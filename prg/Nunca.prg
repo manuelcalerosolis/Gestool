@@ -1,0 +1,3 @@
+Function Nunca()
+
+Return nil
