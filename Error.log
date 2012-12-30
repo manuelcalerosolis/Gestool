@@ -1,0 +1,130 @@
+Error BASE/1081  Error de argumento: +
+Llamado desde DEFERROR(54)
+Llamado desde (b)ERRORSYS(10)
+Llamado desde CPATEMP(2067)
+Llamado desde SETEMPRESA(3208)
+Llamado desde LINITCHECK(755)
+Llamado desde ACCESSCODE:ENDRESOURCE(239)
+Llamado desde (b)ACCESSCODE:RESOURCE(177)
+Llamado desde TBUTTON:CLICK(176)
+Llamado desde TBUTTON:HANDLEEVENT(1427)
+Llamado desde _FWH(3408)
+Llamado desde SENDMESSAGE(0)
+Llamado desde TDIALOG:COMMAND(419)
+Llamado desde TWINDOW:HANDLEEVENT(0)
+Llamado desde TDIALOG:HANDLEEVENT(939)
+Llamado desde DIALOGBOX(0)
+Llamado desde TDIALOG:ACTIVATE(285)
+Llamado desde ACCESSCODE:RESOURCE(199)
+Llamado desde MAIN(311)
+- Llamado desde CPATEMP(2067)
+     Param   1:C   
+     Local   1:L .F.
+     Local   2:C C:\fw195\gestool\
+     Local   3:U 
+     Local   4:U 
+     Local   5:U 
+- Llamado desde SETEMPRESA(3208)
+     Param   1:C   
+     Param   2:C EMPRESA
+     Param   3:C DELEGA
+     Param   4:C USERS
+     Param   5:U 
+     Param   6:U 
+     Local   1:L .F.
+     Local   2:C CODEMP
+     Local   3:U 
+     Local   4:U 
+     Local   5:L .T.
+     Local   6:L .T.
+     Local   7:L .T.
+     Local   8:L .T.
+- Llamado desde LINITCHECK(755)
+     Param   1:L .F.
+     Param   2:O Class: TSAY
+     Param   3:O Class: TMETER
+     Local   1:U 
+     Local   2:L .T.
+- Llamado desde ACCESSCODE:ENDRESOURCE(239)
+     Param   1:O Class: TDIALOG
+     Local   1:O Class: ACCESSCODE
+- Llamado desde (b)ACCESSCODE:RESOURCE(177)
+     Local   1:U 
+- Llamado desde TBUTTON:CLICK(176)
+     Local   1:O Class: TBUTTON
+- Llamado desde TBUTTON:HANDLEEVENT(1427)
+     Param   1:N 2048
+     Param   2:N 0
+     Param   3:N 0
+     Local   1:O Class: TBUTTON
+     Local   2:U 
+- Llamado desde _FWH(3408)
+     Param   1:N 0
+     Param   2:N 2048
+     Param   3:N 0
+     Param   4:N 0
+     Param   5:N 8
+     Local   1:O Class: TBUTTON
+- Llamado desde SENDMESSAGE(0)
+     Param   1:N 5899468
+     Param   2:N 2048
+     Param   3:N 0
+     Param   4:N 0
+- Llamado desde TDIALOG:COMMAND(419)
+     Param   1:N 1
+     Param   2:N 5899468
+     Local   1:O Class: TDIALOG
+     Local   2:O Class: TBUTTON
+     Local   3:N 0
+     Local   4:N 1
+     Local   5:N 5899468
+- Llamado desde TWINDOW:HANDLEEVENT(0)
+     Param   1:N 273
+     Param   2:N 1
+     Param   3:N 5899468
+- Llamado desde TDIALOG:HANDLEEVENT(939)
+     Param   1:N 273
+     Param   2:N 1
+     Param   3:N 5899468
+     Local   1:O Class: TDIALOG
+- Llamado desde DIALOGBOX(0)
+     Param   1:N 4194304
+     Param   2:C Bienvenidos
+     Param   3:N 0
+     Param   4:O Class: TDIALOG
+- Llamado desde TDIALOG:ACTIVATE(285)
+     Param   1:U 
+     Param   2:U 
+     Param   3:U 
+     Param   4:L .T.
+     Param   5:U 
+     Param   6:L .T.
+     Param   7:U 
+     Param   8:U 
+     Param   9:U 
+     Param  10:L .F.
+     Param  11:O Class: TDIALOG
+     Local   1:N 0
+     Local   2:U 
+     Local   3:U 
+     Local   4:U 
+     Local   5:O Class: TDIALOG
+- Llamado desde ACCESSCODE:RESOURCE(199)
+     Local   1:O Class: ACCESSCODE
+     Local   2:O Class: TDIALOG
+     Local   3:O Class: TICON
+- Llamado desde MAIN(311)
+     Param   1:C /TERMINAL
+     Local   1:U 
+     Local   2:U 
+     Local   3:U 
+     Local   4:O Class: TICON
+     Local   5:C 
+     Local   6:C 
+     Local   7:C 
+     Local   8:U 
+     Local   9:U 
+     Local  10:U 
+     Local  11:U 
+     Local  12:U 
+     Local  13:U 
