@@ -3,11 +3,10 @@
 #include <windows.h>
 #include <commctrl.h>
 #include <richedit.h>
-#include "..\camero\GstDialog.h"
 
 LANGUAGE LANG_ENGLISH,SUBLANG_ENGLISH_US
 
-GESTOOL ICON "Gestool.ico"
+GESTOOL ICON "..\Bmp\Gestool.ico"
 
 BIENVENIDOS DIALOG DISCARDABLE 6, 15, 504, 268
 STYLE WS_POPUP|DS_MODALFRAME|WS_CAPTION|WS_SYSMENU|WS_VISIBLE

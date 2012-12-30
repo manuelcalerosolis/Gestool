@@ -3,13 +3,8 @@
 #include <windows.h>
 #include <commctrl.h>
 #include <richedit.h>
-#include "GstDialog.h"
 
 LANGUAGE LANG_ENGLISH,SUBLANG_ENGLISH_US
-
-CASHIER_160 BITMAP "..\\iconexperience\\BmpConvert\\Cashier_160.bmp"
-
-WHEEL_160 BITMAP "..\\iconexperience\\BmpConvert\\Wheel_160.bmp"
 
 WELSERTACTIL DIALOG DISCARDABLE 113, 122, 536, 318
 STYLE WS_POPUP|DS_MODALFRAME|DS_3DLOOK|WS_CAPTION|WS_VISIBLE
@@ -2263,4 +2258,3 @@ FONT 8, "MS Sans Serif"
   CONTROL "", IDCANCEL, "Button", WS_TABSTOP, 228, 218, 34, 30
   CONTROL "", 100, "TXBrowse", WS_TABSTOP|0x00800000, 44, 29, 217, 186
 }
-

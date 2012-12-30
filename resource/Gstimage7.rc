@@ -4,5 +4,5 @@
 #include <commctrl.h>
 #include <richedit.h>
 
-WEBTOPGREEN BITMAP "..\\iconexperience\\BmpConvert\\MkTopGreen.bmp"
-WEBTOPORANGE BITMAP "..\\iconexperience\\BmpConvert\\MkTopOrange.bmp"
+WEBTOPGREEN BITMAP "..\\bmp\\MkTopGreen.bmp"
+WEBTOPORANGE BITMAP "..\\bmp\\MkTopOrange.bmp"
