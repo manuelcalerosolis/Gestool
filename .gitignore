@@ -15,6 +15,7 @@ datos/
 *.swp
 *~.nib
 *.res
+*.log
 
 local.properties
 .classpath
