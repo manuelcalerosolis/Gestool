@@ -3,7 +3,7 @@
 #include "Folder.ch"
 #include "Print.ch"
 #include "Report.ch"
-#include "Factu.ch"
+#include "Factu.ch" 
 
 #define _NNUMFAC                   1      //   N      9     0
 #define _CSUFFAC                   2      //   C      2     0
