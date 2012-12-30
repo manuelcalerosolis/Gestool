@@ -1,0 +1,127 @@
+#line 112 "hbclass.ch"
+   DYNAMIC DivertConstructorCall
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+DECLARE HBClass  New( cName AS String, OPTIONAL SuperParams ) AS CLASS HBClass  Create() AS Object  Instance() AS Object  AddClsMethod( cName AS String, @MethodName(), nScope AS Numeric, n2 AS Numeric, n3 AS Numeric )  AddDelegate( cName AS String, cDelegate AS String, cObject AS String, nScope AS Numeric, lPersistent AS LOGICAL )  AddMultiClsData( cType AS String, uVal, nScope AS Numeric, aDatas AS Array OF String )  AddMultiData( cType AS String, uVal, nScope AS Numeric, aDatas AS Array OF String, x AS LOGICAL, lPer AS LOGICAL )  AddMethod( cName AS String, @MethodName(), nScope AS Numeric, lPersistent AS LOGICAL )  AddInLine( cName AS String, bBlock AS CodeBlock, nScope AS Numeric, lPersistent AS LOGICAL )  AddVirtual( cName AS String )  ModMethod( cName AS String, @MethodName(), nScope AS Numeric, lPersistent AS LOGICAL )  ModClsMethod( cName AS String, @MethodName(), nScope AS Numeric )  ModInline( cName AS String, bBlock AS CodeBlock, nScope AS Numeric, lPersistent AS LOGICAL )  SetOnError( @MethodName() )
+#line 85 "\Fwh1204\Include\FiveWin.Ch"
+   EXTERNAL GetProcAdd
+   EXTERNAL TActiveX
+
+
+
+
+extern errorsys
+#line 17 ".\Prg\TftpC3.prg"
+_HB_CLASS TFTP ; UTILITY FUNCTION TFTP(...); static s_oClass ; local oClassInstance ; local nScope ; nScope := 1 ; if s_oClass == NIL ; s_oClass := IIF(.F.,, HBClass():New( "TFTP" , { HBObject():Classh } ) ) ;
+
+   _HB_MEMBER { oInternet} ; IIF( !.F., s_oClass:AddMultiData(,, nScope + IIF( .F., 32, 0 ), { "oInternet" }, .F., .F. ), )
+   _HB_MEMBER { cSite} ; IIF( !.F., s_oClass:AddMultiData(,, nScope + IIF( .F., 32, 0 ), { "cSite" }, .F., .F. ), )
+   _HB_MEMBER { hFTP} ; IIF( !.F., s_oClass:AddMultiData(,, nScope + IIF( .F., 32, 0 ), { "hFTP" }, .F., .F. ), )
+   _HB_MEMBER { cUserName} ; IIF( !.F., s_oClass:AddMultiData(,, nScope + IIF( .F., 32, 0 ), { "cUserName" }, .F., .F. ), )
+   _HB_MEMBER { cPassword} ; IIF( !.F., s_oClass:AddMultiData(,, nScope + IIF( .F., 32, 0 ), { "cPassword" }, .F., .F. ), )
+   _HB_MEMBER { lPassive} ; IIF( !.F., s_oClass:AddMultiData(,, nScope + IIF( .F., 32, 0 ), { "lPassive" }, .F., .F. ), )
+
+   _HB_MEMBER New( cFTPSite, oInternet) AS CLASS TFTP; IIF( .F., s_oClass:ModMethod( "New", @TFTP_New(), nScope + IIF( .T., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ), s_oClass:AddMethod( "New", @TFTP_New(), nScope + IIF( .T., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ));
+
+   _HB_MEMBER End(); IIF( .F., s_oClass:ModMethod( "End", @TFTP_End(), nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ), s_oClass:AddMethod( "End", @TFTP_End(), nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ));
+
+   _HB_MEMBER DeleteFile( cFileName); IIF( .F., s_oClass:ModMethod( "DeleteFile", @TFTP_DeleteFile(), nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ), s_oClass:AddMethod( "DeleteFile", @TFTP_DeleteFile(), nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ));
+
+   _HB_MEMBER Directory( cMask); IIF( .F., s_oClass:ModMethod( "Directory", @TFTP_Directory(), nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ), s_oClass:AddMethod( "Directory", @TFTP_Directory(), nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ));
+
+   _HB_MEMBER DeleteMask( cMask); IIF( .F., s_oClass:ModMethod( "DeleteMask", @TFTP_DeleteMask(), nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ), s_oClass:AddMethod( "DeleteMask", @TFTP_DeleteMask(), nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ));
+
+   _HB_MEMBER GetCurrentDirectory(); IIF( .F., s_oClass:ModInline( "GetCurrentDirectory", {|Self | Self, ( FtpGetCurrentDirectory( ::hFTP ) ) }, nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ), s_oClass:AddInline( "GetCurrentDirectory", {|Self | Self, ( FtpGetCurrentDirectory( ::hFTP ) ) }, nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ) )
+
+   _HB_MEMBER SetCurrentDirectory(cDirectory); IIF( .F., s_oClass:ModInline( "SetCurrentDirectory", {|Self,cDirectory | Self, ( FtpSetCurrentDirectory( ::hFTP, cDirectory ) ) }, nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ), s_oClass:AddInline( "SetCurrentDirectory", {|Self,cDirectory | Self, ( FtpSetCurrentDirectory( ::hFTP, cDirectory ) ) }, nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ) )
+
+   _HB_MEMBER CreateDirectory(cDirectory); IIF( .F., s_oClass:ModInline( "CreateDirectory", {|Self,cDirectory | Self, ( FtpCreateDirectory( ::hFTP, cDirectory ) ) }, nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ), s_oClass:AddInline( "CreateDirectory", {|Self,cDirectory | Self, ( FtpCreateDirectory( ::hFTP, cDirectory ) ) }, nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ) )
+
+   _HB_MEMBER RemoveDirectory(cDirectory); IIF( .F., s_oClass:ModInline( "RemoveDirectory", {|Self,cDirectory | Self, ( FtpRemoveDirectory( ::hFTP, cDirectory ) ) }, nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ), s_oClass:AddInline( "RemoveDirectory", {|Self,cDirectory | Self, ( FtpRemoveDirectory( ::hFTP, cDirectory ) ) }, nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ) )
+
+; IF .F. ; __clsActive(s_oClass:hClass) ; s_oClass:Refresh() ; ELSE ; s_oClass:Create() ; END ; oClassInstance := __clsInst( s_oClass:hClass ) ; IF __ObjHasMsg( oClassInstance, "InitClass" ); oClassInstance:InitClass( hb_aParams() ) ; END ; ELSE ; oClassInstance := __clsInst( s_oClass:hClass ) ; END ; IF PCount() > 0 ; DIVERT TO (@DivertConstructorCall()) OF s_oClass ; END ; RETURN oClassInstance AS CLASS TFTP ;
+
+
+
+UTILITY STATIC function TFTP_New( cFTPSite, oInternet, cUserName, cPassword, lPassive) ; local Self AS CLASS TFTP := QSelf() AS CLASS TFTP
+
+   IIF( lPassive == nil, lPassive := .F., ) ;
+
+   ::oInternet       := oInternet
+   ::cSite           := cFTPSite
+   ::cUserName       := cUserName
+   ::cPassword       := cPassword
+   ::lPassive        := lPassive
+
+   if oInternet:hSession <> nil
+      ::hFTP         := InternetConnect_C3( oInternet:hSession, cFTPSite, 21, ::cUserName, ::cPassword, 1, if( lPassive, 0x08000000, 0 ), 0 )
+      AAdd( oInternet:aFTPs, Self )
+   endif
+
+return ( Self )
+
+
+
+UTILITY STATIC function TFTP_End() ; local Self AS CLASS TFTP := QSelf() AS CLASS TFTP
+
+   if ::hFTP <> nil
+      InternetCloseHandle_C3( ::hFTP )
+      ::hFTP         := nil
+   endif
+
+return nil
+
+
+
+UTILITY STATIC function TFTP_DeleteFile( cFileName) ; local Self AS CLASS TFTP := QSelf() AS CLASS TFTP
+
+return If( ::hFTP <> nil, FtpDeleteFile_C3( ::hFTP, cFileName ), .F. )
+
+
+
+UTILITY STATIC function TFTP_Directory( cMask) ; local Self AS CLASS TFTP := QSelf() AS CLASS TFTP
+
+   local aFiles   := {}
+
+   IIF( cMask == nil, cMask := "*.*", ) ;
+
+   aFiles         := InternetDirectory_C3( ::hFtp, cMask, 16, 0 )
+
+return aFiles
+
+
+
+UTILITY STATIC function TFTP_DeleteMask( cMask) ; local Self AS CLASS TFTP := QSelf() AS CLASS TFTP
+
+   local n
+   local aFiles
+
+   IIF( cMask == nil, cMask := "*.*", ) ;
+
+   IF ::hFTP <> nil
+
+      aFiles := ::Directory( cMask )
+
+      FOR n = 1 TO len( aFiles )
+
+         FtpDeleteFile_C3( ::hFTP, aFiles[ n, 1 ] )
+
+      NEXT
+
+   end
+
+return nil

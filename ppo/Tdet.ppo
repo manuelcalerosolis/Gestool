@@ -1,0 +1,698 @@
+#line 112 "hbclass.ch"
+   DYNAMIC DivertConstructorCall
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+DECLARE HBClass  New( cName AS String, OPTIONAL SuperParams ) AS CLASS HBClass  Create() AS Object  Instance() AS Object  AddClsMethod( cName AS String, @MethodName(), nScope AS Numeric, n2 AS Numeric, n3 AS Numeric )  AddDelegate( cName AS String, cDelegate AS String, cObject AS String, nScope AS Numeric, lPersistent AS LOGICAL )  AddMultiClsData( cType AS String, uVal, nScope AS Numeric, aDatas AS Array OF String )  AddMultiData( cType AS String, uVal, nScope AS Numeric, aDatas AS Array OF String, x AS LOGICAL, lPer AS LOGICAL )  AddMethod( cName AS String, @MethodName(), nScope AS Numeric, lPersistent AS LOGICAL )  AddInLine( cName AS String, bBlock AS CodeBlock, nScope AS Numeric, lPersistent AS LOGICAL )  AddVirtual( cName AS String )  ModMethod( cName AS String, @MethodName(), nScope AS Numeric, lPersistent AS LOGICAL )  ModClsMethod( cName AS String, @MethodName(), nScope AS Numeric )  ModInline( cName AS String, bBlock AS CodeBlock, nScope AS Numeric, lPersistent AS LOGICAL )  SetOnError( @MethodName() )
+#line 85 "\Fwh1204\Include\FiveWin.Ch"
+   EXTERNAL GetProcAdd
+   EXTERNAL TActiveX
+
+
+
+
+extern errorsys
+#line 13 ".\Prg\Tdet.prg"
+_HB_CLASS TDet ; UTILITY FUNCTION TDet(...); static s_oClass ; local oClassInstance ; local nScope ; nScope := 1 ; if s_oClass == NIL ; s_oClass := IIF(.F.,, HBClass():New( "TDet" , { HBObject():Classh } ) ) ;
+
+   _HB_MEMBER { oParent} ; IIF( !.F., s_oClass:AddMultiData(,, nScope + IIF( .F., 32, 0 ), { "oParent" }, .F., .F. ), )
+
+   _HB_MEMBER { oDbf} ; IIF( !.F., s_oClass:AddMultiData(,, nScope + IIF( .F., 32, 0 ), { "oDbf" }, .F., .F. ), )
+   _HB_MEMBER { oDbfVir} ; IIF( !.F., s_oClass:AddMultiData(,, nScope + IIF( .F., 32, 0 ), { "oDbfVir" }, .F., .F. ), )
+
+   _HB_MEMBER { cPath} ; IIF( !.F., s_oClass:AddMultiData(,, nScope + IIF( .F., 32, 0 ), { "cPath" }, .F., .F. ), )
+
+   _HB_MEMBER { cFirstKey} ; IIF( !.F., s_oClass:AddMultiData(,, nScope + IIF( .F., 32, 0 ), { "cFirstKey" }, .F., .F. ), )
+   _HB_MEMBER { bWhile} ; IIF( !.F., s_oClass:AddMultiData(,, nScope + IIF( .F., 32, 0 ), { "bWhile" }, .F., .F. ), )
+
+   _HB_MEMBER { oBrw} ; IIF( !.F., s_oClass:AddMultiData(,, nScope + IIF( .F., 32, 0 ), { "oBrw" }, .F., .F. ), )
+
+   _HB_MEMBER { bWhile} ; IIF( !.F., s_oClass:AddMultiData(,, nScope + IIF( .F., 32, 0 ), { "bWhile" }, .F., .F. ), )
+
+   _HB_MEMBER {AS NUMERIC nRegisterLoaded} ; IIF( !.F., s_oClass:AddMultiData( "NUMERIC", 0, nScope + IIF( .F., 32, 0 ), { "nRegisterLoaded" }, .F., .F. ), )
+
+   _HB_MEMBER { bOnPreAppend, bOnPostAppend} ; IIF( !.F., s_oClass:AddMultiData(,, nScope + IIF( .F., 32, 0 ), { "bOnPreAppend" , "bOnPostAppend" }, .F., .F. ), )
+   _HB_MEMBER { bOnPreEdit, bOnPostEdit} ; IIF( !.F., s_oClass:AddMultiData(,, nScope + IIF( .F., 32, 0 ), { "bOnPreEdit" , "bOnPostEdit" }, .F., .F. ), )
+   _HB_MEMBER { bOnPreDelete, bOnPostDelete} ; IIF( !.F., s_oClass:AddMultiData(,, nScope + IIF( .F., 32, 0 ), { "bOnPreDelete" , "bOnPostDelete" }, .F., .F. ), )
+   _HB_MEMBER { bOnPreDeleteDetail, bOnPostDeleteDetail} ; IIF( !.F., s_oClass:AddMultiData(,, nScope + IIF( .F., 32, 0 ), { "bOnPreDeleteDetail" , "bOnPostDeleteDetail" }, .F., .F. ), )
+   _HB_MEMBER { bOnPreSave, bOnPostSave} ; IIF( !.F., s_oClass:AddMultiData(,, nScope + IIF( .F., 32, 0 ), { "bOnPreSave" , "bOnPostSave" }, .F., .F. ), )
+   _HB_MEMBER { bOnPreSaveDetail, bOnPostSaveDetail} ; IIF( !.F., s_oClass:AddMultiData(,, nScope + IIF( .F., 32, 0 ), { "bOnPreSaveDetail" , "bOnPostSaveDetail" }, .F., .F. ), )
+   _HB_MEMBER { bOnPreLoad, bOnPostLoad} ; IIF( !.F., s_oClass:AddMultiData(,, nScope + IIF( .F., 32, 0 ), { "bOnPreLoad" , "bOnPostLoad" }, .F., .F. ), )
+
+
+
+   _HB_MEMBER { oRadSelect} ; IIF( !.F., s_oClass:AddMultiData(,, nScope + IIF( .F., 32, 0 ), { "oRadSelect" }, .F., .F. ), )
+   _HB_MEMBER {AS NUMERIC nRadSelect} ; IIF( !.F., s_oClass:AddMultiData( "NUMERIC",, nScope + IIF( .F., 32, 0 ), { "nRadSelect" }, .F., .F. ), )
+   _HB_MEMBER { oChkSelect} ; IIF( !.F., s_oClass:AddMultiData(,, nScope + IIF( .F., 32, 0 ), { "oChkSelect" }, .F., .F. ), )
+   _HB_MEMBER {AS LOGIC lChkSelect} ; IIF( !.F., s_oClass:AddMultiData( "LOGIC", .T., nScope + IIF( .F., 32, 0 ), { "lChkSelect" }, .F., .F. ), )
+   _HB_MEMBER { oDlgSelect} ; IIF( !.F., s_oClass:AddMultiData(,, nScope + IIF( .F., 32, 0 ), { "oDlgSelect" }, .F., .F. ), )
+
+   _HB_MEMBER New( cPath, oParent) AS CLASS TDet; IIF( .F., s_oClass:ModMethod( "New", @TDet_New(), nScope + IIF( .T., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ), s_oClass:AddMethod( "New", @TDet_New(), nScope + IIF( .T., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ));
+   _HB_MEMBER Create(cPath, oParent); IIF( .F., s_oClass:ModMethod( "Create", @TDet_New(), nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ) ), s_oClass:AddMethod( "Create", @TDet_New(), nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ) ) );
+
+   _HB_MEMBER End(); IIF( .F., s_oClass:ModInline( "End", {|Self | Self, ( ::CloseFiles(), Self := nil ) }, nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ), s_oClass:AddInline( "End", {|Self | Self, ( ::CloseFiles(), Self := nil ) }, nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ) )
+
+   _HB_MEMBER Load(); IIF( .F., s_oClass:ModMethod( "Load", @TDet_Load(), nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ), s_oClass:AddMethod( "Load", @TDet_Load(), nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ));
+   _HB_MEMBER LoadAppend(); IIF( .F., s_oClass:ModInline( "LoadAppend", {|Self | Self, ( ::Load( .T. ) ) }, nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ), s_oClass:AddInline( "LoadAppend", {|Self | Self, ( ::Load( .T. ) ) }, nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ) )
+   _HB_MEMBER RollBack(); IIF( .F., s_oClass:ModMethod( "RollBack", @TDet_RollBack(), nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ), s_oClass:AddMethod( "RollBack", @TDet_RollBack(), nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ));
+
+   _HB_MEMBER Append(); IIF( .F., s_oClass:ModMethod( "Append", @TDet_Append(), nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ), s_oClass:AddMethod( "Append", @TDet_Append(), nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ));
+   _HB_MEMBER Edit(); IIF( .F., s_oClass:ModMethod( "Edit", @TDet_Edit(), nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ), s_oClass:AddMethod( "Edit", @TDet_Edit(), nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ));
+   _HB_MEMBER Zoom(); IIF( .F., s_oClass:ModMethod( "Zoom", @TDet_Zoom(), nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ), s_oClass:AddMethod( "Zoom", @TDet_Zoom(), nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ));
+   _HB_MEMBER Del(); IIF( .F., s_oClass:ModMethod( "Del", @TDet_Del(), nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ), s_oClass:AddMethod( "Del", @TDet_Del(), nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ));
+   _HB_MEMBER Duplicate(); IIF( .F., s_oClass:ModMethod( "Duplicate", @TDet_Duplicate(), nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ), s_oClass:AddMethod( "Duplicate", @TDet_Duplicate(), nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ));
+
+   _HB_MEMBER DefineFiles( ); IIF( !.F., s_oClass:AddVirtual( "DefineFiles" ), )
+   _HB_MEMBER OpenFiles( ); IIF( !.F., s_oClass:AddVirtual( "OpenFiles" ), )
+   _HB_MEMBER CloseFiles(); IIF( .F., s_oClass:ModMethod( "CloseFiles", @TDet_CloseFiles(), nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ), s_oClass:AddMethod( "CloseFiles", @TDet_CloseFiles(), nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ));
+
+   _HB_MEMBER Resource( nMode ); IIF( !.F., s_oClass:AddVirtual( "Resource" ), )
+
+   _HB_MEMBER CreateBrowse(); IIF( .F., s_oClass:ModMethod( "CreateBrowse", @TDet_CreateBrowse(), nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ), s_oClass:AddMethod( "CreateBrowse", @TDet_CreateBrowse(), nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ));
+
+   _HB_MEMBER Save(); IIF( .F., s_oClass:ModMethod( "Save", @TDet_Save(), nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ), s_oClass:AddMethod( "Save", @TDet_Save(), nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ));
+   _HB_MEMBER Cancel(); IIF( .F., s_oClass:ModMethod( "Cancel", @TDet_Cancel(), nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ), s_oClass:AddMethod( "Cancel", @TDet_Cancel(), nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ));
+
+   _HB_MEMBER GetFirstKey(); IIF( .F., s_oClass:ModInline( "GetFirstKey", {|Self | Self, ( if( ::bFirstKey <> nil, ::cFirstKey := Eval( ::bFirstKey, Self ), ) ) }, nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ), s_oClass:AddInline( "GetFirstKey", {|Self | Self, ( if( ::bFirstKey <> nil, ::cFirstKey := Eval( ::bFirstKey, Self ), ) ) }, nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ) )
+
+   _HB_MEMBER GetStatus(); IIF( .F., s_oClass:ModInline( "GetStatus", {|Self | Self, ( ::oDbf:GetStatus() ) }, nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ), s_oClass:AddInline( "GetStatus", {|Self | Self, ( ::oDbf:GetStatus() ) }, nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ) )
+   _HB_MEMBER SetStatus(); IIF( .F., s_oClass:ModInline( "SetStatus", {|Self | Self, ( ::oDbf:SetStatus() ) }, nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ), s_oClass:AddInline( "SetStatus", {|Self | Self, ( ::oDbf:SetStatus() ) }, nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ) )
+
+   _HB_MEMBER AppendFrom( cPath); IIF( .F., s_oClass:ModMethod( "AppendFrom", @TDet_AppendFrom(), nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ), s_oClass:AddMethod( "AppendFrom", @TDet_AppendFrom(), nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ));
+
+   _HB_MEMBER SyncAllDbf(); IIF( .F., s_oClass:ModMethod( "SyncAllDbf", @TDet_SyncAllDbf(), nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ), s_oClass:AddMethod( "SyncAllDbf", @TDet_SyncAllDbf(), nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ));
+
+   _HB_MEMBER Reindexa(); IIF( .F., s_oClass:ModMethod( "Reindexa", @TDet_Reindexa(), nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ), s_oClass:AddMethod( "Reindexa", @TDet_Reindexa(), nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ));
+
+   _HB_MEMBER CheckFiles( cFileAppendFrom); IIF( .F., s_oClass:ModMethod( "CheckFiles", @TDet_CheckFiles(), nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ), s_oClass:AddMethod( "CheckFiles", @TDet_CheckFiles(), nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ));
+
+   _HB_MEMBER Existe( uValue, oGetTxt, uField, lMessage, lFill, cFillChar); IIF( .F., s_oClass:ModMethod( "Existe", @TDet_Existe(), nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ), s_oClass:AddMethod( "Existe", @TDet_Existe(), nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ));
+   _HB_MEMBER NotExiste( uValue, oGetTxt, uField, lMessage, lFill, cFillChar); IIF( .F., s_oClass:ModMethod( "NotExiste", @TDet_NotExiste(), nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ), s_oClass:AddMethod( "NotExiste", @TDet_NotExiste(), nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ));
+
+; IF .F. ; __clsActive(s_oClass:hClass) ; s_oClass:Refresh() ; ELSE ; s_oClass:Create() ; END ; oClassInstance := __clsInst( s_oClass:hClass ) ; IF __ObjHasMsg( oClassInstance, "InitClass" ); oClassInstance:InitClass( hb_aParams() ) ; END ; ELSE ; oClassInstance := __clsInst( s_oClass:hClass ) ; END ; IF PCount() > 0 ; DIVERT TO (@DivertConstructorCall()) OF s_oClass ; END ; RETURN oClassInstance AS CLASS TDet ;
+
+
+
+UTILITY STATIC function TDet_New(cPath, oParent) ; local Self AS CLASS TDet := QSelf() AS CLASS TDet
+
+   IIF( cPath == nil, cPath := cPatEmp(), ) ;
+
+   ::cPath              := cPath
+   ::oParent            := oParent
+
+RETURN ( Self )
+
+
+
+UTILITY STATIC function TDet_CloseFiles() ; local Self AS CLASS TDet := QSelf() AS CLASS TDet
+
+   if ::oDbf <> nil .AND. ::oDbf:Used()
+      ::oDbf:End()
+      ::oDbf      := nil
+   end
+
+RETURN .T.
+
+
+
+UTILITY STATIC function TDet_Load( lAppend) ; local Self AS CLASS TDet := QSelf() AS CLASS TDet
+
+   IIF( lAppend == nil, lAppend := .F., ) ;
+
+   ::nRegisterLoaded := 0
+
+   if Empty( ::oDbfVir )
+      ::oDbfVir      := ::DefineFiles( cPatTmp(), cLocalDriver(), .T. )
+   end
+
+   if !( ::oDbfVir:Used() )
+      ::oDbfVir:Activate( .F., .F. )
+   end
+
+   ::oDbfVir:Zap()
+
+   if ::oParent:cFirstKey <> nil
+
+      if ( lAppend ) .AND. ::oDbf:Seek( ::oParent:cFirstKey )
+
+         while !Empty( ::oDbf:OrdKeyVal() ) .AND. ( ::oDbf:OrdKeyVal() == ::oParent:cFirstKey ) .AND. !( ::oDbf:Eof() )
+
+            if ::bOnPreLoad <> nil
+               Eval( ::bOnPreLoad, Self )
+            end
+
+            ::oDbfVir:AppendFromObject( ::oDbf )
+
+            ::nRegisterLoaded++
+
+            if ::bOnPostLoad <> nil
+               Eval( ::bOnPostLoad, Self )
+            end
+
+            ::oDbf:Skip()
+
+         end
+
+      end
+
+   end
+
+   ::oDbfVir:GoTop()
+
+RETURN ( Self )
+
+
+
+UTILITY STATIC function TDet_RollBack() ; local Self AS CLASS TDet := QSelf() AS CLASS TDet
+
+   if ::oParent:cFirstKey <> nil
+
+      while ::oDbf:Seek( ::oParent:cFirstKey )
+
+         if ::bOnPreDeleteDetail <> nil
+            Eval( ::bOnPreDeleteDetail, Self )
+         end
+
+         ::oDbf:Delete( .F. )
+
+         if ::bOnPostDeleteDetail <> nil
+            Eval( ::bOnPostDeleteDetail, Self )
+         end
+
+      end
+
+   end
+
+RETURN ( Self )
+
+
+
+UTILITY STATIC function TDet_Save() ; local Self AS CLASS TDet := QSelf() AS CLASS TDet
+
+   ::oDbfVir:OrdSetFocus( 0 )
+
+   ::oDbfVir:GoTop()
+   while !::oDbfVir:eof()
+
+      if ::bOnPreSaveDetail <> nil
+         Eval( ::bOnPreSaveDetail, Self )
+      end
+
+      ::oDbf:AppendFromObject( ::oDbfVir )
+
+      if ::bOnPostSaveDetail <> nil
+         Eval( ::bOnPostSaveDetail, Self )
+      endif
+
+      ::oDbfVir:Skip()
+
+   end
+
+RETURN ( Self )
+
+
+
+UTILITY STATIC function TDet_Append( oBrw, xOthers) ; local Self AS CLASS TDet := QSelf() AS CLASS TDet
+
+   ::oDbfVir:Blank()
+
+   if ::bOnPreAppend <> nil
+      Eval( ::bOnPreAppend, Self )
+   end
+
+   if ::Resource( 1, xOthers )
+
+      if ::bOnPreSave <> nil
+         Eval( ::bOnPreSave, Self )
+      end
+
+      ::oDbfVir:Insert()
+
+      if ::bOnPostSave <> nil
+         Eval( ::bOnPostSave, Self )
+      end
+
+      if ::bOnPostAppend <> nil
+         Eval( ::bOnPostAppend, Self )
+      end
+
+   end
+
+   ::oDbfVir:Cancel()
+
+   IIF( oBrw <> nil, oBrw:Refresh(), )
+
+RETURN ( Self )
+
+
+
+UTILITY STATIC function TDet_Edit( oBrw) ; local Self AS CLASS TDet := QSelf() AS CLASS TDet
+
+   if ::oDbfVir:Recno() == 0
+      RETURN ( Self )
+   end
+
+   ::oDbfVir:Load()
+
+   if ::bOnPreEdit <> nil
+      Eval( ::bOnPreEdit, Self )
+   end
+
+   if ::Resource( 2 )
+
+      if ::bOnPreSave <> nil
+         Eval( ::bOnPreSave, Self )
+      end
+
+      ::oDbfVir:Save()
+
+      if ::bOnPostSave <> nil
+         Eval( ::bOnPostSave, Self )
+      end
+
+      if ::bOnPostEdit <> nil
+         Eval( ::bOnPostEdit, Self )
+      end
+
+   end
+
+   ::oDbfVir:Cancel()
+
+   IIF( oBrw <> nil, oBrw:Refresh(), )
+
+RETURN ( Self )
+
+
+
+UTILITY STATIC function TDet_Zoom() ; local Self AS CLASS TDet := QSelf() AS CLASS TDet
+
+   if ::oDbfVir:Recno() == 0
+      RETURN ( Self )
+   end
+
+   ::oDbfVir:Load()
+
+   ::Resource( 3 )
+
+   ::oDbfVir:Cancel()
+
+RETURN ( Self )
+
+
+
+UTILITY STATIC function TDet_Del( oBrw) ; local Self AS CLASS TDet := QSelf() AS CLASS TDet
+
+   if ::oDbfVir:Recno() == 0
+      RETURN ( Self )
+   end
+
+   if oUser():lNotConfirmDelete() .OR. ApoloMsgNoYes("¿ Desea eliminar definitivamente este registro ?", "Confirme supersión" )
+
+      if ::bOnPreDelete <> nil
+         Eval( ::bOnPreDelete, Self )
+      end
+
+      ::oDbfVir:Delete( .F. )
+
+      if ::bOnPostDelete <> nil
+         Eval( ::bOnPostDelete, Self )
+      end
+
+   end
+
+   IIF( oBrw <> nil, oBrw:Refresh(), )
+
+RETURN ( Self )
+
+
+
+UTILITY STATIC function TDet_Duplicate() ; local Self AS CLASS TDet := QSelf() AS CLASS TDet
+
+RETURN ( Self )
+
+
+
+UTILITY STATIC function TDet_CreateBrowse( nId, oDlg) ; local Self AS CLASS TDet := QSelf() AS CLASS TDet
+
+   local n
+   local aFlds       := {}
+   local aHeaders    := {}
+   local aColSizes   := {}
+   local aJustify    := {}
+
+   if Empty( ::oDbf )
+      ::OpenFiles()
+   end
+
+
+
+
+
+   for n := 1 to len( ::oDbf:aTField )
+
+      if !::oDbf:aTField[ n ]:lHide
+
+         aAdd( aFlds,      ::oDbf:FieldBlock( n ) )
+         aAdd( aHeaders,   ::oDbf:aTField[ n ]:cComment  )
+         aAdd( aColSizes,  ::oDbf:aTField[ n ]:nColSize  )
+         aAdd( aJustify,   ::oDbf:aTField[ n ]:lColAlign )
+
+      endif
+
+   next
+
+
+
+
+
+   ::oBrw            := TWBrowse():Redefine( nId, {|| _aFlds( aFlds ) }, oDlg, aHeaders, aColSizes, , , , , , , , , , , , , ::oDbf:cAlias  )
+   ::oBrw:aJustify   := aJustify
+
+   ::oDbfVir:SetBrowse( ::oBrw )
+
+RETURN ( Self )
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+UTILITY STATIC function TDet_Reindexa() ; local Self AS CLASS TDet := QSelf() AS CLASS TDet
+
+
+
+
+
+   if Empty( ::oDbf )
+      ::oDbf   := ::DefineFiles()
+   end
+
+   ::oDbf:IdxFDel()
+
+   if ::OpenService( .T. )
+      ::oDbf:IdxFCheck()
+      ::oDbf:Pack()
+   end
+
+   ::CloseFiles()
+
+RETURN ( Self )
+
+
+
+static function _aFlds( aFields )
+
+   local nFor
+   local nLen  := Len( aFields )
+   local aFld  := {}
+
+   for nFor = 1 to nLen
+      aAdd( aFld, Eval( aFields[ nFor ] ) )
+   next
+
+RETURN ( aFld )
+
+
+
+UTILITY STATIC function TDet_Cancel() ; local Self AS CLASS TDet := QSelf() AS CLASS TDet
+
+   local cFileName
+
+   if !Empty( ::oDbfVir ) .AND. ::oDbfVir:Used()
+
+      cFileName      := ::oDbfVir:cPath + ::oDbfVir:cName
+
+      ::oDbfVir:End()
+
+   end
+
+   if !Empty( cFileName )
+      dbfErase( cFileName )
+   end
+
+   ::oDbfVir         := nil
+
+RETURN ( Self )
+
+
+
+UTILITY STATIC function TDet_SyncAllDbf( lInfo) ; local Self AS CLASS TDet := QSelf() AS CLASS TDet
+
+   local oDbfTmp
+   local oDbfOld
+
+   IIF( lInfo == nil, lInfo := .F., ) ;
+
+   oDbfTmp        := ::DefineFiles( cPatEmpTmp() )
+
+   if lInfo
+      msginfo( "::DefineFiles( cPatEmpTmp() )" )
+   end
+
+   if !Empty( oDbfTmp )
+      oDbfTmp:Activate( .F., .F. )
+   end
+
+   if lInfo
+      msginfo( "oDbfTmp:Activate( .f., .f. )" )
+   end
+
+   oDbfOld        := ::DefineFiles()
+
+
+   if lInfo
+      msginfo( "::DefineFiles( cPatEmp() )" )
+   end
+
+   if !Empty( oDbfOld )
+      oDbfOld:Activate( .F., .F., , , , .T. )
+   end
+
+   if lInfo
+      msginfo( "oDbfOld:Activate( .f., .f., , , , .t. )" )
+   end
+
+   while !oDbfOld:Eof()
+      dbPass( oDbfOld:cAlias, oDbfTmp:cAlias, .T. )
+      oDbfOld:Skip()
+   end
+
+   if lInfo
+      msginfo( "dbPass( oDbfOld:cAlias, oDbfTmp:cAlias, .t. )" )
+   end
+
+   oDbfTmp:Close()
+   oDbfOld:Close()
+
+   if lInfo
+      msginfo( "oDbfOld:Close()" )
+   end
+
+   if dbfErase( oDbfOld:cPath + GetFileNoExt( oDbfOld:cFile ) )
+      if dbfRename( oDbfTmp:cPath + GetFileNoExt( oDbfTmp:cFile ), oDbfOld:cPath + GetFileNoExt( oDbfOld:cFile ) )
+         dbfErase( oDbfTmp:cPath + GetFileNoExt( oDbfTmp:cFile ) )
+      else
+         MsgStop( "No se actualizo el fichero " + GetFileNoExt( oDbfOld:cFile ) + ".Dbf" )
+      end
+   end
+
+   if lInfo
+      msginfo( "dbfErase( oDbfOld:cPath + GetFileNoExt( oDbfOld:cFile ) )" )
+   end
+
+   oDbfTmp:Destroy()
+   oDbfOld:Destroy()
+
+RETURN ( Self )
+
+
+
+UTILITY STATIC function TDet_CheckFiles( cFileAppendFrom) ; local Self AS CLASS TDet := QSelf() AS CLASS TDet
+
+   if ::OpenFiles()
+      if !Empty( cFileAppendFrom )
+         ::AppendFrom( cFileAppendFrom )
+      end
+      ::CloseFiles()
+   end
+
+Return ( Self )
+
+
+
+UTILITY STATIC function TDet_AppendFrom( cFile) ; local Self AS CLASS TDet := QSelf() AS CLASS TDet
+
+   if !file( cFile )
+      MsgStop( "No existe el fichero " + cFile )
+   else
+      ::oDbf:AppendFrom( cFile )
+   end
+
+return ( Self )
+
+
+
+UTILITY STATIC function TDet_Existe( uValue, oGetTxt, uField, lMessage, lFill, cFillChar, cOrder) ; local Self AS CLASS TDet := QSelf() AS CLASS TDet
+
+   local uValor
+   local lValid      := .F.
+
+   IIF( uField == nil, uField := 2, ) ;
+   IIF( lFill == nil, lFill := .F., ) ;
+   IIF( cFillChar == nil, cFillChar := "0", ) ;
+   IIF( lMessage == nil, lMessage := .T., ) ;
+
+   if ValType( uValue ) == "O"
+      uValor         := uValue:VarGet()
+   else
+      uValor         := uValue
+   end
+
+   if Empty( uValor )
+      return .T.
+   end
+
+   if ( Alltrim( uValor ) == Replicate( "Z", len( Alltrim( uValor ) ) ) )
+      return .T.
+   end
+
+   ::oDbf:GetStatus( .T. )
+
+   if lFill
+      uValor         := RJust( uValor, cFillChar )
+      if ValType( uValue ) == "O"
+         uValue:cText( uValor )
+         uValue:Refresh()
+      end
+   end
+
+   if !Empty( cOrder )
+      ::oDbf:OrdSetFocus( cOrder )
+   end
+
+   if ::oDbf:Seek( uValor )
+
+      if ValType( uValue ) == "O"
+         uValue:cText( uValor )
+      end
+
+      if oGetTxt <> nil
+
+         if ValType( uField ) == "N"
+            uField   := ::oDbf:FieldGet( uField )
+         else
+            uField   := ::oDbf:FieldGetByName( uField )
+         end
+
+         oGetTxt:cText( uField )
+
+      end
+
+      lValid         := .T.
+
+   else
+
+      if lMessage
+         msgStop( "Valor no encontrado." )
+      end
+
+   end
+
+   ::oDbf:SetStatus()
+
+RETURN lValid
+
+
+
+UTILITY STATIC function TDet_NotExiste( uValue, oGetTxt, uField, lMessage, lFill, cFillChar) ; local Self AS CLASS TDet := QSelf() AS CLASS TDet
+
+   local uValor
+   local lValid      := .F.
+   local nRecno      := ::oDbf:Recno()
+
+   IIF( uField == nil, uField := 2, ) ;
+   IIF( lFill == nil, lFill := .F., ) ;
+   IIF( cFillChar == nil, cFillChar := "0", ) ;
+   IIF( lMessage == nil, lMessage := .T., ) ;
+
+   if ValType( uValue ) == "O"
+      uValor   := uValue:VarGet()
+   else
+      uValor   := uValue
+   end
+
+   if Empty( uValor )
+      return .T.
+   end
+
+   if lFill
+      uValor   := RJust( uValor, cFillChar )
+   end
+
+   if !::oDbf:Seek( uValor )
+
+      if ValType( uValue ) == "O"
+         uValue:cText( uValor )
+      end
+
+      lValid   := .T.
+
+   else
+
+      if lMessage
+         msgStop( "Valor ya existe." )
+      end
+
+   end
+
+   ::oDbf:GoTo( nRecno )
+
+RETURN lValid

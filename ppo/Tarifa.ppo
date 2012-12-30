@@ -1,0 +1,2256 @@
+#line 112 "hbclass.ch"
+   DYNAMIC DivertConstructorCall
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+DECLARE HBClass  New( cName AS String, OPTIONAL SuperParams ) AS CLASS HBClass  Create() AS Object  Instance() AS Object  AddClsMethod( cName AS String, @MethodName(), nScope AS Numeric, n2 AS Numeric, n3 AS Numeric )  AddDelegate( cName AS String, cDelegate AS String, cObject AS String, nScope AS Numeric, lPersistent AS LOGICAL )  AddMultiClsData( cType AS String, uVal, nScope AS Numeric, aDatas AS Array OF String )  AddMultiData( cType AS String, uVal, nScope AS Numeric, aDatas AS Array OF String, x AS LOGICAL, lPer AS LOGICAL )  AddMethod( cName AS String, @MethodName(), nScope AS Numeric, lPersistent AS LOGICAL )  AddInLine( cName AS String, bBlock AS CodeBlock, nScope AS Numeric, lPersistent AS LOGICAL )  AddVirtual( cName AS String )  ModMethod( cName AS String, @MethodName(), nScope AS Numeric, lPersistent AS LOGICAL )  ModClsMethod( cName AS String, @MethodName(), nScope AS Numeric )  ModInline( cName AS String, bBlock AS CodeBlock, nScope AS Numeric, lPersistent AS LOGICAL )  SetOnError( @MethodName() )
+#line 85 "\Fwh1204\Include\FiveWin.Ch"
+   EXTERNAL GetProcAdd
+   EXTERNAL TActiveX
+
+
+
+
+extern errorsys
+#line 14 ".\Prg\Tarifa.prg"
+static oWndBrw
+static cNewFile
+static cCdxFile
+static cNewFil2
+static dbfArticulo
+static dbfTarPreT
+static dbfTarPreL
+static dbfTarPreS
+static dbfAgentes
+static dbfDivisa
+static dbfFamilia
+static dbfPro
+static dbfProL
+static oBandera
+static cPouDiv
+
+static dbfTmpArticulo
+static dbfTmpAgente
+
+static bEdit      := {  |aTmp, aGet, dbfTarPreT, oBrw, bWhen, bValid, nMode |          EdtRec(     aTmp, aGet, dbfTarPreT, oBrw, bWhen, bValid, nMode ) }
+static bEdit2     := {  |aTmp, aGet, dbfTarPreL, oBrw, bWhen, bValid, nMode, cCodTar | EdtDet(     aTmp, aGet, dbfTarPreL, oBrw, bWhen, bValid, nMode, cCodTar ) }
+static bEdit3     := {  |aTmp, aGet, dbfTarPreS, oBrw, bWhen, bValid, nMode, cCodArt | EdtExtDet(  aTmp, aGet, dbfTarPreS, oBrw, bWhen, bValid, nMode, cCodArt ) }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+static aDetalle   := {  {"CCODTAR",   "C",    5,    0, "Código de la tarifa" }, {"NTIPTAR",   "N",    1,    0, "Tipo de tarifa" }, {"CCODART",   "C",   18,    0, "Código del artículo" }, {"CNOMART",   "C",   50,    0, "Nombre del artículo" }, {"CCODFAM",   "C",   16,    0, "Código de la família" }, {"CNOMFAM",   "C",   50,    0, "Nombre de la família" }, {"NPRCTAR1",  "N",   16,    6, "Precio del artículo 1" }, {"NPRCTAR2",  "N",   16,    6, "Precio del artículo 2" }, {"NPRCTAR3",  "N",   16,    6, "Precio del artículo 3" }, {"NPRCTAR4",  "N",   16,    6, "Precio del artículo 4" }, {"NPRCTAR5",  "N",   16,    6, "Precio del artículo 5" }, {"NPRCTAR6",  "N",   16,    6, "Precio del artículo 6" }, {"NDTOART",   "N",    6,    2, "Descuento fijo del artículo" }, {"CDIVART",   "C",    3,    0, "Código de la divisa" }, {"NDTODIV",   "N",   16,    6, "Descuento lineal del artículo" }, {"DINIPRM",   "D",    8,    0, "Fecha inicio de promoción" }, {"DFINPRM",   "D",    8,    0, "Fecha final de promoción" }, {"NDTOPRM",   "N",    6,    2, "Descuento promoción" }, {"CCODPR1",   "C",   10,    0, "Código de primera propiedad" }, {"CCODPR2",   "C",   10,    0, "Código de segunda propiedad" }, {"CVALPR1",   "C",   10,    0, "Valor de primera propiedad" }, {"CVALPR2",   "C",   10,    0, "Valor de segunda propiedad" } }
+
+
+
+
+
+
+
+
+
+
+static aDeta2     := {  {"CCODTAR",   "C",    5,    0, "Código de la tarifa" }, {"CCODART",   "C",   18,    0, "Código del artículo" }, {"CCODFAM",   "C",   16,    0, "Código de la família" }, {"CCODPR1",   "C",   10,    0, "Código de primera propiedad" }, {"CCODPR2",   "C",   10,    0, "Código de segunda propiedad" }, {"CVALPR1",   "C",   10,    0, "Valor de primera propiedad" }, {"CVALPR2",   "C",   10,    0, "Valor de segunda propiedad" }, {"CCODAGE",   "C",    3,    0, "Código del agentes" }, {"NCOMAGE",   "N",    6,    2, "Porcentaje de comisión del agente" }, {"NCOMPRM",   "N",    6,    2, "Porcentaje de comisión en promoción" } }
+
+
+
+
+
+
+
+
+
+function aItmTar()
+
+   local aItmTar :=  {}
+
+   aAdd( aItmTar, { "CCODTAR",   "C",  5,  0, "Código de la tarifa" ,  "",  "", "( cDbf )" } )
+   aAdd( aItmTar, { "CNOMTAR",   "C", 30,  0, "Nombre de la tarifa" ,  "",  "", "( cDbf )" } )
+
+return ( aItmTar )
+
+
+
+FUNCTION Tarifa( oMenuItem, oWnd )
+
+   local nLevel
+
+   IIF( oMenuItem == nil, oMenuItem := "01019", ) ;
+   IIF( oWnd == nil, oWnd := oWnd(), ) ;
+
+    IF oWndBrw == NIL
+
+
+
+
+
+      nLevel            := nLevelUsr( oMenuItem )
+      if nAnd( nLevel, 1 ) <> 0
+         msgStop( "Acceso no permitido." )
+         return nil
+      end
+
+
+
+
+
+      if oWnd <> nil
+         SysRefresh(); oWnd:CloseAll(); SysRefresh()
+      end
+
+
+
+
+
+      if !OpenFiles()
+         return nil
+      end
+
+
+
+
+
+      AddMnuNext( "Tarifa de precios", ProcName() )
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+      oWndBrw := TShell():New( 0, 0, 22, 80, "Tarifa de precios",, oWnd,,, .F.,,, ( dbfTarPreT ),,,,, {"Código",    "Nombre"}, {||( WinAppRec( oWndBrw:oBrw, bEdit, dbfTarPreT ) )}, {||( WinEdtRec( oWndBrw:oBrw, bEdit, dbfTarPreT ) )}, {||( DBDelRec(  oWndBrw:oBrw, dbfTarPreT ) )}, {||( WinDupRec( oWndBrw:oBrw, bEdit, dbfTarPreT ) )}, nil,, "Percent_16", ( 104 + ( 0 * 256 ) + ( 63 * 65536 ) ),,, .T. )
+
+      with object ( oWndBrw:AddXCol() )
+         :cHeader          := "Código"
+         :cSortOrder       := "cCodTar"
+         :bEditValue       := {|| ( dbfTarPreT )->cCodTar }
+         :nWidth           := 80
+         :bLClickHeader    := {| nMRow, nMCol, nFlags, oCol | oWndBrw:ClickOnHeader( oCol ) }
+      end
+
+      with object ( oWndBrw:AddXCol() )
+         :cHeader          := "Nombre"
+         :cSortOrder       := "cNomTar"
+         :bEditValue       := {|| ( dbfTarPreT )->cNomTar }
+         :nWidth           := 280
+         :bLClickHeader    := {| nMRow, nMCol, nFlags, oCol | oWndBrw:ClickOnHeader( oCol ) }
+      end
+
+      oWndBrw:CreateXFromCode()
+
+
+
+
+
+
+
+
+
+      oWndBrw:NewAt( "BUS",,, {||( oWndBrw:SearchSetFocus() )}, "(B)uscar", "B",,,,, .F. )
+
+      oWndBrw:AddSeaBar()
+
+
+
+
+
+
+
+
+      oWndBrw:NewAt( "NEW",,, {||( oWndBrw:RecAdd() )}, "(A)ñadir", "A",,, 2,, .F. )
+
+
+
+
+
+
+
+        oWndBrw:NewAt( "DUP",,, {||( oWndBrw:RecDup() )}, "(D)uplicar", "D",,, 2,, .F. )
+
+
+
+
+
+
+
+        oWndBrw:NewAt( "EDIT",,, {||( oWndBrw:RecEdit() )}, "(M)odificar", "M",,, 4,, .F. )
+
+
+
+
+
+
+
+        oWndBrw:NewAt( "ZOOM",,, {||( WinZooRec( oWndBrw:oBrw, bEdit, dbfTarPreT ) )}, "(Z)oom", "Z",,, 8,, .F. )
+
+
+
+
+
+
+
+        oWndBrw:NewAt( "DEL",,, {||( oWndBrw:RecDel() )}, "(E)liminar", "E",,, 16,, .F. )
+
+
+
+
+
+
+
+
+      oWndBrw:NewAt( "IMP",,, {||( InfTar():New( "Listado de tarifas" ):Play() )}, "(L)istado", "L",,, 32,, .F. )
+
+
+
+
+
+
+
+      oWndBrw:NewAt( "END",,, {||( oWndBrw:end() )}, "(S)alir", "S",,,,, .F. )
+
+    oWndBrw:Activate(, oWndBrw:bLClicked, oWndBrw:bRClicked, oWndBrw:bMoved, oWndBrw:bResized, oWndBrw:bPainted, oWndBrw:bKeyDown, oWndBrw:bInit,,,,,,,,, {|| CloseFiles()},, oWndBrw:bLButtonUp )
+
+    ELSE
+
+        oWndBrw:SetFocus()
+
+    end
+
+RETURN NIL
+
+
+
+STATIC FUNCTION EdtRec( aTmp, aGet, dbfTarPreT, oBrw, bWhen, bValid, nMode )
+
+    local oDlg
+    local oGet
+   local oBrwDet
+   local oOrden
+   local cOrden   := "Código artículo"
+
+   BeginTrans( aTmp )
+
+   oDlg = TDialog():New(,,,, LblTitle( nMode ) + "tarifas", "TARIFAS",, .F.,,,,,, .F.,,,,,, .F., )
+
+
+
+
+
+
+
+
+
+
+      oGet := TGetHlp():ReDefine( 100, { | u | If( PCount()==0, aTmp[ (dbfTarPreT)->( FieldPos( "CCODTAR" ) ) ], aTmp[ (dbfTarPreT)->( FieldPos( "CCODTAR" ) ) ]:= u ) }, oDlg,, "@!", {||    ( NotValid( oGet, dbfTarPreT, .T., "0" ) )},,,,,, .F., {||     ( nMode == 1 .OR. nMode == 4 )},, .F., .F.,,,,,, nil,,, )
+
+
+
+
+
+      TGetHlp():ReDefine( 110, { | u | If( PCount()==0, aTmp[ (dbfTarPreT)->( FieldPos( "CNOMTAR" ) ) ], aTmp[ (dbfTarPreT)->( FieldPos( "CNOMTAR" ) ) ]:= u ) }, oDlg,, "@!",,,,,,, .F., {||     ( nMode <> 3 )},, .F., .F.,,,,,, nil,,, )
+
+      oBrwDet                 := IXBrowse():New( oDlg )
+
+      oBrwDet:bClrSel         := {|| { 0, ( 229 + ( 229 * 256 ) + ( 229 * 65536 ) ) } }
+      oBrwDet:bClrSelFocus    := {|| { 0, ( 167 + ( 205 * 256 ) + ( 240 * 65536 ) ) } }
+
+      oBrwDet:cAlias          := dbfTmpArticulo
+      oBrwDet:nMarqueeStyle   := 5
+      oBrwDet:cName           := "Tarifa.Detalle"
+
+      with object ( oBrwDet:AddCol() )
+         :cHeader          := "Tipo"
+         :bEditValue       := {|| if( ( dbfTmpArticulo )->nTipTar <= 1, "Artículo", "Familia" ) }
+         :nWidth           := 60
+      end
+
+      with object ( oBrwDet:AddCol() )
+         :cHeader          := "Código"
+         :bEditValue       := {|| if( ( dbfTmpArticulo )->nTipTar <= 1, ( dbfTmpArticulo )->cCodArt, ( dbfTmpArticulo )->cCodFam ) }
+         :nWidth           := 80
+      end
+
+      with object ( oBrwDet:AddCol() )
+         :cHeader          := "Nombre"
+         :bEditValue       := {|| if( ( dbfTmpArticulo )->nTipTar <= 1, ( dbfTmpArticulo )->cNomArt, ( dbfTmpArticulo )->cNomFam ) }
+         :nWidth           := 160
+      end
+
+      with object ( oBrwDet:AddCol() )
+         :cHeader          := "Prop. 1"
+         :bEditValue       := {|| ( dbfTmpArticulo )->cValPr1 }
+         :nWidth           := 40
+      end
+
+      with object ( oBrwDet:AddCol() )
+         :cHeader          := "Prop. 2"
+         :bEditValue       := {|| ( dbfTmpArticulo )->cValPr2 }
+         :nWidth           := 40
+      end
+
+      with object ( oBrwDet:AddCol() )
+         :cHeader          := "Precio 1"
+         :bEditValue       := {|| ( dbfTmpArticulo )->nPrcTar1 }
+         :cEditPicture     := cPouDiv
+         :nWidth           := 80
+         :nDataStrAlign    := 1
+         :nHeadStrAlign    := 1
+      end
+
+      with object ( oBrwDet:AddCol() )
+         :cHeader          := "Precio 2"
+         :bEditValue       := {|| ( dbfTmpArticulo )->nPrcTar2 }
+         :cEditPicture     := cPouDiv
+         :nWidth           := 80
+         :nDataStrAlign    := 1
+         :nHeadStrAlign    := 1
+      end
+
+      with object ( oBrwDet:AddCol() )
+         :cHeader          := "Precio 3"
+         :bEditValue       := {|| ( dbfTmpArticulo )->nPrcTar3 }
+         :cEditPicture     := cPouDiv
+         :nWidth           := 80
+         :nDataStrAlign    := 1
+         :nHeadStrAlign    := 1
+      end
+
+      with object ( oBrwDet:AddCol() )
+         :cHeader          := "Precio 4"
+         :bEditValue       := {|| ( dbfTmpArticulo )->nPrcTar4 }
+         :cEditPicture     := cPouDiv
+         :nWidth           := 80
+         :nDataStrAlign    := 1
+         :nHeadStrAlign    := 1
+      end
+
+      with object ( oBrwDet:AddCol() )
+         :cHeader          := "Precio 5"
+         :bEditValue       := {|| ( dbfTmpArticulo )->nPrcTar5 }
+         :cEditPicture     := cPouDiv
+         :nWidth           := 80
+         :nDataStrAlign    := 1
+         :nHeadStrAlign    := 1
+      end
+
+      with object ( oBrwDet:AddCol() )
+         :cHeader          := "Precio 6"
+         :bEditValue       := {|| ( dbfTmpArticulo )->nPrcTar6 }
+         :cEditPicture     := cPouDiv
+         :nWidth           := 80
+         :nDataStrAlign    := 1
+         :nHeadStrAlign    := 1
+      end
+
+      with object ( oBrwDet:AddCol() )
+         :cHeader          := "% Descuento"
+         :bEditValue       := {|| ( dbfTmpArticulo )->nDtoArt }
+         :cEditPicture     := "@E 999.99"
+         :nWidth           := 40
+         :nDataStrAlign    := 1
+         :nHeadStrAlign    := 1
+      end
+
+      with object ( oBrwDet:AddCol() )
+         :cHeader          := "% Promoción"
+         :bEditValue       := {|| ( dbfTmpArticulo )->nDtoArt }
+         :cEditPicture     := "@E 999.99"
+         :nWidth           := 40
+         :nDataStrAlign    := 1
+         :nHeadStrAlign    := 1
+      end
+
+      with object ( oBrwDet:AddCol() )
+         :cHeader          := "Dto. lineal"
+         :bEditValue       := {|| ( dbfTmpArticulo )->nDtoDiv }
+         :cEditPicture     := cPouDiv
+         :nWidth           := 80
+         :nDataStrAlign    := 1
+         :nHeadStrAlign    := 1
+      end
+
+      oBrwDet:bLDblClick      := {|| EdtDeta(oBrwDet, bEdit2, aTmp ) }
+      oBrwDet:bRClicked       := {| nRow, nCol, nFlags | oBrwDet:RButtonDown( nRow, nCol, nFlags ) }
+
+      oBrwDet:CreateFromResource( 200 )
+
+
+
+
+
+      oOrden := TComboBox():ReDefine( 210, { | u | If( PCount()==0, cOrden, cOrden:= u ) }, { "Código artículo", "Nombre artículo", "Código família", "Nombre família" }, oDlg,,, {|Self|( ( dbfTmpArticulo )->( OrdSetFocus( oOrden:nAt ) ), oBrwDet:refresh() )},,,, .F.,,,,,, )
+
+
+
+
+
+      TButton():ReDefine( 500, {||( AppDeta( oBrwDet, bEdit2, aTmp ) )}, oDlg,,, .F., {||     ( oUser():lCambiarPrecio() .AND. nMode <> 3 )},,, .F. )
+
+
+
+
+
+      TButton():ReDefine( 501, {||( EdtDeta( oBrwDet, bEdit2, aTmp ) )}, oDlg,,, .F., {||     ( oUser():lCambiarPrecio() .AND. nMode <> 3 )},,, .F. )
+
+
+
+
+
+      TButton():ReDefine( 502, {||( DelDeta( oBrwDet, aTmp ) )}, oDlg,,, .F., {||     ( oUser():lCambiarPrecio() .AND. nMode <> 3 )},,, .F. )
+
+
+
+
+      TButton():ReDefine( 503, {||( EdtZoom( oBrwDet, bEdit2, aTmp ) )}, oDlg,,, .F.,,,, .F. )
+
+
+
+
+      TButton():ReDefine( 504, {||( Searching( dbfTmpArticulo, { "Código artículo", "Nombre artículo", "Código família", "Nombre família" }, oBrwDet ) )}, oDlg,,, .F.,,,, .F. )
+
+
+
+
+
+      TButton():ReDefine( 511, {||( EndTrans( aTmp, aGet, dbfTarPreT, oBrw, oBrwDet, nMode, oDlg ) )}, oDlg,,, .F., {||     ( nMode <> 3 )},,, .F. )
+
+
+
+
+
+        TButton():ReDefine( 510, {||( oDlg:end() )}, oDlg,,, .F.,,,, .T. )
+
+
+
+
+      TButton():ReDefine( 559, {||( ChmHelp( "Tarifas" ) )}, oDlg,,, .F.,,,, .F. )
+
+      if oUser():lCambiarPrecio() .AND. nMode <> 3
+         oDlg:AddFastKey( 113, {|| AppDeta(oBrwDet, bEdit2, aTmp) } )
+         oDlg:AddFastKey( 114, {|| EdtDeta(oBrwDet, bEdit2, aTmp ) } )
+         oDlg:AddFastKey( 115, {|| DelDeta( oBrwDet, aTmp ) } )
+         oDlg:AddFastKey( 116, {|| EndTrans( aTmp, aGet, dbfTarPreT, oBrw, oBrwDet, nMode, oDlg ) } )
+      end
+
+      oDlg:AddFastKey( 112, {|| ChmHelp( "Tarifas" ) } )
+
+      oDlg:bStart := {|| oBrwDet:Load(), oGet:SetFocus() }
+
+    oDlg:Activate( oDlg:bLClicked, oDlg:bMoved, oDlg:bPainted, .T.,,,, oDlg:bRClicked,,, )
+
+   KillTrans( oBrwDet )
+
+RETURN ( oDlg:nResult == 1 )
+
+
+
+
+
+
+
+STATIC FUNCTION AppDeta( oBrw, bEdit2, aTmp )
+
+RETURN WinAppRec( oBrw, bEdit2, dbfTmpArticulo, , , aTmp[ (dbfTarPreT)->( FieldPos( "CCODTAR" ) ) ] )
+
+
+
+
+
+
+
+STATIC FUNCTION EdtDeta( oBrw, bEdit2, aTmp )
+
+RETURN WinEdtRec( oBrw, bEdit2, dbfTmpArticulo )
+
+
+
+STATIC FUNCTION EdtZoom( oBrw, bEdit2, aTmp )
+
+RETURN WinZooRec( oBrw, bEdit2, dbfTmpArticulo )
+
+
+
+
+
+
+
+STATIC FUNCTION DelDeta( oBrw, aTmp )
+
+RETURN DBDelRec( oBrw, dbfTmpArticulo )
+
+
+
+STATIC FUNCTION BeginTrans( aTmp )
+
+   local cDbf     := "TTarL"
+   local cCodTar  := aTmp[ ( dbfTarPreT )->( FieldPos( "CCODTAR" ) ) ]
+
+   cNewFile       := cGetNewFileName( cPatTmp() + cDbf, "DBF", .T. )
+   cCdxFile       := cGetNewFileName( cPatTmp() + cDbf, "CDX", .T. )
+
+
+
+
+
+   dbCreate( cNewFile, aSqlStruct( aDetalle ), cLocalDriver() )
+
+   dbUseArea( .T., cLocalDriver(), cNewFile, cCheckArea( cDbf, @dbfTmpArticulo ), .F. )
+   if !( dbfTmpArticulo )->( neterr() )
+
+      ( dbfTmpArticulo )->( ordCondSet( "!Deleted()", {|| !Deleted() } ) )
+      ( dbfTmpArticulo )->( ordCreate( cCdxFile, "cCodArt", "Field->cCodArt", {|| Field->cCodArt } ) )
+
+      ( dbfTmpArticulo )->( ordCondSet( "!Deleted()", {|| !Deleted() } ) )
+      ( dbfTmpArticulo )->( ordCreate( cCdxFile, "cNomArt", "Field->cNomArt", {|| Field->cNomArt } ) )
+
+      ( dbfTmpArticulo )->( ordCondSet( "!Deleted()", {|| !Deleted() } ) )
+      ( dbfTmpArticulo )->( ordCreate( cCdxFile, "cCodFam", "Field->cCodFam", {|| Field->cCodFam } ) )
+
+      ( dbfTmpArticulo )->( ordCondSet( "!Deleted()", {|| !Deleted() } ) )
+      ( dbfTmpArticulo )->( ordCreate( cCdxFile, "cNomFam", "Field->cNomFam", {|| Field->cNomFam } ) )
+
+      ( dbfTmpArticulo )->( ordListAdd( cCdxFile ) )
+
+
+
+
+
+      if ( dbfTarPreL )->( dbSeek( cCodTar ) )
+
+         while ( ( dbfTarPreL )->cCodTar == cCodTar .AND. !( dbfTarPreL )->( Eof() ) )
+
+            dbPass( dbfTarPreL, dbfTmpArticulo, .T. )
+
+            if Empty( ( dbfTmpArticulo )->cNomArt )
+               ( dbfTmpArticulo )->cNomArt := RetArticulo( ( dbfTmpArticulo )->cCodArt, dbfArticulo )
+            end
+
+            if Empty( ( dbfTmpArticulo )->cNomFam )
+               ( dbfTmpArticulo )->cNomFam := RetFamilia( ( dbfTmpArticulo )->cCodFam, dbfFamilia )
+            end
+
+            ( dbfTarPreL )->( dbSkip() )
+
+         end
+
+      end
+
+      ( dbfTmpArticulo )->( ordSetFocus( "cCodArt" ) )
+      ( dbfTmpArticulo )->( dbGoTop() )
+
+   end
+
+RETURN NIL
+
+
+
+STATIC FUNCTION EndTrans( aTmp, aGet, dbfTarPreT, oBrw, oBrwDet, nMode, oDlg )
+
+   local oError
+   local oBlock
+   local aTabla
+   local cCodTar  := aTmp[ ( dbfTarPreT )->( FieldPos( "CCODTAR" ) ) ]
+
+   if nMode == 1 .OR. nMode == 4
+
+      if Empty( cCodTar )
+         MsgStop( "Código no puede estar vacio" )
+         return nil
+      end
+
+      if dbSeekInOrd( cCodTar, "CCODTAR", dbfTarPreT )
+         msgStop( "Código ya existe" )
+         return nil
+      end
+
+   end
+
+
+
+
+
+   oBlock      := ErrorBlock( {| oError | ApoloBreak( oError ) } )
+   BEGIN SEQUENCE
+
+      BeginTransaction()
+
+
+
+
+
+      while ( dbfTarPreL )->( dbSeek( cCodTar ) ) .AND. !( dbfTarPreL )->( eof() )
+         if dbLock( dbfTarPreL )
+            ( dbfTarPreL )->( dbDelete() )
+            ( dbfTarPreL )->( dbUnLock() )
+         end
+      end
+
+
+
+
+
+      ( dbfTmpArticulo )->( dbGoTop() )
+      while !( dbfTmpArticulo )->( Eof() )
+
+         aTabla                                                := dbScatter( dbfTmpArticulo )
+         aTabla[ ( dbfTarPreL )->( FieldPos( "CCODTAR" ) ) ]   := cCodTar
+
+         dbGather( aTabla, dbfTarPreL, .T. )
+
+         ( dbfTmpArticulo )->( dbSkip() )
+
+      end
+
+      WinGather( aTmp, aGet, dbfTarPreT, oBrw, nMode )
+
+      oDlg:End( 1 )
+
+      CommitTransaction()
+
+   RECOVER USING oError
+
+      RollBackTransaction()
+      msgStop( "Imposible eliminar datos anteriores" + Chr(13)+Chr(10) + ErrorMessage( oError ) )
+
+   end
+   ErrorBlock( oBlock )
+
+RETURN .T.
+
+
+
+STATIC FUNCTION KillTrans( oBrwDet )
+
+   if !Empty( dbfTmpArticulo ) .AND. ( dbfTmpArticulo )->( Used() )
+      ( dbfTmpArticulo )->( dbCloseArea() )
+   end
+
+   if oBrwDet <> nil
+      oBrwDet:CloseData()
+   end
+
+   fErase( cNewFile )
+   fErase( cCdxFile )
+
+   dbCommitAll()
+
+RETURN .T.
+
+
+
+STATIC FUNCTION OpenFiles()
+
+   local oBlock
+   local oError
+   local lOpen       := .T.
+
+   oBlock            := ErrorBlock( {| oError | ApoloBreak( oError ) } )
+   BEGIN SEQUENCE
+
+
+
+      IF !lExistTable( cPatArt() + "TARPRET.DBF" ) .OR. !lExistTable( cPatArt() + "TARPREL.DBF" ) .OR. !lExistTable( cPatArt() + "TARPRES.DBF" )
+         CreateFiles()
+      end
+
+      dbUseArea( .T., ( cDriver() ), ( cPatArt() + "TARPRET.DBF" ), ( cCheckArea( "TARPRET", @dbfTarPreT ) ), if(.T. .OR. .F., !.F., NIL), .F.,, )
+      if !lAIS() ; ordListAdd( ( cPatArt() + "TARPRET.CDX" ) ) ; else ; ordSetFocus( 1 ) ; end
+
+      dbUseArea( .T., ( cDriver() ), ( cPatArt() + "TARPREL.DBF" ), ( cCheckArea( "TARPREL", @dbfTarPreL ) ), if(.T. .OR. .F., !.F., NIL), .F.,, )
+      if !lAIS() ; ordListAdd( ( cPatArt() + "TARPREL.CDX" ) ) ; else ; ordSetFocus( 1 ) ; end
+
+      dbUseArea( .T., ( cDriver() ), ( cPatArt() + "TARPRES.DBF" ), ( cCheckArea( "TARPRES", @dbfTarPreS ) ), if(.T. .OR. .F., !.F., NIL), .F.,, )
+      if !lAIS() ; ordListAdd( ( cPatArt() + "TARPRES.CDX" ) ) ; else ; ordSetFocus( 1 ) ; end
+
+      dbUseArea( .T., ( cDriver() ), ( cPatArt() + "ARTICULO.DBF" ), ( cCheckArea( "ARTICULO", @dbfArticulo ) ), if(.T. .OR. .F., !.F., NIL), .F.,, )
+      if !lAIS() ; ordListAdd( ( cPatArt() + "ARTICULO.CDX" ) ) ; else ; ordSetFocus( 1 ) ; end
+
+      dbUseArea( .T., ( cDriver() ), ( cPatCli() + "AGENTES.DBF" ), ( cCheckArea( "AGENTES", @dbfAgentes ) ), if(.T. .OR. .F., !.F., NIL), .F.,, )
+      if !lAIS() ; ordListAdd( ( cPatCli() + "AGENTES.CDX" ) ) ; else ; ordSetFocus( 1 ) ; end
+
+      dbUseArea( .T., ( cDriver() ), ( cPatDat() + "DIVISAS.DBF" ), ( cCheckArea( "DIVISAS", @dbfDivisa ) ), if(.T. .OR. .F., !.F., NIL), .F.,, )
+      if !lAIS() ; ordListAdd( ( cPatDat() + "DIVISAS.CDX" ) ) ; else ; ordSetFocus( 1 ) ; end
+
+      dbUseArea( .T., ( cDriver() ), ( cPatArt() + "FAMILIAS.DBF" ), ( cCheckArea( "FAMILIAS", @dbfFamilia ) ), if(.T. .OR. .F., !.F., NIL), .F.,, )
+      if !lAIS() ; ordListAdd( ( cPatArt() + "FAMILIAS.CDX" ) ) ; else ; ordSetFocus( 1 ) ; end
+
+      dbUseArea( .T., ( cDriver() ), ( cPatArt() + "PRO.DBF" ), ( cCheckArea( "PRO", @dbfPro ) ), if(.T. .OR. .F., !.F., NIL), .F.,, )
+      if !lAIS() ; ordListAdd( ( cPatArt() + "PRO.CDX" ) ) ; else ; ordSetFocus( 1 ) ; end
+
+      dbUseArea( .T., ( cDriver() ), ( cPatArt() + "TBLPRO.DBF" ), ( cCheckArea( "TBLPRO", @dbfProL ) ), if(.T. .OR. .F., !.F., NIL), .F.,, )
+      if !lAIS() ; ordListAdd( ( cPatArt() + "TBLPRO.CDX" ) ) ; else ; ordSetFocus( 1 ) ; end
+
+      oBandera    := TBandera():New
+      cPouDiv     := cPouDiv( cDivEmp(), dbfDivisa )
+
+   RECOVER USING oError
+
+      lOpen      := .F.
+      MsgStop ( "Imposible abrir la bases de datos de tarifas" + Chr(13)+Chr(10) + ErrorMessage( oError ))
+
+   end
+
+   ErrorBlock( oBlock )
+
+   if !lOpen
+      CloseFiles()
+   end
+
+RETURN( lOpen )
+
+
+
+STATIC FUNCTION CloseFiles()
+
+   IIF( !Empty( dbfTarPreT ), ( dbfTarPreT )->( dbCloseArea() ), )
+   IIF( !Empty( dbfTarPreL ), ( dbfTarPreL )->( dbCloseArea() ), )
+   IIF( !Empty( dbfTarPreS ), ( dbfTarPreS )->( dbCloseArea() ), )
+   IIF( !Empty( dbfArticulo), ( dbfArticulo)->( dbCloseArea() ), )
+   IIF( !Empty( dbfAgentes ), ( dbfAgentes )->( dbCloseArea() ), )
+   IIF( !Empty( dbfDivisa  ), ( dbfDivisa  )->( dbCloseArea() ), )
+   IIF( !Empty( dbfFamilia ), ( dbfFamilia )->( dbCloseArea() ), )
+   IIF( !Empty( dbfPro     ), ( dbfPro     )->( dbCloseArea() ), )
+   IIF( !Empty( dbfProL    ), ( dbfProL    )->( dbCloseArea() ), )
+
+    dbfTarPreT    := NIL
+    dbfTarPreL     := NIL
+    dbfTarPreS    := NIL
+    dbfArticulo    := NIL
+    dbfAgentes    := NIL
+   dbfDivisa   := NIL
+   dbfFamilia  := NIL
+   oBandera    := NIL
+   dbfPro      := NIL
+   dbfProL     := NIL
+
+   if oWndBrw  <> nil
+      oWndBrw  := nil
+   end
+
+Return ( .T. )
+
+
+
+FUNCTION mkTarifa( cPath, oMeter, lAppend, cPathOld )
+
+   IIF( cPath == nil, cPath := cPatArt(), ) ;
+
+   CreateFiles( oMeter, cPath, lAppend, cPathOld )
+   Reindex( oMeter, cPath )
+
+   if lAppend .AND. lIsDir( cPathOld )
+      AppDbf( cPathOld, cPath, "TARPRET" )
+      AppDbf( cPathOld, cPath, "TARPREL" )
+      AppDbf( cPathOld, cPath, "TARPRES" )
+   end
+
+RETURN NIL
+
+
+
+STATIC FUNCTION CreateFiles( oMeter, cPath )
+
+   IIF( cPath == nil, cPath := cPatArt(), ) ;
+
+   if !lExistTable( cPath + "TARPRET.DBF" )
+      dbCreate( cPath + "TARPRET.DBF", aSqlStruct( aItmTar() ), cDriver() )
+   end
+
+   if !lExistTable( cPath + "TARPREL.DBF" )
+      dbCreate( cPath + "TARPREL.DBF", aSqlStruct( aDetalle ), cDriver() )
+   end
+
+   if !lExistTable( cPath + "TARPRES.DBF" )
+      dbCreate( cPath + "TARPRES.DBF", aSqlStruct( aDeta2 ), cDriver() )
+   end
+
+RETURN NIL
+
+
+
+FUNCTION rxTarifa( cPath, oMeter )
+
+RETURN Reindex( oMeter, cPath )
+
+
+
+STATIC FUNCTION Reindex( oMeter, cPath )
+
+   IIF( cPath == nil, cPath := cPatArt(), ) ;
+
+
+
+   IF !lExistTable( cPath + "TARPRET.DBF" ) .OR.  !lExistTable( cPath + "TARPREL.DBF" ) .OR.  !lExistTable( cPath + "TARPRES.DBF" )
+
+        CreateFiles()
+
+    end
+
+   fEraseIndex( cPath + "TARPRET.CDX" )
+   fEraseIndex( cPath + "TARPREL.CDX" )
+   fEraseIndex( cPath + "TARPRES.CDX" )
+
+   dbUseArea( .T., ( cDriver() ), ( cPath + "TARPRET.DBF" ), ( cCheckArea( "TARPRET", @dbfTarPreT ) ), if(.F. .OR. .T., !.T., NIL), .F.,, )
+   if !( dbfTarPreT )->( neterr() )
+      ( dbfTarPreT )->( __dbPack() )
+
+      ( dbfTarPreT )->( ordCondSet("!Deleted()", {||!Deleted()}  ) )
+      ( dbfTarPreT )->( ordCreate( cPath + "TARPRET", "CCODTAR", "Field->CCODTAR", {|| Field->CCODTAR } ) )
+
+      ( dbfTarPreT )->( ordCondSet("!Deleted()", {||!Deleted()}  ) )
+      ( dbfTarPreT )->( ordCreate( cPath + "TARPRET", "CNOMTAR", "Field->CNOMTAR", {|| Field->CNOMTAR } ) )
+
+      ( dbfTarPreT )->( dbCloseArea() )
+      dbfTarPreT  := nil
+   else
+      msgStop( "Imposible abrir en modo exclusivo la tabla de tarifas" )
+   end
+
+   dbUseArea( .T., ( cDriver() ), ( cPath + "TARPREL.DBF" ), ( cCheckArea( "TARPREL", @dbfTarPreL ) ), if(.F. .OR. .T., !.T., NIL), .F.,, )
+    if !( dbfTarPreL )->( neterr() )
+      ( dbfTarPreL )->( __dbPack() )
+
+      ( dbfTarPreL )->( ordCondSet("!Deleted()", {||!Deleted()}  ) )
+      ( dbfTarPreL )->( ordCreate( cPath + "TARPREL", "CCODART", "Field->CCODTAR + Field->CCODART", {|| Field->CCODTAR + Field->CCODART } ) )
+
+      ( dbfTarPreL )->( ordCondSet("!Deleted()", {||!Deleted()}  ) )
+      ( dbfTarPreL )->( ordCreate( cPath + "TARPREL", "CNOMART", "Field->CCODTAR + Field->CNOMART", {|| Field->CCODTAR + Field->CNOMART } ) )
+
+      ( dbfTarPreL )->( ordCondSet("!Deleted()", {||!Deleted()}  ) )
+      ( dbfTarPreL )->( ordCreate( cPath + "TARPREL", "CCODFAM", "Field->CCODTAR + Field->CCODFAM", {|| Field->CCODTAR + Field->CCODFAM } ) )
+
+      ( dbfTarPreL )->( ordCondSet("!Deleted()", {||!Deleted()}  ) )
+      ( dbfTarPreL )->( ordCreate( cPath + "TARPREL", "CNOMFAM", "Field->CCODTAR + Field->CNOMFAM", {|| Field->CCODTAR + Field->CNOMFAM } ) )
+
+      ( dbfTarPreL )->( ordCondSet("!Deleted()", {||!Deleted()}  ) )
+      ( dbfTarPreL )->( ordCreate( cPath + "TARPREL", "CTARPRP", "Field->CCODTAR + Field->CCODART + Field->CCODPR1 + Field->CCODPR2 + Field->CVALPR1 + Field->CVALPR2", {|| Field->CCODTAR + Field->CCODART + Field->CCODPR1 + Field->CCODPR2 + Field->CVALPR1 + Field->CVALPR2 } ) )
+
+      ( dbfTarPreL )->( dbCloseArea() )
+      dbfTarPreL  := nil
+   else
+      msgStop( "Imposible abrir en modo exclusivo la tabla de tarifas" )
+   end
+
+   dbUseArea( .T., ( cDriver() ), ( cPath + "TARPRES.DBF" ), ( cCheckArea( "TARPRES", @dbfTarPreS ) ), if(.F. .OR. .T., !.T., NIL), .F.,, )
+   if !( dbfTarPreS )->( neterr() )
+      ( dbfTarPreS )->( __dbPack() )
+
+      ( dbfTarPreS )->( ordCondSet("!Deleted()", {||!Deleted()}  ) )
+      ( dbfTarPreS )->( ordCreate( cPath + "TARPRES.CDX", "CCODACC", "Field->CCODTAR + Field->CCODART + Field->CCODFAM + Field->CCODPR1 + Field->CCODPR2 + Field->CVALPR1 + Field->CVALPR2", {|| Field->CCODTAR + Field->CCODART + Field->CCODFAM + Field->CCODPR1 + Field->CCODPR2 + Field->CVALPR1 + Field->CVALPR2 } ) )
+
+      ( dbfTarPreS )->( ordCondSet("!Deleted()", {||!Deleted()}  ) )
+      ( dbfTarPreS )->( ordCreate( cPath + "TARPRES.CDX", "CCODAGE", "Field->CCODTAR + Field->CCODART + Field->CCODFAM + Field->CCODPR1 + Field->CCODPR2 + Field->CVALPR1 + Field->CVALPR2 + Field->CCODAGE", {|| Field->CCODTAR + Field->CCODART + Field->CCODFAM + Field->CCODPR1 + Field->CCODPR2 + Field->CVALPR1 + Field->CVALPR2 + Field->CCODAGE } ) )
+
+      ( dbfTarPreS )->( dbCloseArea() )
+      dbfTarPreS  := nil
+   else
+      msgStop( "Imposible abrir en modo exclusivo la tabla de tarifas" )
+   end
+
+RETURN NIL
+
+
+
+
+
+
+
+STATIC FUNCTION EdtDet( aTmp, aGet, dbf, oBrw, bWhen, bValid, nMode, cCodTar )
+
+   local oDlg
+   local oFld
+   local oTxt
+   local cTxt        := ""
+   local oBrwExt
+   local oSayPr1
+   local oSayPr2
+   local cSayPr1
+   local cSayPr2
+   local oSayVp1
+   local oSayVp2
+   local cSayVp1
+   local cSayVp2
+
+   if nMode == 1
+
+      aTmp[ ( dbfTarPreL )->( FieldPos( "CCODTAR" ) ) ] := cCodTar
+
+   else
+
+      if !Empty( aTmp[ ( dbfTarPreL )->( FieldPos( "CCODPR1" ) ) ] )
+         cSayPr1 := retProp( aTmp[ ( dbfTarPreL )->( FieldPos( "CCODPR1" ) ) ], dbfPro )
+         cSayVp1 := retValProp( aTmp[ ( dbfTarPreL )->( FieldPos( "CCODPR1" ) ) ] + aTmp[ ( dbfTarPreL )->( FieldPos( "CVALPR1" ) ) ], dbfProL )
+      end
+
+      if !Empty( aTmp[ ( dbfTarPreL )->( FieldPos( "CCODPR2" ) ) ] )
+         cSayPr2 := retProp( aTmp[ ( dbfTarPreL )->( FieldPos( "CCODPR2" ) ) ], dbfPro )
+         cSayVp2 := retValProp( aTmp[ ( dbfTarPreL )->( FieldPos( "CCODPR2" ) ) ] + aTmp[ ( dbfTarPreL )->( FieldPos( "CVALPR2" ) ) ], dbfProL )
+      end
+
+   end
+
+   if Empty( aTmp[ ( dbfTarPreL )->( FieldPos( "CDIVART" ) ) ] )
+      aTmp[ ( dbfTarPreL )->( FieldPos( "CDIVART" ) ) ] := cDivEmp()
+   end
+
+   BeginTr2( aTmp )
+
+   oDlg = TDialog():New(,,,, LblTitle( nMode ) + "lineas a tarifas", "LTARPRE",, .F.,,,,,, .F.,,,,,, .F., )
+
+
+
+
+
+
+
+      oFld := TFolder():ReDefine( 500, {"&Tarifa", "A&gentes"}, { "LTARPRE_1","LTARPRE_2" }, oDlg,,,,, .F., )
+
+
+
+
+
+
+      aGet[ (dbfTarPreL)->( FieldPos( "NTIPTAR" ) ) ] := TRadMenu():Redefine( { | u | If( PCount()==0, aTmp[ (dbfTarPreL)->( FieldPos( "NTIPTAR" ) ) ], aTmp[ (dbfTarPreL)->( FieldPos( "NTIPTAR" ) ) ]:= u ) }, oFld:aDialogs[1],, { 90, 91 }, {||( ChTipTar( aGet, aTmp, oSayPr1, oSayPr2, oSayVp1, oSayVp2 ) )},,,, .F., {||     ( nMode == 1 )}, )
+
+
+
+
+
+
+
+
+      aGet[ ( dbfTarPreL )->( FieldPos( "CCODART" ) ) ] := TGetHlp():ReDefine( 100, { | u | If( PCount()==0, aTmp[ ( dbfTarPreL )->( FieldPos( "CCODART" ) ) ], aTmp[ ( dbfTarPreL )->( FieldPos( "CCODART" ) ) ]:= u ) }, oFld:aDialogs[1],,, {||    ( IsTarTmp( aGet, aTmp, nMode, oSayPr1, oSayPr2, oSayVp1, oSayVp2 ) )},,,,,, .F., {||     ( aTmp[ ( dbfTarPreL )->( FieldPos( "NTIPTAR" ) ) ] == 1 .AND. nMode == 1 )},, .F., .F.,,,,, {|Self|( BrwArticulo( aGet[ ( dbfTarPreL )->( FieldPos( "CCODART" ) ) ], aGet[ ( dbfTarPreL )->( FieldPos( "CNOMART" ) ) ] ) )}, nil, "LUPA",, )
+
+
+
+
+
+      aGet[ ( dbfTarPreL )->( FieldPos( "CNOMART" ) ) ] := TGetHlp():ReDefine( 110, { | u | If( PCount()==0, aTmp[ ( dbfTarPreL )->( FieldPos( "CNOMART" ) ) ], aTmp[ ( dbfTarPreL )->( FieldPos( "CNOMART" ) ) ]:= u ) }, oFld:aDialogs[1],,,,,,,,, .F., {||         ( .F. )},, .F., .F.,,,,,, nil,,, )
+
+
+
+      oSayPr1 := TSay():ReDefine( 888, {|| cSayPr1}, oFld:aDialogs[1],,,, .F.,, .F., .F. )
+
+
+
+
+
+
+      aGet[ (dbfTarPreL)->( FieldPos( "CVALPR1" ) ) ] := TGetHlp():ReDefine( 250, { | u | If( PCount()==0, aTmp[ (dbfTarPreL)->( FieldPos( "CVALPR1" ) ) ], aTmp[ (dbfTarPreL)->( FieldPos( "CVALPR1" ) ) ]:= u ) }, oFld:aDialogs[1],,,,,,,,, .F., {||     ( nMode == 1 )},, .F., .F.,,,,, {|Self|( brwPrpAct( aGet[ (dbfTarPreL)->( FieldPos( "CVALPR1" ) ) ], oSayVp1, aTmp[ (dbfTarPreL)->( FieldPos( "CCODPR1" ) ) ] ) )}, nil, "LUPA",, )
+
+
+
+
+      oSayVp1 := TGetHlp():ReDefine( 251, { | u | If( PCount()==0, cSayVp1, cSayVp1:= u ) }, oFld:aDialogs[1],,,,,,,,, .F., {||     .F.},, .F., .F.,,,,,, nil,,, )
+
+
+
+      oSayPr2 := TSay():ReDefine( 889, {|| cSayPr2}, oFld:aDialogs[1],,,, .F.,, .F., .F. )
+
+
+
+
+
+
+      aGet[ (dbfTarPreL)->( FieldPos( "CVALPR2" ) ) ] := TGetHlp():ReDefine( 260, { | u | If( PCount()==0, aTmp[ (dbfTarPreL)->( FieldPos( "CVALPR2" ) ) ], aTmp[ (dbfTarPreL)->( FieldPos( "CVALPR2" ) ) ]:= u ) }, oFld:aDialogs[1],,,,,,,,, .F., {||     ( nMode == 1 )},, .F., .F.,,,,, {|Self|( brwPrpAct( aGet[ (dbfTarPreL)->( FieldPos( "CVALPR2" ) ) ], oSayVp2, aTmp[ (dbfTarPreL)->( FieldPos( "CCODPR2" ) ) ] ) )}, nil, "LUPA",, )
+
+
+
+
+
+      oSayVp2 := TGetHlp():ReDefine( 261, { | u | If( PCount()==0, cSayVp2, cSayVp2:= u ) }, oFld:aDialogs[1],,,, "N/W*",,,,, .F., {||     .F.},, .F., .F.,,,,,, nil,,, )
+
+
+
+
+
+
+
+
+      aGet[ ( dbfTarPreL )->( FieldPos( "CCODFAM" ) ) ] := TGetHlp():ReDefine( 105, { | u | If( PCount()==0, aTmp[ ( dbfTarPreL )->( FieldPos( "CCODFAM" ) ) ], aTmp[ ( dbfTarPreL )->( FieldPos( "CCODFAM" ) ) ]:= u ) }, oFld:aDialogs[1],,, {||    ( IsFamTmp( aGet, aTmp, nMode ) )},,,,,, .F., {||     ( aTmp[ ( dbfTarPreL )->( FieldPos( "NTIPTAR" ) ) ] == 2 .AND. nMode == 1 )},, .F., .F.,,,,, {|Self|BrwFamilia( aGet[ ( dbfTarPreL )->( FieldPos( "CCODFAM" ) ) ], aGet[ ( dbfTarPreL )->( FieldPos( "CNOMFAM" ) ) ] )}, nil, "LUPA",, )
+
+
+
+
+
+      aGet[ (dbfTarPreL)->( FieldPos( "CNOMFAM" ) ) ] := TGetHlp():ReDefine( 106, { | u | If( PCount()==0, aTmp[ (dbfTarPreL)->( FieldPos( "CNOMFAM" ) ) ], aTmp[ (dbfTarPreL)->( FieldPos( "CNOMFAM" ) ) ]:= u ) }, oFld:aDialogs[1],,,,,,,,, .F., {||         ( .F. )},, .F., .F.,,,,,, nil,,, )
+
+
+
+
+
+
+
+      aGet[ (dbfTarPreL)->( FieldPos( "NPRCTAR1" ) ) ] := TGetHlp():ReDefine( 120, { | u | If( PCount()==0, aTmp[ (dbfTarPreL)->( FieldPos( "NPRCTAR1" ) ) ], aTmp[ (dbfTarPreL)->( FieldPos( "NPRCTAR1" ) ) ]:= u ) }, oFld:aDialogs[1],, cPouDiv,,,,,,, .F., {||     ( aTmp[ (dbfTarPreL)->( FieldPos( "NTIPTAR" ) ) ] <= 1 .AND. nMode <> 3 )},, .F., .T.,,,,,, nil,,, )
+
+
+
+
+
+
+
+      aGet[ (dbfTarPreL)->( FieldPos( "NPRCTAR2" ) ) ] := TGetHlp():ReDefine( 130, { | u | If( PCount()==0, aTmp[ (dbfTarPreL)->( FieldPos( "NPRCTAR2" ) ) ], aTmp[ (dbfTarPreL)->( FieldPos( "NPRCTAR2" ) ) ]:= u ) }, oFld:aDialogs[1],, cPouDiv,,,,,,, .F., {||     ( aTmp[ (dbfTarPreL)->( FieldPos( "NTIPTAR" ) ) ] <= 1 .AND. nMode <> 3 )},, .F., .T.,,,,,, nil,,, )
+
+
+
+
+
+
+
+      aGet[ (dbfTarPreL)->( FieldPos( "NPRCTAR3" ) ) ] := TGetHlp():ReDefine( 140, { | u | If( PCount()==0, aTmp[ (dbfTarPreL)->( FieldPos( "NPRCTAR3" ) ) ], aTmp[ (dbfTarPreL)->( FieldPos( "NPRCTAR3" ) ) ]:= u ) }, oFld:aDialogs[1],, cPouDiv,,,,,,, .F., {||     ( aTmp[ (dbfTarPreL)->( FieldPos( "NTIPTAR" ) ) ] <= 1 .AND. nMode <> 3 )},, .F., .T.,,,,,, nil,,, )
+
+
+
+
+
+
+
+     aGet[ (dbfTarPreL)->( FieldPos( "NPRCTAR4" ) ) ] := TGetHlp():ReDefine( 150, { | u | If( PCount()==0, aTmp[ (dbfTarPreL)->( FieldPos( "NPRCTAR4" ) ) ], aTmp[ (dbfTarPreL)->( FieldPos( "NPRCTAR4" ) ) ]:= u ) }, oFld:aDialogs[1],, cPouDiv,,,,,,, .F., {||     ( aTmp[ (dbfTarPreL)->( FieldPos( "NTIPTAR" ) ) ] <= 1 .AND. nMode <> 3 )},, .F., .T.,,,,,, nil,,, )
+
+
+
+
+
+
+
+     aGet[ (dbfTarPreL)->( FieldPos( "NPRCTAR5" ) ) ] := TGetHlp():ReDefine( 160, { | u | If( PCount()==0, aTmp[ (dbfTarPreL)->( FieldPos( "NPRCTAR5" ) ) ], aTmp[ (dbfTarPreL)->( FieldPos( "NPRCTAR5" ) ) ]:= u ) }, oFld:aDialogs[1],, cPouDiv,,,,,,, .F., {||     ( aTmp[ (dbfTarPreL)->( FieldPos( "NTIPTAR" ) ) ] <= 1 .AND. nMode <> 3 )},, .F., .T.,,,,,, nil,,, )
+
+
+
+
+
+
+
+     aGet[ (dbfTarPreL)->( FieldPos( "NPRCTAR6" ) ) ] := TGetHlp():ReDefine( 170, { | u | If( PCount()==0, aTmp[ (dbfTarPreL)->( FieldPos( "NPRCTAR6" ) ) ], aTmp[ (dbfTarPreL)->( FieldPos( "NPRCTAR6" ) ) ]:= u ) }, oFld:aDialogs[1],, cPouDiv,,,,,,, .F., {||     ( aTmp[ (dbfTarPreL)->( FieldPos( "NTIPTAR" ) ) ] <= 1 .AND. nMode <> 3 )},, .F., .T.,,,,,, nil,,, )
+
+
+
+
+
+
+
+      TGetHlp():ReDefine( 190, { | u | If( PCount()==0, aTmp[ (dbfTarPreL)->( FieldPos( "NDTODIV" ) ) ], aTmp[ (dbfTarPreL)->( FieldPos( "NDTODIV" ) ) ]:= u ) }, oFld:aDialogs[1],, cPouDiv, {||    ( aTmp[ (dbfTarPreL)->( FieldPos( "NDTODIV" ) ) ] >= 0 )},,,,,, .F., {||     ( nMode <> 3 )},, .F., .T.,,,,,, nil,,, )
+
+
+
+
+
+
+
+
+      TGetHlp():ReDefine( 200, { | u | If( PCount()==0, aTmp[ (dbfTarPreL)->( FieldPos( "NDTOART" ) ) ], aTmp[ (dbfTarPreL)->( FieldPos( "NDTOART" ) ) ]:= u ) }, oFld:aDialogs[1],, "@E 99.99",,,,,,, .F., {||         ( nMode <> 3 )},, .F., .T.,,, {||      0}, {||      99},, nil,,, )
+
+
+
+
+
+
+      TGetHlp():ReDefine( 220, { | u | If( PCount()==0, aTmp[ (dbfTarPreL)->( FieldPos( "DINIPRM" ) ) ], aTmp[ (dbfTarPreL)->( FieldPos( "DINIPRM" ) ) ]:= u ) }, oFld:aDialogs[1],,,, "N/W*",,,,, .F., {||         ( nMode <> 3 )},, .F., .T.,,,,,, nil,,, )
+
+
+
+
+
+
+
+
+      aGet[ ( dbfTarPreL )->( FieldPos( "DFINPRM" ) ) ] := TGetHlp():ReDefine( 230, { | u | If( PCount()==0, aTmp[ ( dbfTarPreL )->( FieldPos( "DFINPRM" ) ) ], aTmp[ ( dbfTarPreL )->( FieldPos( "DFINPRM" ) ) ]:= u ) }, oFld:aDialogs[1],,, {||    ( SetNumDay( aTmp, oTxt ) )}, "N/W*",,,,, .F., {||         ( nMode <> 3 )},, .F., .T.,,,,,, nil,,, )
+
+
+
+
+      oTxt := TGetHlp():ReDefine( 240, { | u | If( PCount()==0, cTxt, cTxt:= u ) }, oFld:aDialogs[1],,,,,,,,, .F., {||     ( .F. )},, .F., .F.,,,,,, nil,,, )
+
+
+
+
+
+
+
+
+      TGetHlp():ReDefine( 210, { | u | If( PCount()==0, aTmp[ (dbfTarPreL)->( FieldPos( "NDTOPRM" ) ) ], aTmp[ (dbfTarPreL)->( FieldPos( "NDTOPRM" ) ) ]:= u ) }, oFld:aDialogs[1],, "@E 999.99",,,,,,, .F., {||         ( nMode <> 3 )},, .F., .T.,,, {||      0}, {||      100},, nil,,, )
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+      oBrwExt                 := IXBrowse():New( oFld:aDialogs[2] )
+
+      oBrwExt:bClrSel         := {|| { 0, ( 229 + ( 229 * 256 ) + ( 229 * 65536 ) ) } }
+      oBrwExt:bClrSelFocus    := {|| { 0, ( 167 + ( 205 * 256 ) + ( 240 * 65536 ) ) } }
+
+      oBrwExt:cAlias          := dbfTmpAgente
+      oBrwExt:nMarqueeStyle   := 5
+      oBrwExt:cName           := "Tarifa.Agente"
+
+      with object ( oBrwExt:AddCol() )
+         :cHeader          := "Código"
+         :bEditValue       := {|| ( dbfTmpAgente )->cCodAge }
+         :nWidth           := 60
+      end
+
+      with object ( oBrwExt:AddCol() )
+         :cHeader          := "Nombre"
+         :bEditValue       := {|| RetNbrAge( ( dbfTmpAgente )->CCODAGE, dbfAgentes ) }
+         :nWidth           := 180
+      end
+
+      with object ( oBrwExt:AddCol() )
+         :cHeader          := "% Comisión"
+         :bEditValue       := {|| ( dbfTmpAgente )->nComAge }
+         :cEditPicture     := "@E 999.99"
+         :nWidth           := 60
+         :nDataStrAlign    := 1
+         :nHeadStrAlign    := 1
+      end
+
+      with object ( oBrwExt:AddCol() )
+         :cHeader          := "% Promoción"
+         :bEditValue       := {|| ( dbfTmpAgente )->nComPrm }
+         :cEditPicture     := "@E 999.99"
+         :nWidth           := 60
+         :nDataStrAlign    := 1
+         :nHeadStrAlign    := 1
+      end
+
+      oBrwExt:bLDblClick      := {|| EdtDet2( oBrwExt, bEdit3, aTmp ) }
+      oBrwExt:bRClicked       := {| nRow, nCol, nFlags | oBrwExt:RButtonDown( nRow, nCol, nFlags ) }
+
+      oBrwExt:CreateFromResource( 210 )
+
+
+
+
+
+      TButton():ReDefine( 500, {||( AppDet2( oBrwExt, bEdit3, aTmp) )}, oFld:aDialogs[2],,, .F., {||     ( nMode <> 3 )},,, .F. )
+
+
+
+
+
+      TButton():ReDefine( 501, {||( EdtDet2( oBrwExt, bEdit3, aTmp ) )}, oFld:aDialogs[2],,, .F., {||     ( nMode <> 3 )},,, .F. )
+
+
+
+
+
+      TButton():ReDefine( 502, {||( DelDet2( oBrwExt ) )}, oFld:aDialogs[2],,, .F., {||     ( nMode <> 3 )},,, .F. )
+
+
+
+
+
+      TButton():ReDefine( 1, {||( EndTr2( aTmp, aGet, nMode, oBrw, oBrwExt, oDlg ) )}, oDlg,,, .F., {||     ( nMode <> 3 )},,, .F. )
+
+
+
+
+
+        TButton():ReDefine( 2, {||( oDlg:end() )}, oDlg,,, .F.,,,, .T. )
+
+      if nMode <> 3
+         oFld:aDialogs[2]:AddFastKey( 113, {|| AppDet2( oBrwExt, bEdit3, aTmp) } )
+         oFld:aDialogs[2]:AddFastKey( 114, {|| EdtDet2( oBrwExt, bEdit3, aTmp ) } )
+         oFld:aDialogs[2]:AddFastKey( 115, {|| DelDet2( oBrwExt ) } )
+
+         oDlg:AddFastKey( 116, {|| EndTr2( aTmp, aGet, nMode, oBrw, oBrwExt, oDlg ) } )
+      end
+
+      oDlg:bStart := {|| oBrwExt:Load(), cValoresProp( aTmp, aGet, nMode, oSayPr1, oSayPr2, oSayVp1, oSayVp2 )  }
+
+   oDlg:Activate( oDlg:bLClicked, oDlg:bMoved, oDlg:bPainted, .T.,,,, oDlg:bRClicked,,, )
+
+   KillTr2( oBrwExt )
+
+RETURN ( oDlg:nResult == 1 )
+
+
+
+Static Function cValoresProp( aTmp, aGet, nMode, oSayPr1, oSayPr2, oSayVp1, oSayVp2 )
+
+   if nMode == 1
+
+      oSayPr1:Hide()
+      oSayPr2:Hide()
+      oSayVp1:Hide()
+      oSayVp2:Hide()
+
+      aGet[ ( dbfTarPreL )->( FieldPos( "CVALPR1" ) ) ]:Hide()
+      aGet[ ( dbfTarPreL )->( FieldPos( "CVALPR2" ) ) ]:Hide()
+
+   else
+
+      if Empty( aTmp[ ( dbfTarPreL )->( FieldPos( "CCODPR1" ) ) ] ) .OR. aTmp[ ( dbfTarPreL )->( FieldPos( "NTIPTAR" ) ) ] == 2
+         oSayPr1:Hide()
+         oSayVp1:Hide()
+         aGet[ ( dbfTarPreL )->( FieldPos( "CVALPR1" ) ) ]:Hide()
+      end
+
+      if Empty( aTmp[ ( dbfTarPreL )->( FieldPos( "CCODPR2" ) ) ] ) .OR. aTmp[ ( dbfTarPreL )->( FieldPos( "NTIPTAR" ) ) ] == 2
+         oSayPr2:Hide()
+         oSayVp2:Hide()
+         aGet[ ( dbfTarPreL )->( FieldPos( "CVALPR2" ) ) ]:Hide()
+      end
+
+   end
+
+   aGet[ ( dbfTarPreL )->( FieldPos( "DFINPRM" ) ) ]:lValid()
+
+Return nil
+
+
+
+STATIC FUNCTION SetNumDay( aTmp, oTxt )
+
+   local dFecIni  := aTmp[ (dbfTarPreL)->( FieldPos( "DINIPRM" ) ) ]
+   local dFecFin  := aTmp[ (dbfTarPreL)->( FieldPos( "DFINPRM" ) ) ]
+
+    IF dFecFin >= dFecIni
+      oTxt:SetText( Trans( dFecFin - dFecIni, "@E 999,999" ) + " días." )
+        RETURN .T.
+    end
+
+    MsgAlert( "La fecha final debe ser mayor que la inicial." )
+
+RETURN .F.
+
+
+
+static function ChTipTar( aGet, aTmp, oSayPr1, oSayPr2, oSayVp1, oSayVp2 )
+
+   aGet[ (dbfTarPreL)->( FieldPos( "CCODART"  ) ) ]:cText( "" )
+   aGet[ (dbfTarPreL)->( FieldPos( "CCODFAM"  ) ) ]:cText( "" )
+   aGet[ (dbfTarPreL)->( FieldPos( "CNOMART"  ) ) ]:cText( "" )
+   aGet[ (dbfTarPreL)->( FieldPos( "CNOMFAM"  ) ) ]:cText( "" )
+   aGet[ (dbfTarPreL)->( FieldPos( "NPRCTAR1" ) ) ]:cText( 0 )
+   aGet[ (dbfTarPreL)->( FieldPos( "NPRCTAR2" ) ) ]:cText( 0 )
+   aGet[ (dbfTarPreL)->( FieldPos( "NPRCTAR3" ) ) ]:cText( 0 )
+   aGet[ (dbfTarPreL)->( FieldPos( "NPRCTAR4" ) ) ]:cText( 0 )
+   aGet[ (dbfTarPreL)->( FieldPos( "NPRCTAR5" ) ) ]:cText( 0 )
+   aGet[ (dbfTarPreL)->( FieldPos( "NPRCTAR6" ) ) ]:cText( 0 )
+
+   if aTmp[ (dbfTarPreL)->( FieldPos( "NTIPTAR" ) ) ] == 2
+
+      oSayPr1:Hide()
+      oSayPr2:Hide()
+
+      oSayVp1:SetText( "" )
+      oSayVp2:SetText( "" )
+
+      oSayVp1:Hide()
+      oSayVp2:Hide()
+
+      aGet[ (dbfTarPreL)->( FieldPos( "CVALPR1" ) ) ]:cText( "" )
+      aGet[ (dbfTarPreL)->( FieldPos( "CVALPR2" ) ) ]:cText( "" )
+
+      aGet[ (dbfTarPreL)->( FieldPos( "CVALPR1" ) ) ]:Hide()
+      aGet[ (dbfTarPreL)->( FieldPos( "CVALPR2" ) ) ]:Hide()
+
+   end
+
+return .T.
+
+
+
+STATIC FUNCTION EndTr2( aTmp, aGet, nMode, oBrw, oBrwExt, oDlg )
+
+   local nOrd
+   local nRec
+   local aTabla
+   local oError
+   local oBlock
+   local lReturn     := .T.
+   local nTipArt     := aTmp[ ( dbfTmpArticulo )->( FieldPos( "NTIPTAR" ) ) ]
+   local cCodArt     := aTmp[ ( dbfTmpArticulo )->( FieldPos( "CCODART" ) ) ]
+   local cCodFam     := aTmp[ ( dbfTmpArticulo )->( FieldPos( "CCODFAM" ) ) ]
+   local cCodTar     := aTmp[ ( dbfTmpArticulo )->( FieldPos( "CCODTAR" ) ) ] + aTmp[ ( dbfTmpArticulo )->( FieldPos( "CCODART" ) ) ] + aTmp[ ( dbfTmpArticulo )->( FieldPos( "CCODFAM" ) ) ] + aTmp[ ( dbfTmpArticulo )->( FieldPos( "CCODPR1" ) ) ] + aTmp[ ( dbfTmpArticulo )->( FieldPos( "CCODPR2" ) ) ] + aTmp[ ( dbfTmpArticulo )->( FieldPos( "CVALPR1" ) ) ] + aTmp[ ( dbfTmpArticulo )->( FieldPos( "CVALPR2" ) ) ]
+
+   if nTipArt == 1 .AND. Empty( cCodArt )
+      msgStop( "Código de artículo no puede estar vacio" )
+      return .F.
+   end
+
+   if nTipArt == 2 .AND. Empty( cCodFam )
+      msgStop( "Código de família no puede estar vacia" )
+      return .F.
+   end
+
+   if nTipArt == 1 .AND. ( nMode == 1 .OR. nMode == 4 )
+
+      nRec           := ( dbfTmpArticulo )->( Recno() )
+      nOrd           := ( dbfTmpArticulo )->( OrdSetFocus( "cCodArt" ) )
+
+      lReturn        := ( dbfTmpArticulo )->( dbSeek( cCodArt ) )
+      if lReturn
+         msgStop( "Código de artículo ya existe" )
+      end
+
+      ( dbfTmpArticulo )->( dbGoTo( nRec ) )
+      ( dbfTmpArticulo )->( OrdSetFocus( nOrd ) )
+
+      if lReturn
+         Return .F.
+      end
+
+   end
+
+   if nTipArt == 2 .AND. ( nMode == 1 .OR. nMode == 4 )
+
+      nRec           := ( dbfTmpArticulo )->( Recno() )
+      nOrd           := ( dbfTmpArticulo )->( OrdSetFocus( "cCodFam" ) )
+
+      lReturn        := ( dbfTmpArticulo )->( dbSeek( cCodFam ) )
+      if lReturn
+         msgStop( "Código de família ya existe" )
+      end
+
+      ( dbfTmpArticulo )->( dbGoTo( nRec ) )
+      ( dbfTmpArticulo )->( OrdSetFocus( nOrd ) )
+
+      if lReturn
+         Return .F.
+      end
+
+   end
+
+   CursorWait()
+
+
+
+
+
+   oBlock      := ErrorBlock( {| oError | ApoloBreak( oError ) } )
+   BEGIN SEQUENCE
+
+   BeginTransaction()
+
+
+
+
+
+   while ( dbfTarPreS )->( dbSeek( cCodTar ) )
+
+      if ( dbfTarPreS )->( dbRLock() )
+         ( dbfTarPreS )->( dbDelete() )
+         ( dbfTarPreS )->( dbUnLock() )
+      end
+
+   end
+
+
+
+
+
+   ( dbfTmpAgente )->( dbGoTop() )
+   while !( dbfTmpAgente )->( Eof() )
+
+      aTabla                                             := dbScatter( dbfTmpAgente )
+      aTabla[ ( dbfTarPreS )->( FieldPos( "CCODTAR" ) )] := aTmp[ ( dbfTmpArticulo )->( FieldPos( "CCODTAR" ) ) ]
+      aTabla[ ( dbfTarPreS )->( FieldPos( "CCODART" ) )] := aTmp[ ( dbfTmpArticulo )->( FieldPos( "CCODART" ) ) ]
+      aTabla[ ( dbfTarPreS )->( FieldPos( "CCODFAM" ) )] := aTmp[ ( dbfTmpArticulo )->( FieldPos( "CCODFAM" ) ) ]
+      aTabla[ ( dbfTarPreS )->( FieldPos( "CCODPR1" ) )] := aTmp[ ( dbfTmpArticulo )->( FieldPos( "CCODPR1" ) ) ]
+      aTabla[ ( dbfTarPreS )->( FieldPos( "CCODPR2" ) )] := aTmp[ ( dbfTmpArticulo )->( FieldPos( "CCODPR2" ) ) ]
+      aTabla[ ( dbfTarPreS )->( FieldPos( "CVALPR1" ) )] := aTmp[ ( dbfTmpArticulo )->( FieldPos( "CVALPR1" ) ) ]
+      aTabla[ ( dbfTarPreS )->( FieldPos( "CVALPR2" ) )] := aTmp[ ( dbfTmpArticulo )->( FieldPos( "CVALPR2" ) ) ]
+
+        ( dbfTarPreS )->( dbAppend() )
+
+      dbGather( aTabla, dbfTarPreS )
+
+      ( dbfTmpAgente )->( dbSkip() )
+
+   end
+
+
+
+
+
+   WinGather( aTmp, aGet, dbfTmpArticulo, oBrw, nMode )
+
+   CommitTransaction()
+
+   RECOVER USING oError
+
+      RollBackTransaction()
+      msgStop( "Imposible actualizar bases de datos" + Chr(13)+Chr(10) + ErrorMessage( oError ) )
+
+   end
+   ErrorBlock( oBlock )
+
+   oDlg:end()
+
+   CursorWE()
+
+RETURN .T.
+
+
+
+STATIC FUNCTION KillTr2( oBrwExt )
+
+   if !Empty( dbfTmpAgente ) .AND. ( dbfTmpAgente )->( Used() )
+      ( dbfTmpAgente )->( dbCloseArea() )
+   end
+
+   if oBrwExt <> nil
+      oBrwExt:CloseData()
+   end
+
+
+
+
+
+   dbfErase( cNewFil2 )
+
+RETURN .T.
+
+
+
+STATIC FUNCTION AppDet2( oBrw, bEdit3, aTmp )
+
+RETURN WinAppRec( oBrw, bEdit3, dbfTmpAgente, , , aTmp[(dbfTarPreL)->( FieldPos( "CCODTAR" ) )] + aTmp[(dbfTarPreL)->( FieldPos( "CCODART" ) )] + aTmp[(dbfTarPreL)->( FieldPos( "CCODFAM" ) )] )
+
+
+
+
+
+
+
+STATIC FUNCTION EdtDet2( oBrw, bEdit3 )
+
+RETURN WinEdtRec( oBrw, bEdit3, dbfTmpAgente )
+
+
+
+
+
+
+
+STATIC FUNCTION DelDet2( oBrw )
+
+RETURN DBDelRec( oBrw, dbfTmpAgente )
+
+
+
+STATIC FUNCTION EdtExtDet( aTmp, aGet, dbfTmpAgente, oBrw, bWhen, bValid, nMode, cCodAcc )
+
+    local oDlg
+    local oGet
+    local oGetTxt
+    local cGetTxt
+
+   oDlg = TDialog():New(,,,, LblTitle( nMode ) + "agentes a tarifas", "LAGETAR",, .F.,,,,,, .F.,,,,,, .F., )
+
+
+
+
+
+
+
+
+      oGet := TGetHlp():ReDefine( 100, { | u | If( PCount()==0, aTmp[ (dbfTarPreS)->( FieldPos( "CCODAGE" ) ) ], aTmp[ (dbfTarPreS)->( FieldPos( "CCODAGE" ) ) ]:= u ) }, oDlg,,, {||     ( cAgentes( oGet,    dbfAgentes, oGetTxt ) )}, "N/W*",,,,, .F., {||         ( nMode <> 3 )},, .F., .F.,,,,, {|Self|( BrwAgentes( oGet, oGetTxt ) )}, nil, "LUPA",, )
+
+
+
+
+
+        oGetTxt := TGetHlp():ReDefine( 110, { | u | If( PCount()==0, cGetTxt, cGetTxt:= u ) }, oDlg,,,, "N/W*",,,,, .F., {||         ( .F. )},, .F., .F.,,,,,, nil,,, )
+
+
+
+
+
+
+
+      TGetHlp():ReDefine( 120, { | u | If( PCount()==0, aTmp[ (dbfTarPreS)->( FieldPos( "NCOMAGE" ) ) ], aTmp[ (dbfTarPreS)->( FieldPos( "NCOMAGE" ) ) ]:= u ) }, oDlg,, "@E 999.99",, "N/W*",,,,, .F., {||         ( nMode <> 3 )},, .F., .T.,,,,,, nil,,, )
+
+
+
+
+
+
+
+      TGetHlp():ReDefine( 130, { | u | If( PCount()==0, aTmp[ (dbfTarPreS)->( FieldPos( "NCOMPRM" ) ) ], aTmp[ (dbfTarPreS)->( FieldPos( "NCOMPRM" ) ) ]:= u ) }, oDlg,, "@E 999.99",, "N/W*",,,,, .F., {||         ( nMode <> 3 )},, .F., .T.,,,,,, nil,,, )
+
+
+
+
+
+      TButton():ReDefine( 1, {||( WinGather( aTmp, aGet, dbfTmpAgente, oBrw, nMode ), oDlg:end() )}, oDlg,,, .F., {||         ( nMode <> 3 )},,, .F. )
+
+
+
+
+        TButton():ReDefine( 2, {||( oDlg:end() )}, oDlg,,, .F.,,,, .F. )
+
+   if nMode <> 3
+      oDlg:AddFastKey( 116, {|| WinGather( aTmp, aGet, dbfTmpAgente, oBrw, nMode ), oDlg:end() } )
+   end
+
+   oDlg:Activate( oDlg:bLClicked, oDlg:bMoved, oDlg:bPainted := {|hDC,cPS|( oGet:lValid() )}, .T.,,,, oDlg:bRClicked,,, )
+
+RETURN ( oDlg:nResult == 1 )
+
+
+
+FUNCTION cTarifa( oGet, oGet2 )
+
+    local nOrdAnt
+    local lClose    := .F.
+    local lValid     := .F.
+    local xValor     := oGet:varGet()
+
+   if Empty( xValor )
+      if oGet2    <> NIL
+            oGet2:cText( "" )
+      end
+      return .T.
+   end
+
+   if Empty( dbfTarPreT )
+      if !OpenFiles()
+         return nil
+      end
+      lclose      := .T.
+   end
+
+   nOrdAnt        := ( dbfTarPreT )->( OrdSetFocus( 1 ) )
+
+   if Empty( xvalor )
+      return .T.
+   end
+
+    xValor    := Rjust( xValor, "0" )
+
+   if ( dbfTarPreT )->( dbSeek( xValor ) )
+
+        oGet:cText( (dbfTarPreT)->CCODTAR )
+
+        IF oGet2 <> NIL
+            oGet2:cText( (dbfTarPreT)->CNOMTAR )
+        end
+
+        lValid     := .T.
+
+   else
+
+        msgStop( "Tarifa no encontrada" )
+
+   end
+
+   ( dbfTarPreT )->( OrdSetFocus( nOrdAnt ) )
+
+   if lClose
+        CloseFiles()
+   end
+
+RETURN lValid
+
+
+
+FUNCTION retTarifa( cCodFam, dbfTarPreT )
+
+    local lClose     := .F.
+    local cAreaAnt := Alias()
+    local cTemp        := Space( 30 )
+
+    IF dbfTarPreT     == NIL
+      IF !OpenFiles()
+         RETURN NIL
+      end
+        lClose        := .T.
+    end
+
+    IF ( dbfTarPreT )->( DbSeek( cCodFam ) )
+        cTemp := (dbfTarPreT)->CNOMTAR
+    end
+
+    IF lClose
+        CloseFiles()
+    end
+
+    IF cAreaAnt <> ""
+        dbSelectArea( ( cAreaAnt ) )
+    end
+
+RETURN cTemp
+
+
+
+FUNCTION BrwTarifa( oGet, oGet2 )
+
+    local oDlg
+    local oBrw
+    local oGet1
+    local cGet1
+   local nOrd        := GetBrwOpt( "BrwTarifa" )
+    local oCbxOrd
+   local lClose      := .F.
+   local aCbxOrd     := { "Código", "Nombre" }
+   local cCbxOrd
+   local nLevelUsr   := nLevelUsr( "01019" )
+
+   nOrd              := Min( Max( nOrd, 1 ), len( aCbxOrd ) )
+   cCbxOrd           := aCbxOrd[ nOrd ]
+
+   if Empty( dbfTarPreT )
+      if !OpenFiles()
+         return nil
+      end
+      lClose         := .T.
+   end
+
+   nOrd              := ( dbfTarPreT )->( OrdSetFocus( nOrd ) )
+
+   ( dbfTarPreT )->( dbGoTop() )
+
+   oDlg = TDialog():New(,,,, "Tarifa de precios", "HELPENTRY",, .F.,,,,,, .F.,,,,,, .F., )
+
+
+
+
+
+
+        oGet1 := TGetHlp():ReDefine( 104, { | u | If( PCount()==0, cGet1, cGet1:= u ) }, oDlg,,, {||    ( OrdClearScope( oBrw, dbfTarPreT ) )},,,,,, .F.,, {|nKey,nFlags,Self| ( AutoSeek( nKey, nFlags, Self, oBrw, dbfTarPreT ) ) }, .F., .F.,,,,,, nil, "FIND",, )
+
+
+
+
+
+
+        oCbxOrd := TComboBox():ReDefine( 102, { | u | If( PCount()==0, cCbxOrd, cCbxOrd:= u ) }, aCbxOrd, oDlg,,, {|Self|( ( dbfTarPreT )->( OrdSetFocus( oCbxOrd:nAt ) ), oBrw:refresh(), oGet1:SetFocus() )},,,, .F.,,,,,, )
+
+      oBrw                 := IXBrowse():New( oDlg )
+
+      oBrw:bClrSel         := {|| { 0, ( 229 + ( 229 * 256 ) + ( 229 * 65536 ) ) } }
+      oBrw:bClrSelFocus    := {|| { 0, ( 167 + ( 205 * 256 ) + ( 240 * 65536 ) ) } }
+
+      oBrw:cAlias          := dbfTarPreT
+      oBrw:nMarqueeStyle   := 5
+
+      with object ( oBrw:AddCol() )
+         :cHeader          := "Código"
+         :cSortOrder       := "cCodTar"
+         :bEditValue       := {|| ( dbfTarPreT )->cCodTar }
+         :nWidth           := 60
+         :bLClickHeader    := {| nMRow, nMCol, nFlags, oCol | oCbxOrd:Set( oCol:cHeader ) }
+      end
+
+      with object ( oBrw:AddCol() )
+         :cHeader          := "Nombre"
+         :cSortOrder       := "cNomTar"
+         :bEditValue       := {|| ( dbfTarPreT )->cNomTar }
+         :nWidth           := 200
+         :bLClickHeader    := {| nMRow, nMCol, nFlags, oCol | oCbxOrd:Set( oCol:cHeader ) }
+      end
+
+      oBrw:bLDblClick      := {|| oDlg:end( 1 ) }
+      oBrw:bRClicked       := {| nRow, nCol, nFlags | oBrw:RButtonDown( nRow, nCol, nFlags ) }
+
+      oBrw:CreateFromResource( 105 )
+
+
+
+
+        TButton():ReDefine( 1, {||( oDlg:end( 1 ) )}, oDlg,,, .F.,,,, .F. )
+
+
+
+
+        TButton():ReDefine( 2, {||( oDlg:end() )}, oDlg,,, .F.,,,, .F. )
+
+
+
+
+
+        TButton():ReDefine( 500, {||( WinAppRec( oBrw, bEdit, dbfTarPreT ) )}, oDlg,,, .F., {||     ( nAnd( nLevelUsr, 2 ) <> 0 )},,, .F. )
+
+
+
+
+
+        TButton():ReDefine( 501, {||( WinEdtRec( oBrw, bEdit, dbfTarPreT ) )}, oDlg,,, .F., {||     ( nAnd( nLevelUsr, 4 ) <> 0 )},,, .F. )
+
+      oDlg:AddFastKey( 113,       {|| if( nAnd( nLevelUsr, 2 ) <> 0, WinAppRec( oBrw, bEdit, dbfTarPreT ), ) } )
+      oDlg:AddFastKey( 114,       {|| if( nAnd( nLevelUsr, 4 ) <> 0, WinEdtRec( oBrw, bEdit, dbfTarPreT ), ) } )
+      oDlg:AddFastKey( 116,       {|| oDlg:end( 1 ) } )
+      oDlg:AddFastKey( 13,   {|| oDlg:end( 1 ) } )
+
+   oDlg:Activate( oDlg:bLClicked, oDlg:bMoved, oDlg:bPainted, .T.,,,, oDlg:bRClicked,,, )
+
+   if oDlg:nResult == 1
+
+      oGet:cText( ( dbfTarPreT )->cCodTar )
+
+      if oGet2 <> nil
+         oGet2:cText( ( dbfTarPreT )->cNomTar )
+      end
+
+   end
+
+   DestroyFastFilter( dbfTarPreT )
+
+   SetBrwOpt( "BrwTarifa", ( dbfTarPreT )->( OrdNumber() ) )
+
+   if lClose
+        CloseFiles()
+   else
+      ( dbfTarPreT )->( OrdSetFocus( nOrd ) )
+   end
+
+    oGet:setFocus()
+
+RETURN ( oDlg:nResult == 1 )
+
+
+
+
+
+
+
+STATIC FUNCTION IsTarTmp( aGet, aTmp, nMode, oSayPr1, oSayPr2, oSayVp1, oSayVp2 )
+
+   local nRec
+   local cOrd
+   local lReturn  := .T.
+   local cCodArt  := aTmp[ ( dbfTarPreL )->( FieldPos( "CCODART" ) ) ]
+
+   nRec           := ( dbfArticulo )->( Recno() )
+   cOrd           := ( dbfArticulo )->( OrdSetFocus( "Codigo" ) )
+
+   if nMode == 1
+
+      if Empty( cCodArt )
+         aGet[ ( dbfTarPreL )->( FieldPos( "CNOMART"  ) ) ]:cText( "" )
+         return .T.
+      end
+
+      if ( dbfArticulo )->( dbSeek( cCodArt ) )
+
+         aGet[ ( dbfTarPreL )->( FieldPos( "CNOMART" ) ) ]:cText( ( dbfArticulo )->Nombre )
+
+         if Empty( aTmp[ ( dbfTarPreL )->( FieldPos( "NPRCTAR1" ) ) ] )
+            aGet[ ( dbfTarPreL )->( FieldPos( "NPRCTAR1" ) ) ]:cText( ( dbfArticulo )->pVenta1 )
+         end
+         if Empty( aTmp[ (dbfTarPreL)->( FieldPos( "NPRCTAR2" ) ) ] )
+            aGet[ (dbfTarPreL)->( FieldPos( "NPRCTAR2" ) ) ]:cText( ( dbfArticulo )->pVenta2 )
+         end
+         if Empty( aTmp[ (dbfTarPreL)->( FieldPos( "NPRCTAR3" ) ) ] )
+            aGet[ (dbfTarPreL)->( FieldPos( "NPRCTAR3" ) ) ]:cText( ( dbfArticulo )->pVenta3 )
+         end
+         if Empty( aTmp[ (dbfTarPreL)->( FieldPos( "NPRCTAR4" ) ) ] )
+            aGet[ (dbfTarPreL)->( FieldPos( "NPRCTAR4" ) ) ]:cText( ( dbfArticulo )->pVenta4 )
+         end
+         if Empty( aTmp[ (dbfTarPreL)->( FieldPos( "NPRCTAR5" ) ) ] )
+            aGet[ (dbfTarPreL)->( FieldPos( "NPRCTAR5" ) ) ]:cText( ( dbfArticulo )->pVenta5 )
+         end
+         if Empty( aTmp[ (dbfTarPreL)->( FieldPos( "NPRCTAR6" ) ) ] )
+            aGet[ (dbfTarPreL)->( FieldPos( "NPRCTAR6" ) ) ]:cText( ( dbfArticulo )->pVenta6 )
+         end
+
+
+
+         aTmp[ (dbfTarPreL)->( FieldPos( "CCODPR1" ) ) ] := ( dbfArticulo )->cCodPrp1
+         aTmp[ (dbfTarPreL)->( FieldPos( "CCODPR2" ) ) ] := ( dbfArticulo )->cCodPrp2
+
+         if !empty( aTmp[ ( dbfTarPreL )->( FieldPos( "CCODPR1" ) ) ] )
+            oSayPr1:SetText( retProp( ( dbfArticulo )->cCodPrp1, dbfPro ) )
+            oSayPr1:show()
+            aGet[ (dbfTarPreL)->( FieldPos( "CVALPR1" ) ) ]:show()
+            oSayVp1:show()
+         else
+            oSayPr1:hide()
+            aGet[ (dbfTarPreL)->( FieldPos( "CVALPR1" ) ) ]:hide()
+            oSayVp1:hide()
+         end
+
+         if !empty( aTmp[ ( dbfTarPreL )->( FieldPos( "CCODPR2" ) ) ] )
+            oSayPr2:SetText( retProp( ( dbfArticulo )->cCodPrp2, dbfPro ) )
+            oSayPr2:show()
+            aGet[ (dbfTarPreL)->( FieldPos( "CVALPR2" ) ) ]:show()
+            oSayVp2:show()
+         else
+            oSayPr2:hide()
+            aGet[ (dbfTarPreL)->( FieldPos( "CVALPR2" ) ) ]:hide()
+            oSayVp2:hide()
+         end
+
+      else
+         MsgStop( "Código de artículo no encontrado" )
+         return .F.
+      end
+
+   else
+
+      if ( dbfArticulo )->( dbSeek( cCodArt ) )
+
+
+
+         aTmp[ (dbfTarPreL)->( FieldPos( "CCODPR1" ) ) ] := ( dbfArticulo )->cCodPrp1
+         aTmp[ (dbfTarPreL)->( FieldPos( "CCODPR2" ) ) ] := ( dbfArticulo )->cCodPrp2
+
+         if !empty( aTmp[ (dbfTarPreL)->( FieldPos( "CCODPR1" ) ) ] )
+            oSayPr1:SetText( retProp( ( dbfArticulo )->cCodPrp1, dbfPro ) )
+            oSayPr1:show()
+            aGet[ (dbfTarPreL)->( FieldPos( "CVALPR1" ) ) ]:show()
+            oSayVp1:show()
+         else
+            oSayPr1:hide()
+            aGet[ (dbfTarPreL)->( FieldPos( "CVALPR1" ) ) ]:hide()
+            oSayVp1:hide()
+         end
+
+         if !empty( aTmp[ (dbfTarPreL)->( FieldPos( "CCODPR2" ) ) ] )
+            oSayPr2:SetText( retProp( ( dbfArticulo )->cCodPrp2, dbfPro ) )
+            oSayPr2:show()
+            aGet[ (dbfTarPreL)->( FieldPos( "CVALPR2" ) ) ]:show()
+            oSayVp2:show()
+         else
+            oSayPr2:hide()
+            aGet[ (dbfTarPreL)->( FieldPos( "CVALPR2" ) ) ]:hide()
+            oSayVp2:hide()
+         end
+
+      end
+
+   end
+
+   ( dbfArticulo )->( dbGoTo( nRec ) )
+   ( dbfArticulo )->( OrdSetFocus( cOrd ) )
+
+RETURN lReturn
+
+
+
+FUNCTION IsFamTmp( aGet, aTmp, nMode )
+
+   local nRecNo
+   local lReturn  := .T.
+   local cCodFam  := aTmp[ ( dbfTarPreL )->( FieldPos( "CCODFAM" ) ) ]
+
+   if Empty( cCodFam )
+      aGet[ ( dbfTarPreL )->( FieldPos( "CNOMFAM" ) ) ]:cText( "" )
+      return .T.
+   end
+
+   if ( dbfFamilia )->( dbSeek( cCodFam ) )
+      aGet[ ( dbfTarPreL )->( FieldPos( "CNOMFAM" ) ) ]:cText( ( dbfFamilia )->cNomFam )
+   else
+      MsgStop( "Código de família no encontrada" )
+      return .F.
+   end
+
+   if nMode == 1
+
+      nRecNo      := ( dbfTmpArticulo )->( RecNo() )
+
+      ( dbfTmpArticulo )->( dbGoTop() )
+      while !( dbfTmpArticulo )->( Eof() )
+
+         if ( dbfTmpArticulo )->cCodFam == cCodFam
+            msgStop( "Código de família ya existe" )
+            lReturn  := .F.
+            exit
+         end
+
+         ( dbfTmpArticulo )->( dbSkip() )
+
+      end
+
+      ( dbfTmpArticulo )->( dbGoTo( nRecNo ) )
+
+   end
+
+RETURN lReturn
+
+
+
+FUNCTION AppTarPre( cTarPreT, cTarPreL, cTarPreS, cCodArt )
+
+    local cTagPreT
+    local cTagPreL
+    local cTagPreS
+    local oldTarPreT    := dbfTarPreT
+    local oldTarPreL    := dbfTarPreL
+    local oldTarPreS    := dbfTarPreS
+
+    dbfTarPreT            := cTarPreT
+    dbfTarPreL            := cTarPreL
+    dbfTarPreS            := cTarPreS
+
+    cTagPreT                := (dbfTarPreT)->( OrdSetFocus( 1 ) )
+    cTagPreL                := (dbfTarPreL)->( OrdSetFocus( 1 ) )
+    cTagPreS                := (dbfTarPreS)->( OrdSetFocus( 1 ) )
+
+    WinAppRec( Nil, bEdit2, dbfTarPreL, nil, nil, cCodArt )
+
+    (dbfTarPreT)->( OrdSetFocus( cTagPreT ) )
+    (dbfTarPreL)->( OrdSetFocus( cTagPreL ) )
+    (dbfTarPreS)->( OrdSetFocus( cTagPreS ) )
+
+    dbfTarPreT            := oldTarPreT
+    dbfTarPreL            := oldTarPreL
+    dbfTarPreS            := oldTarPreS
+
+RETURN NIL
+
+
+
+STATIC FUNCTION BeginTr2( aTmp )
+
+   local cDbf     := "TTarS"
+   local cCodTar  := aTmp[ ( dbfTarPreL )->( FieldPos( "CCODTAR" ) ) ] + aTmp[ ( dbfTarPreL )->( FieldPos( "CCODART" ) ) ] + aTmp[ ( dbfTarPreL )->( FieldPos( "CCODFAM" ) ) ] + aTmp[ ( dbfTarPreL )->( FieldPos( "CCODPR1" ) ) ] + aTmp[ ( dbfTarPreL )->( FieldPos( "CCODPR2" ) ) ] + aTmp[ ( dbfTarPreL )->( FieldPos( "CVALPR1" ) ) ] + aTmp[ ( dbfTarPreL )->( FieldPos( "CVALPR2" ) ) ]
+
+   cNewFil2       := cGetNewFileName( cPatTmp() + cDbf )
+
+
+
+
+
+   dbCreate( cNewFil2, aSqlStruct( aDeta2 ), cLocalDriver() )
+
+   dbUseArea( .T., cLocalDriver(), cNewFil2, cCheckArea( cDbf, @dbfTmpAgente ), .F. )
+   if !( dbfTmpAgente )->( neterr() )
+
+
+
+
+
+      if ( dbfTarPreS )->( dbSeek( cCodTar ) )
+
+         while ( ( dbfTarPreS )->CCODTAR + ( dbfTarPreS )->CCODART + ( dbfTarPreS )->CCODFAM + ( dbfTarPreS )->CCODPR1 + ( dbfTarPreS )->CCODPR2 + ( dbfTarPreS )->CVALPR1 + ( dbfTarPreS )->CVALPR2 == cCodTar .AND. !( dbfTarPreS )->( Eof() ) )
+
+            dbPass( dbfTarPreS, dbfTmpAgente, .T. )
+
+            ( dbfTarPreS )->( dbSkip() )
+
+         end
+
+      end
+
+      ( dbfTmpAgente )->( dbGoTop() )
+
+   end
+
+RETURN NIL
+
+
+
+
+
+
+
+
+
+
+
+FUNCTION RetDtoAge( cCodArt, cCodFam, cCodTar, cCodPr1, cCodPr2, cValPr1, cValPr2, dFecDoc, cCodAge, dbfTarPreL, dbfTarPreS )
+
+   local lFound      := .F.
+   local nResult     := 0
+   local cCodSek
+   local nOrdAnt     := ( dbfTarPreL )->( OrdSetFocus( "CTARPRP" ) )
+   local nOrdAge     := ( dbfTarPreS )->( OrdSetFocus( "CCODAGE" ) )
+
+   IIF( cCodPr1 == nil, cCodPr1 := Space( 10 ), ) ;
+   IIF( cCodPr2 == nil, cCodPr2 := Space( 10 ), ) ;
+   IIF( cValPr1 == nil, cValPr1 := Space( 10 ), ) ;
+   IIF( cValPr2 == nil, cValPr2 := Space( 10 ), ) ;
+
+   cCodSek := cCodTar + cCodArt + cCodPr1 + cCodPr2 + cValPr1 + cValPr2
+
+   if ( dbfTarPreL )->( dbSeek( cCodSek ) )
+      if ( dbfTarPreS )->( dbSeek( cCodTar + cCodArt + Space( 8 ) + cCodPr1 + cCodPr2 + cValPr1 + cValPr2 + cCodAge ) )
+         if ( dbfTarPreL )->dIniPrm <= dFecDoc .AND. dFecDoc <= ( dbfTarPreL )->dFinPrm
+            nResult  := ( dbfTarPreS )->nComPrm
+         end
+         lFound      := .T.
+      end
+   end
+
+    (dbfTarPreL)->( OrdSetFocus( nOrdAnt ) )
+
+   if !lFound
+
+      cCodSek        := cCodTar + cCodFam
+      nOrdAnt        := ( dbfTarPreL )->( OrdSetFocus( "CCODFAM" ) )
+
+      if ( dbfTarPreL )->( dbSeek( cCodSek ) )
+         if ( dbfTarPreS )->( dbSeek( cCodTar + Space( 18 ) + cCodFam + cCodAge ) )
+            if ( dbfTarPreL )->dIniPrm <= dFecDoc .AND. dFecDoc <= ( dbfTarPreL )->dFinPrm
+               nResult  := ( dbfTarPreS )->nComPrm
+            end
+            lFound      := .T.
+         end
+      end
+
+      ( dbfTarPreL )->( OrdSetFocus( nOrdAnt ) )
+
+   end
+
+   ( dbfTarPreS )->( OrdSetFocus( nOrdAge ) )
+
+RETURN nResult
+
+
+
+
+
+
+
+FUNCTION RetDtoPrm( cCodArt, cCodFam, cCodTar, cCodPr1, cCodPr2, cValPr1, cValPr2, dFecDoc, dbfTarPreL )
+
+   local lFound      := .F.
+   local nResult     := 0
+   local cCodSek
+   local nOrdAnt     := ( dbfTarPreL )->( OrdSetFocus( "CTARPRP" ) )
+
+   IIF( cCodPr1 == nil, cCodPr1 := Space( 10 ), ) ;
+   IIF( cCodPr2 == nil, cCodPr2 := Space( 10 ), ) ;
+   IIF( cValPr1 == nil, cValPr1 := Space( 10 ), ) ;
+   IIF( cValPr2 == nil, cValPr2 := Space( 10 ), ) ;
+
+   cCodSek := cCodTar + cCodArt + cCodPr1 + cCodPr2 + cValPr1 + cValPr2
+
+
+   if ( dbfTarPreL )->( dbSeek( cCodSek ) )
+      if ( dbfTarPreL )->dIniPrm <= dFecDoc .AND. dFecDoc <= ( dbfTarPreL )->dFinPrm
+         nResult     := (dbfTarPreL)->nDtoPrm
+         lFound      := .T.
+      end
+   end
+
+    (dbfTarPreL)->( OrdSetFocus( nOrdAnt ) )
+
+   if !lFound
+
+      cCodSek        := cCodTar + cCodFam
+      nOrdAnt        := (dbfTarPreL)->( OrdSetFocus( "CCODFAM" ) )
+
+      if ( dbfTarPreL )->( dbSeek( cCodSek ) )
+         if ( dbfTarPreL )->dIniPrm <= dFecDoc .AND. dFecDoc <= ( dbfTarPreL )->dFinPrm
+            nResult  := (dbfTarPreL)->nDtoPrm
+         end
+      end
+
+      ( dbfTarPreL )->( OrdSetFocus( nOrdAnt ) )
+
+   end
+
+RETURN nResult
+
+
+
+
+
+
+
+FUNCTION RetComTar( cCodArt, cCodFam, cCodTar, cCodPr1, cCodPr2, cValPr1, cValPr2, cCodAge, dbfTarPreL, dbfTarPreS )
+
+    local nResult    := 0
+   local cCodSek
+   local nOrdAnt  := ( dbfTarPreS )->( OrdSetFocus( "CCODAGE" ) )
+   local nOrdAntL := ( dbfTarPreL )->( OrdSetFocus( "CTARPRP" ) )
+
+   IIF( cCodPr1 == nil, cCodPr1 := Space( 10 ), ) ;
+   IIF( cCodPr2 == nil, cCodPr2 := Space( 10 ), ) ;
+   IIF( cValPr1 == nil, cValPr1 := Space( 10 ), ) ;
+   IIF( cValPr2 == nil, cValPr2 := Space( 10 ), ) ;
+
+   if ( dbfTarPreL )->( dbSeek( cCodTar + cCodArt + cCodPr1 + cCodPr2 + cValPr1 + cValPr2 ) )
+      cCodSek  := cCodTar + cCodArt + Space(16) + cCodPr1 + cCodPr2 + cValPr1 + cValPr2 + cCodAge
+   else
+      cCodSek  := cCodTar + Space(18) + cCodFam + Space(10) + Space(10) + Space(10) + Space(10) + cCodAge
+   end
+
+   if ( dbfTarPreS )->( dbSeek( cCodSek ) )
+      nResult     := ( dbfTarPreS )->NCOMAGE
+   end
+
+   ( dbfTarPreS )->( OrdSetFocus( nOrdAnt ) )
+   ( dbfTarPreL )->( OrdSetFocus( nOrdAntL ) )
+
+RETURN nResult
+
+
+
+FUNCTION RetLinTar( cCodArt, cCodFam, cCodTar, cCodPr1, cCodPr2, cValPr1, cValPr2, dbfTarPreL )
+
+   local lFound   := .F.
+    local nResult    := 0
+   local cCodSek
+   local nOrdAnt  := ( dbfTarPreL )->( OrdSetFocus( "CTARPRP" ) )
+
+   IIF( cCodPr1 == nil, cCodPr1 := Space( 10 ), ) ;
+   IIF( cCodPr2 == nil, cCodPr2 := Space( 10 ), ) ;
+   IIF( cValPr1 == nil, cValPr1 := Space( 10 ), ) ;
+   IIF( cValPr2 == nil, cValPr2 := Space( 10 ), ) ;
+
+   cCodSek := cCodTar + cCodArt + cCodPr1 + cCodPr2 + cValPr1 + cValPr2
+
+   if ( dbfTarPreL )->( dbSeek( cCodSek ) )
+      nResult     := ( dbfTarPreL )->nDtoDiv
+      lFound      := .T.
+   end
+
+   ( dbfTarPreL )->( OrdSetFocus( nOrdAnt ) )
+
+   if !lFound
+
+      cCodSek     := cCodTar + cCodFam
+      nOrdAnt     := ( dbfTarPreL )->( OrdSetFocus( "CCODFAM" ) )
+
+      if ( dbfTarPreL )->( dbSeek( cCodSek ) )
+         nResult  := ( dbfTarPreL )->nDtoDiv
+      end
+
+      ( dbfTarPreL )->( OrdSetFocus( nOrdAnt ) )
+
+   end
+
+RETURN nResult
+
+
+
+FUNCTION RetPctTar( cCodArt, cCodFam, cCodTar, cCodPr1, cCodPr2, cValPr1, cValPr2, dbfTarPreL )
+
+   local lFound   := .F.
+    local nResult    := 0
+   local cCodSek
+   local nOrdAnt  := ( dbfTarPreL )->( OrdSetFocus( "CTARPRP" ) )
+
+   IIF( cCodPr1 == nil, cCodPr1 := Space( 10 ), ) ;
+   IIF( cCodPr2 == nil, cCodPr2 := Space( 10 ), ) ;
+   IIF( cValPr1 == nil, cValPr1 := Space( 10 ), ) ;
+   IIF( cValPr2 == nil, cValPr2 := Space( 10 ), ) ;
+
+   cCodSek := cCodTar + cCodArt + cCodPr1 + cCodPr2 + cValPr1 + cValPr2
+
+   if ( dbfTarPreL )->( dbSeek( cCodSek ) )
+      nResult     := ( dbfTarPreL )->NDTOART
+      lFound      := .T.
+   end
+
+   ( dbfTarPreL )->( OrdSetFocus( nOrdAnt ) )
+
+   if !lFound .AND. !Empty( cCodFam )
+
+      cCodSek     := cCodTar + cCodFam
+      nOrdAnt     := ( dbfTarPreL )->( OrdSetFocus( "CCODFAM" ) )
+
+      if ( dbfTarPreL )->( dbSeek( cCodSek ) )
+         nResult  := ( dbfTarPreL )->NDTOART
+      end
+
+      ( dbfTarPreL )->( OrdSetFocus( nOrdAnt ) )
+
+   end
+
+RETURN nResult
+
+
+
+
+
+
+
+FUNCTION RetPrcTar( cCodArt, cCodTar, cCodPr1, cCodPr2, cValPr1, cValPr2, dbfTarPreL, nTarPre )
+
+    local nResult    := 0
+   local cCodSek
+   local nOrdAnt  := ( dbfTarPreL )->( OrdSetFocus( "CTARPRP" ) )
+
+   IIF( cCodPr1 == nil, cCodPr1 := Space( 10 ), ) ;
+   IIF( cCodPr2 == nil, cCodPr2 := Space( 10 ), ) ;
+   IIF( cValPr1 == nil, cValPr1 := Space( 10 ), ) ;
+   IIF( cValPr2 == nil, cValPr2 := Space( 10 ), ) ;
+   IIF( nTarPre == nil, nTarPre := 1, ) ;
+
+   cCodSek        := cCodTar + cCodArt + cCodPr1 + cCodPr2 + cValPr1 + cValPr2
+
+
+   if ( dbfTarPreL )->( dbSeek( cCodSek ) )
+
+      do case
+         case nTarPre == 1
+            nResult     := (dbfTarPreL)->nPrcTar1
+         case nTarPre == 2
+            nResult     := (dbfTarPreL)->nPrcTar2
+         case nTarPre == 3
+            nResult     := (dbfTarPreL)->nPrcTar3
+         case nTarPre == 4
+            nResult     := (dbfTarPreL)->nPrcTar4
+         case nTarPre == 5
+            nResult     := (dbfTarPreL)->nPrcTar5
+         case nTarPre == 6
+            nResult     := (dbfTarPreL)->nPrcTar6
+      end
+
+   end
+
+   ( dbfTarPreL )->( OrdSetFocus( nOrdAnt ) )
+
+RETURN nResult

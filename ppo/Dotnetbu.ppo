@@ -1,0 +1,800 @@
+#line 112 "hbclass.ch"
+   DYNAMIC DivertConstructorCall
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+DECLARE HBClass  New( cName AS String, OPTIONAL SuperParams ) AS CLASS HBClass  Create() AS Object  Instance() AS Object  AddClsMethod( cName AS String, @MethodName(), nScope AS Numeric, n2 AS Numeric, n3 AS Numeric )  AddDelegate( cName AS String, cDelegate AS String, cObject AS String, nScope AS Numeric, lPersistent AS LOGICAL )  AddMultiClsData( cType AS String, uVal, nScope AS Numeric, aDatas AS Array OF String )  AddMultiData( cType AS String, uVal, nScope AS Numeric, aDatas AS Array OF String, x AS LOGICAL, lPer AS LOGICAL )  AddMethod( cName AS String, @MethodName(), nScope AS Numeric, lPersistent AS LOGICAL )  AddInLine( cName AS String, bBlock AS CodeBlock, nScope AS Numeric, lPersistent AS LOGICAL )  AddVirtual( cName AS String )  ModMethod( cName AS String, @MethodName(), nScope AS Numeric, lPersistent AS LOGICAL )  ModClsMethod( cName AS String, @MethodName(), nScope AS Numeric )  ModInline( cName AS String, bBlock AS CodeBlock, nScope AS Numeric, lPersistent AS LOGICAL )  SetOnError( @MethodName() )
+#line 85 "\Fwh1204\Include\fivewin.ch"
+   EXTERNAL GetProcAdd
+   EXTERNAL TActiveX
+
+
+
+
+extern errorsys
+#line 6 ".\Prg\Dotnetbu.prg"
+_HB_CLASS TDotNetButton ; UTILITY FUNCTION TDotNetButton(...); static s_oClass ; local oClassInstance ; local nScope ; nScope := 1 ; if s_oClass == NIL ; s_oClass := IIF(.F.,, HBClass():New( "TDotNetButton" , { HBObject():Classh } ) ) ;
+
+
+      _HB_MEMBER {AS NUMERIC nInitId} ; IIF( !.F., s_oClass:AddMultiClsData("NUMERIC", 100, nScope + IIF( .F., 32, 0 ) + IIF( .T., 64, 0 ), { "nInitId" }, .F. ), )
+      _HB_MEMBER {AS ARRAY aCoors} ; IIF( !.F., s_oClass:AddMultiData( "ARRAY", {0,0,0,0}, nScope + IIF( .F., 32, 0 ), { "aCoors" }, .F., .F. ), )
+      _HB_MEMBER { bAction} ; IIF( !.F., s_oClass:AddMultiData(,, nScope + IIF( .F., 32, 0 ), { "bAction" }, .F., .F. ), )
+      _HB_MEMBER { bRAction} ; IIF( !.F., s_oClass:AddMultiData(,, nScope + IIF( .F., 32, 0 ), { "bRAction" }, .F., .F. ), )
+      _HB_MEMBER { bSelect} ; IIF( !.F., s_oClass:AddMultiData(,, nScope + IIF( .F., 32, 0 ), { "bSelect" }, .F., .F. ), )
+      _HB_MEMBER { bWhen} ; IIF( !.F., s_oClass:AddMultiData(,, nScope + IIF( .F., 32, 0 ), { "bWhen" }, .F., .F. ), )
+      _HB_MEMBER { cIcon} ; IIF( !.F., s_oClass:AddMultiData(,, nScope + IIF( .F., 32, 0 ), { "cIcon" }, .F., .F. ), )
+      _HB_MEMBER {AS CHARACTER cName} ; IIF( !.F., s_oClass:AddMultiData( "CHARACTER", "oBoton", nScope + IIF( .F., 32, 0 ), { "cName" }, .F., .F. ), )
+      _HB_MEMBER {AS CHARACTER cPrompt} ; IIF( !.F., s_oClass:AddMultiData( "CHARACTER", "", nScope + IIF( .F., 32, 0 ), { "cPrompt" }, .F., .F. ), )
+      _HB_MEMBER { cxBmp} ; IIF( !.F., s_oClass:AddMultiData(,, nScope + IIF( .F., 32, 0 ), { "cxBmp" }, .F., .F. ), )
+      _HB_MEMBER {AS LOGICAL lEnabled} ; IIF( !.F., s_oClass:AddMultiData( "LOGICAL", .T., nScope + IIF( .F., 32, 0 ), { "lEnabled" }, .F., .F. ), )
+      _HB_MEMBER {AS LOGICAL lEnd} ; IIF( !.F., s_oClass:AddMultiData( "LOGICAL", .F., nScope + IIF( .F., 32, 0 ), { "lEnd" }, .F., .F. ), )
+      _HB_MEMBER {AS LOGICAL lGrouping} ; IIF( !.F., s_oClass:AddMultiData( "LOGICAL", .F., nScope + IIF( .F., 32, 0 ), { "lGrouping" }, .F., .F. ), )
+      _HB_MEMBER {AS LOGICAL lHead} ; IIF( !.F., s_oClass:AddMultiData( "LOGICAL", .F., nScope + IIF( .F., 32, 0 ), { "lHead" }, .F., .F. ), )
+      _HB_MEMBER {AS LOGICAL lHorizontal} ; IIF( !.F., s_oClass:AddMultiData( "LOGICAL", .F., nScope + IIF( .F., 32, 0 ), { "lHorizontal" }, .F., .F. ), )
+      _HB_MEMBER {AS LOGICAL lSelected} ; IIF( !.F., s_oClass:AddMultiData( "LOGICAL", .F., nScope + IIF( .F., 32, 0 ), { "lSelected" }, .F., .F. ), )
+      _HB_MEMBER {AS LOGICAL lVisible} ; IIF( !.F., s_oClass:AddMultiData( "LOGICAL", .T., nScope + IIF( .F., 32, 0 ), { "lVisible" }, .F., .F. ), )
+      _HB_MEMBER {AS LOGICAL lWorking} ; IIF( !.F., s_oClass:AddMultiData( "LOGICAL", .F., nScope + IIF( .F., 32, 0 ), { "lWorking" }, .F., .F. ), )
+      _HB_MEMBER { nClrText} ; IIF( !.F., s_oClass:AddMultiData(,, nScope + IIF( .F., 32, 0 ), { "nClrText" }, .F., .F. ), )
+      _HB_MEMBER {AS NUMERIC nColumna} ; IIF( !.F., s_oClass:AddMultiData( "NUMERIC", 0, nScope + IIF( .F., 32, 0 ), { "nColumna" }, .F., .F. ), )
+      _HB_MEMBER { nId} ; IIF( !.F., s_oClass:AddMultiData(,, nScope + IIF( .F., 32, 0 ), { "nId" }, .F., .F. ), )
+      _HB_MEMBER { oGrupo} ; IIF( !.F., s_oClass:AddMultiData(,, nScope + IIF( .F., 32, 0 ), { "oGrupo" }, .F., .F. ), )
+      _HB_MEMBER { oMenu} ; IIF( !.F., s_oClass:AddMultiData(,, nScope + IIF( .F., 32, 0 ), { "oMenu" }, .F., .F. ), )
+      _HB_MEMBER { oPopup} ; IIF( !.F., s_oClass:AddMultiData(,, nScope + IIF( .F., 32, 0 ), { "oPopup" }, .F., .F. ), )
+      _HB_MEMBER { oPrevio} ; IIF( !.F., s_oClass:AddMultiData(,, nScope + IIF( .F., 32, 0 ), { "oPrevio" }, .F., .F. ), )
+
+      _HB_MEMBER { Cargo} ; IIF( !.F., s_oClass:AddMultiData(,, nScope + IIF( .F., 32, 0 ), { "Cargo" }, .F., .F. ), )
+
+      _HB_MEMBER New( nWidth, oGroup, cBmp, cCaption, nColumna, bAction, oMenu, bWhen, lGrouping, lHead, lEnd) AS CLASS TDotNetButton; IIF( .F., s_oClass:ModMethod( "New", @TDotNetButton_New(), nScope + IIF( .T., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ), s_oClass:AddMethod( "New", @TDotNetButton_New(), nScope + IIF( .T., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ));
+
+      _HB_MEMBER Click( ); IIF( !.F., s_oClass:AddVirtual( "Click" ), )
+      _HB_MEMBER Copy(); IIF( .F., s_oClass:ModMethod( "Copy", @TDotNetButton_Copy(), nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ), s_oClass:AddMethod( "Copy", @TDotNetButton_Copy(), nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ));
+      _HB_MEMBER Delete(); IIF( .F., s_oClass:ModMethod( "Delete", @TDotNetButton_Delete(), nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ), s_oClass:AddMethod( "Delete", @TDotNetButton_Delete(), nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ));
+      _HB_MEMBER Edit(); IIF( .F., s_oClass:ModMethod( "Edit", @TDotNetButton_Edit(), nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ), s_oClass:AddMethod( "Edit", @TDotNetButton_Edit(), nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ));
+      _HB_MEMBER End( ); IIF( !.F., s_oClass:AddVirtual( "End" ), )
+      _HB_MEMBER GenPrg(); IIF( .F., s_oClass:ModMethod( "GenPrg", @TDotNetButton_GenPrg(), nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ), s_oClass:AddMethod( "GenPrg", @TDotNetButton_GenPrg(), nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ));
+      _HB_MEMBER GetNewId(); IIF( .F., s_oClass:ModInline( "GetNewId", {|Self | Self, If( ::nInitId == nil, ::nInitId := 100,), ++::nInitId }, nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ), s_oClass:AddInline( "GetNewId", {|Self | Self, If( ::nInitId == nil, ::nInitId := 100,), ++::nInitId }, nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ) )
+      _HB_MEMBER GetTextWidth(); IIF( .F., s_oClass:ModMethod( "GetTextWidth", @TDotNetButton_GetTextWidth(), nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ), s_oClass:AddMethod( "GetTextWidth", @TDotNetButton_GetTextWidth(), nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ));
+      _HB_MEMBER Hide(); IIF( .F., s_oClass:ModInline( "Hide", {|Self | Self, ::lVisible := .F. }, nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ), s_oClass:AddInline( "Hide", {|Self | Self, ::lVisible := .F. }, nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ) )
+      _HB_MEMBER IsOver(nRow, nCol); IIF( .F., s_oClass:ModInline( "IsOver", {|Self,nRow, nCol | Self, PtInRect( nRow, nCol,::aCoors ) }, nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ), s_oClass:AddInline( "IsOver", {|Self,nRow, nCol | Self, PtInRect( nRow, nCol,::aCoors ) }, nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ) )
+      _HB_MEMBER Paint( hDC); IIF( .F., s_oClass:ModMethod( "Paint", @TDotNetButton_Paint(), nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ), s_oClass:AddMethod( "Paint", @TDotNetButton_Paint(), nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ));
+      _HB_MEMBER RButtonDown( nRow, nCol, nFlags); IIF( .F., s_oClass:ModMethod( "RButtonDown", @TDotNetButton_RButtonDown(), nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ), s_oClass:AddMethod( "RButtonDown", @TDotNetButton_RButtonDown(), nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ));
+      _HB_MEMBER Refresh(); IIF( .F., s_oClass:ModInline( "Refresh", {|Self | Self, ::oGrupo:Refresh() }, nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ), s_oClass:AddInline( "Refresh", {|Self | Self, ::oGrupo:Refresh() }, nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ) )
+      _HB_MEMBER Show(); IIF( .F., s_oClass:ModInline( "Show", {|Self | Self, ::lVisible := .T. }, nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ), s_oClass:AddInline( "Show", {|Self | Self, ::lVisible := .T. }, nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ) )
+      _HB_MEMBER cBmp(cNewVal); _HB_MEMBER _cBmp(cNewVal); IIF( .F., s_oClass:ModMethod( "cBmp", @TDotNetButton_cBmp(), 1 + 32, .F. ), s_oClass:AddMethod( "cBmp", @TDotNetButton_cBmp(), 1 + 32, .F. ) ) ; IIF( .F., s_oClass:ModMethod( "_cBmp", @TDotNetButton_cBmp() ), s_oClass:AddMethod( "_cBmp", @TDotNetButton_cBmp() ) ) ;
+      _HB_MEMBER cCaption(cNewVal); _HB_MEMBER _cCaption(cNewVal); IIF( .F., s_oClass:ModMethod( "cCaption", @TDotNetButton_cCaption(), 1 + 32, .F. ), s_oClass:AddMethod( "cCaption", @TDotNetButton_cCaption(), 1 + 32, .F. ) ) ; IIF( .F., s_oClass:ModMethod( "_cCaption", @TDotNetButton_cCaption() ), s_oClass:AddMethod( "_cCaption", @TDotNetButton_cCaption() ) ) ;
+      _HB_MEMBER cGetFromDLL(); IIF( .F., s_oClass:ModMethod( "cGetFromDLL", @TDotNetButton_cGetFromDLL(), nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ), s_oClass:AddMethod( "cGetFromDLL", @TDotNetButton_cGetFromDLL(), nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ));
+      _HB_MEMBER nBottom(nNewVal); _HB_MEMBER _nBottom(nNewVal); IIF( .F., s_oClass:ModMethod( "nBottom", @TDotNetButton_nBottom(), 1 + 32, .F. ), s_oClass:AddMethod( "nBottom", @TDotNetButton_nBottom(), 1 + 32, .F. ) ) ; IIF( .F., s_oClass:ModMethod( "_nBottom", @TDotNetButton_nBottom() ), s_oClass:AddMethod( "_nBottom", @TDotNetButton_nBottom() ) ) ;
+      _HB_MEMBER nHeight(nNewVal); _HB_MEMBER _nHeight(nNewVal); IIF( .F., s_oClass:ModMethod( "nHeight", @TDotNetButton_nHeight(), 1 + 32, .F. ), s_oClass:AddMethod( "nHeight", @TDotNetButton_nHeight(), 1 + 32, .F. ) ) ; IIF( .F., s_oClass:ModMethod( "_nHeight", @TDotNetButton_nHeight() ), s_oClass:AddMethod( "_nHeight", @TDotNetButton_nHeight() ) ) ;
+      _HB_MEMBER nHorizWidth( nHeight); IIF( .F., s_oClass:ModMethod( "nHorizWidth", @TDotNetButton_nHorizWidth(), nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ), s_oClass:AddMethod( "nHorizWidth", @TDotNetButton_nHorizWidth(), nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ));
+      _HB_MEMBER nLeft(nNewVal); _HB_MEMBER _nLeft(nNewVal); IIF( .F., s_oClass:ModMethod( "nLeft", @TDotNetButton_nLeft(), 1 + 32, .F. ), s_oClass:AddMethod( "nLeft", @TDotNetButton_nLeft(), 1 + 32, .F. ) ) ; IIF( .F., s_oClass:ModMethod( "_nLeft", @TDotNetButton_nLeft() ), s_oClass:AddMethod( "_nLeft", @TDotNetButton_nLeft() ) ) ;
+      _HB_MEMBER nRight(nNewVal); _HB_MEMBER _nRight(nNewVal); IIF( .F., s_oClass:ModMethod( "nRight", @TDotNetButton_nRight(), 1 + 32, .F. ), s_oClass:AddMethod( "nRight", @TDotNetButton_nRight(), 1 + 32, .F. ) ) ; IIF( .F., s_oClass:ModMethod( "_nRight", @TDotNetButton_nRight() ), s_oClass:AddMethod( "_nRight", @TDotNetButton_nRight() ) ) ;
+      _HB_MEMBER nTop(nNewVal); _HB_MEMBER _nTop(nNewVal); IIF( .F., s_oClass:ModMethod( "nTop", @TDotNetButton_nTop(), 1 + 32, .F. ), s_oClass:AddMethod( "nTop", @TDotNetButton_nTop(), 1 + 32, .F. ) ) ; IIF( .F., s_oClass:ModMethod( "_nTop", @TDotNetButton_nTop() ), s_oClass:AddMethod( "_nTop", @TDotNetButton_nTop() ) ) ;
+      _HB_MEMBER nWidth(nNewVal); _HB_MEMBER _nWidth(nNewVal); IIF( .F., s_oClass:ModMethod( "nWidth", @TDotNetButton_nWidth(), 1 + 32, .F. ), s_oClass:AddMethod( "nWidth", @TDotNetButton_nWidth(), 1 + 32, .F. ) ) ; IIF( .F., s_oClass:ModMethod( "_nWidth", @TDotNetButton_nWidth() ), s_oClass:AddMethod( "_nWidth", @TDotNetButton_nWidth() ) ) ;
+      _HB_MEMBER oParent(); IIF( .F., s_oClass:ModInline( "oParent", {|Self | Self, ::oGrupo:oCarpeta:oParent }, nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ), s_oClass:AddInline( "oParent", {|Self | Self, ::oGrupo:oCarpeta:oParent }, nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ) )
+
+      _HB_MEMBER Selected(); IIF( .F., s_oClass:ModInline( "Selected", {|Self | Self, ( ::lSelected := .T. ) }, nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ), s_oClass:AddInline( "Selected", {|Self | Self, ( ::lSelected := .T. ) }, nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ) )
+      _HB_MEMBER UnSelected(); IIF( .F., s_oClass:ModInline( "UnSelected", {|Self | Self, ( ::lSelected := .F. ) }, nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ), s_oClass:AddInline( "UnSelected", {|Self | Self, ( ::lSelected := .F. ) }, nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ) )
+
+; IF .F. ; __clsActive(s_oClass:hClass) ; s_oClass:Refresh() ; ELSE ; s_oClass:Create() ; END ; oClassInstance := __clsInst( s_oClass:hClass ) ; IF __ObjHasMsg( oClassInstance, "InitClass" ); oClassInstance:InitClass( hb_aParams() ) ; END ; ELSE ; oClassInstance := __clsInst( s_oClass:hClass ) ; END ; IF PCount() > 0 ; DIVERT TO (@DivertConstructorCall()) OF s_oClass ; END ; RETURN oClassInstance AS CLASS TDotNetButton ;
+
+
+
+  UTILITY STATIC function TDotNetButton_New( nWidth, oGroup, cBmp, cCaption, nColumna, bAction, oMenu, bWhen, lGrouping, lHead, lEnd) ; local Self AS CLASS TDotNetButton := QSelf() AS CLASS TDotNetButton
+
+
+ local n, nLen, oCol
+
+ if cCaption  == nil; cCaption  :=  ""; endif
+ if cBmp      == nil; cBmp      :=  ""; endif
+ if lGrouping == nil; lGrouping := .F.; endif
+ if lHead     == nil; lHead     := .F.; endif
+ if lEnd      == nil; lEnd      := .F.; endif
+
+ ::cBmp      := cBmp
+ ::cPrompt   := cCaption
+ ::lGrouping := lGrouping
+ ::lHead     := lHead
+ ::lEnd      := lEnd
+ ::bAction   := bAction
+
+ ::aCoors[1] := 0
+ ::aCoors[2] := 0
+ ::aCoors[3] := 0  + 0
+ ::aCoors[4] := 0 + nWidth
+
+ ::oPopup    := oMenu
+ ::bWhen     := bWhen
+
+ ::nId       := ::GetNewId()
+
+ ::oGrupo := oGroup
+
+
+
+ ::oGrupo:AddButton( self, nColumna, lGrouping, lHead, lEnd )
+
+
+return self
+
+
+  UTILITY STATIC function TDotNetButton_nTop(nNewVal) ; local Self AS CLASS TDotNetButton := QSelf() AS CLASS TDotNetButton
+
+
+if nNewVal <> nil
+   ::aCoors[1] := nNewVal
+endif
+
+return ::aCoors[1]
+
+
+
+  UTILITY STATIC function TDotNetButton_nLeft(nNewVal) ; local Self AS CLASS TDotNetButton := QSelf() AS CLASS TDotNetButton
+
+
+if nNewVal <> nil
+   ::aCoors[2] := nNewVal
+endif
+
+return ::aCoors[2]
+
+
+  UTILITY STATIC function TDotNetButton_nBottom(nNewVal) ; local Self AS CLASS TDotNetButton := QSelf() AS CLASS TDotNetButton
+
+
+if nNewVal <> nil
+   ::aCoors[3] := nNewVal
+endif
+
+return ::aCoors[3]
+
+
+  UTILITY STATIC function TDotNetButton_nRight(nNewVal) ; local Self AS CLASS TDotNetButton := QSelf() AS CLASS TDotNetButton
+
+
+if nNewVal <> nil
+   ::aCoors[4] := nNewVal
+endif
+
+return ::aCoors[4]
+
+
+
+  UTILITY STATIC function TDotNetButton_nWidth(nNewVal) ; local Self AS CLASS TDotNetButton := QSelf() AS CLASS TDotNetButton
+
+
+if nNewVal <> nil
+   ::aCoors[4] := ::aCoors[2] + nNewVal
+endif
+
+return ::aCoors[4]-::aCoors[2]
+
+
+  UTILITY STATIC function TDotNetButton_nHeight(nNewVal) ; local Self AS CLASS TDotNetButton := QSelf() AS CLASS TDotNetButton
+
+
+if nNewVal <> nil
+   ::aCoors[3] := ::aCoors[1] + nNewVal
+endif
+
+return ::aCoors[3] - ::aCoors[1]
+
+
+
+  UTILITY STATIC function TDotNetButton_cCaption(cNewVal) ; local Self AS CLASS TDotNetButton := QSelf() AS CLASS TDotNetButton
+
+
+if cNewVal <> nil
+   ::cPrompt := cNewVal
+   ::oGrupo:ResizeItems()
+endif
+
+return ::cPrompt
+
+
+  UTILITY STATIC function TDotNetButton_cBmp(cNewVal) ; local Self AS CLASS TDotNetButton := QSelf() AS CLASS TDotNetButton
+
+
+if cNewVal <> nil
+   ::cxBmp := cNewVal
+   if ::oGrupo <> nil
+      ::oGrupo:ResizeItems()
+   endif
+endif
+
+return ::cxBmp
+
+
+
+  UTILITY STATIC function TDotNetButton_Paint( hDC) ; local Self AS CLASS TDotNetButton := QSelf() AS CLASS TDotNetButton
+
+local lSmallImage := .F.
+local nT          := ::nTop
+local nL          := ::nLeft
+local hBmp        := 0
+local hScr        := 0
+local rc
+local hBmp2       := 0
+local nH          := 0
+local nW          := 0
+local oFont, hFont, hOldFont
+local nColor, nMode
+local nTop, nLeft, nBottom, nRight
+local nAlign
+local a := {::oParent:nRow, ::oParent:nCol }
+local aPoint := {a[1],a[2]}
+local lIsOver
+local nHeight := ::aCoors[3]-::aCoors[1]
+local nWidth  := ::aCoors[4]-::aCoors[2]
+local nH4 := nHeight/4
+local nH5 := nHeight/5
+local n2H5 := nH5*2
+local n3H5 := n2H5 + nH5
+local lCaptured
+local hPen, hOldPen
+local nHText
+local nWText := ::GetTextWidth()
+local hLib := 0
+
+if ::lWorking
+   return 0
+endif
+
+
+lIsOver := PtInRect( aPoint[1], aPoint[2], ::aCoors )
+
+
+lCaptured := lIsOver .AND. ::oParent:lCaptured .AND. ::oParent:oBtnCaptured <> nil .AND. ::oParent:oBtnCaptured:nID == ::nID
+
+if !::lVisible
+   return 0
+endif
+
+if ::oGrupo:lByLines
+   lSmallImage := .T.
+endif
+
+if ::oParent:lDisenio
+   if ::oParent:cResources <> nil
+      hLib := LoadLibrary( ::oParent:cResources )
+      if hLib <> 0
+         hBmp := LoadBitmap( hLib, ::cBmp )
+         FreeLibrary( hLib )
+      endif
+   endif
+endif
+
+if hBmp == 0
+   if( hBmp := LoadBitmap( GetResources(), ::cBmp ) ) == 0
+       hBmp := ReadBitmap( 0, ::cBmp )
+   endif
+endif
+
+if hBmp <> 0
+   nH := BmpHeight( hBmp )
+   nW := BmpWidth( hBmp )
+endif
+
+if hBmp <> 0
+   if lSmallImage .OR. ::lHorizontal .OR. empty( ::cCaption )
+      nT := ::nTop + int(::nHeight/2) - nH/2
+      nL := ::nLeft + if( empty(::cCaption), ::nWidth/2 - nW/2, 5 )
+      if ::oPopup <> nil
+         nL := ::nLeft + 4
+      endif
+   else
+      nT := ::nTop  + nH4 - (nH/2)
+      nL := ::nLeft + (::nWidth /2) - (nW/2)
+   endif
+   if lCaptured
+      nT++
+      nL++
+   endif
+endif
+
+
+rc := { ::aCoors[1], ::aCoors[2],::aCoors[3],::aCoors[4]}
+
+if lIsOver .AND. ::lEnabled .OR. ::lSelected
+
+   if lCaptured
+      VerticalGradient( hDC, {rc[1]             ,rc[2]+1,rc[1]+n2H5         ,rc[4]  }, ::oParent:oColor:GRADBTN10, ::oParent:oColor:GRADBTN11 )
+      VerticalGradient( hDC, {rc[1]+ n2H5 -1    ,rc[2]+1,rc[1]+n3H5         ,rc[4]  }, ::oParent:oColor:GRADBTN20, ::oParent:oColor:GRADBTN21 )
+      VerticalGradient( hDC, {rc[1]+ n3H5 -1    ,rc[2]+1,rc[3]              ,rc[4]  }, ::oParent:oColor:GRADBTN30, ::oParent:oColor:GRADBTN31 )
+   else
+      if ::lSelected
+         VerticalGradient( hDC, {rc[1]             ,rc[2]+1,rc[1]+n2H5         ,rc[4]  }, ::oParent:oColor:GRADBTN100, ::oParent:oColor:GRADBTN101 )
+         VerticalGradient( hDC, {rc[1]+ n2H5 -1    ,rc[2]+1,rc[1]+n3H5         ,rc[4]  }, ::oParent:oColor:GRADBTN200, ::oParent:oColor:GRADBTN201 )
+         VerticalGradient( hDC, {rc[1]+ n3H5 -1    ,rc[2]+1,rc[3]              ,rc[4]  }, ::oParent:oColor:GRADBTN300, ::oParent:oColor:GRADBTN301 )
+      else
+         VerticalGradient( hDC, {rc[1]             ,rc[2]+1,rc[1]+n2H5         ,rc[4]  }, ::oParent:oColor:GRADBTN1000, ::oParent:oColor:GRADBTN1001 )
+         VerticalGradient( hDC, {rc[1]+ n2H5 -1    ,rc[2]+1,rc[1]+n3H5         ,rc[4]  }, ::oParent:oColor:GRADBTN2000, ::oParent:oColor:GRADBTN2001 )
+         VerticalGradient( hDC, {rc[1]+ n3H5 -1    ,rc[2]+1,rc[3]              ,rc[4]  }, ::oParent:oColor:GRADBTN3000, ::oParent:oColor:GRADBTN3001 )
+      endif
+      RoundBox( hDC,rc[2]+1,rc[1]+1,rc[4]-1,rc[3]-1, ::oParent:oColor:nCorner1, ::oParent:oColor:nCorner1, ::oParent:oColor:BORDERBTN1 )
+   endif
+
+   RoundBox( hDC,rc[2],rc[1],rc[4],rc[3], ::oParent:oColor:nCorner1, ::oParent:oColor:nCorner1, ::oParent:oColor:BORDERBTN2 )
+
+endif
+
+if ::lGrouping
+
+   nTop    := rc[1]
+   nLeft   := rc[2]
+   nBottom := rc[3]
+   nRight  := rc[4]
+
+
+   if !lCaptured .AND. !lIsOver .AND. ::lEnabled .AND. !::lSelected
+      FillSolidRect(hDC, {nTop                     , nLeft, nTop + (nBottom-nTop)*0.4, nRight}, ::oParent:oColor:PANE_BTN_GRP1 )
+      FillSolidRect(hDC, {nTop + (nBottom-nTop)*0.4, nLeft,                   nBottom, nRight}, ::oParent:oColor:PANE_BTN_GRP2 )
+   endif
+
+   if ::lHead
+
+
+      Line( hDC, nTop     , nLeft+1 , nTop     , nRight  , ::oParent:oColor:BORDER_TOP_BTN_HEAD1 )
+      Line( hDC, nTop+1   , nLeft+1 , nTop+1   , nRight-1, ::oParent:oColor:BORDER_TOP_BTN_HEAD2 )
+
+
+      Line( hDC, nTop + 1 , nLeft   , nBottom  , nLeft   , ::oParent:oColor:BORDER_LEFT_BTN_HEAD1 )
+      Line( hDC, nTop + 2 , nLeft+1 , nBottom-1, nLeft+1 , ::oParent:oColor:BORDER_LEFT_BTN_HEAD2 )
+
+
+      Line( hDC, nBottom  , nLeft+1 , nBottom  , nRight  , ::oParent:oColor:BORDER_BOTTOM_BTN_HEAD1 )
+      Line( hDC, nBottom-1, nLeft+2 , nBottom-1, nRight-1, ::oParent:oColor:BORDER_BOTTOM_BTN_HEAD2 )
+
+
+      Line( hDC, nTop + 1 , nRight-1, nBottom-1, nRight-1, ::oParent:oColor:BORDER_RIGHT_BTN_HEAD1 )
+
+   endif
+
+   if ::lEnd
+
+      if ::lHead
+
+
+         Line( hDC, nTop     , nLeft+4 , nTop     , nRight  , ::oParent:oColor:BORDER_TOP_BTN_HEAD_END1 )
+         Line( hDC, nTop+1   , nLeft+4 , nTop+1   , nRight-1, ::oParent:oColor:BORDER_TOP_BTN_HEAD_END2 )
+
+
+
+
+
+         Line( hDC, nBottom  , nLeft +4, nBottom  , nRight  , ::oParent:oColor:BORDER_BOTTOM_BTN_HEAD_END1 )
+         Line( hDC, nBottom-1, nLeft +4, nBottom-1, nRight-1, ::oParent:oColor:BORDER_BOTTOM_BTN_HEAD_END2 )
+
+
+         Line( hDC, nTop + 1 , nRight  , nBottom  , nRight  , ::oParent:oColor:BORDER_RIGHT_BTN_HEAD_END1 )
+         Line( hDC, nTop + 1 , nRight-1, nBottom-1, nRight-1, ::oParent:oColor:BORDER_RIGHT_BTN_HEAD_END2 )
+
+      else
+
+
+         Line( hDC, nTop     , nLeft   , nTop     , nRight  , ::oParent:oColor:BORDER_TOP_BTN_END1 )
+         Line( hDC, nTop+1   , nLeft+1 , nTop+1   , nRight-1, ::oParent:oColor:BORDER_TOP_BTN_END2 )
+
+
+         Line( hDC, nTop+1  , nLeft    , nBottom-1, nLeft   , ::oParent:oColor:BORDER_LEFT_BTN_END1   )
+
+
+         Line( hDC, nBottom  , nLeft   , nBottom  , nRight  , ::oParent:oColor:BORDER_BOTTOM_BTN_END1 )
+         Line( hDC, nBottom-1, nLeft   , nBottom-1, nRight-1, ::oParent:oColor:BORDER_BOTTOM_BTN_END2 )
+
+
+         Line( hDC, nTop + 1 , nRight  , nBottom  , nRight  , ::oParent:oColor:BORDER_RIGHT_BTN_END1 )
+         Line( hDC, nTop + 1 , nRight-1, nBottom-1, nRight-1, ::oParent:oColor:BORDER_RIGHT_BTN_END2 )
+
+      endif
+
+   endif
+
+   if !::lEnd .AND. !::lHead
+
+      Line( hDC, nTop    , nLeft    , nTop     , nRight  , ::oParent:oColor:BORDER_MIDLE_TOP1     )
+      Line( hDC, nTop+1   , nLeft+1 , nTop+1   , nRight-1, ::oParent:oColor:BORDER_MIDLE_TOP2     )
+
+      Line( hDC, nTop+1  , nLeft    , nBottom-1, nLeft   , ::oParent:oColor:BORDER_MIDLE_LEFT1    )
+
+      Line( hDC, nBottom , nLeft    , nBottom  , nRight  , ::oParent:oColor:BORDER_MIDLE_BOTTOM1  )
+      Line( hDC, nBottom-1, nLeft   , nBottom-1, nRight-1, ::oParent:oColor:BORDER_MIDLE_BOTTOM2  )
+
+      Line( hDC, nTop + 1 , nRight-1, nBottom-1, nRight-1, ::oParent:oColor:BORDER_MIDLE_RIGHT1   )
+   endif
+
+endif
+
+if hBmp <> 0
+   if !::lEnabled
+      hBmp2 := BmpToGray( hBmp, 20 )
+      DeleteObject( hBmp )
+      hBmp := hBmp2
+   endif
+   DrawMasked( hDC, hBmp, nT, nL )
+   DeleteObject( hBmp )
+endif
+
+if ::oParent:oFont <> nil
+   hFont := ::oParent:oFont:hFont
+else
+   oFont := TFont():New( "Ms Sans Serif", 0, -12.3,,,,,,,,,,,,,, )
+   hFont := oFont:hFont
+endif
+
+do case
+   case ::lHorizontal
+
+      nTop    := ::nTop
+      nLeft   := nL +  nW + 4
+      nBottom := ::nBottom
+      nRight  := ::nRight
+
+   case hBmp == 0 .AND. nWText < ::nWidth
+
+      nTop    := ::nTop
+      nLeft   := ::nLeft
+      nBottom := ::nBottom
+      nRight  := ::nRight
+
+   case lSmallImage
+
+      nTop    := ::nTop
+      nLeft   := ::nLeft + nW + 8
+      nBottom := ::nBottom
+      nRight  := ::nRight
+
+   otherwise
+
+      nTop    := ::nTop + nH + 8
+      nLeft   := ::nLeft
+      nBottom := ::nBottom
+      nRight  := ::nRight
+
+endcase
+
+if lCaptured
+   nTop++
+   nLeft++
+   nBottom++
+   nRight++
+endif
+
+hOldFont := SelectObject( hDC, hFont )
+nColor   := SetTextColor( hDC, if( ::lEnabled, ::oParent:oColor:_CLRTEXTBACK, 12632256 ) )
+nMode    := SetBkMode( hDC, 1 )
+
+do case
+   case ::lHorizontal .AND. ( ::oPopup <> nil .OR. hBmp <> 0 )
+        nAlign := nOr( 32, 4, 0x00040000 )
+   case hBmp == 0 .AND. nWText < ::nWidth
+        nAlign := nOr( 32, 4, 1 )
+   case lSmallImage
+        nAlign := nOR( 32, 0, 4 )
+   otherwise
+        nAlign := nOR( 1, 16, 0x00040000, 0 )
+endcase
+
+if ::oGrupo:lByLines .AND. hBmp == 0 .AND. ::oPopup <> nil
+   nRight -= 11
+endif
+
+
+nHText := DrawText( hDC, ::cCaption, {nTop, nLeft, nBottom, nRight}, nOr( nAlign, 1024, 2048 ))
+
+if ::oPopup <> nil .AND. !::lHorizontal
+   if !lSmallImage .AND. nTop + nHText + 12 > ::nTop + ::nHeight
+      nAlign := nOR( 16, 0x00040000, 0 )
+   endif
+   nLeft += 4
+endif
+
+DrawText( hDC, alltrim(::cCaption), {nTop, nLeft + if( nAlign == nOR( 1, 16, 0x00040000, 0, 2048 ),4,0), nBottom, nRight}, nAlign )
+
+
+
+if ::oGrupo:lByLines .AND. hBmp == 0 .AND. ::oPopup <> nil
+   nRight += 11
+endif
+
+
+if ::oPopup <> nil
+
+   hBmp := BmpArrowDownNet()
+
+   if ::lHorizontal
+      nTop  := nTop + int(nHeight/2) - 2
+      nLeft := nRight - 10
+   else
+      if !lSmallImage .AND. nTop + nHText + 12 > ::nTop + ::nHeight
+         nTop  := nBottom - 8
+         nLeft := nRight - 10
+      else
+         if lSmallImage
+            nTop  := nTop + int(nHeight/2) - 2
+            nLeft := nRight - 10
+         else
+            nTop  := nTop + nHText + 3
+            nLeft := nLeft + nWidth/2 - 3
+         endif
+      endif
+   endif
+   Drawmasked( hDC, hBmp, nTop, nLeft )
+   DeleteObject( hBmp )
+
+endif
+
+SetBkMode   ( hDC, nMode    )
+SetTextColor( hDC, nColor   )
+SelectObject( hDC, hOldFont )
+
+if oFont <> nil
+   oFont:End()
+endif
+
+return 0
+
+
+  UTILITY STATIC function TDotNetButton_RButtonDown( nRow, nCol, nFlags) ; local Self AS CLASS TDotNetButton := QSelf() AS CLASS TDotNetButton
+
+local oPopup
+local o := self
+local nWidth
+local cFile := lower(curdrive() + ":\" + curdir() + "\")
+
+  oPopup := MenuBegin( .T.,,, .F., .F. )
+     if ::oGrupo:lByLines
+        MenuAddItem( "Header's group",, .F.,, {|oMenuItem|( o:lHead := .T., o:oGrupo:ResizeLines(),o:oParent:Refresh() )},,,,,,, .F.,,, .F. )
+        MenuAddItem( "Middle",, .F.,, {|oMenuItem|( o:lHead := .F., o:lEnd := .F., o:oGrupo:ResizeLines(),o:oParent:Refresh() )},,,,,,, .F.,,, .F. )
+        MenuAddItem( "End of group",, .F.,, {|oMenuItem|( o:lEnd  := .T., o:oGrupo:ResizeLines(),o:oParent:Refresh() )},,,,,,, .F.,,, .F. )
+        MenuAddItem()
+     endif
+     MenuAddItem( "Add image",, .F.,,,,,,,,, .F.,,, .F. )
+     MenuBegin( .F.,,, .F., .F. )
+        MenuAddItem( "From fichero",, .F.,, {|oMenuItem|( o:cBmp := strtran(lower(cGetFile("*.bmp", "Seleccione Imágen" )),cFile,""), o:oParent:Refresh())},,,,,,, .F.,,, .F. )
+        MenuAddItem( "From dll",, .F.,, {|oMenuItem|( ::cGetFromDll() )},,,,,,, .F.,,, .F. )
+     MenuEnd()
+     MenuAddItem( "Change size",, .F.,, {|oMenuItem|( nWidth := o:nWidth, DlgChangeSize( @nWidth, .T.  ), o:nWidth := nWidth, o:oGrupo:ResizeItems(), o:oParent:Refresh() )},,,,,,, .F.,,, .F. )
+     MenuAddItem( "Delete button",, .F.,, {|oMenuItem|( o:Delete(),o:oGrupo:ResizeItems(),o:oParent:Refresh())},,,,,,, .F.,,, .F. )
+     MenuAddItem( if(o:oPopup == nil,"Add menu","Reset menu"),, .F.,, {|oMenuItem|( o:oPopup := if( o:oPopup == nil,MakePopup( o ),nil), o:oGrupo:ResizeItems(),o:oParent:Refresh())},,,,,,, .F.,,, .F. )
+     MenuAddItem()
+     MenuAddItem( "Edit",, .F.,, {|oMenuItem|o:Edit()},,,,,,, .F.,,, .F. )
+     MenuAddItem( "Delete text",, .F.,, {|oMenuItem|( o:cPrompt := "",o:oParent:Refresh())},,,,,,, .F.,,, .F. )
+     MenuAddItem( "Copy",, .F.,, {|oMenuItem|o:Copy()},,,,,,, .F.,,, .F. )
+  MenuEnd()
+  oPopup:Activate( nRow, nCol, ::oParent, ! .F., )
+
+
+return 0
+
+static function MakePopup( o )
+local oPopup
+
+oPopup := MenuBegin( .T.,,, .F., .F. )
+    MenuAddItem( "Item 1",, .F.,,,,,,,,, .F.,,, .F. )
+    MenuAddItem( "Item 2",, .F.,,,,,,,,, .F.,,, .F. )
+    MenuAddItem( "Item 3",, .F.,,,,,,,,, .F.,,, .F. )
+    MenuAddItem()
+    MenuAddItem( "Item 4",, .F.,,,,,,,,, .F.,,, .F. )
+MenuEnd()
+
+return oPopup
+
+
+   UTILITY STATIC function TDotNetButton_Edit() ; local Self AS CLASS TDotNetButton := QSelf() AS CLASS TDotNetButton
+
+local oFont
+local bValid := {||.T.}
+local o := self
+local uVar
+local nTop, nLeft, nWidth, nHeight
+
+uVar := padr(::cPrompt, 100)
+
+nTop    := ::nTop + 6
+nLeft   := ::nLeft +4
+nWidth  := ::nWidth -8
+nHeight := ::nHeight -8
+
+oFont := TFont():New( "Ms Sans Serif", 0, -10,,,,,,,,,,,,,, )
+
+   ::oParent:oGet := TGet():New(nTop,nLeft,{ | u | If( PCount()==0, uVar, uVar:= u ) },o:oParent,nWidth,nHeight,,,0,( 255 + ( 215 * 256 ) + ( 94 * 65536 ) ) ,oFont,.F.,,.T.,,.F.,,.F.,.F.,,.F.,.F.,.T.,)
+
+   ::oParent:nLastKey := 0
+   ::oParent:oGet:SetFocus()
+   ::oParent:oGet:bValid := {|| .T. }
+
+
+
+
+   ::oParent:oGet:bLostFocus := {||  o:oParent:oGet:Assign(), o:oParent:oGet:VarPut( o:oParent:oGet:oGet:VarGet() ), o:cCaption := if( o:oParent:nLastKey <> 27, alltrim(o:oParent:oGet:oGet:VarGet()), o:cCaption ) , o:oParent:GetCoords(), o:oParent:Refresh() }
+
+   ::oParent:oGet:bKeyDown := { | nKey | If( nKey == 13 .OR. nKey == 27, ( o:oParent:nLastKey := nKey, o:oParent:oGet:End()), ) }
+
+
+
+return nil
+
+
+  UTILITY STATIC function TDotNetButton_nHorizWidth( nHeight) ; local Self AS CLASS TDotNetButton := QSelf() AS CLASS TDotNetButton
+
+local nWidth
+local hBmp
+local nW := 0
+local nH := 0
+
+if valtype( ::cBmp ) == "C" .AND. "." $ ::cBmp
+   hBmp := ReadBitmap( 0, ::cBmp )
+else
+   hBmp := LoadBitmap( GetResources(), ::cBmp )
+endif
+
+if hBmp <> 0
+   nH := BmpHeight( hBmp )
+   nW := BmpWidth( hBmp )
+   DeleteObject( hBmp )
+endif
+
+if empty( ::cCaption )
+   nWidth := 5 + nW + 5
+else
+   if hBmp == 0
+      nWidth := 5 + ::GetTextWidth() + 5
+   else
+      nWidth := 5 + nW + 5 + ::GetTextWidth()
+   endif
+endif
+
+if ::oGrupo:lByLines
+   if ::oPopup <> nil
+      nWidth += 11
+   endif
+endif
+
+if nWidth < ::nWidth
+   nWidth := ::nWidth
+endif
+
+return nWidth
+
+
+
+
+
+   UTILITY STATIC function TDotNetButton_GetTextWidth() ; local Self AS CLASS TDotNetButton := QSelf() AS CLASS TDotNetButton
+
+local hFont
+local oFont
+local nWidth := 0
+
+if ::oParent:oFont <> nil
+   hFont := ::oParent:oFont:hFont
+else
+   oFont := TFont():New( "Ms Sans Serif", 0, -12.3,,,,,,,,,,,,,, )
+   hFont := oFont:hFont
+endif
+
+nWidth := GetTextWidth( 0, ::cCaption, hFont )
+
+if oFont <> nil
+   oFont:End()
+endif
+
+
+return nWidth
+
+
+
+   UTILITY STATIC function TDotNetButton_Delete() ; local Self AS CLASS TDotNetButton := QSelf() AS CLASS TDotNetButton
+
+local n, n2, nLen2
+local nLen := len( ::oGrupo:aItems )
+
+::lWorking := .T.
+
+for n := 1 to nLen
+    if ::oGrupo:aItems[n]:nId == ::nId
+       adel( ::oGrupo:aItems, n )
+       asize( ::oGrupo:aItems, nLen - 1 )
+       exit
+    endif
+next
+
+if ::oGrupo:lByColumns
+   nLen := len( ::oGrupo:aColumns[::nColumna] )
+   for n := 1 to nLen
+       if ::oGrupo:aColumns[::nColumna]:aItems[n]:nId == ::nId
+          adel( ::oGrupo:aColumns[::nColumna]:aItems, n )
+          asize( ::oGrupo:aColumns[::nColumna]:aItems, len(::oGrupo:aColumns[::nColumna]:aItems) - 1 )
+          exit
+       endif
+   next
+
+   if len(::oGrupo:aColumns[::nColumna]:aItems) == 0
+      adel( ::oGrupo:aColumns,::nColumna )
+      asize( ::oGrupo:aColumns, len( ::oGrupo:aColumns ) - 1 )
+   endif
+
+
+
+   for n := 1 to len(::oGrupo:aColumns)
+       nLen2 := len(::oGrupo:aColumns[n]:aItems)
+       for n2 := 1 to nLen2
+           ::oGrupo:aColumns[n]:aItems[n2]:nColumna := n
+       next
+   next
+endif
+
+::lWorking := .F.
+
+return nil
+
+
+
+   UTILITY STATIC function TDotNetButton_GenPrg() ; local Self AS CLASS TDotNetButton := QSelf() AS CLASS TDotNetButton
+
+local cPrg := ""
+
+::cName := "oBtn" +  alltrim(str(::nId-100))
+
+  ::oParent:cVars += "local " + ::cName + Chr(13)+Chr(10)
+
+  cPrg += space(16) + ::cName + " := "
+
+
+
+
+
+
+
+
+
+
+  cPrg += "TDotNetButton():New( " + alltrim( str(::nWidth))   +", "     + ::oGrupo:cName +", "     + if( valtype(::cBmp) == "N", alltrim(str(::cBmp)),'"'+::cBmp+'"') + ","  + '"'+ ::cPrompt +'", '             + if( ::nColumna > 0, alltrim(str(::nColumna)),) +", " + "{|| .t.}, "                      + " oMenu ,"                        +  " bWhen, "                        + if(::lGrouping,".t.",".f.")+ ", " + if(::lHead,".t.",".f.")+ ", "     + if(::lEnd,".t.",".f.") +         " ) " + Chr(13)+Chr(10)
+
+
+return cPrg
+
+
+
+
+
+
+
+      UTILITY STATIC function TDotNetButton_cGetFromDLL() ; local Self AS CLASS TDotNetButton := QSelf() AS CLASS TDotNetButton
+
+
+
+
+return 0
+
+
+  UTILITY STATIC function TDotNetButton_Copy() ; local Self AS CLASS TDotNetButton := QSelf() AS CLASS TDotNetButton
+
+local cInfo := ::GenPrg()
+local oClp
+
+
+   oClp := TClipBoard():New( Upper("TEXT"), )
+
+   if oClp:Open()
+      oClp:Clear()
+      oClp:SetText( cInfo )
+      oClp:End()
+   else
+      MsgAlert( "The clipboard is not available now!" )
+   endif
+
+return nil

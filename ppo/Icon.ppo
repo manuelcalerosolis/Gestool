@@ -1,0 +1,241 @@
+#line 112 "hbclass.ch"
+   DYNAMIC DivertConstructorCall
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+DECLARE HBClass  New( cName AS String, OPTIONAL SuperParams ) AS CLASS HBClass  Create() AS Object  Instance() AS Object  AddClsMethod( cName AS String, @MethodName(), nScope AS Numeric, n2 AS Numeric, n3 AS Numeric )  AddDelegate( cName AS String, cDelegate AS String, cObject AS String, nScope AS Numeric, lPersistent AS LOGICAL )  AddMultiClsData( cType AS String, uVal, nScope AS Numeric, aDatas AS Array OF String )  AddMultiData( cType AS String, uVal, nScope AS Numeric, aDatas AS Array OF String, x AS LOGICAL, lPer AS LOGICAL )  AddMethod( cName AS String, @MethodName(), nScope AS Numeric, lPersistent AS LOGICAL )  AddInLine( cName AS String, bBlock AS CodeBlock, nScope AS Numeric, lPersistent AS LOGICAL )  AddVirtual( cName AS String )  ModMethod( cName AS String, @MethodName(), nScope AS Numeric, lPersistent AS LOGICAL )  ModClsMethod( cName AS String, @MethodName(), nScope AS Numeric )  ModInline( cName AS String, bBlock AS CodeBlock, nScope AS Numeric, lPersistent AS LOGICAL )  SetOnError( @MethodName() )
+#line 85 "\Fwh1204\Include\FiveWin.Ch"
+   EXTERNAL GetProcAdd
+   EXTERNAL TActiveX
+
+
+
+
+extern errorsys
+#line 19 ".\Prg\Icon.prg"
+_HB_CLASS TIcon ; UTILITY FUNCTION TIcon(...); static s_oClass ; local oClassInstance ; local nScope ; nScope := 1 ; if s_oClass == NIL ; s_oClass := IIF(.F.,, HBClass():New( "TIcon" , {TControl():classh} ) ) ; ;
+
+   _HB_MEMBER {AS LOGICAL lRegistered} ; IIF( !.F., s_oClass:AddMultiClsData("LOGICAL",, nScope + IIF( .F., 32, 0 ) + 64, { "lRegistered" }, .F. ), )
+
+   _HB_MEMBER { cIcoFile, cResName} ; IIF( !.F., s_oClass:AddMultiData(,, nScope + IIF( .F., 32, 0 ), { "cIcoFile" , "cResName" }, .F., .F. ), )
+   _HB_MEMBER { hIcon} ; IIF( !.F., s_oClass:AddMultiData(,, nScope + IIF( .F., 32, 0 ), { "hIcon" }, .F., .F. ), )
+   _HB_MEMBER { hBitmap} ; IIF( !.F., s_oClass:AddMultiData(,, nScope + IIF( .F., 32, 0 ), { "hBitmap" }, .F., .F. ), )
+
+
+   _HB_MEMBER New( nRow, nCol, cResName, cIcoFile, lBorder, bClick, oWnd, lUpdate, bWhen, nClrFore, nClrBack) AS CLASS TIcon; IIF( .F., s_oClass:ModMethod( "New", @TIcon_New(), nScope + IIF( .T., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ), s_oClass:AddMethod( "New", @TIcon_New(), nScope + IIF( .T., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ));
+
+
+   _HB_MEMBER ReDefine( nId, cResName, cIcoFile, bClick, lUpdate, oDlg, bWhen) AS CLASS TIcon; IIF( .F., s_oClass:ModMethod( "ReDefine", @TIcon_ReDefine(), nScope + IIF( .T., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ), s_oClass:AddMethod( "ReDefine", @TIcon_ReDefine(), nScope + IIF( .T., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ));
+
+   _HB_MEMBER Define( cResName, cIcoFile, oWnd); IIF( .F., s_oClass:ModMethod( "Define", @TIcon_Define(), nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ), s_oClass:AddMethod( "Define", @TIcon_Define(), nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ));
+
+   _HB_MEMBER Display(); IIF( .F., s_oClass:ModInline( "Display", {|Self | Self, ::BeginPaint(), ::Paint(), ::EndPaint(), 0 }, nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ), s_oClass:AddInline( "Display", {|Self | Self, ::BeginPaint(), ::Paint(), ::EndPaint(), 0 }, nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ) )
+
+   _HB_MEMBER Paint(); IIF( .F., s_oClass:ModInline( "Paint", {|Self | Self, DrawIcon( ::hDC, 0, 0, ::hIcon ) }, nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ), s_oClass:AddInline( "Paint", {|Self | Self, DrawIcon( ::hDC, 0, 0, ::hIcon ) }, nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ) )
+
+   _HB_MEMBER Destroy(); IIF( .F., s_oClass:ModMethod( "Destroy", @TIcon_Destroy(), nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ), s_oClass:AddMethod( "Destroy", @TIcon_Destroy(), nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ));
+
+   _HB_MEMBER HandleEvent( nMsg, nWParam, nLParam); IIF( .F., s_oClass:ModMethod( "HandleEvent", @TIcon_HandleEvent(), nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ), s_oClass:AddMethod( "HandleEvent", @TIcon_HandleEvent(), nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ));
+
+   _HB_MEMBER SetName( cNewName); IIF( .F., s_oClass:ModMethod( "SetName", @TIcon_SetName(), nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ), s_oClass:AddMethod( "SetName", @TIcon_SetName(), nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ));
+
+   _HB_MEMBER SetFile( cIcoFile); IIF( .F., s_oClass:ModMethod( "SetFile", @TIcon_SetFile(), nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ), s_oClass:AddMethod( "SetFile", @TIcon_SetFile(), nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ));
+
+   _HB_MEMBER Initiate( hDlg); IIF( .F., s_oClass:ModMethod( "Initiate", @TIcon_Initiate(), nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ), s_oClass:AddMethod( "Initiate", @TIcon_Initiate(), nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ));
+
+   _HB_MEMBER End(); IIF( .F., s_oClass:ModMethod( "End", @TIcon_End(), nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ), s_oClass:AddMethod( "End", @TIcon_End(), nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ));
+
+; IF .F. ; __clsActive(s_oClass:hClass) ; s_oClass:Refresh() ; ELSE ; s_oClass:Create() ; END ; oClassInstance := __clsInst( s_oClass:hClass ) ; IF __ObjHasMsg( oClassInstance, "InitClass" ); oClassInstance:InitClass( hb_aParams() ) ; END ; ELSE ; oClassInstance := __clsInst( s_oClass:hClass ) ; END ; IF PCount() > 0 ; DIVERT TO (@DivertConstructorCall()) OF s_oClass ; END ; RETURN oClassInstance AS CLASS TIcon ;
+
+
+
+
+UTILITY STATIC function TIcon_New( nRow, nCol, cResName, cIcoFile, lBorder, bClick, oWnd, lUpdate, bWhen, nClrFore, nClrBack) ; local Self AS CLASS TIcon := QSelf() AS CLASS TIcon
+
+
+   IIF( nRow == nil, nRow := 0, ) ; IIF( nCol == nil, nCol := 0, ); IIF( cResName == nil, cResName := "", ); IIF( cIcoFile == nil, cIcoFile := "", ); IIF( lBorder == nil, lBorder := .F., ); IIF( lUpdate == nil, lUpdate := .F., );
+
+   ::nTop      = nRow * 14
+   ::nLeft     = nCol * 8
+   ::nBottom   = ::nTop  + 32
+   ::nRight    = ::nLeft + 32
+   ::oWnd      = oWnd
+   ::nStyle    = nOR( 1073741824, 268435456, If( lBorder, 8388608, 0 ) )
+   ::nId       = ::GetNewId()
+   ::cIcoFile  = cIcoFile
+   ::cResName  = cResName
+   ::bLClicked = bClick
+   ::lDrag     = .F.
+   ::lCaptured = .F.
+   ::lUpdate   = lUpdate
+   ::bWhen     = bWhen
+
+   ::Register( nOR( 1, 2 ) )
+
+   if oWnd <> nil
+      ::nClrText  = oWnd:nClrText
+      ::nClrPane  = oWnd:nClrPane
+      if ! Empty( oWnd:hWnd )
+         ::Create()
+      else
+         oWnd:DefControl( Self )
+      endif
+   else
+      oWnd   = GetWndDefault()
+      ::hWnd = 0
+      if oWnd <> nil
+         ::nClrText = oWnd:nClrText
+         ::nClrPane = oWnd:nClrPane
+      endif
+   endif
+
+   ::SetColor( nClrFore, nClrBack )
+
+   if ! Empty( cIcoFile )
+      ::hIcon = ExtractIcon( cIcoFile )
+   endif
+
+   if ! Empty( cResName )
+      ::hIcon = LoadIcon( GetResources(), cResName )
+   endif
+
+return Self
+
+
+
+
+UTILITY STATIC function TIcon_ReDefine( nId, cResName, cIcoFile, bClick, lUpdate, oDlg, bWhen) ; local Self AS CLASS TIcon := QSelf() AS CLASS TIcon
+
+   IIF( lUpdate == nil, lUpdate := .F., ) ;
+
+   ::nId       = nId
+   ::cResName  = cResName
+   ::cIcoFile  = cIcoFile
+   ::bLClicked = bClick
+   ::lUpdate   = lUpdate
+   ::oWnd      = oDlg
+   ::bWhen     = bWhen
+
+   ::Register( nOR( 1, 2 ) )
+
+   oDlg:DefControl( Self )
+
+return Self
+
+
+
+UTILITY STATIC function TIcon_Define( cResName, cIcoFile, oWnd) ; local Self AS CLASS TIcon := QSelf() AS CLASS TIcon
+
+
+
+   IIF( cResName == nil, cResName := "", ) ; IIF( cIcoFile == nil, cIcoFile := "", ); IIF( oWnd == nil, oWnd := GetWndDefault(), );
+
+   ::oWnd      = oWnd
+   ::cIcoFile  = cIcoFile
+   ::cResName  = cResName
+   ::lDrag     = .F.
+   ::lCaptured = .F.
+
+
+
+   if ! Empty( cIcoFile )
+      ::hIcon  = ExtractIcon( cIcoFile )
+   endif
+
+   if ! Empty( cResName )
+      ::hIcon  = LoadIcon( GetResources(), cResName )
+   endif
+
+return Self
+
+
+
+UTILITY STATIC function TIcon_HandleEvent( nMsg, nWParam, nLParam) ; local Self AS CLASS TIcon := QSelf() AS CLASS TIcon
+
+   if nMsg == 132
+      return DefWindowProc( ::hWnd, nMsg, nWParam, nLParam )
+   endif
+
+return ::TControl:HandleEvent( nMsg, nWParam, nLParam )
+
+
+
+UTILITY STATIC function TIcon_SetName( cNewName) ; local Self AS CLASS TIcon := QSelf() AS CLASS TIcon
+
+   if ! Empty( cNewName )
+      ::cResName = cNewName
+      if ::hIcon <> 0
+         DestroyIcon( ::hIcon )
+      endif
+      ::hIcon = LoadIcon( GetResources(), cNewName )
+      ::Refresh( .T. )
+   endif
+
+return nil
+
+
+
+UTILITY STATIC function TIcon_SetFile( cIcoFile) ; local Self AS CLASS TIcon := QSelf() AS CLASS TIcon
+
+   if ! Empty( cIcoFile ) .AND. File( cIcoFile )
+      ::cIcoFile = cIcoFile
+      if ::hIcon <> 0
+         DestroyIcon( ::hIcon )
+      endif
+      ::hIcon = ExtractIcon( cIcoFile )
+      ::Refresh()
+   endif
+
+return nil
+
+
+
+UTILITY STATIC function TIcon_Initiate( hDlg) ; local Self AS CLASS TIcon := QSelf() AS CLASS TIcon
+
+   ::TControl:Initiate( hDlg )
+
+   if ! Empty( ::cIcoFile )
+      ::hIcon = ExtractIcon( ::cIcoFile )
+   endif
+
+   if ! Empty( ::cResName )
+      ::hIcon = LoadIcon( GetResources(), ::cResName )
+   endif
+
+return nil
+
+
+
+UTILITY STATIC function TIcon_End() ; local Self AS CLASS TIcon := QSelf() AS CLASS TIcon
+
+   if ::hWnd == 0
+      ::Destroy()
+   else
+      return ::TControl:End()
+   endif
+
+return nil
+
+
+
+UTILITY STATIC function TIcon_Destroy() ; local Self AS CLASS TIcon := QSelf() AS CLASS TIcon
+
+   if ::hIcon <> 0
+      DestroyIcon( ::hIcon )
+      ::hIcon = 0
+   endif
+
+return ::TControl:Destroy()

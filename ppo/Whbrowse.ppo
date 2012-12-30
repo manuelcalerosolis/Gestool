@@ -1,0 +1,352 @@
+#line 112 "hbclass.ch"
+   DYNAMIC DivertConstructorCall
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+DECLARE HBClass  New( cName AS String, OPTIONAL SuperParams ) AS CLASS HBClass  Create() AS Object  Instance() AS Object  AddClsMethod( cName AS String, @MethodName(), nScope AS Numeric, n2 AS Numeric, n3 AS Numeric )  AddDelegate( cName AS String, cDelegate AS String, cObject AS String, nScope AS Numeric, lPersistent AS LOGICAL )  AddMultiClsData( cType AS String, uVal, nScope AS Numeric, aDatas AS Array OF String )  AddMultiData( cType AS String, uVal, nScope AS Numeric, aDatas AS Array OF String, x AS LOGICAL, lPer AS LOGICAL )  AddMethod( cName AS String, @MethodName(), nScope AS Numeric, lPersistent AS LOGICAL )  AddInLine( cName AS String, bBlock AS CodeBlock, nScope AS Numeric, lPersistent AS LOGICAL )  AddVirtual( cName AS String )  ModMethod( cName AS String, @MethodName(), nScope AS Numeric, lPersistent AS LOGICAL )  ModClsMethod( cName AS String, @MethodName(), nScope AS Numeric )  ModInline( cName AS String, bBlock AS CodeBlock, nScope AS Numeric, lPersistent AS LOGICAL )  SetOnError( @MethodName() )
+#line 85 "\Fwh1204\Include\FiveWin.ch"
+   EXTERNAL GetProcAdd
+   EXTERNAL TActiveX
+
+
+
+
+extern errorsys
+#line 37 ".\Prg\Whbrowse.prg"
+_HB_CLASS TWHeader ; UTILITY FUNCTION TWHeader(...); static s_oClass ; local oClassInstance ; local nScope ; nScope := 1 ; if s_oClass == NIL ; s_oClass := IIF(.F.,, HBClass():New( "TWHeader" , {TControl():classh} ) ) ; ;
+
+   _HB_MEMBER { aItems} ; IIF( !.F., s_oClass:AddMultiData(,, nScope + IIF( .F., 32, 0 ), { "aItems" }, .F., .F. ), )
+   _HB_MEMBER { nColTrack, nColTrackTmp} ; IIF( !.F., s_oClass:AddMultiData(,, nScope + IIF( .F., 32, 0 ), { "nColTrack" , "nColTrackTmp" }, .F., .F. ), )
+   _HB_MEMBER { nLastColVertLine} ; IIF( !.F., s_oClass:AddMultiData(,, nScope + IIF( .F., 32, 0 ), { "nLastColVertLine" }, .F., .F. ), )
+   _HB_MEMBER { lBeginTrack} ; IIF( !.F., s_oClass:AddMultiData(, .F., nScope + IIF( .F., 32, 0 ), { "lBeginTrack" }, .F., .F. ), )
+   _HB_MEMBER { bClicked} ; IIF( !.F., s_oClass:AddMultiData(,, nScope + IIF( .F., 32, 0 ), { "bClicked" }, .F., .F. ), )
+
+   _HB_MEMBER New( oWnd, nHeight, nRow, oFont, nClrFore, nClrBack) AS CLASS TWHeader; IIF( .F., s_oClass:ModMethod( "New", @TWHeader_New(), nScope + IIF( .T., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ), s_oClass:AddMethod( "New", @TWHeader_New(), nScope + IIF( .T., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ));
+   _HB_MEMBER HandleEvent( nMsg, nWParam, nLParam); IIF( .F., s_oClass:ModMethod( "HandleEvent", @TWHeader_HandleEvent(), nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ), s_oClass:AddMethod( "HandleEvent", @TWHeader_HandleEvent(), nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ));
+   _HB_MEMBER Notify( nIdCtrl, nPtrNMHDR); IIF( .F., s_oClass:ModMethod( "Notify", @TWHeader_Notify(), nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ), s_oClass:AddMethod( "Notify", @TWHeader_Notify(), nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ));
+   _HB_MEMBER GetWidth( nCol); IIF( .F., s_oClass:ModMethod( "GetWidth", @TWHeader_GetWidth(), nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ), s_oClass:AddMethod( "GetWidth", @TWHeader_GetWidth(), nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ));
+
+   _HB_MEMBER Paint(); IIF( .F., s_oClass:ModMethod( "Paint", @TWHeader_Paint(), nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ), s_oClass:AddMethod( "Paint", @TWHeader_Paint(), nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ));
+
+   _HB_MEMBER InsertItem( nCol, cCaption, nWidth, nAlign); IIF( .F., s_oClass:ModMethod( "InsertItem", @TWHeader_InsertItem(), nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ), s_oClass:AddMethod( "InsertItem", @TWHeader_InsertItem(), nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ));
+   _HB_MEMBER SetItem( nCol, cCaption, nWidth, nAlign, nSort); IIF( .F., s_oClass:ModMethod( "SetItem", @TWHeader_SetItem(), nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ), s_oClass:AddMethod( "SetItem", @TWHeader_SetItem(), nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ));
+   _HB_MEMBER DeleteItem( nCol); IIF( .F., s_oClass:ModMethod( "DeleteItem", @TWHeader_DeleteItem(), nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ), s_oClass:AddMethod( "DeleteItem", @TWHeader_DeleteItem(), nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ));
+   _HB_MEMBER SetNumCols( nCols); IIF( .F., s_oClass:ModMethod( "SetNumCols", @TWHeader_SetNumCols(), nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ), s_oClass:AddMethod( "SetNumCols", @TWHeader_SetNumCols(), nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ));
+   _HB_MEMBER EraseBkGnd(hDC); IIF( .F., s_oClass:ModInline( "EraseBkGnd", {|Self,hDC | Self, 0 }, nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ), s_oClass:AddInline( "EraseBkGnd", {|Self,hDC | Self, 0 }, nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ) )
+   _HB_MEMBER Initiate( hDlg); IIF( .F., s_oClass:ModMethod( "Initiate", @TWHeader_Initiate(), nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ), s_oClass:AddMethod( "Initiate", @TWHeader_Initiate(), nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ));
+   _HB_MEMBER VertLine( nCol, lRelease); IIF( .F., s_oClass:ModMethod( "VertLine", @TWHeader_VertLine(), nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ), s_oClass:AddMethod( "VertLine", @TWHeader_VertLine(), nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ));
+
+
+; IF .F. ; __clsActive(s_oClass:hClass) ; s_oClass:Refresh() ; ELSE ; s_oClass:Create() ; END ; oClassInstance := __clsInst( s_oClass:hClass ) ; IF __ObjHasMsg( oClassInstance, "InitClass" ); oClassInstance:InitClass( hb_aParams() ) ; END ; ELSE ; oClassInstance := __clsInst( s_oClass:hClass ) ; END ; IF PCount() > 0 ; DIVERT TO (@DivertConstructorCall()) OF s_oClass ; END ; RETURN oClassInstance AS CLASS TWHeader ;
+
+
+
+UTILITY STATIC function TWHeader_New( oWnd, nHeight, nRow, oFont, nClrFore, nClrBack) ; local Self AS CLASS TWHeader := QSelf() AS CLASS TWHeader
+
+   local n, oDlg
+
+
+
+
+
+
+
+   IIF( oWnd == nil, oWnd := GetWndDefault(), ) ; IIF( nClrFore == nil, nClrFore := oWnd:nClrText, ); IIF( nClrBack == nil, nClrBack := GetSysColor( 15 ), ); IIF( nHeight == nil, nHeight := 0, ); IIF( oFont == nil, oFont := oWnd:oFont, ); IIF( nRow == nil, nRow := 0, );
+
+
+   ::nStyle   := nOR( 1073741824, 268435456, 0, 2, 4, 128 )
+
+   ::nId      := ::GetNewId()
+   ::oWnd     := oWnd
+   ::nTop     := nRow
+   ::nLeft    := 0
+   ::nHeight  := nHeight
+   ::nBottom  := ::nTop + nHeight - 1
+   ::nRight   := ::nLeft + oWnd:nWidth - 1
+   ::cVarName := ""
+   ::aItems   := {}
+
+   ::SetColor( nClrFore, nClrBack )
+
+
+
+   if ! Empty( oWnd:hWnd )
+      ::Create( "SysHeader32" )
+      if oFont <> nil
+         ::SetFont( oFont )
+      endif
+   else
+      ::oFont     = oFont
+      oWnd:DefControl( Self )
+   endif
+
+   if ! Empty( oWnd:hWnd )
+      ::Default()
+   endif
+
+   SetWndDefault( oWnd )
+
+return Self
+
+
+
+UTILITY STATIC function TWHeader_Initiate( hDlg) ; local Self AS CLASS TWHeader := QSelf() AS CLASS TWHeader
+
+   local n
+
+   ::TControl:Initiate( hDlg )
+
+
+   SetWindowLong( ::hWnd, -16, nOr( 1073741824, 268435456, 0, 2, 4, 128 ) )
+
+return nil
+
+
+
+UTILITY STATIC function TWHeader_Paint() ; local Self AS CLASS TWHeader := QSelf() AS CLASS TWHeader
+
+   CallWindowProc( ::nOldProc, ::hWnd, 15, ::hDC, 0 )
+
+return 0
+
+
+
+UTILITY STATIC function TWHeader_HandleEvent( nMsg, nWParam, nLParam) ; local Self AS CLASS TWHeader := QSelf() AS CLASS TWHeader
+
+   local lMChange
+   local nWidth, aSizes, nColTrack
+
+   if nMsg == 32
+
+      lMChange:= ::oWnd:lMChange
+      IIF( lMChange == nil, lMChange := .T., ) ;
+      if ::oWnd:aSaveScreen<> nil .OR. !lMChange
+          return .T.
+      endif
+
+   elseif nMsg == 513
+
+      if ::oWnd:aSaveScreen<> nil
+          return 0
+      endif
+      ::bClicked:= {|| ::oWnd:LButtonDown( nHiWord( nLParam ), nLoWord( nLParam ), nWParam ) }
+      return nil
+
+   elseif nMsg == 515
+
+      if ::oWnd:aSaveScreen<> nil
+          return 0
+      endif
+      ::oWnd:LDblClick( nHiWord( nLParam ), nLoWord( nLParam ), nWParam )
+      return nil
+
+   elseif nMsg == 512
+
+      if ::oWnd:aSaveScreen<> nil
+          return 0
+      endif
+      if ::lBeginTrack
+         ::VertLine( nLoWord( nLParam ) )
+      endif
+      return nil
+
+   elseif nMsg == 15
+
+      ::BeginPaint()
+      ::Paint()
+      ::EndPaint()
+
+      if ::nColTrack <> nil .AND. ! ::lBeginTrack
+         nColTrack     := ::nColTrack
+         ::nColTrack   := nil
+         ::nColTrackTmp:= nil
+         nWidth:= ::GetWidth( nColTrack ) - 1
+         ::oWnd:aColSizes[ nColTrack ]:= nWidth
+         if ::oWnd:nFreeze > 0
+            aSizes:= ::oWnd:GetColSizes()
+            if ::oWnd:aTmpColSizes == Nil
+               ::oWnd:aTmpColSizes:= aClone( aSizes )
+            else
+               ::oWnd:aTmpColSizes[nColTrack]:= nWidth
+            endif
+         endif
+         ::VertLine(,.T.)
+         ::oWnd:lSyncH:= .T.
+         ::oWnd:lSyncF:= .T.
+         ::oWnd:Refresh(.F.)
+         SysRefresh()
+      endif
+
+      return 0
+
+   endif
+
+return ::TControl:HandleEvent( nMsg, nWParam, nLParam )
+
+
+
+UTILITY STATIC function TWHeader_Notify( nIdCtrl, nPtrNMHDR) ; local Self AS CLASS TWHeader := QSelf() AS CLASS TWHeader
+
+   local nCode := GetNMHDRCode( nPtrNMHDR )
+   local nCol, aSizes, nWidth
+   local bClicked, lMChange
+
+
+   do case
+
+      case nCode == (-300-6)
+
+         nCol:= TWHeaderNotifyPos( nPtrNMHDR )
+         lMChange:= ::oWnd:lMChange
+         IIF( lMChange == nil, lMChange := .T., ) ;
+         if lMChange .AND. ::oWnd:lAdjLastCol .AND. nCol>=Len(::oWnd:GetColSizes())
+            lMChange:= .F.
+         endif
+         if !lMChange
+            return .T.
+         endif
+         ::lBeginTrack:= .T.
+         ::nColTrackTmp:= nCol
+
+
+
+      case ( nCode == (-300-8) .OR. nCode == (-300-0) ) .AND. ::lBeginTrack
+         ::nColTrack  := ::nColTrackTmp
+         if nCode == (-300-8)
+            ::Refresh(.F.)
+         endif
+
+      case nCode == (-300-7) .AND. ::lBeginTrack
+         ::lBeginTrack:= .F.
+
+      case nCode == (-300-2) .AND. ::bClicked <> nil
+
+         bClicked:= ::bClicked
+         ::bClicked:= nil
+         Eval( bClicked )
+
+   endcase
+
+return nil
+
+
+
+UTILITY STATIC function TWHeader_InsertItem( nCol, cCaption, nWidth, nAlign, hBmp) ; local Self AS CLASS TWHeader := QSelf() AS CLASS TWHeader
+
+   IIF( nCol == nil, nCol := Len(::aItems), ) ;
+
+   nCol:= Max( 1, nCol )
+
+   if nCol >= Len( ::aItems )
+      aAdd( ::aItems, { cCaption, nWidth } )
+   else
+      aSize( ::aItems, Len(::aItems)+1 )
+      aIns( ::aItems, nCol )
+      ::aItems[nCol]:= { cCaption, nWidth }
+   endif
+
+return TWHeaderAction( 1, ::hWnd, nCol, cCaption, nWidth, nAlign, hBmp )
+
+
+
+UTILITY STATIC function TWHeader_SetItem( nCol, cCaption, nWidth, nAlign, hBmp) ; local Self AS CLASS TWHeader := QSelf() AS CLASS TWHeader
+
+   if nCol >= 1 .AND. nCol <= Len( ::aItems )
+       if !(::aItems[nCol,1]==cCaption .AND. nWidth==::aItems[nCol,2])
+          TWHeaderAction( 2, ::hWnd, nCol, cCaption, nWidth, nAlign, hBmp )
+          ::aItems[nCol]:= { cCaption, nWidth }
+       endif
+   endif
+
+return .T.
+
+
+
+UTILITY STATIC function TWHeader_DeleteItem( nCol) ; local Self AS CLASS TWHeader := QSelf() AS CLASS TWHeader
+
+  if Len( ::aItems ) <= nCol .AND. nCol >= 1
+     TWHeaderAction( 3, ::hWnd, nCol )
+     aDel( ::aItems, nCol )
+     aSize( ::aItems, Len(::aItems)-1 )
+  endif
+
+return .T.
+
+
+
+UTILITY STATIC function TWHeader_SetNumCols( nCols) ; local Self AS CLASS TWHeader := QSelf() AS CLASS TWHeader
+
+  while Len( ::aItems ) > nCols
+     ::DeleteItem( Len(::aItems) )
+  end
+  while Len( ::aItems ) < nCols
+     ::InsertItem(, "", 0 )
+  end
+
+return nil
+
+
+
+UTILITY STATIC function TWHeader_GetWidth( nCol) ; local Self AS CLASS TWHeader := QSelf() AS CLASS TWHeader
+
+   if nCol >= 1 .AND. nCol <= Len( ::aItems )
+      return TWHeaderAction( 4, ::hWnd, nCol )
+   endif
+
+return 0
+
+
+
+UTILITY STATIC function TWHeader_VertLine( nCol, lRelease) ; local Self AS CLASS TWHeader := QSelf() AS CLASS TWHeader
+
+   local oRect, nTop, nBottom, bDraw
+
+   IIF( lRelease == nil, lRelease := .F., ) ;
+
+   if lRelease .AND. ::nLastColVertLine == nil
+      return nil
+   endif
+
+   bDraw:= {|nMCol| InvertRect( ::oWnd:hDC, { nTop, nMCol - 0.5, nBottom, nMCol + 0.5 } ) }
+   oRect = ::oWnd:GetRect()
+
+   nBottom:= oRect:nBottom
+   if ::oWnd:oHeader <> nil
+      nTop:=  ::oWnd:nHeaderHeight+1
+   endif
+   if ::oWnd:oFooter <> nil
+      nBottom:= oRect:nBottom - (::oWnd:nFooterHeight+2)
+   endif
+   if lRelease
+      if ::nLastColVertLine <> nil
+         ::oWnd:GetDC()
+         Eval( bDraw, ::nLastColVertLine )
+         ::nLastColVertLine:= nil
+         ::oWnd:ReleaseDC()
+      endif
+   else
+      if ::nLastColVertLine == nil .OR. ::nLastColVertLine <> nCol
+         ::oWnd:GetDC()
+         if ::nLastColVertLine <> nil
+            Eval( bDraw, ::nLastColVertLine )
+         endif
+         Eval( bDraw, nCol )
+         ::nLastColVertLine:= nCol
+         ::oWnd:ReleaseDC()
+      endif
+   endif
+
+return nil

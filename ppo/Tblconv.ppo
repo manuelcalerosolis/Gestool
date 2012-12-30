@@ -1,0 +1,756 @@
+#line 112 "hbclass.ch"
+   DYNAMIC DivertConstructorCall
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+DECLARE HBClass  New( cName AS String, OPTIONAL SuperParams ) AS CLASS HBClass  Create() AS Object  Instance() AS Object  AddClsMethod( cName AS String, @MethodName(), nScope AS Numeric, n2 AS Numeric, n3 AS Numeric )  AddDelegate( cName AS String, cDelegate AS String, cObject AS String, nScope AS Numeric, lPersistent AS LOGICAL )  AddMultiClsData( cType AS String, uVal, nScope AS Numeric, aDatas AS Array OF String )  AddMultiData( cType AS String, uVal, nScope AS Numeric, aDatas AS Array OF String, x AS LOGICAL, lPer AS LOGICAL )  AddMethod( cName AS String, @MethodName(), nScope AS Numeric, lPersistent AS LOGICAL )  AddInLine( cName AS String, bBlock AS CodeBlock, nScope AS Numeric, lPersistent AS LOGICAL )  AddVirtual( cName AS String )  ModMethod( cName AS String, @MethodName(), nScope AS Numeric, lPersistent AS LOGICAL )  ModClsMethod( cName AS String, @MethodName(), nScope AS Numeric )  ModInline( cName AS String, bBlock AS CodeBlock, nScope AS Numeric, lPersistent AS LOGICAL )  SetOnError( @MethodName() )
+#line 85 "\Fwh1204\Include\FiveWin.Ch"
+   EXTERNAL GetProcAdd
+   EXTERNAL TActiveX
+
+
+
+
+extern errorsys
+#line 29 ".\Prg\Tblconv.prg"
+static oWndBrw
+
+static bEdit      := { | aTmp, aGet, dbfTblCnv, oBrw, bWhen, bValid, nMode | EdtRec( aTmp, aGet, dbfTblCnv, oBrw, bWhen, bValid, nMode ) }
+
+
+
+static dbfTblCnv
+
+
+
+
+
+
+static function OpenFiles()
+
+   local lOpen       := .T.
+   local oBlock      := ErrorBlock( {| oError | ApoloBreak( oError ) } )
+
+   BEGIN SEQUENCE
+
+      IF !lExistTable( cPatDat() + "TBLCNV.DBF" )
+         mkTblCnv()
+      end
+
+      dbUseArea( .T., ( cDriver() ), ( cPatDat() + "TBLCNV.DBF" ), ( cCheckArea( "TBLCNV", @dbfTblCnv ) ), if(.T. .OR. .F., !.F., NIL), .F.,, )
+      if !lAIS() ; ordListAdd( ( cPatDat() + "TBLCNV.CDX" ) ) ; else ; ordSetFocus( 1 ) ; end
+
+   RECOVER
+
+      msgStop( "Imposible abrir todas las bases de datos" )
+      CloseFiles()
+      lOpen          := .F.
+
+   end
+
+   ErrorBlock( oBlock )
+
+return ( lOpen )
+
+
+
+static function CloseFiles()
+
+   if oWndBrw <> nil
+      oWndBrw := nil
+   end
+
+   ( dbfTblCnv )->( dbCloseArea() )
+
+return .T.
+
+
+
+function TblCnv( oMenuItem, oWnd )
+
+   local nLevel
+
+   IIF( oMenuItem == nil, oMenuItem := "01016", ) ;
+   IIF( oWnd == nil, oWnd := oWnd(), ) ;
+
+    IF oWndBrw == NIL
+
+
+
+
+
+      nLevel            := nLevelUsr( oMenuItem )
+
+      if nAnd( nLevel, 1 ) <> 0
+         msgStop( "Acceso no permitido." )
+         return nil
+      end
+
+
+
+
+
+      if oWnd <> nil
+         SysRefresh(); oWnd:CloseAll(); SysRefresh()
+      end
+
+
+
+
+
+      if !OpenFiles()
+         return nil
+      end
+
+
+
+
+
+      AddMnuNext( "Factores de conversión", ProcName() )
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+      oWndBrw := TShell():New( 2, 10, 18, 70, "Factores de conversión",, oWnd,,, .F.,,, ( dbfTblCnv ),,,,, {"Código", "Nombre"}, {||WinAppRec( oWndBrw, bEdit, dbfTblCnv )}, {||WinEdtRec( oWndBrw, bEdit, dbfTblCnv )}, {||WinDelRec( oWndBrw, dbfTblCnv )}, {||WinDupRec( oWndBrw, bEdit, dbfTblCnv )}, nil, nLevel, "Tape_Measure2_16", ( 104 + ( 0 * 256 ) + ( 63 * 65536 ) ),,, .T. )
+
+      with object ( oWndBrw:AddXCol() )
+         :cHeader          := "Código"
+         :cSortOrder       := "cCodCnv"
+         :bEditValue       := {|| ( dbfTblCnv )->cCodCnv }
+         :nWidth           := 80
+         :bLClickHeader    := {| nMRow, nMCol, nFlags, oCol | oWndBrw:ClickOnHeader( oCol ) }
+      end
+
+      with object ( oWndBrw:AddXCol() )
+         :cHeader          := "Nombre"
+         :cSortOrder       := "cDetCnv"
+         :bEditValue       := {|| ( dbfTblCnv )->cDetCnv }
+         :nWidth           := 200
+         :bLClickHeader    := {| nMRow, nMCol, nFlags, oCol | oWndBrw:ClickOnHeader( oCol ) }
+      end
+
+      with object ( oWndBrw:AddXCol() )
+         :cHeader          := "Und. compra"
+         :bEditValue       := {|| ( dbfTblCnv )->cUndStk }
+         :nWidth           := 80
+      end
+
+      with object ( oWndBrw:AddXCol() )
+         :cHeader          := "Und. venta"
+         :bEditValue       := {|| ( dbfTblCnv )->cUndVta }
+         :nWidth           := 80
+      end
+
+      with object ( oWndBrw:AddXCol() )
+         :cHeader          := "Factor conversión"
+         :bEditValue       := {|| Trans( ( dbfTblCnv )->nFacCnv, "@E 999,999.999999" ) }
+         :nWidth           := 100
+         :nDataStrAlign    := 1
+         :nHeadStrAlign    := 1
+      end
+
+      oWndBrw:CreateXFromCode()
+
+
+
+
+
+      oWndBrw:NewAt( "BUS",,, {||( oWndBrw:SearchSetFocus() )}, "(B)uscar", "B",,,,, .F. )
+
+         oWndBrw:AddSeaBar()
+
+
+
+
+
+
+
+
+      oWndBrw:NewAt( "NEW",,, {||( oWndBrw:RecAdd() )}, "(A)ñadir", "A",,, 2,, .F. )
+
+
+
+
+
+
+
+        oWndBrw:NewAt( "DUP",,, {||( oWndBrw:RecDup() )}, "(D)uplicar", "D",,, 2,, .F. )
+
+
+
+
+
+
+
+        oWndBrw:NewAt( "EDIT",,, {||( oWndBrw:RecEdit() )}, "(M)odificar", "M",,, 4,, .F. )
+
+
+
+
+
+
+
+        oWndBrw:NewAt( "ZOOM",,, {||( WinZooRec( oWndBrw:oBrw, bEdit, dbfTblCnv ) )}, "(Z)oom", "Z",,, 8,, .F. )
+
+
+
+
+
+
+
+        oWndBrw:NewAt( "DEL",,, {||( oWndBrw:RecDel() )}, "(E)liminar", "E",,, 16,, .F. )
+
+
+
+
+
+
+
+
+      oWndBrw:NewAt( "IMP",,, {||( InfCnv():New( "Listado de factores de conversión" ):Play() )}, "(L)istado", "L",,, 32,, .F. )
+
+
+
+
+
+
+
+      oWndBrw:NewAt( "END",,, {||( oWndBrw:End() )}, "(S)alir", "S",,,,, .F. )
+
+      oWndBrw:Activate(, oWndBrw:bLClicked, oWndBrw:bRClicked, oWndBrw:bMoved, oWndBrw:bResized, oWndBrw:bPainted, oWndBrw:bKeyDown, oWndBrw:bInit,,,,,,,,, {|| ( CloseFiles() )},, oWndBrw:bLButtonUp )
+
+    ELSE
+
+        oWndBrw:SetFocus()
+
+    end
+
+RETURN NIL
+
+
+
+
+
+
+static function EdtRec( aTmp, aGet, dbfTblCnv, oBrw, bWhen, bValid, nMode )
+
+   local oDlg
+
+
+
+   oDlg = TDialog():New(,,,, LblTitle( nMode ) + "factores de conversión", "TBLCNV",, .F.,,,,, oBrw, .F.,,,,,, .F., )
+
+
+
+
+
+
+      aGet[ 1 ] := TGetHlp():ReDefine( 110, { | u | If( PCount()==0, aTmp[ 1 ], aTmp[ 1 ]:= u ) }, oDlg,,, {||    ( NotValid( aGet[ 1 ], dbfTblCnv ) .AND. !Empty( aTmp[ 1 ] ) )}, "N/W*",,,,, .F., {||     ( nMode == 1 .OR. nMode == 4 )},, .F., .F.,,,,,, nil,,, )
+
+
+
+
+
+      aGet[ 2 ] := TGetHlp():ReDefine( 120, { | u | If( PCount()==0, aTmp[ 2 ], aTmp[ 2 ]:= u ) }, oDlg,,,, "N/W*",,,,, .F., {||         ( nMode <> 3 )},, .F., .F.,,,,,, nil,,, )
+
+
+
+
+
+
+      TGetHlp():ReDefine( 130, { | u | If( PCount()==0, aTmp[ 3 ], aTmp[ 3 ]:= u ) }, oDlg,,,, "N/W*",,,,, .F., {||     ( nMode <> 3 )},, .F., .F.,,,,,, nil,,, )
+
+
+
+
+
+      TGetHlp():ReDefine( 140, { | u | If( PCount()==0, aTmp[ 4 ], aTmp[ 4 ]:= u ) }, oDlg,,,, "N/W*",,,,, .F., {||     ( nMode <> 3 )},, .F., .F.,,,,,, nil,,, )
+
+
+
+
+
+
+      TGetHlp():ReDefine( 150, { | u | If( PCount()==0, aTmp[ 5 ], aTmp[ 5 ]:= u ) },,, "@E 999,999.999999",, "N/W*",,,,, .F., {||     ( nMode <> 3 )},, .F., .T.,,,,,, nil,,, )
+
+
+
+
+      TButton():ReDefine( 1, {||( EndTrans( aTmp, aGet, dbfTblCnv, oBrw, nMode, oDlg ) )}, oDlg,,, .F., {||     ( nMode <> 3 )},,, .F. )
+
+
+
+
+
+      TButton():ReDefine( 2, {||( oDlg:end() )}, oDlg,,, .F.,,,, .T. )
+
+
+
+
+      TButton():ReDefine( 559, {||( ChmHelp( "Factores_de_conversion" ) )}, oDlg,,, .F.,,,, .F. )
+
+      if nMode <> 3
+         oDlg:AddFastKey( 116, {|| EndTrans( aTmp, aGet, dbfTblCnv, oBrw, nMode, oDlg ) } )
+      end
+
+      oDlg:AddFastKey ( 112, {|| ChmHelp( "Factores_de_conversion" ) } )
+
+      oDlg:bStart := {|| aGet[ 1 ]:SetFocus() }
+
+      oDlg:Activate( oDlg:bLClicked, oDlg:bMoved, oDlg:bPainted, .T.,,,, oDlg:bRClicked,,, )
+
+RETURN ( oDlg:nResult == 1 )
+
+
+
+Static Function EndTrans( aTmp, aGet, dbfTblCnv, oBrw, nMode, oDlg )
+
+   if nMode == 1 .OR. nMode == 4
+
+      if Empty( aTmp[ 1 ] )
+         MsgStop( "Código no puede estar vacío" )
+         aGet[ 1 ]:SetFocus()
+         return nil
+      end
+
+      if dbSeekInOrd( aTmp[ 1 ], "CCODCNV", dbfTblCnv )
+         MsgStop( "Código ya existe " + Rtrim( aTmp[ 1 ] ) )
+         return nil
+      end
+
+   end
+
+   if Empty( aTmp[ 2 ] )
+         MsgStop( "Nombre no puede estar vacío" )
+         aGet[ 2 ]:SetFocus()
+         return nil
+      end
+
+   WinGather( aTmp, aGet, dbfTblCnv, oBrw, nMode )
+
+Return ( oDlg:end( 1 ) )
+
+
+
+FUNCTION BrwTblCnv( oGet, dbfTblCnv, oGet2 )
+
+   local oBlock
+   local oError
+    local oDlg
+    local oBrw
+    local oGet1
+    local cGet1
+   local nOrd     := GetBrwOpt( "BrwTblCnv" )
+    local oCbxOrd
+   local aCbxOrd  := { "Código", "Nombre" }
+   local cCbxOrd
+   local nLevel   := nLevelUsr( "01016" )
+   local lClose   := .F.
+
+   nOrd           := Min( Max( nOrd, 1 ), len( aCbxOrd ) )
+   cCbxOrd        := aCbxOrd[ nOrd ]
+
+   oBlock            := ErrorBlock( {| oError | ApoloBreak( oError ) } )
+   BEGIN SEQUENCE
+
+   if dbfTblCnv == nil
+      dbUseArea( .T., ( cDriver() ), ( cPatDat() + "TBLCNV.DBF" ), ( cCheckArea( "TBLCNV", @dbfTblCnv ) ), if(.T. .OR. .F., !.F., NIL), .F.,, )
+      if !lAIS() ; ordListAdd( ( cPatDat() + "TBLCNV.CDX" ) ) ; else ; ordSetFocus( 1 ) ; end
+      lClose      := .T.
+   end
+
+   nOrd           := ( dbfTblCnv )->( OrdSetFocus( nOrd ) )
+
+   ( dbfTblCnv )->( dbGoTop() )
+
+   oDlg = TDialog():New(,,,, "Tablas de conversión", "HELPENTRY",, .F.,,,,,, .F.,,,,,, .F., )
+
+
+
+
+
+
+        oGet1 := TGetHlp():ReDefine( 104, { | u | If( PCount()==0, cGet1, cGet1:= u ) }, oDlg,,, {||    ( OrdClearScope( oBrw, dbfTblCnv ) )},,,,,, .F.,, {|nKey,nFlags,Self| ( AutoSeek( nKey, nFlags, Self, oBrw, dbfTblCnv ) ) }, .F., .F.,,,,,, nil, "FIND",, )
+
+
+
+
+
+
+        oCbxOrd := TComboBox():ReDefine( 102, { | u | If( PCount()==0, cCbxOrd, cCbxOrd:= u ) }, aCbxOrd, oDlg,,, {|Self|( ( dbfTblCnv )->( OrdSetFocus( oCbxOrd:nAt ) ), oBrw:Refresh(), oGet1:SetFocus() )},,,, .F.,,,,,, )
+
+      oBrw                 := IXBrowse():New( oDlg )
+
+      oBrw:bClrSel         := {|| { 0, ( 229 + ( 229 * 256 ) + ( 229 * 65536 ) ) } }
+      oBrw:bClrSelFocus    := {|| { 0, ( 167 + ( 205 * 256 ) + ( 240 * 65536 ) ) } }
+
+      oBrw:cAlias          := dbfTblCnv
+      oBrw:nMarqueeStyle   := 5
+      oBrw:cName           := "Browse.Tablas de conversión"
+
+      with object ( oBrw:AddCol() )
+         :cHeader          := "Código"
+         :cSortOrder       := "cCodCnv"
+         :bEditValue       := {|| ( dbfTblCnv )->cCodCnv }
+         :nWidth           := 80
+         :bLClickHeader    := {| nMRow, nMCol, nFlags, oCol | oCbxOrd:Set( oCol:cHeader ) }
+      end
+
+      with object ( oBrw:AddCol() )
+         :cHeader          := "Nombre"
+         :cSortOrder       := "cDetCnv"
+         :bEditValue       := {|| ( dbfTblCnv )->cDetCnv }
+         :nWidth           := 260
+         :bLClickHeader    := {| nMRow, nMCol, nFlags, oCol | oCbxOrd:Set( oCol:cHeader ) }
+      end
+
+      oBrw:bLDblClick      := {|| oDlg:end( 1 ) }
+      oBrw:bRClicked       := {| nRow, nCol, nFlags | oBrw:RButtonDown( nRow, nCol, nFlags ) }
+
+      oBrw:CreateFromResource( 105 )
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+        TButton():ReDefine( 1, {||( oDlg:end(1) )}, oDlg,,, .F.,,,, .F. )
+
+
+
+
+        TButton():ReDefine( 2, {||( oDlg:end() )}, oDlg,,, .F.,,,, .F. )
+
+
+
+
+
+        TButton():ReDefine( 500, {||( WinAppRec( oBrw, bEdit, dbfTblCnv ) )}, oDlg,,, .F., {||     nAnd( nLevel, 2 ) <> 0},,, .F. )
+
+
+
+
+
+        TButton():ReDefine( 501, {||( WinEdtRec( oBrw, bEdit, dbfTblCnv ) )}, oDlg,,, .F., {||     nAnd( nLevel, 4 ) <> 0},,, .F. )
+
+      oDlg:AddFastKey( 113,       {|| if( nAnd( nLevel, 2 ) <> 0, WinAppRec( oBrw, bEdit, dbfTblCnv ), ) } )
+      oDlg:AddFastKey( 114,       {|| if( nAnd( nLevel, 4 ) <> 0, WinEdtRec( oBrw, bEdit, dbfTblCnv ), ) } )
+      oDlg:AddFastKey( 116,       {|| oDlg:end( 1 ) } )
+      oDlg:AddFastKey( 13,   {|| oDlg:end( 1 ) } )
+
+      oDlg:bStart := {|| oBrw:Load() }
+
+   oDlg:Activate( oDlg:bLClicked, oDlg:bMoved, oDlg:bPainted, .T.,,,, oDlg:bRClicked,,, )
+
+   if oDlg:nResult == 1
+
+      oGet:cText( ( dbfTblCnv )->cCodCnv )
+      oGet:lValid()
+
+      if ValType( oGet2 ) == "O"
+         oGet2:cText( ( dbfTblCnv )->cDetCnv )
+      end
+
+   end
+
+   DestroyFastFilter( dbfTblCnv )
+
+   SetBrwOpt( "BrwTblCnv", ( dbfTblCnv )->( OrdNumber() ) )
+
+   RECOVER USING oError
+
+      msgStop( "Imposible abrir todas las bases de datos " + Chr(13)+Chr(10) + ErrorMessage( oError ) )
+
+   end
+
+   ErrorBlock( oBlock )
+
+   if lClose
+      ( dbfTblCnv )->( dbCloseArea() )
+   else
+      ( dbfTblCnv )->( OrdSetFocus( nOrd ) )
+   end
+
+   oGet:setFocus()
+
+RETURN ( .T. )
+
+
+
+FUNCTION cTblCnv( oGet, dbfTblCnv, oGet2, oGetCom, oGetVta )
+
+   local oBlock
+   local oError
+   local lClose   := .F.
+   local lValid   := .F.
+    local xValor    := oGet:varGet()
+
+   oBlock            := ErrorBlock( {| oError | ApoloBreak( oError ) } )
+   BEGIN SEQUENCE
+
+   IF dbfTblCnv == NIL
+      dbUseArea( .T., ( cDriver() ), ( cPatDat() + "TBLCNV.DBF" ), ( cCheckArea( "TBLCNV", @dbfTblCnv ) ), if(.T. .OR. .F., !.F., NIL), .F.,, )
+      if !lAIS() ; ordListAdd( ( cPatDat() + "TBLCNV.CDX" ) ) ; else ; ordSetFocus( 1 ) ; end
+      lClose = .T.
+    end
+
+   IF !(dbfTblCnv)->( dbSeek( xValor ) )
+
+      (dbfTblCnv)->( dbGoBottom() )
+      (dbfTblCnv)->( dbSkip() )
+
+      if !Empty( xValor )
+         msgStop( "Tabla de conversión no encontrada" )
+         lValid   := .F.
+      else
+         lValid   := .T.
+      end
+
+   ELSE
+
+      lValid   := .T.
+
+   end
+
+   oGet:cText( (dbfTblCnv)->CCODCNV )
+
+   IF oGet2 <> NIL
+      oGet2:cText( (dbfTblCnv)->CDETCNV )
+   end
+
+   IF oGetCom <> NIL
+      oGetCom:cText( (dbfTblCnv)->CUNDSTK )
+   end
+
+   IF oGetVta <> NIL
+      oGetVta:cText( (dbfTblCnv)->CUNDVTA )
+   end
+
+   RECOVER USING oError
+
+      msgStop( "Imposible abrir todas las bases de datos de agentes" + Chr(13)+Chr(10) + ErrorMessage( oError ) )
+
+   end
+
+   ErrorBlock( oBlock )
+
+    IF lClose
+      (dbfTblCnv)->( dbCloseArea() )
+    end
+
+   dbfTblCnv := NIL
+
+RETURN lValid
+
+
+
+
+
+
+FUNCTION nValTblCnv( cCod, dbfArt, dbfTblCnv )
+
+   local nRec     := ( dbfArt )->( Recno() )
+   local nValCnv  := 1
+
+   if !Empty( dbfArt ) .AND. ( dbfArt )->( Used() )
+      RETURN ( nValCnv )
+   end
+
+   if !Empty( dbfTblCnv ) .AND. ( dbfTblCnv )->( Used() )
+      RETURN ( nValCnv )
+   end
+
+   if dbSeekInOrd( cCod, "Codigo", dbfArt )
+      if ( dbfTblCnv )->( dbSeek( ( dbfArt )->cFacCnv ) ) .AND. ( dbfArt )->lFacCnv
+         nValCnv  := ( dbfTblCnv )->nFacCnv
+      end
+   end
+
+   ( dbfArt )->( dbGoTo( nRec ) )
+
+RETURN ( nValCnv )
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+FUNCTION mkTblCnv( cPath, lAppend, cPathOld )
+
+   local dbf
+
+   IIF( cPath == nil, cPath := cPatDat(), ) ;
+   IIF( lAppend == nil, lAppend := .F., ) ;
+
+   if !lExistTable( cPath + "TblCnv.Dbf" )
+      dbCreate( cPath + "TblCnv.Dbf", aSqlStruct( aItmTbl() ), cDriver() )
+   end
+
+   if lAppend .AND. lIsDir( cPathOld )
+
+      dbUseArea( .T., cDriver(), cPath + "TblCnv.Dbf", cCheckArea( "TblCnv.Dbf", @dbf ), .F. )
+      if !( dbf )->( neterr() )
+         ( dbf )->( __dbApp( cPathOld + "TblCnv.Dbf" ) )
+         (   dbf )->( dbCloseArea() )
+      end
+
+   end
+
+   rxTblCnv( cPath )
+
+RETURN .T.
+
+
+
+FUNCTION rxTblCnv( cPath, oMeter )
+
+   local dbf
+
+   IIF( cPath == nil, cPath := cPatDat(), ) ;
+
+   if !lExistTable( cPath + "TBLCNV.DBF" )
+      mkTblCnv( cPath )
+   end
+
+   dbUseArea( .T., cDriver(), cPath + "TBLCNV.DBF", cCheckArea( "TBLCNV", @dbf ), .F. )
+   if !( dbf )->( neterr() )
+      ( dbf )->( __dbPack() )
+
+      ( dbf )->( ordCondSet("!Deleted()", {||!Deleted()}  ) )
+      ( dbf )->( ordCreate( cPath + "TBLCNV.CDX", "CCODCNV", "Field->CCODCNV", {|| Field->CCODCNV } ) )
+
+      ( dbf )->( ordCondSet("!Deleted()", {||!Deleted()}  ) )
+      ( dbf )->( ordCreate( cPath + "TBLCNV.CDX", "CDETCNV", "Upper( Field->cDetCnv )", {|| Upper( Field->cDetCnv ) } ) )
+
+      ( dbf )->( dbCloseArea() )
+   else
+      msgStop( "Imposible abrir en modo exclusivo la tabla de factores de conversión" )
+   end
+
+RETURN NIL
+
+
+
+function aItmTbl()
+
+   local aItmTbl  :=  {}
+
+   aAdd( aItmTbl, { "CCODCNV",   "C",  2,  0, "Código de la tabla de conversión" ,  "",  "", "( cDbf )"} )
+   aAdd( aItmTbl, { "CDETCNV",   "C", 30,  0, "Detalle de la tabla de conversión" , "",  "", "( cDbf )"} )
+   aAdd( aItmTbl, { "CUNDSTK",   "C",  4,  0, "Literal para unidades de stocks" ,   "",  "", "( cDbf )"} )
+   aAdd( aItmTbl, { "CUNDVTA",   "C",  4,  0, "Literal para unidades de venta" ,    "",  "", "( cDbf )"} )
+   aAdd( aItmTbl, { "NFACCNV",   "N", 16,  6, "Factor de conversión" ,              "",  "", "( cDbf )"} )
+
+return ( aItmTbl )

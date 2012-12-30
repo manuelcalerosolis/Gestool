@@ -1,0 +1,453 @@
+#line 112 "hbclass.ch"
+   DYNAMIC DivertConstructorCall
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+DECLARE HBClass  New( cName AS String, OPTIONAL SuperParams ) AS CLASS HBClass  Create() AS Object  Instance() AS Object  AddClsMethod( cName AS String, @MethodName(), nScope AS Numeric, n2 AS Numeric, n3 AS Numeric )  AddDelegate( cName AS String, cDelegate AS String, cObject AS String, nScope AS Numeric, lPersistent AS LOGICAL )  AddMultiClsData( cType AS String, uVal, nScope AS Numeric, aDatas AS Array OF String )  AddMultiData( cType AS String, uVal, nScope AS Numeric, aDatas AS Array OF String, x AS LOGICAL, lPer AS LOGICAL )  AddMethod( cName AS String, @MethodName(), nScope AS Numeric, lPersistent AS LOGICAL )  AddInLine( cName AS String, bBlock AS CodeBlock, nScope AS Numeric, lPersistent AS LOGICAL )  AddVirtual( cName AS String )  ModMethod( cName AS String, @MethodName(), nScope AS Numeric, lPersistent AS LOGICAL )  ModClsMethod( cName AS String, @MethodName(), nScope AS Numeric )  ModInline( cName AS String, bBlock AS CodeBlock, nScope AS Numeric, lPersistent AS LOGICAL )  SetOnError( @MethodName() )
+#line 85 "\Fwh1204\Include\FiveWin.Ch"
+   EXTERNAL GetProcAdd
+   EXTERNAL TActiveX
+
+
+
+
+extern errorsys
+#line 10 ".\Prg\Ttrans.prg"
+static dbfTranspor
+
+
+
+_HB_CLASS TTrans ; UTILITY FUNCTION TTrans(...); static s_oClass ; local oClassInstance ; local nScope ; nScope := 1 ; if s_oClass == NIL ; s_oClass := IIF(.F.,, HBClass():New( "TTrans" , {TMANT():classh} ) ) ; ;
+
+   _HB_MEMBER { cPouDiv} ; IIF( !.F., s_oClass:AddMultiData(,, nScope + IIF( .F., 32, 0 ), { "cPouDiv" }, .F., .F. ), )
+
+   _HB_MEMBER { cMru} ; IIF( !.F., s_oClass:AddMultiData(, "Truck_Blue_16", nScope + IIF( .F., 32, 0 ), { "cMru" }, .F., .F. ), )
+
+   _HB_MEMBER { cBitmap} ; IIF( !.F., s_oClass:AddMultiData(, ( 104 + ( 0 * 256 ) + ( 63 * 65536 ) ), nScope + IIF( .F., 32, 0 ), { "cBitmap" }, .F., .F. ), )
+
+   _HB_MEMBER Create( cPath) AS CLASS TTrans; IIF( .F., s_oClass:ModMethod( "Create", @TTrans_Create(), nScope + IIF( .T., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ), s_oClass:AddMethod( "Create", @TTrans_Create(), nScope + IIF( .T., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ));
+
+   _HB_MEMBER New( cPath, oWndParent, oMenuItem) AS CLASS TTrans; IIF( .F., s_oClass:ModMethod( "New", @TTrans_New(), nScope + IIF( .T., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ), s_oClass:AddMethod( "New", @TTrans_New(), nScope + IIF( .T., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ));
+
+   _HB_MEMBER DefineFiles(); IIF( .F., s_oClass:ModMethod( "DefineFiles", @TTrans_DefineFiles(), nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ), s_oClass:AddMethod( "DefineFiles", @TTrans_DefineFiles(), nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ));
+
+   _HB_MEMBER OpenFiles( lExclusive); IIF( .F., s_oClass:ModMethod( "OpenFiles", @TTrans_OpenFiles(), nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ), s_oClass:AddMethod( "OpenFiles", @TTrans_OpenFiles(), nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ));
+   _HB_MEMBER OpenService(lExclusive); IIF( .F., s_oClass:ModMethod( "OpenService", @TTrans_OpenFiles(), nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ) ), s_oClass:AddMethod( "OpenService", @TTrans_OpenFiles(), nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ) ) );
+
+   _HB_MEMBER Resource( nMode); IIF( .F., s_oClass:ModMethod( "Resource", @TTrans_Resource(), nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ), s_oClass:AddMethod( "Resource", @TTrans_Resource(), nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ));
+
+   _HB_MEMBER cBrwose( oGet); IIF( .F., s_oClass:ModMethod( "cBrwose", @TTrans_cBrwose(), nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ), s_oClass:AddMethod( "cBrwose", @TTrans_cBrwose(), nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ));
+
+   _HB_MEMBER cNombre( cCodTrn); IIF( .F., s_oClass:ModMethod( "cNombre", @TTrans_cNombre(), nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ), s_oClass:AddMethod( "cNombre", @TTrans_cNombre(), nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ));
+
+   _HB_MEMBER lPreSave( nMode); IIF( .F., s_oClass:ModMethod( "lPreSave", @TTrans_lPreSave(), nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ), s_oClass:AddMethod( "lPreSave", @TTrans_lPreSave(), nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ));
+
+; IF .F. ; __clsActive(s_oClass:hClass) ; s_oClass:Refresh() ; ELSE ; s_oClass:Create() ; END ; oClassInstance := __clsInst( s_oClass:hClass ) ; IF __ObjHasMsg( oClassInstance, "InitClass" ); oClassInstance:InitClass( hb_aParams() ) ; END ; ELSE ; oClassInstance := __clsInst( s_oClass:hClass ) ; END ; IF PCount() > 0 ; DIVERT TO (@DivertConstructorCall()) OF s_oClass ; END ; RETURN oClassInstance AS CLASS TTrans ;
+
+
+
+UTILITY STATIC function TTrans_Create( cPath) ; local Self AS CLASS TTrans := QSelf() AS CLASS TTrans
+
+   IIF( cPath == nil, cPath := cPatCli(), ) ;
+
+   ::cPath           := cPath
+   ::oDbf            := nil
+
+RETURN ( Self )
+
+
+
+UTILITY STATIC function TTrans_New( cPath, oWndParent, oMenuItem) ; local Self AS CLASS TTrans := QSelf() AS CLASS TTrans
+
+   IIF( cPath == nil, cPath := cPatCli(), ) ;
+   IIF( oWndParent == nil, oWndParent := oWnd(), ) ;
+
+   if oMenuItem <> nil
+      ::nLevel          := nLevelUsr( oMenuItem )
+   else
+      ::nLevel          := 1
+   end
+
+   ::cPath              := cPath
+   ::oWndParent         := oWndParent
+   ::oDbf               := nil
+
+   ::cPouDiv            := cPouDiv( cDivEmp() )
+
+   ::lAutoButtons       := .T.
+   ::lCreateShell       := .F.
+
+RETURN ( Self )
+
+
+
+UTILITY STATIC function TTrans_OpenFiles(lExclusive) ; local Self AS CLASS TTrans := QSelf() AS CLASS TTrans
+
+   local lOpen          := .T.
+   local oError
+   local oBlock         := ErrorBlock( {| oError | ApoloBreak( oError ) } )
+
+   IIF( lExclusive == nil, lExclusive := .F., ) ;
+
+   BEGIN SEQUENCE
+
+      if Empty( ::oDbf )
+
+         ::DefineFiles()
+
+      end
+
+      ::oDbf:Activate( .F., !( lExclusive ) )
+
+  RECOVER USING oError
+
+      msgStop( ErrorMessage( oError ), "Imposible abrir las bases de datos de transportistas" )
+
+      ::CloseFiles()
+
+      lOpen             := .F.
+
+   end
+
+   ErrorBlock( oBlock )
+
+RETURN ( lOpen )
+
+
+
+UTILITY STATIC function TTrans_DefineFiles( cPath, cDriver) ; local Self AS CLASS TTrans := QSelf() AS CLASS TTrans
+
+   IIF( cPath == nil, cPath := ::cPath, ) ;
+   IIF( cDriver == nil, cDriver := cDriver(), ) ;
+
+   ::oDbf := DbfServer( "Transpor.Dbf", "Transpor" ):New( "Transpor.Dbf", "Transpor", ( cDriver ), "Transportistas", ( cPath ) )
+
+      ::oDbf:AddField( "cCodTrn", "C", 9, 0,,,,, "Código", .F., 60, .F., {} )
+      ::oDbf:AddField( "cNomTrn", "C", 50, 0,,,,, "Nombre", .F., 200, .F., {} )
+      ::oDbf:AddField( "cDirTrn", "C", 50, 0,,,,, "Domicilio", .F., 180, .F., {} )
+      ::oDbf:AddField( "cLocTrn", "C", 40, 0,,,,, "Localidad", .F., 180, .F., {} )
+      ::oDbf:AddField( "cCdpTrn", "C", 5, 0,,,,, "Código postal", .F., 60, .F., {} )
+      ::oDbf:AddField( "cPrvTrn", "C", 24, 0,,,,, "Provincia", .F., 80, .F., {} )
+      ::oDbf:AddField( "cTlfTrn", "C", 12, 0,,,,, "Teléfono", .F., 60, .F., {} )
+      ::oDbf:AddField( "cMovTrn", "C", 12, 0,,,,, "Móvil", .F., 60, .F., {} )
+      ::oDbf:AddField( "cFaxTrn", "C", 12, 0,,,,, "Fax", .F., 60, .F., {} )
+      ::oDbf:AddField( "nKgsTrn", "N", 16, 6, MasUnd(),,,, "Tara", .T., 100, .F., {} )
+      ::oDbf:AddField( "cMatTrn", "C", 20, 0,,,,, "Matrícula", .F.,, .T., {} )
+      ::oDbf:AddField( "cDniTrn", "C", 15, 0,,,,, "DNI Transportista", .F.,, .T., {} )
+
+      ::oDbf:AddIndex( "cCodTrn", "Transpor.Cdx", "cCodTrn",,, .F., .F., "Código",,, .T., .F. )
+      ::oDbf:AddIndex( "cNomTrn", "Transpor.Cdx", "Upper( cNomTrn )",,, .F., .F., "Nombre",,, .T., .F. )
+
+
+
+RETURN ( ::oDbf )
+
+
+
+UTILITY STATIC function TTrans_Resource( nMode) ; local Self AS CLASS TTrans := QSelf() AS CLASS TTrans
+
+    local oDlg
+   local oGet
+
+   oDlg = TDialog():New(,,,, LblTitle( nMode ) + "transportistas", "TRANSP",, .F.,,,,,, .F.,,,,,, .F., )
+
+
+
+
+
+
+      oGet := TGetHlp():ReDefine( 100, { | u | If( PCount()==0, ::oDbf:cCodTrn, ::oDbf:cCodTrn:= u ) }, oDlg,, "@!", {||    NotValid( oGet, ::oDbf:cAlias )},,,,,, .T., {||     ( nMode == 1 .OR. nMode == 4 )},, .F., .F.,,,,,, nil,,, )
+
+
+
+
+      TGetHlp():ReDefine( 110, { | u | If( PCount()==0, ::oDbf:cNomTrn, ::oDbf:cNomTrn:= u ) }, oDlg,,,,,,,,, .T., {||     ( nMode <> 3 )},, .F., .F.,,,,,, nil,,, )
+
+
+
+
+      TGetHlp():ReDefine( 200, { | u | If( PCount()==0, ::oDbf:cDniTrn, ::oDbf:cDniTrn:= u ) }, oDlg,,,,,,,,, .T., {||     ( nMode <> 3 )},, .F., .F.,,,,,, nil,,, )
+
+
+
+
+
+      TGetHlp():ReDefine( 120, { | u | If( PCount()==0, ::oDbf:cDirTrn, ::oDbf:cDirTrn:= u ) }, oDlg,,,,,,,,, .T., {||     ( nMode <> 3 )},, .F., .T.,,,,,, nil,,, )
+
+
+
+
+      TGetHlp():ReDefine( 130, { | u | If( PCount()==0, ::oDbf:cLocTrn, ::oDbf:cLocTrn:= u ) }, oDlg,,,,,,,,, .T., {||     ( nMode <> 3 )},, .F., .F.,,,,,, nil,,, )
+
+
+
+
+      TGetHlp():ReDefine( 140, { | u | If( PCount()==0, ::oDbf:cPrvTrn, ::oDbf:cPrvTrn:= u ) }, oDlg,,,,,,,,, .T., {||     ( nMode <> 3 )},, .F., .F.,,,,,, nil,,, )
+
+
+
+
+      TGetHlp():ReDefine( 150, { | u | If( PCount()==0, ::oDbf:cCdpTrn, ::oDbf:cCdpTrn:= u ) }, oDlg,,,,,,,,, .T., {||     ( nMode <> 3 )},, .F., .F.,,,,,, nil,,, )
+
+
+
+
+      TGetHlp():ReDefine( 160, { | u | If( PCount()==0, ::oDbf:cTlfTrn, ::oDbf:cTlfTrn:= u ) }, oDlg,,,,,,,,, .T., {||     ( nMode <> 3 )},, .F., .F.,,,,,, nil,,, )
+
+
+
+
+      TGetHlp():ReDefine( 170, { | u | If( PCount()==0, ::oDbf:cMovTrn, ::oDbf:cMovTrn:= u ) }, oDlg,,,,,,,,, .T., {||     ( nMode <> 3 )},, .F., .F.,,,,,, nil,,, )
+
+
+
+
+      TGetHlp():ReDefine( 180, { | u | If( PCount()==0, ::oDbf:cFaxTrn, ::oDbf:cFaxTrn:= u ) }, oDlg,,,,,,,,, .T., {||     ( nMode <> 3 )},, .F., .F.,,,,,, nil,,, )
+
+
+
+
+
+      TGetHlp():ReDefine( 190, { | u | If( PCount()==0, ::oDbf:nKgsTrn, ::oDbf:nKgsTrn:= u ) }, oDlg,, ( MasUnd() ),,,,,,, .T., {||     ( nMode <> 3 )},, .F., .F.,,,,,, nil,,, )
+
+
+
+
+      TGetHlp():ReDefine( 210, { | u | If( PCount()==0, ::oDbf:cMatTrn, ::oDbf:cMatTrn:= u ) }, oDlg,,,,,,,,, .T., {||     ( nMode <> 3 )},, .F., .F.,,,,,, nil,,, )
+
+
+
+
+
+      TButton():ReDefine( 1, {||( if( ::lPreSave( nMode ), oDlg:end( 1 ), ) )}, oDlg,,, .F., {||         ( nMode <> 3 )},,, .F. )
+
+
+
+
+
+        TButton():ReDefine( 2, {||( oDlg:end() )}, oDlg,,, .F.,,,, .T. )
+
+
+
+
+      TButton():ReDefine( 9, {||( ChmHelp( "Transportistas" ) )}, oDlg,,, .F.,,,, .F. )
+
+   if nMode <> 3
+      oDlg:AddFastKey( 116, {|| if( ::lPreSave( nMode ), oDlg:end( 1 ), ) } )
+   end
+
+   oDlg:AddFastKey ( 112, {|| ChmHelp( "Transportistas" ) } )
+
+   oDlg:bStart := { || oGet:SetFocus() }
+
+   oDlg:Activate( oDlg:bLClicked, oDlg:bMoved, oDlg:bPainted, .T.,,,, oDlg:bRClicked,,, )
+
+RETURN ( oDlg:nResult == 1 )
+
+
+
+UTILITY STATIC function TTrans_lPreSave( nMode) ; local Self AS CLASS TTrans := QSelf() AS CLASS TTrans
+
+   if Empty( ::oDbf:cCodTrn )
+      MsgStop( "El código del transportista no puede estar vacío." )
+      Return .F.
+   end
+
+   if ( nMode == 1 .OR. nMode == 4 ) .AND. ::oDbf:SeekInOrd( ::oDbf:cCodTrn, "CCODTRN" )
+      MsgStop( "Código ya existe " + Rtrim( ::oDbf:cCodTrn ) )
+      Return .F.
+   end
+
+   if Empty( ::oDbf:cNomTrn )
+      MsgStop( "El nombre del transportista no puede estar vacío." )
+      Return .F.
+   end
+
+Return .T.
+
+
+
+UTILITY STATIC function TTrans_cBrwose( oGet) ; local Self AS CLASS TTrans := QSelf() AS CLASS TTrans
+
+   local n
+   local cCaption
+   local cAlias
+   local cField
+   local uOrden   := "cNomTrn"
+   local aSizes   := {}
+   local aOrd     := {}
+   local aCampos  := {}
+   local aTitulos := {}
+   local bAlta    := {|| ::Append() }
+   local bEdit    := {|| ::Edit()   }
+   local bZoom    := {|| ::Zoom()   }
+
+   cCaption       := ::oDbf:cComment
+   cAlias         := ::oDbf:cAlias
+   cField         := "cCodTrn"
+
+   for n := 1 to ::oDbf:FCount()
+
+      if !::oDbf:aTField[ n ]:lHide
+
+         aAdd( aCampos, FieldWBlock( ::oDbf:aTField[ n ]:cName, ::oDbf:nArea ) )
+         aAdd( aTitulos, ::oDbf:aTField[ n ]:cComment )
+         aAdd( aSizes, ::oDbf:aTField[ n ]:nColSize )
+
+      endif
+
+   next
+
+   for n := 1 to len( ::oDbf:aTIndex )
+      aAdd( aOrd, ::oDbf:aTIndex[ n ]:cComment )
+   next
+
+
+
+   ::oBuscar      := TBuscar():New( cCaption, cAlias, uOrden, cField, aOrd, aCampos, aTitulos, aSizes, bAlta, bEdit, bZoom )
+
+   ::oBuscar:Activate()
+
+   if oGet <> nil
+      oGet:cText( ::oBuscar:Getfield() )
+      oGet:lValid()
+   end
+
+RETURN nil
+
+
+
+UTILITY STATIC function TTrans_cNombre( cCodTrn) ; local Self AS CLASS TTrans := QSelf() AS CLASS TTrans
+
+   local cNomTrn  := ""
+
+   ::oDbf:GetStatus()
+   ::oDbf:OrdSetFocus( "cCodTrn" )
+
+   if ::oDbf:Seek( cCodtrn )
+      cNomTrn     := ::oDbf:cNomTrn
+   end
+
+   ::oDbf:SetStatus()
+
+RETURN ( cNomTrn )
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+FUNCTION EdtTrans( cCodTrans )
+
+   local nLevel         := nLevelUsr( "01045" )
+   local oTrans
+
+   if nAnd( nLevel, 1 ) <> 0 .OR. nAnd( nLevel, 4 ) == 0
+      msgStop( "Acceso no permitido." )
+      return .T.
+   end
+
+   oTrans            := TTrans():Create( cPatCli() )
+
+   if oTrans:OpenFiles()
+
+      if oTrans:oDbf:SeekInOrd( cCodTrans, "cCodTrn" )
+
+         oTrans:Edit()
+
+      end
+
+      oTrans:CloseFiles()
+
+   end
+
+   oTrans:End()
+
+RETURN .T.
+
+
+
+_HB_CLASS pdaTransSenderReciver ; UTILITY FUNCTION pdaTransSenderReciver(...); static s_oClass ; local oClassInstance ; local nScope ; nScope := 1 ; if s_oClass == NIL ; s_oClass := IIF(.F.,, HBClass():New( "pdaTransSenderReciver" , { HBObject():Classh } ) ) ;
+
+   _HB_MEMBER CreateData(); IIF( .F., s_oClass:ModMethod( "CreateData", @pdaTransSenderReciver_CreateData(), nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ), s_oClass:AddMethod( "CreateData", @pdaTransSenderReciver_CreateData(), nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ));
+
+; IF .F. ; __clsActive(s_oClass:hClass) ; s_oClass:Refresh() ; ELSE ; s_oClass:Create() ; END ; oClassInstance := __clsInst( s_oClass:hClass ) ; IF __ObjHasMsg( oClassInstance, "InitClass" ); oClassInstance:InitClass( hb_aParams() ) ; END ; ELSE ; oClassInstance := __clsInst( s_oClass:hClass ) ; END ; IF PCount() > 0 ; DIVERT TO (@DivertConstructorCall()) OF s_oClass ; END ; RETURN oClassInstance AS CLASS pdaTransSenderReciver ;
+
+
+
+UTILITY STATIC function pdaTransSenderReciver_CreateData( oPgrActual, oSayStatus, cPatPreVenta) ; local Self AS CLASS pdaTransSenderReciver := QSelf() AS CLASS pdaTransSenderReciver
+
+   local pdaTranspor
+   local pcTranspor
+   local lExist      := .F.
+   local cFileName
+   local cPatPc      := if( Empty( cPatPreVenta ), cPatPc(), cPatPreVenta )
+
+   dbUseArea( .T., ( cDriver() ), ( cPatCli() + "Transpor.Dbf" ), ( cCheckArea( "Transpor", @pdaTranspor ) ), if(.T. .OR. .F., !.F., NIL), .F.,, )
+   if !lAIS() ; ordListAdd( ( cPatCli() + "Transpor.Cdx" ) ) ; else ; ordSetFocus( 1 ) ; end
+
+   dbUseArea( .T., cDriver(), cPatPc + "Transpor.Dbf", cCheckArea( "Transpor", @pcTranspor ), .T. )
+   ( pcTranspor )->( ordListAdd( cPatPc + "Transpor.Cdx" ) )
+
+   if !Empty( oPgrActual )
+      oPgrActual:SetRange( 0, ( pcTranspor )->( OrdKeyCount() ) )
+   end
+
+   ( pcTranspor )->( dbGoTop() )
+   while !( pcTranspor )->( eof() )
+
+      if ( pdaTranspor )->( dbSeek( ( pcTranspor )->cCodTrn ) )
+         dbPass( pcTranspor, pdaTranspor, .F. )
+      else
+         dbPass( pcTranspor, pdaTranspor, .T. )
+      end
+
+      ( pcTranspor )->( dbSkip() )
+
+      if !Empty( oSayStatus )
+         oSayStatus:SetText( "Sincronizando transportistas " + Alltrim( Str( ( pcTranspor )->( OrdKeyNo() ) ) ) + " de " + Alltrim( Str( ( pcTranspor )->( OrdKeyCount() ) ) ) )
+      end
+
+      SysRefresh()
+
+      if !Empty( oPgrActual )
+         oPgrActual:SetPos( ( pcTranspor )->( OrdKeyNo() ) )
+      end
+
+      SysRefresh()
+
+   end
+
+   ( pcTranspor )->( dbCloseArea() )
+   ( pdaTranspor )->( dbCloseArea() )
+
+Return ( Self )

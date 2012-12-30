@@ -1,0 +1,1642 @@
+#line 112 "hbclass.ch"
+   DYNAMIC DivertConstructorCall
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+DECLARE HBClass  New( cName AS String, OPTIONAL SuperParams ) AS CLASS HBClass  Create() AS Object  Instance() AS Object  AddClsMethod( cName AS String, @MethodName(), nScope AS Numeric, n2 AS Numeric, n3 AS Numeric )  AddDelegate( cName AS String, cDelegate AS String, cObject AS String, nScope AS Numeric, lPersistent AS LOGICAL )  AddMultiClsData( cType AS String, uVal, nScope AS Numeric, aDatas AS Array OF String )  AddMultiData( cType AS String, uVal, nScope AS Numeric, aDatas AS Array OF String, x AS LOGICAL, lPer AS LOGICAL )  AddMethod( cName AS String, @MethodName(), nScope AS Numeric, lPersistent AS LOGICAL )  AddInLine( cName AS String, bBlock AS CodeBlock, nScope AS Numeric, lPersistent AS LOGICAL )  AddVirtual( cName AS String )  ModMethod( cName AS String, @MethodName(), nScope AS Numeric, lPersistent AS LOGICAL )  ModClsMethod( cName AS String, @MethodName(), nScope AS Numeric )  ModInline( cName AS String, bBlock AS CodeBlock, nScope AS Numeric, lPersistent AS LOGICAL )  SetOnError( @MethodName() )
+#line 85 "\Fwh1204\Include\FiveWin.Ch"
+   EXTERNAL GetProcAdd
+   EXTERNAL TActiveX
+
+
+
+
+extern errorsys
+#line 11 ".\Prg\SalaVta.prg"
+_HB_CLASS TSalaVenta ; UTILITY FUNCTION TSalaVenta(...); static s_oClass ; local oClassInstance ; local nScope ; nScope := 1 ; if s_oClass == NIL ; s_oClass := IIF(.F.,, HBClass():New( "TSalaVenta" , {TMasDet():classh} ) ) ; ;
+
+   _HB_MEMBER { cMru} ; IIF( !.F., s_oClass:AddMultiData(, "Cup_16", nScope + IIF( .F., 32, 0 ), { "cMru" }, .F., .F. ), )
+   _HB_MEMBER { cBitmap} ; IIF( !.F., s_oClass:AddMultiData(, "WebTopBlack", nScope + IIF( .F., 32, 0 ), { "cBitmap" }, .F., .F. ), )
+
+
+
+
+
+
+
+
+
+
+   _HB_MEMBER {AS ARRAY aResource} ; IIF( !.F., s_oClass:AddMultiClsData("ARRAY", {  "BEER_BOTTLE_16"     , "BEER_GLASS_16"      , "WINE_RED_BOTTLE_16" , "WINE_RED_GLASS_16"  , "WINE_WHITE_GLASS_16", "LEMONADE_BOTTLE_16" , "COCKTAIL_16"        , "ICECREAM_16"        , "FISH_16"            , "PIG_16"             }, nScope + IIF( .F., 32, 0 ) + 64, { "aResource" }, .F. ), )
+
+
+
+
+
+
+
+
+
+
+   _HB_MEMBER {AS ARRAY aBigResource} ; IIF( !.F., s_oClass:AddMultiClsData("ARRAY", {   "BEER_BOTTLE_32"     , "BEER_GLASS_32"      , "WINE_RED_BOTTLE_32" , "WINE_RED_GLASS_32"  , "WINE_WHITE_GLASS_32", "LEMONADE_BOTTLE_32" , "COCKTAIL_32"        , "ICECREAM_32"        , "FISH_32"            , "PIG_32"             }, nScope + IIF( .F., 32, 0 ) + 64, { "aBigResource" }, .F. ), )
+
+
+
+
+
+
+
+
+
+
+   _HB_MEMBER {AS ARRAY aImagen} ; IIF( !.F., s_oClass:AddMultiClsData("ARRAY", {   "Botella cerveza"    , "Cerveza barril"     , "Botella de tinto"   , "Copa de tinto"      , "Copa de blanco"     , "Botella de limonada", "Cocktail"           , "Helado"             , "Pescado"            , "Carne"              }, nScope + IIF( .F., 32, 0 ) + 64, { "aImagen" }, .F. ), )
+
+
+
+
+
+
+   _HB_MEMBER {AS ARRAY aPrecio} ; IIF( !.F., s_oClass:AddMultiData( "ARRAY", {   uFieldEmpresa( "cTxtTar1", "Precio 1" ), uFieldEmpresa( "cTxtTar2", "Precio 2" ), uFieldEmpresa( "cTxtTar3", "Precio 3" ), uFieldEmpresa( "cTxtTar4", "Precio 4" ), uFieldEmpresa( "cTxtTar5", "Precio 5" ), uFieldEmpresa( "cTxtTar6", "Precio 6" ) }, nScope + IIF( .F., 32, 0 ), { "aPrecio" }, .F., .F. ), )
+
+   _HB_MEMBER { oDlgSalaVenta} ; IIF( !.F., s_oClass:AddMultiClsData(,, nScope + IIF( .F., 32, 0 ) + 64, { "oDlgSalaVenta" }, .F. ), )
+
+   _HB_MEMBER {AS ARRAY aSalas} ; IIF( !.F., s_oClass:AddMultiClsData("ARRAY", {}, nScope + IIF( .F., 32, 0 ) + 64, { "aSalas" }, .F. ), )
+   _HB_MEMBER {AS ARRAY aTikets} ; IIF( !.F., s_oClass:AddMultiClsData("ARRAY", {}, nScope + IIF( .F., 32, 0 ) + 64, { "aTikets" }, .F. ), )
+   _HB_MEMBER { oGenerico} ; IIF( !.F., s_oClass:AddMultiClsData(,, nScope + IIF( .F., 32, 0 ) + 64, { "oGenerico" }, .F. ), )
+   _HB_MEMBER { oLlevar} ; IIF( !.F., s_oClass:AddMultiClsData(,, nScope + IIF( .F., 32, 0 ) + 64, { "oLlevar" }, .F. ), )
+
+   _HB_MEMBER { oSalon} ; IIF( !.F., s_oClass:AddMultiData(,, nScope + IIF( .F., 32, 0 ), { "oSalon" }, .F., .F. ), )
+
+   _HB_MEMBER {AS LOGIC lMinimize} ; IIF( !.F., s_oClass:AddMultiData( "LOGIC", .F., nScope + IIF( .F., 32, 0 ), { "lMinimize" }, .F., .F. ), )
+   _HB_MEMBER { lPuntosVenta} ; IIF( !.F., s_oClass:AddMultiData(,, nScope + IIF( .F., 32, 0 ), { "lPuntosVenta" }, .F., .F. ), )
+   _HB_MEMBER { cInitialSala} ; IIF( !.F., s_oClass:AddMultiData(,, nScope + IIF( .F., 32, 0 ), { "cInitialSala" }, .F., .F. ), )
+
+   _HB_MEMBER {AS OBJECT oDetSalaVta} ; IIF( !.F., s_oClass:AddMultiData( "OBJECT",, nScope + IIF( .F., 32, 0 ), { "oDetSalaVta" }, .F., .F. ), )
+
+   _HB_MEMBER {AS NUMERIC nTarifa} ; IIF( !.F., s_oClass:AddMultiData( "NUMERIC", 1, nScope + IIF( .F., 32, 0 ), { "nTarifa" }, .F., .F. ), )
+
+   _HB_MEMBER { cSelectedSala} ; IIF( !.F., s_oClass:AddMultiData(,, nScope + IIF( .F., 32, 0 ), { "cSelectedSala" }, .F., .F. ), )
+   _HB_MEMBER { cSelectedPunto} ; IIF( !.F., s_oClass:AddMultiData(,, nScope + IIF( .F., 32, 0 ), { "cSelectedPunto" }, .F., .F. ), )
+   _HB_MEMBER { oSelectedPunto} ; IIF( !.F., s_oClass:AddMultiData(,, nScope + IIF( .F., 32, 0 ), { "oSelectedPunto" }, .F., .F. ), )
+   _HB_MEMBER {AS NUMERIC nSelectedPrecio} ; IIF( !.F., s_oClass:AddMultiData( "NUMERIC", 1, nScope + IIF( .F., 32, 0 ), { "nSelectedPrecio" }, .F., .F. ), )
+   _HB_MEMBER {AS NUMERIC nSelectedCombinado} ; IIF( !.F., s_oClass:AddMultiData( "NUMERIC", 2, nScope + IIF( .F., 32, 0 ), { "nSelectedCombinado" }, .F., .F. ), )
+   _HB_MEMBER { cSelectedTiket} ; IIF( !.F., s_oClass:AddMultiData(,, nScope + IIF( .F., 32, 0 ), { "cSelectedTiket" }, .F., .F. ), )
+
+   _HB_MEMBER { cSelectedImagen} ; IIF( !.F., s_oClass:AddMultiData(,, nScope + IIF( .F., 32, 0 ), { "cSelectedImagen" }, .F., .F. ), )
+   _HB_MEMBER { cSelectedTexto} ; IIF( !.F., s_oClass:AddMultiData(,, nScope + IIF( .F., 32, 0 ), { "cSelectedTexto" }, .F., .F. ), )
+
+   _HB_MEMBER { cTikT} ; IIF( !.F., s_oClass:AddMultiData(,, nScope + IIF( .F., 32, 0 ), { "cTikT" }, .F., .F. ), )
+   _HB_MEMBER { cTikL} ; IIF( !.F., s_oClass:AddMultiData(,, nScope + IIF( .F., 32, 0 ), { "cTikL" }, .F., .F. ), )
+   _HB_MEMBER { cDiv} ; IIF( !.F., s_oClass:AddMultiData(,, nScope + IIF( .F., 32, 0 ), { "cDiv" }, .F., .F. ), )
+
+   _HB_MEMBER New( cPath, oWndParent, oMenuItem); IIF( .F., s_oClass:ModMethod( "New", @TSalaVenta_New(), nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ), s_oClass:AddMethod( "New", @TSalaVenta_New(), nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ));
+   _HB_MEMBER Create( cPath); IIF( .F., s_oClass:ModMethod( "Create", @TSalaVenta_Create(), nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ), s_oClass:AddMethod( "Create", @TSalaVenta_Create(), nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ));
+   _HB_MEMBER End(); IIF( .F., s_oClass:ModMethod( "End", @TSalaVenta_End(), nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ), s_oClass:AddMethod( "End", @TSalaVenta_End(), nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ));
+
+   _HB_MEMBER OpenFiles( lExclusive); IIF( .F., s_oClass:ModMethod( "OpenFiles", @TSalaVenta_OpenFiles(), nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ), s_oClass:AddMethod( "OpenFiles", @TSalaVenta_OpenFiles(), nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ));
+   _HB_MEMBER OpenService(lExclusive); IIF( .F., s_oClass:ModMethod( "OpenService", @TSalaVenta_OpenFiles(), nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ) ), s_oClass:AddMethod( "OpenService", @TSalaVenta_OpenFiles(), nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ) ) );
+   _HB_MEMBER CloseFiles(); IIF( .F., s_oClass:ModMethod( "CloseFiles", @TSalaVenta_CloseFiles(), nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ), s_oClass:AddMethod( "CloseFiles", @TSalaVenta_CloseFiles(), nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ));
+   _HB_MEMBER DefineFiles(); IIF( .F., s_oClass:ModMethod( "DefineFiles", @TSalaVenta_DefineFiles(), nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ), s_oClass:AddMethod( "DefineFiles", @TSalaVenta_DefineFiles(), nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ));
+
+   _HB_MEMBER Resource( nMode); IIF( .F., s_oClass:ModMethod( "Resource", @TSalaVenta_Resource(), nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ), s_oClass:AddMethod( "Resource", @TSalaVenta_Resource(), nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ));
+
+   _HB_MEMBER lPreSave( nMode); IIF( .F., s_oClass:ModMethod( "lPreSave", @TSalaVenta_lPreSave(), nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ), s_oClass:AddMethod( "lPreSave", @TSalaVenta_lPreSave(), nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ));
+
+   _HB_MEMBER Dialog(); IIF( .F., s_oClass:ModMethod( "Dialog", @TSalaVenta_Dialog(), nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ), s_oClass:AddMethod( "Dialog", @TSalaVenta_Dialog(), nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ));
+   _HB_MEMBER InitDialog( oImgUsr, oLstUsr); IIF( .F., s_oClass:ModMethod( "InitDialog", @TSalaVenta_InitDialog(), nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ), s_oClass:AddMethod( "InitDialog", @TSalaVenta_InitDialog(), nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ));
+   _HB_MEMBER SelectDialog( nOpt, oDlg, oLstSala); IIF( .F., s_oClass:ModMethod( "SelectDialog", @TSalaVenta_SelectDialog(), nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ), s_oClass:AddMethod( "SelectDialog", @TSalaVenta_SelectDialog(), nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ));
+
+   _HB_MEMBER Tikets(); IIF( .F., s_oClass:ModMethod( "Tikets", @TSalaVenta_Tikets(), nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ), s_oClass:AddMethod( "Tikets", @TSalaVenta_Tikets(), nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ));
+   _HB_MEMBER InitTikets( oImgUsr, oLstUsr); IIF( .F., s_oClass:ModMethod( "InitTikets", @TSalaVenta_InitTikets(), nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ), s_oClass:AddMethod( "InitTikets", @TSalaVenta_InitTikets(), nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ));
+   _HB_MEMBER SelectTikets( nOpt, oDlg, oLstSala); IIF( .F., s_oClass:ModMethod( "SelectTikets", @TSalaVenta_SelectTikets(), nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ), s_oClass:AddMethod( "SelectTikets", @TSalaVenta_SelectTikets(), nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ));
+
+   _HB_MEMBER Reset( oBtnTarifa); IIF( .F., s_oClass:ModMethod( "Reset", @TSalaVenta_Reset(), nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ), s_oClass:AddMethod( "Reset", @TSalaVenta_Reset(), nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ));
+
+   _HB_MEMBER ConfigButton( oBtnTarifa); IIF( .F., s_oClass:ModMethod( "ConfigButton", @TSalaVenta_ConfigButton(), nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ), s_oClass:AddMethod( "ConfigButton", @TSalaVenta_ConfigButton(), nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ));
+
+   _HB_MEMBER cTextoPunto( sSala, sPunto); IIF( .F., s_oClass:ModMethod( "cTextoPunto", @TSalaVenta_cTextoPunto(), nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ), s_oClass:AddMethod( "cTextoPunto", @TSalaVenta_cTextoPunto(), nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ));
+   _HB_MEMBER cTextoGenerico( sPunto); IIF( .F., s_oClass:ModMethod( "cTextoGenerico", @TSalaVenta_cTextoGenerico(), nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ), s_oClass:AddMethod( "cTextoGenerico", @TSalaVenta_cTextoGenerico(), nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ));
+   _HB_MEMBER cTextoTiket( sSala, sPunto); IIF( .F., s_oClass:ModMethod( "cTextoTiket", @TSalaVenta_cTextoTiket(), nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ), s_oClass:AddMethod( "cTextoTiket", @TSalaVenta_cTextoTiket(), nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ));
+   _HB_MEMBER nStatePunto( sPunto); IIF( .F., s_oClass:ModMethod( "nStatePunto", @TSalaVenta_nStatePunto(), nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ), s_oClass:AddMethod( "nStatePunto", @TSalaVenta_nStatePunto(), nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ));
+   _HB_MEMBER nImagenPunto( sPunto, n); IIF( .F., s_oClass:ModMethod( "nImagenPunto", @TSalaVenta_nImagenPunto(), nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ), s_oClass:AddMethod( "nImagenPunto", @TSalaVenta_nImagenPunto(), nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ));
+   _HB_MEMBER nImagenTiket( sSala, sPunto, n); IIF( .F., s_oClass:ModMethod( "nImagenTiket", @TSalaVenta_nImagenTiket(), nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ), s_oClass:AddMethod( "nImagenTiket", @TSalaVenta_nImagenTiket(), nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ));
+
+   _HB_MEMBER lCambiaPunto(cTiket); IIF( .F., s_oClass:ModInline( "lCambiaPunto", {|Self,cTiket | Self, ( !Empty( ::cSelectedTiket ) .AND. ( cTiket <> ::cSelectedTiket ) ) }, nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ), s_oClass:AddInline( "lCambiaPunto", {|Self,cTiket | Self, ( !Empty( ::cSelectedTiket ) .AND. ( cTiket <> ::cSelectedTiket ) ) }, nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ) )
+
+   _HB_MEMBER cSelectedTicket(); IIF( .F., s_oClass:ModInline( "cSelectedTicket", {|Self | Self, ( ::cSelectedTiket ) }, nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ), s_oClass:AddInline( "cSelectedTicket", {|Self | Self, ( ::cSelectedTiket ) }, nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ) )
+
+   _HB_MEMBER SetSelected( aTmp); IIF( .F., s_oClass:ModMethod( "SetSelected", @TSalaVenta_SetSelected(), nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ), s_oClass:AddMethod( "SetSelected", @TSalaVenta_SetSelected(), nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ));
+   _HB_MEMBER SetSelectedImagen(); IIF( .F., s_oClass:ModMethod( "SetSelectedImagen", @TSalaVenta_SetSelectedImagen(), nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ), s_oClass:AddMethod( "SetSelectedImagen", @TSalaVenta_SetSelectedImagen(), nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ));
+   _HB_MEMBER SetSelectedTexto(); IIF( .F., s_oClass:ModMethod( "SetSelectedTexto", @TSalaVenta_SetSelectedTexto(), nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ), s_oClass:AddMethod( "SetSelectedTexto", @TSalaVenta_SetSelectedTexto(), nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ));
+
+   _HB_MEMBER SetGenerico( sPunto); IIF( .F., s_oClass:ModMethod( "SetGenerico", @TSalaVenta_SetGenerico(), nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ), s_oClass:AddMethod( "SetGenerico", @TSalaVenta_SetGenerico(), nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ));
+   _HB_MEMBER SetLlevar( sPunto); IIF( .F., s_oClass:ModMethod( "SetLlevar", @TSalaVenta_SetLlevar(), nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ), s_oClass:AddMethod( "SetLlevar", @TSalaVenta_SetLlevar(), nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ));
+
+   _HB_MEMBER lLlevar(); IIF( .F., s_oClass:ModInline( "lLlevar", {|Self | Self, ( Empty( ::cSelectedSala ) .AND. AllTrim( ::cSelectedPunto ) == "Llevar" ) }, nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ), s_oClass:AddInline( "lLlevar", {|Self | Self, ( Empty( ::cSelectedSala ) .AND. AllTrim( ::cSelectedPunto ) == "Llevar" ) }, nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ) )
+   _HB_MEMBER lGeneric(); IIF( .F., s_oClass:ModInline( "lGeneric", {|Self | Self, ( !::lNotGeneric() ) }, nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ), s_oClass:AddInline( "lGeneric", {|Self | Self, ( !::lNotGeneric() ) }, nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ) )
+   _HB_MEMBER lNotGeneric(); IIF( .F., s_oClass:ModInline( "lNotGeneric", {|Self | Self, ( !Empty( ::cSelectedSala ) .AND. !Empty( ::cSelectedPunto ) ) }, nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ), s_oClass:AddInline( "lNotGeneric", {|Self | Self, ( !Empty( ::cSelectedSala ) .AND. !Empty( ::cSelectedPunto ) ) }, nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ) )
+
+   _HB_MEMBER cImagen(); IIF( .F., s_oClass:ModInline( "cImagen", {|Self | Self, ( ::aImagen[ Min( Max( ::oDbf:nImagen, 1 ), len( ::aImagen ) ) ] ) }, nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ), s_oClass:AddInline( "cImagen", {|Self | Self, ( ::aImagen[ Min( Max( ::oDbf:nImagen, 1 ), len( ::aImagen ) ) ] ) }, nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ) )
+   _HB_MEMBER cPrecio(); IIF( .F., s_oClass:ModInline( "cPrecio", {|Self | Self, ( ::aPrecio[ Min( Max( ::oDbf:nPrecio, 1 ), len( ::aPrecio ) ) ] ) }, nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ), s_oClass:AddInline( "cPrecio", {|Self | Self, ( ::aPrecio[ Min( Max( ::oDbf:nPrecio, 1 ), len( ::aPrecio ) ) ] ) }, nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ) )
+   _HB_MEMBER cPrecioCombinado(); IIF( .F., s_oClass:ModInline( "cPrecioCombinado", {|Self | Self, ( ::aPrecio[ Min( Max( ::oDbf:nPreCmb, 1 ), len( ::aPrecio ) ) ] ) }, nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ), s_oClass:AddInline( "cPrecioCombinado", {|Self | Self, ( ::aPrecio[ Min( Max( ::oDbf:nPreCmb, 1 ), len( ::aPrecio ) ) ] ) }, nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ) )
+   _HB_MEMBER cResource(); IIF( .F., s_oClass:ModInline( "cResource", {|Self | Self, ( ::aResource[ Min( Max( ::oDbf:nImagen, 1 ), len( ::aResource ) ) ] ) }, nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ), s_oClass:AddInline( "cResource", {|Self | Self, ( ::aResource[ Min( Max( ::oDbf:nImagen, 1 ), len( ::aResource ) ) ] ) }, nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ) )
+   _HB_MEMBER cBigResource(); IIF( .F., s_oClass:ModInline( "cBigResource", {|Self | Self, ( ::aBigResource[ Min( Max( ::oDbf:nImagen, 1 ), len( ::aBigResource ) ) ] ) }, nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ), s_oClass:AddInline( "cBigResource", {|Self | Self, ( ::aBigResource[ Min( Max( ::oDbf:nImagen, 1 ), len( ::aBigResource ) ) ] ) }, nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ) )
+
+   _HB_MEMBER cTextoPrecio( nPrecio); IIF( .F., s_oClass:ModMethod( "cTextoPrecio", @TSalaVenta_cTextoPrecio(), nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ), s_oClass:AddMethod( "cTextoPrecio", @TSalaVenta_cTextoPrecio(), nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ));
+
+   _HB_MEMBER GetSelectedTexto(); IIF( .F., s_oClass:ModMethod( "GetSelectedTexto", @TSalaVenta_GetSelectedTexto(), nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ), s_oClass:AddMethod( "GetSelectedTexto", @TSalaVenta_GetSelectedTexto(), nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ));
+
+   _HB_MEMBER SetSalaVta( aTmp, dbfTikT); IIF( .F., s_oClass:ModMethod( "SetSalaVta", @TSalaVenta_SetSalaVta(), nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ), s_oClass:AddMethod( "SetSalaVta", @TSalaVenta_SetSalaVta(), nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ));
+
+   _HB_MEMBER Selector( oBtnTarifa, lPuntosPendientes, lLlevar); IIF( .F., s_oClass:ModMethod( "Selector", @TSalaVenta_Selector(), nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ), s_oClass:AddMethod( "Selector", @TSalaVenta_Selector(), nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ));
+
+   _HB_MEMBER Sala( oBtnTarifa, lPuntosPendientes); IIF( .F., s_oClass:ModMethod( "Sala", @TSalaVenta_Sala(), nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ), s_oClass:AddMethod( "Sala", @TSalaVenta_Sala(), nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ));
+   _HB_MEMBER BuildSala(); IIF( .F., s_oClass:ModMethod( "BuildSala", @TSalaVenta_BuildSala(), nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ), s_oClass:AddMethod( "BuildSala", @TSalaVenta_BuildSala(), nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ));
+   _HB_MEMBER InitSala(); IIF( .F., s_oClass:ModMethod( "InitSala", @TSalaVenta_InitSala(), nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ), s_oClass:AddMethod( "InitSala", @TSalaVenta_InitSala(), nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ));
+
+   _HB_MEMBER SetPunto( sPunto); IIF( .F., s_oClass:ModMethod( "SetPunto", @TSalaVenta_SetPunto(), nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ), s_oClass:AddMethod( "SetPunto", @TSalaVenta_SetPunto(), nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ));
+
+   _HB_MEMBER cSelected(); IIF( .F., s_oClass:ModInline( "cSelected", {|Self | Self, ( if( !Empty( ::cSelectedSala ), ::cSelectedSala + ::cSelectedPunto, Space( 3 ) + ::cSelectedPunto ) ) }, nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ), s_oClass:AddInline( "cSelected", {|Self | Self, ( if( !Empty( ::cSelectedSala ), ::cSelectedSala + ::cSelectedPunto, Space( 3 ) + ::cSelectedPunto ) ) }, nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ) )
+   _HB_MEMBER cTextoSala(); IIF( .F., s_oClass:ModMethod( "cTextoSala", @TSalaVenta_cTextoSala(), nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ), s_oClass:AddMethod( "cTextoSala", @TSalaVenta_cTextoSala(), nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ));
+
+   _HB_MEMBER SetTicket( sPunto); IIF( .F., s_oClass:ModMethod( "SetTicket", @TSalaVenta_SetTicket(), nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ), s_oClass:AddMethod( "SetTicket", @TSalaVenta_SetTicket(), nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ));
+
+; IF .F. ; __clsActive(s_oClass:hClass) ; s_oClass:Refresh() ; ELSE ; s_oClass:Create() ; END ; oClassInstance := __clsInst( s_oClass:hClass ) ; IF __ObjHasMsg( oClassInstance, "InitClass" ); oClassInstance:InitClass( hb_aParams() ) ; END ; ELSE ; oClassInstance := __clsInst( s_oClass:hClass ) ; END ; IF PCount() > 0 ; DIVERT TO (@DivertConstructorCall()) OF s_oClass ; END ; RETURN oClassInstance AS CLASS TSalaVenta ;
+
+
+
+UTILITY STATIC function TSalaVenta_Resource( nMode) ; local Self AS CLASS TSalaVenta := QSelf() AS CLASS TSalaVenta
+
+    local oDlg
+   local oGet
+   local oCmbImagen
+   local cCmbImagen     := ::cImagen()
+   local oCmbPrecio
+   local cCmbPrecio
+   local oCmbPreCmb
+   local cCmbPreCmb
+   local oBrwDetSalaVta
+
+   if nMode == 1
+      cCmbPrecio        := ::aPrecio[ Min( Max( uFieldEmpresa( "NPRETPRO" ), 1 ), len( ::aPrecio ) ) ]
+      cCmbPreCmb        := ::aPrecio[ Min( Max( uFieldEmpresa( "NPRETCMB" ), 1 ), len( ::aPrecio ) ) ]
+   else
+      cCmbPrecio        := ::cPrecio()
+      cCmbPreCmb        := ::cPrecioCombinado()
+   end
+
+   oDlg = TDialog():New(,,,, LblTitle( nMode ) + "sala de ventas", "SalaVentas",, .F.,,,,,, .F.,,,,,, .F., )
+
+
+
+
+
+
+      oGet := TGetHlp():ReDefine( 100, { | u | If( PCount()==0, ::oDbf:cCodigo, ::oDbf:cCodigo:= u ) }, oDlg,, "@!", {||    ( NotValid( oGet, ::oDbf:cAlias, .T., "0" ) )},,,,,, .F., {||     ( nMode == 1 )},, .F., .F.,,,,,, nil,,, )
+
+
+
+
+      TGetHlp():ReDefine( 110, { | u | If( PCount()==0, ::oDbf:cDescrip, ::oDbf:cDescrip:= u ) }, oDlg,,,,,,,,, .F., {||     ( nMode <> 3 )},, .F., .F.,,,,,, nil,,, )
+
+
+
+
+
+
+      oCmbImagen := TComboBox():ReDefine( 120, { | u | If( PCount()==0, cCmbImagen, cCmbImagen:= u ) }, ::aImagen, oDlg,,,,,,, .F., {||     ( nMode <> 3 )}, ::aResource,,,, )
+
+
+
+
+
+      oCmbPrecio := TComboBox():ReDefine( 130, { | u | If( PCount()==0, cCmbPrecio, cCmbPrecio:= u ) }, ::aPrecio, oDlg,,,,,,, .F., {||     ( nMode <> 3 )},,,,, )
+
+
+
+
+
+      oCmbPreCmb := TComboBox():ReDefine( 140, { | u | If( PCount()==0, cCmbPreCmb, cCmbPreCmb:= u ) }, ::aPrecio, oDlg,,,,,,, .F., {||     ( nMode <> 3 )},,,,, )
+
+
+
+
+
+      TButton():ReDefine( 503, {||( ::oSalon:Design( ::oDetSalaVta:oDbfVir, oDlg ) )}, oDlg,,, .F., {||     ( nMode <> 3 )},,, .F. )
+
+
+
+
+
+      TButton():ReDefine( 1, {||( if( ::lPreSave( nMode, oCmbImagen, oCmbPrecio, oCmbPreCmb ), oDlg:end( 1 ), ) )}, oDlg,,, .F., {||         ( nMode <> 3 )},,, .F. )
+
+
+
+
+
+        TButton():ReDefine( 2, {||( oDlg:end() )}, oDlg,,, .F.,,,, .T. )
+
+
+
+
+      TButton():ReDefine( 9, {||( MsgInfo( "Ayuda no definida" ) )}, oDlg,,, .F.,,,, .F. )
+
+      if nMode <> 3
+         oDlg:AddFastKey( 114, {|| ::oSalon:Design( ::oDetSalaVta:oDbfVir, oDlg ) } )
+         oDlg:AddFastKey( 116, {|| if( ::lPreSave( nMode, oCmbImagen, oCmbPrecio, oCmbPreCmb ), oDlg:end( 1 ), ) } )
+      end
+
+      oDlg:bStart := { || oGet:SetFocus() }
+
+   oDlg:Activate( oDlg:bLClicked, oDlg:bMoved, oDlg:bPainted, .T.,,,, oDlg:bRClicked,,, )
+
+RETURN ( oDlg:nResult == 1 )
+
+
+
+UTILITY STATIC function TSalaVenta_lPreSave( nMode, oCmbImagen, oCmbPrecio, oCmbPreCmb) ; local Self AS CLASS TSalaVenta := QSelf() AS CLASS TSalaVenta
+
+   if nMode == 1 .OR. nMode == 4
+
+      if ::oDbf:SeekInOrd( ::oDbf:cCodigo, "cCodigo" )
+         MsgStop( "Código ya existe " + Rtrim( ::oDbf:cCodigo ) )
+         return .F.
+      end
+
+   end
+
+   if Empty( ::oDbf:cDescrip )
+      MsgStop( "La descripción de la sala no puede estar vacía." )
+      Return .F.
+   end
+
+   ::oDbf:nImagen := oCmbImagen:nAt
+   ::oDbf:nPrecio := oCmbPrecio:nAt
+   ::oDbf:nPreCmb := oCmbPreCmb:nAt
+
+Return .T.
+
+
+
+UTILITY STATIC function TSalaVenta_Dialog( oBtnTarifa, lPuntosLibres) ; local Self AS CLASS TSalaVenta := QSelf() AS CLASS TSalaVenta
+
+   local oDlg
+   local oImgSala
+   local oLstSala
+
+   IIF( lPuntosLibres == nil, lPuntosLibres := .F., ) ;
+
+   oDlg = TDialog():New(,,,,, "SelectSalaVta",, .F.,,,,,, .F.,,,,,, .F., )
+
+      oImgSala             := TImageList():New( 44, 44 )
+
+      oLstSala             := TListView():Redefine( 100, oDlg )
+      oLstSala:nOption     := 0
+      oLstSala:bAction     := {| nOpt | ::SelectDialog( nOpt, oDlg, oBtnTarifa, lPuntosLibres ) }
+
+
+
+
+
+
+      TButtonBmp():ReDefine( 500, {||( ::InitSala(), oDlg:end() )}, oDlg,,, .F.,,,, .F., "Cup_48",, )
+
+
+
+
+
+      TButtonBmp():ReDefine( 2, {||( ::InitSala(), oDlg:end() )}, oDlg,,, .F.,,,, .F., "Delete2_48",, )
+   oDlg:Activate( , , , .T., , , {|| ::InitDialog( oImgSala, oLstSala, lPuntosLibres ) } )
+
+Return ( Self )
+
+
+
+UTILITY STATIC function TSalaVenta_InitDialog( oImgSala, oLstSala, lPuntosLibres) ; local Self AS CLASS TSalaVenta := QSelf() AS CLASS TSalaVenta
+
+   local n                 := 0
+   local sSala
+   local sPunto
+   local cPunto
+
+   IIF( lPuntosLibres == nil, lPuntosLibres := .F., ) ;
+
+   oLstSala:SetImageList( oImgSala )
+
+   oLstSala:EnableGroupView()
+
+   for each sSala in ::aSalas
+
+      oImgSala:AddMasked( TBitmap():Define( sSala:cImagen ), ( 255 + ( 0 * 256 ) + ( 255 * 65536 ) ) )
+
+      oLstSala:InsertGroup( n, sSala:cDescripcion )
+
+      for each sPunto in sSala:aPunto
+
+         if lPuntosLibres
+
+            oLstSala:InsertItemGroup( ::nImagenPunto( sPunto, n ), ::cTextoPunto( sPunto ), n )
+
+         else
+
+            oLstSala:InsertItemGroup( ::nImagenPunto( sPunto, n ), ::cTextoPunto( sPunto ), n )
+
+         end
+
+      next
+
+      n++
+
+   next
+
+Return ( Self )
+
+
+
+UTILITY STATIC function TSalaVenta_SelectDialog( nOpt, oDlg, oBtnTarifa, lPuntosLibres) ; local Self AS CLASS TSalaVenta := QSelf() AS CLASS TSalaVenta
+
+   local sSala
+   local sPunto
+
+   IIF( lPuntosLibres == nil, lPuntosLibres := .F., ) ;
+
+   for each sSala in ::aSalas
+
+      for each sPunto in sSala:aPunto
+
+         if sPunto:nNumero == nOpt
+
+            ::oSelectedPunto     := sPunto
+
+
+
+
+
+            if dbSeekInOrd( sPunto:cPunto(), "cCodSal", ::cTikT )
+
+               if lPuntosLibres
+                  msgStop( "El punto de venta esta actualmente ocupado." )
+                  Return ( Self )
+               end
+
+               ::SetSelected( ::cTikT, sPunto )
+
+            else
+
+               ::SetSelected( nil, sPunto )
+
+            end
+
+            oDlg:End()
+
+         end
+
+      next
+
+   next
+
+Return ( Self )
+
+
+
+UTILITY STATIC function TSalaVenta_Tikets( oBtnTarifa, oBtnRenombrar) ; local Self AS CLASS TSalaVenta := QSelf() AS CLASS TSalaVenta
+
+   local oDlg
+   local oImgSala
+   local oLstSala
+
+   oDlg = TDialog():New(,,,,, "SelectTickets",, .F.,,,,,, .F.,,,,,, .F., )
+
+      oImgSala          := TImageList():New( 46, 46 )
+
+      oLstSala          := TListView():Redefine( 100, oDlg )
+      oLstSala:nOption  := 0
+      oLstSala:bAction  := {| nOpt | ::SelectTikets( nOpt, oDlg, oBtnTarifa, oBtnRenombrar ) }
+
+
+
+
+
+
+      TButtonBmp():ReDefine( 2, {||( oDlg:end() )}, oDlg,,, .F.,,,, .F., "Delete2_48",, )
+   oDlg:Activate( , , , .T., , , {|| ::InitTikets( oImgSala, oLstSala ) } )
+
+Return ( oDlg:nResult == 1 )
+
+
+
+UTILITY STATIC function TSalaVenta_InitTikets( oImgSala, oLstSala) ; local Self AS CLASS TSalaVenta := QSelf() AS CLASS TSalaVenta
+
+   local n           := 0
+   local nOrd
+   local sSala
+   local sPunto
+   local nLastGroup
+
+
+
+
+
+   ::aTikets         := {}
+
+   oLstSala:SetImageList( oImgSala )
+
+   oLstSala:EnableGroupView()
+
+   do case
+      case ( IsNil( ::lPuntosVenta ) )
+
+         oImgSala:AddMasked( TBitmap():Define( "Cup_48" ), ( 255 + ( 0 * 256 ) + ( 255 * 65536 ) ) )
+
+         oLstSala:InsertGroup( 0, "Tickets pendientes" )
+
+         nOrd     := ( ::cTikT )->( OrdSetFocus( "cCodSal" ) )
+
+         ( ::cTikT )->( dbGoTop() )
+         while !( ::cTikT )->( Eof() )
+
+            sPunto      := sPunto():New( n++, ::cTikT, sSala )
+
+            oLstSala:InsertItemGroup( 0, ::cTextoTiket( sPunto ), 0 )
+
+            aAdd( ::aTikets, sPunto )
+
+            ( ::cTikT )->( dbSkip() )
+
+         end
+
+         ( ::cTikT )->( OrdSetFocus( nOrd ) )
+
+      case ( IsFalse( ::lPuntosVenta ) )
+
+
+
+
+
+         nOrd     := ( ::cTikT )->( OrdSetFocus( "cCodSal" ) )
+
+
+
+
+
+         for each sSala in ::aSalas
+
+            oImgSala:AddMasked( TBitmap():Define( sSala:cImagen ),      ( 255 + ( 0 * 256 ) + ( 255 * 65536 ) ) )
+
+            oLstSala:InsertGroup( hb_EnumIndex() - 1, sSala:cDescripcion )
+
+
+
+
+
+            if ( ::cTikT )->( dbSeek( sSala:cCodigo ) )
+
+               while ( ::cTikT )->cCodSala == sSala:cCodigo .AND. !( ::cTikT )->( eof() )
+
+                  sPunto   := sPunto():New( n++, ::cTikT, sSala )
+
+                  oLstSala:InsertItemGroup( ::nImagenTiket( sSala, sPunto, hb_EnumIndex() - 1 ), ::cTextoTiket( sPunto ), hb_EnumIndex() - 1 )
+
+                  aAdd( ::aTikets, sPunto )
+
+                  ( ::cTikT )->( dbSkip() )
+
+               end
+
+            end
+
+         next
+
+         ( ::cTikT )->( OrdSetFocus( nOrd ) )
+
+      case ( IsTrue( ::lPuntosVenta ) )
+
+
+
+
+
+         nOrd     := ( ::cTikT )->( OrdSetFocus( "cCodSal" ) )
+
+
+
+
+
+         for each sSala in ::aSalas
+
+            oImgSala:AddMasked( TBitmap():Define( sSala:cImagen ),      ( 255 + ( 0 * 256 ) + ( 255 * 65536 ) ) )
+
+            oLstSala:InsertGroup( hb_EnumIndex() - 1, sSala:cDescripcion )
+
+
+
+
+
+            if ( ::cTikT )->( dbSeek( sSala:cCodigo ) )
+
+               while ( ::cTikT )->cCodSala == sSala:cCodigo .AND. !( ::cTikT )->( eof() )
+
+                  if !Empty( ( ::cTikT )->cPntVenta )
+
+                     sPunto   := sPunto():New( n++, ::cTikT, sSala )
+
+                     oLstSala:InsertItemGroup( ::nImagenPunto( sPunto, hb_EnumIndex() - 1 ), ::cTextoPunto( sPunto ), hb_EnumIndex() - 1 )
+
+                     aAdd( ::aTikets, sPunto )
+
+                  end
+
+                  ( ::cTikT )->( dbSkip() )
+
+               end
+
+            end
+
+            nLastGroup  := hb_EnumIndex()
+
+         next
+
+
+
+
+
+         oImgSala:AddMasked( TBitmap():Define( "Cup_48" ), ( 255 + ( 0 * 256 ) + ( 255 * 65536 ) ) )
+
+         oLstSala:InsertGroup( nLastGroup, "General" )
+
+         ( ::cTikT )->( dbGoTop() )
+
+         while !( ::cTikT )->( eof() )
+
+            if Empty( ( ::cTikT )->cPntVenta )
+
+               sPunto   := sPunto():New( n++, ::cTikT )
+
+               oLstSala:InsertItemGroup( ( nLastGroup * 2 ), ::cTextoGenerico( sPunto ), nLastGroup )
+
+               aAdd( ::aTikets, sPunto )
+
+            end
+
+            ( ::cTikT )->( dbSkip() )
+
+         end
+
+         ( ::cTikT )->( OrdSetFocus( nOrd ) )
+
+   end
+
+Return ( Self )
+
+
+
+UTILITY STATIC function TSalaVenta_SelectTikets( nOpt, oDlg, oBtnTarifa, oBtnRenombrar) ; local Self AS CLASS TSalaVenta := QSelf() AS CLASS TSalaVenta
+
+   local sPunto            := ::aTikets[ Min( Max( nOpt, 1 ), len( ::aTikets ) ) ]
+
+   ::cSelectedSala         := sPunto:cSala()
+   ::nSelectedPrecio       := sPunto:nPrecio()
+   ::cSelectedTiket        := sPunto:cTiket()
+   ::cSelectedImagen       := sPunto:cImagen()
+   ::cSelectedTexto        := sPunto:cTextoPunto()
+   ::cSelectedPunto        := sPunto:cPuntoVenta()
+   ::oSelectedPunto        := sPunto
+
+   ::ConfigButton( oBtnTarifa, oBtnRenombrar )
+
+   oDlg:End( 1 )
+
+Return ( Self )
+
+
+
+UTILITY STATIC function TSalaVenta_ConfigButton( oBtnTarifa, oBtnRenombrar) ; local Self AS CLASS TSalaVenta := QSelf() AS CLASS TSalaVenta
+
+   do case
+      case ( IsNil( ::lPuntosVenta ) )
+
+         oBtnRenombrar:Hide()
+
+      case IsFalse( ::lPuntosVenta )
+
+         if Empty( ::cSelectedImagen )
+            oBtnTarifa:cBmp( "Cup_32" )
+         else
+            oBtnTarifa:cBmp( ::cSelectedImagen )
+         end
+
+         if Empty( ::cSelectedTexto )
+            oBtnTarifa:cCaption( "General" )
+         else
+            oBtnTarifa:cCaption( ::cSelectedTexto )
+         end
+
+         oBtnRenombrar:Hide()
+
+      case IsTrue( ::lPuntosVenta )
+
+         if Empty( ::cSelectedImagen )
+            oBtnTarifa:cBmp( "Cup_32" )
+         else
+            oBtnTarifa:cBmp( ::cSelectedImagen )
+         end
+
+         if Empty( ::cSelectedTexto )
+            oBtnTarifa:cCaption( "General" )
+         else
+            oBtnTarifa:cCaption( ::cSelectedTexto )
+         end
+
+         oBtnRenombrar:Show()
+
+   end
+
+Return ( Self )
+
+
+
+UTILITY STATIC function TSalaVenta_Reset( oBtnTarifa) ; local Self AS CLASS TSalaVenta := QSelf() AS CLASS TSalaVenta
+
+   if !Empty( oBtnTarifa )
+      oBtnTarifa:cBmp( "Cup_48" )
+      oBtnTarifa:cCaption( "General" )
+   end
+
+RETURN ( Self )
+
+
+
+UTILITY STATIC function TSalaVenta_nImagenTiket( sSala, sPunto, n) ; local Self AS CLASS TSalaVenta := QSelf() AS CLASS TSalaVenta
+
+   local nRecno
+   local nImagen        := ( ( ( n + 1 ) * 2 ) - 2 )
+
+   if !Empty( ::cTikT ) .AND. !Empty( ::cTikL )
+
+      nRecno            := ( ::cTikT )->( Recno() )
+
+      if !Empty( sPunto:cTiket() )
+         if ( dbSeekInOrd( sPunto:cTiket(), "cNumTik", ::cTikT ) .AND. !( ::cTikT )->lAbierto )
+            ++nImagen
+         end
+      end
+
+      ( ::cTikT )->( dbGoTo( nRecno ) )
+
+   end
+
+RETURN ( nImagen )
+
+
+
+UTILITY STATIC function TSalaVenta_nStatePunto( sPunto) ; local Self AS CLASS TSalaVenta := QSelf() AS CLASS TSalaVenta
+
+   local nRecno
+   local nImagen        := 1
+
+   if !Empty( ::cTikT ) .AND. !Empty( ::cTikL )
+
+      nRecno            := ( ::cTikT )->( Recno() )
+
+      if !Empty( sPunto:cPunto() ) .AND. !Empty( sPunto:cPuntoVenta )
+
+         if ( dbSeekInOrd( sPunto:cPunto(), "cCodSal", ::cTikT ) .AND. ( ::cTikT )->lAbierto )
+            ++nImagen
+         end
+
+      end
+
+      ( ::cTikT )->( dbGoTo( nRecno ) )
+
+   end
+
+RETURN ( nImagen )
+
+
+
+UTILITY STATIC function TSalaVenta_nImagenPunto( sPunto, n) ; local Self AS CLASS TSalaVenta := QSelf() AS CLASS TSalaVenta
+
+   local nRecno
+   local nImagen        := ( ( ( n + 1 ) * 2 ) - 2 )
+
+   if !Empty( ::cTikT ) .AND. !Empty( ::cTikL )
+
+      nRecno            := ( ::cTikT )->( Recno() )
+
+      if !Empty( sPunto:cPunto() )
+         if (  dbSeekInOrd( sPunto:cPunto(), "cCodSal", ::cTikT ) .AND. !( ::cTikT )->lAbierto )
+            ++nImagen
+         end
+      end
+
+      ( ::cTikT )->( dbGoTo( nRecno ) )
+
+   end
+
+RETURN ( nImagen )
+
+
+
+UTILITY STATIC function TSalaVenta_cTextoTiket( sPunto) ; local Self AS CLASS TSalaVenta := QSelf() AS CLASS TSalaVenta
+
+   local nRecno
+   local cTextoPunto
+
+   cTextoPunto          := sPunto:cTextoPunto()
+
+   if !Empty( ::cTikT ) .AND. !Empty( ::cTikL )
+
+      nRecno            := ( ::cTikT )->( Recno() )
+
+      if ( dbSeekInOrd( sPunto:cTiket(), "cNumTik", ::cTikT ) .AND. !( ::cTikT )->lPgdTik )
+         cTextoPunto    += Chr(13)+Chr(10)
+         cTextoPunto    += "[ Total : " + Ltrim( nTotTik( ( ::cTikT )->cSerTik + ( ::cTikT )->cNumTik + ( ::cTikT )->cSufTik, ::cTikT, ::cTikL, ::cDiv, , , .T. ) ) + " ]"
+      end
+
+      ( ::cTikT )->( dbGoTo( nRecno ) )
+
+   end
+
+RETURN ( cTextoPunto )
+
+
+
+UTILITY STATIC function TSalaVenta_cTextoPunto( sPunto) ; local Self AS CLASS TSalaVenta := QSelf() AS CLASS TSalaVenta
+
+   local nRecno
+   local cTextoPunto
+
+   IIF( sPunto == nil, sPunto := ::oSelectedPunto, ) ;
+
+   cTextoPunto          := sPunto:cTextoPunto()
+
+   if !Empty( ::cTikT ) .AND. !Empty( ::cTikL )
+
+      nRecno            := ( ::cTikT )->( Recno() )
+
+      if ( dbSeekInOrd( sPunto:cPunto(), "cCodSal", ::cTikT ) .AND. !( ::cTikT )->lPgdTik )
+
+         if !Empty( ( ::cTikT )->cAliasTik )
+            cTextoPunto := Upper( Rtrim( ( ::cTikT )->cAliasTik ) )
+         end
+
+         cTextoPunto    += Chr(13)+Chr(10)
+         cTextoPunto    += "[ Total : " + Ltrim( nTotTik( ( ::cTikT )->cSerTik + ( ::cTikT )->cNumTik + ( ::cTikT )->cSufTik, ::cTikT, ::cTikL, ::cDiv, , , .T. ) ) + " ]"
+
+      end
+
+      ( ::cTikT )->( dbGoTo( nRecno ) )
+
+   end
+
+RETURN ( cTextoPunto )
+
+
+
+UTILITY STATIC function TSalaVenta_cTextoGenerico( sPunto) ; local Self AS CLASS TSalaVenta := QSelf() AS CLASS TSalaVenta
+
+   local nRecno
+   local cTextoPunto
+
+   IIF( sPunto == nil, sPunto := ::oSelectedPunto, ) ;
+
+   cTextoPunto          := "General"
+
+   if !Empty( ::cTikT ) .AND. !Empty( ::cTikL )
+
+      nRecno            := ( ::cTikT )->( Recno() )
+
+      if ( dbSeekInOrd( sPunto:cTiket(), "cNumTik", ::cTikT ) .AND. !( ::cTikT )->lPgdTik )
+
+         if !Empty( ( ::cTikT )->cAliasTik )
+            cTextoPunto := Upper( Rtrim( ( ::cTikT )->cAliasTik ) )
+         end
+
+         cTextoPunto    += Chr(13)+Chr(10)
+         cTextoPunto    += "[ Total : " + Ltrim( nTotTik( ( ::cTikT )->cSerTik + ( ::cTikT )->cNumTik + ( ::cTikT )->cSufTik, ::cTikT, ::cTikL, ::cDiv, , , .T. ) ) + " ]"
+
+      end
+
+      ( ::cTikT )->( dbGoTo( nRecno ) )
+
+   end
+
+RETURN ( cTextoPunto )
+
+
+
+UTILITY STATIC function TSalaVenta_cTextoPrecio( nPrecio) ; local Self AS CLASS TSalaVenta := QSelf() AS CLASS TSalaVenta
+
+   IIF( nPrecio == nil, nPrecio := ::nSelectedPrecio, ) ;
+
+   if !IsNum( nPrecio )
+      nPrecio        := 1
+   end
+
+Return ( ::aPrecio[ Min( Max( nPrecio, 1 ), len( ::aPrecio ) ) ] )
+
+
+
+UTILITY STATIC function TSalaVenta_SetSelectedImagen() ; local Self AS CLASS TSalaVenta := QSelf() AS CLASS TSalaVenta
+
+   local nScan
+
+   if Empty( ::aSalas )
+      Return ( Self )
+   end
+
+   do case
+      case IsFalse( ::lPuntosVenta )
+
+         ::cSelectedImagen       := ::aSalas[ Min( Max( ::nSelectedPrecio, 1 ), len( ::aSalas ) ) ]:cImagen
+
+      case IsTrue( ::lPuntosVenta )
+
+         if Empty( ::cSelectedImagen )
+            nScan                := aScan( ::aSalas, {|o| o:cCodigo == ::cSelectedSala } )
+            if nScan <> 0
+               ::cSelectedImagen := ::aSalas[ nScan ]:cImagen
+            end
+         end
+
+   end
+
+Return ( Self )
+
+
+
+UTILITY STATIC function TSalaVenta_SetSelectedTexto() ; local Self AS CLASS TSalaVenta := QSelf() AS CLASS TSalaVenta
+
+   local nScan
+
+   if Empty( ::aSalas )
+      Return ( Self )
+   end
+
+   do case
+      case IsFalse( ::lPuntosVenta )
+
+         ::cSelectedTexto     := Rtrim( ::aSalas[ Min( Max( ::nSelectedPrecio, 1 ), len( ::aSalas ) ) ]:cDescripcion )
+
+      case IsTrue( ::lPuntosVenta )
+
+
+
+
+
+         ::cSelectedTexto     := Rtrim( ::cSelectedPunto )
+
+   end
+
+Return ( Self )
+
+
+
+UTILITY STATIC function TSalaVenta_SetGenerico( sPunto) ; local Self AS CLASS TSalaVenta := QSelf() AS CLASS TSalaVenta
+
+   ::cSelectedSala               := ""
+   ::cSelectedPunto              := "General"
+   ::nSelectedPrecio             := sPunto:nPrecio
+   ::nSelectedCombinado          := sPunto:nPreCmb
+   ::cSelectedImagen             := sPunto:cImagen
+   ::cSelectedTiket              := sPunto:cTiket()
+   ::cSelectedTexto              := sPunto:cTextoPunto()
+
+   ::SetSelectedImagen()
+   ::SetSelectedTexto()
+
+Return ( Self )
+
+
+
+UTILITY STATIC function TSalaVenta_SetLlevar( sPunto) ; local Self AS CLASS TSalaVenta := QSelf() AS CLASS TSalaVenta
+
+   ::cSelectedSala               := ""
+   ::cSelectedPunto              := "Llevar"
+   ::nSelectedPrecio             := sPunto:nPrecio
+   ::nSelectedCombinado          := sPunto:nPreCmb
+   ::cSelectedImagen             := sPunto:cImagen
+   ::cSelectedTiket              := sPunto:cTiket()
+   ::cSelectedTexto              := sPunto:cTextoPunto()
+
+   ::SetSelectedImagen()
+   ::SetSelectedTexto()
+
+Return ( Self )
+
+
+
+UTILITY STATIC function TSalaVenta_SetSelected( uTmp, sPunto) ; local Self AS CLASS TSalaVenta := QSelf() AS CLASS TSalaVenta
+
+   if Empty( sPunto )
+      if !Empty( ::oSelectedPunto )
+         sPunto               := ::oSelectedPunto
+      else
+         sPunto               := sPunto():Generico()
+      end
+   end
+
+   do case
+      case IsChar( uTmp )
+
+         sPunto:cSerie           := ( ::cTikT )->cSerTik
+         sPunto:cNumero          := ( ::cTikT )->cNumTik
+         sPunto:cSufijo          := ( ::cTikT )->cSufTik
+         sPunto:cAlias           := ( ::cTikT )->cAliasTik
+
+         if !Empty( ( ::cTikT )->nTarifa )
+            sPunto:nPrecio       := ( ::cTikT )->nTarifa
+         end
+         if !Empty( ( ::cTikT )->cCodSala )
+            sPunto:cCodigoSala   := ( ::cTikT )->cCodSala
+         end
+         if !Empty( ( ::cTikT )->cPntVenta )
+            sPunto:cPuntoVenta   := ( ::cTikT )->cPntVenta
+         end
+
+      case IsArray( uTmp )
+
+         sPunto:cSerie           := uTmp[ ( ::cTikT )->( FieldPos( "cSerTik"   ) ) ]
+         sPunto:cNumero          := uTmp[ ( ::cTikT )->( FieldPos( "cNumTik"   ) ) ]
+         sPunto:cSufijo          := uTmp[ ( ::cTikT )->( FieldPos( "cSufTik"   ) ) ]
+         sPunto:cAlias           := uTmp[ ( ::cTikT )->( FieldPos( "cAliasTik" ) ) ]
+
+         if !Empty( uTmp[ ( ::cTikT )->( FieldPos( "nTarifa" ) ) ] )
+            sPunto:nPrecio       := uTmp[ ( ::cTikT )->( FieldPos( "nTarifa"   ) ) ]
+         end
+         if !Empty( uTmp[ ( ::cTikT )->( FieldPos( "cCodSala" ) ) ] )
+            sPunto:cCodigoSala   := uTmp[ ( ::cTikT )->( FieldPos( "cCodSala"  ) ) ]
+         end
+         if !Empty( uTmp[ ( ::cTikT )->( FieldPos( "cPntVenta" ) ) ] )
+            sPunto:cPuntoVenta   := uTmp[ ( ::cTikT )->( FieldPos( "cPntVenta" ) ) ]
+         end
+
+   end
+
+
+
+
+
+   ::cSelectedSala               := sPunto:cSala
+   ::cSelectedPunto              := sPunto:cPuntoVenta
+   ::nSelectedPrecio             := sPunto:nPrecio
+   ::nSelectedCombinado          := sPunto:nPreCmb
+   ::cSelectedImagen             := sPunto:cImagen
+   ::cSelectedTiket              := sPunto:cTiket()
+   ::cSelectedTexto              := sPunto:cTextoPunto()
+   ::oSelectedPunto              := sPunto
+
+   ::SetSelectedImagen()
+   ::SetSelectedTexto()
+
+Return ( Self )
+
+
+
+UTILITY STATIC function TSalaVenta_GetSelectedTexto( lExtend) ; local Self AS CLASS TSalaVenta := QSelf() AS CLASS TSalaVenta
+
+   local nRecno
+   local cTextoPunto    := Rtrim( ::cSelectedPunto )
+
+   IIF( lExtend == nil, lExtend := .F., ) ;
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+Return ( cTextoPunto )
+
+
+
+UTILITY STATIC function TSalaVenta_SetSalaVta( aTmp, dbfTikT) ; local Self AS CLASS TSalaVenta := QSelf() AS CLASS TSalaVenta
+
+   IIF( dbfTikT == nil, dbfTikT := ::cTikT, ) ;
+
+   if Empty( aTmp[ ( dbfTikT )->( FieldPos( "cCodSala" ) ) ] )
+
+      do case
+         case Empty( aTmp[ ( dbfTikT )->( FieldPos( "cPntVenta" ) ) ] )
+             ::SetPunto( sPunto():New( , dbfTikT ) )
+
+         case AllTrim( aTmp[ ( dbfTikT )->( FieldPos( "cPntVenta" ) ) ] ) == "General"
+             ::SetGenerico( sPunto():Generico( dbfTikT ) )
+
+         case AllTrim( aTmp[ ( dbfTikT )->( FieldPos( "cPntVenta" ) ) ] ) == "Llevar"
+             ::SetLlevar( sPunto():Llevar( dbfTikT ) )
+
+         end
+
+   else
+
+      ::SetPunto( sPunto():New( , dbfTikT ) )
+
+   end
+
+return .T.
+
+
+
+UTILITY STATIC function TSalaVenta_SetPunto( sPunto) ; local Self AS CLASS TSalaVenta := QSelf() AS CLASS TSalaVenta
+
+   if !Empty( sPunto )
+
+      ::oSelectedPunto                 := sPunto
+
+
+
+
+
+      ::cSelectedSala                  := ::oSelectedPunto:cSala
+      ::cSelectedPunto                 := ::oSelectedPunto:cPuntoVenta
+      ::nSelectedPrecio                := ::oSelectedPunto:nPrecio
+
+      ::nSelectedCombinado             := ::oSelectedPunto:nPreCmb
+      ::cSelectedImagen                := ::oSelectedPunto:cImagen
+
+      ::cSelectedTiket                 := ::oSelectedPunto:cTiket()
+      ::cSelectedTexto                 := ::oSelectedPunto:cTextoPunto()
+
+      ::SetSelectedImagen()
+      ::SetSelectedTexto()
+
+   end
+
+Return ( Self )
+
+
+
+UTILITY STATIC function TSalaVenta_cTextoSala( cSala) ; local Self AS CLASS TSalaVenta := QSelf() AS CLASS TSalaVenta
+
+   local nScan
+   local cTextoSala  := ""
+
+   IIF( cSala == nil, cSala := ::cSelectedSala, ) ;
+
+   nScan             := aScan( ::aSalas, {|o| o:cCodigo == cSala } )
+   if nScan <> 0
+      cTextoSala     := Rtrim( ::aSalas[ nScan ]:cDescripcion )
+   end
+
+Return ( cTextoSala )
+
+
+
+UTILITY STATIC function TSalaVenta_New( cPath, oWndParent, oMenuItem) ; local Self AS CLASS TSalaVenta := QSelf() AS CLASS TSalaVenta
+
+   IIF( cPath == nil, cPath := cPatEmp(), ) ;
+
+   IIF( oWndParent == nil, oWndParent := GetWndFrame(), ) ;
+
+   if oMenuItem <> nil .AND. ::nLevel == nil
+      ::nLevel             := nLevelUsr( oMenuItem )
+   else
+      ::nLevel             := 0
+   end
+
+   ::cPath                 := cPath
+   ::oWndParent            := oWndParent
+
+   ::bFirstKey             := {|| :: oDbf:cCodigo }
+
+   ::nSelectedPrecio       := Max( uFieldEmpresa( "nPreTPro" ), 1 )
+   ::nSelectedCombinado    := Max( uFieldEmpresa( "nPreTCmb" ), 1 )
+
+   ::oSalon                := TSalon():New()
+
+   ::oDetSalaVta           := TDetSalaVta():New( cPath, Self )
+   ::AddDetail( ::oDetSalaVta )
+
+RETURN ( Self )
+
+
+
+UTILITY STATIC function TSalaVenta_Create( cPath) ; local Self AS CLASS TSalaVenta := QSelf() AS CLASS TSalaVenta
+
+   IIF( cPath == nil, cPath := cPatEmp(), ) ;
+
+   ::cPath                 := cPath
+
+RETURN ( Self )
+
+
+
+UTILITY STATIC function TSalaVenta_Selector( oBtnTarifa, lPuntosPendientes, lLlevar, dbfTikT) ; local Self AS CLASS TSalaVenta := QSelf() AS CLASS TSalaVenta
+
+   local lSelector         := .T.
+
+   IIF( dbfTikT == nil, dbfTikT := ::cTikT, ) ;
+
+   if ::oSalon:Selector( Self, lPuntosPendientes, lLlevar, dbfTikT )
+
+      if !Empty( ::oSalon:oSelectedPunto )
+
+         if ::oSalon:oSelectedPunto:lGenerico()
+
+            ::SetGenerico( ::oSalon:oSelectedPunto )
+
+         else
+
+
+
+
+
+            if !Empty( ::oSalon:oSelectedPunto:cTiket() ) .AND. dbSeekInOrd( ::oSalon:oSelectedPunto:cTiket(), "cNumTik", ::cTikT )
+               ::SetTicket( ::oSalon:oSelectedPunto )
+            else
+               ::SetPunto( ::oSalon:oSelectedPunto )
+            end
+
+         end
+
+      else
+
+         lSelector         := .F.
+
+      end
+
+   else
+
+      lSelector            := .F.
+
+   end
+
+Return ( lSelector )
+
+
+
+
+
+
+UTILITY STATIC function TSalaVenta_SetTicket( sPunto) ; local Self AS CLASS TSalaVenta := QSelf() AS CLASS TSalaVenta
+
+   if !Empty( sPunto )
+
+      ::oSelectedPunto                 := sPunto
+
+      ::oSelectedPunto:cSerie          := ( ::cTikT )->cSerTik
+      ::oSelectedPunto:cNumero         := ( ::cTikT )->cNumTik
+      ::oSelectedPunto:cSufijo         := ( ::cTikT )->cSufTik
+      ::oSelectedPunto:cAlias          := ( ::cTikT )->cAliasTik
+
+      if !Empty( ( ::cTikT )->nTarifa )
+         ::oSelectedPunto:nPrecio      := ( ::cTikT )->nTarifa
+      end
+      if !Empty( ( ::cTikT )->cCodSala )
+         ::oSelectedPunto:cCodigoSala  := ( ::cTikT )->cCodSala
+      end
+      if !Empty( ( ::cTikT )->cPntVenta )
+         ::oSelectedPunto:cPuntoVenta  := ( ::cTikT )->cPntVenta
+      end
+
+
+
+
+
+      ::cSelectedSala                  := ::oSelectedPunto:cSala
+      ::cSelectedPunto                 := ::oSelectedPunto:cPuntoVenta
+      ::nSelectedPrecio                := ::oSelectedPunto:nPrecio
+
+      ::nSelectedCombinado             := ::oSelectedPunto:nPreCmb
+      ::cSelectedImagen                := ::oSelectedPunto:cImagen
+      ::cSelectedTiket                 := ::oSelectedPunto:cTiket()
+      ::cSelectedTexto                 := ::oSelectedPunto:cTextoPunto()
+
+      ::SetSelectedImagen()
+      ::SetSelectedTexto()
+
+   end
+
+Return ( Self )
+
+
+
+UTILITY STATIC function TSalaVenta_Sala( lPuntosPendientes, lLlevar) ; local Self AS CLASS TSalaVenta := QSelf() AS CLASS TSalaVenta
+
+   do case
+      case IsTrue( ::lPuntosVenta )
+
+         Return ( ::Selector( lPuntosPendientes, lLlevar ) )
+
+      case IsFalse( ::lPuntosVenta )
+
+         ++::nTarifa
+
+         if ::nTarifa > len( ::aSalas )
+            ::nTarifa         := 1
+         end
+
+         ::cSelectedTiket     := ""
+         ::cSelectedPunto     := ""
+         ::oSelectedPunto     := nil
+         ::cSelectedSala      := ::aSalas[ ::nTarifa ]:cCodigo
+         ::nSelectedPrecio    := ::aSalas[ ::nTarifa ]:nPrecio
+         ::nSelectedCombinado := ::aSalas[ ::nTarifa ]:nPreCmb
+         ::cSelectedImagen    := ::aSalas[ ::nTarifa ]:cImagen
+         ::cSelectedTexto     := ::aSalas[ ::nTarifa ]:cDescripcion
+
+   end
+
+Return ( .T. )
+
+
+
+UTILITY STATIC function TSalaVenta_BuildSala() ; local Self AS CLASS TSalaVenta := QSelf() AS CLASS TSalaVenta
+
+   local n                    := 0
+   local sSala
+
+   ::aSalas                   := {}
+   ::lPuntosVenta             := nil
+   ::cInitialSala             := nil
+
+   ::lPuntosVenta             := .F.
+
+   ::oDbf:GoTop()
+   while !::oDbf:Eof()
+
+      if Empty( ::cInitialSala )
+         ::cInitialSala       := ::oDbf:cCodigo
+      end
+
+      sSala                   := sSala():New( ::oDbf, ::cBigResource() )
+
+      if ::oDetSalaVta:oDbf:Seek( ::oDbf:cCodigo )
+
+         while ::oDetSalaVta:oDbf:cCodigo == ::oDbf:cCodigo .AND. !::oDetSalaVta:oDbf:Eof()
+
+            if !::lPuntosVenta
+               ::lPuntosVenta := .T.
+            end
+
+            sSala:AddPunto( n++, ::oDetSalaVta:oDbf, ::cTikT )
+
+            ::oDetSalaVta:oDbf:Skip()
+
+         end
+
+      end
+
+      aAdd( ::aSalas, sSala )
+
+      ::oDbf:Skip()
+
+   end
+
+
+
+
+
+   ::oGenerico             := sPunto():Generico()
+
+
+
+
+
+   ::oLlevar               := sPunto():Llevar()
+
+
+
+
+
+   ::InitSala()
+
+RETURN ( nil )
+
+
+
+UTILITY STATIC function TSalaVenta_InitSala() ; local Self AS CLASS TSalaVenta := QSelf() AS CLASS TSalaVenta
+
+   do case
+      case ( IsTrue( ::lPuntosVenta ) )
+
+         ::nSelectedPrecio       := Max( uFieldEmpresa( "nPreTPro" ), 1 )
+         ::nSelectedCombinado    := Max( uFieldEmpresa( "nPreTCmb" ), 1 )
+         ::cSelectedSala         := ""
+         ::cSelectedTiket        := ""
+         ::cSelectedImagen       := ""
+         ::cSelectedTexto        := ""
+         ::cSelectedPunto        := ""
+         ::oSelectedPunto        := nil
+
+      case ( IsFalse( ::lPuntosVenta ) )
+
+         if len( ::aSalas ) > 0
+            ::cSelectedSala      := ::aSalas[ 1 ]:cCodigo
+            ::nSelectedPrecio    := ::aSalas[ 1 ]:nPrecio
+            ::nSelectedCombinado := ::aSalas[ 1 ]:nPreCmb
+            ::cSelectedImagen    := ::aSalas[ 1 ]:cImagen
+            ::cSelectedTexto     := ::aSalas[ 1 ]:cDescripcion
+            ::cSelectedTiket     := ""
+            ::cSelectedPunto     := ""
+            ::oSelectedPunto     := nil
+         end
+
+   end
+
+RETURN ( nil )
+
+
+
+UTILITY STATIC function TSalaVenta_OpenFiles(lExclusive) ; local Self AS CLASS TSalaVenta := QSelf() AS CLASS TSalaVenta
+
+   local lOpen          := .T.
+   local oBlock         := ErrorBlock( {| oError | ApoloBreak( oError ) } )
+
+   IIF( lExclusive == nil, lExclusive := .F., ) ;
+
+   BEGIN SEQUENCE
+
+      if Empty( ::oDbf )
+         ::DefineFiles()
+      end
+
+      ::oDbf:Activate( .F., !( lExclusive ) )
+
+      ::OpenDetails()
+
+   RECOVER
+
+      msgStop( "Imposible abrir todas las bases de datos de las salas de ventas." )
+      ::CloseFiles()
+      lOpen             := .F.
+
+   end
+
+   ErrorBlock( oBlock )
+
+RETURN ( lOpen )
+
+
+
+UTILITY STATIC function TSalaVenta_CloseFiles() ; local Self AS CLASS TSalaVenta := QSelf() AS CLASS TSalaVenta
+
+   if !Empty( ::oDbf ) .AND. ::oDbf:Used()
+      ::oDbf:End()
+   end
+
+   if Valtype( ::oDbfDet ) == "A"
+      aSend( ::oDbfDet, "End()" )
+   end
+
+   if Valtype( ::oDbfDet ) == "O"
+      ::oDbfDet:End()
+   end
+
+RETURN ( .T. )
+
+
+
+UTILITY STATIC function TSalaVenta_DefineFiles( cPath, cDriver) ; local Self AS CLASS TSalaVenta := QSelf() AS CLASS TSalaVenta
+
+   IIF( cPath == nil, cPath := ::cPath, ) ;
+   IIF( cDriver == nil, cDriver := cDriver(), ) ;
+
+   ::oDbf := DbfServer( "SalaVta.Dbf", "SalaVta" ):New( "SalaVta.Dbf", "SalaVta", ( cDriver ), "Sala de ventas", ( cPath ) )
+
+      ::oDbf:AddField( "cCodigo", "C", 3, 0,, Space( 3 ),,, "Código", .F., 100, .F., {} )
+      ::oDbf:AddField( "cDescrip", "C", 35, 0,, Space( 35 ),,, "Nombre", .F., 400, .F., {} )
+      ::oDbf:AddField( "lSala", "L", 1, 0,,,,, "Sala", .F.,, .T., {} )
+      ::oDbf:AddField( "cSala", "C", 3, 0,,,,, "Código sala", .F.,, .T., {} )
+      ::oDbf:AddField( "nPrecio", "N", 1, 0,,,,, "Precios sala", .F.,, .T., {} )
+      ::oDbf:AddField( "nImagen", "N", 2, 0,,,,, "Imagen", .F.,, .T., {} )
+      ::oDbf:AddField( "nPreCmb", "N", 1, 0,,,,, "Precio Combinado", .F.,, .T., {} )
+
+      ::oDbf:AddIndex( "cCodigo", "SalaVta.Cdx", "cCodigo",,, .F., .F., "Código",,, .T., .F. )
+      ::oDbf:AddIndex( "cDescrip", "SalaVta.Cdx", "cDescrip",,, .F., .F., "Nombre",,, .T., .F. )
+
+
+
+RETURN ( ::oDbf )
+
+
+
+UTILITY STATIC function TSalaVenta_End() ; local Self AS CLASS TSalaVenta := QSelf() AS CLASS TSalaVenta
+
+   if !Empty( ::oSalon )
+      ::oSalon:End()
+   end
+
+   ::oSalon    := nil
+
+Return ( ::TMasDet:End() )
+
+
+
+
+
+
+
+_HB_CLASS TDetSalaVta ; UTILITY FUNCTION TDetSalaVta(...); static s_oClass ; local oClassInstance ; local nScope ; nScope := 1 ; if s_oClass == NIL ; s_oClass := IIF(.F.,, HBClass():New( "TDetSalaVta" , {TDet():classh} ) ) ; ;
+
+   _HB_MEMBER Create( cPath); IIF( .F., s_oClass:ModMethod( "Create", @TDetSalaVta_Create(), nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ), s_oClass:AddMethod( "Create", @TDetSalaVta_Create(), nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ));
+
+   _HB_MEMBER OpenFiles( lExclusive); IIF( .F., s_oClass:ModMethod( "OpenFiles", @TDetSalaVta_OpenFiles(), nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ), s_oClass:AddMethod( "OpenFiles", @TDetSalaVta_OpenFiles(), nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ));
+   _HB_MEMBER OpenService(lExclusive); IIF( .F., s_oClass:ModMethod( "OpenService", @TDetSalaVta_OpenFiles(), nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ) ), s_oClass:AddMethod( "OpenService", @TDetSalaVta_OpenFiles(), nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ) ) );
+
+   _HB_MEMBER CloseFiles(); IIF( .F., s_oClass:ModMethod( "CloseFiles", @TDetSalaVta_CloseFiles(), nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ), s_oClass:AddMethod( "CloseFiles", @TDetSalaVta_CloseFiles(), nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ));
+
+   _HB_MEMBER DefineFiles(); IIF( .F., s_oClass:ModMethod( "DefineFiles", @TDetSalaVta_DefineFiles(), nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ), s_oClass:AddMethod( "DefineFiles", @TDetSalaVta_DefineFiles(), nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ));
+
+   _HB_MEMBER Resource( nMode, lLiteral); IIF( .F., s_oClass:ModMethod( "Resource", @TDetSalaVta_Resource(), nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ), s_oClass:AddMethod( "Resource", @TDetSalaVta_Resource(), nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ));
+
+   _HB_MEMBER SaveDetails(); IIF( .F., s_oClass:ModMethod( "SaveDetails", @TDetSalaVta_SaveDetails(), nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ), s_oClass:AddMethod( "SaveDetails", @TDetSalaVta_SaveDetails(), nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ));
+
+   _HB_MEMBER lPresave( oGetCod, nMode); IIF( .F., s_oClass:ModMethod( "lPresave", @TDetSalaVta_lPresave(), nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ), s_oClass:AddMethod( "lPresave", @TDetSalaVta_lPresave(), nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ));
+
+; IF .F. ; __clsActive(s_oClass:hClass) ; s_oClass:Refresh() ; ELSE ; s_oClass:Create() ; END ; oClassInstance := __clsInst( s_oClass:hClass ) ; IF __ObjHasMsg( oClassInstance, "InitClass" ); oClassInstance:InitClass( hb_aParams() ) ; END ; ELSE ; oClassInstance := __clsInst( s_oClass:hClass ) ; END ; IF PCount() > 0 ; DIVERT TO (@DivertConstructorCall()) OF s_oClass ; END ; RETURN oClassInstance AS CLASS TDetSalaVta ;
+
+
+
+UTILITY STATIC function TDetSalaVta_DefineFiles( cPath, cVia, lUniqueName, cFileName) ; local Self AS CLASS TDetSalaVta := QSelf() AS CLASS TDetSalaVta
+
+   local oDbf
+
+   IIF( cPath == nil, cPath := ::cPath, ) ;
+   IIF( lUniqueName == nil, lUniqueName := .F., ) ;
+   IIF( cFileName == nil, cFileName := "SlaPnt", ) ;
+   IIF( cVia == nil, cVia := cDriver(), ) ;
+
+   if lUniqueName
+      cFileName         := cGetNewFileName( cFileName, , , cPath )
+   end
+
+   oDbf := DbfServer( ( cFileName ), ( cFileName ) ):New( ( cFileName ), ( cFileName ), ( cVia ), "Puntos de venta en sala", ( cPath ) )
+
+      oDbf:AddField( "cCodigo", "C", 3, 0,,,,, "Código", .F.,, .T., {} )
+      oDbf:AddField( "cDescrip", "C", 35, 0,,,,, "Descripción de punto de venta", .F., 200, .F., {} )
+      oDbf:AddField( "nTipo", "N", 2, 0,,,,, "Tipo de objeto", .F.,, .T., {} )
+      oDbf:AddField( "nFila", "N", 6, 0,,,,, "Fila del objeto", .F.,, .T., {} )
+      oDbf:AddField( "nColumna", "N", 6, 0,,,,, "Columna del objeto", .F.,, .T., {} )
+
+      oDbf:AddIndex( "Codigo", ( cFileName ), "cCodigo",,, .F., .F.,,,, .T., .F. )
+      oDbf:AddIndex( "Descrip", ( cFileName ), "cDescrip",,, .F., .F.,,,, .T., .F. )
+      oDbf:AddIndex( "cCodDes", ( cFileName ), "cCodigo + cDescrip",,, .F., .F.,,,, .T., .F. )
+
+
+
+RETURN ( oDbf )
+
+
+
+UTILITY STATIC function TDetSalaVta_CloseFiles() ; local Self AS CLASS TDetSalaVta := QSelf() AS CLASS TDetSalaVta
+
+   if ::oDbf <> nil .AND. ::oDbf:Used()
+      ::oDbf:End()
+      ::oDbf      := nil
+   end
+
+RETURN .T.
+
+
+
+UTILITY STATIC function TDetSalaVta_Create( cPath) ; local Self AS CLASS TDetSalaVta := QSelf() AS CLASS TDetSalaVta
+
+   IIF( cPath == nil, cPath := cPatEmp(), ) ;
+
+   ::cPath              := cPath
+
+RETURN ( Self )
+
+
+
+UTILITY STATIC function TDetSalaVta_OpenFiles(lExclusive) ; local Self AS CLASS TDetSalaVta := QSelf() AS CLASS TDetSalaVta
+
+   local lOpen          := .T.
+   local oBlock
+
+   IIF( lExclusive == nil, lExclusive := .F., ) ;
+
+   oBlock               := ErrorBlock( {| oError | ApoloBreak( oError ) } )
+   BEGIN SEQUENCE
+
+   if Empty( ::oDbf )
+      ::oDbf            := ::DefineFiles()
+   end
+
+   ::oDbf:Activate( .F., !lExclusive )
+
+   ::bOnPreSaveDetail   := {|| ::SaveDetails() }
+
+   RECOVER
+
+      msgStop( "Imposible abrir todas las bases de datos de puntos de venta" )
+      ::CloseFiles()
+      lOpen             := .F.
+
+   end
+
+   ErrorBlock( oBlock )
+
+RETURN ( lOpen )
+
+
+
+
+
+UTILITY STATIC function TDetSalaVta_Resource( nMode) ; local Self AS CLASS TDetSalaVta := QSelf() AS CLASS TDetSalaVta
+
+   local oDlg
+   local oGetDescrip
+
+   if nMode == 1
+      ::oDbfVir:cDescrip   := Alltrim( ::oParent:oDbf:cDescrip ) + Space( 1 ) + Alltrim( Str( ::oDbfVir:Lastrec() + 1 ) )
+   end
+
+
+
+
+
+   oDlg = TDialog():New(,,,, LblTitle( nMode ) + "puntos de venta", "LSalaVentas",, .F.,,,,,, .F.,,,,,, .F., )
+
+
+
+
+
+
+
+
+      oGetDescrip := TGetHlp():ReDefine( 100, { | u | If( PCount()==0, ::oDbfVir:cDescrip, ::oDbfVir:cDescrip:= u ) }, oDlg,,,,,,,,, .F., {||     ( nMode <> 3 )},, .F., .F.,,,,,, nil,,, )
+
+
+
+
+
+      TButton():ReDefine( 1, {||( if( ::lPresave( oGetDescrip, nMode ), oDlg:end( 1 ), ) )}, oDlg,,, .F., {||     ( nMode <> 3 )},,, .F. )
+
+
+
+
+
+        TButton():ReDefine( 2, {||( oDlg:end() )}, oDlg,,, .F.,,,, .T. )
+
+
+
+
+      TButton():ReDefine( 9, {||( MsgInfo( "Ayuda no definida" ) )}, oDlg,,, .F.,,,, .F. )
+
+      if nMode <> 3
+         oDlg:AddFastKey( 116, {|| if( ::lPresave( oGetDescrip, nMode ), oDlg:end( 1 ), ) } )
+      end
+
+   oDlg:Activate( oDlg:bLClicked, oDlg:bMoved, oDlg:bPainted, .T.,,,, oDlg:bRClicked,,, )
+
+RETURN ( oDlg:nResult == 1 )
+
+
+
+UTILITY STATIC function TDetSalaVta_SaveDetails() ; local Self AS CLASS TDetSalaVta := QSelf() AS CLASS TDetSalaVta
+
+   ::oDbfVir:cCodigo := ::oParent:oDbf:cCodigo
+
+RETURN ( Self )
+
+
+
+UTILITY STATIC function TDetSalaVta_lPresave( oGetDescrip, nMode) ; local Self AS CLASS TDetSalaVta := QSelf() AS CLASS TDetSalaVta
+
+   local lOk   := .T.
+
+   if nMode == 1
+
+      ::oDbfVir:GetStatus()
+
+      if ::oDbfVir:SeekInOrd( ::oDbfVir:cDescrip, "cDescrip" )
+         msgStop( "Descripción ya existe" )
+         oGetDescrip:SetFocus()
+         lOk   := .F.
+      end
+
+      ::oDbfVir:SetStatus()
+
+   end
+
+Return ( lOk )

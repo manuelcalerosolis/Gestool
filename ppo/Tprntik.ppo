@@ -1,0 +1,207 @@
+#line 112 "hbclass.ch"
+   DYNAMIC DivertConstructorCall
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+DECLARE HBClass  New( cName AS String, OPTIONAL SuperParams ) AS CLASS HBClass  Create() AS Object  Instance() AS Object  AddClsMethod( cName AS String, @MethodName(), nScope AS Numeric, n2 AS Numeric, n3 AS Numeric )  AddDelegate( cName AS String, cDelegate AS String, cObject AS String, nScope AS Numeric, lPersistent AS LOGICAL )  AddMultiClsData( cType AS String, uVal, nScope AS Numeric, aDatas AS Array OF String )  AddMultiData( cType AS String, uVal, nScope AS Numeric, aDatas AS Array OF String, x AS LOGICAL, lPer AS LOGICAL )  AddMethod( cName AS String, @MethodName(), nScope AS Numeric, lPersistent AS LOGICAL )  AddInLine( cName AS String, bBlock AS CodeBlock, nScope AS Numeric, lPersistent AS LOGICAL )  AddVirtual( cName AS String )  ModMethod( cName AS String, @MethodName(), nScope AS Numeric, lPersistent AS LOGICAL )  ModClsMethod( cName AS String, @MethodName(), nScope AS Numeric )  ModInline( cName AS String, bBlock AS CodeBlock, nScope AS Numeric, lPersistent AS LOGICAL )  SetOnError( @MethodName() )
+#line 85 "\Fwh1204\Include\FiveWin.Ch"
+   EXTERNAL GetProcAdd
+   EXTERNAL TActiveX
+
+
+
+
+extern errorsys
+#line 36 ".\Prg\Tprntik.prg"
+_HB_CLASS TPort ; UTILITY FUNCTION TPort(...); static s_oClass ; local oClassInstance ; local nScope ; nScope := 1 ; if s_oClass == NIL ; s_oClass := IIF(.F.,, HBClass():New( "TPort" , { HBObject():Classh } ) ) ;
+
+   _HB_MEMBER { cPort} ; IIF( !.F., s_oClass:AddMultiData(,, nScope + IIF( .F., 32, 0 ), { "cPort" }, .F., .F. ), )
+   _HB_MEMBER {AS LOGIC lCreated} ; IIF( !.F., s_oClass:AddMultiData( "LOGIC", .T., nScope + IIF( .F., 32, 0 ), { "lCreated" }, .F., .F. ), )
+   _HB_MEMBER {AS NUMERIC nHComm} ; IIF( !.F., s_oClass:AddMultiData( "NUMERIC",, nScope + IIF( .F., 32, 0 ), { "nHComm" }, .F., .F. ), )
+   _HB_MEMBER { cLastError} ; IIF( !.F., s_oClass:AddMultiData(,, nScope + IIF( .F., 32, 0 ), { "cLastError" }, .F., .F. ), )
+   _HB_MEMBER {AS NUMERIC nBitsSec} ; IIF( !.F., s_oClass:AddMultiData( "NUMERIC",, nScope + IIF( .F., 32, 0 ), { "nBitsSec" }, .F., .F. ), )
+   _HB_MEMBER {AS NUMERIC nBitsParada} ; IIF( !.F., s_oClass:AddMultiData( "NUMERIC",, nScope + IIF( .F., 32, 0 ), { "nBitsParada" }, .F., .F. ), )
+   _HB_MEMBER {AS NUMERIC nBitsDatos} ; IIF( !.F., s_oClass:AddMultiData( "NUMERIC",, nScope + IIF( .F., 32, 0 ), { "nBitsDatos" }, .F., .F. ), )
+   _HB_MEMBER {AS NUMERIC nBitsParidad} ; IIF( !.F., s_oClass:AddMultiData( "NUMERIC",, nScope + IIF( .F., 32, 0 ), { "nBitsParidad" }, .F., .F. ), )
+
+   _HB_MEMBER New( cPort, nBitsSec, nBitsParada, nBitsDatos, nBitsParidad) AS CLASS TPort; IIF( .F., s_oClass:ModMethod( "New", @TPort_New(), nScope + IIF( .T., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ), s_oClass:AddMethod( "New", @TPort_New(), nScope + IIF( .T., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ));
+
+   _HB_MEMBER OpenCommError(); IIF( .F., s_oClass:ModMethod( "OpenCommError", @TPort_OpenCommError(), nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ), s_oClass:AddMethod( "OpenCommError", @TPort_OpenCommError(), nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ));
+
+   _HB_MEMBER End(); IIF( .F., s_oClass:ModInline( "End", {|Self | Self, ( fClose( ::nHComm ) ) }, nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ), s_oClass:AddInline( "End", {|Self | Self, ( fClose( ::nHComm ) ) }, nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ) )
+
+   _HB_MEMBER Write( cTexto); IIF( .F., s_oClass:ModMethod( "Write", @TPort_Write(), nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ), s_oClass:AddMethod( "Write", @TPort_Write(), nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ));
+
+; IF .F. ; __clsActive(s_oClass:hClass) ; s_oClass:Refresh() ; ELSE ; s_oClass:Create() ; END ; oClassInstance := __clsInst( s_oClass:hClass ) ; IF __ObjHasMsg( oClassInstance, "InitClass" ); oClassInstance:InitClass( hb_aParams() ) ; END ; ELSE ; oClassInstance := __clsInst( s_oClass:hClass ) ; END ; IF PCount() > 0 ; DIVERT TO (@DivertConstructorCall()) OF s_oClass ; END ; RETURN oClassInstance AS CLASS TPort ;
+
+
+
+UTILITY STATIC function TPort_New( cPort, nBitsSec, nBitsParada, nBitsDatos, nBitsParidad, lMessage) ; local Self AS CLASS TPort := QSelf() AS CLASS TPort
+
+   local fDCB
+
+   IIF( cPort == nil, cPort := "COM1", ) ;
+   IIF( nBitsSec == nil, nBitsSec := "9600", ) ;
+   IIF( nBitsDatos == nil, nBitsDatos := "8", ) ;
+   IIF( nBitsParada == nil, nBitsParada := "0", ) ;
+   IIF( nBitsParidad == nil, nBitsParidad := "Sin paridad", ) ;
+   IIF( lMessage == nil, lMessage := .F., ) ;
+
+   ::cPort              := Rtrim( cPort )
+
+
+
+
+
+   if ValType( nBitsSec ) == "C"
+      ::nBitsSec        := Val( nBitsSec )
+   else
+      ::nBitsSec        := nBitsSec
+   end
+
+
+
+
+
+   if ValType( nBitsDatos ) == "C"
+      ::nBitsDatos      := Val( nBitsDatos )
+   else
+      ::nBitsDatos      := nBitsDatos
+   end
+
+
+
+
+
+   if ValType( ::nBitsParada ) == "C"
+      ::nBitsParada     := Val( nBitsParada )
+   else
+      ::nBitsParada     := nBitsParada
+   end
+
+
+
+
+
+   nBitsParidad         := Rtrim( nBitsParidad )
+
+   do case
+      case nBitsParidad == "Sin paridad"
+         ::nBitsParidad := 0
+      case nBitsParidad == "Paridad par"
+         ::nBitsParidad := 1
+      case nBitsParidad == "Paridad impar"
+         ::nBitsParidad := 2
+   end
+
+   ::nHComm             := fCreate( ::cPort )
+
+   if ::nHComm > 0
+
+      if ( "COM" $ ::cPort )
+         fDCB           := fDCB( ::nHComm, ::nBitsSec, ::nBitsDatos, ::nBitsParada, ::nBitsParidad )
+         if fDCB == nil
+            ::nHComm    := -1
+         end
+      end
+
+   else
+
+      ::OpenCommError()
+
+
+
+
+
+
+      msgStop( "Puerto  : " + cValToChar( ::cPort )          + Chr(13)+Chr(10) + "Bits    : " + cValToChar( ::nBitsSec )       + Chr(13)+Chr(10) + "Parada  : " + cValToChar( ::nBitsParada )    + Chr(13)+Chr(10) + "Datos   : " + cValToChar( ::nBitsDatos )     + Chr(13)+Chr(10) + "Paridad : " + cValToChar( ::nBitsParidad ), ::cLastError )
+
+      ::lCreated        := .F.
+
+   end
+
+RETURN Self
+
+
+
+UTILITY STATIC function TPort_OpenCommError() ; local Self AS CLASS TPort := QSelf() AS CLASS TPort
+
+   if ( ::nHComm >= 0 )
+      ::cLastError         := "No error"
+    else
+        do case
+         case ::nHComm == -1
+            ::cLastError   := "ID: Inválido o no soportado"
+         case ::nHComm == -12
+            ::cLastError   := "BAUDIOS: No soportado"
+         case ::nHComm == -11
+            ::cLastError   := "BYTE: Tamaño no válido"
+         case ::nHComm == -5
+            ::cLastError   := "Valores por defecto son erroneos"
+         case ::nHComm == -10
+            ::cLastError   := "HARDWARE: No presente"
+         case ::nHComm == -4
+            ::cLastError   := "MEMORIA: Insuficiente"
+         case ::nHComm == -3
+            ::cLastError   := "HARDWARE: Dispositivo no abierto"
+         case ::nHComm == -2
+            ::cLastError   := "HARDWARE: Dispositivo ya abierto"
+            otherwise
+            ::cLastError   := "Error no determinado"
+        endcase
+    endif
+
+return ::nHComm
+
+
+
+UTILITY STATIC function TPort_Write( cTexto, nRetardo) ; local Self AS CLASS TPort := QSelf() AS CLASS TPort
+
+   local lWrite      := .T.
+   local nLenTexto   := len( cTexto )
+
+   IIF( nRetardo == nil, nRetardo := 0, ) ;
+
+   fWrite( ::nHComm, cTexto, nLenTexto )
+
+   if nRetardo <> 0
+      DlgWait( nRetardo )
+   end
+
+
+
+return ( lWrite )
+
+
+
+
+
+
+
+
+
+Function DlgWait( nRetardo )
+
+   local nSeconds
+
+   IIF( nRetardo == nil, nRetardo := 0.1, ) ;
+
+   nSeconds          := Seconds() + nRetardo
+
+   while nSeconds >= Seconds()
+   end
+
+RETURN ( nil )

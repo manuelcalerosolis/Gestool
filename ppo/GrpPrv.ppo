@@ -1,0 +1,539 @@
+#line 112 "hbclass.ch"
+   DYNAMIC DivertConstructorCall
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+DECLARE HBClass  New( cName AS String, OPTIONAL SuperParams ) AS CLASS HBClass  Create() AS Object  Instance() AS Object  AddClsMethod( cName AS String, @MethodName(), nScope AS Numeric, n2 AS Numeric, n3 AS Numeric )  AddDelegate( cName AS String, cDelegate AS String, cObject AS String, nScope AS Numeric, lPersistent AS LOGICAL )  AddMultiClsData( cType AS String, uVal, nScope AS Numeric, aDatas AS Array OF String )  AddMultiData( cType AS String, uVal, nScope AS Numeric, aDatas AS Array OF String, x AS LOGICAL, lPer AS LOGICAL )  AddMethod( cName AS String, @MethodName(), nScope AS Numeric, lPersistent AS LOGICAL )  AddInLine( cName AS String, bBlock AS CodeBlock, nScope AS Numeric, lPersistent AS LOGICAL )  AddVirtual( cName AS String )  ModMethod( cName AS String, @MethodName(), nScope AS Numeric, lPersistent AS LOGICAL )  ModClsMethod( cName AS String, @MethodName(), nScope AS Numeric )  ModInline( cName AS String, bBlock AS CodeBlock, nScope AS Numeric, lPersistent AS LOGICAL )  SetOnError( @MethodName() )
+#line 85 "\Fwh1204\Include\FiveWin.Ch"
+   EXTERNAL GetProcAdd
+   EXTERNAL TActiveX
+
+
+
+
+extern errorsys
+#line 7 ".\Prg\GrpPrv.prg"
+_HB_CLASS TGrpPrv ; UTILITY FUNCTION TGrpPrv(...); static s_oClass ; local oClassInstance ; local nScope ; nScope := 1 ; if s_oClass == NIL ; s_oClass := IIF(.F.,, HBClass():New( "TGrpPrv" , {TMant():classh} ) ) ; ;
+
+   _HB_MEMBER { cMru} ; IIF( !.F., s_oClass:AddMultiData(, "Users2_16", nScope + IIF( .F., 32, 0 ), { "cMru" }, .F., .F. ), )
+
+   _HB_MEMBER { cParentSelect} ; IIF( !.F., s_oClass:AddMultiData(, Space( 4 ), nScope + IIF( .F., 32, 0 ), { "cParentSelect" }, .F., .F. ), )
+
+   _HB_MEMBER { oGetCodigo} ; IIF( !.F., s_oClass:AddMultiData(,, nScope + IIF( .F., 32, 0 ), { "oGetCodigo" }, .F., .F. ), )
+   _HB_MEMBER { oGetNombre} ; IIF( !.F., s_oClass:AddMultiData(,, nScope + IIF( .F., 32, 0 ), { "oGetNombre" }, .F., .F. ), )
+
+   _HB_MEMBER { oTreePadre} ; IIF( !.F., s_oClass:AddMultiData(,, nScope + IIF( .F., 32, 0 ), { "oTreePadre" }, .F., .F. ), )
+
+   _HB_MEMBER New( cPath, oWndParent, oMenuItem) AS CLASS TGrpPrv; IIF( .F., s_oClass:ModMethod( "New", @TGrpPrv_New(), nScope + IIF( .T., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ), s_oClass:AddMethod( "New", @TGrpPrv_New(), nScope + IIF( .T., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ));
+   _HB_MEMBER Create( cPath) AS CLASS TGrpPrv; IIF( .F., s_oClass:ModMethod( "Create", @TGrpPrv_Create(), nScope + IIF( .T., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ), s_oClass:AddMethod( "Create", @TGrpPrv_Create(), nScope + IIF( .T., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ));
+
+   _HB_MEMBER OpenFiles( lExclusive); IIF( .F., s_oClass:ModMethod( "OpenFiles", @TGrpPrv_OpenFiles(), nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ), s_oClass:AddMethod( "OpenFiles", @TGrpPrv_OpenFiles(), nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ));
+
+   _HB_MEMBER OpenService(lExclusive); IIF( .F., s_oClass:ModMethod( "OpenService", @TGrpPrv_OpenFiles(), nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ) ), s_oClass:AddMethod( "OpenService", @TGrpPrv_OpenFiles(), nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ) ) );
+
+   _HB_MEMBER DefineFiles(); IIF( .F., s_oClass:ModMethod( "DefineFiles", @TGrpPrv_DefineFiles(), nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ), s_oClass:AddMethod( "DefineFiles", @TGrpPrv_DefineFiles(), nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ));
+
+   _HB_MEMBER Resource( nMode); IIF( .F., s_oClass:ModMethod( "Resource", @TGrpPrv_Resource(), nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ), s_oClass:AddMethod( "Resource", @TGrpPrv_Resource(), nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ));
+   _HB_MEMBER lSaveResource(); IIF( .F., s_oClass:ModMethod( "lSaveResource", @TGrpPrv_lSaveResource(), nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ), s_oClass:AddMethod( "lSaveResource", @TGrpPrv_lSaveResource(), nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ));
+   _HB_MEMBER StartResource( oGet); IIF( .F., s_oClass:ModMethod( "StartResource", @TGrpPrv_StartResource(), nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ), s_oClass:AddMethod( "StartResource", @TGrpPrv_StartResource(), nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ));
+
+   _HB_MEMBER aChild( cCodGrupo); IIF( .F., s_oClass:ModMethod( "aChild", @TGrpPrv_aChild(), nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ), s_oClass:AddMethod( "aChild", @TGrpPrv_aChild(), nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ));
+   _HB_MEMBER IsPadreMayor( cCodGrupo, cCodDesde); IIF( .F., s_oClass:ModMethod( "IsPadreMayor", @TGrpPrv_IsPadreMayor(), nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ), s_oClass:AddMethod( "IsPadreMayor", @TGrpPrv_IsPadreMayor(), nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ));
+   _HB_MEMBER IsPadreMenor( cCodGrupo, cCodDesde); IIF( .F., s_oClass:ModMethod( "IsPadreMenor", @TGrpPrv_IsPadreMenor(), nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ), s_oClass:AddMethod( "IsPadreMenor", @TGrpPrv_IsPadreMenor(), nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ));
+
+   _HB_MEMBER Tree( oGet); IIF( .F., s_oClass:ModMethod( "Tree", @TGrpPrv_Tree(), nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ), s_oClass:AddMethod( "Tree", @TGrpPrv_Tree(), nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ));
+
+   _HB_MEMBER LoadTree( cCodGrupo); IIF( .F., s_oClass:ModMethod( "LoadTree", @TGrpPrv_LoadTree(), nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ), s_oClass:AddMethod( "LoadTree", @TGrpPrv_LoadTree(), nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ));
+   _HB_MEMBER ChangeTreeState( oTree, aItems); IIF( .F., s_oClass:ModMethod( "ChangeTreeState", @TGrpPrv_ChangeTreeState(), nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ), s_oClass:AddMethod( "ChangeTreeState", @TGrpPrv_ChangeTreeState(), nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ));
+   _HB_MEMBER GetTreeState( oTree, aItems); IIF( .F., s_oClass:ModMethod( "GetTreeState", @TGrpPrv_GetTreeState(), nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ), s_oClass:AddMethod( "GetTreeState", @TGrpPrv_GetTreeState(), nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ));
+   _HB_MEMBER SetTreeState( oTree, aItems); IIF( .F., s_oClass:ModMethod( "SetTreeState", @TGrpPrv_SetTreeState(), nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ), s_oClass:AddMethod( "SetTreeState", @TGrpPrv_SetTreeState(), nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ));
+
+; IF .F. ; __clsActive(s_oClass:hClass) ; s_oClass:Refresh() ; ELSE ; s_oClass:Create() ; END ; oClassInstance := __clsInst( s_oClass:hClass ) ; IF __ObjHasMsg( oClassInstance, "InitClass" ); oClassInstance:InitClass( hb_aParams() ) ; END ; ELSE ; oClassInstance := __clsInst( s_oClass:hClass ) ; END ; IF PCount() > 0 ; DIVERT TO (@DivertConstructorCall()) OF s_oClass ; END ; RETURN oClassInstance AS CLASS TGrpPrv ;
+
+
+
+UTILITY STATIC function TGrpPrv_New( cPath, oWndParent, oMenuItem) ; local Self AS CLASS TGrpPrv := QSelf() AS CLASS TGrpPrv
+
+   IIF( cPath == nil, cPath := cPatCli(), ) ;
+   IIF( oWndParent == nil, oWndParent := GetWndFrame(), ) ;
+   IIF( oMenuItem == nil, oMenuItem := "01030", ) ;
+
+   if Empty( ::nLevel )
+      ::nLevel          := nLevelUsr( oMenuItem )
+   end
+
+
+
+
+
+   if oWndParent <> nil
+      oWndParent:CloseAll()
+   end
+
+   ::cPath              := cPath
+   ::oWndParent         := oWndParent
+   ::oDbf               := nil
+
+
+   ::lCreateShell       := .F.
+   ::cHtmlHelp          := "Grupos de clientes"
+
+RETURN ( Self )
+
+
+
+UTILITY STATIC function TGrpPrv_Create( cPath) ; local Self AS CLASS TGrpPrv := QSelf() AS CLASS TGrpPrv
+
+   IIF( cPath == nil, cPath := cPatCli(), ) ;
+
+   ::cPath              := cPath
+   ::oDbf               := nil
+
+RETURN ( Self )
+
+
+
+UTILITY STATIC function TGrpPrv_OpenFiles(lExclusive) ; local Self AS CLASS TGrpPrv := QSelf() AS CLASS TGrpPrv
+
+   local lOpen          := .T.
+   local oError
+   local oBlock
+
+   IIF( lExclusive == nil, lExclusive := .F., ) ;
+
+   oBlock               := ErrorBlock( {| oError | ApoloBreak( oError ) } )
+   BEGIN SEQUENCE
+
+      if Empty( ::oDbf )
+         ::DefineFiles()
+      end
+
+      ::oDbf:Activate( .F., !( lExclusive ) )
+
+   RECOVER USING oError
+
+      lOpen             := .F.
+      msgStop( ErrorMessage( oError ), "Imposible abrir todas las bases de datos de grupos de clientes" )
+
+   end
+   ErrorBlock( oBlock )
+
+   if !lOpen
+      ::CloseFiles()
+   end
+
+RETURN ( lOpen )
+
+
+
+UTILITY STATIC function TGrpPrv_DefineFiles( cPath, cDriver) ; local Self AS CLASS TGrpPrv := QSelf() AS CLASS TGrpPrv
+
+   IIF( cPath == nil, cPath := ::cPath, ) ;
+   IIF( cDriver == nil, cDriver := cDriver(), ) ;
+
+   ::oDbf := DbfServer( "GrpPrv.DBF", "GrpPrv" ):New( "GrpPrv.DBF", "GrpPrv", ( cDriver ), "Grupos de clientes", ( cPath ) )
+
+      ::oDbf:AddField( "CCODGRP", "C", 4, 0,,,,, "Código", .F., 80, .F., {} )
+      ::oDbf:AddField( "CNOMGRP", "C", 30, 0,,,,, "Nombre", .F., 200, .F., {} )
+      ::oDbf:AddField( "CCODPDR", "C", 4, 0,,,,, "Grupo padre", .F., 80, .F., {} )
+
+      ::oDbf:AddIndex( "CCODGRP", "GrpPrv.CDX", "CCODGRP",,, .F., .F., "Código",,, .T., .F. )
+      ::oDbf:AddIndex( "CNOMGRP", "GrpPrv.CDX", "CNOMGRP",,, .F., .F., "Nombre",,, .T., .F. )
+      ::oDbf:AddIndex( "CCODPDR", "GrpPrv.CDX", "CCODPDR",,, .F., .F., "Grupo padre",,, .T., .F. )
+
+
+
+RETURN ( ::oDbf )
+
+
+
+UTILITY STATIC function TGrpPrv_Resource( nMode) ; local Self AS CLASS TGrpPrv := QSelf() AS CLASS TGrpPrv
+
+   local oDlg
+
+   oDlg = TDialog():New(,,,, LblTitle( nMode ) + "Grupos de proveedores", "GRPCLI",, .F.,,,,,, .F.,,,,,, .F., )
+
+
+
+
+
+
+
+      ::oGetCodigo := TGetHlp():ReDefine( 100, { | u | If( PCount()==0, ::oDbf:cCodGrp, ::oDbf:cCodGrp:= u ) }, oDlg,, "@!", {||    NotValid( ::oGetCodigo, ::oDbf:cAlias, .T., "0" )},,,,,, .F., {||     ( nMode == 1 .OR. nMode == 4 )},, .F., .F.,,,,,, nil,,, )
+
+
+
+
+
+      ::oGetNombre := TGetHlp():ReDefine( 110, { | u | If( PCount()==0, ::oDbf:cNomGrp, ::oDbf:cNomGrp:= u ) }, oDlg,,,,,,,,, .F., {||     ( nMode <> 3 )},, .F., .F.,,,,,, nil,,, )
+
+      ::oTreePadre                     := TTreeView():Redefine( 130, oDlg )
+      ::oTreePadre:bItemSelectChanged  := {|| ::ChangeTreeState() }
+
+
+
+
+
+      TButton():ReDefine( 1, {||( ::lSaveResource( nMode, oDlg ) )}, oDlg,,, .F., {||     ( nMode <> 3 )},,, .F. )
+
+
+
+
+
+      TButton():ReDefine( 2, {||( oDlg:end() )}, oDlg,,, .F.,,,, .T. )
+
+   oDlg:AddFastKey( 116, {|| ::lSaveResource( nMode, oDlg ) } )
+
+   oDlg:bStart          := {|| ::StartResource() }
+
+   oDlg:Activate( oDlg:bLClicked, oDlg:bMoved, oDlg:bPainted, .T.,,,, oDlg:bRClicked,,, )
+
+RETURN ( oDlg:nResult == 1 )
+
+
+
+UTILITY STATIC function TGrpPrv_lSaveResource( nMode, oDlg) ; local Self AS CLASS TGrpPrv := QSelf() AS CLASS TGrpPrv
+
+   local aGrp
+
+   ::oDbf:cCodPdr    := Space( 4 )
+
+   if ( nMode == 1 .OR. nMode == 4 )
+
+      if Empty( ::oDbf:cCodGrp )
+         MsgStop( "Código de grupo de proveedores no puede estar vacío" )
+         ::oGetCodigo:SetFocus()
+         Return nil
+      end
+
+      if ::oDbf:SeekInOrd( ::oDbf:cCodGrp, "cCodGrp" )
+         msgStop( "Código existente" )
+         ::oGetCodigo:SetFocus()
+         Return nil
+      end
+
+   end
+
+   if Empty( ::oDbf:cNomGrp )
+      MsgStop( "Nombre de grupo de proveedores no puede estar vacío" )
+      ::oGetNombre:SetFocus()
+      Return nil
+   end
+
+   ::GetTreeState( ::oTreePadre )
+
+   if ( ::oDbf:cCodGrp == ::oDbf:cCodPdr )
+      MsgStop( "Grupo padre no puede ser el mismo" )
+      ::oTreePadre:SetFocus()
+      Return nil
+   end
+
+   aGrp  := ::aChild( ::oDbf:cCodGrp )
+   if aScan( aGrp, ::oDbf:cCodPdr ) <> 0
+      MsgStop( "Grupo padre contiene referencia circular" )
+      ::oTreePadre:SetFocus()
+      Return nil
+   end
+
+Return oDlg:end( 1 )
+
+
+
+UTILITY STATIC function TGrpPrv_StartResource() ; local Self AS CLASS TGrpPrv := QSelf() AS CLASS TGrpPrv
+
+   ::LoadTree()
+
+   ::SetTreeState()
+
+   ::oGetCodigo:SetFocus()
+
+Return ( Self )
+
+
+
+UTILITY STATIC function TGrpPrv_aChild( cCodGrupo, aChild) ; local Self AS CLASS TGrpPrv := QSelf() AS CLASS TGrpPrv
+
+   local nRec
+   local nOrd
+
+   if Empty( aChild )
+      aChild   := {}
+   end
+
+   CursorWait()
+
+   nRec        := ( ::oDbf:cAlias )->( Recno() )
+   nOrd        := ( ::oDbf:cAlias )->( OrdSetFocus( "cCodPdr" ) )
+
+   if ( ::oDbf:cAlias )->( dbSeek( cCodGrupo ) )
+
+      while ( ( ::oDbf:cAlias )->cCodPdr == cCodGrupo .AND. !( ::oDbf:cAlias )->( Eof() ) )
+
+         aAdd( aChild, ( ::oDbf:cAlias )->cCodGrp )
+
+         ::aChild( ( ::oDbf:cAlias )->cCodGrp, aChild )
+
+         ( ::oDbf:cAlias )->( dbSkip() )
+
+      end
+
+   end
+
+   ( ::oDbf:cAlias )->( OrdSetFocus( nOrd ) )
+   ( ::oDbf:cAlias )->( dbGoTo( nRec ) )
+
+   CursorWE()
+
+Return ( aChild )
+
+
+
+UTILITY STATIC function TGrpPrv_IsPadreMayor( cCodGrupo, cCodDesde) ; local Self AS CLASS TGrpPrv := QSelf() AS CLASS TGrpPrv
+
+   local cPadre
+   local aPadre
+
+   if cCodGrupo >= cCodDesde
+      Return .T.
+   end
+
+   if !Empty( cCodGrupo )
+
+      aPadre         := ::aChild( cCodGrupo )
+
+      for each cPadre in aPadre
+         if cPadre >= cCodDesde
+            Return .T.
+         end
+      next
+
+   end
+
+Return ( .F. )
+
+
+
+UTILITY STATIC function TGrpPrv_IsPadreMenor( cCodGrupo, cCodHasta) ; local Self AS CLASS TGrpPrv := QSelf() AS CLASS TGrpPrv
+
+   local cPadre
+   local aPadre
+
+   if cCodGrupo <= cCodHasta
+      Return .T.
+   end
+
+   if !Empty( cCodGrupo )
+
+      aPadre         := ::aChild( cCodGrupo )
+
+      for each cPadre in aPadre
+         if cPadre <= cCodHasta
+            Return .T.
+         end
+      next
+
+   end
+
+Return ( .F. )
+
+
+
+UTILITY STATIC function TGrpPrv_LoadTree( oTree, cCodGrupo) ; local Self AS CLASS TGrpPrv := QSelf() AS CLASS TGrpPrv
+
+   local nRec
+   local nOrd
+   local oNode
+
+   IIF( oTree == nil, oTree := ::oTreePadre, ) ;
+
+   if Empty( cCodGrupo )
+      cCodGrupo      := Space( 4 )
+   end
+
+   CursorWait()
+
+   nRec              := ( ::oDbf:cAlias )->( Recno() )
+   nOrd              := ( ::oDbf:cAlias )->( OrdSetFocus( "cCodPdr" ) )
+
+   if ( ::oDbf:cAlias )->( dbSeek( cCodGrupo ) )
+
+      while ( ( ::oDbf:cAlias )->cCodPdr == cCodGrupo .AND. !( ::oDbf:cAlias )->( Eof() ) )
+
+         oNode       := oTree:Add( Alltrim( ( ::oDbf:cAlias )->cNomGrp ) )
+         oNode:Cargo := ( ::oDbf:cAlias )->cCodGrp
+
+         ::LoadTree( oNode, ( ::oDbf:cAlias )->cCodGrp )
+
+         ( ::oDbf:cAlias )->( dbSkip() )
+
+      end
+
+   end
+
+   ( ::oDbf:cAlias )->( OrdSetFocus( nOrd ) )
+   ( ::oDbf:cAlias )->( dbGoTo( nRec ) )
+
+   CursorWE()
+
+   oTree:Expand()
+
+Return ( Self )
+
+
+
+UTILITY STATIC function TGrpPrv_ChangeTreeState( oTree, aItems) ; local Self AS CLASS TGrpPrv := QSelf() AS CLASS TGrpPrv
+
+   local oItem
+
+   IIF( oTree == nil, oTree := ::oTreePadre, ) ;
+
+   if Empty( aItems )
+      aItems      := oTree:aItems
+   end
+
+   for each oItem in aItems
+
+      SysRefresh()
+
+      tvSetCheckState( oTree:hWnd, oItem:hItem, .F. )
+
+      if len( oItem:aItems ) > 0
+         ::ChangeTreeState( oTree, oItem:aItems )
+      end
+
+   next
+
+Return ( Self )
+
+
+
+UTILITY STATIC function TGrpPrv_GetTreeState( oTree, aItems) ; local Self AS CLASS TGrpPrv := QSelf() AS CLASS TGrpPrv
+
+   local oItem
+
+   IIF( oTree == nil, oTree := ::oTreePadre, ) ;
+
+   if Empty( aItems )
+      aItems      := oTree:aItems
+   end
+
+   for each oItem in aItems
+
+      if tvGetCheckState( oTree:hWnd, oItem:hItem )
+         ::oDbf:cCodPdr    := oItem:Cargo
+      end
+
+      if len( oItem:aItems ) > 0
+         ::GetTreeState( oTree, oItem:aItems )
+      end
+
+   next
+
+Return ( Self )
+
+
+
+UTILITY STATIC function TGrpPrv_SetTreeState( oTree, aItems) ; local Self AS CLASS TGrpPrv := QSelf() AS CLASS TGrpPrv
+
+   local oItem
+
+   IIF( oTree == nil, oTree := ::oTreePadre, ) ;
+
+   if Empty( aItems )
+      aItems      := oTree:aItems
+   end
+
+   for each oItem in aItems
+
+      if ( ::oDbf:cCodPdr == oItem:Cargo )
+
+
+
+         oTree:Select( oItem )
+
+         tvSetCheckState( oTree:hWnd, oItem:hItem, .T. )
+
+      end
+
+      if len( oItem:aItems ) > 0
+         ::SetTreeState( oTree, oItem:aItems )
+      end
+
+   next
+
+Return ( Self )
+
+
+
+UTILITY STATIC function TGrpPrv_Tree( oGet) ; local Self AS CLASS TGrpPrv := QSelf() AS CLASS TGrpPrv
+
+   local oDlg
+   local uVal
+   local oTree
+
+   uVal                    := oGet:VarGet()
+
+
+
+
+
+   oDlg                    := TDialog():New( , , , , "cDlgName", "TreeGruposCliente" )
+
+   oTree                   := TTreeView():Redefine( 100, oDlg  )
+
+   TButton():ReDefine( 1, {|| oDlg:end( 1 ) }, oDlg, , , .F. )
+
+   TButton():ReDefine( 2, {|| oDlg:end() }, oDlg, , , .F. )
+
+   oDlg:bStart             := {|| ::StartTree( nil, oTree ) }
+
+   oDlg:AddFastKey( 116, {|| oDlg:end( 1 ) } )
+
+   oDlg:Activate( , , , .T. )
+
+
+
+
+
+   if oDlg:nResult == 1
+      msgAlert( "valor" )
+   end
+
+RETURN ( uVal )
+
+
+
+function cGruPrv( cCodPrv, oDbfPrv )
+
+   local cCodGrP  := ""
+
+   if oDbfPrv:Seek( cCodPrv )
+      cCodGrP := oDbfPrv:cCodGrp
+   end
+
+return( cCodGrP )
+
+
+
+function cNomGrp( cCodGrc, oDbfGprPrv )
+
+   local cNomGrP  := ""
+
+   if oDbfGprPrv:Seek( cCodGrC )
+      cNomGrP := oDbfGprPrv:cNomGrp
+   end
+
+return( cNomGrP )

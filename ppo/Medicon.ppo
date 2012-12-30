@@ -1,0 +1,384 @@
+#line 112 "hbclass.ch"
+   DYNAMIC DivertConstructorCall
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+DECLARE HBClass  New( cName AS String, OPTIONAL SuperParams ) AS CLASS HBClass  Create() AS Object  Instance() AS Object  AddClsMethod( cName AS String, @MethodName(), nScope AS Numeric, n2 AS Numeric, n3 AS Numeric )  AddDelegate( cName AS String, cDelegate AS String, cObject AS String, nScope AS Numeric, lPersistent AS LOGICAL )  AddMultiClsData( cType AS String, uVal, nScope AS Numeric, aDatas AS Array OF String )  AddMultiData( cType AS String, uVal, nScope AS Numeric, aDatas AS Array OF String, x AS LOGICAL, lPer AS LOGICAL )  AddMethod( cName AS String, @MethodName(), nScope AS Numeric, lPersistent AS LOGICAL )  AddInLine( cName AS String, bBlock AS CodeBlock, nScope AS Numeric, lPersistent AS LOGICAL )  AddVirtual( cName AS String )  ModMethod( cName AS String, @MethodName(), nScope AS Numeric, lPersistent AS LOGICAL )  ModClsMethod( cName AS String, @MethodName(), nScope AS Numeric )  ModInline( cName AS String, bBlock AS CodeBlock, nScope AS Numeric, lPersistent AS LOGICAL )  SetOnError( @MethodName() )
+#line 85 "\Fwh1204\Include\FiveWin.ch"
+   EXTERNAL GetProcAdd
+   EXTERNAL TActiveX
+
+
+
+
+extern errorsys
+#line 13 ".\Prg\Medicon.prg"
+static cFullCurDir
+
+
+
+
+
+
+
+
+
+
+
+
+FUNCTION LJust( cCadena, cChar, nLen )
+
+    IIF( cChar == nil, cChar := " ", ) ;
+    IIF( nLen == nil, nLen := Len( cCadena ), ) ;
+
+    IF ValType( cCadena ) == "N"
+        cCadena := Str( Int( cCadena ) )
+    end
+
+RETURN PadR( AllTrim( cCadena ), nLen, cChar )
+
+
+
+
+
+
+
+FUNCTION cHoy( dFecha )
+
+    local cMes
+
+
+
+
+
+
+
+
+
+
+
+    local aMeses := { "Enero",    "Febrero",    "Marzo",    "Abril",    "Mayo",    "Junio",    "Julio",    "Agosto",    "Septiembre",    "Octubre",    "Noviembre",    "Diciembre" }
+
+    IIF( dFecha == nil, dFecha := DATE(), ) ;
+
+    cMes    := aMeses[ month( dFecha ) ]
+
+RETURN ( Str(Day(dFecha)) + " de " +  cMes + " de " + str(year(dFecha)) )
+
+
+
+
+
+
+
+
+FUNCTION Compile( cExpression )
+
+    local bExpression
+
+   if !Empty( cExpression ) .AND. At( Type( cExpression ), "UEUI" ) == 0
+      bExpression := &( "{|| " + Rtrim( cExpression ) + " } " )
+   else
+      bExpression := {|| nil }
+   end
+
+RETURN ( bExpression )
+
+
+
+FUNCTION CompileParam( cExpression )
+
+   local lError
+   local oError
+   local oBlock
+   local bExpression
+
+   lError            := .F.
+
+   oBlock            := ErrorBlock( {| oError | ApoloBreak( oError ) } )
+   BEGIN SEQUENCE
+
+      bExpression    := &( "{| uParam | " + Rtrim( cExpression ) + " } " )
+
+   RECOVER USING oError
+
+      lError         := .T.
+
+   end
+
+   ErrorBlock( oBlock )
+
+   if lError
+
+      msgStop( "Expresión incorrecta " + cExpression + Chr(13)+Chr(10) + ErrorMessage( oError ), cExpression )
+
+      bExpression    := nil
+
+   end
+
+RETURN ( bExpression )
+
+
+
+
+
+
+
+
+FUNCTION FullCurDir()
+
+   if Empty( cFullCurDir )
+
+      cFullCurDir    := CurDrive()
+
+      if IsAlpha( cFullCurDir )
+         cFullCurDir += ":\"
+      end
+
+      cFullCurDir    += CurDir() + If( !Empty( CurDir() ), "\", "" )
+
+   end
+
+RETURN ( cFullCurDir )
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+FUNCTION nlen( xVar, xPicture )
+
+   LOCAL nLen  := 0
+   LOCAL cTipo := ValType( xVar )
+
+   do case
+      case ( cTipo == "N" ) .AND. ( xPicture == NIL )
+            nLen := len( str( xVar ) )
+
+      case ( cTipo == "N" ) .AND. ( xPicture <> NIL )
+            nLen := len( Transform( xVar, xPicture ) )
+
+      case ( cTipo == "C" ) .AND. ( xPicture == NIL )
+            nLen := len( xVar )
+
+      case ( cTipo == "C" ) .AND. ( xPicture <> NIL )
+            nLen := len( Transform( xVar, xPicture ) )
+
+      case ( cTipo == "D" )
+             nLen := len( dtoc( xVar ) )
+
+      case ( cTipo == "L" )
+             nLen := 1
+
+      case ( cTipo == "A" )
+             nLen := Len( xVar )
+
+      case ( cTipo == "B" )
+          nLen := nLen( Eval( xVar ) )
+
+   end
+
+RETURN nLen
+
+
+
+FUNCTION nPadR( cText, nSize, oFont, nCol, oInf )
+
+    local nStartCol
+    local nWidth
+
+    nWidth         := oInf:oDevice:GetTextWidth( cText, oFont ) / oInf:nLogPixX
+    nSize            := oInf:oDevice:GetTextWidth( Replicate( "B", nSize),    oFont ) / oInf:nLogPixX
+
+   nStartCol   := nCol - nWidth + nSize
+
+RETURN nStartCol
+
+
+
+FUNCTION nPadC( cText, nSize, oFont, nCol, oInf )
+
+    local nStartCol
+    local nWidth
+
+    nWidth         := oInf:oDevice:GetTextWidth( cText, oFont ) / oInf:nLogPixX
+    nSize            := oInf:oDevice:GetTextWidth( Replicate( "B", nSize),    oFont ) / oInf:nLogPixX
+
+    nStartCol    := nCol + ( ( nWidth - nSize ) / 2 )
+
+RETURN nStartCol
+
+
+
+FUNCTION cDayToStr( dDate )
+
+RETURN ( { "Domingo", "Lunes", "Martes", "Miércoles", "Jueves", "Viernes", "Sábado" }[ DoW( dDate ) ] )
+
+
+
+FUNCTION cMonthToStr( dDate )
+
+
+RETURN ( {  "Enero", "Febrero", "Marzo", "Abril", "Mayo", "Junio", "Julio", "Agosto", "Septiembre", "Octubre", "Noviembre", "Diciembre" }[ Month( dDate ) ] )
+
+
+
+
+
+function aPrinterInfo( cPrnName )
+
+   local aInfo    := {}
+
+return ( aInfo )
+
+
+
+Function GoWeb( cUrl )
+
+   IIF( cUrl == nil, cUrl := "http://www.gestool.es", ) ;
+
+   IF !IsWinNt()
+      WinExec("start urlto:"+cURL,0)
+   ELSE
+      WinExec("rundll32.exe url.dll,FileProtocolHandler " + cURL)
+   ENDIF
+
+Return NIL
+
+
+
+Function GoHelp( cUrl )
+
+   IF !IsWinNt()
+      WinExec( "start urlto:" + "http://www.gstrotor.com/ayuda/Index.html" , 0 )
+   ELSE
+      WinExec( "rundll32.exe url.dll,FileProtocolHandler " + "http://www.gstrotor.com/ayuda/Index.html" )
+   ENDIF
+
+Return NIL
+
+
+
+Static Function DecodeUrlHelp( cUrl )
+
+   cUrl     := StrTran( cUrl, " ", "_" )
+   cUrl     := StrTran( cUrl, "ñ", "%C3%B1" )
+   cUrl     := StrTran( cUrl, "Ñ", "%C3%91" )
+   cUrl     := StrTran( cUrl, "á", "%C3%A1" )
+   cUrl     := StrTran( cUrl, "é", "%C3%A9" )
+   cUrl     := StrTran( cUrl, "í", "%C3%AD" )
+   cUrl     := StrTran( cUrl, "ó", "%C3%B3" )
+   cUrl     := StrTran( cUrl, "ú", "%C3%BA" )
+   cUrl     := StrTran( cUrl, "Á", "%C3%81" )
+   cUrl     := StrTran( cUrl, "É", "%C3%89" )
+   cUrl     := StrTran( cUrl, "Í", "%C3%8D" )
+   cUrl     := StrTran( cUrl, "Ó", "%C3%93" )
+   cUrl     := StrTran( cUrl, "Ú", "%C3%9A" )
+
+Return ( cUrl )
+
+
+
+
+
+
+Function cNamePath( cFile )
+
+    local nPos    := 0
+    local cPath   := ""
+
+    if ( nPos := Rat( "\", cFile ) ) <> 0
+        cPath     := Upper( SubStr( cFile, 1, nPos - 1 ) )
+    endif
+
+Return( cPath )
+
+
+
+FUNCTION RJustObj( oGet, cChar, nLen )
+
+   local cCadena  := oGet:varGet()
+
+   IIF( cChar == nil, cChar := " ", ) ;
+   IIF( nLen == nil, nLen := Len( cCadena ), ) ;
+
+   cCadena        := RJust( cCadena, cChar, nLen )
+
+    oGet:varPut( cCadena )
+    oGet:refresh()
+
+RETURN cCadena
+
+
+
+FUNCTION PntReplace( oGet, cChar, nLen )
+
+    local nPointPos
+    local cCadena := oGet:varGet()
+
+    IIF( cChar == nil, cChar := "0", ) ;
+    IIF( nLen == nil, nLen := Len( cCadena ), ) ;
+
+    nPointPos         := At( ".", cCadena )
+
+    IF nPointPos    <> 0
+
+        cCadena := StrTran( cCadena, ".", "0" )
+
+        WHILE len( AllTrim( cCadena ) ) < nLen
+            cCadena := SubStr( cCadena, 1, nPointPos - 1 ) + cChar + SubStr( cCadena, nPointPos )
+        end
+
+        oGet:cText( cCadena )
+
+    end
+
+RETURN cCadena
+
+
+
+
+
+
+
+
+FUNCTION RJust( cCadena, cChar, nLen )
+
+    IIF( cChar == nil, cChar := " ", ) ;
+    IIF( nLen == nil, nLen := Len( cCadena ), ) ;
+
+    IF ValType( cCadena ) == "N"
+        cCadena := Str( Int( cCadena ) )
+    end
+
+RETURN PadL( AllTrim( cCadena ), nLen, cChar )

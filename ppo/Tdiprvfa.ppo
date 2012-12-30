@@ -1,0 +1,299 @@
+#line 112 "hbclass.ch"
+   DYNAMIC DivertConstructorCall
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+DECLARE HBClass  New( cName AS String, OPTIONAL SuperParams ) AS CLASS HBClass  Create() AS Object  Instance() AS Object  AddClsMethod( cName AS String, @MethodName(), nScope AS Numeric, n2 AS Numeric, n3 AS Numeric )  AddDelegate( cName AS String, cDelegate AS String, cObject AS String, nScope AS Numeric, lPersistent AS LOGICAL )  AddMultiClsData( cType AS String, uVal, nScope AS Numeric, aDatas AS Array OF String )  AddMultiData( cType AS String, uVal, nScope AS Numeric, aDatas AS Array OF String, x AS LOGICAL, lPer AS LOGICAL )  AddMethod( cName AS String, @MethodName(), nScope AS Numeric, lPersistent AS LOGICAL )  AddInLine( cName AS String, bBlock AS CodeBlock, nScope AS Numeric, lPersistent AS LOGICAL )  AddVirtual( cName AS String )  ModMethod( cName AS String, @MethodName(), nScope AS Numeric, lPersistent AS LOGICAL )  ModClsMethod( cName AS String, @MethodName(), nScope AS Numeric )  ModInline( cName AS String, bBlock AS CodeBlock, nScope AS Numeric, lPersistent AS LOGICAL )  SetOnError( @MethodName() )
+#line 85 "\Fwh1204\Include\FiveWin.Ch"
+   EXTERNAL GetProcAdd
+   EXTERNAL TActiveX
+
+
+
+
+extern errorsys
+#line 8 ".\Prg\Tdiprvfa.prg"
+FUNCTION TDPrvFac()
+
+   local oInf
+   local aCol  := {}
+   local aIdx  := {}
+
+   aAdd( aCol, { "CCODPRV", "C", 12, 0, {|| "@!" },         "Cli",                       .F., "Cod. proveedor",             8 } )
+   aAdd( aCol, { "CNOMPRV", "C", 50, 0, {|| "@!" },         "Nom",                       .F., "Nombre proveedor",          25 } )
+   aAdd( aCol, { "CDOCMOV", "C", 18, 0, {|| "@!" },         "Fac",                       .T., "Factura",                   14 } )
+   aAdd( aCol, { "DFECMOV", "D",  8, 0, {|| "@!" },         "Fecha",                     .T., "Fecha",                     14 } )
+   aAdd( aCol, { "CNIFPRV", "C", 15, 0, {|| "@!" },         "Nif",                       .F., "Nif",                        8 } )
+   aAdd( aCol, { "CDOMPRV", "C", 35, 0, {|| "@!" },         "Dom",                       .F., "Domicilio",                 10 } )
+   aAdd( aCol, { "CPOBPRV", "C", 25, 0, {|| "@!" },         "Pob",                       .F., "Población",                 25 } )
+   aAdd( aCol, { "CPROPRV", "C", 20, 0, {|| "@!" },         "Prov",                      .F., "Provincia",                 20 } )
+   aAdd( aCol, { "CCDPPRV", "C",  7, 0, {|| "@!" },         "CP",                        .F., "Cod. Postal",               20 } )
+   aAdd( aCol, { "CTLFPRV", "C", 12, 0, {|| "@!" },         "Tlf",                       .F., "Teléfono",                   7 } )
+   aAdd( aCol, { "CDEFI01", "C",100, 0, {|| "@!" },         {|| oInf:cNameIniPrv(1) },   .F., {|| oInf:cNameIniPrv(1) },   50 } )
+   aAdd( aCol, { "CDEFI02", "C",100, 0, {|| "@!" },         {|| oInf:cNameIniPrv(2) },   .F., {|| oInf:cNameIniPrv(2) },   50 } )
+   aAdd( aCol, { "CDEFI03", "C",100, 0, {|| "@!" },         {|| oInf:cNameIniPrv(3) },   .F., {|| oInf:cNameIniPrv(3) },   50 } )
+   aAdd( aCol, { "CDEFI04", "C",100, 0, {|| "@!" },         {|| oInf:cNameIniPrv(4) },   .F., {|| oInf:cNameIniPrv(4) },   50 } )
+   aAdd( aCol, { "CDEFI05", "C",100, 0, {|| "@!" },         {|| oInf:cNameIniPrv(5) },   .F., {|| oInf:cNameIniPrv(5) },   50 } )
+   aAdd( aCol, { "CDEFI06", "C",100, 0, {|| "@!" },         {|| oInf:cNameIniPrv(6) },   .F., {|| oInf:cNameIniPrv(6) },   50 } )
+   aAdd( aCol, { "CDEFI07", "C",100, 0, {|| "@!" },         {|| oInf:cNameIniPrv(7) },   .F., {|| oInf:cNameIniPrv(7) },   50 } )
+   aAdd( aCol, { "CDEFI08", "C",100, 0, {|| "@!" },         {|| oInf:cNameIniPrv(8) },   .F., {|| oInf:cNameIniPrv(8) },   50 } )
+   aAdd( aCol, { "CDEFI09", "C",100, 0, {|| "@!" },         {|| oInf:cNameIniPrv(9) },   .F., {|| oInf:cNameIniPrv(9) },   50 } )
+   aAdd( aCol, { "CDEFI10", "C",100, 0, {|| "@!" },         {|| oInf:cNameIniPrv(10)},   .F., {|| oInf:cNameIniPrv(10)},   50 } )
+   aAdd( aCol, { "NTOTNET", "N", 16, 6, {|| oInf:cPicIn },  "Neto",                      .T., "Neto",                      10 } )
+   aAdd( aCol, { "NTOTIVA", "N", 16, 6, {|| oInf:cPicIn },  cImp(),                       .T., cImp(),                       10 } )
+   aAdd( aCol, { "NTOTREQ", "N", 16, 3, {|| oInf:cPicIn },  "Rec",                       .T., "Rec",                       10 } )
+   aAdd( aCol, { "NTOTDOC", "N", 16, 6, {|| oInf:cPicIn },  "Total",                     .T., "Total",                     10 } )
+
+   aAdd( aIdx, { "CCODPRV", "CCODPRV" } )
+
+   oInf  := TDiaPFac():New( "Informe totalizado de facturas de proveedores agrupadas por proveedor", aCol, aIdx, "01045" )
+
+   oInf:AddGroup( {|| oInf:oDbf:cCodPrv }, {|| "Proveedor : " + Rtrim( oInf:oDbf:cCodPrv ) + "-" + oRetFld( oInf:oDbf:cCodPrv, oInf:oDbfPrv ) } )
+
+   oInf:Resource()
+   oInf:Activate()
+
+   oInf:End()
+   oInf  := nil
+
+RETURN NIL
+
+
+
+_HB_CLASS TDiaPFac ; UTILITY FUNCTION TDiaPFac(...); static s_oClass ; local oClassInstance ; local nScope ; nScope := 1 ; if s_oClass == NIL ; s_oClass := IIF(.F.,, HBClass():New( "TDiaPFac" , {TInfGen():classh} ) ) ; ;
+
+   _HB_MEMBER {AS LOGIC lExcCero} ; IIF( !.F., s_oClass:AddMultiData( "LOGIC", .F., nScope + IIF( .F., 32, 0 ), { "lExcCero" }, .F., .F. ), )
+   _HB_MEMBER {AS OBJECT oEstado} ; IIF( !.F., s_oClass:AddMultiData( "OBJECT",, nScope + IIF( .F., 32, 0 ), { "oEstado" }, .F., .F. ), )
+   _HB_MEMBER {AS OBJECT oDbfIva} ; IIF( !.F., s_oClass:AddMultiData( "OBJECT",, nScope + IIF( .F., 32, 0 ), { "oDbfIva" }, .F., .F. ), )
+   _HB_MEMBER {AS OBJECT oFacPrvP} ; IIF( !.F., s_oClass:AddMultiData( "OBJECT",, nScope + IIF( .F., 32, 0 ), { "oFacPrvP" }, .F., .F. ), )
+   _HB_MEMBER {AS OBJECT oFacPrvT} ; IIF( !.F., s_oClass:AddMultiData( "OBJECT",, nScope + IIF( .F., 32, 0 ), { "oFacPrvT" }, .F., .F. ), )
+   _HB_MEMBER {AS OBJECT oFacPrvL} ; IIF( !.F., s_oClass:AddMultiData( "OBJECT",, nScope + IIF( .F., 32, 0 ), { "oFacPrvL" }, .F., .F. ), )
+   _HB_MEMBER {AS OBJECT oDbfTvta} ; IIF( !.F., s_oClass:AddMultiData( "OBJECT",, nScope + IIF( .F., 32, 0 ), { "oDbfTvta" }, .F., .F. ), )
+   _HB_MEMBER {AS ARRAY aEstado} ; IIF( !.F., s_oClass:AddMultiData( "ARRAY", { "Pendiente", "Liquidada", "Todas" }, nScope + IIF( .F., 32, 0 ), { "aEstado" }, .F., .F. ), )
+
+   _HB_MEMBER OpenFiles(); IIF( .F., s_oClass:ModMethod( "OpenFiles", @TDiaPFac_OpenFiles(), nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ), s_oClass:AddMethod( "OpenFiles", @TDiaPFac_OpenFiles(), nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ));
+
+   _HB_MEMBER CloseFiles(); IIF( .F., s_oClass:ModMethod( "CloseFiles", @TDiaPFac_CloseFiles(), nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ), s_oClass:AddMethod( "CloseFiles", @TDiaPFac_CloseFiles(), nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ));
+
+   _HB_MEMBER Resource( cFld); IIF( .F., s_oClass:ModMethod( "Resource", @TDiaPFac_Resource(), nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ), s_oClass:AddMethod( "Resource", @TDiaPFac_Resource(), nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ));
+
+   _HB_MEMBER lGenerate(); IIF( .F., s_oClass:ModMethod( "lGenerate", @TDiaPFac_lGenerate(), nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ), s_oClass:AddMethod( "lGenerate", @TDiaPFac_lGenerate(), nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ));
+
+; IF .F. ; __clsActive(s_oClass:hClass) ; s_oClass:Refresh() ; ELSE ; s_oClass:Create() ; END ; oClassInstance := __clsInst( s_oClass:hClass ) ; IF __ObjHasMsg( oClassInstance, "InitClass" ); oClassInstance:InitClass( hb_aParams() ) ; END ; ELSE ; oClassInstance := __clsInst( s_oClass:hClass ) ; END ; IF PCount() > 0 ; DIVERT TO (@DivertConstructorCall()) OF s_oClass ; END ; RETURN oClassInstance AS CLASS TDiaPFac ;
+
+
+
+UTILITY STATIC function TDiaPFac_OpenFiles() ; local Self AS CLASS TDiaPFac := QSelf() AS CLASS TDiaPFac
+
+  local oBlock
+  local oError
+  local lOpen := .T.
+
+
+
+
+
+   oBlock   := ErrorBlock( {| oError | ApoloBreak( oError ) } )
+   BEGIN SEQUENCE
+
+   ::oFacPrvT := DbfServer( "FACPRVT.DBF", ):NewOpen( "FACPRVT.DBF",, ( cDriver() ),, ( cPatEmp() ), .F., .T., .F., .F. ) ; ::oFacPrvT:AddBag( "FACPRVT.CDX" ) ; ::oFacPrvT:AddBag( ) ; ::oFacPrvT:AutoIndex()
+   ::oFacPrvT:SetOrder( "DFECFAC" )
+
+   ::oFacPrvL := DbfServer( "FACPRVL.DBF", ):NewOpen( "FACPRVL.DBF",, ( cDriver() ),, ( cPatEmp() ), .F., .T., .F., .F. ) ; ::oFacPrvL:AddBag( "FACPRVL.CDX" ) ; ::oFacPrvL:AddBag( ) ; ::oFacPrvL:AutoIndex()
+
+   ::oDbfIva := DbfServer( "TIVA.DBF", ):NewOpen( "TIVA.DBF",, ( cDriver() ),, ( cPatDat() ), .F., .T., .F., .F. ) ; ::oDbfIva:AddBag( "TIVA.CDX" ) ; ::oDbfIva:AddBag( ) ; ::oDbfIva:AutoIndex()
+
+   ::oFacPrvP := DbfServer( "FACPRVP.DBF", ):NewOpen( "FACPRVP.DBF",, ( cDriver() ),, ( cPatEmp() ), .F., .T., .F., .F. ) ; ::oFacPrvP:AddBag( "FACPRVP.CDX" ) ; ::oFacPrvP:AddBag( ) ; ::oFacPrvP:AutoIndex()
+
+   ::oDbfTvta := DbfServer( "TVTA.DBF", ):NewOpen( "TVTA.DBF",, ( cDriver() ),, ( cPatDat() ), .F., .T., .F., .F. ) ; ::oDbfTvta:AddBag( "TVTA.CDX" ) ; ::oDbfTvta:AddBag( ) ; ::oDbfTvta:AutoIndex()
+
+   RECOVER USING oError
+
+      lOpen := .F.
+
+      msgStop( "Imposible abrir todas las bases de datos" )
+      ::CloseFiles()
+
+   end
+
+   ErrorBlock( oBlock )
+
+RETURN ( lOpen )
+
+
+
+UTILITY STATIC function TDiaPFac_CloseFiles() ; local Self AS CLASS TDiaPFac := QSelf() AS CLASS TDiaPFac
+
+   if !Empty( ::oFacPrvtT ) .AND. ::oFacPrvtT:Used()
+      ::oFacPrvtT:End()
+   end
+
+   if !Empty( ::oFacPrvtL ) .AND. ::oFacPrvtL:Used()
+      ::oFacPrvtL:End()
+   end
+
+   if !Empty( ::oFacPrvtP ) .AND. ::oFacPrvtP:Used()
+      ::oFacPrvtP:End()
+   end
+
+   if !Empty( ::oDbfTvta ) .AND. ::oDbfTvta:Used()
+      ::oDbfTvta:End()
+   end
+
+  if !Empty( ::oDbfPrv ) .AND. ::oDbfPrv:Used()
+      ::oDbfPrv:End()
+   end
+
+  if !Empty( ::oDbfIva ) .AND. ::oDbfIva:Used()
+      ::oDbfIva:End()
+   end
+
+RETURN ( Self )
+
+
+
+UTILITY STATIC function TDiaPFac_Resource( cFld) ; local Self AS CLASS TDiaPFac := QSelf() AS CLASS TDiaPFac
+
+   local cEstado := "Todas"
+
+   if !::StdResource( "INF_GEN05A" )
+      return .F.
+   end
+
+
+
+
+
+   ::oDefPrvInf( 70, 80, 90, 100 )
+
+
+
+
+
+   ::lDefArtInf( 110, 120, 130, 140 )
+
+
+
+
+
+   ::oMtrInf:SetTotal( ::oFacPrvT:Lastrec() )
+
+   ::oDefExcInf()
+
+   ::oDefResInf()
+
+
+
+
+
+   ::oEstado := TComboBox():ReDefine( 218, { | u | If( PCount()==0, cEstado, cEstado:= u ) }, ::aEstado, ::oFld:aDialogs[1],,,,,,, .F.,,,,,, )
+
+RETURN ( Self )
+
+
+
+
+
+
+UTILITY STATIC function TDiaPFac_lGenerate() ; local Self AS CLASS TDiaPFac := QSelf() AS CLASS TDiaPFac
+
+   local bValid   := {|| .T. }
+   local aTotTmp  := {}
+
+   ::oDlg:Disable()
+
+   ::oDbf:Zap()
+
+   do case
+      case ::oEstado:nAt == 1
+         bValid   := {|| !::oFacPrvT:lLiquidada }
+      case ::oEstado:nAt == 2
+         bValid   := {|| ::oFacPrvT:lLiquidada }
+      case ::oEstado:nAt == 3
+         bValid   := {|| .T. }
+   end
+
+
+
+
+   ::aHeader      := {  {|| "Fecha   : " + Dtoc( Date() ) }, {|| "Periodo : " + Dtoc( ::dIniInf ) + " > " + Dtoc( ::dFinInf ) }, {|| "Provedor: " + ::cPrvOrg         + " > " + ::cPrvDes         }, {|| "Estado  : " + ::aEstado[ ::oEstado:nAt ] } }
+
+
+
+
+
+   ::oFacPrvT:GoTop()
+   while !::oFacPrvT:Eof()
+
+
+
+
+
+
+      if Eval( bValid )                                                                      .AND. ::oFacPrvT:DFECFAC >= ::dIniInf                                                     .AND. ::oFacPrvT:DFECFAC <= ::dFinInf                                                     .AND. ::oFacPrvT:CCODPRV >= ::cPrvOrg                                                     .AND. ::oFacPrvT:CCODPRV <= ::cPrvDes                                                     .AND. lChkSer( ::oFacPrvT:cSerFac, ::aSer )
+
+
+
+
+
+         ::oDbf:Append()
+
+         ::oDbf:CCODPRV := ::oFacPrvT:CCODPRV
+         ::oDbf:CNOMPRV := ::oFacPrvT:CNOMPRV
+         ::oDbf:DFECMOV := ::oFacPrvT:DFECFAC
+
+         aTotTmp        := aTotFacPrv (::oFacPrvT:cSerFac + Str( ::oFacPrvT:NNUMFAC ) + ::oFacPrvT:CSUFFAC, ::oFacPrvT:cAlias, ::oFacPrvL:cAlias, ::oDbfIva:cAlias, ::oDbfDiv:cAlias, ::oFacPrvP:cAlias, ::cDivInf )
+
+         ::oDbf:NTOTNET := aTotTmp[1]
+         ::oDbf:NTOTIVA := aTotTmp[2]
+         ::oDbf:NTOTREQ := aTotTmp[3]
+         ::oDbf:NTOTDOC := aTotTmp[4]
+         ::oDbf:CDOCMOV := ::oFacPrvT:cSerFac + "/" + Str( ::oFacPrvT:NNUMFAC ) + "/" + ::oFacPrvT:CSUFFAC
+
+         if ::oDbfPrv:Seek ( ::oFacPrvT:CCODPRV )
+
+            ::oDbf:CNIFPRV := ::oDbfPrv:Nif
+            ::oDbf:CDOMPRV := ::oDbfPrv:Domicilio
+            ::oDbf:CPOBPRV := ::oDbfPrv:Poblacion
+            ::oDbf:CPROPRV := ::oDbfPrv:Provincia
+            ::oDbf:CCDPPRV := ::oDbfPrv:CodPostal
+            ::oDbf:CTLFPRV := ::oDbfPrv:Telefono
+            ::oDbf:CDEFI01 := ::oDbfPrv:cUsrDef01
+            ::oDbf:CDEFI02 := ::oDbfPrv:cUsrDef02
+            ::oDbf:CDEFI03 := ::oDbfPrv:cUsrDef03
+            ::oDbf:CDEFI04 := ::oDbfPrv:cUsrDef04
+            ::oDbf:CDEFI05 := ::oDbfPrv:cUsrDef05
+            ::oDbf:CDEFI06 := ::oDbfPrv:cUsrDef06
+            ::oDbf:CDEFI07 := ::oDbfPrv:cUsrDef07
+            ::oDbf:CDEFI08 := ::oDbfPrv:cUsrDef08
+            ::oDbf:CDEFI09 := ::oDbfPrv:cUsrDef09
+            ::oDbf:CDEFI10 := ::oDbfPrv:cUsrDef10
+
+         end
+
+         ::oDbf:Save()
+
+      end
+
+      ::oMtrInf:AutoInc( ::oFacPrvT:OrdKeyNo() )
+
+      ::oFacPrvT:Skip()
+
+   end
+
+   ::oDlg:Enable()
+
+RETURN ( ::oDbf:LastRec() > 0 )

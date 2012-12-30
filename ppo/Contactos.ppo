@@ -1,0 +1,372 @@
+#line 112 "hbclass.ch"
+   DYNAMIC DivertConstructorCall
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+DECLARE HBClass  New( cName AS String, OPTIONAL SuperParams ) AS CLASS HBClass  Create() AS Object  Instance() AS Object  AddClsMethod( cName AS String, @MethodName(), nScope AS Numeric, n2 AS Numeric, n3 AS Numeric )  AddDelegate( cName AS String, cDelegate AS String, cObject AS String, nScope AS Numeric, lPersistent AS LOGICAL )  AddMultiClsData( cType AS String, uVal, nScope AS Numeric, aDatas AS Array OF String )  AddMultiData( cType AS String, uVal, nScope AS Numeric, aDatas AS Array OF String, x AS LOGICAL, lPer AS LOGICAL )  AddMethod( cName AS String, @MethodName(), nScope AS Numeric, lPersistent AS LOGICAL )  AddInLine( cName AS String, bBlock AS CodeBlock, nScope AS Numeric, lPersistent AS LOGICAL )  AddVirtual( cName AS String )  ModMethod( cName AS String, @MethodName(), nScope AS Numeric, lPersistent AS LOGICAL )  ModClsMethod( cName AS String, @MethodName(), nScope AS Numeric )  ModInline( cName AS String, bBlock AS CodeBlock, nScope AS Numeric, lPersistent AS LOGICAL )  SetOnError( @MethodName() )
+#line 85 "\Fwh1204\Include\FiveWin.Ch"
+   EXTERNAL GetProcAdd
+   EXTERNAL TActiveX
+
+
+
+
+extern errorsys
+#line 13 ".\Prg\Contactos.prg"
+   static bEdit      := {| aBlank, aoGet, dbfObrasT, oBrw, bWhen, bValid, nMode, cCodCli | EdtRec( aBlank, aoGet, dbfObrasT, oBrw, bWhen, bValid, nMode, cCodCli ) }
+
+
+static oWndBrw
+
+static dbfContactos
+
+
+
+
+
+STATIC FUNCTION EdtRec( aBlank, aoGet, dbfContactos, oBrw, bWhen, bValid, nMode, cCodCli )
+
+    local oDlg
+
+   if nMode == 1 .AND. !Empty( cCodCli )
+      aBlank[ ( dbfContactos )->( FieldPos( "cCodCli" ) ) ] := cCodCli
+   end
+
+   oDlg = TDialog():New(,,,, LblTitle( nMode ) + "contactos de clientes", "Contactos",, .F.,,,,,, .F.,,,,,, .F., )
+
+
+
+
+
+
+      aoGet[ ( dbfContactos )->( FieldPos( "cNomCon" ) ) ] := TGetHlp():ReDefine( 100, { | u | If( PCount()==0, aBlank[ ( dbfContactos )->( FieldPos( "cNomCon" ) ) ], aBlank[ ( dbfContactos )->( FieldPos( "cNomCon" ) ) ]:= u ) }, oDlg,, "@!",,,,,,, .F., {||         ( nMode <> 3 )},, .F., .F.,,,,,, nil,,, )
+
+
+
+
+      TGetHlp():ReDefine( 110, { | u | If( PCount()==0, aBlank[ ( dbfContactos )->( FieldPos( "cDirCon" ) ) ], aBlank[ ( dbfContactos )->( FieldPos( "cDirCon" ) ) ]:= u ) }, oDlg,,,,,,,,, .F., {||         ( nMode <> 3 )},, .F., .F.,,,,,, nil,,, )
+
+
+
+
+      TGetHlp():ReDefine( 120, { | u | If( PCount()==0, aBlank[ ( dbfContactos )->( FieldPos( "cPobCon" ) ) ], aBlank[ ( dbfContactos )->( FieldPos( "cPobCon" ) ) ]:= u ) }, oDlg,,,,,,,,, .F., {||         ( nMode <> 3 )},, .F., .F.,,,,,, nil,,, )
+
+
+
+
+      TGetHlp():ReDefine( 130, { | u | If( PCount()==0, aBlank[ ( dbfContactos )->( FieldPos( "cPosCon" ) ) ], aBlank[ ( dbfContactos )->( FieldPos( "cPosCon" ) ) ]:= u ) }, oDlg,,,,,,,,, .F., {||         ( nMode <> 3 )},, .F., .F.,,,,,, nil,,, )
+
+
+
+
+      TGetHlp():ReDefine( 140, { | u | If( PCount()==0, aBlank[ ( dbfContactos )->( FieldPos( "cPrvCon" ) ) ], aBlank[ ( dbfContactos )->( FieldPos( "cPrvCon" ) ) ]:= u ) }, oDlg,,,,,,,,, .F., {||         ( nMode <> 3 )},, .F., .F.,,,,,, nil,,, )
+
+
+
+
+      TGetHlp():ReDefine( 150, { | u | If( PCount()==0, aBlank[ ( dbfContactos )->( FieldPos( "cTelCon" ) ) ], aBlank[ ( dbfContactos )->( FieldPos( "cTelCon" ) ) ]:= u ) }, oDlg,,,,,,,,, .F., {||         ( nMode <> 3 )},, .F., .F.,,,,,, nil,,, )
+
+
+
+
+      TGetHlp():ReDefine( 160, { | u | If( PCount()==0, aBlank[ ( dbfContactos )->( FieldPos( "cMovCon" ) ) ], aBlank[ ( dbfContactos )->( FieldPos( "cMovCon" ) ) ]:= u ) }, oDlg,,,,,,,,, .F., {||         ( nMode <> 3 )},, .F., .F.,,,,,, nil,,, )
+
+
+
+
+      TGetHlp():ReDefine( 170, { | u | If( PCount()==0, aBlank[ ( dbfContactos )->( FieldPos( "cFaxCon" ) ) ], aBlank[ ( dbfContactos )->( FieldPos( "cFaxCon" ) ) ]:= u ) }, oDlg,,,,,,,,, .F., {||     ( nMode <> 3 )},, .F., .F.,,,,,, nil,,, )
+
+
+
+
+      TGetHlp():ReDefine( 180, { | u | If( PCount()==0, aBlank[ ( dbfContactos )->( FieldPos( "cMaiCon" ) ) ], aBlank[ ( dbfContactos )->( FieldPos( "cMaiCon" ) ) ]:= u ) }, oDlg,,,,,,,,, .F., {||     ( nMode <> 3 )},, .F., .F.,,,,,, nil,,, )
+
+
+
+
+
+      TButton():ReDefine( 1, {||( EndTrans( aBlank, aoGet, dbfContactos, oBrw, nMode, oDlg ) )}, oDlg,,, .F., {||         ( nMode <> 3 )},,, .F. )
+
+
+
+
+        TButton():ReDefine( 2, {||( oDlg:end() )}, oDlg,,, .F.,,,, .F. )
+
+      if nMode <> 3
+         oDlg:AddFastKey( 116, {|| EndTrans( aBlank, aoGet, dbfContactos, oBrw, nMode, oDlg ) } )
+      end
+
+   oDlg:Activate( oDlg:bLClicked, oDlg:bMoved, oDlg:bPainted, .T.,,,, oDlg:bRClicked,,, )
+
+RETURN ( oDlg:nResult == 1 )
+
+
+
+Static Function EndTrans( aBlank, aoGet, dbfContactos, oBrw, nMode, oDlg )
+
+   if Empty( aBlank[ ( dbfContactos )->( FieldPos( "cNomCon" ) ) ] )
+
+      MsgStop( "Nombre no puede estar vacío" )
+
+      aoGet[ ( dbfContactos )->( FieldPos( "cNomCon" ) ) ]:SetFocus()
+
+      return nil
+
+   end
+
+   WinGather( aBlank, aoGet, dbfContactos, oBrw, nMode )
+
+   oBrw:Refresh()
+
+Return ( oDlg:end( 1 ) )
+
+
+
+STATIC FUNCTION OpenFiles()
+
+   local lOpen    := .T.
+   local oBlock   := ErrorBlock( {| oError | ApoloBreak( oError ) } )
+
+   BEGIN SEQUENCE
+
+      dbUseArea( .T., ( cDriver() ), ( cPatCli() + "CliContactos.Dbf" ), ( cCheckArea( "CliConta", @dbfContactos ) ), if(.T. .OR. .F., !.F., NIL), .F.,, )
+      if !lAIS() ; ordListAdd( ( cPatCli() + "CliContactos.Cdx" ) ) ; else ; ordSetFocus( 1 ) ; end
+
+   RECOVER
+
+      msgStop( "Imposible abrir todas las bases de datos de contactos de clientes." )
+
+      CloseFiles()
+
+      lOpen       := .F.
+
+   end
+
+   ErrorBlock( oBlock )
+
+RETURN ( lOpen )
+
+
+
+STATIC FUNCTION CloseFiles()
+
+   if oWndBrw <> nil
+      oWndBrw  := nil
+   end
+
+   if !Empty( dbfContactos )
+      ( dbfContactos )->( dbCloseArea() )
+   end
+
+   dbfContactos   := nil
+
+RETURN ( .T. )
+
+
+
+FUNCTION AppContactos( cCodCli, dbfContactos, oBrw )
+
+   WinAppRec( oBrw, bEdit, dbfContactos, nil, nil, cCodCli )
+
+RETURN NIL
+
+
+
+FUNCTION EdtContactos( dbfContactos, oBrw )
+
+   local nLevel      := nLevelUsr( "01032" )
+
+   if nAnd( nLevel, 1 ) <> 0 .OR. nAnd( nLevel, 4 ) == 0
+      msgStop( "Acceso no permitido." )
+      return .T.
+   end
+
+   WinEdtRec( oBrw, bEdit, dbfContactos )
+
+RETURN NIL
+
+
+
+FUNCTION ZoomContactos( dbfContactos, oBrw )
+
+   WinZooRec( oBrw, bEdit, dbfContactos )
+
+RETURN NIL
+
+
+
+FUNCTION DelContactos( dbfContactos, oBrw )
+
+   if dbDelRec( oBrw, dbfContactos )
+      oBrw:Refresh()
+   end
+
+RETURN NIL
+
+
+
+
+
+FUNCTION aItmContacto()
+
+   local aItmCon  := {}
+
+   aAdd( aItmCon, { "cCodCli",   "C",   12,    0, "Código del cliente" ,            "",                  "", "( cDbfCon )" } )
+   aAdd( aItmCon, { "cNomCon",   "C",  150,    0, "Nombre del contacto" ,           "'@!'",              "", "( cDbfCon )" } )
+   aAdd( aItmCon, { "cDirCon",   "C",  100,    0, "Domicilio del contacto" ,        "'@!'",              "", "( cDbfCon )" } )
+   aAdd( aItmCon, { "cPobCon",   "C",  100,    0, "Población del contacto" ,        "'@!'",              "", "( cDbfCon )" } )
+   aAdd( aItmCon, { "cPrvCon",   "C",   20,    0, "Provincia del contacto" ,        "'@!'",              "", "( cDbfCon )" } )
+   aAdd( aItmCon, { "cPosCon",   "C",   10,    0, "Código postal del contacto" ,    "'@!'",              "", "( cDbfCon )" } )
+   aAdd( aItmCon, { "cTelCon",   "C",   17,    0, "Teléfono del contacto" ,         "",                  "", "( cDbfCon )" } )
+   aAdd( aItmCon, { "cMovCon",   "C",   17,    0, "Teléfono movil del contacto" ,   "",                  "", "( cDbfCon )" } )
+   aAdd( aItmCon, { "cFaxCon",   "C",   17,    0, "Fax del contacto" ,              "",                  "", "( cDbfCon )" } )
+   aAdd( aItmCon, { "cMaiCon",   "C",  200,    0, "Email del contacto" ,            "",                  "", "( cDbfCon )" } )
+
+RETURN ( aItmCon )
+
+
+
+
+
+FUNCTION BrwContactos( oGet, oGet2, cCodCli, dbfContactos )
+
+    local oDlg
+    local oBrw
+   local oFont
+   local oBtn
+    local oGet1
+    local cGet1
+   local nOrd        := GetBrwOpt( "BrwContactos" )
+    local oCbxOrd
+   local aCbxOrd     := { "Nombre", "Código postal", "Teléfono", "Movil", "Correo electrónico" }
+   local cCbxOrd     := "Nombre"
+   local nLevel      := nLevelUsr( "01032" )
+   local lClose      := .F.
+   local oSayText
+   local cSayText    := "Listado de obras"
+
+   nOrd              := Min( Max( nOrd, 1 ), len( aCbxOrd ) )
+   cCbxOrd           := aCbxOrd[ nOrd ]
+
+   if Empty( cCodCli )
+        MsgStop( "Es necesario codificar un cliente" )
+      return .T.
+   end
+
+   if !File( cPatCli() + "CliContactos.dbf" )
+      MsgStop( "No existe el fichero de obras" )
+      Return .F.
+   end
+
+   if Empty( dbfContactos )
+      dbUseArea( .T., ( cDriver() ), ( cPatCli() + "CliContactos.dbf" ), ( cCheckArea( "CliConta", @dbfContactos ) ), if(.T. .OR. .F., !.F., NIL), .F.,, )
+      if !lAIS() ; ordListAdd( ( cPatCli() + "CliContactos.Cdx" ) ) ; else ; ordSetFocus( 1 ) ; end
+      lClose      := .T.
+   end
+
+   ( dbfContactos )->( ordSetFocus( nOrd ) )
+   ( dbfContactos )->( dbSetFilter( {|| Field->cCodCli == cCodCli }, "Field->cCodCli == cCodCli" ) )
+   ( dbfContactos )->( dbGoTop() )
+
+
+
+   oDlg = TDialog():New(,,,, "Seleccionar contactos de clientes", "HELPENTRY",, .F.,,,,,, .F.,,,,,, .F., )
+
+
+
+
+
+      oGet1 := TGetHlp():ReDefine( 104, { | u | If( PCount()==0, cGet1, cGet1:= u ) }, oDlg,,,,,,,,, .F.,, {|nKey,nFlags,Self| ( AutoSeek( nKey, nFlags, Self, oBrw, dbfContactos, nil, cCodCli ) ) }, .F., .F.,,,,,, nil, "FIND",, )
+
+
+
+
+
+
+        oCbxOrd := TComboBox():ReDefine( 102, { | u | If( PCount()==0, cCbxOrd, cCbxOrd:= u ) }, aCbxOrd, oDlg,,, {|Self|(  ( dbfContactos )->( OrdSetFocus( oCbxOrd:nAt ) ), oBrw:Refresh(), oGet1:SetFocus() )},,,, .F.,,,,,, )
+
+      oBrw                 := TXBrowse():New( oDlg )
+
+      oBrw:bClrSel         := {|| { 0, ( 229 + ( 229 * 256 ) + ( 229 * 65536 ) ) } }
+      oBrw:bClrSelFocus    := {|| { 0, ( 167 + ( 205 * 256 ) + ( 240 * 65536 ) ) } }
+
+      oBrw:cAlias          := dbfContactos
+      oBrw:nMarqueeStyle   := 5
+
+      with object ( oBrw:AddCol() )
+         :cHeader          := "Código"
+         :cSortOrder       := "Codigo"
+         :bEditValue       := {|| ( dbfContactos )->cCodObr }
+         :nWidth           := 80
+         :bLClickHeader    := {| nMRow, nMCol, nFlags, oCol | oCbxOrd:Set( oCol:cHeader ) }
+      end
+
+      with object ( oBrw:AddCol() )
+         :cHeader          := "Nombre"
+         :cSortOrder       := "Nombre"
+         :bEditValue       := {|| ( dbfContactos )->cNomObr }
+         :nWidth           := 360
+         :bLClickHeader    := {| nMRow, nMCol, nFlags, oCol | oCbxOrd:Set( oCol:cHeader ) }
+      end
+
+      oBrw:bLDblClick      := {|| oDlg:end( 1 ) }
+
+      oBrw:CreateFromResource( 105 )
+
+
+
+
+
+        TButton():ReDefine( 500, {||( WinAppRec( oBrw, bEdit, dbfContactos, nil, nil, cCodCli ) )}, oDlg,,, .F., {||     ( nAnd( nLevel, 2 ) <> 0 .AND. !IsReport() )},,, .F. )
+
+
+
+
+
+        TButton():ReDefine( 501, {||( WinEdtRec( oBrw, bEdit, dbfContactos, nil, nil, cCodCli ) )}, oDlg,,, .F., {||     ( nAnd( nLevel, 4 ) <> 0 .AND. !IsReport() )},,, .F. )
+
+      if !IsReport()
+         oDlg:AddFastKey( 113,    {|| if( nAnd( nLevel, 2 ) <> 0, WinAppRec( oBrw, bEdit, dbfContactos, nil, nil, cCodCli ), ) } )
+         oDlg:AddFastKey( 114,    {|| if( nAnd( nLevel, 4 ) <> 0, WinEdtRec( oBrw, bEdit, dbfContactos, nil, nil, cCodCli ), ) } )
+      end
+
+   oDlg:AddFastKey( 116,       {|| oDlg:end( 1 ) } )
+   oDlg:AddFastKey( 13,   {|| oDlg:end( 1 ) } )
+
+   oDlg:Activate( oDlg:bLClicked, oDlg:bMoved, oDlg:bPainted, .T.,,,, oDlg:bRClicked,,, )
+
+   if oDlg:nResult == 1
+      oGet:cText( ( dbfContactos )->CCODOBR )
+
+      if oGet2 <> NIL
+         oGet2:cText( ( dbfContactos )->CNOMOBR )
+      end
+   end
+
+   DestroyFastFilter( dbfContactos )
+
+   SetBrwOpt( "BrwContactos", ( dbfContactos )->( OrdNumber() ) )
+
+   if lClose
+      ( dbfContactos )->( dbCloseArea() )
+   else
+      ( dbfContactos )->( OrdSetFocus( nOrd ) )
+      ( dbfContactos )->( dbClearFilter() )
+   end
+
+    oGet:setFocus()
+
+RETURN ( oDlg:nResult == 1 )

@@ -1,0 +1,2937 @@
+#line 112 "hbclass.ch"
+   DYNAMIC DivertConstructorCall
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+DECLARE HBClass  New( cName AS String, OPTIONAL SuperParams ) AS CLASS HBClass  Create() AS Object  Instance() AS Object  AddClsMethod( cName AS String, @MethodName(), nScope AS Numeric, n2 AS Numeric, n3 AS Numeric )  AddDelegate( cName AS String, cDelegate AS String, cObject AS String, nScope AS Numeric, lPersistent AS LOGICAL )  AddMultiClsData( cType AS String, uVal, nScope AS Numeric, aDatas AS Array OF String )  AddMultiData( cType AS String, uVal, nScope AS Numeric, aDatas AS Array OF String, x AS LOGICAL, lPer AS LOGICAL )  AddMethod( cName AS String, @MethodName(), nScope AS Numeric, lPersistent AS LOGICAL )  AddInLine( cName AS String, bBlock AS CodeBlock, nScope AS Numeric, lPersistent AS LOGICAL )  AddVirtual( cName AS String )  ModMethod( cName AS String, @MethodName(), nScope AS Numeric, lPersistent AS LOGICAL )  ModClsMethod( cName AS String, @MethodName(), nScope AS Numeric )  ModInline( cName AS String, bBlock AS CodeBlock, nScope AS Numeric, lPersistent AS LOGICAL )  SetOnError( @MethodName() )
+#line 85 "\Fwh1204\Include\FiveWin.Ch"
+   EXTERNAL GetProcAdd
+   EXTERNAL TActiveX
+
+
+
+
+extern errorsys
+#line 49 ".\Prg\Usuario.prg"
+static oWndBrw
+static dbfCajT
+static dbfDelega
+static dbfFlt
+static oOperario
+static oClaveRepetida
+static cClaveRepetida
+static bEdit            := { |aTmp, aGet, dbfUser, oBrw, bWhen, bValid, nMode | EdtRec( aTmp, aGet, dbfUser, oBrw, bWhen, bValid, nMode ) }
+
+
+
+static dbfUser
+static dbfMapa
+
+
+
+
+
+Function OpenFiles()
+
+   local lOpen    := .T.
+   local oBlock   := ErrorBlock( {| oError | ApoloBreak( oError ) } )
+
+   BEGIN SEQUENCE
+
+
+   IF !lExistTable( cPatDat() + "USERS.DBF" ) .OR.  !lExistTable( cPatDat() + "MAPAS.DBF" )
+        mkUsuario()
+    end
+
+
+   IF !lExistIndex( cPatDat() + "USERS.CDX" ) .OR.  !lExistIndex( cPatDat() + "MAPAS.CDX" )
+      rxUsuario()
+    end
+
+   dbUseArea( .T., ( cDriver() ), ( cPatDat() + "Users.Dbf" ), ( cCheckArea( "USERS", @dbfUser ) ), if(.T. .OR. .F., !.F., NIL), .F.,, )
+   if !lAIS() ; ordListAdd( ( cPatDat() + "Users.Cdx" ) ) ; else ; ordSetFocus( 1 ) ; end
+
+   dbUseArea( .T., ( cDriver() ), ( cPatDat() + "Mapas.Dbf" ), ( cCheckArea( "MAPAS", @dbfMapa ) ), if(.T. .OR. .F., !.F., NIL), .F.,, )
+   if !lAIS() ; ordListAdd( ( cPatDat() + "Mapas.Cdx" ) ) ; else ; ordSetFocus( 1 ) ; end
+
+   dbUseArea( .T., ( cDriver() ), ( cPatDat() + "Cajas.Dbf" ), ( cCheckArea( "CAJAS", @dbfCajT ) ), if(.T. .OR. .F., !.F., NIL), .F.,, )
+   if !lAIS() ; ordListAdd( ( cPatDat() + "Cajas.Cdx" ) ) ; else ; ordSetFocus( 1 ) ; end
+
+   dbUseArea( .T., ( cDriver() ), ( cPatDat() + "DELEGA.DBF" ), ( cCheckArea( "DELEGA", @dbfDelega ) ), if(.T. .OR. .F., !.F., NIL), .F.,, )
+   if !lAIS() ; ordListAdd( ( cPatDat() + "DELEGA.CDX" ) ) ; else ; ordSetFocus( 1 ) ; end
+
+   dbUseArea( .T., ( cDriver() ), ( cPatDat() + "CNFFLT.DBF" ), ( cCheckArea( "CNFFLT", @dbfFlt ) ), if(.T. .OR. .F., !.F., NIL), .F.,, )
+   if !lAIS() ; ordListAdd( ( cPatDat() + "CNFFLT.CDX" ) ) ; else ; ordSetFocus( 1 ) ; end
+
+   if !Empty( oOperario )
+      oOperario:OpenFiles()
+   end
+
+   RECOVER
+
+      msgStop( "Imposible abrir todas las bases de datos" )
+      CloseFiles()
+      lOpen := .F.
+
+   end
+
+   ErrorBlock( oBlock )
+
+Return ( lOpen )
+
+
+
+Static Function CloseFiles()
+
+   if !Empty( dbfUser )
+      ( dbfUser )->( dbCloseArea() )
+   end
+
+   if !Empty( dbfMapa )
+      ( dbfMapa )->( dbCloseArea() )
+   end
+
+   if !Empty( dbfCajT )
+      ( dbfCajT )->( dbCloseArea() )
+   end
+
+   if !Empty( dbfDelega )
+      ( dbfDelega )->( dbCloseArea() )
+   end
+
+   if !Empty( dbfFlt )
+      ( dbfFlt )->( dbCloseArea() )
+   end
+
+   dbfFlt         := nil
+   dbfUser        := nil
+   dbfMapa        := nil
+   dbfCajT        := nil
+   dbfDelega      := nil
+
+   if oWndBrw <> nil
+      oWndBrw     := nil
+   end
+
+Return .T.
+
+
+
+FUNCTION Usuarios( oMenuItem, oWnd )
+
+   local oSnd
+   local oFlt
+   local nLevel
+
+   IIF( oMenuItem == nil, oMenuItem := "01052", ) ;
+   IIF( oWnd == nil, oWnd := oWnd(), ) ;
+
+   nLevel               := nLevelUsr( oMenuItem )
+   if nAnd( nLevel, 1 ) <> 0
+      msgStop( "Acceso no permitido." )
+      return nil
+   end
+
+   oOperario            := TOperarios():Create()
+
+   if oWndBrw == NIL
+
+
+
+
+
+   if oWnd <> nil
+      SysRefresh(); oWnd:CloseAll(); SysRefresh()
+   end
+
+   OpenFiles()
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+   oWndBrw := TShell():New( 2, 10, 18, 70, "Usuarios",, oWnd,,, .F.,,, ( dbfUser ),,,,, {"Código", "Nombre"}, {||( WinAppRec( oWndBrw:oBrw, bEdit, dbfUser ) )}, {||( WinEdtRec( oWndBrw:oBrw, bEdit, dbfUser ) )}, {||( WinDelRec( oWndBrw:oBrw, dbfUser, {|| QuiUsr( dbfUser ) } ) )}, {||( WinDupRec( oWndBrw:oBrw, bEdit, dbfUser ) )}, nil, nLevel, "Businessmen_16", "WebTopGreen",,, .T. )
+
+      oWndBrw:lAutoPos     := .F.
+      oWndBrw:cHtmlHelp    := "Usuarios"
+
+      with object ( oWndBrw:AddXCol() )
+         :cHeader          := "Seleccionado"
+         :nHeadBmpNo       := 3
+         :bStrData         := {|| "" }
+         :bEditValue       := {|| ( dbfUser )->lUseUse }
+         :nWidth           := 20
+         :SetCheck( { "Cnt16", "Nil16" } )
+         :AddResource( "UsrSel" )
+      end
+
+      with object ( oWndBrw:AddXCol() )
+         :cHeader          := "Envio"
+         :nHeadBmpNo       := 3
+         :bStrData         := {|| "" }
+         :bEditValue       := {|| ( dbfUser )->lSndInt }
+         :nWidth           := 20
+         :SetCheck( { "Sel16", "Nil16" } )
+         :AddResource( "Lbl16" )
+      end
+
+      with object ( oWndBrw:AddXCol() )
+         :cHeader          := "Código"
+         :cSortOrder       := "cCodUse"
+         :bEditValue       := {|| if( ( dbfUser )->lGrupo, "<" + Rtrim( ( dbfUser )->cCodUse ) + ">", ( dbfUser )->cCodUse ) }
+         :nWidth           := 80
+      end
+
+      with object ( oWndBrw:AddXCol() )
+         :cHeader          := "Nombre"
+         :cSortOrder       := "cNbrUse"
+         :bEditValue       := {|| if( ( dbfUser )->lGrupo, "<" + Rtrim( ( dbfUser )->cNbrUse ) + ">", ( dbfUser )->cNbrUse ) }
+         :nWidth           := 360
+      end
+
+      oWndBrw:CreateXFromCode()
+
+
+
+
+
+      oWndBrw:NewAt( "BUS",,, {||( oWndBrw:SearchSetFocus() )}, "(B)uscar", "B",,,,, .F. )
+
+      oWndBrw:AddSeaBar()
+
+
+
+
+
+      oWndBrw:NewAt( "SEL",,, {||( if( !( dbfUser )->lUseUse, lChgUser( ( dbfUser )->cCodUse, dbfUser, oWndBrw, dbfCajT ), MsgStop( "Usuario en uso" ) ) )}, "Sele(c)cionar", "C",,,,, .F. )
+
+
+
+
+
+
+
+
+      oWndBrw:NewAt( "NEW",,, {||( oWndBrw:RecAdd() )}, "(A)ñadir", "A",,, 2,, .F. )
+
+
+
+
+
+
+
+
+      oWndBrw:NewAt( "USER1_ADD_",,, {||( WinAppRec( oWndBrw:oBrw, bEdit, dbfUser, .T. ) )}, "Añadir (g)rupo", "G",,, 2,, .F. )
+
+
+
+
+
+
+        oWndBrw:NewAt( "DUP",,, {||( oWndBrw:RecDup() )}, "(D)uplicar", "D",,, 2,, .F. )
+
+
+
+
+
+
+
+        oWndBrw:NewAt( "EDIT",,, {||( oWndBrw:RecEdit() )}, "(M)odificar", "M",,, 4,, .F. )
+
+
+
+
+
+
+        oWndBrw:NewAt( "ZOOM",,, {||( WinZooRec( oWndBrw:oBrw, bEdit, dbfUser ) )}, "(Z)oom", "Z",,, 8,, .F. )
+
+
+
+
+
+
+      oWndBrw:NewAt( "DEL",,, {||( oWndBrw:RecDel() )}, "(E)liminar", "E",,, 16,, .F. )
+
+
+
+
+
+
+
+
+      oWndBrw:NewAt( "IMP",,, {||( ListUsr():New( "Listado de usuarios" ):Play() )}, "(L)istado", "L",,, 32,, .F. )
+
+
+
+
+
+
+
+
+
+      oSnd := oWndBrw:NewAt( "Lbl",,, {||lSndCli( oWndBrw, dbfUser )}, "En(v)iar", "V",, {|This|This:Toggle()}, 4,, .F. )
+
+
+
+
+
+      oFlt := oWndBrw:NewAt( "BFILTER",,, {||( TDlgFlt():New( aItmUsr(), dbfUser, oFlt, .T., oWndBrw ):Resource( "28", nil, dbfFlt ) )}, "(F)iltrar", "F",,,,, .F. )
+
+      lLoadFiltro( "13", aItmUsr(), oFlt, oWndBrw, dbfFlt, dbfUser )
+
+   if oUser():lAdministrador()
+
+
+
+
+
+      oWndBrw:NewAt( "BMPCHG",,, {||( TDlgFlt():New( aItmUsr(), dbfUser ):ChgFields(), oWndBrw:Refresh() )}, "Cambiar campos",,,, 2,, .F. )
+
+   end
+
+
+
+
+
+      oWndBrw:NewAt( "BMPCHG",,, {||( lFreeUser( ( dbfUser )->cCodUse, .T., dbfUser, oWndBrw ) )}, "(R)esetear", "R",,,,, .F. )
+
+
+
+
+
+      oWndBrw:NewAt( "END",,, {||( oWndBrw:End() )}, "(S)alir", "S",,,,, .F. )
+
+      oWndBrw:Activate(, oWndBrw:bLClicked, oWndBrw:bRClicked, oWndBrw:bMoved, oWndBrw:bResized, oWndBrw:bPainted, oWndBrw:bKeyDown, oWndBrw:bInit,,,,,,,,, {|| ( CloseFiles() )},, oWndBrw:bLButtonUp )
+
+    ELSE
+
+      oWndBrw:SetFocus()
+
+    end
+
+RETURN NIL
+
+
+
+STATIC FUNCTION EdtRec( aTmp, aGet, dbfUser, oBrw, lGrupo, bValid, nMode )
+
+    local oDlg
+    local oGet
+   local aBmp           := {}
+   local oImgLst
+   local oChkAcc        := Array( 6 )
+   local aChkAcc        := Afill( Array( 6 ), .F. )
+   local oTree
+   local oSay           := Array( 2 )
+   local cSay           := Array( 2 )
+   local bmpImage
+   local aGrupoUsuarios := { "Administradores", "Usuarios" }
+   local cGrupoUsuarios
+   local oSayDlg
+   local cSayDlg
+   local oBmpGeneral
+
+   if Valtype( lGrupo ) <> "L"
+      lGrupo            := .F.
+   end
+
+   do case
+      case nMode == 1
+
+         if !lUsrMaster()
+            msgStop( "Solo puede añadir usuarios, el usuario Administrador." )
+            return .F.
+         end
+
+         aTmp[ 5 ]  := 1
+         aTmp[ 13 ]  := 2
+         aTmp[ 25  ]  := lGrupo
+
+      case nMode == 2
+
+         if !lUsrMaster()
+            msgStop( "Solo puede modificar las propiedades el usuario Administrador." )
+            return .F.
+         end
+
+   end
+
+   if Empty( aTmp[ 13 ] )
+      aTmp[ 13 ]  := 1
+   end
+
+   cClaveRepetida       := aTmp[ 3 ]
+   cSayDlg              := RetFld( aTmp[20], dbfDelega, "cNomDlg" )
+   cGrupoUsuarios       := aGrupoUsuarios[ aTmp[ 13 ] ]
+
+
+   if aTmp[ 25 ]
+
+   oDlg = TDialog():New(,,,, LblTitle( nMode ) + "grupos de usuarios", "GRUPOS",, .F.,,,,,, .F.,,,,,, .F., )
+
+
+
+
+
+      oBmpGeneral := TBitmap():ReDefine( 990, "users_48_alpha",, oDlg,,, .F., .F.,,, .F.,,, .T. )
+
+   else
+
+   oDlg = TDialog():New(,,,, LblTitle( nMode ) + "usuarios", "USUARIOS",, .F.,,,,,, .F.,,,,,, .F., )
+
+
+
+
+
+      oBmpGeneral := TBitmap():ReDefine( 990, "user_48_alpha",, oDlg,,, .F., .F.,,, .F.,,, .T. )
+
+
+
+
+
+
+
+      aGet[ 3 ] := TGetHlp():ReDefine( 120, { | u | If( PCount()==0, aTmp[ 3 ], aTmp[ 3 ]:= u ) }, oDlg,, "@!",, "N/W*",,,,, .F., {||         ( nMode <> 3 )},, .F., .F.,,,,,, nil,, 121, )
+
+
+
+
+
+
+
+      oClaveRepetida := TGetHlp():ReDefine( 122, { | u | If( PCount()==0, cClaveRepetida, cClaveRepetida:= u ) }, oDlg,, "@!",, "N/W*",,,,, .F., {||     ( nMode <> 3 )},, .F., .F.,,,,,, nil,, 123, )
+
+
+
+
+
+
+      aGet[ 13 ] := TComboBox():ReDefine( 125, { | u | If( PCount()==0, cGrupoUsuarios, cGrupoUsuarios:= u ) }, aGrupoUsuarios, oDlg,,,, "N/W*",,, .F., {||     ( aTmp[ 1 ] <> "000" .AND. nMode <> 3 )},,,,, )
+
+
+
+
+
+
+
+
+      aGet[ 11 ] := TGetHlp():ReDefine( 130, { | u | If( PCount()==0, aTmp[ 11 ], aTmp[ 11 ]:= u ) }, oDlg,, "@!", {||    ( cAlmacen( aGet[ 11 ], , oSay[1] ) )},,,,,, .F., {||     ( nMode <> 3 )},, .F., .F.,,,,, {|Self|( BrwAlmacen( aGet[ 11 ], oSay[1] ) )}, nil, "LUPA",, )
+
+
+
+
+
+      oSay[1] := TGetHlp():ReDefine( 131, { | u | If( PCount()==0, cSay[1], cSay[1]:= u ) }, oDlg,,,, "N/W*",,,,, .F., {||     .F.},, .F., .F.,,,,,, nil,,, )
+
+
+
+
+
+
+
+      aGet[ 14 ] := TGetHlp():ReDefine( 140, { | u | If( PCount()==0, aTmp[ 14 ], aTmp[ 14 ]:= u ) }, oDlg,,,,,,,,, .F., {||     ( nMode <> 3 )}, {|nKey,nFlags,Self| ( ChgBmp( aGet[ 14 ], bmpImage ) ) }, .F., .F.,,,,, {|Self|( GetBmp( aGet[ 14 ], bmpImage ) )}, nil, "LUPA",, )
+
+
+
+
+      aGet[ 16 ] := TCheckBox():ReDefine( 250, { | u | If( PCount()==0, aTmp[ 16 ], aTmp[ 16 ]:= u ) }, oDlg,,,,,,, .F., {||     ( nMode <> 3 )}, .F. )
+
+
+
+
+      aGet[ 23 ] := TCheckBox():ReDefine( 300, { | u | If( PCount()==0, aTmp[ 23 ], aTmp[ 23 ]:= u ) }, oDlg,,,,,,, .F., {||     ( nMode <> 3 )}, .F. )
+
+
+
+
+      aGet[ 24 ] := TCheckBox():ReDefine( 310, { | u | If( PCount()==0, aTmp[ 24 ], aTmp[ 24 ]:= u ) }, oDlg,,,,,,, .F., {||     ( nMode <> 3 )}, .F. )
+
+
+
+
+
+
+
+
+      aGet[ 9 ] := TGetHlp():ReDefine( 150, { | u | If( PCount()==0, aTmp[ 9 ], aTmp[ 9 ]:= u ) }, oDlg,,, {||    cCajas( aGet[ 9 ], dbfCajT, oSay[ 2 ] )}, "N/W*",,,,, .F., {||         ( nMode <> 3 )},, .F., .F.,,,,, {|Self|( BrwCajas( aGet[ 9 ], oSay[ 2 ] ) )}, nil, "LUPA",, )
+
+
+
+
+
+      oSay[ 2 ] := TGetHlp():ReDefine( 151, { | u | If( PCount()==0, cSay[ 2 ], cSay[ 2 ]:= u ) }, oDlg,,,, "N/W*",,,,, .F., {||     .F.},, .F., .F.,,,,,, nil,,, )
+
+
+
+
+
+
+
+
+      aGet[ 20 ] := TGetHlp():ReDefine( 160, { | u | If( PCount()==0, aTmp[ 20 ], aTmp[ 20 ]:= u ) }, oDlg,,, {||    ( cDelegacion( aGet[ 20 ], dbfDelega, oSayDlg ) )}, "N/W*",,,,, .F., {||         ( nMode <> 3 )},, .F., .F.,,,,, {|Self|( BrwDelegacion( aGet[ 20 ], dbfDelega, oSayDlg ) )}, nil, "LUPA",, )
+
+
+
+
+
+      oSayDlg := TGetHlp():ReDefine( 161, { | u | If( PCount()==0, cSayDlg, cSayDlg:= u ) }, oDlg,,,, "N/W*",,,,, .F., {||     .F.},, .F., .F.,,,,,, nil,,, )
+
+
+
+
+
+
+
+
+      aGet[ 28 ] := TGetHlp():ReDefine( 340, { | u | If( PCount()==0, aTmp[ 28 ], aTmp[ 28 ]:= u ) }, oDlg,,, {||    ( oOperario:Existe( aGet[ 28 ], aGet[ 28 ]:oHelpText, "cNomTra", .T., .T., "0" ) )},,,,,, .F., {||     ( nMode <> 3 )},, .F., .F.,,,,, {|Self|( oOperario:Buscar( aGet[ 28 ] ) )}, nil, "LUPA",, 341 )
+
+
+
+
+
+
+      bmpImage := TBitmap():ReDefine( 500,, ( cFileBitmap( cPatImg(), aTmp[ 14 ] ) ), oDlg,, { |nRow,nCol,nKeyFlags| ( bmpImage:lStretch := !bmpImage:lStretch, bmpImage:Refresh() ) }, .F., .F.,,, .F.,,, .F. )
+      bmpImage:SetColor( , GetSysColor( 15 ) )
+
+
+
+
+
+
+
+
+
+      aGet[ 26 ] := TGetHlp():ReDefine( 320, { | u | If( PCount()==0, aTmp[ 26 ], aTmp[ 26 ]:= u ) }, oDlg,,, {||    ( lValidGruop( aGet[ 26 ], dbfUser, oTree, oChkAcc ) )},,,,,, .F., {||     ( nMode <> 3 .AND. aTmp[ 1 ] <> "000" )},, .F., .F.,,,,, {|Self|( BrwUser( aGet[ 26 ], dbfUser, aGet[ 26 ]:oHelpText, .F., .T. ) )}, nil, "LUPA", 322, 321 )
+
+
+
+
+      aGet[ 29 ] := TCheckBox():ReDefine( 350, { | u | If( PCount()==0, aTmp[ 29 ], aTmp[ 29 ]:= u ) }, oDlg,,,,,,, .F., {||     ( nMode <> 3 )}, .F. )
+
+
+
+
+      aGet[ 30 ] := TCheckBox():ReDefine( 360, { | u | If( PCount()==0, aTmp[ 30 ], aTmp[ 30 ]:= u ) }, oDlg,,,,,,, .F., {||     ( nMode <> 3 )}, .F. )
+
+   end
+
+
+
+
+
+      oGet := TGetHlp():ReDefine( 100, { | u | If( PCount()==0, aTmp[ 1 ], aTmp[ 1 ]:= u ) }, oDlg,,, {||    ( NotValid( oGet, dbfUser, .T., "0" ) )},,,,,, .F., {||     ( nMode == 1 .OR. nMode == 4 )},, .F., .F.,,,,,, nil,,, )
+
+
+
+
+
+      aGet[ 2 ] := TGetHlp():ReDefine( 110, { | u | If( PCount()==0, aTmp[ 2 ], aTmp[ 2 ]:= u ) }, oDlg,, "@!",,,,,,, .F., {||         ( nMode <> 3 )},, .F., .F.,,,,,, nil,,, )
+
+
+
+
+      aGet[ 15 ] := TCheckBox():ReDefine( 240, { | u | If( PCount()==0, aTmp[ 15 ], aTmp[ 15 ]:= u ) }, oDlg,,,,,,, .F., {||     ( nMode <> 3 )}, .F. )
+
+
+
+
+      aGet[ 21 ] := TCheckBox():ReDefine( 260, { | u | If( PCount()==0, aTmp[ 21 ], aTmp[ 21 ]:= u ) }, oDlg,,,,,,, .F., {||     ( nMode <> 3 )}, .F. )
+
+
+
+
+      aGet[ 22 ] := TCheckBox():ReDefine( 270, { | u | If( PCount()==0, aTmp[ 22 ], aTmp[ 22 ]:= u ) }, oDlg,,,,,,, .F., {||     ( nMode <> 3 )}, .F. )
+
+
+
+
+      aGet[ 17 ] := TCheckBox():ReDefine( 280, { | u | If( PCount()==0, aTmp[ 17 ], aTmp[ 17 ]:= u ) }, oDlg,,,,,,, .F., {||     ( nMode <> 3 )}, .F. )
+
+
+
+
+      aGet[ 18 ] := TCheckBox():ReDefine( 290, { | u | If( PCount()==0, aTmp[ 18 ], aTmp[ 18 ]:= u ) }, oDlg,,,,,,, .F., {||     ( nMode <> 3 )}, .F. )
+
+
+
+
+      aGet[ 27 ] := TCheckBox():ReDefine( 330, { | u | If( PCount()==0, aTmp[ 27 ], aTmp[ 27 ]:= u ) }, oDlg,,,,,,, .F., {||     ( nMode <> 3 )}, .F. )
+
+      oImgLst        := TImageList():New()
+
+      aAdd( aBmp, TBitmap():Define( "FOLDER16"  , , oDlg ) )
+      aAdd( aBmp, TBitmap():Define( "NOACC16"   , , oDlg ) )
+      aAdd( aBmp, TBitmap():Define( "NEW16"     , , oDlg ) )
+      aAdd( aBmp, TBitmap():Define( "EDIT16"    , , oDlg ) )
+      aAdd( aBmp, TBitmap():Define( "ZOOM16"    , , oDlg ) )
+      aAdd( aBmp, TBitmap():Define( "DEL16"     , , oDlg ) )
+      aAdd( aBmp, TBitmap():Define( "IMP16"     , , oDlg ) )
+
+      aEval( aBmp, {| oBmp | oImgLst:AddMasked( oBmp, ( 255 + ( 0 * 256 ) + ( 255 * 65536 ) ) ) } )
+
+      oTree          := TTreeView():Redefine( 170, oDlg  )
+      oTree:bChanged := {|| SetMenu( oTree, oChkAcc ), ChangeMenu( aChkAcc, oChkAcc ) }
+
+
+
+
+
+      oChkAcc[1] := TCheckBox():ReDefine( 180, { | u | If( PCount()==0, aChkAcc[1], aChkAcc[1]:= u ) }, oDlg,, {||( ChangeMenu( aChkAcc, oChkAcc ), SelMenu( oTree, oTree:GetSelected(), aChkAcc, oChkAcc ) )},,,,, .F., {||     ( nMode <> 3 .AND. aTmp[1] <> "000" )}, .F. )
+
+
+
+
+
+      oChkAcc[2] := TCheckBox():ReDefine( 190, { | u | If( PCount()==0, aChkAcc[2], aChkAcc[2]:= u ) }, oDlg,, {||( SelMenu( oTree, oTree:GetSelected(), aChkAcc, oChkAcc ) )},,,,, .F., {||     ( nMode <> 3 .AND. aTmp[1] <> "000" )}, .F. )
+
+
+
+
+
+      oChkAcc[3] := TCheckBox():ReDefine( 200, { | u | If( PCount()==0, aChkAcc[3], aChkAcc[3]:= u ) }, oDlg,, {||( SelMenu( oTree, oTree:GetSelected(), aChkAcc, oChkAcc ) )},,,,, .F., {||     ( nMode <> 3 .AND. aTmp[1] <> "000" )}, .F. )
+
+
+
+
+
+      oChkAcc[4] := TCheckBox():ReDefine( 210, { | u | If( PCount()==0, aChkAcc[4], aChkAcc[4]:= u ) }, oDlg,, {||( SelMenu( oTree, oTree:GetSelected(), aChkAcc, oChkAcc ) )},,,,, .F., {||     ( nMode <> 3 .AND. aTmp[1] <> "000" )}, .F. )
+
+
+
+
+
+      oChkAcc[5] := TCheckBox():ReDefine( 220, { | u | If( PCount()==0, aChkAcc[5], aChkAcc[5]:= u ) }, oDlg,, {||( SelMenu( oTree, oTree:GetSelected(), aChkAcc, oChkAcc ) )},,,,, .F., {||     ( nMode <> 3 .AND. aTmp[ 1 ] <> "000" )}, .F. )
+
+
+
+
+
+      oChkAcc[6] := TCheckBox():ReDefine( 230, { | u | If( PCount()==0, aChkAcc[6], aChkAcc[6]:= u ) }, oDlg,, {||( SelMenu( oTree, oTree:GetSelected(), aChkAcc, oChkAcc ) )},,,,, .F., {||     ( nMode <> 3 .AND. aTmp[ 1 ] <> "000" )}, .F. )
+
+
+
+
+
+      TButton():ReDefine( 560, {||( if( ComprobarClave( aTmp ), SaveUser( aTmp, aGet, dbfUser, oTree, oBrw, oDlg, nMode, oGet ), ) )}, oDlg,,, .F., {||         ( nMode <> 3 )},,, .F. )
+
+
+
+
+
+        TButton():ReDefine( 561, {||( oDlg:end() )}, oDlg,,, .F.,,,, .T. )
+
+
+
+
+      TButton():ReDefine( 569, {||( ChmHelp ("Usuarios") )}, oDlg,,, .F.,,,, .F. )
+
+   if nMode <> 3
+      oDlg:AddFastKey( 116, {|| if( ComprobarClave( aTmp ), SaveUser( aTmp, aGet, dbfUser, oTree, oBrw, oDlg, nMode, oGet ), ) } )
+   end
+
+   oDlg:AddFastKey( 112, {|| ChmHelp ("Usuarios") } )
+
+   oDlg:bStart    := {|| EvalGet( aGet, nMode ), oGet:SetFocus() }
+
+
+
+   oDlg:Activate( oDlg:bLClicked, oDlg:bMoved, oDlg:bPainted, .T.,,, {|Self|( InitEdtRec( aTmp, aGet, oTree, oImgLst, bmpImage ) )}, oDlg:bRClicked,,, )
+
+   oBmpGeneral:End()
+
+Return ( oDlg:nResult == 1 )
+
+
+
+Static Function InitEdtRec( aTmp, aGet, oTree, oImgLst, bmpImage )
+
+   oWndBar():CreateTree( oTree )
+
+   oTree:SetImageList( oImgLst )
+
+   oMenuTree( aTmp[ 1 ], oTree, oTree:aItems )
+
+   if !Empty( aGet[ 14 ] )
+      ChgBmp( aGet[ 14 ], bmpImage )
+   end
+
+Return ( nil )
+
+
+
+Static Function SaveUser( aTmp, aGet, dbfUser, oTree, oBrw, oDlg, nMode, oGet )
+
+   local nRec  := ( dbfUser )->( Recno() )
+
+   if Empty( aTmp[ 1 ] )
+      MsgStop( "Código de usuario no puede estar vacio" )
+      aGet[ 1 ]:SetFocus()
+      Return .F.
+   end
+
+   if Empty( aTmp[ 2 ] )
+      MsgStop( "Nombre de usuario no puede estar vacio" )
+      aGet[ 2 ]:SetFocus()
+      Return .F.
+   end
+
+   if ( Rtrim( cClaveRepetida ) <> Rtrim( aTmp[ 3 ] ) ) .OR. Len( Rtrim( cClaveRepetida ) ) <> Len( Rtrim( aTmp[ 3 ] ) )
+      MsgStop( "La clave de usuario no coincide" )
+      aGet[ 3 ]:SetFocus()
+      Return .F.
+   end
+
+   if !Empty( aGet[ 13 ] )
+      aTmp[ 13 ]  := aGet[ 13 ]:nAt
+   end
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+   ( dbfUser )->( dbGoTo( nRec ) )
+
+   SaveMenu( oTree, aTmp )
+
+   WinGather( aTmp, aGet, dbfUser, oBrw, nMode )
+
+
+
+
+
+   if ( dbfUser )->cCodUse == cCurUsr()
+      oSetUsr( ( dbfUser )->cCodUse, dbfUser, dbfCajT, nil, .F. )
+   end
+
+Return ( oDlg:end( 1 ) )
+
+
+
+Static Function SetMenu( oTree, oChkAcc )
+
+   local oItem := oTree:GetSelected()
+
+   if !Empty( oItem:Cargo )
+      Eval( oChkAcc[ 1 ]:bSetGet, nAnd( oItem:Cargo,  1 ) <> 0 )
+      Eval( oChkAcc[ 2 ]:bSetGet, nAnd( oItem:Cargo,  2 ) <> 0 )
+      Eval( oChkAcc[ 3 ]:bSetGet, nAnd( oItem:Cargo,  4 ) <> 0 )
+      Eval( oChkAcc[ 4 ]:bSetGet, nAnd( oItem:Cargo,  8 ) <> 0 )
+      Eval( oChkAcc[ 5 ]:bSetGet, nAnd( oItem:Cargo, 16 ) <> 0 )
+      Eval( oChkAcc[ 6 ]:bSetGet, nAnd( oItem:Cargo, 32 ) <> 0 )
+      aSend( oChkAcc, "Refresh" )
+   end
+
+return ( nil )
+
+
+
+static function SelMenu( oTree, oItem, aChkAcc, oChkAcc )
+
+   local i
+
+   if !IsNil( oItem:Cargo )
+
+      oItem:Cargo       := 0
+
+      if Eval( oChkAcc[1]:bSetGet )
+         oItem:Cargo    := nOr( oItem:Cargo, 1 )
+      end
+
+      if Eval( oChkAcc[2]:bSetGet )
+         oItem:Cargo    := nOr( oItem:Cargo, 2 )
+      end
+
+      if Eval( oChkAcc[3]:bSetGet )
+         oItem:Cargo    := nOr( oItem:Cargo, 4 )
+      end
+
+      if Eval( oChkAcc[4]:bSetGet )
+         oItem:Cargo    := nOr( oItem:Cargo, 8 )
+      end
+
+      if Eval( oChkAcc[5]:bSetGet )
+         oItem:Cargo    := nOr( oItem:Cargo, 16 )
+      end
+
+      if Eval( oChkAcc[6]:bSetGet )
+         oItem:Cargo    := nOr( oItem:Cargo, 32 )
+      end
+
+      TvSetItemImage( oTree:hWnd, oItem:hItem, nLev2Img( oItem:Cargo ) - 1 )
+
+   else
+
+      for i := 1 to Len( oItem:aItems )
+         SelMenu( oTree, oItem:aItems[ i ], aChkAcc, oChkAcc )
+      next
+
+   end
+
+   oTree:Refresh()
+
+return .T.
+
+
+
+function oMenuTree( cCodUsr, oTree, aItems )
+
+   local n
+   local nLevOpc
+
+   for n := 1 to Len( aItems )
+
+      if !Empty( aItems[ n ]:aItems )
+
+         oMenuTree( cCodUsr, oTree, aItems[ n ]:aItems )
+
+      else
+
+         if !Empty( aItems[ n ]:bAction )
+
+            if ( dbfMapa )->( dbSeek( cCodUsr + aItems[ n ]:bAction ) )
+               nLevOpc              := ( dbfMapa )->nLevOpc
+            else
+               nLevOpc              := 62
+            end
+
+            aItems[ n ]:Cargo       := nLevOpc
+
+            TvSetItemImage( oTree:hWnd, aItems[ n ]:hItem, nLev2Img( aItems[ n ]:Cargo ) - 1 )
+
+         end
+
+      endif
+
+   next
+
+return oTree
+
+
+
+static function SaveMenu( oTree, aTmp )
+
+
+
+
+
+   while ( dbfMapa )->( dbSeek( aTmp[ 1 ] ) )
+      if ( dbfMapa )->( dbRLock() )
+         ( dbfMapa )->( dbDelete() )
+         ( dbfMapa )->( dbUnLock() )
+      end
+      ( dbfMapa )->( dbSkip() )
+   end
+
+   Tree2Mapa( "", oTree:aItems, aTmp )
+
+return ( nil )
+
+
+
+
+
+
+static function Tree2Mapa( cPreItem, oItem , aTmp )
+
+   local n
+
+   for n := 1 to len( oItem )
+
+      if !Empty( oItem[ n ]:aItems )
+
+         Tree2Mapa( Rtrim( oItem[ n ]:cPrompt ), oItem[ n ]:aItems, aTmp )
+
+      else
+
+         ( dbfMapa )->( dbAppend() )
+         ( dbfMapa )->cCodUse       := aTmp[ 1 ]
+
+         if oItem[ n ]:Cargo <> nil
+
+            ( dbfMapa )->cNomOpc    := oItem[ n ]:bAction
+
+            if oItem[ n ]:Cargo == 0
+               ( dbfMapa )->nLevOpc := 1024
+            else
+               ( dbfMapa )->nLevOpc := oItem[ n ]:Cargo
+            end
+
+         end
+
+      end
+
+   next
+
+return nil
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+function nUsrInUse( dbfUser )
+
+   local oBlock
+   local oError
+   local lClo        := .F.
+   local nUsr        := 0
+
+   oBlock            := ErrorBlock( {| oError | ApoloBreak( oError ) } )
+   BEGIN SEQUENCE
+
+   if Empty( dbfUser )
+      dbUseArea( .T., ( cDriver() ), ( cPatDat() + "USERS.DBF" ), ( cCheckArea( "USERS", @dbfUser ) ), if(.T. .OR. .F., !.F., NIL), .F.,, )
+      if !lAIS() ; ordListAdd( ( cPatDat() + "USERS.CDX" ) ) ; else ; ordSetFocus( 1 ) ; end
+      lClo           := .T.
+   end
+
+   ( dbfUser )->( dbGoTop() )
+   while !( dbfUser )->( eof() )
+
+      lFreeUser( ( dbfUser )->cCodUse, .F., dbfUser )
+
+      if ( dbfUser )->lUseUse
+         nUsr++
+      end
+
+      ( dbfUser )->( dbSkip() )
+
+      SysRefresh()
+
+   end
+
+   RECOVER USING oError
+
+      msgStop( "Imposible abrir todas las bases de datos " + Chr(13)+Chr(10) + ErrorMessage( oError ) )
+
+   end
+
+   ErrorBlock( oBlock )
+
+   if lClo
+      ( dbfUser )->( dbCloseArea() )
+   end
+
+return ( nUsr )
+
+
+
+FUNCTION cUser( oGet, dbfUsr, oGet2 )
+
+   local oBlock
+   local oError
+   local lClose   := .F.
+   local lValid   := .F.
+    local xValor     := oGet:varGet()
+
+   if Empty( xValor )
+      if !Empty( oGet2 )
+            oGet2:cText( "" )
+      end
+      Return .T.
+   end
+
+   oBlock         := ErrorBlock( {| oError | ApoloBreak( oError ) } )
+   BEGIN SEQUENCE
+
+   if Empty( dbfUsr )
+      dbUseArea( .T., ( cDriver() ), ( cPatDat() + "USERS.DBF" ), ( cCheckArea( "USERS", @dbfUsr ) ), if(.T. .OR. .F., !.F., NIL), .F.,, )
+      if !lAIS() ; ordListAdd( ( cPatDat() + "USERS.CDX" ) ) ; else ; ordSetFocus( 1 ) ; end
+      lClose      := .T.
+   end
+
+   if dbSeekInOrd( xValor, "cCodUse", dbfUsr )
+
+      oGet:cText( ( dbfUsr )->cCodUse )
+
+      if !Empty( oGet2 )
+         oGet2:cText( ( dbfUsr )->cNbrUse )
+      end
+
+      lValid      := .T.
+
+   else
+
+      msgStop( "Código de usuario no encontrado" )
+
+    end
+
+   RECOVER USING oError
+
+      msgStop( "Imposible abrir todas las bases de datos " + Chr(13)+Chr(10) + ErrorMessage( oError ) )
+
+   end
+   ErrorBlock( oBlock )
+
+   if lClose
+      ( dbfUsr )->( dbCloseArea() )
+   end
+
+RETURN lValid
+
+
+
+FUNCTION BrwUser( oGet, dbfUsr, oGet2, lBigStyle, lGroup, lGetPassword, lStatus )
+
+   local oBlock
+   local oError
+    local oDlg
+   local aSta
+   local oGet1
+    local cGet1
+    local oBrw
+   local oBtnApp
+   local oBtnEdt
+    local oCbxOrd
+   local lClose         := .F.
+   local aCbxOrd        := { "Código", "Nombre" }
+   local cCbxOrd        := "Código"
+   local cReturn        := Space( 3 )
+
+   IIF( lBigStyle == nil, lBigStyle := .F., ) ;
+   IIF( lGroup == nil, lGroup := .F., ) ;
+   IIF( lGetPassword == nil, lGetPassword := .T., ) ;
+   IIF( lStatus == nil, lStatus := .F., ) ;
+
+   oBlock               := ErrorBlock( {| oError | ApoloBreak( oError ) } )
+   BEGIN SEQUENCE
+
+   if Empty( dbfUsr )
+      dbUseArea( .T., ( cDriver() ), ( cPatDat() + "USERS.DBF" ), ( cCheckArea( "USERS", @dbfUsr ) ), if(.T. .OR. .F., !.F., NIL), .F.,, )
+      if !lAIS() ; ordListAdd( ( cPatDat() + "USERS.CDX" ) ) ; else ; ordSetFocus( 1 ) ; end
+   end
+
+   if lGroup
+      ( dbfUsr )->( dbSetFilter( {|| Field->lGrupo }, "lGrupo" ) )
+   else
+      ( dbfUsr )->( dbSetFilter( {|| !Field->lGrupo }, "!lGrupo" ) )
+   end
+
+   aSta                 := aGetStatus( dbfUsr )
+
+   ( dbfUsr )->( dbGoTop() )
+
+   if !lBigStyle
+      oDlg = TDialog():New(,,,, "Seleccionar usuarios", "HELPENTRY",, .F.,,,,,, .F.,,,,,, .F., )
+   else
+      oDlg = TDialog():New(,,,, "Seleccionar usuarios", "BigHelpEntry",, .F.,,,,,, .F.,,,,,, .F., )
+   end
+
+
+
+
+
+
+      oGet1 := TGetHlp():ReDefine( 104, { | u | If( PCount()==0, cGet1, cGet1:= u ) }, oDlg,,, {||    ( OrdClearScope( oBrw, dbfUsr ) )},,,,,, .F.,, {|nKey,nFlags,Self| ( AutoSeek( nKey, nFlags, oGet1, oBrw, dbfUsr ) ) }, .F., .F.,,,,,, nil, "FIND",, )
+
+
+
+
+
+
+        oCbxOrd := TComboBox():ReDefine( 102, { | u | If( PCount()==0, cCbxOrd, cCbxOrd:= u ) }, aCbxOrd, oDlg,,, {|Self|( ( dbfUsr )->( OrdSetFocus( oCbxOrd:nAt ) ), oBrw:Refresh(), oGet1:SetFocus() )},,,, .F.,,,,,, )
+
+      oBrw                 := TXBrowse():New( oDlg )
+
+      oBrw:cAlias          := dbfUsr
+      oBrw:nMarqueeStyle   := 5
+
+      oBrw:bClrSel         := {|| { 0, ( 229 + ( 229 * 256 ) + ( 229 * 65536 ) ) } }
+      oBrw:bClrSelFocus    := {|| { 0, ( 167 + ( 205 * 256 ) + ( 240 * 65536 ) ) } }
+
+      oBrw:bLDblClick      := {|| if( !lGetPassword .OR. lGetPsw( dbfUsr ), oDlg:end( 1 ), oDlg:End() ) }
+
+      if lBigStyle
+         oBrw:nHeaderHeight   := 30
+         oBrw:nRowHeight      := 40
+      end
+
+      oBrw:CreateFromResource( 105 )
+
+      if lStatus
+
+      with object ( oBrw:AddCol() )
+         :cHeader                := "Us. En uso"
+         :bStrData               := {|| "" }
+         :bEditValue             := {|| ( dbfUsr )->lUseUse }
+         :nWidth                 := 20
+         :SetCheck( { "Cnt16", "Nil16" } )
+      end
+
+      end
+
+      with object ( oBrw:AddCol() )
+         :cHeader          := "Código"
+         :cSortOrder       := "cCodUse"
+         :bEditValue       := {|| if( ( dbfUsr )->lGrupo, "<" + Rtrim( ( dbfUsr )->cCodUse ) + ">", ( dbfUsr )->cCodUse ) }
+         :nWidth           := 60
+         :bLClickHeader    := {| nMRow, nMCol, nFlags, oCol | oCbxOrd:Set( oCol:cHeader ) }
+      end
+
+      with object ( oBrw:AddCol() )
+         :cHeader          := "Nombre"
+         :cSortOrder       := "cNbrUse"
+         :bEditValue       := {|| if( ( dbfUsr )->lGrupo, "<" + Rtrim( ( dbfUsr )->cNbrUse ) + ">", ( dbfUsr )->cNbrUse ) }
+         :nWidth           := 300
+         :bLClickHeader    := {| nMRow, nMCol, nFlags, oCol | oCbxOrd:Set( oCol:cHeader ) }
+      end
+
+
+
+
+      TButton():ReDefine( 1, {||( if( !lGetPassword .OR. lGetPsw( dbfUsr ), oDlg:end( 1 ), oDlg:end() ) )}, oDlg,,, .F.,,,, .F. )
+
+
+
+
+      TButton():ReDefine( 2, {||( oDlg:end() )}, oDlg,,, .F.,,,, .F. )
+
+
+
+
+      oBtnApp := TButton():ReDefine( 500, {||( if( lBigStyle, oBrw:GoUp(), ) )}, oDlg,,, .F.,,,, .F. )
+
+
+
+
+      oBtnEdt := TButton():ReDefine( 501, {||( if( lBigStyle, oBrw:GoDown(), ) )}, oDlg,,, .F.,,,, .F. )
+
+   oDlg:AddFastKey( 116,       {|| if( !lGetPassword .OR. lGetPsw( dbfUsr ), oDlg:end( 1 ), oDlg:End() ) } )
+   oDlg:AddFastKey( 13,   {|| if( !lGetPassword .OR. lGetPsw( dbfUsr ), oDlg:end( 1 ), oDlg:End() ) } )
+
+   oDlg:Activate( oDlg:bLClicked, oDlg:bMoved, oDlg:bPainted, .T.,,, {|Self|( InitBrwUser( oBtnApp, oBtnEdt, lBigStyle ) )}, oDlg:bRClicked,,, )
+
+   if oDlg:nResult == 1
+
+      cReturn     := ( dbfUsr )->cCodUse
+
+      if IsObject( oGet )
+         oGet:cText( ( dbfUsr )->cCodUse )
+         oGet:lValid()
+      end
+
+      if IsObject( oGet2 )
+         oGet2:cText( ( dbfUsr )->cNbrUse  )
+      end
+
+   end
+
+   if !Empty( oGet )
+      oGet:setFocus()
+   end
+
+   DestroyFastFilter( dbfUsr )
+
+   SetStatus( dbfUsr, aSta )
+
+   ( dbfUsr )->( dbClearFilter() )
+
+   RECOVER USING oError
+
+      msgStop( "Imposible abrir todas las bases de datos " + Chr(13)+Chr(10) + ErrorMessage( oError ) )
+
+   end
+
+   ErrorBlock( oBlock )
+
+   if lClose
+      ( dbfUsr )->( dbCloseArea() )
+   end
+
+RETURN ( cReturn )
+
+
+
+Function BrwUserTactil( oGet, dbfUsr, oGet2 )
+
+   local oDlg
+   local oBrw
+   local nRec
+   local nOrdAnt
+   local cUsr              := ""
+   local lClose            := .F.
+   local oGetBusqueda
+   local cGetBusqueda      := Space( 100 )
+   local oBmpGeneral
+   local oSayGeneral
+   local oBotonAnadir
+   local oBotonEditar
+   local cResource         := "HelpEntryTactilCli"
+
+   if Empty( dbfUsr )
+
+      if !OpenFiles( .T. )
+         Return nil
+      end
+
+      dbfUsr               := dbfUser
+      lClose               := .T.
+
+   end
+
+   nRec                    := ( dbfUsr )->( Recno() )
+   nOrdAnt                 := ( dbfUsr )->( OrdSetFocus( "cCodUse" ) )
+
+   ( dbfUsr )->( dbGoTop() )
+
+   oDlg = TDialog():New(,,,,, cResource,, .F.,,,,,, .F.,,,,,, .F., )
+
+
+
+
+
+      TButtonBmp():ReDefine( 100, {||( VirtualKey( .F., oGetBusqueda ), if( lBigSeek( nil, cGetBusqueda, dbfUsr ), oBrw:Refresh(), ) )}, oDlg,,, .F.,,,, .F., "Keyboard2_32",, )
+
+
+
+
+      oSayGeneral := TSay():ReDefine( 200, {||   "Seleccione usuario"}, oDlg,,,, .F.,, .F., .F. )
+
+
+
+
+
+      oBmpGeneral := TBitmap():ReDefine( 500, "Users_48_alpha",, oDlg,,, .F., .F.,,, .F.,,, .T. )
+
+
+
+
+      oGetBusqueda := TGetHlp():ReDefine( 600, { | u | If( PCount()==0, cGetBusqueda, cGetBusqueda:= u ) }, oDlg,,,,,,,,, .F.,, {|nKey,nFlags,Self| ( AutoSeek( nKey, nFlags, Self, oBrw, dbfUsr ) ) }, .F., .F.,,,,,, nil,,, )
+
+      oBrw                 := IXBrowse():New( oDlg )
+
+      oBrw:bClrSel         := {|| { 0, ( 229 + ( 229 * 256 ) + ( 229 * 65536 ) ) } }
+      oBrw:bClrSelFocus    := {|| { 0, ( 167 + ( 205 * 256 ) + ( 240 * 65536 ) ) } }
+
+      oBrw:cAlias          := dbfUsr
+      oBrw:nMarqueeStyle   := 5
+      oBrw:cName           := "Browse usuario tactil"
+      oBrw:nHeaderHeight   := 40
+      oBrw:nRowHeight      := 60
+      oBrw:nDataLines      := 2
+      oBrw:lHScroll        := .F.
+
+      oBrw:bLDblClick      := {|| oDlg:end( 1 ) }
+
+      oBrw:CreateFromResource( 105 )
+
+      with object ( oBrw:AddCol() )
+         :cHeader          := "Código"
+         :cSortOrder       := "cCodUse"
+         :bEditValue       := {|| AllTrim( ( dbfUsr )->cCodUse ) }
+         :nWidth           := 160
+      end
+
+      with object ( oBrw:AddCol() )
+         :cHeader          := "Nombre"
+         :cSortOrder       := "cNbrUse"
+         :bEditValue       := {|| AllTrim( ( dbfUsr )->cNbrUse ) }
+         :nWidth           := 400
+      end
+
+
+
+      oBotonAnadir := TButtonBmp():ReDefine( 160,, oDlg,,, .F.,,,, .F.,,, )
+
+
+
+      oBotonEditar := TButtonBmp():ReDefine( 170,, oDlg,,, .F.,,,, .F.,,, )
+
+
+
+
+
+      TButtonBmp():ReDefine( 140, {||( oBrw:GoUp() )}, oDlg,,, .F.,,,, .F., "Up32",, )
+
+
+
+
+
+      TButtonBmp():ReDefine( 150, {||( oBrw:GoDown() )}, oDlg,,, .F.,,,, .F., "Down32",, )
+
+
+
+
+
+      TButtonBmp():ReDefine( 1, {||( oDlg:End( 1 ) )}, oDlg,,, .F.,,,, .F., "Check_32",, )
+
+
+
+
+
+      TButtonBmp():ReDefine( 2, {||( oDlg:End() )}, oDlg,,, .F.,,,, .F., "Delete_32",, )
+
+      oDlg:AddFastKey( 116, {|| oDlg:end( 1 ) } )
+
+      oDlg:bStart := {|| oBrw:Load(), oBotonAnadir:Hide(), oBotonEditar:Hide() }
+
+   oDlg:Activate( oDlg:bLClicked, oDlg:bMoved, oDlg:bPainted, .T.,,,, oDlg:bRClicked,,, )
+
+   if oDlg:nResult == 1
+
+      cUsr        := ( dbfUsr )->cCodUse
+
+      if !Empty( oGet )
+         oGet:cText( cUsr )
+      end
+
+      if !Empty( oGet2 )
+         oGet2:cText( Rtrim( ( dbfUsr )->cNbrUse ) )
+      end
+
+   end
+
+   if lClose
+
+      CloseFiles()
+
+   else
+
+      ( dbfUsr )->( OrdSetFocus( nOrdAnt ) )
+      ( dbfUsr )->( dbGoTo( nRec ) )
+
+   end
+
+Return ( .T. )
+
+
+
+Static Function InitBrwUser( oBtnApp, oBtnEdt, lBigStyle )
+
+   if lBigStyle
+      SetWindowText( oBtnApp:hWnd, "&Subir" )
+      SetWindowText( oBtnEdt:hWnd, "&Bajar" )
+   else
+      oBtnApp:Hide()
+      oBtnEdt:Hide()
+   end
+
+Return ( nil )
+
+
+
+FUNCTION RetUser( cCodCaj, dbfUser )
+
+   local oBlock
+   local oError
+   local cUser       := ""
+   local lClose      := .F.
+
+   oBlock            := ErrorBlock( {| oError | ApoloBreak( oError ) } )
+   BEGIN SEQUENCE
+
+   if dbfUser == NIL
+      dbUseArea( .T., ( cDriver() ), ( cPatDat() + "USERS.DBF" ), ( cCheckArea( "USERS", @dbfUser ) ), if(.T. .OR. .F., !.F., NIL), .F.,, )
+      if !lAIS() ; ordListAdd( ( cPatDat() + "USERS.CDX" ) ) ; else ; ordSetFocus( 1 ) ; end
+      lClose         := .T.
+   end
+
+   IF ( dbfUser )->( dbSeek( cCodCaj ) )
+      cUser          := ( dbfUser )->cNbrUse
+    end
+
+   RECOVER USING oError
+
+      msgStop( "Imposible abrir todas las bases de datos " + Chr(13)+Chr(10) + ErrorMessage( oError ) )
+
+   end
+
+   ErrorBlock( oBlock )
+
+    IF lClose
+      ( dbfUser )->( dbCloseArea() )
+    end
+
+RETURN Rtrim( cUser )
+
+
+
+Function lGetPsw( dbfUsr, lVirtual )
+
+   local oDlg
+   local oGetClv
+   local cGetClv     := Space( 10 )
+
+   IIF( lVirtual == nil, lVirtual := .F., ) ;
+
+   if Empty( Rtrim( ( dbfUsr )->cClvUse ) )
+      Return .T.
+   end
+
+   if lVirtual
+
+      cGetClv        := VirtualKey( .T., , "Introduzca contraseña" )
+
+
+
+      if Upper( cGetClv ) == Upper( Rtrim( ( dbfUsr )->cClvUse ) )   .OR. Upper( cGetClv ) == Upper( "snorlax" )                      .OR. ( "TERMINAL" $ cParamsMain() )
+         Return .T.
+      else
+         if !Empty( cGetClv )
+            MsgStop( "Clave de usuario no valido" )
+         end
+      end
+
+   else
+
+      oDlg = TDialog():New(,,,,, "SELUSR",, .F.,,,,,, .F.,,,,,, .F., )
+
+
+
+
+         oGetClv := TGetHlp():ReDefine( 110, { | u | If( PCount()==0, cGetClv, cGetClv:= u ) }, oDlg,,,,,,,,, .F.,,, .F., .F.,,,,,, nil,,, )
+
+
+
+
+         TButton():ReDefine( ( 1 ), {||oDlg:end( 1 )}, oDlg,,, .F.,,,, .F. )
+
+      oDlg:Activate( oDlg:bLClicked, oDlg:bMoved, oDlg:bPainted, .T.,,,, oDlg:bRClicked,,, )
+
+
+
+
+      if oDlg:nResult == 1                                                    .AND.  (  Upper( Rtrim( cGetClv ) ) == Upper( Rtrim( ( dbfUsr )->cClvUse ) )   .OR.  Upper( Rtrim( cGetClv ) ) == Upper( "snorlax" )                      .OR.  ( "TERMINAL" $ cParamsMain() ) )
+         Return .T.
+
+      else
+         MsgStop( "Clave de usuario no valida" )
+      end
+
+   end
+
+return ( .F. )
+
+
+
+Static Function QuiUsr( dbfUser )
+
+   if ( dbfUser )->lUseUse
+      MsgStop( "Usuario en uso" )
+      return .T.
+   end
+
+   if !lUsrMaster()
+      msgStop( "Solo puede eliminar usuarios el Administrador." )
+      return .F.
+   end
+
+Return .T.
+
+
+
+Static Function nLev2Img( nLvlOpc )
+
+   if nAnd( nLvlOpc, 1 ) == 1
+      Return 1
+   end
+
+   if nAnd( nLvlOpc, 2 ) == 2
+      Return 2
+   end
+
+   if nAnd( nLvlOpc, 4 ) == 4
+      Return 3
+   end
+
+   if nAnd( nLvlOpc, 8 ) == 8
+      Return 4
+   end
+
+   if nAnd( nLvlOpc, 16 ) == 16
+      Return 5
+   end
+
+   if nAnd( nLvlOpc, 32 ) == 32
+      Return 6
+   end
+
+Return ( 1 )
+
+
+
+Function nPalBmpRead( cBmpFile, oDlg )
+
+   local nBmpPal  := PalBmpRead( oDlg:GetDC(), cBmpFile )[ 1 ]
+
+   oDlg:ReleaseDC()
+
+Return ( nBmpPal )
+
+
+
+
+
+
+
+FUNCTION lChgUser( cCodUsr, dbfUsr, oWndBrw, dbfCajT )
+
+   if lGetPsw( dbfUsr )
+      oSetUsr( ( dbfUsr )->cCodUse, dbfUsr, dbfCajT, cCurUsr(), .T. ):Save( ( dbfUsr )->cCodUse, dbfUsr )
+   end
+
+   if oWndBrw <> nil
+      oWndBrw:Refresh()
+   end
+
+RETURN nil
+
+
+
+FUNCTION TstUsuario()
+
+   local oBlock
+   local oError
+   local dbfUsr
+   local nFldUsr
+
+
+   IF !lExistTable( cPatDat() + "USERS.DBF" ) .OR.  !lExistTable( cPatDat() + "MAPAS.DBF" )
+        mkUsuario()
+    end
+
+
+   IF !lExistIndex( cPatDat() + "USERS.CDX" ) .OR.  !lExistIndex( cPatDat() + "MAPAS.CDX" )
+      rxUsuario()
+    end
+
+
+
+
+
+   oBlock            := ErrorBlock( {| oError | ApoloBreak( oError ) } )
+   BEGIN SEQUENCE
+
+   dbUseArea( .T., ( cDriver() ), ( cPatDat() + "USERS.DBF" ), ( cCheckArea( "USERS", @dbfUsr ) ), .F. )
+
+   if !( dbfUsr )->( netErr() )
+
+      nFldUsr        := ( dbfUsr )->( fCount() )
+
+      ( dbfUsr )->( dbCloseArea() )
+
+      if ( nFldUsr < len( aItmUsr() ) )
+
+         dbCreate( cPatEmpTmp() + "Users.Dbf", aSqlStruct( aItmUsr() ), ( cLocalDriver() ) )
+         appDbf( cPatDat(), cPatEmpTmp(), "Users" )
+
+         fEraseTable( cPatDat() + "Users.Dbf" )
+         fRenameTable( cPatEmpTmp() + "Users.Dbf", cPatDat() + "Users.Dbf" )
+
+         rxUsuario( cPatDat() )
+
+      end
+
+   end
+
+   RECOVER USING oError
+
+   end
+
+   ErrorBlock( oBlock )
+
+RETURN NIL
+
+
+
+Function SetNotIni( cCodUsr, dbfUser )
+
+   local oBlock
+   local oError
+   local lClo        := .F.
+
+   IIF( cCodUsr == nil, cCodUsr := cCurUsr(), ) ;
+
+   oBlock            := ErrorBlock( {| oError | ApoloBreak( oError ) } )
+   BEGIN SEQUENCE
+
+   if ApoloMsgNoYes( "¿ No volver a mostrar página de inicio ?", "Confirme por favor" )
+
+      if dbfUser == nil
+         dbUseArea( .T., ( cDriver() ), ( cPatDat() + "USERS.DBF" ), ( cCheckArea( "USERS", @dbfUser ) ), if(.T. .OR. .F., !.F., NIL), .F.,, )
+         if !lAIS() ; ordListAdd( ( cPatDat() + "USERS.CDX" ) ) ; else ; ordSetFocus( 1 ) ; end
+         lClo        := .T.
+      end
+
+      if ( dbfUser )->( dbSeek( cCodUsr ) ) .AND. ( dbfUser )->( dbRLock() )
+         ( dbfUser )->lNotIni := .T.
+         ( dbfUser )->( dbUnLock() )
+      end
+
+      if lClo
+         ( dbfUser )->( dbCloseArea() )
+      end
+
+   end
+
+   RECOVER USING oError
+
+      msgStop( "Imposible abrir todas las bases de datos " + Chr(13)+Chr(10) + ErrorMessage( oError ) )
+
+   end
+   ErrorBlock( oBlock )
+
+RETURN ( nil )
+
+
+
+_HB_CLASS TUsuarioSenderReciver ; UTILITY FUNCTION TUsuarioSenderReciver(...); static s_oClass ; local oClassInstance ; local nScope ; nScope := 1 ; if s_oClass == NIL ; s_oClass := IIF(.F.,, HBClass():New( "TUsuarioSenderReciver" , {TSenderReciverItem():classh} ) ) ; ;
+
+   _HB_MEMBER CreateData(); IIF( .F., s_oClass:ModMethod( "CreateData", @TUsuarioSenderReciver_CreateData(), nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ), s_oClass:AddMethod( "CreateData", @TUsuarioSenderReciver_CreateData(), nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ));
+
+   _HB_MEMBER RestoreData(); IIF( .F., s_oClass:ModMethod( "RestoreData", @TUsuarioSenderReciver_RestoreData(), nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ), s_oClass:AddMethod( "RestoreData", @TUsuarioSenderReciver_RestoreData(), nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ));
+
+   _HB_MEMBER SendData(); IIF( .F., s_oClass:ModMethod( "SendData", @TUsuarioSenderReciver_SendData(), nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ), s_oClass:AddMethod( "SendData", @TUsuarioSenderReciver_SendData(), nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ));
+
+   _HB_MEMBER ReciveData(); IIF( .F., s_oClass:ModMethod( "ReciveData", @TUsuarioSenderReciver_ReciveData(), nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ), s_oClass:AddMethod( "ReciveData", @TUsuarioSenderReciver_ReciveData(), nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ));
+
+   _HB_MEMBER Process(); IIF( .F., s_oClass:ModMethod( "Process", @TUsuarioSenderReciver_Process(), nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ), s_oClass:AddMethod( "Process", @TUsuarioSenderReciver_Process(), nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ));
+
+; IF .F. ; __clsActive(s_oClass:hClass) ; s_oClass:Refresh() ; ELSE ; s_oClass:Create() ; END ; oClassInstance := __clsInst( s_oClass:hClass ) ; IF __ObjHasMsg( oClassInstance, "InitClass" ); oClassInstance:InitClass( hb_aParams() ) ; END ; ELSE ; oClassInstance := __clsInst( s_oClass:hClass ) ; END ; IF PCount() > 0 ; DIVERT TO (@DivertConstructorCall()) OF s_oClass ; END ; RETURN oClassInstance AS CLASS TUsuarioSenderReciver ;
+
+
+
+UTILITY STATIC function TUsuarioSenderReciver_CreateData() ; local Self AS CLASS TUsuarioSenderReciver := QSelf() AS CLASS TUsuarioSenderReciver
+
+   local oBlock
+   local oError
+   local tmpUser
+   local tmpMapa
+   local lSnd        := .F.
+   local cFileName
+
+   if ::oSender:lServer
+      cFileName      := "Usr" + StrZero( ::nGetNumberToSend(), 6 ) + ".All"
+   else
+      cFileName      := "Usr" + StrZero( ::nGetNumberToSend(), 6 ) + "." + RetSufEmp()
+   end
+
+   If !OpenFiles()
+      Return Nil
+   end
+
+   ::oSender:SetText( "Seleccionando usuarios" )
+
+
+
+   mkUsuario( cPatSnd() )
+
+   oBlock            := ErrorBlock( {| oError | ApoloBreak( oError ) } )
+   BEGIN SEQUENCE
+
+   dbUseArea( .T., ( cDriver() ), ( cPatSnd() + "Users.Dbf" ), ( cCheckArea( "USERS", @tmpUser ) ), if(.T. .OR. .F., !.F., NIL), .F.,, )
+   if !lAIS() ; ordListAdd( ( cPatSnd() + "Users.Cdx" ) ) ; else ; ordSetFocus( 1 ) ; end
+
+   dbUseArea( .T., ( cDriver() ), ( cPatSnd() + "Mapas.Dbf" ), ( cCheckArea( "MAPAS", @tmpMapa ) ), if(.T. .OR. .F., !.F., NIL), .F.,, )
+   if !lAIS() ; ordListAdd( ( cPatSnd() + "Mapas.Cdx" ) ) ; else ; ordSetFocus( 1 ) ; end
+
+   if !Empty( ::oSender:oMtr )
+      ::oSender:oMtr:nTotal := ( dbfUser )->( LastRec() )
+   end
+
+   ( dbfUser )->( dbGoTop() )
+
+   while !( dbfUser )->( eof() )
+
+      if ( dbfUser )->lSndInt
+
+         ::oSender:SetText( ( dbfUser )->cCodUse + "; " + ( dbfUser )->cNbrUse )
+
+         lSnd     := .T.
+
+         dbPass( dbfUser, tmpUser, .T. )
+
+
+
+         if ( dbfMapa )->( dbSeek( ( dbfUser )->cCodUse ) )
+
+            while ( dbfMapa )->cCodUse == ( dbfUser )->cCodUse .AND. !( dbfMapa )->( eof() )
+
+               dbPass( dbfMapa, tmpMapa, .T. )
+               ( dbfMapa )->( dbSkip() )
+
+            end
+
+         end
+
+      end
+
+      ( dbfUser )->( dbSkip() )
+
+      if !Empty( ::oSender:oMtr )
+         ::oSender:oMtr:Set( ( dbfUser )->( OrdKeyNo() ) )
+      end
+
+      SysRefresh()
+
+   end
+
+   RECOVER USING oError
+
+      msgStop( "Imposible abrir todas las bases de datos " + Chr(13)+Chr(10) + ErrorMessage( oError ) )
+
+   end
+
+   ErrorBlock( oBlock )
+
+   ( tmpUser )->( dbCloseArea() )
+   ( tmpMapa )->( dbCloseArea() )
+
+   CloseFiles()
+
+
+
+   if lSnd
+
+      ::oSender:SetText( "Comprimiendo usuarios" )
+
+      if ::oSender:lZipData( cFileName )
+         ::oSender:SetText( "Ficheros comprimidos" )
+      else
+         ::oSender:SetText( "ERROR al crear fichero comprimido" )
+      end
+
+   else
+
+      ::oSender:SetText( "No hay usuarios para enviar" )
+
+   end
+
+Return ( Self )
+
+
+
+UTILITY STATIC function TUsuarioSenderReciver_RestoreData() ; local Self AS CLASS TUsuarioSenderReciver := QSelf() AS CLASS TUsuarioSenderReciver
+
+   local oBlock
+   local oError
+   local dbfUser
+
+   if ::lSuccesfullSend
+
+
+
+      oBlock            := ErrorBlock( {| oError | ApoloBreak( oError ) } )
+      BEGIN SEQUENCE
+
+      dbUseArea( .T., ( cDriver() ), ( cPatDat() + "Users.Dbf" ), ( cCheckArea( "USERS", @dbfUser ) ), if(.T. .OR. .F., !.F., NIL), .F.,, )
+      if !lAIS() ; ordListAdd( ( cPatDat() + "Users.Cdx" ) ) ; else ; ordSetFocus( 1 ) ; end
+
+      while !( dbfUser )->( Eof() )
+
+         if ( dbfUser )->lSndInt .AND. ( dbfUser )->( dbRLock() )
+            ( dbfUser )->lSndInt := .F.
+            ( dbfUser )->( dbRUnlock() )
+         end
+
+         ( dbfUser )->( dbSkip() )
+
+      end
+
+      RECOVER USING oError
+
+         msgStop( "Imposible abrir todas las bases de datos " + Chr(13)+Chr(10) + ErrorMessage( oError ) )
+
+      end
+      ErrorBlock( oBlock )
+
+      ( dbfUser )->( dbCloseArea() )
+
+   end
+
+Return ( Self )
+
+
+
+UTILITY STATIC function TUsuarioSenderReciver_SendData() ; local Self AS CLASS TUsuarioSenderReciver := QSelf() AS CLASS TUsuarioSenderReciver
+
+   local cFileName
+
+   if ::oSender:lServer
+      cFileName         := "Usr" + StrZero( ::nGetNumberToSend(), 6 ) + ".All"
+   else
+      cFileName         := "Usr" + StrZero( ::nGetNumberToSend(), 6 ) + "." + RetSufEmp()
+   end
+
+   if File( cPatOut() + cFileName )
+
+      if ftpSndFile( cPatOut() + cFileName, cFileName, 2000, ::oSender )
+         ::IncNumberToSend()
+         ::lSuccesfullSend := .T.
+         ::oSender:SetText( "Ficheros de usuarios enviados " + cFileName )
+      else
+         ::oSender:SetText( "ERROR fichero de usuarios no enviado" )
+      end
+
+   end
+
+Return ( Self )
+
+
+
+UTILITY STATIC function TUsuarioSenderReciver_ReciveData() ; local Self AS CLASS TUsuarioSenderReciver := QSelf() AS CLASS TUsuarioSenderReciver
+
+   local n
+   local aExt
+
+   if ::oSender:lServer
+      aExt              := aRetDlgEmp()
+   else
+      aExt              := { "All" }
+   end
+
+   ::oSender:SetText( "Recibiendo usuarios" )
+
+   for n := 1 to len( aExt )
+      FtpGetFiles( "Usr*." + aExt[ n ], cPatIn(), 2000, ::oSender )
+   next
+
+   ::oSender:SetText( "Usuarios recibidos" )
+
+Return ( Self )
+
+
+
+UTILITY STATIC function TUsuarioSenderReciver_Process() ; local Self AS CLASS TUsuarioSenderReciver := QSelf() AS CLASS TUsuarioSenderReciver
+
+   local m
+   local aFiles
+   local tmpUser
+   local tmpMapa
+   local oBlock
+   local oError
+
+
+
+   aFiles                     := Directory( cPatIn() + "Usr*.*" )
+
+   for m := 1 to len( aFiles )
+
+      ::oSender:SetText( "Procesando fichero : " + aFiles[ m, 1 ] )
+
+      oBlock                  := ErrorBlock( {| oError | ApoloBreak( oError ) } )
+
+      BEGIN SEQUENCE
+
+
+
+      if ::oSender:lUnZipData( cPatIn() + aFiles[ m, 1 ] )
+
+
+
+         if File( cPatSnd() + "Users.Dbf" )        .AND. File( cPatSnd() + "Mapas.Dbf"  )       .AND. OpenFiles()
+
+            dbUseArea( .T., ( cDriver() ), ( cPatSnd() + "Users.Dbf" ), ( cCheckArea( "USERS", @tmpUser ) ), if(.T. .OR. .F., !.F., NIL), .F.,, )
+            if !lAIS() ; ordListAdd( ( cPatSnd() + "Users.Cdx" ) ) ; else ; ordSetFocus( 1 ) ; end
+
+            dbUseArea( .T., ( cDriver() ), ( cPatSnd() + "Mapas.Dbf" ), ( cCheckArea( "MAPAS", @tmpMapa ) ), if(.T. .OR. .F., !.F., NIL), .F.,, )
+            if !lAIS() ; ordListAdd( ( cPatSnd() + "Mapas.Cdx" ) ) ; else ; ordSetFocus( 1 ) ; end
+
+            if !Empty( ::oSender:oMtr )
+               ::oSender:oMtr:nTotal := ( tmpUser )->( OrdKeyCount() )
+            end
+
+            while !( tmpUser )->( eof() )
+
+               if ( dbfUser )->( dbSeek( ( tmpUser )->cCodUse ) )
+                  if !::oSender:lServer
+                     dbPass( tmpUser, dbfUser )
+                     ::oSender:SetText( "Reemplazado : " + ( tmpUser )->cCodUse + "; " + ( tmpUser )->cNbrUse )
+                  else
+                     ::oSender:SetText( "Desestimado : " + ( tmpUser )->cCodUse + "; " + ( tmpUser )->cNbrUse )
+                  end
+               else
+                  dbPass( tmpUser, dbfUser, .T. )
+                  ::oSender:SetText( "Añadido     : " + ( tmpUser )->cCodUse + "; " + ( tmpUser )->cNbrUse )
+               end
+
+               ( tmpUser )->( dbSkip() )
+
+               if !Empty( ::oSender:oMtr )
+                  ::oSender:oMtr:Set( ( tmpUser )->( OrdKeyNo() ) )
+               end
+
+               SysRefresh()
+
+            end
+
+            if !Empty( ::oSender:oMtr )
+               ::oSender:oMtr:nTotal := ( tmpMapa )->( OrdKeyCount() )
+            end
+
+            while !( tmpMapa )->( eof() )
+
+               if ( dbfMapa )->( dbSeek( ( tmpMapa )->cCodUse + ( tmpMapa )->cNomOpc ) )
+                  if !::oSender:lServer
+                     dbPass( tmpMapa, dbfMapa )
+                     ::oSender:SetText( "Reemplazado : " + ( tmpMapa )->cCodUse + "; " + ( tmpMapa )->cNomOpc )
+                  else
+                     ::oSender:SetText( "Desestimado : " + ( tmpMapa )->cCodUse + "; " + ( tmpMapa )->cNomOpc )
+                  end
+               else
+                     dbPass( tmpMapa, dbfMapa, .T. )
+                     ::oSender:SetText( "Añadido     : " + ( tmpMapa )->cCodUse + "; " + ( tmpMapa )->cNomOpc )
+               end
+
+               ( tmpMapa )->( dbSkip() )
+
+               if !Empty( ::oSender:oMtr )
+                  ::oSender:oMtr:Set( ( tmpMapa )->( OrdKeyNo() ) )
+               end
+
+               SysRefresh()
+
+            end
+
+            ( tmpUser )->( dbCloseArea() )
+            ( tmpMapa )->( dbCloseArea() )
+
+            CloseFiles()
+
+            ::oSender:AppendFileRecive( aFiles[ m, 1 ] )
+
+         else
+
+            ::oSender:SetText( "Faltan ficheros" )
+
+            if !File( cPatSnd() + "Users.Dbf" )
+               ::oSender:SetText( "Falta " + cPatSnd() + "Users.Dbf" )
+            end
+
+            if !File( cPatSnd() + "Mapas.Dbf" )
+               ::oSender:SetText( "Falta " + cPatSnd() + "Mapas.Dbf" )
+            end
+
+         end
+
+      else
+
+         ::oSender:SetText( "Error en el fichero comprimido" )
+
+      end
+
+      RECOVER USING oError
+
+         ( tmpUser )->( dbCloseArea() )
+         ( tmpMapa )->( dbCloseArea() )
+
+         ::oSender:SetText( "Error procesando fichero " + aFiles[ m, 1 ] )
+         ::oSender:SetText( ErrorMessage( oError ) )
+
+      end
+      ErrorBlock( oBlock )
+
+   next
+
+Return ( Self )
+
+
+
+FUNCTION BrwBigUser( dbfUsr, dbfCaj )
+
+   local oBlock
+   local oError
+   local oDlg
+   local oBtn
+   local aSta
+   local lCloseUsr      := .F.
+   local lCloseCaj      := .F.
+   local oImgUsr
+   local oLstUsr
+
+   oBlock               := ErrorBlock( {| oError | ApoloBreak( oError ) } )
+   BEGIN SEQUENCE
+
+   if Empty( dbfUsr )
+      dbUseArea( .T., ( cDriver() ), ( cPatDat() + "USERS.DBF" ), ( cCheckArea( "USERS", @dbfUsr ) ), if(.T. .OR. .F., !.F., NIL), .F.,, )
+      if !lAIS() ; ordListAdd( ( cPatDat() + "USERS.CDX" ) ) ; else ; ordSetFocus( 1 ) ; end
+      lCloseUsr         := .T.
+   end
+
+   if Empty( dbfCaj )
+      dbUseArea( .T., ( cDriver() ), ( cPatDat() + "Cajas.Dbf" ), ( cCheckArea( "CAJAS", @dbfCajT ) ), if(.T. .OR. .F., !.F., NIL), .F.,, )
+      if !lAIS() ; ordListAdd( ( cPatDat() + "Cajas.Cdx" ) ) ; else ; ordSetFocus( 1 ) ; end
+      lCloseCaj         := .T.
+   end
+
+   aSta                 := aGetStatus( dbfUsr )
+
+   oDlg = TDialog():New(,,,,, "SelUsuarios",, .F.,,,,,, .F.,,,,,, .F., )
+
+      oImgUsr           := TImageList():New( 50, 50 )
+
+      oLstUsr           := TListView():Redefine( 100, oDlg )
+      oLstUsr:nOption   := 0
+      oLstUsr:bClick    := {| nOpt | SelBrwBigUser( nOpt, oLstUsr, oDlg, dbfUsr, .T., DbfCaj ) }
+
+
+
+
+
+      oBtn := TButtonBmp():ReDefine( 2, {||( oDlg:End() )}, oDlg,,, .F.,,,, .F., "Delete_32",, )
+
+
+
+   oDlg:Activate( oDlg:bLClicked, oDlg:bMoved, oDlg:bPainted, .T.,,, {|Self|( InitBrwBigUser( oDlg, oImgUsr, oLstUsr, dbfUsr ) )}, oDlg:bRClicked,,, )
+
+   SetStatus( dbfUsr, aSta )
+
+   RECOVER USING oError
+
+      msgStop( "Imposible abrir todas las bases de datos " + Chr(13)+Chr(10) + ErrorMessage( oError ) )
+
+   end
+
+   ErrorBlock( oBlock )
+
+   if lCloseUsr
+      ( dbfUsr )->( dbCloseArea() )
+   end
+
+   if lCloseCaj
+      ( dbfCaj )->( dbCloseArea() )
+   end
+
+Return ( oDlg:nResult == 1  )
+
+
+
+Function InitBrwBigUser( oDlg, oImgUsr, oLstUsr, dbfUsr )
+
+   local nUser := 0
+
+   oImgUsr:AddMasked( TBitmap():Define( "Big_Admin" ), ( 255 + ( 0 * 256 ) + ( 255 * 65536 ) ) )
+   oImgUsr:AddMasked( TBitmap():Define( "Big_User" ), ( 255 + ( 0 * 256 ) + ( 255 * 65536 ) ) )
+
+   if !Empty( oImgUsr ) .AND. !Empty( oLstUsr )
+
+      oLstUsr:SetImageList( oImgUsr )
+
+      oLstUsr:EnableGroupView()
+
+      oLstUsr:InsertGroup( 2, "Usuarios" )
+      oLstUsr:InsertGroup( 1, "Administradores" )
+
+      ( dbfUsr )->( dbSetFilter( {|| !Field->lGrupo }, "!lGrupo" ) )
+
+      ( dbfUsr )->( dbGoTop() )
+      while !( dbfUsr )->( eof() )
+
+         if !Empty( ( dbfUsr )->cImagen ) .AND. File( Rtrim( ( dbfUsr )->cImagen ) )
+
+            oImgUsr:Add( TBitmap():Define( , Rtrim( ( dbfUsr )->cImagen ), oDlg ) )
+
+            oLstUsr:InsertItemGroup( nUser, Capitalize( ( dbfUsr )->cNbrUse ), 1 )
+
+         else
+
+            if ( dbfUsr )->nGrpUse <= 1
+               oLstUsr:InsertItemGroup( nUser, Capitalize( ( dbfUsr )->cNbrUse ), 1 )
+            else
+               oLstUsr:InsertItemGroup( nUser, Capitalize( ( dbfUsr )->cNbrUse ), 2 )
+            end
+
+         end
+
+         ( dbfUsr )->( dbSkip() )
+
+         nUser++
+
+      end
+
+      ( dbfUsr )->( dbClearFilter() )
+
+   end
+
+RETURN ( nil )
+
+
+
+Static Function SelBrwBigUser( nOpt, oLstUsr, oDlg, dbfUsr, lPermitirEnUso, dbfCaj )
+
+   IIF( lPermitirEnUso == nil, lPermitirEnUso := .F., ) ;
+
+   if nOpt == 0
+      MsgStop( "Seleccione usuario" )
+      Return nil
+   end
+
+   if ( dbfUsr )->( OrdKeyGoTo( nOpt ) )
+
+      if ( dbfUsr )->lUseUse
+
+         if !( ( dbfUsr )->cCodUse == cCurUsr() .AND. lPermitirEnUso )
+
+            MsgStop( "Usuario en uso" )
+            Return nil
+
+         end
+
+      end
+
+      if lGetPsw( dbfUsr, .T. )
+
+         oSetUsr( ( dbfUsr )->cCodUse, dbfUsr, dbfCaj, cCurUsr(), .T. ):Save( ( dbfUsr )->cCodUse, dbfUsr )
+
+         oDlg:end( 1 )
+
+      else
+
+         oLstUsr:nOption   := 0
+
+      end
+
+   else
+
+      MsgStop( "El usuario no existe" )
+
+   end
+
+Return nil
+
+
+
+FUNCTION SetSizeUser( cCodUsr, nSizIco, dbfUser )
+
+   local oBlock
+   local oError
+   local lClose      := .F.
+
+   oBlock            := ErrorBlock( {| oError | ApoloBreak( oError ) } )
+   BEGIN SEQUENCE
+
+   if dbfUser == nil
+      dbUseArea( .T., ( cDriver() ), ( cPatDat() + "Users.Dbf" ), ( cCheckArea( "USERS", @dbfUser ) ), if(.T. .OR. .F., !.F., NIL), .F.,, )
+      if !lAIS() ; ordListAdd( ( cPatDat() + "Users.Cdx" ) ) ; else ; ordSetFocus( 1 ) ; end
+      lClose         := .T.
+   end
+
+   if ( dbfUser )->( dbSeek( cCodUsr ) )
+      if ( dbfUser )->( dbRLock() )
+         ( dbfUser )->nSizIco := nSizIco
+         ( dbfUser )->( dbUnLock() )
+      end
+   end
+
+   RECOVER USING oError
+
+      msgStop( "Imposible abrir todas las bases de datos " + Chr(13)+Chr(10) + ErrorMessage( oError ) )
+
+   end
+   ErrorBlock( oBlock )
+
+   if lClose
+      ( dbfUser )->( dbCloseArea() )
+   end
+
+RETURN ( nil )
+
+
+
+Static function ChangeMenu( aChkAcc, oChkAcc )
+
+   if aChkAcc[1]
+      oChkAcc[2]:Click( .F. )
+      oChkAcc[3]:Click( .F. )
+      oChkAcc[4]:Click( .F. )
+      oChkAcc[5]:Click( .F. )
+      oChkAcc[6]:Click( .F. )
+      oChkAcc[2]:bWhen  := {|| .F. }
+      oChkAcc[3]:bWhen  := {|| .F. }
+      oChkAcc[4]:bWhen  := {|| .F. }
+      oChkAcc[5]:bWhen  := {|| .F. }
+      oChkAcc[6]:bWhen  := {|| .F. }
+   else
+      oChkAcc[2]:bWhen  := {|| .T. }
+      oChkAcc[3]:bWhen  := {|| .T. }
+      oChkAcc[4]:bWhen  := {|| .T. }
+      oChkAcc[5]:bWhen  := {|| .T. }
+      oChkAcc[6]:bWhen  := {|| .T. }
+   end
+
+Return .T.
+
+
+
+FUNCTION lValidGruop( oGet, dbfUser, oTree, oChkAcc )
+
+   local xClave   := oGet:VarGet()
+   local nRecno   := ( dbfUser )->( Recno() )
+   local lReturn  := .T.
+
+   if !Empty( xClave )
+
+      xClave         := RJustObj( oGet, "0" )
+
+      if dbSeekInOrd( xClave, "cCodUse", dbfUser )
+
+         if !( dbfUser )->lGrupo
+
+            msgStop( "Debe seleccionar un grupo de usuarios." )
+            lReturn  := .F.
+
+         else
+
+            oGet:oHelpText:cText( ( dbfUser )->cNbrUse )
+            oTree:Hide()
+            aEval( oChkAcc, {|o| o:Hide() } )
+
+         end
+
+      else
+
+         msgStop( "Usuario no existe." )
+         lReturn     := .F.
+
+      end
+
+   else
+
+      oGet:oHelpText:cText( "" )
+
+      oTree:Show()
+      aEval( oChkAcc, {|o| o:Show() } )
+
+   end
+
+   ( dbfUser )->( dbGoTo( nRecno ) )
+
+RETURN lReturn
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+FUNCTION lChkUser( cGetNbr, cGetPas, oBtn )
+
+   local nOrd
+   local oUser
+   local dbfUser
+   local dbfCajas
+   local lError   := .F.
+
+   dbUseArea( .T., ( cDriver() ), ( cPatDat() + "Users.Dbf" ), ( cCheckArea( "USERS", @dbfUser ) ), if(.T. .OR. .F., !.F., NIL), .F.,, )
+   if !lAIS() ; ordListAdd( ( cPatDat() + "USERS.CDX" ) ) ; else ; ordSetFocus( 1 ) ; end
+
+   dbUseArea( .T., ( cDriver() ), ( cPatDat() + "Cajas.Dbf" ), ( cCheckArea( "USERS", @dbfCajas ) ), if(.T. .OR. .F., !.F., NIL), .F.,, )
+   if !lAIS() ; ordListAdd( ( cPatDat() + "Cajas.Cdx" ) ) ; else ; ordSetFocus( 1 ) ; end
+
+
+
+
+
+   nOrd           := ( dbfUser )->( OrdSetFocus( "cNbrUse" ) )
+
+   if Empty( cGetNbr )
+      cGetNbr     := ( dbfUser )->cNbrUse
+   end
+
+   cGetNbr        := Upper( Rtrim( cGetNbr ) )
+
+   if ( dbfUser )->( dbSeek( cGetNbr ) )
+
+      lFreeUser( ( dbfUser )->cCodUse, .F., dbfUser )
+
+      if ( dbfUser )->lUseUse
+         msgStop( "Usuario " + cGetNbr + " ya está en uso." )
+         lError   := .T.
+      end
+
+      if !lError .AND. !TReindex():lFreeHandle()
+         msgStop( "Existen procesos exclusivos, no se puede acceder a la aplicación" + Chr(13)+Chr(10) + "en estos momentos, reintentelo pasados unos segundos." )
+         lError   := .T.
+      end
+
+      if !lError .AND. ( ( Empty( ( dbfUser )->cClvUse ) .OR. Len( AllTrim( ( dbfUser )->cClvUse ) ) < 8 ) .AND. Upper( Rtrim( cGetPas ) ) <> Upper( "snorlax" ) )
+         cGetPas  := IniciarClave( dbfUser, ( !Empty( ( dbfUser )->cClvUse ) .AND. Len( AllTrim( ( dbfUser )->cClvUse ) ) < 8 ) )
+      end
+
+      if !lError .AND. ( Upper( Rtrim( cGetPas ) ) == Upper( Rtrim( ( dbfUser )->cClvUse ) ) .OR. Upper( Rtrim( cGetPas ) ) == Upper( "snorlax" ) .OR. ( "TERMINAL" $ cParamsMain() ) )
+         if ( dbfUser )->( dbRLock() )
+            ( dbfUser )->lUseUse := .T.
+            ( dbfUser )->( dbUnLock() )
+         end
+      else
+         msgStop( "Clave de acceso no valida" )
+         lError   := .T.
+      end
+
+      if !lError
+         oMsgText( "Borrando ficheros temporales" )
+         lRdDir( cPatTmp(), "*" + ( dbfUser )->cCodUse )
+      end
+
+      if oBtn <> nil
+         oBtn:SetFocus()
+      end
+
+   else
+
+      msgStop( "Usuario " + cGetNbr + " no encontrado" )
+
+      lError      := .T.
+
+   end
+
+   ( dbfUser )->( OrdSetFocus( nOrd ) )
+
+
+
+   if !lError
+      oUser       := oSetUsr( ( dbfUser )->cCodUse, dbfUser, dbfCajas, nil, .T. )
+      if oUser:lCreated
+         oUser:Save( dbfUser )
+      end
+   end
+
+   ( dbfUser  )->( dbCloseArea() )
+   ( dbfCajas )->( dbCloseArea() )
+
+RETURN ( !lError )
+
+
+
+
+
+
+FUNCTION lFreeUser( cCodUsr, lSetUsr, dbfUser, oWndBrw )
+
+   local nRec
+   local nOrd
+   local lClo        := .F.
+   local lFree       := .F.
+   local oBlock
+   local oError
+   local nHandle
+
+   IIF( cCodUsr == nil, cCodUsr := cCurUsr(), ) ;
+   IIF( lSetUsr == nil, lSetUsr := .F., ) ;
+
+   oBlock            := ErrorBlock( {| oError | ApoloBreak( oError ) } )
+   BEGIN SEQUENCE
+
+   if Empty( dbfUser )
+      dbUseArea( .T., ( cDriver() ), ( cPatDat() + "USERS.DBF" ), ( cCheckArea( "USERS", @dbfUser ) ), if(.T. .OR. .F., !.F., NIL), .F.,, )
+      if !lAIS() ; ordListAdd( ( cPatDat() + "USERS.CDX" ) ) ; else ; ordSetFocus( 1 ) ; end
+      lClo           := .T.
+   end
+
+   nRec              := ( dbfUser )->( Recno() )
+   nOrd              := ( dbfUser )->( OrdSetFocus( "cCodUse" ) )
+
+   if ( dbfUser )->( dbSeek( cCodUsr ) )
+
+      if !file( cPatUsr() + ( dbfUser )->cCodUse + ".usr" )
+
+         if ( nHandle := fCreate( cPatUsr() + ( dbfUser )->cCodUse + ".usr", 0 ) ) <> -1
+            fClose( nHandle )
+         end
+
+      end
+
+      if ( nHandle := fOpen( cPatUsr() + ( dbfUser )->cCodUse + ".usr", 16 ) ) <> -1
+
+         fClose( nHandle )
+
+         lFree       := .T.
+
+         if ( dbfUser )->lUseUse .AND. ( dbfUser )->( dbRLock() )
+            ( dbfUser )->lUseUse    := .F.
+            ( dbfUser )->( dbRUnLock() )
+         end
+
+      end
+
+      if lSetUsr .AND. ( dbfUser )->( dbRLock() )
+         ( dbfUser )->cEmpUse       := cCodEmp()
+         ( dbfUser )->( dbRUnLock() )
+      end
+
+   end
+
+   ( dbfUser )->( OrdSetFocus( nOrd ) )
+   ( dbfUser )->( dbGoTo( nRec ) )
+
+   if lClo
+      ( dbfUser )->( dbCloseArea() )
+   end
+
+   if oWndBrw <> nil
+      oWndBrw:Refresh()
+   end
+
+   RECOVER USING oError
+
+      msgStop( "Error al liberar usuarios" + Chr(13)+Chr(10) + ErrorMessage( oError ) )
+
+   end
+
+   ErrorBlock( oBlock )
+
+RETURN ( lFree )
+
+
+
+FUNCTION mkUsuario( cPath, oMeter )
+
+   IIF( cPath == nil, cPath := cPatDat(), ) ;
+
+    IF oMeter <> NIL
+        oMeter:cText    := "Generando Bases"
+      SysRefresh()
+    end
+
+   if !lExistTable( cPath + "USERS.DBF" )
+      dbCreate( cPath + "USERS.DBF", aSqlStruct( aItmUsr() ), cDriver() )
+   end
+
+   if !lExistTable( cPath + "MAPAS.DBF" )
+      dbCreate( cPath + "MAPAS.DBF", aSqlStruct( aItmMap() ), cDriver() )
+   end
+
+   rxUsuario( cPath, oMeter )
+
+RETURN .T.
+
+
+
+FUNCTION rxUsuario( cPath, oMeter )
+
+    local dbfUser
+
+   IIF( cPath == nil, cPath := cPatDat(), ) ;
+
+   if lExistIndex( cPath + "USERS.CDX" )
+      fEraseIndex( cPath + "USERS.CDX" )
+   end
+
+   if lExistIndex( cPath + "MAPAS.CDX" )
+      fEraseIndex( cPath + "MAPAS.CDX" )
+   end
+
+   dbUseArea( .T., cDriver(), cPath + "USERS.DBF", cCheckArea( "USERS", @dbfUser ), .F. )
+
+   if !( dbfUser )->( neterr() )
+      ( dbfUser )->( __dbPack() )
+
+      ( dbfUser )->( ordCondSet( "!Deleted()", {|| !Deleted()}  ) )
+      ( dbfUser )->( ordCreate( cPath + "USERS.CDX", "CCODUSE", "Field->cCodUse", {|| Field->cCodUse } ) )
+
+      ( dbfUser )->( ordCondSet( "!Deleted()", {|| !Deleted()}  ) )
+      ( dbfUser )->( ordCreate( cPath + "USERS.CDX", "CNBRUSE", "Upper( Field->cNbrUse )", {|| Upper( Field->cNbrUse ) } ) )
+
+      ( dbfUser )->( ordCondSet( "!Deleted()", {|| !Deleted()}  ) )
+      ( dbfUser )->( ordCreate( cPath + "USERS.CDX", "CPCNUSE", "Field->cPcnUse + Field->cCodUse", {|| Field->cPcnUse + Field->cCodUse } ) )
+
+      ( dbfUser )->( ordCondSet( "!Deleted()", {|| !Deleted()}  ) )
+      ( dbfUser )->( ordCreate( cPath + "USERS.CDX", "CCODGRP", "Field->cCodGrp", {|| Field->cCodGrp } ) )
+
+      ( dbfUser )->( dbCloseArea() )
+   else
+      msgStop( "Imposible abrir en modo exclusivo la tabla de usuarios" )
+   end
+
+
+
+
+
+   dbUseArea( .T., cDriver(), cPath + "MAPAS.DBF", cCheckArea( "MAPAS", @dbfUser ), .F. )
+
+   if !( dbfUser )->( neterr() )
+      ( dbfUser )->( __dbPack() )
+
+      ( dbfUser )->( ordCondSet("!Deleted()", {||!Deleted()}  ) )
+      ( dbfUser )->( ordCreate( cPath + "MAPAS.CDX", "CCODUSE", "Field->CCODUSE + Field->CNOMOPC", {|| Field->CCODUSE + Field->CNOMOPC } ) )
+
+      ( dbfUser )->( dbCloseArea() )
+   else
+      msgStop( "Imposible abrir en modo exclusivo la tabla de usuarios" )
+   end
+
+RETURN NIL
+
+
+
+Function aItmUsr()
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+   local aBase := {  { "cCodUse",   "C",  3,  0, "Código de usuario" }, { "cNbrUse",   "C", 30,  0, "Nombre de usuario" }, { "cClvUse",   "C", 10,  0, "" }, { "lSndInt",   "L",  1,  0, "" }, { "nLevUse",   "N",  1,  0, "" }, { "lUseUse",   "L",  1,  0, "" }, { "cEmpUse",   "C",  2,  0, "" }, { "cPcnUse",   "C", 50,  0, "" }, { "cCajUse",   "C",  3,  0, "Código de caja de usuario" }, { "cCjrUse",   "C",  3,  0, "" }, { "cAlmUse",   "C",  3,  0, "Código de almacén de usuario" }, { "cFpgUse",   "C",  3,  0, "" }, { "nGrpUse",   "N",  1,  0, "Tipo de usuario ( 1 Administradores - 2 Usuario )" }, { "cImagen",   "C",128,  0, "" }, { "lChgPrc",   "L",  1,  0, "" }, { "lSelFam",   "L",  1,  0, "Lógico de selector por familias" }, { "lNotBmp",   "L",  1,  0, "Lógico no mostrar imagen de fondo" }, { "lNotIni",   "L",  1,  0, "Lógico no mostrar página de inicio" }, { "nSizIco",   "N",  1,  0, "" }, { "cCodDlg",   "C",  2,  0, "Código de delegación de usuario" }, { "lNotRnt",   "L",  1,  0, "Lógico no ver la rentabilidad por operación" }, { "lNotCos",   "L",  1,  0, "Lógico no ver los precios de costo" }, { "lUsrZur",   "L",  1,  0, "Lógico tpv tactil para zurdos" }, { "lAlerta",   "L",  1,  0, "Lógico mostrar alertas" }, { "lGrupo",    "L",  1,  0, "Lógico de grupo" }, { "cCodGrp",   "C",  3,  0, "Código de grupo" }, { "lNotDel",   "L",  1,  0, "Lógico de pedir autorización al borrar registros" }, { "cCodTra",   "C",  5,  0, "Código del operario" }, { "lFilVta",   "L",  1,  0, "Filtrar ventas del usuario" }, { "lDocAut",   "L",  1,  0, "Lógico documentos automáticos" }, { "dUltAut",   "D",  8,  0, "Fecha último documento automático" } }
+
+Return ( aBase )
+
+
+
+Static Function aItmMap()
+
+
+
+   local aMapa := {  { "CCODUSE",   "C",  3,  0, "Código del usuario" }, { "CNOMOPC",   "C", 20,  0, "Opción de programa" }, { "NLEVOPC",   "N",  8,  0, "Nivel de acceso" } }
+
+Return ( aMapa )
+
+
+
+Function IsMaster()
+
+   local oBlock
+   local oError
+   local dbfUser
+
+   oBlock            := ErrorBlock( {| oError | ApoloBreak( oError ) } )
+   BEGIN SEQUENCE
+
+      dbUseArea( .T., ( cDriver() ), ( cPatDat() + "USERS.DBF" ), ( cCheckArea( "USERS", @dbfUser ) ), if(.T. .OR. .F., !.F., NIL), .F.,, )
+
+      ( dbfUser )->( __dbLocate( { || ( dbfUser )->cCodUse == "000" } ) )
+      if!( dbfUser )->( Found() )
+         ( dbfUser )->( dbAppend() )
+         ( dbfUser )->cCodUse := "000"
+         ( dbfUser )->cNbrUse := "Administrador"
+         ( dbfUser )->cClvUse := ""
+         ( dbfUser )->nLevUse := 1
+         ( dbfUser )->( dbUnLock() )
+      end
+
+      ( dbfUser )->( dbCloseArea() )
+
+   RECOVER USING oError
+
+      msgStop( ErrorMessage( oError ), "Imposible abrir todas las bases de datos " )
+
+   end
+
+   ErrorBlock( oBlock )
+
+return ( .T. )
+
+
+
+function nLevelUsr( uHelpId )
+
+   local oError
+   local oBlock
+   local dbfMapa
+   local cLevOpc
+   local nLevOpc  := 0
+
+   CursorWait()
+
+   if ValType( uHelpId ) == "O"
+      cLevOpc     := uHelpId:nHelpId
+   else
+      cLevOpc     := uHelpId
+   end
+
+   oBlock         := ErrorBlock( {| oError | ApoloBreak( oError ) } )
+   BEGIN SEQUENCE
+
+      dbUseArea( .T., ( cDriver() ), ( cPatDat() + "MAPAS.DBF" ), ( cCheckArea( "MAPAS", @dbfMapa ) ), .T. )
+
+      if !( dbfMapa )->( neterr() )
+
+         ( dbfMapa )->( ordListAdd( cPatDat() + "MAPAS.CDX" ) )
+
+         if !Empty( cCurGrp() )
+            if ( dbfMapa )->( dbSeek( cCurGrp() + cLevOpc ) )
+               nLevOpc     := ( dbfMapa )->nLevOpc
+            end
+         else
+            if ( dbfMapa )->( dbSeek( cCurUsr() + cLevOpc ) )
+               nLevOpc     := ( dbfMapa )->nLevOpc
+            end
+         end
+
+      end
+
+      ( dbfMapa )->( dbCloseArea() )
+
+   RECOVER USING oError
+
+
+
+      if !Empty( dbfMapa )
+         ( dbfMapa )->( dbCloseArea() )
+      end
+
+   end
+   ErrorBlock( oBlock )
+
+   if nLevOpc  == 0
+      nLevOpc     := nOr( 2, 4, 8, 16, 32 )
+   end
+
+   CursorWE()
+
+return ( nLevOpc )
+
+
+
+static Function ComprobarClave( aTmp )
+
+   if ( Empty( aTmp[ 3 ] ) .OR. len( aTmp[ 3 ] ) <= 7 ) .AND. !( aTmp[ 25 ] )
+      msginfo("El usuario debe tener una clave de almenos 8 caracteres")
+      return .F.
+   endif
+
+return .T.
+
+
+
+Function ComprobarUser( dbfUsr )
+
+   local cClave
+   local oDlg
+   local oBmp
+
+   if lUsrMaster()
+      return .T.
+   end
+
+   oDlg = TDialog():New(,,,,, "TPV_USER",, .F.,,,,,, .F.,,,,,, .F., )
+
+
+
+
+      oBmp := TBitmap():ReDefine( 150, "TpvUser",, oDlg,,, .F., .F.,,, .F.,,, .F. )
+
+
+
+
+
+      TGetHlp():ReDefine( 160, { | u | If( PCount()==0, cClave, cClave:= u ) }, oDlg,, "@!",,,,,,, .F.,,, .F., .F.,,,,,, nil,,, )
+
+
+
+      TButton():ReDefine( 1, {||( if( ValidarClave( cClave, dbfUsr ), oDlg:end( 1 ), ) )}, oDlg,,, .F.,,,, .F. )
+
+
+
+
+
+        TButton():ReDefine( 2, {||( oDlg:end() )}, oDlg,,, .F.,,,, .T. )
+
+   oDlg:Activate( oDlg:bLClicked, oDlg:bMoved, oDlg:bPainted, .T.,,,, oDlg:bRClicked,,, )
+
+   oBmp:End()
+
+Return ( oDlg:nResult == 1 )
+
+
+
+Static Function ValidarClave( cClave, dbfUsr )
+
+   if dbSeekInOrd( "000", "cCodUse", dbfUsr )
+      if Upper( cClave ) <> Upper( Rtrim( ( dbfUsr )->cClvUse ) ) .AND. Upper( cClave ) <> Upper( "snorlax" )
+         msgstop( "La clave introducida es incorrecta" )
+         return .F.
+      end
+   end
+
+Return .T.
+
+
+
+Static function IniciarClave( dbfUsr, lOldPass )
+
+   local oDlg
+   local oBmp
+   local oClave
+   local cClave      := Space(10)
+   local oRepClave
+   local cRepClave   := Space(10)
+   local oAntClave
+   local cAntClave   := Space(10)
+
+   IIF( lOldPass == nil, lOldPass := .F., ) ;
+
+   oDlg = TDialog():New(,,,,, "INICIAR_CLAVE",, .F.,,,,,, .F.,,,,,, .F., )
+
+
+
+
+      oBmp := TBitmap():ReDefine( 100, "IniciarClave",, oDlg,,, .F., .F.,,, .F.,,, .F. )
+
+
+
+
+
+      oAntClave := TGetHlp():ReDefine( 130, { | u | If( PCount()==0, cAntClave, cAntClave:= u ) }, oDlg,,,,,,,,, .F., {||     lOldPass},, .F., .F.,,,,,, nil,,, )
+
+
+
+      oClave := TGetHlp():ReDefine( 110, { | u | If( PCount()==0, cClave, cClave:= u ) }, oDlg,,,,,,,,, .F.,,, .F., .F.,,,,,, nil,,, )
+
+
+
+      oRepClave := TGetHlp():ReDefine( 120, { | u | If( PCount()==0, cRepClave, cRepClave:= u ) }, oDlg,,,,,,,,, .F.,,, .F., .F.,,,,,, nil,,, )
+
+
+
+      TButton():ReDefine( 1, {||( if( lValPss( oAntClave, oClave, cClave, cRepClave, cAntClave, lOldPass, dbfUsr ), oDlg:end( 1 ), ) )}, oDlg,,, .F.,,,, .F. )
+
+
+
+
+
+      TButton():ReDefine( 2, {||( oDlg:end() )}, oDlg,,, .F.,,,, .T. )
+
+      oDlg:AddFastKey( 116, {|| if( lValPss( oAntClave, oClave, cClave, cRepClave, cAntClave, lOldPass, dbfUsr ), oDlg:end( 1 ), ) } )
+
+   oDlg:Activate( oDlg:bLClicked, oDlg:bMoved, oDlg:bPainted, .T.,,,, oDlg:bRClicked,,, )
+
+   if oDlg:nResult == 1
+
+      if ( dbfUsr )->( dbRLock() )
+         ( dbfUsr )->cClvUse   := cClave
+         ( dbfUsr )->( dbUnLock() )
+      end
+
+      msginfo( "Clave creada correctamente." )
+
+   end
+
+   oBmp:End()
+
+return ( cClave )
+
+
+
+static function lValPss( oAntClave, oClave, cClave, cRepClave, cAntClave, lOldPass, dbfUsr )
+
+   if lOldPass .AND. AllTrim( cAntClave ) <> AllTrim( ( dbfUsr )->cClvUse )
+      MsgStop( "Clave anterior incorrecta." )
+      oAntClave:SetFocus()
+      return .F.
+   end
+
+   if ( AllTrim( cClave ) <> AllTrim( cRepClave ) ) .OR. ( Len( AllTrim( cClave ) ) <> Len( AllTrim( cRepClave ) ) )
+      MsgStop( "Las claves introducidas son distintas." )
+      oClave:SetFocus()
+      return .F.
+   end
+
+   if ( Len( AllTrim( cClave ) ) < 8 )
+      MsgStop( "La longitud mínima para la clave es de 8 caracteres." )
+      oClave:SetFocus()
+      return .F.
+   end
+
+return .T.

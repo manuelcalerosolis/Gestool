@@ -1,0 +1,256 @@
+#line 112 "hbclass.ch"
+   DYNAMIC DivertConstructorCall
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+DECLARE HBClass  New( cName AS String, OPTIONAL SuperParams ) AS CLASS HBClass  Create() AS Object  Instance() AS Object  AddClsMethod( cName AS String, @MethodName(), nScope AS Numeric, n2 AS Numeric, n3 AS Numeric )  AddDelegate( cName AS String, cDelegate AS String, cObject AS String, nScope AS Numeric, lPersistent AS LOGICAL )  AddMultiClsData( cType AS String, uVal, nScope AS Numeric, aDatas AS Array OF String )  AddMultiData( cType AS String, uVal, nScope AS Numeric, aDatas AS Array OF String, x AS LOGICAL, lPer AS LOGICAL )  AddMethod( cName AS String, @MethodName(), nScope AS Numeric, lPersistent AS LOGICAL )  AddInLine( cName AS String, bBlock AS CodeBlock, nScope AS Numeric, lPersistent AS LOGICAL )  AddVirtual( cName AS String )  ModMethod( cName AS String, @MethodName(), nScope AS Numeric, lPersistent AS LOGICAL )  ModClsMethod( cName AS String, @MethodName(), nScope AS Numeric )  ModInline( cName AS String, bBlock AS CodeBlock, nScope AS Numeric, lPersistent AS LOGICAL )  SetOnError( @MethodName() )
+#line 85 "\Fwh1204\Include\FiveWin.Ch"
+   EXTERNAL GetProcAdd
+   EXTERNAL TActiveX
+
+
+
+
+extern errorsys
+#line 8 ".\Prg\TICobAge.prg"
+_HB_CLASS TInfCobAge ; UTILITY FUNCTION TInfCobAge(...); static s_oClass ; local oClassInstance ; local nScope ; nScope := 1 ; if s_oClass == NIL ; s_oClass := IIF(.F.,, HBClass():New( "TInfCobAge" , {TInfGen():classh} ) ) ; ;
+
+   _HB_MEMBER { nAgeDes} ; IIF( !.F., s_oClass:AddMultiData(,, nScope + IIF( .F., 32, 0 ), { "nAgeDes" }, .F., .F. ), )
+   _HB_MEMBER { nAgeHas} ; IIF( !.F., s_oClass:AddMultiData(,, nScope + IIF( .F., 32, 0 ), { "nAgeHas" }, .F., .F. ), )
+   _HB_MEMBER { cSufDes} ; IIF( !.F., s_oClass:AddMultiData(,, nScope + IIF( .F., 32, 0 ), { "cSufDes" }, .F., .F. ), )
+   _HB_MEMBER { cSufHas} ; IIF( !.F., s_oClass:AddMultiData(,, nScope + IIF( .F., 32, 0 ), { "cSufHas" }, .F., .F. ), )
+   _HB_MEMBER { oCobAgeT} ; IIF( !.F., s_oClass:AddMultiData(,, nScope + IIF( .F., 32, 0 ), { "oCobAgeT" }, .F., .F. ), )
+   _HB_MEMBER { oCobAgeL} ; IIF( !.F., s_oClass:AddMultiData(,, nScope + IIF( .F., 32, 0 ), { "oCobAgeL" }, .F., .F. ), )
+   _HB_MEMBER { oFacCliT} ; IIF( !.F., s_oClass:AddMultiData(,, nScope + IIF( .F., 32, 0 ), { "oFacCliT" }, .F., .F. ), )
+
+   _HB_MEMBER Create(); IIF( .F., s_oClass:ModMethod( "Create", @TInfCobAge_Create(), nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ), s_oClass:AddMethod( "Create", @TInfCobAge_Create(), nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ));
+
+   _HB_MEMBER OpenFiles(); IIF( .F., s_oClass:ModMethod( "OpenFiles", @TInfCobAge_OpenFiles(), nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ), s_oClass:AddMethod( "OpenFiles", @TInfCobAge_OpenFiles(), nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ));
+
+   _HB_MEMBER CloseFiles(); IIF( .F., s_oClass:ModMethod( "CloseFiles", @TInfCobAge_CloseFiles(), nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ), s_oClass:AddMethod( "CloseFiles", @TInfCobAge_CloseFiles(), nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ));
+
+   _HB_MEMBER lResource( cFld); IIF( .F., s_oClass:ModMethod( "lResource", @TInfCobAge_lResource(), nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ), s_oClass:AddMethod( "lResource", @TInfCobAge_lResource(), nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ));
+
+   _HB_MEMBER lGenerate(); IIF( .F., s_oClass:ModMethod( "lGenerate", @TInfCobAge_lGenerate(), nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ), s_oClass:AddMethod( "lGenerate", @TInfCobAge_lGenerate(), nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ));
+
+; IF .F. ; __clsActive(s_oClass:hClass) ; s_oClass:Refresh() ; ELSE ; s_oClass:Create() ; END ; oClassInstance := __clsInst( s_oClass:hClass ) ; IF __ObjHasMsg( oClassInstance, "InitClass" ); oClassInstance:InitClass( hb_aParams() ) ; END ; ELSE ; oClassInstance := __clsInst( s_oClass:hClass ) ; END ; IF PCount() > 0 ; DIVERT TO (@DivertConstructorCall()) OF s_oClass ; END ; RETURN oClassInstance AS CLASS TInfCobAge ;
+
+
+
+UTILITY STATIC function TInfCobAge_Create() ; local Self AS CLASS TInfCobAge := QSelf() AS CLASS TInfCobAge
+
+   ::AddField( "cNumLiq", "C", 12, 0, {|| "@!" },        "Liquidación",      .F., "Número de la liquidación",    10 )
+   ::AddField( "dFecLiq", "D",  8, 0, {|| "@!" },        "Fecha",            .F., "Fecha liquidación",            8 )
+   ::AddField( "cCodAge", "C",  3, 0, {|| "@!" },        "Cod. Age.",        .F., "Código agente",               20 )
+   ::AddField( "cNomAge", "C", 30, 0, {|| "@!" },        "Agente",           .F., "Nombre agente",               20 )
+   ::AddField( "cTipo",   "C", 14, 0, {|| "@!" },        "Tipo",             .T., "Tipo de factura",             20 )
+   ::AddField( "cNumFac", "C", 14, 0, {|| "@!" },        "Factura",          .T., "Número de factura",           20 )
+   ::AddField( "dFecFac", "D",  8, 0, {|| "@!" },        "Fecha",            .T., "Fecha de la factura",         10 )
+   ::AddField( "cCodCli", "C", 12, 0, {|| "@!" },        "Cod. Cli.",        .F., "Código de cliente",           10 )
+   ::AddField( "cNomCli", "C", 80, 0, {|| "@!" },        "Cliente",          .T., "Nombre del cliente",          50 )
+   ::AddField( "nTotBas", "N", 16, 6, {|| ::cPicOut },   "Base",             .T., "Base comisionable",           12 )
+   ::AddField( "nPorCom", "N", 16, 6, {|| "@E 999.99" }, "% Com.",           .T., "Porcentaje de comisión",      12 )
+   ::AddField( "nTotCom", "N", 16, 6, {|| ::cPicOut },   "Total",            .T., "Total comisión",              12 )
+
+   ::AddTmpIndex( "cNumLiq", "cNumLiq + cNumFac" )
+
+   ::AddGroup( {|| ::oDbf:cNumLiq }, {|| "Liquidación : " + AllTrim( ::oDbf:cNumLiq ) + " Fecha: " + Dtoc( ::oDbf:dFecLiq ) + " Agente: " + AllTrim( ::oDbf:cCodAge ) + " - " + AllTrim( ::oDbf:cNomAge ) }, {|| "Total liquidación..." } )
+
+   ::oCobAgeT  := ::xOthers[ 1 ]
+   ::oCobAgeL  := ::xOthers[ 2 ]
+
+RETURN ( Self )
+
+
+
+UTILITY STATIC function TInfCobAge_OpenFiles() ; local Self AS CLASS TInfCobAge := QSelf() AS CLASS TInfCobAge
+
+   local lOpen    := .T.
+   local oBlock   := ErrorBlock( {| oError | ApoloBreak( oError ) } )
+
+   BEGIN SEQUENCE
+
+   ::oDbfDiv := DbfServer( "DIVISAS.DBF", ):NewOpen( "DIVISAS.DBF",, ( cDriver() ),, ( cPatDat() ), .F., .T., .F., .F. ) ; ::oDbfDiv:AddBag( "DIVISAS.CDX" ) ; ::oDbfDiv:AddBag( ) ; ::oDbfDiv:AutoIndex()
+
+   ::oFacCliT := DbfServer( "FACCLIT.DBF", ):NewOpen( "FACCLIT.DBF",, ( cDriver() ),, ( cPatEmp() ), .F., .T., .F., .F. ) ; ::oFacCliT:AddBag( "FACCLIT.CDX" ) ; ::oFacCliT:AddBag( ) ; ::oFacCliT:AutoIndex()
+
+   RECOVER
+
+      msgStop( "Imposible abrir todas las bases de datos" )
+      ::CloseFiles()
+      lOpen          := .F.
+
+   end
+
+   ErrorBlock( oBlock )
+
+RETURN ( lOpen )
+
+
+
+UTILITY STATIC function TInfCobAge_CloseFiles() ; local Self AS CLASS TInfCobAge := QSelf() AS CLASS TInfCobAge
+
+   if !Empty( ::oDbfDiv ) .AND. ::oDbfDiv:Used()
+      ::oDbfDiv:End()
+   end
+
+   if !Empty( ::oFacCliT ) .AND. ::oFacCliT:Used()
+      ::oFacCliT:End()
+   end
+
+   ::oDbfDiv  := nil
+   ::oFacCliT := nil
+
+RETURN ( .T. )
+
+
+
+UTILITY STATIC function TInfCobAge_lResource( cFld) ; local Self AS CLASS TInfCobAge := QSelf() AS CLASS TInfCobAge
+
+   ::nAgeDes      := dbFirst ( ::oCobAgeT, 2 )
+   ::nAgeHas      := dbLast  ( ::oCobAgeT, 2 )
+   ::cSufDes      := dbFirst ( ::oCobAgeT, 3 )
+   ::cSufHas      := dbLast  ( ::oCobAgeT, 3 )
+
+   ::lDefDivInf   := .F.
+   ::lDefSerInf   := .F.
+
+   if !::StdResource( "INF_GENCOBAGE" )
+      return .F.
+   end
+
+   ::lLoadDivisa()
+
+
+
+
+
+
+
+
+
+   TGetHlp():ReDefine( 100, { | u | If( PCount()==0, ::nAgeDes, ::nAgeDes:= u ) }, ::oFld:aDialogs[1],, "999999999",,,,,,, .F.,,, .F., .T.,,,,,, nil,,, )
+
+
+
+   TGetHlp():ReDefine( 110, { | u | If( PCount()==0, ::cSufDes, ::cSufDes:= u ) }, ::oFld:aDialogs[1],,,,,,,,, .F.,,, .F., .F.,,,,,, nil,,, )
+
+
+
+
+
+   TGetHlp():ReDefine( 120, { | u | If( PCount()==0, ::nAgeHas, ::nAgeHas:= u ) }, ::oFld:aDialogs[1],, "999999999",,,,,,, .F.,,, .F., .T.,,,,,, nil,,, )
+
+
+
+   TGetHlp():ReDefine( 130, { | u | If( PCount()==0, ::cSufHas, ::cSufHas:= u ) }, ::oFld:aDialogs[1],,,,,,,,, .F.,,, .F., .F.,,,,,, nil,,, )
+
+   if !::oDefAgeInf( 140, 141, 150, 151, 160 )
+      return .F.
+   end
+
+   ::oMtrInf:SetTotal( ::oCobAgeT:Lastrec() )
+
+   ::CreateFilter( , ::oCobAgeT )
+
+RETURN .T.
+
+
+
+
+
+
+UTILITY STATIC function TInfCobAge_lGenerate() ; local Self AS CLASS TInfCobAge := QSelf() AS CLASS TInfCobAge
+
+   local nKlgEnt  := 0
+   local cExpHead := ""
+
+   ::oDlg:Disable()
+
+   ::oDbf:Zap()
+
+
+
+   ::aHeader         := {  {|| "Fecha   : " + Dtoc( Date() ) }, {|| "Rango   : " + Alltrim( Str( ::nAgeDes ) ) + "/" + AllTrim( ::cSufDes ) + " > " + Alltrim( Str( ::nAgeHas ) ) + "/" + Alltrim( ::cSufHas ) } , {|| "Agentes : " + if( ::lAgeAll, "Todos", AllTrim( ::cAgeOrg ) + " > " + AllTrim( ::cAgeDes ) ) } }
+
+   ::oCobAgeT:OrdSetFocus( "nNumCob" )
+   ::oCobAgeL:OrdSetFocus( "nNumCob" )
+
+   cExpHead          := 'dFecCob >= Ctod( "' + Dtoc( ::dIniInf ) + '" ) .and. dFecCob <= Ctod( "' + Dtoc( ::dFinInf ) + '" )'
+
+   if !::lAgeAll
+      cExpHead       += '.and. cCodAge >= "' + Rtrim( ::cAgeOrg ) + '" .and. cCodAge <= "' + Rtrim( ::cAgeDes ) + '"'
+   end
+
+   if !Empty( ::oFilter:cExpFilter )
+      cExpHead       += ::oFilter:cExpFilter
+   end
+
+   ::oCobAgeT:AddTmpIndex( cCurUsr(), GetFileNoExt( ::oCobAgeT:cFile ), ::oCobAgeT:OrdKey(), ( cExpHead ), , , , , , , , .T. )
+
+   if ::oCobAgeT:Seek( Str( ::nAgeDes ) + ::cSufDes )
+
+      while Str( ::oCobAgeT:nNumCob ) + ::oCobAgeT:cSufCob <= Str( ::nAgeHas ) + ::cSufHas .AND. !::oCobAgeT:eof()
+
+
+
+
+
+         if ::oCobAgeL:Seek( Str( ::oCobAgeT:nNumCob ) + ::oCobAgeT:cSufCob )
+
+
+            while Str( ::oCobAgeT:nNumCob ) + ::oCobAgeT:cSufCob == Str( ::oCobAgeL:nNumCob ) + ::oCobAgeL:cSufCob .AND. !::oCobAgeL:Eof()
+
+               ::oDbf:Append()
+
+               ::oDbf:cNumLiq    := AllTrim( Str( ::oCobAgeT:nNumCob ) ) + "/" + ::oCobAgeT:cSufCob
+               ::oDbf:dFecLiq    := ::oCobAgeT:dFecCob
+               ::oDbf:cCodAge    := ::oCobAgeT:cCodAge
+               ::oDbf:cNomAge    := cNbrAgent( ::oCobAgeT:cCodAge, ::oDbfAge:cAlias )
+               ::oDbf:cTipo      := if( ::oCobAgeL:lFacRec, "Rectificativa", "Factura" )
+               ::oDbf:cNumFac    := ::oCobAgeL:cSerFac + "/" + AllTrim( Str( ::oCobAgeL:nNumFac ) )+ "/" + ::oCobAgeL:cSufFac
+               ::oDbf:dFecFac    := ::oCobAgeL:dFecFac
+               ::oDbf:cCodCli    := ::oCobAgeL:cCodCli
+               ::oDbf:cNomCli    := oRetFld( Padr( ::oCobAgeL:cCodCli, 12 ), ::oFacCliT, "cNomCli", "CCODCLI" )
+               ::oDbf:nTotBas    := ::oCobAgeL:nImpCom
+               ::oDbf:nPorCom    := ::oCobAgeL:nComAge
+               ::oDbf:nTotCom    := ( ::oCobAgeL:nImpCom * ::oCobAgeL:nComAge / 100 )
+
+               ::oDbf:Save()
+
+               ::oCobAgeL:Skip()
+
+            end
+
+         end
+
+         ::oCobAgeT:Skip()
+
+         ::oMtrInf:AutoInc( ::oCobAgeT:OrdKeyNo() )
+
+      end
+
+   end
+
+   ::oCobAgeT:IdxDelete( cCurUsr(), GetFileNoExt( ::oCobAgeT:cFile ) )
+
+   ::oMtrInf:AutoInc( ::oCobAgeT:LastRec() )
+
+   ::oCobAgeT:SetStatus()
+
+   ::oDlg:Enable()
+
+RETURN ( ::oDbf:LastRec() > 0 )

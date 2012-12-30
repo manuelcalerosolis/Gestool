@@ -1,0 +1,1407 @@
+#line 112 "hbclass.ch"
+   DYNAMIC DivertConstructorCall
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+DECLARE HBClass  New( cName AS String, OPTIONAL SuperParams ) AS CLASS HBClass  Create() AS Object  Instance() AS Object  AddClsMethod( cName AS String, @MethodName(), nScope AS Numeric, n2 AS Numeric, n3 AS Numeric )  AddDelegate( cName AS String, cDelegate AS String, cObject AS String, nScope AS Numeric, lPersistent AS LOGICAL )  AddMultiClsData( cType AS String, uVal, nScope AS Numeric, aDatas AS Array OF String )  AddMultiData( cType AS String, uVal, nScope AS Numeric, aDatas AS Array OF String, x AS LOGICAL, lPer AS LOGICAL )  AddMethod( cName AS String, @MethodName(), nScope AS Numeric, lPersistent AS LOGICAL )  AddInLine( cName AS String, bBlock AS CodeBlock, nScope AS Numeric, lPersistent AS LOGICAL )  AddVirtual( cName AS String )  ModMethod( cName AS String, @MethodName(), nScope AS Numeric, lPersistent AS LOGICAL )  ModClsMethod( cName AS String, @MethodName(), nScope AS Numeric )  ModInline( cName AS String, bBlock AS CodeBlock, nScope AS Numeric, lPersistent AS LOGICAL )  SetOnError( @MethodName() )
+#line 85 "\Fwh1204\Include\FiveWin.Ch"
+   EXTERNAL GetProcAdd
+   EXTERNAL TActiveX
+
+
+
+
+extern errorsys
+#line 8 ".\Prg\Trazalote.prg"
+_HB_CLASS TTrazarLote ; UTILITY FUNCTION TTrazarLote(...); static s_oClass ; local oClassInstance ; local nScope ; nScope := 1 ; if s_oClass == NIL ; s_oClass := IIF(.F.,, HBClass():New( "TTrazarLote" , { HBObject():Classh } ) ) ;
+
+   _HB_MEMBER { oDbfIva} ; IIF( !.F., s_oClass:AddMultiData(,, nScope + IIF( .F., 32, 0 ), { "oDbfIva" }, .F., .F. ), )
+   _HB_MEMBER { oDbfArt} ; IIF( !.F., s_oClass:AddMultiData(,, nScope + IIF( .F., 32, 0 ), { "oDbfArt" }, .F., .F. ), )
+   _HB_MEMBER { oDbfCli} ; IIF( !.F., s_oClass:AddMultiData(,, nScope + IIF( .F., 32, 0 ), { "oDbfCli" }, .F., .F. ), )
+   _HB_MEMBER { oDbfPrv} ; IIF( !.F., s_oClass:AddMultiData(,, nScope + IIF( .F., 32, 0 ), { "oDbfPrv" }, .F., .F. ), )
+   _HB_MEMBER { oDbfTmp} ; IIF( !.F., s_oClass:AddMultiData(,, nScope + IIF( .F., 32, 0 ), { "oDbfTmp" }, .F., .F. ), )
+   _HB_MEMBER { oPedPrvT} ; IIF( !.F., s_oClass:AddMultiData(,, nScope + IIF( .F., 32, 0 ), { "oPedPrvT" }, .F., .F. ), )
+   _HB_MEMBER { oPedPrvL} ; IIF( !.F., s_oClass:AddMultiData(,, nScope + IIF( .F., 32, 0 ), { "oPedPrvL" }, .F., .F. ), )
+   _HB_MEMBER { oAlbPrvT} ; IIF( !.F., s_oClass:AddMultiData(,, nScope + IIF( .F., 32, 0 ), { "oAlbPrvT" }, .F., .F. ), )
+   _HB_MEMBER { oAlbPrvL} ; IIF( !.F., s_oClass:AddMultiData(,, nScope + IIF( .F., 32, 0 ), { "oAlbPrvL" }, .F., .F. ), )
+   _HB_MEMBER { oFacPrvT} ; IIF( !.F., s_oClass:AddMultiData(,, nScope + IIF( .F., 32, 0 ), { "oFacPrvT" }, .F., .F. ), )
+   _HB_MEMBER { oFacPrvL} ; IIF( !.F., s_oClass:AddMultiData(,, nScope + IIF( .F., 32, 0 ), { "oFacPrvL" }, .F., .F. ), )
+   _HB_MEMBER { oAlbCliT} ; IIF( !.F., s_oClass:AddMultiData(,, nScope + IIF( .F., 32, 0 ), { "oAlbCliT" }, .F., .F. ), )
+   _HB_MEMBER { oAlbCliL} ; IIF( !.F., s_oClass:AddMultiData(,, nScope + IIF( .F., 32, 0 ), { "oAlbCliL" }, .F., .F. ), )
+   _HB_MEMBER { oFacCliT} ; IIF( !.F., s_oClass:AddMultiData(,, nScope + IIF( .F., 32, 0 ), { "oFacCliT" }, .F., .F. ), )
+   _HB_MEMBER { oFacCliL} ; IIF( !.F., s_oClass:AddMultiData(,, nScope + IIF( .F., 32, 0 ), { "oFacCliL" }, .F., .F. ), )
+   _HB_MEMBER { oFacRecT} ; IIF( !.F., s_oClass:AddMultiData(,, nScope + IIF( .F., 32, 0 ), { "oFacRecT" }, .F., .F. ), )
+   _HB_MEMBER { oFacRecL} ; IIF( !.F., s_oClass:AddMultiData(,, nScope + IIF( .F., 32, 0 ), { "oFacRecL" }, .F., .F. ), )
+   _HB_MEMBER { oPreCliT} ; IIF( !.F., s_oClass:AddMultiData(,, nScope + IIF( .F., 32, 0 ), { "oPreCliT" }, .F., .F. ), )
+   _HB_MEMBER { oPreCliL} ; IIF( !.F., s_oClass:AddMultiData(,, nScope + IIF( .F., 32, 0 ), { "oPreCliL" }, .F., .F. ), )
+   _HB_MEMBER { oPedCliT} ; IIF( !.F., s_oClass:AddMultiData(,, nScope + IIF( .F., 32, 0 ), { "oPedCliT" }, .F., .F. ), )
+   _HB_MEMBER { oPedCliL} ; IIF( !.F., s_oClass:AddMultiData(,, nScope + IIF( .F., 32, 0 ), { "oPedCliL" }, .F., .F. ), )
+   _HB_MEMBER { oTikCliT} ; IIF( !.F., s_oClass:AddMultiData(,, nScope + IIF( .F., 32, 0 ), { "oTikCliT" }, .F., .F. ), )
+   _HB_MEMBER { oTikCliL} ; IIF( !.F., s_oClass:AddMultiData(,, nScope + IIF( .F., 32, 0 ), { "oTikCliL" }, .F., .F. ), )
+   _HB_MEMBER { oHisMov} ; IIF( !.F., s_oClass:AddMultiData(,, nScope + IIF( .F., 32, 0 ), { "oHisMov" }, .F., .F. ), )
+   _HB_MEMBER { oProducT} ; IIF( !.F., s_oClass:AddMultiData(,, nScope + IIF( .F., 32, 0 ), { "oProducT" }, .F., .F. ), )
+   _HB_MEMBER { oProducL} ; IIF( !.F., s_oClass:AddMultiData(,, nScope + IIF( .F., 32, 0 ), { "oProducL" }, .F., .F. ), )
+   _HB_MEMBER { oProducM} ; IIF( !.F., s_oClass:AddMultiData(,, nScope + IIF( .F., 32, 0 ), { "oProducM" }, .F., .F. ), )
+
+   _HB_MEMBER { oMetMsg} ; IIF( !.F., s_oClass:AddMultiData(,, nScope + IIF( .F., 32, 0 ), { "oMetMsg" }, .F., .F. ), )
+   _HB_MEMBER {AS NUMERIC nMetMsg} ; IIF( !.F., s_oClass:AddMultiData( "NUMERIC", 0, nScope + IIF( .F., 32, 0 ), { "nMetMsg" }, .F., .F. ), )
+   _HB_MEMBER { cLote} ; IIF( !.F., s_oClass:AddMultiData(, Space( 12 ), nScope + IIF( .F., 32, 0 ), { "cLote" }, .F., .F. ), )
+
+   _HB_MEMBER { oBrw} ; IIF( !.F., s_oClass:AddMultiData(,, nScope + IIF( .F., 32, 0 ), { "oBrw" }, .F., .F. ), )
+
+   _HB_MEMBER { aBmp} ; IIF( !.F., s_oClass:AddMultiData(,, nScope + IIF( .F., 32, 0 ), { "aBmp" }, .F., .F. ), )
+
+   _HB_MEMBER { cCodArt} ; IIF( !.F., s_oClass:AddMultiData(, Space( 18 ), nScope + IIF( .F., 32, 0 ), { "cCodArt" }, .F., .F. ), )
+   _HB_MEMBER { cFiltro} ; IIF( !.F., s_oClass:AddMultiData(, Space( 12 ), nScope + IIF( .F., 32, 0 ), { "cFiltro" }, .F., .F. ), )
+   _HB_MEMBER { cBuscar} ; IIF( !.F., s_oClass:AddMultiData(, Space( 7 ), nScope + IIF( .F., 32, 0 ), { "cBuscar" }, .F., .F. ), )
+
+   _HB_MEMBER OpenFiles(); IIF( .F., s_oClass:ModMethod( "OpenFiles", @TTrazarLote_OpenFiles(), nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ), s_oClass:AddMethod( "OpenFiles", @TTrazarLote_OpenFiles(), nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ));
+
+   _HB_MEMBER CloseFiles(); IIF( .F., s_oClass:ModMethod( "CloseFiles", @TTrazarLote_CloseFiles(), nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ), s_oClass:AddMethod( "CloseFiles", @TTrazarLote_CloseFiles(), nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ));
+
+   _HB_MEMBER Activate( oMenuItem, oWnd); IIF( .F., s_oClass:ModMethod( "Activate", @TTrazarLote_Activate(), nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ), s_oClass:AddMethod( "Activate", @TTrazarLote_Activate(), nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ));
+
+   _HB_MEMBER Search(); IIF( .F., s_oClass:ModMethod( "Search", @TTrazarLote_Search(), nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ), s_oClass:AddMethod( "Search", @TTrazarLote_Search(), nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ));
+
+   _HB_MEMBER AddPedPrv(); IIF( .F., s_oClass:ModMethod( "AddPedPrv", @TTrazarLote_AddPedPrv(), nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ), s_oClass:AddMethod( "AddPedPrv", @TTrazarLote_AddPedPrv(), nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ));
+
+   _HB_MEMBER AddAlbPrv(); IIF( .F., s_oClass:ModMethod( "AddAlbPrv", @TTrazarLote_AddAlbPrv(), nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ), s_oClass:AddMethod( "AddAlbPrv", @TTrazarLote_AddAlbPrv(), nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ));
+
+   _HB_MEMBER AddFacPrv(); IIF( .F., s_oClass:ModMethod( "AddFacPrv", @TTrazarLote_AddFacPrv(), nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ), s_oClass:AddMethod( "AddFacPrv", @TTrazarLote_AddFacPrv(), nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ));
+
+   _HB_MEMBER AddPreCli(); IIF( .F., s_oClass:ModMethod( "AddPreCli", @TTrazarLote_AddPreCli(), nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ), s_oClass:AddMethod( "AddPreCli", @TTrazarLote_AddPreCli(), nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ));
+
+   _HB_MEMBER AddPedCli(); IIF( .F., s_oClass:ModMethod( "AddPedCli", @TTrazarLote_AddPedCli(), nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ), s_oClass:AddMethod( "AddPedCli", @TTrazarLote_AddPedCli(), nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ));
+
+   _HB_MEMBER AddAlbCli(); IIF( .F., s_oClass:ModMethod( "AddAlbCli", @TTrazarLote_AddAlbCli(), nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ), s_oClass:AddMethod( "AddAlbCli", @TTrazarLote_AddAlbCli(), nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ));
+
+   _HB_MEMBER AddFacCli(); IIF( .F., s_oClass:ModMethod( "AddFacCli", @TTrazarLote_AddFacCli(), nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ), s_oClass:AddMethod( "AddFacCli", @TTrazarLote_AddFacCli(), nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ));
+
+   _HB_MEMBER AddFacRec(); IIF( .F., s_oClass:ModMethod( "AddFacRec", @TTrazarLote_AddFacRec(), nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ), s_oClass:AddMethod( "AddFacRec", @TTrazarLote_AddFacRec(), nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ));
+
+   _HB_MEMBER AddHisMov(); IIF( .F., s_oClass:ModMethod( "AddHisMov", @TTrazarLote_AddHisMov(), nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ), s_oClass:AddMethod( "AddHisMov", @TTrazarLote_AddHisMov(), nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ));
+
+   _HB_MEMBER Zoom(); IIF( .F., s_oClass:ModMethod( "Zoom", @TTrazarLote_Zoom(), nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ), s_oClass:AddMethod( "Zoom", @TTrazarLote_Zoom(), nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ));
+
+   _HB_MEMBER Filtrar(); IIF( .F., s_oClass:ModMethod( "Filtrar", @TTrazarLote_Filtrar(), nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ), s_oClass:AddMethod( "Filtrar", @TTrazarLote_Filtrar(), nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ));
+
+   _HB_MEMBER Visualizar(); IIF( .F., s_oClass:ModMethod( "Visualizar", @TTrazarLote_Visualizar(), nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ), s_oClass:AddMethod( "Visualizar", @TTrazarLote_Visualizar(), nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ));
+
+   _HB_MEMBER Imprimir(); IIF( .F., s_oClass:ModMethod( "Imprimir", @TTrazarLote_Imprimir(), nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ), s_oClass:AddMethod( "Imprimir", @TTrazarLote_Imprimir(), nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ));
+
+   _HB_MEMBER AddProducido(); IIF( .F., s_oClass:ModMethod( "AddProducido", @TTrazarLote_AddProducido(), nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ), s_oClass:AddMethod( "AddProducido", @TTrazarLote_AddProducido(), nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ));
+
+   _HB_MEMBER AddConsumido(); IIF( .F., s_oClass:ModMethod( "AddConsumido", @TTrazarLote_AddConsumido(), nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ), s_oClass:AddMethod( "AddConsumido", @TTrazarLote_AddConsumido(), nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ));
+
+   _HB_MEMBER nTreeImagen(); IIF( .F., s_oClass:ModMethod( "nTreeImagen", @TTrazarLote_nTreeImagen(), nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ), s_oClass:AddMethod( "nTreeImagen", @TTrazarLote_nTreeImagen(), nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ));
+
+; IF .F. ; __clsActive(s_oClass:hClass) ; s_oClass:Refresh() ; ELSE ; s_oClass:Create() ; END ; oClassInstance := __clsInst( s_oClass:hClass ) ; IF __ObjHasMsg( oClassInstance, "InitClass" ); oClassInstance:InitClass( hb_aParams() ) ; END ; ELSE ; oClassInstance := __clsInst( s_oClass:hClass ) ; END ; IF PCount() > 0 ; DIVERT TO (@DivertConstructorCall()) OF s_oClass ; END ; RETURN oClassInstance AS CLASS TTrazarLote ;
+
+
+
+UTILITY STATIC function TTrazarLote_OpenFiles() ; local Self AS CLASS TTrazarLote := QSelf() AS CLASS TTrazarLote
+
+   local lOpen    := .T.
+   local oBlock   := ErrorBlock( {| oError | ApoloBreak( oError ) } )
+
+   BEGIN SEQUENCE
+
+      ::oDbfIva := DbfServer( "TIva.Dbf", ):NewOpen( "TIva.Dbf",, ( cDriver() ),, ( cPatDat() ), .F., .T., .F., .F. ) ; ::oDbfIva:AddBag( "TIva.Cdx" ) ; ::oDbfIva:AddBag( ) ; ::oDbfIva:AutoIndex()
+
+      ::oDbfArt := DbfServer( "ARTICULO.DBF", ):NewOpen( "ARTICULO.DBF",, ( cDriver() ),, ( cPatArt() ), .F., .T., .F., .F. ) ; ::oDbfArt:AddBag( "ARTICULO.CDX" ) ; ::oDbfArt:AddBag( ) ; ::oDbfArt:AutoIndex()
+
+      ::oDbfCli := DbfServer( "CLIENT.DBF", ):NewOpen( "CLIENT.DBF",, ( cDriver() ),, ( cPatCli() ), .F., .T., .F., .F. ) ; ::oDbfCli:AddBag( "CLIENT.CDX" ) ; ::oDbfCli:AddBag( ) ; ::oDbfCli:AutoIndex()
+
+      ::oDbfPrv := DbfServer( "PROVEE.DBF", ):NewOpen( "PROVEE.DBF",, ( cDriver() ),, ( cPatPrv() ), .F., .T., .F., .F. ) ; ::oDbfPrv:AddBag( "PROVEE.CDX" ) ; ::oDbfPrv:AddBag( ) ; ::oDbfPrv:AutoIndex()
+
+      ::oPedPrvT := DbfServer( "PedProvT.Dbf", ):NewOpen( "PedProvT.Dbf",, ( cDriver() ),, ( cPatEmp() ), .F., .T., .F., .F. ) ; ::oPedPrvT:AddBag( "PedProvT.Cdx" ) ; ::oPedPrvT:AddBag( ) ; ::oPedPrvT:AutoIndex()
+
+      ::oPedPrvL := DbfServer( "PedProvL.Dbf", ):NewOpen( "PedProvL.Dbf",, ( cDriver() ),, ( cPatEmp() ), .F., .T., .F., .F. ) ; ::oPedPrvL:AddBag( "PedProvL.Cdx" ) ; ::oPedPrvL:AddBag( ) ; ::oPedPrvL:AutoIndex()
+      ::oPedPrvL:OrdSetFocus( "Lote" )
+
+      ::oAlbPrvT := DbfServer( "AlbProvT.Dbf", ):NewOpen( "AlbProvT.Dbf",, ( cDriver() ),, ( cPatEmp() ), .F., .T., .F., .F. ) ; ::oAlbPrvT:AddBag( "AlbProvT.Cdx" ) ; ::oAlbPrvT:AddBag( ) ; ::oAlbPrvT:AutoIndex()
+
+      ::oAlbPrvL := DbfServer( "AlbProvL.Dbf", ):NewOpen( "AlbProvL.Dbf",, ( cDriver() ),, ( cPatEmp() ), .F., .T., .F., .F. ) ; ::oAlbPrvL:AddBag( "AlbProvL.Cdx" ) ; ::oAlbPrvL:AddBag( ) ; ::oAlbPrvL:AutoIndex()
+      ::oAlbPrvL:OrdSetFocus( "Lote" )
+
+      ::oFacPrvT := DbfServer( "FacPrvT.Dbf", ):NewOpen( "FacPrvT.Dbf",, ( cDriver() ),, ( cPatEmp() ), .F., .T., .F., .F. ) ; ::oFacPrvT:AddBag( "FacPrvT.Cdx" ) ; ::oFacPrvT:AddBag( ) ; ::oFacPrvT:AutoIndex()
+
+      ::oFacPrvL := DbfServer( "FacPrvL.Dbf", ):NewOpen( "FacPrvL.Dbf",, ( cDriver() ),, ( cPatEmp() ), .F., .T., .F., .F. ) ; ::oFacPrvL:AddBag( "FacPrvL.Cdx" ) ; ::oFacPrvL:AddBag( ) ; ::oFacPrvL:AutoIndex()
+      ::oFacPrvL:OrdSetFocus( "Lote" )
+
+      ::oPreCliT := DbfServer( "PreCliT.Dbf", ):NewOpen( "PreCliT.Dbf",, ( cDriver() ),, ( cPatEmp() ), .F., .T., .F., .F. ) ; ::oPreCliT:AddBag( "PreCliT.Cdx" ) ; ::oPreCliT:AddBag( ) ; ::oPreCliT:AutoIndex()
+
+      ::oPreCliL := DbfServer( "PreCliL.Dbf", ):NewOpen( "PreCliL.Dbf",, ( cDriver() ),, ( cPatEmp() ), .F., .T., .F., .F. ) ; ::oPreCliL:AddBag( "PreCliL.Cdx" ) ; ::oPreCliL:AddBag( ) ; ::oPreCliL:AutoIndex()
+      ::oPreCliL:OrdSetFocus( "Lote" )
+
+      ::oPedCliT := DbfServer( "PedCliT.Dbf", ):NewOpen( "PedCliT.Dbf",, ( cDriver() ),, ( cPatEmp() ), .F., .T., .F., .F. ) ; ::oPedCliT:AddBag( "PedCliT.Cdx" ) ; ::oPedCliT:AddBag( ) ; ::oPedCliT:AutoIndex()
+
+      ::oPedCliL := DbfServer( "PedCliL.Dbf", ):NewOpen( "PedCliL.Dbf",, ( cDriver() ),, ( cPatEmp() ), .F., .T., .F., .F. ) ; ::oPedCliL:AddBag( "PedCliL.Cdx" ) ; ::oPedCliL:AddBag( ) ; ::oPedCliL:AutoIndex()
+      ::oPedCliL:OrdSetFocus( "Lote" )
+
+      ::oAlbCliT := DbfServer( "AlbCliT.Dbf", ):NewOpen( "AlbCliT.Dbf",, ( cDriver() ),, ( cPatEmp() ), .F., .T., .F., .F. ) ; ::oAlbCliT:AddBag( "AlbCliT.Cdx" ) ; ::oAlbCliT:AddBag( ) ; ::oAlbCliT:AutoIndex()
+
+      ::oAlbCliL := DbfServer( "AlbCliL.Dbf", ):NewOpen( "AlbCliL.Dbf",, ( cDriver() ),, ( cPatEmp() ), .F., .T., .F., .F. ) ; ::oAlbCliL:AddBag( "AlbCliL.Cdx" ) ; ::oAlbCliL:AddBag( ) ; ::oAlbCliL:AutoIndex()
+      ::oAlbCliL:OrdSetFocus( "Lote" )
+
+      ::oFacCliT := DbfServer( "FacCliT.Dbf", ):NewOpen( "FacCliT.Dbf",, ( cDriver() ),, ( cPatEmp() ), .F., .T., .F., .F. ) ; ::oFacCliT:AddBag( "FacCliT.Cdx" ) ; ::oFacCliT:AddBag( ) ; ::oFacCliT:AutoIndex()
+
+      ::oFacCliL := DbfServer( "FacCliL.Dbf", ):NewOpen( "FacCliL.Dbf",, ( cDriver() ),, ( cPatEmp() ), .F., .T., .F., .F. ) ; ::oFacCliL:AddBag( "FacCliL.Cdx" ) ; ::oFacCliL:AddBag( ) ; ::oFacCliL:AutoIndex()
+      ::oFacCliL:OrdSetFocus( "Lote" )
+
+      ::oFacRecT := DbfServer( "FacRecT.Dbf", ):NewOpen( "FacRecT.Dbf",, ( cDriver() ),, ( cPatEmp() ), .F., .T., .F., .F. ) ; ::oFacRecT:AddBag( "FacRecT.Cdx" ) ; ::oFacRecT:AddBag( ) ; ::oFacRecT:AutoIndex()
+
+      ::oFacRecL := DbfServer( "FacRecL.Dbf", ):NewOpen( "FacRecL.Dbf",, ( cDriver() ),, ( cPatEmp() ), .F., .T., .F., .F. ) ; ::oFacRecL:AddBag( "FacRecL.Cdx" ) ; ::oFacRecL:AddBag( ) ; ::oFacRecL:AutoIndex()
+      ::oFacRecL:OrdSetFocus( "Lote" )
+
+      ::oHisMov := DbfServer( "HISMOV.DBF", ):NewOpen( "HISMOV.DBF",, ( cDriver() ),, ( cPatEmp() ), .F., .T., .F., .F. ) ; ::oHisMov:AddBag( "HISMOV.CDX" ) ; ::oHisMov:AddBag( ) ; ::oHisMov:AutoIndex()
+      ::oHisMov:OrdSetFocus( "cLote" )
+
+      ::oProducT := DbfServer( "PROCAB.DBF", ):NewOpen( "PROCAB.DBF",, ( cDriver() ),, ( cPatEmp() ), .F., .T., .F., .F. ) ; ::oProducT:AddBag( "PROCAB.CDX" ) ; ::oProducT:AddBag( ) ; ::oProducT:AutoIndex()
+
+      ::oProducL := DbfServer( "PROLIN.DBF", ):NewOpen( "PROLIN.DBF",, ( cDriver() ),, ( cPatEmp() ), .F., .T., .F., .F. ) ; ::oProducL:AddBag( "PROLIN.CDX" ) ; ::oProducL:AddBag( ) ; ::oProducL:AutoIndex()
+      ::oProducL:OrdSetFocus( "cLote" )
+
+      ::oProducM := DbfServer( "PROMAT.DBF", ):NewOpen( "PROMAT.DBF",, ( cDriver() ),, ( cPatEmp() ), .F., .T., .F., .F. ) ; ::oProducM:AddBag( "PROMAT.CDX" ) ; ::oProducM:AddBag( ) ; ::oProducM:AutoIndex()
+      ::oProducM:OrdSetFocus( "cLote" )
+
+      ::oDbfTmp         := DbfServer( "TrazarLote", SubStr( Str( Seconds() ), -6 ) ):New( "TrazarLote", "TrazarLote", cLocalDriver(), , cPatTmp() )
+
+      ::oDbfTmp:AddField( "cTipDoc",  "C", 40, 0 )
+      ::oDbfTmp:AddField( "cNumDoc",  "C", 12, 0 )
+      ::oDbfTmp:AddField( "cDoc",     "C", 12, 0 )
+      ::oDbfTmp:AddField( "cCodArt",  "C", 18, 0 )
+      ::oDbfTmp:AddField( "cNomArt",  "C",100, 0 )
+      ::oDbfTmp:AddField( "nUnidades","N", 16, 6 )
+      ::oDbfTmp:AddField( "dFecDoc",  "D",  8, 0 )
+      ::oDbfTmp:AddField( "cCodCli",  "C", 12, 0 )
+      ::oDbfTmp:AddField( "cCliPrv",  "C", 50, 0 )
+      ::oDbfTmp:AddField( "cCodObr",  "C", 10, 0 )
+
+      ::oDbfTmp:Create()
+      ::oDbfTmp:Activate( .F., .F. )
+
+      ::oDbfTmp:AddTmpIndex( "dFecDoc", "TrazarLote.Cdx", "Dtos( dFecDoc )" )
+      ::oDbfTmp:AddTmpIndex( "cTipDoc", "TrazarLote.Cdx", "cTipDoc + Dtos( dFecDoc )" )
+      ::oDbfTmp:AddTmpIndex( "cCodArt", "TrazarLote.Cdx", "cCodArt + Dtos( dFecDoc )" )
+      ::oDbfTmp:AddTmpIndex( "cNomArt", "TrazarLote.Cdx", "cNomArt + Dtos( dFecDoc )" )
+      ::oDbfTmp:AddTmpIndex( "cCliPrv", "TrazarLote.Cdx", "cCliPrv + Dtos( dFecDoc )" )
+
+   RECOVER
+
+      msgStop( "Imposible abrir todas las bases de datos de trazabilidad" )
+
+      ::CloseFiles()
+
+      lOpen             := .F.
+
+   end
+
+   ErrorBlock( oBlock )
+
+RETURN( lOpen )
+
+
+
+UTILITY STATIC function TTrazarLote_CloseFiles() ; local Self AS CLASS TTrazarLote := QSelf() AS CLASS TTrazarLote
+
+   if !Empty( ::oDbfIva ) .AND. ::oDbfIva:Used()
+      ::oDbfIva:End()
+   end
+
+   if !Empty( ::oDbfArt ) .AND. ::oDbfArt:Used()
+      ::oDbfArt:End()
+   end
+
+   if !Empty( ::oDbfCli ) .AND. ::oDbfCli:Used()
+      ::oDbfCli:End()
+   end
+
+   if !Empty( ::oDbfPrv ) .AND. ::oDbfPrv:Used()
+      ::oDbfPrv:End()
+   end
+
+   if !Empty( ::oPedPrvT ) .AND.::oPedPrvT:Used()
+      ::oPedPrvT:End()
+   end
+
+   if !Empty( ::oPedPrvL ) .AND.::oPedPrvL:Used()
+      ::oPedPrvL:End()
+   end
+
+   if !Empty( ::oAlbPrvT ) .AND.::oAlbPrvT:Used()
+      ::oAlbPrvT:End()
+   end
+
+   if !Empty( ::oAlbPrvL ) .AND.::oAlbPrvL:Used()
+      ::oAlbPrvL:End()
+   end
+
+   if !Empty( ::oFacPrvT ) .AND.::oFacPrvT:Used()
+      ::oFacPrvT:End()
+   end
+
+   if !Empty( ::oFacPrvL ) .AND.::oFacPrvL:Used()
+      ::oFacPrvL:End()
+   end
+
+   if !Empty( ::oPreCliT ) .AND.::oPreCliT:Used()
+      ::oPreCliT:End()
+   end
+
+   if !Empty( ::oPreCliL ) .AND.::oPreCliL:Used()
+      ::oPreCliL:End()
+   end
+
+   if !Empty( ::oPedCliT ) .AND.::oPedCliT:Used()
+      ::oPedCliT:End()
+   end
+
+   if !Empty( ::oPedCliL ) .AND.::oPedCliL:Used()
+      ::oPedCliL:End()
+   end
+
+   if !Empty( ::oAlbCliT ) .AND.::oAlbCliT:Used()
+      ::oAlbCliT:End()
+   end
+
+   if !Empty( ::oAlbCliL ) .AND.::oAlbCliL:Used()
+      ::oAlbCliL:End()
+   end
+
+   if !Empty( ::oFacCliT ) .AND.::oFacCliT:Used()
+      ::oFacCliT:End()
+   end
+
+   if !Empty( ::oFacCliL ) .AND.::oFacCliL:Used()
+      ::oFacCliL:End()
+   end
+
+   if !Empty( ::oFacRecT ) .AND.::oFacRecT:Used()
+      ::oFacRecT:End()
+   end
+
+   if !Empty( ::oFacRecL ) .AND.::oFacRecL:Used()
+      ::oFacRecL:End()
+   end
+
+   if !Empty( ::oHisMov )  .AND.::oHisMov:Used()
+      ::oHisMov:End()
+   end
+
+   if !Empty( ::oProducT ) .AND.::oProducT:Used()
+      ::oProducT:End()
+   end
+
+   if !Empty( ::oProducL ) .AND.::oProducL:Used()
+      ::oProducL:End()
+   end
+
+   if !Empty( ::oProducM ) .AND.::oProducM:Used()
+      ::oProducM:End()
+   end
+
+   if !Empty( ::oDbfTmp )  .AND.::oDbfTmp:Used()
+      ::oDbfTmp:End()
+   end
+
+   fErase( cPatTmp() + "TrazarLote.Dbf" )
+   fErase( cPatTmp() + "TrazarLote.Cdx" )
+
+RETURN ( Self )
+
+
+
+UTILITY STATIC function TTrazarLote_Activate( oMenuItem, oWnd) ; local Self AS CLASS TTrazarLote := QSelf() AS CLASS TTrazarLote
+
+   local oDlg
+   local oBmp
+   local oLote
+   local nLevel
+   local oBlock
+   local oError
+   local oCodArt
+   local oSayArt
+   local cSayArt
+   local oFiltro
+   local aFiltro
+   local oBuscar
+   local aBuscar
+   local oBotonImprimir
+   local oBotonVer
+   local oBotonZoom
+   local oBotonInforme
+   local oBtnCancel
+   local oBtnBuscar
+
+   IIF( oMenuItem == nil, oMenuItem := "01022", ) ;
+   IIF( oWnd == nil, oWnd := oWnd(), ) ;
+
+
+
+   nLevel               := nLevelUsr( oMenuItem )
+
+   if nAnd( nLevel, 1 ) <> 0
+      msgStop( "Acceso no permitido." )
+      return nil
+   end
+
+
+
+   if oWnd <> nil
+      SysRefresh(); oWnd:CloseAll(); SysRefresh()
+   end
+
+
+
+   cSayArt              := ""
+   aBuscar              := {  "Compras", "Almacén", "Ventas", "Producción", "Todos" }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+   aFiltro              := {  "Todos", Space( 3 ) + "Compras", Space( 6 ) + "Pedidos a proveedores", Space( 6 ) + "Albaranes de proveedores", Space( 6 ) + "Facturas de proveedores", Space( 3 ) + "Ventas", Space( 6 ) + "Presupuestos de clientes", Space( 6 ) + "Pedidos de clientes", Space( 6 ) + "Albaranes de clientes", Space( 6 ) + "Facturas de clientes", Space( 6 ) + "Facturas rectificativas de clientes", Space( 3 ) + "Movimiento de almacén", Space( 3 ) + "Partes de producción", Space( 6 ) + "Material producido", Space( 6 ) + "Material consumido" }
+
+   ::cFiltro            := "Todos"
+   ::cBuscar            := "Todos"
+
+
+
+
+
+
+
+
+
+   ::aBmp               := {  "Clipboard_empty_businessman_16", "Document_plain_businessman_16", "Document_businessman_16", "Notebook_user1_16", "Clipboard_empty_user1_16", "Document_plain_user1_16", "Document_user1_16", "Document_delete_16", "Package_book_red_16", "Worker2_Form_Red_16" }
+
+   if !::OpenFiles()
+      return( Self )
+   end
+
+   oBlock               := ErrorBlock( {| oError | ApoloBreak( oError ) } )
+   BEGIN SEQUENCE
+
+   oDlg = TDialog():New(,,,,, "TrazarLote",, .F.,,,,,, .F.,,,,,, .F., )
+
+
+
+
+   oBmp := TBitmap():ReDefine( 800, "Package_Alpha_48",, oDlg,,, .F., .F.,,, .F.,,, .F. )
+
+
+
+
+
+
+   oCodArt := TGetHlp():ReDefine( ( 100 ), { | u | If( PCount()==0, ::cCodArt, ::cCodArt:= u ) }, oDlg,,, {||    cArticulo( oCodArt, ::oDbfArt:cAlias, oSayArt )},,,,,, .F.,,, .F., .F.,,,,, {|Self|BrwArticulo( oCodArt, oSayArt )}, nil, "LUPA",, )
+
+
+
+
+   oSayArt := TGetHlp():ReDefine( ( 110 ), { | u | If( PCount()==0, cSayArt, cSayArt:= u ) }, oDlg,,,,,,,,, .F., {||     .F.},, .F., .F.,,,,,, nil,,, )
+
+
+
+   oLote := TGetHlp():ReDefine( ( 120 ), { | u | If( PCount()==0, ::cLote, ::cLote:= u ) }, oDlg,,,,,,,,, .F.,,, .F., .F.,,,,,, nil,,, )
+
+
+
+
+
+   oFiltro := TComboBox():ReDefine( 130, { | u | If( PCount()==0, ::cFiltro, ::cFiltro:= u ) }, aFiltro, oDlg,,, {|Self|( ::Filtrar() )},,,, .F.,,,,,, )
+
+   oFiltro:bChange   := {|| ::Filtrar() }
+
+
+
+
+   oBuscar := TComboBox():ReDefine( 140, { | u | If( PCount()==0, ::cBuscar, ::cBuscar:= u ) }, aBuscar, oDlg,,,,,,, .F.,,,,,, )
+
+
+
+   ::oBrw                  := TXBrowse():New( oDlg )
+
+   ::oBrw:bClrSel          := {|| { 0, ( 229 + ( 229 * 256 ) + ( 229 * 65536 ) ) } }
+   ::oBrw:bClrSelFocus     := {|| { 0, ( 167 + ( 205 * 256 ) + ( 240 * 65536 ) ) } }
+
+   ::oBrw:SetoDbf( ::oDbfTmp )
+
+   ::oBrw:nMarqueeStyle    := 5
+
+      with object ( ::oBrw:AddCol() )
+         :cHeader          := "Tipo de documento"
+         :cSortOrder       := "cTipDoc"
+         :bStrData         := {|| ::oDbfTmp:cTipDoc }
+         :bBmpData         := {|| ::nTreeImagen() }
+         :nWidth           := 120
+         aEval( ::aBmp, {|cRes| :AddResource( cRes ) } )
+      end
+
+      with object ( ::oBrw:AddCol() )
+         :cHeader          := "Número"
+         :cSortOrder       := "cNumDoc"
+         :bStrData         := {|| ::oDbfTmp:cNumDoc }
+         :nWidth           := 70
+      end
+
+      with object ( ::oBrw:AddCol() )
+         :cHeader          := "Fecha"
+         :cSortOrder       := "dFecDoc"
+         :bStrData         := {|| Dtoc( ::oDbfTmp:dFecDoc ) }
+         :nWidth           := 70
+      end
+
+      with object ( ::oBrw:AddCol() )
+         :cHeader          := "Cliente/Proveedor"
+         :cSortOrder       := "cCodCli"
+         :bStrData         := {|| Rtrim( ::oDbfTmp:cCodCli ) + Space( 1 ) + Rtrim( ::oDbfTmp:cCliPrv ) }
+         :nWidth           := 300
+      end
+
+      with object ( ::oBrw:AddCol() )
+         :cHeader          := "Obra"
+         :cSortOrder       := "cCodObr"
+         :bStrData         := {|| ::oDbfTmp:cCodObr }
+         :nWidth           := 60
+      end
+
+      with object ( ::oBrw:AddCol() )
+         :cHeader          := "Unidades"
+         :bEditValue       := {|| ::oDbfTmp:nUnidades }
+         :cEditPicture     := MasUnd()
+         :nWidth           := 100
+         :nDataStrAlign    := 1
+         :nHeadStrAlign    := 1
+      end
+
+      with object ( ::oBrw:AddCol() )
+         :cHeader          := "Artículo"
+         :cSortOrder       := "cCodArt"
+         :bStrData         := {|| ::oDbfTmp:cCodArt }
+         :nWidth           := 140
+      end
+
+      ::oBrw:bRClicked     := {| nRow, nCol, nFlags | ::oBrw:RButtonDown( nRow, nCol, nFlags ) }
+      ::oBrw:bLDblClick    := {|| ::Zoom() }
+
+      ::oBrw:CreateFromResource( 150 )
+
+
+
+
+   ::oMetMsg := TMeter():ReDefine( 160, { | u | If( PCount()==0, ::nMetMsg, ::nMetMsg:= u ) },, oDlg, .F.,,, .F.,,,, )
+
+
+
+
+   oBtnBuscar := TButton():ReDefine( 200, {||( if( ::Search( oLote, oBtnCancel, oBtnBuscar ), ( oBotonImprimir:Show(), oBotonVer:Show(), oBotonZoom:Show(), oFiltro:Show(), oBotonInforme:Enable() ), ) )}, oDlg,,, .F.,,,, .F. )
+
+
+
+
+   oBtnCancel := TButton():ReDefine( 210, {||( oDlg:End() )}, oDlg,,, .F.,,,, .F. )
+
+
+
+
+   oBotonImprimir := TButton():ReDefine( 220, {||( ::Imprimir() )}, oDlg,,, .F.,,,, .F. )
+
+
+
+
+   oBotonVer := TButton():ReDefine( 240, {||( ::Visualizar() )}, oDlg,,, .F.,,,, .F. )
+
+
+
+
+   oBotonZoom := TButton():ReDefine( 230, {||( ::Zoom() )}, oDlg,,, .F.,,,, .F. )
+
+
+
+
+   oBotonInforme := TButton():ReDefine( 250, {||( TInfTrazLot():New( "Informe detallado de trazas de un lotes", , , , , , { ::oDbfTmp, ::cLote } ):Play() )}, oDlg,,, .F.,,,, .F. )
+
+   oDlg:AddFastKey( 116, {|| if( ::Search( oLote, oBtnCancel, oBtnBuscar ), ( oBotonImprimir:Show(), oBotonVer:Show(), oBotonZoom:Show(), oFiltro:Show(), oBotonInforme:Enable() ), ) } )
+
+   oDlg:bStart := {|| oCodArt:SetFocus() }
+
+   oDlg:Activate( oDlg:bLClicked, oDlg:bMoved, oDlg:bPainted, .T.,,, {|Self|( oBotonImprimir:Hide(), oBotonVer:Hide(), oBotonZoom:Hide(), oFiltro:Hide(), oBotonInforme:Disable() )}, oDlg:bRClicked,,, )
+
+   RECOVER USING oError
+
+      msgStop( ErrorMessage( oError ), "Imposible abrir dialogo" )
+
+   end
+
+   ErrorBlock( oBlock )
+
+   ::CloseFiles()
+
+RETURN ( Self )
+
+
+
+UTILITY STATIC function TTrazarLote_Search( oLote, oBtnCancel, oBtnBuscar) ; local Self AS CLASS TTrazarLote := QSelf() AS CLASS TTrazarLote
+
+   if Empty( ::cLote )
+      MsgStop( "Debe introducir un número de lote." )
+      oLote:SetFocus()
+      Return ( .F. )
+   end
+
+   oBtnCancel:Disable()
+   oBtnBuscar:Disable()
+
+   CursorWait()
+
+   ::oDbfTmp:Zap()
+
+   if ::cBuscar == "Compras" .OR. ::cBuscar == "Todos"
+
+
+
+      ::oMetMsg:SetTotal( ::oPedPrvL:LastRec() )
+
+      ::oMetMsg:cText   := "Pedidos proveedor"
+
+
+
+
+      if ::oPedPrvL:Seek( ::cLote )
+
+
+         while ::cLote == ::oPedPrvL:cLote .AND. !::oPedPrvL:Eof()
+
+            if ( Empty( ::cCodArt ) .OR. ::cCodArt == ::oPedPrvL:cRef )
+               ::AddPedPrv()
+            end
+
+            ::oPedPrvL:Skip()
+
+            ::oMetMsg:Set( ::oPedPrvL:OrdKeyNo() )
+
+         end
+
+      end
+
+      ::oMetMsg:Set( ::oPedPrvL:LastRec() )
+
+
+
+      ::oMetMsg:SetTotal( ::oAlbPrvL:LastRec() )
+
+      ::oMetMsg:cText   := "Albaranes proveedor"
+
+      if ::oAlbPrvL:Seek( ::cLote )
+         while ::cLote == ::oAlbPrvL:cLote .AND. !::oAlbPrvL:Eof()
+
+            if ( Empty( ::cCodArt ) .OR. ::cCodArt == ::oAlbPrvL:cRef )
+               ::AddAlbPrv()
+            end
+
+            ::oAlbPrvL:Skip()
+
+            ::oMetMsg:Set( ::oAlbPrvL:OrdKeyNo() )
+
+         end
+
+      end
+
+      ::oMetMsg:Set( ::oAlbPrvL:LastRec() )
+
+
+
+      ::oMetMsg:SetTotal( ::oFacPrvL:LastRec() )
+
+      ::oMetMsg:cText   := "Facturas proveedor"
+
+      if ::oFacPrvL:Seek( ::cLote )
+         while ::cLote == ::oFacPrvL:cLote .AND. !::oFacPrvL:Eof()
+
+            if ( Empty( ::cCodArt ) .OR. ::cCodArt == ::oFacPrvL:cRef )
+               ::AddFacPrv()
+            end
+
+            ::oFacPrvL:Skip()
+
+            ::oMetMsg:Set( ::oFacPrvL:OrdKeyNo() )
+
+         end
+
+      end
+
+      ::oMetMsg:Set( ::oFacPrvL:LastRec() )
+
+   end
+
+   if ::cBuscar == "Ventas" .OR. ::cBuscar == "Todos"
+
+
+
+   ::oMetMsg:SetTotal( ::oPreCliL:LastRec() )
+
+   ::oMetMsg:cText   := "Presupuestos clientes"
+
+   if ::oPreCliL:Seek( ::cLote )
+
+      while ::cLote == ::oPreCliL:cLote .AND. !::oPreCliL:Eof()
+
+         if ( Empty( ::cCodArt ) .OR. ::cCodArt == ::oPreCliL:cRef )
+            ::AddPreCli()
+         end
+
+         ::oPreCliL:Skip()
+
+         ::oMetMsg:Set( ::oPreCliL:OrdKeyNo() )
+
+      end
+
+   end
+
+   ::oMetMsg:Set( ::oPreCliL:LastRec() )
+
+
+
+   ::oMetMsg:SetTotal( ::oPedCliL:LastRec() )
+
+   ::oMetMsg:cText   := "Pedidos clientes"
+
+   if ::oPedCliL:Seek( ::cLote )
+
+      while ::cLote == ::oPedCliL:cLote .AND. !::oPedCliL:Eof()
+
+         if ( Empty( ::cCodArt ) .OR. ::cCodArt == ::oPedCliL:cRef )
+            ::AddPedCli()
+         end
+
+         ::oPedCliL:Skip()
+
+         ::oMetMsg:Set( ::oPedCliL:OrdKeyNo() )
+
+      end
+
+   end
+
+   ::oMetMsg:Set( ::oPedCliL:LastRec() )
+
+
+
+   ::oMetMsg:SetTotal( ::oAlbCliL:LastRec() )
+
+   ::oMetMsg:cText   := "Albaranes clientes"
+
+   if ::oAlbCliL:Seek( ::cLote )
+
+         while ::cLote == ::oAlbCliL:cLote .AND. !::oAlbCliL:Eof()
+
+            if ( Empty( ::cCodArt ) .OR. ::cCodArt == ::oAlbCliL:cRef )
+               ::AddAlbCli()
+            end
+
+            ::oAlbCliL:Skip()
+
+            ::oMetMsg:Set( ::oAlbCliL:OrdKeyNo() )
+
+         end
+
+   end
+
+   ::oMetMsg:Set( ::oAlbCliL:LastRec() )
+
+
+
+   with object ( ::oFacCliL )
+
+      ::oMetMsg:SetTotal( :LastRec() )
+
+      ::oMetMsg:cText   := "Facturas clientes"
+
+      if :Seek( ::cLote )
+
+         while ::cLote == :cLote .AND. !:Eof()
+
+            if ( Empty( ::cCodArt ) .OR. ::cCodArt == :cRef )
+               ::AddFacCli()
+            end
+
+            :Skip()
+
+            ::oMetMsg:Set( :OrdKeyNo() )
+
+         end
+
+      end
+
+      ::oMetMsg:Set( :LastRec() )
+
+   end
+
+
+
+   with object ( ::oFacRecL )
+
+      ::oMetMsg:SetTotal( :LastRec() )
+
+      ::oMetMsg:cText   := "Facturas rectificativas clientes"
+
+         if :Seek( ::cLote )
+
+            while ::cLote == :cLote .AND. !:Eof()
+
+               if ( Empty( ::cCodArt ) .OR. ::cCodArt == :cRef )
+                  ::AddFacRec()
+               end
+
+               :Skip()
+
+               ::oMetMsg:Set( :OrdKeyNo() )
+
+            end
+
+         end
+
+      ::oMetMsg:Set( :LastRec() )
+
+   end
+
+
+
+
+   end
+
+
+
+   if ::cBuscar == "Almacén" .OR. ::cBuscar == "Todos"
+
+      ::oMetMsg:SetTotal( ::oHisMov:LastRec() )
+
+      ::oMetMsg:cText   := "Movimientos de almacén"
+
+      if ::oHisMov:Seek( ::cLote )
+
+         while ::oHisMov:cLote == ::cLote .AND. !::oHisMov:Eof()
+
+            if ( Empty( ::cCodArt ) .OR. ::cCodArt == ::oHisMov:cRefMov )
+               ::AddHisMov()
+            end
+
+            ::oHisMov:Skip()
+
+            ::oMetMsg:Set( ::oHisMov:OrdKeyNo() )
+
+         end
+
+      end
+
+      ::oMetMsg:Set( ::oHisMov:LastRec() )
+
+   end
+
+   if ::cBuscar == "Producción" .OR. ::cBuscar == "Todos"
+
+
+
+      ::oMetMsg:SetTotal( ::oProducL:LastRec() )
+
+      ::oMetMsg:cText   := "Materiales producidos"
+
+      if ::oProducL:Seek( ::cLote )
+
+         while ::cLote == ::oProducL:cLote .AND. !::oProducL:Eof()
+
+            if ( Empty( ::cCodArt ) .OR. ::cCodArt == ::oProducL:cCodArt )
+               ::AddProducido()
+            end
+
+            ::oProducL:Skip()
+
+            ::oMetMsg:Set( ::oProducL:OrdKeyNo() )
+
+         end
+
+      end
+
+      ::oMetMsg:Set( ::oProducL:LastRec() )
+
+
+
+      ::oMetMsg:SetTotal( ::oProducM:LastRec() )
+
+      ::oMetMsg:cText   := "Materiales consumidos"
+
+      if ::oProducM:Seek( ::cLote )
+
+         while ::cLote == ::oProducM:cLote .AND. !::oProducM:Eof()
+
+            if ( Empty( ::cCodArt ) .OR. ::cCodArt == ::oProducM:cCodArt )
+               ::AddConsumido()
+            end
+
+            ::oProducM:Skip()
+
+            ::oMetMsg:Set( ::oProducM:OrdKeyNo() )
+
+         end
+
+      end
+
+      ::oMetMsg:Set( ::oProducM:LastRec() )
+
+   end
+
+   ::oDbfTmp:GoTop()
+
+   ::oBrw:Refresh( .T. )
+   ::oBrw:Select()
+
+   CursorWE()
+
+   oBtnCancel:Enable()
+   oBtnBuscar:Enable()
+
+RETURN ( .T. )
+
+
+
+UTILITY STATIC function TTrazarLote_AddPedPrv() ; local Self AS CLASS TTrazarLote := QSelf() AS CLASS TTrazarLote
+
+      if ::cLote == ::oPedPrvL:cLote
+
+         ::oDbfTmp:Append()
+         ::oDbfTmp:cTipDoc    := "Pedido a proveedor"
+         ::oDbfTmp:cNumDoc    := ::oPedPrvL:cSerPed + "/" + Ltrim( Str( ::oPedPrvL:nNumPed ) ) + "/" + ::oPedPrvL:cSufPed
+         ::oDbfTmp:cDoc       := ::oPedPrvL:cSerPed + Str( ::oPedPrvL:nNumPed ) + ::oPedPrvL:cSufPed
+         ::oDbfTmp:cCodArt    := ::oPedPrvL:cRef
+         ::oDbfTmp:cNomArt    := ::oPedPrvL:cDetalle
+         ::oDbfTmp:nUnidades  := nTotNPedPrv( ::oPedPrvL:cName )
+         ::oDbfTmp:dFecDoc    := oRetFld( ::oPedPrvL:cSerPed + Str( ::oPedPrvL:nNumPed ) + ::oPedPrvL:cSufPed, ::oPedPrvT, "dFecPed" )
+         ::oDbfTmp:cCodCli    := oRetFld( ::oPedPrvL:cSerPed + Str( ::oPedPrvL:nNumPed ) + ::oPedPrvL:cSufPed, ::oPedPrvT, "cCodPrv" )
+         ::oDbfTmp:cCliPrv    := oRetFld( ::oPedPrvL:cSerPed + Str( ::oPedPrvL:nNumPed ) + ::oPedPrvL:cSufPed, ::oPedPrvT, "cNomPrv" )
+         ::oDbfTmp:cCodObr    := ""
+         ::oDbfTmp:Save()
+
+      end
+
+RETURN ( Self )
+
+
+
+UTILITY STATIC function TTrazarLote_AddAlbPrv() ; local Self AS CLASS TTrazarLote := QSelf() AS CLASS TTrazarLote
+
+      if ::cLote == ::oAlbPrvL:cLote
+
+         ::oDbfTmp:Append()
+         ::oDbfTmp:cTipDoc    := "Albarán de proveedor"
+         ::oDbfTmp:cNumDoc    := ::oAlbPrvL:cSerAlb + "/" + Ltrim( Str( ::oAlbPrvL:nNumAlb ) ) + "/" + ::oAlbPrvL:cSufAlb
+         ::oDbfTmp:cDoc       := ::oAlbPrvL:cSerAlb + Str( ::oAlbPrvL:nNumAlb ) + ::oAlbPrvL:cSufAlb
+         ::oDbfTmp:cCodArt    := ::oAlbPrvL:cRef
+         ::oDbfTmp:cNomArt    := ::oAlbPrvL:cDetalle
+         ::oDbfTmp:nUnidades  := nTotNAlbPrv( ::oAlbPrvL:cName )
+         ::oDbfTmp:dFecDoc    := oRetFld( ::oAlbPrvL:cSerAlb + Str( ::oAlbPrvL:nNumAlb ) + ::oAlbPrvL:cSufAlb, ::oAlbPrvT, "dFecAlb" )
+         ::oDbfTmp:cCodCli    := oRetFld( ::oAlbPrvL:cSerAlb + Str( ::oAlbPrvL:nNumAlb ) + ::oAlbPrvL:cSufAlb, ::oAlbPrvT, "cCodPrv" )
+         ::oDbfTmp:cCliPrv    := oRetFld( ::oAlbPrvL:cSerAlb + Str( ::oAlbPrvL:nNumAlb ) + ::oAlbPrvL:cSufAlb, ::oAlbPrvT, "cNomPrv" )
+         ::oDbfTmp:cCodObr    := ""
+         ::oDbfTmp:Save()
+
+      end
+
+RETURN ( Self )
+
+
+
+UTILITY STATIC function TTrazarLote_AddFacPrv() ; local Self AS CLASS TTrazarLote := QSelf() AS CLASS TTrazarLote
+
+      if ::cLote == ::oFacPrvL:cLote
+
+         ::oDbfTmp:Append()
+         ::oDbfTmp:cTipDoc    := "Factura de proveedor"
+         ::oDbfTmp:cNumDoc    := ::oFacPrvL:cSerFac + "/" + Ltrim( Str( ::oFacPrvL:nNumFac ) ) + "/" + ::oFacPrvL:cSufFac
+         ::oDbfTmp:cDoc       := ::oFacPrvL:cSerFac + Str( ::oFacPrvL:nNumFac ) + ::oFacPrvL:cSufFac
+         ::oDbfTmp:cCodArt    := ::oFacPrvL:cRef
+         ::oDbfTmp:cNomArt    := ::oFacPrvL:cDetalle
+         ::oDbfTmp:nUnidades  := nTotNFacPrv( ::oFacPrvL:cName )
+         ::oDbfTmp:dFecDoc    := oRetFld( ::oFacPrvL:cSerFac + Str( ::oFacPrvL:nNumFac ) + ::oFacPrvL:cSufFac, ::oFacPrvT, "dFecFac" )
+         ::oDbfTmp:cCodCli    := oRetFld( ::oFacPrvL:cSerFac + Str( ::oFacPrvL:nNumFac ) + ::oFacPrvL:cSufFac, ::oFacPrvT, "cCodPrv" )
+         ::oDbfTmp:cCliPrv    := oRetFld( ::oFacPrvL:cSerFac + Str( ::oFacPrvL:nNumFac ) + ::oFacPrvL:cSufFac, ::oFacPrvT, "cNomPrv" )
+         ::oDbfTmp:cCodObr    := ""
+         ::oDbfTmp:Save()
+
+      end
+
+RETURN ( Self )
+
+
+
+UTILITY STATIC function TTrazarLote_AddPreCli() ; local Self AS CLASS TTrazarLote := QSelf() AS CLASS TTrazarLote
+
+      if ::cLote == ::oPreCliL:cLote
+
+         ::oDbfTmp:Append()
+         ::oDbfTmp:cTipDoc    := "Presupuesto de cliente"
+         ::oDbfTmp:cNumDoc    := ::oPreCliL:cSerPre + "/" + Ltrim( Str( ::oPreCliL:nNumPre ) ) + "/" + ::oPreCliL:cSufPre
+         ::oDbfTmp:cDoc       := ::oPreCliL:cSerPre + Str( ::oPreCliL:nNumPre ) + ::oPreCliL:cSufPre
+         ::oDbfTmp:cCodArt    := ::oPreCliL:cRef
+         ::oDbfTmp:cNomArt    := ::oPreCliL:cDetalle
+         ::oDbfTmp:nUnidades  := nTotNPreCli( ::oPreCliL:cName )
+         ::oDbfTmp:dFecDoc    := oRetFld( ::oPreCliL:cSerPre + Str( ::oPreCliL:nNumPre ) + ::oPreCliL:cSufPre, ::oPreCliT, "dFecPre" )
+         ::oDbfTmp:cCodCli    := oRetFld( ::oPreCliL:cSerPre + Str( ::oPreCliL:nNumPre ) + ::oPreCliL:cSufPre, ::oPreCliT, "cCodCli" )
+         ::oDbfTmp:cCliPrv    := oRetFld( ::oPreCliL:cSerPre + Str( ::oPreCliL:nNumPre ) + ::oPreCliL:cSufPre, ::oPreCliT, "cNomCli" )
+         ::oDbfTmp:cCodObr    := oRetFld( ::oPreCliL:cSerPre + Str( ::oPreCliL:nNumPre ) + ::oPreCliL:cSufPre, ::oPreCliT, "cCodObr" )
+         ::oDbfTmp:Save()
+
+      end
+
+RETURN ( Self )
+
+
+
+UTILITY STATIC function TTrazarLote_AddPedCli() ; local Self AS CLASS TTrazarLote := QSelf() AS CLASS TTrazarLote
+
+      if ::cLote == ::oPedCliL:cLote
+
+         ::oDbfTmp:Append()
+         ::oDbfTmp:cTipDoc    := "Pedido de cliente"
+         ::oDbfTmp:cNumDoc    := ::oPedCliL:cSerPed + "/" + Ltrim( Str( ::oPedCliL:nNumPed ) ) + "/" + ::oPedCliL:cSufPed
+         ::oDbfTmp:cDoc       := ::oPedCliL:cSerPed + Str( ::oPedCliL:nNumPed ) + ::oPedCliL:cSufPed
+         ::oDbfTmp:cCodArt    := ::oPedCliL:cRef
+         ::oDbfTmp:cNomArt    := ::oPedCliL:cDetalle
+         ::oDbfTmp:nUnidades  := nTotNPedCli( ::oPedCliL:cName )
+         ::oDbfTmp:dFecDoc    := oRetFld( ::oPedCliL:cSerPed + Str( ::oPedCliL:nNumPed ) + ::oPedCliL:cSufPed, ::oPedCliT, "dFecPed" )
+         ::oDbfTmp:cCodCli    := oRetFld( ::oPedCliL:cSerPed + Str( ::oPedCliL:nNumPed ) + ::oPedCliL:cSufPed, ::oPedCliT, "cCodCli" )
+         ::oDbfTmp:cCliPrv    := oRetFld( ::oPedCliL:cSerPed + Str( ::oPedCliL:nNumPed ) + ::oPedCliL:cSufPed, ::oPedCliT, "cNomCli" )
+         ::oDbfTmp:cCodObr    := oRetFld( ::oPedCliL:cSerPed + Str( ::oPedCliL:nNumPed ) + ::oPedCliL:cSufPed, ::oPedCliT, "cCodObr" )
+         ::oDbfTmp:Save()
+
+      end
+
+RETURN ( Self )
+
+
+
+UTILITY STATIC function TTrazarLote_AddAlbCli() ; local Self AS CLASS TTrazarLote := QSelf() AS CLASS TTrazarLote
+
+      if ::cLote == ::oAlbCliL:cLote
+
+         ::oDbfTmp:Append()
+         ::oDbfTmp:cTipDoc    := "Albarán de cliente"
+         ::oDbfTmp:cNumDoc    := ::oAlbCliL:cSerAlb + "/" + Ltrim( Str( ::oAlbCliL:nNumAlb ) ) + "/" + ::oAlbCliL:cSufAlb
+         ::oDbfTmp:cDoc       := ::oAlbCliL:cSerAlb + Str( ::oAlbCliL:nNumAlb ) + ::oAlbCliL:cSufAlb
+         ::oDbfTmp:cCodArt    := ::oAlbCliL:cRef
+         ::oDbfTmp:cNomArt    := ::oAlbCliL:cDetalle
+         ::oDbfTmp:nUnidades  := nTotNAlbCli( ::oAlbCliL:cName )
+         ::oDbfTmp:dFecDoc    := oRetFld( ::oAlbCliL:cSerAlb + Str( ::oAlbCliL:nNumAlb ) + ::oAlbCliL:cSufAlb, ::oAlbCliT, "dFecAlb" )
+         ::oDbfTmp:cCodCli    := oRetFld( ::oAlbCliL:cSerAlb + Str( ::oAlbCliL:nNumAlb ) + ::oAlbCliL:cSufAlb, ::oAlbCliT, "cCodCli" )
+         ::oDbfTmp:cCliPrv    := oRetFld( ::oAlbCliL:cSerAlb + Str( ::oAlbCliL:nNumAlb ) + ::oAlbCliL:cSufAlb, ::oAlbCliT, "cNomCli" )
+         ::oDbfTmp:cCodObr    := oRetFld( ::oAlbCliL:cSerAlb + Str( ::oAlbCliL:nNumAlb ) + ::oAlbCliL:cSufAlb, ::oAlbCliT, "cCodObr" )
+         ::oDbfTmp:Save()
+
+      end
+
+RETURN ( Self )
+
+
+
+UTILITY STATIC function TTrazarLote_AddFacCli() ; local Self AS CLASS TTrazarLote := QSelf() AS CLASS TTrazarLote
+
+      if ::cLote == ::oFacCliL:cLote
+
+         ::oDbfTmp:Append()
+         ::oDbfTmp:cTipDoc    := "Factura de cliente"
+         ::oDbfTmp:cNumDoc    := ::oFacCliL:cSerie + "/" + Ltrim( Str( ::oFacCliL:nNumFac ) ) + "/" + ::oFacCliL:cSufFac
+         ::oDbfTmp:cDoc       := ::oFacCliL:cSerie + Str( ::oFacCliL:nNumFac ) + ::oFacCliL:cSufFac
+         ::oDbfTmp:cCodArt    := ::oFacCliL:cRef
+         ::oDbfTmp:cNomArt    := ::oFacCliL:cDetalle
+         ::oDbfTmp:nUnidades  := nTotNFacCli( ::oFacCliL:cName )
+         ::oDbfTmp:dFecDoc    := oRetFld( ::oFacCliL:cSerie + Str( ::oFacCliL:nNumFac ) + ::oFacCliL:cSufFac, ::oFacCliT, "dFecFac" )
+         ::oDbfTmp:cCodCli    := oRetFld( ::oFacCliL:cSerie + Str( ::oFacCliL:nNumFac ) + ::oFacCliL:cSufFac, ::oFacCliT, "cCodCli" )
+         ::oDbfTmp:cCliPrv    := oRetFld( ::oFacCliL:cSerie + Str( ::oFacCliL:nNumFac ) + ::oFacCliL:cSufFac, ::oFacCliT, "cNomCli" )
+         ::oDbfTmp:cCodObr    := oRetFld( ::oFacCliL:cSerie + Str( ::oFacCliL:nNumFac ) + ::oFacCliL:cSufFac, ::oFacCliT, "cCodObr" )
+         ::oDbfTmp:Save()
+
+      end
+
+RETURN ( Self )
+
+
+
+UTILITY STATIC function TTrazarLote_AddFacRec() ; local Self AS CLASS TTrazarLote := QSelf() AS CLASS TTrazarLote
+
+      if ::cLote == ::oFacRecL:cLote
+
+         ::oDbfTmp:Append()
+         ::oDbfTmp:cTipDoc    := "Factura rectificativa de cliente"
+         ::oDbfTmp:cNumDoc    := ::oFacRecL:cSerie + "/" + Ltrim( Str( ::oFacRecL:nNumFac ) ) + "/" + ::oFacRecL:cSufFac
+         ::oDbfTmp:cDoc       := ::oFacRecL:cSerie + Str( ::oFacRecL:nNumFac ) + ::oFacRecL:cSufFac
+         ::oDbfTmp:cCodArt    := ::oFacRecL:cRef
+         ::oDbfTmp:cNomArt    := ::oFacRecL:cDetalle
+         ::oDbfTmp:nUnidades  := nTotNFacRec( ::oFacRecL:cName )
+         ::oDbfTmp:dFecDoc    := oRetFld( ::oFacRecL:cSerie + Str( ::oFacRecL:nNumFac ) + ::oFacRecL:cSufFac, ::oFacRecT, "dFecFac" )
+         ::oDbfTmp:cCodCli    := oRetFld( ::oFacRecL:cSerie + Str( ::oFacRecL:nNumFac ) + ::oFacRecL:cSufFac, ::oFacRecT, "cCodCli" )
+         ::oDbfTmp:cCliPrv    := oRetFld( ::oFacRecL:cSerie + Str( ::oFacRecL:nNumFac ) + ::oFacRecL:cSufFac, ::oFacRecT, "cNomCli" )
+         ::oDbfTmp:cCodObr    := oRetFld( ::oFacRecL:cSerie + Str( ::oFacRecL:nNumFac ) + ::oFacRecL:cSufFac, ::oFacRecT, "cCodObr" )
+         ::oDbfTmp:Save()
+
+      end
+
+RETURN ( Self )
+
+
+
+UTILITY STATIC function TTrazarLote_AddHisMov() ; local Self AS CLASS TTrazarLote := QSelf() AS CLASS TTrazarLote
+
+   ::oDbfTmp:Append()
+   ::oDbfTmp:cTipDoc    := "Movimiento de almacén"
+   ::oDbfTmp:cNumDoc    := Str( ::oHisMov:nNumRem ) + "/" + ::oHisMov:cSufRem
+   ::oDbfTmp:cDoc       := Str( ::oHisMov:Recno() )
+   ::oDbfTmp:cCodArt    := ::oHisMov:cRefMov
+   ::oDbfTmp:cNomArt    := oRetFld( ::oHisMov:cRefMov, ::oDbfArt )
+   ::oDbfTmp:nUnidades  := nTotNMovAlm( ::oHisMov:cAlias )
+   ::oDbfTmp:dFecDoc    := ::oHisMov:dFecMov
+   ::oDbfTmp:cCodCli    := Space(12)
+   ::oDbfTmp:cCliPrv    := Space(50)
+   ::oDbfTmp:cCodObr    := Space(10)
+   ::oDbfTmp:Save()
+
+RETURN ( Self )
+
+
+
+UTILITY STATIC function TTrazarLote_AddProducido() ; local Self AS CLASS TTrazarLote := QSelf() AS CLASS TTrazarLote
+
+      if ::cLote == ::oProducL:cLote
+
+         ::oDbfTmp:Append()
+         ::oDbfTmp:cTipDoc    := "Material producido"
+         ::oDbfTmp:cNumDoc    := ::oProducL:cSerOrd + "/" + Ltrim( Str( ::oProducL:nNumOrd ) ) + "/" + ::oProducL:cSufOrd
+         ::oDbfTmp:cDoc       := ::oProducL:cSerOrd + Str( ::oProducL:nNumOrd ) + ::oProducL:cSufOrd
+         ::oDbfTmp:cCodArt    := ::oProducL:cCodArt
+         ::oDbfTmp:cNomArt    := ::oProducL:cNomArt
+         ::oDbfTmp:nUnidades  := NotCaja( ::oProducL:nCajOrd ) * ::oProducL:nUndOrd
+         ::oDbfTmp:dFecDoc    := oRetFld( ::oProducL:cSerOrd + Str( ::oProducL:nNumOrd ) + ::oProducL:cSufOrd, ::oProducT, "dFecFin" )
+         ::oDbfTmp:cCodCli    := Space( 12 )
+         ::oDbfTmp:cCliPrv    := Space( 50 )
+         ::oDbfTmp:cCodObr    := Space( 10 )
+         ::oDbfTmp:Save()
+
+      end
+
+RETURN ( Self )
+
+
+
+UTILITY STATIC function TTrazarLote_AddConsumido() ; local Self AS CLASS TTrazarLote := QSelf() AS CLASS TTrazarLote
+
+      if ::cLote == ::oProducM:cLote
+
+         ::oDbfTmp:Append()
+         ::oDbfTmp:cTipDoc    := "Material consumido"
+         ::oDbfTmp:cNumDoc    := ::oProducM:cSerOrd + "/" + Ltrim( Str( ::oProducM:nNumOrd ) ) + "/" + ::oProducM:cSufOrd
+         ::oDbfTmp:cDoc       := ::oProducM:cSerOrd + Str( ::oProducM:nNumOrd ) + ::oProducM:cSufOrd
+         ::oDbfTmp:cCodArt    := ::oProducM:cCodArt
+         ::oDbfTmp:cNomArt    := ::oProducM:cNomArt
+         ::oDbfTmp:nUnidades  := NotCaja( ::oProducM:nCajOrd ) * ::oProducM:nUndOrd
+         ::oDbfTmp:dFecDoc    := oRetFld( ::oProducM:cSerOrd + Str( ::oProducM:nNumOrd ) + ::oProducM:cSufOrd, ::oProducT, "dFecFin" )
+         ::oDbfTmp:cCodCli    := Space( 12 )
+         ::oDbfTmp:cCliPrv    := Space( 50 )
+         ::oDbfTmp:cCodObr    := Space( 10 )
+         ::oDbfTmp:Save()
+
+      end
+
+RETURN ( Self )
+
+
+
+UTILITY STATIC function TTrazarLote_Zoom() ; local Self AS CLASS TTrazarLote := QSelf() AS CLASS TTrazarLote
+
+    do case
+      case AllTrim( ::oDbfTmp:cTipDoc ) == "Pedido a proveedor"
+         ZooPedPrv( ::oDbfTmp:cDoc )
+
+      case AllTrim( ::oDbfTmp:cTipDoc ) == "Albarán de proveedor"
+         ZooAlbPrv( ::oDbfTmp:cDoc )
+
+      case AllTrim( ::oDbfTmp:cTipDoc ) == "Factura de proveedor"
+         ZooFacPrv( ::oDbfTmp:cDoc )
+
+      case AllTrim( ::oDbfTmp:cTipDoc ) == "Pedido de cliente"
+         ZooPedCli( ::oDbfTmp:cDoc )
+
+      case AllTrim( ::oDbfTmp:cTipDoc ) == "Presupuesto de cliente"
+         ZooPreCli( ::oDbfTmp:cDoc )
+
+      case AllTrim( ::oDbfTmp:cTipDoc ) == "Albarán de cliente"
+         ZooAlbCli( ::oDbfTmp:cDoc )
+
+      case AllTrim( ::oDbfTmp:cTipDoc ) == "Factura de cliente"
+         ZooFacCli( ::oDbfTmp:cDoc )
+
+      case AllTrim( ::oDbfTmp:cTipDoc ) == "Factura rectificativa de cliente"
+         ZooFacRec( ::oDbfTmp:cDoc )
+
+      case AllTrim( ::oDbfTmp:cTipDoc ) == "Movimiento de almacén"
+         ZooMovAlm( Val( ::oDbfTmp:cDoc ) )
+
+      case Alltrim( ::oDbfTmp:cTipDoc ) == "Material producido"
+         ZoomProduccion( ::oDbfTmp:cDoc, ::oBrw )
+
+      case Alltrim( ::oDbfTmp:cTipDoc ) == "Material consumido"
+         ZoomProduccion( ::oDbfTmp:cDoc, ::oBrw )
+
+   endcase
+
+return( Self )
+
+
+
+UTILITY STATIC function TTrazarLote_Filtrar() ; local Self AS CLASS TTrazarLote := QSelf() AS CLASS TTrazarLote
+
+   ::oDbfTmp:SetFilter()
+
+   do case
+      case Alltrim( ::cFiltro ) == "Todos"
+         ::oDbfTmp:OrdSetFocus( "dFecDoc" )
+         ::oDbfTmp:OrdClearScope()
+         ::oDbfTmp:GoTop()
+         ::oBrw:Refresh()
+
+      case Alltrim( ::cFiltro ) == "Compras"
+         ::oDbfTmp:OrdSetFocus( "dFecDoc" )
+         ::oDbfTmp:SetFilter( "'proveedor' $ cTipDoc" )
+         ::oDbfTmp:GoTop()
+         ::oBrw:Refresh()
+
+      case Alltrim( ::cFiltro ) == "Pedidos a proveedores"
+         ::oDbfTmp:OrdSetFocus( "cTipDoc" )
+         ::oDbfTmp:OrdScope( "Pedido a proveedor" )
+         ::oDbfTmp:GoTop()
+         ::oBrw:Refresh()
+
+      case Alltrim( ::cFiltro ) == "Albaranes de proveedores"
+         ::oDbfTmp:OrdSetFocus( "cTipDoc" )
+         ::oDbfTmp:OrdScope( "Albarán de proveedor" )
+         ::oDbfTmp:GoTop()
+         ::oBrw:Refresh()
+
+      case Alltrim( ::cFiltro ) == "Facturas de proveedores"
+         ::oDbfTmp:OrdSetFocus( "cTipDoc" )
+         ::oDbfTmp:OrdScope( "Factura de proveedor" )
+         ::oDbfTmp:GoTop()
+         ::oBrw:Refresh()
+
+      case Alltrim( ::cFiltro ) == "Ventas"
+         ::oDbfTmp:OrdSetFocus( "dFecDoc" )
+         ::oDbfTmp:SetFilter( "'cliente' $ cTipDoc" )
+         ::oDbfTmp:GoTop()
+         ::oBrw:Refresh()
+
+      case Alltrim( ::cFiltro ) == "Presupuestos de clientes"
+         ::oDbfTmp:OrdSetFocus( "cTipDoc" )
+         ::oDbfTmp:OrdScope( "Presupuesto de cliente" )
+         ::oDbfTmp:GoTop()
+         ::oBrw:Refresh()
+
+      case Alltrim( ::cFiltro ) == "Pedidos de clientes"
+         ::oDbfTmp:OrdSetFocus( "cTipDoc" )
+         ::oDbfTmp:OrdScope( "Pedido de cliente" )
+         ::oDbfTmp:GoTop()
+         ::oBrw:Refresh()
+
+      case Alltrim( ::cFiltro ) == "Albaranes de clientes"
+         ::oDbfTmp:OrdSetFocus( "cTipDoc" )
+         ::oDbfTmp:OrdScope( "Albarán de cliente" )
+         ::oDbfTmp:GoTop()
+         ::oBrw:Refresh()
+
+      case Alltrim( ::cFiltro ) == "Facturas de clientes"
+         ::oDbfTmp:OrdSetFocus( "cTipDoc" )
+         ::oDbfTmp:OrdScope( "Factura de cliente" )
+         ::oDbfTmp:GoTop()
+         ::oBrw:Refresh()
+
+      case Alltrim( ::cFiltro ) == "Facturas rectificativas de clientes"
+         ::oDbfTmp:OrdSetFocus( "cTipDoc" )
+         ::oDbfTmp:OrdScope( "Factura rectificativa de cliente" )
+         ::oDbfTmp:GoTop()
+         ::oBrw:Refresh()
+
+      case Alltrim( ::cFiltro ) == "Movimiento de almacén"
+         ::oDbfTmp:OrdSetFocus( "cTipDoc" )
+         ::oDbfTmp:OrdScope( "Movimiento de almacén" )
+         ::oDbfTmp:GoTop()
+         ::oBrw:Refresh()
+
+      case Alltrim( ::cFiltro ) == "Partes de producción"
+         ::oDbfTmp:OrdSetFocus( "dFecDoc" )
+         ::oDbfTmp:SetFilter( "'Material' $ cTipDoc" )
+         ::oDbfTmp:GoTop()
+         ::oBrw:Refresh()
+
+      case Alltrim( ::cFiltro ) == "Material producido"
+         ::oDbfTmp:OrdSetFocus( "cTipDoc" )
+         ::oDbfTmp:OrdScope( "Material producido" )
+         ::oDbfTmp:GoTop()
+         ::oBrw:Refresh()
+
+      case Alltrim( ::cFiltro ) == "Material consumido"
+         ::oDbfTmp:OrdSetFocus( "cTipDoc" )
+         ::oDbfTmp:OrdScope( "Material consumido" )
+         ::oDbfTmp:GoTop()
+         ::oBrw:Refresh()
+
+   end
+
+return( nil )
+
+
+
+UTILITY STATIC function TTrazarLote_Visualizar() ; local Self AS CLASS TTrazarLote := QSelf() AS CLASS TTrazarLote
+
+   do case
+
+      case Alltrim( ::oDbfTmp:cTipDoc ) == "Pedido a proveedor"
+         VisPedPrv( ::oDbfTmp:cDoc )
+
+      case Alltrim( ::oDbfTmp:cTipDoc ) == "Albarán de proveedor"
+         VisAlbPrv( ::oDbfTmp:cDoc )
+
+      case Alltrim( ::oDbfTmp:cTipDoc ) == "Factura de proveedor"
+         VisFacPrv( ::oDbfTmp:cDoc )
+
+      case Alltrim( ::oDbfTmp:cTipDoc ) == "Presupuesto de cliente"
+         VisPreCli( ::oDbfTmp:cDoc )
+
+      case Alltrim( ::oDbfTmp:cTipDoc ) == "Pedido de cliente"
+         VisPedCli( ::oDbfTmp:cDoc )
+
+      case Alltrim( ::oDbfTmp:cTipDoc ) == "Albarán de cliente"
+         VisAlbCli( ::oDbfTmp:cDoc )
+
+      case Alltrim( ::oDbfTmp:cTipDoc ) == "Factura de cliente"
+         VisFacCli( ::oDbfTmp:cDoc )
+
+      case Alltrim( ::oDbfTmp:cTipDoc ) == "Factura rectificativa de cliente"
+         VisFacRec( ::oDbfTmp:cDoc )
+
+      case Alltrim( ::oDbfTmp:cTipDoc ) == "Movimiento de almacén"
+         msgStop( "El documento no se puede visualizar","Información" )
+
+      case Alltrim( ::oDbfTmp:cTipDoc ) == "Material producido"
+         VisProduccion( ::oDbfTmp:cDoc )
+
+      case Alltrim( ::oDbfTmp:cTipDoc ) == "Material consumido"
+         VisProduccion( ::oDbfTmp:cDoc )
+
+   endcase
+
+return( nil )
+
+
+
+UTILITY STATIC function TTrazarLote_Imprimir() ; local Self AS CLASS TTrazarLote := QSelf() AS CLASS TTrazarLote
+
+   do case
+
+      case Alltrim( ::oDbfTmp:cTipDoc ) == "Pedido a proveedor"
+         PrnPedPrv( ::oDbfTmp:cDoc )
+
+      case Alltrim( ::oDbfTmp:cTipDoc ) == "Albarán de proveedor"
+         PrnAlbPrv( ::oDbfTmp:cDoc )
+
+      case Alltrim( ::oDbfTmp:cTipDoc ) == "Factura de proveedor"
+         PrnFacPrv( ::oDbfTmp:cDoc )
+
+      case Alltrim( ::oDbfTmp:cTipDoc ) == "Presupuesto de cliente"
+         PrnPreCli( ::oDbfTmp:cDoc )
+
+      case Alltrim( ::oDbfTmp:cTipDoc ) == "Pedido de cliente"
+         PrnPedCli( ::oDbfTmp:cDoc )
+
+      case Alltrim( ::oDbfTmp:cTipDoc ) == "Albarán de cliente"
+         PrnAlbCli( ::oDbfTmp:cDoc )
+
+      case Alltrim( ::oDbfTmp:cTipDoc ) == "Factura de cliente"
+         PrnFacCli( ::oDbfTmp:cDoc )
+
+      case Alltrim( ::oDbfTmp:cTipDoc ) == "Factura rectificativa de cliente"
+         PrnFacRec( ::oDbfTmp:cDoc )
+
+      case Alltrim( ::oDbfTmp:cTipDoc ) == "Movimiento de almacén"
+         msgStop( "El documento no se puede imprimir","Información" )
+
+      case Alltrim( ::oDbfTmp:cTipDoc ) == "Material producido"
+         PrnProduccion( ::oDbfTmp:cDoc )
+
+      case Alltrim( ::oDbfTmp:cTipDoc ) == "Material consumido"
+         PrnProduccion( ::oDbfTmp:cDoc )
+
+   endcase
+
+return( nil )
+
+
+
+UTILITY STATIC function TTrazarLote_nTreeImagen() ; local Self AS CLASS TTrazarLote := QSelf() AS CLASS TTrazarLote
+
+   do case
+
+      case Alltrim( ::oDbfTmp:cTipDoc ) == "Pedido a proveedor"
+         Return ( 1 )
+
+      case Alltrim( ::oDbfTmp:cTipDoc ) == "Albarán de proveedor"
+         Return ( 2 )
+
+      case Alltrim( ::oDbfTmp:cTipDoc ) == "Factura de proveedor"
+         Return ( 3 )
+
+      case Alltrim( ::oDbfTmp:cTipDoc ) == "Presupuesto de cliente"
+         Return ( 4 )
+
+      case Alltrim( ::oDbfTmp:cTipDoc ) == "Pedido de cliente"
+         Return ( 5 )
+
+      case Alltrim( ::oDbfTmp:cTipDoc ) == "Albarán de cliente"
+         Return ( 6 )
+
+      case Alltrim( ::oDbfTmp:cTipDoc ) == "Factura de cliente"
+         Return ( 7 )
+
+      case Alltrim( ::oDbfTmp:cTipDoc ) == "Factura rectificativa de cliente"
+         Return ( 8 )
+
+      case Alltrim( ::oDbfTmp:cTipDoc ) == "Movimiento de almacén"
+         Return ( 9 )
+
+      case Alltrim( ::oDbfTmp:cTipDoc ) == "Material producido"
+         Return ( 10 )
+
+      case Alltrim( ::oDbfTmp:cTipDoc ) == "Material consumido"
+         Return ( 10 )
+
+   end
+
+Return ( 1 )

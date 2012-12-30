@@ -1,0 +1,2821 @@
+#line 112 "hbclass.ch"
+   DYNAMIC DivertConstructorCall
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+DECLARE HBClass  New( cName AS String, OPTIONAL SuperParams ) AS CLASS HBClass  Create() AS Object  Instance() AS Object  AddClsMethod( cName AS String, @MethodName(), nScope AS Numeric, n2 AS Numeric, n3 AS Numeric )  AddDelegate( cName AS String, cDelegate AS String, cObject AS String, nScope AS Numeric, lPersistent AS LOGICAL )  AddMultiClsData( cType AS String, uVal, nScope AS Numeric, aDatas AS Array OF String )  AddMultiData( cType AS String, uVal, nScope AS Numeric, aDatas AS Array OF String, x AS LOGICAL, lPer AS LOGICAL )  AddMethod( cName AS String, @MethodName(), nScope AS Numeric, lPersistent AS LOGICAL )  AddInLine( cName AS String, bBlock AS CodeBlock, nScope AS Numeric, lPersistent AS LOGICAL )  AddVirtual( cName AS String )  ModMethod( cName AS String, @MethodName(), nScope AS Numeric, lPersistent AS LOGICAL )  ModClsMethod( cName AS String, @MethodName(), nScope AS Numeric )  ModInline( cName AS String, bBlock AS CodeBlock, nScope AS Numeric, lPersistent AS LOGICAL )  SetOnError( @MethodName() )
+#line 85 "\Fwh1204\Include\FiveWin.Ch"
+   EXTERNAL GetProcAdd
+   EXTERNAL TActiveX
+
+
+
+
+extern errorsys
+#line 17 ".\Prg\Comun.prg"
+static aEmpresa
+
+static cCodEmp          := ""
+
+
+
+static aMnuNext         := {}
+static aMnuPrev         := {}
+static aDlgEmp          := {}
+
+static nError           := 0
+
+static nHndCaj
+
+static aEmpresasGrupo   := {}
+
+static cDefPicIn
+static cDefPicOut
+
+static cCodigoEmpresaEnUso
+
+
+
+static lAds             := .F.
+static lAIS             := .F.
+static lCdx             := .F.
+
+static cIp              := ""
+static cData            := ""
+
+static dSysDate
+
+static cEmpUsr
+static cPatGrp
+static cPatCli
+static cPatArt
+static cPatPrv
+static cPatAlm
+static cPatEmp
+static cPatTmp
+static cPathPC
+static cNombrePc        := ""
+
+static cUsrTik
+
+static oFastReport
+
+
+
+Function lAds( lSetAds )
+
+   if IsLogic( lSetAds )
+      lAds     := lSetAds
+   end
+
+Return ( lAds )
+
+
+
+Function lAIS( lSetAIS )
+
+   if IsLogic( lSetAIS )
+      lAIS     := lSetAIS
+   end
+
+Return ( lAIS )
+
+
+
+Function lAdsRdd()
+
+Return ( lAds() .OR. lAIS() )
+
+
+
+Function cIp( cSetIp )
+
+   if IsChar( cSetIp )
+      cIp      := cSetIp
+   end
+
+Return ( cPath( cIp ) )
+
+
+
+Function cData( cSetData )
+
+   if IsChar( cSetData )
+      cData    := cSetData
+   end
+
+Return ( if( !Empty( cData ), cPath( cData ), "" ) )
+
+
+
+Function cAdsUNC()
+
+   if ( "localhost" $ cIp() )
+      Return( cData() )
+   end
+
+Return ( cIp() + cData() )
+
+
+
+Function lCdx( lSetCdx )
+
+   if IsLogic( lSetCdx )
+      lCdx     := lSetCdx
+   end
+
+Return ( lCdx )
+
+
+
+Function lPda()
+
+Return ( "PDA" $ cParamsMain() )
+
+
+
+
+
+Function cDriver()
+
+   if lAds()
+      Return ( "ADSCDX" )
+   end
+
+   if lAIS()
+      Return ( "ADSCDX" )
+   end
+
+Return ( "DBFCDX" )
+
+
+
+Function cADSDriver()
+
+Return ( "ADS" )
+
+
+
+Function cLocalDriver()
+
+Return ( "DBFCDX" )
+
+
+
+Function cNombrePc( xValue )
+
+   if !Empty( xValue )
+      cNombrePc   := xValue
+   end
+
+Return ( cNombrePc )
+
+
+
+Function CacheRecords( cAlias )
+
+   if lAdsRdd()
+      ( cAlias )->( AdsCacheRecords( 50 ) )
+   end
+
+Return nil
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+Function cPatDat( lFull )
+
+   IIF( lFull == nil, lFull := .F., ) ;
+
+   if lAds()
+      Return ( cAdsUNC() + "Datos\" )
+   end
+
+   if lAIS() .AND. lFull
+      Return ( cAdsUNC() + "Datos\" )
+   end
+
+   if lAIS() .AND. !lFull
+      Return ( "Datos" )
+   end
+
+   if lCdx()
+      Return ( FullCurDir() + "Datos\" )
+   end
+
+Return ( FullCurDir() + "Datos\" )
+
+
+
+Function cPatADS( lFull )
+
+   IIF( lFull == nil, lFull := .F., ) ;
+
+   if lAds()
+      Return ( cAdsUNC() + "ADS\" )
+   end
+
+   if lAIS() .AND. lFull
+      Return ( cAdsUNC() + "ADS\" )
+   end
+
+   if lAIS() .AND. !lFull
+      Return ( "ADS" )
+   end
+
+   if lCdx()
+      Return ( FullCurDir() + "ADS\" )
+   end
+
+Return ( FullCurDir() + "ADS\" )
+
+
+
+Function cPatEmpTmp( lShort )
+
+   IIF( lShort == nil, lShort := .F., ) ;
+
+   if lAds()
+      Return ( cAdsUNC() + "EmpTmp\" )
+   end
+
+Return ( if( !lShort, FullCurDir(), "" ) + "EmpTmp\" )
+
+
+
+Function cPatEmpOld( cCodEmp )
+
+   if lAds()
+      Return ( cAdsUNC() + "Emp" + cCodEmp + "\" )
+   end
+
+Return ( FullCurDir() + "Emp" + cCodEmp + "\" )
+
+
+
+Function cPatGrpOld( cCodGrp )
+
+   if lAds()
+      Return ( cAdsUNC() + "Grp" + cCodGrp + "\" )
+   end
+
+Return ( FullCurDir() + "Grp" + cCodGrp + "\" )
+
+
+
+Function cPatTmp()
+
+   if Empty( cPatTmp )
+
+      cPatTmp     := GetEnv( "TEMP" )
+
+      if Empty( cPatTmp )
+         cPatTmp  := GetEnv( "TMP" )
+      endif
+
+      if Empty( cPatTmp ) .OR. ! lIsDir( cPatTmp )
+         cPatTmp  := GetWinDir()
+      endif
+
+      cPatTmp     += If( Right( cPatTmp, 1 ) == "\", "", "\" ) + "Apolo"
+
+      if !lIsDir( cPatTmp )
+         MakeDir( cPatTmp )
+      endif
+
+      if Right( cPatTmp, 1 ) <> "\"
+         cPatTmp  += "\"
+      end
+
+   end
+
+Return ( cPatTmp )
+
+
+
+Function cPatIn( lShort )
+
+   IIF( lShort == nil, lShort := .F., ) ;
+
+Return ( if( !lShort, FullCurDir(), "" ) + "In\" )
+
+
+
+Function cPatScript( lShort )
+
+   IIF( lShort == nil, lShort := .F., ) ;
+
+Return ( if( !lShort, FullCurDir(), "" ) + "Script\" )
+
+
+
+Function cPatOut( lShort )
+
+   IIF( lShort == nil, lShort := .F., ) ;
+
+Return ( if( !lShort, FullCurDir(), "" ) + "Out\" )
+
+
+
+Function cPatSafe( lShort )
+
+   IIF( lShort == nil, lShort := .F., ) ;
+
+Return ( if( !lShort, FullCurDir(), "" ) + "Safe\" )
+
+
+
+Function cPatBmp( lShort )
+
+   IIF( lShort == nil, lShort := .F., ) ;
+
+Return ( if( !lShort, FullCurDir(), "" ) + "Bmp\" )
+
+
+
+Function cPatPsion( lShort )
+
+   IIF( lShort == nil, lShort := .F., ) ;
+
+Return ( if( !lShort, FullCurDir(), "" ) + "Psion\" )
+
+
+
+Function cPatHtm( lShort )
+
+   IIF( lShort == nil, lShort := .F., ) ;
+
+Return ( if( !lShort, FullCurDir(), "" ) + "Htm\" )
+
+
+
+Function cPatXml( lShort )
+
+   IIF( lShort == nil, lShort := .F., ) ;
+
+Return ( if( !lShort, FullCurDir(), "" ) + "Xml\" )
+
+
+
+FUNCTION PicIn()
+
+   if Empty( cDefPicIn )
+      cDefPicIn   := cPirDiv( cDivEmp() )
+   end
+
+RETURN ( cDefPicIn )
+
+
+
+Function cPatReport( lShort )
+
+   IIF( lShort == nil, lShort := .F., ) ;
+
+Return ( if( !lShort, FullCurDir(), "" ) + "Reports\" )
+
+
+
+function by( uVal )
+
+   local uRet     := uVal
+
+return ( uRet )
+
+
+
+Function nHndCaj( nHnd )
+
+   if nHnd <> nil
+      nHndCaj  := nHnd
+   end
+
+Return nHndCaj
+
+
+
+Function SelSysDate( oMenuItem )
+
+   IIF( oMenuItem == nil, oMenuItem := "01084", ) ;
+
+   if dSysDate == nil
+      dSysDate       := Date()
+   end
+
+
+
+
+
+   if nAnd( nLevelUsr( oMenuItem ), 1 ) <> 0
+      msgStop( "Acceso no permitido." )
+   else
+      dSysDate       := Calendario( dSysDate, "Fecha de trabajo" )
+   end
+
+Return ( dSysDate )
+
+
+
+
+function ExcMnuNext( cName )
+
+   local nPos
+
+   if cName == nil
+      nPos  := len( aMnuNext )
+   else
+      nPos  := aScan( aMnuNext, {|c| c[1] == cName } )
+   end
+
+   if nPos <> 0
+
+      Eval( aMnuNext[ nPos, 2 ] )
+
+
+
+      addMnuPrev( aMnuNext[ nPos, 1 ], aMnuNext[ nPos, 2 ] )
+
+
+
+      aDel( aMnuNext, nPos )
+      aSize( aMnuNext, len( aMnuNext ) - 1 )
+
+   end
+
+return .T.
+
+
+
+function MnuNext( oBtn, oWnd )
+
+   local n
+   local cText
+   local oMenu
+   local bAction
+
+   IIF( oWnd == nil, oWnd := oWnd(), ) ;
+
+   oMenu := MenuBegin( .T. )
+
+   for n := 1 to len( aMnuNext )
+
+      cText    := by( aMnuNext[ n, 1 ] )
+      bAction  := bMnuNext( cText )
+
+      MenuAddItem( cText,, .F.,, bAction,,,,,,, .F.,,, .F. )
+
+   next
+
+   MenuEnd()
+
+   oMenu:Activate( 0, oBtn:nRight, oBtn )
+
+RETURN NIL
+
+
+
+function addMnuPrev( cName, uAction )
+
+   if aScan( aMnuPrev, {|c| c[1] == cName } ) == 0
+      if valtype( uAction ) == "C"
+         aAdd( aMnuPrev, { cName, &( "{||" + uAction + "() }" ) } )
+      else
+         aAdd( aMnuPrev, { cName, uAction } )
+      end
+   end
+
+return nil
+
+
+
+function ExcMnuPrev( cName )
+
+   local nPos
+
+   if cName == nil
+      nPos  := len( aMnuPrev )
+   else
+      nPos  := aScan( aMnuPrev, {|c| c[1] == cName } )
+   end
+
+   if nPos <> 0
+
+      Eval( aMnuPrev[ nPos, 2 ] )
+
+
+
+      addMnuNext( aMnuPrev[ nPos, 1 ], aMnuPrev[ nPos, 2 ] )
+
+
+
+      aDel( aMnuPrev, nPos )
+      aSize( aMnuPrev, len( aMnuPrev ) - 1 )
+
+   end
+
+return .T.
+
+
+
+Function MnuPrev( oBtn, oWnd )
+
+   local n
+   local cText
+   local oMenu
+   local bAction
+
+   IIF( oWnd == nil, oWnd := oWnd(), ) ;
+
+   oMenu := MenuBegin( .T. )
+
+   for n := 1 to len( aMnuPrev )
+
+      cText    := by( aMnuPrev[ n, 1 ] )
+      bAction  := bMnuPrev( cText )
+
+      MenuAddItem( cText,, .F.,, bAction,,,,,,, .F.,,, .F. )
+
+   next
+
+   MenuEnd()
+
+   oMenu:Activate( oBtn:nBottom - 1, 0, oBtn )
+
+Return nil
+
+
+
+static function bMnuPrev( uValue )
+return {|| ExcMnuPrev( uValue ) }
+
+
+
+static function bMnuNext( uValue )
+return {|| ExcMnuNext( uValue ) }
+
+
+
+function Visor( aMsg )
+
+   local oDlg
+   local oBrwCon
+
+
+   if len( aMsg ) == 0
+      return .F.
+   end
+
+
+   oDlg = TDialog():New(,,,,, "VISOR",, .F.,,,,,, .F.,,,,,, .F., )
+
+   oBrwCon                        := TXBrowse():New( oDlg )
+
+   oBrwCon:bClrSel                := {|| { 0, ( 229 + ( 229 * 256 ) + ( 229 * 65536 ) ) } }
+   oBrwCon:bClrSelFocus           := {|| { 0, ( 167 + ( 205 * 256 ) + ( 240 * 65536 ) ) } }
+
+   oBrwCon:SetArray( aMsg, , , .F. )
+
+   oBrwCon:nMarqueeStyle          := 5
+   oBrwCon:lRecordSelector        := .F.
+   oBrwCon:lHScroll               := .F.
+   oBrwCon:lHeader                := .F.
+
+   oBrwCon:CreateFromResource( 100 )
+
+   with object ( oBrwCon:AddCol() )
+      :cHeader          := Space(1)
+      :bStrData         := {|| Space(1) }
+      :bEditValue       := {|| aMsg[ oBrwCon:nArrayAt, 1 ] }
+      :nWidth           := 20
+      :SetCheck( { "Cnt16", "Nil16" } )
+   end
+
+   with object ( oBrwCon:AddCol() )
+      :cHeader          := Space(1)
+      :bStrData         := {|| aMsg[ oBrwCon:nArrayAt, 2 ] }
+      :nWidth           := 300
+   end
+
+
+
+
+   TButton():ReDefine( 1, {||( oDlg:end() )}, oDlg,,, .F.,,,, .F. )
+
+    oDlg:Activate( oDlg:bLClicked, oDlg:bMoved, oDlg:bPainted, .T.,,,, oDlg:bRClicked,,, )
+
+RETURN NIL
+
+
+
+
+FUNCTION aItmVentas()
+
+   local aItmVta := {}
+
+   aAdd( aItmVta, { { "CSERALB",    "CSERIE",      "CSERIE",      "CSERTIK" }, { "C", "C", "C", "C" },   1, 0, "Serie del documento" } )
+   aAdd( aItmVta, { { "NNUMALB",    "NNUMFAC",     "NNUMFAC",     "CNUMTIK" }, { "N", "N", "N", "C" },   9, 0, "Número del documento" } )
+   aAdd( aItmVta, { { "CSUFALB",    "CSUFFAC",     "CSUFFAC",     "CSUFTIK" }, { "C", "C", "C", "C" },   2, 0, "Sufijo del documento" } )
+   aAdd( aItmVta, { { "CTURALB",    "CTURFAC",     "CTURFAC",     "CTURTIK" }, { "C", "C", "C", "C" },   6, 0, "Sesión del documento" } )
+   aAdd( aItmVta, { { "DFECALB",    "DFECFAC",     "DFECFAC",     "DFECTIK" }, { "D", "D", "D", "D" },   8, 0, "Fecha del documento" } )
+   aAdd( aItmVta, { { "CCODCLI",    "CCODCLI",     "CCODCLI",     "CCLITIK" }, { "C", "C", "C", "C" },  12, 0, "Código del cliente" } )
+   aAdd( aItmVta, { { "CNOMCLI",    "CNOMCLI",     "CNOMCLI",     "CNOMTIK" }, { "C", "C", "C", "C" },  80, 0, "Nombre del cliente" } )
+   aAdd( aItmVta, { { "CDIRCLI",    "CDIRCLI",     "CDIRCLI",     "CDIRCLI" }, { "C", "C", "C", "C" }, 100, 0, "Domicilio del cliente" } )
+   aAdd( aItmVta, { { "CPOBCLI",    "CPOBCLI",     "CPOBCLI",     "CPOBCLI" }, { "C", "C", "C", "C" },  35, 0, "Población del cliente" } )
+   aAdd( aItmVta, { { "CPRVCLI",    "CPRVCLI",     "CPRVCLI",     "CPRVCLI" }, { "C", "C", "C", "C" },  20, 0, "Provincia del cliente" } )
+   aAdd( aItmVta, { { "CPOSCLI",    "CPOSCLI",     "CPOSCLI",     "CPOSCLI" }, { "C", "C", "C", "C" },  15, 0, "Código postal del cliente" } )
+   aAdd( aItmVta, { { "CDNICLI",    "CDNICLI",     "CDNICLI",     "CDNICLI" }, { "C", "C", "C", "C" },  15, 0, "DNI/CIF del cliente" } )
+   aAdd( aItmVta, { { "CCODALM",    "CCODALM",     "CCODALM",     "CALMTIK" }, { "C", "C", "C", "C" },   3, 0, "Código del almacén" } )
+   aAdd( aItmVta, { { "CCODCAJ",    "CCODCAJ",     "CCODCAJ",     "CNCJTIK" }, { "C", "C", "C", "C" },   3, 0, "Código de la caja" } )
+   aAdd( aItmVta, { { "CCODPAGO",   "CCODPAGO",    "CCODPAGO",    "CFPGTIK" }, { "C", "C", "C", "C" },   2, 0, "Forma de pago del documento" } )
+   aAdd( aItmVta, { { "CCODOBR",    "CCODOBR",     "CCODOBR",     "CCODOBR" }, { "C", "C", "C", "C" },  10, 0, "Obra del documento" } )
+   aAdd( aItmVta, { { "CCODTAR",    "CCODTAR",     "CCODTAR",     "CCODTAR" }, { "C", "C", "C", "C" },   5, 0, "Código de la tarifa" } )
+   aAdd( aItmVta, { { "CCODRUT",    "CCODRUT",     "CCODRUT",     "CCODRUT" }, { "C", "C", "C", "C" },   4, 0, "Código de la ruta" } )
+   aAdd( aItmVta, { { "CCODAGE",    "CCODAGE",     "CCODAGE",     "CCODAGE" }, { "C", "C", "C", "C" },   3, 0, "Código del agente" } )
+   aAdd( aItmVta, { { "NPCTCOMAGE", "NPCTCOMAGE",  "NPCTCOMAGE",  "NCOMAGE" }, { "N", "N", "N", "" },    6, 2, "Comisión agente" } )
+   aAdd( aItmVta, { { "NTARIFA",    "NTARIFA",     "NTARIFA",     "NTARIFA" }, { "N", "N", "N", "N" },   1, 0, "Tarifa del documento" } )
+   aAdd( aItmVta, { { "NDTOESP",    "NDTOESP",     "NDTOESP",     "" },        { "N", "N", "N", "" },    6, 2, "Descuento general" } )
+   aAdd( aItmVta, { { "NDPP",       "NDPP",        "NDPP",        "" },        { "N", "N", "N", "" },    6, 2, "Descuento por pronto pago" } )
+   aAdd( aItmVta, { { "NDTOUNO",    "NDTOUNO",     "NDTOUNO",     "" },        { "N", "N", "N", "" },    6, 2, "Descuento definido 1" } )
+   aAdd( aItmVta, { { "NDTODOS",    "NDTODOS",     "NDTODOS",     "" },        { "N", "N", "N", "" },    4, 1, "Descuento definido 2" } )
+   aAdd( aItmVta, { { "LRECARGO",   "LRECARGO",    "LRECARGO",    "" },        { "L", "L", "L", "" },    1, 0, "Lógico de recargo" } )
+   aAdd( aItmVta, { { "CDIVALB",    "CDIVFAC",     "CDIVFAC",     "CDIVTIK" }, { "C", "C", "C", "C" },   3, 0, "Código divisa" } )
+   aAdd( aItmVta, { { "NVDVALB",    "NVDVFAC",     "NVDVFAC",     "NVDVTIK" }, { "N", "N", "N", "N" },  10, 4, "Valor divisa" } )
+   aAdd( aItmVta, { { "CRETPOR",    "CRETPOR",     "CRETPOR",     "CRETPOR" }, { "C", "C", "C", "C" }, 100, 0, "Retirado por" } )
+   aAdd( aItmVta, { { "CRETMAT",    "CRETMAT",     "CRETMAT",     "CRETMAT" }, { "C", "C", "C", "C" },  20, 0, "Matricula" } )
+   aAdd( aItmVta, { { "LIVAINC",    "LIVAINC",     "LIVAINC",     "" },        { "L", "L", "L", "" },    1, 0, "Lógico IGIC incluido" } )
+   aAdd( aItmVta, { { "NREGIVA",    "NREGIVA",     "NREGIVA",     "" },        { "N", "N", "N", "" },   20, 0, "Régimen de " + cImp() } )
+   aAdd( aItmVta, { { "CCODTRN",    "CCODTRN",     "CCODTRN",     "" },        { "C", "C", "C", "" },    9, 0, "Código del transportista" } )
+   aAdd( aItmVta, { { "CCODUSR",    "CCODUSR",     "CCODUSR",     "CCCJTIK" }, { "C", "C", "C", "C" },   3, 0, "Código de usuario" } )
+   aAdd( aItmVta, { { "DFECCRE",    "DFECCRE",     "DFECCRE",     "DFECCRE" }, { "D", "D", "D", "D" },   8, 0, "Fecha de creación/modificación" } )
+   aAdd( aItmVta, { { "CTIMCRE",    "CTIMCRE",     "CTIMCRE",     "CTIMCRE" }, { "C", "C", "C", "C" },  20, 0, "Hora de creación/modificación" } )
+   aAdd( aItmVta, { { "CCODGRP",    "CCODGRP",     "CCODGRP",     ""        }, { "C", "C", "C", "" },    4, 0, "Grupo de cliente" } )
+   aAdd( aItmVta, { { "lImprimido", "lImprimido",  "lImprimido",  ""        }, { "L", "L", "L", "" },    1, 0, "Lógico de imprimido" } )
+   aAdd( aItmVta, { { "dFecImp",    "dFecImp",     "dFecImp",     ""        }, { "D", "D", "D", "" },    8, 0, "Fecha última impresión" } )
+   aAdd( aItmVta, { { "cHorImp",    "cHorImp",     "cHorImp",     ""        }, { "C", "C", "C", "" },    5, 0, "Hora última impresión" } )
+   aAdd( aItmVta, { { "cCodDlg",    "cCodDlg",     "cCodDlg",     "cCodDlg" }, { "C", "C", "C", "C" },   2, 0, "Código delegación" } )
+
+RETURN ( aItmVta )
+
+
+
+FUNCTION aItmCompras()
+
+   local aItmCom := {}
+
+   aAdd( aItmCom, { { "CSERALB",    "CSERFAC"   }, { "C", "C" },  1, 0, "Serie del documento" } )
+   aAdd( aItmCom, { { "NNUMALB",    "NNUMFAC"   }, { "N", "N" },  9, 0, "Número del documento" } )
+   aAdd( aItmCom, { { "CSUFALB",    "CSUFFAC"   }, { "C", "C" },  2, 0, "Sufijo del documento" } )
+   aAdd( aItmCom, { { "CTURALB",    "CTURFAC"   }, { "C", "C" },  6, 0, "Sesión del documento" } )
+   aAdd( aItmCom, { { "DFECALB",    "DFECFAC"   }, { "D", "D" },  8, 0, "Fecha del documento" } )
+   aAdd( aItmCom, { { "CCODALM",    "CCODALM"   }, { "C", "C" },  3, 0, "Código del almacén" } )
+   aAdd( aItmCom, { { "CCODCAJ",    "CCODCAJ"   }, { "C", "C" },  3, 0, "Código de la caja" } )
+   aAdd( aItmCom, { { "CCODPRV",    "CCODPRV"   }, { "C", "C" }, 12, 0, "Código del proveedor" } )
+   aAdd( aItmCom, { { "CNOMPRV",    "CNOMPRV"   }, { "C", "C" }, 35, 0, "Nombre del proveedor" } )
+   aAdd( aItmCom, { { "CDIRPRV",    "CDIRPRV"   }, { "C", "C" }, 35, 0, "Domicilio del proveedor" } )
+   aAdd( aItmCom, { { "CPOBPRV",    "CPOBPRV"   }, { "C", "C" }, 25, 0, "Población del proveedor" } )
+   aAdd( aItmCom, { { "CPROPRV",    "CPROVPROV" }, { "C", "C" }, 20, 0, "Provincia del proveedor" } )
+   aAdd( aItmCom, { { "CPOSPRV",    "CPOSPRV"   }, { "C", "C" },  5, 0, "Código postal del provedor" } )
+   aAdd( aItmCom, { { "CDNIPRV",    "CDNIPRV"   }, { "C", "C" }, 30, 0, "DNI/CIF del proveedor" } )
+   aAdd( aItmCom, { { "DFECENT",    "DFECENT"   }, { "D", "D" },  8, 0, "Fecha de entrada" } )
+   aAdd( aItmCom, { { "CCODPGO",    "CCODPAGO"  }, { "C", "C" },  2, 0, "Forma de pago" } )
+   aAdd( aItmCom, { { "NBULTOS",    "NBULTOS"   }, { "N", "N" },  3, 0, "Número de bultos" } )
+   aAdd( aItmCom, { { "NPORTES",    "NPORTES"   }, { "N", "N" },  6, 0, "Valor de los portes" } )
+   aAdd( aItmCom, { { "NDTOESP",    "NDTOESP"   }, { "N", "N" },  6, 2, "Descuento general" } )
+   aAdd( aItmCom, { { "NDPP",       "NDPP"      }, { "N", "N" },  6, 2, "Descuento por pronto pago" } )
+   aAdd( aItmCom, { { "LRECARGO",   "LRECARGO"  }, { "L", "L" },  1, 0, "Lógico de recargo" } )
+   aAdd( aItmCom, { { "CCONDENT",   "CCONDENT"  }, { "C", "C" }, 20, 0, "Condición de entrada" } )
+   aAdd( aItmCom, { { "CEXPED",     "CEXPED"    }, { "C", "C" }, 20, 0, "Expedición" } )
+   aAdd( aItmCom, { { "COBSERV",    "COBSERV"   }, { "M", "M" }, 10, 0, "Observaciones" } )
+   aAdd( aItmCom, { { "CDIVALB",    "CDIVFAC"   }, { "C", "C" },  3, 0, "Código de la divisa" } )
+   aAdd( aItmCom, { { "NVDVALB",    "NVDVFAC"   }, { "N", "N" }, 10, 4, "Valor de la divisa" } )
+   aAdd( aItmCom, { { "NDTOUNO",    "NDTOUNO"   }, { "N", "N" },  5, 2, "Descuento definido 1" } )
+   aAdd( aItmCom, { { "NDTODOS",    "NDTODOS"   }, { "N", "N" },  5, 2, "Descuento definido 2" } )
+   aAdd( aItmCom, { { "CCODUSR",    "CCODUSR"   }, { "C", "C" },  3, 0, "Código de usuario" } )
+   aAdd( aItmCom, { { "LIMPRIMIDO", "LIMPRIMIDO"}, { "L", "L" },  1, 0, "Lógico de imprimido" } )
+   aAdd( aItmCom, { { "DFECIMP",    "DFECIMP"   }, { "D", "D" },  8, 0, "Fecha de última impresión" } )
+   aAdd( aItmCom, { { "CHORIMP",    "CHORIMP"   }, { "C", "C" },  5, 0, "Hora última impresión" } )
+   aAdd( aItmCom, { { "DFECCHG",    "DFECCHG"   }, { "D", "D" },  8, 0, "Fecha creación/modificación" } )
+   aAdd( aItmCom, { { "CTIMCHG",    "CTIMCHG"   }, { "C", "C" },  5, 0, "Hora creación/modificación" } )
+   aAdd( aItmCom, { { "CCODDLG",    "CCODDLG"   }, { "C", "C" },  2, 0, "Código de la delegación" } )
+
+RETURN ( aItmCom )
+
+
+
+Function aEmpresa( cEmp, dbfEmp, dbfDlg, dbfUser, lRptGal )
+
+   local oBlock
+   local oError
+   local lEmpFnd     := .T.
+   local lCloDlg     := .F.
+   local lCloEmp     := .F.
+   local lCloUsr     := .F.
+
+   IIF( lRptGal == nil, lRptGal := .F., ) ;
+
+   aDlgEmp           := {}
+
+   oBlock            := ErrorBlock( {| oError | ApoloBreak( oError ) } )
+   BEGIN SEQUENCE
+
+   if dbfEmp == nil
+      dbUseArea( .T., ( cDriver() ), ( cPatDat() + "EMPRESA.DBF" ), ( cCheckArea( "EMPRESA", @dbfEmp ) ), if(.T. .OR. .F., !.F., NIL), .F.,, )
+      if !lAIS() ; ordListAdd( ( cPatDat() + "EMPRESA.CDX" ) ) ; else ; ordSetFocus( 1 ) ; end
+      lCloEmp   := .T.
+   end
+
+   if dbfUser == nil
+      dbUseArea( .T., ( cDriver() ), ( cPatDat() + "USERS.DBF" ), ( cCheckArea( "USERS", @dbfUser ) ), if(.T. .OR. .F., !.F., NIL), .F.,, )
+      if !lAIS() ; ordListAdd( ( cPatDat() + "USERS.CDX" ) ) ; else ; ordSetFocus( 1 ) ; end
+      lCloUsr  := .T.
+   end
+
+   if dbfDlg == nil
+      dbUseArea( .T., ( cDriver() ), ( cPatDat() + "DELEGA.DBF" ), ( cCheckArea( "DELEGA", @dbfDlg ) ), if(.T. .OR. .F., !.F., NIL), .F.,, )
+      if !lAIS() ; ordListAdd( ( cPatDat() + "DELEGA.CDX" ) ) ; else ; ordSetFocus( 1 ) ; end
+      lCloDlg  := .T.
+   end
+
+
+   if dbSeekInOrd( cEmp, "CodEmp", dbfEmp )
+
+      aEmpresa    := dbScatter( dbfEmp )
+
+
+
+
+
+      if !lRptGal
+
+         if Empty( oUser():cCaja() )
+            oUser():cCaja( cCajUsr( ( dbfEmp )->cDefCaj ) )
+         end
+
+         if Empty( oUser():cAlmacen() )
+            oUser():cAlmacen( cAlmUsr( ( dbfEmp )->cDefAlm ) )
+         end
+
+      end
+
+
+
+
+
+      if ( dbfDlg )->( dbSeek( cEmp ) )
+
+         while ( dbfDlg )->cCodEmp == cEmp .AND. ( dbfDlg )->( !eof() )
+
+            aAdd( aDlgEmp, ( dbfDlg )->cCodDlg )
+            ( dbfDlg )->( dbSkip() )
+
+         end
+
+      else
+
+         aDlgEmp  := { "" }
+
+      end
+
+   else
+
+      lEmpFnd  := .F.
+
+   end
+
+   RECOVER USING oError
+
+      msgStop( "Imposible abrir todas las bases de datos " + Chr(13)+Chr(10) + ErrorMessage( oError ) )
+
+   end
+
+   ErrorBlock( oBlock )
+
+   if lCloDlg
+      ( dbfDlg )->( dbCloseArea() )
+   end
+
+   if lCloUsr
+      ( dbfUser )->( dbCloseArea() )
+   end
+
+   if lCloEmp
+      ( dbfEmp )->( dbCloseArea() )
+   end
+
+RETURN ( lEmpFnd )
+
+
+
+Function SetEmp( uVal, nPos )
+
+   if nPos >= 0 .AND. nPos <= len( aEmpresa )
+      aEmpresa[ nPos ]  := uVal
+   end
+
+ Return ( aEmpresa )
+
+
+
+Function aRetDlgEmp() ; Return ( aDlgEmp )
+
+
+
+Function cCodigoEmpresaEnUso( cCodEmp )
+
+   if cCodEmp <> nil
+      cCodigoEmpresaEnUso  := cCodEmp
+   end
+
+Return ( cCodigoEmpresaEnUso )
+
+
+
+FUNCTION GetCodEmp( dbfEmp )
+
+   local oBlock
+   local oError
+   local nRec
+   local cCodEmp
+   local lClose   := .F.
+
+   oBlock         := ErrorBlock( {| oError | ApoloBreak( oError ) } )
+   BEGIN SEQUENCE
+
+   IF dbfEmp == NIL
+      dbUseArea( .T., ( cDriver() ), ( cPatDat() + "EMPRESA.DBF" ), ( cCheckArea( "EMPRESA", @dbfEmp ) ), if(.T. .OR. .F., !.F., NIL), .F.,, )
+      if !lAIS() ; ordListAdd( ( cPatDat() + "EMPRESA.CDX" ) ) ; else ; ordSetFocus( 1 ) ; end
+      lClose      := .T.
+    end
+
+   nRec           := ( dbfEmp )->( RecNo() )
+   cCodEmp        := ""
+
+   ( dbfEmp )->( dbGoTop() )
+   while !( dbfEmp )->( eof() )
+      if ( dbfEmp )->lActiva
+         cCodEmp  := ( dbfEmp )->CodEmp
+      end
+      ( dbfEmp )->( dbSkip() )
+   end
+
+
+
+
+
+   if Empty( cCodEmp )
+      ( dbfEmp )->( dbGoTop() )
+      cCodEmp     := ( dbfEmp )->CodEmp
+   end
+
+   ( dbfEmp )->( dbGoTo( nRec ) )
+
+   RECOVER USING oError
+
+      msgStop( "Imposible abrir todas las bases de datos " + Chr(13)+Chr(10) + ErrorMessage( oError ) )
+
+   end
+
+   ErrorBlock( oBlock )
+
+   if lClose
+      ( dbfEmp )->( dbCloseArea() )
+   end
+
+Return ( cCodEmp )
+
+
+
+
+
+
+
+Function mkReport( cPath, lAppend, cPathOld, oMeter )
+
+   IIF( lAppend == nil, lAppend := .F., ) ;
+
+   IF oMeter <> NIL
+        oMeter:cText        := "Generando Bases"
+      sysRefresh()
+    end
+
+   CreateDbfReport( cPath )
+   rxReport( cPath, oMeter )
+
+   if lAppend .AND. lIsDir( cPathOld )
+      AppDbf( cPathOld, cPath, "CfgCar" )
+   end
+
+   if lAppend .AND. lIsDir( cPathOld )
+      AppDbf( cPathOld, cPath, "CfgFav" )
+   end
+
+Return .T.
+
+
+
+Function rxReport( cPath, oMeter )
+
+   local dbfFolder
+   local dbfFavorito
+
+   IIF( cPath == nil, cPath := cPatEmp(), ) ;
+
+
+   if !lExistTable( cPath + "CfgCar.Dbf" ) .OR. !lExistTable( cPath + "CfgFav.Dbf" )
+
+      CreateDbfReport( cPath )
+
+   end
+
+   fEraseIndex( cPath + "CFGCAR.CDX" )
+
+   dbUseArea( .T., cDriver(), cPath + "CFGCAR.DBF", cCheckArea( "CFGCAR", @dbfFolder ), .F. )
+   if !( dbfFolder )->( neterr() )
+      ( dbfFolder )->( __dbPack() )
+
+      ( dbfFolder )->( ordCondSet("!Deleted()", {||!Deleted()}  ) )
+      ( dbfFolder )->( ordCreate( cPath + "CFGCAR.CDX", "CUSRNOM", "CCODUSR + CNOMBRE", {|| Field->CCODUSR + Field->CNOMBRE } ) )
+
+      ( dbfFolder )->( dbCloseArea() )
+
+   else
+
+      msgStop( "Imposible abrir en modo exclusivo la tabla de configuraciones" )
+
+   end
+
+   fEraseIndex( cPath + "CFGFAV.CDX" )
+
+   dbUseArea( .T., cDriver(), cPath + "CFGFAV.DBF", cCheckArea( "CFGFAV", @dbfFavorito ), .F. )
+   if !( dbfFavorito )->( neterr() )
+      ( dbfFavorito )->( __dbPack() )
+
+      ( dbfFavorito )->( ordCondSet("!Deleted()", {||!Deleted()}  ) )
+      ( dbfFavorito )->( ordCreate( cPath + "CFGFAV.CDX", "CUSRFAV", "CCODUSR + CNOMFAV", {|| Field->CCODUSR + Field->CNOMFAV } ) )
+
+      ( dbfFavorito )->( ordCondSet("!Deleted()", {||!Deleted()}  ) )
+      ( dbfFavorito )->( ordCreate( cPath + "CFGFAV.CDX", "CUSRCAR", "CCODUSR + CCARPETA", {|| Field->CCODUSR + Field->CCARPETA } ) )
+
+      ( dbfFavorito )->( ordCondSet("!Deleted()", {||!Deleted()}  ) )
+      ( dbfFavorito )->( ordCreate( cPath + "CFGFAV.CDX", "CUSRRPT", "CCODUSR + CCARPETA + CNOMRPT", {|| Field->CCODUSR + Field->CCARPETA + Field->CNOMRPT } ) )
+
+      ( dbfFavorito )->( ordCondSet("!Deleted()", {||!Deleted()}  ) )
+      ( dbfFavorito )->( ordCreate( cPath + "CFGFAV.CDX", "CUSRCARFAV", "CCODUSR + CCARPETA + CNOMFAV", {|| Field->CCODUSR + Field->CCARPETA + Field->CNOMFAV } ) )
+
+      ( dbfFavorito )->( dbCloseArea() )
+
+   else
+
+      msgStop( "Imposible abrir en modo exclusivo la tabla de configuraciones" )
+
+   end
+
+Return nil
+
+
+
+Function CreateDbfReport( cPath )
+
+   IIF( cPath == nil, cPath := cPatEmp(), ) ;
+
+   if !lExistTable( cPath + "CFGCAR.DBF" )
+      dbCreate( cPath + "CFGCAR.DBF", aSqlStruct( aItmDbfReport() ), cDriver() )
+   end
+
+   if !lExistTable( cPath + "CFGFAV.DBF" )
+      dbCreate( cPath + "CFGFAV.DBF", aSqlStruct( aItmDbfFavoritos() ), cDriver() )
+   end
+
+Return nil
+
+
+
+Function aItmDbfReport()
+
+   local aBase := {}
+
+   aAdd( aBase, { "cCodUsr",  "C",   3, 0, "Código de usuario" } )
+   aAdd( aBase, { "cNombre",  "C", 100, 0, "Nombre de la carpeta" } )
+
+Return ( aBase )
+
+
+
+Function aItmDbfFavoritos()
+
+   local aBase := {}
+
+   aAdd( aBase, { "cCodUsr",  "C",   3, 0, "Código de usuario" } )
+   aAdd( aBase, { "cCarpeta", "C", 100, 0, "Nombre de la carpeta" } )
+   aAdd( aBase, { "cNomFav",  "C", 100, 0, "Descripción para favoritos" } )
+   aAdd( aBase, { "cNomRpt",  "C", 100, 0, "Descripción original" } )
+
+Return ( aBase )
+
+
+
+Function lTactilMode()
+
+Return ( "TCT" $ cParamsMain() )
+
+
+
+Function lTpvMode()
+
+Return ( "TPV" $ cParamsMain() )
+
+
+
+Function GoogleMaps( cStreetTo, cCityTo, cCountryTo )
+
+   local oDlg
+   local oWebMap
+   local oActiveX
+
+   local oStreetFrom
+   local cStreetFrom
+   local oCityFrom
+   local cCityFrom
+   local oCountryFrom
+   local cCountryFrom
+
+   cStreetTo         := Padr( cStreetTo, 200 )
+   cCityTo           := Padr( cCityTo, 200 )
+
+   if Empty( cCountryTo )
+      cCountryTo     := Padr( "Spain", 100 )
+   end
+
+   cStreetFrom       := Space( 200 )
+   cCityFrom         := Space( 200 )
+   cCountryFrom      := Space( 100 )
+
+   oWebMap           := WebMap():new()
+
+   oDlg = TDialog():New(,,,,, "GoogleMap",, .F.,,,,,, .F.,,,,,, .F., )
+
+   oActiveX := TActiveX():Redefine( 100, oDlg, "Shell.Explorer" )
+
+   oStreetFrom := TGetHlp():ReDefine( 200, { | u | If( PCount()==0, cStreetFrom, cStreetFrom:= u ) }, oDlg,,,,,,,,, .F.,,, .F., .F.,,,,, {|Self|load( oStreetFrom, oCityFrom, oCountryFrom )}, nil, "Office_16",, )
+
+   oCityFrom := TGetHlp():ReDefine( 210, { | u | If( PCount()==0, cCityFrom, cCityFrom:= u ) }, oDlg,,,,,,,,, .F.,,, .F., .F.,,,,,, nil,,, )
+
+   oCountryFrom := TGetHlp():ReDefine( 220, { | u | If( PCount()==0, cCountryFrom, cCountryFrom:= u ) }, oDlg,,,,,,,,, .F.,,, .F., .F.,,,,,, nil,,, )
+
+   TGetHlp():ReDefine( 300, { | u | If( PCount()==0, cStreetTo, cStreetTo:= u ) }, oDlg,,,,,,,,, .F.,,, .F., .F.,,,,,, nil,,, )
+
+   TGetHlp():ReDefine( 310, { | u | If( PCount()==0, cCityTo, cCityTo:= u ) }, oDlg,,,,,,,,, .F.,,, .F., .F.,,,,,, nil,,, )
+
+   TGetHlp():ReDefine( 320, { | u | If( PCount()==0, cCountryTo, cCountryTo:= u ) }, oDlg,,,,,,,,, .F.,,, .F., .F.,,,,,, nil,,, )
+
+   TButton():ReDefine( 1, {||ShowInWin( cStreetFrom, cCityFrom, cCountryFrom, cStreetTo, cCityTo, cCountryTo, oWebMap, oActiveX )}, oDlg,,, .F.,,,, .F. )
+
+   TButton():ReDefine( 3, {||ShowInExplorer( cStreetFrom, cCityFrom, cCountryFrom, cStreetTo, cCityTo, cCountryTo, oWebMap, oActiveX )}, oDlg,,, .F.,,,, .F. )
+
+   oDlg:Activate( oDlg:bLClicked, oDlg:bMoved, oDlg:bPainted, .T.,,, {|Self|ShowInWin( cStreetFrom, cCityFrom, cCountryFrom, cStreetTo, cCityTo, cCountryTo, oWebMap, oActiveX )}, oDlg:bRClicked,,, )
+
+return nil
+
+
+
+static function Load( oStreetFrom, oCityFrom, oCountryFrom )
+
+   oStreetFrom:cText(   Padr( cDomEmp(), 200 ) )
+   oCityFrom:cText(     Padr( Rtrim( cPobEmp() ) + Space( 1 ) + Rtrim( cPrvEmp() ), 200 ) )
+   oCountryFrom:cText(  Padr( "Spain", 100 ) )
+
+return nil
+
+
+
+static function ShowInWin( cStreetFrom, cCityFrom, cCountryFrom, cStreetTo, cCityTo, cCountryTo, oWebMap, oActiveX )
+
+   oWebMap:aAddress  := {}
+
+   if !Empty( cStreetFrom )
+      oWebMap:AddStopSep( cStreetFrom, cCityFrom, , , cCountryFrom )
+   end
+
+   oWebMap:AddStopSep( cStreetTo, cCityTo, , , cCountryTo )
+
+   oWebMap:GenLink()
+
+   if !Empty( oWebMap:cLink )
+      oActiveX:Do( "Navigate", oWebMap:cLink )
+      sysrefresh()
+   end
+
+return nil
+
+
+
+static function ShowInExplorer( cStreetFrom, cCityFrom, cCountryFrom, cStreetTo, cCityTo, cCountryTo, oWebMap, oActiveX )
+
+   oWebMap:aAddress  := {}
+
+   if !Empty( cStreetFrom )
+      oWebMap:AddStopSep( cStreetFrom, cCityFrom, , , cCountryFrom )
+   end
+
+   oWebMap:AddStopSep( cStreetTo, cCityTo, , , cCountryTo )
+
+   oWebMap:ShowMap()
+
+return nil
+
+
+
+Function cUnidadMedicion( cDbf, lParentesis )
+
+   local cUnidad        := ""
+
+   IIF( lParentesis == nil, lParentesis := .F., ) ;
+
+   if !Empty( ( cDbf )->nMedUno )
+      cUnidad           += AllTrim( Trans( ( cDbf )->nMedUno, MasUnd() ) )
+   end
+
+   if !Empty( ( cDbf )->nMedDos )
+      cUnidad           += " x "
+      cUnidad           += AllTrim( Trans( ( cDbf )->nMedDos, MasUnd() ) )
+   end
+
+   if !Empty( ( cDbf )->nMedTre )
+      cUnidad           += " x "
+      cUnidad           += AllTrim( Trans( ( cDbf )->nMedTre, MasUnd() ) )
+   end
+
+   if lParentesis .AND. !Empty( cUnidad )
+      cUnidad           := "(" + cUnidad + ")"
+   end
+
+Return ( cUnidad )
+
+
+
+Function sErrorBlock( bBlock )
+
+   nError++
+
+   titulo( str( nError ) )
+   logwrite( "suma control del errores 1:" + procname(1) + "2:" + procname(2) + str( nError ) )
+
+Return ( ErrorBlock( {| oError | ApoloBreak( oError ) } ) )
+
+Function rErrorBlock( oBlock )
+
+   nError--
+
+   titulo( str( nError ) )
+   logwrite( "resta control del errores 1:" + procname(1) + "2:" + procname(2) + str( nError ) )
+
+Return ( ErrorBlock( oBlock ) )
+
+
+
+
+
+FUNCTION AppSql( cEmpDbf, cEmpSql, cFile )
+
+   local oBlock
+   local oError
+   local dbfOld
+    local dbfTmp
+   local dbfDbf      := FullCurDir() + cEmpDbf + "\" + cFile + ".Dbf"
+   local cdxDbf      := FullCurDir() + cEmpDbf + "\" + cFile + ".Cdx"
+   local dbfSql      := cEmpSql + "\" + cFile + ".Dbf"
+   local cdxSql      := cEmpSql + "\" + cFile + ".Cdx"
+
+   if !File( dbfDbf )
+      Return nil
+   end
+
+   if !lExistTable( dbfSql )
+      Return nil
+   end
+
+   oBlock            := ErrorBlock( {| oError | ApoloBreak( oError ) } )
+   BEGIN SEQUENCE
+
+
+
+      dbUseArea( .T., ( cLocalDriver() ), ( dbfDbf ), ( cCheckArea( "OLD", @dbfOld ) ), if(.F. .OR. .F., !.F., NIL), .F.,, )
+      if File( cdxDbf )
+         if !lAIS() ; ordListAdd( ( cdxDbf ) ) ; else ; ordSetFocus( 1 ) ; end
+      end
+
+
+
+      dbUseArea( .T., "SQLRDD", ( dbfSql ), ( cCheckArea( "TMP", @dbfTmp ) ), if(.F. .OR. .F., !.F., NIL), .F.,, )
+      if lExistIndex( cdxSql )
+         if !lAIS() ; ordListAdd( ( cdxSql ) ) ; else ; ordSetFocus( 1 ) ; end
+      end
+
+
+
+
+
+      while !( dbfOld )->( eof() )
+         dbPass( dbfOld, dbfTmp, .T. )
+         ( dbfOld )->( dbSkip() )
+         sysRefresh()
+      end
+
+   RECOVER USING oError
+
+      msgStop( "Imposible abrir todas las bases de datos " + Chr(13)+Chr(10) + ErrorMessage( oError ) )
+
+   end
+
+   ErrorBlock( oBlock )
+
+    ( dbfOld )->( dbCloseArea() )
+    ( dbfTmp )->( dbCloseArea() )
+
+RETURN NIL
+
+
+
+
+Function cSqlTableName( cTableName )
+
+   if cTableName[2] == ":"
+      cTableName  := SubStr( cTableName, 3 )
+   endif
+
+   cTableName     := StrTran( AllTrim( Lower( cTableName ) ), ".dbf", "_dbf" )
+   cTableName     := StrTran( cTableName, ".ntx", "" )
+   cTableName     := StrTran( cTableName, ".cdx", "" )
+   cTableName     := StrTran( cTableName, "\", "_" )
+
+   if cTableName[1] == "/"
+      cTableName  := SubStr( cTableName, 2 )
+   endif
+
+   cTableName     := StrTran( cTableName, "/", "_" )
+   cTableName     := StrTran( cTableName, ".", "_" )
+   cTableName     := AllTrim( cTableName )
+
+   if len( cTableName ) > 30
+      cTableName  := SubStr( cTableName, len( cTableName ) - 30 + 1 )
+   endif
+
+Return ( cTableName )
+
+
+
+Function PrinterPreferences( oGet )
+
+   PrinterSetup()
+
+   if !Empty( oGet )
+      oGet:cText( PrnGetName() )
+   end
+
+Return ( Nil )
+
+
+
+function DateTimeRich( oRTF )
+
+   local aLbx := REGetDateTime()
+   local nLbx := 1
+   local oDlg, oLbx
+
+   oDlg = TDialog():New(,,,,, "DateRich",, .F.,,,,,, .F.,,,,,, .F., )
+
+   oLbx := TListBox():ReDefine( 101, { | u | If( PCount()==0, nLbx, nLbx:= u ) }, aLbx,, oDlg,,,,,,,,, .F.,, )
+
+   TButton():ReDefine( 201, {||( oDlg:End( 1 ) )},,,, .F.,,,, .F. )
+
+   TButton():ReDefine( 202, {||( oDlg:End() )},,,, .F.,,,, .F. )
+
+   oDlg:AddFastKey( 116, {|| oDlg:End( 1 ) } )
+
+   oDlg:Activate( oDlg:bLClicked, oDlg:bMoved, oDlg:bPainted, .T.,,,, oDlg:bRClicked,,, )
+
+   if oDlg:nResult == 1
+      oRTF:InsertRTF( aLbx[ nLbx ] )
+   endif
+
+return nil
+
+
+
+function FindRich( oRTF )
+
+   local oDlg
+   local oFind
+   local cFind    := Space( 100 )
+   local nDir     := 1
+   local lCase    := .F.
+   local lWord    := .T.
+
+   oDlg = TDialog():New(,,,,, "FindRich",, .F.,,,,,, .F.,,,,,, .F., )
+
+   oFind := TGetHlp():ReDefine( 101, { | u | If( PCount()==0, cFind, cFind:= u ) }, oDlg,,,,,,,,, .T.,,, .F., .F.,,,,,, nil,,, )
+
+   TRadMenu():Redefine( { | u | If( PCount()==0, nDir, nDir:= u ) }, oDlg,, { 102, 103 },,,,, .F.,, )
+
+   TCheckBox():ReDefine( 104, { | u | If( PCount()==0, lCase, lCase:= u ) }, oDlg,,,,,,, .F.,, .F. )
+
+   TCheckBox():ReDefine( 105, { | u | If( PCount()==0, lWord, lWord:= u ) }, oDlg,,,,,,, .F.,, .F. )
+
+   TButton():ReDefine( 201, {||( oRTF:SetFocus(), oRTF:Find( AllTrim( cFind ), ( nDir == 1 ), lCase, lWord ) )},,,, .F.,,,, .F. )
+
+   TButton():ReDefine( 202, {||( oDlg:End() )},,,, .F.,,,, .F. )
+
+   oDlg:bStart := { || oDlg:SetFocus() }
+
+   oDlg:Activate( oDlg:bLClicked, oDlg:bMoved, oDlg:bPainted, .T.,, ! .T.,, oDlg:bRClicked,,, )
+
+return nil
+
+
+
+Function ReportBackLine( oInf, nLines )
+
+   IIF( nLines == nil, nLines := 1, ) ;
+
+   if !Empty( oInf )
+      oInf:BackLine( nLines )
+   end
+
+Return ( "" )
+
+
+
+Function SetBrwOpt( cName, cOption )
+
+Return ( WritePProString( "browse", cName, cValToChar( cOption ), cPatEmp() + "Empresa.Ini" ) )
+
+
+
+Function GetBrwOpt( cName )
+
+Return ( GetPvProfInt( "browse", cName, 2, cPatEmp() + "Empresa.Ini" ) )
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+Function cPatPc( cPath )
+
+   if !Empty( cPath )
+      cPathPC     := cPath
+   end
+
+Return ( cPathPc )
+
+
+
+
+
+
+
+
+Function cEmpUsr( cEmp )
+
+   if cEmp <> nil
+      cEmpUsr  := cEmp
+   end
+
+Return cEmpUsr
+
+
+
+function lGrupoEmpresa( cCodEmp, dbfEmpresa )
+
+   local oBlock
+   local oError
+   local lClose   := .F.
+   local lGrupo   := .F.
+
+   oBlock         := ErrorBlock( {| oError | ApoloBreak( oError ) } )
+   BEGIN SEQUENCE
+
+   if Empty( dbfEmpresa )
+      dbUseArea( .T., ( cDriver() ), ( cPatDat() + "EMPRESA.DBF" ), ( cCheckArea( "EMPRESA", @dbfEmpresa ) ), if(.T. .OR. .F., !.F., NIL), .F.,, )
+      if !lAIS() ; ordListAdd( ( cPatDat() + "EMPRESA.CDX" ) ) ; else ; ordSetFocus( 1 ) ; end
+      lClose      := .T.
+   end
+
+   if dbSeekInOrd( cCodEmp, "CodEmp", dbfEmpresa )
+      lGrupo      := ( dbfEmpresa )->lGrupo
+   end
+
+   RECOVER USING oError
+
+      msgStop( ErrorMessage( oError ), "Imposible abrir todas las bases de datos" )
+
+   end
+
+   ErrorBlock( oBlock )
+
+   if lClose
+      ( dbfEmpresa )->( dbCloseArea() )
+   end
+
+return ( lGrupo )
+
+
+
+function cCodigoGrupo( cCodEmp, dbfEmpresa )
+
+   local nRec
+   local oBlock
+   local oError
+   local lClose   := .F.
+   local cGrupo   := ""
+
+   oBlock         := ErrorBlock( {| oError | ApoloBreak( oError ) } )
+   BEGIN SEQUENCE
+
+   if Empty( dbfEmpresa )
+      dbUseArea( .T., ( cDriver() ), ( cPatDat() + "EMPRESA.DBF" ), ( cCheckArea( "EMPRESA", @dbfEmpresa ) ), if(.T. .OR. .F., !.F., NIL), .F.,, )
+      if !lAIS() ; ordListAdd( ( cPatDat() + "EMPRESA.CDX" ) ) ; else ; ordSetFocus( 1 ) ; end
+      lClose      := .T.
+   else
+      nRec        := ( dbfEmpresa )->( Recno() )
+   end
+
+   if dbSeekInOrd( cCodEmp, "CodEmp", dbfEmpresa )
+      cGrupo      := ( dbfEmpresa )->cCodGrp
+   end
+
+   RECOVER USING oError
+
+      msgStop( ErrorMessage( oError ), "Imposible abrir todas las bases de datos" )
+
+   end
+
+   ErrorBlock( oBlock )
+
+   if lClose
+      ( dbfEmpresa )->( dbCloseArea() )
+   else
+      ( dbfEmpresa )->( dbGoTo( nRec ) )
+   end
+
+return ( cGrupo )
+
+
+
+Function cItemsToReport( aItems )
+
+   local aItem
+   local cString  := ""
+
+   for each aItem in aItems
+      if !Empty( aItem[ 5 ] )
+         cString  += aItem[ 1 ] + "=" + aItem[ 5 ] + ";"
+      end
+   next
+
+Return ( cString )
+
+
+
+FUNCTION cObjectsToReport( oDbf )
+
+   local oItem
+   local cString  := ""
+
+   for each oItem in oDbf:aTField
+
+      if !Empty( oItem:cComment ) .AND. !( oItem:lCalculate )
+         cString  += oItem:cName + "=" + oItem:cComment + ";"
+      end
+
+   next
+
+Return ( cString )
+
+
+
+FUNCTION aEmpGrp( cCodGrp, dbfEmp, lEmpresa )
+
+   local nRec
+   local nOrd
+   local lClose            := .F.
+
+   IIF( lEmpresa == nil, lEmpresa := .F., ) ;
+
+   if !Empty( cCodGrp )
+
+      if Empty( dbfEmp )
+
+         dbUseArea( .T., ( cDriver() ), ( cPatDat() + "EMPRESA.DBF" ), ( cCheckArea( "EMPRESA", @dbfEmp ) ), if(.T. .OR. .F., !.F., NIL), .F.,, )
+         if !lAIS() ; ordListAdd( ( cPatDat() + "EMPRESA.CDX" ) ) ; else ; ordSetFocus( 1 ) ; end
+
+         ( dbfEmp )->( OrdSetFocus( "cCodGrp" ) )
+
+         lClose            := .T.
+
+      else
+
+         nOrd              := ( dbfEmp )->( OrdSetFocus( "cCodGrp" ) )
+         nRec              := ( dbfEmp )->( Recno() )
+
+      end
+
+      aEmpresasGrupo       := {}
+
+      if lEmpresa
+
+         aAdd( aEmpresasGrupo, cCodGrp )
+
+      else
+
+         if ( dbfEmp )->( dbSeek( cCodGrp ) )
+
+            while ( dbfEmp )->cCodGrp == cCodGrp .AND. !( dbfEmp )->( Eof() )
+
+               aAdd( aEmpresasGrupo, ( dbfEmp )->CodEmp )
+
+               ( dbfEmp )->( dbSkip() )
+
+            end
+
+         end
+
+      end
+
+      if lClose
+
+         ( dbfEmp )->( dbCloseArea() )
+
+      else
+
+         ( dbfEmp )->( OrdSetFocus( nOrd ) )
+         ( dbfEmp )->( dbGoTo( nRec ) )
+
+      end
+
+   end
+
+Return ( aEmpresasGrupo )
+
+
+
+FUNCTION cPatStk( cPath, lPath, lShort, lGrp )
+
+   IIF( lPath == nil, lPath := .T., ) ;
+   IIF( lShort == nil, lShort := .F., ) ;
+   IIF( lGrp == nil, lGrp := .F., ) ;
+
+   if lAds()
+      Return ( cAdsUNC() + if( lGrp, "Grp", "Emp" ) + cPath + if( lPath, "\", "" ) )
+   end
+
+
+
+
+
+Return ( if( !lShort, FullCurDir(), "" ) + if( lGrp, "Grp", "Emp" ) + cPath + if( lPath, "\", "" ) )
+
+
+
+
+
+
+
+FUNCTION Descrip( cFacCliL, cFacCliS )
+
+   local nOrd
+   local cKey
+   local cReturn     := ""
+
+   if !Empty( ( cFacCliL )->cDetalle )
+      cReturn        := Rtrim( ( cFacCliL )->cDetalle )
+   else
+      cReturn        := Rtrim( ( cFacCliL )->mLngDes )
+   end
+
+   if !Empty( cFacCliS )
+
+      nOrd           := ( cFacCliL )->( OrdSetFocus( 1 ) )
+      cKey           := ( cFacCliL )->( OrdKeyVal() ) + Str( ( cFacCliL )->nNumLin, 4 )
+
+      cReturn        += SerialDescrip( cKey, cFacCliS )
+
+      ( cFacCliL )->( OrdSetFocus( nOrd ) )
+
+   end
+
+RETURN ( cReturn )
+
+
+
+Function SerialDescrip( cKey, cFacCliS )
+
+   local nOrd
+   local nInc
+   local nLast
+   local cLast
+   local nPrior
+   local cPrior
+   local cReturn           := ""
+
+   nInc                    := 0
+   nOrd                    := ( cFacCliS )->( OrdSetFocus( 1 ) )
+
+   if ( cFacCliS )->( dbSeek( cKey ) )
+
+      while ( ( cFacCliS )->( ordKeyVal() ) == cKey .AND. !( cFacCliS )->( eof() ) )
+
+         if Empty( nPrior )
+            nInc           := 0
+            cPrior         := ( cFacCliS )->cNumSer
+            nPrior         := SpecialVal( ( cFacCliS )->cNumSer )
+         else
+            nInc++
+         end
+
+         if !Empty( nPrior ) .AND. ( nInc <> 0 )
+
+            if ( SpecialVal( ( cFacCliS )->cNumSer ) == nPrior + nInc )
+
+               cLast       := ( cFacCliS )->cNumSer
+               nLast       := SpecialVal( ( cFacCliS )->cNumSer )
+
+            else
+
+               cReturn     += Alltrim( cPrior )
+
+               if !Empty( nLast )
+                  cReturn  += "-"
+                  cReturn  += Alltrim( cLast )
+               end
+
+               cReturn     += ","
+
+               nInc        := 0
+               nLast       := nil
+               cPrior      := ( cFacCliS )->cNumSer
+               nPrior      := SpecialVal( ( cFacCliS )->cNumSer )
+
+            end
+
+         end
+
+         ( cFacCliS )->( dbSkip() )
+
+      end
+
+      if !Empty( nPrior )
+         cReturn           += Alltrim( cPrior )
+      end
+
+      if !Empty( nLast )
+         cReturn           += "-"
+         cReturn           += Alltrim( cLast )
+      end
+
+      cReturn              := Space( 1 ) + "[" + cReturn + "]"
+
+   end
+
+   ( cFacCliS )->( OrdSetFocus( nOrd ) )
+
+Return ( cReturn )
+
+
+
+FUNCTION AppDbf( cEmpOld, cEmpTmp, cFile, aStruct )
+
+   local oBlock
+   local oError
+   local dbfOld
+    local dbfTmp
+   local dbfNamOld   := cEmpOld + cFile + ".Dbf"
+   local dbfNamTmp   := cEmpTmp + cFile + ".Dbf"
+   local cdxNamOld   := cEmpOld + cFile + ".Cdx"
+   local cdxNamTmp   := cEmpTmp + cFile + ".Cdx"
+
+   IF !File( dbfNamOld )
+      MsgStop( "No existe : " + dbfNamOld )
+      RETURN NIL
+    end
+
+   IF !File( dbfNamTmp )
+      MsgStop( "No existe : " + dbfNamTmp )
+      RETURN NIL
+    end
+
+   oBlock            := ErrorBlock( {| oError | ApoloBreak( oError ) } )
+   BEGIN SEQUENCE
+
+   dbUseArea( .T., ( cDriver() ), ( dbfNamOld ), ( cCheckArea( "OLD", @dbfOld ) ), if(.F. .OR. .T., !.T., NIL), .F.,, )
+   if File( cdxNamOld )
+      if !lAIS() ; ordListAdd( ( cdxNamOld ) ) ; else ; ordSetFocus( 1 ) ; end
+   end
+
+   dbUseArea( .T., ( cDriver() ), ( dbfNamTmp ), ( cCheckArea( "TMP", @dbfTmp ) ), if(.F. .OR. .T., !.T., NIL), .F.,, )
+   if File( cdxNamTmp )
+      if !lAIS() ; ordListAdd( ( cdxNamTmp ) ) ; else ; ordSetFocus( 1 ) ; end
+   end
+
+   if !Empty( aStruct )
+
+      while !( dbfOld )->( eof() )
+         dbAppendDefault( dbfOld, dbfTmp, aStruct )
+         ( dbfOld )->( dbSkip() )
+      end
+
+   else
+
+      while !( dbfOld )->( eof() )
+         dbPass( dbfOld, dbfTmp, .T. )
+         ( dbfOld )->( dbSkip() )
+      end
+
+   end
+
+   RECOVER USING oError
+
+      msgStop( "Error en el trasbase de registros " + Chr(13)+Chr(10) + ErrorMessage( oError ) )
+
+   end
+
+   ErrorBlock( oBlock )
+
+    ( dbfOld )->( dbCloseArea() )
+    ( dbfTmp )->( dbCloseArea() )
+
+RETURN NIL
+
+
+
+FUNCTION cPatGrp( cPath, lFull, lEmpresa )
+
+   IIF( lFull == nil, lFull := .F., ) ;
+   IIF( lEmpresa == nil, lEmpresa := .T., ) ;
+
+   if !Empty( cPath )
+
+      if lEmpresa
+         cPatGrp     := "Emp" + cPath
+      else
+         cPatGrp     := "Grp" + cPath
+      end
+
+   end
+
+   if lAds()
+      Return ( cAdsUNC() + cPatGrp + "\" )
+   end
+
+   if lAIS() .AND. lFull
+      Return ( cAdsUNC() + cPatGrp + "\" )
+   end
+
+   if lAIS() .AND. !lFull
+      Return ( cPatGrp )
+   end
+
+   if lCdx()
+      Return ( FullCurDir() + cPatGrp + "\" )
+   end
+
+
+
+
+Return ( if( lFull, FullCurDir(), "" ) + cPatGrp + "\" )
+
+
+
+
+
+
+FUNCTION cPatCli( cPath, lFull, lEmpresa )
+
+   IIF( lFull == nil, lFull := .F., ) ;
+   IIF( lEmpresa == nil, lEmpresa := .T., ) ;
+
+   if !Empty( cPath )
+      if lEmpresa
+         cPatCli     := "Emp" + cPath
+      else
+         cPatCli     := "Grp" + cPath
+      end
+   end
+
+   if lAds()
+      Return ( cAdsUNC() + cPatCli + "\" )
+   end
+
+   if lAIS() .AND. lFull
+      Return ( cAdsUNC() + cPatCli + "\" )
+   end
+
+   if lAIS() .AND. !lFull
+      Return ( cPatCli )
+   end
+
+   if lCdx()
+      Return ( FullCurDir() + cPatCli + "\" )
+   end
+
+Return ( if( lFull, FullCurDir(), "" ) + cPatCli + "\" )
+
+
+
+
+
+
+
+
+
+
+
+FUNCTION cPatArt( cPath, lFull, lEmpresa )
+
+   IIF( lFull == nil, lFull := .F., ) ;
+   IIF( lEmpresa == nil, lEmpresa := .T., ) ;
+
+   if !Empty( cPath )
+
+      if lEmpresa
+         cPatArt     := "Emp" + cPath
+      else
+         cPatArt     := "Grp" + cPath
+      end
+
+   end
+
+   if lAds()
+      Return ( cAdsUNC() + cPatArt + "\" )
+   end
+
+   if lAIS() .AND. lFull
+      Return ( cAdsUNC() + cPatArt + "\" )
+   end
+
+   if lAIS() .AND. !lFull
+      Return ( cPatArt )
+   end
+
+   if lCdx()
+      Return ( FullCurDir() + cPatArt + "\" )
+   end
+
+Return ( if( lFull, FullCurDir(), "" ) + cPatArt + "\" )
+
+
+
+
+
+
+
+
+
+
+
+FUNCTION cPatPrv( cPath, lFull, lEmpresa )
+
+   IIF( lFull == nil, lFull := .F., ) ;
+   IIF( lEmpresa == nil, lEmpresa := .T., ) ;
+
+   if !Empty( cPath )
+
+      if lEmpresa
+         cPatPrv     := "Emp" + cPath
+      else
+         cPatPrv     := "Grp" + cPath
+      end
+
+   end
+
+   if lAds()
+      Return ( cAdsUNC() + cPatPrv + "\" )
+   end
+
+   if lAIS() .AND. lFull
+      Return ( cAdsUNC() + cPatPrv + "\" )
+   end
+
+   if lAIS() .AND. !lFull
+      Return ( cPatPrv )
+   end
+
+   if lCdx()
+      Return ( FullCurDir() + cPatPrv + "\" )
+   end
+
+
+
+
+   Return ( if( !lFull, FullCurDir(), "" ) + cPatPrv + "\" )
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+FUNCTION cPatAlm( cPath, lFull, lEmpresa )
+
+   IIF( lFull == nil, lFull := .F., ) ;
+   IIF( lEmpresa == nil, lEmpresa := .T., ) ;
+
+   if !Empty( cPath )
+
+      if lEmpresa
+         cPatAlm     := "Emp" + cPath
+      else
+         cPatAlm     := "Grp" + cPath
+      end
+
+   end
+
+   if lAds()
+      Return ( cAdsUNC() + cPatAlm + "\" )
+   end
+
+   if lAIS() .AND. lFull
+      Return ( cAdsUNC() + cPatAlm + "\" )
+   end
+
+   if lAIS() .AND. !lFull
+      Return ( cPatAlm )
+   end
+
+   if lCdx()
+      Return ( FullCurDir() + cPatAlm + "\" )
+   end
+
+
+
+
+Return ( if( lFull, FullCurDir(), "" ) + cPatAlm + "\" )
+
+
+
+
+
+
+
+
+
+
+
+
+Function GetSysDate()
+
+Return ( if( dSysDate <> nil, dSysDate, Date() ) )
+
+
+
+Function aEmp() ; Return ( aEmpresa )
+
+
+
+FUNCTION cPatEmp( cPath, lFull )
+
+   IIF( cPath == nil, cPath := "", ) ;
+   IIF( lFull == nil, lFull := .F., ) ;
+
+   if !Empty( cPath )
+      cPatEmp     := "Emp" + cPath
+   end
+
+   if lAds()
+      Return ( cAdsUNC() + cPatEmp + "\" )
+   end
+
+   if lAIS() .AND. lFull
+      Return ( cAdsUNC() + cPatEmp + "\" )
+   end
+
+   if lAIS() .AND. !lFull
+      Return ( cPatEmp )
+   end
+
+   if lCdx()
+      Return ( FullCurDir() + cPatEmp + "\" )
+   end
+
+
+
+
+Return ( if( lFull, FullCurDir(), "" ) + cPatEmp + "\" )
+
+
+
+
+Function IsMuebles()
+
+
+   Return ( "MUEBLES" $ cParamsMain() )
+
+
+
+
+
+
+FUNCTION ChmHelp( cTema )
+
+RETURN WinExec( ( "HH " + cPatHelp() + "HELP.CHM::/" + AllTrim( cTema ) + ".HTM" ) )
+
+
+
+Function cPatHelp()
+
+Return ( FullCurDir() + "Help\" )
+
+
+
+Function HtmlHelp()
+
+Return ( "" )
+
+
+
+function lUsrMaster()
+
+return ( cCurUsr() == "000" )
+
+
+
+Function IsPda()
+
+Return ( "PDA" $ cParamsMain() )
+
+
+
+Function cPatSnd( lShort )
+
+   IIF( lShort == nil, lShort := .F., ) ;
+
+Return ( if( !lShort, FullCurDir(), "" ) + "Snd\" )
+
+
+
+Function cEmpTmp( lPath, lShort )
+
+   IIF( lPath == nil, lPath := .T., ) ;
+   IIF( lShort == nil, lShort := .F., ) ;
+
+Return ( if( !lShort, FullCurDir(), "" ) + "EmpTmp" + if( lPath, "\", "" ) )
+
+
+
+Function cPatUsr()
+
+Return ( FullCurDir() + "Usr\" )
+
+
+
+Function cImp()
+
+   local cImp  := uFieldEmpresa( "cNomImp" )
+
+   if !IsChar( cImp )
+      cImp     := ""
+   end
+
+Return ( cImp )
+
+
+
+Function addMnuNext( cName, uAction )
+
+   if aScan( aMnuNext, {|c| c[1] == cName } ) == 0
+      if valtype( uAction ) == "C"
+         aAdd( aMnuNext, { cName, &( "{||" + uAction + "() }" ) } )
+      else
+         aAdd( aMnuNext, { cName, uAction } )
+      end
+   end
+
+Return .T.
+
+
+
+function cValToChar( uVal )
+
+   local cType := ValType( uVal )
+
+   do case
+      case cType == "C" .OR. cType == "M"
+           return uVal
+
+      case cType == "D"
+           return DToC( uVal )
+
+      case cType == "L"
+           return If( uVal, ".T.", ".F." )
+
+      case cType == "N"
+           return AllTrim( Str( uVal ) )
+
+      case cType == "B"
+           return "{|| ... }"
+
+      case cType == "A"
+           return "{ ... }"
+
+      case cType == "O"
+           return "Object"
+
+      otherwise
+           return ""
+   endcase
+
+return nil
+
+
+
+function cValToText( uVal, lBarraFecha )
+
+   local cType             := ValType( uVal )
+
+   IIF( lBarraFecha == nil, lBarraFecha := .F., ) ;
+
+   do case
+      case cType == "C" .OR. cType == "M"
+           return uVal
+
+      case cType == "D"
+           if lBarraFecha
+               return DToC( uVal )
+           else
+               return StrTran( DToC( uVal ), "/", "" )
+           end
+
+      case cType == "L"
+           return If( uVal, "S", "N" )
+
+      case cType == "N"
+           return AllTrim( Str( uVal ) )
+
+      case cType == "B"
+           return "{|| ... }"
+
+      case cType == "A"
+           return "{ ... }"
+
+      case cType == "O"
+           return "Object"
+
+      otherwise
+           return ""
+   endcase
+
+return nil
+
+
+
+function dToIso( dDate )
+
+   local cDate := ""
+
+   if Valtype( dDate ) <> "D"
+      dDate    := Date()
+   endif
+
+   cDate       := Alltrim( Str( Year( dDate ) ) + "-" + StrZero( Month( dDate ), 2 ) + "-" + StrZero( Day( dDate ), 2 ) )
+
+return ( cDate )
+
+
+
+Function LogWrite( cText, cFileName )
+
+   local nHand
+
+   IIF( cFileName == nil, cFileName := "Trace.Log", ) ;
+
+   if !Empty( cText )
+
+      if !File( cFileName )
+         nHand := fCreate( cFileName )
+      else
+        nHand  := fOpen( cFileName, 1 )
+      endif
+
+      fSeek( nHand, 0 , 2 )
+
+
+
+         fWrite( nHand, Time() + "-" + Trans( Seconds(), "999999.9999" ) + Space( 1 ) )
+
+
+      fWrite( nHand, cValToChar( cText ) + Chr(13)+Chr(10) )
+      fClose( nHand )
+
+   end
+
+RETURN NIL
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+_HB_CLASS ApoloBtnBmp ; UTILITY FUNCTION ApoloBtnBmp(...); static s_oClass ; local oClassInstance ; local nScope ; nScope := 1 ; if s_oClass == NIL ; s_oClass := IIF(.F.,, HBClass():New( "ApoloBtnBmp" , {TBtnBmp():classh} ) ) ; ;
+
+   _HB_MEMBER aGrad(); IIF( .F., s_oClass:ModInline( "aGrad", {|Self | Self, Eval( If( ::bClrGrad == nil, ::oWnd:bClrGrad, ::bClrGrad ), ( ::lMOver .OR. ::lBtnDown ) ) }, nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ), s_oClass:AddInline( "aGrad", {|Self | Self, Eval( If( ::bClrGrad == nil, ::oWnd:bClrGrad, ::bClrGrad ), ( ::lMOver .OR. ::lBtnDown ) ) }, nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ) )
+
+; IF .F. ; __clsActive(s_oClass:hClass) ; s_oClass:Refresh() ; ELSE ; s_oClass:Create() ; END ; oClassInstance := __clsInst( s_oClass:hClass ) ; IF __ObjHasMsg( oClassInstance, "InitClass" ); oClassInstance:InitClass( hb_aParams() ) ; END ; ELSE ; oClassInstance := __clsInst( s_oClass:hClass ) ; END ; IF PCount() > 0 ; DIVERT TO (@DivertConstructorCall()) OF s_oClass ; END ; RETURN oClassInstance AS CLASS ApoloBtnBmp ;
+
+
+
+FUNCTION PicOut()
+
+   if Empty( cDefPicOut )
+      cDefPicOut  := cPorDiv( cDivEmp() )
+   end
+
+RETURN ( cDefPicOut )
+
+
+
+FUNCTION cUsrTik( cCodUsr )
+
+   if !Empty( cCodUsr )
+      cUsrTik     := cCodUsr
+   end
+
+Return cUsrTik
+
+
+
+FUNCTION cDelUsrTik( cCodUsr )
+
+   cUsrTik     := Space(3)
+
+Return .T.
+
+
+
+FUNCTION nAjuste( nNumber, cAdjust )
+
+   local n
+   local cNumber
+   local cResult
+
+   cResult           := ""
+   cNumber           := Trans( nNumber, cPorDiv() )
+
+   if IsNum( cAdjust )
+      cAdjust        := Trans( cAdjust, cPorDiv() )
+   else
+      cAdjust        := Alltrim( cAdjust )
+   end
+
+   cAdjust           := Padl( cAdjust, len( cNumber ), Space( 1 ) )
+
+   for n := 1 to len( cNumber )
+      if ( cAdjust[ n ] == Space( 1 ) .OR. cAdjust[ n ] == "#" )
+         cResult     += cNumber[ n ]
+      else
+         cResult     += cAdjust[ n ]
+      end
+   next
+
+   nNumber           := Val( StrTran( cResult, ",", "." ) )
+
+RETURN ( nNumber )
+
+
+
+
+
+
+
+
+
+
+
+
+
+Function cPatLog( lShort )
+
+   IIF( lShort == nil, lShort := .F., ) ;
+
+Return ( if( !lShort, FullCurDir(), "" ) + "Log\" )
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+Function cCodigoEmpresa( xValue )
+
+   if !Empty( xValue )
+      cCodEmp     := xValue
+   end
+
+Return ( cCodEmp )
+
+
+
+
+
+PROCEDURE xmlIterator( cFileName, cNode, cAttrib, cValue, cData )
+
+   LOCAL hFile, cXml
+   LOCAL oDoc, oNode, oIter, lFind
+   LOCAL cText    := ""
+
+   Set( 1, "OFF" )
+
+   InvalidateRect( GetActiveWindow(), 0, .T. )
+
+   cText          += "X H A R B O U R - XML ITERATOR test "
+
+   IF cFileName == NIL
+      cFileName := "xmltest.xml"
+   ENDIF
+
+
+   IF ValType( cNode ) == "C" .AND. Len( cNode ) == 0
+      cNode := NIL
+   ENDIF
+
+
+   IF ValType( cAttrib ) == "C" .AND. Len( cAttrib ) == 0
+      cAttrib := NIL
+   ENDIF
+
+
+   IF ValType( cValue ) == "C" .AND. Len( cValue ) == 0
+      cValue := NIL
+   ENDIF
+
+   cText          +=  "Processing file " + cFileName + "..." + Chr(13)+Chr(10)
+
+   oDoc := TXmlDocument():New( cFileName )
+
+   IF oDoc:nStatus <> 1
+      cText       +=  "Error While Processing File: "+cFileName
+      cText       +=  "On Line: " + AllTrim( Str( oDoc:nLine ) )
+      cText       +=  "Error: " + oDoc:ErrorMsg
+      cText       +=  "Program Terminating, press any key"
+      RETURN
+   ENDIF
+
+   lFind := ( cNode <> NIL .OR. cAttrib <> NIL .OR. cValue <> NIL .OR. cData <> NIL )
+
+   cText          += "Navigating all nodes with a base iterator" + Chr(13)+Chr(10)
+
+   oNode := oDoc:CurNode
+
+if ! lFind
+
+   while oNode <> NIL
+      cXml := oNode:Path()
+      IF cXml == NIL
+         cXml :=  "(Node without path)"
+      ENDIF
+
+      cText       += Alltrim( Str( oNode:nType ) ) + ", " + cValToChar( oNode:cName ) + ", " + ValToPrg( oNode:aAttributes ) + ", " + cValToChar( oNode:cData ) + ": " + cValToChar( cXml ) + Chr(13)+Chr(10)
+
+      oNode       := oDoc:Next()
+   ENDDO
+
+else
+      cText       += "Iterator - Navigating all nodes" +  cValToChar( cNode ) +  "," + cValToChar( cAttrib ) + "=" + cValToChar( cValue ) + " with data having " + cValToChar( cData ) + Chr(13)+Chr(10)
+
+      oIter := TXmlIterator():New( oDoc:oRoot )
+      oIter:lRegex := .T.
+
+      IF cNode <> NIL
+         cNode := HB_RegexComp( cNode )
+      ENDIF
+
+      IF cAttrib <> NIL
+         cAttrib := HB_RegexComp( cAttrib )
+      ENDIF
+
+      IF cValue <> NIL
+         cValue := HB_RegexComp( cValue )
+      ENDIF
+
+      IF cData <> NIL
+         cData := HB_RegexComp( cData )
+      ENDIF
+
+      oNode := oIter:Find( cNode, cAttrib, cValue, cData )
+
+      WHILE oNode <> NIL
+         cText    += "Found node " + oNode:Path() + ValToPrg( oNode:ToArray() ) + Chr(13)+Chr(10)
+         oNode    := oIter:FindNext()
+      ENDDO
+
+endif
+
+   cText          += "Terminated. Press any key to continue"
+
+
+RETURN
+
+
+
+
+
+Function lBancas()
+
+Return ( "BANCAS" $ cParamsMain() )
+
+
+
+function GetOleObject( cApp )
+
+   local oObj
+
+   TRY
+      oObj  := GetActiveObject( cApp )
+   CATCH
+      TRY
+         oObj  := CreateObject( cApp )
+      CATCH
+      END
+   END
+
+return oObj
+
+
+
+function WinWordObj()
+
+   local lInstalled
+   local oWord
+
+   if !( lInstalled == .F. )
+      lInstalled  := ( ( oWord := GetOleObject( "Word.Application" ) ) <> nil )
+   endif
+
+return oWord
+
+
+
+function ExcelObj()
+
+   local lInstalled
+   local oExcel
+
+   if !( lInstalled == .F. )
+      lInstalled  := ( ( oExcel := GetOleObject( "Excel.Application" ) ) <> nil )
+   endif
+
+return oExcel
+
+
+
+function SunCalcObj()
+
+   local lInstalled
+   local oCalc
+
+   if !( lInstalled == .F. )
+      lInstalled  := ( ( oCalc := GetOleObject( "com.sun.star.ServiceManager" ) ) <> nil )
+   endif
+
+return oCalc
+
+
+
+function GetExcelRange( cBook, cSheet, acRange )
+
+   local oExcel, oBook, oSheet, oRange
+
+   if ( oExcel := ExcelObj() ) <> nil
+      if ( oBook := GetExcelBook( cBook ) ) <> nil
+         TRY
+            oSheet   := oBook:WorkSheets( cSheet )
+            if ValType( acRange ) == "A"
+
+               oRange   := oSheet:Range( oSheet:Cells( acRange[ 1 ], acRange[ 2 ] ),  oSheet:Cells( acRange[ 3 ], acRange[ 4 ] ) )
+            else
+               oRange   := oSheet:Range( acRange )
+            endif
+         CATCH
+         END
+      endif
+   endif
+
+return oRange
+
+
+
+function GetExcelBook( cBook )
+
+   local oExcel, oBook
+   local c, n, nBooks
+
+   cBook := Upper( cFilePath( cBook ) + cFileNoExt( cBook ) )
+   if ( oExcel := ExcelObj() ) <> nil
+      nBooks   := oExcel:WorkBooks:Count()
+      for n := 1 to nBooks
+         c  := oExcel:WorkBooks( n ):FullName
+         if cBook == Upper( cFilePath( c ) + cFileNoExt( c ) )
+            return oExcel:WorkBooks( n )
+         endif
+      next
+      TRY
+         oBook := oExcel:WorkBooks:Open( cBook )
+      CATCH
+      END
+   endif
+
+return oBook
+
+
+
+Function SpecialVal( cNumber )
+
+   local cChar
+   local cResult  := ""
+
+   cNumber        := Alltrim( cNumber )
+
+   for each cChar in cNumber
+      if Str( Val( cChar ) ) == cChar
+         cResult  += cChar
+      end
+   next
+
+Return ( Val( cResult ) )
+
+
+
+Function ApoloMsgNoYes( cText, cTitle, lTactil )
+
+   local oDlg
+   local oBmp
+   local oBtnOk
+   local oBtnCancel
+
+   IIF( cText == nil, cText := "¿Desea eliminar el registro en curso?", ) ;
+   IIF( cTitle == nil, cTitle := "Confirme supresión.", ) ;
+   IIF( lTactil == nil, lTactil := .F., ) ;
+
+   if lTactil
+      oDlg = TDialog():New(,,,, ( cTitle ), "DeleteRecnoTct",, .F.,,,,,, .F.,,,,,, .F., )
+   else
+      oDlg = TDialog():New(,,,, ( cTitle ), "DeleteRecno",, .F.,,,,,, .F.,,,,,, .F., )
+   end
+
+   oBmp := TBitmap():ReDefine( 500, "Symbol_questionmark_48_Alpha",, oDlg,,, .F., .F.,,, .F.,,, .T. )
+
+   TSay():ReDefine( 100, {|| cText}, oDlg,,,, .F.,, .F., .F. )
+
+   oBtnOk := TButton():ReDefine( 1, {||( oDlg:end( 1 ) )}, oDlg,,, .F.,,,, .F. )
+
+   oBtnCancel := TButton():ReDefine( 2, {||( oDlg:end() )}, oDlg,,, .F.,,,, .F. )
+
+   oDlg:AddFastKey( 116, {|| oDlg:end( 1 ) } )
+
+   oDlg:Activate( oDlg:bLClicked, oDlg:bMoved, oDlg:bPainted, .T.,,,, oDlg:bRClicked,,, )
+
+   if !Empty( oBmp )
+      oBmp:End()
+   end
+
+RETURN ( oDlg:nResult == 1 )
+
+
+
+Function ApoloWaitSeconds( nSecs )
+
+   local n
+
+   for n := 1 to nSecs
+      WaitSeconds( 1 )
+      SysRefresh()
+   next
+
+return nil
+
+
+
+Function ApoloDescend( uParam )
+
+Return ( Descend( uParam ) )
+
+
+
+Function CreateFastReport()
+
+   if Empty( oFastReport )
+
+      oFastReport    := frReportManager():new()
+
+      oFastReport:LoadLangRes( "Spanish.Xml" )
+      oFastReport:SetIcon( 1 )
+
+   end
+
+Return ( oFastReport )
+
+
+
+Function DestroyFastReport()
+
+   if Empty( oFastReport )
+      oFastReport:DestroyFR()
+   end
+
+Return ( nil )
+
+
+
+
+
+
+
+
+function RgbToRgbHex( nColorRgb )
+
+   local cRgbHex  := ""
+
+   cRgbHex        += "#"
+   cRgbHex        += NumToHex( nRgbRed( nColorRgb ), 2 )
+   cRgbHex        += NumToHex( nRgbGreen( nColorRgb ), 2 )
+   cRgbHex        += NumToHex( nRgbBlue( nColorRgb ), 2 )
+
+return cRgbHex
+
+
+
+function InfoStack()
+
+   local i
+   local cStack
+
+   i              := 2
+   cStack         := ""
+
+   while !Empty( ProcName( i ) )
+      cStack      += "Llamado desde " + Trim( ProcName( i ) ) + "(" + LTrim( Str( ProcLine( i ) ) ) + ")" + Chr(13)+Chr(10)
+      i++
+   enddo
+
+   MsgInfo( cStack )
+
+return nil

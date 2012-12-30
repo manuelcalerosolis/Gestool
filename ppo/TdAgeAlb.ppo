@@ -1,0 +1,292 @@
+#line 112 "hbclass.ch"
+   DYNAMIC DivertConstructorCall
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+DECLARE HBClass  New( cName AS String, OPTIONAL SuperParams ) AS CLASS HBClass  Create() AS Object  Instance() AS Object  AddClsMethod( cName AS String, @MethodName(), nScope AS Numeric, n2 AS Numeric, n3 AS Numeric )  AddDelegate( cName AS String, cDelegate AS String, cObject AS String, nScope AS Numeric, lPersistent AS LOGICAL )  AddMultiClsData( cType AS String, uVal, nScope AS Numeric, aDatas AS Array OF String )  AddMultiData( cType AS String, uVal, nScope AS Numeric, aDatas AS Array OF String, x AS LOGICAL, lPer AS LOGICAL )  AddMethod( cName AS String, @MethodName(), nScope AS Numeric, lPersistent AS LOGICAL )  AddInLine( cName AS String, bBlock AS CodeBlock, nScope AS Numeric, lPersistent AS LOGICAL )  AddVirtual( cName AS String )  ModMethod( cName AS String, @MethodName(), nScope AS Numeric, lPersistent AS LOGICAL )  ModClsMethod( cName AS String, @MethodName(), nScope AS Numeric )  ModInline( cName AS String, bBlock AS CodeBlock, nScope AS Numeric, lPersistent AS LOGICAL )  SetOnError( @MethodName() )
+#line 85 "\Fwh1204\Include\FiveWin.Ch"
+   EXTERNAL GetProcAdd
+   EXTERNAL TActiveX
+
+
+
+
+extern errorsys
+#line 8 ".\Prg\TdAgeAlb.prg"
+_HB_CLASS TdAgeAlb ; UTILITY FUNCTION TdAgeAlb(...); static s_oClass ; local oClassInstance ; local nScope ; nScope := 1 ; if s_oClass == NIL ; s_oClass := IIF(.F.,, HBClass():New( "TdAgeAlb" , {TInfGen():classh} ) ) ; ;
+
+   _HB_MEMBER {AS LOGIC lResumen} ; IIF( !.F., s_oClass:AddMultiData( "LOGIC", .F., nScope + IIF( .F., 32, 0 ), { "lResumen" }, .F., .F. ), )
+   _HB_MEMBER {AS LOGIC lExcCero} ; IIF( !.F., s_oClass:AddMultiData( "LOGIC", .F., nScope + IIF( .F., 32, 0 ), { "lExcCero" }, .F., .F. ), )
+   _HB_MEMBER {AS OBJECT oEstado} ; IIF( !.F., s_oClass:AddMultiData( "OBJECT",, nScope + IIF( .F., 32, 0 ), { "oEstado" }, .F., .F. ), )
+   _HB_MEMBER {AS CHARACTER cEstado} ; IIF( !.F., s_oClass:AddMultiData( "CHARACTER", "Todos", nScope + IIF( .F., 32, 0 ), { "cEstado" }, .F., .F. ), )
+   _HB_MEMBER {AS ARRAY aEstado} ; IIF( !.F., s_oClass:AddMultiData( "ARRAY", { "No facturados", "Facturados", "Todos" }, nScope + IIF( .F., 32, 0 ), { "aEstado" }, .F., .F. ), )
+   _HB_MEMBER {AS OBJECT oAlbCliT} ; IIF( !.F., s_oClass:AddMultiData( "OBJECT",, nScope + IIF( .F., 32, 0 ), { "oAlbCliT" }, .F., .F. ), )
+   _HB_MEMBER {AS OBJECT oAlbCliL} ; IIF( !.F., s_oClass:AddMultiData( "OBJECT",, nScope + IIF( .F., 32, 0 ), { "oAlbCliL" }, .F., .F. ), )
+   _HB_MEMBER {AS OBJECT oDbfTvta} ; IIF( !.F., s_oClass:AddMultiData( "OBJECT",, nScope + IIF( .F., 32, 0 ), { "oDbfTvta" }, .F., .F. ), )
+   _HB_MEMBER {AS OBJECT oDbfIva} ; IIF( !.F., s_oClass:AddMultiData( "OBJECT",, nScope + IIF( .F., 32, 0 ), { "oDbfIva" }, .F., .F. ), )
+   _HB_MEMBER {AS LOGIC lTvta} ; IIF( !.F., s_oClass:AddMultiData( "LOGIC", .F., nScope + IIF( .F., 32, 0 ), { "lTvta" }, .F., .F. ), )
+   _HB_MEMBER {AS OBJECT oOrdenado} ; IIF( !.F., s_oClass:AddMultiData( "OBJECT",, nScope + IIF( .F., 32, 0 ), { "oOrdenado" }, .F., .F. ), )
+   _HB_MEMBER {AS CHARACTER cOrdenado} ; IIF( !.F., s_oClass:AddMultiData( "CHARACTER", "Fechas", nScope + IIF( .F., 32, 0 ), { "cOrdenado" }, .F., .F. ), )
+   _HB_MEMBER {AS ARRAY aOrdenado} ; IIF( !.F., s_oClass:AddMultiData( "ARRAY", { "Clientes", "Fechas", "Documento" }, nScope + IIF( .F., 32, 0 ), { "aOrdenado" }, .F., .F. ), )
+
+   _HB_MEMBER Create(); IIF( .F., s_oClass:ModMethod( "Create", @TdAgeAlb_Create(), nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ), s_oClass:AddMethod( "Create", @TdAgeAlb_Create(), nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ));
+
+   _HB_MEMBER OpenFiles(); IIF( .F., s_oClass:ModMethod( "OpenFiles", @TdAgeAlb_OpenFiles(), nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ), s_oClass:AddMethod( "OpenFiles", @TdAgeAlb_OpenFiles(), nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ));
+
+   _HB_MEMBER CloseFiles(); IIF( .F., s_oClass:ModMethod( "CloseFiles", @TdAgeAlb_CloseFiles(), nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ), s_oClass:AddMethod( "CloseFiles", @TdAgeAlb_CloseFiles(), nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ));
+
+   _HB_MEMBER Resource( cFld); IIF( .F., s_oClass:ModMethod( "Resource", @TdAgeAlb_Resource(), nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ), s_oClass:AddMethod( "Resource", @TdAgeAlb_Resource(), nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ));
+
+   _HB_MEMBER lGenerate(); IIF( .F., s_oClass:ModMethod( "lGenerate", @TdAgeAlb_lGenerate(), nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ), s_oClass:AddMethod( "lGenerate", @TdAgeAlb_lGenerate(), nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ));
+
+   _HB_MEMBER AppendLine( aTotal); IIF( .F., s_oClass:ModMethod( "AppendLine", @TdAgeAlb_AppendLine(), nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ), s_oClass:AddMethod( "AppendLine", @TdAgeAlb_AppendLine(), nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ));
+
+; IF .F. ; __clsActive(s_oClass:hClass) ; s_oClass:Refresh() ; ELSE ; s_oClass:Create() ; END ; oClassInstance := __clsInst( s_oClass:hClass ) ; IF __ObjHasMsg( oClassInstance, "InitClass" ); oClassInstance:InitClass( hb_aParams() ) ; END ; ELSE ; oClassInstance := __clsInst( s_oClass:hClass ) ; END ; IF PCount() > 0 ; DIVERT TO (@DivertConstructorCall()) OF s_oClass ; END ; RETURN oClassInstance AS CLASS TdAgeAlb ;
+
+
+
+UTILITY STATIC function TdAgeAlb_Create() ; local Self AS CLASS TdAgeAlb := QSelf() AS CLASS TdAgeAlb
+
+   ::AddField( "cCodAge", "C",  3, 0, {|| "@!" },        "Cód. age.",        .F., "Cod. agente",         3 )
+   ::AddField( "cNomAge", "C", 50, 0, {|| "@!" },        "Agente",           .F., "Nom. agente",        25 )
+   ::FldCliente()
+   ::AddField( "cNumDoc", "C", 12, 0, {|| "" },          "Doc.",             .T., "Documento",          12 )
+   ::AddField( "dFecDoc", "D",  8, 0, {|| "" },          "Fecha",            .T., "Fecha",              12 )
+   ::AddField( "nTotNet", "N", 16, 6, {|| ::cPicOut },   "Neto",             .T., "Neto",               12 )
+   ::AddField( "nTotIva", "N", 16, 6, {|| ::cPicOut },   cImp(),              .T., cImp(),                12 )
+   ::AddField( "nTotReq", "N", 16, 3, {|| ::cPicOut },   "Rec",              .T., "Rec",                12 )
+   ::AddField( "nTotPnt", "N", 16, 6, {|| ::cPicPnt },   "Pnt.Ver.",         .T., "Punto verde",        12 )
+   ::AddField( "nTotTrn", "N", 16, 6, {|| ::cPicOut },   "Transp.",          .T., "Transporte",         12 )
+   ::AddField( "nTotDoc", "N", 16, 6, {|| ::cPicOut },   "Total",            .T., "Total",              12 )
+   ::AddField( "nTotCos", "N", 16, 6, {|| ::cPicOut },   "Costo",            .T., "Costo",              12 )
+   ::AddField( "nMarGen", "N", 16, 6, {|| ::cPicOut },   "Margen",           .T., "Margen",             12 )
+   ::AddField( "nRenTab", "N", 16, 6, {|| ::cPicOut },   "% Ren.",           .T., "% rentabilidad",     12 )
+   ::AddField( "nComAge", "N", 13, 6, {|| ::cPicOut },   "Com.Age.",         .T., "Comisión agente",    12 )
+
+   ::AddTmpIndex( "cCodCli", "cCodAge + cCodCli" )
+   ::AddTmpIndex( "cCodFec", "cCodAge + DtoS( dFecDoc )" )
+   ::AddTmpIndex( "cCodNum", "cCodAge + cNumDoc" )
+
+   ::AddGroup( {|| ::oDbf:cNomAge }, {|| "Agente  : " + Rtrim( ::oDbf:cNomAge ) + "-" + oRetFld( ::oDbf:cNomAge, ::oDbfAge ) }, {||"Total agente..."} )
+
+RETURN ( Self )
+
+
+
+UTILITY STATIC function TdAgeAlb_OpenFiles() ; local Self AS CLASS TdAgeAlb := QSelf() AS CLASS TdAgeAlb
+
+  local oBlock
+  local oError
+  local lOpen := .T.
+
+
+
+
+
+   oBlock   := ErrorBlock( {| oError | ApoloBreak( oError ) } )
+   BEGIN SEQUENCE
+
+   ::oAlbCliT := DbfServer( "ALBCLIT.DBF", ):NewOpen( "ALBCLIT.DBF",, ( cDriver() ),, ( cPatEmp() ), .F., .T., .F., .F. ) ; ::oAlbCliT:AddBag( "ALBCLIT.CDX" ) ; ::oAlbCliT:AddBag( ) ; ::oAlbCliT:AutoIndex()
+
+   ::oAlbCliL := DbfServer( "ALBCLIL.DBF", ):NewOpen( "ALBCLIL.DBF",, ( cDriver() ),, ( cPatEmp() ), .F., .T., .F., .F. ) ; ::oAlbCliL:AddBag( "ALBCLIL.CDX" ) ; ::oAlbCliL:AddBag( ) ; ::oAlbCliL:AutoIndex()
+
+   ::oDbfCli := DbfServer( "CLIENT.DBF", ):NewOpen( "CLIENT.DBF",, ( cDriver() ),, ( cPatCli() ), .F., .T., .F., .F. ) ; ::oDbfCli:AddBag( "CLIENT.CDX" ) ; ::oDbfCli:AddBag( ) ; ::oDbfCli:AutoIndex()
+
+   ::oDbfTvta := DbfServer( "TVTA.DBF", ):NewOpen( "TVTA.DBF",, ( cDriver() ),, ( cPatDat() ), .F., .T., .F., .F. ) ; ::oDbfTvta:AddBag( "TVTA.CDX" ) ; ::oDbfTvta:AddBag( ) ; ::oDbfTvta:AutoIndex()
+
+   ::oDbfIva := DbfServer( "TIVA.DBF", ):NewOpen( "TIVA.DBF",, ( cDriver() ),, ( cPatDat () ), .F., .T., .F., .F. ) ; ::oDbfIva:AddBag( "TIVA.CDX" ) ; ::oDbfIva:AddBag( ) ; ::oDbfIva:AutoIndex()
+
+   RECOVER USING oError
+
+      lOpen := .F.
+
+      msgStop( "Imposible abrir todas las bases de datos" )
+      ::CloseFiles()
+
+   end
+
+   ErrorBlock( oBlock )
+
+RETURN ( lOpen )
+
+
+
+UTILITY STATIC function TdAgeAlb_CloseFiles() ; local Self AS CLASS TdAgeAlb := QSelf() AS CLASS TdAgeAlb
+
+   if !Empty( ::oAlbCliT ) .AND. ::oAlbCliT:Used()
+      ::oAlbCliT:End()
+   end
+
+   if !Empty( ::oAlbCliL ) .AND. ::oAlbCliL:Used()
+      ::oAlbCliL:End()
+   end
+
+   if !Empty( ::oDbfTvta ) .AND. ::oDbfTvta:Used()
+      ::oDbfTvta:End()
+   end
+
+  if !Empty( ::oDbfCli ) .AND. ::oDbfCli:Used()
+      ::oDbfCli:End()
+   end
+
+  if !Empty( ::oDbfIva ) .AND. ::oDbfIva:Used()
+      ::oDbfIva:End()
+   end
+
+RETURN ( Self )
+
+
+
+UTILITY STATIC function TdAgeAlb_Resource( cFld) ; local Self AS CLASS TdAgeAlb := QSelf() AS CLASS TdAgeAlb
+
+   if !::StdResource( "INF_GEN25" )
+      return .F.
+   end
+
+
+
+
+
+   ::oDefAgeInf( 70, 80, 90, 100 )
+
+
+
+
+
+   ::oMtrInf:SetTotal( ::oAlbCliT:Lastrec() )
+
+   ::oDefResInf()
+
+
+
+
+
+   ::oEstado := TComboBox():ReDefine( 218, { | u | If( PCount()==0, ::cEstado, ::cEstado:= u ) }, ::aEstado, ::oFld:aDialogs[1],,,,,,, .F.,,,,,, )
+
+
+
+
+
+   ::oOrdenado := TComboBox():ReDefine( 219, { | u | If( PCount()==0, ::cOrdenado, ::cOrdenado:= u ) }, ::aOrdenado, ::oFld:aDialogs[1],,,,,,, .F.,,,,,, )
+
+RETURN ( Self )
+
+
+
+
+
+
+UTILITY STATIC function TdAgeAlb_lGenerate() ; local Self AS CLASS TdAgeAlb := QSelf() AS CLASS TdAgeAlb
+
+   local bValid   := {|| .T. }
+   local aTotal
+
+   ::oDlg:Disable()
+
+   ::oDbf:Zap()
+   ::oAlbCliT:GoTop()
+
+
+
+
+
+   ::aHeader      := {  {|| "Fecha   : " + Dtoc( Date() ) }, {|| "Periodo : " + Dtoc( ::dIniInf ) + " > " + Dtoc( ::dFinInf ) }, {|| "Agentes : " + ::cAgeOrg         + " > " + ::cAgeDes }, {|| "Estado  : " + ::cEstado }, {|| "Ordenado: " + ::cOrdenado } }
+
+
+
+
+
+   while ! ::oAlbCliT:Eof()
+
+
+
+
+
+      if ::oAlbCliT:dFecAlb >= ::dIniInf                                                    .AND. ::oAlbCliT:dFecAlb <= ::dFinInf                                                    .AND. ::oAlbCliT:cCodAge >= ::cAgeOrg                                                    .AND. ::oAlbCliT:cCodAge <= ::cAgeDes                                                    .AND. lChkSer( ::oAlbCliT:cSerAlb, ::aSer )
+
+         aTotal            := aTotAlbCli( ::oAlbCliT:cSerAlb + Str( ::oAlbCliT:nNumAlb ) + ::oAlbCliT:cSufAlb, ::oAlbCliT:cAlias, ::oAlbCliL:cAlias, ::oDbfIva:cAlias, ::oDbfDiv:cAlias )
+
+         do case
+            case ::oEstado:nAt == 1
+               if bValid   := {|| !::oAlbCliT:lFacturado }
+                  ::AppendLine( aTotal )
+               end
+            case ::oEstado:nAt == 2
+               if bValid   := {|| ::oAlbCliT:lFacturado }
+                  ::AppendLine( aTotal )
+               end
+            case ::oEstado:nAt == 3
+               ::AppendLine( aTotal )
+         end
+
+      end
+
+      ::oAlbCliT:Skip()
+
+      ::oMtrInf:AutoInc()
+
+   end
+
+   do case
+      case ::oOrdenado:nAt == 1
+         ::oDbf:OrdSetFocus( "CCODCLI" )
+      case ::oOrdenado:nAt == 2
+         ::oDbf:OrdSetFocus( "CCODFEC" )
+      case ::oOrdenado:nAt == 3
+         ::oDbf:OrdSetFocus( "CCODNUM" )
+   end
+
+   ::oDlg:Enable()
+
+RETURN ( ::oDbf:LastRec() > 0 )
+
+
+
+UTILITY STATIC function TdAgeAlb_AppendLine( aTotal) ; local Self AS CLASS TdAgeAlb := QSelf() AS CLASS TdAgeAlb
+
+   ::oDbf:Append()
+
+   ::oDbf:cCodAge    := ::oAlbCliT:cCodAge
+
+   if ::oDbfAge:Seek( ::oAlbCliT:cCodAge )
+      ::oDbf:cNomAge := Rtrim( ::oDbfAge:cApeAge ) + ", " + ::oDbfAge:cNbrAge
+   end
+
+   ::oDbf:cNomAge    := ::oAlbCliT:cCodAge
+   ::oDbf:cCodCli    := ::oAlbCliT:cCodCli
+   ::oDbf:cNomCli    := ::oAlbCliT:cNomCli
+
+   ::AddCliente( ::oAlbCliT:cCodCli, ::oAlbCliT, .F. )
+
+   aTotal            := aTotAlbCli( ::oAlbCliT:cSerAlb + Str( ::oAlbCliT:nNumAlb ) + ::oAlbCliT:cSufAlb, ::oAlbCliT:cAlias, ::oAlbCliL:cAlias, ::oDbfIva:cAlias, ::oDbfDiv:cAlias )
+
+   ::oDbf:dFecDoc    := ::oAlbCliT:dFecAlb
+   ::oDbf:cNumDoc    := ::oAlbCliT:cSerAlb + "/" + AllTrim( Str( ::oAlbCliT:nNumAlb ) ) + "/" + ::oAlbCliT:cSufAlb
+   ::oDbf:nTotNet    := aTotal[ 1 ] - aTotal[ 5 ] - aTotal[ 6 ]
+   ::oDbf:nTotIva    := aTotal[ 2 ]
+   ::oDbf:nTotReq    := aTotal[ 3 ]
+   ::oDbf:nTotDoc    := aTotal[ 4 ]
+   ::oDbf:nTotPnt    := aTotal[ 5 ]
+   ::oDbf:nTotTrn    := aTotal[ 6 ]
+   ::oDbf:nComAge    := aTotal[ 7 ]
+
+   ::oDbf:nTotCos    := aTotal[ 9 ]
+   ::oDbf:nMarGen    := aTotal[ 4 ] - aTotal[ 9 ]
+   ::oDbf:nRenTab    := ( ( aTotal[ 4 ] / aTotal[ 9 ] ) - 1 ) * 100
+
+   ::oDbf:Save()
+
+RETURN ( Self )

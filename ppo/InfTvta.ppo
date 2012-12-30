@@ -1,0 +1,200 @@
+#line 112 "hbclass.ch"
+   DYNAMIC DivertConstructorCall
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+DECLARE HBClass  New( cName AS String, OPTIONAL SuperParams ) AS CLASS HBClass  Create() AS Object  Instance() AS Object  AddClsMethod( cName AS String, @MethodName(), nScope AS Numeric, n2 AS Numeric, n3 AS Numeric )  AddDelegate( cName AS String, cDelegate AS String, cObject AS String, nScope AS Numeric, lPersistent AS LOGICAL )  AddMultiClsData( cType AS String, uVal, nScope AS Numeric, aDatas AS Array OF String )  AddMultiData( cType AS String, uVal, nScope AS Numeric, aDatas AS Array OF String, x AS LOGICAL, lPer AS LOGICAL )  AddMethod( cName AS String, @MethodName(), nScope AS Numeric, lPersistent AS LOGICAL )  AddInLine( cName AS String, bBlock AS CodeBlock, nScope AS Numeric, lPersistent AS LOGICAL )  AddVirtual( cName AS String )  ModMethod( cName AS String, @MethodName(), nScope AS Numeric, lPersistent AS LOGICAL )  ModClsMethod( cName AS String, @MethodName(), nScope AS Numeric )  ModInline( cName AS String, bBlock AS CodeBlock, nScope AS Numeric, lPersistent AS LOGICAL )  SetOnError( @MethodName() )
+#line 85 "\Fwh1204\Include\FiveWin.Ch"
+   EXTERNAL GetProcAdd
+   EXTERNAL TActiveX
+
+
+
+
+extern errorsys
+#line 8 ".\Prg\InfTvta.prg"
+_HB_CLASS InfTVta ; UTILITY FUNCTION InfTVta(...); static s_oClass ; local oClassInstance ; local nScope ; nScope := 1 ; if s_oClass == NIL ; s_oClass := IIF(.F.,, HBClass():New( "InfTVta" , {TInfGen():classh} ) ) ; ;
+
+   _HB_MEMBER {AS OBJECT oDbfTVta} ; IIF( !.F., s_oClass:AddMultiData( "OBJECT",, nScope + IIF( .F., 32, 0 ), { "oDbfTVta" }, .F., .F. ), )
+   _HB_MEMBER {AS CHARACTER cTVtaOrg} ; IIF( !.F., s_oClass:AddMultiData( "CHARACTER",, nScope + IIF( .F., 32, 0 ), { "cTVtaOrg" }, .F., .F. ), )
+   _HB_MEMBER {AS CHARACTER cTVtaDes} ; IIF( !.F., s_oClass:AddMultiData( "CHARACTER",, nScope + IIF( .F., 32, 0 ), { "cTVtaDes" }, .F., .F. ), )
+   _HB_MEMBER {AS LOGIC lAllTVta} ; IIF( !.F., s_oClass:AddMultiData( "LOGIC", .T., nScope + IIF( .F., 32, 0 ), { "lAllTVta" }, .F., .F. ), )
+
+   _HB_MEMBER Create(); IIF( .F., s_oClass:ModMethod( "Create", @InfTVta_Create(), nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ), s_oClass:AddMethod( "Create", @InfTVta_Create(), nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ));
+
+   _HB_MEMBER OpenFiles(); IIF( .F., s_oClass:ModMethod( "OpenFiles", @InfTVta_OpenFiles(), nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ), s_oClass:AddMethod( "OpenFiles", @InfTVta_OpenFiles(), nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ));
+
+   _HB_MEMBER CloseFiles(); IIF( .F., s_oClass:ModMethod( "CloseFiles", @InfTVta_CloseFiles(), nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ), s_oClass:AddMethod( "CloseFiles", @InfTVta_CloseFiles(), nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ));
+
+   _HB_MEMBER lResource( cFld); IIF( .F., s_oClass:ModMethod( "lResource", @InfTVta_lResource(), nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ), s_oClass:AddMethod( "lResource", @InfTVta_lResource(), nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ));
+
+   _HB_MEMBER lGenerate(); IIF( .F., s_oClass:ModMethod( "lGenerate", @InfTVta_lGenerate(), nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ), s_oClass:AddMethod( "lGenerate", @InfTVta_lGenerate(), nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ));
+
+; IF .F. ; __clsActive(s_oClass:hClass) ; s_oClass:Refresh() ; ELSE ; s_oClass:Create() ; END ; oClassInstance := __clsInst( s_oClass:hClass ) ; IF __ObjHasMsg( oClassInstance, "InitClass" ); oClassInstance:InitClass( hb_aParams() ) ; END ; ELSE ; oClassInstance := __clsInst( s_oClass:hClass ) ; END ; IF PCount() > 0 ; DIVERT TO (@DivertConstructorCall()) OF s_oClass ; END ; RETURN oClassInstance AS CLASS InfTVta ;
+
+
+
+UTILITY STATIC function InfTVta_Create() ; local Self AS CLASS InfTVta := QSelf() AS CLASS InfTVta
+
+   ::AddField( "CCODMOV",      "C",  2, 0, {|| "" },   "Cod. Mov.",      .T., "Tipo de movimiento",                  8, .F. )
+   ::AddField( "CDESMOV",      "C", 20, 0, {|| "" },   "Nom. Mov.",      .T., "Descripción del tipo de movimiento", 20, .F. )
+
+   ::AddTmpIndex ( "CCODMOV", "CCODMOV" )
+
+   ::lDefFecInf   := .F.
+   ::lDefSerInf   := .F.
+   ::lDefDivInf   := .F.
+
+RETURN ( Self )
+
+
+
+UTILITY STATIC function InfTVta_OpenFiles() ; local Self AS CLASS InfTVta := QSelf() AS CLASS InfTVta
+
+   local lOpen    := .T.
+   local oBlock   := ErrorBlock( {| oError | ApoloBreak( oError ) } )
+
+   BEGIN SEQUENCE
+
+   ::oDbfTVta := DbfServer( "TVTA.DBF", ):NewOpen( "TVTA.DBF",, ( cDriver() ),, ( cPatDat() ), .F., .T., .F., .F. ) ; ::oDbfTVta:AddBag( "TVTA.CDX" ) ; ::oDbfTVta:AddBag( ) ; ::oDbfTVta:AutoIndex()
+
+   RECOVER
+
+      msgStop( "Imposible abrir todas las bases de datos" )
+      ::CloseFiles()
+      lOpen          := .F.
+
+   end
+
+   ErrorBlock( oBlock )
+
+RETURN ( lOpen )
+
+
+
+UTILITY STATIC function InfTVta_CloseFiles() ; local Self AS CLASS InfTVta := QSelf() AS CLASS InfTVta
+
+   if !Empty( ::oDbfTVta ) .AND. ::oDbfTVta:Used()
+      ::oDbfTVta:End()
+   end
+
+   ::oDbfTVta  := nil
+
+
+RETURN ( Self )
+
+
+
+UTILITY STATIC function InfTVta_lResource( cFld) ; local Self AS CLASS InfTVta := QSelf() AS CLASS InfTVta
+
+   local cSayTVtaOrg
+   local cSayTVtaDes
+   local oSayTVtaOrg
+   local oSayTVtaDes
+   local oTVtaOrg
+   local oTVtaDes
+
+   if !::StdResource( "INF_TVTA01" )
+      return .F.
+   end
+
+   ::cTVtaOrg   := dbFirst( ::oDbfTVta, 1 )
+   ::cTVtaDes   := dbLast(  ::oDbfTVta, 1 )
+   cSayTVtaOrg  := dbFirst( ::oDbfTVta, 2 )
+   cSayTVtaDes  := dbLast(  ::oDbfTVta, 2 )
+
+
+
+   TCheckBox():ReDefine( ( 60 ), { | u | If( PCount()==0, ::lAllTVta, ::lAllTVta:= u ) }, ::oFld:aDialogs[1],,,,,,, .F.,, .F. )
+
+
+
+
+
+
+   oTVtaOrg := TGetHlp():ReDefine( ( 70 ), { | u | If( PCount()==0, ::cTVtaOrg, ::cTVtaOrg:= u ) }, ::oFld:aDialogs[1],,,, "N/W*",,,,, .F., {||     ( !::lAllTVta )},, .F., .F.,,,,,, nil, "LUPA",, )
+
+      oTVtaOrg:bValid   := {|| cTVta( oTVtaOrg, ::oDbfTVta:cAlias, oSayTVtaOrg ) }
+      oTVtaOrg:bHelp    := {|| BrwTVta( oTVtaOrg, ::oDbfTVta:cAlias, oSayTVtaOrg ) }
+
+
+
+
+
+   oSayTVtaOrg := TGetHlp():ReDefine( ( 80 ), { | u | If( PCount()==0, cSayTVtaOrg, cSayTVtaOrg:= u ) }, ::oFld:aDialogs[1],,,, "N/W*",,,,, .F., {||     .F.},, .F., .F.,,,,,, nil,,, )
+
+
+
+
+
+
+   oTVtaDes := TGetHlp():ReDefine( ( 90 ), { | u | If( PCount()==0, ::cTVtaDes, ::cTVtaDes:= u ) }, ::oFld:aDialogs[1],,,, "N/W*",,,,, .F., {||     ( !::lAllTVta )},, .F., .F.,,,,,, nil, "LUPA",, )
+
+      oTVtaDes:bValid   := {|| cTVta( oTVtaDes, ::oDbfTVta:cAlias, oSayTVtaDes ) }
+      oTVtaDes:bHelp    := {|| BrwTVta( oTVtaDes, ::oDbfTVta:cAlias, oSayTVtaDes ) }
+
+
+
+
+   oSayTVtaDes := TGetHlp():ReDefine( ( 100 ), { | u | If( PCount()==0, cSayTVtaDes, cSayTVtaDes:= u ) }, ::oFld:aDialogs[1],,,,,,,,, .F., {||     .F.},, .F., .F.,,,,,, nil,,, )
+
+   ::oMtrInf:SetTotal( ::oDbfTVta:Lastrec() )
+
+   ::CreateFilter( aItmTVta(), ::oDbfTVta:cAlias )
+
+RETURN .T.
+
+
+
+
+
+
+UTILITY STATIC function InfTVta_lGenerate() ; local Self AS CLASS InfTVta := QSelf() AS CLASS InfTVta
+
+   ::oDlg:Disable()
+   ::oBtnCancel:Enable()
+   ::oDbf:Zap()
+
+
+   ::aHeader      := {  {|| "Fecha          : " + Dtoc( Date() ) }, {|| "Tipos de venta : " + if( ::lAllTVta, "Todos", AllTrim( ::cTVtaOrg ) + " > " + AllTrim( ::cTVtaDes ) ) } }
+
+   ::oDbfTVta:OrdSetFocus( "CCODMOV" )
+
+   ::oDbfTVta:GoTop()
+   while !::lBreak .AND. !::oDbfTVta:Eof()
+
+      if ( ::lAllTVta .OR. ( ::oDbfTVta:cCodMov >= ::cTVtaOrg .AND. ::oDbfTVta:cCodMov <= ::cTVtaDes ) )
+
+         ::oDbf:Append()
+
+         ::oDbf:cCodMov   := ::oDbfTVta:cCodMov
+         ::oDbf:cDesMov   := ::oDbfTVta:cDesMov
+
+         ::oDbf:Save()
+
+      end
+
+      ::oDbfTVta:Skip()
+
+      ::oMtrInf:AutoInc()
+
+   end
+
+   ::oMtrInf:AutoInc( ::oDbfTVta:LastRec() )
+
+   ::oDlg:Enable()
+
+RETURN ( ::oDbf:LastRec() > 0 )

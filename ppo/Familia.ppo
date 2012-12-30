@@ -1,0 +1,3267 @@
+#line 112 "hbclass.ch"
+   DYNAMIC DivertConstructorCall
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+DECLARE HBClass  New( cName AS String, OPTIONAL SuperParams ) AS CLASS HBClass  Create() AS Object  Instance() AS Object  AddClsMethod( cName AS String, @MethodName(), nScope AS Numeric, n2 AS Numeric, n3 AS Numeric )  AddDelegate( cName AS String, cDelegate AS String, cObject AS String, nScope AS Numeric, lPersistent AS LOGICAL )  AddMultiClsData( cType AS String, uVal, nScope AS Numeric, aDatas AS Array OF String )  AddMultiData( cType AS String, uVal, nScope AS Numeric, aDatas AS Array OF String, x AS LOGICAL, lPer AS LOGICAL )  AddMethod( cName AS String, @MethodName(), nScope AS Numeric, lPersistent AS LOGICAL )  AddInLine( cName AS String, bBlock AS CodeBlock, nScope AS Numeric, lPersistent AS LOGICAL )  AddVirtual( cName AS String )  ModMethod( cName AS String, @MethodName(), nScope AS Numeric, lPersistent AS LOGICAL )  ModClsMethod( cName AS String, @MethodName(), nScope AS Numeric )  ModInline( cName AS String, bBlock AS CodeBlock, nScope AS Numeric, lPersistent AS LOGICAL )  SetOnError( @MethodName() )
+#line 85 "\Fwh1204\Include\FiveWin.ch"
+   EXTERNAL GetProcAdd
+   EXTERNAL TActiveX
+
+
+
+
+extern errorsys
+#line 71 ".\Prg\Familia.prg"
+static oWndBrw
+static dbfPrv
+static dbfTmp
+static dbfArticulo
+static oGrpFam
+static oFraPub
+static oTComandas
+static oComentarios
+static cNewFil
+static bEdit         := { |aTmp, aGet, dbfFam, oBrw, bWhen, bValid, nMode | EdtRec( aTmp, aGet, dbfFam, oBrw, bWhen, bValid, nMode ) }
+static bEdit2        := { |aTmp, aGet, dbfTmp, oBrw, bWhen, bValid, nMode | EdtDet( aTmp, aGet, dbfTmp, oBrw, bWhen, bValid, nMode ) }
+
+
+
+
+static dbfFamilia
+static dbfFamPrv
+
+
+
+
+
+
+
+
+
+FUNCTION BrwFamilia( oGet, oGet2, lAdd )
+
+    local oDlg
+    local oBrw
+   local cCod     := Space( 16 )
+    local oGet1
+    local cGet1
+   local nOrd     := GetBrwOpt( "BrwFamilia" )
+    local oCbxOrd
+   local aCbxOrd  := { "Código", "Nombre" }
+   local cCbxOrd
+   local nLevel   := nLevelUsr( "01012" )
+   local lOpen    := .F.
+
+   IIF( lAdd == nil, lAdd := .T., ) ;
+
+   nOrd           := Min( Max( nOrd, 1 ), len( aCbxOrd ) )
+   cCbxOrd        := aCbxOrd[ nOrd ]
+
+   if !OpenFiles( .T. )
+      return nil
+   end
+
+   nOrd           := ( dbfFamilia )->( OrdSetFocus( nOrd ) )
+
+   ( dbfFamilia )->( dbGoTop() )
+
+   oDlg = TDialog():New(,,,, "Familias de artículos", "HELPENTRY",, .F.,,,,,, .F.,,,,,, .F., )
+
+
+
+
+
+
+        oGet1 := TGetHlp():ReDefine( 104, { | u | If( PCount()==0, cGet1, cGet1:= u ) }, oDlg,,, {||    ( OrdClearScope( oBrw, dbfFamilia ) )},,,,,, .F.,, {|nKey,nFlags,Self| ( AutoSeek( nKey, nFlags, Self, oBrw, dbfFamilia ) ) }, .F., .F.,,,,,, nil, "FIND",, )
+
+
+
+
+
+
+        oCbxOrd := TComboBox():ReDefine( 102, { | u | If( PCount()==0, cCbxOrd, cCbxOrd:= u ) }, aCbxOrd, oDlg,,, {|Self|( ( dbfFamilia )->( OrdSetFocus( oCbxOrd:nAt ) ), oBrw:refresh(), oGet1:SetFocus() )},,,, .F.,,,,,, )
+
+      oBrw                 := IXBrowse():New( oDlg )
+
+      oBrw:bClrSel         := {|| { 0, ( 229 + ( 229 * 256 ) + ( 229 * 65536 ) ) } }
+      oBrw:bClrSelFocus    := {|| { 0, ( 167 + ( 205 * 256 ) + ( 240 * 65536 ) ) } }
+
+      oBrw:cAlias          := dbfFamilia
+      oBrw:nMarqueeStyle   := 5
+      oBrw:cName           := "Browse.Familias"
+
+      with object ( oBrw:AddCol() )
+         :cHeader          := "Código"
+         :cSortOrder       := "cCodFam"
+         :bEditValue       := {|| ( dbfFamilia )->cCodFam }
+         :nWidth           := 120
+         :bLClickHeader    := {| nMRow, nMCol, nFlags, oCol | oCbxOrd:Set( oCol:cHeader ) }
+      end
+
+      with object ( oBrw:AddCol() )
+         :cHeader          := "Nombre"
+         :cSortOrder       := "cNomFam"
+         :bEditValue       := {|| ( dbfFamilia )->cNomFam }
+         :nWidth           := 260
+         :bLClickHeader    := {| nMRow, nMCol, nFlags, oCol | oCbxOrd:Set( oCol:cHeader ) }
+      end
+
+      oBrw:bLDblClick      := {|| oDlg:end( 1 ) }
+      oBrw:bRClicked       := {| nRow, nCol, nFlags | oBrw:RButtonDown( nRow, nCol, nFlags ) }
+
+      oBrw:CreateFromResource( 105 )
+
+
+
+
+        TButton():ReDefine( 1, {||( oDlg:end(1) )}, oDlg,,, .F.,,,, .F. )
+
+
+
+
+        TButton():ReDefine( 2, {||( oDlg:end() )}, oDlg,,, .F.,,,, .F. )
+
+
+
+
+
+        TButton():ReDefine( 500, {||( WinAppRec( oBrw, bEdit, dbfFamilia ) )}, oDlg,,, .F., {||     ( nAnd( nLevel, 2 ) <> 0 .AND. !IsReport() .AND. lAdd )},,, .F. )
+
+
+
+
+
+        TButton():ReDefine( 501, {||( WinEdtRec( oBrw, bEdit, dbfFamilia ) )}, oDlg,,, .F., {||     ( nAnd( nLevel, 4 ) <> 0 .AND. !IsReport() .AND. lAdd )},,, .F. )
+
+   if nAnd( nLevel, 2 ) <> 0 .AND. !IsReport()
+      oDlg:AddFastKey( 113,    {|| WinAppRec( oBrw, bEdit, dbfFamilia ) } )
+   end
+
+   if nAnd( nLevel, 4 ) <> 0 .AND. !IsReport()
+      oDlg:AddFastKey( 114,    {|| WinEdtRec( oBrw, bEdit, dbfFamilia ) } )
+   end
+
+   oDlg:AddFastKey( 116,       {|| oDlg:end( 1 ) } )
+   oDlg:AddFastKey( 13,   {|| oDlg:end( 1 ) } )
+
+   oDlg:Activate( oDlg:bLClicked, oDlg:bMoved, oDlg:bPainted, .T.,,,, oDlg:bRClicked,,, )
+
+   DestroyFastFilter( dbfFamilia )
+
+   SetBrwOpt( "BrwFamilia", ( dbfFamilia )->( OrdNumber() ) )
+
+   if oDlg:nResult == 1
+
+      cCod                 := ( dbfFamilia )->cCodFam
+
+      if !Empty( oGet )
+         oGet:cText( cCod )
+      end
+
+      if !Empty( oGet2 )
+         oGet2:cText( ( dbfFamilia )->cNomFam )
+      end
+
+   end
+
+   CloseFiles()
+
+   if !Empty( oGet )
+      oGet:SetFocus()
+   end
+
+RETURN ( cCod )
+
+
+
+
+
+
+FUNCTION BrwFamiliaCombinada( oGet, dbfFamilia, oGet2 )
+
+    local oDlg
+    local oBrw
+   local nRec
+    local oGet1
+    local cGet1
+   local nOrd     := GetBrwOpt( "BrwFamilia" )
+    local oCbxOrd
+   local aCbxOrd  := { "Código", "Nombre" }
+   local cCbxOrd
+   local nLevel   := nLevelUsr( "01012" )
+   local lOpen    := .F.
+
+   nRec           := ( dbfFamilia )->( RecNo() )
+
+   nOrd           := Min( Max( nOrd, 1 ), len( aCbxOrd ) )
+   cCbxOrd        := aCbxOrd[ nOrd ]
+
+   nOrd           := ( dbfFamilia )->( OrdSetFocus( nOrd ) )
+
+   ( dbfFamilia )->( dbGoTop() )
+
+   oDlg = TDialog():New(,,,, "Familias de artículos", "HELPENTRY",, .F.,,,,,, .F.,,,,,, .F., )
+
+
+
+
+
+
+        oGet1 := TGetHlp():ReDefine( 104, { | u | If( PCount()==0, cGet1, cGet1:= u ) }, oDlg,,, {||    ( OrdClearScope( oBrw, dbfFamilia ) )},,,,,, .F.,, {|nKey,nFlags,Self| ( AutoSeek( nKey, nFlags, Self, oBrw, dbfFamilia ) ) }, .F., .F.,,,,,, nil, "FIND",, )
+
+
+
+
+
+
+        oCbxOrd := TComboBox():ReDefine( 102, { | u | If( PCount()==0, cCbxOrd, cCbxOrd:= u ) }, aCbxOrd, oDlg,,, {|Self|( ( dbfFamilia )->( OrdSetFocus( oCbxOrd:nAt ) ), oBrw:refresh(), oGet1:SetFocus() )},,,, .F.,,,,,, )
+
+
+
+
+
+
+
+
+
+
+
+
+
+      oBrw := XbrowseNew( oDlg, 0, 0,,, { {||  ( dbfFamilia )->cCodFam}, {|| ( dbfFamilia )->cNomFam} }, {"Código", "Nombre"}, {60 , 200},,,,,,,,, .F., ( dbfFamilia ),, .F.,, .F., 105, .F., .F. ,,,,, .F., .F., .F., .F.,,,,, .F., .F. )
+
+      oBrw:bClrSel         := {|| { 0, ( 229 + ( 229 * 256 ) + ( 229 * 65536 ) ) } }
+      oBrw:bClrSelFocus    := {|| { 0, ( 167 + ( 205 * 256 ) + ( 240 * 65536 ) ) } }
+
+      oBrw:bLDblClick      := {|| oDlg:end( 1 ) }
+
+      oBrw:nMarqueeStyle   := 5
+
+
+
+
+        TButton():ReDefine( 1, {||( oDlg:end(1) )}, oDlg,,, .F.,,,, .F. )
+
+
+
+
+        TButton():ReDefine( 2, {||( oDlg:end() )}, oDlg,,, .F.,,,, .F. )
+
+
+
+
+
+        TButton():ReDefine( 500, {||( nil )}, oDlg,,, .F., {||     ( .F. )},,, .F. )
+
+
+
+
+
+        TButton():ReDefine( 501, {||( nil )}, oDlg,,, .F., {||     ( .F. )},,, .F. )
+
+   oDlg:AddFastKey( 116,       {|| oDlg:end( 1 ) } )
+   oDlg:AddFastKey( 13,   {|| oDlg:end( 1 ) } )
+
+   oDlg:Activate( oDlg:bLClicked, oDlg:bMoved, oDlg:bPainted, .T.,,,, oDlg:bRClicked,,, )
+
+   DestroyFastFilter( dbfFamilia )
+
+   SetBrwOpt( "BrwFamilia", ( dbfFamilia )->( OrdNumber() ) )
+
+   if oDlg:nResult == 1
+
+      oGet:cText( ( dbfFamilia )->cCodFam )
+
+      if oGet2 <> NIL
+         oGet2:cText( ( dbfFamilia )->cNomFam )
+      end
+
+   end
+
+   oGet:SetFocus()
+
+   ( dbfFamilia )->( dbGoTo( nRec ) )
+
+RETURN ( oDlg:nResult == 1 )
+
+
+
+static function OpenFiles()
+
+   local lOpen       := .T.
+   local oError
+   local oBlock
+
+   oBlock            := ErrorBlock( {| oError | ApoloBreak( oError ) } )
+   BEGIN SEQUENCE
+
+   dbUseArea( .T., ( cDriver() ), ( cPatArt() + "Familias.Dbf" ), ( cCheckArea( "FAMILIAS", @dbfFamilia ) ), if(.T. .OR. .F., !.F., NIL), .F.,, )
+   if !lAIS() ; ordListAdd( ( cPatArt() + "Familias.Cdx" ) ) ; else ; ordSetFocus( 1 ) ; end
+
+   dbUseArea( .T., ( cDriver() ), ( cPatArt() + "FamPrv.Dbf" ), ( cCheckArea( "FAMPRV", @dbfFamPrv ) ), if(.T. .OR. .F., !.F., NIL), .F.,, )
+   if !lAIS() ; ordListAdd( ( cPatArt() + "FamPrv.Cdx" ) ) ; else ; ordSetFocus( 1 ) ; end
+
+   dbUseArea( .T., ( cDriver() ), ( cPatPrv() + "Provee.Dbf" ), ( cCheckArea( "PROVEE", @dbfPrv ) ), if(.T. .OR. .F., !.F., NIL), .F.,, )
+   if !lAIS() ; ordListAdd( ( cPatPrv() + "Provee.Cdx" ) ) ; else ; ordSetFocus( 1 ) ; end
+
+   dbUseArea( .T., ( cDriver() ), ( cPatArt() + "Articulo.Dbf" ), ( cCheckArea( "ARTICULO", @dbfArticulo ) ), if(.T. .OR. .F., !.F., NIL), .F.,, )
+   if !lAIS() ; ordListAdd( ( cPatArt() + "Articulo.Cdx" ) ) ; else ; ordSetFocus( 1 ) ; end
+   ( dbfArticulo )->( OrdSetFocus( "cFamCod" ) )
+
+   oGrpFam           := TGrpFam():Create( cPatArt() )
+   oGrpFam:OpenFiles()
+
+   oFraPub           := TFrasesPublicitarias():Create( cPatArt() )
+   oFraPub:OpenFiles()
+
+   oTComandas        := TComandas():Create( cPatArt() )
+   oTComandas:OpenFiles()
+
+   oComentarios      := TComentarios():Create( cPatArt() )
+   oComentarios:OpenFiles()
+
+   RECOVER USING oError
+
+      msgStop( ErrorMessage( oError ), "Imposible abrir todas las bases de datos de familias" )
+
+      CloseFiles()
+
+      lOpen          := .F.
+
+   end
+
+   ErrorBlock( oBlock )
+
+return ( lOpen )
+
+
+
+static function CloseFiles()
+
+   ( dbfFamilia   )->( dbCloseArea() )
+   ( dbfFamPrv    )->( dbCloseArea() )
+   ( dbfArticulo  )->( dbCloseArea() )
+   ( dbfPrv       )->( dbCloseArea() )
+
+   if !Empty( oGrpFam )
+      oGrpFam:End()
+   end
+
+   if !Empty( oFraPub )
+      oFraPub:End()
+   end
+
+   if !Empty( oTComandas )
+      oTComandas:End()
+   end
+
+   if !Empty( oComentarios )
+      oComentarios:End()
+   end
+
+   oWndBrw        := nil
+   dbfArticulo    := nil
+   dbfFamilia     := nil
+   dbfPrv         := nil
+   oComentarios   := nil
+
+return .T.
+
+
+
+FUNCTION Familia( oMenuItem, oWnd )
+
+   local oSnd
+   local nLevel
+
+   IIF( oMenuItem == nil, oMenuItem := "01012", ) ;
+   IIF( oWnd == nil, oWnd := oWnd(), ) ;
+
+   if oWndBrw == NIL
+
+
+
+
+
+      nLevel            := nLevelUsr( oMenuItem )
+
+      if nAnd( nLevel, 1 ) <> 0
+         msgStop( "Acceso no permitido." )
+         return nil
+      end
+
+
+
+
+
+      if oWnd <> nil
+         SysRefresh(); oWnd:CloseAll(); SysRefresh()
+      end
+
+      if !OpenFiles()
+         return nil
+      end
+
+
+
+
+
+      AddMnuNext( "Familias de artículos", ProcName() )
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+      oWndBrw := TShell():New( 0, 0, 22, 80, "Familias de artículos",, oWnd,,, .F.,,, ( dbfFamilia ),,,,, {"Código", "Nombre", "Posición"}, {||( WinAppRec( oWndBrw:oBrw, bEdit, dbfFamilia ) )}, {||( WinEdtRec( oWndBrw:oBrw, bEdit, dbfFamilia ) )}, {||( WinDelRec( oWndBrw:oBrw, dbfFamilia, {|| DeleteFamiliaProveedores() } ) )}, {||( WinDupRec( oWndBrw:oBrw, bEdit, dbfFamilia ) )}, nil, nLevel, "Cubes_16", ( 104 + ( 0 * 256 ) + ( 63 * 65536 ) ),,, .T. )
+
+
+
+      with object ( oWndBrw:AddXCol() )
+         :cHeader          := "Envio"
+         :bStrData         := {|| "" }
+         :bEditValue       := {|| ( dbfFamilia )->lSelDoc }
+         :nWidth           := 20
+         :SetCheck( { "Sel16", "Nil16" } )
+         :nHeadBmpNo       := 3
+         :AddResource( "Lbl16" )
+      end
+
+      with object ( oWndBrw:AddXCol() )
+         :cHeader          := "Publicar"
+         :bStrData         := {|| "" }
+         :bEditValue       := {|| ( dbfFamilia )->lPubInt }
+         :nWidth           := 20
+         :SetCheck( { "Sel16", "Nil16" } )
+         :nHeadBmpNo       := 3
+         :AddResource( "SndInt16" )
+      end
+
+      with object ( oWndBrw:AddXCol() )
+         :cHeader          := "Táctil"
+         :bStrData         := {|| "" }
+         :bEditValue       := {|| ( dbfFamilia )->lIncTpv }
+         :nWidth           := 20
+         :SetCheck( { "Sel16", "Nil16" } )
+         :nHeadBmpNo       := 3
+         :AddResource( "Tactil16" )
+      end
+
+      with object ( oWndBrw:AddXCol() )
+         :cHeader          := "Código"
+         :nHeadBmpNo       := 1
+         :cSortOrder       := "CCODFAM"
+         :bEditValue       := {|| ( dbfFamilia )->cCodFam }
+         :nWidth           := 80
+         :bLClickHeader    := {| nMRow, nMCol, nFlags, oCol | oWndBrw:ClickOnHeader( oCol ) }
+         :AddResource( "Sel16" )
+      end
+
+      with object ( oWndBrw:AddXCol() )
+         :cHeader          := "Nombre"
+         :cSortOrder       := "CNOMFAM"
+         :bEditValue       := {|| ( dbfFamilia )->cNomFam }
+         :nWidth           := 260
+         :bLClickHeader    := {| nMRow, nMCol, nFlags, oCol | oWndBrw:ClickOnHeader( oCol ) }
+      end
+
+      with object ( oWndBrw:AddXCol() )
+         :cHeader          := "Grupo"
+         :bStrData         := {|| ( dbfFamilia )->cCodGrp }
+         :nWidth           := 60
+      end
+
+      with object ( oWndBrw:AddXCol() )
+         :cHeader          := "Prop. 1"
+         :bStrData         := {|| ( dbfFamilia )->cCodPrp1 }
+         :nWidth           := 60
+      end
+
+      with object ( oWndBrw:AddXCol() )
+         :cHeader          := "Prop. 2"
+         :bStrData         := {|| ( dbfFamilia )->cCodPrp2 }
+         :nWidth           := 60
+      end
+
+      with object ( oWndBrw:AddXCol() )
+         :cHeader          := "Posición"
+         :cSortOrder       := "nPosTpv"
+         :bEditValue       := {|| if( ( dbfFamilia )->lIncTpv, Trans( ( dbfFamilia )->nPosTpv, "99" ), "" ) }
+         :nWidth           := 80
+         :bLClickHeader    := {| nMRow, nMCol, nFlags, oCol | oWndBrw:ClickOnHeader( oCol ) }
+         :nDataStrAlign    := 1
+         :nHeadStrAlign    := 1
+      end
+
+
+      oWndBrw:CreateXFromCode()
+
+
+
+
+
+      oWndBrw:NewAt( "BUS",,, {||( oWndBrw:SearchSetFocus() )}, "(B)uscar", "B",,,,, .F. )
+
+      oWndBrw:AddSeaBar()
+
+
+
+
+
+
+
+
+      oWndBrw:NewAt( "NEW",,, {||( oWndBrw:RecAdd() )}, "(A)ñadir", "A",,, 2,, .F. )
+
+
+
+
+
+
+
+        oWndBrw:NewAt( "DUP",,, {||( oWndBrw:RecDup() )}, "(D)uplicar", "D",,, 2,, .F. )
+
+
+
+
+
+
+        oWndBrw:NewAt( "EDIT",,, {||( oWndBrw:RecEdit() )}, "(M)odificar", "M",,, 4,, .F. )
+
+
+
+
+
+
+        oWndBrw:NewAt( "ZOOM",,, {||( WinZooRec( oWndBrw:oBrw, bEdit, dbfFamilia ) )}, "(Z)oom", "Z",,, 8,, .F. )
+
+
+
+
+
+
+        oWndBrw:NewAt( "DEL",,, {||( oWndBrw:RecDel() )}, "(E)liminar", "E",,, 16,, .F. )
+
+
+
+
+
+
+      oWndBrw:NewAt( "IMP",,, {||( TListadoFamilias():New( "Listado de Familias" ):Play() )}, "(L)istado", "L",,, 4,, .F. )
+
+
+
+
+
+
+
+
+      oSnd := oWndBrw:NewAt( "Lbl",, "Seleccionar registros para ser enviados", {||IncEnvio()}, "En(v)iar", "V",, {|This|This:Toggle()}, 4,, .F. )
+
+
+
+
+
+
+
+         oWndBrw:NewAt( "Lbl",,, {||( lSelectAll( oWndBrw, dbfFamilia, "lSelDoc", .T., .T., .T. ) )}, "Todos",,,, 4, oSnd, .F. )
+
+
+
+
+
+
+
+         oWndBrw:NewAt( "Lbl",,, {||( lSelectAll( oWndBrw, dbfFamilia, "lSelDoc", .F., .T., .T. ) )}, "Ninguno",,,, 4, oSnd, .F. )
+
+
+
+
+
+
+      oWndBrw:NewAt( "SNDINT",,, {||( IncWeb() )}, "(P)ublicar", "P",,, 4,, .F. )
+
+
+
+
+
+
+      oWndBrw:NewAt( "TACTIL",,, {||( IncTactil() )}, "(T)áctil", "T",,, 4,, .F. )
+
+
+
+
+
+
+      oWndBrw:NewAt( "Up",,, {||( ChangePosition( .F. ), oWndBrw:Select() )}, "S(u)bir posición", "U",,, 32,, .F. )
+
+
+
+
+
+
+      oWndBrw:NewAt( "Down",,, {||( ChangePosition( .T. ), oWndBrw:Select() )}, "Ba(j)ar posición", "J",,, 32,, .F. )
+
+
+
+
+
+      oWndBrw:NewAt( "End",,, {||( oWndBrw:End() )}, "(S)alir", "S",,,,, .F. )
+
+      oWndBrw:Activate(, oWndBrw:bLClicked, oWndBrw:bRClicked, oWndBrw:bMoved, oWndBrw:bResized, oWndBrw:bPainted, oWndBrw:bKeyDown, oWndBrw:bInit,,,,,,,,, {|| ( CloseFiles() )},, oWndBrw:bLButtonUp )
+
+    ELSE
+
+        oWndBrw:SetFocus()
+
+    end
+
+RETURN NIL
+
+
+
+Static Function EdtRec( aTmp, aGet, dbfFamilia, oBrw, bWhen, bValid, nMode )
+
+    local oDlg
+   local oFld
+   local oBlock
+   local oError
+   local oBrwPrv
+   local oSayGrp
+   local cSayGrp
+   local oSayTComandas
+   local cSayTComandas
+   local oSayPrpUno
+   local cSayPrpUno     := ""
+   local oSayPrpDos
+   local cSayPrpDos     := ""
+   local bmpImage
+   local oSayFamCmb
+   local cSayFamCmb     := ""
+
+   oBlock               := ErrorBlock( {| oError | ApoloBreak( oError ) } )
+   BEGIN SEQUENCE
+
+      BeginTrans( aTmp )
+
+      if Empty( aTmp[ 23 ] )
+         aTmp[ 23 ]  := GetSysColor( 15 )
+      end
+
+      if nMode == 4
+         aTmp[ 1 ]  := NextKey( aTmp[ 1 ], dbfFamilia )
+      end
+
+      if nMode == 1
+         aTmp[ 36 ]  := 1
+      end
+
+      oDlg = TDialog():New(,,,, LblTitle( nMode ) + "familias de artículos", "FAMILIA",, .F.,,,,,, .F.,,,,,, .F., )
+
+
+
+
+
+
+
+      oFld := TFolder():ReDefine( 100, {"&General", "&Proveedores"}, { "FAMILIA_01","FAMILIA_02" }, oDlg,,,,, .F., )
+
+
+
+
+
+
+
+
+
+
+
+
+         aGet[ 1 ] := TGetHlp():ReDefine( 100, { | u | If( PCount()==0, aTmp[ 1 ], aTmp[ 1 ]:= u ) }, oFld:aDialogs[1],, "@!", {||    ( ValidKey( aGet[ 1 ], dbfFamilia ) )},,,,,, .F., {||     ( nMode == 1 .OR. nMode == 4 )},, .F., .F.,,,,, {|Self|( aGet[ 1 ]:cText( NextKey( aTmp[ 1 ], dbfFamilia ) ) )}, nil, "BOT",, )
+
+
+
+
+         aGet[ 2 ] := TGetHlp():ReDefine( 110, { | u | If( PCount()==0, aTmp[ 2 ], aTmp[ 2 ]:= u ) }, oFld:aDialogs[1],,,,,,,,, .F., {||     ( nMode <> 3 )},, .F., .F.,,,,,, nil,,, )
+
+
+
+
+
+         TCheckBox():ReDefine( 115, { | u | If( PCount()==0, aTmp[ 22 ], aTmp[ 22 ]:= u ) }, oFld:aDialogs[1],, {||( if( nMode <> 1, IncWeb( aTmp ), .T. ) )},,,,, .F., {||     ( nMode <> 3 )}, .F. )
+
+
+
+
+         TCheckBox():ReDefine( 116, { | u | If( PCount()==0, aTmp[ 37 ], aTmp[ 37 ]:= u ) }, oFld:aDialogs[1],,,,,,, .F., {||     ( nMode <> 3 )}, .F. )
+
+
+
+
+
+
+
+         aGet[ 5 ] := TGetHlp():ReDefine( 120, { | u | If( PCount()==0, aTmp[ 5 ], aTmp[ 5 ]:= u ) }, oFld:aDialogs[1],,, {||    ( oSayGrp:cText( RetFld( aTmp[ 5 ], oGrpFam:GetAlias() ) ), .T. )},,,,,, .F., {||     ( nMode <> 3 )},, .F., .F.,,,,, {|Self|( oGrpFam:Buscar( aGet[ 5 ], "cCodGrp" ) )}, nil, "LUPA",, )
+
+
+
+
+
+         oSayGrp := TGetHlp():ReDefine( 121, { | u | If( PCount()==0, cSayGrp, cSayGrp:= u ) }, oFld:aDialogs[1],,,,,,,,, .F., {||     ( .F. )},, .F., .T.,,,,,, nil,,, )
+
+
+
+
+
+
+
+
+         aGet[ 3 ] := TGetHlp():ReDefine( 130, { | u | If( PCount()==0, aTmp[ 3 ], aTmp[ 3 ]:= u ) }, oFld:aDialogs[1],, "@!", {||    cProp( aGet[ 3 ], oSayPrpUno )},,,,,, .F., {||     ( nMode <> 3 )},, .F., .F.,,,,, {|Self|brwProp( aGet[ 3 ], oSayPrpUno )}, nil, "LUPA",, )
+
+
+
+
+         oSayPrpUno := TGetHlp():ReDefine( 131, { | u | If( PCount()==0, cSayPrpUno, cSayPrpUno:= u ) }, oFld:aDialogs[1],,,,,,,,, .F., {||     ( .F. )},, .F., .F.,,,,,, nil,,, )
+
+
+
+
+
+
+
+
+         aGet[ 4 ] := TGetHlp():ReDefine( 140, { | u | If( PCount()==0, aTmp[ 4 ], aTmp[ 4 ]:= u ) }, oFld:aDialogs[1],, "@!", {||    cProp( aGet[ 4 ], oSayPrpDos )},,,,,, .F., {||     ( nMode <> 3 )},, .F., .F.,,,,, {|Self|brwProp( aGet[ 4 ], oSayPrpDos )}, nil, "LUPA",, )
+
+
+
+
+         oSayPrpDos := TGetHlp():ReDefine( 141, { | u | If( PCount()==0, cSayPrpDos, cSayPrpDos:= u ) }, oFld:aDialogs[ 1 ],,,,,,,,, .F., {||     ( .F. )},, .F., .F.,,,,,, nil,,, )
+
+
+
+
+
+
+         aGet[ 27 ] := TGetHlp():ReDefine( 280, { | u | If( PCount()==0, aTmp[ 27 ], aTmp[ 27 ]:= u ) }, oFld:aDialogs[ 1 ],,,,,,,,, .F., {||     ( nMode <> 3 )},, .F., .F.,,,,,, nil, "LUPA",, 281 )
+
+            aGet[ 27 ]:bValid := {|| ( aGet[ 27 ]:oHelpText:cText( RetFld( aTmp[ 27 ], oFraPub:GetAlias() ) ), .T. ) }
+            aGet[ 27 ]:bHelp  := {|| oFraPub:Buscar( aGet[ 27 ],  ) }
+
+
+
+
+
+
+         aGet[ 23 ] := TGetHlp():ReDefine( 290, { | u | If( PCount()==0, aTmp[ 23 ], aTmp[ 23 ]:= u ) }, oFld:aDialogs[1],,,, aTmp[ 23 ], aTmp[ 23 ],,,, .F.,,, .F., .F.,,,,, {|Self|(  ColorFam( aGet[ 23 ] ) )}, nil, "LUPA",, )
+
+
+
+
+
+
+
+         aGet[ 24 ] := TGetHlp():ReDefine( 300, { | u | If( PCount()==0, aTmp[ 24 ], aTmp[ 24 ]:= u ) }, oFld:aDialogs[1],,,,,,,,, .F., {||     ( nMode <> 3 )}, {|nKey,nFlags,Self| ( ChgBmp( aGet[ 24 ], bmpImage ) ) }, .F., .F.,,,,, {|Self|( GetBmp( aGet[ 24 ], bmpImage ) )}, nil, "FOLDER",, )
+
+
+
+
+
+
+
+
+
+         aGet[ 29 ] := TGetHlp():ReDefine( 410, { | u | If( PCount()==0, aTmp[ 29 ], aTmp[ 29 ]:= u ) }, oFld:aDialogs[1],,, {||    ( cFamilia( aGet[ 29 ], dbfFamilia, oSayFamCmb ), if( nMode <> 1, lValidFamiliaCombinado( aTmp ), .T. ) )},,,,,, .F., {||     ( nMode <> 3 )},, .F., .F.,,,,, {|Self|( BrwFamiliaCombinada( aGet[ 29 ], dbfFamilia, oSayFamCmb ) )}, nil, "LUPA",, )
+
+
+
+
+         oSayFamCmb := TGetHlp():ReDefine( 411, { | u | If( PCount()==0, cSayFamCmb, cSayFamCmb:= u ) }, oFld:aDialogs[1],,,,,,,,, .F., {||     ( .F. )},, .F., .F.,,,,,, nil,,, )
+
+
+
+
+
+
+
+
+
+
+
+
+         aGet[ 38 ] := TGetHlp():ReDefine( 430, { | u | If( PCount()==0, aTmp[ 38 ], aTmp[ 38 ]:= u ) }, oFld:aDialogs[1],,, {||    ( oComentarios:Existe( aGet[ 38 ], aGet[ 38 ]:oHelpText, "cDescri" ) )},,,,,, .F., {||     ( nMode <> 3 )},, .F., .F.,,,,, {|Self|( oComentarios:Buscar( aGet[ 38 ] ) )}, nil, "LUPA",, 431 )
+
+
+
+
+
+
+         aGet[ 20 ] := TGetHlp():ReDefine( 320, { | u | If( PCount()==0, aTmp[ 20 ], aTmp[ 20 ]:= u ) }, oFld:aDialogs[1],, "@E 99.99",,,,,,, .F., {||     ( nMode <> 3 )},, .F., .T.,,,,,, nil,,, )
+
+
+
+
+
+
+
+
+
+         aGet[ 36 ] := TGetHlp():ReDefine( 180, { | u | If( PCount()==0, aTmp[ 36 ], aTmp[ 36 ]:= u ) }, oFld:aDialogs[1],, "999", {||    ( aTmp[ 36 ] >= 1 .AND. aTmp[ 36 ] <= 999 )},,,,,, .F., {||     ( nMode <> 3 )},, .F., .T.,,, {||      ( 1 )}, {||      ( 999 )},, nil,,, )
+
+
+
+
+
+
+         aGet[ 21 ] := TGetHlp():ReDefine( 310, { | u | If( PCount()==0, aTmp[ 21 ], aTmp[ 21 ]:= u ) }, oFld:aDialogs[1],, "@E 99.99",,,,,,, .F., {||     ( nMode <> 3 )},, .F., .T.,,,,,, nil,,, )
+
+
+
+
+         TCheckBox():ReDefine( 315, { | u | If( PCount()==0, aTmp[ 26 ], aTmp[ 26 ]:= u ) }, oFld:aDialogs[1],,,,,,, .F., {||     ( nMode <> 3 )}, .F. )
+
+
+
+
+         bmpImage := TImage():ReDefine( 600,, cFileBmpName( aTmp[ 24 ] ), oFld:aDialogs[1],,, .F., .F.,,, .F.,, )
+
+         bmpImage:SetColor( , GetSysColor( 15 ) )
+         bmpImage:bLClicked   := {|| ShowImage( bmpImage ) }
+         bmpImage:bRClicked   := {|| ShowImage( bmpImage ) }
+
+
+
+
+
+         TCheckBox():ReDefine( 150, { | u | If( PCount()==0, aTmp[ 6 ], aTmp[ 6 ]:= u ) }, oFld:aDialogs[1],, {||( if( nMode <> 1, IncTactil( aTmp[ 6 ] ), .T. ) )},,,,, .F., {||     ( nMode <> 3 )}, .F. )
+
+
+
+
+         TCheckBox():ReDefine( 160, { | u | If( PCount()==0, aTmp[ 32 ], aTmp[ 32 ]:= u ) }, oFld:aDialogs[1],,,,,,, .F., {||     ( nMode <> 3 )}, .F. )
+
+
+
+
+         aGet[ 33 ] := TCheckBox():ReDefine( 170, { | u | If( PCount()==0, aTmp[ 33 ], aTmp[ 33 ]:= u ) }, oFld:aDialogs[1],,,,,,, .F., {||     ( nMode <> 3 )}, .F. )
+
+
+
+
+
+
+
+
+
+         aGet[ 30 ] := TGetHlp():ReDefine( 330, { | u | If( PCount()==0, aTmp[ 30 ], aTmp[ 30 ]:= u ) }, oFld:aDialogs[1],, "99", {||    ( aTmp[ 30 ] >= 1 .AND. aTmp[ 30 ] <= 99 )},,,,,, .F., {||     ( nMode <> 3 )},, .F., .T.,,, {||      ( 1 )}, {||      ( 99 )},, nil,,, )
+
+
+
+
+
+
+
+         aGet[ 34 ] := TGetHlp():ReDefine( 420, { | u | If( PCount()==0, aTmp[ 34 ], aTmp[ 34 ]:= u ) }, oFld:aDialogs[1],,, {||    ( oSayTComandas:cText( RetFld( aTmp[ 34 ], oTComandas:GetAlias() ) ), .T. )},,,,,, .F., {||     ( nMode <> 3 )},, .F., .F.,,,,, {|Self|( oTComandas:Buscar( aGet[ 34 ], "cCodigo" ) )}, nil, "LUPA",, )
+
+
+
+
+
+         oSayTComandas := TGetHlp():ReDefine( 421, { | u | If( PCount()==0, cSayTComandas, cSayTComandas:= u ) }, oFld:aDialogs[1],,,,,,,,, .F., {||     ( .F. )},, .F., .T.,,,,,, nil,,, )
+
+
+
+
+
+
+         TCheckBox():ReDefine( 540, { | u | If( PCount()==0, aTmp[ 28 ], aTmp[ 28 ]:= u ) }, oFld:aDialogs[ 2 ],,,,,,, .F., {||     ( nMode <> 3 )}, .F. )
+
+         oBrwPrv                 := IXBrowse():New( oFld:aDialogs[ 2 ] )
+
+         oBrwPrv:bClrSel         := {|| { 0, ( 229 + ( 229 * 256 ) + ( 229 * 65536 ) ) } }
+         oBrwPrv:bClrSelFocus    := {|| { 0, ( 167 + ( 205 * 256 ) + ( 240 * 65536 ) ) } }
+
+         oBrwPrv:cAlias          := dbfTmp
+         oBrwPrv:nMarqueeStyle   := 6
+
+            with object ( oBrwPrv:AddCol() )
+               :cHeader          := "Proveedor"
+               :bEditValue       := {|| Rtrim( ( dbfTmp )->cCodPrv ) + Space( 1 ) + retFld( ( dbfTmp )->cCodPrv, dbfPrv, "Titulo" ) }
+               :nWidth           := 220
+            end
+
+            with object ( oBrwPrv:AddCol() )
+               :cHeader          := "Familia"
+               :bEditValue       := {|| ( dbfTmp )->cFamPrv }
+               :nWidth           := 140
+            end
+
+            if nMode <> 3
+               oBrwPrv:bLDblClick   := {|| WinEdtRec( oBrwPrv, bEdit2, dbfTmp ) }
+            end
+
+            oBrwPrv:CreateFromResource( 530 )
+
+
+
+
+
+         TButton():ReDefine( 500, {||( WinAppRec( oBrwPrv, bEdit2, dbfTmp ) )}, oFld:aDialogs[2],,, .F., {||     ( nMode <> 3 )},,, .F. )
+
+
+
+
+
+         TButton():ReDefine( 510, {||( WinEdtRec( oBrwPrv, bEdit2, dbfTmp ) )}, oFld:aDialogs[2],,, .F., {||     ( nMode <> 3 )},,, .F. )
+
+
+
+
+
+         TButton():ReDefine( 520, {||( dbDelRec( oBrwPrv, dbfTmp ) )}, oFld:aDialogs[2],,, .F., {||     ( nMode <> 3 )},,, .F. )
+
+
+
+
+
+
+
+         TButton():ReDefine( 1, {||( EndTrans( aTmp, aGet, nMode, oBrwPrv, oDlg ) )}, oDlg,,, .F., {||     ( nMode <> 3 )},,, .F. )
+
+
+
+
+
+         TButton():ReDefine( 2, {||( KillTrans(), oDlg:end() )}, oDlg,,, .F.,,,, .T. )
+
+
+      if nMode <> 3
+         oFld:aDialogs[2]:AddFastKey( 113, {|| WinAppRec( oBrwPrv, bEdit2, dbfTmp ) } )
+         oFld:aDialogs[2]:AddFastKey( 114, {|| WinEdtRec( oBrwPrv, bEdit2, dbfTmp ) } )
+         oFld:aDialogs[2]:AddFastKey( 115, {|| dbDelRec( oBrwPrv, dbfTmp ) } )
+         oDlg:AddFastKey( 116, {|| EndTrans( aTmp, aGet, nMode, oBrwPrv, oDlg ) } )
+      end
+
+      oDlg:bStart    := {|| aGet[ 5 ]:lValid(), aGet[ 38 ]:lValid(), aGet[ 34 ]:lValid(), aGet[ 27 ]:lValid(), aGet[ 3 ]:lValid(), aGet[ 4 ]:lValid(), aGet[ 1 ]:SetFocus(), aGet[ 29 ]:lValid() }
+
+
+
+      oDlg:Activate( oDlg:bLClicked, oDlg:bMoved, oDlg:bPainted, .T.,,, {|Self|( ChgBmp( aGet[ 24 ], bmpImage ) )}, oDlg:bRClicked,,, )
+   RECOVER USING oError
+
+      msgStop( "Imposible abrir dialogo de familias." + Chr(13)+Chr(10) + ErrorMessage( oError ) )
+
+   end
+
+   ErrorBlock( oBlock )
+
+   if !Empty( oBrwPrv )
+      oBrwPrv:End()
+   end
+
+
+
+
+
+   KillTrans()
+
+RETURN ( oDlg:nResult == 1 )
+
+
+
+STATIC FUNCTION BeginTrans( aTmp )
+
+   local cCodFam
+
+   cCodFam           := aTmp[ 1 ]
+   cNewFil           := cGetNewFileName( cPatTmp() + "PrvL" )
+
+
+
+
+
+   dbCreate( cNewFil, aSqlStruct( aItmFamPrv() ), cLocalDriver() )
+   dbUseArea( .T., cLocalDriver(), cNewFil, cCheckArea( "PrvL", @dbfTmp ), .F. )
+
+   if !( dbfTmp )->( neterr() )
+
+      ( dbfTmp )->( ordCondSet( "!Deleted()", {|| !Deleted() } ) )
+      ( dbfTmp )->( OrdCreate( cNewFil, "cPrvFam", "cCodPrv + cFamPrv", {|| Field->cCodPrv + Field->cFamPrv } ) )
+
+
+
+
+
+      if ( dbfFamPrv )->( dbSeek( cCodFam ) )
+         while ( ( dbfFamPrv )->cCodFam == cCodFam .AND. !( dbfFamPrv )->( Eof() ) )
+            dbPass( dbfFamPrv, dbfTmp, .T. )
+            ( dbfFamPrv )->( dbSkip() )
+         end
+      end
+
+      ( dbfTmp )->( dbGoTop() )
+
+   end
+
+Return Nil
+
+
+
+STATIC FUNCTION EndTrans( aTmp, aGet, nMode, oBrw, oDlg )
+
+   local oError
+   local oBlock
+   local cCodFam     := aTmp[ 1 ]
+
+
+
+   if nMode == 1 .OR. nMode == 4
+
+      if Empty( cCodFam )
+         MsgStop( "Código no puede estar vacío" )
+         aGet[ 1 ]:SetFocus()
+         return nil
+      end
+
+      if dbSeekInOrd( cCodFam, "cCodFam", dbfFamilia )
+         MsgStop( "Código ya existe " + Rtrim( cCodFam ) )
+         return nil
+      end
+
+   end
+
+   if Empty( aTmp[ 2 ] )
+      MsgStop( "Nombre no puede estar vacío" )
+      aGet[ 2 ]:SetFocus()
+      return nil
+   end
+
+   do case
+      case !Empty( aTmp[ 4 ] ) .AND. Empty( aTmp[ 3 ] )
+         MsgStop( "Para informar la propiedad 2 no puede dejar vacía la propiedad 1." )
+         Return nil
+      case aTmp[ 3 ] == aTmp[ 4 ] .AND. !Empty( aTmp[ 3 ] ) .AND. !Empty( aTmp[ 4 ] )
+         MsgStop( "No puede repetir las propiedades." )
+         Return nil
+   end
+
+   aTmp[ 25 ]  := .T.
+
+
+
+
+
+   CursorWait()
+
+   oBlock         := ErrorBlock( {| oError | ApoloBreak( oError ) } )
+   BEGIN SEQUENCE
+
+      BeginTransaction()
+
+
+
+
+
+      while ( dbfFamPrv )->( dbSeek( cCodFam ) ) .AND. !( dbfFamPrv )->( Eof() )
+         if dbLock( dbfFamPrv )
+            ( dbfFamPrv )->( dbDelete() )
+            ( dbfFamPrv )->( dbUnLock() )
+         end
+      end
+
+
+
+
+
+      ( dbfTmp )->( dbGoTop() )
+      while !( dbfTmp )->( eof() )
+         dbPass( dbfTmp, dbfFamPrv, .T., cCodFam )
+         ( dbfTmp )->( dbSkip() )
+      end
+
+
+
+
+
+      WinGather( aTmp, aGet, dbfFamilia, oBrw, nMode )
+
+      CommitTransaction()
+
+   RECOVER USING oError
+
+      RollBackTransaction()
+
+      msgStop( ErrorMessage( oError ), "Imposible almacenar artículo" )
+
+   end
+
+   ErrorBlock( oBlock )
+
+
+
+
+
+
+
+   CursorWe()
+
+   oDlg:end( 1 )
+
+
+
+Return NIL
+
+
+
+STATIC FUNCTION KillTrans()
+
+
+
+
+
+   if ( dbfTmp )->( Used() )
+      ( dbfTmp )->( dbCloseArea() )
+   end
+
+   dbfErase( cNewFil )
+
+RETURN .T.
+
+
+
+STATIC FUNCTION EdtDet( aTmp, aGet, dbfTmp, oBrw, bWhen, bValid, nMode )
+
+    local oDlg
+    local oGet
+   local oGet2
+    local oGetTxt
+    local cGetTxt
+
+   oDlg = TDialog():New(,,,, LblTitle( nMode ) + "familias de proveedores", "LFAMPRV",, .F.,,,,,, .F.,,,,,, .F., )
+
+
+
+
+
+
+
+
+
+      oGet := TGetHlp():ReDefine( 100, { | u | If( PCount()==0, aTmp[ ( dbfTmp )->( FieldPos( "cCodPrv" ) ) ], aTmp[ ( dbfTmp )->( FieldPos( "cCodPrv" ) ) ]:= u ) }, oDlg,, ( RetPicCodPrvEmp() ), {||    ( cProvee( oGet, dbfPrv, oGetTxt ) )},,,,,, .F., {||     ( nMode == 1 )},, .F., .F.,,,,, {|Self|( BrwProvee( oGet ) )}, nil, "LUPA",, )
+
+
+
+
+        oGetTxt := TGetHlp():ReDefine( 101, { | u | If( PCount()==0, cGetTxt, cGetTxt:= u ) }, oDlg,,,,,,,,, .F., {||     ( .F. )},, .F., .F.,,,,,, nil,,, )
+
+
+
+
+      oGet2 := TGetHlp():ReDefine( 110, { | u | If( PCount()==0, aTmp[ ( dbfTmp )->( FieldPos( "cFamPrv" ) ) ], aTmp[ ( dbfTmp )->( FieldPos( "cFamPrv" ) ) ]:= u ) }, oDlg,,,,,,,,, .F., {||         ( nMode <> 3 )},, .F., .F.,,,,,, nil,,, )
+
+
+
+
+
+      TButton():ReDefine( 1, {||(  EndDetalle( aTmp, aGet, dbfTmp, oBrw, nMode, oDlg, oGet, oGet2 ) )}, oDlg,,, .F., {||         (     nMode <> 3 )},,, .F. )
+
+
+
+
+        TButton():ReDefine( 2, {||( oDlg:end() )}, oDlg,,, .F.,,,, .F. )
+
+   if nMode <> 3
+      oDlg:AddFastKey( 116, {|| EndDetalle( aTmp, aGet, dbfTmp, oBrw, nMode, oDlg, oGet, oGet2 ) } )
+   end
+
+   oDlg:Activate( oDlg:bLClicked, oDlg:bMoved, oDlg:bPainted := {|hDC,cPS|( oGet:lValid() )}, .T.,,,, oDlg:bRClicked,,, )
+
+RETURN ( oDlg:nResult == 1 )
+
+
+
+Static Function EndDetalle( aTmp, aGet, dbfTmp, oBrw, nMode, oDlg, oGet, oGet2 )
+
+   if nMode == 1
+
+      if Empty( aTmp[ ( dbfTmp )->( FieldPos( "cCodPrv" ) ) ] )
+         MsgStop( "Código no puede estar vacío" )
+         oGet:SetFocus()
+         return nil
+      end
+
+   end
+
+   if Empty( aTmp[ ( dbfTmp )->( FieldPos( "cFamPrv" ) ) ] )
+         MsgStop( "Código de la familia no puede estar vacío" )
+         oGet2:SetFocus()
+         return nil
+      end
+
+   if dbSeekFamilia( aTmp, dbfTmp )
+      msgStop( "Código de familia existente" )
+      return nil
+   end
+
+   WinGather( aTmp, aGet, dbfTmp, oBrw, nMode )
+
+Return ( oDlg:end() )
+
+
+
+Static Function dbSeekFamilia( aTmp, dbfTmp )
+
+   local lSeek    := .F.
+   local nOrdAnt  := ( dbfTmp )->( OrdSetFocus( "cPrvFam" ) )
+
+   if ( dbfTmp )->( dbSeek( aTmp[ ( dbfTmp )->( FieldPos( "cCodPrv" ) ) ] + aTmp[ ( dbfTmp )->( FieldPos( "cFamPrv" ) ) ] ) )
+      lSeek    := .T.
+   end
+
+   ( dbfTmp )->( OrdSetFocus( nOrdAnt ) )
+
+Return ( lSeek )
+
+
+
+Function EdtFamilia( cCodFam, lOpenBrowse )
+
+   local lEdit          := .F.
+   local nLevel         := nLevelUsr( "01012" )
+
+   IIF( lOpenBrowse == nil, lOpenBrowse := .F., ) ;
+
+   if nAnd( nLevel, 1 ) <> 0 .OR. nAnd( nLevel, 4 ) == 0
+      msgStop( "Acceso no permitido." )
+      return .F.
+   end
+
+   if lOpenBrowse
+
+      if Familia()
+         if dbSeekInOrd( cCodFam, "cCodFam", dbfFamilia )
+            lEdit       := oWndBrw:RecEdit()
+         else
+            MsgStop( "No se encuentra familia" )
+         end
+      end
+
+   else
+
+      if OpenFiles( .T. )
+         if dbSeekInOrd( cCodFam, "cCodFam", dbfFamilia )
+            lEdit       := WinEdtRec( oWndBrw, bEdit, dbfFamilia )
+         else
+            MsgStop( "No se encuentra familia" )
+         end
+         CloseFiles()
+      end
+
+   end
+
+Return ( lEdit )
+
+
+
+
+
+
+
+function nPreFamilia( cCodFam, aMes, lAno, dbfFamilia )
+
+   local nPreFam  := 0
+
+   if dbSeekInOrd( cCodFam, "cCodFam", dbfFamilia )
+
+      if lAno
+
+         nPreFam  := ( dbfFamilia )->NVALANU
+
+      else
+
+         if aMes[ 1]
+            nPreFam  += ( dbfFamilia )->NENE
+         end
+
+         if aMes[ 2]
+            nPreFam  += ( dbfFamilia )->NFEB
+         end
+
+         if aMes[ 3]
+            nPreFam  += ( dbfFamilia )->NMAR
+         end
+
+         if aMes[ 4]
+            nPreFam  += ( dbfFamilia )->NABR
+         end
+
+         if aMes[ 5]
+            nPreFam  += ( dbfFamilia )->NMAY
+         end
+
+         if aMes[ 6]
+            nPreFam  += ( dbfFamilia )->NJUN
+         end
+
+         if aMes[ 7]
+            nPreFam  += ( dbfFamilia )->NJUL
+         end
+
+         if aMes[ 8]
+            nPreFam  += ( dbfFamilia )->NAGO
+         end
+
+         if aMes[ 9]
+            nPreFam  += ( dbfFamilia )->NSEP
+         end
+
+         if aMes[10]
+            nPreFam  += ( dbfFamilia )->NOCT
+         end
+
+         if aMes[11]
+            nPreFam  += ( dbfFamilia )->NNOV
+         end
+
+         if aMes[12]
+            nPreFam  += ( dbfFamilia )->NDIC
+         end
+
+      end
+
+   end
+
+return ( nPreFam )
+
+
+
+function lFamInTpv( dbfFamilia )
+
+   local lFamInTpv   := .F.
+
+   ( dbfFamilia )->( dbGoTop() )
+   while !( dbfFamilia )->( eof() )
+      if ( dbfFamilia )->lIncTpv
+         lFamInTpv   := .T.
+         exit
+      end
+      ( dbfFamilia )->( dbSkip() )
+   end
+
+return ( lFamInTpv )
+
+
+
+Static Function IncWeb( aTmp )
+
+   local nRec
+
+   if Empty( aTmp )
+
+      for each nRec in ( oWndBrw:oBrw:aSelected )
+
+         ( dbfFamilia )->( dbGoTo( nRec ) )
+
+         if dbLock( dbfFamilia )
+            ( dbfFamilia )->lPubInt := !( dbfFamilia )->lPubInt
+            ( dbfFamilia )->lSelDoc := ( dbfFamilia )->lPubInt
+            ( dbfFamilia )->cCodWeb := 0
+            ( dbfFamilia )->( dbUnLock() )
+         end
+
+         oWndBrw:Refresh()
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+      next
+
+   else
+
+      aTmp[ ( dbfFamilia )->( fieldpos( "cCodWeb" ) ) ]  := 0
+
+   end
+
+Return ( nil )
+
+
+
+Static Function IncEnvio( aTmp )
+
+   local nRec
+
+   for each nRec in ( oWndBrw:oBrw:aSelected )
+
+      ( dbfFamilia )->( dbGoTo( nRec ) )
+
+      if dbLock( dbfFamilia )
+         ( dbfFamilia )->lSelDoc := !( dbfFamilia )->lSelDoc
+         ( dbfFamilia )->cCodWeb := 0
+         ( dbfFamilia )->( dbUnLock() )
+      end
+
+   next
+
+   oWndBrw:Refresh()
+
+return ( nil )
+
+
+
+static function IncTactil( lIncTactil )
+
+   IIF( lIncTactil == nil, lIncTactil := !( dbfFamilia )->lIncTpv, ) ;
+
+   if dbLock( dbfFamilia )
+      ( dbfFamilia )->lIncTpv := lIncTactil
+      ( dbfFamilia )->( dbUnLock() )
+      if oWndBrw <> nil
+         oWndBrw:Refresh()
+      end
+   end
+
+
+
+
+
+   if ApoloMsgNoYes(   "¿Desea " + if( lIncTactil, "seleccionar", "deseleccionar" ) + " todos los artículos de esta familia," + Chr(13)+Chr(10) + "para que sean " + if( lIncTactil, "incluidos en el", "excluidos del" ) + " TPV táctil ?", ( dbfFamilia )->cCodFam + Space( 1 ) + ( dbfFamilia )->cNomFam )
+
+      if ( dbfArticulo )->( dbSeek( ( dbfFamilia )->cCodFam ) )
+
+         while ( dbfArticulo )->Familia == ( dbfFamilia )->cCodFam
+
+            if dbLock( dbfArticulo )
+               ( dbfArticulo )->lIncTcl := lIncTactil
+               ( dbfArticulo )->( dbUnLock() )
+            end
+
+            ( dbfArticulo )->( dbSkip() )
+
+         end
+
+      end
+
+   end
+
+return ( nil )
+
+
+
+FUNCTION aFamPrp( cCodFam, dbfFami )
+
+   local aPrp     := aFill( Array( 2 ), "" )
+
+
+
+
+
+   if ( dbfFami )->( dbSeek( cCodFam ) )
+      aPrp[ 1 ]   := ( dbfFami )->CCODPRP1
+      aPrp[ 2 ]   := ( dbfFami )->CCODPRP2
+   end
+
+RETURN ( aPrp )
+
+
+
+FUNCTION cCodFam( cCodFam, oDbfFam )
+
+   local cCod     := ""
+
+   if oDbfFam:Seek( cCodFam )
+      cCod        := oDbfFam:Familia
+   end
+
+RETURN cCod
+
+
+
+FUNCTION cNomFam( cCodFam, oDbfFam )
+
+   local cNom     := ""
+
+   if oDbfFam:SeekInOrd( cCodFam, "cCodFam" )
+      cNom        := oDbfFam:cNomFam
+   end
+
+RETURN ( cNom )
+
+
+
+Function cCodFamPrv( cCodPrv, cFamPrv, dbfFamPrv )
+
+   local cCodFam  := ""
+   local nOrdAnt  := ( dbfFamPrv )->( OrdSetFocus( "cFamPrv" ) )
+
+   if ( dbfFamPrv )->( dbSeek( cCodPrv + cFamPrv ) )
+      cCodFam     := ( dbfFamPrv )->cCodFam
+   end
+
+   ( dbfFamPrv )->( OrdSetFocus( nOrdAnt ) )
+
+Return ( cCodFam )
+
+
+
+Static Function DeleteFamiliaProveedores()
+
+   local cCodFam        := ( dbfFamilia )->cCodFam
+
+   CursorWait()
+
+   while ( dbfFamPrv )->( dbSeek( cCodFam ) ) .AND. !( dbfFamPrv )->( Eof() )
+      IIF( dbLock( dbfFamPrv ), ( ( dbfFamPrv )->( dbDelete() ), ( dbfFamPrv )->( dbUnLock() ) ), )
+   end
+
+   CursorWE()
+
+Return ( .T. )
+
+
+
+Function lPermitirVentaSinValorar( cCodArt, dbfArticulo, dbfFamilia )
+
+   local lPermitir   := .F.
+
+   if dbSeekInOrd( cCodArt, "Codigo", dbfArticulo )
+      if dbSeekInOrd( ( dbfArticulo )->Familia, "cCodFam", dbfFamilia )
+         lPermitir   := ( dbfFamilia )->lPreEsp
+      end
+   end
+
+Return ( lPermitir )
+
+
+
+_HB_CLASS TFamiliaSenderReciver ; UTILITY FUNCTION TFamiliaSenderReciver(...); static s_oClass ; local oClassInstance ; local nScope ; nScope := 1 ; if s_oClass == NIL ; s_oClass := IIF(.F.,, HBClass():New( "TFamiliaSenderReciver" , {TSenderReciverItem():classh} ) ) ; ;
+
+   _HB_MEMBER CreateData(); IIF( .F., s_oClass:ModMethod( "CreateData", @TFamiliaSenderReciver_CreateData(), nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ), s_oClass:AddMethod( "CreateData", @TFamiliaSenderReciver_CreateData(), nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ));
+
+   _HB_MEMBER RestoreData(); IIF( .F., s_oClass:ModMethod( "RestoreData", @TFamiliaSenderReciver_RestoreData(), nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ), s_oClass:AddMethod( "RestoreData", @TFamiliaSenderReciver_RestoreData(), nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ));
+
+   _HB_MEMBER SendData(); IIF( .F., s_oClass:ModMethod( "SendData", @TFamiliaSenderReciver_SendData(), nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ), s_oClass:AddMethod( "SendData", @TFamiliaSenderReciver_SendData(), nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ));
+
+   _HB_MEMBER ReciveData(); IIF( .F., s_oClass:ModMethod( "ReciveData", @TFamiliaSenderReciver_ReciveData(), nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ), s_oClass:AddMethod( "ReciveData", @TFamiliaSenderReciver_ReciveData(), nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ));
+
+   _HB_MEMBER Process(); IIF( .F., s_oClass:ModMethod( "Process", @TFamiliaSenderReciver_Process(), nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ), s_oClass:AddMethod( "Process", @TFamiliaSenderReciver_Process(), nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ));
+
+; IF .F. ; __clsActive(s_oClass:hClass) ; s_oClass:Refresh() ; ELSE ; s_oClass:Create() ; END ; oClassInstance := __clsInst( s_oClass:hClass ) ; IF __ObjHasMsg( oClassInstance, "InitClass" ); oClassInstance:InitClass( hb_aParams() ) ; END ; ELSE ; oClassInstance := __clsInst( s_oClass:hClass ) ; END ; IF PCount() > 0 ; DIVERT TO (@DivertConstructorCall()) OF s_oClass ; END ; RETURN oClassInstance AS CLASS TFamiliaSenderReciver ;
+
+
+
+UTILITY STATIC function TFamiliaSenderReciver_CreateData() ; local Self AS CLASS TFamiliaSenderReciver := QSelf() AS CLASS TFamiliaSenderReciver
+
+   local oBlock
+   local oError
+   local dbfFam
+   local tmpFam
+   local lSndFam     := .F.
+   local cFileName
+
+   if ::oSender:lServer
+      cFileName      := "Fam" + StrZero( ::nGetNumberToSend(), 6 ) + ".All"
+   else
+      cFileName      := "Fam" + StrZero( ::nGetNumberToSend(), 6 ) + "." + RetSufEmp()
+   end
+
+   ::oSender:SetText( "Seleccionando familias" )
+
+   oBlock            := ErrorBlock( {| oError | ApoloBreak( oError ) } )
+   BEGIN SEQUENCE
+
+   dbUseArea( .T., ( cDriver() ), ( cPatArt() + "Familias.Dbf" ), ( cCheckArea( "FAMILIAS", @dbfFam ) ), if(.T. .OR. .F., !.F., NIL), .F.,, )
+   if !lAIS() ; ordListAdd( ( cPatArt() + "Familias.Cdx" ) ) ; else ; ordSetFocus( 1 ) ; end
+
+   mkFamilia( cPatSnd() )
+
+   dbUseArea( .T., ( cDriver() ), ( cPatSnd() + "Familias.Dbf" ), ( cCheckArea( "FAMILIAS", @tmpFam ) ), if(.T. .OR. .F., !.F., NIL), .F.,, )
+   if !lAIS() ; ordListAdd( ( cPatSnd() + "Familias.Cdx" ) ) ; else ; ordSetFocus( 1 ) ; end
+
+   if !Empty( ::oSender:oMtr )
+      ::oSender:oMtr:nTotal := ( dbfFam )->( lastrec() )
+   end
+
+   while !( dbfFam )->( eof() )
+
+      if ( dbfFam )->lSelDoc
+         ::oSender:SetText( AllTrim( ( dbfFam )->cCodFam ) + "; " + AllTrim( ( dbfFam )->cNomFam ) )
+         lSndFam  := .T.
+         dbPass( dbfFam, tmpFam, .T. )
+      end
+
+      ( dbfFam )->( dbSkip() )
+
+      if !Empty( ::oSender:oMtr )
+         ::oSender:oMtr:Set( ( dbfFam )->( OrdKeyNo() ) )
+      end
+
+      SysRefresh()
+
+   end
+
+   RECOVER USING oError
+
+      msgStop( "Imposible abrir todas las bases de datos " + Chr(13)+Chr(10) + ErrorMessage( oError ) )
+
+   end
+
+   ErrorBlock( oBlock )
+
+   ( dbfFam  )->( dbCloseArea() )
+   ( tmpFam  )->( dbCloseArea() )
+
+   if lSndFam
+
+      ::oSender:SetText( "Comprimiendo familias" )
+
+      if ::oSender:lZipData( cFileName )
+         ::oSender:SetText( "Ficheros comprimidos" )
+      else
+         ::oSender:SetText( "ERROR al crear fichero comprimido" )
+      end
+
+   else
+
+      ::oSender:SetText( "No hay familias para enviar" )
+
+   end
+
+Return ( Self )
+
+
+
+UTILITY STATIC function TFamiliaSenderReciver_RestoreData() ; local Self AS CLASS TFamiliaSenderReciver := QSelf() AS CLASS TFamiliaSenderReciver
+
+   local oBlock
+   local oError
+   local dbfFamilia
+
+   if ::lSuccesfullSend
+
+
+
+
+
+      oBlock            := ErrorBlock( {| oError | ApoloBreak( oError ) } )
+      BEGIN SEQUENCE
+
+      dbUseArea( .T., ( cDriver() ), ( cPatArt() + "Familias.Dbf" ), ( cCheckArea( "FAMILIAS", @dbfFamilia ) ), if(.T. .OR. .F., !.F., NIL), .F.,, )
+      if !lAIS() ; ordListAdd( ( cPatArt() + "Familias.Cdx" ) ) ; else ; ordSetFocus( 1 ) ; end
+
+      while !( dbfFamilia )->( eof() )
+         if ( dbfFamilia )->lSelDoc .AND. ( dbfFamilia )->( dbRLock() )
+            ( dbfFamilia )->lSelDoc := .F.
+            ( dbfFamilia )->( dbRUnlock() )
+         end
+         ( dbfFamilia )->( dbSkip() )
+      end
+
+      RECOVER USING oError
+
+         msgStop( "Imposible abrir todas las bases de datos " + Chr(13)+Chr(10) + ErrorMessage( oError ) )
+
+      end
+
+      ErrorBlock( oBlock )
+
+      ( dbfFamilia  )->( dbCloseArea() )
+
+   end
+
+Return ( Self )
+
+
+
+UTILITY STATIC function TFamiliaSenderReciver_SendData() ; local Self AS CLASS TFamiliaSenderReciver := QSelf() AS CLASS TFamiliaSenderReciver
+
+   local cFileName
+
+   if ::oSender:lServer
+      cFileName      := "Fam" + StrZero( ::nGetNumberToSend(), 6 ) + ".All"
+   else
+      cFileName      := "Fam" + StrZero( ::nGetNumberToSend(), 6 ) + "." + RetSufEmp()
+   end
+
+   if File( cPatOut() + cFileName )
+
+      if ftpSndFile( cPatOut() + cFileName, cFileName, 2000, ::oSender )
+         ::IncNumberToSend()
+         ::lSuccesfullSend := .T.
+         ::oSender:SetText( "Ficheros de familias enviados " + cFileName )
+      else
+         ::oSender:SetText( "ERROR fichero de familias no enviado" )
+      end
+
+   end
+
+Return ( Self )
+
+
+
+UTILITY STATIC function TFamiliaSenderReciver_ReciveData() ; local Self AS CLASS TFamiliaSenderReciver := QSelf() AS CLASS TFamiliaSenderReciver
+
+   local n
+   local aExt
+
+   if ::oSender:lServer
+      aExt              := aRetDlgEmp()
+   else
+      aExt              := { "All" }
+   end
+
+   ::oSender:SetText( "Recibiendo familias" )
+
+   for n := 1 to len( aExt )
+      if IsChar( aExt[ n ] )
+         FtpGetFiles( "Fam*." + aExt[ n ], cPatIn(), 2000, ::oSender )
+      end
+   next
+
+   ::oSender:SetText( "Familias recibidas" )
+
+Return ( Self )
+
+
+
+UTILITY STATIC function TFamiliaSenderReciver_Process() ; local Self AS CLASS TFamiliaSenderReciver := QSelf() AS CLASS TFamiliaSenderReciver
+
+   local m
+   local aFiles
+   local tmpFam
+   local dbfFam
+   local oBlock
+   local oError
+
+
+
+
+
+   aFiles                     := Directory( cPatIn() + "Fam*.*" )
+
+   for m := 1 to len( aFiles )
+
+      ::oSender:SetText( "Procesando fichero : " + aFiles[ m, 1 ] )
+
+      oBlock                  := ErrorBlock( {| oError | ApoloBreak( oError ) } )
+      BEGIN SEQUENCE
+
+
+
+
+
+         if ::oSender:lUnZipData( cPatIn() + aFiles[ m, 1 ] )
+
+            if File( cPatSnd() + "Familias.Dbf" )
+
+               dbUseArea( .T., ( cDriver() ), ( cPatSnd() + "Familias.Dbf" ), ( cCheckArea( "FAMILIAS", @tmpFam ) ), if(.T. .OR. .F., !.F., NIL), .F.,, )
+               if !lAIS() ; ordListAdd( ( cPatSnd() + "Familias.Cdx" ) ) ; else ; ordSetFocus( 1 ) ; end
+
+               dbUseArea( .T., ( cDriver() ), ( cPatArt() + "Familias.Dbf" ), ( cCheckArea( "FAMILIAS", @dbfFam ) ), if(.T. .OR. .F., !.F., NIL), .F.,, )
+               if !lAIS() ; ordListAdd( ( cPatArt() + "Familias.Cdx" ) ) ; else ; ordSetFocus( 1 ) ; end
+
+               if !Empty( ::oSender:oMtr )
+                  ::oSender:oMtr:nTotal := ( tmpFam )->( lastrec() )
+               end
+
+               while !( tmpFam )->( eof() )
+
+                  if ( dbfFam )->( dbSeek( ( tmpFam )->cCodFam ) )
+                     if !::oSender:lServer
+                        dbPass( tmpFam, dbfFam )
+                        ::oSender:SetText( "Reemplazado : " + AllTrim( ( dbfFam )->cCodFam ) + "; " + AllTrim( ( dbfFam )->cNomFam ) )
+                     else
+                        ::oSender:SetText( "Desestimado : " + AllTrim( ( dbfFam )->cCodFam ) + "; " + AllTrim( ( dbfFam )->cNomFam ) )
+                     end
+                  else
+                        dbPass( tmpFam, dbfFam, .T. )
+                        ::oSender:SetText( "Añadido     : " + AllTrim( ( dbfFam )->cCodFam ) + "; " + AllTrim( ( dbfFam )->cNomFam ) )
+                  end
+
+                  ( tmpFam )->( dbSkip() )
+
+                  if !Empty( ::oSender:oMtr )
+                     ::oSender:oMtr:Set( ( tmpFam )->( OrdKeyNo() ) )
+                  end
+
+                  SysRefresh()
+
+               end
+
+               if !Empty( ::oSender:oMtr )
+                  ::oSender:oMtr:nTotal := ( tmpFam )->( LastRec() )
+               end
+
+               ( tmpFam )->( dbCloseArea() )
+               ( dbfFam )->( dbCloseArea() )
+
+               ::oSender:AppendFileRecive( aFiles[ m, 1 ] )
+
+            end
+
+         end
+
+      RECOVER USING oError
+
+         ( tmpFam )->( dbCloseArea() )
+         ( dbfFam )->( dbCloseArea() )
+
+         ::oSender:SetText( "Error procesando fichero " + aFiles[ m, 1 ] )
+         ::oSender:SetText( ErrorMessage( oError ) )
+
+      end
+
+      ErrorBlock( oBlock )
+
+   next
+
+Return ( Self )
+
+
+
+STATIC FUNCTION lSelFam( lSel, oBrw, dbf )
+
+   IIF( lSel == nil, lSel := !( dbf )->lSelDoc, ) ;
+
+   if dbLock( dbf )
+      ( dbf )->lSelDoc  := lSel
+      ( dbf )->( dbUnlock() )
+   end
+
+   if oBrw <> nil
+      oBrw:Refresh()
+      oBrw:SetFocus()
+   end
+
+RETURN NIL
+
+
+
+
+Function ExcelWirex( dbfArticulo, dbfFam )
+
+   local n
+   local nRec
+   local nOrd
+   local cPreFam     := ""
+   local cCodFam     := ""
+   local cCodArt     := ""
+   local cNomArt     := ""
+   local nPvdArt     := 0
+   local nPvpArt     := 0
+   local nIvaArt     := 0
+   local oOleExcel
+   local cFileExcel  := cGetFile32( "Excel ( *.Xls ) | " + "*.Xls", "Seleccione la hoja de calculo" )
+
+   if File( cFileExcel )
+
+      nRec           := ( dbfArticulo )->( RecNo() )
+      nOrd           := ( dbfArticulo )->( OrdSetFocus( 1 ) )
+
+      CreateWaitMeter( "Importando de Excel", "Tarifa de wirex", 4000 )
+
+      oOleExcel      := CreateObject( "Excel.Application" )
+
+      oOleExcel:Visible       := .F.
+      oOleExcel:DisplayAlerts := .F.
+      oOleExcel:WorkBooks:Open( cFileExcel )
+
+      oOleExcel:WorkSheets( 1 ):Activate()
+
+      for n := 8 to 4000
+
+         cPreFam  := oOleExcel:ActiveSheet:Range( "A" + lTrim( Str( n ) ) ):Text
+         cCodFam  := if( !Empty( cPreFam ), cPreFam, cCodFam )
+         cCodArt  := oOleExcel:ActiveSheet:Range( "B" + lTrim( Str( n ) ) ):Text
+         cNomArt  := oOleExcel:ActiveSheet:Range( "C" + lTrim( Str( n ) ) ):Text
+         nPvdArt  := oOleExcel:ActiveSheet:Range( "E" + lTrim( Str( n ) ) ):Value
+         nPvpArt  := oOleExcel:ActiveSheet:Range( "F" + lTrim( Str( n ) ) ):Value
+         nIvaArt  := oOleExcel:ActiveSheet:Range( "G" + lTrim( Str( n ) ) ):Value
+
+         if !Empty( cPreFam )
+
+            if !( dbfFam )->( dbSeek( cPreFam ) )
+               ( dbfFam )->( dbAppend() )
+            else
+               ( dbfFam )->( dbRLock() )
+            end
+
+               ( dbfFam )->cCodFam  := cPreFam
+               ( dbfFam )->cNomFam  := cCodArt
+
+               ( dbfFam )->( dbUnLock() )
+
+         end
+
+         if !Empty( cCodArt ) .AND. !Empty( nPvdArt ) .AND. !Empty( nPvpArt ) .AND. !Empty( nPvdArt )
+
+            if !( dbfArticulo )->( dbSeek( cCodArt ) )
+               ( dbfArticulo )->( dbAppend() )
+            else
+               ( dbfArticulo )->( dbRLock() )
+            end
+
+               ( dbfArticulo )->Codigo    := cCodArt
+               ( dbfArticulo )->Nombre    := cNomArt
+               ( dbfArticulo )->Familia   := cCodFam
+
+               if Valtype( nPvdArt ) <> "N"
+                  nPvdArt                 := Val( nPvdArt )
+               end
+               ( dbfArticulo )->pCosto    := nPvdArt
+
+               if Valtype( nPvpArt ) <> "N"
+                  nPvpArt                 := Val( nPvpArt )
+               end
+               ( dbfArticulo )->pVenta1   := nPvpArt
+
+               if Valtype( nIvaArt ) <> "N"
+                  nIvaArt                 := Val( nIvaArt )
+               end
+               ( dbfArticulo )->pVtaIva1  := nIvaArt
+
+               ( dbfArticulo )->TipoIva   := cDefIva()
+
+               ( dbfArticulo )->( dbUnLock() )
+
+         end
+
+         RefreshWaitMeter( n )
+
+      next
+
+      oOleExcel:DisplayAlerts := .T.
+
+      oOleExcel:Quit()
+
+      ( dbfArticulo )->( dbGoTo( nRec ) )
+      ( dbfArticulo )->( OrdSetFocus( nOrd ) )
+
+      EndWaitMeter()
+
+   end
+
+Return nil
+
+
+
+Function SetHeadDiv( lEur, oWndBrw, cChrSea )
+
+   local n
+
+   IIF( cChrSea == nil, cChrSea := "Precio", ) ;
+
+   for n := 1 to len( oWndBrw:oBrw:aHeaders )
+
+      if cChrSea $ oWndBrw:oBrw:aHeaders[ n ]
+         if lEur
+            oWndBrw:oBrw:aHeaders[ n ] := SubStr( oWndBrw:oBrw:aHeaders[ n ], 1, len( oWndBrw:oBrw:aHeaders[ n ] ) - 4 ) + Space( 1 ) + cDivChg()
+         else
+            oWndBrw:oBrw:aHeaders[ n ] := SubStr( oWndBrw:oBrw:aHeaders[ n ], 1, len( oWndBrw:oBrw:aHeaders[ n ] ) - 4 ) + Space( 1 ) + cDivEmp()
+         end
+      end
+   next
+
+   oWndBrw:Refresh()
+   oWndBrw:SetFocus()
+
+return nil
+
+
+
+_HB_CLASS TListadoFamilias ; UTILITY FUNCTION TListadoFamilias(...); static s_oClass ; local oClassInstance ; local nScope ; nScope := 1 ; if s_oClass == NIL ; s_oClass := IIF(.F.,, HBClass():New( "TListadoFamilias" , {TInfGen():classh} ) ) ; ;
+
+   _HB_MEMBER Create(); IIF( .F., s_oClass:ModMethod( "Create", @TListadoFamilias_Create(), nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ), s_oClass:AddMethod( "Create", @TListadoFamilias_Create(), nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ));
+
+   _HB_MEMBER lResource( cFld); IIF( .F., s_oClass:ModMethod( "lResource", @TListadoFamilias_lResource(), nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ), s_oClass:AddMethod( "lResource", @TListadoFamilias_lResource(), nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ));
+
+   _HB_MEMBER lGenerate(); IIF( .F., s_oClass:ModMethod( "lGenerate", @TListadoFamilias_lGenerate(), nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ), s_oClass:AddMethod( "lGenerate", @TListadoFamilias_lGenerate(), nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ));
+
+; IF .F. ; __clsActive(s_oClass:hClass) ; s_oClass:Refresh() ; ELSE ; s_oClass:Create() ; END ; oClassInstance := __clsInst( s_oClass:hClass ) ; IF __ObjHasMsg( oClassInstance, "InitClass" ); oClassInstance:InitClass( hb_aParams() ) ; END ; ELSE ; oClassInstance := __clsInst( s_oClass:hClass ) ; END ; IF PCount() > 0 ; DIVERT TO (@DivertConstructorCall()) OF s_oClass ; END ; RETURN oClassInstance AS CLASS TListadoFamilias ;
+
+
+
+UTILITY STATIC function TListadoFamilias_Create() ; local Self AS CLASS TListadoFamilias := QSelf() AS CLASS TListadoFamilias
+
+   ::AddField( "CCODFAM",    "C",  16, 0, {|| "" },    "Código",                 .T., "Código de familia",                   16, .F. )
+   ::AddField( "CNOMFAM",    "C",  40, 0, {|| "" },    "Nombre",                 .T., "Nombre de familia",                   40, .F. )
+   ::AddField( "CCODPRP1",   "C",  10, 0, {|| "" },    "Prp1",                   .F., "Primera propiedad de la familia",      5, .F. )
+   ::AddField( "CCODPRP2",   "C",  10, 0, {|| "" },    "Prp2",                   .F., "Segunda propiedad de la familia",      5, .F. )
+   ::AddField( "CCODGRP",    "C",   3, 0, {|| "" },    "Cod. grupo",             .T., "Código de grupo",                      5, .F. )
+   ::AddField( "NVALANU",    "N",  16, 6, {|| "" },    "Anual",                  .T., "Previsiones anual",                   20, .F. )
+   ::AddField( "NENE",       "N",  16, 6, {|| "" },    "Enero",                  .F., "Previsiones Enero",                   20, .F. )
+   ::AddField( "NFEB",       "N",  16, 6, {|| "" },    "Febrero",                .F., "Previsiones Febrero",                 20, .F. )
+   ::AddField( "NMAR",       "N",  16, 6, {|| "" },    "Marzo",                  .F., "Previsiones Marzo",                   20, .F. )
+   ::AddField( "NABR",       "N",  16, 6, {|| "" },    "Abril",                  .F., "Previsiones Abril",                   20, .F. )
+   ::AddField( "NMAY",       "N",  16, 6, {|| "" },    "Mayo",                   .F., "Previsiones Mayo",                    20, .F. )
+   ::AddField( "NJUN",       "N",  16, 6, {|| "" },    "Junio",                  .F., "Previsiones Junio",                   20, .F. )
+   ::AddField( "NJUL",       "N",  16, 6, {|| "" },    "Julio",                  .F., "Previsiones Julio",                   20, .F. )
+   ::AddField( "NAGO",       "N",  16, 6, {|| "" },    "Agosto",                 .F., "Previsiones Agosto",                  20, .F. )
+   ::AddField( "NSEP",       "N",  16, 6, {|| "" },    "Septiembre",             .F., "Previsiones Septiembre",              20, .F. )
+   ::AddField( "NOCT",       "N",  16, 6, {|| "" },    "Octubre",                .F., "Previsiones Octubre",                 20, .F. )
+   ::AddField( "NNOV",       "N",  16, 6, {|| "" },    "Noviembre",              .F., "Previsiones Noviembre",               20, .F. )
+   ::AddField( "NDIC",       "N",  16, 6, {|| "" },    "Diciembre",              .F., "Previsiones Diciembre",               20, .F. )
+   ::AddField( "NPCTRPL",    "N",   6, 2, {|| "" },    "Rapels",                 .F., "Porcentaje de rapels",                10, .F. )
+   ::AddField( "LPUBINT",    "L",   1, 0, {|| "" },    "Internet",               .F., "Publicar esta familia en internet",   10, .F. )
+
+   ::lDefFecInf   := .F.
+   ::lDefSerInf   := .F.
+   ::lDefDivInf   := .F.
+
+RETURN ( Self )
+
+
+
+UTILITY STATIC function TListadoFamilias_lResource( cFld) ; local Self AS CLASS TListadoFamilias := QSelf() AS CLASS TListadoFamilias
+
+   if !::StdResource( "INF_FAM01" )
+      return .F.
+   end
+
+   ::lDefFamInf( 110, 120, 130, 140, 600 )
+
+   ::CreateFilter( aItmFam(), ::oDbfFam )
+
+   ::oMtrInf:SetTotal( ::oDbfFam:Lastrec() )
+
+RETURN ( .T. )
+
+
+
+
+
+
+UTILITY STATIC function TListadoFamilias_lGenerate() ; local Self AS CLASS TListadoFamilias := QSelf() AS CLASS TListadoFamilias
+
+   local cExpHead := ""
+
+   ::oDlg:Disable()
+   ::oBtnCancel:Enable()
+   ::oDbf:Zap()
+
+
+   ::aHeader      := {  {|| "Fecha    : " + Dtoc( Date() ) }, {|| "Familias : " + if( ::lAllFam, "Todas", AllTrim( ::cFamOrg ) + " > " + AllTrim( ::cFamDes ) ) } }
+
+   if !Empty( ::oFilter:cExpFilter )
+      cExpHead       := ::oFilter:cExpFilter
+   else
+      cExpHead       := ".t."
+   end
+
+   ::oDbfFam:OrdSetFocus( "cCodFam" )
+   ::oDbfFam:GoTop()
+
+   while !::lBreak .AND. !::oDbfFam:Eof()
+
+
+
+      if ::oDbfFam:cCodFam >= ::cFamOrg                      .AND. ::oDbfFam:cCodFam <= ::cFamDes                      .AND. ::EvalFilter()
+
+         ::oDbf:Append()
+
+         ::oDbf:cCodFam     := ::oDbfFam:cCodFam
+         ::oDbf:cNomFam     := ::oDbfFam:cNomFam
+         ::oDbf:cCodPrp1    := ::oDbfFam:cCodPrp1
+         ::oDbf:cCodPrp2    := ::oDbfFam:cCodPrp2
+         ::oDbf:cCodGrp     := ::oDbfFam:cCodGrp
+         ::oDbf:nValAnu     := ::oDbfFam:nValAnu
+         ::oDbf:nEne        := ::oDbfFam:nEne
+         ::oDbf:nFeb        := ::oDbfFam:nFeb
+         ::oDbf:nMar        := ::oDbfFam:nMar
+         ::oDbf:nAbr        := ::oDbfFam:nAbr
+         ::oDbf:nMay        := ::oDbfFam:nMay
+         ::oDbf:nJun        := ::oDbfFam:nJun
+         ::oDbf:nJul        := ::oDbfFam:nJul
+         ::oDbf:nAgo        := ::oDbfFam:nAgo
+         ::oDbf:nSep        := ::oDbfFam:nSep
+         ::oDbf:nOct        := ::oDbfFam:nOct
+         ::oDbf:nNov        := ::oDbfFam:nNov
+         ::oDbf:nDic        := ::oDbfFam:nDic
+         ::oDbf:nPctRpl     := ::oDbfFam:nPctRpl
+         ::oDbf:lPubInt     := ::oDbfFam:lPubInt
+
+         ::oDbf:Save()
+
+      end
+
+      ::oDbfFam:Skip()
+
+      ::oMtrInf:AutoInc( ::oDbfFam:OrdKeyNo() )
+
+   end
+
+   ::oMtrInf:AutoInc( ::oDbfFam:LastRec() )
+
+   ::oDlg:Enable()
+
+RETURN ( ::oDbf:LastRec() > 0 )
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+_HB_CLASS pdaFamiliaSenderReciver ; UTILITY FUNCTION pdaFamiliaSenderReciver(...); static s_oClass ; local oClassInstance ; local nScope ; nScope := 1 ; if s_oClass == NIL ; s_oClass := IIF(.F.,, HBClass():New( "pdaFamiliaSenderReciver" , { HBObject():Classh } ) ) ;
+
+   _HB_MEMBER CreateData(); IIF( .F., s_oClass:ModMethod( "CreateData", @pdaFamiliaSenderReciver_CreateData(), nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ), s_oClass:AddMethod( "CreateData", @pdaFamiliaSenderReciver_CreateData(), nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ));
+
+; IF .F. ; __clsActive(s_oClass:hClass) ; s_oClass:Refresh() ; ELSE ; s_oClass:Create() ; END ; oClassInstance := __clsInst( s_oClass:hClass ) ; IF __ObjHasMsg( oClassInstance, "InitClass" ); oClassInstance:InitClass( hb_aParams() ) ; END ; ELSE ; oClassInstance := __clsInst( s_oClass:hClass ) ; END ; IF PCount() > 0 ; DIVERT TO (@DivertConstructorCall()) OF s_oClass ; END ; RETURN oClassInstance AS CLASS pdaFamiliaSenderReciver ;
+
+
+
+UTILITY STATIC function pdaFamiliaSenderReciver_CreateData( oPgrActual, oSayStatus, cPatPreVenta) ; local Self AS CLASS pdaFamiliaSenderReciver := QSelf() AS CLASS pdaFamiliaSenderReciver
+
+   local dbfFam
+   local tmpFam
+   local lExist      := .F.
+   local cFileName
+   local cPatPc      := if( Empty( cPatPreVenta ), cPatPc(), cPatPreVenta )
+
+   dbUseArea( .T., ( cDriver() ), ( cPatArt() + "Familias.Dbf" ), ( cCheckArea( "FAMILIAS", @dbfFam ) ), if(.T. .OR. .F., !.F., NIL), .F.,, )
+   if !lAIS() ; ordListAdd( ( cPatArt() + "Familias.Cdx" ) ) ; else ; ordSetFocus( 1 ) ; end
+
+   dbUseArea( .T., cDriver(), cPatPc + "Familias.Dbf", cCheckArea( "Familias", @tmpFam ), .T. )
+   ( tmpFam )->( ordListAdd( cPatPc + "Familias.Cdx" ) )
+
+   if !Empty( oPgrActual )
+      oPgrActual:SetRange( 0, ( tmpFam )->( OrdKeyCount() ) )
+   end
+
+   ( tmpFam )->( dbGoTop() )
+   while !( tmpFam )->( eof() )
+
+      if ( tmpFam )->lSelDoc
+
+         if ( dbfFam )->( dbSeek( ( tmpFam )->cCodFam ) )
+            dbPass( tmpFam, dbfFam, .F. )
+         else
+            dbPass( tmpFam, dbfFam, .T. )
+         end
+
+         if dbLock( tmpFam )
+            ( tmpFam )->lSelDoc  := .F.
+            ( tmpFam )->( dbUnLock() )
+         end
+
+         if dbLock( dbfFam )
+            ( dbfFam )->lSelDoc  := .F.
+            ( dbfFam )->( dbUnLock() )
+         end
+
+      end
+
+      ( tmpFam )->( dbSkip() )
+
+      if !Empty( oSayStatus )
+         oSayStatus:SetText( "Sincronizando familias " + Alltrim( Str( ( tmpFam )->( OrdKeyNo() ) ) ) + " de " + Alltrim( Str( ( tmpFam )->( OrdKeyCount() ) ) ) )
+      end
+
+      SysRefresh()
+
+      if !Empty( oPgrActual )
+         oPgrActual:SetPos( ( tmpFam )->( OrdKeyNo() ) )
+      end
+
+      SysRefresh()
+
+   end
+
+   ( tmpFam )->( dbCloseArea() )
+   ( dbfFam )->( dbCloseArea() )
+
+Return ( Self )
+
+
+
+
+
+
+
+
+
+Function IsFamilia( cPath )
+
+   IIF( cPath == nil, cPath := cPatArt(), ) ;
+
+   if !lExistTable( cPath + "Familias.Dbf" )
+      dbCreate( cPath + "Familias.Dbf", aSqlStruct( aItmFam() ), cDriver() )
+   end
+
+   if !lExistTable( cPath + "FamPrv.Dbf" )
+      dbCreate( cPath + "FamPrv.Dbf", aSqlStruct( aItmFamPrv() ), cDriver() )
+   end
+
+
+   if !lExistIndex( cPath + "Familias.Cdx" ) .OR.  !lExistIndex( cPath + "FamPrv.Cdx" )
+      rxFamilia( cPath )
+   end
+
+Return nil
+
+
+
+FUNCTION mkFamilia( cPath, lAppend, cPathOld, oMeter )
+
+    local dbfFamilia
+
+    IIF( lAppend == nil, lAppend := .F., ) ;
+   IIF( cPath == nil, cPath := cPatArt(), ) ;
+
+   if lExistTable( cPath + "Familias.Dbf" )
+      fEraseTable( cPath + "Familias.dbf" )
+   end
+
+   if lExistTable( cPath + "FamPrv.Dbf" )
+      fEraseTable( cPath + "FamPrv.Dbf" )
+   end
+
+   dbCreate( cPath + "Familias.Dbf", aSqlStruct( aItmFam() ), cDriver() )
+
+   if lAppend .AND. cPathOld <> nil .AND. lIsDir( cPathOld )
+      dbUseArea( .T., cDriver(), cPath + "Familias.Dbf", cCheckArea( "Familias", @dbfFamilia ), .F. )
+      if !( dbfFamilia )->( neterr() )
+         ( dbfFamilia )->( __dbApp( cPathOld + "Familias.Dbf" ) )
+         ( dbfFamilia )->( dbCloseArea() )
+      end
+   end
+
+   dbCreate( cPath + "FamPrv.Dbf", aSqlStruct( aItmFamPrv() ), cDriver() )
+
+   if lAppend .AND. cPathOld <> nil .AND. lIsDir( cPathOld )
+      dbUseArea( .T., cDriver(), cPath + "FamPrv.Dbf", cCheckArea( "FamPrv", @dbfFamilia ), .F. )
+      if !( dbfFamilia )->( neterr() )
+         ( dbfFamilia )->( __dbApp( cPathOld + "FamPrv.Dbf" ) )
+         ( dbfFamilia )->( dbCloseArea() )
+      end
+   end
+
+   rxFamilia( cPath, oMeter )
+
+RETURN .T.
+
+
+
+FUNCTION rxFamilia( cPath, oMeter )
+
+    local dbfFamilia
+
+   IIF( cPath == nil, cPath := cPatArt(), ) ;
+
+   if !lExistTable( cPath + "Familias.Dbf" )
+      dbCreate( cPath + "Familias.Dbf", aSqlStruct( aItmFam() ), cDriver() )
+   end
+
+   fEraseIndex(  cPath + "Familias.Cdx" )
+
+   if !lExistTable( cPath + "FamPrv.Dbf" )
+      dbCreate( cPath + "FamPrv.Dbf", aSqlStruct( aItmFamPrv() ), cDriver() )
+   end
+
+   fEraseIndex(  cPath + "FamPrv.Cdx" )
+
+   dbUseArea( .T., cDriver(), cPath + "FAMILIAS.DBF", cCheckArea( "FAMILIAS", @dbfFamilia ), .F. )
+   if !( dbfFamilia )->( neterr() )
+      ( dbfFamilia )->( __dbPack() )
+
+      ( dbfFamilia )->( ordCondSet( "!Deleted()", {|| !Deleted() }  ) )
+      ( dbfFamilia )->( ordCreate( cPath + "FAMILIAS.CDX", "cCodFam", "Field->cCodFam", {|| Field->cCodFam }, ) )
+
+      ( dbfFamilia )->( ordCondSet("!Deleted()", {|| !Deleted() }  ) )
+      ( dbfFamilia )->( ordCreate( cPath + "FAMILIAS.CDX", "cNomFam", "Upper( Field->cNomFam )", {|| Upper( Field->cNomFam ) } ) )
+
+      ( dbfFamilia )->( ordCondSet("!Deleted().and. lIncTpv", {|| !Deleted() .AND. Field->lIncTpv }  ) )
+      ( dbfFamilia )->( ordCreate( cPath + "FAMILIAS.CDX", "nPosTpv", "Str( Field->nPosTpv )", {|| Str( Field->nPosTpv ) } ) )
+
+      ( dbfFamilia )->( ordCondSet("!Deleted() .and. lIncTpv", {|| !Deleted() .AND. Field->lIncTpv }  ) )
+      ( dbfFamilia )->( ordCreate( cPath + "FAMILIAS.CDX", "lIncTpv", "Upper( cNomFam )", {|| Upper( Field->cNomFam ) } ) )
+
+      ( dbfFamilia )->( ordCondSet("!Deleted()", {|| !Deleted() }  ) )
+      ( dbfFamilia )->( ordCreate( cPath + "FAMILIAS.CDX", "lSelDoc", "lSelDoc", {|| Field->lSelDoc } ) )
+
+      ( dbfFamilia )->( ordCondSet("!Deleted()", {|| !Deleted() }  ) )
+      ( dbfFamilia )->( ordCreate( cPath + "FAMILIAS.CDX", "cCodWeb", "Str( Field->cCodWeb, 11 )", {|| Str( Field->cCodWeb, 11 ) } ) )
+
+      ( dbfFamilia )->( dbCloseArea() )
+   else
+      msgStop( "Imposible abrir en modo exclusivo la tabla de familias" )
+   end
+
+   dbUseArea( .T., cDriver(), cPath + "FamPrv.Dbf", cCheckArea( "FAMPRV", @dbfFamilia ), .F. )
+   if !( dbfFamilia )->( neterr() )
+      ( dbfFamilia )->( __dbPack() )
+
+      ( dbfFamilia )->( ordCondSet("!Deleted()", {||!Deleted()}  ) )
+      ( dbfFamilia )->( ordCreate( cPath + "FamPrv.Cdx", "cCodFam", "cCodFam", {|| Field->cCodFam }, ) )
+
+      ( dbfFamilia )->( ordCondSet("!Deleted()", {||!Deleted()}  ) )
+      ( dbfFamilia )->( ordCreate( cPath + "FamPrv.Cdx", "cFamPrv", "cCodPrv + cFamPrv", {|| Field->cCodPrv + Field->cFamPrv } ) )
+
+      ( dbfFamilia )->( dbCloseArea() )
+   else
+      msgStop( "Imposible abrir en modo exclusivo la tabla de familias" )
+   end
+
+RETURN NIL
+
+
+
+Function aItmFamPrv()
+
+
+
+   local aBase := {  {"CCODFAM",    "C",    16,    0, "Código de familia" }, {"CCODPRV",    "C",    12,    0, "Código de proveedor" }, {"CFAMPRV",    "C",    20,    0, "Código de familia del proveedor" } }
+
+return ( aBase )
+
+
+
+Function aItmFam()
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+   local aBase := {  {"CCODFAM",    "C",    16,    0, "Código de familia" }, {"CNOMFAM",    "C",    40,    0, "Nombre de familia" }, {"CCODPRP1",   "C",    10,    0, "Primera propiedad de la familia" }, {"CCODPRP2",   "C",    10,    0, "Segunda propiedad de la familia" }, {"CCODGRP",    "C",     3,    0, "Código de grupo" }, {"LINCTPV",    "L",     1,    0, "Incluir en TPV táctil" }, {"NVALANU",    "N",    16,    6, "Previsiones anual" }, {"NENE",       "N",    16,    6, "Previsiones Enero" }, {"NFEB",       "N",    16,    6, "Previsiones Febrero" }, {"NMAR",       "N",    16,    6, "Previsiones Marzo" }, {"NABR",       "N",    16,    6, "Previsiones Abril" }, {"NMAY",       "N",    16,    6, "Previsiones Mayo" }, {"NJUN",       "N",    16,    6, "Previsiones Junio" }, {"NJUL",       "N",    16,    6, "Previsiones Julio" }, {"NAGO",       "N",    16,    6, "Previsiones Agosto" }, {"NSEP",       "N",    16,    6, "Previsiones Septiembre" }, {"NOCT",       "N",    16,    6, "Previsiones Octubre" }, {"NNOV",       "N",    16,    6, "Previsiones Noviembre" }, {"NDIC",       "N",    16,    6, "Previsiones Diciembre" }, {"nDtoLin",    "N",     6,    2, "Porcentaje de descuento por familia" }, {"NPCTRPL",    "N",     6,    2, "Porcentaje de rapels" }, {"LPUBINT",    "L",     1,    0, "Publicar esta familia en internet" }, {"NCOLBTN",    "N",    10,    0, "Color del botón" }, {"CIMGBTN",    "C",   250,    0, "Imagen del botón" }, {"lSelDoc",    "L",     1,    0, "Lógico para seleccionado" }, {"lPreEsp",    "L",     1,    0, "Lógico para permitir precios especiales" }, {"cCodFra",    "C",     3,    0, "Código de frases publiciarias" }, {"lInfStk",    "L",     1,    0, "Incluir en informe de stocks bajo minimos" }, {"cFamCmb",    "C",    16,    0, "Familia para combinar" }, {"nPosTpv",    "N",     4,    1, "Posición para mostrar en TPV" }, {"cCodWeb",    "N",    11,    0, "Código para la web" }, {"lAcum",      "L",     1,    0, "Lógico para acumular árticulos" }, {"lMostrar",   "L",     1,    0, "Lógico para mostrar ventana de comentarios" }, {"cCodImp",    "C",     3,    0, "Codigo del orden de impresion comanda" }, {"cNomImp",    "C",    50,    0, "Nombre del orden de impresion comanda" }, {"nPosInt",    "N",     3,    0, "Pocisión para mostrar en internet" }, {"LFAMINT",    "L",     1,    0, "Añade la familia junto con la descripción en internet" }, {"CCOMFAM",    "C",     3,    0, "Comentario por defecto para la familia" } }
+
+return ( aBase )
+
+
+
+Function lPressCol( nCol, oBrw, oCmbOrd, aCbxOrd, cDbf )
+
+   local nPos
+   local cHeader
+
+   if !Empty( nCol ) .AND. nCol <= len( oBrw:aHeaders )
+      cHeader     := oBrw:aHeaders[ nCol ]
+      nPos        := aScan( aCbxOrd, cHeader )
+
+      if nPos <> 0
+
+         oCmbOrd:Set( cHeader )
+         ( cDbf )->( OrdSetFocus( oCmbOrd:nAt ) )
+
+         oBrw:Refresh()
+
+      end
+
+   end
+
+return nil
+
+
+
+FUNCTION nDescuentoFamilia( cCodFam, oDbfFam )
+
+   local nDescuentoFamilia := 0
+
+   if ValType( oDbfFam ) == "O"
+      if oDbfFam:SeekInOrd( cCodFam, "cCodFam" )
+         nDescuentoFamilia := oDbfFam:nDtoLin
+      end
+   else
+      if dbSeekInOrd( cCodFam, "cCodFam", oDbfFam )
+         nDescuentoFamilia := ( oDbfFam )->nDtoLin
+      end
+   end
+
+RETURN ( nDescuentoFamilia )
+
+
+
+FUNCTION cCodFra( cCodFam, oDbfFam )
+
+   local cCodFra  := ""
+
+   if ValType( oDbfFam ) == "O"
+      if oDbfFam:SeekInOrd( cCodFam, "cCodFam" )
+         cCodFra  := oDbfFam:cCodFra
+      end
+   else
+      if dbSeekInOrd( cCodFam, "cCodFam", oDbfFam )
+         cCodFra  := ( oDbfFam )->cCodFra
+      end
+   end
+
+RETURN ( cCodFra )
+
+
+
+Static Function lValidFamiliaCombinado( aTmp )
+
+   local lValid   := .T.
+
+
+
+   if !Empty( aTmp[ 1 ] ) .AND. !Empty( aTmp[ 29 ] ) .AND. ( aTmp[ 1 ] == aTmp[ 29 ] )
+
+      lValid      := .F.
+
+      MsgStop( "Código de familia no puede ser igual al combinado" )
+
+   end
+
+return ( lValid )
+
+
+
+FUNCTION retFamilia( cCodFam, uFamilia )
+
+   local oBlock
+   local oError
+   local lClose   := .F.
+    local cTemp        := Space( 30 )
+
+   oBlock            := ErrorBlock( {| oError | ApoloBreak( oError ) } )
+   BEGIN SEQUENCE
+
+   if Empty( uFamilia )
+      dbUseArea( .T., ( cDriver() ), ( cPatArt() + "FAMILIAS.DBF" ), ( cCheckArea( "FAMILIAS", @uFamilia ) ), if(.T. .OR. .F., !.F., NIL), .F.,, )
+      if !lAIS() ; ordListAdd( ( cPatArt() + "FAMILIAS.CDX" ) ) ; else ; ordSetFocus( 1 ) ; end
+      lClose      := .T.
+   end
+
+   do case
+   case ValType( uFamilia ) == "C"
+
+      if ( uFamilia )->( dbSeek( cCodFam ) )
+         cTemp    := ( uFamilia )->cNomFam
+      end
+
+   case ValType( uFamilia ) == "O"
+
+      if uFamilia:Seek( cCodFam )
+         cTemp    := uFamilia:cNomFam
+      end
+
+   end
+
+   RECOVER USING oError
+
+      msgStop( "Imposible abrir todas las bases de datos " + Chr(13)+Chr(10) + ErrorMessage( oError ) )
+
+   end
+
+   ErrorBlock( oBlock )
+
+   if lClose
+      ( uFamilia )->( dbCloseArea() )
+   end
+
+RETURN cTemp
+
+
+
+FUNCTION cFamilia( oGet, dbfFamilia, oGet2, lMessage, oGetPrp1, oGetPrp2 )
+
+   local nRec
+   local oBlock
+   local oError
+   local lValid      := .F.
+   local lClose      := .F.
+   local xValor      := oGet:varGet()
+
+   IIF( lMessage == nil, lMessage := .T., ) ;
+
+   if Empty( xValor ) .OR. ( xValor == Replicate( "Z", 16 ) )
+      return .T.
+   end
+
+   oBlock            := ErrorBlock( {| oError | ApoloBreak( oError ) } )
+   BEGIN SEQUENCE
+
+   if Empty( dbfFamilia )
+      dbUseArea( .T., ( cDriver() ), ( cPatArt() + "FAMILIAS.DBF" ), ( cCheckArea( "FAMILIAS", @dbfFamilia ) ), if(.T. .OR. .F., !.F., NIL), .F.,, )
+      if !lAIS() ; ordListAdd( ( cPatArt() + "FAMILIAS.CDX" ) ) ; else ; ordSetFocus( 1 ) ; end
+      lClose         := .T.
+   else
+      nRec           := ( dbfFamilia )->( Recno() )
+   end
+
+   if dbSeekInOrd( xValor, "cCodFam", dbfFamilia )
+
+      if !Empty( oGet )
+         oGet:cText( ( dbfFamilia )->cCodFam )
+      end
+
+      if !Empty( oGet2 )
+         oGet2:cText( ( dbfFamilia )->cNomFam )
+      end
+
+      if !Empty( oGetPrp1 ) .AND. Empty( oGetPrp1:VarGet() )
+         oGetPrp1:cText( ( dbfFamilia )->cCodPrp1 )
+         oGetPrp1:lValid()
+      end
+
+      if !Empty( oGetPrp2 ) .AND. Empty( oGetPrp2:VarGet() )
+         oGetPrp2:cText( ( dbfFamilia )->cCodPrp2 )
+         oGetPrp2:lValid()
+      end
+
+      lValid         := .T.
+
+    ELSE
+
+      if lMessage
+         msgStop( "Familia no encontrada", "Aviso del sistema" )
+      end
+
+    end
+
+   RECOVER USING oError
+
+      msgStop( "Imposible abrir todas las bases de datos " + Chr(13)+Chr(10) + ErrorMessage( oError ) )
+
+   end
+
+   ErrorBlock( oBlock )
+
+   if lClose
+      ( dbfFamilia )->( dbCloseArea() )
+   else
+      ( dbfFamilia )->( dbGoTo( nRec ) )
+   end
+
+RETURN lValid
+
+
+
+Static Function ChangePosition( lInc )
+
+   local aPos
+   local nPos     := 1
+   local aRec     := {}
+   local nRec     := ( dbfFamilia )->( Recno() )
+   local nOrd     := ( dbfFamilia )->( OrdSetFocus( "nPosTpv" ) )
+
+   CursorWait()
+
+   do case
+      case IsTrue( lInc )
+
+         if ( dbfFamilia )->( dbRLock() )
+            ( dbfFamilia )->nPosTpv   := ( dbfFamilia )->nPosTpv + 1.5
+         end
+         ( dbfFamilia )->( dbUnLock() )
+
+      case IsFalse( lInc )
+
+         if ( dbfFamilia )->( dbRLock() )
+            ( dbfFamilia )->nPosTpv   := ( dbfFamilia )->nPosTpv - 1.5
+         end
+         ( dbfFamilia )->( dbUnLock() )
+
+   end
+
+
+
+   ( dbfFamilia )->( dbGoTop() )
+   while !( dbfFamilia )->( eof() )
+
+      if ( dbfFamilia )->lIncTpv
+         aAdd( aRec, { ( dbfFamilia )->( Recno() ), nPos++ } )
+      end
+
+      ( dbfFamilia )->( dbSkip() )
+
+   end
+
+
+
+   for each aPos in aRec
+
+      ( dbfFamilia )->( dbGoTo( aPos[ 1 ] ) )
+
+      if ( dbfFamilia )->( dbRLock() )
+         ( dbfFamilia )->nPosTpv      := aPos[ 2 ]
+         ( dbfFamilia )->( dbUnLock() )
+      end
+
+   next
+
+
+
+   CursorWE()
+
+   ( dbfFamilia )->( dbGoTo( nRec ) )
+   ( dbfFamilia )->( OrdSetFocus( nOrd ) )
+
+Return ( nil )
+
+
+
+Function ColorFam( oGetColor )
+
+   local oDlg
+   local oBmpGeneral
+   local oImgColores
+
+   oDlg = TDialog():New(,,,,, "COLORFAM",, .F.,,,,,, .F.,,,,,, .F., )
+
+      oImgColores             := C5ImageView():Redefine( 200, oDlg )
+      oImgColores:nWItem      := 131
+      oImgColores:nHItem      := 75
+      oImgColores:lVScroll    := .F.
+      oImgColores:nAlignText  := nOr( 0x00000000, 0x00000001 )
+      oImgColores:lTitle      := .T.
+      oImgColores:nHTitle     := 12
+      oImgColores:lShowOption := .T.
+      oImgColores:aTextMargin := { 0, 0, 0, 0 }
+      oImgColores:nClrTextSel := ( 0 + ( 0 * 256 ) + ( 0 * 65536 ) )
+
+      oImgColores:nOption     := 0
+
+      aAdd( oImgColores:aItems, C5ImageViewItem():New( , "Amarillo pastel",   ( 255 + ( 255 * 256 ) + ( 149 * 65536 ) ) ) )
+      aAdd( oImgColores:aItems, C5ImageViewItem():New( , "Amarillo señales",  ( 255 + ( 204 * 256 ) + ( 0 * 65536 ) ) ) )
+      aAdd( oImgColores:aItems, C5ImageViewItem():New( , "Amarillo miel",     ( 201 + ( 135 * 256 ) + ( 33 * 65536 ) ) ) )
+      aAdd( oImgColores:aItems, C5ImageViewItem():New( , "Amarillo ocre",     ( 196 + ( 181 * 256 ) + ( 134 * 65536 ) ) ) )
+      aAdd( oImgColores:aItems, C5ImageViewItem():New( , "Pardo verdoso",     ( 143 + ( 141 * 256 ) + ( 97 * 65536 ) ) ) )
+      aAdd( oImgColores:aItems, C5ImageViewItem():New( , "Rosa lavanda",      ( 235 + ( 205 * 256 ) + ( 245 * 65536 ) ) ) )
+      aAdd( oImgColores:aItems, C5ImageViewItem():New( , "Rosa claro",        ( 232 + ( 156 * 256 ) + ( 181 * 65536 ) ) ) )
+      aAdd( oImgColores:aItems, C5ImageViewItem():New( , "Violeta pastel",    ( 172 + ( 134 * 256 ) + ( 164 * 65536 ) ) ) )
+      aAdd( oImgColores:aItems, C5ImageViewItem():New( , "Biscuit",           ( 249 + ( 228 * 256 ) + ( 202 * 65536 ) ) ) )
+      aAdd( oImgColores:aItems, C5ImageViewItem():New( , "Rojo beige",        ( 204 + ( 130 * 256 ) + ( 115 * 65536 ) ) ) )
+      aAdd( oImgColores:aItems, C5ImageViewItem():New( , "Rojo anaranjado",   ( 224 + ( 94 * 256 ) + ( 31 * 65536 ) ) ) )
+      aAdd( oImgColores:aItems, C5ImageViewItem():New( , "Verde amarillento", ( 165 + ( 226 * 256 ) + ( 135 * 65536 ) ) ) )
+      aAdd( oImgColores:aItems, C5ImageViewItem():New( , "Verde mayo",        ( 88 + ( 186 * 256 ) + ( 78 * 65536 ) ) ) )
+      aAdd( oImgColores:aItems, C5ImageViewItem():New( , "Verde oliva",       ( 69 + ( 182 * 256 ) + ( 159 * 65536 ) ) ) )
+      aAdd( oImgColores:aItems, C5ImageViewItem():New( , "Cian",              ( 180 + ( 243 * 256 ) + ( 243 * 65536 ) ) ) )
+      aAdd( oImgColores:aItems, C5ImageViewItem():New( , "Azul pastel",       ( 196 + ( 215 * 256 ) + ( 225 * 65536 ) ) ) )
+      aAdd( oImgColores:aItems, C5ImageViewItem():New( , "Azul luminoso",     ( 50 + ( 134 * 256 ) + ( 209 * 65536 ) ) ) )
+      aAdd( oImgColores:aItems, C5ImageViewItem():New( , "Gris ceniza",       ( 226 + ( 224 * 256 ) + ( 228 * 65536 ) ) ) )
+      aAdd( oImgColores:aItems, C5ImageViewItem():New( , "Aluminio blanco",   ( 172 + ( 172 * 256 ) + ( 181 * 65536 ) ) ) )
+      aAdd( oImgColores:aItems, C5ImageViewItem():New( , "Gris piedra",       ( 145 + ( 145 * 256 ) + ( 135 * 65536 ) ) ) )
+
+
+
+
+
+      oBmpGeneral := TBitmap():ReDefine( 500, "color_wheel_48_alpha",, oDlg,,, .F., .F.,,, .F.,,, .T. )
+
+
+
+
+     TButton():ReDefine( 2, {||( oDlg:End() )}, oDlg,,, .F.,,,, .F. )
+
+      oDlg:bStart := {|| StartColorFamilia( oImgColores, oGetColor, oDlg ) }
+
+   oDlg:Activate( oDlg:bLClicked, oDlg:bMoved, oDlg:bPainted, .T.,,,, oDlg:bRClicked,,, )
+
+Return .T.
+
+
+
+Static Function StartColorFamilia( oImgColores, oGetColor, oDlg )
+
+   oImgColores:bAction := {|| SeleccionaColor( oImgColores, oGetColor, oDlg ) }
+
+Return .T.
+
+
+
+Function SeleccionaColor( oImgColores, oGetColor, oDlg )
+
+   local nOpt  := oImgColores:nOption
+
+   if Empty( nOpt )
+      MsgStop( "Seleccione un color" )
+      Return .F.
+   end
+
+   nOpt        := Max( Min( nOpt, len( oImgColores:aItems ) ), 1 )
+
+   if nOpt > 0 .AND. nOpt <= len( oImgColores:aItems )
+      oGetColor:cText( oImgColores:aItems[ nOpt ]:nClrPane )
+      oGetColor:SetColor( oImgColores:aItems[ nOpt ]:nClrPane, oImgColores:aItems[ nOpt ]:nClrPane )
+    end
+
+   oDlg:End()
+
+Return .T.
+
+
+
+Function AppFamilia( lOpenBrowse )
+
+   local oBlock
+   local oError
+   local nLevel         := nLevelUsr( "01012" )
+
+   IIF( lOpenBrowse == nil, lOpenBrowse := .F., ) ;
+
+   if nAnd( nLevel, 1 ) <> 0 .OR. nAnd( nLevel, 2 ) == 0
+      msgStop( "Acceso no permitido." )
+      return .T.
+   end
+
+   oBlock               := ErrorBlock( { | oError | ApoloBreak( oError ) } )
+   BEGIN SEQUENCE
+
+      if lOpenBrowse
+
+         if Familia()
+            oWndBrw:RecAdd()
+         end
+
+      else
+
+         if OpenFiles( .T. )
+            WinAppRec( oWndBrw, bEdit, dbfFamilia )
+            CloseFiles()
+         end
+
+      end
+
+   RECOVER USING oError
+
+      msgStop( ErrorMessage( oError ), "Error añadiendo artículo" )
+
+   end
+
+   ErrorBlock( oBlock )
+
+RETURN .T.

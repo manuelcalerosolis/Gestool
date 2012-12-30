@@ -1,0 +1,962 @@
+#line 112 "hbclass.ch"
+   DYNAMIC DivertConstructorCall
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+DECLARE HBClass  New( cName AS String, OPTIONAL SuperParams ) AS CLASS HBClass  Create() AS Object  Instance() AS Object  AddClsMethod( cName AS String, @MethodName(), nScope AS Numeric, n2 AS Numeric, n3 AS Numeric )  AddDelegate( cName AS String, cDelegate AS String, cObject AS String, nScope AS Numeric, lPersistent AS LOGICAL )  AddMultiClsData( cType AS String, uVal, nScope AS Numeric, aDatas AS Array OF String )  AddMultiData( cType AS String, uVal, nScope AS Numeric, aDatas AS Array OF String, x AS LOGICAL, lPer AS LOGICAL )  AddMethod( cName AS String, @MethodName(), nScope AS Numeric, lPersistent AS LOGICAL )  AddInLine( cName AS String, bBlock AS CodeBlock, nScope AS Numeric, lPersistent AS LOGICAL )  AddVirtual( cName AS String )  ModMethod( cName AS String, @MethodName(), nScope AS Numeric, lPersistent AS LOGICAL )  ModClsMethod( cName AS String, @MethodName(), nScope AS Numeric )  ModInline( cName AS String, bBlock AS CodeBlock, nScope AS Numeric, lPersistent AS LOGICAL )  SetOnError( @MethodName() )
+#line 85 "\Fwh1204\Include\FiveWin.ch"
+   EXTERNAL GetProcAdd
+   EXTERNAL TActiveX
+
+
+
+
+extern errorsys
+#line 12 ".\Prg\AccessCode.prg"
+_HB_CLASS AccessCode ; UTILITY FUNCTION AccessCode(...); static s_oClass ; local oClassInstance ; local nScope ; nScope := 1 ; if s_oClass == NIL ; s_oClass := IIF(.F.,, HBClass():New( "AccessCode" , { HBObject():Classh } ) ) ;
+
+   _HB_MEMBER { oDlg} ; IIF( !.F., s_oClass:AddMultiData(,, nScope + IIF( .F., 32, 0 ), { "oDlg" }, .F., .F. ), )
+   _HB_MEMBER { oDlgConnect} ; IIF( !.F., s_oClass:AddMultiData(,, nScope + IIF( .F., 32, 0 ), { "oDlgConnect" }, .F., .F. ), )
+   _HB_MEMBER { oBrwUser} ; IIF( !.F., s_oClass:AddMultiData(,, nScope + IIF( .F., 32, 0 ), { "oBrwUser" }, .F., .F. ), )
+   _HB_MEMBER { oBtnOk} ; IIF( !.F., s_oClass:AddMultiData(,, nScope + IIF( .F., 32, 0 ), { "oBtnOk" }, .F., .F. ), )
+   _HB_MEMBER { oBtnCancel} ; IIF( !.F., s_oClass:AddMultiData(,, nScope + IIF( .F., 32, 0 ), { "oBtnCancel" }, .F., .F. ), )
+   _HB_MEMBER { oBtnFree} ; IIF( !.F., s_oClass:AddMultiData(,, nScope + IIF( .F., 32, 0 ), { "oBtnFree" }, .F., .F. ), )
+   _HB_MEMBER { oBrush} ; IIF( !.F., s_oClass:AddMultiData(,, nScope + IIF( .F., 32, 0 ), { "oBrush" }, .F., .F. ), )
+   _HB_MEMBER { dbfUser} ; IIF( !.F., s_oClass:AddMultiData(,, nScope + IIF( .F., 32, 0 ), { "dbfUser" }, .F., .F. ), )
+   _HB_MEMBER { dbfCajas} ; IIF( !.F., s_oClass:AddMultiData(,, nScope + IIF( .F., 32, 0 ), { "dbfCajas" }, .F., .F. ), )
+
+   _HB_MEMBER { oSayDatabase} ; IIF( !.F., s_oClass:AddMultiData(,, nScope + IIF( .F., 32, 0 ), { "oSayDatabase" }, .F., .F. ), )
+
+   _HB_MEMBER { oGetUser} ; IIF( !.F., s_oClass:AddMultiData(,, nScope + IIF( .F., 32, 0 ), { "oGetUser" }, .F., .F. ), )
+   _HB_MEMBER { cGetUser} ; IIF( !.F., s_oClass:AddMultiData(, Space( 100 ), nScope + IIF( .F., 32, 0 ), { "cGetUser" }, .F., .F. ), )
+   _HB_MEMBER { oSayUser} ; IIF( !.F., s_oClass:AddMultiData(,, nScope + IIF( .F., 32, 0 ), { "oSayUser" }, .F., .F. ), )
+
+   _HB_MEMBER { oGetPassword} ; IIF( !.F., s_oClass:AddMultiData(,, nScope + IIF( .F., 32, 0 ), { "oGetPassword" }, .F., .F. ), )
+   _HB_MEMBER { cGetPassword} ; IIF( !.F., s_oClass:AddMultiData(, Space( 10 ), nScope + IIF( .F., 32, 0 ), { "cGetPassword" }, .F., .F. ), )
+   _HB_MEMBER { oSayPassword} ; IIF( !.F., s_oClass:AddMultiData(,, nScope + IIF( .F., 32, 0 ), { "oSayPassword" }, .F., .F. ), )
+
+   _HB_MEMBER { oMessage} ; IIF( !.F., s_oClass:AddMultiData(,, nScope + IIF( .F., 32, 0 ), { "oMessage" }, .F., .F. ), )
+   _HB_MEMBER { cPcnUsr} ; IIF( !.F., s_oClass:AddMultiData(, Rtrim( NetName() ), nScope + IIF( .F., 32, 0 ), { "cPcnUsr" }, .F., .F. ), )
+   _HB_MEMBER { oGetServer} ; IIF( !.F., s_oClass:AddMultiData(,, nScope + IIF( .F., 32, 0 ), { "oGetServer" }, .F., .F. ), )
+   _HB_MEMBER { cGetServer} ; IIF( !.F., s_oClass:AddMultiData(,, nScope + IIF( .F., 32, 0 ), { "cGetServer" }, .F., .F. ), )
+
+   _HB_MEMBER { cGetBuscar} ; IIF( !.F., s_oClass:AddMultiData(, "", nScope + IIF( .F., 32, 0 ), { "cGetBuscar" }, .F., .F. ), )
+   _HB_MEMBER { oGetBuscar} ; IIF( !.F., s_oClass:AddMultiData(,, nScope + IIF( .F., 32, 0 ), { "oGetBuscar" }, .F., .F. ), )
+
+   _HB_MEMBER { oCbxOrden} ; IIF( !.F., s_oClass:AddMultiData(,, nScope + IIF( .F., 32, 0 ), { "oCbxOrden" }, .F., .F. ), )
+   _HB_MEMBER { cCbxOrden} ; IIF( !.F., s_oClass:AddMultiData(, "Código", nScope + IIF( .F., 32, 0 ), { "cCbxOrden" }, .F., .F. ), )
+
+   _HB_MEMBER { oGetPasswordSql} ; IIF( !.F., s_oClass:AddMultiData(,, nScope + IIF( .F., 32, 0 ), { "oGetPasswordSql" }, .F., .F. ), )
+   _HB_MEMBER { cGetPasswordSql} ; IIF( !.F., s_oClass:AddMultiData(,, nScope + IIF( .F., 32, 0 ), { "cGetPasswordSql" }, .F., .F. ), )
+   _HB_MEMBER { oBtnConectOk} ; IIF( !.F., s_oClass:AddMultiData(,, nScope + IIF( .F., 32, 0 ), { "oBtnConectOk" }, .F., .F. ), )
+   _HB_MEMBER { oBtnConectCancel} ; IIF( !.F., s_oClass:AddMultiData(,, nScope + IIF( .F., 32, 0 ), { "oBtnConectCancel" }, .F., .F. ), )
+
+   _HB_MEMBER { oBmpEngine} ; IIF( !.F., s_oClass:AddMultiData(,, nScope + IIF( .F., 32, 0 ), { "oBmpEngine" }, .F., .F. ), )
+   _HB_MEMBER { cBmpEngine} ; IIF( !.F., s_oClass:AddMultiData(, "Data_Green_Alpha_48", nScope + IIF( .F., 32, 0 ), { "cBmpEngine" }, .F., .F. ), )
+
+   _HB_MEMBER { oProgress} ; IIF( !.F., s_oClass:AddMultiData(,, nScope + IIF( .F., 32, 0 ), { "oProgress" }, .F., .F. ), )
+   _HB_MEMBER { nProgress} ; IIF( !.F., s_oClass:AddMultiData(, 0, nScope + IIF( .F., 32, 0 ), { "nProgress" }, .F., .F. ), )
+
+   _HB_MEMBER { nConnection} ; IIF( !.F., s_oClass:AddMultiData(, 0, nScope + IIF( .F., 32, 0 ), { "nConnection" }, .F., .F. ), )
+   _HB_MEMBER { lConnected} ; IIF( !.F., s_oClass:AddMultiData(, .T., nScope + IIF( .F., 32, 0 ), { "lConnected" }, .F., .F. ), )
+
+   _HB_MEMBER { cIniFile} ; IIF( !.F., s_oClass:AddMultiData(, FullCurDir() + "GstApolo.Ini", nScope + IIF( .F., 32, 0 ), { "cIniFile" }, .F., .F. ), )
+
+   _HB_MEMBER Resource(); IIF( .F., s_oClass:ModMethod( "Resource", @AccessCode_Resource(), nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ), s_oClass:AddMethod( "Resource", @AccessCode_Resource(), nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ));
+   _HB_MEMBER InitResource(); IIF( .F., s_oClass:ModMethod( "InitResource", @AccessCode_InitResource(), nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ), s_oClass:AddMethod( "InitResource", @AccessCode_InitResource(), nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ));
+   _HB_MEMBER EndResource( oDlg); IIF( .F., s_oClass:ModMethod( "EndResource", @AccessCode_EndResource(), nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ), s_oClass:AddMethod( "EndResource", @AccessCode_EndResource(), nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ));
+
+   _HB_MEMBER TactilResource(); IIF( .F., s_oClass:ModMethod( "TactilResource", @AccessCode_TactilResource(), nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ), s_oClass:AddMethod( "TactilResource", @AccessCode_TactilResource(), nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ));
+   _HB_MEMBER InitTactilResource( oDlg, oImgUsr, oLstUsr, dbfUsr); IIF( .F., s_oClass:ModMethod( "InitTactilResource", @AccessCode_InitTactilResource(), nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ), s_oClass:AddMethod( "InitTactilResource", @AccessCode_InitTactilResource(), nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ));
+   _HB_MEMBER SelectTactilResource( nOpt, oLstUsr); IIF( .F., s_oClass:ModMethod( "SelectTactilResource", @AccessCode_SelectTactilResource(), nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ), s_oClass:AddMethod( "SelectTactilResource", @AccessCode_SelectTactilResource(), nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ));
+   _HB_MEMBER EndTactilResource( oDlg); IIF( .F., s_oClass:ModMethod( "EndTactilResource", @AccessCode_EndTactilResource(), nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ), s_oClass:AddMethod( "EndTactilResource", @AccessCode_EndTactilResource(), nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ));
+
+   _HB_MEMBER LoadIni(); IIF( .F., s_oClass:ModMethod( "LoadIni", @AccessCode_LoadIni(), nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ), s_oClass:AddMethod( "LoadIni", @AccessCode_LoadIni(), nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ));
+
+   _HB_MEMBER SaveIni(); IIF( .F., s_oClass:ModMethod( "SaveIni", @AccessCode_SaveIni(), nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ), s_oClass:AddMethod( "SaveIni", @AccessCode_SaveIni(), nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ));
+
+
+
+
+
+
+
+   _HB_MEMBER ShowConnectDialog(); IIF( .F., s_oClass:ModMethod( "ShowConnectDialog", @AccessCode_ShowConnectDialog(), nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ), s_oClass:AddMethod( "ShowConnectDialog", @AccessCode_ShowConnectDialog(), nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ));
+   _HB_MEMBER ShowLoginDialog(); IIF( .F., s_oClass:ModMethod( "ShowLoginDialog", @AccessCode_ShowLoginDialog(), nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ), s_oClass:AddMethod( "ShowLoginDialog", @AccessCode_ShowLoginDialog(), nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ));
+   _HB_MEMBER HideLoginDialog(); IIF( .F., s_oClass:ModMethod( "HideLoginDialog", @AccessCode_HideLoginDialog(), nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ), s_oClass:AddMethod( "HideLoginDialog", @AccessCode_HideLoginDialog(), nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ));
+
+   _HB_MEMBER InitialCheck(); IIF( .F., s_oClass:ModMethod( "InitialCheck", @AccessCode_InitialCheck(), nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ), s_oClass:AddMethod( "InitialCheck", @AccessCode_InitialCheck(), nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ));
+
+   _HB_MEMBER LoadUsuarios(); IIF( .F., s_oClass:ModMethod( "LoadUsuarios", @AccessCode_LoadUsuarios(), nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ), s_oClass:AddMethod( "LoadUsuarios", @AccessCode_LoadUsuarios(), nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ));
+   _HB_MEMBER lCheckUsuario(); IIF( .F., s_oClass:ModMethod( "lCheckUsuario", @AccessCode_lCheckUsuario(), nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ), s_oClass:AddMethod( "lCheckUsuario", @AccessCode_lCheckUsuario(), nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ));
+
+; IF .F. ; __clsActive(s_oClass:hClass) ; s_oClass:Refresh() ; ELSE ; s_oClass:Create() ; END ; oClassInstance := __clsInst( s_oClass:hClass ) ; IF __ObjHasMsg( oClassInstance, "InitClass" ); oClassInstance:InitClass( hb_aParams() ) ; END ; ELSE ; oClassInstance := __clsInst( s_oClass:hClass ) ; END ; IF PCount() > 0 ; DIVERT TO (@DivertConstructorCall()) OF s_oClass ; END ; RETURN oClassInstance AS CLASS AccessCode ;
+
+
+
+UTILITY STATIC function AccessCode_Resource() ; local Self AS CLASS AccessCode := QSelf() AS CLASS AccessCode
+
+   local oDlg
+   local oIcoApp
+
+
+
+
+
+
+
+
+
+   oIcoApp := TIcon():New( ,, "Gestool",, )
+
+
+
+
+
+   IIF( !lIsDir( cPatUsr() ), MakeDir( cNamePath( cPatUsr() ) ), )
+
+
+
+
+
+   ::LoadIni()
+
+
+
+
+
+   if !( Os_IsWTSClient() )
+      ::oBrush := TBrush():New(,, ( cBmpVersion() ),,, )
+   end
+
+   oDlg = TDialog():New(,,,, "Bienvenidos a " + "Gestool" + Space( 1 ) + "2K13" + " - " + "Gestool", "Bienvenidos",, .F.,,,, ::oBrush,, .F., oIcoApp,,,,, .F., )
+
+   do case
+      case lAds()
+         ::oSayDatabase       := TWebBtn():Redefine( 210,,,,,, oDlg,,,, "Database engine : Sybase Advantage Release 10.0 - SAP Company ®", "LEFT",,,,, ( 0 + ( 0 * 256 ) + ( 0 * 65536 ) ), ( 255 + ( 255 * 256 ) + ( 255 * 65536 ) ) )
+         ::cBmpEngine         := "Data_Green_Alpha_48"
+
+      case lAIS()
+         ::oSayDatabase       := TWebBtn():Redefine( 210,,,,,, oDlg,,,, "Database engine : Internet Sybase Advantage Release 10.0 - SAP Company ®", "LEFT",,,,, ( 0 + ( 0 * 256 ) + ( 0 * 65536 ) ), ( 255 + ( 255 * 256 ) + ( 255 * 65536 ) ) )
+         ::cBmpEngine         := "Courthouse_Alpha_48"
+
+      otherwise
+         ::oSayDatabase       := TWebBtn():Redefine( 210,,,,,, oDlg,,,, "Database engine : xHarbour Native RDD", "LEFT",,,,, ( 0 + ( 0 * 256 ) + ( 0 * 65536 ) ), ( 255 + ( 255 * 256 ) + ( 255 * 65536 ) ) )
+         ::cBmpEngine         := "Data_Green_Alpha_48"
+
+   end
+
+   ::oSayDatabase:SetTransparent()
+
+
+
+
+
+   ::oBmpEngine := TBitmap():ReDefine( 200, ::cBmpEngine,, oDlg,,, .F., .F.,,, .F.,,, .T. )
+
+   ::oSayUser                 := TWebBtn():Redefine( 100,,,,,, oDlg,,,,, "LEFT",,,,, ( 0 + ( 0 * 256 ) + ( 0 * 65536 ) ), ( 255 + ( 255 * 256 ) + ( 255 * 65536 ) ) )
+   ::oSayUser:SetTransparent()
+
+
+
+
+
+   ::oGetUser := TGetHlp():ReDefine( 110, { | u | If( PCount()==0, ::cGetUser, ::cGetUser:= u ) }, oDlg,,,,,,,,, .F.,,, .F., .F.,,,,,, nil, "LUPA",, )
+
+   ::oGetUser:bHelp           := {|| BrwUser( ::oGetUser, nil, ::oGetUser, .F., .F., .F., .T. ) }
+
+   ::oSayPassword             := TWebBtn():Redefine( 120,,,,,, oDlg,,,,, "LEFT",,,,, ( 0 + ( 0 * 256 ) + ( 0 * 65536 ) ), ( 255 + ( 255 * 256 ) + ( 255 * 65536 ) ) )
+   ::oSayPassword:SetTransparent()
+
+
+
+
+   ::oGetPassword := TGetHlp():ReDefine( 130, { | u | If( PCount()==0, ::cGetPassword, ::cGetPassword:= u ) }, oDlg,,,,,,,,, .F.,,, .F., .F.,,,,,, nil,,, )
+
+   ::oProgress                := TMeter():ReDefine( 240, { | u | if( pCount() == 0, ::nProgress, ::nProgress := u ) }, 10, oDlg, .F., , , .T., ( 255 + ( 255 * 256 ) + ( 255 * 65536 ) ), , ( 128 + ( 255 * 256 ) + ( 0 * 65536 ) ) )
+
+
+
+
+   ::oBtnOk := TButton():ReDefine( 1, {||( ::EndResource( oDlg ) )}, oDlg,,, .F.,,,, .F. )
+
+
+
+
+
+   ::oBtnCancel := TButton():ReDefine( 2, {||( oDlg:end() )}, oDlg,,, .F.,,,, .T. )
+
+   with object ( TWebBtn():Redefine( 150,,,,,  {|| goWeb( "http://www.gestool.es" ) }, oDlg,,,,, "LEFT",,,,, ( 0 + ( 0 * 256 ) + ( 255 * 65536 ) ), ( 0 + ( 0 * 256 ) + ( 255 * 65536 ) ),,,, "Ir a la página web de " + "Gestool" ) )
+      :SetTransparent()
+      :SetText( "http://www.gestool.es" )
+   end
+
+
+
+
+   ::oMessage := TSay():ReDefine( 160, {|| ""}, oDlg,, ( 0 + ( 0 * 256 ) + ( 0 * 65536 ) ), ( 255 + ( 255 * 256 ) + ( 255 * 65536 ) ), .F.,, .F., .F. )
+
+   oDlg:AddFastKey( 116, {|| ::EndResource( oDlg ) } )
+
+   oDlg:bStart := {|| ::InitResource( oDlg ) }
+
+   oDlg:Activate( oDlg:bLClicked, oDlg:bMoved, oDlg:bPainted, .T.,,,, oDlg:bRClicked,,, )
+
+   if !Empty( ::dbfUser )
+      ( ::dbfUser )->( dbClearFilter() )
+      ( ::dbfUser )->( dbCloseArea() )
+   end
+
+   if !Empty( ::dbfCajas )
+      ( ::dbfCajas )->( dbCloseArea() )
+   end
+
+   if !Empty( oIcoApp )
+      oIcoApp:end()
+   end
+
+   if !Empty( ::oBrush )
+      ::oBrush:End()
+   end
+
+   if !Empty( ::oBmpEngine )
+      ::oBmpEngine:End()
+   end
+
+   ::SaveIni()
+
+RETURN ( oDlg:nResult == 1 )
+
+
+
+UTILITY STATIC function AccessCode_EndResource( oDlg) ; local Self AS CLASS AccessCode := QSelf() AS CLASS AccessCode
+
+   SysRefresh()
+
+   if lChkUser( ::cGetUser, ::cGetPassword, ::oBtnOk )
+
+      ::HideLoginDialog()
+
+      ::oProgress:Show()
+      ::oMessage:Show()
+
+      lInitCheck( , ::oMessage, ::oProgress )
+
+      ::oProgress:Hide()
+
+      oDlg:end( 1 )
+
+   end
+
+RETURN ( nil )
+
+
+
+UTILITY STATIC function AccessCode_InitResource( oDlg) ; local Self AS CLASS AccessCode := QSelf() AS CLASS AccessCode
+
+   ::HideLoginDialog()
+
+   ::InitialCheck()
+
+   ::ShowLoginDialog( oDlg )
+
+   ::oGetPassword:SetFocus()
+
+Return .T.
+
+
+
+UTILITY STATIC function AccessCode_ShowLoginDialog( oDlg) ; local Self AS CLASS AccessCode := QSelf() AS CLASS AccessCode
+
+
+
+   ::oGetUser:Show()
+   ::oSayUser:Show()
+
+   ::oGetPassword:Show()
+   ::oSayPassword:Show()
+
+   ::oBtnOk:Show()
+   ::oBtnCancel:Show()
+
+   if !Empty( ::oMessage )
+      ::oMessage:Hide()
+   end
+
+Return ( Self )
+
+
+
+UTILITY STATIC function AccessCode_TactilResource() ; local Self AS CLASS AccessCode := QSelf() AS CLASS AccessCode
+
+   local oDlg
+   local oIcoApp
+   local oImgUsr
+   local oLstUsr
+
+
+
+
+
+   IIF( !lIsDir( cPatUsr() ), MakeDir( cNamePath( cPatUsr() ) ), )
+
+
+
+
+
+   if File( FullCurDir() + "GstRotor.Ico" )
+      oIcoApp := TIcon():New( ,,, ( FullCurDir() + "GstRotor.Ico" ), )
+   end
+
+
+
+
+
+   if !( Os_IsWTSClient() .OR. "PDA" $ cParamsMain() )
+      ::oBrush := TBrush():New(,, ( cBmpVersion() ),,, )
+   end
+
+
+
+
+
+   oDlg = TDialog():New(,,,, "Gestool" + Space( 1 ) + "2K13" + " - " + "Gestool", "WelSerTactil",, .F.,,,, ::oBrush,, .F.,,,,,, .F., )
+
+
+
+
+
+      oImgUsr                    := TImageList():New( 50, 50 )
+
+      oLstUsr                    := TListView():Redefine( 100, oDlg )
+      oLstUsr:nOption            := 0
+      oLstUsr:bClick             := {| nOpt | ::SelectTactilResource( nOpt, oDlg, oLstUsr ) }
+
+
+
+
+
+      do case
+      case lAds()
+         ::oSayDatabase          := TWebBtn():Redefine( 210,,,,,, oDlg,,,, "Database engine : Sybase Advantage Release 10.0 - SAP Company ®", "LEFT",,,,, ( 0 + ( 0 * 256 ) + ( 0 * 65536 ) ), ( 255 + ( 255 * 256 ) + ( 255 * 65536 ) ) )
+         ::cBmpEngine            := "Data_Green_Alpha_48"
+
+      case lAIS()
+         ::oSayDatabase          := TWebBtn():Redefine( 210,,,,,, oDlg,,,, "Database engine : Internet Sybase Advantage Release 10.0 - SAP Company ®", "LEFT",,,,, ( 0 + ( 0 * 256 ) + ( 0 * 65536 ) ), ( 255 + ( 255 * 256 ) + ( 255 * 65536 ) ) )
+         ::cBmpEngine            := "Courthouse_Alpla_48"
+
+      otherwise
+         ::oSayDatabase          := TWebBtn():Redefine( 210,,,,,, oDlg,,,, "Database engine : xHarbour Native RDD", "LEFT",,,,, ( 0 + ( 0 * 256 ) + ( 0 * 65536 ) ), ( 255 + ( 255 * 256 ) + ( 255 * 65536 ) ) )
+         ::cBmpEngine            := "Data_Green_Alpha_48"
+
+      end
+
+      ::oSayDatabase:SetTransparent()
+
+
+
+
+      ::oBmpEngine := TImage():ReDefine( 200, ::cBmpEngine,, oDlg,,, .F., .F.,,, .F.,,, .F. )
+
+      TWebBtn():Redefine( 220,,,,,, oDlg,,,, cNameVersion(), "Left",,,,, ( 0 + ( 0 * 256 ) + ( 0 * 65536 ) ), ( 255 + ( 255 * 256 ) + ( 255 * 65536 ) ) ):SetTransparent()
+
+      ::oProgress                := TMeter():ReDefine( 240, { | u | if( pCount() == 0, ::nProgress, ::nProgress := u ) }, 10, oDlg, .F., , , .T., ( 255 + ( 255 * 256 ) + ( 255 * 65536 ) ), , ( 128 + ( 255 * 256 ) + ( 0 * 65536 ) ) )
+
+      ::oMessage := TSay():ReDefine( 160, {|| ""}, oDlg,, ( 0 + ( 0 * 256 ) + ( 0 * 65536 ) ), ( 255 + ( 255 * 256 ) + ( 255 * 65536 ) ), .F.,, .F., .F. )
+
+
+
+
+
+      TButton():ReDefine( 2, {||( oDlg:end() )}, oDlg,,, .F.,,,, .F. )
+
+
+
+
+
+      oDlg:bStart                := {|| ::InitTactilResource( oDlg, oImgUsr, oLstUsr ) }
+
+   oDlg:Activate( oDlg:bLClicked, oDlg:bMoved, oDlg:bPainted, .T.,,,, oDlg:bRClicked,,, )
+
+   if !Empty( ::oBrush )
+      ::oBrush:End()
+   end
+
+   if !Empty( ::oBmpEngine )
+      ::oBmpEngine:End()
+   end
+
+   if !Empty( oIcoApp )
+      oIcoApp:end()
+   end
+
+   if !Empty( oLstUsr )
+      oLstUsr:End()
+   end
+
+RETURN ( oDlg:nResult == 1 )
+
+
+
+UTILITY STATIC function AccessCode_InitTactilResource( oDlg, oImgUsr, oLstUsr) ; local Self AS CLASS AccessCode := QSelf() AS CLASS AccessCode
+
+   local nImg     := -1
+   local nUser    := 0
+
+   CursorWait()
+
+
+
+   TstUsuario()
+
+   while !IsMaster()
+      rxUsuario()
+   end
+
+
+
+   dbUseArea( .T., ( cDriver() ), ( cPatDat() + "USERS.DBF" ), ( ::dbfUser := cCheckArea( "USERS" ) ), if(.T. .OR. .F., !.F., NIL), .F.,, )
+   ( ::dbfUser )->( ordListAdd( cPatDat() + "USERS.CDX" ) )
+
+   ( ::dbfUser )->( dbSetFilter( {|| !Field->lGrupo }, "!lGrupo" ) )
+
+   dbUseArea( .T., ( cDriver() ), ( cPatDat() + "Cajas.Dbf" ), ( ::dbfCajas := cCheckArea( "CAJAS" ) ), if(.T. .OR. .F., !.F., NIL), .F.,, )
+   ( ::dbfCajas )->( ordListAdd( cPatDat() + "Cajas.Cdx" ) )
+
+
+
+   nUsrInUse( ::dbfUser )
+
+   if !Empty( oImgUsr ) .AND. !Empty( oLstUsr )
+
+      oImgUsr:AddMasked( TBitmap():Define( "BIG_ADMIN" ),   ( 255 + ( 0 * 256 ) + ( 255 * 65536 ) ) )
+      oImgUsr:AddMasked( TBitmap():Define( "BIG_USER" ),    ( 255 + ( 0 * 256 ) + ( 255 * 65536 ) ) )
+
+      oLstUsr:SetImageList( oImgUsr )
+
+      oLstUsr:EnableGroupView()
+
+      oLstUsr:SetIconSpacing( 120, 140 )
+
+      with object ( TListViewGroup():New() )
+         :cHeader := "Administradores"
+         :Create( oLstUsr )
+      end
+
+      with object ( TListViewGroup():New() )
+         :cHeader := "Usuarios"
+         :Create( oLstUsr )
+      end
+
+      ( ::dbfUser )->( dbGoTop() )
+      while !( ::dbfUser )->( eof() )
+
+         if !( ::dbfUser )->lUseUse .AND. !( ::dbfUser )->lGrupo
+
+            if !Empty( ( ::dbfUser )->cImagen ) .AND. File( Rtrim( ( ::dbfUser )->cImagen ) )
+
+               oImgUsr:Add( TBitmap():Define( , Rtrim( ( ::dbfUser )->cImagen ) ) )
+
+               nImg++
+
+               with object ( TListViewItem():New() )
+                  :Cargo   := ( ::dbfUser )->cCodUse
+                  :cText   := Capitalize( ( ::dbfUser )->cNbrUse )
+                  :nImage  := nImg
+                  :nGroup  := if( ( ::dbfUser )->nGrpUse <= 1, 1, 2 )
+                  :Create( oLstUsr )
+               end
+
+            else
+
+               with object ( TListViewItem():New() )
+                  :Cargo   := ( ::dbfUser )->cCodUse
+                  :cText   := Capitalize( ( ::dbfUser )->cNbrUse )
+                  :nImage  := if( ( ::dbfUser )->nGrpUse <= 1, 0, 1 )
+                  :nGroup  := if( ( ::dbfUser )->nGrpUse <= 1, 1, 2 )
+                  :Create( oLstUsr )
+               end
+
+            end
+
+         end
+
+         ( ::dbfUser )->( dbSkip() )
+
+      end
+
+      oLstUsr:Refresh()
+
+   end
+
+   CursorWE()
+
+RETURN ( Self )
+
+
+
+UTILITY STATIC function AccessCode_EndTactilResource( oDlg) ; local Self AS CLASS AccessCode := QSelf() AS CLASS AccessCode
+
+   if ( ::dbfUser )->( Used() )
+      ( ::dbfUser )->( dbCloseArea() )
+   end
+
+   if ( ::dbfCajas )->( Used() )
+      ( ::dbfCajas )->( dbCloseArea() )
+   end
+
+   lInitCheck( , ::oMessage, ::oProgress )
+
+   oDlg:End( 1 )
+
+RETURN ( nil )
+
+
+
+UTILITY STATIC function AccessCode_SelectTactilResource( nOpt, oDlg, oLstUsr) ; local Self AS CLASS AccessCode := QSelf() AS CLASS AccessCode
+
+   local oUser
+   local oItem
+
+
+
+   if Empty( nOpt )
+      MsgStop( "Seleccione usuario" )
+      Return .F.
+   end
+
+   oItem             := oLstUsr:GetItem( nOpt )
+
+   if !Empty( oItem ) .AND. dbSeekInOrd( oItem:Cargo, "cCodUse", ::dbfUser )
+
+      if !( ::dbfUser )->lUseUse
+
+
+
+         if lGetPsw( ::dbfUser, .T. )
+
+            oUser    := oSetUsr( ( ::dbfUser )->cCodUse, ::dbfUser, ::dbfCajas, nil, .T. )
+            if oUser:lCreated
+               oUser:Save( ::dbfUser )
+            end
+
+            ::EndTactilResource( oDlg )
+
+            Return ( .T. )
+
+         end
+
+      else
+
+         MsgStop( "Usuario en uso" )
+
+         Return .F.
+
+      end
+
+   else
+
+      MsgStop( "El usuario no existe" )
+
+   end
+
+Return ( .F. )
+
+
+
+UTILITY STATIC function AccessCode_LoadIni() ; local Self AS CLASS AccessCode := QSelf() AS CLASS AccessCode
+
+   ::cGetServer      := GetPvProfString( "Sql", "Servidor", cValToChar( ::cGetServer ),      ::cIniFile )
+   ::cGetUser        := GetPvProfString( "Sql", "Usuario",  cValToChar( ::cGetUser ),        ::cIniFile )
+   ::cGetPasswordSql := GetPvProfString( "Sql", "Password", cValToChar( ::cGetPasswordSql ), ::cIniFile )
+
+Return ( Self )
+
+
+
+UTILITY STATIC function AccessCode_SaveIni() ; local Self AS CLASS AccessCode := QSelf() AS CLASS AccessCode
+
+   WritePProString( "Sql", "Servidor", cValToChar( ::cGetServer ),      ::cIniFile )
+   WritePProString( "Sql", "Usuario",  cValToChar( ::cGetUser ),        ::cIniFile )
+   WritePProString( "Sql", "Password", cValToChar( ::cGetPasswordSql ), ::cIniFile )
+
+Return ( Self )
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+UTILITY STATIC function AccessCode_ShowConnectDialog() ; local Self AS CLASS AccessCode := QSelf() AS CLASS AccessCode
+
+
+
+   ::cGetServer      := Padr( ::cGetServer,        100 )
+   ::cGetUser        := Padr( ::cGetUser,          100 )
+   ::cGetPasswordSql := Padr( ::cGetPasswordSql,   100 )
+
+   ::oDlgConnect = TDialog():New(,,,,, "SqlConnect",, .F.,,,,,, .F.,,,,,, .F., )
+
+
+
+
+      TBitmap():ReDefine( 500, "ConectarMySql",, ::oDlgConnect,,, .F., .F.,,, .F.,,, .F. )
+
+
+
+
+
+      ::oGetServer := TGetHlp():ReDefine( 210, { | u | If( PCount()==0, ::cGetServer, ::cGetServer:= u ) }, ::oDlgConnect,,,,,,,,, .F.,,, .F., .F.,,,,,, nil,, 200, )
+
+
+
+
+
+      ::oGetUser := TGetHlp():ReDefine( 230, { | u | If( PCount()==0, ::cGetUser, ::cGetUser:= u ) }, ::oDlgConnect,,,,,,,,, .F.,,, .F., .F.,,,,,, nil,, 220, )
+
+
+
+
+
+      ::oGetPasswordSql := TGetHlp():ReDefine( 250, { | u | If( PCount()==0, ::cGetPasswordSql, ::cGetPasswordSql:= u ) }, ::oDlgConnect,,,,,,,,, .F.,,, .F., .F.,,,,,, nil,, 240, )
+
+
+
+
+      ::oBtnConectOk := TButton():ReDefine( 260, {||( if( ::lConnect(), ::oDlgConnect:end( 1 ), ) )}, ::oDlgConnect,,, .F.,,,, .F. )
+
+
+
+
+
+      ::oBtnConectCancel := TButton():ReDefine( 270, {||( ::oDlgConnect:end() )}, ::oDlgConnect,,, .F.,,,, .T. )
+
+   ::oDlgConnect:Activate( ::oDlgConnect:bLClicked, ::oDlgConnect:bMoved, ::oDlgConnect:bPainted, .T.,,,, ::oDlgConnect:bRClicked,,, )
+
+Return ( ::oDlgConnect:nResult == 1 )
+
+
+
+UTILITY STATIC function AccessCode_HideLoginDialog() ; local Self AS CLASS AccessCode := QSelf() AS CLASS AccessCode
+
+   ::oGetUser:Hide()
+   ::oSayUser:Hide()
+
+   ::oGetPassword:Hide()
+   ::oSayPassword:Hide()
+
+   ::oBtnOk:Hide()
+   ::oBtnCancel:Hide()
+
+Return ( Self )
+
+
+
+UTILITY STATIC function AccessCode_InitialCheck() ; local Self AS CLASS AccessCode := QSelf() AS CLASS AccessCode
+
+   if !Empty( ::oMessage )
+      ::oMessage:Show()
+   end
+
+   if !lAIS()
+
+
+
+      TstUsuario()
+
+      while !IsMaster()
+         rxUsuario()
+      end
+
+
+
+      if !Empty( ::oMessage )
+         ::oMessage:SetText( "Comprobando cajas..." )
+      end
+
+      while !IsCaja()
+         rxCajas()
+      end
+
+
+
+      if !Empty( ::oMessage )
+         ::oMessage:SetText( "Comprobando impresoras de tikets..." )
+      end
+
+      while !IsImpTik()
+         rxImpTik( cPatDat() )
+      end
+
+
+
+      if !Empty( ::oMessage )
+         ::oMessage:SetText( "Comprobando visor..." )
+      end
+
+      while !IsVisor()
+         rxVisor( cPatDat() )
+      end
+
+
+
+      if !Empty( ::oMessage )
+         ::oMessage:SetText( "Comprobando cajón portamonedas..." )
+      end
+
+      while !IsCajPorta()
+         rxCajPorta( cPatDat() )
+      end
+
+
+
+      if !Empty( ::oMessage )
+         ::oMessage:SetText( "Comprobando situaciones..." )
+      end
+
+      while !IsSitua()
+         rxSitua( cPatDat() )
+      end
+
+
+
+      if !Empty( ::oMessage )
+         ::oMessage:SetText( "Comprobando tipos de impresoras..." )
+      end
+
+      while !IsTipImp()
+         rxTImp( cPatDat() )
+      end
+
+
+
+      if !Empty( ::oMessage )
+         ::oMessage:SetText( "Comprobando tipos de notas..." )
+      end
+
+      while !IsTipoNotas()
+         rxTipoNotas( cPatDat() )
+      end
+
+
+
+      if !Empty( ::oMessage )
+         ::oMessage:SetText( "Comprobando tipos de ventas..." )
+      end
+
+      while !IsTipoVentas()
+         rxTVta( cPatDat() )
+      end
+
+
+
+      if !Empty( ::oMessage )
+         ::oMessage:SetText( "Comprobando divisas..." )
+      end
+
+      while !IsDiv()
+         rxDiv()
+      end
+
+
+
+      if !Empty( ::oMessage )
+         ::oMessage:SetText( "Comprobando tipos de IGIC..." )
+      end
+
+      IsIva()
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+   end
+
+
+
+   if lAIS()
+
+      with object ( TDataCenter() )
+
+         if :lAdsConnection
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+            ::oBmpEngine:Reload( "Data_Green_Alpha_48" )
+
+         end
+
+      end
+
+   end
+
+
+
+   if !Empty( ::oMessage )
+      ::oMessage:SetText( "Cargando usuarios... " )
+   end
+
+   ::LoadUsuarios()
+
+
+
+   if !Empty( ::oMessage )
+      ::oMessage:Hide()
+   end
+
+Return ( Self )
+
+
+
+UTILITY STATIC function AccessCode_LoadUsuarios() ; local Self AS CLASS AccessCode := QSelf() AS CLASS AccessCode
+
+   local dbfUser
+
+   dbUseArea( .T., ( cDriver() ), ( cPatDat() + "Users.Dbf" ), ( cCheckArea( "USERS", @dbfUser ) ), if(.T. .OR. .F., !.F., NIL), .F.,, )
+   if !lAIS() ; ordListAdd( ( cPatDat() + "Users.Cdx" ) ) ; else ; ordSetFocus( 1 ) ; end
+
+      nUsrInUse( dbfUser )
+
+      if ( dbfUser )->( FieldPos( "cPcnUse" ) ) <> 0 .AND. !dbSeekInOrd( ::cPcnUsr, "cPcnUse", dbfUser )
+         ( dbfUser )->( dbGoTop() )
+      end
+
+      ::oGetUser:cText( Capitalize( ( dbfUser )->cNbrUse ) )
+
+   ( dbfUser )->( dbCloseArea() )
+
+Return ( Self )
+
+
+
+UTILITY STATIC function AccessCode_lCheckUsuario() ; local Self AS CLASS AccessCode := QSelf() AS CLASS AccessCode
+
+   local dbfUser
+
+   dbUseArea( .T., ( cDriver() ), ( cPatDat() + "Users.Dbf" ), ( cCheckArea( "USERS", @dbfUser ) ), if(.T. .OR. .F., !.F., NIL), .F.,, )
+   if !lAIS() ; ordListAdd( ( cPatDat() + "Users.Cdx" ) ) ; else ; ordSetFocus( 1 ) ; end
+
+   nUsrInUse( dbfUser )
+
+   ( dbfUser )->( dbGoTop() )
+   while !( dbfUser )->( eof() )
+
+      if !( dbfUser )->lGrupo
+         aAdd( ::aUser, { ( dbfUser )->lUseUse, ( dbfUser )->cCodUse, ( dbfUser )->cNbrUse, ( dbfUser )->cClvUse } )
+      end
+
+      ( dbfUser )->( dbSkip() )
+
+   end
+
+Return ( Self )

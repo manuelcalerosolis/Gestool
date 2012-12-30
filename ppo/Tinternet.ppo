@@ -1,0 +1,77 @@
+#line 112 "hbclass.ch"
+   DYNAMIC DivertConstructorCall
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+DECLARE HBClass  New( cName AS String, OPTIONAL SuperParams ) AS CLASS HBClass  Create() AS Object  Instance() AS Object  AddClsMethod( cName AS String, @MethodName(), nScope AS Numeric, n2 AS Numeric, n3 AS Numeric )  AddDelegate( cName AS String, cDelegate AS String, cObject AS String, nScope AS Numeric, lPersistent AS LOGICAL )  AddMultiClsData( cType AS String, uVal, nScope AS Numeric, aDatas AS Array OF String )  AddMultiData( cType AS String, uVal, nScope AS Numeric, aDatas AS Array OF String, x AS LOGICAL, lPer AS LOGICAL )  AddMethod( cName AS String, @MethodName(), nScope AS Numeric, lPersistent AS LOGICAL )  AddInLine( cName AS String, bBlock AS CodeBlock, nScope AS Numeric, lPersistent AS LOGICAL )  AddVirtual( cName AS String )  ModMethod( cName AS String, @MethodName(), nScope AS Numeric, lPersistent AS LOGICAL )  ModClsMethod( cName AS String, @MethodName(), nScope AS Numeric )  ModInline( cName AS String, bBlock AS CodeBlock, nScope AS Numeric, lPersistent AS LOGICAL )  SetOnError( @MethodName() )
+#line 85 "\Fwh1204\Include\FiveWin.Ch"
+   EXTERNAL GetProcAdd
+   EXTERNAL TActiveX
+
+
+
+
+extern errorsys
+#line 7 ".\Prg\Tinternet.prg"
+_HB_CLASS TInternet ; UTILITY FUNCTION TInternet(...); static s_oClass ; local oClassInstance ; local nScope ; nScope := 1 ; if s_oClass == NIL ; s_oClass := IIF(.F.,, HBClass():New( "TInternet" , { HBObject():Classh } ) ) ;
+
+   _HB_MEMBER { hWinINet} ; IIF( !.F., s_oClass:AddMultiClsData(,, nScope + IIF( .F., 32, 0 ) + 64, { "hWinINet" }, .F. ), )
+   _HB_MEMBER { hSession} ; IIF( !.F., s_oClass:AddMultiClsData(,, nScope + IIF( .F., 32, 0 ) + 64, { "hSession" }, .F. ), )
+
+   _HB_MEMBER { aFTPs} ; IIF( !.F., s_oClass:AddMultiClsData(, {}, nScope + IIF( .F., 32, 0 ) + 64, { "aFTPs" }, .F. ), )
+
+   _HB_MEMBER New() AS CLASS TInternet; IIF( .F., s_oClass:ModMethod( "New", @TInternet_New(), nScope + IIF( .T., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ), s_oClass:AddMethod( "New", @TInternet_New(), nScope + IIF( .T., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ));
+
+   _HB_MEMBER End(); IIF( .F., s_oClass:ModMethod( "End", @TInternet_End(), nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ), s_oClass:AddMethod( "End", @TInternet_End(), nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ));
+
+   _HB_MEMBER FTP( cFTPSite); IIF( .F., s_oClass:ModMethod( "FTP", @TInternet_FTP(), nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ), s_oClass:AddMethod( "FTP", @TInternet_FTP(), nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ));
+
+; IF .F. ; __clsActive(s_oClass:hClass) ; s_oClass:Refresh() ; ELSE ; s_oClass:Create() ; END ; oClassInstance := __clsInst( s_oClass:hClass ) ; IF __ObjHasMsg( oClassInstance, "InitClass" ); oClassInstance:InitClass( hb_aParams() ) ; END ; ELSE ; oClassInstance := __clsInst( s_oClass:hClass ) ; END ; IF PCount() > 0 ; DIVERT TO (@DivertConstructorCall()) OF s_oClass ; END ; RETURN oClassInstance AS CLASS TInternet ;
+
+
+
+UTILITY STATIC function TInternet_New() ; local Self AS CLASS TInternet := QSelf() AS CLASS TInternet
+
+   local hWinINet := WinINet_C3()
+
+   if hWinINet < 0 .OR. hWinINet >= 32
+      ::hSession  := InternetOpen_C3( 0, 0, 0, 0, 0 )
+   endif
+
+return Self
+
+
+
+UTILITY STATIC function TInternet_End() ; local Self AS CLASS TInternet := QSelf() AS CLASS TInternet
+
+
+
+
+      ASend( ::aFTPs, "End()" )
+
+
+   if ::hSession <> nil
+      InternetCloseHandle_C3( ::hSession )
+      ::hSession = nil
+   endif
+
+return nil
+
+
+
+UTILITY STATIC function TInternet_FTP( cFTPSite) ; local Self AS CLASS TInternet := QSelf() AS CLASS TInternet
+
+return TFTP():New( cFTPSite, Self )

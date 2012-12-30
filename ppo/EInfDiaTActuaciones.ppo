@@ -1,0 +1,260 @@
+#line 112 "hbclass.ch"
+   DYNAMIC DivertConstructorCall
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+DECLARE HBClass  New( cName AS String, OPTIONAL SuperParams ) AS CLASS HBClass  Create() AS Object  Instance() AS Object  AddClsMethod( cName AS String, @MethodName(), nScope AS Numeric, n2 AS Numeric, n3 AS Numeric )  AddDelegate( cName AS String, cDelegate AS String, cObject AS String, nScope AS Numeric, lPersistent AS LOGICAL )  AddMultiClsData( cType AS String, uVal, nScope AS Numeric, aDatas AS Array OF String )  AddMultiData( cType AS String, uVal, nScope AS Numeric, aDatas AS Array OF String, x AS LOGICAL, lPer AS LOGICAL )  AddMethod( cName AS String, @MethodName(), nScope AS Numeric, lPersistent AS LOGICAL )  AddInLine( cName AS String, bBlock AS CodeBlock, nScope AS Numeric, lPersistent AS LOGICAL )  AddVirtual( cName AS String )  ModMethod( cName AS String, @MethodName(), nScope AS Numeric, lPersistent AS LOGICAL )  ModClsMethod( cName AS String, @MethodName(), nScope AS Numeric )  ModInline( cName AS String, bBlock AS CodeBlock, nScope AS Numeric, lPersistent AS LOGICAL )  SetOnError( @MethodName() )
+#line 85 "\Fwh1204\Include\FiveWin.Ch"
+   EXTERNAL GetProcAdd
+   EXTERNAL TActiveX
+
+
+
+
+extern errorsys
+#line 8 ".\Prg\EInfDiaTActuaciones.prg"
+_HB_CLASS EInfDiaActuaciones ; UTILITY FUNCTION EInfDiaActuaciones(...); static s_oClass ; local oClassInstance ; local nScope ; nScope := 1 ; if s_oClass == NIL ; s_oClass := IIF(.F.,, HBClass():New( "EInfDiaActuaciones" , {TInfGen():classh} ) ) ; ;
+
+   _HB_MEMBER {AS OBJECT oExpediente} ; IIF( !.F., s_oClass:AddMultiData( "OBJECT",, nScope + IIF( .F., 32, 0 ), { "oExpediente" }, .F., .F. ), )
+   _HB_MEMBER {AS OBJECT oActuacion} ; IIF( !.F., s_oClass:AddMultiData( "OBJECT",, nScope + IIF( .F., 32, 0 ), { "oActuacion" }, .F., .F. ), )
+   _HB_MEMBER {AS OBJECT oTipoActuacion} ; IIF( !.F., s_oClass:AddMultiData( "OBJECT",, nScope + IIF( .F., 32, 0 ), { "oTipoActuacion" }, .F., .F. ), )
+   _HB_MEMBER {AS LOGIC lPendientes} ; IIF( !.F., s_oClass:AddMultiData( "LOGIC", .T., nScope + IIF( .F., 32, 0 ), { "lPendientes" }, .F., .F. ), )
+   _HB_MEMBER {AS LOGIC lAllAct} ; IIF( !.F., s_oClass:AddMultiData( "LOGIC", .T., nScope + IIF( .F., 32, 0 ), { "lAllAct" }, .F., .F. ), )
+   _HB_MEMBER {AS OBJECT oIniAct} ; IIF( !.F., s_oClass:AddMultiData( "OBJECT",, nScope + IIF( .F., 32, 0 ), { "oIniAct" }, .F., .F. ), )
+   _HB_MEMBER {AS OBJECT oFinAct} ; IIF( !.F., s_oClass:AddMultiData( "OBJECT",, nScope + IIF( .F., 32, 0 ), { "oFinAct" }, .F., .F. ), )
+   _HB_MEMBER { dIniAct} ; IIF( !.F., s_oClass:AddMultiData(, CtoD( "01/01/" + Str( Year( Date() ) ) ), nScope + IIF( .F., 32, 0 ), { "dIniAct" }, .F., .F. ), )
+   _HB_MEMBER { dFinAct} ; IIF( !.F., s_oClass:AddMultiData(, Date(), nScope + IIF( .F., 32, 0 ), { "dFinAct" }, .F., .F. ), )
+
+   _HB_MEMBER Create(); IIF( .F., s_oClass:ModMethod( "Create", @EInfDiaActuaciones_Create(), nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ), s_oClass:AddMethod( "Create", @EInfDiaActuaciones_Create(), nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ));
+
+   _HB_MEMBER OpenFiles(); IIF( .F., s_oClass:ModMethod( "OpenFiles", @EInfDiaActuaciones_OpenFiles(), nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ), s_oClass:AddMethod( "OpenFiles", @EInfDiaActuaciones_OpenFiles(), nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ));
+
+   _HB_MEMBER CloseFiles(); IIF( .F., s_oClass:ModMethod( "CloseFiles", @EInfDiaActuaciones_CloseFiles(), nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ), s_oClass:AddMethod( "CloseFiles", @EInfDiaActuaciones_CloseFiles(), nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ));
+
+   _HB_MEMBER lResource( cFld); IIF( .F., s_oClass:ModMethod( "lResource", @EInfDiaActuaciones_lResource(), nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ), s_oClass:AddMethod( "lResource", @EInfDiaActuaciones_lResource(), nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ));
+
+   _HB_MEMBER lGenerate(); IIF( .F., s_oClass:ModMethod( "lGenerate", @EInfDiaActuaciones_lGenerate(), nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ), s_oClass:AddMethod( "lGenerate", @EInfDiaActuaciones_lGenerate(), nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ));
+
+; IF .F. ; __clsActive(s_oClass:hClass) ; s_oClass:Refresh() ; ELSE ; s_oClass:Create() ; END ; oClassInstance := __clsInst( s_oClass:hClass ) ; IF __ObjHasMsg( oClassInstance, "InitClass" ); oClassInstance:InitClass( hb_aParams() ) ; END ; ELSE ; oClassInstance := __clsInst( s_oClass:hClass ) ; END ; IF PCount() > 0 ; DIVERT TO (@DivertConstructorCall()) OF s_oClass ; END ; RETURN oClassInstance AS CLASS EInfDiaActuaciones ;
+
+
+
+UTILITY STATIC function EInfDiaActuaciones_Create() ; local Self AS CLASS EInfDiaActuaciones := QSelf() AS CLASS EInfDiaActuaciones
+
+   ::AddField( "cTipAct",  "C",  3, 0,  {|| "" }         ,  "Tip. Act."          , .F., "Tipo actuación"             , 10, .F. )
+   ::AddField( "cNomAct",  "C", 35, 0,  {|| "" }         ,  "Actuación"          , .F., "Nombre actuación"           , 10, .F. )
+   ::AddField( "cNumDoc",  "C", 14, 0,  {|| "" }         ,  "Documento"          , .T., "Número documento"           , 14, .F. )
+   ::AddField( "dFecIni",  "D",  8, 0,  {|| "" }         ,  "Inicio"             , .T., "Fecha inicio"               , 10, .F. )
+   ::AddField( "cHorIni",  "C",  5, 0,  {|| "" }         ,  "Hora inicio"        , .F., "Hora inicio"                , 10, .F. )
+   ::AddField( "dFecFin",  "D",  8, 0,  {|| "" }         ,  "Límite"             , .T., "Fecha límite"               , 10, .F. )
+   ::AddField( "cHorFin",  "C",  5, 0,  {|| "" }         ,  "Hora fin"           , .F., "Hora fin"                   , 10, .F. )
+   ::AddField( "mMemAct",  "M", 10, 0,  {|| "" }         ,  "Descripción"        , .F., "Descripción"                , 50, .F. )
+   ::AddField( "cCodCli",  "C", 12, 0,  {|| "" }         ,  "Cliente"            , .T., "Cliente"                    , 14, .F. )
+   ::AddField( "cNomCli",  "C", 80, 0,  {|| "" }         ,  "Nombre cliente"     , .T., "Nombre cliente"             , 50, .F. )
+   ::AddField( "cPerCto",  "C", 30, 0,  {|| "" }         ,  "Contacto"           , .T., "Persona de contacto"        , 30, .F. )
+   ::AddField( "cTlfCto",  "C", 20, 0,  {|| "" }         ,  "Teléfono"           , .T., "Teléfono"                   , 25, .F. )
+   ::AddField( "cMvlCto",  "C", 20, 0,  {|| "" }         ,  "Movil"              , .F., "Movil"                      , 25, .F. )
+   ::AddField( "cFaxCto",  "C", 20, 0,  {|| "" }         ,  "Fax"                , .F., "Fax"                        , 25, .F. )
+
+   ::AddTmpIndex( "cNumDoc", "cTipAct + cNumDoc" )
+
+   ::AddGroup( {|| ::oDbf:cTipAct }, {|| "Tipo actuación  : " + Rtrim( ::oDbf:cTipAct ) + "-" + Rtrim( ::oDbf:cNomAct ) }, {||"Total tipo actuación..."} )
+
+   ::lDefDivInf      := .F.
+   ::lDefFecInf      := .F.
+
+RETURN ( Self )
+
+
+
+UTILITY STATIC function EInfDiaActuaciones_OpenFiles() ; local Self AS CLASS EInfDiaActuaciones := QSelf() AS CLASS EInfDiaActuaciones
+
+   local lOpen       := .T.
+   local oError
+   local oBlock      := ErrorBlock( {| oError | ApoloBreak( oError ) } )
+
+   BEGIN SEQUENCE
+
+      ::oExpediente := DbfServer( "EXPCAB.DBF", ):NewOpen( "EXPCAB.DBF", "ExpCab", ( cDriver() ),, ( cPatEmp() ), .F., .T., .F., .F. ) ; ::oExpediente:AddBag( "EXPCAB.CDX" ) ; ::oExpediente:AddBag( ) ; ::oExpediente:AutoIndex()
+
+      ::oActuacion := DbfServer( "EXPDET.DBF", ):NewOpen( "EXPDET.DBF", "ExpDet", ( cDriver() ),, ( cPatEmp() ), .F., .T., .F., .F. ) ; ::oActuacion:AddBag( "EXPDET.CDX" ) ; ::oActuacion:AddBag( ) ; ::oActuacion:AutoIndex()
+
+      ::oTipoActuacion := DbfServer( "ACTUACIONES.DBF", ):NewOpen( "ACTUACIONES.DBF", "Actuac", ( cDriver() ),, ( cPatEmp() ), .F., .T., .F., .F. ) ; ::oTipoActuacion:AddBag( "ACTUACIONES.CDX" ) ; ::oTipoActuacion:AddBag( ) ; ::oTipoActuacion:AutoIndex()
+
+   RECOVER USING oError
+
+
+      msgStop( ErrorMessage( oError ), "Imposible abrir todas las bases de datos" )
+      ::CloseFiles()
+      lOpen          := .F.
+
+   end
+
+   ErrorBlock( oBlock )
+
+RETURN ( lOpen )
+
+
+
+UTILITY STATIC function EInfDiaActuaciones_CloseFiles() ; local Self AS CLASS EInfDiaActuaciones := QSelf() AS CLASS EInfDiaActuaciones
+
+   if !Empty( ::oExpediente ) .AND. ::oExpediente:Used()
+      ::oExpediente:end()
+   end
+
+   if !Empty( ::oActuacion ) .AND. ::oActuacion:Used()
+      ::oActuacion:end()
+   end
+
+   if !Empty( ::oTipoActuacion ) .AND. ::oTipoActuacion:Used()
+      ::oTipoActuacion:End()
+   end
+
+   ::oExpediente     := nil
+   ::oActuacion      := nil
+   ::oTipoActuacion  := nil
+
+RETURN ( Self )
+
+
+
+UTILITY STATIC function EInfDiaActuaciones_lResource( cFld) ; local Self AS CLASS EInfDiaActuaciones := QSelf() AS CLASS EInfDiaActuaciones
+
+   if !::StdResource( "INFTACTUACIONES" )
+      return .F.
+   end
+
+   if !::oDefCliInf( 110, 111, 120, 121, , 130 )
+      return .F.
+   end
+
+   if !::oDefTipActInf( 150, 151, 160, 161, 140 )
+      return .F.
+   end
+
+
+
+   TCheckBox():ReDefine( 170, { | u | If( PCount()==0, ::lAllAct, ::lAllAct:= u ) }, ::oFld:aDialogs[1],,,,,,, .F.,, .F. )
+
+
+
+
+
+
+   ::oIniAct := TGetHlp():ReDefine( 180, { | u | If( PCount()==0, ::dIniAct, ::dIniAct:= u ) }, ::oFld:aDialogs[1],,,,,,,,, .F., {||        !::lAllAct},, .F., .T.,,,,,, nil,,, )
+
+
+
+
+
+
+   ::oFinAct := TGetHlp():ReDefine( 190, { | u | If( PCount()==0, ::dFinAct, ::dFinAct:= u ) }, ::oFld:aDialogs[1],,,,,,,,, .F., {||        !::lAllAct},, .F., .T.,,,,,, nil,,, )
+
+
+
+   TCheckBox():ReDefine( 200, { | u | If( PCount()==0, ::lPendientes, ::lPendientes:= u ) }, ::oFld:aDialogs[1],,,,,,, .F.,, .F. )
+
+   ::CreateFilter( aItmActua(), ::oActuacion:cAlias )
+
+   ::oMtrInf:SetTotal( ::oActuacion:Lastrec() )
+
+RETURN .T.
+
+
+
+UTILITY STATIC function EInfDiaActuaciones_lGenerate() ; local Self AS CLASS EInfDiaActuaciones := QSelf() AS CLASS EInfDiaActuaciones
+
+   local cExpHead    := ".t."
+
+   ::oDlg:Disable()
+   ::oBtnCancel:Enable()
+
+   ::oDbf:Zap()
+
+
+
+
+   ::aHeader         := {  {|| "Fecha     : " + Dtoc( Date() ) }, {|| "Periodo   : " + Dtoc( ::dIniInf ) + " > " + Dtoc( ::dFinInf ) }, {|| "Clientes  : " + if( ::lAllCli, "Todos", AllTrim( ::cCliOrg ) + " > " + AllTrim( ::cCliDes ) ) }, {|| "Actuación : " + if( ::lAllTipAct, "Todos", AllTrim( ::cTipActOrg ) + " > " + AllTrim( ::cTipActDes ) ) } }
+
+   if ::lPendientes
+      cExpHead       += " .and. !lActEnd"
+   end
+
+   if !::lAllAct
+      cExpHead       += ' .and. dFecFin >= Ctod( "' + Dtoc( ::dIniAct ) + '" ) .and. dFecFin <= Ctod( "' + Dtoc( ::dFinAct ) + '" )'
+   end
+
+   if !::lAllTipAct
+      cExpHead       += ' .and. cCodAct >= "' + Rtrim( ::cTipActOrg ) + '" .and. cCodAct <= "' + Rtrim( ::cTipActDes ) + '"'
+   end
+
+   if !Empty( ::oFilter:cExpFilter )
+      cExpHead       += " .and. " + ::oFilter:cExpFilter
+   end
+
+   ::oActuacion:AddTmpIndex( cCurUsr(), GetFileNoExt( ::oActuacion:cFile ), ::oActuacion:OrdKey(), ( cExpHead ), , , , , , , , .T. )
+
+   ::oMtrInf:SetTotal( ::oActuacion:OrdKeyCount() )
+
+
+
+
+
+   ::oActuacion:GoTop()
+
+   while !::lBreak .AND. !::oActuacion:Eof()
+
+      if lChkSer( ::oActuacion:cSerExp, ::aSer )
+
+
+         if ::oExpediente:Seek( ::oActuacion:cSerExp + Str( ::oActuacion:nNumExp ) + ::oActuacion:cSufExp )  .AND. ( ::lAllCli .OR. ( ::oExpediente:cCodCli >= Rtrim( ::cCliOrg ) .AND. ::oExpediente:cCodCli <= Rtrim( ::cCliDes ) ) )
+
+            ::oDbf:Append()
+
+            ::oDbf:cTipAct    := ::oActuacion:cCodAct
+            ::oDbf:cNomAct    := oRetFld( ::oActuacion:cCodAct, ::oTipoActuacion, "cDesAct" )
+            ::oDbf:cNumDoc    := ::oActuacion:cSerExp + "/" + AllTrim( Str( ::oActuacion:nNumExp ) ) + "/" + ::oActuacion:cSufExp
+            ::oDbf:cCodCli    := ::oExpediente:cCodCli
+            ::oDbf:cNomCli    := oRetFld( ::oExpediente:cCodCli, ::oDbfCli, "Titulo" )
+            ::oDbf:cPerCto    := oRetFld( ::oExpediente:cCodCli, ::oDbfCli, "cPerCto" )
+            ::oDbf:cTlfCto    := oRetFld( ::oExpediente:cCodCli, ::oDbfCli, "Telefono" )
+            ::oDbf:cMvlCto    := oRetFld( ::oExpediente:cCodCli, ::oDbfCli, "Movil" )
+            ::oDbf:cFaxCto    := oRetFld( ::oExpediente:cCodCli, ::oDbfCli, "Fax" )
+            ::oDbf:dFecIni    := ::oActuacion:dFecIni
+            ::oDbf:cHorIni    := ::oActuacion:cHorIni
+            ::oDbf:dFecFin    := ::oActuacion:dFecFin
+            ::oDbf:cHorFin    := ::oActuacion:cHorFin
+            ::oDbf:mMemAct    := ::oActuacion:mMemAct
+
+            ::oDbf:Save()
+
+         end
+
+      end
+
+      ::oActuacion:Skip()
+
+      ::oMtrInf:AutoInc()
+
+   end
+
+   ::oActuacion:IdxDelete( cCurUsr(), GetFileNoExt( ::oActuacion:cFile ) )
+
+   ::oMtrInf:AutoInc( ::oActuacion:Lastrec() )
+
+   ::oDlg:Enable()
+
+RETURN ( ::oDbf:LastRec() > 0 )

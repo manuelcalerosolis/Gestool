@@ -1,0 +1,290 @@
+#line 112 "hbclass.ch"
+   DYNAMIC DivertConstructorCall
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+DECLARE HBClass  New( cName AS String, OPTIONAL SuperParams ) AS CLASS HBClass  Create() AS Object  Instance() AS Object  AddClsMethod( cName AS String, @MethodName(), nScope AS Numeric, n2 AS Numeric, n3 AS Numeric )  AddDelegate( cName AS String, cDelegate AS String, cObject AS String, nScope AS Numeric, lPersistent AS LOGICAL )  AddMultiClsData( cType AS String, uVal, nScope AS Numeric, aDatas AS Array OF String )  AddMultiData( cType AS String, uVal, nScope AS Numeric, aDatas AS Array OF String, x AS LOGICAL, lPer AS LOGICAL )  AddMethod( cName AS String, @MethodName(), nScope AS Numeric, lPersistent AS LOGICAL )  AddInLine( cName AS String, bBlock AS CodeBlock, nScope AS Numeric, lPersistent AS LOGICAL )  AddVirtual( cName AS String )  ModMethod( cName AS String, @MethodName(), nScope AS Numeric, lPersistent AS LOGICAL )  ModClsMethod( cName AS String, @MethodName(), nScope AS Numeric )  ModInline( cName AS String, bBlock AS CodeBlock, nScope AS Numeric, lPersistent AS LOGICAL )  SetOnError( @MethodName() )
+#line 85 "\Fwh1204\Include\FiveWin.Ch"
+   EXTERNAL GetProcAdd
+   EXTERNAL TActiveX
+
+
+
+
+extern errorsys
+#line 7 ".\Prg\TComentarios.prg"
+_HB_CLASS TComentarios ; UTILITY FUNCTION TComentarios(...); static s_oClass ; local oClassInstance ; local nScope ; nScope := 1 ; if s_oClass == NIL ; s_oClass := IIF(.F.,, HBClass():New( "TComentarios" , {TMasDet():classh} ) ) ; ;
+
+   _HB_MEMBER { cMru} ; IIF( !.F., s_oClass:AddMultiData(, "Message_16", nScope + IIF( .F., 32, 0 ), { "cMru" }, .F., .F. ), )
+
+   _HB_MEMBER { cBitmap} ; IIF( !.F., s_oClass:AddMultiData(, ( 104 + ( 0 * 256 ) + ( 63 * 65536 ) ), nScope + IIF( .F., 32, 0 ), { "cBitmap" }, .F., .F. ), )
+
+   _HB_MEMBER { oDetComentarios} ; IIF( !.F., s_oClass:AddMultiData(,, nScope + IIF( .F., 32, 0 ), { "oDetComentarios" }, .F., .F. ), )
+
+   _HB_MEMBER { Codigo} ; IIF( !.F., s_oClass:AddMultiData(,, nScope + IIF( .F., 32, 0 ), { "Codigo" }, .F., .F. ), )
+
+   _HB_MEMBER OpenFiles( lExclusive); IIF( .F., s_oClass:ModMethod( "OpenFiles", @TComentarios_OpenFiles(), nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ), s_oClass:AddMethod( "OpenFiles", @TComentarios_OpenFiles(), nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ));
+
+   _HB_MEMBER CloseFiles(); IIF( .F., s_oClass:ModMethod( "CloseFiles", @TComentarios_CloseFiles(), nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ), s_oClass:AddMethod( "CloseFiles", @TComentarios_CloseFiles(), nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ));
+
+   _HB_MEMBER DefineFiles(); IIF( .F., s_oClass:ModMethod( "DefineFiles", @TComentarios_DefineFiles(), nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ), s_oClass:AddMethod( "DefineFiles", @TComentarios_DefineFiles(), nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ));
+
+   _HB_MEMBER Resource( nMode); IIF( .F., s_oClass:ModMethod( "Resource", @TComentarios_Resource(), nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ), s_oClass:AddMethod( "Resource", @TComentarios_Resource(), nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ));
+
+   _HB_MEMBER lPreSave( oNom, oSec, nMode); IIF( .F., s_oClass:ModMethod( "lPreSave", @TComentarios_lPreSave(), nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ), s_oClass:AddMethod( "lPreSave", @TComentarios_lPreSave(), nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ));
+
+   _HB_MEMBER DelRecComentario( oBrw); IIF( .F., s_oClass:ModMethod( "DelRecComentario", @TComentarios_DelRecComentario(), nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ), s_oClass:AddMethod( "DelRecComentario", @TComentarios_DelRecComentario(), nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ));
+
+   _HB_MEMBER Reindexa(); IIF( .F., s_oClass:ModMethod( "Reindexa", @TComentarios_Reindexa(), nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ), s_oClass:AddMethod( "Reindexa", @TComentarios_Reindexa(), nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ));
+
+; IF .F. ; __clsActive(s_oClass:hClass) ; s_oClass:Refresh() ; ELSE ; s_oClass:Create() ; END ; oClassInstance := __clsInst( s_oClass:hClass ) ; IF __ObjHasMsg( oClassInstance, "InitClass" ); oClassInstance:InitClass( hb_aParams() ) ; END ; ELSE ; oClassInstance := __clsInst( s_oClass:hClass ) ; END ; IF PCount() > 0 ; DIVERT TO (@DivertConstructorCall()) OF s_oClass ; END ; RETURN oClassInstance AS CLASS TComentarios ;
+
+
+
+UTILITY STATIC function TComentarios_OpenFiles( lExclusive) ; local Self AS CLASS TComentarios := QSelf() AS CLASS TComentarios
+
+   local lOpen          := .T.
+   local oError
+   local oBlock
+
+   IIF( lExclusive == nil, lExclusive := .F., ) ;
+
+   oBlock               := ErrorBlock( {| oError | ApoloBreak( oError ) } )
+   BEGIN SEQUENCE
+
+   if Empty( ::oDbf )
+      ::DefineFiles()
+   end
+
+   ::oDbf:Activate( .F., !lExclusive )
+
+   ::oDetComentarios    := TDetComentarios():New( ::cPath, Self )
+   ::AddDetail( ::oDetComentarios )
+
+   ::OpenDetails()
+
+   ::bFirstKey          := {|| ::oDbf:cCodigo }
+
+   RECOVER USING oError
+
+      msgStop( ErrorMessage( oError ), "Imposible abrir las bases de datos de comentarios" )
+
+      ::CloseFiles()
+
+      lOpen             := .F.
+
+   end
+
+   ErrorBlock( oBlock )
+
+RETURN ( lOpen )
+
+
+
+UTILITY STATIC function TComentarios_CloseFiles() ; local Self AS CLASS TComentarios := QSelf() AS CLASS TComentarios
+
+   ::CloseDetails()
+
+   if !Empty( ::oDbf )
+      ::oDbf:end()
+   end
+
+   ::oDbf         := nil
+
+RETURN .T.
+
+
+
+UTILITY STATIC function TComentarios_DefineFiles( cPath, cDriver) ; local Self AS CLASS TComentarios := QSelf() AS CLASS TComentarios
+
+   IIF( cPath == nil, cPath := ::cPath, ) ;
+   IIF( cDriver == nil, cDriver := cDriver(), ) ;
+
+   ::oDbf := DbfServer( "ComentariosT.Dbf", "Comentario" ):New( "ComentariosT.Dbf", "Coment", ( cDriver ), "Comentarios", ( cPath ) )
+
+      ::oDbf:AddField( "cCodigo", "C", 3, 0,,,,, "Código", .F., 60, .F., {} )
+      ::oDbf:AddField( "cDescri", "C", 200, 0,,,,, "Descripción", .F., 300, .F., {} )
+
+      ::oDbf:AddIndex( "cCodigo", "ComentariosT.Cdx", "cCodigo",,, .F., .F., "Código",,, .T., .F. )
+      ::oDbf:AddIndex( "cDescri", "ComentariosT.Cdx", "cDescri",,, .F., .F., "Descripción",,, .T., .F. )
+
+
+
+RETURN ( ::oDbf )
+
+
+
+UTILITY STATIC function TComentarios_Resource( nMode) ; local Self AS CLASS TComentarios := QSelf() AS CLASS TComentarios
+
+    local oDlg
+   local oGet
+   local oNom
+   local oBrw
+
+   oDlg = TDialog():New(,,,,, "Comentarios",, .F.,,,,,, .F.,,,,,, .F., )
+
+
+
+
+
+
+      oGet := TGetHlp():ReDefine( 100, { | u | If( PCount()==0, ::oDbf:cCodigo, ::oDbf:cCodigo:= u ) }, oDlg,, "@!", {||    ( RjustObj( oGet, "0" ), .T. )},,,,,, .F., {||     ( nMode == 1 )},, .F., .F.,,,,,, nil,,, )
+
+
+
+
+      oNom := TGetHlp():ReDefine( 110, { | u | If( PCount()==0, ::oDbf:cDescri, ::oDbf:cDescri:= u ) }, oDlg,,,,,,,,, .F., {||     ( nMode <> 3 )},, .F., .F.,,,,,, nil,,, )
+
+
+
+
+
+
+
+
+
+        TButton():ReDefine( 500, {||( ::oDetComentarios:Append( oBrw ) )}, oDlg,,, .F., {||     ( nMode <> 3 )},,, .F. )
+
+
+
+
+
+        TButton():ReDefine( 501, {||( ::oDetComentarios:Edit( oBrw ) )}, oDlg,,, .F., {||     ( nMode <> 3 )},,, .F. )
+
+
+
+
+        TButton():ReDefine( 502, {||( ::oDetComentarios:Zoom() )}, oDlg,,, .F.,,,, .F. )
+
+
+
+
+
+      TButton():ReDefine( 503, {||( ::DelRecComentario( oBrw ) )}, oDlg,,, .F., {||     ( nMode <> 3 )},,, .F. )
+
+      oBrw                 := IXBrowse():New( oDlg )
+
+      oBrw:bClrSel         := {|| { 0, ( 229 + ( 229 * 256 ) + ( 229 * 65536 ) ) } }
+      oBrw:bClrSelFocus    := {|| { 0, ( 167 + ( 205 * 256 ) + ( 240 * 65536 ) ) } }
+
+      oBrw:nMarqueeStyle   := 5
+
+      oBrw:bLDblClick      := { || ::oDetComentarios:Edit( oBrw ) }
+
+      ::oDetComentarios:oDbfVir:SetBrowse( oBrw )
+
+      with object ( oBrw:AddCol() )
+         :cHeader          := "Descripción"
+         :bEditValue       := {|| ::oDetComentarios:oDbfVir:cDescri }
+      end
+
+      oBrw:CreateFromResource( 400 )
+
+
+
+
+
+      TButton():ReDefine( 1, {||( ::lPreSave( oGet, oNom, oDlg, nMode ) )}, oDlg,,, .F., {||         ( nMode <> 3 )},,, .F. )
+
+
+
+
+
+        TButton():ReDefine( 2, {||( oDlg:end() )}, oDlg,,, .F.,,,, .T. )
+
+   if nMode <> 3
+      oDlg:AddFastKey( 113, {|| ::oDetComentarios:Append( oBrw ) } )
+      oDlg:AddFastKey( 114, {|| ::oDetComentarios:Edit( oBrw ) } )
+      oDlg:AddFastKey( 115, {|| ::oDetComentarios:Del( oBrw ) } )
+      oDlg:AddFastKey( 116, {|| ::lPreSave( oGet, oNom, oDlg, nMode ) } )
+   end
+
+   oDlg:bStart := { || oGet:SetFocus() }
+
+    oDlg:Activate( oDlg:bLClicked, oDlg:bMoved, oDlg:bPainted, .T.,,,, oDlg:bRClicked,,, )
+
+RETURN ( oDlg:nResult == 1 )
+
+
+
+UTILITY STATIC function TComentarios_lPreSave( oGet, oNom, oDlg, nMode) ; local Self AS CLASS TComentarios := QSelf() AS CLASS TComentarios
+
+   if ( nMode == 1 .OR. nMode == 4 )
+
+      oGet:lValid()
+
+      if ::oDbf:SeekInOrd( ::oDbf:cCodigo, "cCodigo" )
+         MsgStop( "Código ya existe " + Rtrim( ::oDbf:cCodigo ) )
+         return .F.
+      end
+
+      if Empty( ::oDbf:cCodigo )
+         MsgStop( "El código del comentario no puede estar vacío." )
+         oGet:SetFocus()
+         Return .F.
+      end
+
+   end
+
+   if Empty( ::oDbf:cDescri )
+      MsgStop( "La descripción del comentario no puede estar vacía." )
+      oNom:SetFocus()
+      Return .F.
+   end
+
+Return ( oDlg:End( 1 ) )
+
+
+
+UTILITY STATIC function TComentarios_DelRecComentario( oBrw) ; local Self AS CLASS TComentarios := QSelf() AS CLASS TComentarios
+
+   local lDefComentario := .F.
+
+   if ::oDetComentarios:oDbfVir:Recno() == 0
+      RETURN ( Self )
+   end
+
+   if oUser():lNotConfirmDelete() .OR. ApoloMsgNoYes("¿ Desea eliminar definitivamente este registro ?", "Confirme supersión" )
+
+      ::oDetComentarios:oDbfVir:Delete()
+
+   end
+
+   oBrw:Refresh()
+
+RETURN ( Self )
+
+
+
+UTILITY STATIC function TComentarios_Reindexa() ; local Self AS CLASS TComentarios := QSelf() AS CLASS TComentarios
+
+
+
+
+
+   if Empty( ::oDbf )
+      ::oDbf   := ::DefineFiles()
+   end
+
+   ::oDbf:IdxFDel()
+
+   if ::OpenFiles( .T. )
+      ::oDbf:Pack()
+   end
+
+   ::CloseFiles()
+
+RETURN ( Self )

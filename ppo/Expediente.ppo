@@ -1,0 +1,1968 @@
+#line 112 "hbclass.ch"
+   DYNAMIC DivertConstructorCall
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+DECLARE HBClass  New( cName AS String, OPTIONAL SuperParams ) AS CLASS HBClass  Create() AS Object  Instance() AS Object  AddClsMethod( cName AS String, @MethodName(), nScope AS Numeric, n2 AS Numeric, n3 AS Numeric )  AddDelegate( cName AS String, cDelegate AS String, cObject AS String, nScope AS Numeric, lPersistent AS LOGICAL )  AddMultiClsData( cType AS String, uVal, nScope AS Numeric, aDatas AS Array OF String )  AddMultiData( cType AS String, uVal, nScope AS Numeric, aDatas AS Array OF String, x AS LOGICAL, lPer AS LOGICAL )  AddMethod( cName AS String, @MethodName(), nScope AS Numeric, lPersistent AS LOGICAL )  AddInLine( cName AS String, bBlock AS CodeBlock, nScope AS Numeric, lPersistent AS LOGICAL )  AddVirtual( cName AS String )  ModMethod( cName AS String, @MethodName(), nScope AS Numeric, lPersistent AS LOGICAL )  ModClsMethod( cName AS String, @MethodName(), nScope AS Numeric )  ModInline( cName AS String, bBlock AS CodeBlock, nScope AS Numeric, lPersistent AS LOGICAL )  SetOnError( @MethodName() )
+#line 85 "\Fwh1204\Include\FiveWin.ch"
+   EXTERNAL GetProcAdd
+   EXTERNAL TActiveX
+
+
+
+
+extern errorsys
+#line 13 ".\Prg\Expediente.prg"
+memvar oDbf
+memvar cDbf
+memvar oDbfCol
+memvar cDbfCol
+memvar oDbfAlm
+memvar cDbfAlm
+memvar oDbfSec
+memvar cDbfSec
+memvar cPouDivPro
+memvar cDetPro
+memvar cDetMat
+memvar cDetHPer
+memvar cDetMaq
+memvar oThis
+memvar nPagina
+memvar lEnd
+memvar cTiempoEmp
+memvar nProd
+memvar nMat
+memvar nPer
+memvar nMaq
+memvar nParte
+
+
+
+Function StartTExpediente()
+
+   local oExpediente
+
+   oExpediente    := TExpediente():New( cPatEmp(), oWnd(), "04010" )
+   if !Empty( oExpediente )
+      oExpediente:Activate()
+   end
+
+Return nil
+
+
+
+_HB_CLASS TExpediente ; UTILITY FUNCTION TExpediente(...); static s_oClass ; local oClassInstance ; local nScope ; nScope := 1 ; if s_oClass == NIL ; s_oClass := IIF(.F.,, HBClass():New( "TExpediente" , {TMasDet():classh} ) ) ; ;
+
+   _HB_MEMBER { cMru} ; IIF( !.F., s_oClass:AddMultiData(, "Folder_document_16", nScope + IIF( .F., 32, 0 ), { "cMru" }, .F., .F. ), )
+   _HB_MEMBER { cBitmap} ; IIF( !.F., s_oClass:AddMultiData(, ( 231 + ( 135 * 256 ) + ( 0 * 65536 ) ), nScope + IIF( .F., 32, 0 ), { "cBitmap" }, .F., .F. ), )
+
+   _HB_MEMBER { oArt} ; IIF( !.F., s_oClass:AddMultiData(,, nScope + IIF( .F., 32, 0 ), { "oArt" }, .F., .F. ), )
+   _HB_MEMBER { oCli} ; IIF( !.F., s_oClass:AddMultiData(,, nScope + IIF( .F., 32, 0 ), { "oCli" }, .F., .F. ), )
+   _HB_MEMBER { oAlbPrvT} ; IIF( !.F., s_oClass:AddMultiData(,, nScope + IIF( .F., 32, 0 ), { "oAlbPrvT" }, .F., .F. ), )
+   _HB_MEMBER { oAlbPrvL} ; IIF( !.F., s_oClass:AddMultiData(,, nScope + IIF( .F., 32, 0 ), { "oAlbPrvL" }, .F., .F. ), )
+   _HB_MEMBER { oFacPrvT} ; IIF( !.F., s_oClass:AddMultiData(,, nScope + IIF( .F., 32, 0 ), { "oFacPrvT" }, .F., .F. ), )
+   _HB_MEMBER { oFacPrvL} ; IIF( !.F., s_oClass:AddMultiData(,, nScope + IIF( .F., 32, 0 ), { "oFacPrvL" }, .F., .F. ), )
+   _HB_MEMBER { oStock} ; IIF( !.F., s_oClass:AddMultiData(,, nScope + IIF( .F., 32, 0 ), { "oStock" }, .F., .F. ), )
+   _HB_MEMBER { oPro} ; IIF( !.F., s_oClass:AddMultiData(,, nScope + IIF( .F., 32, 0 ), { "oPro" }, .F., .F. ), )
+   _HB_MEMBER { oTblPro} ; IIF( !.F., s_oClass:AddMultiData(,, nScope + IIF( .F., 32, 0 ), { "oTblPro" }, .F., .F. ), )
+   _HB_MEMBER { oFam} ; IIF( !.F., s_oClass:AddMultiData(,, nScope + IIF( .F., 32, 0 ), { "oFam" }, .F., .F. ), )
+   _HB_MEMBER { oKitArt} ; IIF( !.F., s_oClass:AddMultiData(,, nScope + IIF( .F., 32, 0 ), { "oKitArt" }, .F., .F. ), )
+   _HB_MEMBER { oDbfDoc} ; IIF( !.F., s_oClass:AddMultiData(,, nScope + IIF( .F., 32, 0 ), { "oDbfDoc" }, .F., .F. ), )
+   _HB_MEMBER { oDbfCount} ; IIF( !.F., s_oClass:AddMultiData(,, nScope + IIF( .F., 32, 0 ), { "oDbfCount" }, .F., .F. ), )
+   _HB_MEMBER { oDbfEmp} ; IIF( !.F., s_oClass:AddMultiData(,, nScope + IIF( .F., 32, 0 ), { "oDbfEmp" }, .F., .F. ), )
+   _HB_MEMBER { oDbfFilter} ; IIF( !.F., s_oClass:AddMultiData(,, nScope + IIF( .F., 32, 0 ), { "oDbfFilter" }, .F., .F. ), )
+
+   _HB_MEMBER { oDetActuaciones} ; IIF( !.F., s_oClass:AddMultiData(,, nScope + IIF( .F., 32, 0 ), { "oDetActuaciones" }, .F., .F. ), )
+
+   _HB_MEMBER { oOperario} ; IIF( !.F., s_oClass:AddMultiData(,, nScope + IIF( .F., 32, 0 ), { "oOperario" }, .F., .F. ), )
+   _HB_MEMBER { oSeccion} ; IIF( !.F., s_oClass:AddMultiData(,, nScope + IIF( .F., 32, 0 ), { "oSeccion" }, .F., .F. ), )
+   _HB_MEMBER { oTipoExpediente} ; IIF( !.F., s_oClass:AddMultiData(,, nScope + IIF( .F., 32, 0 ), { "oTipoExpediente" }, .F., .F. ), )
+   _HB_MEMBER { oEntidad} ; IIF( !.F., s_oClass:AddMultiData(,, nScope + IIF( .F., 32, 0 ), { "oEntidad" }, .F., .F. ), )
+   _HB_MEMBER { oColaborador} ; IIF( !.F., s_oClass:AddMultiData(,, nScope + IIF( .F., 32, 0 ), { "oColaborador" }, .F., .F. ), )
+   _HB_MEMBER { oActuaciones} ; IIF( !.F., s_oClass:AddMultiData(,, nScope + IIF( .F., 32, 0 ), { "oActuaciones" }, .F., .F. ), )
+
+   _HB_MEMBER { oOperarioActuaciones} ; IIF( !.F., s_oClass:AddMultiData(,, nScope + IIF( .F., 32, 0 ), { "oOperarioActuaciones" }, .F., .F. ), )
+
+   _HB_MEMBER { oGetTotalUnidades} ; IIF( !.F., s_oClass:AddMultiData(,, nScope + IIF( .F., 32, 0 ), { "oGetTotalUnidades" }, .F., .F. ), )
+   _HB_MEMBER { nGetTotalUnidades} ; IIF( !.F., s_oClass:AddMultiData(, 0, nScope + IIF( .F., 32, 0 ), { "nGetTotalUnidades" }, .F., .F. ), )
+
+   _HB_MEMBER { cTmpEmp} ; IIF( !.F., s_oClass:AddMultiData(,, nScope + IIF( .F., 32, 0 ), { "cTmpEmp" }, .F., .F. ), )
+   _HB_MEMBER { cTiempoEmpleado} ; IIF( !.F., s_oClass:AddMultiData(, 0, nScope + IIF( .F., 32, 0 ), { "cTiempoEmpleado" }, .F., .F. ), )
+
+   _HB_MEMBER { oTotProducido} ; IIF( !.F., s_oClass:AddMultiData(,, nScope + IIF( .F., 32, 0 ), { "oTotProducido" }, .F., .F. ), )
+   _HB_MEMBER { oTotMaterias} ; IIF( !.F., s_oClass:AddMultiData(,, nScope + IIF( .F., 32, 0 ), { "oTotMaterias" }, .F., .F. ), )
+   _HB_MEMBER { oTotPersonal} ; IIF( !.F., s_oClass:AddMultiData(,, nScope + IIF( .F., 32, 0 ), { "oTotPersonal" }, .F., .F. ), )
+   _HB_MEMBER { oTotMaquinaria} ; IIF( !.F., s_oClass:AddMultiData(,, nScope + IIF( .F., 32, 0 ), { "oTotMaquinaria" }, .F., .F. ), )
+
+   _HB_MEMBER { cOldCodSec} ; IIF( !.F., s_oClass:AddMultiData(, "", nScope + IIF( .F., 32, 0 ), { "cOldCodSec" }, .F., .F. ), )
+   _HB_MEMBER { cOldCodOpe} ; IIF( !.F., s_oClass:AddMultiData(, "", nScope + IIF( .F., 32, 0 ), { "cOldCodOpe" }, .F., .F. ), )
+   _HB_MEMBER { dOldFecIni} ; IIF( !.F., s_oClass:AddMultiData(, Ctod( "" ), nScope + IIF( .F., 32, 0 ), { "dOldFecIni" }, .F., .F. ), )
+   _HB_MEMBER { dOldFecFin} ; IIF( !.F., s_oClass:AddMultiData(, Ctod( "" ), nScope + IIF( .F., 32, 0 ), { "dOldFecFin" }, .F., .F. ), )
+   _HB_MEMBER { cOldHorIni} ; IIF( !.F., s_oClass:AddMultiData(, "", nScope + IIF( .F., 32, 0 ), { "cOldHorIni" }, .F., .F. ), )
+   _HB_MEMBER { cOldHorFin} ; IIF( !.F., s_oClass:AddMultiData(, "", nScope + IIF( .F., 32, 0 ), { "cOldHorFin" }, .F., .F. ), )
+
+   _HB_MEMBER { aCal} ; IIF( !.F., s_oClass:AddMultiData(,, nScope + IIF( .F., 32, 0 ), { "aCal" }, .F., .F. ), )
+   _HB_MEMBER { cTime} ; IIF( !.F., s_oClass:AddMultiData(,, nScope + IIF( .F., 32, 0 ), { "cTime" }, .F., .F. ), )
+
+   _HB_MEMBER { lOperarioIndex} ; IIF( !.F., s_oClass:AddMultiData(, .F., nScope + IIF( .F., 32, 0 ), { "lOperarioIndex" }, .F., .F. ), )
+
+   _HB_MEMBER { oDbfTemporal} ; IIF( !.F., s_oClass:AddMultiData(,, nScope + IIF( .F., 32, 0 ), { "oDbfTemporal" }, .F., .F. ), )
+
+   _HB_MEMBER { cFileName} ; IIF( !.F., s_oClass:AddMultiData(,, nScope + IIF( .F., 32, 0 ), { "cFileName" }, .F., .F. ), )
+
+   _HB_MEMBER { oButtonOld} ; IIF( !.F., s_oClass:AddMultiData(,, nScope + IIF( .F., 32, 0 ), { "oButtonOld" }, .F., .F. ), )
+
+   _HB_MEMBER New( cPath, oWndParent, oMenuItem); IIF( .F., s_oClass:ModMethod( "New", @TExpediente_New(), nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ), s_oClass:AddMethod( "New", @TExpediente_New(), nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ));
+   _HB_MEMBER Create( cPath, oWndParent); IIF( .F., s_oClass:ModMethod( "Create", @TExpediente_Create(), nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ), s_oClass:AddMethod( "Create", @TExpediente_Create(), nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ));
+
+   _HB_MEMBER Activate(); IIF( .F., s_oClass:ModMethod( "Activate", @TExpediente_Activate(), nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ), s_oClass:AddMethod( "Activate", @TExpediente_Activate(), nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ));
+
+   _HB_MEMBER OpenFiles( lExclusive); IIF( .F., s_oClass:ModMethod( "OpenFiles", @TExpediente_OpenFiles(), nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ), s_oClass:AddMethod( "OpenFiles", @TExpediente_OpenFiles(), nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ));
+   _HB_MEMBER OpenService( lExclusive); IIF( .F., s_oClass:ModMethod( "OpenService", @TExpediente_OpenService(), nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ), s_oClass:AddMethod( "OpenService", @TExpediente_OpenService(), nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ));
+
+   _HB_MEMBER CloseFiles(); IIF( .F., s_oClass:ModMethod( "CloseFiles", @TExpediente_CloseFiles(), nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ), s_oClass:AddMethod( "CloseFiles", @TExpediente_CloseFiles(), nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ));
+   _HB_MEMBER CloseService(); IIF( .F., s_oClass:ModMethod( "CloseService", @TExpediente_CloseService(), nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ), s_oClass:AddMethod( "CloseService", @TExpediente_CloseService(), nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ));
+
+   _HB_MEMBER DefineFiles(); IIF( .F., s_oClass:ModMethod( "DefineFiles", @TExpediente_DefineFiles(), nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ), s_oClass:AddMethod( "DefineFiles", @TExpediente_DefineFiles(), nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ));
+
+   _HB_MEMBER Resource( nMode, aDatosAnterior); IIF( .F., s_oClass:ModMethod( "Resource", @TExpediente_Resource(), nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ), s_oClass:AddMethod( "Resource", @TExpediente_Resource(), nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ));
+
+   _HB_MEMBER lPreSave( oGetAlm, oGetSec, oGetOpe, oHorFin, nMode, oDlg); IIF( .F., s_oClass:ModMethod( "lPreSave", @TExpediente_lPreSave(), nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ), s_oClass:AddMethod( "lPreSave", @TExpediente_lPreSave(), nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ));
+
+   _HB_MEMBER ChangeExpEnd( oFecFin, oHorFin); IIF( .F., s_oClass:ModMethod( "ChangeExpEnd", @TExpediente_ChangeExpEnd(), nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ), s_oClass:AddMethod( "ChangeExpEnd", @TExpediente_ChangeExpEnd(), nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ));
+
+   _HB_MEMBER lTiempoEmpleado( oTmpEmp); IIF( .F., s_oClass:ModMethod( "lTiempoEmpleado", @TExpediente_lTiempoEmpleado(), nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ), s_oClass:AddMethod( "lTiempoEmpleado", @TExpediente_lTiempoEmpleado(), nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ));
+
+   _HB_MEMBER nTotUnidades(); IIF( .F., s_oClass:ModInline( "nTotUnidades", {|Self | Self, ( NotCaja( ::oDbf:nCajArt ) * ::oDbf:nUndArt ) }, nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ), s_oClass:AddInline( "nTotUnidades", {|Self | Self, ( NotCaja( ::oDbf:nCajArt ) * ::oDbf:nUndArt ) }, nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ) )
+   _HB_MEMBER lTotUnidades(); IIF( .F., s_oClass:ModInline( "lTotUnidades", {|Self | Self, ( ::oGetTotalUnidades:cText( Round( ::nTotUnidades(), ::nDouDiv ) ), .T. ) }, nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ), s_oClass:AddInline( "lTotUnidades", {|Self | Self, ( ::oGetTotalUnidades:cText( Round( ::nTotUnidades(), ::nDouDiv ) ), .T. ) }, nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ) )
+
+   _HB_MEMBER GetNewCount(); IIF( .F., s_oClass:ModMethod( "GetNewCount", @TExpediente_GetNewCount(), nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ), s_oClass:AddMethod( "GetNewCount", @TExpediente_GetNewCount(), nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ));
+
+   _HB_MEMBER GenExpediente( nDevice, cCaption, cCodDoc, cPrinter); IIF( .F., s_oClass:ModMethod( "GenExpediente", @TExpediente_GenExpediente(), nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ), s_oClass:AddMethod( "GenExpediente", @TExpediente_GenExpediente(), nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ));
+
+   _HB_MEMBER lGenExpediente( oBrw, oBtn, nDevice); IIF( .F., s_oClass:ModMethod( "lGenExpediente", @TExpediente_lGenExpediente(), nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ), s_oClass:AddMethod( "lGenExpediente", @TExpediente_lGenExpediente(), nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ));
+
+   _HB_MEMBER bGenExpediente( nDevice, cTitle, cCodDoc); IIF( .F., s_oClass:ModMethod( "bGenExpediente", @TExpediente_bGenExpediente(), nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ), s_oClass:AddMethod( "bGenExpediente", @TExpediente_bGenExpediente(), nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ));
+
+   _HB_MEMBER nGenExpediente( nDevice, cTitle, cCodDoc, cPrinter, nCopy); IIF( .F., s_oClass:ModMethod( "nGenExpediente", @TExpediente_nGenExpediente(), nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ), s_oClass:AddMethod( "nGenExpediente", @TExpediente_nGenExpediente(), nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ));
+
+   _HB_MEMBER nEstado( cDocumento); IIF( .F., s_oClass:ModMethod( "nEstado", @TExpediente_nEstado(), nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ), s_oClass:AddMethod( "nEstado", @TExpediente_nEstado(), nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ));
+
+   _HB_MEMBER DataReport( oFr); IIF( .F., s_oClass:ModMethod( "DataReport", @TExpediente_DataReport(), nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ), s_oClass:AddMethod( "DataReport", @TExpediente_DataReport(), nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ));
+
+   _HB_MEMBER DesignReport( oFr, dbfDoc); IIF( .F., s_oClass:ModMethod( "DesignReport", @TExpediente_DesignReport(), nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ), s_oClass:AddMethod( "DesignReport", @TExpediente_DesignReport(), nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ));
+
+   _HB_MEMBER PrintReport( nDevice, nCopies, cPrinter, dbfDoc); IIF( .F., s_oClass:ModMethod( "PrintReport", @TExpediente_PrintReport(), nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ), s_oClass:AddMethod( "PrintReport", @TExpediente_PrintReport(), nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ));
+
+   _HB_MEMBER PrnSerie(); IIF( .F., s_oClass:ModMethod( "PrnSerie", @TExpediente_PrnSerie(), nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ), s_oClass:AddMethod( "PrnSerie", @TExpediente_PrnSerie(), nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ));
+
+   _HB_MEMBER StartPrint( cFmtDoc, cDocIni, cDocFin, oDlg, cPrinter, lCopiasPre, nNumCop, lInvOrden); IIF( .F., s_oClass:ModMethod( "StartPrint", @TExpediente_StartPrint(), nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ), s_oClass:AddMethod( "StartPrint", @TExpediente_StartPrint(), nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ));
+
+   _HB_MEMBER PutOperarioIndex( nTypeExp, oButton); IIF( .F., s_oClass:ModMethod( "PutOperarioIndex", @TExpediente_PutOperarioIndex(), nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ), s_oClass:AddMethod( "PutOperarioIndex", @TExpediente_PutOperarioIndex(), nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ));
+
+   _HB_MEMBER QuitOperarioIndex( lExpEnd, oButton); IIF( .F., s_oClass:ModMethod( "QuitOperarioIndex", @TExpediente_QuitOperarioIndex(), nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ), s_oClass:AddMethod( "QuitOperarioIndex", @TExpediente_QuitOperarioIndex(), nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ));
+
+   _HB_MEMBER RestoreOperarioButton(); IIF( .F., s_oClass:ModMethod( "RestoreOperarioButton", @TExpediente_RestoreOperarioButton(), nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ), s_oClass:AddMethod( "RestoreOperarioButton", @TExpediente_RestoreOperarioButton(), nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ));
+
+; IF .F. ; __clsActive(s_oClass:hClass) ; s_oClass:Refresh() ; ELSE ; s_oClass:Create() ; END ; oClassInstance := __clsInst( s_oClass:hClass ) ; IF __ObjHasMsg( oClassInstance, "InitClass" ); oClassInstance:InitClass( hb_aParams() ) ; END ; ELSE ; oClassInstance := __clsInst( s_oClass:hClass ) ; END ; IF PCount() > 0 ; DIVERT TO (@DivertConstructorCall()) OF s_oClass ; END ; RETURN oClassInstance AS CLASS TExpediente ;
+
+
+
+UTILITY STATIC function TExpediente_New( cPath, oWndParent, oMenuItem) ; local Self AS CLASS TExpediente := QSelf() AS CLASS TExpediente
+
+   IIF( cPath == nil, cPath := cPatEmp(), ) ;
+   IIF( oWndParent == nil, oWndParent := GetWndFrame(), ) ;
+
+   if oMenuItem <> nil .AND. ::nLevel == nil
+      ::nLevel             := nLevelUsr( oMenuItem )
+   else
+      ::nLevel             := 0
+   end
+
+   if nAnd( ::nLevel, 1 ) <> 0
+      msgStop( "Acceso no permitido." )
+      return nil
+   end
+
+   ::cPath                 := cPath
+   ::oWndParent            := oWndParent
+
+   ::cTipoDocumento        := "29"
+
+   ::bFirstKey             := {|| if( !Empty( ::oDbf ) .AND. ( ::oDbf:Used() ), ( ::oDbf:cSerExp + Str( ::oDbf:nNumExp ) + ::oDbf:cSufExp ), "" ) }
+
+   ::oOperario             := TOperarios():Create()
+
+   ::oOperarioActuaciones  := TOperarios():Create()
+
+   ::oColaborador          := TColaboradores():Create()
+
+   ::oTipoExpediente       := TTipoExpediente():CreateInit()
+
+   ::oSeccion              := TSeccion():Create()
+
+   ::oEntidad              := TEntidades():Create()
+
+   ::oActuaciones          := TActuaciones():Create()
+
+   ::oDetActuaciones       := TDetActuacion():New( cPath, Self )
+   ::AddDetail( ::oDetActuaciones )
+
+RETURN ( Self )
+
+
+
+UTILITY STATIC function TExpediente_Create( cPath, oWndParent) ; local Self AS CLASS TExpediente := QSelf() AS CLASS TExpediente
+
+   IIF( cPath == nil, cPath := cPatEmp(), ) ;
+   IIF( oWndParent == nil, oWndParent := GetWndFrame(), ) ;
+
+   ::cPath                 := cPath
+   ::oWndParent            := oWndParent
+
+   ::oOperario             := TOperarios():Create( cPath )
+
+   ::oOperarioActuaciones  := TOperarios():Create( cPath )
+
+   ::oColaborador          := TColaboradores():Create( cPath )
+
+   ::oTipoExpediente       := TTipoExpediente():CreateInit( cPath )
+
+   ::oEntidad              := TEntidades():Create( cPath )
+
+   ::oActuaciones          := TActuaciones():Create( cPath )
+
+   ::oDetActuaciones       := TDetActuacion():New( cPath, Self )
+   ::AddDetail( ::oDetActuaciones )
+
+   ::bFirstKey             := {|| if( !Empty( ::oDbf ) .AND. ( ::oDbf:Used() ), ( ::oDbf:cSerExp + Str( ::oDbf:nNumExp ) + ::oDbf:cSufExp ), "" ) }
+
+RETURN ( Self )
+
+
+
+UTILITY STATIC function TExpediente_Activate() ; local Self AS CLASS TExpediente := QSelf() AS CLASS TExpediente
+
+   local oImp
+   local oPrv
+   local oPdf
+   local oExp
+   local oMisExp
+   local oPdtExp
+   local oFinExp
+   local oActExp
+
+   if ::oWndParent <> nil
+      ::oWndParent:CloseAll()
+   end
+
+   if !::OpenFiles()
+      return nil
+   end
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+   ::oWndBrw := TShell():New( 2, 10, 18, 70, "Expedientes",, ::oWndParent,,, .F.,,, ( ::oDbf ),,,,, {"Número", "Fecha inicio", "Cliente", "Nombre cliente", "Tipo", "Subtipo", "Operario", "Entidad", "Colaborador"}, {||::Append()}, {||::Edit()}, {||::Del()}, {||::Dup()}, nil,, "Folder_document_16", ( 197 + ( 227 * 256 ) + ( 9 * 65536 ) ),,, .T. )
+
+
+
+      ::oWndBrw:AddImageList( "on_worker2_folder_document_16" )
+
+
+
+      with object ( ::oWndBrw:AddXCol() )
+         :cHeader          := "Finalizado"
+         :nHeadBmpNo       := 3
+         :bStrData         := {|| "" }
+         :bEditValue       := {|| ::oDbf:FieldGetByName( "lExpEnd" ) }
+         :nWidth           := 20
+         :SetCheck( { "Sel16", "Nil16" } )
+         :AddResource( "folder_ok_16" )
+      end
+
+      with object ( ::oWndBrw:AddXCol() )
+         :cHeader          := "Estado"
+         :nHeadBmpNo       := 4
+         :bStrData         := {|| "" }
+         :bBmpData         := {|| ::nEstado( ::oDbf:FieldGetByName( "cSerExp" ) + Str( ::oDbf:FieldGetByName( "nNumExp" ) ) + ::oDbf:FieldGetByName( "cSufExp" ) ) }
+         :nWidth           := 20
+         :AddResource( "Bullet_Square_Red_16" )
+         :AddResource( "Bullet_Square_Yellow_16" )
+         :AddResource( "Bullet_Square_Green_16" )
+         :AddResource( "trafficlight_on_16" )
+      end
+
+      with object ( ::oWndBrw:AddXCol() )
+         :cHeader          := "Número"
+         :cSortOrder       := "cNumExp"
+         :bEditValue       := {|| ::oDbf:FieldGetByName( "cSerExp" ) + "/" + AllTrim( Str( ::oDbf:FieldGetByName( "nNumExp" ) ) ) + "/" + ::oDbf:FieldGetByName( "cSufExp" ) }
+         :nWidth           := 100
+         :bLClickHeader    := {| nMRow, nMCol, nFlags, oCol | ::oWndBrw:ClickOnHeader( oCol ) }
+      end
+
+      with object ( ::oWndBrw:AddXCol() )
+         :cHeader          := "Fecha inicio"
+         :cSortOrder       := "dFecOrd"
+         :bEditValue       := {|| Dtoc( ::oDbf:FieldGetByName( "dFecOrd" ) ) + "-" + Trans( ::oDbf:FieldGetByName( "cHorOrd" ), "@R 99:99" ) }
+         :nWidth           := 100
+         :bLClickHeader    := {| nMRow, nMCol, nFlags, oCol | ::oWndBrw:ClickOnHeader( oCol ) }
+      end
+
+      with object ( ::oWndBrw:AddXCol() )
+         :cHeader          := "Fecha fin"
+         :bEditValue       := {|| Dtoc( ::oDbf:FieldGetByName( "dFecVto" ) ) + "-" + Trans( ::oDbf:FieldGetByName( "cHorVto" ), "@R 99:99" ) }
+         :nWidth           := 100
+      end
+
+      with object ( ::oWndBrw:AddXCol() )
+         :cHeader          := "Cliente"
+         :cSortOrder       := "cCodCli"
+         :bEditValue       := {|| ::oDbf:FieldGetByName( "cCodCli" ) }
+         :nWidth           := 80
+         :bLClickHeader    := {| nMRow, nMCol, nFlags, oCol | ::oWndBrw:ClickOnHeader( oCol ) }
+      end
+
+      with object ( ::oWndBrw:AddXCol() )
+         :cHeader          := "Nombre cliente"
+         :cSortOrder       := "cNomCli"
+         :bEditValue       := {|| ::oDbf:FieldGetByName( "cNomCli" ) }
+         :nWidth           := 200
+         :bLClickHeader    := {| nMRow, nMCol, nFlags, oCol | ::oWndBrw:ClickOnHeader( oCol ) }
+      end
+
+      with object ( ::oWndBrw:AddXCol() )
+         :cHeader          := "Tipo"
+         :cSortOrder       := "cCodTip"
+         :bEditValue       := {|| ::oDbf:FieldGetByName( "cCodTip" ) + " - " + oRetFld( ::oDbf:FieldGetByName( "cCodTip" ), ::oTipoExpediente:oDbf, "cNomTip", "cCodTip" ) }
+         :nWidth           := 200
+         :bLClickHeader    := {| nMRow, nMCol, nFlags, oCol | ::oWndBrw:ClickOnHeader( oCol ) }
+      end
+
+      with object ( ::oWndBrw:AddXCol() )
+         :cHeader          := "Subtipo"
+         :cSortOrder       := "cCodSub"
+         :bEditValue       := {|| ::oDbf:FieldGetByName( "cCodSub" ) + " - " + oRetFld( ::oDbf:FieldGetByName( "cCodTip" ) + ::oDbf:FieldGetByName( "cCodSub" ), ::oTipoExpediente:oSubTipoExpediente:oDbf, "cNomSub", "cCodSub" ) }
+         :nWidth           := 200
+         :bLClickHeader    := {| nMRow, nMCol, nFlags, oCol | ::oWndBrw:ClickOnHeader( oCol ) }
+      end
+
+      with object ( ::oWndBrw:AddXCol() )
+         :cHeader          := "Operario"
+         :cSortOrder       := "cCodTra"
+         :bEditValue       := {|| ::oDbf:FieldGetByName( "cCodTra" ) + " - " + oRetFld( ::oDbf:FieldGetByName( "cCodTra" ), ::oOperario:oDbf, "cNomTra", "cCodTra" ) }
+         :nWidth           := 200
+         :bLClickHeader    := {| nMRow, nMCol, nFlags, oCol | ::oWndBrw:ClickOnHeader( oCol ) }
+      end
+
+      with object ( ::oWndBrw:AddXCol() )
+         :cHeader          := "Entidad"
+         :cSortOrder       := "cCodEnt"
+         :bEditValue       := {|| ::oDbf:FieldGetByName( "cCodEnt" ) + " - " + oRetFld( ::oDbf:FieldGetByName( "cCodEnt" ), ::oEntidad:oDbf, "cDesEnt", "cCodEnt" ) }
+         :nWidth           := 200
+         :bLClickHeader    := {| nMRow, nMCol, nFlags, oCol | ::oWndBrw:ClickOnHeader( oCol ) }
+      end
+
+      with object ( ::oWndBrw:AddXCol() )
+         :cHeader          := "Colaborador"
+         :cSortOrder       := "cCodCol"
+         :bEditValue       := {|| ::oDbf:FieldGetByName( "cCodCol" ) + " - " + oRetFld( ::oDbf:FieldGetByName( "cCodCol" ), ::oColaborador:oDbf, "cDesCol", "cCodCol" ) }
+         :nWidth           := 200
+         :bLClickHeader    := {| nMRow, nMCol, nFlags, oCol | ::oWndBrw:ClickOnHeader( oCol ) }
+      end
+
+      ::oWndBrw:CreateXFromCode()
+
+
+
+
+
+
+   ::oWndBrw:NewAt( "BUS",,, {||( ::oWndBrw:SearchSetFocus() )}, "(B)uscar", "B",,,,, .F. )
+      ::oWndBrw:AddSeaBar()
+
+
+
+
+
+
+
+
+   ::oWndBrw:NewAt( "NEW",,, {||( ::oWndBrw:RecAdd() )}, "(A)ñadir", "A",,, 2,, .F. )
+
+
+
+
+
+
+   ::oWndBrw:NewAt( "DUP",,, {||( ::oWndBrw:RecDup() )}, "(D)uplicar", "D",,, 2,, .F. )
+
+
+
+
+
+
+   ::oWndBrw:NewAt( "EDIT",,, {||( ::oWndBrw:RecEdit() )}, "(M)odificar", "M",,, 4,, .F. )
+
+
+
+
+
+
+   ::oWndBrw:NewAt( "ZOOM",,, {||( ::Zoom() )}, "(Z)oom", "Z",,, 8,, .F. )
+
+
+
+
+
+
+   ::oWndBrw:NewAt( "DEL",,, {||( ::oWndBrw:RecDel() )}, "(E)liminar", "E",,, 16,, .F. )
+
+
+
+
+
+
+   oImp := ::oWndBrw:NewAt( "IMP",,, {||( ::nGenExpediente( 1 ) )}, "(I)mprimir", "I",,, 32,, .F. )
+
+      ::lGenExpediente( ::oWndBrw:oBrw, oImp, 1 )
+
+
+
+
+
+
+   ::oWndBrw:NewAt( "SERIE1",,, {||( ::PrnSerie() )}, "Imp(r)imir series", "R",,, 32,, .F. )
+
+
+
+
+
+
+   oPrv := ::oWndBrw:NewAt( "PREV1",,, {||( ::nGenExpediente( 2 ) )}, "(P)revisualizar", "P",,, 32,, .F. )
+
+      ::lGenExpediente( ::oWndBrw:oBrw, oPrv, 2 )
+
+
+
+
+
+
+   oPdf := ::oWndBrw:NewAt( "DOCLOCK",,, {||( ::nGenExpediente( 3 ) )}, "Pd(f)", "F",,, 32,, .F. )
+
+      ::lGenExpediente( ::oWndBrw:oBrw, oPdf, 3 )
+
+
+
+
+
+   ::oWndBrw:NewAt( "IMP",,, {||( EInfDiaExpediente():New( "Diario detallado de expedientes" ):Play() )}, "(L)istado", "L",,, 32,, .F. )
+
+
+
+
+
+   ::oWndBrw:NewAt( "IMP",,, {||( EInfDiaActuaciones():New( "Diario detallado de actuaciones" ):Play() )}, "Lis(t)ado de actuaciones", "T",,, 32,, .F. )
+
+   if !Empty( oUser():cOperario )
+
+
+
+
+
+   oExp := ::oWndBrw:NewAt( "Worker2_Folder_Document_",,, {||( oExp:Expand() )}, "Mis expedientes", "X",,,,, .F. )
+
+
+
+
+
+
+   oMisExp := ::oWndBrw:NewAt( "Worker2_Folder_Document_",,, {||( ::PutOperarioIndex( 0, oMisExp ) )}, "Todos", "X",,,, oExp, .F. )
+
+
+
+
+
+
+   oPdtExp := ::oWndBrw:NewAt( "Worker2_Folder_Document_",,, {||( ::PutOperarioIndex( 2, oPdtExp ) )}, "Pendientes", "P",,,, oExp, .F. )
+
+
+
+
+
+
+   oFinExp := ::oWndBrw:NewAt( "Worker2_Folder_Document_",,, {||( ::PutOperarioIndex( 1, oFinExp ) )}, "Finalizados", "F",,,, oExp, .F. )
+
+
+
+
+
+
+   oActExp := ::oWndBrw:NewAt( "Worker2_Folder_Document_",,, {||( ::PutOperarioIndex( 3, oActExp ) )}, "Actuaciones", "T",,,, oExp, .F. )
+
+
+
+
+
+
+   ::oWndBrw:NewAt( "Worker2_Folder_Document_",,, {||( ::QuitOperarioIndex() )}, "Quitar mis expedientes", "Q",,,, oExp, .F. )
+
+   end
+
+
+
+
+
+
+   ::oWndBrw:NewAt( "END",,, {||( ::oWndBrw:end() )}, "(S)alir", "S",,,,, .F. )
+
+   if ::cHtmlHelp <> nil
+      ::oWndBrw:cHtmlHelp  := ::cHtmlHelp
+   end
+
+   ::LoadFilter()
+
+   ::oWndBrw:Activate(, ::oWndBrw:bLClicked, ::oWndBrw:bRClicked, ::oWndBrw:bMoved, ::oWndBrw:bResized, ::oWndBrw:bPainted, ::oWndBrw:bKeyDown, ::oWndBrw:bInit,,,,,,,,, {|| ( ::CloseFiles() )},, ::oWndBrw:bLButtonUp )
+
+   if !Empty( oUser():cOperario )
+
+      oExp:Expand()
+
+      ::PutOperarioIndex( nil, oMisExp )
+
+   end
+
+RETURN ( Self )
+
+
+
+UTILITY STATIC function TExpediente_OpenFiles( lExclusive) ; local Self AS CLASS TExpediente := QSelf() AS CLASS TExpediente
+
+   local lOpen          := .T.
+   local oError
+   local oBlock
+
+   IIF( lExclusive == nil, lExclusive := .F., ) ;
+
+   oBlock               := ErrorBlock( {| oError | ApoloBreak( oError ) } )
+   BEGIN SEQUENCE
+
+      if Empty( ::oDbf )
+         ::DefineFiles()
+      end
+      ::oDbf:Activate( .F., !lExclusive )
+
+      ::OpenDetails()
+
+      ::oDbfEmp := DbfServer( "Empresa.Dbf", ):NewOpen( "Empresa.Dbf",, ( cDriver() ),, ( cPatDat() ), .F., .T., .F., .F. ) ; ::oDbfEmp:AddBag( "Empresa.Cdx" ) ; ::oDbfEmp:AddBag( ) ; ::oDbfEmp:AutoIndex()
+
+      ::oCli := DbfServer( "Client.Dbf", ):NewOpen( "Client.Dbf",, ( cDriver() ),, ( cPatCli() ), .F., .T., .F., .F. ) ; ::oCli:AddBag( "Client.Cdx" ) ; ::oCli:AddBag( ) ; ::oCli:AutoIndex()
+
+      ::oDbfDoc := DbfServer( "rDocumen.Dbf", ):NewOpen( "rDocumen.Dbf",, ( cDriver() ),, ( cPatEmp() ), .F., .T., .F., .F. ) ; ::oDbfDoc:AddBag( "rDocumen.Cdx" ) ; ::oDbfDoc:AddBag( ) ; ::oDbfDoc:AutoIndex()
+      ::oDbfDoc:OrdSetFocus( "cTipo" )
+
+      ::oDbfCount := DbfServer( "nCount.Dbf", ):NewOpen( "nCount.Dbf",, ( cDriver() ),, ( cPatEmp() ), .F., .T., .F., .F. ) ; ::oDbfCount:AddBag( "nCount.Cdx" ) ; ::oDbfCount:AddBag( ) ; ::oDbfCount:AutoIndex()
+
+      ::oDbfFilter := DbfServer( "CnfFlt.Dbf", ):NewOpen( "CnfFlt.Dbf",, ( cDriver() ),, ( cPatDat() ), .F., .T., .F., .F. ) ; ::oDbfFilter:AddBag( "CnfFlt.Cdx" ) ; ::oDbfFilter:AddBag( ) ; ::oDbfFilter:AutoIndex()
+
+      if !::oTipoExpediente:OpenFiles()
+         lOpen          := .F.
+      end
+
+      if !::oOperario:OpenFiles()
+         lOpen          := .F.
+      end
+
+      if !::oOperarioActuaciones:OpenFiles()
+         lOpen          := .F.
+      end
+
+      if !::oColaborador:OpenFiles()
+         lOpen          := .F.
+      end
+
+      if !::oEntidad:OpenFiles()
+         lOpen          := .F.
+      end
+
+      if !::oActuaciones:OpenFiles()
+         lOpen          := .F.
+      end
+
+   RECOVER USING oError
+
+      lOpen             := .F.
+
+      msgStop( ErrorMessage( oError ), "Imposible abrir todas las bases de datos" )
+
+   end
+
+   ErrorBlock( oBlock )
+
+   if !lOpen
+      ::CloseFiles()
+   end
+
+RETURN ( lOpen )
+
+
+
+UTILITY STATIC function TExpediente_OpenService( lExclusive) ; local Self AS CLASS TExpediente := QSelf() AS CLASS TExpediente
+
+   local lOpen          := .T.
+   local oError
+   local oBlock         := ErrorBlock( {| oError | ApoloBreak( oError ) } )
+
+   IIF( lExclusive == nil, lExclusive := .F., ) ;
+
+   BEGIN SEQUENCE
+
+      if Empty( ::oDbf )
+         ::DefineFiles()
+      end
+
+      ::oDbf:Activate( .F., !lExclusive )
+
+   RECOVER USING oError
+
+      msgStop( "Imposible abrir todas las bases de datos" + Chr(13)+Chr(10) + ErrorMessage( oError ) )
+      ::CloseService()
+      lOpen             := .F.
+
+   end
+
+   ErrorBlock( oBlock )
+
+RETURN ( lOpen )
+
+
+
+UTILITY STATIC function TExpediente_CloseService() ; local Self AS CLASS TExpediente := QSelf() AS CLASS TExpediente
+
+   if ::oDbf <> nil .AND. ::oDbf:Used()
+      ::oDbf:End()
+   end
+
+   ::oDbf   := nil
+
+   ::CloseDetails()
+
+RETURN ( .T. )
+
+
+
+UTILITY STATIC function TExpediente_CloseFiles() ; local Self AS CLASS TExpediente := QSelf() AS CLASS TExpediente
+
+   ::CloseDetails()
+
+   if ::oCli <> nil .AND. ::oCli:Used()
+      ::oCli:End()
+      ::oCli         := nil
+   end
+
+   if ::oDbfDoc <> nil .AND. ::oDbfDoc:Used()
+      ::oDbfDoc:End()
+      ::oDbfDoc      := nil
+   end
+
+   if ::oDbfCount <> nil .AND. ::oDbfCount:Used()
+      ::oDbfCount:End()
+      ::oDbfCount    := nil
+   end
+
+   if ::oDbfEmp <> nil .AND. ::oDbfEmp:Used()
+      ::oDbfEmp:End()
+      ::oDbfEmp      := nil
+   end
+
+   if ::oDbfFilter <> nil .AND. ::oDbfFilter:Used()
+      ::oDbfFilter:End()
+      ::oDbfFilter   := nil
+   end
+
+   if ::oOperario <> nil
+      ::oOperario:End()
+      ::oOperario    := nil
+   end
+
+   if ::oOperarioActuaciones <> nil
+      ::oOperarioActuaciones:End()
+      ::oOperarioActuaciones  := nil
+   end
+
+   if ::oColaborador <> nil
+      ::oColaborador:End()
+      ::oColaborador := nil
+   end
+
+   if ::oTipoExpediente <> nil
+      ::oTipoExpediente:End()
+      ::oTipoExpediente := nil
+   end
+
+   if ::oEntidad <> nil
+      ::oEntidad:End()
+      ::oEntidad        := nil
+   end
+
+   if ::oActuaciones <> nil
+      ::oActuaciones:End()
+      ::oActuaciones := nil
+   end
+
+   if ::oDbf <> nil .AND. ::oDbf:Used()
+      ::oDbf:End()
+      ::oDbf         := nil
+   end
+
+RETURN ( .T. )
+
+
+
+UTILITY STATIC function TExpediente_DefineFiles( cPath, cDriver) ; local Self AS CLASS TExpediente := QSelf() AS CLASS TExpediente
+
+   IIF( cPath == nil, cPath := ::cPath, ) ;
+   IIF( cDriver == nil, cDriver := cDriver(), ) ;
+
+   ::oDbf := DbfServer( "ExpCab.Dbf", "ExpCab" ):New( "ExpCab.Dbf", "ExpCab", ( cDriver ), "Expediente de producción", ( cPath ) )
+
+      ::oDbf:AddField( "cSerExp", "C", 01, 0,,,,, "Serie", .F.,, .F., {} )
+      ::oDbf:AddField( "nNumExp", "N", 09, 0,,,,, "Número", .F.,, .F., {} )
+      ::oDbf:AddField( "cSufExp", "C", 02, 0,,,,, "Sufijo", .F.,, .F., {} )
+      ::oDbf:AddField( "lExpEnd", "L", 01, 0,,,,, "Expediente finalizado", .F.,, .T., {} )
+      ::oDbf:AddField( "dFecOrd", "D", 08, 0,,,,, "Fecha inicio", .F.,, .F., {} )
+      ::oDbf:AddField( "cHorOrd", "C", 05, 0, "@R 99:99",,,, "Hora de inicio", .F.,, .F., {} )
+      ::oDbf:AddField( "dFecVto", "D", 08, 0,,,,, "Fecha vencimiento", .F.,, .F., {} )
+      ::oDbf:AddField( "cHorVto", "C", 05, 0, "@R 99:99",,,, "Hora de vencimiento", .F.,, .F., {} )
+      ::oDbf:AddField( "cCodCli", "C", 12, 0,,,,, "Cliente", .F.,, .F., {} )
+      ::oDbf:AddField( "cNomCli", "C", 80, 0,,,,, "Nombre cliente", .F.,, .F., {} )
+      ::oDbf:AddField( "cCodTip", "C", 03, 0,,,,, "Código tipo expediente", .F.,, .F., {} )
+      ::oDbf:AddField( "cCodSub", "C", 03, 0,,,,, "Código subtipo expediente", .F.,, .F., {} )
+      ::oDbf:AddField( "cCodSec", "C", 03, 0,,,,, "Sección", .F.,, .F., {} )
+      ::oDbf:AddField( "cCodCol", "C", 03, 0,,,,, "Colaborador", .F.,, .F., {} )
+      ::oDbf:AddField( "cCodTra", "C", 05, 0,,,,, "Operario", .F.,, .F., {} )
+      ::oDbf:AddField( "cCodEnt", "C", 03, 0,,,,, "Entidad", .F.,, .F., {} )
+      ::oDbf:AddField( "dFecAsg", "D", 08, 0,,,,, "Fecha de asignación", .F.,, .F., {} )
+
+      ::oDbf:AddIndex( "cNumExp", "ExpCab.Cdx", "cSerExp + Str( nNumExp, 9 ) + cSufExp",,, .F., .F., "Número",,, .T., .F. )
+      ::oDbf:AddIndex( "dFecOrd", "ExpCab.Cdx", "dFecOrd",,, .F., .F., "Fecha inicio",,, .T., .F. )
+      ::oDbf:AddIndex( "cCodCli", "ExpCab.Cdx", "cCodCli",,, .F., .F., "Cliente",,, .T., .F. )
+      ::oDbf:AddIndex( "cNomCli", "ExpCab.Cdx", "cNomCli",,, .F., .F., "Nombre cliente",,, .T., .F. )
+      ::oDbf:AddIndex( "cCodTip", "ExpCab.Cdx", "cCodTip",,, .F., .F., "Tipo",,, .T., .F. )
+      ::oDbf:AddIndex( "cCodSub", "ExpCab.Cdx", "cCodSub",,, .F., .F., "Subtipo",,, .T., .F. )
+      ::oDbf:AddIndex( "cCodTra", "ExpCab.Cdx", "cCodTra",,, .F., .F., "Operario",,, .T., .F. )
+      ::oDbf:AddIndex( "cCodEnt", "ExpCab.Cdx", "cCodEnt",,, .F., .F., "Entidad",,, .T., .F. )
+      ::oDbf:AddIndex( "cCodCol", "ExpCab.Cdx", "cCodCol",,, .F., .F., "Colaborador",,, .T., .F. )
+
+
+
+RETURN ( ::oDbf )
+
+
+
+UTILITY STATIC function TExpediente_Resource( nMode, aDatosAnterior) ; local Self AS CLASS TExpediente := QSelf() AS CLASS TExpediente
+
+   local oFld
+   local oDlg
+   local oGetSer
+   local oGetCli
+   local oGetNom
+   local oGetTip
+   local oGetSub
+   local oSayTip
+   local cSayTip
+   local oSaySub
+   local cSaySub
+   local oGetEnt
+   local oSayEnt
+   local cSayEnt
+   local oGetTra
+   local oSayTra
+   local cSayTra
+   local oGetCol
+   local oSayCol
+   local cSayCol
+   local oHorIni
+   local oHorFin
+   local oTmpEmp
+   local oFecAsg
+   local oFecIni
+   local oFecFin
+   local oBrwActuacion
+   local oBmpGeneral
+
+   if nMode == 1
+
+      if !Empty( cDefSer() )
+         ::oDbf:cSerExp    := cDefSer()
+      else
+         ::oDbf:cSerExp    := "A"
+      end
+
+      ::oDbf:cCodTra       := oUser():cOperario()
+      ::oDbf:dFecOrd       := GetSysDate()
+      ::oDbf:cHorOrd       := uFieldEmpresa( "cIniJornada" )
+      ::oDbf:dFecVto       := Ctod( "" )
+      ::oDbf:dFecAsg       := GetSysDate()
+
+   end
+
+   cSayTip                 := oRetFld( ::oDbf:cCodTip, ::oTipoExpediente:oDbf, "cNomTip", "cCodTip" )
+   cSaySub                 := oRetFld( ::oDbf:cCodTip + ::oDbf:cCodSub, ::oTipoExpediente:oSubTipoExpediente:oDbf, "cNomSub", "cCodSub" )
+   cSayEnt                 := oRetFld( ::oDbf:cCodEnt, ::oEntidad:oDbf, "cDesEnt", "cCodEnt" )
+   cSayTra                 := oRetFld( ::oDbf:cCodTra, ::oOperario:oDbf, "cNomTra", "cCodTra" )
+   cSayCol                 := oRetFld( ::oDbf:cCodCol, ::oColaborador:oDbf, "cDesCol", "cCodCol" )
+
+   ::lTiempoEmpleado()
+
+   oDlg = TDialog():New(,,,, LblTitle( nMode ) + "expedientes", "Expediente",, .F.,,,,,, .F.,,,,,, .F., )
+
+
+
+
+
+      oFld := TFolder():ReDefine( 400, {"&Expedientes"}, { "Expediente_1" }, oDlg,,,,, .F., )
+
+
+
+
+
+
+
+
+
+      oBmpGeneral := TBitmap():ReDefine( 990, "folder_document_48_alpha",, oFld:aDialogs[1],,, .F., .F.,,, .F.,,, .T. )
+
+
+
+
+
+
+
+
+
+      oGetSer := TGetHlp():ReDefine( 100, { | u | If( PCount()==0, ::oDbf:cSerExp, ::oDbf:cSerExp:= u ) }, oFld:aDialogs[1],, "@!", {||    ( ::oDbf:cSerExp >= "A" .AND. ::oDbf:cSerExp <= "Z" )},,,,,, .F., {||     ( nMode == 1 .OR. nMode == 4 )},, .F., .T., {||    ( UpSerie( oGetSer ) )}, {||  ( DwSerie( oGetSer ) )},,,, nil,,, )
+
+
+
+
+
+      TGetHlp():ReDefine( 110, { | u | If( PCount()==0, ::oDbf:nNumExp, ::oDbf:nNumExp:= u ) }, oFld:aDialogs[1],, "999999999",,,,,,, .F., {||     ( .F. )},, .F., .F.,,,,,, nil,,, )
+
+
+
+
+
+      TGetHlp():ReDefine( 120, { | u | If( PCount()==0, ::oDbf:cSufExp, ::oDbf:cSufExp:= u ) }, oFld:aDialogs[1],, "@!",,,,,,, .F., {||     ( .F. )},, .F., .F.,,,,,, nil,,, )
+
+
+
+
+
+
+
+
+
+      TCheckBox():ReDefine( 160, { | u | If( PCount()==0, ::oDbf:lExpEnd, ::oDbf:lExpEnd:= u ) }, oFld:aDialogs[1],, {||( ::ChangeExpEnd( oFecFin, oHorFin, oTmpEmp ) )},,,,, .F., {||     ( nMode <> 3 )}, .F. )
+
+
+
+
+
+
+
+
+
+      oFecAsg := TGetHlp():ReDefine( 170, { | u | If( PCount()==0, ::oDbf:dFecAsg, ::oDbf:dFecAsg:= u ) }, oFld:aDialogs[1],,,,,,,,, .F., {||     ( nMode <> 3 .AND. lUsrMaster() )},, .F., .T.,,,,,, nil,,, )
+
+
+
+
+
+
+
+
+
+      oFecIni := TGetHlp():ReDefine( 130, { | u | If( PCount()==0, ::oDbf:dFecOrd, ::oDbf:dFecOrd:= u ) }, oFld:aDialogs[1],,,,,,,,, .F., {||         ( nMode <> 3 )},, .F., .T.,,,,,, nil,,, )
+
+      oFecIni:bValid    := {|| ::lTiempoEmpleado( oTmpEmp ) }
+      oFecIni:bChange   := {|| ::lTiempoEmpleado( oTmpEmp ) }
+
+
+
+
+
+
+
+
+      oHorIni := TGetHlp():ReDefine( 131, { | u | If( PCount()==0, ::oDbf:cHorOrd, ::oDbf:cHorOrd:= u ) }, oFld:aDialogs[1],, "@R 99:99",,,,,,, .F., {||     ( nMode <> 3 )},, .F., .T., {||    ( UpTime( oHorIni ) )}, {||  ( DwTime( oHorIni ) )},,,, nil,,, )
+
+      oHorIni:bValid    := {|| if( ValidTime( oHorIni ), ::lTiempoEmpleado( oTmpEmp ), .F. ) }
+      oHorIni:bChange   := {|| ::lTiempoEmpleado( oTmpEmp ) }
+
+
+
+
+
+      oFecFin := TGetHlp():ReDefine( 140, { | u | If( PCount()==0, ::oDbf:dFecVto, ::oDbf:dFecVto:= u ) }, oFld:aDialogs[1],,,,,,,,, .F., {||         ( nMode <> 3 )},, .F., .T.,,,,,, nil,,, )
+
+      oFecFin:bValid    := {|| ::lTiempoEmpleado( oTmpEmp ) }
+      oFecFin:bChange   := {|| ::lTiempoEmpleado( oTmpEmp ) }
+
+
+
+
+
+
+
+
+      oHorFin := TGetHlp():ReDefine( 141, { | u | If( PCount()==0, ::oDbf:cHorVto, ::oDbf:cHorVto:= u ) }, oFld:aDialogs[1],, "@R 99:99",,,,,,, .F., {||     ( nMode <> 3 )},, .F., .T., {||    ( UpTime( oHorFin ) )}, {||  ( DwTime( oHorFin ) )},,,, nil,,, )
+
+      oHorFin:bValid    := {|| if( ValidTime( oHorFin ), ::lTiempoEmpleado( oTmpEmp ), .F. ) }
+      oHorFin:bChange   := {|| ::lTiempoEmpleado( oTmpEmp ) }
+
+
+
+
+
+      oTmpEmp := TGetHlp():ReDefine( 150, { | u | If( PCount()==0, ::cTmpEmp, ::cTmpEmp:= u ) }, oFld:aDialogs[1],,,,,,,,, .F., {||     ( nMode <> 3 )},, .F., .F.,,,,,, nil,,, )
+
+
+
+
+
+
+
+
+
+
+      oGetCli := TGetHlp():ReDefine( 200, { | u | If( PCount()==0, ::oDbf:cCodCli, ::oDbf:cCodCli:= u ) }, oFld:aDialogs[1],,, {||    cClient( oGetCli, ::oCli:cAlias, oGetNom )},,,,,, .F., {||     ( nMode <> 3 )},, .F., .F.,,,,,, nil, "LUPA",, )
+
+      oGetCli:bHelp     := {|| BrwClient( oGetCli, oGetNom ) }
+
+
+
+
+      oGetNom := TGetHlp():ReDefine( 201, { | u | If( PCount()==0, ::oDbf:cNomCli, ::oDbf:cNomCli:= u ) }, oFld:aDialogs[1],,,,,,,,, .F., {||     ( nMode <> 3 )},, .F., .F.,,,,,, nil,,, )
+
+
+
+
+
+
+
+
+
+      oGetTip := TGetHlp():ReDefine( 210, { | u | If( PCount()==0, ::oDbf:cCodTip, ::oDbf:cCodTip:= u ) }, oFld:aDialogs[1],,,,,,,,, .F., {||     ( nMode <> 3 )},, .F., .F.,,,,,, nil, "LUPA",, )
+
+         oGetTip:bHelp     := {|| ::oTipoExpediente:BuscarEspecial( oGetTip, oGetSub ) }
+         oGetTip:bValid    := {|| ::oTipoExpediente:Existe( oGetTip, oSayTip, "cNomTip", .T., .T., "0" ) }
+
+
+
+
+      oSayTip := TGetHlp():ReDefine( 211, { | u | If( PCount()==0, cSayTip, cSayTip:= u ) }, oFld:aDialogs[1],,,,,,,,, .F., {||     .F.},, .F., .F.,,,,,, nil,,, )
+
+
+
+
+
+
+
+
+
+      oGetSub := TGetHlp():ReDefine( 250, { | u | If( PCount()==0, ::oDbf:cCodSub, ::oDbf:cCodSub:= u ) }, oFld:aDialogs[1],,,,,,,,, .F., {||     ( nMode <> 3 )},, .F., .F.,,,,,, nil, "LUPA",, )
+
+         oGetSub:bHelp     := {|| ::oTipoExpediente:BuscarEspecial( oGetTip, oGetSub ) }
+         oGetSub:bValid    := {|| ::oTipoExpediente:oSubTipoExpediente:Existe( oGetTip:VarGet() + oGetSub:VarGet(), oSaySub, "cNomSub", .T., .T., "0", "cCodSub" ) }
+
+
+
+
+      oSaySub := TGetHlp():ReDefine( 251, { | u | If( PCount()==0, cSaySub, cSaySub:= u ) }, oFld:aDialogs[1],,,,,,,,, .F., {||     .F.},, .F., .F.,,,,,, nil,,, )
+
+
+
+
+
+
+
+
+
+      oGetEnt := TGetHlp():ReDefine( 220, { | u | If( PCount()==0, ::oDbf:cCodEnt, ::oDbf:cCodEnt:= u ) }, oFld:aDialogs[1],,,,,,,,, .F., {||     ( nMode <> 3 )},, .F., .F.,,,,,, nil, "LUPA",, )
+
+         oGetEnt:bHelp     := {|| ::oEntidad:Buscar( oGetEnt ) }
+         oGetEnt:bValid    := {|| ::oEntidad:Existe( oGetEnt, oSayEnt, "cDesEnt", .T., .T., "0" ) }
+
+
+
+
+      oSayEnt := TGetHlp():ReDefine( 221, { | u | If( PCount()==0, cSayEnt, cSayEnt:= u ) }, oFld:aDialogs[1],,,,,,,,, .F., {||     .F.},, .F., .F.,,,,,, nil,,, )
+
+
+
+
+
+
+
+
+
+      oGetTra := TGetHlp():ReDefine( 230, { | u | If( PCount()==0, ::oDbf:cCodTra, ::oDbf:cCodTra:= u ) }, oFld:aDialogs[1],,,,,,,,, .F., {||     ( nMode <> 3 )},, .F., .F.,,,,,, nil, "LUPA",, )
+
+         oGetTra:bHelp     := {|| ::oOperario:Buscar( oGetTra ) }
+         oGetTra:bValid    := {|| ::oOperario:Existe( oGetTra, oSayTra, "cNomTra", .T., .T., "0" ) }
+
+
+
+
+      oSayTra := TGetHlp():ReDefine( 231, { | u | If( PCount()==0, cSayTra, cSayTra:= u ) }, oFld:aDialogs[1],,,,,,,,, .F., {||     .F.},, .F., .F.,,,,,, nil,,, )
+
+
+
+
+
+
+
+
+
+      oGetCol := TGetHlp():ReDefine( 240, { | u | If( PCount()==0, ::oDbf:cCodCol, ::oDbf:cCodCol:= u ) }, oFld:aDialogs[1],,,,,,,,, .F., {||     ( nMode <> 3 )},, .F., .F.,,,,,, nil, "LUPA",, )
+
+         oGetCol:bHelp     := {|| ::oColaborador:Buscar( oGetCol ) }
+         oGetCol:bValid    := {|| ::oColaborador:Existe( oGetCol, oSayCol, "cDesCol", .T., .T., "0" ) }
+
+
+
+
+      oSayCol := TGetHlp():ReDefine( 241, { | u | If( PCount()==0, cSayCol, cSayCol:= u ) }, oFld:aDialogs[1],,,,,,,,, .F., {||     .F.},, .F., .F.,,,,,, nil,,, )
+
+
+
+
+
+
+
+
+
+      TButton():ReDefine( 500, {||( ::oDetActuaciones:Append( oBrwActuacion ) )}, oFld:aDialogs[1],,, .F., {||     ( nMode <> 3 )},,, .F. )
+
+
+
+
+
+        TButton():ReDefine( 501, {||( ::oDetActuaciones:Edit( oBrwActuacion ) )}, oFld:aDialogs[1],,, .F., {||     ( nMode <> 3 )},,, .F. )
+
+
+
+
+        TButton():ReDefine( 502, {||( ::oDetActuaciones:Zoom() )}, oFld:aDialogs[1],,, .F.,,,, .F. )
+
+
+
+
+
+      TButton():ReDefine( 503, {||( ::oDetActuaciones:Del( oBrwActuacion ) )}, oFld:aDialogs[1],,, .F., {||     ( nMode <> 3 )},,, .F. )
+
+      oBrwActuacion                 := IXBrowse():New( oFld:aDialogs[1] )
+
+      oBrwActuacion:bClrSel         := {|| { 0, ( 229 + ( 229 * 256 ) + ( 229 * 65536 ) ) } }
+      oBrwActuacion:bClrSelFocus    := {|| { 0, ( 167 + ( 205 * 256 ) + ( 240 * 65536 ) ) } }
+
+      oBrwActuacion:nMarqueeStyle   := 6
+      oBrwActuacion:cName           := "Expediente.Lineas de actuacion"
+
+      oBrwActuacion:SetoDbf( ::oDetActuaciones:oDbfVir )
+
+      with object ( oBrwActuacion:AddCol() )
+         :cHeader          := "Finalizada"
+         :bStrData         := {|| "" }
+         :bEditValue       := {|| ::oDetActuaciones:oDbfVir:lActEnd }
+         :nWidth           := 65
+         :SetCheck( { "Sel16", "Nil16" } )
+      end
+
+      with object ( oBrwActuacion:AddCol() )
+         :cHeader          := "Tipo actuación"
+         :bStrData         := {|| ::oDetActuaciones:oDbfVir:cCodAct + Space( 1 ) + oRetFld( ::oDetActuaciones:oDbfVir:cCodAct, ::oActuaciones:oDbf, "cDesAct" ) }
+         :nWidth           := 255
+      end
+
+      with object ( oBrwActuacion:AddCol() )
+         :cHeader          := "Operario"
+         :bStrData         := {|| ::oDetActuaciones:oDbfVir:cCodTra + Space( 1 ) + oRetFld( ::oDetActuaciones:oDbfVir:cCodTra, ::oOperarioActuaciones:oDbf, "cNomTra" ) }
+         :nWidth           := 255
+      end
+
+      with object ( oBrwActuacion:AddCol() )
+         :cHeader          := "Actuación"
+         :bEditValue       := {|| Dtoc( ::oDetActuaciones:oDbfVir:dFecIni ) + Space( 1 ) + if( !Empty( ::oDetActuaciones:oDbfVir:cHorIni ), Trans( ::oDetActuaciones:oDbfVir:cHorIni, "@R 99:99" ), "" ) }
+         :nWidth           := 135
+      end
+
+      with object ( oBrwActuacion:AddCol() )
+         :cHeader          := "Limite"
+         :bEditValue       := {|| Dtoc( ::oDetActuaciones:oDbfVir:dFecFin ) + Space( 1 ) + if( !Empty( ::oDetActuaciones:oDbfVir:cHorFin ), Trans( ::oDetActuaciones:oDbfVir:cHorFin, "@R 99:99" ), "" ) }
+         :nWidth           := 135
+      end
+
+      oBrwActuacion:CreateFromResource( 300 )
+
+
+
+
+   TButton():ReDefine( 1, {||( ::lPreSave( oGetCli, oGetTip, oGetSub, oGetTra, oDlg ) )}, oDlg,,, .F.,,,, .F. )
+
+
+
+
+   TButton():ReDefine( 2, {||( oDlg:end() )}, oDlg,,, .F.,,,, .F. )
+
+   oDlg:AddFastKey( 113, {|| ::oDetActuaciones:Append( oBrwActuacion ) } )
+   oDlg:AddFastKey( 114, {|| ::oDetActuaciones:Edit( oBrwActuacion ) } )
+   oDlg:AddFastKey( 115, {|| ::oDetActuaciones:Del( oBrwActuacion ) } )
+
+   oDlg:AddFastKey( 116, {|| ::lPreSave( oGetCli, oGetTip, oGetSub, oGetTra, oDlg ) } )
+
+   oDlg:Activate( oDlg:bLClicked, oDlg:bMoved, oDlg:bPainted, .T.,,,, oDlg:bRClicked,,, )
+
+   oBmpGeneral:End()
+
+RETURN ( oDlg:nResult == 1 )
+
+
+
+UTILITY STATIC function TExpediente_lPreSave( oGetCli, oGetTip, oGetSub, oGetTra, oDlg) ; local Self AS CLASS TExpediente := QSelf() AS CLASS TExpediente
+
+   if Empty( oGetCli:VarGet() )
+      MsgStop( "Tiene que seleccionar un cliente." )
+      oGetCli:SetFocus()
+      Return nil
+   end
+
+   if Empty( oGetTip:VarGet() )
+      MsgStop( "Tiene que seleccionar un tipo." )
+      oGetTip:SetFocus()
+      Return nil
+   end
+
+   if Empty( oGetSub:VarGet() )
+      MsgStop( "Tiene que seleccionar un subtipo." )
+      oGetSub:SetFocus()
+      Return nil
+   end
+
+   if Empty( oGetTra:VarGet() )
+      MsgStop( "Tiene que seleccionar un trabajador." )
+      oGetTra:SetFocus()
+      Return nil
+   end
+
+   oDlg:End( 1 )
+
+Return ( .T. )
+
+
+
+UTILITY STATIC function TExpediente_ChangeExpEnd( oFecFin, oHorFin, oTmpEmp) ; local Self AS CLASS TExpediente := QSelf() AS CLASS TExpediente
+
+   if ::oDbf:lExpEnd
+      oFecFin:cText( GetSysDate() )
+      oHorFin:cText( SubStr( Time(), 1, 2 ) + SubStr( Time(), 4, 2 ) )
+   else
+      oFecFin:cText( Ctod( "" ) )
+      oHorFin:cText( Space( 5 ) )
+   end
+
+   if !Empty( oTmpEmp )
+      ::lTiempoEmpleado( oTmpEmp )
+   end
+
+return .T.
+
+
+
+UTILITY STATIC function TExpediente_GetNewCount() ; local Self AS CLASS TExpediente := QSelf() AS CLASS TExpediente
+
+   ::oDbf:nNumExp    := nNewDoc( ::oDbf:cSerExp, ::oDbf:nArea, "nExpedi" )
+
+RETURN ( .T. )
+
+
+
+UTILITY STATIC function TExpediente_lTiempoEmpleado( oTmpEmp) ; local Self AS CLASS TExpediente := QSelf() AS CLASS TExpediente
+
+   ::cTiempoEmpleado    := nTiempoEntreFechas( ::oDbf:dFecOrd, ::oDbf:dFecVto, ::oDbf:cHorOrd, ::oDbf:cHorVto )
+   ::cTmpEmp            := cFormatoDDHHMM( ::cTiempoEmpleado )
+
+   if oTmpEmp <> nil
+      oTmpEmp:cText( ::cTmpEmp )
+      oTmpEmp:Refresh()
+   end
+
+RETURN .T.
+
+
+
+UTILITY STATIC function TExpediente_GenExpediente( nDevice, cCaption, cCodDoc, cPrinter, nCopies) ; local Self AS CLASS TExpediente := QSelf() AS CLASS TExpediente
+
+   local oInf
+   local oDevice
+   local cNumeroParte
+
+   IIF( nDevice == nil, nDevice := 1, ) ;
+   IIF( cCaption == nil, cCaption := "Imprimiendo expediente", ) ;
+   IIF( cCodDoc == nil, cCodDoc := cFormatoDocumento( ::oDbf:cSerExp, "nExpedi", ::oDbfCount:cAlias ), ) ;
+   IIF( nCopies == nil, nCopies := nCopiasDocumento(  ::oDbf:cSerExp, "nExpedi", ::oDbfCount:cAlias ), ) ;
+
+   if ::oDbf:Lastrec() == 0
+      Return nil
+   end
+
+   if Empty( cCodDoc )
+      cCodDoc           := if( ::oDbf:cSerExp == "A", "EDA", "EDB" )
+   end
+
+   if !lExisteDocumento( cCodDoc, ::oDbfDoc:cAlias )
+      Return nil
+   end
+
+   cNumeroParte         := ::oDbf:cSerExp + Str( ::oDbf:nNumExp ) + ::oDbf:cSufExp
+
+   ::oDbf:GetStatus( .T. )
+
+   if ::oDbf:Seek( cNumeroParte )
+      ::PrintReport( nDevice, nCopies, cPrinter, ::oDbfDoc:cAlias )
+   end
+
+   ::oDbf:SetStatus()
+
+RETURN ( NIL )
+
+
+
+UTILITY STATIC function TExpediente_lGenExpediente( oBrw, oBtn, nDevice) ; local Self AS CLASS TExpediente := QSelf() AS CLASS TExpediente
+
+   local bAction
+
+   IIF( nDevice == nil, nDevice := 1, ) ;
+
+   if !::oDbfDoc:Seek( "ED" )
+
+
+
+
+
+
+
+
+      ::oWndBrw:NewAt( "DOCUMENT",,, {||( msgStop( "No hay documentos predefinidos" ) )}, "No hay documentos", "N",,, 4, oBtn, .F. )
+
+   else
+
+      while ::oDbfDoc:cTipo == "ED" .AND. !::oDbfDoc:eof()
+
+         bAction  := ::bGenExpediente( nDevice, "Imprimiendo expedientes", ::oDbfDoc:Codigo )
+
+         ::oWndBrw:NewAt( "Document", , , bAction, Rtrim( ::oDbfDoc:cDescrip ) , , , , , oBtn )
+
+         ::oDbfDoc:Skip()
+
+      end
+
+   end
+
+RETURN nil
+
+
+
+UTILITY STATIC function TExpediente_bGenExpediente( nDevice, cTitle, cCodDoc) ; local Self AS CLASS TExpediente := QSelf() AS CLASS TExpediente
+
+   local bGen
+   local nDev        := by( nDevice )
+   local cTit        := by( cTitle  )
+   local cCod        := by( cCodDoc )
+
+   bGen              := {|| ::nGenExpediente( nDev, cTit, cCod ) }
+
+RETURN ( bGen )
+
+
+
+UTILITY STATIC function TExpediente_nGenExpediente( nDevice, cTitle, cCodDoc, cPrinter, nCopy) ; local Self AS CLASS TExpediente := QSelf() AS CLASS TExpediente
+
+   local nExp
+   local nImpYet     := 1
+
+   IIF( nDevice == nil, nDevice := 1, ) ;
+   IIF( nCopy == nil, nCopy := nCopiasDocumento( , "nParPrd", ::oDbfCount:cAlias ), ) ;
+
+   nCopy             := Max( nCopy, 1 )
+
+   CursorWait()
+
+   for each nExp in ( ::oWndBrw:oBrw:aSelected )
+
+      ::oDbf:GoTo( nExp )
+
+      ::GenExpediente( nDevice, cTitle, cCodDoc, cPrinter , nCopy )
+
+   next
+
+   CursorWE()
+
+return nil
+
+
+
+
+
+
+UTILITY STATIC function TExpediente_nEstado( cDocumento) ; local Self AS CLASS TExpediente := QSelf() AS CLASS TExpediente
+
+   local nTotal   := 0
+   local nFinal   := 0
+   local nEstado  := 1
+   local nRec     := ::oDetActuaciones:oDbf:Recno()
+   local nOrd     := ::oDetActuaciones:oDbf:OrdSetFocus( "cNumExp" )
+
+   if ::oDetActuaciones:oDbf:Seek( cDocumento )
+
+      while ::oDetActuaciones:oDbf:cSerExp + Str( ::oDetActuaciones:oDbf:nNumExp, 9 ) + ::oDetActuaciones:oDbf:cSufExp == cDocumento .AND. !::oDetActuaciones:oDbf:Eof()
+
+         nTotal++
+
+         if ::oDetActuaciones:oDbf:lActEnd
+            nFinal++
+         end
+
+         ::oDetActuaciones:oDbf:Skip()
+
+      end
+
+   end
+
+   ::oDetActuaciones:oDbf:OrdSetFocus( nOrd )
+   ::oDetActuaciones:oDbf:GoTo( nRec )
+
+   do case
+      case nFinal == 0
+         nEstado  := 1
+      case nTotal > nFinal
+         nEstado  := 2
+      case nFinal >= nTotal
+         nEstado  := 3
+   end
+
+RETURN ( nEstado )
+#line 1375 ".\Prg\Expediente.prg"
+UTILITY STATIC function TExpediente_DataReport( oFr) ; local Self AS CLASS TExpediente := QSelf() AS CLASS TExpediente
+
+
+
+
+
+   oFr:ClearDataSets()
+
+   ::oTipoExpediente:oSubTipoExpediente:oDbf:OrdSetFocus( "cCodSub" )
+
+   oFr:SetWorkArea(     "Expediente", ::oDbf:nArea, .F., { 1, 1, 0 } )
+   oFr:SetFieldAliases( "Expediente", cObjectsToReport( ::oDbf ) )
+
+   oFr:SetWorkArea(     "Actuaciones", ::oDetActuaciones:oDbf:nArea )
+   oFr:SetFieldAliases( "Actuaciones", cObjectsToReport( ::oDetActuaciones:oDbf ) )
+
+   oFr:SetWorkArea(     "Empresa", ::oDbfEmp:nArea )
+   oFr:SetFieldAliases( "Empresa", cItemsToReport( aItmEmp() ) )
+
+   oFr:SetWorkArea(     "Clientes", ::oCli:nArea )
+   oFr:SetFieldAliases( "Clientes", cItemsToReport( aItmCli() ) )
+
+   oFr:SetWorkArea(     "Operarios", ::oOperario:oDbf:nArea )
+   oFr:SetFieldAliases( "Operarios", cObjectsToReport( ::oOperario:oDbf ) )
+
+   oFr:SetWorkArea(     "Colaboradores", ::oColaborador:oDbf:nArea )
+   oFr:SetFieldAliases( "Colaboradores", cObjectsToReport( ::oColaborador:oDbf ) )
+
+   oFr:SetWorkArea(     "Tipo expediente", ::oTipoExpediente:oDbf:nArea )
+   oFr:SetFieldAliases( "Tipo expediente", cObjectsToReport( ::oTipoExpediente:oDbf ) )
+
+   oFr:SetWorkArea(     "Subtipo expediente", ::oTipoExpediente:oSubTipoExpediente:oDbf:nArea )
+   oFr:SetFieldAliases( "Subtipo expediente", cObjectsToReport( ::oTipoExpediente:oSubTipoExpediente:oDbf ) )
+
+   oFr:SetWorkArea(     "Entidades", ::oEntidad:oDbf:nArea )
+   oFr:SetFieldAliases( "Entidades", cObjectsToReport( ::oEntidad:oDbf ) )
+
+   oFr:SetWorkArea(     "Tipos de actuaciones", ::oActuaciones:oDbf:nArea )
+   oFr:SetFieldAliases( "Tipos de actuaciones", cObjectsToReport( ::oActuaciones:oDbf ) )
+
+   oFr:SetWorkArea(     "Operarios de actuaciones", ::oOperarioActuaciones:oDbf:nArea )
+   oFr:SetFieldAliases( "Operarios de actuaciones", cObjectsToReport( ::oOperarioActuaciones:oDbf ) )
+
+   oFr:SetMasterDetail( "Expediente", "Actuaciones",           {|| ::oDbf:cSerExp + Str( ::oDbf:nNumExp ) + ::oDbf:cSufExp } )
+   oFr:SetMasterDetail( "Expediente", "Empresa",               {|| cCodigoEmpresaEnUso() } )
+   oFr:SetMasterDetail( "Expediente", "Clientes",              {|| ::oDbf:cCodCli } )
+   oFr:SetMasterDetail( "Expediente", "Operario",              {|| ::oDbf:cCodTra } )
+   oFr:SetMasterDetail( "Expediente", "Colaboradores",         {|| ::oDbf:cCodCol } )
+   oFr:SetMasterDetail( "Expediente", "Entidades",             {|| ::oDbf:cCodEnt } )
+   oFr:SetMasterDetail( "Expediente", "Tipo expediente",       {|| ::oDbf:cCodTip } )
+   oFr:SetMasterDetail( "Expediente", "Subtipo expediente",    {|| ::oDbf:cCodTip + ::oDbf:cCodSub } )
+
+   oFr:SetMasterDetail( "Actuaciones", "Tipos de actuaciones",       {|| ::oDetActuaciones:oDbf:cCodAct } )
+   oFr:SetMasterDetail( "Actuaciones", "Operarios de actuaciones",   {|| ::oDetActuaciones:oDbf:cCodTra } )
+
+   oFr:SetResyncPair(   "Expediente", "Actuaciones" )
+   oFr:SetResyncPair(   "Expediente", "Empresa" )
+   oFr:SetResyncPair(   "Expediente", "Clientes" )
+   oFr:SetResyncPair(   "Expediente", "Operario" )
+   oFr:SetResyncPair(   "Expediente", "Colaboradores" )
+   oFr:SetResyncPair(   "Expediente", "Entidades" )
+   oFr:SetResyncPair(   "Expediente", "Tipo expediente" )
+   oFr:SetResyncPair(   "Expediente", "Subtipo expediente" )
+
+   oFr:SetResyncPair(   "Actuaciones", "Tipos de actuaciones" )
+   oFr:SetResyncPair(   "Actuaciones", "Operarios de actuaciones" )
+
+Return nil
+
+
+
+UTILITY STATIC function TExpediente_DesignReport( oFr, dbfDoc) ; local Self AS CLASS TExpediente := QSelf() AS CLASS TExpediente
+
+   if ::OpenFiles()
+
+
+
+
+
+      ::DataReport( oFr )
+
+
+
+
+
+      if !Empty( ( dbfDoc )->mReport )
+
+         oFr:LoadFromBlob( ( dbfDoc )->( Select() ), "mReport")
+
+      else
+
+         oFr:SetProperty(     "Report",            "ScriptLanguage", "PascalScript" )
+
+         oFr:AddPage(         "MainPage" )
+
+         oFr:AddBand(         "CabeceraDocumento", "MainPage", 2 )
+         oFr:SetProperty(     "CabeceraDocumento", "Top", 0 )
+         oFr:SetProperty(     "CabeceraDocumento", "Height", 200 )
+
+         oFr:AddBand(         "CabeceraColumnas",  "MainPage", 6 )
+         oFr:SetProperty(     "CabeceraColumnas",  "Top", 200 )
+         oFr:SetProperty(     "CabeceraColumnas",  "Height", 0 )
+         oFr:SetProperty(     "CabeceraColumnas",  "StartNewPage", .T. )
+         oFr:SetObjProperty(  "CabeceraColumnas",  "DataSet", "Expediente" )
+
+         oFr:AddBand(         "DetalleColumnas",   "MainPage", 7  )
+         oFr:SetProperty(     "DetalleColumnas",   "Top", 230 )
+         oFr:SetProperty(     "DetalleColumnas",   "Height", 28 )
+         oFr:SetObjProperty(  "DetalleColumnas",   "DataSet", "Actuaciones" )
+         oFr:SetProperty(     "DetalleColumnas",   "OnMasterDetail", "DetalleOnMasterDetail" )
+
+         oFr:AddBand(         "PieDocumento",      "MainPage", 3 )
+         oFr:SetProperty(     "PieDocumento",      "Top", 930 )
+         oFr:SetProperty(     "PieDocumento",      "Height", 110 )
+
+      end
+
+
+
+
+
+      oFr:SetTabTreeExpanded( 16, .F. )
+
+
+
+
+
+      oFr:DesignReport()
+
+
+
+
+
+      oFr:DestroyFr()
+
+
+
+
+
+      ::CloseFiles()
+
+   else
+
+      Return .F.
+
+   end
+
+Return .T.
+
+
+
+UTILITY STATIC function TExpediente_PrintReport( nDevice, nCopies, cPrinter, dbfDoc) ; local Self AS CLASS TExpediente := QSelf() AS CLASS TExpediente
+
+   local oFr
+
+   IIF( nDevice == nil, nDevice := 2, ) ;
+   IIF( nCopies == nil, nCopies := 1, ) ;
+   IIF( cPrinter == nil, cPrinter := PrnGetName(), ) ;
+
+   SysRefresh()
+
+   oFr                  := frReportManager():New()
+
+   oFr:LoadLangRes(     "Spanish.Xml" )
+
+   oFr:SetIcon( 1 )
+
+   oFr:SetTitle(        "Diseñador de documentos" )
+
+
+
+
+
+   oFr:SetEventHandler( "Designer", "OnSaveReport", {|| oFr:SaveToBlob( ( dbfDoc )->( Select() ), "mReport" ) } )
+
+
+
+
+
+   ::DataReport( oFr )
+
+
+
+
+
+   if !Empty( ( dbfDoc )->mReport )
+
+      oFr:LoadFromBlob( ( dbfDoc )->( Select() ), "mReport")
+
+
+
+
+
+      oFr:PrepareReport()
+
+
+
+
+
+      do case
+         case nDevice == 2
+            oFr:ShowPreparedReport()
+
+         case nDevice == 1
+            oFr:PrintOptions:SetPrinter( cPrinter )
+            oFr:PrintOptions:SetCopies( nCopies )
+            oFr:PrintOptions:SetShowDialog( .F. )
+            oFr:Print()
+
+         case nDevice == 3
+            oFr:SetProperty(  "PDFExport", "EmbeddedFonts",    .T. )
+            oFr:SetProperty(  "PDFExport", "PrintOptimized",   .T. )
+            oFr:SetProperty(  "PDFExport", "Outline",          .T. )
+            oFr:DoExport(     "PDFExport" )
+
+      end
+
+   end
+
+
+
+
+
+   oFr:DestroyFr()
+
+Return .T.
+
+
+
+UTILITY STATIC function TExpediente_PrnSerie() ; local Self AS CLASS TExpediente := QSelf() AS CLASS TExpediente
+
+    local oDlg
+   local oFmtDoc
+   local cFmtDoc     := cSelPrimerDoc( "ED" )
+   local oSayFmt
+   local cSayFmt
+   local oSerIni
+   local oSerFin
+   local nRecno      := ::oDbf:Recno()
+   local nOrdAnt     := ::oDbf:OrdSetFocus( "cNumExp" )
+   local cSerIni     := ::oDbf:cSerExp
+   local cSerFin     := ::oDbf:cSerExp
+   local nDocIni     := ::oDbf:nNumExp
+   local nDocFin     := ::oDbf:nNumExp
+   local cSufIni     := ::oDbf:cSufExp
+   local cSufFin     := ::oDbf:cSufExp
+   local oPrinter
+   local cPrinter    := PrnGetName()
+   local lCopiasPre  := .T.
+   local lInvOrden   := .F.
+   local oNumCop
+   local nNumCop     := nCopiasDocumento( ::oDbf:cSerExp, "nExpedi", ::oDbfCount:cAlias )
+
+   IIF( cPrinter == nil, cPrinter := PrnGetName(), ) ;
+
+   cSayFmt           := cNombreDoc( cFmtDoc )
+
+   nNumCop           := Max( nNumCop, 1 )
+
+   oDlg = TDialog():New(,,,, "Imprimir series de partes de expedientes", "ImpSerDoc",, .F.,,,,,, .F.,,,,,, .F., )
+
+
+
+
+
+
+
+
+
+   oSerIni := TGetHlp():ReDefine( 100, { | u | If( PCount()==0, cSerIni, cSerIni:= u ) }, oDlg,, "@!", {||    ( cSerIni >= "A" .AND. cSerIni <= "Z"  )},,,,,, .T.,,, .F., .T., {||    ( UpSerie( oSerIni ) )}, {||  ( DwSerie( oSerIni ) )},,,, nil,,, )
+
+
+
+
+
+
+
+
+
+   oSerFin := TGetHlp():ReDefine( 110, { | u | If( PCount()==0, cSerFin, cSerFin:= u ) }, oDlg,, "@!", {||    ( cSerFin >= "A" .AND. cSerFin <= "Z"  )},,,,,, .T.,,, .F., .T., {||    ( UpSerie( oSerFin ) )}, {||  ( DwSerie( oSerFin ) )},,,, nil,,, )
+
+
+
+
+
+   TGetHlp():ReDefine( 120, { | u | If( PCount()==0, nDocIni, nDocIni:= u ) }, oDlg,, "999999999",,,,,,, .F.,,, .F., .T.,,,,,, nil,,, )
+
+
+
+
+
+   TGetHlp():ReDefine( 130, { | u | If( PCount()==0, nDocFin, nDocFin:= u ) }, oDlg,, "999999999",,,,,,, .F.,,, .F., .T.,,,,,, nil,,, )
+
+
+
+
+   TGetHlp():ReDefine( 140, { | u | If( PCount()==0, cSufIni, cSufIni:= u ) }, oDlg,, "##",,,,,,, .F.,,, .F., .F.,,,,,, nil,,, )
+
+
+
+
+   TGetHlp():ReDefine( 150, { | u | If( PCount()==0, cSufFin, cSufFin:= u ) }, oDlg,, "##",,,,,,, .F.,,, .F., .F.,,,,,, nil,,, )
+
+
+
+   TCheckBox():ReDefine( 500, { | u | If( PCount()==0, lInvOrden, lInvOrden:= u ) }, oDlg,,,,,,, .F.,, .F. )
+
+
+
+   TCheckBox():ReDefine( 170, { | u | If( PCount()==0, lCopiasPre, lCopiasPre:= u ) }, oDlg,,,,,,, .F.,, .F. )
+
+
+
+
+
+
+
+
+
+   oNumCop := TGetHlp():ReDefine( 180, { | u | If( PCount()==0, nNumCop, nNumCop:= u ) }, oDlg,, "999999999", {||    nNumCop > 0},,,,,, .F., {||     !lCopiasPre},, .F., .T.,,, {||      1}, {||      99999},, nil,,, )
+
+
+
+
+
+
+
+   oFmtDoc := TGetHlp():ReDefine( 90, { | u | If( PCount()==0, cFmtDoc, cFmtDoc:= u ) }, oDlg,,, {||    ( cDocumento( oFmtDoc, oSayFmt, ::oDbfDoc:cAlias ) )}, "N/W*",,,,, .F.,,, .F., .F.,,,,, {|Self|( BrwDocumento( oFmtDoc, oSayFmt, "ED" ) )}, nil, "LUPA",, )
+
+
+
+
+
+   oSayFmt := TGetHlp():ReDefine( 91, { | u | If( PCount()==0, cSayFmt, cSayFmt:= u ) }, oDlg,,,, "N/W*",,,,, .F., {||     ( .F. )},, .F., .F.,,,,,, nil,,, )
+
+   TBtnBmp():ReDefine( 92, "Printer_pencil_16",,,,,{|| EdtDocumento( cFmtDoc ) }, oDlg, .F., , .F.,  )
+
+
+
+
+   oPrinter := TGetHlp():ReDefine( 160, { | u | If( PCount()==0, cPrinter, cPrinter:= u ) }, oDlg,,,,,,,,, .F., {||     ( .F. )},, .F., .F.,,,,,, nil,,, )
+
+   TBtnBmp():ReDefine( 161, "Printer_preferences_16",,,,,{|| PrinterPreferences( oPrinter ) }, oDlg, .F., , .F.,  )
+
+
+
+
+
+   TButton():ReDefine( 1, {||(  ::StartPrint( SubStr( cFmtDoc, 1, 3 ), cSerIni + Str( nDocIni, 9 ) + cSufIni, cSerFin + Str( nDocFin, 9 ) + cSufFin, oDlg, cPrinter, lCopiasPre, nNumCop, lInvOrden ), oDlg:end( 1 ) )}, oDlg,,, .F.,,,, .F. )
+
+
+
+
+   TButton():ReDefine( 2, {||( oDlg:end() )}, oDlg,,, .F.,,,, .F. )
+
+   oDlg:bStart := { || oSerIni:SetFocus() }
+
+   oDlg:AddFastKey( 116, {|| ::StartPrint( SubStr( cFmtDoc, 1, 3 ), cSerIni + Str( nDocIni, 9 ) + cSufIni, cSerFin + Str( nDocFin, 9 ) + cSufFin, oDlg, cPrinter, lCopiasPre, nNumCop, lInvOrden ), oDlg:end( 1 ) } )
+
+   oDlg:Activate( oDlg:bLClicked, oDlg:bMoved, oDlg:bPainted, .T.,,,, oDlg:bRClicked,,, )
+
+   ::oDbf:GoTo( nRecNo )
+   ::oDbf:OrdSetFocus( nOrdAnt )
+
+RETURN NIL
+
+
+
+UTILITY STATIC function TExpediente_StartPrint( cFmtDoc, cDocIni, cDocFin, oDlg, cPrinter, lCopiasPre, nNumCop, lInvOrden) ; local Self AS CLASS TExpediente := QSelf() AS CLASS TExpediente
+
+   oDlg:Disable()
+
+   if !lInvOrden
+
+      ::oDbf:Seek( cDocIni, .T. )
+
+
+
+      while ::oDbf:cSerExp + Str( ::oDbf:nNumExp ) + ::oDbf:cSufExp >= cDocIni .AND.  ::oDbf:cSerExp + Str( ::oDbf:nNumExp ) + ::oDbf:cSufExp <= cDocFin .AND.  !::oDbf:Eof()
+
+         if lCopiasPre
+
+            ::GenExpediente( 1, "Imprimiendo documento : " + ::oDbf:cSerExp + Str( ::oDbf:nNumExp ) + ::oDbf:cSufExp, cFmtDoc, cPrinter, nCopiasDocumento( ::oDbf:cSerExp, "nExpedi", ::oDbfCount:cAlias ) )
+
+         else
+
+            ::GenExpediente( 1, "Imprimiendo documento : " + ::oDbf:cSerExp + Str( ::oDbf:nNumExp ) + ::oDbf:cSufExp, cFmtDoc, cPrinter, nNumCop )
+
+         end
+
+         ::oDbf:Skip( 1 )
+
+      end
+
+   else
+
+      ::oDbf:Seek( cDocFin )
+
+
+
+      while ::oDbf:cSerExp + Str( ::oDbf:nNumExp ) + ::oDbf:cSufExp >= cDocIni .AND. ::oDbf:cSerExp + Str( ::oDbf:nNumExp ) + ::oDbf:cSufExp <= cDocFin .AND. !::oDbf:Bof()
+
+         if lCopiasPre
+
+            ::GenExpediente( 1, "Imprimiendo documento : " + ::oDbf:cSerExp + Str( ::oDbf:nNumExp ) + ::oDbf:cSufExp, cFmtDoc, cPrinter, nCopiasDocumento( ::oDbf:cSerExp, "nExpedi", ::oDbfCount:cAlias ) )
+
+         else
+
+            ::nGenExpediente( 1, "Imprimiendo documento : " + ::oDbf:cSerExp + Str( ::oDbf:nNumExp ) + ::oDbf:cSufExp, cFmtDoc, cPrinter, nNumCop )
+
+         end
+
+         ::oDbf:Skip( -1 )
+
+      end
+
+   end
+
+   oDlg:Enable()
+
+RETURN NIL
+
+
+
+UTILITY STATIC function TExpediente_PutOperarioIndex( nTypeExp, oButton) ; local Self AS CLASS TExpediente := QSelf() AS CLASS TExpediente
+
+   local nItemBitmap
+
+
+
+
+
+   ::RestoreOperarioButton()
+
+
+
+
+
+   nItemBitmap                      := aScan( ::oWndBrw:oImageList:aBitmaps, {|o| Upper( o:cResName ) == Upper( "on_worker2_folder_document_16" ) } )
+   if nItemBitmap <> 0
+      nItemBitmap := nItemBitmap - 2
+      TvSetItemImage( ::oWndBrw:oBtnBar:hWnd, oButton:hItem, nItemBitmap )
+   end
+
+
+
+
+
+   ::oDbf:SetFilter()
+
+
+
+
+
+   do case
+      case ( nTypeExp == 0 )
+
+         ::oWndBrw:oBtnTop:aSay[ 1, 3 ]   := "Expedientes : Operario " + oUser():cOperario + "-" + oRetFld( oUser():cOperario, ::oOperario:oDbf, "cNomTra", "cCodTra" )
+
+         ::oDbf:AddTmpIndex( cCurUsr(), GetFileNoExt( ::oDbf:cFile ), ::oDbf:OrdKey(), ( 'cCodTra == "' + Rtrim( oUser():cOperario ) + '"' ), , , , , , , , .T. )
+
+         ::oWndBrw:bChgIndex  := {|| ::oDbf:AddTmpIndex( cCurUsr(), GetFileNoExt( ::oDbf:cFile ), ::oDbf:OrdKey(), ( 'cCodTra == "' + Rtrim( oUser():cOperario ) + '"' ), , , , , , , , .T. ) }
+
+      case ( nTypeExp == 1 )
+
+         ::oWndBrw:oBtnTop:aSay[ 1, 3 ]   := "Expedientes : Finalizados operario " + oUser():cOperario + "-" + oRetFld( oUser():cOperario, ::oOperario:oDbf, "cNomTra", "cCodTra" )
+
+         ::oDbf:AddTmpIndex( cCurUsr(), GetFileNoExt( ::oDbf:cFile ), ::oDbf:OrdKey(), ( 'lExpEnd .and. cCodTra == "' + Rtrim( oUser():cOperario ) + '"' ), , , , , , , , .T. )
+
+         ::oWndBrw:bChgIndex  := {|| ::oDbf:AddTmpIndex( cCurUsr(), GetFileNoExt( ::oDbf:cFile ), ::oDbf:OrdKey(), ( 'lExpEnd .and. cCodTra == "' + Rtrim( oUser():cOperario ) + '"' ), , , , , , , , .T. ) }
+
+      case ( nTypeExp == 2 )
+
+         ::oWndBrw:oBtnTop:aSay[ 1, 3 ]   := "Expedientes : Pendientes operario " + oUser():cOperario + "-" + oRetFld( oUser():cOperario, ::oOperario:oDbf, "cNomTra", "cCodTra" )
+
+         ::oDbf:AddTmpIndex( cCurUsr(), GetFileNoExt( ::oDbf:cFile ), ::oDbf:OrdKey(), ( '!lExpEnd .and. cCodTra == "' + Rtrim( oUser():cOperario ) + '"' ), , , , , , , , .T. )
+
+         ::oWndBrw:bChgIndex  := {|| ::oDbf:AddTmpIndex( cCurUsr(), GetFileNoExt( ::oDbf:cFile ), ::oDbf:OrdKey(), ( '!lExpEnd .and. cCodTra == "' + Rtrim( oUser():cOperario ) + '"' ), , , , , , , , .T. ) }
+
+      case ( nTypeExp == 3 )
+
+         ::oWndBrw:oBtnTop:aSay[ 1, 3 ]   := "Expedientes : Con actuaciones operario " + oUser():cOperario + "-" + oRetFld( oUser():cOperario, ::oOperario:oDbf, "cNomTra", "cCodTra" )
+
+         ::oDbf:SetFilter( "lActuaciones( cSerExp + Str( nNumExp ) + cSufExp," + '"' + ::oDetActuaciones:oDbf:cAlias + '", "' + Rtrim( oUser():cOperario ) + '")' )
+
+
+
+   end
+
+
+
+
+
+   ::oButtonOld                        := oButton
+
+
+
+
+
+   ::oDbf:GoTop()
+
+   ::oWndBrw:Refresh()
+
+Return Self
+
+
+
+UTILITY STATIC function TExpediente_QuitOperarioIndex() ; local Self AS CLASS TExpediente := QSelf() AS CLASS TExpediente
+
+
+
+
+
+   ::RestoreOperarioButton()
+
+
+
+
+
+   ::oWndBrw:bChgIndex                 := nil
+
+   ::oDbf:OrdSetFocus( ::oWndBrw:oWndBar:GetComboBoxAt() )
+
+
+
+
+
+   ::oDbf:GoTop()
+
+   ::oWndBrw:Refresh()
+
+Return Self
+
+
+
+UTILITY STATIC function TExpediente_RestoreOperarioButton() ; local Self AS CLASS TExpediente := QSelf() AS CLASS TExpediente
+
+   local nItemBitmap
+
+
+
+
+
+   if !Empty( ::oButtonOld )
+
+      ::oWndBrw:oBtnTop:aSay[ 1, 3 ]   := "Expedientes"
+
+      nItemBitmap                      := aScan( ::oWndBrw:oImageList:aBitmaps, {|o| Upper( o:cResName ) == Upper( "worker2_folder_document_16" ) } )
+      if nItemBitmap <> 0
+         nItemBitmap := nItemBitmap - 2
+         TvSetItemImage( ::oWndBrw:oBtnBar:hWnd, ::oButtonOld:hItem, nItemBitmap )
+      end
+
+      ::oButtonOld                     := nil
+
+   end
+
+Return Self
+
+
+
+Function lActuaciones( cDocumento, dbfActuaciones, cOperario )
+
+   local lAct     := .F.
+   local nOrd     := ( dbfActuaciones )->( OrdSetFocus( "cNumExp" ) )
+
+   if ( dbfActuaciones )->( dbSeek( cDocumento ) )
+
+      while ( dbfActuaciones )->cSerExp + Str( ( dbfActuaciones )->nNumExp, 9 ) + ( dbfActuaciones )->cSufExp == cDocumento .AND. !( dbfActuaciones )->( Eof() )
+
+         if ( dbfActuaciones )->cCodTra == cOperario .AND. !( dbfActuaciones )->lActEnd
+            lAct  := .T.
+         end
+
+         ( dbfActuaciones )->( dbSkip() )
+
+      end
+
+   end
+
+   ( dbfActuaciones )->( OrdSetFocus( nOrd ) )
+
+Return ( lAct )

@@ -1,0 +1,2496 @@
+#line 112 "hbclass.ch"
+   DYNAMIC DivertConstructorCall
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+DECLARE HBClass  New( cName AS String, OPTIONAL SuperParams ) AS CLASS HBClass  Create() AS Object  Instance() AS Object  AddClsMethod( cName AS String, @MethodName(), nScope AS Numeric, n2 AS Numeric, n3 AS Numeric )  AddDelegate( cName AS String, cDelegate AS String, cObject AS String, nScope AS Numeric, lPersistent AS LOGICAL )  AddMultiClsData( cType AS String, uVal, nScope AS Numeric, aDatas AS Array OF String )  AddMultiData( cType AS String, uVal, nScope AS Numeric, aDatas AS Array OF String, x AS LOGICAL, lPer AS LOGICAL )  AddMethod( cName AS String, @MethodName(), nScope AS Numeric, lPersistent AS LOGICAL )  AddInLine( cName AS String, bBlock AS CodeBlock, nScope AS Numeric, lPersistent AS LOGICAL )  AddVirtual( cName AS String )  ModMethod( cName AS String, @MethodName(), nScope AS Numeric, lPersistent AS LOGICAL )  ModClsMethod( cName AS String, @MethodName(), nScope AS Numeric )  ModInline( cName AS String, bBlock AS CodeBlock, nScope AS Numeric, lPersistent AS LOGICAL )  SetOnError( @MethodName() )
+#line 85 "\Fwh1204\Include\FiveWin.Ch"
+   EXTERNAL GetProcAdd
+   EXTERNAL TActiveX
+
+
+
+
+extern errorsys
+#line 13 ".\Prg\Pro.prg"
+static oWndBrw
+static dbfProT
+static dbfProL
+static dbfTmpProL
+static cTmpProLin
+static bEdit      := { |aTmp, aGet, dbf, oBrw, bWhen, bValid, nMode | EdtRec( aTmp, aGet, dbf, oBrw, bWhen, bValid, nMode ) }
+static bEdtDet    := { |aTmp, aGet, dbf, oBrw, bWhen, bValid, nMode, cCodArt | EdtDet( aTmp, aGet, dbf, oBrw, bWhen, bValid, nMode, cCodArt ) }
+
+
+
+
+
+
+
+
+
+FUNCTION Prop( oMenuItem, oWnd )
+
+   local nLevel
+   local oSnd
+
+   IIF( oMenuItem == nil, oMenuItem := "01015", ) ;
+   IIF( oWnd == nil, oWnd := oWnd(), ) ;
+
+    IF oWndBrw == NIL
+
+
+
+
+
+      nLevel            := nLevelUsr( oMenuItem )
+
+      if nAnd( nLevel, 1 ) <> 0
+         msgStop( "Acceso no permitido." )
+         return nil
+      end
+
+
+
+
+
+      if oWnd <> nil
+         SysRefresh(); oWnd:CloseAll(); SysRefresh()
+      end
+
+
+
+
+
+      if !OpenFiles()
+         Return nil
+      end
+
+
+
+
+
+      AddMnuNext( "Propiedades de artículos", ProcName() )
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+   oWndBrw := TShell():New( 2, 10, 18, 70, "Propiedades de artículos",, oWnd,,, .F.,,, ( dbfProT ),,,,, {"Código", "Nombre"}, {||( WinAppRec( oWndBrw:oBrw, bEdit, dbfProT ) )}, {||( WinEdtRec( oWndBrw:oBrw, bEdit, dbfProT ) )}, {||( WinDelRec( oWndBrw:oBrw, dbfProT, {|| DeletePropiedades( ( dbfProT )->cCodPro ) } ) )}, {||( WinDupRec( oWndBrw:oBrw, bEdit, dbfProT ) )}, nil, nLevel, "Die_Gold_16", ( 104 + ( 0 * 256 ) + ( 63 * 65536 ) ),,, .T. )
+
+      with object ( oWndBrw:AddXCol() )
+         :cHeader          := "Envio"
+         :nHeadBmpNo       := 3
+         :bStrData         := {|| "" }
+         :bEditValue       := {|| ( dbfProT )->lSndDoc }
+         :nWidth           := 20
+         :SetCheck( { "Sel16", "Nil16" } )
+         :AddResource( "Lbl16" )
+      end
+
+      with object ( oWndBrw:AddXCol() )
+         :cHeader          := "Públicar"
+         :nHeadBmpNo       := 3
+         :bStrData         := {|| "" }
+         :bEditValue       := {|| ( dbfProT )->lPubInt }
+         :nWidth           := 20
+         :SetCheck( { "Sel16", "Nil16" } )
+         :AddResource( "SNDINT16" )
+      end
+
+
+      with object ( oWndBrw:AddXCol() )
+         :cHeader          := "Código"
+         :cSortOrder       := "cCodPro"
+         :bEditValue       := {|| ( dbfProT )->cCodPro }
+         :nWidth           := 80
+         :bLClickHeader    := {| nMRow, nMCol, nFlags, oCol | oWndBrw:ClickOnHeader( oCol ) }
+      end
+
+      with object ( oWndBrw:AddXCol() )
+         :cHeader          := "Nombre"
+         :cSortOrder       := "cDesPro"
+         :bEditValue       := {|| ( dbfProT )->cDesPro }
+         :nWidth           := 260
+         :bLClickHeader    := {| nMRow, nMCol, nFlags, oCol | oWndBrw:ClickOnHeader( oCol ) }
+      end
+
+      oWndBrw:CreateXFromCode()
+
+
+
+
+
+      oWndBrw:NewAt( "BUS",,, {||( oWndBrw:SearchSetFocus() )}, "(B)uscar", "B",,,,, .F. )
+
+      oWndBrw:AddSeaBar()
+
+
+
+
+
+
+
+
+      oWndBrw:NewAt( "NEW",,, {||( oWndBrw:RecAdd() )}, "(A)ñadir", "A",,, 2,, .F. )
+
+
+
+
+
+
+
+        oWndBrw:NewAt( "EDIT",,, {||( oWndBrw:RecEdit() )}, "(M)odificar", "M",,, 4,, .F. )
+
+
+
+
+
+
+
+        oWndBrw:NewAt( "ZOOM",,, {||( WinZooRec( oWndBrw:oBrw, bEdit, dbfProT ) )}, "(Z)oom", "Z",,, 8,, .F. )
+
+
+
+
+
+
+
+        oWndBrw:NewAt( "DEL",,, {||( oWndBrw:RecDel() )}, "(E)liminar", "E",,, 16,, .F. )
+
+
+
+
+
+
+
+
+      oSnd := oWndBrw:NewAt( "Lbl",, "Seleccionar registros para ser enviados", {||ChangelSndDoc()}, "En(v)iar", "V",, {|This|This:Toggle()}, 4,, .F. )
+
+
+
+
+
+
+      oWndBrw:NewAt( "SNDINT",,, {||( ChangePublicar() )}, "P(u)blicar", "U",,, 4,, .F. )
+
+
+
+
+
+
+      oWndBrw:NewAt( "END",,, {||( oWndBrw:end() )}, "(S)alir", "S",,,,, .F. )
+
+        oWndBrw:Activate(, oWndBrw:bLClicked, oWndBrw:bRClicked, oWndBrw:bMoved, oWndBrw:bResized, oWndBrw:bPainted, oWndBrw:bKeyDown, oWndBrw:bInit,,,,,,,,, {|| ( CloseFiles() )},, oWndBrw:bLButtonUp )
+
+    ELSE
+
+        oWndBrw:SetFocus()
+
+    end
+
+RETURN NIL
+
+
+
+STATIC FUNCTION EdtRec( aTmp, aGet, dbfProT, oWndBrw, bWhen, bValid, nMode )
+
+    local oDlg
+   local oBrw
+
+   if BeginTrans( aTmp, nMode, ( dbfProT )->cCodPro )
+
+      oDlg = TDialog():New(,,,, LblTitle( nMode ) + "propiedades", "PROP",, .F.,,,,,, .F.,,,,,, .F., )
+
+
+
+
+
+
+
+
+         aGet[ ( dbfProT )->( FieldPos( "cCodPro" ) ) ] := TGetHlp():ReDefine( 100, { | u | If( PCount()==0, aTmp[ ( dbfProT )->( FieldPos( "cCodPro" ) ) ], aTmp[ ( dbfProT )->( FieldPos( "cCodPro" ) ) ]:= u ) }, oDlg,, "@!", {||    ( !Empty( aTmp[ ( dbfProT )->( FieldPos( "cCodPro" ) ) ] ) .AND. NotValid( aGet[ ( dbfProT )->( FieldPos( "cCodPro" ) ) ], dbfProT ) )},,,,,, .T., {||     ( nMode == 1 )},, .F., .F.,,,,,, nil,,, )
+
+
+
+
+
+
+         aGet[ ( dbfProT )->( FieldPos( "cDesPro" ) ) ] := TGetHlp():ReDefine( 110, { | u | If( PCount()==0, aTmp[ ( dbfProT )->( FieldPos( "cDesPro" ) ) ], aTmp[ ( dbfProT )->( FieldPos( "cDesPro" ) ) ]:= u ) }, oDlg,,,,,,,,, .T., {||     ( nMode <> 3 )},, .F., .F.,,,,,, nil,,, )
+
+
+
+
+
+
+         aGet[ ( dbfProT )->( FieldPos( "cNomInt" ) ) ] := TGetHlp():ReDefine( 160, { | u | If( PCount()==0, aTmp[ ( dbfProT )->( FieldPos( "cNomInt" ) ) ], aTmp[ ( dbfProT )->( FieldPos( "cNomInt" ) ) ]:= u ) }, oDlg,,,,,,,,, .T., {||     ( nMode <> 3 )},, .F., .F.,,,,,, nil,,, )
+
+
+
+
+
+         TCheckBox():ReDefine( 150, { | u | If( PCount()==0, aTmp[ ( dbfProT )->( FieldPos( "lPubInt" ) ) ], aTmp[ ( dbfProT )->( FieldPos( "lPubInt" ) ) ]:= u ) }, oDlg,, {||( ChangePublicar( aTmp ) )},,,,, .F., {||     ( nMode <> 3 )}, .F. )
+
+
+
+
+         TCheckBox():ReDefine( 200, { | u | If( PCount()==0, aTmp[ ( dbfProT )->( FieldPos( "lColor" ) ) ], aTmp[ ( dbfProT )->( FieldPos( "lColor" ) ) ]:= u ) }, oDlg,,,,,,, .F., {||     ( nMode <> 3 )}, .F. )
+
+         oBrw                 := TXBrowse():New( oDlg )
+
+         oBrw:bClrSel         := {|| { 0, ( 229 + ( 229 * 256 ) + ( 229 * 65536 ) ) } }
+         oBrw:bClrSelFocus    := {|| { 0, ( 167 + ( 205 * 256 ) + ( 240 * 65536 ) ) } }
+
+         oBrw:cAlias          := dbfTmpProL
+         oBrw:nMarqueeStyle   := 5
+
+         with object ( oBrw:AddCol() )
+            :cHeader          := "Código"
+            :cSortOrder       := "cCodTbl"
+            :bEditValue       := {|| ( dbfTmpProL )->cCodTbl }
+            :nWidth           := 60
+         end
+
+         with object ( oBrw:AddCol() )
+            :cHeader          := "Nombre"
+            :cSortOrder       := "cDesTbl"
+            :bEditValue       := {|| ( dbfTmpProL )->cDesTbl }
+            :nWidth           := 160
+         end
+
+         with object ( oBrw:AddCol() )
+            :cHeader          := "Orden"
+            :cSortOrder       := "nOrdTbl"
+            :bEditValue       := {|| ( dbfTmpProL )->nOrdTbl }
+            :cEditPicture     := "9999"
+            :nWidth           := 50
+            :nDataStrAlign    := 1
+            :nHeadStrAlign    := 1
+         end
+
+         with object ( oBrw:AddCol() )
+            :cHeader          := "CB"
+            :cSortOrder       := "nBarTbl"
+            :bEditValue       := {|| ( dbfTmpProL )->nBarTbl }
+            :cEditPicture     := "9999"
+            :nWidth           := 50
+            :nDataStrAlign    := 1
+            :nHeadStrAlign    := 1
+         end
+
+         oBrw:CreateFromResource( 120 )
+
+         oBrw:bLDblClick      := {|| WinEdtRec( oBrw, bEdtDet, dbfTmpProL, aTmp ) }
+         oBrw:bRClicked       := {| nRow, nCol, nFlags | oBrw:RButtonDown( nRow, nCol, nFlags ) }
+
+
+
+
+
+         TButton():ReDefine( 500, {||( WinAppRec( oBrw, bEdtDet, dbfTmpProL, aTmp ) )}, oDlg,,, .F., {||     ( nMode <> 3 )},,, .F. )
+
+
+
+
+
+         TButton():ReDefine( 501, {||( WinEdtRec( oBrw, bEdtDet, dbfTmpProL, aTmp ) )}, oDlg,,, .F., {||     ( nMode <> 3 )},,, .F. )
+
+
+
+
+
+         TButton():ReDefine( 502, {||( DelDet( oBrw ) )}, oDlg,,, .F., {||     ( nMode <> 3 )},,, .F. )
+
+
+
+
+
+         TButton():ReDefine( 503, {||( UpDet( oBrw ) )}, oDlg,,, .F., {||     ( nMode <> 3 )},,, .F. )
+
+
+
+
+
+         TButton():ReDefine( 504, {||( DownDet( oBrw ) )}, oDlg,,, .F., {||     ( nMode <> 3 )},,, .F. )
+
+
+
+
+
+         TButton():ReDefine( 1, {||( EndTrans( aTmp, aGet, nMode, oDlg ) )}, oDlg,,, .F., {||     ( nMode <> 3 )},,, .F. )
+
+
+
+
+
+         TButton():ReDefine( 2, {||( oDlg:end() )}, oDlg,,, .F.,,,, .T. )
+
+
+
+
+         TButton():ReDefine( 559, {||( ChmHelp( "Propiedades_de_articulos" ) )}, oDlg,,, .F.,,,, .F. )
+
+         if nMode <> 3
+            oDlg:AddFastKey( 113, {|| WinAppRec( oBrw, bEdtDet, dbfTmpProL, aTmp ) } )
+            oDlg:AddFastKey( 114, {|| WinEdtRec( oBrw, bEdtDet, dbfTmpProL, aTmp ) } )
+            oDlg:AddFastKey( 115, {|| DelDet( oBrw ) } )
+            oDlg:AddFastKey( 116, {|| EndTrans( aTmp, aGet, nMode, oDlg ) } )
+         end
+
+         oDlg:AddFastKey ( 112, {|| ChmHelp( "Propiedades_de_articulos" ) } )
+
+         oDlg:bStart := {|| aGet[ ( dbfProT )->( FieldPos( "cCodPro" ) ) ]:SetFocus() }
+
+      oDlg:Activate( oDlg:bLClicked, oDlg:bMoved, oDlg:bPainted, .T.,,,, oDlg:bRClicked,,, )
+
+      KillTrans()
+
+   end
+
+RETURN ( oDlg:nResult == 1 )
+
+
+
+Static Function UpDet( oBrw )
+
+    local nRecno       := ( dbfTmpProL )->( Recno() )
+    local nPosition       := ( dbfTmpProL )->nOrdTbl
+
+    if nPosition > 1
+
+        nPosition--
+
+        ( dbfTmpProL )->( __dbLocate( {|| Field->nOrdTbl == nPosition } ) )
+        if ( dbfTmpProL )->( Found() )
+            ( dbfTmpProL )->nOrdTbl++
+        endif
+
+        ( dbfTmpProL )->( dbGoTo( nRecno ) )
+        ( dbfTmpProL )->nOrdTbl--
+
+    endif
+
+     oBrw:Refresh()
+
+RETURN ( nil )
+
+
+
+Static Function DownDet( oBrw )
+
+    local nRecno       := ( dbfTmpProL )->( Recno() )
+    local nPosition       := ( dbfTmpProL )->nOrdTbl
+
+    if nPosition < ( dbfTmpProL )->( LastRec() )
+
+        nPosition++
+
+        ( dbfTmpProL )->( __dbLocate( {|| Field->nOrdTbl == nPosition } ) )
+        if ( dbfTmpProL )->( Found() )
+            ( dbfTmpProL )->nOrdTbl--
+        endif
+
+        ( dbfTmpProL )->( dbGoTo( nRecno ) )
+        ( dbfTmpProL )->nOrdTbl++
+
+    endif
+
+     oBrw:Refresh()
+
+RETURN ( nil )
+
+
+
+STATIC FUNCTION BeginTrans( aTmp, nMode, cCodPro )
+
+   local oError
+   local oBlock
+   local nOrdAnt
+   local lCreate     := .T.
+
+   oBlock            := ErrorBlock( {| oError | ApoloBreak( oError ) } )
+   BEGIN SEQUENCE
+
+   cTmpProLin        := cGetNewFileName( cPatTmp() + "TmpProLin" )
+
+   dbCreate( cTmpProLin, aSqlStruct( aItmPro() ), cLocalDriver() )
+
+   dbUseArea( .T., cLocalDriver(), cTmpProLin, cCheckArea( "TmpProLin", @dbfTmpProL ), .F. )
+
+   if !( dbfTmpProL )->( neterr() )
+
+      ( dbfTmpProL )->( OrdCondSet( "!Deleted()", {||!Deleted() } ) )
+      ( dbfTmpProL )->( OrdCreate( cTmpProLin, "nOrdTbl", "Str( Field->nOrdTbl )", {|| Str( Field->nOrdTbl ) } ) )
+
+      ( dbfTmpProL )->( OrdCondSet( "!Deleted()", {||!Deleted() } ) )
+      ( dbfTmpProL )->( OrdCreate( cTmpProLin, "cCodTbl", "Field->cCodTbl", {|| Field->cCodTbl } ) )
+
+      ( dbfTmpProL )->( OrdCondSet( "!Deleted()", {||!Deleted() } ) )
+      ( dbfTmpProL )->( OrdCreate( cTmpProLin, "cDesTbl", "Field->cDesTbl", {|| Field->cDesTbl } ) )
+
+      ( dbfTmpProL )->( OrdCondSet( "!Deleted()", {||!Deleted() } ) )
+      ( dbfTmpProL )->( OrdCreate( cTmpProLin, "nBarTbl", "Field->nBarTbl", {|| Field->nBarTbl } ) )
+
+      ( dbfTmpProL )->( OrdSetFocus( "nOrdTbl" ) )
+
+      nOrdAnt           := ( dbfProL )->( OrdSetFocus( 1 ) )
+
+      if nMode <> 1 .AND. ( dbfProL )->( dbSeek( cCodPro ) )
+
+         while ( dbfProL )->cCodPro == cCodPro .AND. !( dbfProL )->( eof() )
+            dbPass( dbfProL, dbfTmpProL, .T. )
+            if Empty( ( dbfTmpProL )->nOrdTbl )
+               ( dbfTmpProL )->nOrdTbl := ( dbfTmpProL )->( Recno() )
+            end
+           ( dbfProL )->( dbSkip() )
+         end
+
+      end
+
+      ( dbfTmpProL )->( dbGoTop() )
+
+      ( dbfProL )->( OrdSetFocus( nOrdAnt ) )
+      ( dbfProL )->( dbGoTop() )
+
+   end
+
+   RECOVER USING oError
+
+      lCreate        := .F.
+
+      msgStop( "Imposible crear el fichero temporal" + Chr(13)+Chr(10) + ErrorMessage( oError ) )
+
+   end
+
+   ErrorBlock( oBlock )
+
+Return ( lCreate )
+
+
+
+STATIC FUNCTION EndTrans( aTmp, aGet, nMode, oDlg )
+
+   local oError
+   local oBlock
+   local nOrdAnt
+
+
+
+   if nMode == 1
+
+      if Empty( aTmp[ ( dbfProT )->( FieldPos( "cCodPro" ) ) ] )
+         MsgStop( "Código no puede estar vacío" )
+         aGet[ ( dbfProT )->( FieldPos( "cCodPro" ) ) ]:SetFocus()
+         return nil
+      end
+
+      if dbSeekInOrd( aTmp[ ( dbfProT )->( FieldPos( "cCodPro" ) ) ], "CCODPRO", dbfProT )
+         MsgStop( "Código ya existe " + Rtrim( aTmp[ ( dbfProT )->( FieldPos( "cCodPro" ) ) ] ) )
+         return nil
+      end
+
+   end
+
+   if Empty( aTmp[ ( dbfProT )->( FieldPos( "cDesPro" ) ) ] )
+      msgStop( "Nombre no puede estar vacío" )
+      aGet[ ( dbfProT )->( FieldPos( "cDesPro" ) ) ]:SetFocus()
+      return nil
+   end
+
+
+
+
+
+   aTmp[ ( dbfProT )->( FieldPos( "lSndDoc" ) ) ]   := .T.
+
+   oBlock      := ErrorBlock( {| oError | ApoloBreak( oError ) } )
+   BEGIN SEQUENCE
+
+      BeginTransaction()
+
+      nOrdAnt  := ( dbfProL )->( OrdSetFocus( 2 ) )
+
+      while ( dbfProL )->( dbSeek( aTmp[ ( dbfProL )->( FieldPos( "cCodPro" ) ) ] ) ) .AND. !( dbfProL )->( eof() )
+         if dbLock( dbfProL )
+            ( dbfProL )->( dbDelete() )
+            ( dbfProL )->( dbUnLock() )
+         end
+      end
+
+      ( dbfProL )->( OrdSetFocus( nOrdAnt ) )
+      ( dbfProL )->( dbGoTop() )
+
+      ( dbfTmpProL )->( dbGoTop() )
+      while !( dbfTmpProL )->( eof() )
+         dbPass( dbfTmpProL, dbfProL, .T., aTmp[ ( dbfProT )->( FieldPos( "cCodPro" ) ) ] )
+         ( dbfTmpProL )->( dbSkip() )
+      end
+
+      WinGather( aTmp, aGet, dbfProT, nil, nMode )
+
+      CommitTransaction()
+
+   RECOVER USING oError
+
+      RollBackTransaction()
+      msgStop( "Imposible completar la transacción" + Chr(13)+Chr(10) + ErrorMessage( oError ) )
+
+   end
+   ErrorBlock( oBlock )
+
+RETURN ( oDlg:end( 1 ) )
+
+
+
+STATIC FUNCTION KillTrans()
+
+   if !Empty( dbfTmpProL ) .AND. ( dbfTmpProL )->( Used() )
+      ( dbfTmpProL )->( dbCloseArea() )
+   end
+
+   dbfTmpProL  := nil
+
+   dbfErase( cTmpProLin )
+
+RETURN nil
+
+
+
+STATIC FUNCTION EdtDet( aTmp, aGet, dbf, oBrw, aTmpPro, bValid, nMode, cCodArt )
+
+    local oDlg
+
+   if nMode == 1
+      aTmp[ ( dbfProL )->( FieldPos( "nOrdTbl" ) ) ]  := ( dbfTmpProL )->( LastRec() ) + 1
+   end
+
+   oDlg = TDialog():New(,,,, LblTitle( nMode ) + "propiedad", "PRODET",, .F.,,,,,, .F.,,,,,, .F., )
+
+
+
+
+
+
+
+      aGet[ ( dbfProL )->( FieldPos( "cCodTbl" ) ) ] := TGetHlp():ReDefine( 100, { | u | If( PCount()==0, aTmp[ ( dbfProL )->( FieldPos( "cCodTbl" ) ) ], aTmp[ ( dbfProL )->( FieldPos( "cCodTbl" ) ) ]:= u ) }, oDlg,, "@!", {||    ( !Empty( aTmp[ ( dbfTmpProL )->( FieldPos( "cCodTbl" ) ) ] ) )},,,,,, .F., {||     ( nMode == 1 )},, .F., .F.,,,,,, nil,,, )
+
+
+
+
+
+
+      aGet[ ( dbfProL )->( FieldPos( "cDesTbl" ) ) ] := TGetHlp():ReDefine( 110, { | u | If( PCount()==0, aTmp[ ( dbfProL )->( FieldPos( "cDesTbl" ) ) ], aTmp[ ( dbfProL )->( FieldPos( "cDesTbl" ) ) ]:= u ) }, oDlg,, "@!",,,,,,, .F., {||         ( nMode <> 3 )},, .F., .F.,,,,,, nil,,, )
+
+
+
+
+
+
+
+      aGet[ ( dbfProL )->( FieldPos( "nOrdTbl" ) ) ] := TGetHlp():ReDefine( 120, { | u | If( PCount()==0, aTmp[ ( dbfProL )->( FieldPos( "nOrdTbl" ) ) ], aTmp[ ( dbfProL )->( FieldPos( "nOrdTbl" ) ) ]:= u ) }, oDlg,, "9999",,,,,,, .F., {||         ( nMode <> 3 )},, .F., .T.,,,,,, nil,,, )
+
+
+
+
+
+
+      aGet[ ( dbfProL )->( FieldPos( "nBarTbl" ) ) ] := TGetHlp():ReDefine( 130, { | u | If( PCount()==0, aTmp[ ( dbfProL )->( FieldPos( "nBarTbl" ) ) ], aTmp[ ( dbfProL )->( FieldPos( "nBarTbl" ) ) ]:= u ) }, oDlg,, "9999",,,,,,, .F., {||         ( nMode <> 3 )},, .F., .F.,,,,,, nil,,, )
+
+
+
+
+
+
+
+
+
+
+      aGet[ ( dbfProL )->( FieldPos( "nColor" ) ) ] := TGetHlp():ReDefine( 200, { | u | If( PCount()==0, aTmp[ ( dbfProL )->( FieldPos( "nColor" ) ) ], aTmp[ ( dbfProL )->( FieldPos( "nColor" ) ) ]:= u ) }, oDlg,,,, aTmp[ ( dbfProL )->( FieldPos( "nColor" ) ) ], aTmp[ ( dbfProL )->( FieldPos( "nColor" ) ) ],,,, .F., {||     ( nMode <> 3 .AND. aTmpPro[ ( dbfProT )->( FieldPos( "lColor" ) ) ] )},, .F., .F.,,,,, {|Self|(  aTmp[ ( dbfProL )->( FieldPos( "nColor" ) ) ]  := ChooseColor(), aGet[ ( dbfProL )->( FieldPos( "nColor" ) ) ]:SetColor( aTmp[ ( dbfProL )->( FieldPos( "nColor" ) ) ], aTmp[ ( dbfProL )->( FieldPos( "nColor" ) ) ] ), aGet[ ( dbfProL )->( FieldPos( "nColor" ) ) ]:Refresh() )}, nil, "LUPA",, )
+
+
+
+
+
+      TButton():ReDefine( 1, {||( SaveEdtDet( aTmp, aGet, oBrw, oDlg, nMode, dbfTmpProL ) )}, oDlg,,, .F., {||         ( nMode <> 3 )},,, .F. )
+
+
+
+
+
+      TButton():ReDefine( 2, {||( oDlg:end() )}, oDlg,,, .F.,,,, .T. )
+
+
+
+
+      TButton():ReDefine( 9, {||( ChmHelp( "Propiedades_de_articulos" ) )}, oDlg,,, .F.,,,, .F. )
+
+   if nMode <> 3
+      oDlg:AddFastKey( 116, {|| SaveEdtDet( aTmp, aGet, oBrw, oDlg, nMode, dbfTmpProL ) } )
+   end
+
+   oDlg:AddFastKey( 112, {||  ChmHelp( "Propiedades_de_articulos" ) } )
+
+   oDlg:Activate( oDlg:bLClicked, oDlg:bMoved, oDlg:bPainted, .T.,,,, oDlg:bRClicked,,, )
+
+RETURN ( oDlg:nResult == 1 )
+
+
+
+Static Function SaveEdtDet( aTmp, aGet, oBrw, oDlg, nMode, dbfTmpProL )
+
+   local nRec
+   local lErr     := .F.
+
+   nRec           := ( dbfTmpProL )->( Recno() )
+
+   if nMode == 1
+
+      if Empty( aTmp[ ( dbfTmpProL )->( FieldPos( "cCodTbl" ) ) ] )
+         MsgStop( "Código de la propiedad no puede estar vacio" )
+         lErr     := .T.
+      end
+
+      if dbSeekInOrd( aTmp[ ( dbfTmpProL )->( FieldPos( "cCodTbl" ) ) ], "cCodTbl", dbfTmpProL )
+         MsgStop( "Código de la propiedad ya existe" )
+         lErr     := .T.
+      end
+
+   end
+
+
+
+   if ( nMode == 1 .OR. ( dbfTmpProL )->nBarTbl <> aTmp[ ( dbfTmpProL )->( FieldPos( "nBarTbl" ) ) ] ) .AND. !Empty( aTmp[ ( dbfTmpProL )->( FieldPos( "nBarTbl" ) ) ] )                                              .AND. dbSeekInOrd( aTmp[ ( dbfTmpProL )->( FieldPos( "nBarTbl" ) ) ], "nBarTbl", dbfTmpProL )
+         MsgStop( "Número para código de barras ya existe" )
+         lErr     := .T.
+   end
+
+   ( dbfTmpProL )->( dbGoTo( nRec ) )
+
+   if !lErr
+      WinGather( aTmp, aGet, dbfTmpProL, oBrw, nMode )
+      oDlg:end( 1 )
+   end
+
+Return nil
+
+
+
+FUNCTION cProp( oGet, oSay )
+
+   local oBlock
+   local oError
+   local dbfPro
+   local lValid   := .F.
+   local cCodPrp  := oGet:VarGet()
+
+   if Empty( cCodPrp )
+
+      if !Empty( oSay )
+         oSay:SetText( Space( 3 ) )
+      end
+
+      return .T.
+
+   end
+
+   oBlock         := ErrorBlock( {| oError | ApoloBreak( oError ) } )
+   BEGIN SEQUENCE
+
+   dbUseArea( .T., ( cDriver() ), ( cPatArt() + "PRO.DBF" ), ( cCheckArea( "PRO", @dbfPro ) ), if(.T. .OR. .F., !.F., NIL), .F.,, )
+   if !lAIS() ; ordListAdd( ( cPatArt() + "PRO.CDX" ) ) ; else ; ordSetFocus( 1 ) ; end
+
+   if ( dbfPro )->( dbSeek( cCodPrp ) )
+
+      if !Empty( oSay )
+         oSay:SetText( ( dbfPro )->cDesPro )
+      end
+
+      lValid      := .T.
+
+   end
+
+   RECOVER USING oError
+
+      msgStop( "Imposible abrir todas las bases de datos " + Chr(13)+Chr(10) + ErrorMessage( oError ) )
+
+   end
+   ErrorBlock( oBlock )
+
+   ( dbfPro )->( dbCloseArea() )
+
+RETURN lValid
+
+
+
+FUNCTION brwProp( oGet, oSay )
+
+   local oDlg
+   local oGetNbr
+   local cGetNbr
+   local oBrw
+   local nOrd     := GetBrwOpt( "BrwProp" )
+   local oCbxOrd
+   local aCbxOrd  := { "Código", "Nombre" }
+   local cCbxOrd
+   local nLevel   := nLevelUsr( "01015" )
+
+   nOrd           := Min( Max( nOrd, 1 ), len( aCbxOrd ) )
+   cCbxOrd        := aCbxOrd[ nOrd ]
+
+   if !OpenFiles()
+      Return ( .F. )
+   end
+
+   oDlg = TDialog():New(,,,, "Seleccionar propiedad", "HELPENTRY",, .F.,,,,,, .F.,,,,,, .F., )
+
+
+
+
+
+
+      oGetNbr := TGetHlp():ReDefine( 104, { | u | If( PCount()==0, cGetNbr, cGetNbr:= u ) }, oDlg,,, {||    ( OrdClearScope( oBrw, dbfProT ) )},,,,,, .F.,, {|nKey,nFlags,Self| ( AutoSeek( nKey, nFlags, Self, oBrw, dbfProT ) ) }, .F., .F.,,,,,, nil, "FIND",, )
+
+
+
+
+
+        oCbxOrd := TComboBox():ReDefine( 102, { | u | If( PCount()==0, cCbxOrd, cCbxOrd:= u ) }, aCbxOrd, oDlg,,,,,,, .F.,,,,,, )
+
+      oBrw                 := IXBrowse():New( oDlg )
+
+      oBrw:bClrSel         := {|| { 0, ( 229 + ( 229 * 256 ) + ( 229 * 65536 ) ) } }
+      oBrw:bClrSelFocus    := {|| { 0, ( 167 + ( 205 * 256 ) + ( 240 * 65536 ) ) } }
+
+      oBrw:cAlias          := dbfProT
+      oBrw:nMarqueeStyle   := 5
+      oBrw:cName           := "Browse.Propiedades"
+
+      with object ( oBrw:AddCol() )
+         :cHeader          := "Código"
+         :cSortOrder       := "cCodPro"
+         :bEditValue       := {|| ( dbfProT )->cCodPro }
+         :nWidth           := 60
+         :bLClickHeader    := {| nMRow, nMCol, nFlags, oCol | oCbxOrd:Set( oCol:cHeader ) }
+      end
+
+      with object ( oBrw:AddCol() )
+         :cHeader          := "Nombre"
+         :cSortOrder       := "cDesPro"
+         :bEditValue       := {|| ( dbfProT )->cDesPro }
+         :nWidth           := 260
+         :bLClickHeader    := {| nMRow, nMCol, nFlags, oCol | oCbxOrd:Set( oCol:cHeader ) }
+      end
+
+      oBrw:bLDblClick      := {|| oDlg:end( 1 ) }
+      oBrw:bRClicked       := {| nRow, nCol, nFlags | oBrw:RButtonDown( nRow, nCol, nFlags ) }
+
+      oBrw:CreateFromResource( 105 )
+
+
+
+
+      TButton():ReDefine( 1, {||( oDlg:end( 1 ) )}, oDlg,,, .F.,,,, .F. )
+
+
+
+
+        TButton():ReDefine( 2, {||( oDlg:end() )}, oDlg,,, .F.,,,, .F. )
+
+
+
+
+
+      TButton():ReDefine( 500, {||( WinAppRec( oBrw, bEdit, dbfProT ) )}, oDlg,,, .F., {||     ( nAnd( nLevel, 2 ) <> 0 )},,, .F. )
+
+
+
+
+
+        TButton():ReDefine( 501, {||( WinEdtRec( oBrw, bEdit, dbfProT ) )}, oDlg,,, .F., {||     ( nAnd( nLevel, 4 ) <> 0 )},,, .F. )
+
+      oBrw:bLDblClick               := {|| oDlg:end( 1 ) }
+
+      oDlg:AddFastKey( 113,       {|| if( nAnd( nLevel, 2 ) <> 0, WinAppRec( oBrw, bEdit, dbfProT ), ) } )
+      oDlg:AddFastKey( 114,       {|| if( nAnd( nLevel, 4 ) <> 0, WinEdtRec( oBrw, bEdit, dbfProT ), ) } )
+      oDlg:AddFastKey( 116,       {|| oDlg:end( 1 ) } )
+      oDlg:AddFastKey( 13,   {|| oDlg:end( 1 ) } )
+
+      oDlg:bStart := {|| oBrw:Load() }
+
+   oDlg:Activate( oDlg:bLClicked, oDlg:bMoved, oDlg:bPainted, .T.,,,, oDlg:bRClicked,,, )
+
+   DestroyFastFilter( dbfProT )
+
+   SetBrwOpt( "BrwProp", ( dbfProT )->( OrdNumber() ) )
+
+   if oDlg:nResult == 1
+
+      oGet:cText( ( dbfProT )->cCodPro )
+
+      if ValType( oSay ) == "O"
+         oSay:SetText( ( dbfProT )->cDesPro )
+      end
+
+   end
+
+   oGet:SetFocus()
+
+   CloseFiles()
+
+RETURN ( oDlg:nResult == 1 )
+
+
+
+Static Function DeletePropiedades( cCodPro )
+
+   local nOrdAnt  := ( dbfProL )->( OrdSetFocus( 2 ) )
+
+   ( dbfProL )->( dbGoTop() )
+
+   if ( dbfProL )->( dbSeek( cCodPro ) )
+      while ( dbfProL )->cCodPro == cCodPro .AND. !( dbfProL )->( eof() )
+         if dbLock( dbfProL )
+            ( dbfProL )->( dbDelete() )
+            ( dbfProL )->( dbUnLock() )
+         end
+         ( dbfProL )->( dbSkip() )
+      end
+   end
+
+   ( dbfProL )->( OrdSetFocus( nOrdAnt ) )
+   ( dbfProL )->( dbGoTop() )
+
+Return .T.
+
+
+
+Static Function DelDet( oBrwLineas )
+
+   if oUser():lNotConfirmDelete() .OR. ApoloMsgNoYes("¿Desea eliminar el registro en curso?", "Confirme supresión" )
+
+      dbDelRec( oBrwLineas, dbfTmpProL )
+
+   end
+
+Return .T.
+
+
+
+function lIsProp1( cCodArt, dbfFamilia, dbfArticulo )
+
+   local lIsPro   := .F.
+
+   if ( dbfArticulo )->( dbSeek( cCodArt ) )
+      lIsPro      := Empty( ( dbfArticulo )->cCodPrp1 )
+   end
+
+return ( lIsPro )
+
+
+
+function lIsProp2( cCodArt, dbfFamilia, dbfArticulo )
+
+   local lIsPro   := .F.
+
+   if ( dbfArticulo )->( dbSeek( cCodArt ) )
+      lIsPro      := Empty( ( dbfArticulo )->cCodPrp2 )
+   end
+
+return ( lIsPro )
+
+
+
+Function cBarPrp( cCodPrp, cValPrp, dbfTblPro )
+
+   local cBarPro  := ""
+
+   if dbSeekInOrd( cCodPrp + cValPrp, "cCodPro", dbfTblPro )
+      cBarPro     := AllTrim( ( dbfTblPro )->nBarTbl )
+   end
+
+return ( cBarPro )
+
+
+
+Function cCodPrp( cCodPrp, nBarPrp, dbfTblPro )
+
+   local cBarPro  := Space( 10 )
+
+   if dbSeekInOrd( cCodPrp + nBarPrp, "nBarPro", dbfTblPro )
+      cBarPro     := ( dbfTblPro )->cCodTbl
+   else
+      if dbSeekInOrd( cCodPrp + nBarPrp, "cCodPro", dbfTblPro )
+         cBarPro  := ( dbfTblPro )->cCodTbl
+      end
+   end
+
+return ( cBarPro )
+
+
+
+Function aSeekProp( cCodBar, cCodPr1, cCodPr2, dbfArticulo, dbfTblPro )
+
+   local n
+   local cCodArt     := cCodBar
+
+   cCodBar           := Alltrim( cCodBar )
+
+   if dbSeekInOrd( cCodBar, "Codigo", dbfArticulo ) .OR. dbSeekInOrd( Upper( cCodBar ), "Codigo", dbfArticulo )
+
+      Return ( .T. )
+
+   else
+
+      n              := At( ".", cCodBar )
+
+      if n <> 0
+
+         cCodArt     := SubStr( cCodBar, 1, n - 1 )
+         cCodBar     := SubStr( cCodBar, n + 1 )
+
+         n           := At( ".", cCodBar )
+
+         if n <> 0
+            cCodPr1  := SubStr( cCodBar, 1, n - 1 )
+            cCodPr2  := SubStr( cCodBar, n + 1 )
+         else
+            cCodPr1  := Rtrim( cCodBar )
+         end
+
+      end
+
+      if ( dbfArticulo )->( dbSeek( cCodArt ) )
+
+         cCodBar     := ( dbfArticulo )->Codigo
+         cCodPr1     := Padr( cCodPr1, 5 )
+         cCodPr2     := Padr( cCodPr2, 5 )
+
+         Return ( .T. )
+
+      end
+
+   end
+
+Return ( .F. )
+
+
+
+
+
+
+Function LoaPrePro( cCodArt, cCodPr1, cValPr1, cCodPr2, cValPr2, nTarPre, lIvaInc, aGet, dbfArtDiv, dbfTarPreL, cCodTar )
+
+   local nPrePro  := nPrePro( cCodArt, cCodPr1, cValPr1, cCodPr2, cValPr2, nTarPre, lIvaInc, dbfArtDiv, dbfTarPreL, cCodTar )
+
+   if nPrePro <> 0
+      aGet:cText( nPrePro )
+   end
+
+return .T.
+
+
+
+
+
+
+Function LoaComPro( cCodArt, cCodPr1, cValPr1, cCodPr2, cValPr2, aGet, dbfArtCom )
+
+   local nPrePro  := nComPro( cCodArt, cCodPr1, cValPr1, cCodPr2, cValPr2, dbfArtCom )
+
+   if nPrePro <> 0
+      aGet:cText( nPrePro )
+   end
+
+return .T.
+
+
+
+Function LoadPropertiesTable( cCodArt, nPreCos, cCodPr1, cCodPr2, dbfPro, dbfTblPro, dbfArtCom, oBrw, oGetUnd, oGetPre )
+
+   local n
+   local a
+   local o
+   local nOrd
+   local nRow              := 1
+   local nCol              := 1
+   local nTotalRow         := 0
+   local nTotalCol         := 0
+   local aPropertiesTable  := {}
+   local aHeadersTable     := {}
+   local aSizesTable       := {}
+   local aJustifyTable     := {}
+
+   nOrd                    := ( dbfTblPro )->( OrdSetFocus( "nOrdPro" ) )
+
+   if !Empty( cCodPr1 ) .AND. ( dbfTblPro )->( dbSeek( cCodPr1 ) )
+      while ( dbfTblPro )->cCodPro == cCodPr1 .AND. !( dbfTblPro )->( eof() )
+         nTotalRow++
+         ( dbfTblPro )->( dbSkip() )
+      end
+      nTotalCol++
+   end
+
+   if nTotalRow == 0
+      Return nil
+   end
+
+   if !Empty( cCodPr2 ) .AND. ( dbfTblPro )->( dbSeek( cCodPr2 ) )
+      while ( dbfTblPro )->cCodPro == cCodPr2 .AND. !( dbfTblPro )->( eof() )
+         nTotalCol++
+         ( dbfTblPro )->( dbSkip() )
+      end
+   else
+      nTotalCol++
+   end
+
+   aPropertiesTable        := Array( nTotalRow, nTotalCol )
+
+   if ( dbfPro )->( dbSeek( cCodPr1 ) )
+      aAdd( aHeadersTable, ( dbfPro )->cDesPro )
+      aAdd( aSizesTable,   60 )
+      aAdd( aJustifyTable, .F. )
+   end
+
+   if ( dbfTblPro )->( dbSeek( cCodPr1 ) )
+      while ( dbfTblPro )->cCodPro == cCodPr1 .AND. !( dbfTblPro )->( eof() )
+         aPropertiesTable[ nRow, nCol ]                     := TPropertiesItems():New()
+         aPropertiesTable[ nRow, nCol ]:cCodigo             := cCodArt
+         aPropertiesTable[ nRow, nCol ]:cHead               := Rtrim( ( dbfPro )->cDesPro )
+         aPropertiesTable[ nRow, nCol ]:cText               := ( dbfTblPro )->cDesTbl
+         aPropertiesTable[ nRow, nCol ]:cCodigoPropiedad1   := ( dbfTblPro )->cCodPro
+         aPropertiesTable[ nRow, nCol ]:cValorPropiedad1    := ( dbfTblPro )->cCodTbl
+         nRow++
+         ( dbfTblPro )->( dbSkip() )
+      end
+   end
+
+   if !Empty( cCodPr2 ) .AND. ( dbfTblPro )->( dbSeek( cCodPr2 ) )
+
+      while ( dbfTblPro )->cCodPro == cCodPr2 .AND. !( dbfTblPro )->( eof() )
+
+         nCol++
+
+         aAdd( aHeadersTable, Rtrim( ( dbfTblPro )->cDesTbl ) )
+         aAdd( aSizesTable,   60 )
+         aAdd( aJustifyTable, .T. )
+
+         for n := 1 to nTotalRow
+            aPropertiesTable[ n, nCol ]                     := TPropertiesItems():New()
+            aPropertiesTable[ n, nCol ]:Value               := 0
+            aPropertiesTable[ n, nCol ]:cHead               := Rtrim( ( dbfTblPro )->cDesTbl )
+            aPropertiesTable[ n, nCol ]:cCodigo             := cCodArt
+            aPropertiesTable[ n, nCol ]:cCodigoPropiedad1   := aPropertiesTable[ n, 1 ]:cCodigoPropiedad1
+            aPropertiesTable[ n, nCol ]:cValorPropiedad1    := aPropertiesTable[ n, 1 ]:cValorPropiedad1
+            aPropertiesTable[ n, nCol ]:cCodigoPropiedad2   := ( dbfTblPro )->cCodPro
+            aPropertiesTable[ n, nCol ]:cValorPropiedad2    := ( dbfTblPro )->cCodTbl
+         next
+
+         ( dbfTblPro )->( dbSkip() )
+
+      end
+
+   else
+
+      nCol++
+
+      aAdd( aHeadersTable, "Unidades" )
+      aAdd( aSizesTable,   60 )
+      aAdd( aJustifyTable, .T. )
+
+      for n := 1 to nTotalRow
+         aPropertiesTable[ n, nCol ]                        := TPropertiesItems():New()
+         aPropertiesTable[ n, nCol ]:Value                  := 0
+         aPropertiesTable[ n, nCol ]:cHead                  := "Unidades"
+         aPropertiesTable[ n, nCol ]:cCodigo                := cCodArt
+         aPropertiesTable[ n, nCol ]:cCodigoPropiedad1      := aPropertiesTable[ n, 1 ]:cCodigoPropiedad1
+         aPropertiesTable[ n, nCol ]:cValorPropiedad1       := aPropertiesTable[ n, 1 ]:cValorPropiedad1
+      next
+
+   end
+
+
+
+
+
+   for each a in aPropertiesTable
+      for each o in a
+         if IsObject( o )
+            o:PrecioCompra( nPreCos, dbfArtCom )
+         end
+      next
+   next
+
+
+
+
+
+   ( dbfTblPro )->( OrdSetFocus( nOrd ) )
+
+   if !Empty( oBrw ) .AND. oBrw:ClassName() == "TWBROWSE"
+
+
+
+
+
+      if !Empty( oGetPre )
+         oGetPre:bValid := {|| SetPropertiesTable( oBrw, oGetPre ) }
+      end
+
+
+
+
+
+      oBrw:bTextColor   := {| nRow, nCol, nStyleLine | if( nCol == 1, 128, 0 ) }
+      oBrw:bLine        := {|| aPropertiesTable( oBrw, nTotalCol ) }
+      oBrw:aFooters     := {|| aPropertiesFooter( oBrw, nTotalRow, nTotalCol, oGetUnd ) }
+      oBrw:aHeaders     := aHeadersTable
+      oBrw:aColSizes    := aSizesTable
+      oBrw:aJustify     := aJustifyTable
+      oBrw:bKeyChar     := {| nKey | KeyPropertiesTable( nKey, oBrw ) }
+      oBrw:bEdit        := {|| EditPropertiesTable( oBrw ) }
+      oBrw:bLDblClick   := {|| EditPropertiesTable( oBrw ) }
+      oBrw:bMod         := {|| EditPropertiesTable( oBrw ) }
+      oBrw:bWhen        := {|| PutPropertiesTable( oBrw, oGetPre ) }
+      oBrw:bChange      := {|| PutPropertiesTable( oBrw, oGetPre ) }
+      oBrw:nColAct      := 2
+      oBrw:nFreeze      := 1
+      oBrw:lDrawFooters := .T.
+      oBrw:lAdjLastCol  := .F.
+      oBrw:lAdjBrowse   := .T.
+      oBrw:lCellStyle   := .T.
+      oBrw:Cargo        := aPropertiesTable
+      oBrw:SetArray( aPropertiesTable )
+
+      oBrw:Show()
+      oBrw:Refresh()
+
+   end
+
+
+
+
+
+   if !Empty( oBrw ) .AND. oBrw:ClassName() == "TXBROWSE"
+
+
+
+
+
+
+
+
+
+
+
+
+
+      oBrw:SetArray( aPropertiesTable, , , .F. )
+
+      for n := 1 to len( aPropertiesTable[ 1 ] )
+
+         if IsNil( aPropertiesTable[ oBrw:nArrayAt, n ]:Value )
+
+            with object ( oBrw:AddCol() )
+               :cHeader          := aPropertiesTable[ oBrw:nArrayAt, n ]:cHead
+               :bEditValue       := bGenEditText( aPropertiesTable, oBrw, n )
+               :nWidth           := 80
+               :bFooter          := {|| "Total" }
+            end
+
+         else
+
+            with object ( oBrw:AddCol() )
+               :cHeader          := aPropertiesTable[ oBrw:nArrayAt, n ]:cHead
+               :bEditValue       := bGenEditValue( aPropertiesTable, oBrw, n )
+               :nWidth           := 60
+               :cEditPicture     := MasUnd()
+               :nTotal           := 0
+               :nDataStrAlign    := 1
+               :nHeadStrAlign    := 1
+
+
+               :bOnPostEdit      := {| oCol, xVal, nKey | aPropertiesTable[ oBrw:nArrayAt, oBrw:nColSel + oBrw:nColOffset - 1 ]:Value := xVal }
+            end
+
+         end
+
+      next
+
+      oBrw:Adjust()
+
+      oBrw:Show()
+
+   end
+
+
+
+
+Return ( aPropertiesTable )
+
+
+
+Static Function bGenEditText( aTblPrp, oBrwPrp, n )
+
+Return ( {|| aTblPrp[ oBrwPrp:nArrayAt, n ]:cText } )
+
+
+
+Static Function bGenEditValue( aTblPrp, oBrwPrp, n )
+
+Return ( {|| aTblPrp[ oBrwPrp:nArrayAt, n ]:Value } )
+
+
+
+Static Function aPropertiesTable( oBrw, nTotalCol )
+
+   local n
+   local nAt
+   local aRow        := {}
+
+   nAt               := oBrw:nAt
+
+   for n := 1 to nTotalCol
+      if oBrw:Cargo[ nAt, n ]:Value == nil
+         aAdd( aRow, oBrw:Cargo[ nAt, n ]:cText )
+      else
+         aAdd( aRow, Trans( oBrw:Cargo[ nAt, n ]:Value, MasUnd() ) )
+      end
+   next
+
+Return ( aRow )
+
+
+
+Static Function EditPropertiesTable( oBrw )
+
+   local nRow     := oBrw:nAt
+   local nCol     := oBrw:nColAct
+   local uVar     := oBrw:Cargo[ nRow, nCol ]:Value
+
+   if nCol <= 1
+      return .F.
+   end
+
+   if oBrw:lEditCol( nCol, @uVar, MasUnd() )
+      oBrw:Cargo[ nRow, nCol ]:Value   := uVar
+      oBrw:Refresh()
+   end
+
+RETURN .T.
+
+
+
+Static Function PutPropertiesTable( oBrw, oGet )
+
+   local nRow
+   local nCol
+   local uVar
+
+   if !Empty( oBrw ) .AND. !Empty( oBrw:Cargo )
+
+      nRow        := oBrw:nAt
+      nCol        := oBrw:nColAct
+      uVar        := oBrw:Cargo[ nRow, nCol ]:nPrecioCompra
+
+      if !Empty( oGet )
+         oGet:cText( uVar )
+      end
+
+   end
+
+RETURN .T.
+
+
+
+Static Function SetPropertiesTable( oBrw, oGet )
+
+   local nRow
+   local nCol
+   local uVar
+   local oBlock
+
+   oBlock         := ErrorBlock( {| oError | ApoloBreak( oError ) } )
+   BEGIN SEQUENCE
+
+      nRow        := oBrw:nAt
+      nCol        := oBrw:nColAct
+      uVar        := oGet:VarGet()
+
+      if IsArray( oBrw:Cargo )
+         oBrw:Cargo[ nRow, nCol ]:nPrecioCompra := uVar
+      end
+
+   RECOVER
+
+      msgStop( "Imposible asignar valor a la celda." )
+
+   end
+
+   ErrorBlock( oBlock )
+
+RETURN .T.
+
+
+
+Static Function KeyPropertiesTable( nKey, oBrw )
+
+   local nVar     := 0
+   local nRow     := oBrw:nAt
+   local nCol     := oBrw:nColAct
+   local uVar     := Val( Chr( nKey ) )
+
+   if nCol <= 1
+      return .F.
+   end
+
+   if oBrw:lEditCol( nCol, @nVar, MasUnd(), , , , , , , , {|oGet| oGet:KeyChar( nKey ) } )
+      oBrw:Cargo[ nRow, nCol ]:Value   := nVar
+      oBrw:GoDown()
+      oBrw:Refresh()
+   end
+
+Return .T.
+
+
+
+Static Function aPropertiesFooter( oBrw, nTotalRow, nTotalCol, oGet )
+
+   local n
+   local i
+   local nTot  := 0
+   local aRow  := AFill( Array( nTotalCol ), 0 )
+
+   for n := 1 to nTotalCol
+      for i := 1 to nTotalRow
+         if oBrw:Cargo[ i, n ]:Value == nil
+            aRow[ n ]   := "Total"
+         else
+            aRow[ n ]   += oBrw:Cargo[ i, n ]:Value
+         end
+      next
+   next
+
+   for n := 1 to nTotalCol
+      if ValType( aRow[ n ] ) == "N"
+         nTot           += aRow[ n ]
+         aRow[ n ]      := Trans( aRow[ n ], MasUnd() )
+      end
+   next
+
+   if oGet <> nil
+      oGet:cText( nTot )
+   end
+
+Return ( aRow )
+
+
+
+Function SearchProperty( oGetIra, oBrwPrp )
+
+   local n
+   local nPos
+   local cHeader  := ""
+   local cColumn  := ""
+   local cGetIra  := Rtrim( oGetIra:cText() )
+
+   nPos           := At( ":", cGetIra )
+   if nPos <> 0
+      cHeader     := Left( cGetIra, nPos - 1)
+      cColumn     := SubStr( cGetIra, nPos + 1 )
+   else
+      cHeader     := cGetIra
+   end
+
+   if !Empty( cColumn )
+      for n := 1 to len( oBrwPrp:Cargo )
+         if Rtrim( Upper( oBrwPrp:Cargo[ n, 1 ]:cText ) ) == Rtrim( Upper( cColumn ) )
+            oBrwPrp:nAt := n
+         end
+      next
+   end
+
+   if !Empty( cHeader )
+      nPos        := aScan( oBrwPrp:aHeaders, {| cH | Rtrim( Upper( cH ) ) == Rtrim( Upper( cHeader ) ) } )
+      if nPos <> 0
+         oBrwPrp:GoToCol( nPos )
+      end
+   end
+
+   oBrwPrp:Refresh()
+   oBrwPrp:SetFocus()
+
+Return nil
+
+
+
+_HB_CLASS TPropertiesItems ; UTILITY FUNCTION TPropertiesItems(...); static s_oClass ; local oClassInstance ; local nScope ; nScope := 1 ; if s_oClass == NIL ; s_oClass := IIF(.F.,, HBClass():New( "TPropertiesItems" , { HBObject():Classh } ) ) ;
+
+   _HB_MEMBER { cText} ; IIF( !.F., s_oClass:AddMultiData(,, nScope + IIF( .F., 32, 0 ), { "cText" }, .F., .F. ), )
+   _HB_MEMBER { cCodigo} ; IIF( !.F., s_oClass:AddMultiData(,, nScope + IIF( .F., 32, 0 ), { "cCodigo" }, .F., .F. ), )
+   _HB_MEMBER { cCodigoPropiedad1} ; IIF( !.F., s_oClass:AddMultiData(,, nScope + IIF( .F., 32, 0 ), { "cCodigoPropiedad1" }, .F., .F. ), )
+   _HB_MEMBER { cCodigoPropiedad2} ; IIF( !.F., s_oClass:AddMultiData(,, nScope + IIF( .F., 32, 0 ), { "cCodigoPropiedad2" }, .F., .F. ), )
+   _HB_MEMBER { cValorPropiedad1} ; IIF( !.F., s_oClass:AddMultiData(,, nScope + IIF( .F., 32, 0 ), { "cValorPropiedad1" }, .F., .F. ), )
+   _HB_MEMBER { cValorPropiedad2} ; IIF( !.F., s_oClass:AddMultiData(,, nScope + IIF( .F., 32, 0 ), { "cValorPropiedad2" }, .F., .F. ), )
+   _HB_MEMBER { nPrecioCompra} ; IIF( !.F., s_oClass:AddMultiData(,, nScope + IIF( .F., 32, 0 ), { "nPrecioCompra" }, .F., .F. ), )
+   _HB_MEMBER { cHead} ; IIF( !.F., s_oClass:AddMultiData(,, nScope + IIF( .F., 32, 0 ), { "cHead" }, .F., .F. ), )
+
+   _HB_MEMBER { Value} ; IIF( !.F., s_oClass:AddMultiData(,, nScope + IIF( .F., 32, 0 ), { "Value" }, .F., .F. ), )
+
+   _HB_MEMBER New(); IIF( .F., s_oClass:ModMethod( "New", @TPropertiesItems_New(), nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ), s_oClass:AddMethod( "New", @TPropertiesItems_New(), nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ));
+
+   _HB_MEMBER PrecioCompra(); IIF( .F., s_oClass:ModMethod( "PrecioCompra", @TPropertiesItems_PrecioCompra(), nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ), s_oClass:AddMethod( "PrecioCompra", @TPropertiesItems_PrecioCompra(), nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ));
+
+   _HB_MEMBER ToString(); IIF( .F., s_oClass:ModMethod( "ToString", @TPropertiesItems_ToString(), nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ), s_oClass:AddMethod( "ToString", @TPropertiesItems_ToString(), nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ));
+
+   _HB_MEMBER FromString(); IIF( .F., s_oClass:ModMethod( "FromString", @TPropertiesItems_FromString(), nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ), s_oClass:AddMethod( "FromString", @TPropertiesItems_FromString(), nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ));
+
+; IF .F. ; __clsActive(s_oClass:hClass) ; s_oClass:Refresh() ; ELSE ; s_oClass:Create() ; END ; oClassInstance := __clsInst( s_oClass:hClass ) ; IF __ObjHasMsg( oClassInstance, "InitClass" ); oClassInstance:InitClass( hb_aParams() ) ; END ; ELSE ; oClassInstance := __clsInst( s_oClass:hClass ) ; END ; IF PCount() > 0 ; DIVERT TO (@DivertConstructorCall()) OF s_oClass ; END ; RETURN oClassInstance AS CLASS TPropertiesItems ;
+
+
+
+UTILITY STATIC function TPropertiesItems_New() ; local Self AS CLASS TPropertiesItems := QSelf() AS CLASS TPropertiesItems
+
+   ::cText              := ""
+   ::cCodigo            := ""
+   ::cHead              := ""
+   ::Value              := nil
+   ::cCodigoPropiedad1  := Space( 10 )
+   ::cCodigoPropiedad2  := Space( 10 )
+   ::cValorPropiedad1   := Space( 10 )
+   ::cValorPropiedad2   := Space( 10 )
+   ::nPrecioCompra      := 0
+
+Return ( Self )
+
+
+
+UTILITY STATIC function TPropertiesItems_PrecioCompra( nPreCos, dbfArtCom) ; local Self AS CLASS TPropertiesItems := QSelf() AS CLASS TPropertiesItems
+
+   ::nPrecioCompra      := nComPro( ::cCodigo, ::cCodigoPropiedad1, ::cValorPropiedad1, ::cCodigoPropiedad2, ::cValorPropiedad2, dbfArtCom )
+
+   if ::nPrecioCompra == 0
+      ::nPrecioCompra   := nPreCos
+   end
+
+Return ( ::nPrecioCompra )
+
+
+
+UTILITY STATIC function TPropertiesItems_ToString() ; local Self AS CLASS TPropertiesItems := QSelf() AS CLASS TPropertiesItems
+
+   local cString  := ""
+
+   cString        += "cText : "              + Rtrim( cValToChar( ::cText ) )               + ","
+   cString        += "cHead : "              + Rtrim( cValToChar( ::cHead ) )               + ","
+   cString        += "Value : "              + Rtrim( cValToChar( ::Value ) )               + ","
+   cString        += "cCodigo : "            + Rtrim( cValToChar( ::cCodigo ) )             + ","
+   cString        += "cCodigoPropiedad1 : "  + Rtrim( cValToChar( ::cCodigoPropiedad1 ) )   + ","
+   cString        += "cCodigoPropiedad2 : "  + Rtrim( cValToChar( ::cCodigoPropiedad2 ) )   + ","
+   cString        += "cValorPropiedad1 : "   + Rtrim( cValToChar( ::cValorPropiedad1 ) )    + ","
+   cString        += "cValorPropiedad2 : "   + Rtrim( cValToChar( ::cValorPropiedad2 ) )    + ","
+   cString        += "nPrecioCompra : "      + Rtrim( cValToChar( ::nPrecioCompra ) )       + ";"
+
+Return ( cString )
+
+
+
+UTILITY STATIC function TPropertiesItems_FromString( cString) ; local Self AS CLASS TPropertiesItems := QSelf() AS CLASS TPropertiesItems
+
+   local aTokens        := hb_aTokens( cString, "," )
+
+   ::cText              := aTokens[ 1 ]
+   ::cHead              := aTokens[ 2 ]
+
+   if Val( aTokens[ 3 ] ) <> 0
+      ::Value           := Val( aTokens[ 3 ] )
+   else
+      ::Value           := nil
+   end
+
+   ::cCodigo            := aTokens[ 4 ]
+   ::cCodigoPropiedad1  := aTokens[ 5 ]
+   ::cCodigoPropiedad2  := aTokens[ 6 ]
+   ::cValorPropiedad1   := aTokens[ 7 ]
+   ::cValorPropiedad2   := aTokens[ 8 ]
+   ::nPrecioCompra      := Val( aTokens[ 9 ] )
+
+Return ( Self )
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+FUNCTION lPrpAct( cVal, oSay, cPrp, dbfTblPro )
+
+   local lRet     := .F.
+
+   if Empty( cPrp )
+      return .T.
+   end
+
+   if ValType( cVal ) == "O"
+      cVal        := cVal:VarGet()
+   end
+
+
+
+
+
+   if Rtrim( cVal ) == "*"
+      if oSay <> nil
+         oSay:SetText( "Todos" )
+      end
+      return .T.
+   end
+
+   if dbSeekInOrd( cPrp + cVal, "cCodPro", dbfTblPro ) .OR. dbSeekInOrd( Upper( cPrp + cVal ), "cCodPro", dbfTblPro )
+
+      if oSay <> nil
+         oSay:SetText( ( dbfTblPro )->cDesTbl )
+      end
+
+      lRet        := .T.
+
+   else
+
+      if oSay <> nil
+         oSay:SetText( "" )
+      end
+
+      if !Empty( cVal )
+         MsgStop( "Valor de la propiedad " + Rtrim( cVal ) + " no encontrado." )
+      end
+
+   end
+
+RETURN ( lRet )
+
+
+
+FUNCTION brwPrpAct( oGet, oSay, cPrp )
+
+   local oDlg
+   local oBrw
+   local lRet        := .F.
+   local oBlock
+   local oError
+   local cTitle      := ""
+   local oGetNbr
+   local cGetNbr
+   local oCbxOrd
+   local cCbxOrd     := "Código"
+   local aCbxOrd     := { "Código", "Nombre" }
+   local cTmpBrw
+   local nOrdTmp
+   local oSayText
+   local cSayText    := "Propiedades"
+   local dbfTmpBrw
+
+   if Empty( cPrp )
+      MsgStop( "No hay propiedades seleccionadas para este artículo." )
+      Return .F.
+   end
+
+   if !OpenFiles()
+      Return .F.
+   end
+
+   oBlock            := ErrorBlock( {| oError | ApoloBreak( oError ) } )
+   BEGIN SEQUENCE
+
+
+
+   cTitle            := "Seleccionar propiedad : " + retProp( cPrp, dbfProT )
+
+
+
+   cTmpBrw           := cGetNewFileName( cPatTmp() + "TmpBrw" )
+
+   dbCreate( cTmpBrw, aSqlStruct( aItmTmpBrw() ), cLocalDriver() )
+   dbUseArea( .T., cLocalDriver(), cTmpBrw, cCheckArea( "TmpBrw", @dbfTmpBrw ), .F. )
+
+   if !( dbfTmpBrw )->( neterr() )
+
+      ( dbfTmpBrw )->( OrdCondSet( "!Deleted()", {||!Deleted()}  ) )
+      ( dbfTmpBrw )->( OrdCreate( cTmpBrw, "cCodTbl", "cCodTbl", {|| Field->cCodTbl } ) )
+
+      ( dbfTmpBrw )->( OrdCondSet( "!Deleted()", {||!Deleted()}  ) )
+      ( dbfTmpBrw )->( OrdCreate( cTmpBrw, "cDesTbl", "cDesTbl", {|| Field->cDesTbl } ) )
+
+   end
+
+   nOrdTmp           := ( dbfProL )->( OrdSetFocus( "nOrdPro" ) )
+
+   ( dbfProL )->( dbGoTop() )
+
+   if ( dbfProL )->( dbSeek( cPrp ) )
+
+      while ( dbfProL )->cCodPro == cPrp .AND. !( dbfProL )->( eof() )
+
+         if dbAppe( dbfTmpBrw )
+            ( dbfTmpBrw )->cCodTbl  := ( dbfProL )->cCodTbl
+            ( dbfTmpBrw )->cDesTbl  := ( dbfProL )->cDesTbl
+            ( dbfTmpBrw )->( dbUnLock() )
+         end
+
+         ( dbfProL )->( dbSkip() )
+
+      end
+
+   end
+
+   ( dbfTmpBrw )->( dbGoTop() )
+
+   ( dbfProL )->( OrdSetFocus( nOrdTmp ) )
+   ( dbfProL )->( dbGoTop() )
+
+
+
+   if ( "PDA" $ cParamsMain() )
+   oDlg = TDialog():New(,,,, cTitle, "HELPENTRY_PDA",, .F.,,,,,, .F.,,,,,, .F., )
+   else
+   oDlg = TDialog():New(,,,, cTitle, "HELPENTRY",, .F.,,,,,, .F.,,,,,, .F., )
+   end
+
+
+
+
+
+      oGetNbr := TGetHlp():ReDefine( 104, { | u | If( PCount()==0, cGetNbr, cGetNbr:= u ) }, oDlg,,,,,,,,, .F.,, {|nKey,nFlags,Self| AutoSeek( nKey, nFlags, Self, oBrw, dbfTmpBrw ) }, .F., .F.,,,,,, nil, "FIND",, )
+
+
+
+
+
+
+        oCbxOrd := TComboBox():ReDefine( 102, { | u | If( PCount()==0, cCbxOrd, cCbxOrd:= u ) }, aCbxOrd, oDlg,,, {|Self|( ( dbfTmpBrw )->( OrdSetFocus( oCbxOrd:nAt ) ), ( dbfTmpBrw )->( dbGoTop() ), oBrw:Refresh(), oGetNbr:SetFocus(), oCbxOrd:Refresh() )},,,, .F.,,,,,, )
+
+
+
+      oBrw                 := TXBrowse():New( oDlg )
+
+      oBrw:bClrSel         := {|| { 0, ( 229 + ( 229 * 256 ) + ( 229 * 65536 ) ) } }
+      oBrw:bClrSelFocus    := {|| { 0, ( 167 + ( 205 * 256 ) + ( 240 * 65536 ) ) } }
+
+      oBrw:cAlias          := dbfTmpBrw
+
+      oBrw:nMarqueeStyle   := 5
+      oBrw:lHScroll        := .T.
+
+      with object ( oBrw:AddCol() )
+         :cHeader          := "Código"
+         :cSortOrder       := "cCodTbl"
+         :bEditValue       := {|| ( dbfTmpBrw )->cCodTbl }
+         :nWidth           := 80
+         :bLClickHeader    := {| nMRow, nMCol, nFlags, oCol | oCbxOrd:Set( oCol:cHeader ) }
+      end
+
+      with object ( oBrw:AddCol() )
+         :cHeader          := "Nombre"
+         :cSortOrder       := "cDesTbl"
+         :bEditValue       := {|| ( dbfTmpBrw )->cDesTbl }
+         :nWidth           := 280
+         :bLClickHeader    := {| nMRow, nMCol, nFlags, oCol | oCbxOrd:Set( oCol:cHeader ) }
+      end
+
+      oBrw:bLDblClick      := {|| oDlg:end( 1 ) }
+
+      oBrw:CreateFromResource( 105 )
+
+
+
+      if ( "PDA" $ cParamsMain() )
+
+
+
+         oSayText := TSay():ReDefine( 100, {|| cSayText}, oDlg,,,, .F.,, .F., .F. )
+
+      end
+
+      if !( "PDA" $ cParamsMain() )
+
+
+
+
+
+         TButton():ReDefine( 500, {||nil}, oDlg,,, .F., {||     .F.},,, .F. )
+
+
+
+
+
+         TButton():ReDefine( 501, {||nil}, oDlg,,, .F., {||     .F.},,, .F. )
+
+      end
+
+
+
+
+      TButton():ReDefine( 1, {||( oDlg:end( 1 ) )}, oDlg,,, .F.,,,, .F. )
+
+
+
+
+        TButton():ReDefine( 2, {||( oDlg:end() )}, oDlg,,, .F.,,,, .F. )
+
+      oDlg:AddFastKey( 116,       {|| oDlg:end( 1 ) } )
+      oDlg:AddFastKey( 13,   {|| oDlg:end( 1 ) } )
+
+   oDlg:Activate( oDlg:bLClicked, oDlg:bMoved, oDlg:bPainted, .T.,,,, oDlg:bRClicked,,, )
+
+   if ( oDlg:nResult == 1 )
+
+      oGet:cText( ( dbfTmpBrw )->cCodTbl )
+
+      if ValType( oSay ) == "O"
+         oSay:SetText( ( dbfTmpBrw )->cDesTbl )
+      end
+
+      lRet        := .T.
+
+   end
+
+   RECOVER USING oError
+
+      msgStop( ErrorMessage( oError ), "Imposible mostrar tablas de propiedades" )
+
+   end
+   ErrorBlock( oBlock )
+
+   CloseFiles()
+
+   if !Empty( dbfTmpBrw ) .AND. ( dbfTmpBrw )->( Used() )
+      ( dbfTmpBrw )->( dbCloseArea() )
+   end
+
+   dbfTmpBrw      := nil
+
+   dbfErase( cTmpBrw )
+
+RETURN ( lRet )
+
+
+
+STATIC FUNCTION OpenFiles()
+
+   local lOpen    := .T.
+   local oBlock   := ErrorBlock( {| oError | ApoloBreak( oError ) } )
+
+   BEGIN SEQUENCE
+
+      dbUseArea( .T., ( cDriver() ), ( cPatArt() + "PRO.DBF" ), ( cCheckArea( "PRO", @dbfProT ) ), if(.T. .OR. .F., !.F., NIL), .F.,, )
+      if !lAIS() ; ordListAdd( ( cPatArt() + "PRO.CDX" ) ) ; else ; ordSetFocus( 1 ) ; end
+
+      dbUseArea( .T., ( cDriver() ), ( cPatArt() + "TBLPRO.DBF" ), ( cCheckArea( "TBLPRO", @dbfProL ) ), if(.T. .OR. .F., !.F., NIL), .F.,, )
+      if !lAIS() ; ordListAdd( ( cPatArt() + "TBLPRO.CDX" ) ) ; else ; ordSetFocus( 1 ) ; end
+
+   RECOVER
+
+      msgStop( "Imposible abrir todas las bases de datos" )
+
+      CloseFiles()
+
+      lOpen       := .F.
+
+   end
+
+   ErrorBlock( oBlock )
+
+RETURN ( lOpen )
+
+
+
+STATIC FUNCTION CloseFiles()
+
+   if dbfProT <> nil
+      ( dbfProT )->( dbCloseArea() )
+   end
+
+   if dbfProL <> nil
+      ( dbfProL )->( dbCloseArea() )
+   end
+
+   dbfProT    := nil
+   dbfProL    := nil
+   oWndBrw    := nil
+
+RETURN .T.
+
+
+
+Static Function aItmTmpBrw()
+
+   local aBase := {}
+
+   aAdd( aBase, { "CCODTBL",  "C", 10, 0, "Código de línea de propiedad"   } )
+   aAdd( aBase, { "CDESTBL",  "C", 30, 0, "Nombre de línea de propiedad"   } )
+
+return ( aBase )
+
+
+
+FUNCTION retProp( cCodPrp, dbfPro )
+
+   local oBlock
+   local oError
+   local lClo     := .F.
+   local cPrp     := ""
+
+   oBlock         := ErrorBlock( {| oError | ApoloBreak( oError ) } )
+   BEGIN SEQUENCE
+
+   if Empty( dbfPro )
+      dbUseArea( .T., ( cDriver() ), ( cPatArt() + "PRO.DBF" ), ( cCheckArea( "PRO", @dbfPro ) ), if(.T. .OR. .F., !.F., NIL), .F.,, )
+      if !lAIS() ; ordListAdd( ( cPatArt() + "PRO.CDX" ) ) ; else ; ordSetFocus( 1 ) ; end
+      lClo        := .T.
+   end
+
+   if ValType( dbfPro ) == "O"
+      if dbfPro:Seek( cCodPrp )
+         cPrp     := dbfPro:cDesPro
+      end
+   else
+      if ( dbfPro )->( dbSeek( cCodPrp ) )
+         cPrp     := ( dbfPro )->cDesPro
+      end
+   end
+
+   RECOVER USING oError
+
+      msgStop( "Imposible abrir todas las bases de datos" + Chr(13)+Chr(10) + ErrorMessage( oError ) )
+
+   end
+
+   ErrorBlock( oBlock )
+
+   if lClo
+      ( dbfPro )->( dbCloseArea() )
+   end
+
+RETURN ( cPrp )
+
+
+
+Function IsPro()
+
+
+   if !lExistTable( cPatArt() + "PRO.Dbf" ) .OR. !lExistTable( cPatArt() + "TBLPRO.Dbf" )
+      mkPro( cPatArt() )
+   end
+
+
+   if !lExistIndex( cPatArt() + "PRO.Cdx" ) .OR. !lExistIndex( cPatArt() + "TBLPRO.Cdx" )
+      rxPro( cPatArt() )
+   end
+
+Return ( .T. )
+
+
+
+Function mkPro( cPath, lAppend, cPathOld, oMeter )
+
+   local cDbf
+
+   IIF( cPath == nil, cPath := cPatArt(), ) ;
+    IIF( lAppend == nil, lAppend := .F., ) ;
+
+   dbCreate( cPath + "Pro.Dbf", aSqlStruct( aPro() ), cDriver() )
+
+   if lAppend .AND. cPathOld <> nil .AND. lIsDir( cPathOld )
+
+      dbUseArea( .T., cDriver(), cPath + "Pro.Dbf", cCheckArea( "Pro", @cDbf ), .F. )
+
+      if !( cDbf )->( neterr() )
+         ( cDbf )->( __dbApp( cPathOld + "Pro.Dbf" ) )
+         ( cDbf )->( dbCloseArea() )
+      end
+
+   end
+
+   dbCreate( cPath + "TblPro.Dbf", aSqlStruct( aItmPro() ), cDriver() )
+
+   if lAppend .AND. cPathOld <> nil .AND. lIsDir( cPathOld )
+
+      dbUseArea( .T., cDriver(), cPath + "TblPro.Dbf", cCheckArea( "Pro", @cDbf ), .F. )
+
+      if !( cDbf )->( neterr() )
+         ( cDbf )->( __dbApp( cPathOld + "TblPro.Dbf" ) )
+         ( cDbf )->( dbCloseArea() )
+      end
+
+   end
+
+   rxPro( cPath, oMeter )
+
+Return nil
+
+
+
+Function rxPro( cPath, oMeter )
+
+   local dbfPro
+
+   IIF( cPath == nil, cPath := cPatArt(), ) ;
+
+   if !lExistTable( cPath + "PRO.DBF" )
+      mkPro( cPath )
+   end
+
+   if lExistIndex( cPath + "PRO.CDX" )
+      fErase( cPath + "PRO.CDX" )
+   end
+
+   if lExistIndex( cPath + "TBLPRO.CDX" )
+      fErase( cPath + "TBLPRO.CDX" )
+   end
+
+   if lExistTable( cPath + "PRO.DBF" )
+
+      dbUseArea( .T., cDriver(), cPath + "PRO.DBF", cCheckArea( "PRO", @dbfPro ), .F. )
+
+      if !( dbfPro )->( neterr() )
+         ( dbfPro )->( __dbPack() )
+
+         ( dbfPro )->( ordCondSet("!Deleted()", {||!Deleted()}  ) )
+         ( dbfPro )->( ordCreate( cPath + "PRO.CDX", "CCODPRO", "Field->CCODPRO", {|| Field->CCODPRO } ) )
+
+         ( dbfPro )->( ordCondSet("!Deleted()", {||!Deleted()}  ) )
+         ( dbfPro )->( ordCreate( cPath + "PRO.CDX", "CDESPRO", "Field->CDESPRO", {|| Field->CDESPRO } ) )
+
+         ( dbfPro )->( ordCondSet("!Deleted()", {||!Deleted()}  ) )
+         ( dbfPro )->( ordCreate( cPath + "PRO.CDX", "CCODWEB", "Str( Field->cCodWeb, 11 )", {|| Str( Field->cCodWeb, 11 ) } ) )
+
+         ( dbfPro )->( dbCloseArea() )
+      else
+         msgStop( "Imposible abrir en modo exclusivo la tabla de promociones" )
+      end
+
+      dbUseArea( .T., cDriver(), cPath + "TBLPRO.DBF", cCheckArea( "TBLPRO", @dbfPro ), .F. )
+
+      if !( dbfPro )->( neterr() )
+         ( dbfPro )->( __dbPack() )
+
+         ( dbfPro )->( ordCondSet( "!Deleted()", {|| !Deleted() }  ) )
+         ( dbfPro )->( ordCreate( cPath + "TBLPRO.CDX", "cCodPro", "Field->cCodPro + Field->cCodTbl", {|| Field->cCodPro + Field->cCodTbl } ) )
+
+         ( dbfPro )->( ordCondSet( "!Deleted()", {|| !Deleted() }  ) )
+         ( dbfPro )->( ordCreate( cPath + "TBLPRO.CDX", "nOrdPro", "Field->cCodPro + Str( Field->nOrdTbl )", {|| Field->cCodPro + Str( Field->nOrdTbl )} ) )
+
+         ( dbfPro )->( ordCondSet( "!Deleted()", {|| !Deleted() }  ) )
+         ( dbfPro )->( ordCreate( cPath + "TBLPRO.CDX", "NBARPRO", "Field->cCodPro + Field->nBarTbl", {|| Field->cCodPro + Field->nBarTbl } ) )
+
+         ( dbfPro )->( ordCondSet( "!Deleted()", {|| !Deleted() }  ) )
+         ( dbfPro )->( ordCreate( cPath + "TBLPRO.CDX", "CPRO", "Field->CCODPRO", {|| Field->CCODPRO } ) )
+
+         ( dbfPro )->( ordCondSet( "!Deleted()", {|| !Deleted() }  ) )
+         ( dbfPro )->( ordCreate( cPath + "TBLPRO.CDX", "CCODDES", "Field->cCodPro + Field->cDesTbl", {|| Field->cCodPro + Field->cDesTbl } ) )
+
+         ( dbfPro )->( ordCondSet( "!Deleted()", {|| !Deleted() }  ) )
+         ( dbfPro )->( ordCreate( cPath + "TBLPRO.CDX", "CCODWEB", "Str( Field->cCodWeb, 11 )", {|| Str( Field->cCodWeb, 11 ) } ) )
+
+         ( dbfPro )->( dbCloseArea() )
+      else
+         msgStop( "Imposible abrir en modo exclusivo la tabla de promociones" )
+      end
+
+   end
+
+RETURN NIL
+
+
+
+Static Function aPro()
+
+   local aBase := {}
+
+   aAdd( aBase, { "cCodPro",   "C", 10, 0, "Código de la propiedad"                 } )
+   aAdd( aBase, { "cDesPro",   "C", 30, 0, "Nombre de la propiedad"                 } )
+   aAdd( aBase, { "cCodWeb",   "N", 11, 0, "Código de la propiedad en la web"       } )
+   aAdd( aBase, { "lPubInt",   "L",  1, 0, "Lógico de propiedad en la web"          } )
+   aAdd( aBase, { "lSndDoc",   "L",  1, 0, "Lógico de propiedad para envio"         } )
+   aAdd( aBase, { "cNomInt",   "C", 50, 0, "Nombre de la propiedad en la web"       } )
+   aAdd( aBase, { "lColor",    "L",  1, 0, "Lógico tipo color"                      } )
+
+return ( aBase )
+
+
+
+Static Function aItmPro()
+
+   local aBase := {}
+
+   aAdd( aBase, { "cCodPro",   "C", 10, 0, "Código propiedad"                       } )
+   aAdd( aBase, { "cCodTbl",   "C", 10, 0, "Código de línea de propiedad"           } )
+   aAdd( aBase, { "cDesTbl",   "C", 30, 0, "Nombre de línea de propiedad"           } )
+   aAdd( aBase, { "nOrdTbl",   "N",  4, 0, "Número de orden para codigos de barras" } )
+   aAdd( aBase, { "nBarTbl",   "C",  4, 0, "Código para codigos de barras"          } )
+   aAdd( aBase, { "cCodWeb",   "N", 11, 0, "Código del producto en la web"          } )
+   aAdd( aBase, { "nColor",    "N", 10, 0, "Código de color"                        } )
+
+return ( aBase )
+
+
+
+Function nCosPro( cCodArt, cCodPr1, cValPr1, cCodPr2, cValPr2, dbfArtDiv )
+
+   local nPreCos        := 0
+
+   if ( dbfArtDiv )->( dbSeek( cCodArt + cCodPr1 + cCodPr2 + cValPr1 + cValPr2 ) )
+      nPreCos           := ( dbfArtDiv )->nPreCom
+   end
+
+Return ( nPreCos )
+
+
+
+
+Function nPreAlq( cCodArt, nTarPre, lIvaInc, dbfArtDiv )
+
+   local  nPreAlq       := 0
+
+   if ( dbfArtDiv )->( dbSeek( cCodArt ) )
+
+      do case
+         case nTarPre == 1
+            nPreAlq  := if( lIvaInc, ( dbfArtDiv )->pAlqIva1, ( dbfArtDiv )->pAlq1 )
+         case nTarPre == 2
+            nPreAlq  := if( lIvaInc, ( dbfArtDiv )->pAlqIva2, ( dbfArtDiv )->pAlq2 )
+         case nTarPre == 3
+            nPreAlq  := if( lIvaInc, ( dbfArtDiv )->pAlqIva3, ( dbfArtDiv )->pAlq3 )
+         case nTarPre == 4
+            nPreAlq  := if( lIvaInc, ( dbfArtDiv )->pAlqIva4, ( dbfArtDiv )->pAlq4 )
+         case nTarPre == 5
+            nPreAlq  := if( lIvaInc, ( dbfArtDiv )->pAlqIva5, ( dbfArtDiv )->pAlq5 )
+         case nTarPre == 6
+            nPreAlq  := if( lIvaInc, ( dbfArtDiv )->pAlqIva6, ( dbfArtDiv )->pAlq6 )
+      end
+
+   end
+
+Return ( nPreAlq )
+
+
+
+Function nPrePro( cCodArt, cCodPr1, cValPr1, cCodPr2, cValPr2, nTarPre, lIvaInc, dbfArtDiv, dbfTarPreL, cCodTar )
+
+   local nPreVta        := 0
+
+   if Empty( cCodTar )
+
+      if dbSeekInOrd( cCodArt + cCodPr1 + cCodPr2 + cValPr1 + cValPr2, "cCodArt", dbfArtDiv )
+
+         do case
+            case nTarPre <= 1
+               nPreVta  := if( lIvaInc, ( dbfArtDiv )->nPreIva1, ( dbfArtDiv )->nPreVta1 )
+            case nTarPre == 2
+               nPreVta  := if( lIvaInc, ( dbfArtDiv )->nPreIva2, ( dbfArtDiv )->nPreVta2 )
+            case nTarPre == 3
+               nPreVta  := if( lIvaInc, ( dbfArtDiv )->nPreIva3, ( dbfArtDiv )->nPreVta3 )
+            case nTarPre == 4
+               nPreVta  := if( lIvaInc, ( dbfArtDiv )->nPreIva4, ( dbfArtDiv )->nPreVta4 )
+            case nTarPre == 5
+               nPreVta  := if( lIvaInc, ( dbfArtDiv )->nPreIva5, ( dbfArtDiv )->nPreVta5 )
+            case nTarPre == 6
+               nPreVta  := if( lIvaInc, ( dbfArtDiv )->nPreIva6, ( dbfArtDiv )->nPreVta6 )
+         end
+
+      end
+
+   else
+
+      nPreVta           := RetPrcTar( cCodArt, cCodTar, cCodPr1, cCodPr2, cValPr1, cValPr2, dbfTarPreL, nTarPre )
+
+   end
+
+Return ( nPreVta )
+
+
+
+FUNCTION retValProp( cCodPrp, dbfPro )
+
+   local oBlock
+   local oError
+   local lClo     := .F.
+   local cPrp     := Space( 3 )
+
+   oBlock            := ErrorBlock( {| oError | ApoloBreak( oError ) } )
+   BEGIN SEQUENCE
+
+   if Empty( dbfPro )
+      dbUseArea( .T., ( cDriver() ), ( cPatArt() + "TBLPRO.DBF" ), ( cCheckArea( "PROTBL", @dbfPro ) ), if(.T. .OR. .F., !.F., NIL), .F.,, )
+      if !lAIS() ; ordListAdd( ( cPatArt() + "TBLPRO.CDX" ) ) ; else ; ordSetFocus( 1 ) ; end
+      lClo        := .T.
+   end
+
+   if ValType( dbfPro ) == "O"
+      if dbfPro:Seek( cCodPrp )
+         cPrp     := dbfPro:cDesTbl
+      end
+   else
+      if ( dbfPro )->( dbSeek( cCodPrp ) )
+         cPrp     := ( dbfPro )->cDesTbl
+      end
+   end
+
+   RECOVER USING oError
+
+      msgStop( "Imposible abrir todas las bases de datos " + Chr(13)+Chr(10) + ErrorMessage( oError ) )
+
+   end
+
+   ErrorBlock( oBlock )
+
+   if lClo
+      ( dbfPro )->( dbCloseArea() )
+   end
+
+RETURN ( cPrp )
+
+
+
+Static Function ChangelSndDoc( aTmp )
+
+   local nRec
+
+   for each nRec in ( oWndBrw:oBrw:aSelected )
+
+      ( dbfProT )->( dbGoTo( nRec ) )
+
+      if ( dbfProT )->( dbRLock() )
+         ( dbfProT )->lSndDoc    := !( dbfProT )->lSndDoc
+         ( dbfProT )->cCodWeb    := 0
+         ( dbfProT )->( dbCommit() )
+         ( dbfProT )->( dbUnLock() )
+      end
+
+   next
+
+   oWndBrw:Refresh()
+
+Return nil
+
+
+
+Static Function ChangePublicar( aTmp )
+
+   local nRec
+
+   if Empty( aTmp )
+
+      for each nRec in ( oWndBrw:oBrw:aSelected )
+
+         ( dbfProT )->( dbGoTo( nRec ) )
+
+         if ( dbfProT )->( dbRLock() )
+            ( dbfProT )->lPubInt   := !( dbfProT )->lPubInt
+            ( dbfProT )->lSndDoc   := ( dbfProT )->lPubInt
+            ( dbfProT )->cCodWeb   := 0
+            ( dbfProT )->( dbCommit() )
+            ( dbfProT )->( dbUnLock() )
+         end
+
+      next
+
+      oWndBrw:Refresh()
+
+   else
+
+      aTmp[ ( dbfProT )->( fieldpos( "cCodWeb" ) ) ]  := 0
+
+   end
+
+Return nil
+
+
+
+
+Function nComPro( cCodArt, cCodPr1, cValPr1, cCodPr2, cValPr2, dbfArtCom )
+
+   local nPreCom  := 0
+
+   if ( dbfArtCom )->( dbSeek( cCodArt + cCodPr1 + cCodPr2 + cValPr1 + cValPr2 ) )
+      nPreCom     := ( dbfArtCom )->nPreCom
+   end
+
+Return ( nPreCom )
+
+
+
+
+
+FUNCTION brwSelectPropiedad( cPrp, cVal )
+
+   local oDlg
+   local oBrw
+   local aVal
+   local aData       := {}
+   local oBlock
+   local oError
+
+   if Empty( cPrp )
+      MsgStop( "No hay propiedades seleccionadas para este artículo." )
+      Return .F.
+   end
+
+   if !OpenFiles()
+      Return .F.
+   end
+
+   oBlock            := ErrorBlock( {| oError | ApoloBreak( oError ) } )
+   BEGIN SEQUENCE
+
+   aVal              := Hb_aTokens( cVal, "," )
+
+
+
+   ( dbfProL )->( OrdSetFocus( "nOrdPro" ) )
+
+   if ( dbfProL )->( dbSeek( cPrp ) )
+
+      while ( dbfProL )->cCodPro == cPrp .AND. !( dbfProL )->( eof() )
+
+         aAdd( aData, { aScan( aVal, {|a| Alltrim( ( dbfProL )->cCodTbl ) == a } ) <> 0, ( dbfProL )->cCodTbl, ( dbfProL )->cDesTbl } )
+
+         ( dbfProL )->( dbSkip() )
+
+      end
+
+   end
+
+
+
+   oDlg = TDialog():New(,,,, "Seleccionar propiedad : " + retProp( cPrp, dbfProT ), "SelectPropiedad",, .F.,,,,,, .F.,,,,,, .F., )
+
+
+
+
+      TButton():ReDefine( 500, {||( SelectPropiedadDblClick( oBrw, aData ) )}, oDlg,,, .F.,,,, .F. )
+
+
+
+
+      TButton():ReDefine( 501, {||( SelectPropiedadDblClick( oBrw, aData, .T. ) )}, oDlg,,, .F.,,,, .F. )
+
+
+
+
+      TButton():ReDefine( 502, {||( SelectPropiedadDblClick( oBrw, aData, .F. ) )}, oDlg,,, .F.,,,, .F. )
+
+      oBrw                 := TXBrowse():New( oDlg )
+
+      oBrw:bClrSel         := {|| { 0, ( 229 + ( 229 * 256 ) + ( 229 * 65536 ) ) } }
+      oBrw:bClrSelFocus    := {|| { 0, ( 167 + ( 205 * 256 ) + ( 240 * 65536 ) ) } }
+
+      oBrw:SetArray( aData )
+
+      oBrw:nMarqueeStyle   := 5
+      oBrw:lHScroll        := .T.
+
+      oBrw:bLDblClick      := {|| SelectPropiedadDblClick( oBrw, aData ) }
+
+      oBrw:CreateFromResource( 100 )
+
+      with object ( oBrw:aCols[ 1 ] )
+         :cHeader       := "Sel."
+         :bEditValue    := {|| aData[ oBrw:nArrayAt, 1 ] }
+         :nWidth        := 20
+         :SetCheck( { "Sel16", "Nil16" } )
+      end
+
+      with object ( oBrw:aCols[ 2 ] )
+         :cHeader       := "Código"
+         :bEditValue    := {|| aData[ oBrw:nArrayAt, 2 ] }
+         :nWidth        := 80
+      end
+
+      with object ( oBrw:aCols[ 3 ] )
+         :cHeader       := "Nombre"
+         :bEditValue    := {|| aData[ oBrw:nArrayAt, 3 ] }
+         :nWidth        := 280
+      end
+
+
+
+
+      TButton():ReDefine( 1, {||( oDlg:end( 1 ) )}, oDlg,,, .F.,,,, .F. )
+
+
+
+
+        TButton():ReDefine( 2, {||( oDlg:end() )}, oDlg,,, .F.,,,, .F. )
+
+      oDlg:AddFastKey( 116,       {|| oDlg:end( 1 ) } )
+      oDlg:AddFastKey( 13,   {|| oDlg:end( 1 ) } )
+
+   oDlg:Activate( oDlg:bLClicked, oDlg:bMoved, oDlg:bPainted, .T.,,,, oDlg:bRClicked,,, )
+
+   if ( oDlg:nResult == 1 )
+      cVal        := SelectedPropiedadToMemo( aData )
+   end
+
+   RECOVER USING oError
+
+      msgStop( ErrorMessage( oError ), "Imposible mostrar tablas de propiedades" )
+
+   end
+   ErrorBlock( oBlock )
+
+   CloseFiles()
+
+RETURN ( nil )
+
+
+
+Static Function SelectPropiedadDblClick( oBrw, aData, lAllSelected )
+
+   if !Empty( aData )
+
+      do case
+         case IsNil( lAllSelected )
+
+            aData[ oBrw:nArrayAt, 1 ]  := !aData[ oBrw:nArrayAt, 1 ]
+
+         case IsTrue( lAllSelected )
+
+            aEval( aData, {|a| a[ 1 ] := .T. } )
+
+         case IsFalse( lAllSelected )
+
+            aEval( aData, {|a| a[ 1 ] := .F. } )
+
+      end
+
+
+   end
+
+   if !Empty( oBrw )
+      oBrw:Refresh()
+   end
+
+Return ( nil )
+
+
+
+Static Function SelectedPropiedadToMemo( aData )
+
+   local cMemo := ""
+
+   aEval( aData, {|aItem| if( aItem[ 1 ], cMemo += Rtrim( aItem[ 2 ] ) + ",", ) } )
+
+Return ( cMemo )

@@ -1,0 +1,834 @@
+#line 112 "hbclass.ch"
+   DYNAMIC DivertConstructorCall
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+DECLARE HBClass  New( cName AS String, OPTIONAL SuperParams ) AS CLASS HBClass  Create() AS Object  Instance() AS Object  AddClsMethod( cName AS String, @MethodName(), nScope AS Numeric, n2 AS Numeric, n3 AS Numeric )  AddDelegate( cName AS String, cDelegate AS String, cObject AS String, nScope AS Numeric, lPersistent AS LOGICAL )  AddMultiClsData( cType AS String, uVal, nScope AS Numeric, aDatas AS Array OF String )  AddMultiData( cType AS String, uVal, nScope AS Numeric, aDatas AS Array OF String, x AS LOGICAL, lPer AS LOGICAL )  AddMethod( cName AS String, @MethodName(), nScope AS Numeric, lPersistent AS LOGICAL )  AddInLine( cName AS String, bBlock AS CodeBlock, nScope AS Numeric, lPersistent AS LOGICAL )  AddVirtual( cName AS String )  ModMethod( cName AS String, @MethodName(), nScope AS Numeric, lPersistent AS LOGICAL )  ModClsMethod( cName AS String, @MethodName(), nScope AS Numeric )  ModInline( cName AS String, bBlock AS CodeBlock, nScope AS Numeric, lPersistent AS LOGICAL )  SetOnError( @MethodName() )
+#line 85 "\Fwh1204\Include\FiveWin.Ch"
+   EXTERNAL GetProcAdd
+   EXTERNAL TActiveX
+
+
+
+
+extern errorsys
+#line 10 ".\Prg\Temporada.prg"
+static oWndBrw
+
+static dbfTemporada
+
+static aBmpTipo
+static aStrTipo      := {  "Sol", "Sol y nubes", "Nubes", "Lluvia", "Nieve" }
+static aResTipo      := {  "Sun_16", "Sun_and_cloud_16", "Cloud_16", "Cloud_dark_16", "Snowflake_16" }
+
+static bEdit         := {| aTmp, aGet, dbfTemporada, oBrw, bWhen, bValid, nMode | EdtRec( aTmp, aGet, dbfTemporada, oBrw, bWhen, bValid, nMode ) }
+
+
+
+
+
+
+Function aItmTemporada()
+
+   local aBase := { }
+
+   aAdd( aBase, { "cCodigo",   "C",  3, 0, "Código de la Temporada" ,   "",   "", "( cDbfTemporada )"} )
+   aAdd( aBase, { "cNombre",   "C", 50, 0, "Nombre de la Temporada" ,   "",   "", "( cDbfTemporada )"} )
+   aAdd( aBase, { "cTipo",     "C", 30, 0, "Tipo de la Temporada" ,     "",   "", "( cDbfTemporada )"} )
+
+Return ( aBase )
+
+
+
+
+
+
+Function mkTemporada( cPath, lAppend, cPathOld )
+
+   local dbfTemporada
+
+    IIF( lAppend == nil, lAppend := .F., ) ;
+   IIF( cPath == nil, cPath := cPatArt(), ) ;
+
+   dbCreate( cPath + "Temporadas.Dbf", aSqlStruct( aItmTemporada() ), cDriver() )
+
+   if lAppend .AND. cPathOld <> nil .AND. lIsDir( cPathOld )
+      dbUseArea( .T., cDriver(), cPath + "Temporadas.Dbf", cCheckArea( "Temporada", @dbfTemporada ), .F. )
+      if !( dbfTemporada )->( neterr() )
+         ( dbfTemporada )->( __dbApp( cPathOld + "Temporadas.Dbf" ) )
+         ( dbfTemporada )->( dbCloseArea() )
+      end
+   end
+
+   rxTemporada( cPath )
+
+Return ( nil )
+
+
+
+
+
+
+Function rxTemporada( cPath )
+
+   local dbfTemporada
+
+   IIF( cPath == nil, cPath := cPatArt(), ) ;
+
+   if !lExistTable( cPath + "Temporadas.Dbf" )
+      mkTemporada( cPath )
+   end
+
+   if lExistIndex( cPath + "Temporadas.Cdx" )
+      ferase( cPath + "Temporadas.Cdx" )
+   end
+
+   dbUseArea( .T., cDriver(), cPath + "Temporadas.Dbf", cCheckArea( "Temporada", @dbfTemporada ), .F. )
+
+   if !( dbfTemporada )->( neterr() )
+      ( dbfTemporada )->( __dbPack() )
+
+      ( dbfTemporada )->( ordCondSet( "!Deleted()", {|| !Deleted() } ) )
+      ( dbfTemporada )->( ordCreate( cPath + "Temporadas.Cdx", "Codigo", "cCodigo", {|| Field->cCodigo }, ) )
+
+      ( dbfTemporada )->( ordCondSet( "!Deleted()", {|| !Deleted() } ) )
+      ( dbfTemporada )->( ordCreate( cPath + "Temporadas.Cdx", "Nombre", "Upper( cNombre )", {|| Upper( Field->cNombre ) } ) )
+
+      ( dbfTemporada )->( dbCloseArea() )
+   else
+      msgStop( "Imposible abrir en modo exclusivo la tabla de Temporadas" )
+   end
+
+Return ( nil )
+
+
+
+
+
+
+Static Function OpenFiles()
+
+   local lOpen       := .T.
+   local oBlock      := ErrorBlock( {| oError | ApoloBreak( oError ) } )
+
+   BEGIN SEQUENCE
+
+
+
+
+
+
+
+   dbUseArea( .T., ( cDriver() ), ( cPatArt() + "Temporadas.Dbf" ), ( cCheckArea( "Temporada", @dbfTemporada ) ), if(.T. .OR. .F., !.F., NIL), .F.,, )
+   if !lAIS() ; ordListAdd( ( cPatArt() + "Temporadas.Cdx" ) ) ; else ; ordSetFocus( 1 ) ; end
+
+   RECOVER
+
+      msgStop( "Imposible abrir todas las bases de datos" )
+      CloseFiles()
+      lOpen          := .F.
+
+   end
+
+   ErrorBlock( oBlock )
+
+Return ( lOpen )
+
+
+
+
+
+
+Static Function CloseFiles()
+
+   if oWndBrw <> nil
+      oWndBrw     := nil
+   end
+
+   ( dbfTemporada )->( dbCloseArea() )
+
+   dbfTemporada   := nil
+   aBmpTipo       := nil
+
+Return ( .T. )
+
+
+
+
+
+
+FUNCTION Temporada( oMenuItem, oWnd )
+
+   local nLevel
+
+   IIF( oMenuItem == nil, oMenuItem := "01114", ) ;
+   IIF( oWnd == nil, oWnd := oWnd(), ) ;
+
+   if oWndBrw == nil
+
+
+
+
+
+      nLevel            := nLevelUsr( oMenuItem )
+
+      if nAnd( nLevel, 1 ) <> 0
+         msgStop( "Acceso no permitido." )
+         return nil
+      end
+
+
+
+
+
+      if oWnd <> nil
+         SysRefresh(); oWnd:CloseAll(); SysRefresh()
+      end
+
+      if !OpenFiles()
+         return nil
+      end
+
+
+
+
+
+      AddMnuNext( "Temporadas de artículos", ProcName() )
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+      oWndBrw := TShell():New( 2, 10, 18, 70, "Temporadas de artículos",, oWnd,,, .F.,,, ( dbfTemporada ),,,,, {"Código", "Nombre"}, {||( WinAppRec( oWndBrw:oBrw, bEdit, dbfTemporada ) )}, {||( WinEdtRec( oWndBrw:oBrw, bEdit, dbfTemporada ) )}, {||( WinDelRec( oWndBrw:oBrw, dbfTemporada ) )}, {||( WinDupRec( oWndBrw:oBrw, bEdit, dbfTemporada ) )}, nil, nLevel, "Sun_and_cloud_16", ( 104 + ( 0 * 256 ) + ( 63 * 65536 ) ),,, .T. )
+
+      with object ( oWndBrw:AddXCol() )
+         :cHeader          := "Código"
+         :cSortOrder       := "Codigo"
+         :bStrData         := {|| ( dbfTemporada )->cCodigo }
+         :bBmpData         := {|| nBitmapTipoTemporada( ( dbfTemporada )->cTipo ) }
+         :nWidth           := 80
+         :bLClickHeader    := {| nMRow, nMCol, nFlags, oCol | oWndBrw:ClickOnHeader( oCol ) }
+         aEval( aResTipo, {|cRes| :AddResource( cRes ) } )
+      end
+
+      with object ( oWndBrw:AddXCol() )
+         :cHeader          := "Nombre"
+         :cSortOrder       := "Nombre"
+         :bEditValue       := {|| ( dbfTemporada )->cNombre }
+         :nWidth           := 260
+         :bLClickHeader    := {| nMRow, nMCol, nFlags, oCol | oWndBrw:ClickOnHeader( oCol ) }
+      end
+
+      oWndBrw:CreateXFromCode()
+
+
+
+
+
+      oWndBrw:NewAt( "BUS",,, {||( oWndBrw:SearchSetFocus() )}, "(B)uscar", "B",,,,, .F. )
+
+      oWndBrw:AddSeaBar()
+
+
+
+
+
+
+
+
+      oWndBrw:NewAt( "NEW",,, {||( oWndBrw:RecAdd() )}, "(A)ñadir", "A",,, 2,, .F. )
+
+
+
+
+
+
+
+      oWndBrw:NewAt( "DUP",,, {||( oWndBrw:RecDup() )}, "(D)uplicar", "D",,, 2,, .F. )
+
+
+
+
+
+
+      oWndBrw:NewAt( "EDIT",,, {||( oWndBrw:RecEdit() )}, "(M)odificar", "M",,, 4,, .F. )
+
+
+
+
+
+
+      oWndBrw:NewAt( "ZOOM",,, {||( WinZooRec( oWndBrw:oBrw, bEdit, dbfTemporada ) )}, "(Z)oom", "Z",,, 8,, .F. )
+
+
+
+
+
+
+      oWndBrw:NewAt( "DEL",,, {||( oWndBrw:RecDel() )}, "(E)liminar", "E",,, 16,, .F. )
+
+
+
+
+
+
+      oWndBrw:NewAt( "IMP",,, {||( TListadoTemporadas():New( "Listado de temporadas" ):Play( dbfTemporada ) )}, "(L)istado", "L",,, 32,, .F. )
+
+
+
+
+
+      oWndBrw:NewAt( "END",,, {||( oWndBrw:End() )}, "(S)alir", "S",,,,, .F. )
+
+      oWndBrw:Activate(, oWndBrw:bLClicked, oWndBrw:bRClicked, oWndBrw:bMoved, oWndBrw:bResized, oWndBrw:bPainted, oWndBrw:bKeyDown, oWndBrw:bInit,,,,,,,,, {|| ( CloseFiles() )},, oWndBrw:bLButtonUp )
+
+   else
+
+      oWndBrw:SetFocus()
+
+   end
+
+Return nil
+
+
+
+
+Static Function EdtRec( aTmp, aGet, dbfTemporada, oBrw, bWhen, bValid, nMode )
+
+   local oDlg
+
+   if nMode == 1
+      aTmp[ ( dbfTemporada )->( fieldpos( "cTipo" ) ) ]  := aStrTipo[ 1 ]
+   end
+
+   oDlg = TDialog():New(,,,, LblTitle( nMode ) + "Temporada de artículo", "Categoria",, .F.,,,,,, .F.,,,,,, .F., )
+
+
+
+
+
+
+
+
+      aGet[ ( dbfTemporada )->( fieldpos( "cCodigo" ) ) ] := TGetHlp():ReDefine( 100, { | u | If( PCount()==0, aTmp[ ( dbfTemporada )->( fieldpos( "cCodigo" ) ) ], aTmp[ ( dbfTemporada )->( fieldpos( "cCodigo" ) ) ]:= u ) }, oDlg,, "@!", {||    ( NotValid( aGet[ ( dbfTemporada )->( fieldpos( "cCodigo" ) ) ], dbfTemporada, .T., "0" ) )}, "N/W*",,,,, .F., {||     ( nMode == 1 .OR. nMode == 4 )},, .F., .F.,,,,,, nil,,, )
+
+
+
+
+
+
+      aGet[ ( dbfTemporada )->( fieldpos( "cNombre" ) ) ] := TGetHlp():ReDefine( 110, { | u | If( PCount()==0, aTmp[ ( dbfTemporada )->( fieldpos( "cNombre" ) ) ], aTmp[ ( dbfTemporada )->( fieldpos( "cNombre" ) ) ]:= u ) }, oDlg,,,, "N/W*",,,,, .F., {||     ( nMode <> 3 )},, .F., .F.,,,,,, nil,,, )
+
+
+
+
+
+
+
+      aGet[ ( dbfTemporada )->( fieldpos( "cTipo" ) ) ] := TComboBox():ReDefine( 120, { | u | If( PCount()==0, aTmp[ ( dbfTemporada )->( fieldpos( "cTipo" ) ) ], aTmp[ ( dbfTemporada )->( fieldpos( "cTipo" ) ) ]:= u ) }, aStrTipo, oDlg,,,,,,, .F., {||     ( nMode <> 3 )}, aResTipo,,,, )
+
+
+
+
+
+      TButton():ReDefine( 500, {||( EndTrans( aTmp, aGet, nMode, oBrw, oDlg ) )}, oDlg,,, .F., {||     ( nMode <> 3 )},,, .F. )
+
+
+
+
+
+      TButton():ReDefine( 510, {||( oDlg:end() )}, oDlg,,, .F.,,,, .T. )
+
+   if nMode <> 3
+      oDlg:AddFastKey( 116, {|| EndTrans( aTmp, aGet, nMode, oBrw, oDlg ) } )
+   end
+
+   oDlg:bStart    := {|| aGet[ ( dbfTemporada )->( fieldpos( "cCodigo" ) ) ]:SetFocus() }
+
+   oDlg:Activate( oDlg:bLClicked, oDlg:bMoved, oDlg:bPainted, .T.,,,, oDlg:bRClicked,,, )
+
+Return ( oDlg:nResult == 1 )
+
+
+
+
+Static Function EndTrans( aTmp, aGet, nMode, oBrw, oDlg )
+
+   local nRec
+   local nOrdAnt
+
+   if nMode == 1 .OR. nMode == 4
+
+
+
+
+
+      if Empty( aTmp[ ( dbfTemporada )->( fieldpos( "cCodigo" ) ) ] )
+         MsgStop( "Código no puede estar vacío" )
+         aGet[ ( dbfTemporada )->( fieldpos( "cCodigo" ) ) ]:SetFocus()
+         return nil
+      end
+
+      if dbSeekInOrd( aTmp[ ( dbfTemporada )->( fieldpos( "cCodigo" ) ) ], "Codigo", dbfTemporada )
+         MsgStop( "Código ya existe " + Rtrim( aTmp[ ( dbfTemporada )->( fieldpos( "cCodigo" ) ) ] ) )
+         return nil
+      end
+
+      if Empty( aTmp[ ( dbfTemporada )->( fieldpos( "cNombre" ) ) ] )
+         MsgStop( "Nombre no puede estar vacío" )
+         aGet[ ( dbfTemporada )->( fieldpos( "cNombre" ) ) ]:SetFocus()
+         return nil
+      end
+
+
+
+
+
+      nRec     := ( dbfTemporada )->( Recno() )
+      nOrdAnt  := ( dbfTemporada )->( OrdSetFocus( "NOMBRE" ) )
+
+      if( dbfTemporada )->( dbSeek( Upper( aTmp[ ( dbfTemporada )->( fieldpos( "cNombre" ) ) ] ) ) )
+         MsgStop( "Nombre de Temporada existente" )
+         aGet[ ( dbfTemporada )->( fieldpos( "cNombre" ) ) ]:SetFocus()
+         ( dbfTemporada )->( OrdSetFocus( nOrdAnt ) )
+         ( dbfTemporada )->( dbGoTo( nRec ) )
+         return nil
+      end
+
+      ( dbfTemporada )->( OrdSetFocus( nOrdAnt ) )
+      ( dbfTemporada )->( dbGoTo( nRec ) )
+
+   end
+
+
+
+   WinGather( aTmp, aGet, dbfTemporada, oBrw, nMode )
+
+   oDlg:end( 1 )
+
+Return ( nil )
+
+
+
+
+
+
+
+Static Function cBitmapTipo( cTipo, aStrTipo )
+
+   local cBitmapTipo := ""
+
+   if !Empty( cTipo )
+      cBitmapTipo    := aResTipo[ aScan( aStrTipo, AllTrim( cTipo ) ) ]
+   end
+
+return ( cBitmapTipo )
+
+
+
+Function nBitmapTipoTemporada( cTipo )
+
+   local nBitmapTipo := 0
+
+   if !Empty( cTipo )
+      nBitmapTipo    := aScan( aStrTipo, AllTrim( cTipo ) )
+   end
+
+return ( nBitmapTipo )
+
+
+
+Function cTemporada( oGet, dbfTemporada, oGet2, oBmpTemporada  )
+
+   local oBlock
+   local oError
+   local nOrd
+   local lOpen          := .F.
+   local lValid         := .F.
+   local xValor         := oGet:varGet()
+
+   if ( Empty( xValor ) .OR. Rtrim( xValor ) == "ZZZ" )
+      IIF( oGet2 <> nil, oGet2:cText( "" ), )
+      return .T.
+   end
+
+   oBlock               := ErrorBlock( {| oError | ApoloBreak( oError ) } )
+   BEGIN SEQUENCE
+
+   if dbfTemporada == nil
+
+      dbUseArea( .T., ( cDriver() ), ( cPatArt() + "Temporadas.Dbf" ), ( cCheckArea( "Temporada", @dbfTemporada ) ), if(.T. .OR. .F., !.F., NIL), .F.,, )
+      if !lAIS() ; ordListAdd( ( cPatArt() + "Temporadas.Cdx" ) ) ; else ; ordSetFocus( 1 ) ; end
+
+      lOpen := .T.
+
+   end
+
+
+
+
+
+
+
+   nOrd                 := ( dbfTemporada )->( OrdSetFocus( "Codigo" ) )
+
+   if ( dbfTemporada )->( dbSeek( xValor ) )
+
+      oGet:cText( ( dbfTemporada )->cCodigo )
+
+      if oGet2 <> NIL
+         oGet2:cText( ( dbfTemporada )->cNombre )
+      end
+
+      if oBmpTemporada <> nil
+         oBmpTemporada:ReLoad( aResTipo[ aScan( aStrTipo, AllTrim( ( dbfTemporada )->cTipo ) ) ] )
+      end
+
+      lValid            := .T.
+
+   else
+      msgStop( "Temporada no encontrada", "Aviso del sistema" )
+   end
+
+   ( dbfTemporada )->( OrdSetFocus( nOrd ) )
+
+   RECOVER USING oError
+
+      msgStop( "Imposible abrir todas las bases de datos " + Chr(13)+Chr(10) + ErrorMessage( oError ) )
+
+   end
+
+   ErrorBlock( oBlock )
+
+   if lOpen
+      ( dbfTemporada )->( dbCloseArea() )
+   end
+
+Return lValid
+
+
+
+Function BrwTemporada( oGet, oGet2, oBmpTemporada )
+
+   local uVar
+   local oDlg
+    local oBrw
+   local oGetSeek
+   local cGetSeek
+   local nOrd           := GetBrwOpt( "BrwTemporada" )
+    local oCbxOrd
+   local aCbxOrd        := { "Código", "Nombre" }
+   local cCbxOrd
+   local nLevelUsr
+
+
+
+
+
+
+
+   nOrd                 := Min( Max( nOrd, 1 ), len( aCbxOrd ) )
+   cCbxOrd              := aCbxOrd[ nOrd ]
+
+   if !OpenFiles()
+      return .T.
+   end
+
+   nOrd                 := ( dbfTemporada )->( OrdSetFocus( nOrd ) )
+
+   ( dbfTemporada )->( dbGoTop() )
+
+   nLevelUsr            := nLevelUsr( "01114" )
+
+   oDlg = TDialog():New(,,,, "Temporadas de artículos", "HELPENTRY",, .F.,,,,,, .F.,,,,,, .F., )
+
+
+
+
+
+
+      oGetSeek := TGetHlp():ReDefine( 104, { | u | If( PCount()==0, cGetSeek, cGetSeek:= u ) }, oDlg,,, {||    ( OrdClearScope( oBrw, dbfTemporada ) )},,,,,, .F.,, {|nKey,nFlags,Self| ( AutoSeek( nKey, nFlags, Self, oBrw, dbfTemporada ) ) }, .F., .F.,,,,,, nil, "FIND",, )
+
+
+
+
+
+
+        oCbxOrd := TComboBox():ReDefine( 102, { | u | If( PCount()==0, cCbxOrd, cCbxOrd:= u ) }, aCbxOrd, oDlg,,, {|Self|( ( dbfTemporada )->( OrdSetFocus( oCbxOrd:nAt ) ), oBrw:refresh(), oGetSeek:SetFocus() )},,,, .F.,,,,,, )
+
+      oBrw                 := IXBrowse():New( oDlg )
+
+      oBrw:bClrSel         := {|| { 0, ( 229 + ( 229 * 256 ) + ( 229 * 65536 ) ) } }
+      oBrw:bClrSelFocus    := {|| { 0, ( 167 + ( 205 * 256 ) + ( 240 * 65536 ) ) } }
+
+      oBrw:cAlias          := dbfTemporada
+      oBrw:nMarqueeStyle   := 5
+      oBrw:cName           := "Browse.Temporada"
+
+      with object ( oBrw:AddCol() )
+         :cHeader          := "Código"
+         :cSortOrder       := "Codigo"
+         :bStrData         := {|| ( dbfTemporada )->cCodigo }
+         :bBmpData         := {|| nBitmapTipoTemporada( ( dbfTemporada )->cTipo ) }
+         :nWidth           := 80
+         :bLClickHeader    := {| nMRow, nMCol, nFlags, oCol | oCbxOrd:Set( oCol:cHeader ) }
+         aEval( aResTipo, {|cRes| :AddResource( cRes ) } )
+      end
+
+      with object ( oBrw:AddCol() )
+         :cHeader          := "Nombre"
+         :cSortOrder       := "Nombre"
+         :bEditValue       := {|| ( dbfTemporada )->cNombre }
+         :nWidth           := 260
+         :bLClickHeader    := {| nMRow, nMCol, nFlags, oCol | oCbxOrd:Set( oCol:cHeader ) }
+      end
+
+      oBrw:bLDblClick      := {|| oDlg:end( 1 ) }
+      oBrw:bRClicked       := {| nRow, nCol, nFlags | oBrw:RButtonDown( nRow, nCol, nFlags ) }
+
+      oBrw:CreateFromResource( 105 )
+
+
+
+
+        TButton():ReDefine( 1, {||( oDlg:end(1) )}, oDlg,,, .F.,,,, .F. )
+
+
+
+
+        TButton():ReDefine( 2, {||( oDlg:end() )}, oDlg,,, .F.,,,, .F. )
+
+
+
+
+
+        TButton():ReDefine( 500, {||( WinAppRec( oBrw, bEdit, dbfTemporada ) )}, oDlg,,, .F., {||     ( nAnd( nLevelUsr, 2 ) <> 0 .AND. !IsReport() )},,, .F. )
+
+
+
+
+
+        TButton():ReDefine( 501, {||( WinEdtRec( oBrw, bEdit, dbfTemporada ) )}, oDlg,,, .F., {||     ( nAnd( nLevelUsr, 4 ) <> 0 .AND. !IsReport() )},,, .F. )
+
+   if nAnd( nLevelUsr, 2 ) <> 0
+      oDlg:AddFastKey( 113, {|| WinAppRec( oBrw, bEdit, dbfTemporada ) } )
+   end
+
+   if nAnd( nLevelUsr, 4 ) <> 0
+      oDlg:AddFastKey( 114, {|| WinEdtRec( oBrw, bEdit, dbfTemporada ) } )
+   end
+
+   oDlg:AddFastKey( 116,    {|| oDlg:end( 1 ) } )
+   oDlg:AddFastKey( 13,{|| oDlg:end( 1 ) } )
+
+   oDlg:bStart    := {|| oBrw:Load() }
+
+   oDlg:Activate( oDlg:bLClicked, oDlg:bMoved, oDlg:bPainted, .T.,,,, oDlg:bRClicked,,, )
+
+   DestroyFastFilter( dbfTemporada )
+
+   SetBrwOpt( "BrwTemporada", ( dbfTemporada )->( OrdNumber() ) )
+
+   if oDlg:nResult == 1
+
+      uVar        := ( dbfTemporada )->cCodigo
+
+      if !Empty( oGet )
+         oGet:cText( ( dbfTemporada )->cCodigo )
+      end
+
+      if !Empty( oGet2 )
+         oGet2:cText( ( dbfTemporada )->cNombre )
+      end
+
+      if oBmpTemporada <> nil .AND. !Empty( ( dbfTemporada )->cTipo )
+         oBmpTemporada:ReLoad( aResTipo[ aScan( aStrTipo, AllTrim( ( dbfTemporada )->cTipo ) ) ] )
+      end
+
+   end
+
+   CloseFiles()
+
+   if !Empty( oGet )
+      oGet:setFocus()
+   end
+
+Return ( uVar )
+
+
+
+Function BrwInternalTemporada( oGet, dbfArticulo, oGet2 )
+
+   local oDlg
+    local oBrw
+    local oGet1
+    local cGet1
+   local nRec
+   local nOrd           := GetBrwOpt( "BrwTemporada" )
+    local oCbxOrd
+   local aCbxOrd        := { "Código", "Nombre" }
+   local cCbxOrd
+   local oBtnEdit
+   local oBtnAppend
+   local nLevelUsr
+
+   nOrd                 := Min( Max( nOrd, 1 ), len( aCbxOrd ) )
+   cCbxOrd              := aCbxOrd[ nOrd ]
+
+   nRec                 := ( dbfTemporada )->( Recno() )
+   nOrd                 := ( dbfTemporada )->( OrdSetFocus( nOrd ) )
+
+   ( dbfTemporada )->( dbGoTop() )
+
+   nLevelUsr            := nLevelUsr( "01114" )
+
+   oDlg = TDialog():New(,,,, "Temporadas de artículos", "HELPENTRY",, .F.,,,,,, .F.,,,,,, .F., )
+
+
+
+
+
+
+        oGet1 := TGetHlp():ReDefine( 104, { | u | If( PCount()==0, cGet1, cGet1:= u ) }, oDlg,,, {||    ( OrdClearScope( oBrw, dbfTemporada ) )},,,,,, .F.,, {|nKey,nFlags,Self| ( AutoSeek( nKey, nFlags, Self, oBrw, dbfTemporada ) ) }, .F., .F.,,,,,, nil, "FIND",, )
+
+
+
+
+
+
+        oCbxOrd := TComboBox():ReDefine( 102, { | u | If( PCount()==0, cCbxOrd, cCbxOrd:= u ) }, aCbxOrd, oDlg,,, {|Self|( ( dbfTemporada )->( OrdSetFocus( oCbxOrd:nAt ) ), oBrw:refresh(), oGet1:SetFocus() )},,,, .F.,,,,,, )
+
+      oBrw                 := TXBrowse():New( oDlg )
+
+      oBrw:bClrSel         := {|| { 0, ( 229 + ( 229 * 256 ) + ( 229 * 65536 ) ) } }
+      oBrw:bClrSelFocus    := {|| { 0, ( 167 + ( 205 * 256 ) + ( 240 * 65536 ) ) } }
+
+      oBrw:cAlias          := dbfTemporada
+
+      oBrw:nMarqueeStyle   := 5
+
+      oBrw:bLDblClick      := {|| oDlg:end( 1 ) }
+
+      oBrw:CreateFromResource( 105 )
+
+      with object ( oBrw:AddCol() )
+         :cHeader             := "Código"
+         :cSortOrder          := "Codigo"
+         :bEditValue          := {|| ( dbfTemporada )->cCodigo }
+         :nWidth              := 60
+         :bLClickHeader       := {| nMRow, nMCol, nFlags, oCol | oCbxOrd:Set( oCol:cHeader ) }
+      end
+
+      with object ( oBrw:AddCol() )
+         :cHeader             := "Nombre"
+         :cSortOrder          := "Nombre"
+         :bEditValue          := {|| ( dbfTemporada )->cNombre }
+         :nWidth              := 400
+         :bLClickHeader       := {| nMRow, nMCol, nFlags, oCol | oCbxOrd:Set( oCol:cHeader ) }
+      end
+
+
+
+
+        TButton():ReDefine( 1, {||( oDlg:end(1) )}, oDlg,,, .F.,,,, .F. )
+
+
+
+
+        TButton():ReDefine( 2, {||( oDlg:end() )}, oDlg,,, .F.,,,, .F. )
+
+
+
+
+      oBtnAppend := TButton():ReDefine( 500, {||( nil )}, oDlg,,, .F.,,,, .F. )
+
+
+
+
+      oBtnEdit := TButton():ReDefine( 501, {||( nil )}, oDlg,,, .F.,,,, .F. )
+
+   oDlg:AddFastKey( 116,    {|| oDlg:end( 1 ) } )
+   oDlg:AddFastKey( 13,{|| oDlg:end( 1 ) } )
+
+   oDlg:Activate( oDlg:bLClicked, oDlg:bMoved, oDlg:bPainted, .T.,,, {|Self|( oBtnAppend:Hide(), oBtnEdit:Hide() )}, oDlg:bRClicked,,, )
+
+   DestroyFastFilter( dbfTemporada )
+
+   SetBrwOpt( "BrwTemporada", ( dbfTemporada )->( OrdNumber() ) )
+
+   if oDlg:nResult == 1
+      oGet:cText( ( dbfTemporada )->cCodigo )
+
+      if oGet2 <> nil
+         oGet2:cText( ( dbfTemporada )->cNombre )
+      end
+   end
+
+   ( dbfTemporada )->( dbGoTo( nRec ) )
+   ( dbfTemporada )->( OrdSetFocus( nOrd ) )
+
+   oGet:SetFocus()
+
+Return ( oDlg:nResult == 1 )
+
+
+
+
+Function aBmpTipoTemporada()
+
+
+
+
+
+
+
+
+
+
+
+
+   local aBmpTipo    := {  LoadBitmap( GetResources(), "BULLET_BALL_GLASS_BLUE_16" ), LoadBitmap( GetResources(), "BULLET_BALL_GLASS_GREEN_16" ), LoadBitmap( GetResources(), "BULLET_BALL_GLASS_RED_16" ), LoadBitmap( GetResources(), "BULLET_BALL_GLASS_YELLOW_16" ), LoadBitmap( GetResources(), "BULLET_SQUARE_BLUE_16" ), LoadBitmap( GetResources(), "BULLET_SQUARE_GREEN_16" ), LoadBitmap( GetResources(), "BULLET_SQUARE_RED_16" ), LoadBitmap( GetResources(), "BULLET_SQUARE_YELLOW_16" ), LoadBitmap( GetResources(), "BULLET_TRIANGLE_BLUE_16" ), LoadBitmap( GetResources(), "BULLET_TRIANGLE_GREEN_16" ), LoadBitmap( GetResources(), "BULLET_TRIANGLE_RED_16" ), LoadBitmap( GetResources(), "BULLET_TRIANGLE_YELLOW_16" ) }
+
+Return ( aBmpTipo )
+
+
+
+Function aStrTipoTemporada()
+
+Return( aStrTipo )
+
+
+
+Function AddResourceTipoTemporada( oCol )
+
+   local cResTipo
+
+   if !Empty( oCol )
+      for each cResTipo in aResTipo
+         oCol:AddResource( cResTipo )
+      next
+   end
+
+Return ( oCol )

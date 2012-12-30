@@ -1,0 +1,257 @@
+#line 112 "hbclass.ch"
+   DYNAMIC DivertConstructorCall
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+DECLARE HBClass  New( cName AS String, OPTIONAL SuperParams ) AS CLASS HBClass  Create() AS Object  Instance() AS Object  AddClsMethod( cName AS String, @MethodName(), nScope AS Numeric, n2 AS Numeric, n3 AS Numeric )  AddDelegate( cName AS String, cDelegate AS String, cObject AS String, nScope AS Numeric, lPersistent AS LOGICAL )  AddMultiClsData( cType AS String, uVal, nScope AS Numeric, aDatas AS Array OF String )  AddMultiData( cType AS String, uVal, nScope AS Numeric, aDatas AS Array OF String, x AS LOGICAL, lPer AS LOGICAL )  AddMethod( cName AS String, @MethodName(), nScope AS Numeric, lPersistent AS LOGICAL )  AddInLine( cName AS String, bBlock AS CodeBlock, nScope AS Numeric, lPersistent AS LOGICAL )  AddVirtual( cName AS String )  ModMethod( cName AS String, @MethodName(), nScope AS Numeric, lPersistent AS LOGICAL )  ModClsMethod( cName AS String, @MethodName(), nScope AS Numeric )  ModInline( cName AS String, bBlock AS CodeBlock, nScope AS Numeric, lPersistent AS LOGICAL )  SetOnError( @MethodName() )
+#line 85 "\Fwh1204\Include\FiveWin.Ch"
+   EXTERNAL GetProcAdd
+   EXTERNAL TActiveX
+
+
+
+
+extern errorsys
+#line 8 ".\Prg\Tfampre.prg"
+_HB_CLASS TInfFamPre ; UTILITY FUNCTION TInfFamPre(...); static s_oClass ; local oClassInstance ; local nScope ; nScope := 1 ; if s_oClass == NIL ; s_oClass := IIF(.F.,, HBClass():New( "TInfFamPre" , {TInfFam():classh} ) ) ; ;
+
+   _HB_MEMBER {AS LOGIC lExcMov} ; IIF( !.F., s_oClass:AddMultiData( "LOGIC", .F., nScope + IIF( .F., 32, 0 ), { "lExcMov" }, .F., .F. ), )
+   _HB_MEMBER {AS OBJECT oEstado} ; IIF( !.F., s_oClass:AddMultiData( "OBJECT",, nScope + IIF( .F., 32, 0 ), { "oEstado" }, .F., .F. ), )
+   _HB_MEMBER {AS OBJECT oPreCliT} ; IIF( !.F., s_oClass:AddMultiData( "OBJECT",, nScope + IIF( .F., 32, 0 ), { "oPreCliT" }, .F., .F. ), )
+   _HB_MEMBER {AS OBJECT oPreCliL} ; IIF( !.F., s_oClass:AddMultiData( "OBJECT",, nScope + IIF( .F., 32, 0 ), { "oPreCliL" }, .F., .F. ), )
+   _HB_MEMBER {AS OBJECT oDbfTvta} ; IIF( !.F., s_oClass:AddMultiData( "OBJECT",, nScope + IIF( .F., 32, 0 ), { "oDbfTvta" }, .F., .F. ), )
+   _HB_MEMBER {AS ARRAY aEstado} ; IIF( !.F., s_oClass:AddMultiData( "ARRAY", { "Pendiente", "Aceptado", "Todos" }, nScope + IIF( .F., 32, 0 ), { "aEstado" }, .F., .F. ), )
+
+   _HB_MEMBER Create(); IIF( .F., s_oClass:ModMethod( "Create", @TInfFamPre_Create(), nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ), s_oClass:AddMethod( "Create", @TInfFamPre_Create(), nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ));
+
+   _HB_MEMBER OpenFiles(); IIF( .F., s_oClass:ModMethod( "OpenFiles", @TInfFamPre_OpenFiles(), nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ), s_oClass:AddMethod( "OpenFiles", @TInfFamPre_OpenFiles(), nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ));
+
+   _HB_MEMBER CloseFiles(); IIF( .F., s_oClass:ModMethod( "CloseFiles", @TInfFamPre_CloseFiles(), nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ), s_oClass:AddMethod( "CloseFiles", @TInfFamPre_CloseFiles(), nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ));
+
+   _HB_MEMBER Resource( cFld); IIF( .F., s_oClass:ModMethod( "Resource", @TInfFamPre_Resource(), nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ), s_oClass:AddMethod( "Resource", @TInfFamPre_Resource(), nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ));
+
+   _HB_MEMBER lGenerate(); IIF( .F., s_oClass:ModMethod( "lGenerate", @TInfFamPre_lGenerate(), nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ), s_oClass:AddMethod( "lGenerate", @TInfFamPre_lGenerate(), nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ));
+
+; IF .F. ; __clsActive(s_oClass:hClass) ; s_oClass:Refresh() ; ELSE ; s_oClass:Create() ; END ; oClassInstance := __clsInst( s_oClass:hClass ) ; IF __ObjHasMsg( oClassInstance, "InitClass" ); oClassInstance:InitClass( hb_aParams() ) ; END ; ELSE ; oClassInstance := __clsInst( s_oClass:hClass ) ; END ; IF PCount() > 0 ; DIVERT TO (@DivertConstructorCall()) OF s_oClass ; END ; RETURN oClassInstance AS CLASS TInfFamPre ;
+
+
+
+UTILITY STATIC function TInfFamPre_Create() ; local Self AS CLASS TInfFamPre := QSelf() AS CLASS TInfFamPre
+
+   ::DetCreateFields()
+
+   ::AddTmpIndex( "CCODFAM", "cCodFam + CCODART" )
+   ::AddGroup( {|| ::oDbf:cCodFam }, {|| "Familia  : " + Rtrim( ::oDbf:cCodFam ) + "-" + oRetFld( ::oDbf:cCodFam, ::oDbfFam ) }, {||"Total familia..."}, , ::lSalto )
+   ::AddGroup( {|| ::oDbf:cCodFam + ::oDbf:cCodArt },    {|| "Artículo : " + Rtrim( ::oDbf:cCodArt ) + "-" + Rtrim( oRetFld( ::oDbf:cCodArt, ::oDbfArt ) ) }, {||""} )
+
+RETURN ( self )
+
+
+UTILITY STATIC function TInfFamPre_OpenFiles() ; local Self AS CLASS TInfFamPre := QSelf() AS CLASS TInfFamPre
+
+  local oBlock
+  local oError
+  local lOpen := .T.
+
+
+
+
+
+   oBlock   := ErrorBlock( {| oError | ApoloBreak( oError ) } )
+   BEGIN SEQUENCE
+
+   ::oPreCliT := DbfServer( "PRECLIT.DBF", ):NewOpen( "PRECLIT.DBF",, ( cDriver() ),, ( cPatEmp() ), .F., .T., .F., .F. ) ; ::oPreCliT:AddBag( "PRECLIT.CDX" ) ; ::oPreCliT:AddBag( ) ; ::oPreCliT:AutoIndex()
+
+   ::oPreCliL := DbfServer( "PRECLIL.DBF", ):NewOpen( "PRECLIL.DBF",, ( cDriver() ),, ( cPatEmp() ), .F., .T., .F., .F. ) ; ::oPreCliL:AddBag( "PRECLIL.CDX" ) ; ::oPreCliL:AddBag( ) ; ::oPreCliL:AutoIndex()
+   ::oPreCliL:SetOrder( "CREF" )
+
+   ::oDbfTvta := DbfServer( "TVTA.DBF", ):NewOpen( "TVTA.DBF",, ( cDriver() ),, ( cPatDat() ), .F., .T., .F., .F. ) ; ::oDbfTvta:AddBag( "TVTA.CDX" ) ; ::oDbfTvta:AddBag( ) ; ::oDbfTvta:AutoIndex()
+
+   ::oDbfArt := DbfServer( "ARTICULO.DBF", ):NewOpen( "ARTICULO.DBF",, ( cDriver() ),, ( cPatArt() ), .F., .T., .F., .F. ) ; ::oDbfArt:AddBag( "ARTICULO.CDX" ) ; ::oDbfArt:AddBag( ) ; ::oDbfArt:AutoIndex()
+
+   RECOVER USING oError
+
+      lOpen := .F.
+
+      msgStop( "Imposible abrir todas las bases de datos" )
+      ::CloseFiles()
+
+   end
+
+   ErrorBlock( oBlock )
+
+RETURN ( lOpen )
+
+
+
+UTILITY STATIC function TInfFamPre_CloseFiles() ; local Self AS CLASS TInfFamPre := QSelf() AS CLASS TInfFamPre
+
+   if !Empty( ::oPreCliT ) .AND. ::oPreCliT:Used()
+      ::oPreCliT:End()
+   end
+
+   if !Empty( ::oPreCliL ) .AND. ::oPreCliL:Used()
+      ::oPreCliL:End()
+   end
+
+   if !Empty( ::oDbfTvta ) .AND. ::oDbfTvta:Used()
+      ::oDbfTvta:End()
+   end
+
+   if !Empty( ::oDbfArt ) .AND. ::oDbfArt:Used()
+      ::oDbfArt:End()
+   end
+
+RETURN ( Self )
+
+
+
+UTILITY STATIC function TInfFamPre_Resource( cFld) ; local Self AS CLASS TInfFamPre := QSelf() AS CLASS TInfFamPre
+
+   local cEstado := "Todos"
+
+   if !::StdResource( "INF_GEN11" )
+      return .F.
+   end
+
+
+
+   ::lDefFamInf( 110, 120, 130, 140 )
+
+
+
+
+
+   ::lDefArtInf( 70, 80, 90, 100 )
+
+
+
+   ::oMtrInf:SetTotal( ::oDbfArt:Lastrec() )
+
+   ::oDefExcInf( 204 )
+
+   ::oDefSalInf( 201 )
+
+   ::oDefResInf()
+
+
+
+   TCheckBox():ReDefine( ( 203 ), { | u | If( PCount()==0, ::lExcMov, ::lExcMov:= u ) }, ::oFld:aDialogs[1],,,,,,, .F.,, .F. )
+
+
+
+
+
+   ::oEstado := TComboBox():ReDefine( 218, { | u | If( PCount()==0, cEstado, cEstado:= u ) }, ::aEstado, ::oFld:aDialogs[1],,,,,,, .F.,,,,,, )
+
+RETURN ( Self )
+
+
+
+
+
+
+UTILITY STATIC function TInfFamPre_lGenerate() ; local Self AS CLASS TInfFamPre := QSelf() AS CLASS TInfFamPre
+
+   local bValid   := {|| .T. }
+   local cCodFam
+
+   ::oDlg:Disable()
+
+   ::oDbf:Zap()
+
+   do case
+      case ::oEstado:nAt == 1
+         bValid   := {|| !::oPreCliT:lEstado }
+      case ::oEstado:nAt == 2
+         bValid   := {|| ::oPreCliT:lEstado }
+      case ::oEstado:nAt == 3
+         bValid   := {|| .T. }
+   end
+
+
+
+
+   ::aHeader   := {  {|| "Fecha  : " + Dtoc( Date() ) }, {|| "Periodo: " + Dtoc( ::dIniInf )     + " > " + Dtoc( ::dFinInf ) }, {|| "Familia: " + AllTrim (::cFamOrg)   + " > " + AllTrim ( ::cFamDes ) }, {|| "Estado : " + ::aEstado[ ::oEstado:nAt ] } }
+
+
+   ::oPreCliL:GoTop()
+
+   WHILE !::oPreCliL:Eof()
+
+      cCodFam := cCodFam( ::oPrecliL:cRef, ::oDbfArt )
+
+
+      if cCodFam >= ::cFamOrg                       .AND. cCodFam <= ::cFamDes
+
+         if ::oPreCliT:Seek( ::oPreCliL:cSerPre + Str( ::oPreCliL:nNumPre ) + ::oPreCliL:cSufPre )
+
+
+
+
+
+
+
+
+            if Eval ( bValid )                                                 .AND. ::oPreCliT:DFECPRE >= ::dIniInf                                 .AND. ::oPreCliT:DFECPRE <= ::dFinInf                                 .AND. ::oPreCliL:cRef    >= ::cArtOrg                                 .AND. ::oPreCliL:cRef    <= ::cArtDes                                 .AND. lChkSer( ::oPreCliT:CSERPRE, ::aSer )                           .AND. !( ::lExcCero .AND. ::oPreCliL:NUNICAJA == 0 )                  .AND. !( ::lExcMov  .AND. nImpLPreCli( ::oPreCliT:cAlias, ::oPreCliL:cAlias, ::nDecOut, ::nDerOut, ::nValDiv ) == 0 )
+
+
+
+
+
+                  ::oDbf:Append()
+
+                  ::AddCliente      ( ::oPreCliT:cCodCli, ::oPreCliT, .F. )
+
+                  ::oDbf:cCodArt    := ::oDbfArt:CODIGO
+                  ::oDbf:cNomArt    := ::oDbfArt:NOMBRE
+                  ::oDbf:cCodFam    := ::oDbfArt:FAMILIA
+                  ::oDbf:nNumCaj    := ::oPreCliL:nCanPre
+                  ::oDbf:nUniDad    := ::oPreCliL:NUNICAJA
+                  ::oDbf:nNumUni    := nTotNPreCli( ::oPreCliL )
+                  ::oDbf:nImpArt    := nTotUPreCli( ::oPreCliL:cAlias, ::nDecOut, ::nValDiv )
+                  ::oDbf:nImpTrn    := nTrnUPreCli( ::oPreCliL:cAlias, ::nDecOut, ::nValDiv )
+                  ::oDbf:nPntVer    := nPntUPreCli( ::oPreCliL:cAlias, ::nDecOut, ::nValDiv )
+                  ::oDbf:nImpTot    := nImpLPreCli( ::oPreCliT:cAlias, ::oPreCliL:cAlias, ::nDecOut, ::nDerOut, ::nValDiv )
+
+                  ::oDbf:nIvaArt    := Round( ::oDbf:nImpArt * ::oPreCliL:nIva / 100, ::nDerOut )
+
+                  ::oDbf:cDocMov    := lTrim( ::oPreCliL:CSERPRE ) + "/" + lTrim ( Str( ::oPreCliL:NNUMPRE ) ) + "/" + lTrim ( ::oPreCliL:CSUFPRE )
+                  ::oDbf:dFecMov    := ::oPreCliT:DFECPRE
+
+                  if ::oDbfTvta:Seek( ::oPreCliL:cTipMov )
+                     ::oDbf:cTipVen := ::oDbfTvta:cDesMov
+                  end
+
+                  ::oDbf:Save()
+
+               end
+
+         end
+
+      end
+
+      ::oPreCliL:Skip()
+
+      ::oMtrInf:AutoInc()
+
+   end
+
+   ::oMtrInf:AutoInc( ::oPreCliL:Lastrec() )
+
+   ::oDlg:Enable()
+
+RETURN ( ::oDbf:LastRec() > 0 )

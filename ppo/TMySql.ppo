@@ -1,0 +1,83 @@
+#line 112 "hbclass.ch"
+   DYNAMIC DivertConstructorCall
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+DECLARE HBClass  New( cName AS String, OPTIONAL SuperParams ) AS CLASS HBClass  Create() AS Object  Instance() AS Object  AddClsMethod( cName AS String, @MethodName(), nScope AS Numeric, n2 AS Numeric, n3 AS Numeric )  AddDelegate( cName AS String, cDelegate AS String, cObject AS String, nScope AS Numeric, lPersistent AS LOGICAL )  AddMultiClsData( cType AS String, uVal, nScope AS Numeric, aDatas AS Array OF String )  AddMultiData( cType AS String, uVal, nScope AS Numeric, aDatas AS Array OF String, x AS LOGICAL, lPer AS LOGICAL )  AddMethod( cName AS String, @MethodName(), nScope AS Numeric, lPersistent AS LOGICAL )  AddInLine( cName AS String, bBlock AS CodeBlock, nScope AS Numeric, lPersistent AS LOGICAL )  AddVirtual( cName AS String )  ModMethod( cName AS String, @MethodName(), nScope AS Numeric, lPersistent AS LOGICAL )  ModClsMethod( cName AS String, @MethodName(), nScope AS Numeric )  ModInline( cName AS String, bBlock AS CodeBlock, nScope AS Numeric, lPersistent AS LOGICAL )  SetOnError( @MethodName() )
+#line 85 "\Fwh1204\Include\FiveWin.Ch"
+   EXTERNAL GetProcAdd
+   EXTERNAL TActiveX
+
+
+
+
+extern errorsys
+#line 15 ".\Prg\TMySql.prg"
+_HB_CLASS TMySql ; UTILITY FUNCTION TMySql(...); static s_oClass ; local oClassInstance ; local nScope ; nScope := 1 ; if s_oClass == NIL ; s_oClass := IIF(.F.,, HBClass():New( "TMySql" , { HBObject():Classh } ) ) ;
+
+   _HB_MEMBER { oConexion} ; IIF( !.F., s_oClass:AddMultiData(,, nScope + IIF( .F., 32, 0 ), { "oConexion" }, .F., .F. ), )
+   _HB_MEMBER { cHost} ; IIF( !.F., s_oClass:AddMultiData(,, nScope + IIF( .F., 32, 0 ), { "cHost" }, .F., .F. ), )
+   _HB_MEMBER { cUser} ; IIF( !.F., s_oClass:AddMultiData(,, nScope + IIF( .F., 32, 0 ), { "cUser" }, .F., .F. ), )
+   _HB_MEMBER { cPasswd} ; IIF( !.F., s_oClass:AddMultiData(,, nScope + IIF( .F., 32, 0 ), { "cPasswd" }, .F., .F. ), )
+   _HB_MEMBER { cDbName} ; IIF( !.F., s_oClass:AddMultiData(,, nScope + IIF( .F., 32, 0 ), { "cDbName" }, .F., .F. ), )
+   _HB_MEMBER { nPort} ; IIF( !.F., s_oClass:AddMultiData(,, nScope + IIF( .F., 32, 0 ), { "nPort" }, .F., .F. ), )
+
+   _HB_MEMBER New(); IIF( .F., s_oClass:ModMethod( "New", @TMySql_New(), nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ), s_oClass:AddMethod( "New", @TMySql_New(), nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ));
+
+   _HB_MEMBER Connect(); IIF( .F., s_oClass:ModInline( "Connect", {|Self | Self, ( ::oConexion:Connect( ::cHost, ::cUser, ::cPasswd, ::cDbName, ::nPort ) ) }, nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ), s_oClass:AddInline( "Connect", {|Self | Self, ( ::oConexion:Connect( ::cHost, ::cUser, ::cPasswd, ::cDbName, ::nPort ) ) }, nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ) )
+   _HB_MEMBER Destroy(); IIF( .F., s_oClass:ModInline( "Destroy", {|Self | Self, ( ::oConexion:Destroy() ) }, nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ), s_oClass:AddInline( "Destroy", {|Self | Self, ( ::oConexion:Destroy() ) }, nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ) )
+
+   _HB_MEMBER TestConexion(); IIF( .F., s_oClass:ModMethod( "TestConexion", @TMySql_TestConexion(), nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ), s_oClass:AddMethod( "TestConexion", @TMySql_TestConexion(), nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ));
+
+; IF .F. ; __clsActive(s_oClass:hClass) ; s_oClass:Refresh() ; ELSE ; s_oClass:Create() ; END ; oClassInstance := __clsInst( s_oClass:hClass ) ; IF __ObjHasMsg( oClassInstance, "InitClass" ); oClassInstance:InitClass( hb_aParams() ) ; END ; ELSE ; oClassInstance := __clsInst( s_oClass:hClass ) ; END ; IF PCount() > 0 ; DIVERT TO (@DivertConstructorCall()) OF s_oClass ; END ; RETURN oClassInstance AS CLASS TMySql ;
+
+
+
+UTILITY STATIC function TMySql_New( cHost, cUser, cPasswd, cDbName, nPort) ; local Self AS CLASS TMySql := QSelf() AS CLASS TMySql
+
+   IIF( cHost == nil, cHost := cSitSql(), ) ;
+   IIF( cUser == nil, cUser := cUsrSql(), ) ;
+   IIF( cPasswd == nil, cPasswd := cPswSql(), ) ;
+   IIF( cDbName == nil, cDbName := cDtbSql(), ) ;
+   IIF( nPort == nil, nPort := nPrtSql(), ) ;
+
+   ::oConexion       := TMSConnect():New()
+
+   ::cHost           := RTrim( cHost )
+   ::cUser           := RTrim( cUser )
+   ::cPasswd         := RTrim( cPasswd )
+   ::cDbName         := RTrim( cDbName )
+   ::nPort           := nPort
+
+Return ( Self )
+
+
+
+UTILITY STATIC function TMySql_TestConexion() ; local Self AS CLASS TMySql := QSelf() AS CLASS TMySql
+
+   if Empty( ::oConexion )
+      ::New()
+   end
+
+   if ::Connect()
+       MsgInfo( "Conectado" )
+   else
+       MsgInfo( "No hay conexión" )
+   endif
+
+   ::Destroy()
+
+Return ( Self )

@@ -1,0 +1,579 @@
+#line 112 "hbclass.ch"
+   DYNAMIC DivertConstructorCall
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+DECLARE HBClass  New( cName AS String, OPTIONAL SuperParams ) AS CLASS HBClass  Create() AS Object  Instance() AS Object  AddClsMethod( cName AS String, @MethodName(), nScope AS Numeric, n2 AS Numeric, n3 AS Numeric )  AddDelegate( cName AS String, cDelegate AS String, cObject AS String, nScope AS Numeric, lPersistent AS LOGICAL )  AddMultiClsData( cType AS String, uVal, nScope AS Numeric, aDatas AS Array OF String )  AddMultiData( cType AS String, uVal, nScope AS Numeric, aDatas AS Array OF String, x AS LOGICAL, lPer AS LOGICAL )  AddMethod( cName AS String, @MethodName(), nScope AS Numeric, lPersistent AS LOGICAL )  AddInLine( cName AS String, bBlock AS CodeBlock, nScope AS Numeric, lPersistent AS LOGICAL )  AddVirtual( cName AS String )  ModMethod( cName AS String, @MethodName(), nScope AS Numeric, lPersistent AS LOGICAL )  ModClsMethod( cName AS String, @MethodName(), nScope AS Numeric )  ModInline( cName AS String, bBlock AS CodeBlock, nScope AS Numeric, lPersistent AS LOGICAL )  SetOnError( @MethodName() )
+#line 85 "\Fwh1204\Include\FiveWin.ch"
+   EXTERNAL GetProcAdd
+   EXTERNAL TActiveX
+
+
+
+
+extern errorsys
+#line 24 ".\Prg\Font.prg"
+static aFonts := {}
+
+
+
+_HB_CLASS TFont ; UTILITY FUNCTION TFont(...); static s_oClass ; local oClassInstance ; local nScope ; nScope := 1 ; if s_oClass == NIL ; s_oClass := IIF(.F.,, HBClass():New( "TFont" , { HBObject():Classh } ) ) ;
+
+   _HB_MEMBER { cFaceName} ; IIF( !.F., s_oClass:AddMultiData(,, nScope + IIF( .F., 32, 0 ), { "cFaceName" }, .F., .F. ), )
+   _HB_MEMBER { hFont, hFontOld} ; IIF( !.F., s_oClass:AddMultiData(,, nScope + IIF( .F., 32, 0 ), { "hFont" , "hFontOld" }, .F., .F. ), )
+   _HB_MEMBER { lBold, lItalic, lUnderline, lStrikeOut} ; IIF( !.F., s_oClass:AddMultiData(,, nScope + IIF( .F., 32, 0 ), { "lBold" , "lItalic" , "lUnderline" , "lStrikeOut" }, .F., .F. ), )
+   _HB_MEMBER { nInpHeight, nInpWidth, nEscapement, nOrientation, nWeight} ; IIF( !.F., s_oClass:AddMultiData(,, nScope + IIF( .F., 32, 0 ), { "nInpHeight" , "nInpWidth" , "nEscapement" , "nOrientation" , "nWeight" }, .F., .F. ), )
+   _HB_MEMBER { nCharSet, nOutPrecision, nClipPrecision, nQuality, nPitchFamily} ; IIF( !.F., s_oClass:AddMultiData(,, nScope + IIF( .F., 32, 0 ), { "nCharSet" , "nOutPrecision" , "nClipPrecision" , "nQuality" , "nPitchFamily" }, .F., .F. ), )
+   _HB_MEMBER { nCount, lDestroy} ; IIF( !.F., s_oClass:AddMultiData(,, nScope + IIF( .F., 32, 0 ), { "nCount" , "lDestroy" }, .F., .F. ), )
+   _HB_MEMBER { lNew} ; IIF( !.F., s_oClass:AddMultiData(,, nScope + IIF( .F., 32, 0 ), { "lNew" }, .F., .F. ), )
+
+
+   _HB_MEMBER { aProperties} ; IIF( !.F., s_oClass:AddMultiClsData(, { "cFaceName", "lBold", "lItalic", "lUnderline", "lStrikeOut", "nOrientation", "nWeight", "nCharSet" }, nScope + IIF( .F., 32, 0 ) + 64, { "aProperties" }, .F. ), )
+
+
+
+
+   _HB_MEMBER New( cFaceName, nWidth, nHeight, lFromUser, lBold, nEscapement, nOrientation, nWeight, lItalic, lUnderline, lStrikeOut, nCharSet, nOutPrecision, nClipPrecision, nQuality, oDevice, nPitchFamily); IIF( .F., s_oClass:ModMethod( "New", @TFont_New(), nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ), s_oClass:AddMethod( "New", @TFont_New(), nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ));
+
+
+
+   _HB_MEMBER Choose( nRGBColor); IIF( .F., s_oClass:ModMethod( "Choose", @TFont_Choose(), nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ), s_oClass:AddMethod( "Choose", @TFont_Choose(), nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ));
+
+   _HB_MEMBER End(); IIF( .F., s_oClass:ModMethod( "End", @TFont_End(), nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ), s_oClass:AddMethod( "End", @TFont_End(), nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ));
+
+   _HB_MEMBER Release(); IIF( .F., s_oClass:ModInline( "Release", {|Self | Self, ::End() }, nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ), s_oClass:AddInline( "Release", {|Self | Self, ::End() }, nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ) )
+
+   _HB_MEMBER Activate(hDC); IIF( .F., s_oClass:ModInline( "Activate", {|Self,hDC | Self, ::hFontOld := SelectObject( hDC, ::hFont ) }, nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ), s_oClass:AddInline( "Activate", {|Self,hDC | Self, ::hFontOld := SelectObject( hDC, ::hFont ) }, nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ) )
+
+   _HB_MEMBER DeActivate(hDC); IIF( .F., s_oClass:ModInline( "DeActivate", {|Self,hDC | Self, SelectObject( hDC, ::hFontOld ) }, nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ), s_oClass:AddInline( "DeActivate", {|Self,hDC | Self, SelectObject( hDC, ::hFontOld ) }, nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ) )
+
+   _HB_MEMBER nSize(); IIF( .F., s_oClass:ModMethod( "nSize", @TFont_nSize(), nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ), s_oClass:AddMethod( "nSize", @TFont_nSize(), nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ));
+
+   _HB_MEMBER nWidth(nNewValue); _HB_MEMBER _nWidth(nNewValue); IIF( .F., s_oClass:ModMethod( "nWidth", @TFont_nWidth(), 1 + 32, .F. ), s_oClass:AddMethod( "nWidth", @TFont_nWidth(), 1 + 32, .F. ) ) ; IIF( .F., s_oClass:ModMethod( "_nWidth", @TFont_nWidth() ), s_oClass:AddMethod( "_nWidth", @TFont_nWidth() ) ) ;
+   _HB_MEMBER nHeight(nNewValue); _HB_MEMBER _nHeight(nNewValue); IIF( .F., s_oClass:ModMethod( "nHeight", @TFont_nHeight(), 1 + 32, .F. ), s_oClass:AddMethod( "nHeight", @TFont_nHeight(), 1 + 32, .F. ) ) ; IIF( .F., s_oClass:ModMethod( "_nHeight", @TFont_nHeight() ), s_oClass:AddMethod( "_nHeight", @TFont_nHeight() ) ) ;
+
+   _HB_MEMBER Bold( lOnOff); IIF( .F., s_oClass:ModMethod( "Bold", @TFont_Bold(), nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ), s_oClass:AddMethod( "Bold", @TFont_Bold(), nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ));
+   _HB_MEMBER Italic( lOnOff); IIF( .F., s_oClass:ModMethod( "Italic", @TFont_Italic(), nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ), s_oClass:AddMethod( "Italic", @TFont_Italic(), nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ));
+   _HB_MEMBER Underline( lOnOff); IIF( .F., s_oClass:ModMethod( "Underline", @TFont_Underline(), nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ), s_oClass:AddMethod( "Underline", @TFont_Underline(), nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ));
+   _HB_MEMBER StrikeOut( lOnOff); IIF( .F., s_oClass:ModMethod( "StrikeOut", @TFont_StrikeOut(), nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ), s_oClass:AddMethod( "StrikeOut", @TFont_StrikeOut(), nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ));
+   _HB_MEMBER Escapement( nEsc); IIF( .F., s_oClass:ModMethod( "Escapement", @TFont_Escapement(), nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ), s_oClass:AddMethod( "Escapement", @TFont_Escapement(), nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ));
+   _HB_MEMBER Rotate( n); IIF( .F., s_oClass:ModMethod( "Rotate", @TFont_Rotate(), nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ), s_oClass:AddMethod( "Rotate", @TFont_Rotate(), nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ));
+
+   _HB_MEMBER Modify( nHeight, lBold, lItalic, lUnderline, lStrikeOut, nEscapement); IIF( .F., s_oClass:ModMethod( "Modify", @TFont_Modify(), nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ), s_oClass:AddMethod( "Modify", @TFont_Modify(), nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ));
+
+   _HB_MEMBER cGenPrg(); IIF( .F., s_oClass:ModMethod( "cGenPrg", @TFont_cGenPrg(), nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ), s_oClass:AddMethod( "cGenPrg", @TFont_cGenPrg(), nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ));
+   _HB_MEMBER IsLike(oFont); IIF( .F., s_oClass:ModMethod( "==", @TFont_IsLike(), nScope + IIF( .F., 1024, 0 ) ), s_oClass:AddMethod( "==", @TFont_IsLike(), nScope + IIF( .F., 1024, 0 ) ) );
+
+   _HB_MEMBER Load(); IIF( .F., s_oClass:ModMethod( "Load", @TFont_Load(), nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ), s_oClass:AddMethod( "Load", @TFont_Load(), nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ));
+   _HB_MEMBER Save(); IIF( .F., s_oClass:ModMethod( "Save", @TFont_Save(), nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ), s_oClass:AddMethod( "Save", @TFont_Save(), nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ));
+   _HB_MEMBER SaveToText( nIndent); IIF( .F., s_oClass:ModMethod( "SaveToText", @TFont_SaveToText(), nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ), s_oClass:AddMethod( "SaveToText", @TFont_SaveToText(), nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ));
+
+; IF .F. ; __clsActive(s_oClass:hClass) ; s_oClass:Refresh() ; ELSE ; s_oClass:Create() ; END ; oClassInstance := __clsInst( s_oClass:hClass ) ; IF __ObjHasMsg( oClassInstance, "InitClass" ); oClassInstance:InitClass( hb_aParams() ) ; END ; ELSE ; oClassInstance := __clsInst( s_oClass:hClass ) ; END ; IF PCount() > 0 ; DIVERT TO (@DivertConstructorCall()) OF s_oClass ; END ; RETURN oClassInstance AS CLASS TFont ;
+
+
+
+
+
+
+UTILITY STATIC function TFont_New( cFaceName, nWidth, nHeight, lFromUser, lBold, nEscapement, nOrientation, nWeight, lItalic, lUnderline, lStrikeOut, nCharSet, nOutPrecision, nClipPrecision, nQuality, oDevice, nPitchFamily) ; local Self AS CLASS TFont := QSelf() AS CLASS TFont
+
+   local aFont, nRGBColor
+
+
+   local nAt, aSystem := { "OEM_FIXED_FONT", "ANSI_FIXED_FONT", "ANSI_VAR_FONT", "SYSTEM_FONT", "DEVICE_DEFAULT_FONT", "SYSTEM_FIXED_FONT" }
+
+
+   local aInfo, aSysFonts := { 10, 11, 12, 13, 14, 16 }
+
+
+
+
+
+
+
+
+
+
+
+
+
+   IIF( cFaceName == nil, cFaceName := "SYSTEM_FONT", ) ; IIF( nEscapement == nil, nEscapement := 0, ); IIF( nOrientation == nil, nOrientation := 0, ); IIF( nWeight == nil, nWeight := 0, ); IIF( nHeight == nil, nHeight := 14, ); IIF( lItalic == nil, lItalic := .F., ); IIF( lFromUser == nil, lFromUser := .F., ); IIF( lUnderLine == nil, lUnderLine := .F., ); IIF( lStrikeOut == nil, lStrikeOut := .F., ); IIF( nCharSet == nil, nCharSet := 0, ); IIF( nOutPrecision == nil, nOutPrecision := 0, ); IIF( nClipPrecision == nil, nClipPrecision := 0, ); IIF( nQuality == nil, nQuality := 0, ); IIF( lBold == nil, lBold := .F., ); IIF( nWidth == nil, nWidth := 0, ); IIF( nPitchFamily == nil, nPitchFamily := 0, ); IIF( ::nCount == nil, ::nCount := 0, ); IIF( ::lDestroy == nil, ::lDestroy := .T., ); IIF( aFonts == nil, aFonts := {}, );
+
+
+   if Upper( cFaceName ) == "SYSTAHOMA" .AND. nHeight < 0 .AND. Abs( nHeight ) < 12
+      nHeight = -12
+   endif
+
+   if Upper( cFaceName ) == "SYSTAHOMA"
+      cFaceName = "TAHOMA"
+   endif
+
+   if lFromUser
+      aFont     = ChooseFont( , @nRGBColor )
+      lFromUser = ! Empty( aFont[ 14 ] )
+   elseif nWidth = 0 .AND. nHeight < 0
+   endif
+
+   if lBold
+      nWeight = nOr( nWeight, 700 )
+   endif
+
+   ::cFaceName      = If( lFromUser, aFont[ 14 ], cFaceName )
+   ::nInpHeight     = If( lFromUser, aFont[ 1 ], nHeight )
+   ::nInpWidth      = If( lFromUser, aFont[ 2 ], nWidth )
+   ::nEscapement    = If( lFromUser, aFont[ 3 ], nEscapement )
+   ::nOrientation   = If( lFromUser, aFont[ 4 ], nOrientation )
+   ::nWeight        = If( lFromUser, aFont[ 5 ], nWeight )
+   ::lBold          = If( lFromUser, ! ( ::nWeight == 400 ), lBold )
+   ::lItalic        = If( lFromUser, aFont[ 6 ], lItalic )
+   ::lUnderLine     = If( lFromUser, aFont[ 7 ], lUnderLine )
+   ::lStrikeOut     = If( lFromUser, aFont[ 8 ], lStrikeOut )
+   ::nCharSet       = If( lFromUser, aFont[ 9 ], nCharSet )
+   ::nOutPrecision  = If( lFromUser, aFont[ 10 ], nOutPrecision )
+   ::nClipPrecision = If( lFromUser, aFont[ 11 ], nClipPrecision )
+   ::nQuality       = If( lFromUser, aFont[ 12 ], nQuality )
+   ::nPitchFamily   = If( lFromUser, aFont[ 13 ], nPitchFamily )
+   ::hFontOld       = 0
+
+   if oDevice <> nil
+      ::nInpHeight = ( oDevice:nLogPixelY() / 72 ) * ::nInpHeight
+   endif
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+   if( nAt := AScan( aFonts, { | oFont | oFont:nInpHeight  == ::nInpHeight .AND.  oFont:nInpWidth    == ::nInpWidth  .AND.  oFont:nEscapement  == ::nEscapement .AND.  oFont:nOrientation == ::nOrientation .AND.  oFont:nWeight      == ::nWeight      .AND.  oFont:lItalic      == ::lItalic      .AND.  oFont:lUnderLine   == ::lUnderLine .AND.  oFont:lBold        == ::lBold .AND.  oFont:lStrikeOut   == ::lStrikeOut .AND.  oFont:nCharSet     == ::nCharSet   .AND.  oFont:nOutPrecision  == ::nOutPrecision .AND.  oFont:nClipPrecision == ::nClipPrecision .AND.  oFont:nQuality       == ::nQuality  .AND.  oFont:nPitchFamily   == ::nPitchFamily .AND.  oFont:cFaceName      == ::cFaceName } )) > 0
+
+
+            Self := aFonts[ nAt ]
+            ::nCount++
+            ::lNew = .F.
+            return Self
+
+
+
+
+
+
+   elseif ( nAt := AScan( aSystem, { | cType | cType == Upper( ::cFaceName ) } ) ) <> 0
+
+      ::hFont = GetStockObject( aSysFonts[ nAt ] )
+      aInfo = GetFontInfo( ::hFont )
+      ::nInpHeight  = aInfo[ 1 ]
+      ::nInpWidth   = aInfo[ 2 ]
+      ::lBold       = aInfo[ 3 ]
+      ::lDestroy    = .F.
+      ::nCount++
+      ::lNew = .T.
+
+   else
+
+
+
+
+      ::hFont = CreateFont( { ::nInpHeight, ::nInpWidth, ::nEscapement, ::nOrientation, ::nWeight, ::lItalic, ::lUnderLine, ::lStrikeOut, ::nCharSet, ::nOutPrecision, ::nClipPrecision, ::nQuality, ::nPitchFamily, ::cFaceName } )
+      ::lDestroy = .T.
+      ::nCount++
+      ::lNew = .T.
+      AAdd( aFonts, Self )
+   endif
+
+return Self
+
+
+
+UTILITY STATIC function TFont_Choose( nRGBColor) ; local Self AS CLASS TFont := QSelf() AS CLASS TFont
+
+   local aFont, oFont
+
+   if nRGBColor <> nil
+
+
+
+
+
+      aFont := ChooseFont( { ::nInpHeight, ::nInpWidth, ::nEscapement, ::nOrientation, ::nWeight, ::lItalic, ::lUnderLine, ::lStrikeOut, ::nCharSet, ::nOutPrecision, ::nClipPrecision, ::nQuality, ::nPitchFamily, ::cFaceName }, @nRGBColor )
+   else
+
+
+
+
+      aFont := ChooseFont( { ::nInpHeight, ::nInpWidth, ::nEscapement, ::nOrientation, ::nWeight, ::lItalic, ::lUnderLine, ::lStrikeOut, ::nCharSet, ::nOutPrecision, ::nClipPrecision, ::nQuality, ::nPitchFamily, ::cFaceName } )
+   endif
+
+   if ! Empty( aFont[ 14 ] )
+      ::End()
+
+
+
+
+
+
+
+      oFont = TFont():New( aFont[ 14 ],, aFont[ 1 ], .F., ! ( aFont[ 5 ] == 400 ), aFont[ 3 ], aFont[ 4 ], aFont[ 5 ], aFont[ 6 ], aFont[ 7 ], aFont[ 8 ], aFont[ 9 ], aFont[ 10 ], aFont[ 11 ], aFont[ 12 ],, aFont[ 13 ] )
+   endif
+
+return If( oFont <> nil, oFont, Self )
+
+
+
+UTILITY STATIC function TFont_End() ; local Self AS CLASS TFont := QSelf() AS CLASS TFont
+
+   local nAt
+
+   if ::nCount <> nil .AND. --::nCount < 1
+      if ! Empty( ::hFont ) .AND. ::lDestroy
+
+         if DeleteObject( ::hFont )
+            nAt := AScan( aFonts, { | oFont | oFont:hFont == ::hFont } )
+            if nAt > 0
+               ADel( aFonts, nAt )
+               ASize( aFonts, Len( aFonts ) - 1 )
+            endif
+            ::hFont  = 0
+            ::nCount = 0
+         else
+
+
+            LogFile( "resources.txt", { "DeleteObject( ::hFont ) failed from TFont:End()", ::hFont, ::nCount, ::lDestroy } )
+         endif
+      endif
+   endif
+
+return nil
+
+
+
+UTILITY STATIC function TFont_nSize() ; local Self AS CLASS TFont := QSelf() AS CLASS TFont
+
+   local hDC   := GetDC( 0 )
+   local nSize := ( -::nInpHeight * 72 ) / GetDeviceCaps( hDC, 90 )
+
+   ReleaseDC( 0, hDC )
+
+
+return If( nSize - Int( nSize ) == 0.25, nSize - 0.25, If( nSize <> Int( nSize ), nSize + 0.25, nSize ) )
+
+
+
+UTILITY STATIC function TFont_nHeight(nNewHeight) ; local Self AS CLASS TFont := QSelf() AS CLASS TFont
+
+   IIF( ::nInpHeight == nil, ::nInpHeight := 0, ) ;
+
+   if PCount() > 0
+      ::nInpHeight := nNewHeight
+   else
+      return Abs( ::nInpHeight )
+   endif
+
+return nil
+
+
+
+UTILITY STATIC function TFont_nWidth(nNewWidth) ; local Self AS CLASS TFont := QSelf() AS CLASS TFont
+
+   if PCount() > 0
+      ::nInpWidth := nNewWidth
+   else
+      if ::nInpWidth <> nil .AND. ::nInpWidth == 0
+         return ::nHeight  * 0.44
+      else
+         return ::nInpWidth
+      endif
+   endif
+
+return nil
+
+
+
+UTILITY STATIC function TFont_Bold( lBold) ; local Self AS CLASS TFont := QSelf() AS CLASS TFont
+
+   IIF( lBold == nil, lBold := .T., ) ;
+
+return ::Modify( nil, lBold )
+
+
+
+UTILITY STATIC function TFont_Italic( lItalic) ; local Self AS CLASS TFont := QSelf() AS CLASS TFont
+
+   IIF( lItalic == nil, lItalic := .T., ) ;
+
+return ::Modify( nil, nil, lItalic )
+
+
+
+UTILITY STATIC function TFont_Load( cInfo) ; local Self AS CLASS TFont := QSelf() AS CLASS TFont
+
+   local nPos := 1, nProps, n, nLen
+   local cData, cType, cBuffer
+
+   nProps = Bin2I( SubStr( cInfo, nPos, 2 ) )
+   nPos += 2
+
+   for n = 1 to nProps
+      nLen  = Bin2I( SubStr( cInfo, nPos, 2 ) )
+      nPos += 2
+      cData = SubStr( cInfo, nPos, nLen )
+      nPos += nLen
+      cType = SubStr( cInfo, nPos++, 1 )
+      nLen  = Bin2I( SubStr( cInfo, nPos, 2 ) )
+      nPos += 2
+      cBuffer = SubStr( cInfo, nPos, nLen )
+      nPos += nLen
+
+
+      do case
+         case cData == "n_Style"
+              cData = "nStyle"
+      endcase
+
+      do case
+         case cType == "A"
+              OSend( Self, "_" + cData, ARead( cBuffer ) )
+
+         case cType == "O"
+              OSend( Self, "_" + cData, ORead( cBuffer ) )
+
+         case cType == "C"
+              OSend( Self, "_" + cData, cBuffer )
+
+         case cType == "L"
+              OSend( Self, "_" + cData, cBuffer == ".T." )
+
+         case cType == "N"
+              OSend( Self, "_" + cData, Val( cBuffer ) )
+      endcase
+   next
+
+return nil
+
+
+
+UTILITY STATIC function TFont_Underline( lUnderline) ; local Self AS CLASS TFont := QSelf() AS CLASS TFont
+
+   IIF( lUnderline == nil, lUnderline := .T., ) ;
+
+return ::Modify( nil, nil, nil, lUnderline )
+
+
+
+UTILITY STATIC function TFont_Save() ; local Self AS CLASS TFont := QSelf() AS CLASS TFont
+
+   local n
+   local cType, cInfo := "", cMethod
+   local oFont := &( ::ClassName() + "()" )
+   local uData, nProps := 0
+
+   oFont = oFont:New()
+
+   for n = 1 to Len( ::aProperties )
+
+       if ! ( uData := OSend( Self, ::aProperties[ n ] ) ) ==  OSend( oFont, ::aProperties[ n ] )
+
+          cInfo += ( I2Bin( Len( ::aProperties[ n ] ) ) +  ::aProperties[ n ] )
+          nProps++
+          cType = ValType( uData )
+          do case
+             case cType == "A"
+                  cInfo += ASave( uData )
+
+             case cType == "O"
+                  cInfo += uData:Save()
+
+             otherwise
+
+                  cInfo += ( cType + I2Bin( Len( uData := cValToChar( uData ) ) ) +  uData )
+          endcase
+       endif
+   next
+
+   oFont:End()
+
+
+
+return "O" + I2Bin( 2 + Len( ::ClassName() ) + 2 + Len( cInfo ) ) +  I2Bin( Len( ::ClassName() ) ) +  ::ClassName() + I2Bin( nProps ) + cInfo
+
+
+
+UTILITY STATIC function TFont_SaveToText( nIndent) ; local Self AS CLASS TFont := QSelf() AS CLASS TFont
+
+   local n, m, cType, cInfo
+   local cMethod, uData, nProps := 0
+   local oMenu := &( ::ClassName() + "()" )
+   local cParams1, cParams2
+
+   IIF( nIndent == nil, nIndent := 0, ) ;
+
+
+
+
+
+   cInfo := Space( nIndent ) + "OBJECT " + If( nIndent > 0, "::", "" ) +  "oFont AS " +  If( nIndent > 0, Upper( Left( ::ClassName(), 2 ) ) +  Lower( SubStr( ::ClassName(), 3 ) ), ::cClassName ) +  Chr(13)+Chr(10) + Chr(13)+Chr(10)
+
+   oMenu = oMenu:New()
+
+   for n = 1 to Len( ::aProperties )
+
+
+
+
+          if ! ( uData := OSend( Self, ::aProperties[ n ] ) ) ==  OSend( oMenu, ::aProperties[ n ] )
+             nProps++
+             cType = ValType( uData )
+             do case
+                case cType == "C"
+                     cInfo += Space( nIndent ) + "   ::" + ::aProperties[ n ] + " = "
+                     cInfo += '"' + uData + '"' + Chr(13)+Chr(10)
+
+                case cType == "A"
+
+                     cInfo += Space( nIndent + 3 ) + "::" + ::aProperties[ n ] +  " = Array( " + AllTrim( Str( Len( uData ) ) ) + " )" + Chr(13)+Chr(10) + Chr(13)+Chr(10)
+                     cInfo += AToText( uData, ::aProperties[ n ], nIndent + 3 )
+
+                case cType == "O"
+                     cInfo += Chr(13)+Chr(10) + uData:SaveToText( nIndent + 3 )
+
+                otherwise
+                     cInfo += Space( nIndent ) + "   ::" + ::aProperties[ n ] + " = "
+                     cInfo += cValToChar( uData ) + Chr(13)+Chr(10)
+             endcase
+          endif
+
+   next
+
+   cInfo += Chr(13)+Chr(10) + Space( nIndent ) + "ENDOBJECT" + If( nIndent > 0, Chr(13)+Chr(10), "" )
+
+   oMenu:End()
+
+return cInfo
+
+
+
+UTILITY STATIC function TFont_StrikeOut( lStrikeOut) ; local Self AS CLASS TFont := QSelf() AS CLASS TFont
+
+   IIF( lStrikeOut == nil, lStrikeOut := .T., ) ;
+
+return ::Modify( nil, nil, nil, nil, lStrikeOut )
+
+
+
+UTILITY STATIC function TFont_Escapement( nEsc) ; local Self AS CLASS TFont := QSelf() AS CLASS TFont
+
+   IIF( nEsc == nil, nEsc := ::nEscapement, ) ;
+
+return ::Modify( nil, nil, nil, nil, nil, nEsc % 3600 )
+
+
+
+UTILITY STATIC function TFont_Rotate( nRotateBy) ; local Self AS CLASS TFont := QSelf() AS CLASS TFont
+
+   local nEsc
+
+   IIF( nRotateBy == nil, nRotateBy := 900, ) ;
+
+   nEsc  += nRotateBy
+   while nEsc < 0
+      nEsc  += 3600
+   enddo
+
+return ::Escapement( nEsc )
+
+
+
+
+UTILITY STATIC function TFont_Modify( nHeight, lBold, lItalic, lUnderline, lStrikeOut,  nEscapement) ; local Self AS CLASS TFont := QSelf() AS CLASS TFont
+
+
+
+
+
+   IIF( nHeight == nil, nHeight := ::nHeight, ) ; IIF( lBold == nil, lBold := ::lBold, ); IIF( lItalic == nil, lItalic := ::lItalic, ); IIF( lUnderline == nil, lUnderline := ::lUnderline, ); IIF( lStrikeOut == nil, lStrikeOut := ::lStrikeOut, ); IIF( nEscapement == nil, nEscapement := ::nEscapement, );
+
+
+
+
+return TFont():New( ::cFaceName, ::nWidth, nHeight, .F., lBold, nEscapement, ::nOrientation, ::nWeight, lItalic, lUnderline, lStrikeOut, ::nCharSet, ::nOutPrecision, ::nClipPrecision, ::nQuality, nil, ::nPitchFamily )
+
+
+UTILITY STATIC function TFont_cGenPrg( cVar) ; local Self AS CLASS TFont := QSelf() AS CLASS TFont
+
+   local cCode, nWeight
+
+   IIF( cVar == nil, cVar := "oFont", ) ;
+   nWeight        := If( ::lBold .AND. ::nWeight == 700, 0, ::nWeight )
+
+
+   if Empty( ::nOrientation ) .AND. Empty( ::lStrikeOut ) .AND. Empty( ::nCharSet ) .AND.  Empty( ::nOutPrecision ) .AND. Empty( ::nClipPrecision ) .AND. empty( ::nQuality )
+
+      cCode    := "DEFINE FONT " + cVar
+      cCode    += " NAME '" + ::cFaceName + "' "
+      cCode    += LTrim( Str( ::nInpWidth ) ) + "," + LTrim( Str( ::nInpHeight ) )
+
+
+
+
+      cCode    += If( ::lBold, " BOLD", "" ) + If( ::lItalic, " ITALIC", "" ) +  If( ::lUnderLine, " UNDERLINE", "" ) +  If( Empty( ::nPitchFamily ), "", " PITCHFAMILY " + LTrim( Str( ::nPitchFamily ) ) ) +  If( Empty( nWeight ), "", " WEIGHT " + LTrim( Str( nWeight ) ) ) +  If( Empty( ::nEscapement ), "", " ESCAPEMENT " + LTrim( Str( ::nEscapement ) ) )
+   else
+      cCode    := cVar + " := TFont():New( "
+      cCode    += "'" + ::cFaceName + "', " + LTrim( Str( ::nwidth ) ) + ", " + LTrim( Str( ::nHeight ) ) + ", .f., "
+      cCode    += If( ::lBold, ".t.", ".f." ) + ", " + LTrim( Str( ::nEscapement ) ) + ", "
+      cCode    += LTrim( Str( ::nOrientation ) ) + ", " + LTrim( Str( ::nWeight ) ) + ", "
+      cCode    += If( ::lItalic, ".t.", ".f." ) + ", " + If( ::lUnderline, ".t.", ".f." ) + ", " + If( ::lStrikeout, ".t.", ".f." ) + ", "
+      cCode    += LTrim( Str( ::nCharSet ) ) + "," + LTrim( Str( ::nOutprecision ) ) + ", "
+      cCode    += LTrim( Str( ::nClipPrecision ) ) + ", " + LTrim( Str( ::nQuality ) ) + ",, "
+      cCode    += LTrim( Str( ::nPitchFamily ) ) + " )"
+
+
+   endif
+
+
+return cCode
+
+
+
+UTILITY STATIC function TFont_IsLike(oFont) ; local Self AS CLASS TFont := QSelf() AS CLASS TFont
+
+   local lEq   := .F.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+   lEq :=   oFont:ClassName()    == ::ClassName()     .AND.  oFont:nInpHeight     == ::nInpHeight      .AND.  oFont:nInpWidth      == ::nInpWidth       .AND.  oFont:nEscapement    == ::nEscapement     .AND.  oFont:nOrientation   == ::nOrientation    .AND.  oFont:nWeight        == ::nWeight         .AND.  oFont:lItalic        == ::lItalic         .AND.  oFont:lUnderLine     == ::lUnderLine      .AND.  oFont:lBold          == ::lBold           .AND.  oFont:lStrikeOut     == ::lStrikeOut      .AND.  oFont:nCharSet       == ::nCharSet        .AND.  oFont:nOutPrecision  == ::nOutPrecision   .AND.  oFont:nClipPrecision == ::nClipPrecision  .AND.  oFont:nQuality       == ::nQuality        .AND.  oFont:nPitchFamily   == ::nPitchFamily    .AND.  oFont:cFaceName      == ::cFaceName
+
+return lEq

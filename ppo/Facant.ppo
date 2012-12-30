@@ -1,0 +1,5492 @@
+#line 112 "hbclass.ch"
+   DYNAMIC DivertConstructorCall
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+DECLARE HBClass  New( cName AS String, OPTIONAL SuperParams ) AS CLASS HBClass  Create() AS Object  Instance() AS Object  AddClsMethod( cName AS String, @MethodName(), nScope AS Numeric, n2 AS Numeric, n3 AS Numeric )  AddDelegate( cName AS String, cDelegate AS String, cObject AS String, nScope AS Numeric, lPersistent AS LOGICAL )  AddMultiClsData( cType AS String, uVal, nScope AS Numeric, aDatas AS Array OF String )  AddMultiData( cType AS String, uVal, nScope AS Numeric, aDatas AS Array OF String, x AS LOGICAL, lPer AS LOGICAL )  AddMethod( cName AS String, @MethodName(), nScope AS Numeric, lPersistent AS LOGICAL )  AddInLine( cName AS String, bBlock AS CodeBlock, nScope AS Numeric, lPersistent AS LOGICAL )  AddVirtual( cName AS String )  ModMethod( cName AS String, @MethodName(), nScope AS Numeric, lPersistent AS LOGICAL )  ModClsMethod( cName AS String, @MethodName(), nScope AS Numeric )  ModInline( cName AS String, bBlock AS CodeBlock, nScope AS Numeric, lPersistent AS LOGICAL )  SetOnError( @MethodName() )
+#line 85 "\Fwh1204\Include\FiveWin.Ch"
+   EXTERNAL GetProcAdd
+   EXTERNAL TActiveX
+
+
+
+
+extern errorsys
+#line 85 ".\Prg\Facant.prg"
+memvar cDbf
+memvar cDbfCli
+memvar cDbfDiv
+memvar cDbfPgo
+memvar cDbfIva
+memvar cDbfAge
+memvar cDbfObr
+memvar cDbfUsr
+memvar nTotNet
+memvar nTotIva
+memvar nTotReq
+memvar nTotAnt
+memvar nTotImp
+memvar nTotRet
+memvar nTotAge
+memvar cCtaCli
+memvar nVdv
+memvar nVdvDivAnt
+memvar cPicUndAnt
+memvar cPouDivAnt
+memvar cPorDivAnt
+memvar cPpvDivAnt
+memvar nDouDivAnt
+memvar nRouDivAnt
+memvar nDpvDivAnt
+memvar cCodPgo
+memvar nPagina
+memvar lEnd
+
+
+
+
+
+static oWndBrw
+static oBrw
+static dbfUsr
+static dbfTikCliT
+static dbfAntCliT
+static dbfAntCliI
+static dbfAntCliD
+static dbfFacCliP
+static dbfFacCliT
+static dbfAlbCliT
+static dbfTmpInc
+static dbfTmpDoc
+static dbfIva
+static dbfCount
+static dbfCli
+static dbfCliInc
+static dbfFPago
+static dbfAgent
+static dbfDiv
+static dbfInci
+static dbfObrasT
+static dbfDoc
+static dbfCajT
+static dbfAlmT
+static dbfDelega
+static dbfAgeCom
+static dbfFlt
+static dbfEmp
+static oBandera
+static cTmpInc
+static cTmpDoc
+static oGetTotal
+static oGetNet
+static oGetPctRet
+static oGetIva
+static oGetReq
+static oGetAge
+static cPouDiv
+static cPorDiv
+static cPpvDiv
+static cPicUnd
+static nVdvDiv
+static nDouDiv
+static nRouDiv
+static nDpvDiv
+static nTotOld
+static oMenu
+static oStock
+
+static cOldCodCli       := ""
+static lOpenFiles       := .F.
+static lExternal        := .F.
+static cFiltroUsuario   := ""
+
+
+
+static bEdtRec          := { |aTmp, aGet, dbfAntCliT, oBrw, bWhen, bValid, nMode, cSerAnt| EdtRec( aTmp, aGet, dbfAntCliT, oBrw, bWhen, bValid, nMode, cSerAnt ) }
+static bEdtInc          := { |aTmp, aGet, dbfAntCliI, oBrw, bWhen, bValid, nMode, aTmpLin | EdtInc( aTmp, aGet, dbfAntCliI, oBrw, bWhen, bValid, nMode, aTmpLin ) }
+static bEdtDoc          := { |aTmp, aGet, dbfAntCliD, oBrw, bWhen, bValid, nMode, aTmpLin | EdtDoc( aTmp, aGet, dbfAntCliD, oBrw, bWhen, bValid, nMode, aTmpLin ) }
+
+
+
+
+
+
+
+
+
+STATIC FUNCTION GenAntCli( nDevice, cCaption, cCodDoc, cPrinter, nCopies )
+
+   local oInf
+   local oDevice
+   local cAnticipo
+
+   if ( dbfAntCliT )->( Lastrec() ) == 0
+      return nil
+   end
+
+   cAnticipo            := ( dbfAntCliT )->cSerAnt + Str( ( dbfAntCliT )->nNumAnt ) + ( dbfAntCliT )->cSufAnt
+
+   IIF( nDevice == nil, nDevice := 1, ) ;
+   IIF( cCaption == nil, cCaption := "Imprimiendo anticipos : " + cAnticipo, ) ;
+   IIF( cCodDoc == nil, cCodDoc := cFormatoDocumento( ( dbfAntCliT )->cSerAnt, "nAntCli", dbfCount ), ) ;
+   IIF( nCopies == nil, nCopies := if( nCopiasDocumento( ( dbfAntCliT )->cSerAnt, "nAntCli", dbfCount ) == 0, Max( Retfld( ( dbfAntCliT )->cCodCli, dbfCli, "CopiasF" ), 1 ), nCopiasDocumento( ( dbfAntCliT )->cSerAnt, "nAntCli", dbfCount ) ), ) ;
+
+   if Empty( cCodDoc )
+      cCodDoc           := cFirstDoc( "TC", dbfDoc )
+   end
+
+   if !lExisteDocumento( cCodDoc, dbfDoc )
+      return nil
+   end
+
+
+
+
+
+   if !Empty( oAuditor() )
+      if nDevice == 1
+         oAuditor():AddEvent( "Impresa factura de anticipo",    cAnticipo, "13" )
+      else
+         oAuditor():AddEvent( "Previsualiza factura de anticipo",  cAnticipo, "13" )
+      end
+   end
+
+
+
+
+
+   if lVisualDocumento( cCodDoc, dbfDoc )
+
+      PrintReportAntCli( nDevice, nCopies, cPrinter, dbfDoc )
+
+   else
+
+
+
+
+
+      nTotAntCli( dbfAntCliT, dbfIva, dbfDiv, nil, nil, .T. )
+
+
+
+
+
+      private cDbf         := dbfAntCliT
+      private cDbfCli      := dbfCli
+      private cDbfDiv      := dbfDiv
+      private cDbfPgo      := dbfFPago
+      private cDbfIva      := dbfIva
+      private cDbfAge      := dbfAgent
+      private cDbfObr      := dbfObrasT
+      private cDbfUsr      := dbfUsr
+      private nVdv         := nVdvDiv
+      private nVdvDivAnt   := nVdvDiv
+      private cPicUndAnt   := cPicUnd
+      private cPouDivAnt   := cPouDiv
+      private cPorDivAnt   := cPorDiv
+      private cPpvDivAnt   := cPpvDiv
+      private nDouDivAnt   := nDouDiv
+      private nRouDivAnt   := nRouDiv
+      private nDpvDivAnt   := nDpvDiv
+      private cCodPgo      := ( dbfAntCliT )->cCodPago
+
+
+
+
+
+      ( dbfCli    )->( dbSeek( ( dbfAntCliT )->cCodCli ) )
+      ( dbfAgent  )->( dbSeek( ( dbfAntCliT )->cCodAge ) )
+      ( dbfFPago  )->( dbSeek( ( dbfAntCliT )->cCodPago) )
+      ( dbfDiv    )->( dbSeek( ( dbfAntCliT )->cDivAnt ) )
+      ( dbfObrasT )->( dbSeek( ( dbfAntCliT )->cCodCli + ( dbfAntCliT )->cCodObr ) )
+
+      if !Empty( cPrinter )
+         oDevice           := TPrinter():New( cCaption, .F., .T., cPrinter )
+         oInf := RptBegin({}, {}, {}, {}, {}, .F.,,,, .F.,, oDevice, cCaption,,, )
+      else
+         oInf := RptBegin({}, {}, {}, {}, {}, .F.,,,, .T.,,, cCaption,,, )
+      end
+
+
+
+
+
+      if !Empty( oInf ) .AND. oInf:lCreated
+         oInf:lAutoland    := .F.
+         oInf:lFinish      := .F.
+         oInf:lNoCancel    := .T.
+         oInf:bSkip        := {|| ( dbfAntCliT )->( dbSkip() ) }
+
+         oInf:oDevice:lPrvModal  := .T.
+
+         do case
+            case nDevice == 1
+
+               oInf:oDevice:SetCopies( nCopies )
+
+               oInf:bPreview  := {| oDevice | PrintPreview( oDevice ) }
+
+            case nDevice == 3
+
+               oInf:bPreview  := {| oDevice | PrintPdf( oDevice ) }
+
+         end
+
+         SetMargin( cCodDoc, oInf )
+         PrintColum( cCodDoc, oInf )
+
+      end
+
+      RptEnd()
+
+      if !Empty( oInf )
+
+
+
+         oInf:Activate(, {||       ( ( dbfAntCliT )->cSerAnt + Str( ( dbfAntCliT )->nNumAnt ) + ( dbfAntCliT )->cSufAnt = cAnticipo )},,, {||( EPage( oInf, cCodDoc ) )},,,,,,,,, )
+
+         if nDevice == 1
+            oInf:oDevice:end()
+         end
+
+      end
+
+      oInf                 := nil
+
+   end
+
+RETURN NIL
+
+
+
+Static Function EPage( oInf, cCodDoc )
+
+   private nPagina      := oInf:nPage
+   private lEnd         := oInf:lFinish
+
+
+
+
+
+   PrintItems( cCodDoc, oInf )
+
+RETURN NIL
+
+
+
+STATIC FUNCTION OpenFiles( lExt )
+
+   local oBlock
+   local oError
+
+   if lOpenFiles
+      MsgStop( "Imposible abrir ficheros de facturas de anticipos a clientes" )
+      Return ( .F. )
+   end
+
+   IIF( lExt == nil, lExt := .F., ) ;
+
+   lExternal            := lExt
+
+   oBlock               := ErrorBlock( {| oError | ApoloBreak( oError ) } )
+
+   BEGIN SEQUENCE
+
+   dbUseArea( .T., ( cDriver() ), ( cPatEmp() + "AntCliT.DBF" ), ( cCheckArea( "AntCliT", @dbfAntCliT ) ), if(.T. .OR. .F., !.F., NIL), .F.,, )
+   if !lAIS() ; ordListAdd( ( cPatEmp() + "AntCliT.CDX" ) ) ; else ; ordSetFocus( 1 ) ; end
+
+   dbUseArea( .T., ( cDriver() ), ( cPatEmp() + "AntCliI.DBF" ), ( cCheckArea( "AntCliI", @dbfAntCliI ) ), if(.T. .OR. .F., !.F., NIL), .F.,, )
+   if !lAIS() ; ordListAdd( ( cPatEmp() + "AntCliI.CDX" ) ) ; else ; ordSetFocus( 1 ) ; end
+
+   dbUseArea( .T., ( cDriver() ), ( cPatEmp() + "AntCliD.DBF" ), ( cCheckArea( "AntCliD", @dbfAntCliD ) ), if(.T. .OR. .F., !.F., NIL), .F.,, )
+   if !lAIS() ; ordListAdd( ( cPatEmp() + "AntCliD.CDX" ) ) ; else ; ordSetFocus( 1 ) ; end
+
+   dbUseArea( .T., ( cDriver() ), ( cPatCli() + "CLIENT.DBF" ), ( cCheckArea( "CLIENT", @dbfCli ) ), if(.T. .OR. .F., !.F., NIL), .F.,, )
+   if !lAIS() ; ordListAdd( ( cPatCli() + "CLIENT.CDX" ) ) ; else ; ordSetFocus( 1 ) ; end
+
+   dbUseArea( .T., ( cDriver() ), ( cPatCli() + "CliInc.Dbf" ), ( cCheckArea( "CliInc", @dbfCliInc ) ), if(.T. .OR. .F., !.F., NIL), .F.,, )
+   if !lAIS() ; ordListAdd( ( cPatCli() + "CliInc.Cdx" ) ) ; else ; ordSetFocus( 1 ) ; end
+
+   dbUseArea( .T., ( cDriver() ), ( cPatCli() + "AGENTES.DBF" ), ( cCheckArea( "AGENTES", @dbfAgent ) ), if(.T. .OR. .F., !.F., NIL), .F.,, )
+   if !lAIS() ; ordListAdd( ( cPatCli() + "AGENTES.CDX" ) ) ; else ; ordSetFocus( 1 ) ; end
+
+   dbUseArea( .T., ( cDriver() ), ( cPatDat() + "TIVA.DBF" ), ( cCheckArea( "TIVA", @dbfIva ) ), if(.T. .OR. .F., !.F., NIL), .F.,, )
+   if !lAIS() ; ordListAdd( ( cPatDat() + "TIVA.CDX" ) ) ; else ; ordSetFocus( 1 ) ; end
+
+   dbUseArea( .T., ( cDriver() ), ( cPatGrp() + "FPAGO.DBF" ), ( cCheckArea( "FPAGO", @dbfFPago ) ), if(.T. .OR. .F., !.F., NIL), .F.,, )
+   if !lAIS() ; ordListAdd( ( cPatGrp() + "FPAGO.CDX" ) ) ; else ; ordSetFocus( 1 ) ; end
+
+   dbUseArea( .T., ( cDriver() ), ( cPatDat() + "DIVISAS.DBF" ), ( cCheckArea( "DIVISAS", @dbfDiv ) ), if(.T. .OR. .F., !.F., NIL), .F.,, )
+   if !lAIS() ; ordListAdd( ( cPatDat() + "DIVISAS.CDX" ) ) ; else ; ordSetFocus( 1 ) ; end
+
+   dbUseArea( .T., ( cDriver() ), ( cPatCli() + "ObrasT.Dbf" ), ( cCheckArea( "OBRAST", @dbfObrasT ) ), if(.T. .OR. .F., !.F., NIL), .F.,, )
+   if !lAIS() ; ordListAdd( ( cPatCli() + "ObrasT.Cdx" ) ) ; else ; ordSetFocus( 1 ) ; end
+
+   dbUseArea( .T., ( cDriver() ), ( cPatEmp() + "RDOCUMEN.DBF" ), ( cCheckArea( "RDOCUMEN", @dbfDoc ) ), if(.T. .OR. .F., !.F., NIL), .F.,, )
+   if !lAIS() ; ordListAdd( ( cPatEmp() + "RDOCUMEN.CDX" ) ) ; else ; ordSetFocus( 1 ) ; end
+   ordSetFocus( "CTIPO" )
+
+   dbUseArea( .T., ( cDriver() ), ( cPatDat() + "Cajas.Dbf" ), ( cCheckArea( "CAJAS", @dbfCajT ) ), if(.T. .OR. .F., !.F., NIL), .F.,, )
+   if !lAIS() ; ordListAdd( ( cPatDat() + "Cajas.Cdx" ) ) ; else ; ordSetFocus( 1 ) ; end
+
+   dbUseArea( .T., ( cDriver() ), ( cPatAlm() + "ALMACEN.DBF" ), ( cCheckArea( "ALMACEN", @dbfAlmT ) ), if(.T. .OR. .F., !.F., NIL), .F.,, )
+   if !lAIS() ; ordListAdd( ( cPatAlm() + "ALMACEN.CDX" ) ) ; else ; ordSetFocus( 1 ) ; end
+
+   dbUseArea( .T., ( cDriver() ), ( cPatDat() + "USERS.DBF" ), ( cCheckArea( "USERS", @dbfUsr ) ), if(.T. .OR. .F., !.F., NIL), .F.,, )
+   if !lAIS() ; ordListAdd( ( cPatDat() + "USERS.CDX" ) ) ; else ; ordSetFocus( 1 ) ; end
+
+   dbUseArea( .T., ( cDriver() ), ( cPatEmp() + "NCOUNT.DBF" ), ( cCheckArea( "NCOUNT", @dbfCount ) ), if(.T. .OR. .F., !.F., NIL), .F.,, )
+   if !lAIS() ; ordListAdd( ( cPatEmp() + "NCOUNT.CDX" ) ) ; else ; ordSetFocus( 1 ) ; end
+
+   dbUseArea( .T., ( cDriver() ), ( cPatEmp() + "TIPINCI.DBF" ), ( cCheckArea( "TIPINCI", @dbfInci ) ), if(.T. .OR. .F., !.F., NIL), .F.,, )
+   if !lAIS() ; ordListAdd( ( cPatEmp() + "TIPINCI.CDX" ) ) ; else ; ordSetFocus( 1 ) ; end
+
+   dbUseArea( .T., ( cDriver() ), ( cPatDat() + "DELEGA.DBF" ), ( cCheckArea( "DELEGA", @dbfDelega ) ), if(.T. .OR. .F., !.F., NIL), .F.,, )
+   if !lAIS() ; ordListAdd( ( cPatDat() + "DELEGA.CDX" ) ) ; else ; ordSetFocus( 1 ) ; end
+
+   dbUseArea( .T., ( cDriver() ), ( cPatDat() + "CNFFLT.DBF" ), ( cCheckArea( "CNFFLT", @dbfFlt ) ), if(.T. .OR. .F., !.F., NIL), .F.,, )
+   if !lAIS() ; ordListAdd( ( cPatDat() + "CNFFLT.CDX" ) ) ; else ; ordSetFocus( 1 ) ; end
+
+   dbUseArea( .T., ( cDriver() ), ( cPatGrp() + "AGECOM.DBF" ), ( cCheckArea( "AGECOM", @dbfAgeCom ) ), if(.T. .OR. .F., !.F., NIL), .F.,, )
+   if !lAIS() ; ordListAdd( ( cPatGrp() + "AGECOM.CDX" ) ) ; else ; ordSetFocus( 1 ) ; end
+
+   dbUseArea( .T., ( cDriver() ), ( cPatDat() + "EMPRESA.DBF" ), ( cCheckArea( "EMPRESA", @dbfEmp ) ), if(.T. .OR. .F., !.F., NIL), .F.,, )
+   if !lAIS() ; ordListAdd( ( cPatDat() + "EMPRESA.CDX" ) ) ; else ; ordSetFocus( 1 ) ; end
+
+   dbUseArea( .T., ( cDriver() ), ( cPatEmp() + "TIKET.DBF" ), ( cCheckArea( "TIKET", @dbfTikCliT ) ), if(.T. .OR. .F., !.F., NIL), .F.,, )
+   if !lAIS() ; ordListAdd( ( cPatEmp() + "TIKET.CDX" ) ) ; else ; ordSetFocus( 1 ) ; end
+
+   dbUseArea( .T., ( cDriver() ), ( cPatEmp() + "FacCliP.DBF" ), ( cCheckArea( "FacCliP", @dbfFacCliP ) ), if(.T. .OR. .F., !.F., NIL), .F.,, )
+   if !lAIS() ; ordListAdd( ( cPatEmp() + "FacCliP.CDX" ) ) ; else ; ordSetFocus( 1 ) ; end
+
+   dbUseArea( .T., ( cDriver() ), ( cPatEmp() + "ALBCLIT.DBF" ), ( cCheckArea( "ALBCLIT", @dbfAlbCliT ) ), if(.T. .OR. .F., !.F., NIL), .F.,, )
+   if !lAIS() ; ordListAdd( ( cPatEmp() + "ALBCLIT.CDX" ) ) ; else ; ordSetFocus( 1 ) ; end
+
+   dbUseArea( .T., ( cDriver() ), ( cPatEmp() + "FacCliT.DBF" ), ( cCheckArea( "FacCliT", @dbfFacCliT ) ), if(.T. .OR. .F., !.F., NIL), .F.,, )
+   if !lAIS() ; ordListAdd( ( cPatEmp() + "FacCliT.CDX" ) ) ; else ; ordSetFocus( 1 ) ; end
+
+   oBandera             := TBandera():New()
+
+   oStock               := TStock():Create( cPatGrp() )
+   if !oStock:lOpenFiles()
+      lOpenFiles        := .F.
+   else
+      oStock:cTikT      := dbfTikCliT
+      oStock:cFacCliP   := dbfFacCliP
+      oStock:cFacCliT   := dbfFacCliT
+      oStock:cAlbCliT   := dbfAlbCliT
+      oStock:cAntCliT   := dbfAntCliT
+   end
+
+   lOpenFiles           := .T.
+
+   public nTotAnt       := 0
+   public nTotNet       := 0
+   public nTotIva       := 0
+   public nTotAge       := 0
+   public nTotReq       := 0
+   public nTotRet       := 0
+   public nTotImp       := 0
+
+
+
+
+
+   if oUser():lFiltroVentas()
+      cFiltroUsuario    := "Field->cCodUsr == '" + oUser():cCodigo() + "' .and. Field->cCodCaj == '" + oUser():cCaja() + "'"
+   end
+
+   RECOVER USING oError
+
+      msgStop( "Imposible abrir todas las bases de datos" + Chr(13)+Chr(10) + ErrorMessage( oError ) )
+      CloseFiles()
+
+   end
+   ErrorBlock( oBlock )
+
+RETURN ( lOpenFiles )
+
+
+
+STATIC FUNCTION CloseFiles()
+
+   DestroyFastFilter( dbfAntCliT, .T., .T. )
+
+   if !Empty( dbfAntCliT )
+      ( dbfAntCliT )->( dbCloseArea() )
+   end
+
+   if !Empty( dbfIva )
+      ( dbfIva     )->( dbCloseArea() )
+   end
+
+   if !Empty( dbfFPago )
+      ( dbfFPago   )->( dbCloseArea() )
+   end
+
+   if !Empty( dbfAgent )
+      ( dbfAgent   )->( dbCloseArea() )
+   end
+
+   if !Empty( dbfCli )
+      ( dbfCli     )->( dbCloseArea() )
+   end
+
+   if !Empty( dbfAntCliI )
+      ( dbfAntCliI )->( dbCloseArea() )
+   end
+
+   if !Empty( dbfAntCliD )
+      ( dbfAntCliD )->( dbCloseArea() )
+   end
+
+   if !Empty( dbfDiv )
+      ( dbfDiv     )->( dbCloseArea() )
+   end
+
+   if !Empty( dbfObrasT )
+      ( dbfObrasT  )->( dbCloseArea() )
+   end
+
+   if !Empty( dbfDoc )
+      ( dbfDoc     )->( dbCloseArea() )
+   end
+
+   if !Empty( dbfCajT )
+      ( dbfCajT    )->( dbCloseArea() )
+   end
+
+   if !Empty( dbfAlmT )
+      ( dbfAlmT    )->( dbCloseArea() )
+   end
+
+   if !Empty( dbfUsr )
+      ( dbfUsr )->( dbCloseArea() )
+   end
+
+   if !Empty( dbfCount )
+      ( dbfCount   )->( dbCloseArea() )
+   end
+
+   if dbfInci <> nil
+      ( dbfInci )->( dbCloseArea() )
+   end
+
+   if dbfDelega <> nil
+      ( dbfDelega )->( dbCloseArea() )
+   end
+
+   if !Empty( dbfFlt )
+      ( dbfFlt )->( dbCloseArea() )
+   end
+
+   if !Empty( dbfAgeCom )
+      ( dbfAgeCom )->( dbCloseArea() )
+   end
+
+   if !Empty( dbfEmp )
+      ( dbfEmp )->( dbCloseArea() )
+   end
+
+   if dbfCliInc <> nil
+      ( dbfCliInc )->( dbCloseArea() )
+   end
+
+   if !Empty( dbfTikCliT )
+      ( dbfTikCliT )->( dbCloseArea() )
+   end
+
+   if !Empty( dbfFacCliP )
+      ( dbfFacCliP )->( dbCloseArea() )
+   end
+
+   if !Empty( dbfAlbCliT )
+      ( dbfAlbCliT )->( dbCloseArea() )
+   end
+
+   if !Empty( dbfFacCliT )
+      ( dbfFacCliT )->( dbCloseArea() )
+   end
+
+   if !Empty( oStock )
+      oStock:end()
+   end
+
+   dbfIva      := nil
+   dbfFPago    := nil
+   dbfAgent    := nil
+   dbfCli      := nil
+   dbfAntCliT  := nil
+   dbfAntCliI  := nil
+   dbfAntCliD  := nil
+   dbfInci     := nil
+   dbfDiv      := nil
+   oBandera    := nil
+   dbfObrasT   := nil
+   dbfDoc      := nil
+   dbfCajT     := nil
+   dbfAlmT     := nil
+   dbfUsr      := nil
+   dbfCount    := nil
+   dbfDelega   := nil
+   dbfFlt      := nil
+   dbfAgeCom   := nil
+   dbfEmp      := nil
+   dbfCliInc   := nil
+
+   oWndBrw     := nil
+
+   lOpenFiles  := .F.
+
+RETURN .T.
+
+
+
+FUNCTION FacAntCli( oMenuItem, oWnd, cCodCli )
+
+   local oRpl
+   local oSnd
+   local oImp
+   local oPrv
+   local oDel
+   local oPdf
+   local oMail
+   local oBtnEur
+   local lEuro          := .F.
+   local nLevel
+   local oRotor
+
+   IIF( oMenuItem == nil, oMenuItem := "01181", ) ;
+   IIF( oWnd == nil, oWnd := oWnd(), ) ;
+   IIF( cCodCli == nil, cCodCli := nil, ) ;
+
+   nLevel               := nLevelUsr( oMenuItem )
+   if nAnd( nLevel, 1 ) <> 0
+      msgStop( "Acceso no permitido." )
+      Return Nil
+   end
+
+
+
+
+
+   if oWnd <> nil
+      SysRefresh(); oWnd:CloseAll(); SysRefresh()
+   end
+
+   if !OpenFiles()
+      Return .F.
+   end
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+   oWndBrw := TShell():New( 0, 0, 22, 80, "Facturas de anticipos a clientes",, oWnd,,, .F.,,, ( dbfAntCliT ),,,,, {"Número", "Fecha", "Código", "Nombre", "Obra"}, {||( WinAppRec( oWndBrw:oBrw, bEdtRec, dbfAntCliT, cCodCli ) )}, {||( WinEdtRec( oWndBrw:oBrw, bEdtRec, dbfAntCliT, cCodCli ) )}, {||( WinDelRec( oWndBrw:oBrw, dbfAntCliT, {|| QuiAntCli() } ) )}, {||( WinDupRec( oWndBrw:oBrw, bEdtRec, dbfAntCliT, cCodCli ) )}, nil, nLevel, "Document_money2_16", ( 104 + ( 0 * 256 ) + ( 63 * 65536 ) ),,, .T. )
+
+      oWndBrw:lFechado     := .T.
+
+      oWndBrw:bChgIndex    := {|| if( oUser():lFiltroVentas(), CreateFastFilter( cFiltroUsuario, dbfAntCliT, .F., , cFiltroUsuario ), CreateFastFilter( "", dbfAntCliT, .F. ) ) }
+
+      oWndBrw:SetYearComboBoxChange( {|| YearComboBoxChange() } )
+
+      with object ( oWndBrw:AddXCol() )
+         :cHeader          := "Sesión cerrada"
+         :nHeadBmpNo       := 3
+         :bStrData         := {|| "" }
+         :bEditValue       := {|| ( dbfAntCliT )->lCloAnt }
+         :nWidth           := 20
+         :bLDClickData     := {|| oWndBrw:RecEdit() }
+         :SetCheck( { "Sel16", "Nil16" } )
+         :AddResource( "Zoom16" )
+      end
+
+      with object ( oWndBrw:AddXCol() )
+         :cHeader          := "Contabilizado"
+         :nHeadBmpNo       := 3
+         :bStrData         := {|| "" }
+         :bEditValue       := {|| ( dbfAntCliT )->lContab }
+         :nWidth           := 20
+         :bLDClickData     := {|| oWndBrw:RecEdit() }
+         :SetCheck( { "Sel16", "Nil16" } )
+         :AddResource( "BmpConta16" )
+      end
+
+      with object ( oWndBrw:AddXCol() )
+         :cHeader          := "Envio"
+         :nHeadBmpNo       := 3
+         :bStrData         := {|| "" }
+         :bEditValue       := {|| ( dbfAntCliT )->lSndDoc }
+         :nWidth           := 20
+         :bLDClickData     := {|| oWndBrw:RecEdit() }
+         :SetCheck( { "Sel16", "Nil16" } )
+         :AddResource( "Lbl16" )
+      end
+
+      with object ( oWndBrw:AddXCol() )
+         :cHeader          := "Liquidada"
+         :nHeadBmpNo       := 3
+         :bStrData         := {|| "" }
+         :bEditValue       := {|| ( dbfAntCliT )->lLiquidada }
+         :nWidth           := 20
+         :bLDClickData     := {|| oWndBrw:RecEdit() }
+         :SetCheck( { "Sel16", "Cnt16" } )
+         :AddResource( "ChgPre16" )
+      end
+
+      with object ( oWndBrw:AddXCol() )
+         :cHeader          := "Incidencia"
+         :nHeadBmpNo       := 4
+         :bStrData         := {|| "" }
+         :bBmpData         := {|| nEstadoIncidencia( ( dbfAntCliT )->cSerAnt + Str( ( dbfAntCliT )->nNumAnt ) + ( dbfAntCliT )->cSufAnt ) }
+         :nWidth           := 20
+         :lHide            := .T.
+         :bLDClickData     := {|| oWndBrw:RecEdit() }
+         :AddResource( "Bullet_Square_Red_16" )
+         :AddResource( "Bullet_Square_Yellow_16" )
+         :AddResource( "Bullet_Square_Green_16" )
+         :AddResource( "informacion_16" )
+      end
+
+      with object ( oWndBrw:AddXCol() )
+         :cHeader          := "Número"
+         :cSortOrder       := "nNumAnt"
+         :bEditValue       := {|| ( dbfAntCliT )->cSerAnt + "/" + Alltrim( Str( ( dbfAntCliT )->nNumAnt ) ) + "/" + ( dbfAntCliT )->cSufAnt }
+         :nWidth           := 80
+         :bLClickHeader    := {| nMRow, nMCol, nFlags, oCol | oWndBrw:ClickOnHeader( oCol ) }
+         :bLDClickData     := {|| oWndBrw:RecEdit() }
+      end
+
+      with object ( oWndBrw:AddXCol() )
+         :cHeader          := "Delegación"
+         :bEditValue       := {|| ( dbfAntCliT )->cCodDlg }
+         :nWidth           := 20
+         :lHide            := .T.
+         :bLDClickData     := {|| oWndBrw:RecEdit() }
+      end
+
+      with object ( oWndBrw:AddXCol() )
+         :cHeader          := "Sesión"
+         :bEditValue       := {|| Trans( ( dbfAntCliT )->cTurAnt, "######" ) }
+         :nWidth           := 40
+         :lHide            := .T.
+         :nDataStrAlign    := 1
+         :nHeadStrAlign    := 1
+         :bLDClickData     := {|| oWndBrw:RecEdit() }
+      end
+
+      with object ( oWndBrw:AddXCol() )
+         :cHeader          := "Fecha"
+         :cSortOrder       := "dFecAnt"
+         :bEditValue       := {|| Dtoc( ( dbfAntCliT )->dFecAnt ) }
+         :nWidth           := 80
+         :bLClickHeader    := {| nMRow, nMCol, nFlags, oCol | oWndBrw:ClickOnHeader( oCol ) }
+         :bLDClickData     := {|| oWndBrw:RecEdit() }
+      end
+
+      with object ( oWndBrw:AddXCol() )
+         :cHeader          := "Caja"
+         :bEditValue       := {|| ( dbfAntCliT )->cCodCaj }
+         :nWidth           := 40
+         :lHide            := .T.
+      end
+
+      with object ( oWndBrw:AddXCol() )
+         :cHeader          := "Usuario"
+         :bEditValue       := {|| ( dbfAntCliT )->cCodUsr }
+         :nWidth           := 40
+         :lHide            := .T.
+      end
+
+      with object ( oWndBrw:AddXCol() )
+         :cHeader          := "Código"
+         :cSortOrder       := "cCodCli"
+         :bEditValue       := {|| AllTrim( ( dbfAntCliT )->cCodCli ) }
+         :nWidth           := 70
+         :bLClickHeader    := {| nMRow, nMCol, nFlags, oCol | oWndBrw:ClickOnHeader( oCol ) }
+         :bLDClickData     := {|| oWndBrw:RecEdit() }
+      end
+
+      with object ( oWndBrw:AddXCol() )
+         :cHeader          := "Nombre"
+         :cSortOrder       := "cNomCli"
+         :bEditValue       := {|| AllTrim( ( dbfAntCliT )->cNomCli ) }
+         :nWidth           := 180
+         :bLClickHeader    := {| nMRow, nMCol, nFlags, oCol | oWndBrw:ClickOnHeader( oCol ) }
+         :bLDClickData     := {|| oWndBrw:RecEdit() }
+      end
+
+      with object ( oWndBrw:AddXCol() )
+         :cHeader          := "Población"
+         :bEditValue       := {|| AllTrim( ( dbfAntCliT )->cPobCli ) }
+         :nWidth           := 180
+         :lHide            := .T.
+         :bLDClickData     := {|| oWndBrw:RecEdit() }
+      end
+
+      with object ( oWndBrw:AddXCol() )
+         :cHeader          := "Agente"
+         :bEditValue       := {|| ( dbfAntCliT )->cCodAge }
+         :nWidth           := 50
+         :bLDClickData     := {|| oWndBrw:RecEdit() }
+      end
+
+      with object ( oWndBrw:AddXCol() )
+         :cHeader          := "Ruta"
+         :bEditValue       := {|| ( dbfAntCliT )->cCodRut }
+         :nWidth           := 40
+         :bLDClickData     := {|| oWndBrw:RecEdit() }
+      end
+
+      with object ( oWndBrw:AddXCol() )
+         :cHeader          := "Almacén"
+         :bEditValue       := {|| ( dbfAntCliT )->cCodAlm }
+         :nWidth           := 60
+         :bLDClickData     := {|| oWndBrw:RecEdit() }
+      end
+
+      with object ( oWndBrw:AddXCol() )
+         :cHeader          := "Obra"
+         :cSortOrder       := "cCodObr"
+         :bEditValue       := {|| ( dbfAntCliT )->cCodObr }
+         :nWidth           := 40
+         :bLClickHeader    := {| nMRow, nMCol, nFlags, oCol | oWndBrw:ClickOnHeader( oCol ) }
+         :bLDClickData     := {|| oWndBrw:RecEdit() }
+      end
+
+      with object ( oWndBrw:AddXCol() )
+         :cHeader          := "Base"
+         :bEditValue       := {|| ( dbfAntCliT )->nTotNet }
+         :cEditPicture     := cPorDiv( ( dbfAntCliT )->cDivAnt, dbfDiv )
+         :nWidth           := 80
+         :nDataStrAlign    := 1
+         :nHeadStrAlign    := 1
+         :lHide            := .T.
+      end
+
+      with object ( oWndBrw:AddXCol() )
+         :cHeader          := cImp()
+         :bEditValue       := {|| ( dbfAntCliT )->nTotIva }
+         :cEditPicture     := cPorDiv( ( dbfAntCliT )->cDivAnt, dbfDiv )
+         :nWidth           := 80
+         :nDataStrAlign    := 1
+         :nHeadStrAlign    := 1
+         :lHide            := .T.
+      end
+
+      with object ( oWndBrw:AddXCol() )
+         :cHeader          := "R.E."
+         :bEditValue       := {|| ( dbfAntCliT )->nTotReq }
+         :cEditPicture     := cPorDiv( ( dbfAntCliT )->cDivAnt, dbfDiv )
+         :nWidth           := 80
+         :nDataStrAlign    := 1
+         :nHeadStrAlign    := 1
+         :lHide            := .T.
+      end
+
+      with object ( oWndBrw:AddXCol() )
+         :cHeader          := "Total"
+         :bEditValue       := {|| ( dbfAntCliT )->nTotAnt }
+         :cEditPicture     := cPorDiv( ( dbfAntCliT )->cDivAnt, dbfDiv )
+         :nWidth           := 80
+         :nDataStrAlign    := 1
+         :nHeadStrAlign    := 1
+      end
+
+      with object ( oWndBrw:AddXCol() )
+         :cHeader          := "Div."
+         :bEditValue       := {|| cSimDiv( if( lEuro, cDivChg(), ( dbfAntCliT )->cDivAnt ), dbfDiv ) }
+         :nWidth           := 30
+         :nDataStrAlign    := 1
+         :nHeadStrAlign    := 1
+         :bLDClickData     := {|| oWndBrw:RecEdit() }
+      end
+
+      with object ( oWndBrw:AddXCol() )
+         :cHeader          := "Documento"
+         :bEditValue       := {|| Trans( ( dbfAntCliT )->cNumDoc, "@R #/#########/##" ) }
+         :nWidth           := 60
+         :lHide            := .T.
+         :bLDClickData     := {|| oWndBrw:RecEdit() }
+      end
+
+   oWndBrw:CreateXFromCode()
+
+
+
+
+
+   oWndBrw:NewAt( "BUS",,, {||( oWndBrw:SearchSetFocus() )}, "(B)uscar", "B",,,,, .F. )
+
+   oWndBrw:AddSeaBar()
+
+
+
+
+
+
+
+
+   oWndBrw:NewAt( "NEW",,, {||( oWndBrw:RecAdd() )}, "(A)ñadir", "A",,, 2,, .F. )
+
+
+
+
+
+
+   oWndBrw:NewAt( "DUP",,, {||( oWndBrw:RecDup() )}, "(D)uplicar", "D",,, 2,, .F. )
+
+
+
+
+
+
+
+   oWndBrw:NewAt( "EDIT",,, {||( oWndBrw:RecEdit() )}, "(M)odificar", "M",,, 4,, .F. )
+
+
+
+
+
+
+
+   oWndBrw:NewAt( "ZOOM",,, {||( WinZooRec( oWndBrw:oBrw, bEdtRec, dbfAntCliT ) )}, "(Z)oom", "Z",,, 8,, .F. )
+
+
+
+
+
+
+   oDel := oWndBrw:NewAt( "DEL",,, {||( WinDelRec( oWndBrw:oBrw, dbfAntCliT, {|| QuiAntCli() } ) )}, "(E)liminar", "E",,, 16,, .F. )
+
+
+
+
+
+
+
+      oWndBrw:NewAt( "DEL",,, {||( DelSerie( oWndBrw ) )}, "Series",,,, 16, oDel, .F. )
+
+
+
+
+
+
+
+   oImp := oWndBrw:NewAt( "IMP",,, {||( GenAntCli( 1 ) )}, "(I)mprimir", "I",, {|This|This:Toggle()}, 32,, .F. )
+
+
+      lGenAntCli( oWndBrw:oBrw, oImp, 1 )
+
+
+
+
+
+   oWndBrw:NewAt( "SERIE1",,, {||PrnSerie()}, "Imp(r)imir series", "R",,, 32,, .F. )
+
+
+
+
+
+
+
+   oPrv := oWndBrw:NewAt( "PREV1",,, {||( GenAntCli( 2 ), oWndBrw:Refresh() )}, "(P)revisualizar", "P",, {|This|This:Toggle()}, 32,, .F. )
+
+
+      lGenAntCli( oWndBrw:oBrw, oPrv, 2 )
+
+
+
+
+
+
+   oPdf := oWndBrw:NewAt( "DOCLOCK",,, {||( GenAntCli( 3 ) )}, "Pd(f)", "F",, {|This|This:Toggle()}, 32,, .F. )
+
+
+      lGenAntCli( oWndBrw:oBrw, oPdf, 3 )
+
+
+
+
+
+   oMail := oWndBrw:NewAt( "Mail",,, {||( GenAntCli( 6 ) )}, "Correo electrónico",,, {|This|This:Toggle()}, 32,, .F. )
+
+
+      lGenAntCli( oWndBrw:oBrw, oMail, 6 )
+
+
+
+
+
+   oWndBrw:NewAt( "BMPCONTA",,, {||( aGetSelRec( oWndBrw, {|lChk1, lChk2, oTree| ContabilizarAnticipos( lChk1, lChk2, oTree ) }, "Contabilizar anticipos", .F., "Simular resultados", .T., , , {|| oDiario() }, {|| cDiario() } ) )}, "(C)ontabilizar", "C",,, 4,, .F. )
+
+   if lUsrMaster()
+
+
+
+
+
+
+   oWndBrw:NewAt( "CHGSTATE",,, {||( aGetSelRec( oWndBrw, {| lChk1, lChk2, oTree| CambiarEstado( lChk1, lChk2, oTree ) }, "Cambiar estado", .F., "Contabilizado", .T. ) )}, "Cambiar es(t)ado", "T",,, 4,, .F. )
+
+
+
+
+
+   oWndBrw:NewAt( "CHGSTATE",,, {||( aGetSelRec( oWndBrw, {| lChk1, lChk2, oTree| CambiarLiquidado( lChk1, lChk2, oTree ) }, "Cambiar liquidación", .F., "Liquidación", .T. ) )}, "Cambiar liquidación",,,, 4,, .F. )
+
+   end
+
+
+
+
+
+
+
+
+   oSnd := oWndBrw:NewAt( "LBL",, "Seleccionar albaranes para ser enviados", {||lSnd( oWndBrw, dbfAntCliT )}, "En(v)iar", "V",, {|This|This:Toggle()}, 4,, .F. )
+
+
+
+
+
+
+
+      oWndBrw:NewAt( "LBL",,, {||( lSelectAll( oWndBrw, dbfAntCliT, "lSndDoc", .T., .T., .T. ) )}, "Todos",,,, 4, oSnd, .F. )
+
+
+
+
+
+
+
+      oWndBrw:NewAt( "LBL",,, {||( lSelectAll( oWndBrw, dbfAntCliT, "lSndDoc", .F., .T., .T. ) )}, "Ninguno",,,, 4, oSnd, .F. )
+
+
+
+
+
+
+
+      oWndBrw:NewAt( "LBL",,, {||( lSelectAll( oWndBrw, dbfAntCliT, "lSndDoc", .T., .F., .T. ) )}, "Abajo",,,, 4, oSnd, .F. )
+
+
+
+
+
+
+   oBtnEur := oWndBrw:NewAt( "BAL_EURO",,, {||( lEuro := !lEuro, oWndBrw:Refresh() )}, "M(o)neda", "O",,, 8,, .F. )
+
+   if oUser():lAdministrador()
+
+
+
+
+
+      oRpl := oWndBrw:NewAt( "BMPCHG",,, {||( TDlgFlt():New( aItmAntCli(), dbfAntCliT ):ChgFields(), oWndBrw:Refresh() )}, "Cambiar campos",,,, 4,, .F. )
+
+   end
+
+
+
+
+
+
+   oRotor := oWndBrw:NewAt( "ROTOR",,, {||( oRotor:Expand() )}, "Rotor",,, {|This|This:Toggle()},,, .F. )
+
+
+
+
+
+
+      oWndBrw:NewAt( "USER1_",,, {||( EdtCli( ( dbfAntCliT )->cCodCli ) )}, "Modificar cliente",,,,, oRotor, .F. )
+
+
+
+
+
+
+      oWndBrw:NewAt( "INFO",,, {||( InfCliente( ( dbfAntCliT )->cCodCli ) )}, "Informe de cliente",,,,, oRotor, .F. )
+
+
+
+
+
+
+      oWndBrw:NewAt( "WORKER",,, {||( EdtObras( ( dbfAntCliT )->cCodCli, ( dbfAntCliT )->cCodObr, dbfObrasT ) )}, "Modificar obra",,,,, oRotor, .F. )
+
+
+
+
+
+
+      oWndBrw:NewAt( "DOCUMENT_PLAIN_USER1_",,, {||( if( !Empty( ( dbfAntCliT )->cNumDoc ), ZooFacCli( ( dbfAntCliT )->cNumDoc ), MsgStop( "Este documento no esta liquidado" ) ) )}, "Visualizar factura",,,,, oRotor, .F. )
+
+
+
+
+   oWndBrw:NewAt( "END",,, {||( oWndBrw:End() )}, "(S)alir", "S",,,,, .T. )
+
+   if !oUser():lFiltroVentas()
+      oWndBrw:oActiveFilter:aTField       := aItmAntCli()
+      oWndBrw:oActiveFilter:cDbfFilter    := dbfFlt
+      oWndBrw:oActiveFilter:cTipFilter    := "13"
+   end
+
+   oWndBrw:Activate(, oWndBrw:bLClicked, oWndBrw:bRClicked, oWndBrw:bMoved, oWndBrw:bResized, oWndBrw:bPainted, oWndBrw:bKeyDown, oWndBrw:bInit,,,,,,,,, {|| ( CloseFiles() )},, oWndBrw:bLButtonUp )
+
+   if !Empty( cCodCli )
+      oWndBrw:RecAdd()
+      cCodCli        := {}
+   end
+
+Return .T.
+
+
+
+STATIC FUNCTION EdtRec( aTmp, aGet, dbfAntCliT, oBrw, cCodCli, bValid, nMode, cSerAnt )
+
+   local oDlg
+    local oFld
+   local nOrd
+   local oBrwInc
+   local oBrwDoc
+    local oFont
+   local oSay        := Array( 8 )
+   local cSay        := Array( 8 )
+   local oRieCli
+   local oBmpDiv
+   local oGetMasDiv
+   local cGetMasDiv  := ""
+   local oGetSubCta
+   local cGetSubCta  := ""
+   local nRieCli     := 0
+   local oBmpGeneral
+
+   IIF( cCodCli == nil, cCodCli := nil, ) ;
+   IIF( cSerAnt == nil, cSerAnt := cNewSer( "NANTCLI", dbfCount ), ) ;
+
+   do case
+   case nMode == 1
+
+      if !lCurSesion()
+         msgStop( "No hay sesiones activas, imposible añadir documentos" )
+         Return .F.
+      end
+
+      if !lCajaOpen( oUser():cCaja() ) .AND. !oUser():lAdministrador()
+         msgStop( "Esta caja " + oUser():cCaja() + " esta cerrada." )
+         Return .F.
+      end
+
+      aTmp[ 4  ]    := cCurSesion()
+      aTmp[ 7  ]    := oUser():cAlmacen()
+      aTmp[ 8  ]    := oUser():cCaja()
+      aTmp[ 49  ]    := cCurUsr()
+      aTmp[ 31 ]    := cDefFpg()
+      aTmp[ 37  ]    := cDivEmp()
+      aTmp[ 38  ]    := nChgDiv( aTmp[ 37 ], dbfDiv )
+      aTmp[ 3  ]    := RetSufEmp()
+      aTmp[ 36  ]    := .T.
+      aTmp[ 43  ]    := cProCnt()
+      aTmp[ 35  ]    := .T.
+      aTmp[ 45  ]    := nIva( dbfIva, cDefIva() )
+      aTmp[ 54     ]    := nReq( dbfIva, cDefIva() )
+      aTmp[ 55  ]    := oUser():cDelegacion()
+
+      if !Empty( cCodCli )
+         aTmp[ 6 ]  := cCodCli
+      end
+
+   case nMode == 4
+
+      if !lCurSesion()
+         msgStop( "No hay sesiones activas, imposible añadir documentos" )
+         Return .F.
+      end
+
+      if !lCajaOpen( oUser():cCaja() ) .AND. !oUser():lAdministrador()
+         msgStop( "Esta caja " + oUser():cCaja() + " esta cerrada." )
+         Return .F.
+      end
+
+      aTmp[ 5    ]  := GetSysDate()
+      aTmp[ 48    ]  := .F.
+      aTmp[ 36    ]  := .T.
+      aTmp[ 22 ]  := .F.
+      aTmp[ 41    ]  := ""
+
+   case nMode == 2
+
+      if aTmp[ 22 ] .AND. !oUser():lAdministrador()
+         msgStop( "No se pueden modificar las anticipos liquidados." )
+         return .F.
+      end
+
+      if aTmp[ 48 ] .AND. !oUser():lAdministrador()
+         msgStop( "Solo puede modificar las anticipos cerradas los administradores." )
+         return .F.
+      end
+
+
+      if aTmp[ 26 ] .AND. !ApoloMsgNoYes( "La modificación de este anticipo puede provocar descuadres contables." + Chr(13)+Chr(10) + "¿ Desea continuar ?", "Anticipo ya contabilizada" )
+         return .F.
+      end
+
+   end
+
+
+
+
+
+   cOldCodCli              := aTmp[ 6 ]
+
+   cSay[ 2 ]               := RetFld( aTmp[ 7 ], dbfAlmT )
+   cSay[ 3 ]               := RetFld( aTmp[ 18 ], dbfAgent )
+   cSay[ 4 ]               := RetFld( aTmp[ 31], dbfFPago )
+   cSay[ 5 ]               := RetFld( aTmp[ 6 ] + aTmp[ 20 ], dbfObrasT, "cNomObr" )
+   cSay[ 6 ]               := RetFld( aTmp[ 8 ], dbfCajT )
+   cSay[ 7 ]               := RetFld( cCodEmp() + aTmp[ 55 ], dbfDelega, "cNomDlg" )
+
+
+
+
+
+   nOrd                    := ( dbfAntCliT )->( ordSetFocus( 1 ) )
+
+
+
+
+
+   if Empty( Rtrim( aTmp[1] ) )
+      aTmp[ 1 ]     := cSerAnt
+   end
+
+   if Empty( aTmp[ 37 ] )
+      aTmp[ 37 ]     := cDivEmp()
+   end
+
+   if Empty( aTmp[ 56 ] )
+      aTmp[ 56 ]     := RetFld( aTmp[ 6 ], dbfCli, "Telefono" )
+   end
+
+   nRieCli                 := oStock:nRiesgo( aTmp[ 6 ] )
+
+
+
+
+
+   BeginTrans( aTmp, nMode )
+
+   cPicUnd                 := MasUnd()
+   cPouDiv                 := cPouDiv( aTmp[ 37 ], dbfDiv )
+   cPorDiv                 := cPorDiv( aTmp[ 37 ], dbfDiv )
+   nDouDiv                 := nDouDiv( aTmp[ 37 ], dbfDiv )
+   nRouDiv                 := nRouDiv( aTmp[ 37 ], dbfDiv )
+
+   oFont                   := TFont():New( "Arial", 8, 26, .F., .T. )
+
+   oDlg = TDialog():New(,,,, LblTitle( nMode ) + "anticipos a clientes", "AntCli",, .F.,,,,,, .F.,,,,,, .F., )
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+      oFld := TFolder():ReDefine( 400, {"&Anticipo", "&Incidencias", "D&ocumentos"}, { "AntCli_1","PedCli_3","PedCli_4" }, oDlg,,,,, .F., )
+
+
+
+
+
+      oBmpGeneral := TBitmap():ReDefine( 990, "anticipo_cliente_48_alpha",, oFld:aDialogs[1],,, .F., .F.,,, .F.,,, .T. )
+
+
+
+
+
+      oBmpGeneral := TBitmap():ReDefine( 990, "information_48_alpha",, oFld:aDialogs[2],,, .F., .F.,,, .F.,,, .T. )
+
+
+
+
+
+      oBmpGeneral := TBitmap():ReDefine( 990, "address_book2_alpha_48",, oFld:aDialogs[3],,, .F., .F.,,, .F.,,, .T. )
+
+
+
+
+
+
+
+
+
+
+      aGet[ 1 ] := TGetHlp():ReDefine( 100, { | u | If( PCount()==0, aTmp[ 1 ], aTmp[ 1 ]:= u ) }, oFld:aDialogs[1],, "@!", {||    ( aTmp[1] >= "A" .AND. aTmp[1] <= "Z" )}, "N/W*",,,,, .F., {||     ( nMode == 1 .OR. nMode == 4 )},, .F., .T., {||    ( UpSerie( aGet[ 1 ] ) )}, {||  ( DwSerie( aGet[ 1 ] ) )},,,, nil,,, )
+
+         aGet[ 1 ]:bLostFocus := {|| aTmp[ 43 ] := cProCnt( aTmp[ 1 ] ) }
+
+
+
+
+
+      aGet[2] := TGetHlp():ReDefine( 110, { | u | If( PCount()==0, aTmp[2], aTmp[2]:= u ) }, oFld:aDialogs[1],, "999999999",,,,,,, .F., {||         .F.},, .F., .F.,,,,,, nil,,, )
+
+
+
+
+
+      aGet[3] := TGetHlp():ReDefine( 120, { | u | If( PCount()==0, aTmp[3], aTmp[3]:= u ) }, oFld:aDialogs[1],, "@!",,,,,,, .F., {||      ( .F. )},, .F., .F.,,,,,, nil,,, )
+
+
+
+
+
+
+
+      aGet[5 ] := TGetHlp():ReDefine( 130, { | u | If( PCount()==0, aTmp[5 ], aTmp[5 ]:= u ) }, oFld:aDialogs[1],,,, "N/W*",,,,, .F., {||         ( nMode <> 3 )},, .F., .T.,,,,, {|Self|aGet[5]:cText( Calendario( aTmp[5] ) )}, nil,,, )
+
+
+
+
+
+
+
+
+
+      aGet[ 49 ] := TGetHlp():ReDefine( 115, { | u | If( PCount()==0, aTmp[ 49 ], aTmp[ 49 ]:= u ) }, oFld:aDialogs[1],,, {||    ( SetUsuario( aGet[ 49 ], oSay[ 8 ], nil, dbfUsr ) )},,,,,, .F., {||     ( .F. )},, .F., .F.,,,,,, nil,,, )
+
+
+
+
+      oSay[ 8 ] := TGetHlp():ReDefine( 116, { | u | If( PCount()==0, cSay[ 8 ], cSay[ 8 ]:= u ) }, oFld:aDialogs[1],,,,,,,,, .F., {||     ( .F. )},, .F., .F.,,,,,, nil,,, )
+
+
+
+
+
+
+
+
+
+
+
+
+
+      aGet[ 37 ] := TGetHlp():ReDefine( 140, { | u | If( PCount()==0, aTmp[ 37 ], aTmp[ 37 ]:= u ) }, oFld:aDialogs[1],, "@!", {||    ( cDivOut( aGet[ 37 ], oBmpDiv, aTmp[ 38 ], @cPouDiv, @nDouDiv, @cPorDiv, @nRouDiv, nil, nil, oGetMasDiv, dbfDiv, oBandera ) )}, "N/W*",,,,, .F., {||     ( nMode == 1 )},, .F., .F.,,,,, {|Self|BrwDiv( aGet[ 37 ], oBmpDiv, aTmp[ 38 ], dbfDiv, oBandera )}, nil, "LUPA",, )
+
+
+
+
+        oBmpDiv := TBitmap():ReDefine( 141, "BAN_EURO",, oFld:aDialogs[1],,, .F., .F.,,, .F.,,, .F. )
+
+
+
+
+
+      aGet[35] := TCheckBox():ReDefine( 150, { | u | If( PCount()==0, aTmp[35], aTmp[35]:= u ) }, oFld:aDialogs[1],, {||( nRecTot( aTmp ) )},,,,, .F., {||     ( nMode <> 3 )}, .F. )
+
+
+
+
+      aGet[22] := TCheckBox():ReDefine( 151, { | u | If( PCount()==0, aTmp[22], aTmp[22]:= u ) }, oFld:aDialogs[1],,,,,,, .F., {||     ( .F. )}, .F. )
+
+
+
+
+
+      aGet[ 23 ] := TGetHlp():ReDefine( 152, { | u | If( PCount()==0, aTmp[ 23 ], aTmp[ 23 ]:= u ) }, oFld:aDialogs[1],,,,,,,,, .F., {||         ( nMode <> 3 )},, .F., .T.,,,,,, nil,,, )
+
+
+
+
+
+
+
+
+        aGet[6] := TGetHlp():ReDefine( 160, { | u | If( PCount()==0, aTmp[6], aTmp[6]:= u ) }, oFld:aDialogs[1],,, {||    ( if( !Empty( aTmp[ 6 ] ), loaCli( aGet, aTmp, nMode, oRieCli ), .T. ) )}, "N/W*",,,,, .F., {||     ( nMode <> 3 )},, .F., .F.,,,,, {|Self|( BrwClient( aGet[6], aGet[9] ), ::lValid() )}, nil, "LUPA",, )
+
+
+
+
+
+      oRieCli := TGetHlp():ReDefine( 161, { | u | If( PCount()==0, nRieCli, nRieCli:= u ) }, oFld:aDialogs[1],, cPorDiv,,,,,,, .F., {||     ( nMode <> 3 )},, .F., .F.,,,,,, nil,,, )
+
+
+
+
+
+      aGet[9] := TGetHlp():ReDefine( 170, { | u | If( PCount()==0, aTmp[9], aTmp[9]:= u ) }, oFld:aDialogs[1],,,, "N/W*",,,,, .F., {||     ( nMode <> 3 .AND. ( !aTmp[ 16 ] .OR. oUser():lAdministrador() ) )},, .F., .F.,,,,,, nil,,, )
+
+      if uFieldEmpresa( "nCifRut" ) == 1
+
+
+
+
+
+      aGet[ 15 ] := TGetHlp():ReDefine( 180, { | u | If( PCount()==0, aTmp[ 15 ], aTmp[ 15 ]:= u ) }, oFld:aDialogs[ 1 ],,, {||    ( CheckCif( aGet[ 15 ] ) )},,,,,, .F., {||     ( nMode <> 3 .AND. ( !aTmp[ 16 ] .OR. oUser():lAdministrador() ) )},, .F., .F.,,,,,, nil,,, )
+
+      else
+
+
+
+
+
+
+      aGet[ 15 ] := TGetHlp():ReDefine( 180, { | u | If( PCount()==0, aTmp[ 15 ], aTmp[ 15 ]:= u ) }, oFld:aDialogs[ 1 ],, "@R 999999999-9", {||    ( CheckRut( aGet[ 15 ] ) )},,,,,, .F., {||     ( nMode <> 3 .AND. ( !aTmp[ 16 ] .OR. oUser():lAdministrador() ) )},, .F., .F.,,,,,, nil,,, )
+
+      end
+
+
+
+
+
+
+      aGet[10] := TGetHlp():ReDefine( 190, { | u | If( PCount()==0, aTmp[10], aTmp[10]:= u ) }, oFld:aDialogs[1],,,,,,,,, .F., {||     ( nMode <> 3 .AND. ( !aTmp[ 16 ] .OR. oUser():lAdministrador() ) )},, .F., .F.,,,,, {|Self|GoogleMaps( aTmp[ 10 ], Rtrim( aTmp[ 11 ] ) + Space( 1 ) + Rtrim( aTmp[ 12 ] ) )}, nil, "Environnment_View_16",, )
+
+
+
+
+
+      aGet[14] := TGetHlp():ReDefine( 200, { | u | If( PCount()==0, aTmp[14], aTmp[14]:= u ) }, oFld:aDialogs[1],,,, "N/W*",,,,, .F., {||     ( nMode <> 3 .AND. ( !aTmp[ 16 ] .OR. oUser():lAdministrador() ) )},, .F., .F.,,,,,, nil,,, )
+
+
+
+
+
+      aGet[ 11 ] := TGetHlp():ReDefine( 210, { | u | If( PCount()==0, aTmp[ 11 ], aTmp[ 11 ]:= u ) }, oFld:aDialogs[1],,,, "N/W*",,,,, .F., {||     ( nMode <> 3 .AND. ( !aTmp[ 16 ] .OR. oUser():lAdministrador() ) )},, .F., .F.,,,,,, nil,,, )
+
+
+
+
+
+      aGet[ 12 ] := TGetHlp():ReDefine( 220, { | u | If( PCount()==0, aTmp[ 12 ], aTmp[ 12 ]:= u ) }, oFld:aDialogs[1],,,, "N/W*",,,,, .F., {||     ( nMode <> 3 .AND. ( !aTmp[ 16 ] .OR. oUser():lAdministrador() ) )},, .F., .F.,,,,,, nil,,, )
+
+
+
+
+
+
+      aGet[56] := TGetHlp():ReDefine( 225, { | u | If( PCount()==0, aTmp[56], aTmp[56]:= u ) }, oFld:aDialogs[1],,,, "N/W*",,,,, .F., {||     ( nMode <> 3 .AND. ( !aTmp[ 16 ] .OR. oUser():lAdministrador() ) )},, .F., .F.,,,,,, nil,,, )
+
+
+
+
+
+
+
+
+
+
+
+
+        aGet[20] := TGetHlp():ReDefine( 230, { | u | If( PCount()==0, aTmp[20], aTmp[20]:= u ) }, oFld:aDialogs[1],,, {||    ( cObras( aGet[20], oSay[ 5 ], aTmp[6], dbfObrasT ) )}, "N/W*",,,,, .F., {||         ( nMode <> 3 )},, .F., .F.,,,,, {|Self|( brwObras( aGet[20], oSay[ 5 ], aTmp[6], dbfObrasT ) )}, nil, "LUPA",, )
+
+
+
+
+      oSay[ 5 ] := TGetHlp():ReDefine( 231, { | u | If( PCount()==0, cSay[ 5 ], cSay[ 5 ]:= u ) }, oFld:aDialogs[1],,,,,,,,, .F., {||         .F.},, .F., .F.,,,,,, nil,,, )
+
+
+
+
+
+
+
+
+
+
+
+
+        aGet[7] := TGetHlp():ReDefine( 240, { | u | If( PCount()==0, aTmp[7], aTmp[7]:= u ) }, oFld:aDialogs[1],,, {||    ( cAlmacen( aGet[7], dbfAlmT, oSay[ 2 ] ) )}, "N/W*",,,,, .F., {||         ( nMode <> 3 )},, .F., .F.,,,,, {|Self|( BrwAlmacen( aGet[7], oSay[ 2 ] ) )}, nil, "LUPA",, )
+
+
+
+
+      oSay[ 2 ] := TGetHlp():ReDefine( 241, { | u | If( PCount()==0, cSay[ 2 ], cSay[ 2 ]:= u ) }, oFld:aDialogs[1],,,,,,,,, .F., {||         .F.},, .F., .F.,,,,,, nil,,, )
+
+
+
+
+
+
+
+
+
+
+
+
+
+      aGet[ 31 ] := TGetHlp():ReDefine( 250, { | u | If( PCount()==0, aTmp[ 31 ], aTmp[ 31 ]:= u ) }, oFld:aDialogs[1],, "@!", {||    ( cFPago( aGet[ 31 ], dbfFPago, oSay[ 4 ] ) )}, "N/W*",,,,, .F., {||     ( nMode <> 3 )},, .F., .F.,,,,, {|Self|( BrwFPago( aGet[ 31 ], oSay[ 4 ] ) )}, nil, "LUPA",, )
+
+
+
+
+      oSay[ 4 ] := TGetHlp():ReDefine( 251, { | u | If( PCount()==0, cSay[ 4 ], cSay[ 4 ]:= u ) }, oFld:aDialogs[1],,,,,,,,, .F., {||     .F.},, .F., .F.,,,,,, nil,,, )
+
+
+
+
+
+
+
+
+
+
+
+
+        aGet[18] := TGetHlp():ReDefine( 260, { | u | If( PCount()==0, aTmp[18], aTmp[18]:= u ) }, oFld:aDialogs[1],,, {||    ( cAgentes( aGet[18], dbfAgent, oSay[ 3 ], aGet[21], dbfAgeCom ) )}, "N/W*",,,,, .F., {||         ( nMode <> 3 )},, .F., .F.,,,,, {|Self|( BrwAgentes( aGet[18], oSay[ 3 ] ) )}, nil, "LUPA",, )
+
+
+
+
+
+      oSay[ 3 ] := TGetHlp():ReDefine( 261, { | u | If( PCount()==0, cSay[ 3 ], cSay[ 3 ]:= u ) }, oFld:aDialogs[1],,,, "N/W*",,,,, .F., {||         .F.},, .F., .F.,,,,,, nil,,, )
+
+
+
+
+
+        aGet[21] := TGetHlp():ReDefine( 270, { | u | If( PCount()==0, aTmp[21], aTmp[21]:= u ) }, oFld:aDialogs[1],, "@E 99.99",,,,,,, .F., {||         ( !Empty( aTmp[18] ) .AND. nMode <> 3 )},, .F., .F.,,,,,, nil,,, )
+
+
+
+
+      oGetAge := TGetHlp():ReDefine( 271, { | u | If( PCount()==0, nTotAge, nTotAge:= u ) }, oFld:aDialogs[1],,,,,,,,, .F., {||     ( nMode <> 3 )},, .F., .F.,,,,,, nil,,, )
+
+
+
+
+
+
+
+
+
+
+
+      aGet[ 8 ] := TGetHlp():ReDefine( 280, { | u | If( PCount()==0, aTmp[ 8 ], aTmp[ 8 ]:= u ) }, oFld:aDialogs[1],,, {||    cCajas( aGet[ 8 ], dbfCajT, oSay[ 6 ] )},,,,,, .F., {||         ( nMode <> 3 )},, .F., .F.,,,,, {|Self|( BrwCajas( aGet[ 8 ], oSay[ 6 ] ) )}, nil, "LUPA",, )
+
+
+
+
+      oSay[ 6 ] := TGetHlp():ReDefine( 281, { | u | If( PCount()==0, cSay[ 6 ], cSay[ 6 ]:= u ) }, oFld:aDialogs[1],,,,,,,,, .F., {||     .F.},, .F., .F.,,,,,, nil,,, )
+
+
+
+
+
+      aGet[ 29 ] := TMultiGet():ReDefine( 290, { | u | If( PCount()==0, aTmp[ 29 ], aTmp[ 29 ]:= u ) }, oFld:aDialogs[1],,,,,,, .F., {||     ( nMode <> 3 )}, .F.,, )
+
+
+
+
+
+
+
+
+      aGet[53] := TGetHlp():ReDefine( 350, { | u | If( PCount()==0, aTmp[53], aTmp[53]:= u ) }, oFld:aDialogs[1],, ( Replicate( "X", nLenSubcuentaContaplus() ) ), {||    ( MkSubCta( aGet[53], nil, oGetSubCta ) )},,,,,, .F., {||     ( nLenCuentaContaplus() <> 0 .AND. nMode <> 3 )},, .F., .F.,,,,, {|Self|( BrwChkSubCta( aGet[53], oGetSubCta ) )}, nil, "LUPA",, )
+
+
+
+
+        oGetSubCta := TGetHlp():ReDefine( 351, { | u | If( PCount()==0, cGetSubCta, cGetSubCta:= u ) }, oFld:aDialogs[1],,,,,,,,, .F., {||     .F.},, .F., .F.,,,,,, nil,,, )
+
+
+
+
+
+
+
+
+
+
+
+      aGet[ 30 ] := TGetHlp():ReDefine( 300, { | u | If( PCount()==0, aTmp[ 30 ], aTmp[ 30 ]:= u ) }, oFld:aDialogs[1],, cPorDiv, {||    ( nRecTot( aTmp ) )},,,,,, .F., {||     ( nMode <> 3 )},, .F., .F.,,,,,, nil,,, )
+
+
+
+
+
+
+
+
+      aGet[ 45 ] := TGetHlp():ReDefine( 310, { | u | If( PCount()==0, aTmp[ 45 ], aTmp[ 45 ]:= u ) }, oFld:aDialogs[1],, "@E 99.99", {||    ( lTiva( dbfIva, aTmp[ 45 ], @aTmp[ 46 ] ) .AND. nRecTot( aTmp ) )},,,,,, .F., {||     ( nMode <> 3 )},, .F., .F.,,,,, {|Self|( BrwIva( aGet[ 45 ], dbfIva, , .T. ) )}, nil, "LUPA",, )
+
+
+
+      oGetIva := TSay():ReDefine( 311, {|| nTotIva}, oFld:aDialogs[1],,,, .F.,, .F., .F. )
+
+
+
+
+
+
+        aGet[33] := TCheckBox():ReDefine( 320, { | u | If( PCount()==0, aTmp[33], aTmp[33]:= u ) }, oFld:aDialogs[1],, {||( nRecTot( aTmp ) )}, {||    ( nRecTot( aTmp ) )},,,, .F., {||     ( nMode <> 3 )}, .F. )
+
+
+
+      oGetReq := TSay():ReDefine( 321, {|| nTotReq}, oFld:aDialogs[1],,,, .F.,, .F., .F. )
+
+
+
+
+
+
+
+     aGet[ 47 ] := TGetHlp():ReDefine( 330, { | u | If( PCount()==0, aTmp[ 47 ], aTmp[ 47 ]:= u ) }, oFld:aDialogs[1],, "@E 999.99", {||    ( nRecTot( aTmp ) )},,,,,, .F., {||     ( nMode <> 3 )},, .F., .T.,,,,,, nil,,, )
+
+
+
+      oGetPctRet := TSay():ReDefine( 331, {|| nTotRet}, oFld:aDialogs[1],,,, .F.,, .F., .F. )
+
+
+
+
+      oGetMasDiv := TSay():ReDefine( 340, {|| cGetMasDiv}, oFld:aDialogs[1],,,, .F., oFont, .F., .F. )
+
+
+
+
+      oGetTotal := TSay():ReDefine( 341, {|| nTotAnt}, oFld:aDialogs[1],,,, .F., oFont, .F., .F. )
+
+
+
+
+      aGet[ 55 ] := TGetHlp():ReDefine( 400, { | u | If( PCount()==0, aTmp[ 55 ], aTmp[ 55 ]:= u ) }, oFld:aDialogs[1],,,,,,,,, .F., {||     ( .F. )},, .F., .F.,,,,,, nil,,, )
+
+
+
+
+      oSay[ 7 ] := TGetHlp():ReDefine( 401, { | u | If( PCount()==0, cSay[ 7 ], cSay[ 7 ]:= u ) }, oFld:aDialogs[1],,,,,,,,, .F., {||     ( .F. )},, .F., .F.,,,,,, nil,,, )
+
+
+
+
+
+      oBrwInc                 := IXBrowse():New( oFld:aDialogs[ 2 ] )
+
+      oBrwInc:bClrSel         := {|| { 0, ( 229 + ( 229 * 256 ) + ( 229 * 65536 ) ) } }
+      oBrwInc:bClrSelFocus    := {|| { 0, ( 167 + ( 205 * 256 ) + ( 240 * 65536 ) ) } }
+
+      oBrwInc:cAlias          := dbfTmpInc
+
+      oBrwInc:nMarqueeStyle   := 6
+      oBrwInc:cName           := "Factura de cliente.Incidencia"
+
+         with object ( oBrwInc:AddCol() )
+            :cHeader          := "Resuelta"
+            :bStrData         := {|| "" }
+            :bEditValue       := {|| ( dbfTmpInc )->lListo }
+            :nWidth           := 70
+            :SetCheck( { "Sel16", "Cnt16" } )
+         end
+
+         with object ( oBrwInc:AddCol() )
+            :cHeader          := "Código"
+            :bEditValue       := {|| ( dbfTmpInc )->cCodTip }
+            :nWidth           := 80
+         end
+
+         with object ( oBrwInc:AddCol() )
+            :cHeader          := "Incidencia"
+            :bEditValue       := {|| cNomInci( ( dbfTmpInc )->cCodTip, dbfInci ) }
+            :nWidth           := 250
+         end
+
+         with object ( oBrwInc:AddCol() )
+            :cHeader          := "Fecha"
+            :bEditValue       := {|| Dtoc( ( dbfTmpInc )->dFecInc ) }
+            :nWidth           := 100
+         end
+
+         with object ( oBrwInc:AddCol() )
+            :cHeader          := "Descripción"
+            :bEditValue       := {|| ( dbfTmpInc )->mDesInc }
+            :nWidth           := 500
+         end
+
+         if nMode <> 3
+            oBrwInc:bLDblClick   := {|| WinEdtRec( oBrwInc, bEdtInc, dbfTmpInc, nil, nil, aTmp ) }
+         else
+            oBrwInc:bLDblClick   := {|| WinZooRec( oBrwInc, bEdtInc, dbfTmpInc ) }
+         end
+
+         oBrwInc:CreateFromResource( 210 )
+
+
+
+
+
+      TButton():ReDefine( 500, {||( WinAppRec( oBrwInc, bEdtInc, dbfTmpInc, nil, nil, aTmp ) )}, oFld:aDialogs[ 2 ],,, .F., {||         ( nMode <> 3 )},,, .F. )
+
+
+
+
+
+      TButton():ReDefine( 501, {||( WinEdtRec( oBrwInc, bEdtInc, dbfTmpInc, nil, nil, aTmp ) )}, oFld:aDialogs[ 2 ],,, .F., {||         ( nMode <> 3 )},,, .F. )
+
+
+
+
+
+        TButton():ReDefine( 502, {||( DbDelRec( oBrwInc, dbfTmpInc, nil, nil, .T. ) )}, oFld:aDialogs[ 2 ],,, .F., {||         ( nMode <> 3 )},,, .F. )
+
+
+
+
+        TButton():ReDefine( 503, {||( WinZooRec( oBrwInc, bEdtInc, dbfTmpInc ) )}, oFld:aDialogs[ 2 ],,, .F.,,,, .F. )
+
+
+
+      oBrwDoc                 := TXBrowse():New( oFld:aDialogs[ 3 ] )
+
+      oBrwDoc:bClrSel         := {|| { 0, ( 229 + ( 229 * 256 ) + ( 229 * 65536 ) ) } }
+      oBrwDoc:bClrSelFocus    := {|| { 0, ( 167 + ( 205 * 256 ) + ( 240 * 65536 ) ) } }
+
+      oBrwDoc:cAlias          := dbfTmpDoc
+
+      oBrwDoc:nMarqueeStyle   := 6
+      oBrwDoc:nRowHeight      := 40
+      oBrwDoc:nDataLines      := 2
+
+      with object ( oBrwDoc:AddCol() )
+         :cHeader          := "Documento"
+         :bEditValue       := {|| Rtrim( ( dbfTmpDoc )->cNombre ) + Chr(13)+Chr(10) + Space( 5 ) + Rtrim( ( dbfTmpDoc )->cRuta ) }
+         :nWidth           := 960
+      end
+
+      if nMode <> 3
+         oBrwDoc:bLDblClick   := {|| ShellExecute( oDlg:hWnd, "open", Rtrim( ( dbfTmpDoc )->cRuta ) ) }
+      end
+
+      oBrwDoc:CreateFromResource( 210 )
+
+
+
+
+
+      TButton():ReDefine( 500, {||( WinAppRec( oBrwDoc, bEdtDoc, dbfTmpDoc, nil, nil, aTmp ) )}, oFld:aDialogs[ 3 ],,, .F., {||         ( nMode <> 3 )},,, .F. )
+
+
+
+
+
+      TButton():ReDefine( 501, {||( WinEdtRec( oBrwDoc, bEdtDoc, dbfTmpDoc, nil, nil, aTmp ) )}, oFld:aDialogs[ 3 ],,, .F., {||         ( nMode <> 3 )},,, .F. )
+
+
+
+
+
+        TButton():ReDefine( 502, {||( DbDelRec( oBrwDoc, dbfTmpDoc, nil, nil, .T. ) )}, oFld:aDialogs[ 3 ],,, .F., {||         ( nMode <> 3 )},,, .F. )
+
+
+
+
+        TButton():ReDefine( 503, {||( WinZooRec( oBrwDoc, bEdtDoc, dbfTmpDoc ) )}, oFld:aDialogs[ 3 ],,, .F.,,,, .F. )
+
+
+
+
+      TButton():ReDefine( 504, {||( ShellExecute( oDlg:hWnd, "open", rTrim( ( dbfTmpDoc )->cRuta ) ) )}, oFld:aDialogs[ 3 ],,, .F.,,,, .F. )
+
+
+
+
+
+
+
+
+
+
+        TButton():ReDefine( 1, {||( EndTrans( aTmp, aGet, oBrw, nMode, nRouDiv, nTotAnt, oDlg ) )}, oDlg,,, .F., {||     ( nMode <> 3 )},,, .F. )
+
+
+
+
+
+      TButton():ReDefine( 4, {||( if( EndTrans( aTmp, aGet, oBrw, nMode, nRouDiv, nTotAnt, oDlg ), GenAntCli( 1 ), ) )}, oDlg,,, .F., {||     ( nMode <> 3 )},,, .F. )
+
+
+
+
+
+      TButton():ReDefine( 2, {||( oDlg:end() )}, oDlg,,, .F.,,,, .T. )
+
+   if nMode <> 3
+
+      oFld:aDialogs[2]:AddFastKey( 113, {|| WinAppRec( oBrwInc, bEdtInc, dbfTmpInc, nil, nil, aTmp ) } )
+      oFld:aDialogs[2]:AddFastKey( 114, {|| WinEdtRec( oBrwInc, bEdtInc, dbfTmpInc, nil, nil, aTmp ) } )
+      oFld:aDialogs[2]:AddFastKey( 115, {|| DbDelRec( oBrwInc, dbfTmpInc, nil, nil, .T. ) } )
+
+      oFld:aDialogs[3]:AddFastKey( 113, {|| WinAppRec( oBrwDoc, bEdtDoc, dbfTmpDoc, nil, nil, aTmp ) } )
+      oFld:aDialogs[3]:AddFastKey( 114, {|| WinEdtRec( oBrwDoc, bEdtDoc, dbfTmpDoc, nil, nil, aTmp ) } )
+      oFld:aDialogs[3]:AddFastKey( 115, {|| DbDelRec( oBrwDoc, dbfTmpDoc, nil, nil, .T. ) } )
+
+      oDlg:AddFastKey( 116, {|| EndTrans( aTmp, aGet, oBrw, nMode, nRouDiv, nTotAnt, oDlg ) } )
+      oDlg:AddFastKey( 117, {|| if( EndTrans( aTmp, aGet, oBrw, nMode, nRouDiv, nTotAnt, oDlg ), GenAntCli( 1 ), ) } )
+
+   end
+
+   if ( nMode == 1 .OR. nMode == 4 ) .AND. lRecogerUsuario()
+      oDlg:bStart := {|| if( lGetUsuario( aGet[ 49 ], dbfUsr ), , oDlg:End() ) }
+   end
+
+
+
+   oDlg:Activate( oDlg:bLClicked, oDlg:bMoved, oDlg:bPainted, .T.,,, {|Self|( EdtRecMenu( aTmp, oDlg ), nRecTot( aTmp, aGet ), oBrwInc:Load() )}, oDlg:bRClicked,,, )
+
+   EndEdtRecMenu()
+
+   oFont:end()
+
+   oBmpDiv:end()
+   oBmpGeneral:End()
+
+
+
+
+
+   ( dbfAntCliT )->( ordSetFocus( nOrd ) )
+
+
+
+
+
+   KillTrans()
+
+RETURN ( oDlg:nResult == 1 )
+
+
+
+Static Function EdtInc( aTmp, aGet, dbfAntCliI, oBrw, bWhen, bValid, nMode, aTmpFac )
+
+   local oDlg
+   local oNomInci
+   local cNomInci
+
+   if !Empty( aTmp[ ( dbfTmpInc )->( FieldPos( "cCodTip" ) ) ] )
+      cNomInci          := cNomInci( aTmp[ ( dbfTmpInc )->( FieldPos( "cCodTip" ) ) ], dbfInci )
+   end
+
+   if nMode == 1
+      aTmp[ 1  ] := aTmpFac[ 1 ]
+      aTmp[ 2  ] := aTmpFac[ 2 ]
+      aTmp[ 3  ] := aTmpFac[ 3 ]
+      if IsMuebles()
+         aTmp[ ( dbfTmpInc )->( FieldPos( "lAviso" ) ) ]  := .T.
+      end
+   end
+
+   oDlg = TDialog():New(,,,, LblTitle( nMode ) + "incidencias de anticipos a clientes", "INCIDENCIA",, .F.,,,,,, .F.,,,,,, .F., )
+
+
+
+
+
+
+
+
+      aGet[ ( dbfTmpInc )->( FieldPos( "cCodTip" ) ) ] := TGetHlp():ReDefine( 120, { | u | If( PCount()==0, aTmp[ ( dbfTmpInc )->( FieldPos( "cCodTip" ) ) ], aTmp[ ( dbfTmpInc )->( FieldPos( "cCodTip" ) ) ]:= u ) }, oDlg,,, {||    ( cTipInci( aGet[ ( dbfTmpInc )->( FieldPos( "cCodTip" ) ) ], dbfInci, oNomInci ) )},,,,,, .F., {||     ( nMode <> 3 )},, .F., .F.,,,,, {|Self|( BrwIncidencia( dbfInci, aGet[ ( dbfTmpInc )->( FieldPos( "cCodTip" ) ) ], oNomInci ) )}, nil, "LUPA",, )
+
+
+
+
+      oNomInci := TGetHlp():ReDefine( 130, { | u | If( PCount()==0, cNomInci, cNomInci:= u ) }, oDlg,,,,,,,,, .F., {||     .F.},, .F., .F.,,,,,, nil,,, )
+
+
+
+
+
+      TGetHlp():ReDefine( 100, { | u | If( PCount()==0, aTmp[ ( dbfTmpInc )->( FieldPos( "dFecInc" ) ) ], aTmp[ ( dbfTmpInc )->( FieldPos( "dFecInc" ) ) ]:= u ) }, oDlg,,,,,,,,, .F., {||     ( nMode <> 3 )},, .F., .T.,,,,,, nil,,, )
+
+
+
+
+
+      TMultiGet():ReDefine( 110, { | u | If( PCount()==0, aTmp[ ( dbfTmpInc )->( FieldPos( "mDesInc" ) ) ], aTmp[ ( dbfTmpInc )->( FieldPos( "mDesInc" ) ) ]:= u ) }, oDlg,,,,,,, .F., {||     ( nMode <> 3 )}, .F.,, )
+
+
+
+
+      TCheckBox():ReDefine( 140, { | u | If( PCount()==0, aTmp[ ( dbfTmpInc )->( FieldPos( "lListo" ) ) ], aTmp[ ( dbfTmpInc )->( FieldPos( "lListo" ) ) ]:= u ) }, oDlg,,,,,,, .F., {||         ( nMode <> 3 )}, .F. )
+
+
+
+
+      TCheckBox():ReDefine( 150, { | u | If( PCount()==0, aTmp[ ( dbfTmpInc )->( FieldPos( "lAviso" ) ) ], aTmp[ ( dbfTmpInc )->( FieldPos( "lAviso" ) ) ]:= u ) }, oDlg,,,,,,, .F., {||         ( nMode <> 3 )}, .F. )
+
+
+
+
+
+      TButton():ReDefine( 1, {||( WinGather( aTmp, nil, dbfTmpInc, oBrw, nMode ), oDlg:end( 1 ) )}, oDlg,,, .F., {||     ( nMode <> 3 )},,, .F. )
+
+
+
+
+
+      TButton():ReDefine( 2, {||( oDlg:end() )}, oDlg,,, .F.,,,, .T. )
+
+   if nMode <> 3
+      oDlg:AddFastKey( 116, {|| WinGather( aTmp, nil, dbfTmpInc, oBrw, nMode ), oDlg:end( 1 ) } )
+   end
+
+   oDlg:Activate( oDlg:bLClicked, oDlg:bMoved, oDlg:bPainted, .T.,,,, oDlg:bRClicked,,, )
+
+Return ( oDlg:nResult == 1 )
+
+
+
+Static Function EdtDoc( aTmp, aGet, dbfAntCliD, oBrw, bWhen, bValid, nMode, aTmpLin )
+
+   local oDlg
+   local oRuta
+   local oNombre
+   local oObservacion
+
+   oDlg = TDialog():New(,,,, LblTitle( nMode ) + "documento de anticipos de clientes", "DOCUMENTOS",, .F.,,,,,, .F.,,,,,, .F., )
+
+
+
+
+      oNombre := TGetHlp():ReDefine( 120, { | u | If( PCount()==0, aTmp[ ( dbfTmpDoc )->( FieldPos( "cNombre" ) ) ], aTmp[ ( dbfTmpDoc )->( FieldPos( "cNombre" ) ) ]:= u ) }, oDlg,,,,,,,,, .F., {||     ( nMode <> 3 )},, .F., .F.,,,,,, nil,,, )
+
+
+
+
+
+
+      oRuta := TGetHlp():ReDefine( 100, { | u | If( PCount()==0, aTmp[ ( dbfTmpDoc )->( FieldPos( "cRuta" ) ) ], aTmp[ ( dbfTmpDoc )->( FieldPos( "cRuta" ) ) ]:= u ) }, oDlg,,,,,,,,, .F., {||     ( nMode <> 3 )},, .F., .F.,,,,, {|Self|( oRuta:cText( cGetFile( "Doc ( *.* ) | " + "*.*", "Seleccione el nombre del fichero" ) ) )}, nil, "FOLDER",, )
+
+
+
+
+
+      oObservacion := TMultiGet():ReDefine( 110, { | u | If( PCount()==0, aTmp[ ( dbfTmpDoc )->( FieldPos( "mObsDoc" ) ) ], aTmp[ ( dbfTmpDoc )->( FieldPos( "mObsDoc" ) ) ]:= u ) }, oDlg,,,,,,, .F., {||     ( nMode <> 3 )}, .F.,, )
+
+
+
+
+
+      TButton():ReDefine( 1, {||( WinGather( aTmp, nil, dbfTmpDoc, oBrw, nMode ), oDlg:end( 1 ) )}, oDlg,,, .F., {||     ( nMode <> 3 )},,, .F. )
+
+
+
+
+
+      TButton():ReDefine( 2, {||( oDlg:end() )}, oDlg,,, .F.,,,, .T. )
+
+   if nMode <> 3
+      oDlg:AddFastKey( 116, {|| WinGather( aTmp, nil, dbfTmpDoc, oBrw, nMode ), oDlg:end( 1 ) } )
+   end
+
+   oDlg:Activate( oDlg:bLClicked, oDlg:bMoved, oDlg:bPainted, .T.,,,, oDlg:bRClicked,,, )
+
+Return ( oDlg:nResult == 1 )
+
+
+
+STATIC FUNCTION PrnSerie()
+
+    local oDlg
+   local oFmtDoc
+   local cFmtDoc     := cFormatoDocumento( ( dbfAntCliT )->cSerAnt, "nAntCli", dbfCount )
+   local oSayFmt
+   local cSayFmt
+   local oSerIni
+   local oSerFin
+   local nRecno      := (dbfAntCliT)->( recno() )
+   local nOrdAnt     := (dbfAntCliT)->( OrdSetFocus(1) )
+   local cSerIni     := (dbfAntCliT)->CSERANT
+   local cSerFin     := (dbfAntCliT)->CSERANT
+   local nDocIni     := (dbfAntCliT)->NNUMANT
+   local nDocFin     := (dbfAntCliT)->NNUMANT
+   local cSufIni     := (dbfAntCliT)->CSUFANT
+   local cSufFin     := (dbfAntCliT)->CSUFANT
+   local oPrinter
+   local cPrinter    := PrnGetName()
+   local lCopiasPre  := .T.
+   local lInvOrden   := .F.
+   local oNumCop
+   local nNumCop     := if( nCopiasDocumento( ( dbfAntCliT )->cSerAnt, "nAntCli", dbfCount ) == 0, Max( Retfld( ( dbfAntCliT )->cCodCli, dbfCli, "CopiasF" ), 1 ), nCopiasDocumento( ( dbfAntCliT )->cSerAnt, "nAntCli", dbfCount ) )
+
+   if Empty( cFmtDoc )
+      cFmtDoc        := cSelPrimerDoc( "TC" )
+   end
+
+   cSayFmt           := cNombreDoc( cFmtDoc )
+
+   oDlg = TDialog():New(,,,, "Imprimir series de anticipos", "IMPSERDOC",, .F.,,,,,, .F.,,,,,, .F., )
+
+
+
+
+
+
+
+
+
+   oSerIni := TGetHlp():ReDefine( 100, { | u | If( PCount()==0, cSerIni, cSerIni:= u ) }, oDlg,, "@!", {||    ( cSerIni >= "A" .AND. cSerIni <= "Z"  )},,,,,, .T.,,, .F., .T., {||    ( UpSerie( oSerIni ) )}, {||  ( DwSerie( oSerIni ) )},,,, nil,,, )
+
+
+
+
+
+
+
+
+
+   oSerFin := TGetHlp():ReDefine( 110, { | u | If( PCount()==0, cSerFin, cSerFin:= u ) }, oDlg,, "@!", {||    ( cSerFin >= "A" .AND. cSerFin <= "Z"  )},,,,,, .T.,,, .F., .T., {||    ( UpSerie( oSerFin ) )}, {||  ( DwSerie( oSerFin ) )},,,, nil,,, )
+
+
+
+
+
+   TGetHlp():ReDefine( 120, { | u | If( PCount()==0, nDocIni, nDocIni:= u ) }, oDlg,, "999999999",,,,,,, .F.,,, .F., .T.,,,,,, nil,,, )
+
+
+
+
+
+   TGetHlp():ReDefine( 130, { | u | If( PCount()==0, nDocFin, nDocFin:= u ) }, oDlg,, "999999999",,,,,,, .F.,,, .F., .T.,,,,,, nil,,, )
+
+
+
+
+   TGetHlp():ReDefine( 140, { | u | If( PCount()==0, cSufIni, cSufIni:= u ) }, oDlg,, "##",,,,,,, .F.,,, .F., .F.,,,,,, nil,,, )
+
+
+
+
+   TGetHlp():ReDefine( 150, { | u | If( PCount()==0, cSufFin, cSufFin:= u ) }, oDlg,, "##",,,,,,, .F.,,, .F., .F.,,,,,, nil,,, )
+
+
+
+   TCheckBox():ReDefine( 500, { | u | If( PCount()==0, lInvOrden, lInvOrden:= u ) }, oDlg,,,,,,, .F.,, .F. )
+
+
+
+
+   oPrinter := TGetHlp():ReDefine( 160, { | u | If( PCount()==0, cPrinter, cPrinter:= u ) }, oDlg,,,,,,,,, .F., {||     ( .F. )},, .F., .F.,,,,,, nil,,, )
+
+   TBtnBmp():ReDefine( 161, "Printer_preferences_16",,,,,{|| PrinterPreferences( oPrinter ) }, oDlg, .F., , .F.,  )
+
+
+
+   TCheckBox():ReDefine( 170, { | u | If( PCount()==0, lCopiasPre, lCopiasPre:= u ) }, oDlg,,,,,,, .F.,, .F. )
+
+
+
+
+
+
+
+
+
+   oNumCop := TGetHlp():ReDefine( 180, { | u | If( PCount()==0, nNumCop, nNumCop:= u ) }, oDlg,, "999999999", {||    nNumCop > 0},,,,,, .F., {||     !lCopiasPre},, .F., .T.,,, {||      1}, {||      99999},, nil,,, )
+
+
+
+
+
+
+
+   oFmtDoc := TGetHlp():ReDefine( 90, { | u | If( PCount()==0, cFmtDoc, cFmtDoc:= u ) }, oDlg,,, {||    ( cDocumento( oFmtDoc, oSayFmt, dbfDoc ) )}, "N/W*",,,,, .F.,,, .F., .F.,,,,, {|Self|( BrwDocumento( oFmtDoc, oSayFmt, "TC" ) )}, nil, "LUPA",, )
+
+
+
+
+
+   oSayFmt := TGetHlp():ReDefine( 91, { | u | If( PCount()==0, cSayFmt, cSayFmt:= u ) }, oDlg,,,, "N/W*",,,,, .F., {||     ( .F. )},, .F., .F.,,,,,, nil,,, )
+
+   TBtnBmp():ReDefine( 92, "Printer_pencil_16",,,,,{|| EdtDocumento( cFmtDoc ) }, oDlg, .F., , .F.,  )
+
+
+
+
+
+   TButton():ReDefine( 1, {||(  StartPrint( SubStr( cFmtDoc, 1, 3 ), cSerIni + Str( nDocIni, 9 ) + cSufIni, cSerFin + Str( nDocFin, 9 ) + cSufFin, oDlg, cPrinter, nNumCop, lInvOrden, lCopiasPre ), oDlg:end( 1 ) )}, oDlg,,, .F.,,,, .F. )
+
+
+
+
+   TButton():ReDefine( 2, {||( oDlg:end() )}, oDlg,,, .F.,,,, .F. )
+
+   oDlg:AddFastKey( 116, {|| StartPrint( SubStr( cFmtDoc, 1, 3 ), cSerIni + Str( nDocIni, 9 ) + cSufIni, cSerFin + Str( nDocFin, 9 ) + cSufFin, oDlg, cPrinter, nNumCop, lInvOrden, lCopiasPre ), oDlg:end( 1 ) } )
+   oDlg:bStart := { || oSerIni:SetFocus() }
+
+   oDlg:Activate( oDlg:bLClicked, oDlg:bMoved, oDlg:bPainted, .T.,,,, oDlg:bRClicked,,, )
+
+   (dbfAntCliT)->( dbGoTo( nRecNo ) )
+   (dbfAntCliT)->( ordSetFocus( nOrdAnt ) )
+
+    oWndBrw:oBrw:refresh()
+
+RETURN NIL
+
+
+
+STATIC FUNCTION StartPrint( cFmtDoc, cDocIni, cDocFin, oDlg, cPrinter, nCopPrn, lInvOrden, lCopiasPre )
+
+   local nCopyClient
+
+   oDlg:disable()
+
+   if !lInvOrden
+
+      ( dbfAntCliT )->( dbSeek( cDocIni, .T. ) )
+
+
+      while ( dbfAntCliT )->CSERANT + Str( ( dbfAntCliT )->NNUMANT ) + (dbfAntCliT)->CSUFANT >= cDocIni .AND.  ( dbfAntCliT )->CSERANT + Str( ( dbfAntCliT )->NNUMANT ) + (dbfAntCliT)->CSUFANT <= cDocFin
+
+         if lCopiasPre
+
+            nCopyClient := if( nCopiasDocumento( ( dbfAntCliT )->cSerAnt, "nAntCli", dbfCount ) == 0, Max( Retfld( ( dbfAntCliT )->cCodCli, dbfCli, "CopiasF" ), 1 ), nCopiasDocumento( ( dbfAntCliT )->cSerAnt, "nAntCli", dbfCount ) )
+
+            GenAntCli( 1, "Imprimiendo documento : " + ( dbfAntCliT )->CSERANT + Str( ( dbfAntCliT )->NNUMANT ) + (dbfAntCliT)->CSUFANT, cFmtDoc, cPrinter, nCopyClient )
+
+         else
+
+            GenAntCli( 1, "Imprimiendo documento : " + ( dbfAntCliT )->CSERANT + Str( ( dbfAntCliT )->NNUMANT ) + (dbfAntCliT)->CSUFANT, cFmtDoc, cPrinter, nCopPrn )
+
+         end
+
+      ( dbfAntCliT )->( dbSkip() )
+
+      end
+
+   else
+
+      ( dbfAntCliT )->( dbSeek( cDocFin ) )
+
+
+
+      while ( dbfAntCliT )->cSerAnt + Str( ( dbfAntCliT )->nNumAnt ) + ( dbfAntCliT )->cSufAnt >= cDocIni .AND. ( dbfAntCliT )->cSerAnt + Str( ( dbfAntCliT )->nNumAnt ) + ( dbfAntCliT )->cSufAnt <= cDocFin .AND. !( dbfAntCliT )->( Bof() )
+
+         if lCopiasPre
+
+            nCopyClient := if( nCopiasDocumento( ( dbfAntCliT )->cSerAnt, "nAntCli", dbfCount ) == 0, Max( Retfld( ( dbfAntCliT )->cCodCli, dbfCli, "CopiasF" ), 1 ), nCopiasDocumento( ( dbfAntCliT )->cSerAnt, "nAntCli", dbfCount ) )
+
+            GenAntCli( 1, "Imprimiendo documento : " + ( dbfAntCliT )->CSERANT + Str( ( dbfAntCliT )->NNUMANT ) + (dbfAntCliT)->CSUFANT, cFmtDoc, cPrinter, nCopyClient )
+
+         else
+
+            GenAntCli( 1, "Imprimiendo documento : " + ( dbfAntCliT )->CSERANT + Str( ( dbfAntCliT )->NNUMANT ) + (dbfAntCliT)->CSUFANT, cFmtDoc, cPrinter, nCopPrn )
+
+         end
+
+      ( dbfAntCliT )->( dbSkip( -1 ) )
+
+      end
+
+   end
+
+   oDlg:enable()
+
+RETURN NIL
+
+
+
+Static Function RecalculaTotal( aTmp )
+
+   nTotAntCli( dbfAntCliT, dbfIva, dbfDiv, aTmp, nil, .T. )
+
+
+
+
+
+   if oGetAge <> nil
+      oGetAge:SetText( Trans( nTotAge, cPorDiv ) )
+   end
+
+
+
+
+
+   if oGetNet <> nil
+      oGetNet:SetText( Trans( nTotNet, cPorDiv ) )
+   end
+
+   if oGetIva <> nil
+      oGetIva:SetText( Trans( nTotIva, cPorDiv ) )
+   end
+
+   if oGetReq <> nil
+      oGetReq:SetText( Trans( nTotReq, cPorDiv ) )
+   end
+
+   if oGetPctRet <> nil
+      oGetPctRet:SetText( Trans( nTotRet, cPorDiv ) )
+   end
+
+   if oGetTotal <> nil
+      oGetTotal:SetText( Trans( nTotAnt, cPorDiv ) )
+   end
+
+Return ( nil )
+
+
+
+
+
+
+
+STATIC FUNCTION loaCli( aGet, aTmp, nMode, oRieCli )
+
+   local lValid      := .T.
+   local cNewCodCli  := aGet[ 6 ]:varGet()
+   local lChgCodCli  := ( Empty( cOldCodCli ) .OR. cOldCodCli <> cNewCodCli )
+
+   if Empty( cNewCodCli )
+      Return .T.
+   elseif At( ".", cNewCodCli ) <> 0
+      cNewCodCli     := PntReplace( aGet[ 6 ], "0", RetNumCodCliEmp() )
+   else
+      cNewCodCli     := Rjust( cNewCodCli, "0", RetNumCodCliEmp() )
+   end
+
+   if ( dbfCli )->( dbSeek( cNewCodCli ) )
+
+
+
+
+
+      if uFieldEmpresa( "lSalPdt" )
+         if ( dbfCli )->nImpRie > ( dbfCli )->Riesgo
+            msgStop( "El riesgo del cliente supera el límite establecido", "Riesgo: " + Trans( ( dbfCli )->nImpRie, "@E 999999.99" ) )
+         end
+      end
+
+
+
+
+
+      aGet[6]:cText( ( dbfCli )->Cod )
+
+
+
+
+
+      if ( dbfCli )->nColor <> 0
+         aGet[9]:SetColor( , ( dbfCli )->nColor )
+      end
+
+      if Empty( aGet[9]:varGet() ) .OR. lChgCodCli
+         aGet[9]:cText( ( dbfCli )->Titulo )
+      end
+
+      if Empty( aGet[ 56 ]:varGet() ) .OR. lChgCodCli
+         aGet[ 56 ]:cText( ( dbfCli )->Telefono )
+      end
+
+      if Empty( aGet[10]:varGet() ) .OR. lChgCodCli
+         aGet[10]:cText( ( dbfCli )->Domicilio )
+      end
+
+      if Empty( aGet[11]:varGet() ) .OR. lChgCodCli
+         aGet[11]:cText( ( dbfCli )->Poblacion )
+      end
+
+      if Empty( aGet[12]:varGet() ) .OR. lChgCodCli
+         aGet[12]:cText( ( dbfCli )->Provincia )
+      end
+
+      if Empty( aGet[14]:varGet() ) .OR. lChgCodCli
+         aGet[14]:cText( ( dbfCli )->CodPostal )
+      end
+
+      if Empty( aGet[15]:varGet() ) .OR. lChgCodCli
+         aGet[15]:cText( ( dbfCli )->Nif )
+      end
+
+      if ( lChgCodCli )
+         aTmp[ 16 ]  := ( dbfCli )->lModDat
+      end
+
+      if nMode == 1
+
+         aTmp[42 ]   := ( dbfCli )->nRegIva
+
+
+
+
+
+         if !Empty( (dbfCli)->Serie )
+            aGet[1 ]:cText( ( dbfCli )->Serie )
+         end
+
+         if !Empty( (dbfCli)->cCodAlm )
+            aGet[ 7]:cText( ( dbfCli )->cCodAlm )
+            aGet[ 7]:lValid()
+         end
+
+         if !Empty( ( dbfCli )->CodPago )
+
+            aGet[ 31 ]:cText( ( dbfCli )->CodPago )
+            aGet[ 31 ]:lValid()
+
+            aGet[ 53  ]:cText( RetFld( ( dbfCli )->CodPago, dbfFPago, "cCtaCobro" ) )
+            aGet[ 53  ]:lValid()
+
+         end
+
+         if !Empty( ( dbfCli )->cAgente )
+            aGet[ 18 ]:cText( ( dbfCli )->cAgente )
+            aGet[ 18 ]:lValid()
+         end
+
+         aGet[ 33 ]:Click( ( dbfCli )->lReq ):Refresh()
+
+      end
+
+      if ( dbfCli )->lMosCom .AND. !Empty( ( dbfCli )->mComent ) .AND. lChgCodCli
+         MsgStop( Trim( ( dbfCli )->mComent ) )
+      end
+
+      if !Empty( oRieCli ) .AND. lChgCodCli
+         oStock:SetRiesgo( cNewCodCli, oRieCli, ( dbfCli )->Riesgo )
+      end
+
+      ShowInciCliente( ( dbfCli )->Cod, dbfCliInc )
+
+      cOldCodCli  := ( dbfCli )->Cod
+
+      lValid      := .T.
+
+   else
+
+        msgStop( "Cliente no encontrado" )
+
+      lValid      := .F.
+
+   end
+
+RETURN lValid
+
+
+
+
+
+
+
+STATIC FUNCTION BeginTrans( aTmp, nMode )
+
+   local cFac     := aTmp[ 1 ] + Str( aTmp[ 2 ] ) + aTmp[ 3 ]
+   local cDbfInc  := "FCliI"
+   local cDbfDoc  := "FCliD"
+
+   cTmpInc        := cGetNewFileName( cPatTmp() + cDbfInc )
+   cTmpDoc        := cGetNewFileName( cPatTmp() + cDbfDoc )
+
+
+
+
+
+   do case
+   case nMode == 1 .OR. nMode == 4
+      nTotOld     := 0
+
+   case nMode == 2
+      nTotOld     := nTotAnt
+
+   end
+
+
+
+
+
+   dbCreate( cTmpInc, aSqlStruct( aIncAntCli() ), cLocalDriver() )
+   dbUseArea( .T., cLocalDriver(), cTmpInc, cCheckArea( cDbfInc, @dbfTmpInc ), .F. )
+   if !( dbfTmpInc )->( neterr() )
+      ( dbfTmpInc )->( ordCondSet( "!Deleted()", {||!Deleted() } ) )
+      ( dbfTmpInc )->( ordCreate( cTmpInc, "Recno", "Recno()", {|| Recno() } ) )
+   end
+
+   dbCreate( cTmpDoc, aSqlStruct( aAntCliDoc() ), cLocalDriver() )
+   dbUseArea( .T., cLocalDriver(), cTmpDoc, cCheckArea( cDbfDoc, @dbfTmpDoc ), .F. )
+   if !( dbfTmpDoc )->( neterr() )
+      ( dbfTmpDoc )->( ordCondSet( "!Deleted()", {||!Deleted() } ) )
+      ( dbfTmpDoc )->( ordCreate( cTmpDoc, "Recno", "Recno()", {|| Recno() } ) )
+   end
+
+
+
+
+
+   if ( dbfAntCliI )->( dbSeek( cFac ) )
+      while ( ( dbfAntCliI )->cSerAnt + Str( ( dbfAntCliI )->nNumAnt ) + ( dbfAntCliI )->cSufAnt == cFac ) .AND. ( dbfAntCliI )->( !eof() )
+         dbPass( dbfAntCliI, dbfTmpInc, .T. )
+         ( dbfAntCliI )->( dbSkip() )
+      end
+   end
+
+   ( dbfTmpInc )->( dbGoTop() )
+
+
+
+
+
+   if ( dbfAntCliD )->( dbSeek( cFac ) )
+      while ( ( dbfAntCliD )->cSerAnt + Str( ( dbfAntCliD )->nNumAnt ) + ( dbfAntCliD )->cSufAnt == cFac ) .AND. ( dbfAntCliD )->( !eof() )
+         dbPass( dbfAntCliD, dbfTmpDoc, .T. )
+         ( dbfAntCliD )->( dbSkip() )
+      end
+   end
+
+   ( dbfTmpDoc )->( dbGoTop() )
+
+RETURN NIL
+
+
+
+
+
+
+
+STATIC FUNCTION EndTrans( aTmp, aGet, oBrw, nMode, nDec, nTotal, oDlg )
+
+    local aTabla
+   local cSerFac
+   local nNumAnt
+   local cSufAnt
+
+   if Empty( aTmp[ 1 ] )
+      aTmp[ 1 ]  := "A"
+   end
+
+   cSerFac              := aTmp[ 1 ]
+   nNumAnt              := aTmp[ 2 ]
+   cSufAnt              := aTmp[ 3 ]
+
+
+
+
+
+   if !lValidaOperacion( aTmp[5] )
+      Return .F.
+   end
+
+
+
+
+
+   if Empty( aTmp[ 9 ] )
+      msgStop( "Nombre de cliente no puede estar vacío." )
+      aGet[ 9 ]:SetFocus()
+      return .F.
+   end
+
+   if Empty( aTmp[ 10 ] )
+      msgStop( "Domicilio de cliente no puede estar vacía." )
+      aGet[ 10 ]:SetFocus()
+      return .F.
+   end
+
+   if Empty( aTmp[ 15 ] )
+      msgStop( "D.N.I. / C.I.F. de cliente no puede estar vacío." )
+      aGet[ 15 ]:SetFocus()
+      return .F.
+   end
+
+   if Empty( aTmp[ 7 ] )
+      msgStop( "Almacén no puede estar vacío." )
+      aGet[ 7 ]:SetFocus()
+      return .F.
+   end
+
+   if Empty( aTmp[ 31 ] )
+      msgStop( "Forma de pago no puede estar vacía." )
+      aGet[ 31 ]:SetFocus()
+      return .F.
+   end
+
+   if Empty( aTmp[ 37 ] )
+      MsgStop( "No puede almacenar documento sin código de divisa." )
+      aGet[ 37 ]:SetFocus()
+      return .F.
+   end
+
+   if Empty( aTmp[ 18 ] ) .AND. lRecogerAgentes()
+      msgStop( "Agente no puede estar vacío." )
+      aGet[ 18 ]:SetFocus()
+      return .F.
+   end
+
+
+
+
+
+   oDlg:Disable()
+
+   oMsgText( "Archivando" )
+
+   aTmp[ 50 ]     := GetSysDate()
+   aTmp[ 51 ]     := Time()
+
+
+
+
+
+   do case
+   case nMode == 1 .OR. nMode == 4
+
+
+
+
+
+      nNumAnt           := nNewDoc( aTmp[ 1 ], dbfAntCliT, "NANTCLI", , dbfCount )
+      aTmp[ 2 ]  := nNumAnt
+
+   case nMode == 2
+
+
+
+
+
+      if nNumAnt <> 0
+
+         while ( dbfAntCliI )->( dbSeek( cSerFac + str( nNumAnt ) + cSufAnt ) )
+            if dbLock( dbfAntCliI )
+               ( dbfAntCliI )->( dbDelete() )
+               ( dbfAntCliI )->( dbUnLock() )
+            end
+         end
+
+         while ( dbfAntCliD )->( dbSeek( cSerFac + str( nNumAnt ) + cSufAnt ) )
+            if dbLock( dbfAntCliD )
+               ( dbfAntCliD )->( dbDelete() )
+               ( dbfAntCliD )->( dbUnLock() )
+            end
+         end
+
+      end
+
+   end
+
+
+
+
+
+   AddRiesgo( nTotAnt - nTotOld, aTmp[ 6 ], dbfCli )
+
+   oMsgProgress()
+   oMsgProgress():SetRange( 0, ( dbfTmpInc )->( LastRec() ) )
+
+
+
+
+
+   ( dbfTmpInc )->( dbGoTop() )
+
+   while ( dbfTmpInc )->( !eof() )
+
+      dbPass( dbfTmpInc, dbfAntCliI, .T., cSerFac, nNumAnt, cSufAnt )
+
+      ( dbfTmpInc )->( dbSkip() )
+
+      oMsgProgress():Deltapos(1)
+
+   end
+
+   ( dbfTmpDoc )->( dbGoTop() )
+
+   while ( dbfTmpDoc )->( !eof() )
+
+      dbPass( dbfTmpDoc, dbfAntCliD, .T., cSerFac, nNumAnt, cSufAnt )
+
+      ( dbfTmpDoc )->( dbSkip() )
+
+      oMsgProgress():Deltapos(1)
+
+   end
+
+   aTmp[ 54 ]           := nPReq( dbfIva, aTmp[ 45 ] )
+
+
+
+
+
+   aTmp[ 57 ]  := nTotNet
+   aTmp[ 58 ]  := nTotIva
+   aTmp[ 59 ]  := nTotReq
+   aTmp[ 60 ]  := nTotAnt
+
+
+
+
+
+   WinGather( aTmp, , dbfAntCliT, , nMode )
+
+
+
+
+
+   dbfErase( cTmpInc )
+
+
+
+
+
+   dbCommitAll()
+
+   oMsgText()
+   EndProgress()
+
+
+
+
+
+   if nMode == 1 .OR. nMode == 4
+      oUser():OpenCajon()
+   end
+
+   oDlg:Enable()
+   oDlg:End( 1 )
+
+Return .T.
+
+
+
+Static Function KillTrans()
+
+
+
+
+
+   if !Empty( dbfTmpInc ) .AND. ( dbfTmpInc )->( Used() )
+      ( dbfTmpInc )->( dbCloseArea() )
+   end
+
+   if !Empty( dbfTmpDoc ) .AND. ( dbfTmpDoc )->( Used() )
+      ( dbfTmpDoc )->( dbCloseArea() )
+   end
+
+   dbfTmpInc      := nil
+   dbfTmpDoc      := nil
+
+   dbfErase( cTmpInc )
+   dbfErase( cTmpDoc )
+
+RETURN NIL
+
+
+
+Function AppAntCli( cCodCli, lOpenBrowse )
+
+   local nLevel         := nLevelUsr( "01181" )
+
+   IIF( lOpenBrowse == nil, lOpenBrowse := .F., ) ;
+
+   if nAnd( nLevel, 1 ) <> 0 .OR. nAnd( nLevel, 2 ) == 0
+      msgStop( "Acceso no permitido." )
+      return .T.
+   end
+
+   if lOpenBrowse
+
+      if FacAntCli( nil, nil, cCodCli )
+         oWndBrw:RecAdd()
+      end
+
+   else
+
+      if OpenFiles( .T. )
+         WinAppRec( nil, bEdtRec, dbfAntCliT, cCodCli )
+         CloseFiles()
+      end
+
+   end
+
+RETURN .T.
+
+
+
+Function EdtAntCli( cNumFac, lOpenBrowse )
+
+   local nLevel         := nLevelUsr( "01181" )
+
+   IIF( lOpenBrowse == nil, lOpenBrowse := .F., ) ;
+
+   if nAnd( nLevel, 1 ) <> 0 .OR. nAnd( nLevel, 4 ) == 0
+      msgStop( "Acceso no permitido." )
+      return .T.
+   end
+
+   if lOpenBrowse
+
+      if FacAntCli()
+         if dbSeekInOrd( cNumFac, "nNumAnt", dbfAntCliT )
+            oWndBrw:RecEdit()
+         else
+            MsgStop( "No se encuentra anticipo" )
+         end
+      end
+
+   else
+
+      if OpenFiles( .T. )
+
+         if dbSeekInOrd( cNumFac, "nNumAnt", dbfAntCliT )
+            WinEdtRec( nil, bEdtRec, dbfAntCliT )
+         end
+
+         CloseFiles()
+
+      end
+
+   end
+
+Return .T.
+
+
+
+FUNCTION ZooAntCli( cNumFac, lOpenBrowse )
+
+   local nLevel         := nLevelUsr( "01181" )
+
+   IIF( lOpenBrowse == nil, lOpenBrowse := .F., ) ;
+
+   if nAnd( nLevel, 1 ) <> 0 .OR. nAnd( nLevel, 8 ) == 0
+      msgStop( "Acceso no permitido." )
+      return .T.
+   end
+
+   if lOpenBrowse
+
+      if FacAntCli()
+         if dbSeekInOrd( cNumFac, "nNumAnt", dbfAntCliT )
+            oWndBrw:RecZoom()
+         else
+            MsgStop( "No se encuentra anticipo" )
+         end
+      end
+
+   else
+
+      if OpenFiles( .T. )
+         if dbSeekInOrd( cNumFac, "nNumAnt", dbfAntCliT )
+            WinZooRec( nil, bEdtRec, dbfAntCliT )
+         end
+         CloseFiles()
+      end
+
+   end
+
+Return .T.
+
+
+
+FUNCTION DelAntCli( cNumFac, lOpenBrowse )
+
+   local nLevel         := nLevelUsr( "01181" )
+
+   IIF( lOpenBrowse == nil, lOpenBrowse := .F., ) ;
+
+   if nAnd( nLevel, 1 ) <> 0 .OR. nAnd( nLevel, 16 ) == 0
+      msgStop( "Acceso no permitido." )
+      return .T.
+   end
+
+   if lOpenBrowse
+
+      if FacAntCli()
+         if dbSeekInOrd( cNumFac, "nNumAnt", dbfAntCliT )
+            WinDelRec( nil, dbfAntCliT, {|| QuiAntCli() } )
+         else
+            MsgStop( "No se encuentra anticipo" )
+         end
+      end
+
+   else
+
+      if OpenFiles( .T. )
+
+         if dbSeekInOrd( cNumFac, "nNumAnt", dbfAntCliT )
+            WinDelRec( nil, dbfAntCliT, {|| QuiAntCli() } )
+         end
+
+         CloseFiles()
+
+      end
+
+   end
+
+Return .T.
+
+
+
+FUNCTION PrnAntCli( cNumFac, lOpenBrowse )
+
+   local nLevel         := nLevelUsr( "01181" )
+
+   IIF( lOpenBrowse == nil, lOpenBrowse := .F., ) ;
+
+   if nAnd( nLevel, 1 ) <> 0 .OR. nAnd( nLevel, 32 ) == 0
+      msgStop( "Acceso no permitido." )
+      return .T.
+   end
+
+   if lOpenBrowse
+
+      if FacAntCli()
+         if dbSeekInOrd( cNumFac, "nNumAnt", dbfAntCliT )
+            GenAntCli( 1 )
+         else
+            MsgStop( "No se encuentra anticipo" )
+         end
+      end
+
+   else
+
+      if OpenFiles( .T. )
+
+         if dbSeekInOrd( cNumFac, "nNumAnt", dbfAntCliT )
+            GenAntCli( 1 )
+         end
+
+         CloseFiles()
+
+      end
+
+   end
+
+Return .T.
+
+
+
+FUNCTION VisAntCli( cNumFac, lOpenBrowse )
+
+   local nLevel         := nLevelUsr( "01181" )
+
+   IIF( lOpenBrowse == nil, lOpenBrowse := .F., ) ;
+
+   if nAnd( nLevel, 1 ) <> 0 .OR. nAnd( nLevel, 32 ) == 0
+      msgStop( "Acceso no permitido." )
+      return .T.
+   end
+
+   if lOpenBrowse
+
+      if FacAntCli()
+         if dbSeekInOrd( cNumFac, "nNumAnt", dbfAntCliT )
+            GenAntCli( 2 )
+         else
+            MsgStop( "No se encuentra anticipo" )
+         end
+      end
+
+   else
+
+      if OpenFiles( .T. )
+
+         if dbSeekInOrd( cNumFac, "nNumAnt", dbfAntCliT )
+            GenAntCli( 2 )
+         end
+
+         CloseFiles()
+
+      end
+
+   end
+
+Return .T.
+
+
+
+static function lGenAntCli( oBrw, oBtn, nDevice )
+
+   local bAction
+
+   IIF( nDevice == nil, nDevice := 1, ) ;
+
+   if !( dbfDoc )->( dbSeek( "TC" ) )
+
+
+
+
+
+
+
+
+         oWndBrw:NewAt( "DOCUMENT",,, {||( msgStop( "No hay anticipos de clientes predefinidas" ) )}, "No hay documentos", "N",,, 4, oBtn, .F. )
+
+   ELSE
+
+      WHILE ( dbfDoc )->CTIPO == "TC" .AND. !( dbfDoc )->( eof() )
+
+         bAction  := bGenAntCli( nDevice, "Imprimiendo anticipos de clientes", ( dbfDoc )->CODIGO )
+
+         oWndBrw:NewAt( "Document", , , bAction, Rtrim( ( dbfDoc )->cDescrip ) , , , , , oBtn )
+
+         ( dbfDoc )->( dbSkip() )
+
+      end
+
+   end
+
+   SysRefresh()
+
+return nil
+
+
+
+static function bGenAntCli( nDevice, cTitle, cCodDoc )
+
+   local bGen
+   local nDev  := by( nDevice )
+   local cTit  := by( cTitle  )
+   local cCod  := by( cCodDoc )
+
+   if nDev == 1
+      bGen     := {|| GenAntCli( nDev, cTit, cCod ) }
+   else
+      bGen     := {|| GenAntCli( nDev, cTit, cCod ) }
+   end
+
+return ( bGen )
+
+
+
+
+
+
+
+STATIC FUNCTION lSelAll( oBrw, dbf, lSel )
+
+   local nRecAct  := ( dbf )->( recno() )
+
+   IIF( lSel == nil, lSel := .T., ) ;
+
+   CursorWait()
+
+   ( dbf )->( dbGoTop() )
+
+   while !( dbf )->( eof() )
+
+      if ( dbf )->( dbRLock() )
+         ( dbf )->lSndDoc  := lSel
+         ( dbf )->( dbUnlock() )
+      end
+
+      ( dbf )->( dbSkip() )
+
+   end
+
+   ( dbf )->( dbGoTo( nRecAct ) )
+
+   oBrw:SetFocus()
+   oBrw:Refresh()
+
+   CursorWe()
+
+RETURN NIL
+
+
+
+static function QuiAntCli()
+
+   local nOrdAnt
+   local cSerDoc     := ( dbfAntCliT )->cSerAnt
+   local nNumDoc     := ( dbfAntCliT )->nNumAnt
+   local cSufDoc     := ( dbfAntCliT )->cSufAnt
+
+   if ( dbfAntCliT )->lCloAnt .AND. !oUser():lAdministrador()
+      msgStop( "Solo puede eliminar anticipos cerradas los administradores." )
+      return .F.
+   end
+
+
+
+
+
+   nOrdAnt     := ( dbfAntCliI )->( OrdSetFocus( "nNumAnt" ) )
+
+   while ( dbfAntCliI )->( dbSeek( cSerDoc + Str( nNumDoc ) + cSufDoc ) ) .AND. !( dbfAntCliI )->( eof() )
+      if dbDialogLock( dbfAntCliI )
+         ( dbfAntCliI )->( dbDelete() )
+         ( dbfAntCliI )->( dbUnLock() )
+      end
+
+      ( dbfAntCliI )->( dbSkip() )
+   end
+
+   ( dbfAntCliI )->( OrdSetFocus( nOrdAnt ) )
+
+
+
+
+
+   nOrdAnt     := ( dbfAntCliD )->( OrdSetFocus( "nNumAnt" ) )
+
+   while ( dbfAntCliD )->( dbSeek( cSerDoc + Str( nNumDoc ) + cSufDoc ) ) .AND. !( dbfAntCliD )->( eof() )
+      if dbDialogLock( dbfAntCliD )
+         ( dbfAntCliD )->( dbDelete() )
+         ( dbfAntCliD )->( dbUnLock() )
+      end
+
+      ( dbfAntCliD )->( dbSkip() )
+   end
+
+   ( dbfAntCliD )->( OrdSetFocus( nOrdAnt ) )
+
+
+
+
+
+   DelRiesgo( nTotAnt, ( dbfAntCliT )->cCodCli, dbfCli )
+
+return .T.
+
+
+
+FUNCTION aDocAntCli()
+
+   local aDoc  := {}
+
+
+
+
+
+   aAdd( aDoc, { "Empresa",         "EM" } )
+   aAdd( aDoc, { "Anticipos",       "TC" } )
+   aAdd( aDoc, { "Cliente",         "CL" } )
+   aAdd( aDoc, { "Almacen",         "AL" } )
+   aAdd( aDoc, { "Obras",           "OB" } )
+   aAdd( aDoc, { "Rutas",           "RT" } )
+   aAdd( aDoc, { "Agentes",         "AG" } )
+   aAdd( aDoc, { "Divisas",         "DV" } )
+   aAdd( aDoc, { "Formas de pago",  "PG" } )
+
+RETURN ( aDoc )
+
+
+
+function aCalAntCli()
+
+   local aCalAntCli  := {}
+
+   aAdd( aCalAntCli, { "nTotNet",   "N", 16,  6, "Total neto",                  "cPorDivAnt",  "!Empty( nTotNet ) .and. lEnd" } )
+   aAdd( aCalAntCli, { "nTotIva",   "N", 16,  6, "Total " + cImp(),                "cPorDivAnt",  "!Empty( nTotIva ) .and. lEnd" } )
+   aAdd( aCalAntCli, { "nTotReq",   "N", 16,  6, "Total R.E.",                  "cPorDivAnt",  "!Empty( nTotReq ) .and. lEnd" } )
+   aAdd( aCalAntCli, { "nTotImp",   "N", 16,  6, "Total impuestos",             "cPorDivAnt",  "!Empty( nTotImp ) .and. lEnd" } )
+   aAdd( aCalAntCli, { "nTotAnt",   "N", 16,  6, "Total anticipos",             "cPorDivAnt",  "!Empty( nTotAnt ) .and. lEnd" } )
+   aAdd( aCalAntCli, { "nPagina",   "N",  2,  0, "Número de página",            "'99'",         "" }                            )
+   aAdd( aCalAntCli, { "lEnd",      "L",  1,  0, "Fin del documento",           "",             "" }                            )
+
+return ( aCalAntCli )
+
+
+
+function aColAntCli()
+
+   local aColAntCli  := {}
+
+   aAdd( aColAntCli, { "mDescrip",  "M", 10,  0, "Descripción",                 "" ,           "",                            "( cDbfCol )"} )
+   aAdd( aColAntCli, { "nTotNet",   "N", 16,  6, "Total neto",                  "cPorDivAnt",  "!Empty( nTotNet ) .and. lEnd","" } )
+   aAdd( aColAntCli, { "nTotIva",   "N", 16,  6, "Total " + cImp(),                "cPorDivAnt",  "!Empty( nTotIva ) .and. lEnd","" } )
+   aAdd( aColAntCli, { "nTotReq",   "N", 16,  6, "Total R.E.",                  "cPorDivAnt",  "!Empty( nTotReq ) .and. lEnd","" } )
+   aAdd( aColAntCli, { "nTotImp",   "N", 16,  6, "Total impuestos",             "cPorDivAnt",  "!Empty( nTotReq ) .and. lEnd","" } )
+   aAdd( aColAntCli, { "nTotAnt",   "N", 16,  6, "Total anticipos",             "cPorDivAnt",  "!Empty( nTotAnt ) .and. lEnd","" } )
+   aAdd( aColAntCli, { "nPagina",   "N",  2,  0, "Número de página",            "'99'",        "",                            "" } )
+   aAdd( aColAntCli, { "lEnd",      "L",  1,  0, "Fin del documento",           "",            "",                            "" } )
+
+return ( aColAntCli )
+
+
+
+Static Function nRecTot( aTmp, aGet )
+
+   if !Empty( aGet )
+      if ( lUsrMaster() .OR. oUser():lCambiarPrecio() )
+         aGet[ 33 ]:HardEnable()
+      else
+         aGet[ 33 ]:HardDisable()
+      end
+   end
+
+   RecalculaTotal( aTmp )
+
+Return .T.
+
+
+
+Static Function ShowInci( dbfTmpInc, cCodCli, dbfClient )
+
+   while !( dbfTmpInc )->( Eof() )
+      if ( dbfTmpInc )->lAviso .AND. !( dbfTmpInc )->lListo
+         MsgInfo( Trim( ( dbfTmpInc )->mDesInc ), "¡Incidencia!" )
+      end
+      ( dbfTmpInc )->( dbSkip() )
+   end
+
+   ( dbfTmpInc )->( dbGoTop() )
+
+Return .T.
+
+
+
+FUNCTION BrwAntCli( cCodCli, dbfAntCliT, dbfIva, dbfDiv, dbfTmpA, oBrwAnt )
+
+    local oDlg
+    local oBrw
+   local nOrd        := GetBrwOpt( "BrwAntCli" )
+   local oGet1
+   local cGet1
+   local oCbxOrd
+   local aStaAnt
+   local aCbxOrd     := { "Número", "Fecha", "Cliente", "Nombre" }
+   local aNomOrd     := { "lNumAnt", "lFecAnt", "lCodCli", "lNomCli" }
+   local cCbxOrd
+   local oBtnSelect
+   local oBtnUnSelect
+
+   nOrd              := Min( Max( nOrd, 1 ), len( aCbxOrd ) )
+   cCbxOrd           := aCbxOrd[ nOrd ]
+
+   aStaAnt           := aGetStatus( dbfAntCliT, .T. )
+
+
+
+
+
+   ( dbfTmpA )->( dbGoTop() )
+   while !( dbfTmpA )->( Eof() )
+      if ( dbfAntCliT )->( dbSeek( ( dbfTmpA )->cSerAnt + Str( ( dbfTmpA )->nNumAnt ) + ( dbfTmpA )->cSufAnt ) )
+         if dbLock( dbfAntCliT )
+            ( dbfAntCliT )->lSelDoc := .T.
+            ( dbfAntCliT )->( dbUnLock() )
+         end
+      end
+      ( dbfTmpA )->( dbSkip() )
+   end
+
+   ( dbfAntCliT )->( OrdSetFocus( aNomOrd[ nOrd ] ) )
+   ( dbfAntCliT )->( dbGoTop() )
+
+   oDlg = TDialog():New(,,,, "Seleccionar anticipos de clientes", "HELPENTRY",, .F.,,,,,, .F.,,,,,, .F., )
+
+
+
+
+
+
+        oGet1 := TGetHlp():ReDefine( 104, { | u | If( PCount()==0, cGet1, cGet1:= u ) }, oDlg,,, {||    ( if( empty( cGet1 ), OrdClearScope( oBrw, dbfAntCliT ), ), .T. )},,,,,, .F.,, {|nKey,nFlags,Self| ( AutoSeek( nKey, nFlags, Self, oBrw, dbfAntCliT ) ) }, .F., .F.,,,,,, nil, "FIND",, )
+
+
+
+
+
+
+        oCbxOrd := TComboBox():ReDefine( 102, { | u | If( PCount()==0, cCbxOrd, cCbxOrd:= u ) }, aCbxOrd, oDlg,,, {|Self|( ( dbfAntCliT )->( OrdSetFocus( aNomOrd[ oCbxOrd:nAt ] ) ), oBrw:Refresh(), oGet1:SetFocus() )},,,, .F.,,,,,, )
+
+      oBrw                 := IXBrowse():New( oDlg )
+
+      oBrw:bClrSel         := {|| { 0, ( 229 + ( 229 * 256 ) + ( 229 * 65536 ) ) } }
+      oBrw:bClrSelFocus    := {|| { 0, ( 167 + ( 205 * 256 ) + ( 240 * 65536 ) ) } }
+
+      oBrw:bRClicked       := {| nRow, nCol, nFlags | oBrw:RButtonDown( nRow, nCol, nFlags ) }
+      oBrw:bLDblClick      := {|| lSelAnt( dbfAntCliT, nil, oBrw ) }
+
+      oBrw:cAlias          := dbfAntCliT
+      oBrw:nMarqueeStyle   := 5
+      oBrw:cName           := "Browse.Anticipos"
+
+      oBrw:CreateFromResource( 105 )
+
+      with object ( oBrw:AddCol() )
+         :cHeader          := "Sl. Seleccionado"
+         :bEditValue       := {|| ( dbfAntCliT )->lSelDoc }
+         :nWidth           := 20
+         :SetCheck( { "Sel16", "Nil16" } )
+      end
+
+      with object ( oBrw:AddCol() )
+         :cHeader          := "Número"
+         :cSortOrder       := "nNumAnt"
+         :bEditValue       := {|| ( dbfAntCliT )->cSerAnt + "/" + Alltrim( Str( ( dbfAntCliT )->nNumAnt ) ) + "/" + ( dbfAntCliT )->cSufAnt }
+         :nWidth           := 70
+         :bLClickHeader    := {| nMRow, nMCol, nFlags, oCol | oCbxOrd:Set( oCol:cHeader ) }
+      end
+
+      with object ( oBrw:AddCol() )
+         :cHeader          := "Fecha"
+         :cSortOrder       := "dFecAnt"
+         :bEditValue       := {|| ( dbfAntCliT )->dFecAnt }
+         :nWidth           := 70
+         :bLClickHeader    := {| nMRow, nMCol, nFlags, oCol | oCbxOrd:Set( oCol:cHeader ) }
+      end
+
+      with object ( oBrw:AddCol() )
+         :cHeader          := "Código"
+         :cSortOrder       := "cCodCli"
+         :bEditValue       := {|| ( dbfAntCliT )->cCodCli }
+         :nWidth           := 80
+         :bLClickHeader    := {| nMRow, nMCol, nFlags, oCol | oCbxOrd:Set( oCol:cHeader ) }
+      end
+
+      with object ( oBrw:AddCol() )
+         :cHeader          := "Nombre"
+         :cSortOrder       := "cNomCli"
+         :bEditValue       := {|| ( dbfAntCliT )->cNomCli }
+         :nWidth           := 180
+         :bLClickHeader    := {| nMRow, nMCol, nFlags, oCol | oCbxOrd:Set( oCol:cHeader ) }
+      end
+
+      with object ( oBrw:AddCol() )
+         :cHeader          := "Importe"
+         :bEditValue       := {|| nTotAntCli( dbfAntCliT, dbfIva, dbfDiv, nil, cDivEmp(), .T. ) }
+         :nWidth           := 80
+         :nDataStrAlign    := 1
+         :nHeadStrAlign    := 1
+      end
+
+
+
+
+      oBtnSelect := TButton():ReDefine( 500, {||( lSelAnt( dbfAntCliT, .T., oBrw ) )}, oDlg,,, .F.,,,, .F. )
+
+
+
+
+      oBtnUnSelect := TButton():ReDefine( 501, {||( lSelAnt( dbfAntCliT, .F., oBrw ) )}, oDlg,,, .F.,,,, .F. )
+
+
+
+
+        TButton():ReDefine( 1, {||( oDlg:end( 1 ) )}, oDlg,,, .F.,,,, .F. )
+
+
+
+
+        TButton():ReDefine( 2, {||( oDlg:end() )}, oDlg,,, .F.,,,, .F. )
+
+   oDlg:AddFastKey( 116, {|| oDlg:end( 1 ) } )
+
+
+   oDlg:Activate( oDlg:bLClicked, oDlg:bMoved, oDlg:bPainted, .T.,,, {|Self|( SetWindowText( oBtnSelect:hWnd, "&Seleccionar" ), SetWindowText( oBtnUnSelect:hWnd, "&Deseleccionar" ) )}, oDlg:bRClicked,,, )
+
+   SetBrwOpt( "BrwAntCli", oCbxOrd:nAt )
+
+
+
+
+
+   if oDlg:nResult == 1
+
+      ( dbfTmpA )->( __dbZap() )
+
+      ( dbfAntCliT )->( dbGoTop() )
+      while !( dbfAntCliT )->( eof() )
+         if ( dbfAntCliT )->lSelDoc
+            dbPass( dbfAntCliT, dbfTmpA, .T. )
+            if dbLock( dbfAntCliT )
+               ( dbfAntCliT )->lSelDoc := .F.
+               ( dbfAntCliT )->( dbUnLock() )
+            end
+         end
+         ( dbfAntCliT )->( dbSkip() )
+      end
+
+      ( dbfTmpA )->( dbGoTop() )
+
+   end
+
+   if oBrwAnt <> nil
+      oBrwAnt:Refresh()
+   end
+
+
+
+
+
+   SetStatus( dbfAntCliT, aStaAnt )
+
+RETURN ( oDlg:nResult == 1 )
+
+
+
+Static Function lSelAnt( dbfAntCliT, lSel, oBrw )
+
+   IIF( lSel == nil, lSel := !( dbfAntCliT )->lSelDoc, ) ;
+
+   if dbLock( dbfAntCliT )
+      ( dbfAntCliT )->lSelDoc := lSel
+      ( dbfAntCliT )->( dbUnLock() )
+   end
+
+   oBrw:DrawSelect()
+
+Return nil
+
+
+
+FUNCTION nNetAntFacCli( cFactura, dbfAntCliT, dbfIva, dbfDiv, cDivRet, lPic )
+
+   local nRec
+   local nOrd
+   local cPorDiv
+   local cCodDiv
+   local nRouDiv           := 2
+   local nTotAnt           := 0
+
+   IIF( lPic == nil, lPic := .F., ) ;
+
+   do case
+      case IsNil( cFactura )
+
+         cCodDiv           := ( dbfAntCliT )->cDivAnt
+         cPorDiv           := cPorDiv( cCodDiv, dbfDiv )
+         nRouDiv           := nRouDiv( cCodDiv, dbfDiv )
+
+         nRec              := ( dbfAntCliT )->( Recno() )
+
+         ( dbfAntCliT )->( dbGoTop() )
+         while !( dbfAntCliT )->( eof() )
+            nTotAnt        += nNetAntCli( dbfAntCliT, dbfIva, dbfDiv )
+            ( dbfAntCliT )->( dbSkip() )
+         end
+
+         ( dbfAntCliT )->( dbGoTo( nRec ) )
+
+      case !Empty( cFactura )
+
+         nRec              := ( dbfAntCliT )->( Recno() )
+         nOrd              := ( dbfAntCliT )->( OrdSetFocus( "cNumDoc" ) )
+
+         if ( dbfAntCliT )->( dbSeek( cFactura ) )
+            while ( ( dbfAntCliT )->cNumDoc == cFactura .AND. !( dbfAntCliT )->( eof() ) )
+               nTotAnt     += nNetAntCli( dbfAntCliT, dbfIva, dbfDiv )
+               ( dbfAntCliT )->( dbSkip() )
+            end
+         end
+
+         ( dbfAntCliT )->( OrdSetFocus( nOrd ) )
+         ( dbfAntCliT )->( dbGoTo( nRec ) )
+
+   end
+
+   if cDivRet <> nil .AND. cCodDiv <> cDivRet
+      nTotAnt              := nCnv2Div( nTotAnt, cCodDiv, cDivRet, dbfDiv )
+      cPorDiv              := cPorDiv( cDivRet, dbfDiv )
+      nRouDiv              := nRouDiv( cDivRet, dbfDiv )
+   end
+
+   nTotAnt                 := Round( nTotAnt, nRouDiv )
+
+   if lPic
+      nTotAnt              := Trans( nTotAnt, cPorDiv )
+   end
+
+RETURN ( nTotAnt )
+
+
+
+
+
+
+
+Function cNumAnt( cNumFac, dbfAntCliT )
+
+   local cNumAnt  := ""
+   local nOrd     := ( dbfAntCliT )->( OrdSetFocus( "cNumDoc" ) )
+
+   if ( dbfAntCliT )->( dbSeek( cNumFac ) )
+      cNumAnt     := ( dbfAntCliT )->cSerAnt + Str( ( dbfAntCliT )->nNumAnt ) + ( dbfAntCliT )->cSufAnt
+   end
+
+   ( dbfAntCliT )->( OrdSetFocus( nOrd ) )
+
+Return ( cNumAnt )
+
+
+
+STATIC FUNCTION aGetSelRec( oBrw, bAction, cTitle, lHide1, cTitle1, lHide2, cTitle2, bPreAction, bPostAction )
+
+   local oDlg
+   local oRad
+   local nRad        := 1
+   local aRet        := {}
+   local oTree
+   local oChk1
+   local oChk2
+   local lChk1       := .T.
+   local lChk2       := .T.
+   local nRecno      := ( dbfAntCliT )->( Recno() )
+   local nOrdAnt     := ( dbfAntCliT )->( OrdSetFocus( 1 ) )
+   local oSerIni
+   local oSerFin
+   local cSerIni     := ( dbfAntCliT )->cSerAnt
+   local cSerFin     := ( dbfAntCliT )->cSerAnt
+   local oDocIni
+   local oDocFin
+   local nDocIni     := ( dbfAntCliT )->nNumAnt
+   local nDocFin     := ( dbfAntCliT )->nNumAnt
+   local oSufIni
+   local oSufFin
+   local cSufIni     := ( dbfAntCliT )->cSufAnt
+   local cSufFin     := ( dbfAntCliT )->cSufAnt
+   local oMtrInf
+   local nMtrInf
+   local lFechas     := .T.
+   local dDesde      := CtoD( "01/01/" + Str( Year( Date() ) ) )
+   local dHasta      := Date()
+   local oImageList
+   local oBtnCancel
+
+   IIF( cTitle == nil, cTitle := "", ) ;
+   IIF( lHide1 == nil, lHide1 := .F., ) ;
+   IIF( cTitle1 == nil, cTitle1 := "", ) ;
+   IIF( lHide2 == nil, lHide2 := .F., ) ;
+   IIF( cTitle2 == nil, cTitle2 := "", ) ;
+
+   oImageList        := TImageList():New( 16, 16 )
+   oImageList:AddMasked( TBitmap():Define( "Bullet_Square_Red_16" ),    ( 255 + ( 0 * 256 ) + ( 255 * 65536 ) ) )
+   oImageList:AddMasked( TBitmap():Define( "Bullet_Square_Green_16" ),  ( 255 + ( 0 * 256 ) + ( 255 * 65536 ) ) )
+
+   oDlg = TDialog():New(,,,, cTitle, "SelectRango",, .F.,,,,,, .F.,,,,,, .F., )
+
+
+
+   oRad := TRadMenu():Redefine( { | u | If( PCount()==0, nRad, nRad:= u ) }, oDlg,, { 80, 81 },,,,, .F.,, )
+
+
+
+
+
+
+
+
+
+
+   oSerIni := TGetHlp():ReDefine( 100, { | u | If( PCount()==0, cSerIni, cSerIni:= u ) }, oDlg,, "@!", {||    ( cSerIni >= "A" .AND. cSerIni <= "Z" )},,,,,, .T., {||     ( oRad:nOption == 2 )},, .F., .T., {||    ( UpSerie( oSerIni ) )}, {||  ( DwSerie( oSerIni ) )},,,, nil,,, )
+
+
+
+
+
+
+   TBtnBmp():ReDefine( 101, "Up16",,,,, {|Self|( dbFirst( dbfAntCliT, "nNumAnt", oDocIni, cSerIni, "nNumAnt" ) )}, oDlg, .F.,, .F.,,,,,, !.T.,, .F.,,, .F., !.F. )
+
+
+
+
+
+
+
+
+
+
+   oSerFin := TGetHlp():ReDefine( 110, { | u | If( PCount()==0, cSerFin, cSerFin:= u ) }, oDlg,, "@!", {||    ( cSerFin >= "A" .AND. cSerFin <= "Z" )},,,,,, .T., {||     ( oRad:nOption == 2 )},, .F., .T., {||    ( UpSerie( oSerFin ) )}, {||  ( DwSerie( oSerFin ) )},,,, nil,,, )
+
+
+
+
+
+
+   TBtnBmp():ReDefine( 111, "Down16",,,,, {|Self|( dbLast( dbfAntCliT, "nNumAnt", oDocFin, cSerFin, "nNumAnt" ) )}, oDlg, .F.,, .F.,,,,,, !.T.,, .F.,,, .F., !.F. )
+
+
+
+
+
+
+   oDocIni := TGetHlp():ReDefine( 120, { | u | If( PCount()==0, nDocIni, nDocIni:= u ) }, oDlg,, "999999999",,,,,,, .F., {||     ( nRad == 2 )},, .F., .T.,,,,,, nil,,, )
+
+
+
+
+
+
+   oDocFin := TGetHlp():ReDefine( 130, { | u | If( PCount()==0, nDocFin, nDocFin:= u ) }, oDlg,, "999999999",,,,,,, .F., {||     ( nRad == 2 )},, .F., .T.,,,,,, nil,,, )
+
+
+
+
+
+   oSufIni := TGetHlp():ReDefine( 140, { | u | If( PCount()==0, cSufIni, cSufIni:= u ) }, oDlg,, "##",,,,,,, .F., {||     ( nRad == 2 )},, .F., .F.,,,,,, nil,,, )
+
+
+
+
+
+   oSufFin := TGetHlp():ReDefine( 150, { | u | If( PCount()==0, cSufFin, cSufFin:= u ) }, oDlg,, "##",,,,,,, .F., {||     ( nRad == 2 )},, .F., .F.,,,,,, nil,,, )
+
+
+
+   oChk1 := TCheckBox():ReDefine( 160, { | u | If( PCount()==0, lChk1, lChk1:= u ) }, oDlg,,,,,,, .F.,, .F. )
+
+
+
+   oChk2 := TCheckBox():ReDefine( 180, { | u | If( PCount()==0, lChk2, lChk2:= u ) }, oDlg,,,,,,, .F.,, .F. )
+
+
+
+
+
+
+
+   TCheckBox():ReDefine( 300, { | u | If( PCount()==0, lFechas, lFechas:= u ) }, oDlg,,,,,,, .F.,, .F. )
+
+
+
+
+
+   TGetHlp():ReDefine( 310, { | u | If( PCount()==0, dDesde, dDesde:= u ) }, oDlg,,,,,,,,, .F., {||     ( !lFechas )},, .F., .T.,,,,,, nil,,, )
+
+
+
+
+
+    TGetHlp():ReDefine( 320, { | u | If( PCount()==0, dHasta, dHasta:= u ) }, oDlg,,,,,,,,, .F., {||     ( !lFechas )},, .F., .T.,,,,,, nil,,, )
+
+
+
+
+
+   oTree             := TTreeView():Redefine( 170, oDlg )
+   oTree:bLDblClick  := {|| TreeChanged( oTree ) }
+
+
+
+
+
+   oMtrInf := TMeter():ReDefine( 200, { | u | If( PCount()==0, nMtrInf, nMtrInf:= u ) },, oDlg, .F.,, "Proceso", .F.,,,, )
+
+   oMtrInf:SetTotal( ( dbfAntCliT )->( OrdKeyCount() ) )
+
+
+
+
+   TButton():ReDefine( 1, {||( MakSelRec( bAction, cSerIni + Str( nDocIni, 9 ) + cSufIni, cSerFin + Str( nDocFin, 9 ) + cSufFin, bPreAction, bPostAction, nRad, lChk1, lChk2, lFechas, dDesde, dHasta, oDlg, dbfAntCliT, oTree, oBrw, oMtrInf, oBtnCancel ) )}, oDlg,,, .F.,,,, .F. )
+
+
+
+
+
+   oBtnCancel := TButton():ReDefine( 2, {||( oDlg:end() )}, oDlg,,, .F.,,,, .T. )
+
+   oDlg:bStart := {|| StartGetSelRec( oBrw, oRad, oChk1, oChk2, oSerIni, oSerFin, oDocIni, oDocFin, oSufIni, oSufFin, lHide1, lHide2, cTitle1, cTitle2 ) }
+
+
+
+   oDlg:Activate( oDlg:bLClicked, oDlg:bMoved, oDlg:bPainted, .T.,,, {|Self|( oTree:SetImageList( oImageList ) )}, oDlg:bRClicked,,, )
+
+   ( dbfAntCliT )->( ordSetFocus( nOrdAnt ) )
+   ( dbfAntCliT )->( dbGoTo( nRecNo ) )
+
+   oImageList:End()
+
+   oTree:Destroy()
+
+   oBrw:SetFocus()
+   oBrw:Refresh()
+
+RETURN ( aRet )
+
+
+
+Static Function StartGetSelRec( oBrw, oRad, oChk1, oChk2, oSerIni, oSerFin, oDocIni, oDocFin, oSufIni, oSufFin, lHide1, lHide2, cTitle1, cTitle2 )
+
+   if !Empty( oBrw ) .AND. ( len( oBrw:oBrw:aSelected ) > 1 )
+
+      oRad:SetOption( 1 )
+
+   else
+
+      oRad:SetOption( 2 )
+
+      oSerIni:Enable()
+      oSerFin:Enable()
+      oDocIni:Enable()
+      oDocFin:Enable()
+      oSufIni:Enable()
+      oSufFin:Enable()
+
+   end
+
+   if lHide1
+      oChk1:Hide()
+   else
+      SetWindowText( oChk1:hWnd, cTitle1 )
+      oChk1:Refresh()
+   end
+
+   if lHide2
+      oChk2:Hide()
+   else
+      SetWindowText( oChk2:hWnd, cTitle2 )
+      oChk2:Refresh()
+   end
+
+Return ( nil )
+
+
+
+Static Function TreeChanged( oTree )
+
+   local oItemTree   := oTree:GetItem()
+
+   if !Empty( oItemTree ) .AND. !Empty( oItemTree:bAction )
+      Eval( oItemTree:bAction )
+   end
+
+RETURN NIL
+
+
+
+Static Function MakSelRec( bAction, cDocIni, cDocFin, bPreAction, bPostAction, nRad, lChk1, lChk2, lFechas, dDesde, dHasta, oDlg, dbfAntCliT, oTree, oBrw, oMtrInf, oBtnCancel )
+
+   local n        := 0
+   local nPos     := 0
+   local nRec     := ( dbfAntCliT )->( Recno() )
+   local aPos
+   local lRet
+   local lPre
+   local lWhile   := .T.
+
+
+
+
+
+
+   if lChk1
+      aPos        := { 0, 0 }
+      ClientToScreen( oDlg:hWnd, aPos )
+      oDlg:Move( aPos[ 1 ] - 22, aPos[ 2 ] - 510 )
+   end
+
+
+
+
+
+   oDlg:Disable()
+
+   oTree:Enable()
+   oTree:DeleteAll()
+
+   oBtnCancel:bAction   := {|| lWhile := .F. }
+   oBtnCancel:Enable()
+
+   if !Empty( bPreAction )
+      lPre              := Eval( bPreAction )
+   end
+
+   if !IsLogic( lPre ) .OR. lPre
+
+      if ( nRad == 1 )
+
+         for each nPos in ( oBrw:oBrw:aSelected )
+
+            ( dbfAntCliT )->( dbGoTo( nPos ) )
+
+            if lFechas .OR.( ( dbfAntCliT )->dFecFac >= dDesde .AND. ( dbfAntCliT )->dFecFac <= dHasta )
+
+               lRet  := Eval( bAction, lChk1, lChk2, oTree, dbfAntCliT )
+
+               if IsFalse( lRet )
+                  exit
+               end
+
+            end
+
+            oMtrInf:Set( ++n )
+
+            SysRefresh()
+
+            if !lWhile
+               exit
+            end
+
+         next
+
+      else
+
+         ( dbfAntCliT )->( dbSeek( cDocIni, .T. ) )
+
+
+
+
+         while ( lWhile )                                                                                         .AND.  ( dbfAntCliT )->cSerAnt + Str( ( dbfAntCliT )->nNumAnt, 9 ) + ( dbfAntCliT )->cSufAnt >= cDocIni   .AND.  ( dbfAntCliT )->cSerAnt + Str( ( dbfAntCliT )->nNumAnt, 9 ) + ( dbfAntCliT )->cSufAnt <= cDocFin   .AND.  !( dbfAntCliT )->( eof() )
+
+            if lFechas .OR.( ( dbfAntCliT )->dFecFac >= dDesde .AND. ( dbfAntCliT )->dFecFac <= dHasta )
+
+               lRet  := Eval( bAction, lChk1, lChk2, oTree, dbfAntCliT )
+
+               if IsFalse( lRet )
+                  exit
+               end
+
+            end
+
+            oMtrInf:Set( ++n )
+
+            ( dbfAntCliT )->( dbSkip() )
+
+            SysRefresh()
+
+         end
+
+      end
+
+      if !Empty( bPostAction )
+         Eval( bPostAction )
+      end
+
+   end
+
+   oMtrInf:Set( ( dbfAntCliT )->( LastRec() ) )
+
+   ( dbfAntCliT )->( dbGoTo( nRec ) )
+
+   if lChk1
+      WndCenter( oDlg:hWnd )
+   end
+
+   oBtnCancel:bAction   := {|| oDlg:End() }
+
+   oDlg:Enable()
+
+   if oBrw <> nil
+      oBrw:Refresh()
+   end
+
+RETURN ( nil )
+
+
+
+
+
+STATIC FUNCTION ContabilizarAnticipos( lSimula, lPago, oTree )
+
+    local nReq
+   local cIva
+   local cReq
+    local dFecha
+    local cConcepto
+    local cPago
+    local cSubCtaIva
+    local cSubCtaReq
+   local cCodEmp
+   local cRuta
+   local aSimula        := {}
+   local cCodDiv        := ( dbfAntCliT )->cDivAnt
+   local cCtaCli        := cCliCta( ( dbfAntCliT )->cCodCli, dbfCli )
+   local cCtaAnticipo   := cCtaAnt()
+   local cCtaPgo
+   local nFactura       := ( dbfAntCliT )->cSerAnt + Str( ( dbfAntCliT )->nNumAnt ) + ( dbfAntCliT )->cSufAnt
+   local cFactura       := ( dbfAntCliT )->cSerAnt + Alltrim( Str( ( dbfAntCliT )->nNumAnt ) )
+   local cCodPro        := ( dbfAntCliT )->cCodPro
+   local aTotalAnt      := aTotAntCli( dbfAntCliT, dbfIva, dbfDiv )
+   local nTotalNet      := aTotalAnt[ 1 ]
+   local nTotalIva      := aTotalAnt[ 2 ]
+   local nTotalReq      := aTotalAnt[ 3 ]
+   local nTotalAnt      := aTotalAnt[ 5 ]
+   local nAsiento       := 0
+   local lErrorFound    := .F.
+   local nIva
+   local cTerNif        := ( dbfAntCliT )->cDniCli
+   local cTerNom        := ( dbfAntCliT )->cNomCli
+   local lReturn
+
+   IIF( lSimula == nil, lSimula := .T., ) ;
+   IIF( aSimula == nil, aSimula := {}, ) ;
+
+
+
+
+
+
+   if ( dbfAntCliT )->lContab
+      oTree:Select( oTree:Add( "Factura : " + rtrim( cFactura ) + " contabilizada.", 0 ) )
+      lErrorFound       := .T.
+   end
+
+   if !ChkRuta( cRutCnt() )
+      oTree:Select( oTree:Add( "Factura : " + rtrim( cFactura ) + " ruta no valida.", 0 ) )
+      lErrorFound       := .T.
+   end
+
+
+
+
+
+
+   cRuta                := cRutCnt()
+   cCodEmp              := cCodEmpCnt( ( dbfAntCliT )->cSerAnt )
+
+   if empty( cCodEmp )
+      oTree:Select( oTree:Add("Factura : " + rtrim( cFactura ) + " no se definierón empresas asociadas.", 0 ) )
+      lErrorFound       := .T.
+   end
+
+
+
+
+
+
+   if Empty( cCtaCli )
+      cCtaCli  := cCtaSin()
+   end
+
+   if !ChkSubCta( cRuta, cCodEmp, cCtaCli, , .F., .F. )
+      oTree:Select( oTree:Add("Factura : " + cFactura + " subcuenta de cliente " + cCtaCli + " no encontada.", 0 ) )
+      lErrorFound       := .T.
+   end
+
+   if !ChkSubCta( cRuta, cCodEmp, cCtaAnticipo, , .F., .F. )
+      oTree:Select( oTree:Add("Factura : " + cFactura + " subcuenta de anticipo " + Rtrim( cCtaAnticipo ) + " no encontada.", 0 ) )
+      lErrorFound       := .T.
+   end
+
+
+
+
+
+
+   if !ChkFecha( , , ( dbfAntCliT )->dFecAnt, .F., oTree )
+      lErrorFound       := .T.
+   end
+
+
+
+
+
+
+   nIva        := ( dbfAntCliT )->nPctIva
+   cIva        := RJust( ( dbfAntCliT )->nPctIva, "0", 2 )
+
+   if ( dbfAntCliT )->lRecargo
+      nReq     := ( dbfAntCliT )->nPctReq
+
+      if nReq  < 1
+         nReq  := nReq * 10
+      end
+
+      cReq     := RJust( nReq, "0", 2 )
+   else
+      cReq     := "00"
+   end
+
+   if lIvaReq()
+      cSubCtaIva  := cIva + cReq
+   else
+      cSubCtaIva  := cReq + cIva
+   end
+
+   cSubCtaIva     := RetCtaEsp( 2 ) + RJust( cSubCtaIva, "0", nLenCuentaContaplus( cRuta, cCodEmp ) )
+
+   if !ChkSubCta( cRutCnt(), cCodEmp, cSubCtaIva, , .F., .F. )
+      oTree:Select( oTree:Add( "Factura : " + rtrim( cFactura ) + " subcuenta de " + cImp() + cSubCtaIva + " no encontada.", 0 ) )
+      lErrorFound       := .T.
+   end
+
+
+
+
+
+
+   if ( dbfAntCliT )->lRecargo
+
+      nReq     := ( dbfAntCliT )->nPctReq
+
+      if nReq  < 1
+         nReq  := nReq * 10
+      end
+
+      cSubCtaReq        := RetCtaEsp( 3 ) + RJust( nReq, "0", nLenCuentaContaplus( cRuta, cCodEmp ) )
+
+      if !ChkSubCta( cRutCnt(), cCodEmp, cSubCtaReq, , .F., .F. )
+         oTree:Select( oTree:Add( "Factura : " + cFactura + " subcuenta de recargo " + Rtrim( cSubCtaReq ) + " no encontada.", 0 ) )
+         lErrorFound    := .T.
+      end
+
+   end
+
+
+
+
+
+   if !Empty( ( dbfAntCliT )->cCtaPgo )
+      cCtaPgo           := ( dbfAntCliT )->cCtaPgo
+   else
+      cCtaPgo           := cCtaFPago( ( dbfAntCliT )->cCodPago, dbfFPago )
+   end
+
+   if Empty( cCtaPgo )
+      cCtaPgo  := cCtaCob()
+   end
+
+   if !ChkSubCta( cRutCnt(), cCodEmp, cCtaPgo, , .F., .F. )
+      oTree:Select( oTree:Add("Factura : " + Rtrim( cFactura ) + " subcuenta de cobro " + Rtrim( cCtaPgo ) + " no encontada.", 0 ) )
+      lErrorFound       := .T.
+   end
+
+
+
+
+
+
+   dFecha               := ( dbfAntCliT )->dFecAnt
+
+   cConcepto            := "N/Ant. N." + cFactura
+   cPago                := "C/Ant. N." + cFactura
+
+
+
+
+
+
+   if OpenDiario( , cCodEmp )
+      nAsiento          := RetLastAsi()
+   else
+      oTree:Select( oTree:Add( "Factura : " + Rtrim( cFactura ) + " imposible abrir ficheros.", 0 ) )
+      Return .F.
+   end
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+   aadd( aSimula, MkAsiento(  nAsiento, cCodDiv, dFecha, cCtaCli, , nTotalAnt, cConcepto, , cFactura, , , , , cCodPro, , , , , lSimula, cTerNif, cTerNom ) )
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+   aadd( aSimula, MkAsiento(  nAsiento, cCodDiv, dFecha, cCtaAnticipo, , , cConcepto, nTotalNet, cFactura, , , , , cCodPro, , , , , lSimula, cTerNif, cTerNom ) )
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+   aadd( aSimula, MkAsiento(  nAsiento,  cCodDiv,  dFecha,  cSubCtaIva, cCtaCli, , cConcepto, nTotalIva, cFactura, nTotalNet, nIva, nTotalReq, , cCodPro, , , , , lSimula, cTerNif, cTerNom ) )
+
+
+
+
+
+
+   if ( dbfAntCliT )->lRecargo .AND. nTotalReq <> 0
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+      aadd( aSimula, MkAsiento(  nAsiento, cCodDiv, dFecha, cSubCtaReq, , , cConcepto, nTotalReq, cFactura, , , , , cCodPro, , , , , lSimula, cTerNif, cTerNom ) )
+
+   end
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+   aadd( aSimula, MkAsiento(  nAsiento, cCodDiv, dFecha, cCtaCli, , , cConcepto, nTotalAnt, cFactura, , , , , cCodPro, , , , , lSimula, cTerNif, cTerNom ) )
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+   aadd( aSimula, MkAsiento(  nAsiento, cCodDiv, dFecha, cCtaPgo, , nTotalAnt, cConcepto, , cFactura, , , , , cCodPro, , , , , lSimula, cTerNif, cTerNom ) )
+
+
+
+
+
+
+   if !lSimula .AND. !lErrorFound
+
+      lReturn  := CambiarEstado( .T., nAsiento, cFactura, oTree )
+
+   else
+
+      lReturn  := msgTblCon( aSimula, cCodDiv, dbfDiv, !lErrorFound, cFactura, {|| aWriteAsiento( aSimula, cCodDiv, .T., oTree, cFactura, nAsiento ), CambiarEstado( .T., nAsiento, cFactura, oTree ) } )
+
+   end
+
+   CloseDiario()
+
+   if !Empty( oBrw )
+      oBrw:Refresh()
+   end
+
+RETURN ( lReturn )
+
+
+
+Static Function CambiarEstado( lContab, nAsiento, cFactura, oTree )
+
+   local lReturn  := .T.
+
+   if ( dbfAntCliT )->( dbRLock() )
+      ( dbfAntCliT )->lContab := lContab
+      ( dbfAntCliT )->( dbUnlock() )
+
+      if !Empty( oTree )
+         oTree:Select( oTree:Add( "Factura : " + cFactura + " asiento generado num. " + Alltrim( Str( nAsiento ) ), 1 ) )
+      end
+
+   else
+
+      lReturn     := .F.
+
+   end
+
+RETURN ( lReturn )
+
+
+
+Static function CambiarLiquidado( lContab )
+
+   if ( dbfAntCliT )->( dbRLock() )
+      ( dbfAntCliT )->lLiquidada := lContab
+      ( dbfAntCliT )->( dbUnlock() )
+   end
+
+RETURN NIL
+
+
+
+Static Function GotoFacturaCliente()
+
+   if !Empty( ( dbfAntCliT )->cNumDoc )
+      if oUser():lAdministrador()
+         EdtFacCli( ( dbfAntCliT )->cNumDoc )
+      else
+         ZooFacCli( ( dbfAntCliT )->cNumDoc )
+      end
+   else
+      msgStop( "Este documento no esta liquidado" )
+   end
+
+Return nil
+
+
+
+Function CreateAntCli( cCodCli )
+
+   local nLevel   := nLevelUsr( "01181" )
+
+   if nAnd( nLevel, 1 ) <> 0 .OR. nAnd( nLevel, 4 ) == 0
+      msgStop( "Acceso no permitido." )
+      return .T.
+   end
+
+   if !OpenFiles()
+      CloseFiles()
+      return nil
+   end
+
+   WinAppRec( nil, bEdtRec, dbfAntCliT, cCodCli )
+
+   if oBrw <> NIL
+      oBrw:Refresh()
+   end
+
+   CloseFiles()
+
+return nil
+
+
+
+
+function nCobAntCli( cCodCli, dbfAntCli, dbfIva, dbfDiv, nYear, dFecIni, dFecFin )
+
+   local nCon        := 0
+   local nOrd        := ( dbfAntCli )->( OrdSetFocus( "CCODCLI" ) )
+   local nRec        := ( dbfAntCli )->( Recno() )
+
+
+
+
+
+   if ( dbfAntCli )->( dbSeek( cCodCli ) )
+
+      while ( dbfAntCli )->cCodCli = cCodCli .AND. !( dbfAntCli )->( Eof() )
+
+
+
+
+         if !( dbfAntCli )->lLiquidada .AND. ( nYear == nil .OR. Year( ( dbfAntCli )->dFecAnt ) == nYear ) .AND. ( dFecIni == nil .OR. ( dbfAntCli )->dFecAnt >= dFecIni ) .AND. ( dFecFin == nil .OR. ( dbfAntCli )->dFecAnt <= dFecFin )
+
+            nCon     += nTotAntCli( dbfAntCli, dbfIva, dbfDiv )
+
+         end
+
+         ( dbfAntCli )->( dbSkip() )
+
+         SysRefresh()
+
+      end
+
+   end
+
+   ( dbfAntCli )->( OrdSetFocus( nOrd ) )
+   ( dbfAntCli )->( dbGoTo( nRec ) )
+
+return nCon
+
+
+
+Static Function EdtRecMenu( aTmp, oDlg )
+
+   oMenu := MenuBegin( .F.,,, .F., .F. )
+
+      MenuAddItem( "&1. Rotor",, .F.,,,,,,,,, .F.,,, .F. )
+
+         if !lExternal
+
+         MenuBegin( .F.,,, .F., .F. )
+
+
+
+
+
+            MenuAddItem( "&1. Visualizar factura", "Visualiza la factura que lo liquida", .F.,, {|oMenuItem|( if( !Empty( aTmp[ 41 ] ), ZooFacCli( aTmp[ 41 ] ), MsgStop( "Este documento no esta liquidado" ) ) )},, "Document_Plain_User1_16",,,,, .F.,,, .F. )
+            MenuAddItem()
+
+
+
+
+            MenuAddItem( "&2. Modificar cliente", "Modifica la ficha del cliente", .F.,, {|oMenuItem|( if( !Empty( aTmp[ 6 ] ), EdtCli( aTmp[ 6 ] ), MsgStop( "Código de cliente vacío" ) ) )},, "User1_16",,,,, .F.,,, .F. )
+
+
+
+
+
+            MenuAddItem( "&3. Informe de cliente", "Informe de cliente", .F.,, {|oMenuItem|( if( !Empty( aTmp[ 6 ] ), InfCliente( aTmp[ 6 ] ), MsgStop( "Código de cliente vacío" ) ) )},, "Info16",,,,, .F.,,, .F. )
+
+
+
+
+            MenuAddItem( "&4. Modificar obra", "Modifica ficha de la obra", .F.,, {|oMenuItem|( if( !Empty( aTmp[ 20 ] ), EdtObras( aTmp[ 6 ], aTmp[ 20 ], dbfObrasT ), MsgStop( "Código de obra vacío" ) ) )},, "Worker16",,,,, .F.,,, .F. )
+
+         MenuEnd()
+
+         end
+
+   MenuEnd()
+
+   oDlg:SetMenu( oMenu )
+
+RETURN ( oMenu )
+
+
+
+Static Function EndEdtRecMenu()
+
+Return( oMenu:End() )
+
+
+
+STATIC FUNCTION DelSerie( oWndBrw )
+
+    local oDlg
+   local oSerIni
+   local oSerFin
+   local oTxtDel
+   local nTxtDel     := 0
+   local nRecno      := ( dbfAntCliT )->( Recno() )
+   local nOrdAnt     := ( dbfAntCliT )->( OrdSetFocus( 1 ) )
+   local oDesde      := TDesdeHasta():Init( ( dbfAntCliT )->cSerAnt, ( dbfAntCliT )->nNumAnt, ( dbfAntCliT )->cSufAnt, GetSysDate() )
+   local lCancel     := .F.
+   local oBtnAceptar
+   local oBtnCancel
+
+
+
+
+   oDlg = TDialog():New(,,,, "Eliminar series de anticipos", "DELSERDOC",, .F.,,,,, oWndBrw, .F.,,,,,, .F., )
+
+
+
+   TRadMenu():Redefine( { | u | If( PCount()==0, oDesde:nRadio, oDesde:nRadio:= u ) }, oDlg,, { 90, 91 },,,,, .F.,, )
+
+
+
+
+
+
+
+
+
+
+   oSerIni := TGetHlp():ReDefine( 100, { | u | If( PCount()==0, oDesde:cSerieInicio, oDesde:cSerieInicio:= u ) }, oDlg,, "@!", {||    ( oDesde:cSerieInicio >= "A" .AND. oDesde:cSerieInicio <= "Z"  )},,,,,, .T., {||     ( oDesde:nRadio == 1 )},, .F., .T., {||    ( UpSerie( oSerIni ) )}, {||  ( DwSerie( oSerIni ) )},,,, nil,,, )
+
+
+
+
+
+
+
+
+
+
+   oSerFin := TGetHlp():ReDefine( 110, { | u | If( PCount()==0, oDesde:cSerieFin, oDesde:cSerieFin:= u ) }, oDlg,, "@!", {||    ( oDesde:cSerieFin >= "A" .AND. oDesde:cSerieFin <= "Z"  )},,,,,, .T., {||     ( oDesde:nRadio == 1 )},, .F., .T., {||    ( UpSerie( oSerFin ) )}, {||  ( DwSerie( oSerFin ) )},,,, nil,,, )
+
+
+
+
+
+
+   TGetHlp():ReDefine( 120, { | u | If( PCount()==0, oDesde:nNumeroInicio, oDesde:nNumeroInicio:= u ) }, oDlg,, "999999999",,,,,,, .F., {||     ( oDesde:nRadio == 1 )},, .F., .T.,,,,,, nil,,, )
+
+
+
+
+
+
+   TGetHlp():ReDefine( 130, { | u | If( PCount()==0, oDesde:nNumeroFin, oDesde:nNumeroFin:= u ) }, oDlg,, "999999999",,,,,,, .F., {||     ( oDesde:nRadio == 1 )},, .F., .T.,,,,,, nil,,, )
+
+
+
+
+
+   TGetHlp():ReDefine( 140, { | u | If( PCount()==0, oDesde:cSufijoInicio, oDesde:cSufijoInicio:= u ) }, oDlg,, "##",,,,,,, .F., {||     ( oDesde:nRadio == 1 )},, .F., .F.,,,,,, nil,,, )
+
+
+
+
+
+   TGetHlp():ReDefine( 150, { | u | If( PCount()==0, oDesde:cSufijoFin, oDesde:cSufijoFin:= u ) }, oDlg,, "##",,,,,,, .F., {||     ( oDesde:nRadio == 1 )},, .F., .F.,,,,,, nil,,, )
+
+
+
+
+
+   TGetHlp():ReDefine( 170, { | u | If( PCount()==0, oDesde:dFechaInicio, oDesde:dFechaInicio:= u ) }, oDlg,,,,,,,,, .F., {||     ( oDesde:nRadio == 2 )},, .F., .T.,,,,,, nil,,, )
+
+
+
+
+
+   TGetHlp():ReDefine( 180, { | u | If( PCount()==0, oDesde:dFechaFin, oDesde:dFechaFin:= u ) }, oDlg,,,,,,,,, .F., {||     ( oDesde:nRadio == 2 )},, .F., .T.,,,,,, nil,,, )
+
+
+
+
+   oBtnAceptar := TButton():ReDefine( 1, {||( DelStart( oDesde, oDlg, oBtnAceptar, oBtnCancel, oTxtDel, @lCancel ) )}, oDlg,,, .F.,,,, .F. )
+
+
+
+
+
+   oBtnCancel := TButton():ReDefine( 2, {||( lCancel := .T., oDlg:end() )}, oDlg,,, .F.,,,, .T. )
+
+
+
+
+
+   oTxtDel := TMeter():ReDefine( 160, { | u | If( PCount()==0, nTxtDel, nTxtDel:= u ) }, ( dbfAntCliT )->( OrdKeyCount() ), oDlg, .F.,,, .T.,,,, )
+
+   oDlg:Activate( oDlg:bLClicked, oDlg:bMoved, oDlg:bPainted, .T., {|Self|( lCancel )},,, oDlg:bRClicked,,, )
+
+   ( dbfAntCliT )->( dbGoTo( nRecNo ) )
+   ( dbfAntCliT )->( ordSetFocus( nOrdAnt ) )
+
+   oWndBrw:SetFocus()
+   oWndBrw:Refresh()
+
+RETURN NIL
+
+
+
+STATIC FUNCTION DelStart( oDesde, oDlg, oBtnAceptar, oBtnCancel, oTxtDel, lCancel )
+
+   local nOrd
+   local nDeleted       := 0
+   local nProcesed      := 0
+
+   oBtnAceptar:Hide()
+   oBtnCancel:bAction   := {|| lCancel := .T. }
+
+   if oDesde:nRadio == 1
+
+      nOrd              := ( dbfAntCliT )->( OrdSetFocus( "nNumAnt" ) )
+
+      ( dbfAntCliT )->( dbSeek( oDesde:cNumeroInicio(), .T. ) )
+      while !lCancel .AND. ( dbfAntCliT )->( !eof() )
+
+
+
+
+
+
+         if ( dbfAntCliT )->cSerAnt >= oDesde:cSerieInicio  .AND. ( dbfAntCliT )->cSerAnt <= oDesde:cSerieFin     .AND. ( dbfAntCliT )->nNumAnt >= oDesde:nNumeroInicio .AND. ( dbfAntCliT )->nNumAnt <= oDesde:nNumeroFin    .AND. ( dbfAntCliT )->cSufAnt >= oDesde:cSufijoInicio .AND. ( dbfAntCliT )->cSufAnt <= oDesde:cSufijoFin
+
+            ++nDeleted
+
+            oTxtDel:cText  := "Eliminando : " + ( dbfAntCliT )->cSerAnt + "/" + Alltrim( Str( ( dbfAntCliT )->nNumAnt ) ) + "/" + ( dbfAntCliT )->cSufAnt
+
+            WinDelRec( nil, dbfAntCliT, {|| QuiAntCli() } )
+
+         else
+
+            ( dbfAntCliT )->( dbSkip() )
+
+         end
+
+         ++nProcesed
+
+         oTxtDel:Set( nProcesed )
+
+      end
+
+      ( dbfAntCliT )->( OrdSetFocus( nOrd ) )
+
+   else
+
+      nOrd              := ( dbfAntCliT )->( OrdSetFocus( "dFecAnt" ) )
+
+      ( dbfAntCliT )->( dbSeek( oDesde:dFechaInicio, .T. ) )
+      while !lCancel .AND. ( dbfAntCliT )->( !eof() )
+
+
+         if ( dbfAntCliT )->dFecAnt >= oDesde:dFechaInicio  .AND. ( dbfAntCliT )->dFecAnt <= oDesde:dFechaFin
+
+            ++nDeleted
+
+            oTxtDel:cText  := "Eliminando : " + ( dbfAntCliT )->cSerAnt + "/" + Alltrim( Str( ( dbfAntCliT )->nNumAnt ) ) + "/" + ( dbfAntCliT )->cSufAnt
+
+            WinDelRec( nil, dbfAntCliT, {|| QuiAntCli() } )
+
+         else
+
+            ( dbfAntCliT )->( dbSkip() )
+
+         end
+
+         ++nProcesed
+
+         oTxtDel:Set( nProcesed )
+
+      end
+
+      ( dbfAntCliT )->( OrdSetFocus( nOrd ) )
+
+   end
+
+   lCancel              := .T.
+
+   oBtnAceptar:Show()
+
+   if lCancel
+      msgStop( "Total de registros borrados : " + Str( nDeleted ), "Proceso cancelado" )
+   else
+      msgInfo( "Total de registros borrados : " + Str( nDeleted ), "Proceso finalizado" )
+   end
+
+RETURN ( oDlg:End() )
+
+
+
+Static Function nEstadoIncidencia( cNumAnt )
+
+   local nEstado  := 0
+   local aBmp     := ""
+
+   if ( dbfAntCliI )->( dbSeek( cNumAnt ) )
+
+      while ( dbfAntCliI )->cSerAnt + Str( ( dbfAntCliI )->nNumAnt ) + ( dbfAntCliI )->cSufAnt == cNumAnt .AND. !( dbfAntCliI )->( Eof() )
+
+         if ( dbfAntCliI )->lListo
+            do case
+               case nEstado == 0 .OR. nEstado == 3
+                    nEstado := 3
+               case nEstado == 1
+                    nEstado := 2
+            end
+         else
+            do case
+               case nEstado == 0
+                    nEstado := 1
+               case nEstado == 3
+                    nEstado := 2
+            end
+         end
+
+         ( dbfAntCliI )->( dbSkip() )
+
+      end
+
+   end
+
+Return ( nEstado )
+#line 4526 ".\Prg\Facant.prg"
+Static Function DataReport( oFr )
+
+
+
+
+
+   oFr:ClearDataSets()
+
+   oFr:SetWorkArea(     "Facturas anticipos", ( dbfAntCliT )->( Select() ), .F., { 1, 1, 0 } )
+   oFr:SetFieldAliases( "Facturas anticipos", cItemsToReport( aItmAntCli() ) )
+
+   oFr:SetWorkArea(     "Incidencias de facturas anticipos", ( dbfAntCliI )->( Select() ) )
+   oFr:SetFieldAliases( "Incidencias de facturas anticipos", cItemsToReport( aIncAntCli() ) )
+
+   oFr:SetWorkArea(     "Documentos de facturas anticipos", ( dbfAntCliD )->( Select() ) )
+   oFr:SetFieldAliases( "Documentos de facturas anticipos", cItemsToReport( aAntCliDoc() ) )
+
+   oFr:SetWorkArea(     "Empresa", ( dbfEmp )->( Select() ) )
+   oFr:SetFieldAliases( "Empresa", cItemsToReport( aItmEmp() ) )
+
+   oFr:SetWorkArea(     "Clientes", ( dbfCli )->( Select() ) )
+   oFr:SetFieldAliases( "Clientes", cItemsToReport( aItmCli() ) )
+
+   oFr:SetWorkArea(     "Obras", ( dbfObrasT )->( Select() ) )
+   oFr:SetFieldAliases( "Obras",  cItemsToReport( aItmObr() ) )
+
+   oFr:SetWorkArea(     "Almacenes", ( dbfAlmT )->( Select() ) )
+   oFr:SetFieldAliases( "Almacenes", cItemsToReport( aItmAlm() ) )
+
+   oFr:SetWorkArea(     "Agentes", ( dbfAgent )->( Select() ) )
+   oFr:SetFieldAliases( "Agentes", cItemsToReport( aItmAge() ) )
+
+   oFr:SetWorkArea(     "Formas de pago", ( dbfFpago )->( Select() ) )
+   oFr:SetFieldAliases( "Formas de pago", cItemsToReport( aItmFPago() ) )
+
+   oFr:SetMasterDetail( "Facturas anticipos", "Incidencias de facturas anticipos", {|| ( dbfAntCliT )->cSerAnt + Str( ( dbfAntCliT )->nNumAnt ) + ( dbfAntCliT )->cSufAnt } )
+   oFr:SetMasterDetail( "Facturas anticipos", "Documentos de facturas anticipos",  {|| ( dbfAntCliT )->cSerAnt + Str( ( dbfAntCliT )->nNumAnt ) + ( dbfAntCliT )->cSufAnt } )
+   oFr:SetMasterDetail( "Facturas anticipos", "Empresa",                 {|| cCodigoEmpresaEnUso() } )
+   oFr:SetMasterDetail( "Facturas anticipos", "Clientes",                {|| ( dbfAntCliT )->cCodCli } )
+   oFr:SetMasterDetail( "Facturas anticipos", "Obras",                   {|| ( dbfAntCliT )->cCodCli + ( dbfAntCliT )->cCodObr } )
+   oFr:SetMasterDetail( "Facturas anticipos", "Almacenes",               {|| ( dbfAntCliT )->cCodAlm } )
+   oFr:SetMasterDetail( "Facturas anticipos", "Agentes",                 {|| ( dbfAntCliT )->cCodAge } )
+   oFr:SetMasterDetail( "Facturas anticipos", "Formas de pago",          {|| ( dbfAntCliT )->cCodPago } )
+
+   oFr:SetResyncPair(   "Facturas anticipos", "Incidencias de facturas anticipos" )
+   oFr:SetResyncPair(   "Facturas anticipos", "Documentos de facturas anticipos" )
+   oFr:SetResyncPair(   "Facturas anticipos", "Empresa" )
+   oFr:SetResyncPair(   "Facturas anticipos", "Clientes" )
+   oFr:SetResyncPair(   "Facturas anticipos", "Obras" )
+   oFr:SetResyncPair(   "Facturas anticipos", "Almacenes" )
+   oFr:SetResyncPair(   "Facturas anticipos", "Rutas" )
+   oFr:SetResyncPair(   "Facturas anticipos", "Agentes" )
+   oFr:SetResyncPair(   "Facturas anticipos", "Formas de pago" )
+
+Return nil
+
+
+
+Static Function VariableReport( oFr )
+
+   oFr:DeleteCategory(  "Facturas anticipos" )
+
+
+
+
+
+   oFr:AddVariable(     "Facturas anticipos",             "Total factura",                      "GetHbVar('nTotAnt')" )
+   oFr:AddVariable(     "Facturas anticipos",             "Total neto",                         "GetHbVar('nTotNet')" )
+   oFr:AddVariable(     "Facturas anticipos",             "Total " + cImp(),                          "GetHbVar('nTotIva')" )
+   oFr:AddVariable(     "Facturas anticipos",             "Total RE",                           "GetHbVar('nTotReq')" )
+   oFr:AddVariable(     "Facturas anticipos",             "Total impuestos",                    "GetHbVar('nTotImp')" )
+   oFr:AddVariable(     "Facturas anticipos",             "Total retención",                    "GetHbVar('nTotRet')" )
+   oFr:AddVariable(     "Facturas anticipos",             "Total agente",                       "GetHbVar('nTotAge')" )
+   oFr:AddVariable(     "Facturas anticipos",             "Cuenta por defecto del cliente",     "GetHbVar('cCtaCli')" )
+
+Return nil
+
+
+
+Function DesignReportAntCli( oFr, dbfDoc )
+
+   local lOpen    := .F.
+   local lFlag    := .F.
+
+
+
+
+
+   if lOpenFiles
+      lFlag       := .T.
+   else
+      if Openfiles()
+         lFlag    := .T.
+         lOpen    := .T.
+      else
+         lFlag    := .F.
+      end
+   end
+
+   if lFlag
+
+
+
+
+
+      DataReport( oFr )
+
+
+
+
+
+      oFr:SetFileName(        "Editando facturas de anticipo" )
+
+      if !Empty( ( dbfDoc )->mReport )
+
+         oFr:LoadFromBlob( ( dbfDoc )->( Select() ), "mReport")
+
+      else
+
+         oFr:SetProperty(     "Report",            "ScriptLanguage", "PascalScript" )
+
+
+
+
+
+
+
+         oFr:SetProperty(     "Report.ScriptText", "Text", +  "procedure DetalleOnMasterDetail(Sender: TfrxComponent);"   + Chr(13) + Chr(10) +  "begin"                                                     + Chr(13) + Chr(10) +  "CallHbFunc('nTotAntCli');"                                 + Chr(13) + Chr(10) +  "end;"                                                      + Chr(13) + Chr(10) +  "begin"                                                     + Chr(13) + Chr(10) +  "end." )
+
+         oFr:AddPage(         "MainPage" )
+
+         oFr:SetProperty(     "MainPage",          "OnBeforePrint", "DetalleOnMasterDetail" )
+
+         oFr:AddBand(         "CabeceraDocumento", "MainPage", 2 )
+         oFr:SetProperty(     "CabeceraDocumento", "Top", 0 )
+         oFr:SetProperty(     "CabeceraDocumento", "Height", 200 )
+
+         oFr:AddBand(         "CabeceraColumnas",  "MainPage", 6 )
+         oFr:SetProperty(     "CabeceraColumnas",  "Top", 200 )
+         oFr:SetProperty(     "CabeceraColumnas",  "Height", 18 )
+         oFr:SetProperty(     "CabeceraColumnas",  "StartNewPage", .T. )
+         oFr:SetObjProperty(  "CabeceraColumnas",  "DataSet", "Facturas Anticipos" )
+
+         oFr:AddBand(         "PieDocumento",      "MainPage", 3 )
+         oFr:SetProperty(     "PieDocumento",      "Top", 930 )
+         oFr:SetProperty(     "PieDocumento",      "Height", 110 )
+
+      end
+
+
+
+
+
+      VariableReport( oFr )
+
+
+
+
+
+      oFr:DesignReport()
+
+
+
+
+
+      oFr:DestroyFr()
+
+
+
+
+
+      if lOpen
+         CloseFiles()
+      end
+
+   else
+
+      Return .F.
+
+   end
+
+Return .T.
+
+
+
+Function PrintReportAntCli( nDevice, nCopies, cPrinter, dbfDoc )
+
+   local oFr
+   local cFilePdf       := cPatTmp() + "FacturasAnticiposCliente" + StrTran( ( dbfAntCliT )->cSerAnt + Str( ( dbfAntCliT )->nNumAnt ) + ( dbfAntCliT )->cSufAnt, " ", "" ) + ".Pdf"
+
+   IIF( nDevice == nil, nDevice := 2, ) ;
+   IIF( nCopies == nil, nCopies := 1, ) ;
+   IIF( cPrinter == nil, cPrinter := PrnGetName(), ) ;
+
+   SysRefresh()
+
+   oFr                  := frReportManager():New()
+
+   oFr:LoadLangRes(     "Spanish.Xml" )
+
+   oFr:SetIcon( 1 )
+
+   oFr:SetTitle(        "Diseñador de documentos" )
+
+
+
+
+
+   oFr:SetEventHandler( "Designer", "OnSaveReport", {|| oFr:SaveToBlob( ( dbfDoc )->( Select() ), "mReport" ) } )
+
+
+
+
+
+   DataReport( oFr )
+
+
+
+
+
+   if !Empty( ( dbfDoc )->mReport )
+
+      oFr:LoadFromBlob( ( dbfDoc )->( Select() ), "mReport")
+
+
+
+
+
+      VariableReport( oFr )
+
+
+
+
+
+      oFr:PrepareReport()
+
+
+
+
+
+      do case
+         case nDevice == 2
+
+            oFr:ShowPreparedReport()
+
+         case nDevice == 1
+
+            oFr:PrintOptions:SetPrinter( cPrinter )
+            oFr:PrintOptions:SetCopies( nCopies )
+            oFr:PrintOptions:SetShowDialog( .F. )
+            oFr:Print()
+
+         case nDevice == 3
+
+            oFr:SetProperty(  "PDFExport", "ShowDialog",       .F. )
+            oFr:SetProperty(  "PDFExport", "DefaultPath",      cPatTmp() )
+            oFr:SetProperty(  "PDFExport", "FileName",         cFilePdf )
+            oFr:SetProperty(  "PDFExport", "EmbeddedFonts",    .T. )
+            oFr:SetProperty(  "PDFExport", "PrintOptimized",   .T. )
+            oFr:SetProperty(  "PDFExport", "Outline",          .T. )
+            oFr:SetProperty(  "PDFExport", "OpenAfterExport",  .T. )
+            oFr:DoExport(     "PDFExport" )
+
+         case nDevice == 6
+
+            oFr:SetProperty(  "PDFExport", "ShowDialog",       .F. )
+            oFr:SetProperty(  "PDFExport", "DefaultPath",      cPatTmp() )
+            oFr:SetProperty(  "PDFExport", "FileName",         cFilePdf )
+            oFr:SetProperty(  "PDFExport", "EmbeddedFonts",    .T. )
+            oFr:SetProperty(  "PDFExport", "PrintOptimized",   .T. )
+            oFr:SetProperty(  "PDFExport", "Outline",          .T. )
+            oFr:SetProperty(  "PDFExport", "OpenAfterExport",  .F. )
+            oFr:DoExport(     "PDFExport" )
+
+            if file( cFilePdf )
+
+               with object ( TGenMailing():New() )
+
+                  :SetTypeDocument( "nFacAnt" )
+
+                  :SetDe(           uFieldEmpresa( "cNombre" ) )
+                  :SetCopia(        uFieldEmpresa( "cCcpMai" ) )
+                  :SetAdjunto(      cFilePdf )
+                  :SetPara(         RetFld( ( dbfAntCliT )->cCodCli, dbfCli, "cMeiInt" ) )
+                  :SetAsunto(       "Envio de factura de anticipo de cliente número " + ( dbfAntCliT )->cSerAnt + "/" + Alltrim( Str( ( dbfAntCliT )->nNumAnt ) ) )
+                  :SetMensaje(      "Adjunto le remito nuestra factura de anticipo de cliente " + ( dbfAntCliT )->cSerAnt + "/" + Alltrim( Str( ( dbfAntCliT )->nNumAnt ) ) + Space( 1 ) )
+                  :SetMensaje(      "de fecha " + Dtoc( ( dbfAntCliT )->dFecAnt ) + Space( 1 ) )
+                  :SetMensaje(      Chr(13)+Chr(10) )
+                  :SetMensaje(      Chr(13)+Chr(10) )
+                  :SetMensaje(      "Reciba un cordial saludo." )
+
+                  :GeneralResource( dbfAntCliT, aItmAntCli() )
+
+               end
+
+            end
+
+      end
+
+   end
+
+
+
+
+
+   oFr:DestroyFr()
+
+Return .T.
+
+
+
+
+
+
+
+
+
+Function nNetAntCli( dbfMaster, dbfIva, dbfDiv, aTmp, cDivRet, lPic )
+
+   nTotAntCli( dbfMaster, dbfIva, dbfDiv, aTmp, cDivRet, lPic )
+
+Return ( nTotNet )
+
+
+
+
+
+
+
+FUNCTION nTotAntCli( cAntCliT, cIva, cDiv, aTmp, cDivRet, lPic )
+
+   local nPctRet
+   local nPctReq
+   local nPctIva
+    local lRecargo
+    local cCodDiv
+   local lIvaInc
+
+   IIF( cAntCliT == nil, cAntCliT := dbfAntCliT, ) ;
+   IIF( cIva == nil, cIva := dbfIva, ) ;
+   IIF( cDiv == nil, cDiv := dbfDiv, ) ;
+   IIF( lPic == nil, lPic := .F., ) ;
+
+   public nTotAnt    := 0
+   public nTotNet    := 0
+   public nTotIva    := 0
+   public nTotAge    := 0
+   public nTotReq    := 0
+   public nTotRet    := 0
+   public nTotImp    := 0
+   public cCtaCli    := cClientCuenta( ( cAntCliT )->cCodCli )
+
+   if aTmp <> nil
+      lRecargo       := aTmp[ 33]
+      lIvaInc        := aTmp[ 35 ]
+      cCodDiv        := aTmp[ 37 ]
+      nPctIva        := aTmp[ 45 ]
+      nPctReq        := aTmp[ 46 ]
+      nPctRet        := aTmp[ 47 ]
+      nTotNet        := aTmp[ 30 ]
+   else
+      lRecargo       := ( cAntCliT )->lRecargo
+      lIvaInc        := ( cAntCliT )->lIvaInc
+      cCodDiv        := ( cAntCliT )->cDivAnt
+      nPctIva        := ( cAntCliT )->nPctIva
+      nPctReq        := ( cAntCliT )->nPctReq
+      nPctRet        := ( cAntCliT )->nPctRet
+      nTotNet        := ( cAntCliT )->nImpArt
+   end
+
+
+
+
+
+   cPorDiv           := cPorDiv( cCodDiv, dbfDiv )
+   nRouDiv           := nRouDiv( cCodDiv, dbfDiv )
+
+   if lIvaInc
+
+
+
+
+
+      nTotAnt        := Round( nTotNet, nRouDiv )
+
+      do case
+         case !lRecargo .AND. nPctIva <> 0
+
+            nTotImp  := Round( nTotNet / ( 100 / nPctIva + 1 ), nRouDiv )
+
+         case lRecargo .AND. nPctReq <> 0 .AND. nPctIva <> 0
+
+            nTotImp  := Round( nTotNet / ( 100 / ( nPctIva + nPctReq ) + 1 ), nRouDiv )
+
+
+      end
+
+
+
+
+
+
+
+
+
+
+
+      nTotNet        := nTotAnt - nTotImp
+
+
+
+
+
+      if nPctIva <> 0
+         nTotIva     := Round( nTotNet * nPctIva / 100, nRouDiv )
+      end
+
+
+
+
+
+      if lRecargo .AND. nPctReq <> 0
+         nTotReq     := Round( nTotNet * nPctReq / 100, nRouDiv )
+      end
+
+
+
+
+
+      nTotImp        := nTotIva + nTotReq
+
+
+
+
+
+      nTotNet        := Round( nTotAnt - nTotImp, nRouDiv )
+
+
+
+
+
+      if nPctRet <> 0
+         nTotRet     := Round( nTotNet * nPctRet / 100, nRouDiv )
+      end
+
+
+
+
+
+      nTotNet        := Round( nTotAnt - nTotImp - nTotRet, nRouDiv )
+
+   else
+
+      nTotIva        := if( !Empty( nPctIva ), Round( nTotNet * nPctIva / 100, nRouDiv ), 0 )
+
+      if lRecargo
+         nTotReq     := if( !Empty( nPctReq ), Round( nTotNet * nPctReq / 100, nRouDiv ), 0 )
+      end
+
+
+
+
+
+      nTotImp        := nTotIva + nTotReq
+
+
+
+
+
+      if nPctRet <> 0
+         nTotRet     := Round( nTotNet * nPctRet / 100, nRouDiv )
+      end
+
+
+
+
+
+      nTotAnt        := Round( nTotNet + nTotImp - nTotRet, nRouDiv )
+
+   end
+
+
+
+
+
+   if cDivRet <> nil .AND. cDivRet <> cCodDiv
+      nTotNet  := nCnv2Div( nTotNet, cCodDiv, cDivRet, dbfDiv )
+      nTotIva  := nCnv2Div( nTotIva, cCodDiv, cDivRet, dbfDiv )
+      nTotReq  := nCnv2Div( nTotReq, cCodDiv, cDivRet, dbfDiv )
+      nTotAnt  := nCnv2Div( nTotAnt, cCodDiv, cDivRet, dbfDiv )
+      nTotRet  := nCnv2Div( nTotRet, cCodDiv, cDivRet, dbfDiv )
+      cPorDiv  := cPorDiv( cDivRet, dbfDiv )
+   end
+
+RETURN ( if( lPic, Trans( nTotAnt, cPorDiv ), nTotAnt ) )
+
+
+
+function aItmAntCli()
+
+   local aItmAntCli  := {}
+
+   aAdd( aItmAntCli, {"cSerAnt"     ,"C",  1, 0, "Serie del anticipo" ,                                  "",                   "", "( cDbf )"} )
+   aAdd( aItmAntCli, {"nNumAnt"     ,"N",  9, 0, "Número del anticipo" ,                                 "'999999999'",        "", "( cDbf )"} )
+   aAdd( aItmAntCli, {"cSufAnt"     ,"C",  2, 0, "Sufijo del anticipo" ,                                 "",                   "", "( cDbf )"} )
+   aAdd( aItmAntCli, {"cTurAnt"     ,"C",  6, 0, "Sesión del anticipo" ,                                 "######",             "", "( cDbf )"} )
+   aAdd( aItmAntCli, {"dFecAnt"     ,"D",  8, 0, "Fecha del anticipo" ,                                  "",                   "", "( cDbf )"} )
+   aAdd( aItmAntCli, {"cCodCli"     ,"C", 12, 0, "Código del cliente" ,                                  "'@!'",               "", "( cDbf )"} )
+   aAdd( aItmAntCli, {"cCodAlm"     ,"C",  3, 0, "Código de almacén" ,                                   "'@!'",               "", "( cDbf )"} )
+   aAdd( aItmAntCli, {"cCodCaj"     ,"C",  3, 0, "Código de caja" ,                                      "'@!'",               "", "( cDbf )"} )
+   aAdd( aItmAntCli, {"cNomCli"     ,"C", 80, 0, "Nombre del cliente" ,                                  "'@!'",               "", "( cDbf )"} )
+   aAdd( aItmAntCli, {"cDirCli"     ,"C",100, 0, "Domicilio del cliente" ,                               "'@!'",               "", "( cDbf )"} )
+   aAdd( aItmAntCli, {"cPobCli"     ,"C", 25, 0, "Población del cliente" ,                               "'@!'",               "", "( cDbf )"} )
+   aAdd( aItmAntCli, {"cPrvCli"     ,"C", 20, 0, "Provincia del cliente" ,                               "'@!'",               "", "( cDbf )"} )
+   aAdd( aItmAntCli, {"nCodProv"    ,"N",  2, 0, "Número de provincia cliente" ,                         "'@!'",               "", "( cDbf )"} )
+   aAdd( aItmAntCli, {"cPosCli"     ,"C", 15, 0, "Código postal del cliente" ,                           "'@!'",               "", "( cDbf )"} )
+   aAdd( aItmAntCli, {"cDniCli"     ,"C", 30, 0, "DNI/Cif del cliente" ,                                 "",                   "", "( cDbf )"} )
+   aAdd( aItmAntCli, {"lModCli"     ,"L",  1, 0, "Lógico de modificar datos del cliente" ,               "",                   "", "( cDbf )"} )
+   aAdd( aItmAntCli, {"lMayor"      ,"L",  1, 0, "Lógico de mayorista" ,                                 "",                   "", "( cDbf )"} )
+   aAdd( aItmAntCli, {"cCodAge"     ,"C",  3, 0, "Código del agente" ,                                   "",                   "", "( cDbf )"} )
+   aAdd( aItmAntCli, {"cCodRut"     ,"C",  4, 0, "Código de la ruta" ,                                   "",                   "", "( cDbf )"} )
+   aAdd( aItmAntCli, {"cCodObr"     ,"C", 10, 0, "Código de la obra" ,                                   "'@!'",               "", "( cDbf )"} )
+   aAdd( aItmAntCli, {"nPctComAge"  ,"N",  6, 2, "Porcentaje de comisión del agente" ,                   "'@E 999,99'",        "", "( cDbf )"} )
+   aAdd( aItmAntCli, {"lLiquidada"  ,"L",  1, 0, "Lógico de la liquidación" ,                            "",                   "", "( cDbf )"} )
+   aAdd( aItmAntCli, {"dLiquidada"  ,"D",  8, 0, "Fecha de la liquidación" ,                             "",                   "", "( cDbf )"} )
+   aAdd( aItmAntCli, {"cTurLiq"     ,"C",  6, 0, "Sesión de la liquidación" ,                             "######",             "", "( cDbf )"} )
+   aAdd( aItmAntCli, {"cCajLiq"     ,"C",  3, 0, "Código de la liquidación" ,                            "'@!'",               "", "( cDbf )"} )
+   aAdd( aItmAntCli, {"lContab"     ,"L",  1, 0, "Lógico de la contabilización" ,                        "",                   "", "( cDbf )"} )
+   aAdd( aItmAntCli, {"cSuant"      ,"C", 10, 0, "Su anticipo" ,                                         "",                   "", "( cDbf )"} )
+   aAdd( aItmAntCli, {"cCondent"    ,"C", 20, 0, "Condición de entrada" ,                                "",                   "", "( cDbf )"} )
+   aAdd( aItmAntCli, {"mDescrip"    ,"M", 10, 0, "Concepto" ,                                            "",                   "", "( cDbf )"} )
+   aAdd( aItmAntCli, {"nImpArt"     ,"N", 16, 6, "Importe del anticipo" ,                                "cPorDivAnt",         "", "( cDbf )"} )
+   aAdd( aItmAntCli, {"cCodPago"    ,"C",  2, 0, "Código del tipo de pago" ,                             "",                   "", "( cDbf )"} )
+   aAdd( aItmAntCli, {"nPorcIva"    ,"N",  4, 1, "" ,                                                    "",                   "", "( cDbf )"} )
+   aAdd( aItmAntCli, {"lRecargo"    ,"L",  1, 0, "Lógico para recargo" ,                                 "",                   "", "( cDbf )"} )
+   aAdd( aItmAntCli, {"cRemitido"   ,"C", 50, 0, "Campo de remitido" ,                                   "",                   "", "( cDbf )"} )
+   aAdd( aItmAntCli, {"lIvaInc"     ,"L",  1, 0, cImp() + " incluido" ,                                        "",                   "", "( cDbf )"} )
+   aAdd( aItmAntCli, {"lSndDoc"     ,"L",  1, 0, "Lógico para documento enviado" ,                       "",                   "", "( cDbf )"} )
+   aAdd( aItmAntCli, {"cDivAnt"     ,"C",  3, 0, "Código de la divisa" ,                                 "",                   "", "( cDbf )"} )
+   aAdd( aItmAntCli, {"nVdvAnt"     ,"N", 10, 4, "Cambio de la divisa" ,                                 "",                   "", "( cDbf )"} )
+   aAdd( aItmAntCli, {"cRetPor"     ,"C",100, 0, "Retirado por" ,                                        "",                   "", "( cDbf )"} )
+   aAdd( aItmAntCli, {"cRetMat"     ,"C", 20, 0, "Matrícula" ,                                           "",                   "", "( cDbf )"} )
+   aAdd( aItmAntCli, {"cNumDoc"     ,"C", 12, 0, "" ,                                                    "",                   "", "( cDbf )"} )
+   aAdd( aItmAntCli, {"nRegIva"     ,"N",  1, 0, "Regimen de " + cImp() ,                                   "'@E 999,99'",        "", "( cDbf )"} )
+   aAdd( aItmAntCli, {"cCodPro"     ,"C",  9, 0, "Código de proyecto en contabilidad" ,                  "",                   "", "( cDbf )"} )
+   aAdd( aItmAntCli, {"cDocOrg"     ,"C", 10, 0, "Número del documento origen" ,                         "",                   "", "( cDbf )"} )
+   aAdd( aItmAntCli, {"nPctIva"     ,"N",  6, 2, "Porcentaje de " + cImp() ,                                "",                   "", "( cDbf )"} )
+   aAdd( aItmAntCli, {"nPctReq"     ,"N",  6, 2, "Porcentaje de recargo de equivalencia",                "",                   "", "( cDbf )"} )
+   aAdd( aItmAntCli, {"nPctRet"     ,"N",  6, 2, "Porcentaje de retención",                              "",                   "", "( cDbf )"} )
+   aAdd( aItmAntCli, {"lCloAnt"     ,"L",  1, 0, "Lógico para anticipo liquidado" ,                      "",                   "", "( cDbf )"} )
+   aAdd( aItmAntCli, {"cCodUsr"     ,"C",  3, 0, "Código de usuario",                                    "",                   "", "( cDbf )"} )
+   aAdd( aItmAntCli, {"dFecCre"     ,"D",  8, 0, "Fecha de creación del documento",                      "",                   "", "( cDbf )"} )
+   aAdd( aItmAntCli, {"cTimCre"     ,"C",  5, 0, "Hora de creación del documento",                       "",                   "", "( cDbf )"} )
+   aAdd( aItmAntCli, {"lSelDoc"     ,"L",  1, 0, "Lógico para seleccionar documento" ,                   "",                   "", "( cDbf )"} )
+   aAdd( aItmAntCli, {"cCtaPgo"     ,"C", 12, 0, "Cuenta de pago" ,                                      "'@!'",               "", "( cDbf )"} )
+   aAdd( aItmAntCli, {"nReq"        ,"N", 16, 6, "Recargo de equivalencia" ,                             "",                   "", "( cDbf )"} )
+   aAdd( aItmAntCli, {"cCodDlg"     ,"C",  2, 0, "Código delegación" ,                                   "",                   "", "( cDbf )"} )
+   aAdd( aItmAntCli, {"CTLFCLI"     ,"C", 20, 0, "Teléfono del cliente" ,                                "",                   "", "( cDbf )"} )
+   aAdd( aItmAntCli, {"nTotNet"     ,"N", 16, 6, "Total neto" ,                                          "",                   "", "( cDbf )"} )
+   aAdd( aItmAntCli, {"nTotIva"     ,"N", 16, 6, "Total " + cImp() ,                                           "",                   "", "( cDbf )"} )
+   aAdd( aItmAntCli, {"nTotReq"     ,"N", 16, 6, "Total recargo" ,                                       "",                   "", "( cDbf )"} )
+   aAdd( aItmAntCli, {"nTotAnt"     ,"N", 16, 6, "Total anticipo" ,                                      "",                   "", "( cDbf )"} )
+
+RETURN ( aItmAntCli )
+
+
+
+
+
+
+
+FUNCTION nTotAntFacCli( cFactura, dbfAntCliT, dbfIva, dbfDiv, cDivRet, lPic )
+
+   local nRec
+   local nOrd
+   local cPorDiv
+   local cCodDiv
+   local nRouDiv           := 2
+   local nTotAnt           := 0
+
+   IIF( lPic == nil, lPic := .F., ) ;
+
+   do case
+      case IsNil( cFactura )
+
+         cCodDiv           := ( dbfAntCliT )->cDivAnt
+         cPorDiv           := cPorDiv( cCodDiv, dbfDiv )
+         nRouDiv           := nRouDiv( cCodDiv, dbfDiv )
+
+         nRec              := ( dbfAntCliT )->( Recno() )
+
+         ( dbfAntCliT )->( dbGoTop() )
+         while !( dbfAntCliT )->( eof() )
+            nTotAnt        += nTotAntCli( dbfAntCliT, dbfIva, dbfDiv )
+            ( dbfAntCliT )->( dbSkip() )
+         end
+
+         ( dbfAntCliT )->( dbGoTo( nRec ) )
+
+      case !Empty( cFactura )
+
+         nRec              := ( dbfAntCliT )->( Recno() )
+         nOrd              := ( dbfAntCliT )->( OrdSetFocus( "cNumDoc" ) )
+
+         if ( dbfAntCliT )->( dbSeek( cFactura ) )
+            while ( ( dbfAntCliT )->cNumDoc == cFactura .AND. !( dbfAntCliT )->( eof() ) )
+               nTotAnt     += nTotAntCli( dbfAntCliT, dbfIva, dbfDiv )
+               ( dbfAntCliT )->( dbSkip() )
+            end
+         end
+
+         ( dbfAntCliT )->( OrdSetFocus( nOrd ) )
+         ( dbfAntCliT )->( dbGoTo( nRec ) )
+
+   end
+
+   if cDivRet <> nil .AND. cCodDiv <> cDivRet
+      nTotAnt              := nCnv2Div( nTotAnt, cCodDiv, cDivRet, dbfDiv )
+      cPorDiv              := cPorDiv( cDivRet, dbfDiv )
+      nRouDiv              := nRouDiv( cDivRet, dbfDiv )
+   end
+
+   nTotAnt                 := Round( nTotAnt, nRouDiv )
+
+   if lPic
+      nTotAnt              := Trans( nTotAnt, cPorDiv )
+   end
+
+RETURN ( nTotAnt )
+
+
+
+FUNCTION IsAntCli( cPath )
+
+   IIF( cPath == nil, cPath := cPatEmp(), ) ;
+
+   if !lExistTable( cPath + "AntCliT.DBF" )
+      dbCreate( cPath + "AntCliT.DBF", aSqlStruct( aItmAntCli() ), cDriver() )
+   end
+
+   if !lExistTable( cPath + "AntCliI.DBF" )
+      dbCreate( cPath + "AntCliI.DBF", aSqlStruct( aIncAntCli() ), cDriver() )
+   end
+
+   if !lExistTable( cPath + "AntCliD.DBF" )
+      dbCreate( cPath + "AntCliD.DBF", aSqlStruct( aAntCliDoc() ), cDriver() )
+   end
+
+
+
+   if !lExistIndex( cPath + "AntCliT.Cdx" ) .OR.  !lExistIndex( cPath + "AntCliI.Cdx" ) .OR.  !lExistIndex( cPath + "AntCliD.Cdx" )
+
+      rxAntCli( cPath )
+
+   end
+
+Return ( .T. )
+
+
+
+
+
+
+
+FUNCTION mkAntCli( cPath, lAppend, cPathOld, oMeter )
+
+   local oBlock
+   local oError
+   local dbfAntCliT
+   local dbfAntCliI
+   local dbfAntCliD
+   local oldAntCliT
+   local oldAntCliI
+   local oldAntCliD
+
+   IIF( lAppend == nil, lAppend := .F., ) ;
+
+   if oMeter <> NIL
+        oMeter:cText    := "Generando Bases"
+      SysRefresh()
+   end
+
+   CreateFiles( cPath, .T. )
+
+   oBlock            := ErrorBlock( {| oError | ApoloBreak( oError ) } )
+
+   BEGIN SEQUENCE
+
+   if lAppend .AND. lIsDir( cPathOld )
+
+      dbUseArea( .T., cDriver(), cPath + "AntCliT.Dbf" , cCheckArea( "AntCliT", @dbfAntCliT ), .F. )
+      if !( dbfAntCliT )->( neterr() )
+         ( dbfAntCliT )->( OrdListAdd( cPath + "AntCliT.Cdx" ) )
+      end
+
+      dbUseArea( .T., cDriver(), cPath + "AntCliI.DBF" , cCheckArea( "AntCliI", @dbfAntCliI ), .F. )
+      if !( dbfAntCliI )->( neterr() )
+         ( dbfAntCliI )->( OrdListAdd( cPath + "AntCliI.CDX" ) )
+      end
+
+      dbUseArea( .T., cDriver(), cPath + "AntCliD.DBF", cCheckArea( "AntCliD", @dbfAntCliD ), .F. )
+      if !( dbfAntCliD )->( neterr() )
+         ( dbfAntCliD )->( ordListAdd( cPath + "AntCliD.CDX" ) )
+      end
+
+      dbUseArea( .T., cDriver(), cPathOld + "AntCliT.DBF" , cCheckArea( "AntCliT", @oldAntCliT ), .F. )
+      if !( dbfAntCliT )->( neterr() )
+         ( oldAntCliT )->( OrdListAdd( cPathOld + "AntCliT.CDX" ) )
+      end
+
+      dbUseArea( .T., cDriver(), cPathOld + "AntCliI.DBF" , cCheckArea( "AntCliI", @oldAntCliI ), .F. )
+      if !( dbfAntCliI )->( neterr() )
+         ( oldAntCliI )->( OrdListAdd( cPathOld + "AntCliI.CDX" ) )
+      end
+
+      dbUseArea( .T., cDriver(), cPathOld + "AntCliD.DBF", cCheckArea( "AntCliD", @oldAntCliD ), .F. )
+      if !( dbfAntCliD )->( neterr() )
+         ( oldAntCliD )->( ordListAdd( cPathOld + "AntCliD.CDX" ) )
+      end
+
+      ( dbfAntCliT )->( OrdSetFocus( "lLiquidada" ) )
+      ( oldAntCliT )->( OrdSetFocus( "lLiquidada" ) )
+
+      ( oldAntCliT )->( dbGoTop() )
+      while !( oldAntCliT )->( Eof() )
+
+         if !( oldAntCliT )->lLiquidada
+
+            dbCopy( oldAntCliT, dbfAntCliT, .T. )
+
+            if ( oldAntCliI )->( dbSeek( ( oldAntCliT )->cSerAnt + Str( ( oldAntCliT )->nNumAnt ) + ( oldAntCliT )->cSufAnt ) )
+               while ( oldAntCliT )->cSerAnt + Str( ( oldAntCliT )->nNumAnt ) + ( oldAntCliT )->cSufAnt == ( oldAntCliI )->cSerAnt + Str( ( oldAntCliI )->nNumAnt ) + ( oldAntCliI )->cSufAnt .AND. !( oldAntCliI )->( eof() )
+                  dbCopy( oldAntCliI, dbfAntCliI, .T. )
+                  ( oldAntCliI )->( dbSkip() )
+               end
+            end
+
+            if ( oldAntCliD )->( dbSeek( ( oldAntCliT )->cSerAnt + Str( ( oldAntCliT )->nNumAnt ) + ( oldAntCliT )->cSufAnt ) )
+               while ( oldAntCliT )->cSerAnt + Str( ( oldAntCliT )->nNumAnt ) + ( oldAntCliT )->cSufAnt == ( oldAntCliD )->cSerAnt + Str( ( oldAntCliD )->nNumAnt ) + ( oldAntCliD )->cSufAnt .AND. !( oldAntCliD )->( eof() )
+                  dbCopy( oldAntCliD, dbfAntCliD, .T. )
+                  ( oldAntCliD )->( dbSkip() )
+               end
+            end
+
+         end
+
+         ( oldAntCliT )->( dbSkip() )
+
+      end
+
+
+
+
+
+      ( dbfAntCliT )->( dbEval( {|| ( dbfAntCliT )->cTurAnt := Space( 6 ) }, , , , , .F. ) )
+
+
+
+
+
+      ( dbfAntCliT )->( dbCloseArea() )
+      ( dbfAntCliI )->( dbCloseArea() )
+      ( dbfAntCliD )->( dbCloseArea() )
+
+      ( oldAntCliT )->( dbCloseArea() )
+      ( oldAntCliI )->( dbCloseArea() )
+      ( oldAntCliD )->( dbCloseArea() )
+
+   end
+
+   RECOVER USING oError
+
+      msgStop( "Imposible abrir todas las bases de datos" + Chr(13)+Chr(10) + ErrorMessage( oError ) )
+
+      ( dbfAntCliT )->( dbCloseArea() )
+      ( dbfAntCliI )->( dbCloseArea() )
+      ( dbfAntCliD )->( dbCloseArea() )
+
+      ( oldAntCliT )->( dbCloseArea() )
+      ( oldAntCliI )->( dbCloseArea() )
+      ( oldAntCliD )->( dbCloseArea() )
+
+   end
+   ErrorBlock( oBlock )
+
+Return .T.
+
+
+
+
+
+
+FUNCTION rxAntCli( cPath, oMeter )
+
+   local dbfAntCliT
+
+   IIF( cPath == nil, cPath := cPatEmp(), ) ;
+
+
+
+
+
+
+
+   if !lExistTable( cPath + "AntCliT.Dbf" )   .OR. !lExistTable( cPath + "AntCliI.Dbf" )   .OR. !lExistTable( cPath + "AntCliD.Dbf" )
+      CreateFiles( cPath, .F. )
+   end
+
+   fEraseIndex( cPath + "AntCliT.Cdx" )
+   fEraseIndex( cPath + "AntCliI.Cdx" )
+   fEraseIndex( cPath + "AntCliD.Cdx" )
+
+   dbUseArea( .T., cDriver(), cPath + "AntCliT.DBF", cCheckArea( "AntCliT", @dbfAntCliT ), .F. )
+   if !( dbfAntCliT )->( neterr() )
+      ( dbfAntCliT )->( __dbPack() )
+
+      ( dbfAntCliT )->( ordCondSet( "!Deleted()", {|| !Deleted() } ) )
+      ( dbfAntCliT )->( ordCreate( cPath + "AntCliT.CDX", "nNumAnt", "cSerAnt + Str( nNumAnt ) + cSufAnt", {|| Field->cSerAnt + Str( Field->nNumAnt ) + Field->cSufAnt } ) )
+
+      ( dbfAntCliT )->( ordCondSet( "!Deleted()", {|| !Deleted() } ) )
+      ( dbfAntCliT )->( ordCreate( cPath + "AntCliT.CDX", "dFecAnt", "dFecAnt", {|| Field->dFecAnt } ) )
+
+      ( dbfAntCliT )->( ordCondSet( "!Deleted()", {|| !Deleted() } ) )
+      ( dbfAntCliT )->( ordCreate( cPath + "AntCliT.CDX", "cCodCli", "cCodCli", {|| Field->cCodCli } ) )
+
+      ( dbfAntCliT )->( ordCondSet( "!Deleted()", {|| !Deleted() } ) )
+      ( dbfAntCliT )->( ordCreate( cPath + "AntCliT.CDX", "cNomCli", "Upper( cNomCli )", {|| Upper( Field->cNomCli ) } ) )
+
+      ( dbfAntCliT )->( ordCondSet( "!Deleted()", {|| !Deleted() } ) )
+      ( dbfAntCliT )->( ordCreate( cPath + "AntCliT.CDX", "cCodObr", "cCodObr", {|| Field->cCodObr } ) )
+
+      ( dbfAntCliT )->( ordCondSet( "!Deleted()", {|| !Deleted() } ) )
+      ( dbfAntCliT )->( ordCreate( cPath + "AntCliT.CDX", "cTurAnt", "cTurAnt + cSufAnt + cCodCaj", {|| Field->cTurAnt + Field->cSufAnt + Field->cCodCaj } ) )
+
+      ( dbfAntCliT )->( ordCondSet( "!Deleted()", {|| !Deleted() } ) )
+      ( dbfAntCliT )->( ordCreate( cPath + "AntCliT.CDX", "cCodAge", "cCodAge", {|| Field->cCodAge } ) )
+
+      ( dbfAntCliT )->( ordCondSet( "!Deleted()", {|| !Deleted() } ) )
+      ( dbfAntCliT )->( ordCreate( cPath + "AntCliT.CDX", "cCodRut", "cCodRut", {|| Field->cCodRut } ) )
+
+      ( dbfAntCliT )->( ordCondSet( "!Deleted()", {|| !Deleted() } ) )
+      ( dbfAntCliT )->( ordCreate( cPath + "AntCliT.CDX", "cPobCli", "cPobCli + cNomCli", {|| Field->cPobCli + Field->cNomCli } ) )
+
+      ( dbfAntCliT )->( ordCondSet( "!Deleted()", {|| !Deleted() } ) )
+      ( dbfAntCliT )->( ordCreate( cPath + "AntCliT.CDX", "cAgeFec", "cCodAge + DtoS( dFecAnt )", {|| Field->cCodAge + DtoS( Field->dFecAnt ) } ) )
+
+      ( dbfAntCliT )->( ordCondSet( "!Deleted()", {|| !Deleted() } ) )
+      ( dbfAntCliT )->( ordCreate( cPath + "AntCliT.CDX", "cNumDoc", "cNumDoc", {|| Field->cNumDoc } ) )
+
+      ( dbfAntCliT )->( ordCondSet( "!Deleted()", {|| !Deleted() } ))
+      ( dbfAntCliT )->( ordCreate( cPath + "AntCliT.CDX", "lSndDoc", "lSndDoc", {|| Field->lSndDoc } ) )
+
+      ( dbfAntCliT )->( ordCondSet( "!Deleted()", {|| !Deleted() } ) )
+      ( dbfAntCliT )->( ordCreate( cPath + "AntCliT.CDX", "cTurLiq", "cTurLiq + cSufAnt + cCajLiq", {|| Field->cTurLiq + Field->cSufAnt + Field->cCajLiq } ) )
+
+      ( dbfAntCliT )->( ordCondSet( "!Deleted()", {||!Deleted()}  ) )
+      ( dbfAntCliT )->( ordCreate( cPath + "AntCliT.Cdx", "cCodUsr", "cCodUsr + Dtos( dFecCre ) + cTimCre", {|| Field->cCodUsr + Dtos( Field->dFecCre ) + Field->cTimCre } ) )
+
+      ( dbfAntCliT )->( ordCondSet( "!Deleted() .and. !lLiquidada", {|| !Deleted() .AND. !Field->lLiquidada } ) )
+      ( dbfAntCliT )->( ordCreate( cPath + "AntCliT.CDX", "lLiquidada", "cSerAnt + Str( nNumAnt ) + cSufAnt", {|| Field->cSerAnt + Str( Field->nNumAnt ) + Field->cSufAnt } ) )
+
+      ( dbfAntCliT )->( ordCondSet( "!Deleted() .and. !lLiquidada", {|| !Deleted() .AND. !Field->lLiquidada } ) )
+      ( dbfAntCliT )->( ordCreate( cPath + "AntCliT.CDX", "lNumAnt", "cSerAnt + Str( nNumAnt ) + cSufAnt", {|| Field->cSerAnt + Str( Field->nNumAnt ) + Field->cSufAnt } ) )
+
+      ( dbfAntCliT )->( ordCondSet( "!Deleted() .and. !lLiquidada", {|| !Deleted() .AND. !Field->lLiquidada } ) )
+      ( dbfAntCliT )->( ordCreate( cPath + "AntCliT.CDX", "lFecAnt", "dFecAnt", {|| Field->dFecAnt } ) )
+
+      ( dbfAntCliT )->( ordCondSet( "!Deleted() .and. !lLiquidada", {|| !Deleted() .AND. !Field->lLiquidada } ) )
+      ( dbfAntCliT )->( ordCreate( cPath + "AntCliT.CDX", "lCodCli", "cCodCli", {|| Field->cCodCli } ) )
+
+      ( dbfAntCliT )->( ordCondSet( "!Deleted() .and. !lLiquidada", {|| !Deleted() .AND. !Field->lLiquidada } ) )
+      ( dbfAntCliT )->( ordCreate( cPath + "AntCliT.CDX", "lNomCli", "Upper( cNomCli )", {|| Upper( Field->cNomCli ) } ) )
+
+      ( dbfAntCliT )->( dbCloseArea() )
+
+   end
+
+   dbUseArea( .T., cDriver(), cPath + "AntCliI.DBF", cCheckArea( "AntCliI", @dbfAntCliT ), .F. )
+   if !( dbfAntCliT )->( neterr() )
+      ( dbfAntCliT )->( __dbPack() )
+
+      ( dbfAntCliT )->( ordCondSet("!Deleted()", {||!Deleted()}  ) )
+      ( dbfAntCliT )->( ordCreate( cPath + "AntCliI.CDX", "nNumAnt", "cSerAnt + Str( nNumAnt ) + cSufAnt", {|| Field->cSerAnt + Str( Field->nNumAnt ) + Field->cSufAnt } ) )
+
+      ( dbfAntCliT )->( dbCloseArea() )
+   end
+
+   dbUseArea( .T., cDriver(), cPath + "AntCliD.DBF", cCheckArea( "AntCliD", @dbfAntCliT ), .F. )
+   if !( dbfAntCliT )->( neterr() )
+      ( dbfAntCliT )->( __dbPack() )
+
+      ( dbfAntCliT )->( ordCondSet("!Deleted()", {||!Deleted()}  ) )
+      ( dbfAntCliT )->( ordCreate( cPath + "AntCliD.CDX", "nNumAnt", "cSerAnt + Str( nNumAnt ) + cSufAnt", {|| Field->cSerAnt + Str( Field->nNumAnt ) + Field->cSufAnt } ) )
+
+      ( dbfAntCliT )->( dbCloseArea() )
+   end
+
+RETURN NIL
+
+
+
+
+
+
+
+STATIC FUNCTION CreateFiles( cPath, lReindex )
+
+   IIF( lReindex == nil, lReindex := .T., ) ;
+
+   if !lExistTable( cPath + "AntCliT.DBF" )
+      dbCreate( cPath + "AntCliT.DBF", aSqlStruct( aItmAntCli() ), cDriver() )
+   end
+
+   if !lExistTable( cPath + "AntCliI.DBF" )
+      dbCreate( cPath + "AntCliI.DBF", aSqlStruct( aIncAntCli() ), cDriver() )
+   end
+
+   if !lExistTable( cPath + "AntCliD.DBF" )
+      dbCreate( cPath + "AntCliD.DBF", aSqlStruct( aAntCliDoc() ), cDriver() )
+   end
+
+   if lReindex
+      rxAntCli( cPath )
+   end
+
+RETURN NIL
+
+
+
+function aAntCliDoc()
+
+   local aAntCliDoc  := {}
+
+   aAdd( aAntCliDoc, { "cSerAnt", "C",    1,  0, "Serie de anticipos" ,              "",                   "", "( cDbfCol )" } )
+   aAdd( aAntCliDoc, { "nNumAnt", "N",    9,  0, "Número de anticipos" ,             "'999999999'",        "", "( cDbfCol )" } )
+   aAdd( aAntCliDoc, { "cSufAnt", "C",    2,  0, "Sufijo de anticipos" ,             "",                   "", "( cDbfCol )" } )
+   aAdd( aAntCliDoc, { "cNombre", "C",  250,  0, "Nombre del documento" ,            "",                   "", "( cDbfCol )" } )
+   aAdd( aAntCliDoc, { "cRuta",   "C",  250,  0, "Ruta del documento" ,              "",                   "", "( cDbfCol )" } )
+   aAdd( aAntCliDoc, { "mObsDoc", "M",   10,  0, "Observaciones del documento" ,     "",                   "", "( cDbfCol )" } )
+
+return ( aAntCliDoc )
+
+
+
+function aIncAntCli()
+
+   local aIncAntCli  := {}
+
+   aAdd( aIncAntCli, { "cSerAnt", "C",    1,  0, "Serie de anticipo" ,              "",                   "", "( cDbfCol )" } )
+   aAdd( aIncAntCli, { "nNumAnt", "N",    9,  0, "Número de anticipo" ,             "'999999999'",        "", "( cDbfCol )" } )
+   aAdd( aIncAntCli, { "cSufAnt", "C",    2,  0, "Sufijo de anticipo" ,             "",                   "", "( cDbfCol )" } )
+   aAdd( aIncAntCli, { "cCodTip", "C",    3,  0, "Tipo de incidencia" ,             "",                   "", "( cDbfCol )" } )
+   aAdd( aIncAntCli, { "dFecInc", "D",    8,  0, "Fecha de la incidencia" ,         "",                   "", "( cDbfCol )" } )
+   aAdd( aIncAntCli, { "mDesInc", "M",   10,  0, "Descripción de la incidencia" ,   "",                   "", "( cDbfCol )" } )
+   aAdd( aIncAntCli, { "lListo",  "L",    1,  0, "Lógico de listo" ,                "",                   "", "( cDbfCol )" } )
+   aAdd( aIncAntCli, { "lAviso",  "L",    1,  0, "Lógico de aviso" ,                "",                   "", "( cDbfCol )" } )
+
+return ( aIncAntCli )
+
+
+
+Static Function YearComboBoxChange()
+
+     if oWndBrw:oWndBar:lAllYearComboBox()
+        DestroyFastFilter( dbfAntCliT )
+      CreateUserFilter( "", dbfAntCliT, .F., , , "all" )
+     else
+        DestroyFastFilter( dbfAntCliT )
+      CreateUserFilter( "Year( Field->dFecAnt ) == " + oWndBrw:oWndBar:cYearComboBox(), dbfAntCliT, .F., , , "Year( Field->dFecAnt ) == " + oWndBrw:oWndBar:cYearComboBox() )
+     end
+
+     ( dbfAntCliT )->( dbGoTop() )
+
+     oWndBrw:Refresh()
+
+  Return nil
+
+
+
+
+
+function SynAntCli( cPath )
+
+   local aTotAnt
+
+   IIF( cPath == nil, cPath := cPatEmp(), ) ;
+
+   if OpenFiles()
+
+      while !( dbfAntCliT )->( eof() )
+
+
+
+
+
+         if ( dbfAntCliT )->nTotAnt == 0 .AND. dbLock( dbfAntCliT )
+
+            aTotAnt                 := aTotAntCli( dbfAntCliT, dbfIva, dbfDiv, , ( dbfAntClit )->cDivAnt )
+
+            ( dbfAntCliT )->nTotNet := aTotAnt[1]
+            ( dbfAntCliT )->nTotIva := aTotAnt[2]
+            ( dbfAntCliT )->nTotReq := aTotAnt[3]
+            ( dbfAntCliT )->nTotAnt := aTotAnt[5]
+
+            ( dbfAntCliT )->( dbUnLock() )
+
+         end
+
+         ( dbfAntCliT )->( dbSkip() )
+
+      end
+
+   CloseFiles()
+
+   end
+
+return nil
+
+
+
+
+
+Function aTotAntCli( dbfMaster, dbfIva, dbfDiv, aTmp, cDivRet, lPic )
+
+   nTotAntCli( dbfMaster, dbfIva, dbfDiv, aTmp, cDivRet, lPic )
+
+Return { nTotNet, nTotIva, nTotReq, nTotRet, nTotAnt }

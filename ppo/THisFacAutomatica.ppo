@@ -1,0 +1,155 @@
+#line 112 "hbclass.ch"
+   DYNAMIC DivertConstructorCall
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+DECLARE HBClass  New( cName AS String, OPTIONAL SuperParams ) AS CLASS HBClass  Create() AS Object  Instance() AS Object  AddClsMethod( cName AS String, @MethodName(), nScope AS Numeric, n2 AS Numeric, n3 AS Numeric )  AddDelegate( cName AS String, cDelegate AS String, cObject AS String, nScope AS Numeric, lPersistent AS LOGICAL )  AddMultiClsData( cType AS String, uVal, nScope AS Numeric, aDatas AS Array OF String )  AddMultiData( cType AS String, uVal, nScope AS Numeric, aDatas AS Array OF String, x AS LOGICAL, lPer AS LOGICAL )  AddMethod( cName AS String, @MethodName(), nScope AS Numeric, lPersistent AS LOGICAL )  AddInLine( cName AS String, bBlock AS CodeBlock, nScope AS Numeric, lPersistent AS LOGICAL )  AddVirtual( cName AS String )  ModMethod( cName AS String, @MethodName(), nScope AS Numeric, lPersistent AS LOGICAL )  ModClsMethod( cName AS String, @MethodName(), nScope AS Numeric )  ModInline( cName AS String, bBlock AS CodeBlock, nScope AS Numeric, lPersistent AS LOGICAL )  SetOnError( @MethodName() )
+#line 85 "\Fwh1204\Include\FiveWin.Ch"
+   EXTERNAL GetProcAdd
+   EXTERNAL TActiveX
+
+
+
+
+extern errorsys
+#line 9 ".\Prg\THisFacAutomatica.prg"
+_HB_CLASS THisFacAutomatica ; UTILITY FUNCTION THisFacAutomatica(...); static s_oClass ; local oClassInstance ; local nScope ; nScope := 1 ; if s_oClass == NIL ; s_oClass := IIF(.F.,, HBClass():New( "THisFacAutomatica" , {TDet():classh} ) ) ; ;
+
+   _HB_MEMBER DefineFiles(); IIF( .F., s_oClass:ModMethod( "DefineFiles", @THisFacAutomatica_DefineFiles(), nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ), s_oClass:AddMethod( "DefineFiles", @THisFacAutomatica_DefineFiles(), nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ));
+
+   _HB_MEMBER OpenFiles( lExclusive); IIF( .F., s_oClass:ModMethod( "OpenFiles", @THisFacAutomatica_OpenFiles(), nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ), s_oClass:AddMethod( "OpenFiles", @THisFacAutomatica_OpenFiles(), nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ));
+
+   _HB_MEMBER OpenService( lExclusive); IIF( .F., s_oClass:ModMethod( "OpenService", @THisFacAutomatica_OpenService(), nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ), s_oClass:AddMethod( "OpenService", @THisFacAutomatica_OpenService(), nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ));
+
+   _HB_MEMBER CloseFiles(); IIF( .F., s_oClass:ModMethod( "CloseFiles", @THisFacAutomatica_CloseFiles(), nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ), s_oClass:AddMethod( "CloseFiles", @THisFacAutomatica_CloseFiles(), nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ));
+
+   _HB_MEMBER CloseService(); IIF( .F., s_oClass:ModMethod( "CloseService", @THisFacAutomatica_CloseService(), nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ), s_oClass:AddMethod( "CloseService", @THisFacAutomatica_CloseService(), nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ));
+
+; IF .F. ; __clsActive(s_oClass:hClass) ; s_oClass:Refresh() ; ELSE ; s_oClass:Create() ; END ; oClassInstance := __clsInst( s_oClass:hClass ) ; IF __ObjHasMsg( oClassInstance, "InitClass" ); oClassInstance:InitClass( hb_aParams() ) ; END ; ELSE ; oClassInstance := __clsInst( s_oClass:hClass ) ; END ; IF PCount() > 0 ; DIVERT TO (@DivertConstructorCall()) OF s_oClass ; END ; RETURN oClassInstance AS CLASS THisFacAutomatica ;
+
+
+
+UTILITY STATIC function THisFacAutomatica_DefineFiles( cPath, cVia, lUniqueName, cFileName) ; local Self AS CLASS THisFacAutomatica := QSelf() AS CLASS THisFacAutomatica
+
+   local oDbf
+
+   IIF( cPath == nil, cPath := ::cPath, ) ;
+   IIF( lUniqueName == nil, lUniqueName := .F., ) ;
+   IIF( cFileName == nil, cFileName := "FacAutI", ) ;
+   IIF( cVia == nil, cVia := cDriver(), ) ;
+
+   if lUniqueName
+      cFileName         := cGetNewFileName( cFileName, , , cPath )
+   end
+
+   oDbf := DbfServer( ( cFileName ), ( cFileName ) ):New( ( cFileName ), ( cFileName ), ( cVia ), "líneas de plantillas de ventas automáticas", ( cPath ) )
+
+      oDbf:AddField( "cCodFac", "C", 03, 0,,,,, "Código", .F.,, .F., {} )
+      oDbf:AddField( "dFecha", "D", 08, 0,,,,, "Fecha de creación", .F.,, .F., {} )
+      oDbf:AddField( "cHora", "C", 05, 2,,,,, "Hora de creación", .F.,, .F., {} )
+      oDbf:AddField( "cFichero", "C", 255, 0,,,,, "Fichero con el resultado", .F.,, .F., {} )
+
+      oDbf:AddIndex( "cCodFac", ( cFileName ), "cCodFac",,, .F., .F.,,,, .T., .F. )
+
+
+
+RETURN ( oDbf )
+
+
+
+UTILITY STATIC function THisFacAutomatica_OpenFiles( lExclusive) ; local Self AS CLASS THisFacAutomatica := QSelf() AS CLASS THisFacAutomatica
+
+   local lOpen             := .T.
+   local oBlock            := ErrorBlock( {| oError | ApoloBreak( oError ) } )
+
+   IIF( lExclusive == nil, lExclusive := .F., ) ;
+
+   BEGIN SEQUENCE
+
+      if Empty( ::oDbf )
+         ::oDbf            := ::DefineFiles()
+      end
+
+      ::oDbf:Activate( .F., !lExclusive )
+
+   RECOVER
+
+      msgStop( "Imposible abrir todas las bases de datos" )
+      lOpen                := .F.
+
+   end
+
+   ErrorBlock( oBlock )
+
+   if !lOpen
+      ::CloseFiles()
+   end
+
+RETURN ( lOpen )
+
+
+
+UTILITY STATIC function THisFacAutomatica_OpenService( lExclusive) ; local Self AS CLASS THisFacAutomatica := QSelf() AS CLASS THisFacAutomatica
+
+   local lOpen          := .T.
+   local oError
+   local oBlock         := ErrorBlock( {| oError | ApoloBreak( oError ) } )
+
+   IIF( lExclusive == nil, lExclusive := .F., ) ;
+
+   BEGIN SEQUENCE
+
+      if Empty( ::oDbf )
+         ::DefineFiles()
+      end
+
+      ::oDbf:Activate( .F., !lExclusive )
+
+   RECOVER USING oError
+
+      msgStop( "Imposible abrir todas las bases de datos" + Chr(13)+Chr(10) + ErrorMessage( oError ) )
+      ::CloseService()
+      lOpen             := .F.
+
+   end
+
+   ErrorBlock( oBlock )
+
+RETURN ( lOpen )
+
+
+
+UTILITY STATIC function THisFacAutomatica_CloseFiles() ; local Self AS CLASS THisFacAutomatica := QSelf() AS CLASS THisFacAutomatica
+
+   if ::oDbf <> nil .AND. ::oDbf:Used()
+      ::oDbf:End()
+   end
+
+   ::oDbf         := nil
+
+RETURN ( .T. )
+
+
+
+UTILITY STATIC function THisFacAutomatica_CloseService() ; local Self AS CLASS THisFacAutomatica := QSelf() AS CLASS THisFacAutomatica
+
+   if ::oDbf <> nil .AND. ::oDbf:Used()
+      ::oDbf:End()
+   end
+
+   ::oDbf   := nil
+
+RETURN ( .T. )

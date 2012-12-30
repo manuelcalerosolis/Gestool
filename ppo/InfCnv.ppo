@@ -1,0 +1,213 @@
+#line 112 "hbclass.ch"
+   DYNAMIC DivertConstructorCall
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+DECLARE HBClass  New( cName AS String, OPTIONAL SuperParams ) AS CLASS HBClass  Create() AS Object  Instance() AS Object  AddClsMethod( cName AS String, @MethodName(), nScope AS Numeric, n2 AS Numeric, n3 AS Numeric )  AddDelegate( cName AS String, cDelegate AS String, cObject AS String, nScope AS Numeric, lPersistent AS LOGICAL )  AddMultiClsData( cType AS String, uVal, nScope AS Numeric, aDatas AS Array OF String )  AddMultiData( cType AS String, uVal, nScope AS Numeric, aDatas AS Array OF String, x AS LOGICAL, lPer AS LOGICAL )  AddMethod( cName AS String, @MethodName(), nScope AS Numeric, lPersistent AS LOGICAL )  AddInLine( cName AS String, bBlock AS CodeBlock, nScope AS Numeric, lPersistent AS LOGICAL )  AddVirtual( cName AS String )  ModMethod( cName AS String, @MethodName(), nScope AS Numeric, lPersistent AS LOGICAL )  ModClsMethod( cName AS String, @MethodName(), nScope AS Numeric )  ModInline( cName AS String, bBlock AS CodeBlock, nScope AS Numeric, lPersistent AS LOGICAL )  SetOnError( @MethodName() )
+#line 85 "\Fwh1204\Include\FiveWin.Ch"
+   EXTERNAL GetProcAdd
+   EXTERNAL TActiveX
+
+
+
+
+extern errorsys
+#line 8 ".\Prg\InfCnv.prg"
+_HB_CLASS InfCnv ; UTILITY FUNCTION InfCnv(...); static s_oClass ; local oClassInstance ; local nScope ; nScope := 1 ; if s_oClass == NIL ; s_oClass := IIF(.F.,, HBClass():New( "InfCnv" , {TInfGen():classh} ) ) ; ;
+
+   _HB_MEMBER {AS OBJECT oDbfCnv} ; IIF( !.F., s_oClass:AddMultiData( "OBJECT",, nScope + IIF( .F., 32, 0 ), { "oDbfCnv" }, .F., .F. ), )
+   _HB_MEMBER {AS CHARACTER cCnvOrg} ; IIF( !.F., s_oClass:AddMultiData( "CHARACTER",, nScope + IIF( .F., 32, 0 ), { "cCnvOrg" }, .F., .F. ), )
+   _HB_MEMBER {AS CHARACTER cCnvDes} ; IIF( !.F., s_oClass:AddMultiData( "CHARACTER",, nScope + IIF( .F., 32, 0 ), { "cCnvDes" }, .F., .F. ), )
+   _HB_MEMBER {AS LOGIC lAllCnv} ; IIF( !.F., s_oClass:AddMultiData( "LOGIC", .T., nScope + IIF( .F., 32, 0 ), { "lAllCnv" }, .F., .F. ), )
+
+   _HB_MEMBER Create(); IIF( .F., s_oClass:ModMethod( "Create", @InfCnv_Create(), nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ), s_oClass:AddMethod( "Create", @InfCnv_Create(), nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ));
+
+   _HB_MEMBER OpenFiles(); IIF( .F., s_oClass:ModMethod( "OpenFiles", @InfCnv_OpenFiles(), nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ), s_oClass:AddMethod( "OpenFiles", @InfCnv_OpenFiles(), nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ));
+
+   _HB_MEMBER CloseFiles(); IIF( .F., s_oClass:ModMethod( "CloseFiles", @InfCnv_CloseFiles(), nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ), s_oClass:AddMethod( "CloseFiles", @InfCnv_CloseFiles(), nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ));
+
+   _HB_MEMBER lResource( cFld); IIF( .F., s_oClass:ModMethod( "lResource", @InfCnv_lResource(), nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ), s_oClass:AddMethod( "lResource", @InfCnv_lResource(), nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ));
+
+   _HB_MEMBER lGenerate(); IIF( .F., s_oClass:ModMethod( "lGenerate", @InfCnv_lGenerate(), nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ), s_oClass:AddMethod( "lGenerate", @InfCnv_lGenerate(), nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ));
+
+; IF .F. ; __clsActive(s_oClass:hClass) ; s_oClass:Refresh() ; ELSE ; s_oClass:Create() ; END ; oClassInstance := __clsInst( s_oClass:hClass ) ; IF __ObjHasMsg( oClassInstance, "InitClass" ); oClassInstance:InitClass( hb_aParams() ) ; END ; ELSE ; oClassInstance := __clsInst( s_oClass:hClass ) ; END ; IF PCount() > 0 ; DIVERT TO (@DivertConstructorCall()) OF s_oClass ; END ; RETURN oClassInstance AS CLASS InfCnv ;
+
+
+
+UTILITY STATIC function InfCnv_Create() ; local Self AS CLASS InfCnv := QSelf() AS CLASS InfCnv
+
+   ::AddField( "cCodCnv",   "C",  2, 0, {|| "" },           "Cód. Cnv.",      .T., "Código de la tabla de conversión",    5, .F. )
+   ::AddField( "cDetCnv",   "C", 30, 0, {|| "" },           "Descripción",    .T., "Detalle de la tabla de conversión",  30, .F. )
+   ::AddField( "cUndStk",   "C",  4, 0, {|| "" },           "U. Stk.",        .T., "Literal para unidades de stocks",    15, .F. )
+   ::AddField( "cUndVta",   "C",  4, 0, {|| "" },           "U. Vta.",        .T., "Literal para unidades de venta",     50, .F. )
+   ::AddField( "nFacCnv",   "n", 16, 6, {|| "" },           "Factor",         .T., "Factor de conversión",               50, .F. )
+
+   ::AddTmpIndex ( "cCodCnv", "cCodCnv" )
+
+   ::lDefFecInf   := .F.
+   ::lDefSerInf   := .F.
+   ::lDefDivInf   := .F.
+
+RETURN ( Self )
+
+
+
+UTILITY STATIC function InfCnv_OpenFiles() ; local Self AS CLASS InfCnv := QSelf() AS CLASS InfCnv
+
+   local lOpen    := .T.
+   local oBlock   := ErrorBlock( {| oError | ApoloBreak( oError ) } )
+
+   BEGIN SEQUENCE
+
+   ::oDbfCnv := DbfServer( "TBLCNV.DBF", ):NewOpen( "TBLCNV.DBF",, ( cDriver() ),, ( cPatDat() ), .F., .T., .F., .F. ) ; ::oDbfCnv:AddBag( "TBLCNV.CDX" ) ; ::oDbfCnv:AddBag( ) ; ::oDbfCnv:AutoIndex()
+
+   RECOVER
+
+      msgStop( "Imposible abrir todas las bases de datos" )
+      ::CloseFiles()
+      lOpen          := .F.
+
+   end
+
+   ErrorBlock( oBlock )
+
+RETURN ( lOpen )
+
+
+
+UTILITY STATIC function InfCnv_CloseFiles() ; local Self AS CLASS InfCnv := QSelf() AS CLASS InfCnv
+
+   if !Empty( ::oDbfCnv ) .AND. ::oDbfCnv:Used()
+      ::oDbfCnv:End()
+   end
+
+   ::oDbfCnv  := nil
+
+RETURN ( Self )
+
+
+
+UTILITY STATIC function InfCnv_lResource( cFld) ; local Self AS CLASS InfCnv := QSelf() AS CLASS InfCnv
+
+   local cSayCnvOrg
+   local cSayCnvDes
+   local oSayCnvOrg
+   local oSayCnvDes
+   local oCnvOrg
+   local oCnvDes
+
+   if !::StdResource( "INF_CNV01" )
+      return .F.
+   end
+
+
+
+
+
+   ::cCnvOrg   := dbFirst( ::oDbfCnv, 1 )
+   ::cCnvDes   := dbLast(  ::oDbfCnv, 1 )
+   cSayCnvOrg  := dbFirst( ::oDbfCnv, 2 )
+   cSayCnvDes  := dbLast(  ::oDbfCnv, 2 )
+
+
+
+   TCheckBox():ReDefine( ( 60 ), { | u | If( PCount()==0, ::lAllCnv, ::lAllCnv:= u ) }, ::oFld:aDialogs[1],,,,,,, .F.,, .F. )
+
+
+
+
+
+
+   oCnvOrg := TGetHlp():ReDefine( ( 70 ), { | u | If( PCount()==0, ::cCnvOrg, ::cCnvOrg:= u ) }, ::oFld:aDialogs[1],,,, "N/W*",,,,, .F., {||     ( !::lAllCnv )},, .F., .F.,,,,,, nil, "LUPA",, )
+
+      oCnvOrg:bValid   := {|| cTblCnv( oCnvOrg, ::oDbfCnv:cAlias, oSayCnvOrg ) }
+      oCnvOrg:bHelp    := {|| BrwTblCnv( oCnvOrg, ::oDbfCnv:cAlias, oSayCnvOrg ) }
+
+
+
+
+
+   oSayCnvOrg := TGetHlp():ReDefine( ( 80 ), { | u | If( PCount()==0, cSayCnvOrg, cSayCnvOrg:= u ) }, ::oFld:aDialogs[1],,,, "N/W*",,,,, .F., {||     .F.},, .F., .F.,,,,,, nil,,, )
+
+
+
+
+
+
+   oCnvDes := TGetHlp():ReDefine( ( 90 ), { | u | If( PCount()==0, ::cCnvDes, ::cCnvDes:= u ) }, ::oFld:aDialogs[1],,,, "N/W*",,,,, .F., {||     ( !::lAllCnv )},, .F., .F.,,,,,, nil, "LUPA",, )
+
+      oCnvDes:bValid   := {|| cTblCnv( oCnvDes, ::oDbfCnv:cAlias, oSayCnvDes ) }
+      oCnvDes:bHelp    := {|| BrwTblCnv( oCnvDes, ::oDbfCnv:cAlias, oSayCnvDes ) }
+
+
+
+
+   oSayCnvDes := TGetHlp():ReDefine( ( 100 ), { | u | If( PCount()==0, cSayCnvDes, cSayCnvDes:= u ) }, ::oFld:aDialogs[1],,,,,,,,, .F., {||     .F.},, .F., .F.,,,,,, nil,,, )
+
+
+
+
+
+   ::oMtrInf:SetTotal( ::oDbfCnv:Lastrec() )
+
+   ::CreateFilter( aItmTbl(), ::oDbfCnv )
+
+RETURN .T.
+
+
+
+
+
+
+UTILITY STATIC function InfCnv_lGenerate() ; local Self AS CLASS InfCnv := QSelf() AS CLASS InfCnv
+
+   ::oDlg:Disable()
+   ::oDbf:Zap()
+
+
+   ::aHeader         := {  {|| "Fecha         : " + Dtoc( Date() ) }, {|| "F. conversión : " + if( ::lAllCnv, "Todos", AllTrim( ::cCnvOrg ) + " > " + AllTrim( ::cCnvDes ) ) } }
+
+   ::oDbfCnv:OrdSetFocus( "CCODCNV" )
+
+   ::oDbfCnv:GoTop()
+   while !::oDbfCnv:Eof()
+
+
+      if ( ::lAllCnv .OR. ( ::oDbfCnv:cCodCnv >= ::cCnvOrg .AND. ::oDbfCnv:cCodCnv <= ::cCnvDes ) ) .AND.  ::EvalFilter()
+
+         ::oDbf:Append()
+
+         ::oDbf:cCodCnv    := ::oDbfCnv:cCodCnv
+         ::oDbf:cDetCnv    := ::oDbfCnv:cDetCnv
+         ::oDbf:cUndStk    := ::oDbfCnv:cUndStk
+         ::oDbf:cUndVta    := ::oDbfCnv:cUndVta
+         ::oDbf:nFacCnv    := ::oDbfCnv:nFacCnv
+
+         ::oDbf:Save()
+
+      end
+
+      ::oDbfCnv:Skip()
+
+      ::oMtrInf:AutoInc( ::oDbfCnv:OrdKeyNo() )
+
+   end
+
+   ::oMtrInf:AutoInc( ::oDbfCnv:LastRec() )
+
+   ::oDlg:Enable()
+
+RETURN ( ::oDbf:LastRec() > 0 )

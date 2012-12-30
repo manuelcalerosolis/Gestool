@@ -1,0 +1,192 @@
+#line 112 "hbclass.ch"
+   DYNAMIC DivertConstructorCall
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+DECLARE HBClass  New( cName AS String, OPTIONAL SuperParams ) AS CLASS HBClass  Create() AS Object  Instance() AS Object  AddClsMethod( cName AS String, @MethodName(), nScope AS Numeric, n2 AS Numeric, n3 AS Numeric )  AddDelegate( cName AS String, cDelegate AS String, cObject AS String, nScope AS Numeric, lPersistent AS LOGICAL )  AddMultiClsData( cType AS String, uVal, nScope AS Numeric, aDatas AS Array OF String )  AddMultiData( cType AS String, uVal, nScope AS Numeric, aDatas AS Array OF String, x AS LOGICAL, lPer AS LOGICAL )  AddMethod( cName AS String, @MethodName(), nScope AS Numeric, lPersistent AS LOGICAL )  AddInLine( cName AS String, bBlock AS CodeBlock, nScope AS Numeric, lPersistent AS LOGICAL )  AddVirtual( cName AS String )  ModMethod( cName AS String, @MethodName(), nScope AS Numeric, lPersistent AS LOGICAL )  ModClsMethod( cName AS String, @MethodName(), nScope AS Numeric )  ModInline( cName AS String, bBlock AS CodeBlock, nScope AS Numeric, lPersistent AS LOGICAL )  SetOnError( @MethodName() )
+#line 85 "\Fwh1204\Include\FiveWin.Ch"
+   EXTERNAL GetProcAdd
+   EXTERNAL TActiveX
+
+
+
+
+extern errorsys
+#line 10 ".\Prg\Tur2ses.prg"
+_HB_CLASS TTur2Ses ; UTILITY FUNCTION TTur2Ses(...); static s_oClass ; local oClassInstance ; local nScope ; nScope := 1 ; if s_oClass == NIL ; s_oClass := IIF(.F.,, HBClass():New( "TTur2Ses" , { HBObject():Classh } ) ) ;
+
+   _HB_MEMBER { oArt} ; IIF( !.F., s_oClass:AddMultiData(,, nScope + IIF( .F., 32, 0 ), { "oArt" }, .F., .F. ), )
+   _HB_MEMBER { oArtNew} ; IIF( !.F., s_oClass:AddMultiData(,, nScope + IIF( .F., 32, 0 ), { "oArtNew" }, .F., .F. ), )
+
+   _HB_MEMBER { oDbfTikT} ; IIF( !.F., s_oClass:AddMultiData(,, nScope + IIF( .F., 32, 0 ), { "oDbfTikT" }, .F., .F. ), )
+   _HB_MEMBER { oDbfTikL} ; IIF( !.F., s_oClass:AddMultiData(,, nScope + IIF( .F., 32, 0 ), { "oDbfTikL" }, .F., .F. ), )
+   _HB_MEMBER { oDbfTikP} ; IIF( !.F., s_oClass:AddMultiData(,, nScope + IIF( .F., 32, 0 ), { "oDbfTikP" }, .F., .F. ), )
+   _HB_MEMBER { oDbfTurT} ; IIF( !.F., s_oClass:AddMultiData(,, nScope + IIF( .F., 32, 0 ), { "oDbfTurT" }, .F., .F. ), )
+   _HB_MEMBER { oDbfTurL} ; IIF( !.F., s_oClass:AddMultiData(,, nScope + IIF( .F., 32, 0 ), { "oDbfTurL" }, .F., .F. ), )
+   _HB_MEMBER { oAlbCliT} ; IIF( !.F., s_oClass:AddMultiData(,, nScope + IIF( .F., 32, 0 ), { "oAlbCliT" }, .F., .F. ), )
+   _HB_MEMBER { oAlbCliL} ; IIF( !.F., s_oClass:AddMultiData(,, nScope + IIF( .F., 32, 0 ), { "oAlbCliL" }, .F., .F. ), )
+   _HB_MEMBER { oFacCliT} ; IIF( !.F., s_oClass:AddMultiData(,, nScope + IIF( .F., 32, 0 ), { "oFacCliT" }, .F., .F. ), )
+   _HB_MEMBER { oFacCliL} ; IIF( !.F., s_oClass:AddMultiData(,, nScope + IIF( .F., 32, 0 ), { "oFacCliL" }, .F., .F. ), )
+   _HB_MEMBER { oFacCliP} ; IIF( !.F., s_oClass:AddMultiData(,, nScope + IIF( .F., 32, 0 ), { "oFacCliP" }, .F., .F. ), )
+   _HB_MEMBER { oPedPrvT} ; IIF( !.F., s_oClass:AddMultiData(,, nScope + IIF( .F., 32, 0 ), { "oPedPrvT" }, .F., .F. ), )
+   _HB_MEMBER { oPedPrvL} ; IIF( !.F., s_oClass:AddMultiData(,, nScope + IIF( .F., 32, 0 ), { "oPedPrvL" }, .F., .F. ), )
+   _HB_MEMBER { oAlbPrvT} ; IIF( !.F., s_oClass:AddMultiData(,, nScope + IIF( .F., 32, 0 ), { "oAlbPrvT" }, .F., .F. ), )
+   _HB_MEMBER { oAlbPrvL} ; IIF( !.F., s_oClass:AddMultiData(,, nScope + IIF( .F., 32, 0 ), { "oAlbPrvL" }, .F., .F. ), )
+   _HB_MEMBER { oFacPrvT} ; IIF( !.F., s_oClass:AddMultiData(,, nScope + IIF( .F., 32, 0 ), { "oFacPrvT" }, .F., .F. ), )
+   _HB_MEMBER { oFacPrvL} ; IIF( !.F., s_oClass:AddMultiData(,, nScope + IIF( .F., 32, 0 ), { "oFacPrvL" }, .F., .F. ), )
+   _HB_MEMBER { oFacPrvP} ; IIF( !.F., s_oClass:AddMultiData(,, nScope + IIF( .F., 32, 0 ), { "oFacPrvP" }, .F., .F. ), )
+
+   _HB_MEMBER New(); IIF( .F., s_oClass:ModMethod( "New", @TTur2Ses_New(), nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ), s_oClass:AddMethod( "New", @TTur2Ses_New(), nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ));
+
+   _HB_MEMBER DefNew(); IIF( .F., s_oClass:ModMethod( "DefNew", @TTur2Ses_DefNew(), nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ), s_oClass:AddMethod( "DefNew", @TTur2Ses_DefNew(), nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ));
+
+   _HB_MEMBER OpenFiles(); IIF( .F., s_oClass:ModMethod( "OpenFiles", @TTur2Ses_OpenFiles(), nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ), s_oClass:AddMethod( "OpenFiles", @TTur2Ses_OpenFiles(), nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ));
+
+   _HB_MEMBER CloseFiles(); IIF( .F., s_oClass:ModMethod( "CloseFiles", @TTur2Ses_CloseFiles(), nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ), s_oClass:AddMethod( "CloseFiles", @TTur2Ses_CloseFiles(), nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ));
+
+   _HB_MEMBER App(); IIF( .F., s_oClass:ModMethod( "App", @TTur2Ses_App(), nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ), s_oClass:AddMethod( "App", @TTur2Ses_App(), nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ));
+
+; IF .F. ; __clsActive(s_oClass:hClass) ; s_oClass:Refresh() ; ELSE ; s_oClass:Create() ; END ; oClassInstance := __clsInst( s_oClass:hClass ) ; IF __ObjHasMsg( oClassInstance, "InitClass" ); oClassInstance:InitClass( hb_aParams() ) ; END ; ELSE ; oClassInstance := __clsInst( s_oClass:hClass ) ; END ; IF PCount() > 0 ; DIVERT TO (@DivertConstructorCall()) OF s_oClass ; END ; RETURN oClassInstance AS CLASS TTur2Ses ;
+
+
+
+
+
+
+
+UTILITY STATIC function TTur2Ses_OpenFiles( cSufDes) ; local Self AS CLASS TTur2Ses := QSelf() AS CLASS TTur2Ses
+
+   ::oDbfTikT := DbfServer( "TIKET.DBF", ):NewOpen( "TIKET.DBF",, ( cDriver() ),, ( cPatEmp() ), .F., .F., .F., .F. ) ; ::oDbfTikT:AddBag( "TIKET.CDX" ) ; ::oDbfTikT:AddBag( ) ; ::oDbfTikT:AutoIndex()
+   ::oDbfTikL := DbfServer( "TIKEL.DBF", ):NewOpen( "TIKEL.DBF",, ( cDriver() ),, ( cPatEmp() ), .F., .F., .F., .F. ) ; ::oDbfTikL:AddBag( "TIKEL.CDX" ) ; ::oDbfTikL:AddBag( ) ; ::oDbfTikL:AutoIndex()
+   ::oAlbCliT := DbfServer( "ALBCLIT.DBF", ):NewOpen( "ALBCLIT.DBF",, ( cDriver() ),, ( cPatEmp() ), .F., .F., .F., .F. ) ; ::oAlbCliT:AddBag( "ALBCLIT.CDX" ) ; ::oAlbCliT:AddBag( ) ; ::oAlbCliT:AutoIndex()
+   ::oAlbCliL := DbfServer( "ALBCLIL.DBF", ):NewOpen( "ALBCLIL.DBF",, ( cDriver() ),, ( cPatEmp() ), .F., .F., .F., .F. ) ; ::oAlbCliL:AddBag( "ALBCLIL.CDX" ) ; ::oAlbCliL:AddBag( ) ; ::oAlbCliL:AutoIndex()
+   ::oFacCliT := DbfServer( "FACCLIT.DBF", ):NewOpen( "FACCLIT.DBF",, ( cDriver() ),, ( cPatEmp() ), .F., .F., .F., .F. ) ; ::oFacCliT:AddBag( "FACCLIT.CDX" ) ; ::oFacCliT:AddBag( ) ; ::oFacCliT:AutoIndex()
+   ::oFacCliL := DbfServer( "FACCLIL.DBF", ):NewOpen( "FACCLIL.DBF",, ( cDriver() ),, ( cPatEmp() ), .F., .F., .F., .F. ) ; ::oFacCliL:AddBag( "FACCLIL.CDX" ) ; ::oFacCliL:AddBag( ) ; ::oFacCliL:AutoIndex()
+   ::oFacCliP := DbfServer( "FACCLIP.DBF", ):NewOpen( "FACCLIP.DBF",, ( cDriver() ),, ( cPatEmp() ), .F., .F., .F., .F. ) ; ::oFacCliP:AddBag( "FACCLIP.CDX" ) ; ::oFacCliP:AddBag( ) ; ::oFacCliP:AutoIndex()
+   ::oAlbPrvT := DbfServer( "AlbProvT.DBF", ):NewOpen( "AlbProvT.DBF",, ( cDriver() ),, ( cPatEmp() ), .F., .F., .F., .F. ) ; ::oAlbPrvT:AddBag( "AlbProvT.CDX" ) ; ::oAlbPrvT:AddBag( ) ; ::oAlbPrvT:AutoIndex()
+   ::oAlbPrvL := DbfServer( "AlbProvL.DBF", ):NewOpen( "AlbProvL.DBF",, ( cDriver() ),, ( cPatEmp() ), .F., .F., .F., .F. ) ; ::oAlbPrvL:AddBag( "AlbProvL.CDX" ) ; ::oAlbPrvL:AddBag( ) ; ::oAlbPrvL:AutoIndex()
+   ::oFacPrvT := DbfServer( "FacPrvT.DBF", ):NewOpen( "FacPrvT.DBF",, ( cDriver() ),, ( cPatEmp() ), .F., .F., .F., .F. ) ; ::oFacPrvT:AddBag( "FacPrvT.CDX" ) ; ::oFacPrvT:AddBag( ) ; ::oFacPrvT:AutoIndex()
+   ::oFacPrvL := DbfServer( "FacPrvL.DBF", ):NewOpen( "FacPrvL.DBF",, ( cDriver() ),, ( cPatEmp() ), .F., .F., .F., .F. ) ; ::oFacPrvL:AddBag( "FACPrvL.CDX" ) ; ::oFacPrvL:AddBag( ) ; ::oFacPrvL:AutoIndex()
+   ::oFacPrvP := DbfServer( "FacPrvP.DBF", ):NewOpen( "FacPrvP.DBF",, ( cDriver() ),, ( cPatEmp() ), .F., .F., .F., .F. ) ; ::oFacPrvP:AddBag( "FACPrvP.CDX" ) ; ::oFacPrvP:AddBag( ) ; ::oFacPrvP:AutoIndex()
+
+RETURN .T.
+
+
+
+
+
+
+
+UTILITY STATIC function TTur2Ses_CloseFiles() ; local Self AS CLASS TTur2Ses := QSelf() AS CLASS TTur2Ses
+
+   ::oArt:End()
+   ::oArtNew:End()
+
+   ::oDbfTikT:End()
+   ::oDbfTikL:End()
+   ::oAlbCliT:End()
+   ::oAlbCliL:End()
+   ::oFacCliT:End()
+   ::oFacCliL:End()
+   ::oFacCliP:End()
+   ::oAlbPrvT:End()
+   ::oAlbPrvL:End()
+   ::oFacPrvT:End()
+   ::oFacPrvL:End()
+   ::oFacPrvP:End()
+
+RETURN .T.
+
+
+
+UTILITY STATIC function TTur2Ses_DefNew() ; local Self AS CLASS TTur2Ses := QSelf() AS CLASS TTur2Ses
+
+   local n
+   local aSufDes     := { "31", "32", "33", "34", "35", "36", "38", "39" }
+
+
+
+
+
+   for n := 1 to len( aSufDes )
+
+   if !::OpenFiles( aSufDes[ n ] )
+      Return Nil
+   end
+
+   ::oDbfTikT:AppendFrom( FullCurDir() + "EMP" + aSufDes[ n ] + "\" + "TIKET.DBF"    )
+   ::oDbfTikL:AppendFrom( FullCurDir() + "EMP" + aSufDes[ n ] + "\" + "TIKEL.DBF"    )
+   ::oAlbCliT:AppendFrom( FullCurDir() + "EMP" + aSufDes[ n ] + "\" + "ALBCLIT.DBF"  )
+   ::oAlbCliL:AppendFrom( FullCurDir() + "EMP" + aSufDes[ n ] + "\" + "ALBCLIL.DBF"  )
+   ::oFacCliT:AppendFrom( FullCurDir() + "EMP" + aSufDes[ n ] + "\" + "FACCLIT.DBF"  )
+   ::oFacCliL:AppendFrom( FullCurDir() + "EMP" + aSufDes[ n ] + "\" + "FACCLIL.DBF"  )
+   ::oFacCliP:AppendFrom( FullCurDir() + "EMP" + aSufDes[ n ] + "\" + "FACCLIP.DBF"  )
+   ::oAlbPrvT:AppendFrom( FullCurDir() + "EMP" + aSufDes[ n ] + "\" + "AlbProvT.DBF" )
+   ::oAlbPrvL:AppendFrom( FullCurDir() + "EMP" + aSufDes[ n ] + "\" + "AlbProvL.DBF" )
+   ::oFacPrvT:AppendFrom( FullCurDir() + "EMP" + aSufDes[ n ] + "\" + "FacPrvT.DBF"  )
+   ::oFacPrvL:AppendFrom( FullCurDir() + "EMP" + aSufDes[ n ] + "\" + "FacPrvL.DBF"  )
+   ::oFacPrvP:AppendFrom( FullCurDir() + "EMP" + aSufDes[ n ] + "\" + "FacPrvP.DBF"  )
+
+   ::CloseFiles()
+
+   next
+
+RETURN Self
+
+
+
+UTILITY STATIC function TTur2Ses_App( cTitle, oOrigen, oDestino) ; local Self AS CLASS TTur2Ses := QSelf() AS CLASS TTur2Ses
+
+   while !( oDestino:cAlias )->( Eof() )
+      dbPass( oOrigen:cAlias, oDestino:cAlias, .T. )
+      Titulo( cTitle + Str( ( oDestino:cAlias )->( Recno() ) ) )
+      ( oDestino:cAlias )->( dbSkip() )
+   end
+
+RETURN Self
+
+
+
+UTILITY STATIC function TTur2Ses_New() ; local Self AS CLASS TTur2Ses := QSelf() AS CLASS TTur2Ses
+
+   local n
+   local aSufDes     := { "31", "32", "33", "34", "35", "36", "38", "39" }
+
+
+
+
+
+   for n := 1 to len( aSufDes )
+
+   if !::OpenFiles( aSufDes[ n ] )
+      Return Nil
+   end
+
+   while !::oArtNew:Eof()
+
+      if !::oArt:Seek( ::oArtNew:Cod )
+         dbPass( ::oArtNew:cAlias, ::oArt:cAlias, .T. )
+      end
+
+      ::oArtNew:Skip()
+
+   end
+
+   ::CloseFiles()
+
+   next
+
+RETURN Self

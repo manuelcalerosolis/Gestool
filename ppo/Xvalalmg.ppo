@@ -1,0 +1,545 @@
+#line 112 "hbclass.ch"
+   DYNAMIC DivertConstructorCall
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+DECLARE HBClass  New( cName AS String, OPTIONAL SuperParams ) AS CLASS HBClass  Create() AS Object  Instance() AS Object  AddClsMethod( cName AS String, @MethodName(), nScope AS Numeric, n2 AS Numeric, n3 AS Numeric )  AddDelegate( cName AS String, cDelegate AS String, cObject AS String, nScope AS Numeric, lPersistent AS LOGICAL )  AddMultiClsData( cType AS String, uVal, nScope AS Numeric, aDatas AS Array OF String )  AddMultiData( cType AS String, uVal, nScope AS Numeric, aDatas AS Array OF String, x AS LOGICAL, lPer AS LOGICAL )  AddMethod( cName AS String, @MethodName(), nScope AS Numeric, lPersistent AS LOGICAL )  AddInLine( cName AS String, bBlock AS CodeBlock, nScope AS Numeric, lPersistent AS LOGICAL )  AddVirtual( cName AS String )  ModMethod( cName AS String, @MethodName(), nScope AS Numeric, lPersistent AS LOGICAL )  ModClsMethod( cName AS String, @MethodName(), nScope AS Numeric )  ModInline( cName AS String, bBlock AS CodeBlock, nScope AS Numeric, lPersistent AS LOGICAL )  SetOnError( @MethodName() )
+#line 85 "\Fwh1204\Include\FiveWin.Ch"
+   EXTERNAL GetProcAdd
+   EXTERNAL TActiveX
+
+
+
+
+extern errorsys
+#line 8 ".\Prg\Xvalalmg.prg"
+_HB_CLASS XValAlmGrp ; UTILITY FUNCTION XValAlmGrp(...); static s_oClass ; local oClassInstance ; local nScope ; nScope := 1 ; if s_oClass == NIL ; s_oClass := IIF(.F.,, HBClass():New( "XValAlmGrp" , {TInfGen():classh} ) ) ; ;
+
+   _HB_MEMBER {AS LOGIC lExcCero} ; IIF( !.F., s_oClass:AddMultiData( "LOGIC", .F., nScope + IIF( .F., 32, 0 ), { "lExcCero" }, .F., .F. ), )
+   _HB_MEMBER {AS LOGIC lResumen} ; IIF( !.F., s_oClass:AddMultiData( "LOGIC", .F., nScope + IIF( .F., 32, 0 ), { "lResumen" }, .F., .F. ), )
+   _HB_MEMBER {AS NUMERIC nEstado} ; IIF( !.F., s_oClass:AddMultiData( "NUMERIC", 1, nScope + IIF( .F., 32, 0 ), { "nEstado" }, .F., .F. ), )
+   _HB_MEMBER {AS OBJECT oAlbPrvT} ; IIF( !.F., s_oClass:AddMultiData( "OBJECT",, nScope + IIF( .F., 32, 0 ), { "oAlbPrvT" }, .F., .F. ), )
+   _HB_MEMBER {AS OBJECT oAlbPrvL} ; IIF( !.F., s_oClass:AddMultiData( "OBJECT",, nScope + IIF( .F., 32, 0 ), { "oAlbPrvL" }, .F., .F. ), )
+   _HB_MEMBER {AS OBJECT oFacPrvT} ; IIF( !.F., s_oClass:AddMultiData( "OBJECT",, nScope + IIF( .F., 32, 0 ), { "oFacPrvT" }, .F., .F. ), )
+   _HB_MEMBER {AS OBJECT oFacPrvL} ; IIF( !.F., s_oClass:AddMultiData( "OBJECT",, nScope + IIF( .F., 32, 0 ), { "oFacPrvL" }, .F., .F. ), )
+   _HB_MEMBER {AS OBJECT oAlbCliT} ; IIF( !.F., s_oClass:AddMultiData( "OBJECT",, nScope + IIF( .F., 32, 0 ), { "oAlbCliT" }, .F., .F. ), )
+   _HB_MEMBER {AS OBJECT oAlbCliL} ; IIF( !.F., s_oClass:AddMultiData( "OBJECT",, nScope + IIF( .F., 32, 0 ), { "oAlbCliL" }, .F., .F. ), )
+   _HB_MEMBER {AS OBJECT oFacCliT} ; IIF( !.F., s_oClass:AddMultiData( "OBJECT",, nScope + IIF( .F., 32, 0 ), { "oFacCliT" }, .F., .F. ), )
+   _HB_MEMBER {AS OBJECT oFacCliL} ; IIF( !.F., s_oClass:AddMultiData( "OBJECT",, nScope + IIF( .F., 32, 0 ), { "oFacCliL" }, .F., .F. ), )
+   _HB_MEMBER {AS OBJECT oFacRecT} ; IIF( !.F., s_oClass:AddMultiData( "OBJECT",, nScope + IIF( .F., 32, 0 ), { "oFacRecT" }, .F., .F. ), )
+   _HB_MEMBER {AS OBJECT oFacRecL} ; IIF( !.F., s_oClass:AddMultiData( "OBJECT",, nScope + IIF( .F., 32, 0 ), { "oFacRecL" }, .F., .F. ), )
+   _HB_MEMBER {AS OBJECT oTikCliT} ; IIF( !.F., s_oClass:AddMultiData( "OBJECT",, nScope + IIF( .F., 32, 0 ), { "oTikCliT" }, .F., .F. ), )
+   _HB_MEMBER {AS OBJECT oTikCliL} ; IIF( !.F., s_oClass:AddMultiData( "OBJECT",, nScope + IIF( .F., 32, 0 ), { "oTikCliL" }, .F., .F. ), )
+   _HB_MEMBER {AS OBJECT oPedCliL} ; IIF( !.F., s_oClass:AddMultiData( "OBJECT",, nScope + IIF( .F., 32, 0 ), { "oPedCliL" }, .F., .F. ), )
+   _HB_MEMBER {AS OBJECT oPedPrvL} ; IIF( !.F., s_oClass:AddMultiData( "OBJECT",, nScope + IIF( .F., 32, 0 ), { "oPedPrvL" }, .F., .F. ), )
+   _HB_MEMBER {AS OBJECT oRctPrvT} ; IIF( !.F., s_oClass:AddMultiData( "OBJECT",, nScope + IIF( .F., 32, 0 ), { "oRctPrvT" }, .F., .F. ), )
+   _HB_MEMBER {AS OBJECT oRctPrvL} ; IIF( !.F., s_oClass:AddMultiData( "OBJECT",, nScope + IIF( .F., 32, 0 ), { "oRctPrvL" }, .F., .F. ), )
+   _HB_MEMBER {AS OBJECT oProCab} ; IIF( !.F., s_oClass:AddMultiData( "OBJECT",, nScope + IIF( .F., 32, 0 ), { "oProCab" }, .F., .F. ), )
+   _HB_MEMBER {AS OBJECT oProLin} ; IIF( !.F., s_oClass:AddMultiData( "OBJECT",, nScope + IIF( .F., 32, 0 ), { "oProLin" }, .F., .F. ), )
+   _HB_MEMBER {AS OBJECT oProMat} ; IIF( !.F., s_oClass:AddMultiData( "OBJECT",, nScope + IIF( .F., 32, 0 ), { "oProMat" }, .F., .F. ), )
+   _HB_MEMBER {AS OBJECT oHisMov} ; IIF( !.F., s_oClass:AddMultiData( "OBJECT",, nScope + IIF( .F., 32, 0 ), { "oHisMov" }, .F., .F. ), )
+   _HB_MEMBER {AS OBJECT oTMov} ; IIF( !.F., s_oClass:AddMultiData( "OBJECT",, nScope + IIF( .F., 32, 0 ), { "oTMov" }, .F., .F. ), )
+   _HB_MEMBER {AS OBJECT oDbfFam} ; IIF( !.F., s_oClass:AddMultiData( "OBJECT",, nScope + IIF( .F., 32, 0 ), { "oDbfFam" }, .F., .F. ), )
+   _HB_MEMBER {AS OBJECT oArtDiv} ; IIF( !.F., s_oClass:AddMultiData( "OBJECT",, nScope + IIF( .F., 32, 0 ), { "oArtDiv" }, .F., .F. ), )
+   _HB_MEMBER {AS OBJECT oDbfKit} ; IIF( !.F., s_oClass:AddMultiData( "OBJECT",, nScope + IIF( .F., 32, 0 ), { "oDbfKit" }, .F., .F. ), )
+   _HB_MEMBER {AS OBJECT oStock} ; IIF( !.F., s_oClass:AddMultiData( "OBJECT",, nScope + IIF( .F., 32, 0 ), { "oStock" }, .F., .F. ), )
+   _HB_MEMBER {AS OBJECT oEstado} ; IIF( !.F., s_oClass:AddMultiData( "OBJECT",, nScope + IIF( .F., 32, 0 ), { "oEstado" }, .F., .F. ), )
+   _HB_MEMBER {AS ARRAY aEstado} ; IIF( !.F., s_oClass:AddMultiData( "ARRAY", { "Precios de costo medio", "Último precio costo", "Precio 1", "Precio 2", "Precio 3", "Precio 4", "Precio 5", "Precio 6" }, nScope + IIF( .F., 32, 0 ), { "aEstado" }, .F., .F. ), )
+   _HB_MEMBER {AS CHARACTER cEstado} ; IIF( !.F., s_oClass:AddMultiData( "CHARACTER", "Último precio costo", nScope + IIF( .F., 32, 0 ), { "cEstado" }, .F., .F. ), )
+
+   _HB_MEMBER Create(); IIF( .F., s_oClass:ModMethod( "Create", @XValAlmGrp_Create(), nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ), s_oClass:AddMethod( "Create", @XValAlmGrp_Create(), nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ));
+
+   _HB_MEMBER OpenFiles(); IIF( .F., s_oClass:ModMethod( "OpenFiles", @XValAlmGrp_OpenFiles(), nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ), s_oClass:AddMethod( "OpenFiles", @XValAlmGrp_OpenFiles(), nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ));
+
+   _HB_MEMBER CloseFiles(); IIF( .F., s_oClass:ModMethod( "CloseFiles", @XValAlmGrp_CloseFiles(), nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ), s_oClass:AddMethod( "CloseFiles", @XValAlmGrp_CloseFiles(), nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ));
+
+   _HB_MEMBER lResource( cFld); IIF( .F., s_oClass:ModMethod( "lResource", @XValAlmGrp_lResource(), nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ), s_oClass:AddMethod( "lResource", @XValAlmGrp_lResource(), nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ));
+
+   _HB_MEMBER lGenerate(); IIF( .F., s_oClass:ModMethod( "lGenerate", @XValAlmGrp_lGenerate(), nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ), s_oClass:AddMethod( "lGenerate", @XValAlmGrp_lGenerate(), nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ));
+
+   _HB_MEMBER nRetPrecio(); IIF( .F., s_oClass:ModMethod( "nRetPrecio", @XValAlmGrp_nRetPrecio(), nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ), s_oClass:AddMethod( "nRetPrecio", @XValAlmGrp_nRetPrecio(), nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ));
+
+   _HB_MEMBER nRetPrecioPropiedades( cCodArt, cValPrp1, cValPrp2); IIF( .F., s_oClass:ModMethod( "nRetPrecioPropiedades", @XValAlmGrp_nRetPrecioPropiedades(), nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ), s_oClass:AddMethod( "nRetPrecioPropiedades", @XValAlmGrp_nRetPrecioPropiedades(), nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ));
+
+; IF .F. ; __clsActive(s_oClass:hClass) ; s_oClass:Refresh() ; ELSE ; s_oClass:Create() ; END ; oClassInstance := __clsInst( s_oClass:hClass ) ; IF __ObjHasMsg( oClassInstance, "InitClass" ); oClassInstance:InitClass( hb_aParams() ) ; END ; ELSE ; oClassInstance := __clsInst( s_oClass:hClass ) ; END ; IF PCount() > 0 ; DIVERT TO (@DivertConstructorCall()) OF s_oClass ; END ; RETURN oClassInstance AS CLASS XValAlmGrp ;
+
+
+
+UTILITY STATIC function XValAlmGrp_Create() ; local Self AS CLASS XValAlmGrp := QSelf() AS CLASS XValAlmGrp
+
+   ::AddField ( "cCodGrp", "C",  5, 0, {|| "@!" },          "Cod.",           .F., "Código grupo de familia",   8, .F. )
+   ::AddField ( "cNomGrp", "C", 50, 0, {|| "@!" },          "Grupo",          .F., "Nombre grupo de familia",  40, .F. )
+   ::AddField ( "cCodFam", "C", 16, 0, {|| "@!" },          "Familia",        .F., "Familia",                   8, .F. )
+   ::AddField ( "cNomFam", "C", 50, 0, {|| "@!" },          "Nom. fam.",      .F., "Nombre familia",           40, .F. )
+   ::AddField ( "cCodAlm", "C",  3, 0, {|| "@!" },          "Alm.",           .T., "Código almacen",            3, .F. )
+   ::AddField ( "cNomAlm", "C", 50, 0, {|| "@!" },          "Almacén",        .T., "Almacén",                  35, .F. )
+   ::AddField ( "cCodArt", "C", 18, 0, {|| "@!" },          "Cod. art.",      .T., "Código artículo",          14, .F. )
+   ::AddField ( "cNomArt", "C",100, 0, {|| "@!" },          "Artículo",       .T., "Artículo",                 35, .F. )
+   ::AddField ( "cValPr1", "C", 10, 0, {|| "@!" },          "Prp. 1",         .F., "Propiedad 1",               6, .F. )
+   ::AddField ( "cValPr2", "C", 10, 0, {|| "@!" },          "Prp. 2",         .F., "Propiedad 2",               6, .F. )
+   ::AddField ( "cLote",   "C", 12, 0, {|| "@!" },          "Lote",           .F., "Lote",                      6, .F. )
+   ::AddField ( "nTotEnt", "N", 16, 6, {|| MasUnd() },      cNombreUnidades(),.T., cNombreUnidades(),          10, .T. )
+   ::AddField ( "nImpArt", "N", 16, 6, {|| ::cPicOut },     "Importe",        .T., "Importe",                  10, .F. )
+   ::AddField ( "nTotImp", "N", 16, 6, {|| ::cPicOut },     "Tot. imp.",      .T., "Total importe",            10, .T. )
+
+   ::AddTmpIndex( "cCodArt", "cCodGrp + cCodAlm + cCodArt" )
+
+   ::AddGroup( {|| ::oDbf:cCodGrp },{|| "Grupo de familia : " + Rtrim( ::oDbf:cCodGrp ) + "-" + Rtrim( ::oDbf:cNomGrp ) }, {||"Total grupo de familia..."} )
+
+   ::dIniInf   := CtoD( "01/01/2000" )
+
+RETURN ( Self )
+
+
+
+UTILITY STATIC function XValAlmGrp_OpenFiles() ; local Self AS CLASS XValAlmGrp := QSelf() AS CLASS XValAlmGrp
+
+   local lOpen    := .T.
+   local oBlock   := ErrorBlock( {| oError | ApoloBreak( oError ) } )
+
+   BEGIN SEQUENCE
+
+   ::oPedPrvL := DbfServer( "PEDPROVL.DBF", ):NewOpen( "PEDPROVL.DBF",, ( cDriver() ),, ( cPatEmp() ), .F., .T., .F., .F. ) ; ::oPedPrvL:AddBag( "PEDPROVL.CDX" ) ; ::oPedPrvL:AddBag( ) ; ::oPedPrvL:AutoIndex()
+
+   ::oPedCliL := DbfServer( "PEDCLIL.DBF", ):NewOpen( "PEDCLIL.DBF",, ( cDriver() ),, ( cPatEmp() ), .F., .T., .F., .F. ) ; ::oPedCliL:AddBag( "PEDCLIL.CDX" ) ; ::oPedCliL:AddBag( ) ; ::oPedCliL:AutoIndex()
+
+   ::oAlbPrvT := DbfServer( "ALBPROVT.DBF", ):NewOpen( "ALBPROVT.DBF",, ( cDriver() ),, ( cPatEmp() ), .F., .T., .F., .F. ) ; ::oAlbPrvT:AddBag( "ALBPROVT.CDX" ) ; ::oAlbPrvT:AddBag( ) ; ::oAlbPrvT:AutoIndex()
+
+   ::oAlbPrvL := DbfServer( "ALBPROVL.DBF", ):NewOpen( "ALBPROVL.DBF",, ( cDriver() ),, ( cPatEmp() ), .F., .T., .F., .F. ) ; ::oAlbPrvL:AddBag( "ALBPROVL.CDX" ) ; ::oAlbPrvL:AddBag( ) ; ::oAlbPrvL:AutoIndex()
+
+   ::oFacPrvT := DbfServer( "FACPRVT.DBF", ):NewOpen( "FACPRVT.DBF",, ( cDriver() ),, ( cPatEmp() ), .F., .T., .F., .F. ) ; ::oFacPrvT:AddBag( "FACPRVT.CDX" ) ; ::oFacPrvT:AddBag( ) ; ::oFacPrvT:AutoIndex()
+
+   ::oFacPrvL := DbfServer( "FACPRVL.DBF", ):NewOpen( "FACPRVL.DBF",, ( cDriver() ),, ( cPatEmp() ), .F., .T., .F., .F. ) ; ::oFacPrvL:AddBag( "FACPRVL.CDX" ) ; ::oFacPrvL:AddBag( ) ; ::oFacPrvL:AutoIndex()
+
+   ::oRctPrvT := DbfServer( "RCTPRVT.DBF", ):NewOpen( "RCTPRVT.DBF",, ( cDriver() ),, ( cPatEmp() ), .F., .T., .F., .F. ) ; ::oRctPrvT:AddBag( "RCTPRVT.CDX" ) ; ::oRctPrvT:AddBag( ) ; ::oRctPrvT:AutoIndex()
+
+   ::oRctPrvL := DbfServer( "RCTPRVL.DBF", ):NewOpen( "RCTPRVL.DBF",, ( cDriver() ),, ( cPatEmp() ), .F., .T., .F., .F. ) ; ::oRctPrvL:AddBag( "RCTPRVL.CDX" ) ; ::oRctPrvL:AddBag( ) ; ::oRctPrvL:AutoIndex()
+
+   ::oAlbCliT := DbfServer( "ALBCLIT.DBF", ):NewOpen( "ALBCLIT.DBF",, ( cDriver() ),, ( cPatEmp() ), .F., .T., .F., .F. ) ; ::oAlbCliT:AddBag( "ALBCLIT.CDX" ) ; ::oAlbCliT:AddBag( ) ; ::oAlbCliT:AutoIndex()
+
+   ::oAlbCliL := DbfServer( "ALBCLIL.DBF", ):NewOpen( "ALBCLIL.DBF",, ( cDriver() ),, ( cPatEmp() ), .F., .T., .F., .F. ) ; ::oAlbCliL:AddBag( "ALBCLIL.CDX" ) ; ::oAlbCliL:AddBag( ) ; ::oAlbCliL:AutoIndex()
+
+   ::oFacCliT := DbfServer( "FACCLIT.DBF", ):NewOpen( "FACCLIT.DBF",, ( cDriver() ),, ( cPatEmp() ), .F., .T., .F., .F. ) ; ::oFacCliT:AddBag( "FACCLIT.CDX" ) ; ::oFacCliT:AddBag( ) ; ::oFacCliT:AutoIndex()
+
+   ::oFacCliL := DbfServer( "FACCLIL.DBF", ):NewOpen( "FACCLIL.DBF",, ( cDriver() ),, ( cPatEmp() ), .F., .T., .F., .F. ) ; ::oFacCliL:AddBag( "FACCLIL.CDX" ) ; ::oFacCliL:AddBag( ) ; ::oFacCliL:AutoIndex()
+
+   ::oFacRecT := DbfServer( "FACRECT.DBF", ):NewOpen( "FACRECT.DBF",, ( cDriver() ),, ( cPatEmp() ), .F., .T., .F., .F. ) ; ::oFacRecT:AddBag( "FACRECT.CDX" ) ; ::oFacRecT:AddBag( ) ; ::oFacRecT:AutoIndex()
+
+   ::oFacRecL := DbfServer( "FACRECL.DBF", ):NewOpen( "FACRECL.DBF",, ( cDriver() ),, ( cPatEmp() ), .F., .T., .F., .F. ) ; ::oFacRecL:AddBag( "FACRECL.CDX" ) ; ::oFacRecL:AddBag( ) ; ::oFacRecL:AutoIndex()
+
+   ::oTikCliT := DbfServer( "TIKET.DBF", ):NewOpen( "TIKET.DBF",, ( cDriver() ),, ( cPatEmp() ), .F., .T., .F., .F. ) ; ::oTikCliT:AddBag( "TIKET.CDX" ) ; ::oTikCliT:AddBag( ) ; ::oTikCliT:AutoIndex()
+
+   ::oTikCliL := DbfServer( "TIKEL.DBF", ):NewOpen( "TIKEL.DBF",, ( cDriver() ),, ( cPatEmp() ), .F., .T., .F., .F. ) ; ::oTikCliL:AddBag( "TIKEL.CDX" ) ; ::oTikCliL:AddBag( ) ; ::oTikCliL:AutoIndex()
+
+   ::oHisMov := DbfServer( "HISMOV.DBF", ):NewOpen( "HISMOV.DBF",, ( cDriver() ),, ( cPatEmp() ), .F., .T., .F., .F. ) ; ::oHisMov:AddBag( "HISMOV.CDX" ) ; ::oHisMov:AddBag( ) ; ::oHisMov:AutoIndex()
+
+   ::oTMov := DbfServer( "TMOV.DBF", ):NewOpen( "TMOV.DBF",, ( cDriver() ),, ( cPatDat() ), .F., .T., .F., .F. ) ; ::oTMov:AddBag( "TMOV.CDX" ) ; ::oTMov:AddBag( ) ; ::oTMov:AutoIndex()
+
+   ::oProLin := DbfServer( "PROLIN.DBF", ):NewOpen( "PROLIN.DBF",, ( cDriver() ),, ( cPatEmp() ), .F., .T., .F., .F. ) ; ::oProLin:AddBag( "PROLIN.CDX" ) ; ::oProLin:AddBag( ) ; ::oProLin:AutoIndex()
+
+   ::oProMat := DbfServer( "PROMAT.DBF", ):NewOpen( "PROMAT.DBF",, ( cDriver() ),, ( cPatEmp() ), .F., .T., .F., .F. ) ; ::oProMat:AddBag( "PROMAT.CDX" ) ; ::oProMat:AddBag( ) ; ::oProMat:AutoIndex()
+
+   ::oProCab := DbfServer( "PROCAB.DBF", ):NewOpen( "PROCAB.DBF",, ( cDriver() ),, ( cPatEmp() ), .F., .T., .F., .F. ) ; ::oProCab:AddBag( "PROCAB.CDX" ) ; ::oProCab:AddBag( ) ; ::oProCab:AutoIndex()
+
+   ::oDbfKit := DbfServer( "ARTKIT.DBF", ):NewOpen( "ARTKIT.DBF",, ( cDriver() ),, ( cPatArt() ), .F., .T., .F., .F. ) ; ::oDbfKit:AddBag( "ARTKIT.CDX" ) ; ::oDbfKit:AddBag( ) ; ::oDbfKit:AutoIndex()
+
+   ::oArtDiv := DbfServer( "ARTDIV.DBF", ):NewOpen( "ARTDIV.DBF",, ( cDriver() ),, ( cPatArt() ), .F., .T., .F., .F. ) ; ::oArtDiv:AddBag( "ARTDIV.CDX" ) ; ::oArtDiv:AddBag( ) ; ::oArtDiv:AutoIndex()
+   ::oArtDiv:OrdSetFocus( "cValPrp" )
+
+   ::oDbfFam := DbfServer( "FAMILIAS.DBF", ):NewOpen( "FAMILIAS.DBF",, ( cDriver() ),, ( cPatArt() ), .F., .T., .F., .F. ) ; ::oDbfFam:AddBag( "FAMILIAS.CDX" ) ; ::oDbfFam:AddBag( ) ; ::oDbfFam:AutoIndex()
+
+   ::oStock             := TStock():Create( cPatGrp() )
+
+   if ::oStock:lOpenFiles()
+      ::oStock:cAlbPrvT := ::oAlbPrvT:cAlias
+      ::oStock:cAlbPrvL := ::oAlbPrvL:cAlias
+      ::oStock:cFacPrvT := ::oFacPrvT:cAlias
+      ::oStock:cFacPrvL := ::oFacPrvL:cAlias
+      ::oStock:cRctPrvT := ::oRctPrvT:cAlias
+      ::oStock:cRctPrvL := ::oRctPrvL:cAlias
+      ::oStock:cAlbCliT := ::oAlbCliT:cAlias
+      ::oStock:cAlbCliL := ::oAlbCliL:cAlias
+      ::oStock:cFacCliT := ::oFacCliT:cAlias
+      ::oStock:cFacCliL := ::oFacCliL:cAlias
+      ::oStock:cFacRecT := ::oFacRecT:cAlias
+      ::oStock:cFacRecL := ::oFacRecL:cAlias
+      ::oStock:cTikT    := ::oTikCliT:cAlias
+      ::oStock:cTikL    := ::oTikCliL:cAlias
+      ::oStock:cProducL := ::oProLin:cAlias
+      ::oStock:cProducM := ::oProMat:cAlias
+      ::oStock:cProducT := ::oProCab:cAlias
+      ::oStock:cHisMov  := ::oHisMov:cAlias
+      ::oStock:cPedPrvL := ::oPedCliL:cAlias
+      ::oStock:cPedCliL := ::oPedPrvL:cAlias
+      ::oStock:cKit     := ::oDbfKit:cAlias
+   end
+
+   RECOVER
+
+      msgStop( "Imposible abrir todas las bases de datos" )
+      ::CloseFiles()
+      lOpen          := .F.
+
+   end
+
+   ErrorBlock( oBlock )
+
+RETURN ( lOpen )
+
+
+
+UTILITY STATIC function XValAlmGrp_CloseFiles() ; local Self AS CLASS XValAlmGrp := QSelf() AS CLASS XValAlmGrp
+
+   if !Empty( ::oPedPrvL ) .AND. ::oPedPrvL:Used()
+      ::oPedPrvL:End()
+   end
+   if !Empty( ::oPedCliL ) .AND. ::oPedCliL:Used()
+      ::oPedCliL:End()
+   end
+   if !Empty( ::oAlbPrvT ) .AND. ::oAlbPrvT:Used()
+      ::oAlbPrvT:End()
+   end
+   if !Empty( ::oAlbPrvL ) .AND. ::oAlbPrvL:Used()
+      ::oAlbPrvL:End()
+   end
+   if !Empty( ::oFacPrvT ) .AND. ::oFacPrvT:Used()
+      ::oFacPrvT:End()
+   end
+   if !Empty( ::oFacPrvL ) .AND. ::oFacPrvL:Used()
+      ::oFacPrvL:End()
+   end
+   if !Empty( ::oRctPrvT ) .AND. ::oRctPrvT:Used()
+      ::oRctPrvT:End()
+   end
+   if !Empty( ::oRctPrvL ) .AND. ::oRctPrvL:Used()
+      ::oRctPrvL:End()
+   end
+   if !Empty( ::oAlbCliT ) .AND. ::oAlbCliT:Used()
+      ::oAlbCliT:End()
+   end
+   if !Empty( ::oAlbCliL ) .AND. ::oAlbCliL:Used()
+      ::oAlbCliL:End()
+   end
+   if !Empty( ::oFacCliT ) .AND. ::oFacCliT:Used()
+      ::oFacCliT:End()
+   end
+   if !Empty( ::oFacCliL ) .AND. ::oFacCliL:Used()
+      ::oFacCliL:End()
+   end
+   if !Empty( ::oFacRecT ) .AND. ::oFacRecT:Used()
+      ::oFacRecT:End()
+   end
+   if !Empty( ::oFacRecL ) .AND. ::oFacRecL:Used()
+      ::oFacRecL:End()
+   end
+   if !Empty( ::oTikClit ) .AND. ::oTikClit:Used()
+      ::oTikClit:End()
+   end
+   if !Empty( ::oTikClil ) .AND. ::oTikClil:Used()
+      ::oTikClil:End()
+   end
+   if !Empty( ::oHisMov ) .AND. ::oHisMov:Used()
+      ::oHisMov:End()
+   end
+   if !Empty( ::oTMov ) .AND. ::oTMov:Used()
+      ::oTMov:End()
+   end
+   if !Empty( ::oProLin ) .AND. ::oProLin:Used()
+      ::oProLin:End()
+   end
+   if !Empty( ::oProMat ) .AND. ::oProMat:Used()
+      ::oProMat:End()
+   end
+   if !Empty( ::oProCab ) .AND. ::oProCab:Used()
+      ::oProCab:End()
+   end
+   if !Empty( ::oArtDiv ) .AND. ::oArtDiv:Used()
+      ::oArtDiv:End()
+   end
+   if !Empty( ::oDbfFam ) .AND. ::oDbfFam:Used()
+      ::oDbfFam:End()
+   end
+
+   if !Empty( ::oDbfKit ) .AND. ::oDbfKit:Used()
+      ::oDbfKit:End()
+   end
+
+   if !Empty( ::oStock )
+      ::oStock:end()
+   end
+
+   ::oPedPrvL := nil
+   ::oPedCliL := nil
+   ::oAlbPrvT := nil
+   ::oAlbPrvL := nil
+   ::oFacPrvT := nil
+   ::oFacPrvL := nil
+   ::oRctPrvT := nil
+   ::oRctPrvL := nil
+   ::oAlbCliT := nil
+   ::oAlbCliL := nil
+   ::oFacCliT := nil
+   ::oFacCliL := nil
+   ::oFacRecT := nil
+   ::oFacRecL := nil
+   ::oTikCliT := nil
+   ::oTikCliL := nil
+   ::oHisMov  := nil
+   ::oTMov    := nil
+   ::oProLin  := nil
+   ::oProMat  := nil
+   ::oProCab  := nil
+   ::oStock   := nil
+   ::oArtDiv  := nil
+   ::oDbfFam  := nil
+   ::oDbfKit  := nil
+
+RETURN ( Self )
+
+
+
+UTILITY STATIC function XValAlmGrp_lResource( cFld) ; local Self AS CLASS XValAlmGrp := QSelf() AS CLASS XValAlmGrp
+
+   if !::StdResource( "INF_GEN08D" )
+      return .F.
+   end
+
+
+
+
+
+   if !::oDefAlmInf( 70, 80, 90, 100, 600 )
+      return .F.
+   end
+
+
+
+
+
+   if !::oDefGrfInf( 110, 120, 130, 140, 800 )
+      return .F.
+   end
+
+
+
+
+
+   if !::lDefArtInf( 150, 151, 160, 161, 170 )
+      return .F.
+   end
+
+   ::oDefExcInf()
+
+   ::oDefResInf()
+
+
+
+
+
+   ::oEstado := TComboBox():ReDefine( 218, { | u | If( PCount()==0, ::cEstado, ::cEstado:= u ) }, ::aEstado, ::oFld:aDialogs[1],,,,,,, .F.,,,,,, )
+
+
+
+
+
+   ::oStock:cArt       := ::oDbfArt:cAlias
+
+   ::CreateFilter( aItmArt(), ::oDbfArt:cAlias )
+
+RETURN .T.
+
+
+
+
+
+
+UTILITY STATIC function XValAlmGrp_lGenerate() ; local Self AS CLASS XValAlmGrp := QSelf() AS CLASS XValAlmGrp
+
+   local cExpHead    := ""
+   local aStkActual
+   local aStock
+   local cCodGrp
+
+   ::oDlg:Disable()
+   ::oBtnCancel:Enable()
+   ::oDbf:Zap()
+
+
+
+
+
+   ::aHeader      := {  {|| "Fecha   : " + Dtoc( Date() ) }, {|| "Periodo : " + Dtoc( ::dIniInf ) + " > " + Dtoc( ::dFinInf ) }, {|| "Almacén : " + AllTrim( ::cAlmOrg ) + " > " + AllTrim( ::cAlmDes ) }, {|| "Grp.Fam.: " + AllTrim( ::cGruFamOrg ) + " > " + AllTrim( ::cGruFamDes ) }, {|| "Artículo: " + AllTrim( ::cArtOrg ) + " > " + AllTrim( ::cArtDes ) } }
+
+   if !::lAllArt
+      cExpHead       := 'Codigo >= "' + Rtrim( ::cArtOrg ) + '" .and. Codigo <= "' + Rtrim( ::cArtDes ) + '"'
+   else
+      cExpHead       := ".t."
+   end
+
+   if !Empty( ::oFilter:cExpFilter )
+      cExpHead       += " .and. " + ::oFilter:cExpFilter
+   end
+
+   ::oDbfArt:AddTmpIndex( cCurUsr(), GetFileNoExt( ::oDbfArt:cFile ), ::oDbfArt:OrdKey(), ( cExpHead ), , , , , , , , .T. )
+
+   ::oMtrInf:SetTotal( ::oDbfArt:OrdKeyCount() )
+
+   ::oDbfArt:GoTop()
+
+   while !::lBreak .AND. !::oDbfArt:Eof()
+
+      cCodGrp        := cGruFam( ::oDbfArt:Familia, ::oDbfFam )
+
+
+      if ( ::lAllGrp .OR. ( cCodGrp >= ::cGruFamOrg .AND. cCodGrp <= ::cGruFamDes ) ) .AND. ( ::oDbfArt:nCtlStock <> 3 )
+
+         aStkActual  := ::oStock:aStockArticulo( ::oDbfArt:Codigo )
+
+         if len( aStkActual ) <> 0
+
+            for each aStock in aStkActual
+
+
+               if ( ::lAllAlm .OR. ( aStock:cCodigoAlmacen >= ::cAlmOrg .AND. aStock:cCodigoAlmacen <= ::cAlmDes ) ) .AND. !( ::lExcCero .AND. aStock:nUnidades == 0 )
+
+                  ::oDbf:Append()
+
+                  ::oDbf:cCodAlm := aStock:cCodigoAlmacen
+                  ::oDbf:cNomAlm := oRetFld( aStock:cCodigoAlmacen, ::oDbfAlm )
+                  ::oDbf:cCodFam := ::oDbfArt:Familia
+                  ::oDbf:cNomFam := oRetFld( ::oDbfArt:Familia, ::oDbfFam )
+                  ::oDbf:cCodAlm := aStock:cCodigoAlmacen
+                  ::oDbf:cNomAlm := oRetFld( aStock:cCodigoAlmacen, ::oDbfAlm )
+                  ::oDbf:cCodArt := ::oDbfArt:Codigo
+                  ::oDbf:cNomArt := ::oDbfArt:Nombre
+                  ::oDbf:cValPr1 := aStock:cValorPropiedad1
+                  ::oDbf:cValPr2 := aStock:cValorPropiedad2
+                  ::oDbf:cLote   := aStock:cLote
+                  ::oDbf:nTotEnt := aStock:nUnidades
+                  ::oDbf:nImpArt := ::nRetPrecioPropiedades( ::oDbfArt:Codigo, aStock:cCodigoPropiedad1, aStock:cCodigoPropiedad2, aStock:cValorPropiedad1, aStock:cValorPropiedad1 )
+                  ::oDbf:nTotImp := ::oDbf:nTotEnt * ::oDbf:nImpArt
+
+                  ::oDbf:Save()
+
+               end
+
+            next
+
+         end
+
+      end
+
+      ::oDbfArt:Skip()
+
+      ::oMtrInf:AutoInc()
+
+   end
+
+   ::oMtrInf:Set( ::oDbfArt:LastRec() )
+
+   ::oDbfArt:IdxDelete( cCurUsr(), GetFileNoExt( ::oDbfArt:cFile ) )
+
+   ::oDlg:Enable()
+
+RETURN ( ::oDbf:LastRec() > 0 )
+
+
+
+UTILITY STATIC function XValAlmGrp_nRetPrecio( cCodArt) ; local Self AS CLASS XValAlmGrp := QSelf() AS CLASS XValAlmGrp
+
+    local nPreMed     := 0
+
+   do case
+   case ::cEstado == "Precios de costo medio"
+         nPreMed := ::oStock:nCostoMedio( cCodArt )
+
+   case ::cEstado == "Último precio costo"
+      if ::oDbfArt:Seek( cCodArt )
+         nPreMed := Round( ::oDbfArt:pCosto  / ::nValDiv, ::nDerOut )
+      end
+   case ::cEstado == "Precio 1"
+      if ::oDbfArt:Seek( cCodArt )
+         nPreMed := Round( ::oDbfArt:pVenta1 / ::nValDiv, ::nDerOut )
+      end
+   case ::cEstado == "Precio 2"
+      if ::oDbfArt:Seek( cCodArt )
+         nPreMed := Round( ::oDbfArt:pVenta2 / ::nValDiv, ::nDerOut )
+      end
+   case ::cEstado == "Precio 3"
+      if ::oDbfArt:Seek( cCodArt )
+         nPreMed := Round( ::oDbfArt:pVenta3 / ::nValDiv, ::nDerOut )
+      end
+   case ::cEstado == "Precio 4"
+      if ::oDbfArt:Seek( cCodArt )
+         nPreMed := Round( ::oDbfArt:pVenta4 / ::nValDiv, ::nDerOut )
+      end
+   case ::cEstado == "Precio 5"
+      if ::oDbfArt:Seek( cCodArt )
+         nPreMed := Round( ::oDbfArt:pVenta5 / ::nValDiv, ::nDerOut )
+      end
+   case ::cEstado == "Precio 6"
+      if ::oDbfArt:Seek( cCodArt )
+         nPreMed := Round( ::oDbfArt:pVenta6 / ::nValDiv, ::nDerOut )
+      end
+   end
+
+RETURN ( nPreMed )
+
+
+
+UTILITY STATIC function XValAlmGrp_nRetPrecioPropiedades( cCodArt, cCodPrp1, cCodPrp2, cValPrp1, cValPrp2) ; local Self AS CLASS XValAlmGrp := QSelf() AS CLASS XValAlmGrp
+
+   local nPreMed  := 0
+
+   do case
+   case ::cEstado == "Precios de costo medio"
+         nPreMed := ::oStock:nCostoMedio( cCodArt, , cCodPrp1, cCodPrp2, cValPrp1, cValPrp2 )
+
+   case ::cEstado == "Último precio costo"
+      if ::oArtDiv:Seek( cCodArt + cValPrp1 + cValPrp2 )
+         nPreMed := Round( ::oArtDiv:nPreCom / ::nValDiv, ::nDerOut )
+      end
+   case ::cEstado == "Precio 1"
+      if ::oArtDiv:Seek( cCodArt + cValPrp1 + cValPrp2 )
+         nPreMed := Round( ::oArtDiv:nPreVta1 / ::nValDiv, ::nDerOut )
+      end
+   case ::cEstado == "Precio 2"
+      if ::oArtDiv:Seek( cCodArt + cValPrp1 + cValPrp2 )
+         nPreMed := Round( ::oArtDiv:nPreVta2 / ::nValDiv, ::nDerOut )
+      end
+   case ::cEstado == "Precio 3"
+      if ::oArtDiv:Seek( cCodArt + cValPrp1 + cValPrp2 )
+         nPreMed := Round( ::oArtDiv:nPreVta3 / ::nValDiv, ::nDerOut )
+      end
+   case ::cEstado == "Precio 4"
+      if ::oArtDiv:Seek( cCodArt + cValPrp1 + cValPrp2 )
+         nPreMed := Round( ::oArtDiv:nPreVta4 / ::nValDiv, ::nDerOut )
+      end
+   case ::cEstado == "Precio 5"
+      if ::oArtDiv:Seek( cCodArt + cValPrp1 + cValPrp2 )
+         nPreMed := Round( ::oArtDiv:nPreVta5 / ::nValDiv, ::nDerOut )
+      end
+   case ::cEstado == "Precio 6"
+      if ::oArtDiv:Seek( cCodArt + cValPrp1 + cValPrp2 )
+         nPreMed := Round( ::oArtDiv:nPreVta6 / ::nValDiv, ::nDerOut )
+      end
+   end
+
+   if nPreMed == 0
+      nPreMed    := ::nRetPrecio( cCodArt )
+   end
+
+RETURN ( nPreMed )

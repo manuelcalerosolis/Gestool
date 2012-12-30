@@ -1,0 +1,353 @@
+#line 112 "hbclass.ch"
+   DYNAMIC DivertConstructorCall
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+DECLARE HBClass  New( cName AS String, OPTIONAL SuperParams ) AS CLASS HBClass  Create() AS Object  Instance() AS Object  AddClsMethod( cName AS String, @MethodName(), nScope AS Numeric, n2 AS Numeric, n3 AS Numeric )  AddDelegate( cName AS String, cDelegate AS String, cObject AS String, nScope AS Numeric, lPersistent AS LOGICAL )  AddMultiClsData( cType AS String, uVal, nScope AS Numeric, aDatas AS Array OF String )  AddMultiData( cType AS String, uVal, nScope AS Numeric, aDatas AS Array OF String, x AS LOGICAL, lPer AS LOGICAL )  AddMethod( cName AS String, @MethodName(), nScope AS Numeric, lPersistent AS LOGICAL )  AddInLine( cName AS String, bBlock AS CodeBlock, nScope AS Numeric, lPersistent AS LOGICAL )  AddVirtual( cName AS String )  ModMethod( cName AS String, @MethodName(), nScope AS Numeric, lPersistent AS LOGICAL )  ModClsMethod( cName AS String, @MethodName(), nScope AS Numeric )  ModInline( cName AS String, bBlock AS CodeBlock, nScope AS Numeric, lPersistent AS LOGICAL )  SetOnError( @MethodName() )
+#line 85 "\Fwh1204\Include\FiveWin.Ch"
+   EXTERNAL GetProcAdd
+   EXTERNAL TActiveX
+
+
+
+
+extern errorsys
+#line 8 ".\Prg\InfTar.prg"
+_HB_CLASS InfTar ; UTILITY FUNCTION InfTar(...); static s_oClass ; local oClassInstance ; local nScope ; nScope := 1 ; if s_oClass == NIL ; s_oClass := IIF(.F.,, HBClass():New( "InfTar" , {TInfGen():classh} ) ) ; ;
+
+   _HB_MEMBER {AS OBJECT oDbfTarT} ; IIF( !.F., s_oClass:AddMultiData( "OBJECT",, nScope + IIF( .F., 32, 0 ), { "oDbfTarT" }, .F., .F. ), )
+   _HB_MEMBER {AS OBJECT oDbfTarL} ; IIF( !.F., s_oClass:AddMultiData( "OBJECT",, nScope + IIF( .F., 32, 0 ), { "oDbfTarL" }, .F., .F. ), )
+   _HB_MEMBER {AS OBJECT oDbfArt} ; IIF( !.F., s_oClass:AddMultiData( "OBJECT",, nScope + IIF( .F., 32, 0 ), { "oDbfArt" }, .F., .F. ), )
+   _HB_MEMBER {AS CHARACTER cTarOrg} ; IIF( !.F., s_oClass:AddMultiData( "CHARACTER",, nScope + IIF( .F., 32, 0 ), { "cTarOrg" }, .F., .F. ), )
+   _HB_MEMBER {AS CHARACTER cTarDes} ; IIF( !.F., s_oClass:AddMultiData( "CHARACTER",, nScope + IIF( .F., 32, 0 ), { "cTarDes" }, .F., .F. ), )
+   _HB_MEMBER {AS LOGIC lAllTar} ; IIF( !.F., s_oClass:AddMultiData( "LOGIC", .T., nScope + IIF( .F., 32, 0 ), { "lAllTar" }, .F., .F. ), )
+   _HB_MEMBER {AS LOGIC lGrpFam} ; IIF( !.F., s_oClass:AddMultiData( "LOGIC", .F., nScope + IIF( .F., 32, 0 ), { "lGrpFam" }, .F., .F. ), )
+
+   _HB_MEMBER Create(); IIF( .F., s_oClass:ModMethod( "Create", @InfTar_Create(), nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ), s_oClass:AddMethod( "Create", @InfTar_Create(), nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ));
+
+   _HB_MEMBER OpenFiles(); IIF( .F., s_oClass:ModMethod( "OpenFiles", @InfTar_OpenFiles(), nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ), s_oClass:AddMethod( "OpenFiles", @InfTar_OpenFiles(), nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ));
+
+   _HB_MEMBER CloseFiles(); IIF( .F., s_oClass:ModMethod( "CloseFiles", @InfTar_CloseFiles(), nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ), s_oClass:AddMethod( "CloseFiles", @InfTar_CloseFiles(), nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ));
+
+   _HB_MEMBER lResource( cFld); IIF( .F., s_oClass:ModMethod( "lResource", @InfTar_lResource(), nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ), s_oClass:AddMethod( "lResource", @InfTar_lResource(), nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ));
+
+   _HB_MEMBER lGenerate(); IIF( .F., s_oClass:ModMethod( "lGenerate", @InfTar_lGenerate(), nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ), s_oClass:AddMethod( "lGenerate", @InfTar_lGenerate(), nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ));
+
+   _HB_MEMBER AddLine(); IIF( .F., s_oClass:ModMethod( "AddLine", @InfTar_AddLine(), nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ), s_oClass:AddMethod( "AddLine", @InfTar_AddLine(), nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ));
+
+   _HB_MEMBER NewGroup( lDesFam); IIF( .F., s_oClass:ModMethod( "NewGroup", @InfTar_NewGroup(), nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ), s_oClass:AddMethod( "NewGroup", @InfTar_NewGroup(), nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ));
+
+   _HB_MEMBER QuiGroup( lDesFam); IIF( .F., s_oClass:ModMethod( "QuiGroup", @InfTar_QuiGroup(), nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ), s_oClass:AddMethod( "QuiGroup", @InfTar_QuiGroup(), nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ));
+
+; IF .F. ; __clsActive(s_oClass:hClass) ; s_oClass:Refresh() ; ELSE ; s_oClass:Create() ; END ; oClassInstance := __clsInst( s_oClass:hClass ) ; IF __ObjHasMsg( oClassInstance, "InitClass" ); oClassInstance:InitClass( hb_aParams() ) ; END ; ELSE ; oClassInstance := __clsInst( s_oClass:hClass ) ; END ; IF PCount() > 0 ; DIVERT TO (@DivertConstructorCall()) OF s_oClass ; END ; RETURN oClassInstance AS CLASS InfTar ;
+
+
+
+UTILITY STATIC function InfTar_Create() ; local Self AS CLASS InfTar := QSelf() AS CLASS InfTar
+
+   ::AddField( "cCodTar",   "C",  5, 0, {|| "" },           "Cód. tar.",      .F., "Código de la tarifa",       5, .F. )
+   ::AddField( "cNomTar",   "C", 30, 0, {|| "" },           "Tarifa",         .F., "Nombre de la tarifa",      30, .F. )
+   ::AddField( "cCodigo",   "C", 18, 0, {|| "" },           "Código",         .T., "Código del art./fam.",     15, .F. )
+   ::AddField( "cNombre",   "C",100, 0, {|| "" },           "Nombre",         .T., "Nombre del art./fam.",     50, .F. )
+   ::AddField( "cCodFam",   "C", 16, 0, {|| "" },           "Cod. Fam.",      .F., "Código de la familia",     15, .F. )
+   ::AddField( "cNomFam",   "C", 40, 0, {|| "" },           "Nom. Fam.",      .F., "Nombre de la familia",     50, .F. )
+   ::FldPropiedades()
+   ::AddField( "nPrcTar1",  "N", 16, 6, {|| "" },           "Precio1",        .T., "Precio1",                  12, .F. )
+   ::AddField( "nPrcTar2",  "N", 16, 6, {|| "" },           "Precio2",        .F., "Precio2",                  12, .F. )
+   ::AddField( "nPrcTar3",  "N", 16, 6, {|| "" },           "Precio3",        .F., "Precio3",                  12, .F. )
+   ::AddField( "nPrcTar4",  "N", 16, 6, {|| "" },           "Precio4",        .F., "Precio4",                  12, .F. )
+   ::AddField( "nPrcTar5",  "N", 16, 6, {|| "" },           "Precio5",        .F., "Precio5",                  12, .F. )
+   ::AddField( "nPrcTar6",  "N", 16, 6, {|| "" },           "Precio6",        .F., "Precio6",                  12, .F. )
+   ::AddField( "nDtoArt",   "N",  6, 2, {|| "@E 99.99" },   "% Dto.",         .T., "Dto. porcentual",           6, .F. )
+   ::AddField( "nDtoDiv",   "N", 16, 6, {|| "" },           "Dto. lin.",      .T., "Dto. lineal",              12, .F. )
+   ::AddField( "dIniPrm",   "D",  8, 0, {|| "" },           "Ini. Prom.",     .F., "Fecha inicio de promoción",10, .F. )
+   ::AddField( "dFinPrm",   "D",  8, 0, {|| "" },           "Fin Prom.",      .F., "Fecha fin de promoción",   10, .F. )
+   ::AddField( "nDtoPrm",   "N",  6, 2, {|| "@E 99.99" },   "% Dto. Prom.",   .F., "Descuento promoción",       6, .F. )
+
+   ::AddTmpIndex ( "cCodTar", "cCodTar + cCodigo" )
+
+   ::AddGroup( {|| ::oDbf:cCodTar }, {|| "Tarifa : " + Rtrim( ::oDbf:cCodTar ) + "-" + Rtrim( ::oDbf:cNomTar ) }, {||"Total tarifa..."} )
+
+   ::lDefFecInf   := .F.
+   ::lDefSerInf   := .F.
+   ::lDefDivInf   := .F.
+
+RETURN ( Self )
+
+
+
+UTILITY STATIC function InfTar_OpenFiles() ; local Self AS CLASS InfTar := QSelf() AS CLASS InfTar
+
+   local lOpen    := .T.
+   local oBlock   := ErrorBlock( {| oError | ApoloBreak( oError ) } )
+
+   BEGIN SEQUENCE
+
+      ::oDbfTarT := DbfServer( "TARPRET.DBF", ):NewOpen( "TARPRET.DBF",, ( cDriver() ),, ( cPatArt() ), .F., .T., .F., .F. ) ; ::oDbfTarT:AddBag( "TARPRET.CDX" ) ; ::oDbfTarT:AddBag( ) ; ::oDbfTarT:AutoIndex()
+
+      ::oDbfTarL := DbfServer( "TARPREL.DBF", ):NewOpen( "TARPREL.DBF",, ( cDriver() ),, ( cPatArt() ), .F., .T., .F., .F. ) ; ::oDbfTarL:AddBag( "TARPREL.CDX" ) ; ::oDbfTarL:AddBag( ) ; ::oDbfTarL:AutoIndex()
+
+      ::oDbfArt := DbfServer( "ARTICULO.DBF", ):NewOpen( "ARTICULO.DBF",, ( cDriver() ),, ( cPatArt() ), .F., .T., .F., .F. ) ; ::oDbfArt:AddBag( "ARTICULO.CDX" ) ; ::oDbfArt:AddBag( ) ; ::oDbfArt:AutoIndex()
+
+   RECOVER
+
+      msgStop( "Imposible abrir todas las bases de datos" )
+      ::CloseFiles()
+      lOpen       := .F.
+
+   end
+
+   ErrorBlock( oBlock )
+
+RETURN ( lOpen )
+
+
+
+UTILITY STATIC function InfTar_CloseFiles() ; local Self AS CLASS InfTar := QSelf() AS CLASS InfTar
+
+   if !Empty( ::oDbfTarT ) .AND. ::oDbfTarT:Used()
+      ::oDbfTarT:End()
+   end
+
+   if !Empty( ::oDbfTarL ) .AND. ::oDbfTarL:Used()
+      ::oDbfTarL:End()
+   end
+
+   if !Empty( ::oDbfArt ) .AND. ::oDbfArt:Used()
+      ::oDbfArt:End()
+   end
+
+   ::oDbfTarT  := nil
+   ::oDbfTarL  := nil
+   ::oDbfArt   := nil
+
+RETURN ( Self )
+
+
+
+UTILITY STATIC function InfTar_lResource( cFld) ; local Self AS CLASS InfTar := QSelf() AS CLASS InfTar
+
+   local cSayTarOrg
+   local cSayTarDes
+   local oSayTarOrg
+   local oSayTarDes
+   local oTarOrg
+   local oTarDes
+
+   if !::StdResource( "INF_TAR01" )
+      return .F.
+   end
+
+
+
+   ::cTarOrg   := dbFirst( ::oDbfTarT, 1 )
+   ::cTarDes   := dbLast(  ::oDbfTarT, 1 )
+   cSayTarOrg  := dbFirst( ::oDbfTarT, 2 )
+   cSayTarDes  := dbLast(  ::oDbfTarT, 2 )
+
+
+
+   TCheckBox():ReDefine( ( 60 ), { | u | If( PCount()==0, ::lAllTar, ::lAllTar:= u ) }, ::oFld:aDialogs[1],,,,,,, .F.,, .F. )
+
+
+
+
+
+
+   oTarOrg := TGetHlp():ReDefine( ( 70 ), { | u | If( PCount()==0, ::cTarOrg, ::cTarOrg:= u ) }, ::oFld:aDialogs[1],,,, "N/W*",,,,, .F., {||     ( !::lAllTar )},, .F., .F.,,,,,, nil, "LUPA",, )
+
+      oTarOrg:bValid   := {|| cTarifa( oTarOrg, oSayTarOrg ) }
+      oTarOrg:bHelp    := {|| BrwTarifa( oTarOrg, oSayTarOrg ) }
+
+
+
+
+
+   oSayTarOrg := TGetHlp():ReDefine( ( 80 ), { | u | If( PCount()==0, cSayTarOrg, cSayTarOrg:= u ) }, ::oFld:aDialogs[1],,,, "N/W*",,,,, .F., {||     .F.},, .F., .F.,,,,,, nil,,, )
+
+
+
+
+
+
+   oTarDes := TGetHlp():ReDefine( ( 90 ), { | u | If( PCount()==0, ::cTarDes, ::cTarDes:= u ) }, ::oFld:aDialogs[1],,,, "N/W*",,,,, .F., {||     ( !::lAllTar )},, .F., .F.,,,,,, nil, "LUPA",, )
+
+      oTarDes:bValid   := {|| cTarifa( oTarDes, oSayTarDes ) }
+      oTarDes:bHelp    := {|| BrwTarifa( oTarDes, oSayTarDes ) }
+
+
+
+
+   oSayTarDes := TGetHlp():ReDefine( ( 100 ), { | u | If( PCount()==0, cSayTarDes, cSayTarDes:= u ) }, ::oFld:aDialogs[1],,,,,,,,, .F., {||     .F.},, .F., .F.,,,,,, nil,,, )
+
+   if !::lDefFamInf( 110, 111, 120, 121, 130 )
+      Return .F.
+   end
+
+
+
+   TCheckBox():ReDefine( ( 200 ), { | u | If( PCount()==0, ::lGrpFam, ::lGrpFam:= u ) }, ::oFld:aDialogs[1],,,,,,, .F.,, .F. )
+
+
+
+
+
+   ::oMtrInf:SetTotal( ::oDbfTarT:Lastrec() )
+
+   ::CreateFilter( aItmTar(), ::oDbfTarT )
+
+   ::bPreGenerate    := {|| ::NewGroup( ::lGrpFam ) }
+   ::bPostGenerate   := {|| ::QuiGroup( ::lGrpFam ) }
+
+RETURN .T.
+
+
+
+
+
+
+UTILITY STATIC function InfTar_lGenerate() ; local Self AS CLASS InfTar := QSelf() AS CLASS InfTar
+
+   local cExpHead  := ""
+
+   ::oDlg:Disable()
+   ::oBtnCancel:Enable()
+   ::oDbf:Zap()
+
+
+
+   ::aHeader      := {  {|| "Fecha    : " + Dtoc( Date() ) }, {|| "Tarifas  : " + if( ::lAllTar, "Todos", AllTrim( ::cTarOrg ) + " > " + AllTrim( ::cTarDes ) ) }, {|| "Familias : " + if( ::lAllFam, "Todas", AllTrim( ::cFamOrg ) + " > " + AllTrim( ::cFamDes ) ) } }
+
+   ::oDbfTarT:OrdSetFocus( "CCODTAR" )
+
+   if !::lAllTar
+      cExpHead       := 'cCodTar >= "' + Rtrim( ::cTarOrg ) + '" .and. cCodTar <= "' + Rtrim( ::cTarDes ) + '"'
+   else
+      cExpHead       := ".t."
+   end
+
+   if !Empty( ::oFilter:cExpFilter )
+      cExpHead       += " .and. " + ::oFilter:cExpFilter
+   end
+
+   ::oDbfTarT:AddTmpIndex( cCurUsr(), GetFileNoExt( ::oDbfTarT:cFile ), ::oDbfTarT:OrdKey(), ( cExpHead ), , , , , , , , .T. )
+
+   ::oDbfTarT:GoTop()
+
+   while !::lBreak .AND. !::oDbfTarT:Eof()
+
+      if ::oDbfTarL:Seek( ::oDbfTarT:cCodTar )
+
+            while ::oDbfTarT:cCodTar == ::oDbfTarL:cCodTar .AND. !::oDbfTarL:Eof()
+
+               if ::oDbfTarL:nTipTar <= 1
+
+                  if ( ::lAllFam .OR. ( oRetFld( ::oDbfTarL:cCodArt, ::oDbfArt, "Familia" ) >= ::cFamOrg .AND. oRetFld( ::oDbfTarL:cCodArt, ::oDbfArt, "Familia" ) <= ::cFamDes ) )
+                     ::AddLine()
+                  end
+
+               else
+
+                  if( ::lAllFam .OR.( ::oDbfTarL:cCodFam >= ::cFamOrg .AND. ::oDbfTarL:cCodFam <= ::cFamDes ) )
+                     ::AddLine()
+                  end
+
+               end
+
+               ::oDbfTarL:Skip()
+
+            end
+
+      end
+
+      ::oDbfTarT:Skip()
+
+      ::oMtrInf:AutoInc( ::oDbfTarT:OrdKeyNo() )
+
+   end
+
+   ::oDbfTarT:IdxDelete( cCurUsr(), GetFileNoExt( ::oDbfTarT:cFile ) )
+
+   ::oMtrInf:AutoInc( ::oDbfTarT:LastRec() )
+
+   ::oDlg:Enable()
+
+RETURN ( ::oDbf:LastRec() > 0 )
+
+
+
+UTILITY STATIC function InfTar_AddLine() ; local Self AS CLASS InfTar := QSelf() AS CLASS InfTar
+
+   ::oDbf:Append()
+
+   ::oDbf:cCodTar    := ::oDbfTarT:cCodTar
+   ::oDbf:cNomTar    := retTarifa( ::oDbf:cCodTar, ::oDbfTarT:cAlias )
+
+   if ::oDbfTarL:nTipTar <= 1
+      ::oDbf:cCodigo := ::oDbfTarL:cCodArt
+      ::oDbf:cNombre := ::oDbfTarL:cNomArt
+      ::oDbf:cCodFam := oRetFld( ::oDbfTarL:cCodArt, ::oDbfArt, "Familia" )
+      ::oDbf:cNomFam := oRetFld( ::oDbf:cCodFam, ::oDbfFam )
+   else
+      ::oDbf:cCodigo := ::oDbfTarL:cCodFam
+      ::oDbf:cNombre := ::oDbfTarL:cNomFam
+      ::oDbf:cCodFam := ::oDbfTarL:cCodFam
+      ::oDbf:cNomFam := ::oDbfTarL:cNomFam
+   end
+
+   ::oDbf:cCodPr1   := ::oDbfTarL:cCodPr1
+   ::oDbf:cNomPr1   := retProp( ::oDbfTarL:cCodPr1 )
+   ::oDbf:cValPr1   := ::oDbfTarL:cValPr1
+   ::oDbf:cNomVl1   := retValProp( ::oDbfTarL:cCodPr1 + ::oDbfTarL:cValPr1 )
+   ::oDbf:cCodPr2   := ::oDbfTarL:cCodPr2
+   ::oDbf:cNomPr2   := retProp( ::oDbfTarL:cCodPr2 )
+   ::oDbf:cValPr2   := ::oDbfTarL:cValPr2
+   ::oDbf:cNomVl2   := retValProp( ::oDbfTarL:cCodPr2 + ::oDbfTarL:cValPr2 )
+   ::oDbf:nPrcTar1  := ::oDbfTarL:nPrcTar1
+   ::oDbf:nPrcTar2  := ::oDbfTarL:nPrcTar2
+   ::oDbf:nPrcTar3  := ::oDbfTarL:nPrcTar3
+   ::oDbf:nPrcTar4  := ::oDbfTarL:nPrcTar4
+   ::oDbf:nPrcTar5  := ::oDbfTarL:nPrcTar5
+   ::oDbf:nPrcTar6  := ::oDbfTarL:nPrcTar6
+   ::oDbf:nDtoArt   := ::oDbfTarL:nDtoArt
+   ::oDbf:nDtoDiv   := ::oDbfTarL:nDtoDiv
+   ::oDbf:dIniPrm   := ::oDbfTarL:dIniPrm
+   ::oDbf:dFinPrm   := ::oDbfTarL:dFinPrm
+   ::oDbf:nDtoPrm   := ::oDbfTarL:nDtoPrm
+
+   ::oDbf:Save()
+
+RETURN .T.
+
+
+
+UTILITY STATIC function InfTar_NewGroup( lDesFam) ; local Self AS CLASS InfTar := QSelf() AS CLASS InfTar
+
+   if !lDesFam
+      ::AddGroup( {|| ::oDbf:cCodTar + ::oDbf:cCodFam }, {|| "Familia : " + Rtrim( ::oDbf:cCodFam ) + "-" + Rtrim( ::oDbf:cNomFam ) }, {||"Total familia..."} )
+   end
+
+RETURN ( Self )
+
+
+
+UTILITY STATIC function InfTar_QuiGroup( lDesFam) ; local Self AS CLASS InfTar := QSelf() AS CLASS InfTar
+
+   if !lDesFam
+      ::DelGroup()
+   end
+
+RETURN ( Self )

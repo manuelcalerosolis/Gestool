@@ -1,0 +1,476 @@
+#line 112 "hbclass.ch"
+   DYNAMIC DivertConstructorCall
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+DECLARE HBClass  New( cName AS String, OPTIONAL SuperParams ) AS CLASS HBClass  Create() AS Object  Instance() AS Object  AddClsMethod( cName AS String, @MethodName(), nScope AS Numeric, n2 AS Numeric, n3 AS Numeric )  AddDelegate( cName AS String, cDelegate AS String, cObject AS String, nScope AS Numeric, lPersistent AS LOGICAL )  AddMultiClsData( cType AS String, uVal, nScope AS Numeric, aDatas AS Array OF String )  AddMultiData( cType AS String, uVal, nScope AS Numeric, aDatas AS Array OF String, x AS LOGICAL, lPer AS LOGICAL )  AddMethod( cName AS String, @MethodName(), nScope AS Numeric, lPersistent AS LOGICAL )  AddInLine( cName AS String, bBlock AS CodeBlock, nScope AS Numeric, lPersistent AS LOGICAL )  AddVirtual( cName AS String )  ModMethod( cName AS String, @MethodName(), nScope AS Numeric, lPersistent AS LOGICAL )  ModClsMethod( cName AS String, @MethodName(), nScope AS Numeric )  ModInline( cName AS String, bBlock AS CodeBlock, nScope AS Numeric, lPersistent AS LOGICAL )  SetOnError( @MethodName() )
+#line 85 "\Fwh1204\Include\FiveWin.Ch"
+   EXTERNAL GetProcAdd
+   EXTERNAL TActiveX
+
+
+
+
+extern errorsys
+#line 5 ".\Prg\TipoNotas.prg"
+static oWndBrw
+static dbfTipoNotas
+static bEdit      := { |aTmp, aGet, dbfTipoNotas, oBrw, bWhen, bValid, nMode | EdtRec( aTmp, aGet, dbfTipoNotas, oBrw, bWhen, bValid, nMode ) }
+
+
+
+
+
+
+STATIC FUNCTION OpenFiles()
+
+   local lOpen    := .T.
+   local oBlock   := ErrorBlock( {| oError | ApoloBreak( oError ) } )
+
+   BEGIN SEQUENCE
+
+      if !lExistTable( cPatDat() + "TipoNotas.Dbf" )
+         mkTipoNotas( cPatDat() )
+      end
+
+      dbUseArea( .T., ( cDriver() ), ( cPatDat() + "TipoNotas.Dbf" ), ( cCheckArea( "TipoNotas", @dbfTipoNotas ) ), if(.T. .OR. .F., !.F., NIL), .F.,, )
+      if !lAIS() ; ordListAdd( ( cPatDat() + "TipoNotas.Cdx" ) ) ; else ; ordSetFocus( 1 ) ; end
+
+   RECOVER
+
+      msgStop( "Imposible abrir todas las bases de datos" )
+      CloseFiles ()
+      lOpen       := .F.
+
+   end
+
+   ErrorBlock( oBlock )
+
+RETURN ( lOpen )
+
+
+
+
+
+
+STATIC FUNCTION CloseFiles()
+
+   if dbfTipoNotas <> nil
+      ( dbfTipoNotas )->( dbCloseArea() )
+   end
+
+   dbfTipoNotas := nil
+   oWndBrw  := nil
+
+RETURN .T.
+
+
+
+
+
+
+FUNCTION mkTipoNotas( cPath, lAppend, cPathOld, oMeter )
+
+   local dbfTipoNotas
+
+   IIF( cPath == nil, cPath := cPatDat(), ) ;
+   IIF( lAppend == nil, lAppend := .F., ) ;
+
+   if !lExistTable( cPath + "TipoNotas.Dbf" )
+      dbCreate( cPath + "TipoNotas.Dbf", { { "cTipo", "C", 30, 0 } }, cDriver() )
+   end
+
+   if lExistIndex( cPath + "TipoNotas.Cdx" )
+      fErase( cPath + "TipoNotas.Cdx" )
+   end
+
+   if lAppend .AND. lIsDir( cPathOld ) .AND. file( cPathOld + "TipoNotas.Dbf" )
+      dbUseArea( .T., cDriver(), "TipoNotas.Dbf", cCheckArea( "TipoNotas", @dbfTipoNotas ), .F. )
+      if !( dbfTipoNotas )->( neterr() )
+         ( dbfTipoNotas )->( __dbApp( cPathOld + "TipoNotas.Dbf" ) )
+         ( dbfTipoNotas )->( dbCloseArea() )
+      end
+   end
+
+RETURN .T.
+
+
+
+
+
+
+FUNCTION rxTipoNotas( cPath, oMeter )
+
+   local dbfTipoNotas
+
+   IIF( cPath == nil, cPath := cPatDat(), ) ;
+
+   IF !lExistTable( cPath + "TipoNotas.Dbf" )
+      dbCreate( cPath + "TipoNotas.Dbf", { { "cTipo", "C", 30, 0 } }, cDriver() )
+   end
+
+   IF lExistIndex( cPath + "TipoNotas.Cdx" )
+      fErase( cPath + "TipoNotas.Cdx" )
+   end
+
+   if lExistTable( cPath + "TipoNotas.Dbf" )
+
+      dbUseArea( .T., cDriver(), cPath + "TipoNotas.Dbf", cCheckArea( "TipoNotas", @dbfTipoNotas ), .F. )
+
+      if !( dbfTipoNotas )->( neterr() )
+         ( dbfTipoNotas )->( __dbPack() )
+
+         ( dbfTipoNotas )->( ordCondSet("!Deleted()", {||!Deleted()}  ) )
+         ( dbfTipoNotas )->( ordCreate( cPath + "TipoNotas.Cdx", "cTipo", "Upper( Field->cTipo )", {|| Upper( Field->cTipo ) } ) )
+
+         ( dbfTipoNotas )->( dbCloseArea() )
+
+      else
+
+         msgStop( "Imposible abrir en modo exclusivo tipos de notas" )
+
+      end
+
+   end
+
+RETURN NIL
+
+
+
+
+
+
+FUNCTION TipoNotas( oMenuItem, oWnd )
+
+   local nLevel
+
+   IIF( oMenuItem == nil, oMenuItem := "01097", ) ;
+   IIF( oWnd == nil, oWnd := oWnd(), ) ;
+
+   if oWndBrw == NIL
+
+
+
+
+
+      nLevel            := nLevelUsr( oMenuItem )
+
+      if nAnd( nLevel, 1 ) <> 0
+         msgStop( "Acceso no permitido." )
+         return nil
+      end
+
+
+
+
+
+      if oWnd <> nil
+         SysRefresh(); oWnd:CloseAll(); SysRefresh()
+      end
+
+
+
+
+
+      if !OpenFiles()
+         return Nil
+      end
+
+
+
+
+
+      AddMnuNext( "Tipos notas", ProcName() )
+
+
+
+
+
+
+
+
+
+
+
+
+
+      oWndBrw := TShell():New( 2, 10, 18, 70, "Tipos de notas",, oWnd,,, .F.,,, ( dbfTipoNotas ),,,,, {"Tipo"}, {||( WinAppRec( oWndBrw:oBrw, bEdit, dbfTipoNotas ) )}, {||( WinEdtRec( oWndBrw:oBrw, bEdit, dbfTipoNotas ) )}, {||( WinDelRec( oWndBrw:oBrw, dbfTipoNotas ) )}, {||( WinDupRec( oWndBrw:oBrw, bEdit, dbfTipoNotas ) )}, nil, nLevel, "Index_16", ( 104 + ( 0 * 256 ) + ( 63 * 65536 ) ),,, .T. )
+
+      with object ( oWndBrw:AddXCol() )
+         :cHeader          := "Tipo"
+         :cSortOrder       := "cTipo"
+         :bEditValue       := {|| ( dbfTipoNotas )->cTipo }
+         :nWidth           := 800
+         :bLClickHeader    := {| nMRow, nMCol, nFlags, oCol | oWndBrw:ClickOnHeader( oCol ) }
+      end
+
+      oWndBrw:cHtmlHelp    := "Tipos de notas"
+
+      oWndBrw:CreateXFromCode()
+
+
+
+
+
+      oWndBrw:NewAt( "BUS",,, {||( oWndBrw:SearchSetFocus() )}, "(B)uscar", "B",,,,, .F. )
+
+      oWndBrw:AddSeaBar()
+
+
+
+
+
+
+
+
+      oWndBrw:NewAt( "NEW",,, {||( oWndBrw:RecAdd() )}, "(A)ñadir", "A",,, 2,, .F. )
+
+
+
+
+
+
+
+      oWndBrw:NewAt( "DUP",,, {||( oWndBrw:RecDup() )}, "(D)uplicar", "D",,, 2,, .F. )
+
+
+
+
+
+
+
+      oWndBrw:NewAt( "EDIT",,, {||( oWndBrw:RecEdit() )}, "(M)odificar", "M",,, 4,, .F. )
+
+
+
+
+
+
+
+      oWndBrw:NewAt( "ZOOM",,, {||( WinZooRec( oWndBrw:oBrw, bEdit, dbfTipoNotas ) )}, "(Z)oom", "Z",,, 8,, .F. )
+
+
+
+
+
+
+
+      oWndBrw:NewAt( "DEL",,, {||( oWndBrw:RecDel() )}, "(E)liminar", "E",,, 16,, .F. )
+
+
+
+
+
+      oWndBrw:NewAt( "END",,, {||( oWndBrw:end() )}, "(S)alir", "S",,,,, .F. )
+
+      oWndBrw:Activate(, oWndBrw:bLClicked, oWndBrw:bRClicked, oWndBrw:bMoved, oWndBrw:bResized, oWndBrw:bPainted, oWndBrw:bKeyDown, oWndBrw:bInit,,,,,,,,, {|| ( CloseFiles() )},, oWndBrw:bLButtonUp )
+
+   else
+
+      oWndBrw:SetFocus()
+
+   end
+
+ RETURN NIL
+
+
+
+
+
+
+
+STATIC FUNCTION EdtRec( aTmp, aGet, dbfTipoNotas, oBrw, bWhen, bValid, nMode )
+
+   local oDlg
+
+
+
+   oDlg = TDialog():New(,,,, LblTitle( nMode ) + "tipos de notas", "SITUACION",, .F.,,,,,, .F.,,,,,, .F., )
+
+
+
+
+
+
+
+   aGet[ ( dbfTipoNotas )->( FieldPos( "cTipo" ) ) ] := TGetHlp():ReDefine( 90, { | u | If( PCount()==0, aTmp[ ( dbfTipoNotas )->( FieldPos( "cTipo" ) ) ], aTmp[ ( dbfTipoNotas )->( FieldPos( "cTipo" ) ) ]:= u ) }, oDlg,,,,,,,,, .F., {||     ( nMode <> 3 )},, .F., .F.,,,,,, nil,,, )
+
+
+
+
+
+   TButton():ReDefine( 500, {||( EndTrans( aTmp, aGet, dbfTipoNotas, oBrw, nMode, oDlg ) )}, oDlg,,, .F., {||     ( nMode <> 3 )},,, .F. )
+
+
+
+
+
+   TButton():ReDefine( 550, {||( oDlg:end() )}, oDlg,,, .F.,,,, .T. )
+
+
+
+
+   TButton():ReDefine( 9, {||( GoHelp() )}, oDlg,,, .F.,,,, .F. )
+
+
+
+   if nMode <> 3
+   oDlg:AddFastKey( 116, {|| EndTrans( aTmp, aGet, dbfTipoNotas, oBrw, nMode, oDlg ) } )
+   end
+   oDlg:AddFastKey( 112, {|| GoHelp() } )
+
+   oDlg:bStart          := {|| aGet[ ( dbfTipoNotas )->( FieldPos( "cTipo" ) ) ]:SetFocus() }
+
+   oDlg:Activate( oDlg:bLClicked, oDlg:bMoved, oDlg:bPainted, .T.,,,, oDlg:bRClicked,,, )
+
+RETURN ( oDlg:nResult == 1 )
+
+
+
+
+
+
+STATIC FUNCTION EndTrans( aTmp, aGet, dbfTipoNotas, oBrw, nMode, oDlg )
+
+
+
+
+
+   if nMode == 1 .OR. nMode == 4
+      if Existe( Upper( aTmp[ ( dbfTipoNotas )->( FieldPos( "cTipo" ) ) ] ), dbfTipoNotas, "cTipo" )
+         msgStop( "Tipo de nota existente" )
+         aGet[ ( dbfTipoNotas )->( FieldPos( "cTipo" ) ) ]:SetFocus()
+         return nil
+      end
+   end
+
+   if Empty( aTmp[ ( dbfTipoNotas )->( FieldPos( "cTipo" ) ) ] )
+      MsgStop( "El tipo de nota no puede estar vacío" )
+      aGet[ ( dbfTipoNotas )->( FieldPos( "cTipo" ) ) ]:SetFocus()
+      return nil
+   end
+
+
+
+
+
+   WinGather( aTmp, aGet, dbfTipoNotas, oBrw, nMode )
+
+RETURN ( oDlg:end( 1 ) )
+
+
+
+
+
+
+Function aTipoNotas( dbfTipoNotas )
+
+   local oBlock
+   local oError
+   local aSitua   := {}
+   local lClose   := .F.
+   local nRec
+
+   oBlock            := ErrorBlock( {| oError | ApoloBreak( oError ) } )
+   BEGIN SEQUENCE
+
+   if dbfTipoNotas == nil
+
+
+
+
+
+      dbUseArea( .T., ( cDriver() ), ( cPatDat() + "TipoNotas.Dbf" ), ( cCheckArea( "TipoNotas", @dbfTipoNotas ) ), if(.T. .OR. .F., !.F., NIL), .F.,, )
+      if !lAIS() ; ordListAdd( ( cPatDat() + "TipoNotas.Cdx" ) ) ; else ; ordSetFocus( 1 ) ; end
+      lClose      := .T.
+
+   else
+
+
+
+
+
+      nRec        := ( dbfTipoNotas )->( RecNo() )
+
+   end
+
+
+
+
+
+   ( dbfTipoNotas )->( dbGoTop() )
+
+   aAdd( aSitua, "" )
+
+   while !( dbfTipoNotas )->( Eof() )
+      if !Empty( ( dbfTipoNotas )->cTipo )
+         aAdd( aSitua, ( dbfTipoNotas )->cTipo )
+      end
+      ( dbfTipoNotas )->( dbSkip() )
+   end
+
+
+
+
+
+   RECOVER USING oError
+
+      msgStop( "Imposible abrir todas las bases de datos " + Chr(13)+Chr(10) + ErrorMessage( oError ) )
+
+   end
+
+   ErrorBlock( oBlock )
+
+   if lClose
+      ( dbfTipoNotas )->( dbCloseArea() )
+   else
+      ( dbfTipoNotas )->( dbGoto( nRec ) )
+   end
+
+Return aSitua
+
+
+
+
+
+
+FUNCTION IsTipoNotas()
+
+   local dbfTipoNotas
+   local oError
+   local oBlock   := ErrorBlock( {| oError | ApoloBreak( oError ) } )
+
+   BEGIN SEQUENCE
+
+   if !lExistTable( cPatDat() + "TipoNotas.Dbf" )
+      mkTipoNotas( cPatDat() )
+   end
+
+   if !lExistIndex( cPatDat() + "TipoNotas.Cdx" )
+      rxTipoNotas( cPatDat() )
+   end
+
+   RECOVER USING oError
+
+      msgStop( "Imposible realizar las comprobación inicial de tipos de notas" + Chr(13)+Chr(10) + ErrorMessage( oError ) )
+
+   end
+
+   ErrorBlock( oBlock )
+
+   ( dbfTipoNotas )->( dbCloseArea() )
+
+ RETURN ( .T. )

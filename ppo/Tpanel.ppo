@@ -1,0 +1,78 @@
+#line 112 "hbclass.ch"
+   DYNAMIC DivertConstructorCall
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+DECLARE HBClass  New( cName AS String, OPTIONAL SuperParams ) AS CLASS HBClass  Create() AS Object  Instance() AS Object  AddClsMethod( cName AS String, @MethodName(), nScope AS Numeric, n2 AS Numeric, n3 AS Numeric )  AddDelegate( cName AS String, cDelegate AS String, cObject AS String, nScope AS Numeric, lPersistent AS LOGICAL )  AddMultiClsData( cType AS String, uVal, nScope AS Numeric, aDatas AS Array OF String )  AddMultiData( cType AS String, uVal, nScope AS Numeric, aDatas AS Array OF String, x AS LOGICAL, lPer AS LOGICAL )  AddMethod( cName AS String, @MethodName(), nScope AS Numeric, lPersistent AS LOGICAL )  AddInLine( cName AS String, bBlock AS CodeBlock, nScope AS Numeric, lPersistent AS LOGICAL )  AddVirtual( cName AS String )  ModMethod( cName AS String, @MethodName(), nScope AS Numeric, lPersistent AS LOGICAL )  ModClsMethod( cName AS String, @MethodName(), nScope AS Numeric )  ModInline( cName AS String, bBlock AS CodeBlock, nScope AS Numeric, lPersistent AS LOGICAL )  SetOnError( @MethodName() )
+#line 85 "\Fwh1204\Include\FiveWin.Ch"
+   EXTERNAL GetProcAdd
+   EXTERNAL TActiveX
+
+
+
+
+extern errorsys
+#line 12 ".\Prg\Tpanel.prg"
+_HB_CLASS TMPanel ; UTILITY FUNCTION TMPanel(...); static s_oClass ; local oClassInstance ; local nScope ; nScope := 1 ; if s_oClass == NIL ; s_oClass := IIF(.F.,, HBClass():New( "TMPanel" , {TControl():classh} ) ) ; ;
+
+   _HB_MEMBER {AS LOGICAL lRegistered} ; IIF( !.F., s_oClass:AddMultiClsData("LOGICAL",, nScope + IIF( .F., 32, 0 ) + 64, { "lRegistered" }, .F. ), )
+
+   _HB_MEMBER New( nTop, nLeft, nBottom, nRight, oWnd) AS CLASS TMPanel; IIF( .F., s_oClass:ModMethod( "New", @TMPanel_New(), nScope + IIF( .T., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ), s_oClass:AddMethod( "New", @TMPanel_New(), nScope + IIF( .T., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ));
+   _HB_MEMBER Display(); IIF( .F., s_oClass:ModInline( "Display", {|Self | Self, ::BeginPaint(), ::Paint(), ::EndPaint(), 0 }, nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ), s_oClass:AddInline( "Display", {|Self | Self, ::BeginPaint(), ::Paint(), ::EndPaint(), 0 }, nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ) )
+   _HB_MEMBER Paint(); IIF( .F., s_oClass:ModMethod( "Paint", @TMPanel_Paint(), nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ), s_oClass:AddMethod( "Paint", @TMPanel_Paint(), nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ));
+
+; IF .F. ; __clsActive(s_oClass:hClass) ; s_oClass:Refresh() ; ELSE ; s_oClass:Create() ; END ; oClassInstance := __clsInst( s_oClass:hClass ) ; IF __ObjHasMsg( oClassInstance, "InitClass" ); oClassInstance:InitClass( hb_aParams() ) ; END ; ELSE ; oClassInstance := __clsInst( s_oClass:hClass ) ; END ; IF PCount() > 0 ; DIVERT TO (@DivertConstructorCall()) OF s_oClass ; END ; RETURN oClassInstance AS CLASS TMPanel ;
+
+
+
+UTILITY STATIC function TMPanel_New( nTop, nLeft, nBottom, nRight, oWnd) ; local Self AS CLASS TMPanel := QSelf() AS CLASS TMPanel
+
+
+   IIF( nTop == nil, nTop := 0, ) ; IIF( nLeft == nil, nLeft := 0, ); IIF( nBottom == nil, nBottom := 100, ); IIF( nRight == nil, nRight := 100, ); IIF( oWnd == nil, oWnd := GetWndDefault(), );
+
+   ::nTop    = nTop
+   ::nLeft   = nLeft
+   ::nBottom = nBottom
+   ::nRight  = nRight
+   ::oWnd    = oWnd
+
+   ::nStyle  = nOr( 1073741824, 268435456, 67108864, 33554432, )
+   ::lDrag   = .F.
+
+
+
+
+
+   ::Register()
+
+   if ! Empty( ::oWnd:hWnd )
+      ::Create()
+      ::oWnd:AddControl( Self )
+   else
+      ::oWnd:DefControl( Self )
+   endif
+
+return Self
+
+
+
+UTILITY STATIC function TMPanel_Paint() ; local Self AS CLASS TMPanel := QSelf() AS CLASS TMPanel
+
+if ::bPainted <> nil
+   eval( ::bPainted, ::hDC )
+endif
+
+return nil

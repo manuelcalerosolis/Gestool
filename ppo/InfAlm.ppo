@@ -1,0 +1,147 @@
+#line 112 "hbclass.ch"
+   DYNAMIC DivertConstructorCall
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+DECLARE HBClass  New( cName AS String, OPTIONAL SuperParams ) AS CLASS HBClass  Create() AS Object  Instance() AS Object  AddClsMethod( cName AS String, @MethodName(), nScope AS Numeric, n2 AS Numeric, n3 AS Numeric )  AddDelegate( cName AS String, cDelegate AS String, cObject AS String, nScope AS Numeric, lPersistent AS LOGICAL )  AddMultiClsData( cType AS String, uVal, nScope AS Numeric, aDatas AS Array OF String )  AddMultiData( cType AS String, uVal, nScope AS Numeric, aDatas AS Array OF String, x AS LOGICAL, lPer AS LOGICAL )  AddMethod( cName AS String, @MethodName(), nScope AS Numeric, lPersistent AS LOGICAL )  AddInLine( cName AS String, bBlock AS CodeBlock, nScope AS Numeric, lPersistent AS LOGICAL )  AddVirtual( cName AS String )  ModMethod( cName AS String, @MethodName(), nScope AS Numeric, lPersistent AS LOGICAL )  ModClsMethod( cName AS String, @MethodName(), nScope AS Numeric )  ModInline( cName AS String, bBlock AS CodeBlock, nScope AS Numeric, lPersistent AS LOGICAL )  SetOnError( @MethodName() )
+#line 85 "\Fwh1204\Include\FiveWin.Ch"
+   EXTERNAL GetProcAdd
+   EXTERNAL TActiveX
+
+
+
+
+extern errorsys
+#line 8 ".\Prg\InfAlm.prg"
+_HB_CLASS InfAlm ; UTILITY FUNCTION InfAlm(...); static s_oClass ; local oClassInstance ; local nScope ; nScope := 1 ; if s_oClass == NIL ; s_oClass := IIF(.F.,, HBClass():New( "InfAlm" , {TInfGen():classh} ) ) ; ;
+
+   _HB_MEMBER Create(); IIF( .F., s_oClass:ModMethod( "Create", @InfAlm_Create(), nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ), s_oClass:AddMethod( "Create", @InfAlm_Create(), nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ));
+
+   _HB_MEMBER lResource( cFld); IIF( .F., s_oClass:ModMethod( "lResource", @InfAlm_lResource(), nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ), s_oClass:AddMethod( "lResource", @InfAlm_lResource(), nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ));
+
+   _HB_MEMBER lGenerate(); IIF( .F., s_oClass:ModMethod( "lGenerate", @InfAlm_lGenerate(), nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ), s_oClass:AddMethod( "lGenerate", @InfAlm_lGenerate(), nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ));
+
+; IF .F. ; __clsActive(s_oClass:hClass) ; s_oClass:Refresh() ; ELSE ; s_oClass:Create() ; END ; oClassInstance := __clsInst( s_oClass:hClass ) ; IF __ObjHasMsg( oClassInstance, "InitClass" ); oClassInstance:InitClass( hb_aParams() ) ; END ; ELSE ; oClassInstance := __clsInst( s_oClass:hClass ) ; END ; IF PCount() > 0 ; DIVERT TO (@DivertConstructorCall()) OF s_oClass ; END ; RETURN oClassInstance AS CLASS InfAlm ;
+
+
+
+UTILITY STATIC function InfAlm_Create() ; local Self AS CLASS InfAlm := QSelf() AS CLASS InfAlm
+
+   ::AddField( "cCodAlm",   "C",  3, 0, {|| "" },     "Cod.",              .T., "Código de almacen",                5, .F. )
+   ::AddField( "cNomAlm",   "C", 20, 0, {|| "" },     "Nombre",            .T., "Nombre de almacen",               30, .F. )
+   ::AddField( "cDirAlm",   "C", 50, 0, {|| "" },     "Dir.",              .T., "Domicilio de almacen",            15, .F. )
+   ::AddField( "cPosAlm",   "C",  7, 0, {|| "" },     "C.P.",              .T., "Código postal de almacen",        15, .F. )
+   ::AddField( "cPobAlm",   "C", 30, 0, {|| "" },     "Población",         .T., "Población de almacen",            15, .F. )
+   ::AddField( "cProAlm",   "C", 20, 0, {|| "" },     "Provincia",         .T., "Provincia de almacen",            15, .F. )
+   ::AddField( "cTfnAlm",   "C", 12, 0, {|| "" },     "Teléfono",          .F., "Teléfono de almacen",              6, .F. )
+   ::AddField( "cFaxAlm",   "C", 12, 0, {|| "" },     "Fax",               .F., "Fax de almacen",                  15, .F. )
+   ::AddField( "cPerAlm",   "C", 50, 0, {|| "" },     "Contacto",          .F., "Persona de contacto de almacen",  12, .F. )
+   ::AddField( "cCodCli",   "C", 12, 0, {|| "" },     "Cliente",           .F., "Codigo del cliente",              12, .F. )
+   ::AddField( "cUbiCa1",   "C",  5, 0, {|| "" },     "Cod. Ubi1",         .F., "Ubicación 1",                     12, .F. )
+   ::AddField( "cNomUbi1",  "C",  5, 2, {|| "" },     "Nom. Ubi1",         .F., "Nombre ubicación 1",               6, .F. )
+   ::AddField( "cUbiCa2",   "C",  5, 2, {|| "" },     "Cod. Ubi2",         .F., "Ubicación 2",                      6, .F. )
+   ::AddField( "cNomUbi2",  "C", 30, 2, {|| "" },     "Nom. Ubi2",         .F., "Nombre ubicación 2",               6, .F. )
+   ::AddField( "cUbiCa3",   "C", 30, 2, {|| "" },     "Cod. Ubi3",         .F., "Ubicación 3",                      6, .F. )
+   ::AddField( "cNomUbi3",  "C", 30, 2, {|| "" },     "Nom. Ubi3",         .F., "Nombre ubicación 3",               6, .F. )
+
+   ::AddTmpIndex ( "cCodAlm", "cCodAlm" )
+
+   ::lDefFecInf   := .F.
+   ::lDefSerInf   := .F.
+   ::lDefDivInf   := .F.
+
+RETURN ( Self )
+
+
+
+UTILITY STATIC function InfAlm_lResource( cFld) ; local Self AS CLASS InfAlm := QSelf() AS CLASS InfAlm
+
+   if !::StdResource( "INF_ALM01" )
+      return .F.
+   end
+
+
+
+
+
+   ::oDefAlmInf( 70, 80, 90, 100, 60 )
+
+
+
+
+
+   ::oMtrInf:SetTotal( ::oDbfAlm:Lastrec() )
+
+   ::CreateFilter( aItmAlm(), ::oDbfAlm:cAlias )
+
+RETURN .T.
+
+
+
+
+
+
+UTILITY STATIC function InfAlm_lGenerate() ; local Self AS CLASS InfAlm := QSelf() AS CLASS InfAlm
+
+   ::oDlg:Disable()
+   ::oBtnCancel:Enable()
+   ::oDbf:Zap()
+
+
+   ::aHeader      := {  {|| "Fecha     : " + Dtoc( Date() ) }, {|| "Almacenes : " + if( ::lAllAlm, "Todos", AllTrim( ::cAlmOrg ) + " > " + AllTrim( ::cAlmDes ) ) } }
+
+   ::oDbfAlm:OrdSetFocus( "CCODALM" )
+
+   ::oDbfAlm:GoTop()
+   while !::lBreak .AND. !::oDbfAlm:Eof()
+
+
+      if ( ::lAllAlm .OR. ( ::oDbfAlm:cCodAlm >= ::cAlmOrg .AND. ::oDbfAlm:cCodAlm <= ::cAlmDes ) ) .AND.  ::EvalFilter()
+
+         ::oDbf:Append()
+
+         ::oDbf:cCodAlm     := ::oDbfAlm:cCodAlm
+         ::oDbf:cNomAlm     := ::oDbfAlm:cNomAlm
+         ::oDbf:cDirAlm     := ::oDbfAlm:cDirAlm
+         ::oDbf:cPosAlm     := ::oDbfAlm:cPosAlm
+         ::oDbf:cPobAlm     := ::oDbfAlm:cPobAlm
+         ::oDbf:cProAlm     := ::oDbfAlm:cProAlm
+         ::oDbf:cTfnAlm     := ::oDbfAlm:cTfnAlm
+         ::oDbf:cFaxAlm     := ::oDbfAlm:cFaxAlm
+         ::oDbf:cPerAlm     := ::oDbfAlm:cPerAlm
+         ::oDbf:cCodCli     := ::oDbfAlm:cCodCli
+         ::oDbf:cUbiCa1     := ::oDbfAlm:cUbiCa1
+         ::oDbf:cNomUbi1    := ::oDbfAlm:cNomUbi1
+         ::oDbf:cUbiCa2     := ::oDbfAlm:cUbiCa2
+         ::oDbf:cNomUbi2    := ::oDbfAlm:cNomUbi2
+         ::oDbf:cUbiCa3     := ::oDbfAlm:cUbiCa3
+         ::oDbf:cNomUbi3    := ::oDbfAlm:cNomUbi3
+
+         ::oDbf:Save()
+
+      end
+
+      ::oDbfAlm:Skip()
+
+      ::oMtrInf:AutoInc()
+
+   end
+
+   ::oMtrInf:AutoInc( ::oDbfAlm:LastRec() )
+
+   ::oDlg:Enable()
+
+RETURN ( ::oDbf:LastRec() > 0 )

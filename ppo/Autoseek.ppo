@@ -1,0 +1,608 @@
+#line 112 "hbclass.ch"
+   DYNAMIC DivertConstructorCall
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+DECLARE HBClass  New( cName AS String, OPTIONAL SuperParams ) AS CLASS HBClass  Create() AS Object  Instance() AS Object  AddClsMethod( cName AS String, @MethodName(), nScope AS Numeric, n2 AS Numeric, n3 AS Numeric )  AddDelegate( cName AS String, cDelegate AS String, cObject AS String, nScope AS Numeric, lPersistent AS LOGICAL )  AddMultiClsData( cType AS String, uVal, nScope AS Numeric, aDatas AS Array OF String )  AddMultiData( cType AS String, uVal, nScope AS Numeric, aDatas AS Array OF String, x AS LOGICAL, lPer AS LOGICAL )  AddMethod( cName AS String, @MethodName(), nScope AS Numeric, lPersistent AS LOGICAL )  AddInLine( cName AS String, bBlock AS CodeBlock, nScope AS Numeric, lPersistent AS LOGICAL )  AddVirtual( cName AS String )  ModMethod( cName AS String, @MethodName(), nScope AS Numeric, lPersistent AS LOGICAL )  ModClsMethod( cName AS String, @MethodName(), nScope AS Numeric )  ModInline( cName AS String, bBlock AS CodeBlock, nScope AS Numeric, lPersistent AS LOGICAL )  SetOnError( @MethodName() )
+#line 85 "\Fwh1204\Include\FiveWin.Ch"
+   EXTERNAL GetProcAdd
+   EXTERNAL TActiveX
+
+
+
+
+extern errorsys
+#line 13 ".\Prg\Autoseek.prg"
+   Static lTmpIndex  := .T.
+
+
+static cBagAnterior
+static cOldIndexName
+static nRecAnterior
+static cTmpAnterior
+static cNamAnterior
+static cFiltroUsuario
+static cFiltroFecha
+
+
+
+
+
+
+
+
+
+
+
+
+FUNCTION Searching( cAlias, aIndex, oBrw, cPreFij )
+
+    local oDlg
+   local cType
+   local oIndice
+    local cIndice
+    local oCadena
+   local xCadena  := Space( 100 )
+    local nOrdAnt
+
+    IIF( cAlias == nil, cAlias := Alias(), ) ;
+   IIF( aIndex == nil, aIndex := { "Código", "Descripción" }, ) ;
+
+   nOrdAnt        := ( cAlias )->( OrdNumber() )
+   cIndice        := aIndex[ Min( nOrdAnt, Len( aIndex ) ) ]
+   cType          := ( cAlias )->( dbOrderInfo( 24 ) )
+
+   oDlg = TDialog():New(,,,,, "SSEARCH",, .F.,,,,,, .F.,,,,,, .F., )
+
+
+
+
+
+
+
+    oCadena := TGetHlp():ReDefine( 100, { | u | If( PCount()==0, xCadena, xCadena:= u ) }, oDlg,, "@!", {||       ( OrdClearScope( oBrw, cAlias ) )},,,,,, .F.,, {|nKey,nFlags,Self| ( lBigSeek( nil, oCadena, cAlias ), ( if( !Empty( oBrw ), oBrw:Refresh(), ) ) ) }, .F., .F.,,,,,, nil,,, )
+
+
+
+
+    oIndice := TComboBox():ReDefine( 101, { | u | If( PCount()==0, cIndice, cIndice:= u ) }, aIndex, oDlg,,, {|Self|( ( cAlias )->( OrdSetFocus( oIndice:nAt ) ), oBrw:Refresh(), oCadena:SetFocus(), oCadena:SelectAll() )},,,, .F.,,,,,, )
+
+
+
+
+
+    TButton():ReDefine( 510, {||( oDlg:end() )}, oDlg,,, .F.,,,, .T. )
+
+    oDlg:Activate( oDlg:bLClicked, oDlg:bMoved, oDlg:bPainted, .T.,,,, oDlg:bRClicked,,, )
+
+   OrdClearScope( oBrw, cAlias )
+
+   ( cAlias )->( OrdSetFocus( nOrdAnt ) )
+
+RETURN NIL
+
+
+
+
+
+
+
+
+
+FUNCTION AutoSeek( nKey, nFlags, oGet, oBrw, xAlias, lUpper, cPreFij, lAllowFilter, lNotUser, lNotFecha )
+
+   local cType
+    local xCadena
+   local lReturn        := .T.
+
+   IIF( xAlias == nil, xAlias := Alias(), ) ;
+   IIF( lUpper == nil, lUpper := .T., ) ;
+   IIF( lAllowFilter == nil, lAllowFilter := .T., ) ;
+   IIF( lNotUser == nil, lNotUser := .T., ) ;
+   IIF( lNotFecha == nil, lNotFecha := .T., ) ;
+
+   if ValType( xAlias ) == "O"
+      xAlias            := xAlias:cAlias
+   end
+
+   oGet:Assign()
+
+   xCadena              := Rtrim( oGet:VarGet() )
+
+   cType                := ( xAlias )->( dbOrderInfo( 24 ) )
+
+   do case
+      case cType == "C"
+
+         if lUpper
+            xCadena     := Upper( xCadena )
+         end
+
+      case cType == "N"
+
+         xCadena        := Val( xCadena )
+
+   end
+
+   if lBigSeek( cPreFij, xCadena, xAlias, oBrw, lNotUser, lNotFecha ) .OR. Empty( xCadena )
+
+      oGet:SetColor( ( 0 + ( 0 * 256 ) + ( 0 * 65536 ) ), ( 255 + ( 255 * 256 ) + ( 255 * 65536 ) ) )
+
+   else
+
+      oGet:SetColor( ( 255 + ( 255 * 256 ) + ( 255 * 65536 ) ), ( 255 + ( 102 * 256 ) + ( 102 * 65536 ) ) )
+
+      lReturn           := .F.
+
+   end
+
+   if oBrw <> nil
+      oBrw:Refresh( .T. )
+   end
+
+Return ( lReturn )
+
+
+
+FUNCTION lBigSeek( cPreFij, xCadena, xAlias, oBrw, lNotUser, lNotFecha )
+
+   local oCol
+   local xVal
+   local nRec
+   local nLen
+   local lRet        := .F.
+   local cSort
+   local nSort
+
+   IIF( lNotUser == nil, lNotUser := .T., ) ;
+   IIF( lNotFecha == nil, lNotFecha := .T., ) ;
+
+   if IsObject( xCadena )
+      xCadena:Assign()
+      xCadena        := xCadena:VarGet()
+   end
+
+   xCadena           := StrTran( xCadena, Chr( 8 ), "" )
+
+   if !Empty( cPreFij )
+      xCadena        := cPreFij + xCadena
+   end
+
+   xCadena           := Alltrim( xCadena )
+
+   if IsObject( xAlias )
+      xAlias         := xAlias:cAlias
+   end
+
+   if !( xAlias )->( Used() )
+      return .T.
+   end
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+   DestroyFastFilter( xAlias, .F., .F. )
+
+   CreateFastFilter( "", xAlias, .F., , , , lNotUser, lNotFecha )
+
+   if Left( xCadena, 1 ) == "*"
+
+      if Right( xCadena, 1 ) == "*" .AND. len( Rtrim( xCadena ) ) > 1
+
+         CreateFastFilter( SubStr( xCadena, 2, len( xCadena ) - 2 ), xAlias, .T. , , , , lNotUser, lNotFecha )
+
+         return .T.
+
+      else
+
+         CreateFastFilter( "", xAlias, .F., , , , lNotUser, lNotFecha )
+
+         return .T.
+
+      end
+
+   end
+
+
+
+
+
+   cSort       := ( xAlias )->( OrdSetFocus() )
+
+   lRet        := lMiniSeek( cPrefij, xCadena, xAlias, nLen )
+
+   if uFieldEmpresa( "lBusCir" )
+
+      if !lRet .AND. !Empty( oBrw )
+
+         for each oCol in oBrw:aCols
+
+            if isChar( oCol:cSortOrder ) .AND. !Empty( oCol:cSortOrder )
+
+               ( xAlias )->( OrdSetFocus( oCol:cSortOrder ) )
+
+               lRet  := lMiniSeek( cPrefij, xCadena, xAlias, nLen )
+
+               if lRet
+                  oCol:SetOrder()
+                  if !Empty( oCol:bLClickHeader )
+                     Eval( oCol:bLClickHeader, nil, nil, nil, oCol )
+                  end
+                  oBrw:Select( 0 )
+                  oBrw:Select( 1 )
+                  oBrw:Refresh()
+                  exit
+               end
+
+            end
+
+         next
+
+      end
+
+   end
+
+   if !lRet
+      ( xAlias )->( OrdSetFocus( cSort ) )
+   end
+
+RETURN ( lRet )
+
+
+
+Function lMiniSeek( cPrefij, xCadena, xAlias, nLen )
+
+   local n
+   local nRec
+   local lRet     := .F.
+   local cPre
+   local cPos
+   local cType
+   local oBlock
+   local oError
+
+   cType          := ( xAlias )->( dbOrderInfo( 24 ) )
+
+   if !( cType $ "CDN" )
+      return .F.
+   end
+
+   oBlock         := ErrorBlock( {| oError | ApoloBreak( oError ) } )
+   BEGIN SEQUENCE
+
+   nRec           := ( xAlias )->( Recno() )
+
+   if !Empty( xCadena )
+
+      ( xAlias )->( OrdScope( 0, nil ) )
+      ( xAlias )->( OrdScope( 1, nil ) )
+
+      do case
+      case cType == "D"
+
+         if len( Rtrim( xCadena ) ) == 10
+            if ( xAlias )->( dbSeek( Ctod( xCadena ), .T. ) )
+               ( xAlias )->( OrdScope( 0, Ctod( xCadena ) ) )
+               ( xAlias )->( OrdScope( 1, Ctod( xCadena ) ) )
+            else
+               ( xAlias )->( OrdScope( 0, nil ) )
+               ( xAlias )->( OrdScope( 1, nil ) )
+            end
+         end
+
+         lRet     := .T.
+
+      case cType == "N"
+
+         if ( xAlias )->( dbSeek( Val( xCadena ), .T. ) )
+            lRet  := .T.
+         else
+            lRet  := .T.
+         end
+
+      case cType == "C"
+
+         if ( xAlias )->( dbSeek( xCadena, .T. ) )
+
+            ( xAlias )->( OrdScope( 0, xCadena ) )
+            ( xAlias )->( OrdScope( 1, xCadena ) )
+
+            lRet     := .T.
+
+         else
+
+            nLen     := 14
+
+            if Empty( cPrefij )
+
+               cPre  := SubStr( xCadena, 1, 1 )
+               cPos  := Padl( Rtrim( SubStr( xCadena, 2, nLen - 1 ) ), nLen - 1 )
+
+               for n := 1 to nLen
+
+                  if ( xAlias )->( dbSeek( cPre + cPos, .F. ) )
+
+                     ( xAlias )->( OrdScope( 0, cPre + cPos ) )
+                     ( xAlias )->( OrdScope( 1, cPre + cPos ) )
+
+                     lRet  := .T.
+                     exit
+
+                  end
+
+                  if Empty( SubStr( cPos, 2, 1 ) )
+                     lRet  := .F.
+                     cPos  := SubStr( cPos, 2, len( cPos ) - 1 )
+                  else
+                     lRet  := .F.
+                     exit
+                  end
+
+               next
+
+            else
+
+               ( xAlias )->( OrdScope( 0, cPreFij ) )
+               ( xAlias )->( OrdScope( 1, cPreFij ) )
+
+            end
+
+         end
+
+      end
+
+      if !lRet
+         ( xAlias )->( dbGoTo( nRec ) )
+      end
+
+   else
+
+      ( xAlias )->( OrdScope( 0, cPreFij ) )
+      ( xAlias )->( OrdScope( 1, cPreFij ) )
+
+      lRet           := .F.
+
+   end
+
+   if !lRet
+      ( xAlias )->( dbGoTo( nRec ) )
+   end
+
+   RECOVER USING oError
+
+   end
+
+   ErrorBlock( oBlock )
+
+Return ( lRet )
+
+
+
+Function CreateUserFilter( cExpFilter, cAlias, lInclude, oMeter, cExpUsuario, cExpFecha )
+
+RETURN ( CreateFastFilter( cExpFilter, cAlias, lInclude, oMeter, cExpUsuario, cExpFecha, .F., .F. ) )
+
+
+
+Function CreateFastFilter( cExpFilter, cAlias, lInclude, oMeter, cExpUsuario, cExpFecha, lNotUser, lNotFecha )
+
+   local nEvery
+   local bEvery
+   local cOrdKey
+   local bOrdKey
+   local bExpFilter
+   local oBlock
+   local oError
+   local cCondAnterior
+
+   IIF( lInclude == nil, lInclude := .T., ) ;
+   IIF( cExpUsuario == nil, cExpUsuario := "", ) ;
+   IIF( cExpFecha == nil, cExpFecha := "", ) ;
+   IIF( lNotUser == nil, lNotUser := .T., ) ;
+   IIF( lNotFecha == nil, lNotFecha := .T., ) ;
+
+   if Empty( cAlias )
+      return .F.
+   end
+
+   if !Empty( cExpUsuario )
+      cFiltroUsuario       := cExpUsuario
+   else
+      cFiltroUsuario       := ""
+   end
+
+   if !Empty( cExpFecha )
+
+      if cExpFecha == "all"
+         cFiltroFecha      := ""
+      else
+         cFiltroFecha      := cExpFecha
+      end
+
+   end
+
+   if lAds() .OR. lAIS()
+
+      cOrdKey              := ( cAlias )->( OrdKey() )
+
+      if lInclude
+         cExpFilter        := "'" + cExpFilter + "' $ " + cOrdKey + " .and. !Deleted()"
+      end
+
+      if Empty( cExpUsuario ) .AND. !Empty( cFiltroUsuario )
+         cExpFilter        += if( !Empty( cExpFilter ), " .and. ", "" ) + cFiltroUsuario
+      end
+
+      if Empty( cExpFecha ) .AND. !Empty( cFiltroFecha )
+         cExpFilter        += if( !Empty( cExpFilter ), " .and. ", "" ) + cFiltroFecha
+      end
+
+      if !Empty( cExpFilter )
+
+         bExpFilter        := bCheck2Block( cExpFilter )
+
+         ( cAlias )->( dbSetFilter( bExpFilter, cExpFilter ) )
+         ( cAlias )->( dbGoTop() )
+
+      else
+
+         ( cAlias )->( dbSetFilter() )
+
+      end
+
+   else
+
+   oBlock                  := ErrorBlock( {| oError | ApoloBreak( oError ) } )
+   BEGIN SEQUENCE
+
+      nRecAnterior         := ( cAlias )->( Recno() )
+      cOldIndexName        := ( cAlias )->( OrdSetFocus() )
+      cBagAnterior         := ( cAlias )->( dbOrderInfo( 20 ) )
+      cNamAnterior         := "OrdTmp" + cCurUsr()
+      cCondAnterior        := ( cAlias )->( dbOrderInfo( 1 ) )
+
+      cOrdKey              := ( cAlias )->( OrdKey() )
+      bOrdKey              := c2Block( cOrdKey )
+
+      if !Empty( oMeter )
+         nEvery            := Int( ( cAlias )->( OrdKeyCount() ) / 10 )
+         bEvery            := {|| oMeter:Set( ( cAlias )->( OrdKeyNo() ) ) }
+      end
+
+      if lInclude
+         cExpFilter        := "'" + cExpFilter + "' $ " + cOrdKey + ".and. " + cCondAnterior
+      end
+
+      if !lNotUser .AND. Empty( cExpUsuario ) .AND. !Empty( cFiltroUsuario )
+         if !Empty( cExpFilter )
+            cExpFilter     += " .and. " + cFiltroUsuario
+         else
+            cExpFilter     := cFiltroUsuario
+         end
+      end
+
+      if !lNotFecha .AND. Empty( cExpFecha ) .AND. !Empty( cFiltroFecha )
+         if !Empty( cExpFilter )
+            cExpFilter     += " .and. " + cFiltroFecha
+         else
+            cExpFilter     := cFiltroFecha
+         end
+      end
+
+      dbSelectArea( ( cAlias ) )
+
+      bExpFilter           := bCheck2Block( cExpFilter )
+
+      if !Empty( bExpFilter ) .AND. !Empty( cOldIndexName ) .AND. !Empty( cBagAnterior )
+         ( cAlias )->( OrdCondSet( cExpFilter, bExpFilter ) )
+         ( cAlias )->( OrdCreate( cBagAnterior, cNamAnterior, cOrdKey, bOrdKey ) )
+         ( cAlias )->( OrdSetFocus( cNamAnterior, cBagAnterior ) )
+         ( cAlias )->( dbGoTop() )
+      else
+         cOldIndexName     := nil
+         nRecAnterior      := nil
+         cBagAnterior      := nil
+      end
+
+   RECOVER USING oError
+
+      bExpFilter           := nil
+
+      msgStop( "Imposible crear el filtro en el indice" + Chr(13)+Chr(10) + ErrorMessage( oError ) )
+
+   end
+
+   ErrorBlock( oBlock )
+
+   end
+
+Return ( bExpFilter <> nil )
+
+
+
+Function DestroyFastFilter( cAlias, lUser, lFecha )
+
+   IIF( lUser == nil, lUser := .F., ) ;
+   IIF( lFecha == nil, lFecha := .F., ) ;
+
+   if lAds() .OR. lAIS()
+
+      if !Empty( cAlias ) .AND. ( cAlias )->( used() )
+         ( cAlias )->( dbClearFilter() )
+      end
+
+   else
+
+      if !Empty( cBagAnterior )
+
+         if !Empty( cAlias ) .AND. ( cAlias )->( Used() )
+
+            ( cAlias )->( OrdSetFocus( cOldIndexName, cBagAnterior ) )
+            ( cAlias )->( OrdDestroy( cNamAnterior, cBagAnterior ) )
+
+            ( cAlias )->( dbGoTo( nRecAnterior ) )
+
+            cOldIndexName  := nil
+            nRecAnterior   := nil
+            cBagAnterior   := nil
+
+         end
+
+      end
+
+   end
+
+   if lUser
+      cFiltroUsuario    := ""
+   end
+
+   if lFecha
+      cFiltroFecha      := ""
+   end
+
+Return .T.
+
+
+
+Function OrdClearScope( oBrw, dbf )
+
+   if !Empty( dbf ) .AND. ( dbf )->( Used() )
+      ( dbf )->( OrdScope( 0, nil ) )
+      ( dbf )->( OrdScope( 1, nil ) )
+   end
+
+   if oBrw <> nil
+      oBrw:Refresh()
+   end
+
+Return .T.

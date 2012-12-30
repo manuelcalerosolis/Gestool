@@ -1,0 +1,479 @@
+#line 112 "hbclass.ch"
+   DYNAMIC DivertConstructorCall
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+DECLARE HBClass  New( cName AS String, OPTIONAL SuperParams ) AS CLASS HBClass  Create() AS Object  Instance() AS Object  AddClsMethod( cName AS String, @MethodName(), nScope AS Numeric, n2 AS Numeric, n3 AS Numeric )  AddDelegate( cName AS String, cDelegate AS String, cObject AS String, nScope AS Numeric, lPersistent AS LOGICAL )  AddMultiClsData( cType AS String, uVal, nScope AS Numeric, aDatas AS Array OF String )  AddMultiData( cType AS String, uVal, nScope AS Numeric, aDatas AS Array OF String, x AS LOGICAL, lPer AS LOGICAL )  AddMethod( cName AS String, @MethodName(), nScope AS Numeric, lPersistent AS LOGICAL )  AddInLine( cName AS String, bBlock AS CodeBlock, nScope AS Numeric, lPersistent AS LOGICAL )  AddVirtual( cName AS String )  ModMethod( cName AS String, @MethodName(), nScope AS Numeric, lPersistent AS LOGICAL )  ModClsMethod( cName AS String, @MethodName(), nScope AS Numeric )  ModInline( cName AS String, bBlock AS CodeBlock, nScope AS Numeric, lPersistent AS LOGICAL )  SetOnError( @MethodName() )
+#line 85 "\Fwh1204\Include\FiveWin.Ch"
+   EXTERNAL GetProcAdd
+   EXTERNAL TActiveX
+
+
+
+
+extern errorsys
+#line 9 ".\Prg\Ctarem.prg"
+_HB_CLASS TCtaRem ; UTILITY FUNCTION TCtaRem(...); static s_oClass ; local oClassInstance ; local nScope ; nScope := 1 ; if s_oClass == NIL ; s_oClass := IIF(.F.,, HBClass():New( "TCtaRem" , {TMANT():classh} ) ) ; ;
+
+   _HB_MEMBER { cMru} ; IIF( !.F., s_oClass:AddMultiData(, "Address_book2_16", nScope + IIF( .F., 32, 0 ), { "cMru" }, .F., .F. ), )
+
+   _HB_MEMBER { cBitmap} ; IIF( !.F., s_oClass:AddMultiData(, ( 104 + ( 0 * 256 ) + ( 63 * 65536 ) ), nScope + IIF( .F., 32, 0 ), { "cBitmap" }, .F., .F. ), )
+
+   _HB_MEMBER { oBanco} ; IIF( !.F., s_oClass:AddMultiData(,, nScope + IIF( .F., 32, 0 ), { "oBanco" }, .F., .F. ), )
+
+   _HB_MEMBER DefineFiles(); IIF( .F., s_oClass:ModMethod( "DefineFiles", @TCtaRem_DefineFiles(), nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ), s_oClass:AddMethod( "DefineFiles", @TCtaRem_DefineFiles(), nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ));
+
+   _HB_MEMBER OpenFiles( lExclusive); IIF( .F., s_oClass:ModMethod( "OpenFiles", @TCtaRem_OpenFiles(), nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ), s_oClass:AddMethod( "OpenFiles", @TCtaRem_OpenFiles(), nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ));
+
+   _HB_MEMBER CloseFiles(); IIF( .F., s_oClass:ModMethod( "CloseFiles", @TCtaRem_CloseFiles(), nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ), s_oClass:AddMethod( "CloseFiles", @TCtaRem_CloseFiles(), nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ));
+
+   _HB_MEMBER OpenService( lExclusive); IIF( .F., s_oClass:ModMethod( "OpenService", @TCtaRem_OpenService(), nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ), s_oClass:AddMethod( "OpenService", @TCtaRem_OpenService(), nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ));
+
+   _HB_MEMBER Resource( nMode); IIF( .F., s_oClass:ModMethod( "Resource", @TCtaRem_Resource(), nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ), s_oClass:AddMethod( "Resource", @TCtaRem_Resource(), nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ));
+
+   _HB_MEMBER lGetCtaRem( cCodCta, oSay); IIF( .F., s_oClass:ModMethod( "lGetCtaRem", @TCtaRem_lGetCtaRem(), nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ), s_oClass:AddMethod( "lGetCtaRem", @TCtaRem_lGetCtaRem(), nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ));
+
+   _HB_MEMBER cRetCtaRem( cCodCta, oSay); IIF( .F., s_oClass:ModMethod( "cRetCtaRem", @TCtaRem_cRetCtaRem(), nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ), s_oClass:AddMethod( "cRetCtaRem", @TCtaRem_cRetCtaRem(), nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ));
+
+   _HB_MEMBER cRetCtaCon( cCodCta); IIF( .F., s_oClass:ModMethod( "cRetCtaCon", @TCtaRem_cRetCtaCon(), nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ), s_oClass:AddMethod( "cRetCtaCon", @TCtaRem_cRetCtaCon(), nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ));
+
+   _HB_MEMBER cRetCtaDto( cCodCta); IIF( .F., s_oClass:ModMethod( "cRetCtaDto", @TCtaRem_cRetCtaDto(), nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ), s_oClass:AddMethod( "cRetCtaDto", @TCtaRem_cRetCtaDto(), nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ));
+
+   _HB_MEMBER lValidResource( nMode, oDlg); IIF( .F., s_oClass:ModMethod( "lValidResource", @TCtaRem_lValidResource(), nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ), s_oClass:AddMethod( "lValidResource", @TCtaRem_lValidResource(), nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ));
+
+   _HB_MEMBER lCargaBanco(); IIF( .F., s_oClass:ModMethod( "lCargaBanco", @TCtaRem_lCargaBanco(), nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ), s_oClass:AddMethod( "lCargaBanco", @TCtaRem_lCargaBanco(), nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ));
+
+; IF .F. ; __clsActive(s_oClass:hClass) ; s_oClass:Refresh() ; ELSE ; s_oClass:Create() ; END ; oClassInstance := __clsInst( s_oClass:hClass ) ; IF __ObjHasMsg( oClassInstance, "InitClass" ); oClassInstance:InitClass( hb_aParams() ) ; END ; ELSE ; oClassInstance := __clsInst( s_oClass:hClass ) ; END ; IF PCount() > 0 ; DIVERT TO (@DivertConstructorCall()) OF s_oClass ; END ; RETURN oClassInstance AS CLASS TCtaRem ;
+
+
+
+UTILITY STATIC function TCtaRem_OpenFiles( lExclusive) ; local Self AS CLASS TCtaRem := QSelf() AS CLASS TCtaRem
+
+   local lOpen          := .T.
+   local oBlock         := ErrorBlock( {| oError | ApoloBreak( oError ) } )
+
+   IIF( lExclusive == nil, lExclusive := .F., ) ;
+
+   BEGIN SEQUENCE
+
+   if Empty( ::oDbf )
+      ::DefineFiles()
+   end
+
+   ::oBanco             := TBancos():Create()
+   ::oBanco:OpenFiles()
+
+   ::oDbf:Activate( .F., !( lExclusive ) )
+   ::cFirstKey          := ::oDbf:cCodCta
+
+   RECOVER
+
+      msgStop( "Imposible abrir todas las bases de datos" )
+
+      ::CloseFiles()
+
+      lOpen             := .F.
+
+   end
+
+   ErrorBlock( oBlock )
+
+RETURN ( lOpen )
+
+
+
+UTILITY STATIC function TCtaRem_OpenService( lExclusive) ; local Self AS CLASS TCtaRem := QSelf() AS CLASS TCtaRem
+
+   local lOpen          := .T.
+   local oBlock
+
+   IIF( lExclusive == nil, lExclusive := .F., ) ;
+
+   oBlock               := ErrorBlock( {| oError | ApoloBreak( oError ) } )
+   BEGIN SEQUENCE
+
+      if Empty( ::oDbf )
+         ::DefineFiles()
+      end
+
+      ::oDbf:Activate( .F., !( lExclusive ) )
+
+   RECOVER
+
+      msgStop( "Imposible abrir todas las bases de datos de cuentas de remesas." )
+
+      ::CloseFiles()
+
+      lOpen             := .F.
+
+   end
+
+   ErrorBlock( oBlock )
+
+RETURN ( lOpen )
+
+
+
+UTILITY STATIC function TCtaRem_CloseFiles() ; local Self AS CLASS TCtaRem := QSelf() AS CLASS TCtaRem
+
+   if !Empty( ::oDbf ) .AND. ::oDbf:Used()
+      ::oDbf:End()
+   end
+
+   if !Empty( ::oBanco )
+      ::oBanco:End()
+   end
+
+   ::oDbf      := nil
+   ::oBanco    := nil
+
+RETURN .T.
+
+
+
+UTILITY STATIC function TCtaRem_DefineFiles( cPath, cDriver) ; local Self AS CLASS TCtaRem := QSelf() AS CLASS TCtaRem
+
+   IIF( cPath == nil, cPath := ::cPath, ) ;
+   IIF( cDriver == nil, cDriver := cDriver(), ) ;
+
+   ::oDbf := DbfServer( "CTAREM.DBF", "CTAREM" ):New( "CTAREM.DBF", "CTAREM", ( cDriver ), "Cuentas de remesas", ( cPath ) )
+
+      ::oDbf:AddField( "cCodCta", "C", 3, 0, "@!",,,, "Código", .F., 40, .F., {} )
+      ::oDbf:AddField( "cNomCta", "C", 40, 0, "@!",,,, "Nombre", .F., 140, .F., {} )
+      ::oDbf:AddField( "cDirCta", "C", 80, 0,,,,, "Domicilio", .F., 200, .F., {} )
+      ::oDbf:AddField( "cEntBan", "C", 4, 0, "9999",,,, "Entidad", .F., 50, .F., {} )
+      ::oDbf:AddField( "cAgcBan", "C", 4, 0, "9999",,,, "Agencia", .F., 50, .F., {} )
+      ::oDbf:AddField( "cDgcBan", "C", 2, 0, "99",,,, "DC", .F., 40, .F., {} )
+      ::oDbf:AddField( "cCtaBan", "C", 10, 0, "9999999999",,,, "Cuenta", .F., 100, .F., {} )
+      ::oDbf:AddField( "cSufCta", "C", 3, 0, "@!", "000",,, "Sufijo", .F.,, .T., {} )
+      ::oDbf:AddField( "cSufN58", "C", 3, 0, "@!",,,, "Sufijo Norma 58", .F.,, .T., {} )
+      ::oDbf:AddField( "cCodPre", "C", 2, 0, "99",,,, "", .F.,, .T., {} )
+      ::oDbf:AddField( "cNifPre", "C", 9, 0, "@!",,,, "", .F.,, .T., {} )
+      ::oDbf:AddField( "cNomPre", "C", 40, 0, "@!",,,, "", .F.,, .T., {} )
+      ::oDbf:AddField( "cEntPre", "C", 4, 0, "9999",,,, "", .F.,, .T., {} )
+      ::oDbf:AddField( "cAgcPre", "C", 4, 0, "9999",,,, "", .F.,, .T., {} )
+      ::oDbf:AddField( "cSubCta", "C", 12, 0,,,,, "", .F.,, .T., {} )
+      ::oDbf:AddField( "cCtaDto", "C", 12, 0,,,,, "", .F.,, .T., {} )
+      ::oDbf:AddField( "cCodIne", "C", 6, 0,,,,, "", .F.,, .T., {} )
+      ::oDbf:AddField( "cBanco", "C", 50, 0,,,,, "", .F.,, .T., {} )
+
+      ::oDbf:AddIndex( "cCodCta", "CtaRem.Cdx", "cCodCta",,, .F., .F., "Código",,, .T., .F. )
+      ::oDbf:AddIndex( "cNomCta", "CtaRem.Cdx", "cNomCta",,, .F., .F., "Nombre",,, .T., .F. )
+
+
+
+RETURN ( ::oDbf )
+
+
+
+UTILITY STATIC function TCtaRem_Resource( nMode) ; local Self AS CLASS TCtaRem := QSelf() AS CLASS TCtaRem
+
+    local oDlg
+   local oGet
+   local oGetCta
+   local oGetDto
+   local cGetSubCta  := ""
+   local oGetSubCta
+   local cGetCtaDto  := ""
+   local oGetCtaDto
+   local oGetDgtBan
+   local oBanco
+   local oEntBnc
+   local oSucBnc
+   local oCtaBnc
+   local oEntPre
+   local oAgcPre
+
+   oDlg = TDialog():New(,,,, LblTitle( nMode ) + "cuentas de remesas", "CtaRem",, .F.,,,,,, .F.,,,,,, .F., )
+
+
+
+
+
+
+      oGet := TGetHlp():ReDefine( 100, { | u | If( PCount()==0, ::oDbf:cCodCta, ::oDbf:cCodCta:= u ) }, oDlg,, ::oDbf:FieldByName( "cCodCta" ):cPict, {||    NotValid( oGet, ::oDbf:cAlias, .T., "0" )},,,,,, .F., {||     ( nMode == 1 )},, .F., .F.,,,,,, nil,,, )
+
+
+
+
+
+      TGetHlp():ReDefine( 110, { | u | If( PCount()==0, ::oDbf:cNomCta, ::oDbf:cNomCta:= u ) }, oDlg,, ::oDbf:FieldByName( "cNomCta" ):cPict,,,,,,, .F., {||     ( nMode <> 3 )},, .F., .F.,,,,,, nil,,, )
+
+
+
+
+
+      TGetHlp():ReDefine( 120, { | u | If( PCount()==0, ::oDbf:cDirCta, ::oDbf:cDirCta:= u ) }, oDlg,, ::oDbf:FieldByName( "cDirCta" ):cPict,,,,,,, .F., {||         ( nMode <> 3 )},, .F., .F.,,,,,, nil,,, )
+
+
+
+
+
+      oBanco := TGetHlp():ReDefine( 300, { | u | If( PCount()==0, ::oDbf:cBanco, ::oDbf:cBanco:= u ) }, oDlg,,,,,,,,, .F., {||         ( nMode <> 3 )},, .F., .F.,,,,,, nil, "LUPA",, )
+
+         oBanco:bHelp   := {|| ::lCargaBanco( oBanco, oEntBnc, oSucBnc, oGetDgtBan, oCtaBnc, oEntPre, oAgcPre ) }
+
+
+
+
+
+
+      oEntBnc := TGetHlp():ReDefine( 130, { | u | If( PCount()==0, ::oDbf:cEntBan, ::oDbf:cEntBan:= u ) }, oDlg,, ::oDbf:FieldByName( "cEntBan" ):cPict, {||    ( lCalcDC( ::oDbf:cEntBan, ::oDbf:cAgcBan, ::oDbf:cDgcBan, ::oDbf:cCtaBan, oGetDgtBan ) )},,,,,, .F., {||         ( nMode <> 3 )},, .F., .F.,,,,,, nil,,, )
+
+
+
+
+
+
+      oSucBnc := TGetHlp():ReDefine( 140, { | u | If( PCount()==0, ::oDbf:cAgcBan, ::oDbf:cAgcBan:= u ) }, oDlg,, ::oDbf:FieldByName( "cAgcBan" ):cPict, {||    ( lCalcDC( ::oDbf:cEntBan, ::oDbf:cAgcBan, ::oDbf:cDgcBan, ::oDbf:cCtaBan, oGetDgtBan ) )},,,,,, .F., {||         ( nMode <> 3 )},, .F., .F.,,,,,, nil,,, )
+
+
+
+
+
+
+      oGetDgtBan := TGetHlp():ReDefine( 150, { | u | If( PCount()==0, ::oDbf:cDgcBan, ::oDbf:cDgcBan:= u ) }, oDlg,, ::oDbf:FieldByName( "cDgcBan" ):cPict, {||    ( lCalcDC( ::oDbf:cEntBan, ::oDbf:cAgcBan, ::oDbf:cDgcBan, ::oDbf:cCtaBan, oGetDgtBan ) )},,,,,, .F., {||         ( nMode <> 3 )},, .F., .F.,,,,,, nil,,, )
+
+
+
+
+
+
+      oCtaBnc := TGetHlp():ReDefine( 160, { | u | If( PCount()==0, ::oDbf:cCtaBan, ::oDbf:cCtaBan:= u ) }, oDlg,, ::oDbf:FieldByName( "cCtaBan" ):cPict, {||    ( lCalcDC( ::oDbf:cEntBan, ::oDbf:cAgcBan, ::oDbf:cDgcBan, ::oDbf:cCtaBan, oGetDgtBan ) )},,,,,, .F., {||         ( nMode <> 3 )},, .F., .F.,,,,,, nil,,, )
+
+
+
+
+
+      TGetHlp():ReDefine( 170, { | u | If( PCount()==0, ::oDbf:cSufCta, ::oDbf:cSufCta:= u ) }, oDlg,, ::oDbf:FieldByName( "cSufCta" ):cPict,,,,,,, .F., {||         ( nMode <> 3 )},, .F., .F.,,,,,, nil,,, )
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+      oGetCta := TGetHlp():ReDefine( 240, { | u | If( PCount()==0, ::oDbf:cSubCta, ::oDbf:cSubCta:= u ) }, oDlg,, ( Replicate( "X", nLenSubcuentaContaplus() ) ), {||    ( MkSubCta( oGetCta, {  ::oDbf:cSubCta, ::oDbf:cNomCta, "", ::oDbf:cDirCta, "", "", "" }, oGetSubCta ) )},,,,,, .F., {||     ( nLenCuentaContaplus() <> 0 .AND. nMode <> 3 )},, .F., .F.,,,,, {|Self|( BrwChkSubCta( oGetCta, oGetSubCta ) )}, nil, "LUPA",, )
+
+
+
+
+        oGetSubCta := TGetHlp():ReDefine( 241, { | u | If( PCount()==0, cGetSubCta, cGetSubCta:= u ) }, oDlg,,,,,,,,, .F., {||         .F.},, .F., .F.,,,,,, nil,,, )
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+      oGetDto := TGetHlp():ReDefine( 250, { | u | If( PCount()==0, ::oDbf:cCtaDto, ::oDbf:cCtaDto:= u ) }, oDlg,, ( Replicate( "X", nLenSubcuentaContaplus() ) ), {||    ( MkSubCta( oGetDto, {  ::oDbf:cSubCta, ::oDbf:cNomCta, "", ::oDbf:cDirCta, "", "", "" }, oGetCtaDto ) )},,,,,, .F., {||     ( nLenCuentaContaplus() <> 0 .AND. nMode <> 3 )},, .F., .F.,,,,, {|Self|( BrwChkSubCta( oGetDto, oGetCtaDto ) )}, nil, "LUPA",, )
+
+
+
+
+      oGetCtaDto := TGetHlp():ReDefine( 251, { | u | If( PCount()==0, cGetCtaDto, cGetCtaDto:= u ) }, oDlg,,,,,,,,, .F., {||         .F.},, .F., .F.,,,,,, nil,,, )
+
+
+
+
+
+      TGetHlp():ReDefine( 190, { | u | If( PCount()==0, ::oDbf:cCodPre, ::oDbf:cCodPre:= u ) }, oDlg,, ::oDbf:FieldByName( "cCodPre" ):cPict,,,,,,, .F., {||         ( nMode <> 3 )},, .F., .F.,,,,,, nil,,, )
+
+
+
+
+
+      TGetHlp():ReDefine( 200, { | u | If( PCount()==0, ::oDbf:cNomPre, ::oDbf:cNomPre:= u ) }, oDlg,, ::oDbf:FieldByName( "cNomPre" ):cPict,,,,,,, .F., {||         ( nMode <> 3 )},, .F., .F.,,,,,, nil,,, )
+
+
+
+
+
+      TGetHlp():ReDefine( 210, { | u | If( PCount()==0, ::oDbf:cNifPre, ::oDbf:cNifPre:= u ) }, oDlg,, ::oDbf:FieldByName( "cNifPre" ):cPict,,,,,,, .F., {||         ( nMode <> 3 )},, .F., .F.,,,,,, nil,,, )
+
+
+
+
+
+      oEntPre := TGetHlp():ReDefine( 220, { | u | If( PCount()==0, ::oDbf:cEntPre, ::oDbf:cEntPre:= u ) }, oDlg,, ::oDbf:FieldByName( "cEntPre" ):cPict,,,,,,, .F., {||         ( nMode <> 3 )},, .F., .F.,,,,,, nil,,, )
+
+
+
+
+
+      oAgcPre := TGetHlp():ReDefine( 230, { | u | If( PCount()==0, ::oDbf:cAgcPre, ::oDbf:cAgcPre:= u ) }, oDlg,, ::oDbf:FieldByName( "cAgcPre" ):cPict,,,,,,, .F., {||         ( nMode <> 3 )},, .F., .F.,,,,,, nil,,, )
+
+
+
+
+      TGetHlp():ReDefine( 260, { | u | If( PCount()==0, ::oDbf:cCodIne, ::oDbf:cCodIne:= u ) }, oDlg,,,,,,,,, .T., {||         ( nMode <> 3 )},, .F., .F.,,,,,, nil,,, )
+
+
+
+
+
+      TButton():ReDefine( 1, {||( ::lValidResource( nMode, oGet, oDlg ) )}, oDlg,,, .F., {||         ( nMode <> 3 )},,, .F. )
+
+
+
+
+
+        TButton():ReDefine( 2, {||( oDlg:end() )}, oDlg,,, .F.,,,, .T. )
+
+   if nMode <> 3
+      oDlg:AddFastKey( 116, {|| ::lValidResource( nMode, oGet, oDlg ) } )
+   end
+
+   oDlg:bStart    := { || oGet:SetFocus() }
+
+    oDlg:Activate( oDlg:bLClicked, oDlg:bMoved, oDlg:bPainted, .T.,,,, oDlg:bRClicked,,, )
+
+RETURN ( oDlg:nResult == 1 )
+
+
+
+UTILITY STATIC function TCtaRem_lCargaBanco( oBnc, oEnt, oSuc, oDig, oCta, oEntPre, oAgcPre) ; local Self AS CLASS TCtaRem := QSelf() AS CLASS TCtaRem
+
+   local cBanco   := ::oBanco:Buscar( , "cCodBnc" )
+
+   if !Empty( cBanco )
+
+      oBnc:cText( oRetFld( cBanco, ::oBanco:oDbf, "cNomBnc" ) )
+      oEnt:cText( oRetFld( cBanco, ::oBanco:oDbf, "cEntBnc" ) )
+      oSuc:cText( oRetFld( cBanco, ::oBanco:oDbf, "cOfiBnc" ) )
+      oDig:cText( Space( 2 ) )
+      oCta:cText( Space( 10 ) )
+
+      oEntPre:cText( oRetFld( cBanco, ::oBanco:oDbf, "cEntBnc" ) )
+      oAgcPre:cText( oRetFld( cBanco, ::oBanco:oDbf, "cOfiBnc" ) )
+
+
+
+
+
+
+
+
+
+
+
+
+   end
+
+Return .T.
+
+
+
+UTILITY STATIC function TCtaRem_lValidResource( nMode, oGet, oDlg) ; local Self AS CLASS TCtaRem := QSelf() AS CLASS TCtaRem
+
+   if nMode == 1 .OR. nMode == 4
+
+      if ::oDbf:SeekInOrd( ::oDbf:cCodCta, "cCodCta" )
+         MsgStop( "Código ya existe " + Rtrim( ::oDbf:cCodCta ) )
+         return nil
+      end
+
+   end
+
+   if Empty( ::oDbf:cNomCta )
+      MsgStop( "El nombre de la cuenta de remesa no puede estar vacío." )
+      Return nil
+   end
+
+Return ( oDlg:end( 1 ) )
+
+
+
+UTILITY STATIC function TCtaRem_lGetCtaRem( oCodCta, oSay) ; local Self AS CLASS TCtaRem := QSelf() AS CLASS TCtaRem
+
+   local lRet     := .F.
+   local xValor   := oCodCta:VarGet()
+
+   if Empty( xValor )
+      IIF( oSay <> nil, oSay:cText( "" ), )
+      return .T.
+   else
+      xValor      := RJustObj( oCodCta, "0" )
+   end
+
+   if ::oDbf:SeekInOrd( xValor, "cCodCta" )
+      oSay:cText( ::oDbf:cNomCta )
+      lRet        := .T.
+   else
+      msgStop( "Cuenta de remesa no encontrada" )
+   end
+
+RETURN ( lRet )
+
+
+
+UTILITY STATIC function TCtaRem_cRetCtaRem( cCodCta) ; local Self AS CLASS TCtaRem := QSelf() AS CLASS TCtaRem
+
+   local cRet  := ""
+
+   if !Empty( ::oDbf )
+      if ::oDbf:SeekInOrd( cCodCta, "cCodCta" )
+         cRet  := ::oDbf:cNomCta
+      end
+   end
+
+RETURN ( cRet )
+
+
+
+UTILITY STATIC function TCtaRem_cRetCtaCon( cCodCta) ; local Self AS CLASS TCtaRem := QSelf() AS CLASS TCtaRem
+
+   local cRet  := ""
+
+   if ::oDbf:SeekInOrd( cCodCta, "cCodCta" )
+      cRet     := ::oDbf:cSubCta
+   end
+
+RETURN ( cRet )
+
+
+
+UTILITY STATIC function TCtaRem_cRetCtaDto( cCodCta) ; local Self AS CLASS TCtaRem := QSelf() AS CLASS TCtaRem
+
+   local cRet  := ""
+
+   if ::oDbf:SeekInOrd( cCodCta, "cCodCta" )
+      cRet     := ::oDbf:cCtaDto
+   end
+
+RETURN ( cRet )

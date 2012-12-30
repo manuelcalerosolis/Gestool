@@ -1,0 +1,134 @@
+#line 112 "hbclass.ch"
+   DYNAMIC DivertConstructorCall
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+DECLARE HBClass  New( cName AS String, OPTIONAL SuperParams ) AS CLASS HBClass  Create() AS Object  Instance() AS Object  AddClsMethod( cName AS String, @MethodName(), nScope AS Numeric, n2 AS Numeric, n3 AS Numeric )  AddDelegate( cName AS String, cDelegate AS String, cObject AS String, nScope AS Numeric, lPersistent AS LOGICAL )  AddMultiClsData( cType AS String, uVal, nScope AS Numeric, aDatas AS Array OF String )  AddMultiData( cType AS String, uVal, nScope AS Numeric, aDatas AS Array OF String, x AS LOGICAL, lPer AS LOGICAL )  AddMethod( cName AS String, @MethodName(), nScope AS Numeric, lPersistent AS LOGICAL )  AddInLine( cName AS String, bBlock AS CodeBlock, nScope AS Numeric, lPersistent AS LOGICAL )  AddVirtual( cName AS String )  ModMethod( cName AS String, @MethodName(), nScope AS Numeric, lPersistent AS LOGICAL )  ModClsMethod( cName AS String, @MethodName(), nScope AS Numeric )  ModInline( cName AS String, bBlock AS CodeBlock, nScope AS Numeric, lPersistent AS LOGICAL )  SetOnError( @MethodName() )
+#line 85 "\Fwh1204\Include\FiveWin.Ch"
+   EXTERNAL GetProcAdd
+   EXTERNAL TActiveX
+
+
+
+
+extern errorsys
+#line 8 ".\Prg\TInfseanum.prg"
+_HB_CLASS TInfSeaNum ; UTILITY FUNCTION TInfSeaNum(...); static s_oClass ; local oClassInstance ; local nScope ; nScope := 1 ; if s_oClass == NIL ; s_oClass := IIF(.F.,, HBClass():New( "TInfSeaNum" , {TInfGen():classh} ) ) ; ;
+
+   _HB_MEMBER Create(); IIF( .F., s_oClass:ModMethod( "Create", @TInfSeaNum_Create(), nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ), s_oClass:AddMethod( "Create", @TInfSeaNum_Create(), nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ));
+
+   _HB_MEMBER lResource( cFld); IIF( .F., s_oClass:ModMethod( "lResource", @TInfSeaNum_lResource(), nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ), s_oClass:AddMethod( "lResource", @TInfSeaNum_lResource(), nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ));
+
+   _HB_MEMBER OpenFiles(); IIF( .F., s_oClass:ModMethod( "OpenFiles", @TInfSeaNum_OpenFiles(), nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ), s_oClass:AddMethod( "OpenFiles", @TInfSeaNum_OpenFiles(), nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ));
+
+   _HB_MEMBER CloseFiles(); IIF( .F., s_oClass:ModMethod( "CloseFiles", @TInfSeaNum_CloseFiles(), nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ), s_oClass:AddMethod( "CloseFiles", @TInfSeaNum_CloseFiles(), nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ));
+
+   _HB_MEMBER lGenerate(); IIF( .F., s_oClass:ModMethod( "lGenerate", @TInfSeaNum_lGenerate(), nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ), s_oClass:AddMethod( "lGenerate", @TInfSeaNum_lGenerate(), nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ));
+
+; IF .F. ; __clsActive(s_oClass:hClass) ; s_oClass:Refresh() ; ELSE ; s_oClass:Create() ; END ; oClassInstance := __clsInst( s_oClass:hClass ) ; IF __ObjHasMsg( oClassInstance, "InitClass" ); oClassInstance:InitClass( hb_aParams() ) ; END ; ELSE ; oClassInstance := __clsInst( s_oClass:hClass ) ; END ; IF PCount() > 0 ; DIVERT TO (@DivertConstructorCall()) OF s_oClass ; END ; RETURN oClassInstance AS CLASS TInfSeaNum ;
+
+
+
+UTILITY STATIC function TInfSeaNum_OpenFiles() ; local Self AS CLASS TInfSeaNum := QSelf() AS CLASS TInfSeaNum
+
+RETURN ( Self )
+
+
+
+UTILITY STATIC function TInfSeaNum_CloseFiles() ; local Self AS CLASS TInfSeaNum := QSelf() AS CLASS TInfSeaNum
+
+RETURN ( Self )
+
+
+
+UTILITY STATIC function TInfSeaNum_Create() ; local Self AS CLASS TInfSeaNum := QSelf() AS CLASS TInfSeaNum
+
+   ::AddField( "cTipDoc",  "C",27, 0, {|| "@!" },     "Tip. Doc.",    .T., "Tipo de documento",     25, .F.  )
+   ::AddField( "cNumDoc",  "C",12, 0, {|| "@!" },     "Num. Doc.",    .T., "Número del documento",  15, .F.  )
+   ::AddField( "cCodArt",  "C",18, 0, {|| "@!" },     "Cod. Art.",    .T., "Código del artículo",   18, .F.  )
+   ::AddField( "dFecDoc",  "D", 8, 0, {|| "@!" },     "Fecha",        .T., "Fecha del documento",   12, .F.  )
+   ::AddField( "cCodCli",  "C",12, 0, {|| "@!" },     "Cod. Cli/Prv", .T., "Código del Cli/Prv",    15, .F.  )
+   ::AddField( "cCliPrv",  "C",50, 0, {|| "@!" },     "Nom. Cli/Prv", .T., "Nombre del Cli/Prv",    50, .F.  )
+   ::AddField( "cCodObr",  "C",10, 0, {|| "@!" },     "Obra",         .T., "Obra",                  10, .F.  )
+
+   ::AddTmpIndex ( "dFecDoc", "dFecDoc" )
+
+   ::lDefSerInf := .F.
+
+RETURN ( Self )
+
+
+
+UTILITY STATIC function TInfSeaNum_lResource( cFld) ; local Self AS CLASS TInfSeaNum := QSelf() AS CLASS TInfSeaNum
+
+   if !::StdResource( "INF_TRAZALOTE" )
+      return .F.
+   end
+
+   ::oBtnFilter:Disable()
+
+   ::oMtrInf:SetTotal( ::xOthers:Lastrec() )
+
+RETURN .T.
+
+
+
+
+
+
+UTILITY STATIC function TInfSeaNum_lGenerate() ; local Self AS CLASS TInfSeaNum := QSelf() AS CLASS TInfSeaNum
+
+   ::oDlg:Disable()
+   ::oDbf:Zap()
+
+   ::xOthers:GoTop()
+
+   ::aHeader      := {  {|| "Fecha   : " + Dtoc( Date() ) } }
+
+   while !::xOthers:Eof()
+
+
+      if ::xOthers:dFecDoc >= ::dIniInf                                                               .AND. ::xOthers:dFecDoc <= ::dFinInf
+
+         ::oDbf:Append()
+
+         ::oDbf:cTipDoc     := AllTrim( ::xOthers:cTipDoc )
+         ::oDbf:cNumDoc     := ::xOthers:cNumDoc
+         ::oDbf:cCodArt     := ::xOthers:cCodArt
+         ::oDbf:dFecDoc     := ::xOthers:dFecDoc
+         ::oDbf:cCodCli     := ::xOthers:cCodCli
+         ::oDbf:cCliPrv     := ::xOthers:cCliPrv
+         ::oDbf:cCodObr     := ::xOthers:cCodObr
+
+         ::oDbf:Save()
+
+      end
+
+      ::xOthers:Skip()
+
+      ::oMtrInf:AutoInc( ::xOthers:OrdKeyNo() )
+
+   end
+
+   ::oMtrInf:AutoInc( ::xOthers:LastRec() )
+
+   ::oDlg:Enable()
+
+   ::oBtnFilter:Disable()
+
+   ::xOthers:GoTop()
+
+RETURN ( ::oDbf:LastRec() > 0 )

@@ -1,0 +1,1898 @@
+#line 112 "hbclass.ch"
+   DYNAMIC DivertConstructorCall
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+DECLARE HBClass  New( cName AS String, OPTIONAL SuperParams ) AS CLASS HBClass  Create() AS Object  Instance() AS Object  AddClsMethod( cName AS String, @MethodName(), nScope AS Numeric, n2 AS Numeric, n3 AS Numeric )  AddDelegate( cName AS String, cDelegate AS String, cObject AS String, nScope AS Numeric, lPersistent AS LOGICAL )  AddMultiClsData( cType AS String, uVal, nScope AS Numeric, aDatas AS Array OF String )  AddMultiData( cType AS String, uVal, nScope AS Numeric, aDatas AS Array OF String, x AS LOGICAL, lPer AS LOGICAL )  AddMethod( cName AS String, @MethodName(), nScope AS Numeric, lPersistent AS LOGICAL )  AddInLine( cName AS String, bBlock AS CodeBlock, nScope AS Numeric, lPersistent AS LOGICAL )  AddVirtual( cName AS String )  ModMethod( cName AS String, @MethodName(), nScope AS Numeric, lPersistent AS LOGICAL )  ModClsMethod( cName AS String, @MethodName(), nScope AS Numeric )  ModInline( cName AS String, bBlock AS CodeBlock, nScope AS Numeric, lPersistent AS LOGICAL )  SetOnError( @MethodName() )
+#line 85 "\Fwh1204\Include\FiveWin.Ch"
+   EXTERNAL GetProcAdd
+   EXTERNAL TActiveX
+
+
+
+
+extern errorsys
+#line 44 ".\Prg\ReportC3.prg"
+_HB_CLASS TReport ; UTILITY FUNCTION TReport(...); static s_oClass ; local oClassInstance ; local nScope ; nScope := 1 ; if s_oClass == NIL ; s_oClass := IIF(.F.,, HBClass():New( "TReport" , { HBObject():Classh } ) ) ;
+
+   _HB_MEMBER { oDevice, oTitle, oHeader, oFooter, oRptWnd, oShdBrush, oPenHorz} ; IIF( !.F., s_oClass:AddMultiData(,, nScope + IIF( .F., 32, 0 ), { "oDevice" , "oTitle" , "oHeader" , "oFooter" , "oRptWnd" , "oShdBrush" , "oPenHorz" }, .F., .F. ), )
+
+   _HB_MEMBER { aGroups, aColumns, aFont, aCols, aText, aData, aPen,  aDataHeight, aClrText} ; IIF( !.F., s_oClass:AddMultiData(,, nScope + IIF( .F., 32, 0 ), { "aGroups" , "aColumns" , "aFont" , "aCols" , "aText" , "aData" , "aPen" , "aDataHeight" , "aClrText" }, .F., .F. ), )
+
+
+   _HB_MEMBER { bFor, bWhile , bInit, bEnd, bStartLine, bEndLine, bStartPage,  bEndPage, bStartGroup, bEndGroup, bSkip, bStdFont, bPreview,  bChange, bPostEnd, bPostPage, bPostGroup, bStartRecord, bEndRecord} ; IIF( !.F., s_oClass:AddMultiData(,, nScope + IIF( .F., 32, 0 ), { "bFor" , "bWhile" , "bInit" , "bEnd" , "bStartLine" , "bEndLine" , "bStartPage" , "bEndPage" , "bStartGroup" , "bEndGroup" , "bSkip" , "bStdFont" , "bPreview" , "bChange" , "bPostEnd" , "bPostPage" , "bPostGroup" , "bStartRecord" , "bEndRecord" }, .F., .F. ), )
+
+   _HB_MEMBER { cRptFile, cResName, cFile, cName, cPageTotal, cGrandTotal, cCharPattern} ; IIF( !.F., s_oClass:AddMultiData(,, nScope + IIF( .F., 32, 0 ), { "cRptFile" , "cResName" , "cFile" , "cName" , "cPageTotal" , "cGrandTotal" , "cCharPattern" }, .F., .F. ), )
+
+
+
+
+
+   _HB_MEMBER { nWidth, nHeight, nMargin, nRow, nPage, nMaxTitle, nMaxData, nSeparator, nLeftMargin, nRightMargin, nTopMargin, nDnMargin, nTitleRow, nBottomRow, nStdLineHeight, nRptWidth, nLogPixX, nLogPixY, nFirstdrow, nLastdrow, nTitleHeight, nCounter, nTotalLine, nGroupLine, nTitleUpLine, nTitleDnLine, nClrShadow, nDataLine} ; IIF( !.F., s_oClass:AddMultiData(,, nScope + IIF( .F., 32, 0 ), { "nWidth" , "nHeight" , "nMargin" , "nRow" , "nPage" , "nMaxTitle" , "nMaxData" , "nSeparator" , "nLeftMargin" , "nRightMargin" , "nTopMargin" , "nDnMargin" , "nTitleRow" , "nBottomRow" , "nStdLineHeight" , "nRptWidth" , "nLogPixX" , "nLogPixY" , "nFirstdrow" , "nLastdrow" , "nTitleHeight" , "nCounter" , "nTotalLine" , "nGroupLine" , "nTitleUpLine" , "nTitleDnLine" , "nClrShadow" , "nDataLine" }, .F., .F. ), )
+   _HB_MEMBER { hOldRes} ; IIF( !.F., s_oClass:AddMultiData(,, nScope + IIF( .F., 32, 0 ), { "hOldRes" }, .F., .F. ), )
+
+
+   _HB_MEMBER { lSummary, lTotal, lFinish, lStable, lGroup, lPrinter, lScreen, lFirstRow, lCreated, lBreak, lShadow, lGrid, lJoin, lSeparator, lAutoLand, lIsNarrow, lBoxOnTotal, lNoCancel, lPageTotal} ; IIF( !.F., s_oClass:AddMultiData(,, nScope + IIF( .F., 32, 0 ), { "lSummary" , "lTotal" , "lFinish" , "lStable" , "lGroup" , "lPrinter" , "lScreen" , "lFirstRow" , "lCreated" , "lBreak" , "lShadow" , "lGrid" , "lJoin" , "lSeparator" , "lAutoLand" , "lIsNarrow" , "lBoxOnTotal" , "lNoCancel" , "lPageTotal" }, .F., .F. ), )
+   _HB_MEMBER { Cargo} ; IIF( !.F., s_oClass:AddMultiData(,, nScope + IIF( .F., 32, 0 ), { "Cargo" }, .F., .F. ), )
+
+   _HB_MEMBER { lOnProcess} ; IIF( !.F., s_oClass:AddMultiClsData(,, nScope + IIF( .F., 32, 0 ) + 64, { "lOnProcess" }, .F. ), )
+
+
+
+   _HB_MEMBER New( aTitle, aHead, aFoot, aFont, lSummary, cRptFile,  cResName, lPrinter, lScreen, cFile, oDevice,  cName, cTFmt, cHFmt, cFFmt) AS CLASS TReport; IIF( .F., s_oClass:ModMethod( "New", @TReport_New(), nScope + IIF( .T., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ), s_oClass:AddMethod( "New", @TReport_New(), nScope + IIF( .T., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ));
+
+
+
+
+   _HB_MEMBER AddColumn(oColumn); IIF( .F., s_oClass:ModInline( "AddColumn", {|Self,oColumn | Self, Aadd(::aColumns,oColumn) }, nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ), s_oClass:AddInline( "AddColumn", {|Self,oColumn | Self, Aadd(::aColumns,oColumn) }, nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ) )
+
+
+   _HB_MEMBER DelColumn(nColumn); IIF( .F., s_oClass:ModInline( "DelColumn", {|Self,nColumn | Self, Adel(::aColumns,nColumn) , Asize(::aColumns,len(::aColumns)-1) }, nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ), s_oClass:AddInline( "DelColumn", {|Self,nColumn | Self, Adel(::aColumns,nColumn) , Asize(::aColumns,len(::aColumns)-1) }, nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ) )
+
+
+
+   _HB_MEMBER InsColumn(oColumn , nColumn); IIF( .F., s_oClass:ModInline( "InsColumn", {|Self,oColumn , nColumn | Self, Ains(::aColumns,nColumn) , ::aColumns[nColumn]:= oColumn }, nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ), s_oClass:AddInline( "InsColumn", {|Self,oColumn , nColumn | Self, Ains(::aColumns,nColumn) , ::aColumns[nColumn]:= oColumn }, nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ) )
+
+   _HB_MEMBER AddGroup(oGroup); IIF( .F., s_oClass:ModInline( "AddGroup", {|Self,oGroup | Self, Aadd(::aGroups,oGroup) }, nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ), s_oClass:AddInline( "AddGroup", {|Self,oGroup | Self, Aadd(::aGroups,oGroup) }, nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ) )
+
+
+   _HB_MEMBER DelGroup(nGroup); IIF( .F., s_oClass:ModInline( "DelGroup", {|Self,nGroup | Self, Adel(::aGroups,nGroup)   , Asize(::aGroups,len(::aGroups)-1) }, nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ), s_oClass:AddInline( "DelGroup", {|Self,nGroup | Self, Adel(::aGroups,nGroup)   , Asize(::aGroups,len(::aGroups)-1) }, nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ) )
+
+   _HB_MEMBER Stabilize(); IIF( .F., s_oClass:ModMethod( "Stabilize", @TReport_Stabilize(), nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ), s_oClass:AddMethod( "Stabilize", @TReport_Stabilize(), nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ));
+   _HB_MEMBER Skip( n); IIF( .F., s_oClass:ModMethod( "Skip", @TReport_Skip(), nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ), s_oClass:AddMethod( "Skip", @TReport_Skip(), nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ));
+
+   _HB_MEMBER Init(); IIF( .F., s_oClass:ModMethod( "Init", @TReport_Init(), nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ), s_oClass:AddMethod( "Init", @TReport_Init(), nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ));
+   _HB_MEMBER End(); IIF( .F., s_oClass:ModMethod( "End", @TReport_End(), nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ), s_oClass:AddMethod( "End", @TReport_End(), nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ));
+
+   _HB_MEMBER StartLine( nHeight); IIF( .F., s_oClass:ModMethod( "StartLine", @TReport_StartLine(), nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ), s_oClass:AddMethod( "StartLine", @TReport_StartLine(), nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ));
+   _HB_MEMBER EndLine( nHeight); IIF( .F., s_oClass:ModMethod( "EndLine", @TReport_EndLine(), nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ), s_oClass:AddMethod( "EndLine", @TReport_EndLine(), nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ));
+   _HB_MEMBER StartGroup( nGroup); IIF( .F., s_oClass:ModMethod( "StartGroup", @TReport_StartGroup(), nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ), s_oClass:AddMethod( "StartGroup", @TReport_StartGroup(), nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ));
+   _HB_MEMBER EndGroup( nGroup); IIF( .F., s_oClass:ModMethod( "EndGroup", @TReport_EndGroup(), nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ), s_oClass:AddMethod( "EndGroup", @TReport_EndGroup(), nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ));
+   _HB_MEMBER StartPage(); IIF( .F., s_oClass:ModMethod( "StartPage", @TReport_StartPage(), nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ), s_oClass:AddMethod( "StartPage", @TReport_StartPage(), nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ));
+   _HB_MEMBER EndPage(); IIF( .F., s_oClass:ModMethod( "EndPage", @TReport_EndPage(), nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ), s_oClass:AddMethod( "EndPage", @TReport_EndPage(), nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ));
+   _HB_MEMBER NeedNewPage(); IIF( .F., s_oClass:ModInline( "NeedNewPage", {|Self | Self, (::nRow+::nStdLineHeight >= ::nBottomRow) }, nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ), s_oClass:AddInline( "NeedNewPage", {|Self | Self, (::nRow+::nStdLineHeight >= ::nBottomRow) }, nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ) )
+
+   _HB_MEMBER NewLine(nHeight); IIF( .F., s_oClass:ModInline( "NewLine", {|Self,nHeight | Self, ( ::StartLine( nHeight ), iif( !::lFirstRow, ::EndLine( nHeight ), ) ) }, nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ), s_oClass:AddInline( "NewLine", {|Self,nHeight | Self, ( ::StartLine( nHeight ), iif( !::lFirstRow, ::EndLine( nHeight ), ) ) }, nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ) )
+
+   _HB_MEMBER BackLine( nLine); IIF( .F., s_oClass:ModMethod( "BackLine", @TReport_BackLine(), nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ), s_oClass:AddMethod( "BackLine", @TReport_BackLine(), nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ));
+
+   _HB_MEMBER ColTitle(); IIF( .F., s_oClass:ModMethod( "ColTitle", @TReport_ColTitle(), nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ), s_oClass:AddMethod( "ColTitle", @TReport_ColTitle(), nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ));
+   _HB_MEMBER TotalLine( cChar, nGrid); IIF( .F., s_oClass:ModMethod( "TotalLine", @TReport_TotalLine(), nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ), s_oClass:AddMethod( "TotalLine", @TReport_TotalLine(), nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ));
+   _HB_MEMBER PageTotal(); IIF( .F., s_oClass:ModMethod( "PageTotal", @TReport_PageTotal(), nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ), s_oClass:AddMethod( "PageTotal", @TReport_PageTotal(), nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ));
+
+
+
+   _HB_MEMBER Activate( bFor, bWhile, bInit, bEnd, bStartPage,  bEndPage, bStartGroup, bEndGroup,  bStartLine, bEndLine, bChange); IIF( .F., s_oClass:ModMethod( "Activate", @TReport_Activate(), nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ), s_oClass:AddMethod( "Activate", @TReport_Activate(), nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ));
+
+   _HB_MEMBER Play(); IIF( .F., s_oClass:ModMethod( "Play", @TReport_Play(), nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ), s_oClass:AddMethod( "Play", @TReport_Play(), nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ));
+
+   _HB_MEMBER Margin( nValue,nType,nScale); IIF( .F., s_oClass:ModMethod( "Margin", @TReport_Margin(), nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ), s_oClass:AddMethod( "Margin", @TReport_Margin(), nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ));
+
+   _HB_MEMBER Say( nCol, xText, nFont, nPad, nRow); IIF( .F., s_oClass:ModMethod( "Say", @TReport_Say(), nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ), s_oClass:AddMethod( "Say", @TReport_Say(), nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ));
+
+   _HB_MEMBER SayBitmap( nRow, nCol, cBitmap, nWidth, nHeight, nScale); IIF( .F., s_oClass:ModMethod( "SayBitmap", @TReport_SayBitmap(), nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ), s_oClass:AddMethod( "SayBitmap", @TReport_SayBitmap(), nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ));
+   _HB_MEMBER Box( nRow, nCol, nBottom, nRight, nPen, nScale); IIF( .F., s_oClass:ModMethod( "Box", @TReport_Box(), nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ), s_oClass:AddMethod( "Box", @TReport_Box(), nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ));
+   _HB_MEMBER Line( nTop, nLeft, nBottom, nRight, nPen, nScale); IIF( .F., s_oClass:ModMethod( "Line", @TReport_Line(), nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ), s_oClass:AddMethod( "Line", @TReport_Line(), nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ));
+   _HB_MEMBER Shadow( nHeight); IIF( .F., s_oClass:ModMethod( "Shadow", @TReport_Shadow(), nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ), s_oClass:AddMethod( "Shadow", @TReport_Shadow(), nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ));
+   _HB_MEMBER Grid( nHeight, nRow, cChar); IIF( .F., s_oClass:ModMethod( "Grid", @TReport_Grid(), nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ), s_oClass:AddMethod( "Grid", @TReport_Grid(), nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ));
+   _HB_MEMBER Separator( nPen, nRow); IIF( .F., s_oClass:ModMethod( "Separator", @TReport_Separator(), nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ), s_oClass:AddMethod( "Separator", @TReport_Separator(), nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ));
+
+
+
+
+   _HB_MEMBER CellView(); IIF( .F., s_oClass:ModInline( "CellView", {|Self | Self, ::lJoin       := .T. , ::lSeparator  := .F. , ::lBoxOnTotal := .T. , Aeval(::aColumns,{|val| val:lGrid := .T.}) }, nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ), s_oClass:AddInline( "CellView", {|Self | Self, ::lJoin       := .T. , ::lSeparator  := .F. , ::lBoxOnTotal := .T. , Aeval(::aColumns,{|val| val:lGrid := .T.}) }, nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ) )
+
+
+
+
+   _HB_MEMBER UderLine(); IIF( .F., s_oClass:ModInline( "UderLine", {|Self | Self, ::lJoin       := .F. , ::lSeparator  := .F. , ::lBoxOnTotal := .F. , Aeval(::aColumns,{|val| val:lUnderLine := .T.}) }, nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ), s_oClass:AddInline( "UderLine", {|Self | Self, ::lJoin       := .F. , ::lSeparator  := .F. , ::lBoxOnTotal := .F. , Aeval(::aColumns,{|val| val:lUnderLine := .T.}) }, nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ) )
+
+
+
+
+   _HB_MEMBER PhyWidth(nScale); IIF( .F., s_oClass:ModInline( "PhyWidth", {|Self,nScale | Self, ( iif(nScale==NIL,nScale:=1 ,), PrnGetSize(::oDevice:hDC)[1] / ::nLogPixX *  iif(nScale==1 ,1 ,2.54)                     ) }, nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ), s_oClass:AddInline( "PhyWidth", {|Self,nScale | Self, ( iif(nScale==NIL,nScale:=1 ,), PrnGetSize(::oDevice:hDC)[1] / ::nLogPixX *  iif(nScale==1 ,1 ,2.54)                     ) }, nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ) )
+
+
+
+
+   _HB_MEMBER PhyHeight(nScale); IIF( .F., s_oClass:ModInline( "PhyHeight", {|Self,nScale | Self, ( iif(nScale==NIL,nScale:=1 ,), PrnGetSize(::oDevice:hDC)[2] / ::nLogPixY *  iif(nScale==1 ,1 ,2.54)                     ) }, nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ), s_oClass:AddInline( "PhyHeight", {|Self,nScale | Self, ( iif(nScale==NIL,nScale:=1 ,), PrnGetSize(::oDevice:hDC)[2] / ::nLogPixY *  iif(nScale==1 ,1 ,2.54)                     ) }, nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ) )
+
+
+
+
+
+   _HB_MEMBER SetTxtColor(nColor,nFont); IIF( .F., s_oClass:ModInline( "SetTxtColor", {|Self,nColor,nFont | Self, (iif(nColor <> NIL .AND.                           nFont   > 0   .AND.                           nFont   <= len(::aClrText)                  , ::aClrText[nFont] := nColor, ) ) }, nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ), s_oClass:AddInline( "SetTxtColor", {|Self,nColor,nFont | Self, (iif(nColor <> NIL .AND.                           nFont   > 0   .AND.                           nFont   <= len(::aClrText)                  , ::aClrText[nFont] := nColor, ) ) }, nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ) )
+
+   _HB_MEMBER SetShdColor(nColor); IIF( .F., s_oClass:ModInline( "SetShdColor", {|Self,nColor | Self, ::nClrShadow := nColor }, nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ), s_oClass:AddInline( "SetShdColor", {|Self,nColor | Self, ::nClrShadow := nColor }, nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ) )
+
+   _HB_MEMBER SetPenColor( nColor); IIF( .F., s_oClass:ModMethod( "SetPenColor", @TReport_SetPenColor(), nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ), s_oClass:AddMethod( "SetPenColor", @TReport_SetPenColor(), nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ));
+
+; IF .F. ; __clsActive(s_oClass:hClass) ; s_oClass:Refresh() ; ELSE ; s_oClass:Create() ; END ; oClassInstance := __clsInst( s_oClass:hClass ) ; IF __ObjHasMsg( oClassInstance, "InitClass" ); oClassInstance:InitClass( hb_aParams() ) ; END ; ELSE ; oClassInstance := __clsInst( s_oClass:hClass ) ; END ; IF PCount() > 0 ; DIVERT TO (@DivertConstructorCall()) OF s_oClass ; END ; RETURN oClassInstance AS CLASS TReport ;
+
+
+
+
+
+UTILITY STATIC function TReport_New( aTitle, aHead, aFoot, aFont, aPen, lSummary, cRptFile,  cResName, lPrinter, lScreen, cFile, oDevice, cName, cTFmt, cHFmt, cFFmt) ; local Self AS CLASS TReport := QSelf() AS CLASS TReport
+
+   LOCAL nTFmt, nHFmt, nFFmt
+
+
+   LOCAL lFontDefined := .T. , lPenDefined  := .T.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+   IIF( aTitle == nil, aTitle := {{|| ""} }, ) ; IIF( aHead == nil, aHead := {{|| ""} }, ); IIF( aFoot == nil, aFoot := {{|| ""} }, ); IIF( aFont == nil, aFont := {}, ); IIF( aPen == nil, aPen := {}, ); IIF( lSummary == nil, lSummary := .F., ); IIF( cRptFile == nil, cRptFile := "", ); IIF( cResName == nil, cResName := "", ); IIF( lPrinter == nil, lPrinter := .F., ); IIF( lScreen == nil, lScreen := .F., ); IIF( cFile == nil, cFile := "", ); IIF( cTFmt == nil, cTFmt := "CENTER", ); IIF( cHFmt == nil, cHFmt := "LEFT", ); IIF( cFFmt == nil, cFFmt := "LEFT", );
+
+   ::aColumns     := {}
+   ::aGroups      := {}
+   ::bStdFont     := {|| 1 }
+   ::bPreview     := {|oDevice| rPreview(oDevice) }
+   ::cRptFile     := cRptFile
+   ::cResName     := cResName
+   ::cPageTotal   := ""
+   ::cGrandTotal  := ""
+   ::cCharPattern := "B"
+   ::cFile        := cFile
+   ::cName        := cName
+   ::nRow         := 0
+   ::nPage        := 0
+   ::nSeparator   := 0
+   ::nCounter     := 0
+   ::nTotalLine   := 2
+   ::nGroupLine   := 1
+   ::nTitleUpLine := 2
+   ::nTitleDnLine := 2
+   ::nClrShadow   := 12632256
+   ::lSummary     := lSummary
+   ::lStable      := .F.
+   ::lPrinter     := lPrinter
+   ::lScreen      := lScreen
+   ::lFirstRow    := .T.
+   ::lCreated     := .F.
+   ::lBreak       := .F.
+   ::lShadow      := .F.
+   ::lJoin        := .F.
+   ::lSeparator   := .F.
+   ::lAutoLand    := .T.
+   ::lIsNarrow    := .F.
+   ::lBoxOnTotal  := .F.
+   ::lNoCancel    := .F.
+   ::lPageTotal   := .T.
+
+   IF cTFmt == "LEFT"
+      nTFmt = 1
+   ELSEIF cTFmt == "RIGHT"
+      nTFmt = 2
+   ELSEIF cTFmt == "CENTER" .OR. cTFmt == "CENTERED"
+      nTFmt = 3
+   ELSE
+      nTFmt = 3
+   ENDIF
+
+   IF cHFmt == "LEFT"
+      nHFmt = 1
+   ELSEIF cHFmt == "RIGHT"
+      nHFmt = 2
+   ELSEIF cHFmt == "CENTER" .OR. cHFmt == "CENTERED"
+      nHFmt = 3
+   ELSE
+      nHFmt = 1
+   ENDIF
+
+   IF cFFmt == "LEFT"
+      nFFmt = 1
+   ELSEIF cFFmt == "RIGHT"
+      nFFmt = 2
+   ELSEIF cFFmt == "CENTER" .OR. cFFmt == "CENTERED"
+      nFFmt = 3
+   ELSE
+      nFFmt = 1
+   ENDIF
+
+
+
+
+
+   IF oDevice <> NIL
+      ::oDevice  := oDevice
+      ::lScreen  := oDevice:lMeta
+      ::lPrinter := !::lScreen
+   ELSEIF ::lPrinter
+      ::oDevice  := TPrinter():New(cName,.F.)
+   ELSEIF ::lScreen
+      ::oDevice  := TPrinter():New(cName,.F.,.T.)
+   ELSEIF !empty(::cFile)
+      ::oDevice  := TRFile():New(::cFile)
+      ::lPrinter := .F.
+   ELSE
+      ::oDevice  := TPrinter():New(cName,.F.)
+      ::lPrinter := .T.
+   ENDIF
+
+
+
+
+
+   IF empty(::cName)
+     IF !empty(::oDevice:cDocument)
+          ::cName := ::oDevice:cDocument
+     ELSE
+          ::cName := "Printing report"
+     ENDIF
+   ENDIF
+
+
+
+
+
+   IF empty(::oDevice:hDC)
+      RETURN Self
+   ELSE
+      ::lCreated := .T.
+   ENDIF
+
+
+
+
+
+   ::nWidth  := ::oDevice:nHorzRes()
+   ::nHeight := ::oDevice:nVertRes()
+
+
+
+
+
+   ::nLogPixX := ::oDevice:nLogPixelX()
+   ::nLogPixY := ::oDevice:nLogPixelY()
+
+
+
+
+
+   IF len(aFont) == 0
+      lFontDefined := .F.
+      Asize(aFont,1)
+      aFont[1] := TFont():New( "Arial", 0, -10,,,,,,,,,,,,,, )
+   ENDIF
+
+
+
+
+
+   IF len(aPen) == 0
+      lPenDefined := .F.
+      Asize(aPen,1)
+      aPen[1] := TPen():New( 0, 1, 0, )
+   ENDIF
+
+
+
+
+
+
+
+
+   ::oPenHorz := TPen():New( aPen[1]:nStyle, aPen[1]:nWidth * ::nLogPixX/72, aPen[1]:nColor, )
+
+
+
+
+
+
+   ::aFont := Array(len(aFont))
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+   Aeval(aFont                                        , {|val,elem|                                    ::aFont[elem]:= TFont():New(val:cFaceName    , Int(val:nWidth*::nLogPixX/72)                , Int(val:nHeight*::nLogPixY/72)               , .F.                                          , val:lBold                                    , val:nEscapement                              , val:nOrientation                             , val:nWeight                                  , val:lItalic                                  , val:lUnderline                               , val:lStrikeOut                               , val:nCharSet                                 , val:nOutPrecision                            , val:nClipPrecision                           , val:nQuality) })
+
+   IF !lFontDefined
+      aFont[1]:end()
+   ENDIF
+
+
+
+
+
+   ::aPen := Array(len(aPen))
+
+
+
+
+   Aeval(aPen, {|val,elem|                              ::aPen[elem] := Tpen():New( val:nStyle , Int(val:nWidth*::nLogPixX/72)          , val:nColor)} )
+
+   IF !lPenDefined
+      aPen[1]:end()
+   ENDIF
+
+
+
+
+
+   ::aClrText := Array(len(::aFont))
+
+   Aeval(::aClrText,{|val,elem| ::aClrText[elem] := 0 })
+
+
+
+
+
+   ::nLeftMargin  := ::nLogPixX*0.2
+   ::nRightMargin := ::nLogPixX*0.2
+   ::nTopMargin   := ::nLogPixY*0.2
+   ::nDnMargin    := ::nLogPixY*0.2
+
+
+
+
+
+   ::oHeader := TrLine():New(aHead,Self,nHFmt)
+   ::oTitle  := TrLine():New(aTitle,Self,nTFmt)
+   ::oFooter := TrLine():New(aFoot,Self,nFFmt)
+
+RETURN Self
+
+
+
+UTILITY STATIC function TReport_Margin( nValue, nType, nScale) ; local Self AS CLASS TReport := QSelf() AS CLASS TReport
+
+
+
+
+   IIF( nValue == nil, nValue := .2, ) ; IIF( nType == nil, nType := 1, ); IIF( nScale == nil, nScale := 1, );
+
+   IF nScale == 2
+      nValue := nValue/2.54
+   ENDIF
+
+   DO CASE
+   CASE nType == 4
+      ::nTopMargin   := ::nLogPixY*nValue
+   CASE nType == 5
+      ::nDnMargin    := ::nLogPixY*nValue
+   CASE nType == 1
+      ::nLeftMargin  := ::nLogPixX*nValue
+   CASE nType == 2
+      ::nRightMargin := ::nLogPixX*nValue
+   ENDCASE
+
+   ::lStable := .F.
+
+RETURN Self
+
+
+
+UTILITY STATIC function TReport_Say( nCol, xText, nFont, nPad, nRow) ; local Self AS CLASS TReport := QSelf() AS CLASS TReport
+
+
+
+
+
+   IIF( nCol == nil, nCol := 1, ) ; IIF( nFont == nil, nFont := 1, ); IIF( xText == nil, xText := "", ); IIF( nRow == nil, nRow := ::nRow, ); IIF( nPad == nil, nPad := 1, );
+
+   IF nCol <1 .OR. nCol > len(::aCols)
+      nCol := 1
+   ENDIF
+
+   IF nFont <1 .OR. nFont > len(::aFont)
+      nFont := 1
+   ENDIF
+
+
+
+
+
+
+
+   ::oDevice:Say(nRow              , ::aCols[nCol]     , cValToChar(xText) , ::aFont[nFont]    , NIL               , ::aClrText[nFont],, nPad-1)
+
+RETURN Self
+
+
+
+UTILITY STATIC function TReport_SayBitmap( nRow, nCol, cBitmap, nWidth, nHeight, nScale) ; local Self AS CLASS TReport := QSelf() AS CLASS TReport
+
+   LOCAL nPixWidth, nPixHeight
+   LOCAL aOffset     := Array( 2 )
+
+
+
+
+
+   IIF( nRow == nil, nRow := .2, ) ; IIF( nCol == nil, nCol := .2, ); IIF( nWidth == nil, nWidth := 1, ); IIF( nHeight == nil, nHeight := 1, ); IIF( nScale == nil, nScale := 1, );
+
+   IF nScale == 2
+      aOffset := ::oDevice:Cmtr2Pix(nRow, nCol)
+      nWidth  := nWidth/2.54
+      nHeight := nHeight/2.54
+   ELSE
+      aOffset := ::oDevice:Inch2Pix(nRow, nCol)
+   ENDIF
+
+   nPixWidth  := ::nLogPixY*nWidth
+   nPixHeight := ::nLogPixX*nHeight
+
+
+
+
+
+   ::oDevice:SayBitmap(aOffset[1] , aOffset[2] , cBitmap    , nPixWidth  , nPixHeight)
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+   ::oDevice:SayBitmap(aOffset[1] , aOffset[2] , cBitmap    , nPixWidth  , nPixHeight)
+
+RETURN Self
+
+
+
+UTILITY STATIC function TReport_Box( nRow, nCol, nBottom, nRight, nPen, nScale) ; local Self AS CLASS TReport := QSelf() AS CLASS TReport
+
+   LOCAL aStart, aEnd
+
+
+
+
+
+
+   IIF( nRow == nil, nRow := .2, ) ; IIF( nCol == nil, nCol := .2, ); IIF( nBottom == nil, nBottom := 5, ); IIF( nRight == nil, nRight := 5, ); IIF( nPen == nil, nPen := 1, ); IIF( nScale == nil, nScale := 1, );
+
+   IF nScale == 2
+      aStart := ::oDevice:Cmtr2Pix(nRow, nCol)
+      aEnd   := ::oDevice:Cmtr2Pix(nBottom, nRight)
+   ELSE
+      aStart := ::oDevice:Inch2Pix(nRow, nCol)
+      aEnd   := ::oDevice:Inch2Pix(nBottom, nRight)
+   ENDIF
+
+
+
+
+
+   ::oDevice:Box(aStart[1]    , aStart[2]    , aEnd[1]      , aEnd[2]      , ::aPen[nPen])
+
+RETURN Self
+
+
+
+UTILITY STATIC function TReport_Line( nRow, nCol, nBottom, nRight, nPen, nScale) ; local Self AS CLASS TReport := QSelf() AS CLASS TReport
+
+   LOCAL aStart, aEnd
+
+
+
+
+
+
+   IIF( nRow == nil, nRow := .2, ) ; IIF( nCol == nil, nCol := .2, ); IIF( nBottom == nil, nBottom := 5, ); IIF( nRight == nil, nRight := 5, ); IIF( nPen == nil, nPen := 1, ); IIF( nScale == nil, nScale := 1, );
+
+   IF nScale == 2
+      aStart := ::oDevice:Cmtr2Pix(nRow, nCol)
+      aEnd   := ::oDevice:Cmtr2Pix(nBottom, nRight)
+   ELSE
+      aStart := ::oDevice:Inch2Pix(nRow, nCol)
+      aEnd   := ::oDevice:Inch2Pix(nBottom, nRight)
+   ENDIF
+
+
+
+
+
+   ::oDevice:Line(aStart[1]    , aStart[2]    , aEnd[1]      , aEnd[2]      , ::aPen[nPen])
+
+RETURN Self
+
+
+
+UTILITY STATIC function TReport_Shadow( nHeight) ; local Self AS CLASS TReport := QSelf() AS CLASS TReport
+
+   LOCAL nFor, nCols, nGrid
+
+   IF !::lShadow
+     RETU NIL
+   ENDIF
+
+   nCols := len(::aColumns)
+
+   IF ::oShdBrush == NIL
+       ::oShdBrush := TBrush():New(, ::nClrShadow,,,, )
+   ENDIF
+
+   FOR nFor := 1 TO nCols
+      IF ::aColumns[nFor]:lShadow
+
+         IF ::aColumns[nFor]:lGrid
+            nGrid := ::aPen[::aColumns[nFor]:nPen]:nWidth * 2
+         ELSE
+            nGrid := 0
+         ENDIF
+
+         SetbkMode( ::oDevice:hDCOut, 1 )
+
+
+
+
+
+         ::oDevice:FillRect({::nRow         , ::aCols[nFor] -nGrid  , ::nRow+nHeight  , ::aCols[nFor]+::aColumns[nFor]:nWidth+nGrid} , ::oShdBrush)
+      ENDIF
+   NEXT
+
+RETURN Self
+
+
+
+UTILITY STATIC function TReport_Grid( nHeight, nRow, cChar) ; local Self AS CLASS TReport := QSelf() AS CLASS TReport
+
+   LOCAL nFor, nCols
+
+
+   IIF( nHeight == nil, nHeight := ::nStdLineHeight, ) ; IIF( nRow == nil, nRow := ::nRow, );
+
+   IF !::lGrid .OR. empty(nHeight)
+     RETU NIL
+   ENDIF
+
+   nCols := len(::aColumns)
+
+   IF ::lScreen .OR. ::lPrinter
+
+        FOR nFor := 1 TO nCols
+
+           IF ::aColumns[nFor]:lGrid
+
+              SetbkMode( ::oDevice:hDCOut, 1 )
+
+
+
+
+
+              ::oDevice:line(nRow    , ::aCols[nFor]-(::nSeparator/2)   , nRow+nHeight     , ::aCols[nFor]-(::nSeparator/2), ::aPen[::aColumns[nFor]:nPen])
+
+
+
+
+              ::oDevice:line(nRow    , ::aCols[nFor]+::aColumns[nFor]:nWidth+(::nSeparator/2) , nRow+nHeight     , ::aCols[nFor]+::aColumns[nFor]:nWidth+(::nSeparator/2) , ::aPen[::aColumns[nFor]:nPen])
+           ENDIF
+
+        NEXT
+
+     ELSE
+
+        IF cChar == NIL
+           cChar := "³"
+        ENDIF
+
+        FOR nFor := 1 TO nCols
+
+           IF ::aColumns[nFor]:lGrid
+
+
+
+
+
+              ::oDevice:Say(nRow    , ::aCols[nFor]-::nSeparator , Replicate(cChar,::nSeparator) , ::aFont[eval(::bStdFont)], ::nSeparator)
+
+
+
+
+
+              ::oDevice:Say(nRow    , ::aCols[nFor]+::aColumns[nFor]:nWidth , Replicate(cChar,::nSeparator) , ::aFont[eval(::bStdFont)], ::nSeparator)
+
+           ENDIF
+
+        NEXT
+
+     ENDIF
+
+RETURN Self
+
+
+
+UTILITY STATIC function TReport_Separator( nPen, nRow) ; local Self AS CLASS TReport := QSelf() AS CLASS TReport
+
+     LOCAL oPen
+     LOCAL cSeparator
+     LOCAL nLeft, nRight
+
+
+     IIF( nRow == nil, nRow := ::nRow, ) ; IIF( nPen == nil, nPen := 1, );
+
+     nLeft  := ::nMargin
+     nRight := nLeft
+
+     Aeval(::aColumns, {|v| nRight += v:nWidth } )
+
+     nRight += ((len(::aColumns)-1)*::nSeparator)
+
+     IF !::lPrinter .AND. !::lScreen
+
+          cSeparator := ""
+
+          Aeval(::aColumns, {|val| cSeparator += Replicate("Ä",val:nWidth)+"Å" })
+          cSeparator := "Ã"+Substr(cSeparator,1,len(cSeparator)-1)+"´"
+          ::oDevice:Say(nRow, nLeft-::nSeparator, cSeparator)
+          ::Shadow(::nStdLineHeight)
+          ::nRow += ::nStdLineHeight
+          RETU NIL
+
+     ENDIF
+
+     IF ::aColumns[1]:lGrid
+          nLeft -= Int(::nSeparator/2)
+     ENDIF
+
+     IF Atail(::aColumns):lGrid
+          nRight += Int(::nSeparator/2)
+     ENDIF
+
+     IF nPen <> NIL .AND. nPen > 0 .AND. nPen < len(::aPen)
+          oPen := ::aPen[nPen]
+     ELSE
+          oPen := ::oPenHorz
+     ENDIF
+
+
+     Aeval(::aColumns, {|v| v:Separator(nRow)})
+     ::NewLine(oPen:nWidth*4)
+
+RETURN Self
+
+
+
+UTILITY STATIC function TReport_SetPenColor( nColor) ; local Self AS CLASS TReport := QSelf() AS CLASS TReport
+
+   IF nColor == NIL
+       RETU NIL
+   ENDIF
+
+   ::oPenHorz:End()
+
+
+
+
+   ::oPenHorz := TPen():New( 0, Int(1*::nLogPixX/72), nColor, )
+
+RETURN Self
+
+
+
+
+
+
+
+UTILITY STATIC function TReport_Activate( bFor, bWhile, bInit, bEnd, bStartPage,  bEndPage, bStartGroup, bEndGroup,  bStartLine, bEndLine, bChange,  bPostEnd, bPostPage, bPostGroup) ; local Self AS CLASS TReport := QSelf() AS CLASS TReport
+
+
+   LOCAL oPagina
+
+
+   IIF( bFor == nil, bFor := {|| .T.    }, ) ; IIF( bWhile == nil, bWhile := {|| !eof() }, );
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+   IIF( ::bFor == nil, ::bFor := bFor, ) ; IIF( ::bWhile == nil, ::bWhile := bWhile, ); IIF( ::bInit == nil, ::bInit := bInit, ); IIF( ::bEnd == nil, ::bEnd := bEnd, ); IIF( ::bStartPage == nil, ::bStartPage := bStartPage, ); IIF( ::bEndPage == nil, ::bEndPage := bEndPage, ); IIF( ::bStartGroup == nil, ::bStartGroup := bStartGroup, ); IIF( ::bEndGroup == nil, ::bEndGroup := bEndGroup, ); IIF( ::bStartLine == nil, ::bStartLine := bStartLine, ); IIF( ::bEndLine == nil, ::bEndLine := bEndLine, ); IIF( ::bChange == nil, ::bChange := bChange, ); IIF( ::bPostEnd == nil, ::bPostEnd := bPostEnd, ); IIF( ::bPostPage == nil, ::bPostPage := bPostPage, ); IIF( ::bPostGroup == nil, ::bPostGroup := bPostGroup, );
+
+
+
+
+
+
+   IF len(::aGroups) > 0
+      while eval(::bWhile) .AND. !eval(::bFor)
+         SysRefresh()
+         ::Skip(1)
+      ENDDO
+   ENDIF
+
+
+
+
+
+   IF !::lCreated
+       ::End()
+       RETU NIL
+   ENDIF
+
+   ::Stabilize()
+
+   IF ::lIsNarrow
+        ::oDevice:SetLandScape()
+        ::nWidth  := ::oDevice:nHorzRes()
+        ::nHeight := ::oDevice:nVertRes()
+        ::Stabilize()
+   ENDIF
+
+   IF !::lStable
+       ::End()
+       RETU NIL
+   ENDIF
+
+
+
+
+
+   IF !::lScreen
+
+      ::oRptWnd = TDialog():New(,,,, ::cName, "PRINT_PROC",, .F.,,,,,, .F.,,,,,, .F., )
+
+
+
+      TButton():ReDefine( 2, {||(::lBreak := .T., ::oRptWnd:End())}, ::oRptWnd,,, .F., {|| (!::lNoCancel)},,, .F. )
+
+      oPagina := TSay():ReDefine( 101, {|| ::nPage}, ::oRptWnd,,,, .F.,, .F., .F. )
+
+      ::oRptWnd:bPainted := {|| iif(::nPage>0,oPagina:Refresh(), )}
+
+      ::oRptWnd:bStart := {|| ::Play(), ::oRptWnd:End() }
+
+      ::oRptWnd:Activate( ::oRptWnd:bLClicked, ::oRptWnd:bMoved, ::oRptWnd:bPainted, .T.,,,, ::oRptWnd:bRClicked,,, )
+
+   ELSE
+
+      ::oRptWnd = TDialog():New(,,,, ::cName, "PREVIEW_PROC",, .F.,,,,,, .F.,,,,,, .F., )
+
+
+
+      TButton():ReDefine( 2, {||(::lBreak := .T., ::oRptWnd:End())}, ::oRptWnd,,, .F., {|| (!::lNoCancel)},,, .F. )
+
+      oPagina := TSay():ReDefine( 101, {|| ::nPage}, ::oRptWnd,,,, .F.,, .F., .F. )
+
+      ::oRptWnd:bPainted := {|| iif(::nPage>0,oPagina:Refresh(), )}
+
+      ::oRptWnd:bStart := {|| ::Play(), ::oRptWnd:End()}
+
+      ::oRptWnd:Activate( ::oRptWnd:bLClicked, ::oRptWnd:bMoved, ::oRptWnd:bPainted, .T.,,,, ::oRptWnd:bRClicked,,, )
+
+      Eval( ::bPreview, ::oDevice )
+
+   ENDIF
+
+RETURN Self
+
+
+
+UTILITY STATIC function TReport_Play() ; local Self AS CLASS TReport := QSelf() AS CLASS TReport
+
+   LOCAL nColumns, nGroups, nFor1, nFor2, nFor3, nTotalValue
+   LOCAL lSeparator
+
+
+
+
+
+   nColumns   := len(::aColumns)
+   nGroups    := len(::aGroups)
+
+
+
+
+
+   ::StartPage()
+   ::Init()
+
+
+
+
+
+
+
+
+      ASend( ::aGroups, "Reset()" )
+
+
+
+
+
+
+   Aeval(::aGroups,{|val,elem| ::StartGroup(elem) })
+
+
+
+
+
+   while !::lBreak .AND. eval(::bWhile)
+
+
+
+
+
+      SysRefresh()
+
+
+
+
+
+      IF !eval(::bFor)
+         ::Skip(1)
+         LOOP
+       ENDIF
+
+
+
+
+
+
+
+
+
+
+         IF ::lGroup
+            ASend( ::aGroups, "Evaluate()" )
+         ENDIF
+
+
+
+
+
+
+
+
+      IF ::bStartRecord <> Nil
+         Eval(::bStartRecord, Self)
+      ENDIF
+
+      FOR nFor1 := 1 TO ::nMaxData
+
+         ::nDataLine := nFor1
+
+         IF !::lSummary
+
+
+            lSeparator := (::lSeparator .AND.  !::lFirstRow .AND.  nFor1 == 1)
+            ::StartLine(::aDataHeight[nFor1], lSeparator)
+         ENDIF
+
+         FOR nFor2 := 1 TO nColumns
+
+            IF !::lSummary
+
+
+                ::aColumns[nFor2]:SayData(::nRow , ::aCols[nFor2] , nFor1)
+            ENDIF
+
+
+
+
+
+
+
+
+            IF ::lTotal                                    .AND.  ::aColumns[nFor2]:lTotal                    .AND.  (!::aColumns[nFor2]:lTotalExpr .OR.                (::aColumns[nFor2]:bTotalExpr <> nil) )
+
+               if ::aColumns[nFor2]:bTotalExpr <> nil
+                  nTotalValue := eval(::aColumns[nFor2]:bTotalExpr)
+               else
+                  nTotalValue := eval(::aData[nFor2][nFor1])
+               end
+
+               IF valtype(nTotalValue) == "N"
+                    ::aColumns[nFor2]:nTotal += nTotalValue
+                    IF ::lGroup
+                       FOR nFor3 := 1 TO nGroups
+                          ::aGroups[nFor3]:aTotal[nFor2] += nTotalValue
+                       NEXT
+                    ENDIF
+               ENDIF
+            ENDIF
+         NEXT
+
+         IF !::lSummary
+            ::EndLine(::aDataHeight[nFor1])
+         ENDIF
+      NEXT
+
+
+
+
+
+      ::Skip(1)
+
+
+
+      IF ::bEndRecord <> Nil
+         Eval(::bEndRecord, Self)
+      ENDIF
+
+
+
+
+
+      IF ::lGroup
+
+         while eval(::bWhile) .AND. !eval(::bFor)
+            SysRefresh()
+            ::Skip(1)
+         ENDDO
+
+         FOR nFor1 := nGroups TO 1 STEP -1
+            IF ::aGroups[nFor1]:Check()
+               ::EndGroup(nFor1)
+            ENDIF
+         NEXT
+         FOR nFor1 := 1 TO nGroups
+            IF ::aGroups[nFor1]:lNeedStart
+               ::StartGroup(nFor1)
+            ENDIF
+         NEXT
+
+       ENDIF
+
+   ENDDO
+
+   IF ::lGroup
+      FOR nFor1 := nGroups TO 1 STEP -1
+         IF !Empty(::aGroups[nFor1]:nCounter)
+            ::EndGroup(nFor1)
+         ENDIF
+      NEXT
+   ENDIF
+
+   ::End()
+
+RETURN Self
+
+
+
+UTILITY STATIC function TReport_Stabilize() ; local Self AS CLASS TReport := QSelf() AS CLASS TReport
+
+   LOCAL nColumns, nFor1, nFor2, nMaxHeight, nPrnWidth
+
+   nColumns   := len(::aColumns)
+   nMaxHeight := 0
+
+   IF nColumns == 0
+      ::lCreated := .F.
+      RETU NIL
+   ENDIF
+
+
+
+
+
+   IF empty(::nSeparator)
+       ::nSeparator := ::oDevice:GetTextWidth(::cCharPattern,::aFont[eval(::bStdFont)])
+   ENDIF
+
+
+
+
+
+   ::nStdLineHeight := ::oDevice:GetTextHeight(::cCharPattern,::aFont[eval(::bStdFont)])
+
+
+
+
+
+
+   ::nMaxTitle := 0
+   ::nMaxData  := 0
+
+   AEval( ::aColumns, {|Val| ::nMaxTitle := Max(len(Val:aTitle),::nMaxTitle) } )
+   AEval( ::aColumns, {|Val| ::nMaxData  := Max(len(Val:aData),::nMaxData) } )
+
+
+
+
+
+   ::aText := Array(nColumns,::nMaxTitle)
+
+   FOR nFor1 := 1 TO nColumns
+      FOR nFor2 := 1 TO ::nMaxTitle
+         IF len(::aColumns[nFor1]:aTitle) < nFor2
+               ::aText[nFor1][nFor2] := {|| "" }
+         ELSE
+               ::aText[nFor1][nFor2] := ::aColumns[nFor1]:aTitle[nFor2]
+         ENDIF
+      NEXT
+   NEXT
+
+
+
+
+
+   ::aData    := Array(nColumns,::nMaxData)
+
+   FOR nFor1 := 1 TO nColumns
+      FOR nFor2 := 1 TO ::nMaxData
+         IF len(::aColumns[nFor1]:aData) < nFor2
+               ::aData[nFor1][nFor2] := {|| "" }
+         ELSE
+               ::aData[nFor1][nFor2] := ::aColumns[nFor1]:aData[nFor2]
+         ENDIF
+      NEXT
+   NEXT
+
+
+
+
+
+   ::lGroup := (len(::aGroups)>0)
+
+
+
+
+
+   ::oHeader:Stabilize()
+   ::oFooter:Stabilize()
+   ::oTitle:Stabilize()
+
+   Aeval(::aGroups , {|val,elem| val:Stabilize(elem) })
+   Aeval(::aColumns, {|val,elem| val:Stabilize(elem) })
+
+
+
+
+
+   ::lTotal := .F.
+   aeval(::aColumns,{|Val| iif(Val:lTotal,::lTotal := .T. ,NIL ) })
+
+
+
+
+
+
+
+
+
+
+
+
+   ::lGrid := .F.
+   aeval(::aColumns,{|Val| iif(Val:lGrid,::lGrid := .T. ,NIL ) })
+
+
+
+
+
+   ::nRptWidth := 0
+   aeval(::aColumns,{|Val| ::nRptWidth += Val:nWidth+::nSeparator })
+
+   ::nRptWidth -= ::nSeparator
+
+   ::nRptWidth := max(::nRptWidth,::oTitle:nWidth)
+   ::nRptWidth := max(::nRptWidth,::oHeader:nWidth)
+   ::nRptWidth := max(::nRptWidth,::oFooter:nWidth)
+
+
+
+
+
+   IF !::lPrinter .AND. !::lScreen
+     ::oDevice:nWidth := ::nRptWidth+ (::nSeparator*10)
+     ::nWidth         := ::oDevice:nHorzRes()
+   ENDIF
+
+
+
+
+
+   IF ::nRptWidth > ::nWidth .AND. (::lScreen .OR. ::lPrinter)
+
+
+      IF  ::lAutoLand .AND.  !::lIsNarrow .AND.  ::oDevice:GetOrientation() == 1
+
+          ::lStable   := .F.
+          ::lIsNarrow := .T.
+          RETU NIL
+
+      ENDIF
+
+
+
+
+
+
+   ENDIF
+
+   ::nRptWidth := min(::nRptWidth,::nWidth)
+
+
+
+
+
+
+   nPrnWidth := ::nWidth - ::nLeftMargin - ::nRightMargin
+   ::nMargin := max((nPrnWidth-::nRptWidth)/2,0) + ::nLeftMargin
+
+
+
+
+
+   ::aCols := Array(nColumns)
+
+   ::aCols[1] := iif(::aColumns[1]:nCol<>0, ::aColumns[1]:nCol, ::nMargin)
+   ::aColumns[1]:nCalCol := ::aCols[1]
+
+   FOR nFor1 := 2 TO nColumns
+      IF ::aColumns[nFor1]:nCol>0
+         ::aCols[nFor1] := ::aColumns[nFor1]:nCol
+      ELSE
+
+
+         ::aCols[nFor1] := ::aCols[nFor1-1] +  ::aColumns[nFor1-1]:nWidth +  ::nSeparator
+      ENDIF
+      ::aColumns[nFor1]:nCalCol := ::aCols[nFor1]
+   NEXT
+
+
+
+
+
+   ::oHeader:Stabilize(::nTopMargin,::nMargin)
+   ::oTitle:Stabilize(::oHeader:nHeight+::nTopMargin,::nMargin)
+   ::oFooter:Stabilize(::nHeight-::nDnMargin-::oFooter:nHeight,::nMargin)
+
+
+
+
+
+
+   Aeval(::aColumns, {|val| nMaxHeight:=Max(nMaxHeight,val:nDataHeight) })
+
+   ::nTitleRow  := ::oHeader:nHeight + ::oTitle:nHeight + ::nTopMargin
+
+
+
+
+   ::nBottomRow := ::nHeight-::oFooter:nHeight-::nDnMargin-  iif(!::lTotal,0,::nStdLineHeight+nMaxHeight) -  iif(!::lTotal .AND. ::lSeparator,::oPenHorz:nWidth*10 ,0 ) -  iif(::lTotal .AND. ::lBoxOnTotal,::nStdLineHeight ,0 )
+
+
+
+
+
+   nMaxHeight     := 0
+   ::nTitleHeight := 0
+
+   FOR nFor1 := 1 TO ::nMaxTitle
+
+      FOR nFor2 := 1 TO nColumns
+         nMaxHeight := Max(nMaxHeight, ::aColumns[nFor2]:nTitleHeight)
+      NEXT
+      ::nTitleHeight += nMaxHeight
+
+   NEXT
+
+
+
+
+
+   ::aDataHeight := Afill(Array(::nMaxData),0)
+
+   FOR nFor1 := 1 TO ::nMaxData
+
+
+
+      Aeval(::aColumns, {|val| ::aDataHeight[nFor1] := Max(::aDataHeight[nFor1], val:nDataHeight) })
+   NEXT
+
+
+
+
+
+
+
+
+   ::nFirstdRow := ::nTitleRow + iif(!empty(::nTitleUpLine),::nStdLineHeight,0) + ::nTitleHeight + iif(!empty(::nTitleDnLine),::nStdLineHeight,0)
+
+
+
+
+   ::nLastdRow  := ::nBottomRow - iif(::lTotal,::nStdLineHeight/2 ,0 ) -  iif(!::lTotal .AND. ::lSeparator,::oPenHorz:nWidth*10 ,0 ) - iif(::lTotal .AND. ::lBoxOnTotal,::nStdLineHeight ,0 )
+
+
+
+
+
+   ::lStable := .T.
+   ::lFinish := .F.
+
+RETURN (NIL)
+
+
+
+UTILITY STATIC function TReport_Init() ; local Self AS CLASS TReport := QSelf() AS CLASS TReport
+
+   IF ::bInit <> nil
+       Eval( ::bInit, Self )
+   ENDIF
+
+RETURN Self
+
+
+
+UTILITY STATIC function TReport_End() ; local Self AS CLASS TReport := QSelf() AS CLASS TReport
+
+   ::lFinish := .T.
+
+   IF !::lCreated .OR. !::lStable
+
+        IF ::oShdBrush <> NIL
+            ::oShdBrush:end()
+        ENDIF
+
+
+            ASend( ::aFont, "End" )
+            ASend( ::aPen, "End" )
+
+
+
+
+
+        if ::oPenHorz <> nil
+           ::oPenHorz:End()
+        endif
+
+        ::oDevice:End()
+        RETU NIL
+
+   ENDIF
+
+   IF !::lBreak .AND. ::bEnd <> nil
+       Eval( ::bEnd, Self )
+   ENDIF
+
+
+   ::EndPage()
+
+
+   IF !::lScreen
+       ::oDevice:End()
+   ENDIF
+
+   IF ::oShdBrush <> NIL
+       ::oShdBrush:end()
+   ENDIF
+
+
+      ASend( ::aFont, "End" )
+      ASend( ::aPen, "End" )
+
+
+
+
+
+   ::oPenHorz:End()
+
+RETURN Self
+
+
+
+UTILITY STATIC function TReport_Skip( n) ; local Self AS CLASS TReport := QSelf() AS CLASS TReport
+
+   STATIC lRunning := .F.
+
+   ::nCounter++
+
+   IF ::bChange <> nil .AND. !lRunning
+       lRunning := .T.
+       Eval( ::bChange, Self )
+       lRunning := .F.
+   ENDIF
+
+   IF ::bSkip <> nil
+       retu Eval( ::bSkip, n )
+   ENDIF
+
+RETURN DbSkip( n )
+
+
+
+UTILITY STATIC function TReport_StartPage() ; local Self AS CLASS TReport := QSelf() AS CLASS TReport
+
+   STATIC lRunning := .F.
+
+   ::oDevice:StartPage()
+
+   ::nPage++
+
+   ::oRptWnd:Refresh()
+
+   IF ::bStartPage <> nil .AND. !lRunning
+       lRunning := .T.
+       Eval( ::bStartPage, Self )
+       lRunning := .F.
+   ENDIF
+
+   ::oHeader:Say()
+   ::oTitle:Say()
+   ::ColTitle()
+   ::lFirstRow := .T.
+
+RETURN Self
+
+
+
+UTILITY STATIC function TReport_EndPage() ; local Self AS CLASS TReport := QSelf() AS CLASS TReport
+
+   STATIC lRunning := .F.
+
+   IF ::bEndPage <> nil .AND. !lRunning
+       lRunning := .T.
+       Eval( ::bEndPage, Self )
+       lRunning := .F.
+   ENDIF
+
+   ::PageTotal()
+   ::oFooter:Say()
+
+   IF ::bPostPage <> nil .AND. !lRunning
+       lRunning := .T.
+       Eval( ::bPostPage, Self )
+       lRunning := .F.
+   ENDIF
+
+   IF !::lBreak .AND. ::lFinish .AND. ::bPostEnd <> nil .AND. !lRunning
+       lRunning := .T.
+       Eval( ::bPostEnd, Self )
+       lRunning := .F.
+   ENDIF
+
+   ::oDevice:EndPage()
+
+   IF !(::lFinish)
+       ::StartPage()
+   ENDIF
+
+RETURN Self
+
+
+
+UTILITY STATIC function TReport_StartLine( nHeight, lSeparator) ; local Self AS CLASS TReport := QSelf() AS CLASS TReport
+
+   STATIC lRunning := .F.
+
+
+   IIF( nHeight == nil, nHeight := ::nStdLineHeight, ) ; IIF( lSeparator == nil, lSeparator := .F., );
+
+   IF nHeight == 0
+     RETU NIL
+   ENDIF
+
+   IF (nHeight+::nRow) >= ::nBottomRow
+         ::EndPage()
+         lSeparator := .F.
+   ENDIF
+
+   IF lSeparator
+     ::Separator()
+   ENDIF
+
+   ::Shadow(nHeight)
+   ::Grid(nHeight)
+
+   IF ::bStartLine <> nil .AND. !lRunning
+      lRunning := .T.
+      Eval( ::bStartLine, Self)
+      lRunning := .F.
+   ENDIF
+
+RETURN Self
+
+
+
+UTILITY STATIC function TReport_EndLine( nHeight) ; local Self AS CLASS TReport := QSelf() AS CLASS TReport
+
+   STATIC lRunning := .F.
+
+   IIF( nHeight == nil, nHeight := ::nStdLineHeight, ) ;
+
+   IF ::bEndLine <> nil .AND. !lRunning
+      lRunning := .T.
+      Eval( ::bEndLine, Self)
+      lRunning := .F.
+   ENDIF
+
+   ::nRow      += nHeight
+   ::lFirstRow := .F.
+
+   IF ::NeedNewPage()
+       ::EndPage()
+   ENDIF
+
+RETURN Self
+
+
+
+UTILITY STATIC function TReport_StartGroup( nGroup) ; local Self AS CLASS TReport := QSelf() AS CLASS TReport
+
+   STATIC lRunning := .F.
+
+   ::aGroups[nGroup]:lNeedStart := .F.
+
+   IF !eval(::bWhile)
+         RETU NIL
+   ENDIF
+
+   IF ::bStartGroup <> nil .AND. !lRunning
+      lRunning := .T.
+      Eval( ::bStartGroup, ::aGroups[nGroup])
+      lRunning := .F.
+   ENDIF
+
+   IF ::aGroups[nGroup]:lHeader
+      ::StartLine(::aGroups[nGroup]:nHeaderHeight)
+      ::aGroups[nGroup]:Header(::nRow)
+      ::EndLine(::aGroups[nGroup]:nHeaderHeight)
+   ENDIF
+
+RETURN Self
+
+
+
+UTILITY STATIC function TReport_EndGroup( nGroup) ; local Self AS CLASS TReport := QSelf() AS CLASS TReport
+
+   STATIC lRunning := .F.
+
+   IF ::bEndGroup <> nil .AND. !lRunning
+      lRunning := .T.
+      Eval( ::bEndGroup, ::aGroups[nGroup])
+      lRunning := .F.
+   ENDIF
+
+   IF !::lSummary .AND. ::lTotal
+       ::StartLine(::aGroups[nGroup]:nFooterHeight*2)
+       ::TotalLine(::nGroupLine, 0)
+   ENDIF
+
+   IF ::aGroups[nGroup]:lFooter
+      ::StartLine(::aGroups[nGroup]:nFooterHeight)
+      ::aGroups[nGroup]:Footer(::nRow)
+      ::EndLine(::aGroups[nGroup]:nFooterHeight)
+   ENDIF
+
+   IF ::bPostGroup <> nil .AND. !lRunning
+      lRunning := .T.
+      Eval( ::bPostGroup, ::aGroups[nGroup])
+      lRunning := .F.
+   ENDIF
+
+
+
+
+   IF !::lFirstRow              .AND.  ::aGroups[nGroup]:lEject  .AND.  eval(::bWhile)            .AND.  eval(::bFor)
+
+      ::EndPage()
+   ENDIF
+
+   ::aGroups[nGroup]:Reset()
+   ::aGroups[nGroup]:lNeedStart := .T.
+
+RETURN Self
+
+
+
+UTILITY STATIC function TReport_PageTotal() ; local Self AS CLASS TReport := QSelf() AS CLASS TReport
+
+   LOCAL nFor, nColumns
+
+
+
+
+
+   IF !(::lTotal) .OR. (!::lPageTotal .AND. !::lFinish)
+      IF ::lSeparator .OR. ::lJoin
+          ::TotalLine(::nTotalLine, 0)
+      ENDIF
+      RETU (NIL)
+   ENDIF
+
+   nColumns := len(::aColumns)
+
+
+
+
+
+   IF ::lBoxOnTotal
+     ::TotalLine(::nTotalLine, 2)
+     ::Grid()
+   ELSE
+     ::TotalLine(::nTotalLine, 0)
+   ENDIF
+
+
+
+
+
+   IF ::lFinish
+      IF !empty(::cGrandTotal)
+
+
+
+
+
+         ::oDevice:Say(::nRow                    , ::aCols[1]                , ::cGrandTotal             , ::aFont[eval(::bStdFont)] , NIL                       , ::aClrText[eval(::bStdFont)],2)
+      ENDIF
+   ELSE
+      IF !empty(::cPageTotal)
+
+
+
+
+
+         ::oDevice:Say(::nRow                    , ::aCols[1]                , ::cPageTotal              , ::aFont[eval(::bStdFont)] , NIL                       , ::aClrText[eval(::bStdFont)],2)
+      ENDIF
+   ENDIF
+
+
+
+
+
+   FOR nFor := 1 TO nColumns
+      ::aColumns[nFor]:SayTotal(::nRow, ::aCols[nFor])
+   NEXT
+
+   ::nRow += ::nStdLineHeight
+
+   IF ::lBoxOnTotal
+      ::TotalLine(::nTotalLine, 0)
+   ENDIF
+
+RETURN Self
+
+
+
+UTILITY STATIC function TReport_ColTitle() ; local Self AS CLASS TReport := QSelf() AS CLASS TReport
+
+   LOCAL nFor1, nFor2, nColumns, nMaxHeight
+
+   nColumns   := len(::aColumns)
+   nMaxHeight := 0
+
+   ::nRow := ::nTitleRow
+
+
+
+
+
+   ::TotalLine(::nTitleUpLine, 1)
+
+
+
+
+
+   FOR nFor1 := 1 TO ::nMaxTitle
+
+      FOR nFor2 := 1 TO nColumns
+
+
+
+         ::aColumns[nFor2]:saytitle(::nRow , ::aCols[nFor2] , nFor1 )
+         nMaxHeight := Max(nMaxHeight, ::aColumns[nFor2]:nTitleHeight)
+      NEXT
+
+      IF !empty(::nTitleUpLine)
+           ::Grid(nMaxHeight)
+      ENDIF
+
+      ::nRow += nMaxHeight
+      nMaxHeight := 0
+
+   NEXT
+
+
+
+
+
+   ::TotalLine(::nTitleDnLine, 2)
+
+   ::lFirstRow := .T.
+
+RETURN Self
+
+
+
+UTILITY STATIC function TReport_TotalLine( nType, nGrid) ; local Self AS CLASS TReport := QSelf() AS CLASS TReport
+
+     LOCAL nFor, nColumns, nJoin, nGridRow, nGridHeight, nHeight
+     LOCAL cChar, cLeft, cRight
+
+     IF nType == NIL .OR. empty(nType)
+          RETU NIL
+     ENDIF
+
+     IIF( nGrid == nil, nGrid := 0, ) ;
+
+     nJoin       := iif(::lJoin,::nSeparator/2 ,0 )
+     nGridRow    := 0
+     nGridHeight := 0
+     cChar       := "³"
+     cLeft       := "À"
+     cRight      := "Ù"
+
+     nColumns := len(::aColumns)
+
+     IF nType == 1
+
+          IF ::lScreen .OR. ::lPrinter
+
+               nHeight := Int(::oPenHorz:nWidth*10)
+
+               DO CASE
+               CASE nGrid == 0
+                    nGridRow    := ::nRow
+                    nGridHeight := Int(nHeight*.5)
+               CASE nGrid == 1
+                    nGridRow    := ::nRow+Int(nHeight*.5)
+                    nGridHeight := Int(nHeight*.5)
+               CASE nGrid == 2
+                    nGridRow    := ::nRow
+                    nGridHeight := nHeight
+               ENDCASE
+
+               ::Grid(nGridHeight, nGridRow, cChar)
+
+               FOR nFor := 1 TO nColumns
+
+
+
+
+
+                    ::oDevice:Line(::nRow+Int(nHeight*.5) , ::aCols[nFor] - nJoin , ::nRow+Int(nHeight*.5) , ::aCols[nFor]+::aColumns[nFor]:nWidth + nJoin , ::oPenHorz)
+
+               next
+
+          ELSE
+
+               nHeight     := ::nStdLineHeight
+               nGridRow    := ::nRow
+               nGridHeight := nHeight
+
+               DO CASE
+               CASE nGrid == 0
+                    cChar  := "Á"
+                    cLeft  := "À"
+                    cRight := "Ù"
+               CASE nGrid == 1
+                    cChar  := "Â"
+                    cLeft  := "Ú"
+                    cRight := "¿"
+               CASE nGrid == 2
+                    cChar  := "Å"
+                    cLeft  := "Ã"
+                    cRight := "´"
+               ENDCASE
+
+               ::Grid(nGridHeight, nGridRow, cChar)
+
+               FOR nFor := 1 TO nColumns
+
+
+
+
+
+                    ::oDevice:Say(::nRow, ::aCols[nFor], Replicate("Ä",::aColumns[nFor]:nWidth) , ::aFont[eval(::bStdFont)], ::aColumns[nFor]:nWidth)
+
+                    IF nFor == 1 .AND. ::aColumns[nFor]:lGrid
+
+
+
+                         ::oDevice:Say(::nRow, ::aCols[nFor]-1, cLeft , ::aFont[eval(::bStdFont)],1)
+                    ENDIF
+
+                    IF nFor == nColumns .AND. ::aColumns[nFor]:lGrid
+
+
+
+                         ::oDevice:Say(::nRow, ::aCols[nFor]+::aColumns[nFor]:nWidth, cRight , ::aFont[eval(::bStdFont)],1)
+                    ENDIF
+
+               next
+
+          ENDIF
+
+     ELSEIF nType == 2
+
+          IF ::lScreen .OR. ::lPrinter
+
+               nHeight := ::oPenHorz:nWidth*10
+
+               DO CASE
+               CASE nGrid == 0
+                    nGridRow    := ::nRow
+                    nGridHeight := Int(nHeight*.6)
+               CASE nGrid == 1
+                    nGridRow    := ::nRow+Int(nHeight*.4)
+                    nGridHeight := Int(nHeight*.6)
+               CASE nGrid == 2
+                    nGridRow    := ::nRow
+                    nGridHeight := nHeight
+               ENDCASE
+
+               ::Grid(nGridHeight, nGridRow, cChar)
+
+               FOR nFor := 1 TO nColumns
+
+
+
+
+
+                    ::oDevice:Line(::nRow+Int(nHeight*.4) , ::aCols[nFor] - nJoin , ::nRow+Int(nHeight*.4) , ::aCols[nFor]+::aColumns[nFor]:nWidth + nJoin , ::oPenHorz)
+
+
+
+
+
+                    ::oDevice:Line(::nRow+Int(nHeight*.6), ::aCols[nFor] - nJoin , ::nRow+Int(nHeight*.6) , ::aCols[nFor]+::aColumns[nFor]:nWidth + nJoin , ::oPenHorz)
+
+               next
+
+          ELSE
+
+               nHeight     := ::nStdLineHeight
+               nGridRow    := ::nRow
+               nGridHeight := nHeight
+
+               DO CASE
+               CASE nGrid == 0
+                    cChar  := "Ï"
+                    cLeft  := "Ô"
+                    cRight := "¾"
+               CASE nGrid == 1
+                    cChar  := "Ñ"
+                    cLeft  := "Õ"
+                    cRight := "¸"
+               CASE nGrid == 2
+                    cChar  := "Ø"
+                    cLeft  := "Æ"
+                    cRight := "µ"
+               ENDCASE
+
+               ::Grid(nGridHeight, nGridRow, cChar)
+
+               FOR nFor := 1 TO nColumns
+
+
+
+
+
+                    ::oDevice:Say(::nRow, ::aCols[nFor], Replicate("Í",::aColumns[nFor]:nWidth) , ::aFont[eval(::bStdFont)], ::aColumns[nFor]:nWidth)
+
+                    IF nFor == 1 .AND. ::aColumns[nFor]:lGrid
+
+
+
+                         ::oDevice:Say(::nRow, ::aCols[nFor]-1, cLeft , ::aFont[eval(::bStdFont)],1)
+                    ENDIF
+
+                    IF nFor == nColumns .AND. ::aColumns[nFor]:lGrid
+
+
+
+                         ::oDevice:Say(::nRow, ::aCols[nFor]+::aColumns[nFor]:nWidth, cRight , ::aFont[eval(::bStdFont)],1)
+                    ENDIF
+
+               next
+
+          ENDIF
+
+     ENDIF
+
+     ::nRow += nHeight
+
+RETURN Self
+
+UTILITY STATIC function TReport_BackLine( nLine) ; local Self AS CLASS TReport := QSelf() AS CLASS TReport
+
+   if !Empty( ::nStdLineHeight )
+      ::nRow -= ::nStdLineHeight * iif( nLine == nil, 1 , nLine )
+   end
+
+RETURN ( ::nRow )

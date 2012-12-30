@@ -1,0 +1,228 @@
+#line 112 "hbclass.ch"
+   DYNAMIC DivertConstructorCall
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+DECLARE HBClass  New( cName AS String, OPTIONAL SuperParams ) AS CLASS HBClass  Create() AS Object  Instance() AS Object  AddClsMethod( cName AS String, @MethodName(), nScope AS Numeric, n2 AS Numeric, n3 AS Numeric )  AddDelegate( cName AS String, cDelegate AS String, cObject AS String, nScope AS Numeric, lPersistent AS LOGICAL )  AddMultiClsData( cType AS String, uVal, nScope AS Numeric, aDatas AS Array OF String )  AddMultiData( cType AS String, uVal, nScope AS Numeric, aDatas AS Array OF String, x AS LOGICAL, lPer AS LOGICAL )  AddMethod( cName AS String, @MethodName(), nScope AS Numeric, lPersistent AS LOGICAL )  AddInLine( cName AS String, bBlock AS CodeBlock, nScope AS Numeric, lPersistent AS LOGICAL )  AddVirtual( cName AS String )  ModMethod( cName AS String, @MethodName(), nScope AS Numeric, lPersistent AS LOGICAL )  ModClsMethod( cName AS String, @MethodName(), nScope AS Numeric )  ModInline( cName AS String, bBlock AS CodeBlock, nScope AS Numeric, lPersistent AS LOGICAL )  SetOnError( @MethodName() )
+#line 85 "\Fwh1204\Include\FiveWin.Ch"
+   EXTERNAL GetProcAdd
+   EXTERNAL TActiveX
+
+
+
+
+extern errorsys
+#line 8 ".\Prg\Tinftik.prg"
+_HB_CLASS TInfDetTik ; UTILITY FUNCTION TInfDetTik(...); static s_oClass ; local oClassInstance ; local nScope ; nScope := 1 ; if s_oClass == NIL ; s_oClass := IIF(.F.,, HBClass():New( "TInfDetTik" , {TInfAlm():classh} ) ) ; ;
+
+   _HB_MEMBER {AS NUMERIC nEstado} ; IIF( !.F., s_oClass:AddMultiData( "NUMERIC", 1, nScope + IIF( .F., 32, 0 ), { "nEstado" }, .F., .F. ), )
+   _HB_MEMBER {AS OBJECT oTikeT} ; IIF( !.F., s_oClass:AddMultiData( "OBJECT",, nScope + IIF( .F., 32, 0 ), { "oTikeT" }, .F., .F. ), )
+   _HB_MEMBER {AS OBJECT oTikeL} ; IIF( !.F., s_oClass:AddMultiData( "OBJECT",, nScope + IIF( .F., 32, 0 ), { "oTikeL" }, .F., .F. ), )
+   _HB_MEMBER {AS OBJECT oDbfTvta} ; IIF( !.F., s_oClass:AddMultiData( "OBJECT",, nScope + IIF( .F., 32, 0 ), { "oDbfTvta" }, .F., .F. ), )
+
+   _HB_MEMBER Create(); IIF( .F., s_oClass:ModMethod( "Create", @TInfDetTik_Create(), nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ), s_oClass:AddMethod( "Create", @TInfDetTik_Create(), nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ));
+
+   _HB_MEMBER OpenFiles(); IIF( .F., s_oClass:ModMethod( "OpenFiles", @TInfDetTik_OpenFiles(), nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ), s_oClass:AddMethod( "OpenFiles", @TInfDetTik_OpenFiles(), nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ));
+
+   _HB_MEMBER CloseFiles(); IIF( .F., s_oClass:ModMethod( "CloseFiles", @TInfDetTik_CloseFiles(), nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ), s_oClass:AddMethod( "CloseFiles", @TInfDetTik_CloseFiles(), nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ));
+
+   _HB_MEMBER lResource( cFld); IIF( .F., s_oClass:ModMethod( "lResource", @TInfDetTik_lResource(), nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ), s_oClass:AddMethod( "lResource", @TInfDetTik_lResource(), nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ));
+
+   _HB_MEMBER lGenerate(); IIF( .F., s_oClass:ModMethod( "lGenerate", @TInfDetTik_lGenerate(), nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ), s_oClass:AddMethod( "lGenerate", @TInfDetTik_lGenerate(), nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ));
+
+; IF .F. ; __clsActive(s_oClass:hClass) ; s_oClass:Refresh() ; ELSE ; s_oClass:Create() ; END ; oClassInstance := __clsInst( s_oClass:hClass ) ; IF __ObjHasMsg( oClassInstance, "InitClass" ); oClassInstance:InitClass( hb_aParams() ) ; END ; ELSE ; oClassInstance := __clsInst( s_oClass:hClass ) ; END ; IF PCount() > 0 ; DIVERT TO (@DivertConstructorCall()) OF s_oClass ; END ; RETURN oClassInstance AS CLASS TInfDetTik ;
+
+
+
+UTILITY STATIC function TInfDetTik_Create() ; local Self AS CLASS TInfDetTik := QSelf() AS CLASS TInfDetTik
+
+   ::CreateFields()
+
+   ::AddTmpIndex ( "CCODALM", "CCODALM + CCODART" )
+   ::AddGroup( {|| ::oDbf:cCodAlm },                     {|| "Almacén  : " + Rtrim( ::oDbf:cCodAlm ) + "-" + oRetFld( ::oDbf:cCodAlm, ::oDbfAlm ) },  {||"Total almacén ..."} )
+   ::AddGroup( {|| ::oDbf:cCodAlm + ::oDbf:cCodArt },    {|| "Artículo : " + Rtrim( ::oDbf:cCodArt ) + "-" + oRetFld( ::oDbf:cCodArt, ::oDbfArt ) },  {||"Total articulo..."} )
+
+
+RETURN ( self )
+
+
+
+UTILITY STATIC function TInfDetTik_OpenFiles() ; local Self AS CLASS TInfDetTik := QSelf() AS CLASS TInfDetTik
+
+   local lOpen    := .T.
+   local oBlock   := ErrorBlock( {| oError | ApoloBreak( oError ) } )
+
+
+
+
+
+   BEGIN SEQUENCE
+
+   ::oTikeT := DbfServer( "TIKET.DBF", ):NewOpen( "TIKET.DBF",, ( cDriver() ),, ( cPatEmp() ), .F., .T., .F., .F. ) ; ::oTikeT:AddBag( "TIKET.CDX" ) ; ::oTikeT:AddBag( ) ; ::oTikeT:AutoIndex()
+
+   ::oTikeL := DbfServer( "TIKEL.DBF", ):NewOpen( "TIKEL.DBF",, ( cDriver() ),, ( cPatEmp() ), .F., .T., .F., .F. ) ; ::oTikeL:AddBag( "TIKEL.CDX" ) ; ::oTikeL:AddBag( ) ; ::oTikeL:AutoIndex()
+
+   ::oDbfCli := DbfServer( "CLIENT.DBF", ):NewOpen( "CLIENT.DBF",, ( cDriver() ),, ( cPatCli() ), .F., .T., .F., .F. ) ; ::oDbfCli:AddBag( "CLIENT.CDX" ) ; ::oDbfCli:AddBag( ) ; ::oDbfCli:AutoIndex()
+
+   ::oDbfTvta := DbfServer( "TVTA.DBF", ):NewOpen( "TVTA.DBF",, ( cDriver() ),, ( cPatDat() ), .F., .T., .F., .F. ) ; ::oDbfTvta:AddBag( "TVTA.CDX" ) ; ::oDbfTvta:AddBag( ) ; ::oDbfTvta:AutoIndex()
+
+   RECOVER
+
+      msgStop( "Imposible abrir todas las bases de datos" )
+      ::CloseFiles()
+      lOpen          := .F.
+
+   end
+
+   ErrorBlock( oBlock )
+
+RETURN ( lOpen )
+
+
+
+UTILITY STATIC function TInfDetTik_CloseFiles() ; local Self AS CLASS TInfDetTik := QSelf() AS CLASS TInfDetTik
+
+   if !Empty( ::oTikeT ) .AND. ::oTikeT:Used()
+      ::oTikeT:End()
+   end
+   if !Empty( ::oTikeL ) .AND. ::oTikeL:Used()
+      ::oTikeL:End()
+   end
+
+   if !Empty( ::oDbfTvta ) .AND. ::oDbfTvta:Used()
+      ::oDbfTvta:End()
+   end
+
+   if !Empty( ::oDbfCli ) .AND. ::oDbfCli:Used()
+      ::oDbfCli:End()
+   end
+
+RETURN ( Self )
+
+
+
+UTILITY STATIC function TInfDetTik_lResource( cFld) ; local Self AS CLASS TInfDetTik := QSelf() AS CLASS TInfDetTik
+
+   if !::StdResource( "INF_GEN01A" )
+      return .F.
+   end
+
+
+
+
+
+   ::oDefAlmInf( 70, 80, 90, 100 )
+
+
+
+
+
+   ::lDefArtInf( 110, 120, 130, 140 )
+
+
+
+
+
+   ::oMtrInf:SetTotal( ::oTikeT:Lastrec() )
+
+   ::oDefExcInf()
+
+   ::oDefResInf()
+
+
+
+
+
+RETURN .T.
+
+
+
+
+
+
+UTILITY STATIC function TInfDetTik_lGenerate() ; local Self AS CLASS TInfDetTik := QSelf() AS CLASS TInfDetTik
+
+   ::oDlg:Disable()
+
+   ::oDbf:Zap()
+   ::oTikeT:GoTop()
+
+
+
+
+
+   WHILE ! ::oTikeT:Eof()
+
+
+
+      if ( ::oTikeT:cTipTik == "1" .OR. ::oTikeT:cTipTik == "4" ) .AND. ::oTikeT:DFECTIK >= ::dIniInf                            .AND. ::oTikeT:DFECTIK <= ::dFinInf
+
+         if ::oTikeL:Seek( ::oTikeT:CSERTIK +  ::oTikeT:CNUMTIK + ::oTikeT:CSUFTIK )
+
+
+
+
+
+            while ::oTikeT:CSERTIK + ::oTikeT:CNUMTIK + ::oTikeT:CSUFTIK == ::oTikeL:CSERTIL + ::oTikeL:CNUMTIL + ::oTikeL:CSUFTIL .AND. !::oTikeL:eof()
+
+
+
+
+
+
+               if !Empty( ::oTikeL:cCbaTil )                      .AND. ::oTikeL:cCbaTil >= ::cArtOrg                   .AND. ::oTikeL:cCbaTil <= ::cArtDes                   .AND. ::oTikeL:CALMLIN >= ::cAlmOrg                   .AND. ::oTikeL:CALMLIN <= ::cAlmDes                   .AND. !( ::lExcCero .AND. ::oTikeL:nPvpTil == 0 )
+
+
+
+
+                  ::AddTik()
+
+               end
+
+
+
+
+
+
+
+
+
+
+               if !Empty( ::oTikeL:cComTil )                      .AND. ::oTikeL:cComTil >= ::cArtOrg                   .AND. ::oTikeL:cComTil <= ::cArtDes                   .AND. ::oTikeL:CALMLIN >= ::cAlmOrg                   .AND. ::oTikeL:CALMLIN <= ::cAlmDes                   .AND. !( ::lExcCero .AND. ::oTikeL:nPvpTil == 0 )
+
+                  ::AddTik()
+
+               end
+
+               ::oTikeL:Skip()
+
+            end
+
+         end
+
+      end
+
+      ::oTikeT:Skip()
+
+      ::oMtrInf:AutoInc( ::oTikeT:OrdKeyNo() )
+
+   end
+
+   ::oMtrInf:AutoInc( ::oTikeT:Lastrec() )
+
+   ::oDlg:Enable()
+
+RETURN ( ::oDbf:LastRec() > 0 )

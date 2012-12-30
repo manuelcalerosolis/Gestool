@@ -1,0 +1,336 @@
+#line 112 "hbclass.ch"
+   DYNAMIC DivertConstructorCall
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+DECLARE HBClass  New( cName AS String, OPTIONAL SuperParams ) AS CLASS HBClass  Create() AS Object  Instance() AS Object  AddClsMethod( cName AS String, @MethodName(), nScope AS Numeric, n2 AS Numeric, n3 AS Numeric )  AddDelegate( cName AS String, cDelegate AS String, cObject AS String, nScope AS Numeric, lPersistent AS LOGICAL )  AddMultiClsData( cType AS String, uVal, nScope AS Numeric, aDatas AS Array OF String )  AddMultiData( cType AS String, uVal, nScope AS Numeric, aDatas AS Array OF String, x AS LOGICAL, lPer AS LOGICAL )  AddMethod( cName AS String, @MethodName(), nScope AS Numeric, lPersistent AS LOGICAL )  AddInLine( cName AS String, bBlock AS CodeBlock, nScope AS Numeric, lPersistent AS LOGICAL )  AddVirtual( cName AS String )  ModMethod( cName AS String, @MethodName(), nScope AS Numeric, lPersistent AS LOGICAL )  ModClsMethod( cName AS String, @MethodName(), nScope AS Numeric )  ModInline( cName AS String, bBlock AS CodeBlock, nScope AS Numeric, lPersistent AS LOGICAL )  SetOnError( @MethodName() )
+#line 85 "\Fwh1204\Include\FiveWin.Ch"
+   EXTERNAL GetProcAdd
+   EXTERNAL TActiveX
+
+
+
+
+extern errorsys
+#line 71 ".\Prg\TTreevc3.prg"
+_HB_CLASS TTreeView ; UTILITY FUNCTION TTreeView(...); static s_oClass ; local oClassInstance ; local nScope ; nScope := 1 ; if s_oClass == NIL ; s_oClass := IIF(.F.,, HBClass():New( "TTreeView" , {TControl():classh} ) ) ; ;
+
+   _HB_MEMBER { aItems} ; IIF( !.F., s_oClass:AddMultiData(,, nScope + IIF( .F., 32, 0 ), { "aItems" }, .F., .F. ), )
+   _HB_MEMBER { oImageList} ; IIF( !.F., s_oClass:AddMultiData(,, nScope + IIF( .F., 32, 0 ), { "oImageList" }, .F., .F. ), )
+   _HB_MEMBER { bChanged} ; IIF( !.F., s_oClass:AddMultiData(,, nScope + IIF( .F., 32, 0 ), { "bChanged" }, .F., .F. ), )
+   _HB_MEMBER { bItemChanged} ; IIF( !.F., s_oClass:AddMultiData(,, nScope + IIF( .F., 32, 0 ), { "bItemChanged" }, .F., .F. ), )
+   _HB_MEMBER { bItemSelectChanged} ; IIF( !.F., s_oClass:AddMultiData(,, nScope + IIF( .F., 32, 0 ), { "bItemSelectChanged" }, .F., .F. ), )
+   _HB_MEMBER { bAction} ; IIF( !.F., s_oClass:AddMultiData(,, nScope + IIF( .F., 32, 0 ), { "bAction" }, .F., .F. ), )
+
+
+
+   _HB_MEMBER New( nTop, nLeft, oWnd, nClrFore, nClrBack, lPixel, lDesign, nWidth, nHeight, cMsg) AS CLASS TTreeView; IIF( .F., s_oClass:ModMethod( "New", @TTreeView_New(), nScope + IIF( .T., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ), s_oClass:AddMethod( "New", @TTreeView_New(), nScope + IIF( .T., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ));
+
+   _HB_MEMBER ReDefine( nId, oWnd, nClrFore, nClrBack, lDesign, cMsg) AS CLASS TTreeView; IIF( .F., s_oClass:ModMethod( "ReDefine", @TTreeView_ReDefine(), nScope + IIF( .T., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ), s_oClass:AddMethod( "ReDefine", @TTreeView_ReDefine(), nScope + IIF( .T., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ));
+
+   _HB_MEMBER Add( cPrompt, nImage); IIF( .F., s_oClass:ModMethod( "Add", @TTreeView_Add(), nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ), s_oClass:AddMethod( "Add", @TTreeView_Add(), nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ));
+
+   _HB_MEMBER VScroll( nWParam, nLParam ); IIF( !.F., s_oClass:AddVirtual( "VScroll" ), )
+
+   _HB_MEMBER HScroll( nWParam, nLParam ); IIF( !.F., s_oClass:AddVirtual( "HScroll" ), )
+
+   _HB_MEMBER Expand(); IIF( .F., s_oClass:ModInline( "Expand", {|Self | Self, AEval( ::aItems, { | oItem | oItem:Expand() } ) }, nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ), s_oClass:AddInline( "Expand", {|Self | Self, AEval( ::aItems, { | oItem | oItem:Expand() } ) }, nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ) )
+
+   _HB_MEMBER ExpandAll(oItem); IIF( .F., s_oClass:ModInline( "ExpandAll", {|Self,oItem | Self, ScanItems( ::aItems, .T. ) }, nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ), s_oClass:AddInline( "ExpandAll", {|Self,oItem | Self, ScanItems( ::aItems, .T. ) }, nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ) )
+
+   _HB_MEMBER GetItem( hItem); IIF( .F., s_oClass:ModMethod( "GetItem", @TTreeView_GetItem(), nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ), s_oClass:AddMethod( "GetItem", @TTreeView_GetItem(), nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ));
+
+   _HB_MEMBER Select(oItem); IIF( .F., s_oClass:ModInline( "Select", {|Self,oItem | Self, TVSelect( ::hWnd, oItem:hItem ) }, nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ), s_oClass:AddInline( "Select", {|Self,oItem | Self, TVSelect( ::hWnd, oItem:hItem ) }, nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ) )
+
+   _HB_MEMBER GetSelText(); IIF( .F., s_oClass:ModInline( "GetSelText", {|Self | Self, TVGetSelText( ::hWnd ) }, nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ), s_oClass:AddInline( "GetSelText", {|Self | Self, TVGetSelText( ::hWnd ) }, nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ) )
+
+   _HB_MEMBER SelChanged(); IIF( .F., s_oClass:ModInline( "SelChanged", {|Self | Self, If( ::bChanged <> nil, Eval( ::bChanged, Self ), nil ) }, nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ), s_oClass:AddInline( "SelChanged", {|Self | Self, If( ::bChanged <> nil, Eval( ::bChanged, Self ), nil ) }, nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ) )
+
+   _HB_MEMBER SetImageList( oImageList); IIF( .F., s_oClass:ModMethod( "SetImageList", @TTreeView_SetImageList(), nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ), s_oClass:AddMethod( "SetImageList", @TTreeView_SetImageList(), nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ));
+
+   _HB_MEMBER GetSelected(); IIF( .F., s_oClass:ModMethod( "GetSelected", @TTreeView_GetSelected(), nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ), s_oClass:AddMethod( "GetSelected", @TTreeView_GetSelected(), nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ));
+
+   _HB_MEMBER GetText(cPrompt); IIF( .F., s_oClass:ModInline( "GetText", {|Self,cPrompt | Self, ScanTextItem( ::aItems, cPrompt ) }, nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ), s_oClass:AddInline( "GetText", {|Self,cPrompt | Self, ScanTextItem( ::aItems, cPrompt ) }, nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ) )
+
+
+      _HB_MEMBER DeleteAll(); IIF( .F., s_oClass:ModInline( "DeleteAll", {|Self | Self, ( TvDeleteAllItems( ::hWnd ), ::aItems := {} ) }, nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ), s_oClass:AddInline( "DeleteAll", {|Self | Self, ( TvDeleteAllItems( ::hWnd ), ::aItems := {} ) }, nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ) )
+
+
+
+
+   _HB_MEMBER SetItemHeight(nHeight); IIF( .F., s_oClass:ModInline( "SetItemHeight", {|Self,nHeight | Self, ( TvSetItemHeight( ::hWnd, nHeight ) ) }, nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ), s_oClass:AddInline( "SetItemHeight", {|Self,nHeight | Self, ( TvSetItemHeight( ::hWnd, nHeight ) ) }, nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ) )
+
+   _HB_MEMBER HitTest( nRow, nCol); IIF( .F., s_oClass:ModMethod( "HitTest", @TTreeView_HitTest(), nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ), s_oClass:AddMethod( "HitTest", @TTreeView_HitTest(), nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ));
+
+   _HB_MEMBER SetTrackSelect(); IIF( .F., s_oClass:ModInline( "SetTrackSelect", {|Self | Self, SetWindowLong( ::hWnd, -20, nOr( GetWindowLong( ::hWnd, -20 ), 512 ) ) }, nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ), s_oClass:AddInline( "SetTrackSelect", {|Self | Self, SetWindowLong( ::hWnd, -20, nOr( GetWindowLong( ::hWnd, -20 ), 512 ) ) }, nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ) )
+
+   _HB_MEMBER MouseMove( nRow, nCol, nKeyFlags ); IIF( !.F., s_oClass:AddVirtual( "MouseMove" ), )
+
+   _HB_MEMBER Notify( nIdCtrl, nPtrNMHDR); IIF( .F., s_oClass:ModMethod( "Notify", @TTreeView_Notify(), nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ), s_oClass:AddMethod( "Notify", @TTreeView_Notify(), nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ));
+
+   _HB_MEMBER Toggle(); IIF( .F., s_oClass:ModInline( "Toggle", {|Self | Self, aEval( ::aItems, {| oItem | oItem:Toggle() } ) }, nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ), s_oClass:AddInline( "Toggle", {|Self | Self, aEval( ::aItems, {| oItem | oItem:Toggle() } ) }, nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ) )
+
+
+
+   _HB_MEMBER ToggleBranch(oItem); IIF( .F., s_oClass:ModInline( "ToggleBranch", {|Self,oItem | Self, If( oItem == nil, oItem := ::GetSelected(), nil ),  If( oItem <> nil, ( oItem:Toggle(), ScanItems( oItem:aItems, , .T. ) ), nil ) }, nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ), s_oClass:AddInline( "ToggleBranch", {|Self,oItem | Self, If( oItem == nil, oItem := ::GetSelected(), nil ),  If( oItem <> nil, ( oItem:Toggle(), ScanItems( oItem:aItems, , .T. ) ), nil ) }, nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ) )
+
+
+
+   _HB_MEMBER SetCheck(oItem, lOnOff); IIF( .F., s_oClass:ModInline( "SetCheck", {|Self,oItem, lOnOff | Self, If( oItem == nil, oItem := ::GetSelected(), nil ),  TVSetCheck( ::hWnd, oItem:hItem, lOnOff ) }, nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ), s_oClass:AddInline( "SetCheck", {|Self,oItem, lOnOff | Self, If( oItem == nil, oItem := ::GetSelected(), nil ),  TVSetCheck( ::hWnd, oItem:hItem, lOnOff ) }, nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ) )
+
+; IF .F. ; __clsActive(s_oClass:hClass) ; s_oClass:Refresh() ; ELSE ; s_oClass:Create() ; END ; oClassInstance := __clsInst( s_oClass:hClass ) ; IF __ObjHasMsg( oClassInstance, "InitClass" ); oClassInstance:InitClass( hb_aParams() ) ; END ; ELSE ; oClassInstance := __clsInst( s_oClass:hClass ) ; END ; IF PCount() > 0 ; DIVERT TO (@DivertConstructorCall()) OF s_oClass ; END ; RETURN oClassInstance AS CLASS TTreeView ;
+
+
+
+
+UTILITY STATIC function TTreeView_New( nTop, nLeft, oWnd, nClrFore, nClrBack, lPixel, lDesign, nWidth, nHeight, cMsg) ; local Self AS CLASS TTreeView := QSelf() AS CLASS TTreeView
+
+
+
+
+
+
+
+
+
+   IIF( nTop == nil, nTop := 0, ) ; IIF( nLeft == nil, nLeft := 0, ); IIF( oWnd == nil, oWnd := GetWndDefault(), ); IIF( nClrFore == nil, nClrFore := oWnd:nClrText, ); IIF( nClrBack == nil, nClrBack := GetSysColor( 5 ), ); IIF( lPixel == nil, lPixel := .F., ); IIF( lDesign == nil, lDesign := .F., ); IIF( nWidth == nil, nWidth := 200, ); IIF( nHeight == nil, nHeight := 150, );
+
+
+
+
+
+
+   ::nStyle    = nOR(   1073741824, 268435456, 16, 512, 4, 1 )
+
+
+
+
+
+   ::nId       = ::GetNewId()
+   ::oWnd      = oWnd
+   ::cMsg      = cMsg
+   ::nTop      = If( lPixel, nTop, nTop * 15 )
+   ::nLeft     = If( lPixel, nLeft, nLeft * 6 )
+   ::nBottom   = ::nTop + nHeight - 1
+   ::nRight    = ::nLeft + nWidth - 1
+   ::lDrag     = lDesign
+   ::lCaptured = .F.
+   ::nClrText  = nClrFore
+   ::nClrPane  = nClrBack
+   ::aItems    = {}
+
+   if !Empty( oWnd:hWnd )
+      ::Create( "SysTreeView32" )
+      oWnd:AddControl( Self )
+   else
+      oWnd:DefControl( Self )
+   endif
+
+   ::Default()
+
+   if lDesign
+      ::CheckDots()
+   endif
+
+return Self
+
+
+
+UTILITY STATIC function TTreeView_ReDefine( nId, oWnd, nClrFore, nClrBack, lDesign, cMsg) ; local Self AS CLASS TTreeView := QSelf() AS CLASS TTreeView
+
+
+
+
+   IIF( oWnd == nil, oWnd := GetWndDefault(), ) ; IIF( nClrFore == nil, nClrFore := oWnd:nClrText, ); IIF( nClrBack == nil, nClrBack := GetSysColor( 5 ), ); IIF( lDesign == nil, lDesign := .F., );
+
+   ::nId     = nId
+   ::oWnd    = oWnd
+   ::aItems  = {}
+
+
+
+
+
+
+   ::Register( nOR(     1, 2, 1, 2, 512, 4 ) )
+   oWnd:DefControl( Self )
+
+return Self
+
+
+
+UTILITY STATIC function TTreeView_Add( cPrompt, nImage, bAction) ; local Self AS CLASS TTreeView := QSelf() AS CLASS TTreeView
+
+   local oItem
+
+   oItem := TTVItem():New( TVInsertItem( ::hWnd, cPrompt, , nImage ), Self )
+
+   oItem:cPrompt := cPrompt
+   oItem:nImage  := nImage
+   oItem:bAction := bAction
+
+   AAdd( ::aItems, oItem )
+
+return oItem
+
+
+
+UTILITY STATIC function TTreeView_GetItem( hItem) ; local Self AS CLASS TTreeView := QSelf() AS CLASS TTreeView
+
+   IIF( hItem == nil, hItem := TVGetSelected( ::hWnd ), ) ;
+
+return ScanItem( ::aItems, hItem )
+
+
+
+UTILITY STATIC function TTreeView_HitTest( nRow, nCol) ; local Self AS CLASS TTreeView := QSelf() AS CLASS TTreeView
+
+   local hItem
+
+   hItem := TVHitTest( ::hWnd, nRow, nCol )
+
+   If hItem > 0
+      return ::GetItem( hItem )
+   Endif
+
+return nil
+
+
+
+UTILITY STATIC function TTreeView_SetImageList( oImageList) ; local Self AS CLASS TTreeView := QSelf() AS CLASS TTreeView
+
+   ::oImageList = oImageList
+
+   TVSetImageList( ::hWnd, oImageList:hImageList, 0 )
+
+return nil
+
+
+
+UTILITY STATIC function TTreeView_GetSelected() ; local Self AS CLASS TTreeView := QSelf() AS CLASS TTreeView
+
+   local oItem := ScanItem( ::aItems, TVGetSelected( ::hWnd ) )
+
+   if !Empty( oItem )
+      Return ( oItem )
+   end
+
+Return ( Self )
+
+
+
+UTILITY STATIC function TTreeView_Notify( nIdCtrl, nPtrNMHDR) ; local Self AS CLASS TTreeView := QSelf() AS CLASS TTreeView
+
+   local nCode := GetNMHDRCode( nPtrNMHDR )
+
+   do case
+      case nCode == -24
+
+         if !Empty( ::bItemSelectChanged )
+            Eval( ::bItemSelectChanged, Self )
+         end
+
+      case nCode == -401
+
+         if !Empty( ::bItemChanged )
+            Eval( ::bItemChanged, Self )
+         end
+
+   end
+
+return ( nil )
+
+
+
+static function ScanItems( aItems, lExpand, lToggle )
+
+   local oItem, i
+
+   IIF( lExpand == nil, lExpand := .T., ) ; IIF( lToggle == nil, lToggle := .F., );
+
+   for i := 1 to Len( aItems )
+
+       oItem = aItems[ i ]
+
+       if lToggle
+          oItem:Toggle()
+       elseif lExpand
+          oItem:Expand()
+       else
+          oItem:Collapse()
+       endif
+
+       if Len( oItem:aItems ) <> 0
+          ScanItems( oItem:aItems, lExpand, lToggle )
+       endif
+   next
+
+return nil
+
+
+
+static function ScanPosItem( aItems, hItem )
+
+   local n
+
+   for n = 1 to Len( aItems )
+      if aItems[ n ]:hItem == hItem
+         return ( n )
+      endif
+      if Len( aItems[ n ]:aItems ) > 0
+         return ScanPosItem( aItems[ n ]:aItems, hItem )
+      endif
+   next
+
+return nil
+
+
+
+static function ScanItem( aItems, hItem )
+
+   local n, oItem
+
+   for n = 1 to Len( aItems )
+      if Len( aItems[ n ]:aItems ) > 0
+         if ( oItem := ScanItem( aItems[ n ]:aItems, hItem ) ) <> nil
+            return oItem
+         endif
+      endif
+      if aItems[ n ]:hItem == hItem
+         return aItems[ n ]
+      endif
+   next
+
+return nil
+
+
+
+static function ScanTextItem( aItems, cPrompt )
+
+   local n, oItem
+
+   for n = 1 to Len( aItems )
+      if Len( aItems[ n ]:aItems ) > 0
+         if ( oItem := ScanTextItem( aItems[ n ]:aItems, cPrompt ) ) <> nil
+            return oItem
+         endif
+      endif
+      if aItems[ n ]:cPrompt == cPrompt
+         return aItems[ n ]
+      endif
+   next
+
+return nil

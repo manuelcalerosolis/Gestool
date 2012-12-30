@@ -1,0 +1,103 @@
+#line 112 "hbclass.ch"
+   DYNAMIC DivertConstructorCall
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+DECLARE HBClass  New( cName AS String, OPTIONAL SuperParams ) AS CLASS HBClass  Create() AS Object  Instance() AS Object  AddClsMethod( cName AS String, @MethodName(), nScope AS Numeric, n2 AS Numeric, n3 AS Numeric )  AddDelegate( cName AS String, cDelegate AS String, cObject AS String, nScope AS Numeric, lPersistent AS LOGICAL )  AddMultiClsData( cType AS String, uVal, nScope AS Numeric, aDatas AS Array OF String )  AddMultiData( cType AS String, uVal, nScope AS Numeric, aDatas AS Array OF String, x AS LOGICAL, lPer AS LOGICAL )  AddMethod( cName AS String, @MethodName(), nScope AS Numeric, lPersistent AS LOGICAL )  AddInLine( cName AS String, bBlock AS CodeBlock, nScope AS Numeric, lPersistent AS LOGICAL )  AddVirtual( cName AS String )  ModMethod( cName AS String, @MethodName(), nScope AS Numeric, lPersistent AS LOGICAL )  ModClsMethod( cName AS String, @MethodName(), nScope AS Numeric )  ModInline( cName AS String, bBlock AS CodeBlock, nScope AS Numeric, lPersistent AS LOGICAL )  SetOnError( @MethodName() )
+#line 85 "\Fwh1204\Include\FiveWin.ch"
+   EXTERNAL GetProcAdd
+   EXTERNAL TActiveX
+
+
+
+
+extern errorsys
+#line 5 ".\Prg\Rect.prg"
+_HB_CLASS TRect ; UTILITY FUNCTION TRect(...); static s_oClass ; local oClassInstance ; local nScope ; nScope := 1 ; if s_oClass == NIL ; s_oClass := IIF(.F.,, HBClass():New( "TRect" , { HBObject():Classh } ) ) ;
+
+   _HB_MEMBER { aRect} ; IIF( !.F., s_oClass:AddMultiData(,, nScope + IIF( .F., 32, 0 ), { "aRect" }, .F., .F. ), )
+
+   _HB_MEMBER New( nTop, nLeft, nBottom, nRight) AS CLASS TRect; IIF( .F., s_oClass:ModMethod( "New", @TRect_New(), nScope + IIF( .T., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ), s_oClass:AddMethod( "New", @TRect_New(), nScope + IIF( .T., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ));
+
+   _HB_MEMBER nTop(); IIF( .F., s_oClass:ModInline( "nTop", {|Self | Self, ::aRect[ 1 ] }, 1, .F. ), s_oClass:AddInline( "nTop", {|Self | Self, ::aRect[ 1 ] }, 1, .F. ) )
+   _HB_MEMBER nLeft(); IIF( .F., s_oClass:ModInline( "nLeft", {|Self | Self, ::aRect[ 2 ] }, 1, .F. ), s_oClass:AddInline( "nLeft", {|Self | Self, ::aRect[ 2 ] }, 1, .F. ) )
+   _HB_MEMBER nBottom(); IIF( .F., s_oClass:ModInline( "nBottom", {|Self | Self, ::aRect[ 3 ] }, 1, .F. ), s_oClass:AddInline( "nBottom", {|Self | Self, ::aRect[ 3 ] }, 1, .F. ) )
+   _HB_MEMBER nRight(); IIF( .F., s_oClass:ModInline( "nRight", {|Self | Self, ::aRect[ 4 ] }, 1, .F. ), s_oClass:AddInline( "nRight", {|Self | Self, ::aRect[ 4 ] }, 1, .F. ) )
+   _HB_MEMBER nHeight(); IIF( .F., s_oClass:ModInline( "nHeight", {|Self | Self, ::aRect[ 3 ] - ::aRect[ 1 ] + 1 }, 1, .F. ), s_oClass:AddInline( "nHeight", {|Self | Self, ::aRect[ 3 ] - ::aRect[ 1 ] + 1 }, 1, .F. ) )
+   _HB_MEMBER nWidth(); IIF( .F., s_oClass:ModInline( "nWidth", {|Self | Self, ::aRect[ 4 ] - ::aRect[ 2 ] + 1 }, 1, .F. ), s_oClass:AddInline( "nWidth", {|Self | Self, ::aRect[ 4 ] - ::aRect[ 2 ] + 1 }, 1, .F. ) )
+
+   _HB_MEMBER cRect(); IIF( .F., s_oClass:ModInline( "cRect", {|Self | Self, L2Bin( ::aRect[ 2 ] ) + L2Bin( ::aRect[ 1 ] ) +  L2Bin( ::aRect[ 4 ] ) + L2Bin( ::aRect[ 3 ] ) }, 1, .F. ), s_oClass:AddInline( "cRect", {|Self | Self, L2Bin( ::aRect[ 2 ] ) + L2Bin( ::aRect[ 1 ] ) +  L2Bin( ::aRect[ 4 ] ) + L2Bin( ::aRect[ 3 ] ) }, 1, .F. ) )
+
+   _HB_MEMBER _nTop(x); IIF( .F., s_oClass:ModInline( "_nTop", {|Self,x | Self, ( ::aRect[ 1 ] := x ) }, 1 ), s_oClass:AddInline( "_nTop", {|Self,x | Self, ( ::aRect[ 1 ] := x ) }, 1 ) )
+   _HB_MEMBER _nLeft(x); IIF( .F., s_oClass:ModInline( "_nLeft", {|Self,x | Self, ( ::aRect[ 2 ] := x ) }, 1 ), s_oClass:AddInline( "_nLeft", {|Self,x | Self, ( ::aRect[ 2 ] := x ) }, 1 ) )
+   _HB_MEMBER _nBottom(x); IIF( .F., s_oClass:ModInline( "_nBottom", {|Self,x | Self, ( ::aRect[ 3 ] := x ) }, 1 ), s_oClass:AddInline( "_nBottom", {|Self,x | Self, ( ::aRect[ 3 ] := x ) }, 1 ) )
+   _HB_MEMBER _nRight(x); IIF( .F., s_oClass:ModInline( "_nRight", {|Self,x | Self, ( ::aRect[ 4 ] := x ) }, 1 ), s_oClass:AddInline( "_nRight", {|Self,x | Self, ( ::aRect[ 4 ] := x ) }, 1 ) )
+   _HB_MEMBER _nHeight(x); IIF( .F., s_oClass:ModInline( "_nHeight", {|Self,x | Self, ( ::aRect[ 3 ] := x + ::aRect[ 1 ] - 1, ::nHeight ) }, 1 ), s_oClass:AddInline( "_nHeight", {|Self,x | Self, ( ::aRect[ 3 ] := x + ::aRect[ 1 ] - 1, ::nHeight ) }, 1 ) )
+   _HB_MEMBER _nWidth(x); IIF( .F., s_oClass:ModInline( "_nWidth", {|Self,x | Self, ( ::aRect[ 4 ] := x + ::aRect[ 2 ] - 1, ::nWidth ) }, 1 ), s_oClass:AddInline( "_nWidth", {|Self,x | Self, ( ::aRect[ 4 ] := x + ::aRect[ 2 ] - 1, ::nWidth ) }, 1 ) )
+
+
+
+
+   _HB_MEMBER _cRect(c); IIF( .F., s_oClass:ModInline( "_cRect", {|Self,c | Self, ::aRect := {  Bin2L( SubStr( c,  5, 4 ) ),  Bin2L( SubStr( c,  1, 4 ) ),  Bin2L( SubStr( c, 13, 4 ) ),  Bin2L( SubStr( c,  9, 4 ) )  } }, 1 ), s_oClass:AddInline( "_cRect", {|Self,c | Self, ::aRect := {  Bin2L( SubStr( c,  5, 4 ) ),  Bin2L( SubStr( c,  1, 4 ) ),  Bin2L( SubStr( c, 13, 4 ) ),  Bin2L( SubStr( c,  9, 4 ) )  } }, 1 ) )
+
+   _HB_MEMBER MoveBy( nRows, nCols); IIF( .F., s_oClass:ModMethod( "MoveBy", @TRect_MoveBy(), nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ), s_oClass:AddMethod( "MoveBy", @TRect_MoveBy(), nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ));
+   _HB_MEMBER MoveTo( nNewTop, nNewLeft); IIF( .F., s_oClass:ModMethod( "MoveTo", @TRect_MoveTo(), nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ), s_oClass:AddMethod( "MoveTo", @TRect_MoveTo(), nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ));
+
+
+
+   IIF( .F., s_oClass:ModInline( "==", {|Self, o | Self, ( ::nTop == o:nTop .AND. ::nLeft == o:nLeft .AND.  ::nBottom == o:nBottom .AND. ::nRight == o:nRight ) }, nScope ), s_oClass:AddInline( "==", {|Self, o | Self, ( ::nTop == o:nTop .AND. ::nLeft == o:nLeft .AND.  ::nBottom == o:nBottom .AND. ::nRight == o:nRight ) }, nScope ) )
+
+   _HB_MEMBER ByIndex(n, x); IIF( .F., s_oClass:ModMethod( "[]", @TRect_ByIndex(), nScope + IIF( .F., 1024, 0 ) ), s_oClass:AddMethod( "[]", @TRect_ByIndex(), nScope + IIF( .F., 1024, 0 ) ) );
+
+; IF .F. ; __clsActive(s_oClass:hClass) ; s_oClass:Refresh() ; ELSE ; s_oClass:Create() ; END ; oClassInstance := __clsInst( s_oClass:hClass ) ; IF __ObjHasMsg( oClassInstance, "InitClass" ); oClassInstance:InitClass( hb_aParams() ) ; END ; ELSE ; oClassInstance := __clsInst( s_oClass:hClass ) ; END ; IF PCount() > 0 ; DIVERT TO (@DivertConstructorCall()) OF s_oClass ; END ; RETURN oClassInstance AS CLASS TRect ;
+
+
+
+UTILITY STATIC function TRect_New( nTop, nLeft, nBottom, nRight) ; local Self AS CLASS TRect := QSelf() AS CLASS TRect
+
+   if ValType( nTop ) == "A"
+      ::aRect     := AClone( nTop )
+   else
+      ::aRect     := { nTop, nLeft, nBottom, nRight }
+   endif
+
+return Self
+
+
+
+UTILITY STATIC function TRect_MoveBy( nRows, nCols) ; local Self AS CLASS TRect := QSelf() AS CLASS TRect
+
+   IIF( nRows == nil, nRows := 0, ) ; IIF( nCols == nil, nCols := 0, );
+
+   ::aRect[ 1 ]      += nRows
+   ::aRect[ 3 ]      += nRows
+   ::aRect[ 2 ]      += nCols
+   ::aRect[ 4 ]      += nCols
+
+return Self
+
+
+
+UTILITY STATIC function TRect_MoveTo( nNewTop, nNewLeft) ; local Self AS CLASS TRect := QSelf() AS CLASS TRect
+
+   IIF( nNewTop == nil, nNewTop := ::aRect[ 1 ], ) ; IIF( nNewLeft == nil, nNewLeft := ::aRect[ 2 ], );
+
+return ::MoveBy( nNewTop - ::aRect[ 1 ], nNewLeft - ::aRect[ 2 ] )
+
+
+
+UTILITY STATIC function TRect_ByIndex(n, x) ; local Self AS CLASS TRect := QSelf() AS CLASS TRect
+return If( x == nil, ::aRect[ n ], ::aRect[ n ] := x )

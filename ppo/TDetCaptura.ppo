@@ -1,0 +1,410 @@
+#line 112 "hbclass.ch"
+   DYNAMIC DivertConstructorCall
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+DECLARE HBClass  New( cName AS String, OPTIONAL SuperParams ) AS CLASS HBClass  Create() AS Object  Instance() AS Object  AddClsMethod( cName AS String, @MethodName(), nScope AS Numeric, n2 AS Numeric, n3 AS Numeric )  AddDelegate( cName AS String, cDelegate AS String, cObject AS String, nScope AS Numeric, lPersistent AS LOGICAL )  AddMultiClsData( cType AS String, uVal, nScope AS Numeric, aDatas AS Array OF String )  AddMultiData( cType AS String, uVal, nScope AS Numeric, aDatas AS Array OF String, x AS LOGICAL, lPer AS LOGICAL )  AddMethod( cName AS String, @MethodName(), nScope AS Numeric, lPersistent AS LOGICAL )  AddInLine( cName AS String, bBlock AS CodeBlock, nScope AS Numeric, lPersistent AS LOGICAL )  AddVirtual( cName AS String )  ModMethod( cName AS String, @MethodName(), nScope AS Numeric, lPersistent AS LOGICAL )  ModClsMethod( cName AS String, @MethodName(), nScope AS Numeric )  ModInline( cName AS String, bBlock AS CodeBlock, nScope AS Numeric, lPersistent AS LOGICAL )  SetOnError( @MethodName() )
+#line 85 "\Fwh1204\Include\FiveWin.Ch"
+   EXTERNAL GetProcAdd
+   EXTERNAL TActiveX
+
+
+
+
+extern errorsys
+#line 11 ".\Prg\TDetCaptura.prg"
+_HB_CLASS TDetCaptura ; UTILITY FUNCTION TDetCaptura(...); static s_oClass ; local oClassInstance ; local nScope ; nScope := 1 ; if s_oClass == NIL ; s_oClass := IIF(.F.,, HBClass():New( "TDetCaptura" , {TDet():classh} ) ) ; ;
+
+   _HB_MEMBER DefineFiles(); IIF( .F., s_oClass:ModMethod( "DefineFiles", @TDetCaptura_DefineFiles(), nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ), s_oClass:AddMethod( "DefineFiles", @TDetCaptura_DefineFiles(), nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ));
+
+   _HB_MEMBER OpenFiles( lExclusive); IIF( .F., s_oClass:ModMethod( "OpenFiles", @TDetCaptura_OpenFiles(), nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ), s_oClass:AddMethod( "OpenFiles", @TDetCaptura_OpenFiles(), nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ));
+
+   _HB_MEMBER OpenService( lExclusive); IIF( .F., s_oClass:ModMethod( "OpenService", @TDetCaptura_OpenService(), nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ), s_oClass:AddMethod( "OpenService", @TDetCaptura_OpenService(), nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ));
+
+   _HB_MEMBER CheckDefault(); IIF( .F., s_oClass:ModMethod( "CheckDefault", @TDetCaptura_CheckDefault(), nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ), s_oClass:AddMethod( "CheckDefault", @TDetCaptura_CheckDefault(), nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ));
+
+   _HB_MEMBER SaveLines(); IIF( .F., s_oClass:ModMethod( "SaveLines", @TDetCaptura_SaveLines(), nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ), s_oClass:AddMethod( "SaveLines", @TDetCaptura_SaveLines(), nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ));
+
+; IF .F. ; __clsActive(s_oClass:hClass) ; s_oClass:Refresh() ; ELSE ; s_oClass:Create() ; END ; oClassInstance := __clsInst( s_oClass:hClass ) ; IF __ObjHasMsg( oClassInstance, "InitClass" ); oClassInstance:InitClass( hb_aParams() ) ; END ; ELSE ; oClassInstance := __clsInst( s_oClass:hClass ) ; END ; IF PCount() > 0 ; DIVERT TO (@DivertConstructorCall()) OF s_oClass ; END ; RETURN oClassInstance AS CLASS TDetCaptura ;
+
+
+
+UTILITY STATIC function TDetCaptura_DefineFiles( cPath, cVia) ; local Self AS CLASS TDetCaptura := QSelf() AS CLASS TDetCaptura
+
+   local oDbf
+
+   IIF( cPath == nil, cPath := ::cPath, ) ;
+   IIF( cVia == nil, cVia := cDriver(), ) ;
+
+   oDbf := DbfServer( "CapturaCampos.Dbf", "TCapCam" ):New( "CapturaCampos.Dbf", "CapCam", ( cVia ),, ( cPath ) )
+
+      oDbf:AddField( "cCodigo", "C", 3, 0,,,,, "Código", .F.,, .F., {} )
+      oDbf:AddField( "nNumero", "N", 2, 0,,,,, "Número", .F.,, .F., {} )
+      oDbf:AddField( "cNombre", "C", 50, 0,,,,, "Nombre", .F.,, .F., {} )
+      oDbf:AddField( "lEditable", "L", 1, 0,,,,, "Editable", .F.,, .F., {} )
+      oDbf:AddField( "lVisible", "L", 1, 0,,,,, "Visble", .F.,, .F., {} )
+      oDbf:AddField( "nCaptura", "N", 1, 0,,,,, "Captura", .F.,, .F., {} )
+      oDbf:AddField( "cTitulo", "C", 50, 0,,,,, "Título", .F.,, .F., {} )
+      oDbf:AddField( "lAlign", "L", 1, 0,,,,, "Align", .F.,, .F., {} )
+      oDbf:AddField( "cPicture", "C", 50, 0,,,,, "Picture", .F.,, .F., {} )
+      oDbf:AddField( "nAncho", "N", 3, 0,,,,, "Ancho", .F.,, .F., {} )
+      oDbf:AddField( "lBitmap", "L", 1, 0,,,,, "Recurso", .F.,, .F., {} )
+
+      oDbf:AddIndex( "cCodigo", "CapturaCampos.Cdx", "cCodigo",,, .F., .F., "Código",,, .T., .F. )
+
+
+
+RETURN ( oDbf )
+
+
+
+UTILITY STATIC function TDetCaptura_OpenFiles( lExclusive) ; local Self AS CLASS TDetCaptura := QSelf() AS CLASS TDetCaptura
+
+   IIF( lExclusive == nil, lExclusive := .F., ) ;
+
+   if Empty( ::oDbf )
+      ::oDbf            := ::DefineFiles()
+   end
+
+   ::oDbf:Activate( .F., !lExclusive )
+
+   ::CheckDefault( "000", .F. )
+
+   ::bOnPreSaveDetail   := {|| ::SaveLines() }
+
+RETURN ( Self )
+
+
+
+UTILITY STATIC function TDetCaptura_SaveLines() ; local Self AS CLASS TDetCaptura := QSelf() AS CLASS TDetCaptura
+
+   ::oDbfVir:cCodigo    := ::oParent:oDbf:cCodigo
+
+RETURN ( Self )
+
+
+
+UTILITY STATIC function TDetCaptura_CheckDefault( cCod, lNew) ; local Self AS CLASS TDetCaptura := QSelf() AS CLASS TDetCaptura
+
+   IIF( cCod == nil, cCod := "000", ) ;
+   IIF( lNew == nil, lNew := .F., ) ;
+
+   if lNew
+      while ::oDbf:Seek( cCod ) .AND. !::oDbf:Eof()
+         ::oDbf:Delete()
+      end
+   end
+
+   if Empty( cCod ) .OR. !::oDbf:Seek( cCod )
+
+      ::oDbf:Append()
+      ::oDbf:cCodigo    := cCod
+      ::oDbf:nNumero    := 1
+      ::oDbf:cNombre    := "Código del artículo"
+      ::oDbf:lEditable  := .F.
+      ::oDbf:lVisible   := .T.
+      ::oDbf:nCaptura   := 3
+      ::oDbf:cTitulo    := "Código"
+      ::oDbf:lAlign     := .F.
+      ::oDbf:cPicture   := Space( 50 )
+      ::oDbf:nAncho     := 100
+      ::oDbf:lBitmap    := .F.
+      ::oDbf:Save()
+
+      ::oDbf:Append()
+      ::oDbf:cCodigo    := cCod
+      ::oDbf:nNumero    := 16
+      ::oDbf:cNombre    := "Promoción"
+      ::oDbf:lEditable  := .T.
+      ::oDbf:lVisible   := .F.
+      ::oDbf:nCaptura   := 2
+      ::oDbf:cTitulo    := "Prm."
+      ::oDbf:lAlign     := .F.
+      ::oDbf:cPicture   := Space( 50 )
+      ::oDbf:nAncho     := 20
+      ::oDbf:lBitmap    := .T.
+      ::oDbf:Save()
+
+      ::oDbf:Append()
+      ::oDbf:cCodigo    := cCod
+      ::oDbf:nNumero    := 17
+      ::oDbf:cNombre    := "Oferta"
+      ::oDbf:lEditable  := .T.
+      ::oDbf:lVisible   := .F.
+      ::oDbf:nCaptura   := 2
+      ::oDbf:cTitulo    := "Ofe."
+      ::oDbf:lAlign     := .F.
+      ::oDbf:cPicture   := Space( 50 )
+      ::oDbf:nAncho     := 20
+      ::oDbf:lBitmap    := .T.
+      ::oDbf:Save()
+
+      ::oDbf:Append()
+      ::oDbf:cCodigo    := cCod
+      ::oDbf:nNumero    := 2
+      ::oDbf:cNombre    := "Unidades"
+      ::oDbf:lEditable  := .F.
+      ::oDbf:lVisible   := .T.
+      ::oDbf:nCaptura   := 3
+      ::oDbf:cTitulo    := "Und."
+      ::oDbf:lAlign     := .T.
+      ::oDbf:cPicture   := "cPicUnd"
+      ::oDbf:nAncho     := 60
+      ::oDbf:lBitmap    := .F.
+      ::oDbf:Save()
+
+      ::oDbf:Append()
+      ::oDbf:cCodigo    := cCod
+      ::oDbf:nNumero    := 18
+      ::oDbf:cNombre    := "Factor"
+      ::oDbf:lEditable  := .F.
+      ::oDbf:lVisible   := .T.
+      ::oDbf:nCaptura   := 3
+      ::oDbf:cTitulo    := "Factor"
+      ::oDbf:lAlign     := .T.
+      ::oDbf:cPicture   := "@E 999,999.999999"
+      ::oDbf:nAncho     := 60
+      ::oDbf:lBitmap    := .F.
+      ::oDbf:Save()
+
+      ::oDbf:Append()
+      ::oDbf:cCodigo    := cCod
+      ::oDbf:nNumero    := 3
+      ::oDbf:cNombre    := "Medición 1"
+      ::oDbf:lEditable  := .T.
+      ::oDbf:lVisible   := .F.
+      ::oDbf:nCaptura   := 1
+      ::oDbf:cTitulo    := "Med. 1"
+      ::oDbf:lAlign     := .T.
+      ::oDbf:cPicture   := "cPicUnd"
+      ::oDbf:nAncho     := 60
+      ::oDbf:lBitmap    := .F.
+      ::oDbf:Save()
+
+      ::oDbf:Append()
+      ::oDbf:cCodigo    := cCod
+      ::oDbf:nNumero    := 4
+      ::oDbf:cNombre    := "Medición 2"
+      ::oDbf:lEditable  := .T.
+      ::oDbf:lVisible   := .F.
+      ::oDbf:nCaptura   := 1
+      ::oDbf:cTitulo    := "Med. 2"
+      ::oDbf:lAlign     := .T.
+      ::oDbf:cPicture   := "cPicUnd"
+      ::oDbf:nAncho     := 60
+      ::oDbf:lBitmap    := .F.
+      ::oDbf:Save()
+
+      ::oDbf:Append()
+      ::oDbf:cCodigo    := cCod
+      ::oDbf:nNumero    := 5
+      ::oDbf:cNombre    := "Medición 3"
+      ::oDbf:lEditable  := .T.
+      ::oDbf:lVisible   := .F.
+      ::oDbf:nCaptura   := 1
+      ::oDbf:cTitulo    := "Med. 3"
+      ::oDbf:lAlign     := .T.
+      ::oDbf:cPicture   := "cPicUnd"
+      ::oDbf:nAncho     := 60
+      ::oDbf:lBitmap    := .F.
+      ::oDbf:Save()
+
+      ::oDbf:Append()
+      ::oDbf:cCodigo    := cCod
+      ::oDbf:nNumero    := 6
+      ::oDbf:cNombre    := "Propiedad 1"
+      ::oDbf:lEditable  := .T.
+      ::oDbf:lVisible   := .F.
+      ::oDbf:nCaptura   := 2
+      ::oDbf:cTitulo    := "Prop. 1"
+      ::oDbf:lAlign     := .F.
+      ::oDbf:cPicture   := Space( 50 )
+      ::oDbf:nAncho     := 40
+      ::oDbf:lBitmap    := .F.
+      ::oDbf:Save()
+
+      ::oDbf:Append()
+      ::oDbf:cCodigo    := cCod
+      ::oDbf:nNumero    := 7
+      ::oDbf:cNombre    := "Propiedad 2"
+      ::oDbf:lEditable  := .T.
+      ::oDbf:lVisible   := .F.
+      ::oDbf:nCaptura   := 2
+      ::oDbf:cTitulo    := "Prop. 2"
+      ::oDbf:lAlign     := .F.
+      ::oDbf:cPicture   := Space( 50 )
+      ::oDbf:nAncho     := 40
+      ::oDbf:lBitmap    := .F.
+      ::oDbf:Save()
+
+      ::oDbf:Append()
+      ::oDbf:cCodigo    := cCod
+      ::oDbf:nNumero    := 8
+      ::oDbf:cNombre    := "Lote"
+      ::oDbf:lEditable  := .T.
+      ::oDbf:lVisible   := .F.
+      ::oDbf:nCaptura   := 2
+      ::oDbf:cTitulo    := "Lote"
+      ::oDbf:lAlign     := .T.
+      ::oDbf:cPicture   := "@Z 999999999"
+      ::oDbf:nAncho     := 60
+      ::oDbf:lBitmap    := .F.
+      ::oDbf:Save()
+
+      ::oDbf:Append()
+      ::oDbf:cCodigo    := cCod
+      ::oDbf:nNumero    := 9
+      ::oDbf:cNombre    := "Detalle"
+      ::oDbf:lEditable  := .T.
+      ::oDbf:lVisible   := .T.
+      ::oDbf:nCaptura   := 2
+      ::oDbf:cTitulo    := "Detalle"
+      ::oDbf:lAlign     := .F.
+      ::oDbf:cPicture   := Space( 50 )
+      ::oDbf:nAncho     := 200
+      ::oDbf:lBitmap    := .F.
+      ::oDbf:Save()
+
+      ::oDbf:Append()
+      ::oDbf:cCodigo    := cCod
+      ::oDbf:nNumero    := 10
+      ::oDbf:cNombre    := "Importe"
+      ::oDbf:lEditable  := .T.
+      ::oDbf:lVisible   := .T.
+      ::oDbf:nCaptura   := 2
+      ::oDbf:cTitulo    := "Importe"
+      ::oDbf:lAlign     := .T.
+      ::oDbf:cPicture   := "cPouDiv"
+      ::oDbf:nAncho     := 80
+      ::oDbf:lBitmap    := .F.
+      ::oDbf:Save()
+
+      ::oDbf:Append()
+      ::oDbf:cCodigo    := cCod
+      ::oDbf:nNumero    := 11
+      ::oDbf:cNombre    := "Descuento lineal"
+      ::oDbf:lEditable  := .T.
+      ::oDbf:lVisible   := .T.
+      ::oDbf:nCaptura   := 2
+      ::oDbf:cTitulo    := "Dto. lin."
+      ::oDbf:lAlign     := .T.
+      ::oDbf:cPicture   := "cPouDiv"
+      ::oDbf:nAncho     := 80
+      ::oDbf:lBitmap    := .F.
+      ::oDbf:Save()
+
+      ::oDbf:Append()
+      ::oDbf:cCodigo    := cCod
+      ::oDbf:nNumero    := 12
+      ::oDbf:cNombre    := "Descuento porcentual"
+      ::oDbf:lEditable  := .T.
+      ::oDbf:lVisible   := .T.
+      ::oDbf:nCaptura   := 2
+      ::oDbf:cTitulo    := "%Dto."
+      ::oDbf:lAlign     := .T.
+      ::oDbf:cPicture   := '"@E 99.99"'
+      ::oDbf:nAncho     := 40
+      ::oDbf:lBitmap    := .F.
+      ::oDbf:Save()
+
+      ::oDbf:Append()
+      ::oDbf:cCodigo    := cCod
+      ::oDbf:nNumero    := 13
+      ::oDbf:cNombre    := "Total"
+      ::oDbf:lEditable  := .F.
+      ::oDbf:lVisible   := .T.
+      ::oDbf:nCaptura   := 2
+      ::oDbf:cTitulo    := "Total"
+      ::oDbf:lAlign     := .T.
+      ::oDbf:cPicture   := "cPorDiv"
+      ::oDbf:nAncho     := 80
+      ::oDbf:lBitmap    := .F.
+      ::oDbf:Save()
+
+      ::oDbf:Append()
+      ::oDbf:cCodigo    := cCod
+      ::oDbf:nNumero    := 14
+      ::oDbf:cNombre    := "Número de serie"
+      ::oDbf:lEditable  := .T.
+      ::oDbf:lVisible   := .F.
+      ::oDbf:nCaptura   := 2
+      ::oDbf:cTitulo    := "Nº Serie"
+      ::oDbf:lAlign     := .F.
+      ::oDbf:cPicture   := Space( 50 )
+      ::oDbf:nAncho     := 56
+      ::oDbf:lBitmap    := .F.
+      ::oDbf:Save()
+
+      ::oDbf:Append()
+      ::oDbf:cCodigo    := cCod
+      ::oDbf:nNumero    := 15
+      ::oDbf:cNombre    := "Número de línea"
+      ::oDbf:lEditable  := .T.
+      ::oDbf:lVisible   := .F.
+      ::oDbf:nCaptura   := 2
+      ::oDbf:cTitulo    := "Nº Línea"
+      ::oDbf:lAlign     := .T.
+      ::oDbf:cPicture   := "9999"
+      ::oDbf:nAncho     := 40
+      ::oDbf:lBitmap    := .F.
+      ::oDbf:Save()
+
+      ::oDbf:Append()
+      ::oDbf:cCodigo    := cCod
+      ::oDbf:nNumero    := 16
+      ::oDbf:cNombre    := "Código de barras"
+      ::oDbf:lEditable  := .T.
+      ::oDbf:lVisible   := .T.
+      ::oDbf:nCaptura   := 2
+      ::oDbf:cTitulo    := "C. barras"
+      ::oDbf:lAlign     := .F.
+      ::oDbf:cPicture   := Space( 50 )
+      ::oDbf:nAncho     := 100
+      ::oDbf:lBitmap    := .F.
+      ::oDbf:Save()
+
+   end
+
+RETURN ( .T. )
+
+
+
+UTILITY STATIC function TDetCaptura_OpenService( lExclusive) ; local Self AS CLASS TDetCaptura := QSelf() AS CLASS TDetCaptura
+
+   local lOpen          := .T.
+   local oBlock         := ErrorBlock( {| oError | ApoloBreak( oError ) } )
+
+   IIF( lExclusive == nil, lExclusive := .F., ) ;
+
+   BEGIN SEQUENCE
+
+      if Empty( ::oDbf )
+         ::oDbf         := ::DefineFiles()
+      end
+
+      ::oDbf:Activate( .F., !( lExclusive ) )
+
+   RECOVER
+
+      msgStop( "Imposible abrir todas las bases de datos de detalle de capturas" )
+      ::CloseService()
+      lOpen             := .F.
+
+   end
+
+   ErrorBlock( oBlock )
+
+RETURN ( lOpen )

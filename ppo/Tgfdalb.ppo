@@ -1,0 +1,238 @@
+#line 112 "hbclass.ch"
+   DYNAMIC DivertConstructorCall
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+DECLARE HBClass  New( cName AS String, OPTIONAL SuperParams ) AS CLASS HBClass  Create() AS Object  Instance() AS Object  AddClsMethod( cName AS String, @MethodName(), nScope AS Numeric, n2 AS Numeric, n3 AS Numeric )  AddDelegate( cName AS String, cDelegate AS String, cObject AS String, nScope AS Numeric, lPersistent AS LOGICAL )  AddMultiClsData( cType AS String, uVal, nScope AS Numeric, aDatas AS Array OF String )  AddMultiData( cType AS String, uVal, nScope AS Numeric, aDatas AS Array OF String, x AS LOGICAL, lPer AS LOGICAL )  AddMethod( cName AS String, @MethodName(), nScope AS Numeric, lPersistent AS LOGICAL )  AddInLine( cName AS String, bBlock AS CodeBlock, nScope AS Numeric, lPersistent AS LOGICAL )  AddVirtual( cName AS String )  ModMethod( cName AS String, @MethodName(), nScope AS Numeric, lPersistent AS LOGICAL )  ModClsMethod( cName AS String, @MethodName(), nScope AS Numeric )  ModInline( cName AS String, bBlock AS CodeBlock, nScope AS Numeric, lPersistent AS LOGICAL )  SetOnError( @MethodName() )
+#line 85 "\Fwh1204\Include\FiveWin.Ch"
+   EXTERNAL GetProcAdd
+   EXTERNAL TActiveX
+
+
+
+
+extern errorsys
+#line 8 ".\Prg\Tgfdalb.prg"
+_HB_CLASS TInfGFDAlb ; UTILITY FUNCTION TInfGFDAlb(...); static s_oClass ; local oClassInstance ; local nScope ; nScope := 1 ; if s_oClass == NIL ; s_oClass := IIF(.F.,, HBClass():New( "TInfGFDAlb" , {TInfGrp():classh} ) ) ; ;
+
+   _HB_MEMBER {AS LOGIC lExcMov} ; IIF( !.F., s_oClass:AddMultiData( "LOGIC", .F., nScope + IIF( .F., 32, 0 ), { "lExcMov" }, .F., .F. ), )
+   _HB_MEMBER {AS OBJECT oEstado} ; IIF( !.F., s_oClass:AddMultiData( "OBJECT",, nScope + IIF( .F., 32, 0 ), { "oEstado" }, .F., .F. ), )
+   _HB_MEMBER {AS OBJECT oAlbCliT} ; IIF( !.F., s_oClass:AddMultiData( "OBJECT",, nScope + IIF( .F., 32, 0 ), { "oAlbCliT" }, .F., .F. ), )
+   _HB_MEMBER {AS OBJECT oAlbCliL} ; IIF( !.F., s_oClass:AddMultiData( "OBJECT",, nScope + IIF( .F., 32, 0 ), { "oAlbCliL" }, .F., .F. ), )
+   _HB_MEMBER {AS OBJECT oDbfTvta} ; IIF( !.F., s_oClass:AddMultiData( "OBJECT",, nScope + IIF( .F., 32, 0 ), { "oDbfTvta" }, .F., .F. ), )
+   _HB_MEMBER {AS ARRAY aEstado} ; IIF( !.F., s_oClass:AddMultiData( "ARRAY", { "No facturado", "Facturado", "Todos" }, nScope + IIF( .F., 32, 0 ), { "aEstado" }, .F., .F. ), )
+
+   _HB_MEMBER Create(); IIF( .F., s_oClass:ModMethod( "Create", @TInfGFDAlb_Create(), nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ), s_oClass:AddMethod( "Create", @TInfGFDAlb_Create(), nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ));
+
+   _HB_MEMBER OpenFiles(); IIF( .F., s_oClass:ModMethod( "OpenFiles", @TInfGFDAlb_OpenFiles(), nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ), s_oClass:AddMethod( "OpenFiles", @TInfGFDAlb_OpenFiles(), nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ));
+
+   _HB_MEMBER CloseFiles(); IIF( .F., s_oClass:ModMethod( "CloseFiles", @TInfGFDAlb_CloseFiles(), nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ), s_oClass:AddMethod( "CloseFiles", @TInfGFDAlb_CloseFiles(), nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ));
+
+   _HB_MEMBER Resource( cFld); IIF( .F., s_oClass:ModMethod( "Resource", @TInfGFDAlb_Resource(), nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ), s_oClass:AddMethod( "Resource", @TInfGFDAlb_Resource(), nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ));
+
+   _HB_MEMBER lGenerate(); IIF( .F., s_oClass:ModMethod( "lGenerate", @TInfGFDAlb_lGenerate(), nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ), s_oClass:AddMethod( "lGenerate", @TInfGFDAlb_lGenerate(), nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ));
+
+
+; IF .F. ; __clsActive(s_oClass:hClass) ; s_oClass:Refresh() ; ELSE ; s_oClass:Create() ; END ; oClassInstance := __clsInst( s_oClass:hClass ) ; IF __ObjHasMsg( oClassInstance, "InitClass" ); oClassInstance:InitClass( hb_aParams() ) ; END ; ELSE ; oClassInstance := __clsInst( s_oClass:hClass ) ; END ; IF PCount() > 0 ; DIVERT TO (@DivertConstructorCall()) OF s_oClass ; END ; RETURN oClassInstance AS CLASS TInfGFDAlb ;
+
+
+
+UTILITY STATIC function TInfGFDAlb_Create() ; local Self AS CLASS TInfGFDAlb := QSelf() AS CLASS TInfGFDAlb
+
+   ::DetalleCreateFields()
+
+   ::AddTmpIndex ( "CGRPFAM", "CGRPFAM + CCODART" )
+   ::AddGroup( {|| ::oDbf:cGrpFam }, {|| "Grupo Familia  : " + Rtrim( ::oDbf:cGrpFam ) + "-" + oRetFld( ::oDbf:cGrpFam, ::oGruFam:oDbf ) }, {||"Total Grupo de Familia..."} )
+   ::AddGroup( {|| ::oDbf:cGrpFam + ::oDbf:cCodArt },    {|| "Artículo : " + Rtrim( ::oDbf:cCodArt ) + "-" + Rtrim( oRetFld( ::oDbf:cCodArt, ::oDbfArt ) ) }, {||""} )
+
+RETURN ( self )
+
+
+
+UTILITY STATIC function TInfGFDAlb_OpenFiles() ; local Self AS CLASS TInfGFDAlb := QSelf() AS CLASS TInfGFDAlb
+
+  local oBlock
+  local oError
+  local lOpen := .T.
+
+
+
+
+
+   oBlock   := ErrorBlock( {| oError | ApoloBreak( oError ) } )
+   BEGIN SEQUENCE
+
+   ::oAlbCliT := DbfServer( "ALBCLIT.DBF", ):NewOpen( "ALBCLIT.DBF",, ( cDriver() ),, ( cPatEmp() ), .F., .T., .F., .F. ) ; ::oAlbCliT:AddBag( "ALBCLIT.CDX" ) ; ::oAlbCliT:AddBag( ) ; ::oAlbCliT:AutoIndex()
+
+   ::oAlbCliL := DbfServer( "ALBCLIL.DBF", ):NewOpen( "ALBCLIL.DBF",, ( cDriver() ),, ( cPatEmp() ), .F., .T., .F., .F. ) ; ::oAlbCliL:AddBag( "ALBCLIL.CDX" ) ; ::oAlbCliL:AddBag( ) ; ::oAlbCliL:AutoIndex()
+   ::oAlbCliL:SetOrder( "CREF" )
+
+   ::oDbfFam := DbfServer( "FAMILIAS.DBF", ):NewOpen( "FAMILIAS.DBF",, ( cDriver() ),, ( cPatArt() ), .F., .T., .F., .F. ) ; ::oDbfFam:AddBag( "FAMILIAS.CDX" ) ; ::oDbfFam:AddBag( ) ; ::oDbfFam:AutoIndex()
+
+   ::oDbfTvta := DbfServer( "TVTA.DBF", ):NewOpen( "TVTA.DBF",, ( cDriver() ),, ( cPatDat() ), .F., .T., .F., .F. ) ; ::oDbfTvta:AddBag( "TVTA.CDX" ) ; ::oDbfTvta:AddBag( ) ; ::oDbfTvta:AutoIndex()
+
+   ::oDbfArt := DbfServer( "ARTICULO.DBF", ):NewOpen( "ARTICULO.DBF",, ( cDriver() ),, ( cPatArt() ), .F., .T., .F., .F. ) ; ::oDbfArt:AddBag( "ARTICULO.CDX" ) ; ::oDbfArt:AddBag( ) ; ::oDbfArt:AutoIndex()
+
+   RECOVER USING oError
+
+      lOpen := .F.
+
+      msgStop( "Imposible abrir todas las bases de datos" )
+      ::CloseFiles()
+
+   end
+
+   ErrorBlock( oBlock )
+
+RETURN ( lOpen )
+
+
+
+UTILITY STATIC function TInfGFDAlb_CloseFiles() ; local Self AS CLASS TInfGFDAlb := QSelf() AS CLASS TInfGFDAlb
+
+   if !Empty( ::oAlbCliT ) .AND. ::oAlbCliT:Used()
+      ::oAlbCliT:End()
+   end
+
+   if !Empty( ::oAlbCliL ) .AND. ::oAlbCliL:Used()
+      ::oAlbCliL:End()
+   end
+
+   if !Empty( ::oDbfFam ) .AND. ::oDbfFam:Used()
+      ::oDbfFam:End()
+   end
+
+   if !Empty( ::oDbfTvta ) .AND. ::oDbfTvta:Used()
+      ::oDbfTvta:End()
+   end
+
+   if !Empty( ::oDbfArt ) .AND. ::oDbfArt:Used()
+      ::oDbfArt:End()
+   end
+
+RETURN ( Self )
+
+
+
+UTILITY STATIC function TInfGFDAlb_Resource( cFld) ; local Self AS CLASS TInfGFDAlb := QSelf() AS CLASS TInfGFDAlb
+
+   local cEstado  := "No facturado"
+
+   if !::StdResource( "INF_GEN14" )
+      return .F.
+   end
+
+
+
+
+
+   ::oDefGrFInf( 110, 120, 130, 140 )
+
+
+
+
+
+   ::oMtrInf:SetTotal( ::oAlbCliL:Lastrec() )
+
+
+
+
+
+   ::lDefArtInf( 150, 160, 170, 180 )
+
+   ::oDefExcInf(204)
+
+   ::oDefSalInf(201)
+
+
+
+   TCheckBox():ReDefine( ( 203 ), { | u | If( PCount()==0, ::lExcMov, ::lExcMov:= u ) }, ::oFld:aDialogs[1],,,,,,, .F.,, .F. )
+
+
+
+
+
+   ::oEstado := TComboBox():ReDefine( 218, { | u | If( PCount()==0, cEstado, cEstado:= u ) }, ::aEstado, ::oFld:aDialogs[1],,,,,,, .F.,,,,,, )
+
+RETURN ( Self )
+
+
+
+
+
+
+UTILITY STATIC function TInfGFDAlb_lGenerate() ; local Self AS CLASS TInfGFDAlb := QSelf() AS CLASS TInfGFDAlb
+
+   local bValid   := {|| .T. }
+
+   ::oDlg:Disable()
+   ::oDbf:Zap()
+
+   ::oDbfArt:GoTop()
+
+   do case
+      case ::oEstado:nAt == 1
+         bValid   := {|| !::oAlbCliT:lFacturado }
+      case ::oEstado:nAt == 2
+         bValid   := {|| ::oAlbCliT:lFacturado }
+      case ::oEstado:nAt == 3
+         bValid   := {|| .T. }
+   end
+
+
+
+
+   ::aHeader   := {  {|| "Fecha   : " + Dtoc( Date() ) }, {|| "Periodo : " + Dtoc( ::dIniInf ) + " > " + Dtoc( ::dFinInf ) }, {|| "Gr. Fam.: " + ::cGruFamOrg      + " > " + ::cGruFamDes }, {|| "Estado  : " + ::aEstado[ ::oEstado:nAt ] } }
+
+   ::oAlbCliL:GoTop()
+   WHILE !::oAlbCliL:Eof()
+
+
+      if cCodGruFam( ::oAlbCliL:cRef, ::oDbfArt, ::oDbfFam ) >= ::cGruFamOrg .AND. cCodGruFam( ::oAlbCliL:cRef, ::oDbfArt, ::oDbfFam ) <= ::cGruFamDes
+
+         if ::oAlbCliT:Seek( ::oAlbCliL:cSerAlb + Str( ::oAlbCliL:nNumAlb ) + ::oAlbCliL:cSufAlb )
+
+
+
+
+
+
+
+            if Eval ( bValid )                                                         .AND. ::oAlbCliT:DFECALB >= ::dIniInf                                         .AND. ::oAlbCliT:DFECALB <= ::dFinInf                                         .AND. ::oAlbCliL:cRef    >= ::cArtOrg                                         .AND. ::oAlbCliL:cRef    <= ::cArtDes                                         .AND. lChkSer( ::oAlbCliT:CSERALB, ::aSer )                                   .AND. !( ::lExcCero .AND. ::oAlbCliL:NPREDIV == 0 )
+
+
+
+
+
+               ::AddAlb()
+
+            end
+
+        end
+
+     end
+
+      ::oAlbCliL:Skip()
+
+      ::oMtrInf:AutoInc( ::oAlbCliL:OrdKeyNo() )
+
+   end
+
+   ::oMtrInf:AutoInc( ::oAlbCliL:Lastrec() )
+
+   ::oDlg:Enable()
+
+RETURN ( ::oDbf:LastRec() > 0 )

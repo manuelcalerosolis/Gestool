@@ -1,0 +1,715 @@
+#line 112 "hbclass.ch"
+   DYNAMIC DivertConstructorCall
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+DECLARE HBClass  New( cName AS String, OPTIONAL SuperParams ) AS CLASS HBClass  Create() AS Object  Instance() AS Object  AddClsMethod( cName AS String, @MethodName(), nScope AS Numeric, n2 AS Numeric, n3 AS Numeric )  AddDelegate( cName AS String, cDelegate AS String, cObject AS String, nScope AS Numeric, lPersistent AS LOGICAL )  AddMultiClsData( cType AS String, uVal, nScope AS Numeric, aDatas AS Array OF String )  AddMultiData( cType AS String, uVal, nScope AS Numeric, aDatas AS Array OF String, x AS LOGICAL, lPer AS LOGICAL )  AddMethod( cName AS String, @MethodName(), nScope AS Numeric, lPersistent AS LOGICAL )  AddInLine( cName AS String, bBlock AS CodeBlock, nScope AS Numeric, lPersistent AS LOGICAL )  AddVirtual( cName AS String )  ModMethod( cName AS String, @MethodName(), nScope AS Numeric, lPersistent AS LOGICAL )  ModClsMethod( cName AS String, @MethodName(), nScope AS Numeric )  ModInline( cName AS String, bBlock AS CodeBlock, nScope AS Numeric, lPersistent AS LOGICAL )  SetOnError( @MethodName() )
+#line 85 "\Fwh1204\Include\FiveWin.ch"
+   EXTERNAL GetProcAdd
+   EXTERNAL TActiveX
+
+
+
+
+extern errorsys
+#line 19 ".\Prg\Splitter.prg"
+_HB_CLASS TSplitter ; UTILITY FUNCTION TSplitter(...); static s_oClass ; local oClassInstance ; local nScope ; nScope := 1 ; if s_oClass == NIL ; s_oClass := IIF(.F.,, HBClass():New( "TSplitter" , {TControl():classh} ) ) ; ;
+
+   _HB_MEMBER {AS LOGICAL lRegistered} ; IIF( !.F., s_oClass:AddMultiClsData("LOGICAL",, nScope + IIF( .F., 32, 0 ) + 64, { "lRegistered" }, .F. ), )
+
+   _HB_MEMBER { lVertical, aPrevCtrols, aHindCtrols} ; IIF( !.F., s_oClass:AddMultiData(,, nScope + IIF( .F., 32, 0 ), { "lVertical" , "aPrevCtrols" , "aHindCtrols" }, .F., .F. ), )
+   _HB_MEMBER { bFirstMargin, bLastMargin} ; IIF( !.F., s_oClass:AddMultiData(,, nScope + IIF( .F., 32, 0 ), { "bFirstMargin" , "bLastMargin" }, .F., .F. ), )
+
+
+   _HB_MEMBER { nLong, nWidth} ; IIF( !.F., s_oClass:AddMultiData(,, nScope + IIF( .F., 32, 0 ), { "nLong" , "nWidth" }, .F., .F. ), )
+   _HB_MEMBER { nBreadth, nAdjust, nAdjTop, nAdjLeft} ; IIF( !.F., s_oClass:AddMultiData(,, nScope + IIF( .F., 32, 0 ), { "nBreadth" , "nAdjust" , "nAdjTop" , "nAdjLeft" }, .F., .F. ), )
+
+   _HB_MEMBER { nFirst, nLast} ; IIF( !.F., s_oClass:AddMultiData(,, nScope + IIF( .F., 32, 0 ), { "nFirst" , "nLast" }, .F., .F. ), )
+
+   _HB_MEMBER { lStatic, l3D, lMoving, lStyle, lMOver} ; IIF( !.F., s_oClass:AddMultiData(,, nScope + IIF( .F., 32, 0 ), { "lStatic" , "l3D" , "lMoving" , "lStyle" , "lMOver" }, .F., .F. ), )
+
+   _HB_MEMBER { aGradient, aGradientOver} ; IIF( !.F., s_oClass:AddMultiData(,, nScope + IIF( .F., 32, 0 ), { "aGradient" , "aGradientOver" }, .F., .F. ), )
+
+
+
+   _HB_MEMBER New( nRow, nCol, lVertical, aPrevCtrols, lAdjPrev, aHindCtrols, lAdjHind,  bMargin1, bMargin2, oWnd, bChange, nWidth, nHeight,  lPixel, l3D, nClrBack, lDesign, lUpdate) AS CLASS TSplitter; IIF( .F., s_oClass:ModMethod( "New", @TSplitter_New(), nScope + IIF( .T., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ), s_oClass:AddMethod( "New", @TSplitter_New(), nScope + IIF( .T., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ));
+
+
+
+   _HB_MEMBER ReDefine( nId, lVertical, aPrevCtrols, lAdjPrev, aHindCtrols, lAdjHind,  bMargin1, bMargin2, oWnd, bChange,  l3D, nClrBack, lUpdate) AS CLASS TSplitter; IIF( .F., s_oClass:ModMethod( "ReDefine", @TSplitter_ReDefine(), nScope + IIF( .T., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ), s_oClass:AddMethod( "ReDefine", @TSplitter_ReDefine(), nScope + IIF( .T., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ));
+
+   _HB_MEMBER Default(); IIF( .F., s_oClass:ModInline( "Default", {|Self | Self, ::_CoorsUpdate() }, nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ), s_oClass:AddInline( "Default", {|Self | Self, ::_CoorsUpdate() }, nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ) )
+
+   _HB_MEMBER Display(); IIF( .F., s_oClass:ModInline( "Display", {|Self | Self, ::BeginPaint(), ::Paint(), ::EndPaint(), 0 }, nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ), s_oClass:AddInline( "Display", {|Self | Self, ::BeginPaint(), ::Paint(), ::EndPaint(), 0 }, nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ) )
+
+   _HB_MEMBER _CoorsUpdate(); IIF( .F., s_oClass:ModMethod( "_CoorsUpdate", @TSplitter__CoorsUpdate(), nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ), s_oClass:AddMethod( "_CoorsUpdate", @TSplitter__CoorsUpdate(), nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ));
+
+   _HB_MEMBER EraseBkGnd(hDC); IIF( .F., s_oClass:ModInline( "EraseBkGnd", {|Self,hDC | Self, 1 }, nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ), s_oClass:AddInline( "EraseBkGnd", {|Self,hDC | Self, 1 }, nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ) )
+
+   _HB_MEMBER Initiate(hDlg); IIF( .F., s_oClass:ModInline( "Initiate", {|Self,hDlg | Self, ::TControl:Initiate( hDlg ), ::Default() }, nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ), s_oClass:AddInline( "Initiate", {|Self,hDlg | Self, ::TControl:Initiate( hDlg ), ::Default() }, nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ) )
+
+   _HB_MEMBER HandleEvent( nMsg, nWParam, nLParam); IIF( .F., s_oClass:ModMethod( "HandleEvent", @TSplitter_HandleEvent(), nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ), s_oClass:AddMethod( "HandleEvent", @TSplitter_HandleEvent(), nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ));
+
+   _HB_MEMBER AdjClient(); IIF( .F., s_oClass:ModInline( "AdjClient", {|Self | Self, ::Adjust() }, nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ), s_oClass:AddInline( "AdjClient", {|Self | Self, ::Adjust() }, nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ) )
+
+   _HB_MEMBER AdjTop(); IIF( .F., s_oClass:ModInline( "AdjTop", {|Self | Self, ::Adjust( .T., .F. ) }, nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ), s_oClass:AddInline( "AdjTop", {|Self | Self, ::Adjust( .T., .F. ) }, nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ) )
+   _HB_MEMBER AdjBottom(); IIF( .F., s_oClass:ModInline( "AdjBottom", {|Self | Self, ::Adjust( .F., .T. ) }, nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ), s_oClass:AddInline( "AdjBottom", {|Self | Self, ::Adjust( .F., .T. ) }, nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ) )
+   _HB_MEMBER AdjLeft(); IIF( .F., s_oClass:ModInline( "AdjLeft", {|Self | Self, ::Adjust( .T., .T., .T., .F. ) }, nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ), s_oClass:AddInline( "AdjLeft", {|Self | Self, ::Adjust( .T., .T., .T., .F. ) }, nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ) )
+   _HB_MEMBER AdjRight(); IIF( .F., s_oClass:ModInline( "AdjRight", {|Self | Self, ::Adjust( .T., .T., .F., .T. ) }, nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ), s_oClass:AddInline( "AdjRight", {|Self | Self, ::Adjust( .T., .T., .F., .T. ) }, nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ) )
+
+   _HB_MEMBER Paint(); IIF( .F., s_oClass:ModMethod( "Paint", @TSplitter_Paint(), nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ), s_oClass:AddMethod( "Paint", @TSplitter_Paint(), nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ));
+
+   _HB_MEMBER FirstMargin(); IIF( .F., s_oClass:ModInline( "FirstMargin", {|Self | Self, Eval( ::bFirstMargin ) }, nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ), s_oClass:AddInline( "FirstMargin", {|Self | Self, Eval( ::bFirstMargin ) }, nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ) )
+   _HB_MEMBER LastMargin(); IIF( .F., s_oClass:ModInline( "LastMargin", {|Self | Self, Eval( ::bLastMargin ) }, nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ), s_oClass:AddInline( "LastMargin", {|Self | Self, Eval( ::bLastMargin ) }, nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ) )
+
+   _HB_MEMBER SetPosition( nPos); IIF( .F., s_oClass:ModMethod( "SetPosition", @TSplitter_SetPosition(), nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ), s_oClass:AddMethod( "SetPosition", @TSplitter_SetPosition(), nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ));
+
+   _HB_MEMBER Move( nTop, nLeft, nWidth, nHeight, lRepaint); IIF( .F., s_oClass:ModMethod( "Move", @TSplitter_Move(), nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ), s_oClass:AddMethod( "Move", @TSplitter_Move(), nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ));
+
+
+      _HB_MEMBER Moved( ); IIF( !.F., s_oClass:AddVirtual( "Moved" ), )
+
+
+   _HB_MEMBER LButtonDown( nRow, nCol, nFlags); IIF( .F., s_oClass:ModMethod( "LButtonDown", @TSplitter_LButtonDown(), nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ), s_oClass:AddMethod( "LButtonDown", @TSplitter_LButtonDown(), nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ));
+   _HB_MEMBER LButtonUp( nRow, nCol, nFlags); IIF( .F., s_oClass:ModMethod( "LButtonUp", @TSplitter_LButtonUp(), nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ), s_oClass:AddMethod( "LButtonUp", @TSplitter_LButtonUp(), nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ));
+
+   _HB_MEMBER MouseLeave( nRow, nCol, nFlags); IIF( .F., s_oClass:ModMethod( "MouseLeave", @TSplitter_MouseLeave(), nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ), s_oClass:AddMethod( "MouseLeave", @TSplitter_MouseLeave(), nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ));
+   _HB_MEMBER MouseMove( nRow, nCol, nKeyFlags); IIF( .F., s_oClass:ModMethod( "MouseMove", @TSplitter_MouseMove(), nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ), s_oClass:AddMethod( "MouseMove", @TSplitter_MouseMove(), nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ));
+
+   _HB_MEMBER Invert( nPos, nColInit); IIF( .F., s_oClass:ModMethod( "Invert", @TSplitter_Invert(), nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ), s_oClass:AddMethod( "Invert", @TSplitter_Invert(), nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ));
+
+   _HB_MEMBER Adjust( lTop, lBottom, lLeft, lRight); IIF( .F., s_oClass:ModMethod( "Adjust", @TSplitter_Adjust(), nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ), s_oClass:AddMethod( "Adjust", @TSplitter_Adjust(), nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ));
+
+   _HB_MEMBER AdjustCtrols( nAdjust); IIF( .F., s_oClass:ModMethod( "AdjustCtrols", @TSplitter_AdjustCtrols(), nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ), s_oClass:AddMethod( "AdjustCtrols", @TSplitter_AdjustCtrols(), nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ));
+
+; IF .F. ; __clsActive(s_oClass:hClass) ; s_oClass:Refresh() ; ELSE ; s_oClass:Create() ; END ; oClassInstance := __clsInst( s_oClass:hClass ) ; IF __ObjHasMsg( oClassInstance, "InitClass" ); oClassInstance:InitClass( hb_aParams() ) ; END ; ELSE ; oClassInstance := __clsInst( s_oClass:hClass ) ; END ; IF PCount() > 0 ; DIVERT TO (@DivertConstructorCall()) OF s_oClass ; END ; RETURN oClassInstance AS CLASS TSplitter ;
+
+
+
+
+
+UTILITY STATIC function TSplitter_New( nRow, nCol, lVertical, aPrevCtrols, lAdjPrev, aHindCtrols, lAdjHind,  bMargin1, bMargin2, oWnd, bChange, nWidth, nHeight,  lPixel, l3D, nClrBack, lDesign, lUpdate, lStyle, aGradient, aGradientOver) ; local Self AS CLASS TSplitter := QSelf() AS CLASS TSplitter
+
+
+
+   IIF( lVertical == nil, lVertical := .T., ) ; IIF( aPrevCtrols == nil, aPrevCtrols := {}, ); IIF( aHindCtrols == nil, aHindCtrols := {}, ); IIF( bMargin1 == nil, bMargin1 := {|| 0 }, ); IIF( bMargin2 == nil, bMargin2 := {|| 0 }, ); IIF( lAdjPrev == nil, lAdjPrev := .F., ); IIF( lAdjHind == nil, lAdjHind := .F., ); IIF( lPixel == nil, lPixel := .F., );
+
+   IIF( !lAdjPrev, AAdd( aPrevCtrols, .F. ), )
+   IIF( !lAdjHind, AAdd( aHindCtrols, .F. ), )
+
+   IIF( nRow == nil, nRow := 0, ) ; IIF( nCol == nil, nCol := 0, ); IIF( oWnd == nil, oWnd := GetWndDefault(), );
+
+   IIF( l3D == nil, l3D := .F., ) ; IIF( nClrBack == nil, nClrBack := GetSysColor( 15 ), );
+   IIF( lStyle == nil, lStyle := .F., ) ;
+
+
+
+   IIF( nWidth == nil, nWidth := If( lVertical, 4, 100 ), ) ; IIF( nHeight == nil, nHeight := If( lVertical, 100, 4 ), ); IIF( lUpdate == nil, lUpdate := .F., ); IIF( lDesign == nil, lDesign := .F., );
+
+
+
+
+
+
+
+   IIF( aGradientOver == nil, aGradientOver := { { 1/4, nRGB( 255, 255, 255 ),  nRGB( 0, 160, 230) }, { 1/2,  nRGB( 0, 160, 230),  nRGB( 0, 160, 230) }, { 1/4,  nRGB( 0, 160, 230), nRGB( 255, 255, 255 ) } }, ) ; IIF( aGradient == nil, aGradient := { { 1/4, nRGB( 255, 255, 255 ),  nRGB( 190, 210, 220) }, { 1/2,  nRGB( 190, 210, 220),  nRGB( 190, 210, 220) }, { 1/4,  nRGB( 190, 210, 220), nRGB( 255, 255, 255 ) } }, );
+
+   ::lVertical    = lVertical
+   ::aPrevCtrols  = aPrevCtrols
+   ::aHindCtrols  = aHindCtrols
+   ::bFirstMargin = bMargin1
+   ::bLastMargin  = bMargin2
+
+   ::nTop      = If( lPixel, nRow, nRow * 16 )
+   ::nLeft     = If( lPixel, nCol, nCol * 8 )
+   ::nBottom   = ::nTop  + nHeight - 1
+   ::nRight    = ::nLeft + nWidth
+   ::bChange   = bChange
+   ::oWnd      = oWnd
+
+   ::nStyle    = nOR( 1073741824, 268435456, If( lDesign, nOr( 67108864, 65536 ), 0 ) )
+   ::nId       = ::GetNewId()
+   ::l3D       = l3D
+   ::lStatic   = .F.
+   ::lDrag     = lDesign
+   ::lCaptured = .F.
+   ::lUpdate   = lUpdate
+   ::lMoving   = .F.
+   ::lMOver    = .F.
+   ::lStyle    = lStyle
+   ::aGradientOver = aGradientOver
+   ::aGradient = aGradient
+
+   ::SetColor( nClrBack, nClrBack )
+
+
+
+
+   ::Register( nOR( 1, 2 ) )
+
+   if ! Empty( oWnd:hWnd )
+      ::Create()
+      ::Default()
+      oWnd:AddControl( Self )
+   else
+      oWnd:DefControl( Self )
+   endif
+
+   if lDesign
+      ::CheckDots()
+   endif
+
+return Self
+
+
+
+
+
+UTILITY STATIC function TSplitter_ReDefine( nId, lVertical, aPrevCtrols, lAdjPrev, aHindCtrols, lAdjHind,  bMargin1, bMargin2, oWnd, bChange,  l3D, nClrBack, lUpdate) ; local Self AS CLASS TSplitter := QSelf() AS CLASS TSplitter
+
+
+   IIF( lVertical == nil, lVertical := .T., ) ; IIF( aPrevCtrols == nil, aPrevCtrols := {}, ); IIF( aHindCtrols == nil, aHindCtrols := {}, ); IIF( bMargin1 == nil, bMargin1 := {|| 0 }, ); IIF( bMargin2 == nil, bMargin2 := {|| 0 }, );
+   IIF( oWnd == nil, oWnd := GetWndDefault(), ) ;
+
+   IIF( !lAdjPrev, AAdd( aPrevCtrols, .F. ), )
+   IIF( !lAdjHind, AAdd( aHindCtrols, .F. ), )
+
+   IIF( lUpdate == nil, lUpdate := .F., ) ;
+
+   IIF( l3D == nil, l3D := .F., ) ; IIF( nClrBack == nil, nClrBack := GetSysColor( 15 ), );
+
+   ::lVertical    = lVertical
+   ::aPrevCtrols  = aPrevCtrols
+   ::aHindCtrols  = aHindCtrols
+   ::bFirstMargin = bMargin1
+   ::bLastMargin  = bMargin2
+
+   ::nId       = nId
+   ::bChange   = bChange
+   ::oWnd      = oWnd
+   ::l3D       = l3D
+   ::lStatic   = .F.
+   ::lDrag     = .F.
+   ::lCaptured = .F.
+   ::lUpdate   = lUpdate
+   ::lMoving   = .F.
+   ::lStyle    = .T.
+   ::lMoving   = .F.
+   ::lMOver    = .F.
+
+
+
+   ::aGradientOver   = {   { 1/4, nRGB( 255, 255, 255 ),  nRGB( 0, 160, 230) }, { 1/2,  nRGB( 0, 160, 230),  nRGB( 0, 160, 230) }, { 1/4,  nRGB( 0, 160, 230), nRGB( 255, 255, 255 ) } }
+
+
+   ::aGradient       = {   { 1/4, nRGB( 255, 255, 255 ),  nRGB( 190, 210, 220) }, { 1/2,  nRGB( 190, 210, 220),  nRGB( 190, 210, 220) }, { 1/4,  nRGB( 190, 210, 220), nRGB( 255, 255, 255 ) } }
+
+   ::SetColor( nClrBack, nClrBack )
+
+   ::Register( nOR( 1, 2 ) )
+
+   if oWnd <> nil
+      oWnd:DefControl( Self )
+   endif
+
+return Self
+
+
+
+UTILITY STATIC function TSplitter_HandleEvent( nMsg, nWParam, nLParam) ; local Self AS CLASS TSplitter := QSelf() AS CLASS TSplitter
+
+   do case
+
+      case nMsg == 15
+         ::BeginPaint()
+         ::Paint()
+         ::EndPaint()
+         return 0
+
+      case nMsg == 675
+         return ::MouseLeave( nHiWord( nLParam ), nLoWord( nLParam ), nWParam )
+
+   endcase
+
+return ::TControl:HandleEvent( nMsg, nWParam, nLParam )
+
+
+
+UTILITY STATIC function TSplitter_Paint() ; local Self AS CLASS TSplitter := QSelf() AS CLASS TSplitter
+
+   local aInfo := ::DispBegin()
+   local aRect := GetClientRect( ::hWnd )
+   local aGrad
+
+   if ::lStyle
+
+      if ::lMOver
+         aGrad = ::aGradientOver
+      else
+         aGrad = ::aGradient
+      endif
+
+      GradientFill( ::hDC, aRect[ 1 ], aRect[ 2 ], aRect[ 3 ], aRect[ 4 ], aGrad, ::lVertical )
+
+   else
+
+      FillRect( ::hDC, aRect, ::oBrush:hBrush )
+
+      if ::l3D
+         if ::lVertical
+            WndVRaised( ::hWnd, ::hDC )
+         else
+            WndHRaised( ::hWnd, ::hDC )
+         endif
+      endif
+
+   endif
+
+   ::DispEnd( aInfo )
+
+return nil
+
+
+
+UTILITY STATIC function TSplitter_SetPosition( nPos) ; local Self AS CLASS TSplitter := QSelf() AS CLASS TSplitter
+
+   if ::lMoving
+      return nil
+   endif
+
+   ::nAdjust = ::nFirst
+
+   if ::lVertical
+      ::Move( ::nTop, nPos, ::nWidth, ::nLong, .T. )
+   else
+      ::Move( nPos, ::nLeft, ::nLong, ::nWidth, .T. )
+   endif
+
+   ::AdjustCtrols( ::nFirst - ::nAdjust )
+
+return nil
+
+
+
+UTILITY STATIC function TSplitter_Move( nTop, nLeft, nWidth, nHeight, lRepaint) ; local Self AS CLASS TSplitter := QSelf() AS CLASS TSplitter
+
+   ::lMoving = .T.
+
+   MoveWindow( ::hWnd, nTop, nLeft, nWidth, nHeight, lRepaint )
+
+   ::_CoorsUpdate()
+
+   ::lMoving = .F.
+
+return nil
+
+
+
+UTILITY STATIC function TSplitter_LButtonDown( nRow, nCol, nFlags) ; local Self AS CLASS TSplitter := QSelf() AS CLASS TSplitter
+
+   local nPos, aRect
+
+   if ::lStatic .OR. ::lDrag
+      return ::TControl:LButtonDown( nRow, nCol, nFlags )
+   endif
+
+   if ! ::lCaptured
+
+      aRect = GetClientRect( ::oWnd:hWnd )
+
+      ::nAdjust = ::nFirst
+
+      if ::lvertical
+         nPos = nCol
+
+         ::nBreadth = MAX( aRect[ 4 ] - ::FirstMargin() - ::LastMargin(),  ::nLeft + ::nWidth - ::FirstMargin() )
+         MoveWindow( ::hWnd, ::nTop, ::FirstMargin(), ::nBreadth, ::nLong, .F. )
+      else
+         nPos = nRow
+
+         ::nBreadth = MAX( aRect[ 3 ] - ::FirstMargin() - ::LastMargin(),  ::nTop + ::nWidth - ::FirstMargin() )
+         MoveWindow( ::hWnd, ::FirstMargin(), ::nLeft, ::nLong, ::nBreadth, .F. )
+      endif
+
+      ::lCaptured = .T.
+      ::Capture()
+      ::Invert( , nPos )
+
+   endif
+
+   ::TControl:LButtonDown( nRow, nCol, nFlags )
+
+return nil
+
+
+
+UTILITY STATIC function TSplitter_LButtonUp( nRow, nCol, nFlags) ; local Self AS CLASS TSplitter := QSelf() AS CLASS TSplitter
+
+   if ::lStatic .OR. ::lDrag
+      return ::TControl:LButtonUp( nRow, nCol, nFlags )
+   endif
+
+   if ::lCaptured
+
+      ::lCaptured = .F.
+      ReleaseCapture()
+      ::Invert()
+
+      if ::lvertical
+         MoveWindow( ::hWnd, ::nTop, ::nFirst, ::nWidth, ::nLong, .T. )
+      else
+         MoveWindow( ::hWnd, ::nFirst, ::nLeft, ::nLong, ::nWidth, .T. )
+      endif
+      ::_CoorsUpdate()
+
+      ::AdjustCtrols( ::nFirst - ::nAdjust )
+
+   endif
+
+   if ::bChange <> nil
+      Eval( ::bChange, Self, ::nFirst, ::nLast)
+   endif
+
+   ::TControl:LButtonUp( nRow, nCol, nFlags )
+
+return nil
+
+
+
+UTILITY STATIC function TSplitter_MouseLeave( nRow, nCol, nFlags) ; local Self AS CLASS TSplitter := QSelf() AS CLASS TSplitter
+
+   ::lCaptured = .F.
+   ::lMOver    = .F.
+   ::Refresh()
+
+return nil
+
+
+
+UTILITY STATIC function TSplitter_MouseMove( nRow, nCol, nKeyFlags) ; local Self AS CLASS TSplitter := QSelf() AS CLASS TSplitter
+
+   if ::lStatic .OR. ::lDrag
+      return ::TControl:MouseMove( nRow, nCol, nKeyFlags )
+   endif
+
+   ::lMOver := .T.
+
+   if ::lCaptured
+      ::Invert( If( ::lVertical, nCol, nRow ) )
+      return 0
+   endif
+
+   if ::lVertical
+      CursorWE()
+   else
+      CursorNS()
+   endif
+
+   ::refresh()
+
+   TrackMouseEvent( ::hWnd, 2 )
+
+return 0
+
+
+
+UTILITY STATIC function TSplitter_Invert( nPos, nInit) ; local Self AS CLASS TSplitter := QSelf() AS CLASS TSplitter
+
+   static nInitPos, nOldPos
+
+   ::GetDC()
+
+   if nPos = nil
+
+      if nInit = nil
+         nPos = nOldPos
+         ::nFirst = nPos + ::FirstMargin()
+      else
+         nInitPos = nInit
+         nPos = ::nFirst
+      endif
+
+   else
+
+      nPos = nPos - nInitPos
+
+      if nPos < 0 .OR. (nPos + ::nWidth) > ::nBreadth
+         ::ReleaseDC()
+         return nil
+      endif
+
+      if ::lVertical
+         InvertRect( ::hDC, { 0, nOldPos, ::nLong, nOldPos + ::nWidth } )
+      else
+         InvertRect( ::hDC, { nOldPos, 0, nOldPos + ::nWidth, ::nLong } )
+      endif
+
+   endif
+
+   if ::lVertical
+      InvertRect( ::hDC, { 0, nPos, ::nLong, nPos + ::nWidth } )
+   else
+      InvertRect( ::hDC, { nPos, 0, nPos + ::nWidth, ::nLong } )
+   endif
+
+   nOldPos = nPos
+
+   ::ReleaseDC()
+
+return nil
+
+
+
+UTILITY STATIC function TSplitter_Adjust( lTop, lBottom, lLeft, lRight) ; local Self AS CLASS TSplitter := QSelf() AS CLASS TSplitter
+
+  Local aRect
+
+  Local oCtrol
+  Local nTop, nLeft, nWidth, nHeight
+  Local nCtrlTop, nCtrlLeft, nCtrlWidth, nCtrlHeight
+
+  Local nSplitTop := 0, nSplitLeft := 0
+
+  IIF( lTop == nil, lTop := .T., ) ; IIF( lBottom == nil, lBottom := .T., ); IIF( lLeft == nil, lLeft := .T., ); IIF( lRight == nil, lRight := .T., );
+
+  ClientCoors( ::oWnd, @nTop, @nLeft, @nWidth, @nHeight )
+
+  IIF( ::nAdjTop == nil, ::nAdjTop := nTop, ) ; IIF( ::nAdjLeft == nil, ::nAdjLeft := nLeft, );
+
+  if ::nAdjTop <> nTop
+     nSplitTop = nTop - ::nAdjTop
+     ::nAdjTop = nTop
+  endif
+  if ::nAdjLeft <> nLeft
+     nSplitLeft = nLeft - ::nAdjLeft
+     ::nAdjLeft = nLeft
+  endif
+
+
+
+  if Len( ::aPrevCtrols ) == 1
+
+     oCtrol = ::aPrevCtrols[ 1 ]
+     aRect = GetCoors( oCtrol:hWnd )
+
+     nCtrlTop  = if( lTop, nTop, aRect[1] + nSplitTop )
+     nCtrlLeft = if( lLeft, nLeft, aRect[2] + nSplitLeft )
+     if ::lVertical
+
+
+        nCtrlHeight = if( lTop,  if( lBottom, nHeight, aRect[3] - nTop + nSplitTop ),  nHeight + nTop - nCtrlTop )
+        nCtrlWidth  = if( lLeft, aRect[4] - nLeft + nSplitLeft, aRect[4] - aRect[2] )
+     else
+        nCtrlHeight = iF( lTop, aRect[3] - nTop + nSplitTop, aRect[3] - aRect[1] )
+
+
+        nCtrlWidth  = if( lLeft, if( lRight, nWidth, aRect[4] - nLeft + nSplitLeft ),  nWidth + nLeft - nCtrlLeft )
+     endif
+
+     oCtrol:Move( nCtrlTop, nCtrlLeft, nCtrlWidth, nCtrlHeight, .T. )
+
+  endif
+
+
+
+  if Len( ::aHindCtrols ) == 1
+
+     oCtrol = ::aHindCtrols[ 1 ]
+     aRect = GetCoors( oCtrol:hWnd )
+
+     if ::lVertical
+        nCtrlTop    = if( lTop, nTop, aRect[1] + nSplitTop )
+        nCtrlLeft   = aRect[2] + nSplitLeft
+
+
+        nCtrlHeight = if( lTop,  if( lBottom, nHeight, aRect[3] - nTop + nSplitTop ),  nHeight + nTop - nCtrlTop )
+        nCtrlWidth  = if( lRight, nWidth + nLeft - nCtrlLeft, aRect[4] - aRect[2] )
+     else
+        nCtrlTop    = aRect[1] + nSplitTop
+        nCtrlLeft   = if( lLeft, nLeft, aRect[2] + nSplitLeft )
+        nCtrlHeight = if( lBottom, nHeight + nTop - nCtrlTop, aRect[3] - aRect[1] )
+
+
+        nCtrlWidth  = if( lLeft,  if( lRight, nWidth, aRect[4] - nLeft + nSplitLeft ),  nWidth + nLeft - nCtrlLeft )
+     endif
+
+     oCtrol:Move( nCtrlTop, nCtrlLeft, nCtrlWidth, nCtrlHeight, .T. )
+
+  endif
+
+
+
+  if ::lVertical
+
+
+
+
+
+     ::Move( if( lTop, nTop, ::nTop + nSplitTop ),  ::nFirst + nSplitLeft,  ::nWidth,  if( lTop, if( lBottom, nHeight, ::nBottom - nTop + nSplitTop ),  nHeight + nTop - ( ::nTop + nSplitTop ) ),  .T. )
+  else
+
+
+
+
+
+     ::Move( ::nFirst + nSplitTop,  if( lLeft, nLeft, ::nLeft + nSplitLeft ),  if( lLeft, if( lRight, nWidth, ::nRight - nLeft + nSplitLeft ),  nWidth + nleft - (::nLeft + nSplitLeft ) ),  ::nWidth,  .T. )
+  endif
+
+return nil
+
+
+
+UTILITY STATIC function TSplitter_AdjustCtrols( nAdjust) ; local Self AS CLASS TSplitter := QSelf() AS CLASS TSplitter
+
+  Local nLen, aRect
+
+  Local oCtrol, nCtrol
+  Local nTop, nLeft, nWidth, nHeight
+
+
+
+  nLen := Len( ::aPrevCtrols )
+
+  for nCtrol = 1 to nLen
+
+      oCtrol = ::aPrevCtrols[ nCtrol ]
+      if ValType( oCtrol ) <> "O"
+         loop
+      endif
+      aRect = GetCoors( oCtrol:hWnd )
+
+      if ::lVertical
+         nHeight = aRect[3] - aRect[1]
+         nWidth  = aRect[4] - aRect[2] + nAdjust
+      else
+         nHeight = aRect[3] - aRect[1] + nAdjust
+         nWidth  = aRect[4] - aRect[2]
+      endif
+
+     oCtrol:Move( aRect[1], aRect[2], nWidth, nHeight, .T. )
+
+  next
+
+
+
+  nLen := Len( ::aHindCtrols )
+
+  for nCtrol = 1 to nLen
+
+      oCtrol = ::aHindCtrols[ nCtrol ]
+      if ValType( oCtrol ) <> "O"
+         loop
+      endif
+      aRect = GetCoors( oCtrol:hWnd )
+
+      if ::lVertical
+         nTop  = aRect[1]
+         nLeft = aRect[2] + nAdjust
+         nHeight = aRect[3] - aRect[1]
+         nWidth  = aRect[4] - aRect[2] - nAdjust
+      else
+         nTop  = aRect[1] + nAdjust
+         nLeft = aRect[2]
+         nHeight = aRect[3] - aRect[1]  - nAdjust
+         nWidth  = aRect[4] - aRect[2]
+      endif
+
+     oCtrol:Move( nTop, nLeft, nWidth, nHeight, .T., NIL )
+
+  next
+
+return nil
+
+
+
+UTILITY STATIC function TSplitter__CoorsUpdate() ; local Self AS CLASS TSplitter := QSelf() AS CLASS TSplitter
+
+   local aRect := GetCoors( ::hWnd )
+
+   ::nTop    = aRect[1]
+   ::nLeft   = aRect[2]
+   ::nBottom = aRect[3]
+   ::nRight  = aRect[4]
+
+   aRect := GetClientRect( ::oWnd:hWnd )
+
+   if ::lVertical
+      ::nLong  = ::nBottom - ::nTop
+      ::nWidth = ::nRight - ::nLeft
+      ::nFirst = ::nLeft
+      ::nLast  = aRect[4] - ::nRight
+   else
+      ::nLong  = ::nRight - ::nLeft
+      ::nWidth = ::nBottom - ::nTop
+      ::nFirst = ::nTop
+      ::nLast  = aRect[3] - ::nBottom
+   endif
+
+return nil
+
+
+
+
+
+static function ClientCoors( oWnd, nTop, nLeft, nWidth, nHeight )
+
+   local hWnd  := oWnd:hWnd
+   local aRect := GetClientRect( hWnd ), aRectBar
+   local nSubWidth := 0, nSubHeight := 0
+   local oMsgBar, lIsThemed := 0
+
+   nLeft = 0
+   nTop  = if( oWnd:oMenu = nil, -1, 0 )
+   if GetClassName( hWnd ) == "TMDICHILD" .AND. IsZoomed( hWnd )
+      nTop := if( oWnd:oWnd:oTop = nil .AND. oWnd:oWnd:oBar = nil, 1, 0 )
+   endif
+
+   if oWnd:oTop <> nil .OR. oWnd:oBar <> nil
+      if oWnd:oTop = nil
+         oWnd:oTop := oWnd:oBar
+      endif
+      aRectBar := GetClientRect( oWnd:oTop:hWnd )
+      nSubHeight += aRectBar[3]
+      nTop = nSubHeight + 1
+   endif
+
+   if oWnd:oLeft <> nil
+      aRectBar := GetClientRect( oWnd:oLeft:hWnd )
+      nSubWidth += aRectBar[4]
+      nLeft = nSubWidth
+   endif
+
+   if oWnd:oRight <> nil
+      aRectBar := GetClientRect( oWnd:oRight:hWnd )
+      nSubWidth += aRectBar[4]
+   endif
+
+   if oWnd:oBottom <> nil
+      oMsgBar = oWnd:oBottom
+
+      if IsAppThemed()
+         lIsThemed = -1
+      endif
+
+   else
+      oMsgBar = oWnd:oMsgBar
+   endif
+
+   nWidth  = aRect[4] - nSubWidth
+
+   nHeight = aRect[3] - nSubHeight -  If( oMsgBar <> nil, oMsgBar:nHeight() + lIsThemed, 0 )
+
+return nil

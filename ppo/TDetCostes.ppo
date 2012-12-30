@@ -1,0 +1,305 @@
+#line 112 "hbclass.ch"
+   DYNAMIC DivertConstructorCall
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+DECLARE HBClass  New( cName AS String, OPTIONAL SuperParams ) AS CLASS HBClass  Create() AS Object  Instance() AS Object  AddClsMethod( cName AS String, @MethodName(), nScope AS Numeric, n2 AS Numeric, n3 AS Numeric )  AddDelegate( cName AS String, cDelegate AS String, cObject AS String, nScope AS Numeric, lPersistent AS LOGICAL )  AddMultiClsData( cType AS String, uVal, nScope AS Numeric, aDatas AS Array OF String )  AddMultiData( cType AS String, uVal, nScope AS Numeric, aDatas AS Array OF String, x AS LOGICAL, lPer AS LOGICAL )  AddMethod( cName AS String, @MethodName(), nScope AS Numeric, lPersistent AS LOGICAL )  AddInLine( cName AS String, bBlock AS CodeBlock, nScope AS Numeric, lPersistent AS LOGICAL )  AddVirtual( cName AS String )  ModMethod( cName AS String, @MethodName(), nScope AS Numeric, lPersistent AS LOGICAL )  ModClsMethod( cName AS String, @MethodName(), nScope AS Numeric )  ModInline( cName AS String, bBlock AS CodeBlock, nScope AS Numeric, lPersistent AS LOGICAL )  SetOnError( @MethodName() )
+#line 85 "\Fwh1204\Include\FiveWin.Ch"
+   EXTERNAL GetProcAdd
+   EXTERNAL TActiveX
+
+
+
+
+extern errorsys
+#line 9 ".\Prg\TDetCostes.prg"
+_HB_CLASS TDetCostes ; UTILITY FUNCTION TDetCostes(...); static s_oClass ; local oClassInstance ; local nScope ; nScope := 1 ; if s_oClass == NIL ; s_oClass := IIF(.F.,, HBClass():New( "TDetCostes" , {TDet():classh} ) ) ; ;
+
+   _HB_MEMBER { oGetTotalCosto} ; IIF( !.F., s_oClass:AddMultiData(,, nScope + IIF( .F., 32, 0 ), { "oGetTotalCosto" }, .F., .F. ), )
+   _HB_MEMBER { nGetTotalCosto} ; IIF( !.F., s_oClass:AddMultiData(, 0, nScope + IIF( .F., 32, 0 ), { "nGetTotalCosto" }, .F., .F. ), )
+
+   _HB_MEMBER { oCostesMaquina} ; IIF( !.F., s_oClass:AddMultiData(,, nScope + IIF( .F., 32, 0 ), { "oCostesMaquina" }, .F., .F. ), )
+
+   _HB_MEMBER DefineFiles(); IIF( .F., s_oClass:ModMethod( "DefineFiles", @TDetCostes_DefineFiles(), nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ), s_oClass:AddMethod( "DefineFiles", @TDetCostes_DefineFiles(), nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ));
+
+   _HB_MEMBER OpenFiles( lExclusive); IIF( .F., s_oClass:ModMethod( "OpenFiles", @TDetCostes_OpenFiles(), nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ), s_oClass:AddMethod( "OpenFiles", @TDetCostes_OpenFiles(), nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ));
+   _HB_MEMBER OpenService(lExclusive); IIF( .F., s_oClass:ModMethod( "OpenService", @TDetCostes_OpenFiles(), nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ) ), s_oClass:AddMethod( "OpenService", @TDetCostes_OpenFiles(), nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ) ) );
+
+   _HB_MEMBER Resource( nMode, lLiteral); IIF( .F., s_oClass:ModMethod( "Resource", @TDetCostes_Resource(), nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ), s_oClass:AddMethod( "Resource", @TDetCostes_Resource(), nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ));
+
+   _HB_MEMBER SaveLines(); IIF( .F., s_oClass:ModMethod( "SaveLines", @TDetCostes_SaveLines(), nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ), s_oClass:AddMethod( "SaveLines", @TDetCostes_SaveLines(), nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ));
+
+   _HB_MEMBER LoadCostes( oGetCos, oSayCos, oSayImp); IIF( .F., s_oClass:ModMethod( "LoadCostes", @TDetCostes_LoadCostes(), nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ), s_oClass:AddMethod( "LoadCostes", @TDetCostes_LoadCostes(), nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ));
+
+   _HB_MEMBER nTotalLinea( oDbf); IIF( .F., s_oClass:ModMethod( "nTotalLinea", @TDetCostes_nTotalLinea(), nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ), s_oClass:AddMethod( "nTotalLinea", @TDetCostes_nTotalLinea(), nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ));
+   _HB_MEMBER cTotalLinea( oDbf); IIF( .F., s_oClass:ModMethod( "cTotalLinea", @TDetCostes_cTotalLinea(), nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ), s_oClass:AddMethod( "cTotalLinea", @TDetCostes_cTotalLinea(), nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ));
+   _HB_MEMBER lTotalLinea( oDbf); IIF( .F., s_oClass:ModMethod( "lTotalLinea", @TDetCostes_lTotalLinea(), nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ), s_oClass:AddMethod( "lTotalLinea", @TDetCostes_lTotalLinea(), nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ));
+
+   _HB_MEMBER lPreSave(); IIF( .F., s_oClass:ModMethod( "lPreSave", @TDetCostes_lPreSave(), nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ), s_oClass:AddMethod( "lPreSave", @TDetCostes_lPreSave(), nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ));
+
+; IF .F. ; __clsActive(s_oClass:hClass) ; s_oClass:Refresh() ; ELSE ; s_oClass:Create() ; END ; oClassInstance := __clsInst( s_oClass:hClass ) ; IF __ObjHasMsg( oClassInstance, "InitClass" ); oClassInstance:InitClass( hb_aParams() ) ; END ; ELSE ; oClassInstance := __clsInst( s_oClass:hClass ) ; END ; IF PCount() > 0 ; DIVERT TO (@DivertConstructorCall()) OF s_oClass ; END ; RETURN oClassInstance AS CLASS TDetCostes ;
+
+
+
+UTILITY STATIC function TDetCostes_DefineFiles( cPath, cVia, lUniqueName, cFileName) ; local Self AS CLASS TDetCostes := QSelf() AS CLASS TDetCostes
+
+   local oDbf
+
+   IIF( cPath == nil, cPath := ::cPath, ) ;
+   IIF( lUniqueName == nil, lUniqueName := .F., ) ;
+   IIF( cFileName == nil, cFileName := "MaqCosL", ) ;
+
+   if lUniqueName
+      cFileName         := cGetNewFileName( cFileName, , , cPatTmp() )
+   end
+
+   oDbf := DbfServer( ( cFileName ), ( cFileName ) ):New( ( cFileName ), ( cFileName ), ( cDriver() ), "Lineas de coste de maquinaria", ( cPath ) )
+
+      oDbf:AddField( "cCodMaq", "C", 3, 0,,,,, "Máquina", .F.,, .F., {} )
+      oDbf:AddField( "cCodCos", "C", 12, 0,,,,, "Cód. cos.", .F.,, .F., {} )
+      oDbf:AddField( "nPctCos", "N", 3, 0,,,,, "%Aplicación", .F.,, .F., {} )
+
+      oDbf:AddIndex( "cCosMaq", ( cFileName ), "cCodMaq",,, .F., .F.,,,, .T., .F. )
+      oDbf:AddIndex( "cCodCos", ( cFileName ), "cCodCos",,, .F., .F.,,,, .T., .F. )
+
+
+
+RETURN ( oDbf )
+
+
+
+UTILITY STATIC function TDetCostes_OpenFiles(lExclusive) ; local Self AS CLASS TDetCostes := QSelf() AS CLASS TDetCostes
+
+   local lOpen             := .T.
+   local oError
+   local oBlock            := ErrorBlock( {| oError | ApoloBreak( oError ) } )
+
+   IIF( lExclusive == nil, lExclusive := .F., ) ;
+
+   BEGIN SEQUENCE
+
+      if Empty( ::oDbf )
+         ::oDbf            := ::DefineFiles()
+      end
+
+      ::oDbf:Activate( .F., !lExclusive )
+
+      ::bOnPreSaveDetail   := {|| ::SaveLines() }
+
+   RECOVER USING oError
+
+      msgStop( ErrorMessage( oError ), "Imposible abrir todas las bases de datos" )
+
+      ::CloseFiles()
+
+      lOpen                := .F.
+
+   end
+
+   ErrorBlock( oBlock )
+
+RETURN ( lOpen )
+
+
+
+UTILITY STATIC function TDetCostes_Resource( nMode) ; local Self AS CLASS TDetCostes := QSelf() AS CLASS TDetCostes
+
+   local oDlg
+   local oGetCos
+   local oGetPct
+   local oSayCos
+   local cSayCos
+   local oSayImp
+   local nSayImp  := 0
+   local oSayApl
+   local nSayApl  := 0
+
+
+
+
+
+   oDlg = TDialog():New(,,,, LblTitle( nMode ) + "coste de maquinaria", "LCosteMaquina",, .F.,,,,,, .F.,,,,,, .F., )
+
+
+
+
+
+
+
+
+
+      oGetCos := TGetHlp():ReDefine( 110, { | u | If( PCount()==0, ::oDbfVir:cCodCos, ::oDbfVir:cCodCos:= u ) }, oDlg,,,,,,,,, .F., {||     ( nMode == 1 )},, .F., .F.,,,,,, nil, "LUPA",, )
+
+      oGetCos:bHelp     := {|| ::oParent:oCostes:Buscar( oGetCos ) }
+      oGetCos:bValid    := {|| ::loadCostes( oGetCos, oSayCos, oSayImp ) }
+
+
+
+
+      oSayCos := TGetHlp():ReDefine( 111, { | u | If( PCount()==0, cSayCos, cSayCos:= u ) }, oDlg,,,,,,,,, .F., {||     .F.},, .F., .F.,,,,,, nil,,, )
+
+
+
+
+
+
+
+
+
+      oSayImp := TGetHlp():ReDefine( 120, { | u | If( PCount()==0, nSayImp, nSayImp:= u ) }, oDlg,, ::oParent:cPouDiv,,,,,,, .F., {||     .F.},, .F., .F.,,,,,, nil,,, )
+
+
+
+
+
+
+
+
+
+
+      oGetPct := TGetHlp():ReDefine( 130, { | u | If( PCount()==0, ::oDbfVir:nPctCos, ::oDbfVir:nPctCos:= u ) }, oDlg,, "@E 999.99",,,,,,, .F., {||     ( nMode <> 3 )},, .F., .T.,,,,,, nil,,, )
+
+      oGetPct:bChange   := {|| ::lTotalLinea( ::oDbfVir, oSayApl ) }
+
+
+
+
+
+
+
+
+
+      oSayApl := TGetHlp():ReDefine( 140, { | u | If( PCount()==0, nSayApl, nSayApl:= u ) }, oDlg,, ::oParent:cPouDiv,,,,,,, .F., {||     .F.},, .F., .F.,,,,,, nil,,, )
+
+
+
+
+
+      TButton():ReDefine( 1, {||( if( ::lPresave( oGetCos, nMode ), oDlg:end( 1 ), ) )}, oDlg,,, .F., {||     ( nMode <> 3 )},,, .F. )
+
+
+
+
+        TButton():ReDefine( 2, {||( oDlg:end() )}, oDlg,,, .F.,,,, .F. )
+
+
+
+
+
+      TButton():ReDefine( 9, {||( MsgInfo( "Ayuda no definida" ) )}, oDlg,,, .F.,,,, .T. )
+
+      if nMode <> 3
+         oDlg:AddFastKey( 116, {|| if( ::lPresave( oGetCos, nMode ), oDlg:end( 1 ), ) } )
+      end
+
+
+      oDlg:bStart := {||   ::loadCostes( oGetCos, oSayCos, oSayImp ), ::lTotalLinea( ::oDbfVir, oSayApl ) }
+
+   oDlg:Activate( oDlg:bLClicked, oDlg:bMoved, oDlg:bPainted, .T.,,,, oDlg:bRClicked,,, )
+
+RETURN ( oDlg:nResult == 1 )
+
+
+
+UTILITY STATIC function TDetCostes_SaveLines() ; local Self AS CLASS TDetCostes := QSelf() AS CLASS TDetCostes
+
+   ::oDbfVir:cCodMaq  := ::oParent:oDbf:cCodMaq
+
+RETURN ( Self )
+
+
+
+UTILITY STATIC function TDetCostes_nTotalLinea( oDbf) ; local Self AS CLASS TDetCostes := QSelf() AS CLASS TDetCostes
+
+   local nTotal   := 0
+
+   IIF( oDbf == nil, oDbf := ::oDbf, ) ;
+
+   if ::oParent:oCostes:oDbf:SeekInOrd( oDbf:cCodCos, "cCodCos" )
+      nTotal      := ::oParent:oCostes:oDbf:nImpCos * oDbf:nPctCos / 100
+   end
+
+RETURN ( nTotal )
+
+
+
+UTILITY STATIC function TDetCostes_cTotalLinea( oDbf) ; local Self AS CLASS TDetCostes := QSelf() AS CLASS TDetCostes
+
+   IIF( oDbf == nil, oDbf := ::oDbf, ) ;
+
+RETURN ( Trans( ::nTotalLinea( oDbf ), ::oParent:cPorDiv ) )
+
+
+
+UTILITY STATIC function TDetCostes_lTotalLinea( oDbf, oGet) ; local Self AS CLASS TDetCostes := QSelf() AS CLASS TDetCostes
+
+   IIF( oDbf == nil, oDbf := ::oDbf, ) ;
+
+RETURN ( oGet:cText( ::nTotalLinea( oDbf ) ), .T. )
+
+
+
+UTILITY STATIC function TDetCostes_LoadCostes( oGetCos, oSayCos, oSayImp) ; local Self AS CLASS TDetCostes := QSelf() AS CLASS TDetCostes
+
+   local cCodCos  := oGetCos:VarGet()
+
+   if !Empty( cCodCos )
+
+      if ::oParent:oCostes:oDbf:SeekInOrd( cCodCos, "cCodCos" )
+
+         oSayCos:cText( ::oParent:oCostes:oDbf:cDesCos )
+
+         oSayImp:cText( ::oParent:oCostes:oDbf:nImpCos )
+
+         return .T.
+
+      else
+
+         MsgStop( "Costes no encontrado" )
+
+         return .F.
+
+      end
+
+   end
+
+Return .T.
+
+
+
+UTILITY STATIC function TDetCostes_lPreSave( oGetCod, nMode) ; local Self AS CLASS TDetCostes := QSelf() AS CLASS TDetCostes
+
+   local nOrdAnt  := ::oDbfVir:OrdSetFocus( "CCODCOS" )
+
+   if nMode == 1
+
+      if Empty( ::oDbfVir:cCodCos )
+         msgStop( "Código no puede estar vacio" )
+         oGetCod:SetFocus()
+         return .F.
+      end
+
+      if ::oDbfVir:Seek( ::oDbfVir:cCodCos )
+         msgStop( "Código existente" )
+         oGetCod:SetFocus()
+         return .F.
+      end
+
+   end
+
+   ::oDbfVir:OrdSetFocus( nOrdAnt )
+
+RETURN ( .T. )

@@ -1,0 +1,390 @@
+#line 112 "hbclass.ch"
+   DYNAMIC DivertConstructorCall
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+DECLARE HBClass  New( cName AS String, OPTIONAL SuperParams ) AS CLASS HBClass  Create() AS Object  Instance() AS Object  AddClsMethod( cName AS String, @MethodName(), nScope AS Numeric, n2 AS Numeric, n3 AS Numeric )  AddDelegate( cName AS String, cDelegate AS String, cObject AS String, nScope AS Numeric, lPersistent AS LOGICAL )  AddMultiClsData( cType AS String, uVal, nScope AS Numeric, aDatas AS Array OF String )  AddMultiData( cType AS String, uVal, nScope AS Numeric, aDatas AS Array OF String, x AS LOGICAL, lPer AS LOGICAL )  AddMethod( cName AS String, @MethodName(), nScope AS Numeric, lPersistent AS LOGICAL )  AddInLine( cName AS String, bBlock AS CodeBlock, nScope AS Numeric, lPersistent AS LOGICAL )  AddVirtual( cName AS String )  ModMethod( cName AS String, @MethodName(), nScope AS Numeric, lPersistent AS LOGICAL )  ModClsMethod( cName AS String, @MethodName(), nScope AS Numeric )  ModInline( cName AS String, bBlock AS CodeBlock, nScope AS Numeric, lPersistent AS LOGICAL )  SetOnError( @MethodName() )
+#line 85 "\Fwh1204\Include\FiveWin.Ch"
+   EXTERNAL GetProcAdd
+   EXTERNAL TActiveX
+
+
+
+
+extern errorsys
+#line 7 ".\Prg\TDetMaquina.prg"
+_HB_CLASS TDetMaquina ; UTILITY FUNCTION TDetMaquina(...); static s_oClass ; local oClassInstance ; local nScope ; nScope := 1 ; if s_oClass == NIL ; s_oClass := IIF(.F.,, HBClass():New( "TDetMaquina" , {TDet():classh} ) ) ; ;
+
+   _HB_MEMBER { oGetTotalCosto} ; IIF( !.F., s_oClass:AddMultiData(,, nScope + IIF( .F., 32, 0 ), { "oGetTotalCosto" }, .F., .F. ), )
+   _HB_MEMBER { cTmpEmp} ; IIF( !.F., s_oClass:AddMultiData(,, nScope + IIF( .F., 32, 0 ), { "cTmpEmp" }, .F., .F. ), )
+   _HB_MEMBER { oTmpEmp} ; IIF( !.F., s_oClass:AddMultiData(,, nScope + IIF( .F., 32, 0 ), { "oTmpEmp" }, .F., .F. ), )
+   _HB_MEMBER { oTotHoras} ; IIF( !.F., s_oClass:AddMultiData(,, nScope + IIF( .F., 32, 0 ), { "oTotHoras" }, .F., .F. ), )
+   _HB_MEMBER { nTotHoras} ; IIF( !.F., s_oClass:AddMultiData(, 0, nScope + IIF( .F., 32, 0 ), { "nTotHoras" }, .F., .F. ), )
+
+   _HB_MEMBER DefineFiles(); IIF( .F., s_oClass:ModMethod( "DefineFiles", @TDetMaquina_DefineFiles(), nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ), s_oClass:AddMethod( "DefineFiles", @TDetMaquina_DefineFiles(), nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ));
+
+   _HB_MEMBER OpenFiles( lExclusive); IIF( .F., s_oClass:ModMethod( "OpenFiles", @TDetMaquina_OpenFiles(), nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ), s_oClass:AddMethod( "OpenFiles", @TDetMaquina_OpenFiles(), nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ));
+   _HB_MEMBER OpenService(lExclusive); IIF( .F., s_oClass:ModMethod( "OpenService", @TDetMaquina_OpenFiles(), nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ) ), s_oClass:AddMethod( "OpenService", @TDetMaquina_OpenFiles(), nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ) ) );
+
+   _HB_MEMBER CloseFiles(); IIF( .F., s_oClass:ModMethod( "CloseFiles", @TDetMaquina_CloseFiles(), nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ), s_oClass:AddMethod( "CloseFiles", @TDetMaquina_CloseFiles(), nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ));
+
+   _HB_MEMBER Resource( nMode, lLiteral); IIF( .F., s_oClass:ModMethod( "Resource", @TDetMaquina_Resource(), nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ), s_oClass:AddMethod( "Resource", @TDetMaquina_Resource(), nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ));
+
+   _HB_MEMBER lValidMaquina( oGetMaq, oGetSec, oGetCostoHora); IIF( .F., s_oClass:ModMethod( "lValidMaquina", @TDetMaquina_lValidMaquina(), nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ), s_oClass:AddMethod( "lValidMaquina", @TDetMaquina_lValidMaquina(), nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ));
+
+   _HB_MEMBER SaveDetails(); IIF( .F., s_oClass:ModMethod( "SaveDetails", @TDetMaquina_SaveDetails(), nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ), s_oClass:AddMethod( "SaveDetails", @TDetMaquina_SaveDetails(), nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ));
+
+   _HB_MEMBER nTotCosto( oDbf); IIF( .F., s_oClass:ModMethod( "nTotCosto", @TDetMaquina_nTotCosto(), nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ), s_oClass:AddMethod( "nTotCosto", @TDetMaquina_nTotCosto(), nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ));
+
+   _HB_MEMBER nTotal( oDbf); IIF( .F., s_oClass:ModMethod( "nTotal", @TDetMaquina_nTotal(), nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ), s_oClass:AddMethod( "nTotal", @TDetMaquina_nTotal(), nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ));
+
+   _HB_MEMBER lTiempoEmpleado(); IIF( .F., s_oClass:ModMethod( "lTiempoEmpleado", @TDetMaquina_lTiempoEmpleado(), nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ), s_oClass:AddMethod( "lTiempoEmpleado", @TDetMaquina_lTiempoEmpleado(), nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ));
+
+   _HB_MEMBER lPreSave( oGet, oDlg); IIF( .F., s_oClass:ModMethod( "lPreSave", @TDetMaquina_lPreSave(), nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ), s_oClass:AddMethod( "lPreSave", @TDetMaquina_lPreSave(), nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ));
+
+; IF .F. ; __clsActive(s_oClass:hClass) ; s_oClass:Refresh() ; ELSE ; s_oClass:Create() ; END ; oClassInstance := __clsInst( s_oClass:hClass ) ; IF __ObjHasMsg( oClassInstance, "InitClass" ); oClassInstance:InitClass( hb_aParams() ) ; END ; ELSE ; oClassInstance := __clsInst( s_oClass:hClass ) ; END ; IF PCount() > 0 ; DIVERT TO (@DivertConstructorCall()) OF s_oClass ; END ; RETURN oClassInstance AS CLASS TDetMaquina ;
+
+
+
+UTILITY STATIC function TDetMaquina_DefineFiles( cPath, cVia, lUniqueName, cFileName) ; local Self AS CLASS TDetMaquina := QSelf() AS CLASS TDetMaquina
+
+   local oDbf
+
+   IIF( cPath == nil, cPath := ::cPath, ) ;
+   IIF( lUniqueName == nil, lUniqueName := .F., ) ;
+   IIF( cFileName == nil, cFileName := "ProMaq", ) ;
+   IIF( cVia == nil, cVia := cDriver(), ) ;
+
+   if lUniqueName
+      cFileName         := cGetNewFileName( cFileName, , , cPath )
+   end
+
+   oDbf := DbfServer( ( cFileName ), ( cFileName ) ):New( ( cFileName ), ( cFileName ), ( cVia ), "lineas de maquinaria", ( cPath ) )
+
+      oDbf:AddField( "cSerOrd", "C", 01, 0,,,,, "Código", .F.,, .T., {} )
+      oDbf:AddField( "nNumOrd", "N", 09, 0,,,,, "Número", .F.,, .T., {} )
+      oDbf:AddField( "cSufOrd", "C", 02, 0,,,,, "Sufijo", .F.,, .T., {} )
+      oDbf:AddField( "cCodSec", "C", 03, 0,,,,, "Sección", .F.,, .F., {} )
+      oDbf:AddField( "cCodMaq", "C", 03, 0,,,,, "Maquina", .F.,, .F., {} )
+      oDbf:AddField( "dFecIni", "D", 08, 0,,,,, "Fecha inicio", .F.,, .F., {} )
+      oDbf:AddField( "dFecFin", "D", 08, 0,,,,, "Fecha fin", .F.,, .F., {} )
+      oDbf:AddField( "cIniMaq", "C", 05, 0,,,,, "Hora de inicio", .F.,, .F., {} )
+      oDbf:AddField( "cFinMaq", "C", 05, 0,,,,, "Hora de fin", .F.,, .F., {} )
+      oDbf:AddField( "nCosHra", "N", 16, 6,,,,, "Coste por horas", .F.,, .F., {} )
+      oDbf:AddField( "nTotHra", "N", 16, 6,,,,, "Total horas", .F.,, .T., {} )
+
+      oDbf:AddIndex( "cNumOrd", ( cFileName ), "cSerOrd + Str( nNumOrd, 9 ) + cSufOrd",,, .F., .F.,,,, .T., .F. )
+      oDbf:AddIndex( "cCodSec", ( cFileName ), "cCodSec",,, .F., .F.,,,, .T., .F. )
+      oDbf:AddIndex( "cCodMaq", ( cFileName ), "cCodMaq",,, .F., .F.,,,, .T., .F. )
+
+
+
+RETURN ( oDbf )
+
+
+
+UTILITY STATIC function TDetMaquina_OpenFiles(lExclusive) ; local Self AS CLASS TDetMaquina := QSelf() AS CLASS TDetMaquina
+
+   local lOpen          := .T.
+   local oBlock         := ErrorBlock( {| oError | ApoloBreak( oError ) } )
+
+   IIF( lExclusive == nil, lExclusive := .F., ) ;
+
+   BEGIN SEQUENCE
+
+   if Empty( ::oDbf )
+      ::oDbf            := ::DefineFiles()
+   end
+
+   ::oDbf:Activate( .F., !lExclusive )
+
+   ::bOnPreSaveDetail   := {|| ::SaveDetails() }
+
+   RECOVER
+
+      msgStop( "Imposible abrir todas las bases de datos" )
+      ::CloseFiles()
+      lOpen          := .F.
+
+   end
+
+   ErrorBlock( oBlock )
+
+RETURN ( lOpen )
+
+
+
+UTILITY STATIC function TDetMaquina_CloseFiles() ; local Self AS CLASS TDetMaquina := QSelf() AS CLASS TDetMaquina
+
+   if ::oDbf <> nil .AND. ::oDbf:Used()
+      ::oDbf:End()
+      ::oDbf      := nil
+   end
+
+RETURN .T.
+
+
+
+UTILITY STATIC function TDetMaquina_Resource( nMode) ; local Self AS CLASS TDetMaquina := QSelf() AS CLASS TDetMaquina
+
+   local oDlg
+   local oGetMaq
+   local oGetSec
+   local oGetCostoHora
+   local oSayMaq
+   local cSayMaq
+   local oSaySec
+   local cSaySec
+   local oFecIni
+   local oFecFin
+   local oHorIni
+   local oHorFin
+
+   if nMode == 1
+      ::oDbfVir:dFecIni := ::oParent:oDbf:dFecOrd
+      ::oDbfVir:dFecFin := ::oParent:oDbf:dFecFin
+      ::oDbfVir:cIniMaq := ::oParent:oDbf:cHorIni
+      ::oDbfVir:cFinMaq := ::oParent:oDbf:cHorFin
+   end
+
+   ::lTiempoEmpleado()
+
+   cSayMaq              := oRetFld( ::oDbfVir:cCodMaq, ::oParent:oMaquina:oDbf )
+   cSaySec              := oRetFld( ::oDbfVir:cCodSec, ::oParent:oSeccion:oDbf )
+
+
+
+
+
+   oDlg = TDialog():New(,,,, LblTitle( nMode ) + "maquinaria", "lMaquinaria",, .F.,,,,,, .F.,,,,,, .F., )
+
+
+
+
+
+      oGetMaq := TGetHlp():ReDefine( 110, { | u | If( PCount()==0, ::oDbfVir:cCodMaq, ::oDbfVir:cCodMaq:= u ) }, oDlg,,,,,,,,, .F., {||     ( nMode <> 3 )},, .F., .F.,,,,,, nil, "LUPA",, )
+      oGetMaq:bHelp     := {|| ::oParent:oMaquina:Buscar( oGetMaq ) }
+      oGetMaq:bValid    := {|| ::oParent:oMaquina:Existe( oGetMaq, oSayMaq, "cDesMaq", .T., .T., "0" ), ::lValidMaquina( oGetMaq, oGetSec, oGetCostoHora ) }
+
+
+
+
+      oSayMaq := TGetHlp():ReDefine( 111, { | u | If( PCount()==0, cSayMaq, cSayMaq:= u ) }, oDlg,,,,,,,,, .F., {||     ( .F. )},, .F., .F.,,,,,, nil,,, )
+
+
+
+
+
+      oGetSec := TGetHlp():ReDefine( 120, { | u | If( PCount()==0, ::oDbfVir:cCodSec, ::oDbfVir:cCodSec:= u ) }, oDlg,,,,,,,,, .F., {||     ( nMode <> 3 )},, .F., .F.,,,,,, nil, "LUPA",, )
+      oGetSec:bHelp  := {|| ::oParent:oSeccion:Buscar( oGetSec ) }
+      oGetSec:bValid := {|| ::oParent:oSeccion:Existe( oGetSec, oSaySec, "cDesSec", .T., .T., "0" ) }
+
+
+
+
+      oSaySec := TGetHlp():ReDefine( 121, { | u | If( PCount()==0, cSaySec, cSaySec:= u ) }, oDlg,,,,,,,,, .F., {||     ( .F. )},, .F., .F.,,,,,, nil,,, )
+
+
+
+
+
+
+
+
+
+      oFecIni := TGetHlp():ReDefine( 130, { | u | If( PCount()==0, ::oDbfVir:dFecIni, ::oDbfVir:dFecIni:= u ) }, oDlg,,,,,,,,, .F., {||         ( nMode <> 3 )},, .F., .T.,,,,,, nil,,, )
+
+         oFecIni:bChange   := {|| ::lTiempoEmpleado(), ::oGetTotalCosto:Refresh() }
+         oFecIni:bValid    := {|| ::lTiempoEmpleado(), ::oGetTotalCosto:Refresh(), .T. }
+
+
+
+
+
+
+
+
+
+      oHorIni := TGetHlp():ReDefine( 140, { | u | If( PCount()==0, ::oDbfVir:cIniMaq, ::oDbfVir:cIniMaq:= u ) }, oDlg,, "@R 99:99",,,,,,, .F., {||     ( nMode <> 3 )},, .F., .T., {||    ( UpTime( oHorIni ) )}, {||  ( DwTime( oHorIni ) )},,,, nil,,, )
+
+         oHorIni:bValid    := {|| if( ValidTime( oHorIni ), ( ::lTiempoEmpleado(), ::oGetTotalCosto:Refresh(), .T. ), .F. ) }
+         oHorIni:bChange   := {|| ::lTiempoEmpleado(), ::oGetTotalCosto:Refresh() }
+
+
+
+
+
+      oFecFin := TGetHlp():ReDefine( 150, { | u | If( PCount()==0, ::oDbfVir:dFecFin, ::oDbfVir:dFecFin:= u ) }, oDlg,,,,,,,,, .F., {||         ( nMode <> 3 )},, .F., .T.,,,,,, nil,,, )
+
+         oFecFin:bChange   := {|| ::lTiempoEmpleado(), ::oGetTotalCosto:Refresh() }
+         oFecFin:bValid    := {|| ::lTiempoEmpleado(), ::oGetTotalCosto:Refresh(), .T. }
+
+
+
+
+
+
+
+
+
+      oHorFin := TGetHlp():ReDefine( 160, { | u | If( PCount()==0, ::oDbfVir:cFinMaq, ::oDbfVir:cFinMaq:= u ) }, oDlg,, "@R 99:99",,,,,,, .F., {||     ( nMode <> 3 )},, .F., .T., {||    ( UpTime( oHorFin ) )}, {||  ( DwTime( oHorFin ) )},,,, nil,,, )
+
+         oHorFin:bValid    := {|| if( ValidTime( oHorFin ), ( ::lTiempoEmpleado(), ::oGetTotalCosto:Refresh(), .T. ), .F. ) }
+         oHorFin:bChange   := {|| ::lTiempoEmpleado(), ::oGetTotalCosto:Refresh() }
+
+
+
+
+      ::oTmpEmp := TSay():ReDefine( 170, {|| ::cTmpEmp}, oDlg,, "N/W*",, .F.,, .F., .F. )
+
+
+
+
+
+      ::oTotHoras := TSay():ReDefine( 180, {|| ::oDbfVir:nTotHra}, oDlg, "@E 9999.99", "N/W*",, .F.,, .F., .F. )
+
+
+
+
+
+
+      oGetCostoHora := TGetHlp():ReDefine( 190, { | u | If( PCount()==0, ::oDbfVir:nCosHra, ::oDbfVir:nCosHra:= u ) }, oDlg,, ::oParent:cPouDiv,,,,,,, .F., {||     ( nMode <> 3 )},, .F., .T.,,,,,, nil,,, )
+
+      oGetCostoHora:bChange   := {|| ::oGetTotalCosto:Refresh() }
+      oGetCostoHora:bValid    := {|| ::oGetTotalCosto:Refresh(), .T. }
+
+
+
+
+
+      ::oGetTotalCosto := TSay():ReDefine( 200, {|| ::nTotCosto( ::oDbfVir )}, oDlg, ::oParent:cPorDiv, "N/W*",, .F.,, .F., .F. )
+
+
+
+
+
+      TButton():ReDefine( 1, {||( ::lPreSave( oGetMaq, oDlg ) )}, oDlg,,, .F., {||     ( nMode <> 3 )},,, .F. )
+
+
+
+
+        TButton():ReDefine( 2, {||( oDlg:end() )}, oDlg,,, .F.,,,, .F. )
+
+
+
+
+      TButton():ReDefine( 9, {||( MsgInfo( "Ayuda no definida", "Perdonen las molestias" ) )}, oDlg,,, .F.,,,, .F. )
+
+      if nMode <> 3
+         oDlg:AddFastKey( 116, {|| ::lPreSave( oGetMaq, oDlg ) } )
+      end
+
+   oDlg:Activate( oDlg:bLClicked, oDlg:bMoved, oDlg:bPainted, .T.,,,, oDlg:bRClicked,,, )
+
+RETURN ( oDlg:nResult == 1 )
+
+
+
+UTILITY STATIC function TDetMaquina_nTotCosto( oDbf) ; local Self AS CLASS TDetMaquina := QSelf() AS CLASS TDetMaquina
+
+   IIF( oDbf == nil, oDbf := ::oDbf, ) ;
+
+RETURN ( ::oDbfVir:nTotHra * oDbf:nCosHra )
+
+
+
+UTILITY STATIC function TDetMaquina_nTotal( oDbf) ; local Self AS CLASS TDetMaquina := QSelf() AS CLASS TDetMaquina
+
+   local nTotal   := 0
+
+   IIF( oDbf == nil, oDbf := ::oDbf, ) ;
+
+   oDbf:GetStatus()
+
+   while !oDbf:Eof()
+      nTotal      += ::nTotCosto( oDbf )
+      oDbf:Skip()
+   end
+
+   oDbf:SetStatus()
+
+RETURN ( Trans( Round( nTotal, ::oParent:nDorDiv ), ::oParent:cPorDiv ) )
+
+
+
+UTILITY STATIC function TDetMaquina_SaveDetails() ; local Self AS CLASS TDetMaquina := QSelf() AS CLASS TDetMaquina
+
+   ::oDbfVir:cSerOrd  := ::oParent:oDbf:cSerOrd
+   ::oDbfVir:nNumOrd  := ::oParent:oDbf:nNumOrd
+   ::oDbfVir:cSufOrd  := ::oParent:oDbf:cSufOrd
+
+RETURN ( Self )
+
+
+
+UTILITY STATIC function TDetMaquina_lValidMaquina( oGetMaq, oGetSec, oGetCostoHora) ; local Self AS CLASS TDetMaquina := QSelf() AS CLASS TDetMaquina
+
+   local cCodigoMaquina := oGetMaq:VarGet()
+
+   ::oParent:oMaquina:oDbf:GetStatus()
+
+   if ::oParent:oMaquina:oDbf:Seek( cCodigoMaquina )
+
+      if !Empty( oGetSec )
+         oGetSec:cText( ::oParent:oMaquina:oDbf:cCodSec )
+         oGetSec:lValid()
+      end
+
+      if !Empty( oGetCostoHora )
+         oGetCostoHora:cText( ::oParent:oMaquina:nTotalCosteHora( cCodigoMaquina ) )
+         oGetCostoHora:lValid()
+      end
+
+   end
+
+   ::oParent:oMaquina:oDbf:SetStatus()
+
+RETURN ( .T. )
+
+
+
+UTILITY STATIC function TDetMaquina_lPreSave( oGet, oDlg) ; local Self AS CLASS TDetMaquina := QSelf() AS CLASS TDetMaquina
+
+   if Empty( ::oDbfVir:cCodMaq )
+      MsgStop( "Código de la máquina no puede estar vacío." )
+      oGet:SetFocus()
+      Return .F.
+   end
+
+RETURN oDlg:end( 1 )
+
+
+
+UTILITY STATIC function TDetMaquina_lTiempoEmpleado() ; local Self AS CLASS TDetMaquina := QSelf() AS CLASS TDetMaquina
+
+   ::oDbfVir:nTotHra    := nTiempoEntreFechas( ::oDbfVir:dFecIni, ::oDbfVir:dFecFin, ::oDbfVir:cIniMaq, ::oDbfVir:cFinMaq )
+   ::cTmpEmp            := cFormatoDDHHMM( ::oDbfVir:nTotHra )
+
+   if ::oTmpEmp <> nil
+      ::oTmpEmp:SetText( ::cTmpEmp )
+      ::oTmpEmp:Refresh()
+   end
+
+   if ::oTotHoras <> nil
+      ::oTotHoras:Refresh()
+   end
+
+RETURN .T.

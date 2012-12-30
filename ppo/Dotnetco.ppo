@@ -1,0 +1,73 @@
+#line 112 "hbclass.ch"
+   DYNAMIC DivertConstructorCall
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+DECLARE HBClass  New( cName AS String, OPTIONAL SuperParams ) AS CLASS HBClass  Create() AS Object  Instance() AS Object  AddClsMethod( cName AS String, @MethodName(), nScope AS Numeric, n2 AS Numeric, n3 AS Numeric )  AddDelegate( cName AS String, cDelegate AS String, cObject AS String, nScope AS Numeric, lPersistent AS LOGICAL )  AddMultiClsData( cType AS String, uVal, nScope AS Numeric, aDatas AS Array OF String )  AddMultiData( cType AS String, uVal, nScope AS Numeric, aDatas AS Array OF String, x AS LOGICAL, lPer AS LOGICAL )  AddMethod( cName AS String, @MethodName(), nScope AS Numeric, lPersistent AS LOGICAL )  AddInLine( cName AS String, bBlock AS CodeBlock, nScope AS Numeric, lPersistent AS LOGICAL )  AddVirtual( cName AS String )  ModMethod( cName AS String, @MethodName(), nScope AS Numeric, lPersistent AS LOGICAL )  ModClsMethod( cName AS String, @MethodName(), nScope AS Numeric )  ModInline( cName AS String, bBlock AS CodeBlock, nScope AS Numeric, lPersistent AS LOGICAL )  SetOnError( @MethodName() )
+#line 85 "\Fwh1204\Include\fivewin.ch"
+   EXTERNAL GetProcAdd
+   EXTERNAL TActiveX
+
+
+
+
+extern errorsys
+#line 3 ".\Prg\Dotnetco.prg"
+_HB_CLASS TDotNetColumn ; UTILITY FUNCTION TDotNetColumn(...); static s_oClass ; local oClassInstance ; local nScope ; nScope := 1 ; if s_oClass == NIL ; s_oClass := IIF(.F.,, HBClass():New( "TDotNetColumn" , { HBObject():Classh } ) ) ;
+
+      _HB_MEMBER { oGrupo} ; IIF( !.F., s_oClass:AddMultiData(,, nScope + IIF( .F., 32, 0 ), { "oGrupo" }, .F., .F. ), )
+      _HB_MEMBER { oCarpeta} ; IIF( !.F., s_oClass:AddMultiData(,, nScope + IIF( .F., 32, 0 ), { "oCarpeta" }, .F., .F. ), )
+      _HB_MEMBER { oParent} ; IIF( !.F., s_oClass:AddMultiData(,, nScope + IIF( .F., 32, 0 ), { "oParent" }, .F., .F. ), )
+      _HB_MEMBER {AS ARRAY aItems} ; IIF( !.F., s_oClass:AddMultiData( "ARRAY", {}, nScope + IIF( .F., 32, 0 ), { "aItems" }, .F., .F. ), )
+
+      _HB_MEMBER New( oGrupo) AS CLASS TDotNetColumn; IIF( .F., s_oClass:ModMethod( "New", @TDotNetColumn_New(), nScope + IIF( .T., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ), s_oClass:AddMethod( "New", @TDotNetColumn_New(), nScope + IIF( .T., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ));
+      _HB_MEMBER AddItem(oItem); IIF( .F., s_oClass:ModInline( "AddItem", {|Self,oItem | Self, aadd( ::aItems, oItem ) }, nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ), s_oClass:AddInline( "AddItem", {|Self,oItem | Self, aadd( ::aItems, oItem ) }, nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ) )
+      _HB_MEMBER Paint( hDC); IIF( .F., s_oClass:ModMethod( "Paint", @TDotNetColumn_Paint(), nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ), s_oClass:AddMethod( "Paint", @TDotNetColumn_Paint(), nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ));
+      _HB_MEMBER MaxWidthOfCol(); IIF( .F., s_oClass:ModMethod( "MaxWidthOfCol", @TDotNetColumn_MaxWidthOfCol(), nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ), s_oClass:AddMethod( "MaxWidthOfCol", @TDotNetColumn_MaxWidthOfCol(), nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ));
+
+; IF .F. ; __clsActive(s_oClass:hClass) ; s_oClass:Refresh() ; ELSE ; s_oClass:Create() ; END ; oClassInstance := __clsInst( s_oClass:hClass ) ; IF __ObjHasMsg( oClassInstance, "InitClass" ); oClassInstance:InitClass( hb_aParams() ) ; END ; ELSE ; oClassInstance := __clsInst( s_oClass:hClass ) ; END ; IF PCount() > 0 ; DIVERT TO (@DivertConstructorCall()) OF s_oClass ; END ; RETURN oClassInstance AS CLASS TDotNetColumn ;
+
+
+   UTILITY STATIC function TDotNetColumn_New( oGrupo) ; local Self AS CLASS TDotNetColumn := QSelf() AS CLASS TDotNetColumn
+
+
+   ::oGrupo      := oGrupo
+   ::oCarpeta    := oGrupo:oCarpeta
+   ::oParent     := oGrupo:oCarpeta:oParent
+
+   aadd( ::oGrupo:aColumns, self )
+
+return self
+
+
+   UTILITY STATIC function TDotNetColumn_Paint( hDC) ; local Self AS CLASS TDotNetColumn := QSelf() AS CLASS TDotNetColumn
+
+
+
+
+return 0
+
+
+   UTILITY STATIC function TDotNetColumn_MaxWidthOfCol() ; local Self AS CLASS TDotNetColumn := QSelf() AS CLASS TDotNetColumn
+
+local nMax := 0
+local n
+
+ for n := 1 to len( ::aItems )
+     nMax := max( nMax, ::aItems[ n ]:nWidth )
+ next
+
+return nMax

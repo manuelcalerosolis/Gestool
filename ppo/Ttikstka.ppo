@@ -1,0 +1,475 @@
+#line 112 "hbclass.ch"
+   DYNAMIC DivertConstructorCall
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+DECLARE HBClass  New( cName AS String, OPTIONAL SuperParams ) AS CLASS HBClass  Create() AS Object  Instance() AS Object  AddClsMethod( cName AS String, @MethodName(), nScope AS Numeric, n2 AS Numeric, n3 AS Numeric )  AddDelegate( cName AS String, cDelegate AS String, cObject AS String, nScope AS Numeric, lPersistent AS LOGICAL )  AddMultiClsData( cType AS String, uVal, nScope AS Numeric, aDatas AS Array OF String )  AddMultiData( cType AS String, uVal, nScope AS Numeric, aDatas AS Array OF String, x AS LOGICAL, lPer AS LOGICAL )  AddMethod( cName AS String, @MethodName(), nScope AS Numeric, lPersistent AS LOGICAL )  AddInLine( cName AS String, bBlock AS CodeBlock, nScope AS Numeric, lPersistent AS LOGICAL )  AddVirtual( cName AS String )  ModMethod( cName AS String, @MethodName(), nScope AS Numeric, lPersistent AS LOGICAL )  ModClsMethod( cName AS String, @MethodName(), nScope AS Numeric )  ModInline( cName AS String, bBlock AS CodeBlock, nScope AS Numeric, lPersistent AS LOGICAL )  SetOnError( @MethodName() )
+#line 85 "\Fwh1204\Include\FiveWin.Ch"
+   EXTERNAL GetProcAdd
+   EXTERNAL TActiveX
+
+
+
+
+extern errorsys
+#line 8 ".\Prg\Ttikstka.prg"
+_HB_CLASS TTikStkA ; UTILITY FUNCTION TTikStkA(...); static s_oClass ; local oClassInstance ; local nScope ; nScope := 1 ; if s_oClass == NIL ; s_oClass := IIF(.F.,, HBClass():New( "TTikStkA" , {TInfGen():classh} ) ) ; ;
+
+   _HB_MEMBER {AS OBJECT oStock} ; IIF( !.F., s_oClass:AddMultiData( "OBJECT",, nScope + IIF( .F., 32, 0 ), { "oStock" }, .F., .F. ), )
+   _HB_MEMBER {AS OBJECT oEstado} ; IIF( !.F., s_oClass:AddMultiData( "OBJECT",, nScope + IIF( .F., 32, 0 ), { "oEstado" }, .F., .F. ), )
+   _HB_MEMBER {AS LOGIC lControlStock} ; IIF( !.F., s_oClass:AddMultiData( "LOGIC", .F., nScope + IIF( .F., 32, 0 ), { "lControlStock" }, .F., .F. ), )
+   _HB_MEMBER { oPedPrvL} ; IIF( !.F., s_oClass:AddMultiData(,, nScope + IIF( .F., 32, 0 ), { "oPedPrvL" }, .F., .F. ), )
+   _HB_MEMBER { oAlbPrvL} ; IIF( !.F., s_oClass:AddMultiData(,, nScope + IIF( .F., 32, 0 ), { "oAlbPrvL" }, .F., .F. ), )
+   _HB_MEMBER { oFacPrvL} ; IIF( !.F., s_oClass:AddMultiData(,, nScope + IIF( .F., 32, 0 ), { "oFacPrvL" }, .F., .F. ), )
+   _HB_MEMBER { oRctPrvL} ; IIF( !.F., s_oClass:AddMultiData(,, nScope + IIF( .F., 32, 0 ), { "oRctPrvL" }, .F., .F. ), )
+   _HB_MEMBER { oPedCliL} ; IIF( !.F., s_oClass:AddMultiData(,, nScope + IIF( .F., 32, 0 ), { "oPedCliL" }, .F., .F. ), )
+   _HB_MEMBER { oAlbCliL} ; IIF( !.F., s_oClass:AddMultiData(,, nScope + IIF( .F., 32, 0 ), { "oAlbCliL" }, .F., .F. ), )
+   _HB_MEMBER { oFacCliL} ; IIF( !.F., s_oClass:AddMultiData(,, nScope + IIF( .F., 32, 0 ), { "oFacCliL" }, .F., .F. ), )
+   _HB_MEMBER { oFacRecL} ; IIF( !.F., s_oClass:AddMultiData(,, nScope + IIF( .F., 32, 0 ), { "oFacRecL" }, .F., .F. ), )
+   _HB_MEMBER { oTikCliL} ; IIF( !.F., s_oClass:AddMultiData(,, nScope + IIF( .F., 32, 0 ), { "oTikCliL" }, .F., .F. ), )
+   _HB_MEMBER { oPedCliR} ; IIF( !.F., s_oClass:AddMultiData(,, nScope + IIF( .F., 32, 0 ), { "oPedCliR" }, .F., .F. ), )
+   _HB_MEMBER { oHisMov} ; IIF( !.F., s_oClass:AddMultiData(,, nScope + IIF( .F., 32, 0 ), { "oHisMov" }, .F., .F. ), )
+   _HB_MEMBER { oProLin} ; IIF( !.F., s_oClass:AddMultiData(,, nScope + IIF( .F., 32, 0 ), { "oProLin" }, .F., .F. ), )
+   _HB_MEMBER { oProMat} ; IIF( !.F., s_oClass:AddMultiData(,, nScope + IIF( .F., 32, 0 ), { "oProMat" }, .F., .F. ), )
+
+   _HB_MEMBER Create(); IIF( .F., s_oClass:ModMethod( "Create", @TTikStkA_Create(), nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ), s_oClass:AddMethod( "Create", @TTikStkA_Create(), nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ));
+
+   _HB_MEMBER OpenFiles(); IIF( .F., s_oClass:ModMethod( "OpenFiles", @TTikStkA_OpenFiles(), nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ), s_oClass:AddMethod( "OpenFiles", @TTikStkA_OpenFiles(), nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ));
+
+   _HB_MEMBER CloseFiles(); IIF( .F., s_oClass:ModMethod( "CloseFiles", @TTikStkA_CloseFiles(), nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ), s_oClass:AddMethod( "CloseFiles", @TTikStkA_CloseFiles(), nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ));
+
+   _HB_MEMBER lResource( lImpTik); IIF( .F., s_oClass:ModMethod( "lResource", @TTikStkA_lResource(), nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ), s_oClass:AddMethod( "lResource", @TTikStkA_lResource(), nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ));
+
+   _HB_MEMBER lGenerate(); IIF( .F., s_oClass:ModMethod( "lGenerate", @TTikStkA_lGenerate(), nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ), s_oClass:AddMethod( "lGenerate", @TTikStkA_lGenerate(), nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ));
+
+   _HB_MEMBER oDefIniInf( ); IIF( !.F., s_oClass:AddVirtual( "oDefIniInf" ), )
+
+   _HB_MEMBER oDefFinInf( ); IIF( !.F., s_oClass:AddVirtual( "oDefFinInf" ), )
+
+   _HB_MEMBER oDefDivInf( ); IIF( !.F., s_oClass:AddVirtual( "oDefDivInf" ), )
+
+   _HB_MEMBER nTotReserva( cCodArt); IIF( .F., s_oClass:ModMethod( "nTotReserva", @TTikStkA_nTotReserva(), nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ), s_oClass:AddMethod( "nTotReserva", @TTikStkA_nTotReserva(), nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ));
+
+   _HB_MEMBER PrnTiket( lPrev); IIF( .F., s_oClass:ModMethod( "PrnTiket", @TTikStkA_PrnTiket(), nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ), s_oClass:AddMethod( "PrnTiket", @TTikStkA_PrnTiket(), nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ));
+
+   ; IF .F. ; __clsActive(s_oClass:hClass) ; s_oClass:Refresh() ; ELSE ; s_oClass:Create() ; END ; oClassInstance := __clsInst( s_oClass:hClass ) ; IF __ObjHasMsg( oClassInstance, "InitClass" ); oClassInstance:InitClass( hb_aParams() ) ; END ; ELSE ; oClassInstance := __clsInst( s_oClass:hClass ) ; END ; IF PCount() > 0 ; DIVERT TO (@DivertConstructorCall()) OF s_oClass ; END ; RETURN oClassInstance AS CLASS TTikStkA ;
+
+
+
+UTILITY STATIC function TTikStkA_Create() ; local Self AS CLASS TTikStkA := QSelf() AS CLASS TTikStkA
+
+   ::AddField( "cCodAlm", "C",  3, 0, {|| "@!" },            "Cod. alm.",     .F., "Código almacén",      3 )
+   ::AddField( "cCodArt", "C", 18, 0, {|| "@!" },            "Código",        .T., "Código artículo",     8 )
+   ::AddField( "cDesArt", "C", 20, 0, {|| "@!" },            "Des. breve",    .T., "Descripción breve",   40)
+   ::AddField( "cNomArt", "C", 50, 0, {|| "@!" },            "Descripción",   .F., "Descripción",         40)
+   ::AddField( "nNumUnd", "N", 19, 6, {|| MasUnd() },        "Stock",         .T., "Stock",               13)
+   ::AddField( "nStkCmp", "N", 19, 6, {|| MasUnd() },        "Stock comp.",   .F., "Stock comprometido",  13)
+   ::AddField( "nStkLib", "N", 19, 6, {|| MasUnd() },        "Stock libre",   .F., "Stock libre",         13)
+
+   if ::xOthers
+   ::AddTmpIndex( "cDesArt", "cCodAlm + cDesArt" )
+   else
+   ::AddTmpIndex( "cNomArt", "cCodAlm + cNomArt" )
+   end
+   ::AddTmpIndex( "cCodArt", "cCodAlm + cCodArt" )
+
+   ::AddGroup( {|| ::oDbf:cCodAlm }, {|| "Almacén : " + Rtrim( ::oDbf:cCodAlm ) + "-" + oRetFld( ::oDbf:cCodAlm, ::oDbfAlm ) }, {||"Total almacén..."} )
+
+RETURN ( Self )
+
+
+
+UTILITY STATIC function TTikStkA_OpenFiles() ; local Self AS CLASS TTikStkA := QSelf() AS CLASS TTikStkA
+
+   local lOpen    := .T.
+   local oBlock   := ErrorBlock( {| oError | ApoloBreak( oError ) } )
+
+   BEGIN SEQUENCE
+
+   ::oPedPrvL := DbfServer( "PedProvL.DBF", ):NewOpen( "PedProvL.DBF",, ( cDriver() ),, ( cPatEmp() ), .F., .T., .F., .F. ) ; ::oPedPrvL:AddBag( "PedProvL.Cdx" ) ; ::oPedPrvL:AddBag( ) ; ::oPedPrvL:AutoIndex()
+
+   ::oAlbPrvL := DbfServer( "ALBPROVL.DBF", ):NewOpen( "ALBPROVL.DBF",, ( cDriver() ),, ( cPatEmp() ), .F., .T., .F., .F. ) ; ::oAlbPrvL:AddBag( "ALBPROVL.CDX" ) ; ::oAlbPrvL:AddBag( ) ; ::oAlbPrvL:AutoIndex()
+
+   ::oFacPrvL := DbfServer( "FACPRVL.DBF", ):NewOpen( "FACPRVL.DBF",, ( cDriver() ),, ( cPatEmp() ), .F., .T., .F., .F. ) ; ::oFacPrvL:AddBag( "FACPRVL.CDX" ) ; ::oFacPrvL:AddBag( ) ; ::oFacPrvL:AutoIndex()
+
+   ::oRctPrvL := DbfServer( "RctPrvL.DBF", ):NewOpen( "RctPrvL.DBF",, ( cDriver() ),, ( cPatEmp() ), .F., .T., .F., .F. ) ; ::oRctPrvL:AddBag( "RctPrvL.Cdx" ) ; ::oRctPrvL:AddBag( ) ; ::oRctPrvL:AutoIndex()
+
+   ::oPedCliL := DbfServer( "PedCliL.DBF", ):NewOpen( "PedCliL.DBF",, ( cDriver() ),, ( cPatEmp() ), .F., .T., .F., .F. ) ; ::oPedCliL:AddBag( "PedCliL.Cdx" ) ; ::oPedCliL:AddBag( ) ; ::oPedCliL:AutoIndex()
+
+   ::oAlbCliL := DbfServer( "ALBCLIL.DBF", ):NewOpen( "ALBCLIL.DBF",, ( cDriver() ),, ( cPatEmp() ), .F., .T., .F., .F. ) ; ::oAlbCliL:AddBag( "ALBCLIL.CDX" ) ; ::oAlbCliL:AddBag( ) ; ::oAlbCliL:AutoIndex()
+
+   ::oPedCliR := DbfServer( "PEDCLIR.DBF", ):NewOpen( "PEDCLIR.DBF",, ( cDriver() ),, ( cPatEmp() ), .F., .T., .F., .F. ) ; ::oPedCliR:AddBag( "PEDCLIR.CDX" ) ; ::oPedCliR:AddBag( ) ; ::oPedCliR:AutoIndex()
+   ::oPedCliR:OrdSetFocus( "cRef" )
+
+   ::oFacCliL := DbfServer( "FACCLIL.DBF", ):NewOpen( "FACCLIL.DBF",, ( cDriver() ),, ( cPatEmp() ), .F., .T., .F., .F. ) ; ::oFacCliL:AddBag( "FACCLIL.CDX" ) ; ::oFacCliL:AddBag( ) ; ::oFacCliL:AutoIndex()
+
+   ::oFacRecL := DbfServer( "FACRECL.DBF", ):NewOpen( "FACRECL.DBF",, ( cDriver() ),, ( cPatEmp() ), .F., .T., .F., .F. ) ; ::oFacRecL:AddBag( "FACRECL.CDX" ) ; ::oFacRecL:AddBag( ) ; ::oFacRecL:AutoIndex()
+
+   ::oTikCliL := DbfServer( "TikeL.DBF", ):NewOpen( "TikeL.DBF",, ( cDriver() ),, ( cPatEmp() ), .F., .T., .F., .F. ) ; ::oTikCliL:AddBag( "TikeL.CDX" ) ; ::oTikCliL:AddBag( ) ; ::oTikCliL:AutoIndex()
+
+   ::oHisMov := DbfServer( "HisMov.DBF", ):NewOpen( "HisMov.DBF",, ( cDriver() ),, ( cPatEmp() ), .F., .T., .F., .F. ) ; ::oHisMov:AddBag( "HisMov.CDX" ) ; ::oHisMov:AddBag( ) ; ::oHisMov:AutoIndex()
+
+   ::oProLin := DbfServer( "PROLIN.DBF", ):NewOpen( "PROLIN.DBF",, ( cDriver() ),, ( cPatEmp() ), .F., .T., .F., .F. ) ; ::oProLin:AddBag( "PROLIN.CDX" ) ; ::oProLin:AddBag( ) ; ::oProLin:AutoIndex()
+
+   ::oProMat := DbfServer( "PROMAT.DBF", ):NewOpen( "PROMAT.DBF",, ( cDriver() ),, ( cPatEmp() ), .F., .T., .F., .F. ) ; ::oProMat:AddBag( "PROMAT.CDX" ) ; ::oProMat:AddBag( ) ; ::oProMat:AutoIndex()
+
+      ::oStock                := TStock():New()
+      if !::oStock:lOpenFiles()
+         lOpen                := .F.
+      else
+         ::oStock:cPedPrvL    := ::oPedPrvL:cAlias
+         ::oStock:cAlbPrvL    := ::oAlbPrvL:cAlias
+         ::oStock:cFacPrvL    := ::oFacPrvL:cAlias
+         ::oStock:cRctPrvL    := ::oRctPrvL:cAlias
+         ::oStock:cPedCliL    := ::oPedCliL:cAlias
+         ::oStock:cAlbCliL    := ::oAlbCliL:cAlias
+         ::oStock:cFacCliL    := ::oFacCliL:cAlias
+         ::oStock:cFacRecL    := ::oFacRecL:cAlias
+         ::oStock:cProducL    := ::oProLin:cAlias
+         ::oStock:cProducM    := ::oProMat:cAlias
+         ::oStock:cHisMov     := ::oHisMov:cAlias
+         ::oStock:cTikL       := ::oTikCliL:cAlias
+      end
+
+   RECOVER
+
+      lOpen       := .F.
+      msgStop( "Imposible abrir todas las bases de datos" )
+
+   end
+
+   ErrorBlock( oBlock )
+
+   if !lOpen
+      ::CloseFiles()
+   end
+
+RETURN ( lOpen )
+
+
+
+UTILITY STATIC function TTikStkA_CloseFiles() ; local Self AS CLASS TTikStkA := QSelf() AS CLASS TTikStkA
+
+   if !Empty( ::oPedPrvL ) .AND. ::oPedPrvL:Used()
+      ::oPedPrvL:End()
+   end
+
+   if !Empty( ::oAlbPrvL ) .AND. ::oAlbPrvL:Used()
+      ::oAlbPrvL:End()
+   end
+
+   if !Empty( ::oFacPrvL ) .AND. ::oFacPrvL:Used()
+      ::oFacPrvL:End()
+   end
+
+   if !Empty( ::oRctPrvL ) .AND. ::oRctPrvL:Used()
+      ::oRctPrvL:End()
+   end
+
+   if !Empty( ::oPedCliL ) .AND. ::oPedCliL:Used()
+      ::oPedCliL:End()
+   end
+
+   if !Empty( ::oAlbCliL ) .AND. ::oAlbCliL:Used()
+      ::oAlbCliL:End()
+   end
+
+   if !Empty( ::oPedCliR ) .AND. ::oPedCliR:Used()
+      ::oPedCliR:End()
+   end
+
+   if !Empty( ::oFacCliL ) .AND. ::oFacCliL:Used()
+      ::oFacCliL:End()
+   end
+
+   if !Empty( ::oFacRecL ) .AND. ::oFacRecL:Used()
+      ::oFacRecL:End()
+   end
+
+   if !Empty( ::oTikCliL ) .AND. ::oTikCliL:Used()
+      ::oTikCliL:End()
+   end
+
+   if !Empty( ::oHisMov ) .AND. ::oHisMov:Used()
+      ::oHisMov:End()
+   end
+
+   if !Empty( ::oProLin ) .AND. ::oProLin:Used()
+      ::oProLin:End()
+   end
+
+   if !Empty( ::oProMat ) .AND. ::oProMat:Used()
+      ::oProMat:End()
+   end
+
+   if !Empty( ::oStock )
+      ::oStock:End()
+   end
+
+   ::oAlbPrvL := nil
+   ::oFacPrvL := nil
+   ::oAlbCliL := nil
+   ::oPedCliR := nil
+   ::oFacCliL := nil
+   ::oFacRecL := nil
+   ::oTikCliL := nil
+   ::oHisMov  := nil
+   ::oProLin  := nil
+   ::oProMat  := nil
+   ::oStock   := nil
+
+RETURN ( Self )
+
+
+
+
+UTILITY STATIC function TTikStkA_lResource() ; local Self AS CLASS TTikStkA := QSelf() AS CLASS TTikStkA
+
+   local cEstado  := "Nombre"
+
+   ::lDefFecInf   := .F.
+   ::lDefSerInf   := .F.
+
+   if !::StdResource( "INF_GEN03C" )
+      return .F.
+   end
+
+
+
+
+
+   if !::oDefAlmInf( 70, 80, 90, 100, 600 )
+      return .F.
+   end
+
+
+
+
+
+   if !::lDefArtInf( 110, 120, 130, 140, 800 )
+      return .F.
+   end
+
+
+
+   TCheckBox():ReDefine( 190, { | u | If( PCount()==0, ::lControlStock, ::lControlStock:= u ) }, ::oFld:aDialogs[1],,,,,,, .F.,, .F. )
+
+
+
+
+
+
+
+
+
+   ::oEstado := TComboBox():ReDefine( 218, { | u | If( PCount()==0, cEstado, cEstado:= u ) }, { "Nombre", "Código" }, ::oFld:aDialogs[1],,,,,,, .F.,,,,,, )
+
+   ::oDefExcInf( 210 )
+
+
+
+
+
+   if ::xOthers
+
+      ::oBtnAction:bAction    := {|| if( ::lGenerate(), ::PrnTiket( ::oCmbReport:nAt == 1 ), msgStop( "No hay registros en las condiciones solictadas" ) ) }
+
+   end
+
+   ::oMtrInf:SetTotal( ::oDbfArt:OrdKeyCount() )
+
+   ::CreateFilter( aItmArt(), ::oDbfArt:cAlias )
+
+RETURN .T.
+
+
+
+
+
+
+UTILITY STATIC function TTikStkA_lGenerate() ; local Self AS CLASS TTikStkA := QSelf() AS CLASS TTikStkA
+
+   local cExpAlm        := ""
+   local cExpArt        := ""
+   local nStockActual   := 0
+
+   ::oDlg:Disable()
+   ::oBtnCancel:Enable()
+   ::oDbf:Zap()
+
+
+
+   ::aHeader      := {  {|| "Fecha      : " + Dtoc( Date() ) }, {|| "Almacenes  : " + if( ::lAllAlm, "Todos", AllTrim( ::cAlmOrg ) + " > " + AllTrim( ::cAlmDes ) ) }, {|| "Artículos  : " + if( ::lAllArt, "Todos", AllTrim( ::cArtOrg ) + " > " + AllTrim( ::cArtDes ) ) } }
+
+   ::oDbfAlm:OrdSetFocus( "cCodAlm" )
+   ::oDbfArt:OrdSetFocus( "Codigo" )
+
+   if !::lAllAlm
+      cExpAlm        += 'cCodAlm >= "' + Rtrim( ::cAlmOrg ) + '" .and. cCodAlm <= "' + Rtrim( ::cAlmDes ) + '"'
+   else
+      cExpAlm        += ".t."
+   end
+
+   ::oDbfAlm:AddTmpIndex( cCurUsr(), GetFileNoExt( ::oDbfAlm:cFile ), ::oDbfAlm:OrdKey(), ( cExpAlm ), , , , , , , , .T. )
+
+   cExpArt           := "nCtlStock != 3"
+
+   if !::lAllArt
+      cExpArt        += ' .and. Codigo >= "' + Rtrim( ::cArtOrg ) + '" .and. Codigo <= "' + Rtrim( ::cArtDes ) + '"'
+   end
+
+   if !Empty( ::oFilter:cExpFilter )
+      cExpArt        += " .and. " + ::oFilter:cExpFilter
+   end
+
+   ::oDbfArt:AddTmpIndex( cCurUsr(), GetFileNoExt( ::oDbfArt:cFile ), ::oDbfArt:OrdKey(), ( cExpArt ), , , , , , , , .T. )
+
+   ::oMtrInf:SetTotal( ::oDbfArt:OrdKeyCount() )
+
+   ::oDbfAlm:GoTop()
+
+   while !::lBreak .AND. !::oDbfAlm:Eof()
+
+      if !Empty( ::oDbfAlm:cCodAlm )
+
+         ::oMtrInf:cText   := ::oDbfAlm:cNomAlm
+
+         ::oDbfArt:GoTop()
+
+         while !::lBreak .AND. !::oDbfArt:Eof()
+
+            if ( ( ::lControlStock .AND. ::oDbfArt:nCtlStock == 1 ) .OR. !::lControlStock )
+
+               nStockActual   := ::oStock:nStockAlmacen( ::oDbfArt:Codigo, ::oDbfAlm:cCodAlm )
+
+               if !( ::lExcCero .AND. nStockActual == 0 )
+
+                  ::oDbf:Append()
+
+                  ::oDbf:cCodAlm := ::oDbfAlm:cCodAlm
+                  ::oDbf:cCodArt := ::oDbfArt:Codigo
+                  ::oDbf:cNomArt := ::oDbfArt:Nombre
+                  ::oDbf:cDesArt := if( Empty( ::oDbfArt:cDesTik ), ::oDbfArt:Nombre, ::oDbfArt:cDesTik )
+                  ::oDbf:nNumUnd := nStockActual
+                  ::oDbf:nStkCmp := ::nTotReserva( ::oDbfArt:Codigo )
+                  ::oDbf:nStkLib := nStockActual - ::oDbf:nStkCmp
+
+                  ::oDbf:Save()
+
+               end
+
+            end
+
+            ::oDbfArt:Skip()
+
+            ::oMtrInf:AutoInc( ::oDbfArt:OrdKeyNo() )
+
+         end
+
+         ::oMtrInf:AutoInc( ::oDbfArt:LastRec() )
+
+      end
+
+      ::oDbfAlm:Skip()
+
+   end
+
+   ::oDbfAlm:IdxDelete( cCurUsr(), GetFileNoExt( ::oDbfAlm:cFile ) )
+
+   ::oDbfArt:IdxDelete( cCurUsr(), GetFileNoExt( ::oDbfArt:cFile ) )
+
+   ::oDlg:Enable()
+
+   ::oDbf:OrdSetFocus( ::oEstado:nAt )
+
+RETURN ( ::oDbf:RecCount() > 0 )
+
+
+
+UTILITY STATIC function TTikStkA_PrnTiket( lPrev) ; local Self AS CLASS TTikStkA := QSelf() AS CLASS TTikStkA
+
+   local oPrnTik
+   local cCodAlm     := Space( 3 )
+   local cImpTik     := cImpresoraTicketEnCaja( oUser():cCaja() )
+
+   IIF( lPrev == nil, lPrev := .T., ) ;
+
+   oPrnTik           := TImpresoraTiket():Create( cImpTik, lPrev )
+
+   if Empty( oPrnTik:cPort )
+      MsgStop( "No hay puerto de impresora" )
+      return nil
+   end
+
+   if !oPrnTik:lBuildComm()
+      MsgStop( "No se puede crear un handle a la impresora" )
+      return nil
+   end
+
+
+
+
+
+   oPrnTik:Write( PadC( Rtrim( ::cTitle ), 40 )       + Chr(13)+Chr(10) )
+   oPrnTik:Write( PadC( Rtrim( ::cSubTitle ), 40 )    + Chr(13)+Chr(10) )
+   oPrnTik:Write( Chr(13)+Chr(10) )
+   oPrnTik:Write( Chr(13)+Chr(10) )
+
+   ::oDbf:OrdSetFocus( ::oEstado:nAt )
+
+   ::oDbf:GoTop()
+   while !::oDbf:Eof()
+
+      if ::oDbf:cCodAlm <> cCodAlm
+         oPrnTik:Write( Replicate( "-", 40 ) + Chr(13)+Chr(10) )
+         oPrnTik:Write( "Almacén : " + ::oDbf:cCodAlm + Chr(13)+Chr(10) )
+         oPrnTik:Write( Replicate( "-", 40 ) + Chr(13)+Chr(10) )
+         oPrnTik:Write( Padr( "Código", 8 ) + Space( 1 ) + Padr( "Artículo", 20 ) + Space( 1 ) + Padl( "Unidades", 10 ) + Chr(13)+Chr(10) )
+         oPrnTik:Write( Replicate( "-", 40 ) + Chr(13)+Chr(10) )
+         cCodAlm     := ::oDbf:cCodAlm
+      end
+
+      oPrnTik:Write( left( ::oDbf:cCodArt, 8 ) + Space( 1 ) + Padr( ::oDbf:cDesArt, 20 ) + Space( 1 ) + Trans( ::oDbf:nNumUnd, Right( MasUnd(), 10 ) ) + Chr(13)+Chr(10) )
+
+      ::oDbf:Skip()
+
+   end
+
+   oPrnTik:Write( Replicate( "-", 40 ) + Chr(13)+Chr(10) )
+
+   oPrnTik:End()
+
+RETURN ( Self )
+
+
+
+UTILITY STATIC function TTikStkA_nTotReserva( cCodArt) ; local Self AS CLASS TTikStkA := QSelf() AS CLASS TTikStkA
+
+   local nTotal  := 0
+
+   if ::oPedCliR:Seek( cCodArt )
+
+      while ::oPedCliR:cRef == cCodArt .AND. !::oPedCliR:Eof()
+
+         nTotal += nTotRPedCli( ::oPedCliR:cSerPed + Str( ::oPedCliR:nNumPed ) + ::oPedCliR:cSufPed, ::oPedCliR:cRef, ::oPedCliR:cValPr1, ::oPedCliR:cValPr2, ::oPedCliR:cAlias )
+
+      ::oPedCliR:Skip()
+
+      end
+
+   end
+
+RETURN ( nTotal )

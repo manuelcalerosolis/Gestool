@@ -1,0 +1,37 @@
+#line 18 ".\Prg\Dummy.prg"
+Function _IsData()         ; Return ( .T. )
+
+Function GetPrinters()    ; Return ( aGetPrinters() )
+Function TOleContainer()   ; Return ( MsgInfo( "TOleContainer()"        ,  "OJO UNRRESOLVED" ) )
+
+Function ZipAddAll( nZip, cPath )
+Return   aEval( Directory( cPath ), { | aFile | MsgInfo( aFile[ 1 ], "OJO UNRRESOLVED" ) } )
+
+Function MyZipAddFile( nZip, cPath )   ; Return ( MsgInfo( "MyZipAddFile()" ,  "OJO UNRRESOLVED" ) )
+Function MyZipNew( nZip, cPath )       ; Return ( MsgInfo( "MyZipNew()" ,  "OJO UNRRESOLVED" ) )
+
+Function ZipCreate()       ; Return ( MsgInfo( "ZipCreate()"            ,  "OJO UNRRESOLVED" ) )
+Function ZipClose()        ; Return ( MsgInfo( "ZipClose()"             ,  "OJO UNRRESOLVED" ) )
+Function MyZipCreate()     ; Return ( MsgInfo( "ZipCreate()"            ,  "OJO UNRRESOLVED" ) )
+Function MyZipClose()      ; Return ( MsgInfo( "ZipClose()"             ,  "OJO UNRRESOLVED" ) )
+Function UnZipOpen()       ; Return ( MsgInfo( "UnZipOpen()"            ,  "OJO UNRRESOLVED" ) )
+Function UnZipExtractAll() ; Return ( MsgInfo( "UnZipOpen()"            ,  "OJO UNRRESOLVED" ) )
+Function UnZipClose()      ; Return ( MsgInfo( "UnZipOpen()"            ,  "OJO UNRRESOLVED" ) )
+Function UnPakFil()        ; Return ( MsgInfo( "UnPakFil()"             ,  "OJO UNRRESOLVED" ) )
+Function UnZipDirectory()  ; Return ( MsgInfo( "ZipAddFile()"           ,  "OJO UNRRESOLVED" ) )
+Function UnZipExtractFile(); Return ( MsgInfo( "ZipAddFile()"           ,  "OJO UNRRESOLVED" ) )
+Function _ObjNewCls()      ; Return ( MsgInfo( "ObjNewCls()"            ,  "OJO UNRRESOLVED" ) )
+Function _ObjClsIns()      ; Return ( MsgInfo( "ObjNewCls()"            ,  "OJO UNRRESOLVED" ) )
+Function _ObjAddMet()      ; Return ( MsgInfo( "ObjNewCls()"            ,  "OJO UNRRESOLVED" ) )
+Function __ClassIns()      ; Return ( MsgInfo( "ObjNewCls()"            ,  "OJO UNRRESOLVED" ) )
+Function __ClassNam()      ; Return ( MsgInfo( "ObjNewCls()"            ,  "OJO UNRRESOLVED" ) )
+
+
+
+
+
+Function DbfHdl()          ; Return ( dbInfo( 23 ) )
+
+Function IsShared()        ; Return ( dbInfo( 36 ) )
+
+Function IsReadOnly()      ; Return ( .F. )

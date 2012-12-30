@@ -1,0 +1,281 @@
+#line 112 "hbclass.ch"
+   DYNAMIC DivertConstructorCall
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+DECLARE HBClass  New( cName AS String, OPTIONAL SuperParams ) AS CLASS HBClass  Create() AS Object  Instance() AS Object  AddClsMethod( cName AS String, @MethodName(), nScope AS Numeric, n2 AS Numeric, n3 AS Numeric )  AddDelegate( cName AS String, cDelegate AS String, cObject AS String, nScope AS Numeric, lPersistent AS LOGICAL )  AddMultiClsData( cType AS String, uVal, nScope AS Numeric, aDatas AS Array OF String )  AddMultiData( cType AS String, uVal, nScope AS Numeric, aDatas AS Array OF String, x AS LOGICAL, lPer AS LOGICAL )  AddMethod( cName AS String, @MethodName(), nScope AS Numeric, lPersistent AS LOGICAL )  AddInLine( cName AS String, bBlock AS CodeBlock, nScope AS Numeric, lPersistent AS LOGICAL )  AddVirtual( cName AS String )  ModMethod( cName AS String, @MethodName(), nScope AS Numeric, lPersistent AS LOGICAL )  ModClsMethod( cName AS String, @MethodName(), nScope AS Numeric )  ModInline( cName AS String, bBlock AS CodeBlock, nScope AS Numeric, lPersistent AS LOGICAL )  SetOnError( @MethodName() )
+#line 85 "\Fwh1204\Include\FiveWin.Ch"
+   EXTERNAL GetProcAdd
+   EXTERNAL TActiveX
+
+
+
+
+extern errorsys
+#line 7 ".\Prg\TFraPub.prg"
+_HB_CLASS TFrasesPublicitarias ; UTILITY FUNCTION TFrasesPublicitarias(...); static s_oClass ; local oClassInstance ; local nScope ; nScope := 1 ; if s_oClass == NIL ; s_oClass := IIF(.F.,, HBClass():New( "TFrasesPublicitarias" , {TMant():classh} ) ) ; ;
+
+   _HB_MEMBER { oDlg} ; IIF( !.F., s_oClass:AddMultiData(,, nScope + IIF( .F., 32, 0 ), { "oDlg" }, .F., .F. ), )
+
+   _HB_MEMBER { oGetCodigo} ; IIF( !.F., s_oClass:AddMultiData(,, nScope + IIF( .F., 32, 0 ), { "oGetCodigo" }, .F., .F. ), )
+   _HB_MEMBER { oGetFrase} ; IIF( !.F., s_oClass:AddMultiData(,, nScope + IIF( .F., 32, 0 ), { "oGetFrase" }, .F., .F. ), )
+
+   _HB_MEMBER { cBitmap} ; IIF( !.F., s_oClass:AddMultiData(, ( 104 + ( 0 * 256 ) + ( 63 * 65536 ) ), nScope + IIF( .F., 32, 0 ), { "cBitmap" }, .F., .F. ), )
+
+   _HB_MEMBER New( cPath, oWndParent, oMenuItem); IIF( .F., s_oClass:ModMethod( "New", @TFrasesPublicitarias_New(), nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ), s_oClass:AddMethod( "New", @TFrasesPublicitarias_New(), nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ));
+
+   _HB_MEMBER OpenFiles( lExclusive); IIF( .F., s_oClass:ModMethod( "OpenFiles", @TFrasesPublicitarias_OpenFiles(), nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ), s_oClass:AddMethod( "OpenFiles", @TFrasesPublicitarias_OpenFiles(), nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ));
+   _HB_MEMBER OpenService(lExclusive); IIF( .F., s_oClass:ModMethod( "OpenService", @TFrasesPublicitarias_OpenFiles(), nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ) ), s_oClass:AddMethod( "OpenService", @TFrasesPublicitarias_OpenFiles(), nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ) ) );
+
+   _HB_MEMBER DefineFiles(); IIF( .F., s_oClass:ModMethod( "DefineFiles", @TFrasesPublicitarias_DefineFiles(), nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ), s_oClass:AddMethod( "DefineFiles", @TFrasesPublicitarias_DefineFiles(), nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ));
+
+   _HB_MEMBER Resource( nMode); IIF( .F., s_oClass:ModMethod( "Resource", @TFrasesPublicitarias_Resource(), nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ), s_oClass:AddMethod( "Resource", @TFrasesPublicitarias_Resource(), nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ));
+
+   _HB_MEMBER InvSelect(oBrw); IIF( .F., s_oClass:ModInline( "InvSelect", {|Self,oBrw | Self, ( ::oDbf:Load(), ::oDbf:lSelect := !::oDbf:lSelect, ::oDbf:Save(), oBrw:Refresh() ) }, nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ), s_oClass:AddInline( "InvSelect", {|Self,oBrw | Self, ( ::oDbf:Load(), ::oDbf:lSelect := !::oDbf:lSelect, ::oDbf:Save(), oBrw:Refresh() ) }, nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ) )
+
+   _HB_MEMBER lSelect( lSel, oBrw); IIF( .F., s_oClass:ModMethod( "lSelect", @TFrasesPublicitarias_lSelect(), nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ), s_oClass:AddMethod( "lSelect", @TFrasesPublicitarias_lSelect(), nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ));
+
+   _HB_MEMBER SelectAll( lSel, oBrw); IIF( .F., s_oClass:ModMethod( "SelectAll", @TFrasesPublicitarias_SelectAll(), nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ), s_oClass:AddMethod( "SelectAll", @TFrasesPublicitarias_SelectAll(), nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ));
+
+   _HB_MEMBER lValid( oGet, oSay); IIF( .F., s_oClass:ModMethod( "lValid", @TFrasesPublicitarias_lValid(), nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ), s_oClass:AddMethod( "lValid", @TFrasesPublicitarias_lValid(), nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ));
+
+   _HB_MEMBER cNombre( cCodArt); IIF( .F., s_oClass:ModMethod( "cNombre", @TFrasesPublicitarias_cNombre(), nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ), s_oClass:AddMethod( "cNombre", @TFrasesPublicitarias_cNombre(), nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ));
+
+   _HB_MEMBER lPreSave( oGet, oGet2, oDlg, nMode); IIF( .F., s_oClass:ModMethod( "lPreSave", @TFrasesPublicitarias_lPreSave(), nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ), s_oClass:AddMethod( "lPreSave", @TFrasesPublicitarias_lPreSave(), nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ));
+
+
+; IF .F. ; __clsActive(s_oClass:hClass) ; s_oClass:Refresh() ; ELSE ; s_oClass:Create() ; END ; oClassInstance := __clsInst( s_oClass:hClass ) ; IF __ObjHasMsg( oClassInstance, "InitClass" ); oClassInstance:InitClass( hb_aParams() ) ; END ; ELSE ; oClassInstance := __clsInst( s_oClass:hClass ) ; END ; IF PCount() > 0 ; DIVERT TO (@DivertConstructorCall()) OF s_oClass ; END ; RETURN oClassInstance AS CLASS TFrasesPublicitarias ;
+
+
+
+UTILITY STATIC function TFrasesPublicitarias_New( cPath, oWndParent, oMenuItem) ; local Self AS CLASS TFrasesPublicitarias := QSelf() AS CLASS TFrasesPublicitarias
+
+   IIF( cPath == nil, cPath := cPatArt(), ) ;
+   IIF( oWndParent == nil, oWndParent := GetWndFrame(), ) ;
+
+   if oMenuItem <> nil
+      ::nLevel          := nLevelUsr( oMenuItem )
+   else
+      ::nLevel          := nLevelUsr( "01104" )
+   end
+
+   ::cPath              := cPath
+   ::oWndParent         := oWndParent
+   ::oDbf               := nil
+   ::cMru               := "Led_Red_16"
+
+   ::lAutoButtons       := .T.
+   ::lCreateShell       := .F.
+
+RETURN ( Self )
+
+
+
+UTILITY STATIC function TFrasesPublicitarias_OpenFiles(lExclusive) ; local Self AS CLASS TFrasesPublicitarias := QSelf() AS CLASS TFrasesPublicitarias
+
+   local lOpen          := .T.
+   local oError
+   local oBlock
+
+   IIF( lExclusive == nil, lExclusive := .F., ) ;
+
+   oBlock               := ErrorBlock( {| oError | ApoloBreak( oError ) } )
+   BEGIN SEQUENCE
+
+      if Empty( ::oDbf )
+         ::DefineFiles()
+      end
+
+      ::oDbf:Activate( .F., !( lExclusive ) )
+
+   RECOVER USING oError
+
+      msgStop( ErrorMessage( oError ), "Imposible abrir las bases de datos de frases publicitarias" )
+
+      ::CloseFiles()
+
+      lOpen             := .F.
+
+   end
+
+   ErrorBlock( oBlock )
+
+RETURN ( lOpen )
+
+
+
+UTILITY STATIC function TFrasesPublicitarias_DefineFiles( cPath, cDriver) ; local Self AS CLASS TFrasesPublicitarias := QSelf() AS CLASS TFrasesPublicitarias
+
+   IIF( cPath == nil, cPath := ::cPath, ) ;
+   IIF( cDriver == nil, cDriver := cDriver(), ) ;
+
+   ::oDbf := DbfServer( "FraPub.Dbf", "FraPub" ):New( "FraPub.Dbf", "FraPub", ( cDriver ), "Frases publicitarias", ( cPath ) )
+
+      ::oDbf:AddField( "cCodFra", "C", 3, 0, "@!",,,, "Código", .F., 60, .F., {} )
+      ::oDbf:AddField( "cTxtFra", "C", 200, 0,,,,, "Frase", .F., 400, .F., {} )
+      ::oDbf:AddField( "lSelect", "L", 1, 0,,,,, "", .F., 0, .T., {} )
+
+      ::oDbf:AddIndex( "cCodFra", "FraPub.CDX", "cCodFra",,, .F., .F., "Código",,, .T., .F. )
+      ::oDbf:AddIndex( "cTxtFra", "FraPub.CDX", "cTxtFra",,, .F., .F., "Frase",,, .T., .F. )
+
+
+
+RETURN ( ::oDbf )
+
+
+
+UTILITY STATIC function TFrasesPublicitarias_Resource( nMode) ; local Self AS CLASS TFrasesPublicitarias := QSelf() AS CLASS TFrasesPublicitarias
+
+   ::oDlg = TDialog():New(,,,, LblTitle( nMode ) + "frases publicitarias", "FraPub",, .F.,,,,,, .F.,,,,,, .F., )
+
+
+
+
+
+      ::oGetCodigo := TGetHlp():ReDefine( 100, { | u | If( PCount()==0, ::oDbf:cCodFra, ::oDbf:cCodFra:= u ) }, ::oDlg,, "@!",,,,,,, .T., {||     ( nMode == 1 )},, .F., .F.,,,,,, nil,,, )
+
+      ::oGetCodigo:bValid  := {|| NotValid( ::oGetCodigo, ::oDbf:cAlias, .T., "0" ) }
+
+
+
+
+      ::oGetFrase := TGetHlp():ReDefine( 110, { | u | If( PCount()==0, ::oDbf:cTxtFra, ::oDbf:cTxtFra:= u ) }, ::oDlg,,,,,,,,, .T., {||     ( nMode <> 3 )},, .F., .F.,,,,,, nil,,, )
+
+
+
+
+
+      TButton():ReDefine( 1, {||( ::lPreSave(  nMode ) )}, ::oDlg,,, .F., {||     ( nMode <> 3 )},,, .F. )
+
+
+
+
+
+        TButton():ReDefine( 2, {||( ::oDlg:end() )}, ::oDlg,,, .F.,,,, .T. )
+
+
+
+
+      TButton():ReDefine( 9, {||( GoHelp() )}, ::oDlg,,, .F.,,,, .F. )
+
+   if nMode <> 3
+      ::oDlg:AddFastKey( 116, {|| ::lPreSave( nMode ) } )
+   end
+
+   ::oDlg:bStart  := {|| ::oGetCodigo:SetFocus() }
+
+   ::oDlg:Activate( ::oDlg:bLClicked, ::oDlg:bMoved, ::oDlg:bPainted, .T.,,,, ::oDlg:bRClicked,,, )
+
+RETURN ( ::oDlg:nResult == 1 )
+
+
+
+UTILITY STATIC function TFrasesPublicitarias_lPreSave( nMode) ; local Self AS CLASS TFrasesPublicitarias := QSelf() AS CLASS TFrasesPublicitarias
+
+   if nMode == 1 .OR. nMode == 4
+
+      if Empty( ::oDbf:cCodFra )
+         MsgStop( "Código de tipo de artículo no puede estar vacío." )
+         ::oGetCodigo:SetFocus()
+         Return .F.
+      end
+
+      if ::oDbf:SeekInOrd( ::oDbf:cCodFra, "cCodFra" )
+         MsgStop( "Código ya existe " + Rtrim( ::oDbf:cCodFra ) )
+         return nil
+      end
+
+   end
+
+   if Empty( ::oDbf:cTxtFra )
+      MsgStop( "Frase publicitaria no puede estar vacía." )
+      ::oGetFrase:SetFocus()
+      Return .F.
+   end
+
+RETURN ( ::oDlg:end( 1 ) )
+
+
+
+UTILITY STATIC function TFrasesPublicitarias_lSelect( lSel, oBrw) ; local Self AS CLASS TFrasesPublicitarias := QSelf() AS CLASS TFrasesPublicitarias
+
+   ::oDbf:Load()
+   ::oDbf:lSelect    := lSel
+   ::oDbf:Save()
+
+   if oBrw <> nil
+      oBrw:Refresh()
+   end
+
+Return ( Self )
+
+
+
+UTILITY STATIC function TFrasesPublicitarias_SelectAll( lSel, oBrw) ; local Self AS CLASS TFrasesPublicitarias := QSelf() AS CLASS TFrasesPublicitarias
+
+   ::oDbf:GetStatus()
+
+   IIF( lSel == nil, lSel := .F., ) ;
+
+   ::oDbf:GoTop()
+   while !( ::oDbf:eof() )
+      ::lSelect( lSel )
+      ::oDbf:Skip()
+   end
+
+   ::oDbf:SetStatus()
+
+   if oBrw <> nil
+      oBrw:Refresh()
+   end
+
+RETURN ( Self )
+
+
+
+UTILITY STATIC function TFrasesPublicitarias_lValid( oGet, oSay) ; local Self AS CLASS TFrasesPublicitarias := QSelf() AS CLASS TFrasesPublicitarias
+
+   local cCodFra
+
+   if Empty( oGet:VarGet() )
+      return .T.
+   end
+
+   cCodFra        := RJustObj( oGet, "0" )
+
+   if ::oDbf:Seek( cCodFra )
+      oGet:cText( cCodFra )
+      if oSay <> nil
+         oSay:cText( ::oDbf:cTxtFra )
+      end
+   else
+      msgStop( "Código de frase publicitaria no encontrada" )
+      return .F.
+   end
+
+RETURN .T.
+
+
+
+UTILITY STATIC function TFrasesPublicitarias_cNombre( cCodFra) ; local Self AS CLASS TFrasesPublicitarias := QSelf() AS CLASS TFrasesPublicitarias
+
+   local cNombre  := ""
+
+   if ::oDbf:Seek( cCodFra )
+      cNombre     := ::oDbf:cTxtFra
+   end
+
+RETURN ( cNombre )

@@ -1,0 +1,1762 @@
+#line 112 "hbclass.ch"
+   DYNAMIC DivertConstructorCall
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+DECLARE HBClass  New( cName AS String, OPTIONAL SuperParams ) AS CLASS HBClass  Create() AS Object  Instance() AS Object  AddClsMethod( cName AS String, @MethodName(), nScope AS Numeric, n2 AS Numeric, n3 AS Numeric )  AddDelegate( cName AS String, cDelegate AS String, cObject AS String, nScope AS Numeric, lPersistent AS LOGICAL )  AddMultiClsData( cType AS String, uVal, nScope AS Numeric, aDatas AS Array OF String )  AddMultiData( cType AS String, uVal, nScope AS Numeric, aDatas AS Array OF String, x AS LOGICAL, lPer AS LOGICAL )  AddMethod( cName AS String, @MethodName(), nScope AS Numeric, lPersistent AS LOGICAL )  AddInLine( cName AS String, bBlock AS CodeBlock, nScope AS Numeric, lPersistent AS LOGICAL )  AddVirtual( cName AS String )  ModMethod( cName AS String, @MethodName(), nScope AS Numeric, lPersistent AS LOGICAL )  ModClsMethod( cName AS String, @MethodName(), nScope AS Numeric )  ModInline( cName AS String, bBlock AS CodeBlock, nScope AS Numeric, lPersistent AS LOGICAL )  SetOnError( @MethodName() )
+#line 85 "\Fwh1204\Include\FiveWin.Ch"
+   EXTERNAL GetProcAdd
+   EXTERNAL TActiveX
+
+
+
+
+extern errorsys
+#line 10 ".\Prg\Tdlgflt.prg"
+_HB_CLASS TDlgFlt ; UTILITY FUNCTION TDlgFlt(...); static s_oClass ; local oClassInstance ; local nScope ; nScope := 1 ; if s_oClass == NIL ; s_oClass := IIF(.F.,, HBClass():New( "TDlgFlt" , { HBObject():Classh } ) ) ;
+
+   _HB_MEMBER { oDbf} ; IIF( !.F., s_oClass:AddMultiData(,, nScope + IIF( .F., 32, 0 ), { "oDbf" }, .F., .F. ), )
+
+   _HB_MEMBER { aTField} ; IIF( !.F., s_oClass:AddMultiData(,, nScope + IIF( .F., 32, 0 ), { "aTField" }, .F., .F. ), )
+
+   _HB_MEMBER { cExpFilter} ; IIF( !.F., s_oClass:AddMultiData(,, nScope + IIF( .F., 32, 0 ), { "cExpFilter" }, .F., .F. ), )
+   _HB_MEMBER { bExpFilter} ; IIF( !.F., s_oClass:AddMultiData(,, nScope + IIF( .F., 32, 0 ), { "bExpFilter" }, .F., .F. ), )
+   _HB_MEMBER { aExpFilter} ; IIF( !.F., s_oClass:AddMultiData(,, nScope + IIF( .F., 32, 0 ), { "aExpFilter" }, .F., .F. ), )
+   _HB_MEMBER { cTxtFilter} ; IIF( !.F., s_oClass:AddMultiData(,, nScope + IIF( .F., 32, 0 ), { "cTxtFilter" }, .F., .F. ), )
+   _HB_MEMBER { aFldFilter} ; IIF( !.F., s_oClass:AddMultiData(,, nScope + IIF( .F., 32, 0 ), { "aFldFilter" }, .F., .F. ), )
+   _HB_MEMBER { aConFilter} ; IIF( !.F., s_oClass:AddMultiData(,, nScope + IIF( .F., 32, 0 ), { "aConFilter" }, .F., .F. ), )
+   _HB_MEMBER { aValFilter} ; IIF( !.F., s_oClass:AddMultiData(,, nScope + IIF( .F., 32, 0 ), { "aValFilter" }, .F., .F. ), )
+   _HB_MEMBER { aNexFilter} ; IIF( !.F., s_oClass:AddMultiData(,, nScope + IIF( .F., 32, 0 ), { "aNexFilter" }, .F., .F. ), )
+   _HB_MEMBER { oFldFilter} ; IIF( !.F., s_oClass:AddMultiData(,, nScope + IIF( .F., 32, 0 ), { "oFldFilter" }, .F., .F. ), )
+   _HB_MEMBER { oConFilter} ; IIF( !.F., s_oClass:AddMultiData(,, nScope + IIF( .F., 32, 0 ), { "oConFilter" }, .F., .F. ), )
+   _HB_MEMBER { oValFilter} ; IIF( !.F., s_oClass:AddMultiData(,, nScope + IIF( .F., 32, 0 ), { "oValFilter" }, .F., .F. ), )
+   _HB_MEMBER { oNexFilter} ; IIF( !.F., s_oClass:AddMultiData(,, nScope + IIF( .F., 32, 0 ), { "oNexFilter" }, .F., .F. ), )
+
+   _HB_MEMBER { cTipFilter} ; IIF( !.F., s_oClass:AddMultiData(,, nScope + IIF( .F., 32, 0 ), { "cTipFilter" }, .F., .F. ), )
+   _HB_MEMBER { cTexFilter} ; IIF( !.F., s_oClass:AddMultiData(, "", nScope + IIF( .F., 32, 0 ), { "cTexFilter" }, .F., .F. ), )
+   _HB_MEMBER { cDbfFilter} ; IIF( !.F., s_oClass:AddMultiData(,, nScope + IIF( .F., 32, 0 ), { "cDbfFilter" }, .F., .F. ), )
+
+   _HB_MEMBER { oWndBrw} ; IIF( !.F., s_oClass:AddMultiData(,, nScope + IIF( .F., 32, 0 ), { "oWndBrw" }, .F., .F. ), )
+
+   _HB_MEMBER { aFilter} ; IIF( !.F., s_oClass:AddMultiData(, {}, nScope + IIF( .F., 32, 0 ), { "aFilter" }, .F., .F. ), )
+
+
+   _HB_MEMBER { lDefaultFilter} ; IIF( !.F., s_oClass:AddMultiData(, .F., nScope + IIF( .F., 32, 0 ), { "lDefaultFilter" }, .F., .F. ), )
+   _HB_MEMBER { cDefaultFilter} ; IIF( !.F., s_oClass:AddMultiData(,, nScope + IIF( .F., 32, 0 ), { "cDefaultFilter" }, .F., .F. ), )
+
+   _HB_MEMBER { lAllUser} ; IIF( !.F., s_oClass:AddMultiData(, .F., nScope + IIF( .F., 32, 0 ), { "lAllUser" }, .F., .F. ), )
+
+   _HB_MEMBER { lMultyExpresion} ; IIF( !.F., s_oClass:AddMultiData(,, nScope + IIF( .F., 32, 0 ), { "lMultyExpresion" }, .F., .F. ), )
+
+   _HB_MEMBER { aTblMask} ; IIF( !.F., s_oClass:AddMultiData(,, nScope + IIF( .F., 32, 0 ), { "aTblMask" }, .F., .F. ), )
+   _HB_MEMBER { aTblField} ; IIF( !.F., s_oClass:AddMultiData(,, nScope + IIF( .F., 32, 0 ), { "aTblField" }, .F., .F. ), )
+   _HB_MEMBER { aTblType} ; IIF( !.F., s_oClass:AddMultiData(,, nScope + IIF( .F., 32, 0 ), { "aTblType" }, .F., .F. ), )
+   _HB_MEMBER { aTblLen} ; IIF( !.F., s_oClass:AddMultiData(,, nScope + IIF( .F., 32, 0 ), { "aTblLen" }, .F., .F. ), )
+   _HB_MEMBER { aTblDecimals} ; IIF( !.F., s_oClass:AddMultiData(,, nScope + IIF( .F., 32, 0 ), { "aTblDecimals" }, .F., .F. ), )
+   _HB_MEMBER { aTblNexo} ; IIF( !.F., s_oClass:AddMultiData(,, nScope + IIF( .F., 32, 0 ), { "aTblNexo" }, .F., .F. ), )
+   _HB_MEMBER { aTblCondition} ; IIF( !.F., s_oClass:AddMultiData(,, nScope + IIF( .F., 32, 0 ), { "aTblCondition" }, .F., .F. ), )
+   _HB_MEMBER { oReplace} ; IIF( !.F., s_oClass:AddMultiData(,, nScope + IIF( .F., 32, 0 ), { "oReplace" }, .F., .F. ), )
+   _HB_MEMBER { cReplace} ; IIF( !.F., s_oClass:AddMultiData(,, nScope + IIF( .F., 32, 0 ), { "cReplace" }, .F., .F. ), )
+   _HB_MEMBER { cFldReplace} ; IIF( !.F., s_oClass:AddMultiData(,, nScope + IIF( .F., 32, 0 ), { "cFldReplace" }, .F., .F. ), )
+   _HB_MEMBER { oExpReplace} ; IIF( !.F., s_oClass:AddMultiData(,, nScope + IIF( .F., 32, 0 ), { "oExpReplace" }, .F., .F. ), )
+   _HB_MEMBER { cExpReplace} ; IIF( !.F., s_oClass:AddMultiData(,, nScope + IIF( .F., 32, 0 ), { "cExpReplace" }, .F., .F. ), )
+   _HB_MEMBER { oMtrReplace} ; IIF( !.F., s_oClass:AddMultiData(,, nScope + IIF( .F., 32, 0 ), { "oMtrReplace" }, .F., .F. ), )
+   _HB_MEMBER { nMtrReplace} ; IIF( !.F., s_oClass:AddMultiData(,, nScope + IIF( .F., 32, 0 ), { "nMtrReplace" }, .F., .F. ), )
+   _HB_MEMBER { lAllRecno} ; IIF( !.F., s_oClass:AddMultiData(,, nScope + IIF( .F., 32, 0 ), { "lAllRecno" }, .F., .F. ), )
+
+   _HB_MEMBER { oWebBtn} ; IIF( !.F., s_oClass:AddMultiData(,, nScope + IIF( .F., 32, 0 ), { "oWebBtn" }, .F., .F. ), )
+
+   _HB_MEMBER { lAplyFilter} ; IIF( !.F., s_oClass:AddMultiData(,, nScope + IIF( .F., 32, 0 ), { "lAplyFilter" }, .F., .F. ), )
+
+   _HB_MEMBER { bOnAplyFilter} ; IIF( !.F., s_oClass:AddMultiData(,, nScope + IIF( .F., 32, 0 ), { "bOnAplyFilter" }, .F., .F. ), )
+   _HB_MEMBER { bOnKillFilter} ; IIF( !.F., s_oClass:AddMultiData(,, nScope + IIF( .F., 32, 0 ), { "bOnKillFilter" }, .F., .F. ), )
+
+   _HB_MEMBER { cPath} ; IIF( !.F., s_oClass:AddMultiData(,, nScope + IIF( .F., 32, 0 ), { "cPath" }, .F., .F. ), )
+
+   _HB_MEMBER { lAppendFilter} ; IIF( !.F., s_oClass:AddMultiData(, .F., nScope + IIF( .F., 32, 0 ), { "lAppendFilter" }, .F., .F. ), )
+
+   _HB_MEMBER { cOrdAnterior} ; IIF( !.F., s_oClass:AddMultiClsData(,, nScope + IIF( .F., 32, 0 ) + 64, { "cOrdAnterior" }, .F. ), )
+   _HB_MEMBER { nRecAnterior} ; IIF( !.F., s_oClass:AddMultiClsData(,, nScope + IIF( .F., 32, 0 ) + 64, { "nRecAnterior" }, .F. ), )
+   _HB_MEMBER { cBagAnterior} ; IIF( !.F., s_oClass:AddMultiClsData(,, nScope + IIF( .F., 32, 0 ) + 64, { "cBagAnterior" }, .F. ), )
+   _HB_MEMBER { cNamAnterior} ; IIF( !.F., s_oClass:AddMultiClsData(,, nScope + IIF( .F., 32, 0 ) + 64, { "cNamAnterior" }, .F. ), )
+
+   _HB_MEMBER New( aTField, oDbf); IIF( .F., s_oClass:ModMethod( "New", @TDlgFlt_New(), nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ), s_oClass:AddMethod( "New", @TDlgFlt_New(), nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ));
+   _HB_MEMBER Init( oDbf, oWndBrw); IIF( .F., s_oClass:ModMethod( "Init", @TDlgFlt_Init(), nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ), s_oClass:AddMethod( "Init", @TDlgFlt_Init(), nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ));
+   _HB_MEMBER Create( aTField, oDbf); IIF( .F., s_oClass:ModMethod( "Create", @TDlgFlt_Create(), nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ), s_oClass:AddMethod( "Create", @TDlgFlt_Create(), nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ));
+
+   _HB_MEMBER CreateFilter( oDlg); IIF( .F., s_oClass:ModMethod( "CreateFilter", @TDlgFlt_CreateFilter(), nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ), s_oClass:AddMethod( "CreateFilter", @TDlgFlt_CreateFilter(), nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ));
+   _HB_MEMBER SaveFilter(); IIF( .F., s_oClass:ModMethod( "SaveFilter", @TDlgFlt_SaveFilter(), nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ), s_oClass:AddMethod( "SaveFilter", @TDlgFlt_SaveFilter(), nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ));
+   _HB_MEMBER DeleteFilter(); IIF( .F., s_oClass:ModMethod( "DeleteFilter", @TDlgFlt_DeleteFilter(), nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ), s_oClass:AddMethod( "DeleteFilter", @TDlgFlt_DeleteFilter(), nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ));
+
+   _HB_MEMBER KillFilter( oDlg); IIF( .F., s_oClass:ModMethod( "KillFilter", @TDlgFlt_KillFilter(), nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ), s_oClass:AddMethod( "KillFilter", @TDlgFlt_KillFilter(), nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ));
+
+   _HB_MEMBER SetFilter( cText); IIF( .F., s_oClass:ModMethod( "SetFilter", @TDlgFlt_SetFilter(), nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ), s_oClass:AddMethod( "SetFilter", @TDlgFlt_SetFilter(), nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ));
+
+   _HB_MEMBER lBuildFilter(); IIF( .F., s_oClass:ModMethod( "lBuildFilter", @TDlgFlt_lBuildFilter(), nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ), s_oClass:AddMethod( "lBuildFilter", @TDlgFlt_lBuildFilter(), nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ));
+   _HB_MEMBER AplyFilter(); IIF( .F., s_oClass:ModMethod( "AplyFilter", @TDlgFlt_AplyFilter(), nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ), s_oClass:AddMethod( "AplyFilter", @TDlgFlt_AplyFilter(), nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ));
+   _HB_MEMBER lBuildAplyFilter(); IIF( .F., s_oClass:ModInline( "lBuildAplyFilter", {|Self | Self, ( if( ::lBuildFilter(), ::AplyFilter(), ) ) }, nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ), s_oClass:AddInline( "lBuildAplyFilter", {|Self | Self, ( if( ::lBuildFilter(), ::AplyFilter(), ) ) }, nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ) )
+
+   _HB_MEMBER Default(); IIF( .F., s_oClass:ModMethod( "Default", @TDlgFlt_Default(), nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ), s_oClass:AddMethod( "Default", @TDlgFlt_Default(), nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ));
+
+   _HB_MEMBER AddFilter(); IIF( .F., s_oClass:ModInline( "AddFilter", {|Self | Self, ( ::lAppendFilter := .T., ::Resource() ) }, nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ), s_oClass:AddInline( "AddFilter", {|Self | Self, ( ::lAppendFilter := .T., ::Resource() ) }, nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ) )
+   _HB_MEMBER EditFilter(); IIF( .F., s_oClass:ModInline( "EditFilter", {|Self | Self, ( ::lAppendFilter := .F., ::Resource() ) }, nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ), s_oClass:AddInline( "EditFilter", {|Self | Self, ( ::lAppendFilter := .F., ::Resource() ) }, nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ) )
+   _HB_MEMBER Resource(); IIF( .F., s_oClass:ModMethod( "Resource", @TDlgFlt_Resource(), nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ), s_oClass:AddMethod( "Resource", @TDlgFlt_Resource(), nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ));
+   _HB_MEMBER StarResource( oBtnSave, oBtnDelete, oDlg); IIF( .F., s_oClass:ModMethod( "StarResource", @TDlgFlt_StarResource(), nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ), s_oClass:AddMethod( "StarResource", @TDlgFlt_StarResource(), nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ));
+
+   _HB_MEMBER Load(); IIF( .F., s_oClass:ModMethod( "Load", @TDlgFlt_Load(), nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ), s_oClass:AddMethod( "Load", @TDlgFlt_Load(), nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ));
+   _HB_MEMBER LoadFilter(); IIF( .F., s_oClass:ModMethod( "LoadFilter", @TDlgFlt_LoadFilter(), nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ), s_oClass:AddMethod( "LoadFilter", @TDlgFlt_LoadFilter(), nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ));
+
+   _HB_MEMBER ChgFields(); IIF( .F., s_oClass:ModMethod( "ChgFields", @TDlgFlt_ChgFields(), nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ), s_oClass:AddMethod( "ChgFields", @TDlgFlt_ChgFields(), nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ));
+
+   _HB_MEMBER ExpMaker(); IIF( .F., s_oClass:ModMethod( "ExpMaker", @TDlgFlt_ExpMaker(), nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ), s_oClass:AddMethod( "ExpMaker", @TDlgFlt_ExpMaker(), nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ));
+
+   _HB_MEMBER aExpMaker(); IIF( .F., s_oClass:ModMethod( "aExpMaker", @TDlgFlt_aExpMaker(), nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ), s_oClass:AddMethod( "aExpMaker", @TDlgFlt_aExpMaker(), nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ));
+
+   _HB_MEMBER ExeReplace(); IIF( .F., s_oClass:ModMethod( "ExeReplace", @TDlgFlt_ExeReplace(), nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ), s_oClass:AddMethod( "ExeReplace", @TDlgFlt_ExeReplace(), nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ));
+
+   _HB_MEMBER ChgGet( cType, nLen, nDec); IIF( .F., s_oClass:ModMethod( "ChgGet", @TDlgFlt_ChgGet(), nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ), s_oClass:AddMethod( "ChgGet", @TDlgFlt_ChgGet(), nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ));
+
+   _HB_MEMBER lGetFilterName(); IIF( .F., s_oClass:ModMethod( "lGetFilterName", @TDlgFlt_lGetFilterName(), nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ), s_oClass:AddMethod( "lGetFilterName", @TDlgFlt_lGetFilterName(), nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ));
+
+   _HB_MEMBER lValidFilterName( oDlg); IIF( .F., s_oClass:ModMethod( "lValidFilterName", @TDlgFlt_lValidFilterName(), nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ), s_oClass:AddMethod( "lValidFilterName", @TDlgFlt_lValidFilterName(), nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ));
+
+; IF .F. ; __clsActive(s_oClass:hClass) ; s_oClass:Refresh() ; ELSE ; s_oClass:Create() ; END ; oClassInstance := __clsInst( s_oClass:hClass ) ; IF __ObjHasMsg( oClassInstance, "InitClass" ); oClassInstance:InitClass( hb_aParams() ) ; END ; ELSE ; oClassInstance := __clsInst( s_oClass:hClass ) ; END ; IF PCount() > 0 ; DIVERT TO (@DivertConstructorCall()) OF s_oClass ; END ; RETURN oClassInstance AS CLASS TDlgFlt ;
+
+
+
+UTILITY STATIC function TDlgFlt_New( aTField, oDbf, oWebBtn, lAplyFilter, oWndBrw) ; local Self AS CLASS TDlgFlt := QSelf() AS CLASS TDlgFlt
+
+   local n
+
+   IIF( aTField == nil, aTField := dbStruct(), ) ;
+   IIF( lAplyFilter == nil, lAplyFilter := .T., ) ;
+
+   ::aTField            := aTField
+   ::oDbf               := oDbf
+   ::oWebBtn            := oWebBtn
+   ::lAplyFilter        := lAplyFilter
+   ::oWndBrw            := oWndBrw
+
+   ::cTipFilter         := ""
+   ::cTexFilter         := ""
+   ::cDbfFilter         := ""
+
+   ::cTxtFilter         := nil
+   ::cExpFilter         := nil
+   ::bExpFilter         := nil
+   ::aExpFilter         := nil
+
+   if Empty( ::aTField )
+      MsgStop( "No hay tabla definida." )
+      return ( Self )
+   end
+
+   ::Default()
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+RETURN Self
+
+
+
+UTILITY STATIC function TDlgFlt_Create( oDbf, oWebBtn, lAplyFilter, oWndBrw) ; local Self AS CLASS TDlgFlt := QSelf() AS CLASS TDlgFlt
+
+   local n
+
+   IIF( lAplyFilter == nil, lAplyFilter := .T., ) ;
+
+   ::aTField            := aClone( oDbf:aTField )
+   ::oDbf               := oDbf
+   ::oWebBtn            := oWebBtn
+   ::lAplyFilter        := lAplyFilter
+   ::oWndBrw            := oWndBrw
+
+   ::lAllRecno          := .F.
+
+   ::cTxtFilter         := nil
+   ::cExpFilter         := nil
+   ::bExpFilter         := nil
+   ::aExpFilter         := nil
+
+   if Empty( ::aTField )
+      MsgStop( "No hay tabla definida." )
+      return ( Self )
+   end
+
+   ::Default()
+
+RETURN Self
+
+
+
+UTILITY STATIC function TDlgFlt_Init( oWndBrw) ; local Self AS CLASS TDlgFlt := QSelf() AS CLASS TDlgFlt
+
+   ::oWndBrw            := oWndBrw
+   ::oDbf               := oWndBrw:xAlias
+
+   ::lAplyFilter        := .T.
+
+RETURN Self
+
+
+
+UTILITY STATIC function TDlgFlt_Default() ; local Self AS CLASS TDlgFlt := QSelf() AS CLASS TDlgFlt
+
+   local oFld
+
+   ::aFldFilter         := Afill( Array( 5 ), "" )
+   ::aConFilter         := Afill( Array( 5 ), "Contenga" )
+   ::aValFilter         := Afill( Array( 5 ), Space( 100 ) )
+   ::aNexFilter         := Afill( Array( 4 ), "" )
+
+   ::oFldFilter         := Array( 5 )
+   ::oConFilter         := Array( 5 )
+   ::oValFilter         := Array( 5 )
+   ::oNexFilter         := Array( 4 )
+
+   ::lMultyExpresion    := .F.
+   ::lAllRecno          := .F.
+
+   ::aTblMask           := {}
+   ::aTblField          := {}
+   ::aTblType           := {}
+   ::aTblLen            := {}
+   ::aTblDecimals       := {}
+
+   ::nMtrReplace        := 0
+
+   ::cExpReplace        := Space( 100 )
+
+   ::aTblNexo           := {  "", "Y", "O" }
+
+
+
+
+
+
+
+
+
+   ::aTblCondition      := {  "Igual", "Distinto", "Mayor", "Menor", "Mayor igual", "Menor igual", "Contenga", "Dia semana igual", "Mes igual", "Año igual" }
+
+   ::aTField            := aSort( ::aTField, , , { |x, y| x[ 5 ] < y[ 5 ] } )
+
+   for each oFld in ::aTField
+
+      do case
+         case IsObject( oFld )
+
+            if !Empty( oFld:cComment ) .AND. !oFld:lCalculate
+               aAdd( ::aTblField,      oFld:cName )
+               aAdd( ::aTblType,       oFld:cType )
+               aAdd( ::aTblLen,        oFld:nLen )
+               aAdd( ::aTblDecimals,   oFld:nDec )
+               aAdd( ::aTblMask,       oFld:cComment )
+            end
+
+         case IsArray( oFld )
+
+            if !Empty( oFld[ 5 ] )
+               aAdd( ::aTblField,      oFld[ 1 ] )
+               aAdd( ::aTblType,       oFld[ 2 ] )
+               aAdd( ::aTblLen,        oFld[ 3 ] )
+               aAdd( ::aTblDecimals,   oFld[ 4 ] )
+               aAdd( ::aTblMask,       oFld[ 5 ] )
+            end
+
+         end
+
+   next
+
+   for each oFld in ::aFldFilter
+      if Empty( oFld )
+         oFld           := ::aTblMask[ 1 ]
+      end
+   next
+
+Return ( Self )
+
+
+
+
+
+
+UTILITY STATIC function TDlgFlt_Resource( cTipFilter, cTexFilter, uDbfFilter, lDefFilter) ; local Self AS CLASS TDlgFlt := QSelf() AS CLASS TDlgFlt
+
+   local n
+   local oBmp
+   local oDlg
+   local oBtnSave
+   local oBtnDelete
+
+
+
+   if Empty( ::aTField )
+      MsgStop( "No hay tabla definida." )
+      return ( Self )
+   end
+
+
+
+   if !Empty( cTipFilter )
+      ::cTipFilter      := cTipFilter
+   end
+
+   if !Empty( cTexFilter )
+      ::cTexFilter      := cTexFilter
+   end
+
+   do case
+      case IsObject( uDbfFilter )
+         ::cDbfFilter   := uDbfFilter:nArea
+      case IsChar(  uDbfFilter )
+         ::cDbfFilter   := uDbfFilter
+   end
+
+   if IsLogic( lDefFilter )
+      ::lDefaultFilter  := lDefFilter
+   end
+
+
+
+   ::Default()
+
+
+
+
+
+   oDlg = TDialog():New(,,,, if( ::lAppendFilter, "Añadiendo filtro", "Modificando filtro : " + Rtrim( ::cTexFilter ) ), "Consulta",, .F.,,,,,, .F.,,,,,, .F., )
+
+
+
+
+
+      oBmp := TBitmap():ReDefine( 400, "Funnel_48_alpha",, oDlg,,, .F., .F.,,, .F.,,, .T. )
+
+
+
+
+      ::oFldFilter[1] := TComboBox():ReDefine( 100, { | u | If( PCount()==0, ::aFldFilter[1], ::aFldFilter[1]:= u ) }, ::aTblMask, oDlg,,,,,,, .F.,,,,,, )
+
+
+
+
+      ::oConFilter[1] := TComboBox():ReDefine( 110, { | u | If( PCount()==0, ::aConFilter[1], ::aConFilter[1]:= u ) }, ::aTblCondition, oDlg,,,,,,, .F.,,,,,, )
+
+
+
+      ::oValFilter[1] := TGetHlp():ReDefine( 120, { | u | If( PCount()==0, ::aValFilter[1], ::aValFilter[1]:= u ) }, oDlg,,,,,,,,, .F.,,, .F., .F.,,,,,, nil,,, )
+
+
+
+
+
+      ::oNexFilter[1] := TComboBox():ReDefine( 130, { | u | If( PCount()==0, ::aNexFilter[1], ::aNexFilter[1]:= u ) }, ::aTblNexo, oDlg,,, {|Self|( oDlg:aEvalWhen() )},,,, .F.,,,,,, )
+
+
+
+
+
+
+
+
+
+      ::oFldFilter[2] := TComboBox():ReDefine( 140, { | u | If( PCount()==0, ::aFldFilter[2], ::aFldFilter[2]:= u ) }, ::aTblMask, oDlg,,,,,,, .F., {||     !empty( ::aNexFilter[1] )},,,,, )
+
+
+
+
+
+      ::oConFilter[2] := TComboBox():ReDefine( 150, { | u | If( PCount()==0, ::aConFilter[2], ::aConFilter[2]:= u ) }, ::aTblCondition, oDlg,,,,,,, .F., {||     !empty( ::aNexFilter[1] )},,,,, )
+
+
+
+
+      ::oValFilter[2] := TGetHlp():ReDefine( 160, { | u | If( PCount()==0, ::aValFilter[2], ::aValFilter[2]:= u ) }, oDlg,,,,,,,,, .F., {||     !empty( ::aNexFilter[1] )},, .F., .F.,,,,,, nil,,, )
+
+
+
+
+
+
+      ::oNexFilter[2] := TComboBox():ReDefine( 170, { | u | If( PCount()==0, ::aNexFilter[2], ::aNexFilter[2]:= u ) }, ::aTblNexo, oDlg,,, {|Self|( oDlg:aEvalWhen() )},,,, .F., {||     !empty( ::aNexFilter[1] )},,,,, )
+
+
+
+
+
+
+
+
+
+      ::oFldFilter[3] := TComboBox():ReDefine( 180, { | u | If( PCount()==0, ::aFldFilter[3], ::aFldFilter[3]:= u ) }, ::aTblMask, oDlg,,,,,,, .F., {||     !empty( ::aNexFilter[2] )},,,,, )
+
+
+
+
+
+      ::oConFilter[3] := TComboBox():ReDefine( 190, { | u | If( PCount()==0, ::aConFilter[3], ::aConFilter[3]:= u ) }, ::aTblCondition, oDlg,,,,,,, .F., {||     !empty( ::aNexFilter[2] )},,,,, )
+
+
+
+
+      ::oValFilter[3] := TGetHlp():ReDefine( 200, { | u | If( PCount()==0, ::aValFilter[3], ::aValFilter[3]:= u ) }, oDlg,,,,,,,,, .F., {||     !empty( ::aNexFilter[2] )},, .F., .F.,,,,,, nil,,, )
+
+
+
+
+
+
+      ::oNexFilter[3] := TComboBox():ReDefine( 210, { | u | If( PCount()==0, ::aNexFilter[3], ::aNexFilter[3]:= u ) }, ::aTblNexo, oDlg,,, {|Self|( oDlg:aEvalWhen() )},,,, .F., {||     !empty( ::aNexFilter[2] )},,,,, )
+
+
+
+
+
+
+
+
+
+      ::oFldFilter[4] := TComboBox():ReDefine( 220, { | u | If( PCount()==0, ::aFldFilter[4], ::aFldFilter[4]:= u ) }, ::aTblMask, oDlg,,,,,,, .F., {||     !empty( ::aNexFilter[3] )},,,,, )
+
+
+
+
+
+      ::oConFilter[4] := TComboBox():ReDefine( 230, { | u | If( PCount()==0, ::aConFilter[4], ::aConFilter[4]:= u ) }, ::aTblCondition, oDlg,,,,,,, .F., {||     !empty( ::aNexFilter[3] )},,,,, )
+
+
+
+
+      ::oValFilter[4] := TGetHlp():ReDefine( 240, { | u | If( PCount()==0, ::aValFilter[4], ::aValFilter[4]:= u ) }, oDlg,,,,,,,,, .F., {||     !empty( ::aNexFilter[3] )},, .F., .F.,,,,,, nil,,, )
+
+
+
+
+
+
+      ::oNexFilter[4] := TComboBox():ReDefine( 250, { | u | If( PCount()==0, ::aNexFilter[4], ::aNexFilter[4]:= u ) }, ::aTblNexo, oDlg,,, {|Self|( oDlg:aEvalWhen() )},,,, .F., {||     !empty( ::aNexFilter[3] )},,,,, )
+
+
+
+
+
+
+
+
+
+      ::oFldFilter[5] := TComboBox():ReDefine( 260, { | u | If( PCount()==0, ::aFldFilter[5], ::aFldFilter[5]:= u ) }, ::aTblMask, oDlg,,,,,,, .F., {||     !empty( ::aNexFilter[4] )},,,,, )
+
+
+
+
+
+      ::oConFilter[5] := TComboBox():ReDefine( 270, { | u | If( PCount()==0, ::aConFilter[5], ::aConFilter[5]:= u ) }, ::aTblCondition, oDlg,,,,,,, .F., {||     !empty( ::aNexFilter[4] )},,,,, )
+
+
+
+
+      ::oValFilter[5] := TGetHlp():ReDefine( 280, { | u | If( PCount()==0, ::aValFilter[5], ::aValFilter[5]:= u ) }, oDlg,,,,,,,,, .F., {||     !empty( ::aNexFilter[4] )},, .F., .F.,,,,,, nil,,, )
+
+
+
+
+      ::oMtrReplace := TMeter():ReDefine( 290, { | u | If( PCount()==0, ::nMtrReplace, ::nMtrReplace:= u ) },, oDlg, .F.,, "Filtrando", .F.,,,, )
+
+
+
+
+      oBtnSave := TButton():ReDefine( 510, {||( ::SaveFilter( oDlg ) )}, oDlg,,, .F.,,,, .F. )
+
+
+
+
+      oBtnDelete := TButton():ReDefine( 500, {||( ::DeleteFilter( oDlg ) )}, oDlg,,, .F.,,,, .F. )
+
+
+
+
+      TButton():ReDefine( 1, {||( ::CreateFilter( oDlg ) )}, oDlg,,, .F.,,,, .F. )
+
+
+
+
+      TButton():ReDefine( 2, {||( oDlg:end( 1 ) )}, oDlg,,, .F.,,,, .F. )
+
+      oDlg:AddFastKey( 116, {|| ::CreateFilter( oDlg ) } )
+
+      oDlg:bStart := {|| ::StarResource( oBtnSave, oBtnDelete, oDlg ) }
+
+   oDlg:Activate( , , , .T. )
+
+   oBmp:End()
+
+RETURN ( Self )
+
+
+
+UTILITY STATIC function TDlgFlt_StarResource( oBtnSave, oBtnDelete, oDlg) ; local Self AS CLASS TDlgFlt := QSelf() AS CLASS TDlgFlt
+
+   if ::lAppendFilter
+      oBtnDelete:Hide()
+   else
+      ::LoadFilter( oDlg )
+   end
+
+RETURN ( Self )
+
+
+
+UTILITY STATIC function TDlgFlt_CreateFilter( oDlg) ; local Self AS CLASS TDlgFlt := QSelf() AS CLASS TDlgFlt
+
+   oDlg:Disable()
+
+   if ::lMultyExpresion
+      if ::aExpMaker()
+         ::AplyFilter()
+      end
+   else
+      if ::ExpMaker()
+         ::AplyFilter()
+      end
+   end
+
+   oDlg:Enable()
+
+   oDlg:end( 1 )
+
+Return ( Self )
+
+
+
+UTILITY STATIC function TDlgFlt_ChgFields() ; local Self AS CLASS TDlgFlt := QSelf() AS CLASS TDlgFlt
+
+   local This     := Self
+   local oDlg
+
+   if Empty( ::aTField )
+      MsgStop( "No hay tabla definida." )
+      return ( Self )
+   end
+
+   oDlg = TDialog():New(,,,,, "CHGFIELDS",, .F.,,,,,, .F.,,,,,, .F., )
+
+
+
+
+
+   ::oReplace := TComboBox():ReDefine( 80, { | u | If( PCount()==0, ::cReplace, ::cReplace:= u ) }, ::aTblMask, oDlg,,, {|Self|( This:cFldReplace := This:aTblField[ This:oReplace:nAt ] )},,,, .F.,,,,,, )
+
+
+
+   ::oExpReplace := TGetHlp():ReDefine( 90, { | u | If( PCount()==0, ::cExpReplace, ::cExpReplace:= u ) }, oDlg,,,,,,,,, .F.,,, .F., .F.,,,,,, nil,,, )
+
+
+
+
+   TCheckBox():ReDefine( 70, { | u | If( PCount()==0, ::lAllRecno, ::lAllRecno:= u ) }, oDlg,, {||( oDlg:aEvalWhen() )},,,,, .F.,, .F. )
+
+
+
+
+
+   ::oFldFilter[1] := TComboBox():ReDefine( 100, { | u | If( PCount()==0, ::aFldFilter[1], ::aFldFilter[1]:= u ) }, ::aTblMask, oDlg,,,,,,, .F., {||     !::lAllRecno},,,,, )
+
+
+
+
+
+   ::oConFilter[1] := TComboBox():ReDefine( 110, { | u | If( PCount()==0, ::aConFilter[1], ::aConFilter[1]:= u ) }, ::aTblCondition, oDlg,,,,,,, .F., {||     !::lAllRecno},,,,, )
+
+
+
+
+   ::oValFilter[1] := TGetHlp():ReDefine( 120, { | u | If( PCount()==0, ::aValFilter[1], ::aValFilter[1]:= u ) }, oDlg,,,,,,,,, .F., {||     !::lAllRecno},, .F., .F.,,,,,, nil,,, )
+
+
+
+
+
+
+   ::oNexFilter[1] := TComboBox():ReDefine( 130, { | u | If( PCount()==0, ::aNexFilter[1], ::aNexFilter[1]:= u ) }, ::aTblNexo, oDlg,,, {|Self|( oDlg:aEvalWhen() )},,,, .F., {||     !::lAllRecno},,,,, )
+
+
+
+
+
+
+
+
+
+   ::oFldFilter[2] := TComboBox():ReDefine( 140, { | u | If( PCount()==0, ::aFldFilter[2], ::aFldFilter[2]:= u ) }, ::aTblMask, oDlg,,,,,,, .F., {||     ( !::lAllRecno .AND. !empty( ::aNexFilter[1] ) )},,,,, )
+
+
+
+
+
+   ::oConFilter[2] := TComboBox():ReDefine( 150, { | u | If( PCount()==0, ::aConFilter[2], ::aConFilter[2]:= u ) }, ::aTblCondition, oDlg,,,,,,, .F., {||     ( !::lAllRecno .AND. !empty( ::aNexFilter[1] ) )},,,,, )
+
+
+
+
+   ::oValFilter[2] := TGetHlp():ReDefine( 160, { | u | If( PCount()==0, ::aValFilter[2], ::aValFilter[2]:= u ) }, oDlg,,,,,,,,, .F., {||     ( !::lAllRecno .AND. !empty( ::aNexFilter[1] ) )},, .F., .F.,,,,,, nil,,, )
+
+
+
+
+
+
+   ::oNexFilter[2] := TComboBox():ReDefine( 170, { | u | If( PCount()==0, ::aNexFilter[2], ::aNexFilter[2]:= u ) }, ::aTblNexo, oDlg,,, {|Self|( oDlg:aEvalWhen() )},,,, .F., {||     ( !::lAllRecno .AND. !empty( ::aNexFilter[1] ) )},,,,, )
+
+
+
+
+
+
+
+
+
+   ::oFldFilter[3] := TComboBox():ReDefine( 180, { | u | If( PCount()==0, ::aFldFilter[3], ::aFldFilter[3]:= u ) }, ::aTblMask, oDlg,,,,,,, .F., {||     ( !::lAllRecno .AND. !empty( ::aNexFilter[2] ) )},,,,, )
+
+
+
+
+
+   ::oConFilter[3] := TComboBox():ReDefine( 190, { | u | If( PCount()==0, ::aConFilter[3], ::aConFilter[3]:= u ) }, ::aTblCondition, oDlg,,,,,,, .F., {||     ( !::lAllRecno .AND. !empty( ::aNexFilter[2] ) )},,,,, )
+
+
+
+
+   ::oValFilter[3] := TGetHlp():ReDefine( 200, { | u | If( PCount()==0, ::aValFilter[3], ::aValFilter[3]:= u ) }, oDlg,,,,,,,,, .F., {||     ( !::lAllRecno .AND. !empty( ::aNexFilter[2] ) )},, .F., .F.,,,,,, nil,,, )
+
+
+
+
+
+
+   ::oNexFilter[3] := TComboBox():ReDefine( 210, { | u | If( PCount()==0, ::aNexFilter[3], ::aNexFilter[3]:= u ) }, ::aTblNexo, oDlg,,, {|Self|( oDlg:aEvalWhen() )},,,, .F., {||     ( !::lAllRecno .AND. !empty( ::aNexFilter[2] ) )},,,,, )
+
+
+
+
+
+
+
+
+
+   ::oFldFilter[4] := TComboBox():ReDefine( 220, { | u | If( PCount()==0, ::aFldFilter[4], ::aFldFilter[4]:= u ) }, ::aTblMask, oDlg,,,,,,, .F., {||     ( !::lAllRecno .AND. !empty( ::aNexFilter[3] ) )},,,,, )
+
+
+
+
+
+   ::oConFilter[4] := TComboBox():ReDefine( 230, { | u | If( PCount()==0, ::aConFilter[4], ::aConFilter[4]:= u ) }, ::aTblCondition, oDlg,,,,,,, .F., {||     ( !::lAllRecno .AND. !empty( ::aNexFilter[3] ) )},,,,, )
+
+
+
+
+   ::oValFilter[4] := TGetHlp():ReDefine( 240, { | u | If( PCount()==0, ::aValFilter[4], ::aValFilter[4]:= u ) }, oDlg,,,,,,,,, .F., {||     ( !::lAllRecno .AND. !empty( ::aNexFilter[3] ) )},, .F., .F.,,,,,, nil,,, )
+
+
+
+
+
+
+   ::oNexFilter[4] := TComboBox():ReDefine( 250, { | u | If( PCount()==0, ::aNexFilter[4], ::aNexFilter[4]:= u ) }, ::aTblNexo, oDlg,,, {|Self|( oDlg:aEvalWhen() )},,,, .F., {||     ( !::lAllRecno .AND. !empty( ::aNexFilter[3] ) )},,,,, )
+
+
+
+
+
+
+
+
+
+   ::oFldFilter[5] := TComboBox():ReDefine( 260, { | u | If( PCount()==0, ::aFldFilter[5], ::aFldFilter[5]:= u ) }, ::aTblMask, oDlg,,,,,,, .F., {||     ( !::lAllRecno .AND. !empty( ::aNexFilter[4] ) )},,,,, )
+
+
+
+
+
+   ::oConFilter[5] := TComboBox():ReDefine( 270, { | u | If( PCount()==0, ::aConFilter[5], ::aConFilter[5]:= u ) }, ::aTblCondition, oDlg,,,,,,, .F., {||     ( !::lAllRecno .AND. !empty( ::aNexFilter[4] ) )},,,,, )
+
+
+
+
+   ::oValFilter[5] := TGetHlp():ReDefine( 280, { | u | If( PCount()==0, ::aValFilter[5], ::aValFilter[5]:= u ) }, oDlg,,,,,,,,, .F., {||     ( !::lAllRecno .AND. !empty( ::aNexFilter[4] ) )},, .F., .F.,,,,,, nil,,, )
+
+
+
+
+   ::oMtrReplace := TMeter():ReDefine( 290, { | u | If( PCount()==0, ::nMtrReplace, ::nMtrReplace:= u ) },, oDlg, .F.,, "Procesando", .F.,,,, )
+
+
+
+
+   TButton():ReDefine( 1, {||( if( ::ExpMaker(), ( ::ExeReplace(), oDlg:end( 1 ) ), ) )}, oDlg,,, .F.,,,, .F. )
+
+
+
+
+   TButton():ReDefine( 2, {||( oDlg:end() )}, oDlg,,, .F.,,,, .F. )
+
+   oDlg:AddFastKey( 116, {|| if( ::ExpMaker(), ( ::ExeReplace(), oDlg:end( 1 ) ), ) } )
+
+   oDlg:Activate( oDlg:bLClicked, oDlg:bMoved, oDlg:bPainted, .T.,,,, oDlg:bRClicked,,, )
+
+   if oDlg:nResult <> 1
+      ::cExpFilter   := ""
+      ::bExpFilter   := nil
+   end
+
+RETURN ( Self )
+
+
+
+UTILITY STATIC function TDlgFlt_ExpMaker() ; local Self AS CLASS TDlgFlt := QSelf() AS CLASS TDlgFlt
+
+   local oBlock
+   local n           := 1
+   local lExpMaker   := .F.
+   local aNex        := { " .AND. ", " .OR. " }
+   local aExpCon     := { " == ", " != ", " > ", " < ", " >= ", " <= ", " $ ", "Dow()", "Month()", "Year()" }
+
+   oBlock            := ErrorBlock( {| oError | ApoloBreak( oError ) } )
+   BEGIN SEQUENCE
+
+   if ::lAllRecno
+
+      ::cExpFilter   := ""
+      ::bExpFilter   := {|| .T. }
+      ::cTxtFilter   := ""
+      lExpMaker      := .T.
+
+   else
+
+      ::cExpFilter   := ""
+      ::bExpFilter   := nil
+      ::cTxtFilter   := ""
+
+      while n <= len( ::aValFilter )
+
+         do case
+            case aExpCon[ ::oConFilter[ n ]:nAt ] == " $ "
+               ::cExpFilter   += cGetVal( ::aValFilter[ n ], ::aTblType[ ::oFldFilter[ n ]:nAt ] ) + aExpCon[ ::oConFilter[ n ]:nAt ] + cGetField( ::aTblField[ ::oFldFilter[ n ]:nAt ], ::aTblType[ ::oFldFilter[ n ]:nAt ] )
+
+            case aExpCon[ ::oConFilter[ n ]:nAt ] == "Dow()"
+               ::cExpFilter   += "Dow( " + cGetField( ::aTblField[ ::oFldFilter[ n ]:nAt ], ::aTblType[ ::oFldFilter[ n ]:nAt ] ) + " ) == " + cGetVal( ::aValFilter[ n ], ::aTblType[ ::oFldFilter[ n ]:nAt ], aExpCon[ ::oConFilter[ n ]:nAt ] )
+
+            case aExpCon[ ::oConFilter[ n ]:nAt ] == "Month()"
+               ::cExpFilter   += "Month( " + cGetField( ::aTblField[ ::oFldFilter[ n ]:nAt ], ::aTblType[ ::oFldFilter[ n ]:nAt ] ) + " ) == " + cGetVal( ::aValFilter[ n ], ::aTblType[ ::oFldFilter[ n ]:nAt ], aExpCon[ ::oConFilter[ n ]:nAt ] )
+
+            case aExpCon[ ::oConFilter[ n ]:nAt ] == "Year()"
+               ::cExpFilter   += "Year( " + cGetField( ::aTblField[ ::oFldFilter[ n ]:nAt ], ::aTblType[ ::oFldFilter[ n ]:nAt ] ) + " ) == " + cGetVal( ::aValFilter[ n ], ::aTblType[ ::oFldFilter[ n ]:nAt ], aExpCon[ ::oConFilter[ n ]:nAt ] )
+
+            otherwise
+               ::cExpFilter   += cGetField( ::aTblField[ ::oFldFilter[ n ]:nAt ], ::aTblType[ ::oFldFilter[ n ]:nAt ] ) + aExpCon[ ::oConFilter[ n ]:nAt ] + cGetVal( ::aValFilter[ n ], ::aTblType[ ::oFldFilter[ n ]:nAt ] )
+
+         end
+
+         ::cTxtFilter      += ::aTblMask[ ::oFldFilter[n]:nAt ] + Space( 1 ) + lower( ::aTblCondition[ ::oConFilter[n]:nAt ] ) + Space( 1 ) + cGetVal( ::aValFilter[n], ::aTblType[ ::oFldFilter[n]:nAt ] )
+
+         if ::oNexFilter[ n ]:nAt <> 1
+            ::cExpFilter   += aNex[ ::oNexFilter[n]:nAt - 1 ]
+            ::cTxtFilter   += Space( 1 ) + lower( ::aTblNexo[ ::oNexFilter[n]:nAt ] ) + Space( 1 )
+         else
+            exit
+         end
+
+         n++
+
+      end
+
+      do case
+         case IsObject( ::oDbf )
+            ::oDbf:SetFocus()
+         case IsChar( ::oDbf )
+            dbSelectArea( ( ::oDbf ) )
+      end
+
+      if Empty( ::cExpFilter ) .OR. At( Type( ::cExpFilter ), "UEUI" ) <> 0
+         msgAlert( "Expresión " + Rtrim( ::cExpFilter ) + " no valida" )
+         ::cExpFilter   := ""
+         ::bExpFilter   := nil
+         ::cTxtFilter   := ""
+      else
+         ::bExpFilter   := Compile( ::cExpFilter )
+         lExpMaker      := .T.
+      end
+
+   end
+
+   RECOVER
+
+      msgAlert( "Expresión " + Rtrim( ::cExpFilter ) + " no valida" )
+
+   end
+
+   ErrorBlock( oBlock )
+
+Return ( lExpMaker )
+
+
+
+UTILITY STATIC function TDlgFlt_aExpMaker() ; local Self AS CLASS TDlgFlt := QSelf() AS CLASS TDlgFlt
+
+   local n           := 1
+   local i           := 1
+   local aNex        := {  " .AND. ", " .OR. " }
+   local aExpCon     := {  " == ", " != ", " > ", " < ", " >= ", " <= ", " $ " }
+   local oBlock      := ErrorBlock( {| oError | ApoloBreak( oError ) } )
+
+   BEGIN SEQUENCE
+
+   if ::lAllRecno
+
+      ::aExpFilter   := { {|| .T. } }
+
+   else
+
+      ::aExpFilter            := {}
+
+      for i := 1 to len( ::oDbf )
+
+         ::cExpFilter         := ""
+         ::cTxtFilter         := ""
+
+         n                    := 1
+         while n <= len( ::aValFilter )
+
+            if Empty( ::aTblField[ ::oFldFilter[ n ]:nAt, i ] )
+               ::cExpFilter      += ".t."
+            else
+               if aExpCon[ ::oConFilter[ n ]:nAt ] == " $ "
+                  ::cExpFilter   += cGetVal( ::aValFilter[ n ], ::aTblType[ ::oFldFilter[ n ]:nAt, i ] ) + aExpCon[ ::oConFilter[ n ]:nAt ] + cGetField( ::aTblField[ ::oFldFilter[ n ]:nAt, i ], ::aTblType[ ::oFldFilter[ n ]:nAt, i ] )
+               else
+                  ::cExpFilter   += cGetField( ::aTblField[ ::oFldFilter[n]:nAt, i ], ::aTblType[ ::oFldFilter[n]:nAt, i ] ) + aExpCon[ ::oConFilter[n]:nAt ] + cGetVal( ::aValFilter[n], ::aTblType[ ::oFldFilter[n]:nAt, i ] )
+               end
+            end
+
+            ::cTxtFilter         += ::aTblMask[ ::oFldFilter[ n ]:nAt ] + Space( 1 ) + lower( ::aTblCondition[ ::oConFilter[ n ]:nAt ] ) + Space( 1 ) + cGetVal( ::aValFilter[ n ], ::aTblType[ ::oFldFilter[ n ]:nAt, i ] )
+
+            if ::oNexFilter[ n ]:nAt <> 1
+               ::cExpFilter      += aNex[ ::oNexFilter[ n ]:nAt - 1 ]
+               ::cTxtFilter      += Space( 1 ) + lower( ::aTblNexo[ ::oNexFilter[ n ]:nAt ] ) + Space( 1 )
+            else
+               exit
+            end
+
+            n++
+
+         end
+
+         ::oDbf[ i ]:SetFocus()
+
+         if Empty( ::cExpFilter ) .OR. At( Type( ::cExpFilter ), "UEUI" ) <> 0
+            msgAlert( "Expresión " + Rtrim( ::cExpFilter ) + " no valida" )
+            ::cExpFilter         := ""
+            ::cTxtFilter         := ""
+         else
+            aAdd( ::aExpFilter, Rtrim( ::cExpFilter ) )
+         end
+
+      next
+
+   end
+
+   RECOVER
+
+      msgAlert( "Expresión " + Rtrim( ::cExpFilter ) + " no valida" )
+      Return ( .F. )
+
+   end
+
+   ErrorBlock( oBlock )
+
+Return ( .T. )
+
+
+
+UTILITY STATIC function TDlgFlt_ExeReplace() ; local Self AS CLASS TDlgFlt := QSelf() AS CLASS TDlgFlt
+
+   local nRpl     := 0
+   local cGetVal
+   local nOrdAnt
+   local nDbfRec
+   local nFldPos
+
+   if Empty( ::cFldReplace ) .OR. Empty( ::cExpReplace )
+      Return nil
+   end
+
+   ::oMtrReplace:SetTotal( ( ::oDbf )->( LastRec() ) )
+
+   do case
+      case Valtype( ::oDbf ) == "O"
+
+         ::oDbf:GetStatus()
+
+         ::oDbf:SetStatus()
+
+      case Valtype( ::oDbf ) == "C"
+
+         nDbfRec        := ( ::oDbf )->( Recno() )
+         nOrdAnt        := ( ::oDbf )->( OrdSetFocus( 0 ) )
+         nFldPos        := ( ::oDbf )->( FieldPos( Rtrim( ::cFldReplace ) ) )
+
+         if nFldPos <> 0
+
+            ( ::oDbf )->( dbGoTop() )
+            while !( ::oDbf )->( eof() )
+
+               cGetVal  := ( ::oDbf )->( Eval( Compile( cGetVal( ::cExpReplace, ValType( ( ::oDbf )->( FieldGet( nFldPos ) ) ) ) ) ) )
+
+               if ::lAllRecno .OR. ( ::oDbf )->( Eval( ::bExpFilter ) )
+                  if ( ::oDbf )->( dbRLock() )
+                     ( ::oDbf )->( FieldPut( nFldPos, cGetVal ) )
+                     ( ::oDbf )->( dbUnLock() )
+                  end
+                  ++nRpl
+               end
+
+               ::oMtrReplace:Set( ( ::oDbf )->( RecNo() ) )
+
+               ( ::oDbf )->( dbSkip() )
+
+            end
+
+         end
+
+         ( ::oDbf )->( OrdSetFocus( nOrdAnt ) )
+         ( ::oDbf )->( dbGoTo( nDbfRec ) )
+
+   end
+
+   msgInfo( "Total de registros reemplazados " + Str( nRpl ), "Proceso finalizado." )
+
+RETURN ( nil )
+
+
+
+UTILITY STATIC function TDlgFlt_ChgGet( cType, nLen, nDec, n) ; local Self AS CLASS TDlgFlt := QSelf() AS CLASS TDlgFlt
+
+   ::oValFilter[n]:bValid       := {|| .T. }
+   ::oValFilter[n]:oGet:Picture := ""
+
+   if cType == "L"
+      ::oValFilter[n]:bValid := {| oVal | oVal:varGet() $ "SN" }
+   end
+
+   ::oValFilter[n]:refresh()
+
+RETURN ( Self )
+
+
+
+STATIC FUNCTION retGet( cType, nLen, nDec )
+
+   local cRet  := ""
+
+   do case
+      case cType == "L"
+         cRet  := "S"
+      case cType == "C"
+         cRet  := Space( nLen )
+      case cType == "N"
+         cRet  := 0
+      case cType == "D"
+         cRet  := date()
+   end
+
+RETURN cRet
+
+
+
+STATIC FUNCTION cGetVal( xVal, cType, cNexo )
+
+   local cTemp    := ""
+
+   IIF( cType == nil, cType := ValType( xVal ), ) ;
+
+   if "$" $ xVal
+      xVal        := Rtrim( StrTran( xVal, "$", "" ) )
+      xVal        := &( xVal )
+   end
+
+   if SubStr( xVal, 1, 1 ) == "&"
+      Return ( cGetVal( Eval( bChar2Block( SubStr( xVal, 2 ) ) ), cType ) )
+   end
+
+   do case
+      case cType == "C" .OR. cType == "M"
+         if !Empty( xVal )
+            xVal  := Rtrim( xVal )
+         end
+         if ( '"' $ xVal ) .OR. ( "'" $ xVal )
+            cTemp := Rtrim( cValToChar( xVal ) )
+         else
+            cTemp := '"' + Rtrim( cValToChar( xVal ) ) + '"'
+         end
+
+      case cType == "N"
+         cTemp    := cValToChar( xVal )
+
+      case cType == "D"
+
+         do case
+            case cNexo == "Dow()"
+               cTemp := Rtrim( cValToChar( xVal ) )
+            case cNexo == "Month()"
+               cTemp := Rtrim( cValToChar( xVal ) )
+            case cNexo == "Year()"
+               cTemp := Rtrim( cValToChar( xVal ) )
+            otherwise
+               cTemp := 'Ctod( "' + Rtrim( cValToChar( xVal ) ) + '" )'
+         end
+
+      case cType == "L"
+         if "S" $ Rtrim( Upper( xVal ) )
+            cTemp := ".t."
+         else
+            cTemp := ".f."
+         end
+
+   end
+
+RETURN ( Rtrim( cTemp ) )
+
+
+
+STATIC FUNCTION cGetField( xField, cType )
+
+   local cTemp    := ""
+
+   IIF( cType == nil, cType := ValType( xField ), ) ;
+
+   if cType == "C" .OR. cType == "M"
+      cTemp       := "Rtrim( " + Rtrim( xField ) + " )"
+   else
+      cTemp       := xField
+   end
+
+RETURN ( cTemp )
+
+
+
+UTILITY STATIC function TDlgFlt_AplyFilter() ; local Self AS CLASS TDlgFlt := QSelf() AS CLASS TDlgFlt
+
+   local oBlock
+   local oError
+   local nEvery
+   local cOrdKey
+   local bOrdKey
+
+   oBlock               := ErrorBlock( {| oError | ApoloBreak( oError ) } )
+   BEGIN SEQUENCE
+
+
+
+
+
+   if !Empty( ::bOnAplyFilter )
+      Eval( ::bOnAplyFilter )
+   end
+
+   if ::cExpFilter <> nil .AND. ::lAplyFilter
+
+      do case
+         case IsObject( ::oDbf )
+
+            if Empty( ::nRecAnterior )
+               ::nRecAnterior := ( ::oDbf:cAlias )->( Recno() )
+            end
+
+            if lAdsRdd()
+
+               ( ::oDbf:cAlias )->( dbSetFilter( c2Block( ::cExpFilter + " .and. !Deleted()" ), ::cExpFilter + " .and. !Deleted()" ) )
+
+               if !Empty( ::oWndBrw )
+                  ::oWndBrw:ShowButtonFilter()
+                  ::oWndBrw:ShowEditButtonFilter()
+                  ::oWndBrw:Refresh()
+               end
+
+            else
+
+               SysRefresh()
+
+               cOrdKey           := ( ::oDbf:cAlias )->( OrdKey() )
+
+               if cOrdKey <> nil
+
+                  bOrdKey        := c2Block( cOrdKey )
+
+                  if !Empty( ::oMtrReplace )
+                     ::oMtrReplace:SetTotal( ( ::oDbf:cAlias )->( Lastrec() ) )
+                     nEvery      := Int( ::oMtrReplace:nTotal / 10 )
+                  end
+
+                  if Empty( ::cOrdAnterior )
+                     ::cOrdAnterior := ( ::oDbf:cAlias )->( OrdSetFocus() )
+                  end
+
+                  if Empty( ::nRecAnterior )
+                     ::nRecAnterior := ( ::oDbf:cAlias )->( Recno() )
+                  end
+
+                  if Empty( ::cBagAnterior )
+                     ::cBagAnterior := ( ::oDbf:cAlias )->( dbOrderInfo( 20 ) )
+                  end
+
+                  if Empty( ::cNamAnterior )
+                     ::cNamAnterior := "OrdTmp" + cCurUsr()
+                  end
+
+                  if !Empty( ::oMtrReplace )
+                     ( ::oDbf:cAlias )->( OrdCondSet( ::cExpFilter + " .and. !Deleted()", c2Block( ::cExpFilter + " .and. !Deleted()" ),,, {|| ::oMtrReplace:Set( ( ::oDbf:cAlias )->( RecNo() ) ), SysRefresh() }, nEvery ) )
+                  else
+                     ( ::oDbf:cAlias )->( OrdCondSet( ::cExpFilter + " .and. !Deleted()", c2Block( ::cExpFilter + " .and. !Deleted()" ),,, {|| SysRefresh() } ) )
+                  end
+
+                  ( ::oDbf:cAlias )->( OrdCreate( ::cBagAnterior, ::cNamAnterior, cOrdKey, bOrdKey ) )
+                  ( ::oDbf:cAlias )->( OrdSetFocus( ::cNamAnterior, ::cBagAnterior ) )
+                  ( ::oDbf:cAlias )->( dbGoTop() )
+
+                  if !Empty( ::oWndBrw )
+                     ::oWndBrw:ShowButtonFilter()
+                     ::oWndBrw:ShowEditButtonFilter()
+                     ::oWndBrw:Refresh()
+                  end
+
+               else
+
+                  MsgStop( "No existe indice para la busqueda" )
+
+               end
+
+            end
+
+         case IsChar( ::oDbf )
+
+            if Empty( ::nRecAnterior )
+               ::nRecAnterior := ( ::oDbf )->( Recno() )
+            end
+
+            if lAdsRdd()
+
+               ( ::oDbf )->( dbSetFilter( c2Block( ::cExpFilter + " .and. !Deleted()" ), ::cExpFilter + " .and. !Deleted()" ) )
+
+               if !Empty( ::oWndBrw )
+                  ::oWndBrw:ShowButtonFilter()
+                  ::oWndBrw:ShowEditButtonFilter()
+                  ::oWndBrw:Refresh()
+               end
+
+            else
+
+               SysRefresh()
+
+               cOrdKey           := ( ::oDbf )->( OrdKey() )
+
+               if !Empty( cOrdKey )
+
+                  bOrdKey        := c2Block( cOrdKey )
+
+                  if !Empty( ::oMtrReplace )
+                     ::oMtrReplace:SetTotal( ( ::oDbf )->( Lastrec() ) )
+                     nEvery      := Int( ::oMtrReplace:nTotal / 10 )
+                  end
+
+                  if Empty( ::cOrdAnterior )
+                     ::cOrdAnterior := ( ::oDbf )->( OrdSetFocus() )
+                  end
+
+                  if Empty( ::cBagAnterior )
+                     ::cBagAnterior := ( ::oDbf )->( dbOrderInfo( 20 ) )
+                  end
+
+                  if Empty( ::nRecAnterior )
+                     ::nRecAnterior := ( ::oDbf )->( Recno() )
+                  end
+
+                  if Empty( ::cNamAnterior )
+                     ::cNamAnterior := "OrdTmp" + cCurUsr()
+                  end
+
+                  if !Empty( ::oMtrReplace )
+                     ( ::oDbf )->( OrdCondSet( ::cExpFilter + " .and. !Deleted()", c2Block( ::cExpFilter + " .and. !Deleted()" ),,, {|| ::oMtrReplace:Set( ( ::oDbf )->( RecNo() ) ), SysRefresh() }, nEvery ) )
+                  else
+                     ( ::oDbf )->( OrdCondSet( ::cExpFilter + " .and. !Deleted()", c2Block( ::cExpFilter + " .and. !Deleted()" ),,, {|| SysRefresh() } ) )
+                  end
+
+                  ( ::oDbf )->( OrdCreate( ::cBagAnterior, ::cNamAnterior, cOrdKey, bOrdKey ) )
+                  ( ::oDbf )->( OrdSetFocus( ::cNamAnterior, ::cBagAnterior ) )
+                  ( ::oDbf )->( dbGoTop() )
+
+                  if !Empty( ::oWndBrw )
+                     ::oWndBrw:ShowButtonFilter()
+                     ::oWndBrw:ShowEditButtonFilter()
+                     ::oWndBrw:Refresh()
+                  end
+
+               else
+
+                  MsgStop( "No existe indice para la busqueda" )
+
+               end
+
+            end
+
+      end
+
+      if !Empty( ::oMtrReplace )
+         ::oMtrReplace:SetTotal( 0 )
+      end
+
+   end
+
+   RECOVER USING oError
+
+      msgStop( "Imposible establecer filtros " + Chr(13)+Chr(10) + ErrorMessage( oError ) )
+
+   end
+
+   ErrorBlock( oBlock )
+
+Return ( Self )
+
+
+
+UTILITY STATIC function TDlgFlt_KillFilter( oDlg) ; local Self AS CLASS TDlgFlt := QSelf() AS CLASS TDlgFlt
+
+   if !Empty( ::bOnKillFilter )
+      Eval( ::bOnKillFilter )
+   end
+
+   do case
+      case IsObject( ::oDbf )
+
+         if lAdsRdd()
+
+            ( ::oDbf:cAlias )->( dbClearFilter() )
+
+         else
+
+            if !Empty( ::cBagAnterior )
+               ( ::oDbf:cAlias )->( OrdSetFocus( ::cOrdAnterior, ::cBagAnterior ) )
+               ( ::oDbf:cAlias )->( OrdDestroy( ::cNamAnterior, ::cBagAnterior ) )
+            end
+
+         end
+
+      case IsChar( ::oDbf )
+
+         if lAdsRdd()
+
+            ( ::oDbf )->( dbClearFilter() )
+
+         else
+
+            if !Empty( ::cBagAnterior )
+               ( ::oDbf )->( OrdSetFocus( ::cOrdAnterior, ::cBagAnterior ) )
+               ( ::oDbf )->( OrdDestroy( ::cNamAnterior, ::cBagAnterior ) )
+            end
+
+         end
+
+   end
+
+   ::cOrdAnterior := nil
+   ::nRecAnterior := nil
+   ::cBagAnterior := nil
+   ::cNamAnterior := nil
+
+   ::cTxtFilter   := nil
+   ::cExpFilter   := nil
+   ::bExpFilter   := nil
+   ::aExpFilter   := nil
+
+   do case
+      case IsObject( ::oDbf )
+
+         if !Empty( ::nRecAnterior )
+            ( ::oDbf:cAlias )->( dbGoTo( ::nRecAnterior ) )
+         else
+            ( ::oDbf:cAlias )->( dbGoTop() )
+         end
+
+      case IsChar( ::oDbf )
+
+         if !Empty( ::nRecAnterior )
+            ( ::oDbf )->( dbGoTo( ::nRecAnterior ) )
+         else
+            ( ::oDbf )->( dbGoTop() )
+         end
+
+   end
+
+   if !Empty( ::oWndBrw )
+      ::oWndBrw:HideButtonFilter()
+      ::oWndBrw:HideEditButtonFilter()
+      ::oWndBrw:Refresh()
+   end
+
+   if !Empty( oDlg )
+      oDlg:End()
+   end
+
+RETURN ( Self )
+
+
+
+UTILITY STATIC function TDlgFlt_SaveFilter( oDlg) ; local Self AS CLASS TDlgFlt := QSelf() AS CLASS TDlgFlt
+
+   local n        := 1
+   local c        := ""
+   local lExiste  := .T.
+
+   if !::ExpMaker()
+      Return ( .F. )
+   end
+
+   if ::lGetFilterName()
+
+      oDlg:Disable()
+
+      while n <= len( ::aValFilter )
+
+         c        += ::aFldFilter[ n ] + ","
+         c        += ::aConFilter[ n ] + ","
+         c        += Alltrim( ::aValFilter[ n ] ) + ","
+
+         if ::oNexFilter[ n ]:nAt <> 1
+            c     += ::aNexFilter[ n ] + ","
+         else
+            exit
+         end
+
+         n++
+
+      end
+
+
+
+      if ::lDefaultFilter
+
+         if ( ::cDbfFilter)->( dbSeek( ::cTipFilter ) )
+
+            while ( ( ::cDbfFilter)->cTipDoc == ::cTipFilter .AND. !( ::cDbfFilter)->( eof() ) )
+
+               if ( ::cDbfFilter )->( dbRLock() )
+                  ( ::cDbfFilter )->lDefFlt  := .F.
+                  ( ::cDbfFilter )->( dbUnLock() )
+               end
+
+               ( ::cDbfFilter)->( dbSkip() )
+
+            end
+
+         end
+
+      end
+
+
+
+      lExiste     := ( ::cDbfFilter)->( dbSeek( ::cTipFilter + Upper( ::cTexFilter ) ) )
+
+      if dbDialogLock( ::cDbfFilter, !lExiste )
+
+         ( ::cDbfFilter )->cCodUsr     := if( !::lAllUser, cCurUsr(), Space( 3 ) )
+         ( ::cDbfFilter )->cTipDoc     := ::cTipFilter
+         ( ::cDbfFilter )->cTexFlt     := ::cTexFilter
+         ( ::cDbfFilter )->cExpFlt     := ::cExpFilter
+         ( ::cDbfFilter )->lDefFlt     := ::lDefaultFilter
+         ( ::cDbfFilter )->cFldFlt     := c
+
+         ( ::cDbfFilter )->( dbUnLock() )
+
+      end
+
+      ::Load()
+
+      if !Empty( ::oWndBrw )
+         ::oWndBrw:EnableComboFilter( ::aFilter )
+         ::oWndBrw:SetComboFilter( ::cTexFilter )
+      end
+
+      oDlg:Enable()
+
+   end
+
+Return ( .T. )
+
+
+
+UTILITY STATIC function TDlgFlt_DeleteFilter( oDlg) ; local Self AS CLASS TDlgFlt := QSelf() AS CLASS TDlgFlt
+
+   if oUser():lNotConfirmDelete() .OR. ApoloMsgNoYes( "¿ Desea eliminar el filtro : " + Rtrim( ::cTexFilter ) + " ?", "Confirme supresión" )
+
+      if ( ::cDbfFilter)->( dbSeek( ::cTipFilter + Upper( ::cTexFilter ) ) )
+
+         delRecno( ::cDbfFilter )
+
+         ::Load()
+
+         if !Empty( ::oWndBrw )
+            ::oWndBrw:EnableComboFilter( ::aFilter )
+         end
+
+         ::KillFilter()
+
+         oDlg:End()
+
+      end
+
+   end
+
+Return ( .T. )
+
+
+
+UTILITY STATIC function TDlgFlt_lGetFilterName() ; local Self AS CLASS TDlgFlt := QSelf() AS CLASS TDlgFlt
+
+   local oDlg
+
+   ::cTexFilter   := Padr( ::cTexFilter, 100 )
+
+   oDlg = TDialog():New(,,,,, "Nombre_Filtro",, .F.,,,,,, .F.,,,,,, .F., )
+
+
+
+   TGetHlp():ReDefine( 100, { | u | If( PCount()==0, ::cTexFilter, ::cTexFilter:= u ) }, oDlg,,,,,,,,, .F.,,, .F., .F.,,,,,, nil,,, )
+
+
+
+   TCheckBox():ReDefine( 110, { | u | If( PCount()==0, ::lDefaultFilter, ::lDefaultFilter:= u ) }, oDlg,,,,,,, .F.,, .F. )
+
+
+
+
+   TCheckBox():ReDefine( 120, { | u | If( PCount()==0, ::lAllUser, ::lAllUser:= u ) }, oDlg,,,,,,, .F., {||        ( oUser():lAdministrador() )}, .F. )
+
+
+
+
+   TButton():ReDefine( 1, {||( if( ::lValidFilterName(), oDlg:end( 1 ), ) )}, oDlg,,, .F.,,,, .F. )
+
+
+
+
+   TButton():ReDefine( 2, {||( oDlg:end() )}, oDlg,,, .F.,,,, .F. )
+
+   oDlg:AddFastKey( 116, {|| oDlg:end( 1 ) } )
+
+   oDlg:Activate( oDlg:bLClicked, oDlg:bMoved, oDlg:bPainted, .T.,,,, oDlg:bRClicked,,, )
+
+Return ( oDlg:nResult == 1 )
+
+
+
+UTILITY STATIC function TDlgFlt_lValidFilterName() ; local Self AS CLASS TDlgFlt := QSelf() AS CLASS TDlgFlt
+
+   if Empty( ::cTexFilter )
+      MsgStop( "El nombre del filtro no puede estar vacio" )
+      Return ( .F. )
+   end
+
+Return ( .T. )
+
+
+
+UTILITY STATIC function TDlgFlt_LoadFilter() ; local Self AS CLASS TDlgFlt := QSelf() AS CLASS TDlgFlt
+
+   local mFldFlt
+   local cFldFlt
+   local nPosLin  := 1
+   local nPosFld  := 1
+   local nPosSer  := 0
+
+   if Empty( ::cTipFilter ) .OR. Empty( ::cTexFilter )
+      Return ( Self )
+   end
+
+   if ( ::cDbfFilter )->( dbSeek( ::cTipFilter + Rtrim( Upper( ::cTexFilter ) ) ) )
+
+      mFldFlt     := Rtrim( ( ::cDbfFilter )->cFldFlt )
+
+      while ( nPosSer := At( ",", mFldFlt ) ) > 0
+
+         if nPosSer <> 0
+
+            cFldFlt  := SubStr( mFldFlt, 1, nPosSer - 1 )
+            cFldFlt  := Rtrim( cFldFlt )
+
+            do case
+               case nPosFld == 1
+                  ::oFldFilter[ nPosLin ]:Set( cFldFlt )
+
+               case nPosFld == 2
+                  ::oConFilter[ nPosLin ]:Set( cFldFlt )
+
+               case nPosFld == 3
+                  ::oValFilter[ nPosLin ]:cText( Padr( SubStr( mFldFlt, 1, nPosSer - 1 ), 100 ) )
+
+               case nPosFld == 4
+                  ::oNexFilter[ nPosLin ]:Set( SubStr( mFldFlt, 1, nPosSer - 1 ) )
+
+                  ++nPosLin
+                  nPosFld  := 0
+
+            end
+
+            ++nPosFld
+
+            mFldFlt  := SubStr( mFldFlt, nPosSer + 1 )
+
+         end
+
+      end
+
+   else
+
+      MsgStop( "Código de filtro " + ::cTipFilter + " - " + Rtrim( Upper( ::cTexFilter ) ) + " no encontrado" )
+
+   end
+
+Return ( Self )
+
+
+
+UTILITY STATIC function TDlgFlt_lBuildFilter() ; local Self AS CLASS TDlgFlt := QSelf() AS CLASS TDlgFlt
+
+   local lBuild      := .F.
+
+   if Empty( ::cExpFilter )
+      Return ( lBuild )
+   end
+
+   do case
+      case IsObject( ::oDbf )
+         ::oDbf:SetFocus()
+      case IsChar( ::oDbf )
+         dbSelectArea( ( ::oDbf ) )
+   end
+
+   if At( Type( ::cExpFilter ), "UEUI" ) <> 0
+      msgAlert( "Expresión " + Rtrim( ::cExpFilter ) + " no valida" )
+      ::cExpFilter   := ""
+      ::bExpFilter   := nil
+      ::cTxtFilter   := ""
+   else
+      ::bExpFilter   := Compile( ::cExpFilter )
+      lBuild         := .T.
+   end
+
+Return ( lBuild )
+
+
+
+UTILITY STATIC function TDlgFlt_Load() ; local Self AS CLASS TDlgFlt := QSelf() AS CLASS TDlgFlt
+
+   local cText := ""
+
+   if Empty( ::cDbfFilter )
+      Return ( Self )
+   end
+
+   CursorWait()
+
+   ::aFilter   := {}
+
+   if ( ::cDbfFilter )->( dbSeek( ::cTipFilter ) )
+
+      while ( ( ::cDbfFilter )->cTipDoc == ::cTipFilter ) .AND. !( ::cDbfFilter )->( eof() )
+
+         if Empty( ( ::cDbfFilter )->cCodUsr ) .OR. ( ( ::cDbfFilter )->cCodUsr == cCurUsr() )
+
+            if ( ::cDbfFilter )->lDefFlt
+               ::cTexFilter   := ( ::cDbfFilter )->cTexFlt
+               ::cExpFilter   := ( ::cDbfFilter )->cExpFlt
+            end
+
+            aAdd( ::aFilter, { Rtrim( ( ::cDbfFilter )->cTexFlt ) , Rtrim( ( ::cDbfFilter )->cExpFlt ), ( ::cDbfFilter )->lDefFlt } )
+
+         end
+
+         ( ::cDbfFilter )->( dbSkip() )
+
+      end
+
+   end
+
+   CursorWE()
+
+Return ( Self )
+
+
+
+
+
+
+
+
+
+
+
+
+Function lLoadFiltro( cTipoDocumento, aItems, oButton, oWndBrw, dbfFlt, dbf )
+
+   local cFilter
+   local bFilter
+
+   if ( dbfFlt )->( dbSeek( cTipoDocumento ) )
+
+      while ( dbfFlt )->cTipDoc == cTipoDocumento .AND. !( dbfFlt )->( eof() )
+
+         bFilter     := bFiltro( aItems, dbfFlt, dbf, oButton, oWndBrw )
+
+         oWndBrw:NewAt( "bFilter", , , bFilter, Rtrim( by( ( dbfFlt )->cTexFlt ) ), , , , , oButton )
+
+         if Empty( cFilter )
+            cFilter  := Rtrim( by( ( dbfFlt )->cExpFlt ) )
+         end
+
+         ( dbfFlt )->( dbSkip() )
+
+      end
+
+   end
+
+return nil
+
+
+
+UTILITY STATIC function TDlgFlt_SetFilter( cText) ; local Self AS CLASS TDlgFlt := QSelf() AS CLASS TDlgFlt
+
+   local nFilter        := 0
+
+   if !Empty( cText )
+
+      nFilter           := aScan( ::aFilter, {|a| a[ 1 ] == cText } )
+      if nFilter <> 0
+
+         ::cTexFilter   := ::aFilter[ nFilter, 1 ]
+         ::cExpFilter   := ::aFilter[ nFilter, 2 ]
+
+         ::lBuildAplyFilter()
+
+      else
+
+         ::KillFilter()
+
+      end
+
+   end
+
+return nil
+
+
+
+Static Function bFiltro( aItems, dbfFlt, dbf, oButton, oWndBrw )
+
+   local cTip     := by( ( dbfFlt )->cTipDoc )
+   local cTxt     := by( ( dbfFlt )->cTexFlt )
+   local bGen     := {|| TDlgFlt():New( aItems, dbf, oButton, .T., oWndBrw ):Resource( cTip, cTxt, dbfFlt ) }
+
+Return ( bGen )
+
+
+
+FUNCTION mkFilter( cPath, oMeter )
+
+   IIF( cPath == nil, cPath := cPatDat(), ) ;
+
+   if oMeter <> NIL
+      oMeter:cText   := "Generando Bases"
+      sysrefresh()
+   end
+
+   dbCreate( cPath + "CnfFlt.Dbf", aSqlStruct( aItmFilter() ), cDriver() )
+
+   rxFilter( cPath, oMeter )
+
+RETURN .T.
+
+
+
+FUNCTION rxFilter( cPath, oMeter )
+
+   local dbfFilter
+
+   IIF( cPath == nil, cPath := cPatDat(), ) ;
+
+   if !lExistTable( cPath + "CnfFlt.Dbf" )
+      dbCreate( cPath + "CnfFlt.Dbf", aSqlStruct( aItmFilter() ), cDriver() )
+   end
+
+   fEraseIndex( cPath + "CnfFlt.Cdx" )
+
+   dbUseArea( .T., cDriver(), cPath + "CnfFlt.Dbf", cCheckArea( "CnfFlt", @dbfFilter ), .F. )
+
+   if !( dbfFilter )->( neterr() )
+
+      ( dbfFilter )->( __dbPack() )
+
+      ( dbfFilter )->( ordCondSet( "!Deleted()", {||!Deleted()}  ) )
+      ( dbfFilter )->( ordCreate( cPath + "CnfFlt.Cdx", "cTipDoc", "cTipDoc + Upper( cTexFlt )", {|| Field->cTipDoc + Upper( Field->cTexFlt ) } ) )
+
+      ( dbfFilter )->( dbCloseArea() )
+
+   else
+
+      msgStop( "Imposible abrir en modo exclusivo la tabla de filtros" )
+
+   end
+
+RETURN NIL
+
+
+
+FUNCTION aItmFilter()
+
+   local aBase := {}
+
+   aAdd( aBase, { "cTipDoc",  "C",  2, 0, "Tipo de documento" }            )
+   aAdd( aBase, { "cCodUsr",  "C",  3, 0, "Usuario" }                      )
+   aAdd( aBase, { "cTexFlt",  "C",100, 0, "Descripción" }                  )
+   aAdd( aBase, { "cFldFlt",  "M", 10, 0, "Texto largo de la nota" }       )
+   aAdd( aBase, { "cExpFlt",  "M", 10, 0, "Expresión del filtro" }         )
+   aAdd( aBase, { "lDefFlt",  "L",  1, 0, "Lógico de filtro por defecto" } )
+
+RETURN ( aBase )

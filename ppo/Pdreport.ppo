@@ -1,0 +1,180 @@
+#line 112 "hbclass.ch"
+   DYNAMIC DivertConstructorCall
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+DECLARE HBClass  New( cName AS String, OPTIONAL SuperParams ) AS CLASS HBClass  Create() AS Object  Instance() AS Object  AddClsMethod( cName AS String, @MethodName(), nScope AS Numeric, n2 AS Numeric, n3 AS Numeric )  AddDelegate( cName AS String, cDelegate AS String, cObject AS String, nScope AS Numeric, lPersistent AS LOGICAL )  AddMultiClsData( cType AS String, uVal, nScope AS Numeric, aDatas AS Array OF String )  AddMultiData( cType AS String, uVal, nScope AS Numeric, aDatas AS Array OF String, x AS LOGICAL, lPer AS LOGICAL )  AddMethod( cName AS String, @MethodName(), nScope AS Numeric, lPersistent AS LOGICAL )  AddInLine( cName AS String, bBlock AS CodeBlock, nScope AS Numeric, lPersistent AS LOGICAL )  AddVirtual( cName AS String )  ModMethod( cName AS String, @MethodName(), nScope AS Numeric, lPersistent AS LOGICAL )  ModClsMethod( cName AS String, @MethodName(), nScope AS Numeric )  ModInline( cName AS String, bBlock AS CodeBlock, nScope AS Numeric, lPersistent AS LOGICAL )  SetOnError( @MethodName() )
+#line 85 "\Fwh1204\Include\FiveWin.Ch"
+   EXTERNAL GetProcAdd
+   EXTERNAL TActiveX
+
+
+
+
+extern errorsys
+#line 19 ".\Prg\Pdreport.prg"
+STATIC aReports := {}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+FUNCTION RptBegin(        aTitle   ,    aHead    ,    aFoot    ,    aFont    ,    aPen     ,    lSummary ,    cRptfile ,    cResName ,    lPrint   ,    lScreen  ,    cFile    ,    oDevice  ,    cName    ,    cTFmt    ,    cHFmt    ,    cFFmt)
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+   AAdd( aReports , { TReport():New(aTitle   , aHead    , aFoot    , aFont    , aPen     , lSummary , cRptfile , cResName , lPrint   , lScreen  , cFile    , oDevice  , cName    , cTFmt    , cHFmt    , cFFmt ), {}, {} } )
+
+RETURN ATail( aReports )[ 1 ]
+
+
+
+FUNCTION RptAddGroup(bGroup, bHeader, bFooter, bFont, lEject )
+
+     LOCAL oGroup
+
+
+
+
+
+
+     oGroup := TRGroup():New( bGroup     , bHeader    , bFooter    , bFont      , lEject     , Atail(aReports)[ 1 ] )
+
+     AAdd( ATail( aReports )[ 3 ], oGroup )
+
+RETURN (NIL)
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+FUNCTION RptAddColumn(aTitle     , nCol       , aData      , nSize      , aPicture   , uFont      , lTotal     , bTotalExpr , cColFmt    , lShadow    , lGrid      , nPen)
+
+     LOCAL oColumn
+
+
+
+
+
+
+
+
+
+
+
+
+
+     oColumn := TRColumn():New(aTitle     , nCol       , aData      , nSize      , aPicture   , uFont      , lTotal     , bTotalExpr , cColFmt    , lShadow    , lGrid      , nPen       , Atail(aReports)[ 1 ] )
+
+     AAdd( ATail( aReports )[ 2 ], oColumn )
+
+RETURN oColumn
+
+
+
+FUNCTION RptEnd()
+
+   LOCAL oReport  := ATail( aReports )[ 1 ]
+   LOCAL aColumns := ATail( aReports )[ 2 ]
+   LOCAL aGroups  := ATail( aReports )[ 3 ]
+
+   AEval( aColumns, { | oColumn | oReport:AddColumn( oColumn ) } )
+   AEval( aGroups, { | oGroup | oReport:AddGroup( oGroup ) } )
+
+   ASize( aReports, Len( aReports ) - 1 )
+
+RETURN oReport
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+FUNCTION RptAddOColumn(aTitle    , nCol       , aData      , nSize      , aPicture   , oFont      , oTitleFont , oTotalFont , lTotal     , bTotalExpr , cColFmt    , lShadow    , lGrid      , lNewLine   , nPen       , nColor     , nHeight )
+
+     LOCAL oColumn
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+     oColumn := TROColumn():New(aTitle    , nCol       , aData      , nSize      , aPicture   , oFont      , oTitleFont , oTotalFont , lTotal     , bTotalExpr , cColFmt    , lShadow    , lGrid      , lNewLine   , nPen       , nColor     , nHeight    , Atail(aReports)[ 1 ] )
+
+     AAdd( ATail( aReports )[ 2 ], oColumn )
+
+RETURN oColumn

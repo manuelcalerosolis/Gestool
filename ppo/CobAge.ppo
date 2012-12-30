@@ -1,0 +1,3076 @@
+#line 112 "hbclass.ch"
+   DYNAMIC DivertConstructorCall
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+DECLARE HBClass  New( cName AS String, OPTIONAL SuperParams ) AS CLASS HBClass  Create() AS Object  Instance() AS Object  AddClsMethod( cName AS String, @MethodName(), nScope AS Numeric, n2 AS Numeric, n3 AS Numeric )  AddDelegate( cName AS String, cDelegate AS String, cObject AS String, nScope AS Numeric, lPersistent AS LOGICAL )  AddMultiClsData( cType AS String, uVal, nScope AS Numeric, aDatas AS Array OF String )  AddMultiData( cType AS String, uVal, nScope AS Numeric, aDatas AS Array OF String, x AS LOGICAL, lPer AS LOGICAL )  AddMethod( cName AS String, @MethodName(), nScope AS Numeric, lPersistent AS LOGICAL )  AddInLine( cName AS String, bBlock AS CodeBlock, nScope AS Numeric, lPersistent AS LOGICAL )  AddVirtual( cName AS String )  ModMethod( cName AS String, @MethodName(), nScope AS Numeric, lPersistent AS LOGICAL )  ModClsMethod( cName AS String, @MethodName(), nScope AS Numeric )  ModInline( cName AS String, bBlock AS CodeBlock, nScope AS Numeric, lPersistent AS LOGICAL )  SetOnError( @MethodName() )
+#line 85 "\Fwh1204\Include\FiveWin.Ch"
+   EXTERNAL GetProcAdd
+   EXTERNAL TActiveX
+
+
+
+
+extern errorsys
+#line 8 ".\Prg\CobAge.prg"
+static oThis
+
+
+
+Function StartTCobAge()
+
+   local oTCobAge
+
+   oTCobAge := TCobAge():New( cPatEmp(), oWnd(), "01061" )
+
+   if !Empty( oTCobAge )
+      oTCobAge:Activate()
+   end
+
+Return nil
+
+
+
+_HB_CLASS TCobAge ; UTILITY FUNCTION TCobAge(...); static s_oClass ; local oClassInstance ; local nScope ; nScope := 1 ; if s_oClass == NIL ; s_oClass := IIF(.F.,, HBClass():New( "TCobAge" , {TMasDet():classh} ) ) ; ;
+
+   _HB_MEMBER { oRecibos} ; IIF( !.F., s_oClass:AddMultiData(,, nScope + IIF( .F., 32, 0 ), { "oRecibos" }, .F., .F. ), )
+
+   _HB_MEMBER { oFacCliT} ; IIF( !.F., s_oClass:AddMultiData(,, nScope + IIF( .F., 32, 0 ), { "oFacCliT" }, .F., .F. ), )
+   _HB_MEMBER { oFacCliL} ; IIF( !.F., s_oClass:AddMultiData(,, nScope + IIF( .F., 32, 0 ), { "oFacCliL" }, .F., .F. ), )
+   _HB_MEMBER { oFacRecT} ; IIF( !.F., s_oClass:AddMultiData(,, nScope + IIF( .F., 32, 0 ), { "oFacRecT" }, .F., .F. ), )
+   _HB_MEMBER { oFacRecL} ; IIF( !.F., s_oClass:AddMultiData(,, nScope + IIF( .F., 32, 0 ), { "oFacRecL" }, .F., .F. ), )
+   _HB_MEMBER { oFacCliP} ; IIF( !.F., s_oClass:AddMultiData(,, nScope + IIF( .F., 32, 0 ), { "oFacCliP" }, .F., .F. ), )
+   _HB_MEMBER { oAntCliT} ; IIF( !.F., s_oClass:AddMultiData(,, nScope + IIF( .F., 32, 0 ), { "oAntCliT" }, .F., .F. ), )
+   _HB_MEMBER { oFacPrvT} ; IIF( !.F., s_oClass:AddMultiData(,, nScope + IIF( .F., 32, 0 ), { "oFacPrvT" }, .F., .F. ), )
+   _HB_MEMBER { oFacPrvL} ; IIF( !.F., s_oClass:AddMultiData(,, nScope + IIF( .F., 32, 0 ), { "oFacPrvL" }, .F., .F. ), )
+   _HB_MEMBER { oFacPrvP} ; IIF( !.F., s_oClass:AddMultiData(,, nScope + IIF( .F., 32, 0 ), { "oFacPrvP" }, .F., .F. ), )
+
+   _HB_MEMBER { oClientes} ; IIF( !.F., s_oClass:AddMultiData(,, nScope + IIF( .F., 32, 0 ), { "oClientes" }, .F., .F. ), )
+   _HB_MEMBER { oArticulo} ; IIF( !.F., s_oClass:AddMultiData(,, nScope + IIF( .F., 32, 0 ), { "oArticulo" }, .F., .F. ), )
+   _HB_MEMBER { oAgentes} ; IIF( !.F., s_oClass:AddMultiData(,, nScope + IIF( .F., 32, 0 ), { "oAgentes" }, .F., .F. ), )
+   _HB_MEMBER { oAgeRel} ; IIF( !.F., s_oClass:AddMultiData(,, nScope + IIF( .F., 32, 0 ), { "oAgeRel" }, .F., .F. ), )
+   _HB_MEMBER { oBandera} ; IIF( !.F., s_oClass:AddMultiData(,, nScope + IIF( .F., 32, 0 ), { "oBandera" }, .F., .F. ), )
+   _HB_MEMBER { oIva} ; IIF( !.F., s_oClass:AddMultiData(,, nScope + IIF( .F., 32, 0 ), { "oIva" }, .F., .F. ), )
+   _HB_MEMBER { oDivisas} ; IIF( !.F., s_oClass:AddMultiData(,, nScope + IIF( .F., 32, 0 ), { "oDivisas" }, .F., .F. ), )
+   _HB_MEMBER { oEmpresa} ; IIF( !.F., s_oClass:AddMultiData(,, nScope + IIF( .F., 32, 0 ), { "oEmpresa" }, .F., .F. ), )
+   _HB_MEMBER { oCount} ; IIF( !.F., s_oClass:AddMultiData(,, nScope + IIF( .F., 32, 0 ), { "oCount" }, .F., .F. ), )
+   _HB_MEMBER { oProvee} ; IIF( !.F., s_oClass:AddMultiData(,, nScope + IIF( .F., 32, 0 ), { "oProvee" }, .F., .F. ), )
+   _HB_MEMBER { oPrvBnc} ; IIF( !.F., s_oClass:AddMultiData(,, nScope + IIF( .F., 32, 0 ), { "oPrvBnc" }, .F., .F. ), )
+   _HB_MEMBER { oFPago} ; IIF( !.F., s_oClass:AddMultiData(,, nScope + IIF( .F., 32, 0 ), { "oFPago" }, .F., .F. ), )
+
+   _HB_MEMBER { oDbfDoc} ; IIF( !.F., s_oClass:AddMultiData(,, nScope + IIF( .F., 32, 0 ), { "oDbfDoc" }, .F., .F. ), )
+
+   _HB_MEMBER { cPorDiv} ; IIF( !.F., s_oClass:AddMultiData(,, nScope + IIF( .F., 32, 0 ), { "cPorDiv" }, .F., .F. ), )
+
+   _HB_MEMBER { oMeter} ; IIF( !.F., s_oClass:AddMultiData(,, nScope + IIF( .F., 32, 0 ), { "oMeter" }, .F., .F. ), )
+   _HB_MEMBER {AS NUMERIC nMeter} ; IIF( !.F., s_oClass:AddMultiData( "NUMERIC", 0, nScope + IIF( .F., 32, 0 ), { "nMeter" }, .F., .F. ), )
+
+   _HB_MEMBER {AS ARRAY aMsg} ; IIF( !.F., s_oClass:AddMultiData( "ARRAY", {}, nScope + IIF( .F., 32, 0 ), { "aMsg" }, .F., .F. ), )
+
+   _HB_MEMBER { oCodAge} ; IIF( !.F., s_oClass:AddMultiData(,, nScope + IIF( .F., 32, 0 ), { "oCodAge" }, .F., .F. ), )
+   _HB_MEMBER { cCodAge} ; IIF( !.F., s_oClass:AddMultiData(,, nScope + IIF( .F., 32, 0 ), { "cCodAge" }, .F., .F. ), )
+
+   _HB_MEMBER { oSer} ; IIF( !.F., s_oClass:AddMultiData(, Array( 26 ), nScope + IIF( .F., 32, 0 ), { "oSer" }, .F., .F. ), )
+   _HB_MEMBER { aSer} ; IIF( !.F., s_oClass:AddMultiData(, Afill( Array( 26 ), .T. ), nScope + IIF( .F., 32, 0 ), { "aSer" }, .F., .F. ), )
+   _HB_MEMBER { dFecIni} ; IIF( !.F., s_oClass:AddMultiData(,, nScope + IIF( .F., 32, 0 ), { "dFecIni" }, .F., .F. ), )
+   _HB_MEMBER { dFecFin} ; IIF( !.F., s_oClass:AddMultiData(,, nScope + IIF( .F., 32, 0 ), { "dFecFin" }, .F., .F. ), )
+   _HB_MEMBER { lFacLiq} ; IIF( !.F., s_oClass:AddMultiData(,, nScope + IIF( .F., 32, 0 ), { "lFacLiq" }, .F., .F. ), )
+   _HB_MEMBER { lFacturasComisiones} ; IIF( !.F., s_oClass:AddMultiData(,, nScope + IIF( .F., 32, 0 ), { "lFacturasComisiones" }, .F., .F. ), )
+   _HB_MEMBER { lFacturasNoCobradas} ; IIF( !.F., s_oClass:AddMultiData(,, nScope + IIF( .F., 32, 0 ), { "lFacturasNoCobradas" }, .F., .F. ), )
+   _HB_MEMBER { lFacturasParcialmente} ; IIF( !.F., s_oClass:AddMultiData(,, nScope + IIF( .F., 32, 0 ), { "lFacturasParcialmente" }, .F., .F. ), )
+   _HB_MEMBER { lFacturasTotalmente} ; IIF( !.F., s_oClass:AddMultiData(,, nScope + IIF( .F., 32, 0 ), { "lFacturasTotalmente" }, .F., .F. ), )
+   _HB_MEMBER { lFacturasIncluidas} ; IIF( !.F., s_oClass:AddMultiData(,, nScope + IIF( .F., 32, 0 ), { "lFacturasIncluidas" }, .F., .F. ), )
+
+   _HB_MEMBER { oBmp} ; IIF( !.F., s_oClass:AddMultiData(,, nScope + IIF( .F., 32, 0 ), { "oBmp" }, .F., .F. ), )
+   _HB_MEMBER { bmpConta} ; IIF( !.F., s_oClass:AddMultiData(,, nScope + IIF( .F., 32, 0 ), { "bmpConta" }, .F., .F. ), )
+
+   _HB_MEMBER { aAgentesRelacionados} ; IIF( !.F., s_oClass:AddMultiData(, {}, nScope + IIF( .F., 32, 0 ), { "aAgentesRelacionados" }, .F., .F. ), )
+
+   _HB_MEMBER { oBrwDet} ; IIF( !.F., s_oClass:AddMultiData(,, nScope + IIF( .F., 32, 0 ), { "oBrwDet" }, .F., .F. ), )
+
+   _HB_MEMBER { oDetCobAge} ; IIF( !.F., s_oClass:AddMultiData(,, nScope + IIF( .F., 32, 0 ), { "oDetCobAge" }, .F., .F. ), )
+
+   _HB_MEMBER { aDbfVir} ; IIF( !.F., s_oClass:AddMultiData(, { { .F., "", 0, "", Ctod( "" ), "", "", 0, 0, .F., "" } }, nScope + IIF( .F., 32, 0 ), { "aDbfVir" }, .F., .F. ), )
+
+   _HB_MEMBER { oMnuRec} ; IIF( !.F., s_oClass:AddMultiData(,, nScope + IIF( .F., 32, 0 ), { "oMnuRec" }, .F., .F. ), )
+
+   _HB_MEMBER { cOldAge} ; IIF( !.F., s_oClass:AddMultiData(, "", nScope + IIF( .F., 32, 0 ), { "cOldAge" }, .F., .F. ), )
+
+   _HB_MEMBER New( cPath, oWndParent, oMenuItem); IIF( .F., s_oClass:ModMethod( "New", @TCobAge_New(), nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ), s_oClass:AddMethod( "New", @TCobAge_New(), nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ));
+   _HB_MEMBER Create( cPath, oWndParent); IIF( .F., s_oClass:ModMethod( "Create", @TCobAge_Create(), nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ), s_oClass:AddMethod( "Create", @TCobAge_Create(), nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ));
+
+   _HB_MEMBER OpenFiles(); IIF( .F., s_oClass:ModMethod( "OpenFiles", @TCobAge_OpenFiles(), nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ), s_oClass:AddMethod( "OpenFiles", @TCobAge_OpenFiles(), nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ));
+   _HB_MEMBER CloseFiles(); IIF( .F., s_oClass:ModMethod( "CloseFiles", @TCobAge_CloseFiles(), nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ), s_oClass:AddMethod( "CloseFiles", @TCobAge_CloseFiles(), nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ));
+   _HB_MEMBER Resource( nMode); IIF( .F., s_oClass:ModMethod( "Resource", @TCobAge_Resource(), nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ), s_oClass:AddMethod( "Resource", @TCobAge_Resource(), nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ));
+   _HB_MEMBER Activate(); IIF( .F., s_oClass:ModMethod( "Activate", @TCobAge_Activate(), nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ), s_oClass:AddMethod( "Activate", @TCobAge_Activate(), nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ));
+
+   _HB_MEMBER Report(); IIF( .F., s_oClass:ModMethod( "Report", @TCobAge_Report(), nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ), s_oClass:AddMethod( "Report", @TCobAge_Report(), nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ));
+
+   _HB_MEMBER lSave(); IIF( .F., s_oClass:ModMethod( "lSave", @TCobAge_lSave(), nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ), s_oClass:AddMethod( "lSave", @TCobAge_lSave(), nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ));
+
+   _HB_MEMBER cValidCobro(); IIF( .F., s_oClass:ModMethod( "cValidCobro", @TCobAge_cValidCobro(), nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ), s_oClass:AddMethod( "cValidCobro", @TCobAge_cValidCobro(), nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ));
+
+   _HB_MEMBER DefineFiles(); IIF( .F., s_oClass:ModMethod( "DefineFiles", @TCobAge_DefineFiles(), nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ), s_oClass:AddMethod( "DefineFiles", @TCobAge_DefineFiles(), nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ));
+
+   _HB_MEMBER ValidAgente( oSay); IIF( .F., s_oClass:ModMethod( "ValidAgente", @TCobAge_ValidAgente(), nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ), s_oClass:AddMethod( "ValidAgente", @TCobAge_ValidAgente(), nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ));
+
+   _HB_MEMBER ImportaFacturaAgentes( oBrwDet); IIF( .F., s_oClass:ModMethod( "ImportaFacturaAgentes", @TCobAge_ImportaFacturaAgentes(), nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ), s_oClass:AddMethod( "ImportaFacturaAgentes", @TCobAge_ImportaFacturaAgentes(), nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ));
+
+   _HB_MEMBER AsistenteImportarFacturas(); IIF( .F., s_oClass:ModMethod( "AsistenteImportarFacturas", @TCobAge_AsistenteImportarFacturas(), nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ), s_oClass:AddMethod( "AsistenteImportarFacturas", @TCobAge_AsistenteImportarFacturas(), nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ));
+
+   _HB_MEMBER EdtLiqAge( nMode); IIF( .F., s_oClass:ModMethod( "EdtLiqAge", @TCobAge_EdtLiqAge(), nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ), s_oClass:AddMethod( "EdtLiqAge", @TCobAge_EdtLiqAge(), nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ));
+
+   _HB_MEMBER lAgenteRelaciondo(); IIF( .F., s_oClass:ModInline( "lAgenteRelaciondo", {|Self | Self, ( !Empty( ::aAgentesRelacionados ) ) }, nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ), s_oClass:AddInline( "lAgenteRelaciondo", {|Self | Self, ( !Empty( ::aAgentesRelacionados ) ) }, nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ) )
+
+   _HB_MEMBER Del(); IIF( .F., s_oClass:ModMethod( "Del", @TCobAge_Del(), nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ), s_oClass:AddMethod( "Del", @TCobAge_Del(), nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ));
+
+   _HB_MEMBER nTotComAge(); IIF( .F., s_oClass:ModMethod( "nTotComAge", @TCobAge_nTotComAge(), nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ), s_oClass:AddMethod( "nTotComAge", @TCobAge_nTotComAge(), nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ));
+
+   _HB_MEMBER nTotLiq( lPic); IIF( .F., s_oClass:ModMethod( "nTotLiq", @TCobAge_nTotLiq(), nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ), s_oClass:AddMethod( "nTotLiq", @TCobAge_nTotLiq(), nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ));
+   _HB_MEMBER nTotFac( lPic); IIF( .F., s_oClass:ModMethod( "nTotFac", @TCobAge_nTotFac(), nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ), s_oClass:AddMethod( "nTotFac", @TCobAge_nTotFac(), nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ));
+
+   _HB_MEMBER nTotLiqAge( cNumLiq, lPic); IIF( .F., s_oClass:ModMethod( "nTotLiqAge", @TCobAge_nTotLiqAge(), nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ), s_oClass:AddMethod( "nTotLiqAge", @TCobAge_nTotLiqAge(), nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ));
+
+   _HB_MEMBER Cancelar(); IIF( .F., s_oClass:ModMethod( "Cancelar", @TCobAge_Cancelar(), nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ), s_oClass:AddMethod( "Cancelar", @TCobAge_Cancelar(), nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ));
+
+   _HB_MEMBER OpenError(); IIF( .F., s_oClass:ModMethod( "OpenError", @TCobAge_OpenError(), nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ), s_oClass:AddMethod( "OpenError", @TCobAge_OpenError(), nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ));
+
+   _HB_MEMBER LiquidaFacturaCliente( cNumFac, nMark); IIF( .F., s_oClass:ModMethod( "LiquidaFacturaCliente", @TCobAge_LiquidaFacturaCliente(), nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ), s_oClass:AddMethod( "LiquidaFacturaCliente", @TCobAge_LiquidaFacturaCliente(), nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ));
+
+   _HB_MEMBER BrwRecCli( oGet); IIF( .F., s_oClass:ModMethod( "BrwRecCli", @TCobAge_BrwRecCli(), nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ), s_oClass:AddMethod( "BrwRecCli", @TCobAge_BrwRecCli(), nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ));
+
+   _HB_MEMBER IntBtnPrv( oPag, oDlg); IIF( .F., s_oClass:ModMethod( "IntBtnPrv", @TCobAge_IntBtnPrv(), nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ), s_oClass:AddMethod( "IntBtnPrv", @TCobAge_IntBtnPrv(), nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ));
+   _HB_MEMBER IntBtnNxt( oPag, oDlg); IIF( .F., s_oClass:ModMethod( "IntBtnNxt", @TCobAge_IntBtnNxt(), nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ), s_oClass:AddMethod( "IntBtnNxt", @TCobAge_IntBtnNxt(), nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ));
+
+   _HB_MEMBER dFecLiqAge( cNumLiq); IIF( .F., s_oClass:ModMethod( "dFecLiqAge", @TCobAge_dFecLiqAge(), nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ), s_oClass:AddMethod( "dFecLiqAge", @TCobAge_dFecLiqAge(), nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ));
+
+   _HB_MEMBER nTotImp(); IIF( .F., s_oClass:ModMethod( "nTotImp", @TCobAge_nTotImp(), nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ), s_oClass:AddMethod( "nTotImp", @TCobAge_nTotImp(), nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ));
+   _HB_MEMBER nTotCom(); IIF( .F., s_oClass:ModMethod( "nTotCom", @TCobAge_nTotCom(), nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ), s_oClass:AddMethod( "nTotCom", @TCobAge_nTotCom(), nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ));
+
+   _HB_MEMBER GenLiquidacion( nDevice, cCaption, cCodDoc, cPrinter); IIF( .F., s_oClass:ModMethod( "GenLiquidacion", @TCobAge_GenLiquidacion(), nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ), s_oClass:AddMethod( "GenLiquidacion", @TCobAge_GenLiquidacion(), nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ));
+   _HB_MEMBER lGenLiquidacion( oBrw, oBtn, nDevice); IIF( .F., s_oClass:ModMethod( "lGenLiquidacion", @TCobAge_lGenLiquidacion(), nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ), s_oClass:AddMethod( "lGenLiquidacion", @TCobAge_lGenLiquidacion(), nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ));
+   _HB_MEMBER bGenLiquidacion( nDevice, cTitle, cCodDoc); IIF( .F., s_oClass:ModMethod( "bGenLiquidacion", @TCobAge_bGenLiquidacion(), nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ), s_oClass:AddMethod( "bGenLiquidacion", @TCobAge_bGenLiquidacion(), nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ));
+   _HB_MEMBER nGenLiquidacion( nDevice, cTitle, cCodDoc, cPrinter, nCopy); IIF( .F., s_oClass:ModMethod( "nGenLiquidacion", @TCobAge_nGenLiquidacion(), nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ), s_oClass:AddMethod( "nGenLiquidacion", @TCobAge_nGenLiquidacion(), nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ));
+
+   _HB_MEMBER PrintReport( nDevice, nCopies, cPrinter, dbfDoc); IIF( .F., s_oClass:ModMethod( "PrintReport", @TCobAge_PrintReport(), nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ), s_oClass:AddMethod( "PrintReport", @TCobAge_PrintReport(), nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ));
+   _HB_MEMBER DesignReport(); IIF( .F., s_oClass:ModMethod( "DesignReport", @TCobAge_DesignReport(), nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ), s_oClass:AddMethod( "DesignReport", @TCobAge_DesignReport(), nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ));
+
+   _HB_MEMBER StartPrint( cFmtDoc, cDocIni, cDocFin, oDlg, cPrinter, lCopiasPre, nNumCop, lInvOrden); IIF( .F., s_oClass:ModMethod( "StartPrint", @TCobAge_StartPrint(), nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ), s_oClass:AddMethod( "StartPrint", @TCobAge_StartPrint(), nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ));
+
+   _HB_MEMBER PrnSerie(); IIF( .F., s_oClass:ModMethod( "PrnSerie", @TCobAge_PrnSerie(), nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ), s_oClass:AddMethod( "PrnSerie", @TCobAge_PrnSerie(), nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ));
+   _HB_MEMBER DataReport(); IIF( .F., s_oClass:ModMethod( "DataReport", @TCobAge_DataReport(), nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ), s_oClass:AddMethod( "DataReport", @TCobAge_DataReport(), nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ));
+   _HB_MEMBER VariableReport(); IIF( .F., s_oClass:ModMethod( "VariableReport", @TCobAge_VariableReport(), nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ), s_oClass:AddMethod( "VariableReport", @TCobAge_VariableReport(), nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ));
+
+   _HB_MEMBER lFacturaProcesar( lRectificativa, cCodigoAgente, lAgenteRelacionado); IIF( .F., s_oClass:ModMethod( "lFacturaProcesar", @TCobAge_lFacturaProcesar(), nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ), s_oClass:AddMethod( "lFacturaProcesar", @TCobAge_lFacturaProcesar(), nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ));
+
+   _HB_MEMBER EdtRecMenu( oDlg); IIF( .F., s_oClass:ModMethod( "EdtRecMenu", @TCobAge_EdtRecMenu(), nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ), s_oClass:AddMethod( "EdtRecMenu", @TCobAge_EdtRecMenu(), nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ));
+
+   _HB_MEMBER GeneraFacturaGastos(); IIF( .F., s_oClass:ModMethod( "GeneraFacturaGastos", @TCobAge_GeneraFacturaGastos(), nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ), s_oClass:AddMethod( "GeneraFacturaGastos", @TCobAge_GeneraFacturaGastos(), nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ));
+
+   _HB_MEMBER Contabilizar(); IIF( .F., s_oClass:ModMethod( "Contabilizar", @TCobAge_Contabilizar(), nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ), s_oClass:AddMethod( "Contabilizar", @TCobAge_Contabilizar(), nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ));
+   _HB_MEMBER ChangeConta(lCnt); IIF( .F., s_oClass:ModInline( "ChangeConta", {|Self,lCnt | Self, ( ::oDbf:FieldPutByName( "lConta", lCnt ), ::oWndBrw:Refresh() ) }, nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ), s_oClass:AddInline( "ChangeConta", {|Self,lCnt | Self, ( ::oDbf:FieldPutByName( "lConta", lCnt ), ::oWndBrw:Refresh() ) }, nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ) )
+
+
+
+   WITH OBJECT <|Self, nAsiento|;
+
+      ::oDbf:FieldPutByName( "lConta", .T. )
+
+      ::oTreeSelect:Select( ::oTreeSelect:Add( "Liquidación de agentes : " + Alltrim( Str( ::oDbf:nNumCob, 9 ) ) + " asiento generado num. " + Alltrim( Str( nAsiento ) ), 1 ) )
+
+      RETURN ( Self )
+
+   >; _HB_MEMBER lContabilizar(); IIF( .F., s_oClass:ModInline( "lContabilizar", HB_QWith(), nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ), s_oClass:AddInline( "lContabilizar", HB_QWith(), nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ) ); END
+
+
+
+   WITH OBJECT <|Self, oGetFactura, nMode|;
+
+      local cFactura
+
+      cFactura          := Upper( oGetFactura:VarGet() )
+      cFactura          := SubStr( cFactura, 1, 1 ) + Padl( Alltrim( SubStr( cFactura, 2, 9 ) ), 9 )
+
+      if Empty( cFactura )
+         RETURN ( .T. )
+      end
+
+      if ::oFacPrvT:SeekInOrd( cFactura, "nNumFac" )
+
+         oGetFactura:cText( cFactura )
+
+         RETURN ( .T. )
+
+      else
+
+         MsgStop( "La factura de proveedores introducida no existe." )
+
+      end
+
+      RETURN ( .F. )
+
+   >; _HB_MEMBER lValidFacturaProveedor(); IIF( .F., s_oClass:ModInline( "lValidFacturaProveedor", HB_QWith(), nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ), s_oClass:AddInline( "lValidFacturaProveedor", HB_QWith(), nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ) ); END
+
+
+
+; IF .F. ; __clsActive(s_oClass:hClass) ; s_oClass:Refresh() ; ELSE ; s_oClass:Create() ; END ; oClassInstance := __clsInst( s_oClass:hClass ) ; IF __ObjHasMsg( oClassInstance, "InitClass" ); oClassInstance:InitClass( hb_aParams() ) ; END ; ELSE ; oClassInstance := __clsInst( s_oClass:hClass ) ; END ; IF PCount() > 0 ; DIVERT TO (@DivertConstructorCall()) OF s_oClass ; END ; RETURN oClassInstance AS CLASS TCobAge ;
+
+
+
+UTILITY STATIC function TCobAge_New( cPath, oWndParent, oMenuItem) ; local Self AS CLASS TCobAge := QSelf() AS CLASS TCobAge
+
+   IIF( cPath == nil, cPath := cPatEmp(), ) ;
+   IIF( oWndParent == nil, oWndParent := GetWndFrame(), ) ;
+
+   if oMenuItem <> nil
+      ::nLevel             := nLevelUsr( oMenuItem )
+   else
+      ::nLevel             := 1
+   end
+
+   if nAnd( ::nLevel, 1 ) <> 0
+      msgStop( "Acceso no permitido." )
+      return nil
+   end
+
+   ::cPath                 := cPath
+   ::oWndParent            := oWndParent
+   ::oDbf                  := nil
+
+   ::cCodAge               := Space( 5 )
+
+   ::dFecIni               := Ctod( "01/" + Str( Month( Date() ), 2 ) + "/" + Str( Year( Date() ), 4 ) )
+   ::dFecFin               := Date()
+   ::lFacLiq               := .F.
+   ::lFacturasComisiones   := .T.
+   ::lFacturasNoCobradas   := .T.
+   ::lFacturasParcialmente := .T.
+   ::lFacturasTotalmente   := .T.
+   ::lFacturasIncluidas    := .F.
+
+   ::lMoveDlgSelect        := .T.
+
+   ::oBmp                  := LoadBitmap( 0, 32760 )
+   ::bmpConta              := LoadBitmap( GetResources(), "bConta" )
+
+   ::cNumDocKey            := "nNumCob"
+   ::cSufDocKey            := "cSufCob"
+
+   ::bFirstKey             := {|| Str( ::oDbf:nNumCob, 9 ) + ::oDbf:cSufCob }
+
+   ::oDetCobAge            := TDetCobAge():New( cPath, Self )
+   ::AddDetail( ::oDetCobAge )
+
+   oThis                   := Self
+
+RETURN ( Self )
+
+
+
+UTILITY STATIC function TCobAge_Create( cPath, oWndParent) ; local Self AS CLASS TCobAge := QSelf() AS CLASS TCobAge
+
+   IIF( cPath == nil, cPath := cPatEmp(), ) ;
+   IIF( oWndParent == nil, oWndParent := GetWndFrame(), ) ;
+
+   ::cPath                 := cPath
+   ::oWndParent            := oWndParent
+
+   ::oDetCobAge            := TDetCobAge():New( cPath, Self )
+   ::AddDetail( ::oDetCobAge )
+
+RETURN ( Self )
+
+
+
+UTILITY STATIC function TCobAge_Activate() ; local Self AS CLASS TCobAge := QSelf() AS CLASS TCobAge
+
+   local oImp
+   local oPrv
+   local oPdf
+
+   if ::oWndParent <> nil
+      ::oWndParent:CloseAll()
+   end
+
+   if !::OpenFiles()
+      return nil
+   end
+
+   ::cMru            := "Briefcase_security_agent_16"
+
+   ::CreateShell( ::nLevel )
+
+   ::oWndBrw:bDup    := nil
+
+   ::oWndBrw:GralButtons( Self )
+
+
+
+
+
+
+   oImp := ::oWndBrw:NewAt( "IMP",,, {||( ::nGenLiquidacion( 1 ) )}, "(I)mprimir", "I",,, 32,, .F. )
+
+      ::lGenLiquidacion( ::oWndBrw:oBrw, oImp, 1 )
+
+
+
+
+
+
+   ::oWndBrw:NewAt( "SERIE1",,, {||( ::PrnSerie() )}, "Imp(r)imir series", "R",,, 32,, .F. )
+
+
+
+
+
+
+   oPrv := ::oWndBrw:NewAt( "PREV1",,, {||( ::GenLiquidacion( 2 ) )}, "(P)revisualizar", "P",,, 32,, .F. )
+
+      ::lGenLiquidacion( ::oWndBrw:oBrw, oPrv, 2 )
+
+
+
+
+
+
+   oPdf := ::oWndBrw:NewAt( "DOCLOCK",,, {||( ::GenLiquidacion( 3 ) )}, "Pd(f)", "F",,, 32,, .F. )
+
+      ::lGenLiquidacion( ::oWndBrw:oBrw, oPdf, 3 )
+
+
+
+
+
+   ::oWndBrw:NewAt( "Document_businessman_",,, {||( ::GeneraFacturaGastos( .T. ) )}, "Genera factura",,,, 4,, .F. )
+
+
+
+
+
+
+   ::oWndBrw:NewAt( "BmpConta",,, {||( ::SelectRec( {|| ::Contabilizar( ::lChkSelect ) }, "Contabilizar liquidaciones de agentes", "Simular" , .F. ) )}, "(C)ontabilizar", "C",,, 4,, .F. )
+
+
+
+
+
+
+   ::oWndBrw:NewAt( "ChgState",,, {||( ::SelectRec( {|| ::ChangeConta( ::lChkSelect ) }, "Contabilizar", "Contabilizado" ) )}, "Cambiar es(t)ado", "T",,, 4,, .F. )
+
+   ::oWndBrw:EndButtons( Self )
+
+   ::oWndBrw:Activate( nil, nil, nil, nil, nil, nil, nil, nil, nil, nil, nil, nil, nil, nil, nil, nil, {|| ::CloseFiles() } )
+
+RETURN NIL
+
+
+
+UTILITY STATIC function TCobAge_DefineFiles( cPath, cDriver) ; local Self AS CLASS TCobAge := QSelf() AS CLASS TCobAge
+
+   IIF( cPath == nil, cPath := ::cPath, ) ;
+   IIF( cDriver == nil, cDriver := cDriver(), ) ;
+
+   ::oDbf := DbfServer( "RemAgeT.DBF", "RemAgeT" ):New( "RemAgeT.DBF", "RemAgeT", ( cDriver ), "Liquidación de agentes", ( cPath ) )
+
+   ::oDbf:AddField( "lConta", "L", 1, 0,, .F.,,, "", .F.,, .T., {} )
+
+   ::oDbf:AddField( "bConta", "B", 14, 0,,,, {|| ( ::oDbf:cAlias )->lConta }, { "Contabilizado", "BmpConta16", 3 }, .F., 20, .F., {"Sel16", "Nil16"} )
+
+   ::oDbf:AddField( "bGen", "B", 14, 0,,,, {|| !Empty( ( ::oDbf:cAlias )->cNumFac ) }, { "Factura generada", "Document_businessman_16", 3 }, .F., 20, .F., {"Sel16", "Nil16"} )
+   ::oDbf:AddField( "nNumCob", "N", 9, 0, "999999999",,,, "Número", .T., 80, .F., {} )
+   ::oDbf:AddField( "cSufCob", "C", 2, 0, "@!",,,, "Delegación", .F., 40, .F., {} )
+   ::oDbf:AddField( "dFecCob", "D", 8, 0,, GetSysDate(),,, "Fecha", .F., 80, .F., {} )
+   ::oDbf:AddField( "cCodAge", "C", 3, 0,,,,, "Código agente", .F., 40, .F., {} )
+   ::oDbf:AddField( "cNomAge", "B", 50, 0,,,, {|| cNbrAgent( ( ::oDbf:cAlias )->cCodAge, ::oAgentes:cAlias )}, "Agente", .F., 350, .F., {} )
+   ::oDbf:AddField( "cCodDiv", "C", 3, 0,, cDivEmp(),,, "", .F.,, .T., {} )
+   ::oDbf:AddField( "nVdvDiv", "N", 10, 6,, nChgDiv( cDivEmp(), ::oDivisas ),,, "", .F.,, .T., {} )
+   ::oDbf:AddField( "nTotCob", "N", 16, 6, cPorDiv(),,,, "Total liquidación", .T., 100, .F., {} )
+   ::oDbf:AddField( "cCodPrv", "C", 12, 0,,,,, "Proveedor", .F.,, .T., {} )
+   ::oDbf:AddField( "cNumFac", "C", 12, 0,,,,, "Factura de gastos", .F.,, .T., {} )
+
+   ::oDbf:AddIndex( "nNumCob", "RemAgeT.Cdx", "Str( nNumCob ) + cSufCob",,, .F., .F., "Número",,, .T., .F. )
+   ::oDbf:AddIndex( "cCoaAge", "RemAgeT.Cdx", "cCodAge",,, .F., .F., "Agente",,, .T., .F. )
+   ::oDbf:AddIndex( "dFecCob", "RemAgeT.Cdx", "dFecCob",,, .F., .F., "Fecha",,, .T., .F. )
+
+
+
+RETURN ( ::oDbf )
+
+
+
+UTILITY STATIC function TCobAge_OpenFiles( cPath) ; local Self AS CLASS TCobAge := QSelf() AS CLASS TCobAge
+
+   local lOpen    := .T.
+   local oBlock
+
+   IIF( cPath == nil, cPath := cPatEmp(), ) ;
+
+   oBlock         := ErrorBlock( {| oError | ApoloBreak( oError ) } )
+   BEGIN SEQUENCE
+
+
+
+
+
+      if Empty( ::oDbf )
+         ::DefineFiles()
+      end
+
+      ::oDbf:Activate( .F., .T. )
+
+      ::oDbf:bOpenError := { || ::OpenError() }
+
+      ::OpenDetails()
+
+
+
+
+
+      ::oFacCliT := DbfServer( "FACCLIT.DBF", ):NewOpen( "FACCLIT.DBF",, ( cDriver() ),, ( cPath ), .F., .T., .F., .F. ) ; ::oFacCliT:AddBag( "FACCLIT.CDX" ) ; ::oFacCliT:AddBag( ) ; ::oFacCliT:AutoIndex()
+
+      ::oFacCliL := DbfServer( "FACCLIL.DBF", ):NewOpen( "FACCLIL.DBF",, ( cDriver() ),, ( cPath ), .F., .T., .F., .F. ) ; ::oFacCliL:AddBag( "FACCLIL.CDX" ) ; ::oFacCliL:AddBag( ) ; ::oFacCliL:AutoIndex()
+
+      ::oFacRecT := DbfServer( "FacRecT.DBF", ):NewOpen( "FacRecT.DBF",, ( cDriver() ),, ( cPath ), .F., .T., .F., .F. ) ; ::oFacRecT:AddBag( "FacRecT.CDX" ) ; ::oFacRecT:AddBag( ) ; ::oFacRecT:AutoIndex()
+
+      ::oFacRecL := DbfServer( "FacRecL.DBF", ):NewOpen( "FacRecL.DBF",, ( cDriver() ),, ( cPath ), .F., .T., .F., .F. ) ; ::oFacRecL:AddBag( "FacRecL.CDX" ) ; ::oFacRecL:AddBag( ) ; ::oFacRecL:AutoIndex()
+
+      ::oFacCliP := DbfServer( "FACCLIP.DBF", ):NewOpen( "FACCLIP.DBF",, ( cDriver() ),, ( cPath ), .F., .T., .F., .F. ) ; ::oFacCliP:AddBag( "FACCLIP.CDX" ) ; ::oFacCliP:AddBag( ) ; ::oFacCliP:AutoIndex()
+
+      ::oAntCliT := DbfServer( "AntCliT.DBF", ):NewOpen( "AntCliT.DBF",, ( cDriver() ),, ( cPath ), .F., .T., .F., .F. ) ; ::oAntCliT:AddBag( "AntCliT.CDX" ) ; ::oAntCliT:AddBag( ) ; ::oAntCliT:AutoIndex()
+
+      ::oDivisas := DbfServer( "DIVISAS.DBF", ):NewOpen( "DIVISAS.DBF",, ( cDriver() ),, ( cPatDat() ), .F., .T., .F., .F. ) ; ::oDivisas:AddBag( "DIVISAS.CDX" ) ; ::oDivisas:AddBag( ) ; ::oDivisas:AutoIndex()
+
+      ::oClientes := DbfServer( "CLIENT.DBF", ):NewOpen( "CLIENT.DBF",, ( cDriver() ),, ( cPatCli() ), .F., .T., .F., .F. ) ; ::oClientes:AddBag( "CLIENT.CDX" ) ; ::oClientes:AddBag( ) ; ::oClientes:AutoIndex()
+
+      ::oAgentes := DbfServer( "AGENTES.DBF", ):NewOpen( "AGENTES.DBF",, ( cDriver() ),, ( cPatCli() ), .F., .T., .F., .F. ) ; ::oAgentes:AddBag( "AGENTES.CDX" ) ; ::oAgentes:AddBag( ) ; ::oAgentes:AutoIndex()
+
+      ::oAgeRel := DbfServer( "AgeRel.Dbf", ):NewOpen( "AgeRel.Dbf",, ( cDriver() ),, ( cPatCli() ), .F., .T., .F., .F. ) ; ::oAgeRel:AddBag( "AgeRel.Cdx" ) ; ::oAgeRel:AddBag( ) ; ::oAgeRel:AutoIndex()
+
+      ::oIva := DbfServer( "TIVA.DBF", ):NewOpen( "TIVA.DBF",, ( cDriver() ),, ( cPatDat() ), .F., .T., .F., .F. ) ; ::oIva:AddBag( "TIVA.CDX" ) ; ::oIva:AddBag( ) ; ::oIva:AutoIndex()
+
+      ::oEmpresa := DbfServer( "EMPRESA.DBF", ):NewOpen( "EMPRESA.DBF",, ( cDriver() ),, ( cPatDat() ), .F., .T., .F., .F. ) ; ::oEmpresa:AddBag( "EMPRESA.CDX" ) ; ::oEmpresa:AddBag( ) ; ::oEmpresa:AutoIndex()
+
+      ::oDbfDoc := DbfServer( "RDOCUMEN.DBF", ):NewOpen( "RDOCUMEN.DBF",, ( cDriver() ),, ( cPatEmp() ), .F., .T., .F., .F. ) ; ::oDbfDoc:AddBag( "RDOCUMEN.CDX" ) ; ::oDbfDoc:AddBag( ) ; ::oDbfDoc:AutoIndex()
+      ::oDbfDoc:OrdSetFocus( "cTipo" )
+
+      ::oCount := DbfServer( "NCOUNT.DBF", ):NewOpen( "NCOUNT.DBF",, ( cDriver() ),, ( cPatEmp() ), .F., .T., .F., .F. ) ; ::oCount:AddBag( "NCOUNT.CDX" ) ; ::oCount:AddBag( ) ; ::oCount:AutoIndex()
+
+      ::oFacPrvT := DbfServer( "FacPrvT.DBF", ):NewOpen( "FacPrvT.DBF",, ( cDriver() ),, ( cPatEmp() ), .F., .T., .F., .F. ) ; ::oFacPrvT:AddBag( "FACPRVT.CDX" ) ; ::oFacPrvT:AddBag( ) ; ::oFacPrvT:AutoIndex()
+
+      ::oFacPrvL := DbfServer( "FacPrvL.DBF", ):NewOpen( "FacPrvL.DBF",, ( cDriver() ),, ( cPatEmp() ), .F., .T., .F., .F. ) ; ::oFacPrvL:AddBag( "FACPRVL.CDX" ) ; ::oFacPrvL:AddBag( ) ; ::oFacPrvL:AutoIndex()
+
+      ::oFacPrvP := DbfServer( "FacPrvP.DBF", ):NewOpen( "FacPrvP.DBF",, ( cDriver() ),, ( cPatEmp() ), .F., .T., .F., .F. ) ; ::oFacPrvP:AddBag( "FACPRVP.CDX" ) ; ::oFacPrvP:AddBag( ) ; ::oFacPrvP:AutoIndex()
+
+      ::oProvee := DbfServer( "PROVEE.DBF", ):NewOpen( "PROVEE.DBF",, ( cDriver() ),, ( cPatPrv() ), .F., .T., .F., .F. ) ; ::oProvee:AddBag( "PROVEE.CDX" ) ; ::oProvee:AddBag( ) ; ::oProvee:AutoIndex()
+
+      ::oPrvBnc := DbfServer( "PRVBNC.DBF", ):NewOpen( "PRVBNC.DBF",, ( cDriver() ),, ( cPatPrv() ), .F., .T., .F., .F. ) ; ::oPrvBnc:AddBag( "PRVBNC.CDX" ) ; ::oPrvBnc:AddBag( ) ; ::oPrvBnc:AutoIndex()
+
+      ::oFPago := DbfServer( "FPAGO.DBF", ):NewOpen( "FPAGO.DBF",, ( cDriver() ),, ( cPatGrp() ), .F., .T., .F., .F. ) ; ::oFPago:AddBag( "FPAGO.CDX" ) ; ::oFPago:AddBag( ) ; ::oFPago:AutoIndex()
+
+      ::oArticulo := DbfServer( "ARTICULO.DBF", ):NewOpen( "ARTICULO.DBF",, ( cDriver() ),, ( cPatArt() ), .F., .T., .F., .F. ) ; ::oArticulo:AddBag( "ARTICULO.CDX" ) ; ::oArticulo:AddBag( ) ; ::oArticulo:AutoIndex()
+
+      ::cPorDiv   := cPorDiv( cDivEmp(), ::oDivisas:cAlias )
+
+      ::oBandera  := TBandera():New
+
+   RECOVER
+
+      msgStop( "Imposible abrir todas las bases de datos" )
+
+      ::CloseFiles()
+
+      lOpen             := .F.
+
+   end
+
+   ErrorBlock( oBlock )
+
+RETURN ( lOpen )
+
+
+
+UTILITY STATIC function TCobAge_CloseFiles() ; local Self AS CLASS TCobAge := QSelf() AS CLASS TCobAge
+
+   if ::oDbf <> nil .AND. ::oDbf:Used()
+      ::oDbf:End()
+   end
+
+   ::CloseDetails()
+
+   if !Empty ( ::oAgentes ) .AND. ::oAgentes:Used()
+      ::oAgentes:End()
+   end
+
+   if !Empty ( ::oAgeRel ) .AND. ::oAgeRel:Used()
+      ::oAgeRel:End()
+   end
+
+   if !Empty ( ::oFacCliT ) .AND. ::oFacCliT:Used()
+      ::oFacCliT:End()
+   end
+
+   if !Empty ( ::oFacCliL ) .AND. ::oFacCliL:Used()
+      ::oFacCliL:End()
+   end
+
+   if !Empty ( ::oFacCliP ) .AND. ::oFacCliP:Used()
+      ::oFacCliP:End()
+   end
+
+   if !Empty ( ::oFacRecT ) .AND. ::oFacRecT:Used()
+      ::oFacRecT:End()
+   end
+
+   if !Empty ( ::oFacRecL ) .AND. ::oFacRecL:Used()
+      ::oFacRecL:End()
+   end
+
+   if !Empty ( ::oDivisas ) .AND. ::oDivisas:Used()
+      ::oDivisas:End()
+   end
+
+   if !Empty ( ::oClientes ) .AND. ::oClientes:Used()
+      ::oClientes:End()
+   end
+
+   if !Empty ( ::oIva ) .AND. ::oIva:Used()
+      ::oIva:End()
+   end
+
+   if !Empty ( ::oDbfDoc ) .AND. ::oDbfDoc:Used()
+      ::oDbfDoc:End()
+   end
+
+   if !Empty ( ::oEmpresa ) .AND. ::oEmpresa:Used()
+      ::oEmpresa:End()
+   end
+
+   if !Empty ( ::oCount ) .AND. ::oCount:Used()
+      ::oCount:End()
+   end
+
+   if !Empty ( ::oFacPrvT ) .AND. ::oFacPrvT:Used()
+      ::oFacPrvT:End()
+   end
+
+   if !Empty ( ::oFacPrvL ) .AND. ::oFacPrvL:Used()
+      ::oFacPrvL:End()
+   end
+
+   if !Empty ( ::oFacPrvP ) .AND. ::oFacPrvP:Used()
+      ::oFacPrvP:End()
+   end
+
+   if !Empty ( ::oProvee ) .AND. ::oProvee:Used()
+      ::oProvee:End()
+   end
+
+   if !Empty ( ::oArticulo ) .AND. ::oArticulo:Used()
+      ::oArticulo:End()
+   end
+
+   if !Empty ( ::oPrvBnc ) .AND. ::oPrvBnc:Used()
+      ::oPrvBnc:End()
+   end
+
+   if !Empty ( ::oFPago ) .AND. ::oFPago:Used()
+      ::oFPago:End()
+   end
+
+   if !Empty( ::oMnuRec )
+      ::oMnuRec:End()
+   end
+
+   ::oAgentes     := nil
+   ::oFacCliT     := nil
+   ::oFacCliL     := nil
+   ::oFacCliP     := nil
+   ::oFacRecT     := nil
+   ::oFacRecL     := nil
+   ::oDivisas     := nil
+   ::oClientes    := nil
+   ::oArticulo    := nil
+   ::oDbfDoc      := nil
+   ::oEmpresa     := nil
+   ::oCount       := nil
+   ::oIva         := nil
+   ::oDbf         := nil
+   ::oMnuRec      := nil
+   ::oFacPrvT     := nil
+   ::oFacPrvL     := nil
+   ::oFacPrvP     := nil
+   ::oProvee      := nil
+   ::oPrvBnc      := nil
+   ::oFPago       := nil
+
+   DeleteObject( ::oBmp )
+
+RETURN ( .T. )
+
+
+
+UTILITY STATIC function TCobAge_Resource( nMode) ; local Self AS CLASS TCobAge := QSelf() AS CLASS TCobAge
+
+   local oDlg
+   local oSay
+   local cSay
+   local oBmpDiv
+   local oBtnFac
+   local oGetCodAge
+   local oGetCodDiv
+   local oGetValDiv
+   local oFactura
+   local oBmpGeneral
+
+   if ( nMode == 1 )
+      ::oDbf:dFecCob := GetSysDate()
+      ::oDbf:cCodDiv := cDivEmp()
+      ::oDbf:nVdvDiv := nChgDiv( cDivEmp(), ::oDivisas )
+   end
+
+   ::cOldAge         := ::oDbf:cCodAge
+   cSay              := cNbrAgent( ::oDbf:cCodAge, ::oAgentes )
+
+   ::lLoadDivisa( ::oDbf:cCodDiv )
+
+   oDlg = TDialog():New(,,,, LblTitle( nMode ) + "liquidación de agentes", "CobAge",, .F.,,,,,, .F.,,,,,, .F., )
+
+
+
+
+
+      oBmpGeneral := TBitmap():ReDefine( 990, "liquidacion_agentes_48_alpha",, oDlg,,, .F., .F.,,, .F.,,, .T. )
+
+
+
+
+
+      TGetHlp():ReDefine( 100, { | u | If( PCount()==0, ::oDbf:nNumCob, ::oDbf:nNumCob:= u ) }, oDlg,, ::oDbf:FieldByName( "nNumCob" ):cPict,,,,,,, .F., {||     ( .F. )},, .F., .F.,,,,,, nil,,, )
+
+
+
+
+
+      TGetHlp():ReDefine( 110, { | u | If( PCount()==0, ::oDbf:cSufCob, ::oDbf:cSufCob:= u ) }, oDlg,, ::oDbf:FieldByName( "cSufCob" ):cPict,,,,,,, .F., {||     ( .F. )},, .F., .F.,,,,,, nil,,, )
+
+
+
+
+
+      TGetHlp():ReDefine( 120, { | u | If( PCount()==0, ::oDbf:dFecCob, ::oDbf:dFecCob:= u ) }, oDlg,,,,,,,,, .F., {||     ( nMode <> 3 )},, .F., .T.,,,,,, nil,,, )
+
+
+
+
+
+
+      oFactura := TGetHlp():ReDefine( 180, { | u | If( PCount()==0, ::oDbf:cNumFac, ::oDbf:cNumFac:= u ) }, oDlg,, "@R X/#########/XX",,,,,,, .F., {||     ( nMode <> 3 )},, .F., .F.,,,,,, nil, "Lupa",, )
+
+      oFactura:bHelp       := {|| BrwFacPrv( oFactura, ::oFacPrvT:cAlias, ::oFacPrvL:cAlias, ::oIva:cAlias, ::oDivisas:cAlias ) }
+      oFactura:bValid      := {|| ::lValidFacturaProveedor( oFactura, nMode ) }
+
+
+
+
+
+      oBtnFac := TBtnBmp():ReDefine( 190, "Document_businessman_16",,,,,, oDlg, .F.,, .F.,,,,,, !.T.,, .F.,,, .F., !.F. )
+
+      oBtnFac:bAction      := {|| EdtFacPrv( ::oDbf:cNumFac ) }
+
+
+
+
+
+      ::oCodAge := TGetHlp():ReDefine( 130, { | u | If( PCount()==0, ::oDbf:cCodAge, ::oDbf:cCodAge:= u ) }, oDlg,, "@!",,,,,,, .T.,,, .F., .F.,,,,,, nil, "Lupa",, )
+
+      ::oCodAge:bWhen      := {|| nMode == 1 }
+      ::oCodAge:bValid     := {|| ::ValidAgente( oSay ) }
+      ::oCodAge:bHelp      := {|| BrwAgentes( ::oCodAge, oSay ), .T. }
+
+
+
+
+      oSay := TGetHlp():ReDefine( 131, { | u | If( PCount()==0, cSay, cSay:= u ) }, oDlg,,,,,,,,, .T., {||     ( .F. )},, .F., .F.,,,,,, nil,,, )
+
+
+
+
+
+
+      oGetCodDiv := TGetHlp():ReDefine( 140, { | u | If( PCount()==0, ::oDbf:cCodDiv, ::oDbf:cCodDiv:= u ) }, oDlg,, "@!",,,,,,, .T., {||     ( nMode == 1 .AND. ::oDbf:LastRec() == 0 )},, .F., .F.,,,,,, nil, "LUPA",, )
+
+         oGetCodDiv:bValid := {|| cDivOut( oGetCodDiv, oBmpDiv, oGetValDiv, nil, nil, nil, nil, nil, nil, nil, ::oDivisas:cAlias, ::oBandera ) }
+         oGetCodDiv:bHelp  := {|| BrwDiv( oGetCodDiv, oBmpDiv, oGetValDiv, ::oDivisas:cAlias, ::oBandera ) }
+
+
+
+
+        oBmpDiv := TBitmap():ReDefine( 141, "BAN_EURO",, oDlg,,, .F., .F.,,, .F.,,, .F. )
+
+
+
+
+
+
+      oGetValDiv := TGetHlp():ReDefine( 142, { | u | If( PCount()==0, ::oDbf:nVdvDiv, ::oDbf:nVdvDiv:= u ) }, oDlg,, "@E 999,999.9999", {||    ( ::oDbf:nVdvDiv > 0 )},,,,,, .F., {||     ( .F. )},, .F., .F.,,,,,, nil,,, )
+
+
+
+
+
+
+
+
+
+      TButton():ReDefine( 500, {||( ::oDetCobAge:Append( ::oBrwDet ) )}, oDlg,,, .F., {||     ( !Empty( ::oDbf:cCodAge ) .AND. nMode <> 3 )},,, .F. )
+
+
+
+
+
+      TButton():ReDefine( 504, {||( ::oDetCobAge:Append( ::oBrwDet, .T. ) )}, oDlg,,, .F., {||     ( !Empty( ::oDbf:cCodAge ) .AND. nMode <> 3 )},,, .F. )
+
+
+
+
+
+      TButton():ReDefine( 501, {||( ::oDetCobAge:Edit( ::oBrwDet ) )}, oDlg,,, .F., {||     ( !Empty( ::oDbf:cCodAge ) .AND. nMode <> 3 )},,, .F. )
+
+
+
+
+
+        TButton():ReDefine( 502, {||( ::oDetCobAge:Del( ::oBrwDet ) )}, oDlg,,, .F., {||     ( !Empty( ::oDbf:cCodAge ) .AND. nMode <> 3 )},,, .F. )
+
+
+
+
+
+      TButton():ReDefine( 503, {||( ::oDetCobAge:Zoom() )}, oDlg,,, .F., {||     ( !Empty( ::oDbf:cCodAge ) .AND. nMode <> 3 )},,, .F. )
+
+
+
+
+
+      ::oBrwDet                  := IXBrowse():New( oDlg )
+
+      ::oBrwDet:lFooter          := .T.
+      ::oBrwDet:bClrSel          := {|| { 0, ( 229 + ( 229 * 256 ) + ( 229 * 65536 ) ) } }
+      ::oBrwDet:bClrSelFocus     := {|| { 0, ( 167 + ( 205 * 256 ) + ( 240 * 65536 ) ) } }
+
+      ::oBrwDet:SetoDbf( ::oDetCobAge:oDbfVir )
+
+      ::oBrwDet:nMarqueeStyle    := 6
+      ::oBrwDet:cName            := "Lineas de liquidación de agentes"
+
+      with object ( ::oBrwDet:AddCol() )
+         :cHeader                := "Tipo"
+         :bStrData               := {|| if( ::oDetCobAge:oDbfVir:lFacRec, "Rectificativa", "" ) }
+         :nWidth                 := 60
+      end
+
+      with object ( ::oBrwDet:AddCol() )
+         :cHeader                := "Número factura"
+         :cSortOrder             := "nNumCob"
+         :bStrData               := {|| ::oDetCobAge:oDbfVir:cSerFac + "/" + Alltrim( Str( ::oDetCobAge:oDbfVir:nNumFac ) ) }
+         :nWidth                 := 90
+      end
+
+      with object ( ::oBrwDet:AddCol() )
+         :cHeader                := "Fecha"
+         :cSortOrder             := "dFecFac"
+         :bStrData               := {|| ::oDetCobAge:oDbfVir:dFecFac }
+         :nWidth                 := 75
+      end
+
+      with object ( ::oBrwDet:AddCol() )
+         :cHeader                := "Delegación"
+         :bStrData               := {|| ::oDetCobAge:oDbfVir:cSufFac }
+         :nWidth                 := 60
+         :lHide                  := .T.
+      end
+
+      with object ( ::oBrwDet:AddCol() )
+         :cHeader                := "Cliente"
+         :cSortOrder             := "cCodCli"
+         :bStrData               := {|| Rtrim( ::oDetCobAge:oDbfVir:cCodCli ) + Space( 1 ) + RetClient( ::oDetCobAge:oDbfVir:cCodCli, ::oClientes:cAlias ) }
+         :nWidth                 := 220
+      end
+
+      with object ( ::oBrwDet:AddCol() )
+         :cHeader                := "Agente"
+         :cSortOrder             := "cCodAge"
+         :bStrData               := {|| ::oDetCobAge:oDbfVir:cCodAge }
+         :nWidth                 := 70
+      end
+
+      with object ( ::oBrwDet:AddCol() )
+         :cHeader                := "Base comisionable"
+         :bEditValue             := {|| ::oDetCobAge:oDbfVir:nImpCom }
+         :bFooter                := {|| ::nTotImp() }
+         :cEditPicture           := ::cPorDiv
+         :nWidth                 := 110
+         :nDataStrAlign          := 1
+         :nHeadStrAlign          := 1
+         :nFootStrAlign          := 1
+      end
+
+      with object ( ::oBrwDet:AddCol() )
+         :cHeader                := "%Com."
+         :bEditValue             := {|| ::oDetCobAge:oDbfVir:nComAge }
+         :cEditPicture           := "@E 999.99"
+         :nWidth                 := 50
+         :nDataStrAlign          := 1
+         :nHeadStrAlign          := 1
+      end
+
+      with object ( ::oBrwDet:AddCol() )
+         :cHeader                := "Total comisión"
+         :bEditValue             := {|| ::oDetCobAge:nTotalLineaVirtual() }
+         :bFooter                := {|| ::nTotCom() }
+         :cEditPicture           := ::cPorDiv
+         :nWidth                 := 110
+         :nDataStrAlign          := 1
+         :nHeadStrAlign          := 1
+         :nFootStrAlign          := 1
+      end
+
+      ::oBrwDet:CreateFromResource( 150 )
+
+      if nMode <> 3
+         ::oBrwDet:bLDblClick    := {|| ::oDetCobAge:Edit( ::oBrwDet ) }
+      else
+         ::oBrwDet:bLDblClick    := {|| ::oDetCobAge:Zoom() }
+      end
+
+
+
+
+      ::oMeter := TMeter():ReDefine( 160, { | u | If( PCount()==0, ::nMeter, ::nMeter:= u ) },, oDlg, .F.,,, .T.,,,, )
+
+
+
+
+
+      TButton():ReDefine( 511, {||( if( ::lSave( nMode ), oDlg:End( 1 ), ) )}, oDlg,,, .F., {||         ( nMode <> 3 )},,, .F. )
+
+
+
+
+
+        TButton():ReDefine( 510, {||( ::Cancelar(), oDlg:end() )}, oDlg,,, .F.,,,, .T. )
+
+      if nMode <> 3
+         oDlg:AddFastKey( 113, {|| ::oDetCobAge:Append( ::oBrwDet ) } )
+         oDlg:AddFastKey( 114, {|| ::oDetCobAge:Edit( ::oBrwDet ) } )
+         oDlg:AddFastKey( 115, {|| ::oDetCobAge:Del( ::oBrwDet ) } )
+         oDlg:AddFastKey( 116, {|| if( ::lSave( nMode ), oDlg:End( 1 ), ) } )
+      end
+
+      oDlg:bStart    := {|| ::EdtRecMenu( oDlg ) }
+
+   oDlg:Activate( oDlg:bLClicked, oDlg:bMoved, oDlg:bPainted, .T.,,,, oDlg:bRClicked,,, )
+
+   oBmpDiv:End()
+   oBmpGeneral:End()
+
+
+
+
+
+   ::oBrwDet:CloseData()
+
+RETURN ( oDlg:nResult == 1 )
+
+
+
+UTILITY STATIC function TCobAge_EdtRecMenu( oDlg) ; local Self AS CLASS TCobAge := QSelf() AS CLASS TCobAge
+
+   ::oMnuRec := MenuBegin( .F.,,, .F., .F. )
+
+      MenuAddItem( "&1. Rotor",, .F.,,,,,,,,, .F.,,, .F. )
+
+         MenuBegin( .F.,,, .F., .F. )
+
+
+
+
+            MenuAddItem( "&1. Modificar agente", "Modifica la ficha del agenete", .F.,, {|oMenuItem|( if( !Empty( ::oDbf:cCodAge ), EdtAge( ::oDbf:cCodAge ), MsgStop( "Código de agente vacío" ) ) )},, "Security_Agent_16",,,,, .F.,,, .F. )
+
+
+
+
+            MenuAddItem( "&2. Modificar cliente", "Modifica la ficha del cliente", .F.,, {|oMenuItem|( if( !Empty( ::oDetCobAge:oDbfVir:cCodCli ), EdtCli( ::oDetCobAge:oDbfVir:cCodCli ), MsgStop( "Código de cliente vacío" ) ) )},, "User1_16",,,,, .F.,,, .F. )
+
+
+
+
+
+            MenuAddItem( "&3. Informe de cliente", "Informe de cliente", .F.,, {|oMenuItem|( if( !Empty( ::oDetCobAge:oDbfVir:cCodCli ), InfCliente( ::oDetCobAge:oDbfVir:cCodCli ), MsgStop( "Código de cliente vacío" ) ) )},, "Info16",,,,, .F.,,, .F. )
+            MenuAddItem()
+
+
+
+
+            MenuAddItem( "&4. Visualiza factura", "Visualiza la factura", .F.,, {|oMenuItem|( if( ::oDetCobAge:oDbfVir:lFacRec, ZooFacRec( ::oDetCobAge:oDbfVir:cSerFac + Str( ::oDetCobAge:oDbfVir:nNumFac ) + ::oDetCobAge:oDbfVir:cSufFac ), ZooFacCli( ::oDetCobAge:oDbfVir:cSerFac + Str( ::oDetCobAge:oDbfVir:nNumFac ) + ::oDetCobAge:oDbfVir:cSufFac ) ) )},, "ZOOM16",,,,, .F.,,, .F. )
+
+         MenuEnd()
+
+   MenuEnd()
+
+   oDlg:SetMenu( ::oMnuRec )
+
+   ::oBrwDet:Load()
+
+Return ( ::oMnuRec )
+
+
+
+UTILITY STATIC function TCobAge_Cancelar() ; local Self AS CLASS TCobAge := QSelf() AS CLASS TCobAge
+
+Return ( Self )
+
+
+
+UTILITY STATIC function TCobAge_lSave( nMode) ; local Self AS CLASS TCobAge := QSelf() AS CLASS TCobAge
+
+   if Empty( ::oDbf:cCodAge )
+      MsgStop( "Código agente no puede estar vacio." )
+      ::oCodAge:SetFocus()
+      Return .F.
+   end
+
+   ::oDbf:nTotCob    := ::nTotCom()
+
+   if nMode == 1
+      ::oDbf:nNumCob := ::cValidCobro()
+   end
+
+   if Empty( ::oDbf:cNumFac ) .AND. ApoloMsgNoYes( "¿Desea generar la factura de gastos?", "Confirme" )
+      ::GeneraFacturaGastos( .F. )
+   end
+
+RETURN ( .T. )
+
+
+
+UTILITY STATIC function TCobAge_GeneraFacturaGastos( lExternal) ; local Self AS CLASS TCobAge := QSelf() AS CLASS TCobAge
+
+   local oBlock
+   local cSerie
+   local nNumero
+   local cSufijo
+   local cCodPrv
+   local cCodArt
+
+   IIF( lExternal == nil, lExternal := .F., ) ;
+
+
+
+
+
+   if !Empty( ::oDbf:cNumFac )
+      MsgStop( "La liquidación ya contiene una factura generada." )
+      Return ( nil )
+   end
+
+   cCodPrv                    := RetFld( ::oDbf:cCodAge, ::oAgentes:cAlias, "cCodPrv" )
+   if Empty( cCodPrv )
+      MsgStop( "El agente no tiene cuenta de proveedor asociada." )
+      Return ( nil )
+   end
+
+   cCodArt                    := RetFld( ::oDbf:cCodAge, ::oAgentes:cAlias, "cCodArt" )
+   if Empty( cCodArt )
+      MsgStop( "El agente no tiene artículo de facturación asociado." )
+      Return ( nil )
+   end
+
+   cSerie                     := cNewSer( "nFacPrv", ::oCount:cAlias )
+   nNumero                    := nNewDoc( cSerie, ::oFacPrvT:cAlias, "nFacPrv", , ::oCount:cAlias )
+   cSufijo                    := RetSufEmp()
+
+   if Empty( cSerie )
+      MsgStop( "No se ha obtenido serie para la facturación." )
+      Return ( nil )
+   end
+
+   if Empty( nNumero )
+      Return ( nil )
+   end
+
+   CursorWait()
+
+   oBlock                     := ErrorBlock( {| oError | ApoloBreak( oError ) } )
+
+   BEGIN SEQUENCE
+
+
+
+
+
+   ::oFacPrvT:Append()
+
+   ::oFacPrvT:cSerFac         := cSerie
+   ::oFacPrvT:nNumFac         := nNumero
+   ::oFacPrvT:cSufFac         := cSufijo
+   ::oFacPrvT:cTurFac         := cCurSesion()
+   ::oFacPrvT:dFecFac         := GetSysDate()
+   ::oFacPrvT:cDivFac         := ::oDbf:cCodDiv
+   ::oFacPrvT:nVdvFac         := ::oDbf:nVdvDiv
+   ::oFacPrvT:cCodAlm         := oUser():cAlmacen()
+   ::oFacPrvT:cCodCaj         := oUser():cCaja()
+   ::oFacPrvT:lSndDoc         := .T.
+   ::oFacPrvT:cCodUsr         := cCurUsr()
+   ::oFacPrvT:cCodDlg         := oUser():cDelegacion()
+   ::oFacPrvT:dFecEnt         := Ctod( "" )
+   ::oFacPrvT:dFecImp         := Ctod( "" )
+   ::oFacPrvT:lCloFac         := .F.
+   ::oFacPrvT:cCodPrv         := cCodPrv
+   ::oFacPrvT:cNomPrv         := RetFld( cCodPrv, ::oProvee:cAlias, "Titulo"    )
+   ::oFacPrvT:cDirPrv         := RetFld( cCodPrv, ::oProvee:cAlias, "Domicilio" )
+   ::oFacPrvT:cPobPrv         := RetFld( cCodPrv, ::oProvee:cAlias, "Poblacion" )
+   ::oFacPrvT:cProvProv       := RetFld( cCodPrv, ::oProvee:cAlias, "Provincia" )
+   ::oFacPrvT:cPosPrv         := RetFld( cCodPrv, ::oProvee:cAlias, "CodPostal" )
+   ::oFacPrvT:cDniPrv         := RetFld( cCodPrv, ::oProvee:cAlias, "Nif"       )
+   ::oFacPrvT:cCodPago        := RetFld( cCodPrv, ::oProvee:cAlias, "FPago"     )
+   ::oFacPrvT:dFecChg         := Date()
+   ::oFacPrvT:cTimChg         := Time()
+   ::oFacPrvT:cCodAge         := ::oDbf:cCodAge
+   ::oFacPrvT:nTotNet         := ::oDbf:nTotCob
+   ::oFacPrvT:nTotFac         := ::oDbf:nTotCob
+
+   if oRetFld( ::oFacPrvT:cCodPago, ::oFPago, "lUtlBnc" ) .AND. dbSeekInOrd( cCodPrv, "cCodDef", ::oPrvBnc:cAlias )
+      ::oFacPrvT:cBanco       := ::oPrvBnc:cCodBnc
+      ::oFacPrvT:cEntBnc      := ::oPrvBnc:cEntBnc
+      ::oFacPrvT:cSucBnc      := ::oPrvBnc:cSucBnc
+      ::oFacPrvT:cDigBnc      := ::oPrvBnc:cDigBnc
+      ::oFacPrvT:cCtaBnc      := ::oPrvBnc:cCtaBnc
+   end
+
+   ::oFacPrvT:Save()
+
+
+
+
+
+   ::oFacPrvL:Append()
+
+   ::oFacPrvL:cSerFac         := cSerie
+   ::oFacPrvL:nNumFac         := nNumero
+   ::oFacPrvL:cSufFac         := cSufijo
+
+   ::oFacPrvL:cRef            := cCodArt
+   ::oFacPrvL:cDetalle        := oRetFld( cCodArt, ::oArticulo, "Nombre" )
+   ::oFacPrvL:nCtlStk         := oRetFld( cCodArt, ::oArticulo, "nCtlStock" )
+   ::oFacPrvL:nUniCaja        := 1
+   ::oFacPrvL:nPreUnit        := ::oDbf:nTotCob
+   ::oFacPrvL:cAlmLin         := oUser():cAlmacen()
+
+   ::oFacPrvL:Save()
+
+
+
+
+
+   if !lExternal
+      ::oDbf:cNumFac          := cSerie + Str( nNumero ) + cSufijo
+   else
+      ::oDbf:FieldPutByName( "cNumFac", cSerie + Str( nNumero ) + cSufijo )
+   end
+
+
+
+
+
+   GenPgoFacPrv( cSerie + Str( nNumero ) + cSufijo, ::oFacPrvT:cAlias, ::oFacPrvL:cAlias, ::oFacPrvP:cAlias, ::oProvee:cAlias, ::oFPago:cAlias, ::oDivisas:cAlias )
+
+   CursorWE()
+
+   MsgInfo( "Factura " + cSerie + "/" + Alltrim( Str( nNumero ) ) + "/" + Alltrim( cSufijo ) + " generada satisfactoriamente." )
+
+   RECOVER
+
+   msgStop( "Error al generar factrura de proveedores." )
+
+   end
+
+   ErrorBlock( oBlock )
+
+Return .T.
+
+
+
+UTILITY STATIC function TCobAge_nTotImp() ; local Self AS CLASS TCobAge := QSelf() AS CLASS TCobAge
+
+   local nTotImp              := 0
+
+   ::oDetCobAge:oDbfVir:GetStatus()
+
+   ::oDetCobAge:oDbfVir:GoTop()
+
+   while !::oDetCobAge:oDbfVir:Eof()
+
+      nTotImp                 += ::oDetCobAge:oDbfVir:nImpCom
+
+      ::oDetCobAge:oDbfVir:Skip()
+
+   end
+
+   ::oDetCobAge:oDbfVir:SetStatus()
+
+RETURN ( nTotImp )
+
+
+
+UTILITY STATIC function TCobAge_nTotCom() ; local Self AS CLASS TCobAge := QSelf() AS CLASS TCobAge
+
+   local nTotImp     := 0
+
+   ::oDetCobAge:oDbfVir:GetStatus()
+
+   ::oDetCobAge:oDbfVir:GoTop()
+
+   while !::oDetCobAge:oDbfVir:Eof()
+
+      nTotImp        += ::oDetCobAge:oDbfVir:nImpCom * ::oDetCobAge:oDbfVir:nComAge / 100
+
+         ::oDetCobAge:oDbfVir:Skip()
+
+   end
+
+   ::oDetCobAge:oDbfVir:SetStatus()
+
+RETURN ( nTotImp )
+
+
+
+UTILITY STATIC function TCobAge_Report() ; local Self AS CLASS TCobAge := QSelf() AS CLASS TCobAge
+
+   ::oDbf:GetStatus()
+   ::oDetCobAge:oDbf:GetStatus()
+
+   TInfCobAge():New( "Liquidación de agentes", , , , , , { ::oDbf, ::oDetCobAge:oDbf } ):Play()
+
+   ::oDbf:SetStatus()
+   ::oDetCobAge:oDbf:SetStatus()
+
+   ::oWndBrw:Refresh()
+
+return .T.
+
+
+
+UTILITY STATIC function TCobAge_nTotComAge( cNumCob, lPicture) ; local Self AS CLASS TCobAge := QSelf() AS CLASS TCobAge
+
+   local nTotImp     := 0
+
+   IIF( lPicture == nil, lPicture := .T., ) ;
+
+   with object ( ::oDetCobAge:oDbf )
+
+      :GetStatus()
+      :OrdSetFocus( "nNumCob" )
+
+      if :Seek( cNumCob )
+         while Str( :nNumCob ) + :cSufCob == cNumCob .AND. !:Eof()
+            nTotImp  += ( :nImpCom * :nComAge / 100 )
+            :Skip()
+         end
+      end
+
+      :SetStatus()
+
+   end
+
+   if lPicture
+      nTotImp        := Trans( nTotImp, ::cPorDiv )
+   end
+
+RETURN ( nTotImp )
+
+
+
+UTILITY STATIC function TCobAge_ValidAgente( oSay) ; local Self AS CLASS TCobAge := QSelf() AS CLASS TCobAge
+
+   local c
+   local cCodAge  := ::oCodAge:VarGet()
+
+   if ::cOldAge <> cCodAge
+
+      if cAgentes( ::oCodAge, ::oAgentes:cAlias, oSay )
+
+
+
+
+
+         ::oDbf:cCodPrv          := RetFld( cCodAge, ::oAgentes:cAlias, "cCodPrv" )
+
+         ::aAgentesRelacionados  := aAgentesRelacionados( ::oCodAge, ::oAgeRel:cAlias )
+
+         ::AsistenteImportarFacturas()
+
+         ::cOldAge               := cCodAge
+
+         Return .T.
+
+      else
+
+         Return .F.
+
+      end
+
+   end
+
+RETURN ( .T. )
+
+
+
+UTILITY STATIC function TCobAge_nTotLiq( lPic) ; local Self AS CLASS TCobAge := QSelf() AS CLASS TCobAge
+
+   local nTot     := 0
+   local nPos     := ::oDbfDet:Recno()
+
+   IIF( lPic == nil, lPic := .F., ) ;
+
+   ::oDbfDet:GoTop()
+   while !::oDbfDet:Eof()
+      nTot  += ::oDbfDet:nImpCom
+      ::oDbfDet:Skip()
+   end
+
+   ::oDbfDet:GoTo( nPos )
+
+RETURN ( if( lPic, Trans( nTot, ::cPorDiv ), nTot ) )
+
+
+
+UTILITY STATIC function TCobAge_nTotFac( lPic) ; local Self AS CLASS TCobAge := QSelf() AS CLASS TCobAge
+
+   local nTot     := 0
+   local nPos     := ::oDbfDet:Recno()
+
+   IIF( lPic == nil, lPic := .F., ) ;
+
+   ::oDbfDet:GoTop()
+   WHILE !::oDbfDet:Eof()
+         nTot  += ::oDbfDet:nImpFac
+         ::oDbfDet:Skip()
+   end
+
+   ::oDbfDet:GoTo( nPos )
+
+RETURN ( if( lPic, Trans( nTot, ::cPorDiv ), nTot ) )
+
+
+
+UTILITY STATIC function TCobAge_nTotLiqAge( cNumLiq, lPic) ; local Self AS CLASS TCobAge := QSelf() AS CLASS TCobAge
+
+   local nTot     := 0
+
+   IIF( lPic == nil, lPic := .F., ) ;
+
+   ::oFacCliT:GetStatus()
+   ::oFacCliT:OrdSetFocus( "nNumLiq" )
+
+   ::oFacCliT:Seek( cNumLiq )
+   WHILE Str( ::oFacCliT:nNumLiq ) + ::oFacCliT:cSufLiq == cNumLiq .AND. !::oFacCliT:Eof()
+      nTot        += ::oFacCliT:nImpLiq
+      ::oFacCliT:Skip()
+   end
+
+   ::oFacCliT:SetStatus()
+
+RETURN ( if( lPic, Trans( nTot, ::cPorDiv ), nTot ) )
+
+
+
+UTILITY STATIC function TCobAge_EdtLiqAge( nMode) ; local Self AS CLASS TCobAge := QSelf() AS CLASS TCobAge
+
+RETURN ( nil )
+
+
+
+UTILITY STATIC function TCobAge_Del() ; local Self AS CLASS TCobAge := QSelf() AS CLASS TCobAge
+
+   if oUser():lNotConfirmDelete() .OR. msgNoYes( "¿ Desea eliminar el registro en curso ?", "Confirme supresión" )
+
+      while ::oDetCobAge:oDbf:SeekInOrd( Str( ::oDbf:nNumCob ) + ::oDbf:cSufCob, "nNumCob" )
+         ::oDetCobAge:oDbf:Delete()
+      end
+
+      ::oDbf:Delete()
+
+   end
+
+RETURN ( .T. )
+
+
+
+UTILITY STATIC function TCobAge_AsistenteImportarFacturas() ; local Self AS CLASS TCobAge := QSelf() AS CLASS TCobAge
+
+   local oDlg
+   local oBmp
+   local oBrw
+   local oPag
+   local oBtnPrv
+   local oBtnNxt
+
+   if Empty( ::oDbf:cCodAge ) .OR. !( ::oAgentes:SeekInOrd( ::oDbf:cCodAge, "cCodAge" ) )
+      return .F.
+   end
+
+   oDlg = TDialog():New(,,,,, "ASS_LIQAGE",, .F.,,,,,, .F.,,,,,, .F., )
+
+   oPag := TPages():Redefine( 110, oDlg, {"LIQAGE_1", "LIQAGE_2"},,,, )
+
+
+
+
+
+   oBmp := TBitmap():ReDefine( 500, "Bookkeeper_alpha_48",, oDlg,,, .F., .F.,,, .F.,,, .T. )
+
+
+
+
+   TGetHlp():ReDefine( 150, { | u | If( PCount()==0, ::dFecIni, ::dFecIni:= u ) }, oPag:aDialogs[ 1 ],,,,,,,,, .F.,,, .F., .T.,,,,,, nil,,, )
+
+
+
+
+   TGetHlp():ReDefine( 160, { | u | If( PCount()==0, ::dFecFin, ::dFecFin:= u ) }, oPag:aDialogs[ 1 ],,,,,,,,, .F.,,, .F., .T.,,,,,, nil,,, )
+
+
+
+   TCheckBox():ReDefine( 180, { | u | If( PCount()==0, ::lFacturasComisiones, ::lFacturasComisiones:= u ) }, oPag:aDialogs[ 1 ],,,,,,, .F.,, .F. )
+
+
+
+   TCheckBox():ReDefine( 190, { | u | If( PCount()==0, ::lFacturasNoCobradas, ::lFacturasNoCobradas:= u ) }, oPag:aDialogs[ 1 ],,,,,,, .F.,, .F. )
+
+
+
+   TCheckBox():ReDefine( 200, { | u | If( PCount()==0, ::lFacturasParcialmente, ::lFacturasParcialmente:= u ) }, oPag:aDialogs[ 1 ],,,,,,, .F.,, .F. )
+
+
+
+   TCheckBox():ReDefine( 210, { | u | If( PCount()==0, ::lFacturasTotalmente, ::lFacturasTotalmente:= u ) }, oPag:aDialogs[ 1 ],,,,,,, .F.,, .F. )
+
+
+
+   TCheckBox():ReDefine( 220, { | u | If( PCount()==0, ::lFacturasIncluidas, ::lFacturasIncluidas:= u ) }, oPag:aDialogs[ 1 ],,,,,,, .F.,, .F. )
+
+   TWebBtn():Redefine( 1170,,,,, {|| ( aEval( ::oSer, {|o| Eval( o:bSetGet, .T. ), o:refresh() } ) ) }, oPag:aDialogs[ 1 ],,,,, "LEFT",,,,, ( 0 + ( 0 * 256 ) + ( 255 * 65536 ) ), ( 0 + ( 0 * 256 ) + ( 255 * 65536 ) ) )
+
+   TWebBtn():Redefine( 1180,,,,, {|| ( aEval( ::oSer, {|o| Eval( o:bSetGet, .F. ), o:refresh() } ) ) }, oPag:aDialogs[ 1 ],,,,, "LEFT",,,,, ( 0 + ( 0 * 256 ) + ( 255 * 65536 ) ), ( 0 + ( 0 * 256 ) + ( 255 * 65536 ) ) )
+
+   ::oSer[  1 ] := TCheckBox():ReDefine( 1190, { | u | If( PCount()==0, ::aSer[  1 ], ::aSer[  1 ]:= u ) }, oPag:aDialogs[ 1 ],,,,,,, .F.,, .F. )
+   ::oSer[  2 ] := TCheckBox():ReDefine( 1200, { | u | If( PCount()==0, ::aSer[  2 ], ::aSer[  2 ]:= u ) }, oPag:aDialogs[ 1 ],,,,,,, .F.,, .F. )
+   ::oSer[  3 ] := TCheckBox():ReDefine( 1210, { | u | If( PCount()==0, ::aSer[  3 ], ::aSer[  3 ]:= u ) }, oPag:aDialogs[ 1 ],,,,,,, .F.,, .F. )
+   ::oSer[  4 ] := TCheckBox():ReDefine( 1220, { | u | If( PCount()==0, ::aSer[  4 ], ::aSer[  4 ]:= u ) }, oPag:aDialogs[ 1 ],,,,,,, .F.,, .F. )
+   ::oSer[  5 ] := TCheckBox():ReDefine( 1230, { | u | If( PCount()==0, ::aSer[  5 ], ::aSer[  5 ]:= u ) }, oPag:aDialogs[ 1 ],,,,,,, .F.,, .F. )
+   ::oSer[  6 ] := TCheckBox():ReDefine( 1240, { | u | If( PCount()==0, ::aSer[  6 ], ::aSer[  6 ]:= u ) }, oPag:aDialogs[ 1 ],,,,,,, .F.,, .F. )
+   ::oSer[  7 ] := TCheckBox():ReDefine( 1250, { | u | If( PCount()==0, ::aSer[  7 ], ::aSer[  7 ]:= u ) }, oPag:aDialogs[ 1 ],,,,,,, .F.,, .F. )
+   ::oSer[  8 ] := TCheckBox():ReDefine( 1260, { | u | If( PCount()==0, ::aSer[  8 ], ::aSer[  8 ]:= u ) }, oPag:aDialogs[ 1 ],,,,,,, .F.,, .F. )
+   ::oSer[  9 ] := TCheckBox():ReDefine( 1270, { | u | If( PCount()==0, ::aSer[  9 ], ::aSer[  9 ]:= u ) }, oPag:aDialogs[ 1 ],,,,,,, .F.,, .F. )
+   ::oSer[ 10 ] := TCheckBox():ReDefine( 1280, { | u | If( PCount()==0, ::aSer[ 10 ], ::aSer[ 10 ]:= u ) }, oPag:aDialogs[ 1 ],,,,,,, .F.,, .F. )
+   ::oSer[ 11 ] := TCheckBox():ReDefine( 1290, { | u | If( PCount()==0, ::aSer[ 11 ], ::aSer[ 11 ]:= u ) }, oPag:aDialogs[ 1 ],,,,,,, .F.,, .F. )
+   ::oSer[ 12 ] := TCheckBox():ReDefine( 1300, { | u | If( PCount()==0, ::aSer[ 12 ], ::aSer[ 12 ]:= u ) }, oPag:aDialogs[ 1 ],,,,,,, .F.,, .F. )
+   ::oSer[ 13 ] := TCheckBox():ReDefine( 1310, { | u | If( PCount()==0, ::aSer[ 13 ], ::aSer[ 13 ]:= u ) }, oPag:aDialogs[ 1 ],,,,,,, .F.,, .F. )
+   ::oSer[ 14 ] := TCheckBox():ReDefine( 1320, { | u | If( PCount()==0, ::aSer[ 14 ], ::aSer[ 14 ]:= u ) }, oPag:aDialogs[ 1 ],,,,,,, .F.,, .F. )
+   ::oSer[ 15 ] := TCheckBox():ReDefine( 1330, { | u | If( PCount()==0, ::aSer[ 15 ], ::aSer[ 15 ]:= u ) }, oPag:aDialogs[ 1 ],,,,,,, .F.,, .F. )
+   ::oSer[ 16 ] := TCheckBox():ReDefine( 1340, { | u | If( PCount()==0, ::aSer[ 16 ], ::aSer[ 16 ]:= u ) }, oPag:aDialogs[ 1 ],,,,,,, .F.,, .F. )
+   ::oSer[ 17 ] := TCheckBox():ReDefine( 1350, { | u | If( PCount()==0, ::aSer[ 17 ], ::aSer[ 17 ]:= u ) }, oPag:aDialogs[ 1 ],,,,,,, .F.,, .F. )
+   ::oSer[ 18 ] := TCheckBox():ReDefine( 1360, { | u | If( PCount()==0, ::aSer[ 18 ], ::aSer[ 18 ]:= u ) }, oPag:aDialogs[ 1 ],,,,,,, .F.,, .F. )
+   ::oSer[ 19 ] := TCheckBox():ReDefine( 1370, { | u | If( PCount()==0, ::aSer[ 19 ], ::aSer[ 19 ]:= u ) }, oPag:aDialogs[ 1 ],,,,,,, .F.,, .F. )
+   ::oSer[ 20 ] := TCheckBox():ReDefine( 1380, { | u | If( PCount()==0, ::aSer[ 20 ], ::aSer[ 20 ]:= u ) }, oPag:aDialogs[ 1 ],,,,,,, .F.,, .F. )
+   ::oSer[ 21 ] := TCheckBox():ReDefine( 1390, { | u | If( PCount()==0, ::aSer[ 21 ], ::aSer[ 21 ]:= u ) }, oPag:aDialogs[ 1 ],,,,,,, .F.,, .F. )
+   ::oSer[ 22 ] := TCheckBox():ReDefine( 1400, { | u | If( PCount()==0, ::aSer[ 22 ], ::aSer[ 22 ]:= u ) }, oPag:aDialogs[ 1 ],,,,,,, .F.,, .F. )
+   ::oSer[ 23 ] := TCheckBox():ReDefine( 1410, { | u | If( PCount()==0, ::aSer[ 23 ], ::aSer[ 23 ]:= u ) }, oPag:aDialogs[ 1 ],,,,,,, .F.,, .F. )
+   ::oSer[ 24 ] := TCheckBox():ReDefine( 1420, { | u | If( PCount()==0, ::aSer[ 24 ], ::aSer[ 24 ]:= u ) }, oPag:aDialogs[ 1 ],,,,,,, .F.,, .F. )
+   ::oSer[ 25 ] := TCheckBox():ReDefine( 1430, { | u | If( PCount()==0, ::aSer[ 25 ], ::aSer[ 25 ]:= u ) }, oPag:aDialogs[ 1 ],,,,,,, .F.,, .F. )
+   ::oSer[ 26 ] := TCheckBox():ReDefine( 1440, { | u | If( PCount()==0, ::aSer[ 26 ], ::aSer[ 26 ]:= u ) }, oPag:aDialogs[ 1 ],,,,,,, .F.,, .F. )
+
+
+
+
+
+   oBrw                    := TXBrowse():New( oPag:aDialogs[ 2 ] )
+
+   oBrw:bClrSel            := {|| { 0, ( 229 + ( 229 * 256 ) + ( 229 * 65536 ) ) } }
+   oBrw:bClrSelFocus       := {|| { 0, ( 167 + ( 205 * 256 ) + ( 240 * 65536 ) ) } }
+
+   oBrw:SetArray( ::aDbfVir, , , .F. )
+
+   oBrw:nMarqueeStyle      := 6
+   oBrw:lRecordSelector    := .T.
+
+   oBrw:lHScroll           := .T.
+   oBrw:lVScroll           := .T.
+
+      with object ( oBrw:AddCol() )
+         :cHeader          := "Seleccionada"
+         :bStrData         := {|| "" }
+         :bEditValue       := {|| ::aDbfVir[ oBrw:nArrayAt, 1 ] }
+         :nWidth           := 14
+         :SetCheck( { "Sel16", "Nil16" } )
+      end
+
+      with object ( oBrw:AddCol() )
+         :cHeader          := "Tipo"
+         :bStrData         := {|| if( ::aDbfVir[ oBrw:nArrayAt, 10 ], "Rectificativa", "" ) }
+         :nWidth           := 60
+      end
+
+      with object ( oBrw:AddCol() )
+         :cHeader          := "Número"
+         :bStrData         := {|| ::aDbfVir[ oBrw:nArrayAt, 2 ] + "/" + Alltrim( Str( ::aDbfVir[ oBrw:nArrayAt, 3 ] ) ) }
+         :nWidth           := 60
+      end
+
+      with object ( oBrw:AddCol() )
+         :cHeader          := "Fecha"
+         :bStrData         := {|| Dtoc( ::aDbfVir[ oBrw:nArrayAt, 5 ] ) }
+         :nWidth           := 70
+      end
+
+      with object ( oBrw:AddCol() )
+         :cHeader          := "Cliente"
+         :bStrData         := {|| Rtrim( ::aDbfVir[ oBrw:nArrayAt, 6 ] ) + Space( 1 ) + Rtrim( ::aDbfVir[ oBrw:nArrayAt, 7 ] ) }
+         :nWidth           := 200
+      end
+
+      with object ( oBrw:AddCol() )
+         :cHeader          := "Agente"
+         :bStrData         := {|| ::aDbfVir[ oBrw:nArrayAt, 11 ] }
+         :nWidth           := 40
+      end
+
+      with object ( oBrw:AddCol() )
+         :cHeader          := "Importe"
+         :bStrData         := {|| Trans( ::aDbfVir[ oBrw:nArrayAt, 8 ], ::cPorDiv ) }
+         :nWidth           := 60
+         :nDataStrAlign    := 1
+         :nHeadStrAlign    := 1
+      end
+
+      with object ( oBrw:AddCol() )
+         :cHeader          := "Comisión"
+         :bStrData         := {|| Trans( ::aDbfVir[ oBrw:nArrayAt, 9 ], ::cPorDiv )  }
+         :nWidth           := 60
+         :nDataStrAlign    := 1
+         :nHeadStrAlign    := 1
+      end
+
+   oBrw:CreateFromResource( 110 )
+
+
+
+
+
+
+
+
+   TButton():ReDefine( 501, {||( ::aDbfVir[ oBrw:nArrayAt, 1 ] := !::aDbfVir[ oBrw:nArrayAt, 1 ], oBrw:Refresh() )}, oPag:aDialogs[ 2 ],,, .F.,,,, .F. )
+
+
+
+
+   TButton():ReDefine( 502, {||( aEval( ::aDbfVir, { |aItem| aItem[1] := .T. } ), oBrw:refresh() )}, oPag:aDialogs[ 2 ],,, .F.,,,, .F. )
+
+
+
+
+   TButton():ReDefine( 503, {||( aEval( ::aDbfVir, { |aItem| aItem[1] := .F. } ), oBrw:refresh() )}, oPag:aDialogs[ 2 ],,, .F.,,,, .F. )
+
+
+
+
+
+
+
+
+   oBtnPrv := TButton():ReDefine( 401, {||( ::IntBtnPrv( oPag, oBtnPrv, oBtnNxt, oDlg, oBrw ) )}, oDlg,,, .F.,,,, .F. )
+
+
+
+
+   oBtnNxt := TButton():ReDefine( 402, {||( ::IntBtnNxt( oPag, oBtnPrv, oBtnNxt, oDlg, oBrw ) )}, oDlg,,, .F.,,,, .F. )
+
+
+
+
+
+   TButton():ReDefine( 403, {||( oDlg:end() )}, oDlg,,, .F.,,,, .T. )
+
+   oDlg:Activate( oDlg:bLClicked, oDlg:bMoved, oDlg:bPainted, .T.,,, {|Self|( oBtnPrv:Hide() )}, oDlg:bRClicked,,, )
+
+   oBmp:End()
+
+RETURN ( oDlg:nResult == 1 )
+
+
+
+UTILITY STATIC function TCobAge_IntBtnPrv( oPag, oBtnPrv, oBtnNxt, oDlg) ; local Self AS CLASS TCobAge := QSelf() AS CLASS TCobAge
+
+   oPag:GoPrev()
+
+   oBtnPrv:Hide()
+
+   SetWindowText( oBtnNxt:hWnd, "&Siguiente >" )
+
+return nil
+
+
+
+UTILITY STATIC function TCobAge_IntBtnNxt( oPag, oBtnPrv, oBtnNxt, oDlg, oBrw) ; local Self AS CLASS TCobAge := QSelf() AS CLASS TCobAge
+
+   local n
+   local aAgente
+
+   do case
+      case oPag:nOption == 1
+
+         CursorWait()
+
+         ::aDbfVir      := {}
+
+         ::ImportaFacturaAgentes( oBrw )
+
+         for each aAgente in ::aAgentesRelacionados
+            ::ImportaFacturaAgentes( oBrw, aAgente[ 1 ], aAgente[ 2 ], .T. )
+         next
+
+
+
+
+
+         if Empty( ::aDbfVir )
+            ::aDbfVir   := { { .F., "", 0, "", Ctod( "" ), "", "", 0, 0, .F., "" } }
+         end
+
+         oBrw:SetArray( ::aDbfVir )
+
+         CursorWE()
+
+
+
+
+
+         oPag:GoNext()
+
+         oBtnPrv:Show()
+
+         SetWindowText( oBtnNxt:hWnd, "&Importar" )
+
+      case oPag:nOption == 2
+
+         CursorWait()
+
+         for n := 1 to len( ::aDbfVir )
+
+            if ::aDbfVir[ n, 1 ]
+
+               if !::oDetCobAge:oDbfVir:SeekInOrd( ::aDbfVir[ n, 2 ] + Str( ::aDbfVir[ n, 3 ] ) + ::aDbfVir[ n, 4 ], "cNumFac" )
+
+                  ::oDetCobAge:oDbfVir:Append()
+                  ::oDetCobAge:oDbfVir:cCodAge  := ::oDbf:cCodAge
+                  ::oDetCobAge:oDbfVir:lFacRec  := ::aDbfVir[ n, 10]
+                  ::oDetCobAge:oDbfVir:cSerFac  := ::aDbfVir[ n, 2 ]
+                  ::oDetCobAge:oDbfVir:nNumFac  := ::aDbfVir[ n, 3 ]
+                  ::oDetCobAge:oDbfVir:cSufFac  := ::aDbfVir[ n, 4 ]
+                  ::oDetCobAge:oDbfVir:dFecFac  := ::aDbfVir[ n, 5 ]
+                  ::oDetCobAge:oDbfVir:cCodCli  := ::aDbfVir[ n, 6 ]
+                  ::oDetCobAge:oDbfVir:nImpCom  := ::aDbfVir[ n, 8 ]
+                  ::oDetCobAge:oDbfVir:nComAge  := ::aDbfVir[ n, 9 ] / ::aDbfVir[ n, 8 ] * 100
+                  ::oDetCobAge:oDbfVir:Save()
+
+               else
+
+                  MsgStop( "La factura " + ::aDbfVir[ n, 2 ] + "/" + Alltrim( Str( ::aDbfVir[ n, 3 ] ) ) + "/" + Rtrim( ::aDbfVir[ n, 4 ] ) + " ya está incorporada en la liquidación." )
+
+               end
+
+            end
+
+         next
+
+         CursorWE()
+
+         ::oBrwDet:Refresh()
+
+         oDlg:End()
+
+   end
+
+RETURN nil
+
+
+
+UTILITY STATIC function TCobAge_cValidCobro() ; local Self AS CLASS TCobAge := QSelf() AS CLASS TCobAge
+
+   local nCurCob  := nNewDoc( nil, ::oDbf:nArea, "nCobAge" )
+
+   ::oDbf:GetStatus()
+   ::oDbf:OrdSetFocus( "nNumCob" )
+
+   while ::oDbf:Seek( nCurCob ) .OR. ( nCurCob == 0 )
+      ++nCurCob
+   end
+
+   ::oDbf:SetStatus()
+
+RETURN ( nCurCob )
+
+
+
+UTILITY STATIC function TCobAge_BrwRecCli( oGet) ; local Self AS CLASS TCobAge := QSelf() AS CLASS TCobAge
+
+RETURN ( nil )
+
+
+
+FUNCTION CheckRec( oGet, dbfFacCliT, oLiq, oDlgAnt )
+
+RETURN ( nil )
+
+
+
+UTILITY STATIC function TCobAge_OpenError() ; local Self AS CLASS TCobAge := QSelf() AS CLASS TCobAge
+
+   MsgStop( "Proceso en uso por otro usuario", "Abrir fichero" )
+
+   ::lOpenError            := .T.
+
+RETURN .F.
+
+
+
+UTILITY STATIC function TCobAge_LiquidaFacturaCliente( cNumFac, nMark) ; local Self AS CLASS TCobAge := QSelf() AS CLASS TCobAge
+
+   IIF( nMark == nil, nMark := -1, ) ;
+
+   if ::oFacCliT:SeekInOrd( cNumFac, "nNumFac" )
+      ::oFacCliT:FieldPutByName( "nNumLiq", nMark )
+   end
+
+RETURN ( Self )
+
+
+
+UTILITY STATIC function TCobAge_ImportaFacturaAgentes( oBrw, cCodigoAgente, nPorcentajeAgente, lRelacionado) ; local Self AS CLASS TCobAge := QSelf() AS CLASS TCobAge
+
+   local nEstFac
+   local aTotFac
+
+   if IsNil( cCodigoAgente )
+      cCodigoAgente     := ::oDbf:cCodAge
+   end
+
+   if IsNil( lRelacionado )
+      lRelacionado      := .F.
+   end
+
+
+
+
+
+   ::oFacCliT:GetStatus()
+
+   ::oFacCliT:OrdSetFocus( "cCodAge" )
+   if ::oFacCliT:Seek( cCodigoAgente )
+
+      while ( ::oFacCliT:cCodAge == cCodigoAgente ) .AND. !::oFacCliT:eof()
+
+
+
+         if ::oFacCliT:dFecFac >= ::dFecIni                       .AND. ::oFacCliT:dFecFac <= ::dFecFin                       .AND. lChkSer( ::oFacCliT:cSerie, ::aSer )
+
+            if ::lFacturaProcesar( .F., lRelacionado )
+
+               nEstFac  := nChkPagFacCli( ::oFacCliT:cSerie + Str( ::oFacCliT:nNumFac ) + ::oFacCliT:cSufFac, ::oFacCliT:cAlias, ::oFacCliP:cAlias )
+
+
+
+               if ( ::lFacturasNoCobradas    .AND. nEstFac == 3 )  .OR. ( ::lFacturasParcialmente  .AND. nEstFac == 2 )  .OR. ( ::lFacturasTotalmente    .AND. nEstFac == 1 )
+
+                  aTotFac  := ::oDetCobAge:nTotalComisionFactura( .F., ::oFacCliT:cSerie + Str( ::oFacCliT:nNumFac ) + ::oFacCliT:cSufFac, cCodigoAgente, nPorcentajeAgente )
+
+                  if ( ::lFacturasComisiones .AND. aTotFac[ 2 ] <> 0 ) .OR. !( ::lFacturasComisiones )
+
+                     aAdd( ::aDbfVir, { .T., ::oFacCliT:cSerie, ::oFacCliT:nNumFac, ::oFacCliT:cSufFac, ::oFacCliT:dFecFac, ::oFacCliT:cCodCli, ::oFacCliT:cNomCli, aTotFac[ 1 ], aTotFac[ 2 ], .F., ::oFacCliT:cCodAge } )
+
+                  end
+
+               end
+
+            end
+
+         end
+
+         ::oFacCliT:Skip()
+
+      end
+
+   end
+
+   ::oFacCliT:SetStatus()
+
+
+
+
+
+   ::oFacRecT:GetStatus()
+
+   ::oFacRecT:OrdSetFocus( "cCodAge" )
+   if ::oFacRecT:Seek( cCodigoAgente )
+
+      while ( ::oFacRecT:cCodAge == cCodigoAgente ) .AND. !::oFacRecT:eof()
+
+
+
+         if ::oFacRecT:dFecFac >= ::dFecIni                       .AND. ::oFacRecT:dFecFac <= ::dFecFin                       .AND. lChkSer( ::oFacRecT:cSerie, ::aSer )
+
+            if ::lFacturaProcesar( .T., lRelacionado )
+
+               nEstFac  := nChkPagFacRec( ::oFacRecT:cSerie + Str( ::oFacRecT:nNumFac ) + ::oFacRecT:cSufFac, ::oFacRecT:cAlias, ::oFacCliP:cAlias )
+
+
+
+               if ( ::lFacturasNoCobradas    .AND. nEstFac == 3 ) .OR. ( ::lFacturasParcialmente  .AND. nEstFac == 2 ) .OR. ( ::lFacturasTotalmente    .AND. nEstFac == 1 )
+
+                  aTotFac  := ::oDetCobAge:nTotalComisionFactura( .T., ::oFacRecT:cSerie + Str( ::oFacRecT:nNumFac ) + ::oFacRecT:cSufFac, cCodigoAgente, nPorcentajeAgente )
+
+                  if ( ::lFacturasComisiones .AND. aTotFac[ 2 ] <> 0 ) .OR. ( !::lFacturasComisiones )
+
+                     aAdd( ::aDbfVir, { .T., ::oFacRecT:cSerie, ::oFacRecT:nNumFac, ::oFacRecT:cSufFac, ::oFacRecT:dFecFac, ::oFacRecT:cCodCli, ::oFacRecT:cNomCli, aTotFac[ 1 ], aTotFac[ 2 ], .T., ::oFacRecT:cCodAge } )
+
+                  end
+
+               end
+
+            end
+
+         end
+
+         ::oFacRecT:Skip()
+
+      end
+
+   end
+
+   ::oFacRecT:SetStatus()
+
+Return ( nil )
+
+
+
+UTILITY STATIC function TCobAge_dFecLiqAge( cNumLiq) ; local Self AS CLASS TCobAge := QSelf() AS CLASS TCobAge
+
+   local dFecLiq  := Ctod( "" )
+
+   ::oDbf:GetStatus()
+
+   ::oDbf:OrdSetFocus( "nNumCob" )
+
+   if ::oDbf:Seek( cNumLiq )
+      dFecLiq  := ::oDbf:dFecLiq
+   end
+
+   ::oDbf:SetStatus()
+
+return ( dFecLiq )
+
+
+
+UTILITY STATIC function TCobAge_GenLiquidacion( nDevice, cCaption, cCodDoc, cPrinter, nCopies) ; local Self AS CLASS TCobAge := QSelf() AS CLASS TCobAge
+
+   local oInf
+   local nOrd
+   local oDevice
+   local cNumeroLiquidacion
+
+   IIF( nDevice == nil, nDevice := 1, ) ;
+   IIF( cCaption == nil, cCaption := "Imprimiendo liquidación de agentes", ) ;
+   IIF( cCodDoc == nil, cCodDoc := cFormatoDocumento( , "nCobAge", ::oCount:cAlias ), ) ;
+   IIF( nCopies == nil, nCopies := nCopiasDocumento( , "nCobAge", ::oCount:cAlias ), ) ;
+
+   if ::oDbf:Lastrec() == 0
+      Return nil
+   end
+
+   if Empty( cCodDoc )
+      cCodDoc           := cFirstDoc( "LQ", ::oDbfDoc )
+   end
+
+   if !lExisteDocumento( cCodDoc, ::oDbfDoc )
+      return nil
+   end
+
+   cNumeroLiquidacion   := Str( ::oDbf:nNumCob ) + ::oDbf:cSufCob
+
+   ::oDbf:GetStatus( .T. )
+   ::oDbf:Seek( cNumeroLiquidacion )
+
+   nOrd                 := ::oDetCobAge:oDbf:OrdSetFocus( "xNumCob" )
+
+   if lVisualDocumento( cCodDoc, ::oDbfDoc:cAlias )
+      ::PrintReport( nDevice, nCopies, cPrinter, ::oDbfDoc:cAlias )
+   end
+
+   ::oDetCobAge:oDbf:OrdSetFocus( nOrd )
+
+   ::oDbf:SetStatus()
+
+RETURN ( nil )
+
+
+
+UTILITY STATIC function TCobAge_lGenLiquidacion( oBrw, oBtn, nDevice) ; local Self AS CLASS TCobAge := QSelf() AS CLASS TCobAge
+
+   local bAction
+
+   IIF( nDevice == nil, nDevice := 1, ) ;
+
+   if !::oDbfDoc:Seek( "LQ" )
+
+
+
+
+
+
+
+
+      ::oWndBrw:NewAt( "DOCUMENT",,, {||( msgStop( "No hay documentos predefinidos" ) )}, "No hay documentos", "N",,, 4, oBtn, .F. )
+
+   else
+
+      while ::oDbfDoc:cTipo == "LQ" .AND. !::oDbfDoc:eof()
+
+         bAction  := ::bGenLiquidacion( nDevice, "Imprimiendo parte de producción", ::oDbfDoc:Codigo )
+
+         ::oWndBrw:NewAt( "Document", , , bAction, Rtrim( ::oDbfDoc:cDescrip ) , , , , , oBtn )
+
+         ::oDbfDoc:Skip()
+
+      end
+
+   end
+
+RETURN ( nil )
+
+
+
+UTILITY STATIC function TCobAge_bGenLiquidacion( nDevice, cTitle, cCodDoc) ; local Self AS CLASS TCobAge := QSelf() AS CLASS TCobAge
+
+   local bGen
+   local nDev        := by( nDevice )
+   local cTit        := by( cTitle    )
+   local cCod        := by( cCodDoc   )
+
+   bGen              := {|| ::GenLiquidacion( nDev, cTit, cCod ) }
+
+RETURN ( bGen )
+
+
+
+UTILITY STATIC function TCobAge_nGenLiquidacion( nDevice, cTitle, cCodDoc, cPrinter, nCopy) ; local Self AS CLASS TCobAge := QSelf() AS CLASS TCobAge
+
+   local nImpYet     := 1
+
+   IIF( nDevice == nil, nDevice := 1, ) ;
+   IIF( nCopy == nil, nCopy := nCopiasDocumento( , "nCobAge", ::oCount:cAlias ), ) ;
+
+   nCopy             := Max( nCopy, 1 )
+
+   while nImpYet <= nCopy
+      ::GenLiquidacion( nDevice, cTitle, cCodDoc, cPrinter )
+      nImpYet++
+   end
+
+return nil
+
+
+
+UTILITY STATIC function TCobAge_PrnSerie() ; local Self AS CLASS TCobAge := QSelf() AS CLASS TCobAge
+
+    local oDlg
+   local oFmtDoc
+   local cFmtDoc     := cSelPrimerDoc( "LQ" )
+   local oSayFmt
+   local cSayFmt
+   local oSerIni
+   local oSerFin
+   local cSerIni
+   local cSerFin
+   local nRecno      := ::oDbf:Recno()
+   local nOrdAnt     := ::oDbf:OrdSetFocus( "cNumCob" )
+   local nDocIni     := ::oDbf:nNumCob
+   local nDocFin     := ::oDbf:nNumCob
+   local cSufIni     := ::oDbf:cSufCob
+   local cSufFin     := ::oDbf:cSufCob
+   local oPrinter
+   local cPrinter    := PrnGetName()
+   local lCopiasPre  := .T.
+   local lInvOrden   := .F.
+   local oNumCop
+   local nNumCop     := nCopiasDocumento( , "nCobAge", ::oCount:cAlias )
+
+   IIF( cPrinter == nil, cPrinter := PrnGetName(), ) ;
+
+   cSayFmt           := cNombreDoc( cFmtDoc )
+
+   oDlg = TDialog():New(,,,, "Imprimir series de partes de producción", "IMPSERDOC",, .F.,,,,,, .F.,,,,,, .F., )
+
+
+
+   oSerIni := TGetHlp():ReDefine( 100, { | u | If( PCount()==0, cSerIni, cSerIni:= u ) }, oDlg,,,,,,,,, .F.,,, .F., .F.,,,,,, nil,,, )
+
+
+
+   oSerFin := TGetHlp():ReDefine( 110, { | u | If( PCount()==0, cSerFin, cSerFin:= u ) }, oDlg,,,,,,,,, .F.,,, .F., .F.,,,,,, nil,,, )
+
+
+
+
+
+   TGetHlp():ReDefine( 120, { | u | If( PCount()==0, nDocIni, nDocIni:= u ) }, oDlg,, "999999999",,,,,,, .F.,,, .F., .T.,,,,,, nil,,, )
+
+
+
+
+
+   TGetHlp():ReDefine( 130, { | u | If( PCount()==0, nDocFin, nDocFin:= u ) }, oDlg,, "999999999",,,,,,, .F.,,, .F., .T.,,,,,, nil,,, )
+
+
+
+
+   TGetHlp():ReDefine( 140, { | u | If( PCount()==0, cSufIni, cSufIni:= u ) }, oDlg,, "##",,,,,,, .F.,,, .F., .F.,,,,,, nil,,, )
+
+
+
+
+   TGetHlp():ReDefine( 150, { | u | If( PCount()==0, cSufFin, cSufFin:= u ) }, oDlg,, "##",,,,,,, .F.,,, .F., .F.,,,,,, nil,,, )
+
+
+
+   TCheckBox():ReDefine( 500, { | u | If( PCount()==0, lInvOrden, lInvOrden:= u ) }, oDlg,,,,,,, .F.,, .F. )
+
+
+
+   TCheckBox():ReDefine( 170, { | u | If( PCount()==0, lCopiasPre, lCopiasPre:= u ) }, oDlg,,,,,,, .F.,, .F. )
+
+
+
+
+
+
+
+
+
+   oNumCop := TGetHlp():ReDefine( 180, { | u | If( PCount()==0, nNumCop, nNumCop:= u ) }, oDlg,, "999999999", {||    nNumCop > 0},,,,,, .F., {||     !lCopiasPre},, .F., .T.,,, {||      1}, {||      99999},, nil,,, )
+
+
+
+
+
+
+
+   oFmtDoc := TGetHlp():ReDefine( 90, { | u | If( PCount()==0, cFmtDoc, cFmtDoc:= u ) }, oDlg,,, {||    ( cDocumento( oFmtDoc, oSayFmt, ::oDbfDoc:cAlias ) )}, "N/W*",,,,, .F.,,, .F., .F.,,,,, {|Self|( BrwDocumento( oFmtDoc, oSayFmt, "LQ" ) )}, nil, "LUPA",, )
+
+
+
+
+
+   oSayFmt := TGetHlp():ReDefine( 91, { | u | If( PCount()==0, cSayFmt, cSayFmt:= u ) }, oDlg,,,, "N/W*",,,,, .F., {||     ( .F. )},, .F., .F.,,,,,, nil,,, )
+
+   TBtnBmp():ReDefine( 92, "Printer_pencil_16",,,,,{|| EdtDocumento( cFmtDoc ) }, oDlg, .F., , .F.,  )
+
+
+
+
+   oPrinter := TGetHlp():ReDefine( 160, { | u | If( PCount()==0, cPrinter, cPrinter:= u ) }, oDlg,,,,,,,,, .F., {||     ( .F. )},, .F., .F.,,,,,, nil,,, )
+
+   TBtnBmp():ReDefine( 161, "Printer_preferences_16",,,,,{|| PrinterPreferences( oPrinter ) }, oDlg, .F., , .F.,  )
+
+
+
+
+   TButton():ReDefine( 1, {||( ::StartPrint( SubStr( cFmtDoc, 1, 3 ), Str( nDocIni, 9 ) + cSufIni, Str( nDocFin, 9 ) + cSufFin, oDlg, cPrinter, lCopiasPre, nNumCop, lInvOrden ), oDlg:end( 1 ) )}, oDlg,,, .F.,,,, .F. )
+
+
+
+
+   TButton():ReDefine( 2, {||( oDlg:end() )}, oDlg,,, .F.,,,, .F. )
+
+   oDlg:bStart := { || oSerIni:Hide(), oSerFin:Hide() }
+
+   oDlg:AddFastKey( 116, {|| ::StartPrint( SubStr( cFmtDoc, 1, 3 ), Str( nDocIni, 9 ) + cSufIni, Str( nDocFin, 9 ) + cSufFin, oDlg, cPrinter, lCopiasPre, nNumCop, lInvOrden ), oDlg:end( 1 ) } )
+
+   oDlg:Activate( oDlg:bLClicked, oDlg:bMoved, oDlg:bPainted, .T.,,,, oDlg:bRClicked,,, )
+
+   ::oDbf:GoTo( nRecNo )
+   ::oDbf:OrdSetFocus( nOrdAnt )
+
+RETURN NIL
+
+
+
+UTILITY STATIC function TCobAge_StartPrint( cFmtDoc, cDocIni, cDocFin, oDlg, cPrinter, lCopiasPre, nNumCop, lInvOrden) ; local Self AS CLASS TCobAge := QSelf() AS CLASS TCobAge
+
+   oDlg:disable()
+
+   if !lInvOrden
+
+      ::oDbf:SeekInOrd( cDocIni, "nNumCob", .T. )
+
+
+      while Str( ::oDbf:nNumCob ) + ::oDbf:cSufCob >= cDocIni .AND.  Str( ::oDbf:nNumCob ) + ::oDbf:cSufCob <= cDocFin
+
+         if lCopiasPre
+
+            ::nGenLiquidacion( 1, "Imprimiendo documento : " + Str( ::oDbf:nNumCob ) + ::oDbf:cSufCob, cFmtDoc, cPrinter, nCopiasDocumento( , "nCobAge", ::oCount:cAlias ) )
+
+         else
+
+            ::nGenLiquidacion( 1, "Imprimiendo documento : " + Str( ::oDbf:nNumCob ) + ::oDbf:cSufCob, cFmtDoc, cPrinter, nNumCop )
+
+         end
+
+         ::oDbf:Skip( 1 )
+
+      end
+
+   else
+
+      ::oDbf:SeekInOrd( cDocFin, "nNumCob", .T. )
+
+
+
+      while Str( ::oDbf:nNumCob ) + ::oDbf:cSufCob >= cDocIni .AND. Str( ::oDbf:nNumCob ) + ::oDbf:cSufCob <= cDocFin .AND. !::oDbf:Bof()
+
+         if lCopiasPre
+
+            ::nGenLiquidacion( 1, "Imprimiendo documento : " + Str( ::oDbf:nNumCob ) + ::oDbf:cSufCob, cFmtDoc, cPrinter, nCopiasDocumento( , "nCobAge", ::oCount:cAlias ) )
+
+         else
+
+            ::nGenLiquidacion( 1, "Imprimiendo documento : " + Str( ::oDbf:nNumCob ) + ::oDbf:cSufCob, cFmtDoc, cPrinter, nNumCop )
+
+         end
+
+         ::oDbf:Skip( -1 )
+
+      end
+
+   end
+
+   oDlg:enable()
+
+RETURN NIL
+
+
+
+
+
+UTILITY STATIC function TCobAge_DataReport( oFr) ; local Self AS CLASS TCobAge := QSelf() AS CLASS TCobAge
+
+
+
+
+
+   oFr:ClearDataSets()
+
+   oFr:SetWorkArea(     "Liquidación", ::oDbf:nArea, .F., { 1, 1, 0 } )
+   oFr:SetFieldAliases( "Liquidación", cObjectsToReport( ::oDbf ) )
+
+   oFr:SetWorkArea(     "Lineas de liquidación", ::oDetCobAge:oDbf:nArea )
+   oFr:SetFieldAliases( "Lineas de liquidación", cObjectsToReport( ::oDetCobAge:oDbf ) )
+
+   oFr:SetWorkArea(     "Agentes",  ::oAgentes:nArea )
+   oFr:SetFieldAliases( "Agentes",  cItemsToReport( aItmAge() ) )
+
+   oFr:SetWorkArea(     "Factura de clientes",  ::oFacCliT:nArea )
+   oFr:SetFieldAliases( "Factura de clientes",  cItemsToReport( aItmFacCli() ) )
+
+   oFr:SetWorkArea(     "Factura rectificativa de clientes",  ::oFacRecT:nArea )
+   oFr:SetFieldAliases( "Factura rectificativa de clientes",  cItemsToReport( aItmFacRec() ) )
+
+   oFr:SetWorkArea(     "Empresa", ::oEmpresa:nArea )
+   oFr:SetFieldAliases( "Empresa", cItemsToReport( aItmEmp() ) )
+
+   oFr:SetWorkArea(     "Clientes",  ::oClientes:nArea )
+   oFr:SetFieldAliases( "Clientes",  cItemsToReport( aItmCli() ) )
+
+   oFr:SetMasterDetail( "Liquidación", "Lineas de liquidación",                        {|| Str( ::oDbf:nNumCob ) + ::oDbf:cSufCob } )
+   oFr:SetMasterDetail( "Liquidación", "Agentes",                                      {|| ::oDbf:cCodAge } )
+   oFr:SetMasterDetail( "Liquidación", "Empresa",                                      {|| cCodigoEmpresaEnUso() } )
+   oFr:SetMasterDetail( "Lineas de liquidación", "Factura de clientes",                {|| ::oDetCobAge:oDbf:cSerFac + Str( ::oDetCobAge:oDbf:nNumFac, 9 ) + ::oDetCobAge:oDbf:cSufFac } )
+   oFr:SetMasterDetail( "Lineas de liquidación", "Factura rectificativa de clientes",  {|| ::oDetCobAge:oDbf:cSerFac + Str( ::oDetCobAge:oDbf:nNumFac, 9 ) + ::oDetCobAge:oDbf:cSufFac } )
+   oFr:SetMasterDetail( "Lineas de liquidación", "Clientes",                           {|| ::oDetCobAge:oDbf:cCodCli } )
+
+   oFr:SetResyncPair(   "Liquidación", "Lineas de liquidación" )
+   oFr:SetResyncPair(   "Liquidación", "Agentes" )
+   oFr:SetResyncPair(   "Liquidación", "Empresa" )
+   oFr:SetResyncPair(   "Lineas de liquidación", "Factura de clientes" )
+   oFr:SetResyncPair(   "Lineas de liquidación", "Factura rectificativa de clientes" )
+   oFr:SetResyncPair(   "Lineas de liquidación", "Clientes" )
+
+Return nil
+
+
+
+UTILITY STATIC function TCobAge_VariableReport( oFr) ; local Self AS CLASS TCobAge := QSelf() AS CLASS TCobAge
+
+
+
+
+
+
+   oFr:DeleteCategory(  "Lineas de liquidación" )
+
+   oFr:AddVariable(     "Lineas de liquidación",   "Total línea", "CallHbFunc('nTotalLineaLiquidacion')" )
+
+Return nil
+
+
+
+UTILITY STATIC function TCobAge_DesignReport( oFr, dbfDoc) ; local Self AS CLASS TCobAge := QSelf() AS CLASS TCobAge
+
+   if ::OpenFiles()
+
+
+
+
+
+      ::DataReport( oFr )
+
+
+
+
+
+      if !Empty( ( dbfDoc )->mReport )
+
+         oFr:LoadFromBlob( ( dbfDoc )->( Select() ), "mReport")
+
+      else
+
+         oFr:SetProperty(     "Report",            "ScriptLanguage", "PascalScript" )
+
+         oFr:AddPage(         "MainPage" )
+
+         oFr:AddBand(         "CabeceraDocumento", "MainPage", 2 )
+         oFr:SetProperty(     "CabeceraDocumento", "Top", 0 )
+         oFr:SetProperty(     "CabeceraDocumento", "Height", 200 )
+
+         oFr:AddBand(         "CabeceraColumnas",  "MainPage", 6 )
+         oFr:SetProperty(     "CabeceraColumnas",  "Top", 200 )
+         oFr:SetProperty(     "CabeceraColumnas",  "Height", 0 )
+         oFr:SetProperty(     "CabeceraColumnas",  "StartNewPage", .T. )
+         oFr:SetObjProperty(  "CabeceraColumnas",  "DataSet", "Liquidación" )
+
+         oFr:AddBand(         "DetalleColumnas",   "MainPage", 7  )
+         oFr:SetProperty(     "DetalleColumnas",   "Top", 230 )
+         oFr:SetProperty(     "DetalleColumnas",   "Height", 28 )
+         oFr:SetObjProperty(  "DetalleColumnas",   "DataSet", "Lineas de liquidación" )
+         oFr:SetProperty(     "DetalleColumnas",   "OnMasterDetail", "DetalleOnMasterDetail" )
+
+         oFr:AddBand(         "PieDocumento",      "MainPage", 3 )
+         oFr:SetProperty(     "PieDocumento",      "Top", 930 )
+         oFr:SetProperty(     "PieDocumento",      "Height", 110 )
+
+      end
+
+
+
+
+
+      ::VariableReport( oFr )
+
+
+
+
+
+      oFr:DesignReport()
+
+
+
+
+
+      oFr:DestroyFr()
+
+
+
+
+
+      ::CloseFiles()
+
+   else
+
+      Return .F.
+
+   end
+
+Return .T.
+
+
+
+UTILITY STATIC function TCobAge_PrintReport( nDevice, nCopies, cPrinter, dbfDoc) ; local Self AS CLASS TCobAge := QSelf() AS CLASS TCobAge
+
+   local oFr
+
+   IIF( nDevice == nil, nDevice := 2, ) ;
+   IIF( nCopies == nil, nCopies := 1, ) ;
+   IIF( cPrinter == nil, cPrinter := PrnGetName(), ) ;
+
+   SysRefresh()
+
+   oFr                  := frReportManager():New()
+
+   oFr:LoadLangRes(     "Spanish.Xml" )
+
+   oFr:SetIcon( 1 )
+
+   oFr:SetTitle(        "Diseñador de documentos" )
+
+
+
+
+
+   oFr:SetEventHandler( "Designer", "OnSaveReport", {|| oFr:SaveToBlob( ( dbfDoc )->( Select() ), "mReport" ) } )
+
+
+
+
+
+   ::DataReport( oFr )
+
+
+
+
+
+   if !Empty( ( dbfDoc )->mReport )
+
+      oFr:LoadFromBlob( ( dbfDoc )->( Select() ), "mReport")
+
+
+
+
+
+      ::VariableReport( oFr )
+
+
+
+
+
+      oFr:PrepareReport()
+
+
+
+
+
+      do case
+         case nDevice == 2
+            oFr:ShowPreparedReport()
+
+         case nDevice == 1
+            oFr:PrintOptions:SetPrinter( cPrinter )
+            oFr:PrintOptions:SetCopies( nCopies )
+            oFr:PrintOptions:SetShowDialog( .F. )
+            oFr:Print()
+
+         case nDevice == 3
+            oFr:SetProperty(  "PDFExport", "EmbeddedFonts",    .T. )
+            oFr:SetProperty(  "PDFExport", "PrintOptimized",   .T. )
+            oFr:SetProperty(  "PDFExport", "Outline",          .T. )
+            oFr:DoExport(     "PDFExport" )
+
+      end
+
+   end
+
+
+
+
+
+   oFr:DestroyFr()
+
+Return .T.
+
+
+
+
+
+
+UTILITY STATIC function TCobAge_lFacturaProcesar( lRectificativa, lRelacionado) ; local Self AS CLASS TCobAge := QSelf() AS CLASS TCobAge
+
+   local lFacturaProcesar  := .F.
+
+   if lRelacionado
+
+
+
+
+
+
+      if ( ::oDetCobAge:lFacturaRemesada( lRectificativa, ::oFacCliT:cSerie + Str( ::oFacCliT:nNumFac ) + ::oFacCliT:cSufFac, ::oFacCliT:cCodAge ) ) .AND.  ( ::lFacturasIncluidas .OR. ( !::lFacturasIncluidas .AND. !::oDetCobAge:lFacturaRemesada( lRectificativa, ::oFacCliT:cSerie + Str( ::oFacCliT:nNumFac ) + ::oFacCliT:cSufFac, ::oDbf:cCodAge ) ) )
+
+         lFacturaProcesar  := .T.
+
+      end
+
+   else
+
+
+
+
+
+      if ( ::lFacturasIncluidas ) .OR. ( !::lFacturasIncluidas .AND. !::oDetCobAge:lFacturaRemesada( lRectificativa, ::oFacCliT:cSerie + Str( ::oFacCliT:nNumFac ) + ::oFacCliT:cSufFac, ::oFacCliT:cCodAge ) )
+
+         lFacturaProcesar  := .T.
+
+      end
+
+   end
+
+Return ( lFacturaProcesar )
+
+
+
+UTILITY STATIC function TCobAge_Contabilizar( lSimula) ; local Self AS CLASS TCobAge := QSelf() AS CLASS TCobAge
+
+   local cCtaAge     := ""
+   local cCtaGas     := ""
+   local aSimula     := {}
+   local cCodPro     := cProCnt()
+   local cRuta       := cRutCnt()
+   local cCodEmp     := cCodEmpCnt( "A" )
+   local nAsiento
+   local lErrorFound := .F.
+   local cLiquidacion
+
+   cLiquidacion      := "Lqd. agentes N. " + AllTrim( Str( ::oDbf:nNumCob, 9 ) )
+
+   if !ChkRuta( cRutCnt() )
+      ::oTreeSelect:Select( ::oTreeSelect:Add( cLiquidacion + " ruta no valida.", 0 ) )
+      lErrorFound    := .T.
+   end
+
+
+   if Empty( cCodEmp )
+      ::oTreeSelect:Select( ::oTreeSelect:Add( cLiquidacion + " no se definieron empresas asociadas", 0 ) )
+      lErrorFound    := .T.
+   end
+
+
+
+
+
+   if ::oDbf:lConta
+      if !msgYesNo( cLiquidacion + " ya contabilizada." + Chr(13)+Chr(10) + "¿ Desea contabilizarla de nuevo ?" )
+         return .F.
+      end
+   end
+
+   if !lSimula .AND. !ChkRuta( cRutCnt() )
+      ::oTreeSelect:Select( ::oTreeSelect:Add( "Ruta de contaplus no valida.", 0 ) )
+      lErrorFound    := .T.
+   end
+
+
+
+
+
+
+   if Empty( cCodEmp ) .AND. !::lChkSelect
+      ::oTreeSelect:Select( ::oTreeSelect:Add( cLiquidacion + " no se definierón empresas asociadas.", 0 ) )
+      lErrorFound    := .T.
+   end
+
+
+
+
+
+
+   if !lSimula .AND. !ChkFecha( , , ::oDbf:dFecCob, .F., ::oTreeSelect )
+      lErrorFound    := .T.
+   end
+
+
+
+
+
+
+   cCtaAge           := oRetFld( ::oDbf:cCodAge, ::oAgentes, "CtaAge" )
+
+   if !lSimula .AND. !ChkSubCta( cRuta, cCodEmp, cCtaAge, , .F., .F. )
+      ::oTreeSelect:Select( ::oTreeSelect:Add( "Cuenta de agente : " + Rtrim( ::oAgentes:cNbrAge ) + Space( 1 ) + Rtrim( ::oAgentes:cApeAge ) + " cuenta contable no existe.", 0 ) )
+      lErrorFound    := .T.
+   end
+
+   cCtaGas           := oRetFld( ::oDbf:cCodAge, ::oAgentes, "CtaGas" )
+
+   if !lSimula .AND. !ChkSubCta( cRuta, cCodEmp, cCtaGas, , .F., .F. )
+      ::oTreeSelect:Select( ::oTreeSelect:Add( "Cuenta de gasto : " + Rtrim( ::oAgentes:cNbrAge ) + Space( 1 ) + Rtrim( ::oAgentes:cApeAge ) + " cuenta contable no existe.", 0 ) )
+      lErrorFound    := .T.
+   end
+
+
+
+
+
+
+   if OpenDiario( , cCodEmp )
+      nAsiento       := RetLastAsi()
+   else
+      ::oTreeSelect:Select( ::oTreeSelect:Add( cLiquidacion + " imposible abrir ficheros de contaplus", 0 ) )
+      Return .F.
+   end
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+   aadd( aSimula, MkAsiento( nAsiento, ::oDbf:cCodDiv, ::oDbf:dFecCob, cCtaAge, , , cLiquidacion, ::oDbf:nTotCob, Str( ::oDbf:nNumCob, 9 ), , , , , cCodPro, , , , , lSimula ) )
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+   aadd( aSimula, MkAsiento( nAsiento, ::oDbf:cCodDiv, ::oDbf:dFecCob, cCtaGas, , ::oDbf:nTotCob, cLiquidacion, , Str( ::oDbf:nNumCob, 9 ), , , , , cCodPro, , , , , lSimula ) )
+
+   if !lSimula
+
+      if !lErrorFound
+         ::lContabilizar( nAsiento )
+      end
+
+   else
+
+      msgTblCon( aSimula, ::oDbf:cCodDiv, ::oDivisas:cAlias, !lErrorFound, cLiquidacion, {|| aWriteAsiento( aSimula, ::oDbf:cCodDiv, .T., ::oTreeSelect, cLiquidacion, nAsiento ), ::lContabilizar( nAsiento ) } )
+
+   end
+
+   CloseDiario()
+
+   ::oWndBrw:Refresh()
+
+RETURN ( !lErrorFound )
+
+
+
+
+
+
+
+
+
+
+
+
+
+_HB_CLASS TDetCobAge ; UTILITY FUNCTION TDetCobAge(...); static s_oClass ; local oClassInstance ; local nScope ; nScope := 1 ; if s_oClass == NIL ; s_oClass := IIF(.F.,, HBClass():New( "TDetCobAge" , {TDet():classh} ) ) ; ;
+
+   _HB_MEMBER { oNumFac} ; IIF( !.F., s_oClass:AddMultiData(,, nScope + IIF( .F., 32, 0 ), { "oNumFac" }, .F., .F. ), )
+   _HB_MEMBER { oCodCli} ; IIF( !.F., s_oClass:AddMultiData(,, nScope + IIF( .F., 32, 0 ), { "oCodCli" }, .F., .F. ), )
+   _HB_MEMBER { oNomCli} ; IIF( !.F., s_oClass:AddMultiData(,, nScope + IIF( .F., 32, 0 ), { "oNomCli" }, .F., .F. ), )
+   _HB_MEMBER { cNomCli} ; IIF( !.F., s_oClass:AddMultiData(,, nScope + IIF( .F., 32, 0 ), { "cNomCli" }, .F., .F. ), )
+   _HB_MEMBER { oFecFac} ; IIF( !.F., s_oClass:AddMultiData(,, nScope + IIF( .F., 32, 0 ), { "oFecFac" }, .F., .F. ), )
+   _HB_MEMBER { oImpCom} ; IIF( !.F., s_oClass:AddMultiData(,, nScope + IIF( .F., 32, 0 ), { "oImpCom" }, .F., .F. ), )
+   _HB_MEMBER { oPctCom} ; IIF( !.F., s_oClass:AddMultiData(,, nScope + IIF( .F., 32, 0 ), { "oPctCom" }, .F., .F. ), )
+   _HB_MEMBER { oTotCom} ; IIF( !.F., s_oClass:AddMultiData(,, nScope + IIF( .F., 32, 0 ), { "oTotCom" }, .F., .F. ), )
+   _HB_MEMBER { oCodAge} ; IIF( !.F., s_oClass:AddMultiData(,, nScope + IIF( .F., 32, 0 ), { "oCodAge" }, .F., .F. ), )
+   _HB_MEMBER { oNomAge} ; IIF( !.F., s_oClass:AddMultiData(,, nScope + IIF( .F., 32, 0 ), { "oNomAge" }, .F., .F. ), )
+
+   _HB_MEMBER { oGetTotalCosto} ; IIF( !.F., s_oClass:AddMultiData(,, nScope + IIF( .F., 32, 0 ), { "oGetTotalCosto" }, .F., .F. ), )
+   _HB_MEMBER { nGetTotalCosto} ; IIF( !.F., s_oClass:AddMultiData(, 0, nScope + IIF( .F., 32, 0 ), { "nGetTotalCosto" }, .F., .F. ), )
+
+   _HB_MEMBER DefineFiles(); IIF( .F., s_oClass:ModMethod( "DefineFiles", @TDetCobAge_DefineFiles(), nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ), s_oClass:AddMethod( "DefineFiles", @TDetCobAge_DefineFiles(), nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ));
+
+   _HB_MEMBER OpenFiles( lExclusive); IIF( .F., s_oClass:ModMethod( "OpenFiles", @TDetCobAge_OpenFiles(), nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ), s_oClass:AddMethod( "OpenFiles", @TDetCobAge_OpenFiles(), nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ));
+   _HB_MEMBER OpenService(lExclusive); IIF( .F., s_oClass:ModMethod( "OpenService", @TDetCobAge_OpenFiles(), nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ) ), s_oClass:AddMethod( "OpenService", @TDetCobAge_OpenFiles(), nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ) ) );
+
+   _HB_MEMBER Resource( nMode, lLiteral); IIF( .F., s_oClass:ModMethod( "Resource", @TDetCobAge_Resource(), nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ), s_oClass:AddMethod( "Resource", @TDetCobAge_Resource(), nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ));
+
+   _HB_MEMBER SaveDetails(); IIF( .F., s_oClass:ModMethod( "SaveDetails", @TDetCobAge_SaveDetails(), nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ), s_oClass:AddMethod( "SaveDetails", @TDetCobAge_SaveDetails(), nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ));
+
+   _HB_MEMBER lFacturaRemesada( cNumFac); IIF( .F., s_oClass:ModMethod( "lFacturaRemesada", @TDetCobAge_lFacturaRemesada(), nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ), s_oClass:AddMethod( "lFacturaRemesada", @TDetCobAge_lFacturaRemesada(), nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ));
+
+   _HB_MEMBER nTotalComisionFactura( cNumFac); IIF( .F., s_oClass:ModMethod( "nTotalComisionFactura", @TDetCobAge_nTotalComisionFactura(), nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ), s_oClass:AddMethod( "nTotalComisionFactura", @TDetCobAge_nTotalComisionFactura(), nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ));
+
+   _HB_MEMBER nTotCosto( oDbf); IIF( .F., s_oClass:ModMethod( "nTotCosto", @TDetCobAge_nTotCosto(), nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ), s_oClass:AddMethod( "nTotCosto", @TDetCobAge_nTotCosto(), nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ));
+   _HB_MEMBER lTotCosto( oDbf); IIF( .F., s_oClass:ModMethod( "lTotCosto", @TDetCobAge_lTotCosto(), nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ), s_oClass:AddMethod( "lTotCosto", @TDetCobAge_lTotCosto(), nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ));
+
+   _HB_MEMBER lPreSave( oGetTipoHora, oDlg); IIF( .F., s_oClass:ModMethod( "lPreSave", @TDetCobAge_lPreSave(), nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ), s_oClass:AddMethod( "lPreSave", @TDetCobAge_lPreSave(), nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ));
+
+   _HB_MEMBER LoadFacturas( lRectificativa); IIF( .F., s_oClass:ModMethod( "LoadFacturas", @TDetCobAge_LoadFacturas(), nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ), s_oClass:AddMethod( "LoadFacturas", @TDetCobAge_LoadFacturas(), nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ));
+   _HB_MEMBER BrowseFacturas(lRectificativa); IIF( .F., s_oClass:ModInline( "BrowseFacturas", {|Self,lRectificativa | Self, ( if( !lRectificativa, BrwFacCli( ::oNumFac ), BrwFacRec( ::oNumFac ) ) ) }, nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ), s_oClass:AddInline( "BrowseFacturas", {|Self,lRectificativa | Self, ( if( !lRectificativa, BrwFacCli( ::oNumFac ), BrwFacRec( ::oNumFac ) ) ) }, nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ) )
+
+   _HB_MEMBER lChangeComision(); IIF( .F., s_oClass:ModInline( "lChangeComision", {|Self | Self, ( ::oTotCom:cText( ::oImpCom:VarGet() * ::oPctCom:VarGet() / 100 ) ) }, nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ), s_oClass:AddInline( "lChangeComision", {|Self | Self, ( ::oTotCom:cText( ::oImpCom:VarGet() * ::oPctCom:VarGet() / 100 ) ) }, nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ) )
+
+   _HB_MEMBER nTotalLineaVirtual(); IIF( .F., s_oClass:ModInline( "nTotalLineaVirtual", {|Self | Self, ( ::oDbfVir:nImpCom * ::oDbfVir:nComAge / 100 ) }, nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ), s_oClass:AddInline( "nTotalLineaVirtual", {|Self | Self, ( ::oDbfVir:nImpCom * ::oDbfVir:nComAge / 100 ) }, nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ) )
+   _HB_MEMBER nTotalLineaLiquidacion(); IIF( .F., s_oClass:ModInline( "nTotalLineaLiquidacion", {|Self | Self, ( ::oDbf:nImpCom * ::oDbf:nComAge / 100 ) }, nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ), s_oClass:AddInline( "nTotalLineaLiquidacion", {|Self | Self, ( ::oDbf:nImpCom * ::oDbf:nComAge / 100 ) }, nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ) )
+
+; IF .F. ; __clsActive(s_oClass:hClass) ; s_oClass:Refresh() ; ELSE ; s_oClass:Create() ; END ; oClassInstance := __clsInst( s_oClass:hClass ) ; IF __ObjHasMsg( oClassInstance, "InitClass" ); oClassInstance:InitClass( hb_aParams() ) ; END ; ELSE ; oClassInstance := __clsInst( s_oClass:hClass ) ; END ; IF PCount() > 0 ; DIVERT TO (@DivertConstructorCall()) OF s_oClass ; END ; RETURN oClassInstance AS CLASS TDetCobAge ;
+
+
+
+UTILITY STATIC function TDetCobAge_DefineFiles( cPath, cVia, lUniqueName, cFileName) ; local Self AS CLASS TDetCobAge := QSelf() AS CLASS TDetCobAge
+
+   local oDbf
+
+   IIF( cPath == nil, cPath := ::cPath, ) ;
+   IIF( cVia == nil, cVia := cDriver(), ) ;
+   IIF( lUniqueName == nil, lUniqueName := .F., ) ;
+   IIF( cFileName == nil, cFileName := "RemAgeL", ) ;
+
+   if lUniqueName
+      cFileName         := cGetNewFileName( cFileName, , , cPath )
+   end
+
+   oDbf := DbfServer( ( cFileName ), ( cFileName ) ):New( ( cFileName ), ( cFileName ), ( cVia ), "Lineas de liquidación de agentes", ( cPath ) )
+
+      oDbf:AddField( "nNumCob", "N", 09, 0,,,,, "Número", .F.,, .F., {} )
+      oDbf:AddField( "cSufCob", "C", 02, 0,,,,, "Sufijo", .F.,, .F., {} )
+      oDbf:AddField( "cSerFac", "C", 01, 0,,,,, "Serie factura", .F.,, .F., {} )
+      oDbf:AddField( "nNumFac", "N", 09, 0,,,,, "Número factura", .F.,, .F., {} )
+      oDbf:AddField( "cSufFac", "C", 02, 0,,,,, "Sufijo factura", .F.,, .F., {} )
+      oDbf:AddField( "lFacRec", "L", 01, 0,,,,, "Factura rectificativa", .F.,, .F., {} )
+      oDbf:AddField( "dFecFac", "D", 08, 0,,,,, "Fecha factura", .F.,, .F., {} )
+      oDbf:AddField( "cCodCli", "C", 12, 0,,,,, "Código de cliente", .F.,, .F., {} )
+      oDbf:AddField( "cCodAge", "C", 03, 0,,,,, "Código de agente", .F.,, .F., {} )
+      oDbf:AddField( "nImpCom", "N", 16, 6,,,,, "Importe comisión", .F.,, .F., {} )
+      oDbf:AddField( "nComAge", "N", 06, 2,,,,, "Comisión del agente", .F.,, .F., {} )
+
+      oDbf:AddIndex( "nNumCob", ( cFileName ), "Str( nNumCob ) + cSufCob",,, .F., .F.,,,, .T., .F. )
+      oDbf:AddIndex( "cNumDoc", ( cFileName ), "cSerFac + Str( nNumFac, 9 ) + cSufFac + cCodAge",,, .F., .F.,,,, .T., .F. )
+      oDbf:AddIndex( "cNumFac", ( cFileName ), "cSerFac + Str( nNumFac, 9 ) + cSufFac + cCodAge", "!lFacRec",, .F., .F.,,,, .T., .F. )
+      oDbf:AddIndex( "cNumRct", ( cFileName ), "cSerFac + Str( nNumFac, 9 ) + cSufFac + cCodAge", "lFacRec",, .F., .F.,,,, .T., .F. )
+      oDbf:AddIndex( "dFecFac", ( cFileName ), "dFecFac",,, .F., .F.,,,, .T., .F. )
+      oDbf:AddIndex( "cCodCli", ( cFileName ), "cCodCli",,, .F., .F.,,,, .T., .F. )
+      oDbf:AddIndex( "cCodAge", ( cFileName ), "cCodAge",,, .F., .F.,,,, .T., .F. )
+      oDbf:AddIndex( "xNumCob", ( cFileName ), "Str( nNumCob ) + cSufCob + cCodAge + cCodCli + cSerFac + Str( nNumFac, 9 ) + cSufFac",,, .F., .F.,,,, .T., .F. )
+
+
+
+RETURN ( oDbf )
+
+
+
+UTILITY STATIC function TDetCobAge_OpenFiles(lExclusive) ; local Self AS CLASS TDetCobAge := QSelf() AS CLASS TDetCobAge
+
+   local lOpen          := .T.
+   local oBlock         := ErrorBlock( {| oError | ApoloBreak( oError ) } )
+
+   IIF( lExclusive == nil, lExclusive := .F., ) ;
+
+   BEGIN SEQUENCE
+
+   if Empty( ::oDbf )
+      ::oDbf            := ::DefineFiles()
+   end
+
+   ::oDbf:Activate( .F., !lExclusive )
+
+   ::bOnPreSaveDetail   := {|| ::SaveDetails() }
+
+   RECOVER
+
+      msgStop( "Imposible abrir todas las bases de datos de lineas de liquidaciones" )
+
+      ::CloseFiles()
+
+      lOpen             := .F.
+
+   end
+
+   ErrorBlock( oBlock )
+
+RETURN ( lOpen )
+
+
+
+UTILITY STATIC function TDetCobAge_Resource( nMode, lRectificativa) ; local Self AS CLASS TDetCobAge := QSelf() AS CLASS TDetCobAge
+
+   local oDlg
+   local cNumFac
+   local cCodAge
+   local cNomAge
+   local cNomCli
+   local nPctCom           := 0
+   local nImpCom           := 0
+   local nTotCom           := 0
+
+   IIF( lRectificativa == nil, lRectificativa := .F., ) ;
+
+   cNumFac                 := ::oDbfVir:cSerFac + Str( ::oDbfVir:nNumFac ) + ::oDbfVir:cSufFac
+   cNomAge                 := oRetFld( ::oDbfVir:cCodAge, ::oParent:oAgentes )
+   cNomCli                 := oRetFld( ::oDbfVir:cCodCli, ::oParent:oClientes )
+
+   oDlg = TDialog():New(,,,, lblTitle( nMode ) + if( !lRectificativa, "facturas de clientes", "facturas rectificativas de clientes" ), "lCobRec",, .F.,,,,,, .F.,,,,,, .F., )
+
+
+
+
+
+
+      ::oNumFac := TGetHlp():ReDefine( 100, { | u | If( PCount()==0, cNumFac, cNumFac:= u ) }, oDlg,, "@R X/#########/XX",,,,,,, .F., {||         ( nMode == 1 )},, .F., .F.,,,,,, nil, "LUPA",, )
+
+      ::oNumFac:bValid     := {|| ::LoadFacturas( lRectificativa ) }
+      ::oNumFac:bHelp      := {|| ::BrowseFacturas( lRectificativa ) }
+
+
+
+
+      ::oCodCli := TGetHlp():ReDefine( 110, { | u | If( PCount()==0, ::oDbfVir:cCodCli, ::oDbfVir:cCodCli:= u ) }, oDlg,,,,,,,,, .F., {||     ( .F. )},, .F., .F.,,,,,, nil,,, )
+
+
+
+
+      ::oNomCli := TGetHlp():ReDefine( 111, { | u | If( PCount()==0, cNomCli, cNomCli:= u ) }, oDlg,,,,,,,,, .F., {||     ( .F. )},, .F., .F.,,,,,, nil,,, )
+
+
+
+
+      ::oFecFac := TGetHlp():ReDefine( 120, { | u | If( PCount()==0, ::oDbfVir:dFecFac, ::oDbfVir:dFecFac:= u ) }, oDlg,,,,,,,,, .F., {||     ( .F. )},, .F., .F.,,,,,, nil,,, )
+
+
+
+
+      ::oCodAge := TGetHlp():ReDefine( 160, { | u | If( PCount()==0, ::oDbfVir:cCodAge, ::oDbfVir:cCodAge:= u ) }, oDlg,,,,,,,,, .F., {||     ( .F. )},, .F., .F.,,,,,, nil,,, )
+
+
+
+
+      ::oNomAge := TGetHlp():ReDefine( 161, { | u | If( PCount()==0, cNomAge, cNomAge:= u ) }, oDlg,,,,,,,,, .F., {||     ( .F. )},, .F., .F.,,,,,, nil,,, )
+
+
+
+
+
+
+      ::oImpCom := TGetHlp():ReDefine( 130, { | u | If( PCount()==0, ::oDbfVir:nImpCom, ::oDbfVir:nImpCom:= u ) }, oDlg,, ::oParent:cPorDiv,,,,,,, .F., {||     ( nMode <> 3 )},, .F., .T.,,,,,, nil,,, )
+
+      ::oImpCom:bChange    := {|| ::lChangeComision() }
+
+
+
+
+
+
+      ::oPctCom := TGetHlp():ReDefine( 140, { | u | If( PCount()==0, ::oDbfVir:nComAge, ::oDbfVir:nComAge:= u ) }, oDlg,, "@E 999.99",,,,,,, .F., {||     ( nMode <> 3 )},, .F., .T.,,,,,, nil,,, )
+
+      ::oPctCom:bChange := {|| ::lChangeComision() }
+
+
+
+
+
+      ::oTotCom := TGetHlp():ReDefine( 150, { | u | If( PCount()==0, nTotCom, nTotCom:= u ) }, oDlg,, ::oParent:cPorDiv,,,,,,, .F., {||     ( .F. )},, .F., .F.,,,,,, nil,,, )
+
+
+
+
+
+      TButton():ReDefine( 1, {||( oDlg:end( 1 ) )}, oDlg,,, .F., {||         ( nMode <> 3 )},,, .F. )
+
+
+
+
+
+        TButton():ReDefine( 2, {||( oDlg:end() )}, oDlg,,, .F.,,,, .T. )
+
+      oDlg:bStart := {|| ::lChangeComision() }
+
+      if nMode <> 3
+         oDlg:AddFastKey( 116, {|| oDlg:end( 1 ) } )
+      end
+
+   oDlg:Activate( oDlg:bLClicked, oDlg:bMoved, oDlg:bPainted, .T.,,,, oDlg:bRClicked,,, )
+
+RETURN ( oDlg:nResult == 1 )
+
+
+
+UTILITY STATIC function TDetCobAge_lPreSave() ; local Self AS CLASS TDetCobAge := QSelf() AS CLASS TDetCobAge
+
+RETURN ( nil )
+
+
+
+UTILITY STATIC function TDetCobAge_SaveDetails() ; local Self AS CLASS TDetCobAge := QSelf() AS CLASS TDetCobAge
+
+   ::oDbfVir:nNumCob    := ::oParent:oDbf:nNumCob
+   ::oDbfVir:cSufCob    := ::oParent:oDbf:cSufCob
+
+RETURN ( Self )
+
+
+
+UTILITY STATIC function TDetCobAge_nTotalComisionFactura( lRectificativa, cNumFac, cCodAge, nPorcentajeAgente) ; local Self AS CLASS TDetCobAge := QSelf() AS CLASS TDetCobAge
+
+   local nImporte
+   local nComision
+   local nComisionFactura              := 0
+   local nTotalComisionFactura         := 0
+   local nPorcentajeComisionFactura    := 0
+
+   IIF( lRectificativa == nil, lRectificativa := .F., ) ;
+
+   if lRectificativa
+
+      if ::oParent:oFacRecL:Seek( cNumFac )
+
+         while ::oParent:oFacRecL:cSerie + Str( ::oParent:oFacRecL:nNumFac ) + ::oParent:oFacRecL:cSufFac == cNumFac .AND. !::oParent:oFacRecL:Eof()
+
+
+
+            nImporte                   := nImpLFacRec( ::oParent:oFacRecT:cAlias, ::oParent:oFacRecL:cAlias, ::oParent:nDouDiv, ::oParent:nDorDiv, , .F., .T., .F., .F. )
+
+            if IsNum( nPorcentajeAgente ) .AND. ( nPorcentajeAgente <> 0)
+               nComision               := nImporte * nPorcentajeAgente / 100
+            else
+               nComision               := nImporte * ::oParent:oFacRecL:nComAge / 100
+            end
+
+            nTotalComisionFactura      += nImporte
+            nComisionFactura           += nComision
+
+
+
+            ::oParent:oFacRecL:Skip()
+
+         end
+
+      end
+
+   else
+
+      if ::oParent:oFacCliL:Seek( cNumFac )
+
+         while ::oParent:oFacCliL:cSerie + Str( ::oParent:oFacCliL:nNumFac ) + ::oParent:oFacCliL:cSufFac == cNumFac .AND. !::oParent:oFacCliL:Eof()
+
+
+
+            nImporte                   := nImpLFacCli( ::oParent:oFacCliT:cAlias, ::oParent:oFacCliL:cAlias, ::oParent:nDouDiv, ::oParent:nDorDiv, , .F., .T., .F., .F. )
+
+            if IsNum( nPorcentajeAgente ) .AND. ( nPorcentajeAgente <> 0)
+               nComision               := nImporte * nPorcentajeAgente / 100
+            else
+               nComision               := nImporte * ::oParent:oFacCliL:nComAge / 100
+            end
+
+            nTotalComisionFactura      += nImporte
+            nComisionFactura           += nComision
+
+
+
+            ::oParent:oFacCliL:Skip()
+
+         end
+
+      end
+
+   end
+
+   nPorcentajeComisionFactura          := nTotalComisionFactura / nComisionFactura
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+   if !Empty( ::oImpCom )
+      ::oImpCom:cText( nTotalComisionFactura )
+   end
+
+   if !Empty( ::oTotCom )
+      ::oTotCom:cText( nComisionFactura )
+   end
+
+   if !Empty( ::oPctCom )
+      ::oPctCom:cText( nPorcentajeComisionFactura )
+   end
+
+RETURN ( { nTotalComisionFactura, nComisionFactura } )
+
+
+
+UTILITY STATIC function TDetCobAge_lFacturaRemesada( lRectificativa, cNumeroFactura, cCodigoAgente) ; local Self AS CLASS TDetCobAge := QSelf() AS CLASS TDetCobAge
+
+   local lFacturaRemesada  := .F.
+
+   IIF( lRectificativa == nil, lRectificativa := .F., ) ;
+   IIF( cCodigoAgente == nil, cCodigoAgente := "", ) ;
+
+   ::oDbf:GetStatus()
+
+   if lRectificativa
+
+      if ::oDbf:SeekInOrd( cNumeroFactura + cCodigoAgente, "cNumRct" )
+         lFacturaRemesada  := .T.
+      end
+
+   else
+
+      if ::oDbf:SeekInOrd( cNumeroFactura + cCodigoAgente, "cNumFac" )
+         lFacturaRemesada  := .T.
+      end
+
+   end
+
+   ::oDbf:SetStatus()
+
+RETURN ( lFacturaRemesada )
+
+
+
+UTILITY STATIC function TDetCobAge_nTotCosto( oDbf) ; local Self AS CLASS TDetCobAge := QSelf() AS CLASS TDetCobAge
+
+   local nTotalImporte
+
+   IIF( oDbf == nil, oDbf := ::oDbf, ) ;
+
+   nTotalImporte  := oDbf:nNumHra * oDbf:nCosHra
+
+RETURN ( nTotalImporte )
+
+
+
+UTILITY STATIC function TDetCobAge_lTotCosto( oDbf) ; local Self AS CLASS TDetCobAge := QSelf() AS CLASS TDetCobAge
+
+   IIF( oDbf == nil, oDbf := ::oDbf, ) ;
+
+RETURN ( ::oGetTotalCosto:cText( ::nTotCosto( oDbf ) ), .T. )
+
+
+
+UTILITY STATIC function TDetCobAge_LoadFacturas( lRectificativa) ; local Self AS CLASS TDetCobAge := QSelf() AS CLASS TDetCobAge
+
+   local cNumFac
+   local lLoaRec           := .T.
+
+   IIF( lRectificativa == nil, lRectificativa := .F., ) ;
+
+   cNumFac                 := Upper( ::oNumFac:VarGet() )
+   cNumFac                 := SubStr( cNumFac, 1, 1 ) + Padl( Alltrim( SubStr( cNumFac, 2, 9 ) ), 9 )
+
+
+
+
+
+   ::oDbfVir:GetStatus()
+
+   if lRectificativa
+
+      if ::oDbfVir:SeekInOrd( cNumFac, "cNumRct" )
+         MsgStop( "La factura ya esta incluida en esta liquidación." )
+         lLoaRec           := .F.
+      end
+
+   else
+
+      if ::oDbfVir:SeekInOrd( cNumFac, "cNumFac" )
+         MsgStop( "La factura ya esta incluida en esta liquidación." )
+         lLoaRec           := .F.
+      end
+
+   end
+
+   ::oDbfVir:SetStatus()
+
+   if !lLoaRec
+      return .F.
+   end
+
+
+
+
+
+   if ::lFacturaRemesada( lRectificativa, cNumFac )
+      if !MsgYesNo( "La factura ya está incluida en otra liquidación." + Chr(13)+Chr(10) + "¿Desea incluirla de todas formas?", "Seleccione" )
+         return .F.
+      end
+   end
+
+
+
+
+
+   if lRectificativa
+
+      ::oParent:oFacRecT:GetStatus()
+      ::oParent:oFacRecT:SetFocus( "nNumFac" )
+
+      if ::oParent:oFacRecT:Seek( cNumFac )
+
+         if ::oParent:oFacRecT:cCodAge <> ::oParent:oDbf:cCodAge
+
+
+            if !MsgYesNo( "La factura rectificativa " + ::oParent:oFacRecT:cSerie + "/" + Alltrim( Str( ::oParent:oFacRecT:nNumFac ) ) + " pertence a otro agente" + Chr(13)+Chr(10) + "¿ desea asignarlo al agente " + Rtrim( ::oParent:oDbf:cCodAge ) + " ?", "Seleccione" )
+
+               lLoaRec  := .F.
+
+            end
+
+         end
+
+         if lLoaRec
+
+            ::oDbfVir:cSerFac := ::oParent:oFacRecT:cSerie
+            ::oDbfVir:nNumFac := ::oParent:oFacRecT:nNumFac
+            ::oDbfVir:cSufFac := ::oParent:oFacRecT:cSufFac
+            ::oDbfVir:lFacRec := .T.
+
+            ::oNumFac:cText( ::oParent:oFacRecT:cSerie + Str( ::oParent:oFacRecT:nNumFac ) + ::oParent:oFacRecT:cSufFac )
+
+            ::oCodCli:cText( ::oParent:oFacRecT:cCodCli )
+
+            ::oNomCli:cText( ::oParent:oFacRecT:cNomCli )
+
+            ::oFecFac:cText( ::oParent:oFacRecT:dFecFac )
+
+            ::oCodAge:cText( ::oParent:oFacRecT:cCodAge )
+
+            ::oNomAge:cText( oRetFld( ::oParent:oFacRecT:cCodAge, ::oParent:oAgentes ) )
+
+            ::nTotalComisionFactura( .T., ::oParent:oFacRecT:cSerie + Str( ::oParent:oFacRecT:nNumFac ) + ::oParent:oFacRecT:cSufFac )
+
+         end
+
+         lLoaRec        := .T.
+
+      else
+
+         MsgStop( "Número de factura rectificativa no encontrada." )
+
+         lLoaRec        := .F.
+
+      end
+
+      ::oParent:oFacRecT:SetStatus()
+
+   else
+
+      ::oParent:oFacCliT:GetStatus()
+      ::oParent:oFacCliT:SetFocus( "nNumFac" )
+
+      if ::oParent:oFacCliT:Seek( cNumFac )
+
+         if ::oParent:oFacCliT:cCodAge <> ::oParent:oDbf:cCodAge
+
+
+            if !MsgYesNo( "La factura " + ::oParent:oFacCliT:cSerie + "/" + Alltrim( Str( ::oParent:oFacCliT:nNumFac ) ) + " pertence a otro agente" + Chr(13)+Chr(10) + "¿ desea asignarlo al agente " + Rtrim( ::oParent:oDbf:cCodAge ) + " ?", "Seleccione" )
+
+               lLoaRec  := .F.
+
+            end
+
+         end
+
+         if lLoaRec
+
+            ::oDbfVir:cSerFac := ::oParent:oFacCliT:cSerie
+            ::oDbfVir:nNumFac := ::oParent:oFacCliT:nNumFac
+            ::oDbfVir:cSufFac := ::oParent:oFacCliT:cSufFac
+            ::oDbfVir:lFacRec := .F.
+
+            ::oNumFac:cText( ::oParent:oFacCliT:cSerie + Str( ::oParent:oFacCliT:nNumFac ) + ::oParent:oFacCliT:cSufFac )
+
+            ::oCodCli:cText( ::oParent:oFacCliT:cCodCli )
+
+            ::oNomCli:cText( ::oParent:oFacCliT:cNomCli )
+
+            ::oFecFac:cText( ::oParent:oFacCliT:dFecFac )
+
+            ::oCodAge:cText( ::oParent:oFacCliT:cCodAge )
+
+            ::oNomAge:cText( oRetFld( ::oParent:oFacCliT:cCodAge, ::oParent:oAgentes ) )
+
+            ::nTotalComisionFactura( .F., ::oParent:oFacCliT:cSerie + Str( ::oParent:oFacCliT:nNumFac ) + ::oParent:oFacCliT:cSufFac )
+
+         end
+
+         lLoaRec        := .T.
+
+      else
+
+         MsgStop( "Número de factura no encontrada." )
+
+         lLoaRec        := .F.
+
+      end
+
+      ::oParent:oFacCliT:SetStatus()
+
+   end
+
+RETURN ( lLoaRec )
+
+
+
+FUNCTION nTotalLineaLiquidacion()
+
+   if !Empty( oThis )
+      RETURN ( oThis:oDetCobAge:nTotalLineaLiquidacion() )
+   end
+
+RETURN ( 0 )

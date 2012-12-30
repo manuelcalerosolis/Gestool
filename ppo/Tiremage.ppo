@@ -1,0 +1,200 @@
+#line 112 "hbclass.ch"
+   DYNAMIC DivertConstructorCall
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+DECLARE HBClass  New( cName AS String, OPTIONAL SuperParams ) AS CLASS HBClass  Create() AS Object  Instance() AS Object  AddClsMethod( cName AS String, @MethodName(), nScope AS Numeric, n2 AS Numeric, n3 AS Numeric )  AddDelegate( cName AS String, cDelegate AS String, cObject AS String, nScope AS Numeric, lPersistent AS LOGICAL )  AddMultiClsData( cType AS String, uVal, nScope AS Numeric, aDatas AS Array OF String )  AddMultiData( cType AS String, uVal, nScope AS Numeric, aDatas AS Array OF String, x AS LOGICAL, lPer AS LOGICAL )  AddMethod( cName AS String, @MethodName(), nScope AS Numeric, lPersistent AS LOGICAL )  AddInLine( cName AS String, bBlock AS CodeBlock, nScope AS Numeric, lPersistent AS LOGICAL )  AddVirtual( cName AS String )  ModMethod( cName AS String, @MethodName(), nScope AS Numeric, lPersistent AS LOGICAL )  ModClsMethod( cName AS String, @MethodName(), nScope AS Numeric )  ModInline( cName AS String, bBlock AS CodeBlock, nScope AS Numeric, lPersistent AS LOGICAL )  SetOnError( @MethodName() )
+#line 85 "\Fwh1204\Include\FiveWin.Ch"
+   EXTERNAL GetProcAdd
+   EXTERNAL TActiveX
+
+
+
+
+extern errorsys
+#line 8 ".\Prg\Tiremage.prg"
+FUNCTION InfRemAge( oRemAge, oFacCliP, oClientes, oAgentes, oDiv )
+
+   local oInf
+   local aCol  := {}
+   local aIdx  := {}
+
+   oRemAge:GetStatus()
+
+   aAdd( aCol, { "NNUMCOB", "N",  9, 0, {|| "@!" },         "Número",         .F., "Número del cobro",       9 } )
+   aAdd( aCol, { "CSUFCOB", "C",  2, 0, {|| "@!" },         "Suf.",           .F., "Sufijo del cobro",       2 } )
+   aAdd( aCol, { "CCODAGE", "C",  3, 0, {|| "@!" },         "Age.",           .F., "Código agente",          6 } )
+   aAdd( aCol, { "CNOMAGE", "C", 40, 0, {|| "@!" },         "Agente",         .F., "Nombre agente",         20 } )
+   aAdd( aCol, { "CNUMREC", "C", 18, 0, {|| "@!" },         "Recibo",         .T., "Recibo",                18 } )
+   aAdd( aCol, { "DFECREC", "D",  8, 0, {|| "" },           "Fecha",          .T., "Fecha",                 10 } )
+   aAdd( aCol, { "CCODCLI", "C", 12, 0, {|| "" },           "Cod. Cli.",      .T., "Código de cliente",     10 } )
+   aAdd( aCol, { "CNOMCLI", "C", 40, 0, {|| "" },           "Nom. Cli.",      .T., "Nombre de cliente",     36 } )
+   aAdd( aCol, { "NIMPREC", "N", 19, 6, {|| oInf:cPicOut }, "Importe",        .T., "Importe",               12 } )
+
+   aAdd( aIdx, { "NNUMCOB", "Str( NNUMCOB ) + CSUFCOB" } )
+
+   oInf           := TInfRemAge():New( "Remesas de agentes", aCol, aIdx, "01044" )
+
+   oInf:oRemAge   := oRemAge
+   oInf:oFacCliP  := oFacCliP
+   oInf:oClientes := oClientes
+   oInf:oAgentes  := oAgentes
+   oInf:oDiv      := oDiv
+
+   oInf:AddGroup( {|| Str( oInf:oDbf:nNumCob ) + oInf:oDbf:cSufCob }, {|| "Remesas : " + Rtrim( Str( oInf:oDbf:nNumCob ) ) + "/" + oInf:oDbf:cSufCob + " Agente: " + oInf:oDbf:cNomAge }, {|| "Total cobro..." } )
+
+   oInf:Resource()
+
+   oInf:Activate()
+
+   oInf:End()
+
+   oRemAge:SetStatus()
+
+RETURN NIL
+
+
+
+_HB_CLASS TInfRemAge ; UTILITY FUNCTION TInfRemAge(...); static s_oClass ; local oClassInstance ; local nScope ; nScope := 1 ; if s_oClass == NIL ; s_oClass := IIF(.F.,, HBClass():New( "TInfRemAge" , {TInfGen():classh} ) ) ; ;
+
+   _HB_MEMBER { nCobDes} ; IIF( !.F., s_oClass:AddMultiData(,, nScope + IIF( .F., 32, 0 ), { "nCobDes" }, .F., .F. ), )
+   _HB_MEMBER { nCobHas} ; IIF( !.F., s_oClass:AddMultiData(,, nScope + IIF( .F., 32, 0 ), { "nCobHas" }, .F., .F. ), )
+   _HB_MEMBER { cSufDes} ; IIF( !.F., s_oClass:AddMultiData(,, nScope + IIF( .F., 32, 0 ), { "cSufDes" }, .F., .F. ), )
+   _HB_MEMBER { cSufHas} ; IIF( !.F., s_oClass:AddMultiData(,, nScope + IIF( .F., 32, 0 ), { "cSufHas" }, .F., .F. ), )
+   _HB_MEMBER { oRemAge} ; IIF( !.F., s_oClass:AddMultiData(,, nScope + IIF( .F., 32, 0 ), { "oRemAge" }, .F., .F. ), )
+   _HB_MEMBER { oFacCliP} ; IIF( !.F., s_oClass:AddMultiData(,, nScope + IIF( .F., 32, 0 ), { "oFacCliP" }, .F., .F. ), )
+   _HB_MEMBER { oClientes} ; IIF( !.F., s_oClass:AddMultiData(,, nScope + IIF( .F., 32, 0 ), { "oClientes" }, .F., .F. ), )
+   _HB_MEMBER { oAgentes} ; IIF( !.F., s_oClass:AddMultiData(,, nScope + IIF( .F., 32, 0 ), { "oAgentes" }, .F., .F. ), )
+   _HB_MEMBER { oDiv} ; IIF( !.F., s_oClass:AddMultiData(,, nScope + IIF( .F., 32, 0 ), { "oDiv" }, .F., .F. ), )
+
+   _HB_MEMBER OpenFiles(); IIF( .F., s_oClass:ModMethod( "OpenFiles", @TInfRemAge_OpenFiles(), nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ), s_oClass:AddMethod( "OpenFiles", @TInfRemAge_OpenFiles(), nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ));
+
+   _HB_MEMBER Resource( cFld); IIF( .F., s_oClass:ModMethod( "Resource", @TInfRemAge_Resource(), nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ), s_oClass:AddMethod( "Resource", @TInfRemAge_Resource(), nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ));
+
+   _HB_MEMBER lGenerate(); IIF( .F., s_oClass:ModMethod( "lGenerate", @TInfRemAge_lGenerate(), nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ), s_oClass:AddMethod( "lGenerate", @TInfRemAge_lGenerate(), nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ));
+
+; IF .F. ; __clsActive(s_oClass:hClass) ; s_oClass:Refresh() ; ELSE ; s_oClass:Create() ; END ; oClassInstance := __clsInst( s_oClass:hClass ) ; IF __ObjHasMsg( oClassInstance, "InitClass" ); oClassInstance:InitClass( hb_aParams() ) ; END ; ELSE ; oClassInstance := __clsInst( s_oClass:hClass ) ; END ; IF PCount() > 0 ; DIVERT TO (@DivertConstructorCall()) OF s_oClass ; END ; RETURN oClassInstance AS CLASS TInfRemAge ;
+
+
+
+UTILITY STATIC function TInfRemAge_OpenFiles() ; local Self AS CLASS TInfRemAge := QSelf() AS CLASS TInfRemAge
+
+   ::oDbfDiv := DbfServer( "DIVISAS.DBF", ):NewOpen( "DIVISAS.DBF",, ( cDriver() ),, ( cPatDat() ), .F., .T., .F., .F. ) ; ::oDbfDiv:AddBag( "DIVISAS.CDX" ) ; ::oDbfDiv:AddBag( ) ; ::oDbfDiv:AutoIndex()
+
+RETURN ( Self )
+
+
+
+UTILITY STATIC function TInfRemAge_Resource( cFld) ; local Self AS CLASS TInfRemAge := QSelf() AS CLASS TInfRemAge
+
+   ::nCobDes      := ::oRemAge:nNumCob
+   ::nCobHas      := ::oRemAge:nNumCob
+   ::cSufDes      := ::oRemAge:cSufCob
+   ::cSufHas      := ::oRemAge:cSufCob
+
+   ::lDefFecInf   := .F.
+   ::lDefDivInf   := .F.
+   ::lDefSerInf   := .F.
+
+   if !::StdResource( "INF_GENORDCAR" )
+      return .F.
+   end
+
+   ::lLoadDivisa()
+
+
+
+
+
+
+
+
+
+   TGetHlp():ReDefine( 100, { | u | If( PCount()==0, ::nCobDes, ::nCobDes:= u ) }, ::oFld:aDialogs[1],, "999999999",,,,,,, .F.,,, .F., .T.,,,,,, nil,,, )
+
+
+
+   TGetHlp():ReDefine( 110, { | u | If( PCount()==0, ::cSufDes, ::cSufDes:= u ) }, ::oFld:aDialogs[1],,,,,,,,, .F.,,, .F., .F.,,,,,, nil,,, )
+
+
+
+
+
+   TGetHlp():ReDefine( 120, { | u | If( PCount()==0, ::nCobHas, ::nCobHas:= u ) }, ::oFld:aDialogs[1],, "999999999",,,,,,, .F.,,, .F., .T.,,,,,, nil,,, )
+
+
+
+   TGetHlp():ReDefine( 130, { | u | If( PCount()==0, ::cSufHas, ::cSufHas:= u ) }, ::oFld:aDialogs[1],,,,,,,,, .F.,,, .F., .F.,,,,,, nil,,, )
+
+RETURN ( Self )
+
+
+
+
+
+
+UTILITY STATIC function TInfRemAge_lGenerate() ; local Self AS CLASS TInfRemAge := QSelf() AS CLASS TInfRemAge
+
+   ::oDlg:Disable()
+
+   ::oDbf:Zap()
+
+
+   ::aHeader   := {  {|| "Fecha : " + Dtoc( Date() ) }, {|| "Rango : " + Alltrim( Str( ::nCobDes ) + "/" + ::cSufDes ) + " > " + Alltrim( Str( ::nCobHas ) + "/" + ::cSufHas ) } }
+
+   if ::oRemAge:Seek( Str( ::nCobDes ) + ::cSufDes )
+
+      while Str( ::oRemAge:nNumCob ) + ::oRemAge:cSufCob <= Str( ::nCobHas ) + ::cSufHas .AND. !::oRemAge:eof()
+
+
+
+
+
+         if ::oFacCliP:Seek( Str( ::oRemAge:nNumCob ) + ::oRemAge:cSufCob )
+
+            while Str( ::oFacCliP:nNumCob ) + ::oFacCliP:cSufCob == Str( ::oRemAge:nNumCob ) + ::oRemAge:cSufCob .AND. !::oFacCliP:eof()
+
+               ::oDbf:Append()
+               ::oDbf:Blank()
+
+               ::oDbf:nNumCob    := ::oFacCliP:nNumCob
+               ::oDbf:cSufCob    := ::oFacCliP:cSufCob
+               ::oDbf:cCodAge    := ::oRemAge:cCodAge
+               ::oDbf:cNomAge    := ::oRemAge:cNomAge
+               ::oDbf:cNumRec    := ::oFacCliP:cSerie + "/" + Str( ::oFacCliP:nNumFac ) + "/" + ::oFacCliP:cSufFac + "-" + Str( ::oFacCliP:nNumRec )
+               ::oDbf:dFecRec    := ::oFacCliP:dPreCob
+               ::oDbf:cCodCli    := ::oFacCliP:cCodCli
+               ::oDbf:cNomCli    := RetClient( ::oFacCliP:cCodCli, ::oClientes )
+               ::oDbf:nImpRec    := nTotRecCli( ::oFacCliP, ::oDiv:cAlias, cDivEmp() )
+
+               ::oDbf:Save()
+
+               ::oFacCliP:Skip()
+
+            end
+
+         end
+
+         ::oRemAge:Skip()
+         ::oMtrInf:AutoInc( ::oRemAge:OrdKeyNo() )
+
+      end
+
+   end
+
+   ::oDlg:Enable()
+
+RETURN ( ::oDbf:LastRec() > 0 )

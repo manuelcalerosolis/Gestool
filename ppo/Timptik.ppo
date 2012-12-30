@@ -1,0 +1,502 @@
+#line 112 "hbclass.ch"
+   DYNAMIC DivertConstructorCall
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+DECLARE HBClass  New( cName AS String, OPTIONAL SuperParams ) AS CLASS HBClass  Create() AS Object  Instance() AS Object  AddClsMethod( cName AS String, @MethodName(), nScope AS Numeric, n2 AS Numeric, n3 AS Numeric )  AddDelegate( cName AS String, cDelegate AS String, cObject AS String, nScope AS Numeric, lPersistent AS LOGICAL )  AddMultiClsData( cType AS String, uVal, nScope AS Numeric, aDatas AS Array OF String )  AddMultiData( cType AS String, uVal, nScope AS Numeric, aDatas AS Array OF String, x AS LOGICAL, lPer AS LOGICAL )  AddMethod( cName AS String, @MethodName(), nScope AS Numeric, lPersistent AS LOGICAL )  AddInLine( cName AS String, bBlock AS CodeBlock, nScope AS Numeric, lPersistent AS LOGICAL )  AddVirtual( cName AS String )  ModMethod( cName AS String, @MethodName(), nScope AS Numeric, lPersistent AS LOGICAL )  ModClsMethod( cName AS String, @MethodName(), nScope AS Numeric )  ModInline( cName AS String, bBlock AS CodeBlock, nScope AS Numeric, lPersistent AS LOGICAL )  SetOnError( @MethodName() )
+#line 85 "\Fwh1204\Include\FiveWin.Ch"
+   EXTERNAL GetProcAdd
+   EXTERNAL TActiveX
+
+
+
+
+extern errorsys
+#line 19 ".\Prg\Timptik.prg"
+_HB_CLASS TImpresoraTiket ; UTILITY FUNCTION TImpresoraTiket(...); static s_oClass ; local oClassInstance ; local nScope ; nScope := 1 ; if s_oClass == NIL ; s_oClass := IIF(.F.,, HBClass():New( "TImpresoraTiket" , { HBObject():Classh } ) ) ;
+
+   _HB_MEMBER {AS LOGIC lWin} ; IIF( !.F., s_oClass:AddMultiData( "LOGIC", .F., nScope + IIF( .F., 32, 0 ), { "lWin" }, .F., .F. ), )
+   _HB_MEMBER {AS LOGIC lCreated} ; IIF( !.F., s_oClass:AddMultiData( "LOGIC", .F., nScope + IIF( .F., 32, 0 ), { "lCreated" }, .F., .F. ), )
+   _HB_MEMBER {AS LOGIC lPreview} ; IIF( !.F., s_oClass:AddMultiData( "LOGIC", .F., nScope + IIF( .F., 32, 0 ), { "lPreview" }, .F., .F. ), )
+   _HB_MEMBER { oPrn} ; IIF( !.F., s_oClass:AddMultiData(,, nScope + IIF( .F., 32, 0 ), { "oPrn" }, .F., .F. ), )
+   _HB_MEMBER { cPort} ; IIF( !.F., s_oClass:AddMultiData(,, nScope + IIF( .F., 32, 0 ), { "cPort" }, .F., .F. ), )
+   _HB_MEMBER { nBitsSec} ; IIF( !.F., s_oClass:AddMultiData(,, nScope + IIF( .F., 32, 0 ), { "nBitsSec" }, .F., .F. ), )
+   _HB_MEMBER { nBitsParada} ; IIF( !.F., s_oClass:AddMultiData(,, nScope + IIF( .F., 32, 0 ), { "nBitsParada" }, .F., .F. ), )
+   _HB_MEMBER { nBitsDatos} ; IIF( !.F., s_oClass:AddMultiData(,, nScope + IIF( .F., 32, 0 ), { "nBitsDatos" }, .F., .F. ), )
+   _HB_MEMBER { nBitsParidad} ; IIF( !.F., s_oClass:AddMultiData(,, nScope + IIF( .F., 32, 0 ), { "nBitsParidad" }, .F., .F. ), )
+   _HB_MEMBER { cActCentrado} ; IIF( !.F., s_oClass:AddMultiData(,, nScope + IIF( .F., 32, 0 ), { "cActCentrado" }, .F., .F. ), )
+   _HB_MEMBER { cDesCentrado} ; IIF( !.F., s_oClass:AddMultiData(,, nScope + IIF( .F., 32, 0 ), { "cDesCentrado" }, .F., .F. ), )
+   _HB_MEMBER { cActNegrita} ; IIF( !.F., s_oClass:AddMultiData(,, nScope + IIF( .F., 32, 0 ), { "cActNegrita" }, .F., .F. ), )
+   _HB_MEMBER { cDesNegrita} ; IIF( !.F., s_oClass:AddMultiData(,, nScope + IIF( .F., 32, 0 ), { "cDesNegrita" }, .F., .F. ), )
+   _HB_MEMBER { cActExpandida} ; IIF( !.F., s_oClass:AddMultiData(,, nScope + IIF( .F., 32, 0 ), { "cActExpandida" }, .F., .F. ), )
+   _HB_MEMBER { cDesExpandida} ; IIF( !.F., s_oClass:AddMultiData(,, nScope + IIF( .F., 32, 0 ), { "cDesExpandida" }, .F., .F. ), )
+   _HB_MEMBER { cActColor} ; IIF( !.F., s_oClass:AddMultiData(,, nScope + IIF( .F., 32, 0 ), { "cActColor" }, .F., .F. ), )
+   _HB_MEMBER { cDesColor} ; IIF( !.F., s_oClass:AddMultiData(,, nScope + IIF( .F., 32, 0 ), { "cDesColor" }, .F., .F. ), )
+   _HB_MEMBER { cSalto} ; IIF( !.F., s_oClass:AddMultiData(,, nScope + IIF( .F., 32, 0 ), { "cSalto" }, .F., .F. ), )
+   _HB_MEMBER { cCorte} ; IIF( !.F., s_oClass:AddMultiData(,, nScope + IIF( .F., 32, 0 ), { "cCorte" }, .F., .F. ), )
+   _HB_MEMBER { cIniApp} ; IIF( !.F., s_oClass:AddMultiData(,, nScope + IIF( .F., 32, 0 ), { "cIniApp" }, .F., .F. ), )
+   _HB_MEMBER { oIniApp} ; IIF( !.F., s_oClass:AddMultiData(,, nScope + IIF( .F., 32, 0 ), { "oIniApp" }, .F., .F. ), )
+   _HB_MEMBER { cLastError} ; IIF( !.F., s_oClass:AddMultiData(,, nScope + IIF( .F., 32, 0 ), { "cLastError" }, .F., .F. ), )
+   _HB_MEMBER { nRetardo} ; IIF( !.F., s_oClass:AddMultiData(,, nScope + IIF( .F., 32, 0 ), { "nRetardo" }, .F., .F. ), )
+   _HB_MEMBER { cMru} ; IIF( !.F., s_oClass:AddMultiData(, "Printer_16", nScope + IIF( .F., 32, 0 ), { "cMru" }, .F., .F. ), )
+   _HB_MEMBER { cModel} ; IIF( !.F., s_oClass:AddMultiData(,, nScope + IIF( .F., 32, 0 ), { "cModel" }, .F., .F. ), )
+
+   _HB_MEMBER { oFont} ; IIF( !.F., s_oClass:AddMultiData(,, nScope + IIF( .F., 32, 0 ), { "oFont" }, .F., .F. ), )
+
+   _HB_MEMBER { nRow} ; IIF( !.F., s_oClass:AddMultiData(,, nScope + IIF( .F., 32, 0 ), { "nRow" }, .F., .F. ), )
+   _HB_MEMBER { nCol} ; IIF( !.F., s_oClass:AddMultiData(,, nScope + IIF( .F., 32, 0 ), { "nCol" }, .F., .F. ), )
+   _HB_MEMBER { nRowStep} ; IIF( !.F., s_oClass:AddMultiData(,, nScope + IIF( .F., 32, 0 ), { "nRowStep" }, .F., .F. ), )
+
+   _HB_MEMBER { nWidth} ; IIF( !.F., s_oClass:AddMultiData(,, nScope + IIF( .F., 32, 0 ), { "nWidth" }, .F., .F. ), )
+   _HB_MEMBER { nHeight} ; IIF( !.F., s_oClass:AddMultiData(,, nScope + IIF( .F., 32, 0 ), { "nHeight" }, .F., .F. ), )
+
+   _HB_MEMBER New() AS CLASS TImpresoraTiket; IIF( .F., s_oClass:ModMethod( "New", @TImpresoraTiket_New(), nScope + IIF( .T., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ), s_oClass:AddMethod( "New", @TImpresoraTiket_New(), nScope + IIF( .T., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ));
+   _HB_MEMBER Create() AS CLASS TImpresoraTiket; IIF( .F., s_oClass:ModMethod( "Create", @TImpresoraTiket_Create(), nScope + IIF( .T., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ), s_oClass:AddMethod( "Create", @TImpresoraTiket_Create(), nScope + IIF( .T., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ));
+   _HB_MEMBER Initiate( cCodImp, oImpresora, lPrev) AS CLASS TImpresoraTiket; IIF( .F., s_oClass:ModMethod( "Initiate", @TImpresoraTiket_Initiate(), nScope + IIF( .T., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ), s_oClass:AddMethod( "Initiate", @TImpresoraTiket_Initiate(), nScope + IIF( .T., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ));
+
+   _HB_MEMBER lBuildComm(); IIF( .F., s_oClass:ModMethod( "lBuildComm", @TImpresoraTiket_lBuildComm(), nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ), s_oClass:AddMethod( "lBuildComm", @TImpresoraTiket_lBuildComm(), nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ));
+
+   _HB_MEMBER lCloseComm(); IIF( .F., s_oClass:ModInline( "lCloseComm", {|Self | Self, ( if( ::oPrn:lCreated, ::oPrn:End(), ) ) }, nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ), s_oClass:AddInline( "lCloseComm", {|Self | Self, ( if( ::oPrn:lCreated, ::oPrn:End(), ) ) }, nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ) )
+
+   _HB_MEMBER End(); IIF( .F., s_oClass:ModMethod( "End", @TImpresoraTiket_End(), nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ), s_oClass:AddMethod( "End", @TImpresoraTiket_End(), nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ));
+
+   _HB_MEMBER Test(); IIF( .F., s_oClass:ModMethod( "Test", @TImpresoraTiket_Test(), nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ), s_oClass:AddMethod( "Test", @TImpresoraTiket_Test(), nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ));
+
+   _HB_MEMBER Write( cTexto); IIF( .F., s_oClass:ModMethod( "Write", @TImpresoraTiket_Write(), nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ), s_oClass:AddMethod( "Write", @TImpresoraTiket_Write(), nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ));
+
+   _HB_MEMBER WriteExpresion( cExpresion, lCentrado, lNegrita, lExpandida, lColor, lPreview); IIF( .F., s_oClass:ModMethod( "WriteExpresion", @TImpresoraTiket_WriteExpresion(), nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ), s_oClass:AddMethod( "WriteExpresion", @TImpresoraTiket_WriteExpresion(), nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ));
+
+   _HB_MEMBER ActivaCentrado(); IIF( .F., s_oClass:ModInline( "ActivaCentrado", {|Self | Self, ::Write( RetChr( ::cActCentrado ) ) }, nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ), s_oClass:AddInline( "ActivaCentrado", {|Self | Self, ::Write( RetChr( ::cActCentrado ) ) }, nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ) )
+   _HB_MEMBER DesactivaCentrado(); IIF( .F., s_oClass:ModInline( "DesactivaCentrado", {|Self | Self, ::Write( RetChr( ::cDesCentrado ) ) }, nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ), s_oClass:AddInline( "DesactivaCentrado", {|Self | Self, ::Write( RetChr( ::cDesCentrado ) ) }, nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ) )
+
+   _HB_MEMBER ActivaNegrita(); IIF( .F., s_oClass:ModInline( "ActivaNegrita", {|Self | Self, ::Write( RetChr( ::cActNegrita ) ) }, nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ), s_oClass:AddInline( "ActivaNegrita", {|Self | Self, ::Write( RetChr( ::cActNegrita ) ) }, nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ) )
+   _HB_MEMBER DesactivaNegrita(); IIF( .F., s_oClass:ModInline( "DesactivaNegrita", {|Self | Self, ::Write( RetChr( ::cDesNegrita ) ) }, nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ), s_oClass:AddInline( "DesactivaNegrita", {|Self | Self, ::Write( RetChr( ::cDesNegrita ) ) }, nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ) )
+
+   _HB_MEMBER ActivaExpandida(); IIF( .F., s_oClass:ModInline( "ActivaExpandida", {|Self | Self, ::Write( RetChr( ::cActExpandida ) ) }, nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ), s_oClass:AddInline( "ActivaExpandida", {|Self | Self, ::Write( RetChr( ::cActExpandida ) ) }, nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ) )
+   _HB_MEMBER DesactivaExpandida(); IIF( .F., s_oClass:ModInline( "DesactivaExpandida", {|Self | Self, ::Write( RetChr( ::cDesExpandida ) ) }, nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ), s_oClass:AddInline( "DesactivaExpandida", {|Self | Self, ::Write( RetChr( ::cDesExpandida ) ) }, nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ) )
+
+   _HB_MEMBER ActivaColor(); IIF( .F., s_oClass:ModInline( "ActivaColor", {|Self | Self, ::Write( RetChr( ::cActColor ) ) }, nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ), s_oClass:AddInline( "ActivaColor", {|Self | Self, ::Write( RetChr( ::cActColor ) ) }, nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ) )
+   _HB_MEMBER DesactivaColor(); IIF( .F., s_oClass:ModInline( "DesactivaColor", {|Self | Self, ::Write( RetChr( ::cDesColor ) ) }, nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ), s_oClass:AddInline( "DesactivaColor", {|Self | Self, ::Write( RetChr( ::cDesColor ) ) }, nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ) )
+
+   _HB_MEMBER Salto(); IIF( .F., s_oClass:ModInline( "Salto", {|Self | Self, ::Write( RetChr( ::cSalto ) ) }, nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ), s_oClass:AddInline( "Salto", {|Self | Self, ::Write( RetChr( ::cSalto ) ) }, nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ) )
+
+   _HB_MEMBER Corte(); IIF( .F., s_oClass:ModInline( "Corte", {|Self | Self, ::Write( RetChr( ::cCorte ) ) }, nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ), s_oClass:AddInline( "Corte", {|Self | Self, ::Write( RetChr( ::cCorte ) ) }, nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ) )
+
+   _HB_MEMBER NeedNewPage(); IIF( .F., s_oClass:ModInline( "NeedNewPage", {|Self | Self, ( ::nRow + ::nRowStep >= ::nHeight ) }, nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ), s_oClass:AddInline( "NeedNewPage", {|Self | Self, ( ::nRow + ::nRowStep >= ::nHeight ) }, nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ) )
+
+; IF .F. ; __clsActive(s_oClass:hClass) ; s_oClass:Refresh() ; ELSE ; s_oClass:Create() ; END ; oClassInstance := __clsInst( s_oClass:hClass ) ; IF __ObjHasMsg( oClassInstance, "InitClass" ); oClassInstance:InitClass( hb_aParams() ) ; END ; ELSE ; oClassInstance := __clsInst( s_oClass:hClass ) ; END ; IF PCount() > 0 ; DIVERT TO (@DivertConstructorCall()) OF s_oClass ; END ; RETURN oClassInstance AS CLASS TImpresoraTiket ;
+
+
+
+UTILITY STATIC function TImpresoraTiket_New( cPort, nBitsSec, nBitsParada, nBitsDatos, nBitsParidad) ; local Self AS CLASS TImpresoraTiket := QSelf() AS CLASS TImpresoraTiket
+
+   IIF( cPort == nil, cPort := "COM1", ) ;
+   IIF( nBitsSec == nil, nBitsSec := "9600", ) ;
+   IIF( nBitsParada == nil, nBitsParada := "0", ) ;
+   IIF( nBitsDatos == nil, nBitsDatos := "8", ) ;
+   IIF( nBitsParidad == nil, nBitsParidad := "Sin paridad", ) ;
+
+   ::cPort              := cPort
+   ::nBitsSec           := nBitsSec
+   ::nBitsParada        := nBitsParada
+   ::nBitsDatos         := nBitsDatos
+   ::nBitsParidad       := nBitsParidad
+   ::cActCentrado       := Space( 100 )
+   ::cDesCentrado       := Space( 100 )
+   ::cActExpandida      := Space( 100 )
+   ::cDesExpandida      := Space( 100 )
+   ::cActNegrita        := Space( 100 )
+   ::cDesNegrita        := Space( 100 )
+   ::cActColor          := Space( 100 )
+   ::cDesColor          := Space( 100 )
+   ::cSalto             := Space( 100 )
+   ::cCorte             := Space( 100 )
+   ::nRetardo           := 0.1
+   ::lCreated           := .F.
+   ::nRow               := 0
+   ::nCol               := 0
+
+RETURN Self
+
+
+
+UTILITY STATIC function TImpresoraTiket_Create( cCodImp, lPreview) ; local Self AS CLASS TImpresoraTiket := QSelf() AS CLASS TImpresoraTiket
+
+   local oBlock
+   local oError
+   local dbfImpTik
+
+   IIF( lPreview == nil, lPreview := .F., ) ;
+
+
+
+   oBlock                  := ErrorBlock( {| oError | ApoloBreak( oError ) } )
+   BEGIN SEQUENCE
+
+   dbUseArea( .T., ( cDriver() ), ( cPatDat() + "IMPTIK.DBF" ), ( cCheckArea( "IMPTIK", @dbfImpTik ) ), if(.T. .OR. .F., !.F., NIL), .F.,, )
+   if !lAIS() ; ordListAdd( ( cPatDat() + "IMPTIK.CDX" ) ) ; else ; ordSetFocus( 1 ) ; end
+
+   if !Empty( cCodImp ) .AND. ( dbfImpTik )->( dbSeek( cCodImp ) )
+
+
+
+      ::lPreview           := lPreview
+      ::cPort              := Alltrim( if( lPreview, "Print.prn", ( dbfImpTik )->cPort ) )
+      ::lWin               := ( dbfImpTik )->lWin
+      ::nBitsSec           := Str( ( dbfImpTik )->nBitsSec )
+      ::nBitsParada        := Str( ( dbfImpTik )->nBitsPara )
+      ::nBitsDatos         := Str( ( dbfImpTik )->nBitsDatos )
+      ::nBitsParidad       := Alltrim( ( dbfImpTik )->cBitsPari )
+      ::cActCentrado       := Alltrim( ( dbfImpTik )->cActCentr )
+      ::cDesCentrado       := Alltrim( ( dbfImpTik )->cDesCentr )
+      ::cActExpandida      := Alltrim( ( dbfImpTik )->cActExp )
+      ::cDesExpandida      := Alltrim( ( dbfImpTik )->cDesExp )
+      ::cActNegrita        := Alltrim( ( dbfImpTik )->cActNegr )
+      ::cDesNegrita        := Alltrim( ( dbfImpTik )->cDesNegr )
+      ::cActColor          := Alltrim( ( dbfImpTik )->cActColor )
+      ::cDesColor          := Alltrim( ( dbfImpTik )->cDesColor )
+      ::cSalto             := Alltrim( ( dbfImpTik )->cSalto )
+      ::cCorte             := Alltrim( ( dbfImpTik )->cCorte )
+      ::nRetardo           := ( dbfImpTik )->nRetardo
+
+   else
+
+
+
+      ::lPreview           := lPreview
+      ::lWin               := .F.
+      ::cPort              := "COM1"
+      ::nBitsSec           := "9600"
+      ::nBitsParada        := "0"
+      ::nBitsDatos         := "8"
+      ::nBitsParidad       := "Sin paridad"
+      ::nRetardo           := 0
+
+   end
+
+
+
+   RECOVER USING oError
+
+      msgStop( "Imposible abrir todas las bases de datos " + Chr(13)+Chr(10) + ErrorMessage( oError ) )
+
+   end
+
+   ErrorBlock( oBlock )
+
+   if !Empty( dbfImpTik )
+      ( dbfImpTik )->( dbCloseArea() )
+   end
+
+   dbfImpTik               := nil
+
+RETURN Self
+
+
+
+UTILITY STATIC function TImpresoraTiket_Initiate( cCodImp, oImpresora, lPreview) ; local Self AS CLASS TImpresoraTiket := QSelf() AS CLASS TImpresoraTiket
+
+   IIF( lPreview == nil, lPreview := .F., ) ;
+
+   if !Empty( cCodImp ) .AND. oImpresora:Seek( cCodImp )
+
+
+
+      ::lPreview           := lPreview
+      ::cPort              := Alltrim( if( lPreview, "Print.prn", oImpresora:cPort ) )
+      ::lWin               := oImpresora:lWin
+      ::nBitsSec           := Str( oImpresora:nBitsSec )
+      ::nBitsParada        := Str( oImpresora:nBitsPara )
+      ::nBitsDatos         := Str( oImpresora:nBitsDatos )
+      ::nBitsParidad       := Alltrim( oImpresora:cBitsPari )
+      ::cActCentrado       := Alltrim( oImpresora:cActCentr )
+      ::cDesCentrado       := Alltrim( oImpresora:cDesCentr )
+      ::cActExpandida      := Alltrim( oImpresora:cActExp )
+      ::cDesExpandida      := Alltrim( oImpresora:cDesExp )
+      ::cActNegrita        := Alltrim( oImpresora:cActNegr )
+      ::cDesNegrita        := Alltrim( oImpresora:cDesNegr )
+      ::cActColor          := Alltrim( oImpresora:cActColor )
+      ::cDesColor          := Alltrim( oImpresora:cDesColor )
+      ::cSalto             := Alltrim( oImpresora:cSalto )
+      ::cCorte             := Alltrim( oImpresora:cCorte )
+      ::nRetardo           := oImpresora:nRetardo
+
+   else
+
+
+
+      ::lPreview           := lPreview
+      ::lWin               := .F.
+      ::cPort              := "COM1"
+      ::nBitsSec           := "9600"
+      ::nBitsParada        := "0"
+      ::nBitsDatos         := "8"
+      ::nBitsParidad       := "Sin paridad"
+      ::nRetardo           := 0
+
+   end
+
+RETURN Self
+
+
+
+UTILITY STATIC function TImpresoraTiket_lBuildComm( lMessage) ; local Self AS CLASS TImpresoraTiket := QSelf() AS CLASS TImpresoraTiket
+
+   IIF( lMessage == nil, lMessage := .F., ) ;
+
+   if !::lWin
+
+
+
+
+
+      if ::oPrn <> nil
+         ::oPrn:End()
+      end
+
+      ::oPrn               := TPort():New( ::cPort, ::nBitsSec, ::nBitsParada, ::nBitsDatos, ::nBitsParidad, .T. )
+      if ::oPrn:lCreated
+         ::lCreated        := .T.
+      end
+
+      if lMessage
+
+
+
+
+
+         msgInfo( "Puerto  : " + ::cPort        + Chr(13)+Chr(10) + "Bits    : " + ::nBitsSec     + Chr(13)+Chr(10) + "Datos   : " + ::nBitsDatos   + Chr(13)+Chr(10) + "Paridad : " + ::nBitsParidad + Chr(13)+Chr(10) + "Parada  : " + ::nBitsParada  + Chr(13)+Chr(10) + "Handle  : " + Str( ::oPrn:nHComm ) )
+      end
+
+   else
+
+      ::oPrn               := PrintBegin( "Imprimiendo...", .F., ::lPreview, ::cModel, .T. )
+
+      if Empty( ::oPrn:hDC )
+
+         ::lCreated        := .F.
+
+      else
+
+         ::oFont           := TFont():New( "Courier New", 0, -12, , .T., , , , , , , , , , , ::oPrn )
+         ::nRow            := 0
+         ::nRowStep        := ::oPrn:GetTextHeight( "B", ::oFont )
+
+         ::nWidth          := ::oPrn:nHorzRes()
+         ::nHeight         := ::oPrn:nVertRes()
+
+         ::lCreated        := .T.
+
+         PageBegin()
+
+      end
+
+   end
+
+Return ( ::lCreated )
+
+
+
+UTILITY STATIC function TImpresoraTiket_End() ; local Self AS CLASS TImpresoraTiket := QSelf() AS CLASS TImpresoraTiket
+
+   if ::lWin
+
+      if ::oPrn <> nil
+         PageEnd()
+         PrintEnd()
+         ::oPrn:End()
+      end
+
+   else
+
+      if ::oPrn <> nil
+         ::oPrn:End()
+      end
+
+      if ::lPreview
+         VisTik( ::cPort )
+      end
+
+   end
+
+Return .T.
+
+
+
+UTILITY STATIC function TImpresoraTiket_Test() ; local Self AS CLASS TImpresoraTiket := QSelf() AS CLASS TImpresoraTiket
+
+   ::lBuildComm( .T. )
+
+   if ::oPrn <> nil .AND. ::oPrn:nHComm > 0
+      ::Write( "Test de impresora" + Chr(13)+Chr(10) )
+      ::oPrn:End()
+   end
+
+RETURN ( Self )
+
+
+
+UTILITY STATIC function TImpresoraTiket_Write( cTexto, lCenter) ; local Self AS CLASS TImpresoraTiket := QSelf() AS CLASS TImpresoraTiket
+
+   local nStartCol         := ::nCol
+
+   IIF( lCenter == nil, lCenter := .F., ) ;
+
+   cTexto                  := cValToChar( cTexto )
+
+   if ::lWin
+
+      cTexto               := StrTran( cTexto, Chr(13)+Chr(10), "" )
+
+      if ::oPrn <> nil
+
+         if lCenter
+            nStartCol      := Int( ::nWidth / 2 ) - Int( ::oPrn:GetTextWidth( cTexto, ::oFont ) / 2 )
+         end
+
+         ::oPrn:Say( ::nRow, nStartCol, cTexto, ::oFont )
+
+         ::nRow            += ::nRowStep
+
+         if ::NeedNewPage()
+            ::nRow         := 0
+            PageEnd()
+            PageBegin()
+         end
+
+      end
+
+   else
+
+      if ::oPrn <> nil
+         ::oPrn:Write( cTexto, ::nRetardo )
+      end
+
+   end
+
+return ( Self )
+
+
+
+UTILITY STATIC function TImpresoraTiket_WriteExpresion( cExpresion, lCentrado, lNegrita, lExpandida, lColor, lPreview) ; local Self AS CLASS TImpresoraTiket := QSelf() AS CLASS TImpresoraTiket
+
+   local cTexto
+
+   IIF( lPreview == nil, lPreview := .F., ) ;
+
+   if ::oPrn == nil
+      Return ( "" )
+   end
+
+   cTexto            := GetBanda( cExpresion )
+
+   if !lPreview
+      if lCentrado
+         ::ActivaCentrado()
+      end
+      if lNegrita
+         ::ActivaNegrita()
+      end
+      if lExpandida
+         ::ActivaExpandida()
+      end
+      if lColor
+         ::ActivaColor()
+      end
+   end
+
+   ::oPrn:Write( cTexto, ::nRetardo )
+
+   if !lPreview
+      if lCentrado
+         ::DesactivaCentrado()
+      end
+      if lNegrita
+         ::DesactivaNegrita()
+      end
+      if lExpandida
+         ::DesactivaExpandida()
+      end
+      if lColor
+         ::DesactivaColor()
+      end
+   end
+
+Return ( cTexto )
+
+
+
+Function GetBanda( cBanda, lCrlf )
+
+   local cEva
+   local cRet     := ""
+   local cTit     := AllTrim( cBanda )
+
+   IIF( lCrlf == nil, lCrlf := .T., ) ;
+
+   cTit           := StrTran( cTit, Chr(13)+Chr(10), "" )
+
+   cEva           := bChar2Block( cTit, .F., .F., .T. )
+
+   if cEva == nil
+      cRet        += cTit + if( lCrlf, Chr(13)+Chr(10), "" )
+   else
+      cRet        += Rtrim( cValToChar( Eval( cEva ) ) ) + if( lCrlf, Chr(13)+Chr(10), "" )
+   end
+
+RETURN ( cRet )
+
+
+
+function VisTik( cFile )
+
+   local oMemo
+   local oDlg
+   local cText
+   local oFont
+
+   if !File( cFile )
+      MsgStop( "No existe fichero " + cFile )
+      Return .F.
+   end
+
+   oFont       := TFont():New( "Courier" )
+   cText       := Memoread( cFile )
+
+   oDlg = TDialog():New(,,,, "Previsulizar impresión", "PREVDOC",, .F.,,,,,, .F.,,,,,, .F., )
+
+
+
+
+
+
+   oMemo := TMultiGet():ReDefine( 100, { | u | If( PCount()==0, cText, cText:= u ) }, oDlg,,,, oFont,,, .F.,, .T.,, )
+
+
+
+
+
+   TButton():ReDefine( 1, {||( oDlg:End() )}, oDlg,,, .F.,,,, .T. )
+
+   oDlg:AddFastKey( 116, {|| oDlg:End() } )
+
+   oDlg:bStart := { || oMemo:SetFocus() }
+
+   oDlg:Activate( oDlg:bLClicked, oDlg:bMoved, oDlg:bPainted, .T.,,,, oDlg:bRClicked,,, )
+
+   oFont:end()
+
+return nil

@@ -1,0 +1,197 @@
+#line 112 "\xHarbour\Include\HBClass.ch"
+   DYNAMIC DivertConstructorCall
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+DECLARE HBClass  New( cName AS String, OPTIONAL SuperParams ) AS CLASS HBClass  Create() AS Object  Instance() AS Object  AddClsMethod( cName AS String, @MethodName(), nScope AS Numeric, n2 AS Numeric, n3 AS Numeric )  AddDelegate( cName AS String, cDelegate AS String, cObject AS String, nScope AS Numeric, lPersistent AS LOGICAL )  AddMultiClsData( cType AS String, uVal, nScope AS Numeric, aDatas AS Array OF String )  AddMultiData( cType AS String, uVal, nScope AS Numeric, aDatas AS Array OF String, x AS LOGICAL, lPer AS LOGICAL )  AddMethod( cName AS String, @MethodName(), nScope AS Numeric, lPersistent AS LOGICAL )  AddInLine( cName AS String, bBlock AS CodeBlock, nScope AS Numeric, lPersistent AS LOGICAL )  AddVirtual( cName AS String )  ModMethod( cName AS String, @MethodName(), nScope AS Numeric, lPersistent AS LOGICAL )  ModClsMethod( cName AS String, @MethodName(), nScope AS Numeric )  ModInline( cName AS String, bBlock AS CodeBlock, nScope AS Numeric, lPersistent AS LOGICAL )  SetOnError( @MethodName() )
+#line 19 ".\Prg\Tindex.prg"
+_HB_CLASS TIndex ; UTILITY FUNCTION TIndex(...); static s_oClass ; local oClassInstance ; local nScope ; nScope := 1 ; if s_oClass == NIL ; s_oClass := IIF(.F.,, HBClass():New( "TIndex" , { HBObject():Classh } ) ) ;
+
+    _HB_MEMBER {AS STRING cFile, cKey, cFor, cName, cComment} ; IIF( !.F., s_oClass:AddMultiData( "STRING",, nScope + IIF( .F., 32, 0 ), { "cFile" , "cKey" , "cFor" , "cName" , "cComment" }, .F., .F. ), )
+    _HB_MEMBER {AS LOGICAL lScope, lDes, lUniq, lTmp, lNoDel} ; IIF( !.F., s_oClass:AddMultiData( "LOGICAL",, nScope + IIF( .F., 32, 0 ), { "lScope" , "lDes" , "lUniq" , "lTmp" , "lNoDel" }, .F., .F. ), )
+    _HB_MEMBER {AS CODEBLOCK bRange, bTop, bBottom} ; IIF( !.F., s_oClass:AddMultiData( "CODEBLOCK",, nScope + IIF( .F., 32, 0 ), { "bRange" , "bTop" , "bBottom" }, .F., .F. ), )
+    _HB_MEMBER { bWhile, bOption} ; IIF( !.F., s_oClass:AddMultiData(,, nScope + IIF( .F., 32, 0 ), { "bWhile" , "bOption" }, .F., .F. ), )
+    _HB_MEMBER { Cargo, uTop, uBottom} ; IIF( !.F., s_oClass:AddMultiData(,, nScope + IIF( .F., 32, 0 ), { "Cargo" , "uTop" , "uBottom" }, .F., .F. ), )
+    _HB_MEMBER {AS CODEBLOCK bFor, bKey} ; IIF( !.F., s_oClass:AddMultiData( "CODEBLOCK",, nScope + IIF( .F., 32, 0 ), { "bFor" , "bKey" }, .F., .F. ), )
+    _HB_MEMBER {AS NUMERIC nStep} ; IIF( !.F., s_oClass:AddMultiData( "NUMERIC",, nScope + IIF( .F., 32, 0 ), { "nStep" }, .F., .F. ), )
+    _HB_MEMBER { oDbf} ; IIF( !.F., s_oClass:AddMultiData(,, nScope + IIF( .F., 32, 0 ), { "oDbf" }, .F., .F. ), )
+
+    _HB_MEMBER {AS STRING ClsName} ; IIF( !.F., s_oClass:AddMultiData( "STRING", "TINDEX", nScope + IIF( .F., 32, 0 ), { "ClsName" }, .F., .F. ), )
+
+
+    _HB_MEMBER New( oDbf, cName, cFile, cKey, cFor, bWhile, lUniq,  lDes, cComment, bOption, nStep, lNoDel, lTmp) AS CLASS TIndex; IIF( .F., s_oClass:ModMethod( "New", @TIndex_New(), nScope + IIF( .T., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ), s_oClass:AddMethod( "New", @TIndex_New(), nScope + IIF( .T., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ));
+    _HB_MEMBER SetScope( uTop, uBottom); IIF( .F., s_oClass:ModMethod( "SetScope", @TIndex_SetScope(), nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ), s_oClass:AddMethod( "SetScope", @TIndex_SetScope(), nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ));
+    _HB_MEMBER ClearScope(); IIF( .F., s_oClass:ModMethod( "ClearScope", @TIndex_ClearScope(), nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ), s_oClass:AddMethod( "ClearScope", @TIndex_ClearScope(), nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ));
+    _HB_MEMBER Order(); IIF( .F., s_oClass:ModInline( "Order", {|Self | Self, ( ::oDbf:nArea )->( OrdNumber( ::cName, ::cFile ) ) }, nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ), s_oClass:AddInline( "Order", {|Self | Self, ( ::oDbf:nArea )->( OrdNumber( ::cName, ::cFile ) ) }, nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ) )
+    _HB_MEMBER KeyVal(); IIF( .F., s_oClass:ModInline( "KeyVal", {|Self | Self, ( ::oDbf:nArea )->( OrdKeyVal() ) }, nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ), s_oClass:AddInline( "KeyVal", {|Self | Self, ( ::oDbf:nArea )->( OrdKeyVal() ) }, nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ) )
+    _HB_MEMBER SetCond(); IIF( .F., s_oClass:ModMethod( "SetCond", @TIndex_SetCond(), nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ), s_oClass:AddMethod( "SetCond", @TIndex_SetCond(), nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ));
+    _HB_MEMBER Create(); IIF( .F., s_oClass:ModMethod( "Create", @TIndex_Create(), nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ), s_oClass:AddMethod( "Create", @TIndex_Create(), nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ));
+    _HB_MEMBER IdxExt(); IIF( .F., s_oClass:ModMethod( "IdxExt", @TIndex_IdxExt(), nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ), s_oClass:AddMethod( "IdxExt", @TIndex_IdxExt(), nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ));
+    _HB_MEMBER SetFocus(); IIF( .F., s_oClass:ModMethod( "SetFocus", @TIndex_SetFocus(), nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ), s_oClass:AddMethod( "SetFocus", @TIndex_SetFocus(), nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ));
+    _HB_MEMBER Add(); IIF( .F., s_oClass:ModInline( "Add", {|Self | Self, ( if( ( ::oDbf:cRDD <> "ADSCDX" .OR. !lAIS() ), ( ::oDbf:nArea )->( OrdListAdd( ::cFile, ::cName ) ), ) ) }, nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ), s_oClass:AddInline( "Add", {|Self | Self, ( if( ( ::oDbf:cRDD <> "ADSCDX" .OR. !lAIS() ), ( ::oDbf:nArea )->( OrdListAdd( ::cFile, ::cName ) ), ) ) }, nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ) )
+    _HB_MEMBER Delete(); IIF( .F., s_oClass:ModMethod( "Delete", @TIndex__Delete(), nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ) ), s_oClass:AddMethod( "Delete", @TIndex__Delete(), nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ) ) );
+
+    _HB_MEMBER Destroy(); IIF( .F., s_oClass:ModInline( "Destroy", {|Self | Self, Self := nil, .T. }, nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ), s_oClass:AddInline( "Destroy", {|Self | Self, Self := nil, .T. }, nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ) )
+
+; IF .F. ; __clsActive(s_oClass:hClass) ; s_oClass:Refresh() ; ELSE ; s_oClass:Create() ; END ; oClassInstance := __clsInst( s_oClass:hClass ) ; IF __ObjHasMsg( oClassInstance, "InitClass" ); oClassInstance:InitClass( hb_aParams() ) ; END ; ELSE ; oClassInstance := __clsInst( s_oClass:hClass ) ; END ; IF PCount() > 0 ; DIVERT TO (@DivertConstructorCall()) OF s_oClass ; END ; RETURN oClassInstance AS CLASS TIndex ;
+
+
+
+
+UTILITY STATIC function TIndex_New( oDbf, cName, cFile, cKey, cFor, bWhile,  lUniq, lDes, cComment, bOption, nStep, lNoDel, lTmp) ; local Self AS CLASS TIndex := QSelf() AS CLASS TIndex
+
+    ::oDbf := oDbf
+
+    cComment := If( cComment == nil, "", cComment );
+
+    ::cName          := Upper( if( ValType( cName ) == "C", cName, GetFileNoExt( cFile ) ) )
+    ::cFile          := ::oDbf:cPath + GetFileName( if( ValType( cFile ) == "C", cFile, cName ) )
+
+    ::lNoDel := if( lNoDel == NIL, .T., lNoDel )
+    ::lTmp := if( lTmp == NIL, .F., lTmp )
+
+
+    if ValType( cFor ) <> "C" .OR. Empty( cFor )
+        ::cFor       := if( ::lNoDel, "!Deleted()", ".t." )
+    else
+        ::cFor       := if( ::lNoDel, "!Deleted() .and.", "" ) + Upper( cFor )
+    end
+
+
+    ::cKey           := Upper( if( ValType( cKey ) <> "C", ".T.", cKey ) )
+
+    ::lUniq := if( lUniq == NIL, Set( 10 ), lUniq )
+    ::lDes := if( lDes == NIL, .F., lDes )
+    ::bWhile := bWhile
+    ::bOption := bOption
+
+    ::cComment := cComment
+    ::bKey     := c2Block( ::cKey )
+    ::bFor     := c2Block( ::cFor )
+
+    ::bTop     := { || .T. }
+    ::bBottom  := { || .T. }
+    ::bRange   := { || .T. }
+
+    ::uTop     := ::uBottom := nil
+
+    ::lScope   := .F.
+
+    if ValType( nStep ) <> "N"
+         nStep := if( ValType( bOption ) <> "B", 100000000, 0 )
+    endif
+
+    ::nStep := nStep
+
+return( Self )
+
+
+
+UTILITY STATIC function TIndex_SetCond() ; local Self AS CLASS TIndex := QSelf() AS CLASS TIndex
+
+return( ( ::oDbf:nArea )->( OrdCondSet( ::cFor, ::bFor,, ::bWhile,  ::bOption, ::nStep, RecNo(), .F.,,, ::lDes ) ) )
+
+
+
+UTILITY STATIC function TIndex_Create() ; local Self AS CLASS TIndex := QSelf() AS CLASS TIndex
+
+    ::SetCond()
+    ( ::oDbf:nArea )->( OrdCreate( ::cFile, ::cName, ::cKey, ::bKey, ::lUniq ) )
+
+return( Self )
+
+
+
+
+
+UTILITY STATIC function TIndex_IdxExt() ; local Self AS CLASS TIndex := QSelf() AS CLASS TIndex
+
+return( ::cFile := if( AT( ".", GetFileName( ::cFile ) ) > 0, ::cFile,  ::cFile + ( ::oDbf:nArea )->( OrdBagExt() ) ) )
+
+
+
+UTILITY STATIC function TIndex__Delete() ; local Self AS CLASS TIndex := QSelf() AS CLASS TIndex
+
+    if ::oDbf:cRdd $ "_DBFCDX DBFMDX DBFNSX SIXCDX SIXNSX COMIX DBFCDXAX ADS"
+        ( ::oDbf:nArea )->( OrdDestroy( ::cName, ::cFile ) )
+    else
+        FErase( ::cFile )
+    endif
+
+return( Self := nil )
+
+
+
+
+UTILITY STATIC function TIndex_SetScope( uTop, uBottom) ; local Self AS CLASS TIndex := QSelf() AS CLASS TIndex
+
+    if ::lDes
+        if ::lScope := ( uBottom <= uTop )
+
+            ::bTop    :=  { | o | !( o:nArea )->( Bof() ) .AND. ::KeyVal() <= uTop }
+
+            ::bBottom :=  { | o | !( o:nArea )->( Eof() ) .AND. ::KeyVal() >= uBottom }
+
+            ::bRange  :=  { | x | x := ::KeyVal(), x <= uTop .AND. x >= uBottom }
+        endif
+    else
+        if ::lScope := ( uTop <= uBottom  )
+
+            ::bTop    :=  { | o | !( o:nArea )->( Bof() ) .AND. ::KeyVal() >= uTop }
+
+            ::bBottom :=  { | o | !( o:nArea )->( Eof() ) .AND. ::KeyVal() <= uBottom }
+
+            ::bRange  :=  { | x | x := ::KeyVal(), x >= uTop .AND. x <= uBottom }
+        endif
+    endif
+
+    if ::lScope
+        ::uTop    := uTop
+        ::uBottom := uBottom
+    else
+        ::oDbf:DbError( 11 )
+    endif
+
+return( ::lScope )
+
+
+
+UTILITY STATIC function TIndex_ClearScope() ; local Self AS CLASS TIndex := QSelf() AS CLASS TIndex
+
+    ::uTop := ::uBottom := nil
+
+    ::bTop    := { || .T. }
+    ::bBottom := { || .T. }
+    ::bRange  := { || .T. }
+
+    ::lScope := .F.
+
+return( Self )
+
+
+
+UTILITY STATIC function TIndex_SetFocus() ; local Self AS CLASS TIndex := QSelf() AS CLASS TIndex
+
+    local nOrder := 0
+
+    if ::cName <> "_NONE_"
+        nOrder := ::Order()
+        ( ::oDbf:nArea )->( OrdSetFocus( nOrder, ::cFile ) )
+    else
+        ( ::oDbf:nArea )->( OrdSetFocus( 0 ) )
+    endif
+
+return( ::oDbf:oIndex := Self )

@@ -1,0 +1,1141 @@
+#line 112 "hbclass.ch"
+   DYNAMIC DivertConstructorCall
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+DECLARE HBClass  New( cName AS String, OPTIONAL SuperParams ) AS CLASS HBClass  Create() AS Object  Instance() AS Object  AddClsMethod( cName AS String, @MethodName(), nScope AS Numeric, n2 AS Numeric, n3 AS Numeric )  AddDelegate( cName AS String, cDelegate AS String, cObject AS String, nScope AS Numeric, lPersistent AS LOGICAL )  AddMultiClsData( cType AS String, uVal, nScope AS Numeric, aDatas AS Array OF String )  AddMultiData( cType AS String, uVal, nScope AS Numeric, aDatas AS Array OF String, x AS LOGICAL, lPer AS LOGICAL )  AddMethod( cName AS String, @MethodName(), nScope AS Numeric, lPersistent AS LOGICAL )  AddInLine( cName AS String, bBlock AS CodeBlock, nScope AS Numeric, lPersistent AS LOGICAL )  AddVirtual( cName AS String )  ModMethod( cName AS String, @MethodName(), nScope AS Numeric, lPersistent AS LOGICAL )  ModClsMethod( cName AS String, @MethodName(), nScope AS Numeric )  ModInline( cName AS String, bBlock AS CodeBlock, nScope AS Numeric, lPersistent AS LOGICAL )  SetOnError( @MethodName() )
+#line 85 "\Fwh1204\Include\FiveWin.Ch"
+   EXTERNAL GetProcAdd
+   EXTERNAL TActiveX
+
+
+
+
+extern errorsys
+#line 19 ".\Prg\Label.prg"
+_HB_CLASS TLabel ; UTILITY FUNCTION TLabel(...); static s_oClass ; local oClassInstance ; local nScope ; nScope := 1 ; if s_oClass == NIL ; s_oClass := IIF(.F.,, HBClass():New( "TLabel" , { HBObject():Classh } ) ) ;
+
+      _HB_MEMBER { oDevice, oLblWnd, oBrush, oPenHorz} ; IIF( !.F., s_oClass:AddMultiData(,, nScope + IIF( .F., 32, 0 ), { "oDevice" , "oLblWnd" , "oBrush" , "oPenHorz" }, .F., .F. ), )
+      _HB_MEMBER { aFont, aData, aPen, aDataHeight, aClrText} ; IIF( !.F., s_oClass:AddMultiData(,, nScope + IIF( .F., 32, 0 ), { "aFont" , "aData" , "aPen" , "aDataHeight" , "aClrText" }, .F., .F. ), )
+
+
+      _HB_MEMBER { bFor, bWhile , bInit, bEnd, bStartLine, bEndLine, bStartLabel, bEndLabel, bStartPage, bEndPage, bSkip, bStdFont, bPreview,  bChange} ; IIF( !.F., s_oClass:AddMultiData(,, nScope + IIF( .F., 32, 0 ), { "bFor" , "bWhile" , "bInit" , "bEnd" , "bStartLine" , "bEndLine" , "bStartLabel" , "bEndLabel" , "bStartPage" , "bEndPage" , "bSkip" , "bStdFont" , "bPreview" , "bChange" }, .F., .F. ), )
+      _HB_MEMBER { cLblFile, cResName, cFile, cName} ; IIF( !.F., s_oClass:AddMultiData(,, nScope + IIF( .F., 32, 0 ), { "cLblFile" , "cResName" , "cFile" , "cName" }, .F., .F. ), )
+
+
+
+      _HB_MEMBER { nWidth, nHeight, nMargin, nRow, nStartRow, nHSeparator, nVSeparator, nLeftMargin, nRightMargin, nTopMargin, nDnMargin, nBottomRow, nStdLineHeight, nLogPixX, nLogPixY, nFirstdrow, nLastdrow, nCounter, nPageWidth, nPage} ; IIF( !.F., s_oClass:AddMultiData(,, nScope + IIF( .F., 32, 0 ), { "nWidth" , "nHeight" , "nMargin" , "nRow" , "nStartRow" , "nHSeparator" , "nVSeparator" , "nLeftMargin" , "nRightMargin" , "nTopMargin" , "nDnMargin" , "nBottomRow" , "nStdLineHeight" , "nLogPixX" , "nLogPixY" , "nFirstdrow" , "nLastdrow" , "nCounter" , "nPageWidth" , "nPage" }, .F., .F. ), )
+
+      _HB_MEMBER { lFinish, lStable, lPrinter, lScreen, lFirstRow, lCreated, lPreview, lBreak, lSpanish, lShadow, lGrid} ; IIF( !.F., s_oClass:AddMultiData(,, nScope + IIF( .F., 32, 0 ), { "lFinish" , "lStable" , "lPrinter" , "lScreen" , "lFirstRow" , "lCreated" , "lPreview" , "lBreak" , "lSpanish" , "lShadow" , "lGrid" }, .F., .F. ), )
+      _HB_MEMBER { cargo, nOnLineNow, nItemNow} ; IIF( !.F., s_oClass:AddMultiData(,, nScope + IIF( .F., 32, 0 ), { "cargo" , "nOnLineNow" , "nItemNow" }, .F., .F. ), )
+      _HB_MEMBER { hOldRes} ; IIF( !.F., s_oClass:AddMultiData(,, nScope + IIF( .F., 32, 0 ), { "hOldRes" }, .F., .F. ), )
+      _HB_MEMBER { nLblHeight, nLblOnLine, nLblWidth, nItems, aoItems, aColumnStart} ; IIF( !.F., s_oClass:AddMultiData(,, nScope + IIF( .F., 32, 0 ), { "nLblHeight" , "nLblOnLine" , "nLblWidth" , "nItems" , "aoItems" , "aColumnStart" }, .F., .F. ), )
+      _HB_MEMBER { lNoEnd} ; IIF( !.F., s_oClass:AddMultiData(,, nScope + IIF( .F., 32, 0 ), { "lNoEnd" }, .F., .F. ), )
+     _HB_MEMBER { nLblCurrent} ; IIF( !.F., s_oClass:AddMultiData(,, nScope + IIF( .F., 32, 0 ), { "nLblCurrent" }, .F., .F. ), )
+
+
+
+
+      _HB_MEMBER New( nLblWidth, nLblHeight, nHSeparator, nVSeparator, nLblOnLine, aFont, aPen, cLblFile, cResName, lPrinter, lScreen, cFile, oDevice, cName, lNoEnd) AS CLASS TLabel; IIF( .F., s_oClass:ModMethod( "New", @TLabel_New(), nScope + IIF( .T., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ), s_oClass:AddMethod( "New", @TLabel_New(), nScope + IIF( .T., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ));
+
+
+
+
+      _HB_MEMBER AddItem(oItem); IIF( .F., s_oClass:ModInline( "AddItem", {|Self,oItem | Self, Aadd(::aoItems, oItem ) }, nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ), s_oClass:AddInline( "AddItem", {|Self,oItem | Self, Aadd(::aoItems, oItem ) }, nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ) )
+
+
+      _HB_MEMBER DelItem(nItem); IIF( .F., s_oClass:ModInline( "DelItem", {|Self,nItem | Self, Adel(::aoItem, nItem ) , Asize(::aoItems, len(::aoItems) - 1 ) }, nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ), s_oClass:AddInline( "DelItem", {|Self,nItem | Self, Adel(::aoItem, nItem ) , Asize(::aoItems, len(::aoItems) - 1 ) }, nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ) )
+
+
+
+      _HB_MEMBER InsItem(oItem , nItem); IIF( .F., s_oClass:ModInline( "InsItem", {|Self,oItem , nItem | Self, Ains(::aoItems, nItem ) , ::aoItems[nItem]:= oItem }, nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ), s_oClass:AddInline( "InsItem", {|Self,oItem , nItem | Self, Ains(::aoItems, nItem ) , ::aoItems[nItem]:= oItem }, nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ) )
+
+      _HB_MEMBER Stabilize(); IIF( .F., s_oClass:ModMethod( "Stabilize", @TLabel_Stabilize(), nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ), s_oClass:AddMethod( "Stabilize", @TLabel_Stabilize(), nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ));
+      _HB_MEMBER Skip( n); IIF( .F., s_oClass:ModMethod( "Skip", @TLabel_Skip(), nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ), s_oClass:AddMethod( "Skip", @TLabel_Skip(), nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ));
+
+     _HB_MEMBER Init(); IIF( .F., s_oClass:ModMethod( "Init", @TLabel_Init(), nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ), s_oClass:AddMethod( "Init", @TLabel_Init(), nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ));
+     _HB_MEMBER End(); IIF( .F., s_oClass:ModMethod( "End", @TLabel_End(), nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ), s_oClass:AddMethod( "End", @TLabel_End(), nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ));
+
+      _HB_MEMBER StartLabel( nOnLineNow); IIF( .F., s_oClass:ModMethod( "StartLabel", @TLabel_StartLabel(), nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ), s_oClass:AddMethod( "StartLabel", @TLabel_StartLabel(), nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ));
+      _HB_MEMBER EndLabel( nOnLineNow); IIF( .F., s_oClass:ModMethod( "EndLabel", @TLabel_EndLabel(), nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ), s_oClass:AddMethod( "EndLabel", @TLabel_EndLabel(), nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ));
+
+      _HB_MEMBER StartLine( nHeight); IIF( .F., s_oClass:ModMethod( "StartLine", @TLabel_StartLine(), nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ), s_oClass:AddMethod( "StartLine", @TLabel_StartLine(), nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ));
+      _HB_MEMBER EndLine( nHeight); IIF( .F., s_oClass:ModMethod( "EndLine", @TLabel_EndLine(), nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ), s_oClass:AddMethod( "EndLine", @TLabel_EndLine(), nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ));
+
+      _HB_MEMBER StartPage(); IIF( .F., s_oClass:ModMethod( "StartPage", @TLabel_StartPage(), nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ), s_oClass:AddMethod( "StartPage", @TLabel_StartPage(), nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ));
+      _HB_MEMBER EndPage(); IIF( .F., s_oClass:ModMethod( "EndPage", @TLabel_EndPage(), nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ), s_oClass:AddMethod( "EndPage", @TLabel_EndPage(), nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ));
+      _HB_MEMBER NeedNewPage(); IIF( .F., s_oClass:ModInline( "NeedNewPage", {|Self | Self, ( !::lNoEnd .AND. ( ::nRow >= ::nBottomRow ) ) }, nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ), s_oClass:AddInline( "NeedNewPage", {|Self | Self, ( !::lNoEnd .AND. ( ::nRow >= ::nBottomRow ) ) }, nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ) )
+
+
+      _HB_MEMBER NewLabel(nHeight); IIF( .F., s_oClass:ModInline( "NewLabel", {|Self,nHeight | Self, ::StartLine(nHeight) ,    iif(!::lFirstRow, ::EndLabel(nHeight), ) }, nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ), s_oClass:AddInline( "NewLabel", {|Self,nHeight | Self, ::StartLine(nHeight) ,    iif(!::lFirstRow, ::EndLabel(nHeight), ) }, nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ) )
+
+
+     _HB_MEMBER BackLine(nLine); IIF( .F., s_oClass:ModInline( "BackLine", {|Self,nLine | Self, ::nRow -= ::nStdLineHeight*     iif(nLine == Nil,1 ,nLine ) }, nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ), s_oClass:AddInline( "BackLine", {|Self,nLine | Self, ::nRow -= ::nStdLineHeight*     iif(nLine == Nil,1 ,nLine ) }, nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ) )
+
+
+     _HB_MEMBER NewLine(nLine); IIF( .F., s_oClass:ModInline( "NewLine", {|Self,nLine | Self, ::nRow += ::nStdLineHeight*     iif(nLine == Nil,1 ,nLine ) }, nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ), s_oClass:AddInline( "NewLine", {|Self,nLine | Self, ::nRow += ::nStdLineHeight*     iif(nLine == Nil,1 ,nLine ) }, nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ) )
+
+
+     _HB_MEMBER Activate( bFor, bWhile, bInit, bEnd, bStartPage,     bEndPage, bStartLine, bEndLine, bChange); IIF( .F., s_oClass:ModMethod( "Activate", @TLabel_Activate(), nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ), s_oClass:AddMethod( "Activate", @TLabel_Activate(), nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ));
+
+     _HB_MEMBER Play(); IIF( .F., s_oClass:ModMethod( "Play", @TLabel_Play(), nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ), s_oClass:AddMethod( "Play", @TLabel_Play(), nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ));
+
+     _HB_MEMBER Margin( nValue,nType,nScale); IIF( .F., s_oClass:ModMethod( "Margin", @TLabel_Margin(), nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ), s_oClass:AddMethod( "Margin", @TLabel_Margin(), nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ));
+
+     _HB_MEMBER Say( nCol, xText, nFont, nPad, nRow); IIF( .F., s_oClass:ModMethod( "Say", @TLabel_Say(), nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ), s_oClass:AddMethod( "Say", @TLabel_Say(), nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ));
+
+     _HB_MEMBER SayBitmap( nRow, nCol, cBitmap, nWidth, nHeight, nScale); IIF( .F., s_oClass:ModMethod( "SayBitmap", @TLabel_SayBitmap(), nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ), s_oClass:AddMethod( "SayBitmap", @TLabel_SayBitmap(), nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ));
+      _HB_MEMBER Box( nRow, nCol, nBottom, nRight, nPen, nScale); IIF( .F., s_oClass:ModMethod( "Box", @TLabel_Box(), nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ), s_oClass:AddMethod( "Box", @TLabel_Box(), nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ));
+
+     _HB_MEMBER Line( nTop, nLeft, nBottom, nRight, nPen, nScale); IIF( .F., s_oClass:ModMethod( "Line", @TLabel_Line(), nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ), s_oClass:AddMethod( "Line", @TLabel_Line(), nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ));
+     _HB_MEMBER Shadow( nHeight); IIF( .F., s_oClass:ModMethod( "Shadow", @TLabel_Shadow(), nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ), s_oClass:AddMethod( "Shadow", @TLabel_Shadow(), nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ));
+      _HB_MEMBER Grid( nHeight, nItem, nLblOnLine); IIF( .F., s_oClass:ModMethod( "Grid", @TLabel_Grid(), nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ), s_oClass:AddMethod( "Grid", @TLabel_Grid(), nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ));
+
+      _HB_MEMBER Column(); IIF( .F., s_oClass:ModInline( "Column", {|Self | Self, ( ::aColumnStart[::nOnLineNow] ) }, nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ), s_oClass:AddInline( "Column", {|Self | Self, ( ::aColumnStart[::nOnLineNow] ) }, nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ) )
+
+      _HB_MEMBER PhyWidth( nValue, nScale); IIF( .F., s_oClass:ModMethod( "PhyWidth", @TLabel_PhyWidth(), nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ), s_oClass:AddMethod( "PhyWidth", @TLabel_PhyWidth(), nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ));
+      _HB_MEMBER PhyHeight( nValue, nScale); IIF( .F., s_oClass:ModMethod( "PhyHeight", @TLabel_PhyHeight(), nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ), s_oClass:AddMethod( "PhyHeight", @TLabel_PhyHeight(), nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ));
+
+
+
+
+
+      _HB_MEMBER SetTxtColor(nColor,nFont); IIF( .F., s_oClass:ModInline( "SetTxtColor", {|Self,nColor,nFont | Self, (iif(nColor <> NIL .AND.                           nFont   > 0   .AND.                           nFont   < len(::aClrText)                   , ::aClrText[nFont] := nColor, ) ) }, nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ), s_oClass:AddInline( "SetTxtColor", {|Self,nColor,nFont | Self, (iif(nColor <> NIL .AND.                           nFont   > 0   .AND.                           nFont   < len(::aClrText)                   , ::aClrText[nFont] := nColor, ) ) }, nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ) )
+
+      _HB_MEMBER SetPenColor( nColor); IIF( .F., s_oClass:ModMethod( "SetPenColor", @TLabel_SetPenColor(), nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ), s_oClass:AddMethod( "SetPenColor", @TLabel_SetPenColor(), nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ));
+
+; IF .F. ; __clsActive(s_oClass:hClass) ; s_oClass:Refresh() ; ELSE ; s_oClass:Create() ; END ; oClassInstance := __clsInst( s_oClass:hClass ) ; IF __ObjHasMsg( oClassInstance, "InitClass" ); oClassInstance:InitClass( hb_aParams() ) ; END ; ELSE ; oClassInstance := __clsInst( s_oClass:hClass ) ; END ; IF PCount() > 0 ; DIVERT TO (@DivertConstructorCall()) OF s_oClass ; END ; RETURN oClassInstance AS CLASS TLabel ;
+
+
+
+
+UTILITY STATIC function TLabel_New( nLblWidth, nLblHeight, nHSeparator, nVSeparator, nLblOnLine, aFont, aPen, cLblFile, cResName, lPrinter, lScreen, cFile, oDevice, cName, lNoEnd) ; local Self AS CLASS TLabel := QSelf() AS CLASS TLabel
+
+
+     LOCAL lFontDefined := .T. , lPenDefined  := .T.
+
+
+
+
+
+
+
+
+
+
+
+      IIF( nLblHeight == nil, nLblHeight := 20, ) ; IIF( nLblWidth == nil, nLblWidth := 120, ); IIF( nLblOnLine == nil, nLblOnLine := 2, ); IIF( nHSeparator == nil, nHSeparator := 10, ); IIF( nVSeparator == nil, nVSeparator := 5, ); IIF( cResName == nil, cResName := "", ); IIF( lPrinter == nil, lPrinter := .F., ); IIF( lScreen == nil, lScreen := .F., ); IIF( cFile == nil, cFile := "", ); IIF( cName == nil, cName := "FiveWin Labels", ); IIF( lNoEnd == nil, lNoEnd := .F., );
+
+      ::cLblFile      = cLblFile
+      ::cResName      = cResName
+      ::lStable       = .F.
+      ::nRow          = 0
+      ::nStartRow     = 0
+      ::nPage         = 0
+      ::nPageWidth    = 0
+     ::nLblCurrent   = 1
+      ::nLblOnLine    = nLblOnLine
+     ::aoItems       = {}
+      ::aColumnStart  = {}
+      ::nCounter      = 0
+      ::nOnLineNow    = 0
+     ::nItemNow      = 0
+      ::bStdFont      = {|| 1 }
+      ::bPreview      = {|oDevice| rPreview(oDevice) }
+      ::lPrinter      = lPrinter
+     ::lScreen       = lScreen
+     ::lFirstRow     = .T.
+     ::lCreated      = .F.
+      ::lPreview      = .F.
+     ::lSpanish      = (GetProfString("intl", "sLanguage") == "esp")
+     ::lBreak        = .F.
+     ::lShadow       = .F.
+     ::cFile         = cFile
+      ::cName         = cName
+      ::lNoEnd            = lNoEnd
+
+
+
+
+
+     IF oDevice <> NIL
+          ::oDevice := oDevice
+     ELSEIF ::lPrinter
+             ::oDevice := TPrinter():New(cName,.F.)
+      ELSEIF ::lScreen
+             ::lPreview := .T.
+             ::oDevice := TPrinter():New(cName,.F.,.T.)
+     ELSEIF !empty(::cFile)
+          ::oDevice := TRFile():New(::cFile)
+     ELSE
+          ::oDevice := TPrinter():New(cName,.T.)
+     ENDIF
+
+
+
+
+
+     IF empty(::oDevice:hDC)
+          RETU NIL
+     ELSE
+          ::lCreated := .T.
+     ENDIF
+
+
+
+
+
+     ::nWidth  := ::oDevice:nHorzRes()
+     ::nHeight := ::oDevice:nVertRes()
+
+
+
+
+
+      ::nLblHeight    = ::PhyHeight( nLblHeight, 3 )
+      ::nLblWidth     = ::PhyWidth( nLblWidth, 3 )
+
+
+
+
+
+      ::nVSeparator   = ::PhyHeight( nVSeparator, 3 )
+      ::nHSeparator   = ::PhyWidth( nHSeparator, 3 )
+
+
+
+
+
+
+
+
+
+
+     ::nLogPixX := Round(::nWidth/(::oDevice:nHorzSize()/25.4),0)
+     ::nLogPixY := Round(::nHeight/(::oDevice:nVertSize()/25.4),0)
+
+
+
+
+
+     IF len(aFont) == 0
+          lFontDefined := .F.
+          Asize(aFont,1)
+          aFont[1] := TFont():New( "Arial", 0, -10,,,,,,,,,,,,,, )
+     ENDIF
+
+
+
+
+
+
+
+
+     ::oPenHorz := TPen():New( 0, Int(1*::nLogPixX/72), 0, )
+
+
+
+
+
+     IF len(aPen) == 0
+          lPenDefined := .F.
+          Asize(aPen,1)
+          aPen[1] := TPen():New( 0, 1, 0, )
+     ENDIF
+
+
+
+
+
+
+     ::aFont := Array(len(aFont))
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+     Aeval(aFont                                       , {|val,elem|                                    ::aFont[elem]:= TFont():New(val:cFaceName    , Int(val:nWidth*::nLogPixX/72)                , Int(val:nHeight*::nLogPixY/72)               , .F.                                          , val:lBold                                    , val:nEscapement                              , val:nOrientation                             , val:nWeight                                  , val:lItalic                                  , val:lUnderline                               , val:lStrikeOut                               , val:nCharSet                                 , val:nOutPrecision                            , val:nClipPrecision                           , val:nQuality) })
+
+     IF !lFontDefined
+          aFont[1]:end()
+     ENDIF
+
+
+
+
+
+     ::aPen := Array(len(aPen))
+
+
+
+
+     Aeval(aPen, {|val,elem|                              ::aPen[elem] := Tpen():New( val:nStyle , Int(val:nWidth*::nLogPixX/72)          , val:nColor)} )
+
+     IF !lPenDefined
+          aPen[1]:end()
+     ENDIF
+
+
+
+
+
+     ::aClrText := Array(len(::aFont))
+
+     Aeval(::aClrText,{|val,elem| ::aClrText[elem] := 0 })
+
+
+
+
+
+     ::nLeftMargin  := Int(::nLogPixX*0.2)
+     ::nRightMargin := Int(::nLogPixX*0.2)
+     ::nTopMargin   := Int(::nLogPixY*0.2)
+     ::nDnMargin    := Int(::nLogPixY*0.2)
+
+RETURN Self
+
+
+
+UTILITY STATIC function TLabel_Margin( nValue, nType, nScale) ; local Self AS CLASS TLabel := QSelf() AS CLASS TLabel
+
+
+
+     IIF( nValue == nil, nValue := .2, ) ; IIF( nType == nil, nType := 1, ); IIF( nScale == nil, nScale := 3, );
+
+     IF nScale == 2
+             nValue := nValue/2.54
+      ELSEIF nScale == 3
+             nValue := nValue/25.4
+      ENDIF
+
+     DO CASE
+     CASE nType == 4
+          ::nTopMargin   := Int(::nLogPixY*nValue)
+     CASE nType == 5
+          ::nDnMargin    := Int(::nLogPixY*nValue)
+     CASE nType == 1
+          ::nLeftMargin  := Int(::nLogPixX*nValue)
+     CASE nType == 2
+          ::nRightMargin := Int(::nLogPixX*nValue)
+     ENDCASE
+
+     ::lStable := .F.
+
+RETURN Self
+
+
+
+UTILITY STATIC function TLabel_Say( nRow, nCol, xText, nFont, nPad) ; local Self AS CLASS TLabel := QSelf() AS CLASS TLabel
+
+     LOCAL nFor
+     LOCAL nStartCol
+     LOCAL cText
+     LOCAL nWidth
+     LOCAL cLine
+     LOCAL nMemLine
+
+
+
+
+
+     IIF( nCol == nil, nCol := 1, ) ; IIF( nFont == nil, nFont := 1, ); IIF( xText == nil, xText := "", ); IIF( nRow == nil, nRow := ::nRow, ); IIF( nPad == nil, nPad := 1, );
+
+      IF nCol <1 .OR. nCol > len(::aColumnStart)
+             nCol := 1
+      ENDIF
+
+     IF nFont <1 .OR. nFont > len(::aFont)
+          nFont := 1
+     ENDIF
+
+     cText  := cValToChar(xText)
+     nWidth := ::oDevice:GetTextWidth(cText,::aFont[nFont])
+
+     DO CASE
+
+          CASE nPad == 1
+                    nStartCol := ::aColumnStart[nCol]
+
+          CASE nPad == 2
+               nStartCol := ::aColumnStart[nCol] + ::aoItems[nCol]:nWidth - nWidth
+
+          CASE nPad == 3
+               nStartCol := ::aColumnStart[nCol] + Int( ::aoItems[nCol]:nWidth / 2 ) - Int( nWidth / 2 )
+             OTHERWISE
+                    nStartCol := ::aColumnStart[nCol]
+      ENDCASE
+
+     ::oDevice:Say(nRow, nStartCol, cLine, ::aFont[nFont], nil, ::aClrText[nFont] )
+
+RETURN Self
+
+
+
+UTILITY STATIC function TLabel_SayBitmap( nRow, nCol, cBitmap, nWidth, nHeight, nScale) ; local Self AS CLASS TLabel := QSelf() AS CLASS TLabel
+
+     LOCAL nPixRow, nPixCol, nPixWidth, nPixHeight
+
+
+
+
+
+     IIF( nRow == nil, nRow := .2, ) ; IIF( nCol == nil, nCol := .2, ); IIF( nWidth == nil, nWidth := 1, ); IIF( nHeight == nil, nHeight := 1, ); IIF( nScale == nil, nScale := 1, );
+
+     IF nScale == 2
+          nRow := Int(nRow/2.54)
+          nCol := Int(nCol/2.54)
+          nWidth := Int(nWidth/2.54)
+             nHeight := Int(nHeight/2.54)
+      ELSEIF nScale == 3
+             nRow := Int(nRow/25.4)
+             nCol := Int(nCol/25.4)
+             nWidth := Int(nWidth/25.4)
+             nHeight := Int(nHeight/25.4)
+      ENDIF
+
+     nPixRow    := Int(::nLogPixY*nRow)
+     nPixCol    := Int(::nLogPixX*nCol)
+     nPixWidth  := Int(::nLogPixX*nWidth)
+     nPixHeight := Int(::nLogPixY*nHeight)
+
+     ::oDevice:SayBitmap(nPixRow, nPixCol, cBitmap, nPixWidth, nPixHeight)
+
+RETURN Self
+
+
+
+UTILITY STATIC function TLabel_Box( nRow, nCol, nBottom, nRight, nPen, nScale) ; local Self AS CLASS TLabel := QSelf() AS CLASS TLabel
+
+     LOCAL nPixRow, nPixCol, nPixBottom, nPixRight
+
+
+
+
+
+
+     IIF( nRow == nil, nRow := .2, ) ; IIF( nCol == nil, nCol := .2, ); IIF( nBottom == nil, nBottom := 5, ); IIF( nRight == nil, nRight := 5, ); IIF( nPen == nil, nPen := 1, ); IIF( nScale == nil, nScale := 1, );
+
+     IF nScale == 2
+          nRow    := Int(nRow/2.54)
+          nCol    := Int(nCol/2.54)
+          nBottom := Int(nBottom/2.54)
+             nRight  := Int(nRight/2.54)
+      ELSEIF nScale == 3
+             nRow := Int(nRow/25.4)
+             nCol := Int(nCol/25.4)
+             nBottom := Int(nBottom/25.4)
+             nRight  := Int(nRight/25.4)
+      ENDIF
+
+      nPixRow    := Int(::nLogPixY*nRow)
+      nPixCol    := Int(::nLogPixX*nCol)
+      nPixBottom := Int(::nLogPixY*nBottom)
+      nPixRight  := Int(::nLogPixX*nRight)
+
+     ::oDevice:Box(nPixRow, nPixCol, nPixBottom, nPixRight, ::aPen[nPen])
+
+RETURN Self
+
+
+
+UTILITY STATIC function TLabel_Line( nTop, nLeft, nBottom, nRight, nPen, nScale) ; local Self AS CLASS TLabel := QSelf() AS CLASS TLabel
+
+      LOCAL nPixTop, nPixLeft, nPixBottom, nPixRight
+
+
+
+
+
+
+     IIF( nTop == nil, nTop := .2, ) ; IIF( nLeft == nil, nLeft := .2, ); IIF( nBottom == nil, nBottom := 5, ); IIF( nRight == nil, nRight := 5, ); IIF( nPen == nil, nPen := 1, ); IIF( nScale == nil, nScale := 1, );
+
+     IF nScale == 2
+          nTop    := Int(nTop/2.54)
+          nLeft   := Int(nLeft/2.54)
+          nBottom := Int(nBottom/2.54)
+             nRight  := Int(nRight/2.54)
+      ELSEIF nScale == 3
+             nTop    := Int(nTop/25.4)
+             nLeft   := Int(nLeft/25.4)
+             nBottom := Int(nBottom/25.4)
+             nRight  := Int(nRight/25.4)
+      ENDIF
+
+     nPixTop    := Int(::nLogPixY*nTop)
+     nPixLeft   := Int(::nLogPixX*nLeft)
+     nPixBottom := Int(::nLogPixY*nBottom)
+     nPixRight  := Int(::nLogPixX*nRight)
+
+     ::oDevice:Line(nPixTop, nPixLeft, nPixBottom, nPixRight, ::aPen[nPen])
+
+RETURN Self
+
+
+
+UTILITY STATIC function TLabel_Shadow( nHeight, nItem, nLblOnLine) ; local Self AS CLASS TLabel := QSelf() AS CLASS TLabel
+
+      IF ::oBrush == NIL
+          ::oBrush := TBrush():New(, 12632256,,,, )
+     ENDIF
+
+
+
+
+
+      ::oDevice:FillRect({::nRow            , ::aColumnStart[nLblOnLine]   , ::nRow+nHeight               , ::aColumnStart[nLblOnLine]+::aoItems[nItem]:nWidth} , ::oBrush)
+
+RETURN Self
+
+
+
+UTILITY STATIC function TLabel_Grid( nHeight, nItem, nLblOnLine) ; local Self AS CLASS TLabel := QSelf() AS CLASS TLabel
+
+
+
+
+
+        ::oDevice:line(::nRow + nHeight ,    ::aColumnStart[nLblOnLine] ,    ::nRow + nHeight ,    ::aColumnStart[nLblOnLine] + ::aoItems[nItem]:nWidth ,    ::aPen[ ::aoItems[nItem]:nPen ] )
+
+RETURN Self
+
+
+
+
+
+UTILITY STATIC function TLabel_Activate( bFor, bWhile, bInit, bEnd, bStartPage,  bEndPage, bStartLabel, bEndLabel, bStartLine,  bEndLine, bChange) ; local Self AS CLASS TLabel := QSelf() AS CLASS TLabel
+
+      LOCAL oPagina
+
+
+     IIF( bFor == nil, bFor := {|| .T.    }, ) ; IIF( bWhile == nil, bWhile := {|| !eof() }, );
+
+
+
+
+
+
+
+     ::bFor        = bFor
+     ::bWhile      = bWhile
+     ::bInit       = bInit
+     ::bEnd        = bEnd
+     ::bStartPage  = bStartPage
+     ::bEndPage    = bEndPage
+      ::bStartLabel = bStartLabel
+      ::bEndLabel   = bEndLabel
+      ::bStartLine  = bStartLine
+      ::bEndLine    = bEndLine
+     ::bChange     = bChange
+
+
+
+
+
+     IF !::lCreated
+            ::End()
+            RETU NIL
+      ENDIF
+
+     ::Stabilize()
+
+     IF !::lStable
+             ::End()
+          RETU NIL
+     ENDIF
+
+
+
+
+
+    IF !::lPreview
+
+        ::oLblWnd = TDialog():New(,,,, ::cName, "PRINT_PROC",, .F.,,,,,, .F.,,,,,, .F., )
+
+
+        TButton():ReDefine( 2, {||(::lBreak := .T., ::oLblWnd:End())}, ::oLblWnd,,, .F.,,,, .F. )
+
+        oPagina := TSay():ReDefine( 101, {|| ::nPage}, ::oLblWnd,,,, .F.,, .F., .F. )
+
+        ::oLblWnd:bPainted := {|| iif(::nPage>0,oPagina:Refresh(), )}
+
+        ::oLblWnd:bStart := {|| ::Play(),::oLblWnd:End()}
+
+        ::oLblWnd:Activate( ::oLblWnd:bLClicked, ::oLblWnd:bMoved, ::oLblWnd:bPainted, .T.,,,, ::oLblWnd:bRClicked,,, )
+
+   ELSE
+
+        ::oLblWnd = TDialog():New(,,,, ::cName, "PREVIEW_PROC",, .F.,,,,,, .F.,,,,,, .F., )
+
+
+        TButton():ReDefine( 2, {||(::lBreak := .T., ::oLblWnd:End())}, ::oLblWnd,,, .F.,,,, .F. )
+
+        oPagina := TSay():ReDefine( 101, {|| ::nPage}, ::oLblWnd,,,, .F.,, .F., .F. )
+
+        ::oLblWnd:bPainted := {|| iif(::nPage>0,oPagina:Refresh(), )}
+
+        ::oLblWnd:bStart := {|| ::Play(),::oLblWnd:End()}
+
+        ::oLblWnd:Activate( ::oLblWnd:bLClicked, ::oLblWnd:bMoved, ::oLblWnd:bPainted, .T.,,,, ::oLblWnd:bRClicked,,, )
+
+      Eval(::bPreview,::oDevice)
+
+   ENDIF
+
+RETURN Self
+
+
+
+UTILITY STATIC function TLabel_Play() ; local Self AS CLASS TLabel := QSelf() AS CLASS TLabel
+
+   local n := 0
+   LOCAL nItems, nFor
+
+
+
+
+
+   nItems    := len(::aoItems)
+
+
+
+
+
+   ::StartPage()
+
+   ::Init()
+
+
+
+
+
+   while !::lBreak .AND. eval(::bWhile)
+
+
+
+
+
+      if eval(::bFor)
+
+
+
+
+
+         ::nRow := ::nStartRow
+
+
+
+
+
+         ::StartLabel( ::nLblCurrent )
+
+
+
+
+
+
+         for nFor := 1 to ::nItems
+
+            if ::aoItems[nFor]:lGrid
+               ::Grid( ::aoItems[nFor]:nDataHeight, nFor, ::nLblCurrent )
+            endif
+
+            if ::aoItems[nFor]:lShadow
+               ::Shadow( ::aoItems[nFor]:nDataHeight, nFor, ::nLblCurrent )
+            endif
+
+            ::aoItems[nFor]:SayData( ::nRow, ::aColumnStart[::nLblCurrent] )
+
+            ::EndLine( ::aoItems[nFor]:nDataHeight, nFor )
+
+         next
+
+
+
+
+
+         ::EndLabel(::nLblCurrent)
+
+         ::nLblCurrent++
+
+         if ::nLblCurrent > ::nLblOnLine
+
+            ::nLblCurrent  := 1
+
+
+
+
+
+            ::nRow      := ::nStartRow + ::nLblHeight + ::nVSeparator
+
+
+
+
+
+
+            ::nStartRow := ::nRow
+
+
+
+
+
+            if ::NeedNewPage()
+               ::EndPage()
+            end
+
+         end
+
+      end
+
+
+
+
+
+      SysRefresh()
+
+
+
+
+
+      ::Skip(1)
+
+   ENDDO
+
+   ::End()
+
+RETURN Self
+
+
+
+UTILITY STATIC function TLabel_Stabilize() ; local Self AS CLASS TLabel := QSelf() AS CLASS TLabel
+
+   LOCAL nFor1, nMaxHeight, nPrnWidth, nColStart
+
+   nMaxHeight := 0
+
+   ::nItems   := len(::aoItems)
+
+   IF ::nItems == 0
+        ::lCreated := .F.
+        Retu (NIL)
+   ENDIF
+
+
+
+
+
+   ::nStdLineHeight := ::oDevice:GetTextHeight("B",::aFont[eval(::bStdFont)])
+
+
+
+
+
+   Asend(::aoItems, "Stabilize")
+
+
+
+
+
+   AEval( ::aoItems, {|val| nMaxHeight += val:nDataHeight } )
+
+
+
+
+
+
+
+   FOR nFor1 := 1 TO ::nItems
+
+      IF ::aoItems[nFor1]:nWidth > ::nLblWidth
+         ::aoItems[nFor1]:nWidth := ::nLblWidth
+      end
+
+   NEXT
+
+
+
+
+
+   ::lShadow := .F.
+   aeval(::aoItems, {|Val| iif(Val:lShadow,::lShadow := .T. ,NIL ) })
+
+
+
+
+
+   ::lGrid := .F.
+   AEval(::aoItems, {|Val| iif(Val:lGrid,::lGrid := .T. ,NIL ) })
+
+
+
+
+
+   aeval(::aoItems, {|Val| ::nPageWidth += Val:nWidth + ::nHSeparator })
+
+   ::nPageWidth -= ::nHSeparator
+
+   ::nWidth := min(::nPageWidth, ::nWidth)
+
+
+
+
+
+    nPrnWidth := ::nWidth - ::nLeftMargin - ::nRightMargin
+    ::nMargin := max( Int( (nPrnWidth - ::nPageWidth) /2 ), 0) + ::nLeftMargin
+
+
+
+
+
+    nColStart := ::nMargin
+
+    FOR nFor1 := 1 TO ::nLblOnLine
+
+        Aadd( ::aColumnStart, nColStart )
+        nColStart += ( ::nLblWidth + ::nHSeparator )
+
+    NEXT
+
+
+
+
+
+   Aeval(::aoItems, {|val| nMaxHeight := Max( nMaxHeight, val:nDataHeight) })
+
+
+
+
+
+
+    ::nBottomRow := ::nHeight - ::nDnMargin
+
+    ::nFirstdRow := ::nTopMargin
+    ::nLastdRow  := ::nDnMargin
+
+
+
+
+
+    ::lStable := .T.
+    ::lFinish := .F.
+
+RETURN (NIL)
+
+
+
+UTILITY STATIC function TLabel_Init() ; local Self AS CLASS TLabel := QSelf() AS CLASS TLabel
+
+     IF ::bInit <> nil
+          Eval( ::bInit )
+     ENDIF
+
+RETURN Self
+
+
+
+UTILITY STATIC function TLabel_End() ; local Self AS CLASS TLabel := QSelf() AS CLASS TLabel
+
+     ::lFinish := .T.
+
+      IF !::lCreated .OR. !::lStable
+
+        IF ::oBrush <> NIL
+            ::oBrush:end()
+        ENDIF
+        Asend(::aFont,"End")
+        Asend(::aPen,"End")
+
+        if ::oPenHorz <> nil
+           ::oPenHorz:End()
+        endif
+
+        ::oDevice:End()
+
+
+
+
+
+        RETU NIL
+
+      ENDIF
+
+     IF !::lBreak .AND. ::bEnd <> nil
+          Eval( ::bEnd )
+     ENDIF
+
+     ::EndPage()
+
+      SetResources(::hOldRes)
+
+     IF !::lPreview
+          ::oDevice:End()
+     ENDIF
+
+     IF ::oBrush <> NIL
+          ::oBrush:end()
+     ENDIF
+
+     Asend(::aFont,"End")
+     Asend(::aPen,"End")
+
+     ::oPenHorz:End()
+
+RETURN Self
+
+
+
+UTILITY STATIC function TLabel_Skip( n) ; local Self AS CLASS TLabel := QSelf() AS CLASS TLabel
+
+     STATIC lRunning := .F.
+
+     ::nCounter++
+
+     IF ::bChange <> nil .AND. !lRunning
+          lRunning := .T.
+          Eval( ::bChange )
+          lRunning := .F.
+     ENDIF
+
+     IF ::bSkip <> nil
+             retu Eval( ::bSkip, n )
+      ENDIF
+
+RETURN DbSkip( n )
+
+
+
+UTILITY STATIC function TLabel_StartPage() ; local Self AS CLASS TLabel := QSelf() AS CLASS TLabel
+
+     STATIC lRunning := .F.
+
+     ::oDevice:StartPage()
+
+
+
+
+
+      ::nRow :=    ::nStartRow := ::nTopMargin
+
+
+
+
+
+     ::nPage++
+
+      ::oLblWnd:Refresh()
+
+     IF ::bStartPage <> nil .AND. !lRunning
+          lRunning := .T.
+          Eval( ::bStartPage )
+          lRunning := .F.
+     ENDIF
+
+      ::lFirstRow := .T.
+
+RETURN Self
+
+
+
+UTILITY STATIC function TLabel_EndPage() ; local Self AS CLASS TLabel := QSelf() AS CLASS TLabel
+
+     STATIC lRunning := .F.
+
+     IF ::bEndPage <> nil .AND. !lRunning
+          lRunning := .T.
+          Eval( ::bEndPage )
+          lRunning := .F.
+     ENDIF
+
+      ::oDevice:EndPage()
+
+      IF !(::lFinish)
+          ::StartPage()
+     ENDIF
+
+RETURN Self
+
+
+
+UTILITY STATIC function TLabel_StartLine( nHeight) ; local Self AS CLASS TLabel := QSelf() AS CLASS TLabel
+
+     STATIC lRunning := .F.
+
+     IIF( nHeight == nil, nHeight := ::nStdLineHeight, ) ;
+
+      IF !::lNoEnd .AND. ( ( nHeight + ::nRow ) >= ::nBottomRow )
+             ::EndPage()
+      ENDIF
+
+     IF ::bStartLine <> nil .AND. !lRunning
+          lRunning := .T.
+          Eval( ::bStartLine)
+          lRunning := .F.
+     ENDIF
+
+RETURN Self
+
+
+
+UTILITY STATIC function TLabel_EndLine( nHeight, nItem) ; local Self AS CLASS TLabel := QSelf() AS CLASS TLabel
+
+     STATIC lRunning := .F.
+
+     IIF( nHeight == nil, nHeight := ::nStdLineHeight, ) ;
+
+
+
+
+
+      ::nRow      += nHeight
+
+
+
+
+
+
+      ::nItemNow := nItem
+
+      IF ::bEndLine <> nil .AND. !lRunning
+             lRunning := .T.
+          Eval( ::bEndLine)
+          lRunning := .F.
+     ENDIF
+
+      ::lFirstRow := .F.
+
+RETURN Self
+
+
+
+UTILITY STATIC function TLabel_StartLabel( nOnLineNow) ; local Self AS CLASS TLabel := QSelf() AS CLASS TLabel
+
+     STATIC lRunning := .F.
+
+
+
+
+
+      ::nOnLineNow := nOnLineNow
+
+      IF ::bStartLabel <> nil .AND. !lRunning
+             lRunning := .T.
+             Eval( ::bStartLabel)
+          lRunning := .F.
+     ENDIF
+
+RETURN Self
+
+
+
+UTILITY STATIC function TLabel_EndLabel( nOnLineNow) ; local Self AS CLASS TLabel := QSelf() AS CLASS TLabel
+
+      STATIC lRunning := .F.
+
+
+
+
+
+      ::nOnLineNow := nOnLineNow
+
+      IF ::bEndLabel <> nil .AND. !lRunning
+             lRunning := .T.
+             Eval( ::bEndLabel)
+             lRunning := .F.
+      ENDIF
+
+      ::lFirstRow := .F.
+
+RETURN Self
+
+
+
+UTILITY STATIC function TLabel_PhyWidth( nValue, nScale) ; local Self AS CLASS TLabel := QSelf() AS CLASS TLabel
+
+        LOCAL nHorzSize := ( ::oDevice:nHorzRes() / ::oDevice:nHorzSize() )
+        LOCAL nRetValue := 0
+
+        IIF( nValue == nil, nValue := 1, ) ;
+        IIF( nScale == nil, nScale := 3, ) ;
+
+        IF nScale == 1
+
+             nRetValue := nValue * nHorzSize * 25.4
+
+        ELSEIF nScale == 2
+
+             nRetValue := nValue * nHorzSize * 10
+
+        ELSEIF nScale == 3
+
+             nRetValue := nValue * nHorzSize
+
+        end
+
+RETURN Round( nRetValue, 0 )
+
+
+
+UTILITY STATIC function TLabel_PhyHeight( nValue, nScale) ; local Self AS CLASS TLabel := QSelf() AS CLASS TLabel
+
+        LOCAL nVertSize := ( ::oDevice:nVertRes() / ::oDevice:nVertSize() )
+        LOCAL nRetValue := 0
+
+        IIF( nValue == nil, nValue := 1, ) ;
+        IIF( nScale == nil, nScale := 3, ) ;
+
+        IF nScale == 1
+
+             nRetValue := nValue * nVertSize * 25.4
+
+        ELSEIF nScale == 2
+
+             nRetValue := nValue * nVertSize * 10
+
+        ELSEIF nScale == 3
+
+             nRetValue := nValue * nVertSize
+
+        end
+
+RETURN Round( nRetValue, 0 )
+
+
+
+UTILITY STATIC function TLabel_SetPenColor( nColor) ; local Self AS CLASS TLabel := QSelf() AS CLASS TLabel
+
+     IF nColor == NIL
+          RETU NIL
+     ENDIF
+
+     ::oPenHorz:End()
+
+
+
+
+     ::oPenHorz := TPen():New( 0, Int(1*::nLogPixX/72), nColor, )
+
+RETURN Self

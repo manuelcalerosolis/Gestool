@@ -1,0 +1,372 @@
+#line 112 "hbclass.ch"
+   DYNAMIC DivertConstructorCall
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+DECLARE HBClass  New( cName AS String, OPTIONAL SuperParams ) AS CLASS HBClass  Create() AS Object  Instance() AS Object  AddClsMethod( cName AS String, @MethodName(), nScope AS Numeric, n2 AS Numeric, n3 AS Numeric )  AddDelegate( cName AS String, cDelegate AS String, cObject AS String, nScope AS Numeric, lPersistent AS LOGICAL )  AddMultiClsData( cType AS String, uVal, nScope AS Numeric, aDatas AS Array OF String )  AddMultiData( cType AS String, uVal, nScope AS Numeric, aDatas AS Array OF String, x AS LOGICAL, lPer AS LOGICAL )  AddMethod( cName AS String, @MethodName(), nScope AS Numeric, lPersistent AS LOGICAL )  AddInLine( cName AS String, bBlock AS CodeBlock, nScope AS Numeric, lPersistent AS LOGICAL )  AddVirtual( cName AS String )  ModMethod( cName AS String, @MethodName(), nScope AS Numeric, lPersistent AS LOGICAL )  ModClsMethod( cName AS String, @MethodName(), nScope AS Numeric )  ModInline( cName AS String, bBlock AS CodeBlock, nScope AS Numeric, lPersistent AS LOGICAL )  SetOnError( @MethodName() )
+#line 85 "\Fwh1204\Include\FiveWin.Ch"
+   EXTERNAL GetProcAdd
+   EXTERNAL TActiveX
+
+
+
+
+extern errorsys
+#line 16 ".\Prg\Tgrpfam.prg"
+_HB_CLASS TGrpFam ; UTILITY FUNCTION TGrpFam(...); static s_oClass ; local oClassInstance ; local nScope ; nScope := 1 ; if s_oClass == NIL ; s_oClass := IIF(.F.,, HBClass():New( "TGrpFam" , {TMant():classh} ) ) ; ;
+
+   _HB_MEMBER Create( cPath) AS CLASS TGrpFam; IIF( .F., s_oClass:ModMethod( "Create", @TGrpFam_Create(), nScope + IIF( .T., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ), s_oClass:AddMethod( "Create", @TGrpFam_Create(), nScope + IIF( .T., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ));
+
+   _HB_MEMBER New( cPath, oWndParent, oMenuItem) AS CLASS TGrpFam; IIF( .F., s_oClass:ModMethod( "New", @TGrpFam_New(), nScope + IIF( .T., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ), s_oClass:AddMethod( "New", @TGrpFam_New(), nScope + IIF( .T., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ));
+
+   _HB_MEMBER OpenFiles( lExclusive); IIF( .F., s_oClass:ModMethod( "OpenFiles", @TGrpFam_OpenFiles(), nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ), s_oClass:AddMethod( "OpenFiles", @TGrpFam_OpenFiles(), nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ));
+   _HB_MEMBER OpenService(lExclusive); IIF( .F., s_oClass:ModMethod( "OpenService", @TGrpFam_OpenFiles(), nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ) ), s_oClass:AddMethod( "OpenService", @TGrpFam_OpenFiles(), nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ) ) );
+
+   _HB_MEMBER DefineFiles(); IIF( .F., s_oClass:ModMethod( "DefineFiles", @TGrpFam_DefineFiles(), nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ), s_oClass:AddMethod( "DefineFiles", @TGrpFam_DefineFiles(), nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ));
+
+   _HB_MEMBER Resource( nMode); IIF( .F., s_oClass:ModMethod( "Resource", @TGrpFam_Resource(), nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ), s_oClass:AddMethod( "Resource", @TGrpFam_Resource(), nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ));
+
+   _HB_MEMBER Activate(); IIF( .F., s_oClass:ModMethod( "Activate", @TGrpFam_Activate(), nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ), s_oClass:AddMethod( "Activate", @TGrpFam_Activate(), nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ));
+
+   _HB_MEMBER Publicar(); IIF( .F., s_oClass:ModMethod( "Publicar", @TGrpFam_Publicar(), nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ), s_oClass:AddMethod( "Publicar", @TGrpFam_Publicar(), nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ));
+
+   _HB_MEMBER Enviar(); IIF( .F., s_oClass:ModMethod( "Enviar", @TGrpFam_Enviar(), nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ), s_oClass:AddMethod( "Enviar", @TGrpFam_Enviar(), nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ));
+
+   _HB_MEMBER lPreSave( oGet, oDlg); IIF( .F., s_oClass:ModMethod( "lPreSave", @TGrpFam_lPreSave(), nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ), s_oClass:AddMethod( "lPreSave", @TGrpFam_lPreSave(), nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ));
+
+; IF .F. ; __clsActive(s_oClass:hClass) ; s_oClass:Refresh() ; ELSE ; s_oClass:Create() ; END ; oClassInstance := __clsInst( s_oClass:hClass ) ; IF __ObjHasMsg( oClassInstance, "InitClass" ); oClassInstance:InitClass( hb_aParams() ) ; END ; ELSE ; oClassInstance := __clsInst( s_oClass:hClass ) ; END ; IF PCount() > 0 ; DIVERT TO (@DivertConstructorCall()) OF s_oClass ; END ; RETURN oClassInstance AS CLASS TGrpFam ;
+
+
+
+UTILITY STATIC function TGrpFam_Create( cPath) ; local Self AS CLASS TGrpFam := QSelf() AS CLASS TGrpFam
+
+   IIF( cPath == nil, cPath := cPatArt(), ) ;
+
+   ::cPath           := cPath
+   ::oDbf            := nil
+
+RETURN ( Self )
+
+
+
+UTILITY STATIC function TGrpFam_New( cPath, oWndParent, oMenuItem) ; local Self AS CLASS TGrpFam := QSelf() AS CLASS TGrpFam
+
+   IIF( cPath == nil, cPath := cPatArt(), ) ;
+   IIF( oWndParent == nil, oWndParent := GetWndFrame(), ) ;
+
+   if oMenuItem <> nil
+      ::nLevel          := nLevelUsr( oMenuItem )
+   else
+      ::nLevel          := nLevelUsr( "01011" )
+   end
+
+
+
+
+
+   if oWndParent <> nil
+      oWndParent:CloseAll()
+   end
+
+   ::cPath              := cPath
+   ::oWndParent         := oWndParent
+   ::oDbf               := nil
+
+   ::lCreateShell       := .F.
+
+   ::cMru               := "Folder_Cubes_Color_16"
+
+   ::cBitmap            := ( 104 + ( 0 * 256 ) + ( 63 * 65536 ) )
+
+   ::cHtmlHelp          := "Grupos de familias"
+
+RETURN ( Self )
+
+
+
+UTILITY STATIC function TGrpFam_OpenFiles(lExclusive) ; local Self AS CLASS TGrpFam := QSelf() AS CLASS TGrpFam
+
+   local lOpen          := .T.
+   local oError
+   local oBlock         := ErrorBlock( {| oError | ApoloBreak( oError ) } )
+
+   IIF( lExclusive == nil, lExclusive := .F., ) ;
+
+   BEGIN SEQUENCE
+
+   if Empty( ::oDbf )
+      ::DefineFiles()
+   end
+
+   ::oDbf:Activate( .F., !( lExclusive ) )
+
+   RECOVER
+
+      msgStop( "Imposible abrir las bases de datos de grupos de famílias" )
+      ::CloseFiles()
+      lOpen             := .F.
+
+   end
+
+   ErrorBlock( oBlock )
+
+RETURN ( lOpen )
+
+
+
+UTILITY STATIC function TGrpFam_DefineFiles( cPath, cDriver) ; local Self AS CLASS TGrpFam := QSelf() AS CLASS TGrpFam
+
+   IIF( cPath == nil, cPath := ::cPath, ) ;
+   IIF( cDriver == nil, cDriver := cDriver(), ) ;
+
+   ::oDbf := DbfServer( "GRPFAM.DBF", "GRPFAM" ):New( "GRPFAM.DBF", "GRPFAM", ( cDriver ), "Grupos de familias", ( cPath ) )
+
+      ::oDbf:AddField( "bSndDoc", "B", 14, 0,,,, {|| ::oDbf:lSndDoc}, { "Enviar", "Lbl16" , 3 }, .F., 20, .F., {"Sel16", "Nil16"} )
+      ::oDbf:AddField( "bPubInt", "B", 14, 0,,,, {|| ::oDbf:lPubInt}, { "Publi car", "SNDINT16" , 3 }, .F., 20, .F., {"Sel16", "Nil16"} )
+      ::oDbf:AddField( "cCodGrp", "C", 3, 0,,,,, "Código", .F., 80, .F., {} )
+      ::oDbf:AddField( "cNomGrp", "C", 30, 0, "@!",,,, "Nombre", .F., 200, .F., {} )
+      ::oDbf:AddField( "lPubInt", "L", 1, 0,,,,,, .F.,, .T., {} )
+      ::oDbf:AddField( "cCodWeb", "N", 11, 0,,,,,, .F.,, .T., {} )
+      ::oDbf:AddField( "lSndDoc", "L", 1, 0,,,,,, .F.,, .T., {} )
+
+      ::oDbf:AddIndex( "CCODGRP", "GRPFAM.CDX", "CCODGRP",,, .F., .F., "Código",,, .T., .F. )
+      ::oDbf:AddIndex( "CNOMGRP", "GRPFAM.CDX", "UPPER( CNOMGRP )",,, .F., .F., "Nombre",,, .T., .F. )
+      ::oDbf:AddIndex( "cCodWeb", "GRPFAM.CDX", "Str( cCodWeb, 11 )",,, .F., .F., "CódigoWeb",,, .T., .F. )
+
+
+
+RETURN ( ::oDbf )
+
+
+
+UTILITY STATIC function TGrpFam_Resource( nMode) ; local Self AS CLASS TGrpFam := QSelf() AS CLASS TGrpFam
+
+    local oDlg
+   local oGet, oGet2
+
+   if nMode == 4
+      ::oDbf:cCodGrp := NextKey( ::oDbf:cCodGrp, ::oDbf )
+   end
+
+   oDlg = TDialog():New(,,,, LblTitle( nMode ) + "grupos de familias", "GrpFam",, .F.,,,,,, .F.,,,,,, .F., )
+
+
+
+
+
+      oGet := TGetHlp():ReDefine( 100, { | u | If( PCount()==0, ::oDbf:cCodGrp, ::oDbf:cCodGrp:= u ) }, oDlg,, "@!",,,,,,, .T., {||     ( nMode == 1 )},, .F., .F.,,,,,, nil,,, )
+
+      oGet:bHelp  := {|| oGet:cText( NextKey( ::oDbf:cCodGrp, ::oDbf ) ) }
+      oGet:cBmp   := "BOT"
+      oGet:bValid := {|| NotValid( oGet, ::oDbf:cAlias ) .AND. !Empty( oGet:VarGet() ) }
+
+
+
+
+
+      oGet2 := TGetHlp():ReDefine( 110, { | u | If( PCount()==0, ::oDbf:cNomGrp, ::oDbf:cNomGrp:= u ) }, oDlg,, ::oDbf:FieldByName( "cNomGrp" ):cPict,,,,,,, .T., {||     ( nMode <> 3 )},, .F., .F.,,,,,, nil,,, )
+
+
+
+
+
+      TCheckBox():ReDefine( 120, { | u | If( PCount()==0, ::oDbf:lPubInt, ::oDbf:lPubInt:= u ) }, oDlg,, {||( ::Publicar() )},,,,, .F., {||     ( nMode <> 3 )}, .F. )
+
+
+
+
+
+      TButton():ReDefine( 1, {||( ::lPreSave( oGet, oGet2, oDlg, nMode ) )}, oDlg,,, .F., {||         ( nMode <> 3 )},,, .F. )
+
+
+
+
+
+        TButton():ReDefine( 2, {||( oDlg:end() )}, oDlg,,, .F.,,,, .T. )
+
+
+
+
+   TButton():ReDefine( 9, {||( ChmHelp( "Grupos_de_familias" ) )}, oDlg,,, .F.,,,, .F. )
+
+   if nMode <> 3
+      oDlg:AddFastKey( 116, {|| ::lPreSave( oGet, oGet2, oDlg, nMode ) } )
+   end
+
+   oDlg:AddFastKey ( 112, {|| ChmHelp( "Grupos_de_familias" ) } )
+
+   oDlg:bStart := { || oGet:SetFocus() }
+
+   oDlg:Activate( oDlg:bLClicked, oDlg:bMoved, oDlg:bPainted, .T.,,,, oDlg:bRClicked,,, )
+
+RETURN ( oDlg:nResult == 1 )
+
+
+
+UTILITY STATIC function TGrpFam_lPreSave( oGet, oGet2, oDlg, nMode) ; local Self AS CLASS TGrpFam := QSelf() AS CLASS TGrpFam
+
+   if nMode == 1 .OR. nMode == 4
+      if Empty( ::oDbf:cCodGrp )
+         MsgStop( "Código de grupo de família no puede estar vacío." )
+         oGet:SetFocus()
+         Return .F.
+      end
+
+      if ::oDbf:SeekInOrd( ::oDbf:cCodGrp, "CCODGRP" )
+         MsgStop( "Código ya existe " + Rtrim( ::oDbf:cCodGrp ) )
+         return nil
+      end
+
+   end
+
+   if Empty( ::oDbf:cNomGrp )
+      MsgStop( "Nombre de grupo de família no puede estar vacío." )
+      oGet2:SetFocus()
+      Return .F.
+   end
+
+   ::oDbf:lSndDoc    := .T.
+
+RETURN ( oDlg:end( 1 ) )
+
+
+
+UTILITY STATIC function TGrpFam_Activate() ; local Self AS CLASS TGrpFam := QSelf() AS CLASS TGrpFam
+
+   if nAnd( ::nLevel, 1 ) <> 0
+      msgStop( "Acceso no permitido." )
+      Return ( Self )
+   end
+
+   ::CreateShell( ::nLevel )
+
+   ::oWndBrw:GralButtons( Self )
+
+
+
+
+
+
+   ::oWndBrw:NewAt( "Lbl",,, {||( ::Enviar( .T. ) )}, "En(v)iar", "V",,, 4,, .F. )
+
+
+
+
+
+
+   ::oWndBrw:NewAt( "SNDINT",,, {||( ::Publicar( .T. ) )}, "(P)ublicar", "P",,, 4,, .F. )
+
+   ::oWndBrw:EndButtons( Self )
+
+   ::oWndBrw:cHtmlHelp  := "Grupos de familias"
+
+   ::oWndBrw:Activate(  , , , , , , , , , , , , , , , , {|| ::CloseFiles() } )
+
+RETURN ( Self )
+
+
+
+UTILITY STATIC function TGrpFam_Publicar( lLoad) ; local Self AS CLASS TGrpFam := QSelf() AS CLASS TGrpFam
+
+   IIF( lLoad == nil, lLoad := .F., ) ;
+
+   if lLoad
+      ::oDbf:Load()
+      ::oDbf:lPubInt := !::oDbf:lPubInt
+      ::oDbf:lSndDoc := ::oDbf:lPubInt
+   end
+
+      ::oDbf:cCodWeb := 0
+
+   if lLoad
+      ::oDbf:Save()
+      ::oWndBrw:Refresh()
+   end
+
+RETURN ( Self )
+
+
+
+UTILITY STATIC function TGrpFam_Enviar( lLoad) ; local Self AS CLASS TGrpFam := QSelf() AS CLASS TGrpFam
+
+   IIF( lLoad == nil, lLoad := .F., ) ;
+
+   if lLoad
+      ::oDbf:Load()
+      ::oDbf:lSndDoc := !::oDbf:lSndDoc
+   end
+
+      ::oDbf:cCodWeb := 0
+
+   if lLoad
+      ::oDbf:Save()
+      ::oWndBrw:Refresh()
+   end
+
+RETURN ( Self )
+
+
+
+FUNCTION retGruFam( cCodGrf, oDbfGrf )
+
+   local cNombre  := ""
+
+   if oDbfGrf:oDbf:Seek( cCodGrf )
+      cNombre     := oDbfGrf:oDbf:cNomGrp
+   end
+
+RETURN ( cNombre )
+
+
+
+FUNCTION cCodGruFam( cCodArt, oDbfArt, oDbfFam )
+
+   local cCodGrf  := ""
+
+   if oDbfArt:Seek( cCodArt )
+
+      if oDbfFam:Seek( oDbfArt:Familia )
+         cCodGrf  := oDbfFam:cCodGrp
+      end
+
+   end
+
+RETURN ( cCodGrf )
+
+
+
+
+
+
+
+
+
+
+FUNCTION cGruFam( cCodFam, oDbfFam )
+
+   local cCodGrf  := ""
+
+   if ValType( oDbfFam ) == "O"
+      if oDbfFam:Seek( cCodFam )
+         cCodGrf  := oDbfFam:cCodGrp
+      end
+   else
+      if ( oDbfFam )->( dbSeek( cCodFam ) )
+         cCodGrf  := ( oDbfFam )->cCodGrp
+      end
+   end
+
+RETURN ( cCodGrf )

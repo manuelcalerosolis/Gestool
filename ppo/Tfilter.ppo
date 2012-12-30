@@ -1,0 +1,65 @@
+#line 112 "\xHarbour\Include\HBClass.ch"
+   DYNAMIC DivertConstructorCall
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+DECLARE HBClass  New( cName AS String, OPTIONAL SuperParams ) AS CLASS HBClass  Create() AS Object  Instance() AS Object  AddClsMethod( cName AS String, @MethodName(), nScope AS Numeric, n2 AS Numeric, n3 AS Numeric )  AddDelegate( cName AS String, cDelegate AS String, cObject AS String, nScope AS Numeric, lPersistent AS LOGICAL )  AddMultiClsData( cType AS String, uVal, nScope AS Numeric, aDatas AS Array OF String )  AddMultiData( cType AS String, uVal, nScope AS Numeric, aDatas AS Array OF String, x AS LOGICAL, lPer AS LOGICAL )  AddMethod( cName AS String, @MethodName(), nScope AS Numeric, lPersistent AS LOGICAL )  AddInLine( cName AS String, bBlock AS CodeBlock, nScope AS Numeric, lPersistent AS LOGICAL )  AddVirtual( cName AS String )  ModMethod( cName AS String, @MethodName(), nScope AS Numeric, lPersistent AS LOGICAL )  ModClsMethod( cName AS String, @MethodName(), nScope AS Numeric )  ModInline( cName AS String, bBlock AS CodeBlock, nScope AS Numeric, lPersistent AS LOGICAL )  SetOnError( @MethodName() )
+#line 15 ".\Prg\Tfilter.prg"
+_HB_CLASS TFilter ; UTILITY FUNCTION TFilter(...); static s_oClass ; local oClassInstance ; local nScope ; nScope := 1 ; if s_oClass == NIL ; s_oClass := IIF(.F.,, HBClass():New( "TFilter" , { HBObject():Classh } ) ) ;
+
+
+
+    _HB_MEMBER {AS STRING cName,  cFor,   cComment} ; IIF( !.F., s_oClass:AddMultiData( "STRING",, nScope + IIF( .F., 32, 0 ), { "cName" , "cFor" , "cComment" }, .F., .F. ), )
+    _HB_MEMBER {AS CODEBLOCK bFor} ; IIF( !.F., s_oClass:AddMultiData( "CODEBLOCK",, nScope + IIF( .F., 32, 0 ), { "bFor" }, .F., .F. ), )
+    _HB_MEMBER {AS OBJECT oDbf} ; IIF( !.F., s_oClass:AddMultiData( "OBJECT",, nScope + IIF( .F., 32, 0 ), { "oDbf" }, .F., .F. ), )
+    _HB_MEMBER {AS ANYTYPE Cargo} ; IIF( !.F., s_oClass:AddMultiData( "ANYTYPE",, nScope + IIF( .F., 32, 0 ), { "Cargo" }, .F., .F. ), )
+
+    _HB_MEMBER New( oDbf, cName, bFor, cFor, cComment) AS CLASS TFilter; IIF( .F., s_oClass:ModMethod( "New", @TFilter_New(), nScope + IIF( .T., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ), s_oClass:AddMethod( "New", @TFilter_New(), nScope + IIF( .T., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ));
+    _HB_MEMBER SetFocus(); IIF( .F., s_oClass:ModMethod( "SetFocus", @TFilter_SetFocus(), nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ), s_oClass:AddMethod( "SetFocus", @TFilter_SetFocus(), nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ));
+
+    _HB_MEMBER Destroy(); IIF( .F., s_oClass:ModInline( "Destroy", {|Self | Self, Self := nil, .T. }, nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ), s_oClass:AddInline( "Destroy", {|Self | Self, Self := nil, .T. }, nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ) )
+
+; IF .F. ; __clsActive(s_oClass:hClass) ; s_oClass:Refresh() ; ELSE ; s_oClass:Create() ; END ; oClassInstance := __clsInst( s_oClass:hClass ) ; IF __ObjHasMsg( oClassInstance, "InitClass" ); oClassInstance:InitClass( hb_aParams() ) ; END ; ELSE ; oClassInstance := __clsInst( s_oClass:hClass ) ; END ; IF PCount() > 0 ; DIVERT TO (@DivertConstructorCall()) OF s_oClass ; END ; RETURN oClassInstance AS CLASS TFilter ;
+
+
+
+UTILITY STATIC function TFilter_New( oDbf, cName, bFor, cFor, cComment) ; local Self AS CLASS TFilter := QSelf() AS CLASS TFilter
+
+    local oFlt := Self
+
+    ::oDbf := oDbf
+
+    ::cFor := if( cFor == NIL, "", cFor )
+    ::bFor := if( bFor == NIL, &("{ || " + oFlt:cFor + " }"), bFor )
+
+    ::cName := upper( if( ValType( cName ) <> "C", cFor, cName ) )
+
+    ::cComment := if( cComment == NIL, Self:cName + " / " + Self:cFor, cComment )
+
+return( Self )
+
+
+
+UTILITY STATIC function TFilter_SetFocus() ; local Self AS CLASS TFilter := QSelf() AS CLASS TFilter
+
+    local oFlt := Self
+
+    ( ::oDbf:nArea )->( DbSetFilter( ::bFor, ::cFor ) )
+
+    ::oDbf:lCount  := .T.
+    ::oDbf:oFilter := oFlt
+
+return( Self )

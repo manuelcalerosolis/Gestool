@@ -1,0 +1,2395 @@
+#line 112 "hbclass.ch"
+   DYNAMIC DivertConstructorCall
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+DECLARE HBClass  New( cName AS String, OPTIONAL SuperParams ) AS CLASS HBClass  Create() AS Object  Instance() AS Object  AddClsMethod( cName AS String, @MethodName(), nScope AS Numeric, n2 AS Numeric, n3 AS Numeric )  AddDelegate( cName AS String, cDelegate AS String, cObject AS String, nScope AS Numeric, lPersistent AS LOGICAL )  AddMultiClsData( cType AS String, uVal, nScope AS Numeric, aDatas AS Array OF String )  AddMultiData( cType AS String, uVal, nScope AS Numeric, aDatas AS Array OF String, x AS LOGICAL, lPer AS LOGICAL )  AddMethod( cName AS String, @MethodName(), nScope AS Numeric, lPersistent AS LOGICAL )  AddInLine( cName AS String, bBlock AS CodeBlock, nScope AS Numeric, lPersistent AS LOGICAL )  AddVirtual( cName AS String )  ModMethod( cName AS String, @MethodName(), nScope AS Numeric, lPersistent AS LOGICAL )  ModClsMethod( cName AS String, @MethodName(), nScope AS Numeric )  ModInline( cName AS String, bBlock AS CodeBlock, nScope AS Numeric, lPersistent AS LOGICAL )  SetOnError( @MethodName() )
+#line 85 "\Fwh1204\Include\FiveWin.Ch"
+   EXTERNAL GetProcAdd
+   EXTERNAL TActiveX
+
+
+
+
+extern errorsys
+#line 8 ".\Prg\Remcli.prg"
+_HB_CLASS TRemesas ; UTILITY FUNCTION TRemesas(...); static s_oClass ; local oClassInstance ; local nScope ; nScope := 1 ; if s_oClass == NIL ; s_oClass := IIF(.F.,, HBClass():New( "TRemesas" , {TMasDet():classh} ) ) ; ;
+
+   _HB_MEMBER { oCtaRem} ; IIF( !.F., s_oClass:AddMultiData(,, nScope + IIF( .F., 32, 0 ), { "oCtaRem" }, .F., .F. ), )
+   _HB_MEMBER { oDivisas} ; IIF( !.F., s_oClass:AddMultiData(,, nScope + IIF( .F., 32, 0 ), { "oDivisas" }, .F., .F. ), )
+   _HB_MEMBER { oDbfCnt} ; IIF( !.F., s_oClass:AddMultiData(,, nScope + IIF( .F., 32, 0 ), { "oDbfCnt" }, .F., .F. ), )
+   _HB_MEMBER { oRecibos} ; IIF( !.F., s_oClass:AddMultiData(,, nScope + IIF( .F., 32, 0 ), { "oRecibos" }, .F., .F. ), )
+   _HB_MEMBER { oClientes} ; IIF( !.F., s_oClass:AddMultiData(,, nScope + IIF( .F., 32, 0 ), { "oClientes" }, .F., .F. ), )
+   _HB_MEMBER { oFacCliT} ; IIF( !.F., s_oClass:AddMultiData(,, nScope + IIF( .F., 32, 0 ), { "oFacCliT" }, .F., .F. ), )
+   _HB_MEMBER { oFacCliL} ; IIF( !.F., s_oClass:AddMultiData(,, nScope + IIF( .F., 32, 0 ), { "oFacCliL" }, .F., .F. ), )
+   _HB_MEMBER { oAntCliT} ; IIF( !.F., s_oClass:AddMultiData(,, nScope + IIF( .F., 32, 0 ), { "oAntCliT" }, .F., .F. ), )
+   _HB_MEMBER { oIva} ; IIF( !.F., s_oClass:AddMultiData(,, nScope + IIF( .F., 32, 0 ), { "oIva" }, .F., .F. ), )
+   _HB_MEMBER { oBandera} ; IIF( !.F., s_oClass:AddMultiData(,, nScope + IIF( .F., 32, 0 ), { "oBandera" }, .F., .F. ), )
+   _HB_MEMBER { cPorDiv} ; IIF( !.F., s_oClass:AddMultiData(,, nScope + IIF( .F., 32, 0 ), { "cPorDiv" }, .F., .F. ), )
+   _HB_MEMBER { dCarCta} ; IIF( !.F., s_oClass:AddMultiData(,, nScope + IIF( .F., 32, 0 ), { "dCarCta" }, .F., .F. ), )
+   _HB_MEMBER { cPatExp} ; IIF( !.F., s_oClass:AddMultiData(,, nScope + IIF( .F., 32, 0 ), { "cPatExp" }, .F., .F. ), )
+   _HB_MEMBER { dExpedicionIni} ; IIF( !.F., s_oClass:AddMultiData(,, nScope + IIF( .F., 32, 0 ), { "dExpedicionIni" }, .F., .F. ), )
+   _HB_MEMBER { dExpedicionFin} ; IIF( !.F., s_oClass:AddMultiData(,, nScope + IIF( .F., 32, 0 ), { "dExpedicionFin" }, .F., .F. ), )
+   _HB_MEMBER { dVencimientoIni} ; IIF( !.F., s_oClass:AddMultiData(,, nScope + IIF( .F., 32, 0 ), { "dVencimientoIni" }, .F., .F. ), )
+   _HB_MEMBER { dVencimientoFin} ; IIF( !.F., s_oClass:AddMultiData(,, nScope + IIF( .F., 32, 0 ), { "dVencimientoFin" }, .F., .F. ), )
+   _HB_MEMBER {AS OBJECT oMeter} ; IIF( !.F., s_oClass:AddMultiData( "OBJECT",, nScope + IIF( .F., 32, 0 ), { "oMeter" }, .F., .F. ), )
+   _HB_MEMBER {AS NUMERIC nMeter} ; IIF( !.F., s_oClass:AddMultiData( "NUMERIC", 0, nScope + IIF( .F., 32, 0 ), { "nMeter" }, .F., .F. ), )
+   _HB_MEMBER { bmpConta} ; IIF( !.F., s_oClass:AddMultiData(,, nScope + IIF( .F., 32, 0 ), { "bmpConta" }, .F., .F. ), )
+   _HB_MEMBER {AS ARRAY aMsg} ; IIF( !.F., s_oClass:AddMultiData( "ARRAY", {}, nScope + IIF( .F., 32, 0 ), { "aMsg" }, .F., .F. ), )
+   _HB_MEMBER { lAgruparRecibos} ; IIF( !.F., s_oClass:AddMultiData(, .F., nScope + IIF( .F., 32, 0 ), { "lAgruparRecibos" }, .F., .F. ), )
+   _HB_MEMBER { lUsarVencimiento} ; IIF( !.F., s_oClass:AddMultiData(, .F., nScope + IIF( .F., 32, 0 ), { "lUsarVencimiento" }, .F., .F. ), )
+   _HB_MEMBER { cMru} ; IIF( !.F., s_oClass:AddMultiData(, "Briefcase_document_16", nScope + IIF( .F., 32, 0 ), { "cMru" }, .F., .F. ), )
+   _HB_MEMBER { cBitmap} ; IIF( !.F., s_oClass:AddMultiData(, ( 104 + ( 0 * 256 ) + ( 63 * 65536 ) ), nScope + IIF( .F., 32, 0 ), { "cBitmap" }, .F., .F. ), )
+   _HB_MEMBER { oMenu} ; IIF( !.F., s_oClass:AddMultiData(,, nScope + IIF( .F., 32, 0 ), { "oMenu" }, .F., .F. ), )
+   _HB_MEMBER { oCodRem} ; IIF( !.F., s_oClass:AddMultiData(,, nScope + IIF( .F., 32, 0 ), { "oCodRem" }, .F., .F. ), )
+   _HB_MEMBER { oFecExp} ; IIF( !.F., s_oClass:AddMultiData(,, nScope + IIF( .F., 32, 0 ), { "oFecExp" }, .F., .F. ), )
+   _HB_MEMBER { oExportado} ; IIF( !.F., s_oClass:AddMultiData(,, nScope + IIF( .F., 32, 0 ), { "oExportado" }, .F., .F. ), )
+
+   _HB_MEMBER New( cPath, oWndParent, oMenuItem); IIF( .F., s_oClass:ModMethod( "New", @TRemesas_New(), nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ), s_oClass:AddMethod( "New", @TRemesas_New(), nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ));
+
+   _HB_MEMBER OpenFiles( lExclusive); IIF( .F., s_oClass:ModMethod( "OpenFiles", @TRemesas_OpenFiles(), nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ), s_oClass:AddMethod( "OpenFiles", @TRemesas_OpenFiles(), nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ));
+   _HB_MEMBER CloseFiles(); IIF( .F., s_oClass:ModMethod( "CloseFiles", @TRemesas_CloseFiles(), nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ), s_oClass:AddMethod( "CloseFiles", @TRemesas_CloseFiles(), nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ));
+
+   _HB_MEMBER DefineFiles(); IIF( .F., s_oClass:ModMethod( "DefineFiles", @TRemesas_DefineFiles(), nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ), s_oClass:AddMethod( "DefineFiles", @TRemesas_DefineFiles(), nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ));
+   _HB_MEMBER DefineDetails( cPath, cVia, lUniqueName, cFileName); IIF( .F., s_oClass:ModMethod( "DefineDetails", @TRemesas_DefineDetails(), nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ), s_oClass:AddMethod( "DefineDetails", @TRemesas_DefineDetails(), nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ));
+
+   _HB_MEMBER OpenService( lExclusive); IIF( .F., s_oClass:ModMethod( "OpenService", @TRemesas_OpenService(), nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ), s_oClass:AddMethod( "OpenService", @TRemesas_OpenService(), nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ));
+   _HB_MEMBER CloseService(); IIF( .F., s_oClass:ModMethod( "CloseService", @TRemesas_CloseService(), nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ), s_oClass:AddMethod( "CloseService", @TRemesas_CloseService(), nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ));
+
+   _HB_MEMBER Resource( nMode); IIF( .F., s_oClass:ModMethod( "Resource", @TRemesas_Resource(), nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ), s_oClass:AddMethod( "Resource", @TRemesas_Resource(), nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ));
+   _HB_MEMBER ImportResource( nMode); IIF( .F., s_oClass:ModMethod( "ImportResource", @TRemesas_ImportResource(), nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ), s_oClass:AddMethod( "ImportResource", @TRemesas_ImportResource(), nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ));
+   _HB_MEMBER Activate(); IIF( .F., s_oClass:ModMethod( "Activate", @TRemesas_Activate(), nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ), s_oClass:AddMethod( "Activate", @TRemesas_Activate(), nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ));
+   _HB_MEMBER lSave(); IIF( .F., s_oClass:ModMethod( "lSave", @TRemesas_lSave(), nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ), s_oClass:AddMethod( "lSave", @TRemesas_lSave(), nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ));
+
+   _HB_MEMBER GetRecCli( oDlg); IIF( .F., s_oClass:ModMethod( "GetRecCli", @TRemesas_GetRecCli(), nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ), s_oClass:AddMethod( "GetRecCli", @TRemesas_GetRecCli(), nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ));
+   _HB_MEMBER SetRecCli(); IIF( .F., s_oClass:ModMethod( "SetRecCli", @TRemesas_SetRecCli(), nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ), s_oClass:AddMethod( "SetRecCli", @TRemesas_SetRecCli(), nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ));
+
+
+
+
+
+   _HB_MEMBER AppendDet(); IIF( .F., s_oClass:ModMethod( "AppendDet", @TRemesas_AppendDet(), nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ), s_oClass:AddMethod( "AppendDet", @TRemesas_AppendDet(), nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ));
+   _HB_MEMBER RollBack(); IIF( .F., s_oClass:ModMethod( "RollBack", @TRemesas_RollBack(), nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ), s_oClass:AddMethod( "RollBack", @TRemesas_RollBack(), nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ));
+   _HB_MEMBER SaveDet( ); IIF( !.F., s_oClass:AddVirtual( "SaveDet" ), )
+
+   _HB_MEMBER Del(); IIF( .F., s_oClass:ModMethod( "Del", @TRemesas_Del(), nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ), s_oClass:AddMethod( "Del", @TRemesas_Del(), nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ));
+   _HB_MEMBER DelItem(); IIF( .F., s_oClass:ModMethod( "DelItem", @TRemesas_DelItem(), nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ), s_oClass:AddMethod( "DelItem", @TRemesas_DelItem(), nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ));
+
+   _HB_MEMBER nTotRem( lPic); IIF( .F., s_oClass:ModMethod( "nTotRem", @TRemesas_nTotRem(), nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ), s_oClass:AddMethod( "nTotRem", @TRemesas_nTotRem(), nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ));
+   _HB_MEMBER nTotRemVir( lPic); IIF( .F., s_oClass:ModMethod( "nTotRemVir", @TRemesas_nTotRemVir(), nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ), s_oClass:AddMethod( "nTotRemVir", @TRemesas_nTotRemVir(), nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ));
+
+   _HB_MEMBER cNumRem(); IIF( .F., s_oClass:ModInline( "cNumRem", {|Self | Self, ( Alltrim( Str( ::oDbf:nNumRem ) + "/" + ::oDbf:cSufRem ) ) }, nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ), s_oClass:AddInline( "cNumRem", {|Self | Self, ( Alltrim( Str( ::oDbf:nNumRem ) + "/" + ::oDbf:cSufRem ) ) }, nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ) )
+
+
+
+
+
+   _HB_MEMBER SaveModelo(); IIF( .F., s_oClass:ModMethod( "SaveModelo", @TRemesas_SaveModelo(), nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ), s_oClass:AddMethod( "SaveModelo", @TRemesas_SaveModelo(), nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ));
+   _HB_MEMBER InitMod19(); IIF( .F., s_oClass:ModMethod( "InitMod19", @TRemesas_InitMod19(), nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ), s_oClass:AddMethod( "InitMod19", @TRemesas_InitMod19(), nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ));
+   _HB_MEMBER InitMod58(); IIF( .F., s_oClass:ModMethod( "InitMod58", @TRemesas_InitMod58(), nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ), s_oClass:AddMethod( "InitMod58", @TRemesas_InitMod58(), nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ));
+   _HB_MEMBER nAllRecCli(); IIF( .F., s_oClass:ModMethod( "nAllRecCli", @TRemesas_nAllRecCli(), nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ), s_oClass:AddMethod( "nAllRecCli", @TRemesas_nAllRecCli(), nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ));
+
+   _HB_MEMBER nTotRemesaVir(); IIF( .F., s_oClass:ModInline( "nTotRemesaVir", {|Self | Self, 0 }, nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ), s_oClass:AddInline( "nTotRemesaVir", {|Self | Self, 0 }, nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ) )
+
+   _HB_MEMBER Report(); IIF( .F., s_oClass:ModMethod( "Report", @TRemesas_Report(), nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ), s_oClass:AddMethod( "Report", @TRemesas_Report(), nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ));
+
+   _HB_MEMBER Conta(); IIF( .F., s_oClass:ModMethod( "Conta", @TRemesas_Conta(), nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ), s_oClass:AddMethod( "Conta", @TRemesas_Conta(), nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ));
+   _HB_MEMBER ChangeConta( lConta); IIF( .F., s_oClass:ModMethod( "ChangeConta", @TRemesas_ChangeConta(), nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ), s_oClass:AddMethod( "ChangeConta", @TRemesas_ChangeConta(), nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ));
+   _HB_MEMBER lContabilizaRecibos( lConta); IIF( .F., s_oClass:ModMethod( "lContabilizaRecibos", @TRemesas_lContabilizaRecibos(), nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ), s_oClass:AddMethod( "lContabilizaRecibos", @TRemesas_lContabilizaRecibos(), nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ));
+
+   _HB_MEMBER cRetCtaRem(); IIF( .F., s_oClass:ModMethod( "cRetCtaRem", @TRemesas_cRetCtaRem(), nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ), s_oClass:AddMethod( "cRetCtaRem", @TRemesas_cRetCtaRem(), nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ));
+
+   _HB_MEMBER cBmp(); IIF( .F., s_oClass:ModMethod( "cBmp", @TRemesas_cBmp(), nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ), s_oClass:AddMethod( "cBmp", @TRemesas_cBmp(), nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ));
+
+   _HB_MEMBER cRetTipRem(); IIF( .F., s_oClass:ModInline( "cRetTipRem", {|Self | Self, ( if( ::oDbf:nTipRem == 2, "Descuento", "Pago" ) ) }, nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ), s_oClass:AddInline( "cRetTipRem", {|Self | Self, ( if( ::oDbf:nTipRem == 2, "Descuento", "Pago" ) ) }, nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ) )
+
+   _HB_MEMBER GetNewCount(); IIF( .F., s_oClass:ModMethod( "GetNewCount", @TRemesas_GetNewCount(), nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ), s_oClass:AddMethod( "GetNewCount", @TRemesas_GetNewCount(), nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ));
+
+   _HB_MEMBER lNowExist(); IIF( .F., s_oClass:ModMethod( "lNowExist", @TRemesas_lNowExist(), nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ), s_oClass:AddMethod( "lNowExist", @TRemesas_lNowExist(), nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ));
+
+   _HB_MEMBER SaveDetails(); IIF( .F., s_oClass:ModMethod( "SaveDetails", @TRemesas_SaveDetails(), nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ), s_oClass:AddMethod( "SaveDetails", @TRemesas_SaveDetails(), nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ));
+
+   _HB_MEMBER EdtRecMenu( oDlg); IIF( .F., s_oClass:ModMethod( "EdtRecMenu", @TRemesas_EdtRecMenu(), nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ), s_oClass:AddMethod( "EdtRecMenu", @TRemesas_EdtRecMenu(), nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ));
+
+   _HB_MEMBER EndEdtRecMenu(); IIF( .F., s_oClass:ModMethod( "EndEdtRecMenu", @TRemesas_EndEdtRecMenu(), nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ), s_oClass:AddMethod( "EndEdtRecMenu", @TRemesas_EndEdtRecMenu(), nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ));
+
+   _HB_MEMBER ChangeExport(); IIF( .F., s_oClass:ModMethod( "ChangeExport", @TRemesas_ChangeExport(), nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ), s_oClass:AddMethod( "ChangeExport", @TRemesas_ChangeExport(), nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ));
+
+; IF .F. ; __clsActive(s_oClass:hClass) ; s_oClass:Refresh() ; ELSE ; s_oClass:Create() ; END ; oClassInstance := __clsInst( s_oClass:hClass ) ; IF __ObjHasMsg( oClassInstance, "InitClass" ); oClassInstance:InitClass( hb_aParams() ) ; END ; ELSE ; oClassInstance := __clsInst( s_oClass:hClass ) ; END ; IF PCount() > 0 ; DIVERT TO (@DivertConstructorCall()) OF s_oClass ; END ; RETURN oClassInstance AS CLASS TRemesas ;
+
+
+
+UTILITY STATIC function TRemesas_New( cPath, oMenuItem, oWndParent) ; local Self AS CLASS TRemesas := QSelf() AS CLASS TRemesas
+
+   IIF( cPath == nil, cPath := cPatEmp(), ) ;
+   IIF( oWndParent == nil, oWndParent := GetWndFrame(), ) ;
+   IIF( oMenuItem == nil, oMenuItem := "01060", ) ;
+
+   ::nLevel             := nLevelUsr( oMenuItem )
+
+   ::cPath              := cPath
+   ::oWndParent         := oWndParent
+   ::oDbf               := nil
+   ::oDbfDet            := nil
+   ::oDivisas           := nil
+   ::oDbfCnt            := nil
+   ::oBandera           := nil
+
+   ::dExpedicionIni     := Ctod( "01/" + Str( Month( Date() ), 2 ) + "/" + Str( Year( Date() ), 4 ) )
+   ::dExpedicionFin     := Date()
+   ::dVencimientoIni    := ::dExpedicionIni
+   ::dVencimientoFin    := Date()
+
+   ::cNumDocKey         := "nNumRem"
+   ::cSufDocKey         := "cSufRem"
+
+   ::lMoveDlgSelect     := .T.
+
+   ::bmpConta           := LoadBitmap( GetResources(), "bConta" )
+
+   ::dCarCta            := Date()
+   ::cPatExp            := PadR( "C:\Recibos.Txt", 200 )
+
+   ::bFirstKey          := {|| Str( ::oDbf:nNumRem, 9 ) + ::oDbf:cSufRem }
+   ::bWhile             := {|| Str( ::oDbf:nNumRem, 9 ) + ::oDbf:cSufRem == Str( ::oDbfVir:nNumRem, 9 ) + ::oDbfVir:cSufRem .AND. !::oDbfVir:Eof() }
+
+RETURN ( Self )
+
+
+
+UTILITY STATIC function TRemesas_DefineFiles( cPath, cDriver) ; local Self AS CLASS TRemesas := QSelf() AS CLASS TRemesas
+
+   IIF( cPath == nil, cPath := ::cPath, ) ;
+   IIF( cDriver == nil, cDriver := cDriver(), ) ;
+
+   ::oDbf := DbfServer( "REMCLIT.DBF", "REMCLI" ):New( "REMCLIT.DBF", "REMCLI", ( cDriver ), "Remesas bancarias", ( cPath ) )
+
+      ::oDbf:AddField( "lConta", "L", 1, 0,, .F.,,,, .F.,, .T., {} )
+      ::oDbf:AddField( "bmpConta", "B", 1, 0,,,, {|| ::oDbf:lConta }, { "Contabilizado", "bmpConta16", 3 }, .F., 20, .F., {"Sel16", "Nil16"} )
+      ::oDbf:AddField( "lExport", "L", 1, 0,, .F.,,,, .F.,, .T., {} )
+      ::oDbf:AddField( "bmpExport", "B", 1, 0,,,, {|| ::oDbf:lExport }, { "Exportado", "bmpExptar16", 3 }, .F., 20, .F., {"Sel16", "Nil16"} )
+      ::oDbf:AddField( "nNumRem", "N", 9, 0, "999999999",,,, "Número", .T., 80, .F., {} )
+      ::oDbf:AddField( "cSufRem", "C", 2, 0, "@!", RetSufEmp(),,, "Delegación", .F., 20, .F., {} )
+      ::oDbf:AddField( "cCodRem", "C", 3, 0, "@!",,,, "Cuenta", .F., 80, .F., {} )
+      ::oDbf:AddField( "cNomRem", "B", 60, 0,,,, {||      ::cRetCtaRem()}, "Nombre", .F., 200, .F., {} )
+      ::oDbf:AddField( "dFecRem", "D", 8, 0,, Date(),,, "Fecha", .F., 80, .F., {} )
+      ::oDbf:AddField( "nTipRem", "N", 1, 0, "9", 1,,, "", .F.,, .T., {} )
+      ::oDbf:AddField( "cTipRem", "B", 60, 0,,,, {||      ::cRetTipRem()}, "Tipo", .F., 80, .F., {} )
+      ::oDbf:AddField( "cCodDiv", "C", 3, 0, "@!", cDivEmp(),,, "", .F.,, .T., {} )
+      ::oDbf:AddField( "nVdvDiv", "N", 16, 6, "@E 999,999.9999", 1,,, "", .F.,, .T., {} )
+      ::oDbf:AddField( "nTotRem", "B", 16, 6,,,, {||      ::nTotRem(.T.)}, "Total", .T., 100, .F., {} )
+      ::oDbf:AddField( "cBmpDiv", "B", 20, 0,,,, {||      ::cBmp()}, "Div.", .F., 25, .F., {} )
+      ::oDbf:AddField( "dConta", "D", 8, 0,,,,, "Contab.", .F.,, .F., {} )
+      ::oDbf:AddField( "dExport", "D", 8, 0,, CtoD( "" ),,,, .F.,, .T., {} )
+
+      ::oDbf:AddIndex( "nNumRem", "RemCliT.Cdx", "Str( nNumRem ) + cSufRem",,, .F., .F., "Número",,, .T., .F. )
+      ::oDbf:AddIndex( "cCodRem", "RemCliT.Cdx", "cCodRem",,, .F., .F., "Cuenta",,, .T., .F. )
+
+
+
+RETURN ( ::oDbf )
+
+
+
+UTILITY STATIC function TRemesas_DefineDetails( cPath, cVia, lUniqueName, cFileName) ; local Self AS CLASS TRemesas := QSelf() AS CLASS TRemesas
+
+   local oDbf
+
+   IIF( cPath == nil, cPath := ::cPath, ) ;
+   IIF( lUniqueName == nil, lUniqueName := .F., ) ;
+   IIF( cFileName == nil, cFileName := "FacCliP", ) ;
+   IIF( cVia == nil, cVia := cDriver(), ) ;
+
+   if lUniqueName
+      cFileName         := cGetNewFileName( cFileName, , , cPatTmp() )
+   end
+
+   oDbf := DbfServer( ( cFileName ), ( cFileName ) ):New( ( cFileName ), ( cFileName ), ( cVia ),, ( cPath ) )
+
+      oDbf:AddField( "cSerie", "C", 1, 0,,,,,, .F.,, .F., {} )
+      oDbf:AddField( "nNumFac", "N", 9, 0,,,,,, .F.,, .F., {} )
+      oDbf:AddField( "cSufFac", "C", 2, 0,,,,,, .F.,, .F., {} )
+      oDbf:AddField( "nNumRec", "N", 2, 0,,,,,, .F.,, .F., {} )
+      oDbf:AddField( "cTipRec", "C", 1, 0,,,,,, .F.,, .F., {} )
+      oDbf:AddField( "cCodPgo", "C", 2, 0,,,,,, .F.,, .F., {} )
+      oDbf:AddField( "cCodCaj", "C", 3, 0,,,,,, .F.,, .F., {} )
+      oDbf:AddField( "cTurRec", "C", 6, 0,,,,,, .F.,, .F., {} )
+      oDbf:AddField( "cCodCli", "C", 12, 0,,,,,, .F.,, .F., {} )
+      oDbf:AddField( "cNomCli", "C", 80, 0,,,,,, .F.,, .F., {} )
+      oDbf:AddField( "dEntrada", "D", 8, 0,,,,,, .F.,, .F., {} )
+      oDbf:AddField( "nImporte", "N", 16, 6,,,,,, .F.,, .F., {} )
+      oDbf:AddField( "cDesCriP", "C", 100, 0,,,,,, .F.,, .F., {} )
+      oDbf:AddField( "dPreCob", "D", 8, 0,,,,,, .F.,, .F., {} )
+      oDbf:AddField( "cPgdoPor", "C", 50, 0,,,,,, .F.,, .F., {} )
+      oDbf:AddField( "cDocPgo", "C", 50, 0,,,,,, .F.,, .F., {} )
+      oDbf:AddField( "lCobrado", "L", 1, 0,,,,,, .F.,, .F., {} )
+      oDbf:AddField( "cDivPgo", "C", 3, 0,,,,,, .F.,, .F., {} )
+      oDbf:AddField( "nVdvPgo", "N", 10, 6,,,,,, .F.,, .F., {} )
+      oDbf:AddField( "lConPgo", "L", 1, 0,,,,,, .F.,, .F., {} )
+      oDbf:AddField( "cCtaRec", "C", 12, 0,,,,,, .F.,, .F., {} )
+      oDbf:AddField( "nImpEur", "N", 16, 6,,,,,, .F.,, .F., {} )
+      oDbf:AddField( "lImpEur", "L", 1, 0,,,,,, .F.,, .F., {} )
+      oDbf:AddField( "nNumRem", "N", 9, 0,,,,,, .F.,, .F., {} )
+      oDbf:AddField( "cSufRem", "C", 2, 0,,,,,, .F.,, .F., {} )
+      oDbf:AddField( "cCtaRem", "C", 3, 0,,,,,, .F.,, .F., {} )
+      oDbf:AddField( "lRecImp", "L", 1, 0,,,,,, .F.,, .F., {} )
+      oDbf:AddField( "lRecDto", "L", 1, 0,,,,,, .F.,, .F., {} )
+      oDbf:AddField( "dFecDto", "D", 8, 0,,,,,, .F.,, .F., {} )
+      oDbf:AddField( "dFecVto", "D", 8, 0,,,,,, .F.,, .F., {} )
+      oDbf:AddField( "cCodAge", "C", 3, 0,,,,,, .F.,, .F., {} )
+      oDbf:AddField( "nNumCob", "N", 9, 0,,,,,, .F.,, .F., {} )
+      oDbf:AddField( "cSufCob", "C", 2, 0,,,,,, .F.,, .F., {} )
+      oDbf:AddField( "nImpCob", "N", 16, 6,,,,,, .F.,, .F., {} )
+      oDbf:AddField( "nImpGas", "N", 16, 6,,,,,, .F.,, .F., {} )
+      oDbf:AddField( "cCtaGas", "C", 12, 0,,,,,, .F.,, .F., {} )
+      oDbf:AddField( "lEsperaDoc", "L", 1, 0,,,,,, .F.,, .F., {} )
+      oDbf:AddField( "lCloPgo", "L", 1, 0,,,,,, .F.,, .F., {} )
+      oDbf:AddField( "dFecImp", "D", 8, 0,,,,,, .F.,, .F., {} )
+      oDbf:AddField( "cHorImp", "C", 5, 0,,,,,, .F.,, .F., {} )
+      oDbf:AddField( "lNotArqueo", "L", 1, 0,,,,,, .F.,, .F., {} )
+      oDbf:AddField( "cCodBnc", "C", 4, 0,,,,,, .F.,, .F., {} )
+      oDbf:AddField( "dFecCre", "D", 8, 0,,,,,, .F.,, .F., {} )
+      oDbf:AddField( "cHorCre", "C", 5, 0,,,,,, .F.,, .F., {} )
+      oDbf:AddField( "cCodUsr", "C", 3, 0,,,,,, .F.,, .F., {} )
+      oDbf:AddField( "lDevuelto", "L", 1, 0,,,,,, .F.,, .F., {} )
+      oDbf:AddField( "dFecDev", "D", 8, 0,,,,,, .F.,, .F., {} )
+      oDbf:AddField( "cMotDev", "C", 250, 0,,,,,, .F.,, .F., {} )
+      oDbf:AddField( "cRecDev", "C", 14, 0,,,,,, .F.,, .F., {} )
+      oDbf:AddField( "lSndDoc", "L", 1, 0,,,,,, .F.,, .F., {} )
+      oDbf:AddField( "cBncEmp", "C", 50, 0,,,,,, .F.,, .F., {} )
+      oDbf:AddField( "cBncCli", "C", 50, 0,,,,,, .F.,, .F., {} )
+      oDbf:AddField( "cEntEmp", "C", 4, 0,,,,,, .F.,, .F., {} )
+      oDbf:AddField( "cSucEmp", "C", 4, 0,,,,,, .F.,, .F., {} )
+      oDbf:AddField( "cDigEmp", "C", 2, 0,,,,,, .F.,, .F., {} )
+      oDbf:AddField( "cCtaEmp", "C", 10, 0,,,,,, .F.,, .F., {} )
+      oDbf:AddField( "cEntCli", "C", 4, 0,,,,,, .F.,, .F., {} )
+      oDbf:AddField( "cSucCli", "c", 4, 0,,,,,, .F.,, .F., {} )
+      oDbf:AddField( "cDigCli", "C", 2, 0,,,,,, .F.,, .F., {} )
+      oDbf:AddField( "cCtaCli", "C", 10, 0,,,,,, .F.,, .F., {} )
+      oDbf:AddField( "lRemesa", "L", 1, 0,,,,,, .F.,, .F., {} )
+
+      oDbf:AddIndex( "nNumFac", ( cFileName ), "cSerie + Str( nNumFac ) + cSufFac + Str( nNumRec ) + cTipRec",,, .F., .F.,,,, .T., .F. )
+      oDbf:AddIndex( "cCodCli", ( cFileName ), "cCodCli",,, .F., .F.,,,, .T., .F. )
+      oDbf:AddIndex( "cNomCli", ( cFileName ), "cNomCli",,, .F., .F.,,,, .T., .F. )
+      oDbf:AddIndex( "lCodCli", ( cFileName ), "cCodCli", "!lCobrado",, .F., .F.,,,, .T., .F. )
+      oDbf:AddIndex( "dPreCob", ( cFileName ), "dPreCob",,, .F., .F.,,,, .T., .F. )
+      oDbf:AddIndex( "dFecVto", ( cFileName ), "dFecVto",,, .F., .F.,,,, .T., .F. )
+      oDbf:AddIndex( "dEntrada", ( cFileName ), "dEntrada",,, .F., .F.,,,, .T., .F. )
+      oDbf:AddIndex( "nImporte", ( cFileName ), "nImporte",,, .F., .F.,,,, .T., .F. )
+      oDbf:AddIndex( "pNumFac", ( cFileName ), "cSerie + Str( nNumFac ) + cSufFac + Str( nNumRec ) + cTipRec", "!lCobrado",, .F., .F.,,,, .T., .F. )
+      oDbf:AddIndex( "tNumFac", ( cFileName ), "cSerie + Str( nNumFac ) + cSufFac + Str( nNumRec ) + cTipRec", "lCobrado",, .F., .F.,,,, .T., .F. )
+      oDbf:AddIndex( "nNumRem", ( cFileName ), "Str( nNumRem ) + cSufRem",,, .F., .F.,,,, .T., .F. )
+      oDbf:AddIndex( "nNumCli", ( cFileName ), "Str( nNumRem ) + cSufRem + cCodCli",,, .F., .F.,,,, .T., .F. )
+      oDbf:AddIndex( "cCtaRem", ( cFileName ), "cCtaRem",,, .F., .F.,,,, .T., .F. )
+      oDbf:AddIndex( "cCodAge", ( cFileName ), "cCodAge",,, .F., .F.,,,, .T., .F. )
+      oDbf:AddIndex( "nNumCob", ( cFileName ), "Str( nNumCob ) + cSufCob",,, .F., .F.,,,, .T., .F. )
+      oDbf:AddIndex( "cTurRec", ( cFileName ), "cTurRec + cSufFac + cCodCaj",,, .F., .F.,,,, .T., .F. )
+      oDbf:AddIndex( "fNumFac", ( cFileName ), "cSerie + Str( nNumFac ) + cSufFac + Str( nNumRec ) + cTipRec", "Empty( cTipRec )",, .F., .F.,,,, .T., .F. )
+      oDbf:AddIndex( "rNumFac", ( cFileName ), "cSerie + Str( nNumFac ) + cSufFac + Str( nNumRec ) + cTipRec", "!Empty( cTipRec )",, .F., .F.,,,, .T., .F. )
+      oDbf:AddIndex( "cRecDec", ( cFileName ), "cRecDev",,, .F., .F.,,,, .T., .F. )
+      oDbf:AddIndex( "lCtaBnc", ( cFileName ), "cEntEmp + cSucEmp + cDigEmp + cCtaEmp", "lCobrado",, .F., .F.,,,, .T., .F. )
+
+
+
+RETURN ( oDbf )
+
+
+
+UTILITY STATIC function TRemesas_Activate() ; local Self AS CLASS TRemesas := QSelf() AS CLASS TRemesas
+
+   local oRotor
+
+   if nAnd( ::nLevel, 1 ) == 0
+
+
+
+
+
+      if ::oWndParent <> nil
+         ::oWndParent:CloseAll()
+      end
+
+      if !::OpenFiles()
+         return nil
+      end
+
+      ::CreateShell( ::nLevel )
+
+
+
+
+
+
+      ::oWndBrw:NewAt( "BUS",,, {||( ::oWndBrw:SearchSetFocus() )}, "(B)uscar", "B",,,,, .F. )
+         ::oWndBrw:AddSeaBar()
+
+
+
+
+
+
+
+
+      ::oWndBrw:NewAt( "NEW",,, {||( ::oWndBrw:RecAdd() )}, "(A)ñadir", "A",,, 2,, .F. )
+
+
+
+
+
+
+      ::oWndBrw:NewAt( "EDIT",,, {||( ::oWndBrw:RecEdit() )}, "(M)odificar", "M",,, 4,, .F. )
+
+
+
+
+
+
+      ::oWndBrw:NewAt( "ZOOM",,, {||( ::oWndBrw:RecZoom() )}, "(Z)oom", "Z",,, 8,, .F. )
+
+
+
+
+
+
+
+     ::oWndBrw:NewAt( "DEL",,, {||( ::oWndBrw:RecDel() )}, "(E)liminar", "E",,, 16,, .F. )
+
+
+
+
+
+
+      ::oWndBrw:NewAt( "IMP",,, {||( ::Report() )}, "(L)istado", "L",,, 32,, .F. )
+
+
+
+
+
+
+      ::oWndBrw:NewAt( "BmpExptar",,, {||( ::SaveModelo() )}, "E(x)portar", "X",,, 4,, .F. )
+
+
+
+
+
+
+      ::oWndBrw:NewAt( "BmpConta",,, {||( ::SelectRec( {|| ::Conta( ::lChkSelect ) }, "Contabilizar remesas", "Simular" , .F. ) )}, "(C)ontabilizar", "C",,, 4,, .F. )
+
+
+
+
+
+
+      ::oWndBrw:NewAt( "CHGSTATE",,, {||( ::SelectRec( {|| ::ChangeConta( ::lChkSelect ) }, "Cambiar estado", "Contabilizado" , .F. ) )}, "Cambiar es(t)ado", "T",,, 4,, .F. )
+
+
+
+
+      oRotor := ::oWndBrw:NewAt( "ROTOR",,, {||( oRotor:Expand() )}, "Rotor",,,,,, .F. )
+
+
+
+
+         ::oWndBrw:NewAt( "ADDRESS_BOOK2_",,, {||( if( !Empty( ::oDbf:cCodRem ), ::oCtaRem:Edit(), MsgStop( "Cuenta vacía" ) ) )}, "Modificar cuenta",,,,, oRotor, .F. )
+      ::oWndBrw:EndButtons( Self )
+
+      ::oWndBrw:Activate( , , , , , , , , , , , , , , , , {|| ::CloseFiles() } )
+
+   else
+
+      msgStop( "Acceso no permitido." )
+
+   end
+
+RETURN NIL
+
+
+
+UTILITY STATIC function TRemesas_OpenFiles( lExclusive) ; local Self AS CLASS TRemesas := QSelf() AS CLASS TRemesas
+
+   local lOpen          := .T.
+   local oError
+   local oBlock
+
+   IIF( lExclusive == nil, lExclusive := .F., ) ;
+
+   oBlock               := ErrorBlock( {| oError | ApoloBreak( oError ) } )
+   BEGIN SEQUENCE
+
+      if Empty( ::oDbf )
+         ::DefineFiles()
+      end
+
+      ::oDbf:Activate( .F., !( lExclusive ) )
+
+      ::oDbfDet := DbfServer( "FACCLIP.DBF", ):NewOpen( "FACCLIP.DBF",, ( cDriver() ),, ( ::cPath ), .F., .T., .F., .F. ) ; ::oDbfDet:AddBag( "FACCLIP.CDX" ) ; ::oDbfDet:AddBag( ) ; ::oDbfDet:AutoIndex()
+      ::oDbfDet:OrdSetFocus( "nNumRem" )
+
+      ::oFacCliT := DbfServer( "FACCLIT.DBF", ):NewOpen( "FACCLIT.DBF",, ( cDriver() ),, ( ::cPath ), .F., .T., .F., .F. ) ; ::oFacCliT:AddBag( "FACCLIT.CDX" ) ; ::oFacCliT:AddBag( ) ; ::oFacCliT:AutoIndex()
+
+      ::oFacCliL := DbfServer( "FACCLIL.DBF", ):NewOpen( "FACCLIL.DBF",, ( cDriver() ),, ( ::cPath ), .F., .T., .F., .F. ) ; ::oFacCliL:AddBag( "FACCLIL.CDX" ) ; ::oFacCliL:AddBag( ) ; ::oFacCliL:AutoIndex()
+
+      ::oAntCliT := DbfServer( "AntCliT.DBF", ):NewOpen( "AntCliT.DBF",, ( cDriver() ),, ( ::cPath ), .F., .T., .F., .F. ) ; ::oAntCliT:AddBag( "AntCliT.CDX" ) ; ::oAntCliT:AddBag( ) ; ::oAntCliT:AutoIndex()
+
+      ::oClientes := DbfServer( "CLIENT.DBF", ):NewOpen( "CLIENT.DBF",, ( cDriver() ),, ( cPatCli() ), .F., .T., .F., .F. ) ; ::oClientes:AddBag( "CLIENT.CDX" ) ; ::oClientes:AddBag( ) ; ::oClientes:AutoIndex()
+
+      ::oIva := DbfServer( "TIVA.DBF", ):NewOpen( "TIVA.DBF",, ( cDriver() ),, ( cPatDat() ), .F., .T., .F., .F. ) ; ::oIva:AddBag( "TIVA.CDX" ) ; ::oIva:AddBag( ) ; ::oIva:AutoIndex()
+
+      ::oDivisas := DbfServer( "DIVISAS.DBF", ):NewOpen( "DIVISAS.DBF",, ( cDriver() ),, ( cPatDat() ), .F., .T., .F., .F. ) ; ::oDivisas:AddBag( "DIVISAS.CDX" ) ; ::oDivisas:AddBag( ) ; ::oDivisas:AutoIndex()
+
+      ::oDbfCnt := DbfServer( "nCount.Dbf", ):NewOpen( "nCount.Dbf",, ( cDriver() ),, ( cPatEmp() ), .F., .T., .F., .F. ) ; ::oDbfCnt:AddBag( "nCount.Cdx" ) ; ::oDbfCnt:AddBag( ) ; ::oDbfCnt:AutoIndex()
+
+      ::cPorDiv  := cPorDiv( cDivEmp(), ::oDivisas:cAlias )
+
+      ::oBandera := TBandera():New()
+
+      ::oCtaRem  := TCtaRem():Create( cPatCli() )
+      ::oCtaRem:OpenFiles()
+
+   RECOVER USING oError
+
+      msgStop( ErrorMessage( oError ), "Imposible abrir todas las bases de datos de remesas de clientes" )
+
+      ::CloseFiles()
+
+      lOpen             := .F.
+
+   end
+
+   ErrorBlock( oBlock )
+
+RETURN ( lOpen )
+
+
+
+UTILITY STATIC function TRemesas_OpenService( lExclusive) ; local Self AS CLASS TRemesas := QSelf() AS CLASS TRemesas
+
+   local lOpen          := .T.
+   local oError
+   local oBlock         := ErrorBlock( {| oError | ApoloBreak( oError ) } )
+
+   IIF( lExclusive == nil, lExclusive := .F., ) ;
+
+   BEGIN SEQUENCE
+
+      if Empty( ::oDbf )
+         ::DefineFiles()
+      end
+
+      ::oDbf:Activate( .F., !( lExclusive ) )
+
+   RECOVER USING oError
+
+      msgStop( ErrorMessage( oError ), "Imposible abrir todas las bases de datos de remesas de clientes" )
+
+      ::CloseService()
+
+      lOpen             := .F.
+
+   end
+
+   ErrorBlock( oBlock )
+
+RETURN ( lOpen )
+
+
+
+UTILITY STATIC function TRemesas_CloseFiles() ; local Self AS CLASS TRemesas := QSelf() AS CLASS TRemesas
+
+   if ::oDbf <> nil .AND. ::oDbf:Used()
+      ::oDbf:End()
+   end
+
+   if ::oDbfDet <> nil .AND. ::oDbfDet:Used()
+      ::oDbfDet:End()
+   end
+
+   if ::oDivisas <> nil .AND. ::oDivisas:Used()
+      ::oDivisas:End()
+   end
+
+   if ::oDbfCnt <> nil .AND. ::oDbfCnt:Used()
+      ::oDbfCnt:End()
+   end
+
+   if ::oClientes <> nil .AND. ::oClientes:Used()
+      ::oClientes:End()
+   end
+
+   if ::oFacCliT <> nil .AND. ::oFacCliT:Used()
+      ::oFacCliT:End()
+   end
+
+   if ::oFacCliL <> nil .AND. ::oFacCliL:Used()
+      ::oFacCliL:End()
+   end
+
+   if ::oAntCliT <> nil .AND. ::oAntCliT:Used()
+      ::oAntCliT:End()
+   end
+
+   if ::oIva <> nil .AND. ::oIva:Used()
+      ::oIva:End()
+   end
+
+   if ::oCtaRem <> nil
+      ::oCtaRem:End()
+   end
+
+   ::oDbf         := nil
+   ::oDbfDet      := nil
+   ::oDivisas     := nil
+   ::oDbfCnt      := nil
+   ::oClientes    := nil
+   ::oDbfDet      := nil
+   ::oCtaRem      := nil
+
+   if ::bmpConta <> nil
+      DeleteObject( ::bmpConta )
+   end
+
+   ::bmpConta     := nil
+
+RETURN ( .T. )
+
+
+
+UTILITY STATIC function TRemesas_CloseService() ; local Self AS CLASS TRemesas := QSelf() AS CLASS TRemesas
+
+   if !Empty( ::oDbf )
+      ::oDbf:End()
+   end
+
+   ::oDbf         := nil
+
+RETURN ( .T. )
+
+
+
+UTILITY STATIC function TRemesas_Resource( nMode) ; local Self AS CLASS TRemesas := QSelf() AS CLASS TRemesas
+
+   local oDlg
+   local oGet     := Array( 3 )
+   local oSay
+   local cSay     := ::oCtaRem:cRetCtaRem( ::oDbf:cCodRem )
+   local oBmpDiv
+   local oBtnImportar
+   local oBmpGeneral
+
+   oDlg = TDialog():New(,,,, LblTitle( nMode ) + "remesas de recibos a clientes", "RemCli",, .F.,,,,,, .F.,,,,,, .F., )
+
+
+
+
+
+      oBmpGeneral := TBitmap():ReDefine( 990, "remesas_bancarias_48_alpha",, oDlg,,, .F., .F.,,, .F.,,, .T. )
+
+
+
+
+
+      TGetHlp():ReDefine( 100, { | u | If( PCount()==0, ::oDbf:nNumRem, ::oDbf:nNumRem:= u ) }, oDlg,, ::oDbf:FieldByName( "nNumRem" ):cPict,,,,,,, .F., {||     ( .F. )},, .F., .F.,,,,,, nil,,, )
+
+
+
+
+
+      TGetHlp():ReDefine( 110, { | u | If( PCount()==0, ::oDbf:cSufRem, ::oDbf:cSufRem:= u ) }, oDlg,, ::oDbf:FieldByName( "cSufRem" ):cPict,,,,,,, .F., {||     ( .F. )},, .F., .F.,,,,,, nil,,, )
+
+
+
+
+
+      TGetHlp():ReDefine( 120, { | u | If( PCount()==0, ::oDbf:dFecRem, ::oDbf:dFecRem:= u ) }, oDlg,,,,,,,,, .F., {||         ( nMode <> 3 )},, .F., .T.,,,,,, nil,,, )
+
+
+
+
+
+
+      ::oExportado := TCheckBox():ReDefine( 200, { | u | If( PCount()==0, ::oDbf:lExport, ::oDbf:lExport:= u ) }, oDlg,, {||( ::ChangeExport() )},,,,, .F., {||     ( nMode <> 3 )}, .F. )
+
+
+
+
+
+      ::oFecExp := TGetHlp():ReDefine( 201, { | u | If( PCount()==0, ::oDbf:dExport, ::oDbf:dExport:= u ) }, oDlg,,,,,,,,, .F., {||     ( ::oDbf:lExport .AND. nMode <> 3 )},, .F., .T.,,,,,, nil,,, )
+
+
+
+
+
+      ::oCodRem := TGetHlp():ReDefine( 130, { | u | If( PCount()==0, ::oDbf:cCodRem, ::oDbf:cCodRem:= u ) }, oDlg,, ::oDbf:FieldByName( "cCodRem" ):cPict,,,,,,, .T.,,, .F., .F.,,,,,, nil, "LUPA",, )
+
+      ::oCodRem:bValid := {|| ::oCtaRem:lGetCtaRem( ::oCodRem, oSay ) }
+      ::oCodRem:bWhen  := {|| nMode <> 3 }
+      ::oCodRem:bHelp  := {|| ::oCtaRem:Buscar( ::oCodRem ) }
+
+
+
+
+      oSay := TGetHlp():ReDefine( 131, { | u | If( PCount()==0, cSay, cSay:= u ) }, oDlg,,,,,,,,, .T., {||     ( .F. )},, .F., .F.,,,,,, nil,,, )
+
+
+
+
+
+
+
+
+      oGet[ 2 ] := TGetHlp():ReDefine( 140, { | u | If( PCount()==0, ::oDbf:cCodDiv, ::oDbf:cCodDiv:= u ) }, oDlg,, "@!",,,,,,, .T., {||     ( nMode == 1 .OR. ::oDbf:LastRec() == 0 )},, .F., .F.,,,,,, nil, "LUPA",, )
+
+         oGet[2]:bValid := {|| cDivOut( oGet[2], oBmpDiv, oGet[3], nil, nil, nil, nil, nil, nil, nil, ::oDivisas:cAlias, ::oBandera ) }
+         oGet[2]:bHelp  := {|| BrwDiv( oGet[2], oBmpDiv, oGet[3], ::oDivisas:cAlias, ::oBandera ) }
+
+
+
+
+        oBmpDiv := TBitmap():ReDefine( 141, "BAN_EURO",, oDlg,,, .F., .F.,,, .F.,,, .F. )
+
+
+
+
+
+
+
+      oGet[3] := TGetHlp():ReDefine( 142, { | u | If( PCount()==0, ::oDbf:nVdvDiv, ::oDbf:nVdvDiv:= u ) }, oDlg,, "@E 999,999.9999", {||    ( ::oDbf:nVdvDiv > 0 )},,,,,, .F., {||        ( .F. )},, .F., .F.,,,,,, nil,,, )
+
+
+
+
+      TRadMenu():Redefine( { | u | If( PCount()==0, ::oDbf:nTipRem, ::oDbf:nTipRem:= u ) }, oDlg,, { 160, 161 },,,,, .F., {||     ( nMode == 1 )}, )
+
+
+
+
+
+      TGetHlp():ReDefine( 170, { | u | If( PCount()==0, ::oDbf:dConta, ::oDbf:dConta:= u ) }, oDlg,,,,,,,,, .F., {||         ( nMode <> 3 )},, .F., .T.,,,,,, nil,,, )
+
+
+
+
+
+
+
+
+
+      TButton():ReDefine( 500, {||( ::AppendDet() )}, oDlg,,, .F., {||     ( nMode <> 3 )},,, .F. )
+
+
+
+
+
+        TButton():ReDefine( 502, {||( ::DeleteDet() )}, oDlg,,, .F., {||     ( nMode <> 3 )},,, .F. )
+
+
+
+
+
+      oBtnImportar := TButton():ReDefine( 503, {||( ::ImportResource( nMode ) )}, oDlg,,, .F., {||     ( nMode == 1 )},,, .F. )
+
+
+
+
+
+      ::oBrwDet               := IXBrowse():New( oDlg )
+
+      ::oBrwDet:bClrSel       := {|| { 0, ( 229 + ( 229 * 256 ) + ( 229 * 65536 ) ) } }
+      ::oBrwDet:bClrSelFocus  := {|| { 0, ( 167 + ( 205 * 256 ) + ( 240 * 65536 ) ) } }
+
+      ::oBrwDet:nMarqueeStyle := 6
+      ::oBrwDet:cName         := "Remesas.Lineas"
+      ::oBrwDet:lFooter       := .T.
+
+      ::oBrwDet:SetoDbf( ::oDbfVir )
+
+      with object ( ::oBrwDet:AddCol() )
+         :cHeader          := "Número"
+         :bEditValue       := {|| ::oDbfVir:cSerie + "/" + Str( ::oDbfVir:nNumFac ) + "/" + ::oDbfVir:cSufFac + "-" + Str( ::oDbfVir:nNumRec ) }
+         :nWidth           := 95
+      end
+
+      with object ( ::oBrwDet:AddCol() )
+         :cHeader          := "Fecha"
+         :bStrData         := {|| DtoC( ::oDbfVir:dPreCob ) }
+         :nWidth           := 80
+      end
+
+      with object ( ::oBrwDet:AddCol() )
+         :cHeader          := "Vencimiento"
+         :bStrData         := {|| DtoC( ::oDbfVir:dFecVto ) }
+         :nWidth           := 80
+      end
+
+      with object ( ::oBrwDet:AddCol() )
+         :cHeader          := "Cliente"
+         :bStrData         := {|| Rtrim( ::oDbfVir:cCodCli ) + Space( 1 ) + Rtrim( ::oDbfVir:cNomCli ) }
+         :nWidth           := 146
+      end
+
+      with object ( ::oBrwDet:AddCol() )
+         :cHeader          := "Descripción"
+         :bStrData         := {|| ::oDbfVir:cDescrip }
+         :nWidth           := 220
+      end
+
+      with object ( ::oBrwDet:AddCol() )
+         :cHeader          := "Importe"
+         :bEditValue       := {|| nTotRecCli( ::oDbfVir, ::oDivisas:cAlias, ::oDbf:cCodDiv, .T. ) }
+         :nWidth           := 100
+         :bFooter          := {|| ::nTotRemVir( .T. ) }
+         :nDataStrAlign    := 1
+         :nHeadStrAlign    := 1
+         :nFootStrAlign    := 1
+      end
+
+      with object ( ::oBrwDet:AddCol() )
+         :cHeader          := "Div."
+         :bEditValue       := {|| cSimDiv( ::oDbfVir:cDivPgo, ::oDivisas:cAlias ) }
+         :nWidth           := 20
+      end
+
+      ::oBrwDet:CreateFromResource( 150 )
+
+
+
+
+
+      TButton():ReDefine( 511, {||( if( ::lSave( nMode ), oDlg:End( 1 ), ) )}, oDlg,,, .F., {||         ( nMode <> 3 )},,, .F. )
+
+
+
+
+
+        TButton():ReDefine( 510, {||( oDlg:end() )}, oDlg,,, .F.,,,, .T. )
+
+
+
+
+      TButton():ReDefine( 559, {||( ChmHelp( "Remesasbancarias2" ) )}, oDlg,,, .F.,,,, .F. )
+
+   if nMode <> 3
+      oDlg:AddFastKey( 113, {|| ::AppendDet() } )
+      oDlg:AddFastKey( 115, {|| ::DeleteDet() } )
+      oDlg:AddFastKey( 116, {|| if( ::lSave( nMode ), oDlg:End( 1 ), ) } )
+   end
+
+   oDlg:AddFastKey(  112,   {|| ChmHelp( "Remesasbancarias2" ) } )
+
+   oDlg:bStart             := {|| ::oCodRem:SetFocus() }
+
+   oDlg:Activate( , , , .T., , , {|| ::EdtRecMenu( oDlg ) } )
+
+   ::EndEdtRecMenu()
+
+   oBmpDiv:End()
+   oBmpGeneral:End()
+
+
+
+
+
+   ::oBrwDet:CloseData()
+
+RETURN ( oDlg:nResult == 1 )
+
+
+
+UTILITY STATIC function TRemesas_ImportResource( nMode) ; local Self AS CLASS TRemesas := QSelf() AS CLASS TRemesas
+
+   local oDlg
+
+   oDlg = TDialog():New(,,,,, "ImpRemCli",, .F.,,,,,, .F.,,,,,, .F., )
+
+
+
+
+      TGetHlp():ReDefine( 100, { | u | If( PCount()==0, ::dExpedicionIni, ::dExpedicionIni:= u ) }, oDlg,,,,,,,,, .T.,,, .F., .T.,,,,,, nil,,, )
+
+
+
+
+      TGetHlp():ReDefine( 110, { | u | If( PCount()==0, ::dExpedicionFin, ::dExpedicionFin:= u ) }, oDlg,,,,,,,,, .T.,,, .F., .T.,,,,,, nil,,, )
+
+
+
+
+      TGetHlp():ReDefine( 120, { | u | If( PCount()==0, ::dVencimientoIni, ::dVencimientoIni:= u ) }, oDlg,,,,,,,,, .T.,,, .F., .T.,,,,,, nil,,, )
+
+
+
+
+      TGetHlp():ReDefine( 130, { | u | If( PCount()==0, ::dVencimientoFin, ::dVencimientoFin:= u ) }, oDlg,,,,,,,,, .T.,,, .F., .T.,,,,,, nil,,, )
+
+      ::oMeter    := TMeter():ReDefine( 140, { | u | if( pCount() == 0, ::nMeter, ::nMeter := u ) }, 140, oDlg, .F., , , .T., ( 255 + ( 255 * 256 ) + ( 255 * 65536 ) ), , ( 128 + ( 255 * 256 ) + ( 0 * 65536 ) ) )
+
+
+
+
+
+
+
+
+      TButton():ReDefine( 1, {||( ::GetRecCli( oDlg, nMode )  )}, oDlg,,, .F.,,,, .F. )
+
+
+
+
+
+      TButton():ReDefine( 2, {||( oDlg:End() )}, oDlg,,, .F.,,,, .T. )
+
+   oDlg:Activate( , , , .T. )
+
+RETURN ( oDlg:nResult == 1 )
+
+
+
+UTILITY STATIC function TRemesas_lSave( nMode) ; local Self AS CLASS TRemesas := QSelf() AS CLASS TRemesas
+
+   local lReturn  := .T.
+
+   if nMode == 1
+
+      if Empty( ::oDbf:cCodRem )
+         MsgStop( "El número de cuenta no puede estar vacío." )
+         ::oCodRem:SetFocus()
+         lReturn  := .F.
+      end
+
+   end
+
+RETURN ( lReturn )
+
+
+
+UTILITY STATIC function TRemesas_RollBack() ; local Self AS CLASS TRemesas := QSelf() AS CLASS TRemesas
+
+   ::GetFirstKey()
+
+   if ::cFirstKey <> nil
+      while ::oDbfDet:Seek( ::cFirstKey )
+         ::DelItem()
+      end
+   end
+
+RETURN ( Self )
+
+
+
+UTILITY STATIC function TRemesas_SaveDetails() ; local Self AS CLASS TRemesas := QSelf() AS CLASS TRemesas
+
+   local cNumRec
+   local cNumFac
+
+   ::RollBack()
+
+
+
+
+
+   ::oDbfVir:GoTop()
+   while !::oDbfVir:Eof()
+
+      SysRefresh()
+
+      cNumFac     := ::oDbfVir:cSerie + Str( ::oDbfVir:nNumFac, 9 ) + ::oDbfVir:cSufFac
+      cNumRec     := cNumFac + Str( ::oDbfVir:nNumRec, 2 ) + ::oDbfVir:cTipRec
+
+      if ::oDbfDet:SeekInOrd( cNumRec, "nNumFac" )
+
+         ::oDbfDet:Load()
+
+         ::oDbfDet:lCobrado   := .T.
+         ::oDbfDet:dEntrada   := ::oDbf:dFecRem
+
+         if ::oDbf:nTipRem == 2
+
+            ::oDbfDet:lRecDto    := .T.
+            ::oDbfDet:dFecDto    := ::oDbf:dFecRem
+
+         end
+
+         ::oDbfDet:cCtaRem       := ::oDbf:cCodRem
+         ::oDbfDet:nNumRem       := ::oDbf:nNumRem
+         ::oDbfDet:cSufRem       := ::oDbf:cSufRem
+         ::oDbfDet:lRemesa       := .T.
+
+
+
+
+         if Empty( ::oDbfDet:cEntEmp ) .OR. Empty( ::oDbfDet:cSucEmp ) .OR. Empty( ::oDbfDet:cDigEmp ) .OR. Empty( ::oDbfDet:cCtaEmp )
+
+            ::oDbfDet:cBncEmp    := oRetFld( ::oDbf:cCodRem, ::oCtaRem:oDbf, "cBanco" )
+            ::oDbfDet:cEntEmp    := oRetFld( ::oDbf:cCodRem, ::oCtaRem:oDbf, "cEntBan" )
+            ::oDbfDet:cSucEmp    := oRetFld( ::oDbf:cCodRem, ::oCtaRem:oDbf, "cAgcBan" )
+            ::oDbfDet:cDigEmp    := oRetFld( ::oDbf:cCodRem, ::oCtaRem:oDbf, "cDgcBan" )
+            ::oDbfDet:cCtaEmp    := oRetFld( ::oDbf:cCodRem, ::oCtaRem:oDbf, "cCtaBan" )
+
+         end
+
+         ::oDbfDet:Save()
+
+      end
+
+
+
+
+
+      if ::oFacCliT:Seek( cNumFac )
+         ChkLqdFacCli( nil, ::oFacCliT:cAlias, ::oFacCliL:cAlias, ::oDbfDet:cAlias, ::oAntCliT:cAlias, ::oIva:cAlias, ::oDivisas:cAlias )
+      end
+
+      ::oDbfVir:Skip()
+
+   end
+
+RETURN ( .T. )
+
+
+
+UTILITY STATIC function TRemesas_SaveModelo() ; local Self AS CLASS TRemesas := QSelf() AS CLASS TRemesas
+
+   local oDlg
+   local oGet
+   local cTitle
+   local bAction
+   local oBmpGeneral
+
+   if ::oDbf:Recno() == 0
+      RETURN ( Self )
+   end
+
+   if ::oDbf:nTipRem == 2
+      cTitle      := "Remesa de recibos a soporte magnéticos según norma 58"
+      bAction     := {|| ::InitMod58( oDlg ) }
+   else
+      cTitle      := "Remesa de recibos a soporte magnéticos según norma 19"
+      bAction     := {|| ::InitMod19( oDlg ) }
+   end
+
+   oDlg = TDialog():New(,,,, cTitle, "Modelo19",, .F.,,,,,, .F.,,,,,, .F., )
+
+
+
+
+
+      oBmpGeneral := TBitmap():ReDefine( 500, "Courthouse_Alpla_48",, oDlg,,, .F., .F.,,, .F.,,, .T. )
+
+
+
+
+      TCheckBox():ReDefine( 140, { | u | If( PCount()==0, ::lUsarVencimiento, ::lUsarVencimiento:= u ) }, oDlg,,,,,,, .F., {||     ( ::oDbf:nTipRem <> 2 )}, .F. )
+
+
+
+
+
+      TGetHlp():ReDefine( 120, { | u | If( PCount()==0, ::dCarCta, ::dCarCta:= u ) }, oDlg,,,,,,,,, .F., {||     ( !::lUsarVencimiento )},, .F., .T.,,,,,, nil,,, )
+
+
+
+
+
+
+      oGet := TGetHlp():ReDefine( 130, { | u | If( PCount()==0, ::cPatExp, ::cPatExp:= u ) }, oDlg,,,,,,,,, .F.,,, .F., .F.,,,,, {|Self|( oGet:cText( cGetFile( "*.txt", "Selección de fichero" ) ) )}, nil, "FOLDER",, )
+
+
+
+
+      TCheckBox():ReDefine( 100, { | u | If( PCount()==0, ::lAgruparRecibos, ::lAgruparRecibos:= u ) }, oDlg,,,,,,, .F., {||     ( ::oDbf:nTipRem <> 2 )}, .F. )
+
+
+
+
+      TButton():ReDefine( 550, {||( oDlg:Disable(), Eval( bAction ), oDlg:Enable(), oDlg:End( 1 ) )}, oDlg,,, .F.,,,, .F. )
+
+
+
+
+      TButton():ReDefine( 551, {||( oDlg:End() )}, oDlg,,, .F.,,,, .F. )
+
+      oDlg:AddFastKey( 116, bAction )
+
+   oDlg:Activate( oDlg:bLClicked, oDlg:bMoved, oDlg:bPainted, .T.,,,, oDlg:bRClicked,,, )
+
+
+
+
+
+   if ( oDlg:nResult == 1 )
+
+      ::oDbf:Load()
+
+      ::oDbf:lExport := .T.
+      ::oDbf:dExport := GetSysDate()
+
+      ::oDbf:Save()
+
+   end
+
+   if !Empty( oBmpGeneral )
+      oBmpGeneral:End()
+   end
+
+RETURN ( Self )
+
+
+
+UTILITY STATIC function TRemesas_InitMod58( oDlg) ; local Self AS CLASS TRemesas := QSelf() AS CLASS TRemesas
+
+   local oBlock
+   local oError
+   local nHandle
+   local cBuffer
+   local cHeader
+   local cBanCli
+   local nImpRec
+   local cCodCli
+   local cPreMon
+   local nTotImp  := 0
+   local nTotRec  := 0
+   local nTotLin  := 0
+
+   oBlock         := ErrorBlock( {| oError | ApoloBreak( oError ) } )
+   BEGIN SEQUENCE
+
+   cPreMon        := if( cDivEmp() == "EUR", "5", "0" )
+
+   if file( Rtrim( ::cPatExp ) )
+      fErase( Rtrim( ::cPatExp ) )
+   end
+
+   nHandle        := fCreate( Rtrim( ::cPatExp ) )
+
+   if nHandle > 0
+
+
+
+
+
+      cHeader  := ::oCtaRem:oDbf:cNifPre
+      cHeader  += ::oCtaRem:oDbf:cSufCta
+
+
+
+
+
+      cBuffer  := cPreMon
+      cBuffer  += "1"
+      cBuffer  += "7"
+      cBuffer  += "0"
+      cBuffer  += cHeader
+      cBuffer  += Left( Dtoc( ::oDbf:dFecRem ), 2) + SubStr( Dtoc( ::oDbf:dFecRem ), 4, 2 ) + Right( Dtoc( ::oDbf:dFecRem ), 2 )
+      cBuffer  += Space( 6 )
+      cBuffer  += ::oCtaRem:oDbf:cNomPre
+      cBuffer  += Space( 20 )
+      cBuffer  += ::oCtaRem:oDbf:cEntPre
+      cBuffer  += ::oCtaRem:oDbf:cAgcPre
+      cBuffer  := Padr( cBuffer, 162 )
+      cBuffer  += Chr(13)+Chr(10)
+
+      fWrite( nHandle, cBuffer )
+      nTotLin  ++
+
+
+
+
+
+      cBuffer  := cPreMon
+      cBuffer  += "3"
+      cBuffer  += "7"
+      cBuffer  += "0"
+      cBuffer  += cHeader
+      cBuffer  += Left( Dtoc( ::oDbf:dFecRem ), 2) + SubStr( Dtoc( ::oDbf:dFecRem ), 4, 2 ) + Right( Dtoc( ::oDbf:dFecRem ), 2 )
+      cBuffer  += Left( Dtoc( ::dCarCta ), 2) + SubStr( Dtoc( ::dCarCta ), 4, 2 ) + Right( Dtoc( ::dCarCta ), 2 )
+      cBuffer  += ::oCtaRem:oDbf:cNomPre
+      cBuffer  += ::oCtaRem:oDbf:cEntBan
+      cBuffer  += ::oCtaRem:oDbf:cAgcBan
+      cBuffer  += ::oCtaRem:oDbf:cDgcBan
+      cBuffer  += ::oCtaRem:oDbf:cCtaBan
+      cBuffer  += Space( 8 )
+      cBuffer  += "06"
+      cBuffer  += Space( 10 )
+      cBuffer  += Space( 40 )
+      cBuffer  += Space( 2 )
+      cBuffer  += ::oCtaRem:oDbf:cCodIne
+      cBuffer  := Padr( cBuffer, 162 )
+      cBuffer  += Chr(13)+Chr(10)
+
+      fWrite( nHandle, cBuffer )
+      nTotLin  ++
+
+
+
+
+
+      if ::oDbfDet:Seek( Str( ::oDbf:nNumRem, 9 ) + ::oDbf:cSufRem )
+
+         while Str( ::oDbf:nNumRem, 9 ) + ::oDbf:cSufRem == Str( ::oDbfDet:nNumRem ) + ::oDbfDet:cSufRem .AND. !::oDbfDet:eof()
+
+            cCodCli           := ::oDbfDet:cCodCli
+
+            if ::oClientes:Seek( cCodCli )
+
+               cBanCli        := ::oDbfDet:cEntCli + ::oDbfDet:cSucCli + ::oDbfDet:cDigCli + ::oDbfDet:cCtaCli
+
+               if Empty( cBanCli )
+                  cBanCli     := cClientCuenta( cCodCli )
+               end
+
+               if !Empty( cBanCli )
+
+                  nImpRec     := nTotRecCli( ::oDbfDet, ::oDivisas:cAlias, cDivEmp() )
+
+                  nTotImp     += nImpRec
+                  nTotRec     ++
+
+                  cBuffer     := cPreMon
+                  cBuffer     += "6"
+                  cBuffer     += "7"
+                  cBuffer     += "0"
+                  cBuffer     += cHeader
+                  cBuffer     += Right( AllTrim( ::oDbfDet:cCodCli ), 6 )
+                  cBuffer     += Space( 6 )
+                  cBuffer     += Left( ::oClientes:Titulo, 40 )
+                  cBuffer     += Padr( cBanCli, 20 )
+                  cBuffer     += cToCeros( nImpRec, ::cPorDiv )
+                  cBuffer     += Space( 6 )
+                  cBuffer     += ::oDbfDet:cSerie + cToCeros( ::oDbfDet:nNumFac, "999999999", 9 )
+                  cBuffer     += Padr( "Recibo Nº" + ::oDbfDet:cSerie + "/" + AllTrim( Str( ::oDbfDet:nNumFac ) ) + "/" +  Alltrim( ::oDbfDet:cSufFac ) + "-" + Alltrim( Str( ::oDbfDet:nNumRec ) ) + " de " + Dtoc( ::oDbfDet:dEntrada ), 40 )
+                  cBuffer     += Left( Dtoc( ::oDbfDet:dFecVto ), 2 ) + SubStr( Dtoc( ::oDbfDet:dFecVto ), 4, 2 ) + Right( Dtoc( ::oDbfDet:dFecVto ), 2 )
+                  cBuffer     := Padr( cBuffer, 162 )
+                  cBuffer     += Chr(13)+Chr(10)
+
+                  fWrite( nHandle, cBuffer )
+                  nTotLin     ++
+
+
+
+
+
+                  cBuffer     := cPreMon
+                  cBuffer     += "6"
+                  cBuffer     += "7"
+                  cBuffer     += "1"
+                  cBuffer     += cHeader
+                  cBuffer     += Right( AllTrim( ::oDbfDet:cCodCli ), 6 )
+                  cBuffer     += Space( 6 )
+                  cBuffer     += "Factura Nº" + ::oDbfDet:cSerie + "/" + AllTrim( Str( ::oDbfDet:nNumFac ) ) + "/" +  ::oDbfDet:cSufFac + " de " + Dtoc( ::oDbfDet:dEntrada )
+                  cBuffer     += Space( 2 )
+                  cBuffer     := Padr( cBuffer, 162 )
+                  cBuffer     += Chr(13)+Chr(10)
+
+                  fWrite( nHandle, cBuffer )
+                  nTotLin     ++
+
+
+
+
+
+                  cBuffer     := cPreMon
+                  cBuffer     += "6"
+                  cBuffer     += "7"
+                  cBuffer     += "2"
+                  cBuffer     += cHeader
+                  cBuffer     += Right( AllTrim( ::oDbfDet:cCodCli ), 6 )
+                  cBuffer     += Space( 6 )
+                  cBuffer     += Left( ::oClientes:Titulo, 40 )
+                  cBuffer     += Left( ::oClientes:Domicilio, 40 )
+                  cBuffer     += ::oClientes:CodPostal
+                  cBuffer     += Space( 1 )
+                  cBuffer     += ::oClientes:Poblacion
+                  cBuffer     := Padr( cBuffer, 162 )
+                  cBuffer     += Chr(13)+Chr(10)
+
+                  fWrite( nHandle, cBuffer )
+                  nTotLin     ++
+
+               else
+
+                  MsgStop( "No se puede localizar una cuenta bancaria valida, para el cliente " + Rtrim( cCodCli ) + "." )
+
+               end
+
+            else
+
+               MsgStop( "Cliente " + Rtrim( cCodCli ) + " no encontrado." )
+
+            end
+
+            ::oDbfDet:Skip()
+
+         end
+
+      end
+
+
+
+
+
+      cBuffer  := cPreMon
+      cBuffer  += "8"
+      cBuffer  += "7"
+      cBuffer  += "0"
+      cBuffer  += cHeader
+      cBuffer  += Space( 72 )
+      cBuffer  += cToCeros( nTotImp, ::cPorDiv )
+      cBuffer  += Space( 6 )
+      cBuffer  += cToCeros( nTotRec )
+      cBuffer  += cToCeros( nTotLin )
+      cBuffer  := Padr( cBuffer, 162 )
+      cBuffer  += Chr(13)+Chr(10)
+
+      fWrite( nHandle, cBuffer )
+      nTotLin  ++
+
+
+
+
+
+      cBuffer  := cPreMon
+      cBuffer  += "9"
+      cBuffer  += "7"
+      cBuffer  += "0"
+      cBuffer  += cHeader
+      cBuffer  += Space( 52 )
+      cBuffer  += "0001"
+      cBuffer  += Space( 16 )
+      cBuffer  += cToCeros( nTotImp, ::cPorDiv )
+      cBuffer  += Space( 6 )
+      cBuffer  += cToCeros( nTotRec )
+      cBuffer  += cToCeros( ++nTotLin )
+      cBuffer  := Padr( cBuffer, 162 )
+      cBuffer  += Chr(13)+Chr(10)
+      fWrite( nHandle, cBuffer )
+
+   end
+
+
+   if ApoloMsgNoYes( "Proceso de exportación realizado con éxito" + Chr(13)+Chr(10) +  "¿ Desea abrir el fichero resultante ?", "Elija una opción." )
+      ShellExecute( 0, "open", ::cPatExp, , , 1 )
+   end
+
+   RECOVER USING oError
+
+      msgStop( "Imposible exportar  filtros " + Chr(13)+Chr(10) + ErrorMessage( oError ) )
+
+   end
+
+   ErrorBlock( oBlock )
+
+   if !Empty( nHandle )
+      fClose( nHandle )
+   end
+
+RETURN ( Self )
+
+
+
+UTILITY STATIC function TRemesas_GetRecCli( oDlg, nMode) ; local Self AS CLASS TRemesas := QSelf() AS CLASS TRemesas
+
+   local n           := 0
+   local cCodRem     := ::oDbf:cCodRem
+
+   if Empty( cCodRem )
+      return .T.
+   end
+
+   oDlg:Disable()
+
+   ::oMeter:nTotal   := ::oDbfDet:OrdKeyCount()
+
+   if nMode == 1
+
+      ::oDbfDet:OrdSetFocus( "cCtaRem" )
+
+      if ::oDbfDet:Seek( cCodRem )
+
+         while ::oDbfDet:cCtaRem == cCodRem .AND. !::oDbfDet:Eof()
+
+
+
+
+
+
+
+
+
+            if !::lNowExist( ::oDbfDet:cSerie + Str( ::oDbfDet:nNumFac ) + ::oDbfDet:cSufFac + Str( ::oDbfDet:nNumRec ) )  .AND. !::oDbfDet:lCobrado                                                                                         .AND. !Empty( ::oDbfDet:dPreCob )                                                                                 .AND. Empty( ::oDbfDet:nNumRem )                                                                                  .AND. ::oDbfDet:dPreCob >= ::dExpedicionIni                                                                       .AND. ::oDbfDet:dPreCob <= ::dExpedicionFin                                                                       .AND. ::oDbfDet:dFecVto >= ::dVencimientoIni                                                                      .AND. ::oDbfDet:dFecVto <= ::dVencimientoFin                                                                      .AND. ::oDbfDet:nImporte > 0
+
+               if ::oDbfVir:Append()
+                  aEval( ::oDbfVir:aTField, {| oFld, n | ::oDbfVir:FldPut( n, ::oDbfDet:FieldGet( n ) ) } )
+                  ::oDbfVir:Save()
+               end
+
+               n++
+
+            end
+
+            ::oDbfDet:Skip()
+
+            ::oMeter:Set( ::oDbfDet:OrdKeyNo() )
+
+         end
+
+      else
+
+         MsgStop( "No se encuentran recibos, en la cuenta " + cCodRem )
+
+      end
+
+      ::oMeter:Set( 0 )
+      ::oMeter:Refresh()
+
+      ::oDbfDet:OrdSetFocus( "nNumRem" )
+
+      ::oDbfVir:GoTop()
+
+      ::oBrwDet:Refresh()
+
+   end
+
+   oDlg:Enable()
+   oDlg:End()
+
+   MsgInfo( Ltrim( Trans( n, "999999999" ) ) + " recibos importados, en la cuenta " + cCodRem )
+
+RETURN ( .T. )
+
+
+
+UTILITY STATIC function TRemesas_nTotRem( lPic) ; local Self AS CLASS TRemesas := QSelf() AS CLASS TRemesas
+
+   local nTot     := 0
+
+   IIF( lPic == nil, lPic := .F., ) ;
+
+   if ::oDbfDet <> nil .AND. ::oDbf:nNumRem <> 0
+
+      ::oDbfDet:GetStatus()
+
+      if ::oDbfDet:Seek( Str( ::oDbf:nNumRem, 9 ) + ::oDbf:cSufRem )
+         while Str( ::oDbf:nNumRem, 9 ) + ::oDbf:cSufRem == Str( ::oDbfDet:nNumRem, 9 ) + ::oDbfDet:cSufRem .AND. !::oDbfDet:eof()
+            nTot  += nTotRecCli( ::oDbfDet, ::oDivisas:cAlias, ::oDbf:cCodDiv, .F. )
+            ::oDbfDet:Skip()
+         end
+      end
+
+      ::oDbfDet:SetStatus()
+
+   end
+
+RETURN ( if( lPic, Trans( nTot, ::cPorDiv ), nTot ) )
+
+
+
+UTILITY STATIC function TRemesas_nTotRemVir( lPic) ; local Self AS CLASS TRemesas := QSelf() AS CLASS TRemesas
+
+   local nTot     := 0
+
+   IIF( lPic == nil, lPic := .F., ) ;
+
+   ::oDbfVir:GetStatus()
+
+   ::oDbfVir:GoTop()
+   while !::oDbfVir:eof()
+      nTot        += nTotRecCli( ::oDbfVir, ::oDivisas:cAlias, ::oDbf:cCodDiv, .F. )
+      ::oDbfVir:Skip()
+   end
+
+   ::oDbfVir:SetStatus()
+
+RETURN ( if( lPic, Trans( nTot, ::cPorDiv ), nTot ) )
+
+
+
+UTILITY STATIC function TRemesas_AppendDet() ; local Self AS CLASS TRemesas := QSelf() AS CLASS TRemesas
+
+   local cCodRec  := ""
+
+   if BrwRecCli( @cCodRec, ::oDbfDet:cAlias, ::oClientes:cAlias, ::oDivisas:cAlias, ::oBandera )
+
+      if ::oDbfDet:lCobrado
+         msgStop( "Recibo ya cobrado." )
+         return ( .F. )
+      end
+
+      if !Empty( ::oDbfDet:nNumRem )
+         msgStop( "Recibo ya remesado." )
+         return ( .F. )
+      end
+
+      if ::lNowExist( cCodRec )
+         msgStop( "Recibo ya incluido en remesa." )
+         return ( .F. )
+      end
+
+      if ::oDbfDet:SeekInOrd( cCodRec, "nNumFac" )
+         if ::oDbfVir:Append()
+            aEval( ::oDbfVir:aTField, {| oFld, n | ::oDbfVir:FldPut( n, ::oDbfDet:FieldGet( n ) ) } )
+            ::oDbfVir:Save()
+         end
+      end
+
+      ::oBrwDet:Refresh()
+
+   end
+
+RETURN ( Self )
+
+
+
+UTILITY STATIC function TRemesas_Del() ; local Self AS CLASS TRemesas := QSelf() AS CLASS TRemesas
+
+   if oUser():lNotConfirmDelete() .OR. ApoloMsgNoYes("¿ Desea eliminar el registro en curso ?", "Confirme supresión" )
+
+      ::GetFirstKey()
+
+      if !Empty( ::cFirstKey )
+         while ::oDbfDet:Seek( ::cFirstKey )
+            ::DelItem()
+         end
+      end
+
+      ::oDbf:Delete()
+
+   end
+
+RETURN ( .T. )
+
+
+
+UTILITY STATIC function TRemesas_DelItem() ; local Self AS CLASS TRemesas := QSelf() AS CLASS TRemesas
+
+   local cNumFac        := ::oDbfDet:cSerie + Str( ::oDbfDet:nNumFac ) + ::oDbfDet:cSufFac
+
+   ::oDbfDet:Load()
+   ::oDbfDet:nNumRem    := 0
+   ::oDbfDet:cSufRem    := ""
+   ::oDbfDet:lCobrado   := .F.
+   ::oDbfDet:dEntrada   := Ctod( "" )
+   ::oDbfDet:Save()
+
+
+
+
+
+   if ::oFacCliT:Seek( cNumFac )
+      ChkLqdFacCli( nil, ::oFacCliT:cAlias, ::oFacCliL:cAlias, ::oDbfDet:cAlias, ::oAntCliT:cAlias, ::oIva:cAlias, ::oDivisas:cAlias )
+   end
+
+RETURN ( Self )
+
+
+
+FUNCTION Remesas( oMenuItem, oWnd )
+
+   local nLevel
+   local oRemesas
+
+   IIF( oMenuItem == nil, oMenuItem := "01060", ) ;
+   IIF( oWnd == nil, oWnd := oWnd(), ) ;
+
+   nLevel               := nLevelUsr( oMenuItem )
+   if nAnd( nLevel, 1 ) <> 0
+      msgStop( "Acceso no permitido." )
+      return nil
+   end
+
+
+
+
+
+   if oWnd <> nil
+      SysRefresh(); oWnd:CloseAll(); SysRefresh()
+   end
+
+
+
+
+
+   AddMnuNext( "Remesas de recibos", ProcName() )
+
+   oRemesas  := TRemesas():New( cPatEmp() )
+   oRemesas:Activate( nLevel )
+
+RETURN NIL
+
+
+
+static function cToCeros( nImporte, cPicture, nLen )
+
+   local cImporte
+
+   IIF( cPicture == nil, cPicture := "9999999999", ) ;
+   IIF( nLen == nil, nLen := 10, ) ;
+
+   cImporte          := Trans( nImporte, cPicture )
+   cImporte          := StrTran( cImporte, ",", "" )
+   cImporte          := StrTran( cImporte, ".", "" )
+   cImporte          := StrTran( Right( cImporte, nLen ), " ", "0" )
+
+return ( cImporte )
+
+
+
+
+
+
+UTILITY STATIC function TRemesas_SetRecCli() ; local Self AS CLASS TRemesas := QSelf() AS CLASS TRemesas
+
+   if Empty( ::oDbf:cCodRem )
+      return ( Self )
+   end
+
+   ::oDbfDet:OrdSetFocus( "CCTAREM" )
+
+   while ::oDbfDet:Seek( ::oDbf:cCodRem ) .AND. ::oDbfDet:cCtaRem == ::oDbf:cCodRem .AND. !::oDbfDet:Eof()
+
+      ::oDbfDet:Load()
+      ::oDbfDet:lCobrado  := .F.
+      ::oDbfDet:nNumRem   := 0
+      ::oDbfDet:cSufRem   := ""
+      ::oDbfDet:dEntrada  := Ctod( "" )
+      ::oDbfDet:Save()
+
+      ::oDbfDet:Skip()
+
+   end
+
+   ::oDbfDet:OrdSetFocus( "NNUMREM" )
+
+RETURN ( Self )
+
+
+
+UTILITY STATIC function TRemesas_Conta( lSimula) ; local Self AS CLASS TRemesas := QSelf() AS CLASS TRemesas
+
+   local cCtaCli     := ""
+   local cCtaCliCta
+   local cCtaCliDto  := ""
+   local aSimula     := {}
+   local cCodPro     := cProCnt()
+   local cRuta       := cRutCnt()
+   local cCodEmp     := cCodEmpCnt( "A" )
+   local cCtaCon     := ::oCtaRem:cRetCtaCon( ::oDbf:cCodRem )
+   local cCtaBcoDto  := ::oCtaRem:cRetCtaDto( ::oDbf:cCodRem )
+   local nAsiento
+   local cTerNif     := Space(1)
+   local cTerNom     := Space(1)
+   local lErrorFound := .F.
+
+
+
+
+
+
+   if ::oDbf:lConta
+      if !ApoloMsgNoYes(  "Remesa : " + ::cNumRem() + " contabilizada." + Chr(13)+Chr(10) + "¿ Desea contabilizarla de nuevo ?" )
+         return .F.
+      end
+   end
+
+   if !::lChkSelect .AND. !ChkRuta( cRutCnt() )
+      ::oTreeSelect:Add( "Remesa : " + ::cNumRem() + " ruta no valida.", 0 )
+      lErrorFound    := .T.
+   end
+
+
+
+
+
+
+   if empty( cCodEmp ) .AND. !::lChkSelect
+      ::oTreeSelect:Add( "Remesa : " + ::cNumRem() + " no se definierón empresas asociadas.", 0 )
+      lErrorFound          := .T.
+   end
+
+
+
+
+
+
+   if !::lChkSelect .AND. !ChkSubCta( cRuta, cCodEmp, cCtaCon, , .F., .F. )
+      ::oTreeSelect:Add( "Remesa : " + ::cNumRem() + " subcuenta " + cCtaCon + " no encontada.", 0 )
+      lErrorFound          := .T.
+   end
+
+
+
+
+
+
+
+   if !ChkSubCta( cRuta, cCodEmp, cCtaCon, , .F., .F. )
+      ::oTreeSelect:Add( "Cuenta : " + rtrim( cCtaCon ) + " banco no existe.", 0 )
+      lErrorFound          := .T.
+   end
+
+   if ::oDbf:nTipRem == 2 .AND. !ChkSubCta( cRuta, cCodEmp, cCtaBcoDto, , .F., .F. )
+      ::oTreeSelect:Add( "Cuenta : " + rtrim( cCtaBcoDto ) + " de descuento banco no existe.", 0 )
+      lErrorFound          := .T.
+   end
+
+   if ::oDbfDet:Seek( Str( ::oDbf:nNumRem, 9 ) + ::oDbf:cSufRem )
+
+      while Str( ::oDbf:nNumRem, 9 ) + ::oDbf:cSufRem == Str( ::oDbfDet:nNumRem ) + ::oDbfDet:cSufRem .AND. !::oDbfDet:eof()
+
+         if ::oClientes:Seek( ::oDbfDet:cCodCli )
+            cCtaCli        := ::oClientes:SubCta
+            cCtaCliCta     := ::oClientes:SubCtaDto
+         else
+            cCtaCli        := ""
+            cCtaCliCta     := ""
+         end
+
+         if !ChkSubCta( cRuta, cCodEmp, cCtaCli, , .F., .F. )
+            ::oTreeSelect:Add( "Cliente : " + rtrim( ::oClientes:Titulo ) + " cuenta contable no existe.", 0 )
+            lErrorFound    := .T.
+         end
+
+
+
+
+
+         if ::oDbf:nTipRem == 2 .AND. !ChkSubCta( cRuta, cCodEmp, cCtaCliDto, , .F., .F. )
+            ::oTreeSelect:Add( "Cliente : " + Rtrim( ::oClientes:Titulo ) + " cuenta descuento no existe.", 0 )
+            lErrorFound    := .T.
+         end
+
+         ::oDbfDet:Skip()
+
+      end
+
+   else
+
+      ::oTreeSelect:Add( "Remesa : " + ::cNumRem() + " remesa sin recibos.", 0 )
+
+      lErrorFound          := .T.
+
+   end
+
+
+
+
+
+
+   if Empty( ::oDbf:dConta )
+      ::oTreeSelect:Add( "Remesa : " + ::cNumRem() + " sin fecha de contabilización", 0 )
+      lErrorFound          := .T.
+   end
+
+   if !ChkFecha( , , ::oDbf:dConta, .F., ::oTreeSelect )
+      lErrorFound          := .T.
+   end
+
+
+
+
+
+
+   if OpenDiario( , cCodEmp )
+      nAsiento             := RetLastAsi()
+   else
+      ::oTreeSelect:Add( "Remesa : " + ::cNumRem() + " imposible abrir ficheros.", 0 )
+      Return .F.
+   end
+
+   if ::oDbf:nTipRem == 2
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+   aadd( aSimula, MkAsiento(  nAsiento,  ::oDbf:cCodDiv, ::oDbf:dConta, cCtaBcoDto, , ::nTotRem( .F. ), "Pago remesa", , , , , , , cCodPro, , , , , lSimula, cTerNif, cTerNom ) )
+
+   else
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+   aadd( aSimula, MkAsiento(  nAsiento,  ::oDbf:cCodDiv, ::oDbf:dConta, cCtaCon, , ::nTotRem( .F. ), "Pago remesa", , , , , , , cCodPro, , , , , lSimula, cTerNif, cTerNom ) )
+
+   end
+
+
+
+
+
+
+   if ::oDbfDet:Seek( Str( ::oDbf:nNumRem, 9 ) + ::oDbf:cSufRem )
+
+      while Str( ::oDbf:nNumRem, 9 ) + ::oDbf:cSufRem == Str( ::oDbfDet:nNumRem ) + ::oDbfDet:cSufRem .AND. !::oDbf:Eof()
+
+         if ::oClientes:Seek( ::oDbfDet:cCodCli )
+            cCtaCli        := ::oClientes:SubCta
+         else
+            cCtaCli        := ""
+         end
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+         aadd( aSimula, MkAsiento(  nAsiento,  ::oDbf:cCodDiv, ::oDbf:dConta, cCtaCli, , , "Pago remesa " + AllTrim( ::oDbfDet:cSerie + "/" + Str( ::oDbfDet:nNumFac ) + "/" + ::oDbfDet:cSufFac ), nTotRecCli( ::oDbfDet:cAlias, ::oDivisas:cAlias, ::oDbf:cCodDiv, .F. ), ::oDbfDet:cSerie + Str( ::oDbfDet:nNumFac ) + ::oDbfDet:cSufFac, , , , , cCodPro, , , , , lSimula, cTerNif, cTerNom ) )
+
+         ::oDbfDet:Skip()
+
+      end
+
+   end
+
+   if ::oDbf:nTipRem == 2
+
+      if ::oDbfDet:Seek( Str( ::oDbf:nNumRem, 9 ) + ::oDbf:cSufRem )
+
+         while Str( ::oDbf:nNumRem, 9 ) + ::oDbf:cSufRem == Str( ::oDbfDet:nNumRem ) + ::oDbfDet:cSufRem .AND. !::oDbf:Eof()
+
+            if ::oClientes:Seek( ::oDbfDet:cCodCli )
+               cCtaCli        := ::oClientes:SubCtaDto
+            else
+               cCtaCli        := ""
+            end
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+            aadd( aSimula, MkAsiento(  nAsiento,  ::oDbf:cCodDiv, ::oDbf:dConta, cCtaCli, , nTotRecCli( ::oDbfDet:cAlias, ::oDivisas:cAlias, ::oDbf:cCodDiv, .F. ), "Pago remesa " + AllTrim( ::oDbfDet:cSerie + "/" + Str( ::oDbfDet:nNumFac ) + "/" + ::oDbfDet:cSufFac ), , ::oDbfDet:cSerie + Str( ::oDbfDet:nNumFac ) + ::oDbfDet:cSufFac, , , , , cCodPro, , , , , lSimula, cTerNif, cTerNom ) )
+
+            ::oDbfDet:Skip()
+
+         end
+
+      end
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+      aadd( aSimula, MkAsiento(  nAsiento,  ::oDbf:cCodDiv, ::oDbf:dConta, cCtaBcoDto, , , "Pago remesa", ::nTotRem( .F. ), , , , , , cCodPro, , , , , lSimula, cTerNif, cTerNom ) )
+
+   end
+
+
+
+
+
+
+   if !lSimula .AND. !lErrorFound
+
+      ::ChangeConta( .T. )
+
+      ::oTreeSelect:Add( "Remesa : " + ::cNumRem() + " asiento generado num. " + Alltrim( Str( nAsiento ) ), 0 )
+
+   else
+
+      msgTblCon( aSimula, ::oDbf:cCodDiv, ::oDivisas:cAlias, !lErrorFound, ::cNumRem(), {|| aWriteAsiento( aSimula, ::oDbf:cCodDiv, .T., ::oTreeSelect, ::cNumRem(), nAsiento ), ::ChangeConta( .T. ) } )
+
+   end
+
+   CloseDiario()
+
+RETURN NIL
+
+
+
+UTILITY STATIC function TRemesas_cRetCtaRem() ; local Self AS CLASS TRemesas := QSelf() AS CLASS TRemesas
+
+   local cCtaRem  := ""
+
+   if ::oCtaRem <> nil
+      cCtaRem     := ::oCtaRem:cRetCtaRem( ::oDbf:cCodRem )
+   end
+
+RETURN ( cCtaRem )
+
+
+
+UTILITY STATIC function TRemesas_cBmp() ; local Self AS CLASS TRemesas := QSelf() AS CLASS TRemesas
+
+   local cBmpDiv  := ""
+
+   if ::oDivisas <> nil .AND. ::oBandera <> nil
+      cBmpDiv     := cSimDiv( ::oDbf:cCodDiv, ::oDivisas:cAlias )
+   end
+
+return ( cBmpDiv )
+
+
+
+UTILITY STATIC function TRemesas_GetNewCount() ; local Self AS CLASS TRemesas := QSelf() AS CLASS TRemesas
+
+   ::oDbf:nNumRem       := nNewDoc( nil, ::oDbf:nArea, "NREMESA", nil, ::oDbfCnt:nArea )
+
+RETURN ( Self )
+
+
+
+UTILITY STATIC function TRemesas_lNowExist( cCodRec) ; local Self AS CLASS TRemesas := QSelf() AS CLASS TRemesas
+
+   local lRet  := .F.
+
+   ::oDbfVir:GetStatus()
+
+   ::oDbfVir:GoTop()
+   while !::oDbfVir:eof()
+      if ::oDbfVir:cSerie + Str( ::oDbfVir:nNumFac, 9 ) + ::oDbfVir:cSufFac + Str( ::oDbfVir:nNumRec ) == cCodRec
+         lRet  := .T.
+      end
+      ::oDbfVir:Skip()
+   end
+
+   ::oDbfVir:SetStatus()
+
+RETURN ( lRet )
+
+
+
+UTILITY STATIC function TRemesas_lContabilizaRecibos( lConta) ; local Self AS CLASS TRemesas := QSelf() AS CLASS TRemesas
+
+   IIF( lConta == nil, lConta := .T., ) ;
+
+   if ::oDbfDet <> nil
+
+      ::oDbfDet:GetStatus()
+
+      if ::oDbfDet:Seek( Str( ::oDbf:nNumRem, 9 ) + ::oDbf:cSufRem )
+         while Str( ::oDbf:nNumRem, 9 ) + ::oDbf:cSufRem == Str( ::oDbfDet:nNumRem, 9 ) + ::oDbfDet:cSufRem .AND. !::oDbfDet:eof()
+
+            ::oDbfDet:FieldPutByName( "lConPgo", lConta )
+
+            ::oDbfDet:Skip()
+
+         end
+      end
+
+      ::oDbfDet:SetStatus()
+
+   end
+
+RETURN ( Self )
+
+
+
+UTILITY STATIC function TRemesas_ChangeConta( lConta) ; local Self AS CLASS TRemesas := QSelf() AS CLASS TRemesas
+
+   ::oDbf:FieldPutByName( "lConta", lConta )
+
+
+
+
+
+   ::lContabilizaRecibos( lConta )
+
+   ::oWndBrw:Refresh()
+
+RETURN Self
+
+
+
+UTILITY STATIC function TRemesas_nAllRecCli( cCodigoCliente) ; local Self AS CLASS TRemesas := QSelf() AS CLASS TRemesas
+
+   local nTotRecCli  := 0
+   local nRecno      := ::oDbfDet:Recno()
+
+   while Str( ::oDbf:nNumRem, 9 ) + ::oDbf:cSufRem + cCodigoCliente == Str( ::oDbfDet:nNumRem ) + ::oDbfDet:cSufRem + ::oDbfDet:cCodCli .AND. !::oDbfDet:Eof()
+
+      nTotRecCli     += nTotRecCli( ::oDbfDet, ::oDivisas:cAlias, cDivEmp() )
+
+      ::oDbfDet:Skip()
+
+   end
+
+   ::oDbfDet:GoTo( nRecno )
+
+RETURN nTotRecCli
+
+
+
+UTILITY STATIC function TRemesas_EdtRecMenu( oDlg) ; local Self AS CLASS TRemesas := QSelf() AS CLASS TRemesas
+
+   ::oMenu := MenuBegin( .F.,,, .F., .F. )
+
+      MenuAddItem( "&1. Rotor",, .F.,,,,,,,,, .F.,,, .F. )
+
+         MenuBegin( .F.,,, .F., .F. )
+
+
+
+
+            MenuAddItem( "&1. Modificar cuenta", "Modificar cuenta", .F.,, {|oMenuItem|( if( !Empty( ::oDbf:cCodRem ), ::oCtaRem:Edit(), MsgStop( "Cuenta vacía" ) ) )},, "Address_book2_16",,,,, .F.,,, .F. )
+
+
+
+
+
+            MenuAddItem( "&2. Visualizar recibo", "Visualiza el recibo seleccionado", .F.,, {|oMenuItem|( ZooRecCli( ::oDbfVir:cSerie + Str( ::oDbfVir:nNumFac ) + ::oDbfVir:cSufFac + Str( ::oDbfVir:nNumRec ) ) )},, "Briefcase_user1_16",,,,, .F.,,, .F. )
+         MenuEnd()
+
+   MenuEnd()
+
+   oDlg:SetMenu( ::oMenu )
+
+   ::oBrwDet:Load()
+
+RETURN ( ::oMenu )
+
+
+
+UTILITY STATIC function TRemesas_EndEdtRecMenu() ; local Self AS CLASS TRemesas := QSelf() AS CLASS TRemesas
+
+RETURN ( ::oMenu:End() )
+
+
+
+UTILITY STATIC function TRemesas_Report() ; local Self AS CLASS TRemesas := QSelf() AS CLASS TRemesas
+
+
+
+   ListRem():New( "Listado de remesas de clientes" ):Play()
+
+
+
+RETURN ( self )
+
+
+
+
+
+
+
+UTILITY STATIC function TRemesas_InitMod19( oDlg) ; local Self AS CLASS TRemesas := QSelf() AS CLASS TRemesas
+
+   local oBlock
+   local oError
+   local nHandle
+   local cBuffer
+   local cHeader
+   local cBanCli
+   local cCodCli
+   local cPreMon
+   local dOldVto
+   local dFecVto
+   local nTotFec     := 0
+   local nImpRec     := 0
+   local nTotImp     := 0
+   local nTotRec     := 0
+   local nTotLin     := 0
+   local nTotPre     := 0
+   local nLinRec     := 0
+   local nRecFec     := 0
+
+   oBlock            := ErrorBlock( {| oError | ApoloBreak( oError ) } )
+   BEGIN SEQUENCE
+
+   cPreMon           := if( cDivEmp() == "EUR", "5", "0" )
+
+   if file( Rtrim( ::cPatExp ) )
+      fErase( Rtrim( ::cPatExp ) )
+   end
+
+   if ::lAgruparRecibos
+      ::oDbfDet:OrdSetFocus( "nNumCli" )
+   end
+
+   nHandle           := fCreate( Rtrim( ::cPatExp ) )
+
+   if nHandle > 0
+
+
+
+
+
+      cHeader        := ::oCtaRem:oDbf:cNifPre
+      cHeader        += ::oCtaRem:oDbf:cSufCta
+
+
+
+
+
+      cBuffer        := cPreMon
+      cBuffer        += "1"
+      cBuffer        += "8"
+      cBuffer        += "0"
+      cBuffer        += cHeader
+      cBuffer        += Left( Dtoc( ::oDbf:dFecRem ), 2) + SubStr( Dtoc( ::oDbf:dFecRem ), 4, 2 ) + Right( Dtoc( ::oDbf:dFecRem ), 2 )
+      cBuffer        += Space( 6 )
+      cBuffer        += Left( ::oCtaRem:oDbf:cNomPre, 40 )
+      cBuffer        += Space( 20 )
+      cBuffer        += ::oCtaRem:oDbf:cEntPre
+      cBuffer        += ::oCtaRem:oDbf:cAgcPre
+      cBuffer        := Padr( cBuffer, 162 )
+      cBuffer        += Chr(13)+Chr(10)
+
+      fWrite( nHandle, cBuffer )
+      nTotLin++
+
+
+
+
+
+      if ::oDbfDet:Seek( Str( ::oDbf:nNumRem, 9 ) + ::oDbf:cSufRem )
+
+         while Str( ::oDbf:nNumRem, 9 ) + ::oDbf:cSufRem == Str( ::oDbfDet:nNumRem ) + ::oDbfDet:cSufRem .AND. !::oDbfDet:eof()
+
+            cCodCli           := ::oDbfDet:cCodCli
+
+            if ::oClientes:Seek( cCodCli )
+
+
+
+               if Empty( dFecVto )
+                  if ::lUsarVencimiento
+                     dFecVto  := ::oDbfDet:dFecVto
+                  else
+                     dFecVto  := ::dCarCta
+                  end
+               end
+
+
+
+               cBanCli        := ::oDbfDet:cEntCli + ::oDbfDet:cSucCli + ::oDbfDet:cDigCli + ::oDbfDet:cCtaCli
+
+               if Empty( cBanCli ) .OR. Len( AllTrim( cBanCli ) ) <> 20
+                  cBanCli     := cClientCuenta( cCodCli )
+               end
+
+               if !Empty( cBanCli )
+
+                  if ( dFecVto <> dOldVto )
+
+                     nLinRec  := 1
+                     nTotPre  ++
+
+
+
+
+
+                     cBuffer     := cPreMon
+                     cBuffer     += "3"
+                     cBuffer     += "8"
+                     cBuffer     += "0"
+                     cBuffer     += cHeader
+                     cBuffer     += Left( Dtoc( ::oDbf:dFecRem ), 2) + SubStr( Dtoc( ::oDbf:dFecRem ), 4, 2 ) + Right( Dtoc( ::oDbf:dFecRem ), 2 )
+                     cBuffer     += Left( Dtoc( dFecVto ), 2) + SubStr( Dtoc( dFecVto ), 4, 2 ) + Right( Dtoc( dFecVto ), 2 )
+                     cBuffer     += ::oCtaRem:oDbf:cNomPre
+                     cBuffer     += ::oCtaRem:oDbf:cEntBan
+                     cBuffer     += ::oCtaRem:oDbf:cAgcBan
+                     cBuffer     += ::oCtaRem:oDbf:cDgcBan
+                     cBuffer     += ::oCtaRem:oDbf:cCtaBan
+                     cBuffer     += Space( 8 )
+                     cBuffer     += "01"
+                     cBuffer     := Padr( cBuffer, 162 )
+                     cBuffer     += Chr(13)+Chr(10)
+
+                     fWrite( nHandle, cBuffer )
+
+                     nTotLin++
+                     nLinRec++
+
+                  end
+
+
+
+
+
+                  if ::lAgruparRecibos
+                     nImpRec     := ::nAllRecCli( cCodCli )
+                  else
+                     nImpRec     := nTotRecCli( ::oDbfDet, ::oDivisas:cAlias, cDivEmp() )
+                  end
+
+                  nTotImp        += nImpRec
+                  nTotFec        += nImpRec
+
+                  nRecFec++
+                  nTotRec++
+
+                  cBuffer        := cPreMon
+                  cBuffer        += "6"
+                  cBuffer        += "8"
+                  cBuffer        += "0"
+                  cBuffer        += cHeader
+                  cBuffer        += Right( AllTrim( ::oDbfDet:cCodCli ), 6 )
+                  cBuffer        += Space( 6 )
+                  cBuffer        += Left( ::oClientes:Titulo, 40 )
+                  cBuffer        += Padr( cBanCli, 20 )
+                  cBuffer        += cToCeros( nImpRec, ::cPorDiv )
+                  cBuffer        += Space( 6 )
+                  cBuffer        += Left( AllTrim( ::oDbfDet:cSerie ) + "/" + AllTrim( Str( ::oDbfDet:nNumFac ) ) + if( Empty( ::oDbfDet:cSufFac ), "", "/" ) + AllTrim( ::oDbfDet:cSufFac ) + "-" + AllTrim( Str( ::oDbfDet:nNumRec ) ), 40 )
+                  cBuffer        := Padr( cBuffer, 162 )
+                  cBuffer        += Chr(13)+Chr(10)
+
+                  fWrite( nHandle, cBuffer )
+
+                  nTotLin++
+                  nLinRec++
+
+
+
+
+
+                  cBuffer        := cPreMon
+                  cBuffer        += "6"
+                  cBuffer        += "8"
+                  cBuffer        += "1"
+                  cBuffer        += cHeader
+                  cBuffer        += Right( AllTrim( ::oDbfDet:cCodCli ), 6 )
+                  cBuffer        += Space( 6 )
+                  cBuffer        += "Factura Nº" + ::oDbfDet:cSerie + "/" + AllTrim( Str( ::oDbfDet:nNumFac ) ) + "/" +  ::oDbfDet:cSufFac + " de " + Dtoc( ::oDbfDet:dEntrada )
+                  cBuffer        += Space( 2 )
+                  cBuffer        := Padr( cBuffer, 162 )
+                  cBuffer        += Chr(13)+Chr(10)
+
+                  fWrite( nHandle, cBuffer )
+
+                  nTotLin++
+                  nLinRec++
+
+
+
+
+
+                  cBuffer        := cPreMon
+                  cBuffer        += "6"
+                  cBuffer        += "8"
+                  cBuffer        += "2"
+                  cBuffer        += cHeader
+                  cBuffer        += Right( AllTrim( ::oDbfDet:cCodCli ), 6 )
+                  cBuffer        += Space( 6 )
+                  cBuffer        += Left( ::oClientes:Titulo, 40 )
+                  cBuffer        += Left( ::oClientes:Domicilio, 40 )
+                  cBuffer        += ::oClientes:CodPostal
+                  cBuffer        += Space( 1 )
+                  cBuffer        += ::oClientes:Poblacion
+                  cBuffer        := Padr( cBuffer, 162 )
+                  cBuffer        += Chr(13)+Chr(10)
+
+                  fWrite( nHandle, cBuffer )
+
+                  nTotLin++
+                  nLinRec++
+
+               else
+
+                  MsgStop( "No se puede localizar una cuenta bancaria valida, para el cliente " + Rtrim( cCodCli ) + "." )
+
+               end
+
+            else
+
+               MsgStop( "Cliente " + Rtrim( cCodCli ) + " no encontrado." )
+
+            end
+
+
+
+
+
+            dOldVto              := dFecVto
+
+            if ::lAgruparRecibos
+               while cCodCli == ::oDbfDet:cCodCli .AND. !::oDbfDet:Eof()
+                  ::oDbfDet:Skip()
+               end
+            else
+               ::oDbfDet:Skip()
+            end
+
+
+
+
+
+            if ::lUsarVencimiento
+               dFecVto     := ::oDbfDet:dFecVto
+            else
+               dFecVto     := ::dCarCta
+            end
+
+
+
+
+
+            if ( !Empty( cBanCli ) .AND. ( dFecVto <> dOldVto ) ) .OR. ( Str( ::oDbf:nNumRem, 9 ) + ::oDbf:cSufRem <> Str( ::oDbfDet:nNumRem ) + ::oDbfDet:cSufRem .OR. ::oDbfDet:eof() )
+
+               cBuffer     := cPreMon
+               cBuffer     += "8"
+               cBuffer     += "8"
+               cBuffer     += "0"
+               cBuffer     += cHeader
+               cBuffer     += Space( 72 )
+               cBuffer     += cToCeros( nTotFec, ::cPorDiv )
+               cBuffer     += Space( 6 )
+               cBuffer     += cToCeros( nRecFec )
+               cBuffer     += cToCeros( nLinRec )
+               cBuffer     := Padr( cBuffer, 162 )
+
+               cBuffer     += Chr(13)+Chr(10)
+
+               nTotFec     := 0
+               nLinRec     := 0
+               nRecFec     := 0
+
+               fWrite( nHandle, cBuffer )
+
+               nTotLin++
+
+            end
+
+         end
+
+      end
+
+
+
+
+
+      cBuffer  := cPreMon
+      cBuffer  += "9"
+      cBuffer  += "8"
+      cBuffer  += "0"
+      cBuffer  += cHeader
+      cBuffer  += Space( 52 )
+      cBuffer  += cToCeros( nTotPre, "9999", 4 )
+      cBuffer  += Space( 16 )
+      cBuffer  += cToCeros( nTotImp, ::cPorDiv )
+      cBuffer  += Space( 6 )
+      cBuffer  += cToCeros( nTotRec )
+      cBuffer  += cToCeros( ++nTotLin )
+      cBuffer  := Padr( cBuffer, 162 )
+      cBuffer  += Chr(13)+Chr(10)
+
+      fWrite( nHandle, cBuffer )
+
+   end
+
+   if ApoloMsgNoYes( "Proceso de exportación realizado con éxito" + Chr(13)+Chr(10) + "¿ Desea abrir el fichero resultante ?", "Elija una opción." )
+      ShellExecute( 0, "open", ::cPatExp, , , 1 )
+   end
+
+   if ::lAgruparRecibos
+      ::oDbfDet:OrdSetFocus( "nNumRem" )
+   end
+
+   RECOVER USING oError
+
+      msgStop( "Imposible exportar  filtros " + Chr(13)+Chr(10) + ErrorMessage( oError ) )
+
+   end
+
+   ErrorBlock( oBlock )
+
+   if !Empty( nHandle )
+      fClose( nHandle )
+   end
+
+RETURN ( Self )
+
+
+
+UTILITY STATIC function TRemesas_ChangeExport() ; local Self AS CLASS TRemesas := QSelf() AS CLASS TRemesas
+
+   if ::oDbf:lExport
+      ::oDbf:dExport := GetSysDate()
+   else
+      ::oDbf:dExport := Ctod( "" )
+   end
+
+   ::oFecExp:Refresh()
+
+Return .T.

@@ -1,0 +1,293 @@
+#line 112 "hbclass.ch"
+   DYNAMIC DivertConstructorCall
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+DECLARE HBClass  New( cName AS String, OPTIONAL SuperParams ) AS CLASS HBClass  Create() AS Object  Instance() AS Object  AddClsMethod( cName AS String, @MethodName(), nScope AS Numeric, n2 AS Numeric, n3 AS Numeric )  AddDelegate( cName AS String, cDelegate AS String, cObject AS String, nScope AS Numeric, lPersistent AS LOGICAL )  AddMultiClsData( cType AS String, uVal, nScope AS Numeric, aDatas AS Array OF String )  AddMultiData( cType AS String, uVal, nScope AS Numeric, aDatas AS Array OF String, x AS LOGICAL, lPer AS LOGICAL )  AddMethod( cName AS String, @MethodName(), nScope AS Numeric, lPersistent AS LOGICAL )  AddInLine( cName AS String, bBlock AS CodeBlock, nScope AS Numeric, lPersistent AS LOGICAL )  AddVirtual( cName AS String )  ModMethod( cName AS String, @MethodName(), nScope AS Numeric, lPersistent AS LOGICAL )  ModClsMethod( cName AS String, @MethodName(), nScope AS Numeric )  ModInline( cName AS String, bBlock AS CodeBlock, nScope AS Numeric, lPersistent AS LOGICAL )  SetOnError( @MethodName() )
+#line 85 "\Fwh1204\Include\FiveWin.Ch"
+   EXTERNAL GetProcAdd
+   EXTERNAL TActiveX
+
+
+
+
+extern errorsys
+#line 22 ".\Prg\Checkbox.prg"
+_HB_CLASS TCheckBox ; UTILITY FUNCTION TCheckBox(...); static s_oClass ; local oClassInstance ; local nScope ; nScope := 1 ; if s_oClass == NIL ; s_oClass := IIF(.F.,, HBClass():New( "TCheckBox" , {TControl():classh} ) ) ; ;
+
+   _HB_MEMBER { bOldWhen} ; IIF( !.F., s_oClass:AddMultiData(,, nScope + IIF( .F., 32, 0 ), { "bOldWhen" }, .F., .F. ), )
+
+
+
+   _HB_MEMBER New( nRow, nCol, cCaption, bSetGet, oWnd, nWidth, nHeight, nHelpTopic, bChange, oFont, bValid, nClrFore, nClrBack, lDesign, lPixel, cMsg, lUpdate, bWhen) AS CLASS TCheckBox; IIF( .F., s_oClass:ModMethod( "New", @TCheckBox_New(), nScope + IIF( .T., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ), s_oClass:AddMethod( "New", @TCheckBox_New(), nScope + IIF( .T., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ));
+
+
+   _HB_MEMBER ReDefine( nId, bSetGet, oWnd, nHelpId, bChange, bValid, nClrFore, nClrBack, cMsg, lUpdate, bWhen) AS CLASS TCheckBox; IIF( .F., s_oClass:ModMethod( "ReDefine", @TCheckBox_ReDefine(), nScope + IIF( .T., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ), s_oClass:AddMethod( "ReDefine", @TCheckBox_ReDefine(), nScope + IIF( .T., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ));
+
+   _HB_MEMBER Click(); IIF( .F., s_oClass:ModMethod( "Click", @TCheckBox_Click(), nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ), s_oClass:AddMethod( "Click", @TCheckBox_Click(), nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ));
+
+   _HB_MEMBER Default(); IIF( .F., s_oClass:ModMethod( "Default", @TCheckBox_Default(), nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ), s_oClass:AddMethod( "Default", @TCheckBox_Default(), nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ));
+
+   _HB_MEMBER cToChar(); IIF( .F., s_oClass:ModInline( "cToChar", {|Self | Self, ::TControl:cToChar( "BUTTON" ) }, nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ), s_oClass:AddInline( "cToChar", {|Self | Self, ::TControl:cToChar( "BUTTON" ) }, nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ) )
+
+
+      _HB_MEMBER EraseBkGnd( hDC); IIF( .F., s_oClass:ModMethod( "EraseBkGnd", @TCheckBox_EraseBkGnd(), nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ), s_oClass:AddMethod( "EraseBkGnd", @TCheckBox_EraseBkGnd(), nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ));
+      _HB_MEMBER LostFocus( hCtl); IIF( .F., s_oClass:ModMethod( "LostFocus", @TCheckBox_LostFocus(), nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ), s_oClass:AddMethod( "LostFocus", @TCheckBox_LostFocus(), nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ));
+
+
+
+
+   _HB_MEMBER Initiate(hDlg); IIF( .F., s_oClass:ModInline( "Initiate", {|Self,hDlg | Self, ::TControl:Initiate( hDlg ), ::cCaption := GetWindowText( ::hWnd ), ::SendMsg( 241, If( Eval( ::bSetGet ), 1, 0 ) ) }, nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ), s_oClass:AddInline( "Initiate", {|Self,hDlg | Self, ::TControl:Initiate( hDlg ), ::cCaption := GetWindowText( ::hWnd ), ::SendMsg( 241, If( Eval( ::bSetGet ), 1, 0 ) ) }, nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ) )
+
+   _HB_MEMBER MouseMove( nRow, nCol, nKeyFlags); IIF( .F., s_oClass:ModMethod( "MouseMove", @TCheckBox_MouseMove(), nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ), s_oClass:AddMethod( "MouseMove", @TCheckBox_MouseMove(), nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ));
+
+
+   _HB_MEMBER Refresh(); IIF( .F., s_oClass:ModInline( "Refresh", {|Self | Self, ::SendMsg( 241, If( Eval( ::bSetGet ), 1, 0 ) ) }, nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ), s_oClass:AddInline( "Refresh", {|Self | Self, ::SendMsg( 241, If( Eval( ::bSetGet ), 1, 0 ) ) }, nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ) )
+
+
+
+   _HB_MEMBER Reset(); IIF( .F., s_oClass:ModInline( "Reset", {|Self | Self, Eval( ::bSetGet, If( ValType( Eval( ::bSetGet ) ) == "N", 0, "" ) ), ::SendMsg( ( 1024 + 11 ) ) }, nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ), s_oClass:AddInline( "Reset", {|Self | Self, Eval( ::bSetGet, If( ValType( Eval( ::bSetGet ) ) == "N", 0, "" ) ), ::SendMsg( ( 1024 + 11 ) ) }, nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ) )
+
+   _HB_MEMBER cGenPrg(); IIF( .F., s_oClass:ModMethod( "cGenPrg", @TCheckBox_cGenPrg(), nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ), s_oClass:AddMethod( "cGenPrg", @TCheckBox_cGenPrg(), nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ));
+
+   _HB_MEMBER Check(); IIF( .F., s_oClass:ModInline( "Check", {|Self | Self, Eval( ::bSetGet, .T. ), ::SendMsg( 241, 1 ) }, nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ), s_oClass:AddInline( "Check", {|Self | Self, Eval( ::bSetGet, .T. ), ::SendMsg( 241, 1 ) }, nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ) )
+
+   _HB_MEMBER UnCheck(); IIF( .F., s_oClass:ModInline( "UnCheck", {|Self | Self, Eval( ::bSetGet, .F. ), ::SendMsg( 241, 0 ) }, nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ), s_oClass:AddInline( "UnCheck", {|Self | Self, Eval( ::bSetGet, .F. ), ::SendMsg( 241, 0 ) }, nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ) )
+
+   _HB_MEMBER SetCheck(lOnOff); IIF( .F., s_oClass:ModInline( "SetCheck", {|Self,lOnOff | Self, If( lOnOff, ::Check(), ::UnCheck() ) }, nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ), s_oClass:AddInline( "SetCheck", {|Self,lOnOff | Self, If( lOnOff, ::Check(), ::UnCheck() ) }, nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ) )
+
+   _HB_MEMBER SetText( cText); IIF( .F., s_oClass:ModMethod( "SetText", @TCheckBox_SetText(), nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ), s_oClass:AddMethod( "SetText", @TCheckBox_SetText(), nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ));
+
+   _HB_MEMBER HardEnable(); IIF( .F., s_oClass:ModMethod( "HardEnable", @TCheckBox_HardEnable(), nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ), s_oClass:AddMethod( "HardEnable", @TCheckBox_HardEnable(), nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ));
+
+   _HB_MEMBER HardDisable(); IIF( .F., s_oClass:ModMethod( "HardDisable", @TCheckBox_HardDisable(), nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ), s_oClass:AddMethod( "HardDisable", @TCheckBox_HardDisable(), nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ));
+
+; IF .F. ; __clsActive(s_oClass:hClass) ; s_oClass:Refresh() ; ELSE ; s_oClass:Create() ; END ; oClassInstance := __clsInst( s_oClass:hClass ) ; IF __ObjHasMsg( oClassInstance, "InitClass" ); oClassInstance:InitClass( hb_aParams() ) ; END ; ELSE ; oClassInstance := __clsInst( s_oClass:hClass ) ; END ; IF PCount() > 0 ; DIVERT TO (@DivertConstructorCall()) OF s_oClass ; END ; RETURN oClassInstance AS CLASS TCheckBox ;
+
+
+
+
+
+UTILITY STATIC function TCheckBox_New( nRow, nCol, cCaption, bSetGet, oWnd, nWidth, nHeight, nHelpTopic, bChange, oFont, bValid, nClrFore, nClrBack, lDesign, lPixel, cMsg, lUpdate, bWhen) ; local Self AS CLASS TCheckBox := QSelf() AS CLASS TCheckBox
+
+
+
+
+
+   local lTemp := .F.
+
+
+
+
+
+
+
+
+
+   IIF( nRow == nil, nRow := 0, ) ; IIF( nCol == nil, nCol := 0, ); IIF( cCaption == nil, cCaption := "&CheckBox", ); IIF( oWnd == nil, oWnd := GetWndDefault(), ); IIF( nWidth == nil, nWidth := Len( cCaption ) * 7, ); IIF( nHeight == nil, nHeight := 13 + Int( 13 / 2 ), ); IIF( nHelpTopic == nil, nHelpTopic := 100, ); IIF( nClrFore == nil, nClrFore := oWnd:nClrText, ); IIF( nClrBack == nil, nClrBack := oWnd:nClrPane, ); IIF( lPixel == nil, lPixel := .F., ); IIF( lDesign == nil, lDesign := .F., ); IIF( lUpdate == nil, lUpdate := .F., ); IIF( bSetGet == nil, bSetGet := { | u | If( PCount()==0, lTemp, lTemp:= u ) }, );
+
+   if ValType( Eval( bSetGet ) ) <> "L"
+      Eval( bSetGet, .F. )
+   endif
+
+   ::nTop       = nRow * If( lPixel, 1, 13 )
+   ::nLeft      = nCol * If( lPixel, 1, 7 )
+   ::nBottom    = ::nTop + nHeight
+   ::nRight     = ::nLeft + nWidth - If( lPixel, 0, 24 )
+   ::cCaption   = cCaption
+
+
+   ::nStyle     = nOR( 1073741824, 268435456, 3, 65536, If( lDesign, 67108864, 0 ) )
+   ::nId        = ::GetNewId()
+   ::nHelpId    = nHelpTopic
+   ::bSetGet    = bSetGet
+   ::bChange    = bChange
+   ::oWnd       = oWnd
+   ::oFont      = oFont
+   ::bValid     = bValid
+   ::lDrag      = lDesign
+   ::lCaptured  = .F.
+   ::cMsg       = cMsg
+   ::lUpdate    = lUpdate
+   ::bWhen      = bWhen
+
+   ::SetColor( nClrFore, nClrBack )
+
+   if ! Empty( oWnd:hWnd )
+      ::Create( "BUTTON" )
+      ::Default()
+      oWnd:AddControl( Self )
+   else
+      oWnd:DefControl( Self )
+   endif
+
+   if lDesign
+      ::CheckDots()
+   endif
+
+return Self
+
+
+
+UTILITY STATIC function TCheckBox_Click( lValue) ; local Self AS CLASS TCheckBox := QSelf() AS CLASS TCheckBox
+
+   IIF( lValue == nil, lValue := !Eval( ::bSetGet ), ) ;
+
+   if ::bSetGet <> nil
+      Eval( ::bSetGet, lValue )
+      ::Refresh()
+   endif
+
+   if ::bChange <> nil
+      Eval( ::bChange, Eval( ::bSetGet ), Self )
+   endif
+
+   ::TControl:Click()
+
+return ( Self )
+
+
+
+
+UTILITY STATIC function TCheckBox_ReDefine( nId, bSetGet, oWnd, nHelpId, bChange, bValid, nClrFore, nClrBack, cMsg, lUpdate, bWhen) ; local Self AS CLASS TCheckBox := QSelf() AS CLASS TCheckBox
+
+   IIF( oWnd == nil, oWnd := GetWndDefault(), ) ; IIF( nClrFore == nil, nClrFore := oWnd:nClrText, ); IIF( nClrBack == nil, nClrBack := oWnd:nClrPane, );
+
+   if ValType( Eval( bSetGet ) ) <> "L"
+      Eval( bSetGet, .F. )
+   endif
+
+   ::nId       = nId
+   ::bSetGet   = bSetGet
+   ::bChange   = bChange
+   ::oWnd      = oWnd
+   ::nHelpId   = nHelpId
+   ::bValid    = bValid
+   ::lDrag     = .F.
+   ::lCaptured = .F.
+   ::cMsg      = cMsg
+   ::lUpdate   = lUpdate
+   ::bWhen     = bWhen
+
+   ::SetColor( nClrFore, nClrBack )
+
+   oWnd:DefControl( Self )
+
+return Self
+
+
+
+
+
+UTILITY STATIC function TCheckBox_EraseBkGnd( hDC) ; local Self AS CLASS TCheckBox := QSelf() AS CLASS TCheckBox
+
+   if IsAppThemed()
+      return 1
+   endif
+
+return ::TControl:EraseBkGnd( hDC )
+
+UTILITY STATIC function TCheckBox_LostFocus( hCtl) ; local Self AS CLASS TCheckBox := QSelf() AS CLASS TCheckBox
+
+   if IsAppThemed()
+      CheckFocus( ::hWnd, hCtl )
+   endif
+
+return ::TControl:LostFocus( hCtl )
+
+
+
+
+
+UTILITY STATIC function TCheckBox_MouseMove( nRow, nCol, nKeyFlags) ; local Self AS CLASS TCheckBox := QSelf() AS CLASS TCheckBox
+
+   if ::lDrag
+      return ::TControl:MouseMove( nRow, nCol, nKeyFlags )
+   else
+      ::TControl:MouseMove( nRow, nCol, nKeyFlags )
+   endif
+
+return nil
+
+
+
+UTILITY STATIC function TCheckBox_Default() ; local Self AS CLASS TCheckBox := QSelf() AS CLASS TCheckBox
+
+   ::SendMsg( 241, If( Eval( ::bSetGet ), 1, 0 ) )
+
+   if ::oFont <> nil
+      ::SetFont( ::oFont )
+   else
+      ::SetFont( ::oWnd:oFont )
+   endif
+
+return nil
+
+
+
+UTILITY STATIC function TCheckBox_cGenPrg() ; local Self AS CLASS TCheckBox := QSelf() AS CLASS TCheckBox
+
+   local cPrg := ""
+
+   ::CoorsUpdate()
+
+   if ::cCaption == nil
+      ::cCaption = GetWindowText( ::hWnd )
+   endif
+
+
+
+
+
+
+
+   cPrg += Chr(13)+Chr(10) +  "   @ " + LTrim( Str( ::nTop ) ) + ", " +  LTrim( Str( ::nLeft ) ) +  ' CHECKBOX lVar PROMPT "' + ::cCaption + '" SIZE ' +  LTrim( Str( ::nRight - ::nLeft + 1 ) ) + ", " +  LTrim( Str( ::nBottom - ::nTop + 1 ) ) +  " PIXEL OF oWnd " + Chr(13)+Chr(10)
+
+return cPrg
+
+
+
+UTILITY STATIC function TCheckBox_SetText( cText) ; local Self AS CLASS TCheckBox := QSelf() AS CLASS TCheckBox
+
+   local hDC
+
+
+      if IsAppThemed()
+         DrawPBack( ::hWnd, hDC := GetDC( ::hWnd ) )
+         ReleaseDC( ::hWnd, hDC )
+      endif
+
+
+   SetWindowText( ::hWnd, ::cCaption := cText )
+
+return nil
+
+
+
+UTILITY STATIC function TCheckBox_HardEnable() ; local Self AS CLASS TCheckBox := QSelf() AS CLASS TCheckBox
+
+   ::bWhen     := ::bOldWhen
+
+Return ( ::Enable() )
+
+
+
+UTILITY STATIC function TCheckBox_HardDisable() ; local Self AS CLASS TCheckBox := QSelf() AS CLASS TCheckBox
+
+   ::bOldWhen  := ::bWhen
+   ::bWhen     := {|| .F. }
+
+return ( ::Disable() )

@@ -1,0 +1,274 @@
+#line 112 "hbclass.ch"
+   DYNAMIC DivertConstructorCall
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+DECLARE HBClass  New( cName AS String, OPTIONAL SuperParams ) AS CLASS HBClass  Create() AS Object  Instance() AS Object  AddClsMethod( cName AS String, @MethodName(), nScope AS Numeric, n2 AS Numeric, n3 AS Numeric )  AddDelegate( cName AS String, cDelegate AS String, cObject AS String, nScope AS Numeric, lPersistent AS LOGICAL )  AddMultiClsData( cType AS String, uVal, nScope AS Numeric, aDatas AS Array OF String )  AddMultiData( cType AS String, uVal, nScope AS Numeric, aDatas AS Array OF String, x AS LOGICAL, lPer AS LOGICAL )  AddMethod( cName AS String, @MethodName(), nScope AS Numeric, lPersistent AS LOGICAL )  AddInLine( cName AS String, bBlock AS CodeBlock, nScope AS Numeric, lPersistent AS LOGICAL )  AddVirtual( cName AS String )  ModMethod( cName AS String, @MethodName(), nScope AS Numeric, lPersistent AS LOGICAL )  ModClsMethod( cName AS String, @MethodName(), nScope AS Numeric )  ModInline( cName AS String, bBlock AS CodeBlock, nScope AS Numeric, lPersistent AS LOGICAL )  SetOnError( @MethodName() )
+#line 85 "\Fwh1204\Include\FiveWin.Ch"
+   EXTERNAL GetProcAdd
+   EXTERNAL TActiveX
+
+
+
+
+extern errorsys
+#line 5 ".\Prg\Bandera.prg"
+_HB_CLASS TBandera ; UTILITY FUNCTION TBandera(...); static s_oClass ; local oClassInstance ; local nScope ; nScope := 1 ; if s_oClass == NIL ; s_oClass := IIF(.F.,, HBClass():New( "TBandera" , { HBObject():Classh } ) ) ;
+
+   _HB_MEMBER {AS ARRAY aResBan} ; IIF( !.F., s_oClass:AddMultiClsData("ARRAY", {}, nScope + IIF( .F., 32, 0 ) + 64, { "aResBan" }, .F. ), )
+   _HB_MEMBER {AS ARRAY aNomBan} ; IIF( !.F., s_oClass:AddMultiClsData("ARRAY", {}, nScope + IIF( .F., 32, 0 ) + 64, { "aNomBan" }, .F. ), )
+   _HB_MEMBER {AS ARRAY aBmpBan} ; IIF( !.F., s_oClass:AddMultiClsData("ARRAY", {}, nScope + IIF( .F., 32, 0 ) + 64, { "aBmpBan" }, .F. ), )
+
+   _HB_MEMBER New(); IIF( .F., s_oClass:ModMethod( "New", @TBandera_New(), nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ), s_oClass:AddMethod( "New", @TBandera_New(), nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ));
+
+   _HB_MEMBER End( ); IIF( !.F., s_oClass:AddVirtual( "End" ), )
+
+   _HB_MEMBER hBandera( cRes); IIF( .F., s_oClass:ModMethod( "hBandera", @TBandera_hBandera(), nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ), s_oClass:AddMethod( "hBandera", @TBandera_hBandera(), nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ));
+
+   _HB_MEMBER cBandera( cRes); IIF( .F., s_oClass:ModMethod( "cBandera", @TBandera_cBandera(), nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ), s_oClass:AddMethod( "cBandera", @TBandera_cBandera(), nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ));
+
+; IF .F. ; __clsActive(s_oClass:hClass) ; s_oClass:Refresh() ; ELSE ; s_oClass:Create() ; END ; oClassInstance := __clsInst( s_oClass:hClass ) ; IF __ObjHasMsg( oClassInstance, "InitClass" ); oClassInstance:InitClass( hb_aParams() ) ; END ; ELSE ; oClassInstance := __clsInst( s_oClass:hClass ) ; END ; IF PCount() > 0 ; DIVERT TO (@DivertConstructorCall()) OF s_oClass ; END ; RETURN oClassInstance AS CLASS TBandera ;
+
+
+
+UTILITY STATIC function TBandera_New() ; local Self AS CLASS TBandera := QSelf() AS CLASS TBandera
+
+   local n
+
+   if Empty( ::aResBan )
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+      ::aResBan   := {  "BAN_ALB" , "BAN_ALEM", "BAN_AND" , "BAN_ANGO", "BAN_ARGE", "BAN_ARM" , "BAN_AUST", "BAN_AUT" , "BAN_AZB" , "BAN_BOLI", "BAN_BOS" , "BAN_BRAS", "BAN_BULG", "BAN_BELG", "BAN_CABO", "BAN_CANA", "BAN_CHIL", "BAN_CHIN", "BAN_CHIP", "BAN_COLO", "BAN_RICA", "BAN_CRO" , "BAN_CUBA", "BAN_DINA", "BAN_ECUA", "BAN_SALV", "BAN_EMIR", "BAN_ESPA", "BAN_EST" , "BAN_EURO", "BAN_FINL", "BAN_FRAN", "BAN_GEOR", "BAN_GRBR", "BAN_GREC", "BAN_GUAT", "BAN_GUIN", "BAN_HOLA", "BAN_HOND", "BAN_HUNG", "BAN_INDI", "BAN_IRLA", "BAN_ISLA", "BAN_ISRA", "BAN_ITAL", "BAN_JAPO", "BAN_LIEC", "BAN_LIT" , "BAN_LUXE", "BAN_MALT", "BAN_MARR", "BAN_MOLD", "BAN_MONG", "BAN_MOZA", "BAN_MEJI", "BAN_MONC", "BAN_NIC" , "BAN_NORM", "BAN_NORU", "BAN_REST", "BAN_PANA", "BAN_PARG", "BAN_PERU", "BAN_POLO", "BAN_PORT", "BAN_RPDO", "BAN_RUM" , "BAN_RUS" , "BAN_SMAR", "BAN_SING", "BAN_SLK" , "BAN_SLN" , "BAN_SUEC", "BAN_SUIZ", "BAN_SURA", "BAN_TURK", "BAN_TURQ", "BAN_USA" , "BAN_URUG", "BAN_UZB" , "BAN_VAT" , "BAN_VENE", "BAN_YUG"  }
+   end
+
+   if Empty( ::aNomBan )
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+      ::aNomBan   := {  "Albania"             , "Alemania"            , "Andorra"             , "Angola"              , "Argentina"           , "Armenia"             , "Australia"           , "Austria"             , "Azerbaijan"          , "Bolivia"             , "Bosnia-Herzegovina"  , "Brasil"              , "Bulgaria"            , "Bélgica"             , "Cabo Verde"          , "Canadá"              , "Chile"               , "China"               , "Chipre"              , "Colombia"            , "Costa Rica"          , "Croacia"             , "Cuba"                , "Dinamarca"           , "Ecuador"             , "El Salvador"         , "Emiratos Arabes"     , "España"              , "Estonia"             , "Europa"              , "Finlandia"           , "Francia"             , "Georgia"             , "Gran Bretaña"        , "Grecia"              , "Guatemala"           , "Guinea"              , "Holanda"             , "Honduras"            , "Hungría"             , "India"               , "Irlanda"             , "Islandia"            , "Israel"              , "Italia"              , "Japón"               , "Liechtenstein"       , "Lituania"            , "Luxemburgo"          , "Malta"               , "Marruecos"           , "Moldavia"            , "Mongolia"            , "Mozambique"          , "Méjico"              , "Mónaco"              , "Nicaragua"           , "Normandía"           , "Noruega"             , "Otros"               , "Panamá"              , "Paragüay"            , "Perú"                , "Polonia"             , "Portugal"            , "República Dominicana", "Rumanía"             , "Rusia"               , "San Marino"          , "Singapur"            , "Slovakia"            , "Slovenia"            , "Suecia"              , "Suiza"               , "Suráfrica"           , "Turkmenistan"        , "Turquía"             , "USA"                 , "Urugüay"             , "Uzbekistan"          , "Vaticano"            , "Venezuela"           , "Yugoslavia"           }
+   end
+
+   if Empty( ::aBmpBan )
+      ::aBmpBan   := {}
+      for n := 1 to Len( ::aResBan )
+         aAdd( ::aBmpBan, LoadBitMap( GetResources(), ::aResBan[ n ] ) )
+      next
+   end
+
+return ( Self )
+
+
+
+
+
+
+
+
+UTILITY STATIC function TBandera_hBandera( cRes) ; local Self AS CLASS TBandera := QSelf() AS CLASS TBandera
+
+   local n
+   local h  := 0
+
+   if IsChar( cRes )
+
+      n     := aScan( ::aResBan, AllTrim( cRes ) )
+      if n  <> 0
+         h  := ::aBmpBan[ n ]
+      end
+
+   end
+
+return ( h )
+
+
+
+
+
+
+UTILITY STATIC function TBandera_cBandera( cRes) ; local Self AS CLASS TBandera := QSelf() AS CLASS TBandera
+
+   local n
+   local c  := ""
+
+   if IsChar( cRes )
+
+      n     := aScan( ::aResBan, AllTrim( cRes ) )
+      if n  <> 0
+         c  := ::aNomBan[ n ]
+      end
+
+   end
+
+return ( c )

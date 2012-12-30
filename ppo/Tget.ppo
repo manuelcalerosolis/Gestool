@@ -1,0 +1,1690 @@
+#line 112 "hbclass.ch"
+   DYNAMIC DivertConstructorCall
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+DECLARE HBClass  New( cName AS String, OPTIONAL SuperParams ) AS CLASS HBClass  Create() AS Object  Instance() AS Object  AddClsMethod( cName AS String, @MethodName(), nScope AS Numeric, n2 AS Numeric, n3 AS Numeric )  AddDelegate( cName AS String, cDelegate AS String, cObject AS String, nScope AS Numeric, lPersistent AS LOGICAL )  AddMultiClsData( cType AS String, uVal, nScope AS Numeric, aDatas AS Array OF String )  AddMultiData( cType AS String, uVal, nScope AS Numeric, aDatas AS Array OF String, x AS LOGICAL, lPer AS LOGICAL )  AddMethod( cName AS String, @MethodName(), nScope AS Numeric, lPersistent AS LOGICAL )  AddInLine( cName AS String, bBlock AS CodeBlock, nScope AS Numeric, lPersistent AS LOGICAL )  AddVirtual( cName AS String )  ModMethod( cName AS String, @MethodName(), nScope AS Numeric, lPersistent AS LOGICAL )  ModClsMethod( cName AS String, @MethodName(), nScope AS Numeric )  ModInline( cName AS String, bBlock AS CodeBlock, nScope AS Numeric, lPersistent AS LOGICAL )  SetOnError( @MethodName() )
+#line 85 "\Fwh1204\Include\FiveWin.ch"
+   EXTERNAL GetProcAdd
+   EXTERNAL TActiveX
+
+
+
+
+extern errorsys
+#line 66 ".\Prg\Tget.prg"
+_HB_CLASS TGet ; UTILITY FUNCTION TGet(...); static s_oClass ; local oClassInstance ; local nScope ; nScope := 1 ; if s_oClass == NIL ; s_oClass := IIF(.F.,, HBClass():New( "TGet" , {TControl():classh} ) ) ; ;
+
+   _HB_MEMBER { oGet} ; IIF( !.F., s_oClass:AddMultiData(,, nScope + IIF( .F., 32, 0 ), { "oGet" }, .F., .F. ), )
+   _HB_MEMBER { bMin, bMax} ; IIF( !.F., s_oClass:AddMultiData(,, nScope + IIF( .F., 32, 0 ), { "bMin" , "bMax" }, .F., .F. ), )
+   _HB_MEMBER { nPos} ; IIF( !.F., s_oClass:AddMultiData(,, nScope + IIF( .F., 32, 0 ), { "nPos" }, .F., .F. ), )
+   _HB_MEMBER { lReadOnly, lPassword} ; IIF( !.F., s_oClass:AddMultiData(,, nScope + IIF( .F., 32, 0 ), { "lReadOnly" , "lPassword" }, .F., .F. ), )
+   _HB_MEMBER { cError} ; IIF( !.F., s_oClass:AddMultiData(,, nScope + IIF( .F., 32, 0 ), { "cError" }, .F., .F. ), )
+   _HB_MEMBER { hHeap} ; IIF( !.F., s_oClass:AddMultiData(,, nScope + IIF( .F., 32, 0 ), { "hHeap" }, .F., .F. ), )
+   _HB_MEMBER { cPicture} ; IIF( !.F., s_oClass:AddMultiData(,, nScope + IIF( .F., 32, 0 ), { "cPicture" }, .F., .F. ), )
+   _HB_MEMBER { lDisColors} ; IIF( !.F., s_oClass:AddMultiData(,, nScope + IIF( .F., 32, 0 ), { "lDisColors" }, .F., .F. ), )
+   _HB_MEMBER { bPostKey} ; IIF( !.F., s_oClass:AddMultiData(,, nScope + IIF( .F., 32, 0 ), { "bPostKey" }, .F., .F. ), )
+   _HB_MEMBER { lSpinner} ; IIF( !.F., s_oClass:AddMultiData(,, nScope + IIF( .F., 32, 0 ), { "lSpinner" }, .F., .F. ), )
+   _HB_MEMBER { nOldClrPane} ; IIF( !.F., s_oClass:AddMultiData(,, nScope + IIF( .F., 32, 0 ), { "nOldClrPane" }, .F., .F. ), )
+
+   _HB_MEMBER { lClrFocus} ; IIF( !.F., s_oClass:AddMultiClsData(, .F., nScope + IIF( .F., 32, 0 ) + 64, { "lClrFocus" }, .F. ), )
+   _HB_MEMBER { nClrFocus} ; IIF( !.F., s_oClass:AddMultiClsData(, nRGB( 235, 235, 145 ), nScope + IIF( .F., 32, 0 ) + 64, { "nClrFocus" }, .F. ), )
+
+
+
+
+
+   _HB_MEMBER New( nRow, nCol, bSetGet, oWnd, nWidth, nHeight, cPict, bValid, nClrFore, nClrBack, oFont, lDesign, oCursor, lPixel, cMsg, lUpdate, bWhen, lCenter, lRight, bChanged, lReadOnly, lPassword, lNoBorder, nHelpId, lSpinner, bUp, bDown, bMin, bMax) AS CLASS TGet; IIF( .F., s_oClass:ModMethod( "New", @TGet_New(), nScope + IIF( .T., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ), s_oClass:AddMethod( "New", @TGet_New(), nScope + IIF( .T., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ));
+
+   _HB_MEMBER Assign(); IIF( .F., s_oClass:ModInline( "Assign", {|Self | Self, ::oGet:Assign() }, nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ), s_oClass:AddInline( "Assign", {|Self | Self, ::oGet:Assign() }, nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ) )
+
+   _HB_MEMBER cToChar(); IIF( .F., s_oClass:ModInline( "cToChar", {|Self | Self, ::TControl:cToChar( "EDIT" ) }, nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ), s_oClass:AddInline( "cToChar", {|Self | Self, ::TControl:cToChar( "EDIT" ) }, nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ) )
+
+   _HB_MEMBER Copy(); IIF( .F., s_oClass:ModMethod( "Copy", @TGet_Copy(), nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ), s_oClass:AddMethod( "Copy", @TGet_Copy(), nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ));
+
+   _HB_MEMBER Create( cClsName); IIF( .F., s_oClass:ModMethod( "Create", @TGet_Create(), nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ), s_oClass:AddMethod( "Create", @TGet_Create(), nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ));
+
+   _HB_MEMBER Cut(); IIF( .F., s_oClass:ModMethod( "Cut", @TGet_Cut(), nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ), s_oClass:AddMethod( "Cut", @TGet_Cut(), nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ));
+
+   _HB_MEMBER Default(); IIF( .F., s_oClass:ModMethod( "Default", @TGet_Default(), nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ), s_oClass:AddMethod( "Default", @TGet_Default(), nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ));
+
+   _HB_MEMBER Destroy(); IIF( .F., s_oClass:ModMethod( "Destroy", @TGet_Destroy(), nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ), s_oClass:AddMethod( "Destroy", @TGet_Destroy(), nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ));
+
+
+      _HB_MEMBER Display(); IIF( .F., s_oClass:ModInline( "Display", {|Self | Self, ::BeginPaint(), ::Paint(), ::EndPaint(), 0 }, nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ), s_oClass:AddInline( "Display", {|Self | Self, ::BeginPaint(), ::Paint(), ::EndPaint(), 0 }, nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ) )
+
+
+   _HB_MEMBER EraseBkGnd(hDC); IIF( .F., s_oClass:ModInline( "EraseBkGnd", {|Self,hDC | Self, 1 }, nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ), s_oClass:AddInline( "EraseBkGnd", {|Self,hDC | Self, 1 }, nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ) )
+
+   _HB_MEMBER cGenPrg(); IIF( .F., s_oClass:ModMethod( "cGenPrg", @TGet_cGenPrg(), nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ), s_oClass:AddMethod( "cGenPrg", @TGet_cGenPrg(), nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ));
+
+   _HB_MEMBER GetDlgCode( nLastKey); IIF( .F., s_oClass:ModMethod( "GetDlgCode", @TGet_GetDlgCode(), nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ), s_oClass:AddMethod( "GetDlgCode", @TGet_GetDlgCode(), nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ));
+
+   _HB_MEMBER GoHome(); IIF( .F., s_oClass:ModMethod( "GoHome", @TGet_GoHome(), nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ), s_oClass:AddMethod( "GoHome", @TGet_GoHome(), nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ));
+
+   _HB_MEMBER GotFocus( hCtlLost); IIF( .F., s_oClass:ModMethod( "GotFocus", @TGet_GotFocus(), nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ), s_oClass:AddMethod( "GotFocus", @TGet_GotFocus(), nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ));
+
+   _HB_MEMBER HandleEvent( nMsg, nWParam, nLParam); IIF( .F., s_oClass:ModMethod( "HandleEvent", @TGet_HandleEvent(), nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ), s_oClass:AddMethod( "HandleEvent", @TGet_HandleEvent(), nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ));
+
+   _HB_MEMBER Initiate( hDlg); IIF( .F., s_oClass:ModMethod( "Initiate", @TGet_Initiate(), nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ), s_oClass:AddMethod( "Initiate", @TGet_Initiate(), nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ));
+
+   _HB_MEMBER KeyDown( nKey, nFlags); IIF( .F., s_oClass:ModMethod( "KeyDown", @TGet_KeyDown(), nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ), s_oClass:AddMethod( "KeyDown", @TGet_KeyDown(), nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ));
+   _HB_MEMBER KeyChar( nKey, nFlags); IIF( .F., s_oClass:ModMethod( "KeyChar", @TGet_KeyChar(), nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ), s_oClass:AddMethod( "KeyChar", @TGet_KeyChar(), nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ));
+   _HB_MEMBER KeyUp( nKey, nFlags); IIF( .F., s_oClass:ModMethod( "KeyUp", @TGet_KeyUp(), nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ), s_oClass:AddMethod( "KeyUp", @TGet_KeyUp(), nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ));
+
+   _HB_MEMBER LButtonDown( nRow, nCol, nFlags); IIF( .F., s_oClass:ModMethod( "LButtonDown", @TGet_LButtonDown(), nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ), s_oClass:AddMethod( "LButtonDown", @TGet_LButtonDown(), nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ));
+   _HB_MEMBER LButtonUp( nRow, nCol, nFlags); IIF( .F., s_oClass:ModMethod( "LButtonUp", @TGet_LButtonUp(), nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ), s_oClass:AddMethod( "LButtonUp", @TGet_LButtonUp(), nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ));
+
+
+   _HB_MEMBER LimitText(); IIF( .F., s_oClass:ModInline( "LimitText", {|Self | Self, SendMessage( ::hWnd, 197, 0, 0 ) }, nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ), s_oClass:AddInline( "LimitText", {|Self | Self, SendMessage( ::hWnd, 197, 0, 0 ) }, nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ) )
+
+   _HB_MEMBER LostFocus( hCtlFocus); IIF( .F., s_oClass:ModMethod( "LostFocus", @TGet_LostFocus(), nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ), s_oClass:AddMethod( "LostFocus", @TGet_LostFocus(), nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ));
+
+   _HB_MEMBER MouseMove( nRow, nCol, nKeyFlags); IIF( .F., s_oClass:ModMethod( "MouseMove", @TGet_MouseMove(), nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ), s_oClass:AddMethod( "MouseMove", @TGet_MouseMove(), nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ));
+
+   _HB_MEMBER cText(cText); _HB_MEMBER _cText(cText); IIF( .F., s_oClass:ModMethod( "cText", @TGet_cText(), 1 + 32, .F. ), s_oClass:AddMethod( "cText", @TGet_cText(), 1 + 32, .F. ) ) ; IIF( .F., s_oClass:ModMethod( "_cText", @TGet_cText() ), s_oClass:AddMethod( "_cText", @TGet_cText() ) ) ;
+
+
+
+
+   _HB_MEMBER ReDefine( nId, bSetGet, oWnd, nHelpId, cPict, bValid, nClrFore, nClrBack, oFont, oCursor, cMsg, lUpdate, bWhen, bChanged, lReadOnly, lSpinner, bUp, bDown, bMin, bMax) AS CLASS TGet; IIF( .F., s_oClass:ModMethod( "ReDefine", @TGet_ReDefine(), nScope + IIF( .T., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ), s_oClass:AddMethod( "ReDefine", @TGet_ReDefine(), nScope + IIF( .T., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ));
+
+
+
+
+   _HB_MEMBER Refresh(); IIF( .F., s_oClass:ModInline( "Refresh", {|Self | Self, ::oGet:SetFocus(), ::oGet:UpdateBuffer(), ::DispText(), ::GoHome() }, nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ), s_oClass:AddInline( "Refresh", {|Self | Self, ::oGet:SetFocus(), ::oGet:UpdateBuffer(), ::DispText(), ::GoHome() }, nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ) )
+
+   _HB_MEMBER DispText(); IIF( .F., s_oClass:ModMethod( "DispText", @TGet_DispText(), nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ), s_oClass:AddMethod( "DispText", @TGet_DispText(), nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ));
+   _HB_MEMBER GetSel(); IIF( .F., s_oClass:ModMethod( "GetSel", @TGet_GetSel(), nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ), s_oClass:AddMethod( "GetSel", @TGet_GetSel(), nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ));
+   _HB_MEMBER GetSelPos( @nStart, @nEnd); IIF( .F., s_oClass:ModMethod( "GetSelPos", @TGet_GetSelPos(), nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ), s_oClass:AddMethod( "GetSelPos", @TGet_GetSelPos(), nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ));
+   _HB_MEMBER GetDelSel( nStart, nEnd); IIF( .F., s_oClass:ModMethod( "GetDelSel", @TGet_GetDelSel(), nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ), s_oClass:AddMethod( "GetDelSel", @TGet_GetDelSel(), nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ));
+
+   _HB_MEMBER EditUpdate(); IIF( .F., s_oClass:ModMethod( "EditUpdate", @TGet_EditUpdate(), nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ), s_oClass:AddMethod( "EditUpdate", @TGet_EditUpdate(), nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ));
+
+   _HB_MEMBER HideSel(); IIF( .F., s_oClass:ModInline( "HideSel", {|Self | Self, ::SetSel( -1, 0 ) }, nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ), s_oClass:AddInline( "HideSel", {|Self | Self, ::SetSel( -1, 0 ) }, nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ) )
+
+   _HB_MEMBER lValid(); IIF( .F., s_oClass:ModMethod( "lValid", @TGet_lValid(), nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ), s_oClass:AddMethod( "lValid", @TGet_lValid(), nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ));
+
+   _HB_MEMBER Paint(); IIF( .F., s_oClass:ModMethod( "Paint", @TGet_Paint(), nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ), s_oClass:AddMethod( "Paint", @TGet_Paint(), nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ));
+
+   _HB_MEMBER Paste( cText); IIF( .F., s_oClass:ModMethod( "Paste", @TGet_Paste(), nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ), s_oClass:AddMethod( "Paste", @TGet_Paste(), nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ));
+
+   _HB_MEMBER RButtonDown( nRow, nCol, nFlags); IIF( .F., s_oClass:ModMethod( "RButtonDown", @TGet_RButtonDown(), nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ), s_oClass:AddMethod( "RButtonDown", @TGet_RButtonDown(), nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ));
+
+   _HB_MEMBER Resize( nType, nWidth, nHeight); IIF( .F., s_oClass:ModMethod( "Resize", @TGet_Resize(), nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ), s_oClass:AddMethod( "Resize", @TGet_Resize(), nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ));
+
+   _HB_MEMBER SelectAll(); IIF( .F., s_oClass:ModInline( "SelectAll", {|Self | Self, ::SetSel( 0, -1 ) }, nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ), s_oClass:AddInline( "SelectAll", {|Self | Self, ::SetSel( 0, -1 ) }, nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ) )
+
+   _HB_MEMBER SelFile( cMask, cTitle); IIF( .F., s_oClass:ModMethod( "SelFile", @TGet_SelFile(), nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ), s_oClass:AddMethod( "SelFile", @TGet_SelFile(), nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ));
+
+
+
+
+
+   _HB_MEMBER SetMargins(nLeft, nRight); IIF( .F., s_oClass:ModInline( "SetMargins", {|Self,nLeft, nRight | Self, nLeft := If( nLeft == nil, 0, nLeft ), nRight := If( nRight == nil, 0, nRight ), SendMessage( ::hWnd, 211, nOR( 1, 2 ), nMakeLong( nLeft, nRight ) ) }, nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ), s_oClass:AddInline( "SetMargins", {|Self,nLeft, nRight | Self, nLeft := If( nLeft == nil, 0, nLeft ), nRight := If( nRight == nil, 0, nRight ), SendMessage( ::hWnd, 211, nOR( 1, 2 ), nMakeLong( nLeft, nRight ) ) }, nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ) )
+
+
+
+    _HB_MEMBER GetMargins(nResult); IIF( .F., s_oClass:ModInline( "GetMargins", {|Self,nResult | Self, nResult := SendMessage( ::hWnd, 212, 0, 0 ), { nLoWord( nResult ), nHiWord( nResult ) } }, nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ), s_oClass:AddInline( "GetMargins", {|Self,nResult | Self, nResult := SendMessage( ::hWnd, 212, 0, 0 ), { nLoWord( nResult ), nHiWord( nResult ) } }, nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ) )
+
+   _HB_MEMBER SetPos(nStart, nEnd); IIF( .F., s_oClass:ModMethod( "SetPos", @TGet__SetPos(), nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ) ), s_oClass:AddMethod( "SetPos", @TGet__SetPos(), nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ) ) );
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+   _HB_MEMBER SetSel(nStart, nEnd); IIF( .F., s_oClass:ModInline( "SetSel", {|Self,nStart, nEnd | Self, nStart := If( nStart == nil, 1, nStart ), nEnd   := If( nEnd == nil, nStart, nEnd ), SendMessage( ::hWnd, 177, nStart, nEnd ), ::nPos := nStart }, nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ), s_oClass:AddInline( "SetSel", {|Self,nStart, nEnd | Self, nStart := If( nStart == nil, 1, nStart ), nEnd   := If( nEnd == nil, nStart, nEnd ), SendMessage( ::hWnd, 177, nStart, nEnd ), ::nPos := nStart }, nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ) )
+
+
+   _HB_MEMBER Move( nTop, nLeft, nBottom, nRight, lRepaint); IIF( .F., s_oClass:ModMethod( "Move", @TGet_Move(), nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ), s_oClass:AddMethod( "Move", @TGet_Move(), nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ));
+
+   _HB_MEMBER UnDo(); IIF( .F., s_oClass:ModInline( "UnDo", {|Self | Self, ::cText := ::oGet:Original }, nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ), s_oClass:AddInline( "UnDo", {|Self | Self, ::cText := ::oGet:Original }, nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ) )
+
+   _HB_MEMBER Spinner( bUp, bDown, bMin, bMax); IIF( .F., s_oClass:ModMethod( "Spinner", @TGet_Spinner(), nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ), s_oClass:AddMethod( "Spinner", @TGet_Spinner(), nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ));
+
+   _HB_MEMBER Value(); IIF( .F., s_oClass:ModInline( "Value", {|Self | Self, ::VarGet() }, nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ), s_oClass:AddInline( "Value", {|Self | Self, ::VarGet() }, nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ) )
+
+
+
+
+      _HB_MEMBER VarPut(uVal); IIF( .F., s_oClass:ModInline( "VarPut", {|Self,uVal | Self, If( ValType( ::bSetGet ) == "B", Eval( ::bSetGet, uVal ),) }, nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ), s_oClass:AddInline( "VarPut", {|Self,uVal | Self, If( ValType( ::bSetGet ) == "B", Eval( ::bSetGet, uVal ),) }, nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ) )
+
+
+
+   _HB_MEMBER Inc(); IIF( .F., s_oClass:ModMethod( "++", @TGet_Inc(), nScope + IIF( .F., 1024, 0 ) ), s_oClass:AddMethod( "++", @TGet_Inc(), nScope + IIF( .F., 1024, 0 ) ) );
+   _HB_MEMBER Dec(); IIF( .F., s_oClass:ModMethod( "--", @TGet_Dec(), nScope + IIF( .F., 1024, 0 ) ), s_oClass:AddMethod( "--", @TGet_Dec(), nScope + IIF( .F., 1024, 0 ) ) );
+   _HB_MEMBER ScrollDate( nDirection); IIF( .F., s_oClass:ModMethod( "ScrollDate", @TGet_ScrollDate(), nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ), s_oClass:AddMethod( "ScrollDate", @TGet_ScrollDate(), nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ));
+   _HB_MEMBER ScrollNumber( nDirection); IIF( .F., s_oClass:ModMethod( "ScrollNumber", @TGet_ScrollNumber(), nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ), s_oClass:AddMethod( "ScrollNumber", @TGet_ScrollNumber(), nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ));
+
+   _HB_MEMBER SetColorFocus( nClrFocus); IIF( .F., s_oClass:ModMethod( "SetColorFocus", @TGet_SetColorFocus(), nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ), s_oClass:AddMethod( "SetColorFocus", @TGet_SetColorFocus(), nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ));
+
+; IF .F. ; __clsActive(s_oClass:hClass) ; s_oClass:Refresh() ; ELSE ; s_oClass:Create() ; END ; oClassInstance := __clsInst( s_oClass:hClass ) ; IF __ObjHasMsg( oClassInstance, "InitClass" ); oClassInstance:InitClass( hb_aParams() ) ; END ; ELSE ; oClassInstance := __clsInst( s_oClass:hClass ) ; END ; IF PCount() > 0 ; DIVERT TO (@DivertConstructorCall()) OF s_oClass ; END ; RETURN oClassInstance AS CLASS TGet ;
+
+
+
+
+
+
+
+UTILITY STATIC function TGet_New( nRow, nCol, bSetGet, oWnd, nWidth, nHeight, cPict, bValid, nClrFore, nClrBack, oFont, lDesign, oCursor, lPixel, cMsg, lUpdate, bWhen, lCenter, lRight, bChanged, lReadOnly, lPassword, lNoBorder, nHelpId, lSpinner, bUp, bDown, bMin, bMax) ; local Self AS CLASS TGet := QSelf() AS CLASS TGet
+
+
+
+
+
+   local cText := Space( 50 )
+
+
+
+
+
+
+
+
+
+
+   IIF( nClrFore == nil, nClrFore := GetSysColor( 8 ), ) ; IIF( nClrBack == nil, nClrBack := GetSysColor( 5 ), ); IIF( oWnd == nil, oWnd := GetWndDefault(), ); IIF( nHeight == nil, nHeight := If( oFont <> nil, oFont:nHeight, 12 ), ); IIF( lDesign == nil, lDesign := .F., ); IIF( lPixel == nil, lPixel := .F., ); IIF( lUpdate == nil, lUpdate := .F., ); IIF( lCenter == nil, lCenter := .F., ); IIF( lRight == nil, lRight := .F., ); IIF( lReadOnly == nil, lReadOnly := .F., ); IIF( lPassword == nil, lPassword := .F., ); IIF( lSpinner == nil, lSpinner := .F., ); IIF( nRow == nil, nRow := 0, ); IIF( nCol == nil, nCol := 0, ); IIF( lNoBorder == nil, lNoBorder := .F., ); IIF( bSetGet == nil, bSetGet := { | u | If( PCount()==0, cText, cText:= u ) }, );
+
+
+   ::cCaption = If( cPict == nil, cValToChar( Eval( bSetGet ) ),  Transform( Eval( bSetGet ), cPict ) )
+
+   if lSpinner
+     nHeight := Max( 15, nHeight )
+   endif
+
+   ::nTop     = nRow * If( lPixel, 1, 13 )
+   ::nLeft    = nCol * If( lPixel, 1, 8 )
+   ::nBottom  = ::nTop + nHeight - 1
+
+
+   ::nRight   = ::nLeft + If( nWidth == nil, ( 1 + Len( ::cCaption ) ) * 3.5,  nWidth - 1 ) +  If( lSpinner, 20, 0 )
+   ::oWnd      = oWnd
+
+
+
+
+
+
+   ::nStyle    = nOR( 1073741824, 268435456, 128, If( ! lReadOnly, 65536, 0 ), If( lDesign, 67108864, 0 ), If( lSpinner, 2097152, 0 ), If( lReadOnly, 2048, 0 ), If( lCenter, 1, If( lRight, 2, 0 ) ) )
+
+
+
+
+
+
+
+      if ! IsAppThemed()
+         if ! lNoBorder
+            ::nStyle = nOr( ::nStyle, 8388608 )
+         endif
+      else
+         if ! lNoBorder
+            ::nStyle = nOr( ::nStyle, If( oWnd:ChildLevel( TDialog() ) <> 0, 8388608, 0 ) )
+            ::nExStyle = 512
+         endif
+      endif
+
+
+   ::nStyle    = If( lNoBorder, nAnd( ::nStyle, nNot( 8388608 ) ), ::nStyle )
+   ::nId       = ::GetNewId()
+   ::bSetGet   = bSetGet
+   ::oGet      = GetNew( 20, 20, bSetGet,, cPict )
+   ::bValid    = bValid
+   ::lDrag     = lDesign
+   ::lCaptured = .F.
+   ::lPassword = lPassword
+   ::oFont     = oFont
+   ::oCursor   = oCursor
+   ::cMsg      = cMsg
+   ::lUpdate   = lUpdate
+   ::bWhen     = bWhen
+   ::bChange   = bChanged
+   ::nPos      = 1
+   ::lReadOnly = lReadOnly
+   ::lFocused  = .F.
+   ::nHelpId   = nHelpId
+   ::cPicture  = cPict
+   ::bPostKey  = { | x, y | y }
+   ::lSpinner  = lSpinner
+   ::hHeap     = 0
+
+   ::SetColor( nClrFore, nClrBack )
+   ::lDisColors = .T.
+
+   ::oGet:SetFocus()
+   ::cCaption = ::oGet:Buffer
+   ::oGet:KillFocus()
+
+
+      if lPassword .AND. oFont == nil
+         ::oFont := TFont():New( "Arial", 0, -14,, .T.,,,,,,,,,,,, )
+      endif
+
+
+   if ! Empty( oWnd:hWnd )
+      ::Create( "EDIT" )
+      if oFont <> nil
+         ::SetFont( oFont )
+      endif
+      ::GetFont()
+      oWnd:AddControl( Self )
+   else
+      oWnd:DefControl( Self )
+   endif
+
+   if lDesign
+      ::CheckDots()
+   endif
+
+   if lSpinner
+      ::Spinner( bUp, bDown, bMin, bMax )
+   endif
+
+return Self
+
+
+
+
+
+UTILITY STATIC function TGet_ReDefine( nId, bSetGet, oWnd, nHelpId, cPict, bValid, nClrFore, nClrBack, oFont, oCursor, cMsg, lUpdate, bWhen, bChanged, lReadOnly, lSpinner, bUp, bDown, bMin, bMax) ; local Self AS CLASS TGet := QSelf() AS CLASS TGet
+
+
+
+
+   IIF( oWnd == nil, oWnd := GetWndDefault(), ) ; IIF( nClrFore == nil, nClrFore := GetSysColor( 8 ), ); IIF( nClrBack == nil, nClrBack := GetSysColor( 5 ), ); IIF( lUpdate == nil, lUpdate := .F., ); IIF( lReadOnly == nil, lReadOnly := .F., ); IIF( lSpinner == nil, lSpinner := .F., );
+
+
+   if Eval( bSetGet ) == nil
+      Eval( bSetGet, Space( 30 ) )
+   endif
+
+   ::nId       = nId
+   ::oWnd      = oWnd
+   ::nHelpId   = nHelpId
+   ::bSetGet   = bSetGet
+   ::oGet      = GetNew( 20, 20, bSetGet,, cPict )
+   ::bValid    = bValid
+   ::lDrag     = .F.
+   ::lCaptured = .F.
+   ::lPassword = .F.
+   ::oFont     = oFont
+   ::oCursor   = oCursor
+   ::cMsg      = cMsg
+   ::lUpdate   = lUpdate
+   ::bWhen     = bWhen
+   ::bChange   = bChanged
+   ::nPos      =  1
+   ::lReadOnly = lReadOnly
+   ::lFocused  = .F.
+   ::cPicture  = cPict
+   ::bPostKey  = { | x, y | y }
+   ::lSpinner  = lSpinner
+   ::hHeap     = 0
+
+   ::SetColor( nClrFore, nClrBack )
+   ::lDisColors = .T.
+
+   if lSpinner
+      ::Spinner( bUp, bDown, bMin, bMax )
+   endif
+
+   oWnd:DefControl( Self )
+
+return Self
+
+
+
+UTILITY STATIC function TGet_Create( cClsName) ; local Self AS CLASS TGet := QSelf() AS CLASS TGet
+
+   local hHeap
+
+
+
+
+   IIF( cClsName == nil, cClsName := ::ClassName(), ) ; IIF( ::cCaption == nil, ::cCaption := "", ); IIF( ::nStyle == nil, ::nStyle := (0 + 12582912 + 524288 + 262144 + 131072 + 65536), ); IIF( ::nTop == nil, ::nTop := 0, ); IIF( ::nLeft == nil, ::nLeft := 0, ); IIF( ::nBottom == nil, ::nBottom := 10, ); IIF( ::nRight == nil, ::nRight := 10, ); IIF( ::nId == nil, ::nId := 0, );
+
+   if ::oWnd <> nil
+      ::nStyle = nOR( ::nStyle, 1073741824 )
+   endif
+
+   if ::nBottom <> 32768
+
+
+
+
+      ::hWnd = MGetCreate( cClsName, ::cCaption, ::nStyle,  ::nLeft, ::nTop, ::nRight - ::nLeft + 1,  ::nBottom - ::nTop + 1,  If( ::oWnd <> nil, ::oWnd:hWnd, 0 ),  ::nId, @hHeap, ::nExStyle )
+    else
+
+
+
+      ::hWnd = MGetCreate( cClsName, ::cCaption, ::nStyle,  ::nLeft, ::nTop, ::nRight, ::nBottom,  If( ::oWnd <> nil, ::oWnd:hWnd, 0 ),  ::nId, @hHeap, ::nExStyle )
+    endif
+
+   if ::hWnd == 0
+      WndCreateError( Self )
+   else
+      ::Link()
+      if ::oFont <> nil
+         ::SetFont( ::oFont )
+      endif
+      ::hHeap = hHeap
+   endif
+
+return nil
+
+
+
+UTILITY STATIC function TGet_GetDlgCode( nLastKey) ; local Self AS CLASS TGet := QSelf() AS CLASS TGet
+
+
+
+
+
+
+
+      if Len( ::oWnd:aControls ) == 1
+         return 4
+      endif
+
+
+
+
+
+   ::oWnd:nLastKey = nLastKey
+   return 4
+
+
+
+
+UTILITY STATIC function TGet_HandleEvent( nMsg, nWParam, nLParam) ; local Self AS CLASS TGet := QSelf() AS CLASS TGet
+
+   local oClp
+
+   do case
+      case nMsg == 768
+           CallWindowProc( ::nOldProc, ::hWnd, 768, 0, 0 )
+           ::oGet:buffer = Pad( GetWindowText( ::hWnd ), Len( ::oGet:buffer ) )
+           oClp := TClipBoard():New( Upper("TEXT"), Self )
+           ::oGet:Pos -= Len( oClp:GetText() )
+           oClp:End()
+           ::oGet:Assign()
+           return 0
+
+      case nMsg == 770
+           if GetFocus() == ::hWnd
+              CallWindowProc( ::nOldProc, ::hWnd, 770, 0, 0 )
+              ::oGet:buffer = Pad( GetWindowText( ::hWnd ), Len( ::oGet:buffer ) )
+              oClp := TClipBoard():New( Upper("TEXT"), Self )
+              ::oGet:Pos += Len( oClp:GetText() )
+              oClp:End()
+              ::oGet:Assign()
+           endif
+           return 0
+
+      case nMsg == 771
+           CallWindowProc( ::nOldProc, ::hWnd, 771, 0, 0 )
+           ::oGet:buffer = Space( Len( ::oGet:buffer ) )
+           ::SetPos( 1 )
+           ::oGet:Assign()
+           return 0
+   endcase
+
+return ::TControl:HandleEvent( nMsg, nWParam, nLParam )
+
+
+
+UTILITY STATIC function TGet_Initiate( hDlg) ; local Self AS CLASS TGet := QSelf() AS CLASS TGet
+
+   ::TControl:Initiate( hDlg )
+   ::oGet:SetFocus()
+
+   if lAnd( GetWindowLong( ::hWnd, -16 ), 32 )
+      ::lPassword = .T.
+   endif
+
+
+   if ::lPassword
+
+      SetWindowLong( ::hWnd, -16, nOr( GetWindowLong( ::hWnd, -16 ), 32 ) )
+   endif
+
+
+   if ::lReadOnly .AND. ::nClrText == GetSysColor( 8 )  .AND. ::nClrPane == GetSysColor( 5 )
+      ::SetColor( GetSysColor(17) , GetSysColor( 15 ))
+
+   endif
+
+   ::DispText()
+
+   if ::cPicture # nil .AND. "@R" $ ::cPicture
+      ::oGet:Home()
+      ::SetPos( ::oGet:Pos )
+   endif
+   ::oGet:KillFocus()
+
+   ::SetMargins( 1, 1 )
+
+return nil
+
+
+
+
+UTILITY STATIC function TGet_EditUpdate() ; local Self AS CLASS TGet := QSelf() AS CLASS TGet
+
+   if ::oGet:HasFocus
+      ::DispText()
+   endif
+
+   ::SetPos( ::oGet:Pos )
+
+return nil
+
+
+
+UTILITY STATIC function TGet_cText(uVal) ; local Self AS CLASS TGet := QSelf() AS CLASS TGet
+
+   if PCount() == 1
+      ::oGet:VarPut( uVal )
+      ::Refresh()
+   endif
+
+return GetWindowText( ::hWnd )
+
+
+
+UTILITY STATIC function TGet_GetSel() ; local Self AS CLASS TGet := QSelf() AS CLASS TGet
+
+   local n      := ::SendMsg( 176 )
+   local nStart := nLoWord( n )
+   local nEnd   := nHiWord( n )
+
+return If( nStart <> nEnd, SubStr( ::cText, nStart + 1, nEnd - nStart ), "" )
+
+
+
+UTILITY STATIC function TGet_GetSelPos( nStart, nEnd) ; local Self AS CLASS TGet := QSelf() AS CLASS TGet
+
+   local n := ::SendMsg( 176 )
+   nStart  := nLoWord( n )
+   nEnd    := nHiWord( n )
+
+return nil
+
+
+
+UTILITY STATIC function TGet_GetDelSel( nStart, nEnd) ; local Self AS CLASS TGet := QSelf() AS CLASS TGet
+
+
+
+
+   ::oGet:buffer = Left( ::oGet:buffer, Min( nEnd, nStart ) )  + Right( ::oGet:buffer,  Len( ::oGet:buffer ) - Max( nEnd, nStart ) )  + Space( Abs( nStart - nEnd ) )
+
+
+
+
+
+
+   ::oGet:Assign()
+
+
+      if ::oGet:Type $ "DN"
+         ::oGet:KillFocus()
+         ::oGet:SetFocus()
+      endif
+
+
+   ::oGet:Reset()
+   ::oGet:pos := Min( nStart, nEnd ) + 1
+
+return nil
+
+
+
+UTILITY STATIC function TGet_MouseMove( nRow, nCol, nKeyFlags) ; local Self AS CLASS TGet := QSelf() AS CLASS TGet
+
+   if ::lDrag
+      return ::TControl:MouseMove( nRow, nCol, nKeyFlags )
+   else
+      ::oWnd:SetMsg( ::cMsg )
+      if ::oCursor <> nil
+         WSetCursor( ::oCursor:hCursor )
+      else
+         CursorIBeam()
+      endif
+      ::CheckToolTip()
+
+      if ::bMMoved <> nil
+         return Eval( ::bMMoved, nRow, nCol, nKeyFlags )
+      endif
+
+   endif
+
+return nil
+
+
+
+UTILITY STATIC function TGet_Copy() ; local Self AS CLASS TGet := QSelf() AS CLASS TGet
+
+   local oClp
+
+
+   oClp := TClipBoard():New( Upper("TEXT"), Self )
+
+   if oClp:Open()
+      oClp:Clear()
+      oClp:SetText( ::GetSel() )
+      oClp:End()
+   else
+      MsgAlert( "The clipboard is not available now!" )
+   endif
+
+return nil
+
+
+
+UTILITY STATIC function TGet_Default() ; local Self AS CLASS TGet := QSelf() AS CLASS TGet
+
+   if ::oFont <> nil
+      ::SetFont( ::oFont )
+   else
+      ::GetFont()
+   endif
+
+return nil
+
+
+
+UTILITY STATIC function TGet_Destroy() ; local Self AS CLASS TGet := QSelf() AS CLASS TGet
+
+   if ::hHeap <> 0
+
+      ::hHeap = 0
+   endif
+
+return ::TControl:Destroy()
+
+
+
+UTILITY STATIC function TGet_cGenPrg() ; local Self AS CLASS TGet := QSelf() AS CLASS TGet
+
+   local cCode := ""
+
+
+
+
+   cCode += Chr(13)+Chr(10) + "   @ " + Str( ::nTop, 3 ) + ", " + Str( ::nLeft, 3 ) +  " GET oGet SIZE " + Str( ::nWidth, 3 ) +  ", " + Str( ::nHeight, 3 ) +  " PIXEL OF oWnd " + Chr(13)+Chr(10)
+
+return cCode
+
+
+
+UTILITY STATIC function TGet_KeyDown( nKey, nFlags) ; local Self AS CLASS TGet := QSelf() AS CLASS TGet
+
+   local nHi, nLo, nPos, nLastHi := -1, uVal
+
+   ::nLastKey = nKey
+
+   if ::bKeyDown <> nil
+
+      if ValType( uVal := Eval( ::bKeyDown, nKey, nFlags, Self ) ) == "N" .AND.  uVal == 0
+         return 0
+      endif
+   endif
+
+   do case
+         case nKey == 33
+              if ::lSpinner
+                 Self--
+              endif
+
+         case nKey == 34
+              if ::lSpinner
+                 Self++
+              endif
+
+      case nKey == 38
+           if Len( ::oWnd:aControls ) > 1
+               ::oWnd:GoPrevCtrl( ::hWnd )
+               return 1
+           endif
+
+      case nKey == 40
+           if Len( ::oWnd:aControls ) > 1
+               ::oWnd:GoNextCtrl( ::hWnd )
+               return 1
+           endif
+
+      case nKey == 37
+           if GetKeyState( 17 )
+              ::oGet:WordLeft()
+           else
+              ::oGet:Left()
+           endif
+
+           ::oGet:Pos = Max( ::oGet:Pos, 1 )
+
+           while .T.
+              CallWindowProc( ::nOldProc, ::hWnd, 256, nKey, nFlags )
+              ::GetSelPos( @nLo, @nHi )
+              if nLo <= ::oGet:Pos - 1
+                 EXIT
+              endif
+           end
+           ::nPos = nLo + 1
+           if ::nPos < ::oGet:Pos
+              ::SetPos( ::oGet:Pos )
+           else
+              ::oGet:Pos = ::nPos
+           endif
+           return 0
+
+      case nKey == 39
+           nPos = ::oGet:Pos
+           if GetKeyState( 17 )
+              ::oGet:wordRight()
+           else
+              ::oGet:right()
+           endif
+           if nPos <> ::oGet:Pos
+              while .T.
+                 CallWindowProc( ::nOldProc, ::hWnd, 256, nKey, nFlags )
+                 ::GetSelPos( @nLo, @nHi )
+
+                 if nHi + 1 >= ::oGet:Pos .OR. ::lPassword .OR.  nHi == nLastHi
+                    EXIT
+                 endif
+                 nLastHi = nHi
+              end
+              ::oGet:Pos = nHi + 1
+              ::nPos     = nHi + 1
+           endif
+           return 0
+
+
+      case nKey == 45 .AND. ! GetKeyState( 16 )  .AND. ! GetKeyState( 17 )
+
+           Set( 29, ! Set( 29 ) )
+           DestroyCaret()
+           if Set( 29 )
+              CreateCaret( ::hWnd, 0, 6, ::nGetChrHeight() - 1 )
+           else
+              CreateCaret( ::hWnd, 0, 2, ::nGetChrHeight() )
+           endif
+           ShowCaret( ::hWnd )
+           return 0
+
+
+
+
+      case ( nKey == 45 .AND. GetKeyState( 16 ) ) .OR.  ( nKey == ASC("V") .AND. GetKeyState( 17 ) ) .OR.  ( nKey == ASC("X") .AND. GetKeyState( 17 ) ) .AND.  ! lAnd( nFlags, 2 ^ 29 )
+
+          if ! ::lReadOnly
+             CallWindowProc( ::nOldProc, ::hWnd, 256, nKey, nFlags )
+             SysRefresh()
+             if ValType( ::oGet:buffer ) = "C"
+                ::oGet:buffer = Pad( GetWindowText( ::hWnd ), Len( ::oGet:buffer ) )
+                SetWindowText( ::hWnd, ::oGet:buffer )
+             else
+                ::oGet:buffer = GetWindowText( ::hWnd )
+             endif
+             ::oGet:Assign()
+
+
+
+             if ::bChange <> nil
+                Eval( ::bChange, nKey, nFlags, Self )
+             endif
+          endif
+
+          return 0
+
+      case nKey == 36 .OR. nKey == 35
+
+           if GetKeyState( 16 )
+              CallWindowProc( ::nOldProc, ::hWnd, 256, nKey, nFlags )
+
+              ::GetSelPos( @nLo, @nHi )
+              ::oGet:Pos = nLo + 1
+              ::nPos = nLo + 1
+           else
+               if nKey == 36
+                  ::oGet:Home()
+                  ::SetPos( ::oGet:Pos )
+               endif
+
+               if nKey == 35
+                  ::oGet:End()
+                  ::SetPos( ::oGet:Pos )
+               endif
+           endif
+           return 0
+
+      case nKey == 46 .OR. nKey == 8
+
+           if ::lReadOnly
+              return 0
+           endif
+
+           if ::lDrag
+              return ::TControl:KeyDown( nKey, nFlags )
+           endif
+
+           ::GetSelPos( @nLo, @nHi )
+
+
+           if nHi <> nLo
+              ::GetDelSel( nLo, nHi )
+              if GetKeyState( 16 )
+                 CallWindowProc( ::nOldProc, ::hWnd, 256, nKey, nFlags )
+              endif
+           else
+              if nKey == 46
+                 ::oGet:Delete()
+              else
+                 ::oGet:BackSpace()
+              endif
+           endif
+           ::EditUpdate()
+           if ::bChange <> nil
+              Eval( ::bChange, nKey, nFlags, Self )
+           endif
+           return 0
+   endcase
+
+return ::TControl:KeyDown( nKey, nFlags )
+
+
+
+UTILITY STATIC function TGet_KeyChar( nKey, nFlags) ; local Self AS CLASS TGet := QSelf() AS CLASS TGet
+
+   local nHi, nLo
+   local lAccept
+   local bKeyAction := SetKey( nKey )
+   local nDefButton
+
+   if ::bKeyChar <> nil
+      if Eval( ::bKeyChar, nKey, nFlags, Self ) == 0
+         return 0
+      endif
+   endif
+
+   if nKey == 27
+      ::oWnd:KeyChar( nKey, nFlags )
+      return 1
+   endif
+
+   if ! Empty( ::cPicture ) .AND. "@!" $ ::cPicture
+      nKey = Asc( CharUpper( nKey ) )
+   endif
+
+   if bKeyAction <> nil .AND. lAnd( nFlags, 16777216 )
+      Eval( bKeyAction, ProcName( 4 ), ProcLine( 4 ), Self )
+      return 0
+   endif
+
+   if ::lReadOnly
+      if nKey == 27
+         ::oWnd:End()
+      endif
+      return 0
+   endif
+
+   do case
+      case nKey == 8
+           Eval( ::bPostKey, Self, ::oGet:Buffer )
+           return 0
+
+
+
+
+      case nKey == 9 .AND. GetKeyState( 16 )
+           if ::bChange <> nil
+              lAccept = Eval( ::bChange, nKey, nFlags, Self )
+              if ValType( lAccept ) == "L" .AND. lAccept
+                 if Upper( ::oWnd:ClassName() ) == "TCOMBOBOX"
+                    ::oWnd:oWnd:GoPrevCtrl( ::hWnd )
+                 else
+                    ::oWnd:GoPrevCtrl( ::hWnd )
+                 endif
+              endif
+           else
+              if Upper( ::oWnd:ClassName() ) == "TCOMBOBOX"
+                 ::oWnd:oWnd:GoPrevCtrl( ::hWnd )
+              else
+                 ::oWnd:GoPrevCtrl( ::hWnd )
+              endif
+           endif
+           return 0
+
+      case nKey == 9 .OR. nKey == 13
+           if ::bChange <> nil .AND. ( ::oGet:Changed .OR. ::oGet:UnTransform() <> ::oGet:Original )
+              lAccept = Eval( ::bChange, nKey, nFlags, Self )
+              if ValType( lAccept ) == "L"
+                 if lAccept
+                    ::oWnd:GoNextCtrl( ::hWnd )
+                 endif
+              else
+                 ::oWnd:GoNextCtrl( ::hWnd )
+              endif
+           else
+              ::oWnd:GoNextCtrl( ::hWnd )
+           endif
+
+
+               if nKey == 13
+                  ::TControl:KeyChar( nKey, nFlags )
+               endif
+
+
+           return 0
+
+      case nKey >= 32 .AND. nKey < 256
+
+
+
+              if ::oGet:buffer == nil
+                 return 0
+              endif
+
+
+           ::GetSelPos( @nLo, @nHi )
+
+           if nHi <> nLo
+              ::GetDelSel( nLo, nHi )
+              ::EditUpdate()
+           endif
+
+           if ::oGet:Type == "N" .AND.  ( Chr( nKey ) == "." .OR. Chr( nKey ) == "," )
+              if ::oGet:Clear()
+
+
+
+              endif
+              ::oGet:ToDecPos()
+           else
+              if Set( 29 )
+                 ::oGet:Insert( Chr( nKey ) )
+              else
+                 ::oGet:Overstrike( Chr( nKey ) )
+              end
+           endif
+           if ::oGet:Rejected
+              if Set( 26 )
+                 MsgBeep()
+              endif
+           endif
+           ::EditUpdate()
+           if ::oGet:TypeOut
+              if ! Set( 27 )
+                 ::oWnd:nLastKey = 13
+                 ::oWnd:GoNextCtrl( ::hWnd )
+              else
+                 if Set( 26 )
+                    MsgBeep()
+                 endif
+              endif
+           endif
+           if ::bChange <> nil
+              lAccept = Eval( ::bChange, nKey, nFlags, Self )
+              if ValType( lAccept ) == "L" .AND. ! lAccept
+                 return 0
+              endif
+           endif
+           Eval( ::bPostKey, Self, ::oGet:Buffer )
+
+      otherwise
+           return ::TControl:KeyChar( nKey, nFlags )
+   endcase
+
+return 0
+
+
+
+UTILITY STATIC function TGet_lValid() ; local Self AS CLASS TGet := QSelf() AS CLASS TGet
+
+   local lRet := .T.
+
+   if ::oGet:BadDate
+      ::oGet:KillFocus()
+      ::oGet:SetFocus()
+      MsgBeep()
+      return .F.
+   else
+      ::oGet:Assign()
+      if ValType( ::bValid ) == "B"
+         lRet := Eval( ::bValid, Self  )
+         if !lRet
+            ::oWnd:nLastKey = 0
+         endif
+      endif
+   endif
+
+return lRet
+
+
+
+UTILITY STATIC function TGet_LostFocus( hCtlFocus) ; local Self AS CLASS TGet := QSelf() AS CLASS TGet
+
+   local nClrFocus
+
+   ::TControl:LostFocus( hCtlFocus )
+
+   if ! ::lPassword
+      if ::oGet:buffer <> GetWindowText( ::hWnd )
+         ::oGet:buffer  = GetWindowText( ::hWnd )
+         ::oGet:Assign()
+      endif
+   endif
+
+   if ! Empty( ::cPicture ) .AND. ::oGet:Type == "N"
+      ::oGet:Assign()
+      ::oGet:Picture := ::cPicture
+      ::oGet:UpdateBuffer()
+      ::oGet:KillFocus()
+   endif
+
+   ::oGet:SetFocus()
+
+
+   if ! ::oGet:BadDate .AND. ! ::lReadOnly .AND.  ( ::oGet:changed .OR. ::oGet:unTransform() <> ::oGet:original )
+      ::oGet:Assign()
+      ::oGet:UpdateBuffer()
+   endif
+
+
+
+
+
+   if ::lClrFocus
+      ::SetColor( ::nClrText, ::nOldClrPane )
+   endif
+
+   ::DispText()
+
+   if ! ::oGet:BadDate
+      ::oGet:KillFocus()
+   else
+      ::oGet:Pos = 1
+      ::nPos = 1
+   endif
+
+return nil
+
+
+
+UTILITY STATIC function TGet_Paint() ; local Self AS CLASS TGet := QSelf() AS CLASS TGet
+
+   local aInfo := ::DispBegin()
+   local hOldFont
+
+   if ::oBrush <> nil
+      FillRect( ::hDC, GetClientRect( ::hWnd ), ::oBrush:hBrush )
+   else
+      CallWindowProc( ::nOldProc, ::hWnd, 20, ::hDC, 0 )
+   endif
+
+   if IsWindowEnabled( ::hWnd )
+      CallWindowProc( ::nOldProc, ::hWnd, 15, ::hDC, 0 )
+   else
+      if ::lDisColors
+         SetTextColor( ::hDC, GetSysColor( 17 ) )
+         SetBkColor( ::hDC, GetSysColor( 5 ) )
+      else
+         SetTextColor( ::hDC, ::nClrText )
+         SetBkColor( ::hDC, ::nClrPane )
+      endif
+      if ::oFont <> nil
+         hOldFont = SelectObject( ::hDC, ::oFont:hFont )
+      endif
+
+      do case
+         case lAnd( GetWindowLong( ::hWnd, -16 ), 1 )
+              SetTextAlign( ::hDC, 6 )
+              if ::lSpinner
+
+                 ExtTextOut( ::hDC, 1, ( ::nWidth() - 3 - GetSysMetrics( 3 ) ) / 2, { 0, 0, ::nHeight(), ::nWidth() }, GetWindowText( ::hWnd ) )
+              else
+
+                 ExtTextOut( ::hDC, 1, ( ::nWidth() - 3 ) / 2, { 0, 0, ::nHeight(), ::nWidth() }, GetWindowText( ::hWnd ) )
+              endif
+
+         case lAnd( GetWindowLong( ::hWnd, -16 ), 2 )
+              SetTextAlign( ::hDC, 2 )
+              if ::lSpinner
+
+                 ExtTextOut( ::hDC, 1, ::nWidth() - 7 - GetSysMetrics( 3 ), { 0, 0, ::nHeight(), ::nWidth() }, GetWindowText( ::hWnd ) )
+              else
+
+                 ExtTextOut( ::hDC, 1, ::nWidth() - 7, { 0, 0, ::nHeight(), ::nWidth() }, GetWindowText( ::hWnd ) )
+              endif
+
+         otherwise
+              SetTextAlign( ::hDC, 0 )
+
+              ExtTextOut( ::hDC, 1, 2, { 0, 0, ::nHeight(), ::nWidth() }, GetWindowText( ::hWnd ) )
+      endcase
+
+      if ::oFont <> nil
+         SelectObject( ::hDC, hOldFont )
+      endif
+   endif
+
+   if ValType( ::bPainted ) == "B"
+      Eval( ::bPainted, ::hDC, ::cPS, Self )
+   endif
+
+   ::DispEnd( aInfo )
+
+return 1
+
+
+
+UTILITY STATIC function TGet_Paste( cText) ; local Self AS CLASS TGet := QSelf() AS CLASS TGet
+
+   local oClp
+   local cTemp
+
+   oClp := TClipBoard():New( Upper("TEXT"), Self )
+
+   if cText == nil
+      if oClp:Open()
+         cText = oClp:GetText()
+         oClp:Close()
+      else
+         MsgAlert( "The clipboard is not available!" )
+      endif
+   endif
+
+   if ! Empty( cText )
+      cTemp = ::GetText()
+      do case
+         case ValType( cTemp ) == "C"
+
+              ::oGet:Buffer = SubStr( cTemp, 1, ::nPos - 1 ) + Trim( cText ) +  SubStr( cTemp, ::nPos )
+
+         case ValType( cTemp ) == "N"
+              cTemp = cValToChar( cTemp )
+
+              ::oGet:Buffer = Val( SubStr( cTemp, 1, ::nPos - 1 ) + Trim( cText ) +  SubStr( cTemp, ::nPos ) )
+
+         case ValType( cTemp ) == "D"
+              cTemp = cValToChar( cTemp )
+
+              ::oGet:Buffer = CToD( SubStr( cTemp, 1, ::nPos - 1 ) + Trim( cText ) +  SubStr( cTemp, ::nPos ) )
+      endcase
+
+      ::DispText()
+
+
+      if ::bChange <> nil
+         Eval( ::bChange,,, Self )
+      endif
+
+   endif
+
+return nil
+
+
+
+UTILITY STATIC function TGet_DispText() ; local Self AS CLASS TGet := QSelf() AS CLASS TGet
+
+   if ::lPassword .AND. ::oGet:Type == "C"
+
+
+
+
+         SetWindowText( ::hWnd, Replicate( If( IsAppThemed(), Chr( 149 ), "*" ), Len( Trim( ::oGet:buffer ) ) ) )
+
+   else
+      SetWindowText( ::hWnd, ::oGet:buffer )
+   endif
+
+return nil
+
+
+
+UTILITY STATIC function TGet_Move( nTop, nLeft, nBottom, nRight, lRepaint) ; local Self AS CLASS TGet := QSelf() AS CLASS TGet
+
+   ::TControl:Move( nTop, nLeft, nBottom, nRight, lRepaint )
+   MoveGet( ::hWnd, ::nRight - ::nLeft, ::nBottom - ::nTop )
+
+return nil
+
+
+
+UTILITY STATIC function TGet_GoHome() ; local Self AS CLASS TGet := QSelf() AS CLASS TGet
+
+   ::oGet:Home()
+   if ::oGet:Type == "N"
+      ::oGet:Clear := .T.
+   endif
+   ::SetPos( ::oGet:Pos )
+
+return Self
+
+
+
+UTILITY STATIC function TGet_GotFocus( hCtlLost) ; local Self AS CLASS TGet := QSelf() AS CLASS TGet
+
+    ::lFocused = .T.
+
+
+       ::oGet:VarGet()
+
+
+
+
+
+
+    if ! Empty( ::cPicture ) .AND. ::oGet:Type == "N"
+       ::oGet:Picture := StrTran( ::cPicture, ",", "" )
+    endif
+
+    if ! ::lDrag
+       ::oGet:KillFocus()
+       ::oGet:SetFocus()
+       if Upper( ::oWnd:ClassName() ) == "TCOMBOBOX"
+          ::oGet:Buffer := ::oGet:Original
+       endif
+       if ::lClrFocus
+          ::nOldClrPane = ::nClrPane
+
+          ::SetColor( ::nClrText, If( ValType( ::nClrFocus ) == "B", Eval( ::nClrFocus ), ::nClrFocus ) )
+       endif
+       ::DispText()
+       if ::oGet:Type $ "DN" .OR. ::oGet:Pos <> 1
+          ::nPos := ::oGet:Pos
+       endif
+       ::oGet:Pos := ::nPos
+       ::SetPos( ::nPos )
+       CallWindowProc( ::nOldProc, ::hWnd, 7 )
+       if Set( 29 )
+          DestroyCaret()
+          CreateCaret( ::hWnd, 0, 6, ::nGetChrHeight() - 1 )
+          ShowCaret( ::hWnd )
+       endif
+    else
+       HideCaret( ::hWnd )
+    endif
+
+    ::TControl:GotFocus( hCtlLost )
+
+return 0
+
+
+
+UTILITY STATIC function TGet_LButtonDown( nRow, nCol, nFlags) ; local Self AS CLASS TGet := QSelf() AS CLASS TGet
+
+   local nLo, nHi
+
+   if ::lDrag
+      return ::TControl:LButtonDown( nRow, nCol, nFlags )
+   else
+
+      CallWindowProc( ::nOldProc, ::hWnd, 513, nFlags, nMakeLong( nCol, nRow ) )
+      ::GetSelPos( @nLo, @nHi )
+      ::nPos = nHi + 1
+      if ::oGet:Type <> "N" .AND. ::nPos == 1
+         ::oGet:Home()
+         ::SetPos( ::oGet:Pos )
+      else
+         ::oGet:Pos = ::nPos
+      endif
+      if ::bLClicked <> nil
+         Eval( ::bLClicked )
+      endif
+      return 1
+   endif
+
+return nil
+
+
+
+UTILITY STATIC function TGet_LButtonUp( nRow, nCol, nFlags) ; local Self AS CLASS TGet := QSelf() AS CLASS TGet
+
+   local nLo, nHi, cText
+
+   if ::lDrag
+      ::TControl:LButtonUp( nRow, nCol, nFlags )
+      SysRefresh()
+      ::Refresh()
+      return 0
+   else
+      cText = ::GetText()
+      If Left( cText, 1 ) == "("
+         ::nPos = 2
+         ::SetPos( ::nPos )
+
+
+      elseif Empty( cText ) .OR. RTrim( cText ) == "  /  /" .OR.  AllTrim( cText ) == "0" .OR.  RTrim( cText ) == "   -  -"
+         ::nPos = 1
+         ::SetPos( ::nPos )
+      else
+         ::GetSelPos( @nLo, @nHi )
+         ::oGet:pos = nHi + 1
+         ::nPos = ::oGet:pos
+      endif
+   endif
+
+return nil
+
+
+
+UTILITY STATIC function TGet_KeyUp( nVKey, nFlags) ; local Self AS CLASS TGet := QSelf() AS CLASS TGet
+
+   local nLo
+
+
+   if ( nVKey == 45 .AND. GetKeyState( 16 ) ) .OR.  ( nVKey == 86 .AND. GetKeyState( 17 ) )
+      nLo = Len( ::oGet:buffer )
+      ::oGet:buffer = Pad( GetWindowText( ::hWnd ), nLo )
+      if ::SendMsg( 176 ) <> 0
+         ::oGet:pos = Min( nHiWord( ::SendMsg( 176 ) ) + 1, nLo )
+      else
+
+      endif
+      ::EditUpdate()
+   elseif nVKey == 38 .OR. nVKey == 40
+         return 1
+
+   endif
+
+return nil
+
+
+
+UTILITY STATIC function TGet_RButtonDown( nRow, nCol, nFlags) ; local Self AS CLASS TGet := QSelf() AS CLASS TGet
+
+   if GetFocus() <> ::hWnd
+      ::SetFocus()
+      SysRefresh()
+      if GetFocus() <> ::hWnd
+         return nil
+      endif
+   endif
+
+   if ::bRClicked <> nil
+      return Eval( ::bRClicked, nRow, nCol, nFlags )
+   endif
+
+return nil
+
+
+
+UTILITY STATIC function TGet_Resize( nType, nWidth, nHeight) ; local Self AS CLASS TGet := QSelf() AS CLASS TGet
+
+   if ::lDrag
+      ::Refresh()
+   endif
+
+return ::TControl:ReSize( nType, nWidth, nHeight )
+
+
+
+UTILITY STATIC function TGet_SelFile( cMask, cTitle) ; local Self AS CLASS TGet := QSelf() AS CLASS TGet
+
+   local cFileName := Eval( ::bSetGet )
+
+
+   IIF( cFileName == nil, cFileName := "*.*", ) ; IIF( cMask == nil, cMask := cFileName, ); IIF( cTitle == nil, cTitle := "Please select a file", );
+
+   cFileName = cGetFile( cMask, cTitle )
+
+   if ! Empty( cFileName )
+      ::VarPut( cFileName )
+      ::Refresh()
+   endif
+
+return cFileName
+
+
+
+UTILITY STATIC function TGet__SetPos(nStart, nEnd) ; local Self AS CLASS TGet := QSelf() AS CLASS TGet
+
+   IIF( nStart == nil, nStart := 1, ) ; IIF( nEnd == nil, nEnd := nStart, );
+
+
+
+
+
+
+
+      ::SendMsg( 177, nStart - If( nStart > 0, 1, 0 ), nEnd - If( nEnd > 0, 1, 0 ) )
+
+
+   ::nPos := nStart
+   if ::lFocused
+      ::oGet:Pos = nStart
+   endif
+
+return nil
+
+
+
+UTILITY STATIC function TGet_Cut() ; local Self AS CLASS TGet := QSelf() AS CLASS TGet
+
+   local nLo, nHi, cTemp
+
+   if ::lReadOnly
+      MsgAlert( "The get is read only!", "Can't cut" )
+      return nil
+   endif
+
+   ::Copy()
+   ::GetSelPos( @nLo, @nHi )
+
+   if nHi <> nLo
+      ::GetDelSel( nLo, nHi )
+   endif
+
+   ::EditUpdate()
+   cTemp = ::VarGet()
+
+   do case
+      case ValType( cTemp ) == "C"
+           Eval( ::bSetGet, ::GetText() )
+
+      case ValType( cTemp ) == "N"
+           Eval( ::bSetGet, Val( ::GetText() ) )
+
+      case ValType( cTemp ) == "D"
+           Eval( ::bSetGet, CToD( ::GetText() ) )
+   endcase
+
+   ::EditUpdate()
+
+
+   if ::bChange <> nil
+      Eval( ::bChange,,, Self )
+   endif
+
+return nil
+
+
+
+UTILITY STATIC function TGet_Inc() ; local Self AS CLASS TGet := QSelf() AS CLASS TGet
+
+   LOCAL xValue
+
+   if ! ::oGet:BadDate .AND. ! ::lReadOnly
+      ::oGet:Assign()
+      ::oGet:UpdateBuffer()
+   endif
+
+
+      xValue := ::Value
+
+
+
+
+   if Valtype( xValue ) $ "ND"
+
+      if Valtype( xValue ) == "N"
+         ::ScrollNumber( 1 )
+      else
+         ::ScrollDate( 1 )
+      endif
+
+
+         if ::Value <> xValue .AND. ::bChange <> nil
+
+
+
+         Eval( ::bChange,,, Self )
+      endif
+
+   endif
+
+RETURN Self
+
+
+
+UTILITY STATIC function TGet_Dec() ; local Self AS CLASS TGet := QSelf() AS CLASS TGet
+
+   LOCAL xValue
+
+   if ! ::oGet:BadDate .AND. ! ::lReadOnly
+      ::oGet:Assign()
+      ::oGet:UpdateBuffer()
+   endif
+
+
+      xValue := ::Value
+
+
+
+
+   if Valtype( xValue ) $ "ND"
+
+      if Valtype( xValue ) == "N"
+         ::ScrollNumber( -1 )
+      else
+         ::ScrollDate( -1 )
+      endif
+
+
+         if ::Value <> xValue .AND. ::bChange <> nil
+
+
+
+         Eval( ::bChange,,, Self )
+      endif
+
+   endif
+
+RETURN Self
+
+
+
+UTILITY STATIC function TGet_Spinner( bUp, bDown, bMin, bMax) ; local Self AS CLASS TGet := QSelf() AS CLASS TGet
+
+   If ::lReadOnly
+      return nil
+   Endif
+
+   ::bMin := bMin
+   ::bMax := bMax
+
+   ::oVScroll := TScrollBar():WinNew(,,, (!.F.) .OR. .T., Self,,,,,,,,, .F.,, )
+
+
+
+      IIF( bUp == nil, bUp := {|| Self++ }, ) ; IIF( bDown == nil, bDown := {|| Self-- }, );
+
+
+
+
+
+
+   ::oVScroll:bGoUp   := {|| If( GetFocus() <> ::hWnd, ::SetFocus(),), Eval( bUp ) }
+
+   ::oVScroll:bGoDown := {|| If( GetFocus() <> ::hWnd, ::SetFocus(),), Eval( bDown ) }
+
+RETURN NIL
+
+
+
+UTILITY STATIC function TGet_ScrollDate( nDirection) ; local Self AS CLASS TGet := QSelf() AS CLASS TGet
+
+   LOCAL cFormat, cDate, cType
+   LOCAL dDate
+   LOCAL nYear, nDay, nMonth, nPos
+
+
+      dDate := ::Value
+
+
+
+
+   nPos    := ::nPos
+   cFormat := Set( 4, "yyyy.mm.dd" )
+   nYear   := Year( dDate )
+   nMonth  := Month( dDate )
+   nDay    := Day( dDate )
+   cType   := Upper( Substr( cFormat, nPos, 1 ) )
+
+   If ! cType $ "MDY" .AND. nPos > 1
+      cType = Upper( Substr( cFormat, nPos - 1, 1 ) )
+   Endif
+
+   do case
+   case cType == "D"
+      dDate += nDirection
+   case cType == "M"
+      nMonth += nDirection
+      if nMonth > 12
+         nMonth := 1
+         nYear  ++
+      elseif nMonth < 1
+         nMonth := 12
+         nYear  --
+      endif
+      cDate  := Str( nYear, 4 ) + "." + StrZero( nMonth, 2 ) + "." + StrZero( nDay, 2 )
+      dDate  := Ctod(cDate)
+      If Empty( dDate )
+         nDay  := LastDay( Ctod( Str( nYear, 4 ) + "." + StrZero( nMonth, 2 ) + ".01" ) )
+         cDate := Str( nYear, 4 ) + "." + StrZero( nMonth, 2 ) + "." + StrZero( nDay, 2 )
+         dDate := Ctod(cDate)
+      Endif
+   case cType == "Y"
+      nYear += nDirection
+      cDate := Str( nYear, 4 ) + "." + StrZero( nMonth, 2 ) + "." + StrZero( nDay, 2 )
+      dDate := Ctod(cDate)
+   end
+
+   Set( 4, cFormat )
+
+   if nDirection > 0
+      if ::bMax <> NIL .AND. dDate > Eval( ::bMax )
+         MessageBeep()
+      else
+         ::cText( dDate )
+      endif
+   else
+      if ::bMin <> NIL .AND. dDate < Eval( ::bMin )
+         MessageBeep()
+      else
+         ::cText( dDate )
+      endif
+   endif
+
+
+   do case
+   case cType == "D"
+      ::SetSel( 0, 2 )
+   case cType == "M"
+      ::SetSel( 3, 5 )
+      ::nPos := 5
+   case cType == "Y"
+      ::SetSel( 6, 12 )
+      ::nPos := Len(cDate) - 1
+   end
+
+
+
+
+
+RETURN nil
+
+
+
+UTILITY STATIC function TGet_ScrollNumber( nDirection) ; local Self AS CLASS TGet := QSelf() AS CLASS TGet
+
+   LOCAL nValue, nDec, nPos
+
+
+      nValue := ::Value
+
+
+
+
+   nPos := ::nPos
+
+   if !Empty( ::oGet:DecPos ) .AND. nPos >= ::oGet:DecPos
+      nDec   := Max( 1, nPos - ::oGet:DecPos - 1 )
+      If nDirection > 0
+         nValue += 1 / ( 10 ^ nDec )
+      else
+         nValue -= 1 / ( 10 ^ nDec )
+      Endif
+   else
+      nValue += nDirection
+   endif
+
+   if nDirection > 0
+      if ::bMax <> NIL .AND. nValue > Eval( ::bMax )
+         MessageBeep()
+      else
+         ::cText( nValue )
+      endif
+   else
+      if ::bMin <> NIL .AND. nValue < Eval( ::bMin )
+         MessageBeep()
+      else
+         ::cText( nValue )
+      endif
+   endif
+
+   ::oGet:KillFocus()
+   ::oGet:SetFocus()
+   ::SetPos( nPos )
+
+RETURN nil
+
+
+
+UTILITY STATIC function TGet_SetColorFocus( nClrFocus) ; local Self AS CLASS TGet := QSelf() AS CLASS TGet
+
+   ::lClrFocus = .T.
+   ::nClrFocus = nClrFocus
+
+return nil
+
+
+
+function SetGetColorFocus( nClrFocus )
+
+   local oGet := TGet()
+
+   oGet:lClrFocus = .T.
+   if nClrFocus <> nil
+      oGet:nClrFocus = nClrFocus
+   endif
+
+return nil
+
+
+
+static function LastDay( dDate )
+
+   local nMonth := Month( dDate )
+
+   while Month( dDate ) == nMonth
+      dDate++
+   end
+
+   dDate--
+
+return Day( dDate )

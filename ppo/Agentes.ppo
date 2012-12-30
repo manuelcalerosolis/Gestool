@@ -1,0 +1,1825 @@
+#line 112 "hbclass.ch"
+   DYNAMIC DivertConstructorCall
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+DECLARE HBClass  New( cName AS String, OPTIONAL SuperParams ) AS CLASS HBClass  Create() AS Object  Instance() AS Object  AddClsMethod( cName AS String, @MethodName(), nScope AS Numeric, n2 AS Numeric, n3 AS Numeric )  AddDelegate( cName AS String, cDelegate AS String, cObject AS String, nScope AS Numeric, lPersistent AS LOGICAL )  AddMultiClsData( cType AS String, uVal, nScope AS Numeric, aDatas AS Array OF String )  AddMultiData( cType AS String, uVal, nScope AS Numeric, aDatas AS Array OF String, x AS LOGICAL, lPer AS LOGICAL )  AddMethod( cName AS String, @MethodName(), nScope AS Numeric, lPersistent AS LOGICAL )  AddInLine( cName AS String, bBlock AS CodeBlock, nScope AS Numeric, lPersistent AS LOGICAL )  AddVirtual( cName AS String )  ModMethod( cName AS String, @MethodName(), nScope AS Numeric, lPersistent AS LOGICAL )  ModClsMethod( cName AS String, @MethodName(), nScope AS Numeric )  ModInline( cName AS String, bBlock AS CodeBlock, nScope AS Numeric, lPersistent AS LOGICAL )  SetOnError( @MethodName() )
+#line 85 "\Fwh1204\Include\FiveWin.Ch"
+   EXTERNAL GetProcAdd
+   EXTERNAL TActiveX
+
+
+
+
+extern errorsys
+#line 38 ".\Prg\Agentes.prg"
+static cTmpCom
+static cTmpRel
+static oWndBrw
+static lOpenFiles := .F.
+static bEdit      := { |aTmp, aoGet, dbfAge, oBrw, bWhen, bValid, nMode | EdtRec( aTmp, aoGet, dbfAge, oBrw, bWhen, bValid, nMode ) }
+static bEdtDet    := { |aTmp, aoGet, dbfAge, oBrw, bWhen, bValid, nMode | EdtDet( aTmp, aoGet, dbfAge, oBrw, bWhen, bValid, nMode ) }
+static bEdtRel    := { |aTmp, aoGet, dbfAge, oBrw, cCodAge, bValid, nMode | EdtRel( aTmp, aoGet, dbfAge, oBrw, cCodAge, bValid, nMode ) }
+
+
+
+static dbfAge
+static dbfAgeCom
+static dbfAgeRel
+static dbfProvee
+static dbfArticulo
+
+static dbfTmpCom
+static dbfTmpRel
+
+
+
+
+
+
+
+FUNCTION Agentes( oMenuItem, oWnd )
+
+   local nLevel
+
+   IIF( oMenuItem == nil, oMenuItem := "01033", ) ;
+   IIF( oWnd == nil, oWnd := oWnd(), ) ;
+
+   if oWndBrw == NIL
+
+   nLevel               := nLevelUsr( oMenuItem )
+   if nAnd( nLevel, 1 ) <> 0
+      msgStop( "Acceso no permitido." )
+      return nil
+   end
+
+
+
+
+
+   if oWnd <> nil
+      SysRefresh(); oWnd:CloseAll(); SysRefresh()
+   end
+
+   if !OpenFiles()
+      return .F.
+   end
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+   oWndBrw := TShell():New( 2, 10, 18, 70, "Agentes",, oWnd,,, .F.,,, ( dbfAge ),,,,, {"Código",    "Apellidos" ,    "Nombre"}, {||( WinAppRec( oWndBrw:oBrw, bEdit, dbfAge ) )}, {||( WinEdtRec( oWndBrw:oBrw, bEdit, dbfAge ) )}, {||( DBDelRec(  oWndBrw:oBrw, dbfAge ) )}, {||( WinDupRec( oWndBrw:oBrw, bEdit, dbfAge ) )}, nil, nLevel, "Security_Agent_16",,,, .T. )
+
+      with object ( oWndBrw:AddXCol() )
+         :cHeader          := "Código"
+         :cSortOrder       := "cCodAge"
+         :bEditValue       := {|| ( dbfAge )->cCodAge }
+         :nWidth           := 60
+         :bLClickHeader    := {| nMRow, nMCol, nFlags, oCol | oWndBrw:ClickOnHeader( oCol ) }
+      end
+
+      with object ( oWndBrw:AddXCol() )
+         :cHeader          := "Apellidos"
+         :cSortOrder       := "cApeAge"
+         :bEditValue       := {|| ( dbfAge )->cApeAge }
+         :nWidth           := 200
+         :bLClickHeader    := {| nMRow, nMCol, nFlags, oCol | oWndBrw:ClickOnHeader( oCol ) }
+      end
+
+      with object ( oWndBrw:AddXCol() )
+         :cHeader          := "Nombre"
+         :cSortOrder       := "cNbrAge"
+         :bEditValue       := {|| ( dbfAge )->cNbrAge }
+         :nWidth           := 200
+         :bLClickHeader    := {| nMRow, nMCol, nFlags, oCol | oWndBrw:ClickOnHeader( oCol ) }
+      end
+
+      oWndBrw:CreateXFromCode()
+
+
+
+
+
+      oWndBrw:NewAt( "BUS",,, {||( oWndBrw:SearchSetFocus() )}, "(B)uscar", "B",,,,, .F. )
+
+      oWndBrw:AddSeaBar()
+
+
+
+
+
+
+
+
+      oWndBrw:NewAt( "NEW",,, {||( oWndBrw:RecAdd() )}, "(A)ñadir", "A",,, 2,, .F. )
+
+
+
+
+
+
+        oWndBrw:NewAt( "DUP",,, {||( oWndBrw:RecDup() )}, "(D)uplicar", "D",,, 2,, .F. )
+
+
+
+
+
+
+        oWndBrw:NewAt( "EDIT",,, {||( oWndBrw:RecEdit() )}, "(M)odificar", "M",,, 4,, .F. )
+
+
+
+
+
+
+        oWndBrw:NewAt( "ZOOM",,, {||( WinZooRec( oWndBrw:oBrw, bEdit, dbfAge ) )}, "(Z)oom", "Z",,,,, .F. )
+
+
+
+
+
+        oWndBrw:NewAt( "DEL",,, {||( oWndBrw:RecDel() )}, "(E)liminar", "E",,, 16,, .F. )
+
+      if oUser():lAdministrador()
+
+
+
+
+
+      oWndBrw:NewAt( "BMPCHG",,, {||( TDlgFlt():New( aItmAge(), dbfAge ):ChgFields() )}, "Cambiar campos",,,, 2,, .F. )
+
+      end
+
+
+
+
+
+
+
+      oWndBrw:NewAt( "IMP",,, {||( InfAge():New( "Listado de agentes" ):Play() )}, "(L)istado", "L",,,,, .F. )
+
+
+
+
+
+
+
+      oWndBrw:NewAt( "END",,, {||( oWndBrw:End() )}, "(S)alir", "S",,,,, .F. )
+
+      oWndBrw:Activate(, oWndBrw:bLClicked, oWndBrw:bRClicked, oWndBrw:bMoved, oWndBrw:bResized, oWndBrw:bPainted, oWndBrw:bKeyDown, oWndBrw:bInit,,,,,,,,, {|| ( CloseFiles() )},, oWndBrw:bLButtonUp )
+
+   end
+
+RETURN NIL
+
+
+
+STATIC FUNCTION EdtRec( aTemp, aoGet, dbfAge, oBrw, bWhen, bValid, nMode )
+
+    local oDlg
+   local oFld
+   local oBrwLin
+   local oBrwRel
+   local oBmpGeneral
+   local oBmpComisiones
+
+
+
+
+
+   if lPreEdit( aTemp, nMode )
+      Return .F.
+   end
+
+   oDlg = TDialog():New(,,,, LblTitle( nMode ) + "Agentes : " + cNombreAgente( aTemp ), "AGENTES",, .F.,,,,,, .F.,,,,,, .F., )
+
+
+
+
+
+
+
+
+
+        oFld := TFolder():ReDefine( 500, {"General"      , "Comisiones"   , "Relaciones"}, { "AGENTES_1","AGENTES_2","AGENTES_3" }, oDlg,,,,, .F., )
+
+
+
+
+
+
+
+
+
+      oBmpGeneral := TBitmap():ReDefine( 500, "Security_Agent_48_Alpha",, oFld:aDialogs[1],,, .F., .F.,,, .F.,,, .T. )
+
+
+
+
+
+      aoGet[ 1 ] := TGetHlp():ReDefine( 100, { | u | If( PCount()==0, aTemp[ 1 ], aTemp[ 1 ]:= u ) }, oFld:aDialogs[1],, "@!",,,,,,, .F., {||     ( nMode == 1 .OR. nMode == 4 )},, .F., .F.,,,,,, nil,,, )
+
+
+
+
+
+      aoGet[ 2 ] := TGetHlp():ReDefine( 101, { | u | If( PCount()==0, aTemp[ 2 ], aTemp[ 2 ]:= u ) }, oFld:aDialogs[1],, "@!",,,,,,, .F., {||     ( nMode <> 3 )},, .F., .F.,,,,,, nil,,, )
+
+
+
+
+
+      aoGet[ 3 ] := TGetHlp():ReDefine( 102, { | u | If( PCount()==0, aTemp[ 3 ], aTemp[ 3 ]:= u ) }, oFld:aDialogs[1],, "@!",,,,,,, .F., {||     ( nMode <> 3 )},, .F., .F.,,,,,, nil,,, )
+
+
+
+
+        TGetHlp():ReDefine( 103, { | u | If( PCount()==0, aTemp[ 4 ], aTemp[ 4 ]:= u ) }, oFld:aDialogs[1],,,,,,,,, .F., {||     ( nMode <> 3 )},, .F., .F.,,,,,, nil,,, )
+
+
+
+
+        TGetHlp():ReDefine( 104, { | u | If( PCount()==0, aTemp[ 5 ], aTemp[ 5 ]:= u ) }, oFld:aDialogs[1],,,,,,,,, .F., {||     ( nMode <> 3 )},, .F., .F.,,,,,, nil,,, )
+
+
+
+
+        TGetHlp():ReDefine( 105, { | u | If( PCount()==0, aTemp[ 6 ], aTemp[ 6 ]:= u ) }, oFld:aDialogs[1],,,,,,,,, .F., {||     ( nMode <> 3 )},, .F., .F.,,,,,, nil,,, )
+
+
+
+
+        TGetHlp():ReDefine( 106, { | u | If( PCount()==0, aTemp[ 7 ], aTemp[ 7 ]:= u ) }, oFld:aDialogs[1],,,,,,,,, .F., {||     ( nMode <> 3 )},, .F., .F.,,,,,, nil,,, )
+
+
+
+
+        TGetHlp():ReDefine( 107, { | u | If( PCount()==0, aTemp[ 8 ], aTemp[ 8 ]:= u ) }, oFld:aDialogs[1],,,,,,,,, .F., {||     ( nMode <> 3 )},, .F., .F.,,,,,, nil,,, )
+
+
+
+
+
+        TGetHlp():ReDefine( 108, { | u | If( PCount()==0, aTemp[ 9 ], aTemp[ 9 ]:= u ) }, oFld:aDialogs[1],, "############",,,,,,, .F., {||     ( nMode <> 3 )},, .F., .F.,,,,,, nil,,, )
+
+
+
+
+
+      TGetHlp():ReDefine( 113, { | u | If( PCount()==0, aTemp[ 11 ], aTemp[ 11 ]:= u ) }, oFld:aDialogs[1],, "############",,,,,,, .F., {||     ( nMode <> 3 )},, .F., .F.,,,,,, nil,,, )
+
+
+
+
+
+        TGetHlp():ReDefine( 109, { | u | If( PCount()==0, aTemp[ 10 ], aTemp[ 10 ]:= u ) }, oFld:aDialogs[1],, "############",,,,,,, .F., {||     ( nMode <> 3 )},, .F., .F.,,,,,, nil,,, )
+
+
+
+
+      TGetHlp():ReDefine( 114, { | u | If( PCount()==0, aTemp[ 16 ], aTemp[ 16 ]:= u ) }, oFld:aDialogs[1],,,,,,,,, .F., {||     ( nMode <> 3 )},, .F., .F.,,,,,, nil,,, )
+
+
+
+
+
+      TMultiGet():ReDefine( 112, { | u | If( PCount()==0, aTemp[ 13 ], aTemp[ 13 ]:= u ) }, oFld:aDialogs[1],,,,,,, .F., {||         ( nMode <> 3 )}, .F.,, )
+
+
+
+
+
+
+
+
+      aoGet[ 21 ] := TGetHlp():ReDefine( 320, { | u | If( PCount()==0, aTemp[ 21 ], aTemp[ 21 ]:= u ) }, oFld:aDialogs[1],,, {||    ( cProvee( aoGet[ 21 ], dbfProvee, aoGet[ 21 ]:oHelpText ) )},,,,,, .F., {||     ( nMode <> 3 )},, .F., .F.,,,,, {|Self|( BrwProvee( aoGet[ 21 ], aoGet[ 21 ]:oHelpText ) )}, nil, "LUPA",, 330 )
+
+
+
+
+
+
+
+
+      aoGet[ 22 ] := TGetHlp():ReDefine( 340, { | u | If( PCount()==0, aTemp[ 22 ], aTemp[ 22 ]:= u ) }, oFld:aDialogs[1],,, {||    cArticulo( aoGet[ 22 ], dbfArticulo, aoGet[ 22 ]:oHelpText )},,,,,, .F., {||     ( nMode <> 3 )},, .F., .F.,,,,, {|Self|BrwArticulo( aoGet[ 22 ], aoGet[ 22 ]:oHelpText )}, nil, "LUPA",, 350 )
+
+
+
+
+
+
+
+
+
+      oBmpComisiones := TBitmap():ReDefine( 500, "Symbol_Percent_48_Alpha",, oFld:aDialogs[2],,, .F., .F.,,, .F.,,, .T. )
+
+
+
+
+
+
+      TGetHlp():ReDefine( 120, { | u | If( PCount()==0, aTemp[ 15 ], aTemp[ 15 ]:= u ) }, oFld:aDialogs[2],, "@E 999.99",,,,,,, .F., {||     ( nMode <> 3 )},, .F., .T.,,,,,, nil,,, )
+
+
+
+
+
+      oBrwLin                 := IXBrowse():New( oFld:aDialogs[2] )
+
+      oBrwLin:bClrSel         := {|| { 0, ( 229 + ( 229 * 256 ) + ( 229 * 65536 ) ) } }
+      oBrwLin:bClrSelFocus    := {|| { 0, ( 167 + ( 205 * 256 ) + ( 240 * 65536 ) ) } }
+
+      oBrwLin:cAlias          := dbfTmpCom
+      oBrwLin:nMarqueeStyle   := 5
+
+      with object ( oBrwLin:AddCol() )
+         :cHeader          := "Hasta"
+         :bEditValue       := {|| ( dbfTmpCom )->nImpVta }
+         :cEditPicture     := PicOut()
+         :nWidth           := 120
+         :nDataStrAlign    := 1
+         :nHeadStrAlign    := 1
+      end
+
+      with object ( oBrwLin:AddCol() )
+         :cHeader          := "% Comisión"
+         :bEditValue       := {|| ( dbfTmpCom )->nPctCom }
+         :cEditPicture     := "@E 999.99"
+         :nWidth           := 60
+         :nDataStrAlign    := 1
+         :nHeadStrAlign    := 1
+      end
+
+      if nMode <> 3
+         oBrwLin:bLDblClick   := {|| WinEdtRec( oBrwLin, bEdtDet, dbfTmpCom ) }
+      end
+
+      oBrwLin:CreateFromResource( 310 )
+
+
+
+
+
+      TButton():ReDefine( 501, {||( WinAppRec( oBrwLin, bEdtDet, dbfTmpCom ) )}, oFld:aDialogs[2],,, .F., {||     ( nMode <> 3 )},,, .F. )
+
+
+
+
+
+      TButton():ReDefine( 502, {||( WinEdtRec( oBrwLin, bEdtDet, dbfTmpCom ) )}, oFld:aDialogs[2],,, .F., {||     ( nMode <> 3 )},,, .F. )
+
+
+
+
+
+      TButton():ReDefine( 503, {||( dbDelRec( oBrwLin, dbfTmpCom ) )}, oFld:aDialogs[2],,, .F., {||     ( nMode <> 3 )},,, .F. )
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+      aoGet[ 19 ] := TGetHlp():ReDefine( 350, { | u | If( PCount()==0, aTemp[ 19 ], aTemp[ 19 ]:= u ) }, oFld:aDialogs[2],, ( Replicate( "X", nLenSubcuentaContaplus() ) ), {||    ( MkSubCta( aoGet[ 19 ], {  aTemp[ 19    ], Rtrim( aTemp[ 3 ] ) + Space( 1 ) + Rtrim( aTemp[ 2 ] ), aTemp[ 4   ], aTemp[ 5   ], aTemp[ 6   ], aTemp[ 7     ], aTemp[ 8   ], aTemp[ 9   ], aTemp[ 10   ], aTemp[ 16  ] }, aoGet[ 19 ]:oHelpText ) )},,,,,, .F., {||     ( nLenCuentaContaplus() <> 0 .AND. nMode <> 3 )},, .F., .F.,,,,, {|Self|( BrwChkSubCta( aoGet[ 19 ], aoGet[ 19 ]:oHelpText ) )}, nil, "LUPA",, 351 )
+
+
+
+
+
+
+
+
+
+      aoGet[ 20 ] := TGetHlp():ReDefine( 360, { | u | If( PCount()==0, aTemp[ 20 ], aTemp[ 20 ]:= u ) }, oFld:aDialogs[2],, ( Replicate( "X", nLenSubcuentaContaplus() ) ), {||    ( MkSubCta( aoGet[ 20 ], nil, aoGet[ 20 ]:oHelpText ) )},,,,,, .F., {||     ( nLenCuentaContaplus() <> 0 .AND. nMode <> 3 )},, .F., .F.,,,,, {|Self|( BrwChkSubCta( aoGet[ 20 ], aoGet[ 20 ]:oHelpText ) )}, nil, "LUPA",, 361 )
+
+
+
+
+
+      oBrwRel                 := IXBrowse():New( oFld:aDialogs[3] )
+
+      oBrwRel:bClrSel         := {|| { 0, ( 229 + ( 229 * 256 ) + ( 229 * 65536 ) ) } }
+      oBrwRel:bClrSelFocus    := {|| { 0, ( 167 + ( 205 * 256 ) + ( 240 * 65536 ) ) } }
+
+      oBrwRel:cAlias          := dbfTmpRel
+      oBrwRel:nMarqueeStyle   := 5
+
+      with object ( oBrwRel:AddCol() )
+         :cHeader          := "Código"
+         :bEditValue       := {|| ( dbfTmpRel )->cCodRel }
+         :nWidth           := 60
+      end
+
+      with object ( oBrwRel:AddCol() )
+         :cHeader          := "Agente"
+         :bEditValue       := {|| cNbrAgent( ( dbfTmpRel )->cCodRel, dbfAge ) }
+         :nWidth           := 240
+      end
+
+      with object ( oBrwRel:AddCol() )
+         :cHeader          := "% Comisión"
+         :bEditValue       := {|| ( dbfTmpRel )->nComRel }
+         :cEditPicture     := "@E 999.99"
+         :nWidth           := 60
+         :nDataStrAlign    := 1
+         :nHeadStrAlign    := 1
+      end
+
+      if nMode <> 3
+         oBrwRel:bLDblClick   := {|| WinEdtRec( oBrwRel, bEdtRel, dbfTmpRel, aTemp[ 1 ] ) }
+      end
+
+      oBrwRel:CreateFromResource( 310 )
+
+
+
+
+
+      TButton():ReDefine( 501, {||( WinAppRec( oBrwRel, bEdtRel, dbfTmpRel, aTemp[ 1 ] ) )}, oFld:aDialogs[3],,, .F., {||     ( nMode <> 3 )},,, .F. )
+
+
+
+
+
+      TButton():ReDefine( 502, {||( WinEdtRec( oBrwRel, bEdtRel, dbfTmpRel, aTemp[ 1 ] ) )}, oFld:aDialogs[3],,, .F., {||     ( nMode <> 3 )},,, .F. )
+
+
+
+
+
+      TButton():ReDefine( 503, {||( dbDelRec( oBrwRel, dbfTmpRel ) )}, oFld:aDialogs[3],,, .F., {||     ( nMode <> 3 )},,, .F. )
+
+
+
+
+
+
+
+
+
+      TButton():ReDefine( 1, {||( lPreSave( aTemp, aoGet, dbfAge, oBrw, oBrwLin, nMode, oDlg ) )}, oDlg,,, .F., {||     ( nMode <> 3 )},,, .F. )
+
+
+
+
+
+      TButton():ReDefine( 2, {||( oDlg:end() )}, oDlg,,, .F.,,,, .T. )
+
+      if nMode <> 3
+         oDlg:AddFastKey( 116, {|| lPreSave( aTemp, aoGet, dbfAge, oBrw, oBrwLin, nMode, oDlg ) } )
+      end
+
+      oDlg:bStart := {|| EvalGet( aoGet, nMode ) }
+
+   oDlg:Activate( oDlg:bLClicked, oDlg:bMoved, oDlg:bPainted, .T.,,,, oDlg:bRClicked,,, )
+
+   oBmpGeneral:End()
+   oBmpComisiones:End()
+
+RETURN ( oDlg:nResult == 1 )
+
+
+
+Static Function lPreEdit( aTmp, nMode )
+
+   local lErrors  := .F.
+   local cDbfCom  := "AgeCom"
+   local cDbfRel  := "AgeRel"
+   local cCodAge  := aTmp[ 1 ]
+   local oError
+   local oBlock
+
+   oBlock         := ErrorBlock( {| oError | ApoloBreak( oError ) } )
+   BEGIN SEQUENCE
+
+      cTmpCom     := cGetNewFileName( cPatTmp() + cDbfCom )
+
+
+
+
+
+      dbCreate( cTmpCom, aSqlStruct( aItmCom() ), cLocalDriver() )
+      dbUseArea( .T., cLocalDriver(), cTmpCom, cCheckArea( cDbfCom, @dbfTmpCom ), .F. )
+      ( dbfTmpCom )->( OrdCondSet( "!Deleted()", {|| !Deleted() } ) )
+      ( dbfTmpCom )->( OrdCreate( cTmpCom, "nImpVta", "Str( nImpVta )", {|| Str( Field->nImpVta ) } ) )
+
+
+
+
+
+      if ( dbfAgeCom )->( dbSeek( cCodAge ) )
+         while ( ( dbfAgeCom )->cCodAge == cCodAge .AND. !( dbfAgeCom )->( eof() ) )
+            dbPass( dbfAgeCom, dbfTmpCom, .T. )
+            ( dbfAgeCom )->( dbSkip() )
+         end
+      end
+
+      ( dbfTmpCom )->( dbGoTop() )
+
+      cTmpRel     := cGetNewFileName( cPatTmp() + cDbfRel )
+
+
+
+
+
+      dbCreate( cTmpRel, aSqlStruct( aItmRel() ), cLocalDriver() )
+      dbUseArea( .T., cLocalDriver(), cTmpRel, cCheckArea( cDbfRel, @dbfTmpRel ), .F. )
+      ( dbfTmpRel )->( OrdCondSet( "!Deleted()", {|| !Deleted() } ) )
+      ( dbfTmpRel )->( OrdCreate( cTmpRel, "cCodRel", "cCodRel", {|| Field->cCodRel } ) )
+
+
+
+
+
+      if ( dbfAgeRel )->( dbSeek( cCodAge ) )
+         while ( ( dbfAgeRel )->cCodAge == cCodAge .AND. !( dbfAgeRel )->( eof() ) )
+            dbPass( dbfAgeRel, dbfTmpRel, .T. )
+            ( dbfAgeRel )->( dbSkip() )
+         end
+      end
+
+      ( dbfTmpRel )->( dbGoTop() )
+
+   RECOVER USING oError
+
+      msgStop( "Imposible crear tablas temporales" + Chr(13)+Chr(10) + ErrorMessage( oError ) )
+
+      lPosEdit()
+
+      lErrors     := .T.
+
+   end
+
+   ErrorBlock( oBlock )
+
+RETURN ( lErrors )
+
+
+
+Static Function lPosEdit( oBrwLin )
+
+   if !Empty( oBrwLin )
+      oBrwLin:CloseData()
+   end
+
+   if !Empty( dbfTmpCom ) .AND. ( dbfTmpCom )->( Used() )
+      ( dbfTmpCom )->( dbCloseArea() )
+   end
+
+   dbfTmpCom            := nil
+
+   dbfErase( cTmpCom )
+
+   if !Empty( dbfTmpRel ) .AND. ( dbfTmpRel )->( Used() )
+      ( dbfTmpRel )->( dbCloseArea() )
+   end
+
+   dbfTmpRel            := nil
+
+   dbfErase( cTmpRel )
+
+Return .T.
+
+
+
+STATIC FUNCTION lPreSave( aTemp, aoGet, dbfAge, oBrw, oBrwLin, nMode, oDlg )
+
+   if nMode == 1 .OR. nMode == 4
+
+      if Empty( aTemp[ 1 ] )
+         MsgStop( "El código del agente no puede estar vacío." )
+         aoGet[ 1 ]:SetFocus()
+         Return nil
+      end
+
+      if !NotValid( aoGet[ 1 ], dbfAge, .T., "0" )
+         aoGet[ 1 ]:SetFocus()
+         Return nil
+      end
+
+   end
+
+   if Empty( aTemp[ 3 ] )
+      MsgStop( "El nombre del agente no puede estar vacío." )
+      aoGet[ 3 ]:SetFocus()
+      Return nil
+   end
+
+   CursorWait()
+
+   oDlg:Disable()
+
+   oMsgText( "Archivando" )
+
+
+
+
+
+   if nMode == 2
+
+      while ( ( dbfAgeCom )->( dbSeek( aTemp[ 1 ] ) ) .AND. !( dbfAgeCom )->( eof() ) )
+         if dbLock( dbfAgeCom )
+            ( dbfAgeCom )->( dbDelete() )
+            ( dbfAgeCom )->( dbUnLock() )
+         end
+      end
+
+      while ( ( dbfAgeRel )->( dbSeek( aTemp[ 1 ] ) ) .AND. !( dbfAgeRel )->( eof() ) )
+         if dbLock( dbfAgeRel )
+            ( dbfAgeRel )->( dbDelete() )
+            ( dbfAgeRel )->( dbUnLock() )
+         end
+      end
+
+   end
+
+
+
+
+
+   oMsgProgress()
+   oMsgProgress():SetRange( 0, ( dbfTmpCom )->( LastRec() ) )
+
+
+
+
+
+   ( dbfTmpCom )->( dbGoTop() )
+   while ( dbfTmpCom )->( !eof() )
+      dbPass( dbfTmpCom, dbfAgeCom, .T., aTemp[ 1 ] )
+      ( dbfTmpCom )->( dbSkip() )
+      oMsgProgress():Deltapos( 1 )
+   end
+
+   ( dbfTmpRel )->( dbGoTop() )
+   while ( dbfTmpRel )->( !eof() )
+      dbPass( dbfTmpRel, dbfAgeRel, .T., aTemp[ 1 ] )
+      ( dbfTmpRel )->( dbSkip() )
+      oMsgProgress():Deltapos( 1 )
+   end
+
+
+
+
+
+   WinGather( aTemp, aoGet, dbfAge, oBrw, nMode )
+
+   dbCommitAll()
+
+   oMsgText()
+
+   lPosEdit( oBrwLin )
+
+   EndProgress()
+
+   oDlg:Enable()
+   oDlg:End( 1 )
+
+   CursorWE()
+
+Return ( .T. )
+
+
+
+Static Function EdtDet( aTmp, aGet, dbfTmpCom, oBrw, bWhen, bValid, nMode )
+
+    local oDlg
+
+
+
+
+
+   oDlg = TDialog():New(,,,,, "AgeDet",, .F.,,,,,, .F.,,,,,, .F., )
+
+
+
+
+
+
+
+      aGet[ ( dbfTmpCom )->( FieldPos( "nImpVta" ) ) ] := TGetHlp():ReDefine( 100, { | u | If( PCount()==0, aTmp[ ( dbfTmpCom )->( FieldPos( "nImpVta" ) ) ], aTmp[ ( dbfTmpCom )->( FieldPos( "nImpVta" ) ) ]:= u ) }, oDlg,, PicOut(),,,,,,, .F., {||     ( nMode <> 3 )},, .F., .T.,,,,,, nil,,, )
+
+
+
+
+
+
+
+      aGet[ ( dbfTmpCom )->( FieldPos( "nPctCom" ) ) ] := TGetHlp():ReDefine( 110, { | u | If( PCount()==0, aTmp[ ( dbfTmpCom )->( FieldPos( "nPctCom" ) ) ], aTmp[ ( dbfTmpCom )->( FieldPos( "nPctCom" ) ) ]:= u ) }, oDlg,, "@E 999.99",,,,,,, .F., {||     ( nMode <> 3 )},, .F., .T.,,,,,, nil,,, )
+
+
+
+
+
+      TButton():ReDefine( 1, {||( WinGather( aTmp, nil, dbfTmpCom, oBrw, nMode ), oDlg:end( 1 ) )}, oDlg,,, .F., {||         ( nMode <> 3 )},,, .F. )
+
+
+
+
+
+        TButton():ReDefine( 2, {||( oDlg:end() )}, oDlg,,, .F.,,,, .T. )
+
+   oDlg:Activate( oDlg:bLClicked, oDlg:bMoved, oDlg:bPainted, .T.,,,, oDlg:bRClicked,,, )
+
+RETURN ( oDlg:nResult == 1 )
+
+
+
+Static Function EdtRel( aTmp, aGet, dbfTmpRel, oBrw, cCodAge, bValid, nMode )
+
+    local oDlg
+
+
+
+
+
+   oDlg = TDialog():New(,,,,, "AgeRel",, .F.,,,,,, .F.,,,,,, .F., )
+
+
+
+
+
+
+
+
+
+
+      aGet[ ( dbfTmpRel )->( FieldPos( "cCodRel" ) ) ] := TGetHlp():ReDefine( 100, { | u | If( PCount()==0, aTmp[ ( dbfTmpRel )->( FieldPos( "cCodRel" ) ) ], aTmp[ ( dbfTmpRel )->( FieldPos( "cCodRel" ) ) ]:= u ) }, oDlg,, "@!", {||    ( lValidEdtRel( cCodAge, aTmp, aGet, dbfAge ) )},,,,,, .F., {||     ( nMode <> 3 )},, .F., .F.,,,,, {|Self|( BrwAgentes( aGet[ ( dbfTmpRel )->( FieldPos( "cCodRel" ) ) ], aGet[ ( dbfTmpRel )->( FieldPos( "cCodRel" ) ) ]:oHelpText, .T., aTmp[ ( dbfTmpRel )->( FieldPos( "cCodRel" ) ) ] ) )}, nil, "LUPA",, 101 )
+
+
+
+
+
+
+
+      aGet[ ( dbfTmpRel )->( FieldPos( "nComRel" ) ) ] := TGetHlp():ReDefine( 110, { | u | If( PCount()==0, aTmp[ ( dbfTmpRel )->( FieldPos( "nComRel" ) ) ], aTmp[ ( dbfTmpRel )->( FieldPos( "nComRel" ) ) ]:= u ) }, oDlg,, "@E 999.99",,,,,,, .F., {||     ( nMode <> 3 )},, .F., .T.,,,,,, nil,,, )
+
+
+
+
+
+      TButton():ReDefine( 1, {||( WinGather( aTmp, nil, dbfTmpRel, oBrw, nMode ), oDlg:end( 1 ) )}, oDlg,,, .F., {||         ( nMode <> 3 )},,, .F. )
+
+
+
+
+
+        TButton():ReDefine( 2, {||( oDlg:end() )}, oDlg,,, .F.,,,, .T. )
+
+      oDlg:bStart := {|| aGet[ ( dbfTmpRel )->( FieldPos( "cCodRel" ) ) ]:lValid() }
+
+   oDlg:Activate( oDlg:bLClicked, oDlg:bMoved, oDlg:bPainted, .T.,,,, oDlg:bRClicked,,, )
+
+RETURN ( oDlg:nResult == 1 )
+
+
+
+Static Function lValidEdtRel( cCodAge, aTmp, aGet, dbfAge )
+
+   local nRec
+   local nOrd
+   local lVal  := .F.
+
+   if Empty( aTmp[ ( dbfTmpRel )->( FieldPos( "cCodRel" ) ) ] )
+      return .T.
+   end
+
+   if ( cCodAge == aTmp[ ( dbfTmpRel )->( FieldPos( "cCodRel" ) ) ] )
+      MsgStop( "No se puede relacionar un agente con el mismo" )
+      return .F.
+   end
+
+   nRec        := ( dbfAge )->( RecNo() )
+   nOrd        := ( dbfAge )->( OrdSetFocus( "cCodAge" ) )
+
+   if ( dbfAge )->( dbSeek( aTmp[ ( dbfTmpRel )->( FieldPos( "cCodRel" ) ) ] ) )
+      aGet[ ( dbfTmpRel )->( FieldPos( "cCodRel" ) ) ]:oHelpText:cText( cNombreAgente( dbfAge ) )
+      lVal     := .T.
+   end
+
+   ( dbfAge )->( dbGoTo( nRec ) )
+   ( dbfAge )->( OrdSetFocus( nOrd ) )
+
+Return ( lVal )
+
+
+
+FUNCTION BrwAgentes( oGet, oGet2, lRelacionado, cCodigoAgente )
+
+    local oDlg
+    local oBrw
+   local oGet1
+    local cGet1
+   local oBlock
+   local oError
+   local nOrdAnt
+   local oCbxOrd
+   local aCbxOrd
+   local cCbxOrd
+   local aStatus
+   local nLevelUsr
+   local cReturn        := ""
+
+   aCbxOrd              := { "Código", "Apellidos", "Nombre" }
+
+   nOrdAnt              := GetBrwOpt( "BrwAgentes" )
+   nOrdAnt              := Min( Max( nOrdAnt, 1 ), len( aCbxOrd ) )
+
+   cCbxOrd              := aCbxOrd[ nOrdAnt ]
+
+   nLevelUsr            := nLevelUsr( "01033" )
+
+   IIF( lRelacionado == nil, lRelacionado := .F., ) ;
+
+   if lRelacionado
+
+      if !lOpenFiles
+         Return ( .F. )
+      else
+
+         aStatus        := aGetStatus( dbfAge )
+         ( dbfAge )->( dbSetFilter( {|| Field->cCodAge <> cCodigoAgente }, "cCodAge" ) )
+         ( dbfAge )->( dbGoTop() )
+
+      end
+
+   else
+
+      if !OpenFiles()
+         Return ( .F. )
+      end
+
+   end
+
+   oBlock               := ErrorBlock( {| oError | ApoloBreak( oError ) } )
+   BEGIN SEQUENCE
+
+   if ( "PDA" $ cParamsMain() )
+   oDlg = TDialog():New(,,,, "Seleccionar agentes", "HELPENTRY_PDA",, .F.,,,,,, .F.,,,,,, .F., )
+   else
+   oDlg = TDialog():New(,,,, "Seleccionar agentes", "HELPENTRY",, .F.,,,,,, .F.,,,,,, .F., )
+   end
+
+
+
+
+
+
+        oGet1 := TGetHlp():ReDefine( 104, { | u | If( PCount()==0, cGet1, cGet1:= u ) }, oDlg,,, {||    ( OrdClearScope( oBrw, dbfAge ) )},,,,,, .F.,, {|nKey,nFlags,Self| ( AutoSeek( nKey, nFlags, Self, oBrw, dbfAge ) ) }, .F., .F.,,,,,, nil, "FIND",, )
+
+
+
+
+
+
+        oCbxOrd := TComboBox():ReDefine( 102, { | u | If( PCount()==0, cCbxOrd, cCbxOrd:= u ) }, aCbxOrd, oDlg,,, {|Self|( ( dbfAge )->( OrdSetFocus( oCbxOrd:nAt ) ), oBrw:refresh(), oGet1:SetFocus() )},,,, .F.,,,,,, )
+
+      oBrw                 := IXBrowse():New( oDlg )
+
+      oBrw:bClrSel         := {|| { 0, ( 229 + ( 229 * 256 ) + ( 229 * 65536 ) ) } }
+      oBrw:bClrSelFocus    := {|| { 0, ( 167 + ( 205 * 256 ) + ( 240 * 65536 ) ) } }
+
+      oBrw:cAlias          := dbfAge
+      oBrw:nMarqueeStyle   := 5
+      oBrw:cName           := "Browse.Agentes"
+
+      with object ( oBrw:AddCol() )
+         :cHeader          := "Código"
+         :cSortOrder       := "cCodAge"
+         :bEditValue       := {|| ( dbfAge )->cCodAge }
+         :nWidth           := 60
+         :bLClickHeader    := {| nMRow, nMCol, nFlags, oCol | oCbxOrd:Set( oCol:cHeader ) }
+      end
+
+      with object ( oBrw:AddCol() )
+         :cHeader          := "Apellidos"
+         :cSortOrder       := "cApeAge"
+         :bEditValue       := {|| ( dbfAge )->cApeAge }
+         :nWidth           := 225
+         :bLClickHeader    := {| nMRow, nMCol, nFlags, oCol | oCbxOrd:Set( oCol:cHeader ) }
+      end
+
+      with object ( oBrw:AddCol() )
+         :cHeader          := "Nombre"
+         :cSortOrder       := "cNbrAge"
+         :bEditValue       := {|| ( dbfAge )->cNbrAge }
+         :nWidth           := 225
+         :bLClickHeader    := {| nMRow, nMCol, nFlags, oCol | oCbxOrd:Set( oCol:cHeader ) }
+      end
+
+      oBrw:bLDblClick      := {|| oDlg:end( 1 ) }
+      oBrw:bRClicked       := {| nRow, nCol, nFlags | oBrw:RButtonDown( nRow, nCol, nFlags ) }
+
+      oBrw:CreateFromResource( 105 )
+
+
+
+
+        TButton():ReDefine( 1, {||( oDlg:end( 1 ) )}, oDlg,,, .F.,,,, .F. )
+
+
+
+
+
+        TButton():ReDefine( 2, {||( oDlg:end() )}, oDlg,,, .F.,,,, .T. )
+
+   if !( "PDA" $ cParamsMain() )
+
+
+
+
+
+        TButton():ReDefine( 500, {||( WinAppRec( oBrw, bEdit, dbfAge ) )}, oDlg,,, .F., {||     ( nAnd( nLevelUsr, 2 ) <> 0 .AND. !IsReport() .AND. !lRelacionado )},,, .F. )
+
+
+
+
+
+        TButton():ReDefine( 501, {||( WinEdtRec( oBrw, bEdit, dbfAge ) )}, oDlg,,, .F., {||     ( nAnd( nLevelUsr, 4 ) <> 0 .AND. !IsReport() .AND. !lRelacionado )},,, .F. )
+
+      if nAnd( nLevelUsr, 2 ) <> 0 .AND. !IsReport() .AND. !lRelacionado
+         oDlg:AddFastKey( 113, {|| WinAppRec( oBrw, bEdit, dbfAge ) } )
+      end
+
+      if nAnd( nLevelUsr, 4 ) <> 0 .AND. !IsReport() .AND. !lRelacionado
+         oDlg:AddFastKey( 114, {|| WinEdtRec( oBrw, bEdit, dbfAge ) } )
+      end
+
+   end
+
+   oDlg:AddFastKey( 116,       {|| oDlg:end( 1 ) } )
+   oDlg:AddFastKey( 13,   {|| oDlg:end( 1 ) } )
+
+   oDlg:bStart                := {|| oBrw:Load() }
+
+   oDlg:Activate( oDlg:bLClicked, oDlg:bMoved, oDlg:bPainted, .T.,,,, oDlg:bRClicked,,, )
+
+   if oDlg:nResult == 1
+
+      cReturn                 := ( dbfAge )->cCodAge
+
+      if !Empty( oGet )
+         oGet:cText( ( dbfAge )->cCodAge )
+      end
+
+      if IsObject( oGet2 )
+         oGet2:cText( RTrim( ( dbfAge )->cApeAge ) + ", " + ( dbfAge )->cNbrAge )
+      end
+
+   end
+
+   DestroyFastFilter( dbfAge )
+
+   SetBrwOpt( "BrwAgentes", ( dbfAge )->( OrdNumber() ) )
+
+   if lRelacionado
+
+      ( dbfAge )->( dbClearFilter() )
+
+      SetStatus( dbfAge, aStatus )
+
+   else
+
+      CloseFiles()
+
+   end
+
+   RECOVER USING oError
+
+      msgStop( "Imposible abrir todas las bases de datos " + Chr(13)+Chr(10) + ErrorMessage( oError ) )
+
+   end
+
+   ErrorBlock( oBlock )
+
+   if !Empty( oGet )
+      oGet:SetFocus()
+   end
+
+Return ( cReturn )
+
+
+
+FUNCTION RetNbrAge( cCodAge, dbfAge )
+
+   local oBlock
+   local oError
+   local nRecNo
+    local nOrdAnt
+    local cNombre    := ""
+   local lClose   := .F.
+
+   oBlock         := ErrorBlock( {| oError | ApoloBreak( oError ) } )
+   BEGIN SEQUENCE
+
+   if Empty( dbfAge )
+      dbUseArea( .T., ( cDriver() ), ( cPatCli() + "AGENTES.DBF" ), ( cCheckArea( "AGENTES", @dbfAge ) ), if(.T. .OR. .F., !.F., NIL), .F.,, )
+      if !lAIS() ; ordListAdd( ( cPatCli() + "AGENTES.CDX" ) ) ; else ; ordSetFocus( 1 ) ; end
+      lClose      := .T.
+   end
+
+   nRecNo         := (dbfAge)->( RecNo() )
+   nOrdAnt        := (dbfAge)->( OrdSetFocus( 1 ) )
+
+   IF (dbfAge)->( DbSeek( cCodAge ) )
+      cNombre     := Rtrim( (dbfAge)->CNBRAGE ) + " " + (dbfAge)->CAPEAGE
+    end
+
+   (dbfAge)->( dbGoTo( nRecNo ) )
+   (dbfAge)->( OrdSetFocus( nOrdAnt ) )
+
+   RECOVER USING oError
+
+      msgStop( "Imposible abrir todas las bases de datos de agentes" + Chr(13)+Chr(10) + ErrorMessage( oError ) )
+
+   end
+
+   ErrorBlock( oBlock )
+
+    IF lClose
+      ( dbfAge )->( dbCloseArea() )
+    end
+
+RETURN ( cNombre )
+
+
+
+FUNCTION aAgentesRelacionados( cCodAge, dbfAgeRel )
+
+   local nOrd
+   local oBlock
+   local oError
+   local aAgentes    := {}
+
+   if IsObject( cCodAge )
+      cCodAge        := cCodAge:VarGet()
+   end
+
+   oBlock            := ErrorBlock( {| oError | ApoloBreak( oError ) } )
+   BEGIN SEQUENCE
+
+   nOrd              := ( dbfAgeRel )->( ordSetFocus( "cCodRel" ) )
+
+   if ( dbfAgeRel )->( dbSeek( cCodAge ) )
+      while ( ( dbfAgeRel )->cCodRel == cCodAge ) .AND. !( dbfAgeRel )->( eof() )
+         aAdd( aAgentes, { ( dbfAgeRel )->cCodAge, ( dbfAgeRel )->nComRel } )
+         ( dbfAgeRel )->( dbSkip() )
+      end
+   end
+
+   ( dbfAgeRel )->( ordSetFocus( nOrd ) )
+
+   RECOVER USING oError
+
+      msgStop( ErrorMessage( oError ), "Imposible obtener los agentes relacionados" )
+
+   end
+
+   ErrorBlock( oBlock )
+
+RETURN ( aAgentes )
+
+
+
+Static Function aAgentes( cCodAge, uAgentes, dbfAge )
+
+   local oNode
+   local nRecNo
+    local nOrdAnt
+
+   nRecNo            := ( dbfAge )->( RecNo() )
+   nOrdAnt           := ( dbfAge )->( OrdSetFocus( "cAgeRel" ) )
+
+   if ( dbfAge )->( dbSeek( cCodAge ) ) .AND. ( dbfAge )->cAgeRel <> ( dbfAge )->cCodAge
+
+      while ( dbfAge )->cAgeRel == cCodAge .AND. !( dbfAge )->( eof() )
+
+         do case
+            case isObject( uAgentes )
+
+               oNode := uAgentes:Add( cNombreAgente( dbfAge ) + Space( 1 ) + "[" + Trans( ( dbfAge )->nComRel, "@E 99.99" ) + "% ]" )
+
+               aAgentes( ( dbfAge )->cCodAge, oNode, dbfAge )
+
+            case isArray( uAgentes )
+
+               aAdd( uAgentes, { ( dbfAge )->cCodAge, ( dbfAge )->nComRel } )
+
+               aAgentes( ( dbfAge )->cCodAge, uAgentes, dbfAge )
+
+         end
+
+         ( dbfAge )->( dbSkip() )
+
+      end
+
+   end
+
+   ( dbfAge )->( dbGoTo( nRecNo ) )
+   ( dbfAge )->( OrdSetFocus( nOrdAnt ) )
+
+RETURN ( uAgentes )
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+_HB_CLASS pdaAgentesSenderReciver ; UTILITY FUNCTION pdaAgentesSenderReciver(...); static s_oClass ; local oClassInstance ; local nScope ; nScope := 1 ; if s_oClass == NIL ; s_oClass := IIF(.F.,, HBClass():New( "pdaAgentesSenderReciver" , { HBObject():Classh } ) ) ;
+
+   _HB_MEMBER CreateData(); IIF( .F., s_oClass:ModMethod( "CreateData", @pdaAgentesSenderReciver_CreateData(), nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ), s_oClass:AddMethod( "CreateData", @pdaAgentesSenderReciver_CreateData(), nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ));
+
+; IF .F. ; __clsActive(s_oClass:hClass) ; s_oClass:Refresh() ; ELSE ; s_oClass:Create() ; END ; oClassInstance := __clsInst( s_oClass:hClass ) ; IF __ObjHasMsg( oClassInstance, "InitClass" ); oClassInstance:InitClass( hb_aParams() ) ; END ; ELSE ; oClassInstance := __clsInst( s_oClass:hClass ) ; END ; IF PCount() > 0 ; DIVERT TO (@DivertConstructorCall()) OF s_oClass ; END ; RETURN oClassInstance AS CLASS pdaAgentesSenderReciver ;
+
+
+
+UTILITY STATIC function pdaAgentesSenderReciver_CreateData( oPgrActual, oSayStatus, cPatPreVenta) ; local Self AS CLASS pdaAgentesSenderReciver := QSelf() AS CLASS pdaAgentesSenderReciver
+
+   local dbfAge
+   local tmpAge
+   local lExist      := .F.
+   local cFileName
+   local cPatPc      := if( Empty( cPatPreVenta ), cPatPc(), cPatPreVenta )
+
+   dbUseArea( .T., ( cDriver() ), ( cPatCli() + "Agentes.Dbf" ), ( cCheckArea( "Agentes", @dbfAge ) ), if(.T. .OR. .F., !.F., NIL), .F.,, )
+   if !lAIS() ; ordListAdd( ( cPatCli() + "AGENTES.Cdx" ) ) ; else ; ordSetFocus( 1 ) ; end
+
+   dbUseArea( .T., cDriver(), cPatPc + "Agentes.Dbf", cCheckArea( "Agentes", @tmpAge ), .T. )
+   ( tmpAge )->( ordListAdd( cPatPc + "AGENTES.Cdx" ) )
+
+   if !Empty( oPgrActual )
+      oPgrActual:SetRange( 0, ( tmpAge )->( OrdKeyCount() ) )
+   end
+
+   ( tmpAge )->( dbGoTop() )
+
+   while !( tmpAge )->( eof() )
+
+      if ( dbfAge )->( dbSeek( ( tmpAge )->cCodAge ) )
+         dbPass( tmpAge, dbfAge, .F. )
+      else
+         dbPass( tmpAge, dbfAge, .T. )
+      end
+
+      if dbLock( tmpAge )
+         ( tmpAge )->lSelAge  := .F.
+         ( tmpAge )->( dbUnLock() )
+      end
+
+      ( tmpAge )->( dbSkip() )
+
+      if !Empty( oSayStatus )
+         oSayStatus:SetText( "Sincronizando Agentes " + Alltrim( Str( ( tmpAge )->( OrdKeyNo() ) ) ) + " de " + Alltrim( Str( ( tmpAge )->( OrdKeyCount() ) ) ) )
+      end
+
+      SysRefresh()
+
+      if !Empty( oPgrActual )
+         oPgrActual:SetPos( ( tmpAge )->( OrdKeyNo() ) )
+      end
+
+      SysRefresh()
+
+   end
+
+   ( tmpAge )->( dbCloseArea() )
+   ( dbfAge )->( dbCloseArea() )
+
+Return ( Self )
+
+
+
+
+
+
+Function IsAgentes()
+
+   local oError
+   local oBlock
+   local dbfAgente
+
+   if !lExistTable( cPatCli() + "Agentes.Dbf" )
+      mkAgentes( cPatCli() )
+   end
+
+   if !lExistIndex( cPatCli() + "Agentes.Cdx" )
+      rxAgentes( cPatCli() )
+   end
+
+   oBlock                     := ErrorBlock( {| oError | ApoloBreak( oError ) } )
+   BEGIN SEQUENCE
+
+      dbUseArea( .T., ( cDriver() ), ( cPatCli() + "Agentes.Dbf" ), ( cCheckArea( "CCODAGE", @dbfAge ) ), if(.T. .OR. .F., !.F., NIL), .F.,, )
+      if !lAIS() ; ordListAdd( ( cPatCli() + "Agentes.Cdx" ) ) ; else ; ordSetFocus( 1 ) ; end
+
+   RECOVER USING oError
+
+      msgStop( "Imposible abrir todas las bases de datos " + Chr(13)+Chr(10) + ErrorMessage( oError ) )
+
+   end
+
+   ErrorBlock( oBlock )
+
+   ( dbfAge )->( dbCloseArea() )
+
+Return ( .T. )
+
+
+
+FUNCTION mkAgentes( cPath, lAppend, cPathOld, oMeter )
+
+   IIF( lAppend == nil, lAppend := .F., ) ;
+   IIF( cPath == nil, cPath := cPatCli(), ) ;
+
+   if oMeter <> nil
+        oMeter:cText    := "Generando Bases"
+        sysrefresh()
+   end
+
+   if !lExistTable( cPath + "Agentes.Dbf" )
+      dbCreate( cPath + "Agentes.Dbf", aSqlStruct( aItmAge() ), cDriver() )
+   end
+
+   if !lExistTable( cPath + "AgeCom.Dbf" )
+      dbCreate( cPath + "AgeCom.Dbf", aSqlStruct( aItmCom() ), cDriver() )
+   end
+
+   if !lExistTable( cPath + "AgeRel.Dbf" )
+      dbCreate( cPath + "AgeRel.Dbf", aSqlStruct( aItmRel() ), cDriver() )
+   end
+
+    rxAgentes( cPath, oMeter )
+
+   if lAppend .AND. lIsDir( cPathOld )
+      appDbf( cPathOld, cPath, "Agentes" )
+      appDbf( cPathOld, cPath, "AgeCom" )
+      appDbf( cPathOld, cPath, "AgeRel" )
+   end
+
+RETURN NIL
+
+
+
+FUNCTION rxAgentes( cPath, oMeter )
+
+   local dbfAge
+
+   IIF( cPath == nil, cPath := cPatCli(), ) ;
+
+   if !lExistTable( cPath + "Agentes.Dbf" ) .OR. !lExistTable( cPath + "AgeCom.Dbf" ) .OR. !lExistTable( cPath + "AgeRel.Dbf" )
+        mkAgentes( cPath, , , oMeter )
+   end
+
+   fEraseIndex( cPath + "Agentes.Cdx" )
+   fEraseIndex( cPath + "AgeCom.Cdx" )
+   fEraseIndex( cPath + "AgeRel.Cdx" )
+
+   dbUseArea( .T., cDriver(), cPath + "AGENTES.DBF", cCheckArea( "AGENTES", @dbfAge ), .F. )
+
+   if !( dbfAge )->( neterr() )
+      ( dbfAge )->( __dbPack() )
+
+      ( dbfAge )->( ordCondSet("!Deleted()", {||!Deleted()}  ) )
+      ( dbfAge )->( ordCreate( cPath + "AGENTES.CDX", "CCODAGE", "CCODAGE", {|| Field->cCodAge } ) )
+
+      ( dbfAge )->( ordCondSet( "!Deleted()", {||!Deleted()}  ) )
+      ( dbfAge )->( ordCreate( cPath + "AGENTES.CDX", "CAPEAGE", "CAPEAGE", {|| Field->cApeAge } ) )
+
+      ( dbfAge )->( ordCondSet("!Deleted()", {||!Deleted()}  ) )
+      ( dbfAge )->( ordCreate( cPath + "AGENTES.CDX", "CNBRAGE", "CNBRAGE", {|| Field->cNbrAge } ) )
+
+      ( dbfAge )->( ordCondSet("!Deleted()", {||!Deleted()}  ) )
+      ( dbfAge )->( ordCreate( cPath + "AGENTES.CDX", "CAGEREL", "CAGEREL", {|| Field->cAgeRel } ) )
+
+      ( dbfAge )->( dbCloseArea() )
+   else
+      msgStop( "Imposible abrir en modo exclusivo la tabla de agentes" )
+   end
+
+   dbUseArea( .T., cDriver(), cPath + "AGECOM.DBF", cCheckArea( "AGENTES", @dbfAge ), .F. )
+
+   if !( dbfAge )->( neterr() )
+      ( dbfAge )->( __dbPack() )
+
+      ( dbfAge )->( ordCondSet("!Deleted()", {||!Deleted()}  ) )
+      ( dbfAge )->( ordCreate( cPath + "AGECOM.CDX", "CCODAGE", "cCodAge + Str( nImpVta )", {|| Field->cCodAge + Str( Field->nImpVta ) } ) )
+
+      ( dbfAge )->( dbCloseArea() )
+   else
+      msgStop( "Imposible abrir en modo exclusivo la tabla de agentes" )
+   end
+
+   dbUseArea( .T., cDriver(), cPath + "AgeRel.Dbf", cCheckArea( "AGENTES", @dbfAge ), .F. )
+
+   if !( dbfAge )->( neterr() )
+      ( dbfAge )->( __dbPack() )
+
+      ( dbfAge )->( ordCondSet("!Deleted()", {||!Deleted()}  ) )
+      ( dbfAge )->( ordCreate( cPath + "AgeRel.Cdx", "cCodAge", "cCodAge + cCodRel", {|| Field->cCodAge + Field->cCodRel } ) )
+
+      ( dbfAge )->( ordCondSet("!Deleted()", {||!Deleted()}  ) )
+      ( dbfAge )->( ordCreate( cPath + "AgeRel.Cdx", "cCodRel", "cCodRel", {|| Field->cCodRel } ) )
+
+      ( dbfAge )->( dbCloseArea() )
+   else
+      msgStop( "Imposible abrir en modo exclusivo la tabla de agentes" )
+   end
+
+RETURN NIL
+
+
+
+FUNCTION aItmAge()
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+   local aBase := {  { "cCodAge",   "C",  3,  0, "Código del agente" ,        "",            "", "( cDbfAge )" }, { "cApeAge",   "C",100,  0, "Apellidos del agente" ,     "'@!'",        "", "( cDbfAge )" }, { "cNbrAge",   "C",100,  0, "Nombre del agente" ,        "'@!'",        "", "( cDbfAge )" }, { "cDniNif",   "C", 15,  0, "DNI del agente" ,           "'@!'",        "", "( cDbfAge )" }, { "cDirAge",   "C", 35,  0, "Domicilio del agente" ,     "'@!'",        "", "( cDbfAge )" }, { "cPobAge",   "C", 25,  0, "Población del agente" ,     "'@!'",        "", "( cDbfAge )" }, { "cProv",     "C", 15,  0, "Provincia del agente" ,     "'@!'",        "", "( cDbfAge )" }, { "cPtlAge",   "C",  5,  0, "Código postal del agente" , "'@!'",        "", "( cDbfAge )" }, { "cTfoAge",   "C", 12,  0, "Teléfono del agente" ,      "",            "", "( cDbfAge )" }, { "cFaxAge",   "C", 12,  0, "Fax del agente" ,           "",            "", "( cDbfAge )" }, { "cMovAge",   "C", 12,  0, "Teléfono movíl del agente" ,"",            "", "( cDbfAge )" }, { "nIrpfAge",  "N",  5,  2, "IRPF del agente" ,          "'@E 99.99'",  "", "( cDbfAge )" }, { "mComEnt",   "M", 10,  0, "Comentarios" ,              "",            "", "( cDbfAge )" }, { "lSelAge",   "L",  1,  0, "Seleccionar el agente" ,    "",            "", "( cDbfAge )" }, { "nCom1",     "N",  5,  2, "Comisión del agente" ,      "'@E 99.99'",  "", "( cDbfAge )" }, { "cMailAge",  "C",120,  0, "Email del agente" ,         "",            "", "( cDbfAge )" }, { "cAgeRel",   "C",  3,  0, "Código del agente relacionado" ,     "",   "", "( cDbfAge )" }, { "nComRel",   "N",  6,  2, "Comisión del agente relacionado" ,   "",   "", "( cDbfAge )" }, { "CtaAge",    "C", 12,  0, "Código subcuenta agente",   "",            "", "( cDbfAge )" }, { "CtaGas",    "C", 12,  0, "Código subcuenta gasto",    "",            "", "( cDbfAge )" }, { "cCodPrv",   "C", 12,  0, "Código de proveedor",       "",            "", "( cDbfAge )" }, { "cCodArt",   "C", 18,  0, "Código de artículo",        "",            "", "( cDbfAge )" } }
+
+RETURN ( aBase )
+
+
+
+FUNCTION aItmCom()
+
+
+
+   local aBase := {  { "cCodAge",   "C",  3,  0, "Código del agente" ,        "",            "", "( cDbfAge )" }, { "nImpVta",   "N", 16,  6, "Importe de venta" ,         "",            "", "( cDbfAge )" }, { "nPctCom",   "N",  6,  2, "Porcentaje de comisión" ,   "",            "", "( cDbfAge )" } }
+
+RETURN ( aBase )
+
+
+
+FUNCTION aItmRel()
+
+
+
+   local aBase := {  { "cCodAge",   "C",  3,  0, "Código del agente" ,        "",            "", "( cDbfAge )" }, { "cCodRel",   "C",  3,  0, "Código del agente relacionado" , "",       "", "( cDbfAge )" }, { "nComRel",   "N",  6,  2, "Porcentaje de comisión" ,   "",            "", "( cDbfAge )" } }
+
+RETURN ( aBase )
+
+
+
+FUNCTION cAgentes( oGet, dbfAge, oGet2, oGetPct, dbfAgeCom )
+
+   local nRec
+   local oBlock
+   local oError
+   local xValor
+   local lClose      := .F.
+   local lCloseCom   := .F.
+   local lCloseRel   := .F.
+   local lValid      := .F.
+
+   if Empty( oGet:varGet() ) .OR. ( oGet:varGet() == "ZZZ" )
+
+      if ValType( oGet2 ) == "O"
+            oGet2:cText( "" )
+      end
+
+      if ValType( oGetPct ) == "O"
+            oGetPct:cText( 0 )
+      end
+
+      return .T.
+
+   else
+
+      xValor         := RJustObj( oGet, "0" )
+
+   end
+
+   oBlock            := ErrorBlock( {| oError | ApoloBreak( oError ) } )
+   BEGIN SEQUENCE
+
+   if Empty( dbfAge )
+      dbUseArea( .T., ( cDriver() ), ( cPatCli() + "AGENTES.DBF" ), ( cCheckArea( "AGENTES", @dbfAge ) ), if(.T. .OR. .F., !.F., NIL), .F.,, )
+      if !lAIS() ; ordListAdd( ( cPatCli() + "AGENTES.CDX" ) ) ; else ; ordSetFocus( 1 ) ; end
+      lClose         := .T.
+   else
+      nRec           := ( dbfAge )->( Recno() )
+   end
+
+   if Empty( dbfAgeCom )
+      dbUseArea( .T., ( cDriver() ), ( cPatCli() + "AGECOM.DBF" ), ( cCheckArea( "AGECOM", @dbfAgeCom ) ), if(.T. .OR. .F., !.F., NIL), .F.,, )
+      if !lAIS() ; ordListAdd( ( cPatCli() + "AGECOM.CDX" ) ) ; else ; ordSetFocus( 1 ) ; end
+      lCloseCom      := .T.
+   end
+
+   if Empty( dbfAgeRel )
+      dbUseArea( .T., ( cDriver() ), ( cPatCli() + "AGERel.DBF" ), ( cCheckArea( "AGERel", @dbfAgeRel ) ), if(.T. .OR. .F., !.F., NIL), .F.,, )
+      if !lAIS() ; ordListAdd( ( cPatCli() + "AGERel.CDX" ) ) ; else ; ordSetFocus( 1 ) ; end
+      lCloseRel      := .T.
+   end
+
+   if dbSeekInOrd( xValor, "cCodAge", dbfAge )
+
+      if IsObject( oGet2 )
+         oGet2:cText( RTrim( ( dbfAge )->cApeAge ) + ", " + ( dbfAge )->cNbrAge )
+      end
+
+      if IsObject( oGetPct )
+         oGetPct:cText( ( dbfAge )->nCom1 )
+      end
+
+      lValid         := .T.
+
+   else
+
+      msgStop( "Agente no encontrado", "Código " + xValor )
+
+   end
+
+   RECOVER USING oError
+
+      msgStop( "Imposible abrir todas las bases de datos de agentes" + Chr(13)+Chr(10) + ErrorMessage( oError ) )
+
+   end
+
+   ErrorBlock( oBlock )
+
+   if lClose
+      ( dbfAge )->( dbCloseArea() )
+   else
+      ( dbfAge )->( dbGoTo( nRec ) )
+   end
+
+   if lCloseCom
+      ( dbfAgeCom )->( dbCloseArea() )
+   end
+
+   if lCloseRel
+      ( dbfAgeRel )->( dbCloseArea() )
+   end
+
+RETURN lValid
+
+
+
+FUNCTION cNbrAgent( cCodAge, dbfAge )
+
+   local nRec
+   local nOrd
+   local oBlock
+   local oError
+   local xValRet  := ""
+   local lClose   := .F.
+
+   oBlock         := ErrorBlock( {| oError | ApoloBreak( oError ) } )
+   BEGIN SEQUENCE
+
+   if Empty( dbfAge )
+      dbUseArea( .T., ( cDriver() ), ( cPatCli() + "AGENTES.DBF" ), ( cCheckArea( "AGENTES", @dbfAge ) ), if(.T. .OR. .F., !.F., NIL), .F.,, )
+      if !lAIS() ; ordListAdd( ( cPatCli() + "AGENTES.CDX" ) ) ; else ; ordSetFocus( 1 ) ; end
+      lClose      := .T.
+   end
+
+   do case
+      case IsChar( dbfAge )
+
+         nRec     := ( dbfAge )->( RecNo() )
+         nOrd     := ( dbfAge )->( OrdSetFocus( "cCodAge" ) )
+
+         if ( dbfAge )->( dbSeek( cCodAge ) )
+            xValRet  := cNombreAgente( dbfAge )
+         end
+
+         nRec     := ( dbfAge )->( dbGoTo( nRec ) )
+         nOrd     := ( dbfAge )->( OrdSetFocus( nOrd ) )
+
+      case IsObject( dbfAge )
+
+         dbfAge:GetStatus()
+
+         if dbfAge:Seek( cCodAge )
+            xValRet  := cNombreAgente( dbfAge )
+         end
+
+         dbfAge:SetStatus()
+
+   end
+
+   RECOVER USING oError
+
+      msgStop( "Imposible abrir todas las bases de datos de agentes" + Chr(13)+Chr(10) + ErrorMessage( oError ) )
+
+   end
+
+   ErrorBlock( oBlock )
+
+   if lClose
+      ( dbfAge )->( dbCloseArea() )
+   end
+
+Return xValRet
+
+
+
+FUNCTION cNombreAgente( uAge )
+
+   local xValRet     := ""
+
+   do case
+      case IsChar( uAge )
+
+         xValRet     := if( !Empty( ( uAge )->cApeAge ), Rtrim( ( uAge )->cApeAge ) + ", ", "" ) + ( uAge )->cNbrAge
+
+      case IsObject( uAge )
+
+         xValRet     := if( !Empty( uAge:cApeAge ), Rtrim( uAge:cApeAge ) + ", ", "" ) + uAge:cNbrAge
+
+      case IsArray( uAge )
+
+         xValRet     := if( !Empty( uAge[ 2 ] ), Rtrim( uAge[ 3 ] ) + ", ", "" ) + uAge[ 3 ]
+
+   end
+
+Return ( Alltrim( xValRet ) )
+
+
+
+
+
+
+
+FUNCTION EdtAge( cCodAge )
+
+   local nLevel         := nLevelUsr( "01033" )
+
+   if nAnd( nLevel, 1 ) <> 0 .OR. nAnd( nLevel, 4 ) == 0
+      msgStop( "Acceso no permitido." )
+      return .T.
+   end
+
+   if OpenFiles()
+
+      if dbSeekInOrd( cCodAge, "cCodAge", dbfAge )
+         WinEdtRec( nil, bEdit, dbfAge )
+      end
+
+      CloseFiles()
+
+   end
+
+RETURN .T.
+
+
+
+Static Function OpenFiles()
+
+   local oError
+   local oBlock
+
+   oBlock         := ErrorBlock( {| oError | ApoloBreak( oError ) } )
+   BEGIN SEQUENCE
+
+      dbUseArea( .T., ( cDriver() ), ( cPatCli() + "AGENTES.DBF" ), ( cCheckArea( "AGENTES", @dbfAge ) ), if(.T. .OR. .F., !.F., NIL), .F.,, )
+      if !lAIS() ; ordListAdd( ( cPatCli() + "AGENTES.CDX" ) ) ; else ; ordSetFocus( 1 ) ; end
+
+      dbUseArea( .T., ( cDriver() ), ( cPatCli() + "AgeCom.Dbf" ), ( cCheckArea( "AgeCom", @dbfAgeCom ) ), if(.T. .OR. .F., !.F., NIL), .F.,, )
+      if !lAIS() ; ordListAdd( ( cPatCli() + "AgeCom.Cdx" ) ) ; else ; ordSetFocus( 1 ) ; end
+
+      dbUseArea( .T., ( cDriver() ), ( cPatCli() + "AgeRel.DBF" ), ( cCheckArea( "AgeRel", @dbfAgeRel ) ), if(.T. .OR. .F., !.F., NIL), .F.,, )
+      if !lAIS() ; ordListAdd( ( cPatCli() + "AgeRel.CDX" ) ) ; else ; ordSetFocus( 1 ) ; end
+
+      dbUseArea( .T., ( cDriver() ), ( cPatPrv() + "PROVEE.DBF" ), ( cCheckArea( "PROVEE", @dbfProvee ) ), if(.T. .OR. .F., !.F., NIL), .F.,, )
+      if !lAIS() ; ordListAdd( ( cPatPrv() + "PROVEE.CDX" ) ) ; else ; ordSetFocus( 1 ) ; end
+
+      dbUseArea( .T., ( cDriver() ), ( cPatArt() + "ARTICULO.DBF" ), ( cCheckArea( "ARTICULO", @dbfArticulo ) ), if(.T. .OR. .F., !.F., NIL), .F.,, )
+      if !lAIS() ; ordListAdd( ( cPatArt() + "ARTICULO.CDX" ) ) ; else ; ordSetFocus( 1 ) ; end
+
+      lOpenFiles        := .T.
+
+   RECOVER USING oError
+
+      msgStop( ErrorMessage( oError ), "Imposible abrir todas las bases de datos de agentes" )
+
+      CloseFiles()
+
+   end
+
+   ErrorBlock( oBlock )
+
+Return ( lOpenFiles )
+
+
+
+Static Function CloseFiles()
+
+   if !Empty( dbfAge )
+      ( dbfAge )->( dbCloseArea() )
+   end
+
+   if !Empty( dbfAgeCom )
+      ( dbfAgeCom )->( dbCloseArea() )
+   end
+
+   if !Empty( dbfAgeRel )
+      ( dbfAgeRel )->( dbCloseArea() )
+   end
+
+   if !Empty( dbfProvee )
+      ( dbfProvee )->( dbCloseArea() )
+   end
+
+   if !Empty( dbfArticulo )
+      ( dbfArticulo )->( dbCloseArea() )
+   end
+
+   dbfAge      := nil
+   dbfAgeCom   := nil
+   dbfAgeRel   := nil
+   dbfProvee   := nil
+   dbfArticulo := nil
+
+   oWndBrw     := nil
+
+Return ( .T. )

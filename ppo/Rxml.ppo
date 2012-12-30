@@ -1,0 +1,2511 @@
+#line 112 "hbclass.ch"
+   DYNAMIC DivertConstructorCall
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+DECLARE HBClass  New( cName AS String, OPTIONAL SuperParams ) AS CLASS HBClass  Create() AS Object  Instance() AS Object  AddClsMethod( cName AS String, @MethodName(), nScope AS Numeric, n2 AS Numeric, n3 AS Numeric )  AddDelegate( cName AS String, cDelegate AS String, cObject AS String, nScope AS Numeric, lPersistent AS LOGICAL )  AddMultiClsData( cType AS String, uVal, nScope AS Numeric, aDatas AS Array OF String )  AddMultiData( cType AS String, uVal, nScope AS Numeric, aDatas AS Array OF String, x AS LOGICAL, lPer AS LOGICAL )  AddMethod( cName AS String, @MethodName(), nScope AS Numeric, lPersistent AS LOGICAL )  AddInLine( cName AS String, bBlock AS CodeBlock, nScope AS Numeric, lPersistent AS LOGICAL )  AddVirtual( cName AS String )  ModMethod( cName AS String, @MethodName(), nScope AS Numeric, lPersistent AS LOGICAL )  ModClsMethod( cName AS String, @MethodName(), nScope AS Numeric )  ModInline( cName AS String, bBlock AS CodeBlock, nScope AS Numeric, lPersistent AS LOGICAL )  SetOnError( @MethodName() )
+#line 85 "\Fwh1204\Include\FiveWin.Ch"
+   EXTERNAL GetProcAdd
+   EXTERNAL TActiveX
+
+
+
+
+extern errorsys
+#line 12 ".\Prg\Rxml.prg"
+_HB_CLASS TRXml ; UTILITY FUNCTION TRXml(...); static s_oClass ; local oClassInstance ; local nScope ; nScope := 1 ; if s_oClass == NIL ; s_oClass := IIF(.F.,, HBClass():New( "TRXml" , { HBObject():Classh } ) ) ;
+
+   _HB_MEMBER { hDC} ; IIF( !.F., s_oClass:AddMultiData(,, nScope + IIF( .F., 32, 0 ), { "hDC" }, .F., .F. ), )
+   _HB_MEMBER { cFile} ; IIF( !.F., s_oClass:AddMultiData(,, nScope + IIF( .F., 32, 0 ), { "cFile" }, .F., .F. ), )
+   _HB_MEMBER { cDocument} ; IIF( !.F., s_oClass:AddMultiData(,, nScope + IIF( .F., 32, 0 ), { "cDocument" }, .F., .F. ), )
+
+   _HB_MEMBER { oXmlDoc} ; IIF( !.F., s_oClass:AddMultiData(,, nScope + IIF( .F., 32, 0 ), { "oXmlDoc" }, .F., .F. ), )
+   _HB_MEMBER { oXmlNode} ; IIF( !.F., s_oClass:AddMultiData(,, nScope + IIF( .F., 32, 0 ), { "oXmlNode" }, .F., .F. ), )
+   _HB_MEMBER { oXmlInit} ; IIF( !.F., s_oClass:AddMultiData(,, nScope + IIF( .F., 32, 0 ), { "oXmlInit" }, .F., .F. ), )
+
+   _HB_MEMBER New( cFile) AS CLASS TRXml; IIF( .F., s_oClass:ModMethod( "New", @TRXml_New(), nScope + IIF( .T., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ), s_oClass:AddMethod( "New", @TRXml_New(), nScope + IIF( .T., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ));
+
+   _HB_MEMBER End(); IIF( .F., s_oClass:ModMethod( "End", @TRXml_End(), nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ), s_oClass:AddMethod( "End", @TRXml_End(), nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ));
+
+   _HB_MEMBER Say( cLabel, cText); IIF( .F., s_oClass:ModMethod( "Say", @TRXml_Say(), nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ), s_oClass:AddMethod( "Say", @TRXml_Say(), nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ));
+
+   _HB_MEMBER InitLabel( cLabel); IIF( .F., s_oClass:ModMethod( "InitLabel", @TRXml_InitLabel(), nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ), s_oClass:AddMethod( "InitLabel", @TRXml_InitLabel(), nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ));
+
+   _HB_MEMBER EndLabel( cLabel); IIF( .F., s_oClass:ModMethod( "EndLabel", @TRXml_EndLabel(), nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ), s_oClass:AddMethod( "EndLabel", @TRXml_EndLabel(), nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ));
+
+; IF .F. ; __clsActive(s_oClass:hClass) ; s_oClass:Refresh() ; ELSE ; s_oClass:Create() ; END ; oClassInstance := __clsInst( s_oClass:hClass ) ; IF __ObjHasMsg( oClassInstance, "InitClass" ); oClassInstance:InitClass( hb_aParams() ) ; END ; ELSE ; oClassInstance := __clsInst( s_oClass:hClass ) ; END ; IF PCount() > 0 ; DIVERT TO (@DivertConstructorCall()) OF s_oClass ; END ; RETURN oClassInstance AS CLASS TRXml ;
+
+
+
+UTILITY STATIC function TRXml_New( cFile) ; local Self AS CLASS TRXml := QSelf() AS CLASS TRXml
+
+   ::cFile     := cFile
+
+   ::oXmlDoc   := TXmlDocument():new( '<?xml version="1.0" encoding="UTF-8"?>' )
+
+   ::oXmlNode  := TXmlNode():new( , "report" )
+   ::oXmlDoc:oRoot:addBelow( ::oXmlNode )
+
+RETURN ( Self )
+
+
+
+UTILITY STATIC function TRXml_Say( cText, cLabel) ; local Self AS CLASS TRXml := QSelf() AS CLASS TRXml
+
+   cText       := cValToChar( cText )
+   cText       := AllTrim( cText )
+   cText       := UniToU8( cText )
+
+   cLabel      := AllTrim( cLabel )
+   cLabel      := StrTran( cLabel, " ", "_" )
+   cLabel      := ValLabel( cLabel )
+
+   ::oXmlInit:addBelow( TXmlNode():New( , cLabel, nil, cText ) )
+
+RETURN ( Self )
+
+
+
+UTILITY STATIC function TRXml_InitLabel( cLabel) ; local Self AS CLASS TRXml := QSelf() AS CLASS TRXml
+
+   ::oXmlInit  := TXmlNode():new( , cLabel )
+   ::oXmlNode:addBelow( ::oXmlInit )
+
+RETURN ( Self )
+
+
+
+UTILITY STATIC function TRXml_EndLabel( cLabel) ; local Self AS CLASS TRXml := QSelf() AS CLASS TRXml
+
+RETURN ( Self )
+
+
+
+
+UTILITY STATIC function TRXml_End() ; local Self AS CLASS TRXml := QSelf() AS CLASS TRXml
+
+   ::hDC       := fCreate( ::cFile )
+
+   if ::hDC < 0
+      ::hDC    := 0
+   endif
+
+   ::oXmlDoc:write( ::hDC, 1 )
+
+   fClose( ::hDC )
+
+   ::hDC       := 0
+
+RETURN NIL
+
+
+
+Static Function ValLabel( cLabel )
+
+   local n
+   local cChr
+   local nAt
+   local cNewLabel   := ""
+
+   for n := 1 to len( cLabel )
+      cChr           := SubStr( cLabel, n, 1 )
+
+      nAt            := At( cChr, "&áéíóú%ÁÉÍÓÚ<>./ªº" )
+      if nAt <> 0
+         cNewLabel   += SubStr( "yaeiou_AEIOU______", nAt, 1 )
+      else
+         cNewLabel   += cChr
+      end
+   next
+
+Return ( cNewLabel )
+
+
+
+Function ValText( cLabel )
+
+   local n
+   local cChr
+   local nAt
+   local cNewLabel   := ""
+
+   for n := 1 to len( cLabel )
+      cChr           := SubStr( cLabel, n, 1 )
+
+      do case
+         case cChr == "&"
+            cNewLabel   += "y"
+         case cChr == "á"
+            cNewLabel   += "a"
+         case cChr == "é"
+            cNewLabel   += "e"
+         case cChr == "í"
+            cNewLabel   += "i"
+         case cChr == "ó"
+            cNewLabel   += "o"
+         case cChr == "ú"
+            cNewLabel   += "u"
+         case cChr == "Á"
+            cNewLabel   += "A"
+         case cChr == "É"
+            cNewLabel   += "E;"
+         case cChr == "Í"
+            cNewLabel   += "I"
+         case cChr == "Ó"
+            cNewLabel   += "O"
+         case cChr == "Ú"
+            cNewLabel   += "U"
+         case cChr == "ñ"
+            cNewLabel   += "ny"
+         case cChr == "Ñ"
+            cNewLabel   += "NY"
+         case cChr == "ª"
+            cNewLabel   += "a"
+         case cChr == "º"
+            cNewLabel   += "o"
+         otherwise
+            cNewLabel   += cChr
+      end
+   next
+
+Return ( cNewLabel )
+#line 431 ".\Prg\Rxml.prg"
+FUNCTION IsAsc(cStr)
+
+LOCAL lIsAsc := .T.
+LOCAL lScan  := !EMPTY(LEN(cStr))
+LOCAL nCode  := 0
+LOCAL nLen   := LEN(cStr)
+LOCAL nPos   := 1
+
+WHILE lScan
+  nCode := ASCPOS(cStr, nPos)
+  IF nCode > 0x7F
+    lIsAsc := .F.
+  END
+  nPos  ++
+  lScan := lIsAsc .AND. nPos <= nLen
+END
+
+RETURN lIsAsc
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+FUNCTION IsU8(cStr)
+
+LOCAL lIsU8  := .T.
+LOCAL lScan  := !EMPTY(LEN(cStr))
+LOCAL nPos   := 1
+LOCAL nByte1 := 0
+LOCAL nByte2 := 0
+LOCAL nByte3 := 0
+LOCAL nByte4 := 0
+LOCAL nBytes := 0
+LOCAL nCode  := 0
+LOCAL nLen   := LEN(cStr)
+
+WHILE lScan
+  nByte1 := ASCPOS(cStr, nPos)
+  DO CASE
+  CASE nByte1 >= 0x00 .AND. nByte1 <= 0x7F
+    nBytes := 1
+  CASE nByte1 >= 0xC2 .AND. nByte1 <= 0xDF
+    nBytes := 2
+    nByte2 := ASCPOS(cStr, nPos + 1)
+    IF !(nByte2 >= 0x80 .AND. nByte2 <= 0xBF)
+      lIsU8 := .F.
+    END
+  CASE nByte1 == 0xE0
+    nBytes := 3
+    nByte2 := ASCPOS(cStr, nPos + 1)
+    nByte3 := ASCPOS(cStr, nPos + 2)
+
+    IF !(nByte2 >= 0xA0 .AND. nByte2 <= 0xBF .AND.  nByte3 >= 0x80 .AND. nByte3 <= 0xBF)
+      lIsU8 := .F.
+    END
+  CASE nByte1 >= 0xE1 .AND. nByte1 <= 0xEF
+    nBytes := 3
+    nByte2 := ASCPOS(cStr, nPos + 1)
+    nByte3 := ASCPOS(cStr, nPos + 2)
+
+    IF !(nByte2 >= 0x80 .AND. nByte2 <= 0xBF .AND.  nByte3 >= 0x80 .AND. nByte3 <= 0xBF)
+      lIsU8 := .F.
+    END
+  CASE nByte1 >= 0xF0 .AND. nByte1 <= 0xF4
+    nBytes := 4
+    nByte2 := ASCPOS(cStr, nPos + 1)
+    nByte3 := ASCPOS(cStr, nPos + 2)
+    nByte4 := ASCPOS(cStr, nPos + 3)
+
+
+
+    IF !(  nByte2 >= 0x80 .AND. nByte2 <= 0xBF .AND.  nByte3 >= 0x80 .AND. nByte3 <= 0xBF .AND.  nByte4 >= 0x80 .AND. nByte4 <= 0xBF)
+      lIsU8 := .F.
+    END
+  OTHERWISE
+    lIsU8 := .F.
+  END
+  nPos  += nBytes
+  lScan := lIsU8 .AND. nPos <= nLen
+END
+
+RETURN lIsU8
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+FUNCTION U8AddBom(cInStr)
+
+LOCAL cBOM    := CHR(0xEF) + CHR(0xBB) + CHR(0xBF)
+LOCAL cOutStr := IF(LEFT(cInStr, 3) == cBOM, cInStr, cBOM + cInStr)
+
+RETURN cOutStr
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+FUNCTION U8At(cSeaStr, cTargStr)
+
+LOCAL nChar := U8AtNum(cSeaStr, cTargStr, 1)
+
+RETURN nChar
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+FUNCTION U8AtNum(cSeaStr, cTargStr, nRep)
+
+
+LOCAL lSeek    := !EMPTY(LEN(cSeaStr)) .AND.  LEN(cSeaStr) <= LEN(cTargStr) .AND. (EMPTY(nRep) .OR. nRep > 0)
+LOCAL nAtChar  := 1
+LOCAL nByte    := 1
+LOCAL nChar    := 1
+LOCAL nOcc     := 0
+LOCAL nSeaLen  := LEN(cSeaStr)
+LOCAL nTargLen := LEN(cTargStr)
+
+IF nRep == NIL
+  nRep := 0
+END
+
+WHILE lSeek
+  DO CASE
+  CASE nByte + nSeaLen - 1 > nTargLen
+    lSeek := .F.
+  CASE cSeaStr == SUBSTR(cTargStr, nByte, nSeaLen)
+    nOcc    ++
+    nAtChar := nChar
+    IF nOcc == nRep
+      lSeek := .F.
+    END
+  END
+  IF lSeek
+    nByte := U8Inc(cTargStr, nByte)
+    IF EMPTY(nByte)
+      lSeek := .F.
+    ELSE
+      nChar ++
+    END
+  END
+END
+
+RETURN nAtChar
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+FUNCTION U8CharByte(cStr, nChars)
+
+LOCAL lSeek  := !EMPTY(LEN(cStr))
+LOCAL nByte  := 0
+LOCAL nBytes := 1
+LOCAL nChar  := 0
+
+DO CASE
+CASE nChars == 0
+
+  nByte := 0
+
+CASE nChars > 0
+
+  nByte := 0
+  WHILE lSeek
+    nByte := U8Inc(cStr, nByte)
+    IF EMPTY(nByte)
+      lSeek := .F.
+    ELSE
+      nChar ++
+      IF nChar == nChars
+        lSeek := .F.
+      END
+    END
+  END
+
+CASE nChars < 0
+
+  nByte := LEN(cStr) + 1
+  WHILE lSeek
+    nByte := U8Inc(cStr, nByte, -1)
+    IF EMPTY(nByte)
+      lSeek := .F.
+    ELSE
+      nChar --
+      IF nChar == nChars
+        lSeek := .F.
+      END
+    END
+  END
+
+END
+
+RETURN nByte
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+FUNCTION U8CharLen(cStr, nPos)
+
+LOCAL nByte1 := 0
+LOCAL nByte2 := 0
+LOCAL nByte3 := 0
+LOCAL nByte4 := 0
+LOCAL nBytes := 0
+LOCAL nCode  := 0
+LOCAL nLen   := LEN(cStr)
+
+IF nPos == NIL
+  nPos := 1
+END
+nByte1 := ASCPOS(cStr, nPos)
+DO CASE
+CASE EMPTY(nLen) .OR. nPos < 1 .OR. nPos > nLen
+  nBytes := 0
+CASE nByte1 >= 0x00 .AND. nByte1 <= 0x7F
+  nBytes := 1
+CASE nByte1 >= 0xC2 .AND. nByte1 <= 0xDF
+  nBytes := 2
+  nByte2 := ASCPOS(cStr, nPos + 1)
+  IF !(nByte2 >= 0x80 .AND. nByte2 <= 0xBF)
+
+    U8RaiseError(IF(nLen < nBytes, 3, 2),  {cStr, nPos})
+  END
+CASE nByte1 == 0xE0
+  nBytes := 3
+  nByte2 := ASCPOS(cStr, nPos + 1)
+  nByte3 := ASCPOS(cStr, nPos + 2)
+
+  IF !(nByte2 >= 0xA0 .AND. nByte2 <= 0xBF .AND.  nByte3 >= 0x80 .AND. nByte3 <= 0xBF)
+
+    U8RaiseError(IF(nLen < nBytes, 3, 2),  {cStr, nPos})
+  END
+CASE nByte1 >= 0xE1 .AND. nByte1 <= 0xEF
+  nBytes := 3
+  nByte2 := ASCPOS(cStr, nPos + 1)
+  nByte3 := ASCPOS(cStr, nPos + 2)
+
+  IF !(nByte2 >= 0x80 .AND. nByte2 <= 0xBF .AND.  nByte3 >= 0x80 .AND. nByte3 <= 0xBF)
+
+    U8RaiseError(IF(nLen < nBytes, 3, 2),  {cStr, nPos})
+  END
+CASE nByte1 >= 0xF0 .AND. nByte1 <= 0xF4
+  nBytes := 4
+  nByte2 := ASCPOS(cStr, nPos + 1)
+  nByte3 := ASCPOS(cStr, nPos + 2)
+  nByte4 := ASCPOS(cStr, nPos + 3)
+
+
+
+  IF !(  nByte2 >= 0x80 .AND. nByte2 <= 0xBF .AND.  nByte3 >= 0x80 .AND. nByte3 <= 0xBF .AND.  nByte4 >= 0x80 .AND. nByte4 <= 0xBF)
+
+    U8RaiseError(IF(nLen < nBytes, 3, 2),  {cStr, nPos})
+  END
+OTHERWISE
+  U8RaiseError(2, {cStr, nPos})
+END
+
+RETURN nBytes
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+FUNCTION U8CharList(cStr)
+
+LOCAL cChar  := ""
+LOCAL cList  := ""
+LOCAL lSeek  := !EMPTY(LEN(cStr))
+LOCAL nBytes := 0
+LOCAL nPos   := 1
+
+WHILE lSeek
+  nBytes := U8CharLen(cStr, nPos)
+  IF EMPTY(nBytes)
+    lSeek := .F.
+  ELSE
+    cChar := SUBSTR(cStr, nPos, nBytes)
+    IF !(cChar $ cList)
+      cList += cChar
+    END
+    nPos += nBytes
+  END
+END
+
+RETURN cList
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+FUNCTION U8Chr(nCode)
+
+LOCAL cChar  := ""
+LOCAL nByte1 := 0
+LOCAL nByte2 := 0
+LOCAL nByte3 := 0
+LOCAL nByte4 := 0
+
+DO CASE
+CASE nCode >= 0x00 .AND. nCode <= 0x7F
+  cChar  := CHR(nCode)
+CASE nCode >= 0x0080 .AND. nCode <= 0x07FF
+  nByte2 := INT(nCode % 0x0040) + 0x80
+  nCode  := INT(nCode / 0x0040)
+  nByte1 :=     nCode           + 0xC0
+  cChar  := CHR(nByte1) + CHR(nByte2)
+CASE nCode >= 0x0800 .AND. nCode <= 0xFFFF
+  nByte3 := INT(nCode % 0x0040) + 0x80
+  nCode  := INT(nCode / 0x0040)
+  nByte2 := INT(nCode % 0x0040) + 0x80
+  nCode  := INT(nCode / 0x0040)
+  nByte1 :=     nCode           + 0xE0
+  cChar  := CHR(nByte1) + CHR(nByte2) + CHR(nByte3)
+CASE nCode >= 0x00010000 .AND. nCode <= 0x0010FFFF
+  nByte4 := INT(nCode % 0x0040) + 0x80
+  nCode  := INT(nCode / 0x0040)
+  nByte3 := INT(nCode % 0x0040) + 0x80
+  nCode  := INT(nCode / 0x0040)
+  nByte2 := INT(nCode % 0x0040) + 0x80
+  nCode  := INT(nCode / 0x0040)
+  nByte1 :=     nCode           + 0xF0
+  cChar  := CHR(nByte1) + CHR(nByte2) + CHR(nByte3) + CHR(nByte4)
+OTHERWISE
+  U8RaiseError(1, {nCode})
+END
+
+RETURN cChar
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+FUNCTION U8Cod(cStr, nBytes)
+
+LOCAL nCode := 0
+
+nBytes := U8CharLen(cStr)
+
+DO CASE
+CASE nBytes == 0
+  nCode := 0
+CASE nBytes == 1
+  nCode := ASCPOS(cStr, 1)
+CASE nBytes == 2
+
+
+  nCode := INT(  (ASCPOS(cStr, 1) % 0x20) * 0x0040 +  (ASCPOS(cStr, 2) % 0x40)            )
+CASE nBytes == 3
+
+
+
+  nCode := INT(  (ASCPOS(cStr, 1) % 0x10) * 0x1000 +  (ASCPOS(cStr, 2) % 0x40) * 0x0040 +  (ASCPOS(cStr, 3) % 0x40)            )
+CASE nBytes == 4
+
+
+
+
+  nCode := INT(  (ASCPOS(cStr, 1) % 0x08) * 0x00040000 +  (ASCPOS(cStr, 2) % 0x40) * 0x00001000 +  (ASCPOS(cStr, 3) % 0x40) * 0x00000040 +  (ASCPOS(cStr, 4) % 0x40)                )
+END
+
+RETURN nCode
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+FUNCTION U8CodPos(cStr, nChar, nBytes)
+
+LOCAL nCode := U8Cod(U8SubStr(cStr, nChar, 1), @nBytes)
+
+RETURN nCode
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+FUNCTION U8DelBom(cInStr)
+
+LOCAL cBOM    := CHR(0xEF) + CHR(0xBB) + CHR(0xBF)
+LOCAL cOutStr := IF(LEFT(cInStr, 3) == cBOM, SUBSTR(cInStr, 4), cInStr)
+
+RETURN cOutStr
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+FUNCTION U8Inc(cStr, nOByte, nChars)
+
+LOCAL lSeek   := .T.
+LOCAL nChar   := 0
+LOCAL nCode   := 0
+LOCAL nLen    := LEN(cStr)
+LOCAL nIBytes := 0
+LOCAL nNByte  := 0
+LOCAL nSBytes := 0
+
+DO CASE
+CASE nChars == NIL .OR. nChars == 1
+
+  nIBytes := IF(nOByte == 0, 1, U8CharLen(cStr, nOByte))
+  nNByte  := nOByte + nIBytes
+
+CASE nChars > 0
+
+  WHILE lSeek
+    nIBytes := IF(nOByte == 0, 1, U8CharLen(cStr, nOByte))
+    nOByte  += nIBytes
+    IF EMPTY(nIBytes)
+      lSeek := .F.
+    ELSE
+      nChar ++
+      IF nChar == nChars
+        nNByte := nOByte
+        lSeek  := .F.
+      END
+    END
+  END
+
+CASE nChars == -1
+
+
+
+
+
+
+
+
+
+  nSBytes :=  IF(nOByte     >  nLen + 1,  IF(nOByte - 1 <= nLen .AND.  (nCode := ASCPOS(cStr, nOByte - 1)) >= 0x80 .AND. nCode <= 0xBF,  IF(nOByte - 2 <= nLen .AND.  (nCode := ASCPOS(cStr, nOByte - 2)) >= 0x80 .AND. nCode <= 0xBF,  IF(nOByte - 3 <= nLen .AND.  (nCode := ASCPOS(cStr, nOByte - 3)) >= 0x80 .AND. nCode <= 0xBF,  4, 3), 2), 1), 0)
+  IF !EMPTY(nSBytes)
+    nIBytes := U8CharLen(cStr, nOByte - nSBytes)
+    nNByte  := nOByte - nSBytes
+  END
+
+CASE nChars < 0
+
+  WHILE lSeek
+
+
+
+
+
+
+
+
+    nSBytes :=  IF(nOByte     >  nLen + 1,  IF(nOByte - 1 <= nLen .AND.  (nCode := ASCPOS(cStr, nOByte - 1)) >= 0x80 .AND. nCode <= 0xBF,  IF(nOByte - 2 <= nLen .AND.  (nCode := ASCPOS(cStr, nOByte - 2)) >= 0x80 .AND. nCode <= 0xBF,  IF(nOByte - 3 <= nLen .AND.  (nCode := ASCPOS(cStr, nOByte - 3)) >= 0x80 .AND. nCode <= 0xBF,  4, 3), 2), 1), 0)
+    IF EMPTY(nSBytes)
+      lSeek := .F.
+    ELSE
+      nIBytes := U8CharLen(cStr, nOByte - nSBytes)
+      nOByte  -= nSBytes
+      IF EMPTY(nIBytes)
+        lSeek := .F.
+      ELSE
+        nChar --
+        IF nChar == nChars
+          nNByte := nOByte
+          lSeek  := .F.
+        END
+      END
+    END
+  END
+
+CASE nChars == 0
+
+  nIBytes := U8CharLen(cStr, nOByte)
+  nNByte  := nOByte
+
+END
+
+RETURN nNByte
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+FUNCTION U8Left(cInStr, nChars)
+
+LOCAL cOutStr := ""
+LOCAL lSeek   := !EMPTY(LEN(cInStr)) .AND. nChars > 0
+LOCAL nByte   := 1
+LOCAL nBytes  := 0
+LOCAL nChar   := 0
+
+WHILE lSeek
+  nBytes := U8CharLen(cInStr, nByte)
+  IF EMPTY(nBytes)
+    lSeek := .F.
+  ELSE
+    cOutStr += SUBSTR(cInStr, nByte, nBytes)
+    nByte   += nBytes
+    nChar   ++
+    IF nChar == nChars
+      lSeek := .F.
+    END
+  END
+END
+
+RETURN cOutStr
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+FUNCTION U8Len(cStr)
+
+LOCAL lSeek := !EMPTY(LEN(cStr))
+LOCAL nLen  := 0
+LOCAL nByte := 1
+
+WHILE lSeek
+  nByte := U8Inc(cStr, nByte)
+  IF EMPTY(nByte)
+    lSeek := .F.
+  ELSE
+    nLen ++
+  END
+END
+
+RETURN nLen
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+FUNCTION U8PadC(cStr, nChars, cFill)
+
+LOCAL cPad  := ""
+LOCAL nPad  := nChars - U8Len(cStr)
+LOCAL nFill := IF(cFill == NIL, 0, LEN(cFill))
+LOCAL nHal  := INT(nPad/2)
+
+DO CASE
+CASE nFill == 0
+  cFill := " "
+CASE nFill > 1
+  cFill := U8Left(cFill, 1)
+END
+DO CASE
+CASE nPad == 0
+  cPad := cStr
+CASE nPad > 0
+  cPad := REPLICATE(cFill, nHal) + cStr + REPLICATE(cFill, nPad - nHal)
+CASE nPad < 0
+  cPad := LEFT(cStr, U8Inc(cStr, LEN(cStr) + 1, nPad) - 1)
+END
+
+RETURN cPad
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+FUNCTION U8PadL(cStr, nChars, cFill)
+
+LOCAL cPad  := ""
+LOCAL nPad  := nChars - U8Len(cStr)
+LOCAL nFill := IF(cFill == NIL, 0, LEN(cFill))
+
+DO CASE
+CASE nFill == 0
+  cFill := " "
+CASE nFill > 1
+  cFill := U8Left(cFill, 1)
+END
+DO CASE
+CASE nPad == 0
+  cPad := cStr
+CASE nPad > 0
+  cPad := REPLICATE(cFill, nPad) + cStr
+CASE nPad < 0
+  cPad := LEFT(cStr, U8Inc(cStr, LEN(cStr) + 1, nPad) - 1)
+END
+
+RETURN cPad
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+FUNCTION U8PadR(cStr, nChars, cFill)
+
+LOCAL cPad  := ""
+LOCAL nPad  := nChars - U8Len(cStr)
+LOCAL nFill := IF(cFill == NIL, 0, LEN(cFill))
+
+DO CASE
+CASE nFill == 0
+  cFill := " "
+CASE nFill > 1
+  cFill := U8Left(cFill, 1)
+END
+DO CASE
+CASE nPad == 0
+  cPad := cStr
+CASE nPad > 0
+  cPad := cStr + REPLICATE(cFill, nPad)
+CASE nPad < 0
+  cPad := LEFT(cStr, U8Inc(cStr, LEN(cStr) + 1, nPad) - 1)
+END
+
+RETURN cPad
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+PROCEDURE U8RaiseError(nErr, aArgs)
+
+LOCAL oErr := ERRORNEW()
+
+
+
+
+
+
+
+
+LOCAL aErrors := {  "Invalid Unicode code point"     ,  "Invalid byte in UTF-8 string"   ,  "Invalid end of UTF-8 string"    ,  "Invalid byte in UTF-16LE string",  "Invalid end of UTF-16LE string" ,  "Invalid byte in UTF-16BE string",  "Invalid end of UTF-16BE string"   }
+
+oErr:GENCODE     := 1
+oErr:DESCRIPTION := PROCNAME(1) + ": " + aErrors[nErr]
+oErr:ARGS        := aArgs
+oErr:SEVERITY    := 2
+oErr:SUBSYSTEM   := "UTF8FUNCTIONS"
+EVAL(ERRORBLOCK(), oErr)
+
+RETURN
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+FUNCTION U8Rat(cSeaStr, cTargStr)
+
+LOCAL nChar := U8AtNum(cSeaStr, cTargStr, 0)
+
+RETURN nChar
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+FUNCTION U8Right(cInStr, nChars)
+
+LOCAL cOutStr := ""
+LOCAL lSeek   := !EMPTY(LEN(cInStr)) .AND. nChars > 0
+LOCAL nChar   := 0
+LOCAL nNByte  := 0
+LOCAL nOByte  := LEN(cInStr) + 1
+
+WHILE lSeek
+  nNByte := U8Inc(cInStr, nOByte, -1)
+  IF EMPTY(nNByte)
+    lSeek := .F.
+  ELSE
+    cOutStr := SUBSTR(cInStr, nNByte, nOByte - nNByte) + cOutStr
+    nOByte  := nNByte
+    nChar   ++
+    IF nChar == nChars
+      lSeek := .F.
+    END
+  END
+END
+
+RETURN cOutStr
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+FUNCTION U8Stuff(cInStr, nAtChar, nDelChar, cAddStr)
+
+LOCAL cOutStr  := ""
+LOCAL cPostStr := ""
+LOCAL cPreStr  := ""
+LOCAL nAtByte  := 1
+
+IF nAtChar <> NIL .AND. nAtChar > 0
+  nAtByte := U8Inc(cInStr, 1, nAtChar - 1)
+END
+cPreStr := LEFT(cInStr, nAtByte - 1)
+IF nDelChar <> NIL .AND. nDelChar > 0
+  nAtByte := U8Inc(cInStr, nAtByte, nDelChar)
+ENDIF
+cPostStr := SUBSTR(cInStr, nAtByte)
+cOutStr := cPreStr + cAddStr + cPostStr
+
+RETURN cOutStr
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+FUNCTION U8SubStr(cInStr, nStChar, nChars)
+
+LOCAL cOutStr := ""
+LOCAL nByte   := U8CharByte(cInStr, nStChar)
+LOCAL nBytes  := 0
+LOCAL nChar   := 0
+LOCAL lSeek   := !EMPTY(LEN(cInStr)) .AND. nChars > 0 .AND. nByte > 0
+
+WHILE lSeek
+  nBytes := U8CharLen(cInStr, nByte)
+  IF EMPTY(nBytes)
+    lSeek := .F.
+  ELSE
+    cOutStr += SUBSTR(cInStr, nByte, nBytes)
+    nByte   += nBytes
+    nChar   ++
+    IF nChar == nChars
+      lSeek := .F.
+    END
+  END
+END
+
+RETURN cOutStr
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+FUNCTION U8ToUni(cInStr, nType, lAddBom, lDrop)
+
+LOCAL cOutStr := ""
+LOCAL lScan   := .T.
+LOCAL nByte   := 1
+LOCAL nByte1  := 0
+LOCAL nByte2  := 0
+LOCAL nByte3  := 0
+LOCAL nByte4  := 0
+LOCAL nBytes  := 0
+LOCAL nCode   := 0
+LOCAL nCode1  := 0
+LOCAL nCode2  := 0
+LOCAL nLen    := LEN(cInStr)
+
+lDrop := .F.
+
+DO CASE
+CASE nType == 1
+
+  WHILE lScan
+    IF nByte > nLen
+      lScan := .F.
+    ELSE
+      nCode := U8Cod(SUBSTR(cInStr, nByte, 4), @nBytes)
+      IF nBytes == 0
+        lScan := .F.
+      ELSE
+        IF nCode <= 0xFF
+          cOutStr += CHR(nCode)
+        ELSE
+          lDrop := .T.
+        END
+        nByte += nBytes
+      END
+    END
+  END
+
+CASE nType == 2
+
+  cOutStr := IF(EMPTY(lAddBom), cInStr, U8AddBom(cInStr))
+
+CASE nType == 3
+
+  IF !EMPTY(lAddBom)
+    cOutStr := CHR(0xFF) + CHR(0xFE)
+  END
+  WHILE lScan
+    IF nByte > nLen
+      lScan := .F.
+    ELSE
+      nCode := U8Cod(SUBSTR(cInStr, nByte, 4), @nBytes)
+      IF nBytes == 0
+        lScan := .F.
+      ELSE
+        IF nCode <= 0xFFFF
+          nByte1  := INT(nCode % 0x0100)
+          nByte2  := INT(nCode / 0x0100)
+          cOutStr += CHR(nByte1) + CHR(nByte2)
+        ELSE
+          nCode1  := INT(nCode % 0x0400)
+          nCode2  := INT(nCode / 0x0400) - 0x0040
+          nByte1  := INT(nCode1 % 0x0100)
+          nByte2  := INT(nCode1 / 0x0100) + 0xD8
+          nByte3  := INT(nCode2 % 0x0100)
+          nByte4  := INT(nCode2 / 0x0100) + 0xD8
+          cOutStr += CHR(nByte1) + CHR(nByte2) + CHR(nByte3) + CHR(nByte4)
+        END
+        nByte += nBytes
+      END
+    END
+  END
+
+CASE nType == 4
+
+  IF !EMPTY(lAddBom)
+    cOutStr := CHR(0xFE) + CHR(0xFF)
+  END
+  WHILE lScan
+    IF nByte > nLen
+      lScan := .F.
+    ELSE
+      nCode := U8Cod(SUBSTR(cInStr, nByte, 4), @nBytes)
+      IF nBytes == 0
+        lScan := .F.
+      ELSE
+        IF nCode <= 0xFFFF
+          nByte1  := INT(nCode / 0x0100)
+          nByte2  := INT(nCode % 0x0100)
+          cOutStr += CHR(nByte1) + CHR(nByte2)
+        ELSE
+          nCode1  := INT(nCode / 0x0400) - 0x0040
+          nCode2  := INT(nCode % 0x0400)
+          nByte1  := INT(nCode1 / 0x0100) + 0xD8
+          nByte2  := INT(nCode1 % 0x0100)
+          nByte3  := INT(nCode2 / 0x0100) + 0xD8
+          nByte4  := INT(nCode2 % 0x0100)
+          cOutStr += CHR(nByte1) + CHR(nByte2) + CHR(nByte3) + CHR(nByte4)
+        END
+        nByte += nBytes
+      END
+    END
+  END
+
+END
+
+RETURN cOutStr
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+FUNCTION UniBom(nType)
+
+LOCAL cBom := ""
+
+DO CASE
+CASE nType == 2
+  cBom := CHR(0xEF) + CHR(0xBB) + CHR(0xBF)
+CASE nType == 3
+  cBom := CHR(0xFF) + CHR(0xFE)
+CASE nType == 4
+  cBom := CHR(0xFE) + CHR(0xFF)
+END
+
+RETURN cBom
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+FUNCTION UniToU8(cInStr, nType, lDelBom)
+
+LOCAL cOutStr := ""
+LOCAL nChar   := 1
+LOCAL nCode   := 0
+LOCAL nCode2  := 0
+LOCAL nLen    := LEN(cInStr)
+LOCAL nStart  := 1
+
+IF nType == NIL
+  nType := UniType(cInStr)
+END
+
+DO CASE
+CASE nType == 1
+
+  FOR nChar := nStart TO nLen
+    nCode   := ASCPOS(cInStr, nChar)
+    cOutStr += U8Chr(nCode)
+  NEXT
+
+CASE nType == 2
+
+  cOutStr := IF(EMPTY(lDelBom), cInStr, U8DelBom(cInStr))
+
+CASE nType == 3
+
+  IF !EMPTY(INT(nLen % 2))
+    U8RaiseError(5, {cInStr, lDelBom})
+  END
+  IF !EMPTY(lDelBom) .AND. LEFT(cInStr,2) == CHR(0xFF) + CHR(0xFE)
+    nStart := 3
+  END
+  FOR nChar := nStart TO nLen STEP 2
+    nCode := ASCPOS(cInStr, nChar + 1) * 0x0100 + ASCPOS(cInStr, nChar)
+    IF nCode >= 0xD800 .AND. nCode <= 0xDBFF
+      IF nLen < nChar + 3
+        U8RaiseError(5, {cInStr, lDelBom})
+      END
+
+
+      nCode2 :=  ASCPOS(cInStr, nChar + 3) * 0x0100 +  ASCPOS(cInStr, nChar + 2)
+      IF nCode2 < 0xD800 .OR. nCode > 0xDBFF
+        U8RaiseError(4, {cInStr, lDelBom})
+      END
+      nCode := (nCode - 0xD800 + 0x0040) * 0x00010000 + nCode2 - 0xD800
+      nChar += 2
+    END
+    cOutStr += U8Chr(nCode)
+  NEXT
+
+CASE nType == 4
+
+  IF !EMPTY(INT(nLen % 2))
+    U8RaiseError(7, {cInStr, lDelBom})
+  END
+  IF !EMPTY(lDelBom) .AND. LEFT(cInStr,2) == CHR(0xFE) + CHR(0xFF)
+    nStart := 3
+  END
+  FOR nChar := nStart TO nLen STEP 2
+    nCode := ASCPOS(cInStr, nChar) * 0x0100 + ASCPOS(cInStr, nChar + 1)
+    IF nCode >= 0xD800 .AND. nCode <= 0xDBFF
+      IF nLen < nChar + 3
+        U8RaiseError(7, {cInStr, lDelBom})
+      END
+
+
+      nCode2 :=  ASCPOS(cInStr, nChar + 2) * 0x0100 +  ASCPOS(cInStr, nChar + 3)
+      IF nCode2 < 0xD800 .OR. nCode > 0xDBFF
+        U8RaiseError(6, {cInStr, lDelBom})
+      END
+      nCode := (nCode - 0xD800 + 0x0040) * 0x00010000 + nCode2 - 0xD800
+      nChar += 2
+    END
+    cOutStr += U8Chr(nCode)
+  NEXT
+
+END
+
+RETURN cOutStr
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+FUNCTION UniType(cStr)
+
+LOCAL nByte1 := 0
+LOCAL nByte2 := 0
+LOCAL nByte3 := 0
+LOCAL nByte4 := 0
+LOCAL nType  := 0
+
+nByte1 := ASCPOS(cStr, 1)
+nByte2 := ASCPOS(cStr, 2)
+nByte3 := ASCPOS(cStr, 3)
+nByte4 := ASCPOS(cStr, 4)
+DO CASE
+CASE nByte1 == 0xEF .AND. nByte2 == 0xBB .AND. nByte3 == 0xBF
+  nType := 2
+CASE nByte1 == 0xFF .AND. nByte2 == 0xFE
+  nType := 3
+CASE nByte1 == 0xFE .AND. nByte2 == 0xFF
+  nType := 4
+OTHERWISE
+  nType := 1
+END
+
+RETURN nType
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+FUNCTION UnicodeType(cStr)
+
+LOCAL nByte1 := 0
+LOCAL nByte2 := 0
+LOCAL nByte3 := 0
+LOCAL nByte4 := 0
+LOCAL nChar  := 1
+LOCAL nCode  := 0
+LOCAL nCtrl  := 0
+LOCAL nLen   := LEN(cStr)
+LOCAL nType  := 0
+
+nByte1 := IF(nLen >= 1, ASC(SUBSTR(cStr, 1, 1)), 0)
+nByte2 := IF(nLen >= 2, ASC(SUBSTR(cStr, 2, 1)), 0)
+nByte3 := IF(nLen >= 3, ASC(SUBSTR(cStr, 3, 1)), 0)
+nByte4 := IF(nLen >= 4, ASC(SUBSTR(cStr, 4, 1)), 0)
+DO CASE
+CASE nByte1 == 0xEF .AND. nByte2 == 0xBB .AND. nByte3 == 0xBF
+  nType := 2
+CASE nByte1 == 0xFF .AND. nByte2 == 0xFE
+  nType := 3
+CASE nByte1 == 0xFE .AND. nByte2 == 0xFF
+  nType := 4
+OTHERWISE
+  nType := 1
+END
+
+RETURN nType
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+FUNCTION UnicodeBOM(nType)
+
+LOCAL cBOM := ""
+
+DO CASE
+CASE nType == 2
+  cBOM := CHR(0xEF) + CHR(0xBB) + CHR(0xBF)
+CASE nType == 3
+  cBOM := CHR(0xFF) + CHR(0xFE)
+CASE nType == 4
+  cBOM := CHR(0xFE) + CHR(0xFF)
+END
+
+RETURN cBOM
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+FUNCTION UnicodeEOL(nType)
+
+LOCAL cEOL  := ""
+
+DO CASE
+CASE nType == 1
+  cEOL := CHR(0x0D) + CHR(0x0A)
+CASE nType == 2
+  cEOL := CHR(0x0D) + CHR(0x0A)
+CASE nType == 3
+  cEOL := CHR(0x0D) + CHR(0x00) + CHR(0x0A) + CHR(0x00)
+CASE nType == 4
+  cEOL := CHR(0x00) + CHR(0x0D) + CHR(0x00) + CHR(0x0A)
+END
+
+RETURN cEOL
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+FUNCTION UnicodeSwap(cInStr)
+
+LOCAL cOutStr := ""
+LOCAL nChar   := 1
+LOCAL nLen    := LEN(cInStr)
+
+FOR nChar := 1 TO nLen STEP 2
+  cOutStr += SUBSTR(cInStr, nChar + 1, 1) + SUBSTR(cInStr, nChar, 1)
+NEXT
+
+RETURN cOutStr
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+FUNCTION Unicode2Array(cStr, nType, aPoses)
+
+LOCAL aCodes := {}
+LOCAL nByte1 := ASC(SUBSTR(cStr, 1, 1))
+LOCAL nByte2 := ASC(SUBSTR(cStr, 2, 1))
+LOCAL nByte3 := ASC(SUBSTR(cStr, 3, 1))
+LOCAL nByte4 := ASC(SUBSTR(cStr, 4, 1))
+LOCAL nBytes := 1
+LOCAL nChar  := 1
+LOCAL nCode  := 0
+LOCAL nCode1 := 0
+LOCAL nCode2 := 0
+LOCAL nLen   := LEN(cStr)
+LOCAL nPos   := 1
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+aPoses := {}
+
+FOR nPos := 1 TO nLen
+
+  DO CASE
+  CASE nType == 1
+
+    nBytes := 1
+    nCode  := nByte1
+
+  CASE nType == 2
+
+    DO CASE
+    CASE nByte1 >= 0x00 .AND. nByte1 <= 0x7F
+      nBytes := 1
+      nCode  := nByte1
+    CASE nByte1 >= 0xC2 .AND. nByte1 <= 0xDF
+      IF nByte2 >= 0x80 .AND. nByte2 <= 0xBF
+        nBytes := 2
+
+
+        nCode  := INT(  (nByte1 % 0x20) * 0x0040 +  (nByte2 % 0x40)            )
+      ELSE
+        nBytes := 1
+        nCode  := -1
+      END
+    CASE nByte1 == 0xE0
+
+
+      IF  nByte2 >= 0xA0 .AND. nByte2 <= 0xBF .AND.  nByte3 >= 0x80 .AND. nByte3 <= 0xBF
+        nBytes := 3
+
+
+
+        nCode  := INT(  (nByte1 % 0x10) * 0x1000 +  (nByte2 % 0x40) * 0x0040 +  (nByte3 % 0x40)            )
+      ELSE
+        nBytes := 1
+        nCode  := -1
+      END
+    CASE nByte1 >= 0xE1 .AND. nByte1 <= 0xEF
+
+
+      IF  nByte2 >= 0x80 .AND. nByte2 <= 0xBF .AND.  nByte3 >= 0x80 .AND. nByte3 <= 0xBF
+        nBytes := 3
+
+
+
+        nCode  := INT(  (nByte1 % 0x10) * 0x1000 +  (nByte2 % 0x40) * 0x0040 +  (nByte3 % 0x40)            )
+      ELSE
+        nBytes := 1
+        nCode  := -1
+      END
+    CASE nByte1 >= 0xF0 .AND. nByte1 <= 0xF4
+
+
+
+      IF  nByte2 >= 0x80 .AND. nByte2 <= 0xBF .AND.  nByte3 >= 0x80 .AND. nByte3 <= 0xBF .AND.  nByte4 >= 0x80 .AND. nByte4 <= 0xBF
+        nBytes := 4
+
+
+
+
+        nCode  := INT(  (nByte1 % 0x08) * 0x00040000 +  (nByte2 % 0x40) * 0x00001000 +  (nByte3 % 0x40) * 0x00000040 +  (nByte4 % 0x40)                )
+      ELSE
+        nBytes := 1
+        nCode  := -1
+      END
+    OTHERWISE
+      nBytes := 1
+      nCode  := -1
+    END
+
+  CASE nType == 3
+
+    nCode1 := nByte1 + nByte2 * 0x0100
+    IF !(nCode1 >= 0xD800 .AND. nCode1 <= 0xDBFF)
+      nBytes := 2
+      nCode  := nCode1
+    ELSE
+      nBytes := 4
+      nCode1 -= 0xD800
+      nCode2 := nByte3 + nByte4 * 0x0100 - 0xD800 + 0x0040
+      nCode  := nCode1 + nCode2 * 0x00010000
+    END
+
+  CASE nType == 4
+
+    nCode1 := nByte1 * 0x0100 + nByte2
+    IF !(nCode1 >= 0xD800 .AND. nCode1 <= 0xDBFF)
+      nBytes := 2
+      nCode  := nCode1
+    ELSE
+      nBytes := 4
+      nCode1 -= 0xD800 + 0x0040
+      nCode2 := nByte3 * 0x0100 + nByte4 - 0xD800
+      nCode  := nCode1 * 0x00010000 + nCode2
+    END
+
+  END
+
+  DO CASE
+  CASE nBytes == 1
+    nByte1 := nByte2
+    nByte2 := nByte3
+    nByte3 := nByte4
+    nByte4 := ASC(SUBSTR(cStr, nPos + 4, 1))
+  CASE nBytes == 2
+    nPos   ++
+    nByte1 := nByte3
+    nByte2 := nByte4
+    nByte3 := ASC(SUBSTR(cStr, nPos + 3, 1))
+    nByte4 := ASC(SUBSTR(cStr, nPos + 4, 1))
+  CASE nBytes == 3
+    nPos   += 2
+    nByte1 := nByte4
+    nByte2 := ASC(SUBSTR(cStr, nPos + 2, 1))
+    nByte3 := ASC(SUBSTR(cStr, nPos + 3, 1))
+    nByte4 := ASC(SUBSTR(cStr, nPos + 4, 1))
+  CASE nBytes == 4
+    nPos   += 3
+    nByte1 := ASC(SUBSTR(cStr, nPos + 1, 1))
+    nByte2 := ASC(SUBSTR(cStr, nPos + 2, 1))
+    nByte3 := ASC(SUBSTR(cStr, nPos + 3, 1))
+    nByte4 := ASC(SUBSTR(cStr, nPos + 4, 1))
+  END
+
+  AADD(aCodes, nCode)
+  AADD(aPoses, nPos )
+
+NEXT
+
+RETURN aCodes
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+FUNCTION Array2Unicode(aCodes, nType, bOut)
+
+LOCAL cStr   := ""
+LOCAL lCr    := .F.
+LOCAL nByte1 := 0
+LOCAL nByte2 := 0
+LOCAL nByte3 := 0
+LOCAL nByte4 := 0
+LOCAL nLen   := LEN(aCodes)
+LOCAL nPos   := 1
+LOCAL nCode  := 0
+LOCAL nCode1 := 0
+LOCAL nCode2 := 0
+
+IF EMPTY(bOut)
+  bOut := {|| .T.}
+END
+
+FOR nPos := 1 TO nLen
+
+  nCode := aCodes[nPos]
+
+  DO CASE
+  CASE nType == 1
+
+    IF nCode >= 0x00 .AND. nCode <= 0xFF
+      cStr += CHR(nCode)
+    ELSE
+      IF !bOut:EVAL(nCode, nPos)
+        BREAK
+      END
+    END
+
+  CASE nType == 2
+
+    DO CASE
+    CASE nCode >= 0x00 .AND. nCode <= 0x7F
+      cStr += CHR(nCode)
+    CASE nCode >= 0x0080 .AND. nCode <= 0x07FF
+      nByte2 := INT(nCode % 0x0040) + 0x80
+      nCode  := INT(nCode / 0x0040)
+      nByte1 :=     nCode           + 0xC0
+      cStr   += CHR(nByte1) + CHR(nByte2)
+    CASE nCode >= 0x0800 .AND. nCode <= 0xFFFF
+      nByte3 := INT(nCode % 0x0040) + 0x80
+      nCode  := INT(nCode / 0x0040)
+      nByte2 := INT(nCode % 0x0040) + 0x80
+      nCode  := INT(nCode / 0x0040)
+      nByte1 :=     nCode           + 0xE0
+      cStr   += CHR(nByte1) + CHR(nByte2) + CHR(nByte3)
+    CASE nCode >= 0x00010000 .AND. nCode <= 0x0010FFFF
+      nByte4 := INT(nCode % 0x0040) + 0x80
+      nCode  := INT(nCode / 0x0040)
+      nByte3 := INT(nCode % 0x0040) + 0x80
+      nCode  := INT(nCode / 0x0040)
+      nByte2 := INT(nCode % 0x0040) + 0x80
+      nCode  := INT(nCode / 0x0040)
+      nByte1 :=     nCode           + 0xF0
+      cStr   += CHR(nByte1) + CHR(nByte2) + CHR(nByte3) + CHR(nByte4)
+    OTHERWISE
+      IF !bOut:EVAL(nCode, nPos)
+        BREAK
+      END
+    END
+
+  CASE nType == 3
+
+    IF nCode >= 0x00000000 .AND. nCode <= 0x0010FFFF
+      IF !(nCode >= 0x00010000 .AND. nCode <= 0x0010FFFF)
+        nByte1 := INT(nCode % 0x0100)
+        nByte2 := INT(nCode / 0x0100)
+        cStr   += CHR(nByte1) + CHR(nByte2)
+      ELSE
+        nCode1 := INT(nCode % 0x0400)
+        nCode2 := INT(nCode / 0x0400) - 0x0040
+        nByte1 := INT(nCode1 % 0x0100)
+        nByte2 := INT(nCode1 / 0x0100) + 0xD8
+        nByte3 := INT(nCode2 % 0x0100)
+        nByte4 := INT(nCode2 / 0x0100) + 0xD8
+        cStr   += CHR(nByte1) + CHR(nByte2) + CHR(nByte3) + CHR(nByte4)
+      END
+    ELSE
+      IF !bOut:EVAL(nCode, nPos)
+        BREAK
+      END
+    END
+
+  CASE nType == 4
+
+    IF nCode >= 0x00000000 .AND. nCode <= 0x0010FFFF
+      IF !(nCode >= 0x00010000 .AND. nCode <= 0x0010FFFF)
+        nByte1 := INT(nCode / 0x0100)
+        nByte2 := INT(nCode % 0x0100)
+        cStr   += CHR(nByte1) + CHR(nByte2)
+      ELSE
+        nCode1 := INT(nCode / 0x0400) - 0x0040
+        nCode2 := INT(nCode % 0x0400)
+        nByte1 := INT(nCode1 / 0x0100) + 0xD8
+        nByte2 := INT(nCode1 % 0x0100)
+        nByte3 := INT(nCode2 / 0x0100) + 0xD8
+        nByte4 := INT(nCode2 % 0x0100)
+        cStr   += CHR(nByte1) + CHR(nByte2) + CHR(nByte3) + CHR(nByte4)
+      END
+    ELSE
+      IF !bOut:EVAL(nCode, nPos)
+        BREAK
+      END
+    END
+
+  END
+
+NEXT
+
+RETURN cStr
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+FUNCTION UnicodeReadLine(nHandle, nType, lInit, lRead)
+
+STATIC cScan   := ""
+STATIC lCr     := .F.
+STATIC lScan   := .T.
+
+LOCAL cBuffer  := ""
+LOCAL cLine    := ""
+LOCAL nBufLen  := 0x800
+LOCAL nBufRead := 0
+LOCAL nPos     := 0
+
+LOCAL cCR      := CHR(0x0D)
+LOCAL cLF      := CHR(0x0A)
+LOCAL cCRLF    := CHR(0x0D) + CHR(0x0A)
+LOCAL cFF      := CHR(0x0C)
+LOCAL cNel     := CHR(0xC2) + CHR(0x85)
+LOCAL cLS      := CHR(0xE2) + CHR(0x80) + CHR(0xA8)
+LOCAL cPS      := CHR(0xE2) + CHR(0x80) + CHR(0xA9)
+
+IF lInit
+  cScan   := ""
+  lCr     := .F.
+  lScan   := .T.
+  lInit   := .F.
+  lRead   := .T.
+  DO CASE
+  CASE nType == 2
+    FSEEK(nHandle, 3)
+  CASE nType == 3
+    FSEEK(nHandle, 2)
+  CASE nType == 4
+    FSEEK(nHandle, 2)
+  OTHERWISE
+    FSEEK(nHandle, 0)
+  END
+END
+
+DO CASE
+CASE nType == 1
+
+  WHILE EMPTY(nPos)
+
+    nPos := AT(cCR, cScan)
+    DO CASE
+    CASE !EMPTY(nPos)
+      cLine := LEFT(cScan, nPos - 1)
+      cScan := SUBSTR(cScan, nPos + 1)
+    CASE lScan
+      cBuffer  := SPACE(nBufLen)
+      nBufRead := FREAD(nHandle, @cBuffer, nBufLen)
+      lScan    := (nBufRead == nBufLen)
+      IF !lScan
+        cBuffer := LEFT(cBuffer, nBufRead)
+      END
+      IF lCr .AND. LEFT(cBuffer, 1) == cLF
+        cBuffer := SUBSTR(cBuffer, 2)
+      END
+      lCr     := (RIGHT(cBuffer, 1) == cCR)
+
+      cBuffer := STRTRAN(STRTRAN(STRTRAN(cBuffer,  cCRLF, cCR), cLF, cCR), cFF, cCR)
+      IF !lScan .AND. RIGHT(cBuffer, 1) == cCR
+        cBuffer := LEFT(cBuffer, LEN(cBuffer) - 1)
+      END
+      cScan += cBuffer
+    OTHERWISE
+      cLine := cScan
+      cScan := ""
+      lRead := .F.
+      nPos  := 1
+    END
+
+  END
+
+CASE nType == 2
+
+  WHILE EMPTY(nPos)
+
+    nPos := AT(cCR, cScan)
+    DO CASE
+    CASE !EMPTY(nPos)
+      cLine := LEFT(cScan, nPos - 1)
+      cScan := SUBSTR(cScan, nPos + 1)
+    CASE lScan
+      cBuffer  := SPACE(nBufLen)
+      nBufRead := FREAD(nHandle, @cBuffer, nBufLen)
+      lScan    := (nBufRead == nBufLen)
+      IF !lScan
+        cBuffer := LEFT(cBuffer, nBufRead)
+      END
+      IF lCr .AND. LEFT(cBuffer, 1) == cLF
+        cBuffer := SUBSTR(cBuffer, 2)
+      END
+      lCr     := (RIGHT(cBuffer, 1) == cCR)
+
+      cBuffer := STRTRAN(STRTRAN(STRTRAN(STRTRAN(STRTRAN(STRTRAN(cBuffer,  cCRLF, cCR), cLF, cCR), cFF, cCR), cNel, cCR), cLS, cCR), cPS, cCR)
+      IF !lScan .AND. RIGHT(cBuffer, 1) == cCR
+        cBuffer := LEFT(cBuffer, LEN(cBuffer) - 1)
+      END
+      cScan += cBuffer
+    OTHERWISE
+      cLine := cScan
+      cScan := ""
+      lRead := .F.
+      nPos  := 1
+    END
+
+  END
+
+CASE nType == 3
+
+  cCR   := CHR(0x0D) + CHR(0x00)
+  cLF   := CHR(0x0A) + CHR(0x00)
+  cCRLF := CHR(0x0D) + CHR(0x00) + CHR(0x0A) + CHR(0x00)
+  cFF   := CHR(0x0C) + CHR(0x00)
+  cNel  := CHR(0x85) + CHR(0x00)
+  cLS   := CHR(0x28) + CHR(0x20)
+  cPS   := CHR(0x29) + CHR(0x20)
+
+  WHILE EMPTY(nPos)
+
+    nPos := AT(cCR, cScan)
+    DO CASE
+    CASE !EMPTY(nPos) .AND. !EMPTY(nPos % 2)
+      cLine := LEFT(cScan, nPos - 1)
+      cScan := SUBSTR(cScan, nPos + 2)
+    CASE lScan
+      cBuffer  := SPACE(nBufLen)
+      nBufRead := FREAD(nHandle, @cBuffer, nBufLen)
+      lScan    := (nBufRead == nBufLen)
+      IF !lScan
+        cBuffer := LEFT(cBuffer, nBufRead - nBufRead % 2)
+      END
+      IF lCr .AND. LEFT(cBuffer, 2) == cLF
+        cBuffer := SUBSTR(cBuffer, 3)
+      END
+      lCr := (RIGHT(cBuffer, 2) == cCR)
+
+
+      cBuffer :=  PairTran(PairTran(PairTran(PairTran(PairTran(PairTran(cBuffer,  cCRLF, cCR), cLF, cCR), cFF, cCR), cNel, cCR), cLS, cCR), cPS, cCR)
+      IF !lScan .AND. RIGHT(cBuffer, 2) == cCR
+        cBuffer := LEFT(cBuffer, LEN(cBuffer) - 2)
+      END
+      cScan += cBuffer
+    OTHERWISE
+      cLine := cScan
+      cScan := ""
+      lRead := .F.
+      nPos  := 1
+    END
+
+  END
+
+CASE nType == 4
+
+  cCR   := CHR(0x00) + CHR(0x0D)
+  cLF   := CHR(0x00) + CHR(0x0A)
+  cCRLF := CHR(0x00) + CHR(0x0D) + CHR(0x00) + CHR(0x0A)
+  cFF   := CHR(0x00) + CHR(0x0C)
+  cNel  := CHR(0x00) + CHR(0x85)
+  cLS   := CHR(0x20) + CHR(0x28)
+  cPS   := CHR(0x20) + CHR(0x29)
+
+  WHILE EMPTY(nPos)
+
+    nPos := AT(cCR, cScan)
+    DO CASE
+    CASE !EMPTY(nPos) .AND. !EMPTY(nPos % 2)
+      cLine := LEFT(cScan, nPos - 1)
+      cScan := SUBSTR(cScan, nPos + 2)
+    CASE lScan
+      cBuffer  := SPACE(nBufLen)
+      nBufRead := FREAD(nHandle, @cBuffer, nBufLen)
+      lScan    := (nBufRead == nBufLen)
+      IF !lScan
+        cBuffer := LEFT(cBuffer, nBufRead - nBufRead % 2)
+      END
+      IF lCr .AND. LEFT(cBuffer, 2) == cLF
+        cBuffer := SUBSTR(cBuffer, 3)
+      END
+      lCr := RIGHT(cBuffer, 2) == cCR
+
+
+      cBuffer :=  PairTran(PairTran(PairTran(PairTran(PairTran(PairTran(cBuffer,  cCRLF, cCR), cLF, cCR), cFF, cCR), cNel, cCR), cLS, cCR), cPS, cCR)
+      IF !lScan .AND. RIGHT(cBuffer, 2) == cCR
+        cBuffer := LEFT(cBuffer, LEN(cBuffer) - 2)
+      END
+      cScan += cBuffer
+    OTHERWISE
+      cLine := cScan
+      cScan := ""
+      lRead := .F.
+      nPos  := 1
+    END
+
+  END
+
+END
+
+RETURN cLine
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+FUNCTION PairTran(cStr, cOldPair, cNewPair)
+
+LOCAL lTran := .T.
+LOCAL nPos  := 0
+LOCAL nLen  := LEN(cOldPair)
+
+WHILE lTran
+
+
+
+      nPos := AT(cOldPair, cStr, nPos + 1)
+
+  IF !EMPTY(nPos)
+    IF !EMPTY(nPos % 2)
+      cStr := STUFF(cStr, nPos, nLen, cNewPair)
+    END
+  ELSE
+    lTran := .F.
+  END
+END
+
+RETURN cStr

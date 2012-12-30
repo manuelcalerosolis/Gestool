@@ -1,0 +1,260 @@
+#line 112 "hbclass.ch"
+   DYNAMIC DivertConstructorCall
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+DECLARE HBClass  New( cName AS String, OPTIONAL SuperParams ) AS CLASS HBClass  Create() AS Object  Instance() AS Object  AddClsMethod( cName AS String, @MethodName(), nScope AS Numeric, n2 AS Numeric, n3 AS Numeric )  AddDelegate( cName AS String, cDelegate AS String, cObject AS String, nScope AS Numeric, lPersistent AS LOGICAL )  AddMultiClsData( cType AS String, uVal, nScope AS Numeric, aDatas AS Array OF String )  AddMultiData( cType AS String, uVal, nScope AS Numeric, aDatas AS Array OF String, x AS LOGICAL, lPer AS LOGICAL )  AddMethod( cName AS String, @MethodName(), nScope AS Numeric, lPersistent AS LOGICAL )  AddInLine( cName AS String, bBlock AS CodeBlock, nScope AS Numeric, lPersistent AS LOGICAL )  AddVirtual( cName AS String )  ModMethod( cName AS String, @MethodName(), nScope AS Numeric, lPersistent AS LOGICAL )  ModClsMethod( cName AS String, @MethodName(), nScope AS Numeric )  ModInline( cName AS String, bBlock AS CodeBlock, nScope AS Numeric, lPersistent AS LOGICAL )  SetOnError( @MethodName() )
+#line 85 "\Fwh1204\Include\FiveWin.Ch"
+   EXTERNAL GetProcAdd
+   EXTERNAL TActiveX
+
+
+
+
+extern errorsys
+#line 9 ".\Prg\TDetHoras.prg"
+_HB_CLASS TDetHoras ; UTILITY FUNCTION TDetHoras(...); static s_oClass ; local oClassInstance ; local nScope ; nScope := 1 ; if s_oClass == NIL ; s_oClass := IIF(.F.,, HBClass():New( "TDetHoras" , {TDet():classh} ) ) ; ;
+
+   _HB_MEMBER Create( cPath); IIF( .F., s_oClass:ModMethod( "Create", @TDetHoras_Create(), nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ), s_oClass:AddMethod( "Create", @TDetHoras_Create(), nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ));
+
+   _HB_MEMBER DefineFiles(); IIF( .F., s_oClass:ModMethod( "DefineFiles", @TDetHoras_DefineFiles(), nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ), s_oClass:AddMethod( "DefineFiles", @TDetHoras_DefineFiles(), nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ));
+
+   _HB_MEMBER OpenFiles( lExclusive); IIF( .F., s_oClass:ModMethod( "OpenFiles", @TDetHoras_OpenFiles(), nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ), s_oClass:AddMethod( "OpenFiles", @TDetHoras_OpenFiles(), nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ));
+   _HB_MEMBER OpenService(lExclusive); IIF( .F., s_oClass:ModMethod( "OpenService", @TDetHoras_OpenFiles(), nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ) ), s_oClass:AddMethod( "OpenService", @TDetHoras_OpenFiles(), nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ) ) );
+
+   _HB_MEMBER Resource( nMode, lLiteral); IIF( .F., s_oClass:ModMethod( "Resource", @TDetHoras_Resource(), nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ), s_oClass:AddMethod( "Resource", @TDetHoras_Resource(), nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ));
+
+   _HB_MEMBER SaveDetails(); IIF( .F., s_oClass:ModMethod( "SaveDetails", @TDetHoras_SaveDetails(), nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ), s_oClass:AddMethod( "SaveDetails", @TDetHoras_SaveDetails(), nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ));
+
+   _HB_MEMBER nCosteHora( cCodTra, cTipHor); IIF( .F., s_oClass:ModMethod( "nCosteHora", @TDetHoras_nCosteHora(), nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ), s_oClass:AddMethod( "nCosteHora", @TDetHoras_nCosteHora(), nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ));
+
+   _HB_MEMBER lPresave( oGetCod, nMode); IIF( .F., s_oClass:ModMethod( "lPresave", @TDetHoras_lPresave(), nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ), s_oClass:AddMethod( "lPresave", @TDetHoras_lPresave(), nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ));
+
+; IF .F. ; __clsActive(s_oClass:hClass) ; s_oClass:Refresh() ; ELSE ; s_oClass:Create() ; END ; oClassInstance := __clsInst( s_oClass:hClass ) ; IF __ObjHasMsg( oClassInstance, "InitClass" ); oClassInstance:InitClass( hb_aParams() ) ; END ; ELSE ; oClassInstance := __clsInst( s_oClass:hClass ) ; END ; IF PCount() > 0 ; DIVERT TO (@DivertConstructorCall()) OF s_oClass ; END ; RETURN oClassInstance AS CLASS TDetHoras ;
+
+
+
+UTILITY STATIC function TDetHoras_DefineFiles( cPath, cVia, lUniqueName, cFileName) ; local Self AS CLASS TDetHoras := QSelf() AS CLASS TDetHoras
+
+   local oDbf
+
+   IIF( cPath == nil, cPath := ::cPath, ) ;
+   IIF( lUniqueName == nil, lUniqueName := .F., ) ;
+   IIF( cFileName == nil, cFileName := "OpeL", ) ;
+   IIF( cVia == nil, cVia := cDriver(), ) ;
+
+   if lUniqueName
+      cFileName         := cGetNewFileName( cFileName, , , cPath )
+   end
+
+   oDbf := DbfServer( ( cFileName ), ( cFileName ) ):New( ( cFileName ), ( cFileName ), ( cVia ), "Operarios y horas", ( cPath ) )
+
+      oDbf:AddField( "cCodTra", "C", 5, 0,,,,, "Cód. Trabajador", .F., 60, .F., {} )
+      oDbf:AddField( "cCodHra", "C", 3, 0,,,,, "Cód. Hora", .F., 100, .F., {} )
+      oDbf:AddField( "nCosHra", "N", 16, 6, cPouDiv(),,,, "Importe", .T., 140, .F., {} )
+      oDbf:AddField( "lDefHor", "L", 1, 0,,,,, "", .F.,, .T., {} )
+
+      oDbf:AddIndex( "cCodTra", ( cFileName ), "cCodTra",,, .F., .F.,,,, .T., .F. )
+      oDbf:AddIndex( "cCodHra", ( cFileName ), "cCodHra",,, .F., .F.,,,, .T., .F. )
+      oDbf:AddIndex( "cTraHra", ( cFileName ), "cCodTra + cCodHra",,, .F., .F.,,,, .T., .F. )
+
+
+
+RETURN ( oDbf )
+
+
+
+UTILITY STATIC function TDetHoras_Create( cPath) ; local Self AS CLASS TDetHoras := QSelf() AS CLASS TDetHoras
+
+   IIF( cPath == nil, cPath := cPatEmp(), ) ;
+
+   ::cPath              := cPath
+
+RETURN ( Self )
+
+
+
+UTILITY STATIC function TDetHoras_OpenFiles(lExclusive) ; local Self AS CLASS TDetHoras := QSelf() AS CLASS TDetHoras
+
+   local lOpen          := .T.
+   local oBlock         := ErrorBlock( {| oError | ApoloBreak( oError ) } )
+
+   BEGIN SEQUENCE
+
+   IIF( lExclusive == nil, lExclusive := .F., ) ;
+
+   if Empty( ::oDbf )
+      ::oDbf            := ::DefineFiles()
+   end
+
+   ::oDbf:Activate( .F., !lExclusive )
+
+   ::bOnPreSaveDetail   := {|| ::SaveDetails() }
+
+   RECOVER
+
+      msgStop( "Imposible abrir todas las bases de datos" )
+      ::CloseFiles()
+      lOpen          := .F.
+
+   end
+
+   ErrorBlock( oBlock )
+
+RETURN ( lOpen )
+
+
+
+UTILITY STATIC function TDetHoras_Resource( nMode) ; local Self AS CLASS TDetHoras := QSelf() AS CLASS TDetHoras
+
+   local oDlg
+   local oGetCod
+   local oGetCos
+   local oSayCos
+   local cSayCos
+   local lDis              := .F.
+
+   if nMode == 1
+
+      ::oDbfVir:GoTop()
+
+      if ::oDbfVir:OrdKeyCount() == 0
+         ::oDbfVir:lDefHor := .T.
+         lDis              := .T.
+      end
+
+      ::oDbfVir:nCosHra   := ::oParent:nCosteOperario()
+
+   end
+
+
+
+
+
+   cSayCos                 := oRetFld( ::oDbfVir:cCodHra, ::oParent:oHoras:oDbf, "cDesHra" )
+
+
+
+
+
+   oDlg = TDialog():New(,,,, LblTitle( nMode ) + "tipos de horas", "LOperariosHoras",, .F.,,,,,, .F.,,,,,, .F., )
+
+
+
+
+
+
+
+
+
+      oGetCod := TGetHlp():ReDefine( 100, { | u | If( PCount()==0, ::oDbfVir:cCodHra, ::oDbfVir:cCodHra:= u ) }, oDlg,,,,,,,,, .F., {||     ( nMode == 1 )},, .F., .F.,,,,,, nil, "LUPA",, )
+
+      oGetCod:bHelp     := {|| ::oParent:oHoras:Buscar( oGetCod ) }
+      oGetCod:bValid    := {|| ::oParent:oHoras:Existe( oGetCod, oSayCos, "cDesHra", .T., .T., "0" ) }
+
+
+
+
+      oSayCos := TGetHlp():ReDefine( 101, { | u | If( PCount()==0, cSayCos, cSayCos:= u ) }, oDlg,,,,,,,,, .F., {||     .F.},, .F., .F.,,,,,, nil,,, )
+
+
+
+
+
+
+
+
+
+
+      oGetCos := TGetHlp():ReDefine( 110, { | u | If( PCount()==0, ::oDbfVir:nCosHra, ::oDbfVir:nCosHra:= u ) }, oDlg,, ::oParent:cPouDiv,,,,,,, .F., {||     ( nMode <> 3 )},, .F., .T.,,,,,, nil,,, )
+
+
+
+
+      TCheckBox():ReDefine( 290, { | u | If( PCount()==0, ::oDbfVir:lDefHor, ::oDbfVir:lDefHor:= u ) }, oDlg,,,,,,, .F., {||     ( nMode <> 3 .AND. !lDis )}, .F. )
+
+
+
+
+
+      TButton():ReDefine( 1, {||( if( ::lPresave( oGetCod, nMode ), oDlg:end( 1 ), ) )}, oDlg,,, .F., {||     ( nMode <> 3 )},,, .F. )
+
+
+
+
+
+        TButton():ReDefine( 2, {||( oDlg:end() )}, oDlg,,, .F.,,,, .T. )
+
+
+
+
+
+      TButton():ReDefine( 998, {||( MsgInfo( "Ayuda no definida" ) )}, oDlg,,, .F.,,,, .T. )
+
+      oDlg:bStart    := {|| oGetCod:lValid() }
+
+      if nMode <> 3
+         oDlg:AddFastKey( 116, {|| if( ::lPresave( oGetCod, nMode ), oDlg:end( 1 ), ) } )
+      end
+
+   oDlg:Activate( oDlg:bLClicked, oDlg:bMoved, oDlg:bPainted, .T.,,,, oDlg:bRClicked,,, )
+
+RETURN ( oDlg:nResult == 1 )
+
+
+
+UTILITY STATIC function TDetHoras_SaveDetails() ; local Self AS CLASS TDetHoras := QSelf() AS CLASS TDetHoras
+
+   ::oDbfVir:cCodTra  := ::oParent:oDbf:cCodTra
+
+RETURN ( Self )
+
+
+
+UTILITY STATIC function TDetHoras_nCosteHora( cCodTra, cTipHor) ; local Self AS CLASS TDetHoras := QSelf() AS CLASS TDetHoras
+
+   local nCosteHora     := 0
+
+   if ::oDbf:SeekInOrd( cCodTra + cTipHor, "cTraHra" )
+      nCosteHora        := ::oDbf:nCosHra
+   end
+
+RETURN ( nCosteHora )
+
+
+
+UTILITY STATIC function TDetHoras_lPresave( oGetCod, nMode) ; local Self AS CLASS TDetHoras := QSelf() AS CLASS TDetHoras
+
+   if nMode == 1
+
+         if ::oDbfVir:SeekInOrd( ::oDbfVir:cCodHra, "cCodHra" )
+            msgStop( "Código existente" )
+            oGetCod:SetFocus()
+            Return ( .F. )
+         end
+
+         if Empty( ::oDbfVir:cCodHra )
+            msgStop( "Código de hora vacío" )
+            oGetCod:SetFocus()
+            Return ( .F. )
+         end
+
+   end
+
+   ::oParent:cUltHora   := ::oDbfVir:cCodHra
+   ::oParent:lUltDef    := ::oDbfVir:lDefHor
+
+return ( .T. )

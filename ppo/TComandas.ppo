@@ -1,0 +1,258 @@
+#line 112 "hbclass.ch"
+   DYNAMIC DivertConstructorCall
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+DECLARE HBClass  New( cName AS String, OPTIONAL SuperParams ) AS CLASS HBClass  Create() AS Object  Instance() AS Object  AddClsMethod( cName AS String, @MethodName(), nScope AS Numeric, n2 AS Numeric, n3 AS Numeric )  AddDelegate( cName AS String, cDelegate AS String, cObject AS String, nScope AS Numeric, lPersistent AS LOGICAL )  AddMultiClsData( cType AS String, uVal, nScope AS Numeric, aDatas AS Array OF String )  AddMultiData( cType AS String, uVal, nScope AS Numeric, aDatas AS Array OF String, x AS LOGICAL, lPer AS LOGICAL )  AddMethod( cName AS String, @MethodName(), nScope AS Numeric, lPersistent AS LOGICAL )  AddInLine( cName AS String, bBlock AS CodeBlock, nScope AS Numeric, lPersistent AS LOGICAL )  AddVirtual( cName AS String )  ModMethod( cName AS String, @MethodName(), nScope AS Numeric, lPersistent AS LOGICAL )  ModClsMethod( cName AS String, @MethodName(), nScope AS Numeric )  ModInline( cName AS String, bBlock AS CodeBlock, nScope AS Numeric, lPersistent AS LOGICAL )  SetOnError( @MethodName() )
+#line 85 "\Fwh1204\Include\FiveWin.Ch"
+   EXTERNAL GetProcAdd
+   EXTERNAL TActiveX
+
+
+
+
+extern errorsys
+#line 12 ".\Prg\TComandas.prg"
+_HB_CLASS TComandas ; UTILITY FUNCTION TComandas(...); static s_oClass ; local oClassInstance ; local nScope ; nScope := 1 ; if s_oClass == NIL ; s_oClass := IIF(.F.,, HBClass():New( "TComandas" , {TMANT():classh} ) ) ; ;
+
+   _HB_MEMBER { aComandas} ; IIF( !.F., s_oClass:AddMultiData(,, nScope + IIF( .F., 32, 0 ), { "aComandas" }, .F., .F. ), )
+   _HB_MEMBER { cPouDiv} ; IIF( !.F., s_oClass:AddMultiData(,, nScope + IIF( .F., 32, 0 ), { "cPouDiv" }, .F., .F. ), )
+   _HB_MEMBER { cMru} ; IIF( !.F., s_oClass:AddMultiData(,, nScope + IIF( .F., 32, 0 ), { "cMru" }, .F., .F. ), )
+
+   _HB_MEMBER Create( cPath) AS CLASS TComandas; IIF( .F., s_oClass:ModMethod( "Create", @TComandas_Create(), nScope + IIF( .T., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ), s_oClass:AddMethod( "Create", @TComandas_Create(), nScope + IIF( .T., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ));
+
+   _HB_MEMBER New( cPath, oWndParent, oMenuItem) AS CLASS TComandas; IIF( .F., s_oClass:ModMethod( "New", @TComandas_New(), nScope + IIF( .T., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ), s_oClass:AddMethod( "New", @TComandas_New(), nScope + IIF( .T., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ));
+
+   _HB_MEMBER DefineFiles(); IIF( .F., s_oClass:ModMethod( "DefineFiles", @TComandas_DefineFiles(), nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ), s_oClass:AddMethod( "DefineFiles", @TComandas_DefineFiles(), nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ));
+
+   _HB_MEMBER OpenFiles( lExclusive); IIF( .F., s_oClass:ModMethod( "OpenFiles", @TComandas_OpenFiles(), nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ), s_oClass:AddMethod( "OpenFiles", @TComandas_OpenFiles(), nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ));
+   _HB_MEMBER OpenService(lExclusive); IIF( .F., s_oClass:ModMethod( "OpenService", @TComandas_OpenFiles(), nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ) ), s_oClass:AddMethod( "OpenService", @TComandas_OpenFiles(), nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ) ) );
+
+   _HB_MEMBER Resource( nMode); IIF( .F., s_oClass:ModMethod( "Resource", @TComandas_Resource(), nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ), s_oClass:AddMethod( "Resource", @TComandas_Resource(), nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ));
+
+   _HB_MEMBER lPreSave( oGet, oDlg); IIF( .F., s_oClass:ModMethod( "lPreSave", @TComandas_lPreSave(), nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ), s_oClass:AddMethod( "lPreSave", @TComandas_lPreSave(), nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ));
+
+   _HB_MEMBER Activate(); IIF( .F., s_oClass:ModMethod( "Activate", @TComandas_Activate(), nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ), s_oClass:AddMethod( "Activate", @TComandas_Activate(), nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ));
+
+; IF .F. ; __clsActive(s_oClass:hClass) ; s_oClass:Refresh() ; ELSE ; s_oClass:Create() ; END ; oClassInstance := __clsInst( s_oClass:hClass ) ; IF __ObjHasMsg( oClassInstance, "InitClass" ); oClassInstance:InitClass( hb_aParams() ) ; END ; ELSE ; oClassInstance := __clsInst( s_oClass:hClass ) ; END ; IF PCount() > 0 ; DIVERT TO (@DivertConstructorCall()) OF s_oClass ; END ; RETURN oClassInstance AS CLASS TComandas ;
+
+
+
+UTILITY STATIC function TComandas_Create( cPath) ; local Self AS CLASS TComandas := QSelf() AS CLASS TComandas
+
+   IIF( cPath == nil, cPath := cPatCli(), ) ;
+
+   ::cPath           := cPath
+   ::oDbf            := nil
+
+RETURN ( Self )
+
+
+
+UTILITY STATIC function TComandas_New( cPath, oWndParent, oMenuItem) ; local Self AS CLASS TComandas := QSelf() AS CLASS TComandas
+
+   IIF( cPath == nil, cPath := cPatArt(), ) ;
+   IIF( oWndParent == nil, oWndParent := oWnd(), ) ;
+
+   if oMenuItem <> nil
+      ::nLevel          := nLevelUsr( oMenuItem )
+   else
+      ::nLevel          := 1
+   end
+
+
+
+
+
+   if oWndParent <> nil
+      oWndParent:CloseAll()
+   end
+
+   ::cPath              := cPath
+   ::oWndParent         := oWndParent
+   ::oDbf               := nil
+
+   ::lCreateShell       := .F.
+
+   ::cMru               := "documents_preferences_16"
+
+   ::cHtmlHelp          := "Tipos de comandas"
+
+RETURN ( Self )
+
+
+
+UTILITY STATIC function TComandas_OpenFiles(lExclusive) ; local Self AS CLASS TComandas := QSelf() AS CLASS TComandas
+
+   local lOpen          := .T.
+   local oError
+   local oBlock         := ErrorBlock( {| oError | ApoloBreak( oError ) } )
+
+   IIF( lExclusive == nil, lExclusive := .F., ) ;
+
+   BEGIN SEQUENCE
+
+      if Empty( ::oDbf )
+
+         ::DefineFiles()
+
+      end
+
+      ::oDbf:Activate( .F., !( lExclusive ) )
+
+  RECOVER USING oError
+
+      msgStop( ErrorMessage( oError ), "Imposible abrir las bases de datos de tipos de comandas" )
+
+      ::CloseFiles()
+
+      lOpen             := .F.
+
+   end
+
+   ErrorBlock( oBlock )
+
+RETURN ( lOpen )
+
+
+
+UTILITY STATIC function TComandas_DefineFiles( cPath, cDriver) ; local Self AS CLASS TComandas := QSelf() AS CLASS TComandas
+
+   IIF( cPath == nil, cPath := ::cPath, ) ;
+   IIF( cDriver == nil, cDriver := cDriver(), ) ;
+
+   ::oDbf := DbfServer( "TComandas.Dbf", "TComandas" ):New( "TComandas.Dbf", "TComandas", ( cDriver ), "Tipos de comandas", ( cPath ) )
+
+      ::oDbf:AddField( "cCodigo", "C", 3, 0,,,,, "Código", .F., 70, .F., {} )
+      ::oDbf:AddField( "cNombre", "C", 50, 0,,,,, "Nombre", .F., 150, .F., {} )
+      ::oDbf:AddField( "nOrden", "N", 1, 0,,,,, "Orden", .F., 70, .F., {} )
+
+      ::oDbf:AddIndex( "cCodigo", "TComandas.Cdx", "cCodigo",,, .F., .F., "Código",,, .T., .F. )
+      ::oDbf:AddIndex( "cNombre", "TComandas.Cdx", "Upper( cNombre )",,, .F., .F., "Nombre",,, .T., .F. )
+      ::oDbf:AddIndex( "nOrden", "TComandas.Cdx", "Str( nOrden )",,, .F., .F., "Orden",,, .T., .F. )
+
+
+
+RETURN ( ::oDbf )
+
+
+
+UTILITY STATIC function TComandas_Resource( nMode) ; local Self AS CLASS TComandas := QSelf() AS CLASS TComandas
+
+    local oDlg
+   local oGet, oGet2, oGet3
+
+   oDlg = TDialog():New(,,,, LblTitle( nMode ) + "Tipos de comandas", "TComandas",, .F.,,,,,, .F.,,,,,, .F., )
+
+
+
+
+      oGet := TGetHlp():ReDefine( 100, { | u | If( PCount()==0, ::oDbf:cCodigo, ::oDbf:cCodigo:= u ) }, oDlg,,,,,,,,, .F., {||     ( nMode == 1 .OR. nMode == 4 )},, .F., .F.,,,,,, nil,,, )
+
+
+
+
+      oGet2 := TGetHlp():ReDefine( 90, { | u | If( PCount()==0, ::oDbf:cNombre, ::oDbf:cNombre:= u ) }, oDlg,,,,,,,,, .F., {||     ( nMode <> 3 )},, .F., .F.,,,,,, nil,,, )
+
+
+
+
+
+
+
+      oGet3 := TGetHlp():ReDefine( 110, { | u | If( PCount()==0, ::oDbf:nOrden, ::oDbf:nOrden:= u ) }, oDlg,, "99",,,,,,, .F., {||     ( nMode <> 3 )},, .F., .T.,,, {||      1},,, nil,,, )
+
+
+
+
+
+      TButton():ReDefine( 500, {||( ::lPreSave( oGet, oGet2, oGet3, oDlg, nMode ) )}, oDlg,,, .F., {||     ( nMode <> 3 )},,, .F. )
+
+
+
+
+
+      TButton():ReDefine( 550, {||( oDlg:end() )}, oDlg,,, .F.,,,, .T. )
+
+
+
+
+      TButton():ReDefine( 9, {||( msginfo( "Ayuda no definida" ) )}, oDlg,,, .F.,,,, .F. )
+
+   if nMode <> 3
+      oDlg:AddFastKey( 116, {|| ::lPreSave( oGet, oGet2, oGet3, oDlg, nMode ) } )
+   end
+
+   oDlg:AddFastKey ( 112, {|| ChmHelp( "Tipos de comandas" ) } )
+
+   oDlg:bStart := { || oGet:SetFocus() }
+
+   oDlg:Activate( oDlg:bLClicked, oDlg:bMoved, oDlg:bPainted, .T.,,,, oDlg:bRClicked,,, )
+
+RETURN ( oDlg:nResult == 1 )
+
+
+
+UTILITY STATIC function TComandas_Activate() ; local Self AS CLASS TComandas := QSelf() AS CLASS TComandas
+
+   if nAnd( ::nLevel, 1 ) <> 0
+      msgStop( "Acceso no permitido." )
+      Return ( Self )
+   end
+
+   ::CreateShell( ::nLevel )
+
+   ::oWndBrw:GralButtons( Self )
+
+   ::oWndBrw:EndButtons( Self )
+
+   ::oWndBrw:cHtmlHelp  := "Tipos de comandas"
+
+   ::oWndBrw:Activate(  , , , , , , , , , , , , , , , , {|| ::CloseFiles() } )
+
+RETURN ( Self )
+
+
+
+UTILITY STATIC function TComandas_lPreSave( oGet, oGet2, oGet3, oDlg, nMode) ; local Self AS CLASS TComandas := QSelf() AS CLASS TComandas
+
+   if nMode == 1 .OR. nMode == 4
+      if Empty( ::oDbf:cCodigo )
+         MsgStop( "Código de tipo de comanda no puede estar vacio" )
+         oGet:SetFocus()
+         Return .F.
+      end
+
+      if ::oDbf:SeekInOrd( ::oDbf:cCodigo, "CCODIGO" )
+         MsgStop( "Código ya existe " + Rtrim( ::oDbf:cCodigo ) )
+         return nil
+      end
+
+   end
+
+   if Empty( ::oDbf:cNombre )
+      MsgStop( "Nombre de tipo de comanda no puede estar vacío." )
+      oGet2:SetFocus()
+      Return .F.
+   end
+
+   if Empty( ::oDbf:cNombre )
+      MsgStop( "Orden de tipo de comanda no puede estar vacío." )
+      oGet3:SetFocus()
+      Return .F.
+   end
+
+RETURN ( oDlg:end( 1 ) )

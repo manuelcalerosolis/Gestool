@@ -1,0 +1,385 @@
+#line 112 "hbclass.ch"
+   DYNAMIC DivertConstructorCall
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+DECLARE HBClass  New( cName AS String, OPTIONAL SuperParams ) AS CLASS HBClass  Create() AS Object  Instance() AS Object  AddClsMethod( cName AS String, @MethodName(), nScope AS Numeric, n2 AS Numeric, n3 AS Numeric )  AddDelegate( cName AS String, cDelegate AS String, cObject AS String, nScope AS Numeric, lPersistent AS LOGICAL )  AddMultiClsData( cType AS String, uVal, nScope AS Numeric, aDatas AS Array OF String )  AddMultiData( cType AS String, uVal, nScope AS Numeric, aDatas AS Array OF String, x AS LOGICAL, lPer AS LOGICAL )  AddMethod( cName AS String, @MethodName(), nScope AS Numeric, lPersistent AS LOGICAL )  AddInLine( cName AS String, bBlock AS CodeBlock, nScope AS Numeric, lPersistent AS LOGICAL )  AddVirtual( cName AS String )  ModMethod( cName AS String, @MethodName(), nScope AS Numeric, lPersistent AS LOGICAL )  ModClsMethod( cName AS String, @MethodName(), nScope AS Numeric )  ModInline( cName AS String, bBlock AS CodeBlock, nScope AS Numeric, lPersistent AS LOGICAL )  SetOnError( @MethodName() )
+#line 85 "\Fwh1204\Include\fivewin.ch"
+   EXTERNAL GetProcAdd
+   EXTERNAL TActiveX
+
+
+
+
+extern errorsys
+#line 17 ".\Prg\TpanelEx.prg"
+_HB_CLASS TPanelEx ; UTILITY FUNCTION TPanelEx(...); static s_oClass ; local oClassInstance ; local nScope ; nScope := 1 ; if s_oClass == NIL ; s_oClass := IIF(.F.,, HBClass():New( "TPanelEx" , {TPanel():classh} ) ) ; ;
+
+      _HB_MEMBER { lVScroll} ; IIF( !.F., s_oClass:AddMultiData(,, nScope + IIF( .F., 32, 0 ), { "lVScroll" }, .F., .F. ), )
+      _HB_MEMBER { WM_RESETPOS} ; IIF( !.F., s_oClass:AddMultiData(,, nScope + IIF( .F., 32, 0 ), { "WM_RESETPOS" }, .F., .F. ), )
+      _HB_MEMBER { nClrBorder} ; IIF( !.F., s_oClass:AddMultiData(,, nScope + IIF( .F., 32, 0 ), { "nClrBorder" }, .F., .F. ), )
+
+      _HB_MEMBER {AS LOGICAL lRegistered} ; IIF( !.F., s_oClass:AddMultiClsData("LOGICAL",, nScope + IIF( .F., 32, 0 ) + 64, { "lRegistered" }, .F. ), )
+
+      _HB_MEMBER New( nTop, nLeft, nBottom, nRight, oWnd, nClrPane, lVScroll) AS CLASS TPanelEx; IIF( .F., s_oClass:ModMethod( "New", @TPanelEx_New(), nScope + IIF( .T., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ), s_oClass:AddMethod( "New", @TPanelEx_New(), nScope + IIF( .T., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ));
+
+      _HB_MEMBER Paint(); IIF( .F., s_oClass:ModMethod( "Paint", @TPanelEx_Paint(), nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ), s_oClass:AddMethod( "Paint", @TPanelEx_Paint(), nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ));
+      _HB_MEMBER Display(); IIF( .F., s_oClass:ModInline( "Display", {|Self | Self, ::BeginPaint(), ::Paint(), ::EndPaint(),0 }, nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ), s_oClass:AddInline( "Display", {|Self | Self, ::BeginPaint(), ::Paint(), ::EndPaint(),0 }, nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ) )
+
+      _HB_MEMBER VScroll( nWParam, nLParam); IIF( .F., s_oClass:ModMethod( "VScroll", @TPanelEx_VScroll(), nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ), s_oClass:AddMethod( "VScroll", @TPanelEx_VScroll(), nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ));
+      _HB_MEMBER MouseWheel( nKey, nDelta, nXPos, nYPos); IIF( .F., s_oClass:ModMethod( "MouseWheel", @TPanelEx_MouseWheel(), nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ), s_oClass:AddMethod( "MouseWheel", @TPanelEx_MouseWheel(), nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ));
+      _HB_MEMBER HandleEvent( nMsg, nWParam, nLParam); IIF( .F., s_oClass:ModMethod( "HandleEvent", @TPanelEx_HandleEvent(), nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ), s_oClass:AddMethod( "HandleEvent", @TPanelEx_HandleEvent(), nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ));
+
+      _HB_MEMBER Disable(); IIF( .F., s_oClass:ModMethod( "Disable", @TPanelEx_Disable(), nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ), s_oClass:AddMethod( "Disable", @TPanelEx_Disable(), nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ));
+      _HB_MEMBER Enable(); IIF( .F., s_oClass:ModMethod( "Enable", @TPanelEx_Enable(), nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ), s_oClass:AddMethod( "Enable", @TPanelEx_Enable(), nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ));
+
+      _HB_MEMBER Destroy(); IIF( .F., s_oClass:ModMethod( "Destroy", @TPanelEx_Destroy(), nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ), s_oClass:AddMethod( "Destroy", @TPanelEx_Destroy(), nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ));
+
+      _HB_MEMBER GetText(); IIF( .F., s_oClass:ModInline( "GetText", {|Self | Self, ::cCaption }, nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ), s_oClass:AddInline( "GetText", {|Self | Self, ::cCaption }, nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ) )
+
+; IF .F. ; __clsActive(s_oClass:hClass) ; s_oClass:Refresh() ; ELSE ; s_oClass:Create() ; END ; oClassInstance := __clsInst( s_oClass:hClass ) ; IF __ObjHasMsg( oClassInstance, "InitClass" ); oClassInstance:InitClass( hb_aParams() ) ; END ; ELSE ; oClassInstance := __clsInst( s_oClass:hClass ) ; END ; IF PCount() > 0 ; DIVERT TO (@DivertConstructorCall()) OF s_oClass ; END ; RETURN oClassInstance AS CLASS TPanelEx ;
+
+
+
+UTILITY STATIC function TPanelEx_New( nTop, nLeft, nBottom, nRight, oWnd, nClrPane, lVScroll) ; local Self AS CLASS TPanelEx := QSelf() AS CLASS TPanelEx
+
+
+   IIF( nTop == nil, nTop := 0, ) ; IIF( nLeft == nil, nLeft := 0, ); IIF( nBottom == nil, nBottom := 100, ); IIF( nRight == nil, nRight := 100, ); IIF( oWnd == nil, oWnd := GetWndDefault(), ); IIF( nClrPane == nil, nClrPane := 16777215, ); IIF( lVScroll == nil, lVScroll := .F., );
+
+   ::nTop      := nTop
+   ::nLeft     := nLeft
+   ::nBottom   := nBottom
+   ::nRight    := nRight
+   ::oWnd      := oWnd
+   ::nStyle    := nOr( 1073741824, 268435456, 67108864, 33554432, 2097152 )
+   ::lDrag     := .F.
+   ::nClrPane  := nClrPane
+   ::aControls := {}
+   ::lVScroll  := lVScroll
+   ::cCaption  := ""
+
+
+
+
+
+   ::Register()
+   ::SetColor( 0, nClrPane )
+
+   if ! Empty( ::oWnd:hWnd )
+      ::Create()
+      ::oWnd:AddControl( Self )
+   else
+      ::oWnd:DefControl( Self )
+   endif
+
+   ::oVScroll := TScrollBar():WinNew( ,,, .T., self )
+   ::oVScroll:SetRange(0,0)
+
+   ::WM_RESETPOS := RegisterWindowMessage( "WM_RESETPOS" )
+
+   ShowScrollBar( ::hWnd, 1, .F. )
+
+return Self
+
+
+
+UTILITY STATIC function TPanelEx_Destroy() ; local Self AS CLASS TPanelEx := QSelf() AS CLASS TPanelEx
+
+return ::TPanel:Destroy()
+
+
+
+UTILITY STATIC function TPanelEx_HandleEvent( nMsg, nWParam, nLParam) ; local Self AS CLASS TPanelEx := QSelf() AS CLASS TPanelEx
+
+
+local n, nLen
+
+   do case
+      case nMsg == 20
+           return 1
+
+      case nMsg == ::WM_RESETPOS
+           nLen := len( ::aControls )
+           for n := 1 to nLen
+               ::aControls[n]:Move(0,0,,,.T.)
+           next
+           ::oVScroll:SetPos(0)
+           ::Refresh()
+   endcase
+
+return ::TPanel:HandleEvent( nMsg, nWParam, nLParam )
+
+
+   UTILITY STATIC function TPanelEx_Paint() ; local Self AS CLASS TPanelEx := QSelf() AS CLASS TPanelEx
+
+local cText
+local hFont
+local hOldFont
+local nHLen
+local n, nLen
+local nHeight := ::nHeight
+local nMaxB := 0
+local nMinTop    := int(nHeight / 2)
+local nMaxBottom := int(nHeight / 2)
+local rc := GetClientRect(::hWnd)
+
+::TPanel:Paint()
+
+if ::lVScroll
+
+   nLen := len( ::aControls )
+
+   for n := 1 to nLen
+       if IsWindowVisible( ::aControls[n]:hWnd )
+          nMinTop    := min( WndTop( ::aControls[n]:hWnd ), nMinTop )
+          nMaxBottom := max( WndTop( ::aControls[n]:hWnd )+ ::aControls[n]:nHeight, nMaxBottom )
+       endif
+   next
+
+   if nMinTop < 0 .OR. nMaxBottom > nHeight
+      ::oVScroll:SetRange( 0, 10 )
+   else
+      ::oVScroll:SetRange( 0, 0 )
+   endif
+
+endif
+
+if ::nClrPane <> nil
+   FillSolidRect( ::hDC, rc, ::nClrPane )
+endif
+
+if ::nClrBorder <> nil
+   Box( ::hDC, {rc[1],rc[2],rc[3]-1,rc[4]-1},::nClrBorder )
+endif
+
+if ::bPainted <> nil
+   Eval( ::bPainted, ::hDC, self )
+endif
+
+
+return nil
+
+
+
+  UTILITY STATIC function TPanelEx_VScroll( nWParam, nLParam) ; local Self AS CLASS TPanelEx := QSelf() AS CLASS TPanelEx
+
+
+
+   local nScrollCode := nLoWord( nWParam )
+   local nPos := nHiWord( nWParam )
+   local n, nLen
+   local nTop
+   local nLeft
+   local n2, nLen2
+
+   do case
+      case nScrollCode == 0
+
+           ::oVScroll:GoUp()
+           nPos := ::oVScroll:GetPos()
+
+           nLen := len( ::aControls )
+           for n := 1 to nLen
+               nTop  := -(((::aControls[n]:nHeight - GetClientRect(::hWnd )[3])/10)*nPos)
+               if nTop > 3
+                  nTop := 0
+               endif
+               nLeft := ::aControls[n]:nLeft
+               ::aControls[n]:Move( nTop,nLeft,,,.T. )
+               ::aControls[n]:Refresh()
+           next
+
+           return 0
+
+      case nScrollCode == 1
+
+           ::oVScroll:GoDown()
+           nPos := ::oVScroll:GetPos()
+
+           nLen := len( ::aControls )
+           for n := 1 to nLen
+               nTop  := -(((::aControls[n]:nHeight - GetClientRect(::hWnd )[3])/10)*nPos)
+               if nTop > 3
+                  nTop := 0
+               endif
+               nLeft := ::aControls[n]:nLeft
+               ::aControls[n]:Move( nTop,nLeft,,,.T. )
+               ::aControls[n]:Refresh()
+
+           next
+
+           return 0
+
+      case nScrollCode == 2
+
+           ::oVScroll:PageUp()
+           nPos := ::oVScroll:GetPos()
+
+           nLen := len( ::aControls )
+           for n := 1 to nLen
+               nTop  := -(((::aControls[n]:nHeight - GetClientRect(::hWnd )[3])/10)*nPos)
+               if nTop > 3
+                  nTop := 0
+               endif
+               nLeft := ::aControls[n]:nLeft
+               ::aControls[n]:Move( nTop,nLeft,,,.T. )
+           next
+
+           return 0
+
+
+      case nScrollCode == 3
+
+           ::oVScroll:PageDown()
+           nPos := ::oVScroll:GetPos()
+
+           nLen := len( ::aControls )
+           for n := 1 to nLen
+               nTop  := -(((::aControls[n]:nHeight - GetClientRect(::hWnd )[3])/10)*nPos)
+               if nTop > 3
+                  nTop := 0
+               endif
+               nLeft := ::aControls[n]:nLeft
+               ::aControls[n]:Move( nTop,nLeft,,,.T. )
+
+           next
+
+
+      case nScrollCode == 6
+
+           ::oVScroll:GoTop()
+           nPos = ::oVScroll:nMin
+           ::oVScroll:SetPos(nPos)
+           nLen := len( ::aControls )
+           for n := 1 to nLen
+               nTop  := -(((::aControls[n]:nHeight - GetClientRect(::hWnd )[3])/10)*nPos)
+               if nTop > 3
+                  nTop := 0
+               endif
+               nLeft := ::aControls[n]:nLeft
+               ::aControls[n]:Move( nTop,nLeft,,,.T. )
+
+           next
+
+           ::Refresh( .F. )
+           ::Refresh( .F. )
+
+      case nScrollCode == 7
+           nPos = ::oVScroll:nMax
+           ::oVScroll:SetPos(nPos)
+           nLen := len( ::aControls )
+           for n := 1 to nLen
+               nTop  := -(((::aControls[n]:nHeight - GetClientRect(::hWnd )[3])/10)*nPos)
+               if nTop > 3
+                  nTop := 0
+               endif
+               nLeft := ::aControls[n]:nLeft
+               ::aControls[n]:Move( nTop,nLeft,,,.T. )
+
+           next
+
+           ::Refresh( .F. )
+           return 0
+
+       case nScrollCode == 5
+
+           nPos := GetScrollInfoPos( ::hWnd, 1 )
+
+           nLen := len( ::aControls )
+           for n := 1 to nLen
+               nTop  := -(((::aControls[n]:nHeight - GetClientRect(::hWnd )[3])/10)*nPos)
+               if nTop > 3
+                  nTop := 0
+               endif
+               nLeft := ::aControls[n]:nLeft
+               ::aControls[n]:Move( nTop,nLeft,,,.T. )
+           next
+
+       case nScrollCode == 4
+
+           ::oVScroll:ThumbPos( nPos )
+
+      otherwise
+           return nil
+   endcase
+
+
+   ::oVScroll:SetPos( nPos )
+
+return 0
+
+
+  UTILITY STATIC function TPanelEx_MouseWheel( nKeys, nDelta, nXPos, nYPos) ; local Self AS CLASS TPanelEx := QSelf() AS CLASS TPanelEx
+
+
+if ::lVScroll
+   if nDelta < 0
+      ::VScroll( nMakeLong( 0, 0 ),0)
+   else
+      ::VScroll( nMakeLong( 1, 0 ),0)
+   endif
+endif
+
+return nil
+
+
+      UTILITY STATIC function TPanelEx_Disable() ; local Self AS CLASS TPanelEx := QSelf() AS CLASS TPanelEx
+
+   local hCtrl := GetWindow( ::hWnd, 5 )
+   local oCtrl
+
+   while hCtrl <> 0
+         oCtrl := oWndFromhWnd( hCtrl )
+         if oCtrl <> nil
+            oCtrl:Disable()
+            oCtrl:Refresh()
+         endif
+         hCtrl = GetWindow( hCtrl, 2 )
+   end
+
+return 0
+
+
+
+      UTILITY STATIC function TPanelEx_Enable() ; local Self AS CLASS TPanelEx := QSelf() AS CLASS TPanelEx
+
+
+   local hCtrl := GetWindow( ::hWnd, 5 )
+   local oCtrl
+
+   while hCtrl <> 0
+         oCtrl := oWndFromhWnd( hCtrl )
+         if oCtrl <> nil
+            oCtrl:Enable()
+            oCtrl:Refresh()
+         endif
+         hCtrl = GetWindow( hCtrl, 2 )
+   end
+
+return 0
+
+
+
+#pragma BEGINDUMP
+
+#include "windows.h"
+
+HB_FUNC( SHOWSCROLLBAR )
+{
+    hb_retl( ShowScrollBar( (HWND) hb_parnl( 1 ), hb_parni( 2 ), hb_parl( 3 ) ) );
+}
+
+#pragma ENDDUMP

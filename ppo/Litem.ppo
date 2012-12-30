@@ -1,0 +1,160 @@
+#line 112 "hbclass.ch"
+   DYNAMIC DivertConstructorCall
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+DECLARE HBClass  New( cName AS String, OPTIONAL SuperParams ) AS CLASS HBClass  Create() AS Object  Instance() AS Object  AddClsMethod( cName AS String, @MethodName(), nScope AS Numeric, n2 AS Numeric, n3 AS Numeric )  AddDelegate( cName AS String, cDelegate AS String, cObject AS String, nScope AS Numeric, lPersistent AS LOGICAL )  AddMultiClsData( cType AS String, uVal, nScope AS Numeric, aDatas AS Array OF String )  AddMultiData( cType AS String, uVal, nScope AS Numeric, aDatas AS Array OF String, x AS LOGICAL, lPer AS LOGICAL )  AddMethod( cName AS String, @MethodName(), nScope AS Numeric, lPersistent AS LOGICAL )  AddInLine( cName AS String, bBlock AS CodeBlock, nScope AS Numeric, lPersistent AS LOGICAL )  AddVirtual( cName AS String )  ModMethod( cName AS String, @MethodName(), nScope AS Numeric, lPersistent AS LOGICAL )  ModClsMethod( cName AS String, @MethodName(), nScope AS Numeric )  ModInline( cName AS String, bBlock AS CodeBlock, nScope AS Numeric, lPersistent AS LOGICAL )  SetOnError( @MethodName() )
+#line 85 "\Fwh1204\Include\FiveWin.Ch"
+   EXTERNAL GetProcAdd
+   EXTERNAL TActiveX
+
+
+
+
+extern errorsys
+#line 18 ".\Prg\Litem.prg"
+_HB_CLASS TLItem ; UTILITY FUNCTION TLItem(...); static s_oClass ; local oClassInstance ; local nScope ; nScope := 1 ; if s_oClass == NIL ; s_oClass := IIF(.F.,, HBClass():New( "TLItem" , { HBObject():Classh } ) ) ;
+
+      _HB_MEMBER { oLabel} ; IIF( !.F., s_oClass:AddMultiData(,, nScope + IIF( .F., 32, 0 ), { "oLabel" }, .F., .F. ), )
+      _HB_MEMBER { aData, aPicture} ; IIF( !.F., s_oClass:AddMultiData(,, nScope + IIF( .F., 32, 0 ), { "aData" , "aPicture" }, .F., .F. ), )
+      _HB_MEMBER { bDataFont} ; IIF( !.F., s_oClass:AddMultiData(,, nScope + IIF( .F., 32, 0 ), { "bDataFont" }, .F., .F. ), )
+      _HB_MEMBER { nWidth, nDataHeight, nCol, nSize, nPad, nPen} ; IIF( !.F., s_oClass:AddMultiData(,, nScope + IIF( .F., 32, 0 ), { "nWidth" , "nDataHeight" , "nCol" , "nSize" , "nPad" , "nPen" }, .F., .F. ), )
+      _HB_MEMBER { lShadow, lGrid} ; IIF( !.F., s_oClass:AddMultiData(,, nScope + IIF( .F., 32, 0 ), { "lShadow" , "lGrid" }, .F., .F. ), )
+
+
+      _HB_MEMBER New( nCol, aData, nSize, aPicture, bFont, cFmt, lShadow, lGrid, oLabel) AS CLASS TLItem; IIF( .F., s_oClass:ModMethod( "New", @TLItem_New(), nScope + IIF( .T., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ), s_oClass:AddMethod( "New", @TLItem_New(), nScope + IIF( .T., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ));
+
+     _HB_MEMBER Stabilize(); IIF( .F., s_oClass:ModMethod( "Stabilize", @TLItem_Stabilize(), nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ), s_oClass:AddMethod( "Stabilize", @TLItem_Stabilize(), nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ));
+
+      _HB_MEMBER SayData( nRow, nCol, nLine); IIF( .F., s_oClass:ModMethod( "SayData", @TLItem_SayData(), nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ), s_oClass:AddMethod( "SayData", @TLItem_SayData(), nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ));
+
+; IF .F. ; __clsActive(s_oClass:hClass) ; s_oClass:Refresh() ; ELSE ; s_oClass:Create() ; END ; oClassInstance := __clsInst( s_oClass:hClass ) ; IF __ObjHasMsg( oClassInstance, "InitClass" ); oClassInstance:InitClass( hb_aParams() ) ; END ; ELSE ; oClassInstance := __clsInst( s_oClass:hClass ) ; END ; IF PCount() > 0 ; DIVERT TO (@DivertConstructorCall()) OF s_oClass ; END ; RETURN oClassInstance AS CLASS TLItem ;
+
+
+
+
+UTILITY STATIC function TLItem_New( nCol,    aData, nSize, aPicture,    bFont, nPen, cFmt, lShadow, lGrid, oLabel) ; local Self AS CLASS TLItem := QSelf() AS CLASS TLItem
+
+
+
+
+
+
+
+
+
+
+      IIF( aData == nil, aData := {{|| ""} }, ) ; IIF( nSize == nil, nSize := 0, ); IIF( aPicture == nil, aPicture := {""}, ); IIF( nCol == nil, nCol := 0, ); IIF( bFont == nil, bFont := {|| 1 }, ); IIF( nPen == nil, nPen := 1, ); IIF( lShadow == nil, lShadow := .F., ); IIF( lGrid == nil, lGrid := .F., ); IIF( cFmt == nil, cFmt := iif(Valtype(Eval(aData[1]))=="N", "RIGHT", "LEFT"), );
+
+     ::aData      = aData
+     ::nSize      = nSize
+      ::aPicture   = aPicture
+     ::bDataFont  = bFont
+     ::lShadow    = lShadow
+     ::lGrid      = lGrid
+     ::nPen       = nPen
+      ::oLabel     = oLabel
+      ::nCol       = nCol
+      ::nWidth     = 0
+
+      IF cFmt == "LEFT"
+             ::nPad = 1
+      ELSEIF cFmt == "RIGHT"
+             ::nPad = 2
+      ELSEIF cFmt == "CENTER" .OR. cFmt == "CENTERED"
+             ::nPad = 3
+      ELSE
+             ::nPad = 1
+      ENDIF
+
+     while len(::aPicture) < len(::aData)
+             Aadd(::aPicture, "" )
+     ENDDO
+
+RETURN NIL
+
+
+
+UTILITY STATIC function TLItem_Stabilize() ; local Self AS CLASS TLItem := QSelf() AS CLASS TLItem
+
+
+      ::nDataHeight  := ::oLabel:oDevice:GetTextHeight("B", ::oLabel:aFont[eval(::bDataFont)])
+
+
+
+
+
+
+      IF !empty(::nSize)
+
+
+             ::nWidth := ::oLabel:oDevice:GetTextWidth(Replicate("B",::nSize), ::oLabel:aFont[eval(::bDataFont)])
+
+
+
+
+
+
+             IF ::nWidth > ::oLabel:nLblWidth
+                     ::nWidth := ::oLabel:nLblWidth
+             end
+
+             RETU NIL
+
+      end
+
+      ::nWidth := ::oLabel:nLblWidth
+
+RETURN NIL
+
+
+
+UTILITY STATIC function TLItem_SayData( nRow, nCol, nLine) ; local Self AS CLASS TLItem := QSelf() AS CLASS TLItem
+
+     LOCAL nFor
+     LOCAL cText
+     LOCAL cLine
+     LOCAL nWidth
+     LOCAL nMemLine
+
+
+
+     IIF( nRow == nil, nRow := 0, ) ; IIF( nCol == nil, nCol := 0, ); IIF( nLine == nil, nLine := 1, );
+
+     msginfo( "entro en saydata" )
+
+     IF nLine > len(::aData)
+          RETU NIL
+      ENDIF
+
+      IF ::nCol <> 0
+             nCol += ::nCol
+      end
+
+     cText  := Transform(eval(::aData[nLine]),::aPicture[nLine])
+     nWidth := ::oLabel:oDevice:GetTextWidth(cText,::oLabel:aFont[eval(::bDataFont)])
+
+     DO CASE
+          CASE ::nPad == 2
+               nCol := nCol+::nWidth-nWidth
+
+          CASE ::nPad == 3
+               nCol := nCol+Int(::nWidth/2)-Int(nWidth/2)
+     ENDCASE
+
+     ::oLabel:oDevice:Say(nRow,nCol,cText,::oLabel:aFont[eval(::bDataFont)],::nWidth,::oLabel:aClrText[eval(::bDataFont)] )
+
+RETURN ( cText )

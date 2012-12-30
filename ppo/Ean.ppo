@@ -1,0 +1,308 @@
+#line 112 "hbclass.ch"
+   DYNAMIC DivertConstructorCall
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+DECLARE HBClass  New( cName AS String, OPTIONAL SuperParams ) AS CLASS HBClass  Create() AS Object  Instance() AS Object  AddClsMethod( cName AS String, @MethodName(), nScope AS Numeric, n2 AS Numeric, n3 AS Numeric )  AddDelegate( cName AS String, cDelegate AS String, cObject AS String, nScope AS Numeric, lPersistent AS LOGICAL )  AddMultiClsData( cType AS String, uVal, nScope AS Numeric, aDatas AS Array OF String )  AddMultiData( cType AS String, uVal, nScope AS Numeric, aDatas AS Array OF String, x AS LOGICAL, lPer AS LOGICAL )  AddMethod( cName AS String, @MethodName(), nScope AS Numeric, lPersistent AS LOGICAL )  AddInLine( cName AS String, bBlock AS CodeBlock, nScope AS Numeric, lPersistent AS LOGICAL )  AddVirtual( cName AS String )  ModMethod( cName AS String, @MethodName(), nScope AS Numeric, lPersistent AS LOGICAL )  ModClsMethod( cName AS String, @MethodName(), nScope AS Numeric )  ModInline( cName AS String, bBlock AS CodeBlock, nScope AS Numeric, lPersistent AS LOGICAL )  SetOnError( @MethodName() )
+#line 85 "\Fwh1204\Include\FiveWin.Ch"
+   EXTERNAL GetProcAdd
+   EXTERNAL TActiveX
+
+
+
+
+extern errorsys
+#line 9 ".\Prg\Ean.prg"
+function DrwBar( uCodBar, nTipBar, oGetBar, lCalDigit )
+
+   local oFnt
+   local oFntBar
+   local cPinta      := ""
+   local cFuente     := ""
+   local lTexto      := .T.
+   local lEan13      := .F.
+   local cCodBar
+
+   IIF( lCalDigit == nil, lCalDigit := .F., ) ;
+   IIF( cCodBar == nil, cCodBar := "", ) ;
+   IIF( nTipBar == nil, nTipBar := 1, ) ;
+
+   if Valtype( uCodBar ) == "O"
+      cCodBar        := uCodBar:VarGet()
+   else
+      cCodBar        := uCodBar
+   end
+
+
+
+   if lCalDigit .AND. nTipBar == 1 .AND. len( alltrim( cCodBar ) ) == 12
+      cCodBar        := AllTrim( cCodBar ) + Ean13Check( cCodBar )
+   end
+
+
+
+
+
+   lEan13            := ( nTipBar == 1 )                    .AND.  ( (len( AllTrim( cCodBar ) ) <> 13  .AND.  len( AllTrim( cCodBar ) ) <> 15  .AND.  len( AllTrim( cCodBar ) ) <> 18 ).OR.   lBadDigits( AllTrim( cCodBar ) ) )
+
+   if !lEan13
+
+      do case
+         case nTipBar == 1
+              oFntBar := TFont():New( "UPCHeightA", 5, 40,,,,,,,,,,,,,, )
+              cPinta  = If( Empty( cCodBar ) .OR. cCodBar == space( 18 ), "", cEan13( cCodBar ) )
+              cFuente = "EAN13"
+         case nTipBar == 2
+              oFntBar := TFont():New( "Code 39", 1, 70,,,,,,,,,,,,,, )
+              cPinta  = If( Empty( cCodBar ) .OR. cCodBar == space( 18 ), "", cCode39( cCodBar ) )
+              cFuente = "CODE39"
+         case nTipBar == 3
+              oFntBar := TFont():New( "Code128B", 7, 60,,,,,,,,,,,,,, )
+              cPinta  = If( Empty( cCodBar ) .OR. cCodBar == space( 18 ), "", cCode128( cCodBar ) )
+              cFuente = "CODE128"
+      endcase
+
+
+
+      if Upper( AllTrim( oFntBar:cFaceName ) ) <> "UPCHEIGHTA"   .AND.  Upper( AllTrim( oFntBar:cFaceName ) ) <> "CODE 39"      .AND.  Upper( AllTrim( oFntBar:cFaceName ) ) <> "CODE128B"
+
+         oFnt := TFont():New( "Arial", 0, - 10,,,,,,,,,,,,,, )
+
+         oGetBar:SetFont( oFnt )
+         oGetBar:SetText( "Fuente " + cFuente + " no instalada." )
+         lTexto      := .F.
+
+         oFnt:end()
+
+      else
+
+         oGetBar:SetFont( oFntBar )
+         oGetBar:SetText( cPinta )
+
+      endif
+
+      sysRefresh()
+
+      oFntBar:end()
+
+      if nTipBar == 1 .AND. Valtype( uCodBar ) == "O"
+         uCodBar:cText( cCodBar )
+      end
+
+   end
+
+return .T.
+
+
+
+function lCalEan13( oCodBar )
+
+   local cCodBar
+
+   if !Empty( oCodBar )
+
+      cCodBar           := oCodBar:VarGet()
+
+      if len( AllTrim( cCodBar ) ) == 12
+         cCodBar        := AllTrim( cCodBar ) + Ean13Check( cCodBar )
+      end
+
+      oCodBar:cText( cCodBar )
+      oCodBar:Refresh()
+
+   end
+
+return .T.
+
+
+
+function cEan13( cCode )
+
+   local n
+   local cCodeBar := ""
+   local nNumero  := 0
+   local nAdemdum := 0
+   local nNumeroA := 0
+   local nNumeroB := 0
+   local nNumeroX := 0
+   local nValor1  := 8
+
+   cCode          := AllTrim( cCode )
+   nValor1        := Val( Left( cCode, 1 )  )
+
+   if Len( cCode ) == 12
+      cCode       += Ean13Check( cCode )
+   end
+
+   if Len( cCode ) > 13
+      if Len( cCode ) == 15
+         nAdemdum := 2
+      else
+         nAdemdum := 5
+         nNumeroA := 3 * (  Val( SubStr( cCode, 14, 1 ) ) + Val( SubStr( cCode, 16, 1 ) ) + Val( SubStr( cCode, 18, 1 ) ) )
+         nNumeroB := 9 * (  Val( SubStr( cCode, 15, 1 ) ) + Val( SubStr( cCode, 17, 1 ) )                                 )
+         nNumeroX := nNumeroA + nNumeroB
+         nNumeroX := Val( Right( AllTrim( Str( nNumeroX ) ), 1 )  )
+      endif
+   endif
+
+   for n := 1 to Len( cCode )
+      nNumero = Val( SubStr( cCode, n, 1 ) )
+      do case
+         case n ==  1
+              cCodeBar += Chr( nNumero + 117 )
+              cCodeBar += "<"
+         case n >=  2 .AND. n <=  7
+              cCodeBar += Tabla1( n, nValor1, nNumero )
+              if n == 7
+                 cCodeBar += "="
+              endif
+         case n >=  8 .AND. n <= 13
+              cCodeBar += Chr( nNumero + 97 )
+              if n == 13
+                 cCodeBar += "<"
+              endif
+         case n >= 14 .AND. n <= 15
+              if n == 14
+                 cCodeBar += " +"
+              endif
+              if nAdemdum == 2
+                 do case
+                    case Val( SubStr( cCode ,14, 2  ) ) % 4 == 0
+                         cCodeBar += Chr( nNumero +  85 )
+                    case Val( SubStr( cCode ,14, 2  ) ) % 4 == 1
+                         if n == 14
+                            cCodeBar += Chr( nNumero +  85 )
+                         else
+                            cCodeBar += Chr( nNumero + 128 )
+                         endif
+                    case Val( SubStr( cCode ,14, 2  ) ) % 4 == 2
+                         if n == 14
+                            cCodeBar += Chr( nNumero + 128 )
+                         else
+                            cCodeBar += Chr( nNumero +  85 )
+                         endif
+                    case Val( SubStr( cCode ,14, 2  ) ) % 4 == 3
+                         cCodeBar += Chr( nNumero + 128 )
+                 endcase
+                if n == 14
+                   cCodeBar += "-"
+                endif
+              else
+                 cCodeBar += Tabla5( n, nNumero, nNumeroX )
+                 cCodeBar += "-"
+              endif
+         case n >= 16 .AND. n <= 18
+              cCodeBar += Tabla5( n, nNumero, nNumeroX )
+              if n <> 18
+                 cCodeBar += "-"
+              endif
+      endcase
+   next
+
+return cCodeBar
+
+
+
+function cCode39( cCode )
+return "*" + Alltrim( cCode ) + "*"
+
+
+
+function cCode128( cCode )
+return Chr( 202 ) + Alltrim( cCode ) + Chr( 138 )
+
+
+
+function lBadDigits( cCode )
+
+   local i
+   local lBad := .F.
+
+   for i := 1 TO Len( cCode )
+       if ! IsDigit( SubStr( cCode, i, 1 ) )
+          lBad = .T.
+          exit
+       endif
+   next
+
+return lBad
+
+
+
+function Tabla1( n, nValor1, nNumero )
+
+   local cChar := Chr( nNumero + 33  )
+
+
+
+
+
+
+
+
+
+   if ( nValor1 == 1 .AND. ( n ==  4 .OR. n ==  6 .OR. n == 7 ) ) .OR.  ( nValor1 == 2 .AND. ( n ==  4 .OR. n ==  5 .OR. n == 7 ) ) .OR.  ( nValor1 == 3 .AND. ( n ==  4 .OR. n ==  5 .OR. n == 6 ) ) .OR.  ( nValor1 == 4 .AND. ( n ==  3 .OR. n ==  6 .OR. n == 7 ) ) .OR.  ( nValor1 == 5 .AND. ( n ==  3 .OR. n ==  4 .OR. n == 7 ) ) .OR.  ( nValor1 == 6 .AND. ( n ==  3 .OR. n ==  4 .OR. n == 5 ) ) .OR.  ( nValor1 == 7 .AND. ( n ==  3 .OR. n ==  5 .OR. n == 7 ) ) .OR.  ( nValor1 == 8 .AND. ( n ==  3 .OR. n ==  5 .OR. n == 6 ) ) .OR.  ( nValor1 == 9 .AND. ( n ==  3 .OR. n ==  4 .OR. n == 6 ) )
+      cChar = Chr( nNumero + 107 )
+   endif
+
+return cChar
+
+
+
+function Tabla5( n, nNumero, nNumeroX )
+
+   local Caracter := Chr( nNumero + 85  )
+
+
+
+
+
+
+
+
+
+
+   if ( nNumeroX == 0 .AND. ( n == 14 .OR. n == 15 ) ) .OR.  ( nNumeroX == 1 .AND. ( n == 14 .OR. n == 16 ) ) .OR.  ( nNumeroX == 2 .AND. ( n == 14 .OR. n == 17 ) ) .OR.  ( nNumeroX == 3 .AND. ( n == 14 .OR. n == 18 ) ) .OR.  ( nNumeroX == 4 .AND. ( n == 15 .OR. n == 16 ) ) .OR.  ( nNumeroX == 5 .AND. ( n == 16 .OR. n == 17 ) ) .OR.  ( nNumeroX == 6 .AND. ( n == 17 .OR. n == 18 ) ) .OR.  ( nNumeroX == 7 .AND. ( n == 15 .OR. n == 17 ) ) .OR.  ( nNumeroX == 8 .AND. ( n == 15 .OR. n == 18 ) ) .OR.  ( nNumeroX == 9 .AND. ( n == 16 .OR. n == 18 ) )
+      Caracter := Chr( nNumero + 128 )
+   endif
+
+return Caracter
+
+
+
+function Ean13Check( cCode )
+
+    local n
+   local nControl
+   local s1    := 0
+   local s2    := 0
+   local l     := 10
+
+   for n := 1 TO 6
+      s1       := s1 + val( substr( cCode, ( n * 2 ) -1, 1 ) )
+      s2       := s2 + val( substr( cCode, ( n * 2 ), 1 ) )
+   next
+
+   nControl    := ( s2 * 3 ) + s1
+
+   while nControl > l
+      l        := l + 10
+   end
+
+   nControl    := l - nControl
+
+return Str( nControl, 1, 0 )

@@ -1,0 +1,159 @@
+#line 112 "hbclass.ch"
+   DYNAMIC DivertConstructorCall
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+DECLARE HBClass  New( cName AS String, OPTIONAL SuperParams ) AS CLASS HBClass  Create() AS Object  Instance() AS Object  AddClsMethod( cName AS String, @MethodName(), nScope AS Numeric, n2 AS Numeric, n3 AS Numeric )  AddDelegate( cName AS String, cDelegate AS String, cObject AS String, nScope AS Numeric, lPersistent AS LOGICAL )  AddMultiClsData( cType AS String, uVal, nScope AS Numeric, aDatas AS Array OF String )  AddMultiData( cType AS String, uVal, nScope AS Numeric, aDatas AS Array OF String, x AS LOGICAL, lPer AS LOGICAL )  AddMethod( cName AS String, @MethodName(), nScope AS Numeric, lPersistent AS LOGICAL )  AddInLine( cName AS String, bBlock AS CodeBlock, nScope AS Numeric, lPersistent AS LOGICAL )  AddVirtual( cName AS String )  ModMethod( cName AS String, @MethodName(), nScope AS Numeric, lPersistent AS LOGICAL )  ModClsMethod( cName AS String, @MethodName(), nScope AS Numeric )  ModInline( cName AS String, bBlock AS CodeBlock, nScope AS Numeric, lPersistent AS LOGICAL )  SetOnError( @MethodName() )
+#line 85 "\Fwh1204\Include\FiveWin.Ch"
+   EXTERNAL GetProcAdd
+   EXTERNAL TActiveX
+
+
+
+
+extern errorsys
+#line 7 ".\Prg\Actuaciones.prg"
+_HB_CLASS TActuaciones ; UTILITY FUNCTION TActuaciones(...); static s_oClass ; local oClassInstance ; local nScope ; nScope := 1 ; if s_oClass == NIL ; s_oClass := IIF(.F.,, HBClass():New( "TActuaciones" , {TMant():classh} ) ) ; ;
+
+   _HB_MEMBER { cMru} ; IIF( !.F., s_oClass:AddMultiData(, "Power_Drill_16", nScope + IIF( .F., 32, 0 ), { "cMru" }, .F., .F. ), )
+   _HB_MEMBER { cBitmap} ; IIF( !.F., s_oClass:AddMultiData(, ( 197 + ( 227 * 256 ) + ( 9 * 65536 ) ), nScope + IIF( .F., 32, 0 ), { "cBitmap" }, .F., .F. ), )
+
+   _HB_MEMBER OpenFiles( lExclusive); IIF( .F., s_oClass:ModMethod( "OpenFiles", @TActuaciones_OpenFiles(), nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ), s_oClass:AddMethod( "OpenFiles", @TActuaciones_OpenFiles(), nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ));
+
+   _HB_MEMBER DefineFiles(); IIF( .F., s_oClass:ModMethod( "DefineFiles", @TActuaciones_DefineFiles(), nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ), s_oClass:AddMethod( "DefineFiles", @TActuaciones_DefineFiles(), nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ));
+
+   _HB_MEMBER Resource( nMode); IIF( .F., s_oClass:ModMethod( "Resource", @TActuaciones_Resource(), nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ), s_oClass:AddMethod( "Resource", @TActuaciones_Resource(), nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ));
+
+   _HB_MEMBER lPreSave( nMode); IIF( .F., s_oClass:ModMethod( "lPreSave", @TActuaciones_lPreSave(), nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ), s_oClass:AddMethod( "lPreSave", @TActuaciones_lPreSave(), nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ));
+
+; IF .F. ; __clsActive(s_oClass:hClass) ; s_oClass:Refresh() ; ELSE ; s_oClass:Create() ; END ; oClassInstance := __clsInst( s_oClass:hClass ) ; IF __ObjHasMsg( oClassInstance, "InitClass" ); oClassInstance:InitClass( hb_aParams() ) ; END ; ELSE ; oClassInstance := __clsInst( s_oClass:hClass ) ; END ; IF PCount() > 0 ; DIVERT TO (@DivertConstructorCall()) OF s_oClass ; END ; RETURN oClassInstance AS CLASS TActuaciones ;
+
+
+
+UTILITY STATIC function TActuaciones_OpenFiles( lExclusive) ; local Self AS CLASS TActuaciones := QSelf() AS CLASS TActuaciones
+
+   local lOpen          := .T.
+   local oError
+   local oBlock         := ErrorBlock( {| oError | ApoloBreak( oError ) } )
+
+   IIF( lExclusive == nil, lExclusive := .F., ) ;
+
+   BEGIN SEQUENCE
+
+   if Empty( ::oDbf )
+      ::DefineFiles()
+   end
+
+   ::oDbf:Activate( .F., !( lExclusive ) )
+
+   RECOVER USING oError
+
+      msgStop( "Imposible abrir todas las bases de datos" + Chr(13)+Chr(10) + ErrorMessage( oError )  )
+      ::CloseFiles()
+      lOpen          := .F.
+
+   end
+
+   ErrorBlock( oBlock )
+
+RETURN ( lOpen )
+
+
+
+UTILITY STATIC function TActuaciones_DefineFiles( cPath, cDriver) ; local Self AS CLASS TActuaciones := QSelf() AS CLASS TActuaciones
+
+   IIF( cPath == nil, cPath := ::cPath, ) ;
+
+   ::oDbf := DbfServer( "Actuaciones.Dbf", "Actuaciones" ):New( "Actuaciones.Dbf", "Actuac", ( cDriver() ), "Actuaciones", ( cPath ) )
+
+      ::oDbf:AddField( "cCodAct", "C", 3, 0,,,,, "Código", .F., 100, .F., {} )
+      ::oDbf:AddField( "cDesAct", "C", 35, 0,,,,, "Nombre", .F., 400, .F., {} )
+
+      ::oDbf:AddIndex( "cCodAct", "Actuaciones.Cdx", "cCodAct",,, .F., .F., "Código",,, .T., .F. )
+      ::oDbf:AddIndex( "cDesAct", "Actuaciones.Cdx", "cDesAct",,, .F., .F., "Nombre",,, .T., .F. )
+
+
+
+RETURN ( ::oDbf )
+
+
+
+UTILITY STATIC function TActuaciones_Resource( nMode) ; local Self AS CLASS TActuaciones := QSelf() AS CLASS TActuaciones
+
+   local oDlg
+   local oGet
+
+   oDlg = TDialog():New(,,,, LblTitle( nMode ) + "actuaciones", "Horas",, .F.,,,,,, .F.,,,,,, .F., )
+
+
+
+
+
+
+      oGet := TGetHlp():ReDefine( 110, { | u | If( PCount()==0, ::oDbf:cCodAct, ::oDbf:cCodAct:= u ) }, oDlg,, "@!", {||    NotValid( oGet, ::oDbf:cAlias, .T., "0" )},,,,,, .F., {||     ( nMode == 1 )},, .F., .F.,,,,,, nil,,, )
+
+
+
+
+      TGetHlp():ReDefine( 120, { | u | If( PCount()==0, ::oDbf:cDesAct, ::oDbf:cDesAct:= u ) }, oDlg,,,,,,,,, .F., {||     ( nMode <> 3 )},, .F., .F.,,,,,, nil,,, )
+
+
+
+
+
+      TButton():ReDefine( 1, {||( if( ::lPreSave( nMode ), oDlg:end( 1 ), ) )}, oDlg,,, .F., {||         ( nMode <> 3 )},,, .F. )
+
+
+
+
+
+        TButton():ReDefine( 2, {||( oDlg:end() )}, oDlg,,, .F.,,,, .T. )
+
+
+
+
+
+      TButton():ReDefine( 559, {||( MsgInfo( "Ayuda no definida" ) )}, oDlg,,, .F.,,,, .T. )
+
+   if nMode <> 3
+      oDlg:AddFastKey( 116, {|| if( ::lPreSave( nMode ), oDlg:end( 1 ), ) } )
+   end
+
+   oDlg:bStart := { || oGet:SetFocus() }
+
+    oDlg:Activate( oDlg:bLClicked, oDlg:bMoved, oDlg:bPainted, .T.,,,, oDlg:bRClicked,,, )
+
+RETURN ( oDlg:nResult == 1 )
+
+
+
+UTILITY STATIC function TActuaciones_lPreSave( nMode) ; local Self AS CLASS TActuaciones := QSelf() AS CLASS TActuaciones
+
+   if nMode == 1 .OR. nMode == 4
+
+      if ::oDbf:SeekInOrd( ::oDbf:cCodAct, "cCodAct" )
+         MsgStop( "Código ya existe " + Rtrim( ::oDbf:cCodAct ) )
+         Return .F.
+      end
+
+   end
+
+   if Empty( ::oDbf:cDesAct )
+      MsgStop( "La descripción de la actuación no puede estar vacía." )
+      Return .F.
+   end
+
+RETURN .T.

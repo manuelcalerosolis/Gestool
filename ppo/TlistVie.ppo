@@ -1,0 +1,745 @@
+#line 112 "hbclass.ch"
+   DYNAMIC DivertConstructorCall
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+DECLARE HBClass  New( cName AS String, OPTIONAL SuperParams ) AS CLASS HBClass  Create() AS Object  Instance() AS Object  AddClsMethod( cName AS String, @MethodName(), nScope AS Numeric, n2 AS Numeric, n3 AS Numeric )  AddDelegate( cName AS String, cDelegate AS String, cObject AS String, nScope AS Numeric, lPersistent AS LOGICAL )  AddMultiClsData( cType AS String, uVal, nScope AS Numeric, aDatas AS Array OF String )  AddMultiData( cType AS String, uVal, nScope AS Numeric, aDatas AS Array OF String, x AS LOGICAL, lPer AS LOGICAL )  AddMethod( cName AS String, @MethodName(), nScope AS Numeric, lPersistent AS LOGICAL )  AddInLine( cName AS String, bBlock AS CodeBlock, nScope AS Numeric, lPersistent AS LOGICAL )  AddVirtual( cName AS String )  ModMethod( cName AS String, @MethodName(), nScope AS Numeric, lPersistent AS LOGICAL )  ModClsMethod( cName AS String, @MethodName(), nScope AS Numeric )  ModInline( cName AS String, bBlock AS CodeBlock, nScope AS Numeric, lPersistent AS LOGICAL )  SetOnError( @MethodName() )
+#line 85 "\Fwh1204\Include\FiveWin.ch"
+   EXTERNAL GetProcAdd
+   EXTERNAL TActiveX
+
+
+
+
+extern errorsys
+#line 43 ".\Prg\TlistVie.prg"
+_HB_CLASS TListView ; UTILITY FUNCTION TListView(...); static s_oClass ; local oClassInstance ; local nScope ; nScope := 1 ; if s_oClass == NIL ; s_oClass := IIF(.F.,, HBClass():New( "TListView" , {TControl():classh} ) ) ; ;
+
+   _HB_MEMBER { aProperties} ; IIF( !.F., s_oClass:AddMultiClsData(, { "nAlign", "nClrText", "nClrPane", "nOption", "nTop", "nLeft", "nWidth", "nHeight", "Cargo" }, nScope + IIF( .F., 32, 0 ) + 64, { "aProperties" }, .F. ), )
+
+   _HB_MEMBER { aPrompts} ; IIF( !.F., s_oClass:AddMultiData(,, nScope + IIF( .F., 32, 0 ), { "aPrompts" }, .F., .F. ), )
+   _HB_MEMBER { aCargo} ; IIF( !.F., s_oClass:AddMultiData(,, nScope + IIF( .F., 32, 0 ), { "aCargo" }, .F., .F. ), )
+   _HB_MEMBER { aItems} ; IIF( !.F., s_oClass:AddMultiData(, {}, nScope + IIF( .F., 32, 0 ), { "aItems" }, .F., .F. ), )
+   _HB_MEMBER { aGroups} ; IIF( !.F., s_oClass:AddMultiData(, {}, nScope + IIF( .F., 32, 0 ), { "aGroups" }, .F., .F. ), )
+   _HB_MEMBER { bAction} ; IIF( !.F., s_oClass:AddMultiData(,, nScope + IIF( .F., 32, 0 ), { "bAction" }, .F., .F. ), )
+   _HB_MEMBER { bClick} ; IIF( !.F., s_oClass:AddMultiData(,, nScope + IIF( .F., 32, 0 ), { "bClick" }, .F., .F. ), )
+   _HB_MEMBER { nOption} ; IIF( !.F., s_oClass:AddMultiData(,, nScope + IIF( .F., 32, 0 ), { "nOption" }, .F., .F. ), )
+
+
+
+   _HB_MEMBER New( nTop, nLeft, aPrompts, bAction, oWnd, nClrFore, nClrBack, lPixel, lDesign, nWidth, nHeight, cMsg) AS CLASS TListView; IIF( .F., s_oClass:ModMethod( "New", @TListView_New(), nScope + IIF( .T., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ), s_oClass:AddMethod( "New", @TListView_New(), nScope + IIF( .T., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ));
+
+   _HB_MEMBER ReDefine( nId, oWnd, bAction) AS CLASS TListView; IIF( .F., s_oClass:ModMethod( "ReDefine", @TListView_ReDefine(), nScope + IIF( .T., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ), s_oClass:AddMethod( "ReDefine", @TListView_ReDefine(), nScope + IIF( .T., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ));
+
+   _HB_MEMBER Default(); IIF( .F., s_oClass:ModMethod( "Default", @TListView_Default(), nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ), s_oClass:AddMethod( "Default", @TListView_Default(), nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ));
+
+   _HB_MEMBER Display(); IIF( .F., s_oClass:ModInline( "Display", {|Self | Self, ::BeginPaint(), ::Paint(), ::EndPaint(), 0 }, nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ), s_oClass:AddInline( "Display", {|Self | Self, ::BeginPaint(), ::Paint(), ::EndPaint(), 0 }, nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ) )
+
+   _HB_MEMBER EraseBkGnd(hDC); IIF( .F., s_oClass:ModInline( "EraseBkGnd", {|Self,hDC | Self, 1 }, nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ), s_oClass:AddInline( "EraseBkGnd", {|Self,hDC | Self, 1 }, nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ) )
+
+   _HB_MEMBER InsertItem(nImageIndex, cText); IIF( .F., s_oClass:ModInline( "InsertItem", {|Self,nImageIndex, cText | Self, LVInsertItem( ::hWnd, nImageIndex, cText ) }, nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ), s_oClass:AddInline( "InsertItem", {|Self,nImageIndex, cText | Self, LVInsertItem( ::hWnd, nImageIndex, cText ) }, nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ) )
+
+   _HB_MEMBER InsertItemGroup(nImageIndex, cText, nGroup); IIF( .F., s_oClass:ModInline( "InsertItemGroup", {|Self,nImageIndex, cText, nGroup | Self, LVInsertItemGroup( ::hWnd, nImageIndex, cText, nGroup ) }, nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ), s_oClass:AddInline( "InsertItemGroup", {|Self,nImageIndex, cText, nGroup | Self, LVInsertItemGroup( ::hWnd, nImageIndex, cText, nGroup ) }, nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ) )
+   _HB_MEMBER aAddItemGroup( nImageIndex, cText, nGroup); IIF( .F., s_oClass:ModMethod( "aAddItemGroup", @TListView_aAddItemGroup(), nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ), s_oClass:AddMethod( "aAddItemGroup", @TListView_aAddItemGroup(), nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ));
+
+   _HB_MEMBER InsertGroup(nGroupIndex, cText); IIF( .F., s_oClass:ModInline( "InsertGroup", {|Self,nGroupIndex, cText | Self, LVInsertGroupInList( ::hWnd, nGroupIndex, cText ) }, nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ), s_oClass:AddInline( "InsertGroup", {|Self,nGroupIndex, cText | Self, LVInsertGroupInList( ::hWnd, nGroupIndex, cText ) }, nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ) )
+
+   _HB_MEMBER SetIconSpacing(x, y); IIF( .F., s_oClass:ModInline( "SetIconSpacing", {|Self,x, y | Self, SendMessage( ::hWnd, ( 4096 + 53 ), 0, nMakeLong( x, y ) ) }, nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ), s_oClass:AddInline( "SetIconSpacing", {|Self,x, y | Self, SendMessage( ::hWnd, ( 4096 + 53 ), 0, nMakeLong( x, y ) ) }, nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ) )
+   _HB_MEMBER SetHotItem(nItem); IIF( .F., s_oClass:ModInline( "SetHotItem", {|Self,nItem | Self, SendMessage( ::hWnd, ( 4096 + 60 ), nItem, 0 ) }, nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ), s_oClass:AddInline( "SetHotItem", {|Self,nItem | Self, SendMessage( ::hWnd, ( 4096 + 60 ), nItem, 0 ) }, nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ) )
+
+   _HB_MEMBER EnableGroupView(); IIF( .F., s_oClass:ModInline( "EnableGroupView", {|Self | Self, LVEnableGroupView( ::hWnd ) }, nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ), s_oClass:AddInline( "EnableGroupView", {|Self | Self, LVEnableGroupView( ::hWnd ) }, nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ) )
+   _HB_MEMBER FindItem(cText); IIF( .F., s_oClass:ModInline( "FindItem", {|Self,cText | Self, LVFindItem( ::hWnd, cText ) }, nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ), s_oClass:AddInline( "FindItem", {|Self,cText | Self, LVFindItem( ::hWnd, cText ) }, nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ) )
+   _HB_MEMBER SetItemSelect(nItem); IIF( .F., s_oClass:ModInline( "SetItemSelect", {|Self,nItem | Self, LVSetItemSelect( ::hWnd, nItem ) }, nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ), s_oClass:AddInline( "SetItemSelect", {|Self,nItem | Self, LVSetItemSelect( ::hWnd, nItem ) }, nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ) )
+
+   _HB_MEMBER Paint(); IIF( .F., s_oClass:ModMethod( "Paint", @TListView_Paint(), nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ), s_oClass:AddMethod( "Paint", @TListView_Paint(), nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ));
+
+   _HB_MEMBER Notify( nIdCtrl, nPtrNMHDR); IIF( .F., s_oClass:ModMethod( "Notify", @TListView_Notify(), nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ), s_oClass:AddMethod( "Notify", @TListView_Notify(), nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ));
+
+   _HB_MEMBER SetImageList( oImageList, nType); IIF( .F., s_oClass:ModMethod( "SetImageList", @TListView_SetImageList(), nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ), s_oClass:AddMethod( "SetImageList", @TListView_SetImageList(), nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ));
+
+   _HB_MEMBER HScroll( nWParam, nLParam ); IIF( !.F., s_oClass:AddVirtual( "HScroll" ), )
+   _HB_MEMBER VScroll( nWParam, nLParam ); IIF( !.F., s_oClass:AddVirtual( "VScroll" ), )
+
+   _HB_MEMBER GetItem( nItem); IIF( .F., s_oClass:ModMethod( "GetItem", @TListView_GetItem(), nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ), s_oClass:AddMethod( "GetItem", @TListView_GetItem(), nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ));
+
+; IF .F. ; __clsActive(s_oClass:hClass) ; s_oClass:Refresh() ; ELSE ; s_oClass:Create() ; END ; oClassInstance := __clsInst( s_oClass:hClass ) ; IF __ObjHasMsg( oClassInstance, "InitClass" ); oClassInstance:InitClass( hb_aParams() ) ; END ; ELSE ; oClassInstance := __clsInst( s_oClass:hClass ) ; END ; IF PCount() > 0 ; DIVERT TO (@DivertConstructorCall()) OF s_oClass ; END ; RETURN oClassInstance AS CLASS TListView ;
+
+
+
+
+UTILITY STATIC function TListView_New( nTop, nLeft, aPrompts, bAction, oWnd, nClrFore, nClrBack, lPixel, lDesign, nWidth, nHeight, cMsg) ; local Self AS CLASS TListView := QSelf() AS CLASS TListView
+
+
+
+
+
+
+
+
+   IIF( nTop == nil, nTop := 0, ) ; IIF( nLeft == nil, nLeft := 0, ); IIF( aPrompts == nil, aPrompts := { "&One", "&Two", "T&hree" }, ); IIF( oWnd == nil, oWnd := GetWndDefault(), ); IIF( nClrFore == nil, nClrFore := oWnd:nClrText, ); IIF( nClrBack == nil, nClrBack := GetSysColor( 15 ), ); IIF( lPixel == nil, lPixel := .F., ); IIF( lDesign == nil, lDesign := .F., ); IIF( nWidth == nil, nWidth := 200, ); IIF( nHeight == nil, nHeight := 21, );
+
+
+
+
+
+   ::nStyle    = nOR( 1073741824, 268435456, If( lDesign, 67108864, 0 ), 65536 )
+   ::nId       = ::GetNewId()
+   ::oWnd      = oWnd
+   ::aPrompts  = aPrompts
+   ::bAction   = bAction
+   ::cMsg      = cMsg
+   ::nTop      = If( lPixel, nTop, nTop * 15 )
+   ::nLeft     = If( lPixel, nLeft, nLeft * 6 )
+   ::nBottom   = ::nTop + nHeight - 1
+   ::nRight    = ::nLeft + nWidth - 1
+   ::lDrag     = lDesign
+   ::lCaptured = .F.
+   ::oFont     = TFont():New( "Ms Sans Serif", 0, -9 )
+   ::nClrText  = nClrFore
+   ::nClrPane  = nClrBack
+   ::nOption   = 1
+   ::aCargo    = {}
+
+   if ! Empty( oWnd:hWnd )
+      ::Create( "SysListView32" )
+      oWnd:AddControl( Self )
+   else
+      oWnd:DefControl( Self )
+   endif
+
+   ::Default()
+
+   if lDesign
+      ::CheckDots()
+   endif
+
+return Self
+
+
+
+UTILITY STATIC function TListView_ReDefine( nId, oWnd, bAction) ; local Self AS CLASS TListView := QSelf() AS CLASS TListView
+
+   IIF( oWnd == nil, oWnd := GetWndDefault(), ) ;
+
+   ::nId          := nId
+   ::oWnd         := oWnd
+   ::bAction      := bAction
+   ::aPrompts     := {}
+   ::aCargo       := {}
+
+   oWnd:DefControl( Self )
+
+return Self
+
+
+
+UTILITY STATIC function TListView_Default() ; local Self AS CLASS TListView := QSelf() AS CLASS TListView
+
+   local n
+
+   for n = 1 to Len( ::aPrompts )
+      ::InsertItem( n - 1, ::aPrompts[ n ] )
+   next
+
+return ::TControl:Default()
+
+
+
+UTILITY STATIC function TListView_Paint() ; local Self AS CLASS TListView := QSelf() AS CLASS TListView
+
+   local aInfo := ::DispBegin()
+
+   if ::oBrush <> nil
+      FillRect( ::hDC, GetClientRect( ::hWnd ), ::oBrush:hBrush )
+   else
+      CallWindowProc( ::nOldProc, ::hWnd, 20, ::hDC, 0 )
+   endif
+
+   CallWindowProc( ::nOldProc, ::hWnd, 15, ::hDC, 0 )
+
+   ::DispEnd( aInfo )
+
+return 1
+
+
+
+UTILITY STATIC function TListView_Notify( nIdCtrl, nPtrNMHDR) ; local Self AS CLASS TListView := QSelf() AS CLASS TListView
+
+   local nOption
+   local nCode       := GetNMHDRCode( nPtrNMHDR )
+
+   do case
+      case nCode == -2
+
+         nOption     := GetNMListViewItem( nPtrNMHDR ) + 1
+
+         if ::bClick <> nil
+            ::nOption   := nOption
+            Eval( ::bClick, ::nOption, Self )
+         endif
+
+      case nCode == ( -100 - 1 )
+
+         nOption     := GetNMListViewItem( nPtrNMHDR ) + 1
+
+         if ::nOption <> nOption
+
+            ::nOption := nOption
+
+            if ::bAction <> nil
+               Eval( ::bAction, ::nOption, Self )
+            endif
+
+         endif
+
+   endcase
+
+Return nil
+
+
+
+UTILITY STATIC function TListView_SetImageList( oImageList, nType) ; local Self AS CLASS TListView := QSelf() AS CLASS TListView
+
+   local nResult
+
+   IIF( nType == nil, nType := 0, ) ;
+
+   nResult = SendMessage( ::hWnd, ( 4096 + 3 ), nType, oImageList:hImageList )
+
+   SysRefresh()
+
+Return nResult
+
+
+
+UTILITY STATIC function TListView_aAddItemGroup( nImageIndex, cText, nGroup, Cargo) ; local Self AS CLASS TListView := QSelf() AS CLASS TListView
+
+   aAdd( ::aPrompts, cText )
+   aAdd( ::aCargo, Cargo )
+
+Return ( LVInsertItemGroup( ::hWnd, nImageIndex, cText, nGroup ) )
+
+
+
+UTILITY STATIC function TListView_GetItem( nItem) ; local Self AS CLASS TListView := QSelf() AS CLASS TListView
+
+   if nItem > 0 .AND. nItem <= len( ::aItems )
+      Return ( ::aItems[ nItem ] )
+   end
+
+Return ( nil )
+
+
+
+
+
+
+
+
+_HB_CLASS TListViewItem ; UTILITY FUNCTION TListViewItem(...); static s_oClass ; local oClassInstance ; local nScope ; nScope := 1 ; if s_oClass == NIL ; s_oClass := IIF(.F.,, HBClass():New( "TListViewItem" , { HBObject():Classh } ) ) ;
+
+   _HB_MEMBER { oParent} ; IIF( !.F., s_oClass:AddMultiData(,, nScope + IIF( .F., 32, 0 ), { "oParent" }, .F., .F. ), )
+
+   _HB_MEMBER { cText} ; IIF( !.F., s_oClass:AddMultiData(, "", nScope + IIF( .F., 32, 0 ), { "cText" }, .F., .F. ), )
+   _HB_MEMBER { cToolTip} ; IIF( !.F., s_oClass:AddMultiData(, "", nScope + IIF( .F., 32, 0 ), { "cToolTip" }, .F., .F. ), )
+   _HB_MEMBER { nImage} ; IIF( !.F., s_oClass:AddMultiData(, 0, nScope + IIF( .F., 32, 0 ), { "nImage" }, .F., .F. ), )
+   _HB_MEMBER { nGroup} ; IIF( !.F., s_oClass:AddMultiData(, 0, nScope + IIF( .F., 32, 0 ), { "nGroup" }, .F., .F. ), )
+   _HB_MEMBER { nIndent} ; IIF( !.F., s_oClass:AddMultiData(, 0, nScope + IIF( .F., 32, 0 ), { "nIndent" }, .F., .F. ), )
+   _HB_MEMBER { lChecked} ; IIF( !.F., s_oClass:AddMultiData(, .F., nScope + IIF( .F., 32, 0 ), { "lChecked" }, .F., .F. ), )
+
+   _HB_MEMBER { nItem} ; IIF( !.F., s_oClass:AddMultiData(, 0, nScope + IIF( .F., 32, 0 ), { "nItem" }, .F., .F. ), )
+
+   _HB_MEMBER { Cargo} ; IIF( !.F., s_oClass:AddMultiData(,, nScope + IIF( .F., 32, 0 ), { "Cargo" }, .F., .F. ), )
+
+   _HB_MEMBER New( oParent, nPos) AS CLASS TListViewItem; IIF( .F., s_oClass:ModMethod( "New", @TListViewItem_New(), nScope + IIF( .T., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ), s_oClass:AddMethod( "New", @TListViewItem_New(), nScope + IIF( .T., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ));
+   _HB_MEMBER Create( oParent) AS CLASS TListViewItem; IIF( .F., s_oClass:ModMethod( "Create", @TListViewItem_Create(), nScope + IIF( .T., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ), s_oClass:AddMethod( "Create", @TListViewItem_Create(), nScope + IIF( .T., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ));
+   _HB_MEMBER Destroy(); IIF( .F., s_oClass:ModInline( "Destroy", {|Self | Self, ( ::oParent := nil ) }, nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ), s_oClass:AddInline( "Destroy", {|Self | Self, ( ::oParent := nil ) }, nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ) )
+   _HB_MEMBER Delete(); IIF( .F., s_oClass:ModMethod( "Delete", @TListViewItem_Delete(), nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ), s_oClass:AddMethod( "Delete", @TListViewItem_Delete(), nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ));
+   _HB_MEMBER SetGroup( nGroup); IIF( .F., s_oClass:ModMethod( "SetGroup", @TListViewItem_SetGroup(), nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ), s_oClass:AddMethod( "SetGroup", @TListViewItem_SetGroup(), nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ));
+
+   _HB_MEMBER InsertInList(); IIF( .F., s_oClass:ModMethod( "InsertInList", @TListViewItem_InsertInList(), nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ), s_oClass:AddMethod( "InsertInList", @TListViewItem_InsertInList(), nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ));
+   _HB_MEMBER GetId( ); IIF( !.F., s_oClass:AddVirtual( "GetId" ), )
+
+; IF .F. ; __clsActive(s_oClass:hClass) ; s_oClass:Refresh() ; ELSE ; s_oClass:Create() ; END ; oClassInstance := __clsInst( s_oClass:hClass ) ; IF __ObjHasMsg( oClassInstance, "InitClass" ); oClassInstance:InitClass( hb_aParams() ) ; END ; ELSE ; oClassInstance := __clsInst( s_oClass:hClass ) ; END ; IF PCount() > 0 ; DIVERT TO (@DivertConstructorCall()) OF s_oClass ; END ; RETURN oClassInstance AS CLASS TListViewItem ;
+
+
+
+UTILITY STATIC function TListViewItem_New( oParent) ; local Self AS CLASS TListViewItem := QSelf() AS CLASS TListViewItem
+
+   if !Empty( oParent )
+      ::oParent   := oParent
+   end
+
+RETURN Self
+
+
+
+UTILITY STATIC function TListViewItem_Create( oParent) ; local Self AS CLASS TListViewItem := QSelf() AS CLASS TListViewItem
+
+   if !Empty( oParent )
+      ::oParent   := oParent
+   end
+
+   if !Empty( ::oParent ) .AND. ::oParent:hWnd <> 0
+      if ::InsertInList() > -1
+         aAdd( ::oParent:aItems, Self )
+      end
+   end
+
+RETURN Self
+
+
+
+UTILITY STATIC function TListViewItem_InsertInList() ; local Self AS CLASS TListViewItem := QSelf() AS CLASS TListViewItem
+
+   local nItem
+
+   nItem          := LvInsertInList( ::oParent:hWnd, ::nImage, ::cText, ::nGroup )
+   if nItem > -1
+      ::nItem     := nItem
+   end
+
+RETURN ( nItem )
+
+
+
+UTILITY STATIC function TListViewItem_Delete() ; local Self AS CLASS TListViewItem := QSelf() AS CLASS TListViewItem
+
+   LOCAL aItems
+   LOCAL lSuccess
+
+   if ( lSuccess := ::DeleteItemC() )
+
+      ::lParam    := 0
+      aItems      := ::oParent:aItems
+
+      if ::nItem == Len( aItems )
+         aSize( aItems, ::nItem - 1 )
+      elseif ::nItem > 0
+         aItems[ ::nItem ] := nil
+      endif
+
+      ::nItem    := 0
+
+   endif
+
+RETURN lSuccess
+
+
+
+UTILITY STATIC function TListViewItem_SetGroup( nGroup) ; local Self AS CLASS TListViewItem := QSelf() AS CLASS TListViewItem
+
+   LOCAL nLen
+
+   if nGroup > 0 .AND. aScan( ::oParent:aGroups, {|v| v:nItem == nGroup } ) > 0
+      LVSetGroup( nGroup )
+   end
+
+RETURN ::nGroup
+
+
+
+
+
+
+
+
+
+_HB_CLASS TListViewGroup ; UTILITY FUNCTION TListViewGroup(...); static s_oClass ; local oClassInstance ; local nScope ; nScope := 1 ; if s_oClass == NIL ; s_oClass := IIF(.F.,, HBClass():New( "TListViewGroup" , { HBObject():Classh } ) ) ;
+
+   _HB_MEMBER { cHeader} ; IIF( !.F., s_oClass:AddMultiData(, "", nScope + IIF( .F., 32, 0 ), { "cHeader" }, .F., .F. ), )
+   _HB_MEMBER { nState} ; IIF( !.F., s_oClass:AddMultiData(, 0, nScope + IIF( .F., 32, 0 ), { "nState" }, .F., .F. ), )
+
+   _HB_MEMBER { nGroupId} ; IIF( !.F., s_oClass:AddMultiData(,, nScope + IIF( .F., 32, 0 ), { "nGroupId" }, .F., .F. ), )
+
+   _HB_MEMBER { oParent} ; IIF( !.F., s_oClass:AddMultiData(,, nScope + IIF( .F., 32, 0 ), { "oParent" }, .F., .F. ), )
+
+   _HB_MEMBER New( oParent) AS CLASS TListViewGroup; IIF( .F., s_oClass:ModMethod( "New", @TListViewGroup_New(), nScope + IIF( .T., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ), s_oClass:AddMethod( "New", @TListViewGroup_New(), nScope + IIF( .T., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ));
+   _HB_MEMBER Create( oParent) AS CLASS TListViewGroup; IIF( .F., s_oClass:ModMethod( "Create", @TListViewGroup_Create(), nScope + IIF( .T., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ), s_oClass:AddMethod( "Create", @TListViewGroup_Create(), nScope + IIF( .T., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ));
+   _HB_MEMBER Destroy(); IIF( .F., s_oClass:ModInline( "Destroy", {|Self | Self, ( ::oParent := nil ) }, nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ), s_oClass:AddInline( "Destroy", {|Self | Self, ( ::oParent := nil ) }, nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ) )
+
+   _HB_MEMBER InsertInList(); IIF( .F., s_oClass:ModMethod( "InsertInList", @TListViewGroup_InsertInList(), nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ), s_oClass:AddMethod( "InsertInList", @TListViewGroup_InsertInList(), nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ));
+
+   _HB_MEMBER SetState( nState); IIF( .F., s_oClass:ModMethod( "SetState", @TListViewGroup_SetState(), nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ), s_oClass:AddMethod( "SetState", @TListViewGroup_SetState(), nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ));
+
+; IF .F. ; __clsActive(s_oClass:hClass) ; s_oClass:Refresh() ; ELSE ; s_oClass:Create() ; END ; oClassInstance := __clsInst( s_oClass:hClass ) ; IF __ObjHasMsg( oClassInstance, "InitClass" ); oClassInstance:InitClass( hb_aParams() ) ; END ; ELSE ; oClassInstance := __clsInst( s_oClass:hClass ) ; END ; IF PCount() > 0 ; DIVERT TO (@DivertConstructorCall()) OF s_oClass ; END ; RETURN oClassInstance AS CLASS TListViewGroup ;
+
+
+
+UTILITY STATIC function TListViewGroup_New( oParent, nPos) ; local Self AS CLASS TListViewGroup := QSelf() AS CLASS TListViewGroup
+
+   if !Empty( oParent )
+      ::oParent   := oParent
+   end
+
+RETURN Self
+
+
+
+UTILITY STATIC function TListViewGroup_Create( oParent) ; local Self AS CLASS TListViewGroup := QSelf() AS CLASS TListViewGroup
+
+   if !Empty( oParent )
+      ::oParent   := oParent
+   end
+
+   if ::nGroupId == nil
+      ::nGroupId  := Len( ::oParent:aGroups ) + 1
+   endif
+
+   if !Empty( ::oParent ) .AND. ( ::oParent:hWnd <> 0 )
+      if ::InsertInList() > -1
+         aAdd( ::oParent:aGroups, Self )
+      end
+   end
+
+RETURN Self
+
+
+
+UTILITY STATIC function TListViewGroup_InsertInList() ; local Self AS CLASS TListViewGroup := QSelf() AS CLASS TListViewGroup
+
+   local nGroupId
+
+   nGroupId       := LvInsertGroupInList( ::oParent:hWnd, ::nGroupId, ::cHeader, ::nState )
+   if nGroupId > -1
+      ::nGroupId  := nGroupId
+   end
+
+RETURN ( nGroupId )
+
+
+
+UTILITY STATIC function TListViewGroup_SetState( nState) ; local Self AS CLASS TListViewGroup := QSelf() AS CLASS TListViewGroup
+
+   ::nState       := nState
+
+RETURN ( LvGroupSetState( ::oParent:hWnd, ::nGroupId, ::nState ) )
+
+
+
+
+
+
+
+
+
+
+#pragma BEGINDUMP
+
+#define HB_OS_WIN_32_USED
+#define _WIN32_IE 0x0560
+
+#define NONAMELESSUNION
+
+#ifndef __FLAT__
+   #define LPCWSTR LPSTR
+   #define LPWSTR  LPSTR
+   #define NMHDR   void *
+   #define WCHAR   char
+#endif
+
+#include <Windows.h>
+#include <CommCtrl.h>
+
+void _bset( char * pDest, LONG lValue, LONG lLen );
+
+typedef struct _LVITEM {
+  UINT mask;
+  int iItem;
+  int iSubItem;
+  UINT state;
+  UINT stateMask;
+  LPTSTR pszText;
+  int cchTextMax;
+  int iImage;
+  LPARAM lParam;
+  #if (_WIN32_IE >= 0x0300)
+    int iIndent;
+  #endif
+    int iGroupId;
+} LVITEMNEW;
+
+typedef struct tagLVGROUP
+{
+    UINT    cbSize;
+    UINT    mask;
+    LPWSTR  pszHeader;
+    int     cchHeader;
+    LPWSTR  pszFooter;
+    int     cchFooter;
+    int     iGroupId;
+    UINT    stateMask;
+    UINT    state;
+    UINT    uAlign;
+} LVGROUP, *PLVGROUP;
+
+#define LVGF_NONE               0x00000000
+#define LVGF_HEADER             0x00000001
+#define LVGF_FOOTER             0x00000002
+#define LVGF_STATE              0x00000004
+#define LVGF_ALIGN              0x00000008
+#define LVGF_GROUPID            0x00000010
+
+#define LVGF_SUBSETITEMS        0x00010000  // readonly, cItems holds count of items in visible subset, iFirstItem is valid
+
+#define LVIF_GROUPID            0x0100
+#define LVIF_COLUMNS            0x0200
+
+#define LVM_INSERTGROUP         (LVM_FIRST + 145)
+#define ListView_InsertGroup(hwnd, index, pgrp)       SNDMSG((hwnd), LVM_INSERTGROUP, (WPARAM)(index), (LPARAM)(pgrp))
+
+#define LVM_ENABLEGROUPVIEW     (LVM_FIRST + 157)
+#define ListView_EnableGroupView(hwnd, fEnable)       SNDMSG((hwnd), LVM_ENABLEGROUPVIEW, (WPARAM)(fEnable), 0)
+
+#define LVM_SETGROUPINFO         (LVM_FIRST + 147)
+#define ListView_SetGroupInfo(hwnd, iGroupId, pgrp)   SNDMSG((hwnd), LVM_SETGROUPINFO, (WPARAM)iGroupId, (LPARAM)pgrp)
+
+#define LVIS_FOCUSED            0x0001
+#define LVIS_SELECTED           0x0002
+#define LVIS_CUT                0x0004
+#define LVIS_DROPHILITED        0x0008
+#define LVIS_ACTIVATING         0x0020
+
+#define LVIS_OVERLAYMASK        0x0F00
+#define LVIS_STATEIMAGEMASK     0xF000
+
+#define LVGS_NORMAL             0x00000000
+#define LVGS_COLLAPSED          0x00000001
+#define LVGS_HIDDEN             0x00000002
+#define LVGS_NOHEADER           0x00000004
+#define LVGS_COLLAPSIBLE        0x00000008
+#define LVGS_FOCUSED            0x00000010
+#define LVGS_SELECTED           0x00000020
+#define LVGS_SUBSETED           0x00000040
+#define LVGS_SUBSETLINKFOCUSED  0x00000080
+
+//-------------------------------------------------------------------------//
+
+LPWSTR AnsiToWide( LPSTR szAnsi )
+{
+   int nLen = MultiByteToWideChar( CP_ACP, MB_PRECOMPOSED, szAnsi, -1, NULL, 0 );
+
+   if( nLen )
+   {
+      LPWSTR szWide = ( LPWSTR ) hb_xgrab( nLen * 2 );
+
+      if( MultiByteToWideChar( CP_ACP, MB_PRECOMPOSED, szAnsi, -1, szWide, nLen ) )
+         return szWide;
+      else
+         hb_xfree( szWide );
+   }
+
+   return NULL;
+}
+
+//-------------------------------------------------------------------------//
+
+HB_FUNC ( LVINSERTITEM ) // ( hWnd, nImageListIndex, cText ) --> nItem
+{
+   LVITEMNEW lvi;
+   HWND hWnd   = ( HWND ) hb_parnl( 1 );
+
+   _bset( ( char * ) &lvi, 0, sizeof( lvi ) );
+
+   lvi.mask    = LVIF_TEXT | LVIF_IMAGE;
+   lvi.iItem   = ListView_GetItemCount( hWnd );
+   lvi.iImage  = hb_parnl( 2 );
+   lvi.pszText = ( LPTSTR ) hb_parc( 3 );
+
+   hb_retnl( ListView_InsertItem( hWnd, &lvi ) );
+}
+
+//-------------------------------------------------------------------------//
+
+HB_FUNC ( LVINSERTITEMGROUP ) // ( hWnd, nImageListIndex, cText ) --> nItem
+{
+   LVITEMNEW lvi;
+   HWND hWnd      = ( HWND ) hb_parnl( 1 );
+
+   _bset( ( char * ) &lvi, 0, sizeof( lvi ) );
+
+   lvi.mask       = LVIF_TEXT | LVIF_IMAGE | LVIF_GROUPID;
+   lvi.iItem      = ListView_GetItemCount( hWnd );
+   lvi.iImage     = hb_parnl( 2 );
+   lvi.pszText    = ( LPTSTR ) hb_parc( 3 );
+   lvi.iGroupId   = hb_parnl( 4 );
+
+   hb_retnl( ListView_InsertItem( hWnd, &lvi ) );
+}
+
+//-------------------------------------------------------------------------//
+
+HB_FUNC( LVINSERTINLIST )
+{
+   LVITEMNEW lvi;
+   HWND hWnd         = ( HWND ) hb_parnl( 1 );
+   int nGroup        = hb_parnl( 4 );
+
+   _bset( ( char * ) &lvi, 0, sizeof( lvi ) );
+
+   lvi.mask          = LVIF_IMAGE | LVIF_TEXT | LVIF_GROUPID;
+   lvi.iItem         = ListView_GetItemCount( hWnd );
+   lvi.iImage        = hb_parnl( 2 );
+   lvi.pszText       = ( LPTSTR ) hb_parc( 3 );
+
+   if( nGroup )
+      {
+      lvi.mask       |= LVIF_GROUPID;
+      lvi.iGroupId   = nGroup;
+      }
+
+   hb_retnl( ListView_InsertItem( hWnd, &lvi ) );
+}
+
+//-------------------------------------------------------------------------//
+// hwndList is the HWND of the control.
+
+HB_FUNC ( LVINSERTGROUPINLIST ) // ( pnmv ) --> nItem
+{
+   LVGROUP group;
+
+   HWND hWnd         = ( HWND ) hb_parnl( 1 );
+   LPWSTR pWide      = AnsiToWide( ( LPTSTR ) hb_parc( 3 ) );
+   int nState        = hb_parnl( 4 );
+
+   _bset( ( char * ) &group, 0, sizeof( group ) );
+
+   group.cbSize      = sizeof( LVGROUP );
+   group.iGroupId    = hb_parnl( 2 );
+   group.pszHeader   = pWide;
+
+   switch( nState )
+      {
+      case 0   :
+
+         group.mask  = LVGF_GROUPID | LVGF_HEADER | LVGF_SUBSETITEMS ;
+         /*
+         group.mask  = LVGF_STATE | LVGF_GROUPID | LVGF_HEADER | LVGF_SUBSETITEMS ;
+         group.state = LVGS_COLLAPSIBLE | LVGS_NORMAL;
+         */
+         break;
+
+      case 1   :
+
+         group.mask  = LVGF_STATE | LVGF_GROUPID | LVGF_HEADER | LVGF_SUBSETITEMS ;
+         group.state = LVGS_SELECTED | LVGS_COLLAPSIBLE | LVGS_COLLAPSED;
+         break;
+
+      case 2   :
+
+         group.mask  = LVGF_STATE;
+         group.state = LVGS_SELECTED | LVGS_HIDDEN;
+         break;
+      }
+
+    hb_retnl( ListView_InsertGroup( hWnd, -1, &group) );
+
+    hb_xfree( ( void * ) pWide );
+}
+
+//-------------------------------------------------------------------------//
+
+HB_FUNC ( LVGROUPSETSTATE )
+{
+   LVGROUP group;
+
+   HWND hWnd         = ( HWND ) hb_parnl( 1 );
+   int nIndex        = hb_parni( 2 );
+   int nState        = hb_parni( 3 );
+
+   _bset( ( char * ) &group, 0, sizeof( group ) );
+
+   group.cbSize      = sizeof( LVGROUP );
+   group.iGroupId    = nIndex;
+
+   switch( nState )
+      {
+      case LVGS_NORMAL   :
+         group.mask  = LVGF_STATE | LVGF_GROUPID | LVGF_HEADER | LVGF_SUBSETITEMS ;
+         group.state = LVGS_SELECTED | LVGS_NORMAL;
+         break;
+
+      case LVGS_COLLAPSED:
+         group.mask  = LVGF_STATE | LVGF_GROUPID | LVGF_HEADER | LVGF_SUBSETITEMS ;
+         group.state = LVGS_SELECTED | LVGS_COLLAPSIBLE | LVGS_COLLAPSED;
+         break;
+
+      case LVGS_HIDDEN   :
+         group.mask  = LVGF_STATE;
+         group.state = LVGS_SELECTED | LVGS_HIDDEN;
+         break;
+      }
+
+   ListView_SetGroupInfo( hWnd, nIndex, (LPARAM) &group );
+
+   InvalidateRect( hWnd, NULL, FALSE );
+
+   hb_retni( nState );
+}
+
+//-------------------------------------------------------------------------//
+
+HB_FUNC ( LVENABLEGROUPVIEW ) // ( pnmv ) --> nItem
+{
+    hb_retnl( ListView_EnableGroupView( ( HWND ) hb_parnl( 1 ), 1 ) );
+}
+
+//-------------------------------------------------------------------------//
+
+HB_FUNC ( LVFINDITEM ) // ( hWnd, nImageListIndex, cText ) --> nItem
+{
+   LVFINDINFO lvi;
+
+   HWND hWnd   = ( HWND ) hb_parnl( 1 );
+
+   _bset( ( char * ) &lvi, 0, sizeof( lvi ) );
+
+   lvi.flags   = LVFI_PARTIAL;
+   lvi.psz     = ( LPTSTR ) hb_parc( 2 );
+
+   hb_retnl( ListView_FindItem( hWnd, -1, &lvi ) );
+}
+
+//-------------------------------------------------------------------------//
+
+HB_FUNC ( LVSETITEMSELECT )
+{
+   HWND hWnd   = ( HWND ) hb_parnl( 1 );
+
+   ListView_EnsureVisible( hWnd, hb_parnl( 2 ), FALSE );
+   ListView_SetItemState( hWnd, -1, 0, LVIS_SELECTED );
+   ListView_SetItemState( hWnd, hb_parnl( 2 ), (LVIS_SELECTED | LVIS_FOCUSED), (LVIS_SELECTED | LVIS_FOCUSED) );
+}
+
+//-------------------------------------------------------------------------//
+
+HB_FUNC( LVSETGROUP )
+{
+   HWND hWnd   = ( HWND ) hb_parnl( 1 );
+   int nId     = hb_parnl( 2 );
+   int nGroup  = hb_parnl( 3 );
+
+   LVITEMNEW lvi;
+   _bset( ( char * ) &lvi, 0, sizeof( lvi ) );
+   lvi.iItem      = nId;
+   lvi.mask       = LVIF_GROUPID | LVIF_COLUMNS;
+   lvi.iGroupId   = nGroup;
+   ListView_SetItem( hWnd, ( LPARAM ) &lvi );
+
+   hb_retnl( nGroup );
+}
+
+#pragma ENDDUMP

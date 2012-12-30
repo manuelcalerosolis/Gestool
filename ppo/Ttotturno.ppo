@@ -1,0 +1,1543 @@
+#line 112 "hbclass.ch"
+   DYNAMIC DivertConstructorCall
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+DECLARE HBClass  New( cName AS String, OPTIONAL SuperParams ) AS CLASS HBClass  Create() AS Object  Instance() AS Object  AddClsMethod( cName AS String, @MethodName(), nScope AS Numeric, n2 AS Numeric, n3 AS Numeric )  AddDelegate( cName AS String, cDelegate AS String, cObject AS String, nScope AS Numeric, lPersistent AS LOGICAL )  AddMultiClsData( cType AS String, uVal, nScope AS Numeric, aDatas AS Array OF String )  AddMultiData( cType AS String, uVal, nScope AS Numeric, aDatas AS Array OF String, x AS LOGICAL, lPer AS LOGICAL )  AddMethod( cName AS String, @MethodName(), nScope AS Numeric, lPersistent AS LOGICAL )  AddInLine( cName AS String, bBlock AS CodeBlock, nScope AS Numeric, lPersistent AS LOGICAL )  AddVirtual( cName AS String )  ModMethod( cName AS String, @MethodName(), nScope AS Numeric, lPersistent AS LOGICAL )  ModClsMethod( cName AS String, @MethodName(), nScope AS Numeric )  ModInline( cName AS String, bBlock AS CodeBlock, nScope AS Numeric, lPersistent AS LOGICAL )  SetOnError( @MethodName() )
+#line 85 "\Fwh1204\Include\FiveWin.Ch"
+   EXTERNAL GetProcAdd
+   EXTERNAL TActiveX
+
+
+
+
+extern errorsys
+#line 4 ".\Prg\Ttotturno.prg"
+static hBmpOpen
+static hBmpClose
+static aTrees     := {}
+static nLevel     := 0
+
+
+
+_HB_CLASS TTotalTurno ; UTILITY FUNCTION TTotalTurno(...); static s_oClass ; local oClassInstance ; local nScope ; nScope := 1 ; if s_oClass == NIL ; s_oClass := IIF(.F.,, HBClass():New( "TTotalTurno" , { HBObject():Classh } ) ) ;
+
+   _HB_MEMBER { hBmpDoc} ; IIF( !.F., s_oClass:AddMultiData(,, nScope + IIF( .F., 32, 0 ), { "hBmpDoc" }, .F., .F. ), )
+
+   _HB_MEMBER { oTurno} ; IIF( !.F., s_oClass:AddMultiData(,, nScope + IIF( .F., 32, 0 ), { "oTurno" }, .F., .F. ), )
+
+   _HB_MEMBER {AS ARRAY aTotAlbCliContadores} ; IIF( !.F., s_oClass:AddMultiData( "ARRAY", {}, nScope + IIF( .F., 32, 0 ), { "aTotAlbCliContadores" }, .F., .F. ), )
+   _HB_MEMBER {AS ARRAY aTotAlbCliVentas} ; IIF( !.F., s_oClass:AddMultiData( "ARRAY", {}, nScope + IIF( .F., 32, 0 ), { "aTotAlbCliVentas" }, .F., .F. ), )
+
+   _HB_MEMBER {AS ARRAY aTotPedCliEntregas} ; IIF( !.F., s_oClass:AddMultiData( "ARRAY", {}, nScope + IIF( .F., 32, 0 ), { "aTotPedCliEntregas" }, .F., .F. ), )
+   _HB_MEMBER {AS ARRAY aTotAlbCliEntregas} ; IIF( !.F., s_oClass:AddMultiData( "ARRAY", {}, nScope + IIF( .F., 32, 0 ), { "aTotAlbCliEntregas" }, .F., .F. ), )
+   _HB_MEMBER {AS ARRAY aTotEntregas} ; IIF( !.F., s_oClass:AddMultiData( "ARRAY", {}, nScope + IIF( .F., 32, 0 ), { "aTotEntregas" }, .F., .F. ), )
+
+   _HB_MEMBER {AS ARRAY aTotFacCliContadores} ; IIF( !.F., s_oClass:AddMultiData( "ARRAY", {}, nScope + IIF( .F., 32, 0 ), { "aTotFacCliContadores" }, .F., .F. ), )
+   _HB_MEMBER {AS ARRAY aTotFacCliVentas} ; IIF( !.F., s_oClass:AddMultiData( "ARRAY", {}, nScope + IIF( .F., 32, 0 ), { "aTotFacCliVentas" }, .F., .F. ), )
+
+   _HB_MEMBER {AS ARRAY aTotRctCliContadores} ; IIF( !.F., s_oClass:AddMultiData( "ARRAY", {}, nScope + IIF( .F., 32, 0 ), { "aTotRctCliContadores" }, .F., .F. ), )
+   _HB_MEMBER {AS ARRAY aTotRctCliVentas} ; IIF( !.F., s_oClass:AddMultiData( "ARRAY", {}, nScope + IIF( .F., 32, 0 ), { "aTotRctCliVentas" }, .F., .F. ), )
+
+   _HB_MEMBER {AS ARRAY aTotTikCliContadores} ; IIF( !.F., s_oClass:AddMultiData( "ARRAY", {}, nScope + IIF( .F., 32, 0 ), { "aTotTikCliContadores" }, .F., .F. ), )
+   _HB_MEMBER {AS ARRAY aTotTikCliVentas} ; IIF( !.F., s_oClass:AddMultiData( "ARRAY", {}, nScope + IIF( .F., 32, 0 ), { "aTotTikCliVentas" }, .F., .F. ), )
+
+   _HB_MEMBER {AS ARRAY aTotDevCliContadores} ; IIF( !.F., s_oClass:AddMultiData( "ARRAY", {}, nScope + IIF( .F., 32, 0 ), { "aTotDevCliContadores" }, .F., .F. ), )
+   _HB_MEMBER {AS ARRAY aTotDevCliVentas} ; IIF( !.F., s_oClass:AddMultiData( "ARRAY", {}, nScope + IIF( .F., 32, 0 ), { "aTotDevCliVentas" }, .F., .F. ), )
+
+   _HB_MEMBER {AS ARRAY aTotTikCliCheques} ; IIF( !.F., s_oClass:AddMultiData( "ARRAY", {}, nScope + IIF( .F., 32, 0 ), { "aTotTikCliCheques" }, .F., .F. ), )
+
+   _HB_MEMBER {AS ARRAY aTotAntCliVentas} ; IIF( !.F., s_oClass:AddMultiData( "ARRAY", {}, nScope + IIF( .F., 32, 0 ), { "aTotAntCliVentas" }, .F., .F. ), )
+   _HB_MEMBER {AS ARRAY aTotAntCliLiquidados} ; IIF( !.F., s_oClass:AddMultiData( "ARRAY", {}, nScope + IIF( .F., 32, 0 ), { "aTotAntCliLiquidados" }, .F., .F. ), )
+
+   _HB_MEMBER {AS ARRAY aTotValCliContadores} ; IIF( !.F., s_oClass:AddMultiData( "ARRAY", {}, nScope + IIF( .F., 32, 0 ), { "aTotValCliContadores" }, .F., .F. ), )
+   _HB_MEMBER {AS ARRAY aTotValCliVentas} ; IIF( !.F., s_oClass:AddMultiData( "ARRAY", {}, nScope + IIF( .F., 32, 0 ), { "aTotValCliVentas" }, .F., .F. ), )
+   _HB_MEMBER {AS ARRAY aTotValCliLiquidados} ; IIF( !.F., s_oClass:AddMultiData( "ARRAY", {}, nScope + IIF( .F., 32, 0 ), { "aTotValCliLiquidados" }, .F., .F. ), )
+
+   _HB_MEMBER {AS ARRAY aTotChkCliContadores} ; IIF( !.F., s_oClass:AddMultiData( "ARRAY", {}, nScope + IIF( .F., 32, 0 ), { "aTotChkCliContadores" }, .F., .F. ), )
+   _HB_MEMBER {AS ARRAY aTotChkCliVentas} ; IIF( !.F., s_oClass:AddMultiData( "ARRAY", {}, nScope + IIF( .F., 32, 0 ), { "aTotChkCliVentas" }, .F., .F. ), )
+   _HB_MEMBER {AS ARRAY aTotChkCliLiquidados} ; IIF( !.F., s_oClass:AddMultiData( "ARRAY", {}, nScope + IIF( .F., 32, 0 ), { "aTotChkCliLiquidados" }, .F., .F. ), )
+   _HB_MEMBER {AS ARRAY aTotChkCliCobros} ; IIF( !.F., s_oClass:AddMultiData( "ARRAY", {}, nScope + IIF( .F., 32, 0 ), { "aTotChkCliCobros" }, .F., .F. ), )
+
+   _HB_MEMBER {AS ARRAY aTotFacPrvCompras} ; IIF( !.F., s_oClass:AddMultiData( "ARRAY", {}, nScope + IIF( .F., 32, 0 ), { "aTotFacPrvCompras" }, .F., .F. ), )
+   _HB_MEMBER {AS ARRAY aTotRctPrvCompras} ; IIF( !.F., s_oClass:AddMultiData( "ARRAY", {}, nScope + IIF( .F., 32, 0 ), { "aTotRctPrvCompras" }, .F., .F. ), )
+
+   _HB_MEMBER {AS ARRAY aTotAlbPrvCompras} ; IIF( !.F., s_oClass:AddMultiData( "ARRAY", {}, nScope + IIF( .F., 32, 0 ), { "aTotAlbPrvCompras" }, .F., .F. ), )
+   _HB_MEMBER {AS ARRAY aTotFacPrvCompras} ; IIF( !.F., s_oClass:AddMultiData( "ARRAY", {}, nScope + IIF( .F., 32, 0 ), { "aTotFacPrvCompras" }, .F., .F. ), )
+
+   _HB_MEMBER {AS ARRAY aTotTikCliCobros} ; IIF( !.F., s_oClass:AddMultiData( "ARRAY", {}, nScope + IIF( .F., 32, 0 ), { "aTotTikCliCobros" }, .F., .F. ), )
+   _HB_MEMBER {AS ARRAY aTotFacCliCobros} ; IIF( !.F., s_oClass:AddMultiData( "ARRAY", {}, nScope + IIF( .F., 32, 0 ), { "aTotFacCliCobros" }, .F., .F. ), )
+   _HB_MEMBER {AS ARRAY aTotRctCliCobros} ; IIF( !.F., s_oClass:AddMultiData( "ARRAY", {}, nScope + IIF( .F., 32, 0 ), { "aTotRctCliCobros" }, .F., .F. ), )
+   _HB_MEMBER {AS ARRAY aTotValCliCobros} ; IIF( !.F., s_oClass:AddMultiData( "ARRAY", {}, nScope + IIF( .F., 32, 0 ), { "aTotValCliCobros" }, .F., .F. ), )
+   _HB_MEMBER {AS ARRAY aTotDevCliCobros} ; IIF( !.F., s_oClass:AddMultiData( "ARRAY", {}, nScope + IIF( .F., 32, 0 ), { "aTotDevCliCobros" }, .F., .F. ), )
+
+   _HB_MEMBER {AS ARRAY aTotFacPrvPagos} ; IIF( !.F., s_oClass:AddMultiData( "ARRAY", {}, nScope + IIF( .F., 32, 0 ), { "aTotFacPrvPagos" }, .F., .F. ), )
+   _HB_MEMBER {AS ARRAY aTotRctPrvPagos} ; IIF( !.F., s_oClass:AddMultiData( "ARRAY", {}, nScope + IIF( .F., 32, 0 ), { "aTotRctPrvPagos" }, .F., .F. ), )
+
+   _HB_MEMBER {AS ARRAY aTotCobroEfectivo} ; IIF( !.F., s_oClass:AddMultiData( "ARRAY", {}, nScope + IIF( .F., 32, 0 ), { "aTotCobroEfectivo" }, .F., .F. ), )
+   _HB_MEMBER {AS ARRAY aTotCobroNoEfectivo} ; IIF( !.F., s_oClass:AddMultiData( "ARRAY", {}, nScope + IIF( .F., 32, 0 ), { "aTotCobroNoEfectivo" }, .F., .F. ), )
+   _HB_MEMBER {AS ARRAY aTotCobroTarjeta} ; IIF( !.F., s_oClass:AddMultiData( "ARRAY", {}, nScope + IIF( .F., 32, 0 ), { "aTotCobroTarjeta" }, .F., .F. ), )
+
+   _HB_MEMBER {AS ARRAY aTotCajaEfectivo} ; IIF( !.F., s_oClass:AddMultiData( "ARRAY", {}, nScope + IIF( .F., 32, 0 ), { "aTotCajaEfectivo" }, .F., .F. ), )
+   _HB_MEMBER {AS ARRAY aTotCajaNoEfectivo} ; IIF( !.F., s_oClass:AddMultiData( "ARRAY", {}, nScope + IIF( .F., 32, 0 ), { "aTotCajaNoEfectivo" }, .F., .F. ), )
+   _HB_MEMBER {AS ARRAY aTotCajaTarjeta} ; IIF( !.F., s_oClass:AddMultiData( "ARRAY", {}, nScope + IIF( .F., 32, 0 ), { "aTotCajaTarjeta" }, .F., .F. ), )
+   _HB_MEMBER {AS ARRAY aTotCajaObjetivo} ; IIF( !.F., s_oClass:AddMultiData( "ARRAY", {}, nScope + IIF( .F., 32, 0 ), { "aTotCajaObjetivo" }, .F., .F. ), )
+
+   _HB_MEMBER {AS ARRAY aTotPagoEfectivo} ; IIF( !.F., s_oClass:AddMultiData( "ARRAY", {}, nScope + IIF( .F., 32, 0 ), { "aTotPagoEfectivo" }, .F., .F. ), )
+   _HB_MEMBER {AS ARRAY aTotPagoNoEfectivo} ; IIF( !.F., s_oClass:AddMultiData( "ARRAY", {}, nScope + IIF( .F., 32, 0 ), { "aTotPagoNoEfectivo" }, .F., .F. ), )
+   _HB_MEMBER {AS ARRAY aTotPagoTarjeta} ; IIF( !.F., s_oClass:AddMultiData( "ARRAY", {}, nScope + IIF( .F., 32, 0 ), { "aTotPagoTarjeta" }, .F., .F. ), )
+
+   _HB_MEMBER {AS ARRAY aTotFormaPago} ; IIF( !.F., s_oClass:AddMultiData( "ARRAY", {}, nScope + IIF( .F., 32, 0 ), { "aTotFormaPago" }, .F., .F. ), )
+
+   _HB_MEMBER {AS ARRAY aTotEntradas} ; IIF( !.F., s_oClass:AddMultiData( "ARRAY", {}, nScope + IIF( .F., 32, 0 ), { "aTotEntradas" }, .F., .F. ), )
+
+
+
+   _HB_MEMBER {AS ARRAY aTotNumeroAlbaranes} ; IIF( !.F., s_oClass:AddMultiData( "ARRAY", {}, nScope + IIF( .F., 32, 0 ), { "aTotNumeroAlbaranes" }, .F., .F. ), )
+   _HB_MEMBER {AS ARRAY aTotNumeroFacturas} ; IIF( !.F., s_oClass:AddMultiData( "ARRAY", {}, nScope + IIF( .F., 32, 0 ), { "aTotNumeroFacturas" }, .F., .F. ), )
+   _HB_MEMBER {AS ARRAY aTotNumeroTikets} ; IIF( !.F., s_oClass:AddMultiData( "ARRAY", {}, nScope + IIF( .F., 32, 0 ), { "aTotNumeroTikets" }, .F., .F. ), )
+   _HB_MEMBER {AS ARRAY aTotNumeroVales} ; IIF( !.F., s_oClass:AddMultiData( "ARRAY", {}, nScope + IIF( .F., 32, 0 ), { "aTotNumeroVales" }, .F., .F. ), )
+   _HB_MEMBER {AS ARRAY aTotNumeroDevoluciones} ; IIF( !.F., s_oClass:AddMultiData( "ARRAY", {}, nScope + IIF( .F., 32, 0 ), { "aTotNumeroDevoluciones" }, .F., .F. ), )
+   _HB_MEMBER {AS ARRAY aTotNumeroCheques} ; IIF( !.F., s_oClass:AddMultiData( "ARRAY", {}, nScope + IIF( .F., 32, 0 ), { "aTotNumeroCheques" }, .F., .F. ), )
+
+   _HB_MEMBER {AS ARRAY aTotBancos} ; IIF( !.F., s_oClass:AddMultiData( "ARRAY", {}, nScope + IIF( .F., 32, 0 ), { "aTotBancos" }, .F., .F. ), )
+
+
+
+   _HB_MEMBER {AS ARRAY aDatAlbCliContadores} ; IIF( !.F., s_oClass:AddMultiData( "ARRAY", {}, nScope + IIF( .F., 32, 0 ), { "aDatAlbCliContadores" }, .F., .F. ), )
+   _HB_MEMBER {AS ARRAY aDatAlbCliVentas} ; IIF( !.F., s_oClass:AddMultiData( "ARRAY", {}, nScope + IIF( .F., 32, 0 ), { "aDatAlbCliVentas" }, .F., .F. ), )
+
+   _HB_MEMBER {AS ARRAY aDatPedCliEntregas} ; IIF( !.F., s_oClass:AddMultiData( "ARRAY", {}, nScope + IIF( .F., 32, 0 ), { "aDatPedCliEntregas" }, .F., .F. ), )
+   _HB_MEMBER {AS ARRAY aDatAlbCliEntregas} ; IIF( !.F., s_oClass:AddMultiData( "ARRAY", {}, nScope + IIF( .F., 32, 0 ), { "aDatAlbCliEntregas" }, .F., .F. ), )
+   _HB_MEMBER {AS ARRAY aDatEntregas} ; IIF( !.F., s_oClass:AddMultiData( "ARRAY", {}, nScope + IIF( .F., 32, 0 ), { "aDatEntregas" }, .F., .F. ), )
+
+   _HB_MEMBER {AS ARRAY aDatFacCliContadores} ; IIF( !.F., s_oClass:AddMultiData( "ARRAY", {}, nScope + IIF( .F., 32, 0 ), { "aDatFacCliContadores" }, .F., .F. ), )
+   _HB_MEMBER {AS ARRAY aDatFacCliVentas} ; IIF( !.F., s_oClass:AddMultiData( "ARRAY", {}, nScope + IIF( .F., 32, 0 ), { "aDatFacCliVentas" }, .F., .F. ), )
+   _HB_MEMBER {AS ARRAY aDatRctCliContadores} ; IIF( !.F., s_oClass:AddMultiData( "ARRAY", {}, nScope + IIF( .F., 32, 0 ), { "aDatRctCliContadores" }, .F., .F. ), )
+   _HB_MEMBER {AS ARRAY aDatRctCliVentas} ; IIF( !.F., s_oClass:AddMultiData( "ARRAY", {}, nScope + IIF( .F., 32, 0 ), { "aDatRctCliVentas" }, .F., .F. ), )
+   _HB_MEMBER {AS ARRAY aDatTikCliContadores} ; IIF( !.F., s_oClass:AddMultiData( "ARRAY", {}, nScope + IIF( .F., 32, 0 ), { "aDatTikCliContadores" }, .F., .F. ), )
+   _HB_MEMBER {AS ARRAY aDatTikCliVentas} ; IIF( !.F., s_oClass:AddMultiData( "ARRAY", {}, nScope + IIF( .F., 32, 0 ), { "aDatTikCliVentas" }, .F., .F. ), )
+   _HB_MEMBER {AS ARRAY aDatDevCliContadores} ; IIF( !.F., s_oClass:AddMultiData( "ARRAY", {}, nScope + IIF( .F., 32, 0 ), { "aDatDevCliContadores" }, .F., .F. ), )
+   _HB_MEMBER {AS ARRAY aDatDevCliVentas} ; IIF( !.F., s_oClass:AddMultiData( "ARRAY", {}, nScope + IIF( .F., 32, 0 ), { "aDatDevCliVentas" }, .F., .F. ), )
+
+   _HB_MEMBER {AS ARRAY aDatValCliContadores} ; IIF( !.F., s_oClass:AddMultiData( "ARRAY", {}, nScope + IIF( .F., 32, 0 ), { "aDatValCliContadores" }, .F., .F. ), )
+   _HB_MEMBER {AS ARRAY aDatValCliVentas} ; IIF( !.F., s_oClass:AddMultiData( "ARRAY", {}, nScope + IIF( .F., 32, 0 ), { "aDatValCliVentas" }, .F., .F. ), )
+   _HB_MEMBER {AS ARRAY aDatValCliLiquidados} ; IIF( !.F., s_oClass:AddMultiData( "ARRAY", {}, nScope + IIF( .F., 32, 0 ), { "aDatValCliLiquidados" }, .F., .F. ), )
+
+   _HB_MEMBER {AS ARRAY aDatAntCliVentas} ; IIF( !.F., s_oClass:AddMultiData( "ARRAY", {}, nScope + IIF( .F., 32, 0 ), { "aDatAntCliVentas" }, .F., .F. ), )
+   _HB_MEMBER {AS ARRAY aDatAntCliLiquidados} ; IIF( !.F., s_oClass:AddMultiData( "ARRAY", {}, nScope + IIF( .F., 32, 0 ), { "aDatAntCliLiquidados" }, .F., .F. ), )
+
+   _HB_MEMBER {AS ARRAY aDatChkCliContadores} ; IIF( !.F., s_oClass:AddMultiData( "ARRAY", {}, nScope + IIF( .F., 32, 0 ), { "aDatChkCliContadores" }, .F., .F. ), )
+   _HB_MEMBER {AS ARRAY aDatChkCliVentas} ; IIF( !.F., s_oClass:AddMultiData( "ARRAY", {}, nScope + IIF( .F., 32, 0 ), { "aDatChkCliVentas" }, .F., .F. ), )
+
+   _HB_MEMBER {AS ARRAY aDatAlbPrvCompras} ; IIF( !.F., s_oClass:AddMultiData( "ARRAY", {}, nScope + IIF( .F., 32, 0 ), { "aDatAlbPrvCompras" }, .F., .F. ), )
+   _HB_MEMBER {AS ARRAY aDatFacPrvCompras} ; IIF( !.F., s_oClass:AddMultiData( "ARRAY", {}, nScope + IIF( .F., 32, 0 ), { "aDatFacPrvCompras" }, .F., .F. ), )
+   _HB_MEMBER {AS ARRAY aDatRctPrvCompras} ; IIF( !.F., s_oClass:AddMultiData( "ARRAY", {}, nScope + IIF( .F., 32, 0 ), { "aDatRctPrvCompras" }, .F., .F. ), )
+
+   _HB_MEMBER {AS ARRAY aDatTikCliCobros} ; IIF( !.F., s_oClass:AddMultiData( "ARRAY", {}, nScope + IIF( .F., 32, 0 ), { "aDatTikCliCobros" }, .F., .F. ), )
+   _HB_MEMBER {AS ARRAY aDatFacCliCobros} ; IIF( !.F., s_oClass:AddMultiData( "ARRAY", {}, nScope + IIF( .F., 32, 0 ), { "aDatFacCliCobros" }, .F., .F. ), )
+   _HB_MEMBER {AS ARRAY aDatRctCliCobros} ; IIF( !.F., s_oClass:AddMultiData( "ARRAY", {}, nScope + IIF( .F., 32, 0 ), { "aDatRctCliCobros" }, .F., .F. ), )
+   _HB_MEMBER {AS ARRAY aDatValCliCobros} ; IIF( !.F., s_oClass:AddMultiData( "ARRAY", {}, nScope + IIF( .F., 32, 0 ), { "aDatValCliCobros" }, .F., .F. ), )
+   _HB_MEMBER {AS ARRAY aDatChkCliCobros} ; IIF( !.F., s_oClass:AddMultiData( "ARRAY", {}, nScope + IIF( .F., 32, 0 ), { "aDatChkCliCobros" }, .F., .F. ), )
+
+   _HB_MEMBER {AS ARRAY aDatFacPrvPagos} ; IIF( !.F., s_oClass:AddMultiData( "ARRAY", {}, nScope + IIF( .F., 32, 0 ), { "aDatFacPrvPagos" }, .F., .F. ), )
+
+   _HB_MEMBER {AS ARRAY aDatCobroEfectivo} ; IIF( !.F., s_oClass:AddMultiData( "ARRAY", {}, nScope + IIF( .F., 32, 0 ), { "aDatCobroEfectivo" }, .F., .F. ), )
+   _HB_MEMBER {AS ARRAY aDatCobroNoEfectivo} ; IIF( !.F., s_oClass:AddMultiData( "ARRAY", {}, nScope + IIF( .F., 32, 0 ), { "aDatCobroNoEfectivo" }, .F., .F. ), )
+   _HB_MEMBER {AS ARRAY aDatCobroTarjeta} ; IIF( !.F., s_oClass:AddMultiData( "ARRAY", {}, nScope + IIF( .F., 32, 0 ), { "aDatCobroTarjeta" }, .F., .F. ), )
+
+   _HB_MEMBER {AS ARRAY aDatPagoEfectivo} ; IIF( !.F., s_oClass:AddMultiData( "ARRAY", {}, nScope + IIF( .F., 32, 0 ), { "aDatPagoEfectivo" }, .F., .F. ), )
+   _HB_MEMBER {AS ARRAY aDatPagoNoEfectivo} ; IIF( !.F., s_oClass:AddMultiData( "ARRAY", {}, nScope + IIF( .F., 32, 0 ), { "aDatPagoNoEfectivo" }, .F., .F. ), )
+   _HB_MEMBER {AS ARRAY aDatPagoTarjeta} ; IIF( !.F., s_oClass:AddMultiData( "ARRAY", {}, nScope + IIF( .F., 32, 0 ), { "aDatPagoTarjeta" }, .F., .F. ), )
+
+   _HB_MEMBER {AS ARRAY aDatCajaEfectivo} ; IIF( !.F., s_oClass:AddMultiData( "ARRAY", {}, nScope + IIF( .F., 32, 0 ), { "aDatCajaEfectivo" }, .F., .F. ), )
+   _HB_MEMBER {AS ARRAY aDatCajaNoEfectivo} ; IIF( !.F., s_oClass:AddMultiData( "ARRAY", {}, nScope + IIF( .F., 32, 0 ), { "aDatCajaNoEfectivo" }, .F., .F. ), )
+   _HB_MEMBER {AS ARRAY aDatCajaTarjeta} ; IIF( !.F., s_oClass:AddMultiData( "ARRAY", {}, nScope + IIF( .F., 32, 0 ), { "aDatCajaTarjeta" }, .F., .F. ), )
+   _HB_MEMBER {AS ARRAY aDatCajaObjetivo} ; IIF( !.F., s_oClass:AddMultiData( "ARRAY", {}, nScope + IIF( .F., 32, 0 ), { "aDatCajaObjetivo" }, .F., .F. ), )
+
+   _HB_MEMBER {AS ARRAY aDatFormaPago} ; IIF( !.F., s_oClass:AddMultiData( "ARRAY", {}, nScope + IIF( .F., 32, 0 ), { "aDatFormaPago" }, .F., .F. ), )
+
+   _HB_MEMBER {AS ARRAY aDatEntradas} ; IIF( !.F., s_oClass:AddMultiData( "ARRAY", {}, nScope + IIF( .F., 32, 0 ), { "aDatEntradas" }, .F., .F. ), )
+
+   _HB_MEMBER {AS ARRAY aDatNumeroAlbaranes} ; IIF( !.F., s_oClass:AddMultiData( "ARRAY", {}, nScope + IIF( .F., 32, 0 ), { "aDatNumeroAlbaranes" }, .F., .F. ), )
+   _HB_MEMBER {AS ARRAY aDatNumeroFacturas} ; IIF( !.F., s_oClass:AddMultiData( "ARRAY", {}, nScope + IIF( .F., 32, 0 ), { "aDatNumeroFacturas" }, .F., .F. ), )
+   _HB_MEMBER {AS ARRAY aDatNumeroTikets} ; IIF( !.F., s_oClass:AddMultiData( "ARRAY", {}, nScope + IIF( .F., 32, 0 ), { "aDatNumeroTikets" }, .F., .F. ), )
+   _HB_MEMBER {AS ARRAY aDatNumeroVales} ; IIF( !.F., s_oClass:AddMultiData( "ARRAY", {}, nScope + IIF( .F., 32, 0 ), { "aDatNumeroVales" }, .F., .F. ), )
+   _HB_MEMBER {AS ARRAY aDatNumeroDevoluciones} ; IIF( !.F., s_oClass:AddMultiData( "ARRAY", {}, nScope + IIF( .F., 32, 0 ), { "aDatNumeroDevoluciones" }, .F., .F. ), )
+   _HB_MEMBER {AS ARRAY aDatNumeroCheques} ; IIF( !.F., s_oClass:AddMultiData( "ARRAY", {}, nScope + IIF( .F., 32, 0 ), { "aDatNumeroCheques" }, .F., .F. ), )
+
+   _HB_MEMBER {AS ARRAY aDatBancos} ; IIF( !.F., s_oClass:AddMultiData( "ARRAY", {}, nScope + IIF( .F., 32, 0 ), { "aDatBancos" }, .F., .F. ), )
+
+
+
+   _HB_MEMBER {AS NUMERIC nContadores} ; IIF( !.F., s_oClass:AddMultiData( "NUMERIC", 0, nScope + IIF( .F., 32, 0 ), { "nContadores" }, .F., .F. ), )
+   _HB_MEMBER { oTree} ; IIF( !.F., s_oClass:AddMultiData(,, nScope + IIF( .F., 32, 0 ), { "oTree" }, .F., .F. ), )
+
+   _HB_MEMBER New() AS CLASS TTotalTurno; IIF( .F., s_oClass:ModMethod( "New", @TTotalTurno_New(), nScope + IIF( .T., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ), s_oClass:AddMethod( "New", @TTotalTurno_New(), nScope + IIF( .T., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ));
+   _HB_MEMBER Initiate(); IIF( .F., s_oClass:ModMethod( "Initiate", @TTotalTurno_Initiate(), nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ), s_oClass:AddMethod( "Initiate", @TTotalTurno_Initiate(), nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ));
+
+   _HB_MEMBER addImporte( cCaja, cSerie, aData, bEdit); IIF( .F., s_oClass:ModMethod( "addImporte", @TTotalTurno_addImporte(), nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ), s_oClass:AddMethod( "addImporte", @TTotalTurno_addImporte(), nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ));
+
+   _HB_MEMBER addTotAlbCliContadores(cCaja, cSerie, nImporte, cData, bEdit); IIF( .F., s_oClass:ModInline( "addTotAlbCliContadores", {|Self,cCaja, cSerie, nImporte, cData, bEdit | Self, ::addImporte( cCaja, cSerie, nImporte, ::aTotAlbCliContadores, cData, ::aDatAlbCliContadores, bEdit, ::hBmpDoc[ "AlbaranCliente" ] ) }, nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ), s_oClass:AddInline( "addTotAlbCliContadores", {|Self,cCaja, cSerie, nImporte, cData, bEdit | Self, ::addImporte( cCaja, cSerie, nImporte, ::aTotAlbCliContadores, cData, ::aDatAlbCliContadores, bEdit, ::hBmpDoc[ "AlbaranCliente" ] ) }, nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ) )
+   _HB_MEMBER addTotAlbCliVentas(cCaja, cSerie, nImporte, cData, bEdit); IIF( .F., s_oClass:ModInline( "addTotAlbCliVentas", {|Self,cCaja, cSerie, nImporte, cData, bEdit | Self, ::addImporte( cCaja, cSerie, nImporte, ::aTotAlbCliVentas, cData, ::aDatAlbCliVentas, bEdit, ::hBmpDoc[ "AlbaranCliente" ] ) }, nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ), s_oClass:AddInline( "addTotAlbCliVentas", {|Self,cCaja, cSerie, nImporte, cData, bEdit | Self, ::addImporte( cCaja, cSerie, nImporte, ::aTotAlbCliVentas, cData, ::aDatAlbCliVentas, bEdit, ::hBmpDoc[ "AlbaranCliente" ] ) }, nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ) )
+   _HB_MEMBER addTotAlbCliEntregas(cCaja, cSerie, nImporte, cData, bEdit); IIF( .F., s_oClass:ModInline( "addTotAlbCliEntregas", {|Self,cCaja, cSerie, nImporte, cData, bEdit | Self, ::addImporte( cCaja, cSerie, nImporte, ::aTotAlbCliEntregas, cData, ::aDatAlbCliEntregas, bEdit, ::hBmpDoc[ "AlbaranCliente" ] ) }, nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ), s_oClass:AddInline( "addTotAlbCliEntregas", {|Self,cCaja, cSerie, nImporte, cData, bEdit | Self, ::addImporte( cCaja, cSerie, nImporte, ::aTotAlbCliEntregas, cData, ::aDatAlbCliEntregas, bEdit, ::hBmpDoc[ "AlbaranCliente" ] ) }, nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ) )
+
+   _HB_MEMBER addTotPedCliEntregas(cCaja, cSerie, nImporte, cData, bEdit); IIF( .F., s_oClass:ModInline( "addTotPedCliEntregas", {|Self,cCaja, cSerie, nImporte, cData, bEdit | Self, ::addImporte( cCaja, cSerie, nImporte, ::aTotPedCliEntregas, cData, ::aDatPedCliEntregas, bEdit, ::hBmpDoc[ "PedidoCliente" ] ) }, nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ), s_oClass:AddInline( "addTotPedCliEntregas", {|Self,cCaja, cSerie, nImporte, cData, bEdit | Self, ::addImporte( cCaja, cSerie, nImporte, ::aTotPedCliEntregas, cData, ::aDatPedCliEntregas, bEdit, ::hBmpDoc[ "PedidoCliente" ] ) }, nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ) )
+
+   _HB_MEMBER addTotFacCliContadores(cCaja, cSerie, nImporte, cData, bEdit); IIF( .F., s_oClass:ModInline( "addTotFacCliContadores", {|Self,cCaja, cSerie, nImporte, cData, bEdit | Self, ::addImporte( cCaja, cSerie, nImporte, ::aTotFacCliContadores, cData, ::aDatFacCliContadores, bEdit, ::hBmpDoc[ "FacturaCliente" ] ) }, nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ), s_oClass:AddInline( "addTotFacCliContadores", {|Self,cCaja, cSerie, nImporte, cData, bEdit | Self, ::addImporte( cCaja, cSerie, nImporte, ::aTotFacCliContadores, cData, ::aDatFacCliContadores, bEdit, ::hBmpDoc[ "FacturaCliente" ] ) }, nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ) )
+   _HB_MEMBER addTotFacCliVentas(cCaja, cSerie, nImporte, cData, bEdit); IIF( .F., s_oClass:ModInline( "addTotFacCliVentas", {|Self,cCaja, cSerie, nImporte, cData, bEdit | Self, ::addImporte( cCaja, cSerie, nImporte, ::aTotFacCliVentas, cData, ::aDatFacCliVentas, bEdit, ::hBmpDoc[ "FacturaCliente" ] ) }, nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ), s_oClass:AddInline( "addTotFacCliVentas", {|Self,cCaja, cSerie, nImporte, cData, bEdit | Self, ::addImporte( cCaja, cSerie, nImporte, ::aTotFacCliVentas, cData, ::aDatFacCliVentas, bEdit, ::hBmpDoc[ "FacturaCliente" ] ) }, nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ) )
+
+   _HB_MEMBER addTotRctCliContadores(cCaja, cSerie, nImporte, cData, bEdit); IIF( .F., s_oClass:ModInline( "addTotRctCliContadores", {|Self,cCaja, cSerie, nImporte, cData, bEdit | Self, ::addImporte( cCaja, cSerie, nImporte, ::aTotRctCliContadores, cData, ::aDatRctCliContadores, bEdit, ::hBmpDoc[ "RectificativaCliente" ] ) }, nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ), s_oClass:AddInline( "addTotRctCliContadores", {|Self,cCaja, cSerie, nImporte, cData, bEdit | Self, ::addImporte( cCaja, cSerie, nImporte, ::aTotRctCliContadores, cData, ::aDatRctCliContadores, bEdit, ::hBmpDoc[ "RectificativaCliente" ] ) }, nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ) )
+   _HB_MEMBER addTotRctCliVentas(cCaja, cSerie, nImporte, cData, bEdit); IIF( .F., s_oClass:ModInline( "addTotRctCliVentas", {|Self,cCaja, cSerie, nImporte, cData, bEdit | Self, ::addImporte( cCaja, cSerie, nImporte, ::aTotRctCliVentas, cData, ::aDatRctCliVentas, bEdit, ::hBmpDoc[ "RectificativaCliente" ] ) }, nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ), s_oClass:AddInline( "addTotRctCliVentas", {|Self,cCaja, cSerie, nImporte, cData, bEdit | Self, ::addImporte( cCaja, cSerie, nImporte, ::aTotRctCliVentas, cData, ::aDatRctCliVentas, bEdit, ::hBmpDoc[ "RectificativaCliente" ] ) }, nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ) )
+
+   _HB_MEMBER addTotTikCliContadores(cCaja, cSerie, nImporte, cData, bEdit); IIF( .F., s_oClass:ModInline( "addTotTikCliContadores", {|Self,cCaja, cSerie, nImporte, cData, bEdit | Self, ::addImporte( cCaja, cSerie, nImporte, ::aTotTikCliContadores, cData, ::aDatTikCliContadores, bEdit, ::hBmpDoc[ "TiketCliente" ] ) }, nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ), s_oClass:AddInline( "addTotTikCliContadores", {|Self,cCaja, cSerie, nImporte, cData, bEdit | Self, ::addImporte( cCaja, cSerie, nImporte, ::aTotTikCliContadores, cData, ::aDatTikCliContadores, bEdit, ::hBmpDoc[ "TiketCliente" ] ) }, nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ) )
+   _HB_MEMBER addTotTikCliVentas(cCaja, cSerie, nImporte, cData, bEdit); IIF( .F., s_oClass:ModInline( "addTotTikCliVentas", {|Self,cCaja, cSerie, nImporte, cData, bEdit | Self, ::addImporte( cCaja, cSerie, nImporte, ::aTotTikCliVentas, cData, ::aDatTikCliVentas, bEdit, ::hBmpDoc[ "TiketCliente" ] ) }, nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ), s_oClass:AddInline( "addTotTikCliVentas", {|Self,cCaja, cSerie, nImporte, cData, bEdit | Self, ::addImporte( cCaja, cSerie, nImporte, ::aTotTikCliVentas, cData, ::aDatTikCliVentas, bEdit, ::hBmpDoc[ "TiketCliente" ] ) }, nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ) )
+
+   _HB_MEMBER addTotDevCliContadores(cCaja, cSerie, nImporte, cData, bEdit); IIF( .F., s_oClass:ModInline( "addTotDevCliContadores", {|Self,cCaja, cSerie, nImporte, cData, bEdit | Self, ::addImporte( cCaja, cSerie, nImporte, ::aTotDevCliContadores, cData, ::aDatDevCliContadores, bEdit, ::hBmpDoc[ "TiketCliente" ] ) }, nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ), s_oClass:AddInline( "addTotDevCliContadores", {|Self,cCaja, cSerie, nImporte, cData, bEdit | Self, ::addImporte( cCaja, cSerie, nImporte, ::aTotDevCliContadores, cData, ::aDatDevCliContadores, bEdit, ::hBmpDoc[ "TiketCliente" ] ) }, nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ) )
+   _HB_MEMBER addTotDevCliVentas(cCaja, cSerie, nImporte, cData, bEdit); IIF( .F., s_oClass:ModInline( "addTotDevCliVentas", {|Self,cCaja, cSerie, nImporte, cData, bEdit | Self, ::addImporte( cCaja, cSerie, nImporte, ::aTotDevCliVentas, cData, ::aDatDevCliVentas, bEdit, ::hBmpDoc[ "TiketCliente" ] ) }, nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ), s_oClass:AddInline( "addTotDevCliVentas", {|Self,cCaja, cSerie, nImporte, cData, bEdit | Self, ::addImporte( cCaja, cSerie, nImporte, ::aTotDevCliVentas, cData, ::aDatDevCliVentas, bEdit, ::hBmpDoc[ "TiketCliente" ] ) }, nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ) )
+
+   _HB_MEMBER addTotValCliContadores(cCaja, cSerie, nImporte, cData, bEdit); IIF( .F., s_oClass:ModInline( "addTotValCliContadores", {|Self,cCaja, cSerie, nImporte, cData, bEdit | Self, ::addImporte( cCaja, cSerie, nImporte, ::aTotValCliContadores, cData, ::aDatValCliContadores, bEdit, ::hBmpDoc[ "TiketCliente" ] ) }, nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ), s_oClass:AddInline( "addTotValCliContadores", {|Self,cCaja, cSerie, nImporte, cData, bEdit | Self, ::addImporte( cCaja, cSerie, nImporte, ::aTotValCliContadores, cData, ::aDatValCliContadores, bEdit, ::hBmpDoc[ "TiketCliente" ] ) }, nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ) )
+   _HB_MEMBER addTotValCliVentas(cCaja, cSerie, nImporte, cData, bEdit); IIF( .F., s_oClass:ModInline( "addTotValCliVentas", {|Self,cCaja, cSerie, nImporte, cData, bEdit | Self, ::addImporte( cCaja, cSerie, nImporte, ::aTotValCliVentas, cData, ::aDatValCliVentas, bEdit, ::hBmpDoc[ "TiketCliente" ] ) }, nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ), s_oClass:AddInline( "addTotValCliVentas", {|Self,cCaja, cSerie, nImporte, cData, bEdit | Self, ::addImporte( cCaja, cSerie, nImporte, ::aTotValCliVentas, cData, ::aDatValCliVentas, bEdit, ::hBmpDoc[ "TiketCliente" ] ) }, nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ) )
+   _HB_MEMBER addTotValCliLiquidados(cCaja, cSerie, nImporte, cData, bEdit); IIF( .F., s_oClass:ModInline( "addTotValCliLiquidados", {|Self,cCaja, cSerie, nImporte, cData, bEdit | Self, ::addImporte( cCaja, cSerie, nImporte, ::aTotValCliLiquidados, cData, ::aDatValCliLiquidados, bEdit, ::hBmpDoc[ "TiketCliente" ] ) }, nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ), s_oClass:AddInline( "addTotValCliLiquidados", {|Self,cCaja, cSerie, nImporte, cData, bEdit | Self, ::addImporte( cCaja, cSerie, nImporte, ::aTotValCliLiquidados, cData, ::aDatValCliLiquidados, bEdit, ::hBmpDoc[ "TiketCliente" ] ) }, nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ) )
+
+   _HB_MEMBER addTotChkCliContadores(cCaja, cSerie, nImporte, cData, bEdit); IIF( .F., s_oClass:ModInline( "addTotChkCliContadores", {|Self,cCaja, cSerie, nImporte, cData, bEdit | Self, ::addImporte( cCaja, cSerie, nImporte, ::aTotChkCliContadores, cData, ::aDatChkCliContadores, bEdit, ::hBmpDoc[ "TiketCliente" ] ) }, nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ), s_oClass:AddInline( "addTotChkCliContadores", {|Self,cCaja, cSerie, nImporte, cData, bEdit | Self, ::addImporte( cCaja, cSerie, nImporte, ::aTotChkCliContadores, cData, ::aDatChkCliContadores, bEdit, ::hBmpDoc[ "TiketCliente" ] ) }, nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ) )
+   _HB_MEMBER addTotChkCliVentas(cCaja, cSerie, nImporte, cData, bEdit); IIF( .F., s_oClass:ModInline( "addTotChkCliVentas", {|Self,cCaja, cSerie, nImporte, cData, bEdit | Self, ::addImporte( cCaja, cSerie, nImporte, ::aTotChkCliVentas, cData, ::aDatChkCliVentas, bEdit, ::hBmpDoc[ "TiketCliente" ] ) }, nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ), s_oClass:AddInline( "addTotChkCliVentas", {|Self,cCaja, cSerie, nImporte, cData, bEdit | Self, ::addImporte( cCaja, cSerie, nImporte, ::aTotChkCliVentas, cData, ::aDatChkCliVentas, bEdit, ::hBmpDoc[ "TiketCliente" ] ) }, nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ) )
+
+   _HB_MEMBER addTotAlbPrvCompras(cCaja, cSerie, nImporte, cData, bEdit); IIF( .F., s_oClass:ModInline( "addTotAlbPrvCompras", {|Self,cCaja, cSerie, nImporte, cData, bEdit | Self, ::addImporte( cCaja, cSerie, nImporte, ::aTotAlbPrvCompras, cData, ::aDatAlbPrvCompras, bEdit, ::hBmpDoc[ "AlbaranProveedor" ] ) }, nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ), s_oClass:AddInline( "addTotAlbPrvCompras", {|Self,cCaja, cSerie, nImporte, cData, bEdit | Self, ::addImporte( cCaja, cSerie, nImporte, ::aTotAlbPrvCompras, cData, ::aDatAlbPrvCompras, bEdit, ::hBmpDoc[ "AlbaranProveedor" ] ) }, nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ) )
+
+   _HB_MEMBER addTotFacPrvCompras(cCaja, cSerie, nImporte, cData, bEdit); IIF( .F., s_oClass:ModInline( "addTotFacPrvCompras", {|Self,cCaja, cSerie, nImporte, cData, bEdit | Self, ::addImporte( cCaja, cSerie, nImporte, ::aTotFacPrvCompras, cData, ::aDatFacPrvCompras, bEdit, ::hBmpDoc[ "FacturaProveedor" ] ) }, nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ), s_oClass:AddInline( "addTotFacPrvCompras", {|Self,cCaja, cSerie, nImporte, cData, bEdit | Self, ::addImporte( cCaja, cSerie, nImporte, ::aTotFacPrvCompras, cData, ::aDatFacPrvCompras, bEdit, ::hBmpDoc[ "FacturaProveedor" ] ) }, nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ) )
+   _HB_MEMBER addTotRctPrvCompras(cCaja, cSerie, nImporte, cData, bEdit); IIF( .F., s_oClass:ModInline( "addTotRctPrvCompras", {|Self,cCaja, cSerie, nImporte, cData, bEdit | Self, ::addImporte( cCaja, cSerie, nImporte, ::aTotRctPrvCompras, cData, ::aDatRctPrvCompras, bEdit, ::hBmpDoc[ "RectificativaProveedor" ] ) }, nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ), s_oClass:AddInline( "addTotRctPrvCompras", {|Self,cCaja, cSerie, nImporte, cData, bEdit | Self, ::addImporte( cCaja, cSerie, nImporte, ::aTotRctPrvCompras, cData, ::aDatRctPrvCompras, bEdit, ::hBmpDoc[ "RectificativaProveedor" ] ) }, nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ) )
+
+   _HB_MEMBER addTotTikCliCobros(cCaja, cSerie, nImporte, cData, bEdit); IIF( .F., s_oClass:ModInline( "addTotTikCliCobros", {|Self,cCaja, cSerie, nImporte, cData, bEdit | Self, ::addImporte( cCaja, cSerie, nImporte, ::aTotTikCliCobros, cData, ::aDatTikCliCobros, bEdit, ::hBmpDoc[ "TiketCliente" ] ) }, nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ), s_oClass:AddInline( "addTotTikCliCobros", {|Self,cCaja, cSerie, nImporte, cData, bEdit | Self, ::addImporte( cCaja, cSerie, nImporte, ::aTotTikCliCobros, cData, ::aDatTikCliCobros, bEdit, ::hBmpDoc[ "TiketCliente" ] ) }, nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ) )
+   _HB_MEMBER addTotFacCliCobros(cCaja, cSerie, nImporte, cData, bEdit); IIF( .F., s_oClass:ModInline( "addTotFacCliCobros", {|Self,cCaja, cSerie, nImporte, cData, bEdit | Self, ::addImporte( cCaja, cSerie, nImporte, ::aTotFacCliCobros, cData, ::aDatFacCliCobros, bEdit, ::hBmpDoc[ "ReciboClientes" ] ) }, nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ), s_oClass:AddInline( "addTotFacCliCobros", {|Self,cCaja, cSerie, nImporte, cData, bEdit | Self, ::addImporte( cCaja, cSerie, nImporte, ::aTotFacCliCobros, cData, ::aDatFacCliCobros, bEdit, ::hBmpDoc[ "ReciboClientes" ] ) }, nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ) )
+   _HB_MEMBER addTotRctCliCobros(cCaja, cSerie, nImporte, cData, bEdit); IIF( .F., s_oClass:ModInline( "addTotRctCliCobros", {|Self,cCaja, cSerie, nImporte, cData, bEdit | Self, ::addImporte( cCaja, cSerie, nImporte, ::aTotFacCliCobros, cData, ::aDatFacCliCobros, bEdit, ::hBmpDoc[ "ReciboClientes" ] ) }, nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ), s_oClass:AddInline( "addTotRctCliCobros", {|Self,cCaja, cSerie, nImporte, cData, bEdit | Self, ::addImporte( cCaja, cSerie, nImporte, ::aTotFacCliCobros, cData, ::aDatFacCliCobros, bEdit, ::hBmpDoc[ "ReciboClientes" ] ) }, nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ) )
+   _HB_MEMBER addTotValCliCobros(cCaja, cSerie, nImporte, cData, bEdit); IIF( .F., s_oClass:ModInline( "addTotValCliCobros", {|Self,cCaja, cSerie, nImporte, cData, bEdit | Self, ::addImporte( cCaja, cSerie, nImporte, ::aTotValCliCobros, cData, ::aDatValCliCobros, bEdit, ::hBmpDoc[ "TiketCliente" ] ) }, nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ), s_oClass:AddInline( "addTotValCliCobros", {|Self,cCaja, cSerie, nImporte, cData, bEdit | Self, ::addImporte( cCaja, cSerie, nImporte, ::aTotValCliCobros, cData, ::aDatValCliCobros, bEdit, ::hBmpDoc[ "TiketCliente" ] ) }, nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ) )
+   _HB_MEMBER addTotChkCliCobros(cCaja, cSerie, nImporte, cData, bEdit); IIF( .F., s_oClass:ModInline( "addTotChkCliCobros", {|Self,cCaja, cSerie, nImporte, cData, bEdit | Self, ::addImporte( cCaja, cSerie, nImporte, ::aTotChkCliCobros, cData, ::aDatChkCliCobros, bEdit, ::hBmpDoc[ "TiketCliente" ] ) }, nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ), s_oClass:AddInline( "addTotChkCliCobros", {|Self,cCaja, cSerie, nImporte, cData, bEdit | Self, ::addImporte( cCaja, cSerie, nImporte, ::aTotChkCliCobros, cData, ::aDatChkCliCobros, bEdit, ::hBmpDoc[ "TiketCliente" ] ) }, nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ) )
+
+   _HB_MEMBER addTotAntCliVentas(cCaja, cSerie, nImporte, cData, bEdit); IIF( .F., s_oClass:ModInline( "addTotAntCliVentas", {|Self,cCaja, cSerie, nImporte, cData, bEdit | Self, ::addImporte( cCaja, cSerie, nImporte, ::aTotAntCliVentas, cData, ::aDatAntCliVentas, bEdit, ::hBmpDoc[ "FacturaAnticipo" ] ) }, nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ), s_oClass:AddInline( "addTotAntCliVentas", {|Self,cCaja, cSerie, nImporte, cData, bEdit | Self, ::addImporte( cCaja, cSerie, nImporte, ::aTotAntCliVentas, cData, ::aDatAntCliVentas, bEdit, ::hBmpDoc[ "FacturaAnticipo" ] ) }, nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ) )
+   _HB_MEMBER addTotAntCliLiquidados(cCaja, cSerie, nImporte, cData, bEdit); IIF( .F., s_oClass:ModInline( "addTotAntCliLiquidados", {|Self,cCaja, cSerie, nImporte, cData, bEdit | Self, ::addImporte( cCaja, cSerie, nImporte, ::aTotAntCliLiquidados, cData, ::aDatAntCliLiquidados, bEdit, ::hBmpDoc[ "FacturaAnticipo" ] ) }, nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ), s_oClass:AddInline( "addTotAntCliLiquidados", {|Self,cCaja, cSerie, nImporte, cData, bEdit | Self, ::addImporte( cCaja, cSerie, nImporte, ::aTotAntCliLiquidados, cData, ::aDatAntCliLiquidados, bEdit, ::hBmpDoc[ "FacturaAnticipo" ] ) }, nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ) )
+
+   _HB_MEMBER addTotCobroEfectivo(cCaja, cSerie, nImporte, cData, bEdit, hBmp); IIF( .F., s_oClass:ModInline( "addTotCobroEfectivo", {|Self,cCaja, cSerie, nImporte, cData, bEdit, hBmp | Self, ::addImporte( cCaja, cSerie, nImporte, ::aTotCobroEfectivo, cData, ::aDatCobroEfectivo, bEdit, hBmp ) }, nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ), s_oClass:AddInline( "addTotCobroEfectivo", {|Self,cCaja, cSerie, nImporte, cData, bEdit, hBmp | Self, ::addImporte( cCaja, cSerie, nImporte, ::aTotCobroEfectivo, cData, ::aDatCobroEfectivo, bEdit, hBmp ) }, nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ) )
+   _HB_MEMBER addTotCobroNoEfectivo(cCaja, cSerie, nImporte, cData, bEdit, hBmp); IIF( .F., s_oClass:ModInline( "addTotCobroNoEfectivo", {|Self,cCaja, cSerie, nImporte, cData, bEdit, hBmp | Self, ::addImporte( cCaja, cSerie, nImporte, ::aTotCobroNoEfectivo, cData, ::aDatCobroNoEfectivo, bEdit, hBmp ) }, nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ), s_oClass:AddInline( "addTotCobroNoEfectivo", {|Self,cCaja, cSerie, nImporte, cData, bEdit, hBmp | Self, ::addImporte( cCaja, cSerie, nImporte, ::aTotCobroNoEfectivo, cData, ::aDatCobroNoEfectivo, bEdit, hBmp ) }, nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ) )
+   _HB_MEMBER addTotCobroTarjeta(cCaja, cSerie, nImporte, cData, bEdit, hBmp); IIF( .F., s_oClass:ModInline( "addTotCobroTarjeta", {|Self,cCaja, cSerie, nImporte, cData, bEdit, hBmp | Self, ::addImporte( cCaja, cSerie, nImporte, ::aTotCobroTarjeta, cData, ::aDatCobroTarjeta, bEdit, hBmp ) }, nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ), s_oClass:AddInline( "addTotCobroTarjeta", {|Self,cCaja, cSerie, nImporte, cData, bEdit, hBmp | Self, ::addImporte( cCaja, cSerie, nImporte, ::aTotCobroTarjeta, cData, ::aDatCobroTarjeta, bEdit, hBmp ) }, nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ) )
+
+   _HB_MEMBER addTotPagoEfectivo(cCaja, cSerie, nImporte, cData, bEdit); IIF( .F., s_oClass:ModInline( "addTotPagoEfectivo", {|Self,cCaja, cSerie, nImporte, cData, bEdit | Self, ::addImporte( cCaja, cSerie, nImporte, ::aTotPagoEfectivo, cData, ::aDatPagoEfectivo, bEdit, ::hBmpDoc[ "PagoProveedor" ] ) }, nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ), s_oClass:AddInline( "addTotPagoEfectivo", {|Self,cCaja, cSerie, nImporte, cData, bEdit | Self, ::addImporte( cCaja, cSerie, nImporte, ::aTotPagoEfectivo, cData, ::aDatPagoEfectivo, bEdit, ::hBmpDoc[ "PagoProveedor" ] ) }, nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ) )
+   _HB_MEMBER addTotPagoNoEfectivo(cCaja, cSerie, nImporte, cData, bEdit); IIF( .F., s_oClass:ModInline( "addTotPagoNoEfectivo", {|Self,cCaja, cSerie, nImporte, cData, bEdit | Self, ::addImporte( cCaja, cSerie, nImporte, ::aTotPagoNoEfectivo, cData, ::aDatPagoNoEfectivo, bEdit, ::hBmpDoc[ "PagoProveedor" ] ) }, nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ), s_oClass:AddInline( "addTotPagoNoEfectivo", {|Self,cCaja, cSerie, nImporte, cData, bEdit | Self, ::addImporte( cCaja, cSerie, nImporte, ::aTotPagoNoEfectivo, cData, ::aDatPagoNoEfectivo, bEdit, ::hBmpDoc[ "PagoProveedor" ] ) }, nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ) )
+   _HB_MEMBER addTotPagoTarjeta(cCaja, cSerie, nImporte, cData, bEdit); IIF( .F., s_oClass:ModInline( "addTotPagoTarjeta", {|Self,cCaja, cSerie, nImporte, cData, bEdit | Self, ::addImporte( cCaja, cSerie, nImporte, ::aTotPagoTarjeta, cData, ::aDatPagoTarjeta, bEdit, ::hBmpDoc[ "PagoProveedor" ] ) }, nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ), s_oClass:AddInline( "addTotPagoTarjeta", {|Self,cCaja, cSerie, nImporte, cData, bEdit | Self, ::addImporte( cCaja, cSerie, nImporte, ::aTotPagoTarjeta, cData, ::aDatPagoTarjeta, bEdit, ::hBmpDoc[ "PagoProveedor" ] ) }, nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ) )
+
+   _HB_MEMBER addTotFacPrvPagos(cCaja, cSerie, nImporte, cData, bEdit); IIF( .F., s_oClass:ModInline( "addTotFacPrvPagos", {|Self,cCaja, cSerie, nImporte, cData, bEdit | Self, ::addImporte( cCaja, cSerie, nImporte, ::aTotFacPrvPagos, cData, ::aDatFacPrvPagos, bEdit, ::hBmpDoc[ "PagoProveedor" ] ) }, nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ), s_oClass:AddInline( "addTotFacPrvPagos", {|Self,cCaja, cSerie, nImporte, cData, bEdit | Self, ::addImporte( cCaja, cSerie, nImporte, ::aTotFacPrvPagos, cData, ::aDatFacPrvPagos, bEdit, ::hBmpDoc[ "PagoProveedor" ] ) }, nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ) )
+
+   _HB_MEMBER addTotCajaEfectivo(cCaja, nImporte, cData, bEdit); IIF( .F., s_oClass:ModInline( "addTotCajaEfectivo", {|Self,cCaja, nImporte, cData, bEdit | Self, ::addImporte( cCaja, "A", nImporte, ::aTotCajaEfectivo, cData, ::aDatCajaEfectivo, bEdit ) }, nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ), s_oClass:AddInline( "addTotCajaEfectivo", {|Self,cCaja, nImporte, cData, bEdit | Self, ::addImporte( cCaja, "A", nImporte, ::aTotCajaEfectivo, cData, ::aDatCajaEfectivo, bEdit ) }, nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ) )
+   _HB_MEMBER addTotCajaNoEfectivo(cCaja, nImporte, cData, bEdit); IIF( .F., s_oClass:ModInline( "addTotCajaNoEfectivo", {|Self,cCaja, nImporte, cData, bEdit | Self, ::addImporte( cCaja, "A", nImporte, ::aTotCajaNoEfectivo, cData, ::aDatCajaNoEfectivo, bEdit ) }, nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ), s_oClass:AddInline( "addTotCajaNoEfectivo", {|Self,cCaja, nImporte, cData, bEdit | Self, ::addImporte( cCaja, "A", nImporte, ::aTotCajaNoEfectivo, cData, ::aDatCajaNoEfectivo, bEdit ) }, nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ) )
+   _HB_MEMBER addTotCajaTarjeta(cCaja, nImporte, cData, bEdit); IIF( .F., s_oClass:ModInline( "addTotCajaTarjeta", {|Self,cCaja, nImporte, cData, bEdit | Self, ::addImporte( cCaja, "A", nImporte, ::aTotCajaTarjeta, cData, ::aDatCajaTarjeta, bEdit ) }, nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ), s_oClass:AddInline( "addTotCajaTarjeta", {|Self,cCaja, nImporte, cData, bEdit | Self, ::addImporte( cCaja, "A", nImporte, ::aTotCajaTarjeta, cData, ::aDatCajaTarjeta, bEdit ) }, nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ) )
+   _HB_MEMBER addTotCajaObjetivo(cCaja, nImporte, cData, bEdit); IIF( .F., s_oClass:ModInline( "addTotCajaObjetivo", {|Self,cCaja, nImporte, cData, bEdit | Self, ::addImporte( cCaja, "A", nImporte, ::aTotCajaObjetivo, cData, ::aDatCajaObjetivo, bEdit ) }, nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ), s_oClass:AddInline( "addTotCajaObjetivo", {|Self,cCaja, nImporte, cData, bEdit | Self, ::addImporte( cCaja, "A", nImporte, ::aTotCajaObjetivo, cData, ::aDatCajaObjetivo, bEdit ) }, nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ) )
+
+   _HB_MEMBER addTotEntradas(cCaja, nImporte, cData, bEdit); IIF( .F., s_oClass:ModInline( "addTotEntradas", {|Self,cCaja, nImporte, cData, bEdit | Self, ::addImporte( cCaja, "A", nImporte, ::aTotEntradas, cData, ::aDatEntradas, bEdit, ::hBmpDoc[ "EntradaSalida" ] ) }, nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ), s_oClass:AddInline( "addTotEntradas", {|Self,cCaja, nImporte, cData, bEdit | Self, ::addImporte( cCaja, "A", nImporte, ::aTotEntradas, cData, ::aDatEntradas, bEdit, ::hBmpDoc[ "EntradaSalida" ] ) }, nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ) )
+
+   _HB_MEMBER addTotBancos(cCaja, cCuenta, nImporte, cData, bEdit, hBmp); IIF( .F., s_oClass:ModInline( "addTotBancos", {|Self,cCaja, cCuenta, nImporte, cData, bEdit, hBmp | Self, ::addImporte( cCaja, cCuenta, nImporte, ::aTotBancos, cData, ::aDatBancos, bEdit, hBmp ) }, nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ), s_oClass:AddInline( "addTotBancos", {|Self,cCaja, cCuenta, nImporte, cData, bEdit, hBmp | Self, ::addImporte( cCaja, cCuenta, nImporte, ::aTotBancos, cData, ::aDatBancos, bEdit, hBmp ) }, nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ) )
+
+   _HB_MEMBER initContadores(nImporte); IIF( .F., s_oClass:ModInline( "initContadores", {|Self,nImporte | Self, ( ::nContadores := 0 ) }, nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ), s_oClass:AddInline( "initContadores", {|Self,nImporte | Self, ( ::nContadores := 0 ) }, nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ) )
+   _HB_MEMBER addContadores(nImporte); IIF( .F., s_oClass:ModInline( "addContadores", {|Self,nImporte | Self, ( ::nContadores += nImporte ) }, nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ), s_oClass:AddInline( "addContadores", {|Self,nImporte | Self, ( ::nContadores += nImporte ) }, nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ) )
+
+   _HB_MEMBER nTotAlbCliContadores(cCaja, cSerie); IIF( .F., s_oClass:ModInline( "nTotAlbCliContadores", {|Self,cCaja, cSerie | Self, nImporte( cCaja, cSerie, ::aTotAlbCliContadores ) }, nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ), s_oClass:AddInline( "nTotAlbCliContadores", {|Self,cCaja, cSerie | Self, nImporte( cCaja, cSerie, ::aTotAlbCliContadores ) }, nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ) )
+   _HB_MEMBER nTotAlbCliVentas(cCaja, cSerie); IIF( .F., s_oClass:ModInline( "nTotAlbCliVentas", {|Self,cCaja, cSerie | Self, nImporte( cCaja, cSerie, ::aTotAlbCliVentas ) }, nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ), s_oClass:AddInline( "nTotAlbCliVentas", {|Self,cCaja, cSerie | Self, nImporte( cCaja, cSerie, ::aTotAlbCliVentas ) }, nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ) )
+
+   _HB_MEMBER nTotPedCliEntregas(cCaja, cSerie); IIF( .F., s_oClass:ModInline( "nTotPedCliEntregas", {|Self,cCaja, cSerie | Self, nImporte( cCaja, cSerie, ::aTotPedCliEntregas ) }, nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ), s_oClass:AddInline( "nTotPedCliEntregas", {|Self,cCaja, cSerie | Self, nImporte( cCaja, cSerie, ::aTotPedCliEntregas ) }, nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ) )
+   _HB_MEMBER nTotAlbCliEntregas(cCaja, cSerie); IIF( .F., s_oClass:ModInline( "nTotAlbCliEntregas", {|Self,cCaja, cSerie | Self, nImporte( cCaja, cSerie, ::aTotAlbCliEntregas ) }, nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ), s_oClass:AddInline( "nTotAlbCliEntregas", {|Self,cCaja, cSerie | Self, nImporte( cCaja, cSerie, ::aTotAlbCliEntregas ) }, nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ) )
+
+   _HB_MEMBER nTotEntregas(cCaja, cSerie); IIF( .F., s_oClass:ModInline( "nTotEntregas", {|Self,cCaja, cSerie | Self, ( ::nTotPedCliEntregas( cCaja, cSerie ) + ::nTotAlbCliEntregas( cCaja, cSerie ) ) }, nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ), s_oClass:AddInline( "nTotEntregas", {|Self,cCaja, cSerie | Self, ( ::nTotPedCliEntregas( cCaja, cSerie ) + ::nTotAlbCliEntregas( cCaja, cSerie ) ) }, nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ) )
+
+   _HB_MEMBER nTotFacCliContadores(cCaja, cSerie); IIF( .F., s_oClass:ModInline( "nTotFacCliContadores", {|Self,cCaja, cSerie | Self, nImporte( cCaja, cSerie, ::aTotFacCliContadores ) }, nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ), s_oClass:AddInline( "nTotFacCliContadores", {|Self,cCaja, cSerie | Self, nImporte( cCaja, cSerie, ::aTotFacCliContadores ) }, nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ) )
+   _HB_MEMBER nTotFacCliVentas(cCaja, cSerie); IIF( .F., s_oClass:ModInline( "nTotFacCliVentas", {|Self,cCaja, cSerie | Self, nImporte( cCaja, cSerie, ::aTotFacCliVentas ) }, nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ), s_oClass:AddInline( "nTotFacCliVentas", {|Self,cCaja, cSerie | Self, nImporte( cCaja, cSerie, ::aTotFacCliVentas ) }, nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ) )
+
+   _HB_MEMBER nTotRctCliContadores(cCaja, cSerie); IIF( .F., s_oClass:ModInline( "nTotRctCliContadores", {|Self,cCaja, cSerie | Self, nImporte( cCaja, cSerie, ::aTotRctCliContadores ) }, nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ), s_oClass:AddInline( "nTotRctCliContadores", {|Self,cCaja, cSerie | Self, nImporte( cCaja, cSerie, ::aTotRctCliContadores ) }, nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ) )
+   _HB_MEMBER nTotRctCliVentas(cCaja, cSerie); IIF( .F., s_oClass:ModInline( "nTotRctCliVentas", {|Self,cCaja, cSerie | Self, nImporte( cCaja, cSerie, ::aTotRctCliVentas ) }, nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ), s_oClass:AddInline( "nTotRctCliVentas", {|Self,cCaja, cSerie | Self, nImporte( cCaja, cSerie, ::aTotRctCliVentas ) }, nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ) )
+
+   _HB_MEMBER nTotTikCliContadores(cCaja, cSerie); IIF( .F., s_oClass:ModInline( "nTotTikCliContadores", {|Self,cCaja, cSerie | Self, nImporte( cCaja, cSerie, ::aTotTikCliContadores ) }, nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ), s_oClass:AddInline( "nTotTikCliContadores", {|Self,cCaja, cSerie | Self, nImporte( cCaja, cSerie, ::aTotTikCliContadores ) }, nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ) )
+   _HB_MEMBER nTotTikCliVentas(cCaja, cSerie); IIF( .F., s_oClass:ModInline( "nTotTikCliVentas", {|Self,cCaja, cSerie | Self, nImporte( cCaja, cSerie, ::aTotTikCliVentas ) }, nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ), s_oClass:AddInline( "nTotTikCliVentas", {|Self,cCaja, cSerie | Self, nImporte( cCaja, cSerie, ::aTotTikCliVentas ) }, nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ) )
+   _HB_MEMBER nTotTikCliCheques(cCaja, cSerie); IIF( .F., s_oClass:ModInline( "nTotTikCliCheques", {|Self,cCaja, cSerie | Self, nImporte( cCaja, cSerie, ::aTotChkCliVentas ) }, nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ), s_oClass:AddInline( "nTotTikCliCheques", {|Self,cCaja, cSerie | Self, nImporte( cCaja, cSerie, ::aTotChkCliVentas ) }, nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ) )
+
+   _HB_MEMBER nTotDevCliContadores(cCaja, cSerie); IIF( .F., s_oClass:ModInline( "nTotDevCliContadores", {|Self,cCaja, cSerie | Self, nImporte( cCaja, cSerie, ::aTotDevCliContadores, .T. ) }, nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ), s_oClass:AddInline( "nTotDevCliContadores", {|Self,cCaja, cSerie | Self, nImporte( cCaja, cSerie, ::aTotDevCliContadores, .T. ) }, nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ) )
+   _HB_MEMBER nTotDevCliVentas(cCaja, cSerie); IIF( .F., s_oClass:ModInline( "nTotDevCliVentas", {|Self,cCaja, cSerie | Self, nImporte( cCaja, cSerie, ::aTotDevCliVentas, .T. ) }, nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ), s_oClass:AddInline( "nTotDevCliVentas", {|Self,cCaja, cSerie | Self, nImporte( cCaja, cSerie, ::aTotDevCliVentas, .T. ) }, nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ) )
+
+   _HB_MEMBER nTotValCliContadores(cCaja, cSerie); IIF( .F., s_oClass:ModInline( "nTotValCliContadores", {|Self,cCaja, cSerie | Self, nImporte( cCaja, cSerie, ::aTotValCliContadores, .T. ) }, nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ), s_oClass:AddInline( "nTotValCliContadores", {|Self,cCaja, cSerie | Self, nImporte( cCaja, cSerie, ::aTotValCliContadores, .T. ) }, nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ) )
+   _HB_MEMBER nTotValCliVentas(cCaja, cSerie); IIF( .F., s_oClass:ModInline( "nTotValCliVentas", {|Self,cCaja, cSerie | Self, nImporte( cCaja, cSerie, ::aTotValCliVentas, .T. ) }, nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ), s_oClass:AddInline( "nTotValCliVentas", {|Self,cCaja, cSerie | Self, nImporte( cCaja, cSerie, ::aTotValCliVentas, .T. ) }, nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ) )
+   _HB_MEMBER nTotValCliLiquidados(cCaja, cSerie); IIF( .F., s_oClass:ModInline( "nTotValCliLiquidados", {|Self,cCaja, cSerie | Self, nImporte( cCaja, cSerie, ::aTotValCliLiquidados, .T. ) }, nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ), s_oClass:AddInline( "nTotValCliLiquidados", {|Self,cCaja, cSerie | Self, nImporte( cCaja, cSerie, ::aTotValCliLiquidados, .T. ) }, nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ) )
+
+   _HB_MEMBER nTotChkCliContadores(cCaja, cSerie); IIF( .F., s_oClass:ModInline( "nTotChkCliContadores", {|Self,cCaja, cSerie | Self, nImporte( cCaja, cSerie, ::aTotChkCliContadores, .T. ) }, nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ), s_oClass:AddInline( "nTotChkCliContadores", {|Self,cCaja, cSerie | Self, nImporte( cCaja, cSerie, ::aTotChkCliContadores, .T. ) }, nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ) )
+   _HB_MEMBER nTotChkCliVentas(cCaja, cSerie); IIF( .F., s_oClass:ModInline( "nTotChkCliVentas", {|Self,cCaja, cSerie | Self, nImporte( cCaja, cSerie, ::aTotChkCliVentas, .T. ) }, nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ), s_oClass:AddInline( "nTotChkCliVentas", {|Self,cCaja, cSerie | Self, nImporte( cCaja, cSerie, ::aTotChkCliVentas, .T. ) }, nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ) )
+   _HB_MEMBER nTotChkCliLiquidados(cCaja, cSerie); IIF( .F., s_oClass:ModInline( "nTotChkCliLiquidados", {|Self,cCaja, cSerie | Self, nImporte( cCaja, cSerie, ::aTotChkCliLiquidados, .T. ) }, nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ), s_oClass:AddInline( "nTotChkCliLiquidados", {|Self,cCaja, cSerie | Self, nImporte( cCaja, cSerie, ::aTotChkCliLiquidados, .T. ) }, nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ) )
+
+   _HB_MEMBER nTotAlbPrvCompras(cCaja, cSerie); IIF( .F., s_oClass:ModInline( "nTotAlbPrvCompras", {|Self,cCaja, cSerie | Self, nImporte( cCaja, cSerie, ::aTotAlbPrvCompras ) }, nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ), s_oClass:AddInline( "nTotAlbPrvCompras", {|Self,cCaja, cSerie | Self, nImporte( cCaja, cSerie, ::aTotAlbPrvCompras ) }, nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ) )
+   _HB_MEMBER nTotFacPrvCompras(cCaja, cSerie); IIF( .F., s_oClass:ModInline( "nTotFacPrvCompras", {|Self,cCaja, cSerie | Self, nImporte( cCaja, cSerie, ::aTotFacPrvCompras ) }, nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ), s_oClass:AddInline( "nTotFacPrvCompras", {|Self,cCaja, cSerie | Self, nImporte( cCaja, cSerie, ::aTotFacPrvCompras ) }, nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ) )
+   _HB_MEMBER nTotRctPrvCompras(cCaja, cSerie); IIF( .F., s_oClass:ModInline( "nTotRctPrvCompras", {|Self,cCaja, cSerie | Self, nImporte( cCaja, cSerie, ::aTotRctPrvCompras ) }, nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ), s_oClass:AddInline( "nTotRctPrvCompras", {|Self,cCaja, cSerie | Self, nImporte( cCaja, cSerie, ::aTotRctPrvCompras ) }, nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ) )
+
+   _HB_MEMBER nTotAntCliVentas(cCaja, cSerie); IIF( .F., s_oClass:ModInline( "nTotAntCliVentas", {|Self,cCaja, cSerie | Self, nImporte( cCaja, cSerie, ::aTotAntCliVentas ) }, nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ), s_oClass:AddInline( "nTotAntCliVentas", {|Self,cCaja, cSerie | Self, nImporte( cCaja, cSerie, ::aTotAntCliVentas ) }, nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ) )
+   _HB_MEMBER nTotAntCliLiquidados(cCaja, cSerie); IIF( .F., s_oClass:ModInline( "nTotAntCliLiquidados", {|Self,cCaja, cSerie | Self, nImporte( cCaja, cSerie, ::aTotAntCliLiquidados ) }, nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ), s_oClass:AddInline( "nTotAntCliLiquidados", {|Self,cCaja, cSerie | Self, nImporte( cCaja, cSerie, ::aTotAntCliLiquidados ) }, nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ) )
+
+   _HB_MEMBER nTotFacPrvPagos(cCaja, cSerie); IIF( .F., s_oClass:ModInline( "nTotFacPrvPagos", {|Self,cCaja, cSerie | Self, nImporte( cCaja, cSerie, ::aTotFacPrvPagos ) }, nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ), s_oClass:AddInline( "nTotFacPrvPagos", {|Self,cCaja, cSerie | Self, nImporte( cCaja, cSerie, ::aTotFacPrvPagos ) }, nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ) )
+   _HB_MEMBER nTotRctPrvPagos(cCaja, cSerie); IIF( .F., s_oClass:ModInline( "nTotRctPrvPagos", {|Self,cCaja, cSerie | Self, nImporte( cCaja, cSerie, ::aTotRctPrvPagos ) }, nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ), s_oClass:AddInline( "nTotRctPrvPagos", {|Self,cCaja, cSerie | Self, nImporte( cCaja, cSerie, ::aTotRctPrvPagos ) }, nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ) )
+
+   _HB_MEMBER nTotEntradas(cCaja); IIF( .F., s_oClass:ModInline( "nTotEntradas", {|Self,cCaja | Self, nImporte( cCaja, "A", ::aTotEntradas ) }, nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ), s_oClass:AddInline( "nTotEntradas", {|Self,cCaja | Self, nImporte( cCaja, "A", ::aTotEntradas ) }, nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ) )
+
+   _HB_MEMBER nTotVentas( cCaja, cSerie); IIF( .F., s_oClass:ModMethod( "nTotVentas", @TTotalTurno_nTotVentas(), nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ), s_oClass:AddMethod( "nTotVentas", @TTotalTurno_nTotVentas(), nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ));
+   _HB_MEMBER nTotContadores( cCaja, cSerie); IIF( .F., s_oClass:ModMethod( "nTotContadores", @TTotalTurno_nTotContadores(), nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ), s_oClass:AddMethod( "nTotContadores", @TTotalTurno_nTotContadores(), nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ));
+   _HB_MEMBER nTotVentaCredito( cCaja, cSerie); IIF( .F., s_oClass:ModMethod( "nTotVentaCredito", @TTotalTurno_nTotVentaCredito(), nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ), s_oClass:AddMethod( "nTotVentaCredito", @TTotalTurno_nTotVentaCredito(), nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ));
+   _HB_MEMBER nTotVentaContado( cCaja, cSerie); IIF( .F., s_oClass:ModMethod( "nTotVentaContado", @TTotalTurno_nTotVentaContado(), nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ), s_oClass:AddMethod( "nTotVentaContado", @TTotalTurno_nTotVentaContado(), nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ));
+
+   _HB_MEMBER nTotCompras( cCaja, cSerie); IIF( .F., s_oClass:ModMethod( "nTotCompras", @TTotalTurno_nTotCompras(), nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ), s_oClass:AddMethod( "nTotCompras", @TTotalTurno_nTotCompras(), nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ));
+
+   _HB_MEMBER nTotTikCliCobros(cCaja, cSerie); IIF( .F., s_oClass:ModInline( "nTotTikCliCobros", {|Self,cCaja, cSerie | Self, nImporte( cCaja, cSerie, ::aTotTikCliCobros ) }, nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ), s_oClass:AddInline( "nTotTikCliCobros", {|Self,cCaja, cSerie | Self, nImporte( cCaja, cSerie, ::aTotTikCliCobros ) }, nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ) )
+   _HB_MEMBER nTotFacCliCobros(cCaja, cSerie); IIF( .F., s_oClass:ModInline( "nTotFacCliCobros", {|Self,cCaja, cSerie | Self, nImporte( cCaja, cSerie, ::aTotFacCliCobros ) }, nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ), s_oClass:AddInline( "nTotFacCliCobros", {|Self,cCaja, cSerie | Self, nImporte( cCaja, cSerie, ::aTotFacCliCobros ) }, nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ) )
+   _HB_MEMBER nTotRctCliCobros(cCaja, cSerie); IIF( .F., s_oClass:ModInline( "nTotRctCliCobros", {|Self,cCaja, cSerie | Self, nImporte( cCaja, cSerie, ::aTotRctCliCobros ) }, nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ), s_oClass:AddInline( "nTotRctCliCobros", {|Self,cCaja, cSerie | Self, nImporte( cCaja, cSerie, ::aTotRctCliCobros ) }, nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ) )
+   _HB_MEMBER nTotValCliCobros(cCaja, cSerie); IIF( .F., s_oClass:ModInline( "nTotValCliCobros", {|Self,cCaja, cSerie | Self, nImporte( cCaja, cSerie, ::aTotValCliCobros ) }, nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ), s_oClass:AddInline( "nTotValCliCobros", {|Self,cCaja, cSerie | Self, nImporte( cCaja, cSerie, ::aTotValCliCobros ) }, nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ) )
+   _HB_MEMBER nTotChkCliCobros(cCaja, cSerie); IIF( .F., s_oClass:ModInline( "nTotChkCliCobros", {|Self,cCaja, cSerie | Self, nImporte( cCaja, cSerie, ::aTotChkCliCobros ) }, nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ), s_oClass:AddInline( "nTotChkCliCobros", {|Self,cCaja, cSerie | Self, nImporte( cCaja, cSerie, ::aTotChkCliCobros ) }, nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ) )
+
+   _HB_MEMBER nTotCobroEfectivo(cCaja, cSerie); IIF( .F., s_oClass:ModInline( "nTotCobroEfectivo", {|Self,cCaja, cSerie | Self, nImporte( cCaja, cSerie, ::aTotCobroEfectivo ) }, nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ), s_oClass:AddInline( "nTotCobroEfectivo", {|Self,cCaja, cSerie | Self, nImporte( cCaja, cSerie, ::aTotCobroEfectivo ) }, nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ) )
+   _HB_MEMBER nTotCobroNoEfectivo(cCaja, cSerie); IIF( .F., s_oClass:ModInline( "nTotCobroNoEfectivo", {|Self,cCaja, cSerie | Self, nImporte( cCaja, cSerie, ::aTotCobroNoEfectivo ) }, nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ), s_oClass:AddInline( "nTotCobroNoEfectivo", {|Self,cCaja, cSerie | Self, nImporte( cCaja, cSerie, ::aTotCobroNoEfectivo ) }, nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ) )
+   _HB_MEMBER nTotCobroTarjeta(cCaja, cSerie); IIF( .F., s_oClass:ModInline( "nTotCobroTarjeta", {|Self,cCaja, cSerie | Self, nImporte( cCaja, cSerie, ::aTotCobroTarjeta ) }, nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ), s_oClass:AddInline( "nTotCobroTarjeta", {|Self,cCaja, cSerie | Self, nImporte( cCaja, cSerie, ::aTotCobroTarjeta ) }, nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ) )
+
+   _HB_MEMBER nTotCajaEfectivo(cCaja, cSerie); IIF( .F., s_oClass:ModInline( "nTotCajaEfectivo", {|Self,cCaja, cSerie | Self, nImporte( cCaja, "A", ::aTotCajaEfectivo ) }, nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ), s_oClass:AddInline( "nTotCajaEfectivo", {|Self,cCaja, cSerie | Self, nImporte( cCaja, "A", ::aTotCajaEfectivo ) }, nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ) )
+   _HB_MEMBER nTotCajaNoEfectivo(cCaja, cSerie); IIF( .F., s_oClass:ModInline( "nTotCajaNoEfectivo", {|Self,cCaja, cSerie | Self, nImporte( cCaja, "A", ::aTotCajaNoEfectivo ) }, nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ), s_oClass:AddInline( "nTotCajaNoEfectivo", {|Self,cCaja, cSerie | Self, nImporte( cCaja, "A", ::aTotCajaNoEfectivo ) }, nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ) )
+   _HB_MEMBER nTotCajaTarjeta(cCaja, cSerie); IIF( .F., s_oClass:ModInline( "nTotCajaTarjeta", {|Self,cCaja, cSerie | Self, nImporte( cCaja, "A", ::aTotCajaTarjeta ) }, nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ), s_oClass:AddInline( "nTotCajaTarjeta", {|Self,cCaja, cSerie | Self, nImporte( cCaja, "A", ::aTotCajaTarjeta ) }, nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ) )
+   _HB_MEMBER nTotCajaObjetivo(cCaja, cSerie); IIF( .F., s_oClass:ModInline( "nTotCajaObjetivo", {|Self,cCaja, cSerie | Self, nImporte( cCaja, "A", ::aTotCajaObjetivo ) }, nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ), s_oClass:AddInline( "nTotCajaObjetivo", {|Self,cCaja, cSerie | Self, nImporte( cCaja, "A", ::aTotCajaObjetivo ) }, nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ) )
+
+   _HB_MEMBER nTotCobroMedios(cCaja, cSerie); IIF( .F., s_oClass:ModInline( "nTotCobroMedios", {|Self,cCaja, cSerie | Self, ( ::nTotCobroEfectivo( cCaja, cSerie ) + ::nTotEntradas( cCaja, "A" ) ) }, nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ), s_oClass:AddInline( "nTotCobroMedios", {|Self,cCaja, cSerie | Self, ( ::nTotCobroEfectivo( cCaja, cSerie ) + ::nTotEntradas( cCaja, "A" ) ) }, nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ) )
+
+   _HB_MEMBER nTotPagoEfectivo(cCaja, cSerie); IIF( .F., s_oClass:ModInline( "nTotPagoEfectivo", {|Self,cCaja, cSerie | Self, nImporte( cCaja, cSerie, ::aTotPagoEfectivo ) }, nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ), s_oClass:AddInline( "nTotPagoEfectivo", {|Self,cCaja, cSerie | Self, nImporte( cCaja, cSerie, ::aTotPagoEfectivo ) }, nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ) )
+   _HB_MEMBER nTotPagoNoEfectivo(cCaja, cSerie); IIF( .F., s_oClass:ModInline( "nTotPagoNoEfectivo", {|Self,cCaja, cSerie | Self, nImporte( cCaja, cSerie, ::aTotPagoNoEfectivo ) }, nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ), s_oClass:AddInline( "nTotPagoNoEfectivo", {|Self,cCaja, cSerie | Self, nImporte( cCaja, cSerie, ::aTotPagoNoEfectivo ) }, nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ) )
+   _HB_MEMBER nTotPagoTarjeta(cCaja, cSerie); IIF( .F., s_oClass:ModInline( "nTotPagoTarjeta", {|Self,cCaja, cSerie | Self, nImporte( cCaja, cSerie, ::aTotPagoTarjeta ) }, nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ), s_oClass:AddInline( "nTotPagoTarjeta", {|Self,cCaja, cSerie | Self, nImporte( cCaja, cSerie, ::aTotPagoTarjeta ) }, nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ) )
+
+   _HB_MEMBER nTotSaldoEfectivo(cCaja, cSerie); IIF( .F., s_oClass:ModInline( "nTotSaldoEfectivo", {|Self,cCaja, cSerie | Self, ( ::nTotCobroEfectivo( cCaja, cSerie ) - ::nTotPagoEfectivo( cCaja, cSerie ) + ::nTotEntradas( cCaja, "A" ) ) }, nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ), s_oClass:AddInline( "nTotSaldoEfectivo", {|Self,cCaja, cSerie | Self, ( ::nTotCobroEfectivo( cCaja, cSerie ) - ::nTotPagoEfectivo( cCaja, cSerie ) + ::nTotEntradas( cCaja, "A" ) ) }, nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ) )
+   _HB_MEMBER nTotSaldoNoEfectivo(cCaja, cSerie); IIF( .F., s_oClass:ModInline( "nTotSaldoNoEfectivo", {|Self,cCaja, cSerie | Self, ( ::nTotCobroNoEfectivo( cCaja, cSerie ) - ::nTotPagoNoEfectivo( cCaja, cSerie ) ) }, nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ), s_oClass:AddInline( "nTotSaldoNoEfectivo", {|Self,cCaja, cSerie | Self, ( ::nTotCobroNoEfectivo( cCaja, cSerie ) - ::nTotPagoNoEfectivo( cCaja, cSerie ) ) }, nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ) )
+   _HB_MEMBER nTotSaldoTarjeta(cCaja, cSerie); IIF( .F., s_oClass:ModInline( "nTotSaldoTarjeta", {|Self,cCaja, cSerie | Self, ( ::nTotCobroTarjeta( cCaja, cSerie ) - ::nTotPagoTarjeta( cCaja, cSerie ) ) }, nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ), s_oClass:AddInline( "nTotSaldoTarjeta", {|Self,cCaja, cSerie | Self, ( ::nTotCobroTarjeta( cCaja, cSerie ) - ::nTotPagoTarjeta( cCaja, cSerie ) ) }, nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ) )
+
+   _HB_MEMBER nTotPagoMedios(cCaja, cSerie); IIF( .F., s_oClass:ModInline( "nTotPagoMedios", {|Self,cCaja, cSerie | Self, ( ::nTotPagoEfectivo( cCaja, cSerie ) + ::nTotEntradas( cCaja, "A" ) ) }, nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ), s_oClass:AddInline( "nTotPagoMedios", {|Self,cCaja, cSerie | Self, ( ::nTotPagoEfectivo( cCaja, cSerie ) + ::nTotEntradas( cCaja, "A" ) ) }, nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ) )
+
+   _HB_MEMBER nTotCobros( cCaja, cSerie); IIF( .F., s_oClass:ModMethod( "nTotCobros", @TTotalTurno_nTotCobros(), nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ), s_oClass:AddMethod( "nTotCobros", @TTotalTurno_nTotCobros(), nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ));
+   _HB_MEMBER nDifCobros( cCaja, cSerie); IIF( .F., s_oClass:ModMethod( "nDifCobros", @TTotalTurno_nDifCobros(), nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ), s_oClass:AddMethod( "nDifCobros", @TTotalTurno_nDifCobros(), nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ));
+
+   _HB_MEMBER nDifTotal( cCaja, cSerie); IIF( .F., s_oClass:ModMethod( "nDifTotal", @TTotalTurno_nDifTotal(), nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ), s_oClass:AddMethod( "nDifTotal", @TTotalTurno_nDifTotal(), nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ));
+
+   _HB_MEMBER nTotVentaSesion( cCaja, cSerie); IIF( .F., s_oClass:ModMethod( "nTotVentaSesion", @TTotalTurno_nTotVentaSesion(), nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ), s_oClass:AddMethod( "nTotVentaSesion", @TTotalTurno_nTotVentaSesion(), nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ));
+   _HB_MEMBER nTotCobroSesion( cCaja, cSerie); IIF( .F., s_oClass:ModMethod( "nTotCobroSesion", @TTotalTurno_nTotCobroSesion(), nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ), s_oClass:AddMethod( "nTotCobroSesion", @TTotalTurno_nTotCobroSesion(), nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ));
+
+   _HB_MEMBER nTotCaja( cCaja, cSerie); IIF( .F., s_oClass:ModMethod( "nTotCaja", @TTotalTurno_nTotCaja(), nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ), s_oClass:AddMethod( "nTotCaja", @TTotalTurno_nTotCaja(), nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ));
+
+   _HB_MEMBER nTotBancos(cCaja, cCuenta); IIF( .F., s_oClass:ModInline( "nTotBancos", {|Self,cCaja, cCuenta | Self, nImporte( cCaja, cCuenta, ::aTotBancos ) }, nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ), s_oClass:AddInline( "nTotBancos", {|Self,cCaja, cCuenta | Self, nImporte( cCaja, cCuenta, ::aTotBancos ) }, nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ) )
+
+   _HB_MEMBER addNumero( cCaja, aData); IIF( .F., s_oClass:ModMethod( "addNumero", @TTotalTurno_addNumero(), nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ), s_oClass:AddMethod( "addNumero", @TTotalTurno_addNumero(), nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ));
+
+   _HB_MEMBER addNumeroAlbaranes(cCaja); IIF( .F., s_oClass:ModInline( "addNumeroAlbaranes", {|Self,cCaja | Self, ::addNumero( cCaja, ::aTotNumeroAlbaranes ) }, nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ), s_oClass:AddInline( "addNumeroAlbaranes", {|Self,cCaja | Self, ::addNumero( cCaja, ::aTotNumeroAlbaranes ) }, nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ) )
+   _HB_MEMBER addNumeroFacturas(cCaja); IIF( .F., s_oClass:ModInline( "addNumeroFacturas", {|Self,cCaja | Self, ::addNumero( cCaja, ::aTotNumeroFacturas ) }, nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ), s_oClass:AddInline( "addNumeroFacturas", {|Self,cCaja | Self, ::addNumero( cCaja, ::aTotNumeroFacturas ) }, nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ) )
+   _HB_MEMBER addNumeroTikets(cCaja); IIF( .F., s_oClass:ModInline( "addNumeroTikets", {|Self,cCaja | Self, ::addNumero( cCaja, ::aTotNumeroTikets ) }, nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ), s_oClass:AddInline( "addNumeroTikets", {|Self,cCaja | Self, ::addNumero( cCaja, ::aTotNumeroTikets ) }, nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ) )
+   _HB_MEMBER addNumeroVales(cCaja); IIF( .F., s_oClass:ModInline( "addNumeroVales", {|Self,cCaja | Self, ::addNumero( cCaja, ::aTotNumeroVales ) }, nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ), s_oClass:AddInline( "addNumeroVales", {|Self,cCaja | Self, ::addNumero( cCaja, ::aTotNumeroVales ) }, nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ) )
+   _HB_MEMBER addNumeroDevoluciones(cCaja); IIF( .F., s_oClass:ModInline( "addNumeroDevoluciones", {|Self,cCaja | Self, ::addNumero( cCaja, ::aTotNumeroDevoluciones ) }, nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ), s_oClass:AddInline( "addNumeroDevoluciones", {|Self,cCaja | Self, ::addNumero( cCaja, ::aTotNumeroDevoluciones ) }, nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ) )
+   _HB_MEMBER addNumeroCheques(cCaja); IIF( .F., s_oClass:ModInline( "addNumeroCheques", {|Self,cCaja | Self, ::addNumero( cCaja, ::aTotNumeroCheques ) }, nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ), s_oClass:AddInline( "addNumeroCheques", {|Self,cCaja | Self, ::addNumero( cCaja, ::aTotNumeroCheques ) }, nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ) )
+
+   _HB_MEMBER nTotNumeroAlbaranes(cCaja); IIF( .F., s_oClass:ModInline( "nTotNumeroAlbaranes", {|Self,cCaja | Self, nNumero( cCaja, ::aTotNumeroAlbaranes ) }, nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ), s_oClass:AddInline( "nTotNumeroAlbaranes", {|Self,cCaja | Self, nNumero( cCaja, ::aTotNumeroAlbaranes ) }, nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ) )
+   _HB_MEMBER nTotNumeroFacturas(cCaja); IIF( .F., s_oClass:ModInline( "nTotNumeroFacturas", {|Self,cCaja | Self, nNumero( cCaja, ::aTotNumeroFacturas ) }, nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ), s_oClass:AddInline( "nTotNumeroFacturas", {|Self,cCaja | Self, nNumero( cCaja, ::aTotNumeroFacturas ) }, nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ) )
+   _HB_MEMBER nTotNumeroTikets(cCaja); IIF( .F., s_oClass:ModInline( "nTotNumeroTikets", {|Self,cCaja | Self, nNumero( cCaja, ::aTotNumeroTikets ) }, nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ), s_oClass:AddInline( "nTotNumeroTikets", {|Self,cCaja | Self, nNumero( cCaja, ::aTotNumeroTikets ) }, nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ) )
+   _HB_MEMBER nTotNumeroVales(cCaja); IIF( .F., s_oClass:ModInline( "nTotNumeroVales", {|Self,cCaja | Self, nNumero( cCaja, ::aTotNumeroVales ) }, nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ), s_oClass:AddInline( "nTotNumeroVales", {|Self,cCaja | Self, nNumero( cCaja, ::aTotNumeroVales ) }, nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ) )
+   _HB_MEMBER nTotNumeroDevoluciones(cCaja); IIF( .F., s_oClass:ModInline( "nTotNumeroDevoluciones", {|Self,cCaja | Self, nNumero( cCaja, ::aTotNumeroDevoluciones ) }, nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ), s_oClass:AddInline( "nTotNumeroDevoluciones", {|Self,cCaja | Self, nNumero( cCaja, ::aTotNumeroDevoluciones ) }, nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ) )
+   _HB_MEMBER nTotNumeroCheques(cCaja); IIF( .F., s_oClass:ModInline( "nTotNumeroCheques", {|Self,cCaja | Self, nNumero( cCaja, ::aTotNumeroCheques ) }, nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ), s_oClass:AddInline( "nTotNumeroCheques", {|Self,cCaja | Self, nNumero( cCaja, ::aTotNumeroCheques ) }, nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ) )
+   _HB_MEMBER nTotNumeroAptCajon( cTurno); IIF( .F., s_oClass:ModMethod( "nTotNumeroAptCajon", @TTotalTurno_nTotNumeroAptCajon(), nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ), s_oClass:AddMethod( "nTotNumeroAptCajon", @TTotalTurno_nTotNumeroAptCajon(), nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ));
+
+   _HB_MEMBER nTiketMedio(cCaja, cSerie); IIF( .F., s_oClass:ModInline( "nTiketMedio", {|Self,cCaja, cSerie | Self, ( ::nTotTikCliVentas( cCaja, cSerie ) / NotCero( ::nTotNumeroTikets( cCaja ) ) ) }, nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ), s_oClass:AddInline( "nTiketMedio", {|Self,cCaja, cSerie | Self, ( ::nTotTikCliVentas( cCaja, cSerie ) / NotCero( ::nTotNumeroTikets( cCaja ) ) ) }, nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ) )
+
+   _HB_MEMBER CreateTree( cCaja, cTurno); IIF( .F., s_oClass:ModMethod( "CreateTree", @TTotalTurno_CreateTree(), nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ), s_oClass:AddMethod( "CreateTree", @TTotalTurno_CreateTree(), nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ));
+
+   _HB_MEMBER End(); IIF( .F., s_oClass:ModInline( "End", {|Self | Self, ( HEval( ::hBmpDoc, { | xKey, hBmp | DeleteObject( hBmp ) } ) ) }, nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ), s_oClass:AddInline( "End", {|Self | Self, ( HEval( ::hBmpDoc, { | xKey, hBmp | DeleteObject( hBmp ) } ) ) }, nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ) )
+
+; IF .F. ; __clsActive(s_oClass:hClass) ; s_oClass:Refresh() ; ELSE ; s_oClass:Create() ; END ; oClassInstance := __clsInst( s_oClass:hClass ) ; IF __ObjHasMsg( oClassInstance, "InitClass" ); oClassInstance:InitClass( hb_aParams() ) ; END ; ELSE ; oClassInstance := __clsInst( s_oClass:hClass ) ; END ; IF PCount() > 0 ; DIVERT TO (@DivertConstructorCall()) OF s_oClass ; END ; RETURN oClassInstance AS CLASS TTotalTurno ;
+
+
+
+UTILITY STATIC function TTotalTurno_New( oTurno) ; local Self AS CLASS TTotalTurno := QSelf() AS CLASS TTotalTurno
+
+   ::Initiate()
+
+   ::oTurno                   := oTurno
+
+   ::hBmpDoc                  := {=>}
+
+   HSet( ::hBmpDoc, "AlbaranProveedor",      LoadBitmap( GetResources(), "Document_plain_businessman_16" ) )
+   HSet( ::hBmpDoc, "FacturaProveedor",      LoadBitmap( GetResources(), "Document_businessman_16" ) )
+   HSet( ::hBmpDoc, "RectificativaProveedor",LoadBitmap( GetResources(), "Document_navigate_cross_16" ) )
+   HSet( ::hBmpDoc, "PagoProveedor",         LoadBitmap( GetResources(), "Money2_businessman_16" ) )
+   HSet( ::hBmpDoc, "PedidoCliente",         LoadBitmap( GetResources(), "Clipboard_empty_user1_16" ) )
+   HSet( ::hBmpDoc, "AlbaranCliente",        LoadBitmap( GetResources(), "Document_plain_user1_16" ) )
+   HSet( ::hBmpDoc, "FacturaCliente",        LoadBitmap( GetResources(), "Document_user1_16" ) )
+   HSet( ::hBmpDoc, "RectificativaCliente",  LoadBitmap( GetResources(), "Document_delete_16" ) )
+   HSet( ::hBmpDoc, "FacturaAnticipo",       LoadBitmap( GetResources(), "Document_money2_16" ) )
+   HSet( ::hBmpDoc, "ReciboClientes",        LoadBitmap( GetResources(), "Briefcase_user1_16" ) )
+   HSet( ::hBmpDoc, "TiketCliente",          LoadBitmap( GetResources(), "Cashier_user1_16" ) )
+   HSet( ::hBmpDoc, "EntradaSalida",         LoadBitmap( GetResources(), "Cashier_replace_16" ) )
+
+RETURN ( Self )
+
+
+
+UTILITY STATIC function TTotalTurno_Initiate() ; local Self AS CLASS TTotalTurno := QSelf() AS CLASS TTotalTurno
+
+   ::aTotAlbCliContadores     := {}
+   ::aTotAlbCliVentas         := {}
+   ::aTotPedCliEntregas       := {}
+   ::aTotAlbCliEntregas       := {}
+   ::aTotEntregas             := {}
+   ::aTotFacCliContadores     := {}
+   ::aTotFacCliVentas         := {}
+   ::aTotRctCliContadores     := {}
+   ::aTotRctCliVentas         := {}
+   ::aTotTikCliContadores     := {}
+   ::aTotTikCliVentas         := {}
+   ::aTotDevCliContadores     := {}
+   ::aTotDevCliVentas         := {}
+   ::aTotValCliContadores     := {}
+   ::aTotValCliVentas         := {}
+   ::aTotChkCliContadores     := {}
+   ::aTotChkCliVentas         := {}
+   ::aTotAntCliVentas         := {}
+   ::aTotAntCliLiquidados     := {}
+   ::aTotValCliLiquidados     := {}
+   ::aTotChkCliLiquidados     := {}
+   ::aTotFacPrvCompras        := {}
+   ::aTotAlbPrvCompras        := {}
+   ::aTotFacPrvCompras        := {}
+   ::aTotTikCliCobros         := {}
+   ::aTotFacCliCobros         := {}
+   ::aTotRctCliCobros         := {}
+   ::aTotValCliCobros         := {}
+   ::aTotChkCliCobros         := {}
+   ::aTotFacPrvPagos          := {}
+   ::aTotCobroEfectivo        := {}
+   ::aTotCobroNoEfectivo      := {}
+   ::aTotCobroTarjeta         := {}
+   ::aTotPagoEfectivo         := {}
+   ::aTotPagoNoEfectivo       := {}
+   ::aTotPagoTarjeta          := {}
+   ::aTotFormaPago            := {}
+   ::aTotEntradas             := {}
+   ::aTotNumeroAlbaranes      := {}
+   ::aTotNumeroFacturas       := {}
+   ::aTotNumeroTikets         := {}
+   ::aTotNumeroVales          := {}
+   ::aTotNumeroCheques        := {}
+   ::aTotNumeroDevoluciones   := {}
+   ::aTotCajaEfectivo         := {}
+   ::aTotCajaNoEfectivo       := {}
+   ::aTotCajaTarjeta          := {}
+   ::aTotCajaObjetivo         := {}
+   ::aTotBancos               := {}
+
+   ::aDatAlbCliContadores     := {}
+   ::aDatAlbCliVentas         := {}
+   ::aDatPedCliEntregas       := {}
+   ::aDatAlbCliEntregas       := {}
+   ::aDatEntregas             := {}
+   ::aDatFacCliContadores     := {}
+   ::aDatFacCliVentas         := {}
+   ::aDatRctCliContadores     := {}
+   ::aDatRctCliVentas         := {}
+   ::aDatTikCliContadores     := {}
+   ::aDatTikCliVentas         := {}
+   ::aDatDevCliContadores     := {}
+   ::aDatDevCliVentas         := {}
+   ::aDatValCliContadores     := {}
+   ::aDatValCliVentas         := {}
+   ::aDatChkCliContadores     := {}
+   ::aDatChkCliVentas         := {}
+   ::aDatAntCliVentas         := {}
+   ::aDatAntCliLiquidados     := {}
+   ::aDatValCliLiquidados     := {}
+   ::aDatAlbPrvCompras        := {}
+   ::aDatFacPrvCompras        := {}
+   ::aDatTikCliCobros         := {}
+   ::aDatFacCliCobros         := {}
+   ::aDatRctCliCobros         := {}
+   ::aDatValCliCobros         := {}
+   ::aDatChkCliCobros         := {}
+   ::aDatFacPrvPagos          := {}
+   ::aDatCobroEfectivo        := {}
+   ::aDatCobroNoEfectivo      := {}
+   ::aDatCobroTarjeta         := {}
+   ::aDatPagoEfectivo         := {}
+   ::aDatPagoNoEfectivo       := {}
+   ::aDatPagoTarjeta          := {}
+   ::aDatCajaEfectivo         := {}
+   ::aDatCajaNoEfectivo       := {}
+   ::aDatCajaTarjeta          := {}
+   ::aDatCajaObjetivo         := {}
+   ::aDatFormaPago            := {}
+   ::aDatEntradas             := {}
+   ::aDatNumeroAlbaranes      := {}
+   ::aDatNumeroFacturas       := {}
+   ::aDatNumeroTikets         := {}
+   ::aDatNumeroVales          := {}
+   ::aDatNumeroDevoluciones   := {}
+   ::aDatNumeroCheques        := {}
+   ::aDatBancos               := {}
+
+   ::nContadores              := 0
+
+RETURN ( Self )
+
+
+
+UTILITY STATIC function TTotalTurno_addImporte( cCaja, cSerie, nImporte, aImporte, cData, aData, bEdit, nBmp) ; local Self AS CLASS TTotalTurno := QSelf() AS CLASS TTotalTurno
+
+   local n
+
+   IIF( nBmp == nil, nBmp := 0, ) ;
+
+   if ( n := aScan( aImporte, {|a| a[ 1 ] == cCaja .AND. a[ 2 ] == cSerie } ) ) <> 0
+      aImporte[ n, 3 ]  += nImporte
+   else
+      aAdd( aImporte, { cCaja, cSerie, nImporte } )
+   end
+
+   if !Empty( cData )
+      aAdd( aData, { cCaja, cSerie, cData, nImporte, bEdit, nBmp } )
+   end
+
+RETURN ( Self )
+
+
+
+UTILITY STATIC function TTotalTurno_addNumero( cCaja, aData) ; local Self AS CLASS TTotalTurno := QSelf() AS CLASS TTotalTurno
+
+   local n
+
+   if ( n := aScan( aData, {|a| a[ 1 ] == cCaja } ) ) <> 0
+      aData[ n, 2 ]++
+   else
+      aAdd( aData, { cCaja, 1 } )
+   end
+
+RETURN ( Self )
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+UTILITY STATIC function TTotalTurno_nTotVentas( cCaja, cSerie) ; local Self AS CLASS TTotalTurno := QSelf() AS CLASS TTotalTurno
+
+   local nTotVentas
+
+   nTotVentas  := ::nContadores
+   nTotVentas  += ::nTotAlbCliVentas( cCaja, cSerie )
+   nTotVentas  += ::nTotFacCliVentas( cCaja, cSerie )
+   nTotVentas  += ::nTotRctCliVentas( cCaja, cSerie )
+   nTotVentas  += ::nTotTikCliVentas( cCaja, cSerie )
+   nTotVentas  += ::nTotAntCliVentas( cCaja, cSerie )
+   nTotVentas  += ::nTotChkCliVentas( cCaja, cSerie )
+   nTotVentas  -= ::nTotDevCliVentas( cCaja, cSerie )
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+Return ( nTotVentas )
+
+
+
+UTILITY STATIC function TTotalTurno_nTotContadores( cCaja, cSerie) ; local Self AS CLASS TTotalTurno := QSelf() AS CLASS TTotalTurno
+
+   local nTotVentas
+
+   nTotVentas  := ::nContadores
+
+Return ( nTotVentas )
+
+
+
+UTILITY STATIC function TTotalTurno_nTotCompras( cCaja, cSerie) ; local Self AS CLASS TTotalTurno := QSelf() AS CLASS TTotalTurno
+
+   local nTotCompras
+
+   nTotCompras := ::nTotAlbPrvCompras( cCaja, cSerie )
+   nTotCompras += ::nTotFacPrvCompras( cCaja, cSerie )
+   nTotCompras += ::nTotRctPrvCompras( cCaja, cSerie )
+
+Return ( nTotCompras )
+
+
+
+
+
+
+UTILITY STATIC function TTotalTurno_nTotCobros( cCaja, cSerie) ; local Self AS CLASS TTotalTurno := QSelf() AS CLASS TTotalTurno
+
+   local nTotCobros
+
+   nTotCobros  := ::nTotContadores( cCaja, cSerie )
+   nTotCobros  += ::nTotTikCliCobros( cCaja, cSerie )
+   nTotCobros  += ::nTotChkCliCobros( cCaja, cSerie )
+   nTotCobros  += ::nTotFacCliCobros( cCaja, cSerie )
+   nTotCobros  += ::nTotRctCliCobros( cCaja, cSerie )
+   nTotCobros  += ::nTotAntCliVentas( cCaja, cSerie )
+   nTotCobros  -= ::nTotTikCliContadores( cCaja, cSerie )
+   nTotCobros  -= ::nTotFacCliContadores( cCaja, cSerie )
+   nTotCobros  -= ::nTotRctCliContadores( cCaja, cSerie )
+
+Return ( nTotCobros )
+
+
+
+UTILITY STATIC function TTotalTurno_nTotCobroSesion( cCaja, cSerie, lIncluirEntregas) ; local Self AS CLASS TTotalTurno := QSelf() AS CLASS TTotalTurno
+
+   local nTotCobro
+
+   IIF( lIncluirEntregas == nil, lIncluirEntregas := .T., ) ;
+
+   nTotCobro                  := ::nTotCobros( cCaja, cSerie )
+   nTotCobro                  += ::nTotAntCliVentas( cCaja, cSerie )
+   if lIncluirEntregas
+      nTotCobro               += ::nTotEntregas( cCaja, cSerie )
+   end
+
+Return ( nTotCobro )
+
+
+
+UTILITY STATIC function TTotalTurno_nDifCobros( cCaja, cSerie) ; local Self AS CLASS TTotalTurno := QSelf() AS CLASS TTotalTurno
+
+   local nDifCobros
+
+   nDifCobros  := ::nTotVentaContado( cCaja, cSerie )
+   nDifCobros  -= ::nTotCobroSesion( cCaja, cSerie, .F. )
+   nDifCobros  -= ::nTotEntradas( cCaja, cSerie )
+
+Return ( nDifCobros )
+
+
+
+UTILITY STATIC function TTotalTurno_nDifTotal( cCaja, cSerie) ; local Self AS CLASS TTotalTurno := QSelf() AS CLASS TTotalTurno
+
+   local nDifCobros
+
+   nDifCobros  := ::nTotVentaCredito( cCaja, cSerie )
+
+Return ( nDifCobros )
+
+
+
+UTILITY STATIC function TTotalTurno_nTotVentaContado( cCaja, cSerie) ; local Self AS CLASS TTotalTurno := QSelf() AS CLASS TTotalTurno
+
+   local nTotVentas
+
+   nTotVentas  := ::nContadores
+
+   nTotVentas  -= ::nTotAlbCliContadores( cCaja, cSerie )
+   nTotVentas  += ::nTotTikCliVentas( cCaja, cSerie )
+   nTotVentas  += ::nTotFacCliVentas( cCaja, cSerie )
+   nTotVentas  += ::nTotRctCliVentas( cCaja, cSerie )
+   nTotVentas  += ::nTotEntradas( cCaja, cSerie )
+   nTotVentas  += ::nTotAntCliVentas( cCaja, cSerie )
+   nTotVentas  += ::nTotChkCliVentas( cCaja, cSerie )
+   nTotVentas  -= ::nTotDevCliVentas( cCaja, cSerie )
+
+Return ( nTotVentas )
+
+
+
+UTILITY STATIC function TTotalTurno_nTotVentaCredito( cCaja, cSerie) ; local Self AS CLASS TTotalTurno := QSelf() AS CLASS TTotalTurno
+
+   local nTotVenta
+
+   nTotVenta   := ::nTotAlbCliContadores( cCaja, cSerie )
+   nTotVenta   += ::nTotAlbCliVentas( cCaja, cSerie )
+
+Return ( nTotVenta )
+
+
+
+UTILITY STATIC function TTotalTurno_nTotVentaSesion( cCaja, cSerie) ; local Self AS CLASS TTotalTurno := QSelf() AS CLASS TTotalTurno
+
+   local nTotMetalico
+
+   nTotMetalico      := ::nTotVentas( cCaja, cSerie )
+   nTotMetalico      -= ::nTotVentaCredito( cCaja, cSerie )
+   nTotMetalico      -= ::nDifCobros( cCaja, cSerie )
+   nTotMetalico      += ::nTotEntregas( cCaja, cSerie )
+   nTotMetalico      += ::nTotEntradas( cCaja, cSerie )
+
+Return ( nTotMetalico )
+
+
+
+UTILITY STATIC function TTotalTurno_nTotCaja( cCaja, cSerie) ; local Self AS CLASS TTotalTurno := QSelf() AS CLASS TTotalTurno
+
+   local nTotCaja
+
+   nTotCaja          := ::nTotTikCliCobros( cCaja, cSerie )
+   nTotCaja          += ::nTotFacCliCobros( cCaja, cSerie )
+   nTotCaja          += ::nTotRctCliCobros( cCaja, cSerie )
+   nTotCaja          += ::nTotEntregas( cCaja, cSerie )
+   nTotCaja          += ::nTotEntradas( cCaja, cSerie )
+   nTotCaja          += ::nTotAntCliVentas( cCaja, cSerie )
+   nTotCaja          -= ::nTotFacPrvPagos( cCaja, cSerie )
+   nTotCaja          -= ::nTotRctPrvPagos( cCaja, cSerie )
+   nTotCaja          += ::nContadores
+   nTotCaja          -= ::nTotAlbCliContadores( cCaja, cSerie )
+   nTotCaja          -= ::nTotFacCliContadores( cCaja, cSerie )
+   nTotCaja          -= ::nTotRctCliContadores( cCaja, cSerie )
+   nTotCaja          -= ::nTotTikCliContadores( cCaja, cSerie )
+
+Return ( nTotCaja )
+
+
+
+UTILITY STATIC function TTotalTurno_nTotNumeroAptCajon( cTurno) ; local Self AS CLASS TTotalTurno := QSelf() AS CLASS TTotalTurno
+
+   local oBlock
+   local oError
+   local nTotal         := 0
+
+   oBlock               := ErrorBlock( {| oError | ApoloBreak( oError ) } )
+   BEGIN SEQUENCE
+
+      if !Empty( ::oTurno )
+
+         if ::oTurno:oLogPorta:Seek( cTurno )
+
+            while ::oTurno:oLogPorta:cNumTur + ::oTurno:oLogPorta:cSufTur == cTurno .AND. ! ::oTurno:oLogPorta:eof()
+
+               nTotal   := nTotal + 1
+
+               ::oTurno:oLogPorta:Skip()
+
+            end
+
+         end
+
+      end
+
+   RECOVER USING oError
+
+      msgStop( ErrorMessage( oError ), "Error apertura log de cajón portamonedas" )
+
+   end
+
+   ErrorBlock( oBlock )
+
+Return ( nTotal )
+
+
+
+UTILITY STATIC function TTotalTurno_CreateTree( cCaja, cTurno) ; local Self AS CLASS TTotalTurno := QSelf() AS CLASS TTotalTurno
+
+   local aItem
+   local oTree
+   local aSubItem
+   local oTreeBancos
+   local nCont          := 0
+   local nSaldoTotal    := 0
+   local nSaldoActual   := 0
+
+   oTree                := TreeBegin( "Navigate_Minus_16", "Navigate_Plus_16" )
+
+
+
+
+
+   if ::nContadores <> 0
+      TreeAddItem( "Total contadores" ):Cargo := { "Total contadores", ::nContadores }
+   end
+
+
+
+
+
+   if ::nTotAlbCliVentas( cCaja ) <> 0
+
+      TreeAddItem( "Total albaranes" ):Cargo := { "Total albaranes", ::nTotAlbCliVentas( cCaja ) }
+
+      if !Empty( ::aDatAlbCliVentas )
+         TreeBegin()
+         for each aItem in ::aDatAlbCliVentas
+            if ( Empty( cCaja ) .OR. aItem[ 1 ] == cCaja )
+               TreeAddItem( AllTrim( aItem[ 3 ] ), "Detalles", , , , .F. ):Cargo := { aItem[ 3 ], aItem[ 4 ], aItem[ 5 ], aItem[ 6 ] }
+            end
+         next
+         TreeEnd()
+      end
+
+   end
+
+
+
+
+
+   if ::nTotFacCliVentas( cCaja ) <> 0
+
+      TreeAddItem( "Total facturas" ):Cargo := { "Total facturas", ::nTotFacCliVentas( cCaja ) }
+
+      if !Empty( ::aDatFacCliVentas )
+         TreeBegin()
+         for each aItem in ::aDatFacCliVentas
+            if ( Empty( cCaja ) .OR. aItem[ 1 ] == cCaja )
+               TreeAddItem( AllTrim( aItem[ 3 ] ), "Detalles", , , , .F. ):Cargo := { aItem[ 3 ], aItem[ 4 ], aItem[ 5 ], aItem[ 6 ] }
+            end
+         next
+         TreeEnd()
+      end
+
+   end
+
+
+
+
+
+   if ::nTotRctCliVentas( cCaja ) <> 0
+
+      TreeAddItem( "Total facturas rectificativas" ):Cargo := { "Total facturas rectificativas", ::nTotRctCliVentas( cCaja ) }
+
+      if !Empty( ::aDatRctCliVentas )
+         TreeBegin()
+         for each aItem in ::aDatRctCliVentas
+            if ( Empty( cCaja ) .OR. aItem[ 1 ] == cCaja )
+               TreeAddItem( AllTrim( aItem[ 3 ] ), "Detalles", , , , .F. ):Cargo := { aItem[ 3 ], aItem[ 4 ], aItem[ 5 ], aItem[ 6 ] }
+            end
+         next
+         TreeEnd()
+      end
+
+   end
+
+
+
+
+
+   if ::nTotAntCliVentas( cCaja ) <> 0
+      TreeAddItem( "Total anticipos" ):Cargo := { "Total anticipos", ::nTotAntCliVentas( cCaja ) }
+
+      if !Empty( ::aDatAntCliVentas )
+         TreeBegin()
+         for each aItem in ::aDatAntCliVentas
+            if ( Empty( cCaja ) .OR. aItem[ 1 ] == cCaja )
+               TreeAddItem( AllTrim( aItem[ 3 ] ), "Detalles", , , , .F. ):Cargo := { aItem[ 3 ], aItem[ 4 ], aItem[ 5 ], aItem[ 6 ] }
+            end
+         next
+         TreeEnd()
+      end
+   end
+
+
+
+
+
+   if ::nTotTikCliVentas( cCaja ) <> 0
+
+      TreeAddItem( "Total tickets" ):Cargo := { "Total tickets", ::nTotTikCliVentas( cCaja ) }
+
+      if !Empty( ::aDatTikCliVentas )
+         TreeBegin()
+         for each aItem in ::aDatTikCliVentas
+            if ( Empty( cCaja ) .OR. aItem[ 1 ] == cCaja )
+               TreeAddItem( AllTrim( aItem[ 3 ] ), "Detalles", , , , .F. ):Cargo := { aItem[ 3 ], aItem[ 4 ], aItem[ 5 ], aItem[ 6 ] }
+            end
+         next
+         TreeEnd()
+      end
+
+   end
+
+
+
+
+
+   if ::nTotTikCliCheques( cCaja ) <> 0
+
+      TreeAddItem( "Total cheques regalo" ):Cargo := { "Total cheques regalo", ::nTotTikCliCheques( cCaja ) }
+
+      if !Empty( ::aDatChkCliVentas )
+         TreeBegin()
+         for each aItem in ::aDatChkCliVentas
+            if ( Empty( cCaja ) .OR. aItem[ 1 ] == cCaja )
+               TreeAddItem( AllTrim( aItem[ 3 ] ), "Detalles", , , , .F. ):Cargo := { aItem[ 3 ], aItem[ 4 ], aItem[ 5 ], aItem[ 6 ] }
+            end
+         next
+         TreeEnd()
+      end
+
+   end
+
+
+
+
+
+   if ::nTotDevCliVentas( cCaja ) <> 0
+      TreeAddItem( "Total devoluciones" ):Cargo := { "Total devoluciones", ::nTotDevCliVentas( cCaja ) }
+
+      if !Empty( ::aDatDevCliVentas )
+         TreeBegin()
+         for each aItem in ::aDatDevCliVentas
+            if ( Empty( cCaja ) .OR. aItem[ 1 ] == cCaja )
+               TreeAddItem( AllTrim( aItem[ 3 ] ), "Detalles", , , , .F. ):Cargo := { aItem[ 3 ], aItem[ 4 ], aItem[ 5 ], aItem[ 6 ] }
+            end
+         next
+         TreeEnd()
+      end
+   end
+
+
+
+
+
+   TreeAddItem( "" ):Cargo := { Space( 3 ) + "TOTAL VENTAS" + Replicate( ".", 200 ), ::nTotVentas( cCaja ) }
+
+
+
+
+
+   if ::nTotCajaObjetivo( cCaja ) <> 0
+
+      TreeAddItem( "Total objetivo" ):Cargo        := { Space( 3 ) + "TOTAL OBJETIVO" + Replicate( ".", 200 ), ::nTotCajaObjetivo( cCaja ) }
+      TreeAddItem( "Diferencia objetivo" ):Cargo   := { Space( 3 ) + "Diferencia objetivo" + Replicate( ".", 200 ), ::nTotVentas( cCaja ) - ::nTotCajaObjetivo( cCaja ) }
+
+   end
+
+
+
+
+
+   TreeAddItem( "Espacio" ):Cargo := { "", 0 }
+
+
+
+
+
+   if ::nTotAlbPrvCompras( cCaja ) <> 0
+      TreeAddItem( "Total albaranes" ):Cargo := { "Total albaranes", ::nTotAlbPrvCompras( cCaja ) }
+
+      if !Empty( ::aDatAlbPrvCompras )
+         TreeBegin()
+         for each aItem in ::aDatAlbPrvCompras
+            if ( Empty( cCaja ) .OR. aItem[ 1 ] == cCaja )
+               TreeAddItem( AllTrim( aItem[ 3 ] ), "Detalles", , , , .F. ):Cargo := { aItem[ 3 ], aItem[ 4 ], aItem[ 5 ], aItem[ 6 ] }
+            end
+         next
+         TreeEnd()
+      end
+
+   end
+
+
+
+
+
+   if ::nTotFacPrvCompras( cCaja ) <> 0
+      TreeAddItem( "Total facturas" ):Cargo := { "Total facturas", ::nTotFacPrvCompras( cCaja ) }
+
+      if !Empty( ::aDatFacPrvCompras )
+         TreeBegin()
+         for each aItem in ::aDatFacPrvCompras
+            if ( Empty( cCaja ) .OR. aItem[ 1 ] == cCaja )
+               TreeAddItem( AllTrim( aItem[ 3 ] ), "Detalles", , , , .F. ):Cargo := { aItem[ 3 ], aItem[ 4 ], aItem[ 5 ], aItem[ 6 ] }
+            end
+         next
+         TreeEnd()
+      end
+
+   end
+
+
+
+
+
+   if ::nTotRctPrvCompras( cCaja ) <> 0
+      TreeAddItem( "Total facturas rectificativas" ):Cargo := { "Total facturas rectificativas", ::nTotRctPrvCompras( cCaja ) }
+
+      if !Empty( ::aDatRctPrvCompras )
+         TreeBegin()
+         for each aItem in ::aDatRctPrvCompras
+            if ( Empty( cCaja ) .OR. aItem[ 1 ] == cCaja )
+               TreeAddItem( AllTrim( aItem[ 3 ] ), "Detalles", , , , .F. ):Cargo := { aItem[ 3 ], aItem[ 4 ], aItem[ 5 ], aItem[ 6 ] }
+            end
+         next
+         TreeEnd()
+      end
+
+   end
+
+
+
+
+
+   TreeAddItem( "" ):Cargo := { Space( 3 ) + "TOTAL COMPRAS" + Replicate( ".", 200 ), ::nTotCompras( cCaja ) }
+
+
+
+
+
+   TreeAddItem( "Espacio" ):Cargo := { "", 0 }
+
+
+
+
+
+   if ::nTotPedCliEntregas( cCaja ) <> 0
+      TreeAddItem( "Total entregas en pedidos" ):Cargo := { "Entregas pedidos", ::nTotPedCliEntregas( cCaja ) }
+
+      if !Empty( ::aDatPedCliEntregas )
+         TreeBegin()
+         for each aItem in ::aDatPedCliEntregas
+            if ( Empty( cCaja ) .OR. aItem[ 1 ] == cCaja )
+               TreeAddItem( AllTrim( aItem[ 3 ] ), "Detalles", , , , .F. ):Cargo := { aItem[ 3 ], aItem[ 4 ], aItem[ 5 ], aItem[ 6 ] }
+            end
+         next
+         TreeEnd()
+      end
+   end
+
+
+
+
+
+   if ::nTotAlbCliEntregas( cCaja ) <> 0
+
+      TreeAddItem( "Total entregas en albaranes" ):Cargo := { "Entregas albaranes", ::nTotAlbCliEntregas( cCaja ) }
+
+      if !Empty( ::aDatAlbCliEntregas )
+         TreeBegin()
+         for each aItem in ::aDatAlbCliEntregas
+            if ( Empty( cCaja ) .OR. aItem[ 1 ] == cCaja )
+               TreeAddItem( AllTrim( aItem[ 3 ] ), "Detalles", , , , .F. ):Cargo := { aItem[ 3 ], aItem[ 4 ], aItem[ 5 ], aItem[ 6 ] }
+            end
+         next
+         TreeEnd()
+      end
+
+   end
+
+
+
+
+
+
+   if ::nTotTikCliCobros( cCaja ) <> 0
+
+      TreeAddItem( "Total tickets" ):Cargo := { "Cobros tickets", ::nTotTikCliCobros( cCaja ) }
+
+      if !Empty( ::aDatTikCliCobros )
+         TreeBegin()
+         for each aItem in ::aDatTikCliCobros
+            if ( Empty( cCaja ) .OR. aItem[ 1 ] == cCaja )
+               TreeAddItem( AllTrim( aItem[ 3 ] ), "Detalles", , , , .F. ):Cargo := { aItem[ 3 ], aItem[ 4 ], aItem[ 5 ], aItem[ 6 ] }
+            end
+         next
+         TreeEnd()
+      end
+
+   end
+
+
+
+
+
+   if ::nTotFacCliCobros( cCaja ) <> 0
+      TreeAddItem( "Total Facturas" ):Cargo := { "Cobros facturas", ::nTotFacCliCobros( cCaja ) }
+
+      if !Empty( ::aDatFacCliCobros )
+         TreeBegin()
+         for each aItem in ::aDatFacCliCobros
+            if ( Empty( cCaja ) .OR. aItem[ 1 ] == cCaja )
+               TreeAddItem( AllTrim( aItem[ 3 ] ), "Detalles", , , , .F. ):Cargo := { aItem[ 3 ], aItem[ 4 ], aItem[ 5 ], aItem[ 6 ] }
+            end
+         next
+         TreeEnd()
+      end
+   end
+
+
+
+
+
+   nCont       := ::nContadores
+   nCont       -= ::nTotAlbCliContadores( cCaja )
+   nCont       -= ::nTotFacCliContadores( cCaja )
+   nCont       -= ::nTotTikCliContadores( cCaja )
+
+   if nCont > 0
+      TreeAddItem( "Contadores" ):Cargo := { "Total contadores", nCont }
+   end
+
+
+
+
+
+   if ::nTotEntradas( cCaja ) <> 0
+
+      TreeAddItem( "Total Entradas" ):Cargo := { "Entradas y salidas", ::nTotEntradas( cCaja ) }
+
+      if !Empty( ::aDatEntradas )
+         TreeBegin()
+         for each aItem in ::aDatEntradas
+            if ( Empty( cCaja ) .OR. aItem[ 1 ] == cCaja )
+               TreeAddItem( AllTrim( aItem[ 3 ] ), "Detalles", , , , .F. ):Cargo := { aItem[ 3 ], aItem[ 4 ], aItem[ 5 ], aItem[ 6 ] }
+            end
+         next
+         TreeEnd()
+      end
+
+   end
+
+
+
+
+
+   if ::nTotFacPrvPagos( cCaja ) <> 0
+
+      TreeAddItem( "Total Pagos" ):Cargo := { "Pagos facturas", ::nTotFacPrvPagos( cCaja ) }
+
+      if !Empty( ::aDatFacPrvPagos )
+         TreeBegin()
+         for each aItem in ::aDatFacPrvPagos
+            if ( Empty( cCaja ) .OR. aItem[ 1 ] == cCaja )
+               TreeAddItem( AllTrim( aItem[ 3 ] ), "Detalles", , , , .F. ):Cargo := { aItem[ 3 ], aItem[ 4 ], aItem[ 5 ], aItem[ 6 ] }
+            end
+         next
+         TreeEnd()
+      end
+
+   end
+
+
+
+
+
+   TreeAddItem( "" ):Cargo := { Space( 3 ) + "TOTAL OPERACIONES DE CAJA" + Replicate( ".", 200 ), ::nTotCaja( cCaja ) }
+
+
+
+
+
+   if ::nTotCobroEfectivo( cCaja ) <> 0 .OR. ::nTotPagoEfectivo( cCaja ) <> 0
+      TreeAddItem( "Espacio" ):Cargo := { "", 0 }
+   end
+
+
+
+
+
+   if ::nTotCobroEfectivo( cCaja ) <> 0
+
+      TreeAddItem( "Total cobros efectivo" ):Cargo := { "Total cobros efectivo", ::nTotCobroEfectivo( cCaja ) + nCont }
+
+      if !Empty( ::aDatCobroEfectivo )
+
+         TreeBegin()
+
+         for each aItem in ::aDatCobroEfectivo
+            if ( Empty( cCaja ) .OR. aItem[ 1 ] == cCaja )
+               TreeAddItem( AllTrim( aItem[ 3 ] ), "Detalles", , , , .F. ):Cargo := { aItem[ 3 ], aItem[ 4 ], aItem[ 5 ], aItem[ 6 ] }
+            end
+         next
+
+         if nCont > 0
+            TreeAddItem( "Contadores", "Detalles", , , , .F. ):Cargo := { "Contadores", nCont }
+         end
+
+         TreeEnd()
+
+      end
+
+   end
+
+
+
+
+
+   if ::nTotPagoEfectivo( cCaja ) <> 0
+
+      TreeAddItem( "Total pagos efectivo" ):Cargo := { "Total pagos efectivo", ::nTotPagoEfectivo( cCaja ) }
+
+      if !Empty( ::aDatpagoEfectivo )
+
+         TreeBegin()
+
+         for each aItem in ::aDatPagoEfectivo
+            if ( Empty( cCaja ) .OR. aItem[ 1 ] == cCaja )
+               TreeAddItem( AllTrim( aItem[ 3 ] ), "Detalles", , , , .F. ):Cargo := { aItem[ 3 ], aItem[ 4 ], aItem[ 5 ], aItem[ 6 ] }
+            end
+         next
+
+         TreeEnd()
+
+      end
+
+   end
+
+
+
+
+
+   if ::nTotCobroEfectivo( cCaja ) <> 0 .OR. ::nTotPagoEfectivo( cCaja ) <> 0
+      TreeAddItem( "Total saldo efectivo" ):Cargo := { "Total saldo efectivo", ::nTotSaldoEfectivo( cCaja ) }
+   end
+
+
+
+
+
+   if ::nTotCobroNoEfectivo( cCaja ) <> 0 .OR. ::nTotPagoNoEfectivo( cCaja ) <> 0
+      TreeAddItem( "Espacio" ):Cargo := { "", 0 }
+   end
+
+
+
+
+
+   if ::nTotCobroNoEfectivo( cCaja ) <> 0
+
+      TreeAddItem( "Total cobros no efectivo" ):Cargo := { "Total cobros no efectivo", ::nTotCobroNoEfectivo( cCaja ) + nCont }
+
+      if !Empty( ::aDatCobroNoEfectivo )
+
+         TreeBegin()
+
+         for each aItem in ::aDatCobroNoEfectivo
+            if ( Empty( cCaja ) .OR. aItem[ 1 ] == cCaja )
+               TreeAddItem( AllTrim( aItem[ 3 ] ), "Detalles", , , , .F. ):Cargo := { aItem[ 3 ], aItem[ 4 ], aItem[ 5 ], aItem[ 6 ] }
+            end
+         next
+
+         TreeEnd()
+
+      end
+
+   end
+
+
+
+
+
+   if ::nTotBancos( cCaja ) <> 0
+
+      TreeAddItem( "Total operaciones cuentas bancarias", , , , , .T. ):Cargo := { "Total operaciones cuentas bancarias", ::nTotBancos( cCaja ) + nCont }
+
+      if !Empty( ::aTotBancos )
+
+         TreeBegin()
+
+         for each aItem in ::aTotBancos
+
+            if ( Empty( cCaja ) .OR. aItem[ 1 ] == cCaja )
+
+               TreeAddItem( aItem[ 2 ] ):Cargo := { Space( 3 ) + "Operaciones cuenta bancaria : " + Alltrim( aItem[ 2 ] ), aItem[ 3 ], "", "" }
+
+               if !Empty( ::aDatBancos )
+
+                  TreeBegin()
+
+                  for each aSubItem in ::aDatBancos
+
+                     if ( ( Empty( cCaja ) .OR. aSubItem[ 1 ] == cCaja ) .AND. ( aSubItem[ 2 ] == aItem[ 2 ] ) )
+
+                        TreeAddItem( AllTrim( aSubItem[ 3 ] ), "Detalles", , , , .F. ):Cargo := { aSubItem[ 3 ], aSubItem[ 4 ], aSubItem[ 5 ], aSubItem[ 6 ] }
+
+                     end
+
+                  next
+
+                  TreeEnd()
+
+               end
+
+               if !Empty( ::oTurno )
+                  nSaldoActual   := ::oTurno:oCuentasBancarias:nSaldoActual( aItem[ 2 ] )
+                  nSaldoTotal    += nSaldoActual
+               end
+
+               TreeAddItem( aItem[ 2 ] ):Cargo := { Space( 3 ) + "Saldo actual cuenta bancaria " + Alltrim( aItem[ 2 ] ), nSaldoActual, "", "" }
+
+            end
+
+         next
+
+         TreeEnd()
+
+      end
+
+      TreeAddItem( "Total saldos cuentas bancarias" ):Cargo := { "Total saldos cuentas bancarias", nSaldoTotal }
+
+   end
+
+
+
+
+
+   if ::nTotPagoNoEfectivo( cCaja ) <> 0
+
+      TreeAddItem( "Total pagos no efectivo" ):Cargo := { "Total pagos no efectivo", ::nTotPagoNoEfectivo( cCaja ) }
+
+      if !Empty( ::aDatPagoNoEfectivo )
+
+         TreeBegin()
+
+         for each aItem in ::aDatPagoNoEfectivo
+            if ( Empty( cCaja ) .OR. aItem[ 1 ] == cCaja )
+               TreeAddItem( AllTrim( aItem[ 3 ] ), "Detalles", , , , .F. ):Cargo := { aItem[ 3 ], aItem[ 4 ], aItem[ 5 ], aItem[ 6 ] }
+            end
+         next
+
+         TreeEnd()
+
+      end
+
+   end
+
+
+
+
+
+   if ::nTotCobroNoEfectivo( cCaja ) <> 0 .OR. ::nTotPagoNoEfectivo( cCaja ) <> 0
+      TreeAddItem( "Total saldo no efectivo" ):Cargo := { "Total saldo no efectivo", ::nTotSaldoNoEfectivo( cCaja ) }
+   end
+
+
+
+
+
+   if ::nTotCobroTarjeta( cCaja ) <> 0 .OR. ::nTotPagoTarjeta( cCaja ) <> 0
+      TreeAddItem( "Espacio" ):Cargo := { "", 0 }
+   end
+
+
+
+
+
+   if ::nTotCobroTarjeta( cCaja ) <> 0
+
+      TreeAddItem( "Total cobros tarjeta" ):Cargo := { "Total cobros tarjeta", ::nTotCobrotarjeta( cCaja ) }
+
+      if !Empty( ::aDatCobroTarjeta )
+         TreeBegin()
+         for each aItem in ::aDatCobroTarjeta
+            if ( Empty( cCaja ) .OR. aItem[ 1 ] == cCaja )
+               TreeAddItem( AllTrim( aItem[ 3 ] ), "Detalles", , , , .F. ):Cargo := { aItem[ 3 ], aItem[ 4 ], aItem[ 5 ], aItem[ 6 ] }
+            end
+         next
+         TreeEnd()
+      end
+
+   end
+
+
+
+
+
+   if ::nTotPagoTarjeta( cCaja ) <> 0
+
+      TreeAddItem( "Total pagos tarjeta" ):Cargo := { "Total pagos tarjeta", ::nTotPagotarjeta( cCaja ) }
+
+      if !Empty( ::aDatPagoTarjeta )
+         TreeBegin()
+         for each aItem in ::aDatPagoTarjeta
+            if ( Empty( cCaja ) .OR. aItem[ 1 ] == cCaja )
+               TreeAddItem( AllTrim( aItem[ 3 ] ), "Detalles", , , , .F. ):Cargo := { aItem[ 3 ], aItem[ 4 ], aItem[ 5 ], aItem[ 6 ] }
+            end
+         next
+         TreeEnd()
+      end
+   end
+
+
+
+
+
+   if ::nTotCobroTarjeta( cCaja ) <> 0 .OR. ::nTotPagoTarjeta( cCaja ) <> 0
+      TreeAddItem( "Total saldo tarjeta" ):Cargo := { "Total saldo tarjeta", ::nTotSaldoTarjeta( cCaja ) }
+   end
+
+
+
+
+
+   TreeAddItem( "Espacio" ):Cargo := { "", 0 }
+
+   if ::nTotNumeroAlbaranes( cCaja ) <> 0
+      TreeAddItem( "Número de albaranes" ):Cargo := { "Número de albaranes", ::nTotNumeroAlbaranes( cCaja )  }
+   end
+
+   if ::nTotNumeroFacturas( cCaja ) <> 0
+      TreeAddItem( "Número de facturas" ):Cargo := { "Número de facturas", ::nTotNumeroFacturas( cCaja )  }
+   end
+
+   if ::nTotNumeroTikets( cCaja ) <> 0
+      TreeAddItem( "Número de tickets" ):Cargo := { "Número de tickets", ::nTotNumeroTikets( cCaja )  }
+   end
+
+   if ::nTotNumeroCheques( cCaja ) <> 0
+      TreeAddItem( "Número de cheques regalo" ):Cargo := { "Número de cheques regalo", ::nTotNumeroCheques( cCaja )  }
+   end
+
+   if ::nTotNumeroVales( cCaja ) <> 0
+      TreeAddItem( "Número de vales" ):Cargo := { "Número de vales", ::nTotNumeroVales( cCaja )  }
+   end
+
+   if ::nTotNumeroDevoluciones( cCaja ) <> 0
+      TreeAddItem( "Número de devoluciones" ):Cargo := { "Número de devoluciones", ::nTotNumeroDevoluciones( cCaja )  }
+   end
+
+   if ::nTotNumeroAptCajon( cTurno ) <> 0
+      TreeAddItem( "Número de aperturas de cajón" ):Cargo := { "Número de apertura de cajón", ::nTotNumeroAptCajon( cTurno )  }
+   end
+
+   TreeEnd()
+
+Return ( oTree )
+
+
+
+Static Function nImporte( cCaja, cSerie, aData, lAbs )
+
+   local nImporte    := 0
+
+   IIF( lAbs == nil, lAbs := .F., ) ;
+
+   aEval( aData, {|a| if( ( Empty( cCaja ) .OR. a[ 1 ] == cCaja ) .AND. ( Empty( cSerie ) .OR. a[ 2 ] == cSerie ), if( IsNum( a[ 3 ] ), nImporte += a[ 3 ], ), ) } )
+
+Return ( if( lAbs, Abs( nImporte ), nImporte ) )
+
+
+
+Static Function nNumero( cCaja, aData )
+
+   local nContador   := 0
+
+   aEval( aData, {|a| if( Empty( cCaja ) .OR. a[ 1 ] == cCaja, nContador += a[ 2 ], ) } )
+
+Return ( nContador )
+
+
+
+
+
+function TreeBegin( cBmpOpen, cBmpClose )
+
+   local oTree    := TLinkList()
+
+   if ! Empty( cBmpOpen )
+      hBmpOpen    := LoadBitmap( GetResources(), cBmpOpen )
+   endif
+
+   if ! Empty( cBmpClose )
+      hBmpClose   := LoadBitmap( GetResources(), cBmpClose )
+   endif
+
+   AAdd( aTrees, oTree )
+
+   nLevel++
+
+return oTree
+
+
+
+function TreeAddItem( cPrompt, cResName1, cResName2, cBmpOpen, cBmpClose, lOpened )
+
+   local hBmpOpen, hBmpClose
+
+   if ! Empty( cResName1 )
+      hBmpOpen    := LoadBitmap( GetResources(), cResName1 )
+      hBmpClose   := hBmpOpen
+   endif
+
+   if ! Empty( cResName2 )
+      hBmpClose   := LoadBitmap( GetResources(), cResName2 )
+   endif
+
+   if ! Empty( cBmpOpen )
+      hBmpOpen    := ReadBitmap( 0, cBmpOpen )
+      hBmpClose   := hBmpOpen
+   endif
+
+   if ! Empty( cBmpClose )
+      hBmpClose   := ReadBitmap( 0, cBmpClose )
+   endif
+
+return ATail( aTrees ):Add( cPrompt, nLevel, hBmpOpen, hBmpClose, lOpened )
+
+
+
+function TreeEnd()
+
+   local oItem
+   local oTree    := ATail( aTrees )
+
+   if Len( aTrees ) > 1
+
+      ASize( aTrees, Len( aTrees ) - 1 )
+
+      oItem       := ATail( aTrees ):oLast
+      oItem:oTree := oTree
+
+      if oItem:hBmpOpen == nil
+         oItem:hBmpOpen := hBmpOpen
+      endif
+
+      if oItem:hBmpClose == nil
+         oItem:hBmpClose := hBmpClose
+      endif
+
+      oTree:oFirst:oPrev := ATail( aTrees ):oLast
+
+   else
+
+      aTrees   := {}
+
+   endif
+
+   nLevel--
+
+return nil

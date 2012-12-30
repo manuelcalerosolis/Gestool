@@ -1,0 +1,304 @@
+#line 112 "hbclass.ch"
+   DYNAMIC DivertConstructorCall
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+DECLARE HBClass  New( cName AS String, OPTIONAL SuperParams ) AS CLASS HBClass  Create() AS Object  Instance() AS Object  AddClsMethod( cName AS String, @MethodName(), nScope AS Numeric, n2 AS Numeric, n3 AS Numeric )  AddDelegate( cName AS String, cDelegate AS String, cObject AS String, nScope AS Numeric, lPersistent AS LOGICAL )  AddMultiClsData( cType AS String, uVal, nScope AS Numeric, aDatas AS Array OF String )  AddMultiData( cType AS String, uVal, nScope AS Numeric, aDatas AS Array OF String, x AS LOGICAL, lPer AS LOGICAL )  AddMethod( cName AS String, @MethodName(), nScope AS Numeric, lPersistent AS LOGICAL )  AddInLine( cName AS String, bBlock AS CodeBlock, nScope AS Numeric, lPersistent AS LOGICAL )  AddVirtual( cName AS String )  ModMethod( cName AS String, @MethodName(), nScope AS Numeric, lPersistent AS LOGICAL )  ModClsMethod( cName AS String, @MethodName(), nScope AS Numeric )  ModInline( cName AS String, bBlock AS CodeBlock, nScope AS Numeric, lPersistent AS LOGICAL )  SetOnError( @MethodName() )
+#line 85 "\Fwh1204\Include\FiveWin.Ch"
+   EXTERNAL GetProcAdd
+   EXTERNAL TActiveX
+
+
+
+
+extern errorsys
+#line 8 ".\Prg\Tclidifa.prg"
+FUNCTION TCliDiFa()
+
+   local oInf
+   local aCol  := {}
+   local aIdx  := {}
+
+   aAdd( aCol, { "CCODCLI", "C", 12, 0, {|| "@!" },         "Cli",                       .F., "Cod. Cliente",                8 } )
+   aAdd( aCol, { "CNOMCLI", "C", 50, 0, {|| "@!" },         "Nom",                       .F., "Nombre Cliente",             25 } )
+   aAdd( aCol, { "CDOCMOV", "C", 14, 0, {|| "@!" },         "Fac",                       .T., "Factura",                    14 } )
+   aAdd( aCol, { "DFECMOV", "D",  8, 0, {|| "@!" },         "Fecha",                     .T., "Fecha",                       8 } )
+   aAdd( aCol, { "CNIFCLI", "C", 15, 0, {|| "@!" },         "Nif",                       .F., "Nif",                        12 } )
+   aAdd( aCol, { "CDOMCLI", "C", 35, 0, {|| "@!" },         "Dom",                       .F., "Domicilio",                  20 } )
+   aAdd( aCol, { "CPOBCLI", "C", 35, 0, {|| "@!" },         "Pob",                       .F., "Población",                  25 } )
+   aAdd( aCol, { "CPROCLI", "C", 20, 0, {|| "@!" },         "Prov",                      .F., "Provincia",                  20 } )
+   aAdd( aCol, { "CCDPCLI", "C",  7, 0, {|| "@!" },         "CP",                        .F., "Cod. Postal",                 7 } )
+   aAdd( aCol, { "CTLFCLI", "C", 12, 0, {|| "@!" },         "Tlf",                       .F., "Teléfono",                   12 } )
+   aAdd( aCol, { "CDEFI01", "C",100, 0, {|| "@!" },         {|| oInf:cNameIniCli(1) },   .F., {|| oInf:cNameIniCli(1) },    50 } )
+   aAdd( aCol, { "CDEFI02", "C",100, 0, {|| "@!" },         {|| oInf:cNameIniCli(2) },   .F., {|| oInf:cNameIniCli(2) },    50 } )
+   aAdd( aCol, { "CDEFI03", "C",100, 0, {|| "@!" },         {|| oInf:cNameIniCli(3) },   .F., {|| oInf:cNameIniCli(3) },    50 } )
+   aAdd( aCol, { "CDEFI04", "C",100, 0, {|| "@!" },         {|| oInf:cNameIniCli(4) },   .F., {|| oInf:cNameIniCli(4) },    50 } )
+   aAdd( aCol, { "CDEFI05", "C",100, 0, {|| "@!" },         {|| oInf:cNameIniCli(5) },   .F., {|| oInf:cNameIniCli(5) },    50 } )
+   aAdd( aCol, { "CDEFI06", "C",100, 0, {|| "@!" },         {|| oInf:cNameIniCli(6) },   .F., {|| oInf:cNameIniCli(6) },    50 } )
+   aAdd( aCol, { "CDEFI07", "C",100, 0, {|| "@!" },         {|| oInf:cNameIniCli(7) },   .F., {|| oInf:cNameIniCli(7) },    50 } )
+   aAdd( aCol, { "CDEFI08", "C",100, 0, {|| "@!" },         {|| oInf:cNameIniCli(8) },   .F., {|| oInf:cNameIniCli(8) },    50 } )
+   aAdd( aCol, { "CDEFI09", "C",100, 0, {|| "@!" },         {|| oInf:cNameIniCli(9) },   .F., {|| oInf:cNameIniCli(9) },    50 } )
+   aAdd( aCol, { "CDEFI10", "C",100, 0, {|| "@!" },         {|| oInf:cNameIniCli(10)},   .F., {|| oInf:cNameIniCli(10)},    50 } )
+   aAdd( aCol, { "NTOTNET", "N", 16, 6, {|| oInf:cPicOut  },"Neto",                      .T., "Neto",                       12 } )
+   aAdd( aCol, { "NTOTIVA", "N", 16, 6, {|| oInf:cPicOut  },cImp(),                       .T., cImp(),                        12 } )
+   aAdd( aCol, { "NTOTREQ", "N", 16, 3, {|| oInf:cPicOut  },"Rec",                       .T., "Rec",                        12 } )
+   aAdd( aCol, { "NTOTPNT", "N", 16, 6, {|| oInf:cPicOut }, "P.V.",                      .T., "Punto verde",                12 } )
+   aAdd( aCol, { "NTOTDOC", "N", 16, 6, {|| oInf:cPicOut }, "Total",                     .T., "Total",                      12 } )
+   aAdd( aCol, { "NCOMAGE", "N", 13, 6, {|| oInf:cPicOut }, "Com.Age.",                  .T., "Comisión Agente",            12 } )
+   aAdd( aCol, { "CTIPVEN", "C", 20, 0, {|| "@!" },         "Venta",                     .F., "Tipo de Venta",              20 } )
+
+   aAdd( aIdx, { "CCODCLI", "CCODCLI" } )
+
+   oInf  := TCliDiInf():New( "Informe detallado de facturas de clientes ordenado por numero de factura", aCol, aIdx, "01045" )
+
+   oInf:AddGroup( {|| oInf:oDbf:cCodCli },                     {|| "Cliente  : " + Rtrim( oInf:oDbf:cCodCli ) + "-" + oRetFld( oInf:oDbf:cCodCli, oInf:oDbfCli ) } )
+
+   oInf:Resource()
+   oInf:Activate()
+
+   oInf:End()
+   oInf  := nil
+
+RETURN NIL
+
+
+
+_HB_CLASS TCliDiInf ; UTILITY FUNCTION TCliDiInf(...); static s_oClass ; local oClassInstance ; local nScope ; nScope := 1 ; if s_oClass == NIL ; s_oClass := IIF(.F.,, HBClass():New( "TCliDiInf" , {TInfGen():classh} ) ) ; ;
+
+   _HB_MEMBER {AS LOGIC lExcCero} ; IIF( !.F., s_oClass:AddMultiData( "LOGIC", .F., nScope + IIF( .F., 32, 0 ), { "lExcCero" }, .F., .F. ), )
+   _HB_MEMBER {AS OBJECT oEstado} ; IIF( !.F., s_oClass:AddMultiData( "OBJECT",, nScope + IIF( .F., 32, 0 ), { "oEstado" }, .F., .F. ), )
+   _HB_MEMBER {AS OBJECT oDbfIva} ; IIF( !.F., s_oClass:AddMultiData( "OBJECT",, nScope + IIF( .F., 32, 0 ), { "oDbfIva" }, .F., .F. ), )
+   _HB_MEMBER {AS OBJECT oFacCliP} ; IIF( !.F., s_oClass:AddMultiData( "OBJECT",, nScope + IIF( .F., 32, 0 ), { "oFacCliP" }, .F., .F. ), )
+   _HB_MEMBER {AS OBJECT oFacCliT} ; IIF( !.F., s_oClass:AddMultiData( "OBJECT",, nScope + IIF( .F., 32, 0 ), { "oFacCliT" }, .F., .F. ), )
+   _HB_MEMBER {AS OBJECT oFacCliL} ; IIF( !.F., s_oClass:AddMultiData( "OBJECT",, nScope + IIF( .F., 32, 0 ), { "oFacCliL" }, .F., .F. ), )
+   _HB_MEMBER {AS OBJECT oDbfTvta} ; IIF( !.F., s_oClass:AddMultiData( "OBJECT",, nScope + IIF( .F., 32, 0 ), { "oDbfTvta" }, .F., .F. ), )
+   _HB_MEMBER {AS OBJECT oDbfCli} ; IIF( !.F., s_oClass:AddMultiData( "OBJECT",, nScope + IIF( .F., 32, 0 ), { "oDbfCli" }, .F., .F. ), )
+   _HB_MEMBER {AS ARRAY aEstado} ; IIF( !.F., s_oClass:AddMultiData( "ARRAY", { "Pendiente", "Liquidada", "Todas" }, nScope + IIF( .F., 32, 0 ), { "aEstado" }, .F., .F. ), )
+
+   _HB_MEMBER OpenFiles(); IIF( .F., s_oClass:ModMethod( "OpenFiles", @TCliDiInf_OpenFiles(), nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ), s_oClass:AddMethod( "OpenFiles", @TCliDiInf_OpenFiles(), nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ));
+
+   _HB_MEMBER CloseFiles(); IIF( .F., s_oClass:ModMethod( "CloseFiles", @TCliDiInf_CloseFiles(), nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ), s_oClass:AddMethod( "CloseFiles", @TCliDiInf_CloseFiles(), nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ));
+
+   _HB_MEMBER Resource( cFld); IIF( .F., s_oClass:ModMethod( "Resource", @TCliDiInf_Resource(), nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ), s_oClass:AddMethod( "Resource", @TCliDiInf_Resource(), nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ));
+
+   _HB_MEMBER lGenerate(); IIF( .F., s_oClass:ModMethod( "lGenerate", @TCliDiInf_lGenerate(), nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ), s_oClass:AddMethod( "lGenerate", @TCliDiInf_lGenerate(), nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ));
+
+; IF .F. ; __clsActive(s_oClass:hClass) ; s_oClass:Refresh() ; ELSE ; s_oClass:Create() ; END ; oClassInstance := __clsInst( s_oClass:hClass ) ; IF __ObjHasMsg( oClassInstance, "InitClass" ); oClassInstance:InitClass( hb_aParams() ) ; END ; ELSE ; oClassInstance := __clsInst( s_oClass:hClass ) ; END ; IF PCount() > 0 ; DIVERT TO (@DivertConstructorCall()) OF s_oClass ; END ; RETURN oClassInstance AS CLASS TCliDiInf ;
+
+
+
+UTILITY STATIC function TCliDiInf_OpenFiles() ; local Self AS CLASS TCliDiInf := QSelf() AS CLASS TCliDiInf
+
+  local oBlock
+  local oError
+  local lOpen := .T.
+
+
+
+
+
+   oBlock   := ErrorBlock( {| oError | ApoloBreak( oError ) } )
+   BEGIN SEQUENCE
+
+   ::oFacCliT := DbfServer( "FACCLIT.DBF", ):NewOpen( "FACCLIT.DBF",, ( cDriver() ),, ( cPatEmp() ), .F., .T., .F., .F. ) ; ::oFacCliT:AddBag( "FACCLIT.CDX" ) ; ::oFacCliT:AddBag( ) ; ::oFacCliT:AutoIndex()
+   ::oFacCliT:SetOrder( "DFECFAC" )
+
+   ::oFacCliL := DbfServer( "FACCLIL.DBF", ):NewOpen( "FACCLIL.DBF",, ( cDriver() ),, ( cPatEmp() ), .F., .T., .F., .F. ) ; ::oFacCliL:AddBag( "FACCLIL.CDX" ) ; ::oFacCliL:AddBag( ) ; ::oFacCliL:AutoIndex()
+
+   ::oDbfIva := DbfServer( "TIVA.DBF", ):NewOpen( "TIVA.DBF",, ( cDriver() ),, ( cPatDat() ), .F., .T., .F., .F. ) ; ::oDbfIva:AddBag( "TIVA.CDX" ) ; ::oDbfIva:AddBag( ) ; ::oDbfIva:AutoIndex()
+
+   ::oFacCliP := DbfServer( "FACCLIP.DBF", ):NewOpen( "FACCLIP.DBF",, ( cDriver() ),, ( cPatEmp() ), .F., .T., .F., .F. ) ; ::oFacCliP:AddBag( "FACCLIP.CDX" ) ; ::oFacCliP:AddBag( ) ; ::oFacCliP:AutoIndex()
+
+   ::oDbfTvta := DbfServer( "TVTA.DBF", ):NewOpen( "TVTA.DBF",, ( cDriver() ),, ( cPatDat() ), .F., .T., .F., .F. ) ; ::oDbfTvta:AddBag( "TVTA.CDX" ) ; ::oDbfTvta:AddBag( ) ; ::oDbfTvta:AutoIndex()
+
+   ::oAntCliT := DbfServer( "ANTCLIT.DBF", ):NewOpen( "ANTCLIT.DBF",, ( cDriver() ),, ( cPatEmp() ), .F., .T., .F., .F. ) ; ::oAntCliT:AddBag( "ANTCLIT.CDX" ) ; ::oAntCliT:AddBag( ) ; ::oAntCliT:AutoIndex()
+
+   RECOVER USING oError
+
+      lOpen := .F.
+
+      msgStop( "Imposible abrir todas las bases de datos" )
+      ::CloseFiles()
+
+   end
+
+   ErrorBlock( oBlock )
+
+RETURN ( lOpen )
+
+
+
+UTILITY STATIC function TCliDiInf_CloseFiles() ; local Self AS CLASS TCliDiInf := QSelf() AS CLASS TCliDiInf
+
+   ::oFacCliT:End()
+   ::oFacCliL:End()
+   ::oDbfTvta:End()
+   ::oDbfCli:End()
+   ::oDbfIva:End()
+   ::oFacCliP:End()
+   ::oAntCliT:End()
+
+RETURN ( Self )
+
+
+
+UTILITY STATIC function TCliDiInf_Resource( cFld) ; local Self AS CLASS TCliDiInf := QSelf() AS CLASS TCliDiInf
+
+   local cEstado := "Todas"
+
+   if !::StdResource( "INF_GEN05" )
+      return .F.
+   end
+
+
+
+
+
+   ::oDefCliInf( 70, 80, 90, 100 )
+
+
+
+
+
+   ::lDefArtInf( 110, 120, 130, 140 )
+
+
+
+
+
+   ::oMtrInf:SetTotal( ::oFacCliT:Lastrec() )
+
+   ::oDefExcInf()
+
+   ::oDefResInf()
+
+
+
+
+
+   ::oEstado := TComboBox():ReDefine( 218, { | u | If( PCount()==0, cEstado, cEstado:= u ) }, ::aEstado, ::oFld:aDialogs[1],,,,,,, .F.,,,,,, )
+
+RETURN ( Self )
+
+
+
+
+
+
+UTILITY STATIC function TCliDiInf_lGenerate() ; local Self AS CLASS TCliDiInf := QSelf() AS CLASS TCliDiInf
+
+   local aTotFac
+   local bValid   := {|| .T. }
+
+   ::oDlg:Disable()
+
+   ::oDbf:Zap()
+   ::oFacCliT:GoTop()
+
+   do case
+      case ::oEstado:nAt == 1
+         bValid   := {|| !::oFacCliT:lLiquidada }
+      case ::oEstado:nAt == 2
+         bValid   := {|| ::oFacCliT:lLiquidada }
+      case ::oEstado:nAt == 3
+         bValid   := {|| .T. }
+   end
+
+
+
+
+   WHILE !::oFacCliT:Eof()
+
+
+
+
+
+
+      IF Eval( bValid )                                                                     .AND. ::oFacCliT:DFECFAC >= ::dIniInf                                                    .AND. ::oFacCliT:DFECFAC <= ::dFinInf                                                    .AND. ::oFacCliT:CCODCLI >= ::cCliOrg                                                    .AND. ::oFacCliT:CCODCLI <= ::cCliDes                                                    .AND. lChkSer( ::oFacCliT:CSERIE, ::aSer )
+
+         aTotFac              := aTotFacCli (::oFacCliT:CSERIE + Str( ::oFacCliT:NNUMFAC ) + ::oFacCliT:CSUFFAC, ::oFacCliT:cAlias, ::oFacCliL:cAlias, ::oDbfIva:cAlias, ::oDbfDiv:cAlias, ::oFacCliP:cAlias, ::oAntCliT:cAlias, cDivEmp() )
+
+
+
+
+
+            if !::oDbf:Seek( ::oFacCliT:CCODCLI )
+
+               ::oDbf:Append()
+
+               ::oDbf:CCODCLI := ::oFacCliT:CCODCLI
+               ::oDbf:CNOMCLI := ::oFacCliT:CNOMCLI
+               ::oDbf:DFECMOV := ::oFacCliT:DFECFAC
+
+               ::oDbf:NTOTNET := aTotFac[1]
+               ::oDbf:NTOTIVA := aTotFac[2]
+               ::oDbf:NTOTREQ := aTotFac[3]
+               ::oDbf:nComAge := ::oFacCliL:nComAge
+               ::oDbf:NTOTDOC := aTotFac[4]
+               ::oDbf:NTOTPNT := aTotFac[5]
+               ::oDbf:CDOCMOV := ::oFacCliT:CSERIE + "/" + Str( ::oFacCliT:NNUMFAC ) + "/" + ::oFacCliT:CSUFFAC
+
+               ::oDbfTvta:Seek (::oFacCliL:cTipMov)
+               ::oDbf:cTipVen    := ::oDbfTvta:cDesMov
+
+               if ::oDbfCli:Seek ( ::oFacCliT:CCODCLI )
+
+                  ::oDbf:CNIFCLI := ::oDbfCli:Nif
+                  ::oDbf:CDOMCLI := ::oDbfCli:Domicilio
+                  ::oDbf:CPOBCLI := ::oDbfCli:Poblacion
+                  ::oDbf:CPROCLI := ::oDbfCli:Provincia
+                  ::oDbf:CCDPCLI := ::oDbfCli:CodPostal
+                  ::oDbf:CTLFCLI := ::oDbfCli:Telefono
+                  ::oDbf:CDEFI01 := ::oDbfCli:CusRDef01
+                  ::oDbf:CDEFI02 := ::oDbfCli:CusRDef02
+                  ::oDbf:CDEFI03 := ::oDbfCli:CusRDef03
+                  ::oDbf:CDEFI04 := ::oDbfCli:CusRDef04
+                  ::oDbf:CDEFI05 := ::oDbfCli:CusRDef05
+                  ::oDbf:CDEFI06 := ::oDbfCli:CusRDef06
+                  ::oDbf:CDEFI07 := ::oDbfCli:CusRDef07
+                  ::oDbf:CDEFI08 := ::oDbfCli:CusRDef08
+                  ::oDbf:CDEFI09 := ::oDbfCli:CusRDef09
+                  ::oDbf:CDEFI10 := ::oDbfCli:CusRDef10
+
+               end
+
+               ::oDbf:Save()
+
+            else
+
+               ::oDbf:Load()
+
+               ::oDbf:NTOTNET += aTotFac[1]
+               ::oDbf:NTOTIVA += aTotFac[2]
+               ::oDbf:NTOTREQ += aTotFac[3]
+               ::oDbf:NTOTDOC += aTotFac[4]
+               ::oDbf:NTOTPNT += aTotFac[5]
+
+               ::oDbf:Save()
+
+            end
+
+      end
+
+      ::oMtrInf:AutoInc()
+
+      ::oFacCliT:Skip()
+
+   end
+
+   ::oDlg:Enable()
+
+RETURN ( ::oDbf:LastRec() > 0 )

@@ -1,0 +1,216 @@
+#line 112 "hbclass.ch"
+   DYNAMIC DivertConstructorCall
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+DECLARE HBClass  New( cName AS String, OPTIONAL SuperParams ) AS CLASS HBClass  Create() AS Object  Instance() AS Object  AddClsMethod( cName AS String, @MethodName(), nScope AS Numeric, n2 AS Numeric, n3 AS Numeric )  AddDelegate( cName AS String, cDelegate AS String, cObject AS String, nScope AS Numeric, lPersistent AS LOGICAL )  AddMultiClsData( cType AS String, uVal, nScope AS Numeric, aDatas AS Array OF String )  AddMultiData( cType AS String, uVal, nScope AS Numeric, aDatas AS Array OF String, x AS LOGICAL, lPer AS LOGICAL )  AddMethod( cName AS String, @MethodName(), nScope AS Numeric, lPersistent AS LOGICAL )  AddInLine( cName AS String, bBlock AS CodeBlock, nScope AS Numeric, lPersistent AS LOGICAL )  AddVirtual( cName AS String )  ModMethod( cName AS String, @MethodName(), nScope AS Numeric, lPersistent AS LOGICAL )  ModClsMethod( cName AS String, @MethodName(), nScope AS Numeric )  ModInline( cName AS String, bBlock AS CodeBlock, nScope AS Numeric, lPersistent AS LOGICAL )  SetOnError( @MethodName() )
+#line 85 "\Fwh1204\Include\FiveWin.Ch"
+   EXTERNAL GetProcAdd
+   EXTERNAL TActiveX
+
+
+
+
+extern errorsys
+#line 8 ".\Prg\InfTipIva.prg"
+_HB_CLASS InfTipIva ; UTILITY FUNCTION InfTipIva(...); static s_oClass ; local oClassInstance ; local nScope ; nScope := 1 ; if s_oClass == NIL ; s_oClass := IIF(.F.,, HBClass():New( "InfTipIva" , {TInfGen():classh} ) ) ; ;
+
+   _HB_MEMBER {AS OBJECT oDbfTIva} ; IIF( !.F., s_oClass:AddMultiData( "OBJECT",, nScope + IIF( .F., 32, 0 ), { "oDbfTIva" }, .F., .F. ), )
+   _HB_MEMBER {AS CHARACTER cTIvaOrg} ; IIF( !.F., s_oClass:AddMultiData( "CHARACTER",, nScope + IIF( .F., 32, 0 ), { "cTIvaOrg" }, .F., .F. ), )
+   _HB_MEMBER {AS CHARACTER cTIvaDes} ; IIF( !.F., s_oClass:AddMultiData( "CHARACTER",, nScope + IIF( .F., 32, 0 ), { "cTIvaDes" }, .F., .F. ), )
+   _HB_MEMBER {AS LOGIC lAllTIva} ; IIF( !.F., s_oClass:AddMultiData( "LOGIC", .T., nScope + IIF( .F., 32, 0 ), { "lAllTIva" }, .F., .F. ), )
+
+   _HB_MEMBER Create(); IIF( .F., s_oClass:ModMethod( "Create", @InfTipIva_Create(), nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ), s_oClass:AddMethod( "Create", @InfTipIva_Create(), nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ));
+
+   _HB_MEMBER OpenFiles(); IIF( .F., s_oClass:ModMethod( "OpenFiles", @InfTipIva_OpenFiles(), nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ), s_oClass:AddMethod( "OpenFiles", @InfTipIva_OpenFiles(), nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ));
+
+   _HB_MEMBER CloseFiles(); IIF( .F., s_oClass:ModMethod( "CloseFiles", @InfTipIva_CloseFiles(), nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ), s_oClass:AddMethod( "CloseFiles", @InfTipIva_CloseFiles(), nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ));
+
+   _HB_MEMBER lResource( cFld); IIF( .F., s_oClass:ModMethod( "lResource", @InfTipIva_lResource(), nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ), s_oClass:AddMethod( "lResource", @InfTipIva_lResource(), nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ));
+
+   _HB_MEMBER lGenerate(); IIF( .F., s_oClass:ModMethod( "lGenerate", @InfTipIva_lGenerate(), nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ), s_oClass:AddMethod( "lGenerate", @InfTipIva_lGenerate(), nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ));
+
+; IF .F. ; __clsActive(s_oClass:hClass) ; s_oClass:Refresh() ; ELSE ; s_oClass:Create() ; END ; oClassInstance := __clsInst( s_oClass:hClass ) ; IF __ObjHasMsg( oClassInstance, "InitClass" ); oClassInstance:InitClass( hb_aParams() ) ; END ; ELSE ; oClassInstance := __clsInst( s_oClass:hClass ) ; END ; IF PCount() > 0 ; DIVERT TO (@DivertConstructorCall()) OF s_oClass ; END ; RETURN oClassInstance AS CLASS InfTipIva ;
+
+
+
+UTILITY STATIC function InfTipIva_Create() ; local Self AS CLASS InfTipIva := QSelf() AS CLASS InfTipIva
+
+   ::AddField( "Tipo",      "C",  1, 0, {|| "" },   "Cod. IGIC.",      .T., "Tipo de " + cImp(),                    8, .F. )
+   ::AddField( "DescIva",   "C", 30, 0, {|| "" },   "Des. IGIC.",      .T., "Descripción del tipo de " + cImp(),   30, .F. )
+   ::AddField( "TPIva",     "N",  6, 2, {|| "" },   "% IGIC.",         .T., "Tipo de " + cImp(),                    8, .F. )
+   ::AddField( "nRecEq",    "N",  6, 2, {|| "" },   "R.E.",           .T., "Recargo de equivalencia",        8, .F. )
+   ::AddField( "GrpAsc",    "C",  9, 0, {|| "" },   "Grp. Ven.",      .F., "Grupo de venta asociado",       10, .F. )
+   ::AddField( "CodTer",    "C",  1, 0, {|| "" },   "Terminal",       .F., "Código para terminales",         1, .F. )
+
+   ::AddTmpIndex ( "Tipo", "Tipo" )
+
+   ::lDefFecInf   := .F.
+   ::lDefSerInf   := .F.
+   ::lDefDivInf   := .F.
+
+RETURN ( Self )
+
+
+
+UTILITY STATIC function InfTipIva_OpenFiles() ; local Self AS CLASS InfTipIva := QSelf() AS CLASS InfTipIva
+
+   local lOpen    := .T.
+   local oBlock   := ErrorBlock( {| oError | ApoloBreak( oError ) } )
+
+   BEGIN SEQUENCE
+
+   ::oDbfTIva := DbfServer( "TIVA.DBF", ):NewOpen( "TIVA.DBF",, ( cDriver() ),, ( cPatDat() ), .F., .T., .F., .F. ) ; ::oDbfTIva:AddBag( "TIVA.CDX" ) ; ::oDbfTIva:AddBag( ) ; ::oDbfTIva:AutoIndex()
+
+   RECOVER
+
+      msgStop( "Imposible abrir todas las bases de datos" )
+      ::CloseFiles()
+      lOpen          := .F.
+
+   end
+
+   ErrorBlock( oBlock )
+
+RETURN ( lOpen )
+
+
+
+UTILITY STATIC function InfTipIva_CloseFiles() ; local Self AS CLASS InfTipIva := QSelf() AS CLASS InfTipIva
+
+   if !Empty( ::oDbfTIva ) .AND. ::oDbfTIva:Used()
+      ::oDbfTIva:End()
+   end
+
+   ::oDbfTIva  := nil
+
+
+RETURN ( Self )
+
+
+
+UTILITY STATIC function InfTipIva_lResource( cFld) ; local Self AS CLASS InfTipIva := QSelf() AS CLASS InfTipIva
+
+   local cSayTIvaOrg
+   local cSayTIvaDes
+   local oSayTIvaOrg
+   local oSayTIvaDes
+   local oTIvaOrg
+   local oTIvaDes
+
+   if !::StdResource( "INF_TIVA01" )
+      return .F.
+   end
+
+
+
+
+
+   ::cTIvaOrg   := dbFirst( ::oDbfTIva, 1 )
+   ::cTIvaDes   := dbLast(  ::oDbfTIva, 1 )
+   cSayTIvaOrg  := dbFirst( ::oDbfTIva, 2 )
+   cSayTIvaDes  := dbLast(  ::oDbfTIva, 2 )
+
+
+
+   TCheckBox():ReDefine( ( 60 ), { | u | If( PCount()==0, ::lAllTIva, ::lAllTIva:= u ) }, ::oFld:aDialogs[1],,,,,,, .F.,, .F. )
+
+
+
+
+
+
+   oTIvaOrg := TGetHlp():ReDefine( ( 70 ), { | u | If( PCount()==0, ::cTIvaOrg, ::cTIvaOrg:= u ) }, ::oFld:aDialogs[1],,,, "N/W*",,,,, .F., {||     ( !::lAllTIva )},, .F., .F.,,,,,, nil, "LUPA",, )
+
+      oTIvaOrg:bValid   := {|| cTiva( oTIvaOrg, ::oDbfTIva:cAlias, oSayTIvaOrg ) }
+      oTIvaOrg:bHelp    := {|| BrwIva( oTIvaOrg, ::oDbfTIva:cAlias, oSayTIvaOrg ) }
+
+
+
+
+
+   oSayTIvaOrg := TGetHlp():ReDefine( ( 80 ), { | u | If( PCount()==0, cSayTIvaOrg, cSayTIvaOrg:= u ) }, ::oFld:aDialogs[1],,,, "N/W*",,,,, .F., {||     .F.},, .F., .F.,,,,,, nil,,, )
+
+
+
+
+
+
+   oTIvaDes := TGetHlp():ReDefine( ( 90 ), { | u | If( PCount()==0, ::cTIvaDes, ::cTIvaDes:= u ) }, ::oFld:aDialogs[1],,,, "N/W*",,,,, .F., {||     ( !::lAllTIva )},, .F., .F.,,,,,, nil, "LUPA",, )
+
+      oTIvaDes:bValid   := {|| cTiva( oTIvaDes, ::oDbfTIva:cAlias, oSayTIvaDes ) }
+      oTIvaDes:bHelp    := {|| BrwIva( oTIvaDes, ::oDbfTIva:cAlias, oSayTIvaDes ) }
+
+
+
+
+   oSayTIvaDes := TGetHlp():ReDefine( ( 100 ), { | u | If( PCount()==0, cSayTIvaDes, cSayTIvaDes:= u ) }, ::oFld:aDialogs[1],,,,,,,,, .F., {||     .F.},, .F., .F.,,,,,, nil,,, )
+
+
+
+
+
+   ::oMtrInf:SetTotal( ::oDbfTIva:Lastrec() )
+
+   ::CreateFilter( aItmTIva(), ::oDbfTIva:cAlias )
+
+RETURN .T.
+
+
+
+
+
+
+UTILITY STATIC function InfTipIva_lGenerate() ; local Self AS CLASS InfTipIva := QSelf() AS CLASS InfTipIva
+
+   ::oDlg:Disable()
+   ::oBtnCancel:Enable()
+   ::oDbf:Zap()
+
+
+   ::aHeader      := {  {|| "Fecha    : " + Dtoc( Date() ) }, {|| "tipo " + cImp() + " : " + if( ::lAllTIva, "Todos", AllTrim( ::cTIvaOrg ) + " > " + AllTrim( ::cTIvaDes ) ) } }
+
+   ::oDbfTIva:OrdSetFocus( "Tipo" )
+
+   ::oDbfTIva:GoTop()
+   while !::lBreak .AND. !::oDbfTIva:Eof()
+
+      if ( ::lAllTIva .OR. ( ::oDbfTIva:Tipo >= ::cTIvaOrg .AND. ::oDbfTIva:Tipo <= ::cTIvaDes ) )
+
+         ::oDbf:Append()
+
+         ::oDbf:Tipo       := ::oDbfTIva:Tipo
+         ::oDbf:DescIva    := ::oDbfTIva:DescIva
+         ::oDbf:TPIva      := ::oDbfTIva:TPIva
+         ::oDbf:nRecEq     := ::oDbfTIva:nRecEq
+         ::oDbf:GrpAsc     := ::oDbfTIva:GrpAsc
+         ::oDbf:CodTer     := ::oDbfTIva:CodTer
+
+         ::oDbf:Save()
+
+      end
+
+      ::oDbfTIva:Skip()
+
+      ::oMtrInf:AutoInc()
+
+   end
+
+   ::oMtrInf:AutoInc( ::oDbfTIva:LastRec() )
+
+   ::oDlg:Enable()
+
+RETURN ( ::oDbf:LastRec() > 0 )

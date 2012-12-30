@@ -1,0 +1,1377 @@
+#line 112 "hbclass.ch"
+   DYNAMIC DivertConstructorCall
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+DECLARE HBClass  New( cName AS String, OPTIONAL SuperParams ) AS CLASS HBClass  Create() AS Object  Instance() AS Object  AddClsMethod( cName AS String, @MethodName(), nScope AS Numeric, n2 AS Numeric, n3 AS Numeric )  AddDelegate( cName AS String, cDelegate AS String, cObject AS String, nScope AS Numeric, lPersistent AS LOGICAL )  AddMultiClsData( cType AS String, uVal, nScope AS Numeric, aDatas AS Array OF String )  AddMultiData( cType AS String, uVal, nScope AS Numeric, aDatas AS Array OF String, x AS LOGICAL, lPer AS LOGICAL )  AddMethod( cName AS String, @MethodName(), nScope AS Numeric, lPersistent AS LOGICAL )  AddInLine( cName AS String, bBlock AS CodeBlock, nScope AS Numeric, lPersistent AS LOGICAL )  AddVirtual( cName AS String )  ModMethod( cName AS String, @MethodName(), nScope AS Numeric, lPersistent AS LOGICAL )  ModClsMethod( cName AS String, @MethodName(), nScope AS Numeric )  ModInline( cName AS String, bBlock AS CodeBlock, nScope AS Numeric, lPersistent AS LOGICAL )  SetOnError( @MethodName() )
+#line 85 "\Fwh1204\Include\FiveWin.Ch"
+   EXTERNAL GetProcAdd
+   EXTERNAL TActiveX
+
+
+
+
+extern errorsys
+#line 7 ".\Prg\Genfcli.prg"
+static   nAcumulaAlbaran      := 0
+static   nAcumulaDescuento1   := 0
+static   nAcumulaDescuento2   := 0
+static   nAcumulaDescuento3   := 0
+static   nAcumulaDescuento4   := 0
+static   cAnteriorAlbaran     := 0
+
+
+
+Function GenFCli( oBrw, dbfAlbCliT, dbfAlbCliL, dbfAlbCliP, dbfAlbCliS, dbfClient, dbfCliAtp, dbfIva, dbfDiv, dbfFPago, dbfUsr, dbfCount, oGrpCli, oStock )
+
+   local oDlg
+   local oPag
+   local oBmp
+   local oGrpDes
+   local cGrpDes
+   local oNomGrpDes
+   local cNomGrpDes
+   local oGrpHas
+   local cGrpHas
+   local oNomGrpHas
+   local cNomGrpHas
+   local oCliDes
+   local cCliDes
+   local oNomCliDes
+   local cNomCliDes
+   local oCliHas
+   local cCliHas
+   local oNomCliHas
+   local cNomCliHas
+   local oBtnPrv
+   local oBtnNxt
+   local oBrwAlb
+   local lAllCli        := .T.
+   local lAllGrp        := .T.
+   local oMetMsg
+   local nMetMsg        := 0
+   local lGrpCli        := .T.
+   local nGrpObr        := 1
+   local lTotAlb        := .F.
+   local lUniPgo        := .F.
+   local lNotImp        := .F.
+
+   local nRadFec        := 1
+   local dFecFac        := GetSysDate()
+   local dDesAlb        := ctoD( "01/" + Str( Month( GetSysDate() ), 2 ) + "/" + Str( Year( GetSysDate() ) ) )
+   local dHasAlb        := GetSysDate()
+   local oSer           := Array( 26 )
+   local aSer           := { .T., .T., .T., .T., .T., .T., .T., .T., .T., .T., .T., .T., .T., .T., .T., .T., .T., .T., .T., .T., .T., .T., .T., .T., .T., .T. }
+   local oDbfTmp
+   local nRec           := ( dbfAlbCliT )->( Recno() )
+   local nOrd           := ( dbfAlbCliT )->( OrdSetFocus( "nNumAlb" ) )
+
+   if File( cPatTmp() + "GenFac.Dbf" ) .AND. fErase( cPatTmp() + "GenFac.Dbf" ) == -1
+      MsgStop( "Esta opción esta en uso por otro usuario" )
+      Return nil
+   end
+
+   oDbfTmp              := dbfServer( "GenFac", SubStr( Str( Seconds() ), -6 ) ):New( "GenFac", "GenFac", cLocalDriver(), , cPatTmp() )
+   oDbfTmp:AddField( "lFacAlb", "L", 1, 0 )
+   oDbfTmp:AddField( "cSerDoc", "C", 1, 0 )
+   oDbfTmp:AddField( "nNumDoc", "N", 9, 0 )
+   oDbfTmp:AddField( "lNewDoc", "L", 1, 0 )
+   oDbfTmp:AddField( "cNumAlb", "C",12, 0 )
+   oDbfTmp:AddField( "dFecAlb", "D", 8, 0 )
+   oDbfTmp:AddField( "cCodCli", "C",12, 0 )
+   oDbfTmp:AddField( "cNomCli", "C",50, 0 )
+   oDbfTmp:AddField( "cCodObr", "C",10, 0 )
+   oDbfTmp:AddField( "lIvaInc", "L", 1, 0 )
+   oDbfTmp:AddField( "lRecargo","L", 1, 0 )
+   oDbfTmp:AddField( "lOperPv", "L", 1, 0 )
+   oDbfTmp:AddField( "cCodPgo", "C", 2, 0 )
+   oDbfTmp:AddField( "nTotAlb", "N",19, 6 )
+   oDbfTmp:AddField( "nTotEnt", "N",19, 6 )
+   oDbfTmp:AddField( "nPctDto1","N",19, 6 )
+   oDbfTmp:AddField( "nPctDto2","N",19, 6 )
+   oDbfTmp:AddField( "nPctDto3","N",19, 6 )
+   oDbfTmp:AddField( "nPctDto4","N",19, 6 )
+   oDbfTmp:Activate( .F., .F. )
+
+   oDbfTmp:AddTmpIndex( "cCodObr", "GenFac", "cSerDoc + cCodCli + if( lIvaInc, '0', '1' ) + if( lRecargo, '0', '1' ) + cCodObr" )
+   oDbfTmp:AddTmpIndex( "cCodPgo", "GenFac", "cSerDoc + cCodCli + cCodPgo + if( lIvaInc, '0', '1' ) + if( lRecargo, '0', '1' ) + cCodObr" )
+   oDbfTmp:AddTmpIndex( "nNumDoc", "GenFac", "cSerDoc + Str( nNumDoc ) + if( lNewDoc, '0', '1' )" )
+   oDbfTmp:AddTmpIndex( "cNumAlb", "GenFac", "cNumAlb" )
+
+
+
+
+
+   if dbfAlbCliT <> nil
+      cCliDes     := ( dbfAlbCliT )->cCodCli
+      cCliHas     := ( dbfAlbCliT )->cCodCli
+   else
+      cCliDes     := dbFirst( dbfClient, 1 )
+      cCliHas     := dbLast(  dbfClient, 1 )
+   end
+
+   cGrpDes        := dbFirst( oGrpCli:oDbf, 1 )
+   cGrpHas        := dbLast(  oGrpCli:oDbf, 1 )
+
+
+
+
+
+   oDlg = TDialog():New(,,,,, "GENFAC",, .F.,,,,,, .F.,,,,,, .F., )
+
+
+
+
+
+   oPag := TPages():Redefine( 110, oDlg, {"GENFAC_01", "GENFAC_02"},,,, )
+
+
+
+
+
+   oBmp := TBitmap():ReDefine( 600, "plantillas_automaticas_48_alpha",, oDlg,,, .F., .F.,,, .F.,,, .T. )
+
+
+
+
+
+
+
+   TCheckBox():ReDefine( 100, { | u | If( PCount()==0, lAllCli, lAllCli:= u ) }, oPag:aDialogs[ 1 ],,,,,,, .F.,, .F. )
+
+
+
+
+
+
+
+   oCliDes := TGetHlp():ReDefine( 110, { | u | If( PCount()==0, cCliDes, cCliDes:= u ) }, oPag:aDialogs[ 1 ],,, {||    ( cClient( oCliDes, dbfClient, oNomCliDes ) )},,,,,, .F., {||     ( !lAllCli )},, .F., .F.,,,,, {|Self|( BrwClient( oCliDes, oNomCliDes ) )}, nil, "LUPA",, )
+
+
+
+
+   oNomCliDes := TGetHlp():ReDefine( 111, { | u | If( PCount()==0, cNomCliDes, cNomCliDes:= u ) }, oPag:aDialogs[ 1 ],,,,,,,,, .F., {||         .F.},, .F., .F.,,,,,, nil,,, )
+
+
+
+
+
+
+
+   oCliHas := TGetHlp():ReDefine( 120, { | u | If( PCount()==0, cCliHas, cCliHas:= u ) }, oPag:aDialogs[ 1 ],,, {||    ( cClient( oCliHas, dbfClient, oNomCliHas ) )},,,,,, .F., {||     ( !lAllCli )},, .F., .F.,,,,, {|Self|( BrwClient( oCliHas, oNomCliHas ) )}, nil, "LUPA",, )
+
+
+
+
+   oNomCliHas := TGetHlp():ReDefine( 121, { | u | If( PCount()==0, cNomCliHas, cNomCliHas:= u ) }, oPag:aDialogs[ 1 ],,,,,,,,, .F., {||         .F.},, .F., .F.,,,,,, nil,,, )
+
+
+
+
+
+
+
+   TCheckBox():ReDefine( 90, { | u | If( PCount()==0, lAllGrp, lAllGrp:= u ) }, oPag:aDialogs[ 1 ],,,,,,, .F.,, .F. )
+
+
+
+
+
+
+
+   oGrpDes := TGetHlp():ReDefine( 160, { | u | If( PCount()==0, cGrpDes, cGrpDes:= u ) }, oPag:aDialogs[ 1 ],,, {||    ( oGrpCli:Existe( oGrpDes, oNomGrpDes, "CNOMGRP", .T., .T., "0" ) )},,,,,, .F., {||     ( !lAllGrp )},, .F., .F.,,,,, {|Self|( oGrpCli:Buscar( oGrpDes ) )}, nil, "LUPA",, )
+
+
+
+
+   oNomGrpDes := TGetHlp():ReDefine( 161, { | u | If( PCount()==0, cNomGrpDes, cNomGrpDes:= u ) }, oPag:aDialogs[ 1 ],,,,,,,,, .F., {||         .F.},, .F., .F.,,,,,, nil,,, )
+
+
+
+
+
+
+
+   oGrpHas := TGetHlp():ReDefine( 170, { | u | If( PCount()==0, cGrpHas, cGrpHas:= u ) }, oPag:aDialogs[ 1 ],,, {||    ( oGrpCli:Existe( oGrpHas, oNomGrpHas, "CNOMGRP", .T., .T., "0" ) )},,,,,, .F., {||     ( !lAllGrp )},, .F., .F.,,,,, {|Self|( oGrpCli:Buscar( oGrpHas ) )}, nil, "LUPA",, )
+
+
+
+
+   oNomGrpHas := TGetHlp():ReDefine( 171, { | u | If( PCount()==0, cNomGrpHas, cNomGrpHas:= u ) }, oPag:aDialogs[ 1 ],,,,,,,,, .F., {||         .F.},, .F., .F.,,,,,, nil,,, )
+
+
+
+
+   TGetHlp():ReDefine( 130, { | u | If( PCount()==0, dDesAlb, dDesAlb:= u ) }, oPag:aDialogs[ 1 ],,,,,,,,, .F.,,, .F., .T.,,,,,, nil,,, )
+
+
+
+
+   TGetHlp():ReDefine( 140, { | u | If( PCount()==0, dHasAlb, dHasAlb:= u ) }, oPag:aDialogs[ 1 ],,,,,,,,, .F.,,, .F., .T.,,,,,, nil,,, )
+
+
+
+   TCheckBox():ReDefine( 175, { | u | If( PCount()==0, lGrpCli, lGrpCli:= u ) }, oPag:aDialogs[ 1 ],,,,,,, .F.,, .F. )
+
+
+
+
+   TRadMenu():Redefine( { | u | If( PCount()==0, nGrpObr, nGrpObr:= u ) }, oPag:aDialogs[ 1 ],, { 180, 181, 182 },,,,, .F., {||     ( lGrpCli )}, )
+
+
+
+   TCheckBox():ReDefine( 185, { | u | If( PCount()==0, lTotAlb, lTotAlb:= u ) }, oPag:aDialogs[ 1 ],,,,,,, .F.,, .F. )
+
+
+
+   TCheckBox():ReDefine( 186, { | u | If( PCount()==0, lUniPgo, lUniPgo:= u ) }, oPag:aDialogs[ 1 ],,,,,,, .F.,, .F. )
+
+
+
+   TCheckBox():ReDefine( 187, { | u | If( PCount()==0, lNotImp, lNotImp:= u ) }, oPag:aDialogs[ 1 ],,,,,,, .F.,, .F. )
+
+
+
+   TRadMenu():Redefine( { | u | If( PCount()==0, nRadFec, nRadFec:= u ) }, oPag:aDialogs[ 1 ],, { 190, 191 },,,,, .F.,, )
+
+
+
+
+
+   TGetHlp():ReDefine( 150, { | u | If( PCount()==0, dFecFac, dFecFac:= u ) }, oPag:aDialogs[ 1 ],,,,,,,,, .F., {||     ( nRadFec == 1 )},, .F., .T.,,,,,, nil,,, )
+
+   TWebBtn():Redefine(310,,,,, {|This| ( aEval( oSer, {|o| Eval( o:bSetGet, .T. ), o:refresh() } ) ) }, oPag:aDialogs[ 1 ],,,,, "LEFT",,,,, ( 0 + ( 0 * 256 ) + ( 255 * 65536 ) ), ( 0 + ( 0 * 256 ) + ( 255 * 65536 ) ),,,, "Seleccionar todas las series",,,, )
+
+   TWebBtn():Redefine(320,,,,, {|This| ( aEval( oSer, {|o| Eval( o:bSetGet, .F. ), o:refresh() } ) ) }, oPag:aDialogs[ 1 ],,,,, "LEFT",,,,, ( 0 + ( 0 * 256 ) + ( 255 * 65536 ) ), ( 0 + ( 0 * 256 ) + ( 255 * 65536 ) ),,,, "Deseleccionar todas las series",,,, )
+
+   oSer[  1 ] := TCheckBox():ReDefine( 370, { | u | If( PCount()==0, aSer[  1 ], aSer[  1 ]:= u ) }, oPag:aDialogs[ 1 ],,,,,,, .F.,, .F. )
+   oSer[  2 ] := TCheckBox():ReDefine( 371, { | u | If( PCount()==0, aSer[  2 ], aSer[  2 ]:= u ) }, oPag:aDialogs[ 1 ],,,,,,, .F.,, .F. )
+   oSer[  3 ] := TCheckBox():ReDefine( 372, { | u | If( PCount()==0, aSer[  3 ], aSer[  3 ]:= u ) }, oPag:aDialogs[ 1 ],,,,,,, .F.,, .F. )
+   oSer[  4 ] := TCheckBox():ReDefine( 373, { | u | If( PCount()==0, aSer[  4 ], aSer[  4 ]:= u ) }, oPag:aDialogs[ 1 ],,,,,,, .F.,, .F. )
+   oSer[  5 ] := TCheckBox():ReDefine( 374, { | u | If( PCount()==0, aSer[  5 ], aSer[  5 ]:= u ) }, oPag:aDialogs[ 1 ],,,,,,, .F.,, .F. )
+   oSer[  6 ] := TCheckBox():ReDefine( 375, { | u | If( PCount()==0, aSer[  6 ], aSer[  6 ]:= u ) }, oPag:aDialogs[ 1 ],,,,,,, .F.,, .F. )
+   oSer[  7 ] := TCheckBox():ReDefine( 376, { | u | If( PCount()==0, aSer[  7 ], aSer[  7 ]:= u ) }, oPag:aDialogs[ 1 ],,,,,,, .F.,, .F. )
+   oSer[  8 ] := TCheckBox():ReDefine( 377, { | u | If( PCount()==0, aSer[  8 ], aSer[  8 ]:= u ) }, oPag:aDialogs[ 1 ],,,,,,, .F.,, .F. )
+   oSer[  9 ] := TCheckBox():ReDefine( 378, { | u | If( PCount()==0, aSer[  9 ], aSer[  9 ]:= u ) }, oPag:aDialogs[ 1 ],,,,,,, .F.,, .F. )
+   oSer[ 10 ] := TCheckBox():ReDefine( 379, { | u | If( PCount()==0, aSer[ 10 ], aSer[ 10 ]:= u ) }, oPag:aDialogs[ 1 ],,,,,,, .F.,, .F. )
+   oSer[ 11 ] := TCheckBox():ReDefine( 380, { | u | If( PCount()==0, aSer[ 11 ], aSer[ 11 ]:= u ) }, oPag:aDialogs[ 1 ],,,,,,, .F.,, .F. )
+   oSer[ 12 ] := TCheckBox():ReDefine( 381, { | u | If( PCount()==0, aSer[ 12 ], aSer[ 12 ]:= u ) }, oPag:aDialogs[ 1 ],,,,,,, .F.,, .F. )
+   oSer[ 13 ] := TCheckBox():ReDefine( 382, { | u | If( PCount()==0, aSer[ 13 ], aSer[ 13 ]:= u ) }, oPag:aDialogs[ 1 ],,,,,,, .F.,, .F. )
+   oSer[ 14 ] := TCheckBox():ReDefine( 383, { | u | If( PCount()==0, aSer[ 14 ], aSer[ 14 ]:= u ) }, oPag:aDialogs[ 1 ],,,,,,, .F.,, .F. )
+   oSer[ 15 ] := TCheckBox():ReDefine( 384, { | u | If( PCount()==0, aSer[ 15 ], aSer[ 15 ]:= u ) }, oPag:aDialogs[ 1 ],,,,,,, .F.,, .F. )
+   oSer[ 16 ] := TCheckBox():ReDefine( 385, { | u | If( PCount()==0, aSer[ 16 ], aSer[ 16 ]:= u ) }, oPag:aDialogs[ 1 ],,,,,,, .F.,, .F. )
+   oSer[ 17 ] := TCheckBox():ReDefine( 386, { | u | If( PCount()==0, aSer[ 17 ], aSer[ 17 ]:= u ) }, oPag:aDialogs[ 1 ],,,,,,, .F.,, .F. )
+   oSer[ 18 ] := TCheckBox():ReDefine( 387, { | u | If( PCount()==0, aSer[ 18 ], aSer[ 18 ]:= u ) }, oPag:aDialogs[ 1 ],,,,,,, .F.,, .F. )
+   oSer[ 19 ] := TCheckBox():ReDefine( 388, { | u | If( PCount()==0, aSer[ 19 ], aSer[ 19 ]:= u ) }, oPag:aDialogs[ 1 ],,,,,,, .F.,, .F. )
+   oSer[ 20 ] := TCheckBox():ReDefine( 389, { | u | If( PCount()==0, aSer[ 20 ], aSer[ 20 ]:= u ) }, oPag:aDialogs[ 1 ],,,,,,, .F.,, .F. )
+   oSer[ 21 ] := TCheckBox():ReDefine( 390, { | u | If( PCount()==0, aSer[ 21 ], aSer[ 21 ]:= u ) }, oPag:aDialogs[ 1 ],,,,,,, .F.,, .F. )
+   oSer[ 22 ] := TCheckBox():ReDefine( 391, { | u | If( PCount()==0, aSer[ 22 ], aSer[ 22 ]:= u ) }, oPag:aDialogs[ 1 ],,,,,,, .F.,, .F. )
+   oSer[ 23 ] := TCheckBox():ReDefine( 392, { | u | If( PCount()==0, aSer[ 23 ], aSer[ 23 ]:= u ) }, oPag:aDialogs[ 1 ],,,,,,, .F.,, .F. )
+   oSer[ 24 ] := TCheckBox():ReDefine( 393, { | u | If( PCount()==0, aSer[ 24 ], aSer[ 24 ]:= u ) }, oPag:aDialogs[ 1 ],,,,,,, .F.,, .F. )
+   oSer[ 25 ] := TCheckBox():ReDefine( 394, { | u | If( PCount()==0, aSer[ 25 ], aSer[ 25 ]:= u ) }, oPag:aDialogs[ 1 ],,,,,,, .F.,, .F. )
+   oSer[ 26 ] := TCheckBox():ReDefine( 395, { | u | If( PCount()==0, aSer[ 26 ], aSer[ 26 ]:= u ) }, oPag:aDialogs[ 1 ],,,,,,, .F.,, .F. )
+
+
+
+
+
+   oBrwAlb                 := IXBrowse():New( oPag:aDialogs[2] )
+
+   oBrwAlb:bClrSel         := {|| { 0, ( 229 + ( 229 * 256 ) + ( 229 * 65536 ) ) } }
+   oBrwAlb:bClrSelFocus    := {|| { 0, ( 167 + ( 205 * 256 ) + ( 240 * 65536 ) ) } }
+
+   oBrwAlb:nMarqueeStyle   := 5
+   oBrwAlb:cName           := "Linea de generar factura cliente detalle"
+
+   oBrwAlb:CreateFromResource( 180 )
+
+   oDbfTmp:SetBrowse( oBrwAlb )
+
+   with object ( oBrwAlb:AddCol() )
+      :cHeader             := "Se.Seleccionado"
+      :bStrData            := {|| "" }
+      :bEditValue          := {|| !oDbfTmp:lFacAlb }
+      :nWidth              := 20
+      :SetCheck( { "Sel16", "Nil16" } )
+   end
+
+   with object ( oBrwAlb:AddCol() )
+      :cHeader             := ""
+      :bStrData            := {|| "" }
+      :bEditValue          := {|| oDbfTmp:lNewDoc }
+      :nWidth              := 20
+      :SetCheck( { "Sel16", "Nil16" } )
+   end
+
+   with object ( oBrwAlb:AddCol() )
+      :cHeader             := "Num. Alb."
+      :bEditValue          := {|| oDbfTmp:cNumAlb }
+      :cEditPicture        := "@R #/#########/##"
+      :nWidth              := 80
+   end
+
+   with object ( oBrwAlb:AddCol() )
+      :cHeader             := "Fecha"
+      :bEditValue          := {|| dtoc( oDbfTmp:dFecAlb ) }
+      :nWidth              := 75
+   end
+
+   with object ( oBrwAlb:AddCol() )
+      :cHeader             := "Cliente"
+      :bEditValue          := {|| Rtrim( oDbfTmp:cCodCli ) + Space(1) + AllTrim( oDbfTmp:cNomCli ) }
+      :nWidth              := 150
+   end
+
+   with object ( oBrwAlb:AddCol() )
+      :cHeader             := cImp()
+      :bEditValue          := {|| if( oDbfTmp:lIvaInc, "Inc.", "Des." ) }
+      :nWidth              := 35
+   end
+
+   with object ( oBrwAlb:AddCol() )
+      :cHeader             := "Obra"
+      :bEditValue          := {|| oDbfTmp:cCodObr }
+      :nWidth              := 35
+   end
+
+   with object ( oBrwAlb:AddCol() )
+      :cHeader             := "F.Pago"
+      :bEditValue          := {|| oDbfTmp:cCodPgo }
+      :nWidth              := 40
+   end
+
+   with object ( oBrwAlb:AddCol() )
+      :cHeader             := "Importe"
+      :bEditValue          := {|| oDbfTmp:nTotAlb }
+      :cEditPicture        := PicOut()
+      :nWidth              := 80
+      :nDataStrAlign       := 1
+      :nHeadStrAlign       := 1
+   end
+
+   with object ( oBrwAlb:AddCol() )
+      :cHeader             := "Entregado"
+      :bEditValue          := {|| oDbfTmp:nTotEnt }
+      :cEditPicture        := PicOut()
+      :nWidth              := 80
+      :nDataStrAlign       := 1
+      :nHeadStrAlign       := 1
+   end
+
+
+
+
+   TButton():ReDefine( 514, {||( oDbfTmp:Load(), oDbfTmp:lFacAlb := !oDbfTmp:lFacAlb, oDbfTmp:Save(), oBrwAlb:refresh() )}, oPag:aDialogs[ 2 ],,, .F.,,,, .F. )
+
+
+
+
+   TButton():ReDefine( 516, {||( oDbfTmp:GetStatus(), oDbfTmp:DbEval( {|| oDbfTmp:Load(), oDbfTmp:lFacAlb := .F., oDbfTmp:Save() } ), oDbfTmp:SetStatus(), oBrwAlb:refresh() )}, oPag:aDialogs[ 2 ],,, .F.,,,, .F. )
+
+
+
+
+   TButton():ReDefine( 517, {||( oDbfTmp:GetStatus(), oDbfTmp:DbEval( {|| oDbfTmp:Load(), oDbfTmp:lFacAlb := .T., oDbfTmp:Save() } ), oDbfTmp:SetStatus(), oBrwAlb:refresh() )}, oPag:aDialogs[ 2 ],,, .F.,,,, .F. )
+
+   oMetMsg  := TMeter():ReDefine( 120, { | u | if( pCount() == 0, nMetMsg, nMetMsg := u ) }, 10, oDlg, .F., , , .T., ( 255 + ( 255 * 256 ) + ( 255 * 65536 ) ), , ( 128 + ( 255 * 256 ) + ( 0 * 65536 ) ) )
+
+
+
+
+   oBtnPrv := TButton():ReDefine( 500, {||( GoPrev( oPag, oBtnPrv, oBtnNxt ) )}, oDlg,,, .F.,,,, .F. )
+
+
+
+
+
+
+
+   oBtnNxt := TButton():ReDefine( 501, {||( GoNext(   cCliDes, cCliHas, cGrpDes, cGrpHas, dDesAlb, lAllGrp, lAllCli, dHasAlb, nRadFec, dFecFac, aSer, oDbfTmp, oBrwAlb, oDlg, oPag, lGrpCli, nGrpObr, lTotAlb, lUniPgo, lNotImp, oBtnPrv, oBtnNxt, oMetMsg, dbfAlbCliT, dbfAlbCliL, dbfAlbCliS, dbfAlbCliP, dbfClient, dbfCliAtp, dbfIva, dbfDiv, dbfUsr, dbfFPago, dbfCount, oStock ) )}, oDlg,,, .F.,,,, .F. )
+
+
+
+
+
+   TButton():ReDefine( 2, {||( oDlg:End() )}, oDlg,,, .F.,,,, .T. )
+
+      oDlg:bStart := {|| oCliDes:lValid(), oCliHas:lValid(), oGrpDes:lValid(), oGrpHas:lValid() }
+
+   oDlg:Activate( oDlg:bLClicked, oDlg:bMoved, oDlg:bPainted, .T.,,, {|Self|( oBtnPrv:Hide(), oBrwAlb:Load() )}, oDlg:bRClicked,,, )
+
+
+
+
+
+   ( dbfAlbCliT )->( OrdSetFocus( nOrd ) )
+   ( dbfAlbCliT )->( dbGoTo( nRec ) )
+
+
+
+
+
+   Desbloqueo( oDbfTmp, dbfAlbCliT )
+
+
+
+
+
+   oDbfTmp:End()
+
+   fErase( cPatTmp() + "GenFac.Dbf" )
+   fErase( cPatTmp() + "GenFac.Cdx" )
+
+   oBrw:Refresh()
+
+
+
+
+
+   oBrwAlb:CloseData()
+
+
+
+
+
+   oBmp:End()
+
+RETURN NIL
+
+
+
+Static Function Desbloqueo( oDbfTmp, dbfAlbCliT )
+
+   local nRec
+   local nOrd
+   local oBlock
+
+   oBlock            := ErrorBlock( {| oError | ApoloBreak( oError ) } )
+   BEGIN SEQUENCE
+
+   nRec              := ( dbfAlbCliT )->( Recno() )
+   nOrd              := ( dbfAlbCliT )->( OrdSetFocus() )
+
+
+
+
+
+   oDbfTmp:GoTop()
+   while !oDbfTmp:Eof()
+      if ( dbfAlbCliT )->( dbSeek( oDbfTmp:cNumAlb ) )
+         ( dbfAlbCliT )->( dbRUnLock( ( dbfAlbCliT )->( Recno() ) ) )
+      end
+      oDbfTmp:Skip()
+   end
+   oDbfTmp:GoTop()
+
+   ( dbfAlbCliT )->( OrdSetFocus( nOrd ) )
+   ( dbfAlbCliT )->( dbGoTo( nRec ) )
+
+   end
+
+   ErrorBlock( oBlock )
+
+return nil
+
+
+
+Static Function GetFormaDePago( cCodCli, cCodPgo, oDbfTmp )
+
+   local lFormaPago  := .F.
+   local cFormaPago  := oDbfTmp:cCodPgo
+
+   oDbfTmp:GetStatus()
+   oDbfTmp:GoTop()
+
+   while !oDbfTmp:Eof()
+
+      if oDbfTmp:cCodCli == cCodCli .AND. !oDbfTmp:lFacAlb .AND. cFormaPago <> oDbfTmp:cCodPgo
+         lFormaPago  := .T.
+      end
+
+      oDbfTmp:Skip()
+
+   end
+
+   oDbfTmp:SetStatus()
+
+   if lFormaPago
+      cFormaPago     := cCodPgo
+   end
+
+return ( cFormaPago )
+
+
+
+static function GoPrev( oPag, oBtnPrv, oBtnNxt )
+
+   if oPag:nOption == 2
+      SetWindowText( oBtnNxt:hWnd, "&Siguiente >" )
+      oBtnPrv:Hide()
+      oPag:GoPrev()
+   end
+
+return nil
+
+
+
+
+
+
+static function GoNext( cCliDes, cCliHas, cGrpDes, cGrpHas, dDesAlb, lAllGrp, lAllCli, dHasAlb, nRadFec, dFecFac, aSer, oDbfTmp, oBrwAlb, oDlg, oPag, lGrpCli, nGrpObr, lTotAlb, lUniPgo, lNotImp, oBtnPrv, oBtnNxt, oMetMsg, dbfAlbCliT, dbfAlbCliL, dbfAlbCliS, dbfAlbCliP, dbfClient, dbfCliAtp, dbfIva, dbfDiv, dbfUsr, dbfFPago, dbfCount, oStock )
+
+   do case
+   case oPag:nOption == 1
+
+
+      LoaAlbFac(  cCliDes, cCliHas, cGrpDes, cGrpHas, dDesAlb, lAllGrp, lAllCli, dHasAlb, lGrpCli, nGrpObr, lTotAlb, lUniPgo, lNotImp, aSer, oDbfTmp, oBrwAlb, oDlg, oMetMsg, dbfAlbCliT, dbfAlbCliL, dbfAlbCliS, dbfClient, dbfCliAtp, dbfIva, dbfDiv, dbfFPago, dbfAlbCliP )
+
+      oBtnPrv:Show()
+      SetWindowText( oBtnNxt:hWnd, "&Terminar" )
+      oPag:GoNext()
+
+   case oPag:nOption == 2
+
+
+      MakFacCli(  oDbfTmp, dFecFac, lGrpCli, nGrpObr, lTotAlb, lUniPgo, lNotImp, nRadFec, oBrwAlb, oMetMsg, dbfAlbCliT, dbfAlbCliL, dbfAlbCliP, dbfAlbCliS, dbfClient, dbfCliAtp, dbfIva, dbfDiv, dbfFPago, dbfUsr, dbfCount, oStock, oDlg )
+
+      oDlg:End()
+
+   end
+
+return nil
+
+
+
+
+
+STATIC FUNCTION loaAlbFac( cCliDes, cCliHas, cGrpDes, cGrpHas, dDesAlb, lAllGrp, lAllCli, dHasAlb, lGrpCli, nGrpObr, lTotAlb, lUniPgo, lNotImp, aSer, oDbfTmp, oBrwAlb, oDlg, oMetMsg, dbfAlbCliT, dbfAlbCliL, dbfAlbCliS, dbfClient, dbfCliAtp, dbfIva, dbfDiv, dbfFPago, dbfAlbCliP )
+
+   local lNuevo   := .T.
+   local nOrdAnt
+   local cIvaInc
+   local cRecargo
+   local nNumero  := 0
+   local nRecAnt  := ( dbfAlbCliT )->( RecNo() )
+   local cExpHead
+   local cCodPgo
+   local cLastRec
+
+   if lGrpCli
+
+      if nGrpObr == 1
+         nOrdAnt  := ( dbfAlbCliT )->( ordSetFocus( "cCodCli" ) )
+      else
+         nOrdAnt  := ( dbfAlbCliT )->( ordSetFocus( "cCodObr" ) )
+      end
+
+      if lUniPgo
+         oDbfTmp:OrdSetFocus( "cCodObr" )
+      else
+         oDbfTmp:OrdSetFocus( "cCodPgo" )
+      end
+
+   else
+
+      nOrdAnt     := ( dbfAlbCliT )->( ordSetFocus( "nNumAlb" ) )
+
+      oDbfTmp:OrdSetFocus( "cNumAlb" )
+
+   end
+
+   oDlg:Disable()
+
+   CursorWait()
+
+
+
+
+
+   Desbloqueo( oDbfTmp, dbfAlbCliT )
+
+   oDbfTmp:Zap()
+
+
+
+
+
+
+
+   cExpHead       := "!Field->lFacturado"
+   if !lAllGrp
+      cExpHead    += ' .and. Field->cCodGrp >= "' + Rtrim( cGrpDes ) + '" .and. Field->cCodGrp <= "' + Rtrim( cGrpHas ) + '"'
+   end
+   if !lAllCli
+      cExpHead    += ' .and. Field->cCodCli >= "' + Rtrim( cCliDes ) + '" .and. Field->cCodCli <= "' + Rtrim( cCliHas ) + '"'
+   end
+   cExpHead       += ' .and. Field->dFecAlb >= Ctod( "' + Dtoc( dDesAlb ) + '" ) .and. Field->dFecAlb <= Ctod( "' + Dtoc( dHasAlb ) + '" )'
+   cExpHead       += " .and. !Deleted()"
+
+
+
+   oMetMsg:cText  := "Creando filtros..."
+   oMetMsg:Refresh()
+
+   if CreateFastFilter( cExpHead, dbfAlbCliT, .F. )
+
+
+
+
+
+      cLastRec    := dbLast( dbfAlbCliT, "cSerAlb" )
+      cLastRec    += Str( dbLast( dbfAlbCliT, "nNumAlb" ) )
+      cLastRec    += dbLast( dbfAlbCliT, "cSufAlb" )
+
+
+
+      oMetMsg:SetTotal( ( dbfAlbCliT )->( OrdKeyCount() ) )
+
+      ( dbfAlbCliT )->( dbGoTop() )
+      while !( dbfAlbCliT )->( eof() )
+
+         if lChkSer( ( dbfAlbCliT )->cSerAlb, aSer )
+
+            lNuevo            := .F.
+
+            if lGrpCli
+
+               cIvaInc        := if( ( dbfAlbCliT )->lIvaInc,  "0", "1" )
+               cRecargo       := if( ( dbfAlbCliT )->lRecargo, "0", "1" )
+
+
+
+
+
+               if lUniPgo
+                  cCodPgo     := ""
+               else
+                  cCodPgo     := ( dbfAlbCliT )->cCodPago
+               end
+
+               do case
+               case nGrpObr == 1 .OR. nGrpObr == 2
+
+                  if oDbfTmp:Seek( ( dbfAlbCliT )->cSerAlb + ( dbfAlbCliT )->cCodCli + cCodPgo + cIvaInc + cRecargo )
+
+                     AgregaAlbaran( oDbfTmp:nNumDoc, .F., oDbfTmp, dbfAlbCliT, dbfAlbCliL, dbfAlbCliP, dbfIva, dbfDiv, ( ( dbfAlbCliT )->cSerAlb + Str( ( dbfAlbCliT )->nNumAlb ) + ( dbfAlbCliT )->cSufAlb == cLastRec ) )
+
+                  else
+
+                     AgregaAlbaran( ++nNumero, .T., oDbfTmp, dbfAlbCliT, dbfAlbCliL, dbfAlbCliP, dbfIva, dbfDiv, ( ( dbfAlbCliT )->cSerAlb + Str( ( dbfAlbCliT )->nNumAlb ) + ( dbfAlbCliT )->cSufAlb == cLastRec ) )
+
+                  end
+
+               case nGrpObr == 3
+
+                  if oDbfTmp:Seek( ( dbfAlbCliT )->cSerAlb + ( dbfAlbCliT )->cCodCli + cCodPgo + cIvaInc + cRecargo + ( dbfAlbCliT )->cCodObr )
+
+                     AgregaAlbaran( oDbfTmp:nNumDoc, .F., oDbfTmp, dbfAlbCliT, dbfAlbCliL, dbfAlbCliP, dbfIva, dbfDiv, ( ( dbfAlbCliT )->cSerAlb + Str( ( dbfAlbCliT )->nNumAlb ) + ( dbfAlbCliT )->cSufAlb == cLastRec ) )
+
+                  else
+
+                     AgregaAlbaran( ++nNumero, .T., oDbfTmp, dbfAlbCliT, dbfAlbCliL, dbfAlbCliP, dbfIva, dbfDiv, ( ( dbfAlbCliT )->cSerAlb + Str( ( dbfAlbCliT )->nNumAlb ) + ( dbfAlbCliT )->cSufAlb == cLastRec ) )
+
+                  end
+
+               end
+
+            else
+
+               AgregaAlbaran( ++nNumero, .T., oDbfTmp, dbfAlbCliT, dbfAlbCliL, dbfAlbCliP, dbfIva, dbfDiv, ( ( dbfAlbCliT )->cSerAlb + Str( ( dbfAlbCliT )->nNumAlb ) + ( dbfAlbCliT )->cSufAlb == cLastRec ) )
+
+            end
+
+         end
+
+         ( dbfAlbCliT )->( dbSkip() )
+
+         oMetMsg:Set( ( dbfAlbCliT )->( OrdKeyNo() ) )
+
+         SysRefresh()
+
+      end
+
+      oMetMsg:Set( ( dbfAlbCliT )->( OrdKeyCount() ) )
+
+
+
+
+
+      DestroyFastFilter( dbfAlbCliT )
+
+   end
+
+   ( dbfAlbCliT )->( OrdSetFocus( nOrdAnt ) )
+   ( dbfAlbCliT )->( dbGoTo( nRecAnt ) )
+
+
+
+
+
+   oDbfTmp:OrdSetFocus( "nNumDoc" )
+   oDbfTmp:GoTop()
+
+
+
+
+
+   oBrwAlb:Refresh()
+
+
+
+
+
+   oDlg:Enable()
+
+   CursorWE()
+
+RETURN NIL
+
+
+
+Static Function AgregaAlbaran( nNumero, lNuevo, oDbfTmp, dbfAlbCliT, dbfAlbCliL, dbfAlbCliP, dbfIva, dbfDiv, lUltimo )
+
+   local aTotAlb        := {}
+   local nRecAnt
+
+   IIF( lUltimo == nil, lUltimo := .F., ) ;
+
+   if ( dbfAlbCliT )->( dbRLock( ( dbfAlbCliT )->( Recno() ) ) )
+
+      aTotAlb           := aTotAlbCli( ( dbfAlbCliT )->cSerAlb + Str( ( dbfAlbCliT)->nNumAlb ) + ( dbfAlbCliT )->cSufAlb, dbfAlbCliT, dbfAlbCliL, dbfIva, dbfDiv )
+
+      if lNuevo
+
+
+         if !Empty( cAnteriorAlbaran )                                     .AND. cAnteriorAlbaran  <> ( dbfAlbCliT )->cSerAlb + Str( ( dbfAlbCliT )->nNumAlb ) + ( dbfAlbCliT )->cSufAlb
+
+            nRecAnt  := oDbfTmp:Recno()
+
+            if oDbfTmp:SeekInOrd( cAnteriorAlbaran, "cNumAlb" )
+
+               oDbfTmp:Load()
+
+               if nAcumulaDescuento1 <> 0
+                  oDbfTmp:nPctDto1  := ( nAcumulaDescuento1 * 100 ) / nAcumulaAlbaran
+               end
+
+               if nAcumulaDescuento2 <> 0
+                  oDbfTmp:nPctDto2  := ( nAcumulaDescuento2 * 100 ) / ( nAcumulaAlbaran - nAcumulaDescuento1 )
+               end
+
+               if nAcumulaDescuento3 <> 0
+                  oDbfTmp:nPctDto3  := ( nAcumulaDescuento3 * 100 ) / ( nAcumulaAlbaran - nAcumulaDescuento1 - nAcumulaDescuento2 )
+               end
+
+               if nAcumulaDescuento4 <> 0
+                  oDbfTmp:nPctDto4  := ( nAcumulaDescuento4 * 100 ) / ( nAcumulaAlbaran - nAcumulaDescuento1 - nAcumulaDescuento2 - nAcumulaDescuento3 )
+               end
+
+               oDbfTmp:Save()
+
+            end
+
+            oDbfTmp:GoTo( nRecAnt )
+
+            cAnteriorAlbaran     := ( dbfAlbCliT )->cSerAlb + Str( ( dbfAlbCliT )->nNumAlb ) + ( dbfAlbCliT )->cSufAlb
+            nAcumulaAlbaran      := aTotAlb[ 16 ]
+            nAcumulaDescuento1   := aTotAlb[ 12 ]
+            nAcumulaDescuento2   := aTotAlb[ 13 ]
+            nAcumulaDescuento3   := aTotAlb[ 14 ]
+            nAcumulaDescuento4   := aTotAlb[ 15 ]
+
+         else
+
+            cAnteriorAlbaran     := ( dbfAlbCliT )->cSerAlb + Str( ( dbfAlbCliT )->nNumAlb ) + ( dbfAlbCliT )->cSufAlb
+            nAcumulaAlbaran      := aTotAlb[ 16 ]
+            nAcumulaDescuento1   := aTotAlb[ 12 ]
+            nAcumulaDescuento2   := aTotAlb[ 13 ]
+            nAcumulaDescuento3   := aTotAlb[ 14 ]
+            nAcumulaDescuento4   := aTotAlb[ 15 ]
+
+         end
+
+      else
+
+         nAcumulaAlbaran         += aTotAlb[ 16 ]
+         nAcumulaDescuento1      += aTotAlb[ 12 ]
+         nAcumulaDescuento2      += aTotAlb[ 13 ]
+         nAcumulaDescuento3      += aTotAlb[ 14 ]
+         nAcumulaDescuento4      += aTotAlb[ 15 ]
+
+      end
+
+      oDbfTmp:Append()
+      oDbfTmp:Blank()
+      oDbfTmp:nNumDoc            := nNumero
+      oDbfTmp:lNewDoc            := lNuevo
+      oDbfTmp:cSerDoc            := ( dbfAlbCliT )->cSerAlb
+      oDbfTmp:lFacAlb            := ( dbfAlbCliT )->lFacturado
+      oDbfTmp:cNumAlb            := ( dbfAlbCliT )->cSerAlb + Str( ( dbfAlbCliT )->nNumAlb ) + ( dbfAlbCliT )->cSufAlb
+      oDbfTmp:dFecAlb            := ( dbfAlbCliT )->dFecAlb
+      oDbfTmp:cCodCli            := ( dbfAlbCliT )->cCodCli
+      oDbfTmp:cNomCli            := ( dbfAlbCliT )->cNomCli
+      oDbfTmp:cCodObr            := ( dbfAlbCliT )->cCodObr
+      oDbfTmp:lIvaInc            := ( dbfAlbCliT )->lIvaInc
+      oDbfTmp:lRecargo           := ( dbfAlbCliT )->lRecargo
+      oDbfTmp:lOperPv            := ( dbfAlbCliT )->lOperPv
+      oDbfTmp:cCodPgo            := ( dbfAlbCliT )->cCodPago
+      oDbfTmp:nTotAlb            := nTotAlbCli( ( dbfAlbCliT )->cSerAlb + Str( ( dbfAlbCliT)->nNumAlb ) + ( dbfAlbCliT )->cSufAlb, dbfAlbCliT, dbfAlbCliL, dbfIva, dbfDiv, nil, cDivEmp(), .F. )
+      oDbfTmp:nTotEnt            := nPagAlbCli( ( dbfAlbCliT )->cSerAlb + Str( ( dbfAlbCliT )->nNumAlb ) + ( dbfAlbCliT )->cSufAlb, dbfAlbCliP, dbfDiv, cDivEmp(), .F. )
+
+      if lUltimo
+         if nAcumulaDescuento1 <> 0
+            oDbfTmp:nPctDto1     := ( nAcumulaDescuento1 * 100 ) / nAcumulaAlbaran
+         end
+
+         if nAcumulaDescuento2 <> 0
+            oDbfTmp:nPctDto2     := ( nAcumulaDescuento2 * 100 ) / ( nAcumulaAlbaran - nAcumulaDescuento1 )
+         end
+
+         if nAcumulaDescuento3 <> 0
+            oDbfTmp:nPctDto3     := ( nAcumulaDescuento3 * 100 ) / ( nAcumulaAlbaran - nAcumulaDescuento1 - nAcumulaDescuento2 )
+         end
+
+         if nAcumulaDescuento4 <> 0
+            oDbfTmp:nPctDto4     := ( nAcumulaDescuento4 * 100 ) / ( nAcumulaAlbaran - nAcumulaDescuento1 - nAcumulaDescuento2 - nAcumulaDescuento3 )
+         end
+      end
+
+      oDbfTmp:Save()
+
+   end
+
+   ( dbfAlbCliT )->( dbRUnLock() )
+
+Return nil
+
+
+
+
+
+Static Function MakFacCli( oDbfTmp, dFecFac, lGrpCli, nGrpObr, lTotAlb, lUniPgo, lNotImp, nRadFec, oBrw, oMetMsg, dbfAlbCliT, dbfAlbCliL, dbfAlbCliP, dbfAlbCliS, dbfClient, dbfCliAtp, dbfIva, dbfDiv, dbfFPago, dbfUsr, dbfCount, oStock, oDlg )
+
+   local oBlock
+   local oError
+   local nNumRec              := 0
+   local dbfFacCliT
+   local dbfFacCliL
+   local dbfFacCliP
+   local dbfFacCliS
+   local dbfAntCliT
+   local aProcesado           := {}
+   local nProcesando          := 0
+   local cLinObr              := Space( 1 )
+   local cSerAlb
+   local nNewFac              := 0
+   local cSufEmp              := RetSufEmp()
+   local lTotAlbCli           := .F.
+   local nNumLin              := 0
+   local cPath                := cPatEmp()
+   local nRec                 := ( dbfAlbCliT )->( Recno() )
+   local nOrd                 := ( dbfAlbCliT )->( OrdSetFocus( 1 ) )
+   local aMsg                 := {}
+   local cDesAlb
+   local cCodPgo
+   local cCodCli
+   local cNomCli
+   local cDivFac
+   local nVdvFac
+   local cCodAge
+   local cCodCaj
+   local nTotEntAlb           := 0
+   local aTotFac
+   local nRecAnt
+
+   if oDbfTmp:LastRec() <= 0
+      msgStop( "No hay albaranes para facturar" )
+      return nil
+   end
+
+   oDlg:Disable()
+
+   oBlock            := ErrorBlock( {| oError | ApoloBreak( oError ) } )
+   BEGIN SEQUENCE
+
+   dbUseArea( .T., ( cDriver() ), ( cPath + "FACCLIT.DBF" ), ( cCheckArea( "FACCLIT", @dbfFacCliT ) ), if(.T. .OR. .F., !.F., NIL), .F.,, )
+   if !lAIS() ; ordListAdd( ( cPath + "FACCLIT.CDX" ) ) ; else ; ordSetFocus( 1 ) ; end
+
+   dbUseArea( .T., ( cDriver() ), ( cPath + "FACCLIL.DBF" ), ( cCheckArea( "FACCLIL", @dbfFacCliL ) ), if(.T. .OR. .F., !.F., NIL), .F.,, )
+   if !lAIS() ; ordListAdd( ( cPath + "FACCLIL.CDX" ) ) ; else ; ordSetFocus( 1 ) ; end
+
+   dbUseArea( .T., ( cDriver() ), ( cPath + "FACCLIP.DBF" ), ( cCheckArea( "FACCLIP", @dbfFacCliP ) ), if(.T. .OR. .F., !.F., NIL), .F.,, )
+   if !lAIS() ; ordListAdd( ( cPath + "FACCLIP.CDX" ) ) ; else ; ordSetFocus( 1 ) ; end
+
+   dbUseArea( .T., ( cDriver() ), ( cPath + "FACCLIS.DBF" ), ( cCheckArea( "FACCLIS", @dbfFacCliS ) ), if(.T. .OR. .F., !.F., NIL), .F.,, )
+   if !lAIS() ; ordListAdd( ( cPath + "FACCLIS.CDX" ) ) ; else ; ordSetFocus( 1 ) ; end
+
+   dbUseArea( .T., ( cDriver() ), ( cPath + "AntCliT.DBF" ), ( cCheckArea( "AntCliT", @dbfAntCliT ) ), if(.T. .OR. .F., !.F., NIL), .F.,, )
+   if !lAIS() ; ordListAdd( ( cPath + "AntCliT.CDX" ) ) ; else ; ordSetFocus( 1 ) ; end
+
+
+
+
+
+   oMetMsg:SetTotal( oDbfTmp:LastRec() )
+
+   oDbfTmp:GoTop()
+   while !oDbfTmp:Eof()
+
+
+
+
+
+      if ( dbfAlbCliT )->( dbSeek( oDbfTmp:cNumAlb ) ) .AND. !oDbfTmp:lFacAlb
+
+         nProcesando          := oDbfTmp:nNumDoc
+
+
+
+
+
+         if aScan( aProcesado, nProcesando ) == 0
+            aAdd( aProcesado, nProcesando )
+
+
+
+
+
+            cSerAlb                    := ( dbfAlbCliT )->cSerAlb
+            nNewFac                    := nNewDoc( ( dbfAlbCliT )->cSerAlb, dbfFacCliT, "NFACCLI", , dbfCount )
+            nNumLin                    := 0
+            cLinObr                    := Space( 1 )
+
+            ( dbfFacCliT )->( dbAppend() )
+            ( dbfFacCliT )->cSerie     := cSerAlb
+            ( dbfFacCliT )->nNumFac    := nNewFac
+            ( dbfFacCliT )->cSufFac    := cSufEmp
+            ( dbfFacCliT )->cTurFac    := cCurSesion()
+            ( dbfFacCliT )->cCodAlm    := ( dbfAlbCliT )->cCodAlm
+            ( dbfFacCliT )->cCodUsr    := cCurUsr()
+            ( dbfFacCliT )->dFecCre    := Date()
+            ( dbfFacCliT )->cTimCre    := Time()
+            ( dbfFacCliT )->lImpAlb    := .T.
+            ( dbfFacCliT )->cCodDlg    := RetFld( cCurUsr(), dbfUsr, "cCodDlg" )
+            ( dbfFacCliT )->cCodCaj    := oUser():cCaja()
+            cCodCaj                    := oUser():cCaja()
+
+            if nRadFec == 1
+               ( dbfFacCliT )->dFecFac := dFecFac
+            else
+               ( dbfFacCliT )->dFecFac := ( dbfAlbCliT )->dFecAlb
+               dFecFac                 := ( dbfAlbCliT )->dFecAlb
+            end
+
+
+
+
+
+
+            if !lGrpCli
+               ( dbfFacCliT )->cNumAlb    := ( dbfAlbCliT )->cSerAlb + Str( ( dbfAlbCliT )->nNumAlb ) + ( dbfAlbCliT )->cSufAlb
+            end
+
+
+
+
+
+            cCodCli                       := ( dbfAlbCliT )->cCodCli
+            ( dbfFacCliT )->cCodCli       := cCodCli
+
+            if ( dbfClient )->( dbSeek( cCodCli ) )
+               ( dbfFacCliT )->cNomCli    := ( dbfClient )->Titulo
+               cNomCli                    := ( dbfClient )->Titulo
+               ( dbfFacCliT )->cDirCli    := ( dbfClient )->Domicilio
+               ( dbfFacCliT )->cPobCli    := ( dbfClient )->Poblacion
+               ( dbfFacCliT )->cPrvCli    := ( dbfClient )->Provincia
+               ( dbfFacCliT )->cPosCli    := ( dbfClient )->CodPostal
+               ( dbfFacCliT )->cDniCli    := ( dbfClient )->Nif
+               ( dbfFacCliT )->nTarifa    := Max( ( dbfClient )->nTarifa, 1 )
+               lTotAlbCli                 := ( dbfClient )->lTotAlb
+               cCodPgo                    := ( dbfClient )->CodPago
+            end
+
+
+
+
+
+            if lUniPgo
+               ( dbfFacCliT )->cCodPago   := GetFormaDePago( cCodCli, cCodPgo, oDbfTmp )
+               cCodPgo                    := GetFormaDePago( cCodCli, cCodPgo, oDbfTmp )
+            else
+               ( dbfFacCliT )->cCodPago   := oDbfTmp:cCodPgo
+               cCodPgo                    := oDbfTmp:cCodPgo
+            end
+
+            if Empty( ( dbfFacCliT )->nTarifa )
+               ( dbfFacCliT )->nTarifa    := Max( ( dbfAlbCliT )->nTarifa, 1 )
+            end
+
+            ( dbfFacCliT )->cCodAge       := ( dbfAlbCliT )->cCodAge
+            cCodAge                       := ( dbfAlbCliT )->cCodAge
+            ( dbfFacCliT )->cCodRut       := ( dbfAlbCliT )->cCodRut
+            ( dbfFacCliT )->cCodTar       := ( dbfAlbCliT )->cCodTar
+            ( dbfFacCliT )->cCodObr       := ( dbfAlbCliT )->cCodObr
+            ( dbfFacCliT )->cDivFac       := ( dbfAlbCliT )->cDivAlb
+            cDivFac                       := ( dbfAlbCliT )->cDivAlb
+            ( dbfFacCliT )->nVdvFac       := ( dbfAlbCliT )->nVdvAlb
+            nVdvFac                       := ( dbfAlbCliT )->nVdvAlb
+            ( dbfFacCliT )->cDtoEsp       := Padr( "General", 50 )
+            ( dbfFacCliT )->nDtoEsp       := oDbfTmp:nPctDto1
+            ( dbfFacCliT )->cDpp          := Padr( "Pronto pago", 50 )
+            ( dbfFacCliT )->nDpp          := oDbfTmp:nPctDto2
+            ( dbfFacCliT )->cDtoUno       := Space(50)
+            ( dbfFacCliT )->nDtoUno       := oDbfTmp:nPctDto3
+            ( dbfFacCliT )->cDtoDos       := Space(50)
+            ( dbfFacCliT )->nDtoDos       := oDbfTmp:nPctDto4
+            ( dbfFacCliT )->lRecargo      := ( dbfAlbCliT )->lRecargo
+            ( dbfFacCliT )->lOperPv       := ( dbfAlbCliT )->lOperPv
+            ( dbfFacCliT )->mComent       := ( dbfAlbCliT )->mComent
+            ( dbfFacCliT )->mObserv       := ( dbfAlbCliT )->mObserv
+            ( dbfFacCliT )->cCodTrn       := ( dbfAlbCliT )->cCodTrn
+            ( dbfFacCliT )->cCodPro       := cProCnt( ( dbfAlbCliT )->cSerAlb )
+            ( dbfFacCliT )->lIvaInc       := ( dbfAlbCliT )->lIvaInc
+            ( dbfFacCliT )->lSndDoc       := .T.
+
+
+
+
+
+            aAdd( aMsg, {.T., "Factura generada : " + ( dbfFacCliT )->cSerie + "/" + Alltrim( Str( ( dbfFacCliT )->nNumFac ) ) + "/" + ( dbfFacCliT )->cSufFac } )
+
+         end
+
+
+
+
+
+         SetFacturadoAlbaranCliente( .T., , dbfAlbCliT, dbfAlbCliL, dbfAlbCliS, ( dbfFacCliT )->cSerie + Str( ( dbfFacCliT )->nNumFac ) + ( dbfFacCliT )->cSufFac )
+
+
+
+
+
+         if ( dbfAlbCliL )->( dbSeek( oDbfTmp:cNumAlb ) )
+
+
+
+
+
+            if lNumObr() .AND. ( dbfAlbCliT )->cCodObr <> cLinObr
+               ( dbfFacCliL )->( dbAppend() )
+               ( dbfFacCliL )->nNumLin    := ++nNumLin
+               ( dbfFacCliL )->cSerie     := cSerAlb
+               ( dbfFacCliL )->nNumFac    := nNewFac
+               ( dbfFacCliL )->cSufFac    := cSufEmp
+               ( dbfFacCliL )->cDetalle   := Alltrim( cNumObr() ) + Space( 1 ) + ( dbfAlbCliT )->cCodObr
+               ( dbfFacCliL )->lControl   := .T.
+               cLinObr                    := ( dbfAlbCliT )->cCodObr
+            end
+
+
+
+
+
+            if lNumAlb() .OR. lSuAlb()
+               ( dbfFacCliL )->( dbAppend() )
+               ( dbfFacCliL )->nNumLin    := ++nNumLin
+               ( dbfFacCliL )->cSerie     := cSerAlb
+               ( dbfFacCliL )->nNumFac    := nNewFac
+               ( dbfFacCliL )->cSufFac    := cSufEmp
+               cDesAlb                    := ""
+               if lNumAlb()
+                  cDesAlb                 += Alltrim( cNumAlb() ) + " " + Left( oDbfTmp:cNumAlb, 1 ) + "/" + AllTrim( SubStr( oDbfTmp:cNumAlb, 2, 9 ) ) + "/" + Right( oDbfTmp:cNumAlb, 2 ) + Space( 1 )
+               end
+               if lSuAlb()
+                  cDesAlb                 += Alltrim( cSuAlb() ) + " " + Rtrim( ( dbfAlbCliT )->cCodSuAlb ) + Space( 1 )
+               end
+               cDesAlb                    += dtoc( oDbfTmp:dFecAlb )
+               ( dbfFacCliL )->cDetalle   := cDesAlb
+               ( dbfFacCliL )->lControl   := .T.
+            end
+
+
+
+
+
+            while ( ( dbfAlbCliL )->cSerAlb + Str( ( dbfAlbCliL )->nNumAlb ) + ( dbfAlbCliL )->cSufAlb == oDbfTmp:cNumAlb ) .AND. !( dbfAlbCliL )->( eof() )
+
+               ( dbfFacCliL )->( dbAppend() )
+               ( dbfFacCliL )->nNumLin    := ++nNumLin
+               ( dbfFacCliL )->cSerie     := cSerAlb
+               ( dbfFacCliL )->nNumFac    := nNewFac
+               ( dbfFacCliL )->cSufFac    := cSufEmp
+               ( dbfFacCliL )->cRef       := ( dbfAlbCliL )->cRef
+               ( dbfFacCliL )->cDetalle   := ( dbfAlbCliL )->cDetalle
+               ( dbfFacCliL )->mLngDes    := ( dbfAlbCliL )->mLngDes
+               ( dbfFacCliL )->mNumSer    := ( dbfAlbCliL )->mNumSer
+               ( dbfFacCliL )->nCanEnt    := ( dbfAlbCliL )->nCanEnt
+               ( dbfFacCliL )->cUnidad    := ( dbfAlbCliL )->cUnidad
+               ( dbfFacCliL )->nUniCaja   := ( dbfAlbCliL )->nUniCaja
+               ( dbfFacCliL )->nUndKit    := ( dbfAlbCliL )->nUndKit
+               ( dbfFacCliL )->nPesoKg    := ( dbfAlbCliL )->nPesoKg
+               ( dbfFacCliL )->nIva       := ( dbfAlbCliL )->nIva
+               ( dbfFacCliL )->nReq       := ( dbfAlbCliL )->nReq
+               ( dbfFacCliL )->nDto       := ( dbfAlbCliL )->nDto
+               ( dbfFacCliL )->nDtoDiv    := ( dbfAlbCliL )->nDtoDiv
+               ( dbfFacCliL )->nPntVer    := ( dbfAlbCliL )->nPntVer
+               ( dbfFacCliL )->nDtoPrm    := ( dbfAlbCliL )->nDtoPrm
+               ( dbfFacCliL )->nComAge    := ( dbfAlbCliL )->nComAge
+               ( dbfFacCliL )->dFecha     := ( dbfAlbCliL )->dFecha
+               ( dbfFacCliL )->cTipMov    := ( dbfAlbCliL )->cTipMov
+               ( dbfFacCliL )->cAlmLin    := ( dbfAlbCliL )->cAlmLin
+               ( dbfFacCliL )->cCodPr1    := ( dbfAlbCliL )->cCodPr1
+               ( dbfFacCliL )->cCodPr2    := ( dbfAlbCliL )->cCodPr2
+               ( dbfFacCliL )->cValPr1    := ( dbfAlbCliL )->cValPr1
+               ( dbfFacCliL )->cValPr2    := ( dbfAlbCliL )->cValPr2
+               ( dbfFacCliL )->nCtlStk    := ( dbfAlbCliL )->nCtlStk
+               ( dbfFacCliL )->nCosDiv    := ( dbfAlbCliL )->nCosDiv
+               ( dbfFacCliL )->nMesGrt    := ( dbfAlbCliL )->nMesGrt
+               ( dbfFacCliL )->lControl   := ( dbfAlbCliL )->lControl
+               ( dbfFacCliL )->lKitArt    := ( dbfAlbCliL )->lKitArt
+               ( dbfFacCliL )->lKitChl    := ( dbfAlbCliL )->lKitChl
+               ( dbfFacCliL )->lKitPrc    := ( dbfAlbCliL )->lKitPrc
+               ( dbfFacCliL )->lNotVta    := ( dbfAlbCliL )->lNotVta
+               ( dbfFacCliL )->lImpLin    := ( dbfAlbCliL )->lImpLin
+               ( dbfFacCliL )->nValImp    := ( dbfAlbCliL )->nValImp
+               ( dbfFacCliL )->lIvaLin    := ( dbfAlbCliL )->lIvaLin
+               ( dbfFacCliL )->nPreUnit   := ( dbfAlbCliL )->nPreUnit
+               ( dbfFacCliL )->cImagen    := ( dbfAlbCliL )->cImagen
+               ( dbfFacCliL )->cCodFam    := ( dbfAlbCliL )->cCodFam
+               ( dbfFacCliL )->cGrpFam    := ( dbfAlbCliL )->cGrpFam
+               ( dbfFacCliL )->lLote      := ( dbfAlbCliL )->lLote
+               ( dbfFacCliL )->nLote      := ( dbfAlbCliL )->nLote
+               ( dbfFacCliL )->cLote      := ( dbfAlbCliL )->cLote
+               ( dbfFacCliL )->dFecCad    := ( dbfAlbCliL )->dFecCad
+
+               ( dbfFacCliL )->cCodAlb    := oDbfTmp:cNumAlb
+               ( dbfFacCliL )->dFecAlb    := oDbfTmp:dFecAlb
+
+               if lNotImp
+                  ( dbfFacCliL )->lImpLin := lNotImp
+               else
+                  ( dbfFacCliL )->lImpLin := ( dbfAlbCliL )->lImpLin
+               end
+
+
+
+
+
+
+               if ( dbfAlbCliS )->( dbSeek( oDbfTmp:cNumAlb + Str( ( dbfAlbCliL )->nNumLin ) ) )
+
+                  while ( dbfAlbCliS )->cSerAlb + Str( ( dbfAlbCliS )->nNumAlb ) + ( dbfAlbCliS )->cSufAlb + Str( ( dbfAlbCliS )->nNumLin ) == oDbfTmp:cNumAlb + Str( ( dbfAlbCliL )->nNumLin ) .AND. !( dbfAlbCliS )->( Eof() )
+
+                     ( dbfFacCliS )->( dbAppend() )
+                     ( dbfFacCliS )->cSerFac  := cSerAlb
+                     ( dbfFacCliS )->nNumFac  := nNewFac
+                     ( dbfFacCliS )->cSufFac  := cSufEmp
+                     ( dbfFacCliS )->nNumLin  := nNumLin
+                     ( dbfFacCliS )->cRef     := ( dbfAlbCliS )->cRef
+                     ( dbfFacCliS )->cAlmLin  := ( dbfAlbCliS )->cAlmLin
+                     ( dbfFacCliS )->cNumSer  := ( dbfAlbCliS )->cNumSer
+
+                     ( dbfAlbCliS )->( dbSkip() )
+
+                  end
+
+               end
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+               ( dbfAlbCliL )->( dbSkip( 1 ) )
+
+            end
+
+            if lTotAlb .OR. lTotAlbCli
+               ( dbfFacCliL )->( dbAppend() )
+               ( dbfFacCliL )->nNumLin    := ++nNumLin
+               ( dbfFacCliL )->cSerie     := cSerAlb
+               ( dbfFacCliL )->nNumFac    := nNewFac
+               ( dbfFacCliL )->cSufFac    := cSufEmp
+               ( dbfFacCliL )->mLngDes    := "Total albaran..."
+               ( dbfFacCliL )->lTotLin    := .T.
+            end
+
+         end
+
+
+
+
+
+         if ( dbfAlbCliP )->( dbSeek( oDbfTmp:cNumAlb ) )
+
+            while ( dbfAlbCliP )->cSerAlb + Str( ( dbfAlbCliP )->nNumAlb ) + ( dbfAlbCliP )->cSufAlb == oDbfTmp:cNumAlb .AND. !( dbfAlbCliP )->( Eof() )
+
+               nTotEntAlb     += ( dbfAlbCliP )->nImporte
+
+               ( dbfAlbCliP )->( dbSkip() )
+
+            end
+
+         end
+
+         ( dbfAlbCliP )->( dbGoTop() )
+
+      end
+
+      oDbfTmp:Skip()
+
+
+
+
+
+      oMetMsg:Set( oDbfTmp:OrdKeyNo() )
+
+
+
+
+
+
+
+      if nProcesando <> 0 .AND. ( nProcesando <> oDbfTmp:nNumDoc .OR. oDbfTmp:Eof() )
+
+
+
+
+
+         if nTotEntAlb <> 0
+
+            ( dbfFacCliP )->( dbAppend() )
+
+            ( dbfFacCliP )->cSerie   := cSerAlb
+            ( dbfFacCliP )->nNumFac  := nNewFac
+            ( dbfFacCliP )->cSufFac  := cSufEmp
+            ( dbfFacCliP )->nNumRec  := 1
+            ( dbfFacCliP )->cTurRec  := ""
+            ( dbfFacCliP )->lCloPgo  := .T.
+            ( dbfFacCliP )->cCodCaj  := cCodCaj
+            ( dbfFacCliP )->cCodCli  := cCodCli
+            ( dbfFacCliP )->cNomCli  := cNomCli
+            ( dbfFacCliP )->dEntrada := dFecFac
+            ( dbfFacCliP )->dPreCob  := dFecFac
+            ( dbfFacCliP )->dFecVto  := dFecFac
+            ( dbfFacCliP )->nImporte := nTotEntAlb
+            ( dbfFacCliP )->nImpCob  := nTotEntAlb
+            ( dbfFacCliP )->cDescrip := "Suma entregas a cuenta de albaranes"
+            ( dbfFacCliP )->cCodPgo  := cCodPgo
+            ( dbfFacCliP )->cDivPgo  := cDivFac
+            ( dbfFacCliP )->nVdvPgo  := nVdvFac
+            ( dbfFacCliP )->cCodAge  := cCodAge
+            ( dbfFacCliP )->lCobrado := .T.
+            ( dbfFacCliP )->lConPgo  := .F.
+            ( dbfFacCliP )->lRecImp  := .F.
+            ( dbfFacCliP )->lRecDto  := .F.
+            ( dbfFacCliP )->( dbUnLock() )
+
+         end
+
+         nTotEntAlb  := 0
+
+
+
+
+
+         GenPgoFacCli( cSerAlb + Str( nNewFac ) + cSufEmp, dbfFacCliT, dbfFacCliL, dbfFacCliP, dbfAntCliT, dbfClient, dbfFPago, dbfDiv, dbfIva )
+
+         ChkLqdFacCli( nil, dbfFacCliT, dbfFacCliL, dbfFacCliP, dbfAntCliT, dbfIva, dbfDiv, .F. )
+
+
+
+
+
+         nRecAnt  := ( dbfFacCliT )->( RecNo() )
+
+         if dbSeekInOrd( cSerAlb + Str( nNewFac ) + cSufEmp, "nNumFac", dbfFacCliT )
+
+            aTotFac                    := aTotFacCli( cSerAlb + Str( nNewFac ) + cSufEmp, dbfFacCliT, dbfFacCliL, dbfIva, dbfDiv, dbfFacCliP, dbfAntCliT, ( dbfFacCliT )->cDivFac )
+
+            if dbLock( dbfFacCliT )
+
+               ( dbfFacCliT )->nTotNet := aTotFac[1]
+               ( dbfFacCliT )->nTotIva := aTotFac[2]
+               ( dbfFacCliT )->nTotReq := aTotFac[3]
+               ( dbfFacCliT )->nTotFac := aTotFac[4]
+
+               ( dbfFacCliT )->( dbUnLock() )
+
+            end
+
+         end
+
+         ( dbfFacCliT )->( dbGoTo( nRecAnt ) )
+
+      end
+
+   end
+
+   RECOVER USING oError
+
+      msgStop( "Imposible abrir todas las bases de datos " + Chr(13)+Chr(10) + ErrorMessage( oError ) )
+
+   end
+
+   ErrorBlock( oBlock )
+
+   ( dbfFacCliT )->( dbCloseArea() )
+   ( dbfFacCliL )->( dbCloseArea() )
+   ( dbfFacCliP )->( dbCloseArea() )
+   ( dbfFacCliS )->( dbCloseArea() )
+   ( dbfAntCliT )->( dbCloseArea() )
+
+   ( dbfAlbCliT )->( OrdSetFocus( nOrd ) )
+   ( dbfAlbCliT )->( dbGoTo( nRec ) )
+
+   oDlg:Enable()
+
+   if Empty( aMsg )
+      MsgStop( "No se generaron facturas." )
+   else
+      Visor( aMsg )
+   end
+
+RETURN NIL

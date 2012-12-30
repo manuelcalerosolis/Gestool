@@ -1,0 +1,278 @@
+#line 112 "hbclass.ch"
+   DYNAMIC DivertConstructorCall
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+DECLARE HBClass  New( cName AS String, OPTIONAL SuperParams ) AS CLASS HBClass  Create() AS Object  Instance() AS Object  AddClsMethod( cName AS String, @MethodName(), nScope AS Numeric, n2 AS Numeric, n3 AS Numeric )  AddDelegate( cName AS String, cDelegate AS String, cObject AS String, nScope AS Numeric, lPersistent AS LOGICAL )  AddMultiClsData( cType AS String, uVal, nScope AS Numeric, aDatas AS Array OF String )  AddMultiData( cType AS String, uVal, nScope AS Numeric, aDatas AS Array OF String, x AS LOGICAL, lPer AS LOGICAL )  AddMethod( cName AS String, @MethodName(), nScope AS Numeric, lPersistent AS LOGICAL )  AddInLine( cName AS String, bBlock AS CodeBlock, nScope AS Numeric, lPersistent AS LOGICAL )  AddVirtual( cName AS String )  ModMethod( cName AS String, @MethodName(), nScope AS Numeric, lPersistent AS LOGICAL )  ModClsMethod( cName AS String, @MethodName(), nScope AS Numeric )  ModInline( cName AS String, bBlock AS CodeBlock, nScope AS Numeric, lPersistent AS LOGICAL )  SetOnError( @MethodName() )
+#line 85 "\Fwh1204\Include\FiveWin.Ch"
+   EXTERNAL GetProcAdd
+   EXTERNAL TActiveX
+
+
+
+
+extern errorsys
+#line 21 ".\Prg\Webbar.prg"
+_HB_CLASS TWebBar ; UTILITY FUNCTION TWebBar(...); static s_oClass ; local oClassInstance ; local nScope ; nScope := 1 ; if s_oClass == NIL ; s_oClass := IIF(.F.,, HBClass():New( "TWebBar" , {TControl():classh} ) ) ; ;
+
+   _HB_MEMBER {AS LOGICAL lRegistered} ; IIF( !.F., s_oClass:AddMultiClsData("LOGICAL",, nScope + IIF( .F., 32, 0 ) + 64, { "lRegistered" }, .F. ), )
+
+   _HB_MEMBER { hBitmap} ; IIF( !.F., s_oClass:AddMultiData(,, nScope + IIF( .F., 32, 0 ), { "hBitmap" }, .F., .F. ), )
+   _HB_MEMBER { hPalette} ; IIF( !.F., s_oClass:AddMultiData(,, nScope + IIF( .F., 32, 0 ), { "hPalette" }, .F., .F. ), )
+   _HB_MEMBER { lCaptured} ; IIF( !.F., s_oClass:AddMultiData(, .F., nScope + IIF( .F., 32, 0 ), { "lCaptured" }, .F., .F. ), )
+   _HB_MEMBER { nDesp} ; IIF( !.F., s_oClass:AddMultiData(, 0, nScope + IIF( .F., 32, 0 ), { "nDesp" }, .F., .F. ), )
+   _HB_MEMBER { cBitmap} ; IIF( !.F., s_oClass:AddMultiData(,, nScope + IIF( .F., 32, 0 ), { "cBitmap" }, .F., .F. ), )
+   _HB_MEMBER { cResBmp} ; IIF( !.F., s_oClass:AddMultiData(,, nScope + IIF( .F., 32, 0 ), { "cResBmp" }, .F., .F. ), )
+   _HB_MEMBER { nCtlHeight} ; IIF( !.F., s_oClass:AddMultiData(, 20, nScope + IIF( .F., 32, 0 ), { "nCtlHeight" }, .F., .F. ), )
+   _HB_MEMBER { nClrLine} ; IIF( !.F., s_oClass:AddMultiData(,, nScope + IIF( .F., 32, 0 ), { "nClrLine" }, .F., .F. ), )
+   _HB_MEMBER { aSay} ; IIF( !.F., s_oClass:AddMultiData(,, nScope + IIF( .F., 32, 0 ), { "aSay" }, .F., .F. ), )
+   _HB_MEMBER {AS NUMERIC nLeftMargin} ; IIF( !.F., s_oClass:AddMultiData( "NUMERIC", 10, nScope + IIF( .F., 32, 0 ), { "nLeftMargin" }, .F., .F. ), )
+   _HB_MEMBER {AS NUMERIC nRightMargin} ; IIF( !.F., s_oClass:AddMultiData( "NUMERIC", 0, nScope + IIF( .F., 32, 0 ), { "nRightMargin" }, .F., .F. ), )
+   _HB_MEMBER {AS NUMERIC nTopMargin} ; IIF( !.F., s_oClass:AddMultiData( "NUMERIC", 0, nScope + IIF( .F., 32, 0 ), { "nTopMargin" }, .F., .F. ), )
+   _HB_MEMBER {AS NUMERIC nDnMargin} ; IIF( !.F., s_oClass:AddMultiData( "NUMERIC", 0, nScope + IIF( .F., 32, 0 ), { "nDnMargin" }, .F., .F. ), )
+
+   _HB_MEMBER {AS NUMERIC nOption} ; IIF( !.F., s_oClass:AddMultiData( "NUMERIC", 1, nScope + IIF( .F., 32, 0 ), { "nOption" }, .F., .F. ), )
+
+
+
+   _HB_MEMBER New( nTop, nLeft, nWidth, nHeight, nCtlHeight, cBitmap, cResBmp, nClrFore, nClrBack, nStyle, oBrush, oFont,  lPixel, cMsg, oWnd, nHelpID, bRClick) AS CLASS TWebBar; IIF( .F., s_oClass:ModMethod( "New", @TWebBar_New(), nScope + IIF( .T., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ), s_oClass:AddMethod( "New", @TWebBar_New(), nScope + IIF( .T., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ));
+
+
+
+   _HB_MEMBER Redefine( nId, nCtlHeight, cBitmap, cResBmp, nClrFore, nClrBack, nStyle, oBrush, oFont, lPixel, cMsg, oWnd, nHelpID, bRClick) AS CLASS TWebBar; IIF( .F., s_oClass:ModMethod( "Redefine", @TWebBar_Redefine(), nScope + IIF( .T., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ), s_oClass:AddMethod( "Redefine", @TWebBar_Redefine(), nScope + IIF( .T., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ));
+
+   _HB_MEMBER End(); IIF( .F., s_oClass:ModInline( "End", {|Self | Self, ( if( ::hWnd == 0, ::Destroy(), ::TControl:End() ) ) }, nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ), s_oClass:AddInline( "End", {|Self | Self, ( if( ::hWnd == 0, ::Destroy(), ::TControl:End() ) ) }, nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ) )
+
+   _HB_MEMBER Display(); IIF( .F., s_oClass:ModInline( "Display", {|Self | Self, ( ::BeginPaint(), ::Paint(), ::EndPaint() ) }, nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ), s_oClass:AddInline( "Display", {|Self | Self, ( ::BeginPaint(), ::Paint(), ::EndPaint() ) }, nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ) )
+
+   _HB_MEMBER Paint(); IIF( .F., s_oClass:ModMethod( "Paint", @TWebBar_Paint(), nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ), s_oClass:AddMethod( "Paint", @TWebBar_Paint(), nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ));
+
+   _HB_MEMBER EraseBkground(); IIF( .F., s_oClass:ModInline( "EraseBkground", {|Self | Self, 1 }, nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ), s_oClass:AddInline( "EraseBkground", {|Self | Self, 1 }, nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ) )
+
+   _HB_MEMBER Destroy(); IIF( .F., s_oClass:ModMethod( "Destroy", @TWebBar_Destroy(), nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ), s_oClass:AddMethod( "Destroy", @TWebBar_Destroy(), nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ));
+
+   _HB_MEMBER LoadImage( cResName, cBmpFile); IIF( .F., s_oClass:ModMethod( "LoadImage", @TWebBar_LoadImage(), nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ), s_oClass:AddMethod( "LoadImage", @TWebBar_LoadImage(), nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ));
+
+   _HB_MEMBER Say( nRow, nCol, cText); IIF( .F., s_oClass:ModMethod( "Say", @TWebBar_Say(), nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ), s_oClass:AddMethod( "Say", @TWebBar_Say(), nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ));
+
+; IF .F. ; __clsActive(s_oClass:hClass) ; s_oClass:Refresh() ; ELSE ; s_oClass:Create() ; END ; oClassInstance := __clsInst( s_oClass:hClass ) ; IF __ObjHasMsg( oClassInstance, "InitClass" ); oClassInstance:InitClass( hb_aParams() ) ; END ; ELSE ; oClassInstance := __clsInst( s_oClass:hClass ) ; END ; IF PCount() > 0 ; DIVERT TO (@DivertConstructorCall()) OF s_oClass ; END ; RETURN oClassInstance AS CLASS TWebBar ;
+
+
+
+
+
+UTILITY STATIC function TWebBar_New( nTop, nLeft, nWidth, nHeight, nCtlHeight, cBitmap, cResBmp, nClrFore, nClrBack, nStyle, oBrush, oFont,  lPixel, cMsg, oWnd, nHelpID, bRClick) ; local Self AS CLASS TWebBar := QSelf() AS CLASS TWebBar
+
+
+
+
+
+
+
+   IIF( nClrFore == nil, nClrFore := 16777215, ) ; IIF( nClrBack == nil, nClrBack := GetSysColor( 15 ), ); IIF( nStyle == nil, nStyle := nOr( 1073741824, 268435456, 67108864, 33554432 ), ); IIF( nCtlHeight == nil, nCtlHeight := 30, ); IIF( oFont == nil, oFont := TFont():New( "Segoe UI Light", 0, -48, .F., .F. ), ); IIF( lPixel == nil, lPixel := .T., ); IIF( oBrush == nil, oBrush := TBrush():New( , ( 255 + ( 255 * 256 ) + ( 255 * 65536 ) ) ), );
+
+   ::nStyle       = nStyle
+   ::nId          = ::GetNewId()
+   ::oWnd         = oWnd
+   ::nTop         = If( lPixel, nTop, nTop * 16 )
+   ::nLeft        = If( lPixel, nLeft, nLeft * 8 )
+   ::nBottom      = ::nTop + nHeight - 1
+   ::nRight       = ::nLeft + nWidth - 1
+   ::nCtlHeight   = nCtlHeight
+   ::lCaptured    = .F.
+   ::cBitmap      = cBitmap
+   ::cResBmp      = cResBmp
+   ::hBitmap      = 0
+   ::nClrPane     = nClrBack
+   ::nClrText     = nClrFore
+   ::bRClicked    = bRClick
+   ::nHelpID      = nHelpID
+   ::oFont        = oFont
+   ::nClrLine     = ( 51 + ( 51 * 256 ) + ( 255 * 65536 ) )
+   ::oBrush       = oBrush
+   ::nOption      = 1
+
+   if ValType( cResBmp ) == "C" .OR. ValType( cBitmap ) == "C"
+      ::LoadImage( cResBmp, cBitmap )
+   elseif ValType( cResBmp ) == "N"
+      ::SetBitmap( cResBmp )
+   else
+      ::SetColor( nClrFore, nClrBack )
+   end
+
+   ::Register( nOR( 1, 2 ) )
+
+   if !Empty( oWnd:hWnd )
+      ::Create()
+      oWnd:AddControl( Self )
+   else
+      oWnd:DefControl( Self )
+   endif
+
+return Self
+
+
+
+
+UTILITY STATIC function TWebBar_Redefine( nId, nCtlHeight, cBitmap, cResBmp, nClrFore, nClrBack, nStyle,  oBrush, oFont, lPixel, cMsg, oWnd, nHelpID, bRClick) ; local Self AS CLASS TWebBar := QSelf() AS CLASS TWebBar
+
+
+
+
+
+
+
+
+   IIF( nClrFore == nil, nClrFore := 0, ) ; IIF( nClrBack == nil, nClrBack := GetSysColor( 15 ), ); IIF( nStyle == nil, nStyle := nOr( 1073741824, 268435456, 67108864, 33554432 ), ); IIF( nCtlHeight == nil, nCtlHeight := 30, ); IIF( oFont == nil, oFont := TFont():New( "Verdana", 0, -22, .F., .T. ), ); IIF( lPixel == nil, lPixel := .T., ); IIF( oWnd == nil, oWnd := GetWndDefault(), ); IIF( oBrush == nil, oBrush := TBrush():New( , nClrBack ), );
+
+   ::nStyle       = nStyle
+   ::nId          = nId
+   ::oWnd         = oWnd
+   ::nCtlHeight   = nCtlHeight
+   ::lCaptured    = .F.
+   ::cBitmap      = cBitmap
+   ::cResBmp      = cResBmp
+   ::hBitmap      = 0
+   ::nClrPane     = nClrBack
+   ::nClrText     = nClrFore
+   ::bRClicked    = bRClick
+   ::nHelpID      = nHelpID
+   ::oFont        = oFont
+   ::nClrLine     = ( 255 + ( 154 * 256 ) + ( 49 * 65536 ) )
+   ::oBrush       = oBrush
+
+   ::LoadImage( cResBmp, cBitmap )
+
+   ::Register( nOR( 1, 2 ) )
+
+   if oWnd <> nil
+      oWnd:DefControl( Self )
+   end
+
+return Self
+
+
+
+UTILITY STATIC function TWebBar_Paint() ; local Self AS CLASS TWebBar := QSelf() AS CLASS TWebBar
+
+   local n
+   local nWidth
+   local nHeight
+   local nBmpWidth
+   local nBmpHeight
+   local nRow        := 0
+   local nCol        := 0
+   local aInfo       := ::DispBegin()
+
+   if !Empty( ::hBitmap )
+
+      nWidth         := ::nWidth()
+      nHeight        := ::nHeight()
+      nBmpWidth      := nBmpWidth( ::hBitmap )
+      nBmpHeight     := nBmpHeight( ::hBitmap )
+
+      while nRow <= nHeight
+         nCol        := 0
+         while nCol <= nWidth
+            PalBmpDraw( ::hDC, nRow, nCol, ::hBitmap, ::hPalette )
+            nCol     += nBmpWidth
+         end
+         nRow        += nBmpHeight
+      end
+
+   else
+
+      FillRect( ::hDC, GetClientRect( ::hWnd ), ::oBrush:hbrush )
+
+   end
+
+   if ::aSay <> nil
+      for n := 1 to len( ::aSay )
+         wSay( ::hWnd, ::hDC, ::aSay[ n, 1 ], ::aSay[ n, 2 ], ::aSay[ n, 3 ], ::nClrText, , ::oFont:hFont, .T., .T. )
+      next
+   end
+
+   ::DispEnd( aInfo )
+
+return nil
+
+
+
+UTILITY STATIC function TWebBar_Destroy() ; local Self AS CLASS TWebBar := QSelf() AS CLASS TWebBar
+
+   if ::oBrush <> nil
+      ::oBrush:End()
+   end
+
+   if ::oFont <> nil
+      ::oFont:End()
+   end
+
+   PalBmpFree( ::hBitmap, ::hPalette )
+
+   if ::hWnd <> 0
+      ::TControl:Destroy()
+   endif
+
+   ::oBrush    := nil
+   ::oFont     := nil
+   ::hBitmap   := nil
+   ::hPalette  := nil
+
+return Self
+
+
+
+UTILITY STATIC function TWebBar_LoadImage( cResName, cBmpFile) ; local Self AS CLASS TWebBar := QSelf() AS CLASS TWebBar
+
+   local aBmp
+
+   if !Empty( cResName )
+      aBmp        := PalBmpLoad( cResName )
+      ::hBitmap   := aBmp[ 1 ]
+      ::hPalette  := aBmp[ 2 ]
+      ::cBitmap   := cResName
+   endif
+
+   if !Empty( cBmpFile ) .AND. File( cBmpFile )
+      aBmp        := PalBmpRead( ::GetDC(), cBmpFile )
+      ::hBitmap   := aBmp[ 1 ]
+      ::hPalette  := aBmp[ 2 ]
+      ::cBitmap   := AllTrim( cBmpFile )
+      ::ReleaseDC()
+   endif
+
+   if ::hBitmap <> 0
+      PalBmpNew( ::hWnd, ::hBitmap, ::hPalette )
+   endif
+
+return Self
+
+
+
+UTILITY STATIC function TWebBar_Say( nRow, nCol, cText) ; local Self AS CLASS TWebBar := QSelf() AS CLASS TWebBar
+
+
+
+   IIF( nRow == nil, nRow := 0, ) ; IIF( nCol == nil, nCol := 0, ); IIF( cText == nil, cText := "", );
+
+   if ::aSay == nil
+      ::aSay   := {}
+   end
+
+   aAdd( ::aSay, { nRow, nCol, cText } )
+
+RETURN Self

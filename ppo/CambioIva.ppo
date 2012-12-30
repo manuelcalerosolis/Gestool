@@ -1,0 +1,1097 @@
+#line 112 "hbclass.ch"
+   DYNAMIC DivertConstructorCall
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+DECLARE HBClass  New( cName AS String, OPTIONAL SuperParams ) AS CLASS HBClass  Create() AS Object  Instance() AS Object  AddClsMethod( cName AS String, @MethodName(), nScope AS Numeric, n2 AS Numeric, n3 AS Numeric )  AddDelegate( cName AS String, cDelegate AS String, cObject AS String, nScope AS Numeric, lPersistent AS LOGICAL )  AddMultiClsData( cType AS String, uVal, nScope AS Numeric, aDatas AS Array OF String )  AddMultiData( cType AS String, uVal, nScope AS Numeric, aDatas AS Array OF String, x AS LOGICAL, lPer AS LOGICAL )  AddMethod( cName AS String, @MethodName(), nScope AS Numeric, lPersistent AS LOGICAL )  AddInLine( cName AS String, bBlock AS CodeBlock, nScope AS Numeric, lPersistent AS LOGICAL )  AddVirtual( cName AS String )  ModMethod( cName AS String, @MethodName(), nScope AS Numeric, lPersistent AS LOGICAL )  ModClsMethod( cName AS String, @MethodName(), nScope AS Numeric )  ModInline( cName AS String, bBlock AS CodeBlock, nScope AS Numeric, lPersistent AS LOGICAL )  SetOnError( @MethodName() )
+#line 85 "\Fwh1204\Include\FiveWin.Ch"
+   EXTERNAL GetProcAdd
+   EXTERNAL TActiveX
+
+
+
+
+extern errorsys
+#line 9 ".\Prg\CambioIva.prg"
+_HB_CLASS TCambioDeIva ; UTILITY FUNCTION TCambioDeIva(...); static s_oClass ; local oClassInstance ; local nScope ; nScope := 1 ; if s_oClass == NIL ; s_oClass := IIF(.F.,, HBClass():New( "TCambioDeIva" , { HBObject():Classh } ) ) ;
+
+   _HB_MEMBER { oDlg} ; IIF( !.F., s_oClass:AddMultiData(,, nScope + IIF( .F., 32, 0 ), { "oDlg" }, .F., .F. ), )
+   _HB_MEMBER { oFld} ; IIF( !.F., s_oClass:AddMultiData(,, nScope + IIF( .F., 32, 0 ), { "oFld" }, .F., .F. ), )
+
+   _HB_MEMBER { lChangeIva} ; IIF( !.F., s_oClass:AddMultiData(,, nScope + IIF( .F., 32, 0 ), { "lChangeIva" }, .F., .F. ), )
+   _HB_MEMBER { oBtnSiguiente} ; IIF( !.F., s_oClass:AddMultiData(,, nScope + IIF( .F., 32, 0 ), { "oBtnSiguiente" }, .F., .F. ), )
+   _HB_MEMBER { oBtnInforme} ; IIF( !.F., s_oClass:AddMultiData(,, nScope + IIF( .F., 32, 0 ), { "oBtnInforme" }, .F., .F. ), )
+   _HB_MEMBER { oBtnSalir} ; IIF( !.F., s_oClass:AddMultiData(,, nScope + IIF( .F., 32, 0 ), { "oBtnSalir" }, .F., .F. ), )
+   _HB_MEMBER { oTree} ; IIF( !.F., s_oClass:AddMultiData(,, nScope + IIF( .F., 32, 0 ), { "oTree" }, .F., .F. ), )
+   _HB_MEMBER { oMetMsg} ; IIF( !.F., s_oClass:AddMultiData(,, nScope + IIF( .F., 32, 0 ), { "oMetMsg" }, .F., .F. ), )
+   _HB_MEMBER { oAni} ; IIF( !.F., s_oClass:AddMultiData(,, nScope + IIF( .F., 32, 0 ), { "oAni" }, .F., .F. ), )
+
+   _HB_MEMBER { oBrwEmp} ; IIF( !.F., s_oClass:AddMultiData(,, nScope + IIF( .F., 32, 0 ), { "oBrwEmp" }, .F., .F. ), )
+   _HB_MEMBER { aEmp} ; IIF( !.F., s_oClass:AddMultiData(,, nScope + IIF( .F., 32, 0 ), { "aEmp" }, .F., .F. ), )
+
+   _HB_MEMBER { oDbfIva} ; IIF( !.F., s_oClass:AddMultiData(,, nScope + IIF( .F., 32, 0 ), { "oDbfIva" }, .F., .F. ), )
+   _HB_MEMBER { oDbfEmpresa} ; IIF( !.F., s_oClass:AddMultiData(,, nScope + IIF( .F., 32, 0 ), { "oDbfEmpresa" }, .F., .F. ), )
+   _HB_MEMBER { oDbfUser} ; IIF( !.F., s_oClass:AddMultiData(,, nScope + IIF( .F., 32, 0 ), { "oDbfUser" }, .F., .F. ), )
+   _HB_MEMBER { oDbfDlg} ; IIF( !.F., s_oClass:AddMultiData(,, nScope + IIF( .F., 32, 0 ), { "oDbfDlg" }, .F., .F. ), )
+   _HB_MEMBER { oDbfDiv} ; IIF( !.F., s_oClass:AddMultiData(,, nScope + IIF( .F., 32, 0 ), { "oDbfDiv" }, .F., .F. ), )
+
+   _HB_MEMBER { oDbfCli} ; IIF( !.F., s_oClass:AddMultiData(,, nScope + IIF( .F., 32, 0 ), { "oDbfCli" }, .F., .F. ), )
+   _HB_MEMBER { oDbfArt} ; IIF( !.F., s_oClass:AddMultiData(,, nScope + IIF( .F., 32, 0 ), { "oDbfArt" }, .F., .F. ), )
+   _HB_MEMBER { oArtDiv} ; IIF( !.F., s_oClass:AddMultiData(,, nScope + IIF( .F., 32, 0 ), { "oArtDiv" }, .F., .F. ), )
+   _HB_MEMBER { oCliAtp} ; IIF( !.F., s_oClass:AddMultiData(,, nScope + IIF( .F., 32, 0 ), { "oCliAtp" }, .F., .F. ), )
+
+   _HB_MEMBER { cFilTxt} ; IIF( !.F., s_oClass:AddMultiData(,, nScope + IIF( .F., 32, 0 ), { "cFilTxt" }, .F., .F. ), )
+   _HB_MEMBER { hFilTxt} ; IIF( !.F., s_oClass:AddMultiData(,, nScope + IIF( .F., 32, 0 ), { "hFilTxt" }, .F., .F. ), )
+
+   _HB_MEMBER Create(); IIF( .F., s_oClass:ModMethod( "Create", @TCambioDeIva_Create(), nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ), s_oClass:AddMethod( "Create", @TCambioDeIva_Create(), nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ));
+
+   _HB_MEMBER OpenFiles(); IIF( .F., s_oClass:ModMethod( "OpenFiles", @TCambioDeIva_OpenFiles(), nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ), s_oClass:AddMethod( "OpenFiles", @TCambioDeIva_OpenFiles(), nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ));
+
+   _HB_MEMBER CloseFiles(); IIF( .F., s_oClass:ModMethod( "CloseFiles", @TCambioDeIva_CloseFiles(), nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ), s_oClass:AddMethod( "CloseFiles", @TCambioDeIva_CloseFiles(), nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ));
+
+   _HB_MEMBER OpenFilesEmpresa(); IIF( .F., s_oClass:ModMethod( "OpenFilesEmpresa", @TCambioDeIva_OpenFilesEmpresa(), nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ), s_oClass:AddMethod( "OpenFilesEmpresa", @TCambioDeIva_OpenFilesEmpresa(), nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ));
+
+   _HB_MEMBER CloseFilesEmpresa(); IIF( .F., s_oClass:ModMethod( "CloseFilesEmpresa", @TCambioDeIva_CloseFilesEmpresa(), nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ), s_oClass:AddMethod( "CloseFilesEmpresa", @TCambioDeIva_CloseFilesEmpresa(), nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ));
+
+   _HB_MEMBER BotonSiguiente(); IIF( .F., s_oClass:ModMethod( "BotonSiguiente", @TCambioDeIva_BotonSiguiente(), nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ), s_oClass:AddMethod( "BotonSiguiente", @TCambioDeIva_BotonSiguiente(), nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ));
+
+   _HB_MEMBER IniciarAsistente( oDlg); IIF( .F., s_oClass:ModMethod( "IniciarAsistente", @TCambioDeIva_IniciarAsistente(), nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ), s_oClass:AddMethod( "IniciarAsistente", @TCambioDeIva_IniciarAsistente(), nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ));
+
+   _HB_MEMBER CambioTipoIva(); IIF( .F., s_oClass:ModMethod( "CambioTipoIva", @TCambioDeIva_CambioTipoIva(), nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ), s_oClass:AddMethod( "CambioTipoIva", @TCambioDeIva_CambioTipoIva(), nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ));
+
+   _HB_MEMBER CambioArticulos(); IIF( .F., s_oClass:ModMethod( "CambioArticulos", @TCambioDeIva_CambioArticulos(), nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ), s_oClass:AddMethod( "CambioArticulos", @TCambioDeIva_CambioArticulos(), nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ));
+
+   _HB_MEMBER CambioPropiedades(); IIF( .F., s_oClass:ModMethod( "CambioPropiedades", @TCambioDeIva_CambioPropiedades(), nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ), s_oClass:AddMethod( "CambioPropiedades", @TCambioDeIva_CambioPropiedades(), nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ));
+
+   _HB_MEMBER CambioAtipicas(); IIF( .F., s_oClass:ModMethod( "CambioAtipicas", @TCambioDeIva_CambioAtipicas(), nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ), s_oClass:AddMethod( "CambioAtipicas", @TCambioDeIva_CambioAtipicas(), nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ));
+
+   _HB_MEMBER lSalirAsistente(); IIF( .F., s_oClass:ModMethod( "lSalirAsistente", @TCambioDeIva_lSalirAsistente(), nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ), s_oClass:AddMethod( "lSalirAsistente", @TCambioDeIva_lSalirAsistente(), nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ));
+
+; IF .F. ; __clsActive(s_oClass:hClass) ; s_oClass:Refresh() ; ELSE ; s_oClass:Create() ; END ; oClassInstance := __clsInst( s_oClass:hClass ) ; IF __ObjHasMsg( oClassInstance, "InitClass" ); oClassInstance:InitClass( hb_aParams() ) ; END ; ELSE ; oClassInstance := __clsInst( s_oClass:hClass ) ; END ; IF PCount() > 0 ; DIVERT TO (@DivertConstructorCall()) OF s_oClass ; END ; RETURN oClassInstance AS CLASS TCambioDeIva ;
+
+
+
+UTILITY STATIC function TCambioDeIva_Create() ; local Self AS CLASS TCambioDeIva := QSelf() AS CLASS TCambioDeIva
+
+   local oBmp
+   local nMetMsg     := 0
+   local acImages    := { "BAR_01" }
+   local nLevel
+
+
+
+
+
+   ::lChangeIva      := AllTrim( GetPvProfString( "ChangeIva21", "lChangeIva21", cValToChar( .F. ), FullCurDir() + "GstApolo.Ini" ) ) == ".T."
+
+   if GetSysDate() < CtoD( "01/09/2012" )
+      MsgStop( "No puede ejecutar el asistente para cambio de I.V.A. antes del día 01/09/2012" )
+      Return nil
+   end
+
+   if ::lChangeIva
+      MsgStop( "Ya ha realizado el cambio de I.V.A." )
+      Return nil
+   end
+
+
+
+
+
+   nLevel            := nLevelUsr( "01014" )
+
+   if ( nAnd( nLevel, 2 ) == 0 ) .OR. ( nAnd( nLevel, 4 ) == 0 )
+      return nil
+   end
+
+
+
+
+
+   nLevel            := nLevelUsr( "01036" )
+
+   if ( nAnd( nLevel, 2 ) == 0 ) .OR. ( nAnd( nLevel, 4 ) == 0 )
+      return nil
+   end
+
+
+
+
+
+   if nUsrInUse() > 1
+      return nil
+   end
+
+
+
+
+
+   ::aEmp         := {}
+
+   TReindex():lCreateHandle()
+
+   if !::OpenFiles()
+      Return nil
+   end
+
+
+
+
+
+   while !::oDbfEmpresa:Eof()
+      if !::oDbfEmpresa:lGrupo
+         aAdd( ::aEmp, { ( cCodEmp() == ::oDbfEmpresa:CodEmp  ), ::oDbfEmpresa:CodEmp, ::oDbfEmpresa:cNombre } )
+      end
+      ::oDbfEmpresa:Skip()
+   end
+
+   ::oDlg = TDialog():New(,,,,, "AssChangeIva",, .F.,,,,,, .F.,,,,,, .F., )
+
+
+
+
+   oBmp := TBitmap():ReDefine( 800, "AssCambioIva",, ::oDlg,,, .F., .F.,,, .F.,,, .F. )
+
+
+
+
+   ::oFld := TPages():Redefine( 100, ::oDlg, {"AssChangeIva_1", "AssChangeIva_2"},,,, )
+
+
+
+
+
+   ::oBrwEmp                        := TXBrowse():New( ::oFld:aDialogs[ 1 ] )
+
+   ::oBrwEmp:bClrSel                := {|| { 0, ( 229 + ( 229 * 256 ) + ( 229 * 65536 ) ) } }
+   ::oBrwEmp:bClrSelFocus           := {|| { 0, ( 167 + ( 205 * 256 ) + ( 240 * 65536 ) ) } }
+
+   ::oBrwEmp:SetArray( ::aEmp )
+
+   ::oBrwEmp:nMarqueeStyle          := 5
+   ::oBrwEmp:lHScroll               := .F.
+
+   ::oBrwEmp:CreateFromResource( 100 )
+
+   with object ( ::oBrwEmp:aCols[ 1 ] )
+      :cHeader       := "Se. Seleccionada"
+      :bStrData      := {|| "" }
+      :bEditValue    := {|| ::aEmp[ ::oBrwEmp:nArrayAt, 1 ] }
+      :nWidth        := 20
+      :SetCheck( { "Sel16", "Nil16" } )
+   end
+
+   with object ( ::oBrwEmp:aCols[ 2 ] )
+      :cHeader       := "Código"
+      :bEditValue    := {|| ::aEmp[ ::oBrwEmp:nArrayAt, 2 ] }
+      :nWidth        := 40
+   end
+
+   with object ( ::oBrwEmp:aCols[ 3 ] )
+      :cHeader       := "Empresa"
+      :bEditValue    := {|| ::aEmp[ ::oBrwEmp:nArrayAt, 3 ] }
+      :nWidth        := 520
+   end
+
+   ::oBrwEmp:bLDblClick   := {|| ::aEmp[ ::oBrwEmp:nArrayAt, 1 ] := !::aEmp[ ::oBrwEmp:nArrayAt, 1 ], ::oBrwEmp:Refresh() }
+
+
+
+
+   TButton():ReDefine( 500, {||( ::aEmp[ ::oBrwEmp:nArrayAt, 1 ] := !::aEmp[ ::oBrwEmp:nArrayAt, 1 ], ::oBrwEmp:Refresh() )}, ::oFld:aDialogs[ 1 ],,, .F.,,,, .F. )
+
+
+
+
+   TButton():ReDefine( 501, {||( aEval( ::aEmp, { |aItem| aItem[ 1 ] := .T. } ), ::oBrwEmp:Refresh() )}, ::oFld:aDialogs[ 1 ],,, .F.,,,, .F. )
+
+
+
+
+   TButton():ReDefine( 502, {||( aEval( ::aEmp, { |aItem| aItem[ 1 ] := .F. } ), ::oBrwEmp:Refresh() )}, ::oFld:aDialogs[ 1 ],,, .F.,,,, .F. )
+
+
+
+
+
+   ::oTree    := TTreeView():Redefine( 100, ::oFld:aDialogs[ 2 ] )
+
+   ::oMetMsg  := TMeter():ReDefine( 120, { | u | if( pCount() == 0, nMetMsg, nMetMsg := u ) }, 10, ::oFld:aDialogs[ 2 ], .F., , , .T., ( 255 + ( 255 * 256 ) + ( 255 * 65536 ) ), , ( 128 + ( 255 * 256 ) + ( 0 * 65536 ) ) )
+
+   ::oAni     := TAnimat():Redefine( ::oFld:aDialogs[ 2 ], 130, acImages, 1 )
+
+
+
+
+   ::oBtnSiguiente := TButton():ReDefine( 500, {||( ::BotonSiguiente() )}, ::oDlg,,, .F.,,,, .F. )
+
+
+
+
+   ::oBtnSalir := TButton():ReDefine( 550, {||( ::lSalirAsistente(), ::oDlg:End() )}, ::oDlg,,, .F.,,,, .F. )
+
+
+
+
+   ::oBtnInforme := TButton():ReDefine( 600, {||( if( File( AllTrim( ::cFilTxt ) ), WinExec( "notepad.exe " + AllTrim( ::cFilTxt ) ), ) )}, ::oDlg,,, .F.,,,, .F. )
+
+   ::oDlg:bStart := {|| ::oBtnInforme:Disable() }
+
+   ::oDlg:Activate( ::oDlg:bLClicked, ::oDlg:bMoved, ::oDlg:bPainted, .T.,,,, ::oDlg:bRClicked,,, )
+
+   ::CloseFiles()
+
+   oBmp:End()
+
+
+
+
+
+   TReindex():lCloseHandle()
+
+RETURN ( Self )
+
+
+
+UTILITY STATIC function TCambioDeIva_BotonSiguiente() ; local Self AS CLASS TCambioDeIva := QSelf() AS CLASS TCambioDeIva
+
+   local i
+   local cText := ""
+
+
+
+
+
+   for i := 1 to Len( ::aEmp )
+      if ::aEmp[ i, 1 ]
+         cText += AllTrim( ::aEmp[ i, 2 ] ) + " - " + AllTrim( ::aEmp[ i, 3 ] ) + Chr(13)+Chr(10)
+      end
+   next
+
+
+
+
+
+   if !Empty( cText )
+
+      if ApoloMsgNoYes( "Va a proceder al cambio de " + cImp() + " a las empresas siguientes:" + Chr(13)+Chr(10) + cText, "¿Desea continuar?" )
+
+         ::oFld:GoNext()
+         SetWindowText( ::oBtnSiguiente:hWnd, "Procesando..." )
+         ::IniciarAsistente()
+
+      else
+
+         return nil
+
+      end
+
+   else
+
+      msgStop( "Tiene que seleccionar alguna empresa para comenzar el asistente" )
+
+      return nil
+
+   end
+
+return ( Self )
+
+
+
+UTILITY STATIC function TCambioDeIva_OpenFiles() ; local Self AS CLASS TCambioDeIva := QSelf() AS CLASS TCambioDeIva
+
+   local lOpen          := .T.
+   local oError
+   local oBlock         := ErrorBlock( {| oError | ApoloBreak( oError ) } )
+
+   BEGIN SEQUENCE
+
+   ::oDbfIva := DbfServer( "TIVA.DBF", ):NewOpen( "TIVA.DBF",, ( cDriver() ),, ( cPatDat() ), .F., .T., .F., .F. ) ; ::oDbfIva:AddBag( "TIVA.CDX" ) ; ::oDbfIva:AddBag( ) ; ::oDbfIva:AutoIndex()
+
+   ::oDbfEmpresa := DbfServer( "EMPRESA.DBF", ):NewOpen( "EMPRESA.DBF",, ( cDriver() ),, ( cPatDat() ), .F., .T., .F., .F. ) ; ::oDbfEmpresa:AddBag( "EMPRESA.CDX" ) ; ::oDbfEmpresa:AddBag( ) ; ::oDbfEmpresa:AutoIndex()
+
+   ::oDbfDlg := DbfServer( "DELEGA.DBF", ):NewOpen( "DELEGA.DBF",, ( cDriver() ),, ( cPatDat() ), .F., .T., .F., .F. ) ; ::oDbfDlg:AddBag( "DELEGA.CDX" ) ; ::oDbfDlg:AddBag( ) ; ::oDbfDlg:AutoIndex()
+
+   ::oDbfUser := DbfServer( "USERS.DBF", ):NewOpen( "USERS.DBF",, ( cDriver() ),, ( cPatDat() ), .F., .T., .F., .F. ) ; ::oDbfUser:AddBag( "USERS.CDX" ) ; ::oDbfUser:AddBag( ) ; ::oDbfUser:AutoIndex()
+
+   ::oDbfDiv := DbfServer( "DIVISAS.DBF", ):NewOpen( "DIVISAS.DBF",, ( cDriver() ),, ( cPatDat() ), .F., .T., .F., .F. ) ; ::oDbfDiv:AddBag( "DIVISAS.CDX" ) ; ::oDbfDiv:AddBag( ) ; ::oDbfDiv:AutoIndex()
+
+   RECOVER USING oError
+
+      lOpen             := .F.
+      msgStop( "Imposible abrir todas las bases de datos" + Chr(13)+Chr(10) + ErrorMessage( oError ) )
+
+   end
+
+   ErrorBlock( oBlock )
+
+   if !lOpen
+      ::CloseFiles()
+   end
+
+RETURN ( lOpen )
+
+
+
+UTILITY STATIC function TCambioDeIva_CloseFiles() ; local Self AS CLASS TCambioDeIva := QSelf() AS CLASS TCambioDeIva
+
+   if ::oDbfIva <> nil .AND. ::oDbfIva:Used()
+      ::oDbfIva:End()
+   end
+
+   if ::oDbfEmpresa <> nil .AND. ::oDbfEmpresa:Used()
+      ::oDbfEmpresa:End()
+   end
+
+   if ::oDbfUser <> nil .AND. ::oDbfUser:Used()
+      ::oDbfUser:End()
+   end
+
+   if ::oDbfDlg <> nil .AND. ::oDbfDlg:Used()
+      ::oDbfDlg:End()
+   end
+
+   if ::oDbfDiv <> nil .AND. ::oDbfDiv:Used()
+      ::oDbfDiv:End()
+   end
+
+   if !Empty( ::oTree )
+      ::oTree:End()
+   end
+
+   if !Empty( ::oAni )
+      ::oAni:End()
+   end
+
+   ::oDbfIva   := nil
+   ::oTree     := nil
+   ::oDbfUser  := nil
+   ::oDbfDlg   := nil
+   ::oAni      := nil
+   ::oDbfDiv   := nil
+
+Return ( Self )
+
+
+
+UTILITY STATIC function TCambioDeIva_IniciarAsistente( oDlg) ; local Self AS CLASS TCambioDeIva := QSelf() AS CLASS TCambioDeIva
+
+   local oItem
+   local i
+   local cEmpActiva     := cCodEmp()
+   local cGrupoEmpresa  := Space(2)
+
+   ::oBtnSiguiente:Disable()
+   ::oBtnSalir:Disable()
+
+   ::cFilTxt    := cGetNewFileName( cPatLog() + "CAMBIVA" + Dtos( Date() ) + StrTran( Time(), ":", "" ) ) + ".txt"
+   ::hFilTxt    := fCreate( ::cFilTxt )
+
+   if Empty( ::hFilTxt )
+      ::hFilTxt        := fOpen( ::cFilTxt, 1 )
+   endif
+
+   fWrite( ::hFilTxt, "Proceso iniciado: " + AllTrim( Dtoc( GetSysDate() ) ) + Chr(13)+Chr(10) )
+
+   ::oTree:DeleteAll()
+
+   ::oTree:Select( ::oTree:Add( "Proceso iniciado " + AllTrim( Dtoc( GetSysDate() ) ) ) )
+
+
+
+
+
+   ::CambioTipoIva()
+
+
+
+
+
+   ::oMetMsg:SetTotal( Len( ::aEmp ) )
+
+   for i := 1 to Len( ::aEmp )
+
+      if ::aEmp[ i, 1 ]
+
+
+
+
+
+         fWrite( ::hFilTxt, Space( 3 ) + "Nos posicionamos en la empresa " + AllTrim( ::aEmp[ i, 2 ] ) + " - " + AllTrim( ::aEmp[ i, 3 ] ) + Chr(13)+Chr(10) )
+         ::oTree:Select( ::oTree:Add( Space( 3 ) + "Nos posicionamos en la empresa " + AllTrim( ::aEmp[ i, 2 ] ) + " - " + AllTrim( ::aEmp[ i, 3 ] ) ) )
+
+         SetEmpresa( ::aEmp[ i, 2 ], ::oDbfEmpresa:cAlias, ::oDbfDlg:cAlias, ::oDbfUser:cAlias )
+
+
+
+
+
+         fWrite( ::hFilTxt, Space( 3 ) + "Realizando copia de seguridad de la empresa " + AllTrim( ::aEmp[ i, 2 ] ) + " - " + AllTrim( ::aEmp[ i, 3 ] ) + Chr(13)+Chr(10) )
+         ::oTree:Select( ::oTree:Add( Space( 3 ) + "Realizando copia de seguridad de la empresa " + AllTrim( ::aEmp[ i, 2 ] ) + " - " + AllTrim( ::aEmp[ i, 3 ] ) ) )
+
+         CompressEmpresa( ::aEmp[ i, 2 ] )
+
+         if ::OpenFilesEmpresa()
+
+
+
+
+
+            ::CambioArticulos()
+
+
+
+
+
+            ::CambioPropiedades()
+
+
+
+
+
+            ::CambioAtipicas()
+
+         end
+
+         ::CloseFilesEmpresa()
+
+         cGrupoEmpresa  := oRetFld( ::aEmp[ i, 2 ], ::oDbfEmpresa, "cCodGrp" )
+
+         if !Empty( cGrupoEmpresa )
+
+
+
+
+
+            fWrite( ::hFilTxt, Space( 3 ) + "Nos posicionamos en el grupo " + AllTrim( cGrupoEmpresa ) + " - " + AllTrim( oRetFld( cGrupoEmpresa, ::oDbfEmpresa, "cNombre" ) ) + Chr(13)+Chr(10) )
+            ::oTree:Select( ::oTree:Add( Space( 3 ) + "Nos posicionamos en el grupo " + AllTrim( cGrupoEmpresa ) + " - " + AllTrim( oRetFld( cGrupoEmpresa, ::oDbfEmpresa, "cNombre" ) ) ) )
+
+            cPatCli( cGrupoEmpresa, nil, .F. )
+            cPatArt( cGrupoEmpresa, nil, .F. )
+
+
+
+
+
+            fWrite( ::hFilTxt, Space( 3 ) + "Realizando copia de seguridad del grupo " + AllTrim( cGrupoEmpresa ) + " - " + AllTrim( oRetFld( cGrupoEmpresa, ::oDbfEmpresa, "cNombre" ) ) + Chr(13)+Chr(10) )
+            ::oTree:Select( ::oTree:Add( Space( 3 ) + "Realizando copia de seguridad del grupo " + AllTrim( cGrupoEmpresa ) + " - " + AllTrim( oRetFld( cGrupoEmpresa, ::oDbfEmpresa, "cNombre" ) ) ) )
+
+            CompressGrupo( cGrupoEmpresa )
+
+            if ::OpenFilesEmpresa()
+
+
+
+
+
+               ::CambioArticulos()
+
+
+
+
+
+               ::CambioPropiedades()
+
+
+
+
+
+               ::CambioAtipicas()
+
+            end
+
+            ::CloseFilesEmpresa()
+
+         end
+
+      end
+
+      ::oMetMsg:AutoInc()
+
+   next
+
+   ::oMetMsg:AutoInc( Len( ::aEmp ) )
+
+
+
+
+
+   fWrite( ::hFilTxt, "Seleccionando la empresa activa" + Chr(13)+Chr(10) )
+
+   ::oTree:Select( ::oTree:Add( "Seleccionando la empresa activa" ) )
+
+   SetEmpresa( cEmpActiva, ::oDbfEmpresa:cAlias, ::oDbfDlg:cAlias, ::oDbfUser:cAlias )
+
+
+
+
+
+   fWrite( ::hFilTxt, "Guardando configuración" + Chr(13)+Chr(10) )
+
+   ::oTree:Select( ::oTree:Add( "Guardando configuración" ) )
+
+   ::lChangeIva      := .T.
+
+   WritePProString( "ChangeIva21", "lChangeIva21", cValToChar( ::lChangeIva ), FullCurDir() + "GstApolo.Ini" )
+
+
+
+
+
+   ::oBtnInforme:Enable()
+   ::oBtnSalir:Enable()
+   ::oAni:Hide()
+
+   MsgInfo( "Proceso finalizado correctamente", "" )
+
+   fWrite( ::hFilTxt, "Proceso finalizado correctamente" )
+
+   ::oTree:Select( ::oTree:Add( "Proceso finalizado correctamente" ) )
+
+   SetWindowText( ::oBtnSiguiente:hWnd, "Finalizado" )
+
+   fClose( ::hFilTxt )
+
+Return ( Self )
+
+
+
+UTILITY STATIC function TCambioDeIva_lSalirAsistente() ; local Self AS CLASS TCambioDeIva := QSelf() AS CLASS TCambioDeIva
+
+   if !::lChangeIva
+
+      if !MsgYesNo( "¿Desea lanzar el asistente para el cambio de iva en un futuro?", "Elija una opción" )
+
+         ::lChangeIva      := .T.
+
+         WritePProString( "ChangeIva21", "lChangeIva21", cValToChar( ::lChangeIva ), FullCurDir() + "GstApolo.Ini" )
+
+      end
+
+   end
+
+Return ( .T. )
+
+
+
+UTILITY STATIC function TCambioDeIva_CambioTipoIva() ; local Self AS CLASS TCambioDeIva := QSelf() AS CLASS TCambioDeIva
+
+   fWrite( ::hFilTxt,               Space( 3 ) + "Cambiando tipos de " + cImp() + Chr(13)+Chr(10) )
+   ::oTree:Select( ::oTree:Add(     Space( 3 ) + "Cambiando tipos de " + cImp() ) )
+
+   if ::oDbfIva:Seek( "G" )
+
+      ::oDbfIva:Load()
+      ::oDbfIva:nOldIva := ::oDbfIva:TpIva
+      ::oDbfIva:TpIva   := 21
+      ::oDbfIva:nRecEq  := 5.2
+      ::oDbfIva:DescIva := "General al 21%"
+      ::oDbfIva:lSndDoc := .T.
+      ::oDbfIva:Save()
+
+      fWrite( ::hFilTxt,            Space( 6 ) + "Tipo de " + cImp() + " G - General, cambiado al 21%" + Chr(13)+Chr(10) )
+
+      ::oTree:Select( ::oTree:Add(  Space( 6 ) + "Tipo de " + cImp() + " G - General, cambiado al 21%" ) )
+
+   end
+
+   if ::oDbfIva:Seek( "N" )
+
+      ::oDbfIva:Load()
+      ::oDbfIva:nOldIva := ::oDbfIva:TpIva
+      ::oDbfIva:TpIva   := 10
+      ::oDbfIva:nRecEq  := 1.4
+      ::oDbfIva:DescIva := "Reducido al 10%"
+      ::oDbfIva:lSndDoc := .T.
+      ::oDbfIva:Save()
+
+      fWrite( ::hFilTxt,            Space( 6 ) + "Tipo de " + cImp() + " N - Reducido, cambiado al 10%" + Chr(13)+Chr(10) )
+
+      ::oTree:Select( ::oTree:Add(  Space( 6 ) + "Tipo de " + cImp() + " N - Reducido, cambiado al 10%" ) )
+
+   end
+
+Return ( Self )
+
+
+
+UTILITY STATIC function TCambioDeIva_OpenFilesEmpresa() ; local Self AS CLASS TCambioDeIva := QSelf() AS CLASS TCambioDeIva
+
+   local lOpen          := .T.
+   local oError
+   local oBlock         := ErrorBlock( {| oError | ApoloBreak( oError ) } )
+
+   BEGIN SEQUENCE
+
+   ::oDbfArt := DbfServer( "ARTICULO.DBF", ):NewOpen( "ARTICULO.DBF",, ( cDriver() ),, ( cPatArt() ), .F., .T., .F., .F. ) ; ::oDbfArt:AddBag( "ARTICULO.CDX" ) ; ::oDbfArt:AddBag( ) ; ::oDbfArt:AutoIndex()
+
+   ::oArtDiv := DbfServer( "ARTDIV.DBF", ):NewOpen( "ARTDIV.DBF",, ( cDriver() ),, ( cPatArt() ), .F., .T., .F., .F. ) ; ::oArtDiv:AddBag( "ARTDIV.CDX" ) ; ::oArtDiv:AddBag( ) ; ::oArtDiv:AutoIndex()
+
+   ::oDbfCli := DbfServer( "CLIENT.DBF", ):NewOpen( "CLIENT.DBF",, ( cDriver() ),, ( cPatCli() ), .F., .T., .F., .F. ) ; ::oDbfCli:AddBag( "CLIENT.CDX" ) ; ::oDbfCli:AddBag( ) ; ::oDbfCli:AutoIndex()
+
+   ::oCliAtp := DbfServer( "CLIATP.DBF", ):NewOpen( "CLIATP.DBF",, ( cDriver() ),, ( cPatCli() ), .F., .T., .F., .F. ) ; ::oCliAtp:AddBag( "CLIATP.CDX" ) ; ::oCliAtp:AddBag( ) ; ::oCliAtp:AutoIndex()
+
+   RECOVER USING oError
+
+      lOpen             := .F.
+      msgStop( "Imposible abrir todas las bases de datos" + Chr(13)+Chr(10) + ErrorMessage( oError ) )
+
+   end
+
+   ErrorBlock( oBlock )
+
+   if !lOpen
+      ::CloseFilesEmpresa()
+   end
+
+RETURN ( lOpen )
+
+
+
+UTILITY STATIC function TCambioDeIva_CloseFilesEmpresa() ; local Self AS CLASS TCambioDeIva := QSelf() AS CLASS TCambioDeIva
+
+   if ::oDbfArt <> nil .AND. ::oDbfArt:Used()
+      ::oDbfArt:End()
+   end
+
+   if ::oArtDiv <> nil .AND. ::oArtDiv:Used()
+      ::oArtDiv:End()
+   end
+
+   if ::oDbfCli <> nil .AND. ::oDbfCli:Used()
+      ::oDbfCli:End()
+   end
+
+   if ::oCliAtp <> nil .AND. ::oCliAtp:Used()
+      ::oCliAtp:End()
+   end
+
+   ::oDbfArt   := nil
+   ::oArtDiv   := nil
+   ::oDbfCli   := nil
+   ::oCliAtp   := nil
+
+Return ( Self )
+
+
+
+UTILITY STATIC function TCambioDeIva_CambioArticulos() ; local Self AS CLASS TCambioDeIva := QSelf() AS CLASS TCambioDeIva
+
+   if !Empty( ::oDbfArt )
+
+      fWrite( ::hFilTxt, "      Recalculando precios de artículos" + Chr(13)+Chr(10) )
+      ::oTree:Select( ::oTree:Add( "      Recalculando precios de artículos" ) )
+
+      ::oDbfArt:GoTop()
+
+      while !::oDbfArt:Eof()
+
+         if !::oDbfArt:lObs
+
+            ::oDbfArt:Load()
+
+            if ::oDbfArt:pVenta1 <> 0
+
+               if ::oDbfArt:lIvaInc
+
+                  ::oDbfArt:pVenta1       := nCalBas( ::oDbfArt:pVtaIva1, ::oDbfArt:lIvaInc, ::oDbfArt:TipoIva, ::oDbfArt:cCodImp )
+
+               else
+
+                  ::oDbfArt:pVtaIva1      := nCalIva( ::oDbfArt:pVenta1 , ::oDbfArt:lIvaInc, ::oDbfArt:TipoIva, ::oDbfArt:cCodImp )
+
+                  if ::oDbfArt:lMarAju .AND. !Empty( ::oDbfArt:cMarAju )
+                     ::oDbfArt:pVtaIva1   := nAjuste( ::oDbfArt:pVtaIva1, ::oDbfArt:cMarAju )
+                     ::oDbfArt:pVenta1    := nCalBas( ::oDbfArt:pVtaIva1, ::oDbfArt:lIvaInc, ::oDbfArt:TipoIva, ::oDbfArt:cCodImp )
+                  end
+
+               end
+
+            end
+
+            if ::oDbfArt:pVenta2 <> 0
+
+               if ::oDbfArt:lIvaInc
+
+                  ::oDbfArt:pVenta2    := nCalBas( ::oDbfArt:pVtaIva2, ::oDbfArt:lIvaInc, ::oDbfArt:TipoIva, ::oDbfArt:cCodImp )
+
+               else
+
+                  ::oDbfArt:pVtaIva2   := nCalIva( ::oDbfArt:pVenta2 , ::oDbfArt:lIvaInc, ::oDbfArt:TipoIva, ::oDbfArt:cCodImp )
+
+                  if ::oDbfArt:lMarAju .AND. !Empty( ::oDbfArt:cMarAju )
+                     ::oDbfArt:pVtaIva2   := nAjuste( ::oDbfArt:pVtaIva2, ::oDbfArt:cMarAju )
+                     ::oDbfArt:pVenta2    := nCalBas( ::oDbfArt:pVtaIva2, ::oDbfArt:lIvaInc, ::oDbfArt:TipoIva, ::oDbfArt:cCodImp )
+                  end
+
+               end
+
+
+            end
+
+            if ::oDbfArt:pVenta3 <> 0
+
+               if ::oDbfArt:lIvaInc
+
+                  ::oDbfArt:pVenta3    := nCalBas( ::oDbfArt:pVtaIva3, ::oDbfArt:lIvaInc, ::oDbfArt:TipoIva, ::oDbfArt:cCodImp )
+
+               else
+
+                  ::oDbfArt:pVtaIva3   := nCalIva( ::oDbfArt:pVenta3 , ::oDbfArt:lIvaInc, ::oDbfArt:TipoIva, ::oDbfArt:cCodImp )
+
+                  if ::oDbfArt:lMarAju .AND. !Empty( ::oDbfArt:cMarAju )
+                     ::oDbfArt:pVtaIva3   := nAjuste( ::oDbfArt:pVtaIva3, ::oDbfArt:cMarAju )
+                     ::oDbfArt:pVenta3    := nCalBas( ::oDbfArt:pVtaIva3, ::oDbfArt:lIvaInc, ::oDbfArt:TipoIva, ::oDbfArt:cCodImp )
+                  end
+
+               end
+
+            end
+
+            if ::oDbfArt:pVenta4 <> 0
+
+               if ::oDbfArt:lIvaInc
+
+                  ::oDbfArt:pVenta4    := nCalBas( ::oDbfArt:pVtaIva4, ::oDbfArt:lIvaInc, ::oDbfArt:TipoIva, ::oDbfArt:cCodImp )
+
+               else
+
+                  ::oDbfArt:pVtaIva4   := nCalIva( ::oDbfArt:pVenta4 , ::oDbfArt:lIvaInc, ::oDbfArt:TipoIva, ::oDbfArt:cCodImp )
+
+                  if ::oDbfArt:lMarAju .AND. !Empty( ::oDbfArt:cMarAju )
+                     ::oDbfArt:pVtaIva4   := nAjuste( ::oDbfArt:pVtaIva4, ::oDbfArt:cMarAju )
+                     ::oDbfArt:pVenta4    := nCalBas( ::oDbfArt:pVtaIva4, ::oDbfArt:lIvaInc, ::oDbfArt:TipoIva, ::oDbfArt:cCodImp )
+                  end
+
+               end
+
+            end
+
+            if ::oDbfArt:pVenta5 <> 0
+
+               if ::oDbfArt:lIvaInc
+
+                  ::oDbfArt:pVenta5    := nCalBas( ::oDbfArt:pVtaIva5, ::oDbfArt:lIvaInc, ::oDbfArt:TipoIva, ::oDbfArt:cCodImp )
+
+               else
+
+                  ::oDbfArt:pVtaIva5   := nCalIva( ::oDbfArt:pVenta5 , ::oDbfArt:lIvaInc, ::oDbfArt:TipoIva, ::oDbfArt:cCodImp )
+
+                  if ::oDbfArt:lMarAju .AND. !Empty( ::oDbfArt:cMarAju )
+                     ::oDbfArt:pVtaIva5   := nAjuste( ::oDbfArt:pVtaIva5, ::oDbfArt:cMarAju )
+                     ::oDbfArt:pVenta5    := nCalBas( ::oDbfArt:pVtaIva5, ::oDbfArt:lIvaInc, ::oDbfArt:TipoIva, ::oDbfArt:cCodImp )
+                  end
+
+               end
+
+            end
+
+            if ::oDbfArt:pVenta6 <> 0
+
+               if ::oDbfArt:lIvaInc
+
+                  ::oDbfArt:pVenta6    := nCalBas( ::oDbfArt:pVtaIva6, ::oDbfArt:lIvaInc, ::oDbfArt:TipoIva, ::oDbfArt:cCodImp )
+
+               else
+
+                  ::oDbfArt:pVtaIva6   := nCalIva( ::oDbfArt:pVenta6 , ::oDbfArt:lIvaInc, ::oDbfArt:TipoIva, ::oDbfArt:cCodImp )
+
+                  if ::oDbfArt:lMarAju .AND. !Empty( ::oDbfArt:cMarAju )
+                     ::oDbfArt:pVtaIva6   := nAjuste( ::oDbfArt:pVtaIva6, ::oDbfArt:cMarAju )
+                     ::oDbfArt:pVenta6    := nCalBas( ::oDbfArt:pVtaIva6, ::oDbfArt:lIvaInc, ::oDbfArt:TipoIva, ::oDbfArt:cCodImp )
+                  end
+
+               end
+
+            end
+
+            ::oDbfArt:lSndDoc    := .T.
+            ::oDbfArt:dFecChg    := GetSysDate()
+            ::oDbfArt:cTimChg    := Time()
+
+            ::oDbfArt:Save()
+
+            fWrite( ::hFilTxt, Space( 8 ) + AllTrim( ::oDbfArt:Codigo ) + " - " + AllTrim( ::oDbfArt:Nombre ) + " actualizado correctamente" + Chr(13)+Chr(10) )
+            ::oTree:Select( ::oTree:Add( Space( 8 ) + AllTrim( ::oDbfArt:Codigo ) + " - " + AllTrim( ::oDbfArt:Nombre ) + " actualizado correctamente" ) )
+
+         end
+
+         SysRefresh()
+
+         ::oDbfArt:Skip()
+
+      end
+
+   end
+
+Return ( Self )
+
+
+
+UTILITY STATIC function TCambioDeIva_CambioPropiedades() ; local Self AS CLASS TCambioDeIva := QSelf() AS CLASS TCambioDeIva
+
+   if !Empty( ::oArtDiv )
+
+      fWrite( ::hFilTxt, "      Recalculando precios de propiedades" + Chr(13)+Chr(10) )
+      ::oTree:Select( ::oTree:Add( "      Recalculando precios de propiedades" ) )
+
+      ::oArtDiv:GoTop()
+
+      while !::oArtDiv:Eof()
+
+         if ::oDbfArt:Seek( ::oArtDiv:cCodArt )
+
+            ::oArtDiv:Load()
+
+            if ::oArtDiv:nPreVta1 <> 0
+
+               if ::oDbfArt:lIvaInc
+
+                  ::oArtDiv:nPreVta1      := nCalBas( ::oArtDiv:nPreIva1, ::oDbfArt:lIvaInc, ::oDbfArt:TipoIva, ::oDbfArt:cCodImp )
+
+               else
+
+                  ::oArtDiv:nPreIva1      := nCalIva( ::oArtDiv:nPreVta1 , ::oDbfArt:lIvaInc, ::oDbfArt:TipoIva, ::oDbfArt:cCodImp )
+
+                  if ::oDbfArt:lMarAju .AND. !Empty( ::oDbfArt:cMarAju )
+                     ::oArtDiv:nPreIva1   := nAjuste( ::oArtDiv:nPreIva1, ::oDbfArt:cMarAju )
+                     ::oArtDiv:nPreVta1   := nCalBas( ::oArtDiv:nPreIva1, ::oDbfArt:lIvaInc, ::oDbfArt:TipoIva, ::oDbfArt:cCodImp )
+                  end
+
+               end
+
+            end
+
+            if ::oArtDiv:nPreVta2 <> 0
+
+               if ::oDbfArt:lIvaInc
+
+                  ::oArtDiv:nPreVta2      := nCalBas( ::oArtDiv:nPreIva2, ::oDbfArt:lIvaInc, ::oDbfArt:TipoIva, ::oDbfArt:cCodImp )
+
+               else
+
+                  ::oArtDiv:nPreIva2      := nCalIva( ::oArtDiv:nPreVta2 , ::oDbfArt:lIvaInc, ::oDbfArt:TipoIva, ::oDbfArt:cCodImp )
+
+                  if ::oDbfArt:lMarAju .AND. !Empty( ::oDbfArt:cMarAju )
+                     ::oArtDiv:nPreIva2   := nAjuste( ::oArtDiv:nPreIva2, ::oDbfArt:cMarAju )
+                     ::oArtDiv:nPreVta2   := nCalBas( ::oArtDiv:nPreIva2, ::oDbfArt:lIvaInc, ::oDbfArt:TipoIva, ::oDbfArt:cCodImp )
+                  end
+
+               end
+
+            end
+
+            if ::oArtDiv:nPreVta3 <> 0
+
+               if ::oDbfArt:lIvaInc
+
+                  ::oArtDiv:nPreVta3      := nCalBas( ::oArtDiv:nPreIva3, ::oDbfArt:lIvaInc, ::oDbfArt:TipoIva, ::oDbfArt:cCodImp )
+
+               else
+
+                  ::oArtDiv:nPreIva3      := nCalIva( ::oArtDiv:nPreVta3 , ::oDbfArt:lIvaInc, ::oDbfArt:TipoIva, ::oDbfArt:cCodImp )
+
+                  if ::oDbfArt:lMarAju .AND. !Empty( ::oDbfArt:cMarAju )
+                     ::oArtDiv:nPreIva3   := nAjuste( ::oArtDiv:nPreIva3, ::oDbfArt:cMarAju )
+                     ::oArtDiv:nPreVta3   := nCalBas( ::oArtDiv:nPreIva3, ::oDbfArt:lIvaInc, ::oDbfArt:TipoIva, ::oDbfArt:cCodImp )
+                  end
+
+               end
+
+            end
+
+            if ::oArtDiv:nPreVta4 <> 0
+
+               if ::oDbfArt:lIvaInc
+
+                  ::oArtDiv:nPreVta4      := nCalBas( ::oArtDiv:nPreIva4, ::oDbfArt:lIvaInc, ::oDbfArt:TipoIva, ::oDbfArt:cCodImp )
+
+               else
+
+                  ::oArtDiv:nPreIva4      := nCalIva( ::oArtDiv:nPreVta4 , ::oDbfArt:lIvaInc, ::oDbfArt:TipoIva, ::oDbfArt:cCodImp )
+
+                  if ::oDbfArt:lMarAju .AND. !Empty( ::oDbfArt:cMarAju )
+                     ::oArtDiv:nPreIva4   := nAjuste( ::oArtDiv:nPreIva4, ::oDbfArt:cMarAju )
+                     ::oArtDiv:nPreVta4   := nCalBas( ::oArtDiv:nPreIva4, ::oDbfArt:lIvaInc, ::oDbfArt:TipoIva, ::oDbfArt:cCodImp )
+                  end
+
+               end
+
+            end
+
+            if ::oArtDiv:nPreVta5 <> 0
+
+               if ::oDbfArt:lIvaInc
+
+                  ::oArtDiv:nPreVta5      := nCalBas( ::oArtDiv:nPreIva5, ::oDbfArt:lIvaInc, ::oDbfArt:TipoIva, ::oDbfArt:cCodImp )
+
+               else
+
+                  ::oArtDiv:nPreIva5      := nCalIva( ::oArtDiv:nPreVta5 , ::oDbfArt:lIvaInc, ::oDbfArt:TipoIva, ::oDbfArt:cCodImp )
+
+                  if ::oDbfArt:lMarAju .AND. !Empty( ::oDbfArt:cMarAju )
+                     ::oArtDiv:nPreIva5   := nAjuste( ::oArtDiv:nPreIva5, ::oDbfArt:cMarAju )
+                     ::oArtDiv:nPreVta5   := nCalBas( ::oArtDiv:nPreIva5, ::oDbfArt:lIvaInc, ::oDbfArt:TipoIva, ::oDbfArt:cCodImp )
+                  end
+
+               end
+
+            end
+
+            if ::oArtDiv:nPreVta6 <> 0
+
+               if ::oDbfArt:lIvaInc
+
+                  ::oArtDiv:nPreVta6      := nCalBas( ::oArtDiv:nPreIva6, ::oDbfArt:lIvaInc, ::oDbfArt:TipoIva, ::oDbfArt:cCodImp )
+
+               else
+
+                  ::oArtDiv:nPreIva6      := nCalIva( ::oArtDiv:nPreVta6 , ::oDbfArt:lIvaInc, ::oDbfArt:TipoIva, ::oDbfArt:cCodImp )
+
+                  if ::oDbfArt:lMarAju .AND. !Empty( ::oDbfArt:cMarAju )
+                     ::oArtDiv:nPreIva6   := nAjuste( ::oArtDiv:nPreIva6, ::oDbfArt:cMarAju )
+                     ::oArtDiv:nPreVta6   := nCalBas( ::oArtDiv:nPreIva6, ::oDbfArt:lIvaInc, ::oDbfArt:TipoIva, ::oDbfArt:cCodImp )
+                  end
+
+               end
+
+            end
+
+            ::oArtDiv:Save()
+
+            fWrite( ::hFilTxt, Space( 8 ) + AllTrim( ::oArtDiv:cCodArt ) + " - " + AllTrim( ::oDbfArt:Nombre ) + " actualizado correctamente" + Chr(13)+Chr(10) )
+            ::oTree:Select( ::oTree:Add( Space( 8 ) + AllTrim( ::oArtDiv:cCodArt ) + " - " + AllTrim( ::oDbfArt:Nombre ) + " actualizado correctamente" ) )
+
+         end
+
+         SysRefresh()
+
+         ::oArtDiv:Skip()
+
+      end
+
+   end
+
+Return ( Self )
+
+
+
+UTILITY STATIC function TCambioDeIva_CambioAtipicas() ; local Self AS CLASS TCambioDeIva := QSelf() AS CLASS TCambioDeIva
+
+   local nCosto   := 0
+
+   if !Empty( ::oCliAtp )
+
+      fWrite( ::hFilTxt, "      Recalculando precios de atípicas" + Chr(13)+Chr(10) )
+      ::oTree:Select( ::oTree:Add( "      Recalculando precios de atípicas" ) )
+
+      ::oCliAtp:GoTop()
+
+      while !::oCliAtp:Eof()
+
+         if ::oCliAtp:nTipAtp < 2
+
+            if ::oDbfArt:Seek( ::oCliAtp:cCodArt )
+
+               nCosto   := if( ::oCliAtp:lPrcCom, ::oCliAtp:nPrcCom, ::oDbfArt:pCosto )
+
+               ::oCliAtp:Load()
+
+                  if ::oDbfArt:lIvaInc
+
+                     ::oCliAtp:nPrcArt    := nCalBas( ::oCliAtp:nPreIva1, ::oDbfArt:lIvaInc, ::oDbfArt:TipoIva, ::oDbfArt:cCodImp )
+                     ::oCliAtp:nPrcArt2   := nCalBas( ::oCliAtp:nPreIva2, ::oDbfArt:lIvaInc, ::oDbfArt:TipoIva, ::oDbfArt:cCodImp )
+                     ::oCliAtp:nPrcArt3   := nCalBas( ::oCliAtp:nPreIva3, ::oDbfArt:lIvaInc, ::oDbfArt:TipoIva, ::oDbfArt:cCodImp )
+                     ::oCliAtp:nPrcArt4   := nCalBas( ::oCliAtp:nPreIva4, ::oDbfArt:lIvaInc, ::oDbfArt:TipoIva, ::oDbfArt:cCodImp )
+                     ::oCliAtp:nPrcArt5   := nCalBas( ::oCliAtp:nPreIva5, ::oDbfArt:lIvaInc, ::oDbfArt:TipoIva, ::oDbfArt:cCodImp )
+                     ::oCliAtp:nPrcArt6   := nCalBas( ::oCliAtp:nPreIva6, ::oDbfArt:lIvaInc, ::oDbfArt:TipoIva, ::oDbfArt:cCodImp )
+
+                  else
+
+                     ::oCliAtp:nPreIva1   := nCalIva( ::oCliAtp:nPrcArt , ::oDbfArt:lIvaInc, ::oDbfArt:TipoIva, ::oDbfArt:cCodImp )
+
+                     if ::oDbfArt:lMarAju .AND. !Empty( ::oDbfArt:cMarAju )
+                        ::oCliAtp:nPreIva1   := nAjuste( ::oCliAtp:nPreIva1, ::oDbfArt:cMarAju )
+                        ::oCliAtp:nPrcArt    := nCalBas( ::oCliAtp:nPreIva1, ::oDbfArt:lIvaInc, ::oDbfArt:TipoIva, ::oDbfArt:cCodImp )
+                     end
+
+                     ::oCliAtp:nPreIva2   := nCalIva( ::oCliAtp:nPrcArt2, ::oDbfArt:lIvaInc, ::oDbfArt:TipoIva, ::oDbfArt:cCodImp )
+
+                     if ::oDbfArt:lMarAju .AND. !Empty( ::oDbfArt:cMarAju )
+                        ::oCliAtp:nPreIva2   := nAjuste( ::oCliAtp:nPreIva2, ::oDbfArt:cMarAju )
+                        ::oCliAtp:nPrcArt2   := nCalBas( ::oCliAtp:nPreIva2, ::oDbfArt:lIvaInc, ::oDbfArt:TipoIva, ::oDbfArt:cCodImp )
+                     end
+
+                     ::oCliAtp:nPreIva3   := nCalIva( ::oCliAtp:nPrcArt3, ::oDbfArt:lIvaInc, ::oDbfArt:TipoIva, ::oDbfArt:cCodImp )
+
+                     if ::oDbfArt:lMarAju .AND. !Empty( ::oDbfArt:cMarAju )
+                        ::oCliAtp:nPreIva3   := nAjuste( ::oCliAtp:nPreIva3, ::oDbfArt:cMarAju )
+                        ::oCliAtp:nPrcArt3   := nCalBas( ::oCliAtp:nPreIva3, ::oDbfArt:lIvaInc, ::oDbfArt:TipoIva, ::oDbfArt:cCodImp )
+                     end
+
+                     ::oCliAtp:nPreIva4   := nCalIva( ::oCliAtp:nPrcArt4, ::oDbfArt:lIvaInc, ::oDbfArt:TipoIva, ::oDbfArt:cCodImp )
+
+                     if ::oDbfArt:lMarAju .AND. !Empty( ::oDbfArt:cMarAju )
+                        ::oCliAtp:nPreIva4   := nAjuste( ::oCliAtp:nPreIva4, ::oDbfArt:cMarAju )
+                        ::oCliAtp:nPrcArt4   := nCalBas( ::oCliAtp:nPreIva4, ::oDbfArt:lIvaInc, ::oDbfArt:TipoIva, ::oDbfArt:cCodImp )
+                     end
+
+                     ::oCliAtp:nPreIva5   := nCalIva( ::oCliAtp:nPrcArt5, ::oDbfArt:lIvaInc, ::oDbfArt:TipoIva, ::oDbfArt:cCodImp )
+
+                     if ::oDbfArt:lMarAju .AND. !Empty( ::oDbfArt:cMarAju )
+                        ::oCliAtp:nPreIva5   := nAjuste( ::oCliAtp:nPreIva5, ::oDbfArt:cMarAju )
+                        ::oCliAtp:nPrcArt5   := nCalBas( ::oCliAtp:nPreIva5, ::oDbfArt:lIvaInc, ::oDbfArt:TipoIva, ::oDbfArt:cCodImp )
+                     end
+
+                     ::oCliAtp:nPreIva6   := nCalIva( ::oCliAtp:nPrcArt6, ::oDbfArt:lIvaInc, ::oDbfArt:TipoIva, ::oDbfArt:cCodImp )
+
+                     if ::oDbfArt:lMarAju .AND. !Empty( ::oDbfArt:cMarAju )
+                        ::oCliAtp:nPreIva6   := nAjuste( ::oCliAtp:nPreIva6, ::oDbfArt:cMarAju )
+                        ::oCliAtp:nPrcArt6   := nCalBas( ::oCliAtp:nPreIva6, ::oDbfArt:lIvaInc, ::oDbfArt:TipoIva, ::oDbfArt:cCodImp )
+                     end
+
+                  end
+
+               ::oCliAtp:Save()
+
+               fWrite( ::hFilTxt, Space( 8 ) + AllTrim( ::oCliAtp:cCodArt ) + " - " + AllTrim( ::oDbfArt:Nombre ) + " actualizado correctamente" + Chr(13)+Chr(10) )
+               ::oTree:Select( ::oTree:Add( Space( 8 ) + AllTrim( ::oCliAtp:cCodArt ) + " - " + AllTrim( ::oDbfArt:Nombre ) + " actualizado correctamente" ) )
+
+            end
+
+         end
+
+         if ::oDbfCli:Seek( ::oCliAtp:cCodCli )
+
+            ::oDbfCli:Load()
+
+            ::oDbfCli:lSndInt    := .T.
+            ::oDbfCli:dFecChg    := GetSysDate()
+            ::oDbfCli:cTimChg    := Time()
+
+            ::oDbfCli:Save()
+
+         end
+
+         SysRefresh()
+
+         ::oCliAtp:Skip()
+
+      end
+
+   end
+
+Return ( Self )

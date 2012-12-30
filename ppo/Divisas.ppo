@@ -1,0 +1,2210 @@
+#line 112 "hbclass.ch"
+   DYNAMIC DivertConstructorCall
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+DECLARE HBClass  New( cName AS String, OPTIONAL SuperParams ) AS CLASS HBClass  Create() AS Object  Instance() AS Object  AddClsMethod( cName AS String, @MethodName(), nScope AS Numeric, n2 AS Numeric, n3 AS Numeric )  AddDelegate( cName AS String, cDelegate AS String, cObject AS String, nScope AS Numeric, lPersistent AS LOGICAL )  AddMultiClsData( cType AS String, uVal, nScope AS Numeric, aDatas AS Array OF String )  AddMultiData( cType AS String, uVal, nScope AS Numeric, aDatas AS Array OF String, x AS LOGICAL, lPer AS LOGICAL )  AddMethod( cName AS String, @MethodName(), nScope AS Numeric, lPersistent AS LOGICAL )  AddInLine( cName AS String, bBlock AS CodeBlock, nScope AS Numeric, lPersistent AS LOGICAL )  AddVirtual( cName AS String )  ModMethod( cName AS String, @MethodName(), nScope AS Numeric, lPersistent AS LOGICAL )  ModClsMethod( cName AS String, @MethodName(), nScope AS Numeric )  ModInline( cName AS String, bBlock AS CodeBlock, nScope AS Numeric, lPersistent AS LOGICAL )  SetOnError( @MethodName() )
+#line 85 "\Fwh1204\Include\FiveWin.Ch"
+   EXTERNAL GetProcAdd
+   EXTERNAL TActiveX
+
+
+
+
+extern errorsys
+#line 35 ".\Prg\Divisas.prg"
+static bEdit   := { |aTemp, aoGet, dbfDiv, oBrw, bWhen, bValid, nMode, oBan | EdtRec( aTemp, aoGet, dbfDiv, oBrw, bWhen, bValid, nMode, oBan ) }
+
+
+
+static dbfDiv
+static oWndBrw
+static cCodBuf
+static cPouDiv
+static aDivBuf
+static cPpvDiv
+static cPinDiv
+static cPirDiv
+static cPorDiv
+static cPwbDiv
+static cPwrDiv
+
+
+
+
+
+
+
+FUNCTION Divisas( oMenuItem, oWnd )
+
+   local nLevel
+   local oBandera
+
+   IIF( oMenuItem == nil, oMenuItem := "01039", ) ;
+   IIF( oWnd == nil, oWnd := oWnd(), ) ;
+
+    IF oWndBrw == NIL
+
+
+
+
+
+      nLevel            := nLevelUsr( oMenuItem )
+
+      if nAnd( nLevel, 1 ) <> 0
+         msgStop( "Acceso no permitido." )
+         return nil
+      end
+
+
+
+
+
+      if oWnd <> nil
+         SysRefresh(); oWnd:CloseAll(); SysRefresh()
+      end
+
+      if !OpenFiles()
+         return nil
+      end
+
+      oBandera          := TBandera():New()
+
+
+
+
+
+      AddMnuNext( "Divisas monetarias", ProcName() )
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+      oWndBrw := TShell():New( 2, 10, 18, 70, "Tipos de divisas",, oWnd,,, .F.,,, ( dbfDiv ),,,,, {"Código", "Nombre"}, {||WinAppRec( oWndBrw:oBrw, bEdit, dbfDiv, nil, nil, oBandera )}, {||WinEdtRec( oWndBrw:oBrw, bEdit, dbfDiv, nil, nil, oBandera )}, {||WinDelRec( oWndBrw:oBrw, dbfDiv )}, {||WinDupRec( oWndBrw:oBrw, bEdit, dbfDiv, nil, nil, oBandera )}, nil, nLevel, "Currency_Euro_16", ( 104 + ( 0 * 256 ) + ( 63 * 65536 ) ),,, .T. )
+
+      with object ( oWndBrw:AddXCol() )
+         :cHeader          := "Código"
+         :cSortOrder       := "cCdoDiv"
+         :bEditValue       := {|| ( dbfDiv )->cCodDiv }
+         :nWidth           := 80
+         :bLClickHeader    := {| nMRow, nMCol, nFlags, oCol | oWndBrw:ClickOnHeader( oCol ) }
+      end
+
+      with object ( oWndBrw:AddXCol() )
+         :cHeader          := "Nombre"
+         :cSortOrder       := "cNomDiv"
+         :bEditValue       := {|| ( dbfDiv )->cNomDiv }
+         :nWidth           := 200
+         :bLClickHeader    := {| nMRow, nMCol, nFlags, oCol | oWndBrw:ClickOnHeader( oCol ) }
+      end
+
+      with object ( oWndBrw:AddXCol() )
+         :cHeader          := "Valor en pesetas"
+         :bEditValue       := {|| Trans( ( dbfDiv )->nPtsDiv, "@E 999,999.999999") }
+         :nWidth           := 90
+         :nDataStrAlign    := 1
+         :nHeadStrAlign    := 1
+      end
+
+      with object ( oWndBrw:AddXCol() )
+         :cHeader          := "Valor en euros"
+         :bEditValue       := {|| Trans( ( dbfDiv )->nEurDiv, "@E 999,999.999999") }
+         :nWidth           := 90
+         :nDataStrAlign    := 1
+         :nHeadStrAlign    := 1
+      end
+
+      with object ( oWndBrw:AddXCol() )
+         :cHeader          := "Simbolo"
+         :bEditValue       := {|| ( dbfDiv )->cSmbDiv }
+         :nWidth           := 50
+      end
+
+      oWndBrw:lAutoPos     := .F.
+      oWndBrw:cHtmlHelp    := "Divisas"
+
+      oWndBrw:CreateXFromCode()
+
+
+
+
+
+      oWndBrw:NewAt( "BUS",,, {||( oWndBrw:SearchSetFocus() )}, "(B)uscar", "B",,,,, .F. )
+
+      oWndBrw:AddSeaBar()
+
+
+
+
+
+
+
+
+      oWndBrw:NewAt( "NEW",,, {||( oWndBrw:RecAdd() )}, "(A)ñadir", "A",,, 2,, .F. )
+
+
+
+
+
+
+        oWndBrw:NewAt( "DUP",,, {||( oWndBrw:RecDup() )}, "(D)uplicar", "D",,, 2,, .F. )
+
+
+
+
+
+
+        oWndBrw:NewAt( "EDIT",,, {||( oWndBrw:RecEdit() )}, "(M)odificar", "M",,, 4,, .F. )
+
+
+
+
+
+
+        oWndBrw:NewAt( "ZOOM",,, {||( WinZooRec( oWndBrw:oBrw, bEdit, dbfDiv, nil, nil, oBandera ) )}, "(Z)oom", "Z",,, 8,, .F. )
+
+
+
+
+
+
+        oWndBrw:NewAt( "DEL",,, {||( oWndBrw:RecDel() )}, "(E)liminar", "E",,, 16,, .F. )
+
+
+
+
+
+
+
+
+      oWndBrw:NewAt( "IMP",,, {||( InfDiv():New( "Listado de divisas" ):Play(), oWndBrw:Maximize() )}, "(L)istado", "L",,, 32,, .F. )
+
+
+
+
+
+
+
+      oWndBrw:NewAt( "END",,, {||( oWndBrw:End() )}, "(S)alir", "S",,,,, .F. )
+
+      oWndBrw:Activate(, oWndBrw:bLClicked, oWndBrw:bRClicked, oWndBrw:bMoved, oWndBrw:bResized, oWndBrw:bPainted, oWndBrw:bKeyDown, oWndBrw:bInit,,,,,,,,, {|| ( CloseFiles() )},, oWndBrw:bLButtonUp )
+
+    ELSE
+
+        oWndBrw:SetFocus()
+
+    end
+
+RETURN NIL
+
+
+
+STATIC FUNCTION EdtRec( aTmp, aoGet, dbfDiv, oBrw, bWhen, bValid, nMode, oBandera )
+
+    local oDlg
+    local oGetCod
+   local oGet2
+    local oCmb
+    local cCmb
+
+
+
+
+
+   cCmb           := oBandera:cBandera( aTmp[ 18 ] )
+
+   oDlg = TDialog():New(,,,, LblTitle( nMode ) + "Divisas", "DIVISAS",, .F.,,,,,, .F.,,,,,, .F., )
+
+
+
+
+
+
+
+      oGetCod := TGetHlp():ReDefine( 110, { | u | If( PCount()==0, aTmp[ 1 ], aTmp[ 1 ]:= u ) }, oDlg,, "@!", {||     ( NotValid( oGetCod, dbfDiv ) )}, "N/W*",,,,, .F., {||     ( nMode == 1 .OR. nMode == 4 )},, .F., .F.,,,,,, nil,,, )
+
+
+
+
+
+      oGet2 := TGetHlp():ReDefine( 120, { | u | If( PCount()==0, aTmp[2], aTmp[2]:= u ) }, oDlg,,,, "N/W*",,,,, .F., {||         ( nMode <> 3 )},, .F., .F.,,,,,, nil,,, )
+
+
+
+
+
+
+      TGetHlp():ReDefine( 130, { | u | If( PCount()==0, aTmp[4], aTmp[4]:= u ) }, oDlg,, "@E 999,999.999999",, "N/W*",,,,, .F., {||         ( nMode <> 3 )},, .F., .F.,,,,,, nil,,, )
+
+
+
+
+
+      TGetHlp():ReDefine( 140, { | u | If( PCount()==0, aTmp[ 5 ], aTmp[ 5 ]:= u ) }, oDlg,, "@E 999,999.999999",,,,,,, .F., {||         ( nMode <> 3 )},, .F., .F.,,,,,, nil,,, )
+
+
+
+
+
+
+      aoGet[ 3 ] := TGetHlp():ReDefine( 150, { | u | If( PCount()==0, aTmp[ 3 ], aTmp[ 3 ]:= u ) }, oDlg,,,,,,,,, .F., {||     ( nMode <> 3 )},, .F., .F.,,,,, {|Self|aoGet[3]:cText( Calendario( aTmp[3] ) )}, nil,,, )
+
+
+
+
+
+      TGetHlp():ReDefine( 160, { | u | If( PCount()==0, aTmp[19], aTmp[19]:= u ) }, oDlg,,,, "N/W*",,,,, .F., {||     ( nMode <> 3 )},, .F., .F.,,,,,, nil,,, )
+
+
+
+
+
+
+
+
+
+
+        oCmb := TComboBox():ReDefine( 170, { | u | If( PCount()==0, cCmb, cCmb:= u ) }, oBandera:aNomBan, oDlg,,,,,,, .F., {||     ( nMode <> 3 )}, oBandera:aResBan,,,, )
+
+
+
+
+      TCheckBox():ReDefine( 270, { | u | If( PCount()==0, aTmp[21], aTmp[21]:= u ) }, oDlg,,,,,,, .F., {||     ( nMode <> 3 )}, .F. )
+
+
+
+
+
+
+
+
+
+
+
+
+      TGetHlp():ReDefine( 180, { | u | If( PCount()==0, aTmp[6], aTmp[6]:= u ) }, oDlg,, "99", {||    ( aTmp[6] >= 1 .AND. aTmp[6] <= 12 )}, "N/W*",,,,, .F., {||     ( nMode <> 3 )},, .F., .T.,,, {|| 1}, {|| 12},, nil,,, )
+
+
+
+
+
+
+
+
+      TGetHlp():ReDefine( 190, { | u | If( PCount()==0, aTmp[7], aTmp[7]:= u ) }, oDlg,, "9", {||    ( aTmp[7] >= 0 .AND. aTmp[7] <= 6 )}, "N/W*",,,,, .F., {||     ( nMode <> 3 )},, .F., .T.,,, {|| 0}, {|| 6},, nil,,, )
+
+
+
+
+
+
+
+
+      TGetHlp():ReDefine( 200, { | u | If( PCount()==0, aTmp[8], aTmp[8]:= u ) }, oDlg,, "9", {||     ( aTmp[ 8 ] >= 0 .AND. aTmp[ 8 ] <= 6 )}, "N/W*",,,,, .F., {||     ( nMode <> 3 )},, .F., .T.,,, {|| 0}, {|| 6},, nil,,, )
+
+
+
+
+
+
+
+
+
+
+
+
+      TGetHlp():ReDefine( 210, { | u | If( PCount()==0, aTmp[9], aTmp[9]:= u ) }, oDlg,, "99", {||     ( aTmp[9] >= 1 .AND. aTmp[9] <= 12 )}, "N/W*",,,,, .F., {||     ( nMode <> 3 )},, .F., .T.,,, {|| 1}, {|| 12},, nil,,, )
+
+
+
+
+
+
+
+
+      TGetHlp():ReDefine( 220, { | u | If( PCount()==0, aTmp[10], aTmp[10]:= u ) }, oDlg,, "9", {||     ( aTmp[10] >= 0 .AND. aTmp[10] <= 6 )}, "N/W*",,,,, .F., {||     ( nMode <> 3 )},, .F., .T.,,, {|| 0}, {|| 6},, nil,,, )
+
+
+
+
+
+
+
+
+      TGetHlp():ReDefine( 230, { | u | If( PCount()==0, aTmp[11], aTmp[11]:= u ) }, oDlg,, "9", {||     ( aTmp[11] >= 0 .AND. aTmp[11] <= 6 )}, "N/W*",,,,, .F., {||     ( nMode <> 3 )},, .F., .T.,,, {|| 0}, {|| 6},, nil,,, )
+
+
+
+
+
+
+
+
+
+
+
+
+      TGetHlp():ReDefine( 240, { | u | If( PCount()==0, aTmp[12], aTmp[12]:= u ) }, oDlg,, "99", {||     ( aTmp[12] >= 1 .AND. aTmp[12] <= 12 )}, "N/W*",,,,, .F., {||     ( nMode <> 3 )},, .F., .T.,,, {|| 1}, {|| 12},, nil,,, )
+
+
+
+
+
+
+
+      TGetHlp():ReDefine( 250, { | u | If( PCount()==0, aTmp[13], aTmp[13]:= u ) }, oDlg,, "9", {||    ( aTmp[13] >= 0 .AND. aTmp[13] <= 6 )},,,,,, .F., {||     ( nMode <> 3 )},, .F., .T.,,, {|| 0}, {|| 6},, nil,,, )
+
+
+
+
+
+
+
+      TGetHlp():ReDefine( 260, { | u | If( PCount()==0, aTmp[14], aTmp[14]:= u ) }, oDlg,, "9", {||    ( aTmp[14] >= 0 .AND. aTmp[14] <= 6 )},,,,,, .F., {||     ( nMode <> 3 )},, .F., .T.,,, {|| 0}, {|| 6},, nil,,, )
+
+
+
+
+
+
+
+
+
+
+
+      TGetHlp():ReDefine( 300, { | u | If( PCount()==0, aTmp[ 15 ], aTmp[ 15 ]:= u ) }, oDlg,, "99", {||    ( aTmp[ 15 ] >= 1 .AND. aTmp[ 15 ] <= 12 )},,,,,, .F., {||     ( nMode <> 3 )},, .F., .T.,,, {|| 1}, {|| 12},, nil,,, )
+
+
+
+
+
+
+
+      TGetHlp():ReDefine( 310, { | u | If( PCount()==0, aTmp[ 16 ], aTmp[ 16 ]:= u ) }, oDlg,, "9", {||    ( aTmp[ 16 ] >= 0 .AND. aTmp[ 16 ] <= 6 )},,,,,, .F., {||     ( nMode <> 3 )},, .F., .T.,,, {|| 0}, {|| 6},, nil,,, )
+
+
+
+
+
+
+
+      TGetHlp():ReDefine( 320, { | u | If( PCount()==0, aTmp[ 17 ], aTmp[ 17 ]:= u ) }, oDlg,, "9", {||    ( aTmp[ 17 ] >= 0 .AND. aTmp[ 17 ] <= 6 )},,,,,, .F., {||     ( nMode <> 3 )},, .F., .T.,,, {|| 0}, {|| 6},, nil,,, )
+
+
+
+
+
+
+
+
+
+      TButton():ReDefine( 1, {||(  if( nMode == 4, if( oGetCod:lValid(), lPresave( aTmp, dbfDiv, oBrw, nMode, oCmb, oBandera, oDlg, oGetCod, oGet2 ), ), lPresave( aTmp, dbfDiv, oBrw, nMode, oCmb, oBandera, oDlg, oGetCod, oGet2 ) ) )}, oDlg,,, .F., {||         (     nMode <> 3 )},,, .F. )
+
+
+
+
+
+        TButton():ReDefine( 2, {||( oDlg:end() )}, oDlg,,, .F.,,,, .T. )
+
+
+   if nMode <> 3
+      oDlg:AddFastKey( 116, {|| if( nMode == 4, if( oGetCod:lValid(), lPresave( aTmp, dbfDiv, oBrw, nMode, oCmb, oBandera, oDlg, oGetCod, oGet2 ), ), lPresave( aTmp, dbfDiv, oBrw, nMode, oCmb, oBandera, oDlg, oGetCod, oGet2 ) ) } )
+   end
+
+   oDlg:bStart := {|| oGetCod:SetFocus() }
+
+    oDlg:Activate( oDlg:bLClicked, oDlg:bMoved, oDlg:bPainted := {|hDC,cPS|( EvalGet( aoGet, nMode ) )}, .T.,,,, oDlg:bRClicked,,, )
+
+RETURN ( oDlg:nResult == 1 )
+
+
+
+Static Function lPresave( aTmp, dbfDiv, oBrw, nMode, oCmb, oBandera, oDlg, oGetCod, oGet2 )
+
+   if nMode == 1 .OR. nMode == 4
+
+      if Empty( aTmp[1] )
+         MsgStop( "El código de la divisa no puede estar vacío" )
+         oGetCod:SetFocus()
+         Return nil
+      end
+
+      if dbSeekInOrd( aTmp[ 1 ], "CCODDIV", dbfDiv )
+         MsgStop( "Código ya existe " + Rtrim( aTmp[ 1 ] ) )
+         return nil
+      end
+
+   end
+
+   if Empty( aTmp[2] )
+      MsgStop( "El nombre de la divisa no puede estar vacío" )
+      oGet2:SetFocus()
+      Return nil
+   end
+
+   aTmp[18] := oBandera:aResBan[ oCmb:nAt ]
+
+   WinGather( aTmp, nil, dbfDiv, oBrw, nMode )
+
+   aDivBuf( aTmp[ 1 ], dbfDiv )
+
+Return ( oDlg:end( 1 ) )
+
+
+
+
+
+
+
+FUNCTION cDiv( oGet, uBmp, xGetDiv, cPinDiv, nDinDiv, dbfDiv, oBan )
+
+    local cCodDiv    := oGet:varGet()
+    local cAreaAnt := Alias()
+   local lValid   := .F.
+
+   if Empty( cCodDiv )
+      return .T.
+   end
+
+   if ( dbfDiv )->( dbSeek( cCodDiv ) )
+
+        oGet:cText( cCodDiv )
+
+      if ValType( uBmp ) == "O"
+         uBmp:Reload( ( dbfDiv )->cBndDiv )
+      elseif ValType( uBmp ) == "N"
+         uBmp           := oBan:hBandera( ( dbfDiv )->cBndDiv )
+      end
+
+      if ValType( xGetDiv ) == "O"
+         xGetDiv:cText( nValChgDiv( dbfDiv ) )
+      elseif ValType( xGetDiv ) == "N"
+         xGetDiv  := nValChgDiv( dbfDiv )
+      end
+
+        lValid    := .T.
+
+
+
+
+
+      if cPinDiv <> NIL
+            cPinDiv := cPinDiv( cCodDiv, dbfDiv )
+      end
+
+      if nDinDiv <> NIL
+         nDinDiv := nDinDiv( cCodDiv, dbfDiv )
+      end
+
+   else
+
+      msgStop( "Divisa no encontrada", cCodDiv )
+      lValid      := .F.
+
+   end
+
+   IF cAreaAnt <> ""
+        dbSelectArea( ( cAreaAnt ) )
+    end
+
+RETURN lValid
+
+
+
+
+
+
+
+FUNCTION cNbrDiv( oGet, oGetDiv, dbfDiv )
+
+    local cCodDiv    := oGet:varGet()
+   local lValid   := .F.
+
+   if Empty( cCodDiv )
+      return .T.
+   end
+
+   if ( dbfDiv )->( dbSeek( cCodDiv ) )
+
+        oGet:cText( cCodDiv )
+
+      if ValType( oGetDiv ) == "O"
+         oGetDiv:cText( ( dbfDiv )->cNomDiv )
+      elseif ValType( oGetDiv ) == "N"
+         oGetDiv  := ( dbfDiv )->cNomDiv
+      end
+
+      lValid   := .T.
+   else
+      msgStop( "Divisa no encontrada", cCodDiv )
+      lValid   := .F.
+   end
+
+RETURN lValid
+
+
+
+FUNCTION cDivIn( oGet, oBmp, xGetDiv, cPinDiv, nDinDiv, cPirDiv, nDirDiv, oSayMas, dbfDiv, oBan )
+
+   local lValid   := .F.
+   local cCodDiv  := oGet:varGet()
+
+   if Empty( cCodDiv )
+      cCodDiv     := cDivEmp()
+   end
+
+   if ( dbfDiv )->( dbSeek( cCodDiv ) )
+
+        oGet:cText( cCodDiv )
+
+      if !Empty( oBmp ) .AND. !Empty( oBan )
+         oBmp:Reload( ( dbfDiv )->cBndDiv )
+      end
+
+      if ValType( xGetDiv ) == "O"
+         xGetDiv:cText( nValChgDiv( dbfDiv ) )
+      elseif ValType( xGetDiv ) == "N"
+         xGetDiv  := nValChgDiv( dbfDiv )
+      end
+
+      lValid      := .T.
+
+
+
+
+
+      if cPinDiv <> nil
+         cPinDiv  := cPinDiv( cCodDiv, dbfDiv )
+      end
+
+      if nDinDiv <> nil
+         nDinDiv  := nDinDiv( cCodDiv, dbfDiv )
+      end
+
+      if cPirDiv <> nil
+         cPirDiv  := cPirDiv( cCodDiv, dbfDiv )
+      end
+
+      if nDirDiv <> nil
+         nDirDiv  := nRinDiv( cCodDiv, dbfDiv )
+      end
+
+      if oSayMas <> nil
+         oSayMas:SetText( ( dbfDiv )->cSmbDiv )
+      end
+
+   else
+
+      msgStop( "Divisa no encontrada", cCodDiv )
+      lValid      := .F.
+
+   end
+
+RETURN lValid
+
+
+
+FUNCTION cDivOut( oGet, uBmp, xGetDiv, cPouDiv, nDouDiv, cPorDiv, nDorDiv, cPpvDiv, nDprDiv, oSayMas, dbfDiv, oBan )
+
+    local cCodDiv    := oGet:varGet()
+   local lValid   := .F.
+
+   if Empty( cCodDiv )
+      cCodDiv     := cDivEmp()
+   end
+
+   if ( dbfDiv )->( dbSeek( cCodDiv ) )
+
+        oGet:cText( cCodDiv )
+
+      if ValType( uBmp ) == "O" .AND. !Empty( oBan )
+         uBmp:Reload( ( dbfDiv )->cBndDiv )
+      elseif ValType( uBmp ) == "N" .AND. !Empty( oBan )
+         uBmp           := oBan:hBandera( ( dbfDiv )->cBndDiv )
+      end
+
+      if ValType( xGetDiv ) == "O"
+         xGetDiv:cText( nValChgDiv( dbfDiv ) )
+      elseif ValType( xGetDiv ) == "N"
+         xGetDiv  := nValChgDiv( dbfDiv )
+      end
+
+      lValid      := .T.
+
+
+
+
+
+      if cPouDiv <> nil
+         cPouDiv := cPouDiv( cCodDiv, dbfDiv )
+      end
+
+      if nDouDiv <> nil
+         nDouDiv := nDouDiv( cCodDiv, dbfDiv )
+      end
+
+      if cPorDiv <> nil
+         cPorDiv := cPorDiv( cCodDiv, dbfDiv )
+      end
+
+      if nDorDiv <> nil
+         nDorDiv := nRouDiv( cCodDiv, dbfDiv )
+      end
+
+      if cPpvDiv <> nil
+         cPpvDiv := cPpvDiv( cCodDiv, dbfDiv )
+      end
+
+      if nDprDiv <> nil
+         nDprDiv := nDpvDiv( cCodDiv, dbfDiv )
+      end
+
+      if oSayMas <> nil
+         oSayMas:SetText( ( dbfDiv )->CSMBDIV )
+      end
+
+   else
+
+      msgStop( "Divisa no encontrada", cCodDiv )
+      lValid      := .F.
+
+   end
+
+RETURN lValid
+
+
+
+
+
+
+FUNCTION nValDiv( cCodDiv, dbfDiv )
+
+    local nPtsVal    := 1
+
+    IF Empty( cCodDiv )
+        RETURN .T.
+    end
+
+    IF ( dbfDiv )->( dbSeek( cCodDiv ) )
+      nPtsVal     := nValChgDiv( dbfDiv )
+   ELSE
+      msgStop( "Divisa no encontrada", cCodDiv )
+    end
+
+RETURN ( nPtsVal )
+
+
+
+FUNCTION BrwDiv( oGet, oBmp, oGetDiv, dbfDiv, oBan, lBigStyle )
+
+    local oDlg
+    local oGet1
+    local cGet1
+    local oBrw
+   local nOrd        := GetBrwOpt( "BrwDiv" )
+   local aSta
+    local oCbxOrd
+   local aCbxOrd     := { "Código", "Nombre" }
+   local cCbxOrd
+   local nLevel      := nLevelUsr( "01039" )
+
+   nOrd              := Min( Max( nOrd, 1 ), len( aCbxOrd ) )
+   cCbxOrd           := aCbxOrd[ nOrd ]
+
+   IIF( lBigStyle == nil, lBigStyle := .F., ) ;
+
+   if dbfDiv == nil
+      return .F.
+   end
+
+   aSta              := aGetStatus( dbfDiv, .T. )
+
+   nOrd              := ( dbfDiv )->( OrdSetFocus( nOrd ) )
+
+   if !lBigStyle
+      oDlg = TDialog():New(,,,, "Seleccione la divisa", "HELPENTRY",, .F.,,,,,, .F.,,,,,, .F., )
+   else
+      oDlg = TDialog():New(,,,, "Seleccione la divisa", "BIGHELPENTRY",, .F.,,,,,, .F.,,,,,, .F., )
+   end
+
+
+
+
+
+
+        oGet1 := TGetHlp():ReDefine( 104, { | u | If( PCount()==0, cGet1, cGet1:= u ) }, oDlg,,, {||    ( OrdClearScope( oBrw, dbfDiv ) )},,,,,, .F.,, {|nKey,nFlags,Self| ( AutoSeek( nKey, nFlags, Self, oBrw, dbfDiv ) ) }, .F., .F.,,,,,, nil, "FIND",, )
+
+
+
+
+
+
+        oCbxOrd := TComboBox():ReDefine( 102, { | u | If( PCount()==0, cCbxOrd, cCbxOrd:= u ) }, aCbxOrd, oDlg,,, {|Self|( ( dbfDiv )->( OrdSetFocus( oCbxOrd:nAt ) ), oBrw:refresh(), oGet1:SetFocus() )},,,, .F.,,,,,, )
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+      oBrw                 := IXBrowse():New( oDlg )
+
+      oBrw:bClrSel         := {|| { 0, ( 229 + ( 229 * 256 ) + ( 229 * 65536 ) ) } }
+      oBrw:bClrSelFocus    := {|| { 0, ( 167 + ( 205 * 256 ) + ( 240 * 65536 ) ) } }
+
+      oBrw:cAlias          := dbfDiv
+      oBrw:nMarqueeStyle   := 5
+      oBrw:cName           := "Browse.Divisas"
+
+      with object ( oBrw:AddCol() )
+         :cHeader          := "Código"
+         :cSortOrder       := "cCdoDiv"
+         :bEditValue       := {|| ( dbfDiv )->cCodDiv }
+         :nWidth           := 80
+         :bLClickHeader    := {| nMRow, nMCol, nFlags, oCol | oCbxOrd:Set( oCol:cHeader ) }
+      end
+
+      with object ( oBrw:AddCol() )
+         :cHeader          := "Nombre"
+         :cSortOrder       := "cNomDiv"
+         :bEditValue       := {|| ( dbfDiv )->cNomDiv }
+         :nWidth           := 200
+         :bLClickHeader    := {| nMRow, nMCol, nFlags, oCol | oCbxOrd:Set( oCol:cHeader ) }
+      end
+
+      with object ( oBrw:AddCol() )
+         :cHeader          := "Valor en pesetas"
+         :bEditValue       := {|| Trans( ( dbfDiv )->nPtsDiv, "@E 999,999.999999") }
+         :nWidth           := 90
+         :nDataStrAlign    := 1
+         :nHeadStrAlign    := 1
+      end
+
+      with object ( oBrw:AddCol() )
+         :cHeader          := "Valor en euros"
+         :bEditValue       := {|| Trans( ( dbfDiv )->nEurDiv, "@E 999,999.999999") }
+         :nWidth           := 90
+         :nDataStrAlign    := 1
+         :nHeadStrAlign    := 1
+      end
+
+      with object ( oBrw:AddCol() )
+         :cHeader          := "Simbolo"
+         :bEditValue       := {|| ( dbfDiv )->cSmbDiv }
+         :nWidth           := 50
+      end
+
+      oBrw:bLDblClick      := {|| oDlg:end( 1 ) }
+      oBrw:bRClicked       := {| nRow, nCol, nFlags | oBrw:RButtonDown( nRow, nCol, nFlags ) }
+
+      oBrw:CreateFromResource( 105 )
+
+      if lBigStyle
+         oBrw:nHeaderHeight   := 36
+         oBrw:nFooterHeight   := 36
+         oBrw:nLineHeight     := 36
+      end
+
+
+
+
+
+        TButton():ReDefine( 500, {||WinAppRec( oBrw, bEdit, dbfDiv, nil, nil, oBan )}, oDlg,,, .F., {||     ( nAnd( nLevel, 2 ) <> 0 )},,, .F. )
+
+
+
+
+
+        TButton():ReDefine( 501, {||WinEdtRec( oBrw, bEdit, dbfDiv, nil, nil, oBan )}, oDlg,,, .F., {||     ( nAnd( nLevel, 4 ) <> 0 )},,, .F. )
+
+
+
+
+        TButton():ReDefine( 1, {||( oDlg:end( 1 ) )}, oDlg,,, .F.,,,, .F. )
+
+
+
+
+        TButton():ReDefine( 2, {||( oDlg:end() )}, oDlg,,, .F.,,,, .F. )
+
+      oDlg:bStart := { || oBrw:LoadData() }
+
+   oDlg:Activate( oDlg:bLClicked, oDlg:bMoved, oDlg:bPainted, .T.,,,, oDlg:bRClicked,,, )
+
+   if oDlg:nResult == 1
+
+      oGet:cText( ( dbfDiv )->cCodDiv )
+
+      if ValType( oBmp ) == "O"
+         oBmp:Reload( ( dbfDiv )->cBndDiv )
+      end
+
+      if ValType( oGetDiv ) == "O"
+         oGetDiv:cText( nValChgDiv( dbfDiv ) )
+      elseif ValType( oGetDiv ) == "N"
+         oGetDiv  := nValChgDiv( dbfDiv )
+      end
+
+   end
+
+   DestroyFastFilter( dbfDiv )
+
+   SetBrwOpt( "BrwDiv", ( dbfDiv )->( OrdNumber() ) )
+
+    oGet:setFocus()
+
+   ( dbfDiv )->( OrdSetFocus( nOrd ) )
+
+   SetStatus( dbfDiv, aSta )
+
+RETURN ( oDlg:nResult == 1 )
+
+
+
+FUNCTION BrwNbrDiv( oGet, oGetDiv, dbfDiv, oBan )
+
+    local oDlg
+    local oGet1
+    local cGet1
+    local oBrw
+   local nOrd        := GetBrwOpt( "BrwDiv" )
+   local aSta
+    local oCbxOrd
+   local aCbxOrd     := { "Código", "Nombre" }
+   local cCbxOrd
+   local nLevel      := nLevelUsr( "01039" )
+
+   nOrd              := Min( Max( nOrd, 1 ), len( aCbxOrd ) )
+   cCbxOrd           := aCbxOrd[ nOrd ]
+
+   if dbfDiv == nil
+      return .F.
+   end
+
+   aSta              := aGetStatus( dbfDiv, .T. )
+   nOrd              := ( dbfDiv )->( OrdSetFocus( nOrd ) )
+
+   oDlg = TDialog():New(,,,, "Seleccione la divisa", "HELPENTRY",, .F.,,,,,, .F.,,,,,, .F., )
+
+
+
+
+
+
+        oGet1 := TGetHlp():ReDefine( 104, { | u | If( PCount()==0, cGet1, cGet1:= u ) }, oDlg,,, {||    ( OrdClearScope( oBrw, dbfDiv ) )},,,,,, .F.,, {|nKey,nFlags,Self| ( AutoSeek( nKey, nFlags, Self, oBrw, dbfDiv ) ) }, .F., .F.,,,,,, nil, "FIND",, )
+
+
+
+
+
+
+        oCbxOrd := TComboBox():ReDefine( 102, { | u | If( PCount()==0, cCbxOrd, cCbxOrd:= u ) }, aCbxOrd, oDlg,,, {|Self|( ( dbfDiv )->( OrdSetFocus( oCbxOrd:nAt ) ), oBrw:refresh(), oGet1:SetFocus() )},,,, .F.,,,,,, )
+
+      oBrw                 := IXBrowse():New( oDlg )
+
+      oBrw:bClrSel         := {|| { 0, ( 229 + ( 229 * 256 ) + ( 229 * 65536 ) ) } }
+      oBrw:bClrSelFocus    := {|| { 0, ( 167 + ( 205 * 256 ) + ( 240 * 65536 ) ) } }
+
+      oBrw:cAlias          := dbfDiv
+      oBrw:nMarqueeStyle   := 5
+      oBrw:cName           := "Browse.Divisas por nombre"
+
+      with object ( oBrw:AddCol() )
+         :cHeader          := "Código"
+         :cSortOrder       := "cCdoDiv"
+         :bEditValue       := {|| ( dbfDiv )->cCodDiv }
+         :nWidth           := 80
+         :bLClickHeader    := {| nMRow, nMCol, nFlags, oCol | oCbxOrd:Set( oCol:cHeader ) }
+      end
+
+      with object ( oBrw:AddCol() )
+         :cHeader          := "Nombre"
+         :cSortOrder       := "cNomDiv"
+         :bEditValue       := {|| ( dbfDiv )->cNomDiv }
+         :nWidth           := 200
+         :bLClickHeader    := {| nMRow, nMCol, nFlags, oCol | oCbxOrd:Set( oCol:cHeader ) }
+      end
+
+      with object ( oBrw:AddCol() )
+         :cHeader          := "Valor en pesetas"
+         :bEditValue       := {|| Trans( ( dbfDiv )->nPtsDiv, "@E 999,999.999999") }
+         :nWidth           := 90
+         :nDataStrAlign    := 1
+         :nHeadStrAlign    := 1
+      end
+
+      with object ( oBrw:AddCol() )
+         :cHeader          := "Valor en euros"
+         :bEditValue       := {|| Trans( ( dbfDiv )->nEurDiv, "@E 999,999.999999") }
+         :nWidth           := 90
+         :nDataStrAlign    := 1
+         :nHeadStrAlign    := 1
+      end
+
+      with object ( oBrw:AddCol() )
+         :cHeader          := "Simbolo"
+         :bEditValue       := {|| ( dbfDiv )->cSmbDiv }
+         :nWidth           := 50
+      end
+
+      oBrw:bLDblClick      := {|| oDlg:end( 1 ) }
+      oBrw:bRClicked       := {| nRow, nCol, nFlags | oBrw:RButtonDown( nRow, nCol, nFlags ) }
+
+      oBrw:CreateFromResource( 105 )
+
+
+
+
+
+
+        TButton():ReDefine( 500, {||WinAppRec( oBrw, bEdit, dbfDiv, nil, nil, oBan )}, oDlg,,, .F., {||     ( nAnd( nLevel, 2 ) <> 0 )},,, .F. )
+
+
+
+
+
+        TButton():ReDefine( 501, {||WinEdtRec( oBrw, bEdit, dbfDiv, nil, nil, oBan )}, oDlg,,, .F., {||     ( nAnd( nLevel, 4 ) <> 0 )},,, .F. )
+
+
+
+
+        TButton():ReDefine( 1, {||( oDlg:end(1) )}, oDlg,,, .F.,,,, .F. )
+
+
+
+
+        TButton():ReDefine( 2, {||( oDlg:end() )}, oDlg,,, .F.,,,, .F. )
+
+      oDlg:bStart := { || oBrw:Load() }
+
+   oDlg:Activate( oDlg:bLClicked, oDlg:bMoved, oDlg:bPainted, .T.,,,, oDlg:bRClicked,,, )
+
+   if oDlg:nResult == 1
+
+      oGet:cText( ( dbfDiv )->cCodDiv )
+
+      if ValType( oGetDiv ) == "O"
+         oGetDiv:cText( ( dbfDiv )->cNomDiv )
+      elseif ValType( oGetDiv ) == "N"
+         oGetDiv := ( dbfDiv )->cNomDiv
+      end
+
+   end
+
+   DestroyFastFilter( dbfDiv )
+
+   SetBrwOpt( "BrwDiv", ( dbfDiv )->( OrdNumber() ) )
+
+    oGet:setFocus()
+
+   ( dbfDiv )->( OrdSetFocus( nOrd ) )
+
+   SetStatus( dbfDiv, aSta )
+
+RETURN ( oDlg:nResult == 1 )
+
+
+
+
+
+
+
+FUNCTION loadBan( dbfBan, aCodBan, aNomBan, aResBan )
+
+   local nRec  := ( dbfBan )->( Recno() )
+
+   aCodBan     := {}
+   aNomBan     := {}
+   aResBan     := {}
+
+   ( dbfBan )->( dbGoTop() )
+    WHILE ( dbfBan )->( !eof() )
+
+        aadd( aCodBan, ( dbfBan )->CCODBAN )
+        aadd( aNomBan, ( dbfBan )->CNOMBAN )
+      aadd( aResBan, LoadBitMap( GetResources(), ( dbfBan )->CRESBAN ) )
+
+        ( dbfBan )->( dbSkip() )
+
+    end
+
+   ( dbfBan )->( dbGoTo( nRec ) )
+
+RETURN NIL
+
+
+
+
+
+
+
+FUNCTION cNomBan( cCodBan, dbfBan )
+
+    local cNomBan    := ""
+
+    IF ( dbfBan )->( dbSeek( cCodBan ) )
+      cNomBan     := ( dbfBan )->cNomBan
+    end
+
+RETURN ( cNomBan )
+
+
+
+
+
+
+
+FUNCTION cResBan( cCodBan, dbfBan )
+
+    local cNomBan    := ""
+
+    IF ( dbfBan )->( dbSeek( cCodBan ) )
+      cNomBan     := Rtrim( ( dbfBan )->cBndDiv )
+    end
+
+RETURN ( cNomBan )
+
+
+
+
+
+
+
+STATIC FUNCTION cBmpBan( cResBan, oBan )
+
+RETURN ( oBan:hBandera( cResBan ) )
+
+
+
+
+
+
+FUNCTION hBmpDiv( cCodDiv, dbfDiv, oBan, lDefDiv )
+
+   local oBlock
+   local oError
+   local hBmp        := 0
+   local lCloDiv     := .F.
+
+
+
+
+
+   IIF( lDefDiv == nil, lDefDiv := .T., ) ;
+
+   if cCodDiv == cDivEmp() .AND. lDefDiv
+      return ( 0 )
+   end
+
+   oBlock            := ErrorBlock( {| oError | ApoloBreak( oError ) } )
+   BEGIN SEQUENCE
+
+   if dbfDiv == NIL
+      dbUseArea( .T., ( cDriver() ), ( cPatDat() + "DIVISAS.DBF" ), ( cCheckArea( "DIVISAS", @dbfDiv ) ), if(.T. .OR. .F., !.F., NIL), .F.,, )
+      if !lAIS() ; ordListAdd( ( cPatDat() + "DIVISAS.CDX" ) ) ; else ; ordSetFocus( 1 ) ; end
+      lCloDiv        := .T.
+   end
+
+   if dbSeekInOrd( cCodDiv, "cCodDiv", dbfDiv ) .AND. oBan <>nil
+      hBmp           := oBan:hBandera( ( dbfDiv )->cBndDiv )
+   end
+
+   RECOVER USING oError
+
+      msgStop( "Imposible abrir todas las bases de datos " + Chr(13)+Chr(10) + ErrorMessage( oError ) )
+
+   end
+
+   ErrorBlock( oBlock )
+
+   if lCloDiv
+        ( dbfDiv )->( dbCloseArea() )
+   end
+
+RETURN ( hBmp )
+
+
+
+
+
+
+
+FUNCTION nDprDiv( cCodDiv, dbfDiv )
+
+   IIF( cCodDiv == nil, cCodDiv := cDivEmp(), ) ;
+
+   if cCodDiv <> cCodBuf .OR. Empty( aDivBuf )
+      aDivBuf( cCodDiv, dbfDiv )
+   end
+
+RETURN ( aDivBuf[ 14 ] )
+
+
+
+FUNCTION cNomDiv( cCodDiv, dbfDiv )
+
+   IIF( cCodDiv == nil, cCodDiv := cDivEmp(), ) ;
+
+   if cCodDiv <> cCodBuf .OR. Empty( aDivBuf )
+      aDivBuf( cCodDiv, dbfDiv )
+   end
+
+RETURN ( aDivBuf[ 2 ] )
+
+
+
+FUNCTION cBmpDiv( cCodDiv, dbfDiv )
+
+   IIF( cCodDiv == nil, cCodDiv := cDivEmp(), ) ;
+
+   if cCodDiv <> cCodBuf .OR. Empty( aDivBuf )
+      aDivBuf( cCodDiv, dbfDiv )
+   end
+
+RETURN ( aDivBuf[ 18 ] )
+
+
+
+FUNCTION Chg2Div()
+
+    local oDlg
+    local oGetDivOrg
+   local cGetDivOrg  := cDivEmp()
+    local oBmpDivOrg
+    local cPicDivOrg
+    local nVdvDivOrg
+    local oGetDivDes
+    local cGetDivDes    := "EUR"
+    local oBmpDivDes
+    local cPicDivDes
+    local nVdvDivDes
+    local oPtsDivOrg
+    local oPtsDivDes
+    local nPtsDivOrg     := 0
+    local nPtsDivDes     := 0
+
+   IF !OpenFiles()
+      RETURN NIL
+   end
+
+    cPicDivOrg            := cPouDiv( cGetDivOrg, dbfDiv )
+    cPicDivDes            := cPouDiv( cGetDivDes, dbfDiv )
+   nVdvDivOrg        := nChgDiv( cGetDivOrg, dbfDiv )
+   nVdvDivDes        := nChgDiv( cGetDivDes, dbfDiv )
+
+    oDlg = TDialog():New(,,,,, "CNVDIV",, .F.,,,,,, .F.,,,,,, .F., )
+
+
+
+
+
+
+
+
+
+
+    oGetDivOrg := TGetHlp():ReDefine( 100, { | u | If( PCount()==0, cGetDivOrg, cGetDivOrg:= u ) }, oDlg,, "@!", {||        (     cDiv( oGetDivOrg, oBmpDivOrg, @nVdvDivOrg, @cPicDivOrg ),    SetPic( oPtsDivOrg, cPicDivOrg ),    SetChgDiv( oPtsDivOrg, oPtsDivDes, nVdvDivOrg, nVdvDivDes ) )}, "N/W*",,,,, .F.,,, .F., .F.,,,,, {|Self|BrwDiv( oGetDivOrg, oBmpDivOrg )}, nil, "LUPA",, )
+
+
+
+
+    oBmpDivOrg := TBitmap():ReDefine( 110, "BAN_EURO",, oDlg,,, .F., .F.,,, .F.,,, .F. )
+
+
+
+
+
+
+
+    oPtsDivOrg := TGetHlp():ReDefine( 120, { | u | If( PCount()==0, nPtsDivOrg, nPtsDivOrg:= u ) }, oDlg,, cPicDivOrg, {||        SetChgDiv( oPtsDivOrg, oPtsDivDes, nVdvDivOrg, nVdvDivDes )}, "N/W*",,,,, .F.,,, .F., .F.,,,,, {|Self|BrwDiv( oGetDivOrg, oBmpDivOrg )}, nil,,, )
+
+
+
+
+
+
+
+
+
+
+    oGetDivDes := TGetHlp():ReDefine( 130, { | u | If( PCount()==0, cGetDivDes, cGetDivDes:= u ) }, oDlg,, "@!", {||        (    cDiv( oGetDivDes, oBmpDivDes, @nVdvDivDes, @cPicDivDes ),    SetPic( oPtsDivDes, cPicDivDes ),    SetChgDiv( oPtsDivOrg, oPtsDivDes, nVdvDivOrg, nVdvDivDes ) )}, "N/W*",,,,, .F.,,, .F., .F.,,,,, {|Self|BrwDiv( oGetDivDes, oBmpDivDes )}, nil, "LUPA",, )
+
+
+
+
+    oBmpDivDes := TBitmap():ReDefine( 140, "BAN_EURO",, oDlg,,, .F., .F.,,, .F.,,, .F. )
+
+
+
+
+
+
+
+    oPtsDivDes := TGetHlp():ReDefine( 150, { | u | If( PCount()==0, nPtsDivDes, nPtsDivDes:= u ) }, oDlg,, cPicDivDes,, "N/W*",,,,, .F., {||        .F.},, .F., .F.,,,,, {|Self|BrwDiv( oGetDivDes, oBmpDivDes )}, nil,,, )
+
+
+
+
+    TButton():ReDefine( 1, {||oDlg:end()}, oDlg,,, .F.,,,, .F. )
+
+    oDlg:Activate( oDlg:bLClicked, oDlg:bMoved, oDlg:bPainted, .T., {|Self|( CloseFiles() )},,, oDlg:bRClicked,,, )
+
+   oBmpDivOrg:End()
+   oBmpDivDes:End()
+
+RETURN NIL
+
+
+
+FUNCTION SetChgDiv( oPtsDivOrg, oPtsDivDes, nVdvDivOrg, nVdvDivDes )
+
+    local nPtsOrg    := oPtsDivOrg:varGet() / nVdvDivOrg
+
+    oPtsDivDes:cText( nPtsOrg / nVdvDivDes )
+
+RETURN .T.
+
+
+
+STATIC FUNCTION SetPic( oPtsDiv, cPicDiv )
+
+    oPtsDiv:oGet:Picture := cPicDiv
+    oPtsDiv:refresh()
+
+RETURN NIL
+
+
+
+
+
+
+FUNCTION nImpEuros( nImp, cCodDiv, dbfDiv )
+
+   local nChgEuros   := nChgDiv( cCodDiv, dbfDiv )
+   local nRnd        := nRouDiv( cCodDiv, dbfDiv )
+
+return Round( nImp / nChgEuros, nRnd )
+
+
+
+FUNCTION nImpPesetas( nImp, cCodDiv, dbfDiv )
+
+   local nChgPesetas := nChgDiv( cCodDiv, dbfDiv )
+   local nRnd        := nRouDiv( cCodDiv, dbfDiv )
+
+return Round( nImp / nChgPesetas, nRnd )
+
+
+
+FUNCTION nCnv( nImp, nVdv )
+RETURN ( nImp / nVdv  )
+
+
+
+FUNCTION nValChgDiv( dbfDiv )
+
+RETURN ( if( lEmpCnv(), (dbfDiv)->NEURDIV, (dbfDiv)->NPTSDIV ) )
+
+
+
+
+
+
+FUNCTION cFilBmpDiv( cCodDiv, dbfDiv, oBan )
+
+   local oBlock
+   local oError
+   local hBmp        := 0
+   local lCloDiv     := .F.
+
+
+
+
+
+   oBlock         := ErrorBlock( {| oError | ApoloBreak( oError ) } )
+   BEGIN SEQUENCE
+
+   if dbfDiv == NIL
+      dbUseArea( .T., ( cDriver() ), ( cPatDat() + "DIVISAS.DBF" ), ( cCheckArea( "DIVISAS", @dbfDiv ) ), if(.T. .OR. .F., !.F., NIL), .F.,, )
+      if !lAIS() ; ordListAdd( ( cPatDat() + "DIVISAS.CDX" ) ) ; else ; ordSetFocus( 1 ) ; end
+        lCloDiv    := .T.
+   end
+
+   if dbSeekInOrd( cCodDiv, "cCodDiv", dbfDiv )
+      hBmp     := ( dbfDiv )->CBNDDIV
+   end
+
+   RECOVER USING oError
+
+      msgStop( "Imposible abrir todas las bases de datos " + Chr(13)+Chr(10) + ErrorMessage( oError ) )
+
+   end
+
+   ErrorBlock( oBlock )
+
+   if lCloDiv
+        ( dbfDiv )->( dbCloseArea() )
+   end
+
+RETURN ( hBmp )
+
+
+
+FUNCTION lMasDiv( cCodDiv, dbfDiv )
+
+   local lMas        := .T.
+
+   IIF( cCodDiv == nil, cCodDiv := cDivEmp(), ) ;
+
+    IF ( dbfDiv )->( dbSeek( cCodDiv ) )
+      lMas           := ( dbfDiv )->lMasDiv
+    end
+
+RETURN ( lMas )
+
+
+
+
+
+
+
+
+
+function DbDialog( cTitle )
+
+   local j
+   local n
+   local oDlg
+   local oGet
+   local oFont
+   local oError
+   local oBlock
+   local nTarget
+   local cErrorLog
+
+   IIF( cTitle == nil, cTitle := "Bases de datos abiertas", ) ;
+
+   oBlock            := ErrorBlock( {| oError | ApoloBreak( oError ) } )
+   BEGIN SEQUENCE
+
+   oFont             := TFont():New( "Ms Sans Serif", 0, -10, .F., .F. )
+
+
+
+
+   oDlg = TDialog():New(,,,, cTitle,,, .F.,,,,,, .F.,, oFont,, 300, 200 + If( IsWinNT(), 50, 0 ), .F., )
+
+   cErrorLog         := Chr(13)+Chr(10) + "DataBases in use" + Chr(13)+Chr(10) + "================" + Chr(13)+Chr(10)
+
+   for n = 1 to 255
+
+      if ! Empty( Alias( n ) )
+
+
+
+         cErrorLog   += Chr(13)+Chr(10) + Str( n, 3 ) + ": " + If( Select() == n,"=> ", "   " ) +  PadR( Alias( n ), 15 ) + Space( 20 ) + "RddName: " +  ( Alias( n ) )->( RddName() ) + Chr(13)+Chr(10)
+         cErrorLog   += "     ==============================" + Chr(13)+Chr(10)
+         cErrorLog   += "     RecNo    RecCount    BOF   EOF" + Chr(13)+Chr(10)
+
+
+
+         cErrorLog   += "    " + Transform( ( Alias( n ) )->( RecNo() ), "99999" ) +  "      " + Transform( ( Alias( n ) )->( RecCount() ), "99999" ) +  "      " + cValToChar( ( Alias( n ) )->( BoF() ) ) +  "   " + cValToChar( ( Alias( n ) )->( EoF() ) ) + Chr(13)+Chr(10) + Chr(13)+Chr(10)
+         cErrorLog   += "     Indexes in use " + Space( 23 ) + "TagName" + Chr(13)+Chr(10)
+
+         for j = 1 to 15
+
+            if ! Empty( ( Alias( n ) )->( IndexKey( j ) ) )
+
+
+
+
+
+               cErrorLog   += Space( 8 ) +  If( ( Alias( n ) )->( OrdNumber() ) == j, "=> ", "   " ) +  PadR( ( Alias( n ) )->( IndexKey( j ) ), 35 ) +  ( Alias( n ) )->( OrdName( j ) ) +  Chr(13)+Chr(10)
+            endif
+
+         next
+
+         cErrorLog   += Chr(13)+Chr(10) + "     Relations in use" + Chr(13)+Chr(10)
+
+         for j = 1 to 8
+
+            if ! Empty( ( nTarget := ( Alias( n ) )->( DbRSelect( j ) ) ) )
+
+
+
+               cErrorLog += Space( 8 ) + Str( j ) + ": " +  "TO " + ( Alias( n ) )->( DbRelation( j ) ) +  " INTO " + Alias( nTarget ) + Chr(13)+Chr(10)
+
+
+
+            endif
+
+         next
+
+      endif
+
+   next
+
+
+
+
+
+   oGet := TMultiGet():New( 0, 0, { | u | If( PCount()==0, cErrorLog, cErrorLog:= u ) }, oDlg, 149, 100, oFont, .F.,,,, .F.,, .F.,, .F., .F., .F.,,, .F.,, )
+
+
+
+
+
+
+
+   TButton():New( 87 + If( IsWinNT(), 24, 0 ), 60, "&Quit", oDlg, {||   ( oDlg:End() )}, 30, 12,, oFont, .T., .T., .F.,, .F.,,, .F. )
+
+   oDlg:Activate( oDlg:bLClicked, oDlg:bMoved, oDlg:bPainted, .T.,,,, oDlg:bRClicked,,, )
+
+   oFont:End()
+
+   RECOVER USING oError
+
+      msgStop( ErrorMessage( oError ) )
+
+   end
+
+   ErrorBlock( oBlock )
+
+RETURN NIL
+
+
+
+Function IsDiv()
+
+   if OpenFiles()
+
+      ( dbfDiv )->( __dbLocate( { || ( dbfDiv )->cCodDiv == "EUR" } ) )
+      if!( dbfDiv )->( Found() )
+         ( dbfDiv )->( dbAppend() )
+         ( dbfDiv )->cCodDiv  := "EUR"
+         ( dbfDiv )->cNomDiv  := "Euros"
+         ( dbfDiv )->dActDiv  := Ctod( "01/01/2000" )
+         ( dbfDiv )->nPtsDiv  := 166.386
+         ( dbfDiv )->nEurDiv  := 1
+         ( dbfDiv )->nNinDiv  := 8
+         ( dbfDiv )->nDinDiv  := 2
+         ( dbfDiv )->nRinDiv  := 2
+         ( dbfDiv )->nNouDiv  := 8
+         ( dbfDiv )->nDouDiv  := 2
+         ( dbfDiv )->nRouDiv  := 2
+         ( dbfDiv )->nNpvDiv  := 8
+         ( dbfDiv )->nDpvDiv  := 2
+         ( dbfDiv )->nRpvDiv  := 2
+         ( dbfDiv )->nNwbDiv  := 8
+         ( dbfDiv )->nDwbDiv  := 2
+         ( dbfDiv )->nRwbDiv  := 2
+         ( dbfDiv )->cBndDiv  := "BAN_EURO"
+         ( dbfDiv )->cSmbDiv  := "€"
+         ( dbfDiv )->( dbUnLock() )
+      end
+
+      ( dbfDiv )->( __dbLocate( { || ( dbfDiv )->cCodDiv == "PTS" } ) )
+      if!( dbfDiv )->( Found() )
+         ( dbfDiv )->( dbAppend() )
+         ( dbfDiv )->cCodDiv  := "PTS"
+         ( dbfDiv )->cNomDiv  := "Pesetas"
+         ( dbfDiv )->dActDiv  := Ctod( "01/01/2000" )
+         ( dbfDiv )->nPtsDiv  := 1
+         ( dbfDiv )->nEurDiv  := 166.386
+         ( dbfDiv )->nNinDiv  := 10
+         ( dbfDiv )->nDinDiv  := 2
+         ( dbfDiv )->nRinDiv  := 0
+         ( dbfDiv )->nNouDiv  := 10
+         ( dbfDiv )->nDouDiv  := 2
+         ( dbfDiv )->nRouDiv  := 0
+         ( dbfDiv )->nNpvDiv  := 10
+         ( dbfDiv )->nDpvDiv  := 2
+         ( dbfDiv )->nRpvDiv  := 0
+         ( dbfDiv )->nNwbDiv  := 10
+         ( dbfDiv )->nDwbDiv  := 2
+         ( dbfDiv )->nRwbDiv  := 0
+         ( dbfDiv )->cBndDiv  := "BAN_ESPA"
+         ( dbfDiv )->cSmbDiv  := "Pts"
+         ( dbfDiv )->( dbUnLock() )
+      end
+
+      CloseFiles()
+
+   end
+
+Return ( .T. )
+
+
+
+
+
+
+
+STATIC FUNCTION OpenFiles()
+
+   local lOpen       := .T.
+   local oError
+   local oBlock
+
+   IF !lExistTable( cPatDat() + "Divisas.Dbf" )
+        mkDiv()
+    end
+
+   IF !lExistIndex( cPatDat() + "Divisas.Cdx" )
+        rxDiv()
+    end
+
+   oBlock            := ErrorBlock( {| oError | ApoloBreak( oError ) } )
+   BEGIN SEQUENCE
+
+      dbUseArea( .T., ( cDriver() ), ( cPatDat() + "Divisas.Dbf" ), ( cCheckArea( "DIVISAS", @dbfDiv ) ), if(.T. .OR. .F., !.F., NIL), .F.,, )
+      if !lAIS() ; ordListAdd( ( cPatDat() + "Divisas.Cdx" ) ) ; else ; ordSetFocus( 1 ) ; end
+
+   RECOVER USING oError
+
+      lOpen          := .F.
+      CloseFiles()
+
+      msgStop( "Imposible abrir todas las bases de datos de divisas" + Chr(13)+Chr(10) + ErrorMessage( oError ) )
+
+   end
+
+   ErrorBlock( oBlock )
+
+RETURN lOpen
+
+
+
+Static Function CloseFiles()
+
+   oWndBrw  := nil
+
+   if !Empty ( dbfDiv )
+      ( dbfDiv )->( dbCloseArea() )
+   end
+
+   dbfDiv   := nil
+
+Return .T.
+
+
+
+Function mkDiv( cPath, lAppend, cPathOld )
+
+    local dbfDiv
+
+   IIF( cPath == nil, cPath := cPatDat(), ) ;
+    IIF( lAppend == nil, lAppend := .F., ) ;
+
+   if !lExistTable( cPath + "Divisas.Dbf" )
+      dbCreate( cPath + "Divisas.Dbf", aSqlStruct( aItmDiv() ), cDriver() )
+   end
+
+    rxDiv( cPath )
+
+   if lAppend .AND. lIsDir( cPathOld )
+      dbUseArea( .T., cDriver(), cPath + "Divisas.Dbf", cCheckArea( "DIVISAS", @dbfDiv ), .T. )
+      if !( dbfDiv )->( neterr() )
+         ( dbfDiv )->( __dbApp( cPathOld + "Divisas.Dbf" ) )
+         ( dbfDiv )->( dbCloseArea() )
+       end
+
+   end
+
+RETURN .T.
+
+
+
+
+
+
+FUNCTION rxDiv( cPath, oMeter )
+
+    local dbfDiv
+
+   IIF( cPath == nil, cPath := cPatDat(), ) ;
+
+   if !lExistTable( cPath + "Divisas.Dbf" )
+      dbCreate( cPath + "Divisas.Dbf", aSqlStruct( aItmDiv() ), cDriver() )
+   end
+
+   fErase( cPath + "Divisas.Cdx" )
+
+   dbUseArea( .T., cDriver(), cPath + "Divisas.Dbf", cCheckArea( "DIVISAS", @dbfDiv ), .F. )
+
+   if !( dbfDiv )->( neterr() )
+      ( dbfDiv )->( __dbPack() )
+
+      ( dbfDiv )->( ordCondSet("!Deleted()", {||!Deleted() }  ) )
+      ( dbfDiv )->( ordCreate( cPath + "DIVISAS.CDX", "CCODDIV", "CCODDIV", {|| Field->CCODDIV } ) )
+
+      ( dbfDiv )->( ordCondSet("!Deleted()", {||!Deleted() }  ) )
+      ( dbfDiv )->( ordCreate( cPath + "DIVISAS.CDX", "CNOMDIV", "CNOMDIV", {|| Field->CNOMDIV } ) )
+
+   else
+      msgStop( "Imposible abrir en modo exclusivo la tabla de divisas" )
+   end
+
+   ( dbfDiv )->( dbCloseArea() )
+
+RETURN NIL
+
+
+
+function aItmDiv()
+
+   local aItmDiv  := {}
+
+   aAdd( aItmDiv, {"CCODDIV",   "C",     3,    0, "Código de la divisa"                                  ,  "",                  "", "( cDbfDiv )", nil } )
+   aAdd( aItmDiv, {"CNOMDIV",   "C",    20,    0, "Nombre de la divisa"                                  ,  "",                  "", "( cDbfDiv )", nil } )
+   aAdd( aItmDiv, {"DACTDIV",   "D",     8,    0, "Fecha ultimo cambio de la divisa"                     ,  "",                  "", "( cDbfDiv )", nil } )
+   aAdd( aItmDiv, {"NPTSDIV",   "N",    16,    6, "Valor en pesetas de la divisa"                        ,  "'999,999.999999'",  "", "( cDbfDiv )", nil } )
+   aAdd( aItmDiv, {"NEURDIV",   "N",    16,    6, "Valor en euros de la divisa"                          ,  "'999,999.999999'",  "", "( cDbfDiv )", nil } )
+   aAdd( aItmDiv, {"NNINDIV",   "N",     2,    0, "Unidades de compra de la divisa"                      ,  "'99'",              "", "( cDbfDiv )", nil } )
+   aAdd( aItmDiv, {"NDINDIV",   "N",     1,    0, "Decimales de compra de la divisa"                     ,  "'99'",              "", "( cDbfDiv )", nil } )
+   aAdd( aItmDiv, {"NRINDIV",   "N",     1,    0, "Decimales de redondeo de la divisa"                   ,  "'99'",              "", "( cDbfDiv )", nil } )
+   aAdd( aItmDiv, {"NNOUDIV",   "N",     2,    0, "Unidades de venta de la divisa"                       ,  "'99'",              "", "( cDbfDiv )", nil } )
+   aAdd( aItmDiv, {"NDOUDIV",   "N",     1,    0, "Decimales de venta de la divisa"                      ,  "'99'",              "", "( cDbfDiv )", nil } )
+   aAdd( aItmDiv, {"NROUDIV",   "N",     1,    0, "Decimales de redondeo de la divisa"                   ,  "'99'",              "", "( cDbfDiv )", nil } )
+   aAdd( aItmDiv, {"NNPVDIV",   "N",     2,    0, "Unidades de punto verde de la divisa"                 ,  "'99'",              "", "( cDbfDiv )", nil } )
+   aAdd( aItmDiv, {"NDPVDIV",   "N",     1,    0, "Decimales de punto verde de la divisa"                ,  "'99'",              "", "( cDbfDiv )", nil } )
+   aAdd( aItmDiv, {"NRPVDIV",   "N",     1,    0, "Decimales de redondeo de punto verde  de la divisa"   ,  "'99'",              "", "( cDbfDiv )", nil } )
+   aAdd( aItmDiv, {"NNWBDIV",   "N",     2,    0, "Unidades precio web de la divisa"                     ,  "'99'",              "", "( cDbfDiv )", nil } )
+   aAdd( aItmDiv, {"NDWBDIV",   "N",     1,    0, "Decimales precio web de la divisa"                    ,  "'99'",              "", "( cDbfDiv )", nil } )
+   aAdd( aItmDiv, {"NRWBDIV",   "N",     1,    0, "Decimales de redondeo precio web de la divisa"        ,  "'99'",              "", "( cDbfDiv )", nil } )
+   aAdd( aItmDiv, {"CBNDDIV",   "C",     8,    0, ""                                                     ,  "",                  "", "( cDbfDiv )", nil } )
+   aAdd( aItmDiv, {"CSMBDIV",   "C",     4,    0, ""                                                     ,  "",                  "", "( cDbfDiv )", nil } )
+   aAdd( aItmDiv, {"LCTRDIV",   "L",     1,    0, ""                                                     ,  "",                  "", "( cDbfDiv )", nil } )
+   aAdd( aItmDiv, {"LMASDIV",   "L",     1,    0, ""                                                     ,  "",                  "", "( cDbfDiv )", nil } )
+
+return ( aItmDiv )
+
+
+
+
+
+
+
+FUNCTION nDpvDiv( cCodDiv, dbfDiv )
+
+   IIF( cCodDiv == nil, cCodDiv := cDivEmp(), ) ;
+
+   if cCodDiv <> cCodBuf .OR. Empty( aDivBuf )
+      aDivBuf( cCodDiv, dbfDiv )
+   end
+
+RETURN ( aDivBuf[ 13 ] )
+
+
+
+
+
+
+
+FUNCTION cPpvDiv( cCodDiv, dbfDiv )
+
+   IIF( cCodDiv == nil, cCodDiv := cDivEmp(), ) ;
+
+   if cCodDiv <> cCodBuf .OR. Empty( aDivBuf )
+      aDivBuf( cCodDiv, dbfDiv )
+   end
+
+RETURN ( cPpvDiv )
+
+
+
+
+
+
+
+FUNCTION nDouDiv( cCodDiv, dbfDiv )
+
+   IIF( cCodDiv == nil, cCodDiv := cDivEmp(), ) ;
+
+   if cCodDiv <> cCodBuf .OR. Empty( aDivBuf )
+      aDivBuf( cCodDiv, dbfDiv )
+   end
+
+RETURN ( aDivBuf[ 10 ] )
+
+
+
+FUNCTION nDwbDiv( cCodDiv, dbfDiv )
+
+   IIF( cCodDiv == nil, cCodDiv := cDivEmp(), ) ;
+
+   if cCodDiv <> cCodBuf .OR. Empty( aDivBuf )
+      aDivBuf( cCodDiv, dbfDiv )
+   end
+
+RETURN ( aDivBuf[ 16 ] )
+
+
+
+
+
+
+
+FUNCTION cPirDiv( cCodDiv, dbfDiv )
+
+   IIF( cCodDiv == nil, cCodDiv := cDivEmp(), ) ;
+
+   if cCodDiv <> cCodBuf .OR. Empty( aDivBuf )
+      aDivBuf( cCodDiv, dbfDiv )
+   end
+
+RETURN ( cPirDiv )
+
+
+
+
+
+
+
+FUNCTION cPinDiv( cCodDiv, dbfDiv )
+
+   IIF( cCodDiv == nil, cCodDiv := cDivEmp(), ) ;
+
+   if cCodDiv <> cCodBuf .OR. Empty( aDivBuf )
+      aDivBuf( cCodDiv, dbfDiv )
+   end
+
+RETURN ( cPinDiv )
+
+
+
+
+
+
+
+FUNCTION cPorDiv( cCodDiv, dbfDiv )
+
+   IIF( cCodDiv == nil, cCodDiv := cDivEmp(), ) ;
+
+   if cCodDiv <> cCodBuf .OR. Empty( aDivBuf )
+      aDivBuf( cCodDiv, dbfDiv )
+   end
+
+RETURN ( cPorDiv )
+
+
+
+
+
+
+
+FUNCTION cPouDiv( cCodDiv, dbfDiv )
+
+   IIF( cCodDiv == nil, cCodDiv := cDivEmp(), ) ;
+
+   if cCodDiv <> cCodBuf .OR. Empty( aDivBuf )
+      aDivBuf( cCodDiv, dbfDiv )
+   end
+
+RETURN ( cPouDiv )
+
+
+
+FUNCTION cPwbDiv( cCodDiv, dbfDiv )
+
+   IIF( cCodDiv == nil, cCodDiv := cDivEmp(), ) ;
+
+   if cCodDiv <> cCodBuf .OR. Empty( aDivBuf )
+      aDivBuf( cCodDiv, dbfDiv )
+   end
+
+RETURN ( cPwbDiv )
+
+
+
+FUNCTION cPwrDiv( cCodDiv, dbfDiv )
+
+   IIF( cCodDiv == nil, cCodDiv := cDivEmp(), ) ;
+
+   if cCodDiv <> cCodBuf .OR. Empty( aDivBuf )
+      aDivBuf( cCodDiv, dbfDiv )
+   end
+
+RETURN ( cPwrDiv )
+
+
+
+Static Function aDivBuf( cCodDiv, dbfDiv )
+
+   local n
+   local oBlock
+   local oError
+   local nField
+   local lCloDiv     := .F.
+
+   if Empty( cCodDiv )
+      cCodDiv        := cDivEmp()
+   end
+
+   aDivBuf           := {}
+
+   oBlock            := ErrorBlock( {| oError | ApoloBreak( oError ) } )
+   BEGIN SEQUENCE
+
+   if dbfDiv == nil
+      dbUseArea( .T., ( cDriver() ), ( cPatDat() + "Divisas.Dbf" ), ( cCheckArea( "Divisas", @dbfDiv ) ), if(.T. .OR. .F., !.F., NIL), .F.,, )
+      if !lAIS() ; ordListAdd( ( cPatDat() + "Divisas.Cdx" ) ) ; else ; ordSetFocus( 1 ) ; end
+      lCloDiv        := .T.
+   end
+
+   do case
+   case ValType( dbfDiv ) == "C"
+
+      if !dbSeekInOrd( cCodDiv, "cCodDiv", dbfDiv )
+         cCodDiv     := cDivEmp()
+      end
+
+      if dbSeekInOrd( cCodDiv, "cCodDiv", dbfDiv )
+
+         nField      := ( dbfDiv )->( fCount() )
+
+         for n := 1 to nField
+            aAdd( aDivBuf, ( dbfDiv )->( FieldGet( n ) ) )
+         next
+
+         cPouDiv     := RetPic( ( dbfDiv )->nNouDiv, ( dbfDiv )->nDouDiv )
+         cPpvDiv     := RetPic( ( dbfDiv )->nNpvDiv, ( dbfDiv )->nDpvDiv )
+         cPinDiv     := RetPic( ( dbfDiv )->nNinDiv, ( dbfDiv )->nDinDiv )
+         cPirDiv     := RetPic( ( dbfDiv )->nNinDiv, ( dbfDiv )->nRinDiv )
+         cPorDiv     := RetPic( ( dbfDiv )->nNouDiv, ( dbfDiv )->nRouDiv )
+         cPwbDiv     := RetPic( ( dbfDiv )->nNwbDiv, ( dbfDiv )->nDwbDiv )
+         cPwrDiv     := RetPic( ( dbfDiv )->nNwbDiv, ( dbfDiv )->nRwbDiv )
+
+      else
+
+
+
+         msgStop( "Divisa no encontrada " + cCodDiv + ", no puedo cargar" + Chr(13)+Chr(10) +  "los valores necesarios para el programa.", "Fichero : " + cPatDat() + "Divisas.Dbf" )
+      end
+
+   case ValType( dbfDiv ) == "O"
+
+      if !dbfDiv:SeekInOrd( cCodDiv, "cCodDiv" )
+         cCodDiv     := cDivEmp()
+      end
+
+      if dbfDiv:SeekInOrd( cCodDiv, "cCodDiv" )
+
+         nField      := dbfDiv:fCount()
+
+         for n := 1 to nField
+            aAdd( aDivBuf, dbfDiv:FieldGet( n ) )
+         next
+
+         cPouDiv     := RetPic( dbfDiv:nNouDiv, dbfDiv:nDouDiv )
+         cPpvDiv     := RetPic( dbfDiv:nNpvDiv, dbfDiv:nDpvDiv )
+         cPinDiv     := RetPic( dbfDiv:nNinDiv, dbfDiv:nDinDiv )
+         cPirDiv     := RetPic( dbfDiv:nNinDiv, dbfDiv:nRinDiv )
+         cPorDiv     := RetPic( dbfDiv:nNouDiv, dbfDiv:nRouDiv )
+
+      else
+
+
+
+         msgStop( "Divisa no encontrada " + cCodDiv + ", no puedo cargar" + Chr(13)+Chr(10) +  "los valores necesarios para el programa.", "Fichero : " + cPatDat() + "Divisas.Dbf" )
+
+      end
+
+   end
+
+   RECOVER USING oError
+
+      msgStop( "Imposible abrir todas las bases de datos de divisas" + Chr(13)+Chr(10) + ErrorMessage( oError ) )
+
+   end
+
+   ErrorBlock( oBlock )
+
+   if lCloDiv
+      ( dbfDiv )->( dbCloseArea() )
+   end
+
+   cCodBuf           := cCodDiv
+
+Return ( aDivBuf )
+
+
+
+
+
+
+
+FUNCTION nRouDiv( cCodDiv, dbfDiv )
+
+   IIF( cCodDiv == nil, cCodDiv := cDivEmp(), ) ;
+
+   if cCodDiv <> cCodBuf .OR. Empty( aDivBuf )
+      aDivBuf( cCodDiv, dbfDiv )
+   end
+
+RETURN ( aDivBuf[ 11 ] )
+
+
+
+
+
+
+
+FUNCTION nChgDiv( cCodDiv, uDiv )
+
+   IIF( cCodDiv == nil, cCodDiv := cDivEmp(), ) ;
+
+   if cCodDiv <> cCodBuf .OR. Empty( aDivBuf )
+      aDivBuf( cCodDiv, uDiv )
+   end
+
+RETURN ( if ( lEmpCnv(), aDivBuf[ 5 ], aDivBuf[ 4 ] ) )
+
+
+
+
+
+
+
+FUNCTION nRinDiv( cCodDiv, dbfDiv )
+
+   IIF( cCodDiv == nil, cCodDiv := cDivEmp(), ) ;
+
+   if cCodDiv <> cCodBuf .OR. Empty( aDivBuf )
+      aDivBuf( cCodDiv, dbfDiv )
+   end
+
+RETURN ( aDivBuf[ 8 ] )
+
+
+
+
+
+
+
+FUNCTION nDinDiv( cCodDiv, dbfDiv )
+
+   IIF( cCodDiv == nil, cCodDiv := cDivEmp(), ) ;
+
+   if cCodDiv <> cCodBuf .OR. Empty( aDivBuf )
+      aDivBuf( cCodDiv, dbfDiv )
+   end
+
+RETURN ( aDivBuf[ 7 ] )
+
+
+
+
+
+
+
+FUNCTION nDiv2Div( cDivOrg, cDivDes, dbfDiv )
+
+    local nPtsVal    := 1
+    local cAreaAnt := Alias()
+
+
+
+
+
+   DO CASE
+      CASE cDivOrg == "PTS" .AND. cDivDes == "EUR"
+         IF dbSeekInOrd( cDivOrg, "cCodDiv", dbfDiv )
+            nPtsVal     := (dbfDiv)->nEurDiv
+         ELSE
+            msgStop( "Divisa no encontrada", cDivOrg )
+         end
+      CASE cDivOrg == "EUR" .AND. cDivDes == "PTS"
+         IF dbSeekInOrd( cDivOrg, "cCodDiv", dbfDiv )
+            nPtsVal     := 1 / (dbfDiv)->nPtsDiv
+         ELSE
+            msgStop( "Divisa no encontrada", cDivOrg )
+         end
+   end
+
+    IF cAreaAnt <> ""
+        dbSelectArea( ( cAreaAnt ) )
+    end
+
+RETURN ( nPtsVal )
+
+
+
+
+
+
+
+FUNCTION cSimDiv( cCodDiv, dbfDiv )
+
+   IIF( cCodDiv == nil, cCodDiv := cDivEmp(), ) ;
+
+   if cCodDiv <> cCodBuf .OR. Empty( aDivBuf )
+      aDivBuf( cCodDiv, dbfDiv )
+   end
+
+RETURN ( Rtrim( aDivBuf[ 19 ] ) )
+
+
+
+FUNCTION nCnv2Div( nImpChg, cDivOrg, cDivDes, dbfDiv, lRound )
+
+   local nDec     := 0
+
+   IIF( lRound == nil, lRound := .T., ) ;
+
+
+
+
+
+   do case
+      case ValType( dbfDiv ) == "C"
+
+         do case
+            case cDivOrg == "PTS" .AND. cDivDes == "EUR"
+               if dbSeekInOrd( cDivOrg, "cCodDiv", dbfDiv ) .AND. ( dbfDiv )->nEurDiv <> 0
+                  nImpChg     := nImpChg / ( dbfDiv )->nEurDiv
+               end
+            case cDivOrg == "EUR" .AND. cDivDes == "PTS"
+               if dbSeekInOrd( cDivOrg, "cCodDiv", dbfDiv ) .AND. ( dbfDiv )->nPtsDiv <> 0
+                  nImpChg     := nImpChg * ( dbfDiv )->nPtsDiv
+               end
+         end
+
+         if lRound
+            if dbSeekInOrd( cDivDes, "cCodDiv", dbfDiv )
+               nDec           := ( dbfDiv )->nDouDiv
+            end
+            nImpChg           := Round( nImpChg, nDec )
+         end
+
+      case ValType( dbfDiv ) == "O"
+
+         do case
+            case cDivOrg == "PTS" .AND. cDivDes == "EUR"
+               if dbfDiv:SeekInOrd( cDivOrg, "cCodDiv" ) .AND. dbfDiv:nEurDiv <> 0
+                  nImpChg     := nImpChg / dbfDiv:nEurDiv
+               end
+            case cDivOrg == "EUR" .AND. cDivDes == "PTS"
+               if dbfDiv:SeekInOrd( cDivOrg, "cCodDiv" ) .AND. dbfDiv:nPtsDiv <> 0
+                  nImpChg     := nImpChg * dbfDiv:nPtsDiv
+               end
+         end
+
+         if lRound
+            if dbfDiv:Seek( cDivDes )
+               nDec           := dbfDiv:nDouDiv
+            end
+            nImpChg           := Round( nImpChg, nDec )
+         end
+
+      end
+
+RETURN ( nImpChg )
+
+
+
+FUNCTION TstDivisas( cPatDat )
+
+   local n
+   local dbfDiv
+
+   local oError
+   local oBlock
+
+   if !lExistTable( cPatDat() + "Divisas.DBF" )
+      dbCreate( cPatDat() + "Divisas.DBF", aSqlStruct( aItmDiv() ), cDriver() )
+   end
+
+   if !lExistIndex( cPatDat() + "Divisas.CDX" )
+      rxDiv( cPatDat() )
+   end
+
+   oBlock         := ErrorBlock( {| oError | ApoloBreak( oError ) } )
+   BEGIN SEQUENCE
+
+
+
+
+
+   dbUseArea( .T., cDriver(), cPatDat() + "Divisas.Dbf", cCheckArea( "Divisas", @dbfDiv ), .F. )
+
+   if !( dbfDiv )->( netErr() )
+
+      n           := ( dbfDiv )->( fCount() )
+
+      ( dbfDiv )->( dbCloseArea() )
+
+      if n <> len( aItmDiv() )
+
+         dbCreate( cPatEmpTmp() + "Divisas.Dbf", aSqlStruct( aItmDiv() ), cDriver() )
+         appDbf( cPatDat(), cPatEmpTmp(), "Divisas", aItmDiv() )
+
+         fEraseTable( cPatDat() + "Divisas.Dbf" )
+         fRenameTable( cPatEmpTmp() + "Divisas.Dbf", cPatDat() + "Divisas.Dbf" )
+
+         rxDiv( cPatDat() )
+
+      end
+
+   end
+
+   RECOVER USING oError
+
+   end
+
+   ErrorBlock( oBlock )
+
+RETURN ( .T. )
+
+
+
+FUNCTION nRwbDiv( cCodDiv, dbfDiv )
+
+   IIF( cCodDiv == nil, cCodDiv := cDivEmp(), ) ;
+
+   if cCodDiv <> cCodBuf .OR. Empty( aDivBuf )
+      aDivBuf( cCodDiv, dbfDiv )
+   end
+
+RETURN ( aDivBuf[ 17 ] )

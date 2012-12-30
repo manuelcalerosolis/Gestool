@@ -1,0 +1,1594 @@
+#line 112 "hbclass.ch"
+   DYNAMIC DivertConstructorCall
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+DECLARE HBClass  New( cName AS String, OPTIONAL SuperParams ) AS CLASS HBClass  Create() AS Object  Instance() AS Object  AddClsMethod( cName AS String, @MethodName(), nScope AS Numeric, n2 AS Numeric, n3 AS Numeric )  AddDelegate( cName AS String, cDelegate AS String, cObject AS String, nScope AS Numeric, lPersistent AS LOGICAL )  AddMultiClsData( cType AS String, uVal, nScope AS Numeric, aDatas AS Array OF String )  AddMultiData( cType AS String, uVal, nScope AS Numeric, aDatas AS Array OF String, x AS LOGICAL, lPer AS LOGICAL )  AddMethod( cName AS String, @MethodName(), nScope AS Numeric, lPersistent AS LOGICAL )  AddInLine( cName AS String, bBlock AS CodeBlock, nScope AS Numeric, lPersistent AS LOGICAL )  AddVirtual( cName AS String )  ModMethod( cName AS String, @MethodName(), nScope AS Numeric, lPersistent AS LOGICAL )  ModClsMethod( cName AS String, @MethodName(), nScope AS Numeric )  ModInline( cName AS String, bBlock AS CodeBlock, nScope AS Numeric, lPersistent AS LOGICAL )  SetOnError( @MethodName() )
+#line 85 "\Fwh1204\Include\FiveWin.Ch"
+   EXTERNAL GetProcAdd
+   EXTERNAL TActiveX
+
+
+
+
+extern errorsys
+#line 30 ".\Prg\Almacen.prg"
+static bEdit := { |aTemp, aoGet, dbfAlmT, oBrw, bWhen, bValid, nMode | EdtRec( aTemp, aoGet, dbfAlmT, oBrw, bWhen, bValid, nMode ) }
+static bEdit2:= {    |aTemp, aoGet, dbfAlmL, oBrw, bWhen, bValid, nMode, cCodAlm | EdtDet( aTemp, aoGet, dbfAlmL, oBrw, bWhen, bValid, nMode, cCodAlm ) }
+
+
+
+static oWndBrw
+static dbfAlmT
+static dbfAlmL
+static dbfAgent
+static dbfUbicaT
+static dbfUbicaL
+static dbfTmp
+static cNewFile
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+static aBase := { { "CCODALM",  "C",      3,     0, "Código de almacen"              ,  "",   "", "( cDbfAlm )" }, { "CNOMALM",  "C",     20,     0, "Nombre de almacen"              ,  "",   "", "( cDbfAlm )" }, { "CDIRALM",  "C",     50,     0, "Domicilio de almacen"           ,  "",   "", "( cDbfAlm )" }, { "CPOSALM",  "C",      7,     0, "Código postal de almacen"       ,  "",   "", "( cDbfAlm )" }, { "CPOBALM",  "C",     30,     0, "Población de almacen"           ,  "",   "", "( cDbfAlm )" }, { "CPROALM",  "C",     20,     0, "Provincia de almacen"           ,  "",   "", "( cDbfAlm )" }, { "CTFNALM",  "C",     12,     0, "Teléfono de almacen"            ,  "",   "", "( cDbfAlm )" }, { "CFAXALM",  "C",     12,     0, "Fax de almacen"                 ,  "",   "", "( cDbfAlm )" }, { "CPERALM",  "C",     50,     0, "Persona de contacto de almacen" ,  "",   "", "( cDbfAlm )" }, { "CCODCLI",  "C",     12,     0, "Codigo del cliente"             ,  "",   "", "( cDbfAlm )" }, { "CUBICA1",  "C",      5,     0, "Ubicación 1"                    ,  "",   "", "( cDbfAlm )" }, { "CUBICA2",  "C",      5,     0, "Ubicación 2"                    ,  "",   "", "( cDbfAlm )" }, { "CUBICA3",  "C",      5,     0, "Ubicación 3"                    ,  "",   "", "( cDbfAlm )" }, { "CNOMUBI1", "C",     30,     0, "Nombre ubicación 1"             ,  "",   "", "( cDbfAlm )" }, { "CNOMUBI2", "C",     30,     0, "Nombre ubicación 2"             ,  "",   "", "( cDbfAlm )" }, { "CNOMUBI3", "C",     30,     0, "Nombre ubicación 3"             ,  "",   "", "( cDbfAlm )" } }
+
+
+static aBase2:= { { "CCODALM",  "C",      3,     0, "" },    { "CCODAGE",  "C",      3,     0, "" } }
+
+
+
+
+
+FUNCTION Almacen( oMenuItem, oWnd )
+
+   local nLevel
+
+   IIF( oMenuItem == nil, oMenuItem := "01035", ) ;
+   IIF( oWnd == nil, oWnd := oWnd(), ) ;
+
+    IF oWndBrw == NIL
+
+
+
+
+
+      nLevel            := nLevelUsr( oMenuItem )
+      if nAnd( nLevel, 1 ) <> 0
+         msgStop( "Acceso no permitido." )
+         return nil
+      end
+
+
+
+
+
+      if oWnd <> nil
+         SysRefresh(); oWnd:CloseAll(); SysRefresh()
+      end
+
+
+
+
+
+      if !lOpenFiles()
+         return nil
+      end
+
+
+
+
+
+      AddMnuNext( "Almacen", ProcName() )
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+      oWndBrw := TShell():New( 2, 10, 18, 70, "Almacén",, oWnd,,, .F.,,, ( dbfAlmT ),,,,, {"Código",    "Nombre"}, {||( WinAppRec( oWndBrw:oBrw, bEdit, dbfAlmT ) )}, {||( WinEdtRec( oWndBrw:oBrw, bEdit, dbfAlmT ) )}, {||( DBDelRec(  oWndBrw:oBrw, dbfAlmT ) )}, {||( WinDupRec( oWndBrw:oBrw, bEdit, dbfAlmT ) )}, nil, nLevel, "Package_16", ( 106 + ( 70 * 256 ) + ( 18 * 65536 ) ),,, .T. )
+
+      with object ( oWndBrw:AddXCol() )
+         :cHeader          := "Código"
+         :cSortOrder       := "cCodAlm"
+         :bEditValue       := {|| ( dbfAlmT )->cCodAlm }
+         :nWidth           := 80
+         :bLClickHeader    := {| nMRow, nMCol, nFlags, oCol | oWndBrw:ClickOnHeader( oCol ) }
+      end
+
+      with object ( oWndBrw:AddXCol() )
+         :cHeader          := "Nombre"
+         :cSortOrder       := "cNomAlm"
+         :bEditValue       := {|| ( dbfAlmT )->cNomAlm }
+         :nWidth           := 280
+         :bLClickHeader    := {| nMRow, nMCol, nFlags, oCol | oWndBrw:ClickOnHeader( oCol ) }
+      end
+
+      with object ( oWndBrw:AddXCol() )
+         :cHeader          := "Domicilio"
+         :bEditValue       := {|| ( dbfAlmT )->cDirAlm }
+         :nWidth           := 280
+      end
+
+      with object ( oWndBrw:AddXCol() )
+         :cHeader          := "Código postal"
+         :bEditValue       := {|| ( dbfAlmT )->cPosAlm }
+         :nWidth           := 60
+      end
+
+      with object ( oWndBrw:AddXCol() )
+         :cHeader          := "Población"
+         :bEditValue       := {|| ( dbfAlmT )->cPobAlm }
+         :nWidth           := 180
+      end
+
+      with object ( oWndBrw:AddXCol() )
+         :cHeader          := "Provincia"
+         :bEditValue       := {|| ( dbfAlmT )->cProAlm }
+         :nWidth           := 140
+      end
+
+      oWndBrw:cHtmlHelp    := "Almacen"
+
+      oWndBrw:CreateXFromCode()
+
+
+
+
+
+      oWndBrw:NewAt( "BUS",,, {||( oWndBrw:SearchSetFocus() )}, "(B)uscar", "B",,,,, .F. )
+
+      oWndBrw:AddSeaBar()
+
+
+
+
+
+
+
+
+      oWndBrw:NewAt( "NEW",,, {||( oWndBrw:RecAdd() )}, "(A)ñadir", "A",,, 2,, .F. )
+
+
+
+
+
+
+
+      oWndBrw:NewAt( "DUP",,, {||( oWndBrw:RecDup() )}, "(D)uplicar", "D",,, 2,, .F. )
+
+
+
+
+
+
+
+        oWndBrw:NewAt( "EDIT",,, {||( oWndBrw:RecEdit() )}, "(M)odificar", "M",,, 4,, .F. )
+
+
+
+
+
+
+
+        oWndBrw:NewAt( "ZOOM",,, {||( WinZooRec( oWndBrw:oBrw, bEdit, dbfAlmT ) )}, "(Z)oom", "Z",,, 8,, .F. )
+
+
+
+
+
+
+
+        oWndBrw:NewAt( "DEL",,, {||( oWndBrw:RecDel() )}, "(E)liminar", "E",,, 16,, .F. )
+
+
+
+
+
+
+
+
+      oWndBrw:NewAt( "IMP",,, {||( InfAlm():New( "Listado de almacenes" ):Play() )}, "(L)istado", "L",,, 32,, .F. )
+
+
+
+
+
+
+
+      oWndBrw:NewAt( "END",,, {||( oWndBrw:End() )}, "(S)alir", "S",,,,, .F. )
+
+        oWndBrw:Activate(, oWndBrw:bLClicked, oWndBrw:bRClicked, oWndBrw:bMoved, oWndBrw:bResized, oWndBrw:bPainted, oWndBrw:bKeyDown, oWndBrw:bInit,,,,,,,,, {|| ( CloseFiles() )},, oWndBrw:bLButtonUp )
+
+    ELSE
+
+        oWndBrw:SetFocus()
+
+    end
+
+RETURN NIL
+
+
+
+STATIC FUNCTION EdtRec( aTemp, aoGet, dbfAlmT, oBrw, bWhen, bValid, nMode )
+
+    local oDlg
+   local oGet
+   local oGet2
+    local oBrw2
+   local cCodCli
+   local oCodCli
+   local oFld
+   local oBmpGeneral
+
+    BeginTrans( aTemp )
+
+   oDlg = TDialog():New(,,,, LblTitle( nMode ) + "Almacén", "ALMACEN",, .F.,,,,,, .F.,,,,,, .F., )
+
+
+
+
+
+
+
+
+      oFld := TFolder():ReDefine( 100, {"&General", "&Facturación y agentes"}, { "ALMACEN_01","ALMACEN_02" }, oDlg,,,,, .F., )
+
+
+
+
+      oBmpGeneral := TBitmap():ReDefine( 990, "package_48_alpha",, oFld:aDialogs[1],,, .F., .F.,,, .F.,,, .T. )
+
+
+
+
+
+      oBmpGeneral := TBitmap():ReDefine( 990, "security_agent_48_alpha",, oFld:aDialogs[2],,, .F., .F.,,, .F.,,, .T. )
+
+
+
+
+
+
+      oGet := TGetHlp():ReDefine( 100, { | u | If( PCount()==0, aTemp[ 1 ], aTemp[ 1 ]:= u ) }, oFld:aDialogs[1],,, {||    ( NotValid( oGet, dbfAlmT, .T., "0" ) )}, "N/W*",,,,, .F., {||     ( nMode == 1 .OR. nMode == 4 )},, .F., .F.,,,,,, nil,,, )
+
+
+
+
+
+      oGet2 := TGetHlp():ReDefine( 110, { | u | If( PCount()==0, aTemp[ 2 ], aTemp[ 2 ]:= u ) }, oFld:aDialogs[1],,,, "N/W*",,,,, .F., {||     ( nMode <> 3 )},, .F., .F.,,,,,, nil,,, )
+
+
+
+
+
+
+        TGetHlp():ReDefine( 120, { | u | If( PCount()==0, aTemp[ 3 ], aTemp[ 3 ]:= u ) }, oFld:aDialogs[1],, "@!",, "N/W*",,,,, .F., {||     ( nMode <> 3 )},, .F., .F.,,,,,, nil,,, )
+
+
+
+
+
+        TGetHlp():ReDefine( 130, { | u | If( PCount()==0, aTemp[ 4 ], aTemp[ 4 ]:= u ) }, oFld:aDialogs[1],,,, "N/W*",,,,, .F., {||     ( nMode <> 3 )},, .F., .F.,,,,,, nil,,, )
+
+
+
+
+
+        TGetHlp():ReDefine( 140, { | u | If( PCount()==0, aTemp[ 5 ], aTemp[ 5 ]:= u ) }, oFld:aDialogs[1],,,, "N/W*",,,,, .F., {||     ( nMode <> 3 )},, .F., .F.,,,,,, nil,,, )
+
+
+
+
+
+        TGetHlp():ReDefine( 150, { | u | If( PCount()==0, aTemp[ 6 ], aTemp[ 6 ]:= u ) }, oFld:aDialogs[1],,,, "N/W*",,,,, .F., {||     ( nMode <> 3 )},, .F., .F.,,,,,, nil,,, )
+
+
+
+
+
+
+        TGetHlp():ReDefine( 160, { | u | If( PCount()==0, aTemp[ 7 ], aTemp[ 7 ]:= u ) }, oFld:aDialogs[1],, "@R ##########",, "N/W*",,,,, .F., {||     ( nMode <> 3 )},, .F., .F.,,,,,, nil,,, )
+
+
+
+
+
+
+        TGetHlp():ReDefine( 170, { | u | If( PCount()==0, aTemp[ 8 ], aTemp[ 8 ]:= u ) }, oFld:aDialogs[1],, "@R ##########",, "N/W*",,,,, .F., {||     ( nMode <> 3 )},, .F., .F.,,,,,, nil,,, )
+
+
+
+
+
+        TGetHlp():ReDefine( 180, { | u | If( PCount()==0, aTemp[ 9 ], aTemp[ 9 ]:= u ) }, oFld:aDialogs[1],,,, "N/W*",,,,, .F., {||     ( nMode <> 3 )},, .F., .F.,,,,,, nil,,, )
+
+
+
+
+
+
+
+      aoGet[ 11 ] := TGetHlp():ReDefine( 190, { | u | If( PCount()==0, aTemp[ 11 ], aTemp[ 11 ]:= u ) }, oFld:aDialogs[1],,,, "N/W*",,,,, .F., {||     ( nMode <> 3 )},, .F., .F.,,,,, {|Self|( BrwUbicacion( aoGet[ 11 ], dbfUbicaT, aoGet[ 14 ] ) )}, nil, "LUPA",, )
+
+
+
+
+      aoGet[ 14 ] := TGetHlp():ReDefine( 191, { | u | If( PCount()==0, aTemp[ 14 ], aTemp[ 14 ]:= u ) }, oFld:aDialogs[1],,,,,,,,, .F., {||     .F.},, .F., .F.,,,,,, nil,,, )
+
+
+
+
+
+
+
+      aoGet[ 12 ] := TGetHlp():ReDefine( 200, { | u | If( PCount()==0, aTemp[ 12 ], aTemp[ 12 ]:= u ) }, oFld:aDialogs[1],,,, "N/W*",,,,, .F., {||     ( nMode <> 3 )},, .F., .F.,,,,, {|Self|( BrwUbicacion( aoGet[ 12 ], dbfUbicaT, aoGet[ 15 ] ) )}, nil, "LUPA",, )
+
+
+
+
+      aoGet[ 15 ] := TGetHlp():ReDefine( 201, { | u | If( PCount()==0, aTemp[ 15 ], aTemp[ 15 ]:= u ) }, oFld:aDialogs[1],,,,,,,,, .F., {||     .F.},, .F., .F.,,,,,, nil,,, )
+
+
+
+
+
+
+
+      aoGet[ 13 ] := TGetHlp():ReDefine( 210, { | u | If( PCount()==0, aTemp[ 13 ], aTemp[ 13 ]:= u ) }, oFld:aDialogs[1],,,, "N/W*",,,,, .F., {||     ( nMode <> 3 )},, .F., .F.,,,,, {|Self|( BrwUbicacion( aoGet[ 13 ], dbfUbicaT, aoGet[ 16 ] ) )}, nil, "LUPA",, )
+
+
+
+
+      aoGet[ 16 ] := TGetHlp():ReDefine( 211, { | u | If( PCount()==0, aTemp[ 16 ], aTemp[ 16 ]:= u ) }, oFld:aDialogs[1],,,,,,,,, .F., {||     .F.},, .F., .F.,,,,,, nil,,, )
+
+
+
+
+
+
+
+
+      aoGet[ 10 ] := TGetHlp():ReDefine( 190, { | u | If( PCount()==0, aTemp[ 10 ], aTemp[ 10 ]:= u ) }, oFld:aDialogs[2],,, {||    ( cClient( aoGet[ 10 ], , oCodCli ) )}, "N/W*",,,,, .F., {||     ( nMode <> 3 )},, .F., .F.,,,,, {|Self|( BrwClient( aoGet[ 10 ], oCodCli ) )}, nil, "LUPA",, )
+
+
+
+
+
+      oCodCli := TGetHlp():ReDefine( 200, { | u | If( PCount()==0, cCodCli, cCodCli:= u ) }, oFld:aDialogs[2],,,, "N/W*",,,,, .F., {||     .F.},, .F., .F.,,,,,, nil,,, )
+
+      oBrw2                := TXBrowse():New( oFld:aDialogs[2] )
+
+      oBrw2:bClrSel        := {|| { 0, ( 229 + ( 229 * 256 ) + ( 229 * 65536 ) ) } }
+      oBrw2:bClrSelFocus   := {|| { 0, ( 167 + ( 205 * 256 ) + ( 240 * 65536 ) ) } }
+
+      oBrw2:cAlias          := dbfTmp
+      oBrw2:nMarqueeStyle   := 5
+
+      with object ( oBrw2:AddCol() )
+         :cHeader          := "Código"
+         :bEditValue       := {|| ( dbfTmp )->cCodAge }
+         :nWidth           := 120
+      end
+
+      with object ( oBrw2:AddCol() )
+         :cHeader          := "Agente"
+         :bEditValue       := {|| RetNbrAge( ( dbfTmp )->cCodAge, dbfAgent ) }
+         :nWidth           := 550
+      end
+
+      oBrw2:bLDblClick     := {|| oDlg:end( 1 ) }
+
+      oBrw2:CreateFromResource( 210 )
+
+      if nMode <> 3
+         oBrw2:bLDblClick  := {|| EdtDeta( oBrw2, bEdit2, aTemp ) }
+      end
+
+
+
+
+
+      TButton():ReDefine( 500, {||( AppDeta( oBrw2, bEdit2, aTemp) )}, oFld:aDialogs[2],,, .F., {||         ( nMode <> 3 )},,, .F. )
+
+
+
+
+
+      TButton():ReDefine( 501, {||( EdtDeta( oBrw2, bEdit2, aTemp ) )}, oFld:aDialogs[2],,, .F., {||         ( nMode <> 3 )},,, .F. )
+
+
+
+
+
+      TButton():ReDefine( 502, {||( DelDeta( oBrw2, aTemp ) )}, oFld:aDialogs[2],,, .F., {||         ( nMode <> 3 )},,, .F. )
+
+
+
+
+
+        TButton():ReDefine( 524, {||( DbSwapUp( dbfTmp, oBrw2 ) )}, oFld:aDialogs[2],,, .F., {||         ( nMode <> 3 )},,, .F. )
+
+
+
+
+
+        TButton():ReDefine( 525, {||( DbSwapDown( dbfTmp, oBrw2 ) )}, oFld:aDialogs[2],,, .F., {||         ( nMode <> 3 )},,, .F. )
+
+
+
+
+
+      TButton():ReDefine( 1, {||( EndTrans( aTemp, aoGet, dbfAlmT, oBrw, nMode, oDlg, oGet, oGet2 ) )}, oDlg,,, .F., {||     ( nMode <> 3 )},,, .F. )
+
+
+
+
+
+        TButton():ReDefine( 2, {||( oDlg:end() )}, oDlg,,, .F.,,,, .T. )
+
+   if nMode <> 3
+         oFld:aDialogs[2]:AddFastKey( 113, {|| AppDeta( oBrw2, bEdit2, aTemp) } )
+         oFld:aDialogs[2]:AddFastKey( 114, {|| EdtDeta( oBrw2, bEdit2, aTemp ) } )
+         oFld:aDialogs[2]:AddFastKey( 115, {|| DelDeta( oBrw2, aTemp ) } )
+         oDlg:AddFastKey( 116, {|| if( nMode == 4, if( oGet:lValid(), EndTrans( aTemp, aoGet, dbfAlmT, oBrw, nMode, oDlg, oGet, oGet2 ), ), EndTrans( aTemp, aoGet, dbfAlmT, oBrw, nMode, oDlg, oGet, oGet2 ) ) } )
+   end
+
+   oDlg:bStart := {|| oGet:SetFocus() }
+
+    oDlg:Activate( oDlg:bLClicked, oDlg:bMoved, oDlg:bPainted := {|hDC,cPS|( EvalGet( aoGet ) )}, .T.,,,, oDlg:bRClicked,,, )
+
+
+
+
+
+   oBmpGeneral:End()
+
+   KillTrans( oBrw2 )
+
+RETURN ( oDlg:nResult == 1 )
+
+
+
+STATIC FUNCTION BeginTrans( aTemp )
+
+   local cDbf     := "TAlmL"
+    local cCodAlm    := aTemp[ ( dbfAlmT )->( FieldPos( "CCODALM" ) ) ]
+
+   cNewFile       := cGetNewFileName( cPatTmp() + cDbf )
+
+
+
+
+
+   dbCreate( cNewFile, aSqlStruct( aBase2 ), cLocalDriver() )
+   dbUseArea( .T., cLocalDriver(), cNewFile, cCheckArea( cDbf, @dbfTmp ), .F. )
+
+   if !( dbfTmp )->( neterr() )
+      ( dbfTmp )->( OrdCondSet( "!Deleted()", {||!Deleted() } ) )
+      ( dbfTmp )->( OrdCreate( cNewFile, "Recno", "Str( Recno() )", {|| Str( Recno() ) } ) )
+
+
+
+
+
+      if ( dbfAlmL )->( dbSeek( cCodAlm ) )
+
+         while ( ( dbfAlmL )->CCODALM == cCodAlm .AND. !( dbfAlmL )->( Eof() ) )
+            dbPass( dbfAlmL, dbfTmp, .T. )
+            ( dbfAlmL )->( DbSkip() )
+         end
+
+      end
+
+      ( dbfTmp )->( dbGoTop() )
+
+   end
+
+RETURN NIL
+
+
+
+
+
+
+
+STATIC FUNCTION AppDeta( oBrw, bEdit2, aTemp )
+
+RETURN WinAppRec( oBrw, bEdit2, dbfTmp, , , aTemp[(dbfAlmT)->( FieldPos( "CCODALM" ) )] )
+
+
+
+
+
+
+
+STATIC FUNCTION EdtDeta( oBrw, bEdit2, aTemp )
+
+RETURN WinEdtRec( oBrw, bEdit2, dbfTmp )
+
+
+
+
+
+
+
+STATIC FUNCTION DelDeta( oBrw )
+
+RETURN DBDelRec( oBrw, dbfTmp )
+
+
+
+STATIC FUNCTION EndTrans( aTemp, aoGet, dbfAlmT, oBrw, nMode, oDlg, oGet, oGet2 )
+
+   local oError
+   local oBlock
+   local aTabla
+   local cCodAlm  := aTemp[ ( dbfAlmT )->( FieldPos( "CCODALM" ) ) ]
+
+   if nMode == 1 .OR. nMode == 4
+
+      if Empty( aTemp[ 1 ] )
+         MsgStop( "El código del almacén no puede estar vacío." )
+         oGet:SetFocus()
+         Return nil
+      end
+
+      if dbSeekInOrd( aTemp[ 1 ], "CCODALM", dbfAlmT )
+         MsgStop( "Código ya existe " + Rtrim( aTemp[ 1 ] ) )
+         return nil
+      end
+
+   end
+
+   if Empty( aTemp[ 2 ] )
+      MsgStop( "El nombre del almacén no puede estar vacío." )
+      oGet2:SetFocus()
+      Return nil
+   end
+
+   do case
+      case !Empty( aTemp[ 13 ] ) .AND. ( Empty( aTemp[ 12 ] ) .OR. Empty( aTemp[ 11 ] ) )
+         if Empty( aTemp[ 11 ] )
+            MsgStop( "Para informar la ubicación 3 no puede dejar vacía la ubicación 1" )
+         end
+         if Empty( aTemp[ 12 ] )
+            MsgStop( "Para informar la ubicación 3 no puede dejar vacía la ubicación 2" )
+         end
+         Return nil
+
+      case Empty( aTemp[ 13 ] ) .AND. !Empty( aTemp[ 12 ] ) .AND. Empty( aTemp[ 11 ] )
+         MsgStop( "Para informar la ubicación 2 no puede dejar vacía la ubicación 1" )
+         Return nil
+
+      case aTemp[ 11 ] == aTemp[ 12 ] .AND. !Empty( aTemp[ 11 ] ) .AND. !Empty( aTemp[ 12 ] )
+         MsgStop( "Ubicaciones repetidas" )
+         Return nil
+
+      case aTemp[ 11 ] == aTemp[ 13 ] .AND. !Empty( aTemp[ 11 ] ) .AND. !Empty( aTemp[ 13 ] )
+         MsgStop( "Ubicaciones repetidas" )
+         Return nil
+
+      case aTemp[ 12 ] == aTemp[ 13 ] .AND. !Empty( aTemp[ 12 ] ) .AND. !Empty( aTemp[ 13 ] )
+         MsgStop( "Ubicaciones repetidas" )
+         Return nil
+
+   end
+
+
+
+
+
+   CursorWait()
+
+   oBlock      := ErrorBlock( {| oError | ApoloBreak( oError ) } )
+   BEGIN SEQUENCE
+
+   BeginTransaction()
+
+   oDlg:Disable()
+
+
+
+
+
+   while ( dbfAlmL )->( dbSeek( cCodAlm ) )
+      if ( dbfAlmL )->( dbRLock() )
+         ( dbfAlmL )->( dbDelete() )
+         ( dbfAlmL )->( dbUnLock() )
+      end
+   end
+
+
+
+
+
+    ( dbfTmp )->( DbGoTop() )
+   while ( dbfTmp )->( !Eof() )
+
+      aTabla                                          := DBScatter( dbfTmp )
+      aTabla[( dbfAlmL )->( FieldPos( "CCODALM" ) )]  := cCodAlm
+        ( dbfAlmL )->( dbAppend() )
+        DBGather( aTabla, dbfAlmL )
+        ( dbfTmp )->( dbSkip() )
+
+   end
+
+   WinGather( aTemp, aoGet, dbfAlmT, oBrw, nMode )
+
+
+
+
+
+   dbCommitAll()
+
+   CommitTransaction()
+
+   RECOVER USING oError
+
+      RollBackTransaction()
+      msgStop( "Imposible eliminar datos anteriores" + Chr(13)+Chr(10) + ErrorMessage( oError ) )
+
+   end
+   ErrorBlock( oBlock )
+
+   oDlg:Enable()
+
+   oDlg:end( 1 )
+
+   CursorWe()
+
+RETURN nil
+
+
+
+STATIC FUNCTION KillTrans( oBrw2 )
+
+
+
+
+
+    ( dbfTmp )->( dbCloseArea() )
+   dbfErase( cNewFile )
+
+RETURN .T.
+
+
+
+
+STATIC FUNCTION EdtDet( aTemp, aoGet, dbfTmp, oBrw, bWhen, bValid, nMode, cCodAlm )
+
+    local oDlg
+    local oGet
+    local oGetTxt
+    local cGetTxt
+
+    IF nMode == 1
+        aTemp[ (dbfAlmL)->( FieldPos( "CCODALM" ) ) ] := cCodAlm
+    end
+
+   oDlg = TDialog():New(,,,, LblTitle( nMode ) + "Agentes relacionados", "AGEALM",, .F.,,,,,, .F.,,,,,, .F., )
+
+
+
+
+
+
+
+
+        oGet := TGetHlp():ReDefine( 100, { | u | If( PCount()==0, aTemp[ (dbfAlmL)->( FieldPos( "CCODAGE" ) ) ], aTemp[ (dbfAlmL)->( FieldPos( "CCODAGE" ) ) ]:= u ) }, oDlg,,, {||     ( cAgentes( oGet, dbfAgent, oGetTxt ) )}, "N/W*",,,,, .F., {||     ( nMode <> 3 )},, .F., .F.,,,,, {|Self|( BrwAgentes( oGet, oGetTxt ) )}, nil, "LUPA",, )
+
+
+
+
+
+        oGetTxt := TGetHlp():ReDefine( 110, { | u | If( PCount()==0, cGetTxt, cGetTxt:= u ) }, oDlg,,,, "N/W*",,,,, .F., {||         ( .F. )},, .F., .F.,,,,,, nil,,, )
+
+
+
+
+
+      TButton():ReDefine( 1, {||( lPreSave( aTemp, aoGet, dbfTmp, oBrw, nMode, oDlg, oGet ) )}, oDlg,,, .F., {||         (     nMode <> 3 )},,, .F. )
+
+
+
+
+
+        TButton():ReDefine( 2, {||( oDlg:end() )}, oDlg,,, .F.,,,, .T. )
+
+   if nMode <> 3
+      oDlg:AddFastKey( 116, {|| lPreSave( aTemp, aoGet, dbfTmp, oBrw, nMode, oDlg, oGet ) } )
+   end
+
+    oDlg:Activate( oDlg:bLClicked, oDlg:bMoved, oDlg:bPainted := {|hDC,cPS|( oGet:lValid() )}, .T.,,,, oDlg:bRClicked,,, )
+
+RETURN ( oDlg:nResult == 1 )
+
+
+
+Static Function lPreSave( aTemp, aoGet, dbfTmp, oBrw, nMode, oDlg, oGet )
+
+   if Empty( aTemp[ (dbfAlmL)->( FieldPos( "CCODAGE" ) ) ] )
+      MsgStop( "El código del agente no puede estar vacío" )
+      oGet:SetFocus()
+      Return nil
+   end
+
+   WinGather( aTemp, aoGet, dbfTmp, oBrw, nMode )
+
+Return ( oDlg:end( 1 ) )
+
+
+
+FUNCTION RetAlmacen( cCodAlm, dbfAlmT )
+
+   local oBlock
+   local oError
+    local cAlmacen     := ""
+   local lClose      := .F.
+
+   oBlock            := ErrorBlock( {| oError | ApoloBreak( oError ) } )
+   BEGIN SEQUENCE
+
+    IF dbfAlmT == NIL
+      dbUseArea( .T., ( cDriver() ), ( cPatAlm() + "ALMACEN.DBF" ), ( cCheckArea( "ALMACEN", @dbfAlmT ) ), if(.T. .OR. .F., !.F., NIL), .F.,, )
+      if !lAIS() ; ordListAdd( ( cPatAlm() + "ALMACEN.CDX" ) ) ; else ; ordSetFocus( 1 ) ; end
+      lClose         := .T.
+    end
+
+   do case
+      case Valtype( dbfAlmT ) == "C"
+
+         if ( dbfAlmT )->( DbSeek( cCodAlm ) )
+            cAlmacen       := ( dbfAlmT )->cNomAlm
+         end
+
+      case Valtype( dbfAlmT ) == "O"
+
+         if dbfAlmT:Seek( cCodAlm )
+            cAlmacen       := dbfAlmT:cNomAlm
+         end
+
+   end
+
+   RECOVER USING oError
+
+      msgStop( "Imposible abrir todas las bases de datos de almacenes" + Chr(13)+Chr(10) + ErrorMessage( oError ) )
+
+   end
+
+   ErrorBlock( oBlock )
+
+    IF lClose
+        ( dbfAlmT )->( dbCloseArea() )
+    end
+
+RETURN cAlmacen
+
+
+
+
+
+
+FUNCTION RetCliAlm( cCodAlm, dbfAlmT )
+
+   local oBlock
+   local oError
+    local cAlmacen     := ""
+   local lClose      := .F.
+
+   oBlock            := ErrorBlock( {| oError | ApoloBreak( oError ) } )
+   BEGIN SEQUENCE
+
+   if dbfAlmT == nil
+      dbUseArea( .T., ( cDriver() ), ( cPatAlm() + "ALMACEN.DBF" ), ( cCheckArea( "ALMACEN", @dbfAlmT ) ), if(.T. .OR. .F., !.F., NIL), .F.,, )
+      if !lAIS() ; ordListAdd( ( cPatAlm() + "ALMACEN.CDX" ) ) ; else ; ordSetFocus( 1 ) ; end
+      lClose         := .T.
+   end
+
+   if ( dbfAlmT )->( dbSeek( cCodAlm ) )
+      cAlmacen       := ( dbfAlmT)->cCodCli
+   end
+
+   RECOVER USING oError
+
+      msgStop( "Imposible abrir todas las bases de datos de agentes" + Chr(13)+Chr(10) + ErrorMessage( oError ) )
+
+   end
+
+   ErrorBlock( oBlock )
+
+   if lClose
+      ( dbfAlmT )->( dbCloseArea() )
+   end
+
+RETURN cAlmacen
+
+
+
+
+FUNCTION aItmAlm()
+
+RETURN ( aBase )
+
+
+
+
+
+Function cGetUbica( cCodAlm, dbfAlm, nNumUbica )
+
+   local cNomUbica := ""
+
+   ( dbfAlm )->( dbGoTop() )
+
+   if ( dbfAlm )->( dbSeek( cCodAlm ) )
+
+      do case
+         case nNumUbica == 1
+            cNomUbica := ( dbfAlm )->cUbica1
+         case nNumUbica == 2
+            cNomUbica := ( dbfAlm )->cUbica2
+         case nNumUbica == 3
+            cNomUbica := ( dbfAlm )->cUbica3
+      end
+
+   end
+
+return cNomUbica
+
+
+
+Function SelectAlmacen()
+
+   local oDlg
+   local oBrw
+   local oBmp
+   local oBrush
+   local oGetBuscar
+   local cGetBuscar     := Space( 100 )
+   local oCbxOrden
+   local cCbxOrden      := "Código"
+
+   if !lOpenFiles()
+      return .F.
+   end
+
+   oBrush := TBrush():New(, ( 255 + ( 255 * 256 ) + ( 255 * 65536 ) ),,,, )
+
+
+
+
+   oDlg = TDialog():New(,,,, "Seleccionar almacén", "SELECTITEM",, .F.,,,, oBrush,, .F.,,,,,, .F., )
+
+
+
+
+      oBmp := TBitmap():ReDefine( 300, "PACKAGE_48",, oDlg,,, .F., .F.,,, .F.,,, .F. )
+
+
+
+
+
+
+      oGetBuscar := TGetHlp():ReDefine( 100, { | u | If( PCount()==0, cGetBuscar, cGetBuscar:= u ) }, oDlg,,,,,,,,, .F.,, {|nKey,nFlags,Self| ( AutoSeek( nKey, nFlags, Self, oBrw, dbfAlmT, nil, nil, .F. ) ) }, .F., .F.,,,,,, nil, "FIND",, )
+
+
+
+
+
+
+      oCbxOrden := TComboBox():ReDefine( 110, { | u | If( PCount()==0, cCbxOrden, cCbxOrden:= u ) }, { "Código", "Nombre" }, oDlg,,, {|Self|( ( dbfAlmT )->( OrdSetFocus( oCbxOrden:nAt ) ), oBrw:Refresh(), oGetBuscar:SetFocus() )},,,, .F.,,,,,, )
+
+      oBrw                 := TXBrowse():New( oDlg )
+
+      oBrw:bClrSel         := {|| { 0, ( 229 + ( 229 * 256 ) + ( 229 * 65536 ) ) } }
+      oBrw:bClrSelFocus    := {|| { 0, ( 167 + ( 205 * 256 ) + ( 240 * 65536 ) ) } }
+
+      oBrw:cAlias          := dbfAlmT
+      oBrw:nMarqueeStyle   := 5
+
+      with object ( oBrw:AddCol() )
+         :cHeader          := "Código"
+         :bEditValue       := {|| ( dbfAlmT )->cCodAlm }
+         :cSortOrder       := "cCodAlm"
+         :bLClickHeader    := {| nMRow, nMCol, nFlags, oCol | oCbxOrden:Set( oCol:cHeader ) }
+         :nWidth           := 40
+      end
+
+      with object ( oBrw:AddCol() )
+         :cHeader          := "Nombre"
+         :bEditValue       := {|| ( dbfAlmT )->cNomAlm }
+         :cSortOrder       := "cNomAlm"
+         :bLClickHeader    := {| nMRow, nMCol, nFlags, oCol | oCbxOrden:Set( oCol:cHeader ) }
+         :nWidth           := 200
+      end
+
+      oBrw:bLDblClick      := {|| oDlg:end( 1 ) }
+
+      oBrw:CreateFromResource( 200 )
+
+
+
+
+      TButton():ReDefine( 1, {||( oDlg:end( 1 ) )}, oDlg,,, .F.,,,, .F. )
+
+
+
+
+
+      TButton():ReDefine( 2, {||( oDlg:end() )}, oDlg,,, .F.,,,, .T. )
+
+   oDlg:AddFastKey( 116,       {|| oDlg:end( 1 ) } )
+   oDlg:AddFastKey( 13,   {|| oDlg:end( 1 ) } )
+
+   oDlg:Activate( oDlg:bLClicked, oDlg:bMoved, oDlg:bPainted, .T.,,,, oDlg:bRClicked,,, )
+
+   if oDlg:nResult == 1
+      oUser():cAlmacen( ( dbfAlmT )->cCodAlm )
+   else
+
+      MsgInfo( "No seleccionó ningún almacén, se establecerá el almacén por defecto." + Chr(13)+Chr(10) +  "Almacén actual, " + oUser():cAlmacen() )
+   end
+
+   CloseFiles()
+
+   if oBmp <> nil
+      oBmp:End()
+   end
+
+   if oBrush <> nil
+      oBrush:End()
+   end
+
+RETURN ( oDlg:nResult == 1 )
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+_HB_CLASS pdaAlmacenSenderReciver ; UTILITY FUNCTION pdaAlmacenSenderReciver(...); static s_oClass ; local oClassInstance ; local nScope ; nScope := 1 ; if s_oClass == NIL ; s_oClass := IIF(.F.,, HBClass():New( "pdaAlmacenSenderReciver" , { HBObject():Classh } ) ) ;
+
+   _HB_MEMBER CreateData(); IIF( .F., s_oClass:ModMethod( "CreateData", @pdaAlmacenSenderReciver_CreateData(), nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ), s_oClass:AddMethod( "CreateData", @pdaAlmacenSenderReciver_CreateData(), nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ));
+
+; IF .F. ; __clsActive(s_oClass:hClass) ; s_oClass:Refresh() ; ELSE ; s_oClass:Create() ; END ; oClassInstance := __clsInst( s_oClass:hClass ) ; IF __ObjHasMsg( oClassInstance, "InitClass" ); oClassInstance:InitClass( hb_aParams() ) ; END ; ELSE ; oClassInstance := __clsInst( s_oClass:hClass ) ; END ; IF PCount() > 0 ; DIVERT TO (@DivertConstructorCall()) OF s_oClass ; END ; RETURN oClassInstance AS CLASS pdaAlmacenSenderReciver ;
+
+
+
+
+
+
+
+UTILITY STATIC function pdaAlmacenSenderReciver_CreateData( oPgrActual, oSayStatus, cPatPreVenta) ; local Self AS CLASS pdaAlmacenSenderReciver := QSelf() AS CLASS pdaAlmacenSenderReciver
+
+   local oBlock
+   local oError
+   local dbfAlm
+   local tmpAlm
+   local lExist      := .F.
+   local cFileName
+   local cPatPc      := if( Empty( cPatPreVenta ), cPatPc(), cPatPreVenta )
+
+   dbUseArea( .T., ( cDriver() ), ( cPatAlm() + "Almacen.Dbf" ), ( cCheckArea( "Almacen", @dbfAlm ) ), if(.T. .OR. .F., !.F., NIL), .F.,, )
+   if !lAIS() ; ordListAdd( ( cPatAlm() + "Almacen.Cdx" ) ) ; else ; ordSetFocus( 1 ) ; end
+
+   dbUseArea( .T., cDriver(), cPatPc + "Almacen.Dbf", cCheckArea( "Almacen", @tmpAlm ), .T. )
+   ( tmpAlm )->( ordListAdd( cPatPc + "Almacen.Cdx" ) )
+
+   if !Empty( oPgrActual )
+      oPgrActual:SetRange( 0, ( tmpAlm )->( OrdKeyCount() ) )
+   end
+
+   ( tmpAlm )->( dbGoTop() )
+   while !( tmpAlm )->( eof() )
+
+         if ( dbfAlm )->( dbSeek( ( tmpAlm )->cCodAlm ) )
+            dbPass( tmpAlm, dbfAlm, .F. )
+         else
+            dbPass( tmpAlm, dbfAlm, .T. )
+         end
+
+         ( tmpAlm )->( dbSkip() )
+
+         if !Empty( oSayStatus )
+            oSayStatus:SetText( "Sincronizando Almacenes " + Alltrim( Str( ( tmpAlm )->( OrdKeyNo() ) ) ) + " de " + Alltrim( Str( ( tmpAlm )->( OrdKeyCount() ) ) ) )
+         end
+
+      SysRefresh()
+
+      if !Empty( oPgrActual )
+         oPgrActual:SetPos( ( tmpAlm )->( OrdKeyNo() ) )
+      end
+
+      SysRefresh()
+
+   end
+
+   ( tmpAlm )->( dbCloseArea() )
+   ( dbfAlm )->( dbCloseArea() )
+
+Return ( Self )
+
+function IsAlmacen( cPatEmp )
+
+   local oBlock
+   local oError
+
+   local dbfAlmT
+   local lIsAlmacen  := .F.
+
+   IIF( cPatEmp == nil, cPatEmp := cPatAlm(), ) ;
+
+   if !lExistTable( cPatEmp + "Almacen.Dbf" ) .OR. !lExistTable( cPatEmp + "AlmacenL.Dbf" )
+      mkAlmacen()
+   end
+
+   if !lExistIndex( cPatEmp + "Almacen.Cdx" ) .OR. !lExistIndex( cPatEmp + "AlmacenL.Cdx" )
+      rxAlmacen()
+   end
+
+   oBlock            := ErrorBlock( {| oError | ApoloBreak( oError ) } )
+   BEGIN SEQUENCE
+
+   dbUseArea( .T., ( cDriver() ), ( cPatEmp + "ALMACEN.DBF" ), ( cCheckArea( "ALMACEN", @dbfAlmT ) ), if(.T. .OR. .F., !.F., NIL), .F.,, )
+   if !lAIS() ; ordListAdd( ( cPatEmp + "ALMACEN.CDX" ) ) ; else ; ordSetFocus( 1 ) ; end
+
+   if !( dbfAlmT )->( dbSeek( "000" ) ) .AND. ( dbfAlmT )->( LastRec() ) == 0
+      ( dbfAlmT )->( dbAppend() )
+      ( dbfAlmT )->cCodAlm := "000"
+      ( dbfAlmT )->cNomAlm := "Almacén principal"
+      ( dbfAlmT )->( dbUnLock() )
+   end
+
+   lIsAlmacen        := .T.
+
+   ( dbfAlmT )->( dbCloseArea() )
+
+   RECOVER USING oError
+
+      msgStop( "Imposible abrir base de datos de almacenes" + Chr(13)+Chr(10) + ErrorMessage( oError )  )
+
+   end
+
+   ErrorBlock( oBlock )
+
+return ( lIsAlmacen )
+
+
+
+FUNCTION mkAlmacen( cPath, lAppend, cPathOld, oMeter )
+
+   IIF( cPath == nil, cPath := cPatAlm(), ) ;
+    IIF( lAppend == nil, lAppend := .F., ) ;
+
+    IF oMeter <> NIL
+        oMeter:cText    := "Generando Bases"
+        sysrefresh()
+    end
+
+   IF !lExistTable( cPath + "ALMACEN.DBF" )
+      dbCreate( cPath + "ALMACEN.DBF", aSqlStruct( aBase ), cDriver() )
+    end
+
+   IF !lExistTable( cPath + "ALMACENL.DBF" )
+      dbCreate( cPath + "ALMACENL.DBF", aSqlStruct( aBase2 ), cDriver() )
+    end
+
+    rxAlmacen( cPath, oMeter )
+
+    IF lAppend .AND. lIsDir( cPathOld )
+      AppDbf( cPathOld, cPath, "ALMACEN" )
+    end
+
+    IF lAppend .AND. lIsDir( cPathOld )
+      AppDbf( cPathOld, cPath, "ALMACENL" )
+    end
+
+RETURN .T.
+
+
+
+FUNCTION rxAlmacen( cPath, oMeter )
+
+    local dbfAlmT
+    local dbfAlmL
+
+   IIF( cPath == nil, cPath := cPatAlm(), ) ;
+
+   IF !lExistTable( cPath + "ALMACEN.DBF" )
+      dbCreate( cPath + "ALMACEN.DBF", aSqlStruct( aBase ), cDriver() )
+    end
+
+   fEraseIndex( cPath + "ALMACEN.CDX" )
+
+   dbUseArea( .T., cDriver(), cPath + "ALMACEN.DBF", cCheckArea( "ALMACEN", @dbfAlmT ), .F. )
+
+   if !( dbfAlmT )->( neterr() )
+      ( dbfAlmT )->( __dbPack() )
+
+      ( dbfAlmT )->( ordCondSet("!Deleted()", {||!Deleted()}  ) )
+      ( dbfAlmT )->( ordCreate( cPath + "ALMACEN.CDX", "CCODALM", "CCODALM", {|| Field->cCodAlm } ) )
+
+      ( dbfAlmT )->( ordCondSet("!Deleted()", {||!Deleted()}  ) )
+      ( dbfAlmT )->( ordCreate( cPath + "ALMACEN.CDX", "CNOMALM", "Upper( CNOMALM )", {|| Upper( Field->cNomAlm ) }, ) )
+
+      ( dbfAlmT )->( dbCloseArea() )
+   else
+      msgStop( "Imposible abrir en modo exclusivo la tabla de almacenes" )
+   end
+
+   IF !lExistTable( cPath + "ALMACENL.DBF" )
+      dbCreate( cPath + "ALMACENL.DBF", aSqlStruct( aBase2 ), cDriver() )
+    end
+
+   fErase( cPath + "ALMACENL.CDX" )
+
+   dbUseArea( .T., cDriver(), cPath + "ALMACENL.DBF", cCheckArea( "ALMACENL", @dbfAlmL ), .F. )
+
+   if !( dbfAlmL )->( neterr() )
+      ( dbfAlmL )->( __dbPack() )
+
+      ( dbfAlmL )->( ordCondSet("!Deleted()", {||!Deleted()}  ) )
+      ( dbfAlmL )->( ordCreate( cPath + "ALMACENL.CDX", "CCODALM", "CCODALM", {|| Field->cCodAlm } ) )
+
+      ( dbfAlmL )->( dbCloseArea() )
+   else
+      msgStop( "Imposible abrir en modo exclusivo la tabla de almacenes" )
+   end
+
+RETURN NIL
+
+
+
+FUNCTION cAlmacen( oGet, dbfAlmT, oGet2 )
+
+   local oBlock
+   local oError
+   local lClose   := .F.
+   local lValid   := .F.
+   local xValor   := oGet:VarGet()
+
+   if Empty( xValor )
+      IIF( oGet2 <> nil, oGet2:cText( "" ), )
+      return .T.
+   else
+      xValor   := RJustObj( oGet, "0" )
+   end
+
+   oBlock            := ErrorBlock( {| oError | ApoloBreak( oError ) } )
+   BEGIN SEQUENCE
+
+   if dbfAlmT == nil
+      dbUseArea( .T., ( cDriver() ), ( cPatAlm() + "ALMACEN.DBF" ), ( cCheckArea( "ALMACEN", @dbfAlmT ) ), if(.T. .OR. .F., !.F., NIL), .F.,, )
+      if !lAIS() ; ordListAdd( ( cPatAlm() + "ALMACEN.CDX" ) ) ; else ; ordSetFocus( 1 ) ; end
+      lClose      := .T.
+   end
+
+   do case
+      case Valtype( dbfAlmT ) == "C"
+
+         if ( dbfAlmT )->( dbSeek( xValor ) )
+            oGet:cText( ( dbfAlmT )->cCodAlm )
+            IIF( oGet2 <> nil, oGet2:cText( ( dbfAlmT )->cNomAlm ), )
+            lValid   := .T.
+         else
+            oGet:Refresh()
+            msgStop( "Almacén no encontrado" )
+         end
+
+      case Valtype( dbfAlmT ) == "O"
+
+         if dbfAlmT:Seek( xValor )
+            oGet:cText( dbfAlmT:cCodAlm )
+
+            if oGet2 <> nil
+               oGet2:cText( dbfAlmT:cNomAlm )
+            end
+
+            lValid   := .T.
+         else
+            oGet:Refresh()
+            msgStop( "Almacén no encontrado" )
+         end
+
+   end
+
+   RECOVER USING oError
+
+      msgStop( "Imposible abrir todas las bases de datos de almacenes" + Chr(13)+Chr(10) + ErrorMessage( oError ) )
+
+   end
+
+   ErrorBlock( oBlock )
+
+   if lClose
+      ( dbfAlmT )->( dbCloseArea() )
+   end
+
+RETURN lValid
+
+
+
+FUNCTION BrwAlmacen( oGet, oGet2, lBigStyle )
+
+    local oDlg
+    local oBrw
+   local oFont
+   local oBtn
+    local oGet1
+    local cGet1
+   local nOrdAnt        := GetBrwOpt( "BrwAlmacen" )
+    local oCbxOrd
+   local aCbxOrd        := { "Código", "Nombre" }
+   local cCbxOrd
+   local nLevel         := nLevelUsr( "01035" )
+   local oSayText
+   local cSayText       := "Listado de almacenes"
+   local cReturn        := ""
+
+   nOrdAnt              := Min( Max( nOrdAnt, 1 ), len( aCbxOrd ) )
+   cCbxOrd              := aCbxOrd[ nOrdAnt ]
+
+   IIF( lBigStyle == nil, lBigStyle := .F., ) ;
+
+   if lOpenFiles()
+
+      nOrdAnt           := ( dbfAlmT )->( OrdSetFocus( nOrdAnt ) )
+
+      ( dbfAlmT )->( dbGoTop() )
+
+
+
+
+
+
+
+
+
+
+
+   if lBigStyle
+
+      oDlg = TDialog():New(,,,, "Seleccionar almacén", "BIGHELPENTRY",, .F.,,,,,, .F.,,,,,, .F., )
+
+
+
+
+
+
+      oGet1 := TGetHlp():ReDefine( 104, { | u | If( PCount()==0, cGet1, cGet1:= u ) }, oDlg,,, {||    ( OrdClearScope( oBrw, dbfAlmT ) )},,,,,, .F.,, {|nKey,nFlags,Self| ( AutoSeek( nKey, nFlags, Self, oBrw, dbfAlmT ) ) }, .F., .F.,,,,,, nil, "FIND",, )
+
+   else
+
+      oDlg = TDialog():New(,,,, "Seleccionar almacén", "HELPENTRY",, .F.,,,,,, .F.,,,,,, .F., )
+
+
+
+
+
+
+      oGet1 := TGetHlp():ReDefine( 104, { | u | If( PCount()==0, cGet1, cGet1:= u ) }, oDlg,,, {||    ( OrdClearScope( oBrw, dbfAlmT ) )},,,,,, .F.,, {|nKey,nFlags,Self| ( AutoSeek( nKey, nFlags, Self, oBrw, dbfAlmT ) ) }, .F., .F.,,,,,, nil, "FIND",, )
+
+   end
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+        oCbxOrd := TComboBox():ReDefine( 102, { | u | If( PCount()==0, cCbxOrd, cCbxOrd:= u ) }, aCbxOrd, oDlg,,, {|Self|( ( dbfAlmT )->( OrdSetFocus( oCbxOrd:nAt ) ), oBrw:refresh(), oGet1:SetFocus(), oCbxOrd:refresh() )},,,, .F.,,,,,, )
+
+
+
+
+      oBrw                 := IXBrowse():New( oDlg )
+
+      oBrw:bClrSel         := {|| { 0, ( 229 + ( 229 * 256 ) + ( 229 * 65536 ) ) } }
+      oBrw:bClrSelFocus    := {|| { 0, ( 167 + ( 205 * 256 ) + ( 240 * 65536 ) ) } }
+
+      oBrw:cAlias          := dbfAlmT
+      oBrw:nMarqueeStyle   := 5
+      oBrw:cName           := "Browse.Almacen"
+
+      with object ( oBrw:AddCol() )
+         :cHeader          := "Código"
+         :cSortOrder       := "cCodAlm"
+         :bEditValue       := {|| ( dbfAlmT )->cCodAlm }
+         :nWidth           := 80
+         :bLClickHeader    := {| nMRow, nMCol, nFlags, oCol | oCbxOrd:Set( oCol:cHeader ) }
+      end
+
+      with object ( oBrw:AddCol() )
+         :cHeader          := "Nombre"
+         :cSortOrder       := "cNomAlm"
+         :bEditValue       := {|| ( dbfAlmT )->cNomAlm }
+         :nWidth           := 280
+         :bLClickHeader    := {| nMRow, nMCol, nFlags, oCol | oCbxOrd:Set( oCol:cHeader ) }
+      end
+
+      with object ( oBrw:AddCol() )
+         :cHeader          := "Domicilio"
+         :cSortOrder       := "cDirAlm"
+         :bEditValue       := {|| ( dbfAlmT )->cDirAlm }
+         :nWidth           := 80
+         :bLClickHeader    := {| nMRow, nMCol, nFlags, oCol | oCbxOrd:Set( oCol:cHeader ) }
+      end
+
+      oBrw:bLDblClick      := {|| oDlg:end( 1 ) }
+      oBrw:bRClicked       := {| nRow, nCol, nFlags | oBrw:RButtonDown( nRow, nCol, nFlags ) }
+
+      oBrw:CreateFromResource( 105 )
+
+      if lBigStyle
+         oBrw:nHeaderHeight   := 36
+         oBrw:nFooterHeight   := 36
+         oBrw:nLineHeight     := 36
+      end
+
+      if ( "PDA" $ cParamsMain() )
+
+
+
+         oSayText := TSay():ReDefine( 100, {|| cSayText}, oDlg,,,, .F.,, .F., .F. )
+
+      end
+
+
+
+
+        TButton():ReDefine( 1, {||( oDlg:end(1) )}, oDlg,,, .F.,,,, .F. )
+
+
+
+
+
+        TButton():ReDefine( 2, {||( oDlg:end() )}, oDlg,,, .F.,,,, .T. )
+
+      if !( "PDA" $ cParamsMain() )
+
+
+
+
+
+        TButton():ReDefine( 500, {||( WinAppRec( oBrw, bEdit, dbfAlmT ) )}, oDlg,,, .F., {||     ( nAnd( nLevel, 2 ) <> 0 .AND. !IsReport() )},,, .F. )
+
+
+
+
+
+        TButton():ReDefine( 501, {||( WinEdtRec( oBrw, bEdit, dbfAlmT ) )}, oDlg,,, .F., {||     ( nAnd( nLevel, 4 ) <> 0 .AND. !IsReport() )},,, .F. )
+
+      if !IsReport()
+         oDlg:AddFastKey( 113,    {|| if( nAnd( nLevel, 2 ) <> 0, WinAppRec( oBrw, bEdit, dbfAlmT ), ) } )
+         oDlg:AddFastKey( 114,    {|| if( nAnd( nLevel, 4 ) <> 0, WinEdtRec( oBrw, bEdit, dbfAlmT ), ) } )
+      end
+
+      end
+
+      oDlg:AddFastKey( 13,   {|| oDlg:end(1) } )
+      oDlg:AddFastKey( 116,       {|| oDlg:end(1) } )
+
+      oDlg:Activate( oDlg:bLClicked, oDlg:bMoved, oDlg:bPainted, .T.,,,, oDlg:bRClicked,,, )
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+      cReturn                 := ( dbfAlmT )->cCodAlm
+
+      if oDlg:nResult == 1
+
+         if !Empty( oGet )
+            oGet:cText( cReturn )
+            oGet:lValid()
+         end
+
+         if !Empty( oGet2 ) .AND. ValType( oGet2 ) == "O"
+            oGet2:cText( ( dbfAlmT )->cNomAlm )
+         end
+
+      end
+
+      DestroyFastFilter( dbfAlmT )
+
+      SetBrwOpt( "BrwAlmacen", ( dbfAlmT )->( OrdNumber() ) )
+
+        CloseFiles()
+
+      if !Empty( oGet )
+         oGet:setFocus()
+      end
+
+   end
+
+RETURN ( cReturn )
+
+
+
+STATIC FUNCTION lOpenFiles()
+
+   local lOpen       := .T.
+   local oBlock      := ErrorBlock( {| oError | ApoloBreak( oError ) } )
+
+   BEGIN SEQUENCE
+
+
+      IF !lExistTable( cPatAlm() + "ALMACEN.DBF" ) .OR. !lExistTable( cPatAlm() + "ALMACENL.DBF" )
+            mkAlmacen()
+        end
+
+      dbUseArea( .T., ( cDriver() ), ( cPatAlm() + "ALMACEN.DBF" ), ( cCheckArea( "ALMACEN", @dbfAlmT ) ), if(.T. .OR. .F., !.F., NIL), .F.,, )
+      if !lAIS() ; ordListAdd( ( cPatAlm() + "ALMACEN.CDX" ) ) ; else ; ordSetFocus( 1 ) ; end
+
+      dbUseArea( .T., ( cDriver() ), ( cPatAlm() + "ALMACENL.DBF" ), ( cCheckArea( "ALMACENL", @dbfAlmL ) ), if(.T. .OR. .F., !.F., NIL), .F.,, )
+      if !lAIS() ; ordListAdd( ( cPatAlm() + "ALMACENL.CDX" ) ) ; else ; ordSetFocus( 1 ) ; end
+
+      dbUseArea( .T., ( cDriver() ), ( cPatCli() + "AGENTES.DBF" ), ( cCheckArea( "AGENTES", @dbfAgent ) ), if(.T. .OR. .F., !.F., NIL), .F.,, )
+      if !lAIS() ; ordListAdd( ( cPatCli() + "AGENTES.CDX" ) ) ; else ; ordSetFocus( 1 ) ; end
+
+
+
+      dbUseArea( .T., ( cDriver() ), ( cPatAlm() + "UBICAT.DBF" ), ( cCheckArea( "UBICAT", @dbfUbicaT ) ), if(.T. .OR. .F., !.F., NIL), .F.,, )
+      if !lAIS() ; ordListAdd( ( cPatAlm() + "UBICAT.CDX" ) ) ; else ; ordSetFocus( 1 ) ; end
+
+      dbUseArea( .T., ( cDriver() ), ( cPatAlm() + "UBICAL.DBF" ), ( cCheckArea( "UBICAL", @dbfUbicaL ) ), if(.T. .OR. .F., !.F., NIL), .F.,, )
+      if !lAIS() ; ordListAdd( ( cPatAlm() + "UBICAL.CDX" ) ) ; else ; ordSetFocus( 1 ) ; end
+
+
+
+   RECOVER
+
+      msgStop( "Imposible abrir todas las bases de datos" )
+      CloseFiles()
+      lOpen       := .F.
+
+   end
+
+   ErrorBlock( oBlock )
+
+RETURN lOpen
+
+
+
+STATIC FUNCTION CloseFiles()
+
+   ( dbfAlmT   )->( dbCloseArea() )
+   ( dbfAlmL   )->( dbCloseArea() )
+   ( dbfAgent  )->( dbCloseArea() )
+   ( dbfUbicaT )->( dbCloseArea() )
+   ( dbfUbicaL )->( dbCloseArea() )
+
+   dbfAlmT   := nil
+   dbfAlmL   := nil
+   dbfAgent  := nil
+   dbfUbicaT := nil
+   dbfUbicaL := nil
+
+   oWndBrw   := nil
+
+Return .T.
+
+
+
+
+
+
+FUNCTION EdtAlm( cCodAlm )
+
+   local nLevel         := nLevelUsr( "01035" )
+
+   if nAnd( nLevel, 1 ) <> 0 .OR. nAnd( nLevel, 4 ) == 0
+      msgStop( "Acceso no permitido." )
+      return .T.
+   end
+
+   if lOpenFiles()
+
+      if dbSeekInOrd( cCodAlm, "cCodAlm", dbfAlmT )
+         WinEdtRec( nil, bEdit, dbfAlmT )
+      end
+
+      CloseFiles()
+
+   end
+
+RETURN .T.

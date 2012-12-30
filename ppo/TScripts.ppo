@@ -1,0 +1,361 @@
+#line 112 "hbclass.ch"
+   DYNAMIC DivertConstructorCall
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+DECLARE HBClass  New( cName AS String, OPTIONAL SuperParams ) AS CLASS HBClass  Create() AS Object  Instance() AS Object  AddClsMethod( cName AS String, @MethodName(), nScope AS Numeric, n2 AS Numeric, n3 AS Numeric )  AddDelegate( cName AS String, cDelegate AS String, cObject AS String, nScope AS Numeric, lPersistent AS LOGICAL )  AddMultiClsData( cType AS String, uVal, nScope AS Numeric, aDatas AS Array OF String )  AddMultiData( cType AS String, uVal, nScope AS Numeric, aDatas AS Array OF String, x AS LOGICAL, lPer AS LOGICAL )  AddMethod( cName AS String, @MethodName(), nScope AS Numeric, lPersistent AS LOGICAL )  AddInLine( cName AS String, bBlock AS CodeBlock, nScope AS Numeric, lPersistent AS LOGICAL )  AddVirtual( cName AS String )  ModMethod( cName AS String, @MethodName(), nScope AS Numeric, lPersistent AS LOGICAL )  ModClsMethod( cName AS String, @MethodName(), nScope AS Numeric )  ModInline( cName AS String, bBlock AS CodeBlock, nScope AS Numeric, lPersistent AS LOGICAL )  SetOnError( @MethodName() )
+#line 85 "\Fwh1204\Include\FiveWin.Ch"
+   EXTERNAL GetProcAdd
+   EXTERNAL TActiveX
+
+
+
+
+extern errorsys
+#line 7 ".\Prg\TScripts.prg"
+_HB_CLASS TScripts ; UTILITY FUNCTION TScripts(...); static s_oClass ; local oClassInstance ; local nScope ; nScope := 1 ; if s_oClass == NIL ; s_oClass := IIF(.F.,, HBClass():New( "TScripts" , {TMant():classh} ) ) ; ;
+
+   _HB_MEMBER { cMru} ; IIF( !.F., s_oClass:AddMultiData(, "text_code_colored_16", nScope + IIF( .F., 32, 0 ), { "cMru" }, .F., .F. ), )
+   _HB_MEMBER { cBitmap} ; IIF( !.F., s_oClass:AddMultiData(, "WebTopBlack", nScope + IIF( .F., 32, 0 ), { "cBitmap" }, .F., .F. ), )
+   _HB_MEMBER { oBtnEjecutar} ; IIF( !.F., s_oClass:AddMultiData(,, nScope + IIF( .F., 32, 0 ), { "oBtnEjecutar" }, .F., .F. ), )
+   _HB_MEMBER { oBtnCompilar} ; IIF( !.F., s_oClass:AddMultiData(,, nScope + IIF( .F., 32, 0 ), { "oBtnCompilar" }, .F., .F. ), )
+   _HB_MEMBER { cFicheroPRG} ; IIF( !.F., s_oClass:AddMultiData(,, nScope + IIF( .F., 32, 0 ), { "cFicheroPRG" }, .F., .F. ), )
+
+   _HB_MEMBER Activate(); IIF( .F., s_oClass:ModMethod( "Activate", @TScripts_Activate(), nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ), s_oClass:AddMethod( "Activate", @TScripts_Activate(), nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ));
+
+   _HB_MEMBER OpenFiles( lExclusive); IIF( .F., s_oClass:ModMethod( "OpenFiles", @TScripts_OpenFiles(), nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ), s_oClass:AddMethod( "OpenFiles", @TScripts_OpenFiles(), nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ));
+
+   _HB_MEMBER DefineFiles(); IIF( .F., s_oClass:ModMethod( "DefineFiles", @TScripts_DefineFiles(), nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ), s_oClass:AddMethod( "DefineFiles", @TScripts_DefineFiles(), nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ));
+
+   _HB_MEMBER Resource( nMode); IIF( .F., s_oClass:ModMethod( "Resource", @TScripts_Resource(), nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ), s_oClass:AddMethod( "Resource", @TScripts_Resource(), nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ));
+
+   _HB_MEMBER lPreSave(); IIF( .F., s_oClass:ModMethod( "lPreSave", @TScripts_lPreSave(), nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ), s_oClass:AddMethod( "lPreSave", @TScripts_lPreSave(), nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ));
+
+   _HB_MEMBER CompilarScript(); IIF( .F., s_oClass:ModMethod( "CompilarScript", @TScripts_CompilarScript(), nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ), s_oClass:AddMethod( "CompilarScript", @TScripts_CompilarScript(), nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ));
+
+   _HB_MEMBER EjecutarScript(); IIF( .F., s_oClass:ModMethod( "EjecutarScript", @TScripts_EjecutarScript(), nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ), s_oClass:AddMethod( "EjecutarScript", @TScripts_EjecutarScript(), nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ));
+
+; IF .F. ; __clsActive(s_oClass:hClass) ; s_oClass:Refresh() ; ELSE ; s_oClass:Create() ; END ; oClassInstance := __clsInst( s_oClass:hClass ) ; IF __ObjHasMsg( oClassInstance, "InitClass" ); oClassInstance:InitClass( hb_aParams() ) ; END ; ELSE ; oClassInstance := __clsInst( s_oClass:hClass ) ; END ; IF PCount() > 0 ; DIVERT TO (@DivertConstructorCall()) OF s_oClass ; END ; RETURN oClassInstance AS CLASS TScripts ;
+
+
+
+UTILITY STATIC function TScripts_OpenFiles( lExclusive) ; local Self AS CLASS TScripts := QSelf() AS CLASS TScripts
+
+   local lOpen          := .T.
+   local oError
+   local oBlock         := ErrorBlock( {| oError | ApoloBreak( oError ) } )
+
+   IIF( lExclusive == nil, lExclusive := .F., ) ;
+
+   BEGIN SEQUENCE
+
+   if Empty( ::oDbf )
+      ::DefineFiles()
+   end
+
+   ::oDbf:Activate( .F., !( lExclusive ) )
+
+   RECOVER USING oError
+
+      msgStop( "Imposible abrir todas las bases de datos" + Chr(13)+Chr(10) + ErrorMessage( oError )  )
+      ::CloseFiles()
+      lOpen          := .F.
+
+   end
+
+   ErrorBlock( oBlock )
+
+RETURN ( lOpen )
+
+
+
+UTILITY STATIC function TScripts_DefineFiles( cPath, cDriver) ; local Self AS CLASS TScripts := QSelf() AS CLASS TScripts
+
+   IIF( cPath == nil, cPath := ::cPath, ) ;
+
+   ::oDbf := DbfServer( "Scripts.Dbf", "Scripts" ):New( "Scripts.Dbf", "Scri", ( cDriver() ), "Scripts", ( cPath ) )
+
+      ::oDbf:AddField( "cCodScr", "C", 3, 0,,,,, "Código", .F., 100, .F., {} )
+      ::oDbf:AddField( "cDesScr", "C", 35, 0,,,,, "Nombre", .F., 400, .F., {} )
+
+      ::oDbf:AddIndex( "cCodScr", "Scripts.Cdx", "cCodScr",,, .F., .F., "Código",,, .T., .F. )
+      ::oDbf:AddIndex( "cDesScr", "Scripts.Cdx", "cDesScr",,, .F., .F., "Nombre",,, .T., .F. )
+
+
+
+RETURN ( ::oDbf )
+
+
+
+UTILITY STATIC function TScripts_Activate() ; local Self AS CLASS TScripts := QSelf() AS CLASS TScripts
+
+   if nAnd( ::nLevel, 1 ) == 0
+
+
+
+
+
+      if ::oWndParent <> nil
+         ::oWndParent:CloseAll()
+      end
+
+      if Empty( ::oDbf )
+         if !::OpenFiles()
+            return nil
+         end
+      end
+
+
+
+
+
+      if !::lCreateShell
+         ::CreateShell( ::nLevel )
+      end
+
+
+
+
+
+
+      ::oWndBrw:NewAt( "BUS",,, {||( ::oWndBrw:SearchSetFocus() )}, "(B)uscar", "B",,,,, .F. )
+         ::oWndBrw:AddSeaBar()
+
+
+
+
+
+
+
+
+      ::oWndBrw:NewAt( "NEW",,, {||( ::oWndBrw:RecAdd() )}, "(A)ñadir", "A",,, 2,, .F. )
+
+
+
+
+
+
+      ::oWndBrw:NewAt( "DUP",,, {||( ::oWndBrw:RecDup() )}, "(D)uplicar", "D",,, 2,, .F. )
+
+
+
+
+
+
+      ::oWndBrw:NewAt( "EDIT",,, {||( ::oWndBrw:RecEdit() )}, "(M)odificar", "M",,, 4,, .F. )
+
+
+
+
+
+
+      ::oWndBrw:NewAt( "ZOOM",,, {||( ::oWndBrw:RecZoom() )}, "(Z)oom", "Z",,, 8,, .F. )
+
+
+
+
+
+
+
+      ::oWndBrw:NewAt( "DEL",,, {||( ::oWndBrw:RecDel() )}, "(E)liminar", "E",,, 16,, .F. )
+
+
+
+
+
+
+
+
+      ::oBtnCompilar := ::oWndBrw:NewAt( "gears_run_",,, {||( ::CompilarScript( ::oDbf:cCodScr ) )}, "(C)ompilar", "C",,, 8,, .F. )
+
+
+
+
+
+
+
+
+      ::oBtnEjecutar := ::oWndBrw:NewAt( "Flash_",,, {||( ::EjecutarScript() )}, "E(j)ecutar", "J",,, 8,, .F. )
+
+      ::oWndBrw:EndButtons( Self )
+
+      if ::cHtmlHelp <> nil
+         ::oWndBrw:cHtmlHelp  := ::cHtmlHelp
+      end
+
+      ::oWndBrw:Activate( nil, nil, nil, nil, nil, nil, nil, nil, nil, nil, nil, nil, nil, nil, nil, nil, {|| ::CloseFiles() } )
+
+   else
+
+      msgStop( "Acceso no permitido." )
+
+   end
+
+RETURN ( Self )
+
+
+
+UTILITY STATIC function TScripts_Resource( nMode) ; local Self AS CLASS TScripts := QSelf() AS CLASS TScripts
+
+   local oDlg
+   local oGet
+   local oScript
+   local cScript
+   local oFont       := TFont():New( "Courier New", 8, 18, .F., .T. )
+
+   if nMode <> 1
+
+      ::cFicheroPRG  := cPatScript() + ::oDbf:cCodScr + ".prg"
+
+      if File( ::cFicheroPRG )
+         cScript     := MemoRead( ::cFicheroPRG )
+      end
+
+   end
+
+   oDlg = TDialog():New(,,,, LblTitle( nMode ) + "Script", "SCRIPTS",, .F.,,,,,, .F.,,,,,, .F., )
+
+
+
+
+
+
+      oGet := TGetHlp():ReDefine( 100, { | u | If( PCount()==0, ::oDbf:cCodScr, ::oDbf:cCodScr:= u ) }, oDlg,, "@!", {||    NotValid( oGet, ::oDbf:cAlias, .T., "0" )},,,,,, .F., {||     ( nMode == 1 )},, .F., .F.,,,,,, nil,,, )
+
+
+
+
+      TGetHlp():ReDefine( 110, { | u | If( PCount()==0, ::oDbf:cDesScr, ::oDbf:cDesScr:= u ) }, oDlg,,,,,,,,, .F., {||     ( nMode <> 3 )},, .F., .F.,,,,,, nil,,, )
+
+
+
+
+
+      oScript := TMultiGet():ReDefine( 200, { | u | If( PCount()==0, cScript, cScript:= u ) }, oDlg,,,, oFont,,, .F., {||     ( nMode <> 3 )}, .F.,, )
+
+
+
+
+
+      TButton():ReDefine( 1, {||( if( ::lPreSave( nMode, cScript ), oDlg:end( 1 ), ) )}, oDlg,,, .F., {||     ( nMode <> 3 )},,, .F. )
+
+
+
+
+
+      TButton():ReDefine( 2, {||( oDlg:end() )}, oDlg,,, .F.,,,, .T. )
+
+
+
+
+
+      TButton():ReDefine( 500, {||( if( ::lPreSave( nMode, cScript ), ( ::CompilarScript( ::oDbf:cCodScr ), oDlg:end( 1 ) ), ) )}, oDlg,,, .F., {||     ( nMode <> 3 )},,, .F. )
+
+      if nMode <> 3
+         oDlg:AddFastKey( 116, {|| if( ::lPreSave( nMode, cScript ), oDlg:end( 1 ), ) } )
+      end
+
+      oDlg:bStart := { || oGet:SetFocus() }
+
+   oDlg:Activate( oDlg:bLClicked, oDlg:bMoved, oDlg:bPainted, .T.,,,, oDlg:bRClicked,,, )
+
+   if !Empty( oFont )
+      oFont:End()
+   end
+
+   ::cFicheroPRG  := ""
+
+RETURN ( oDlg:nResult == 1 )
+
+
+
+UTILITY STATIC function TScripts_lPreSave( nMode, cScript) ; local Self AS CLASS TScripts := QSelf() AS CLASS TScripts
+
+   if nMode == 1 .OR. nMode == 4
+
+      if ::oDbf:SeekInOrd( ::oDbf:cCodScr, "cCodScr" )
+         MsgStop( "Código ya existe " + Rtrim( ::oDbf:cCodScr ) )
+         Return .F.
+      end
+
+   end
+
+   if Empty( ::oDbf:cDesScr )
+      MsgStop( "La descripción del Script no puede estar vacía." )
+      Return .F.
+   end
+
+   if nMode <> 3
+
+
+
+
+
+      if Empty( ::cFicheroPRG )
+         ::cFicheroPRG  := cPatScript() + ::oDbf:cCodScr + ".prg"
+      end
+
+      MemoWrit( ::cFicheroPRG, cScript )
+
+   end
+
+Return .T.
+
+
+
+
+
+
+
+UTILITY STATIC function TScripts_CompilarScript( cCodScr) ; local Self AS CLASS TScripts := QSelf() AS CLASS TScripts
+
+   local cFichero    := cPatScript() + cCodScr + ".prg"
+
+   WinExec( FullCurDir() + "harbour.exe " + cFichero + " /gh /n /o" + cPatScript(), 2 )
+
+Return .T.
+
+
+
+UTILITY STATIC function TScripts_EjecutarScript() ; local Self AS CLASS TScripts := QSelf() AS CLASS TScripts
+
+   local cFichero
+   Local pHrb
+   Local u
+
+
+
+
+
+   cFichero       := cPatScript() + ::oDbf:cCodScr + ".hrb"
+
+   if !File( cFichero )
+      ::CompilarScript( ::oDbf:cCodScr )
+   end
+
+
+
+
+
+   if File( cFichero )
+
+      pHrb  := __hrbLoad( cFichero )
+      u     := __hrbDo( pHrb )
+      __hrbUnload( pHrb )
+
+   end
+
+Return .T.

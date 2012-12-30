@@ -1,0 +1,304 @@
+#line 112 "hbclass.ch"
+   DYNAMIC DivertConstructorCall
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+DECLARE HBClass  New( cName AS String, OPTIONAL SuperParams ) AS CLASS HBClass  Create() AS Object  Instance() AS Object  AddClsMethod( cName AS String, @MethodName(), nScope AS Numeric, n2 AS Numeric, n3 AS Numeric )  AddDelegate( cName AS String, cDelegate AS String, cObject AS String, nScope AS Numeric, lPersistent AS LOGICAL )  AddMultiClsData( cType AS String, uVal, nScope AS Numeric, aDatas AS Array OF String )  AddMultiData( cType AS String, uVal, nScope AS Numeric, aDatas AS Array OF String, x AS LOGICAL, lPer AS LOGICAL )  AddMethod( cName AS String, @MethodName(), nScope AS Numeric, lPersistent AS LOGICAL )  AddInLine( cName AS String, bBlock AS CodeBlock, nScope AS Numeric, lPersistent AS LOGICAL )  AddVirtual( cName AS String )  ModMethod( cName AS String, @MethodName(), nScope AS Numeric, lPersistent AS LOGICAL )  ModClsMethod( cName AS String, @MethodName(), nScope AS Numeric )  ModInline( cName AS String, bBlock AS CodeBlock, nScope AS Numeric, lPersistent AS LOGICAL )  SetOnError( @MethodName() )
+#line 85 "\Fwh1204\Include\FiveWin.Ch"
+   EXTERNAL GetProcAdd
+   EXTERNAL TActiveX
+
+
+
+
+extern errorsys
+#line 7 ".\Prg\Operaci.prg"
+_HB_CLASS TOperacion ; UTILITY FUNCTION TOperacion(...); static s_oClass ; local oClassInstance ; local nScope ; nScope := 1 ; if s_oClass == NIL ; s_oClass := IIF(.F.,, HBClass():New( "TOperacion" , {TMant():classh} ) ) ; ;
+
+   _HB_MEMBER { cMru} ; IIF( !.F., s_oClass:AddMultiData(, "Worker2_Hammer2_16", nScope + IIF( .F., 32, 0 ), { "cMru" }, .F., .F. ), )
+   _HB_MEMBER { cBitmap} ; IIF( !.F., s_oClass:AddMultiData(, ( 250 + ( 161 * 256 ) + ( 52 * 65536 ) ), nScope + IIF( .F., 32, 0 ), { "cBitmap" }, .F., .F. ), )
+   _HB_MEMBER { oTipOpera} ; IIF( !.F., s_oClass:AddMultiData(,, nScope + IIF( .F., 32, 0 ), { "oTipOpera" }, .F., .F. ), )
+
+   _HB_MEMBER { aStrColor} ; IIF( !.F., s_oClass:AddMultiClsData(, { "Negro", "Rojo oscuro", "Verde oscuro", "Oliva", "Azul marino", "Púrpura", "Verde azulado", "Gris",  "Plateado", "Rojo", "Verde", "Amarillo", "Azul", "Fucsia", "Aguamarina", "Blanco" }, nScope + IIF( .F., 32, 0 ) + 64, { "aStrColor" }, .F. ), )
+   _HB_MEMBER { aResColor} ; IIF( !.F., s_oClass:AddMultiClsData(, { "COL_00", "COL_01", "COL_02", "COL_03", "COL_04", "COL_05", "COL_06", "COL_07", "COL_08", "COL_09", "COL_10", "COL_11", "COL_12", "COL_13", "COL_14", "COL_15" }, nScope + IIF( .F., 32, 0 ) + 64, { "aResColor" }, .F. ), )
+   _HB_MEMBER { aRgbColor} ; IIF( !.F., s_oClass:AddMultiClsData(, { ( 0 + ( 0 * 256 ) + ( 0 * 65536 ) ), ( 128 + ( 0 * 256 ) + ( 0 * 65536 ) ), ( 0 + ( 128 * 256 ) + ( 0 * 65536 ) ), ( 128 + ( 128 * 256 ) + ( 128 * 65536 ) ), ( 0 + ( 0 * 256 ) + ( 128 * 65536 ) ), ( 128 + ( 0 * 256 ) + ( 128 * 65536 ) ), ( 0 + ( 128 * 256 ) + ( 128 * 65536 ) ), ( 128 + ( 128 * 256 ) + ( 128 * 65536 ) ), ( 192 + ( 192 * 256 ) + ( 192 * 65536 ) ), ( 255 + ( 0 * 256 ) + ( 0 * 65536 ) ), ( 0 + ( 255 * 256 ) + ( 0 * 65536 ) ), ( 255 + ( 255 * 256 ) + ( 0 * 65536 ) ), ( 0 + ( 0 * 256 ) + ( 255 * 65536 ) ), ( 255 + ( 0 * 256 ) + ( 255 * 65536 ) ), ( 0 + ( 255 * 256 ) + ( 255 * 65536 ) ), ( 255 + ( 255 * 256 ) + ( 255 * 65536 ) ) }, nScope + IIF( .F., 32, 0 ) + 64, { "aRgbColor" }, .F. ), )
+
+   _HB_MEMBER New( cPath, oWndParent, oMenuItem); IIF( .F., s_oClass:ModMethod( "New", @TOperacion_New(), nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ), s_oClass:AddMethod( "New", @TOperacion_New(), nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ));
+
+   _HB_MEMBER CreateInit( cPath); IIF( .F., s_oClass:ModMethod( "CreateInit", @TOperacion_CreateInit(), nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ), s_oClass:AddMethod( "CreateInit", @TOperacion_CreateInit(), nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ));
+
+   _HB_MEMBER OpenFiles( lExclusive); IIF( .F., s_oClass:ModMethod( "OpenFiles", @TOperacion_OpenFiles(), nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ), s_oClass:AddMethod( "OpenFiles", @TOperacion_OpenFiles(), nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ));
+
+   _HB_MEMBER CloseFiles(); IIF( .F., s_oClass:ModMethod( "CloseFiles", @TOperacion_CloseFiles(), nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ), s_oClass:AddMethod( "CloseFiles", @TOperacion_CloseFiles(), nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ));
+
+   _HB_MEMBER DefineFiles(); IIF( .F., s_oClass:ModMethod( "DefineFiles", @TOperacion_DefineFiles(), nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ), s_oClass:AddMethod( "DefineFiles", @TOperacion_DefineFiles(), nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ));
+
+   _HB_MEMBER Resource( nMode); IIF( .F., s_oClass:ModMethod( "Resource", @TOperacion_Resource(), nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ), s_oClass:AddMethod( "Resource", @TOperacion_Resource(), nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ));
+
+   _HB_MEMBER lPreSave( oTxtColor, nMode); IIF( .F., s_oClass:ModMethod( "lPreSave", @TOperacion_lPreSave(), nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ), s_oClass:AddMethod( "lPreSave", @TOperacion_lPreSave(), nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ));
+
+   _HB_MEMBER cStrColor(); IIF( .F., s_oClass:ModMethod( "cStrColor", @TOperacion_cStrColor(), nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ), s_oClass:AddMethod( "cStrColor", @TOperacion_cStrColor(), nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ));
+
+   _HB_MEMBER cStrTipo(); IIF( .F., s_oClass:ModMethod( "cStrTipo", @TOperacion_cStrTipo(), nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ), s_oClass:AddMethod( "cStrTipo", @TOperacion_cStrTipo(), nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ));
+
+; IF .F. ; __clsActive(s_oClass:hClass) ; s_oClass:Refresh() ; ELSE ; s_oClass:Create() ; END ; oClassInstance := __clsInst( s_oClass:hClass ) ; IF __ObjHasMsg( oClassInstance, "InitClass" ); oClassInstance:InitClass( hb_aParams() ) ; END ; ELSE ; oClassInstance := __clsInst( s_oClass:hClass ) ; END ; IF PCount() > 0 ; DIVERT TO (@DivertConstructorCall()) OF s_oClass ; END ; RETURN oClassInstance AS CLASS TOperacion ;
+
+
+
+UTILITY STATIC function TOperacion_New( cPath, oWndParent, oMenuItem) ; local Self AS CLASS TOperacion := QSelf() AS CLASS TOperacion
+
+   IIF( cPath == nil, cPath := cPatEmp(), ) ;
+   IIF( oWndParent == nil, oWndParent := GetWndFrame(), ) ;
+
+   if oMenuItem <> nil .AND. ::nLevel == nil
+      ::nLevel          := nLevelUsr( oMenuItem )
+   end
+
+   ::cPath              := cPath
+   ::oWndParent         := oWndParent
+   ::oDbf               := nil
+
+   ::lAutoButtons       := .T.
+   ::lCreateShell       := .F.
+
+   ::cPicUnd            := MasUnd()
+
+   ::oTipOpera          := TTipOpera():Create()
+
+RETURN ( Self )
+
+
+
+UTILITY STATIC function TOperacion_CreateInit( cPath) ; local Self AS CLASS TOperacion := QSelf() AS CLASS TOperacion
+
+   IIF( cPath == nil, cPath := cPatEmp(), ) ;
+
+   ::cPath              := cPath
+
+   ::oTipOpera          := TTipOpera():Create( cPath )
+
+RETURN ( Self )
+
+
+
+UTILITY STATIC function TOperacion_OpenFiles( lExclusive) ; local Self AS CLASS TOperacion := QSelf() AS CLASS TOperacion
+
+   local lOpen          := .T.
+   local oError
+   local oBlock
+
+   IIF( lExclusive == nil, lExclusive := .F., ) ;
+
+   oBlock               := ErrorBlock( {| oError | ApoloBreak( oError ) } )
+   BEGIN SEQUENCE
+
+      if Empty( ::oDbf )
+         ::DefineFiles()
+      end
+
+      ::oDbf:Activate( .F., !( lExclusive ) )
+
+      if ::oTipOpera <> nil
+         ::oTipOpera:OpenFiles()
+      end
+
+   RECOVER USING oError
+
+      msgStop( "Imposible abrir todas las bases de datos" + Chr(13)+Chr(10) + ErrorMessage( oError )  )
+
+      ::CloseFiles()
+
+      lOpen             := .F.
+
+   end
+
+   ErrorBlock( oBlock )
+
+RETURN ( lOpen )
+
+
+
+UTILITY STATIC function TOperacion_CloseFiles() ; local Self AS CLASS TOperacion := QSelf() AS CLASS TOperacion
+
+   if ::oDbf <> nil .AND. ::oDbf:Used()
+      ::oDbf:End()
+      ::oDbf      := nil
+   end
+
+   if ::oTipOpera <> nil
+      ::oTipOpera:End()
+   end
+
+   ::oTipOpera    := nil
+
+RETURN .T.
+
+
+
+UTILITY STATIC function TOperacion_DefineFiles( cPath, cDriver) ; local Self AS CLASS TOperacion := QSelf() AS CLASS TOperacion
+
+   IIF( cPath == nil, cPath := ::cPath, ) ;
+   IIF( cDriver == nil, cDriver := cDriver(), ) ;
+
+   ::oDbf := DbfServer( "Operacio.Dbf", "Operacion" ):New( "Operacio.Dbf", "Operacion", ( cDriver ), "Operaciones", ( cPath ) )
+
+      ::oDbf:AddField( "cCodOpe", "C", 3, 0,,,,, "Código", .F., 100, .F., {} )
+      ::oDbf:AddField( "cDesOpe", "C", 35, 0,,,,, "Nombre", .F., 400, .F., {} )
+      ::oDbf:AddField( "cTipOpe", "C", 3, 0,,,,, "Tipo", .F.,, .T., {} )
+      ::oDbf:AddField( "TipoOpe", "B", 20, 0,,,, {|| ::cStrTipo}, "Tipo", .F., 100, .F., {} )
+      ::oDbf:AddField( "nColor", "N", 10, 0,,,,, "Color de la operación", .F.,, .T., {} )
+      ::oDbf:AddField( "cColor", "B", 20, 0,,,, {|| ::cStrColor()}, "Color", .F., 120, .F., {} )
+
+      ::oDbf:AddIndex( "cCodOpe", "Operacio.Cdx", "cCodOpe",,, .F., .F., "Código",,, .T., .F. )
+      ::oDbf:AddIndex( "cDesOpe", "Operacio.Cdx", "cDesOpe",,, .F., .F., "Nombre",,, .T., .F. )
+
+
+
+RETURN ( ::oDbf )
+
+
+
+UTILITY STATIC function TOperacion_Resource( nMode) ; local Self AS CLASS TOperacion := QSelf() AS CLASS TOperacion
+
+    local oDlg
+   local oGet
+   local oGetTip
+   local oTxtColor
+   local cTxtColor
+   local nSeaColor
+
+   if nMode == 1
+      nSeaColor   := aScan( ::aRgbColor, ( 255 + ( 255 * 256 ) + ( 255 * 65536 ) ) )
+   else
+      nSeaColor   := aScan( ::aRgbColor, ::oDbf:nColor )
+   end
+
+   if nSeaColor <> 0
+      cTxtColor         := ::aStrColor[ nSeaColor ]
+   end
+
+   oDlg = TDialog():New(,,,, LblTitle( nMode ) + "operaciones", "Operacion",, .F.,,,,,, .F.,,,,,, .F., )
+
+
+
+
+
+
+      oGet := TGetHlp():ReDefine( 110, { | u | If( PCount()==0, ::oDbf:cCodOpe, ::oDbf:cCodOpe:= u ) }, oDlg,, "@!", {||    ( NotValid( oGet, ::oDbf:cAlias, .T., "0" ) )},,,,,, .F., {||     ( nMode == 1 )},, .F., .F.,,,,,, nil,,, )
+
+
+
+
+      TGetHlp():ReDefine( 120, { | u | If( PCount()==0, ::oDbf:cDesOpe, ::oDbf:cDesOpe:= u ) }, oDlg,,,,,,,,, .F., {||     ( nMode <> 3 )},, .F., .F.,,,,,, nil,,, )
+
+
+
+
+
+
+      oGetTip := TGetHlp():ReDefine( 130, { | u | If( PCount()==0, ::oDbf:cTipOpe, ::oDbf:cTipOpe:= u ) }, oDlg,,,,,,,,, .F., {||     ( nMode <> 3 )},, .F., .F.,,,,,, nil, "LUPA",, 131 )
+
+         oGetTip:bHelp     := {|| ::oTipOpera:Buscar( oGetTip ) }
+         oGetTip:bValid    := {|| ::oTipOpera:Existe( oGetTip, oGetTip:oHelpText, "cDesTip", .T., .T., "0" ) }
+
+
+
+
+
+
+      oTxtColor := TComboBox():ReDefine( 140, { | u | If( PCount()==0, cTxtColor, cTxtColor:= u ) }, ::aStrColor, oDlg,,,,,,, .F., {||     ( nMode <> 3 )}, ::aResColor,,,, )
+
+
+
+
+
+      TButton():ReDefine( 1, {||( if( ::lPreSave( oTxtColor, nMode ), oDlg:end( 1 ), ) )}, oDlg,,, .F., {||         ( nMode <> 3 )},,, .F. )
+
+
+
+
+
+        TButton():ReDefine( 2, {||( oDlg:end() )}, oDlg,,, .F.,,,, .T. )
+
+
+
+
+
+      TButton():ReDefine( 559, {||( MsgInfo( "Ayuda no definida" ) )}, oDlg,,, .F.,,,, .T. )
+
+   if nMode <> 3
+      oDlg:AddFastKey( 116, {|| if( ::lPreSave( oTxtColor, nMode ), oDlg:end( 1 ), ) } )
+   end
+
+   oDlg:bStart := { || oGet:SetFocus(), oGetTip:lValid() }
+
+    oDlg:Activate( oDlg:bLClicked, oDlg:bMoved, oDlg:bPainted, .T.,,,, oDlg:bRClicked,,, )
+
+RETURN ( oDlg:nResult == 1 )
+
+
+
+UTILITY STATIC function TOperacion_lPreSave( oTxtColor, nMode) ; local Self AS CLASS TOperacion := QSelf() AS CLASS TOperacion
+
+   if nMode == 1 .OR. nMode == 4
+
+      if ::oDbf:SeekInOrd( ::oDbf:cCodOpe, "CCODOPE" )
+         MsgStop( "Código ya existe " + Rtrim( ::oDbf:cCodOpe ) )
+         return .F.
+      end
+
+   end
+
+   if Empty( ::oDbf:cDesOpe )
+      MsgStop( "La descripción de la operación no puede estar vacía." )
+      Return .F.
+   end
+
+   ::oDbf:nColor := ::aRgbColor[ oTxtColor:nAt ]
+
+RETURN .T.
+
+
+
+UTILITY STATIC function TOperacion_cStrColor() ; local Self AS CLASS TOperacion := QSelf() AS CLASS TOperacion
+
+   local nPos
+   local cStrColor   := ""
+
+   if Empty( ::aStrColor )
+      Return ( cStrColor )
+   end
+
+   if Empty( ::aRgbColor )
+      Return ( cStrColor )
+   end
+
+   if Empty( ::oDbf )
+      Return ( cStrColor )
+   end
+
+   nPos  := aScan( ::aRgbColor, ::oDbf:nColor )
+   if nPos <> 0
+      cStrColor   := ::aStrColor[ nPos ]
+   end
+
+Return ( cStrColor )
+
+
+
+UTILITY STATIC function TOperacion_cStrTipo() ; local Self AS CLASS TOperacion := QSelf() AS CLASS TOperacion
+
+Return ( ::oDbf:cTipOpe + " - " + oRetFld( ::oDbf:cTipOpe, ::oTipOpera:oDbf ) )

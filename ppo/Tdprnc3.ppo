@@ -1,0 +1,267 @@
+#line 112 "hbclass.ch"
+   DYNAMIC DivertConstructorCall
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+DECLARE HBClass  New( cName AS String, OPTIONAL SuperParams ) AS CLASS HBClass  Create() AS Object  Instance() AS Object  AddClsMethod( cName AS String, @MethodName(), nScope AS Numeric, n2 AS Numeric, n3 AS Numeric )  AddDelegate( cName AS String, cDelegate AS String, cObject AS String, nScope AS Numeric, lPersistent AS LOGICAL )  AddMultiClsData( cType AS String, uVal, nScope AS Numeric, aDatas AS Array OF String )  AddMultiData( cType AS String, uVal, nScope AS Numeric, aDatas AS Array OF String, x AS LOGICAL, lPer AS LOGICAL )  AddMethod( cName AS String, @MethodName(), nScope AS Numeric, lPersistent AS LOGICAL )  AddInLine( cName AS String, bBlock AS CodeBlock, nScope AS Numeric, lPersistent AS LOGICAL )  AddVirtual( cName AS String )  ModMethod( cName AS String, @MethodName(), nScope AS Numeric, lPersistent AS LOGICAL )  ModClsMethod( cName AS String, @MethodName(), nScope AS Numeric )  ModInline( cName AS String, bBlock AS CodeBlock, nScope AS Numeric, lPersistent AS LOGICAL )  SetOnError( @MethodName() )
+#line 85 "\Fwh1204\Include\FiveWin.Ch"
+   EXTERNAL GetProcAdd
+   EXTERNAL TActiveX
+
+
+
+
+extern errorsys
+#line 96 ".\Prg\Tdprnc3.prg"
+_HB_CLASS TDosPrn ; UTILITY FUNCTION TDosPrn(...); static s_oClass ; local oClassInstance ; local nScope ; nScope := 1 ; if s_oClass == NIL ; s_oClass := IIF(.F.,, HBClass():New( "TDosPrn" , { HBObject():Classh } ) ) ;
+
+     _HB_MEMBER { LastError} ; IIF( !.F., s_oClass:AddMultiData(,, nScope + IIF( .F., 32, 0 ), { "LastError" }, .F., .F. ), )
+     _HB_MEMBER { cPort, cCompress, cNormal, cFormFeed, cBuffer} ; IIF( !.F., s_oClass:AddMultiData(,, nScope + IIF( .F., 32, 0 ), { "cPort" , "cCompress" , "cNormal" , "cFormFeed" , "cBuffer" }, .F., .F. ), )
+     _HB_MEMBER { hDC, nRow, nCol, nLeftMargin, nTopMargin} ; IIF( !.F., s_oClass:AddMultiData(,, nScope + IIF( .F., 32, 0 ), { "hDC" , "nRow" , "nCol" , "nLeftMargin" , "nTopMargin" }, .F., .F. ), )
+     _HB_MEMBER { lAnsiToOem} ; IIF( !.F., s_oClass:AddMultiData(,, nScope + IIF( .F., 32, 0 ), { "lAnsiToOem" }, .F., .F. ), )
+
+     _HB_MEMBER New( cPort) AS CLASS TDosPrn; IIF( .F., s_oClass:ModMethod( "New", @TDosPrn_New(), nScope + IIF( .T., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ), s_oClass:AddMethod( "New", @TDosPrn_New(), nScope + IIF( .T., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ));
+
+     _HB_MEMBER End(); IIF( .F., s_oClass:ModMethod( "End", @TDosPrn_End(), nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ), s_oClass:AddMethod( "End", @TDosPrn_End(), nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ));
+
+     _HB_MEMBER StartPage( ); IIF( !.F., s_oClass:AddVirtual( "StartPage" ), )
+     _HB_MEMBER EndPage(); IIF( .F., s_oClass:ModMethod( "EndPage", @TDosPrn_EndPage(), nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ), s_oClass:AddMethod( "EndPage", @TDosPrn_EndPage(), nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ));
+
+     _HB_MEMBER Command( cStr1, cStr2, cStr3, cStr4, cStr5); IIF( .F., s_oClass:ModMethod( "Command", @TDosPrn_Command(), nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ), s_oClass:AddMethod( "Command", @TDosPrn_Command(), nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ));
+
+     _HB_MEMBER SetCoors( nRow, nCol); IIF( .F., s_oClass:ModMethod( "SetCoors", @TDosPrn_SetCoors(), nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ), s_oClass:AddMethod( "SetCoors", @TDosPrn_SetCoors(), nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ));
+
+
+
+     _HB_MEMBER NewLine(); IIF( .F., s_oClass:ModInline( "NewLine", {|Self | Self, (::cBuffer += Chr(13)+Chr(10) , ::nRow++          , ::nCol    := 0     ) }, nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ), s_oClass:AddInline( "NewLine", {|Self | Self, (::cBuffer += Chr(13)+Chr(10) , ::nRow++          , ::nCol    := 0     ) }, nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ) )
+
+
+
+
+     _HB_MEMBER Write(cText, lAToO); IIF( .F., s_oClass:ModInline( "Write", {|Self,cText, lAToO | Self, (iif(lAtoO == NIL, lAtoO := .T.,), ::cBuffer += iif(lAtoO, AnsitoOem(cText), cText) , ::nCol    += len(cText)                           ) }, nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ), s_oClass:AddInline( "Write", {|Self,cText, lAToO | Self, (iif(lAtoO == NIL, lAtoO := .T.,), ::cBuffer += iif(lAtoO, AnsitoOem(cText), cText) , ::nCol    += len(cText)                           ) }, nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ) )
+
+     _HB_MEMBER Say( nRow, nCol, cText); IIF( .F., s_oClass:ModMethod( "Say", @TDosPrn_Say(), nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ), s_oClass:AddMethod( "Say", @TDosPrn_Say(), nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ));
+
+     _HB_MEMBER SayCmp( nRow, nCol, cText); IIF( .F., s_oClass:ModMethod( "SayCmp", @TDosPrn_SayCmp(), nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ), s_oClass:AddMethod( "SayCmp", @TDosPrn_SayCmp(), nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ));
+
+     _HB_MEMBER LoadFile( cFile); IIF( .F., s_oClass:ModMethod( "LoadFile", @TDosPrn_LoadFile(), nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ), s_oClass:AddMethod( "LoadFile", @TDosPrn_LoadFile(), nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ));
+
+; IF .F. ; __clsActive(s_oClass:hClass) ; s_oClass:Refresh() ; ELSE ; s_oClass:Create() ; END ; oClassInstance := __clsInst( s_oClass:hClass ) ; IF __ObjHasMsg( oClassInstance, "InitClass" ); oClassInstance:InitClass( hb_aParams() ) ; END ; ELSE ; oClassInstance := __clsInst( s_oClass:hClass ) ; END ; IF PCount() > 0 ; DIVERT TO (@DivertConstructorCall()) OF s_oClass ; END ; RETURN oClassInstance AS CLASS TDosPrn ;
+
+
+
+UTILITY STATIC function TDosPrn_New( cPort, lFile) ; local Self AS CLASS TDosPrn := QSelf() AS CLASS TDosPrn
+
+
+     IIF( cPort == nil, cPort := "LPT1", ) ; IIF( lFile == nil, lFile := .T., );
+
+     cPort := Upper(cPort)
+
+     ::cCompress   := "15"
+     ::cNormal     := "18"
+     ::cFormFeed   := "12"
+     ::cBuffer     := ""
+     ::nLeftMargin := 0
+     ::nTopMargin  := 0
+     ::nRow        := 0
+     ::nCol        := 0
+     ::lAnsiToOem  := .T.
+     ::cPort       := cPort+iif(!"."$cPort,".PRN","")
+     ::hDC         := fCreate(::cPort)
+     ::LastError   := 0
+
+     IF ::hDC < 0
+          ::LastError := fError()
+     ENDIF
+
+RETURN ( Self )
+
+
+
+UTILITY STATIC function TDosPrn_End() ; local Self AS CLASS TDosPrn := QSelf() AS CLASS TDosPrn
+
+     IF !empty(::nRow+::nCol)
+          ::EndPage()
+     ENDIF
+
+     ::LastError := 0
+
+     IF !fClose(::hDC)
+          ::LastError := fError()
+     ENDIF
+
+RETURN NIL
+
+
+
+UTILITY STATIC function TDosPrn_EndPage() ; local Self AS CLASS TDosPrn := QSelf() AS CLASS TDosPrn
+
+     ::Command(::cFormFeed)
+
+     ::LastError := 0
+
+     IF fWrite(::hDC, ::cBuffer) < len(::cBuffer)
+          ::LastError := fError()
+     ENDIF
+
+     ::cBuffer := ""
+     ::nRow    := 0
+     ::nCol    := 0
+
+RETURN ( Self )
+
+
+
+UTILITY STATIC function TDosPrn_Command( cStr1, cStr2, cStr3, cStr4, cStr5) ; local Self AS CLASS TDosPrn := QSelf() AS CLASS TDosPrn
+
+     LOCAL cCommand, cToken, cString
+     LOCAL nToken
+
+     cString  := cStr1
+
+     IF cStr2 <> NIL
+          cString += ","+cStr2
+     ENDIF
+
+     IF cStr3 <> NIL
+          cString += ","+cStr3
+     ENDIF
+
+     IF cStr4 <> NIL
+          cString += ","+cStr4
+     ENDIF
+
+     IF cStr5 <> NIL
+          cString += ","+cStr5
+     ENDIF
+
+     cCommand := ""
+     nToken   := 1
+
+     while !Empty(cToken := StrToken(cString, nToken++, ","))
+          cCommand += Chr(Val(cToken))
+     ENDDO
+
+     ::cBuffer += cCommand
+
+RETURN ( Self )
+
+
+
+UTILITY STATIC function TDosPrn_SetCoors( nRow, nCol) ; local Self AS CLASS TDosPrn := QSelf() AS CLASS TDosPrn
+
+     nRow += ::nTopMargin
+     nCol += ::nLeftMargin
+
+     IF ::nRow > nRow
+          ::EndPage()
+          ::StartPage()
+     ENDIF
+
+     IF nRow == ::nRow  .AND. nCol < ::nCol
+          ::EndPage()
+          ::StartPage()
+     ENDIF
+
+     while ::nRow < nRow
+          ::NewLine()
+     ENDDO
+
+     IF nCol > ::nCol
+          ::Write(Space(nCol-::nCol))
+     ENDIF
+
+RETURN ( Self )
+
+
+
+UTILITY STATIC function TDosPrn_Say( nRow, nCol, cText, lAToO) ; local Self AS CLASS TDosPrn := QSelf() AS CLASS TDosPrn
+
+     IIF( lAToO == nil, lAToO := ::lAnsiToOem, ) ;
+
+     ::SetCoors(nRow, nCol)
+     ::Write(cText, lAToO)
+
+RETURN ( Self )
+
+
+
+UTILITY STATIC function TDosPrn_SayCmp( nRow, nCol, cText, lAToO) ; local Self AS CLASS TDosPrn := QSelf() AS CLASS TDosPrn
+
+     IIF( lAToO == nil, lAToO := ::lAnsiToOem, ) ;
+
+     ::SetCoors(nRow, nCol)
+     ::Command(::cCompress)
+     ::cBuffer += iif(lAToO, AnsitoOem(cText), cText)
+     ::nCol    += Int(len(cText)/1.7+.5)
+     ::Command(::cNormal)
+
+RETURN ( Self )
+
+
+
+FUNCTION WorkSheet(cPort)
+
+     LOCAL oPrn
+     LOCAL cLine
+     LOCAL nFor
+
+     cLine := ""
+
+     FOR nFor := 0 TO 7
+          cLine += Str(nFor,1)+Replicate(".",9)
+     NEXT
+
+     cLine := Substr(cLine,3)
+
+     oPrn := TDosPrn():New(cPort)
+
+     oPrn:StartPage()
+
+     FOR nFor := 0 TO 65
+          oPrn:Say(nFor,0,StrZero(nFor,2)+cLine)
+     NEXT
+
+     oPrn:EndPage()
+
+     oPrn:End()
+
+RETURN ( nil )
+
+
+
+UTILITY STATIC function TDosPrn_LoadFile( cFile) ; local Self AS CLASS TDosPrn := QSelf() AS CLASS TDosPrn
+
+     local cRead
+     local hFile
+     local nBytes
+     local nBufSize  := 2000
+
+     if !file( cFile )
+         return nil
+     end
+
+     ::cBuffer := ""
+
+     hFile  := FOpen( cFile )
+     while ( nBytes := FRead( hFile, @cRead, nBufSize ) ) > 0
+          ::cBuffer  := SubStr( cRead, 1, nBytes )
+     end
+
+     ::cBuffer := AnsiToOem( ::cBuffer )
+     FClose( hFile )
+
+RETURN ( Self )

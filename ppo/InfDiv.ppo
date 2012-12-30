@@ -1,0 +1,245 @@
+#line 112 "hbclass.ch"
+   DYNAMIC DivertConstructorCall
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+DECLARE HBClass  New( cName AS String, OPTIONAL SuperParams ) AS CLASS HBClass  Create() AS Object  Instance() AS Object  AddClsMethod( cName AS String, @MethodName(), nScope AS Numeric, n2 AS Numeric, n3 AS Numeric )  AddDelegate( cName AS String, cDelegate AS String, cObject AS String, nScope AS Numeric, lPersistent AS LOGICAL )  AddMultiClsData( cType AS String, uVal, nScope AS Numeric, aDatas AS Array OF String )  AddMultiData( cType AS String, uVal, nScope AS Numeric, aDatas AS Array OF String, x AS LOGICAL, lPer AS LOGICAL )  AddMethod( cName AS String, @MethodName(), nScope AS Numeric, lPersistent AS LOGICAL )  AddInLine( cName AS String, bBlock AS CodeBlock, nScope AS Numeric, lPersistent AS LOGICAL )  AddVirtual( cName AS String )  ModMethod( cName AS String, @MethodName(), nScope AS Numeric, lPersistent AS LOGICAL )  ModClsMethod( cName AS String, @MethodName(), nScope AS Numeric )  ModInline( cName AS String, bBlock AS CodeBlock, nScope AS Numeric, lPersistent AS LOGICAL )  SetOnError( @MethodName() )
+#line 85 "\Fwh1204\Include\FiveWin.Ch"
+   EXTERNAL GetProcAdd
+   EXTERNAL TActiveX
+
+
+
+
+extern errorsys
+#line 8 ".\Prg\InfDiv.prg"
+_HB_CLASS InfDiv ; UTILITY FUNCTION InfDiv(...); static s_oClass ; local oClassInstance ; local nScope ; nScope := 1 ; if s_oClass == NIL ; s_oClass := IIF(.F.,, HBClass():New( "InfDiv" , {TInfGen():classh} ) ) ; ;
+
+   _HB_MEMBER {AS OBJECT oDbfDiv} ; IIF( !.F., s_oClass:AddMultiData( "OBJECT",, nScope + IIF( .F., 32, 0 ), { "oDbfDiv" }, .F., .F. ), )
+   _HB_MEMBER {AS CHARACTER cDivOrg} ; IIF( !.F., s_oClass:AddMultiData( "CHARACTER",, nScope + IIF( .F., 32, 0 ), { "cDivOrg" }, .F., .F. ), )
+   _HB_MEMBER {AS CHARACTER cDivDes} ; IIF( !.F., s_oClass:AddMultiData( "CHARACTER",, nScope + IIF( .F., 32, 0 ), { "cDivDes" }, .F., .F. ), )
+   _HB_MEMBER {AS LOGIC lAllDiv} ; IIF( !.F., s_oClass:AddMultiData( "LOGIC", .T., nScope + IIF( .F., 32, 0 ), { "lAllDiv" }, .F., .F. ), )
+   _HB_MEMBER {AS OBJECT oBandera} ; IIF( !.F., s_oClass:AddMultiData( "OBJECT",, nScope + IIF( .F., 32, 0 ), { "oBandera" }, .F., .F. ), )
+
+   _HB_MEMBER Create(); IIF( .F., s_oClass:ModMethod( "Create", @InfDiv_Create(), nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ), s_oClass:AddMethod( "Create", @InfDiv_Create(), nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ));
+
+   _HB_MEMBER OpenFiles(); IIF( .F., s_oClass:ModMethod( "OpenFiles", @InfDiv_OpenFiles(), nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ), s_oClass:AddMethod( "OpenFiles", @InfDiv_OpenFiles(), nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ));
+
+   _HB_MEMBER CloseFiles(); IIF( .F., s_oClass:ModMethod( "CloseFiles", @InfDiv_CloseFiles(), nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ), s_oClass:AddMethod( "CloseFiles", @InfDiv_CloseFiles(), nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ));
+
+   _HB_MEMBER lResource( cFld); IIF( .F., s_oClass:ModMethod( "lResource", @InfDiv_lResource(), nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ), s_oClass:AddMethod( "lResource", @InfDiv_lResource(), nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ));
+
+   _HB_MEMBER lGenerate(); IIF( .F., s_oClass:ModMethod( "lGenerate", @InfDiv_lGenerate(), nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ), s_oClass:AddMethod( "lGenerate", @InfDiv_lGenerate(), nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ));
+
+; IF .F. ; __clsActive(s_oClass:hClass) ; s_oClass:Refresh() ; ELSE ; s_oClass:Create() ; END ; oClassInstance := __clsInst( s_oClass:hClass ) ; IF __ObjHasMsg( oClassInstance, "InitClass" ); oClassInstance:InitClass( hb_aParams() ) ; END ; ELSE ; oClassInstance := __clsInst( s_oClass:hClass ) ; END ; IF PCount() > 0 ; DIVERT TO (@DivertConstructorCall()) OF s_oClass ; END ; RETURN oClassInstance AS CLASS InfDiv ;
+
+
+
+UTILITY STATIC function InfDiv_Create() ; local Self AS CLASS InfDiv := QSelf() AS CLASS InfDiv
+
+   ::AddField( "CCODDIV",      "C",  3, 0, {|| "" },                    "Código",         .T., "Código de la divisa",                                  8, .F. )
+   ::AddField( "CNOMDIV",      "C", 20, 0, {|| "" },                    "Nombre",         .T., "Nombre de la divisa",                                 20, .F. )
+   ::AddField( "DACTDIV",      "D",  8, 0, {|| "" },                    "Ult. camb.",     .T., "Fecha ultimo cambio de la divisa",                    12, .F. )
+   ::AddField( "NPTSDIV",      "N", 16, 0, {|| "@E 999,999.999999" },   "Ptas.",          .T., "Valor en pesetas de la divisa",                       16, .F. )
+   ::AddField( "NEURDIV",      "N", 16, 0, {|| "@E 999,999.999999" },   "Euros",          .T., "Valor en euros de la divisa",                         16, .F. )
+   ::AddField( "NNINDIV",      "N",  2, 0, {|| "" },                    "Und. Com.",      .F., "Unidades de compra de la divisa",                      5, .F. )
+   ::AddField( "NDINDIV",      "N",  1, 0, {|| "" },                    "Dec. Com.",      .F., "Decimales de compra de la divisa",                     5, .F. )
+   ::AddField( "NRINDIV",      "N",  1, 0, {|| "" },                    "Red. Com.",      .F., "Decimales de redondeo de la divisa",                   5, .F. )
+   ::AddField( "NNOUDIV",      "N",  2, 0, {|| "" },                    "Und. Vta.",      .F., "Unidades de venta de la divisa",                       5, .F. )
+   ::AddField( "NDOUDIV",      "N",  1, 0, {|| "" },                    "Dec. Vta.",      .F., "Decimales de venta de la divisa",                      5, .F. )
+   ::AddField( "NROUDIV",      "N",  1, 0, {|| "" },                    "Red. Vta.",      .F., "Decimales de redondeo de la divisa",                   5, .F. )
+   ::AddField( "NNPVDIV",      "N",  2, 0, {|| "" },                    "Und. P. Ver",    .F., "Unidades de punto verde de la divisa",                 5, .F. )
+   ::AddField( "NDPVDIV",      "N",  1, 0, {|| "" },                    "Dec. P. Ver",    .F., "Decimales de punto verde de la divisa",                5, .F. )
+   ::AddField( "NRPVDIV",      "N",  1, 0, {|| "" },                    "Red. P. Ver",    .F., "Decimales de redondeo de punto verde  de la divisa",   5, .F. )
+
+   ::AddTmpIndex ( "CCODDIV", "CCODDIV" )
+
+   ::lDefFecInf   := .F.
+   ::lDefSerInf   := .F.
+   ::lDefDivInf   := .F.
+
+RETURN ( Self )
+
+
+
+UTILITY STATIC function InfDiv_OpenFiles() ; local Self AS CLASS InfDiv := QSelf() AS CLASS InfDiv
+
+   local lOpen    := .T.
+   local oBlock   := ErrorBlock( {| oError | ApoloBreak( oError ) } )
+
+   BEGIN SEQUENCE
+
+      ::oDbfDiv := DbfServer( "DIVISAS.DBF", ):NewOpen( "DIVISAS.DBF",, ( cDriver() ),, ( cPatDat() ), .F., .T., .F., .F. ) ; ::oDbfDiv:AddBag( "DIVISAS.CDX" ) ; ::oDbfDiv:AddBag( ) ; ::oDbfDiv:AutoIndex()
+
+      ::oBandera     := TBandera():New()
+
+   RECOVER
+
+      msgStop( "Imposible abrir todas las bases de datos" )
+      ::CloseFiles()
+      lOpen          := .F.
+
+   end
+
+   ErrorBlock( oBlock )
+
+RETURN ( lOpen )
+
+
+
+UTILITY STATIC function InfDiv_CloseFiles() ; local Self AS CLASS InfDiv := QSelf() AS CLASS InfDiv
+
+   if !Empty( ::oDbfDiv ) .AND. ::oDbfDiv:Used()
+      ::oDbfDiv:End()
+   end
+
+   ::oDbfDiv  := nil
+   ::oBandera := nil
+
+
+RETURN ( Self )
+
+
+
+UTILITY STATIC function InfDiv_lResource( cFld) ; local Self AS CLASS InfDiv := QSelf() AS CLASS InfDiv
+
+   local cSayDivOrg
+   local cSayDivDes
+   local oSayDivOrg
+   local oSayDivDes
+   local oDivOrg
+   local oDivDes
+
+   if !::StdResource( "INF_DIV01" )
+      return .F.
+   end
+
+
+
+
+
+   ::cDivOrg   := dbFirst( ::oDbfDiv, 1 )
+   ::cDivDes   := dbLast(  ::oDbfDiv, 1 )
+   cSayDivOrg  := dbFirst( ::oDbfDiv, 2 )
+   cSayDivDes  := dbLast(  ::oDbfDiv, 2 )
+
+
+
+   TCheckBox():ReDefine( ( 60 ), { | u | If( PCount()==0, ::lAllDiv, ::lAllDiv:= u ) }, ::oFld:aDialogs[1],,,,,,, .F.,, .F. )
+
+
+
+
+
+
+   oDivOrg := TGetHlp():ReDefine( ( 70 ), { | u | If( PCount()==0, ::cDivOrg, ::cDivOrg:= u ) }, ::oFld:aDialogs[1],,,, "N/W*",,,,, .F., {||     ( !::lAllDiv )},, .F., .F.,,,,,, nil, "LUPA",, )
+
+      oDivOrg:bValid   := {|| cNbrDiv( oDivOrg, oSayDivOrg, ::oDbfDiv:cAlias ) }
+      oDivOrg:bHelp    := {|| BrwNbrDiv( oDivOrg, oSayDivOrg, ::oDbfDiv:cAlias, ::oBandera ) }
+
+
+
+
+
+   oSayDivOrg := TGetHlp():ReDefine( ( 80 ), { | u | If( PCount()==0, cSayDivOrg, cSayDivOrg:= u ) }, ::oFld:aDialogs[1],,,, "N/W*",,,,, .F., {||     .F.},, .F., .F.,,,,,, nil,,, )
+
+
+
+
+
+
+   oDivDes := TGetHlp():ReDefine( ( 90 ), { | u | If( PCount()==0, ::cDivDes, ::cDivDes:= u ) }, ::oFld:aDialogs[1],,,, "N/W*",,,,, .F., {||     ( !::lAllDiv )},, .F., .F.,,,,,, nil, "LUPA",, )
+
+      oDivDes:bValid   := {|| cNbrDiv( oDivDes, oSayDivDes, ::oDbfDiv:cAlias ) }
+      oDivDes:bHelp    := {|| BrwNbrDiv( oDivDes, oSayDivDes, ::oDbfDiv:cAlias, ::oBandera ) }
+
+
+
+
+   oSayDivDes := TGetHlp():ReDefine( ( 100 ), { | u | If( PCount()==0, cSayDivDes, cSayDivDes:= u ) }, ::oFld:aDialogs[1],,,,,,,,, .F., {||     .F.},, .F., .F.,,,,,, nil,,, )
+
+
+
+
+
+   ::oMtrInf:SetTotal( ::oDbfDiv:Lastrec() )
+
+   ::CreateFilter( aItmDiv(), ::oDbfDiv:cAlias )
+
+RETURN .T.
+
+
+
+
+
+
+UTILITY STATIC function InfDiv_lGenerate() ; local Self AS CLASS InfDiv := QSelf() AS CLASS InfDiv
+
+   local cExpHead := ""
+
+   ::oDlg:Disable()
+   ::oBtnCancel:Enable()
+   ::oDbf:Zap()
+
+
+   ::aHeader      := {  {|| "Fecha  : " + Dtoc( Date() ) }, {|| "Divisa : " + if( ::lAllDiv, "Todos", AllTrim( ::cDivOrg ) + " > " + AllTrim( ::cDivDes ) ) } }
+
+   ::oDbfDiv:OrdSetFocus( "CCODDIV" )
+
+   if !Empty( ::oFilter:cExpFilter )
+      cExpHead       := ::oFilter:cExpFilter
+   else
+      cExpHead       := ".t."
+   end
+
+   ::oDbfDiv:GoTop()
+
+   while !::lBreak .AND. !::oDbfDiv:Eof()
+
+      if ( ::lAllDiv .OR. ( ::oDbfDiv:cCodDiv >= ::cDivOrg .AND. ::oDbfDiv:cCodDiv <= ::cDivDes ) )
+
+         ::oDbf:Append()
+
+         ::oDbf:cCodDiv   := ::oDbfDiv:cCodDiv
+         ::oDbf:cNomDiv   := ::oDbfDiv:cNomDiv
+         ::oDbf:dActDiv   := ::oDbfDiv:dActDiv
+         ::oDbf:nPtsDiv   := ::oDbfDiv:nPtsDiv
+         ::oDbf:nEurDiv   := ::oDbfDiv:nEurDiv
+         ::oDbf:nNinDiv   := ::oDbfDiv:nNinDiv
+         ::oDbf:nDinDiv   := ::oDbfDiv:nDinDiv
+         ::oDbf:nRinDiv   := ::oDbfDiv:nRinDiv
+         ::oDbf:nNouDiv   := ::oDbfDiv:nNouDiv
+         ::oDbf:nDouDiv   := ::oDbfDiv:nDouDiv
+         ::oDbf:nRouDiv   := ::oDbfDiv:nRouDiv
+         ::oDbf:nNpvDiv   := ::oDbfDiv:nNpvDiv
+         ::oDbf:nDpvDiv   := ::oDbfDiv:nDpvDiv
+         ::oDbf:nRpvDiv   := ::oDbfDiv:nRpvDiv
+
+         ::oDbf:Save()
+
+      end
+
+      ::oDbfDiv:Skip()
+
+      ::oMtrInf:AutoInc( ::oDbfDiv:OrdKeyNo() )
+
+   end
+
+   ::oMtrInf:AutoInc( ::oDbfDiv:LastRec() )
+
+   ::oDlg:Enable()
+
+RETURN ( ::oDbf:LastRec() > 0 )

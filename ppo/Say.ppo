@@ -1,0 +1,284 @@
+#line 112 "hbclass.ch"
+   DYNAMIC DivertConstructorCall
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+DECLARE HBClass  New( cName AS String, OPTIONAL SuperParams ) AS CLASS HBClass  Create() AS Object  Instance() AS Object  AddClsMethod( cName AS String, @MethodName(), nScope AS Numeric, n2 AS Numeric, n3 AS Numeric )  AddDelegate( cName AS String, cDelegate AS String, cObject AS String, nScope AS Numeric, lPersistent AS LOGICAL )  AddMultiClsData( cType AS String, uVal, nScope AS Numeric, aDatas AS Array OF String )  AddMultiData( cType AS String, uVal, nScope AS Numeric, aDatas AS Array OF String, x AS LOGICAL, lPer AS LOGICAL )  AddMethod( cName AS String, @MethodName(), nScope AS Numeric, lPersistent AS LOGICAL )  AddInLine( cName AS String, bBlock AS CodeBlock, nScope AS Numeric, lPersistent AS LOGICAL )  AddVirtual( cName AS String )  ModMethod( cName AS String, @MethodName(), nScope AS Numeric, lPersistent AS LOGICAL )  ModClsMethod( cName AS String, @MethodName(), nScope AS Numeric )  ModInline( cName AS String, bBlock AS CodeBlock, nScope AS Numeric, lPersistent AS LOGICAL )  SetOnError( @MethodName() )
+#line 85 "\Fwh1204\Include\FiveWin.ch"
+   EXTERNAL GetProcAdd
+   EXTERNAL TActiveX
+
+
+
+
+extern errorsys
+#line 26 ".\Prg\Say.prg"
+_HB_CLASS TSay ; UTILITY FUNCTION TSay(...); static s_oClass ; local oClassInstance ; local nScope ; nScope := 1 ; if s_oClass == NIL ; s_oClass := IIF(.F.,, HBClass():New( "TSay" , {TControl():classh} ) ) ; ;
+
+   _HB_MEMBER { l3D} ; IIF( !.F., s_oClass:AddMultiData(,, nScope + IIF( .F., 32, 0 ), { "l3D" }, .F., .F. ), )
+   _HB_MEMBER { cPicture} ; IIF( !.F., s_oClass:AddMultiData(,, nScope + IIF( .F., 32, 0 ), { "cPicture" }, .F., .F. ), )
+   _HB_MEMBER { bGet} ; IIF( !.F., s_oClass:AddMultiData(,, nScope + IIF( .F., 32, 0 ), { "bGet" }, .F., .F. ), )
+   _HB_MEMBER { lWantClick} ; IIF( !.F., s_oClass:AddMultiData(,, nScope + IIF( .F., 32, 0 ), { "lWantClick" }, .F., .F. ), )
+
+
+
+   _HB_MEMBER New( nRow, nCol, bText, oWnd, cPicture, oFont, lCentered, lRight, lBorder, lPixels, nClrText, nClrBack, nWidth, nHeight, lDesign, lUpdate, lShaded, lBox, lRaised) AS CLASS TSay; IIF( .F., s_oClass:ModMethod( "New", @TSay_New(), nScope + IIF( .T., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ), s_oClass:AddMethod( "New", @TSay_New(), nScope + IIF( .T., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ));
+
+
+   _HB_MEMBER ReDefine( nId, bText, oWnd, cPicture,  nClrText, nClrBack, lUpdate, oFont) AS CLASS TSay; IIF( .F., s_oClass:ModMethod( "ReDefine", @TSay_ReDefine(), nScope + IIF( .T., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ), s_oClass:AddMethod( "ReDefine", @TSay_ReDefine(), nScope + IIF( .T., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ));
+
+   _HB_MEMBER cToChar(); IIF( .F., s_oClass:ModInline( "cToChar", {|Self | Self, ::TControl:cToChar( "STATIC" ) }, nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ), s_oClass:AddInline( "cToChar", {|Self | Self, ::TControl:cToChar( "STATIC" ) }, nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ) )
+
+   _HB_MEMBER Default(); IIF( .F., s_oClass:ModMethod( "Default", @TSay_Default(), nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ), s_oClass:AddMethod( "Default", @TSay_Default(), nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ));
+
+   _HB_MEMBER cGenPrg(); IIF( .F., s_oClass:ModMethod( "cGenPrg", @TSay_cGenPrg(), nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ), s_oClass:AddMethod( "cGenPrg", @TSay_cGenPrg(), nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ));
+
+
+      _HB_MEMBER EraseBkGnd( hDC); IIF( .F., s_oClass:ModMethod( "EraseBkGnd", @TSay_EraseBkGnd(), nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ), s_oClass:AddMethod( "EraseBkGnd", @TSay_EraseBkGnd(), nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ));
+
+
+   _HB_MEMBER HandleEvent( nMsg, nWParam, nLParam); IIF( .F., s_oClass:ModMethod( "HandleEvent", @TSay_HandleEvent(), nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ), s_oClass:AddMethod( "HandleEvent", @TSay_HandleEvent(), nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ));
+
+   _HB_MEMBER Initiate( hDlg); IIF( .F., s_oClass:ModMethod( "Initiate", @TSay_Initiate(), nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ), s_oClass:AddMethod( "Initiate", @TSay_Initiate(), nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ));
+
+   _HB_MEMBER Refresh(); IIF( .F., s_oClass:ModInline( "Refresh", {|Self | Self, If( ::bSetGet <> nil, ::SetText( Eval( ::bSetGet ) ),) }, nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ), s_oClass:AddInline( "Refresh", {|Self | Self, If( ::bSetGet <> nil, ::SetText( Eval( ::bSetGet ) ),) }, nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ) )
+
+   _HB_MEMBER SetText( cText); IIF( .F., s_oClass:ModMethod( "SetText", @TSay_SetText(), nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ), s_oClass:AddMethod( "SetText", @TSay_SetText(), nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ));
+
+   _HB_MEMBER VarPut( cValue); IIF( .F., s_oClass:ModMethod( "VarPut", @TSay_VarPut(), nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ), s_oClass:AddMethod( "VarPut", @TSay_VarPut(), nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ));
+
+; IF .F. ; __clsActive(s_oClass:hClass) ; s_oClass:Refresh() ; ELSE ; s_oClass:Create() ; END ; oClassInstance := __clsInst( s_oClass:hClass ) ; IF __ObjHasMsg( oClassInstance, "InitClass" ); oClassInstance:InitClass( hb_aParams() ) ; END ; ELSE ; oClassInstance := __clsInst( s_oClass:hClass ) ; END ; IF PCount() > 0 ; DIVERT TO (@DivertConstructorCall()) OF s_oClass ; END ; RETURN oClassInstance AS CLASS TSay ;
+
+
+
+
+
+UTILITY STATIC function TSay_New( nRow, nCol, bText, oWnd, cPicture, oFont, lCentered, lRight, lBorder, lPixels, nClrText, nClrBack, nWidth, nHeight, lDesign, lUpdate, lShaded, lBox, lRaised) ; local Self AS CLASS TSay := QSelf() AS CLASS TSay
+
+
+
+
+
+
+
+
+
+
+   IIF( nRow == nil, nRow := 0, ) ; IIF( nCol == nil, nCol := 0, ); IIF( lBorder == nil, lBorder := .F., ); IIF( lCentered == nil, lCentered := .F., ); IIF( lRight == nil, lRight := .F., ); IIF( lPixels == nil, lPixels := .F., ); IIF( oWnd == nil, oWnd := GetWndDefault(), ); IIF( nClrText == nil, nClrText := oWnd:nClrText, ); IIF( nClrBack == nil, nClrBack := iif(Upper( oWnd:Classname() ) <> "TWINDOW", GetSysColor( 15 ), oWnd:nClrPane), ); IIF( nHeight == nil, nHeight := If( oFont <> nil, Abs( oFont:nHeight ), 15 ), ); IIF( lDesign == nil, lDesign := .F., ); IIF( bText == nil, bText := { || "" }, ); IIF( lUpdate == nil, lUpdate := .F., ); IIF( lShaded == nil, lShaded := .F., ); IIF( lBox == nil, lBox := .F., ); IIF( lRaised == nil, lRaised := .F., );
+
+   ::l3D       = lShaded .OR. lBox .OR. lRaised
+   ::bGet      = bText
+   ::bSetGet   = bText
+   ::oFont     = oFont
+   ::cPicture  = cPicture
+
+
+   ::cCaption  = If( Empty( cPicture ), cValToChar( Eval( bText ) ), Transform( Eval( bText ), cPicture ) )
+
+   IIF( nWidth == nil, nWidth := 6 * Len( ::cCaption ) - 4, ) ;
+
+   if ! lPixels
+      ::nTop  = nRow * 15 + 2
+      ::nLeft = nCol * 6
+   else
+      ::nTop  = nRow
+      ::nLeft = nCol
+   endif
+
+   ::nBottom   = ::nTop + nHeight - 1
+   ::nRight    = ::nLeft + nWidth - 1
+
+   ::oWnd      = oWnd
+   ::nId       = ::GetNewId()
+
+
+
+
+
+
+   ::nStyle    = nOR( 1073741824, 268435456, If( lDesign, nOr( 67108864, 65536 ), 0 ), If( lCentered, 1, If( lRight, 2, 0 ) ), If( lBorder, 8388608, 0 ), If( lShaded, 4, 0 ), If( lBox,    5,  0 ), If( lRaised, 6, 0 ) )
+   ::lDrag     = lDesign
+   ::lCaptured = .F.
+   ::lUpdate   = lUpdate
+   ::lWantClick = .F.
+
+   ::SetColor( nClrText, nClrBack )
+
+   if ! Empty( oWnd:hWnd )
+      ::Create( "STATIC" )
+      ::Default()
+      if oFont <> nil
+         ::SetFont( oFont )
+      endif
+      if ::l3D
+         ::Set3DLook()
+      endif
+      oWnd:AddControl( Self )
+   else
+      oWnd:DefControl( Self )
+   endif
+
+   if ::lDrag
+      ::CheckDots()
+   endif
+
+return Self
+
+
+
+
+UTILITY STATIC function TSay_ReDefine( nId, bText, oWnd, cPicture, nClrText, nClrBack, lUpdate, oFont) ; local Self AS CLASS TSay := QSelf() AS CLASS TSay
+
+
+
+
+   IIF( oWnd == nil, oWnd := GetWndDefault(), ) ; IIF( nClrText == nil, nClrText := oWnd:nClrText, ); IIF( nClrBack == nil, nClrBack := GetSysColor( 15 ), ); IIF( lUpdate == nil, lUpdate := .F., );
+
+   ::l3D       = .F.
+   ::nId       = nId
+   ::bGet      = bText
+   ::bSetGet   = bText
+   ::cPicture  = cPicture
+   ::oFont     = oFont
+
+   if bText <> nil
+
+      ::cCaption = If( Empty( cPicture ), cValToChar( Eval( bText ) ), Transform( Eval( bText ), cPicture ) )
+   endif
+
+   ::oWnd      = oWnd
+   ::hWnd      = 0
+   ::lDrag     = .F.
+   ::lCaptured = .F.
+   ::lUpdate   = lUpdate
+   ::lWantClick = .F.
+
+   ::SetColor( nClrText, nClrBack )
+   oWnd:DefControl( Self )
+
+return Self
+
+
+
+UTILITY STATIC function TSay_Initiate( hDlg) ; local Self AS CLASS TSay := QSelf() AS CLASS TSay
+
+   ::TControl:Initiate( hDlg )
+
+   if ! IsAppThemed()
+      if ::lTransparent
+         if ! Empty( ::oWnd:oBrush:hBitmap )
+            ::SetBrush( ::oWnd:oBrush )
+         endif
+      endif
+   endif
+
+   if ::cCaption <> nil
+      SetWindowText( ::hWnd, ::cCaption )
+   else
+      ::cCaption = GetWindowText( ::hWnd )
+   endif
+
+return nil
+
+
+
+UTILITY STATIC function TSay_HandleEvent( nMsg, nWParam, nLParam) ; local Self AS CLASS TSay := QSelf() AS CLASS TSay
+
+   if nMsg == 513
+
+      return ::LButtonDown( nHiWord( nLParam ), nLoWord( nLParam ), nWParam )
+   endif
+
+   if ( ( ::lDrag .OR. ::lWantClick ) .AND. nMsg == 132 )
+      return DefWindowProc( ::hWnd, nMsg, nWParam, nLParam )
+   endif
+
+return ::TControl:HandleEvent( nMsg, nWParam, nLParam )
+
+
+
+UTILITY STATIC function TSay_Default() ; local Self AS CLASS TSay := QSelf() AS CLASS TSay
+
+   if ::oFont <> nil
+      ::SetFont( ::oFont )
+   else
+      ::SetFont( ::oWnd:oFont )
+   endif
+
+return nil
+
+
+
+UTILITY STATIC function TSay_cGenPrg() ; local Self AS CLASS TSay := QSelf() AS CLASS TSay
+
+
+
+
+   local cCode := Chr(13)+Chr(10) + "   @ " + Str( ::nTop, 3 ) + ", " +  Str( ::nLeft, 3 ) + ' SAY "' + ::cCaption +  '" SIZE ' + Str( ::nRight - ::nTop, 3 ) + ", " +  Str( ::nBottom - ::nTop, 3 ) + " PIXEL OF oWnd" + Chr(13)+Chr(10)
+return cCode
+
+
+
+
+
+UTILITY STATIC function TSay_EraseBkGnd( hDC) ; local Self AS CLASS TSay := QSelf() AS CLASS TSay
+
+   IIF( ::lTransparent == nil, ::lTransparent := .F., ) ;
+
+   if IsAppThemed() .OR. ::lTransparent
+      return 1
+   endif
+
+return ::TControl:EraseBkGnd( hDC )
+
+
+
+
+
+UTILITY STATIC function TSay_SetText( cText) ; local Self AS CLASS TSay := QSelf() AS CLASS TSay
+
+   local hDC
+
+   IIF( ::lTransparent == nil, ::lTransparent := .F., ) ;
+
+
+   ::cCaption := If( ::cPicture <> nil, Transform( cText, ::cPicture ), cValToChar( cText ) )
+
+
+      if IsAppThemed() .OR. ::lTransparent
+         DrawPBack( ::hWnd, hDC := GetDC( ::hWnd ) )
+         ReleaseDC( ::hWnd, hDC )
+      endif
+
+
+   SetWindowText( ::hWnd, ::cCaption )
+   ::VarPut( ::cCaption )
+
+return nil
+
+
+
+UTILITY STATIC function TSay_VarPut( cValue) ; local Self AS CLASS TSay := QSelf() AS CLASS TSay
+
+   if ! Empty( ::cPicture )
+      cValue = Transform( cValue, ::cPicture )
+   else
+      cValue = cValToChar( cValue )
+   endif
+
+   ::bGet = { || cValue }
+
+return nil

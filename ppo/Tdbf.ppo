@@ -1,0 +1,2194 @@
+#line 112 "\xHarbour\Include\HBClass.ch"
+   DYNAMIC DivertConstructorCall
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+DECLARE HBClass  New( cName AS String, OPTIONAL SuperParams ) AS CLASS HBClass  Create() AS Object  Instance() AS Object  AddClsMethod( cName AS String, @MethodName(), nScope AS Numeric, n2 AS Numeric, n3 AS Numeric )  AddDelegate( cName AS String, cDelegate AS String, cObject AS String, nScope AS Numeric, lPersistent AS LOGICAL )  AddMultiClsData( cType AS String, uVal, nScope AS Numeric, aDatas AS Array OF String )  AddMultiData( cType AS String, uVal, nScope AS Numeric, aDatas AS Array OF String, x AS LOGICAL, lPer AS LOGICAL )  AddMethod( cName AS String, @MethodName(), nScope AS Numeric, lPersistent AS LOGICAL )  AddInLine( cName AS String, bBlock AS CodeBlock, nScope AS Numeric, lPersistent AS LOGICAL )  AddVirtual( cName AS String )  ModMethod( cName AS String, @MethodName(), nScope AS Numeric, lPersistent AS LOGICAL )  ModClsMethod( cName AS String, @MethodName(), nScope AS Numeric )  ModInline( cName AS String, bBlock AS CodeBlock, nScope AS Numeric, lPersistent AS LOGICAL )  SetOnError( @MethodName() )
+#line 29 ".\Prg\Tdbf.prg"
+_HB_CLASS TDbf ; UTILITY FUNCTION TDbf(...); static s_oClass ; local oClassInstance ; local nScope ; nScope := 1 ; if s_oClass == NIL ; s_oClass := IIF(.F.,, HBClass():New( "TDbf" , { HBObject():Classh } ) ) ;
+
+
+    _HB_MEMBER {AS ARRAY aTField, aTIndex, aTFilter,     aBuffer, aStatus} ; IIF( !.F., s_oClass:AddMultiData( "ARRAY",, nScope + IIF( .F., 32, 0 ), { "aTField" , "aTIndex" , "aTFilter" , "aBuffer" , "aStatus" }, .F., .F. ), )
+
+    _HB_MEMBER {AS STRING cAlias, cVer, cRDD, cFile, cName, cPath,    cFldInvalid, cComment} ; IIF( !.F., s_oClass:AddMultiData( "STRING",, nScope + IIF( .F., 32, 0 ), { "cAlias" , "cVer" , "cRDD" , "cFile" , "cName" , "cPath" , "cFldInvalid" , "cComment" }, .F., .F. ), )
+
+    _HB_MEMBER {AS NUMERIC nArea, FieldCount, hDataFile, Count,        nType, nLang, nRecno} ; IIF( !.F., s_oClass:AddMultiData( "NUMERIC",, nScope + IIF( .F., 32, 0 ), { "nArea" , "FieldCount" , "hDataFile" , "Count" , "nType" , "nLang" , "nRecno" }, .F., .F. ), )
+
+
+
+    _HB_MEMBER {AS LOGICAL lRecycle, lShared, lReadOnly, lProtec,      lScope, Eof, Bof,         lMemo, lValid, lAppend, lCount, lFilter,    lBuffer} ; IIF( !.F., s_oClass:AddMultiData( "LOGICAL",, nScope + IIF( .F., 32, 0 ), { "lRecycle" , "lShared" , "lReadOnly" , "lProtec" , "lScope" , "Eof" , "Bof" , "lMemo" , "lValid" , "lAppend" , "lCount" , "lFilter" , "lBuffer" }, .F., .F. ), )
+
+    _HB_MEMBER {AS CODEBLOCK bNetError, bOnCreate, bOnOpen, bOnClose,    bOpenError, bBof, bEof, bLFor, bLWhile} ; IIF( !.F., s_oClass:AddMultiData( "CODEBLOCK",, nScope + IIF( .F., 32, 0 ), { "bNetError" , "bOnCreate" , "bOnOpen" , "bOnClose" , "bOpenError" , "bBof" , "bEof" , "bLFor" , "bLWhile" }, .F., .F. ), )
+    _HB_MEMBER {AS OBJECT oIndex, oFilter} ; IIF( !.F., s_oClass:AddMultiData( "OBJECT",, nScope + IIF( .F., 32, 0 ), { "oIndex" , "oFilter" }, .F., .F. ), )
+    _HB_MEMBER { Cargo} ; IIF( !.F., s_oClass:AddMultiData(,, nScope + IIF( .F., 32, 0 ), { "Cargo" }, .F., .F. ), )
+
+    _HB_MEMBER {AS STRING ClsName} ; IIF( !.F., s_oClass:AddMultiData( "STRING", "TDBF", nScope + IIF( .F., 32, 0 ), { "ClsName" }, .F., .F. ), )
+
+
+
+    _HB_MEMBER New( cFile, cName, cRDD, cComment, cPath) AS CLASS TDbf; IIF( .F., s_oClass:ModMethod( "New", @TDbf_New(), nScope + IIF( .T., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ), s_oClass:AddMethod( "New", @TDbf_New(), nScope + IIF( .T., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ));
+    _HB_MEMBER Use( cFile, cPath, cComment) AS CLASS TDbf; IIF( .F., s_oClass:ModMethod( "Use", @TDbf_Use(), nScope + IIF( .T., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ), s_oClass:AddMethod( "Use", @TDbf_Use(), nScope + IIF( .T., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ));
+
+    _HB_MEMBER NewOpen( cFile, cName, cRDD, cComment, cPath,  lRecycle, lShared, lReadOnly, lProtec) AS CLASS TDbf; IIF( .F., s_oClass:ModMethod( "NewOpen", @TDbf_NewOpen(), nScope + IIF( .T., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ), s_oClass:AddMethod( "NewOpen", @TDbf_NewOpen(), nScope + IIF( .T., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ));
+    _HB_MEMBER AutoField(); IIF( .F., s_oClass:ModMethod( "AutoField", @TDbf_AutoField(), nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ), s_oClass:AddMethod( "AutoField", @TDbf_AutoField(), nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ));
+    _HB_MEMBER AutoIndex(); IIF( .F., s_oClass:ModMethod( "AutoIndex", @TDbf_AutoIndex(), nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ), s_oClass:AddMethod( "AutoIndex", @TDbf_AutoIndex(), nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ));
+
+    _HB_MEMBER Activate( lRecycle, lShared, lReadOnly,  lProtec, lAutoField, lAutoIndex, lOpen, lNewArea); IIF( .F., s_oClass:ModMethod( "Activate", @TDbf_Activate(), nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ), s_oClass:AddMethod( "Activate", @TDbf_Activate(), nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ));
+    _HB_MEMBER ReActivate(); IIF( .F., s_oClass:ModMethod( "ReActivate", @TDbf_ReActivate(), nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ), s_oClass:AddMethod( "ReActivate", @TDbf_ReActivate(), nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ));
+
+
+
+    _HB_MEMBER CheckEofBof(); IIF( .F., s_oClass:ModMethod( "CheckEofBof", @TDbf_CheckEofBof(), nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ), s_oClass:AddMethod( "CheckEofBof", @TDbf_CheckEofBof(), nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ));
+
+    _HB_MEMBER Found(); IIF( .F., s_oClass:ModInline( "Found", {|Self | Self, ( ::nArea )->( Found() ) }, nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ), s_oClass:AddInline( "Found", {|Self | Self, ( ::nArea )->( Found() ) }, nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ) )
+    _HB_MEMBER GoTo(nRec); IIF( .F., s_oClass:ModMethod( "GoTo", @TDbf__GoTo(), nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ) ), s_oClass:AddMethod( "GoTo", @TDbf__GoTo(), nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ) ) );
+    _HB_MEMBER GoTop(); IIF( .F., s_oClass:ModMethod( "GoTop", @TDbf__GoTop(), nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ) ), s_oClass:AddMethod( "GoTop", @TDbf__GoTop(), nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ) ) );
+    _HB_MEMBER GoBottom(); IIF( .F., s_oClass:ModMethod( "GoBottom", @TDbf__GoBottom(), nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ) ), s_oClass:AddMethod( "GoBottom", @TDbf__GoBottom(), nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ) ) );
+
+    _HB_MEMBER Seek( uVal, lSoft, lLast); IIF( .F., s_oClass:ModMethod( "Seek", @TDbf_Seek(), nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ), s_oClass:AddMethod( "Seek", @TDbf_Seek(), nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ));
+    _HB_MEMBER SeekInOrd( uVal, cOrd, lSoft, lLast); IIF( .F., s_oClass:ModMethod( "SeekInOrd", @TDbf_SeekInOrd(), nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ), s_oClass:AddMethod( "SeekInOrd", @TDbf_SeekInOrd(), nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ));
+    _HB_MEMBER SeekBack( uVal, cOrd, lSoft, lLast); IIF( .F., s_oClass:ModMethod( "SeekBack", @TDbf_SeekBack(), nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ), s_oClass:AddMethod( "SeekBack", @TDbf_SeekBack(), nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ));
+
+    _HB_MEMBER Skip(nSkip); IIF( .F., s_oClass:ModMethod( "Skip", @TDbf__Skip(), nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ) ), s_oClass:AddMethod( "Skip", @TDbf__Skip(), nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ) ) );
+    _HB_MEMBER Skipper( nSkip); IIF( .F., s_oClass:ModMethod( "Skipper", @TDbf_Skipper(), nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ), s_oClass:AddMethod( "Skipper", @TDbf_Skipper(), nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ));
+    _HB_MEMBER SkipperLoad( nSkip); IIF( .F., s_oClass:ModMethod( "SkipperLoad", @TDbf_SkipperLoad(), nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ), s_oClass:AddMethod( "SkipperLoad", @TDbf_SkipperLoad(), nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ));
+
+    _HB_MEMBER First(); IIF( .F., s_oClass:ModInline( "First", {|Self | Self, ::GoTop() }, nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ), s_oClass:AddInline( "First", {|Self | Self, ::GoTop() }, nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ) )
+    _HB_MEMBER Next(); IIF( .F., s_oClass:ModInline( "Next", {|Self | Self, ::Skip( 1 ) }, nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ), s_oClass:AddInline( "Next", {|Self | Self, ::Skip( 1 ) }, nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ) )
+    _HB_MEMBER Prior(); IIF( .F., s_oClass:ModInline( "Prior", {|Self | Self, ::Skip( -1 ) }, nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ), s_oClass:AddInline( "Prior", {|Self | Self, ::Skip( -1 ) }, nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ) )
+    _HB_MEMBER Last(); IIF( .F., s_oClass:ModInline( "Last", {|Self | Self, ::GoBottom() }, nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ), s_oClass:AddInline( "Last", {|Self | Self, ::GoBottom() }, nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ) )
+
+
+
+    _HB_MEMBER AddField( cName, cType, nLen, nDec, cPic, xDefault, bValid, bSetGet, cComment, lColAlign, nColSize, lHide); IIF( .F., s_oClass:ModMethod( "AddField", @TDbf_AddField(), nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ), s_oClass:AddMethod( "AddField", @TDbf_AddField(), nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ));
+
+    _HB_MEMBER Append(); IIF( .F., s_oClass:ModMethod( "Append", @TDbf_Append(), nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ), s_oClass:AddMethod( "Append", @TDbf_Append(), nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ));
+    _HB_MEMBER Delete(lNext); IIF( .F., s_oClass:ModMethod( "Delete", @TDbf__Delete(), nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ) ), s_oClass:AddMethod( "Delete", @TDbf__Delete(), nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ) ) );
+    _HB_MEMBER Deleted(); IIF( .F., s_oClass:ModInline( "Deleted", {|Self | Self, ( ::nArea )->( Deleted() ) }, nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ), s_oClass:AddInline( "Deleted", {|Self | Self, ( ::nArea )->( Deleted() ) }, nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ) )
+    _HB_MEMBER FieldName(nPos); IIF( .F., s_oClass:ModInline( "FieldName", {|Self,nPos | Self, ( ::nArea )->( FieldName( nPos ) ) }, nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ), s_oClass:AddInline( "FieldName", {|Self,nPos | Self, ( ::nArea )->( FieldName( nPos ) ) }, nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ) )
+    _HB_MEMBER FCount(); IIF( .F., s_oClass:ModInline( "FCount", {|Self | Self, ( ::nArea )->( FCount() ) }, nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ), s_oClass:AddInline( "FCount", {|Self | Self, ( ::nArea )->( FCount() ) }, nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ) )
+    _HB_MEMBER FieldGet(nPos); IIF( .F., s_oClass:ModInline( "FieldGet", {|Self,nPos | Self, ( ::nArea )->( FieldGet( nPos ) ) }, nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ), s_oClass:AddInline( "FieldGet", {|Self,nPos | Self, ( ::nArea )->( FieldGet( nPos ) ) }, nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ) )
+    _HB_MEMBER FieldGetName(cFld); IIF( .F., s_oClass:ModInline( "FieldGetName", {|Self,cFld | Self, ( ::nArea )->( FieldGet( ::FieldPos( cFld ) ) ) }, nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ), s_oClass:AddInline( "FieldGetName", {|Self,cFld | Self, ( ::nArea )->( FieldGet( ::FieldPos( cFld ) ) ) }, nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ) )
+    _HB_MEMBER FieldGetByName(cFld); IIF( .F., s_oClass:ModInline( "FieldGetByName", {|Self,cFld | Self, ( ::nArea )->( FieldGet( ::FieldPos( cFld ) ) ) }, nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ), s_oClass:AddInline( "FieldGetByName", {|Self,cFld | Self, ( ::nArea )->( FieldGet( ::FieldPos( cFld ) ) ) }, nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ) )
+    _HB_MEMBER FieldPut(nField, uVal); IIF( .F., s_oClass:ModMethod( "FieldPut", @TDbf__FieldPut(), nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ) ), s_oClass:AddMethod( "FieldPut", @TDbf__FieldPut(), nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ) ) );
+    _HB_MEMBER FieldPutByName(cField, uVal); IIF( .F., s_oClass:ModMethod( "FieldPutByName", @TDbf__FieldPutByName(), nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ) ), s_oClass:AddMethod( "FieldPutByName", @TDbf__FieldPutByName(), nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ) ) );
+    _HB_MEMBER FieldPos(cFld); IIF( .F., s_oClass:ModInline( "FieldPos", {|Self,cFld | Self, ( ::nArea )->( FieldPos( cFld ) ) }, nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ), s_oClass:AddInline( "FieldPos", {|Self,cFld | Self, ( ::nArea )->( FieldPos( cFld ) ) }, nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ) )
+    _HB_MEMBER FldGet(nPos); IIF( .F., s_oClass:ModInline( "FldGet", {|Self,nPos | Self, ( if( ::lBuffer, ::aTField[ nPos ]:Val, ::aTField[ nPos ]:GetVal() ) ) }, nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ), s_oClass:AddInline( "FldGet", {|Self,nPos | Self, ( if( ::lBuffer, ::aTField[ nPos ]:Val, ::aTField[ nPos ]:GetVal() ) ) }, nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ) )
+    _HB_MEMBER FldPut(nPos, Val); IIF( .F., s_oClass:ModInline( "FldPut", {|Self,nPos, Val | Self, ( if( ::lBuffer, ::aTField[ nPos ]:Val := Val, ::aTField[ nPos ]:PutVal( Val ) ) ) }, nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ), s_oClass:AddInline( "FldPut", {|Self,nPos, Val | Self, ( if( ::lBuffer, ::aTField[ nPos ]:Val := Val, ::aTField[ nPos ]:PutVal( Val ) ) ) }, nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ) )
+    _HB_MEMBER LastRec(); IIF( .F., s_oClass:ModInline( "LastRec", {|Self | Self, ( ::nArea )->( LastRec() ) }, nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ), s_oClass:AddInline( "LastRec", {|Self | Self, ( ::nArea )->( LastRec() ) }, nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ) )
+    _HB_MEMBER RecCount(); IIF( .F., s_oClass:ModInline( "RecCount", {|Self | Self, ( ::nArea )->( OrdKeyCount() ) }, nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ), s_oClass:AddInline( "RecCount", {|Self | Self, ( ::nArea )->( OrdKeyCount() ) }, nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ) )
+    _HB_MEMBER RecNo(uGo); IIF( .F., s_oClass:ModMethod( "RecNo", @TDbf__RecNo(), nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ) ), s_oClass:AddMethod( "RecNo", @TDbf__RecNo(), nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ) ) );
+    _HB_MEMBER GetRecno(); IIF( .F., s_oClass:ModInline( "GetRecno", {|Self | Self, ::nRecno := ( ::nArea )->( RecNo() ) }, nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ), s_oClass:AddInline( "GetRecno", {|Self | Self, ::nRecno := ( ::nArea )->( RecNo() ) }, nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ) )
+    _HB_MEMBER SetRecno(); IIF( .F., s_oClass:ModInline( "SetRecno", {|Self | Self, ( ::nArea )->( DbGoTo( ::nRecno ) ) }, nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ), s_oClass:AddInline( "SetRecno", {|Self | Self, ( ::nArea )->( DbGoTo( ::nRecno ) ) }, nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ) )
+    _HB_MEMBER ReCall(); IIF( .F., s_oClass:ModMethod( "ReCall", @TDbf_ReCall(), nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ), s_oClass:AddMethod( "ReCall", @TDbf_ReCall(), nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ));
+
+
+
+    _HB_MEMBER Alias(); IIF( .F., s_oClass:ModInline( "Alias", {|Self | Self, Alias( ::nArea ) }, nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ), s_oClass:AddInline( "Alias", {|Self | Self, Alias( ::nArea ) }, nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ) )
+    _HB_MEMBER Create(); IIF( .F., s_oClass:ModMethod( "Create", @TDbf_Create(), nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ), s_oClass:AddMethod( "Create", @TDbf_Create(), nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ));
+    _HB_MEMBER UseArea( lNew, lOpen); IIF( .F., s_oClass:ModMethod( "UseArea", @TDbf_UseArea(), nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ), s_oClass:AddMethod( "UseArea", @TDbf_UseArea(), nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ));
+    _HB_MEMBER Pack( bRecord); IIF( .F., s_oClass:ModMethod( "Pack", @TDbf_Pack(), nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ), s_oClass:AddMethod( "Pack", @TDbf_Pack(), nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ));
+    _HB_MEMBER HardPack( bRecord); IIF( .F., s_oClass:ModMethod( "HardPack", @TDbf_HardPack(), nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ), s_oClass:AddMethod( "HardPack", @TDbf_HardPack(), nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ));
+    _HB_MEMBER Zap(); IIF( .F., s_oClass:ModInline( "Zap", {|Self | Self, ( ::nArea )->( __DbZap() ), Self }, nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ), s_oClass:AddInline( "Zap", {|Self | Self, ( ::nArea )->( __DbZap() ), Self }, nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ) )
+    _HB_MEMBER Eval(bBlock, bFor, bWhile, nNext, nRecord, lRest); IIF( .F., s_oClass:ModMethod( "Eval", @TDbf__Eval(), nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ) ), s_oClass:AddMethod( "Eval", @TDbf__Eval(), nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ) ) );
+
+
+    _HB_MEMBER Close(); IIF( .F., s_oClass:ModMethod( "Close", @TDbf_Close(), nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ), s_oClass:AddMethod( "Close", @TDbf_Close(), nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ));
+    _HB_MEMBER Destroy(); IIF( .F., s_oClass:ModMethod( "Destroy", @TDbf_Destroy(), nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ), s_oClass:AddMethod( "Destroy", @TDbf_Destroy(), nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ));
+    _HB_MEMBER End(); IIF( .F., s_oClass:ModInline( "End", {|Self | Self, if( ::Close(), ::Destroy(), .F. ) }, nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ), s_oClass:AddInline( "End", {|Self | Self, if( ::Close(), ::Destroy(), .F. ) }, nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ) )
+
+
+
+    _HB_MEMBER Locate( bFor, bWhile, lRest); IIF( .F., s_oClass:ModMethod( "Locate", @TDbf_Locate(), nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ), s_oClass:AddMethod( "Locate", @TDbf_Locate(), nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ));
+    _HB_MEMBER Continue(); IIF( .F., s_oClass:ModInline( "Continue", {|Self | Self, ::Locate( ,, .T. ) }, nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ), s_oClass:AddInline( "Continue", {|Self | Self, ::Locate( ,, .T. ) }, nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ) )
+    _HB_MEMBER Sort( cFile, aField, bFor, bWhile, next, rec, lRest); IIF( .F., s_oClass:ModMethod( "Sort", @TDbf_Sort(), nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ), s_oClass:AddMethod( "Sort", @TDbf_Sort(), nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ));
+    _HB_MEMBER Total( cFile, bKey, aField, bFor, bWhile, next, rec, lRest); IIF( .F., s_oClass:ModMethod( "Total", @TDbf_Total(), nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ), s_oClass:AddMethod( "Total", @TDbf_Total(), nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ));
+    _HB_MEMBER Sum( bSum, bFor, bWhile, lRest); IIF( .F., s_oClass:ModMethod( "Sum", @TDbf_Sum(), nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ), s_oClass:AddMethod( "Sum", @TDbf_Sum(), nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ));
+
+
+
+
+
+    _HB_MEMBER OrdBagExt(); IIF( .F., s_oClass:ModInline( "OrdBagExt", {|Self | Self, ( ::nArea )->( OrdBagExt() ) }, nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ), s_oClass:AddInline( "OrdBagExt", {|Self | Self, ( ::nArea )->( OrdBagExt() ) }, nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ) )
+    _HB_MEMBER OrdBagName(cnTag); IIF( .F., s_oClass:ModInline( "OrdBagName", {|Self,cnTag | Self, ( ::nArea )->( OrdBagName( cnTag ) ) }, nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ), s_oClass:AddInline( "OrdBagName", {|Self,cnTag | Self, ( ::nArea )->( OrdBagName( cnTag ) ) }, nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ) )
+
+
+    _HB_MEMBER OrdCreate(cFile, cName, cExp, bExp, lUniq); IIF( .F., s_oClass:ModInline( "OrdCreate", {|Self,cFile, cName, cExp, bExp, lUniq | Self, ( ::nArea )->( OrdCreate( cFile, cName, cExp, bExp, lUniq ) ),  ::AutoIndex() }, nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ), s_oClass:AddInline( "OrdCreate", {|Self,cFile, cName, cExp, bExp, lUniq | Self, ( ::nArea )->( OrdCreate( cFile, cName, cExp, bExp, lUniq ) ),  ::AutoIndex() }, nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ) )
+
+    _HB_MEMBER OrdDestroy(cnTag, cFile); IIF( .F., s_oClass:ModInline( "OrdDestroy", {|Self,cnTag, cFile | Self, ( ::nArea )->( OrdDestroy( cnTag, cFile ) ), ::AutoIndex() }, nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ), s_oClass:AddInline( "OrdDestroy", {|Self,cnTag, cFile | Self, ( ::nArea )->( OrdDestroy( cnTag, cFile ) ), ::AutoIndex() }, nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ) )
+    _HB_MEMBER OrdFor(cnTag, cFile); IIF( .F., s_oClass:ModInline( "OrdFor", {|Self,cnTag, cFile | Self, ( ::nArea )->( OrdFor( cnTag, cFile ) ) }, nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ), s_oClass:AddInline( "OrdFor", {|Self,cnTag, cFile | Self, ( ::nArea )->( OrdFor( cnTag, cFile ) ) }, nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ) )
+    _HB_MEMBER OrdKey(cnTag, cFile); IIF( .F., s_oClass:ModInline( "OrdKey", {|Self,cnTag, cFile | Self, ( ::nArea )->( OrdKey( cnTag, cFile ) ) }, nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ), s_oClass:AddInline( "OrdKey", {|Self,cnTag, cFile | Self, ( ::nArea )->( OrdKey( cnTag, cFile ) ) }, nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ) )
+    _HB_MEMBER OrdKeyNo(); IIF( .F., s_oClass:ModInline( "OrdKeyNo", {|Self | Self, ( ::nArea )->( OrdKeyNo() ) }, nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ), s_oClass:AddInline( "OrdKeyNo", {|Self | Self, ( ::nArea )->( OrdKeyNo() ) }, nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ) )
+    _HB_MEMBER OrdKeyVal(); IIF( .F., s_oClass:ModInline( "OrdKeyVal", {|Self | Self, ( ::nArea )->( OrdKeyVal() ) }, nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ), s_oClass:AddInline( "OrdKeyVal", {|Self | Self, ( ::nArea )->( OrdKeyVal() ) }, nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ) )
+    _HB_MEMBER OrdKeyCount(); IIF( .F., s_oClass:ModInline( "OrdKeyCount", {|Self | Self, ( ::nArea )->( OrdKeyCount() ) }, nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ), s_oClass:AddInline( "OrdKeyCount", {|Self | Self, ( ::nArea )->( OrdKeyCount() ) }, nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ) )
+    _HB_MEMBER OrdScope(uTop, uBottom); IIF( .F., s_oClass:ModMethod( "OrdScope", @TDbf__OrdScope(), nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ) ), s_oClass:AddMethod( "OrdScope", @TDbf__OrdScope(), nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ) ) );
+    _HB_MEMBER OrdClearScope(); IIF( .F., s_oClass:ModMethod( "OrdClearScope", @TDbf_OrdClearScope(), nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ), s_oClass:AddMethod( "OrdClearScope", @TDbf_OrdClearScope(), nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ));
+
+
+    _HB_MEMBER OrdListAdd(cFile, cnTag); IIF( .F., s_oClass:ModInline( "OrdListAdd", {|Self,cFile, cnTag | Self, ( ::nArea )->( OrdListAdd( cFile, cnTag ) ), ::AutoIndex() }, nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ), s_oClass:AddInline( "OrdListAdd", {|Self,cFile, cnTag | Self, ( ::nArea )->( OrdListAdd( cFile, cnTag ) ), ::AutoIndex() }, nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ) )
+    _HB_MEMBER OrdListClear(); IIF( .F., s_oClass:ModInline( "OrdListClear", {|Self | Self, ( ::nArea )->( OrdListClear() ), ::aTindex := {} }, nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ), s_oClass:AddInline( "OrdListClear", {|Self | Self, ( ::nArea )->( OrdListClear() ), ::aTindex := {} }, nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ) )
+    _HB_MEMBER OrdListReBuild(); IIF( .F., s_oClass:ModInline( "OrdListReBuild", {|Self | Self, ( ::nArea )->( OrdListReBuild() ), ::AutoIndex() }, nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ), s_oClass:AddInline( "OrdListReBuild", {|Self | Self, ( ::nArea )->( OrdListReBuild() ), ::AutoIndex() }, nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ) )
+    _HB_MEMBER OrdName(nTag, cFile); IIF( .F., s_oClass:ModInline( "OrdName", {|Self,nTag, cFile | Self, ( ::nArea )->( OrdName( nTag, cFile ) ) }, nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ), s_oClass:AddInline( "OrdName", {|Self,nTag, cFile | Self, ( ::nArea )->( OrdName( nTag, cFile ) ) }, nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ) )
+    _HB_MEMBER OrdNumber(cName, cFile); IIF( .F., s_oClass:ModInline( "OrdNumber", {|Self,cName, cFile | Self, ( ::nArea )->( OrdNumber( cName, cFile ) ) }, nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ), s_oClass:AddInline( "OrdNumber", {|Self,cName, cFile | Self, ( ::nArea )->( OrdNumber( cName, cFile ) ) }, nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ) )
+    _HB_MEMBER OrdDescend(); IIF( .F., s_oClass:ModInline( "OrdDescend", {|Self | Self, ( ::nArea )->( OrdDescend() ) }, nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ), s_oClass:AddInline( "OrdDescend", {|Self | Self, ( ::nArea )->( OrdDescend() ) }, nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ) )
+    _HB_MEMBER OrdSetFocus(cnTag, cFile); IIF( .F., s_oClass:ModMethod( "OrdSetFocus", @TDbf__OrdSetFocus(), nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ) ), s_oClass:AddMethod( "OrdSetFocus", @TDbf__OrdSetFocus(), nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ) ) );
+
+
+
+    _HB_MEMBER IdxByTag( cnTag, cFile); IIF( .F., s_oClass:ModMethod( "IdxByTag", @TDbf_IdxByTag(), nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ), s_oClass:AddMethod( "IdxByTag", @TDbf_IdxByTag(), nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ));
+    _HB_MEMBER IdxByName( cName, cFile); IIF( .F., s_oClass:ModMethod( "IdxByName", @TDbf_IdxByName(), nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ), s_oClass:AddMethod( "IdxByName", @TDbf_IdxByName(), nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ));
+    _HB_MEMBER IdxByOrder( nOrder, cFile); IIF( .F., s_oClass:ModMethod( "IdxByOrder", @TDbf_IdxByOrder(), nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ), s_oClass:AddMethod( "IdxByOrder", @TDbf_IdxByOrder(), nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ));
+
+    _HB_MEMBER AddIndex(); IIF( .F., s_oClass:ModMethod( "AddIndex", @TDbf_AddIndex(), nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ), s_oClass:AddMethod( "AddIndex", @TDbf_AddIndex(), nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ));
+    _HB_MEMBER AddTmpIndex(); IIF( .F., s_oClass:ModMethod( "AddTmpIndex", @TDbf_AddTmpIndex(), nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ), s_oClass:AddMethod( "AddTmpIndex", @TDbf_AddTmpIndex(), nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ));
+    _HB_MEMBER AddBag( cFile); IIF( .F., s_oClass:ModMethod( "AddBag", @TDbf_AddBag(), nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ), s_oClass:AddMethod( "AddBag", @TDbf_AddBag(), nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ));
+
+    _HB_MEMBER IdxFCheck(); IIF( .F., s_oClass:ModMethod( "IdxFCheck", @TDbf_IdxFCheck(), nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ), s_oClass:AddMethod( "IdxFCheck", @TDbf_IdxFCheck(), nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ));
+    _HB_MEMBER IdxCreate(oIdx); IIF( .F., s_oClass:ModInline( "IdxCreate", {|Self,oIdx | Self, ( ::nArea )->( oIdx:Create() ) }, nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ), s_oClass:AddInline( "IdxCreate", {|Self,oIdx | Self, ( ::nArea )->( oIdx:Create() ) }, nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ) )
+    _HB_MEMBER ReIndexAll( bOption, nStep); IIF( .F., s_oClass:ModMethod( "ReIndexAll", @TDbf_ReIndexAll(), nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ), s_oClass:AddMethod( "ReIndexAll", @TDbf_ReIndexAll(), nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ));
+
+    _HB_MEMBER IdxActivate(); IIF( .F., s_oClass:ModMethod( "IdxActivate", @TDbf_IdxActivate(), nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ), s_oClass:AddMethod( "IdxActivate", @TDbf_IdxActivate(), nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ));
+    _HB_MEMBER IdxFDel(); IIF( .F., s_oClass:ModMethod( "IdxFDel", @TDbf_IdxFDel(), nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ), s_oClass:AddMethod( "IdxFDel", @TDbf_IdxFDel(), nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ));
+    _HB_MEMBER IdxDelete( cName, cFile); IIF( .F., s_oClass:ModMethod( "IdxDelete", @TDbf_IdxDelete(), nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ), s_oClass:AddMethod( "IdxDelete", @TDbf_IdxDelete(), nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ));
+
+    _HB_MEMBER SetIndex( cnTag, cFile); IIF( .F., s_oClass:ModMethod( "SetIndex", @TDbf_SetIndex(), nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ), s_oClass:AddMethod( "SetIndex", @TDbf_SetIndex(), nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ));
+
+    _HB_MEMBER SetOrder(cnTag, cFile); IIF( .F., s_oClass:ModInline( "SetOrder", {|Self,cnTag, cFile | Self, ( ::nArea )->( OrdNumber( ::SetIndex( cnTag, cFile ) ) ) }, nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ), s_oClass:AddInline( "SetOrder", {|Self,cnTag, cFile | Self, ( ::nArea )->( OrdNumber( ::SetIndex( cnTag, cFile ) ) ) }, nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ) )
+
+
+    _HB_MEMBER IdxKeyVal(); IIF( .F., s_oClass:ModInline( "IdxKeyVal", {|Self | Self, ( ::nArea )->( OrdKeyVal() ) }, nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ), s_oClass:AddInline( "IdxKeyVal", {|Self | Self, ( ::nArea )->( OrdKeyVal() ) }, nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ) )
+    _HB_MEMBER IdxKeyGoTo(nRec); IIF( .F., s_oClass:ModInline( "IdxKeyGoTo", {|Self,nRec | Self, ( ::nArea )->( OrdKeyGoTo( nRec ) ) }, nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ), s_oClass:AddInline( "IdxKeyGoTo", {|Self,nRec | Self, ( ::nArea )->( OrdKeyGoTo( nRec ) ) }, nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ) )
+    _HB_MEMBER OrdKeyGoTo(nRec); IIF( .F., s_oClass:ModInline( "OrdKeyGoTo", {|Self,nRec | Self, ( ::nArea )->( OrdKeyGoTo( nRec ) ) }, nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ), s_oClass:AddInline( "OrdKeyGoTo", {|Self,nRec | Self, ( ::nArea )->( OrdKeyGoTo( nRec ) ) }, nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ) )
+    _HB_MEMBER IdxKeyNo(); IIF( .F., s_oClass:ModInline( "IdxKeyNo", {|Self | Self, ( ::nArea )->( OrdKeyNo() ) }, nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ), s_oClass:AddInline( "IdxKeyNo", {|Self | Self, ( ::nArea )->( OrdKeyNo() ) }, nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ) )
+    _HB_MEMBER IdxKeyCount(); IIF( .F., s_oClass:ModInline( "IdxKeyCount", {|Self | Self, ( ::nArea )->( OrdKeyCount() ) }, nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ), s_oClass:AddInline( "IdxKeyCount", {|Self | Self, ( ::nArea )->( OrdKeyCount() ) }, nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ) )
+
+
+
+    _HB_MEMBER SetScope(uTop, uBottom); IIF( .F., s_oClass:ModMethod( "SetScope", @TDbf__SetScope(), nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ) ), s_oClass:AddMethod( "SetScope", @TDbf__SetScope(), nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ) ) );
+    _HB_MEMBER ClearScope(); IIF( .F., s_oClass:ModMethod( "ClearScope", @TDbf_ClearScope(), nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ), s_oClass:AddMethod( "ClearScope", @TDbf_ClearScope(), nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ));
+
+
+
+    _HB_MEMBER SetFilter( coFlt); IIF( .F., s_oClass:ModMethod( "SetFilter", @TDbf_SetFilter(), nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ), s_oClass:AddMethod( "SetFilter", @TDbf_SetFilter(), nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ));
+    _HB_MEMBER KillFilter(); IIF( .F., s_oClass:ModInline( "KillFilter", {|Self | Self, ::SetFilter() }, nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ), s_oClass:AddInline( "KillFilter", {|Self | Self, ::SetFilter() }, nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ) )
+
+
+
+    _HB_MEMBER Lock(); IIF( .F., s_oClass:ModInline( "Lock", {|Self | Self, ( ::nArea )->( FLock() ) }, nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ), s_oClass:AddInline( "Lock", {|Self | Self, ( ::nArea )->( FLock() ) }, nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ) )
+    _HB_MEMBER RecLock(); IIF( .F., s_oClass:ModMethod( "RecLock", @TDbf_RecLock(), nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ), s_oClass:AddMethod( "RecLock", @TDbf_RecLock(), nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ));
+    _HB_MEMBER UnLock(); IIF( .F., s_oClass:ModInline( "UnLock", {|Self | Self, ( ::nArea )->( DBUnLock() ), Self }, nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ), s_oClass:AddInline( "UnLock", {|Self | Self, ( ::nArea )->( DBUnLock() ), Self }, nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ) )
+
+
+
+    _HB_MEMBER Protec( nAcction); IIF( .F., s_oClass:ModMethod( "Protec", @TDbf_Protec(), nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ), s_oClass:AddMethod( "Protec", @TDbf_Protec(), nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ));
+    _HB_MEMBER Used(); IIF( .F., s_oClass:ModInline( "Used", {|Self | Self, ( ::nArea )->( Used() ) }, nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ), s_oClass:AddInline( "Used", {|Self | Self, ( ::nArea )->( Used() ) }, nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ) )
+
+    _HB_MEMBER aField(); IIF( .F., s_oClass:ModMethod( "aField", @TDbf_aField(), nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ), s_oClass:AddMethod( "aField", @TDbf_aField(), nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ));
+    _HB_MEMBER Blank(); IIF( .F., s_oClass:ModMethod( "Blank", @TDbf_Blank(), nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ), s_oClass:AddMethod( "Blank", @TDbf_Blank(), nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ));
+    _HB_MEMBER Insert(); IIF( .F., s_oClass:ModInline( "Insert", {|Self | Self, if( ::Append(), ::Save(), .F. ) }, nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ), s_oClass:AddInline( "Insert", {|Self | Self, if( ::Append(), ::Save(), .F. ) }, nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ) )
+    _HB_MEMBER SetBuffer( lVal); IIF( .F., s_oClass:ModMethod( "SetBuffer", @TDbf_SetBuffer(), nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ), s_oClass:AddMethod( "SetBuffer", @TDbf_SetBuffer(), nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ));
+    _HB_MEMBER Load(); IIF( .F., s_oClass:ModMethod( "Load", @TDbf_Load(), nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ), s_oClass:AddMethod( "Load", @TDbf_Load(), nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ));
+    _HB_MEMBER Cancel(); IIF( .F., s_oClass:ModInline( "Cancel", {|Self | Self, ::RollBack() }, nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ), s_oClass:AddInline( "Cancel", {|Self | Self, ::RollBack() }, nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ) )
+    _HB_MEMBER RollBack(); IIF( .F., s_oClass:ModMethod( "RollBack", @TDbf_RollBack(), nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ), s_oClass:AddMethod( "RollBack", @TDbf_RollBack(), nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ));
+    _HB_MEMBER Save(); IIF( .F., s_oClass:ModMethod( "Save", @TDbf_Save(), nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ), s_oClass:AddMethod( "Save", @TDbf_Save(), nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ));
+    _HB_MEMBER Update(); IIF( .F., s_oClass:ModInline( "Update", {|Self | Self, ::Save() }, nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ), s_oClass:AddInline( "Update", {|Self | Self, ::Save() }, nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ) )
+    _HB_MEMBER Valid(); IIF( .F., s_oClass:ModMethod( "Valid", @TDbf_Valid(), nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ), s_oClass:AddMethod( "Valid", @TDbf_Valid(), nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ));
+    _HB_MEMBER Commit(); IIF( .F., s_oClass:ModInline( "Commit", {|Self | Self, ( ::nArea )->( DBCommit() ) }, nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ), s_oClass:AddInline( "Commit", {|Self | Self, ( ::nArea )->( DBCommit() ) }, nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ) )
+
+    _HB_MEMBER SetCalField( cName, bSetGet, cPic, cComment); IIF( .F., s_oClass:ModMethod( "SetCalField", @TDbf_SetCalField(), nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ), s_oClass:AddMethod( "SetCalField", @TDbf_SetCalField(), nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ));
+    _HB_MEMBER SetFieldEmpresa( nCount); IIF( .F., s_oClass:ModMethod( "SetFieldEmpresa", @TDbf_SetFieldEmpresa(), nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ), s_oClass:AddMethod( "SetFieldEmpresa", @TDbf_SetFieldEmpresa(), nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ));
+    _HB_MEMBER SetDefault(); IIF( .F., s_oClass:ModMethod( "SetDefault", @TDbf_SetDefault(), nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ), s_oClass:AddMethod( "SetDefault", @TDbf_SetDefault(), nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ));
+    _HB_MEMBER SetBrowse( oBrw, lLoad); IIF( .F., s_oClass:ModMethod( "SetBrowse", @TDbf_SetBrowse(), nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ), s_oClass:AddMethod( "SetBrowse", @TDbf_SetBrowse(), nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ));
+    _HB_MEMBER SetFocus(); IIF( .F., s_oClass:ModInline( "SetFocus", {|Self | Self, DbSelectArea( ::nArea ), Self }, nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ), s_oClass:AddInline( "SetFocus", {|Self | Self, DbSelectArea( ::nArea ), Self }, nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ) )
+    _HB_MEMBER SetDeleted(); IIF( .F., s_oClass:ModMethod( "SetDeleted", @TDbf_SetDeleted(), nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ), s_oClass:AddMethod( "SetDeleted", @TDbf_SetDeleted(), nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ));
+
+    _HB_MEMBER FieldByName( cName); IIF( .F., s_oClass:ModMethod( "FieldByName", @TDbf_FieldByName(), nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ), s_oClass:AddMethod( "FieldByName", @TDbf_FieldByName(), nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ));
+
+    _HB_MEMBER Clone( lNewArea, cComment); IIF( .F., s_oClass:ModMethod( "Clone", @TDbf_Clone(), nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ), s_oClass:AddMethod( "Clone", @TDbf_Clone(), nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ));
+    _HB_MEMBER Refresh(); IIF( .F., s_oClass:ModMethod( "Refresh", @TDbf_Refresh(), nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ), s_oClass:AddMethod( "Refresh", @TDbf_Refresh(), nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ));
+
+    _HB_MEMBER GetStatus(); IIF( .F., s_oClass:ModMethod( "GetStatus", @TDbf_GetStatus(), nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ), s_oClass:AddMethod( "GetStatus", @TDbf_GetStatus(), nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ));
+    _HB_MEMBER SetStatus(); IIF( .F., s_oClass:ModMethod( "SetStatus", @TDbf_SetStatus(), nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ), s_oClass:AddMethod( "SetStatus", @TDbf_SetStatus(), nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ));
+
+    _HB_MEMBER aMsg(nMsg); IIF( .F., s_oClass:ModInline( "aMsg", {|Self,nMsg | Self, GetMsg( ::nLang )[ nMsg ] }, nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ), s_oClass:AddInline( "aMsg", {|Self,nMsg | Self, GetMsg( ::nLang )[ nMsg ] }, nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ) )
+
+    _HB_MEMBER DbError(Error); IIF( .F., s_oClass:ModInline( "DbError", {|Self,Error | Self, MsgInfo( if( ValType( Error ) <> "N", Error, ::aMsg( Error ) ) ) }, nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ), s_oClass:AddInline( "DbError", {|Self,Error | Self, MsgInfo( if( ValType( Error ) <> "N", Error, ::aMsg( Error ) ) ) }, nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ) )
+
+
+
+    _HB_MEMBER lSetMarkRec( cMark, nRec); IIF( .F., s_oClass:ModMethod( "lSetMarkRec", @TDbf_lSetMarkRec(), nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ), s_oClass:AddMethod( "lSetMarkRec", @TDbf_lSetMarkRec(), nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ));
+    _HB_MEMBER GetMarkRec( nRec); IIF( .F., s_oClass:ModMethod( "GetMarkRec", @TDbf_GetMarkRec(), nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ), s_oClass:AddMethod( "GetMarkRec", @TDbf_GetMarkRec(), nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ));
+    _HB_MEMBER lMarked( cMark, nRec); IIF( .F., s_oClass:ModMethod( "lMarked", @TDbf_lMarked(), nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ), s_oClass:AddMethod( "lMarked", @TDbf_lMarked(), nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ));
+    _HB_MEMBER ChgMarked( cMark, nRec); IIF( .F., s_oClass:ModMethod( "ChgMarked", @TDbf_ChgMarked(), nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ), s_oClass:AddMethod( "ChgMarked", @TDbf_ChgMarked(), nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ));
+    _HB_MEMBER SetAllMark( cMark); IIF( .F., s_oClass:ModMethod( "SetAllMark", @TDbf_SetAllMark(), nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ), s_oClass:AddMethod( "SetAllMark", @TDbf_SetAllMark(), nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ));
+    _HB_MEMBER nGetAllMark( cMark, cAlias); IIF( .F., s_oClass:ModMethod( "nGetAllMark", @TDbf_nGetAllMark(), nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ), s_oClass:AddMethod( "nGetAllMark", @TDbf_nGetAllMark(), nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ));
+
+    _HB_MEMBER AppendFromObject( oDbf); IIF( .F., s_oClass:ModMethod( "AppendFromObject", @TDbf_AppendFromObject(), nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ), s_oClass:AddMethod( "AppendFromObject", @TDbf_AppendFromObject(), nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ));
+
+    _HB_MEMBER AppendFrom(cFile, aFields, bFor, bWhile, nNet, nRec, cRest, cRdd); IIF( .F., s_oClass:ModInline( "AppendFrom", {|Self,cFile, aFields, bFor, bWhile, nNet, nRec, cRest, cRdd | Self, ( ::nArea )->( __dbApp( cFile, aFields, bFor, bWhile, nNet, nRec, cRest, cRdd ) ) }, nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ), s_oClass:AddInline( "AppendFrom", {|Self,cFile, aFields, bFor, bWhile, nNet, nRec, cRest, cRdd | Self, ( ::nArea )->( __dbApp( cFile, aFields, bFor, bWhile, nNet, nRec, cRest, cRdd ) ) }, nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ) )
+    _HB_MEMBER DbEval(bBlock, bForCondition, bWhileCondition, nNextRecords, nRecord, lRest); IIF( .F., s_oClass:ModInline( "DbEval", {|Self,bBlock, bForCondition, bWhileCondition, nNextRecords, nRecord, lRest | Self, ( ::nArea )->( DbEval( bBlock, bForCondition, bWhileCondition, nNextRecords, nRecord, lRest ) ) }, nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ), s_oClass:AddInline( "DbEval", {|Self,bBlock, bForCondition, bWhileCondition, nNextRecords, nRecord, lRest | Self, ( ::nArea )->( DbEval( bBlock, bForCondition, bWhileCondition, nNextRecords, nRecord, lRest ) ) }, nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ) )
+
+    _HB_MEMBER SwapUp(); IIF( .F., s_oClass:ModMethod( "SwapUp", @TDbf_SwapUp(), nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ), s_oClass:AddMethod( "SwapUp", @TDbf_SwapUp(), nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ));
+    _HB_MEMBER SwapDown(); IIF( .F., s_oClass:ModMethod( "SwapDown", @TDbf_SwapDown(), nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ), s_oClass:AddMethod( "SwapDown", @TDbf_SwapDown(), nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ));
+
+
+
+
+
+    _HB_MEMBER aCommentIndex(); IIF( .F., s_oClass:ModMethod( "aCommentIndex", @TDbf_aCommentIndex(), nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ), s_oClass:AddMethod( "aCommentIndex", @TDbf_aCommentIndex(), nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ));
+
+    _HB_MEMBER lExistFile(cFile); IIF( .F., s_oClass:ModInline( "lExistFile", {|Self,cFile | Self, ( ::cRDD <> "DBFCDX" .OR. File( cFile ) ) }, nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ), s_oClass:AddInline( "lExistFile", {|Self,cFile | Self, ( ::cRDD <> "DBFCDX" .OR. File( cFile ) ) }, nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ) )
+
+; IF .F. ; __clsActive(s_oClass:hClass) ; s_oClass:Refresh() ; ELSE ; s_oClass:Create() ; END ; oClassInstance := __clsInst( s_oClass:hClass ) ; IF __ObjHasMsg( oClassInstance, "InitClass" ); oClassInstance:InitClass( hb_aParams() ) ; END ; ELSE ; oClassInstance := __clsInst( s_oClass:hClass ) ; END ; IF PCount() > 0 ; DIVERT TO (@DivertConstructorCall()) OF s_oClass ; END ; RETURN oClassInstance AS CLASS TDbf ;
+
+
+
+
+UTILITY STATIC function TDbf_New( cFile, cName, cRDD, cComment, cPath) ; local Self AS CLASS TDbf := QSelf() AS CLASS TDbf
+
+    ::nType       := 0
+    ::nArea       := 0
+    ::cAlias      := ""
+
+    Set( 44  , "ON" )
+    Set( 45   , "OFF" )
+    Set( 46  , "OFF" )
+    Set( 47 , "OFF" )
+
+    cFile         := if( ValType( cFile )  <> "C", Alias() + ".DBF", upper( cFile ) )
+    cFile         := if( empty( GetFileExt( cFile ) ), cFile + ".DBF", cFile )
+
+    cPath := If( cPath == nil, GetPath( cFile ), cPath ) ;
+
+    cPath         := if( !empty( cPath ), cPath, Set( 7 ) )
+    cPath         := if( empty( cPath ), ".\", cPath )
+
+    ::cPath       := cPath
+
+    ::cFile       := ::cPath + GetFileName( cFile )
+    ::cName       := if( ValType( cName ) <> "C", GetFileNoExt( ::cFile ), cName )
+
+    ::cRDD        := if( ValType( cRDD )     <> "C", cDriver(), upper( cRDD ) )
+    ::cComment    := if( ValType( cComment ) <> "C", "", cComment )
+
+    ::cVer := "TDbf 11.00"
+    ::cFldInvalid := ""
+
+    ::nLang       := SetLang( 0 )
+
+    ::aTIndex     := {}
+    ::aTField     := {}
+    ::aTFilter    := {}
+    ::aBuffer     := {}
+
+    ::FieldCount  := 0
+
+    ::lValid      := .T.
+    ::lCount      := .T.
+
+    ::lBuffer     := .F.
+    ::lScope      := .F.
+    ::lFilter     := .F.
+    ::Eof         := .F.
+    ::Bof         := .F.
+
+    ::bLFor       := { || .T. }
+    ::bLWhile     := { || .T. }
+    ::bBof        := { || nil }
+    ::bEof        := { || nil }
+    ::bOnCreate   := { || .T. }
+    ::bOnOpen     := { || .T. }
+    ::bOnClose    := { || .T. }
+
+
+
+
+    ::bNetError   := { | o | ApoloMsgNoYes( "Alias " + ::cAlias + chr( 13 ) + chr( 10 ) +  o:aMsg( 07 ) + "  Num. " + AllTrim( str( o:RecNo() ) ) + chr( 13 ) + chr( 10 ) +  o:aMsg( 05 ), o:aMsg( 06 ) ) }
+
+    ::bOpenError  := { | o | MsgStop( o:aMsg( 08 ) + chr( 13 ) + chr( 10 ) + o:cFile, o:aMsg( 06 ) ) }
+
+    ::oIndex      := GetIdxNone( Self )
+
+    ::aStatus     := {}
+
+return( Self )
+
+
+
+
+
+
+UTILITY STATIC function TDbf_NewOpen( cFile, cName, cRDD, cComment, cPath,  lRecycle, lShared, lReadOnly, lProtec) ; local Self AS CLASS TDbf := QSelf() AS CLASS TDbf
+
+    ::New( cFile, cName, cRDD, cComment, cPath ):nType := 1
+    ::Activate( lRecycle, lShared, lReadOnly, lProtec, .T., .T., .F., .T. )
+
+return( Self )
+
+
+
+
+UTILITY STATIC function TDbf_Use( cFile, cPath, cComment, lRecycle, lProtec) ; local Self AS CLASS TDbf := QSelf() AS CLASS TDbf
+
+    local cFor := ""
+
+    ::New( cFile,,, cComment, cPath ):nType := 2
+    ::Activate( lRecycle,,, lProtec, .T., .T., .T., .F. )
+
+    cFor := ( ::nArea )->( DbFilter() )
+    if ( ::lFilter := !empty( cFor ) )
+        ::AddFilter( cFor,, cFor )
+    endif
+
+return( Self )
+
+
+
+
+UTILITY STATIC function TDbf_Activate( lRecycle, lShared, lReadOnly, lProtec, lAutoField, lAutoIndex, lOpen, lNewArea) ; local Self AS CLASS TDbf := QSelf() AS CLASS TDbf
+
+   lAutoField := If( lAutoField == nil, .F., lAutoField ) ;
+   lAutoIndex := If( lAutoIndex == nil, .F., lAutoIndex ) ;
+   lOpen := If( lOpen == nil, .F., lOpen ) ;
+   lNewArea := If( lNewArea == nil, .T., lNewArea ) ;
+
+   ::lRecycle := if( lRecycle == NIL, .F., lRecycle )
+   ::lShared := if( lShared == NIL, .F., lShared )
+   ::lReadOnly := if( lReadOnly == NIL, .F., lReadOnly )
+   ::lProtec := if( lProtec == NIL, .F., lProtec )
+
+   ::cComment           := if( empty( ::cComment ), ::cName, ::cComment )
+
+   if !lOpen .AND. !::lExistFile( ::cFile )
+      ::Create()
+   endif
+
+   if ::UseArea( lNewArea, lOpen )
+
+      ::cAlias    := Alias()
+      ::nArea     := Select( ::cAlias )
+      ::cRDD      := ( ::nArea )->( RDDName() )
+      ::lShared   := ( ::nArea )->( IsShared() )
+      ::lReadOnly := ( ::nArea )->( IsReadOnly() )
+      ::hDataFile := ( ::nArea )->( DbfHdl() )
+
+      if lAutoField
+         ::AutoField()
+      end
+
+      FieldToData( Self )
+
+      aEval( ::aTField, { |o| o:Activate() } )
+
+      if ::nType <> 1
+         if lAutoIndex
+            ::AutoIndex()
+         else
+            ( ::nArea )->( ::IdxActivate() )
+         end
+      endif
+
+      ::GoTop()
+
+   else
+
+      eval( ::bOpenError, Self )
+
+
+
+
+
+
+
+   endif
+
+return( Self )
+
+
+
+
+UTILITY STATIC function TDbf_ReActivate() ; local Self AS CLASS TDbf := QSelf() AS CLASS TDbf
+
+return( ::Activate( ::lRecycle, ::lShared,  ::lReadOnly, ::lProtec, .F., .F., .F. ) )
+
+
+
+
+UTILITY STATIC function TDbf_AutoField() ; local Self AS CLASS TDbf := QSelf() AS CLASS TDbf
+
+    local aInfo := ( ::nArea )->( DbStruct() )
+    local nFld  := len( aInfo )
+    local n     := 0
+
+    ::aTField := {}
+
+    FOR n := 1 TO nFld
+
+
+
+        ::AddField( TField():New( Self, aInfo[ n ][ 1 ],  aInfo[ n ][ 2 ],  aInfo[ n ][ 3  ],  aInfo[ n ][ 4  ] ) )
+    NEXT
+
+return( Self )
+
+
+
+
+UTILITY STATIC function TDbf_AutoIndex() ; local Self AS CLASS TDbf := QSelf() AS CLASS TDbf
+
+   local n     := 0
+   local cFor  := ""
+   local lDel  := .F.
+   local cIdx  := ( ::nArea )->( OrdName( 0 ) )
+   local cOrd  := ""
+
+   ::aTIndex   := {}
+
+   while !empty( cOrd := ( ::nArea )->( OrdName( ++n ) ) )
+       cFor    := upper( ( ::nArea )->( OrdFor( n ) ) )
+       lDel    := if( "!DELETED" $ cFor, .T., .F. )
+       ( ::nArea )->( ::AddIndex( cOrd, OrdBagName( n ), OrdKey( n ), cFor,,,,,, lDel ) )
+       IIF( cOrd == cIdx, ::oIndex := ::aTIndex[ n ], )
+   end
+
+return( ::oIndex )
+
+
+
+
+
+UTILITY STATIC function TDbf_CheckEofBof() ; local Self AS CLASS TDbf := QSelf() AS CLASS TDbf
+
+    if !::lScope
+        ::Eof := ( ::nArea )->( Eof() )
+        ::Bof := ( ::nArea )->( Bof() )
+    endif
+
+    if ::Eof
+        eval( ::bEof, Self )
+    elseif ::Bof
+        eval( ::bBof, Self )
+    endif
+
+return( Self )
+
+
+
+UTILITY STATIC function TDbf__GoTo(nRecNo) ; local Self AS CLASS TDbf := QSelf() AS CLASS TDbf
+
+    ( ::nArea )->( DbGoTo( nRecNo ) )
+
+    ::CheckEofBof()
+
+return( Self )
+
+
+
+UTILITY STATIC function TDbf__GoTop() ; local Self AS CLASS TDbf := QSelf() AS CLASS TDbf
+
+    ( ::nArea )->( DbGoTop() )
+
+    ::CheckEofBof()
+
+return( Self )
+
+
+
+UTILITY STATIC function TDbf__GoBottom() ; local Self AS CLASS TDbf := QSelf() AS CLASS TDbf
+
+    ( ::nArea )->( DbGoBottom() )
+
+    ::CheckEofBof()
+
+return( Self )
+
+
+
+
+
+UTILITY STATIC function TDbf_Seek( uVal, lSoft, lLast) ; local Self AS CLASS TDbf := QSelf() AS CLASS TDbf
+
+    local lRet := .F.
+
+    ::Eof      := .F.
+    ::Bof      := .F.
+
+    lSoft := If( lSoft == nil, Set( 9 ), lSoft ) ;
+    lLast := If( lLast == nil, .F., lLast ) ;
+
+    lRet       := ( ::nArea )->( dbSeek( uVal, lSoft, lLast ) )
+
+    if ::lScope
+        if !Eval( ::oIndex:bBottom, Self )
+            ( ::nArea )->( dbGoTo( 0 ) )
+            ::Eof := .T.
+            lRet  := .F.
+        elseif !eval( ::oIndex:bTop, Self )
+            IIF( lSoft, ::GoTop(), ( ( ::nArea )->( dbGoTo( 0 ) ), ::Eof := .T. ) )
+            lRet  := .F.
+        endif
+    endif
+
+return( lRet )
+
+
+
+UTILITY STATIC function TDbf_SeekInOrd( uVal, cOrd, lSoft, lLast) ; local Self AS CLASS TDbf := QSelf() AS CLASS TDbf
+
+    local lRet := .F.
+    local nOrd := ( ::nArea )->( OrdSetFocus( cOrd ) )
+
+    lRet       := ::Seek( uVal, lSoft, lLast )
+
+    ( ::nArea )->( OrdSetFocus( nOrd ) )
+
+return( lRet )
+
+
+
+UTILITY STATIC function TDbf_SeekBack( uVal, cOrd, lSoft, lLast) ; local Self AS CLASS TDbf := QSelf() AS CLASS TDbf
+
+    local lRet := .F.
+    local nRec := ( ::nArea )->( Recno() )
+    local nOrd := ( ::nArea )->( OrdSetFocus( cOrd ) )
+
+    lRet       := ::Seek( uVal, lSoft, lLast )
+
+    ( ::nArea )->( OrdSetFocus( nOrd ) )
+    ( ::nArea )->( dbGoTo( nRec ) )
+
+return( lRet )
+
+
+
+UTILITY STATIC function TDbf__Skip(nSkip) ; local Self AS CLASS TDbf := QSelf() AS CLASS TDbf
+
+    ::Eof := .F.
+    ::Bof := .F.
+
+    ( ::nArea )->( DbSkip( nSkip ) )
+
+    if ::lScope
+        nSkip := If( nSkip == nil, 1, nSkip ) ;
+        if nSkip > 0
+            if !eval( ::oIndex:bBottom, Self )
+                ( ::nArea )->( DbGoTo( 0 ) )
+                ::Eof := .T.
+                eval( ::bEof, Self )
+            endif
+        else
+            if !eval( ::oIndex:bTop, Self )
+                iScpTop( Self )
+                ::Bof := .T.
+                eval( ::bBof, Self )
+            endif
+        endif
+    else
+        if ::Eof := ( ::nArea )->( Eof() )
+            eval( ::bEof, Self )
+        elseif ::Bof := ( ::nArea )->( Bof() )
+            eval( ::bBof, Self )
+        endif
+    endif
+
+return( Self )
+
+
+
+
+UTILITY STATIC function TDbf_Skipper( nSkip) ; local Self AS CLASS TDbf := QSelf() AS CLASS TDbf
+
+    local nSkipped := 0
+
+    ::Eof := .F.
+    ::Bof := .F.
+
+    DO CASE
+    CASE ( ::nArea )->( LastRec() ) == 0
+        ::Eof := .T.
+        ::Bof := .T.
+    CASE nSkip > 0
+        if ::lScope
+            while nSkipped < nSkip
+                ( ::nArea )->( DbSkip( 1 ) )
+                if eval( ::oIndex:bBottom, Self )
+                    ++nSkipped
+                else
+                    ( ::nArea )->( DbSkip( -1 ) )
+                    ::Eof := .T.
+                    EXIT
+                endif
+            end
+        else
+            while nSkipped < nSkip
+                ( ::nArea )->( DbSkip( 1 ) )
+                if !( ::nArea )->( Eof() )
+                    ++nSkipped
+                else
+                    ( ::nArea )->( DbSkip( -1 ) )
+                    ::Eof := .T.
+                    EXIT
+                endif
+            end
+        endif
+    CASE nSkip < 0
+        if ::lScope
+            while nSkipped > nSkip
+                ( ::nArea )->( DbSkip( -1 ) )
+                if eval( ::oIndex:bTop, Self )
+                    --nSkipped
+                else
+
+                    IIF( !( ::nArea )->( Bof() ), ( ::nArea )->( DbSkip( 1 ) ), )
+                    ::Bof := .T.
+                    EXIT
+                endif
+            end
+        else
+            while nSkipped > nSkip
+                ( ::nArea )->( DbSkip( -1 ) )
+                if !( ::nArea )->( Bof() )
+                    --nSkipped
+                else
+                    ::Bof := .T.
+                    EXIT
+                endif
+            end
+        endif
+    end
+
+return( nSkipped )
+
+
+
+
+UTILITY STATIC function TDbf_SkipperLoad( nSkip) ; local Self AS CLASS TDbf := QSelf() AS CLASS TDbf
+
+    local nSkipped := 0
+
+    ::Eof := .F.
+    ::Bof := .F.
+
+    DO CASE
+    CASE ( ::nArea )->( LastRec() ) == 0
+        ::Eof := .T.
+        ::Bof := .T.
+    CASE nSkip > 0
+        if ::lScope
+            while nSkipped < nSkip
+                ( ::nArea )->( DbSkip( 1 ) )
+                if eval( ::oIndex:bBottom, Self )
+                    ++nSkipped
+                    ::Load()
+                else
+                    ( ::nArea )->( DbSkip( -1 ) )
+                    ::Eof := .T.
+                    EXIT
+                endif
+            end
+        else
+            while nSkipped < nSkip
+                ( ::nArea )->( DbSkip( 1 ) )
+                if !( ::nArea )->( Eof() )
+                    ++nSkipped
+                    ::Load()
+                else
+                    ( ::nArea )->( DbSkip( -1 ) )
+                    ::Eof := .T.
+                    EXIT
+                endif
+            end
+        endif
+    CASE nSkip < 0
+        if ::lScope
+            while nSkipped > nSkip
+                ( ::nArea )->( DbSkip( -1 ) )
+                if eval( ::oIndex:bTop, Self )
+                    --nSkipped
+                    ::Load()
+                else
+
+                    IIF( !( ::nArea )->( Bof() ), ( ::nArea )->( DbSkip( 1 ) ), )
+                    ::Bof := .T.
+                    EXIT
+                endif
+            end
+        else
+            while nSkipped > nSkip
+                ( ::nArea )->( DbSkip( -1 ) )
+                if !( ::nArea )->( Bof() )
+                    --nSkipped
+                    ::Load()
+                else
+                    ::Bof := .T.
+                    EXIT
+                endif
+            end
+        endif
+    end
+
+return( nSkipped )
+
+
+
+
+
+
+
+
+UTILITY STATIC function TDbf_AddField( cName, cType, nLen, nDec, cPic, xDefault,  bValid, bSetGet, cComment, lColAlign, nColSize, lHide, aBitmaps) ; local Self AS CLASS TDbf := QSelf() AS CLASS TDbf
+    local oFld
+
+    ++::FieldCount
+
+    if cName:ClassName() == "TFIELD"
+        oFld   := cName
+    else
+
+        oFld   := TField():New( Self, cName, cType, nLen, nDec, cPic, xDefault,  bValid, bSetGet, cComment, lColAlign, nColSize, lHide, aBitmaps )
+    end
+
+    aAdd( ::aTField, oFld )
+
+return( oFld )
+
+
+
+
+UTILITY STATIC function TDbf_Append( lUnLock) ; local Self AS CLASS TDbf := QSelf() AS CLASS TDbf
+
+    ::lBuffer    := .T.
+    ( ::nArea )->( DbAppend( lUnLock ) )
+
+return( ::lAppend := !( ::nArea )->( NetErr() ) )
+
+
+
+
+UTILITY STATIC function TDbf__Delete(lNext) ; local Self AS CLASS TDbf := QSelf() AS CLASS TDbf
+
+   local nNext
+   local nRecNo
+   local lDeleted := .F.
+
+   lNext := If( lNext == nil, .T., lNext ) ;
+
+   if lNext
+      nRecNo      := ( ::nArea )->( RecNo() )
+      ( ::nArea )->( dbSkip() )
+      nNext       := ( ::nArea )->( RecNo() )
+      ( ::nArea )->( dbGoTo( nRecNo ) )
+   end
+
+   if ::RecLock()
+      ( ::nArea )->( DbDelete() )
+      lDeleted    := .T.
+      ::UnLock()
+   endif
+
+   if lDeleted .AND. lNext
+      ( ::nArea )->( dbGoto( nNext ) )
+      if ( ::nArea )->( Eof() ) .OR. nNext == nRecNo
+         ( ::nArea )->( dbGoBottom() )
+      end
+   end
+
+return( lDeleted )
+
+
+
+UTILITY STATIC function TDbf__FieldPut(nPos, Val) ; local Self AS CLASS TDbf := QSelf() AS CLASS TDbf
+
+   if ::RecLock()
+      ( ::nArea )->( FieldPut( nPos, Val ) )
+      ::UnLock()
+   endif
+
+return( Val )
+
+
+
+UTILITY STATIC function TDbf__FieldPutByName(cFld, Val) ; local Self AS CLASS TDbf := QSelf() AS CLASS TDbf
+
+    local nPos := ::FieldPos( cFld )
+
+    if nPos <> 0
+      ::FieldPut( nPos, Val )
+    endif
+
+return( Val )
+
+
+
+
+UTILITY STATIC function TDbf__RecNo(uGo) ; local Self AS CLASS TDbf := QSelf() AS CLASS TDbf
+
+    local Ret := ( ::nArea )->( RecNo() )
+
+    IIF( uGo <> nil, ::GoTo( uGo ), )
+
+return( Ret )
+
+
+
+UTILITY STATIC function TDbf_ReCall() ; local Self AS CLASS TDbf := QSelf() AS CLASS TDbf
+
+    local lRet := ( ::nArea )->( Deleted() ) .AND. ::RecLock()
+
+    if lRet
+        ( ::nArea )->( DbRecall() )
+        ::UnLock()
+    endif
+
+return( lRet )
+
+
+
+
+
+UTILITY STATIC function TDbf_Create() ; local Self AS CLASS TDbf := QSelf() AS CLASS TDbf
+
+   if Eval( ::bOnCreate, Self )
+      if len( ::aTField ) <> 0
+         dbCreate( ::cFile, ::aField(), ::cRDD )
+         ::IdxFDel()
+      endif
+   endif
+
+Return ( ::lExistFile( ::cFile ) )
+
+
+
+
+UTILITY STATIC function TDbf_UseArea( lNewArea, lOpen) ; local Self AS CLASS TDbf := QSelf() AS CLASS TDbf
+
+   local cName
+
+   lOpen := If( lOpen == nil, .F., lOpen ) ;
+   lNewArea := If( lNewArea == nil, .T., lNewArea ) ;
+
+   cName             := Alltrim( Padl( ::cName, 10 ) )
+
+   if !lOpen
+
+       if eval( ::bOnOpen, Self )
+
+           if Select( cName ) > 0
+               DbSelectArea( 0 )
+               ::cAlias := "DBA" + PadL( AllTrim( Str( Select() ) ), 3, "0" )
+               lNewArea := .F.
+           else
+               ::cAlias := cName
+           endif
+
+           DbUseArea( lNewArea, ::cRDD, ::cFile, ::cAlias, ::lShared, ::lReadOnly )
+           if NetErr()
+               lOpen    := .F.
+           else
+               lOpen    := .T.
+           end
+
+       endif
+
+   endif
+
+return( lOpen )
+
+
+
+UTILITY STATIC function TDbf_Pack( bRecord) ; local Self AS CLASS TDbf := QSelf() AS CLASS TDbf
+
+    local lDel    := .T.
+    local lRet    := !::lShared
+    local cOrder  := ""
+
+    if lRet
+        lDel      := Set( 11, .T. )
+        cOrder    := ( ::nArea )->( OrdSetFocus( 0 ) )
+        ( ::nArea )->( __DbPack() )
+
+        Set( 11, lDel )
+        ( ::nArea )->( OrdSetFocus( cOrder ) )
+    endif
+
+return( lRet )
+
+
+
+UTILITY STATIC function TDbf_HardPack( bRecord) ; local Self AS CLASS TDbf := QSelf() AS CLASS TDbf
+
+    local lRet    := .F.
+    local cFPack  := ""
+    local cMmExt  := ".DBT"
+    local cMmFile := ""
+    local cMmNew  := ""
+    local nCount  := 0
+    local i       := 0
+
+
+    while file( cFPack := ::cPath + "WPck" +  PadL( ++nCount, 3, "0" ) + ".DBF" )
+    end
+
+    ::Close()
+    ::IdxFDel()
+
+    if lRet := ( FRename( ::cFile, cFPack ) <> 0 )
+        Alert( "No puedo renombrar " + ::cFile + ";a " + cFPack )
+    elseif ::lMemo
+        cMmExt := if( ::cRDD $ "_DBFCDX REDBDCDX COMIX", ".FPT", ".DBT" )
+        cMmFile := ::cPath + GetFileNoExt( ::cFile ) + cMmExt
+        cMmNew  := ::cPath + GetFileNoExt( cFPack )  + cMmExt
+        if !( lRet := ( FRename( cMmFile, cMmNew ) == 0 ) )
+            Alert( "No puedo renombrar el MEMO" )
+        endif
+     endif
+
+    if lRet
+        ::ReActivate()
+        DbUseArea( .T., ::cRDD, cFPack, "_WPck" )
+        _WPck->( DbGoTop() )
+        nCount := _WPck->( FCount() )
+        if ValType( bRecord ) == "B"
+            while !_WPck->( Eof() )
+                ( ::nArea )->( DbAppend() )
+                FOR i := 1 TO nCount
+                    ( ::nArea )->( FieldPut( i, _WPck->( FieldGet( i ) ) ) )
+                NEXT
+                eval( bRecord, Self )
+                _WPck->( DbSkip() )
+            end
+        else
+            while !_WPck->( Eof() )
+                ( ::nArea )->( DbAppend() )
+                FOR i := 1 TO nCount
+                    ( ::nArea )->( FieldPut( i, _WPck->( FieldGet( i ) ) ) )
+                NEXT
+                _WPck->( DbSkip() )
+            end
+        end
+        _WPck->( DbCloseArea() )
+        if FErase( cFPack ) <> 0
+            Alert( "No puedo borrar: " + cFPack )
+        elseif ::lMemo .AND. FErase( cMmNew ) <> 0
+            Alert( "No puedo borrar: " + cMmNew )
+        endif
+    endif
+
+return( lRet )
+
+
+
+
+UTILITY STATIC function TDbf_Close() ; local Self AS CLASS TDbf := QSelf() AS CLASS TDbf
+
+    local lRet := ( ::Used() .AND. Eval( ::bOnClose, Self ) )
+
+    if lRet
+        ( ::nArea )->( OrdListClear() )
+        ( ::nArea )->( DbCloseArea() )
+        ::Protec( 0 )
+        ::nArea  := 0
+        ::cAlias := ""
+    else
+        Alert( "No puedo cerrar el area de trabajo: " + ::cAlias )
+    endif
+
+return( lRet )
+
+
+
+
+
+
+UTILITY STATIC function TDbf__Eval(bBlock, bFor, bWhile, nNext, nRecord, lRest) ; local Self AS CLASS TDbf := QSelf() AS CLASS TDbf
+
+    local nEval := 0
+    local nRec  := ( ::nArea )->( RecNo() )
+    local lBuf  := ::lBuffer
+
+    ::lBuffer := .F.
+
+    bBlock := If( bBlock == nil, { || .T. }, bBlock ) ;
+    bFor := If( bFor == nil, { || .T. }, bFor ) ;
+    bWhile := If( bWhile == nil, { || .T. }, bWhile ) ;
+    nNext := If( nNext == nil, ( ::nArea )->( LastRec() ), nNext ) ;
+    lRest := If( lRest == nil, .F., lRest ) ;
+
+    if ValType( nRecord ) == "N"
+        ( ::nArea )->( DbGoTo( nRecord ) )
+        if ::lScope
+            if eval( ::oIndex:bRange, Self )
+                ( ::nArea )->( eval( bBlock, Self ) )
+                nEval++
+            endif
+        else
+            ( ::nArea )->( eval( bBlock, Self ) )
+            nEval++
+        endif
+    else
+        IIF( !lRest, ::GoTop(), )
+
+        if ::lScope
+
+            while eval( ::oIndex:bBottom, Self ) .AND.  ( ::nArea )->( eval( bWhile, Self ) ) .AND. nNext > 0
+                if ( ::nArea )->( eval( bFor, Self ) )
+                    ( ::nArea )->( eval( bBlock, Self ) )
+                    nEval++
+                endif
+                nNext--
+                ( ::nArea )->( DbSkip() )
+            enddo
+        else
+
+           while !( ::nArea )->( Eof() ) .AND.  ( ::nArea )->( eval( bWhile, Self ) ) .AND. nNext > 0
+               if ( ::nArea )->( eval( bFor, Self ) )
+                   ( ::nArea )->( eval( bBlock, Self ) )
+                   nEval++
+               endif
+               nNext--
+               ( ::nArea )->( DbSkip() )
+           enddo
+        endif
+   endif
+
+   ( ::nArea )->( DbGoTo( nRec ) )
+
+   ::lBuffer := lBuf
+
+return( nEval )
+
+
+
+
+
+
+
+UTILITY STATIC function TDbf_Locate( bFor, bWhile, lRest) ; local Self AS CLASS TDbf := QSelf() AS CLASS TDbf
+
+    local lBuf := ::lBuffer
+
+    ::lBuffer := .F.
+    ::Eof     := .F.
+    ::Bof     := .F.
+
+    ::bLFor    := if( ValType( bFor )   == "B", bFor,   ::bLFor )
+    ::bLWhile  := if( ValType( bWhile ) == "B", bWhile, ::bLWhile )
+
+    lRest := If( lRest == nil, .F., lRest ) ;
+
+    IIF( lRest, ( ::nArea )->( DbSkip() ), ::GoTop() )
+
+   if ::lScope
+
+      while eval( ::oIndex:bBottom, Self ) .AND.  ( ::nArea )->( eval( ::bLWhile, Self ) )
+         if ( ::nArea )->( eval( ::bLFor, Self ) )
+            EXIT
+         endif
+         ( ::nArea )->( DbSkip() )
+      enddo
+   else
+
+      while !( ::Eof := ( ::nArea )->( Eof() ) ) .AND.  ( ::nArea )->( eval( ::bLWhile, Self ) )
+         if ( ::nArea )->( eval( ::bLFor, Self ) )
+            EXIT
+         endif
+         ( ::nArea )->( DbSkip() )
+      enddo
+   endif
+
+   ::lBuffer := lBuf
+
+return( !::Eof )
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+UTILITY STATIC function TDbf_Sort( cFile, aField, bFor, bWhile, next, rec, lRest) ; local Self AS CLASS TDbf := QSelf() AS CLASS TDbf
+    ( ::nArea )->( __DbSort( cFile, aField, bFor, bWhile, next, rec, lRest ) )
+return( Self )
+
+
+
+
+UTILITY STATIC function TDbf_Total( cFile, bKey, aField, bFor, bWhile, next, rec, lRest) ; local Self AS CLASS TDbf := QSelf() AS CLASS TDbf
+ ( ::nArea )->( __DbTotal( cFile, bKey, aField, bFor, bWhile, next, rec, lRest ) )
+return( Self )
+
+
+
+
+UTILITY STATIC function TDbf_Sum( bSum, bFor, bWhile, nNext, nRecord, lRest) ; local Self AS CLASS TDbf := QSelf() AS CLASS TDbf
+return( ::Eval( bSum, bFor, bWhile, nNext, nRecord, lRest ) )
+
+
+
+
+
+
+
+
+UTILITY STATIC function TDbf_IdxByTag( cnTag, cFile) ; local Self AS CLASS TDbf := QSelf() AS CLASS TDbf
+
+    local cType := ValType( cnTag )
+    local oIdx  := nil
+
+    if cType == "C"
+        oIdx := ::IdxByName( cnTag, cFile )
+    elseif cType == "N"
+        oIdx := ::IdxByOrder( cnTag, cFile )
+    endif
+
+return( if( oIdx == nil, ::oIndex, oIdx ) )
+
+
+
+
+UTILITY STATIC function TDbf_IdxByName( cName, cFile) ; local Self AS CLASS TDbf := QSelf() AS CLASS TDbf
+
+    local nLen := len( ::aTIndex )
+    local oIdx := nil
+    local n    := 0
+
+    if nLen == 0
+
+    elseif ValType( cName ) <> "C"
+        ::DbError( "Error en tipo de parametro - Se requiere STRING" )
+    elseif cName == "_NONE_"
+        oIdx      := GetIdxNone( Self )
+    else
+        if empty( cName )
+            oIdx  := ::oIndex
+        else
+            cName := Upper( cName )
+            for n := 1 to nLen
+                if upper( ::aTIndex[ n ]:cName ) == cName
+                    oIdx := ::aTIndex[ n ]
+                    EXIT
+                endif
+            next
+        endif
+    endif
+
+return( oIdx )
+
+
+
+
+UTILITY STATIC function TDbf_IdxByOrder( nOrder, cFile) ; local Self AS CLASS TDbf := QSelf() AS CLASS TDbf
+
+    local oIdx  := nil
+    local cName := ""
+
+    if ValType( nOrder ) <> "N"
+        ::DbError( "Error en tipo de parametro - Se requiere NUMERIC" )
+    else
+
+        cName := if( nOrder == 0, "_NONE_",  ( ::nArea )->( OrdName( nOrder, cFile ) ) )
+        oIdx  := ::IdxByName( cName, cFile )
+    endif
+
+return( oIdx )
+
+
+
+
+UTILITY STATIC function TDbf_AddIndex( cName, cFile, cKey, cFor, bWhile, lUniq, lDes, cComment, bOption, nStep, lNoDel, lTmp) ; local Self AS CLASS TDbf := QSelf() AS CLASS TDbf
+
+    local oIdx
+
+    if cName:ClassName() $ "TINDEX TNTX TMDX TCDX TCDX53 TNSX TSIXCDX TSIXNSX TCOMIX TADS"
+        oIdx := cName
+    else
+        oIdx := TIndex():New( Self, cName, cFile, cKey, cFor, bWhile, lUniq, lDes, cComment, bOption, nStep, lNoDel, lTmp )
+    endif
+
+    aAdd( ::aTIndex, oIdx )
+
+return( oIdx )
+
+
+
+
+
+
+UTILITY STATIC function TDbf_AddTmpIndex( cName, cFile, cKey, cFor, bWhile, lUniq, lDes, cComment, bOption, nStep, lNoDel, lFocus) ; local Self AS CLASS TDbf := QSelf() AS CLASS TDbf
+
+    local nRec
+    local oIdx
+
+    if ::cRDD == "ADSCDX"
+
+        ( ::nArea )->( dbSetFilter( c2Block( cFor ), ( cFor ) ) )
+
+    else
+
+        lFocus := If( lFocus == nil, .T., lFocus ) ;
+
+        nRec            := ::RecNo()
+        oIdx            := ::AddIndex( cName, cFile, cKey, cFor, bWhile, lUniq, lDes, cComment, bOption, nStep, lNoDel, .T. )
+
+        oIdx:IdxExt()
+        oIdx:Create()
+
+        if ::nArea <> 0
+            ( ::nArea )->( OrdListClear() )
+            aEval( ::aTIndex, { | o | if( ( ::cRDD <> "ADSCDX" .OR. !lAIS() ), ( ::nArea )->( OrdListAdd( o:cFile, o:cName ) ), ) } )
+            ( ::nArea )->( OrdSetFocus( 1 ) )
+        end
+
+        IIF( lFocus, oIdx:SetFocus(), ::oIndex:SetFocus() )
+
+        ::GoTo( nRec )
+
+    end
+
+return( oIdx )
+
+
+
+UTILITY STATIC function TDbf_AddBag( cFile) ; local Self AS CLASS TDbf := QSelf() AS CLASS TDbf
+
+    local cPath      := ""
+    local cExt       := ""
+
+    if !empty( cFile )
+
+        cPath        := if( !empty( cPath := GetPath( cFile ) ) .AND. right( cPath, 1 ) <> "\", cPath + "\", ::cPath )
+
+        cExt         := GetFileExt( cFile )
+
+        if empty( cExt )
+            cExt     := ( ::nArea )->( OrdBagExt() )
+            cFile    += cExt
+        endif
+
+        cFile        := if( !empty( cPath ), cPath + cFile, cFile )
+
+
+        if ::lExistFile( cFile )
+            if ( ::cRDD <> "ADSCDX" .OR. !lAIS() )
+               ( ::nArea )->( OrdListAdd( cFile ) )
+            end
+            ( ::nArea )->( OrdSetFocus( 1 ) )
+        else
+            if !ApoloMsgNoYes( "No existe INDEX BAG FILE: " + cFile  )
+                ::End()
+                __Quit()
+            endif
+        endif
+
+    endif
+
+return( Self )
+
+
+
+
+
+UTILITY STATIC function TDbf_IdxActivate() ; local Self AS CLASS TDbf := QSelf() AS CLASS TDbf
+
+   local oIdx
+   local nNum  := 0
+   local nLen  := len( ::aTIndex )
+   local nRec  := ( ::nArea )->( RecNo() )
+
+   if nLen > 0
+
+      ( ::nArea )->( ::IdxFCheck() )
+      ( ::nArea )->( OrdListClear() )
+
+
+
+      while ++nNum <= nLen
+         ::aTIndex[ nNum ]:Add()
+      end
+
+
+
+      if lAIS()
+         oIdx  := ::IdxByName( ( ::nArea )->( OrdName( 1 ) ) )
+      else
+         oIdx  := ::IdxByName( ( ::nArea )->( OrdName( 0 ) ) )
+      end
+
+      if !Empty( oIdx )
+         oIdx:SetFocus()
+      end
+
+   end
+
+   ::GoTo( nRec )
+
+return( Self )
+
+
+
+
+UTILITY STATIC function TDbf_IdxFCheck() ; local Self AS CLASS TDbf := QSelf() AS CLASS TDbf
+
+   local lCreate := .F.
+
+   aEval( ::aTIndex, { | oIdx | oIdx:IdxExt(), if( !::lExistFile( oIdx:cFile ), lCreate := .T., ) } )
+
+   if lCreate
+      aEval( ::aTIndex, { | oIdx |::IdxCreate( oIdx ) } )
+   end
+
+return( Self )
+
+
+
+
+UTILITY STATIC function TDbf_IdxFDel( cIdxFile) ; local Self AS CLASS TDbf := QSelf() AS CLASS TDbf
+
+    if len( ::aTIndex ) > 0
+        if ValType( cIdxFile ) <> "C"
+            aEval( ::aTIndex, { | oIdx | oIdx:IdxExt(), if( ::lExistFile( oIdx:cFile ), fEraseIndex( oIdx:cFile, ::cRdd ), ) } )
+        else
+            fEraseIndex( cIdxFile, ::cRdd )
+        endif
+    endif
+
+return( Self )
+
+
+
+
+
+UTILITY STATIC function TDbf_IdxDelete( cnTag, cFile) ; local Self AS CLASS TDbf := QSelf() AS CLASS TDbf
+
+    local oIdx
+    local cType
+    local nLen
+    local cName
+    local lRet
+    local n
+
+    if ::cRDD == "SQLRDD"
+
+       ( ::nArea )->( dbClearFilter() )
+
+    else
+
+        cType := ValType( cnTag )
+        nLen  := len( ::aTIndex )
+        cName := ""
+        lRet  := .F.
+        n     := 0
+
+        if cType == "C"
+            oIdx := ::IdxByName( cnTag, cFile )
+        elseif cType == "N"
+            oIdx := ::IdxByOrder( cnTag, cFile )
+        elseif cnTag:ClassName() $ "TINDEX TNTX TMDX TCDX TCDX53 TNSX TSIXCDX TSIXNSX TCOMIX TADS"
+            oIdx := cnTag
+        endif
+
+        if oIdx <> nil
+            cName := upper( oIdx:cName )
+            oIdx:Delete()
+            FOR n := 1 TO nLen
+                if upper( ::aTIndex[ n ]:cName ) == cName
+                    lRet := .T.
+                    ADel( ::aTIndex, n )
+                    ASize( ::aTIndex, nLen - 1 )
+                    EXIT
+                endif
+            NEXT
+        endif
+
+        if len( ::aTIndex ) > 0
+            ::aTIndex[ 1 ]:SetFocus()
+        end
+
+    end
+
+return( lRet )
+
+
+
+
+UTILITY STATIC function TDbf_ReIndexAll( bOption, nStep) ; local Self AS CLASS TDbf := QSelf() AS CLASS TDbf
+
+    ( ::nArea )->( OrdCondSet(,,,, bOption, nStep ) )
+    ( ::nArea )->( OrdListRebuild() )
+
+return( Self )
+
+
+
+
+UTILITY STATIC function TDbf_SetIndex( cnTag, cFile) ; local Self AS CLASS TDbf := QSelf() AS CLASS TDbf
+
+    local oOld := ::oIndex
+    local oIdx := ::IdxByTag( cnTag, cFile )
+
+    if !( upper( oIdx:cName ) == upper( ( ::nArea )->( OrdName( 0 ) ) ) )
+        oIdx:SetFocus()
+        ::lCount := ::lScope .OR. ::SetDeleted() .OR. ( ::Count == 0 )
+        if ( ::lScope := ::oIndex:lScope ) .AND. !eval( ::oIndex:bRange, Self )
+            iScpTop( Self )
+        endif
+    endif
+
+return( oOld:cName )
+
+
+
+
+
+
+UTILITY STATIC function TDbf__SetScope(uTop, uBottom) ; local Self AS CLASS TDbf := QSelf() AS CLASS TDbf
+
+    local cType := ""
+
+    if ::oIndex:cName == "_NONE_"
+            ::DbError( 16 )
+    else
+        ::Eof := ::Bof := ::lScope := .F.
+
+        if uTop == nil .AND. uBottom <> nil
+            cType := ValType( uBottom )
+            DO CASE
+                CASE cType == "L" ; uTop := .F.
+                CASE cType == "N" ; uTop := 0
+                CASE cType == "C" ; uTop := ""
+                CASE cType == "D" ; uTop := CToD( "" )
+                OTHERWISE         ; uTop := uBottom
+            end
+        else
+            uBottom := if( uBottom == nil, uTop, uBottom )
+        endif
+
+        if uBottom <> nil
+
+            if Valtype( uBottom ) <> Valtype( uTop )
+                ::DbError( 10 )
+            elseif ::lScope := ::oIndex:SetScope( uTop, uBottom )
+                iScpTop( Self )
+                ::lCount := .T.
+            else
+                MsgInfo( "No se pudo establecer el SCOPE" )
+            endif
+        else
+            ::ClearScope()
+        endif
+    endif
+
+return( Self )
+
+
+
+UTILITY STATIC function TDbf_ClearScope() ; local Self AS CLASS TDbf := QSelf() AS CLASS TDbf
+
+    ::lScope := .F.
+    ::lCount := .T.
+    ::oIndex:ClearScope()
+
+return( Self )
+
+
+
+
+
+UTILITY STATIC function TDbf_SetFilter( cFlt) ; local Self AS CLASS TDbf := QSelf() AS CLASS TDbf
+
+    if !Empty( cFlt )
+        ( ::nArea )->( DbSetFilter( c2Block( cFlt ), cFlt ) )
+    else
+        ( ::nArea )->( DbClearFilter( nil ) )
+    endif
+
+    ( ::nArea )->( DbGoTop() )
+
+return( Self )
+
+
+
+
+
+UTILITY STATIC function TDbf_RecLock() ; local Self AS CLASS TDbf := QSelf() AS CLASS TDbf
+
+    local lRet := .F.
+
+    while !( lRet := DBLock( ::nArea ) ) .AND. Eval( ::bNetError, Self )
+    end
+
+return( lRet )
+
+
+
+
+
+UTILITY STATIC function TDbf_Protec( nAction) ; local Self AS CLASS TDbf := QSelf() AS CLASS TDbf
+
+    local nHandle   := 0
+    local cBuffer   := space( 32 )
+
+    if ::lProtec
+        nHandle   := FOpen( ::cFile, 2 + 64 )
+        nAction := If( nAction == nil, 1, nAction ) ;
+        if nHandle <> -1
+            if FRead( nHandle, @cBuffer, 32 ) == 32
+                if nAction == 0
+                    if SubStr( cBuffer, 1, 1 ) <> Chr( 26 )
+                        cBuffer := Chr( 26 ) + SubStr( cBuffer, 1, 31 )
+                    endif
+                else
+                    if SubStr( cBuffer, 1, 1 ) == Chr( 26 )
+                        cBuffer := SubStr( cBuffer, 2, 31 ) + Chr( 0 )
+                    endif
+                endif
+                FSeek( nHandle, 0 )
+                FWrite( nHandle, cBuffer, 32 )
+            endif
+            FClose( nHandle )
+        endif
+    endif
+
+return( FError() )
+
+
+
+
+UTILITY STATIC function TDbf_aField() ; local Self AS CLASS TDbf := QSelf() AS CLASS TDbf
+
+    local n         := 0
+    local aDef      := {}
+    local aField    := {}
+
+    FOR n := 1 TO ::FieldCount
+        if !::aTField[ n ]:lCalculate
+            aDef := {}
+            aAdd( aDef, ::aTField[ n ]:cName )
+            aAdd( aDef, ::aTField[ n ]:cType )
+            aAdd( aDef, ::aTField[ n ]:nLen  )
+            aAdd( aDef, ::aTField[ n ]:nDec  )
+            aAdd( aField, aDef )
+        endif
+    NEXT
+
+return( aField )
+
+
+
+
+UTILITY STATIC function TDbf_SetCalField( cName, bSetGet, cPic, cComment) ; local Self AS CLASS TDbf := QSelf() AS CLASS TDbf
+
+    local oFld
+
+    if ::FieldByName( cName ) == nil
+        ::AddField( cName, "B",,, cPic,,, bSetGet, cComment )
+        oFld := GenDataField( Self, ::FieldCount )
+    endif
+
+return( oFld )
+
+
+
+
+
+
+UTILITY STATIC function TDbf_Refresh() ; local Self AS CLASS TDbf := QSelf() AS CLASS TDbf
+
+    ::nArea  := Select( ::cAlias )
+    ::SetIndex( ( ::nArea )->( OrdName( 0 ) ) )
+
+    ::cRDD := ( ::nArea )->( RDDName() )
+
+    ::lShared   := ( ::nArea )->( IsShared() )
+    ::lReadOnly := ( ::nArea )->( IsReadOnly() )
+    ::hDataFile := ( ::nArea )->( DbfHdl() )
+
+    ::lCount := ::lShared
+
+return( Self )
+
+
+
+UTILITY STATIC function TDbf_SetBuffer( lVal) ; local Self AS CLASS TDbf := QSelf() AS CLASS TDbf
+
+    local lRet := ::lBuffer
+
+    ::lBuffer := if( ValType( lVal ) == "L", lVal, ::lBuffer )
+
+return( lRet )
+
+
+
+
+UTILITY STATIC function TDbf_Blank() ; local Self AS CLASS TDbf := QSelf() AS CLASS TDbf
+
+    ::lBuffer  := .T.
+    ::aBuffer  := {}
+    ( ::nArea )->( AEval(::aTField, {|oFld| AAdd( ::aBuffer, oFld:Blank() ) } ) )
+
+return( Self )
+
+
+
+
+UTILITY STATIC function TDbf_SetDefault() ; local Self AS CLASS TDbf := QSelf() AS CLASS TDbf
+
+    ::aBuffer  := {}
+    ( ::nArea )->( AEval(::aTField, {|oFld| AAdd( ::aBuffer, oFld:SetDefault() ) } ) )
+
+return( Self )
+
+
+
+
+UTILITY STATIC function TDbf_Load() ; local Self AS CLASS TDbf := QSelf() AS CLASS TDbf
+
+    ::lBuffer  := .T.
+    ::aBuffer  := {}
+    ( ::nArea )->( AEval(::aTField, {|oFld| AAdd( ::aBuffer, oFld:Load() ) } ) )
+
+return( Self )
+
+
+
+
+UTILITY STATIC function TDbf_RollBack() ; local Self AS CLASS TDbf := QSelf() AS CLASS TDbf
+
+    ( ::nArea )->( AEval( ::aTField, { | oFld, i | oFld:Val := ::aBuffer[ i ] } ) )
+
+    ::lBuffer  := .F.
+
+return( Self )
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+UTILITY STATIC function TDbf_Save() ; local Self AS CLASS TDbf := QSelf() AS CLASS TDbf
+
+    local lRet       := .F.
+    local lContinue  := .T.
+
+    if lContinue .AND. ::RecLock()
+
+        if ::Valid()
+            ( ::nArea )->( aEval( ::aTField, { | oFld | oFld:Save() } ) )
+            lRet     := .T.
+        else
+            if ApoloMsgNoYes( ::cFldInvalid + chr( 13 ) + chr( 10 ) + ::aMsg( 14 ) + ::aMsg( 03 ), ::aMsg( 06 ) )
+                ( ::nArea )->( aEval( ::aTField, { | oFld | oFld:Save() } ) )
+                lRet := .T.
+            else
+                IIF( ::lAppend, ::Delete(), ::RollBack() )
+            endif
+        endif
+        ::UnLock()
+
+    endif
+
+    ::lAppend        := .F.
+    ::lBuffer        := .F.
+
+return( lRet )
+
+
+
+UTILITY STATIC function TDbf_Valid() ; local Self AS CLASS TDbf := QSelf() AS CLASS TDbf
+
+    ::lValid      := .T.
+    ::cFldInvalid := ""
+
+    ( ::nArea )->( aEval( ::aTField, { | oFld | oFld:Valid() } ) )
+
+return( ::lValid )
+
+
+
+UTILITY STATIC function TDbf_SetFieldEmpresa( nRec) ; local Self AS CLASS TDbf := QSelf() AS CLASS TDbf
+
+    local nOldCount := ::Count
+
+    if ValType( nRec ) == "N"
+        ::Count  := nRec
+        ::lCount := .F.
+    endif
+
+return( nOldCount )
+
+
+
+
+
+UTILITY STATIC function TDbf_SetBrowse( oBrw) ; local Self AS CLASS TDbf := QSelf() AS CLASS TDbf
+
+   if Upper( oBrw:ClassName() ) $ "TXBROWSE IXBROWSE"
+
+      oBrw:nDataType    := 0
+      oBrw:cAlias       := ::cAlias
+      oBrw:bGoTop       := {|| if( ( ::cAlias )->( Used() ), ( ::cAlias )->( DbGoTop() ), ) }
+      oBrw:bGoBottom    := {|| if( ( ::cAlias )->( Used() ), ( ::cAlias )->( DbGoBottom() ), ) }
+      oBrw:bSkip        := {| n | iif( n == nil, n := 1, ), if( ( ::cAlias )->( Used() ), ( ::cAlias )->( DbSkipper( n ) ), ) }
+      oBrw:bBof         := {|| if( ( ::cAlias )->( Used() ), ( ::cAlias )->( Bof() ), ) }
+      oBrw:bEof         := {|| if( ( ::cAlias )->( Used() ), ( ::cAlias )->( Eof() ), ) }
+
+
+
+      oBrw:bBookMark    := {| n | iif( n == nil, iif( ( ::cAlias )->( Used() ), ( ::cAlias )->( RecNo() ), 0 ), iif( ( ::cAlias )->( Used() ), ( ::cAlias )->( DbGoto( n ) ), 0 ) ) }
+
+
+
+      oBrw:bKeyNo       := {| n | iif( n == nil, iif( ( ::cAlias )->( Used() ), ( ::cAlias )->( OrdKeyNo() ), 0 ), iif( ( ::cAlias )->( Used() ), ( ::cAlias )->( OrdKeyGoto( n ) ), 0 ) ) }
+
+      oBrw:bKeyCount    := {|| if( ( ::cAlias )->( Used() ), ( ::cAlias )->( OrdKeyCount() ), 0 ) }
+
+      oBrw:bLock        := {|| if( ( ::cAlias )->( Used() ), ( ::cAlias )->( DbrLock() ), ) }
+      oBrw:bUnlock      := {|| if( ( ::cAlias )->( Used() ), ( ::cAlias )->( DbrUnlock() ), ) }
+
+   elseif Upper( oBrw:ClassName() ) $ "TWBROWSE TCBROWSE TSBROWSE IWBROWSE"
+
+      oBrw:bGoTop     := {|| ::GoTop() }
+      oBrw:bGoBottom  := {|| ::GoBottom() }
+      oBrw:bSkip      := {| n | ::Skipper( n ) }
+      oBrw:bLogicLen  := {|| ::OrdKeyCount() }
+      oBrw:bLogicPos  := {|| ::OrdKeyNo() }
+      if oBrw:oVScroll() <> nil
+          oBrw:oVscroll():SetRange( 1, ::OrdKeyCount() )
+      endif
+      oBrw:Refresh()
+
+   else
+
+      ::DbError( 13 )
+
+   endif
+
+return( oBrw )
+
+
+
+
+UTILITY STATIC function TDbf_FieldByName( cName) ; local Self AS CLASS TDbf := QSelf() AS CLASS TDbf
+
+    local n    := 0
+    local oFld := nil
+
+    cName := upper( cName )
+
+    FOR n := 1 TO ::FieldCount
+        if upper( ::aTField[ n ]:cName ) == cName
+            oFld := ::aTField[ n ]
+            EXIT
+        endif
+    NEXT
+
+return( oFld )
+
+
+
+
+
+
+UTILITY STATIC function TDbf_Clone( lNewArea, cComment) ; local Self AS CLASS TDbf := QSelf() AS CLASS TDbf
+
+    local oDb := Self
+    local oClon
+
+    lNewArea := If( lNewArea == nil, .F., lNewArea ) ;
+    cComment := If( cComment == nil, ::cComment, cComment ) ;
+
+    if lNewArea
+        oClon := DbfServer( oDb:cFile )
+        oClon:New( oDb:cFile, oDb:cName, oDb:cRDD, cComment, oDb:cPath )
+        oClon:aTField := __objClone( oDb:aTField )
+        oClon:aTIndex := __objClone( oDb:aTIndex )
+        oClon:FieldCount := len( oClon:aTField )
+        AEval( oClon:aTField, { |o| o:oDbf := oClon } )
+        AEval( oClon:aTIndex, { |o| o:oDbf := oClon } )
+        oClon:Activate( oDb:lRecycle, oDb:lShared, oDb:lReadOnly, oDb:lProtec )
+    else
+        oClon := __objClone( oDb )
+        oClon:aTField := __objClone( oDb:aTField )
+        oClon:aTIndex := __objClone( oDb:aTIndex )
+        oClon:cComment := cComment
+        AEval( oClon:aTField, { |o| o:oDbf := oClon } )
+        AEval( oClon:aTIndex, { |o| o:oDbf := oClon } )
+    endif
+
+return( oClon )
+
+
+
+UTILITY STATIC function TDbf_GetStatus( lInit) ; local Self AS CLASS TDbf := QSelf() AS CLASS TDbf
+
+    lInit := If( lInit == nil, .F., lInit ) ;
+
+    ::aStatus := {}
+
+    AAdd( ::aStatus, ::OrdSetFocus() )
+    AAdd( ::aStatus, ( ::nArea )->( RecNo() ) )
+    AAdd( ::aStatus, ::lScope )
+    AAdd( ::aStatus, if( ::lScope, { ::oIndex:uTop, ::oIndex:uBottom }, {,} ) )
+    AAdd( ::aStatus, ::lBuffer )
+
+    if lInit
+        ::SetIndex( 1 )
+    end
+
+return( Self )
+
+
+
+UTILITY STATIC function TDbf_SetStatus() ; local Self AS CLASS TDbf := QSelf() AS CLASS TDbf
+
+    ::GoTo( ::aStatus[ 2 ] )
+    ::OrdSetFocus( ::aStatus[ 1 ] )
+
+    if ::aStatus[ 3 ]
+        ::SetScope( ::aStatus[ 4, 1 ], ::aStatus[ 4, 2 ] )
+    endif
+
+    ::lBuffer  := ::aStatus[ 5 ]
+
+return( Self )
+
+
+
+UTILITY STATIC function TDbf_SetDeleted( lDel) ; local Self AS CLASS TDbf := QSelf() AS CLASS TDbf
+
+    local lRet := Set( 11 ) .OR. ::oIndex:lNoDel
+
+    IIF( ValType( lDel ) == "L", Set( 11, lDel ), )
+
+return( lRet )
+
+
+
+
+
+UTILITY STATIC function TDbf_Destroy() ; local Self AS CLASS TDbf := QSelf() AS CLASS TDbf
+
+    local oDb := Self
+
+    ( oDb:nArea )->( AEval( oDb:aTFilter,   { | oFlt | oFlt:Destroy() } ) )
+    ( oDb:nArea )->( AEval( oDb:aTIndex,    { | oIdx | oIdx:Destroy() } ) )
+    ( oDb:nArea )->( AEval( oDb:aTField,    { | oFld | oFld:Destroy() } ) )
+
+    oDb:aTFilter    := {}
+    oDb:aTIndex     := {}
+    oDb:aTField     := {}
+
+    oDb:aBuffer     := {}
+
+    Self := nil
+
+return( .T. )
+
+
+
+
+
+static function GenDataField( oDb, nPos )
+
+    local oFld := oDb:aTField[ nPos ]
+
+
+    __clsAddMsg( oDb:ClassH, oFld:cName,  &( "{ | o | o:FldGet( " + Str( nPos, 3 ) + " ) }" ), 3 )
+
+    __clsAddMsg( oDb:ClassH, "_" + oFld:cName,  &( "{ | o, Val | o:FldPut( " + Str( nPos, 3) + ", Val ) }" ), 3 )
+
+
+
+    AAdd( oDb:aBuffer, oFld:Val )
+
+return( oFld )
+
+
+
+
+
+UTILITY STATIC function TDbf_lSetMarkRec( cMark, nRec) ; local Self AS CLASS TDbf := QSelf() AS CLASS TDbf
+
+   local nRecNo   := ::RecNo()
+   local nOffSet  := 0
+
+   nRec           := if( ValType( nRec )  <> "N", ::RecNo(), nRec  )
+   cMark          := if( ValType( cMark ) <> "C", "#", cMark )
+
+   nOffSet        := ( ( ::nArea )->( RecSize() ) * ( nRec - 1 ) ) + ( ::nArea )->( Header() )
+
+   FSeek( ::hDataFile, nOffSet, 0 )
+   FWrite( ::hDataFile, cMark, 1 )
+
+   ::GoTo( nRecNo )
+
+return( FError() == 0 )
+
+
+
+
+
+UTILITY STATIC function TDbf_GetMarkRec( nRec) ; local Self AS CLASS TDbf := QSelf() AS CLASS TDbf
+
+   local nRecNo   := ::RecNo()
+   local nOffSet  := 0
+   local cMark    := " "
+
+   nRec           := if( ValType( nRec ) <> "N", ::RecNo(), nRec  )
+   nOffSet        := ( ( ::nArea )->( RecSize() ) * ( nRec - 1 ) ) + ( ::nArea )->( Header() )
+
+   FSeek( ::hDataFile, nOffSet, 0 )
+   FRead( ::hDataFile, @cMark, 1  )
+
+   ::GoTo( nRecNo )
+
+return( cMark )
+
+
+
+
+UTILITY STATIC function TDbf_lMarked( cMark, nRec) ; local Self AS CLASS TDbf := QSelf() AS CLASS TDbf
+
+    cMark := if( ValType( cMark ) == "C", cMark, "#" )
+
+return( ::GetMarkRec( cMark, nRec ) == cMark )
+
+
+
+
+UTILITY STATIC function TDbf_ChgMarked( cMark, nRec) ; local Self AS CLASS TDbf := QSelf() AS CLASS TDbf
+
+   if ::lMarked( cMark, nRec )
+      ::lSetMarkRec( Space( 1 ), nRec )
+   else
+      ::lSetMarkRec( cMark, nRec )
+   end
+
+return ( nil )
+
+
+
+
+
+UTILITY STATIC function TDbf_SetAllMark( cMark) ; local Self AS CLASS TDbf := QSelf() AS CLASS TDbf
+
+   local nRecNo   := ::RecNo()
+
+   cMark          := if( ValType( cMark ) <> "C", "#", cMark )
+
+   ::GoTop()
+   while !::eof()
+
+      ::lSetMarkRec( cMark )
+      ::Skip()
+
+   end
+
+   ::GoTo( nRecNo )
+
+return ( nil )
+
+
+
+UTILITY STATIC function TDbf_nGetAllMark( cMark, cAlias) ; local Self AS CLASS TDbf := QSelf() AS CLASS TDbf
+
+   local nNum     := 0
+   local nRecNo   := ::RecNo()
+
+   cMark          := if( ValType( cMark ) <> "C", "#", cMark )
+
+   ::GoTop()
+   while !::eof()
+
+      if ::lMarked( cMark )
+         ++nNum
+      end
+      ::Skip()
+
+   end
+
+   ::GoTo( nRecNo )
+
+return ( nNum )
+
+
+
+UTILITY STATIC function TDbf__OrdScope(uTop, uBottom) ; local Self AS CLASS TDbf := QSelf() AS CLASS TDbf
+
+   uBottom  := if( uBottom == nil, uTop, uBottom )
+
+   ( ::nArea )->( OrdScope( 0, uTop ) )
+   ( ::nArea )->( OrdScope( 1, uBottom ) )
+
+   ( ::nArea )->( DbGoTop() )
+
+RETURN ( Self )
+
+
+
+UTILITY STATIC function TDbf_OrdClearScope() ; local Self AS CLASS TDbf := QSelf() AS CLASS TDbf
+
+   ( ::nArea )->( OrdScope( 0, nil ) )
+   ( ::nArea )->( OrdScope( 1, nil ) )
+
+RETURN ( Self )
+
+
+
+UTILITY STATIC function TDbf_SwapUp() ; local Self AS CLASS TDbf := QSelf() AS CLASS TDbf
+
+   local nRecno      := ( ::nArea )->( RecNo() )
+   local aNewBuffer  := {}
+   local aOldBuffer  := {}
+
+   ( ::nArea )->( AEval( ::aTField, {|oFld| AAdd( aOldBuffer, oFld:GetVal() ) } ) )
+   ( ::nArea )->( dbSkip( -1 ) )
+
+   if ( ::nArea )->( Bof() )
+      ( ::nArea )->( dbGoTo( nRecno ) )
+   else
+      ( ::nArea )->( AEval( ::aTField, {|oFld| AAdd( aNewBuffer, oFld:GetVal() ) } ) )
+      ( ::nArea )->( dbSkip( 1 ) )
+      ( ::nArea )->( aEval( ::aTField, {|oFld, n| oFld:PutVal( aNewBuffer[ n ] ) } ) )
+      ( ::nArea )->( dbSkip( -1 ) )
+      ( ::nArea )->( aEval( ::aTField, {|oFld, n| oFld:PutVal( aOldBuffer[ n ] ) } ) )
+      ( ::nArea )->( dbSkip( 1 ) )
+   end
+
+Return ( Self )
+
+
+
+UTILITY STATIC function TDbf_SwapDown() ; local Self AS CLASS TDbf := QSelf() AS CLASS TDbf
+
+   local nRecno      := ( ::nArea )->( RecNo() )
+   local aNewBuffer  := {}
+   local aOldBuffer  := {}
+
+   ( ::nArea )->( AEval( ::aTField, {|oFld| AAdd( aOldBuffer, oFld:GetVal() ) } ) )
+   ( ::nArea )->( dbSkip( 1 ) )
+
+   if ( ::nArea )->( Eof() )
+      ( ::nArea )->( dbGoTo( nRecno ) )
+   else
+      ( ::nArea )->( AEval( ::aTField, {|oFld| AAdd( aNewBuffer, oFld:GetVal() ) } ) )
+      ( ::nArea )->( dbSkip( -1 ) )
+      ( ::nArea )->( aEval( ::aTField, {|oFld, n| oFld:PutVal( aNewBuffer[ n ] ) } ) )
+      ( ::nArea )->( dbSkip( 1 ) )
+      ( ::nArea )->( aEval( ::aTField, {|oFld, n| oFld:PutVal( aOldBuffer[ n ] ) } ) )
+      ( ::nArea )->( dbSkip( -1 ) )
+   end
+
+Return ( Self )
+
+
+
+UTILITY STATIC function TDbf__OrdSetFocus(cnTag, cFile) ; local Self AS CLASS TDbf := QSelf() AS CLASS TDbf
+
+Return ( ( ::nArea )->( OrdSetFocus( cnTag, cFile ) ) )
+
+
+
+
+
+
+UTILITY STATIC function TDbf_aCommentIndex() ; local Self AS CLASS TDbf := QSelf() AS CLASS TDbf
+
+   local oIndex
+   local aIndex   := {}
+
+   for each oIndex in ::aTIndex
+      if !Empty( oIndex:cComment )
+         aAdd( aIndex, oIndex:cComment )
+      end
+   next
+
+Return ( aIndex )
+
+
+
+UTILITY STATIC function TDbf_AppendFromObject( oDbf) ; local Self AS CLASS TDbf := QSelf() AS CLASS TDbf
+
+   local n
+   local nCount   := ( ::nArea )->( fCount() )
+
+   ( ::nArea )->( dbAppend() )
+
+   if !( ::nArea )->( NetErr() )
+
+      for n := 1 to nCount
+         ( ::nArea )->( FieldPut( n, ( oDbf:nArea )->( FieldGet( n ) ) ) )
+      next
+
+      ( ::nArea )->( dbUnLock() )
+
+   end
+
+Return ( Self )
+
+
+
+
+
+
+static function FieldToData( oDb )
+
+    ( oDb:nArea )->( AEval( oDb:aTField, { | oFld, i | GenDataField( oDb, i ) } ) )
+
+return ( oDb )

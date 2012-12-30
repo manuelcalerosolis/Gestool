@@ -1,0 +1,2128 @@
+#line 112 "hbclass.ch"
+   DYNAMIC DivertConstructorCall
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+DECLARE HBClass  New( cName AS String, OPTIONAL SuperParams ) AS CLASS HBClass  Create() AS Object  Instance() AS Object  AddClsMethod( cName AS String, @MethodName(), nScope AS Numeric, n2 AS Numeric, n3 AS Numeric )  AddDelegate( cName AS String, cDelegate AS String, cObject AS String, nScope AS Numeric, lPersistent AS LOGICAL )  AddMultiClsData( cType AS String, uVal, nScope AS Numeric, aDatas AS Array OF String )  AddMultiData( cType AS String, uVal, nScope AS Numeric, aDatas AS Array OF String, x AS LOGICAL, lPer AS LOGICAL )  AddMethod( cName AS String, @MethodName(), nScope AS Numeric, lPersistent AS LOGICAL )  AddInLine( cName AS String, bBlock AS CodeBlock, nScope AS Numeric, lPersistent AS LOGICAL )  AddVirtual( cName AS String )  ModMethod( cName AS String, @MethodName(), nScope AS Numeric, lPersistent AS LOGICAL )  ModClsMethod( cName AS String, @MethodName(), nScope AS Numeric )  ModInline( cName AS String, bBlock AS CodeBlock, nScope AS Numeric, lPersistent AS LOGICAL )  SetOnError( @MethodName() )
+#line 85 "\Fwh1204\Include\FiveWin.Ch"
+   EXTERNAL GetProcAdd
+   EXTERNAL TActiveX
+
+
+
+
+extern errorsys
+#line 52 ".\Prg\Movalm.prg"
+static oWndBrw
+static dbfHisMov
+static dbfArticulo
+static dbfArtKit
+static dbfCodebar
+static dbfTblPro
+static dbfFamilia
+static dbfAlbPrvT
+static dbfAlbPrvL
+static dbfFacPrvT
+static dbfFacPrvL
+static dbfRctPrvT
+static dbfRctPrvL
+static dbfAlbCliT
+static dbfAlbCliL
+static dbfFacCliT
+static dbfFacCliL
+static dbfFacRecT
+static dbfFacRecL
+static dbfTikCliT
+static dbfTikCliL
+static dbfAlmT
+static dbfTmov
+static dbfDiv
+static oStock
+static dbfUsr
+static dbfFlt
+static dbfDelega
+static dbfProLin
+static dbfProMat
+static dbfPedPrvL
+static dbfPedCliL
+
+static aStockActual
+static nStockActual  := 0
+static oBrwStock
+
+static nRecEdit
+static nOrdEdit
+
+static cOldCod       := ""
+
+static lOpenFiles    := .F.
+static lExternal     := .F.
+
+static cPirDiv
+static nDinDiv
+static nDirDiv
+static nVdvDiv
+static cPicUnd
+
+static oMenu
+
+static bEdit         := { |aTmp, aGet, dbfHisMov, oBrw, bWhen, bValid, nMode | EdtRec( aTmp, aGet, dbfHisMov, oBrw, bWhen, bValid, nMode ) }
+
+
+
+
+
+
+
+
+
+
+STATIC FUNCTION OpenFiles()
+
+   local oBlock
+
+   if lOpenFiles
+      MsgStop( "Imposible abrir ficheros de historico de movimientos" )
+      Return ( .F. )
+   end
+
+   oBlock               := ErrorBlock( {| oError | ApoloBreak( oError ) } )
+   BEGIN SEQUENCE
+
+      lOpenFiles        := .T.
+
+      dbUseArea( .T., ( cDriver() ), ( cPatEmp() + "HISMOV.DBF" ), ( cCheckArea( "HISMOV", @dbfHisMov ) ), if(.T. .OR. .F., !.F., NIL), .F.,, )
+      if !lAIS() ; ordListAdd( ( cPatEmp() + "HISMOV.CDX" ) ) ; else ; ordSetFocus( 1 ) ; end
+
+      dbUseArea( .T., ( cDriver() ), ( cPatArt() + "ARTICULO.DBF" ), ( cCheckArea( "ARTICULO", @dbfArticulo ) ), if(.T. .OR. .F., !.F., NIL), .F.,, )
+      if !lAIS() ; ordListAdd( ( cPatArt() + "ARTICULO.CDX" ) ) ; else ; ordSetFocus( 1 ) ; end
+
+      dbUseArea( .T., ( cDriver() ), ( cPatArt() + "ArtCodebar.Dbf" ), ( cCheckArea( "CODEBAR", @dbfCodebar ) ), if(.T. .OR. .F., !.F., NIL), .F.,, )
+      if !lAIS() ; ordListAdd( ( cPatArt() + "ArtCodebar.Cdx" ) ) ; else ; ordSetFocus( 1 ) ; end
+
+      dbUseArea( .T., ( cDriver() ), ( cPatArt() + "ArtKit.Dbf" ), ( cCheckArea( "ARTKIT", @dbfArtKit ) ), if(.T. .OR. .F., !.F., NIL), .F.,, )
+      if !lAIS() ; ordListAdd( ( cPatArt() + "ArtKit.Cdx" ) ) ; else ; ordSetFocus( 1 ) ; end
+
+      dbUseArea( .T., ( cDriver() ), ( cPatArt() + "FAMILIAS.DBF" ), ( cCheckArea( "FAMILIAS", @dbfFamilia ) ), if(.T. .OR. .F., !.F., NIL), .F.,, )
+      if !lAIS() ; ordListAdd( ( cPatArt() + "FAMILIAS.CDX" ) ) ; else ; ordSetFocus( 1 ) ; end
+
+      dbUseArea( .T., ( cDriver() ), ( cPatArt() + "TBLPRO.DBF" ), ( cCheckArea( "TBLPRO", @dbfTblPro ) ), if(.T. .OR. .F., !.F., NIL), .F.,, )
+      if !lAIS() ; ordListAdd( ( cPatArt() + "TBLPRO.CDX" ) ) ; else ; ordSetFocus( 1 ) ; end
+
+      dbUseArea( .T., ( cDriver() ), ( cPatAlm() + "ALMACEN.DBF" ), ( cCheckArea( "ALMACEN", @dbfAlmT ) ), if(.T. .OR. .F., !.F., NIL), .F.,, )
+      if !lAIS() ; ordListAdd( ( cPatAlm() + "ALMACEN.CDX" ) ) ; else ; ordSetFocus( 1 ) ; end
+
+      dbUseArea( .T., ( cDriver() ), ( cPatDat() + "TMOV.DBF" ), ( cCheckArea( "TMOV", @dbfTMov ) ), if(.T. .OR. .F., !.F., NIL), .F.,, )
+      if !lAIS() ; ordListAdd( ( cPatDat() + "TMOV.CDX" ) ) ; else ; ordSetFocus( 1 ) ; end
+
+      dbUseArea( .T., ( cDriver() ), ( cPatEmp() + "ALBPROVT.DBF" ), ( cCheckArea( "ALBPROVT", @dbfAlbPrvT ) ), if(.T. .OR. .F., !.F., NIL), .F.,, )
+      if !lAIS() ; ordListAdd( ( cPatEmp() + "ALBPROVT.CDX" ) ) ; else ; ordSetFocus( 1 ) ; end
+
+      dbUseArea( .T., ( cDriver() ), ( cPatEmp() + "ALBPROVL.DBF" ), ( cCheckArea( "ALBPROVL", @dbfAlbPrvL ) ), if(.T. .OR. .F., !.F., NIL), .F.,, )
+      if !lAIS() ; ordListAdd( ( cPatEmp() + "ALBPROVL.CDX" ) ) ; else ; ordSetFocus( 1 ) ; end
+      ( dbfAlbPrvL )->( ordSetFocus( "cRef" ) )
+
+      dbUseArea( .T., ( cDriver() ), ( cPatEmp() + "FACPRVT.DBF" ), ( cCheckArea( "FACPRVT", @dbfFacPrvT ) ), if(.T. .OR. .F., !.F., NIL), .F.,, )
+      if !lAIS() ; ordListAdd( ( cPatEmp() + "FACPRVT.CDX" ) ) ; else ; ordSetFocus( 1 ) ; end
+
+      dbUseArea( .T., ( cDriver() ), ( cPatEmp() + "FACPRVL.DBF" ), ( cCheckArea( "FACPRVL", @dbfFacPrvL ) ), if(.T. .OR. .F., !.F., NIL), .F.,, )
+      if !lAIS() ; ordListAdd( ( cPatEmp() + "FACPRVL.CDX" ) ) ; else ; ordSetFocus( 1 ) ; end
+      ( dbfFacPrvL )->( ordSetFocus( "cRef" ) )
+
+      dbUseArea( .T., ( cDriver() ), ( cPatEmp() + "RctPrvT.DBF" ), ( cCheckArea( "RctPrvT", @dbfRctPrvT ) ), if(.T. .OR. .F., !.F., NIL), .F.,, )
+      if !lAIS() ; ordListAdd( ( cPatEmp() + "RctPrvT.CDX" ) ) ; else ; ordSetFocus( 1 ) ; end
+
+      dbUseArea( .T., ( cDriver() ), ( cPatEmp() + "RctPrvL.Dbf" ), ( cCheckArea( "RctPrvL", @dbfRctPrvL ) ), if(.T. .OR. .F., !.F., NIL), .F.,, )
+      if !lAIS() ; ordListAdd( ( cPatEmp() + "RctPrvL.Cdx" ) ) ; else ; ordSetFocus( 1 ) ; end
+      ( dbfRctPrvL )->( ordSetFocus( "cRef" ) )
+
+      dbUseArea( .T., ( cDriver() ), ( cPatEmp() + "ALBCLIT.DBF" ), ( cCheckArea( "ALBCLIT", @dbfAlbCliT ) ), if(.T. .OR. .F., !.F., NIL), .F.,, )
+      if !lAIS() ; ordListAdd( ( cPatEmp() + "ALBCLIT.CDX" ) ) ; else ; ordSetFocus( 1 ) ; end
+
+      dbUseArea( .T., ( cDriver() ), ( cPatEmp() + "ALBCLIL.DBF" ), ( cCheckArea( "ALBCLIL", @dbfAlbCliL ) ), if(.T. .OR. .F., !.F., NIL), .F.,, )
+      if !lAIS() ; ordListAdd( ( cPatEmp() + "ALBCLIL.CDX" ) ) ; else ; ordSetFocus( 1 ) ; end
+      ( dbfAlbCliL )->( ordSetFocus( "cRef" ) )
+
+      dbUseArea( .T., ( cDriver() ), ( cPatEmp() + "FACCLIT.DBF" ), ( cCheckArea( "FACCLIT", @dbfFacCliT ) ), if(.T. .OR. .F., !.F., NIL), .F.,, )
+      if !lAIS() ; ordListAdd( ( cPatEmp() + "FACCLIT.CDX" ) ) ; else ; ordSetFocus( 1 ) ; end
+
+      dbUseArea( .T., ( cDriver() ), ( cPatEmp() + "FACCLIL.DBF" ), ( cCheckArea( "FACCLIL", @dbfFacCliL ) ), if(.T. .OR. .F., !.F., NIL), .F.,, )
+      if !lAIS() ; ordListAdd( ( cPatEmp() + "FACCLIL.CDX" ) ) ; else ; ordSetFocus( 1 ) ; end
+      ( dbfFacCliL )->( ordSetFocus( "cRef" ) )
+
+      dbUseArea( .T., ( cDriver() ), ( cPatEmp() + "FACRECT.DBF" ), ( cCheckArea( "FACRECT", @dbfFacRecT ) ), if(.T. .OR. .F., !.F., NIL), .F.,, )
+      if !lAIS() ; ordListAdd( ( cPatEmp() + "FACRECT.CDX" ) ) ; else ; ordSetFocus( 1 ) ; end
+
+      dbUseArea( .T., ( cDriver() ), ( cPatEmp() + "FACRECL.DBF" ), ( cCheckArea( "FACRECL", @dbfFacRecL ) ), if(.T. .OR. .F., !.F., NIL), .F.,, )
+      if !lAIS() ; ordListAdd( ( cPatEmp() + "FACRECL.CDX" ) ) ; else ; ordSetFocus( 1 ) ; end
+      ( dbfFacRecL )->( ordSetFocus( "cRef" ) )
+
+      dbUseArea( .T., ( cDriver() ), ( cPatEmp() + "TIKET.DBF" ), ( cCheckArea( "TIKET", @dbfTikCliT ) ), if(.T. .OR. .F., !.F., NIL), .F.,, )
+      if !lAIS() ; ordListAdd( ( cPatEmp() + "TIKET.CDX" ) ) ; else ; ordSetFocus( 1 ) ; end
+
+      dbUseArea( .T., ( cDriver() ), ( cPatEmp() + "TIKEL.DBF" ), ( cCheckArea( "TIKEL", @dbfTikCliL ) ), if(.T. .OR. .F., !.F., NIL), .F.,, )
+      if !lAIS() ; ordListAdd( ( cPatEmp() + "TIKEL.CDX" ) ) ; else ; ordSetFocus( 1 ) ; end
+      ( dbfTikCliL )->( ordSetFocus( "cCbaTil" ) )
+
+      dbUseArea( .T., ( cDriver() ), ( cPatDat() + "DIVISAS.DBF" ), ( cCheckArea( "DIVISAS", @dbfDiv ) ), if(.T. .OR. .F., !.F., NIL), .F.,, )
+      if !lAIS() ; ordListAdd( ( cPatDat() + "DIVISAS.CDX" ) ) ; else ; ordSetFocus( 1 ) ; end
+
+      dbUseArea( .T., ( cDriver() ), ( cPatDat() + "USERS.DBF" ), ( cCheckArea( "USERS", @dbfUsr ) ), if(.T. .OR. .F., !.F., NIL), .F.,, )
+      if !lAIS() ; ordListAdd( ( cPatDat() + "USERS.CDX" ) ) ; else ; ordSetFocus( 1 ) ; end
+
+      dbUseArea( .T., ( cDriver() ), ( cPatDat() + "DELEGA.DBF" ), ( cCheckArea( "DELEGA", @dbfDelega ) ), if(.T. .OR. .F., !.F., NIL), .F.,, )
+      if !lAIS() ; ordListAdd( ( cPatDat() + "DELEGA.CDX" ) ) ; else ; ordSetFocus( 1 ) ; end
+
+      dbUseArea( .T., ( cDriver() ), ( cPatDat() + "CNFFLT.DBF" ), ( cCheckArea( "CNFFLT", @dbfFlt ) ), if(.T. .OR. .F., !.F., NIL), .F.,, )
+      if !lAIS() ; ordListAdd( ( cPatDat() + "CNFFLT.CDX" ) ) ; else ; ordSetFocus( 1 ) ; end
+
+      dbUseArea( .T., ( cDriver() ), ( cPatEmp() + "PROLIN.DBF" ), ( cCheckArea( "PROLIN", @dbfProLin ) ), if(.T. .OR. .F., !.F., NIL), .F.,, )
+      if !lAIS() ; ordListAdd( ( cPatEmp() + "PROLIN.CDX" ) ) ; else ; ordSetFocus( 1 ) ; end
+      ordSetFocus( "cCodArt" )
+
+      dbUseArea( .T., ( cDriver() ), ( cPatEmp() + "PROMAT.DBF" ), ( cCheckArea( "PROMAT", @dbfProMat ) ), if(.T. .OR. .F., !.F., NIL), .F.,, )
+      if !lAIS() ; ordListAdd( ( cPatEmp() + "PROMAT.CDX" ) ) ; else ; ordSetFocus( 1 ) ; end
+      ordSetFocus( "cCodArt" )
+
+      dbUseArea( .T., ( cDriver() ), ( cPatEmp() + "PEDPROVL.DBF" ), ( cCheckArea( "PEDPROV", @dbfPedPrvL ) ), if(.T. .OR. .F., !.F., NIL), .F.,, )
+      if !lAIS() ; ordListAdd( ( cPatEmp() + "PEDPROVL.CDX" ) ) ; else ; ordSetFocus( 1 ) ; end
+
+      dbUseArea( .T., ( cDriver() ), ( cPatEmp() + "PEDCLIL.DBF" ), ( cCheckArea( "PEDCLI", @dbfPedCliL ) ), if(.T. .OR. .F., !.F., NIL), .F.,, )
+      if !lAIS() ; ordListAdd( ( cPatEmp() + "PEDCLIL.CDX" ) ) ; else ; ordSetFocus( 1 ) ; end
+
+      oStock            := TStock():Create( cPatGrp() )
+      if !oStock:lOpenFiles()
+         lOpenFiles     := .F.
+      else
+      oStock:cPedPrvL   := dbfPedPrvL
+      oStock:cPedCliL   := dbfPedCliL
+      oStock:cAlbPrvT   := dbfAlbPrvT
+      oStock:cAlbPrvL   := dbfAlbPrvL
+      oStock:cFacPrvT   := dbfFacPrvT
+      oStock:cFacPrvL   := dbfFacPrvL
+      oStock:cRctPrvT   := dbfRctPrvT
+      oStock:cRctPrvL   := dbfRctPrvL
+      oStock:cAlbCliT   := dbfAlbCliT
+      oStock:cAlbCliL   := dbfAlbCliL
+      oStock:cFacCliT   := dbfFacCliT
+      oStock:cFacCliL   := dbfFacCliL
+      oStock:cFacRecT   := dbfFacRecT
+      oStock:cFacRecL   := dbfFacRecL
+      oStock:cTikT      := dbfTikCliT
+      oStock:cTikL      := dbfTikCliL
+      oStock:cHisMov    := dbfHisMov
+      oStock:cProducL   := dbfProLin
+      oStock:cProducM   := dbfProMat
+      end
+
+      if ( dbfDiv )->( dbSeek( cDivEmp() ) )
+         cPirDiv        := RetPic( ( dbfDiv )->nNinDiv, ( dbfDiv )->nRinDiv )
+         nDinDiv        := ( dbfDiv )->nDinDiv
+         nDirDiv        := ( dbfDiv )->nRinDiv
+         nVdvDiv        := nDiv2Div( cDivEmp(), ( dbfDiv )->cCodDiv, dbfDiv )
+      end
+
+      cPicUnd           := MasUnd()
+
+   RECOVER
+
+      lOpenFiles        := .F.
+
+      msgStop( "Imposible abrir todas las bases de datos" )
+
+   end
+
+   ErrorBlock( oBlock )
+
+   if !lOpenFiles
+      CloseFiles()
+   end
+
+RETURN ( lOpenFiles )
+
+
+
+STATIC FUNCTION CloseFiles()
+
+   ( dbfHisMov   )->( dbCloseArea() )
+   ( dbfArticulo )->( dbCloseArea() )
+   ( dbfCodebar  )->( dbCloseArea() )
+   ( dbfTblPro   )->( dbCloseArea() )
+   ( dbfFamilia  )->( dbCloseArea() )
+   ( dbfAlmT     )->( dbCloseArea() )
+   ( dbfTMov     )->( dbCloseArea() )
+   ( dbfAlbPrvT  )->( dbCloseArea() )
+   ( dbfAlbPrvL  )->( dbCloseArea() )
+   ( dbfFacPrvT  )->( dbCloseArea() )
+   ( dbfFacPrvL  )->( dbCloseArea() )
+   ( dbfRctPrvT  )->( dbCloseArea() )
+   ( dbfRctPrvL  )->( dbCloseArea() )
+
+   ( dbfDiv      )->( dbCloseArea() )
+   ( dbfAlbCliT  )->( dbCloseArea() )
+   ( dbfAlbCliL  )->( dbCloseArea() )
+   ( dbfFacCliT  )->( dbCloseArea() )
+   ( dbfFacCliL  )->( dbCloseArea() )
+   ( dbfFacRecT  )->( dbCloseArea() )
+   ( dbfFacRecL  )->( dbCloseArea() )
+   ( dbfTikCliT  )->( dbCloseArea() )
+   ( dbfTikCliL  )->( dbCloseArea() )
+   ( dbfUsr      )->( dbCloseArea() )
+   ( dbfFlt      )->( dbCloseArea() )
+   ( dbfDelega   )->( dbCloseArea() )
+   ( dbfProLin   )->( dbCloseArea() )
+   ( dbfProMat   )->( dbCloseArea() )
+   ( dbfPedPrvL  )->( dbCloseArea() )
+   ( dbfPedCliL  )->( dbCloseArea() )
+   ( dbfArtKit   )->( dbCloseArea() )
+
+   if !Empty( oStock )
+      oStock:end()
+   end
+
+   dbfHisMov   := nil
+   dbfArticulo := nil
+   dbfCodebar  := nil
+   dbfTblPro   := nil
+   dbfFamilia  := nil
+   dbfAlmT     := nil
+   dbfTMov     := nil
+   dbfAlbPrvT  := nil
+   dbfAlbPrvL  := nil
+   dbfFacPrvT  := nil
+   dbfFacPrvL  := nil
+   dbfRctPrvT  := nil
+   dbfRctPrvL  := nil
+
+   dbfDiv      := nil
+   dbfAlbCliT  := nil
+   dbfAlbCliL  := nil
+   dbfFacCliT  := nil
+   dbfFacCliL  := nil
+   dbfFacRecT  := nil
+   dbfFacRecL  := nil
+   dbfTikCliT  := nil
+   dbfTikCliL  := nil
+   dbfUsr      := nil
+   dbfFlt      := nil
+   dbfDelega   := nil
+   oStock      := nil
+   dbfPedPrvL  := nil
+   dbfPedCliL  := nil
+   dbfArtKit   := nil
+
+   if !Empty( oWndBrw )
+      oWndBrw  := nil
+   end
+
+   lOpenFiles  := .F.
+
+Return .T.
+
+
+
+FUNCTION HisMovAlm( oMenuItem, oWnd )
+
+   local oSnd
+   local nLevel
+   local oRotor
+
+   IIF( oMenuItem == nil, oMenuItem := "01051", ) ;
+   IIF( oWnd == nil, oWnd := oWnd(), ) ;
+
+   if oWndBrw == nil
+
+
+
+
+
+      nLevel            := nLevelUsr( oMenuItem )
+      if nAnd( nLevel, 1 ) <> 0
+         msgStop( "Acceso no permitido." )
+         return nil
+      end
+
+
+
+
+
+      if oWnd <> nil
+         SysRefresh(); oWnd:CloseAll(); SysRefresh()
+      end
+
+      if !OpenFiles()
+         return nil
+      end
+
+
+
+
+
+      AddMnuNext( "Historico de movimientos de almacén", ProcName() )
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+   oWndBrw := TShell():New( 0, 0, 22, 80, "Historico de movimientos de almacén",, oWnd,,, .F.,,, ( dbfHisMov ),,,,, {"Fecha", "Código", "Origen almacén", "Destino almacén"}, {||( WinAppRec( oWndBrw:oBrw, bEdit, dbfHisMov ) )}, {||( WinEdtRec( oWndBrw:oBrw, bEdit, dbfHisMov ) )}, {||( WinDelRec( oWndBrw:oBrw, dbfHisMov ) )}, {||( WinDupRec( oWndBrw:oBrw, bEdit, dbfHisMov ) )}, nil, nLevel, "Package_book_red_16", ( 128 + ( 57 * 256 ) + ( 123 * 65536 ) ),,, .T. )
+
+      with object ( oWndBrw:AddXCol() )
+         :cHeader          := "Envio"
+         :nHeadBmpNo       := 3
+         :bStrData         := {|| "" }
+         :bEditValue       := {|| ( dbfHisMov )->lSndDoc }
+         :nWidth           := 20
+         :SetCheck( { "Sel16", "Nil16" } )
+         :AddResource( "Lbl16" )
+      end
+
+      with object ( oWndBrw:AddXCol() )
+         :cHeader          := "Delegación"
+         :bEditValue       := {|| ( dbfHisMov )->cCodDlg }
+         :nWidth           := 40
+         :lHide            := .T.
+      end
+
+      with object ( oWndBrw:AddXCol() )
+         :cHeader          := "Fecha"
+         :bEditValue       := {|| dtoc( ( dbfHisMov )->dFecMov ) }
+         :nWidth           := 80
+      end
+
+      with object ( oWndBrw:AddXCol() )
+         :cHeader          := "Tipo"
+         :bEditValue       := {|| cTextoMovimiento( dbfHisMov ) }
+         :nWidth           := 80
+      end
+
+      with object ( oWndBrw:AddXCol() )
+         :cHeader          := "Origen almacén"
+         :cSortOrder       := "cAloMov"
+         :bEditValue       := {|| ( dbfHisMov )->cAloMov }
+         :nWidth           := 60
+         :bLClickHeader    := {| nMRow, nMCol, nFlags, oCol | oWndBrw:ClickOnHeader( oCol ) }
+      end
+
+      with object ( oWndBrw:AddXCol() )
+         :cHeader          := "Destino almacén"
+         :cSortOrder       := "cAliMov"
+         :bEditValue       := {|| ( dbfHisMov )->cAliMov }
+         :nWidth           := 60
+         :bLClickHeader    := {| nMRow, nMCol, nFlags, oCol | oWndBrw:ClickOnHeader( oCol ) }
+      end
+
+      with object ( oWndBrw:AddXCol() )
+         :cHeader          := "Movimiento"
+         :bEditValue       := {|| ( dbfHisMov )->cCodMov }
+         :nWidth           := 30
+      end
+
+      with object ( oWndBrw:AddXCol() )
+         :cHeader          := "Código"
+         :cSortOrder       := "cRefMov"
+         :bEditValue       := {|| ( dbfHisMov )->cRefMov }
+         :nWidth           := 80
+         :bLClickHeader    := {| nMRow, nMCol, nFlags, oCol | oWndBrw:ClickOnHeader( oCol ) }
+      end
+
+      with object ( oWndBrw:AddXCol() )
+         :cHeader          := "Artículo"
+         :bEditValue       := {|| retArticulo( ( dbfHisMov )->cRefMov, dbfArticulo ) }
+         :nWidth           := 180
+      end
+
+      with object ( oWndBrw:AddXCol() )
+         :cHeader          := "Prop. 1"
+         :bEditValue       := {|| ( dbfHisMov )->cValPr1 }
+         :nWidth           := 40
+         :lHide            := .T.
+      end
+
+      with object ( oWndBrw:AddXCol() )
+         :cHeader          := "Prop. 2"
+         :bEditValue       := {|| ( dbfHisMov )->cValPr2 }
+         :nWidth           := 40
+         :lHide            := .T.
+      end
+
+      with object ( oWndBrw:AddXCol() )
+         :cHeader          := "Lote"
+         :bEditValue       := {|| ( dbfHisMov )->cLote }
+         :nWidth           := 80
+      end
+
+      with object ( oWndBrw:AddXCol() )
+         :cHeader          := "Unidades"
+         :bEditValue       := {|| Trans( nTotNMovAlm( dbfHisMov ), cPicUnd ) }
+         :nWidth           := 80
+         :nDataStrAlign    := 1
+         :nHeadStrAlign    := 1
+      end
+
+      with object ( oWndBrw:AddXCol() )
+         :cHeader          := "Precio"
+         :bEditValue       := {|| Trans( ( dbfHisMov )->nPreDiv, cPirDiv ) }
+         :nWidth           := 80
+         :nDataStrAlign    := 1
+         :nHeadStrAlign    := 1
+      end
+
+      with object ( oWndBrw:AddXCol() )
+         :cHeader          := "Total"
+         :bEditValue       := {|| Trans( nTotLMovAlm( dbfHisMov ), cPirDiv ) }
+         :nWidth           := 80
+         :nDataStrAlign    := 1
+         :nHeadStrAlign    := 1
+      end
+
+      oWndBrw:CreateXFromCode()
+
+
+
+
+
+      oWndBrw:NewAt( "BUS",,, {||( oWndBrw:SearchSetFocus() )}, "(B)uscar", "B",,,,, .F. )
+
+         oWndBrw:AddSeaBar()
+
+
+
+
+
+
+
+
+      oWndBrw:NewAt( "NEW",,, {||( oWndBrw:RecAdd() )}, "(A)ñadir", "A",,, 2,, .F. )
+
+
+
+
+
+
+        oWndBrw:NewAt( "DUP",,, {||( oWndBrw:RecDup() )}, "(D)uplicar", "D",,, 2,, .F. )
+
+
+
+
+
+
+        oWndBrw:NewAt( "EDIT",,, {||( oWndBrw:RecEdit() )}, "(M)odificar", "M",,, 4,, .F. )
+
+
+
+
+
+
+        oWndBrw:NewAt( "ZOOM",,, {||( WinZooRec( oWndBrw:oBrw, bEdit, dbfHisMov ) )}, "(Z)oom", "Z",,, 8,, .F. )
+
+
+
+
+
+
+        oWndBrw:NewAt( "DEL",,, {||( WinDelRec( oWndBrw:oBrw, dbfHisMov ) )}, "(E)liminar", "E",,, 16,, .F. )
+
+
+
+
+
+
+
+      oSnd := oWndBrw:NewAt( "LBL",,, {||( lSndInt( oWndBrw, dbfHisMov ) )}, "En(v)iar", "V",, {|This|This:Toggle()}, 4,, .F. )
+
+
+
+
+
+
+
+         oWndBrw:NewAt( "LBL",,, {||( lSelAll( oWndBrw, dbfHisMov ) )}, "Todos",,,, 4, oSnd, .F. )
+
+
+
+
+
+
+
+         oWndBrw:NewAt( "LBL",,, {||( lSelAll( oWndBrw, dbfHisMov, .F. ) )}, "Ninguno",,,, 4, oSnd, .F. )
+
+
+
+
+
+
+      oWndBrw:NewAt( "IMP",,, {||( IMovAlm():New( "Listado de movimientos de almacén" ):Play() )}, "Lis(t)ado", "T",,, 32,, .F. )
+
+      if oUser():lAdministrador()
+
+
+
+
+
+
+      oWndBrw:NewAt( "BMPCHG",,, {||( TDlgFlt():New( aItmMov(), dbfHisMov ):ChgFields(), oWndBrw:Refresh() )}, "Cambiar campos",,, {|This|This:Toggle()}, 4,, .F. )
+
+      end
+
+
+
+
+      oRotor := oWndBrw:NewAt( "ROTOR",,, {||( oRotor:Expand() )}, "Rotor",,,,,, .F. )
+
+
+
+
+
+         oWndBrw:NewAt( "CUBE_YELLOW_",,, {||( EdtArticulo( ( dbfHisMov )->cRefMov ) )}, "Modificar de artículo",,,,, oRotor, .F. )
+
+
+
+
+
+
+         oWndBrw:NewAt( "INFO",,, {||( InfArticulo( ( dbfHisMov )->cRefMov ) )}, "Informe de artículo",,,,, oRotor, .F. )
+
+
+
+
+      oWndBrw:NewAt( "END",,, {||( oWndBrw:End() )}, "(S)alir", "S",,,,, .F. )
+
+      oWndBrw:oActiveFilter:aTField       := aItmMov()
+      oWndBrw:oActiveFilter:cDbfFilter    := dbfFlt
+      oWndBrw:oActiveFilter:cTipFilter    := "05"
+
+        oWndBrw:Activate(, oWndBrw:bLClicked, oWndBrw:bRClicked, oWndBrw:bMoved, oWndBrw:bResized, oWndBrw:bPainted, oWndBrw:bKeyDown, oWndBrw:bInit,,,,,,,,, {|| ( CloseFiles() )},, oWndBrw:bLButtonUp )
+
+    ELSE
+
+        oWndBrw:SetFocus()
+
+    end
+
+RETURN NIL
+
+
+
+STATIC FUNCTION EdtRec( aTmp, aGet, dbfHisMov, oBrw, cCodArt, nTipMov, nMode, lExt )
+
+    local oDlg
+   local oSayMov
+   local oSayPre
+   local oSayTxt
+   local cSayTxt        := "Almacén origen"
+    local oSayAli
+    local cSayAli
+    local oSayAlo
+    local cSayAlo
+    local oSayArt
+    local cSayArt
+   local oSayPr1
+   local oSayPr2
+   local cSayPr1        := ""
+   local cSayPr2        := ""
+   local oSayVp1
+   local oSayVp2
+   local cSayVp1        := ""
+   local cSayVp2        := ""
+   local cSay2          := ""
+   local oSay2
+   local oSayDlg
+   local cSayDlg        := ""
+   local oSayLote
+   local cSayLote       := "Lote"
+   local aOld           := aClone( aTmp )
+   local oBtnSer
+
+   IIF( lExt == nil, lExt := .T., ) ;
+
+   aStockActual         := { { "", "", "", "", "", 0, 0, 0 } }
+
+   cOldCod              := aTmp[ 6 ]
+
+
+      lExternal         := lExt
+
+
+   if nMode == 1
+      if !Empty( cCodArt ) .AND. ValType( cCodArt ) == "C"
+      aTmp[ 6 ]  := cCodArt
+      end
+      if !Empty( nTipMov )
+      aTmp[ 3 ]  := nTipMov
+      end
+      aTmp[ 1 ]  := GetSysDate()
+      aTmp[ 2 ]  := Time()
+      aTmp[ 4 ]  := oUser():cAlmacen()
+      aTmp[ 12 ]  := cCurUsr()
+      aTmp[ 13 ]  := oUser():cDelegacion()
+   end
+
+   if nMode == 2
+      nRecEdit          := ( dbfHisMov )->( RecNo() )
+      nOrdEdit          := ( dbfHisMov )->( OrdSetFocus() )
+   end
+
+
+
+
+
+   cSayDlg              := RetFld( cCodEmp() + aTmp[ 13 ], dbfDelega, "cNomDlg" )
+   cSay2                := RetFld( aTmp[ 7 ], dbfTMov, "cDesMov" )
+   cSayAlo              := RetFld( aTmp[ 5 ], dbfAlmT, "cNomAlm" )
+   cSayAli              := RetFld( aTmp[ 4 ], dbfAlmT, "cNomAlm" )
+
+   oDlg = TDialog():New(,,,, LblTitle( nMode ) + "regularización de almacén", "HISMOV",, .F.,,,,,, .F.,,,,,, .F., )
+
+
+
+
+
+      TRadMenu():Redefine( { | u | If( PCount()==0, aTmp[ 3 ], aTmp[ 3 ]:= u ) }, oDlg,, { 70, 71, 72, 73 }, {||( ShwAlm( aGet, aTmp, nMode, oSayArt, oSayAlo, oSayTxt, oSayLote, oSayPr1, oSayPr2, oSayVp1, oSayVp2, dbfArticulo, dbfFamilia ) )},,,, .F., {||     ( nMode == 1 )}, )
+
+
+
+
+      aGet[ 13 ] := TGetHlp():ReDefine( 300, { | u | If( PCount()==0, aTmp[ 13 ], aTmp[ 13 ]:= u ) }, oDlg,,,,,,,,, .F., {||     ( .F. )},, .F., .F.,,,,,, nil,,, )
+
+
+
+
+      oSayDlg := TGetHlp():ReDefine( 301, { | u | If( PCount()==0, cSayDlg, cSayDlg:= u ) }, oDlg,,,,,,,,, .F., {||     ( .F. )},, .F., .F.,,,,,, nil,,, )
+
+
+
+
+
+      aGet[ 1 ] := TGetHlp():ReDefine( 80, { | u | If( PCount()==0, aTmp[ 1 ], aTmp[ 1 ]:= u ) }, oDlg,,,,,,,,, .F., {||     ( nMode <> 3 )},, .F., .T.,,,,,, nil,,, )
+
+
+
+
+
+
+
+      aGet[ 7 ] := TGetHlp():ReDefine( 180, { | u | If( PCount()==0, aTmp[ 7 ], aTmp[ 7 ]:= u ) }, oDlg,,, {||    ( cTMov( aGet[ 7 ], dbfTMov, oSay2 ) )},,,,,, .F., {||     ( nMode <> 3 )},, .F., .F.,,,,, {|Self|( BrwTMov( aGet[ 7 ], dbfTMov, oSay2 ) )}, nil, "LUPA",, )
+
+
+
+
+      oSay2 := TGetHlp():ReDefine( 190, { | u | If( PCount()==0, cSay2, cSay2:= u ) }, oDlg,,,,,,,,, .F., {||     .F.},, .F., .F.,,,,,, nil,,, )
+
+
+
+
+
+
+
+        aGet[ 5 ] := TGetHlp():ReDefine( 100, { | u | If( PCount()==0, aTmp[ 5 ], aTmp[ 5 ]:= u ) }, oDlg,,, {||    ( cAlmacen( aGet[ 5 ], dbfAlmT, oSayAlo ) )},,,,,, .F., {||         ( nMode <> 3 )},, .F., .F.,,,,, {|Self|( BrwAlmacen( aGet[ 5 ], oSayAlo ) )}, nil, "LUPA",, )
+
+
+
+
+        oSayAlo := TGetHlp():ReDefine( 110, { | u | If( PCount()==0, cSayAlo, cSayAlo:= u ) }, oDlg,,,,,,,,, .F., {||         .F.},, .F., .F.,,,,,, nil,,, )
+
+
+
+      oSayTxt := TSay():ReDefine( 119, {|| cSayTxt}, oDlg,,,, .F.,, .F., .F. )
+
+
+
+
+
+
+
+        aGet[ 4 ] := TGetHlp():ReDefine( 120, { | u | If( PCount()==0, aTmp[ 4 ], aTmp[ 4 ]:= u ) }, oDlg,,, {||    ( cAlmacen( aGet[ 4 ], dbfAlmT, oSayAli ) )},,,,,, .F., {||         ( nMode <> 3 )},, .F., .F.,,,,, {|Self|( BrwAlmacen(     aGet[ 4 ], oSayAli ) )}, nil, "LUPA",, )
+
+
+
+
+        oSayAli := TGetHlp():ReDefine( 130, { | u | If( PCount()==0, cSayAli, cSayAli:= u ) }, oDlg,,,,,,,,, .F., {||         .F.},, .F., .F.,,,,,, nil,,, )
+
+
+
+
+
+
+
+        aGet[ 6 ] := TGetHlp():ReDefine( 140, { | u | If( PCount()==0, aTmp[ 6 ], aTmp[ 6 ]:= u ) }, oDlg,,, {||    ( LoaArt( aGet, aTmp, nMode, oSayPr1, oSayPr2, oSayVp1, oSayVp2, oSayArt, oSayLote, oDlg ) )},,,,,, .F., {||     ( nMode <> 3 .AND. Empty( cCodArt ) )},, .F., .F.,,,,, {|Self|( BrwArticulo( aGet[ 6 ], oSayArt ) )}, nil, "LUPA",, )
+
+
+
+
+        oSayArt := TGetHlp():ReDefine( 150, { | u | If( PCount()==0, cSayArt, cSayArt:= u ) }, oDlg,,,,,,,,, .F., {||     .F.},, .F., .F.,,,,,, nil,,, )
+
+
+
+
+
+
+
+
+
+
+
+      aGet[ 10 ] := TGetHlp():ReDefine( 220, { | u | If( PCount()==0, aTmp[ 10 ], aTmp[ 10 ]:= u ) }, oDlg,,, {||    ( if( lPrpAct( aGet[ 10 ], oSayVp1, aTmp[ 8 ], dbfTblPro ), LoaArt( aGet, aTmp, nMode, oSayPr1, oSayPr2, oSayVp1, oSayVp2, oSayArt, oSayLote, oDlg ), .F. ) )},,,,,, .F.,,, .F., .F.,,,,, {|Self|( brwPrpAct( aGet[ 10 ], oSayVp1, aTmp[ 8 ] ) )}, nil, "LUPA",, )
+
+
+
+      oSayPr1 := TSay():ReDefine( 221, {|| cSayPr1}, oDlg,,,, .F.,, .F., .F. )
+
+
+
+
+      oSayVp1 := TGetHlp():ReDefine( 222, { | u | If( PCount()==0, cSayVp1, cSayVp1:= u ) }, oDlg,,,,,,,,, .F., {||     .F.},, .F., .F.,,,,,, nil,,, )
+
+
+
+
+
+
+      aGet[ 11 ] := TGetHlp():ReDefine( 230, { | u | If( PCount()==0, aTmp[ 11 ], aTmp[ 11 ]:= u ) }, oDlg,,, {||    ( if( lPrpAct( aGet[ 11 ], oSayVp2, aTmp[ 9 ], dbfTblPro ), LoaArt( aGet, aTmp, nMode, oSayPr1, oSayPr2, oSayVp1, oSayVp2, oSayArt, oSayLote, oDlg ), .F. ) )},,,,,, .F.,,, .F., .F.,,,,, {|Self|( brwPrpAct( aGet[ 11 ], oSayVp2, aTmp[ 9 ] ) )}, nil, "LUPA",, )
+
+
+
+      oSayPr2 := TSay():ReDefine( 231, {|| cSayPr2}, oDlg,,,, .F.,, .F., .F. )
+
+
+
+
+      oSayVp2 := TGetHlp():ReDefine( 232, { | u | If( PCount()==0, cSayVp2, cSayVp2:= u ) }, oDlg,,,,,,,,, .F., {||     .F.},, .F., .F.,,,,,, nil,,, )
+
+
+
+
+
+
+
+
+      oSayLote := TSay():ReDefine( 154, {|| cSayLote}, oDlg,,,, .F.,, .F., .F. )
+
+
+
+
+
+      aGet[ 16 ] := TGetHlp():ReDefine( 155, { | u | If( PCount()==0, aTmp[ 16 ], aTmp[ 16 ]:= u ) }, oDlg,,, {||    ( LoaArt( aGet, aTmp, nMode, oSayPr1, oSayPr2, oSayVp1, oSayVp2, oSayArt, oSayLote, oDlg ), .T. )},,,,,, .F., {||     ( nMode <> 3 )},, .F., .F.,,,,,, nil,,, )
+
+
+
+
+
+      oBrwStock                        := IXBrowse():New( oDlg )
+
+      oBrwStock:bClrSel                := {|| { 0, ( 229 + ( 229 * 256 ) + ( 229 * 65536 ) ) } }
+      oBrwStock:bClrSelFocus           := {|| { 0, ( 167 + ( 205 * 256 ) + ( 240 * 65536 ) ) } }
+
+      oBrwStock:SetArray( oStock:aStocks, , , .F. )
+
+      oBrwStock:lFooter                := .T.
+      oBrwStock:lHScroll               := .F.
+      oBrwStock:nMarqueeStyle          := 5
+      oBrwStock:cName                  := "Stock movimientos"
+      oBrwStock:lRecordSelector        := .F.
+
+      oBrwStock:CreateFromResource( 160 )
+
+      with object ( oBrwStock:AddCol() )
+         :cHeader             := "Código"
+         :nWidth              := 40
+         :bStrData            := {|| if( !Empty( oStock:aStocks ), oStock:aStocks[ oBrwStock:nArrayAt ]:cCodigoAlmacen, "" ) }
+      end
+
+      with object ( oBrwStock:AddCol() )
+         :cHeader             := "Almacén"
+         :nWidth              := 170
+         :bStrData            := {|| if( !Empty( oStock:aStocks ), RetAlmacen( oStock:aStocks[ oBrwStock:nArrayAt ]:cCodigoAlmacen, dbfAlmT ), "" ) }
+      end
+
+      with object ( oBrwStock:AddCol() )
+         :cHeader             := "Prop. 1"
+         :nWidth              := 40
+         :bStrData            := {|| if( !Empty( oStock:aStocks ), oStock:aStocks[ oBrwStock:nArrayAt ]:cValorPropiedad1, "" ) }
+         :lHide               := .T.
+      end
+
+      with object ( oBrwStock:AddCol() )
+         :cHeader             := "Prop. 2"
+         :nWidth              := 40
+         :bStrData            := {|| if( !Empty( oStock:aStocks ), oStock:aStocks[ oBrwStock:nArrayAt ]:cValorPropiedad2, "" ) }
+         :lHide               := .T.
+      end
+
+      with object ( oBrwStock:AddCol() )
+         :cHeader             := "Lote"
+         :nWidth              := 50
+         :bStrData            := {|| if( !Empty( oStock:aStocks ), oStock:aStocks[ oBrwStock:nArrayAt ]:cLote, "" ) }
+         :lHide               := .T.
+      end
+
+      with object ( oBrwStock:AddCol() )
+         :cHeader             := "Num. serie"
+         :nWidth              := 60
+         :bStrData            := {|| if( !Empty( oStock:aStocks ), oStock:aStocks[ oBrwStock:nArrayAt ]:cNumeroSerie, "" ) }
+         :lHide               := .T.
+      end
+
+      with object ( oBrwStock:AddCol() )
+         :cHeader             := "Unidades"
+         :nWidth              := 80
+         :bEditValue          := {|| if( !Empty( oStock:aStocks ), oStock:aStocks[ oBrwStock:nArrayAt ]:nUnidades, 0 ) }
+         :bFooter             := {|| nStockUnidades( oBrwStock ) }
+         :cEditPicture        := MasUnd()
+         :nDataStrAlign       := 1
+         :nHeadStrAlign       := 1
+         :nFootStrAlign       := 1
+      end
+
+      with object ( oBrwStock:AddCol() )
+         :cHeader             := "Pdt. recibir"
+         :bEditValue          := {|| if( !Empty( oStock:aStocks ), oStock:aStocks[ oBrwStock:nArrayAt ]:nPendientesRecibir, 0 ) }
+         :bFooter             := {|| nStockPendiente( oBrwStock ) }
+         :nWidth              := 70
+         :cEditPicture        := MasUnd()
+         :nDataStrAlign       := 1
+         :nHeadStrAlign       := 1
+         :nFootStrAlign       := 1
+         :lHide               := .T.
+      end
+
+      with object ( oBrwStock:AddCol() )
+         :cHeader             := "Pdt. entregar"
+         :bEditValue          := {|| if( !Empty( oStock:aStocks ), oStock:aStocks[ oBrwStock:nArrayAt ]:nPendientesEntregar, 0 ) }
+         :bFooter             := {|| nStockEntregar( oBrwStock ) }
+         :nWidth              := 70
+         :cEditPicture        := MasUnd()
+         :nDataStrAlign       := 1
+         :nHeadStrAlign       := 1
+         :nFootStrAlign       := 1
+         :lHide               := .T.
+      end
+
+
+
+
+
+
+
+
+
+      aGet[ 17 ] := TGetHlp():ReDefine( 170, { | u | If( PCount()==0, aTmp[ 17 ], aTmp[ 17 ]:= u ) }, oDlg,, cPicUnd, {||    ( oSayMov:Refresh(), oSayPre:Refresh(), .T. )},,,,,, .F., {||     ( lUseCaj() .AND. nMode <> 3 )}, {|nKey,nFlags,Self| ( oSayMov:Refresh(), oSayPre:Refresh() ) }, .F., .T.,,,,,, nil,, 171, )
+
+
+
+
+
+
+
+
+        aGet[ 18 ] := TGetHlp():ReDefine( 200, { | u | If( PCount()==0, aTmp[ 18 ], aTmp[ 18 ]:= u ) }, oDlg,, cPicUnd, {||    ( oSayMov:Refresh(), oSayPre:Refresh(), .T. )},,,,,, .F., {||     ( nMode <> 3 )}, {|nKey,nFlags,Self| ( oSayMov:Refresh(), oSayPre:Refresh() ) }, .F., .T.,,,,,, nil,,, )
+
+
+
+
+
+      oSayMov := TSay():ReDefine( 210, {|| nTotNMovAlm( aTmp )}, oDlg, cPicUnd, "N/W*",, .F.,, .F., .F. )
+
+
+
+
+
+
+
+
+      aGet[ 21 ] := TGetHlp():ReDefine( 240, { | u | If( PCount()==0, aTmp[ 21 ], aTmp[ 21 ]:= u ) }, oDlg,, cPirDiv, {||    ( oSayPre:Refresh(), .T. )},,,,,, .F., {||     ( nMode <> 3 )}, {|nKey,nFlags,Self| ( oSayPre:Refresh() ) }, .F., .T.,,,,,, nil,,, )
+
+
+
+
+
+      oSayPre := TSay():ReDefine( 250, {|| nTotLMovAlm( aTmp )}, oDlg, cPirDiv, "N/W*",, .F.,, .F., .F. )
+
+
+
+
+      oBtnSer := TButton():ReDefine( 500, {||( aTmp[ 32 ] := EdtNumSer( aTmp[ 32 ], nTotNMovAlm( aTmp ), nMode ) )}, oDlg,,, .F.,,,, .F. )
+
+
+
+
+
+        TButton():ReDefine( 1, {||( ChkCodAlm( aTmp, aOld, aGet, oBrw, nMode, oDlg, oBtnSer ) )}, oDlg,,, .F., {||         ( nMode <> 3 )},,, .F. )
+
+
+
+
+        TButton():ReDefine( 2, {||( oDlg:end() )}, oDlg,,, .F.,,,, .F. )
+
+   if nMode <> 3
+      oDlg:AddFastKey( 117, {|| oBtnSer:Click() } )
+      oDlg:AddFastKey( 116, {|| ChkCodAlm( aTmp, aOld, aGet, oBrw, nMode, oDlg, oBtnSer ) } )
+   end
+
+
+
+
+
+   oDlg:bStart    := {|| ShwAlm( aGet, aTmp, nMode, oSayArt, oSayAlo, oSayTxt, oSayLote, oSayPr1, oSayPr2, oSayVp1, oSayVp2, dbfArticulo, dbfFamilia ), aGet[ 7 ]:SetFocus(), oBrwStock:Load(), if( !Empty( cCodArt ), aGet[ 6 ]:lValid(), ), if( !Empty( aTmp[ 6 ] ), aStkArticulo( aTmp[ 6 ] ), ) }
+
+
+
+   oDlg:Activate( oDlg:bLClicked, oDlg:bMoved, oDlg:bPainted, .T.,,, {|Self|( EdtDetMenu( aTmp, oDlg ) )}, oDlg:bRClicked,,, )
+
+   oMenu:End()
+
+   if oBrw <> nil
+      oBrw:Refresh()
+   end
+
+RETURN ( oDlg:nResult == 1 )
+
+
+
+STATIC FUNCTION ChkCodAlm( aTmp, aOld, aGet, oBrw, nMode, oDlg, oBtnSer )
+
+   if aTmp[ 3 ] == 1
+
+      if empty( aTmp[ 4 ] ) .OR. empty( aTmp[ 5 ] )
+         msgAlert( "Ningun almacén debe estar vacío" )
+         return .F.
+      end
+
+      if aTmp[ 4 ] == aTmp[ 5 ]
+         msgAlert( "Almacén de origen y destino deben de ser distintos" )
+         return .F.
+      end
+
+      if aTmp[ 18 ] <= 0
+         msgAlert( "Cantidad no valida" )
+         return .F.
+      end
+
+      if nTotNMovAlm( aTmp ) > nStockActual
+         if !ApoloMsgNoYes( "No hay stock suficiente", "¿Desea proceder?" )
+            return .F.
+         end
+      end
+
+   else
+
+      if empty( aTmp[ 4 ] )
+         msgAlert( "Almacén destino no puede estar vacío" )
+         return .F.
+      end
+
+   end
+
+   if empty( aTmp[ 6 ] )
+      msgAlert( "Artículo no encontrado" )
+      return .F.
+   end
+
+   if empty( aTmp[ 7 ] )
+      msgAlert( "No existe tipo de movimiento" )
+      return .F.
+   end
+
+   do case
+   case nMode == 1
+
+
+
+
+
+
+
+
+
+      if aTmp[ 3 ] == 3
+         aTmp[ 18 ]  := ( nTotNMovAlm( aTmp ) - nTotNMovOld( aTmp ) ) / NotCero( aTmp[ 17 ] )
+         aTmp[ 20 ]  := 0
+         aTmp[ 19 ]  := 0
+      end
+
+   case nMode == 2
+
+      ( dbfHisMov )->( OrdSetFocus( nOrdEdit ) )
+      ( dbfHisMov )->( dbGoTo( nRecEdit ) )
+
+   end
+
+   WinGather( aTmp, aGet, dbfHisMov, oBrw, nMode )
+
+   oDlg:end( 1 )
+
+RETURN .T.
+
+
+
+STATIC FUNCTION PrnReport( cAlmOrg, cAlmDes, dFecOrg, dFecDes, cTitulo, cSubTitulo, nDevice )
+
+   local oReport
+   local oFont1      := TFont():New( "Courier New", 0, 10, .F., .T. )
+   local oFont2      := TFont():New( "Courier New", 0, 10, .F., .F. )
+   local nRecno      := ( dbfHisMov )->( Recno() )
+
+   ( dbfHisMov )->( dbGoTop() )
+
+   IF nDevice == 1
+
+
+
+
+
+
+
+
+      oReport := RptBegin({{||    Rtrim( cTitulo )}, {|| Rtrim( cSubTitulo )}}, {{||   "Fecha: " + dtoc( date() )}}, {{||   "Página : " + str( oReport:nPage, 3 )}}, {oFont1, oFont2}, {}, .F.,,,, .T.,,, "Listado movimientos de almacén",, UPPER("RIGHT"), UPPER("CENTERED") )
+
+   ELSE
+
+
+
+
+
+
+
+
+      oReport := RptBegin({{||    Rtrim( cTitulo )}, {|| Rtrim( cSubTitulo )}}, {{||   "Fecha: " + dtoc(date())}}, {{||   "Página : " + str( oReport:nPage, 3)}}, {oFont1, oFont2}, {}, .F.,,, .T., .F.,,, "Listado movimientos de almacén",, UPPER("RIGHT"), UPPER("CENTERED") )
+
+   end
+
+
+
+
+      RptAddColumn( {{|| "Fecha"}}, , {{||     ( dbfHisMov )->DFECMOV}}, 10, {} , {||     2}, .F., ,, .F., .F.,, .F., .F.,,, .F., )
+
+
+
+
+      RptAddColumn( {{|| "Alm. Org."}}, , {{||     ( dbfHisMov )->CALOMOV}}, 10, {} , {||     2}, .F., ,, .F., .F.,, .F., .F.,,, .F., )
+
+
+
+
+      RptAddColumn( {{|| "Alm. Des."}}, , {{||     ( dbfHisMov )->CALIMOV}}, 10, {} , {||     2}, .F., ,, .F., .F.,, .F., .F.,,, .F., )
+
+
+
+
+      RptAddColumn( {{|| "Artículo"}}, , {{||     ( dbfHisMov )->cRefMov + Space( 1 ) + RetArticulo(  ( dbfHisMov )->cRefMov, dbfArticulo )}}, 60, {} , {||     2}, .F., ,, .F., .F.,, .F., .F.,,, .F., )
+
+
+
+
+
+
+      RptAddColumn( {{|| "Unidades"}}, , {{||     nTotNMovAlm( dbfHisMov )}}, 14, {cPicUnd} , {||     2}, .T., ,, .F., .F.,, .F., .F.,,, .F., )
+
+
+
+
+
+
+      RptAddColumn( {{|| "Importe"}}, , {{||     ( dbfHisMov )->nPreDiv}}, 14, {cPirDiv} , {||     2}, .T., ,, .F., .F.,, .F., .F.,,, .F., )
+
+
+
+
+
+
+      RptAddColumn( {{|| "Total"}}, , {{||     nTotLMovAlm( dbfHisMov )}}, 14, {cPirDiv} , {||     2}, .T., ,, .F., .F.,, .F., .F.,,, .F., )
+
+   RptEnd()
+
+   IF !Empty( oReport ) .AND.  oReport:lCreated
+      oReport:Margin( 0, 2, 2 )
+      oReport:bSkip := {|| ( dbfHisMov )->( dbSkip() ) }
+   end
+
+
+
+
+
+
+   oReport:Activate({||   ( dbfHisMov )->DFECMOV >= dFecOrg .AND. ( dbfHisMov )->DFECMOV <= dFecDes .AND. ( ( dbfHisMov )->CALOMOV >= cAlmOrg .OR. ( dbfHisMov )->CALOMOV <= cAlmDes .OR. empty( cAlmOrg ) ) .OR. ( ( dbfHisMov )->CALIMOV >= cAlmDes .OR. ( dbfHisMov )->CALIMOV <= cAlmDes .OR. empty( cAlmDes ) )}, {|| !( dbfHisMov )->( eof() )},,,,,,,,,,,, )
+
+   oFont1:end()
+   oFont2:end()
+
+   ( dbfHisMov )->( dbGoTo( nRecno ) )
+
+RETURN NIL
+
+
+
+static function lNotOpen()
+
+   if NetErr()
+      msgAlert( "Imposible abrir ficheros" )
+      CloseFiles()
+      return .T.
+   end
+
+return .F.
+
+
+
+static function LoaArt( aGet, aTmp, nMode, oSayPr1, oSayPr2, oSayVp1, oSayVp2, oSayArt, oSayLote, oDlg )
+
+   local lValid   := .T.
+   local nPos
+   local cCodArt  := aGet[ 6 ]:VarGet()
+   local lChgCod  := ( Empty( cOldCod ) .OR. cOldCod <> cCodArt )
+
+   if !( lChgCod )
+      Return .T.
+   end
+
+
+
+
+
+   if !Empty( cCodArt )
+
+      cCodArt     := cSeekCodebar( cCodArt, dbfCodebar, dbfArticulo )
+
+
+
+
+
+      if ( dbfArticulo )->( dbSeek( cCodArt ) )
+
+         CursorWait()
+
+         oDlg:Disable()
+
+         if ( dbfArticulo )->lKitArt .AND. !( dbfArticulo )->lKitAsc .AND. ( dbfArticulo )->nKitStk <> 2
+            msgStop( "No se puede añadir artículos con escandallos y stock en componentes" )
+            return .F.
+         end
+
+         aGet[ 6 ]:cText( ( dbfArticulo )->Codigo )
+
+         oSayArt:cText( ( dbfArticulo )->Nombre )
+
+
+
+
+
+         aTmp[ 14  ]   := ( dbfArticulo )->lLote
+
+         if ( dbfArticulo )->lLote
+
+            oSayLote:Show()
+
+            aGet[ 16  ]:Show()
+
+            if Empty( aTmp[ 16 ] )
+               aGet[ 16  ]:cText( ( dbfArticulo )->cLote )
+            end
+
+         else
+
+            oSayLote:Hide()
+
+            aGet[ 16  ]:Hide()
+
+         end
+
+
+
+
+
+         aTmp[ 33 ] := ( dbfArticulo )->nVolumen
+         aTmp[ 34 ] := ( dbfArticulo )->cVolumen
+         aTmp[ 35  ] := ( dbfArticulo )->nPesoKg
+         aTmp[ 36  ] := ( dbfArticulo )->cUndDim
+
+
+
+
+
+         aTmp[ 8 ]  := ( dbfArticulo )->cCodPrp1
+         aTmp[ 9 ]  := ( dbfArticulo )->cCodPrp2
+         aTmp[ 10 ]  := Space( 10 )
+         aTmp[ 11 ]  := Space( 10 )
+
+         if !Empty( aTmp[8 ] )
+
+            aGet[ 10 ]:Show()
+
+            oSayPr1:SetText( RetProp( ( dbfArticulo )->cCodPrp1 ) )
+            oSayPr1:Show()
+            oSayVp1:Show()
+
+         else
+
+            aGet[ 10 ]:Hide()
+
+            oSayPr1:Hide()
+            oSayVp1:Hide()
+
+         end
+
+         if !Empty( aTmp[9 ] )
+
+            aGet[ 11 ]:Show()
+
+            oSayPr2:SetText( RetProp( ( dbfArticulo )->cCodPrp2 ) )
+            oSayPr2:Show()
+            oSayVp2:Show()
+
+         else
+
+            aGet[ 11 ]:Hide()
+
+            oSayPr2:Hide()
+            oSayVp2:Hide()
+
+         end
+
+
+         if !uFieldEmpresa( "lCosAct" )
+            aGet[ 21 ]:cText( oStock:nPrecioMedioCompra( ( dbfArticulo )->Codigo, aTmp[ 4 ], nil, GetSysDate() ) )
+         else
+            aGet[ 21 ]:cText( nCosto( ( dbfArticulo )->Codigo, dbfArticulo, dbfArtKit ) )
+         end
+
+
+
+
+
+         aStkArticulo( ( dbfArticulo )->Codigo, ( dbfArticulo )->nCtlStock )
+
+         SysRefresh()
+
+         nPos                 := aScan( oStock:aStocks, {|o| o:cCodigo == aTmp[ 6 ] .AND. o:cCodigoAlmacen == aTmp[ 4 ] .AND. o:cValorPropiedad1 == aTmp[ 10 ] .AND. o:cValorPropiedad2 == aTmp[ 11 ] .AND. o:cLote == aTmp[ 16 ] .AND. o:cNumeroSerie == aTmp[ 32 ] } )
+         if ( nPos <> 0 )
+            aTmp[ 20 ]  := oStock:aStocks[ nPos ]:nUnidades
+         end
+
+         lValid   := .T.
+
+         oDlg:Enable()
+
+         CursorWE()
+
+      end
+
+   else
+
+      lValid      := .F.
+
+   end
+
+return lValid
+
+
+
+static function ShwAlm( aGet, aTmp, nMode, oSayArt, oSayAlo, oSayTxt, oSayLote, oSayPr1, oSayPr2, oSayVp1, oSayVp2, dbfArticulo, dbfFamilia )
+
+   do case
+      case nMode == 1
+
+         oSayLote:Hide()
+         aGet[ 16 ]:Hide()
+
+      case nMode == 2
+
+         if aTmp[ 14 ]
+            aGet[ 16 ]:Show()
+            oSayLote:Show()
+         else
+            aGet[ 16 ]:Hide()
+            oSayLote:Hide()
+         end
+
+         if ( dbfArticulo )->( dbSeek( aTmp[ 6 ] ) )
+            oSayArt:cText( ( dbfArticulo )->Nombre )
+         end
+
+   end
+
+   if aTmp[ 3 ] > 1
+      oSayAlo:hide()
+      oSayTxt:hide()
+      aGet[ 5 ]:hide()
+   else
+      oSayAlo:show()
+      oSayTxt:show()
+      aGet[ 5 ]:show()
+   end
+
+   if !lUseCaj()
+      aGet[ 17 ]:hide()
+   end
+
+
+
+
+
+   if !Empty( aTmp[ 8 ] )
+
+      aGet[ 10 ]:Show()
+      aGet[ 10 ]:lValid()
+
+      oSayPr1:SetText( RetProp( ( dbfArticulo )->cCodPrp1 ) )
+      oSayPr1:Show()
+      oSayVp1:Show()
+
+   else
+
+      aGet[ 10 ]:Hide()
+
+      oSayPr1:Hide()
+      oSayVp1:Hide()
+
+   end
+
+   if !Empty( aTmp[ 9 ] )
+
+      aGet[ 11 ]:Show()
+      aGet[ 11 ]:lValid()
+
+      oSayPr2:SetText( RetProp( ( dbfArticulo )->cCodPrp2 ) )
+      oSayPr2:Show()
+      oSayVp2:Show()
+
+   else
+
+      aGet[ 11 ]:Hide()
+
+      oSayPr2:Hide()
+      oSayVp2:Hide()
+
+   end
+
+return .T.
+
+
+
+function nTotNMovOld( uDbf )
+
+   local nTotUnd
+
+   do case
+   case ValType( uDbf ) == "A"
+      nTotUnd     := NotCaja( uDbf[ 19 ] ) * uDbf[ 20 ]
+   case ValType( uDbf ) == "C"
+      nTotUnd     := NotCaja( ( uDbf )->nCajAnt ) * ( uDbf )->nUndAnt
+   case ValType( uDbf ) == "O"
+      nTotUnd     := NotCaja( uDbf:nCajAnt ) * uDbf:nUndAnt
+   end
+
+RETURN ( nTotUnd )
+
+
+
+function nTotVMovAlm( cCodArt, dbfMovAlm, cCodAlm )
+
+   local nTotVta  := 0
+   local nOrd     := ( dbfMovAlm )->( OrdSetFocus( "cRefMov" ) )
+   local nRec     := ( dbfMovAlm )->( Recno() )
+
+   if ( dbfMovAlm )->( dbSeek( cCodArt ) )
+
+      while ( dbfMovAlm )->cRefMov == cCodArt .AND. !( dbfMovAlm )->( eof() )
+
+         if !( dbfMovAlm )->lNoStk
+
+            if cCodAlm <> nil
+
+               if cCodAlm == ( dbfMovAlm )->cAliMov
+                  nTotVta  += nTotNMovAlm( dbfMovAlm )
+               end
+
+               if cCodAlm == ( dbfMovAlm )->cAloMov
+                  nTotVta  -= nTotNMovAlm( dbfMovAlm )
+               end
+
+            else
+
+               if !Empty( ( dbfMovAlm )->cAliMov )
+                  nTotVta  += nTotNMovAlm( dbfMovAlm )
+               end
+
+               if !Empty( ( dbfMovAlm )->cAloMov )
+                  nTotVta  -= nTotNMovAlm( dbfMovAlm )
+               end
+
+            end
+
+         end
+
+         ( dbfMovAlm )->( dbSkip() )
+
+      end
+
+   end
+
+   ( dbfMovAlm )->( dbGoTo( nRec ) )
+   ( dbfMovAlm )->( OrdSetFocus( nOrd ) )
+
+return ( nTotVta )
+
+
+
+FUNCTION AppMovAlm( cCodArt, nTipMov, oBrw )
+
+   local nLevel      := nLevelUsr( "01050" )
+
+   IIF( nTipMov == nil, nTipMov := 1, ) ;
+
+   if nAnd( nLevel, 1 ) <> 0 .OR. nAnd( nLevel, 2 ) == 0
+      msgStop( "Acceso no permitido." )
+      return .T.
+   end
+
+   if !OpenFiles()
+      CloseFiles()
+      return nil
+   end
+
+   WinAppRec( nil, bEdit, dbfHisMov, cCodArt, nTipMov )
+
+   if oBrw <> NIL
+        oBrw:refresh()
+   end
+
+   CloseFiles()
+
+RETURN NIL
+
+
+
+FUNCTION EdtMovAlm( nNumRec, oBrw )
+
+   local nLevel   := nLevelUsr( "01051" )
+
+   if nAnd( nLevel, 1 ) <> 0 .OR. nAnd( nLevel, 4 ) == 0
+      msgStop( "Acceso no permitido." )
+      return .T.
+   end
+
+   if !OpenFiles()
+      CloseFiles()
+      return nil
+   end
+
+   ( dbfHisMov )->( dbGoto( Int( nNumRec ) ) )
+
+   WinEdtRec( nil, bEdit, dbfHisMov )
+
+   if oBrw <> NIL
+        oBrw:refresh()
+   end
+
+   CloseFiles()
+
+RETURN NIL
+
+
+
+FUNCTION ZooMovAlm( nNumRec, oBrw )
+
+   local nLevel   := nLevelUsr( "01051" )
+
+   if nAnd( nLevel, 1 ) <> 0 .OR. nAnd( nLevel, 8 ) == 0
+      msgStop( "Acceso no permitido." )
+      return .T.
+   end
+
+   if !OpenFiles()
+      CloseFiles()
+      return nil
+   end
+
+   ( dbfHisMov )->( dbGoto( Int( nNumRec ) ) )
+
+   WinZooRec( nil, bEdit, dbfHisMov )
+
+   if oBrw <> NIL
+        oBrw:refresh()
+   end
+
+   CloseFiles()
+
+RETURN NIL
+
+
+
+FUNCTION DelMovAlm( nNumRec, oBrw )
+
+   local nLevel   := nLevelUsr( "01051" )
+
+   if nAnd( nLevel, 1 ) <> 0 .OR. nAnd( nLevel, 16 ) == 0
+      msgStop( "Acceso no permitido." )
+      return .T.
+   end
+
+   if !OpenFiles()
+      CloseFiles()
+      return nil
+   end
+
+   ( dbfHisMov )->( dbGoto( Int( nNumRec ) ) )
+
+   WinDelRec( nil, dbfHisMov )
+
+   if oBrw <> nil
+        oBrw:refresh()
+   end
+
+   CloseFiles()
+
+RETURN NIL
+
+
+
+Static Function EdtDetMenu( aTmp, oDlg )
+
+   oMenu := MenuBegin( .F.,,, .F., .F. )
+
+      MenuAddItem( "&1. Rotor",, .F.,,,,,,,,, .F.,,, .F. )
+
+         if !lExternal
+
+         MenuBegin( .F.,,, .F., .F. )
+
+
+
+
+
+            MenuAddItem( "&1. Modificar de artículo", "Modificar la ficha del artículo", .F.,, {|oMenuItem|( EdtArticulo( aTmp[ 6 ] ) )},, "Cube_Yellow_16",,,,, .F.,,, .F. )
+
+
+
+
+            MenuAddItem( "&2. Informe de artículo", "Abrir el informe del artículo", .F.,, {|oMenuItem|( InfArticulo( aTmp[ 6 ] ) )},, "Info16",,,,, .F.,,, .F. )
+         MenuEnd()
+
+        end
+
+   MenuEnd()
+
+   oDlg:SetMenu( oMenu )
+
+Return ( oMenu )
+
+
+
+
+
+
+
+
+
+function nTotLMovAlm( uDbf )
+
+   local nTotUnd  := nTotNMovAlm( uDbf )
+
+   do case
+   case ValType( uDbf ) == "A"
+      nTotUnd     := NotCaja( uDbf[ 17 ] ) * uDbf[ 18 ] * uDbf[ 21 ]
+   case ValType( uDbf ) == "C"
+      nTotUnd     := NotCaja( ( uDbf )->nCajMov ) * ( uDbf )->nUndMov * ( uDbf )->nPreDiv
+   case ValType( uDbf ) == "O"
+      nTotUnd     := NotCaja( uDbf:nCajMov ) * uDbf:nUndMov * uDbf:nPreDiv
+
+   end
+
+RETURN ( nTotUnd )
+
+
+
+Function nTotNMovAlm( uDbf )
+
+   local nTotUnd
+
+   do case
+   case ValType( uDbf ) == "A"
+      nTotUnd     := NotCaja( uDbf[ 17 ] ) * uDbf[ 18 ]
+   case ValType( uDbf ) == "C"
+      nTotUnd     := NotCaja( ( uDbf )->nCajMov ) * ( uDbf )->nUndMov
+   case ValType( uDbf ) == "O"
+      nTotUnd     := NotCaja( uDbf:nCajMov ) * uDbf:nUndMov
+   end
+
+RETURN ( nTotUnd )
+
+
+
+Static Function aStkArticulo( cCodArt, nCtlStock )
+
+   IIF( nCtlStock == nil, nCtlStock := 1, ) ;
+
+   nStockActual       := 0
+
+   oStock:aStockArticulo( cCodArt, , oBrwStock )
+   aEval( oBrwStock:aArrayData, {|a| nStockActual += a:nUnidades } )
+
+Return .T.
+
+
+
+Function aItmMov()
+
+   local aBase := {}
+
+   aAdd( aBase, { "dFecMov",   "D",     8,    0, "Fecha del movimiento" }              )
+   aAdd( aBase, { "cTimMov",   "C",     5,    0, "Hora del movimiento" }               )
+   aAdd( aBase, { "nTipMov",   "N",     1,    0, "Tipo del movimiento" }               )
+   aAdd( aBase, { "cAliMov",   "C",     3,    0, "Almacén destino" }                   )
+   aAdd( aBase, { "cAloMov",   "C",     3,    0, "Almacén origen" }                    )
+   aAdd( aBase, { "cRefMov",   "C",    18,    0, "Código de artículo" }                )
+   aAdd( aBase, { "cCodMov",   "C",     2,    0, "Tipo de movimiento" }                )
+   aAdd( aBase, { "cCodPr1",   "C",    10,    0, "Código de la primera propiedad" }    )
+   aAdd( aBase, { "cCodPr2",   "C",    10,    0, "Código de la segunda propiedad" }    )
+   aAdd( aBase, { "cValPr1",   "C",    10,    0, "Valor de la primera propiedad"  }    )
+   aAdd( aBase, { "cValPr2",   "C",    10,    0, "Valor de la segunda propiedad"  }    )
+   aAdd( aBase, { "cCodUsr",   "C",     3,    0, "Código de usuario" }                 )
+   aAdd( aBase, { "cCodDlg",   "C",     2,    0, "Código de delegación" }              )
+   aAdd( aBase, { "lLote"  ,   "L",     1,    0, "" }                                  )
+   aAdd( aBase, { "nLote"  ,   "N",     9,    0, "" }                                  )
+   aAdd( aBase, { "cLote"  ,   "C",    12,    0, "Número de lote" }                    )
+   aAdd( aBase, { "nCajMov",   "N",    19,    6, "Cajas movidas" }                     )
+   aAdd( aBase, { "nUndMov",   "N",    19,    6, "Unidades movidas" }                  )
+   aAdd( aBase, { "nCajAnt",   "N",    19,    6, "Cajas movidas anterior" }            )
+   aAdd( aBase, { "nUndAnt",   "N",    19,    6, "Unidades movidas anterior" }         )
+   aAdd( aBase, { "nPreDiv",   "N",    19,    6, "Precio del artículo" }               )
+   aAdd( aBase, { "lSndDoc",   "L",     1,    0, "" }                                  )
+   aAdd( aBase, { "nNumRem",   "N",     9,    0, "Número de remesa" }                  )
+   aAdd( aBase, { "cSufRem",   "C",     2,    0, "Sufijo de remesa" }                  )
+   aAdd( aBase, { "lSelDoc",   "L",     1,    0, "" }                                  )
+   aAdd( aBase, { "lNoStk",    "L",     1,    0, "No controlar stock" }                )
+   aAdd( aBase, { "lKitArt",   "L",     1,    0, "Línea con escandallo" }              )
+   aAdd( aBase, { "lKitEsc",   "L",     1,    0, "Línea perteneciente a escandallo" }  )
+   aAdd( aBase, { "lImpLin",   "L",     1,    0, "Imprimir línea" }                    )
+   aAdd( aBase, { "lKitPrc",   "L",     1,    0, "Precios del kit" }                   )
+   aAdd( aBase, { "nNumLin",   "N",     4,    0, "Número de línea" }                   )
+   aAdd( aBase, { "mNumSer",   "M",    10,    0, "Números de serie" }                  )
+   aAdd( aBase, { "nVolumen",  "N",    16,    6, "Volumen del producto" }              )
+   aAdd( aBase, { "cVolumen",  "C",     2,    0, "Unidad del volumen" }                )
+   aAdd( aBase, { "nPesoKg",   "N",    16,    6, "Peso del producto" }                 )
+   aAdd( aBase, { "cPesoKg",   "C",     2,    0, "Unidad de peso del producto" }       )
+
+Return ( aBase )
+
+
+
+FUNCTION rxHisMov( cPath, oMeter )
+
+    local dbfHisMov
+
+   IIF( cPath == nil, cPath := cPatEmp(), ) ;
+
+   if !lExistTable( cPath + "HISMOV.DBF" )
+      dbCreate( cPath + "HISMOV.DBF", aSqlStruct( aItmMov() ), cDriver() )
+   end
+
+   fEraseIndex( cPath + "HISMOV.CDX" )
+
+   dbUseArea( .T., cDriver(), cPath + "HISMOV.DBF", cCheckArea( "HISMOV", @dbfHisMov ), .F. )
+
+   if !( dbfHisMov )->( neterr() )
+      ( dbfHisMov )->( __dbPack() )
+
+      ( dbfHisMov )->( ordCondSet("!Deleted()", {||!Deleted()}  ) )
+      ( dbfHisMov )->( ordCreate( cPath + "HISMOV.CDX", "NNUMREM", "Str( nNumRem ) + cSufRem", {|| Str( Field->nNumRem ) + Field->cSufRem }, ) )
+
+      ( dbfHisMov )->( ordCondSet("!Deleted()", {||!Deleted()}  ) )
+      ( dbfHisMov )->( ordCreate( cPath + "HISMOV.CDX", "DFECMOV", "Dtos( dFecMov ) + cTimMov", {|| Dtos( Field->dFecMov ) + Field->cTimMov } ) )
+
+      ( dbfHisMov )->( ordCondSet("!Deleted()", {||!Deleted()}  ) )
+      ( dbfHisMov )->( ordCreate( cPath + "HISMOV.CDX", "CREFMOV", "CREFMOV + CVALPR1 + CVALPR2 + CLOTE", {|| Field->CREFMOV + Field->CVALPR1 + Field->CVALPR2 + Field->cLote } ) )
+
+      ( dbfHisMov )->( ordCondSet("!Deleted()", {||!Deleted()}  ) )
+      ( dbfHisMov )->( ordCreate( cPath + "HISMOV.CDX", "CALOMOV", "CALOMOV", {|| Field->CALOMOV } ) )
+
+      ( dbfHisMov )->( ordCondSet("!Deleted()", {||!Deleted()}  ) )
+      ( dbfHisMov )->( ordCreate( cPath + "HISMOV.CDX", "CALIMOV", "CALIMOV", {|| Field->CALIMOV } ) )
+
+      ( dbfHisMov )->( ordCondSet("!Deleted()", {||!Deleted()}  ) )
+      ( dbfHisMov )->( ordCreate( cPath + "HISMOV.CDX", "cRefAlm", "cRefMov + cValPr1 + cValPr2 + cAliMov + cLote", {|| Field->cRefMov + Field->cValPr1 + Field->cValPr2 + Field->cAliMov + Field->cLote } ) )
+
+      ( dbfHisMov )->( ordCondSet("!Deleted()", {||!Deleted()}  ) )
+      ( dbfHisMov )->( ordCreate( cPath + "HISMOV.CDX", "cLote", "cLote", {|| Field->cLote } ) )
+
+      ( dbfHisMov )->( ordCondSet("!Deleted()", {||!Deleted()}  ) )
+      ( dbfHisMov )->( ordCreate( cPath + "HISMOV.CDX", "nNumLin", "Str( nNumLin )", {|| Str( Field->nNumLin ) } ) )
+
+      ( dbfHisMov )->( ordCondSet("!Deleted() .and. lSndDoc", {|| !Deleted() .AND. Field->lSndDoc }  ) )
+      ( dbfHisMov )->( ordCreate( cPath + "HISMOV.CDX", "lSndDoc", "lSndDoc", {|| Field->lSndDoc } ) )
+
+      ( dbfHisMov )->( ordCondSet("!Deleted() .and. nTipMov == 4", {|| !Deleted() .AND. Field->nTipMov == 4 }, , , , , , , , , .T. ) )
+      ( dbfHisMov )->( ordCreate( cPath + "HISMOV.CDX", "nTipMov", "cRefMov + Dtos( dFecMov )", {|| Field->cRefMov + Dtos( Field->dFecMov ) } ) )
+
+      ( dbfHisMov )->( dbCloseArea() )
+
+   else
+
+      msgStop( "Imposible abrir en modo exclusivo la tabla de movimientos de almacén" )
+
+   end
+
+RETURN NIL
+
+
+
+FUNCTION mkHisMov( cPath, lAppend, cPathOld, oMeter )
+
+    local dbfHisMov
+
+   IIF( cPath == nil, cPath := cPatEmp(), ) ;
+    IIF( lAppend == nil, lAppend := .F., ) ;
+
+   if oMeter <> NIL
+      oMeter:cText   := "Generando bases"
+        sysrefresh()
+   end
+
+   if !lExistTable( cPath + "HISMOV.DBF" )
+      dbCreate( cPath + "HISMOV.DBF", aSqlStruct( aItmMov() ), cDriver() )
+   end
+
+   if lAppend .AND. lIsDir( cPathOld )
+      dbUseArea( .T., cDriver(), cPath + "HISMOV.DBF", cCheckArea( "HISMOV", @dbfHisMov ), .F. )
+      if !( dbfHisMov )->( neterr() )
+         ( dbfHisMov )->( __dbApp( cPathOld + "HISMOV.DBF" ) )
+         ( dbfHisMov )->( dbCloseArea() )
+      end
+   end
+
+   rxHisMov( cPath, oMeter )
+
+RETURN .T.
+
+
+
+
+
+
+
+_HB_CLASS THisMovSenderReciver ; UTILITY FUNCTION THisMovSenderReciver(...); static s_oClass ; local oClassInstance ; local nScope ; nScope := 1 ; if s_oClass == NIL ; s_oClass := IIF(.F.,, HBClass():New( "THisMovSenderReciver" , {TSenderReciverItem():classh} ) ) ; ;
+
+   _HB_MEMBER CreateData(); IIF( .F., s_oClass:ModMethod( "CreateData", @THisMovSenderReciver_CreateData(), nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ), s_oClass:AddMethod( "CreateData", @THisMovSenderReciver_CreateData(), nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ));
+
+   _HB_MEMBER RestoreData(); IIF( .F., s_oClass:ModMethod( "RestoreData", @THisMovSenderReciver_RestoreData(), nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ), s_oClass:AddMethod( "RestoreData", @THisMovSenderReciver_RestoreData(), nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ));
+
+   _HB_MEMBER SendData(); IIF( .F., s_oClass:ModMethod( "SendData", @THisMovSenderReciver_SendData(), nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ), s_oClass:AddMethod( "SendData", @THisMovSenderReciver_SendData(), nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ));
+
+   _HB_MEMBER ReciveData(); IIF( .F., s_oClass:ModMethod( "ReciveData", @THisMovSenderReciver_ReciveData(), nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ), s_oClass:AddMethod( "ReciveData", @THisMovSenderReciver_ReciveData(), nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ));
+
+   _HB_MEMBER Process(); IIF( .F., s_oClass:ModMethod( "Process", @THisMovSenderReciver_Process(), nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ), s_oClass:AddMethod( "Process", @THisMovSenderReciver_Process(), nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ));
+
+; IF .F. ; __clsActive(s_oClass:hClass) ; s_oClass:Refresh() ; ELSE ; s_oClass:Create() ; END ; oClassInstance := __clsInst( s_oClass:hClass ) ; IF __ObjHasMsg( oClassInstance, "InitClass" ); oClassInstance:InitClass( hb_aParams() ) ; END ; ELSE ; oClassInstance := __clsInst( s_oClass:hClass ) ; END ; IF PCount() > 0 ; DIVERT TO (@DivertConstructorCall()) OF s_oClass ; END ; RETURN oClassInstance AS CLASS THisMovSenderReciver ;
+
+
+
+UTILITY STATIC function THisMovSenderReciver_CreateData() ; local Self AS CLASS THisMovSenderReciver := QSelf() AS CLASS THisMovSenderReciver
+
+   local oBlock
+   local oError
+   local tmpHisMov
+   local lSnd        := .F.
+   local cFileName
+
+   if ::oSender:lServer
+      cFileName      := "HisMov" + StrZero( ::nGetNumberToSend(), 6 ) + ".All"
+   else
+      cFileName      := "HisMov" + StrZero( ::nGetNumberToSend(), 6 ) + "." + RetSufEmp()
+   end
+
+   If !OpenFiles( .F. )
+      Return Nil
+   end
+
+   ::oSender:SetText( "Seleccionando historico de movimientos" )
+
+
+
+
+
+   mkHisMov( cPatSnd() )
+
+   oBlock            := ErrorBlock( {| oError | ApoloBreak( oError ) } )
+   BEGIN SEQUENCE
+
+   dbUseArea( .T., ( cDriver() ), ( cPatSnd() + "HISMOV.DBF" ), ( cCheckArea( "HISMOV", @tmpHisMov ) ), if(.T. .OR. .F., !.F., NIL), .F.,, )
+   if !lAIS() ; ordListAdd( ( cPatSnd() + "HISMOV.CDX" ) ) ; else ; ordSetFocus( 1 ) ; end
+
+   if !Empty( ::oSender:oMtr )
+      ::oSender:oMtr:nTotal := ( dbfHisMov )->( Lastrec() )
+   end
+
+   ( dbfHisMov )->( OrdSetFocus( "SndCod" ) )
+   ( dbfHisMov )->( dbGoTop() )
+
+   while !( dbfHisMov )->( eof() )
+
+      if ( dbfHisMov )->lSndDoc
+
+         ::oSender:SetText( "Añadido un movimiento de almacén al artículo: " + AllTrim( ( dbfHisMov )->cRefMov ) + AllTrim( RetFld( ( dbfHisMov )->cRefMov, dbfArticulo, "Nombre" ) ) )
+
+         lSnd     := .T.
+
+         dbPass( dbfHisMov, tmpHisMov, .T. )
+
+      end
+
+      ( dbfHisMov )->( dbSkip() )
+
+      if !Empty( ::oSender:oMtr )
+         ::oSender:oMtr:Set( ( dbfHisMov )->( OrdKeyNo() ) )
+      end
+
+      SysRefresh()
+
+   end
+
+   RECOVER USING oError
+
+      msgStop( "Imposible abrir todas las bases de datos de historico de movimientos" + Chr(13)+Chr(10) + ErrorMessage( oError ) )
+
+   end
+
+   ErrorBlock( oBlock )
+
+   ( tmpHisMov )->( dbCloseArea() )
+
+   CloseFiles()
+
+
+
+
+
+   if lSnd
+
+      ::oSender:SetText( "Comprimiendo historico de movimientos" )
+
+      if ::oSender:lZipData( cFileName )
+         ::oSender:SetText( "Ficheros comprimidos" )
+      else
+         ::oSender:SetText( "ERROR al crear fichero comprimido" )
+      end
+
+   else
+
+      ::oSender:SetText( "No hay historico de movimientos para enviar" )
+
+   end
+
+Return ( Self )
+
+
+
+UTILITY STATIC function THisMovSenderReciver_RestoreData() ; local Self AS CLASS THisMovSenderReciver := QSelf() AS CLASS THisMovSenderReciver
+
+   local oBlock
+   local oError
+   local dbfHisMov
+
+   if ::lSuccesfullSend
+
+
+
+
+
+      oBlock            := ErrorBlock( {| oError | ApoloBreak( oError ) } )
+      BEGIN SEQUENCE
+
+         dbUseArea( .T., ( cDriver() ), ( cPatEmp() + "HISMOV.DBF" ), ( cCheckArea( "HISMOV", @dbfHisMov ) ), if(.T. .OR. .F., !.F., NIL), .F.,, )
+         if !lAIS() ; ordListAdd( ( cPatEmp() + "HISMOV.CDX" ) ) ; else ; ordSetFocus( 1 ) ; end
+         ( dbfHisMov )->( ordSetFocus( "SndCod" ) )
+
+         while !( dbfHisMov )->( Eof() )
+
+            if ( dbfHisMov )->( dbRLock() )
+               ( dbfHisMov )->lSndDoc   := .F.
+               ( dbfHisMov )->( dbRUnlock() )
+            end
+
+            ( dbfHisMov )->( dbSkip() )
+
+         end
+
+      RECOVER USING oError
+
+         msgStop( "Imposible abrir todas las bases de datos de historico de movimientos" + Chr(13)+Chr(10) + ErrorMessage( oError ) )
+
+      end
+
+      ErrorBlock( oBlock )
+
+      ( dbfHisMov )->( dbCloseArea() )
+
+   end
+
+Return ( Self )
+
+
+
+UTILITY STATIC function THisMovSenderReciver_SendData() ; local Self AS CLASS THisMovSenderReciver := QSelf() AS CLASS THisMovSenderReciver
+
+   local cFileName
+
+   if ::oSender:lServer
+      cFileName         := "HisMov" + StrZero( ::nGetNumberToSend(), 6 ) + ".All"
+   else
+      cFileName         := "HisMov" + StrZero( ::nGetNumberToSend(), 6 ) + "." + RetSufEmp()
+   end
+
+   if File( cPatOut() + cFileName )
+
+      if ftpSndFile( cPatOut() + cFileName, cFileName, 2000, ::oSender )
+         ::IncNumberToSend()
+         ::lSuccesfullSend := .T.
+         ::oSender:SetText( "Ficheros de historico de movimientos enviados " + cFileName )
+      else
+         ::oSender:SetText( "ERROR fichero de historico de movimientos no enviado" )
+      end
+
+   end
+
+Return ( Self )
+
+
+
+UTILITY STATIC function THisMovSenderReciver_ReciveData() ; local Self AS CLASS THisMovSenderReciver := QSelf() AS CLASS THisMovSenderReciver
+
+   local n
+   local aExt
+
+   if ::oSender:lServer
+      aExt              := RetSufEmp()
+   else
+      aExt              := { "All" }
+   end
+
+   ::oSender:SetText( "Recibiendo historico de movimientos" )
+
+   for n := 1 to len( aExt )
+      FtpGetFiles( "HisMov*." + aExt[ n ], cPatIn(), 2000, ::oSender )
+   next
+
+   ::oSender:SetText( "Historico de movimientos recibidos" )
+
+Return ( Self )
+
+
+
+UTILITY STATIC function THisMovSenderReciver_Process() ; local Self AS CLASS THisMovSenderReciver := QSelf() AS CLASS THisMovSenderReciver
+
+   local m
+   local aFiles
+   local tmpMov
+   local tmpHisMov
+   local oBlock
+   local oError
+
+
+
+
+
+   aFiles                     := Directory( cPatIn() + "HisMov*.*" )
+
+   for m := 1 to len( aFiles )
+
+      oBlock                  := ErrorBlock( {| oError | ApoloBreak( oError ) } )
+
+      BEGIN SEQUENCE
+
+
+
+
+
+      if ::oSender:lUnZipData( cPatIn() + aFiles[ m, 1 ] )
+
+
+         if lExistTable( cPatSnd() + "HisMov.Dbf" )     .AND. OpenFiles( .F. )
+
+            dbUseArea( .T., ( cDriver() ), ( cPatSnd() + "HISMOV.DBF" ), ( cCheckArea( "HISMOV", @tmpHisMov ) ), if(.F. .OR. .F., !.F., NIL), .T.,, )
+            if !lAIS() ; ordListAdd( ( cPatSnd() + "HISMOV.CDX" ) ) ; else ; ordSetFocus( 1 ) ; end
+
+            if !Empty( ::oSender:oMtr )
+               ::oSender:oMtr:nTotal := ( tmpHisMov )->( lastrec() )
+            end
+
+            while !( tmpHisMov )->( eof() )
+
+               dbPass( tmpHisMov, dbfHisMov, .T. )
+               ::oSender:SetText( "Añadido un movimiento de almacén al artículo: " + AllTrim( ( tmpHisMov )->cRefMov ) + AllTrim( RetFld( ( tmpHisMov )->cRefMov, dbfArticulo, "Nombre" ) ) )
+
+               ( tmpHisMov )->( dbSkip() )
+
+               if !Empty( ::oSender:oMtr )
+                  ::oSender:oMtr:Set( ( tmpHisMov )->( OrdKeyNo() ) )
+               end
+
+               SysRefresh()
+
+            end
+
+            ( tmpHisMov )->( dbCloseArea() )
+
+            CloseFiles()
+
+            ::oSender:AppendFileRecive( aFiles[ m, 1 ] )
+
+         else
+
+            ::oSender:SetText( "Falta el fichero HisMov.dbf" )
+
+         end
+
+      else
+
+         ::oSender:SetText( "Error en el fichero comprimido" )
+
+      end
+
+      RECOVER USING oError
+
+         ( tmpHisMov )->( dbCloseArea() )
+         CloseFiles()
+
+         ::oSender:SetText( "Error procesando fichero " + aFiles[ m, 1 ] )
+         ::oSender:SetText( ErrorMessage( oError ) )
+
+      end
+
+      ErrorBlock( oBlock )
+
+   next
+
+Return ( Self )
+
+
+
+
+
+
+
+Static Function cTextoMovimiento( dbfHisMov )
+
+Return ( { "Entre almacenes", "Regularización", "Objetivos", "Consolidación" }[ Min( Max( ( dbfHisMov )->nTipMov, 1 ), 4 ) ] )

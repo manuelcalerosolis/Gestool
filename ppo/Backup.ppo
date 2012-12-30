@@ -1,0 +1,1829 @@
+#line 112 "hbclass.ch"
+   DYNAMIC DivertConstructorCall
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+DECLARE HBClass  New( cName AS String, OPTIONAL SuperParams ) AS CLASS HBClass  Create() AS Object  Instance() AS Object  AddClsMethod( cName AS String, @MethodName(), nScope AS Numeric, n2 AS Numeric, n3 AS Numeric )  AddDelegate( cName AS String, cDelegate AS String, cObject AS String, nScope AS Numeric, lPersistent AS LOGICAL )  AddMultiClsData( cType AS String, uVal, nScope AS Numeric, aDatas AS Array OF String )  AddMultiData( cType AS String, uVal, nScope AS Numeric, aDatas AS Array OF String, x AS LOGICAL, lPer AS LOGICAL )  AddMethod( cName AS String, @MethodName(), nScope AS Numeric, lPersistent AS LOGICAL )  AddInLine( cName AS String, bBlock AS CodeBlock, nScope AS Numeric, lPersistent AS LOGICAL )  AddVirtual( cName AS String )  ModMethod( cName AS String, @MethodName(), nScope AS Numeric, lPersistent AS LOGICAL )  ModClsMethod( cName AS String, @MethodName(), nScope AS Numeric )  ModInline( cName AS String, bBlock AS CodeBlock, nScope AS Numeric, lPersistent AS LOGICAL )  SetOnError( @MethodName() )
+#line 85 "\Fwh1204\Include\FiveWin.Ch"
+   EXTERNAL GetProcAdd
+   EXTERNAL TActiveX
+
+
+
+
+extern errorsys
+#line 22 ".\Prg\Backup.prg"
+_HB_CLASS TBackup ; UTILITY FUNCTION TBackup(...); static s_oClass ; local oClassInstance ; local nScope ; nScope := 1 ; if s_oClass == NIL ; s_oClass := IIF(.F.,, HBClass():New( "TBackup" , { HBObject():Classh } ) ) ;
+
+   _HB_MEMBER { oDbfEmpresa} ; IIF( !.F., s_oClass:AddMultiData(,, nScope + IIF( .F., 32, 0 ), { "oDbfEmpresa" }, .F., .F. ), )
+   _HB_MEMBER { oDbfBackup} ; IIF( !.F., s_oClass:AddMultiData(,, nScope + IIF( .F., 32, 0 ), { "oDbfBackup" }, .F., .F. ), )
+
+   _HB_MEMBER { nLevel} ; IIF( !.F., s_oClass:AddMultiData(,, nScope + IIF( .F., 32, 0 ), { "nLevel" }, .F., .F. ), )
+
+   _HB_MEMBER { lDate} ; IIF( !.F., s_oClass:AddMultiData(, .F., nScope + IIF( .F., 32, 0 ), { "lDate" }, .F., .F. ), )
+
+
+
+   _HB_MEMBER { nBytes} ; IIF( !.F., s_oClass:AddMultiData(, 0, nScope + IIF( .F., 32, 0 ), { "nBytes" }, .F., .F. ), )
+   _HB_MEMBER { nDisks} ; IIF( !.F., s_oClass:AddMultiData(, 0, nScope + IIF( .F., 32, 0 ), { "nDisks" }, .F., .F. ), )
+   _HB_MEMBER { nActualSize} ; IIF( !.F., s_oClass:AddMultiData(, 0, nScope + IIF( .F., 32, 0 ), { "nActualSize" }, .F., .F. ), )
+   _HB_MEMBER { nFileSize} ; IIF( !.F., s_oClass:AddMultiData(, 0, nScope + IIF( .F., 32, 0 ), { "nFileSize" }, .F., .F. ), )
+   _HB_MEMBER { aFiles} ; IIF( !.F., s_oClass:AddMultiData(, {}, nScope + IIF( .F., 32, 0 ), { "aFiles" }, .F., .F. ), )
+   _HB_MEMBER { nActualFile} ; IIF( !.F., s_oClass:AddMultiData(, 0, nScope + IIF( .F., 32, 0 ), { "nActualFile" }, .F., .F. ), )
+   _HB_MEMBER { aMsgs} ; IIF( !.F., s_oClass:AddMultiData(, {}, nScope + IIF( .F., 32, 0 ), { "aMsgs" }, .F., .F. ), )
+   _HB_MEMBER { nTotalFiles} ; IIF( !.F., s_oClass:AddMultiData(, 0, nScope + IIF( .F., 32, 0 ), { "nTotalFiles" }, .F., .F. ), )
+   _HB_MEMBER { bk_Serial} ; IIF( !.F., s_oClass:AddMultiData(, "", nScope + IIF( .F., 32, 0 ), { "bk_Serial" }, .F., .F. ), )
+   _HB_MEMBER { bk_Bytes} ; IIF( !.F., s_oClass:AddMultiData(, 0, nScope + IIF( .F., 32, 0 ), { "bk_Bytes" }, .F., .F. ), )
+   _HB_MEMBER { bk_NumFiles} ; IIF( !.F., s_oClass:AddMultiData(, 0, nScope + IIF( .F., 32, 0 ), { "bk_NumFiles" }, .F., .F. ), )
+   _HB_MEMBER { bk_DiskNum} ; IIF( !.F., s_oClass:AddMultiData(, 0, nScope + IIF( .F., 32, 0 ), { "bk_DiskNum" }, .F., .F. ), )
+
+
+
+   _HB_MEMBER { aEmp} ; IIF( !.F., s_oClass:AddMultiData(,, nScope + IIF( .F., 32, 0 ), { "aEmp" }, .F., .F. ), )
+   _HB_MEMBER { aBmp} ; IIF( !.F., s_oClass:AddMultiData(,, nScope + IIF( .F., 32, 0 ), { "aBmp" }, .F., .F. ), )
+   _HB_MEMBER { oDlg} ; IIF( !.F., s_oClass:AddMultiData(,, nScope + IIF( .F., 32, 0 ), { "oDlg" }, .F., .F. ), )
+   _HB_MEMBER { oFld} ; IIF( !.F., s_oClass:AddMultiData(,, nScope + IIF( .F., 32, 0 ), { "oFld" }, .F., .F. ), )
+   _HB_MEMBER { oBotonAnterior} ; IIF( !.F., s_oClass:AddMultiData(,, nScope + IIF( .F., 32, 0 ), { "oBotonAnterior" }, .F., .F. ), )
+   _HB_MEMBER { oBotonSiguiente} ; IIF( !.F., s_oClass:AddMultiData(,, nScope + IIF( .F., 32, 0 ), { "oBotonSiguiente" }, .F., .F. ), )
+   _HB_MEMBER { oBotonTerminar} ; IIF( !.F., s_oClass:AddMultiData(,, nScope + IIF( .F., 32, 0 ), { "oBotonTerminar" }, .F., .F. ), )
+   _HB_MEMBER { oBotonImprimir} ; IIF( !.F., s_oClass:AddMultiData(,, nScope + IIF( .F., 32, 0 ), { "oBotonImprimir" }, .F., .F. ), )
+   _HB_MEMBER { oAccion} ; IIF( !.F., s_oClass:AddMultiData(,, nScope + IIF( .F., 32, 0 ), { "oAccion" }, .F., .F. ), )
+   _HB_MEMBER { nAccion} ; IIF( !.F., s_oClass:AddMultiData(,, nScope + IIF( .F., 32, 0 ), { "nAccion" }, .F., .F. ), )
+   _HB_MEMBER { oBrwSave} ; IIF( !.F., s_oClass:AddMultiData(,, nScope + IIF( .F., 32, 0 ), { "oBrwSave" }, .F., .F. ), )
+   _HB_MEMBER { oBrwRestore} ; IIF( !.F., s_oClass:AddMultiData(,, nScope + IIF( .F., 32, 0 ), { "oBrwRestore" }, .F., .F. ), )
+   _HB_MEMBER { oBrwHistorial} ; IIF( !.F., s_oClass:AddMultiData(,, nScope + IIF( .F., 32, 0 ), { "oBrwHistorial" }, .F., .F. ), )
+   _HB_MEMBER { oProgreso} ; IIF( !.F., s_oClass:AddMultiData(,, nScope + IIF( .F., 32, 0 ), { "oProgreso" }, .F., .F. ), )
+   _HB_MEMBER { nProgreso} ; IIF( !.F., s_oClass:AddMultiData(,, nScope + IIF( .F., 32, 0 ), { "nProgreso" }, .F., .F. ), )
+   _HB_MEMBER { oProgresoTarget} ; IIF( !.F., s_oClass:AddMultiData(,, nScope + IIF( .F., 32, 0 ), { "oProgresoTarget" }, .F., .F. ), )
+   _HB_MEMBER { nProgresoTarget} ; IIF( !.F., s_oClass:AddMultiData(,, nScope + IIF( .F., 32, 0 ), { "nProgresoTarget" }, .F., .F. ), )
+   _HB_MEMBER { oProgresoInternet} ; IIF( !.F., s_oClass:AddMultiData(,, nScope + IIF( .F., 32, 0 ), { "oProgresoInternet" }, .F., .F. ), )
+   _HB_MEMBER { nProgresoInternet} ; IIF( !.F., s_oClass:AddMultiData(,, nScope + IIF( .F., 32, 0 ), { "nProgresoInternet" }, .F., .F. ), )
+   _HB_MEMBER { oProgresoRestore} ; IIF( !.F., s_oClass:AddMultiData(,, nScope + IIF( .F., 32, 0 ), { "oProgresoRestore" }, .F., .F. ), )
+   _HB_MEMBER { nProgresoRestore} ; IIF( !.F., s_oClass:AddMultiData(,, nScope + IIF( .F., 32, 0 ), { "nProgresoRestore" }, .F., .F. ), )
+   _HB_MEMBER { oDir} ; IIF( !.F., s_oClass:AddMultiData(,, nScope + IIF( .F., 32, 0 ), { "oDir" }, .F., .F. ), )
+   _HB_MEMBER { cDir} ; IIF( !.F., s_oClass:AddMultiData(,, nScope + IIF( .F., 32, 0 ), { "cDir" }, .F., .F. ), )
+   _HB_MEMBER { oDirOrigen} ; IIF( !.F., s_oClass:AddMultiData(,, nScope + IIF( .F., 32, 0 ), { "oDirOrigen" }, .F., .F. ), )
+   _HB_MEMBER { cDirOrigen} ; IIF( !.F., s_oClass:AddMultiData(, "", nScope + IIF( .F., 32, 0 ), { "cDirOrigen" }, .F., .F. ), )
+   _HB_MEMBER { oResultado} ; IIF( !.F., s_oClass:AddMultiData(,, nScope + IIF( .F., 32, 0 ), { "oResultado" }, .F., .F. ), )
+   _HB_MEMBER { mResultado} ; IIF( !.F., s_oClass:AddMultiData(,, nScope + IIF( .F., 32, 0 ), { "mResultado" }, .F., .F. ), )
+
+   _HB_MEMBER { oChkPasswordRestore} ; IIF( !.F., s_oClass:AddMultiData(,, nScope + IIF( .F., 32, 0 ), { "oChkPasswordRestore" }, .F., .F. ), )
+   _HB_MEMBER { oPasswordRestore} ; IIF( !.F., s_oClass:AddMultiData(,, nScope + IIF( .F., 32, 0 ), { "oPasswordRestore" }, .F., .F. ), )
+   _HB_MEMBER { cPasswordRestore} ; IIF( !.F., s_oClass:AddMultiData(, Space( 100 ), nScope + IIF( .F., 32, 0 ), { "cPasswordRestore" }, .F., .F. ), )
+   _HB_MEMBER { lPasswordRestore} ; IIF( !.F., s_oClass:AddMultiData(, .F., nScope + IIF( .F., 32, 0 ), { "lPasswordRestore" }, .F., .F. ), )
+
+   _HB_MEMBER { oChkDir} ; IIF( !.F., s_oClass:AddMultiData(,, nScope + IIF( .F., 32, 0 ), { "oChkDir" }, .F., .F. ), )
+   _HB_MEMBER { lDir} ; IIF( !.F., s_oClass:AddMultiData(,, nScope + IIF( .F., 32, 0 ), { "lDir" }, .F., .F. ), )
+   _HB_MEMBER { oChkInternet} ; IIF( !.F., s_oClass:AddMultiData(,, nScope + IIF( .F., 32, 0 ), { "oChkInternet" }, .F., .F. ), )
+   _HB_MEMBER { lInternet} ; IIF( !.F., s_oClass:AddMultiData(,, nScope + IIF( .F., 32, 0 ), { "lInternet" }, .F., .F. ), )
+   _HB_MEMBER { oUserInternet} ; IIF( !.F., s_oClass:AddMultiData(,, nScope + IIF( .F., 32, 0 ), { "oUserInternet" }, .F., .F. ), )
+   _HB_MEMBER { cUserInternet} ; IIF( !.F., s_oClass:AddMultiData(,, nScope + IIF( .F., 32, 0 ), { "cUserInternet" }, .F., .F. ), )
+   _HB_MEMBER { oPasswordInternet} ; IIF( !.F., s_oClass:AddMultiData(,, nScope + IIF( .F., 32, 0 ), { "oPasswordInternet" }, .F., .F. ), )
+   _HB_MEMBER { cPasswordInternet} ; IIF( !.F., s_oClass:AddMultiData(,, nScope + IIF( .F., 32, 0 ), { "cPasswordInternet" }, .F., .F. ), )
+
+   _HB_MEMBER { oChkPassword} ; IIF( !.F., s_oClass:AddMultiData(,, nScope + IIF( .F., 32, 0 ), { "oChkPassword" }, .F., .F. ), )
+   _HB_MEMBER { lPassword} ; IIF( !.F., s_oClass:AddMultiData(,, nScope + IIF( .F., 32, 0 ), { "lPassword" }, .F., .F. ), )
+   _HB_MEMBER { oPassword1} ; IIF( !.F., s_oClass:AddMultiData(,, nScope + IIF( .F., 32, 0 ), { "oPassword1" }, .F., .F. ), )
+   _HB_MEMBER { cPassword1} ; IIF( !.F., s_oClass:AddMultiData(,, nScope + IIF( .F., 32, 0 ), { "cPassword1" }, .F., .F. ), )
+   _HB_MEMBER { oPassword2} ; IIF( !.F., s_oClass:AddMultiData(,, nScope + IIF( .F., 32, 0 ), { "oPassword2" }, .F., .F. ), )
+   _HB_MEMBER { cPassword2} ; IIF( !.F., s_oClass:AddMultiData(,, nScope + IIF( .F., 32, 0 ), { "cPassword2" }, .F., .F. ), )
+
+   _HB_MEMBER { oFile} ; IIF( !.F., s_oClass:AddMultiData(,, nScope + IIF( .F., 32, 0 ), { "oFile" }, .F., .F. ), )
+   _HB_MEMBER { cFile} ; IIF( !.F., s_oClass:AddMultiData(,, nScope + IIF( .F., 32, 0 ), { "cFile" }, .F., .F. ), )
+
+   _HB_MEMBER { aBackupFiles} ; IIF( !.F., s_oClass:AddMultiData(,, nScope + IIF( .F., 32, 0 ), { "aBackupFiles" }, .F., .F. ), )
+
+   _HB_MEMBER Create( cPath); IIF( .F., s_oClass:ModMethod( "Create", @TBackup_Create(), nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ), s_oClass:AddMethod( "Create", @TBackup_Create(), nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ));
+
+   _HB_MEMBER New( oMenuItem, oWnd); IIF( .F., s_oClass:ModMethod( "New", @TBackup_New(), nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ), s_oClass:AddMethod( "New", @TBackup_New(), nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ));
+
+   _HB_MEMBER OpenFiles(); IIF( .F., s_oClass:ModMethod( "OpenFiles", @TBackup_OpenFiles(), nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ), s_oClass:AddMethod( "OpenFiles", @TBackup_OpenFiles(), nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ));
+
+   _HB_MEMBER CloseFiles(); IIF( .F., s_oClass:ModMethod( "CloseFiles", @TBackup_CloseFiles(), nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ), s_oClass:AddMethod( "CloseFiles", @TBackup_CloseFiles(), nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ));
+
+   _HB_MEMBER MuestraDialogo(); IIF( .F., s_oClass:ModMethod( "MuestraDialogo", @TBackup_MuestraDialogo(), nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ), s_oClass:AddMethod( "MuestraDialogo", @TBackup_MuestraDialogo(), nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ));
+
+   _HB_MEMBER BotonSiguiente(); IIF( .F., s_oClass:ModMethod( "BotonSiguiente", @TBackup_BotonSiguiente(), nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ), s_oClass:AddMethod( "BotonSiguiente", @TBackup_BotonSiguiente(), nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ));
+
+   _HB_MEMBER BotonAnterior(); IIF( .F., s_oClass:ModMethod( "BotonAnterior", @TBackup_BotonAnterior(), nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ), s_oClass:AddMethod( "BotonAnterior", @TBackup_BotonAnterior(), nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ));
+
+   _HB_MEMBER ZipFiles(); IIF( .F., s_oClass:ModMethod( "ZipFiles", @TBackup_ZipFiles(), nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ), s_oClass:AddMethod( "ZipFiles", @TBackup_ZipFiles(), nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ));
+
+   _HB_MEMBER doBackup( aFiles, cDriveTo); IIF( .F., s_oClass:ModMethod( "doBackup", @TBackup_doBackup(), nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ), s_oClass:AddMethod( "doBackup", @TBackup_doBackup(), nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ));
+
+   _HB_MEMBER doFtp( aFiles); IIF( .F., s_oClass:ModMethod( "doFtp", @TBackup_doFtp(), nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ), s_oClass:AddMethod( "doFtp", @TBackup_doFtp(), nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ));
+
+   _HB_MEMBER DoRestore( cFileFrom); IIF( .F., s_oClass:ModMethod( "DoRestore", @TBackup_DoRestore(), nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ), s_oClass:AddMethod( "DoRestore", @TBackup_DoRestore(), nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ));
+
+   _HB_MEMBER SaveToDisk( cFile); IIF( .F., s_oClass:ModMethod( "SaveToDisk", @TBackup_SaveToDisk(), nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ), s_oClass:AddMethod( "SaveToDisk", @TBackup_SaveToDisk(), nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ));
+
+   _HB_MEMBER RestoreFromDisk( cFile); IIF( .F., s_oClass:ModMethod( "RestoreFromDisk", @TBackup_RestoreFromDisk(), nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ), s_oClass:AddMethod( "RestoreFromDisk", @TBackup_RestoreFromDisk(), nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ));
+
+   _HB_MEMBER cGetFilesToRestore(); IIF( .F., s_oClass:ModMethod( "cGetFilesToRestore", @TBackup_cGetFilesToRestore(), nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ), s_oClass:AddMethod( "cGetFilesToRestore", @TBackup_cGetFilesToRestore(), nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ));
+
+   _HB_MEMBER GetZipFiles(); IIF( .F., s_oClass:ModMethod( "GetZipFiles", @TBackup_GetZipFiles(), nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ), s_oClass:AddMethod( "GetZipFiles", @TBackup_GetZipFiles(), nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ));
+
+   _HB_MEMBER RestoreZipFiles(); IIF( .F., s_oClass:ModMethod( "RestoreZipFiles", @TBackup_RestoreZipFiles(), nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ), s_oClass:AddMethod( "RestoreZipFiles", @TBackup_RestoreZipFiles(), nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ));
+
+   _HB_MEMBER CleanDisk( cDriveTo); IIF( .F., s_oClass:ModMethod( "CleanDisk", @TBackup_CleanDisk(), nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ), s_oClass:AddMethod( "CleanDisk", @TBackup_CleanDisk(), nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ));
+
+   _HB_MEMBER CargarPreferencias(); IIF( .F., s_oClass:ModMethod( "CargarPreferencias", @TBackup_CargarPreferencias(), nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ), s_oClass:AddMethod( "CargarPreferencias", @TBackup_CargarPreferencias(), nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ));
+
+   _HB_MEMBER GuardarPreferencias(); IIF( .F., s_oClass:ModMethod( "GuardarPreferencias", @TBackup_GuardarPreferencias(), nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ), s_oClass:AddMethod( "GuardarPreferencias", @TBackup_GuardarPreferencias(), nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ));
+
+   _HB_MEMBER DefineFiles(); IIF( .F., s_oClass:ModMethod( "DefineFiles", @TBackup_DefineFiles(), nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ), s_oClass:AddMethod( "DefineFiles", @TBackup_DefineFiles(), nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ));
+
+   _HB_MEMBER SyncAllDbf(); IIF( .F., s_oClass:ModMethod( "SyncAllDbf", @TBackup_SyncAllDbf(), nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ), s_oClass:AddMethod( "SyncAllDbf", @TBackup_SyncAllDbf(), nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ));
+
+; IF .F. ; __clsActive(s_oClass:hClass) ; s_oClass:Refresh() ; ELSE ; s_oClass:Create() ; END ; oClassInstance := __clsInst( s_oClass:hClass ) ; IF __ObjHasMsg( oClassInstance, "InitClass" ); oClassInstance:InitClass( hb_aParams() ) ; END ; ELSE ; oClassInstance := __clsInst( s_oClass:hClass ) ; END ; IF PCount() > 0 ; DIVERT TO (@DivertConstructorCall()) OF s_oClass ; END ; RETURN oClassInstance AS CLASS TBackup ;
+
+
+
+UTILITY STATIC function TBackup_Create( cPath) ; local Self AS CLASS TBackup := QSelf() AS CLASS TBackup
+
+   ::oDbfBackup      := nil
+
+RETURN ( Self )
+
+
+
+UTILITY STATIC function TBackup_New( oMenuItem, oWnd) ; local Self AS CLASS TBackup := QSelf() AS CLASS TBackup
+
+   IIF( oWnd == nil, oWnd := oWnd(), ) ;
+   IIF( oMenuItem == nil, oMenuItem := "01075", ) ;
+
+   ::nTotalFiles     := 0
+   ::nActualFile     := 0
+   ::nActualSize     := 0
+   ::aEmp            := {}
+
+   if oWnd <> nil
+      SysRefresh(); oWnd:CloseAll(); SysRefresh()
+   end
+
+   ::nLevel          := nLevelUsr( oMenuItem )
+   if nAnd( ::nLevel, 1 ) <> 0
+      msgStop( "Acceso no permitido." )
+      return ( nil )
+   end
+
+   if nUsrInUse() > 1
+      msgStop( "Hay más de un usuario conectado a la aplicación", "Atención" )
+      return ( nil )
+   end
+
+   ::DefineFiles()
+
+   if ::OpenFiles()
+      ::MuestraDialogo()
+   end
+
+   ::CloseFiles()
+
+return ( Self )
+
+
+
+UTILITY STATIC function TBackup_OpenFiles() ; local Self AS CLASS TBackup := QSelf() AS CLASS TBackup
+
+   local lOpen    := .T.
+   local oError
+   local oBlock   := ErrorBlock( { | oError | ApoloBreak( oError ) } )
+
+   BEGIN SEQUENCE
+
+      ::oDbfBackup:Activate( .F., .T. )
+
+      ::oDbfEmpresa := DbfServer( "Empresa.Dbf", ):NewOpen( "Empresa.Dbf",, ( cDriver() ),, ( cPatDat() ), .F., .T., .F., .F. ) ; ::oDbfEmpresa:AddBag( "Empresa.Cdx" ) ; ::oDbfEmpresa:AddBag( ) ; ::oDbfEmpresa:AutoIndex()
+
+   RECOVER USING oError
+
+      msgStop( ErrorMessage( oError ), "Imposible abrir todas las bases de datos" )
+
+      lOpen       := .F.
+
+   end
+
+   ErrorBlock( oBlock )
+
+Return ( lOpen )
+
+
+
+UTILITY STATIC function TBackup_CloseFiles() ; local Self AS CLASS TBackup := QSelf() AS CLASS TBackup
+
+   local oBlock   := ErrorBlock( { | oError | ApoloBreak( oError ) } )
+   local lOpen    := .T.
+
+   BEGIN SEQUENCE
+
+      ::oDbfEmpresa:End()
+      ::oDbfBackup:End()
+
+   RECOVER
+
+      msgStop( "Imposible cerrar todas las bases de datos.","Atención" )
+      lOpen       := .F.
+
+   end
+
+   ErrorBlock( oBlock )
+
+RETURN ( lOpen )
+
+
+
+UTILITY STATIC function TBackup_MuestraDialogo() ; local Self AS CLASS TBackup := QSelf() AS CLASS TBackup
+
+   local oBmp
+
+   while !::oDbfEmpresa:Eof()
+      if !::oDbfEmpresa:lGrupo
+         aAdd( ::aEmp, { ( cCodEmp() == ::oDbfEmpresa:CodEmp  ), ::oDbfEmpresa:CodEmp, ::oDbfEmpresa:cNombre } )
+      end
+      ::oDbfEmpresa:Skip()
+   end
+
+   ::CargarPreferencias()
+
+
+
+   ::oDlg = TDialog():New(,,,,, "Backup_0",, .F.,,,,, oWnd(), .F.,,,,,, .F., )
+
+
+
+
+   oBmp := TBitmap():ReDefine( 500, "BackupEmpresa",, ::oDlg,,, .F., .F.,,, .F.,,, .F. )
+
+
+
+
+   ::oFld := TPages():Redefine( 10, ::oDlg, {"Backup_1", "Backup_2", "Backup_3", "Backup_4", "Backup_5", "Backup_2", "Backup_8", "Backup_6", "Backup_7"},,,, )
+
+
+
+
+
+
+   ::oBotonAnterior := TButton():ReDefine( 20, {||( ::BotonAnterior() )}, ::oDlg,,, .F.,,,, .F. )
+
+
+
+
+   ::oBotonSiguiente := TButton():ReDefine( 30, {||( ::BotonSiguiente() )}, ::oDlg,,, .F.,,,, .F. )
+
+
+
+
+   ::oBotonTerminar := TButton():ReDefine( 40, {||( ::oDlg:end() )}, ::oDlg,,, .F.,,,, .F. )
+
+
+
+
+   ::oBotonImprimir := TButton():ReDefine( 50, {||( ImprimirODbf( ::oDbfBackup, "Copia de Seguridad " ) )}, ::oDlg,,, .F.,,,, .F. )
+
+
+
+   ::oAccion := TRadMenu():Redefine( { | u | If( PCount()==0, ::nAccion, ::nAccion:= u ) }, ::oFld:aDialogs[ 1 ],, { 100, 110, 120 },,,,, .F.,, )
+
+
+
+   ::oBrwSave                        := TXBrowse():New( ::oFld:aDialogs[ 2 ] )
+
+   ::oBrwSave:bClrSel                := {|| { 0, ( 229 + ( 229 * 256 ) + ( 229 * 65536 ) ) } }
+   ::oBrwSave:bClrSelFocus           := {|| { 0, ( 167 + ( 205 * 256 ) + ( 240 * 65536 ) ) } }
+
+   ::oBrwSave:SetArray( ::aEmp )
+
+   ::oBrwSave:nMarqueeStyle          := 5
+
+   ::oBrwSave:lVScroll               := .F.
+
+   ::oBrwSave:CreateFromResource( 200 )
+
+   with object ( ::oBrwSave:aCols[ 1 ] )
+      :cHeader       := "Se. Seleccionada"
+      :bStrData      := {|| "" }
+      :bEditValue    := {|| ::aEmp[ ::oBrwSave:nArrayAt, 1 ] }
+      :nWidth        := 20
+      :SetCheck( { "Sel16", "Nil16" } )
+   end
+
+   with object ( ::oBrwSave:aCols[ 2 ] )
+      :cHeader       := "Código"
+      :bEditValue    := {|| ::aEmp[ ::oBrwSave:nArrayAt, 2 ] }
+      :nWidth        := 40
+   end
+
+   with object ( ::oBrwSave:aCols[ 3 ] )
+      :cHeader       := "Empresa"
+      :bEditValue    := {|| ::aEmp[ ::oBrwSave:nArrayAt, 3 ] }
+      :nWidth        := 260
+   end
+
+   ::oBrwSave:bLDblClick   := {|| ::aEmp[ ::oBrwSave:nArrayAt, 1 ] := !::aEmp[ ::oBrwSave:nArrayAt, 1 ], ::oBrwSave:Refresh() }
+
+
+
+
+   TButton():ReDefine( 230, {||( ::aEmp[ ::oBrwSave:nArrayAt, 1 ] := !::aEmp[ ::oBrwSave:nArrayAt, 1 ], ::oBrwSave:Refresh() )}, ::oFld:aDialogs[ 2 ],,, .F.,,,, .F. )
+
+
+
+
+   TButton():ReDefine( 210, {||( aEval( ::aEmp, { |aItem| aItem[ 1 ] := .T. } ), ::oBrwSave:Refresh() )}, ::oFld:aDialogs[ 2 ],,, .F.,,,, .F. )
+
+
+
+
+   TButton():ReDefine( 220, {||( aEval( ::aEmp, { |aItem| aItem[ 1 ] := .F. } ), ::oBrwSave:Refresh() )}, ::oFld:aDialogs[ 2 ],,, .F.,,,, .F. )
+
+
+
+
+
+   ::oChkDir := TCheckBox():ReDefine( 100, { | u | If( PCount()==0, ::lDir, ::lDir:= u ) }, ::oFld:aDialogs[ 3 ],,,,,,, .F.,, .F. )
+
+
+
+
+
+   ::oDir := TGetHlp():ReDefine( 110, { | u | If( PCount()==0, ::cDir, ::cDir:= u ) }, ::oFld:aDialogs[ 3 ],,,,,,,,, .F., {||     ::lDir},, .F., .F.,,,,,, nil, "FOLDER",, )
+
+   ::oDir:bHelp   := {|| ::oDir:cText( cGetDir32( "Seleccione destino" ) ) }
+
+
+
+   ::oChkInternet := TCheckBox():ReDefine( 120, { | u | If( PCount()==0, ::lInternet, ::lInternet:= u ) }, ::oFld:aDialogs[ 3 ],,,,,,, .F.,, .F. )
+
+
+
+
+   ::oUserInternet := TGetHlp():ReDefine( 130, { | u | If( PCount()==0, ::cUserInternet, ::cUserInternet:= u ) }, ::oFld:aDialogs[ 3 ],,,,,,,,, .F., {||     ::lInternet},, .F., .F.,,,,,, nil,,, )
+
+
+
+
+   ::oPasswordInternet := TGetHlp():ReDefine( 140, { | u | If( PCount()==0, ::cPasswordInternet, ::cPasswordInternet:= u ) }, ::oFld:aDialogs[ 3 ],,,,,,,,, .F., {||     ::lInternet},, .F., .F.,,,,,, nil,,, )
+
+
+
+
+   ::oFile := TGetHlp():ReDefine( 160, { | u | If( PCount()==0, ::cFile, ::cFile:= u ) }, ::oFld:aDialogs[ 3 ],,,,,,,,, .F.,,, .F., .F.,,,,,, nil, "FOLDER",, )
+
+   ::oFile:bHelp  := {|| ::oFile:cText( cGetFile( "Doc ( *.txt ) | *.txt", "Seleccione el nombre del fichero" ) ) }
+
+
+
+
+
+   ::oChkPassword := TCheckBox():ReDefine( 170, { | u | If( PCount()==0, ::lPassword, ::lPassword:= u ) }, ::oFld:aDialogs[ 3 ],,,,,,, .F.,, .F. )
+
+
+
+
+   ::oPassword1 := TGetHlp():ReDefine( 180, { | u | If( PCount()==0, ::cPassword1, ::cPassword1:= u ) }, ::oFld:aDialogs[ 3 ],,,,,,,,, .F., {||     ::lPassword},, .F., .F.,,,,,, nil,,, )
+
+
+
+
+   ::oPassword2 := TGetHlp():ReDefine( 190, { | u | If( PCount()==0, ::cPassword2, ::cPassword2:= u ) }, ::oFld:aDialogs[ 3 ],,,,,,,,, .F., {||     ::lPassword},, .F., .F.,,,,,, nil,,, )
+
+
+
+
+
+
+
+   ::oProgreso := TMeter():ReDefine( 400, { | u | If( PCount()==0, ::nProgreso, ::nProgreso:= u ) },, ::oFld:aDialogs[ 4 ], .F.,,, .F.,,, nRgb( 128, 255, 0 ), nRgb( 255, 255, 255 ) )
+
+
+
+
+
+   ::oProgresoTarget := TMeter():ReDefine( 410, { | u | If( PCount()==0, ::nProgresoTarget, ::nProgresoTarget:= u ) },, ::oFld:aDialogs[ 4 ], .F.,,, .F.,,, nRgb( 128, 255, 0 ), nRgb( 255, 255, 255 ) )
+
+
+
+
+
+   ::oProgresoInternet := TMeter():ReDefine( 420, { | u | If( PCount()==0, ::nProgresoInternet, ::nProgresoInternet:= u ) },, ::oFld:aDialogs[ 4 ], .F.,,, .F.,,, nRgb( 128, 255, 0 ), nRgb( 255, 255, 255 ) )
+
+
+
+
+
+
+
+   ::oDirOrigen := TGetHlp():ReDefine( 530, { | u | If( PCount()==0, ::cDirOrigen, ::cDirOrigen:= u ) }, ::oFld:aDialogs[ 5 ],,,, "N/W*",,,,, .F.,,, .F., .F.,,,,,, nil, "FOLDER",, )
+
+   ::oDirOrigen:bHelp   := {|| ::oDirOrigen:cText( cGetFile( "Copias ( *.Seg ) | *.Seg", "Seleccione fichero de copia", 1 ) ) }
+
+
+
+   ::oChkPasswordRestore := TCheckBox():ReDefine( 550, { | u | If( PCount()==0, ::lPasswordRestore, ::lPasswordRestore:= u ) }, ::oFld:aDialogs[ 5 ],,,,,,, .F.,, .F. )
+
+
+
+
+   ::oPasswordRestore := TGetHlp():ReDefine( 540, { | u | If( PCount()==0, ::cPasswordRestore, ::cPasswordRestore:= u ) }, ::oFld:aDialogs[ 5 ],,,,,,,,, .F., {||     ::lPasswordRestore},, .F., .F.,,,,,, nil,,, )
+
+
+
+   ::oBrwRestore                        := TXBrowse():New( ::oFld:aDialogs[ 6 ] )
+
+   ::oBrwRestore:bClrSel                := {|| { 0, ( 229 + ( 229 * 256 ) + ( 229 * 65536 ) ) } }
+   ::oBrwRestore:bClrSelFocus           := {|| { 0, ( 167 + ( 205 * 256 ) + ( 240 * 65536 ) ) } }
+
+   ::oBrwRestore:SetArray( ::aEmp )
+
+   ::oBrwRestore:nMarqueeStyle          := 5
+
+   ::oBrwRestore:lVScroll               := .F.
+   ::oBrwRestore:lRecordSelector        := .F.
+
+   ::oBrwRestore:CreateFromResource( 200 )
+
+   with object ( ::oBrwRestore:aCols[ 1 ] )
+      :cHeader       := "Se. Seleccionada"
+      :bStrData      := {|| "" }
+      :bEditValue    := {|| ::aEmp[ ::oBrwRestore:nArrayAt, 1 ] }
+      :nWidth        := 20
+      :SetCheck( { "Sel16", "Nil16" } )
+   end
+
+   with object ( ::oBrwRestore:aCols[ 2 ] )
+      :cHeader       := "Código"
+      :bEditValue    := {|| ::aEmp[ ::oBrwRestore:nArrayAt, 2 ] }
+      :nWidth        := 40
+   end
+
+   with object ( ::oBrwRestore:aCols[ 3 ] )
+      :cHeader       := "Empresa"
+      :bEditValue    := {|| ::aEmp[ ::oBrwRestore:nArrayAt, 2 ] }
+      :nWidth        := 280
+   end
+
+   ::oBrwRestore:bLDblClick   := {|| ::aEmp[ ::oBrwRestore:nArrayAt, 1 ] := !::aEmp[ ::oBrwRestore:nArrayAt, 1 ], ::oBrwRestore:Refresh() }
+
+
+
+
+   TButton():ReDefine( 230, {||( ::aEmp[ ::oBrwRestore:nArrayAt, 1 ] := !::aEmp[ ::oBrwRestore:nArrayAt, 1 ], ::oBrwRestore:Refresh() )}, ::oFld:aDialogs[ 6 ],,, .F.,,,, .F. )
+
+
+
+
+   TButton():ReDefine( 210, {||( aEval( ::aEmp, { |aItem| aItem[1] := .T. } ), ::oBrwRestore:Refresh() )}, ::oFld:aDialogs[ 6 ],,, .F.,,,, .F. )
+
+
+
+
+   TButton():ReDefine( 220, {||( aEval( ::aEmp, { |aItem| aItem[1] := .F. } ), ::oBrwRestore:Refresh() )}, ::oFld:aDialogs[ 6 ],,, .F.,,,, .F. )
+
+
+
+
+
+
+   ::oProgresoRestore := TMeter():ReDefine( 400, { | u | If( PCount()==0, ::nProgresoRestore, ::nProgresoRestore:= u ) },, ::oFld:aDialogs[ 7 ], .F.,,, .F.,,,, )
+
+
+
+
+
+
+
+
+
+   ::oResultado := TMultiGet():ReDefine( 600, { | u | If( PCount()==0, ::mResultado, ::mResultado:= u ) }, ::oFld:aDialogs[ 8 ],,,,,,, .F., {||     .F.}, .T.,, )
+
+
+
+   ::oBrwHistorial                 := TXBrowse():New( ::oFld:aDialogs[ 9 ] )
+
+   ::oDbfBackup:SetBrowse( ::oBrwHistorial )
+
+   ::oBrwHistorial:bClrSel         := {|| { 0, ( 229 + ( 229 * 256 ) + ( 229 * 65536 ) ) } }
+   ::oBrwHistorial:bClrSelFocus    := {|| { 0, ( 167 + ( 205 * 256 ) + ( 240 * 65536 ) ) } }
+
+   ::oBrwHistorial:nMarqueeStyle   := 5
+   ::oBrwHistorial:nRowHeight      := 44
+   ::oBrwHistorial:nDataLines      := 3
+
+   ::oBrwHistorial:CreateFromResource( 700 )
+
+      with object ( ::oBrwHistorial:AddCol() )
+         :cHeader          := "Fecha"
+         :bEditValue       := {|| Dtoc( ::oDbfBackup:Fecha ) }
+         :nWidth           := 70
+      end
+
+      with object ( ::oBrwHistorial:AddCol() )
+         :cHeader          := "Hora"
+         :bEditValue       := {|| ::oDbfBackup:Hora }
+         :nWidth           := 60
+      end
+
+      with object ( ::oBrwHistorial:AddCol() )
+         :cHeader          := "Usuario"
+         :bEditValue       := {|| ::oDbfBackup:Usuario }
+         :nWidth           := 30
+      end
+
+      with object ( ::oBrwHistorial:AddCol() )
+         :cHeader          := "Resumen"
+         :bEditValue       := {|| ::oDbfBackup:Resumen }
+         :nWidth           := 300
+      end
+
+
+
+      ::oDlg:bStart        := {|| ::oBotonAnterior:Hide(), ::oBotonImprimir:Hide() }
+
+   ::oDlg:Activate( ::oDlg:bLClicked, ::oDlg:bMoved, ::oDlg:bPainted, .T.,,,, ::oDlg:bRClicked,,, )
+
+   ::GuardarPreferencias()
+
+   oBmp:End()
+
+RETURN ( Self )
+
+
+
+UTILITY STATIC function TBackup_CargarPreferencias() ; local Self AS CLASS TBackup := QSelf() AS CLASS TBackup
+
+   local oIniApp                 := TIni():New( FullCurDir() + "GstApolo.Ini" )
+
+   ::cDirOrigen                  := PadR( oIniApp:Get( "Backup", "Origen",             "C:\",                  ::cDirOrigen ),         200 )
+   ::cDir                        := PadR( oIniApp:Get( "Backup", "Destino",            "C:\",                  ::cDir ),               200 )
+   ::cFile                       := PadR( oIniApp:Get( "Backup", "Informe",            "C:\InfomeCopia.Txt",   ::cFile ),              200 )
+   ::cUserInternet               := PadR( oIniApp:Get( "Backup", "UserInternet",       "",                     ::cUserInternet ),      100 )
+   ::cPasswordInternet           := PadR( oIniApp:Get( "Backup", "PasswordInternet",   "",                     ::cPasswordInternet ),  100 )
+
+   ::cPassword1                  := PadR( oIniApp:Get( "Backup", "PasswordCopia",      "",                     ::cPassword1 ),         100 )
+   ::cPassword2                  := ::cPassword1
+
+   ::lDir                        := oIniApp:Get( "Backup", "Local",     .T. )
+   ::lInternet                   := oIniApp:Get( "Backup", "Internet",  .T. )
+   ::lPassword                   := oIniApp:Get( "Backup", "Copia",     .T. )
+
+return ( Self )
+
+
+
+UTILITY STATIC function TBackup_GuardarPreferencias() ; local Self AS CLASS TBackup := QSelf() AS CLASS TBackup
+
+   local oIniApp                 := TIni():New( FullCurDir() + "GstApolo.Ini" )
+
+   oIniApp:Set( "Backup",  "Origen",            ::cDirOrigen )
+   oIniApp:Set( "Backup",  "Destino",           ::cDir )
+   oIniApp:Set( "Backup",  "Ultimo",            Dtos( Date() ) )
+   oIniApp:Set( "Backup",  "Informe",           ::cFile )
+
+   oIniApp:Set( "Backup",  "Internet",          ::lInternet )
+   oIniApp:Set( "Backup",  "UserInternet",      ::cUserInternet )
+   oIniApp:Set( "Backup",  "PasswordInternet",  ::cPasswordInternet )
+
+   oIniApp:Set( "Backup",  "Local",             ::lDir )
+
+   oIniApp:Set( "Backup",  "Copia",             ::lPassword )
+   oIniApp:Set( "Backup",  "PasswordCopia",     ::cPassword1 )
+
+return ( Self )
+
+
+
+
+
+
+UTILITY STATIC function TBackup_BotonSiguiente() ; local Self AS CLASS TBackup := QSelf() AS CLASS TBackup
+
+   local n
+   local lSeleccionado
+
+   do case
+      case ::oFld:nOption == 1 .AND. ::nAccion == 1
+         ::oFld:GoNext()
+         ::oBotonAnterior:Show()
+
+      case ::oFld:nOption == 1 .AND. ::nAccion == 2
+         ::oFld:SetOption( 5 )
+         ::oBotonAnterior:Show()
+
+      case ::oFld:nOption == 1 .AND. ::nAccion == 3
+         ::oFld:SetOption( 9 )
+         ::oBotonSiguiente:Disable()
+         ::oBotonAnterior:Show()
+         ::oBotonImprimir:Show()
+         SetWindowText( ::oBotonTerminar:hWnd, "&Cerrar" )
+
+      case ::oFld:nOption == 2
+
+         lSeleccionado  := .F.
+
+         for n := 1 TO len( ::aEmp )
+            if ::aEmp[ n, 1 ]
+               lSeleccionado := .T.
+            endif
+         next
+
+         if lSeleccionado
+            SetWindowText( ::oBotonSiguiente:hWnd, "&Terminar" )
+            ::oFld:GoNext()
+         else
+            msgAlert( "No ha seleccionado ninguna empresa", "Atención" )
+         end
+
+      case ::oFld:nOption == 3
+
+         if ::lPassword .AND. ::cPassword1 <> ::cPassword2
+            msgAlert( "Las contraseñas para las copias de seguridad, no coinciden", "Atención" )
+            Return ( Self )
+         end
+
+         if !::lDir .AND. !::lInternet
+            msgAlert( "Debe especificar al menos un destino para la copia", "Atención" )
+            Return ( Self )
+         end
+
+         if ( !::lDir ) .OR. ( len( AllTrim( ::cDir ) ) > 0 )
+
+            ::oFld:GoNext()
+            ::oBotonAnterior:Disable()
+            ::oBotonSiguiente:Disable()
+
+            ::ZipFiles()
+
+            ::oDlg:Enable()
+
+            SetWindowText( ::oBotonTerminar:hWnd, "&Cerrar" )
+
+            ::oBotonSiguiente:Hide()
+            ::oBotonAnterior:Hide()
+
+            ::oFld:SetOption( 8 )
+
+         else
+
+            msgAlert( "Debe especificar el lugar de destino", "Atención" )
+
+         endif
+
+      case ::oFld:nOption == 4
+
+         ::oDlg:End()
+
+
+
+      case ::oFld:nOption == 5
+
+         if len( AllTrim( ::cDirOrigen ) ) > 0
+            ::cGetFilesToRestore()
+            ::GetZipFiles()
+            ::oFld:SetOption( 6 )
+         else
+            msgAlert( "Debe especificar el lugar de origen", "Atención" )
+         endif
+
+
+
+      case ::oFld:nOption == 6
+
+         ::oFld:SetOption( 7 )
+
+         ::RestoreZipFiles()
+         ::GuardarPreferencias()
+         ::oDlg:End()
+
+
+
+      case ::oFld:nOption == 7
+
+
+   end
+
+return ( Self )
+
+
+
+
+
+
+UTILITY STATIC function TBackup_BotonAnterior() ; local Self AS CLASS TBackup := QSelf() AS CLASS TBackup
+
+   do case
+      case ::oFld:nOption == 1
+
+
+      case ::oFld:nOption == 2
+         ::oBotonAnterior:hide()
+         ::oFld:GoPrev()
+
+      case ::oFld:nOption == 3
+         SetWindowText( ::oBotonSiguiente:hWnd, "&Siguiente >" )
+         ::oFld:GoPrev()
+
+      case ::oFld:nOption == 4
+         ::oFld:GoPrev()
+
+      case ::oFld:nOption == 5
+         ::oBotonAnterior:hide()
+         SetWindowText( ::oBotonSiguiente:hWnd, "&Siguiente >" )
+         ::oFld:SetOption( 1 )
+
+      case ::oFld:nOption == 6
+         ::oFld:GoPrev()
+
+      case ::oFld:nOption == 7 .OR. ::oFld:nOption == 8 .OR. ::oFld:nOption == 9
+         ::oBotonAnterior:hide()
+         ::oFld:SetOption( 1 )
+         ::oBotonSiguiente:Enable()
+         ::oBotonImprimir:Hide()
+         SetWindowText( ::oBotonTerminar:hWnd, "&Cancelar" )
+
+   end
+
+return ( Self )
+
+
+
+UTILITY STATIC function TBackup_ZipFiles() ; local Self AS CLASS TBackup := QSelf() AS CLASS TBackup
+
+    local n
+   local nZip
+   local cZip
+   local cGrp
+   local cDat
+   local aDir
+   local cRes     := ""
+   local aFil     := {}
+   local lSel     := .F.
+   local cCodGrp  := Space(2)
+
+   ::aMsgs        := {}
+
+   ::oDlg:Disable()
+
+   aEval( Directory( cPatSafe() + "*.*" ), {|aFiles| fErase( cPatSafe() + aFiles[ 1 ] ) } )
+
+
+
+
+
+   for n := 1 to len( ::aEmp )
+
+      if ::aEmp[ n, 1 ]
+
+         lSel                 := .T.
+
+         cZip                 := cPatSafe() + "Emp" + ::aEmp[ n, 2 ]
+         if ::lDate
+            cZip              += Dtos( Date() )
+         end
+         cZip                 += ".Zip"
+
+         if file( cZip )
+            ferase( cZip )
+         end
+
+         ::nActualFile        := 0
+         aDir                 := Directory( FullCurDir() + "EMP" + ::aEmp[ n, 2 ] + "\*.*" )
+
+         ::oProgreso:SetTotal( Len( aDir ) )
+         ::oProgreso:cText    := "Comprimiendo " + ::aEmp[ n, 2 ] + "-" + Rtrim( ::aEmp[ n, 3 ] )
+
+         hb_SetDiskZip( {|| nil } )
+         aEval( aDir, { | cName, nIndex | hb_ZipFile( cZip, FullCurDir() + "Emp" + ::aEmp[ n, 2 ] + "\" + cName[ 1 ], 9, , , Rtrim( ::cPassword1 ) ), ::oProgreso:Set( nIndex ) } )
+         hb_gcAll()
+
+         aAdd( aFil, cZip )
+
+
+
+
+
+         cCodGrp              := cCodigoGrupo( ::aEmp[ n, 2 ] )
+
+         if !Empty( cCodGrp )
+
+            cGrp              := cPatSafe() + "Grp"
+            if ::lDate
+               cGrp           += Dtos( Date() )
+            end
+            cGrp              += ".Zip"
+
+            if file( cGrp )
+               ferase( cGrp )
+            end
+
+            ::nActualFile     := 0
+            aDir              := Directory( FullCurDir() + "Grp" + cCodGrp + "\*.*" )
+
+            ::oProgreso:SetTotal( Len( aDir ) )
+            ::oProgreso:cText := "Comprimiendo grupo " + cCodGrp
+
+            hb_SetDiskZip( {|| nil } )
+            aEval( aDir, { | cName, nIndex | hb_ZipFile( cGrp, FullCurDir() + "Grp" + cCodGrp + "\" + cName[ 1 ], 9, , , Rtrim( ::cPassword1 ) ), ::oProgreso:Set( nIndex ) } )
+            hb_gcAll()
+
+            aAdd( aFil, cGrp )
+
+         end
+
+      end
+
+      SysRefresh()
+
+   next
+
+   if lSel
+
+
+
+
+
+      cDat                 := cPatSafe() + "Datos"
+      if ::lDate
+         cDat              += Dtos( Date() )
+      end
+      cDat                 += ".Zip"
+
+      if file( cDat )
+         ferase( cDat )
+      end
+
+      ::nActualFile        := 0
+      aDir                 := Directory( FullCurDir() + "Datos\*.*" )
+
+      ::oProgreso:SetTotal( Len( aDir ) )
+      ::oProgreso:cText    := "Comprimiendo directorio de datos generales"
+
+      hb_SetDiskZip( {|| nil } )
+      aEval( aDir, { | cName, nIndex | hb_ZipFile( cDat, FullCurDir() + "Datos\" + cName[ 1 ], 9, , , Rtrim( ::cPassword1 ) ), ::oProgreso:Set( nIndex ) } )
+      hb_gcAll()
+
+      aAdd( aFil, cDat )
+
+
+
+
+
+      if ::lDir
+         if ::doBackup( aFil, ::cDir )
+            cRes           += "Copia local correcta." + Chr(13)+Chr(10)
+         else
+            cRes           += "Copia local incompleta." + Chr(13)+Chr(10)
+         end
+      end
+
+      if ::lInternet
+         if ::doFtp( aFil )
+            cRes           += "Copia en servidor de backup correcta." + Chr(13)+Chr(10)
+         else
+            cRes           += "Copia en servidor de backup incompleta." + Chr(13)+Chr(10)
+         end
+      end
+
+      ::SaveToDisk( cRes )
+
+   else
+
+      msgAlert( "No se selecciono ninguna empresa" )
+
+      ::oDlg:Enable()
+
+   end
+
+return ( lSel )
+
+
+
+UTILITY STATIC function TBackup_cGetFilesToRestore() ; local Self AS CLASS TBackup := QSelf() AS CLASS TBackup
+
+   if ::doRestore( ::cDirOrigen )
+      aEval( ::aEmp, { | aItm | aItm[ 1 ] := file( cPatSafe() + "Emp" + aItm[ 2 ] + ".Zip" ) } )
+      ::oBrwRestore:Refresh()
+   end
+
+Return ( .T. )
+
+
+
+
+
+
+UTILITY STATIC function TBackup_GetZipFiles() ; local Self AS CLASS TBackup := QSelf() AS CLASS TBackup
+
+   local n
+   local cZipFile
+
+
+
+   for n := 1 to len( ::aEmp )
+
+      cZipFile := Rtrim( cPatSafe() + "Emp" + ::aEmp[ n, 2 ] + ".ZIP" )
+
+      if File( cZipFile )
+         ::aEmp[ n, 1 ] := .T.
+      else
+         ::aEmp[ n, 1 ] := .F.
+      endif
+
+   next
+
+RETURN ( Self )
+
+
+
+UTILITY STATIC function TBackup_RestoreZipFiles() ; local Self AS CLASS TBackup := QSelf() AS CLASS TBackup
+
+   local n
+   local nZip
+   local lSel     := .F.
+   local lErr     := .F.
+   local aFiles   := {}
+   local lErrors  := .F.
+   local cZipFile
+
+   for n := 1 to len( ::aEmp )
+      if ::aEmp[ n, 1 ]
+         lSel     := .T.
+      end
+   next
+
+   if !lSel
+      msgAlert( "No se selecciono ninguna empresa" )
+      Return ( Self )
+   end
+
+   for n := 1 to len( ::aEmp )
+
+      if ::aEmp[ n, 1 ]
+
+         cZipFile := Rtrim( cPatSafe() + "Emp" + ::aEmp[ n, 2 ] + ".ZIP" )
+
+         if File( cZipFile )
+
+
+
+            if ApoloMsgNoYes( "Se dispone a sobreescribir la empresa " + ::aEmp[ n, 2 ], "¿ Desea continuar ?" )
+
+
+
+               CursorWait()
+
+               aFiles      := Hb_GetFilesInZip( cZipFile )
+
+               ::oProgresoRestore:SetTotal( Len( aFiles ) )
+
+               if !Hb_UnZipFile( cZipFile, { | cName, nIndex | ::oProgresoRestore:Set( nIndex ) }, , Rtrim( ::cPasswordRestore ), FullCurDir() + "EMP" + ::aEmp[ n, 2 ], aFiles )
+                  lErr     := .T.
+               else
+                  lErr     := .F.
+               end
+
+               hb_gcAll()
+
+               CursorWE()
+
+               if lErr
+                  lErrors  := .T.
+                  MsgStop( "No se ha restaurado la empresa " + ::aEmp[ n, 2 ], "Error" )
+               else
+                  MsgInfo( "Se ha restaurado la empresa " + ::aEmp[ n, 2 ], "Aviso" )
+               end
+
+            end
+
+         else
+
+            MsgStop( "Fichero " + cZipFile + " no encontrado" )
+
+         end
+
+      end
+
+   next
+
+   if lErrors
+      msgStop( "Errores durante la restauración de la copia" )
+   else
+      msgInfo( "Copia satisfactoriamente restaurada" )
+      ::oDlg:end()
+   end
+
+RETURN ( Self )
+
+
+
+FUNCTION nGetBytes( cDir )
+
+    local i
+   local aFil     := Directory( cDir )
+   local nBytes   := 0
+
+    FOR i := 1 TO len( aFil )
+      nBytes      += aFil[ i, 2 ]
+    NEXT
+
+RETURN nBytes
+
+
+
+UTILITY STATIC function TBackup_doBackup( aFiles, cDriveTo) ; local Self AS CLASS TBackup := QSelf() AS CLASS TBackup
+
+   local x
+   local lRetVal
+    local cSerial
+   local nBuffer
+    local nDiskNum
+    local nByteCopy
+    local lLogNew
+    local nFilePos
+    local cFileName
+    local fSource
+    local lTarget
+    local nError
+    local fTarget
+    local nRead
+    local cBuffer
+    local nWrote
+   local nBytes      := 0
+   local nTotalBytes := 0
+   local nTotalWrite := 0
+
+   lRetVal           := .T.
+   lLogNew           := .T.
+
+   cSerial           := dtos( date() ) + str( seconds(), 5)
+   nByteCopy         := 0
+   nBuffer           := 4096
+   nDiskNum          := 0
+   cDriveTo          := Rtrim( cDriveTo )
+
+   if Right( cDriveTo, 1 ) <> "\"
+      cDriveTo       += "\"
+   end
+
+   CursorWait()
+
+
+
+
+
+   for x := 1 to len( aFiles )
+      nTotalBytes    += nGetBytes( aFiles[ x ] )
+   next
+
+   ::oProgresoTarget:SetTotal( nTotalBytes )
+
+
+
+
+
+   for x := 1 to len( aFiles )
+
+        nFilePos             := 0
+      lTarget           := .T.
+      cFileName         := aFiles[ x ]
+        fSource                 := fOpen( cFileName )
+        nError                  := fError()
+
+      nBytes            += nGetBytes( cFileName )
+
+      while nError == 0
+
+
+
+         if lLogNew
+
+            lLogNew     := .F.
+            lTarget     := .T.
+                nDiskNum++
+
+            while .T.
+
+
+               if ( "A:" $ cDriveTo .OR. "B:" $ cDriveTo ) .AND.  !ApoloMsgNoYes( "Inserte el disco # " + lTrim( Str( nDiskNum ) ) + " en unidad " + cDriveTo, "¿ Continuar ?" )
+                  return ( .F. )
+               endif
+
+               ::bk_DiskNum  := nDiskNum
+               ::bk_Serial   := ""
+
+
+
+
+
+               if !fClose( fCreate( cDriveTo + "x" ) )
+                  if !ApoloMsgNoYes(  "No hay discos en unidad o esta protegido contra escritura.", "¿ Continuar ?" )
+                     return ( .F. )
+                  else
+                     loop
+                  endif
+               else
+                  fErase( cDriveTo + "x" )
+               endif
+
+               if File( cDriveTo + "BkData.Seg" )
+                  ::RestoreFromDisk( cDriveTo + "BkData.Seg" )
+               endif
+
+               if ::bk_DiskNum < nDiskNum .AND. ::bk_Serial == cSerial
+                  MsgStop( "Por favor cambie el disco en curso.", "Cambie el disco" )
+               else
+                  if ( "A:" $ cDriveTo .OR. "B:" $ cDriveTo )
+                     MsgRun(  "Limpiando el disco en " + cDriveTo, "Espere por favor...", {|| ::CleanDisk( cDriveTo ) } )
+                  end
+
+
+
+                  ::bk_DiskNum  := nDiskNum
+                  ::bk_Serial   := cSerial
+                  ::bk_Bytes    := nBytes
+                  ::bk_NumFiles := len( aFiles )
+
+                  exit
+
+               endif
+
+            end
+
+         endif
+
+
+
+
+
+         if lTarget
+
+            lTarget := .F.
+            fTarget := fCreate( cDriveTo + cNoPath( cFileName ) )
+
+            if fError() <> 0
+               lRetVal := .F.
+               SysRefresh()
+               EXIT
+            endif
+
+         endif
+
+         cBuffer := Space( nBuffer )
+         nRead   := fRead( fSource, @cBuffer, nBuffer)
+
+         if fError() == 0
+
+            if nRead == 0
+
+               fClose( fTarget )
+               exit
+
+            else
+
+               nWrote      := fWrite( fTarget, cBuffer, nRead )
+
+               if fError() == 0
+
+                  nFilePos    += nWrote
+                  nByteCopy   += nWrote
+                  nTotalWrite += nWrote
+
+                  ::oProgresoTarget:Set( nTotalWrite )
+
+                  SysRefresh()
+
+                  if nWrote < nRead
+
+                     fSeek( fSource, nFilePos )
+                     fClose( fTarget )
+                     lLogNew  := .T.
+
+                  endif
+
+               end
+
+            endif
+
+         endif
+
+         if fError() <> 0
+
+            if fClose( fTarget )
+               fErase ( cDriveTo + cFileName )
+            end
+
+         end
+
+      end
+
+        fClose( fSource )
+
+      if fSize( cFileName ) <> nFilePos .OR. nError <> 0
+         exit
+      end
+
+   next
+
+   CursorWE()
+
+RETURN ( nBytes == nByteCopy )
+
+
+
+
+
+
+UTILITY STATIC function TBackup_CleanDisk( cDriveTo) ; local Self AS CLASS TBackup := QSelf() AS CLASS TBackup
+
+   local x
+   local aDiskFile
+
+    aDiskFile := Directory( cDriveTo + "*.*" )
+
+   for x := 1 to len( aDiskFile )
+        fErase( cDriveTo + aDiskFile[ x, 1 ] )
+   next
+
+RETURN ( Self )
+
+
+
+UTILITY STATIC function TBackup_DoRestore( cFileFrom) ; local Self AS CLASS TBackup := QSelf() AS CLASS TBackup
+
+   local x
+   local aFiles
+   local cSerial
+   local lRetVal        := .T.
+   local nDiskNum       := 1
+   local nByteCopy      := 0
+   local aDiskFile
+   local cDriveFrom     := cOnlyPath( cFileFrom )
+   local nBytes         := 0
+
+   while nDiskNum <> 0
+
+      while .T.
+
+
+         if ( "A:" $ cFileFrom .OR. "B:" $ cFileFrom )                                                                  .AND.  !ApoloMsgNoYes(  "Inserte el disco # " + lTrim( Str( nDiskNum ) ) + " en unidad " + cDriveFrom, "¿ Continuar ?" )
+            Return ( .F. )
+         endif
+
+         if !file( cFileFrom )
+
+            if ApoloMsgNoYes( "No hay discos de copia o no esta preparado.", "¿ Continuar ?" )
+               return ( .F. )
+            else
+               loop
+            end
+
+         else
+
+            ::RestoreFromDisk( cFileFrom )
+
+            if nDiskNum == 1 .AND. ::bk_DiskNum == 1
+               cSerial     := ::bk_Serial
+               nBytes      := ::bk_Bytes
+            end
+
+            if ::bk_DiskNum <> nDiskNum .OR. ::bk_Serial <> cSerial
+               if !ApoloMsgNoYes( "Los discos no estan en el orden correcto en la unidad " + cDriveFrom, "¿ Continuar ?" )
+                  Return .F.
+               end
+
+            else
+
+               aFiles      := {}
+               aDiskFile   := Directory( cDriveFrom + "Emp*.*" )
+
+               for x := 1 to len( aDiskFile )
+                  aAdd( aFiles, aDiskFile[x, 1] )
+               next
+
+               nDiskNum++
+
+               exit
+
+            end
+
+         endif
+
+      enddo
+
+      CursorWait()
+
+      for x := 1 to len( aFiles )
+         CopyFile( cDriveFrom + aFiles[ x ], cPatSafe() + aFiles[ x ] )
+      next
+
+      nDiskNum          := 0
+
+      exit
+
+      CursorWE()
+
+   end
+
+   if nBytes <> nByteCopy
+      lRetVal := .F.
+   endif
+
+RETURN ( .T. )
+
+
+
+Function CompressEmpresa( cCodEmp, cFile, aBtn, oAct, oAni, oMsg, oDlg, lAuto )
+
+   local nZip
+   local aDir
+   local dLastBackup
+   local lLastBackup    := .F.
+   local lEnableBackup  := .T.
+
+   IIF( lAuto == nil, lAuto := .T., ) ;
+   IIF( cFile == nil, cFile := cPatSafe() + "Emp" + cCodEmp + Dtos( Date() ) + ".Zip", ) ;
+
+   if oDlg <> nil
+      oDlg:bValid       := {|| .F. }
+   end
+
+   if ValType( aBtn ) == "A"
+      aEval( aBtn, {|oBtn| oBtn:Hide() } )
+   end
+
+   if !Empty( oAct )
+      oAct:Hide()
+   end
+
+   if !lAuto
+      dLastBackup       := Stod( GetPvProfString( "Backup", "Ultimo", Dtos( Date() ), FullCurDir() + "GstApolo.Ini" ) )
+
+      lEnableBackup     := GetPvProfString( "Backup", "Enable", ".T.", FullCurDir() + "GstApolo.Ini" )
+      lEnableBackup     := Upper( lEnableBackup ) == ".T."
+
+      lLastBackup       := ( Date() - dLastBackup >= 7 ) .AND. ( nUsrInUse() == 1 ) .AND. ( lEnableBackup )
+   end
+
+   if lAuto .OR. lLastBackup
+
+      if lLastBackup
+         MsgInfo( "Ultima copia de seguridad " + Dtoc( dLastBackup ) + " el programa realizará ahora una copia, de manera automática." )
+      end
+
+      if !Empty( oAni )
+         oAni:Show()
+      end
+
+      if oMsg <> nil
+         oMsg:SetText( "Realizando copia de empresa " + cCodEmp )
+      end
+
+
+
+      if File( cFile )
+         fErase( cFile )
+      end
+
+
+
+      hb_SetDiskZip( {|| nil } )
+      aDir           := Directory( FullCurDir() + "EMP" + cCodEmp + "\*.*" )
+      aEval( aDir, { | cName, nIndex | hb_ZipFile( cFile, FullCurDir() + "EMP" + cCodEmp + "\" + cName[ 1 ], 9, {|| SysRefresh() } ) } )
+
+      hb_gcAll()
+
+      if !Empty( oAni )
+         oAni:Hide()
+      end
+
+      WritePProString( "Backup", "Ultimo", Dtos( Date() ), FullCurDir() + "GstApolo.Ini" )
+
+   end
+
+   if oDlg <> nil
+      oDlg:bValid    := {|| .T. }
+      oDlg:End( 1 )
+   end
+
+Return nil
+
+
+
+Function CompressGrupo( cCodGrp, cFile, aBtn, oAct, oAni, oMsg, oDlg, lAuto )
+
+   local nZip
+   local aDir
+   local dLastBackup
+   local lLastBackup
+   local lEnableBackup
+
+   IIF( lAuto == nil, lAuto := .T., ) ;
+   IIF( cFile == nil, cFile := FullCurDir() + "Safe\GRP" + cCodGrp + ".Zip", ) ;
+
+   if oDlg <> nil
+      oDlg:bValid    := {|| .F. }
+   end
+
+   if ValType( aBtn ) == "A"
+      aEval( aBtn, {|oBtn| oBtn:Hide() } )
+   end
+
+   if !Empty( oAct )
+      oAct:Hide()
+   end
+
+   lEnableBackup     := GetPvProfString( "Backup", "Enable", ".T.", FullCurDir() + "GstApolo.Ini" )
+   lEnableBackup     := Upper( lEnableBackup ) == ".T."
+
+   dLastBackup       := Stod( GetPvProfString( "Backup", "Ultimo", Dtos( Date() ), FullCurDir() + "GstApolo.Ini" ) )
+   lLastBackup       := ( Date() - dLastBackup >= 7 ) .AND. ( nUsrInUse() == 1 ) .AND. ( !lAuto )
+
+   if lEnableBackup .AND. ( lAuto .OR. lLastBackup )
+
+      if lLastBackup
+         MsgInfo( "Ultima copia de seguridad " + Dtoc( dLastBackup ) + " el programa realizará ahora una copia, de manera automática." )
+      end
+
+      if !Empty( oAni )
+         oAni:Show()
+      end
+
+      if oMsg <> nil
+         oMsg:SetText( "Realizando copia del grupo " + cCodGrp )
+      end
+
+
+
+      if File( cFile )
+         fErase( cFile )
+      end
+
+
+
+      hb_SetDiskZip( {|| nil } )
+      aDir           := Directory( FullCurDir() + "GRP" + cCodGrp + "\*.*" )
+      aEval( aDir, { | cName, nIndex | hb_ZipFile( cFile, FullCurDir() + "GRP" + cCodGrp + "\" + cName[ 1 ], 9, {|| SysRefresh() } ) } )
+      hb_gcAll()
+
+      if !Empty( oAni )
+         oAni:Hide()
+      end
+
+      WritePProString( "Backup", "Ultimo", Dtos( Date() ), FullCurDir() + "GstApolo.Ini" )
+
+   end
+
+   if oDlg <> nil
+      oDlg:bValid    := {|| .T. }
+      oDlg:End( 1 )
+   end
+
+Return nil
+
+
+
+UTILITY STATIC function TBackup_SaveToDisk( Resultado) ; local Self AS CLASS TBackup := QSelf() AS CLASS TBackup
+
+   local n
+   local oIni
+   local cFile
+   local hFile
+   local Accion
+   local hora     := Time()
+
+   cFile          := Rtrim( ::cDir ) + "\BkData.Seg"
+   Accion         := "Copias de las empresas: "
+
+   for n := 1 to len( ::aEmp )
+
+      if ::aEmp[ n, 1 ]
+         Accion := Accion + ::aEmp[ n, 2 ] + " "
+      endif
+
+   next
+
+   oIni := TIni():New( cFile )
+      oIni:Set( "backup", "DiskNum", ::bk_DiskNum )
+      oIni:Set( "backup", "Serial", ::bk_Serial )
+      oIni:Set( "backup", "Bytes", ::bk_Bytes )
+      oIni:Set( "backup", "NumFiles", ::bk_NumFiles )
+      oIni:Set( "backup", "Usuario", cCurUsr() )
+      oIni:Set( "backup", "Fecha", dtoc( Date() ) + " - " + hora )
+      oIni:Set( "backup", "Estado", Resultado )
+      oIni:Set( "backup", "Contenido", Accion )
+
+
+
+
+   ::mResultado   := "Este informe quedará guardado en el fichero " + Alltrim( ::cFile ) + " de acuerdo con la Ley Orgánica 15/1999, de 13 de Diciembre, de protección de datos de carácter personal." + Chr(13)+Chr(10) + Chr(13)+Chr(10)
+   ::mResultado   += "El proceso de copia de seguridad ha finalizado." + Chr(13)+Chr(10)
+   ::mResultado   += "A continuación se muestra un resumen de las operaciones realizadas." + Chr(13)+Chr(10) + Chr(13)+Chr(10)
+   ::mResultado   += "Usuario que realizó la copia: " + oUser():cCodigo() + Space( 1 ) + oUser():cNombre() + Chr(13)+Chr(10)
+   ::mResultado   += "Número de discos: " + AllTrim( str( ::bk_DiskNum ) ) + Chr(13)+Chr(10)
+   ::mResultado   += "Número de ficheros: " + AllTrim( str( ::bk_NumFiles ) ) + Chr(13)+Chr(10)
+   ::mResultado   += "Fecha: " + dtoc( Date() ) + " - " + hora + Chr(13)+Chr(10)
+   ::mResultado   += "Contenido: " + Accion + Chr(13)+Chr(10)
+   ::mResultado   += Chr(13)+Chr(10)
+   ::mResultado   += "Resultado final: "
+   ::mResultado   += Chr(13)+Chr(10)
+   ::mResultado   += Resultado
+
+   ::oResultado:cText( ::mResultado )
+
+
+
+   if !Empty( ::cFile )
+      hFile       := fCreate( ::cFile )
+      fWrite( hFile, ::mResultado )
+      fClose( hFile )
+   end
+
+
+
+   ::oDbfBackup:Append()
+   ::oDbfBackup:Fecha   := Date()
+   ::oDbfBackup:Hora    := hora
+   ::oDbfBackup:Usuario := cCurUsr()
+   ::oDbfBackup:Resumen := ::mResultado
+   ::oDbfBackup:Save()
+
+Return ( Self )
+
+
+
+UTILITY STATIC function TBackup_RestoreFromDisk( cFile) ; local Self AS CLASS TBackup := QSelf() AS CLASS TBackup
+
+   local oIni
+
+   ::bk_DiskNum  := nil
+   ::bk_Serial   := nil
+   ::bk_Bytes    := nil
+   ::bk_NumFiles := nil
+
+   oIni := TIni():New( cFile )
+      ::bk_DiskNum := oIni:Get( "backup", "DiskNum",, ::bk_DiskNum )
+      ::bk_Serial := oIni:Get( "backup", "Serial",, ::bk_Serial )
+      ::bk_Bytes := oIni:Get( "backup", "Bytes",, ::bk_Bytes )
+      ::bk_NumFiles := oIni:Get( "backup", "NumFiles",, ::bk_NumFiles )
+
+
+   if Valtype( ::bk_DiskNum ) == "C"
+      ::bk_DiskNum     := Val( ::bk_DiskNum )
+   end
+
+   if Valtype( ::bk_Bytes ) == "C"
+      ::bk_Bytes       := Val( ::bk_Bytes   )
+   end
+
+   if Valtype( ::bk_NumFiles ) == "C"
+      ::bk_NumFiles    := Val( ::bk_NumFiles)
+   end
+
+Return ( Self )
+
+
+
+UTILITY STATIC function TBackup_doFtp( aFiles) ; local Self AS CLASS TBackup := QSelf() AS CLASS TBackup
+
+   local oInt
+   local oFtp
+   local cFile
+   local nbrUsr   := Rtrim( ::cUserInternet )
+   local accUsr   := Rtrim( ::cPasswordInternet )
+   local ftpSit   := "apolosupport.serveftp.com"
+
+   oInt           := TInternet():New()
+   oFtp           := TFtp():New( ftpSit, oInt, nbrUsr, accUsr, .F. )
+
+   if Empty( oFtp )
+      msgStop( "Imposible crear la conexión" )
+      return .F.
+   end
+
+   if Empty( oFTP:hFTP )
+      msgStop( "Imposible conectar con el servidor de backup" )
+      return .F.
+   endif
+
+   for each cFile in aFiles
+
+      ::oProgresoInternet:cText    := "Subiendo fichero : " + cNoPath( cFile )
+
+      if File( cFile )
+         TFtpFile():New( cFile, oFtp ):PutFile( ::oProgresoInternet )
+      end
+
+   next
+
+Return ( .T. )
+
+
+
+UTILITY STATIC function TBackup_DefineFiles( cPath, cDriver) ; local Self AS CLASS TBackup := QSelf() AS CLASS TBackup
+
+   IIF( cPath == nil, cPath := cPatDat(), ) ;
+   IIF( cDriver == nil, cDriver := cDriver(), ) ;
+
+   ::oDbfBackup := DbfServer( "Backup.Dbf", "BACKUP" ):New( "Backup.Dbf", "BACKUP", ( cDriver ), "Registro de los backup", ( cPath ) )
+
+      ::oDbfBackup:AddField( "FECHA", "D", 10, 0,,,,, "Fecha de la copia", .F.,, .F., {} )
+      ::oDbfBackup:AddField( "HORA", "C", 8, 0,,,,, "Hora de la copia", .F.,, .F., {} )
+      ::oDbfBackup:AddField( "USUARIO", "C", 3, 0,,,,, "Usuario que la realiza", .F.,, .F., {} )
+      ::oDbfBackup:AddField( "RESUMEN", "C", 200, 0,,,,, "Resumen del proceso", .F.,, .F., {} )
+
+      ::oDbfBackup:AddIndex( "FECHA", "BACKUP.CDX", "FECHA",,, .F., .F., "Por fecha",,, .T., .F. )
+      ::oDbfBackup:AddIndex( "USUARIO", "BACKUP.CDX", "USUARIO",,, .F., .F., "Por usuario",,, .T., .F. )
+
+
+
+RETURN ( ::oDbfBackup )
+
+
+
+UTILITY STATIC function TBackup_SyncAllDbf() ; local Self AS CLASS TBackup := QSelf() AS CLASS TBackup
+
+   local oDbfTmp
+   local oDbfOld
+   local oBlock
+   local oError
+
+   oBlock         := ErrorBlock( {| oError | ApoloBreak( oError ) } )
+   BEGIN SEQUENCE
+
+   oDbfTmp        := ::DefineFiles( cPatEmpTmp() )
+
+   if !Empty( oDbfTmp )
+      oDbfTmp:Activate( .F., .F. )
+   end
+
+   oDbfOld        := ::DefineFiles()
+
+   if !Empty( oDbfOld )
+      oDbfOld:Activate( .F., .F., , , , .T. )
+   end
+
+   while !oDbfOld:Eof()
+      dbPass( oDbfOld:cAlias, oDbfTmp:cAlias, .T. )
+      oDbfOld:Skip()
+   end
+
+   oDbfTmp:Close()
+   oDbfOld:Close()
+
+   if dbfErase( oDbfOld:cPath + GetFileNoExt( oDbfOld:cFile ) )
+      if dbfRename( oDbfTmp:cPath + GetFileNoExt( oDbfTmp:cFile ), oDbfOld:cPath + GetFileNoExt( oDbfOld:cFile ) )
+         dbfErase( oDbfTmp:cPath + GetFileNoExt( oDbfTmp:cFile ) )
+      else
+         MsgStop( "No se actualizo el fichero " + GetFileNoExt( oDbfOld:cFile ) + ".Dbf" )
+      end
+   end
+
+   RECOVER USING oError
+
+      msgStop( ErrorMessage( oError ), "Imposible actualizar fichero a nueva estructura" )
+
+   end
+
+   ErrorBlock( oBlock )
+
+   if !Empty( oDbfTmp )
+      oDbfTmp:Destroy()
+   end
+
+   if !Empty( oDbfOld )
+      oDbfOld:Destroy()
+   end
+
+RETURN ( Self )
+
+
+
+
+
+
+Function ImprimirODbf( oDbf, cTitulo )
+
+   LOCAL oFont
+   local oReport
+
+   if oDbf == nil .OR. !oDbf:Used()
+      msgStop( "La base de datos esta cerrada." )
+      return .F.
+   end
+
+   oFont := TFont():New( "Courier New", 0, -12,,,,,,,,,,,,,, )
+
+
+
+
+   oReport := RptBegin({}, {}, {}, {oFont}, {}, .F.,,,, .T.,,, "Imprimir DBF",,, )
+
+      RptAddColumn( {}, , {{|| " "}}, 76, {} ,, .F., ,, .F., .F.,, .F., .F.,,, .F., )
+
+   RptEnd()
+
+   oReport:nTitleUpLine := 0
+   oReport:nTitleDnLine := 0
+
+   oReport:Activate(,, {|| SayDbf( oDbf, oReport, cTitulo )},,,,,,,,,,, )
+
+   oFont:End()
+
+RETURN NIL
+
+
+
+STATIC Function SayDbf( oDbf, oReport, cTitulo )
+
+   LOCAL cText, cLine
+   LOCAL nFor, nLines, nPageln
+
+   cText    := DbfToC( oDbf, cTitulo )
+
+   nLines   := MlCount( cText, 76 )
+   nPageln  := 0
+
+   FOR nFor := 1 TO nLines
+
+        cLine := MemoLine( cText, 76, nFor )
+
+        oReport:StartLine()
+        oReport:Say(1,cLine)
+        oReport:EndLine()
+
+        nPageln := nPageln + 1
+        IF nPageln = 60
+           nFor := GetTop(cText,nFor,nLines)
+           nPageln := 0
+        ENDIF
+
+   NEXT
+
+RETURN NIL
+
+
+
+
+
+
+function DbfToC( oDbf, cTitulo )
+
+   local Texto := ""
+   local nFila
+   local nColumna
+
+   IIF( cTitulo == nil, cTitulo := " Registro ", ) ;
+
+   oDbf:GoTop()
+
+   for nFila := 1 to oDbf:RecCount()
+
+      Texto    += cTitulo + str( nFila )  + Chr(13)+Chr(10)
+      Texto    += Replicate( "-", 76 )    + Chr(13)+Chr(10)
+
+      for nColumna := 1 to oDbf:Fcount()
+         Texto += oDbf:FieldName( nColumna ) + ": "
+         Texto += cValToChar( oDbf:FieldGet( nColumna ) )
+         Texto += Chr(13)+Chr(10)
+      next
+
+      oDbf:Skip()
+
+      Texto    += Chr(13)+Chr(10)
+
+   next
+
+   oDbf:GoTop()
+
+return Texto
+
+
+
+STATIC FUNCTION GetTop(cText,nFor,nLines)
+
+   local lTest := .T., cLine
+
+   while lTest .AND. nFor <= nLines
+      nFor++
+      cLine := MemoLine( cText, 76, nFor )
+      lTest := Empty( cLine )
+   enddo
+
+   nFor--
+   SysRefresh()
+
+RETURN nFor

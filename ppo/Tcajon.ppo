@@ -1,0 +1,215 @@
+#line 112 "hbclass.ch"
+   DYNAMIC DivertConstructorCall
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+DECLARE HBClass  New( cName AS String, OPTIONAL SuperParams ) AS CLASS HBClass  Create() AS Object  Instance() AS Object  AddClsMethod( cName AS String, @MethodName(), nScope AS Numeric, n2 AS Numeric, n3 AS Numeric )  AddDelegate( cName AS String, cDelegate AS String, cObject AS String, nScope AS Numeric, lPersistent AS LOGICAL )  AddMultiClsData( cType AS String, uVal, nScope AS Numeric, aDatas AS Array OF String )  AddMultiData( cType AS String, uVal, nScope AS Numeric, aDatas AS Array OF String, x AS LOGICAL, lPer AS LOGICAL )  AddMethod( cName AS String, @MethodName(), nScope AS Numeric, lPersistent AS LOGICAL )  AddInLine( cName AS String, bBlock AS CodeBlock, nScope AS Numeric, lPersistent AS LOGICAL )  AddVirtual( cName AS String )  ModMethod( cName AS String, @MethodName(), nScope AS Numeric, lPersistent AS LOGICAL )  ModClsMethod( cName AS String, @MethodName(), nScope AS Numeric )  ModInline( cName AS String, bBlock AS CodeBlock, nScope AS Numeric, lPersistent AS LOGICAL )  SetOnError( @MethodName() )
+#line 85 "\Fwh1204\Include\FiveWin.Ch"
+   EXTERNAL GetProcAdd
+   EXTERNAL TActiveX
+
+
+
+
+extern errorsys
+#line 8 ".\Prg\Tcajon.prg"
+_HB_CLASS TCajon ; UTILITY FUNCTION TCajon(...); static s_oClass ; local oClassInstance ; local nScope ; nScope := 1 ; if s_oClass == NIL ; s_oClass := IIF(.F.,, HBClass():New( "TCajon" , { HBObject():Classh } ) ) ;
+
+   _HB_MEMBER {AS LOGIC lCreated} ; IIF( !.F., s_oClass:AddMultiClsData("LOGIC", .F., nScope + IIF( .F., 32, 0 ) + 64, { "lCreated" }, .F. ), )
+
+   _HB_MEMBER { oPrn} ; IIF( !.F., s_oClass:AddMultiData(,, nScope + IIF( .F., 32, 0 ), { "oPrn" }, .F., .F. ), )
+
+   _HB_MEMBER { cPort} ; IIF( !.F., s_oClass:AddMultiData(,, nScope + IIF( .F., 32, 0 ), { "cPort" }, .F., .F. ), )
+   _HB_MEMBER { nBitsSec} ; IIF( !.F., s_oClass:AddMultiData(,, nScope + IIF( .F., 32, 0 ), { "nBitsSec" }, .F., .F. ), )
+   _HB_MEMBER { nBitsParada} ; IIF( !.F., s_oClass:AddMultiData(,, nScope + IIF( .F., 32, 0 ), { "nBitsParada" }, .F., .F. ), )
+   _HB_MEMBER { nBitsDatos} ; IIF( !.F., s_oClass:AddMultiData(,, nScope + IIF( .F., 32, 0 ), { "nBitsDatos" }, .F., .F. ), )
+   _HB_MEMBER { nBitsParidad} ; IIF( !.F., s_oClass:AddMultiData(,, nScope + IIF( .F., 32, 0 ), { "nBitsParidad" }, .F., .F. ), )
+   _HB_MEMBER { nDriver} ; IIF( !.F., s_oClass:AddMultiData(,, nScope + IIF( .F., 32, 0 ), { "nDriver" }, .F., .F. ), )
+   _HB_MEMBER { cPrinter} ; IIF( !.F., s_oClass:AddMultiData(,, nScope + IIF( .F., 32, 0 ), { "cPrinter" }, .F., .F. ), )
+   _HB_MEMBER { cApertura} ; IIF( !.F., s_oClass:AddMultiData(, "", nScope + IIF( .F., 32, 0 ), { "cApertura" }, .F., .F. ), )
+
+   _HB_MEMBER Create() AS CLASS TCajon; IIF( .F., s_oClass:ModMethod( "Create", @TCajon_Create(), nScope + IIF( .T., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ), s_oClass:AddMethod( "Create", @TCajon_Create(), nScope + IIF( .T., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ));
+
+   _HB_MEMBER New( cPort, nBitsSec, nBitsParada, nBitsDatos, nBitsParidad, cApertura); IIF( .F., s_oClass:ModMethod( "New", @TCajon_New(), nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ), s_oClass:AddMethod( "New", @TCajon_New(), nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ));
+
+   _HB_MEMBER Open(); IIF( .F., s_oClass:ModMethod( "Open", @TCajon_Open(), nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ), s_oClass:AddMethod( "Open", @TCajon_Open(), nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ));
+
+   _HB_MEMBER End( ); IIF( !.F., s_oClass:AddVirtual( "End" ), )
+
+   _HB_MEMBER LogCajon(); IIF( .F., s_oClass:ModMethod( "LogCajon", @TCajon_LogCajon(), nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ), s_oClass:AddMethod( "LogCajon", @TCajon_LogCajon(), nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ));
+
+; IF .F. ; __clsActive(s_oClass:hClass) ; s_oClass:Refresh() ; ELSE ; s_oClass:Create() ; END ; oClassInstance := __clsInst( s_oClass:hClass ) ; IF __ObjHasMsg( oClassInstance, "InitClass" ); oClassInstance:InitClass( hb_aParams() ) ; END ; ELSE ; oClassInstance := __clsInst( s_oClass:hClass ) ; END ; IF PCount() > 0 ; DIVERT TO (@DivertConstructorCall()) OF s_oClass ; END ; RETURN oClassInstance AS CLASS TCajon ;
+
+
+
+UTILITY STATIC function TCajon_Create( cCodCaj) ; local Self AS CLASS TCajon := QSelf() AS CLASS TCajon
+
+   local oBlock
+   local oError
+   local dbfCajPorta
+
+   oBlock                  := ErrorBlock( {| oError | ApoloBreak( oError ) } )
+   BEGIN SEQUENCE
+
+   dbUseArea( .T., ( cDriver() ), ( cPatDat() + "CAJPORTA.DBF" ), ( cCheckArea( "CAJPORTA", @dbfCajPorta ) ), if(.T. .OR. .F., !.F., NIL), .F.,, )
+   if !lAIS() ; ordListAdd( ( cPatDat() + "CAJPORTA.CDX" ) ) ; else ; ordSetFocus( 1 ) ; end
+
+   if !Empty( cCodCaj ) .AND. ( dbfCajPorta)->( dbSeek( cCodCaj ) )
+
+      ::cPort              := ( dbfCajPorta )->cPort
+      ::nBitsSec           := ( dbfCajPorta )->nBitsSec
+      ::nBitsParada        := ( dbfCajPorta )->nBitsPara
+      ::nBitsDatos         := ( dbfCajPorta )->nBitsDatos
+      ::nBitsParidad       := ( dbfCajPorta )->cBitsPari
+      ::cApertura          := ( dbfCajPorta )->cCodAper
+      ::nDriver            := ( dbfCajPorta )->nDriver
+      ::cPrinter           := ( dbfCajPorta )->cPrinter
+
+   else
+
+      ::cPort              := "COM1"
+      ::nBitsSec           := "9600"
+      ::nBitsParada        := "0"
+      ::nBitsDatos         := "8"
+      ::nBitsParidad       := "Sin paridad"
+      ::cApertura          := "27 112 0 60 240"
+      ::nDriver            := 2
+      ::cPrinter           := ""
+
+   end
+
+   RECOVER USING oError
+
+      msgStop( "Imposible abrir todas las bases de datos " + Chr(13)+Chr(10) + ErrorMessage( oError ) )
+
+   end
+
+   ErrorBlock( oBlock )
+
+   if dbfCajPorta <> nil
+      ( dbfCajPorta )->( dbCloseArea() )
+   end
+
+   dbfCajPorta             := nil
+
+RETURN Self
+
+
+
+UTILITY STATIC function TCajon_New( cPort, nBitsSec, nBitsParada, nBitsDatos, cBitsParidad, cApertura, nDriver, cPrinter) ; local Self AS CLASS TCajon := QSelf() AS CLASS TCajon
+
+   IIF( cPort == nil, cPort := "COM1", ) ;
+   IIF( nBitsSec == nil, nBitsSec := "9600", ) ;
+   IIF( nBitsParada == nil, nBitsParada := "0", ) ;
+   IIF( nBitsDatos == nil, nBitsDatos := "8", ) ;
+   IIF( cBitsParidad == nil, cBitsParidad := "Sin paridad", ) ;
+   IIF( cApertura == nil, cApertura := "27 112 0 60 240", ) ;
+   IIF( nDriver == nil, nDriver := 2, ) ;
+   IIF( cPrinter == nil, cPrinter := "", ) ;
+
+   ::cPort              := cPort
+   ::nBitsSec           := nBitsSec
+   ::nBitsParada        := nBitsParada
+   ::nBitsDatos         := nBitsDatos
+   ::nBitsParidad       := cBitsParidad
+   ::cApertura          := cApertura
+   ::nDriver            := nDriver
+   ::cPrinter           := cPrinter
+
+RETURN Self
+
+
+
+UTILITY STATIC function TCajon_Open() ; local Self AS CLASS TCajon := QSelf() AS CLASS TCajon
+
+   if ::nDriver <> 2
+
+      PrintEscCode( ::cApertura, ::cPrinter )
+
+   else
+
+      ::oPrn            := TPort():New( ::cPort, ::nBitsSec, ::nBitsParada, ::nBitsDatos, ::nBitsParidad )
+
+      if !Empty( ::oPrn )
+         ::oPrn:Write( RetChr( ::cApertura ) )
+         ::oPrn:End()
+      end
+
+   end
+
+   ::LogCajon()
+
+RETURN ( Self )
+
+
+
+UTILITY STATIC function TCajon_LogCajon() ; local Self AS CLASS TCajon := QSelf() AS CLASS TCajon
+
+   local oBlock
+   local oError
+   local dbfLogPorta
+
+   oBlock            := ErrorBlock( {| oError | ApoloBreak( oError ) } )
+   BEGIN SEQUENCE
+
+   if IsLogPorta()
+
+      dbUseArea( .T., ( cDriver() ), ( cPatEmp() + "LOGPORTA.DBF" ), ( cCheckArea( "LOGPORTA", @dbfLogPorta ) ), if(.T. .OR. .F., !.F., NIL), .F.,, )
+      if !lAIS() ; ordListAdd( ( cPatEmp() + "LOGPORTA.CDX" ) ) ; else ; ordSetFocus( 1 ) ; end
+
+      ( dbfLogPorta )->( dbAppend() )
+
+      ( dbfLogPorta )->cNumTur   := cCurSesion()
+      ( dbfLogPorta )->cSufTur   := RetSufEmp()
+      ( dbfLogPorta )->cCodUse   := cCurUsr()
+      ( dbfLogPorta )->dFecApt   := GetSysDate()
+      ( dbfLogPorta )->cHorApt   := Substr( Time(), 1, 5 )
+
+      ( dbfLogPorta )->( dbUnLock() )
+
+      ( dbfLogPorta )->( dbCloseArea() )
+
+   end
+
+   RECOVER USING oError
+
+      ( dbfLogPorta )->( dbCloseArea() )
+
+      msgStop( "Imposible abrir bases de datos log de cajón portamonedas" + Chr(13)+Chr(10) + ErrorMessage( oError ) )
+
+   end
+
+   ErrorBlock( oBlock )
+
+return .T.
+
+
+
+Function PrintEscCode( cEscCode, cPrinter )
+
+   local nHandle
+   local cFile    := "EscFile.txt"
+
+   nHandle        := fCreate( cFile, 0 )
+
+   fWrite( nHandle, AllTrim( RetChr( cEscCode ) ) )
+   fClose( nHandle )
+
+   PrintFileRaw( AllTrim( cPrinter ), cFile )
+
+   fErase( cFile )
+
+Return ( nil )

@@ -1,0 +1,190 @@
+#line 112 "hbclass.ch"
+   DYNAMIC DivertConstructorCall
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+DECLARE HBClass  New( cName AS String, OPTIONAL SuperParams ) AS CLASS HBClass  Create() AS Object  Instance() AS Object  AddClsMethod( cName AS String, @MethodName(), nScope AS Numeric, n2 AS Numeric, n3 AS Numeric )  AddDelegate( cName AS String, cDelegate AS String, cObject AS String, nScope AS Numeric, lPersistent AS LOGICAL )  AddMultiClsData( cType AS String, uVal, nScope AS Numeric, aDatas AS Array OF String )  AddMultiData( cType AS String, uVal, nScope AS Numeric, aDatas AS Array OF String, x AS LOGICAL, lPer AS LOGICAL )  AddMethod( cName AS String, @MethodName(), nScope AS Numeric, lPersistent AS LOGICAL )  AddInLine( cName AS String, bBlock AS CodeBlock, nScope AS Numeric, lPersistent AS LOGICAL )  AddVirtual( cName AS String )  ModMethod( cName AS String, @MethodName(), nScope AS Numeric, lPersistent AS LOGICAL )  ModClsMethod( cName AS String, @MethodName(), nScope AS Numeric )  ModInline( cName AS String, bBlock AS CodeBlock, nScope AS Numeric, lPersistent AS LOGICAL )  SetOnError( @MethodName() )
+#line 85 "\Fwh1204\Include\FiveWin.Ch"
+   EXTERNAL GetProcAdd
+   EXTERNAL TActiveX
+
+
+
+
+extern errorsys
+#line 6 ".\Prg\Animat.prg"
+_HB_CLASS TAnimat ; UTILITY FUNCTION TAnimat(...); static s_oClass ; local oClassInstance ; local nScope ; nScope := 1 ; if s_oClass == NIL ; s_oClass := IIF(.F.,, HBClass():New( "TAnimat" , {TControl():classh} ) ) ; ;
+
+      _HB_MEMBER { acBitmaps} ; IIF( !.F., s_oClass:AddMultiData(,, nScope + IIF( .F., 32, 0 ), { "acBitmaps" }, .F., .F. ), )
+      _HB_MEMBER { aBitmaps} ; IIF( !.F., s_oClass:AddMultiData(,, nScope + IIF( .F., 32, 0 ), { "aBitmaps" }, .F., .F. ), )
+      _HB_MEMBER { lGo} ; IIF( !.F., s_oClass:AddMultiData(,, nScope + IIF( .F., 32, 0 ), { "lGo" }, .F., .F. ), )
+      _HB_MEMBER { oTimer} ; IIF( !.F., s_oClass:AddMultiData(,, nScope + IIF( .F., 32, 0 ), { "oTimer" }, .F., .F. ), )
+      _HB_MEMBER { nSpeed} ; IIF( !.F., s_oClass:AddMultiData(,, nScope + IIF( .F., 32, 0 ), { "nSpeed" }, .F., .F. ), )
+      _HB_MEMBER { nActual} ; IIF( !.F., s_oClass:AddMultiData(,, nScope + IIF( .F., 32, 0 ), { "nActual" }, .F., .F. ), )
+      _HB_MEMBER { nHBmp, nWBmp} ; IIF( !.F., s_oClass:AddMultiData(,, nScope + IIF( .F., 32, 0 ), { "nHBmp" , "nWBmp" }, .F., .F. ), )
+
+      _HB_MEMBER { lWorking} ; IIF( !.F., s_oClass:AddMultiData(,, nScope + IIF( .F., 32, 0 ), { "lWorking" }, .F., .F. ), )
+      _HB_MEMBER { lPainted} ; IIF( !.F., s_oClass:AddMultiData(,, nScope + IIF( .F., 32, 0 ), { "lPainted" }, .F., .F. ), )
+      _HB_MEMBER { lFromTimer} ; IIF( !.F., s_oClass:AddMultiData(,, nScope + IIF( .F., 32, 0 ), { "lFromTimer" }, .F., .F. ), )
+
+      _HB_MEMBER {AS LOGICAL lRegistered} ; IIF( !.F., s_oClass:AddMultiClsData("LOGICAL",, nScope + IIF( .F., 32, 0 ) + 64, { "lRegistered" }, .F. ), )
+
+      _HB_MEMBER Redefine( oWnd, nId, acBitmaps, nSpeed) AS CLASS TAnimat; IIF( .F., s_oClass:ModMethod( "Redefine", @TAnimat_Redefine(), nScope + IIF( .T., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ), s_oClass:AddMethod( "Redefine", @TAnimat_Redefine(), nScope + IIF( .T., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ));
+
+      _HB_MEMBER Go(); IIF( .F., s_oClass:ModInline( "Go", {|Self | Self, ::oTimer:Activate() }, nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ), s_oClass:AddInline( "Go", {|Self | Self, ::oTimer:Activate() }, nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ) )
+      _HB_MEMBER Stop(); IIF( .F., s_oClass:ModInline( "Stop", {|Self | Self, ::oTimer:End() }, nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ), s_oClass:AddInline( "Stop", {|Self | Self, ::oTimer:End() }, nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ) )
+
+
+
+      _HB_MEMBER Destroy(); IIF( .F., s_oClass:ModInline( "Destroy", {|Self | Self, aeval( ::aBitmaps, {|x| DeleteObject( x ) } ) , ::oTimer:End()                          , ::TControl:Destroy() }, nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ), s_oClass:AddInline( "Destroy", {|Self | Self, aeval( ::aBitmaps, {|x| DeleteObject( x ) } ) , ::oTimer:End()                          , ::TControl:Destroy() }, nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ) )
+
+      _HB_MEMBER Initiate(hDlg); IIF( .F., s_oClass:ModInline( "Initiate", {|Self,hDlg | Self, ::TControl:Initiate( hDlg ), ::Default() }, nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ), s_oClass:AddInline( "Initiate", {|Self,hDlg | Self, ::TControl:Initiate( hDlg ), ::Default() }, nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ) )
+      _HB_MEMBER Init(hDlg); IIF( .F., s_oClass:ModInline( "Init", {|Self,hDlg | Self, ::TControl:Init    ( hDlg ), ::Default() }, nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ), s_oClass:AddInline( "Init", {|Self,hDlg | Self, ::TControl:Init    ( hDlg ), ::Default() }, nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ) )
+
+      _HB_MEMBER Display(); IIF( .F., s_oClass:ModInline( "Display", {|Self | Self, ::BeginPaint(),::Paint(),::EndPaint() }, nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ), s_oClass:AddInline( "Display", {|Self | Self, ::BeginPaint(),::Paint(),::EndPaint() }, nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ) )
+
+      _HB_MEMBER Paint( lFromTimer); IIF( .F., s_oClass:ModMethod( "Paint", @TAnimat_Paint(), nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ), s_oClass:AddMethod( "Paint", @TAnimat_Paint(), nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ));
+
+      _HB_MEMBER LoadBmps( acBitmaps); IIF( .F., s_oClass:ModMethod( "LoadBmps", @TAnimat_LoadBmps(), nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ), s_oClass:AddMethod( "LoadBmps", @TAnimat_LoadBmps(), nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ));
+
+      _HB_MEMBER Default(); IIF( .F., s_oClass:ModMethod( "Default", @TAnimat_Default(), nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ), s_oClass:AddMethod( "Default", @TAnimat_Default(), nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ));
+
+; IF .F. ; __clsActive(s_oClass:hClass) ; s_oClass:Refresh() ; ELSE ; s_oClass:Create() ; END ; oClassInstance := __clsInst( s_oClass:hClass ) ; IF __ObjHasMsg( oClassInstance, "InitClass" ); oClassInstance:InitClass( hb_aParams() ) ; END ; ELSE ; oClassInstance := __clsInst( s_oClass:hClass ) ; END ; IF PCount() > 0 ; DIVERT TO (@DivertConstructorCall()) OF s_oClass ; END ; RETURN oClassInstance AS CLASS TAnimat ;
+
+
+ UTILITY STATIC function TAnimat_Redefine( oWnd, nId, acBitmaps, nSpeed) ; local Self AS CLASS TAnimat := QSelf() AS CLASS TAnimat
+
+
+ IIF( nSpeed == nil, nSpeed := 4, ) ;
+
+ ::oWnd       := oWnd
+ ::nId        := nId
+ ::acBitmaps  := acBitmaps
+ ::aBitmaps   := {}
+ ::nSpeed     := nSpeed
+ ::lWorking   := .F.
+ ::lPainted   := .F.
+ ::lFromTimer := .F.
+ ::nActual    := 0
+
+ ::Register( nOR( 1, 2 ) )
+
+ if oWnd <> nil
+    oWnd:DefControl( Self )
+ endif
+
+ if ::oBrush <> nil
+    ::oBrush:End()
+ endif
+
+ ::oBrush := TBrush():New("NUL")
+
+return ( Self )
+
+
+ UTILITY STATIC function TAnimat_Default() ; local Self AS CLASS TAnimat := QSelf() AS CLASS TAnimat
+
+
+::oTimer := TTimer():New( ::nSpeed * 100, {||( ::lFromTimer := .T.,::Refresh())}, Self )
+
+::LoadBmps( ::acBitmaps )
+
+::SetSize( ::nWBmp, ::nHBmp, .T. )
+
+return ( Self )
+
+
+ UTILITY STATIC function TAnimat_Paint() ; local Self AS CLASS TAnimat := QSelf() AS CLASS TAnimat
+
+
+local nLeft
+local nW1
+local nW2
+local hDCMem
+local hOldBmp
+
+if !::lPainted
+   ::lPainted := .T.
+   ::oTimer:Activate()
+   return nil
+endif
+
+::GetDC()
+
+if  ::lFromTimer  .AND. !::lWorking
+
+   ::lWorking := .T.
+
+   if ::nActual > 10
+      ::nActual := 0
+   endif
+
+   nLeft := ( ::nWBmp / 10 ) * ::nActual
+
+   nW1   := nLeft
+   nW2   := ::nWBmp - nLeft
+
+   ::nActual++
+
+endif
+
+   hDCMem   = CompatDC( ::hDC )
+   hOldBmp  = SelectObject( hDCMem, ::aBitMaps[1] )
+
+   StretchBlt( ::hDC,   nLeft,  0, nW2, ::nHBmp, hDCMem, 0,   0, nW2, ::nHBmp, 13369376 )
+   StretchBlt( ::hDC,       0,  0, nW1, ::nHBmp, hDCMem, nW2, 0, nW1, ::nHBmp, 13369376 )
+
+   SelectObject( hDCMem, hOldBmp )
+   DeleteDC( hDCMem )
+
+
+
+   ::ReleaseDC()
+
+   ::lFromTimer := .F.
+   ::lWorking   := .F.
+
+   SysRefresh()
+
+   if ::bPainted <> nil
+      eval( ::bPainted, self )
+   endif
+
+return ( Self )
+
+
+  UTILITY STATIC function TAnimat_LoadBmps( acBitmaps) ; local Self AS CLASS TAnimat := QSelf() AS CLASS TAnimat
+
+local n
+
+::GetDC()
+
+for n := 1 to len( ::acBitmaps )
+
+    if "." $ ::acBitmaps[ n ]
+       aadd( ::aBitmaps, ReadBitmap( ::hDC, ::acBitmaps[ n ] ) )
+    else
+       aadd( ::aBitmaps, LoadBitmap( GetResources(), ::acBitmaps[ n ] ) )
+    endif
+
+next
+
+::nHBmp := nBmpHeight( ::aBitmaps[ 1 ] )
+::nWBmp := nBmpWidth ( ::aBitmaps[ 1 ] )
+
+::ReleaseDC()
+
+return ( Self )

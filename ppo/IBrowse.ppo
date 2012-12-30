@@ -1,0 +1,644 @@
+#line 112 "hbclass.ch"
+   DYNAMIC DivertConstructorCall
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+DECLARE HBClass  New( cName AS String, OPTIONAL SuperParams ) AS CLASS HBClass  Create() AS Object  Instance() AS Object  AddClsMethod( cName AS String, @MethodName(), nScope AS Numeric, n2 AS Numeric, n3 AS Numeric )  AddDelegate( cName AS String, cDelegate AS String, cObject AS String, nScope AS Numeric, lPersistent AS LOGICAL )  AddMultiClsData( cType AS String, uVal, nScope AS Numeric, aDatas AS Array OF String )  AddMultiData( cType AS String, uVal, nScope AS Numeric, aDatas AS Array OF String, x AS LOGICAL, lPer AS LOGICAL )  AddMethod( cName AS String, @MethodName(), nScope AS Numeric, lPersistent AS LOGICAL )  AddInLine( cName AS String, bBlock AS CodeBlock, nScope AS Numeric, lPersistent AS LOGICAL )  AddVirtual( cName AS String )  ModMethod( cName AS String, @MethodName(), nScope AS Numeric, lPersistent AS LOGICAL )  ModClsMethod( cName AS String, @MethodName(), nScope AS Numeric )  ModInline( cName AS String, bBlock AS CodeBlock, nScope AS Numeric, lPersistent AS LOGICAL )  SetOnError( @MethodName() )
+#line 85 "\Fwh1204\Include\FiveWin.Ch"
+   EXTERNAL GetProcAdd
+   EXTERNAL TActiveX
+
+
+
+
+extern errorsys
+#line 26 ".\Prg\IBrowse.prg"
+_HB_CLASS IWBrowse ; UTILITY FUNCTION IWBrowse(...); static s_oClass ; local oClassInstance ; local nScope ; nScope := 1 ; if s_oClass == NIL ; s_oClass := IIF(.F.,, HBClass():New( "IWBrowse" , {TWBrowse():classh} ) ) ; ;
+
+   _HB_MEMBER { dbfCfgCol} ; IIF( !.F., s_oClass:AddMultiData(,, nScope + IIF( .F., 32, 0 ), { "dbfCfgCol" }, .F., .F. ), )
+
+   _HB_MEMBER { aIntFields} ; IIF( !.F., s_oClass:AddMultiData(,, nScope + IIF( .F., 32, 0 ), { "aIntFields" }, .F., .F. ), )
+   _HB_MEMBER { aIntHeaders} ; IIF( !.F., s_oClass:AddMultiData(,, nScope + IIF( .F., 32, 0 ), { "aIntHeaders" }, .F., .F. ), )
+   _HB_MEMBER { aIntColSizes} ; IIF( !.F., s_oClass:AddMultiData(,, nScope + IIF( .F., 32, 0 ), { "aIntColSizes" }, .F., .F. ), )
+   _HB_MEMBER { aIntJustify} ; IIF( !.F., s_oClass:AddMultiData(,, nScope + IIF( .F., 32, 0 ), { "aIntJustify" }, .F., .F. ), )
+   _HB_MEMBER { aIntColSelect} ; IIF( !.F., s_oClass:AddMultiData(,, nScope + IIF( .F., 32, 0 ), { "aIntColSelect" }, .F., .F. ), )
+   _HB_MEMBER { aIntColPos} ; IIF( !.F., s_oClass:AddMultiData(,, nScope + IIF( .F., 32, 0 ), { "aIntColPos" }, .F., .F. ), )
+   _HB_MEMBER { aIntColFoot} ; IIF( !.F., s_oClass:AddMultiData(,, nScope + IIF( .F., 32, 0 ), { "aIntColFoot" }, .F., .F. ), )
+
+   _HB_MEMBER { nFlds} ; IIF( !.F., s_oClass:AddMultiData(,, nScope + IIF( .F., 32, 0 ), { "nFlds" }, .F., .F. ), )
+
+   _HB_MEMBER { bFont} ; IIF( !.F., s_oClass:AddMultiData(,, nScope + IIF( .F., 32, 0 ), { "bFont" }, .F., .F. ), )
+
+   _HB_MEMBER {AS LOGIC lNoSave} ; IIF( !.F., s_oClass:AddMultiData( "LOGIC", .F., nScope + IIF( .F., 32, 0 ), { "lNoSave" }, .F., .F. ), )
+
+   _HB_MEMBER {AS ARRAY aOriginal} ; IIF( !.F., s_oClass:AddMultiData( "ARRAY", {}, nScope + IIF( .F., 32, 0 ), { "aOriginal" }, .F., .F. ), )
+
+   _HB_MEMBER { cWndName} ; IIF( !.F., s_oClass:AddMultiData(,, nScope + IIF( .F., 32, 0 ), { "cWndName" }, .F., .F. ), )
+
+   _HB_MEMBER { aFooters} ; IIF( !.F., s_oClass:AddMultiData(,, nScope + IIF( .F., 32, 0 ), { "aFooters" }, .F., .F. ), )
+
+
+
+
+
+
+
+
+   _HB_MEMBER ReDefine( nId, aFields, oDlg, aHeaders, aColSizes, cField, uVal1, uVal2, bChange, bLDblClick, bRClick, oFont, oCursor, nClrFore, nClrBack, cMsg, lUpdate, cAlias, bWhen, bValid, bLClick, aActions); IIF( .F., s_oClass:ModMethod( "ReDefine", @IWBrowse_ReDefine(), nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ), s_oClass:AddMethod( "ReDefine", @IWBrowse_ReDefine(), nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ));
+
+   _HB_MEMBER OpenData( lExclusive); IIF( .F., s_oClass:ModMethod( "OpenData", @IWBrowse_OpenData(), nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ), s_oClass:AddMethod( "OpenData", @IWBrowse_OpenData(), nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ));
+   _HB_MEMBER CloseData(); IIF( .F., s_oClass:ModMethod( "CloseData", @IWBrowse_CloseData(), nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ), s_oClass:AddMethod( "CloseData", @IWBrowse_CloseData(), nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ));
+
+   _HB_MEMBER LoadData(); IIF( .F., s_oClass:ModMethod( "LoadData", @IWBrowse_LoadData(), nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ), s_oClass:AddMethod( "LoadData", @IWBrowse_LoadData(), nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ));
+   _HB_MEMBER SaveData(); IIF( .F., s_oClass:ModMethod( "SaveData", @IWBrowse_SaveData(), nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ), s_oClass:AddMethod( "SaveData", @IWBrowse_SaveData(), nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ));
+   _HB_MEMBER CleanData(); IIF( .F., s_oClass:ModMethod( "CleanData", @IWBrowse_CleanData(), nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ), s_oClass:AddMethod( "CleanData", @IWBrowse_CleanData(), nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ));
+
+   _HB_MEMBER SaveOriginal(); IIF( .F., s_oClass:ModMethod( "SaveOriginal", @IWBrowse_SaveOriginal(), nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ), s_oClass:AddMethod( "SaveOriginal", @IWBrowse_SaveOriginal(), nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ));
+   _HB_MEMBER PutOriginal(); IIF( .F., s_oClass:ModMethod( "PutOriginal", @IWBrowse_PutOriginal(), nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ), s_oClass:AddMethod( "PutOriginal", @IWBrowse_PutOriginal(), nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ));
+
+   _HB_MEMBER SetColumn(); IIF( .F., s_oClass:ModMethod( "SetColumn", @IWBrowse_SetColumn(), nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ), s_oClass:AddMethod( "SetColumn", @IWBrowse_SetColumn(), nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ));
+   _HB_MEMBER DlgColumn(); IIF( .F., s_oClass:ModMethod( "DlgColumn", @IWBrowse_DlgColumn(), nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ), s_oClass:AddMethod( "DlgColumn", @IWBrowse_DlgColumn(), nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ));
+   _HB_MEMBER ActColSizes(); IIF( .F., s_oClass:ModMethod( "ActColSizes", @IWBrowse_ActColSizes(), nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ), s_oClass:AddMethod( "ActColSizes", @IWBrowse_ActColSizes(), nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ));
+
+   _HB_MEMBER UpColumn( oBrw, aFields, aHeaders, aColSizes, aColSelect, aColPos, aJustify); IIF( .F., s_oClass:ModMethod( "UpColumn", @IWBrowse_UpColumn(), nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ), s_oClass:AddMethod( "UpColumn", @IWBrowse_UpColumn(), nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ));
+   _HB_MEMBER DwColumn( oBrw, aFields, aHeaders, aColSizes, aColSelect, aColPos, aJustify); IIF( .F., s_oClass:ModMethod( "DwColumn", @IWBrowse_DwColumn(), nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ), s_oClass:AddMethod( "DwColumn", @IWBrowse_DwColumn(), nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ));
+
+
+   _HB_MEMBER KeyDown(nKey, nFlags); IIF( .F., s_oClass:ModInline( "KeyDown", {|Self,nKey, nFlags | Self, ( if( nKey == 120, ::PutOriginal(), ), ::TWBrowse:KeyDown( nKey, nFlags ) ) }, nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ), s_oClass:AddInline( "KeyDown", {|Self,nKey, nFlags | Self, ( if( nKey == 120, ::PutOriginal(), ), ::TWBrowse:KeyDown( nKey, nFlags ) ) }, nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ) )
+
+   _HB_MEMBER RightButtonDown( nRow, nCol, nFlags); IIF( .F., s_oClass:ModMethod( "RightButtonDown", @IWBrowse_RightButtonDown(), nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ), s_oClass:AddMethod( "RightButtonDown", @IWBrowse_RightButtonDown(), nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ));
+
+
+; IF .F. ; __clsActive(s_oClass:hClass) ; s_oClass:Refresh() ; ELSE ; s_oClass:Create() ; END ; oClassInstance := __clsInst( s_oClass:hClass ) ; IF __ObjHasMsg( oClassInstance, "InitClass" ); oClassInstance:InitClass( hb_aParams() ) ; END ; ELSE ; oClassInstance := __clsInst( s_oClass:hClass ) ; END ; IF PCount() > 0 ; DIVERT TO (@DivertConstructorCall()) OF s_oClass ; END ; RETURN oClassInstance AS CLASS IWBrowse ;
+
+
+
+UTILITY STATIC function IWBrowse_CloseData() ; local Self AS CLASS IWBrowse := QSelf() AS CLASS IWBrowse
+
+   if ( !Empty( ::dbfCfgCol ) .AND. ( ::dbfCfgCol )->( Used() ) )
+      ( ::dbfCfgCol )->( dbCloseArea() )
+   end
+
+Return ( Self )
+
+
+
+UTILITY STATIC function IWBrowse_SaveOriginal() ; local Self AS CLASS IWBrowse := QSelf() AS CLASS IWBrowse
+
+   ::aOriginal       := {}
+
+   aAdd( ::aOriginal, aClone( ::aIntFields      ) )
+   aAdd( ::aOriginal, aClone( ::aIntHeaders     ) )
+   aAdd( ::aOriginal, aClone( ::aIntColSizes    ) )
+   aAdd( ::aOriginal, aClone( ::aIntJustify     ) )
+   aAdd( ::aOriginal, aClone( ::aIntColSelect   ) )
+   aAdd( ::aOriginal, aClone( ::aIntColFoot     ) )
+   aAdd( ::aOriginal, aClone( ::aIntColPos      ) )
+
+return nil
+
+
+
+UTILITY STATIC function IWBrowse_SaveData() ; local Self AS CLASS IWBrowse := QSelf() AS CLASS IWBrowse
+
+   local n
+   local nCols
+   local oError
+   local oBlock
+
+   oBlock               := ErrorBlock( {| oError | ApoloBreak( oError ) } )
+   BEGIN SEQUENCE
+
+      nCols             := Len( ::aIntFields )
+
+      if !::lNoSave .AND. !Empty( ::dbfCfgCol ) .AND. ( ::dbfCfgCol )->( Used() )
+
+
+
+         ::CleanData()
+
+
+
+         ::ActColSizes()
+
+
+
+         for n := 1 to nCols
+
+            ( ::dbfCfgCol )->( dbAppend() )
+            if !( ::dbfCfgCol )->( NetErr() )
+               ( ::dbfCfgCol )->nNumCol   := n
+               ( ::dbfCfgCol )->cCodUse   := cCurUsr()
+               ( ::dbfCfgCol )->cNomCfg   := ::cWndName
+               ( ::dbfCfgCol )->nPosCol   := ::aIntColPos   [ n ]
+               ( ::dbfCfgCol )->lSelCol   := ::aIntColSelect[ n ]
+               ( ::dbfCfgCol )->nSizCol   := ::aIntColSizes [ n ]
+               ( ::dbfCfgCol )->lJusCol   := ::aIntJustify  [ n ]
+               ( ::dbfCfgCol )->( dbUnLock() )
+            end
+
+         next
+
+         msgInfo( "Configuración de columnas guardada." )
+
+      end
+
+   RECOVER USING oError
+
+      msgStop( "Imposible salvar las configuraciones de columnas" + Chr(13)+Chr(10) + ErrorMessage( oError ) )
+
+   end
+
+   ErrorBlock( oBlock )
+
+RETURN ( Self )
+
+
+
+UTILITY STATIC function IWBrowse_CleanData() ; local Self AS CLASS IWBrowse := QSelf() AS CLASS IWBrowse
+
+
+
+
+
+   while ( ::dbfCfgCol )->( dbSeek( cCurUsr() + ::cWndName ) )
+      dbDel( ::dbfCfgCol )
+   end
+
+Return ( Self )
+
+
+
+UTILITY STATIC function IWBrowse_LoadData() ; local Self AS CLASS IWBrowse := QSelf() AS CLASS IWBrowse
+
+   local n
+   local nPos
+   local aTmpFld
+   local aTmpHea
+   local aTmpJus
+   local aTmpSiz
+
+
+
+   ::SaveOriginal()
+
+
+
+   if !::OpenData()
+      Return ( Self )
+   end
+
+   ::cWndName                 := Padr( Rtrim( ::cWndName ), 40 )
+
+   if ( ::dbfCfgCol )->( dbSeek( cCurUsr() + ::cWndName ) )
+
+
+
+      ::nFlds                    := len( ::aIntFields )
+
+
+
+      ::aIntColPos               := Array( ::nFlds )
+      aEval( ::aIntColPos, {| x, n | ::aIntColPos[ n ] := n } )
+
+      for n := 1 to ::nFlds
+         if ( ::dbfCfgCol )->( dbSeek( cCurUsr() + ::cWndName + Str( n, 2 ) ) ) .AND. n <= len( ::aIntColPos )
+            ::aIntColPos   [ n ] := ( ::dbfCfgCol )->nPosCol
+            ::aIntColSelect[ n ] := ( ::dbfCfgCol )->lSelCol
+            ::aIntColSizes [ n ] := ( ::dbfCfgCol )->nSizCol
+            ::aIntJustify  [ n ] := ( ::dbfCfgCol )->lJusCol
+         end
+      next
+
+      aTmpFld                    := Array( ::nFlds )
+      aTmpHea                    := Array( ::nFlds )
+
+      for n := 1 to ::nFlds
+        nPos                    := ::aIntColPos[ n ]
+         if nPos > 0 .AND. nPos <= ::nFlds
+            aTmpFld[ n ]         := ::aIntFields  [ nPos ]
+            aTmpHea[ n ]         := ::aIntHeaders [ nPos ]
+         end
+      next
+
+      ::aIntFields               := aTmpFld
+      ::aIntHeaders              := aTmpHea
+
+   end
+
+   ::Default()
+
+   ::SetColumn( .F. )
+
+Return ( Self )
+
+
+
+UTILITY STATIC function IWBrowse_OpenData( lExclusive) ; local Self AS CLASS IWBrowse := QSelf() AS CLASS IWBrowse
+
+   local lOpen          := .T.
+   local oError
+   local oBlock         := ErrorBlock( {| oError | ApoloBreak( oError ) } )
+
+   IIF( lExclusive == nil, lExclusive := .F., ) ;
+
+   BEGIN SEQUENCE
+
+      if !lExistTable( cPatEmp() + "CfgDet.Dbf" )
+         CreateConfigDetalle()
+      end
+
+      if !lExistIndex( cPatEmp() + "CfgDet.Cdx" )
+         ReindexConfigDetalle()
+      end
+
+      dbUseArea( .T., cDriver(), ( cPatEmp() + "CfgDet.Dbf" ), ( ::dbfCfgCol := cCheckArea( "CfgDet" ) ), !lExclusive )
+      ( ::dbfCfgCol )->( OrdListAdd( cPatEmp() + "CfgDet.Cdx" ) )
+
+   RECOVER
+
+      lOpen             := .F.
+
+   end
+
+   ErrorBlock( oBlock )
+
+RETURN ( lOpen )
+
+
+
+
+
+
+UTILITY STATIC function IWBrowse_ReDefine( nId, aFields, oDlg, aHeaders, aColSizes, cField, uVal1, uVal2, bChange, bLDblClick, bRClick, oFont, oCursor, nClrFore, nClrBack, cMsg, lUpdate, cAlias, bWhen, bValid, bLClick, aActions, aJustify, aSelected) ; local Self AS CLASS IWBrowse := QSelf() AS CLASS IWBrowse
+
+   local bLine
+
+   ::aIntFields            := aFields
+   ::aIntHeaders           := aHeaders
+   ::aIntColSizes          := aColSizes
+   ::aIntJustify           := aJustify
+   ::aIntColSelect         := aSelected
+
+   IIF( ::aIntColSelect == nil, ::aIntColSelect := Afill( Array( len( aFields ) ), .T. ), ) ;
+
+   ::aIntColPos            := Array( len( aFields ) )
+   aEval( ::aIntColPos, {| x, n | ::aIntColPos[ n ] := n } )
+
+   ::aIntColFoot           := Afill( Array( len( aFields ) ), .T. )
+
+   bLine                   := {|| _aFld( aFields,           ::aIntColSelect ) }
+   aHeaders                := _aColHead( ::aIntHeaders,     ::aIntColSelect )
+   aColSizes               := _aColSize( ::aIntColSizes,    ::aIntColSelect )
+
+   ::aJustify              := _aColJustify( ::aIntJustify,  ::aIntColSelect )
+
+
+
+
+Return ::TWBrowse:ReDefine(  nId, bLine, oDlg, aHeaders, aColSizes, cField, uVal1, uVal2, bChange, bLDblClick, bRClick, oFont, oCursor, nClrFore, nClrBack, cMsg, lUpdate, cAlias, bWhen, bValid, bLClick, aActions )
+
+
+
+UTILITY STATIC function IWBrowse_PutOriginal() ; local Self AS CLASS IWBrowse := QSelf() AS CLASS IWBrowse
+
+
+
+
+
+   ::aIntFields      := aClone( ::aOriginal[1] )
+   ::aIntHeaders     := aClone( ::aOriginal[2] )
+   ::aIntColSizes    := aClone( ::aOriginal[3] )
+   ::aIntJustify     := aClone( ::aOriginal[4] )
+   ::aIntColSelect   := aClone( ::aOriginal[5] )
+   ::aIntColFoot     := aClone( ::aOriginal[6] )
+   ::aIntColPos      := aClone( ::aOriginal[7] )
+
+   ::CleanData()
+
+   ::SetColumn( .T. )
+
+   ::Refresh()
+
+return nil
+
+
+
+UTILITY STATIC function IWBrowse_UpColumn( oBrw, aFields, aHeaders, aColSizes, aColSelect, aColPos, aJustify) ; local Self AS CLASS IWBrowse := QSelf() AS CLASS IWBrowse
+
+   local nPos  := oBrw:nAt
+
+   if nPos <= len( aFields ) .AND. nPos > 1
+
+      SwapUpArray( aFields,    nPos )
+      SwapUpArray( aHeaders,   nPos )
+      SwapUpArray( aColSizes,  nPos )
+      SwapUpArray( aColSelect, nPos )
+      SwapUpArray( aColPos,    nPos )
+      SwapUpArray( aJustify,   nPos )
+
+      oBrw:GoUp()
+      oBrw:Refresh()
+      oBrw:SetFocus()
+
+   end
+
+return ( Self )
+
+
+
+Function CreateConfigDetalle( lReindex )
+
+   local aData       := {}
+
+   IIF( lReindex == nil, lReindex := .T., ) ;
+
+   aAdd( aData, { "cCodUse", "C",   3,  0,  "Código usuario"             } )
+   aAdd( aData, { "cNomCfg", "C",  40,  0,  "Nombre ventana"             } )
+   aAdd( aData, { "nNumCol", "N",   2,  0,  "Número de la columna"       } )
+   aAdd( aData, { "lSelCol", "L",   1,  0,  "Columna seleccionada"       } )
+   aAdd( aData, { "nPosCol", "N",   2,  0,  "Posicición de la columna"   } )
+   aAdd( aData, { "nSizCol", "N",   6,  0,  "Tamaño de la columna"       } )
+   aAdd( aData, { "lJusCol", "L",   1,  0,  "Columna a la derecha"       } )
+
+   if !lExistTable( cPatEmp() + "CfgDet.Dbf" )
+      dbCreate( cPatEmp() + "CfgDet.Dbf", aData, cDriver() )
+   end
+
+   if lReindex
+      ReindexConfigDetalle()
+   end
+
+Return .T.
+
+
+
+
+
+
+
+UTILITY STATIC function IWBrowse_ActColSizes() ; local Self AS CLASS IWBrowse := QSelf() AS CLASS IWBrowse
+
+   local nFor
+   local n     := 1
+   local nLen  := len( ::aIntFields )
+
+
+
+
+
+   for nFor := 1 to nLen
+      if ::aIntColSelect[ nFor ]
+         ::aIntColSizes[ nFor ]  := ::aColSizes[ n++ ]
+      end
+   next
+
+return nil
+
+
+
+UTILITY STATIC function IWBrowse_DwColumn( oBrw, aFields, aHeaders, aColSizes, aColSelect, aColPos, aJustify) ; local Self AS CLASS IWBrowse := QSelf() AS CLASS IWBrowse
+
+   local nPos  := oBrw:nAt
+
+   if nPos < len( aFields ) .AND. nPos > 0
+
+      SwapDwArray( aFields,    nPos )
+      SwapDwArray( aHeaders,   nPos )
+      SwapDwArray( aColSizes,  nPos )
+      SwapDwArray( aColSelect, nPos )
+      SwapDwArray( aColPos,    nPos )
+      SwapDwArray( aJustify,   nPos )
+
+      oBrw:GoDown()
+      oBrw:Refresh()
+      oBrw:SetFocus()
+
+   end
+
+return ( Self )
+
+
+
+Function ReindexConfigDetalle()
+
+   local dbf
+
+   if !lExistTable( cPatEmp() + "CfgDet.Dbf" )
+      CreateConfigDetalle( .F. )
+   end
+
+   fEraseIndex( cPatEmp() + "CfgDet.Cdx" )
+
+   dbUseArea( .T., cDriver(), cPatEmp() + "CfgDet.Dbf", cCheckArea( "CfgDet", @dbf ), .F. )
+   if !( dbf )->( neterr() )
+
+      ( dbf )->( __dbPack() )
+
+      ( dbf )->( ordCondSet( "!Deleted()", {|| !Deleted() }  ) )
+      ( dbf )->( ordCreate( cPatEmp() + "CfgDet.Cdx", "cCodUse", "Field->cCodUse + Field->cNomCfg + Str( Field->nNumCol )", {|| Field->cCodUse + Field->cNomCfg + Str( Field->nNumCol ) } ) )
+
+      ( dbf )->( dbCloseArea() )
+   else
+
+      msgStop( "Imposible abrir en modo exclusivo la tabla de configuraciones de columnas" )
+
+   end
+
+Return .T.
+
+
+
+UTILITY STATIC function IWBrowse_SetColumn( lRefresh) ; local Self AS CLASS IWBrowse := QSelf() AS CLASS IWBrowse
+
+   local aData       := _aData( ::aIntFields,         ::aIntColSelect )
+   local aHeaders    := _aColHead( ::aIntHeaders,     ::aIntColSelect )
+   local aColSizes   := _aColSize( ::aIntColSizes,    ::aIntColSelect )
+   local aJustify    := _aColJustify( ::aIntJustify,  ::aIntColSelect )
+   local aFooter     := _aColFoot( ::aIntColFoot,     ::aIntColSelect )
+
+   IIF( lRefresh == nil, lRefresh := .T., ) ;
+
+   ::SetCols( aData, aHeaders, aColSizes )
+
+   ::aJustify        := aJustify
+   ::aFooters        := aFooter
+
+   if lRefresh
+      ::Refresh()
+   end
+
+return nil
+
+
+
+UTILITY STATIC function IWBrowse_DlgColumn() ; local Self AS CLASS IWBrowse := QSelf() AS CLASS IWBrowse
+
+   local oDlg
+   local oGet
+   local oBrwCol
+   local aFields     := aClone( ::aIntFields    )
+   local aHeaders    := aClone( ::aIntHeaders   )
+   local aColSizes   := aClone( ::aIntColSizes  )
+   local aColSelect  := aClone( ::aIntColSelect )
+   local aColPos     := aClone( ::aIntColPos    )
+   local aJustify    := aClone( ::aIntJustify   )
+
+   local hBmp        := LoadBitmap( 0, 32760 )
+
+   oDlg = TDialog():New(,,,,, "DLGCOLUM",, .F.,,,,,, .F.,,,,,, .F., )
+
+
+
+
+
+
+
+
+
+
+
+   oBrwCol := TWBrowse():ReDefine( 100, {|| { if( aColSelect[ oBrwCol:nAt ], hBmp, "" ) , aHeaders[ oBrwCol:nAt ] } }, oDlg, {"S", "Columna"}, {14, 40},,,, {||( oGet:Refresh() )},,,,,,,, .F.,,,,, )
+
+      oBrwCol:nLineStyle := 10
+      oBrwCol:SetArray( aHeaders )
+
+
+
+
+
+
+
+
+   oGet := TGetHlp():ReDefine( 101, { | u | If( PCount()==0, aColSizes[ oBrwCol:nAt ], aColSizes[ oBrwCol:nAt ]:= u ) }, oDlg,, "999", {||    aColSizes[ oBrwCol:nAt ] > 0},,,,,, .F.,,, .F., .T.,,, {||      1}, {||      999},, nil,,, )
+
+
+
+
+   TButton():ReDefine( 400, {||( if( CheckOne( aColSelect ), oDlg:end( 1 ), ) )}, oDlg,,, .F.,,,, .F. )
+
+
+
+
+   TButton():ReDefine( 401, {||( oDlg:end() )}, oDlg,,, .F.,,,, .F. )
+
+
+
+
+   TButton():ReDefine( 402, {||( aColSelect[ oBrwCol:nAt ] := .T., oBrwCol:SetFocus(), oBrwCol:Refresh() )}, oDlg,,, .F.,,,, .F. )
+
+
+
+
+   TButton():ReDefine( 403, {||( aColSelect[ oBrwCol:nAt ] := .F., oBrwCol:SetFocus(), oBrwCol:Refresh() )}, oDlg,,, .F.,,,, .F. )
+
+
+
+
+   TButton():ReDefine( 404, {||( ::UpColumn( oBrwCol, aFields, aHeaders, aColSizes, aColSelect, aColPos, aJustify ) )}, oDlg,,, .F.,,,, .F. )
+
+
+
+
+   TButton():ReDefine( 405, {||( ::DwColumn( oBrwCol, aFields, aHeaders, aColSizes, aColSelect, aColPos, aJustify ) )}, oDlg,,, .F.,,,, .F. )
+
+   oDlg:Activate( oDlg:bLClicked, oDlg:bMoved, oDlg:bPainted, .T.,,,, oDlg:bRClicked,,, )
+
+   if oDlg:nResult == 1
+      ::aIntFields      := aFields
+      ::aIntHeaders     := aHeaders
+      ::aIntColSizes    := aColSizes
+      ::aIntColSelect   := aColSelect
+      ::aIntColPos      := aColPos
+      ::aIntJustify     := aJustify
+      ::SetColumn( .T. )
+      ::SaveData()
+   end
+
+   DeleteObject( hBmp )
+
+   hBmp                 := nil
+
+return nil
+
+
+
+
+
+
+
+
+
+UTILITY STATIC function IWBrowse_RightButtonDown( nRow, nCol, nFlags) ; local Self AS CLASS IWBrowse := QSelf() AS CLASS IWBrowse
+
+   local nLen
+   local nFor
+   local oMenu
+   local bMenuSelect
+   local oMenuColumns
+
+   if oUser():lAdministrador()
+
+      nLen           := len( ::aIntHeaders )
+
+      ::ActColSizes()
+
+
+
+
+
+      oMenu          := MenuBegin( .T. )
+      bMenuSelect    := ::bMenuSelect
+
+      MenuAddItem( "Columnas", "Columnas de la rejilla de datos", .F., .T., , , "Column_16", oMenu )
+
+      MenuBegin( .F.,,, .F. )
+
+         for nFor := 1 to nLen
+            if ValType( ::aIntHeaders[ nFor ] ) == "C" .AND. !Empty( ::aIntHeaders[ nFor ] )
+               MenuAddItem( ::aIntHeaders[ nFor ], ::aIntHeaders[ nFor ], ::aIntColSelect[ nFor ], .T., bSelColumn( nFor, Self ) )
+            end
+         next
+
+      MenuEnd()
+
+
+
+      MenuAddItem( "Guardar vista actual", "Guarda la vista actual de la rejilla de datos", .F., .T., {|| ::SaveData( .T. ) }, , "Column_Disk_16", oMenu )
+
+      MenuAddItem( "Cargar vista por defecto", "Carga la vista por defecto de la rejilla de datos", .F., .T., {|| ::PutOriginal() }, , "Column_Refresh_16", oMenu )
+
+      MenuAddItem()
+
+      MenuAddItem( "Exportar a E&xcel", "Exportar rejilla de datos a Excel", .F., .T., {|| ::ExportToExcel() }, , "Text_Sum_16", oMenu )
+
+      MenuAddItem( "Exportar a &Word", "Exportar rejilla de datos a Word", .F., .T., {|| ::ExportToWord() }, , "Text_Rich_16", oMenu )
+
+      MenuEnd()
+
+      oMenu:Activate( nRow, nCol, Self )
+
+      ::bMenuSelect  := bMenuSelect
+
+   end
+
+Return Self
+
+
+
+
+static function bSelColumn( nFor, Self )
+return {|| ::aIntColSelect[ nFor ] := !::aIntColSelect[ nFor ], if( CheckOne( ::aIntColSelect ), ( ::SetColumn(), ::Refresh() ), ) }

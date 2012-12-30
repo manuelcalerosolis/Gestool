@@ -1,0 +1,166 @@
+#line 112 "hbclass.ch"
+   DYNAMIC DivertConstructorCall
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+DECLARE HBClass  New( cName AS String, OPTIONAL SuperParams ) AS CLASS HBClass  Create() AS Object  Instance() AS Object  AddClsMethod( cName AS String, @MethodName(), nScope AS Numeric, n2 AS Numeric, n3 AS Numeric )  AddDelegate( cName AS String, cDelegate AS String, cObject AS String, nScope AS Numeric, lPersistent AS LOGICAL )  AddMultiClsData( cType AS String, uVal, nScope AS Numeric, aDatas AS Array OF String )  AddMultiData( cType AS String, uVal, nScope AS Numeric, aDatas AS Array OF String, x AS LOGICAL, lPer AS LOGICAL )  AddMethod( cName AS String, @MethodName(), nScope AS Numeric, lPersistent AS LOGICAL )  AddInLine( cName AS String, bBlock AS CodeBlock, nScope AS Numeric, lPersistent AS LOGICAL )  AddVirtual( cName AS String )  ModMethod( cName AS String, @MethodName(), nScope AS Numeric, lPersistent AS LOGICAL )  ModClsMethod( cName AS String, @MethodName(), nScope AS Numeric )  ModInline( cName AS String, bBlock AS CodeBlock, nScope AS Numeric, lPersistent AS LOGICAL )  SetOnError( @MethodName() )
+#line 85 "\Fwh1204\Include\FiveWin.Ch"
+   EXTERNAL GetProcAdd
+   EXTERNAL TActiveX
+
+
+
+
+extern errorsys
+#line 7 ".\Prg\Tinfcols.prg"
+_HB_CLASS TInfCols ; UTILITY FUNCTION TInfCols(...); static s_oClass ; local oClassInstance ; local nScope ; nScope := 1 ; if s_oClass == NIL ; s_oClass := IIF(.F.,, HBClass():New( "TInfCols" , { HBObject():Classh } ) ) ;
+
+   _HB_MEMBER { bFld} ; IIF( !.F., s_oClass:AddMultiData(,, nScope + IIF( .F., 32, 0 ), { "bFld" }, .F., .F. ), )
+   _HB_MEMBER { cTitle} ; IIF( !.F., s_oClass:AddMultiData(,, nScope + IIF( .F., 32, 0 ), { "cTitle" }, .F., .F. ), )
+   _HB_MEMBER { nPad} ; IIF( !.F., s_oClass:AddMultiData(, 1, nScope + IIF( .F., 32, 0 ), { "nPad" }, .F., .F. ), )
+   _HB_MEMBER { lTotal} ; IIF( !.F., s_oClass:AddMultiData(, .F., nScope + IIF( .F., 32, 0 ), { "lTotal" }, .F., .F. ), )
+   _HB_MEMBER { lSeparador} ; IIF( !.F., s_oClass:AddMultiData(, .F., nScope + IIF( .F., 32, 0 ), { "lSeparador" }, .F., .F. ), )
+   _HB_MEMBER { lSombra} ; IIF( !.F., s_oClass:AddMultiData(, .F., nScope + IIF( .F., 32, 0 ), { "lSombra" }, .F., .F. ), )
+   _HB_MEMBER { bPict} ; IIF( !.F., s_oClass:AddMultiData(,, nScope + IIF( .F., 32, 0 ), { "bPict" }, .F., .F. ), )
+   _HB_MEMBER { nSize} ; IIF( !.F., s_oClass:AddMultiData(, 0, nScope + IIF( .F., 32, 0 ), { "nSize" }, .F., .F. ), )
+   _HB_MEMBER { lSelect} ; IIF( !.F., s_oClass:AddMultiData(, .T., nScope + IIF( .F., 32, 0 ), { "lSelect" }, .F., .F. ), )
+   _HB_MEMBER { nPos} ; IIF( !.F., s_oClass:AddMultiData(, 0, nScope + IIF( .F., 32, 0 ), { "nPos" }, .F., .F. ), )
+   _HB_MEMBER { cDescrip} ; IIF( !.F., s_oClass:AddMultiData(,, nScope + IIF( .F., 32, 0 ), { "cDescrip" }, .F., .F. ), )
+   _HB_MEMBER { bFont} ; IIF( !.F., s_oClass:AddMultiData(,, nScope + IIF( .F., 32, 0 ), { "bFont" }, .F., .F. ), )
+   _HB_MEMBER { Cargo} ; IIF( !.F., s_oClass:AddMultiData(,, nScope + IIF( .F., 32, 0 ), { "Cargo" }, .F., .F. ), )
+   _HB_MEMBER { oParent} ; IIF( !.F., s_oClass:AddMultiData(,, nScope + IIF( .F., 32, 0 ), { "oParent" }, .F., .F. ), )
+   _HB_MEMBER { bStartTotal} ; IIF( !.F., s_oClass:AddMultiData(,, nScope + IIF( .F., 32, 0 ), { "bStartTotal" }, .F., .F. ), )
+
+
+   _HB_MEMBER New( bFld, cTitle, bPict, lSelect, nPad, lTotal, lSeparador, lSombra, nPos, nSize, cDescrip, Cargo) AS CLASS TInfCols; IIF( .F., s_oClass:ModMethod( "New", @TInfCols_New(), nScope + IIF( .T., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ), s_oClass:AddMethod( "New", @TInfCols_New(), nScope + IIF( .T., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ));
+
+   _HB_MEMBER lEditCol(); IIF( .F., s_oClass:ModMethod( "lEditCol", @TInfCols_lEditCol(), nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ), s_oClass:AddMethod( "lEditCol", @TInfCols_lEditCol(), nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ));
+
+   _HB_MEMBER Select(); IIF( .F., s_oClass:ModInline( "Select", {|Self | Self, ( ::lSelect := .T., ::lSave2Exit() ) }, nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ), s_oClass:AddInline( "Select", {|Self | Self, ( ::lSelect := .T., ::lSave2Exit() ) }, nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ) )
+
+   _HB_MEMBER UnSelect(); IIF( .F., s_oClass:ModInline( "UnSelect", {|Self | Self, ( ::lSelect := .F., ::lSave2Exit() ) }, nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ), s_oClass:AddInline( "UnSelect", {|Self | Self, ( ::lSelect := .F., ::lSave2Exit() ) }, nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ) )
+
+   _HB_MEMBER Toogle(); IIF( .F., s_oClass:ModInline( "Toogle", {|Self | Self, ( ::lSelect := !::lSelect, ::lSave2Exit() ) }, nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ), s_oClass:AddInline( "Toogle", {|Self | Self, ( ::lSelect := !::lSelect, ::lSave2Exit() ) }, nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ) )
+
+   _HB_MEMBER lSave2Exit(); IIF( .F., s_oClass:ModInline( "lSave2Exit", {|Self | Self, if( ::oParent <> nil, ::oParent:lSave2Exit := .T., ) }, nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ), s_oClass:AddInline( "lSave2Exit", {|Self | Self, if( ::oParent <> nil, ::oParent:lSave2Exit := .T., ) }, nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ) )
+
+; IF .F. ; __clsActive(s_oClass:hClass) ; s_oClass:Refresh() ; ELSE ; s_oClass:Create() ; END ; oClassInstance := __clsInst( s_oClass:hClass ) ; IF __ObjHasMsg( oClassInstance, "InitClass" ); oClassInstance:InitClass( hb_aParams() ) ; END ; ELSE ; oClassInstance := __clsInst( s_oClass:hClass ) ; END ; IF PCount() > 0 ; DIVERT TO (@DivertConstructorCall()) OF s_oClass ; END ; RETURN oClassInstance AS CLASS TInfCols ;
+
+
+
+UTILITY STATIC function TInfCols_New( bFld, cTitle, bPict, lSelect, nPad, lTotal, lSeparador, lSombra, nPos, nSize, cDescrip, bFont, Cargo, oParent) ; local Self AS CLASS TInfCols := QSelf() AS CLASS TInfCols
+
+   IIF( bFld == nil, bFld := {|| "" }, ) ;
+   IIF( cTitle == nil, cTitle := "", ) ;
+   IIF( bPict == nil, bPict := {|| "" }, ) ;
+   IIF( lSelect == nil, lSelect := .T., ) ;
+   IIF( nPad == nil, nPad := 1, ) ;
+   IIF( lTotal == nil, lTotal := .F., ) ;
+   IIF( lSeparador == nil, lSeparador := .F., ) ;
+   IIF( lSombra == nil, lSombra := .F., ) ;
+   IIF( nPos == nil, nPos := 0, ) ;
+   IIF( nSize == nil, nSize := 0, ) ;
+   IIF( cDescrip == nil, cDescrip := cTitle, ) ;
+   IIF( bFont == nil, bFont := {|| 2 }, ) ;
+
+   ::bFld               := bFld
+   ::cTitle             := cTitle
+   ::bPict              := bPict
+   ::lSelect            := lSelect
+   ::nPad               := nPad
+   ::lTotal             := lTotal
+   ::lSeparador         := lSeparador
+   ::lSombra            := lSombra
+   ::nPos               := nPos
+   ::nSize              := nSize
+   ::cDescrip           := cDescrip
+   ::bFont              := bFont
+   ::Cargo              := Cargo
+   ::oParent            := oParent
+
+RETURN Self
+
+
+
+UTILITY STATIC function TInfCols_lEditCol() ; local Self AS CLASS TInfCols := QSelf() AS CLASS TInfCols
+
+   local oDlg
+   local oJustificado
+   local aJustificado   := { "Izquierda", "Derecha" }
+   local cJustificado   := aJustificado[ ::nPad ]
+   local cTitle         := padr( ::cTitle, 50 )
+   local lSelect        := ::lSelect
+   local lTotal         := ::lTotal
+   local lSeparador     := ::lSeparador
+   local lSombra        := ::lSombra
+   local nSize          := ::nSize
+
+   oDlg = TDialog():New(,,,, ::cDescrip, "REP_COL",, .F.,,,,,, .F.,,,,,, .F., )
+
+
+
+   TGet():ReDefine( 100, { | u | If( PCount()==0, cTitle, cTitle:= u ) }, oDlg,,,,,,,,, .F.,,, .F., .F.,,,,,,, "cTitle", )
+
+
+
+
+
+   TGet():ReDefine( 110, { | u | If( PCount()==0, nSize, nSize:= u ) }, oDlg,, "@E 999",,,,,,, .F.,,, .F., .T.,,,,,,, "nSize", )
+
+
+
+
+   oJustificado := TComboBox():ReDefine( 120, { | u | If( PCount()==0, cJustificado, cJustificado:= u ) }, aJustificado, oDlg,,,,,,, .F.,,,,,, )
+
+
+
+   TCheckBox():ReDefine( 130, { | u | If( PCount()==0, lTotal, lTotal:= u ) }, oDlg,,,,,,, .F.,, )
+
+
+
+   TCheckBox():ReDefine( 140, { | u | If( PCount()==0, lSombra, lSombra:= u ) }, oDlg,,,,,,, .F.,, )
+
+
+
+   TCheckBox():ReDefine( 150, { | u | If( PCount()==0, lSeparador, lSeparador:= u ) }, oDlg,,,,,,, .F.,, )
+
+
+
+
+    TButton():ReDefine( 1, {||( oDlg:end( 1 ) )}, oDlg,,, .F.,,,, .F. )
+
+
+
+
+    TButton():ReDefine( 2, {||( oDlg:end() )}, oDlg,,, .F.,,,, .F. )
+
+   oDlg:Activate( oDlg:bLClicked, oDlg:bMoved, oDlg:bPainted, .T.,,,, oDlg:bRClicked,,, )
+
+   if oDlg:nResult == 1
+
+      ::nPad            := oJustificado:nAt
+      ::cTitle          := Rtrim( cTitle )
+      ::lSelect         := lSelect
+      ::lTotal          := lTotal
+      ::lSeparador      := lSeparador
+      ::lSombra         := lSombra
+      ::nSize           := nSize
+
+      ::lSave2Exit()
+
+   end
+
+RETURN ( oDlg:nResult == 1 )

@@ -1,0 +1,536 @@
+#line 112 "hbclass.ch"
+   DYNAMIC DivertConstructorCall
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+DECLARE HBClass  New( cName AS String, OPTIONAL SuperParams ) AS CLASS HBClass  Create() AS Object  Instance() AS Object  AddClsMethod( cName AS String, @MethodName(), nScope AS Numeric, n2 AS Numeric, n3 AS Numeric )  AddDelegate( cName AS String, cDelegate AS String, cObject AS String, nScope AS Numeric, lPersistent AS LOGICAL )  AddMultiClsData( cType AS String, uVal, nScope AS Numeric, aDatas AS Array OF String )  AddMultiData( cType AS String, uVal, nScope AS Numeric, aDatas AS Array OF String, x AS LOGICAL, lPer AS LOGICAL )  AddMethod( cName AS String, @MethodName(), nScope AS Numeric, lPersistent AS LOGICAL )  AddInLine( cName AS String, bBlock AS CodeBlock, nScope AS Numeric, lPersistent AS LOGICAL )  AddVirtual( cName AS String )  ModMethod( cName AS String, @MethodName(), nScope AS Numeric, lPersistent AS LOGICAL )  ModClsMethod( cName AS String, @MethodName(), nScope AS Numeric )  ModInline( cName AS String, bBlock AS CodeBlock, nScope AS Numeric, lPersistent AS LOGICAL )  SetOnError( @MethodName() )
+#line 85 "\Fwh1204\Include\FiveWin.Ch"
+   EXTERNAL GetProcAdd
+   EXTERNAL TActiveX
+
+
+
+
+extern errorsys
+#line 8 ".\Prg\TipoExpediente.prg"
+Function StartTTipoExpediente()
+
+   local oExpediente
+
+   oExpediente    := TTipoExpediente():New( cPatEmp(), oWnd(), "04011" )
+
+   if !Empty( oExpediente )
+      oExpediente:Activate()
+   end
+
+Return nil
+
+
+
+_HB_CLASS TTipoExpediente ; UTILITY FUNCTION TTipoExpediente(...); static s_oClass ; local oClassInstance ; local nScope ; nScope := 1 ; if s_oClass == NIL ; s_oClass := IIF(.F.,, HBClass():New( "TTipoExpediente" , {TMasDet():classh} ) ) ; ;
+
+   _HB_MEMBER { cMru} ; IIF( !.F., s_oClass:AddMultiData(, "Folders_16", nScope + IIF( .F., 32, 0 ), { "cMru" }, .F., .F. ), )
+   _HB_MEMBER { cBitmap} ; IIF( !.F., s_oClass:AddMultiData(, ( 197 + ( 227 * 256 ) + ( 9 * 65536 ) ), nScope + IIF( .F., 32, 0 ), { "cBitmap" }, .F., .F. ), )
+
+   _HB_MEMBER { oSubTipoExpediente} ; IIF( !.F., s_oClass:AddMultiData(,, nScope + IIF( .F., 32, 0 ), { "oSubTipoExpediente" }, .F., .F. ), )
+
+   _HB_MEMBER New( cPath, oWndParent, oMenuItem); IIF( .F., s_oClass:ModMethod( "New", @TTipoExpediente_New(), nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ), s_oClass:AddMethod( "New", @TTipoExpediente_New(), nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ));
+   _HB_MEMBER CreateInit( cPath); IIF( .F., s_oClass:ModMethod( "CreateInit", @TTipoExpediente_CreateInit(), nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ), s_oClass:AddMethod( "CreateInit", @TTipoExpediente_CreateInit(), nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ));
+   _HB_MEMBER Create( cPath); IIF( .F., s_oClass:ModMethod( "Create", @TTipoExpediente_Create(), nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ), s_oClass:AddMethod( "Create", @TTipoExpediente_Create(), nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ));
+
+   _HB_MEMBER OpenFiles( lExclusive); IIF( .F., s_oClass:ModMethod( "OpenFiles", @TTipoExpediente_OpenFiles(), nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ), s_oClass:AddMethod( "OpenFiles", @TTipoExpediente_OpenFiles(), nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ));
+   _HB_MEMBER OpenService( lExclusive); IIF( .F., s_oClass:ModMethod( "OpenService", @TTipoExpediente_OpenService(), nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ), s_oClass:AddMethod( "OpenService", @TTipoExpediente_OpenService(), nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ));
+
+   _HB_MEMBER CloseFiles(); IIF( .F., s_oClass:ModMethod( "CloseFiles", @TTipoExpediente_CloseFiles(), nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ), s_oClass:AddMethod( "CloseFiles", @TTipoExpediente_CloseFiles(), nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ));
+
+   _HB_MEMBER DefineFiles(); IIF( .F., s_oClass:ModMethod( "DefineFiles", @TTipoExpediente_DefineFiles(), nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ), s_oClass:AddMethod( "DefineFiles", @TTipoExpediente_DefineFiles(), nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ));
+
+   _HB_MEMBER Resource( nMode); IIF( .F., s_oClass:ModMethod( "Resource", @TTipoExpediente_Resource(), nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ), s_oClass:AddMethod( "Resource", @TTipoExpediente_Resource(), nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ));
+
+   _HB_MEMBER lPreSave( oGet, nMode); IIF( .F., s_oClass:ModMethod( "lPreSave", @TTipoExpediente_lPreSave(), nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ), s_oClass:AddMethod( "lPreSave", @TTipoExpediente_lPreSave(), nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ));
+
+   _HB_MEMBER BuscarEspecial(); IIF( .F., s_oClass:ModMethod( "BuscarEspecial", @TTipoExpediente_BuscarEspecial(), nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ), s_oClass:AddMethod( "BuscarEspecial", @TTipoExpediente_BuscarEspecial(), nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ));
+
+; IF .F. ; __clsActive(s_oClass:hClass) ; s_oClass:Refresh() ; ELSE ; s_oClass:Create() ; END ; oClassInstance := __clsInst( s_oClass:hClass ) ; IF __ObjHasMsg( oClassInstance, "InitClass" ); oClassInstance:InitClass( hb_aParams() ) ; END ; ELSE ; oClassInstance := __clsInst( s_oClass:hClass ) ; END ; IF PCount() > 0 ; DIVERT TO (@DivertConstructorCall()) OF s_oClass ; END ; RETURN oClassInstance AS CLASS TTipoExpediente ;
+
+
+
+UTILITY STATIC function TTipoExpediente_New( cPath, oWndParent, oMenuItem) ; local Self AS CLASS TTipoExpediente := QSelf() AS CLASS TTipoExpediente
+
+   IIF( cPath == nil, cPath := cPatEmp(), ) ;
+   IIF( oWndParent == nil, oWndParent := GetWndFrame(), ) ;
+
+   if oMenuItem <> nil .AND. ::nLevel == nil
+      ::nLevel          := nLevelUsr( oMenuItem )
+   else
+      ::nLevel          := 1
+   end
+
+   if nAnd( ::nLevel, 1 ) <> 0
+      msgStop( "Acceso no permitido." )
+      return nil
+   end
+
+   ::cPath              := cPath
+   ::oWndParent         := oWndParent
+
+   ::bFirstKey          := {|| ::oDbf:cCodTip }
+
+   ::oSubTipoExpediente := TDetTipoExpediente():New( cPath, Self )
+   ::AddDetail( ::oSubTipoExpediente )
+
+RETURN ( Self )
+
+
+
+UTILITY STATIC function TTipoExpediente_CreateInit( cPath) ; local Self AS CLASS TTipoExpediente := QSelf() AS CLASS TTipoExpediente
+
+   IIF( cPath == nil, cPath := cPatEmp(), ) ;
+
+   ::cPath              := cPath
+
+   ::bFirstKey          := {|| ::oDbf:cCodTip }
+
+   ::oSubTipoExpediente := TDetTipoExpediente():New( cPath, Self )
+
+   ::AddDetail( ::oSubTipoExpediente )
+
+RETURN ( Self )
+
+
+
+UTILITY STATIC function TTipoExpediente_Create( cPath) ; local Self AS CLASS TTipoExpediente := QSelf() AS CLASS TTipoExpediente
+
+   IIF( cPath == nil, cPath := cPatEmp(), ) ;
+
+   ::cPath              := cPath
+   ::oDbf               := nil
+
+RETURN ( Self )
+
+
+
+UTILITY STATIC function TTipoExpediente_OpenFiles( lExclusive) ; local Self AS CLASS TTipoExpediente := QSelf() AS CLASS TTipoExpediente
+
+   local lOpen          := .T.
+   local oError
+   local oBlock
+
+   IIF( lExclusive == nil, lExclusive := .F., ) ;
+
+   oBlock               := ErrorBlock( {| oError | ApoloBreak( oError ) } )
+   BEGIN SEQUENCE
+
+      if Empty( ::oDbf )
+         ::DefineFiles()
+      end
+
+      ::oDbf:Activate( .F., !( lExclusive ) )
+
+      ::OpenDetails()
+
+   RECOVER USING oError
+
+      msgStop( ErrorMessage( oError ), "Imposible abrir todas las bases de datos" )
+
+      ::CloseFiles()
+
+      lOpen             := .F.
+
+   end
+
+   ErrorBlock( oBlock )
+
+RETURN ( lOpen )
+
+
+
+UTILITY STATIC function TTipoExpediente_OpenService( lExclusive) ; local Self AS CLASS TTipoExpediente := QSelf() AS CLASS TTipoExpediente
+
+   local lOpen          := .T.
+   local oBlock         := ErrorBlock( {| oError | ApoloBreak( oError ) } )
+
+   IIF( lExclusive == nil, lExclusive := .F., ) ;
+
+   BEGIN SEQUENCE
+
+      if Empty( ::oDbf )
+         ::DefineFiles()
+      end
+
+      ::oDbf:Activate( .F., !( lExclusive ) )
+
+   RECOVER
+
+      msgStop( "Imposible abrir todas las bases de datos" )
+
+      ::CloseFiles()
+
+      lOpen             := .F.
+
+   end
+
+   ErrorBlock( oBlock )
+
+RETURN ( lOpen )
+
+
+
+UTILITY STATIC function TTipoExpediente_CloseFiles() ; local Self AS CLASS TTipoExpediente := QSelf() AS CLASS TTipoExpediente
+
+   if ::oDbf <> nil .AND. ::oDbf:Used()
+      ::oDbf:End()
+      ::oDbf            := nil
+   end
+
+   ::CloseDetails()
+
+RETURN .T.
+
+
+
+UTILITY STATIC function TTipoExpediente_DefineFiles( cPath, cDriver) ; local Self AS CLASS TTipoExpediente := QSelf() AS CLASS TTipoExpediente
+
+   IIF( cPath == nil, cPath := ::cPath, ) ;
+   IIF( cDriver == nil, cDriver := cDriver(), ) ;
+
+   ::oDbf := DbfServer( "TipExpT.Dbf", "TipExpT" ):New( "TipExpT.Dbf", "TipExpT", ( cDriver ), "Tipos de expedientes", ( cPath ) )
+
+      ::oDbf:AddField( "cCodTip", "C", 3, 0,,,,, "Código", .F., 100, .F., {} )
+      ::oDbf:AddField( "cNomTip", "C", 35, 0,,,,, "Nombre", .F., 400, .F., {} )
+
+      ::oDbf:AddIndex( "cCodTip", "TipExpT.Cdx", "cCodTip",,, .F., .F., "Código",,, .T., .F. )
+      ::oDbf:AddIndex( "cNomTip", "TipExpT.Cdx", "Upper( cNomTip )",,, .F., .F., "Nombre",,, .T., .F. )
+
+
+
+RETURN ( ::oDbf )
+
+
+
+UTILITY STATIC function TTipoExpediente_Resource( nMode) ; local Self AS CLASS TTipoExpediente := QSelf() AS CLASS TTipoExpediente
+
+    local oDlg
+   local oGet
+   local oBrw
+
+   oDlg = TDialog():New(,,,, LblTitle( nMode ) + "tipo de expediente", "TipoExpediente",, .F.,,,,,, .F.,,,,,, .F., )
+
+
+
+
+
+
+      oGet := TGetHlp():ReDefine( 110, { | u | If( PCount()==0, ::oDbf:cCodTip, ::oDbf:cCodTip:= u ) }, oDlg,, "@!", {||    ( NotValid( oGet, ::oDbf:cAlias, .T., "0" ) )},,,,,, .F., {||     ( nMode == 1 )},, .F., .F.,,,,,, nil,,, )
+
+
+
+
+      TGetHlp():ReDefine( 120, { | u | If( PCount()==0, ::oDbf:cNomTip, ::oDbf:cNomTip:= u ) }, oDlg,,,,,,,,, .F., {||     ( nMode <> 3 )},, .F., .F.,,,,,, nil,,, )
+
+
+
+
+
+
+
+
+
+        TButton():ReDefine( 500, {||( ::oSubTipoExpediente:Append( oBrw ) )}, oDlg,,, .F., {||         ( nMode <> 3 )},,, .F. )
+
+
+
+
+
+        TButton():ReDefine( 501, {||( ::oSubTipoExpediente:Edit( oBrw ) )}, oDlg,,, .F., {||         ( nMode <> 3 )},,, .F. )
+
+
+
+
+        TButton():ReDefine( 502, {||( ::oSubTipoExpediente:Zoom() )}, oDlg,,, .F.,,,, .F. )
+
+
+
+
+
+      TButton():ReDefine( 503, {||( ::oSubTipoExpediente:Del( oBrw ) )}, oDlg,,, .F., {||         ( nMode <> 3 )},,, .F. )
+
+      oBrw                 := IXBrowse():New( oDlg )
+
+      oBrw:bClrSel         := {|| { 0, ( 229 + ( 229 * 256 ) + ( 229 * 65536 ) ) } }
+      oBrw:bClrSelFocus    := {|| { 0, ( 167 + ( 205 * 256 ) + ( 240 * 65536 ) ) } }
+
+      oBrw:SetoDbf( ::oSubTipoExpediente:oDbfVir )
+
+      oBrw:nMarqueeStyle   := 5
+      oBrw:cName           := "Lineas subtipos de expedientes"
+
+      with object ( oBrw:AddCol() )
+         :cHeader          := "Código"
+         :bStrData         := {|| ::oSubTipoExpediente:oDbfVir:FieldGetByName( "cCodSub" ) }
+         :nWidth           := 80
+      end
+
+      with object ( oBrw:AddCol() )
+         :cHeader          := "Nombre"
+         :bStrData         := {|| ::oSubTipoExpediente:oDbfVir:FieldGetByName( "cNomSub" ) }
+         :nWidth           := 280
+      end
+
+      if ( nMode <> 3 )
+         oBrw:bLDblClick   := {|| ::oSubTipoExpediente:Edit( oBrw ) }
+      end
+
+      oBrw:CreateFromResource( 200 )
+
+
+
+
+
+      TButton():ReDefine( 1, {||( ::lPreSave( nMode, oGet, oDlg ) )}, oDlg,,, .F., {||         ( nMode <> 3 )},,, .F. )
+
+
+
+
+
+        TButton():ReDefine( 2, {||( oDlg:end() )}, oDlg,,, .F.,,,, .T. )
+
+
+
+
+
+      TButton():ReDefine( 559, {||( MsgInfo( "Ayuda no definida" ) )}, oDlg,,, .F.,,,, .T. )
+
+      if nMode <> 3
+         oDlg:AddFastKey( 113, {|| ::oSubTipoExpediente:Append( oBrw ) } )
+         oDlg:AddFastKey( 114, {|| ::oSubTipoExpediente:Edit( oBrw ) } )
+         oDlg:AddFastKey( 115, {|| ::oSubTipoExpediente:Del( oBrw ) } )
+         oDlg:AddFastKey( 116, {|| ::lPreSave( nMode, oGet, oDlg ) } )
+      end
+
+      oDlg:bStart := {|| oBrw:LoadData() }
+
+    oDlg:Activate( oDlg:bLClicked, oDlg:bMoved, oDlg:bPainted, .T.,,,, oDlg:bRClicked,,, )
+
+RETURN ( oDlg:nResult == 1 )
+
+
+
+UTILITY STATIC function TTipoExpediente_lPreSave( nMode, oGet, oDlg) ; local Self AS CLASS TTipoExpediente := QSelf() AS CLASS TTipoExpediente
+
+   if nMode == 1 .OR. nMode == 4
+
+      if Empty( ::oDbf:cCodTip )
+         MsgStop( "Código del tipo de expediente no puede estar vacío" )
+         oGet:SetFocus()
+         return .F.
+      end
+
+      if ::oDbf:SeekInOrd( ::oDbf:cCodTip, "cCodTip" )
+         msgStop( "Código existente" )
+         oGet:SetFocus()
+         return .F.
+      end
+
+   end
+
+   if Empty( ::oDbf:cNomTip )
+      MsgStop( "La descripción del tipo no puede estar vacía." )
+      Return .F.
+   end
+
+   oDlg:end( 1 )
+
+Return .T.
+
+
+
+UTILITY STATIC function TTipoExpediente_BuscarEspecial( oGetTip, oGetSub, cField) ; local Self AS CLASS TTipoExpediente := QSelf() AS CLASS TTipoExpediente
+
+   local oDlg
+   local nOrd
+   local oField
+   local oBrwTipo
+   local oBrwSubTipo
+   local cDlgName
+   local cCbxIndex
+   local oCbxIndex
+   local aCbxIndex
+   local oGetSearch
+   local cGetSearch
+
+
+
+
+
+   if Empty( ::oDbf ) .OR. !::oDbf:Used()
+      if !::OpenFiles()
+         Return .F.
+      end
+   end
+
+
+
+
+
+   cGetSearch     := Space( 100 )
+
+   cDlgName       := "Buscando " + Rtrim( Lower( ::oDbf:cComment ) )
+   aCbxIndex      := ::oDbf:aCommentIndex()
+
+   nOrd           := 2
+   nOrd           := Min( Max( nOrd, 1 ), len( aCbxIndex ) )
+   cCbxIndex      := aCbxIndex[ nOrd ]
+
+
+
+
+
+   ::oDbf:OrdSetFocus( nOrd )
+   ::oDbf:GoTop()
+
+   ::oSubTipoExpediente:oDbf:OrdSetFocus( "cCodTip" )
+
+
+
+
+
+   oDlg                 := TDialog():New( , , , , cDlgName, "HelpTipo" )
+
+   oGetSearch           := TGet():ReDefine( 106, { | u | if( PCount() == 0, cGetSearch, cGetSearch := u ) }, oDlg, , "@!",,,,,,, .F.,,, .F., .F. )
+   oGetSearch:bChange   := {|nKey, nFlags| AutoSeek( nKey, nFlags, oGetSearch, oBrwTipo, ::oDbf ) }
+
+   oCbxIndex            := TComboBox():ReDefine( 107, { | u | if( PCount() == 0, cCbxIndex, cCbxIndex := u ) }, aCbxIndex, oDlg )
+   oCbxIndex:bChange    := {|| ::oDbf:OrdSetFocus( oCbxIndex:nAt ), oBrwTipo:Refresh(), oGetSearch:SetFocus() }
+
+
+
+
+
+   oBrwTipo                := IXBrowse():New( oDlg )
+
+   oBrwTipo:bClrSel        := {|| { 0, ( 229 + ( 229 * 256 ) + ( 229 * 65536 ) ) } }
+   oBrwTipo:bClrSelFocus   := {|| { 0, ( 167 + ( 205 * 256 ) + ( 240 * 65536 ) ) } }
+
+   oBrwTipo:nMarqueeStyle  := 5
+   oBrwTipo:cName          := cDlgName
+
+   oBrwTipo:bChange        := {|| ::oSubTipoExpediente:oDbf:OrdScope( ::oDbf:cCodTip ), ::oSubTipoExpediente:oDbf:GoTop(), oBrwSubTipo:Refresh() }
+
+   oBrwTipo:oSeek          := oGetSearch
+
+   oBrwTipo:bLDblClick     := {|| oDlg:end( 1 ) }
+   oBrwTipo:bRClicked      := {| nRow, nCol, nFlags | oBrwTipo:RButtonDown( nRow, nCol, nFlags ) }
+
+   ::oDbf:SetBrowse( oBrwTipo )
+
+   with object ( oBrwTipo:AddCol() )
+      :cHeader       := "Código"
+      :nWidth        := 80
+      :bEditValue    := {|| ::oDbf:cCodTip }
+      :cSortOrder    := "cCodTip"
+      :bLClickHeader := {| nMRow, nMCol, nFlags, oCol | oCbxIndex:Set( oCol:cHeader ), oBrwTipo:GoTop() }
+   end
+
+   with object ( oBrwTipo:AddCol() )
+      :cHeader       := "Nombre"
+      :nWidth        := 180
+      :bEditValue    := {|| ::oDbf:cNomTip }
+      :cSortOrder    := "cNomTip"
+      :bLClickHeader := {| nMRow, nMCol, nFlags, oCol | oCbxIndex:Set( oCol:cHeader ), oBrwTipo:GoTop() }
+   end
+
+   oBrwTipo:CreateFromResource( 103 )
+
+
+
+
+
+   oBrwSubTipo                 := IXBrowse():New( oDlg )
+
+   oBrwSubTipo:nMarqueeStyle   := 5
+   oBrwSubTipo:cName           := cDlgName
+   oBrwSubTipo:bSeek           := {|c| ::oSubTipoExpediente:oDbf:Seek( c ) }
+
+   oBrwSubTipo:oSeek           := oGetSearch
+
+   oBrwSubTipo:bLDblClick      := {|| oDlg:end( 1 ) }
+   oBrwSubTipo:bRClicked       := {| nRow, nCol, nFlags | oBrwSubTipo:RButtonDown( nRow, nCol, nFlags ) }
+
+   ::oSubTipoExpediente:oDbf:SetBrowse( oBrwSubTipo )
+
+   with object ( oBrwSubTipo:AddCol() )
+      :cHeader       := "Código"
+      :nWidth        := 80
+      :bEditValue    := {|| ::oSubTipoExpediente:oDbf:cCodSub }
+      :cSortOrder    := "cCodTip"
+      :bLClickHeader := {| nMRow, nMCol, nFlags, oCol | oCbxIndex:Set( oCol:cHeader ), oBrwSubTipo:GoTop() }
+   end
+
+   with object ( oBrwSubTipo:AddCol() )
+      :cHeader       := "Nombre"
+      :nWidth        := 180
+      :bEditValue    := {|| ::oSubTipoExpediente:oDbf:cNomSub }
+      :cSortOrder    := "cNomTip"
+      :bLClickHeader := {| nMRow, nMCol, nFlags, oCol | oCbxIndex:Set( oCol:cHeader ), oBrwSubTipo:GoTop() }
+   end
+
+   oBrwSubTipo:CreateFromResource( 105 )
+
+
+
+
+
+   TButton():ReDefine( 500, {|| ::Append( oBrwTipo ) }, oDlg, , , .F., {|| !IsReport() } )
+
+   TButton():ReDefine( 501, {|| ::Edit( oBrwTipo ) }, oDlg, , , .F., {|| !IsReport() } )
+
+   TButton():ReDefine( 1, {|| oDlg:end( 1 ) }, oDlg )
+
+   TButton():ReDefine( 2, {|| oDlg:end() }, oDlg )
+
+   oDlg:bStart       := {|| oBrwTipo:Load(), oGetSearch:SetFocus() }
+
+   if !IsReport()
+      oDlg:AddFastKey( 113, {|| ::Append( oBrwTipo ) } )
+      oDlg:AddFastKey( 114, {|| ::Edit( oBrwTipo ) } )
+   end
+
+   oDlg:AddFastKey( 116, {|| oDlg:end( 1 ) } )
+
+   oDlg:bStart       := {|| ::oSubTipoExpediente:oDbf:OrdScope( ::oDbf:cCodTip ), ::oSubTipoExpediente:oDbf:GoTop(), oBrwSubTipo:Refresh() }
+
+   oDlg:Activate( , , , .T. )
+
+
+
+
+
+   if oDlg:nResult == 1
+
+      if oGetTip <> nil .AND. !Empty( ::oDbf:cCodTip )
+         oGetTip:cText( ::oDbf:cCodTip )
+         oGetTip:lValid()
+      end
+
+      if oGetSub <> nil .AND. !Empty( ::oSubTipoExpediente:oDbf:cCodSub )
+         oGetSub:cText( ::oSubTipoExpediente:oDbf:cCodSub )
+         oGetSub:lValid()
+      end
+
+   end
+
+RETURN nil

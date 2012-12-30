@@ -1,0 +1,266 @@
+#line 112 "hbclass.ch"
+   DYNAMIC DivertConstructorCall
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+DECLARE HBClass  New( cName AS String, OPTIONAL SuperParams ) AS CLASS HBClass  Create() AS Object  Instance() AS Object  AddClsMethod( cName AS String, @MethodName(), nScope AS Numeric, n2 AS Numeric, n3 AS Numeric )  AddDelegate( cName AS String, cDelegate AS String, cObject AS String, nScope AS Numeric, lPersistent AS LOGICAL )  AddMultiClsData( cType AS String, uVal, nScope AS Numeric, aDatas AS Array OF String )  AddMultiData( cType AS String, uVal, nScope AS Numeric, aDatas AS Array OF String, x AS LOGICAL, lPer AS LOGICAL )  AddMethod( cName AS String, @MethodName(), nScope AS Numeric, lPersistent AS LOGICAL )  AddInLine( cName AS String, bBlock AS CodeBlock, nScope AS Numeric, lPersistent AS LOGICAL )  AddVirtual( cName AS String )  ModMethod( cName AS String, @MethodName(), nScope AS Numeric, lPersistent AS LOGICAL )  ModClsMethod( cName AS String, @MethodName(), nScope AS Numeric )  ModInline( cName AS String, bBlock AS CodeBlock, nScope AS Numeric, lPersistent AS LOGICAL )  SetOnError( @MethodName() )
+#line 85 "\Fwh1204\Include\FiveWin.Ch"
+   EXTERNAL GetProcAdd
+   EXTERNAL TActiveX
+
+
+
+
+extern errorsys
+#line 7 ".\Prg\TInvitacion.prg"
+_HB_CLASS TInvitacion ; UTILITY FUNCTION TInvitacion(...); static s_oClass ; local oClassInstance ; local nScope ; nScope := 1 ; if s_oClass == NIL ; s_oClass := IIF(.F.,, HBClass():New( "TInvitacion" , {TMANT():classh} ) ) ; ;
+
+   _HB_MEMBER { cMru} ; IIF( !.F., s_oClass:AddMultiData(, "Masks_16", nScope + IIF( .F., 32, 0 ), { "cMru" }, .F., .F. ), )
+
+
+
+
+
+
+
+   _HB_MEMBER {AS ARRAY aResource} ; IIF( !.F., s_oClass:AddMultiClsData("ARRAY", {   "COCKTAIL_16"        , "DUDE3_16"           , "SECURITY_AGENT_16"  , "USER_HEADPHONES_16" , "WOMAN2_16"          , "TICKET_GREEN_16"    , "TICKET_RED_16"       }, nScope + IIF( .F., 32, 0 ) + 64, { "aResource" }, .F. ), )
+
+
+
+
+
+
+
+   _HB_MEMBER {AS ARRAY aBigResource} ; IIF( !.F., s_oClass:AddMultiClsData("ARRAY", {   "COCKTAIL_48"        , "DUDE3_48"           , "SECURITY_AGENT_48"  , "USER_HEADPHONES_48" , "WOMAN2_48"          , "TICKET_GREEN_48"    , "TICKET_RED_48"       }, nScope + IIF( .F., 32, 0 ) + 64, { "aBigResource" }, .F. ), )
+
+
+
+
+
+
+
+
+   _HB_MEMBER {AS ARRAY aImagen} ; IIF( !.F., s_oClass:AddMultiClsData("ARRAY", {   "Copas"              , "Cliente"            , "Seguridad"          , "Deejay"             , "Camarera"           , "Entrada tipo 1"     , "Entrada tipo 2"      }, nScope + IIF( .F., 32, 0 ) + 64, { "aImagen" }, .F. ), )
+
+   _HB_MEMBER Create( cPath) AS CLASS TInvitacion; IIF( .F., s_oClass:ModMethod( "Create", @TInvitacion_Create(), nScope + IIF( .T., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ), s_oClass:AddMethod( "Create", @TInvitacion_Create(), nScope + IIF( .T., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ));
+
+   _HB_MEMBER New( cPath, oWndParent, oMenuItem) AS CLASS TInvitacion; IIF( .F., s_oClass:ModMethod( "New", @TInvitacion_New(), nScope + IIF( .T., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ), s_oClass:AddMethod( "New", @TInvitacion_New(), nScope + IIF( .T., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ));
+
+   _HB_MEMBER OpenFiles( lExclusive); IIF( .F., s_oClass:ModMethod( "OpenFiles", @TInvitacion_OpenFiles(), nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ), s_oClass:AddMethod( "OpenFiles", @TInvitacion_OpenFiles(), nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ));
+   _HB_MEMBER OpenService(lExclusive); IIF( .F., s_oClass:ModMethod( "OpenService", @TInvitacion_OpenFiles(), nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ) ), s_oClass:AddMethod( "OpenService", @TInvitacion_OpenFiles(), nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ) ) );
+
+   _HB_MEMBER DefineFiles(); IIF( .F., s_oClass:ModMethod( "DefineFiles", @TInvitacion_DefineFiles(), nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ), s_oClass:AddMethod( "DefineFiles", @TInvitacion_DefineFiles(), nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ));
+
+   _HB_MEMBER Resource( nMode); IIF( .F., s_oClass:ModMethod( "Resource", @TInvitacion_Resource(), nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ), s_oClass:AddMethod( "Resource", @TInvitacion_Resource(), nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ));
+
+   _HB_MEMBER lPreSave(); IIF( .F., s_oClass:ModMethod( "lPreSave", @TInvitacion_lPreSave(), nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ), s_oClass:AddMethod( "lPreSave", @TInvitacion_lPreSave(), nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ));
+   _HB_MEMBER cImagen(); IIF( .F., s_oClass:ModInline( "cImagen", {|Self | Self, ( ::aImagen[ Min( Max( ::oDbf:nImgInv, 1 ), len( ::aImagen ) ) ] ) }, nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ), s_oClass:AddInline( "cImagen", {|Self | Self, ( ::aImagen[ Min( Max( ::oDbf:nImgInv, 1 ), len( ::aImagen ) ) ] ) }, nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ) )
+   _HB_MEMBER cBigResource(); IIF( .F., s_oClass:ModInline( "cBigResource", {|Self | Self, ( ::aBigResource[ Min( Max( ::oDbf:nImgInv, 1 ), len( ::aBigResource ) ) ] ) }, nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ), s_oClass:AddInline( "cBigResource", {|Self | Self, ( ::aBigResource[ Min( Max( ::oDbf:nImgInv, 1 ), len( ::aBigResource ) ) ] ) }, nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ) )
+
+; IF .F. ; __clsActive(s_oClass:hClass) ; s_oClass:Refresh() ; ELSE ; s_oClass:Create() ; END ; oClassInstance := __clsInst( s_oClass:hClass ) ; IF __ObjHasMsg( oClassInstance, "InitClass" ); oClassInstance:InitClass( hb_aParams() ) ; END ; ELSE ; oClassInstance := __clsInst( s_oClass:hClass ) ; END ; IF PCount() > 0 ; DIVERT TO (@DivertConstructorCall()) OF s_oClass ; END ; RETURN oClassInstance AS CLASS TInvitacion ;
+
+
+
+UTILITY STATIC function TInvitacion_New( cPath, oWndParent, oMenuItem) ; local Self AS CLASS TInvitacion := QSelf() AS CLASS TInvitacion
+
+   IIF( cPath == nil, cPath := cPatGrp(), ) ;
+   IIF( oWndParent == nil, oWndParent := GetWndFrame(), ) ;
+
+   if oMenuItem <> nil .AND. ::nLevel == nil
+      ::nLevel          := nLevelUsr( oMenuItem )
+   else
+      ::nLevel          := 0
+   end
+
+
+
+
+
+   if oWndParent <> nil
+      oWndParent:CloseAll()
+   end
+
+   ::cPath              := cPath
+   ::oWndParent         := oWndParent
+   ::oDbf               := nil
+
+   ::lCreateShell       := .F.
+   ::cHtmlHelp          := "Invitaciones"
+
+RETURN ( Self )
+
+
+
+UTILITY STATIC function TInvitacion_Create( cPath) ; local Self AS CLASS TInvitacion := QSelf() AS CLASS TInvitacion
+
+   IIF( cPath == nil, cPath := cPatGrp(), ) ;
+
+   ::cPath              := cPath
+   ::oDbf               := nil
+
+RETURN ( Self )
+
+
+
+UTILITY STATIC function TInvitacion_OpenFiles(lExclusive) ; local Self AS CLASS TInvitacion := QSelf() AS CLASS TInvitacion
+
+   local lOpen          := .T.
+   local oError
+   local oBlock
+
+   IIF( lExclusive == nil, lExclusive := .F., ) ;
+
+   oBlock               := ErrorBlock( {| oError | ApoloBreak( oError ) } )
+   BEGIN SEQUENCE
+
+      if Empty( ::oDbf )
+         ::DefineFiles()
+      end
+
+      ::oDbf:Activate( .F., !( lExclusive ) )
+
+   RECOVER USING oError
+
+      lOpen             := .F.
+      msgStop( ErrorMessage( oError ), "Imposible abrir todas las bases de datos de invitaciones" )
+
+   end
+   ErrorBlock( oBlock )
+
+   if !lOpen
+      ::CloseFiles()
+   end
+
+RETURN ( lOpen )
+
+
+
+UTILITY STATIC function TInvitacion_DefineFiles( cPath, cDriver) ; local Self AS CLASS TInvitacion := QSelf() AS CLASS TInvitacion
+
+   IIF( cPath == nil, cPath := ::cPath, ) ;
+   IIF( cDriver == nil, cDriver := cDriver(), ) ;
+
+   ::oDbf := DbfServer( "Invita.Dbf", "INVITA" ):New( "Invita.Dbf", "INVITA", ( cDriver ), "Invitaciones", ( cPath ) )
+
+      ::oDbf:AddField( "cCodInv", "C", 2, 0,,,,, "Código", .F., 80, .F., {} )
+      ::oDbf:AddField( "cNomInv", "C", 30, 0,,,,, "Nombre", .F., 200, .F., {} )
+      ::oDbf:AddField( "nImgInv", "N", 2, 0,,,,, "", .F., 0, .T., {} )
+      ::oDbf:AddField( "lPreInv", "L", 1, 0,,,,, "", .F., 0, .T., {} )
+      ::oDbf:AddField( "nPreInv", "N", 16, 6,,,,, "", .F., 0, .T., {} )
+
+      ::oDbf:AddIndex( "cCodInv", "Invita.Cdx", "CCODINV",,, .F., .F., "Código",,, .T., .F. )
+      ::oDbf:AddIndex( "cNomInv", "Invita.Cdx", "CNOMINV",,, .F., .F., "Nombre",,, .T., .F. )
+
+
+
+RETURN ( ::oDbf )
+
+
+
+UTILITY STATIC function TInvitacion_Resource( nMode) ; local Self AS CLASS TInvitacion := QSelf() AS CLASS TInvitacion
+
+   local oDlg
+   local oGet
+   local oGet2
+   local oChkPre
+   local oGetPre
+   local oCmbImg
+   local cCmbImg     := ::cImagen()
+
+   ::lLoadDivisa()
+
+   oDlg = TDialog():New(,,,, LblTitle( nMode ) + "invitaciones", "INVITACIONES",, .F.,,,,,, .F.,,,,,, .F., )
+
+
+
+
+
+
+      oGet := TGetHlp():ReDefine( 100, { | u | If( PCount()==0, ::oDbf:cCodInv, ::oDbf:cCodInv:= u ) }, oDlg,, "@!", {||    NotValid( oGet, ::oDbf:cAlias, .T., "0" )},,,,,, .T., {||     ( nMode == 1 .OR. nMode == 4 )},, .F., .F.,,,,,, nil,,, )
+
+
+
+
+      oGet2 := TGetHlp():ReDefine( 110, { | u | If( PCount()==0, ::oDbf:cNomInv, ::oDbf:cNomInv:= u ) }, oDlg,,,,,,,,, .T., {||     ( nMode <> 3 )},, .F., .F.,,,,,, nil,,, )
+
+
+
+
+
+
+      oCmbImg := TComboBox():ReDefine( 120, { | u | If( PCount()==0, cCmbImg, cCmbImg:= u ) }, ::aImagen, oDlg,,,,,,, .F., {||     ( nMode <> 3 )}, ::aResource,,,, )
+
+
+
+
+      TCheckBox():ReDefine( 130, { | u | If( PCount()==0, ::oDbf:lPreInv, ::oDbf:lPreInv:= u ) }, oDlg,,,,,,, .F., {||         ( nMode <> 3 )}, .F. )
+
+
+
+
+
+      oGetPre := TGetHlp():ReDefine( 140, { | u | If( PCount()==0, ::oDbf:nPreInv, ::oDbf:nPreInv:= u ) }, oDlg,, ::cPorDiv,,,,,,, .T., {||     ( ::oDbf:lPreInv .AND. ::oDbf:nPreInv >= 0 .AND. nMode <> 3 )},, .F., .F.,,,,,, nil,,, )
+
+
+
+
+
+      TButton():ReDefine( 500, {||( ::lPreSave( oGet, oGet2, nMode, oDlg, oCmbImg ) )}, oDlg,,, .F., {||         ( nMode <> 3 )},,, .F. )
+
+
+
+
+
+        TButton():ReDefine( 550, {||( oDlg:end() )}, oDlg,,, .F.,,,, .T. )
+
+   oDlg:AddFastKey( 116, {|| if( nMode == 4, if( oGet:lValid(), ::lPreSave( oGet, oGet2, nMode, oDlg, oCmbImg ), ), ::lPreSave( oGet, oGet2, nMode, oDlg, oCmbImg ) ) } )
+
+   oDlg:bStart := {|| oGet:SetFocus() }
+
+   oDlg:Activate( oDlg:bLClicked, oDlg:bMoved, oDlg:bPainted, .T.,,,, oDlg:bRClicked,,, )
+
+RETURN ( oDlg:nResult == 1 )
+
+
+
+UTILITY STATIC function TInvitacion_lPreSave( oGet, oGet2, nMode, oDlg, oCmbImg) ; local Self AS CLASS TInvitacion := QSelf() AS CLASS TInvitacion
+
+   local nRecAnt
+
+   if nMode == 1 .OR. nMode == 4
+      if Empty( ::oDbf:cCodInv )
+         MsgStop( "Código de la invitación no puede estar vacío" )
+         oGet:SetFocus()
+         Return nil
+      end
+
+      if ::oDbf:SeekInOrd( ::oDbf:cCodInv, "CCODINV" )
+         msgStop( "Código existente" )
+         oGet:SetFocus()
+         return nil
+      end
+
+   end
+
+   if Empty( ::oDbf:cNomInv )
+      MsgStop( "Nombre de la invitación no puede estar vacío" )
+      oGet2:SetFocus()
+      Return nil
+   end
+
+   ::oDbf:nImgInv := oCmbImg:nAt
+
+Return ( oDlg:end( 1 ) )

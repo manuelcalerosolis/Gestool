@@ -1,0 +1,3843 @@
+#line 112 "hbclass.ch"
+   DYNAMIC DivertConstructorCall
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+DECLARE HBClass  New( cName AS String, OPTIONAL SuperParams ) AS CLASS HBClass  Create() AS Object  Instance() AS Object  AddClsMethod( cName AS String, @MethodName(), nScope AS Numeric, n2 AS Numeric, n3 AS Numeric )  AddDelegate( cName AS String, cDelegate AS String, cObject AS String, nScope AS Numeric, lPersistent AS LOGICAL )  AddMultiClsData( cType AS String, uVal, nScope AS Numeric, aDatas AS Array OF String )  AddMultiData( cType AS String, uVal, nScope AS Numeric, aDatas AS Array OF String, x AS LOGICAL, lPer AS LOGICAL )  AddMethod( cName AS String, @MethodName(), nScope AS Numeric, lPersistent AS LOGICAL )  AddInLine( cName AS String, bBlock AS CodeBlock, nScope AS Numeric, lPersistent AS LOGICAL )  AddVirtual( cName AS String )  ModMethod( cName AS String, @MethodName(), nScope AS Numeric, lPersistent AS LOGICAL )  ModClsMethod( cName AS String, @MethodName(), nScope AS Numeric )  ModInline( cName AS String, bBlock AS CodeBlock, nScope AS Numeric, lPersistent AS LOGICAL )  SetOnError( @MethodName() )
+#line 85 "\Fwh1204\Include\FiveWin.Ch"
+   EXTERNAL GetProcAdd
+   EXTERNAL TActiveX
+
+
+
+
+extern errorsys
+#line 17 ".\Prg\Brwvta.prg"
+static dbfDiv
+static dbfIva
+static dbfAlm
+static dbfArticulo
+
+static dbfMovAlm
+static dbfArtKit
+
+static dbfPedPrvT
+static dbfPedPrvL
+static dbfAlbPrvT
+static dbfAlbPrvL
+static dbfFacPrvT
+static dbfFacPrvL
+static dbfFacPrvP
+static dbfAlbCliT
+static dbfAlbCliL
+static dbfFacCliT
+static dbfFacCliL
+static dbfFacCliP
+static dbfFacRecT
+static dbfFacRecL
+static dbfPreCliT
+static dbfPreCliL
+static dbfPedCliT
+static dbfPedCliL
+static dbfPedCliR
+static dbfTikCliT
+static dbfTikCliL
+static dbfTikCliP
+static dbfProducT
+static dbfProducL
+static dbfProducM
+static dbfRctPrvT
+static dbfRctPrvL
+
+static oDbfTmp
+
+static oBtnFiltro
+static oFilter     := nil
+
+static cPouDiv
+static cPinDiv
+static cPirDiv
+static cPorDiv
+static nDouDiv
+static nDorDiv
+static nDinDiv
+static nDirDiv
+static cPicUnd
+static nVdvDiv
+
+static oMenu
+
+static oTreeImageList
+static oTreeDocument
+static oTreeCompras
+static oTreeVentas
+static oTreeStock
+static oTreeProduccion
+
+static oStock
+static nTotResStk  := 0
+static nTotEntStk  := 0
+static nTotActStk  := 0
+static nStkCom     := 0
+static nStkAlm     := 0
+static nStkVta     := 0
+static nStkPro     := 0
+static nStkCon     := 0
+static oStkCom
+static oStkAlm
+static oStkVta
+static oStkPro
+static oStkCon
+static oTotActStk
+static oTotResStk
+static oTotEntStk
+static oStkLibre
+static nStkLibre   := 0
+static oPesStk
+static oVolStk
+static oPesUnd
+static oVolUnd
+static nPesStk     := 0
+static nVolStk     := 0
+static nPesUnd     := 0
+static nVolUnd     := 0
+
+static oCom
+static aCom
+static oTotCom
+static aTotCom
+static oVta
+static aVta
+static oTotVta
+static aTotVta
+static aProducido
+static aConsumido
+
+static oGraph
+
+
+
+
+
+
+
+
+
+
+Static Function OpenFiles()
+
+   local lOpen       := .F.
+   local oError
+   local oBlock
+
+   CursorWait()
+
+   oTotCom           := Array( 5 )
+   oCom              := Array( 12, 3 )
+   aTotCom           := Afill( Array( 5 ), 0 )
+   aCom              := Array( 12, 3 )
+   aEval( aCom, {|a| Afill( a, 0 ) } )
+
+   oTotVta           := Array( 4 )
+   oVta              := Array( 12, 3 )
+   aTotVta           := Afill( Array( 5 ), 0 )
+   aVta              := Array( 12, 4 )
+   aEval( aVta, {|a| Afill( a, 0 ) } )
+
+   aProducido        := Array( 12, 3 )
+   aEval( aProducido, {|a| Afill( a, 0 ) } )
+
+   aConsumido        := Array( 12, 3 )
+   aEval( aConsumido, {|a| Afill( a, 0 ) } )
+
+   oBlock            := ErrorBlock( {| oError | ApoloBreak( oError ) } )
+   BEGIN SEQUENCE
+
+
+
+
+
+   dbUseArea( .T., ( cDriver() ), ( cPatEmp() + "PEDPROVT.DBF" ), ( cCheckArea( "PEDPROVT", @dbfPedPrvT ) ), if(.T. .OR. .F., !.F., NIL), .F.,, )
+   if !lAIS() ; ordListAdd( ( cPatEmp() + "PEDPROVT.CDX" ) ) ; else ; ordSetFocus( 1 ) ; end
+
+   dbUseArea( .T., ( cDriver() ), ( cPatEmp() + "PEDPROVL.DBF" ), ( cCheckArea( "PEDPROVL", @dbfPedPrvL ) ), if(.T. .OR. .F., !.F., NIL), .F.,, )
+   if !lAIS() ; ordListAdd( ( cPatEmp() + "PEDPROVL.CDX" ) ) ; else ; ordSetFocus( 1 ) ; end
+   ordSetFocus( "CREF" )
+
+   dbUseArea( .T., ( cDriver() ), ( cPatEmp() + "ALBPROVT.DBF" ), ( cCheckArea( "ALBPROVT", @dbfAlbPrvT ) ), if(.T. .OR. .F., !.F., NIL), .F.,, )
+   if !lAIS() ; ordListAdd( ( cPatEmp() + "ALBPROVT.CDX" ) ) ; else ; ordSetFocus( 1 ) ; end
+
+   dbUseArea( .T., ( cDriver() ), ( cPatEmp() + "ALBPROVL.DBF" ), ( cCheckArea( "ALBPROVL", @dbfAlbPrvL ) ), if(.T. .OR. .F., !.F., NIL), .F.,, )
+   if !lAIS() ; ordListAdd( ( cPatEmp() + "ALBPROVL.CDX" ) ) ; else ; ordSetFocus( 1 ) ; end
+   ordSetFocus( "CREF" )
+
+   dbUseArea( .T., ( cDriver() ), ( cPatEmp() + "FACPRVT.DBF" ), ( cCheckArea( "FACPRVT", @dbfFacPrvT ) ), if(.T. .OR. .F., !.F., NIL), .F.,, )
+   if !lAIS() ; ordListAdd( ( cPatEmp() + "FACPRVT.CDX" ) ) ; else ; ordSetFocus( 1 ) ; end
+
+   dbUseArea( .T., ( cDriver() ), ( cPatEmp() + "FACPRVL.DBF" ), ( cCheckArea( "FACPRVL", @dbfFacPrvL ) ), if(.T. .OR. .F., !.F., NIL), .F.,, )
+   if !lAIS() ; ordListAdd( ( cPatEmp() + "FACPRVL.CDX" ) ) ; else ; ordSetFocus( 1 ) ; end
+   ordSetFocus( "CREF" )
+
+   dbUseArea( .T., ( cDriver() ), ( cPatEmp() + "FACPRVP.DBF" ), ( cCheckArea( "FACPRVP", @dbfFacPrvP ) ), if(.T. .OR. .F., !.F., NIL), .F.,, )
+   if !lAIS() ; ordListAdd( ( cPatEmp() + "FACPRVP.CDX" ) ) ; else ; ordSetFocus( 1 ) ; end
+
+   dbUseArea( .T., ( cDriver() ), ( cPatEmp() + "RctPrvT.DBF" ), ( cCheckArea( "RctPrvL", @dbfRctPrvT ) ), if(.T. .OR. .F., !.F., NIL), .F.,, )
+   if !lAIS() ; ordListAdd( ( cPatEmp() + "RctPrvT.CDX" ) ) ; else ; ordSetFocus( 1 ) ; end
+
+   dbUseArea( .T., ( cDriver() ), ( cPatEmp() + "RctPrvL.DBF" ), ( cCheckArea( "RctPrvL", @dbfRctPrvL ) ), if(.T. .OR. .F., !.F., NIL), .F.,, )
+   if !lAIS() ; ordListAdd( ( cPatEmp() + "RctPrvL.CDX" ) ) ; else ; ordSetFocus( 1 ) ; end
+   ordSetFocus( "cRef" )
+
+
+
+
+
+   dbUseArea( .T., ( cDriver() ), ( cPatEmp() + "PRECLIT.DBF" ), ( cCheckArea( "PRECLIT", @dbfPreCliT ) ), if(.T. .OR. .F., !.F., NIL), .F.,, )
+   if !lAIS() ; ordListAdd( ( cPatEmp() + "PRECLIT.CDX" ) ) ; else ; ordSetFocus( 1 ) ; end
+
+   dbUseArea( .T., ( cDriver() ), ( cPatEmp() + "PRECLIL.DBF" ), ( cCheckArea( "PRECLIL", @dbfPreCliL ) ), if(.T. .OR. .F., !.F., NIL), .F.,, )
+   if !lAIS() ; ordListAdd( ( cPatEmp() + "PRECLIL.CDX" ) ) ; else ; ordSetFocus( 1 ) ; end
+   ordSetFocus( "CREF" )
+
+
+
+
+
+   dbUseArea( .T., ( cDriver() ), ( cPatEmp() + "PEDCLIT.DBF" ), ( cCheckArea( "PEDCLIT", @dbfPedCliT ) ), if(.T. .OR. .F., !.F., NIL), .F.,, )
+   if !lAIS() ; ordListAdd( ( cPatEmp() + "PEDCLIT.CDX" ) ) ; else ; ordSetFocus( 1 ) ; end
+
+   dbUseArea( .T., ( cDriver() ), ( cPatEmp() + "PEDCLIL.DBF" ), ( cCheckArea( "PEDCLIL", @dbfPedCliL ) ), if(.T. .OR. .F., !.F., NIL), .F.,, )
+   if !lAIS() ; ordListAdd( ( cPatEmp() + "PEDCLIL.CDX" ) ) ; else ; ordSetFocus( 1 ) ; end
+   ordSetFocus( "CREF" )
+
+   dbUseArea( .T., ( cDriver() ), ( cPatEmp() + "PEDCLIR.DBF" ), ( cCheckArea( "PEDCLIR", @dbfPedCliR ) ), if(.T. .OR. .F., !.F., NIL), .F.,, )
+   if !lAIS() ; ordListAdd( ( cPatEmp() + "PEDCLIR.CDX" ) ) ; else ; ordSetFocus( 1 ) ; end
+   ordSetFocus( "CREF" )
+
+   dbUseArea( .T., ( cDriver() ), ( cPatEmp() + "ALBCLIT.DBF" ), ( cCheckArea( "ALBCLIT", @dbfAlbCliT ) ), if(.T. .OR. .F., !.F., NIL), .F.,, )
+   if !lAIS() ; ordListAdd( ( cPatEmp() + "ALBCLIT.CDX" ) ) ; else ; ordSetFocus( 1 ) ; end
+
+   dbUseArea( .T., ( cDriver() ), ( cPatEmp() + "ALBCLIL.DBF" ), ( cCheckArea( "ALBCLIL", @dbfAlbCliL ) ), if(.T. .OR. .F., !.F., NIL), .F.,, )
+   if !lAIS() ; ordListAdd( ( cPatEmp() + "ALBCLIL.CDX" ) ) ; else ; ordSetFocus( 1 ) ; end
+   ordSetFocus( "CREF" )
+
+   dbUseArea( .T., ( cDriver() ), ( cPatEmp() + "FACCLIT.DBF" ), ( cCheckArea( "FACCLIT", @dbfFacCliT ) ), if(.T. .OR. .F., !.F., NIL), .F.,, )
+   if !lAIS() ; ordListAdd( ( cPatEmp() + "FACCLIT.CDX" ) ) ; else ; ordSetFocus( 1 ) ; end
+
+   dbUseArea( .T., ( cDriver() ), ( cPatEmp() + "FACCLIL.DBF" ), ( cCheckArea( "FACCLIL", @dbfFacCliL ) ), if(.T. .OR. .F., !.F., NIL), .F.,, )
+   if !lAIS() ; ordListAdd( ( cPatEmp() + "FACCLIL.CDX" ) ) ; else ; ordSetFocus( 1 ) ; end
+   ordSetFocus( "CREF" )
+
+   dbUseArea( .T., ( cDriver() ), ( cPatEmp() + "FACCLIP.DBF" ), ( cCheckArea( "FACCLIP", @dbfFacCliP ) ), if(.T. .OR. .F., !.F., NIL), .F.,, )
+   if !lAIS() ; ordListAdd( ( cPatEmp() + "FACCLIP.CDX" ) ) ; else ; ordSetFocus( 1 ) ; end
+
+   dbUseArea( .T., ( cDriver() ), ( cPatEmp() + "FACRECT.DBF" ), ( cCheckArea( "FACRECT", @dbfFacRecT ) ), if(.T. .OR. .F., !.F., NIL), .F.,, )
+   if !lAIS() ; ordListAdd( ( cPatEmp() + "FACRECT.CDX" ) ) ; else ; ordSetFocus( 1 ) ; end
+
+   dbUseArea( .T., ( cDriver() ), ( cPatEmp() + "FACRECL.DBF" ), ( cCheckArea( "FACRECL", @dbfFacRecL ) ), if(.T. .OR. .F., !.F., NIL), .F.,, )
+   if !lAIS() ; ordListAdd( ( cPatEmp() + "FACRECL.CDX" ) ) ; else ; ordSetFocus( 1 ) ; end
+   ordSetFocus( "CREF" )
+
+   dbUseArea( .T., ( cDriver() ), ( cPatEmp() + "TIKET.DBF" ), ( cCheckArea( "TIKET", @dbfTikCliT ) ), if(.T. .OR. .F., !.F., NIL), .F.,, )
+   if !lAIS() ; ordListAdd( ( cPatEmp() + "TIKET.CDX" ) ) ; else ; ordSetFocus( 1 ) ; end
+
+   dbUseArea( .T., ( cDriver() ), ( cPatEmp() + "TIKEL.DBF" ), ( cCheckArea( "TIKEL", @dbfTikCliL ) ), if(.T. .OR. .F., !.F., NIL), .F.,, )
+   if !lAIS() ; ordListAdd( ( cPatEmp() + "TIKEL.CDX" ) ) ; else ; ordSetFocus( 1 ) ; end
+   ordSetFocus( "CCBATIL" )
+
+   dbUseArea( .T., ( cDriver() ), ( cPatEmp() + "TIKEP.DBF" ), ( cCheckArea( "TIKEP", @dbfTikCliP ) ), if(.T. .OR. .F., !.F., NIL), .F.,, )
+   if !lAIS() ; ordListAdd( ( cPatEmp() + "TIKEP.CDX" ) ) ; else ; ordSetFocus( 1 ) ; end
+
+   dbUseArea( .T., ( cDriver() ), ( cPatEmp() + "HISMOV.DBF" ), ( cCheckArea( "HISMOV", @dbfMovAlm ) ), if(.T. .OR. .F., !.F., NIL), .F.,, )
+   if !lAIS() ; ordListAdd( ( cPatEmp() + "HISMOV.CDX" ) ) ; else ; ordSetFocus( 1 ) ; end
+   ordSetFocus( "CREFMOV" )
+
+   dbUseArea( .T., ( cDriver() ), ( cPatArt() + "ARTKIT.DBF" ), ( cCheckArea( "ARTTIK", @dbfArtKit ) ), if(.T. .OR. .F., !.F., NIL), .F.,, )
+   if !lAIS() ; ordListAdd( ( cPatArt() + "ARTKIT.CDX" ) ) ; else ; ordSetFocus( 1 ) ; end
+
+   dbUseArea( .T., ( cDriver() ), ( cPatEmp() + "PROCAB.DBF" ), ( cCheckArea( "PROCAB", @dbfProducT ) ), if(.T. .OR. .F., !.F., NIL), .F.,, )
+   if !lAIS() ; ordListAdd( ( cPatEmp() + "PROCAB.CDX" ) ) ; else ; ordSetFocus( 1 ) ; end
+
+   dbUseArea( .T., ( cDriver() ), ( cPatEmp() + "PROLIN.DBF" ), ( cCheckArea( "PROLIN", @dbfProducL ) ), if(.T. .OR. .F., !.F., NIL), .F.,, )
+   if !lAIS() ; ordListAdd( ( cPatEmp() + "PROLIN.CDX" ) ) ; else ; ordSetFocus( 1 ) ; end
+   ordSetFocus( "CCODART" )
+
+   dbUseArea( .T., ( cDriver() ), ( cPatEmp() + "PROMAT.DBF" ), ( cCheckArea( "PROMAT", @dbfProducM ) ), if(.T. .OR. .F., !.F., NIL), .F.,, )
+   if !lAIS() ; ordListAdd( ( cPatEmp() + "PROMAT.CDX" ) ) ; else ; ordSetFocus( 1 ) ; end
+   ordSetFocus( "CCODART" )
+
+   oDbfTmp              := DefineTemporal()
+   oDbfTmp:Activate( .F., .F. )
+
+   oStock               := TStock():Create( cPatGrp() )
+   if oStock:lOpenFiles()
+
+      oStock:cPedCliT   := dbfPedCliT
+      oStock:cPedCliL   := dbfPedCliL
+      oStock:cPedCliR   := dbfPedCliR
+      oStock:cAlbCliT   := dbfAlbCliT
+      oStock:cAlbCliL   := dbfAlbCliL
+      oStock:cFacCliT   := dbfFacCliT
+      oStock:cFacCliL   := dbfFacCliL
+      oStock:cFacRecT   := dbfFacRecT
+      oStock:cFacRecL   := dbfFacRecL
+      oStock:cTikT      := dbfTikCliT
+      oStock:cTikL      := dbfTikCliL
+
+      oStock:cKit       := dbfArtKit
+
+      oStock:cPedPrvL   := dbfPedPrvL
+      oStock:cAlbPrvT   := dbfAlbPrvT
+      oStock:cAlbPrvL   := dbfAlbPrvL
+      oStock:cFacPrvT   := dbfFacPrvT
+      oStock:cFacPrvL   := dbfFacPrvL
+      oStock:cRctPrvT   := dbfRctPrvT
+      oStock:cRctPrvL   := dbfRctPrvL
+
+      oStock:cProducT   := dbfProducT
+      oStock:cProducL   := dbfProducL
+      oStock:cProducM   := dbfProducM
+      oStock:cHisMov    := dbfMovAlm
+
+   end
+
+   lOpen             := .T.
+
+   RECOVER USING oError
+
+      msgStop( ErrorMessage( oError ), "Imposible abrir las bases de datos" )
+      lOpen          := .F.
+
+   end
+
+   ErrorBlock( oBlock )
+
+   CursorWE()
+
+Return ( lOpen )
+
+
+
+Static Function CloseFiles()
+
+
+
+
+
+   if oTreeImageList <> nil
+      oTreeImageList:End()
+   end
+
+   (dbfPedPrvT)->( dbCloseArea() )
+   (dbfPedPrvL)->( dbCloseArea() )
+   (dbfAlbPrvT)->( dbCloseArea() )
+   (dbfAlbPrvL)->( dbCloseArea() )
+   (dbfFacPrvT)->( dbCloseArea() )
+   (dbfFacPrvL)->( dbCloseArea() )
+   (dbfFacPrvP)->( dbCloseArea() )
+   (dbfPreCliT)->( dbCloseArea() )
+   (dbfPreCliL)->( dbCloseArea() )
+   (dbfPedCliT)->( dbCloseArea() )
+   (dbfPedCliL)->( dbCloseArea() )
+   (dbfPedCliR)->( dbCloseArea() )
+   (dbfAlbCliT)->( dbCloseArea() )
+   (dbfAlbCliL)->( dbCloseArea() )
+   (dbfFacCliT)->( dbCloseArea() )
+   (dbfFacCliL)->( dbCloseArea() )
+   (dbfFacCliP)->( dbCloseArea() )
+   (dbfFacRecT)->( dbCloseArea() )
+   (dbfFacRecL)->( dbCloseArea() )
+   (dbfTikCliT)->( dbCloseArea() )
+   (dbfTikCliL)->( dbCloseArea() )
+   (dbfTikCliP)->( dbCloseArea() )
+   (dbfMovAlm )->( dbCloseArea() )
+   (dbfArtKit )->( dbCloseArea() )
+   (dbfProducT)->( dbCloseArea() )
+   (dbfProducL)->( dbCloseArea() )
+   (dbfProducM)->( dbCloseArea() )
+   (dbfRctPrvT)->( dbCloseArea() )
+   (dbfRctPrvL)->( dbCloseArea() )
+
+   if !Empty( oStock )
+      oStock:End()
+   end
+
+   if !Empty( oDbfTmp )
+      oDbfTmp:Close()
+      dbfErase( oDbfTmp:cPath + oDbfTmp:cName )
+   end
+
+Return .T.
+
+
+
+function BrwVtaComArt( cCodArt, cNomArt, cDiv, cIva, cAlm, cArticulo )
+
+   local nOrd
+   local nRec
+   local oDlg
+   local oFld
+   local oBrwTmp
+   local oBrwStk
+   local oBrwCom
+   local oBrwVta
+   local oTree
+   local oCmbAnio
+   local cCmbAnio          := "Todos"
+   local oBmpGeneral
+   local oBmpDocumentos
+   local oBmpGraficos
+
+   if Empty( cCodArt )
+      Return nil
+   end
+
+   dbfDiv                  := cDiv
+   dbfIva                  := cIva
+   dbfAlm                  := cAlm
+   dbfArticulo             := cArticulo
+
+   if !OpenFiles()
+      Return nil
+   end
+
+   CursorWait()
+
+   nRec                    := ( dbfArticulo )->( Recno() )
+   nOrd                    := ( dbfArticulo )->( OrdSetFocus( 1 ) )
+
+   oFilter                 := TDlgFlt():Create( oDbfTmp, , .F. )
+   oFilter:bOnAplyFilter   := {|| oDbfTmp:SetFilter( oFilter:cExpFilter ), oBrwTmp:Refresh() }
+   oFilter:bOnKillFilter   := {|| oDbfTmp:SetFilter(), oBrwTmp:Refresh() }
+
+   cPouDiv                 := cPouDiv( cDivEmp(), dbfDiv )
+   cPinDiv                 := cPinDiv( cDivEmp(), dbfDiv )
+   cPirDiv                 := cPirDiv( cDivEmp(), dbfDiv )
+   cPorDiv                 := cPorDiv( cDivEmp(), dbfDiv )
+   nDouDiv                 := nDouDiv( cDivEmp(), dbfDiv )
+   nDorDiv                 := nRouDiv( cDivEmp(), dbfDiv )
+   nDinDiv                 := nDinDiv( cDivEmp(), dbfDiv )
+   nDirDiv                 := nRinDiv( cDivEmp(), dbfDiv )
+   cPicUnd                 := MasUnd()
+   nVdvDiv                 := nChgDiv( cDivEmp(), dbfDiv )
+   nPesUnd                 := RetFld( cCodArt, dbfArticulo, "nPesoKg" )
+   nVolUnd                 := RetFld( cCodArt, dbfArticulo, "nVolumen" )
+
+
+
+
+
+   oDbfTmp:Cargo           := cCodArt
+
+
+
+
+
+   oDlg = TDialog():New(,,,, "Información del artículo : " + Rtrim( cCodArt ) + " - " + Rtrim( cNomArt ), "ARTINFO",, .F.,,,,,, .F.,,,,,, .F., )
+
+
+
+
+
+
+
+
+
+   oFld := TFolder():ReDefine( 300, {"&Estadisticas"      , "&Documentos"        , "Gráfico"}, { "ART_8","INFO_1","INFO_2" }, oDlg,,,,, .F., )
+
+
+
+
+
+
+
+
+
+
+
+   oBmpGeneral := TBitmap():ReDefine( 500, "Cube_Yellow_Alpha_48",, oFld:aDialogs[ 1 ],,, .F., .F.,,, .F.,,, .T. )
+
+
+
+
+
+   oBrwCom                       := IXBrowse():New( oFld:aDialogs[ 1 ] )
+
+   oBrwCom:bClrSel               := {|| { 0, ( 229 + ( 229 * 256 ) + ( 229 * 65536 ) ) } }
+   oBrwCom:bClrSelFocus          := {|| { 0, ( 167 + ( 205 * 256 ) + ( 240 * 65536 ) ) } }
+
+   oBrwCom:SetArray( aCom, , , .F. )
+
+   oBrwCom:lFooter            := .T.
+   oBrwCom:lVScroll           := .F.
+   oBrwCom:lHScroll           := .F.
+   oBrwCom:nMarqueeStyle      := 5
+   oBrwCom:nFooterHeight      := 35
+
+   oBrwCom:nFooterLines       := 2
+   oBrwCom:cName              := "Compras en informe de articulos"
+   oBrwCom:CreateFromResource( 400 )
+
+   with object ( oBrwCom:AddCol() )
+      :cHeader                   := "Mes"
+      :nWidth                    := 90
+      :bStrData                  := {|| cNombreMes( oBrwCom:nArrayAt ) }
+      :bFooter                   := {|| "Totales" + Chr(13)+Chr(10) + "Medias" }
+   end
+
+   with object ( oBrwCom:AddCol() )
+      :cHeader                   := cNombreCajas()
+      :nWidth                    := 90
+      :bEditValue                := {|| aCom[ oBrwCom:nArrayAt, 1] }
+      :cEditPicture              := cPicUnd
+      :bFooter                   := {|| aTotCom[1] }
+      :nDataStrAlign             := 1
+      :nHeadStrAlign             := 1
+      :nFootStrAlign             := 1
+   end
+
+   with object ( oBrwCom:AddCol() )
+      :cHeader                   := cNombreUnidades()
+      :nWidth                    := 90
+      :bEditValue                := {|| aCom[ oBrwCom:nArrayAt, 2] }
+      :cEditPicture              := cPicUnd
+      :bFooter                   := {|| aTotCom[2] }
+      :nDataStrAlign             := 1
+      :nHeadStrAlign             := 1
+      :nFootStrAlign             := 1
+   end
+
+   with object ( oBrwCom:AddCol() )
+      :cHeader                   := "Total " + cNombreUnidades()
+      :nWidth                    := 90
+      :bEditValue                := {|| NotCero( aCom[ oBrwCom:nArrayAt, 1] ) + NotCero( aCom[ oBrwCom:nArrayAt, 2] ) }
+      :cEditPicture              := cPicUnd
+      :bFooter                   := {|| aTotCom[2] }
+      :nDataStrAlign             := 1
+      :nHeadStrAlign             := 1
+      :nFootStrAlign             := 1
+      :lHide                     := .T.
+   end
+
+   with object ( oBrwCom:AddCol() )
+      :cHeader                   := "Importe"
+      :nWidth                    := 100
+      :bEditValue                := {|| aCom[ oBrwCom:nArrayAt, 3] }
+      :cEditPicture              := cPirDiv
+      :bFooter                   := {|| Trans( aTotCom[3], cPirDiv ) + Chr(13)+Chr(10) + Trans( aTotCom[4], cPirDiv ) }
+      :nDataStrAlign             := 1
+      :nHeadStrAlign             := 1
+      :nFootStrAlign             := 1
+   end
+
+
+
+
+
+   oBrwVta                       := IXBrowse():New( oFld:aDialogs[ 1 ] )
+
+   oBrwVta:bClrSel               := {|| { 0, ( 229 + ( 229 * 256 ) + ( 229 * 65536 ) ) } }
+   oBrwVta:bClrSelFocus          := {|| { 0, ( 167 + ( 205 * 256 ) + ( 240 * 65536 ) ) } }
+
+   oBrwVta:SetArray( aVta, , , .F. )
+
+   oBrwVta:lFooter               := .T.
+   oBrwVta:lVScroll              := .F.
+   oBrwVta:lHScroll              := .F.
+   oBrwVta:nMarqueeStyle         := 5
+   oBrwVta:nFooterHeight         := 35
+   oBrwVta:nFooterLines          := 2
+   oBrwVta:cName                 := "Ventas en informe de articulos"
+   oBrwVta:CreateFromResource( 410 )
+
+   with object ( oBrwVta:AddCol() )
+      :cHeader                   := cNombreCajas()
+      :nWidth                    := 90
+      :bEditValue                := {|| aVta[ oBrwVta:nArrayAt, 1] }
+      :cEditPicture              := cPicUnd
+      :bFooter                   := {|| aTotVta[1] }
+      :nDataStrAlign             := 1
+      :nHeadStrAlign             := 1
+      :nFootStrAlign             := 1
+   end
+
+   with object ( oBrwVta:AddCol() )
+      :cHeader                   := cNombreUnidades()
+      :nWidth                    := 90
+      :bEditValue                := {|| aVta[ oBrwVta:nArrayAt, 2] }
+      :cEditPicture              := cPicUnd
+      :bFooter                   := {|| aTotVta[2] }
+      :nDataStrAlign             := 1
+      :nHeadStrAlign             := 1
+      :nFootStrAlign             := 1
+   end
+
+   with object ( oBrwVta:AddCol() )
+      :cHeader                   := "Total " + cNombreUnidades()
+      :nWidth                    := 90
+      :bEditValue                := {|| NotCero( aVta[ oBrwVta:nArrayAt, 1] ) + NotCero( aVta[ oBrwVta:nArrayAt, 2] ) }
+      :cEditPicture              := cPicUnd
+      :bFooter                   := {|| aTotVta[2] }
+      :nDataStrAlign             := 1
+      :nHeadStrAlign             := 1
+      :nFootStrAlign             := 1
+      :lHide                     := .T.
+   end
+
+   with object ( oBrwVta:AddCol() )
+      :cHeader                   := "Importe"
+      :nWidth                    := 110
+      :bEditValue                := {|| aVta[ oBrwVta:nArrayAt, 3] }
+      :cEditPicture              := cPirDiv
+      :bFooter                   := {|| Trans( aTotVta[3], cPirDiv ) + Chr(13)+Chr(10) + Trans( aTotVta[4], cPirDiv ) }
+      :nDataStrAlign             := 1
+      :nHeadStrAlign             := 1
+      :nFootStrAlign             := 1
+   end
+
+   with object ( oBrwVta:AddCol() )
+      :cHeader                   := "Rentabilidad"
+      :nWidth                    := 110
+      :bEditValue                := {|| aVta[ oBrwVta:nArrayAt, 4] }
+      :cEditPicture              := cPirDiv
+      :bFooter                   := {|| Trans( aTotVta[5], cPirDiv ) + Chr(13)+Chr(10) + Trans( ( aTotVta[5] / aTotVta[2] ), cPirDiv )  }
+      :nDataStrAlign             := 1
+      :nHeadStrAlign             := 1
+      :nFootStrAlign             := 1
+   end
+
+
+
+
+
+   oBmpDocumentos := TBitmap():ReDefine( 500, "Document_Text_Alpha_48",, oFld:aDialogs[ 2 ],,, .F., .F.,,, .F.,,, .T. )
+
+   oBrwStk                       := IXBrowse():New( oFld:aDialogs[ 1 ] )
+
+   oBrwStk:bClrSel               := {|| { 0, ( 229 + ( 229 * 256 ) + ( 229 * 65536 ) ) } }
+   oBrwStk:bClrSelFocus          := {|| { 0, ( 167 + ( 205 * 256 ) + ( 240 * 65536 ) ) } }
+
+   oBrwStk:SetArray( oStock:aStocks, , , .F. )
+
+   oBrwStk:lFooter               := .T.
+   oBrwStk:lVScroll              := .T.
+   oBrwStk:lHScroll              := .T.
+   oBrwStk:nMarqueeStyle         := 5
+   oBrwStk:cName                 := "Stocks en informe de articulos"
+   oBrwStk:CreateFromResource( 300 )
+
+   with object ( oBrwStk:AddCol() )
+      :cHeader                   := "Almacén"
+      :nWidth                    := 280
+      :bStrData                  := {|| if( !Empty( oBrwStk:aArrayData ), oBrwStk:aArrayData[ oBrwStk:nArrayAt ]:cCodigoAlmacen + Space( 1 ) + RetAlmacen( oBrwStk:aArrayData[ oBrwStk:nArrayAt ]:cCodigoAlmacen, dbfAlm ), "" ) }
+      :bFooter                   := {|| "Total almacenes" }
+   end
+
+   with object ( oBrwStk:AddCol() )
+      :cHeader                   := "Prop. 1"
+      :nWidth                    := 50
+      :bStrData                  := {|| if( !Empty( oBrwStk:aArrayData ), oBrwStk:aArrayData[ oBrwStk:nArrayAt ]:cValorPropiedad1, "" ) }
+      :lHide                     := .T.
+   end
+
+   with object ( oBrwStk:AddCol() )
+      :cHeader                   := "Prop. 2"
+      :nWidth                    := 50
+      :bStrData                  := {|| if( !Empty( oBrwStk:aArrayData ), oBrwStk:aArrayData[ oBrwStk:nArrayAt ]:cValorPropiedad2, "" ) }
+      :lHide                     := .T.
+   end
+
+   with object ( oBrwStk:AddCol() )
+      :cHeader                   := "Lote"
+      :nWidth                    := 70
+      :bStrData                  := {|| if( !Empty( oBrwStk:aArrayData ), oBrwStk:aArrayData[ oBrwStk:nArrayAt ]:cLote, "" ) }
+      :lHide                     := .T.
+   end
+
+   with object ( oBrwStk:AddCol() )
+      :cHeader                   := "Num. serie"
+      :nWidth                    := 70
+      :bStrData                  := {|| if( !Empty( oBrwStk:aArrayData ), oBrwStk:aArrayData[ oBrwStk:nArrayAt ]:cNumeroSerie, "" ) }
+      :lHide                     := .T.
+   end
+
+   with object ( oBrwStk:AddCol() )
+      :cHeader                   := "Unidades"
+      :nWidth                    := 110
+      :bEditValue                := {|| if( !Empty( oBrwStk:aArrayData ), oBrwStk:aArrayData[ oBrwStk:nArrayAt ]:nUnidades, 0 ) }
+      :bFooter                   := {|| nStockUnidades( oBrwStk ) }
+      :cEditPicture              := MasUnd()
+   end
+
+   with object ( oBrwStk:AddCol() )
+      :cHeader                   := "Pdt. recibir"
+      :nWidth                    := 110
+      :bEditValue                := {|| if( !Empty( oBrwStk:aArrayData ), oBrwStk:aArrayData[ oBrwStk:nArrayAt ]:nPendientesRecibir, 0 ) }
+      :bFooter                   := {|| nStockPendiente( oBrwStk ) }
+      :cEditPicture              := MasUnd()
+   end
+
+   with object ( oBrwStk:AddCol() )
+      :cHeader                   := "Pdt. entregar"
+      :nWidth                    := 110
+      :bEditValue                := {|| if( !Empty( oBrwStk:aArrayData ), oBrwStk:aArrayData[ oBrwStk:nArrayAt ]:nPendientesEntregar, 0 ) }
+      :bFooter                   := {|| nStockEntregar( oBrwStk ) }
+      :cEditPicture              := MasUnd()
+   end
+
+   with object ( oBrwStk:AddCol() )
+      :cHeader                   := "Peso stock"
+      :nWidth                    := 110
+      :bEditValue                := {|| if( !Empty( oBrwStk:aArrayData ), oBrwStk:aArrayData[ oBrwStk:nArrayAt ]:nUnidades * nPesUnd, 0 ) }
+      :bFooter                   := {|| nStockUnidades( oBrwStk ) * nPesUnd }
+      :cEditPicture              := MasUnd()
+   end
+
+   with object ( oBrwStk:AddCol() )
+      :cHeader                   := "Volumen stock"
+      :nWidth                    := 110
+      :bEditValue                := {|| if( !Empty( oBrwStk:aArrayData ), oBrwStk:aArrayData[ oBrwStk:nArrayAt ]:nUnidades * nVolUnd, 0 ) }
+      :bFooter                   := {|| nStockUnidades( oBrwStk ) * nVolUnd }
+      :cEditPicture              := MasUnd()
+   end
+
+   with object ( oBrwStk:AddCol() )
+      :cHeader                   := "Consolidación"
+      :nWidth                    := 110
+      :bStrData                  := {|| if( !Empty( oBrwStk:aArrayData ), Dtoc( oBrwStk:aArrayData[ oBrwStk:nArrayAt ]:dConsolidacion ), "" ) }
+      :lHide                     := .T.
+   end
+
+
+
+
+
+   oTree             := TTreeView():Redefine( 310, oFld:aDialogs[2]  )
+   oTree:bChanged    := {|| TreeChanged( oTree, oBrwTmp ) }
+
+
+
+
+
+
+
+
+   TButton():ReDefine( 301, {||( EditDocument( oBrwTmp ), LoadDatos( cCodArt, cCmbAnio, oDlg, oBrwStk, oBrwTmp, oGraph, oBrwCom, oBrwVta ) )}, oFld:aDialogs[2],,, .F.,,,, .F. )
+
+
+
+
+   TButton():ReDefine( 302, {||( ZoomDocument( oBrwTmp ) )}, oFld:aDialogs[2],,, .F.,,,, .F. )
+
+
+
+
+   TButton():ReDefine( 303, {||( DeleteDocument( oBrwTmp ), LoadDatos( cCodArt, cCmbAnio, oDlg, oBrwStk, oBrwTmp, oGraph, oBrwCom, oBrwVta ) )}, oFld:aDialogs[2],,, .F.,,,, .F. )
+
+
+
+
+   TButton():ReDefine( 304, {||( VisualizaDocument( oBrwTmp ) )}, oFld:aDialogs[2],,, .F.,,,, .F. )
+
+
+
+
+   TButton():ReDefine( 305, {||( PrintDocument( oBrwTmp ) )}, oFld:aDialogs[2],,, .F.,,,, .F. )
+
+
+
+
+   oBtnFiltro := TButton():ReDefine( 600, {||( Filtro(), oBrwTmp:Refresh() )}, oFld:aDialogs[2],,, .F.,,,, .F. )
+
+   oBrwTmp                       := IXBrowse():New( oFld:aDialogs[ 2 ] )
+
+   oBrwTmp:bClrSel               := {|| { 0, ( 229 + ( 229 * 256 ) + ( 229 * 65536 ) ) } }
+   oBrwTmp:bClrSelFocus          := {|| { 0, ( 167 + ( 205 * 256 ) + ( 240 * 65536 ) ) } }
+
+   oDbfTmp:SetBrowse( oBrwTmp )
+
+   oBrwTmp:nMarqueeStyle         := 5
+   oBrwTmp:lFooter               := .T.
+
+   oBrwTmp:cName                 := "Documentos en informe de articulos"
+
+   oBrwTmp:CreateFromResource( 300 )
+
+   with object ( oBrwTmp:addCol() )
+      :cHeader       := "Dc. Documento"
+      :bStrData      := {|| cTextDocument() }
+      :bBmpData      := {|| TreeImagen() }
+      :nWidth        := 20
+      :AddResource( "Clipboard_empty_businessman_16" )
+      :AddResource( "Document_plain_businessman_16" )
+      :AddResource( "Document_businessman_16" )
+      :AddResource( "Pencil_Package_16" )
+      :AddResource( "Notebook_user1_16" )
+      :AddResource( "Clipboard_empty_user1_16" )
+      :AddResource( "Document_plain_user1_16" )
+      :AddResource( "Document_user1_16" )
+      :AddResource( "Cashier_user1_16" )
+      :AddResource( "Document_Delete_16" )
+      :AddResource( "Worker2_Form_Red_16" )
+      :AddResource( "Document_navigate_cross_16" )
+   end
+
+   with object ( oBrwTmp:addCol() )
+      :cHeader       := "Estado"
+      :bEditValue    := {|| oDbfTmp:cEstDoc }
+      :nWidth        := 70
+   end
+
+   with object ( oBrwTmp:addCol() )
+      :cHeader       := "Número"
+      :bEditValue    := {|| cMaskNumDoc( oDbfTmp ) }
+      :cSortOrder    := "cNumDoc"
+      :nWidth        := 80
+   end
+
+   with object ( oBrwTmp:addCol() )
+      :cHeader       := "Fecha"
+      :bEditValue    := {|| Dtoc( oDbfTmp:dFecDoc ) }
+      :cSortOrder    := "dFecDoc"
+      :nWidth        := 70
+   end
+
+   with object ( oBrwTmp:addCol() )
+      :cHeader       := "Código"
+      :bEditValue    := {|| oDbfTmp:cCodDoc }
+      :cSortOrder    := "cCodDoc"
+      :nWidth        := 50
+   end
+
+   with object ( oBrwTmp:addCol() )
+      :cHeader       := "Nombre"
+      :bEditValue    := {|| oDbfTmp:cNomDoc }
+      :cSortOrder    := "cNomDoc"
+      :nWidth        := 175
+   end
+
+   with object ( oBrwTmp:addCol() )
+      :cHeader       := "Unidades"
+      :bEditValue    := {|| oDbfTmp:nUndDoc }
+      :cSortOrder    := "nNundDoc"
+      :cEditPicture  := cPicUnd
+      :bFooter       := {|| nTotUnd( oDbfTmp ) }
+      :nWidth        := 70
+      :nDataStrAlign := 1
+      :nHeadStrAlign := 1
+      :nFootStrAlign := 1
+   end
+
+   with object ( oBrwTmp:addCol() )
+      :cHeader       := "Factor"
+      :bEditValue    := {|| oDbfTmp:nFacCnv }
+      :cSortOrder    := "nFactor"
+      :cEditPicture  := "@E 999,999.999999"
+      :nWidth        := 90
+      :nDataStrAlign := 1
+      :nHeadStrAlign := 1
+      :nFootStrAlign := 1
+      :lHide         := .T.
+   end
+
+
+   with object ( oBrwTmp:addCol() )
+      :cHeader       := "Importe"
+      :bEditValue    := {|| oDbfTmp:nImpDoc }
+      :cSortOrder    := "nImpDoc"
+      :cEditPicture  := cPouDiv
+      :nWidth        := 70
+      :nDataStrAlign := 1
+      :nHeadStrAlign := 1
+   end
+
+   with object ( oBrwTmp:addCol() )
+      :cHeader       := "Total"
+      :bEditValue    := {|| oDbfTmp:nTotDoc }
+      :cSortOrder    := "nTotDoc"
+      :cEditPicture  := cPouDiv
+      :bFooter       := {|| nTotImp( oDbfTmp ) }
+      :nWidth        := 70
+      :nDataStrAlign := 1
+      :nHeadStrAlign := 1
+      :nFootStrAlign := 1
+   end
+
+   with object ( oBrwTmp:addCol() )
+      :cHeader       := "%Dto."
+      :bEditValue    := {|| oDbfTmp:nDtoDoc }
+      :cEditPicture  := "@E 999,99"
+      :nWidth        := 40
+      :nDataStrAlign := 1
+      :nHeadStrAlign := 1
+      :lHide         := .T.
+   end
+
+   with object ( oBrwTmp:addCol() )
+      :cHeader       := "Almacén"
+      :cSortOrder    := "cAlmDoc"
+      :bEditValue    := {|| oDbfTmp:cAlmDoc }
+      :nWidth        := 40
+      :lHide         := .T.
+   end
+
+   with object ( oBrwTmp:addCol() )
+      :cHeader       := "Prop. 1"
+      :bEditValue    := {|| oDbfTmp:cValPr1 }
+      :nWidth        := 40
+      :lHide         := .T.
+   end
+
+   with object ( oBrwTmp:addCol() )
+      :cHeader       := "Prop. 2"
+      :bEditValue    := {|| oDbfTmp:cValPr2 }
+      :nWidth        := 40
+      :lHide         := .T.
+   end
+
+   with object ( oBrwTmp:addCol() )
+      :cHeader       := "Lote"
+      :bEditValue    := {|| oDbfTmp:cLote }
+      :cSortOrder    := "cLote"
+      :nWidth        := 80
+      :lHide         := .T.
+   end
+
+   oBrwTmp:bLDblClick   := {|| ZoomDocument( oBrwTmp ) }
+
+
+
+
+
+   oBmpGraficos := TBitmap():ReDefine( 500, "Chart_area_48_alpha",, oFld:aDialogs[ 3 ],,, .F., .F.,,, .F.,,, .T. )
+
+
+
+
+
+
+
+   TBtnBmp():ReDefine( 101, "ColumnChart16",,,,, {|Self|( oGraph:SetType( 1 ) )}, oFld:aDialogs[ 3 ], .F.,, .F., "Gráfico de barras",,,,, !.T.,, .F.,,, .F., !.F. )
+
+
+
+
+
+
+
+   TBtnBmp():ReDefine( 102, "LineChart16",,,,, {|Self|( oGraph:SetType( 2 ) )}, oFld:aDialogs[ 3 ], .F.,, .F., "Gráfico de lineas",,,,, !.T.,, .F.,,, .F., !.F. )
+
+
+
+
+
+
+
+   TBtnBmp():ReDefine( 103, "DotChart16",,,,, {|Self|( oGraph:SetType( 3 ) )}, oFld:aDialogs[ 3 ], .F.,, .F., "Gráfico de puntos",,,,, !.T.,, .F.,,, .F., !.F. )
+
+
+
+
+
+
+
+   TBtnBmp():ReDefine( 104, "PieChart16",,,,, {|Self|( oGraph:SetType( 4 ) )}, oFld:aDialogs[ 3 ], .F.,, .F., "Gráfico combinado",,,,, !.T.,, .F.,,, .F., !.F. )
+
+
+
+
+
+
+
+   TBtnBmp():ReDefine( 105, "Chart16",,,,, {|Self|( oGraph:SetType( 5 ) )}, oFld:aDialogs[ 3 ], .F.,, .F., "Gráfico combinado",,,,, !.T.,, .F.,,, .F., !.F. )
+
+
+
+
+
+
+
+   TBtnBmp():ReDefine( 106, "Text3d16",,,,, {|Self|( oGraph:l3D := !oGraph:l3D, oGraph:Refresh() )}, oFld:aDialogs[ 3 ], .F.,, .F., "Gráficos en tres dimensiones",,,,, !.T.,, .F.,,, .F., !.F. )
+
+
+
+
+
+
+
+   TBtnBmp():ReDefine( 107, "Copy16",,,,, {|Self|( oGraph:Copy2ClipBoard() )}, oFld:aDialogs[ 3 ], .F.,, .F., "Copiar el gráfico en el portapapeles",,,,, !.T.,, .F.,,, .F., !.F. )
+
+
+
+
+
+
+
+   TBtnBmp():ReDefine( 108, "Imp16",,,,, {|Self|( GetPrtCoors( oGraph ) )}, oFld:aDialogs[ 3 ], .F.,, .F., "Imprimir el gráfico",,,,, !.T.,, .F.,,, .F., !.F. )
+
+
+
+
+
+
+
+   TBtnBmp():ReDefine( 109, "Preferences16",,,,, {|Self|( GraphPropierties( oGraph ) )}, oFld:aDialogs[ 3 ], .F.,, .F., "Propiedades del gráfico",,,,, !.T.,, .F.,,, .F., !.F. )
+
+   oGraph      := TGraph():ReDefine( 300, oFld:aDialogs[3] )
+
+
+
+
+
+
+
+
+
+   oCmbAnio := TComboBox():ReDefine( 310, { | u | If( PCount()==0, cCmbAnio, cCmbAnio:= u ) }, { "Todos", "2000", "2001", "2002", "2003", "2004", "2005", "2006", "2007", "2008", "2009", "2010", "2011", "2012", "2013", "2014", "2015", "2016", "2017", "2018", "2019", "2020" }, oDlg,,, {|Self|( LoadDatos( cCodArt, cCmbAnio, oDlg, oBrwStk, oBrwTmp, oGraph, oBrwCom, oBrwVta ) )},,,, .F.,,,,,, )
+
+
+
+
+
+
+
+
+   TButton():ReDefine( 306, {||( LoadDatos( cCodArt, cCmbAnio, oDlg, oBrwStk, oBrwTmp, oGraph, oBrwCom, oBrwVta ) )}, oDlg,,, .F.,,,, .F. )
+
+
+
+
+
+
+   TButton():ReDefine( 500, {||( TInfLArt():New( "Informe detallado de documentos", , , , , , { oDbfTmp, cCmbAnio } ):Play() )}, oDlg,,, .F.,,,, .F. )
+
+
+
+
+
+
+   TButton():ReDefine( 501, {||( oDlg:End() )}, oDlg,,, .F.,,,, .F. )
+
+   oFld:aDialogs[2]:AddFastKey( 114, {|| EditDocument( oBrwTmp ),     LoadDatos( cCodArt, cCmbAnio, oDlg, oBrwStk, oBrwTmp, oGraph, oBrwCom, oBrwVta ) } )
+   oFld:aDialogs[2]:AddFastKey( 115, {|| DeleteDocument( oBrwTmp ),   LoadDatos( cCodArt, cCmbAnio, oDlg, oBrwStk, oBrwTmp, oGraph, oBrwCom, oBrwVta ) } )
+
+   oDlg:bStart := {|| LoadDatos( cCodArt, cCmbAnio, oDlg, oBrwStk, oBrwTmp, oGraph, oBrwCom, oBrwVta ), oBrwStk:Load(), oBrwCom:Load(), oBrwVta:Load(), oBrwTmp:Load() }
+
+
+
+
+
+   oDlg:Activate( oDlg:bLClicked, oDlg:bMoved, oDlg:bPainted, .T., {|Self|( CloseFiles( oBrwTmp, oBrwStk ) )},, {|Self|( InitBrwVtaCli( cCodArt, oTree, dbfDiv, dbfArticulo, oBrwStk, oBrwTmp, oDlg, cCmbAnio, oGraph, oBrwCom, oBrwVta ), SysRefresh() )}, oDlg:bRClicked,,, )
+   oBrwCom:CloseData()
+   oBrwVta:CloseData()
+
+   if !Empty( oBmpGeneral )
+      oBmpGeneral:End()
+   end
+
+   if !Empty( oBmpDocumentos )
+      oBmpDocumentos:End()
+   end
+
+   if !Empty( oBmpGraficos )
+      oBmpGraficos:End()
+   end
+
+   oMenu:End()
+
+   ( dbfArticulo )->( OrdSetFocus( nOrd ) )
+   ( dbfArticulo )->( dbGoTo( nRec ) )
+
+return nil
+
+
+
+Static Function InitBrwVtaCli( cCodArt, oTree, dbfDiv, dbfArticulo, oBrwStk, oBrwTmp, oDlg, nYear, oGraph, oBrwCom, oBrwVta )
+
+   oTreeImageList := TImageList():New( 16, 16 )
+
+   oTreeImageList:AddMasked( TBitmap():Define( "Cube_yellow_16" ),                  ( 255 + ( 0 * 256 ) + ( 255 * 65536 ) ) )
+   oTreeImageList:AddMasked( TBitmap():Define( "Clipboard_empty_businessman_16" ),  ( 255 + ( 0 * 256 ) + ( 255 * 65536 ) ) )
+   oTreeImageList:AddMasked( TBitmap():Define( "Document_plain_businessman_16" ),   ( 255 + ( 0 * 256 ) + ( 255 * 65536 ) ) )
+   oTreeImageList:AddMasked( TBitmap():Define( "Document_businessman_16" ),         ( 255 + ( 0 * 256 ) + ( 255 * 65536 ) ) )
+   oTreeImageList:AddMasked( TBitmap():Define( "Notebook_user1_16" ),               ( 255 + ( 0 * 256 ) + ( 255 * 65536 ) ) )
+   oTreeImageList:AddMasked( TBitmap():Define( "Clipboard_empty_user1_16" ),        ( 255 + ( 0 * 256 ) + ( 255 * 65536 ) ) )
+   oTreeImageList:AddMasked( TBitmap():Define( "Document_plain_user1_16" ),         ( 255 + ( 0 * 256 ) + ( 255 * 65536 ) ) )
+   oTreeImageList:AddMasked( TBitmap():Define( "Document_user1_16" ),               ( 255 + ( 0 * 256 ) + ( 255 * 65536 ) ) )
+   oTreeImageList:AddMasked( TBitmap():Define( "Document_delete_16" ),              ( 255 + ( 0 * 256 ) + ( 255 * 65536 ) ) )
+   oTreeImageList:AddMasked( TBitmap():Define( "Cashier_user1_16" ),                ( 255 + ( 0 * 256 ) + ( 255 * 65536 ) ) )
+   oTreeImageList:AddMasked( TBitmap():Define( "ChgPre16" ),                        ( 255 + ( 0 * 256 ) + ( 255 * 65536 ) ) )
+   oTreeImageList:AddMasked( TBitmap():Define( "Truck_red_16" ),                    ( 255 + ( 0 * 256 ) + ( 255 * 65536 ) ) )
+   oTreeImageList:AddMasked( TBitmap():Define( "Package_16" ),                      ( 255 + ( 0 * 256 ) + ( 255 * 65536 ) ) )
+   oTreeImageList:AddMasked( TBitmap():Define( "Worker2_Form_Red_16" ),             ( 255 + ( 0 * 256 ) + ( 255 * 65536 ) ) )
+   oTreeImageList:AddMasked( TBitmap():Define( "Document_navigate_cross_16" ),      ( 255 + ( 0 * 256 ) + ( 255 * 65536 ) ) )
+
+   oTree:SetImageList( oTreeImageList )
+
+   oTreeDocument     := oTree:Add( "Todos los documentos", 0 )
+
+   oTreeCompras      := oTreeDocument:Add( "Compras", 11 )
+
+   oTreeDocument:Add( cTextDocument( "05" ), 12 )
+
+   oTreeProduccion   := oTreeDocument:Add( "Producción", 13 )
+
+   oTreeVentas       := oTreeDocument:Add( "Ventas", 10 )
+
+   oTreeStock        := oTreeDocument:Add( "Stock", 12 )
+
+      oTreeCompras:Add( cTextDocument( "01" ), 1 )
+      oTreeCompras:Add( cTextDocument( "02" ), 2 )
+      oTreeCompras:Add( cTextDocument( "03" ), 3 )
+      oTreeCompras:Add( cTextDocument( "04" ), 14 )
+
+      oTreeProduccion:Add( cTextDocument( "06" ), 13 )
+      oTreeProduccion:Add( cTextDocument( "07" ), 13 )
+
+      oTreeVentas:Add( cTextDocument( "08" ), 4 )
+      oTreeVentas:Add( cTextDocument( "09" ), 5 )
+      oTreeVentas:Add( cTextDocument( "10" ), 6 )
+      oTreeVentas:Add( cTextDocument( "11" ), 7 )
+      oTreeVentas:Add( cTextDocument( "14" ), 8 )
+      oTreeVentas:Add( cTextDocument( "12" ), 9 )
+      oTreeVentas:Add( cTextDocument( "15" ), 9 )
+      oTreeVentas:Add( cTextDocument( "16" ), 9 )
+      oTreeVentas:Add( cTextDocument( "17" ), 9 )
+
+      oTreeStock:Add( "Compras ", 11 )
+      oTreeStock:Add( "Movimientos ", 12 )
+      oTreeStock:Add( "Ventas ", 10 )
+      oTreeStock:Add( "Producción ", 13 )
+
+   oTreeDocument:Expand()
+   oTreeCompras:Expand()
+   oTreeVentas:Expand()
+   oTreeStock:Expand()
+   oTreeProduccion:Expand()
+
+   oMenu := MenuBegin( .F.,,, .F., .F. )
+
+      MenuAddItem( "&1. Rotor",, .F.,,,,,,,,, .F.,,, .F. )
+
+         MenuBegin( .F.,,, .F., .F. )
+
+
+
+
+         MenuAddItem( "&1. Añadir pedido a proveedor", "Añade un pedido a proveedor", .F.,, {|oMenuItem|( AppPedPrv( "", cCodArt, .F. ), LoadDatos( cCodArt, nYear, oDlg, oBrwStk, oBrwTmp, oGraph, oBrwCom, oBrwVta ) )},, "Clipboard_empty_businessman_16",,,,, .F.,,, .F. )
+
+
+
+
+            MenuAddItem( "&2. Añadir albarán de proveedor", "Añade un albarán de proveedor", .F.,, {|oMenuItem|( AppAlbPrv( "", cCodArt, .F. ), LoadDatos( cCodArt, nYear, oDlg, oBrwStk, oBrwTmp, oGraph, oBrwCom, oBrwVta ) )},, "Document_plain_businessman_16",,,,, .F.,,, .F. )
+
+
+
+
+            MenuAddItem( "&3. Añadir factura de proveedor", "Añade una factura de proveedor", .F.,, {|oMenuItem|( AppFacPrv( "", cCodArt, .F. ), LoadDatos( cCodArt, nYear, oDlg, oBrwStk, oBrwTmp, oGraph, oBrwCom, oBrwVta ) )},, "Document_businessman_16",,,,, .F.,,, .F. )
+
+            MenuAddItem()
+
+
+
+
+            MenuAddItem( "&4. Añadir presupuesto de cliente", "Añade un presupuesto de cliente", .F.,, {|oMenuItem|( AppPreCli( "", cCodArt, .F. ), LoadDatos( cCodArt, nYear, oDlg, oBrwStk, oBrwTmp, oGraph, oBrwCom, oBrwVta ) )},, "Notebook_user1_16",,,,, .F.,,, .F. )
+
+
+
+
+            MenuAddItem( "&5. Añadir pedido de cliente", "Añade un pedido de cliente", .F.,, {|oMenuItem|( AppPedCli( "", cCodArt, .F. ), LoadDatos( cCodArt, nYear, oDlg, oBrwStk, oBrwTmp, oGraph, oBrwCom, oBrwVta ) )},, "Clipboard_empty_user1_16",,,,, .F.,,, .F. )
+
+
+
+
+            MenuAddItem( "&6. Añadir albarán de cliente", "Añade un albarán de cliente", .F.,, {|oMenuItem|( AppAlbCli( "", cCodArt, .F. ), LoadDatos( cCodArt, nYear, oDlg, oBrwStk, oBrwTmp, oGraph, oBrwCom, oBrwVta ) )},, "Document_plain_user1_16",,,,, .F.,,, .F. )
+
+
+
+
+            MenuAddItem( "&7. Añadir factura de cliente", "Añade una factura de cliente", .F.,, {|oMenuItem|( AppFacCli( "", cCodArt, .F. ), LoadDatos( cCodArt, nYear, oDlg, oBrwStk, oBrwTmp, oGraph, oBrwCom, oBrwVta ) )},, "Document_user1_16",,,,, .F.,,, .F. )
+
+
+
+
+            MenuAddItem( "&8. Añadir factura rectificativa de cliente", "Añade una factura rectificativa de cliente", .F.,, {|oMenuItem|( AppFacRec( "", cCodArt, .F. ), LoadDatos( cCodArt, nYear, oDlg, oBrwStk, oBrwTmp, oGraph, oBrwCom, oBrwVta ) )},, "Document_Delete_16",,,,, .F.,,, .F. )
+
+
+
+
+            MenuAddItem( "&9. Añadir tiket de cliente", "Añade un tiket de cliente", .F.,, {|oMenuItem|( AppTikCli( "", cCodArt, .F. ), LoadDatos( cCodArt, nYear, oDlg, oBrwStk, oBrwTmp, oGraph, oBrwCom, oBrwVta ) )},, "Cashier_user1_16",,,,, .F.,,, .F. )
+
+            MenuAddItem()
+
+
+
+
+
+            MenuAddItem( "&A. Añadir movimiento entre almacenes", "Realizar un nuevo movimiento entre almacenes", .F.,, {|oMenuItem|( AppMovAlm( cCodArt, 1 ), LoadDatos( cCodArt, nYear, oDlg, oBrwStk, oBrwTmp, oGraph, oBrwCom, oBrwVta ) )},, "Pencil_Package_16",,,,, .F.,,, .F. )
+
+
+
+
+            MenuAddItem( "&B. Añadir movimiento de regularización de almacenes simple", "Realizar un nuevo movimiento de regularización de almacenes simple", .F.,, {|oMenuItem|( AppMovAlm( cCodArt, 2 ), LoadDatos( cCodArt, nYear, oDlg, oBrwStk, oBrwTmp, oGraph, oBrwCom, oBrwVta ) )},, "Pencil_Package_16",,,,, .F.,,, .F. )
+
+
+
+
+            MenuAddItem( "&C. Añadir movimiento de regularización de almacenes por objetivo", "Realizar un nuevo movimiento de regularización de almacenes por objetivo", .F.,, {|oMenuItem|( AppMovAlm( cCodArt, 3 ), LoadDatos( cCodArt, nYear, oDlg, oBrwStk, oBrwTmp, oGraph, oBrwCom, oBrwVta ) )},, "Pencil_Package_16",,,,, .F.,,, .F. )
+         MenuEnd()
+
+   MenuEnd()
+
+   oDlg:SetMenu( oMenu )
+
+Return nil
+
+
+
+Static Function LoadDatos( cCodArt, nYear, oDlg, oBrwStk, oBrwTmp, oGraph, oBrwCom, oBrwVta )
+
+   local n
+   local aStk
+   local oError
+   local oBlock
+   local nActStk     := 0
+   local nResStk     := 0
+   local nEntStk     := 0
+   local nStkLib     := 0
+   local nTotStkPro  := 0
+   local nTotStkCon  := 0
+
+   nStkAlm           := 0
+
+   oDlg:Disable()
+
+   CursorWait()
+
+
+
+
+
+
+
+
+   oStock:aStockArticulo( cCodArt, , oBrwStk )
+
+   oMsgProgress()
+   oMsgProgress():SetRange( 0, 17 )
+
+
+
+
+
+   oMsgText( "Calculando compras mensuales" )
+
+   aTotCom[1]        := 0
+   aTotCom[2]        := 0
+   aTotCom[3]        := 0
+   aTotCom[4]        := 0
+   aTotCom[5]        := 0
+
+   nCompras( cCodArt, dbfAlbPrvT, dbfAlbPrvL, dbfFacPrvT, dbfFacPrvL, if( nYear == "Todos", nil, Val( nYear ) ) )
+
+   oMsgProgress():Deltapos(1)
+
+   for n := 1 to 12
+
+      aTotCom[1]     += aCom[n,1]
+      aTotCom[2]     += aCom[n,2]
+      aTotCom[3]     += aCom[n,3]
+
+   next
+
+
+
+
+
+   oMsgText( "Calculando produccion mensual" )
+
+   nProduccion( cCodArt, dbfProducT, dbfProducL, dbfProducM, if( nYear == "Todos", nil, Val( nYear ) ) )
+
+   oMsgProgress():Deltapos(1)
+
+   for n := 1 to 12
+      nTotStkPro     += aProducido[ n, 2 ]
+      nTotStkCon     += aConsumido[ n, 2 ]
+   next
+
+
+
+
+
+   oMsgText( "Calculando ventas mensuales" )
+
+   aTotVta[1]        := 0
+   aTotVta[2]        := 0
+   aTotVta[3]        := 0
+   aTotVta[4]        := 0
+   aTotVta[5]        := 0
+
+   nVentas( cCodArt, dbfAlbCliT, dbfAlbCliL, dbfFacCliT, dbfFacCliL, dbfFacRecT, dbfFacRecL, dbfTikCliT, dbfTikCliL, if( nYear == "Todos", nil, Val( nYear ) ) )
+
+   oMsgProgress():Deltapos(1)
+
+   for n := 1 to 12
+
+      aTotVta[1]     += aVta[n,1]
+      aTotVta[2]     += aVta[n,2]
+      aTotVta[3]     += aVta[n,3]
+      aTotVta[5]     += aVta[n,4]
+
+   next
+
+   oMsgText( "Calculando media de compras" )
+
+   if aTotCom[2] <> 0
+      aTotCom[4]     := aTotCom[3] / aTotCom[2]
+   end
+
+   oMsgProgress():Deltapos(1)
+
+   oMsgText( "Calculando media de ventas" )
+
+   if aTotVta[2] <> 0
+      aTotVta[4]     := aTotVta[3] / aTotVta[2]
+   end
+
+   oMsgProgress():Deltapos(1)
+
+   oMsgText( "Calculando rentabilidad" )
+   aTotCom[ 5 ]      := ( aTotVta[ 3 ] ) - ( aTotVta[ 2 ] * aTotCom[ 4 ] )
+
+   oMsgProgress():Deltapos( 1 )
+
+
+
+
+
+   oDbfTmp:Zap()
+
+   oMsgText( "Cargando los documentos" )
+
+   LoadPedidoProveedor( cCodArt, if( nYear == "Todos", nil, Val( nYear ) ) )
+   oMsgProgress():Deltapos(1)
+
+   LoadAlbaranProveedor( cCodArt, if( nYear == "Todos", nil, Val( nYear ) ) )
+   oMsgProgress():Deltapos(1)
+
+   LoadFacturaProveedor( cCodArt, if( nYear == "Todos", nil, Val( nYear ) ) )
+   oMsgProgress():Deltapos(1)
+
+   LoadRectificativaProveedor( cCodArt, if( nYear == "Todos", nil, Val( nYear ) ) )
+   oMsgProgress():Deltapos(1)
+
+   LoadPresupuestoCliente( cCodArt, if( nYear == "Todos", nil, Val( nYear ) ) )
+   oMsgProgress():Deltapos(1)
+
+   LoadPedidosCliente( cCodArt, if( nYear == "Todos", nil, Val( nYear ) ) )
+   oMsgProgress():Deltapos(1)
+
+   LoadAlbaranesCliente( cCodArt, if( nYear == "Todos", nil, Val( nYear ) ) )
+   oMsgProgress():Deltapos(1)
+
+   LoadFacturasCliente( cCodArt, if( nYear == "Todos", nil, Val( nYear ) ) )
+   oMsgProgress():Deltapos(1)
+
+   LoadFacturasRectificativas( cCodArt, if( nYear == "Todos", nil, Val( nYear ) ) )
+   oMsgProgress():Deltapos(1)
+
+   LoadTiketsCliente( cCodArt, if( nYear == "Todos", nil, Val( nYear ) ) )
+   oMsgProgress():Deltapos(1)
+
+   LoadMovimientosAlmacen( cCodArt, if( nYear == "Todos", nil, Val( nYear ) ) )
+   oMsgProgress():Deltapos(1)
+
+   LoadProduccion( cCodArt, if( nYear == "Todos", nil, Val( nYear ) ) )
+   oMsgProgress():Deltapos(1)
+
+   oDbfTmp:GoTop()
+
+   oBrwTmp:Refresh()
+   oBrwTmp:RefreshFooters()
+
+   oBrwCom:Refresh()
+   oBrwCom:RefreshFooters()
+
+   oBrwVta:Refresh()
+   oBrwVta:RefreshFooters()
+
+
+
+
+
+   oGraph:aSeries    := {}
+   oGraph:aData      := {}
+   oGraph:aSTemp     := {}
+   oGraph:aDTemp     := {}
+
+   oGraph:AddSerie( { aVta[1,3], aVta[2,3], aVta[3,3], aVta[4,3], aVta[5,3], aVta[6,3], aVta[7,3], aVta[8,3], aVta[9,3], aVta[10,3], aVta[11,3], aVta[12,3] }, "Ventas",  ( 253 + ( 186 * 256 ) + ( 40 * 65536 ) ) )
+   oGraph:AddSerie( { aCom[1,3], aCom[2,3], aCom[3,3], aCom[4,3], aCom[5,3], aCom[6,3], aCom[7,3], aCom[8,3], aCom[9,3], aCom[10,3], aCom[11,3], aCom[12,3] }, "Compras", ( 63 + ( 167 * 256 ) + ( 236 * 65536 ) ) )
+   oGraph:AddSerie( { aProducido[1,3], aProducido[2,3], aProducido[3,3], aProducido[4,3], aProducido[5,3], aProducido[6,3], aProducido[7,3], aProducido[8,3], aProducido[9,3], aProducido[10,3], aProducido[11,3], aProducido[12,3] }, "Producido", ( 255 + ( 0 * 256 ) + ( 0 * 65536 ) ) )
+   oGraph:AddSerie( { aConsumido[1,3], aConsumido[2,3], aConsumido[3,3], aConsumido[4,3], aConsumido[5,3], aConsumido[6,3], aConsumido[7,3], aConsumido[8,3], aConsumido[9,3], aConsumido[10,3], aConsumido[11,3], aConsumido[12,3] }, "Consumido", ( 0 + ( 255 * 256 ) + ( 0 * 65536 ) ) )
+   oGraph:SetYVals( { "Ene", "Feb", "Mar", "Abr", "May", "Jun", "Jul", "Ago", "Sep", "Oct", "Nov", "Dic" } )
+
+   oGraph:cTitle     := "Evolución anual de ventas"
+   oGraph:lcTitle    := .F.
+   oGraph:nClrT      := ( 55 + ( 55 * 256 ) + ( 55 * 65536 ) )
+   oGraph:nClrX      := 8388608
+   oGraph:nClrY      := 128
+   oGraph:cPicture   := cPorDiv
+
+   oGraph:Refresh()
+
+   oMsgText()
+
+   EndProgress()
+
+
+
+
+
+
+
+
+   CursorWE()
+
+   oDlg:Enable()
+
+return nil
+
+
+
+
+
+
+Static function nCompras( cCodArt, dbfAlbPrvT, dbfAlbPrvL, dbfFacPrvT, dbfFacPrvL, nYear )
+
+   local cCodEmp
+   local dbfAlbEmpT
+   local dbfAlbEmpL
+   local dbfFacEmpT
+   local dbfFacEmpL
+   local dbfRctEmpT
+   local dbfRctEmpL
+
+   aEval( aCom, {|a| Afill( a, 0 ) } )
+
+   if Len( aEmpGrp() ) <> 0
+
+      for each cCodEmp in aEmpGrp()
+
+         if cCodEmp == cCodEmp()
+
+            nTotAlbCom( cCodArt, dbfAlbPrvT, dbfAlbPrvL, nYear )
+
+            nTotFacCom( cCodArt, dbfFacPrvT, dbfFacPrvL, nYear )
+
+            nTotRctCom( cCodArt, dbfRctPrvT, dbfRctPrvL, nYear )
+
+         else
+
+            dbUseArea( .T., ( cDriver() ), ( cPatStk( cCodEmp ) + "ALBPROVT.DBF" ), ( cCheckArea( "ALBPROVT", @dbfAlbEmpT ) ), if(.T. .OR. .F., !.F., NIL), .F.,, )
+            if !lAIS() ; ordListAdd( ( cPatStk( cCodEmp ) + "ALBPROVT.CDX" ) ) ; else ; ordSetFocus( 1 ) ; end
+
+            dbUseArea( .T., ( cDriver() ), ( cPatStk( cCodEmp ) + "ALBPROVL.DBF" ), ( cCheckArea( "ALBPROVL", @dbfAlbEmpL ) ), if(.T. .OR. .F., !.F., NIL), .F.,, )
+            if !lAIS() ; ordListAdd( ( cPatStk( cCodEmp ) + "ALBPROVL.CDX" ) ) ; else ; ordSetFocus( 1 ) ; end
+            ordSetFocus( "CREF" )
+
+            dbUseArea( .T., ( cDriver() ), ( cPatStk( cCodEmp ) + "FACPRVT.DBF" ), ( cCheckArea( "FACPRVT", @dbfFacEmpT ) ), if(.T. .OR. .F., !.F., NIL), .F.,, )
+            if !lAIS() ; ordListAdd( ( cPatStk( cCodEmp ) + "FACPRVT.CDX" ) ) ; else ; ordSetFocus( 1 ) ; end
+
+            dbUseArea( .T., ( cDriver() ), ( cPatStk( cCodEmp ) + "FACPRVL.DBF" ), ( cCheckArea( "FACPRVL", @dbfFacEmpL ) ), if(.T. .OR. .F., !.F., NIL), .F.,, )
+            if !lAIS() ; ordListAdd( ( cPatStk( cCodEmp ) + "FACPRVL.CDX" ) ) ; else ; ordSetFocus( 1 ) ; end
+            ordSetFocus( "CREF" )
+
+            dbUseArea( .T., ( cDriver() ), ( cPatStk( cCodEmp ) + "RctPrvT.DBF" ), ( cCheckArea( "RctPrvL", @dbfRctEmpT ) ), if(.T. .OR. .F., !.F., NIL), .F.,, )
+            if !lAIS() ; ordListAdd( ( cPatStk( cCodEmp ) + "RctPrvT.CDX" ) ) ; else ; ordSetFocus( 1 ) ; end
+
+            dbUseArea( .T., ( cDriver() ), ( cPatStk( cCodEmp ) + "RctPrvL.DBF" ), ( cCheckArea( "RctPrvL", @dbfRctEmpL ) ), if(.T. .OR. .F., !.F., NIL), .F.,, )
+            if !lAIS() ; ordListAdd( ( cPatStk( cCodEmp ) + "RctPrvL.CDX" ) ) ; else ; ordSetFocus( 1 ) ; end
+            ordSetFocus( "cRef" )
+
+            nTotAlbCom( cCodArt, dbfAlbEmpT, dbfAlbEmpL, nYear )
+
+            nTotFacCom( cCodArt, dbfFacEmpT, dbfFacEmpL, nYear )
+
+            nTotRctCom( cCodArt, dbfRctEmpT, dbfRctEmpL, nYear )
+
+            ( dbfAlbEmpT )->( dbCloseArea() )
+            ( dbfAlbEmpL )->( dbCloseArea() )
+            ( dbfFacEmpT )->( dbCloseArea() )
+            ( dbfFacEmpL )->( dbCloseArea() )
+            ( dbfRctEmpT )->( dbCloseArea() )
+            ( dbfRctEmpL )->( dbCloseArea() )
+
+         end
+
+      next
+
+   end
+
+Return ( nil )
+
+
+
+
+static function nTotAlbCom( cCodArt, dbfAlbPrvT, dbfAlbPrvL, nYear )
+
+   local nPos
+   local nMes
+
+   if ( dbfAlbPrvL )->( dbSeek( cCodArt ) )
+
+      while ( dbfAlbPrvL )->cRef == cCodArt .AND. !( dbfAlbPrvL )->( Eof() )
+
+         if ( dbfAlbPrvT )->( dbSeek( ( dbfAlbPrvL )->cSerAlb + Str( ( dbfAlbPrvL )->nNumAlb ) + ( dbfAlbPrvL )->cSufAlb ) )
+
+            if ( Empty( nYear ) .OR. Year( ( dbfAlbPrvT )->dFecAlb ) == nYear ) .AND. !( dbfAlbPrvT )->lFacturado
+
+               nMes              := Min( Max( Month( ( dbfAlbPrvT )->dFecAlb ), 1 ), 12 )
+
+               aCom[ nMes, 1 ]   += ( dbfAlbPrvL )->nCanEnt
+               aCom[ nMes, 2 ]   += nTotNAlbPrv( dbfAlbPrvL )
+               aCom[ nMes, 3 ]   += nImpLAlbPrv( dbfAlbPrvT, dbfAlbPrvL, nDinDiv, nDirDiv )
+
+            end
+
+         end
+
+         SysRefresh()
+
+         ( dbfAlbPrvL )->( dbSkip() )
+
+      end
+
+   end
+
+Return ( nil )
+
+
+
+
+static function nTotFacCom( cCodArt, dbfFacPrvT, dbfFacPrvL, nYear )
+
+   local nPos
+   local nMes
+
+   if ( dbfFacPrvL )->( dbSeek( cCodArt ) )
+
+      while ( dbfFacPrvL )->cRef == cCodArt .AND. !( dbfFacPrvL )->( Eof() )
+
+         if ( dbfFacPrvT )->( dbSeek( ( dbfFacPrvL )->cSerFac + Str( ( dbfFacPrvL )->nNumFac ) + ( dbfFacPrvL )->cSufFac ) )
+
+            if Empty( nYear ) .OR. Year( ( dbfFacPrvT )->dFecFac ) == nYear
+
+               nMes              := Min( Max( Month( ( dbfFacPrvT )->dFecFac ), 1 ), 12 )
+
+               aCom[ nMes, 1 ]   += ( dbfFacPrvL )->nCanEnt
+               aCom[ nMes, 2 ]   += nTotNFacPrv( dbfFacPrvL )
+               aCom[ nMes, 3 ]   += nImpLFacPrv( dbfFacPrvT, dbfFacPrvL, nDinDiv, nDirDiv )
+
+            end
+
+         end
+
+         SysRefresh()
+
+         ( dbfFacPrvL )->( dbSkip() )
+
+      end
+
+   end
+
+Return ( nil )
+
+
+
+
+static function nTotRctCom( cCodArt, dbfRctPrvT, dbfRctPrvL, nYear )
+
+   local nPos
+   local nMes
+
+   if ( dbfRctPrvL )->( dbSeek( cCodArt ) )
+
+      while ( dbfRctPrvL )->cRef == cCodArt .AND. !( dbfRctPrvL )->( Eof() )
+
+         if ( dbfRctPrvT )->( dbSeek( ( dbfRctPrvL )->cSerFac + Str( ( dbfRctPrvL )->nNumFac ) + ( dbfRctPrvL )->cSufFac ) )
+
+            if Empty( nYear ) .OR. Year( ( dbfRctPrvT )->dFecFac ) == nYear
+
+               nMes              := Min( Max( Month( ( dbfRctPrvT )->dFecFac ), 1 ), 12 )
+
+               aCom[ nMes, 1 ]   += ( dbfRctPrvL )->nCanEnt
+               aCom[ nMes, 2 ]   += nTotNRctPrv( dbfRctPrvL )
+               aCom[ nMes, 3 ]   += nImpLRctPrv( dbfRctPrvT, dbfRctPrvL, nDinDiv, nDirDiv )
+
+            end
+
+         end
+
+         SysRefresh()
+
+         ( dbfRctPrvL )->( dbSkip() )
+
+      end
+
+   end
+
+Return ( nil )
+
+
+
+static function nProduccion( cCodArt, dbfProducT, dbfProducL, dbfProducM, nYear )
+
+   local nPos
+   local nMes
+
+   local cCodEmp
+   local dbfProEmpT
+   local dbfProEmpL
+   local dbfProEmpM
+
+   aEval( aProducido, {|a| Afill( a, 0 ) } )
+   aEval( aConsumido, {|a| Afill( a, 0 ) } )
+
+   if Len( aEmpGrp() ) <> 0
+
+      for each cCodEmp in aEmpGrp()
+
+         if cCodEmp == cCodEmp()
+
+            nProducido( cCodArt, dbfProducT, dbfProducL, nYear )
+            nConsumido( cCodArt, dbfProducT, dbfProducM, nYear )
+
+         else
+
+            dbUseArea( .T., ( cDriver() ), ( cPatStk( cCodEmp ) + "PROCAB.DBF" ), ( cCheckArea( "PROCAB", @dbfProEmpT ) ), if(.T. .OR. .F., !.F., NIL), .F.,, )
+            if !lAIS() ; ordListAdd( ( cPatStk( cCodEmp ) + "PROCAB.CDX" ) ) ; else ; ordSetFocus( 1 ) ; end
+
+            dbUseArea( .T., ( cDriver() ), ( cPatStk( cCodEmp ) + "PROLIN.DBF" ), ( cCheckArea( "PROLIN", @dbfProEmpL ) ), if(.T. .OR. .F., !.F., NIL), .F.,, )
+            if !lAIS() ; ordListAdd( ( cPatStk( cCodEmp ) + "PROLIN.CDX" ) ) ; else ; ordSetFocus( 1 ) ; end
+            ordSetFocus( "CCODART" )
+
+            dbUseArea( .T., ( cDriver() ), ( cPatStk( cCodEmp ) + "PROMAT.DBF" ), ( cCheckArea( "PROMAT", @dbfProEmpM ) ), if(.T. .OR. .F., !.F., NIL), .F.,, )
+            if !lAIS() ; ordListAdd( ( cPatStk( cCodEmp ) + "PROMAT.CDX" ) ) ; else ; ordSetFocus( 1 ) ; end
+            ordSetFocus( "CCODART" )
+
+            nProducido( cCodArt, dbfProEmpT, dbfProEmpL, nYear )
+            nConsumido( cCodArt, dbfProEmpT, dbfProEmpM, nYear )
+
+            ( dbfProEmpT )->( dbCloseArea() )
+            ( dbfProEmpL )->( dbCloseArea() )
+            ( dbfProEmpM )->( dbCloseArea() )
+
+         end
+
+      next
+
+   end
+
+return nil
+
+
+
+static function nProducido( cCodArt, dbfProducT, dbfProducL, nYear )
+
+   local nMes
+   local nPos
+
+   ( dbfProducT )->( dbGoTop() )
+   ( dbfProducL )->( dbGoTop() )
+
+   if ( dbfProducL )->( dbSeek( cCodArt ) )
+
+      while ( dbfProducL )->cCodArt == cCodArt .AND. !( dbfProducL )->( Eof() )
+
+         if ( dbfProducT )->( dbSeek( ( dbfProducL )->cSerOrd + Str( ( dbfProducL )->nNumOrd ) + ( dbfProducL )->cSufOrd ) )
+
+            if ( nYear == nil .OR. Year( ( dbfProducT )->dFecFin ) == nYear )
+
+               nMes              := Min( Max( Month( ( dbfProducT )->dFecFin ), 1 ), 12 )
+
+               aProducido[ nMes, 1 ]   += ( dbfProducL )->nCajOrd
+               aProducido[ nMes, 2 ]   += NotCaja( ( dbfProducL )->nCajOrd ) * ( dbfProducL )->nUndOrd
+               aProducido[ nMes, 3 ]   += ( NotCaja( ( dbfProducL )->nCajOrd ) * ( dbfProducL )->nUndOrd ) * ( dbfProducL )->nImpOrd
+
+            end
+
+         end
+
+         SysRefresh()
+
+         ( dbfProducL )->( dbSkip() )
+
+      end
+
+   end
+
+return nil
+
+
+
+static function nConsumido( cCodArt, dbfProducT, dbfProducM, nYear )
+
+   local nMes
+   local nPos
+
+   ( dbfProducT )->( dbGoTop() )
+   ( dbfProducM )->( dbGoTop() )
+
+   if dbSeekInOrd( cCodArt, "cCodArt", dbfProducM )
+
+      while ( dbfProducM )->cCodArt == cCodArt .AND. !( dbfProducM )->( Eof() )
+
+         if dbSeekInOrd( ( dbfProducM )->cSerOrd + Str( ( dbfProducM )->nNumOrd ) + ( dbfProducM )->cSufOrd, "cNumOrd", dbfProducT )
+
+            if ( nYear == nil .OR. Year( ( dbfProducT )->dFecFin ) == nYear )
+
+               nMes              := Min( Max( Month( ( dbfProducT )->dFecFin ), 1 ), 12 )
+
+               aConsumido[ nMes, 1 ]   += ( dbfProducM )->nCajOrd
+               aConsumido[ nMes, 2 ]   += NotCaja( ( dbfProducM )->nCajOrd ) * ( dbfProducM )->nUndOrd
+               aConsumido[ nMes, 3 ]   += ( NotCaja( ( dbfProducM )->nCajOrd ) * ( dbfProducM )->nUndOrd ) * ( dbfProducM )->nImpOrd
+
+            end
+
+         end
+
+         SysRefresh()
+
+         ( dbfProducM )->( dbSkip() )
+
+      end
+
+   end
+
+return nil
+
+
+
+
+
+
+
+static function nVentas( cCodArt, dbfAlbCliT, dbfAlbCliL, dbfFacCliT, dbfFacCliL, dbfFacRecT, dbfFacRecL, dbfTikCliT, dbfTikCliL, nYear )
+
+   local cCodEmp
+   local dbfAlbEmpT
+   local dbfAlbEmpL
+   local dbfFacEmpT
+   local dbfFacEmpL
+   local dbfTikEmpT
+   local dbfTikEmpL
+   local dbfFacRecEmpT
+   local dbfFacRecEmpL
+
+   aEval( aVta, {|a| Afill( a, 0 ) } )
+
+   if Len( aEmpGrp() ) <> 0
+
+      for each cCodEmp in aEmpGrp()
+
+         if cCodEmp == cCodEmp()
+
+            nTotAlbVta( cCodArt, dbfAlbCliT, dbfAlbCliL, nYear )
+            nTotFacVta( cCodArt, dbfFacCliT, dbfFacCliL, nYear )
+            nTotRecVta( cCodArt, dbfFacRecT, dbfFacRecL, nYear )
+            nTotTikVta( cCodArt, dbfTikCliT, dbfTikCliL, nYear )
+
+         else
+
+            dbUseArea( .T., ( cDriver() ), ( cPatStk( cCodEmp ) + "ALBCLIT.DBF" ), ( cCheckArea( "ALBCLIT", @dbfAlbEmpT ) ), if(.T. .OR. .F., !.F., NIL), .F.,, )
+            if !lAIS() ; ordListAdd( ( cPatStk( cCodEmp ) + "ALBCLIT.CDX" ) ) ; else ; ordSetFocus( 1 ) ; end
+
+            dbUseArea( .T., ( cDriver() ), ( cPatStk( cCodEmp ) + "ALBCLIL.DBF" ), ( cCheckArea( "ALBCLIL", @dbfAlbEmpL ) ), if(.T. .OR. .F., !.F., NIL), .F.,, )
+            if !lAIS() ; ordListAdd( ( cPatStk( cCodEmp ) + "ALBCLIL.CDX" ) ) ; else ; ordSetFocus( 1 ) ; end
+            ordSetFocus( "CREF" )
+
+            dbUseArea( .T., ( cDriver() ), ( cPatStk( cCodEmp ) + "FACCLIT.DBF" ), ( cCheckArea( "FACCLIT", @dbfFacEmpT ) ), if(.T. .OR. .F., !.F., NIL), .F.,, )
+            if !lAIS() ; ordListAdd( ( cPatStk( cCodEmp ) + "FACCLIT.CDX" ) ) ; else ; ordSetFocus( 1 ) ; end
+
+            dbUseArea( .T., ( cDriver() ), ( cPatStk( cCodEmp ) + "FACCLIL.DBF" ), ( cCheckArea( "FACCLIL", @dbfFacEmpL ) ), if(.T. .OR. .F., !.F., NIL), .F.,, )
+            if !lAIS() ; ordListAdd( ( cPatStk( cCodEmp ) + "FACCLIL.CDX" ) ) ; else ; ordSetFocus( 1 ) ; end
+            ordSetFocus( "CREF" )
+
+            dbUseArea( .T., ( cDriver() ), ( cPatStk( cCodEmp ) + "FACRECT.DBF" ), ( cCheckArea( "FACRECT", @dbfFacRecEmpT ) ), if(.T. .OR. .F., !.F., NIL), .F.,, )
+            if !lAIS() ; ordListAdd( ( cPatStk( cCodEmp ) + "FACRECT.CDX" ) ) ; else ; ordSetFocus( 1 ) ; end
+
+            dbUseArea( .T., ( cDriver() ), ( cPatStk( cCodEmp ) + "FACRECL.DBF" ), ( cCheckArea( "FACRECL", @dbfFacRecEmpL ) ), if(.T. .OR. .F., !.F., NIL), .F.,, )
+            if !lAIS() ; ordListAdd( ( cPatStk( cCodEmp ) + "FACRECL.CDX" ) ) ; else ; ordSetFocus( 1 ) ; end
+            ordSetFocus( "CREF" )
+
+            dbUseArea( .T., ( cDriver() ), ( cPatStk( cCodEmp ) + "TIKET.DBF" ), ( cCheckArea( "TIKET", @dbfTikEmpT ) ), if(.T. .OR. .F., !.F., NIL), .F.,, )
+            if !lAIS() ; ordListAdd( ( cPatStk( cCodEmp ) + "TIKET.CDX" ) ) ; else ; ordSetFocus( 1 ) ; end
+
+            dbUseArea( .T., ( cDriver() ), ( cPatStk( cCodEmp ) + "TIKEL.DBF" ), ( cCheckArea( "TIKEL", @dbfTikEmpL ) ), if(.T. .OR. .F., !.F., NIL), .F.,, )
+            if !lAIS() ; ordListAdd( ( cPatStk( cCodEmp ) + "TIKEL.CDX" ) ) ; else ; ordSetFocus( 1 ) ; end
+            ordSetFocus( "CCBATIL" )
+
+            nTotAlbVta( cCodArt, dbfAlbEmpT, dbfAlbEmpL, nYear )
+            nTotFacVta( cCodArt, dbfFacEmpT, dbfFacEmpL, nYear )
+            nTotRecVta( cCodArt, dbfFacRecEmpT, dbfFacRecEmpL, nYear )
+            nTotTikVta( cCodArt, dbfTikEmpT, dbfTikEmpL, nYear )
+
+            ( dbfAlbEmpT )->( dbCloseArea() )
+            ( dbfAlbEmpL )->( dbCloseArea() )
+            ( dbfFacEmpT )->( dbCloseArea() )
+            ( dbfFacEmpL )->( dbCloseArea() )
+            ( dbfFacRecEmpT )->( dbCloseArea() )
+            ( dbfFacRecEmpL )->( dbCloseArea() )
+            ( dbfTikEmpT )->( dbCloseArea() )
+            ( dbfTikEmpL )->( dbCloseArea() )
+
+         end
+
+      next
+
+   end
+
+Return ( nil )
+
+
+
+
+
+
+static function nTotAlbVta( cCodArt, dbfAlbCliT, dbfAlbCliL, nYear )
+
+   local nPos
+   local nMes
+
+   if ( dbfAlbCliL )->( dbSeek( cCodArt ) )
+
+      while ( dbfAlbCliL )->cRef == cCodArt .AND. !( dbfAlbCliL )->( Eof() )
+
+         if ( dbfAlbCliT )->( dbSeek( ( dbfAlbCliL )->cSerAlb + Str( ( dbfAlbCliL )->nNumAlb ) + ( dbfAlbCliL )->cSufAlb ) )
+
+            if !( dbfAlbCliT )->lFacturado .AND. ( nYear == nil .OR. Year( ( dbfAlbCliT )->dFecAlb ) == nYear )
+
+               nMes              := Min( Max( Month( ( dbfAlbCliT )->dFecAlb ), 1 ), 12 )
+
+               aVta[ nMes, 1 ]   += ( dbfAlbCliL )->nCanEnt
+               aVta[ nMes, 2 ]   += nTotVAlbCli( dbfAlbCliL )
+               aVta[ nMes, 3 ]   += nImpLAlbCli( dbfAlbCliT, dbfAlbCliL, nDouDiv, nDorDiv )
+               aVta[ nMes, 4 ]   += nImpLAlbCli( dbfAlbCliT, dbfAlbCliL, nDouDiv, nDorDiv ) - ( nTotNAlbCli( dbfAlbCliL ) * ( dbfAlbCliL )->nCosDiv )
+
+            end
+
+         end
+
+         SysRefresh()
+
+         ( dbfAlbCliL )->( dbSkip() )
+
+      end
+
+   end
+
+Return ( nil )
+
+
+
+
+
+
+static function nTotFacVta( cCodArt, dbfFacCliT, dbfFacCliL, nYear )
+
+   local nPos
+   local nMes
+   local pruebas  := 0
+
+   ( dbfFacCliL )->( dbGoTop() )
+
+   if ( dbfFacCliL )->( dbSeek( cCodArt ) )
+
+      while ( dbfFacCliL )->cRef == cCodArt .AND. !( dbfFacCliL )->( Eof() )
+
+         if ( dbfFacCliT )->( dbSeek( ( dbfFacCliL )->cSerie + Str( ( dbfFacCliL )->nNumFac ) + ( dbfFacCliL )->cSufFac ) )
+
+            if ( nYear == nil .OR. Year( ( dbfFacCliT )->dFecFac ) == nYear ) .AND. ( dbfFacCliL )->nCtlStk < 2
+
+               nMes              := Min( Max( Month( ( dbfFacCliT )->dFecFac ), 1 ), 12 )
+
+               aVta[ nMes, 1 ]   += ( dbfFacCliL )->nCanEnt
+               aVta[ nMes, 2 ]   += nTotVFacCli( dbfFacCliL )
+               aVta[ nMes, 3 ]   += nImpLFacCli( dbfFacCliT, dbfFacCliL, nDouDiv, nDorDiv )
+               aVta[ nMes, 4 ]   += nImpLFacCli( dbfFacCliT, dbfFacCliL, nDouDiv, nDorDiv ) - ( nTotNFacCli( dbfFacCliL ) * ( dbfFacCliL )->nCosDiv )
+
+            end
+
+         end
+
+         SysRefresh()
+
+         ( dbfFacCliL )->( dbSkip() )
+
+      end
+
+   end
+
+Return ( nil )
+
+
+
+
+static function nTotRecVta( cCodArt, dbfFacRecT, dbfFacRecL, nYear )
+
+   local nPos
+   local nMes
+
+   if ( dbfFacRecL )->( dbSeek( cCodArt ) )
+
+      while ( dbfFacRecL )->cRef == cCodArt .AND. !( dbfFacRecL )->( Eof() )
+
+         if ( dbfFacRecT )->( dbSeek( ( dbfFacRecL )->cSerie + Str( ( dbfFacRecL )->nNumFac ) + ( dbfFacRecL )->cSufFac ) )
+
+            if ( nYear == nil .OR. Year( ( dbfFacRecT )->dFecFac ) == nYear )
+
+               nMes              := Min( Max( Month( ( dbfFacRecT )->dFecFac ), 1 ), 12 )
+
+               aVta[ nMes, 1 ]   += ( dbfFacRecL )->nCanEnt
+               aVta[ nMes, 2 ]   += nTotVFacRec( dbfFacRecL )
+               aVta[ nMes, 3 ]   += nImpLFacRec( dbfFacRecT, dbfFacRecL, nDouDiv, nDorDiv )
+               aVta[ nMes, 4 ]   += nImpLFacRec( dbfFacRecT, dbfFacRecL, nDouDiv, nDorDiv ) - ( nTotNFacRec( dbfFacRecL ) * ( dbfFacRecL )->nCosDiv )
+
+            end
+
+         end
+
+         SysRefresh()
+
+         ( dbfFacRecL )->( dbSkip() )
+
+      end
+
+   end
+
+Return ( nil )
+
+
+
+
+static function nTotTikVta( cCodArt, dbfTikCliT, dbfTikCliL, nYear )
+
+   local nPos
+   local nMes
+
+
+
+
+
+   if ( dbfTikCliL )->( dbSeek( cCodArt ) )
+
+      while ( dbfTikCliL )->cCbaTil == cCodArt .AND. !( dbfTikCliL )->( Eof() )
+
+         if ( dbfTikCliT )->( dbSeek( ( dbfTikCliL )->cSerTil + ( dbfTikCliL )->cNumTil + ( dbfTikCliL )->cSufTil ) )
+
+            if ( nYear == nil .OR. Year( ( dbfTikCliT )->dFecTik ) == nYear )
+
+               nMes  := Min( Max( Month( ( dbfTikCliT )->dFecTik ), 1 ), 12 )
+
+               if ( dbfTikCliL )->cTipTil == "1" .OR. ( dbfTikCliL )->cTipTil == "5"
+
+                  aVta[ nMes, 2 ]   += ( dbfTikCliL )->nUntTil
+                  aVta[ nMes, 3 ]   += nImpLTpv( dbfTikCliT, dbfTikCliL, nDouDiv, nDorDiv )
+                  aVta[ nMes, 4 ]   += nImpLTpv( dbfTikCliT, dbfTikCliL, nDouDiv, nDorDiv ) - ( ( dbfTikCliL )->nUntTil * ( dbfTikCliL )->nCosDiv )
+
+               end
+
+               if ( dbfTikCliL )->cTipTil == "4" .OR. ( dbfTikCliL )->cTipTil == "6"
+
+                  aVta[ nMes, 2 ]   -= ( dbfTikCliL )->nUntTil
+                  aVta[ nMes, 3 ]   -= nImpLTpv( dbfTikCliT, dbfTikCliL, nDouDiv, nDorDiv )
+
+               end
+
+            end
+
+         end
+
+         SysRefresh()
+
+         ( dbfTikCliL )->( dbSkip() )
+
+      end
+
+   end
+
+
+
+
+
+   ( dbfTikCliL )->( ordSetFocus( "cComTil" ) )
+
+   if ( dbfTikCliL )->( dbSeek( cCodArt ) )
+
+      while ( dbfTikCliL )->cComTil == cCodArt .AND. !( dbfTikCliL )->( Eof() )
+
+         if ( dbfTikCliT )->( dbSeek( ( dbfTikCliL )->cSerTil + ( dbfTikCliL )->cNumTil + ( dbfTikCliL )->cSufTil ) )
+
+            if ( nYear == nil .OR. Year( ( dbfTikCliT )->dFecTik ) == nYear )
+
+               nMes  := Min( Max( Month( ( dbfTikCliT )->dFecTik ), 1 ), 12 )
+
+               aVta[ nMes, 2 ]   += ( dbfTikCliL )->nUntTil
+               aVta[ nMes, 3 ]   += nImpLTpv( dbfTikCliT, dbfTikCliL, nDouDiv, nDorDiv )
+
+            end
+
+         end
+
+         SysRefresh()
+
+         ( dbfTikCliL )->( dbSkip() )
+
+      end
+
+   end
+
+   ( dbfTikCliL )->( ordSetFocus( "cCbaTil" ) )
+
+Return ( nil )
+
+
+
+
+
+
+static function nStkAlm( cCodArt, dbfMovAlm, nYear )
+
+   local nPos
+   local nUndAlm  := 0
+
+
+
+
+
+   if ( dbfMovAlm )->( dbSeek( cCodArt ) )
+
+      while ( dbfMovAlm )->cRefMov == cCodArt .AND. !( dbfMovAlm )->( eof() )
+
+         if nYear == nil .OR. Year( ( dbfMovAlm )->dFecMov ) == nYear
+
+            if !Empty( ( dbfMovAlm )->cAliMov ) .AND. !( dbfMovAlm )->lNoStk
+
+               nUndAlm   += nTotNMovAlm( dbfMovAlm )
+
+            end
+
+            if !Empty( ( dbfMovAlm )->cAloMov ) .AND. !( dbfMovAlm )->lNoStk
+
+               nUndAlm   -= nTotNMovAlm( dbfMovAlm )
+
+            end
+
+         end
+
+         SysRefresh()
+
+         ( dbfMovAlm )->( dbSkip() )
+
+      end
+
+   end
+
+return nUndAlm
+
+
+
+
+Static Function LoadPedidoProveedor( cCodArt, nYear )
+
+   local aEstadoPedido  := { "Pendiente", "Parcialmente", "Recibido" }
+
+   if ( dbfPedPrvL )->( dbSeek( cCodArt ) )
+      while ( dbfPedPrvL )->cRef == cCodArt .AND. !( dbfPedPrvL )->( eof() )
+
+         if Empty( nYear ) .OR. Year( dFecPedPrv( ( dbfPedPrvL )->cSerPed + Str( ( dbfPedPrvL )->nNumPed ) + ( dbfPedPrvL )->cSufPed, dbfPedPrvT ) ) == nYear
+
+            oDbfTmp:Append()
+            oDbfTmp:nTypDoc   := "01"
+            oDbfTmp:cNumDoc   := ( dbfPedPrvL )->cSerPed + Str( ( dbfPedPrvL )->nNumPed ) + ( dbfPedPrvL )->cSufPed
+            oDbfTmp:cEstDoc   := aEstadoPedido[ Max( RetFld( ( dbfPedPrvL )->cSerPed + Str( ( dbfPedPrvL )->nNumPed ) + ( dbfPedPrvL )->cSufPed, dbfPedPrvT, "nEstado" ), 1 ) ]
+            oDbfTmp:dFecDoc   := dFecPedPrv( ( dbfPedPrvL )->cSerPed + Str( ( dbfPedPrvL )->nNumPed ) + ( dbfPedPrvL )->cSufPed, dbfPedPrvT )
+            oDbfTmp:cCodDoc   := RetFld( ( dbfPedPrvL )->cSerPed + Str( ( dbfPedPrvL )->nNumPed ) + ( dbfPedPrvL )->cSufPed, dbfPedPrvT, "cCodPrv" )
+            oDbfTmp:cNomDoc   := cNbrPedPrv( ( dbfPedPrvL )->cSerPed + Str( ( dbfPedPrvL )->nNumPed ) + ( dbfPedPrvL )->cSufPed, dbfPedPrvT )
+            oDbfTmp:cRef      := ( dbfPedPrvL )->cRef
+            oDbfTmp:cValPr1   := ( dbfPedPrvL )->cValPr1
+            oDbfTmp:cValPr2   := ( dbfPedPrvL )->cValPr2
+            oDbfTmp:cLote     := ( dbfPedPrvL )->cLote
+            oDbfTmp:cAlmDoc   := ( dbfPedPrvL )->cAlmLin
+            oDbfTmp:nUndDoc   := nTotNPedPrv( dbfPedPrvL )
+            oDbfTmp:nFacCnv   := ( dbfPedPrvL )->nFacCnv
+            oDbfTmp:nImpDoc   := nTotUPedPrv( dbfPedPrvL, nDinDiv )
+            oDbfTmp:nDtoDoc   := ( dbfPedPrvL )->nDtoLin
+            oDbfTmp:nTotDoc   := nTotLPedPrv( dbfPedPrvL, nDinDiv, nDirDiv )
+            oDbfTmp:Save()
+
+         end
+
+         SysRefresh()
+         ( dbfPedPrvL )->( dbSkip() )
+
+      end
+   end
+
+Return nil
+
+
+
+
+Static Function LoadAlbaranProveedor( cCodArt, nYear )
+
+   if ( dbfAlbPrvL )->( dbSeek( cCodArt ) )
+      while ( dbfAlbPrvL )->cRef == cCodArt .AND. !( dbfAlbPrvL )->( eof() )
+
+         if nYear == nil .OR. Year( dFecAlbPrv( ( dbfAlbPrvL )->cSerAlb + Str( ( dbfAlbPrvL )->nNumAlb ) + ( dbfAlbPrvL )->cSufAlb, dbfAlbPrvT ) ) == nYear
+
+            oDbfTmp:Append()
+            oDbfTmp:nTypDoc   := "02"
+            oDbfTmp:cNumDoc   := ( dbfAlbPrvL )->cSerAlb + Str( ( dbfAlbPrvL )->nNumAlb ) + ( dbfAlbPrvL )->cSufAlb
+            oDbfTmp:cEstDoc   := if( RetFld( ( dbfAlbPrvL )->cSerAlb + Str( ( dbfAlbPrvL )->nNumAlb ) + ( dbfAlbPrvL )->cSufAlb, dbfAlbPrvT, "lFacturado" ), "Facturado", "No facturado" )
+            oDbfTmp:dFecDoc   := dFecAlbPrv( ( dbfAlbPrvL )->cSerAlb + Str( ( dbfAlbPrvL )->nNumAlb ) + ( dbfAlbPrvL )->cSufAlb, dbfAlbPrvT )
+            oDbfTmp:cCodDoc   := RetFld( ( dbfAlbPrvL )->cSerAlb + Str( ( dbfAlbPrvL )->nNumAlb ) + ( dbfAlbPrvL )->cSufAlb, dbfAlbPrvT, "cCodPrv" )
+            oDbfTmp:cNomDoc   := cNbrAlbPrv( ( dbfAlbPrvL )->cSerAlb + Str( ( dbfAlbPrvL )->nNumAlb ) + ( dbfAlbPrvL )->cSufAlb, dbfAlbPrvT )
+            oDbfTmp:lFacturado:= RetFld( ( dbfAlbPrvL )->cSerAlb + Str( ( dbfAlbPrvL )->nNumAlb ) + ( dbfAlbPrvL )->cSufAlb, dbfAlbPrvT, "lFacturado" )
+            oDbfTmp:cRef      := ( dbfAlbPrvL )->cRef
+            oDbfTmp:cValPr1   := ( dbfAlbPrvL )->cValPr1
+            oDbfTmp:cValPr2   := ( dbfAlbPrvL )->cValPr2
+            oDbfTmp:cLote     := ( dbfAlbPrvL )->cLote
+            oDbfTmp:cAlmDoc   := ( dbfAlbPrvL )->cAlmLin
+            oDbfTmp:nUndDoc   := nTotNAlbPrv( dbfAlbPrvL )
+            oDbfTmp:nFacCnv   := ( dbfAlbPrvL )->nFacCnv
+            oDbfTmp:nImpDoc   := nTotUAlbPrv( dbfAlbPrvL, nDinDiv )
+            oDbfTmp:nDtoDoc   := ( dbfAlbPrvL )->nDtoLin
+            oDbfTmp:nTotDoc   := nTotLAlbPrv( dbfAlbPrvL, nDinDiv, nDirDiv )
+            oDbfTmp:Save()
+
+         end
+
+         SysRefresh()
+         ( dbfAlbPrvL )->( dbSkip() )
+
+      end
+   end
+
+Return nil
+
+
+
+
+Static Function LoadFacturaProveedor( cCodArt, nYear )
+
+   local aEstadoFactura    := { "Pagada", "Parcialmente", "Pendiente" }
+
+   if ( dbfFacPrvL )->( dbSeek( cCodArt ) )
+      while ( dbfFacPrvL )->cRef == cCodArt .AND. !( dbfFacPrvL )->( eof() )
+
+         if nYear == nil .OR. Year( dFecFacPrv( ( dbfFacPrvL )->cSerFac + Str( ( dbfFacPrvL )->nNumFac ) + ( dbfFacPrvL )->cSufFac, dbfFacPrvT ) ) == nYear
+
+            oDbfTmp:Append()
+            oDbfTmp:nTypDoc   := "03"
+            oDbfTmp:cNumDoc   := ( dbfFacPrvL )->cSerFac + Str( ( dbfFacPrvL )->nNumFac ) + ( dbfFacPrvL )->cSufFac
+            oDbfTmp:cEstDoc   := aEstadoFactura[ nEstFacPrv( ( dbfFacPrvL )->cSerFac + Str( ( dbfFacPrvL )->nNumFac ) + ( dbfFacPrvL )->cSufFac, dbfFacPrvT, dbfFacPrvP ) ]
+            oDbfTmp:dFecDoc   := dFecFacPrv( ( dbfFacPrvL )->cSerFac + Str( ( dbfFacPrvL )->nNumFac ) + ( dbfFacPrvL )->cSufFac, dbfFacPrvT )
+            oDbfTmp:cCodDoc   := RetFld( ( dbfFacPrvL )->cSerFac + Str( ( dbfFacPrvL )->nNumFac ) + ( dbfFacPrvL )->cSufFac, dbfFacPrvT, "cCodPrv" )
+            oDbfTmp:cNomDoc   := cNbrFacPrv( ( dbfFacPrvL )->cSerFac + Str( ( dbfFacPrvL )->nNumFac ) + ( dbfFacPrvL )->cSufFac, dbfFacPrvT )
+            oDbfTmp:lFacturado:= .F.
+            oDbfTmp:cRef      := ( dbfFacPrvL )->cRef
+            oDbfTmp:cValPr1   := ( dbfFacPrvL )->cValPr1
+            oDbfTmp:cValPr2   := ( dbfFacPrvL )->cValPr2
+            oDbfTmp:cLote     := ( dbfFacPrvL )->cLote
+            oDbfTmp:cAlmDoc   := ( dbfFacPrvL )->cAlmLin
+            oDbfTmp:nUndDoc   := nTotNFacPrv( dbfFacPrvL )
+            oDbfTmp:nFacCnv   := ( dbfFacPrvL )->nFacCnv
+            oDbfTmp:nImpDoc   := nTotUFacPrv( dbfFacPrvL, nDinDiv )
+            oDbfTmp:nDtoDoc   := ( dbfFacPrvL )->nDtoLin
+            oDbfTmp:nTotDoc   := nTotLFacPrv( dbfFacPrvL, nDinDiv, nDirDiv )
+            oDbfTmp:Save()
+
+         end
+
+         SysRefresh()
+         ( dbfFacPrvL )->( dbSkip() )
+
+      end
+   end
+
+Return nil
+
+
+
+Static Function LoadrectificativaProveedor( cCodArt, nYear )
+
+   local aEstadoFactura    := { "Pagada", "Parcialmente", "Pendiente" }
+
+   if ( dbfRctPrvL )->( dbSeek( cCodArt ) )
+      while ( dbfRctPrvL )->cRef == cCodArt .AND. !( dbfRctPrvL )->( eof() )
+
+         if nYear == nil .OR. Year( dFecRctPrv( ( dbfRctPrvL )->cSerFac + Str( ( dbfRctPrvL )->nNumFac ) + ( dbfRctPrvL )->cSufFac, dbfRctPrvT ) ) == nYear
+
+            oDbfTmp:Append()
+            oDbfTmp:nTypDoc   := "04"
+            oDbfTmp:cNumDoc   := ( dbfRctPrvL )->cSerFac + Str( ( dbfRctPrvL )->nNumFac ) + ( dbfRctPrvL )->cSufFac
+            oDbfTmp:cEstDoc   := aEstadoFactura[ nEstRctPrv( ( dbfRctPrvL )->cSerFac + Str( ( dbfRctPrvL )->nNumFac ) + ( dbfRctPrvL )->cSufFac, dbfRctPrvT, dbfFacPrvP ) ]
+            oDbfTmp:dFecDoc   := dFecRctPrv( ( dbfRctPrvL )->cSerFac + Str( ( dbfRctPrvL )->nNumFac ) + ( dbfRctPrvL )->cSufFac, dbfRctPrvT )
+            oDbfTmp:cCodDoc   := RetFld( ( dbfRctPrvL )->cSerFac + Str( ( dbfRctPrvL )->nNumFac ) + ( dbfRctPrvL )->cSufFac, dbfRctPrvT, "cCodPrv" )
+            oDbfTmp:cNomDoc   := cNbrRctPrv( ( dbfRctPrvL )->cSerFac + Str( ( dbfRctPrvL )->nNumFac ) + ( dbfRctPrvL )->cSufFac, dbfRctPrvT )
+            oDbfTmp:lFacturado:= .F.
+            oDbfTmp:cRef      := ( dbfRctPrvL )->cRef
+            oDbfTmp:cValPr1   := ( dbfRctPrvL )->cValPr1
+            oDbfTmp:cValPr2   := ( dbfRctPrvL )->cValPr2
+            oDbfTmp:cLote     := ( dbfRctPrvL )->cLote
+            oDbfTmp:cAlmDoc   := ( dbfRctPrvL )->cAlmLin
+            oDbfTmp:nUndDoc   := nTotNRctPrv( dbfRctPrvL )
+            oDbfTmp:nFacCnv   := ( dbfRctPrvL )->nFacCnv
+            oDbfTmp:nImpDoc   := nTotURctPrv( dbfRctPrvL, nDinDiv )
+            oDbfTmp:nDtoDoc   := ( dbfRctPrvL )->nDtoLin
+            oDbfTmp:nTotDoc   := nTotLRctPrv( dbfRctPrvL, nDinDiv, nDirDiv )
+            oDbfTmp:Save()
+
+         end
+
+         SysRefresh()
+         ( dbfRctPrvL )->( dbSkip() )
+
+      end
+   end
+
+Return nil
+
+
+
+
+
+
+Static Function LoadPresupuestoCliente( cCodArt, nYear )
+
+   if ( dbfPreCliL )->( dbSeek( cCodArt ) )
+      while ( dbfPreCliL )->cRef == cCodArt .AND. !( dbfPreCliL )->( eof() )
+
+         if nYear == nil .OR. Year( dFecPreCli( ( dbfPreCliL )->cSerPre + Str( ( dbfPreCliL )->nNumPre ) + ( dbfPreCliL )->cSufPre, dbfPreCliT ) ) == nYear
+
+            oDbfTmp:Append()
+            oDbfTmp:nTypDoc   := "08"
+            oDbfTmp:cNumDoc   := ( dbfPreCliL )->cSerPre + Str( ( dbfPreCliL )->nNumPre ) + ( dbfPreCliL )->cSufPre
+            oDbfTmp:cEstDoc   := if( RetFld( ( dbfPreCliL )->cSerPre + Str( ( dbfPreCliL )->nNumPre ) + ( dbfPreCliL )->cSufPre, dbfPreCliT, "lEstado" ), "Aprobado", "Pendiente" )
+            oDbfTmp:dFecDoc   := dFecPreCli( ( dbfPreCliL )->cSerPre + Str( ( dbfPreCliL )->nNumPre ) + ( dbfPreCliL )->cSufPre, dbfPreCliT )
+            oDbfTmp:cCodDoc   := RetFld( ( dbfPreCliL )->cSerPre + Str( ( dbfPreCliL )->nNumPre ) + ( dbfPreCliL )->cSufPre, dbfPreCliT, "cCodCli" )
+            oDbfTmp:cNomDoc   := cNbrPreCli( ( dbfPreCliL )->cSerPre + Str( ( dbfPreCliL )->nNumPre ) + ( dbfPreCliL )->cSufPre, dbfPreCliT )
+            oDbfTmp:cRef      := ( dbfPreCliL )->cRef
+            oDbfTmp:cValPr1   := ( dbfPreCliL )->cValPr1
+            oDbfTmp:cValPr2   := ( dbfPreCliL )->cValPr2
+            oDbfTmp:cLote     := ( dbfPreCliL )->cLote
+            oDbfTmp:cAlmDoc   := ( dbfPreCliL )->cAlmLin
+            oDbfTmp:nUndDoc   := - nTotNPreCli( dbfPreCliL )
+            oDbfTmp:nFacCnv   := ( dbfPreCliL )->nFacCnv
+            oDbfTmp:nImpDoc   := nTotUPreCli( dbfPreCliL, nDouDiv )
+            oDbfTmp:nDtoDoc   := ( dbfPreCliL )->nDto
+            oDbfTmp:nTotDoc   := nTotLPreCli( dbfPreCliT, dbfPreCliL, nDouDiv, nDorDiv )
+            oDbfTmp:Save()
+
+         end
+
+         SysRefresh()
+
+         ( dbfPreCliL )->( dbSkip() )
+
+      end
+   end
+
+Return nil
+
+
+
+
+
+
+Static Function LoadPedidosCliente( cCodArt, nYear )
+
+   local aEstadoPedido  := { "Pendiente", "Parcialmente", "Entregado" }
+
+   if ( dbfPedCliL )->( dbSeek( cCodArt ) )
+      while ( dbfPedCliL )->cRef == cCodArt .AND. !( dbfPedCliL )->( eof() )
+
+         if nYear == nil .OR. Year( dFecPedCli( ( dbfPedCliL )->cSerPed + Str( ( dbfPedCliL )->nNumPed ) + ( dbfPedCliL )->cSufPed, dbfPedCliT ) ) == nYear
+
+            oDbfTmp:Append()
+            oDbfTmp:nTypDoc   := "09"
+            oDbfTmp:cNumDoc   := ( dbfPedCliL )->cSerPed + Str( ( dbfPedCliL )->nNumPed ) + ( dbfPedCliL )->cSufPed
+            oDbfTmp:cEstDoc   := aEstadoPedido[ Max( RetFld( ( dbfPedCliL )->cSerPed + Str( ( dbfPedCliL )->nNumPed ) + ( dbfPedCliL )->cSufPed, dbfPedCliT, "nEstado" ), 1 ) ]
+            oDbfTmp:dFecDoc   := dFecPedCli( ( dbfPedCliL )->cSerPed + Str( ( dbfPedCliL )->nNumPed ) + ( dbfPedCliL )->cSufPed, dbfPedCliT )
+            oDbfTmp:cCodDoc   := RetFld( ( dbfPedCliL )->cSerPed + Str( ( dbfPedCliL )->nNumPed ) + ( dbfPedCliL )->cSufPed, dbfPedCliT, "cCodCli" )
+            oDbfTmp:cNomDoc   := cNbrPedCli( ( dbfPedCliL )->cSerPed + Str( ( dbfPedCliL )->nNumPed ) + ( dbfPedCliL )->cSufPed, dbfPedCliT )
+            oDbfTmp:cRef      := ( dbfPedCliL )->cRef
+            oDbfTmp:cValPr1   := ( dbfPedCliL )->cValPr1
+            oDbfTmp:cValPr2   := ( dbfPedCliL )->cValPr2
+            oDbfTmp:cLote     := ( dbfPedCliL )->cLote
+            oDbfTmp:cAlmDoc   := ( dbfPedCliL )->cAlmLin
+            oDbfTmp:nUndDoc   := - nTotNPedCli( dbfPedCliL )
+            oDbfTmp:nFacCnv   := ( dbfPedCliL )->nFacCnv
+            oDbfTmp:nImpDoc   := nTotUPedCli( dbfPedCliL, nDouDiv )
+            oDbfTmp:nDtoDoc   := ( dbfPedCliL )->nDto
+            oDbfTmp:nTotDoc   := nTotLPedCli( dbfPedCliL, nDouDiv, nDorDiv )
+            oDbfTmp:Save()
+
+         end
+
+         SysRefresh()
+
+         ( dbfPedCliL )->( dbSkip() )
+
+      end
+   end
+
+Return nil
+
+
+
+
+Static Function LoadAlbaranesCliente( cCodArt, nYear )
+
+   if ( dbfAlbCliL )->( dbSeek( cCodArt ) )
+      while ( dbfAlbCliL )->cRef == cCodArt .AND. !( dbfAlbCliL )->( eof() )
+
+         if nYear == nil .OR. Year( dFecAlbCli( ( dbfAlbCliL )->cSerAlb + Str( ( dbfAlbCliL )->nNumAlb ) + ( dbfAlbCliL )->cSufAlb, dbfAlbCliT ) ) == nYear
+
+            oDbfTmp:Append()
+            oDbfTmp:nTypDoc   := "10"
+            oDbfTmp:cNumDoc   := ( dbfAlbCliL )->cSerAlb + Str( ( dbfAlbCliL )->nNumAlb ) + ( dbfAlbCliL )->cSufAlb
+            oDbfTmp:cEstDoc   := if( RetFld( ( dbfAlbCliL )->cSerAlb + Str( ( dbfAlbCliL )->nNumAlb ) + ( dbfAlbCliL )->cSufAlb, dbfAlbCliT, "lFacturado" ), "Facturado", "No facturado" )
+            oDbfTmp:dFecDoc   := dFecAlbCli( ( dbfAlbCliL )->cSerAlb + Str( ( dbfAlbCliL )->nNumAlb ) + ( dbfAlbCliL )->cSufAlb, dbfAlbCliT )
+            oDbfTmp:cCodDoc   := RetFld( ( dbfAlbCliL )->cSerAlb + Str( ( dbfAlbCliL )->nNumAlb ) + ( dbfAlbCliL )->cSufAlb, dbfAlbCliT, "cCodCli" )
+            oDbfTmp:cNomDoc   := RetFld( ( dbfAlbCliL )->cSerAlb + Str( ( dbfAlbCliL )->nNumAlb ) + ( dbfAlbCliL )->cSufAlb, dbfAlbCliT, "cNomCli" )
+            oDbfTmp:lFacturado:= RetFld( ( dbfAlbCliL )->cSerAlb + Str( ( dbfAlbCliL )->nNumAlb ) + ( dbfAlbCliL )->cSufAlb, dbfAlbCliT, "lFacturado" )
+            oDbfTmp:cRef      := ( dbfAlbCliL )->cRef
+            oDbfTmp:cValPr1   := ( dbfAlbCliL )->cValPr1
+            oDbfTmp:cValPr2   := ( dbfAlbCliL )->cValPr2
+            oDbfTmp:cLote     := ( dbfAlbCliL )->cLote
+            oDbfTmp:cAlmDoc   := ( dbfAlbCliL )->cAlmLin
+            oDbfTmp:nUndDoc   := - nTotNAlbCli( dbfAlbCliL )
+            oDbfTmp:nFacCnv   := ( dbfAlbCliL )->nFacCnv
+            oDbfTmp:nImpDoc   := nTotUAlbCli( dbfAlbCliL, nDouDiv )
+            oDbfTmp:nDtoDoc   := ( dbfAlbCliL )->nDto
+            oDbfTmp:nTotDoc   := nTotLAlbCli( dbfAlbCliL, nDouDiv, nDorDiv )
+            oDbfTmp:Save()
+
+         end
+
+         SysRefresh()
+
+         ( dbfAlbCliL )->( dbSkip() )
+
+      end
+   end
+
+Return nil
+
+
+
+
+Static Function LoadFacturasCliente( cCodArt, nYear )
+
+   local aEstadoFactura    := { "Cobrada", "Parcialmente", "Pendiente" }
+
+   if ( dbfFacCliL )->( dbSeek( cCodArt ) )
+      while ( dbfFacCliL )->cRef == cCodArt .AND. !( dbfFacCliL )->( eof() )
+
+         if nYear == nil .OR. Year( dFecFacCli( ( dbfFacCliL )->cSerie + Str( ( dbfFacCliL )->nNumFac ) + ( dbfFacCliL )->cSufFac, dbfFacCliT ) ) == nYear
+
+            oDbfTmp:Append()
+            oDbfTmp:nTypDoc   := "11"
+            oDbfTmp:cNumDoc   := ( dbfFacCliL )->cSerie + Str( ( dbfFacCliL )->nNumFac ) + ( dbfFacCliL )->cSufFac
+            oDbfTmp:cEstDoc   := aEstadoFactura[ nChkPagFacCli( ( dbfFacCliL )->cSerie + Str( ( dbfFacCliL )->nNumFac ) + ( dbfFacCliL )->cSufFac, dbfFacCliT, dbfFacCliP ) ]
+            oDbfTmp:dFecDoc   := dFecFacCli( ( dbfFacCliL )->cSerie + Str( ( dbfFacCliL )->nNumFac ) + ( dbfFacCliL )->cSufFac, dbfFacCliT )
+            oDbfTmp:cCodDoc   := RetFld( ( dbfFacCliL )->cSerie + Str( ( dbfFacCliL )->nNumFac ) + ( dbfFacCliL )->cSufFac, dbfFacCliT, "cCodCli" )
+            oDbfTmp:cNomDoc   := RetFld( ( dbfFacCliL )->cSerie + Str( ( dbfFacCliL )->nNumFac ) + ( dbfFacCliL )->cSufFac, dbfFacCliT, "cNomCli" )
+            oDbfTmp:lFacturado:= .F.
+            oDbfTmp:cRef      := ( dbfFacCliL )->cRef
+            oDbfTmp:cValPr1   := ( dbfFacCliL )->cValPr1
+            oDbfTmp:cValPr2   := ( dbfFacCliL )->cValPr2
+            oDbfTmp:cLote     := ( dbfFacCliL )->cLote
+            oDbfTmp:cAlmDoc   := ( dbfFacCliL )->cAlmLin
+            oDbfTmp:nUndDoc   := - nTotNFacCli( dbfFacCliL )
+            oDbfTmp:nFacCnv   := ( dbfFacCliL )->nFacCnv
+            oDbfTmp:nImpDoc   := nImpUFacCli( dbfFacCliT, dbfFacCliL, nDouDiv )
+            oDbfTmp:nDtoDoc   := ( dbfFacCliL )->nDto
+            oDbfTmp:nTotDoc   := nTotLFacCli( dbfFacCliL, nDouDiv, nDorDiv )
+            oDbfTmp:Save()
+
+         end
+
+         SysRefresh()
+
+         ( dbfFacCliL )->( dbSkip() )
+
+      end
+   end
+
+Return nil
+
+
+
+
+Static Function LoadFacturasRectificativas( cCodArt, nYear )
+
+   if ( dbfFacRecL )->( dbSeek( cCodArt ) )
+      while ( dbfFacRecL )->cRef == cCodArt .AND. !( dbfFacRecL )->( eof() )
+
+         if nYear == nil .OR. Year( dFecFacRec( ( dbfFacRecL )->cSerie + Str( ( dbfFacRecL )->nNumFac ) + ( dbfFacRecL )->cSufFac, dbfFacRecT ) ) == nYear
+
+            oDbfTmp:Append()
+            oDbfTmp:nTypDoc   := "14"
+            oDbfTmp:cNumDoc   := ( dbfFacRecL )->cSerie + Str( ( dbfFacRecL )->nNumFac ) + ( dbfFacRecL )->cSufFac
+            oDbfTmp:cEstDoc   := ""
+            oDbfTmp:dFecDoc   := dFecFacRec( ( dbfFacRecL )->cSerie + Str( ( dbfFacRecL )->nNumFac ) + ( dbfFacRecL )->cSufFac, dbfFacRecT )
+            oDbfTmp:cCodDoc   := RetFld( ( dbfFacRecL )->cSerie + Str( ( dbfFacRecL )->nNumFac ) + ( dbfFacRecL )->cSufFac, dbfFacRecT, "cCodCli" )
+            oDbfTmp:cNomDoc   := cNbrFacRec( ( dbfFacRecL )->cSerie + Str( ( dbfFacRecL )->nNumFac ) + ( dbfFacRecL )->cSufFac, dbfFacRecT )
+            oDbfTmp:cRef      := ( dbfFacRecL )->cRef
+            oDbfTmp:cValPr1   := ( dbfFacRecL )->cValPr1
+            oDbfTmp:cValPr2   := ( dbfFacRecL )->cValPr2
+            oDbfTmp:cLote     := ( dbfFacRecL )->cLote
+            oDbfTmp:cAlmDoc   := ( dbfFacRecL )->cAlmLin
+            oDbfTmp:nUndDoc   := - nTotNFacRec( dbfFacRecL )
+            oDbfTmp:nFacCnv   := ( dbfFacRecL )->nFacCnv
+            oDbfTmp:nImpDoc   := nImpUFacRec( dbfFacRecT, dbfFacRecL, nDouDiv )
+            oDbfTmp:nDtoDoc   := ( dbfFacRecL )->nDto
+            oDbfTmp:nTotDoc   := nTotLFacRec( dbfFacRecL, nDouDiv, nDorDiv )
+            oDbfTmp:Save()
+
+         end
+
+         SysRefresh()
+
+         ( dbfFacRecL )->( dbSkip() )
+
+      end
+   end
+
+Return nil
+
+
+
+
+
+
+Static Function LoadTiketsCliente( cCodArt, nYear )
+
+   local cTipTik
+
+   if ( dbfTikCliL )->( dbSeek( cCodArt ) )
+      while ( dbfTikCliL )->cCbaTil == cCodArt .AND. !( dbfTikCliL )->( eof() )
+
+         if nYear == nil .OR. Year( dFecTik( (dbfTikCliL)->cSerTil + (dbfTikCliL)->cNumTil + (dbfTikCliL)->cSufTil, dbfTikCliT ) ) == nYear
+
+            cTipTik                    := cTipTik( ( dbfTikCliL )->cSerTil + ( dbfTikCliL )->cNumTil + ( dbfTikCliL )->cSufTil, dbfTikCliT )
+
+            if ( cTipTik == "1" .OR. cTipTik == "4" .OR. cTipTik == "5" .OR. cTipTik == "6" )
+
+               oDbfTmp:Append()
+
+               do case
+               case( dbfTikCliT )->cTipTik == "1"
+
+                  oDbfTmp:nTypDoc      := "12"
+                  oDbfTmp:cEstDoc      := if( ( dbfTikCliT )->lPgdTik, "Cobrado", "No cobrado" )
+                  oDbfTmp:nUndDoc      := - nTotNTikTpv( dbfTikCliL )
+                  oDbfTmp:nFacCnv      := ( dbfTikCliL )->nFacCnv
+
+               case ( dbfTikCliT )->cTipTik == "4"
+
+                  oDbfTmp:nTypDoc      := "15"
+                  oDbfTmp:cEstDoc      := "Devolución"
+                  oDbfTmp:nUndDoc      := nTotNTikTpv( dbfTikCliL )
+                  oDbfTmp:nFacCnv      := ( dbfTikCliL )->nFacCnv
+
+               case ( dbfTikCliT )->cTipTik == "6"
+
+                  oDbfTmp:nTypDoc      := "16"
+                  oDbfTmp:cEstDoc      := if( ( dbfTikCliT )->lLiqTik, "Vale liquidado", "Vale pdte. liquidar" )
+                  oDbfTmp:nUndDoc      := nTotNTikTpv( dbfTikCliL )
+                  oDbfTmp:nFacCnv      := ( dbfTikCliL )->nFacCnv
+
+               case ( dbfTikCliT )->cTipTik == "5"
+
+                  oDbfTmp:nTypDoc      := "17"
+                  oDbfTmp:cEstDoc      := "Apartado"
+                  oDbfTmp:nUndDoc      := - nTotNTikTpv( dbfTikCliL )
+                  oDbfTmp:nFacCnv      := ( dbfTikCliL )->nFacCnv
+
+               end
+
+               oDbfTmp:cNumDoc         := ( dbfTikCliL )->cSerTil + ( dbfTikCliL )->cNumTil + ( dbfTikCliL )->cSufTil
+               oDbfTmp:dFecDoc         := dFecTik( (dbfTikCliL)->cSerTil + (dbfTikCliL)->cNumTil + (dbfTikCliL)->cSufTil, dbfTikCliT )
+               oDbfTmp:cCodDoc         := RetFld( ( dbfTikCliL )->cSerTil + ( dbfTikCliL )->cNumTil + ( dbfTikCliL )->cSufTil, dbfTikCliT, "cCliTik" )
+               oDbfTmp:cNomDoc         := RetFld( ( dbfTikCliL )->cSerTil + ( dbfTikCliL )->cNumTil + ( dbfTikCliL )->cSufTil, dbfTikCliT, "cNomTik" )
+               oDbfTmp:cRef            := ( dbfTikCliL )->cCbaTil
+               oDbfTmp:cValPr1         := ( dbfTikCliL )->cValPr1
+               oDbfTmp:cValPr2         := ( dbfTikCliL )->cValPr2
+               oDbfTmp:cLote           := ( dbfTikCliL )->cLote
+               oDbfTmp:cAlmDoc         := ( dbfTikCliL )->cAlmLin
+               oDbfTmp:nDtoDoc         := ( dbfTikCliL )->nDtoLin
+               oDbfTmp:nImpDoc         := nImpUTpv( dbfTikCliT, dbfTikCliL, nDouDiv )
+               oDbfTmp:nTotDoc         := nNetLTpv( dbfTikCliL, nDouDiv )
+
+               oDbfTmp:Save()
+
+            end
+
+         end
+
+         SysRefresh()
+
+         ( dbfTikCliL )->( dbSkip() )
+
+      end
+   end
+
+   ( dbfTikCliL )->( OrdSetFocus( "cComTil" ) )
+
+   if ( dbfTikCliL )->( dbSeek( cCodArt ) )
+      while ( dbfTikCliL )->cComTil == cCodArt .AND. !( dbfTikCliL )->( eof() )
+
+         if nYear == nil .OR. Year( dFecTik( (dbfTikCliL)->cSerTil + (dbfTikCliL)->cNumTil + (dbfTikCliL)->cSufTil, dbfTikCliT ) ) == nYear
+
+            cTipTik  := cTipTik( ( dbfTikCliL )->cSerTil + ( dbfTikCliL )->cNumTil + ( dbfTikCliL )->cSufTil, dbfTikCliT )
+
+            if cTipTik == "1" .OR. cTipTik == "4" .OR. cTipTik == "5" .OR. cTipTik == "6"
+
+               oDbfTmp:Append()
+
+               if ( dbfTikCliT )->cTipTik == "1"
+                  oDbfTmp:nTypDoc   := "12"
+               elseif ( dbfTikCliT )->cTipTik == "4"
+                  oDbfTmp:nTypDoc   := "15"
+               end
+
+               oDbfTmp:cNumDoc      := ( dbfTikCliL )->cSerTil + ( dbfTikCliL )->cNumTil + ( dbfTikCliL )->cSufTil
+               oDbfTmp:cEstDoc      := ""
+               oDbfTmp:dFecDoc      := dFecTik( (dbfTikCliL)->cSerTil + (dbfTikCliL)->cNumTil + (dbfTikCliL)->cSufTil, dbfTikCliT )
+               oDbfTmp:cCodDoc      := RetFld( ( dbfTikCliL )->cSerTil + ( dbfTikCliL )->cNumTil + ( dbfTikCliL )->cSufTil, dbfTikCliT, "cCliTik" )
+               oDbfTmp:cNomDoc      := RetFld( ( dbfTikCliL )->cSerTil + ( dbfTikCliL )->cNumTil + ( dbfTikCliL )->cSufTil, dbfTikCliT, "cNomTik" )
+               oDbfTmp:cRef         := ( dbfTikCliL )->cComTil
+               oDbfTmp:cValPr1      := ( dbfTikCliL )->cValPr1
+               oDbfTmp:cValPr2      := ( dbfTikCliL )->cValPr2
+               oDbfTmp:cLote        := ( dbfTikCliL )->cLote
+               oDbfTmp:cAlmDoc      := ( dbfTikCliL )->cAlmLin
+               oDbfTmp:nUndDoc      := - nTotNTikTpv( dbfTikCliL )
+               oDbfTmp:nFacCnv      := ( dbfTikCliL )->nFacCnv
+               oDbfTmp:nImpDoc      := ( dbfTikCliL )->nPcmTil
+               oDbfTmp:nDtoDoc      := ( dbfTikCliL )->nDtoLin
+               oDbfTmp:nTotDoc      := nTotLDos( dbfTikCliL, nDouDiv, nDorDiv )
+               oDbfTmp:Save()
+
+            end
+
+         end
+
+         SysRefresh()
+
+         ( dbfTikCliL )->( dbSkip() )
+
+      end
+   end
+
+   ( dbfTikCliL )->( OrdSetFocus( "cCbaTil" ) )
+
+Return nil
+
+
+
+
+
+
+Static Function LoadMovimientosAlmacen( cCodArt, nYear )
+
+   if ( dbfMovAlm )->( dbSeek( cCodArt ) )
+
+      while ( dbfMovAlm )->cRefMov == cCodArt .AND. !( dbfMovAlm )->( eof() )
+
+         if nYear == nil .OR. Year( ( dbfMovAlm )->dFecMov ) == nYear
+
+            if !Empty( ( dbfMovAlm )->cAliMov )
+               oDbfTmp:Append()
+               oDbfTmp:nTypDoc   := "05"
+               oDbfTmp:cNumDoc   := Str( ( dbfMovAlm )->nNumRem ) + ( dbfMovAlm )->cSufRem
+               oDbfTmp:cEstDoc   := "Movimiento"
+               oDbfTmp:dFecDoc   := ( dbfMovAlm )->dFecMov
+               oDbfTmp:cNomDoc   := if( ( dbfMovAlm )->nTipMov == 1, "Entre almacenes", "Regularización" )
+               oDbfTmp:cRef      := ( dbfMovAlm )->cRefMov
+               oDbfTmp:cValPr1   := ( dbfMovAlm )->cValPr1
+               oDbfTmp:cValPr2   := ( dbfMovAlm )->cValPr2
+               oDbfTmp:cLote     := ( dbfMovAlm )->cLote
+               oDbfTmp:cAlmDoc   := ( dbfMovAlm )->cAliMov
+               oDbfTmp:nUndDoc   := nTotNMovAlm( dbfMovAlm )
+               oDbfTmp:nImpDoc   := ( dbfMovAlm )->nPreDiv
+               oDbfTmp:nTotDoc   := nTotLMovAlm( dbfMovAlm )
+               oDbfTmp:nDtoDoc   := ( dbfMovAlm )->( Recno() )
+               oDbfTmp:Save()
+            end
+
+            if !Empty( ( dbfMovAlm )->cAloMov )
+               oDbfTmp:Append()
+               oDbfTmp:nTypDoc   := "05"
+               oDbfTmp:cEstDoc   := "Movimiento"
+               oDbfTmp:cNumDoc   := Str( ( dbfMovAlm )->nNumRem ) + ( dbfMovAlm )->cSufRem
+               oDbfTmp:dFecDoc   := ( dbfMovAlm )->dFecMov
+               oDbfTmp:cNomDoc   := if( ( dbfMovAlm )->nTipMov == 1, "Entre almacenes", "Regularización" )
+               oDbfTmp:cRef      := ( dbfMovAlm )->cRefMov
+               oDbfTmp:cValPr1   := ( dbfMovAlm )->cValPr1
+               oDbfTmp:cValPr2   := ( dbfMovAlm )->cValPr2
+               oDbfTmp:cLote     := ( dbfMovAlm )->cLote
+               oDbfTmp:cAlmDoc   := ( dbfMovAlm )->cAloMov
+               oDbfTmp:nUndDoc   := - nTotNMovAlm( dbfMovAlm )
+               oDbfTmp:nImpDoc   := ( dbfMovAlm )->nPreDiv
+               oDbfTmp:nTotDoc   := - nTotLMovAlm( dbfMovAlm )
+               oDbfTmp:nDtoDoc   := ( dbfMovAlm )->( Recno() )
+               oDbfTmp:Save()
+            end
+
+         end
+
+         SysRefresh()
+
+         ( dbfMovAlm )->( dbSkip() )
+
+      end
+
+   end
+
+Return nil
+
+
+
+Static Function LoadProduccion( cCodArt, nYear )
+
+
+
+
+
+   ( dbfProducT )->( dbGoTop() )
+
+   if ( dbfProducL )->( dbSeek( cCodArt ) )
+
+      while ( dbfProducL )->cCodArt == cCodArt .AND. !( dbfProducL )->( eof() )
+
+         if dbSeekInOrd( ( dbfProducL )->cSerOrd + Str( ( dbfProducL )->nNumOrd ) + ( dbfProducL )->cSufOrd, "cNumOrd", dbfProducT )
+
+            if nYear == nil .OR. Year( ( dbfProducT )->dFecFin ) == nYear
+
+               oDbfTmp:Append()
+               oDbfTmp:nTypDoc   := "06"
+               oDbfTmp:cNumDoc   := ( dbfProducL )->cSerOrd + Str( ( dbfProducL )->nNumOrd ) + ( dbfProducL )->cSufOrd
+               oDbfTmp:cEstDoc   := Space(1)
+               oDbfTmp:dFecDoc   := ( dbfProducT )->dFecFin
+               oDbfTmp:cNomDoc   := "Material"
+               oDbfTmp:cRef      := ( dbfProducL )->cCodArt
+               oDbfTmp:cValPr1   := ( dbfProducL )->cValPr1
+               oDbfTmp:cValPr2   := ( dbfProducL )->cValPr2
+               oDbfTmp:cLote     := ( dbfProducL )->cLote
+               oDbfTmp:cAlmDoc   := ( dbfProducL )->cAlmOrd
+               oDbfTmp:nUndDoc   := NotCaja( ( dbfProducL )->nCajOrd ) * ( dbfProducL )->nUndOrd
+               oDbfTmp:nImpDoc   := ( dbfProducL )->nImpOrd
+               oDbfTmp:nTotDoc   := ( NotCaja( ( dbfProducL )->nCajOrd ) * ( dbfProducL )->nUndOrd ) * ( dbfProducL )->nImpOrd
+               oDbfTmp:Save()
+
+            end
+
+         end
+
+         SysRefresh()
+
+         ( dbfProducL )->( dbSkip() )
+
+      end
+
+   end
+
+
+
+
+
+   ( dbfProducT )->( dbGoTop() )
+
+   if ( dbfProducM )->( dbSeek( cCodArt ) )
+
+      while ( dbfProducM )->cCodArt == cCodArt .AND. !( dbfProducM )->( eof() )
+
+         if dbSeekInOrd( ( dbfProducM )->cSerOrd + Str( ( dbfProducM )->nNumOrd ) + ( dbfProducM )->cSufOrd, "cNumOrd", dbfProducT )
+
+            if nYear == nil .OR. Year( ( dbfProducT )->dFecFin ) == nYear
+
+               oDbfTmp:Append()
+               oDbfTmp:nTypDoc   := "07"
+               oDbfTmp:cNumDoc   := ( dbfProducM )->cSerOrd + Str( ( dbfProducM )->nNumOrd ) + ( dbfProducM )->cSufOrd
+               oDbfTmp:cEstDoc   := Space(1)
+               oDbfTmp:dFecDoc   := ( dbfProducT )->dFecFin
+               oDbfTmp:cNomDoc   := "Materias primas"
+               oDbfTmp:cRef      := ( dbfProducM )->cCodArt
+               oDbfTmp:cValPr1   := ( dbfProducM )->cValPr1
+               oDbfTmp:cValPr2   := ( dbfProducM )->cValPr2
+               oDbfTmp:cLote     := ( dbfProducM )->cLote
+               oDbfTmp:cAlmDoc   := ( dbfProducM )->cAlmOrd
+               oDbfTmp:nUndDoc   := NotCaja( ( dbfProducM )->nCajOrd ) * ( dbfProducM )->nUndOrd
+               oDbfTmp:nImpDoc   := ( dbfProducM )->nImpOrd
+               oDbfTmp:nTotDoc   := ( NotCaja( ( dbfProducM )->nCajOrd ) * ( dbfProducM )->nUndOrd ) * ( dbfProducM )->nImpOrd
+               oDbfTmp:Save()
+
+            end
+
+         end
+
+         SysRefresh()
+
+         ( dbfProducM )->( dbSkip() )
+
+      end
+
+   end
+
+Return nil
+
+
+
+static function nReservado( cCodArt, dbfPedCliT, dbfPedCliR, dbfAlbCliT, dbfAlbCliL, nYear )
+
+   local nReservado  := 0
+   local cCodEmp
+   local dbfPedEmpT
+   local dbfPedEmpR
+   local dbfAlbEmpT
+   local dbfAlbEmpL
+
+   if Len( aEmpGrp() ) <> 0
+
+      for each cCodEmp in aEmpGrp()
+
+         if cCodEmp == cCodEmp()
+
+            nReservado    += nTotRStk( cCodArt, dbfPedCliT, dbfPedCliR, dbfAlbCliT, dbfAlbCliL, nYear )
+
+         else
+
+            dbUseArea( .T., ( cDriver() ), ( cPatStk( cCodEmp ) + "PEDCLIT.DBF" ), ( cCheckArea( "PEDCLIT", @dbfPedEmpT ) ), if(.T. .OR. .F., !.F., NIL), .F.,, )
+            if !lAIS() ; ordListAdd( ( cPatStk( cCodEmp ) + "PEDCLIT.CDX" ) ) ; else ; ordSetFocus( 1 ) ; end
+
+            dbUseArea( .T., ( cDriver() ), ( cPatStk( cCodEmp ) + "PEDCLIR.DBF" ), ( cCheckArea( "PEDCLIR", @dbfPedEmpR ) ), if(.T. .OR. .F., !.F., NIL), .F.,, )
+            if !lAIS() ; ordListAdd( ( cPatStk( cCodEmp ) + "PEDCLIR.CDX" ) ) ; else ; ordSetFocus( 1 ) ; end
+            ordSetFocus( "CREF" )
+
+            dbUseArea( .T., ( cDriver() ), ( cPatStk( cCodEmp ) + "ALBCLIT.DBF" ), ( cCheckArea( "ALBCLIT", @dbfAlbEmpT ) ), if(.T. .OR. .F., !.F., NIL), .F.,, )
+            if !lAIS() ; ordListAdd( ( cPatStk( cCodEmp ) + "ALBCLIT.CDX" ) ) ; else ; ordSetFocus( 1 ) ; end
+
+            dbUseArea( .T., ( cDriver() ), ( cPatStk( cCodEmp ) + "ALBCLIL.DBF" ), ( cCheckArea( "ALBCLIL", @dbfAlbEmpL ) ), if(.T. .OR. .F., !.F., NIL), .F.,, )
+            if !lAIS() ; ordListAdd( ( cPatStk( cCodEmp ) + "ALBCLIL.CDX" ) ) ; else ; ordSetFocus( 1 ) ; end
+            ordSetFocus( "CREF" )
+
+            nReservado    += nTotRStk( cCodArt, dbfPedEmpT, dbfPedEmpR, dbfAlbEmpT, dbfAlbEmpL, nYear )
+
+            ( dbfPedEmpT )->( dbCloseArea() )
+            ( dbfPedEmpR )->( dbCloseArea() )
+            ( dbfAlbEmpT )->( dbCloseArea() )
+            ( dbfAlbEmpL )->( dbCloseArea() )
+
+         end
+
+      next
+
+   end
+
+return nReservado
+
+
+
+
+
+
+function nTotRStk( cCodArt, dbfPedCliT, dbfPedCliR, dbfAlbCliT, dbfAlbCliL, nYear )
+
+   local nTotRStk := 0
+   local nOrdAnt  := ( dbfPedCliR )->( OrdSetFocus( "cRef" ) )
+
+   if ( dbfPedCliR )->( dbSeek( cCodArt ) )
+      while cCodArt == ( dbfPedCliR )->cRef .AND. !( dbfPedCliR )->( Eof() )
+
+         if nYear == nil .OR. Year( ( dbfPedCliR )->dFecRes ) == nYear
+            nTotRStk += nTotNResCli( dbfPedCliR ) * NotCero( ( dbfAlbCliL )->nFacCnv )
+         end
+
+         ( dbfPedCliR )->( dbSkip() )
+      end
+   end
+
+   ( dbfPedCliR )->( OrdSetFocus( nOrdAnt ) )
+
+return ( nTotRStk )
+
+
+
+static function nEntregado( cCodArt, dbfPedCliT, dbfPedCliR, dbfAlbCliT, dbfAlbCliL, nYear )
+
+   local nEntregado  := 0
+   local cCodEmp
+   local dbfPedEmpT
+   local dbfPedEmpR
+   local dbfAlbEmpT
+   local dbfAlbEmpL
+
+   if Len( aEmpGrp() ) <> 0
+
+      for each cCodEmp in aEmpGrp()
+
+         if cCodEmp == cCodEmp()
+
+            nEntregado    += nTotEStk( cCodArt, dbfPedCliT, dbfPedCliR, dbfAlbCliT, dbfAlbCliL, nYear )
+
+         else
+
+            dbUseArea( .T., ( cDriver() ), ( cPatStk( cCodEmp ) + "PEDCLIT.DBF" ), ( cCheckArea( "PEDCLIT", @dbfPedEmpT ) ), if(.T. .OR. .F., !.F., NIL), .F.,, )
+            if !lAIS() ; ordListAdd( ( cPatStk( cCodEmp ) + "PEDCLIT.CDX" ) ) ; else ; ordSetFocus( 1 ) ; end
+
+            dbUseArea( .T., ( cDriver() ), ( cPatStk( cCodEmp ) + "PEDCLIR.DBF" ), ( cCheckArea( "PEDCLIR", @dbfPedEmpR ) ), if(.T. .OR. .F., !.F., NIL), .F.,, )
+            if !lAIS() ; ordListAdd( ( cPatStk( cCodEmp ) + "PEDCLIR.CDX" ) ) ; else ; ordSetFocus( 1 ) ; end
+            ordSetFocus( "CREF" )
+
+            dbUseArea( .T., ( cDriver() ), ( cPatStk( cCodEmp ) + "ALBCLIT.DBF" ), ( cCheckArea( "ALBCLIT", @dbfAlbEmpT ) ), if(.T. .OR. .F., !.F., NIL), .F.,, )
+            if !lAIS() ; ordListAdd( ( cPatStk( cCodEmp ) + "ALBCLIT.CDX" ) ) ; else ; ordSetFocus( 1 ) ; end
+
+            dbUseArea( .T., ( cDriver() ), ( cPatStk( cCodEmp ) + "ALBCLIL.DBF" ), ( cCheckArea( "ALBCLIL", @dbfAlbEmpL ) ), if(.T. .OR. .F., !.F., NIL), .F.,, )
+            if !lAIS() ; ordListAdd( ( cPatStk( cCodEmp ) + "ALBCLIL.CDX" ) ) ; else ; ordSetFocus( 1 ) ; end
+            ordSetFocus( "CREF" )
+
+            nEntregado    += nTotEStk( cCodArt, dbfPedCliT, dbfPedCliR, dbfAlbCliT, dbfAlbCliL, nYear )
+
+            ( dbfPedEmpT )->( dbCloseArea() )
+            ( dbfPedEmpR )->( dbCloseArea() )
+            ( dbfAlbEmpT )->( dbCloseArea() )
+            ( dbfAlbEmpL )->( dbCloseArea() )
+
+         end
+
+      next
+
+   end
+
+return nEntregado
+
+
+
+
+
+
+Function nTotEStk( cCodArt, dbfPedCliT, dbfPedCliR, dbfAlbCliT, dbfAlbCliL, nYear )
+
+   local dFecRes  := ctod( "" )
+   local aNumPed  := {}
+   local nTotRes  := 0
+   local nTotAlb  := 0
+   local nTotEnt  := 0
+   local nOrdAnt  := ( dbfPedCliR )->( OrdSetFocus( "cRef" ) )
+
+   if ( dbfPedCliR )->( dbSeek( cCodArt ) )
+
+      while cCodArt == ( dbfPedCliR )->cRef .AND. !( dbfPedCliR )->( Eof() )
+
+         if nYear == nil .OR. Year( ( dbfPedCliR )->dFecRes ) == nYear
+
+            if aScan( aNumPed, {|cNumPed| cNumPed == ( dbfPedCliR )->cSerPed + Str( ( dbfPedCliR )->nNumPed ) + ( dbfPedCliR )->cSufPed } ) == 0
+               aAdd( aNumPed, ( dbfPedCliR )->cSerPed + Str( ( dbfPedCliR )->nNumPed ) + ( dbfPedCliR )->cSufPed )
+               dFecRes  := ( dbfPedCliR )->dFecRes
+               nTotRes  := nTotRPedCli( ( dbfPedCliR )->cSerPed + Str( ( dbfPedCliR )->nNumPed ) + ( dbfPedCliR )->cSufPed, ( dbfPedCliR )->cRef, , , dbfPedCliR )
+               nTotAlb  := nUnidadesRecibidasAlbCli( ( dbfPedCliR )->cSerPed + Str( ( dbfPedCliR )->nNumPed ) + ( dbfPedCliR )->cSufPed, ( dbfPedCliR )->cRef, , , , , dbfAlbCliL )
+               nTotEnt  += Min( nTotRes, nTotAlb )
+            end
+
+         end
+
+         SysRefresh()
+         ( dbfPedCliR )->( dbSkip() )
+
+      end
+
+   end
+
+   ( dbfPedCliR )->( OrdSetFocus( nOrdAnt ) )
+
+return ( nTotEnt )
+
+
+
+
+Function cMaskNumDoc( oDbfTmp )
+
+   do case
+   case oDbfTmp:nTypDoc == "12" .OR. oDbfTmp:nTypDoc == "15" .OR. oDbfTmp:nTypDoc == "16"
+      return ( Left( oDbfTmp:cNumDoc, 1 ) + "/" + Alltrim( SubStr( oDbfTmp:cNumDoc, 2, 10 ) ) + "/" + Right( oDbfTmp:cNumDoc, 2 ) )
+   case oDbfTmp:nTypDoc == "05"
+      if Val( oDbfTmp:cNumDoc ) == 0
+         return ""
+      else
+         return ( Alltrim( Left( oDbfTmp:cNumDoc, 9 ) ) + "/" + Alltrim( SubStr( oDbfTmp:cNumDoc, 10, 2 ) ) )
+      end
+   case oDbfTmp:nTypDoc == "24" .OR. oDbfTmp:nTypDoc == "25" .OR. oDbfTmp:nTypDoc == "18" .OR. oDbfTmp:nTypDoc == "19"
+      return ( Left( oDbfTmp:cNumDoc, 1 ) + "/" + Alltrim( SubStr( oDbfTmp:cNumDoc, 2, 9 ) ) + "/" + Right( oDbfTmp:cNumDoc, 3 ) + "-" + Alltrim( Str( oDbfTmp:nNumRec ) ) )
+   end
+
+return ( Left( oDbfTmp:cNumDoc, 1 ) + "/" + Alltrim( SubStr( oDbfTmp:cNumDoc, 2, 9 ) ) + "/" + Right( oDbfTmp:cNumDoc, 3 ) )
+
+
+
+
+Static Function TreeChanged( oTree, oBrwTmp )
+
+   local cText    := oTree:GetSelText()
+   local cFilter
+
+   do case
+      case cText == "Compras"
+         cFilter  := "( nTypDoc >= '" + "01" + "' .and. nTypDoc <= '" + "03" + "' ) .or. nTypDoc == '" + "04" + "'"
+
+      case cText == "Movimientos"
+         cFilter  := "nTypDoc == '" + "05" + "'"
+
+      case cText == "Ventas"
+         cFilter  := "( nTypDoc >= '" + "08" + "' .and. nTypDoc <= '" + "18" + "' )"
+
+      case cText == "Producción"
+         cFilter  := "( nTypDoc == '" + "06" + "' .or. nTypDoc == '" + "07" + "' )"
+
+      case cText == "Stock"
+         cFilter  := "!lFacturado .and. ( nTypDoc =='" + "02" + "' .or. nTypDoc == '" + "03" + "' .or. nTypDoc == '" + "05" + "' .or. nTypDoc == '" + "10" + "' .or. nTypDoc == '" + "11" + "' .or. nTypDoc == '" + "12" + "'.or. nTypDoc == '" + "14" + "' .or. nTypDoc == '" + "15" + "' .or. nTypDoc == '" + "16" + "' .or. nTypDoc == '" + "06" + "' .or. nTypDoc == '" + "07" + "' .or. nTypDoc == '" + "04" + "' )"
+
+      case cText == cTextDocument( "01" )
+         cFilter  := "( nTypDoc == '" + "01" + "' )"
+
+      case cText == cTextDocument( "02" )
+         cFilter  := "( nTypDoc == '" + "02" + "' )"
+
+      case cText == cTextDocument( "03" )
+         cFilter  := "( nTypDoc == '" + "03" + "' )"
+
+      case cText == cTextDocument( "04" )
+         cFilter  := "( nTypDoc == '" + "04" + "' )"
+
+      case cText == cTextDocument( "08" )
+         cFilter  := "( nTypDoc == '" + "08" + "' )"
+
+      case cText == cTextDocument( "09" )
+         cFilter  := "( nTypDoc == '" + "09" + "' )"
+
+      case cText == cTextDocument( "10" )
+         cFilter  := "( nTypDoc == '" + "10" + "' )"
+
+      case cText == cTextDocument( "11" )
+         cFilter  := "( nTypDoc == '" + "11" + "' )"
+
+      case cText == cTextDocument( "14" )
+         cFilter  := "( nTypDoc == '" + "14" + "' )"
+
+      case cText == cTextDocument( "12" )
+         cFilter  := "( nTypDoc == '" + "12" + "' )"
+
+      case cText == cTextDocument( "15" )
+         cFilter  := "( nTypDoc == '" + "15" + "' )"
+
+      case cText == cTextDocument( "05" )
+         cFilter  := "( nTypDoc == '" + "05" + "' )"
+
+      case cText == cTextDocument( "16" )
+         cFilter  := "( nTypDoc == '" + "16" + "' )"
+
+      case cText == cTextDocument( "17" )
+         cFilter  := "( nTypDoc == '" + "17" + "' )"
+
+      case cText == cTextDocument( "06" )
+         cFilter  := "( nTypDoc == '" + "06" + "' )"
+
+      case cText == cTextDocument( "07" )
+         cFilter  := "( nTypDoc == '" + "07" + "' )"
+
+      otherwise
+         cFilter  := nil
+
+   end
+
+   oDbfTmp:SetFilter( ( cFilter ) )
+   oDbfTmp:GoTop()
+
+   oBrwTmp:Refresh()
+
+Return nil
+
+
+
+
+Static Function TreeImagen()
+
+   do case
+      case oDbfTmp:nTypDoc == "01"
+         Return ( 1 )
+
+      case oDbfTmp:nTypDoc == "02"
+         Return ( 2 )
+
+      case oDbfTmp:nTypDoc == "03"
+         Return ( 3 )
+
+      case oDbfTmp:nTypDoc == "04"
+         Return ( 12 )
+
+      case oDbfTmp:nTypDoc == "05"
+         Return ( 4 )
+
+      case oDbfTmp:nTypDoc == "08"
+         Return ( 5 )
+
+      case oDbfTmp:nTypDoc == "09"
+         Return ( 6 )
+
+      case oDbfTmp:nTypDoc == "10"
+         Return ( 7 )
+
+      case oDbfTmp:nTypDoc == "11"
+         Return ( 8 )
+
+      case oDbfTmp:nTypDoc == "12"
+         Return ( 9 )
+
+      case oDbfTmp:nTypDoc == "15"
+         Return ( 9 )
+
+      case oDbfTmp:nTypDoc == "16"
+         Return ( 9 )
+
+      case oDbfTmp:nTypDoc == "17"
+         Return ( 9 )
+
+      case oDbfTmp:nTypDoc == "14"
+         Return ( 10 )
+
+      case oDbfTmp:nTypDoc == "06"
+         Return ( 11 )
+
+      case oDbfTmp:nTypDoc == "07"
+         Return ( 11 )
+
+   end
+
+Return ( 1 )
+
+
+
+
+Static Function EditDocument( oBrwTmp )
+
+   do case
+      case oDbfTmp:nTypDoc == "01"
+         EdtPedPrv( oDbfTmp:cNumDoc )
+
+      case oDbfTmp:nTypDoc == "02"
+         EdtAlbPrv( oDbfTmp:cNumDoc )
+
+      case oDbfTmp:nTypDoc == "03"
+         EdtFacPrv( oDbfTmp:cNumDoc )
+
+      case oDbfTmp:nTypDoc == "04"
+         EdtRctPrv( oDbfTmp:cNumDoc )
+
+      case oDbfTmp:nTypDoc == "08"
+         EdtPreCli( oDbfTmp:cNumDoc )
+
+      case oDbfTmp:nTypDoc == "09"
+         EdtPedCli( oDbfTmp:cNumDoc )
+
+      case oDbfTmp:nTypDoc == "10"
+         EdtAlbCli( oDbfTmp:cNumDoc )
+
+      case oDbfTmp:nTypDoc == "11"
+         EdtFacCli( oDbfTmp:cNumDoc )
+
+      case oDbfTmp:nTypDoc == "14"
+         EdtFacRec( oDbfTmp:cNumDoc )
+
+
+
+
+      case oDbfTmp:nTypDoc == "12" .OR. oDbfTmp:nTypDoc == "15" .OR. oDbfTmp:nTypDoc == "17" .OR. oDbfTmp:nTypDoc == "16"
+
+         EdtTikCli( oDbfTmp:cNumDoc )
+
+      case oDbfTmp:nTypDoc == "05"
+
+         EditMovimientosAlmacen( oDbfTmp:cNumDoc, oBrwTmp )
+
+
+      case oDbfTmp:nTypDoc == "06" .OR. oDbfTmp:nTypDoc == "07"
+
+         EditProduccion( oDbfTmp:cNumDoc, oBrwTmp )
+
+   end
+
+Return nil
+
+
+
+
+Static Function ZoomDocument( oBrwTmp )
+
+   do case
+      case oDbfTmp:nTypDoc == "01"
+         ZooPedPrv( oDbfTmp:cNumDoc )
+
+      case oDbfTmp:nTypDoc == "02"
+         ZooAlbPrv( oDbfTmp:cNumDoc )
+
+      case oDbfTmp:nTypDoc == "03"
+         ZooFacPrv( oDbfTmp:cNumDoc )
+
+      case oDbfTmp:nTypDoc == "04"
+         ZooRctPrv( oDbfTmp:cNumDoc )
+
+      case oDbfTmp:nTypDoc == "08"
+         ZooPreCli( oDbfTmp:cNumDoc )
+
+      case oDbfTmp:nTypDoc == "09"
+         ZooPedCli( oDbfTmp:cNumDoc )
+
+      case oDbfTmp:nTypDoc == "10"
+         ZooAlbCli( oDbfTmp:cNumDoc )
+
+      case oDbfTmp:nTypDoc == "11"
+         ZooFacCli( oDbfTmp:cNumDoc )
+
+      case oDbfTmp:nTypDoc == "14"
+         ZooFacRec( oDbfTmp:cNumDoc )
+
+
+
+
+      case oDbfTmp:nTypDoc == "12" .OR. oDbfTmp:nTypDoc == "15" .OR. oDbfTmp:nTypDoc == "17" .OR. oDbfTmp:nTypDoc == "16"
+         ZooTikCli( oDbfTmp:cNumDoc )
+
+      case oDbfTmp:nTypDoc == "05"
+
+         ZoomMovimientosAlmacen( oDbfTmp:cNumDoc, oBrwTmp )
+
+
+      case oDbfTmp:nTypDoc == "06" .OR. oDbfTmp:nTypDoc == "07"
+
+         ZoomProduccion( oDbfTmp:cNumDoc, oBrwTmp )
+
+   end
+
+Return nil
+
+
+
+
+Static Function DeleteDocument( oBrwTmp )
+
+   do case
+      case oDbfTmp:nTypDoc == "01"
+         DelPedPrv( oDbfTmp:cNumDoc )
+
+      case oDbfTmp:nTypDoc == "02"
+         DelAlbPrv( oDbfTmp:cNumDoc )
+
+      case oDbfTmp:nTypDoc == "03"
+         DelFacPrv( oDbfTmp:cNumDoc )
+
+      case oDbfTmp:nTypDoc == "04"
+         DelRctPrv( oDbfTmp:cNumDoc )
+
+      case oDbfTmp:nTypDoc == "08"
+         DelPreCli( oDbfTmp:cNumDoc )
+
+      case oDbfTmp:nTypDoc == "09"
+         DelPedCli( oDbfTmp:cNumDoc )
+
+      case oDbfTmp:nTypDoc == "10"
+         DelAlbCli( oDbfTmp:cNumDoc )
+
+      case oDbfTmp:nTypDoc == "11"
+         DelFacCli( oDbfTmp:cNumDoc )
+
+      case oDbfTmp:nTypDoc == "14"
+         DelFacRec( oDbfTmp:cNumDoc )
+
+
+
+
+      case oDbfTmp:nTypDoc == "12" .OR. oDbfTmp:nTypDoc == "15" .OR. oDbfTmp:nTypDoc == "17" .OR. oDbfTmp:nTypDoc == "16"
+         DelTikCli( oDbfTmp:cNumDoc )
+
+      case oDbfTmp:nTypDoc == "05"
+
+         DelMovimientosAlmacen( oDbfTmp:cNumDoc, oBrwTmp )
+
+
+      case oDbfTmp:nTypDoc == "06" .OR. oDbfTmp:nTypDoc == "07"
+
+         DelProduccion( oBrwTmp )
+
+   end
+
+Return nil
+
+
+
+
+Static Function VisualizaDocument( oBrwTmp )
+
+   do case
+      case oDbfTmp:nTypDoc == "01"
+         VisPedPrv( oDbfTmp:cNumDoc )
+
+      case oDbfTmp:nTypDoc == "02"
+         VisAlbPrv( oDbfTmp:cNumDoc )
+
+      case oDbfTmp:nTypDoc == "03"
+         VisFacPrv( oDbfTmp:cNumDoc )
+
+      case oDbfTmp:nTypDoc == "04"
+         VisRctPrv( oDbfTmp:cNumDoc )
+
+      case oDbfTmp:nTypDoc == "08"
+         VisPreCli( oDbfTmp:cNumDoc )
+
+      case oDbfTmp:nTypDoc == "09"
+         VisPedCli( oDbfTmp:cNumDoc )
+
+      case oDbfTmp:nTypDoc == "10"
+         VisAlbCli( oDbfTmp:cNumDoc )
+
+      case oDbfTmp:nTypDoc == "11"
+         VisFacCli( oDbfTmp:cNumDoc )
+
+      case oDbfTmp:nTypDoc == "14"
+         VisFacRec( oDbfTmp:cNumDoc )
+
+
+
+
+      case oDbfTmp:nTypDoc == "12" .OR. oDbfTmp:nTypDoc == "15" .OR. oDbfTmp:nTypDoc == "17" .OR. oDbfTmp:nTypDoc == "16"
+         VisTikCli( oDbfTmp:cNumDoc )
+
+      case oDbfTmp:nTypDoc == "05"
+
+         VisMovimientosAlmacen( oDbfTmp:cNumDoc, oBrwTmp )
+
+
+      case oDbfTmp:nTypDoc == "06" .OR. oDbfTmp:nTypDoc == "07"
+
+         VisProduccion( oDbfTmp:cNumDoc )
+
+   end
+
+Return nil
+
+
+
+
+Static Function PrintDocument( oBrwTmp )
+
+   do case
+      case oDbfTmp:nTypDoc == "01"
+         PrnPedPrv( oDbfTmp:cNumDoc )
+
+      case oDbfTmp:nTypDoc == "02"
+         PrnAlbPrv( oDbfTmp:cNumDoc )
+
+      case oDbfTmp:nTypDoc == "03"
+         PrnFacPrv( oDbfTmp:cNumDoc )
+
+      case oDbfTmp:nTypDoc == "04"
+         PrnRctPrv( oDbfTmp:cNumDoc )
+
+      case oDbfTmp:nTypDoc == "08"
+         PrnPreCli( oDbfTmp:cNumDoc )
+
+      case oDbfTmp:nTypDoc == "09"
+         PrnPedCli( oDbfTmp:cNumDoc )
+
+      case oDbfTmp:nTypDoc == "10"
+         PrnAlbCli( oDbfTmp:cNumDoc )
+
+      case oDbfTmp:nTypDoc == "11"
+         PrnFacCli( oDbfTmp:cNumDoc )
+
+      case oDbfTmp:nTypDoc == "14"
+         PrnFacRec( oDbfTmp:cNumDoc )
+
+
+
+
+      case oDbfTmp:nTypDoc == "12" .OR. oDbfTmp:nTypDoc == "15" .OR. oDbfTmp:nTypDoc == "17" .OR. oDbfTmp:nTypDoc == "16"
+         PrnTikCli( oDbfTmp:cNumDoc )
+
+      case oDbfTmp:nTypDoc == "05"
+
+         PrnProduccion( oDbfTmp:cNumDoc )
+
+
+      case oDbfTmp:nTypDoc == "06" .OR. oDbfTmp:nTypDoc == "07"
+
+         PrnProduccion( oDbfTmp:cNumDoc )
+
+   end
+
+Return nil
+
+
+
+
+
+
+Static Function DefineTemporal( cPath, lUniqueName, cFileName )
+
+   local oDbf
+
+   IIF( cPath == nil, cPath := cPatTmp(), ) ;
+   IIF( lUniqueName == nil, lUniqueName := .T., ) ;
+   IIF( cFileName == nil, cFileName := "InfArt", ) ;
+
+   if lUniqueName
+      cFileName         := cGetNewFileName( cFileName, , , cPatTmp() )
+   end
+
+   oDbf := DbfServer( ( cFileName ), "InfArt" ):New( ( cFileName ), ( cFileName ), ( cLocalDriver() ),, ( cPath ) )
+
+      oDbf:AddField( "nTypDoc", "C", 2, 0,,,,, "Tipo de documento", .F.,, .F., {} )
+      oDbf:AddField( "cEstDoc", "C", 20, 0,,,,, "Estado del documento", .F.,, .F., {} )
+      oDbf:AddField( "dFecDoc", "D", 8, 0,,,,, "Fecha del documento", .F.,, .F., {} )
+      oDbf:AddField( "cNumDoc", "C", 13, 0,,,,, "Número del documento", .F.,, .F., {} )
+      oDbf:AddField( "lFacturado", "L", 1, 0,,,,, "Documento facturado", .F.,, .F., {} )
+      oDbf:AddField( "cCodDoc", "C", 12, 0,,,,, "Código cliente/proveedor", .F.,, .F., {} )
+      oDbf:AddField( "cNomDoc", "C", 50, 0,,,,, "Nombre cliente/proveedor", .F.,, .F., {} )
+      oDbf:AddField( "cRef", "C", 18, 0,,,,, "Referencia artículo", .F.,, .F., {} )
+      oDbf:AddField( "cValPr1", "C", 10, 0,,,,, "Valor de la primera propiedad", .F.,, .F., {} )
+      oDbf:AddField( "cValPr2", "C", 10, 0,,,,, "Valor de la segunda propiedad", .F.,, .F., {} )
+      oDbf:AddField( "cLote", "C", 12, 0,,,,, "Número de lote", .F.,, .F., {} )
+      oDbf:AddField( "cAlmDoc", "C", 3, 0,,,,, "Almacén", .F.,, .F., {} )
+      oDbf:AddField( "nUndDoc", "N", 16, 6,,,,, "Unidades vendidas", .F.,, .F., {} )
+      oDbf:AddField( "nFacCnv", "N", 16, 6,,,,, "Factor de conversión", .F.,, .F., {} )
+      oDbf:AddField( "nDtoDoc", "N", 16, 6,,,,, "Descuento porcentual", .F.,, .F., {} )
+      oDbf:AddField( "nImpDoc", "N", 16, 6,,,,, "Importe unidad", .F.,, .F., {} )
+      oDbf:AddField( "nTotDoc", "N", 16, 6,,,,, "Total documento", .F.,, .F., {} )
+
+      oDbf:AddIndex( "nTypDoc", ( cFileName ), "nTypDoc + Dtos( dFecDoc )",,, .F., .F.,,,, .F., .F. )
+      oDbf:AddIndex( "cEstDoc", ( cFileName ), "cEstDoc + Dtos( dFecDoc )",,, .F., .F.,,,, .F., .F. )
+      oDbf:AddIndex( "dFecDoc", ( cFileName ), "Dtos( dFecDoc )",,, .F., .F.,,,, .F., .F. )
+      oDbf:AddIndex( "cNumDoc", ( cFileName ), "cNumDoc + Dtos( dFecDoc )",,, .F., .F.,,,, .F., .F. )
+      oDbf:AddIndex( "cNomDoc", ( cFileName ), "cNomDoc + Dtos( dFecDoc )",,, .F., .F.,,,, .F., .F. )
+      oDbf:AddIndex( "cCodDoc", ( cFileName ), "cCodDoc + Dtos( dFecDoc )",,, .F., .F.,,,, .F., .F. )
+      oDbf:AddIndex( "cLote", ( cFileName ), "cLote + Dtos( dFecDoc )",,, .F., .F.,,,, .F., .F. )
+      oDbf:AddIndex( "cAlmDoc", ( cFileName ), "cAlmDoc + Dtos( dFecDoc )",,, .F., .F.,,,, .F., .F. )
+      oDbf:AddIndex( "nUndDoc", ( cFileName ), "nUndDoc",,, .F., .F.,,,, .F., .F. )
+      oDbf:AddIndex( "nFacCnv", ( cFileName ), "nFacCnv",,, .F., .F.,,,, .F., .F. )
+      oDbf:AddIndex( "nImpDoc", ( cFileName ), "nImpDoc",,, .F., .F.,,,, .F., .F. )
+      oDbf:AddIndex( "nTotDoc", ( cFileName ), "nTotDoc",,, .F., .F.,,,, .F., .F. )
+
+
+
+Return ( oDbf )
+
+
+
+
+Function cTextDocument( nTypDoc )
+
+   local cTextDocument  := ""
+
+   IIF( nTypDoc == nil, nTypDoc := oDbfTmp:nTypDoc, ) ;
+
+   if !isChar( nTypDoc )
+      Return ( cTextDocument )
+   end
+
+   do case
+      case nTypDoc == "01"
+         cTextDocument  := "Pedidos"
+      case nTypDoc == "02"
+         cTextDocument  := "Albaranes"
+      case nTypDoc == "03"
+         cTextDocument  := "Facturas"
+      case nTypDoc == "04"
+         cTextDocument  := "Rectificativas"
+      case nTypDoc == "08"
+         cTextDocument  := "Presupuestos "
+      case nTypDoc == "09"
+         cTextDocument  := "Pedidos "
+      case nTypDoc == "10"
+         cTextDocument  := "Albaranes "
+      case nTypDoc == "11"
+         cTextDocument  := "Facturas "
+      case nTypDoc == "14"
+         cTextDocument  := "Rectificativas"
+      case nTypDoc == "12"
+         cTextDocument  := "Tickets"
+      case nTypDoc == "15"
+         cTextDocument  := "Devoluciones"
+      case nTypDoc == "16"
+         cTextDocument  := "Vale"
+      case nTypDoc == "17"
+         cTextDocument  := "Apartado"
+      case nTypDoc == "05"
+         cTextDocument  := "Movimientos"
+      case nTypDoc == "06"
+         cTextDocument  := "Material"
+      case nTypDoc == "07"
+         cTextDocument  := "Materia prima"
+   end
+
+Return ( cTextDocument )
+
+
+
+
+Function EdtDetMenu( oCodArt, oDlg, lOferta )
+
+   IIF( lOferta == nil, lOferta := .F., ) ;
+
+   oMenu := MenuBegin( .F.,,, .F., .F. )
+
+
+      MenuAddItem( "&1. Rotor  ",, .F.,,,, "Rotor16",,,,, .F.,,, .F. )
+
+         MenuBegin( .F.,,, .F., .F. )
+
+
+
+
+
+            MenuAddItem( "&1. Modificar de artículo", "Modificar la ficha del artículo", .F.,, {|oMenuItem|( EdtArticulo( oCodArt:VarGet() ) )},, "Cube_Yellow_16",,,,, .F.,,, .F. )
+
+
+
+
+            MenuAddItem( "&2. Modificar codigos de barras", "Modificar los codigos de barras del articulo", .F.,, {|oMenuItem|( EdtArtCodeBar( oCodArt:VarGet() ) )},, "Remotecontrol_16",,,,, .F.,,, .F. )
+
+
+
+
+            MenuAddItem( "&3. Informe de artículo", "Abrir el informe del artículo", .F.,, {|oMenuItem|( if( oUser():lNotCostos(), msgStop( "No tiene permiso para ver los precios de costo" ), InfArticulo( oCodArt:VarGet() ) ) )},, "Info16",,,,, .F.,,, .F. )
+            MenuAddItem()
+
+
+
+
+
+            MenuAddItem( "&4. Añadir movimiento entre almacenes", "Realizar un nuevo movimiento entre almacenes", .F.,, {|oMenuItem|( if( !Empty( oCodArt:VarGet() ), AppMovAlm( oCodArt:VarGet(), 1 ), MsgStop( "No se encuentra artículo" ) ) )},, "Pencil_Package_16",,,,, .F.,,, .F. )
+
+
+
+
+            MenuAddItem( "&5. Añadir movimiento de regularización de almacenes simple", "Realizar un nuevo movimiento de regularización de almacenes simple", .F.,, {|oMenuItem|( if( !Empty( oCodArt:VarGet() ), AppMovAlm( oCodArt:VarGet(), 2 ), MsgStop( "No se encuentra artículo" ) ) )},, "Pencil_Package_16",,,,, .F.,,, .F. )
+
+
+
+
+            MenuAddItem( "&6. Añadir movimiento de regularización de almacenes por objetivo", "Realizar un nuevo movimiento de regularización de almacenes por objetivo", .F.,, {|oMenuItem|( if( !Empty( oCodArt:VarGet() ), AppMovAlm( oCodArt:VarGet(), 3 ), MsgStop( "No se encuentra artículo" ) ) )},, "Pencil_Package_16",,,,, .F.,,, .F. )
+         MenuEnd()
+
+      if lOferta
+
+
+
+
+
+         MenuAddItem( "&2. Artículo en oferta  ", "Modificar la ficha del artículo", .F.,, {|oMenuItem|( EdtArticulo( oCodArt:VarGet() ) )},, "Sel16",,,,, .F.,,, .F. )
+      end
+
+   MenuEnd()
+
+   oDlg:SetMenu( oMenu )
+
+Return ( oMenu )
+
+
+
+
+function EndDetMenu()
+
+return oMenu:End()
+
+
+
+
+
+
+function nStockCalculado( cCodArt )
+
+   local oBlock
+   local oError
+   local nUndVta     := 0
+   local nUndAlm     := 0
+   local nUndCom     := 0
+   local nTotActStk  := 0
+
+   CursorWait()
+
+
+
+
+
+   oBlock            := ErrorBlock( {| oError | ApoloBreak( oError ) } )
+   BEGIN SEQUENCE
+
+   dbUseArea( .T., ( cDriver() ), ( cPatEmp() + "PEDPROVT.DBF" ), ( cCheckArea( "PEDPROVT", @dbfPedPrvT ) ), if(.T. .OR. .F., !.F., NIL), .F.,, )
+   if !lAIS() ; ordListAdd( ( cPatEmp() + "PEDPROVT.CDX" ) ) ; else ; ordSetFocus( 1 ) ; end
+
+   dbUseArea( .T., ( cDriver() ), ( cPatEmp() + "PEDPROVL.DBF" ), ( cCheckArea( "PEDPROVL", @dbfPedPrvL ) ), if(.T. .OR. .F., !.F., NIL), .F.,, )
+   if !lAIS() ; ordListAdd( ( cPatEmp() + "PEDPROVL.CDX" ) ) ; else ; ordSetFocus( 1 ) ; end
+   ordSetFocus( "CREF" )
+
+   dbUseArea( .T., ( cDriver() ), ( cPatEmp() + "ALBPROVT.DBF" ), ( cCheckArea( "ALBPROVT", @dbfAlbPrvT ) ), if(.T. .OR. .F., !.F., NIL), .F.,, )
+   if !lAIS() ; ordListAdd( ( cPatEmp() + "ALBPROVT.CDX" ) ) ; else ; ordSetFocus( 1 ) ; end
+
+   dbUseArea( .T., ( cDriver() ), ( cPatEmp() + "ALBPROVL.DBF" ), ( cCheckArea( "ALBPROVL", @dbfAlbPrvL ) ), if(.T. .OR. .F., !.F., NIL), .F.,, )
+   if !lAIS() ; ordListAdd( ( cPatEmp() + "ALBPROVL.CDX" ) ) ; else ; ordSetFocus( 1 ) ; end
+   ordSetFocus( "CREF" )
+
+   dbUseArea( .T., ( cDriver() ), ( cPatEmp() + "FACPRVT.DBF" ), ( cCheckArea( "FACPRVT", @dbfFacPrvT ) ), if(.T. .OR. .F., !.F., NIL), .F.,, )
+   if !lAIS() ; ordListAdd( ( cPatEmp() + "FACPRVT.CDX" ) ) ; else ; ordSetFocus( 1 ) ; end
+
+   dbUseArea( .T., ( cDriver() ), ( cPatEmp() + "FACPRVL.DBF" ), ( cCheckArea( "FACPRVL", @dbfFacPrvL ) ), if(.T. .OR. .F., !.F., NIL), .F.,, )
+   if !lAIS() ; ordListAdd( ( cPatEmp() + "FACPRVL.CDX" ) ) ; else ; ordSetFocus( 1 ) ; end
+   ordSetFocus( "CREF" )
+
+
+
+
+
+   dbUseArea( .T., ( cDriver() ), ( cPatEmp() + "PRECLIT.DBF" ), ( cCheckArea( "PRECLIT", @dbfPreCliT ) ), if(.T. .OR. .F., !.F., NIL), .F.,, )
+   if !lAIS() ; ordListAdd( ( cPatEmp() + "PRECLIT.CDX" ) ) ; else ; ordSetFocus( 1 ) ; end
+
+   dbUseArea( .T., ( cDriver() ), ( cPatEmp() + "PRECLIL.DBF" ), ( cCheckArea( "PRECLIL", @dbfPreCliL ) ), if(.T. .OR. .F., !.F., NIL), .F.,, )
+   if !lAIS() ; ordListAdd( ( cPatEmp() + "PRECLIL.CDX" ) ) ; else ; ordSetFocus( 1 ) ; end
+   ordSetFocus( "CREF" )
+
+
+
+
+
+   dbUseArea( .T., ( cDriver() ), ( cPatEmp() + "PEDCLIT.DBF" ), ( cCheckArea( "PEDCLIT", @dbfPedCliT ) ), if(.T. .OR. .F., !.F., NIL), .F.,, )
+   if !lAIS() ; ordListAdd( ( cPatEmp() + "PEDCLIT.CDX" ) ) ; else ; ordSetFocus( 1 ) ; end
+
+   dbUseArea( .T., ( cDriver() ), ( cPatEmp() + "PEDCLIL.DBF" ), ( cCheckArea( "PEDCLIL", @dbfPedCliL ) ), if(.T. .OR. .F., !.F., NIL), .F.,, )
+   if !lAIS() ; ordListAdd( ( cPatEmp() + "PEDCLIL.CDX" ) ) ; else ; ordSetFocus( 1 ) ; end
+   ordSetFocus( "CREF" )
+
+   dbUseArea( .T., ( cDriver() ), ( cPatEmp() + "PEDCLIR.DBF" ), ( cCheckArea( "PEDCLIR", @dbfPedCliR ) ), if(.T. .OR. .F., !.F., NIL), .F.,, )
+   if !lAIS() ; ordListAdd( ( cPatEmp() + "PEDCLIR.CDX" ) ) ; else ; ordSetFocus( 1 ) ; end
+   ordSetFocus( "CREF" )
+
+   dbUseArea( .T., ( cDriver() ), ( cPatEmp() + "ALBCLIT.DBF" ), ( cCheckArea( "ALBCLIT", @dbfAlbCliT ) ), if(.T. .OR. .F., !.F., NIL), .F.,, )
+   if !lAIS() ; ordListAdd( ( cPatEmp() + "ALBCLIT.CDX" ) ) ; else ; ordSetFocus( 1 ) ; end
+
+   dbUseArea( .T., ( cDriver() ), ( cPatEmp() + "ALBCLIL.DBF" ), ( cCheckArea( "ALBCLIL", @dbfAlbCliL ) ), if(.T. .OR. .F., !.F., NIL), .F.,, )
+   if !lAIS() ; ordListAdd( ( cPatEmp() + "ALBCLIL.CDX" ) ) ; else ; ordSetFocus( 1 ) ; end
+   ordSetFocus( "CREF" )
+
+   dbUseArea( .T., ( cDriver() ), ( cPatEmp() + "FACCLIT.DBF" ), ( cCheckArea( "FACCLIT", @dbfFacCliT ) ), if(.T. .OR. .F., !.F., NIL), .F.,, )
+   if !lAIS() ; ordListAdd( ( cPatEmp() + "FACCLIT.CDX" ) ) ; else ; ordSetFocus( 1 ) ; end
+
+   dbUseArea( .T., ( cDriver() ), ( cPatEmp() + "FACCLIL.DBF" ), ( cCheckArea( "FACCLIL", @dbfFacCliL ) ), if(.T. .OR. .F., !.F., NIL), .F.,, )
+   if !lAIS() ; ordListAdd( ( cPatEmp() + "FACCLIL.CDX" ) ) ; else ; ordSetFocus( 1 ) ; end
+   ordSetFocus( "CREF" )
+
+   dbUseArea( .T., ( cDriver() ), ( cPatEmp() + "FACRECT.DBF" ), ( cCheckArea( "FACRECT", @dbfFacRecT ) ), if(.T. .OR. .F., !.F., NIL), .F.,, )
+   if !lAIS() ; ordListAdd( ( cPatEmp() + "FACRECT.CDX" ) ) ; else ; ordSetFocus( 1 ) ; end
+
+   dbUseArea( .T., ( cDriver() ), ( cPatEmp() + "FACRECL.DBF" ), ( cCheckArea( "FACRECL", @dbfFacRecL ) ), if(.T. .OR. .F., !.F., NIL), .F.,, )
+   if !lAIS() ; ordListAdd( ( cPatEmp() + "FACRECL.CDX" ) ) ; else ; ordSetFocus( 1 ) ; end
+   ordSetFocus( "CREF" )
+
+   dbUseArea( .T., ( cDriver() ), ( cPatEmp() + "FACCLIP.DBF" ), ( cCheckArea( "FACCLIP", @dbfFacCliP ) ), if(.T. .OR. .F., !.F., NIL), .F.,, )
+   if !lAIS() ; ordListAdd( ( cPatEmp() + "FACCLIP.CDX" ) ) ; else ; ordSetFocus( 1 ) ; end
+
+   dbUseArea( .T., ( cDriver() ), ( cPatEmp() + "TIKET.DBF" ), ( cCheckArea( "TIKET", @dbfTikCliT ) ), if(.T. .OR. .F., !.F., NIL), .F.,, )
+   if !lAIS() ; ordListAdd( ( cPatEmp() + "TIKET.CDX" ) ) ; else ; ordSetFocus( 1 ) ; end
+
+   dbUseArea( .T., ( cDriver() ), ( cPatEmp() + "TIKEL.DBF" ), ( cCheckArea( "TIKEL", @dbfTikCliL ) ), if(.T. .OR. .F., !.F., NIL), .F.,, )
+   if !lAIS() ; ordListAdd( ( cPatEmp() + "TIKEL.CDX" ) ) ; else ; ordSetFocus( 1 ) ; end
+   ordSetFocus( "CCBATIL" )
+
+   dbUseArea( .T., ( cDriver() ), ( cPatEmp() + "TIKEP.DBF" ), ( cCheckArea( "TIKEP", @dbfTikCliP ) ), if(.T. .OR. .F., !.F., NIL), .F.,, )
+   if !lAIS() ; ordListAdd( ( cPatEmp() + "TIKEP.CDX" ) ) ; else ; ordSetFocus( 1 ) ; end
+
+   dbUseArea( .T., ( cDriver() ), ( cPatEmp() + "HISMOV.DBF" ), ( cCheckArea( "HISMOV", @dbfMovAlm ) ), if(.T. .OR. .F., !.F., NIL), .F.,, )
+   if !lAIS() ; ordListAdd( ( cPatEmp() + "HISMOV.CDX" ) ) ; else ; ordSetFocus( 1 ) ; end
+   ordSetFocus( "CREFMOV" )
+
+
+
+
+
+   if ( dbfAlbPrvL )->( dbSeek( cCodArt ) )
+      while ( dbfAlbPrvL )->cRef == cCodArt .AND. !( dbfAlbPrvL )->( Eof() )
+         if ( dbfAlbPrvT )->( dbSeek( ( dbfAlbPrvL )->CSERALB + Str( ( dbfAlbPrvL )->NNUMALB ) + (dbfAlbPrvL)->CSUFALB ) )
+            if !( dbfAlbPrvT )->lFacturado
+               nUndCom  += nTotNAlbPrv( dbfAlbPrvL )
+            end
+         end
+         SysRefresh()
+         ( dbfAlbPrvL )->( dbSkip() )
+      end
+   end
+
+   if ( dbfFacPrvL )->( dbSeek( cCodArt ) )
+      while ( dbfFacPrvL )->cRef == cCodArt .AND. !( dbfFacPrvL )->( Eof() )
+         if ( dbfFacPrvT )->( dbSeek( ( dbfFacPrvL )->CSERFAC + Str( ( dbfFacPrvL )->NNUMFAC ) + (dbfFacPrvL)->CSUFFAC ) )
+            nUndCom     += nTotNFacPrv( dbfFacPrvL )
+         end
+         SysRefresh()
+         ( dbfFacPrvL )->( dbSkip() )
+      end
+   end
+
+
+
+
+
+   if ( dbfAlbCliL )->( dbSeek( cCodArt ) )
+      while ( dbfAlbCliL )->cRef == cCodArt .AND. !( dbfAlbCliL )->( Eof() )
+         if ( dbfAlbCliT )->( dbSeek( ( dbfAlbCliL )->CSERALB + Str( ( dbfAlbCliL )->NNUMALB ) + (dbfAlbCliL)->CSUFALB ) )
+            if !( dbfAlbCliT )->lFacturado
+            nUndVta  += nTotNAlbCli( dbfAlbCliL )
+            end
+         end
+         SysRefresh()
+         ( dbfAlbCliL )->( dbSkip() )
+      end
+   end
+
+   if ( dbfFacCliL )->( dbSeek( cCodArt ) )
+      while ( dbfFacCliL )->CREF == cCodArt .AND. !( dbfFacCliL )->( Eof() )
+         if ( dbfFacCliT )->( dbSeek( ( dbfFacCliL )->CSERIE + Str( ( dbfFacCliL )->NNUMFAC ) + (dbfFacCliL)->CSUFFAC ) )
+            nUndVta  += nTotNFacCli( dbfFacCliL )
+         end
+         SysRefresh()
+         ( dbfFacCliL )->( dbSkip() )
+      end
+   end
+
+   if ( dbfFacRecL )->( dbSeek( cCodArt ) )
+      while ( dbfFacRecL )->cRef == cCodArt .AND. !( dbfFacRecL )->( Eof() )
+         if ( dbfFacRecT )->( dbSeek( ( dbfFacRecL )->cSerie + Str( ( dbfFacRecL )->nNumFac ) + (dbfFacRecL)->cSufFac ) )
+            nUndVta  += nTotNFacRec( dbfFacRecL )
+         end
+         SysRefresh()
+         ( dbfFacRecL )->( dbSkip() )
+      end
+   end
+
+
+
+
+
+   if ( dbfTikCliL )->( dbSeek( cCodArt ) )
+   while ( dbfTikCliL )->cCbaTil == cCodArt .AND. !( dbfTikCliL )->( Eof() )
+      if ( dbfTikCliT )->( dbSeek( ( dbfTikCliL )->cSerTil + ( dbfTikCliL )->cNumTil + (dbfTikCliL)->cSufTil ) )
+         if ( dbfTikCliT )->cTipTik == "1" .OR. ( dbfTikCliT )->cTipTik == "5"
+            nUndVta  += ( dbfTikCliL )->nUntTil
+         elseif ( dbfTikCliT )->cTipTik == "4"
+            nUndVta  -= ( dbfTikCliL )->nUntTil
+         end
+         SysRefresh()
+      end
+      ( dbfTikCliL )->( dbSkip() )
+   end
+   end
+
+
+
+
+
+   ( dbfTikCliL )->( ordSetFocus( "cComTil" ) )
+   if ( dbfTikCliL )->( dbSeek( cCodArt ) )
+   while ( dbfTikCliL )->cComTil == cCodArt .AND. !( dbfTikCliL )->( Eof() )
+      if ( dbfTikCliT )->( dbSeek( ( dbfTikCliL )->cSerTil + ( dbfTikCliL )->cNumTil + (dbfTikCliL)->cSufTil ) )
+         if ( dbfTikCliT )->cTipTik == "1" .OR. ( dbfTikCliT )->cTipTik == "5"
+            nUndVta  += ( dbfTikCliL )->nUntTil
+         elseif ( dbfTikCliT )->cTipTik == "4"
+            nUndVta  -= ( dbfTikCliL )->nUntTil
+         end
+      end
+      SysRefresh()
+      ( dbfTikCliL )->( dbSkip() )
+   end
+   end
+
+   ( dbfTikCliL )->( ordSetFocus( "cCbaTil" ) )
+
+
+
+
+
+   if ( dbfMovAlm )->( dbSeek( cCodArt ) )
+      while ( dbfMovAlm )->cRefMov == cCodArt .AND. !( dbfMovAlm )->( eof() )
+
+         if !Empty( ( dbfMovAlm )->cAliMov ) .AND. !( dbfMovAlm )->lNoStk
+            nUndAlm  += nTotNMovAlm( dbfMovAlm )
+         end
+
+         if !Empty( ( dbfMovAlm )->cAloMov ) .AND. !( dbfMovAlm )->lNoStk
+            nUndAlm  -= nTotNMovAlm( dbfMovAlm )
+         end
+         SysRefresh()
+         ( dbfMovAlm )->( dbSkip() )
+      end
+   end
+
+   nTotActStk  := nUndCom + nUndAlm - nUndVta
+
+   (dbfPedPrvT)->( dbCloseArea() )
+   (dbfPedPrvL)->( dbCloseArea() )
+   (dbfAlbPrvT)->( dbCloseArea() )
+   (dbfAlbPrvL)->( dbCloseArea() )
+   (dbfFacPrvT)->( dbCloseArea() )
+   (dbfFacPrvL)->( dbCloseArea() )
+   (dbfPreCliT)->( dbCloseArea() )
+   (dbfPreCliL)->( dbCloseArea() )
+   (dbfPedCliT)->( dbCloseArea() )
+   (dbfPedCliL)->( dbCloseArea() )
+   (dbfPedCliR)->( dbCloseArea() )
+   (dbfAlbCliT)->( dbCloseArea() )
+   (dbfAlbCliL)->( dbCloseArea() )
+   (dbfFacCliT)->( dbCloseArea() )
+   (dbfFacCliL)->( dbCloseArea() )
+   (dbfFacCliP)->( dbCloseArea() )
+   (dbfFacRecT)->( dbCloseArea() )
+   (dbfFacRecL)->( dbCloseArea() )
+   (dbfTikCliT)->( dbCloseArea() )
+   (dbfTikCliL)->( dbCloseArea() )
+   (dbfTikCliP)->( dbCloseArea() )
+   (dbfMovAlm )->( dbCloseArea() )
+
+   RECOVER USING oError
+
+      msgStop( "Imposible abrir todas las bases de datos" + Chr(13)+Chr(10) + ErrorMessage( oError ) )
+
+   end
+
+   ErrorBlock( oBlock )
+
+return ( nTotActStk )
+
+
+
+Static Function nTotUnd( oDbfTmp )
+
+   local nRec     := oDbfTmp:Recno()
+   local nTotImp  := 0
+
+   oDbfTmp:GoTop()
+   while !oDbfTmp:Eof()
+
+      nTotImp     += oDbfTmp:nUndDoc
+
+      oDbfTmp:Skip()
+
+   end
+
+   oDbfTmp:GoTo( nRec )
+
+Return ( nTotImp )
+
+
+
+Static Function nTotImp( oDbfTmp )
+
+   local nRec     := oDbfTmp:Recno()
+   local nTotImp  := 0
+
+   oDbfTmp:GoTop()
+   while !oDbfTmp:Eof()
+
+      nTotImp     += oDbfTmp:nTotDoc
+
+      oDbfTmp:Skip()
+
+   end
+
+   oDbfTmp:GoTo( nRec )
+
+Return ( nTotImp )
+
+
+
+Static Function Filtro()
+
+   if oFilter <> nil
+
+      oFilter:Resource()
+
+      if oFilter:cExpFilter <> nil
+         SetWindowText( oBtnFiltro:hWnd, "Filtro activo" )
+      else
+         SetWindowText( oBtnFiltro:hWnd, "Filtrar" )
+      end
+
+   end
+
+Return( .T. )
+
+
+
+
+
+
+
+
+
+Function nTotNResCli( dbfPedCliR )
+
+Return ( NotCaja( ( dbfPedCliR )->nCajRes ) * ( dbfPedCliR )->nUndRes )
+
+
+
+function cNombreMes( nMes )
+
+   do case
+      case nMes == 1
+         Return ( "Enero" )
+      case nMes == 2
+         Return ( "Febrero" )
+      case nMes == 3
+         Return ( "Marzo" )
+      case nMes == 4
+         Return ( "Abril" )
+      case nMes == 5
+         Return ( "Mayo" )
+      case nMes == 6
+         Return ( "Junio" )
+      case nMes == 7
+         Return ( "Julio" )
+      case nMes == 8
+         Return ( "Agosto" )
+      case nMes == 9
+         Return ( "Septiembre" )
+      case nMes == 10
+         Return ( "Octubre" )
+      case nMes == 11
+         Return ( "Noviembre" )
+      case nMes == 12
+         Return ( "Diciembre" )
+   end
+
+Return ""

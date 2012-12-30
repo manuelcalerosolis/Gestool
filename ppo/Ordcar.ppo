@@ -1,0 +1,1729 @@
+#line 112 "hbclass.ch"
+   DYNAMIC DivertConstructorCall
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+DECLARE HBClass  New( cName AS String, OPTIONAL SuperParams ) AS CLASS HBClass  Create() AS Object  Instance() AS Object  AddClsMethod( cName AS String, @MethodName(), nScope AS Numeric, n2 AS Numeric, n3 AS Numeric )  AddDelegate( cName AS String, cDelegate AS String, cObject AS String, nScope AS Numeric, lPersistent AS LOGICAL )  AddMultiClsData( cType AS String, uVal, nScope AS Numeric, aDatas AS Array OF String )  AddMultiData( cType AS String, uVal, nScope AS Numeric, aDatas AS Array OF String, x AS LOGICAL, lPer AS LOGICAL )  AddMethod( cName AS String, @MethodName(), nScope AS Numeric, lPersistent AS LOGICAL )  AddInLine( cName AS String, bBlock AS CodeBlock, nScope AS Numeric, lPersistent AS LOGICAL )  AddVirtual( cName AS String )  ModMethod( cName AS String, @MethodName(), nScope AS Numeric, lPersistent AS LOGICAL )  ModClsMethod( cName AS String, @MethodName(), nScope AS Numeric )  ModInline( cName AS String, bBlock AS CodeBlock, nScope AS Numeric, lPersistent AS LOGICAL )  SetOnError( @MethodName() )
+#line 85 "\Fwh1204\Include\FiveWin.Ch"
+   EXTERNAL GetProcAdd
+   EXTERNAL TActiveX
+
+
+
+
+extern errorsys
+#line 13 ".\Prg\Ordcar.prg"
+static dbfAlbCliT
+static dbfAlbCliL
+static dbfFacCliT
+static dbfFacCliL
+static dbfOrdCarT
+static dbfOrdCarL
+static dbfHisMov
+static dbfTransport
+static dbfArticulo
+static dbfTmpEstado
+static cTmpEstado
+static oBrwEstado
+static oPgrEstado
+static oSayProgress
+static cSayProgress   := "Procesando"
+
+
+
+_HB_CLASS TOrdCarga ; UTILITY FUNCTION TOrdCarga(...); static s_oClass ; local oClassInstance ; local nScope ; nScope := 1 ; if s_oClass == NIL ; s_oClass := IIF(.F.,, HBClass():New( "TOrdCarga" , {TMasDet():classh} ) ) ; ;
+
+   _HB_MEMBER { oCtaRem} ; IIF( !.F., s_oClass:AddMultiData(,, nScope + IIF( .F., 32, 0 ), { "oCtaRem" }, .F., .F. ), )
+   _HB_MEMBER { oDbfCnt} ; IIF( !.F., s_oClass:AddMultiData(,, nScope + IIF( .F., 32, 0 ), { "oDbfCnt" }, .F., .F. ), )
+   _HB_MEMBER { oRecibos} ; IIF( !.F., s_oClass:AddMultiData(,, nScope + IIF( .F., 32, 0 ), { "oRecibos" }, .F., .F. ), )
+   _HB_MEMBER { oAlbCliT} ; IIF( !.F., s_oClass:AddMultiData(,, nScope + IIF( .F., 32, 0 ), { "oAlbCliT" }, .F., .F. ), )
+   _HB_MEMBER { oAlbCliL} ; IIF( !.F., s_oClass:AddMultiData(,, nScope + IIF( .F., 32, 0 ), { "oAlbCliL" }, .F., .F. ), )
+   _HB_MEMBER { oAlbCliP} ; IIF( !.F., s_oClass:AddMultiData(,, nScope + IIF( .F., 32, 0 ), { "oAlbCliP" }, .F., .F. ), )
+   _HB_MEMBER { oClientes} ; IIF( !.F., s_oClass:AddMultiData(,, nScope + IIF( .F., 32, 0 ), { "oClientes" }, .F., .F. ), )
+   _HB_MEMBER { oDbfIva} ; IIF( !.F., s_oClass:AddMultiData(,, nScope + IIF( .F., 32, 0 ), { "oDbfIva" }, .F., .F. ), )
+   _HB_MEMBER { oTrans} ; IIF( !.F., s_oClass:AddMultiData(,, nScope + IIF( .F., 32, 0 ), { "oTrans" }, .F., .F. ), )
+   _HB_MEMBER { oDbfAge} ; IIF( !.F., s_oClass:AddMultiData(,, nScope + IIF( .F., 32, 0 ), { "oDbfAge" }, .F., .F. ), )
+   _HB_MEMBER { oDbfArt} ; IIF( !.F., s_oClass:AddMultiData(,, nScope + IIF( .F., 32, 0 ), { "oDbfArt" }, .F., .F. ), )
+   _HB_MEMBER { oTblPro} ; IIF( !.F., s_oClass:AddMultiData(,, nScope + IIF( .F., 32, 0 ), { "oTblPro" }, .F., .F. ), )
+   _HB_MEMBER { oDbfPro} ; IIF( !.F., s_oClass:AddMultiData(,, nScope + IIF( .F., 32, 0 ), { "oDbfPro" }, .F., .F. ), )
+   _HB_MEMBER { oDbfFam} ; IIF( !.F., s_oClass:AddMultiData(,, nScope + IIF( .F., 32, 0 ), { "oDbfFam" }, .F., .F. ), )
+   _HB_MEMBER { cPatExp} ; IIF( !.F., s_oClass:AddMultiData(,, nScope + IIF( .F., 32, 0 ), { "cPatExp" }, .F., .F. ), )
+   _HB_MEMBER { dFecIni} ; IIF( !.F., s_oClass:AddMultiData(,, nScope + IIF( .F., 32, 0 ), { "dFecIni" }, .F., .F. ), )
+   _HB_MEMBER { dFecFin} ; IIF( !.F., s_oClass:AddMultiData(,, nScope + IIF( .F., 32, 0 ), { "dFecFin" }, .F., .F. ), )
+   _HB_MEMBER {AS ARRAY aMsg} ; IIF( !.F., s_oClass:AddMultiData( "ARRAY", {}, nScope + IIF( .F., 32, 0 ), { "aMsg" }, .F., .F. ), )
+   _HB_MEMBER { oSer} ; IIF( !.F., s_oClass:AddMultiData(, Array( 26 ), nScope + IIF( .F., 32, 0 ), { "oSer" }, .F., .F. ), )
+   _HB_MEMBER { aSer} ; IIF( !.F., s_oClass:AddMultiData(, Afill( Array( 26 ), .T. ), nScope + IIF( .F., 32, 0 ), { "aSer" }, .F., .F. ), )
+   _HB_MEMBER { oBmp} ; IIF( !.F., s_oClass:AddMultiData(,, nScope + IIF( .F., 32, 0 ), { "oBmp" }, .F., .F. ), )
+   _HB_MEMBER {AS ARRAY aDbfVir} ; IIF( !.F., s_oClass:AddMultiData( "ARRAY", { { .F., "", 0, "", Ctod( "" ), "", "",  "", 0 } }, nScope + IIF( .F., 32, 0 ), { "aDbfVir" }, .F., .F. ), )
+   _HB_MEMBER { oBrwDet} ; IIF( !.F., s_oClass:AddMultiData(,, nScope + IIF( .F., 32, 0 ), { "oBrwDet" }, .F., .F. ), )
+   _HB_MEMBER { cMru} ; IIF( !.F., s_oClass:AddMultiData(, "Truck_blue_document_16", nScope + IIF( .F., 32, 0 ), { "cMru" }, .F., .F. ), )
+   _HB_MEMBER { cBitmap} ; IIF( !.F., s_oClass:AddMultiData(, ( 104 + ( 0 * 256 ) + ( 63 * 65536 ) ), nScope + IIF( .F., 32, 0 ), { "cBitmap" }, .F., .F. ), )
+
+   _HB_MEMBER { oFecAlb} ; IIF( !.F., s_oClass:AddMultiData(,, nScope + IIF( .F., 32, 0 ), { "oFecAlb" }, .F., .F. ), )
+   _HB_MEMBER { oCodCli} ; IIF( !.F., s_oClass:AddMultiData(,, nScope + IIF( .F., 32, 0 ), { "oCodCli" }, .F., .F. ), )
+   _HB_MEMBER { oNomCli} ; IIF( !.F., s_oClass:AddMultiData(,, nScope + IIF( .F., 32, 0 ), { "oNomCli" }, .F., .F. ), )
+   _HB_MEMBER { oComent} ; IIF( !.F., s_oClass:AddMultiData(,, nScope + IIF( .F., 32, 0 ), { "oComent" }, .F., .F. ), )
+
+   _HB_MEMBER { oPeso} ; IIF( !.F., s_oClass:AddMultiData(,, nScope + IIF( .F., 32, 0 ), { "oPeso" }, .F., .F. ), )
+   _HB_MEMBER {AS NUMERIC nPeso} ; IIF( !.F., s_oClass:AddMultiData( "NUMERIC", 0, nScope + IIF( .F., 32, 0 ), { "nPeso" }, .F., .F. ), )
+
+   _HB_MEMBER { oDiferencias} ; IIF( !.F., s_oClass:AddMultiData(,, nScope + IIF( .F., 32, 0 ), { "oDiferencias" }, .F., .F. ), )
+   _HB_MEMBER {AS NUMERIC nDiferencias} ; IIF( !.F., s_oClass:AddMultiData( "NUMERIC", 0, nScope + IIF( .F., 32, 0 ), { "nDiferencias" }, .F., .F. ), )
+
+   _HB_MEMBER { oMenu} ; IIF( !.F., s_oClass:AddMultiData(,, nScope + IIF( .F., 32, 0 ), { "oMenu" }, .F., .F. ), )
+
+   _HB_MEMBER { oDetOrdCar} ; IIF( !.F., s_oClass:AddMultiData(,, nScope + IIF( .F., 32, 0 ), { "oDetOrdCar" }, .F., .F. ), )
+   _HB_MEMBER {AS ARRAY aAlbaranes} ; IIF( !.F., s_oClass:AddMultiData( "ARRAY", {}, nScope + IIF( .F., 32, 0 ), { "aAlbaranes" }, .F., .F. ), )
+
+   _HB_MEMBER New( cPath, oWndParent, oMenuItem); IIF( .F., s_oClass:ModMethod( "New", @TOrdCarga_New(), nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ), s_oClass:AddMethod( "New", @TOrdCarga_New(), nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ));
+
+   _HB_MEMBER DefineFiles(); IIF( .F., s_oClass:ModMethod( "DefineFiles", @TOrdCarga_DefineFiles(), nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ), s_oClass:AddMethod( "DefineFiles", @TOrdCarga_DefineFiles(), nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ));
+
+   _HB_MEMBER OpenFiles(); IIF( .F., s_oClass:ModMethod( "OpenFiles", @TOrdCarga_OpenFiles(), nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ), s_oClass:AddMethod( "OpenFiles", @TOrdCarga_OpenFiles(), nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ));
+
+   _HB_MEMBER CloseFiles(); IIF( .F., s_oClass:ModMethod( "CloseFiles", @TOrdCarga_CloseFiles(), nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ), s_oClass:AddMethod( "CloseFiles", @TOrdCarga_CloseFiles(), nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ));
+
+   _HB_MEMBER OpenService( lExclusive); IIF( .F., s_oClass:ModMethod( "OpenService", @TOrdCarga_OpenService(), nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ), s_oClass:AddMethod( "OpenService", @TOrdCarga_OpenService(), nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ));
+
+   _HB_MEMBER Resource( nMode); IIF( .F., s_oClass:ModMethod( "Resource", @TOrdCarga_Resource(), nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ), s_oClass:AddMethod( "Resource", @TOrdCarga_Resource(), nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ));
+
+   _HB_MEMBER Activate(); IIF( .F., s_oClass:ModMethod( "Activate", @TOrdCarga_Activate(), nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ), s_oClass:AddMethod( "Activate", @TOrdCarga_Activate(), nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ));
+
+
+
+   _HB_MEMBER Report(); IIF( .F., s_oClass:ModInline( "Report", {|Self | Self, TInfOrdCar():New( "Ordenes de carga", , , , , , { ::oDbf, ::oDetOrdCar:oDbf } ):Play() }, nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ), s_oClass:AddInline( "Report", {|Self | Self, TInfOrdCar():New( "Ordenes de carga", , , , , , { ::oDbf, ::oDetOrdCar:oDbf } ):Play() }, nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ) )
+
+   _HB_MEMBER EdtRotor( oDlg); IIF( .F., s_oClass:ModMethod( "EdtRotor", @TOrdCarga_EdtRotor(), nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ), s_oClass:AddMethod( "EdtRotor", @TOrdCarga_EdtRotor(), nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ));
+
+   _HB_MEMBER ImpAlbCli(); IIF( .F., s_oClass:ModMethod( "ImpAlbCli", @TOrdCarga_ImpAlbCli(), nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ), s_oClass:AddMethod( "ImpAlbCli", @TOrdCarga_ImpAlbCli(), nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ));
+
+
+
+
+
+
+
+   _HB_MEMBER OpenError(); IIF( .F., s_oClass:ModInline( "OpenError", {|Self | Self, ( MsgStop( "Proceso en uso por otro usuario", "Abrir fichero" ), .F. ) }, nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ), s_oClass:AddInline( "OpenError", {|Self | Self, ( MsgStop( "Proceso en uso por otro usuario", "Abrir fichero" ), .F. ) }, nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ) )
+
+   _HB_MEMBER LoadTrans(); IIF( .F., s_oClass:ModMethod( "LoadTrans", @TOrdCarga_LoadTrans(), nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ), s_oClass:AddMethod( "LoadTrans", @TOrdCarga_LoadTrans(), nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ));
+
+   _HB_MEMBER CalculaDiferencias(); IIF( .F., s_oClass:ModMethod( "CalculaDiferencias", @TOrdCarga_CalculaDiferencias(), nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ), s_oClass:AddMethod( "CalculaDiferencias", @TOrdCarga_CalculaDiferencias(), nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ));
+
+   _HB_MEMBER lSave( nMode, oDlg); IIF( .F., s_oClass:ModMethod( "lSave", @TOrdCarga_lSave(), nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ), s_oClass:AddMethod( "lSave", @TOrdCarga_lSave(), nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ));
+
+   _HB_MEMBER GetNewCount(); IIF( .F., s_oClass:ModMethod( "GetNewCount", @TOrdCarga_GetNewCount(), nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ), s_oClass:AddMethod( "GetNewCount", @TOrdCarga_GetNewCount(), nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ));
+
+   _HB_MEMBER nPesOrdVir( lPic); IIF( .F., s_oClass:ModMethod( "nPesOrdVir", @TOrdCarga_nPesOrdVir(), nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ), s_oClass:AddMethod( "nPesOrdVir", @TOrdCarga_nPesOrdVir(), nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ));
+
+   _HB_MEMBER StartImpAlbCli( oDlg); IIF( .F., s_oClass:ModMethod( "StartImpAlbCli", @TOrdCarga_StartImpAlbCli(), nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ), s_oClass:AddMethod( "StartImpAlbCli", @TOrdCarga_StartImpAlbCli(), nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ));
+
+   _HB_MEMBER RollBackAlbCli(); IIF( .F., s_oClass:ModMethod( "RollBackAlbCli", @TOrdCarga_RollBackAlbCli(), nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ), s_oClass:AddMethod( "RollBackAlbCli", @TOrdCarga_RollBackAlbCli(), nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ));
+
+   _HB_MEMBER Enviar( aSelected); IIF( .F., s_oClass:ModMethod( "Enviar", @TOrdCarga_Enviar(), nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ), s_oClass:AddMethod( "Enviar", @TOrdCarga_Enviar(), nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ));
+
+; IF .F. ; __clsActive(s_oClass:hClass) ; s_oClass:Refresh() ; ELSE ; s_oClass:Create() ; END ; oClassInstance := __clsInst( s_oClass:hClass ) ; IF __ObjHasMsg( oClassInstance, "InitClass" ); oClassInstance:InitClass( hb_aParams() ) ; END ; ELSE ; oClassInstance := __clsInst( s_oClass:hClass ) ; END ; IF PCount() > 0 ; DIVERT TO (@DivertConstructorCall()) OF s_oClass ; END ; RETURN oClassInstance AS CLASS TOrdCarga ;
+
+
+
+UTILITY STATIC function TOrdCarga_New( cPath, oMenuItem, oWndParent) ; local Self AS CLASS TOrdCarga := QSelf() AS CLASS TOrdCarga
+
+   IIF( cPath == nil, cPath := cPatEmp(), ) ;
+   IIF( oWndParent == nil, oWndParent := oWnd(), ) ;
+
+   ::nLevel                := nLevelUsr( oMenuItem )
+
+   ::cPath                 := cPath
+   ::oWndParent            := oWndParent
+   ::oDbf                  := nil
+
+
+   ::oTrans                := TTrans():New( cPath )
+
+
+
+
+   ::oBmp                  := LoadBitmap( 0, 32760 )
+   ::dFecIni               := Ctod( "01/" + Str( Month( Date() ), 2 ) + "/" + Str( Year( Date() ), 4 ) )
+   ::dFecFin               := Date()
+
+   ::cNumDocKey            := "nNumOrd"
+   ::cSufDocKey            := "cSufOrd"
+
+   ::bFirstKey             := {|| Str( ::oDbf:nNumOrd ) + ::oDbf:cSufOrd }
+
+   ::bOnPreDelete          := {|| ::RollBackAlbCli()  }
+
+
+   ::bOnPostAppendDetail   := {|| ::oBrwDet:Refresh(), ::nPesOrdVir() }
+   ::bOnPostEditDetail     := {|| ::oBrwDet:Refresh(), ::nPesOrdVir() }
+   ::bOnPostDeleteDetail   := {|| ::oBrwDet:Refresh(), ::nPesOrdVir() }
+
+
+
+
+
+
+   ::oDetOrdCar            := TDetOrdCar():New( cPath, Self )
+
+   ::AddDetail( ::oDetOrdCar )
+
+RETURN ( Self )
+
+
+
+UTILITY STATIC function TOrdCarga_Activate() ; local Self AS CLASS TOrdCarga := QSelf() AS CLASS TOrdCarga
+
+   if nAnd( ::nLevel, 1 ) == 0
+
+
+
+
+
+      if ::oWndParent <> nil
+         ::oWndParent:CloseAll()
+      end
+
+      if !::OpenFiles()
+         return nil
+      end
+
+      ::CreateShell( ::nLevel )
+
+      ::oWndBrw:bDup    := nil
+
+      ::oWndBrw:GralButtons( Self )
+
+
+
+
+
+
+      ::oWndBrw:NewAt( "Lbl",,, {||( ::Enviar() )}, "En(v)iar", "V",,, 4,, .F. )
+
+      ::oWndBrw:EndButtons( Self )
+
+      ::oWndBrw:Activate(  nil, nil, nil, nil, nil, nil, nil, nil, nil, nil, nil, nil, nil, nil, nil, nil, {|| ::CloseFiles() }, nil, nil )
+
+   else
+
+      msgStop( "Acceso no permitido." )
+
+   end
+
+RETURN ( Self )
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+UTILITY STATIC function TOrdCarga_DefineFiles( cPath, cDriver) ; local Self AS CLASS TOrdCarga := QSelf() AS CLASS TOrdCarga
+
+   IIF( cPath == nil, cPath := ::cPath, ) ;
+   IIF( cDriver == nil, cDriver := cDriver(), ) ;
+
+   ::oDbf := DbfServer( "ORDCARP.DBF", "ORDCARP" ):New( "ORDCARP.DBF", "ORDCARP", ( cDriver ), "Ordenes de carga", ( cPath ) )
+
+   ::oDbf:AddField( "bSndInt", "B", 14, 0,,,, {|| ::oDbf:lSndInt }, { "Enviar", "Lbl16" , 3 }, .F., 20, .F., {"Sel16", "Nil16"} )
+   ::oDbf:AddField( "nNumOrd", "N", 9, 0, "999999999",,,, "", .F.,, .T., {} )
+   ::oDbf:AddField( "cSufOrd", "C", 2, 0, "@!",,,, "", .F.,, .T., {} )
+   ::oDbf:AddField( "cNumOrd", "B", 12, 0,,,, {|| ( Str( ::oDbf:nNumOrd ) + "/" + ::oDbf:cSufOrd )}, "Número", .F., 80, .F., {} )
+   ::oDbf:AddField( "dFecOrd", "D", 8, 0,,,,, "Fecha", .F., 80, .F., {} )
+   ::oDbf:AddField( "cCodTrn", "C", 9, 0, "@!",,,, "Código", .F., 60, .F., {} )
+   ::oDbf:AddField( "cNomTrn", "B", 50, 0,,,, {|| ( if( !Empty( ::oTrans ), ::oTrans:cNombre( ::oDbf:cCodTrn ), "" ) )}, "Transportista", .F., 200, .F., {} )
+   ::oDbf:AddField( "nKgsTrn", "N", 16, 6, MasUnd(),,,, "TARA", .T., 80, .F., {} )
+   ::oDbf:AddField( "cRetPor", "C", 100, 0,,,,, "Retirado por", .F., 120, .F., {} )
+   ::oDbf:AddField( "cRetMat", "C", 20, 0, "@!",,,, "Matrícula", .F., 100, .F., {} )
+   ::oDbf:AddField( "nBultos", "N", 3, 0, "999",,,, "Bultos", .T., 50, .F., {} )
+   ::oDbf:AddField( "cCodAge", "C", 3, 0, "@!",,,, "Cod. agente", .F., 50, .T., {} )
+   ::oDbf:AddField( "lSndInt", "L", 1, 0,,,,, "", .F.,, .T., {} )
+   ::oDbf:AddField( "lRegula", "L", 1, 0,,,,, "", .F.,, .T., {} )
+
+   ::oDbf:AddIndex( "nNumOrd", "OrdCarP.Cdx", "Str( nNumOrd ) + cSufOrd",,, .F., .F., "Número",,, .T., .F. )
+   ::oDbf:AddIndex( "dFecOrd", "OrdCarP.Cdx", "dFecOrd",,, .F., .F., "Fecha",,, .T., .F. )
+   ::oDbf:AddIndex( "cCodTrn", "OrdCarP.Cdx", "cCodTrn",,, .F., .F., "Transportista",,, .T., .F. )
+
+
+
+   ::oDbf:bOpenError := { || ::OpenError() }
+
+RETURN ( ::oDbf )
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+UTILITY STATIC function TOrdCarga_OpenFiles( lExclusive) ; local Self AS CLASS TOrdCarga := QSelf() AS CLASS TOrdCarga
+
+   local lOpen          := .T.
+   local oError
+   local oBlock         := ErrorBlock( {| oError | ApoloBreak( oError ) } )
+
+   IIF( lExclusive == nil, lExclusive := .F., ) ;
+
+   BEGIN SEQUENCE
+
+      ::oAlbCliT := DbfServer( "ALBCLIT.DBF", ):NewOpen( "ALBCLIT.DBF",, ( cDriver() ),, ( ::cPath ), .F., .T., .F., .F. ) ; ::oAlbCliT:AddBag( "ALBCLIT.CDX" ) ; ::oAlbCliT:AddBag( ) ; ::oAlbCliT:AutoIndex()
+
+      ::oAlbCliL := DbfServer( "ALBCLIL.DBF", ):NewOpen( "ALBCLIL.DBF",, ( cDriver() ),, ( ::cPath ), .F., .T., .F., .F. ) ; ::oAlbCliL:AddBag( "ALBCLIL.CDX" ) ; ::oAlbCliL:AddBag( ) ; ::oAlbCliL:AutoIndex()
+
+      ::oAlbCliP := DbfServer( "ALBCLIP.DBF", ):NewOpen( "ALBCLIP.DBF",, ( cDriver() ),, ( ::cPath ), .F., .T., .F., .F. ) ; ::oAlbCliP:AddBag( "ALBCLIP.CDX" ) ; ::oAlbCliP:AddBag( ) ; ::oAlbCliP:AutoIndex()
+
+      ::oClientes := DbfServer( "CLIENT.DBF", ):NewOpen( "CLIENT.DBF",, ( cDriver() ),, ( cPatCli() ), .F., .T., .F., .F. ) ; ::oClientes:AddBag( "CLIENT.CDX" ) ; ::oClientes:AddBag( ) ; ::oClientes:AutoIndex()
+
+      ::oDbfIva := DbfServer( "TIVA.DBF", ):NewOpen( "TIVA.DBF",, ( cDriver() ),, ( cPatDat() ), .F., .T., .F., .F. ) ; ::oDbfIva:AddBag( "TIVA.CDX" ) ; ::oDbfIva:AddBag( ) ; ::oDbfIva:AutoIndex()
+
+      ::oDbfCnt := DbfServer( "NCOUNT.DBF", ):NewOpen( "NCOUNT.DBF",, ( cDriver() ),, ( cPatEmp() ), .F., .T., .F., .F. ) ; ::oDbfCnt:AddBag( "NCOUNT.CDX" ) ; ::oDbfCnt:AddBag( ) ; ::oDbfCnt:AutoIndex()
+
+      ::oDbfAge := DbfServer( "AGENTES.DBF", ):NewOpen( "AGENTES.DBF",, ( cDriver() ),, ( cPatCli() ), .F., .T., .F., .F. ) ; ::oDbfAge:AddBag( "AGENTES.CDX" ) ; ::oDbfAge:AddBag( ) ; ::oDbfAge:AutoIndex()
+
+      ::oDbfArt := DbfServer( "ARTICULO.DBF", ):NewOpen( "ARTICULO.DBF",, ( cDriver() ),, ( cPatArt() ), .F., .T., .F., .F. ) ; ::oDbfArt:AddBag( "ARTICULO.CDX" ) ; ::oDbfArt:AddBag( ) ; ::oDbfArt:AutoIndex()
+
+      ::oTblPro := DbfServer( "TBLPRO.DBF", ):NewOpen( "TBLPRO.DBF",, ( cDriver() ),, ( cPatArt() ), .F., .T., .F., .F. ) ; ::oTblPro:AddBag( "TBLPRO.CDX" ) ; ::oTblPro:AddBag( ) ; ::oTblPro:AutoIndex()
+
+      ::oDbfPro := DbfServer( "PRO.DBF", ):NewOpen( "PRO.DBF",, ( cDriver() ),, ( cPatArt() ), .F., .T., .F., .F. ) ; ::oDbfPro:AddBag( "PRO.CDX" ) ; ::oDbfPro:AddBag( ) ; ::oDbfPro:AutoIndex()
+
+      ::oDbfFam := DbfServer( "FAMILIAS.DBF", ):NewOpen( "FAMILIAS.DBF",, ( cDriver() ),, ( cPatArt() ), .F., .T., .F., .F. ) ; ::oDbfFam:AddBag( "FAMILIAS.CDX" ) ; ::oDbfFam:AddBag( ) ; ::oDbfFam:AutoIndex()
+
+      ::lLoadDivisa()
+
+      ::oTrans:OpenFiles()
+
+      if Empty( ::oDbf )
+         ::DefineFiles()
+      end
+
+      ::oDbf:Activate( .F., !( lExclusive ), .F., .F. )
+
+      ::oDetOrdCar:Openfiles()
+
+   RECOVER USING oError
+
+      msgStop( ErrorMessage( oError ), "Imposible abrir todas las bases de datos" )
+
+      lOpen             := .F.
+
+      ::CloseFiles()
+
+   end
+
+   ErrorBlock( oBlock )
+
+RETURN ( lOpen )
+
+
+
+UTILITY STATIC function TOrdCarga_CloseFiles() ; local Self AS CLASS TOrdCarga := QSelf() AS CLASS TOrdCarga
+
+   if !Empty( ::oDbf ) .AND. ::oDbf:Used()
+      ::oDbf:End()
+   end
+
+   if !Empty( ::oAlbCliT ) .AND. ::oAlbCliT:Used()
+      ::oAlbCliT:End()
+   end
+
+   if !Empty( ::oAlbCliL ) .AND. ::oAlbCliL:Used()
+      ::oAlbCliL:End()
+   end
+
+   if !Empty( ::oAlbCliP ) .AND. ::oAlbCliP:Used()
+      ::oAlbCliP:End()
+   end
+
+   if !Empty( ::oDbfIva ) .AND. ::oDbfIva:Used()
+      ::oDbfIva:End()
+   end
+
+   if !Empty( ::oClientes ) .AND. ::oClientes:Used()
+      ::oClientes:End()
+   end
+
+   if !Empty( ::oDbfCnt ) .AND. ::oDbfCnt:Used()
+      ::oDbfCnt:End()
+   end
+
+   if !Empty( ::oDbfAge ) .AND. ::oDbfAge:Used()
+      ::oDbfAge:End()
+   end
+
+   if !Empty( ::oDbfArt ) .AND. ::oDbfArt:Used()
+      ::oDbfArt:End()
+   end
+
+   if !Empty( ::oTblPro ) .AND. ::oTblPro:Used()
+      ::oTblPro:End()
+   end
+
+   if !Empty( ::oDbfPro ) .AND. ::oDbfPro:Used()
+      ::oDbfPro:End()
+   end
+
+   if !Empty( ::oDbfFam ) .AND. ::oDbfFam:Used()
+      ::oDbfFam:End()
+   end
+
+   if !Empty( ::oTrans )
+      ::oTrans:End()
+   end
+
+   if !Empty( ::oDetOrdCar )
+      ::oDetOrdCar:End()
+   end
+
+   ::oAlbCliT     := nil
+   ::oAlbCliL     := nil
+   ::oAlbCliP     := nil
+   ::oDbfIva      := nil
+   ::oClientes    := nil
+   ::oDbf         := nil
+   ::oDbfCnt      := nil
+   ::oTrans       := nil
+   ::oDbfAge      := nil
+   ::oDbfArt      := nil
+   ::oTblPro      := nil
+   ::oDbfPro      := nil
+   ::oDbfFam      := nil
+   ::oDetOrdCar   := nil
+
+   DeleteObject( ::oBmp )
+
+Return ( .T. )
+
+
+
+UTILITY STATIC function TOrdCarga_OpenService( lExclusive) ; local Self AS CLASS TOrdCarga := QSelf() AS CLASS TOrdCarga
+
+   local lOpen          := .T.
+   local oError
+   local oBlock         := ErrorBlock( {| oError | ApoloBreak( oError ) } )
+
+   IIF( lExclusive == nil, lExclusive := .F., ) ;
+
+   BEGIN SEQUENCE
+
+      if Empty( ::oDbf )
+         ::DefineFiles()
+      end
+
+      ::oDbf:Activate( .F., !( lExclusive ) )
+
+   RECOVER USING oError
+
+      msgStop( ErrorMessage( oError ), "Imposible abrir todas las bases de datos" )
+
+      lOpen             := .F.
+
+   end
+
+   ErrorBlock( oBlock )
+
+   if !lOpen
+      ::CloseService()
+   end
+
+RETURN ( lOpen )
+
+
+
+
+
+UTILITY STATIC function TOrdCarga_Resource( nMode) ; local Self AS CLASS TOrdCarga := QSelf() AS CLASS TOrdCarga
+
+   local oDlg
+   local oGet
+   local oSay
+   local cSay           := ::oTrans:cNombre( ::oDbf:cCodTrn )
+   local oGetKgs
+   local oGetAge
+   local oSayAge
+   local cSayAge
+   local oBmpGeneral
+
+   ::aAlbaranes         := {}
+
+   if nMode == 1
+      ::oDbf:dFecOrd    := Date()
+      ::oDbf:cSufOrd    := RetSufEmp()
+      ::nDiferencias    := 0
+   end
+
+   oDlg = TDialog():New(,,,, LblTitle( nMode ) + "ordenes de carga", "ORDCAR",, .F.,,,,,, .F.,,,,,, .F., )
+
+
+
+
+
+      oBmpGeneral := TBitmap():ReDefine( 990, "ordenes_carga_48_alpha",, oDlg,,, .F., .F.,,, .F.,,, .T. )
+
+
+
+
+
+      TGetHlp():ReDefine( 100, { | u | If( PCount()==0, ::oDbf:nNumOrd, ::oDbf:nNumOrd:= u ) }, oDlg,, ::oDbf:FieldByName( "nNumOrd" ):cPict,,,,,,, .F., {||     ( .F. )},, .F., .F.,,,,,, nil,,, )
+
+
+
+
+
+      TGetHlp():ReDefine( 110, { | u | If( PCount()==0, ::oDbf:cSufOrd, ::oDbf:cSufOrd:= u ) }, oDlg,, ::oDbf:FieldByName( "cSufOrd" ):cPict,,,,,,, .F., {||     ( .F. )},, .F., .F.,,,,,, nil,,, )
+
+
+
+
+
+      TGetHlp():ReDefine( 120, { | u | If( PCount()==0, ::oDbf:dFecOrd, ::oDbf:dFecOrd:= u ) }, oDlg,,,,,,,,, .F., {||     ( nMode <> 3 )},, .F., .T.,,,,,, nil,,, )
+
+
+
+
+
+      oGetAge := TGetHlp():ReDefine( 340, { | u | If( PCount()==0, ::oDbf:cCodAge, ::oDbf:cCodAge:= u ) }, oDlg,,,,,,,,, .T., {||     ( nMode <> 3 )},, .F., .F.,,,,,, nil, "LUPA",, )
+
+      oGetAge:bValid := {|| cAgentes( oGetAge, ::oDbfAge:cAlias, oSayAge ) }
+      oGetAge:bHelp  := {|| BrwAgentes( oGetAge, oSayAge ) }
+
+
+
+
+      oSayAge := TGetHlp():ReDefine( 341, { | u | If( PCount()==0, cSayAge, cSayAge:= u ) }, oDlg,,,,,,,,, .F., {||     ( .F. )},, .F., .F.,,,,,, nil,,, )
+
+
+
+
+
+      oGet := TGetHlp():ReDefine( 130, { | u | If( PCount()==0, ::oDbf:cCodTrn, ::oDbf:cCodTrn:= u ) }, oDlg,,,,,,,,, .T., {||     ( nMode <> 3 )},, .F., .F.,,,,,, nil, "LUPA",, )
+
+      oGet:bValid := {|| ::oTrans:Existe( oGet, oSay, "cNomTrn" ), ::LoadTrans( oGet, oGetKgs ) }
+      oGet:bHelp  := {|| ::oTrans:Buscar( oGet, "cCodTrn" ) }
+
+
+
+
+      oSay := TGetHlp():ReDefine( 131, { | u | If( PCount()==0, cSay, cSay:= u ) }, oDlg,,,,,,,,, .T., {||     ( .F. )},, .F., .F.,,,,,, nil,,, )
+
+
+
+
+
+      oGetKgs := TGetHlp():ReDefine( 190, { | u | If( PCount()==0, ::oDbf:nKgsTrn, ::oDbf:nKgsTrn:= u ) }, oDlg,, ( MasUnd() ),,,,,,, .T., {||     ( .F. )},, .F., .F.,,,,,, nil,,, )
+
+
+
+
+
+      ::oPeso := TGetHlp():ReDefine( 200, { | u | If( PCount()==0, ::nPeso, ::nPeso:= u ) }, oDlg,, ( MasUnd() ),,,,,,, .T., {||     ( .F. )},, .F., .F.,,,,,, nil,,, )
+
+
+
+
+
+      ::oDiferencias := TGetHlp():ReDefine( 210, { | u | If( PCount()==0, ::nDiferencias, ::nDiferencias:= u ) }, oDlg,, ( MasUnd() ),,,,,,, .T., {||     ( .F. )},, .F., .F.,,,,,, nil,,, )
+
+
+
+
+      TGetHlp():ReDefine( 140, { | u | If( PCount()==0, ::oDbf:cRetPor, ::oDbf:cRetPor:= u ) }, oDlg,,,,,,,,, .T., {||     ( nMode <> 3 )},, .F., .F.,,,,,, nil,,, )
+
+
+
+
+      TGetHlp():ReDefine( 170, { | u | If( PCount()==0, ::oDbf:cRetMat, ::oDbf:cRetMat:= u ) }, oDlg,,,,,,,,, .T., {||     ( nMode <> 3 )},, .F., .F.,,,,,, nil,,, )
+
+
+
+
+
+
+      TGetHlp():ReDefine( 180, { | u | If( PCount()==0, ::oDbf:nBultos, ::oDbf:nBultos:= u ) }, oDlg,, "999",,,,,,, .T., {||     ( nMode <> 3 )},, .F., .T.,,,,,, nil,,, )
+
+
+
+
+
+
+
+
+
+        TButton():ReDefine( 300, {||( ::oDetOrdCar:Append( ::oBrwDet ) )}, oDlg,,, .F., {||     ( nMode <> 3 )},,, .F. )
+
+
+
+
+
+      TButton():ReDefine( 310, {||( ::oDetOrdCar:Edit( ::oBrwDet ) )}, oDlg,,, .F., {||     ( nMode <> 3 )},,, .F. )
+
+
+
+
+
+      TButton():ReDefine( 320, {||( ::oDetOrdCar:Del( ::oBrwDet ) )}, oDlg,,, .F., {||     ( nMode <> 3 )},,, .F. )
+
+
+
+
+
+      TButton():ReDefine( 330, {||( ::ImpAlbCli() )}, oDlg,,, .F., {||     ( nMode <> 3 )},,, .F. )
+
+      ::oBrwDet                     := IXBrowse():New( oDlg )
+
+      ::oBrwDet:SetoDbf( ::oDetOrdCar:oDbfVir )
+      ::oBrwDet:nMarqueeStyle       := 5
+      ::oBrwDet:cName               := "Lineas de ordenes de carga"
+      ::oBrwDet:lRecordSelector     := .F.
+      ::oBrwDet:CreateFromResource( 150 )
+
+      with object ( ::oBrwDet:AddCol() )
+         :cHeader                   := "Código"
+         :bStrData                  := {|| ::oDetOrdCAr:oDbfVir:cRef }
+         :nWidth                    := 100
+      end
+
+      with object ( ::oBrwDet:AddCol() )
+         :cHeader                   := "Descripción"
+         :bStrData                  := {|| ::oDetOrdCAr:oDbfVir:cDetalle }
+         :nWidth                    := 540
+      end
+
+      with object ( ::oBrwDet:AddCol() )
+         :cHeader                   := "Prp. 1"
+         :bStrData                  := {|| ::oDetOrdCAr:oDbfVir:cValPr1 }
+         :nWidth                    := 30
+         :lHide                     := .T.
+      end
+
+      with object ( ::oBrwDet:AddCol() )
+         :cHeader                   := "Prp. 2"
+         :bStrData                  := {|| ::oDetOrdCAr:oDbfVir:cValPr2 }
+         :nWidth                    := 30
+         :lHide                     := .T.
+      end
+
+      with object ( ::oBrwDet:AddCol() )
+         :cHeader                   := "Lote"
+         :bStrData                  := {|| ::oDetOrdCAr:oDbfVir:cLote }
+         :nWidth                    := 40
+         :lHide                     := .T.
+      end
+
+      with object ( ::oBrwDet:AddCol() )
+         :cHeader                   := "Cajas"
+         :bEditValue                := {|| ::oDetOrdCAr:oDbfVir:nCajOrd }
+         :nWidth                    := 50
+         :cEditPicture              := MasUnd()
+         :nDataStrAlign             := 1
+         :nHeadStrAlign             := 1
+         :lHide                     := .T.
+      end
+
+      with object ( ::oBrwDet:AddCol() )
+         :cHeader                   := "Unidades"
+         :bEditValue                := {|| ::oDetOrdCAr:oDbfVir:nUniOrd }
+         :nWidth                    := 50
+         :cEditPicture              := MasUnd()
+         :nDataStrAlign             := 1
+         :nHeadStrAlign             := 1
+         :lHide                     := .T.
+      end
+
+      with object ( ::oBrwDet:AddCol() )
+         :cHeader                   := "Total unidades"
+         :bEditValue                := {|| ::oDetOrdCar:nTotUnidades( ::oDetOrdCAr:oDbfVir ) }
+         :nWidth                    := 95
+         :cEditPicture              := MasUnd()
+         :nDataStrAlign             := 1
+         :nHeadStrAlign             := 1
+      end
+
+      with object ( ::oBrwDet:AddCol() )
+         :cHeader                   := "Peso"
+         :bEditValue                := {|| ::oDetOrdCAr:oDbfVir:nPeso }
+         :nWidth                    := 50
+         :cEditPicture              := MasUnd()
+         :nDataStrAlign             := 1
+         :nHeadStrAlign             := 1
+         :lHide                     := .T.
+      end
+
+      with object ( ::oBrwDet:AddCol() )
+         :cHeader                   := "Total peso"
+         :bEditValue                := {|| ::oDetOrdCar:nTotPeso( ::oDetOrdCAr:oDbfVir ) }
+         :nWidth                    := 95
+         :cEditPicture              := MasUnd()
+         :nDataStrAlign             := 1
+         :nHeadStrAlign             := 1
+      end
+
+      if nMode <> 3
+         ::oBrwDet:bLDblClick       := {|| ::oDetOrdCar:Edit( ::oBrwDet ) }
+      end
+
+
+
+
+
+      TButton():ReDefine( 500, {||( ::lSave( nMode, oDlg ) )}, oDlg,,, .F., {||         ( nMode <> 3 )},,, .F. )
+
+
+
+
+
+        TButton():ReDefine( 550, {||( oDlg:end() )}, oDlg,,, .F.,,,, .T. )
+
+   if nMode <> 3
+      oDlg:AddFastKey( 113, {|| ::oDetOrdCar:Append( ::oBrwDet ) } )
+      oDlg:AddFastKey( 114, {|| ::oDetOrdCar:Edit( ::oBrwDet ) } )
+      oDlg:AddFastKey( 115, {|| ::oDetOrdCar:Del( ::oBrwDet ) } )
+      oDlg:AddFastKey( 116, {|| ::lSave( nMode, oDlg ) } )
+   end
+
+   oDlg:bStart    := {|| if( nMode <> 1, ( oGet:lValid(), oGetAge:lValid() ), ), oGetAge:SetFocus(), ::EdtRotor( oDlg ), ::nPesOrdVir() }
+
+   oDlg:Activate( oDlg:bLClicked, oDlg:bMoved, oDlg:bPainted, .T.,,,, oDlg:bRClicked,,, )
+
+   ::oMenu:End()
+   oBmpGeneral:End()
+
+RETURN ( oDlg:nResult == 1 )
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+UTILITY STATIC function TOrdCarga_EdtRotor( oDlg) ; local Self AS CLASS TOrdCarga := QSelf() AS CLASS TOrdCarga
+
+   ::oMenu := MenuBegin( .F.,,, .F., .F. )
+
+      MenuAddItem( "&1. Rotor",, .F.,,,,,,,,, .F.,,, .F. )
+
+         MenuBegin( .F.,,, .F., .F. )
+
+
+
+
+
+            MenuAddItem( "&1. Modificar agente", "Modificar la ficha del Agente", .F.,, {|oMenuItem|( if( !Empty( ::oDbf:cCodAge ), EdtAge( ::oDbf:cCodAge ), MsgStop( "Debe que seleccionar un agente" ) ) )},, "Security_Agent_16",,,,, .F.,,, .F. )
+
+
+
+
+            MenuAddItem( "&2. Modificar transportista", "Modificar la ficha del transportista", .F.,, {|oMenuItem|( if( !Empty( ::oDbf:cCodTrn ), EdtTrans( ::oDbf:cCodTrn ), MsgStop( "Debe de seleccionar un transportista" ) ) )},, "Truck_Blue_16",,,,, .F.,,, .F. )
+         MenuEnd()
+
+   MenuEnd()
+
+   oDlg:SetMenu( ::oMenu )
+
+RETURN ( ::oMenu )
+
+
+
+
+
+UTILITY STATIC function TOrdCarga_LoadTrans( oGet, oGetKgs) ; local Self AS CLASS TOrdCarga := QSelf() AS CLASS TOrdCarga
+
+   if ::oTrans:oDbf:SeekInOrd( oGet:VarGet(), "cCodTrn" )
+      oGetKgs:cText( ::oTrans:oDbf:nKgsTrn )
+   end
+
+   ::CalculaDiferencias()
+
+Return .T.
+
+
+
+UTILITY STATIC function TOrdCarga_CalculaDiferencias() ; local Self AS CLASS TOrdCarga := QSelf() AS CLASS TOrdCarga
+
+   if ::oDbf:nKgsTrn <> 0
+      ::oDiferencias:cText( ::oDbf:nKgsTrn - ::nPeso )
+   else
+      ::oDiferencias:cText( 0 )
+   end
+
+RETURN ( Self )
+
+
+
+FUNCTION OrdCar( oMenuItem, oWnd )
+
+   local oOrdCar
+   local nLevel
+
+   IIF( oMenuItem == nil, oMenuItem := "01039", ) ;
+   IIF( oWnd == nil, oWnd := oWnd(), ) ;
+
+   nLevel               := nLevelUsr( oMenuItem )
+   if nAnd( nLevel, 1 ) <> 0
+      msgStop( "Acceso no permitido." )
+      return nil
+   end
+
+
+
+
+
+   if oWnd <> nil
+      SysRefresh(); oWnd:CloseAll(); SysRefresh()
+   end
+
+
+
+
+
+   AddMnuNext( "Ordenes de carga", ProcName() )
+
+   oOrdCar  := TOrdCarga():New( cPatEmp() )
+   oOrdCar:Activate( nLevel )
+
+RETURN NIL
+
+
+
+UTILITY STATIC function TOrdCarga_lSave( nMode, oDlg) ; local Self AS CLASS TOrdCarga := QSelf() AS CLASS TOrdCarga
+
+   local cNumAlb
+
+   if nMode == 1
+
+      if Empty( ::oDbf:cCodAge )
+         MsgStop( "El código de agente no puede estar vacío." )
+         Return .F.
+      end
+
+      if Empty( ::oDbf:cCodTrn )
+         MsgStop( "El código de transportista no puede estar vacío." )
+         Return .F.
+      end
+
+      if ::oDetOrdCar:oDbfVir:Lastrec() == 0
+         MsgStop( "No se puede almacenar un documento sin líneas." )
+         Return .F.
+      end
+
+   end
+
+   if ::nDiferencias < 0
+      MsgStop( "La carga excede la capacidad del medio de transporte." )
+   end
+
+
+
+
+
+   for each cNumAlb in ::aAlbaranes
+
+      if ::oAlbCliT:SeekInOrd( cNumAlb, "nNumAlb" )
+         ::oAlbCliT:fieldPutByName( "lOrdCar", .T. )
+      end
+
+   next
+
+
+
+
+
+   if nMode <> 3
+      ::oDbf:lSndInt := .T.
+   end
+
+
+
+
+
+   if !Empty( oDlg )
+      oDlg:End( 1 )
+   end
+
+RETURN ( .T. )
+
+
+
+UTILITY STATIC function TOrdCarga_GetNewCount() ; local Self AS CLASS TOrdCarga := QSelf() AS CLASS TOrdCarga
+
+   ::oDbf:nNumOrd    := nNewDoc( nil, ::oDbf:nArea, "NORDCAR", nil, ::oDbfCnt:nArea )
+
+RETURN ( Self )
+
+
+
+UTILITY STATIC function TOrdCarga_nPesOrdVir( lPic) ; local Self AS CLASS TOrdCarga := QSelf() AS CLASS TOrdCarga
+
+   local nPeso  := 0
+
+   IIF( lPic == nil, lPic := .F., ) ;
+
+   ::oDetOrdCar:oDbfVir:GetStatus()
+
+   ::oDetOrdCar:oDbfVir:GoTop()
+
+   while !::oDetOrdCar:oDbfVir:Eof()
+
+      nPeso     += ::oDetOrdCar:nTotPeso( ::oDetOrdCar:oDbfVir )
+
+      ::oDetOrdCar:oDbfVir:Skip()
+
+   end
+
+   ::oDetOrdCar:oDbfVir:SetStatus()
+
+   ::oPeso:cText( nPeso )
+
+   ::oPeso:Refresh()
+
+   ::CalculaDiferencias()
+
+RETURN ( if( lPic, Trans( nPeso, MasUnd() ), nPeso ) )
+
+
+
+
+
+UTILITY STATIC function TOrdCarga_ImpAlbCli() ; local Self AS CLASS TOrdCarga := QSelf() AS CLASS TOrdCarga
+
+    local oDlg
+   local oBrw
+   local oGet1
+   local cGet1
+   local This        := Self
+   local nOrd        := GetBrwOpt( "BrwAlbCli" )
+   local oCbxOrd
+   local aCbxOrd     := { "Número", "Fecha", "Cliente", "Nombre" }
+   local cCbxOrd
+
+   nOrd              := Min( Max( nOrd, 1 ), len( aCbxOrd ) )
+   cCbxOrd           := aCbxOrd[ nOrd ]
+
+   oDlg = TDialog():New(,,,, "Albaranes de clientes", "HELPENTRY",, .F.,,,,,, .F.,,,,,, .F., )
+
+
+
+
+        oGet1 := TGetHlp():ReDefine( 104, { | u | If( PCount()==0, cGet1, cGet1:= u ) }, oDlg,,,,,,,,, .F.,,, .F., .F.,,,,,, nil, "FIND",, )
+
+      oGet1:bChange  := {| nKey, nFlags, Self | AutoSeek( nKey, nFlags, Self, oBrw, This:oAlbCliT:cAlias ) }
+
+
+
+
+
+
+        oCbxOrd := TComboBox():ReDefine( 102, { | u | If( PCount()==0, cCbxOrd, cCbxOrd:= u ) }, aCbxOrd, oDlg,,, {|Self|( This:oAlbCliT:OrdSetFocus( oCbxOrd:nAt ), oBrw:refresh(), oGet1:SetFocus() )},,,, .F.,,,,,, )
+
+      oBrw                    := IXBrowse():New( oDlg )
+
+      oBrw:SetoDbf( ::oAlbCliT )
+      oBrw:nMarqueeStyle      := 6
+      oBrw:cName              := "Albaranes de clientes"
+      oBrw:bClrSel            := {|| { 0, ( 229 + ( 229 * 256 ) + ( 229 * 65536 ) ) } }
+      oBrw:bClrSelFocus       := {|| { 0, ( 167 + ( 205 * 256 ) + ( 240 * 65536 ) ) } }
+      oBrw:CreateFromResource( 105 )
+
+      with object ( oBrw:AddCol() )
+         :cHeader             := "Or. Orden de carga"
+         :bStrData            := {|| "" }
+         :bEditValue          := {|| ::oAlbCliT:lOrdCar }
+         :nWidth              := 20
+         :SetCheck( { "Cnt16", "Nil16" } )
+      end
+
+      with object ( oBrw:AddCol() )
+         :cHeader             := "Número"
+         :bStrData            := {|| ::oAlbCliT:cSerAlb + "/" + AllTrim( Str( ::oAlbCliT:nNumAlb ) ) + "/" + ::oAlbCliT:cSufAlb }
+         :nWidth              := 70
+      end
+
+      with object ( oBrw:AddCol() )
+         :cHeader             := "Fecha"
+         :bStrData            := {|| DtoC( ::oAlbCliT:dFecAlb ) }
+         :nWidth              := 70
+      end
+
+      with object ( oBrw:AddCol() )
+         :cHeader             := "Cliente"
+         :bStrData            := {|| ::oAlbCliT:cCodCli }
+         :nWidth              := 70
+      end
+
+      with object ( oBrw:AddCol() )
+         :cHeader             := "Nombre"
+         :bStrData            := {|| ::oAlbCliT:cNomCli }
+         :nWidth              := 275
+      end
+
+      oBrw:bLDblClick         := {|| ::StartImpAlbCli( oBrw:aSelected, oDlg ) }
+
+
+
+
+        TButton():ReDefine( 500,, oDlg,,, .F., {||         .F.},,, .F. )
+
+
+
+
+        TButton():ReDefine( 501,, oDlg,,, .F., {||         .F.},,, .F. )
+
+
+
+
+        TButton():ReDefine( 1, {||( ::StartImpAlbCli( oBrw:aSelected, oDlg ) )}, oDlg,,, .F.,,,, .F. )
+
+
+
+
+        TButton():ReDefine( 2, {||( oDlg:end() )}, oDlg,,, .F.,,,, .F. )
+
+   oDlg:Activate( oDlg:bLClicked, oDlg:bMoved, oDlg:bPainted, .T.,,,, oDlg:bRClicked,,, )
+
+   SetBrwOpt( "BrwAlbCli", ::oAlbCliT:OrdNumber() )
+
+   ::nPesOrdVir()
+
+RETURN ( .T. )
+
+
+
+
+
+UTILITY STATIC function TOrdCarga_StartImpAlbCli( aSelected, oDlg) ; local Self AS CLASS TOrdCarga := QSelf() AS CLASS TOrdCarga
+
+   local nRec
+   local nRecAlbCliT    := ::oAlbCliT:Recno()
+   local nRecAlbCliL    := ::oAlbCliL:Recno()
+   local nOrdAlbCliL    := ::oAlbCliL:OrdSetFocus( "nNumAlb" )
+   local nPos
+
+   for each nRec in aSelected
+
+      ::oAlbCliT:GoTo( nRec )
+
+
+      if ( nPos := aScan( ::aAlbaranes, ::oAlbCliT:cSerAlb + Str( ::oAlbCliT:nNumAlb ) + ::oAlbCliT:cSufAlb ) ) == 0 .AND. !::oAlbCliT:lOrdCar
+
+
+
+
+
+         aAdd( ::aAlbaranes, ::oAlbCliT:cSerAlb + Str( ::oAlbCliT:nNumAlb ) + ::oAlbCliT:cSufAlb )
+
+
+
+
+
+         if ::oAlbCliL:Seek( ::oAlbCliT:cSerAlb + Str( ::oAlbCliT:nNumAlb ) + ::oAlbCliT:cSufAlb )
+
+
+            while ::oAlbCliT:cSerAlb + Str( ::oAlbCliT:nNumAlb ) + ::oAlbCliT:cSufAlb == ::oAlbCliL:cSerAlb + Str( ::oAlbCliL:nNumAlb ) + ::oAlbCliL:cSufAlb .AND. !::oAlbCliL:Eof()
+
+                  ::oDetOrdCar:oDbfVir:Append()
+
+                  ::oDetOrdCar:oDbfVir:nNumOrd     := ::oDbf:nNumOrd
+                  ::oDetOrdCar:oDbfVir:cSufOrd     := ::oDbf:cSufOrd
+                  ::oDetOrdCar:oDbfVir:cRef        := ::oAlbCliL:cRef
+                  ::oDetOrdCar:oDbfVir:cDetalle    := ::oAlbCliL:cDetalle
+                  ::oDetOrdCar:oDbfVir:cCodPr1     := ::oAlbCliL:cCodPr1
+                  ::oDetOrdCar:oDbfVir:cCodPr2     := ::oAlbCliL:cCodPr2
+                  ::oDetOrdCar:oDbfVir:cValPr1     := ::oAlbCliL:cValPr1
+                  ::oDetOrdCar:oDbfVir:cValPr2     := ::oAlbCliL:cValPr2
+                  ::oDetOrdCar:oDbfVir:lLote       := ::oAlbCliL:lLote
+                  ::oDetOrdCar:oDbfVir:cLote       := ::oAlbCliL:cLote
+                  ::oDetOrdCar:oDbfVir:nCajOrd     := ::oAlbCliL:nCanEnt
+                  ::oDetOrdCar:oDbfVir:nUniOrd     := ::oAlbCliL:nUniCaja
+                  ::oDetOrdCar:oDbfVir:nPeso       := ::oAlbCliL:nPesoKg
+                  ::oDetOrdCar:oDbfVir:cUndPes     := ::oAlbCliL:cPesoKg
+                  ::oDetOrdCar:oDbfVir:cNumAlb     := ::oAlbCliL:cSerAlb + Str( ::oAlbCliL:nNumAlb ) + ::oAlbCliL:cSufAlb
+
+                  ::oDetOrdCar:oDbfVir:Save()
+
+               ::oAlbCliL:Skip()
+
+            end
+
+         end
+
+      else
+
+         msgStop( "El albarán " + ::oAlbCliT:cSerAlb + "/" + AllTrim( Str( ::oAlbCliL:nNumAlb ) ) + "/" + ::oAlbCliL:cSufAlb + " ya ha sido insertado en un orden de carga." )
+
+      end
+
+   next
+
+
+
+
+
+   ::oAlbCliL:OrdSetFocus( nOrdAlbCliL )
+
+   ::oAlbCliL:GoTo( nRecAlbCliL )
+
+   ::oAlbCliT:GoTo( nRecAlbCliT )
+
+
+
+
+
+   ::oBrwDet:Refresh()
+
+   oDlg:End( 1 )
+
+RETURN ( oDlg:nResult == 1 )
+
+
+
+UTILITY STATIC function TOrdCarga_RollBackAlbCli() ; local Self AS CLASS TOrdCarga := QSelf() AS CLASS TOrdCarga
+
+   local aAlbCliT    := {}
+   local cNumAlb
+   local nPos
+
+   ::oDetOrdCar:oDbf:GoTop()
+
+   while !::oDetOrdCar:oDbf:Eof()
+
+      if ( nPos := aScan( aAlbCliT, ::oDetOrdCar:oDbf:cNumAlb ) ) == 0
+         aAdd( aAlbCliT, ::oDetOrdCar:oDbf:cNumAlb )
+      end
+
+      ::oDetOrdCar:oDbf:Skip()
+
+   end
+
+   for each cNumAlb in aAlbCliT
+
+      if ::oAlbCliT:SeekInOrd( cNumAlb, "nNumAlb" )
+
+         ::oAlbCliT:fieldPutByName( "lOrdCar", .F. )
+
+      end
+
+   next
+
+RETURN ( Self )
+
+
+
+function SynOrdCar( cPath )
+
+   local dbfOrdCarT
+   local dbfOrdCarL
+   local dbfAlbCliT
+   local dbfAlbCliL
+   local oError
+   local oBlock      := ErrorBlock( {| oError | ApoloBreak( oError ) } )
+
+   IIF( cPath == nil, cPath := cPatEmp(), ) ;
+
+   BEGIN SEQUENCE
+
+   dbUseArea( .T., cDriver(), cPath + "ORDCARP.DBF", cCheckArea( "ORDCARP", @dbfOrdCarT ), .F. )
+   ordListAdd( cPath + "ORDCARP.CDX" )
+
+   dbUseArea( .T., cDriver(), cPath + "ORDCARL.DBF", cCheckArea( "ORDCARL", @dbfOrdCarL ), .F. )
+   ordListAdd( cPath + "ORDCARL.CDX" )
+   ordSetFocus( 0 )
+
+   dbUseArea( .T., cDriver(), cPath + "ALBCLIT.DBF", cCheckArea( "ALBCLIT", @dbfAlbCliT ), .F. )
+   ordListAdd( cPath + "ALBCLIT.CDX" )
+
+   dbUseArea( .T., cDriver(), cPath + "ALBCLIL.DBF", cCheckArea( "ALBCLIL", @dbfAlbCliL ), .F. )
+   ordListAdd( cPath + "ALBCLIL.CDX" )
+
+
+
+
+
+   ( dbfOrdCarL )->( dbGoTop() )
+   while !( dbfOrdCarL )->( eof() )
+
+      if !( dbfOrdCarT )->( dbSeek( Str( ( dbfOrdCarL )->nNumOrd ) + ( dbfOrdCarL )->cSufOrd ) )
+         ( dbfOrdCarL )->( dbDelete() )
+      end
+
+      ( dbfOrdCarL )->( dbSkip() )
+
+   end
+
+
+
+
+
+   ( dbfAlbCliT )->( dbGoTop() )
+
+   while !( dbfAlbCliT )->( Eof() )
+
+      if ( dbfAlbCliT )->nNumOrd <> 0
+
+         if ( dbfOrdCarT )->( dbSeek( Str( ( dbfAlbCliT )->nNumOrd ) + ( dbfAlbCliT )->cSufOrd ) )
+
+            if ( dbfAlbCliL )->( dbSeek( ( dbfAlbCliT )->cSerAlb + Str( ( dbfAlbCliT )->nNumAlb ) + ( dbfAlbCliT )->cSufAlb ) )
+
+
+               while ( dbfAlbCliT )->cSerAlb + Str( ( dbfAlbCliT )->nNumAlb ) + ( dbfAlbCliT )->cSufAlb == ( dbfAlbCliL )->cSerAlb + Str( ( dbfAlbCliL )->nNumAlb ) + ( dbfAlbCliL )->cSufAlb .AND. !( dbfAlbCliL )->( Eof() )
+
+                     ( dbfOrdCarL )->( dbAppend() )
+
+                     ( dbfOrdCarL )->nNumOrd    := ( dbfAlbCliT )->nNumOrd
+                     ( dbfOrdCarL )->cSufOrd    := ( dbfAlbCliT )->cSufOrd
+                     ( dbfOrdCarL )->cRef       := ( dbfAlbCliL )->cRef
+                     ( dbfOrdCarL )->cDetalle   := ( dbfAlbCliL )->cDetalle
+                     ( dbfOrdCarL )->cCodPr1    := ( dbfAlbCliL )->cCodPr1
+                     ( dbfOrdCarL )->cCodPr2    := ( dbfAlbCliL )->cCodPr2
+                     ( dbfOrdCarL )->cValPr1    := ( dbfAlbCliL )->cValPr1
+                     ( dbfOrdCarL )->cValPr2    := ( dbfAlbCliL )->cValPr2
+                     ( dbfOrdCarL )->lLote      := ( dbfAlbCliL )->lLote
+                     ( dbfOrdCarL )->cLote      := ( dbfAlbCliL )->cLote
+                     ( dbfOrdCarL )->nCajOrd    := ( dbfAlbCliL )->nCanEnt
+                     ( dbfOrdCarL )->nUniOrd    := ( dbfAlbCliL )->nUniCaja
+                     ( dbfOrdCarL )->nPeso      := ( dbfAlbCliL )->nPesoKg
+                     ( dbfOrdCarL )->cUndPes    := ( dbfAlbCliL )->cPesoKg
+                     ( dbfOrdCarL )->cNumAlb    := ( dbfAlbCliL )->cSerAlb + Str( ( dbfAlbCliL )->nNumAlb ) + ( dbfAlbCliL )->cSufAlb
+
+                  ( dbfAlbCliL )->( dbSkip() )
+
+               end
+
+            end
+
+            ( dbfAlbCliT )->lOrdCar                   := .T.
+
+         else
+
+            ( dbfAlbCliT )->lOrdCar                   := .F.
+
+         end
+
+
+
+
+
+      ( dbfAlbCliT )->nNumOrd                   := 0
+      ( dbfAlbCliT )->cSufOrd                   := Space(1)
+
+      end
+
+      ( dbfAlbCliT )->( dbSkip() )
+
+   end
+
+   RECOVER USING oError
+
+      msgStop( "Imposible sincronizar ordenes de carga" + Chr(13)+Chr(10) + ErrorMessage( oError ) )
+
+   end
+
+   ErrorBlock( oBlock )
+
+   if !Empty( dbfOrdCarT ) .AND. ( dbfOrdCarT )->( Used() )
+      ( dbfOrdCarT )->( dbCloseArea() )
+   end
+
+   if !Empty( dbfOrdCarL ) .AND. ( dbfOrdCarL )->( Used() )
+      ( dbfOrdCarL )->( dbCloseArea() )
+   end
+
+   if !Empty( dbfAlbCliT ) .AND. ( dbfAlbCliT )->( Used() )
+      ( dbfAlbCliT )->( dbCloseArea() )
+   end
+
+   if !Empty( dbfAlbCliL ) .AND. ( dbfAlbCliL )->( Used() )
+      ( dbfAlbCliL )->( dbCloseArea() )
+   end
+
+return nil
+
+
+
+function isOrdCar()
+
+   with object ( TOrdCarga():Create() )
+
+      :DefineFiles()
+
+      if !lExistTable( :oDbf:cFile )
+
+         :oDbf:Create()
+         :oDbf:Activate( .F., .F. )
+         :oDbf:IdxFCheck()
+
+      endif
+
+      :End()
+
+   end
+
+   with object ( TDetOrdCar():Create() )
+
+      :OpenFiles()
+
+      if !lExistTable( :oDbf:cFile )
+
+         :oDbf:Create()
+         :oDbf:Activate( .F., .F. )
+         :oDbf:IdxFCheck()
+
+      endif
+
+      :End()
+
+   end
+
+return nil
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+UTILITY STATIC function TOrdCarga_Enviar() ; local Self AS CLASS TOrdCarga := QSelf() AS CLASS TOrdCarga
+
+   local nOrdCar
+   local nRec     := ::oDbf:Recno()
+
+   for each nOrdCar in ( ::oWndBrw:oBrw:aSelected )
+      ::oDbf:GoTo( nOrdCar )
+      ::oDbf:FieldPutByName( "lSndInt", !::oDbf:lSndInt )
+   next
+
+   ::oDbf:GoTo( nRec )
+
+   ::oWndBrw:Refresh()
+
+RETURN ( Self )

@@ -1,0 +1,872 @@
+#line 112 "hbclass.ch"
+   DYNAMIC DivertConstructorCall
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+DECLARE HBClass  New( cName AS String, OPTIONAL SuperParams ) AS CLASS HBClass  Create() AS Object  Instance() AS Object  AddClsMethod( cName AS String, @MethodName(), nScope AS Numeric, n2 AS Numeric, n3 AS Numeric )  AddDelegate( cName AS String, cDelegate AS String, cObject AS String, nScope AS Numeric, lPersistent AS LOGICAL )  AddMultiClsData( cType AS String, uVal, nScope AS Numeric, aDatas AS Array OF String )  AddMultiData( cType AS String, uVal, nScope AS Numeric, aDatas AS Array OF String, x AS LOGICAL, lPer AS LOGICAL )  AddMethod( cName AS String, @MethodName(), nScope AS Numeric, lPersistent AS LOGICAL )  AddInLine( cName AS String, bBlock AS CodeBlock, nScope AS Numeric, lPersistent AS LOGICAL )  AddVirtual( cName AS String )  ModMethod( cName AS String, @MethodName(), nScope AS Numeric, lPersistent AS LOGICAL )  ModClsMethod( cName AS String, @MethodName(), nScope AS Numeric )  ModInline( cName AS String, bBlock AS CodeBlock, nScope AS Numeric, lPersistent AS LOGICAL )  SetOnError( @MethodName() )
+#line 85 "\Fwh1204\Include\FiveWin.ch"
+   EXTERNAL GetProcAdd
+   EXTERNAL TActiveX
+
+
+
+
+extern errorsys
+#line 97 ".\Prg\Printer.prg"
+static oPrinter
+
+
+
+_HB_CLASS TPrinter ; UTILITY FUNCTION TPrinter(...); static s_oClass ; local oClassInstance ; local nScope ; nScope := 1 ; if s_oClass == NIL ; s_oClass := IIF(.F.,, HBClass():New( "TPrinter" , { HBObject():Classh } ) ) ;
+
+   _HB_MEMBER { oFont} ; IIF( !.F., s_oClass:AddMultiData(,, nScope + IIF( .F., 32, 0 ), { "oFont" }, .F., .F. ), )
+   _HB_MEMBER { hDC, hDCOut} ; IIF( !.F., s_oClass:AddMultiData(,, nScope + IIF( .F., 32, 0 ), { "hDC" , "hDCOut" }, .F., .F. ), )
+   _HB_MEMBER { aMeta} ; IIF( !.F., s_oClass:AddMultiData(,, nScope + IIF( .F., 32, 0 ), { "aMeta" }, .F., .F. ), )
+   _HB_MEMBER { cDir, cDocument, cModel} ; IIF( !.F., s_oClass:AddMultiData(,, nScope + IIF( .F., 32, 0 ), { "cDir" , "cDocument" , "cModel" }, .F., .F. ), )
+   _HB_MEMBER { nPage, nXOffset, nYOffset, nPad, nOrient} ; IIF( !.F., s_oClass:AddMultiData(,, nScope + IIF( .F., 32, 0 ), { "nPage" , "nXOffset" , "nYOffset" , "nPad" , "nOrient" }, .F., .F. ), )
+   _HB_MEMBER { lMeta, lStarted, lModified, lPrvModal} ; IIF( !.F., s_oClass:AddMultiData(,, nScope + IIF( .F., 32, 0 ), { "lMeta" , "lStarted" , "lModified" , "lPrvModal" }, .F., .F. ), )
+
+   _HB_MEMBER New( cDocument, lUser, lMeta, cModel, lModal, lSelection) AS CLASS TPrinter; IIF( .F., s_oClass:ModMethod( "New", @TPrinter_New(), nScope + IIF( .T., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ), s_oClass:AddMethod( "New", @TPrinter_New(), nScope + IIF( .T., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ));
+
+   _HB_MEMBER StartPage(); IIF( .F., s_oClass:ModMethod( "StartPage", @TPrinter__StartPage(), nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ) ), s_oClass:AddMethod( "StartPage", @TPrinter__StartPage(), nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ) ) );
+   _HB_MEMBER EndPage(); IIF( .F., s_oClass:ModMethod( "EndPage", @TPrinter__EndPage(), nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ) ), s_oClass:AddMethod( "EndPage", @TPrinter__EndPage(), nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ) ) );
+
+   _HB_MEMBER End(); IIF( .F., s_oClass:ModMethod( "End", @TPrinter_End(), nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ), s_oClass:AddMethod( "End", @TPrinter_End(), nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ));
+
+   _HB_MEMBER Say( nRow, nCol, cText, oFont, nWidth, nClrText, nBkMode, nPad); IIF( .F., s_oClass:ModMethod( "Say", @TPrinter_Say(), nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ), s_oClass:AddMethod( "Say", @TPrinter_Say(), nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ));
+
+
+
+
+   _HB_MEMBER CmSay(nRow, nCol, cText, oFont, nWidth, nClrText, nBkMode, nPad); IIF( .F., s_oClass:ModInline( "CmSay", {|Self,nRow, nCol, cText, oFont, nWidth, nClrText, nBkMode, nPad | Self, (::Cmtr2Pix(@nRow, @nCol), ::Say( nRow, nCol, cText, oFont, nWidth, nClrText, nBkMode, nPad )) }, nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ), s_oClass:AddInline( "CmSay", {|Self,nRow, nCol, cText, oFont, nWidth, nClrText, nBkMode, nPad | Self, (::Cmtr2Pix(@nRow, @nCol), ::Say( nRow, nCol, cText, oFont, nWidth, nClrText, nBkMode, nPad )) }, nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ) )
+
+
+
+
+   _HB_MEMBER InchSay(nRow, nCol, cText, oFont, nWidth, nClrText, nBkMode, nPad); IIF( .F., s_oClass:ModInline( "InchSay", {|Self,nRow, nCol, cText, oFont, nWidth, nClrText, nBkMode, nPad | Self, ( ::Inch2Pix(@nRow, @nCol), ::Say( nRow, nCol, cText, oFont, nWidth, nClrText, nBkMode, nPad ) ) }, nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ), s_oClass:AddInline( "InchSay", {|Self,nRow, nCol, cText, oFont, nWidth, nClrText, nBkMode, nPad | Self, ( ::Inch2Pix(@nRow, @nCol), ::Say( nRow, nCol, cText, oFont, nWidth, nClrText, nBkMode, nPad ) ) }, nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ) )
+
+   _HB_MEMBER SayBitmap( nRow, nCol, cBitmap, nWidth, nHeight, nRaster); IIF( .F., s_oClass:ModMethod( "SayBitmap", @TPrinter_SayBitmap(), nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ), s_oClass:AddMethod( "SayBitmap", @TPrinter_SayBitmap(), nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ));
+
+   _HB_MEMBER SayImage( nRow, nCol, oImage, nWidth, nHeight, nRaster); IIF( .F., s_oClass:ModMethod( "SayImage", @TPrinter_SayImage(), nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ), s_oClass:AddMethod( "SayImage", @TPrinter_SayImage(), nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ));
+
+   _HB_MEMBER SetPos(nRow, nCol); IIF( .F., s_oClass:ModInline( "SetPos", {|Self,nRow, nCol | Self, MoveTo( ::hDCOut, nCol, nRow ) }, nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ), s_oClass:AddInline( "SetPos", {|Self,nRow, nCol | Self, MoveTo( ::hDCOut, nCol, nRow ) }, nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ) )
+
+
+
+
+   _HB_MEMBER Line(nTop, nLeft, nBottom, nRight, oPen); IIF( .F., s_oClass:ModInline( "Line", {|Self,nTop, nLeft, nBottom, nRight, oPen | Self, MoveTo( ::hDCOut, nLeft, nTop ), LineTo( ::hDCOut, nRight, nBottom, If( oPen <> nil, oPen:hPen, 0 ) ) }, nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ), s_oClass:AddInline( "Line", {|Self,nTop, nLeft, nBottom, nRight, oPen | Self, MoveTo( ::hDCOut, nLeft, nTop ), LineTo( ::hDCOut, nRight, nBottom, If( oPen <> nil, oPen:hPen, 0 ) ) }, nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ) )
+
+
+
+   _HB_MEMBER Box(nRow, nCol, nBottom, nRight, oPen); IIF( .F., s_oClass:ModInline( "Box", {|Self,nRow, nCol, nBottom, nRight, oPen | Self, Rectangle( ::hDCOut, nRow, nCol, nBottom, nRight, If( oPen <> nil, oPen:hPen, 0 ) ) }, nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ), s_oClass:AddInline( "Box", {|Self,nRow, nCol, nBottom, nRight, oPen | Self, Rectangle( ::hDCOut, nRow, nCol, nBottom, nRight, If( oPen <> nil, oPen:hPen, 0 ) ) }, nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ) )
+
+   _HB_MEMBER RoundBox( nRow, nCol, nBottom, nRight, nWidth, nHeight, oPen, nBGColor); IIF( .F., s_oClass:ModMethod( "RoundBox", @TPrinter_RoundBox(), nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ), s_oClass:AddMethod( "RoundBox", @TPrinter_RoundBox(), nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ));
+
+
+
+   _HB_MEMBER Arc(nTop, nLeft, nBottom, nRight, nXB, nYB, nXE, nYE, oPen); IIF( .F., s_oClass:ModInline( "Arc", {|Self,nTop, nLeft, nBottom, nRight, nXB, nYB, nXE, nYE, oPen | Self, Arc( ::hDCOut, nLeft, nTop, nRight, nBottom, nXB, nYB, nXE, nYE,  If( oPen <> nil, oPen:hPen, 0 ) ) }, nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ), s_oClass:AddInline( "Arc", {|Self,nTop, nLeft, nBottom, nRight, nXB, nYB, nXE, nYE, oPen | Self, Arc( ::hDCOut, nLeft, nTop, nRight, nBottom, nXB, nYB, nXE, nYE,  If( oPen <> nil, oPen:hPen, 0 ) ) }, nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ) )
+
+
+
+   _HB_MEMBER Chord(nTop, nLeft, nBottom, nRight, nXB, nYB, nXE, nYE, oPen); IIF( .F., s_oClass:ModInline( "Chord", {|Self,nTop, nLeft, nBottom, nRight, nXB, nYB, nXE, nYE, oPen | Self, Chord( ::hDCOut, nLeft, nTop, nRight, nBottom, nXB, nYB, nXE, nYE,  If( oPen <> nil, oPen:hPen, 0 ) ) }, nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ), s_oClass:AddInline( "Chord", {|Self,nTop, nLeft, nBottom, nRight, nXB, nYB, nXE, nYE, oPen | Self, Chord( ::hDCOut, nLeft, nTop, nRight, nBottom, nXB, nYB, nXE, nYE,  If( oPen <> nil, oPen:hPen, 0 ) ) }, nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ) )
+
+
+
+   _HB_MEMBER Ellipse(nRow, nCol, nBottom, nRight, oPen); IIF( .F., s_oClass:ModInline( "Ellipse", {|Self,nRow, nCol, nBottom, nRight, oPen | Self, Ellipse( ::hDCOut, nCol, nRow, nRight, nBottom,  If( oPen <> nil, oPen:hPen, 0 ) ) }, nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ), s_oClass:AddInline( "Ellipse", {|Self,nRow, nCol, nBottom, nRight, oPen | Self, Ellipse( ::hDCOut, nCol, nRow, nRight, nBottom,  If( oPen <> nil, oPen:hPen, 0 ) ) }, nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ) )
+
+
+
+   _HB_MEMBER Pie(nTop, nLeft, nBottom, nRight, nxStartArc, nyStartArc, nxEndArc, nyEndArc, oPen); IIF( .F., s_oClass:ModInline( "Pie", {|Self,nTop, nLeft, nBottom, nRight, nxStartArc, nyStartArc, nxEndArc, nyEndArc, oPen | Self, Pie( ::hDCOut, nTop, nLeft, nBottom, nRight, nxStartArc, nyStartArc, nxEndArc, nyEndArc,  If( oPen <> nil, oPen:hPen, 0 ) ) }, nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ), s_oClass:AddInline( "Pie", {|Self,nTop, nLeft, nBottom, nRight, nxStartArc, nyStartArc, nxEndArc, nyEndArc, oPen | Self, Pie( ::hDCOut, nTop, nLeft, nBottom, nRight, nxStartArc, nyStartArc, nxEndArc, nyEndArc,  If( oPen <> nil, oPen:hPen, 0 ) ) }, nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ) )
+
+
+   _HB_MEMBER GetPixel(nRow, nCol, nRGBColor); IIF( .F., s_oClass:ModInline( "GetPixel", {|Self,nRow, nCol, nRGBColor | Self, SetPixel( ::hDCOut, nCol, nRow, nRGBColor ) }, nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ), s_oClass:AddInline( "GetPixel", {|Self,nRow, nCol, nRGBColor | Self, SetPixel( ::hDCOut, nCol, nRow, nRGBColor ) }, nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ) )
+
+
+   _HB_MEMBER SetPixel(nRow, nCol); IIF( .F., s_oClass:ModInline( "SetPixel", {|Self,nRow, nCol | Self, SetPixel( ::hDCOut, nCol, nRow ) }, nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ), s_oClass:AddInline( "SetPixel", {|Self,nRow, nCol | Self, SetPixel( ::hDCOut, nCol, nRow ) }, nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ) )
+
+   _HB_MEMBER Cmtr2Pix( nRow, nCol); IIF( .F., s_oClass:ModMethod( "Cmtr2Pix", @TPrinter_Cmtr2Pix(), nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ), s_oClass:AddMethod( "Cmtr2Pix", @TPrinter_Cmtr2Pix(), nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ));
+
+
+   _HB_MEMBER DraftMode(lOnOff); IIF( .F., s_oClass:ModInline( "DraftMode", {|Self,lOnOff | Self, (DraftMode( lOnOff ), ::Rebuild()       ) }, nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ), s_oClass:AddInline( "DraftMode", {|Self,lOnOff | Self, (DraftMode( lOnOff ), ::Rebuild()       ) }, nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ) )
+
+   _HB_MEMBER Inch2Pix( nRow, nCol); IIF( .F., s_oClass:ModMethod( "Inch2Pix", @TPrinter_Inch2Pix(), nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ), s_oClass:AddMethod( "Inch2Pix", @TPrinter_Inch2Pix(), nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ));
+
+
+
+
+   _HB_MEMBER Pix2Mmtr(nRow, nCol); IIF( .F., s_oClass:ModInline( "Pix2Mmtr", {|Self,nRow, nCol | Self, ( nRow := nRow * 25.4 / ::nLogPixelX() , nCol := nCol * 25.4 / ::nLogPixelY() , {nRow, nCol}                ) }, nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ), s_oClass:AddInline( "Pix2Mmtr", {|Self,nRow, nCol | Self, ( nRow := nRow * 25.4 / ::nLogPixelX() , nCol := nCol * 25.4 / ::nLogPixelY() , {nRow, nCol}                ) }, nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ) )
+
+
+
+
+   _HB_MEMBER Pix2Inch(nRow, nCol); IIF( .F., s_oClass:ModInline( "Pix2Inch", {|Self,nRow, nCol | Self, ( nRow := nRow / ::nLogPixelX() , nCol := nCol / ::nLogPixelY() , {nRow, nCol}             ) }, nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ), s_oClass:AddInline( "Pix2Inch", {|Self,nRow, nCol | Self, ( nRow := nRow / ::nLogPixelX() , nCol := nCol / ::nLogPixelY() , {nRow, nCol}             ) }, nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ) )
+
+   _HB_MEMBER CmRect2Pix( aRect); IIF( .F., s_oClass:ModMethod( "CmRect2Pix", @TPrinter_CmRect2Pix(), nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ), s_oClass:AddMethod( "CmRect2Pix", @TPrinter_CmRect2Pix(), nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ));
+
+   _HB_MEMBER nVertRes(); IIF( .F., s_oClass:ModInline( "nVertRes", {|Self | Self, GetDeviceCaps( ::hDC, 10  ) }, nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ), s_oClass:AddInline( "nVertRes", {|Self | Self, GetDeviceCaps( ::hDC, 10  ) }, nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ) )
+   _HB_MEMBER nHorzRes(); IIF( .F., s_oClass:ModInline( "nHorzRes", {|Self | Self, GetDeviceCaps( ::hDC, 8  ) }, nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ), s_oClass:AddInline( "nHorzRes", {|Self | Self, GetDeviceCaps( ::hDC, 8  ) }, nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ) )
+
+   _HB_MEMBER nVertSize(); IIF( .F., s_oClass:ModInline( "nVertSize", {|Self | Self, GetDeviceCaps( ::hDC, 6 ) }, nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ), s_oClass:AddInline( "nVertSize", {|Self | Self, GetDeviceCaps( ::hDC, 6 ) }, nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ) )
+   _HB_MEMBER nHorzSize(); IIF( .F., s_oClass:ModInline( "nHorzSize", {|Self | Self, GetDeviceCaps( ::hDC, 4 ) }, nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ), s_oClass:AddInline( "nHorzSize", {|Self | Self, GetDeviceCaps( ::hDC, 4 ) }, nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ) )
+
+   _HB_MEMBER nLogPixelX(); IIF( .F., s_oClass:ModInline( "nLogPixelX", {|Self | Self, GetDeviceCaps( ::hDC, 88 ) }, nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ), s_oClass:AddInline( "nLogPixelX", {|Self | Self, GetDeviceCaps( ::hDC, 88 ) }, nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ) )
+   _HB_MEMBER nLogPixelY(); IIF( .F., s_oClass:ModInline( "nLogPixelY", {|Self | Self, GetDeviceCaps( ::hDC, 90 ) }, nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ), s_oClass:AddInline( "nLogPixelY", {|Self | Self, GetDeviceCaps( ::hDC, 90 ) }, nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ) )
+
+   _HB_MEMBER SetPixelMode(); IIF( .F., s_oClass:ModInline( "SetPixelMode", {|Self | Self, SetMapMode( ::hDC, 1 ) }, nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ), s_oClass:AddInline( "SetPixelMode", {|Self | Self, SetMapMode( ::hDC, 1 ) }, nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ) )
+   _HB_MEMBER SetTwipsMode(); IIF( .F., s_oClass:ModInline( "SetTwipsMode", {|Self | Self, SetMapMode( ::hDC, 6 ) }, nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ), s_oClass:AddInline( "SetTwipsMode", {|Self | Self, SetMapMode( ::hDC, 6 ) }, nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ) )
+
+   _HB_MEMBER SetLoInchMode(); IIF( .F., s_oClass:ModInline( "SetLoInchMode", {|Self | Self, SetMapMode( ::hDC, 4 ) }, nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ), s_oClass:AddInline( "SetLoInchMode", {|Self | Self, SetMapMode( ::hDC, 4 ) }, nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ) )
+   _HB_MEMBER SetHiInchMode(); IIF( .F., s_oClass:ModInline( "SetHiInchMode", {|Self | Self, SetMapMode( ::hDC, 5 ) }, nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ), s_oClass:AddInline( "SetHiInchMode", {|Self | Self, SetMapMode( ::hDC, 5 ) }, nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ) )
+
+   _HB_MEMBER SetLoMetricMode(); IIF( .F., s_oClass:ModInline( "SetLoMetricMode", {|Self | Self, SetMapMode( ::hDC, 2 ) }, nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ), s_oClass:AddInline( "SetLoMetricMode", {|Self | Self, SetMapMode( ::hDC, 2 ) }, nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ) )
+   _HB_MEMBER SetHiMetricMode(); IIF( .F., s_oClass:ModInline( "SetHiMetricMode", {|Self | Self, SetMapMode( ::hDC, 3 ) }, nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ), s_oClass:AddInline( "SetHiMetricMode", {|Self | Self, SetMapMode( ::hDC, 3 ) }, nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ) )
+
+   _HB_MEMBER SetIsotropicMode(); IIF( .F., s_oClass:ModInline( "SetIsotropicMode", {|Self | Self, SetMapMode( ::hDC, 7 ) }, nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ), s_oClass:AddInline( "SetIsotropicMode", {|Self | Self, SetMapMode( ::hDC, 7 ) }, nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ) )
+   _HB_MEMBER SetAnisotropicMode(); IIF( .F., s_oClass:ModInline( "SetAnisotropicMode", {|Self | Self, SetMapMode( ::hDC, 8 ) }, nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ), s_oClass:AddInline( "SetAnisotropicMode", {|Self | Self, SetMapMode( ::hDC, 8 ) }, nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ) )
+
+
+   _HB_MEMBER SetWindowExt(nUnitsWidth, nUnitsHeight); IIF( .F., s_oClass:ModInline( "SetWindowExt", {|Self,nUnitsWidth, nUnitsHeight | Self, SetWindowExt( ::hDC, nUnitsWidth, nUnitsHeight ) }, nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ), s_oClass:AddInline( "SetWindowExt", {|Self,nUnitsWidth, nUnitsHeight | Self, SetWindowExt( ::hDC, nUnitsWidth, nUnitsHeight ) }, nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ) )
+
+
+   _HB_MEMBER SetViewPortExt(nWidth, nHeight); IIF( .F., s_oClass:ModInline( "SetViewPortExt", {|Self,nWidth, nHeight | Self, SetViewPortExt( ::hDC, nWidth, nHeight ) }, nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ), s_oClass:AddInline( "SetViewPortExt", {|Self,nWidth, nHeight | Self, SetViewPortExt( ::hDC, nWidth, nHeight ) }, nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ) )
+
+
+   _HB_MEMBER GetTextWidth(cText, oFont); IIF( .F., s_oClass:ModInline( "GetTextWidth", {|Self,cText, oFont | Self, GetTextWidth( ::hDC, cText, ::SetFont(oFont):hFont) }, nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ), s_oClass:AddInline( "GetTextWidth", {|Self,cText, oFont | Self, GetTextWidth( ::hDC, cText, ::SetFont(oFont):hFont) }, nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ) )
+
+   _HB_MEMBER GetTextHeight(cText, oFont); IIF( .F., s_oClass:ModInline( "GetTextHeight", {|Self,cText, oFont | Self, Abs( ::SetFont(oFont):nHeight ) }, nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ), s_oClass:AddInline( "GetTextHeight", {|Self,cText, oFont | Self, Abs( ::SetFont(oFont):nHeight ) }, nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ) )
+
+
+   _HB_MEMBER Preview(); IIF( .F., s_oClass:ModInline( "Preview", {|Self | Self, If( ::lMeta .AND. Len( ::aMeta ) > 0 .AND. ::hDC <> 0, RPreview( Self ), ::End() ) }, nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ), s_oClass:AddInline( "Preview", {|Self | Self, If( ::lMeta .AND. Len( ::aMeta ) > 0 .AND. ::hDC <> 0, RPreview( Self ), ::End() ) }, nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ) )
+
+   _HB_MEMBER FillRect(aRect, oBrush); IIF( .F., s_oClass:ModMethod( "FillRect", @TPrinter__FillRect(), nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ) ), s_oClass:AddMethod( "FillRect", @TPrinter__FillRect(), nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ) ) );
+
+   _HB_MEMBER ResetDC(); IIF( .F., s_oClass:ModInline( "ResetDC", {|Self | Self, ResetDC( ::hDC ) }, nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ), s_oClass:AddInline( "ResetDC", {|Self | Self, ResetDC( ::hDC ) }, nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ) )
+
+   _HB_MEMBER GetOrientation(); IIF( .F., s_oClass:ModInline( "GetOrientation", {|Self | Self, PrnGetOrientation() }, nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ), s_oClass:AddInline( "GetOrientation", {|Self | Self, PrnGetOrientation() }, nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ) )
+
+
+   _HB_MEMBER SetLandscape(); IIF( .F., s_oClass:ModInline( "SetLandscape", {|Self | Self, ( PrnLandscape( ::hDC ), ::Rebuild() ) }, nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ), s_oClass:AddInline( "SetLandscape", {|Self | Self, ( PrnLandscape( ::hDC ), ::Rebuild() ) }, nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ) )
+
+
+   _HB_MEMBER SetPortrait(); IIF( .F., s_oClass:ModInline( "SetPortrait", {|Self | Self, ( PrnPortrait( ::hDC ), ::Rebuild() ) }, nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ), s_oClass:AddInline( "SetPortrait", {|Self | Self, ( PrnPortrait( ::hDC ), ::Rebuild() ) }, nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ) )
+
+
+
+   _HB_MEMBER SetCopies(nCopies); IIF( .F., s_oClass:ModInline( "SetCopies", {|Self,nCopies | Self, ( PrnSetCopies( nCopies ), ::Rebuild()            ) }, nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ), s_oClass:AddInline( "SetCopies", {|Self,nCopies | Self, ( PrnSetCopies( nCopies ), ::Rebuild()            ) }, nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ) )
+
+
+
+   _HB_MEMBER SetSize(nWidth, nHeight); IIF( .F., s_oClass:ModInline( "SetSize", {|Self,nWidth, nHeight | Self, ( PrnSetSize( nWidth, nHeight ), ::Rebuild()             ) }, nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ), s_oClass:AddInline( "SetSize", {|Self,nWidth, nHeight | Self, ( PrnSetSize( nWidth, nHeight ), ::Rebuild()             ) }, nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ) )
+
+
+
+   _HB_MEMBER SetPage(nPage); IIF( .F., s_oClass:ModInline( "SetPage", {|Self,nPage | Self, ( PrnSetPage( nPage ), ::Rebuild()       ) }, nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ), s_oClass:AddInline( "SetPage", {|Self,nPage | Self, ( PrnSetPage( nPage ), ::Rebuild()       ) }, nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ) )
+
+
+
+   _HB_MEMBER SetBin(nBin); IIF( .F., s_oClass:ModInline( "SetBin", {|Self,nBin | Self, ( PrnBinSource( nBin ), ::Rebuild()      ) }, nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ), s_oClass:AddInline( "SetBin", {|Self,nBin | Self, ( PrnBinSource( nBin ), ::Rebuild()      ) }, nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ) )
+
+   _HB_MEMBER GetModel(); IIF( .F., s_oClass:ModInline( "GetModel", {|Self | Self, PrnGetName() }, nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ), s_oClass:AddInline( "GetModel", {|Self | Self, PrnGetName() }, nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ) )
+   _HB_MEMBER GetDriver(); IIF( .F., s_oClass:ModInline( "GetDriver", {|Self | Self, PrnGetDrive() }, nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ), s_oClass:AddInline( "GetDriver", {|Self | Self, PrnGetDrive() }, nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ) )
+   _HB_MEMBER GetPort(); IIF( .F., s_oClass:ModInline( "GetPort", {|Self | Self, PrnGetPort() }, nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ), s_oClass:AddInline( "GetPort", {|Self | Self, PrnGetPort() }, nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ) )
+
+   _HB_MEMBER GetPhySize(); IIF( .F., s_oClass:ModMethod( "GetPhySize", @TPrinter_GetPhySize(), nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ), s_oClass:AddMethod( "GetPhySize", @TPrinter_GetPhySize(), nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ));
+
+
+   _HB_MEMBER Setup(); IIF( .F., s_oClass:ModInline( "Setup", {|Self | Self, ( PrinterSetup(), ::Rebuild()    ) }, nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ), s_oClass:AddInline( "Setup", {|Self | Self, ( PrinterSetup(), ::Rebuild()    ) }, nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ) )
+
+   _HB_MEMBER Rebuild(); IIF( .F., s_oClass:ModMethod( "Rebuild", @TPrinter_Rebuild(), nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ), s_oClass:AddMethod( "Rebuild", @TPrinter_Rebuild(), nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ));
+
+   _HB_MEMBER SetFont( oFont); IIF( .F., s_oClass:ModMethod( "SetFont", @TPrinter_SetFont(), nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ), s_oClass:AddMethod( "SetFont", @TPrinter_SetFont(), nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ));
+   _HB_MEMBER CharSay( nRow, nCol, cText); IIF( .F., s_oClass:ModMethod( "CharSay", @TPrinter_CharSay(), nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ), s_oClass:AddMethod( "CharSay", @TPrinter_CharSay(), nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ));
+   _HB_MEMBER CharWidth(); IIF( .F., s_oClass:ModMethod( "CharWidth", @TPrinter_CharWidth(), nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ), s_oClass:AddMethod( "CharWidth", @TPrinter_CharWidth(), nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ));
+   _HB_MEMBER CharHeight(); IIF( .F., s_oClass:ModMethod( "CharHeight", @TPrinter_CharHeight(), nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ), s_oClass:AddMethod( "CharHeight", @TPrinter_CharHeight(), nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ));
+
+   _HB_MEMBER ImportWMF( cFile); IIF( .F., s_oClass:ModMethod( "ImportWMF", @TPrinter_ImportWMF(), nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ), s_oClass:AddMethod( "ImportWMF", @TPrinter_ImportWMF(), nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ));
+   _HB_MEMBER ImportRAW( cFile); IIF( .F., s_oClass:ModMethod( "ImportRAW", @TPrinter_ImportRAW(), nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ), s_oClass:AddMethod( "ImportRAW", @TPrinter_ImportRAW(), nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ));
+
+   _HB_MEMBER SizeInch2Pix( nHeight, nWidth); IIF( .F., s_oClass:ModMethod( "SizeInch2Pix", @TPrinter_SizeInch2Pix(), nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ), s_oClass:AddMethod( "SizeInch2Pix", @TPrinter_SizeInch2Pix(), nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ));
+
+; IF .F. ; __clsActive(s_oClass:hClass) ; s_oClass:Refresh() ; ELSE ; s_oClass:Create() ; END ; oClassInstance := __clsInst( s_oClass:hClass ) ; IF __ObjHasMsg( oClassInstance, "InitClass" ); oClassInstance:InitClass( hb_aParams() ) ; END ; ELSE ; oClassInstance := __clsInst( s_oClass:hClass ) ; END ; IF PCount() > 0 ; DIVERT TO (@DivertConstructorCall()) OF s_oClass ; END ; RETURN oClassInstance AS CLASS TPrinter ;
+
+
+
+UTILITY STATIC function TPrinter_New( cDocument, lUser, lMeta, cModel, lModal, lSelection) ; local Self AS CLASS TPrinter := QSelf() AS CLASS TPrinter
+
+   local aOffset
+   local cPrinter
+
+
+   IIF( cDocument == nil, cDocument := "FiveWin Report", ) ; IIF( lUser == nil, lUser := .F., ); IIF( lMeta == nil, lMeta := .F., ); IIF( lModal == nil, lModal := .F., ); IIF( lSelection == nil, lSelection := .F., );
+
+   if lUser
+      ::hDC := GetPrintDC( GetActiveWindow(), lSelection, PrnGetPagNums() )
+      if ::hDC <> 0
+         cModel = ::GetModel() + "," + ::GetDriver() + "," + ::GetPort()
+      endif
+   elseif cModel == nil
+      ::hDC  := GetPrintDefault( GetActiveWindow() )
+      if ::hDC <> 0
+         cModel = ::GetModel() + "," + ::GetDriver() + "," + ::GetPort()
+      endif
+   else
+      cPrinter := GetProfString( "windows", "device" , "" )
+      WriteProfString( "windows", "device", cModel )
+      SysRefresh()
+      PrinterInit()
+      ::hDC := GetPrintDefault( GetActiveWindow() )
+      SysRefresh()
+      WriteProfString( "windows", "device", cPrinter  )
+   endif
+
+   if ::hDC <> 0
+      aOffset    = PrnOffset( ::hDC )
+      ::nXOffset = aOffset[ 1 ]
+      ::nYOffset = aOffset[ 2 ]
+      ::nOrient  = ::GetOrientation()
+   elseif ComDlgXErr() <> 0
+
+      MsgStop( "There are no printers installed!"  + Chr(13)+Chr(10) +  "Please exit this application and install a printer." )
+      ::nXOffset = 0
+      ::nYOffset = 0
+   else
+      ::nXOffset = 0
+      ::nYOffset = 0
+      ::nOrient  = 1
+   endif
+
+   ::cDocument = cDocument
+   ::cModel    = cModel
+   ::nPage     = 0
+   ::nPad      = 0
+   ::lMeta     = lMeta
+   ::lStarted  = .F.
+   ::lModified = .F.
+   ::lPrvModal = lModal
+
+   if !lMeta
+      ::hDcOut = ::hDC
+   else
+      ::aMeta  = {}
+      ::cDir   = GetEnv( "TEMP" )
+
+      if Empty( ::cDir )
+         ::cDir = GetEnv( "TMP" )
+      endif
+
+      if Right( ::cDir, 1 ) == "\"
+         ::cDir = SubStr( ::cDir, 1, Len( ::cDir ) - 1 )
+      endif
+
+      if ! Empty( ::cDir )
+         if ! lIsDir( ::cDir )
+            ::cDir = GetWinDir()
+         endif
+      else
+         ::cDir := GetWinDir()
+      endif
+   endif
+
+return Self
+
+
+
+UTILITY STATIC function TPrinter_End() ; local Self AS CLASS TPrinter := QSelf() AS CLASS TPrinter
+
+   if ::hDC <> 0
+      if ! ::lMeta
+         if ::lStarted
+            EndDoc(::hDC)
+         endif
+      else
+         Aeval(::aMeta,{|val| ferase(val) })
+         ::aMeta  := {}
+         ::hDCOut := 0
+      endif
+      if ::nOrient <> nil
+         if ::nOrient == 1
+            ::SetPortrait()
+         else
+            ::SetLandscape()
+         endif
+      endif
+
+      DeleteDC( ::hDC )
+      ::hDC := 0
+   endif
+
+   if ::oFont <> nil
+      ::oFont:End()
+   endif
+
+   oPrinter := nil
+
+return nil
+
+
+
+UTILITY STATIC function TPrinter_Rebuild() ; local Self AS CLASS TPrinter := QSelf() AS CLASS TPrinter
+
+   local cPrinter
+
+   if ::lStarted
+      if ! ::lMeta
+         EndDoc( ::hDC )
+      else
+         ::hDCOut := 0
+      endif
+   endif
+
+   if ::hDC <> 0
+      DeleteDC( ::hDC )
+      ::hDC := GetPrintDefault( GetActiveWindow() )
+      ::lStarted   := .F.
+      ::lModified  := .T.
+   endif
+
+   if ::hDC <> 0
+      if ! ::lMeta
+         ::hDcOut = ::hDC
+      endif
+   endif
+
+return nil
+
+
+
+UTILITY STATIC function TPrinter__StartPage() ; local Self AS CLASS TPrinter := QSelf() AS CLASS TPrinter
+
+   local lSetFixed
+
+   if ::hDC == 0
+      return nil
+   endif
+
+   lSetFixed := Set( 2, .F. )
+
+   if ! ::lMeta .AND. ! ::lStarted
+      ::lStarted := .T.
+      StartDoc( ::hDC, ::cDocument )
+   endif
+
+   ::nPage++
+
+   if ::lMeta
+
+       AAdd( ::aMeta, ::cDir + cTempFile( "\", "emf" ) )
+       ::hDCOut := CreateEnhMetaFile( ::hDC, ATail( ::aMeta ), ::cDocument )
+
+
+
+
+   else
+      StartPage( ::hDC )
+   endif
+
+   Set( 2, lSetFixed )
+
+return nil
+
+
+
+UTILITY STATIC function TPrinter__EndPage() ; local Self AS CLASS TPrinter := QSelf() AS CLASS TPrinter
+
+   if ::hDC = 0
+      return nil
+   endif
+
+   if ::lMeta
+      if Len( ::aMeta ) == 0
+
+         MsgAlert( "The temporal metafile could not be created", "Printer object Error" )
+      else
+
+          DeleteEnhMetaFile( CloseEnhMetaFile( ::hDCOut ) )
+
+
+
+
+         if ! File( Atail( ::aMeta ) )
+
+
+
+           MsgAlert("Could not create temporary file: "+Atail(::aMeta)+Chr(13)+Chr(10)+Chr(13)+Chr(10)+ "Please check your free space on your hard drive "+Chr(13)+Chr(10)+ "and the amount of files handles available." , "Print preview error" )
+         endif
+      endif
+   else
+      EndPage( ::hDC )
+   endif
+
+return nil
+
+
+
+
+UTILITY STATIC function TPrinter_RoundBox( nRow, nCol, nBottom, nRight, nWidth, nHeight, oPen, nBGColor) ; local Self AS CLASS TPrinter := QSelf() AS CLASS TPrinter
+
+   local hBrush, hOldBrush
+   local hPen, hOldPen
+
+   hPen = If( oPen == nil, CreatePen( 0, 1, 0 ), oPen:hPen )
+   hOldPen = SelectObject( ::hDCOut, hPen )
+
+   if nBGColor <> nil
+      hBrush    := CreateSolidBrush( nBGColor )
+      hOldBrush := SelectObject( ::hDCOut, hBrush )
+   endif
+
+   RoundRect( ::hDCOut, nRow, nCol, nBottom, nRight, nWidth, nHeight )
+
+   if nBGColor # nil
+      SelectObject( ::hDCOut, hOldBrush )
+      DeleteObject( hBrush )
+   endif
+
+   SelectObject( ::hDCOut, hOldPen )
+
+   IIF( oPen == nil, DeleteObject( hPen ), nil )
+
+return nil
+
+
+
+
+UTILITY STATIC function TPrinter_Say( nRow, nCol, cText, oFont, nWidth, nClrText, nBkMode, nPad) ; local Self AS CLASS TPrinter := QSelf() AS CLASS TPrinter
+
+   local nTemp
+
+   if ::hDC = 0
+      return nil
+   endif
+
+
+
+   IIF( oFont == nil, oFont := ::oFont, ) ; IIF( nBkMode == nil, nBkMode := 1, ); IIF( nPad == nil, nPad := ::nPad, );
+
+   if oFont <> nil
+      oFont:Activate( ::hDCOut )
+   endif
+
+   SetbkMode( ::hDCOut, nBkMode )
+
+   if nClrText <> nil
+      SetTextColor( ::hDCOut, nClrText )
+   endif
+
+   if Empty( nWidth )
+      do case
+         case nPad == 1
+              nCol := Max( 0, nCol - ::GetTextWidth( cText, oFont ) )
+         case nPad == 2
+              nCol := Max( 0, nCol - ( ::GetTextWidth( cText, oFont ) / 2 ) )
+      endcase
+      SetTextAlign( ::hDCOut, 0 )
+      TextOut( ::hDCOut, nRow, nCol, cText )
+   else
+      do case
+         case nPad == 1
+              nTemp := nCol + nWidth
+              SetTextAlign( ::hDCOut, 2 )
+         case nPad == 2
+              nTemp := nCol + ( nWidth / 2 )
+              SetTextAlign( ::hDCOut, 6 )
+         otherwise
+              nTemp := nCol
+              SetTextAlign( ::hDCOut, 0 )
+      endcase
+
+
+      ExtTextOut( ::hDCOut, nRow, nTemp, { nRow, nCol, nRow+oFont:nHeight, nCol+nWidth }, cText, 4 )
+   endif
+
+   if oFont <> nil
+      oFont:DeActivate( ::hDCOut )
+   endif
+
+return nil
+
+
+
+UTILITY STATIC function TPrinter_SayBitmap( nRow, nCol, xBitmap, nWidth, nHeight, nRaster) ; local Self AS CLASS TPrinter := QSelf() AS CLASS TPrinter
+
+   local hDib, aBmpPal, hBitmap, hPalette
+
+   if ::hDC = 0
+      return nil
+   endif
+
+   if ( ValType( xBitmap ) == "N" ) .OR. ! File( xBitmap )
+      aBmpPal  = PalBmpLoad( xBitmap )
+      hBitmap  = aBmpPal[ 1 ]
+      hPalette = aBmpPal[ 2 ]
+      hDib   = DibFromBitmap( hBitmap, hPalette )
+      PalBmpFree( hBitmap, hPalette )
+   else
+      hDib = DibRead( xBitmap )
+   endif
+
+   if hDib == 0
+      return nil
+   endif
+
+   if ! ::lMeta
+      hPalette = DibPalette( hDib )
+   endif
+
+
+   DibDraw( ::hDCOut, hDib, hPalette, nRow, nCol, nWidth, nHeight, nRaster )
+
+   GlobalFree( hDib )
+
+   if ! ::lMeta
+      DeleteObject( hPalette )
+   endif
+
+return nil
+
+
+
+UTILITY STATIC function TPrinter_SayImage( nRow, nCol, oImage, nWidth, nHeight, nRaster) ; local Self AS CLASS TPrinter := QSelf() AS CLASS TPrinter
+
+   local hDib, hPalBmp, hPal, nRatio, n
+
+   IIF( nWidth == nil, nWidth := 0, ) ; IIF( nHeight == nil, nHeight := 0, );
+
+   if ::hDC = 0
+      return nil
+   endif
+
+   do case
+      case ValType( oImage ) == "O"
+           hDib = DibFromBitmap( oImage:hBitmap, oImage:hPalette )
+      otherwise
+           hDib = 0
+   endcase
+
+   if hDib = 0
+      return nil
+   endif
+
+   if ! ::lMeta
+      hPal := DibPalette( hDib )
+   endif
+
+
+   if nWidth == 0 .AND. nHeight > 0 .AND. ( n := oImage:nHeight() ) > 0
+      nRatio := oImage:nWidth() / n
+      nWidth := int( nHeight * nRatio )
+   elseif nWidth > 0 .AND. nHeight == 0 .AND. ( n := oImage:nWidth() ) > 0
+      nRatio  := oImage:nHeight() / n
+      nHeight := int( nWidth * nRatio )
+   endif
+
+   DibDraw( ::hDCOut, hDib, hPal, nRow, nCol, nWidth, nHeight, nRaster )
+
+   GlobalFree( hDib )
+
+   if ! ::lMeta
+      DeleteObject( hPal )
+   endif
+
+return nil
+
+
+
+UTILITY STATIC function TPrinter__FillRect(aCols, oBrush) ; local Self AS CLASS TPrinter := QSelf() AS CLASS TPrinter
+
+   if ::hDC = 0
+      return nil
+   endif
+
+   FillRect( ::hDCOut, aCols, oBrush:hBrush )
+
+return nil
+
+
+
+UTILITY STATIC function TPrinter_Cmtr2Pix( nRow, nCol) ; local Self AS CLASS TPrinter := QSelf() AS CLASS TPrinter
+
+   if ValType( ::nYoffset ) == "U"
+      ::nYoffset := 0
+   endif
+   if ValType( ::nXOffset ) == "U"
+      ::nXoffset := 0
+   endif
+
+   nRow := Max( 0, ( nRow * 10 * ::nVertRes() / ::nVertSize() ) - ::nYoffset )
+   nCol := Max( 0, ( nCol * 10 * ::nHorzRes() / ::nHorzSize() ) - ::nXoffset )
+
+return { nRow, nCol }
+
+
+
+UTILITY STATIC function TPrinter_CmRect2Pix( aRect) ; local Self AS CLASS TPrinter := QSelf() AS CLASS TPrinter
+
+   local aTmp[ 4 ]
+
+   aTmp[ 1 ] = Max( 0, ( aRect[1] * 10 * ::nVertRes() / ::nVertSize() ) - ::nYoffset )
+   aTmp[ 2 ] = Max( 0, ( aRect[2] * 10 * ::nHorzRes() / ::nHorzSize() ) - ::nXoffset )
+   aTmp[ 3 ] = Max( 0, ( aRect[3] * 10 * ::nVertRes() / ::nVertSize() ) - ::nYoffset )
+   aTmp[ 4 ] = Max( 0, ( aRect[4] * 10 * ::nHorzRes() / ::nHorzSize() ) - ::nXoffset )
+
+return aTmp
+
+
+
+UTILITY STATIC function TPrinter_Inch2Pix( nRow, nCol) ; local Self AS CLASS TPrinter := QSelf() AS CLASS TPrinter
+
+   nRow = Max( 0, ( nRow * ::nVertRes() / (::nVertSize() / 25.4 ))-::nYoffset )
+   nCol = Max( 0, ( nCol * ::nHorzRes() / (::nHorzSize() / 25.4 ))-::nXoffset )
+
+return { nRow, nCol }
+
+
+
+UTILITY STATIC function TPrinter_GetPhySize() ; local Self AS CLASS TPrinter := QSelf() AS CLASS TPrinter
+
+   local aData := PrnGetSize( ::hDC )
+   local nWidth, nHeight
+
+   nWidth  := aData[ 1 ] / ::nLogPixelX() * 25.4
+   nHeight := aData[ 2 ] / ::nLogPixelY() * 25.4
+
+return { nWidth, nHeight }
+
+
+
+UTILITY STATIC function TPrinter_SetFont( oFont) ; local Self AS CLASS TPrinter := QSelf() AS CLASS TPrinter
+
+   if oFont <> nil
+      ::oFont := oFont
+   elseif ::oFont == nil
+      ::oFont := TFont():New( "COURIER", 0, -12,,,,,,,,,,,,, Self, )
+   endif
+
+return ::oFont
+
+
+
+UTILITY STATIC function TPrinter_CharSay( nRow, nCol, cText) ; local Self AS CLASS TPrinter := QSelf() AS CLASS TPrinter
+
+   local nPxRow, nPxCol
+
+   ::SetFont()
+
+   nRow   := Max(--nRow, 0)
+   nCol   := Max(--nCol, 0)
+   nPxRow := nRow * ::GetTextHeight( "", ::oFont )
+   nPxCol := nCol * ::GetTextWidth( "B", ::oFont )
+
+   ::Say( nPxRow, nPxCol, cText, ::oFont )
+
+return nil
+
+
+
+UTILITY STATIC function TPrinter_CharWidth() ; local Self AS CLASS TPrinter := QSelf() AS CLASS TPrinter
+
+   ::SetFont()
+
+return Int( ::nHorzRes() / ::GetTextWidth( "B", ::oFont ) )
+
+
+
+UTILITY STATIC function TPrinter_CharHeight() ; local Self AS CLASS TPrinter := QSelf() AS CLASS TPrinter
+
+   ::SetFont()
+
+return Int( ::nVertRes() / ::GetTextHeight( "",::oFont ) )
+
+
+
+UTILITY STATIC function TPrinter_ImportWMF( cFile, lPlaceable) ; local Self AS CLASS TPrinter := QSelf() AS CLASS TPrinter
+
+   local hMeta, hOld, hWMF
+   local aData := PrnGetSize( ::hDC )
+   local aInfo := Array( 5 )
+
+   IIF( lPlaceable == nil, lPlaceable := .T., ) ;
+
+   if ! File( cFile )
+      return nil
+   endif
+
+   SaveDC( ::hDCOut )
+
+
+
+
+
+
+
+
+      if cFileExt( cFile ) == "EMF"
+         hMeta := GetEnhMetaFile( cFile )
+      else
+         hOld = GetPMetaFile( cFile, aInfo )
+         hMeta = WMF2EMF( hOld, ::hDCOut )
+      endif
+
+
+   ::SetIsoTropicMode()
+
+   ::SetWindowExt( GetDeviceCaps( ::hDC, 8 ), GetDeviceCaps( ::hDC, 10 ) )
+
+   ::SetViewPortExt( GetDeviceCaps( ::hDC, 8 ), GetDeviceCaps( ::hDC, 10 ) )
+
+   if ! ::lMeta
+      SetViewOrg( ::hDCOut, -::nXoffset, -::nYoffset )
+   endif
+
+   SetBkMode( ::hDCOut, 1 )
+
+
+
+
+
+      if cFileExt( cFile ) == "EMF"
+         PlayEnhMetafile( ::hDCOut, hMeta,, .T. )
+      else
+         PlayMetaFile( ::hDCOut, hWMF := EMF2WMF( hMeta, ::hDCOut ) )
+         DeleteMetafile( hWMF )
+      endif
+      DeleteEnhMetafile( hMeta )
+
+
+   if ! Empty( hOld )
+      DeleteMetafile( hOld )
+   endif
+
+   RestoreDC( ::hDCOut )
+
+return nil
+
+
+
+UTILITY STATIC function TPrinter_ImportRAW( cFile) ; local Self AS CLASS TPrinter := QSelf() AS CLASS TPrinter
+
+   if ! File( cFile )
+      return nil
+   endif
+
+   ImportRawFile( ::HDCOut, cFile )
+
+return nil
+
+
+
+UTILITY STATIC function TPrinter_SizeInch2Pix( nHeight, nWidth) ; local Self AS CLASS TPrinter := QSelf() AS CLASS TPrinter
+
+
+
+
+   IIF( nWidth == nil, nWidth := 0, ) ; IIF( nHeight == nil, nHeight := 0, );
+
+   if nHeight <> 0
+      nHeight := Max( 0, ( nHeight * ::nVertRes() / ( ::nVertSize() / 25.4 ) ) )
+   endif
+
+   if nWidth <> 0
+      nWidth := Max( 0, ( nWidth * ::nHorzRes() / ( ::nHorzSize() / 25.4 ) ) )
+   endif
+
+return { nWidth, nHeight }
+
+
+
+function PrintBegin( cDoc, lUser, lPreview, xModel, lModal, lSelection )
+
+   local aPrn
+   local cText, cDevice
+   local nScan
+
+   if xModel == nil
+      return oPrinter := TPrinter():New( cDoc, lUser, lPreview,, lModal, lSelection )
+   endif
+
+   cText := StrTran( GetProfString( "Devices" ),Chr(0), chr(13)+chr(10))
+   aPrn  := Array( Mlcount( cText, 250 ) )
+
+   Aeval(aPrn, {|v,e| aPrn[e] := Trim(Memoline(cText, 250, e)) } )
+
+   if Valtype(xModel) == "N"
+      if xModel < 0 .OR. xModel > len(aPrn)
+         nScan := 0
+      else
+         nScan := xModel
+      endif
+   else
+      if ( nScan := Ascan( aPrn, {|v| Upper( xModel ) == Upper( v ) } ) ) == 0
+         nScan = Ascan( aPrn, {|v| Upper( xModel ) $ Upper( v ) } )
+      endif
+   endif
+
+   if nScan == 0
+      MsgBeep()
+      return oPrinter := TPrinter():New( cDoc, .T., lPreview,, lModal, lSelection )
+   endif
+
+   cText   := GetProfString( "Devices", aPrn[ nScan ] )
+   cDevice := aPrn[ nScan ]
+
+return oPrinter := TPrinter():New( cDoc, .F., lPreview, cDevice, lModal, lSelection )
+
+
+
+function PageBegin() ; oPrinter:StartPage() ; return nil
+
+
+
+function PageEnd() ; oPrinter:EndPage(); return nil
+
+
+
+function PrintEnd()
+
+   if oPrinter:lMeta
+      oPrinter:Preview()
+   else
+      oPrinter:End()
+   endif
+
+   oPrinter := nil
+
+return nil
+
+
+
+function AGetPrinters()
+
+   local aPrinters, cText, cToken := Chr( 15 )
+
+
+   cText = StrTran( StrTran( StrTran(  GetProfString( "Devices", 0 ), Chr( 0 ), cToken ), Chr( 13 ) ), Chr( 10 ) )
+   aPrinters = Array( Len( cText ) - Len( StrTran( cText, cToken ) ) )
+
+   AEval( aPrinters, { |cPrn, nEle |  aPrinters[ nEle ] := StrToken( cText, nEle, cToken ) } )
+
+return aPrinters
+
+
+
+function SetPrintDefault( cModel )
+
+   local cDriver := StrToken( GetProfString( "Devices", cModel, "" ), 1, "," )
+   local cPort   := StrToken( GetProfString( "Devices", cModel, "" ), 2, "," )
+
+   WriteProfString( "Windows", "Device", cModel + "," + cDriver + "," + cPort )
+
+return nil

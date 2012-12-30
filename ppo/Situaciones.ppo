@@ -1,0 +1,512 @@
+#line 112 "hbclass.ch"
+   DYNAMIC DivertConstructorCall
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+DECLARE HBClass  New( cName AS String, OPTIONAL SuperParams ) AS CLASS HBClass  Create() AS Object  Instance() AS Object  AddClsMethod( cName AS String, @MethodName(), nScope AS Numeric, n2 AS Numeric, n3 AS Numeric )  AddDelegate( cName AS String, cDelegate AS String, cObject AS String, nScope AS Numeric, lPersistent AS LOGICAL )  AddMultiClsData( cType AS String, uVal, nScope AS Numeric, aDatas AS Array OF String )  AddMultiData( cType AS String, uVal, nScope AS Numeric, aDatas AS Array OF String, x AS LOGICAL, lPer AS LOGICAL )  AddMethod( cName AS String, @MethodName(), nScope AS Numeric, lPersistent AS LOGICAL )  AddInLine( cName AS String, bBlock AS CodeBlock, nScope AS Numeric, lPersistent AS LOGICAL )  AddVirtual( cName AS String )  ModMethod( cName AS String, @MethodName(), nScope AS Numeric, lPersistent AS LOGICAL )  ModClsMethod( cName AS String, @MethodName(), nScope AS Numeric )  ModInline( cName AS String, bBlock AS CodeBlock, nScope AS Numeric, lPersistent AS LOGICAL )  SetOnError( @MethodName() )
+#line 85 "\Fwh1204\Include\FiveWin.Ch"
+   EXTERNAL GetProcAdd
+   EXTERNAL TActiveX
+
+
+
+
+extern errorsys
+#line 12 ".\Prg\Situaciones.prg"
+static oWndBrw
+static bEdit      := { |aTmp, aGet, dbfSitua, oBrw, bWhen, bValid, nMode | EdtRec( aTmp, aGet, dbfSitua, oBrw, bWhen, bValid, nMode ) }
+
+
+
+static dbfSitua
+
+
+
+
+
+
+
+
+
+STATIC FUNCTION OpenFiles()
+
+   local lOpen    := .T.
+   local oBlock   := ErrorBlock( {| oError | ApoloBreak( oError ) } )
+
+   BEGIN SEQUENCE
+
+      if !lExistTable( cPatDat() + "SITUA.DBF" )
+         mkSitua( cPatDat() )
+      end
+
+      dbUseArea( .T., ( cDriver() ), ( cPatDat() + "SITUA.DBF" ), ( cCheckArea( "SITUA", @dbfSitua ) ), if(.T. .OR. .F., !.F., NIL), .F.,, )
+      if !lAIS() ; ordListAdd( ( cPatDat() + "SITUA.CDX" ) ) ; else ; ordSetFocus( 1 ) ; end
+
+   RECOVER
+
+      msgStop( "Imposible abrir todas las bases de datos" )
+      CloseFiles ()
+      lOpen       := .F.
+
+   end
+
+   ErrorBlock( oBlock )
+
+RETURN ( lOpen )
+
+
+
+
+
+
+STATIC FUNCTION CloseFiles()
+
+   if dbfSitua <> nil
+      ( dbfSitua ) -> ( dbCloseArea() )
+   end
+
+   dbfSitua := nil
+   oWndBrw  := nil
+
+RETURN .T.
+
+
+
+
+
+
+
+FUNCTION Situaciones( oMenuItem, oWnd )
+
+   local nLevel
+
+   IIF( oMenuItem == nil, oMenuItem := "01096", ) ;
+   IIF( oWnd == nil, oWnd := oWnd(), ) ;
+
+   if oWndBrw == NIL
+
+
+
+
+
+      nLevel            := nLevelUsr( oMenuItem )
+
+      if nAnd( nLevel, 1 ) <> 0
+         msgStop( "Acceso no permitido." )
+         return nil
+      end
+
+
+
+
+
+      if oWnd <> nil
+         SysRefresh(); oWnd:CloseAll(); SysRefresh()
+      end
+
+
+
+
+
+      if !OpenFiles()
+         return Nil
+      end
+
+
+
+
+
+      AddMnuNext( "Situaciones", ProcName() )
+
+
+
+
+
+
+
+
+
+
+
+
+
+      oWndBrw := TShell():New( 2, 10, 18, 70, "Situaciones",, oWnd,,, .F.,,, ( dbfSitua ),,,,, {"Situaciones"}, {||( WinAppRec( oWndBrw:oBrw, bEdit, dbfSitua ) )}, {||( WinEdtRec( oWndBrw:oBrw, bEdit, dbfSitua ) )}, {||( WinDelRec( oWndBrw:oBrw, dbfSitua ) )}, {||( WinDupRec( oWndBrw:oBrw, bEdit, dbfSitua ) )}, nil, nLevel, "Document_Attachment_16", ( 104 + ( 0 * 256 ) + ( 63 * 65536 ) ),,, .T. )
+
+      with object ( oWndBrw:AddXCol() )
+         :cHeader          := "Situaciones"
+         :cSortOrder       := "cSitua"
+         :bEditValue       := {|| ( dbfSitua )->cSitua }
+         :nWidth           := 800
+         :bLClickHeader    := {| nMRow, nMCol, nFlags, oCol | oWndBrw:ClickOnHeader( oCol ) }
+      end
+
+      oWndBrw:cHtmlHelp    := "Situaciones"
+
+      oWndBrw:CreateXFromCode()
+
+
+
+
+
+      oWndBrw:NewAt( "BUS",,, {||( oWndBrw:SearchSetFocus() )}, "(B)uscar", "B",,,,, .F. )
+
+      oWndBrw:AddSeaBar()
+
+
+
+
+
+
+
+
+      oWndBrw:NewAt( "NEW",,, {||( oWndBrw:RecAdd() )}, "(A)ñadir", "A",,, 2,, .F. )
+
+
+
+
+
+
+
+      oWndBrw:NewAt( "DUP",,, {||( oWndBrw:RecDup() )}, "(D)uplicar", "D",,, 2,, .F. )
+
+
+
+
+
+
+
+      oWndBrw:NewAt( "EDIT",,, {||( oWndBrw:RecEdit() )}, "(M)odificar", "M",,, 4,, .F. )
+
+
+
+
+
+
+
+      oWndBrw:NewAt( "ZOOM",,, {||( WinZooRec( oWndBrw:oBrw, bEdit, dbfSitua ) )}, "(Z)oom", "Z",,, 8,, .F. )
+
+
+
+
+
+
+
+      oWndBrw:NewAt( "DEL",,, {||( oWndBrw:RecDel() )}, "(E)liminar", "E",,, 16,, .F. )
+
+
+
+
+
+      oWndBrw:NewAt( "END",,, {||( oWndBrw:end() )}, "(S)alir", "S",,,,, .F. )
+
+      oWndBrw:Activate(, oWndBrw:bLClicked, oWndBrw:bRClicked, oWndBrw:bMoved, oWndBrw:bResized, oWndBrw:bPainted, oWndBrw:bKeyDown, oWndBrw:bInit,,,,,,,,, {|| ( CloseFiles() )},, oWndBrw:bLButtonUp )
+
+   else
+
+      oWndBrw:SetFocus()
+
+   end
+
+ RETURN NIL
+
+
+
+
+
+
+STATIC FUNCTION EdtRec( aTmp, aGet, dbfSitua, oBrw, bWhen, bValid, nMode )
+
+   local oDlg
+
+
+
+   oDlg = TDialog():New(,,,, LblTitle( nMode ) + "situación", "SITUACION",, .F.,,,,,, .F.,,,,,, .F., )
+
+
+
+
+
+
+
+   aGet[ ( dbfSitua )->( FieldPos( "cSitua" ) ) ] := TGetHlp():ReDefine( 90, { | u | If( PCount()==0, aTmp[ ( dbfSitua )->( FieldPos( "cSitua" ) ) ], aTmp[ ( dbfSitua )->( FieldPos( "cSitua" ) ) ]:= u ) }, oDlg,,,,,,,,, .F., {||     ( nMode <> 3 )},, .F., .F.,,,,,, nil,,, )
+
+
+
+
+
+   TButton():ReDefine( 500, {||( EndTrans( aTmp, aGet, dbfSitua, oBrw, nMode, oDlg ) )}, oDlg,,, .F., {||     ( nMode <> 3 )},,, .F. )
+
+
+
+
+
+   TButton():ReDefine( 550, {||( oDlg:end() )}, oDlg,,, .F.,,,, .T. )
+
+
+
+
+   TButton():ReDefine( 9, {||( msginfo( "Ayuda no definida" ) )}, oDlg,,, .F.,,,, .F. )
+
+
+
+   if nMode <> 3
+      oDlg:AddFastKey( 116, {|| EndTrans( aTmp, aGet, dbfSitua, oBrw, nMode, oDlg ) } )
+   end
+
+   oDlg:AddFastKey ( 112, {|| msginfo( "Ayuda no definida" ) } )
+
+   oDlg:bStart := {|| aGet[ ( dbfSitua )->( FieldPos( "cSitua" ) ) ]:SetFocus() }
+
+   oDlg:Activate( oDlg:bLClicked, oDlg:bMoved, oDlg:bPainted, .T.,,,, oDlg:bRClicked,,, )
+
+RETURN ( oDlg:nResult == 1 )
+
+
+
+
+
+
+STATIC FUNCTION EndTrans( aTmp, aGet, dbfSitua, oBrw, nMode, oDlg )
+
+
+
+   if nMode == 1 .OR. nMode == 4
+      if Existe( Upper( aTmp[ ( dbfSitua )->( FieldPos( "cSitua" ) ) ] ), dbfSitua, "cSitua" )
+         msgStop( "Situación existente" )
+         aGet[ ( dbfSitua )->( FieldPos( "cSitua" ) ) ]:SetFocus()
+         return nil
+      end
+   end
+
+   if Empty( aTmp[ ( dbfSitua )->( FieldPos( "cSitua" ) ) ] )
+      MsgStop( "La situación no puede estar vacía" )
+      aGet[ ( dbfSitua )->( FieldPos( "cSitua" ) ) ]:SetFocus()
+      return nil
+   end
+
+
+
+   WinGather( aTmp, aGet, dbfSitua, oBrw, nMode )
+
+RETURN ( oDlg:end( 1 ) )
+
+
+
+
+
+
+
+
+
+
+
+
+
+Function aSituacion( dbfSitua )
+
+   local oError
+   local oBlock
+   local aSitua   := {}
+
+   oBlock         := ErrorBlock( {| oError | ApoloBreak( oError ) } )
+   BEGIN SEQUENCE
+
+
+
+
+
+      aAdd( aSitua, "" )
+
+      ( dbfSitua )->( dbGoTop() )
+      while !( dbfSitua )->( Eof() )
+         aAdd( aSitua, ( dbfSitua )->cSitua )
+         ( dbfSitua )->( dbSkip() )
+      end
+
+   RECOVER USING oError
+
+      msgStop( "Imposible cargar situaciones" + Chr(13)+Chr(10) + ErrorMessage( oError )  )
+
+   end
+
+   ErrorBlock( oBlock )
+
+Return aSitua
+
+
+
+
+
+
+FUNCTION mkSitua( cPath, lAppend, cPathOld, oMeter )
+
+   local dbfSitua
+
+   IIF( cPath == nil, cPath := cPatDat(), ) ;
+   IIF( lAppend == nil, lAppend := .F., ) ;
+
+   if !lExistTable( cPath + "Situa.Dbf" )
+      dbCreate( cPath + "Situa.Dbf", { { "cSitua", "C", 30, 0 } }, cDriver() )
+   end
+
+   if lExistIndex( cPath + "Situa.Cdx" )
+      fErase( cPath + "Situa.Cdx" )
+   end
+
+   if lAppend .AND. lIsDir( cPathOld )
+
+      if file( cPathOld + "Situa.Dbf" )
+
+         dbUseArea( .T., cDriver(), "Situa.Dbf", cCheckArea( "Situa", @dbfSitua ), .F. )
+         ( dbfSitua )->( __dbApp( cPathOld + "Situa.Dbf" ) )
+
+      end
+
+   end
+
+   ( dbfSitua )->( dbCloseArea() )
+
+RETURN .T.
+
+
+
+
+
+
+
+FUNCTION rxSitua( cPath, oMeter )
+
+   local dbfSitua
+
+   IIF( cPath == nil, cPath := cPatDat(), ) ;
+
+   IF !lExistTable( cPath + "SITUA.DBF" )
+      dbCreate( cPath + "Situa.Dbf", { { "cSitua", "C", 30, 0 } }, cDriver() )
+   end
+
+   IF lExistIndex( cPath + "SITUA.CDX" )
+      fErase( cPath + "SITUA.CDX" )
+   end
+
+   if lExistTable( cPath + "SITUA.DBF" )
+      dbUseArea( .T., cDriver(), cPath + "SITUA.DBF", cCheckArea( "SITUA", @dbfSitua ), .F. )
+
+      if !( dbfSitua )->( neterr() )
+         ( dbfSitua )->( __dbPack() )
+
+         ( dbfSitua )->( ordCondSet("!Deleted()", {||!Deleted()}  ) )
+         ( dbfSitua )->( ordCreate( cPath + "SITUA.CDX", "CSITUA", "Upper( Field->cSitua )", {|| Upper( Field->cSitua ) } ) )
+
+         ( dbfSitua )->( dbCloseArea() )
+      else
+
+         msgStop( "Imposible abrir en modo exclusivo situaciones" )
+
+      end
+
+   end
+
+RETURN NIL
+
+
+
+
+
+
+
+FUNCTION IsSitua()
+
+   local oError
+   local oBlock   := ErrorBlock( {| oError | ApoloBreak( oError ) } )
+
+   BEGIN SEQUENCE
+
+   if !lExistTable( cPatDat() + "SITUA.DBF" )
+      mkSitua( cPatDat() )
+   end
+
+   if !lExistIndex( cPatDat() + "SITUA.CDX" )
+      rxSitua( cPatDat() )
+   end
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+   RECOVER USING oError
+
+      msgStop( "Imposible realizar las comprobación inicial de situaciones" + Chr(13)+Chr(10) + ErrorMessage( oError ) )
+
+   end
+
+   ErrorBlock( oBlock )
+
+ RETURN ( .T. )

@@ -1,0 +1,2725 @@
+#line 112 "hbclass.ch"
+   DYNAMIC DivertConstructorCall
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+DECLARE HBClass  New( cName AS String, OPTIONAL SuperParams ) AS CLASS HBClass  Create() AS Object  Instance() AS Object  AddClsMethod( cName AS String, @MethodName(), nScope AS Numeric, n2 AS Numeric, n3 AS Numeric )  AddDelegate( cName AS String, cDelegate AS String, cObject AS String, nScope AS Numeric, lPersistent AS LOGICAL )  AddMultiClsData( cType AS String, uVal, nScope AS Numeric, aDatas AS Array OF String )  AddMultiData( cType AS String, uVal, nScope AS Numeric, aDatas AS Array OF String, x AS LOGICAL, lPer AS LOGICAL )  AddMethod( cName AS String, @MethodName(), nScope AS Numeric, lPersistent AS LOGICAL )  AddInLine( cName AS String, bBlock AS CodeBlock, nScope AS Numeric, lPersistent AS LOGICAL )  AddVirtual( cName AS String )  ModMethod( cName AS String, @MethodName(), nScope AS Numeric, lPersistent AS LOGICAL )  ModClsMethod( cName AS String, @MethodName(), nScope AS Numeric )  ModInline( cName AS String, bBlock AS CodeBlock, nScope AS Numeric, lPersistent AS LOGICAL )  SetOnError( @MethodName() )
+#line 85 "\Fwh1204\Include\FiveWin.Ch"
+   EXTERNAL GetProcAdd
+   EXTERNAL TActiveX
+
+
+
+
+extern errorsys
+#line 104 ".\Prg\Depage.prg"
+memvar cDbfCol
+memvar nTotArt
+memvar nTotCaj
+memvar cDbf
+memvar cDetalle
+memvar cIva
+memvar cFPago
+memvar nTotNet
+memvar aTotIva
+memvar aIvaUno
+memvar aIvaDos
+memvar aIvaTre
+memvar nTotBrt
+memvar nTotDto
+memvar nTotDpp
+memvar nTotCnt
+memvar nTotRap
+memvar nTotPub
+memvar nTotPgo
+memvar nTotPtf
+memvar nTotIva
+memvar nTotReq
+memvar nTotDep
+memvar nTotEur
+memvar nPagina
+memvar lEnd
+memvar cDbfVta
+memvar cPouDivDep
+memvar cPorDivDep
+memvar nDouDivDep
+memvar nDorDivDep
+memvar cDbfAlm
+
+static oWndBrw
+static oInf
+static dbfDepAgeT
+static dbfDepAgeL
+static dbfDiv
+static oBandera
+static dbfTmp
+static cNewFile
+static dbfAlmT
+static dbfIva
+static dbfFPago
+static dbfTarPreL
+static dbfArticulo
+static dbfKit
+static dbfPromoT
+static dbfUsr
+static dbfDelega
+static dbfDoc
+static dbfCount
+static dbfEmp
+static oStock
+static oGetTotal
+static oGetTotEur
+static dbfTVta
+static oBrwIva
+static cPicUnd
+static cPouDiv
+static cPorDiv
+static nDouDiv
+static nDorDiv
+static cPpvDiv
+static nDpvDiv
+static oGetNet
+static oGetIva
+static oGetReq
+static nGetNet     := 0
+static nGetIva     := 0
+static nTotalImp    := 0
+static nTotalArt    := 0
+static nGetReq      := 0
+static nNumArt    := 0
+static nNumCaj    := 0
+static bEdit      := { |aTmp, aGet, dbfDepAgeT, oBrw, bWhen, bValid, nMode | EdtRec( aTmp, aGet, dbfDepAgeT, oBrw, bWhen, bValid, nMode ) }
+static bEdit2      := { |aTmp, aGet, dbfDepAgeL, oBrw, bWhen, bValid, nMode, aTmpDep | EdtDet( aTmp, aGet, dbfDepAgeL, oBrw, bWhen, bValid, nMode, aTmpDep ) }
+
+
+
+
+
+
+
+function aItmDepAge()
+
+   local aItmDepAge  := {}
+
+   aAdd( aItmDepAge, { "CSERDEP"   ,"C",  1, 0, "Serie del deposito a almacén",                             "",                   "", "( cDbf )"} )
+   aAdd( aItmDepAge, { "NNUMDEP"   ,"N",  9, 0, "Número del deposito a almacén",                            "",                   "", "( cDbf )"} )
+   aAdd( aItmDepAge, { "CSUFDEP"   ,"C",  2, 0, "Sufijo del deposito a almacén",                            "",                   "", "( cDbf )"} )
+   aAdd( aItmDepAge, { "DFECDEP"   ,"D",  8, 0, "Fecha del pedido",                                         "",                   "", "( cDbf )"} )
+   aAdd( aItmDepAge, { "CCODALM"   ,"C",  3, 0, "Código de almacén de entrada",                             "",                   "", "( cDbf )"} )
+   aAdd( aItmDepAge, { "CNOMALM"   ,"C", 35, 0, "Nombre del almacén de entrada",                            "",                   "", "( cDbf )"} )
+   aAdd( aItmDepAge, { "CDIRALM"   ,"C", 35, 0, "Domicilio del almacén de entrada",                         "",                   "", "( cDbf )"} )
+   aAdd( aItmDepAge, { "CPOBALM"   ,"C", 25, 0, "Población del almacén de entrada",                         "",                   "", "( cDbf )"} )
+   aAdd( aItmDepAge, { "CPRVALM"   ,"C", 20, 0, "Provincia del almacén de entrada",                         "",                   "", "( cDbf )"} )
+   aAdd( aItmDepAge, { "CPOSALM"   ,"C",  5, 0, "Código postal del almacén de entrada",                     "",                   "", "( cDbf )"} )
+   aAdd( aItmDepAge, { "CCODALI"   ,"C",  3, 0, "Código de almacén de salida",                              "",                   "", "( cDbf )"} )
+   aAdd( aItmDepAge, { "LLIQDEP"   ,"L",  1, 0, "Lógico para liquidación",                                  "",                   "", "( cDbf )"} )
+   aAdd( aItmDepAge, { "CCODPGO"   ,"C",  2, 0, "Código del tipo de pago",                                  "",                   "", "( cDbf )"} )
+   aAdd( aItmDepAge, { "NBULTOS"   ,"N",  3, 0, "Número de bultos",                                         "",                   "", "( cDbf )"} )
+   aAdd( aItmDepAge, { "NPORTES"   ,"N",  6, 0, "Importe de los portes",                                    "",                   "", "( cDbf )"} )
+   aAdd( aItmDepAge, { "CCODTAR"   ,"C",  5, 0, "Código de tarifa",                                         "",                   "", "( cDbf )"} )
+   aAdd( aItmDepAge, { "CDTOESP"   ,"C", 50, 0, "Descripción de porcentaje de descuento especial",          "",                   "", "( cDbf )"} )
+   aAdd( aItmDepAge, { "NDTOESP"   ,"N",  5, 2, "Porcentaje de descuento especial",                         "",                   "", "( cDbf )"} )
+   aAdd( aItmDepAge, { "CDPP"      ,"C", 50, 0, "Descripción de porcentaje de descuento por pronto pago",   "",                   "", "( cDbf )"} )
+   aAdd( aItmDepAge, { "NDPP"      ,"N",  5, 2, "Porcentaje de descuento por pronto pago",                  "",                   "", "( cDbf )"} )
+   aAdd( aItmDepAge, { "cDtoUno"   ,"C", 25, 2, "Descripción de primer dto. definido",                      "",                   "", "( cDbf )"} )
+   aAdd( aItmDepAge, { "nDtoUno"   ,"N",  5, 2, "Porcentaje de primer dto. definido",                       "",                   "", "( cDbf )"} )
+   aAdd( aItmDepAge, { "cDtoDos"   ,"C", 25, 2, "Descripción segundo dto. definido",                        "",                   "", "( cDbf )"} )
+   aAdd( aItmDepAge, { "nDtoDos"   ,"N",  5, 2, "Porcentaje de segundo dto. definido",                      "",                   "", "( cDbf )"} )
+   aAdd( aItmDepAge, { "LRECARGO"  ,"L",  1, 0, "Lógico de recargo de equivalencia",                        "",                   "", "( cDbf )"} )
+   aAdd( aItmDepAge, { "CDIVDEP"   ,"C",  3, 0, "Código de divisa",                                         "",                   "", "( cDbf )"} )
+   aAdd( aItmDepAge, { "NVDVDEP"   ,"N", 10, 4, "Valor del cambio de la divisa",                            "",                   "", "( cDbf )"} )
+   aAdd( aItmDepAge, { "CCODUSR"   ,"C",  3, 0, "Código de usuario",                                        "",                   "", "( cDbf )"} )
+   aAdd( aItmDepAge, { "CCODDLG"   ,"C",  2, 0, "Código delegación",                                        "",                   "", "( cDbf )"} )
+
+RETURN ( aItmDepAge )
+
+
+
+function aColDepAge()
+
+   local aColDepAge  := {}
+
+   aAdd( aColDepAge, { "CSERDEP"   ,"C",  1, 0, "Serie del deposito a almacén",     "" ,           "",                            "( cDbfCol )"} )
+   aAdd( aColDepAge, { "NNUMDEP"   ,"N",  9, 0, "Número del deposito a almacén",    "" ,           "",                            "( cDbfCol )"} )
+   aAdd( aColDepAge, { "CSUFDEP"   ,"C",  2, 0, "Sufijo del deposito a almacén",    "" ,           "",                            "( cDbfCol )"} )
+   aAdd( aColDepAge, { "CREF",      "C", 18, 0, "Referencia de artículo",           "" ,           "",                            "( cDbfCol )"} )
+   aAdd( aColDepAge, { "CDETALLE",  "C",100, 0, "Detalle de artículo",              "" ,           "",                            "( cDbfCol )"} )
+   aAdd( aColDepAge, { "NPREUNIT",  "N", 16, 6, "Precio artículo",                  "" ,           "",                            "( cDbfCol )"} )
+   aAdd( aColDepAge, { "NDTO",      "N",  6, 2, "Descuento de artículo",            "" ,           "",                            "( cDbfCol )"} )
+   aAdd( aColDepAge, { "NDTOPRM",   "N",  6, 2, "Descuento de promoción",           "" ,           "",                            "( cDbfCol )"} )
+   aAdd( aColDepAge, { "NIVA",      "N",  4, 1, cImp() + " del artículo",                 "" ,           "",                            "( cDbfCol )"} )
+   aAdd( aColDepAge, { "NCANENT",   "N", 16, 6, "Cantidad entrada",                 "" ,           "",                            "( cDbfCol )"} )
+   aAdd( aColDepAge, { "NPESOKG",   "N", 16, 6, "Peso en kg. del producto",         "" ,           "",                            "( cDbfCol )"} )
+   aAdd( aColDepAge, { "CUNIDAD",   "C",  2, 0, "Unidades",                         "" ,           "",                            "( cDbfCol )"} )
+   aAdd( aColDepAge, { "NUNICAJA",  "N", 16, 6, "Unidades por caja",                "" ,           "",                            "( cDbfCol )"} )
+   aAdd( aColDepAge, { "DFECHA",    "D",  8, 0, "Fecha de línea",                   "" ,           "",                            "( cDbfCol )"} )
+   aAdd( aColDepAge, { "CTIPMOV",   "C",  2, 0, "Tipo de movimiento",               "" ,           "",                            "( cDbfCol )"} )
+   aAdd( aColDepAge, { "LLOTE",     "L",  1, 0, "Lógico para lote",                 "" ,           "",                            "( cDbfCol )"} )
+   aAdd( aColDepAge, { "NLOTE",     "N",  9, 0, "",                                 "" ,           "",                            "( cDbfCol )"} )
+   aAdd( aColDepAge, { "CLOTE",     "C", 12, 0, "Número de lote",                   "" ,           "",                            "( cDbfCol )"} )
+   aAdd( aColDepAge, { "LMSGVTA",   "L",  1, 0, "Avisar depósito sin stocks",       "" ,           "",                            "( cDbfCol )"} )
+   aAdd( aColDepAge, { "LNOTVTA",   "L",  1, 0, "No permitir depósito sin stocks",  "" ,           "",                            "( cDbfCol )"} )
+
+return ( aColDepAge )
+
+
+
+
+function aCalDepAge()
+
+   local aCalDepAge  := {}
+
+   aAdd( aCalDepAge, { "nTotNet",   "N", 16,  6, "Total neto",                  "cPorDivDep",  "!Empty( nTotNet ) .and. lEnd" } )
+   aAdd( aCalDepAge, { "nTotIva",   "N", 16,  6, "Total " + cImp(),                "cPorDivDep",  "!Empty( nTotIva ) .and. lEnd" } )
+   aAdd( aCalDepAge, { "nTotReq",   "N", 16,  6, "Total R.E.",                  "cPorDivDep",  "!Empty( nTotReq ) .and. lEnd" } )
+   aAdd( aCalDepAge, { "nTotDep",   "N", 16,  6, "Total Depósito",              "cPorDivDep",  "!Empty( nTotDep ) .and. lEnd" } )
+   aAdd( aCalDepAge, { "nPagina",   "N",  2,  0, "Número de página",            "'99'",         "" }                            )
+   aAdd( aCalDepAge, { "lEnd",      "L",  1,  0, "Fin del documento",           "",             "" }                            )
+
+return ( aCalDepAge )
+
+
+
+function aCocDepAge()
+
+   local aCocDepAge  := {}
+
+   aAdd( aCocDepAge, {"( Descrip( cDbfCol ) )",                                 "C", 50, 0, "Detalle del artículo",              "",               "Descripción",    "" } )
+   aAdd( aCocDepAge, {"( nTotLDepAge( cDbfCol ) )",                             "N", 16, 6, "Total línea de depósito",           "cPorDivDep",     "Total",       "" } )
+
+return ( aCocDepAge )
+
+
+
+STATIC FUNCTION OpenFiles( cPath )
+
+   local lOpen    := .T.
+   local oError
+   local oBlock
+
+   IIF( cPath == nil, cPath := cPatEmp(), ) ;
+
+   oBlock         := ErrorBlock( {| oError | ApoloBreak( oError ) } )
+   BEGIN SEQUENCE
+
+   dbUseArea( .T., ( cDriver() ), ( cPath + "DEPAGET.DBF" ), ( cCheckArea( "DEPAGET", @dbfDepAgeT ) ), if(.T. .OR. .F., !.F., NIL), .F.,, )
+   if !lAIS() ; ordListAdd( ( cPath + "DEPAGET.CDX" ) ) ; else ; ordSetFocus( 1 ) ; end
+
+   dbUseArea( .T., ( cDriver() ), ( cPath + "DEPAGEL.DBF" ), ( cCheckArea( "DEPAGEL", @dbfDepAgeL ) ), if(.T. .OR. .F., !.F., NIL), .F.,, )
+   if !lAIS() ; ordListAdd( ( cPath + "DEPAGEL.CDX" ) ) ; else ; ordSetFocus( 1 ) ; end
+
+   dbUseArea( .T., ( cDriver() ), ( cPatDat() + "TIVA.DBF" ), ( cCheckArea( "TIVA", @dbfIva ) ), if(.T. .OR. .F., !.F., NIL), .F.,, )
+   if !lAIS() ; ordListAdd( ( cPatDat() + "TIVA.CDX" ) ) ; else ; ordSetFocus( 1 ) ; end
+
+   dbUseArea( .T., ( cDriver() ), ( cPatGrp() + "FPAGO.DBF" ), ( cCheckArea( "FPAGO", @dbfFPago ) ), if(.T. .OR. .F., !.F., NIL), .F.,, )
+   if !lAIS() ; ordListAdd( ( cPatGrp() + "FPAGO.CDX" ) ) ; else ; ordSetFocus( 1 ) ; end
+
+   dbUseArea( .T., ( cDriver() ), ( cPatAlm() + "ALMACEN.DBF" ), ( cCheckArea( "ALMACEN", @dbfAlmT ) ), if(.T. .OR. .F., !.F., NIL), .F.,, )
+   if !lAIS() ; ordListAdd( ( cPatAlm() + "ALMACEN.CDX" ) ) ; else ; ordSetFocus( 1 ) ; end
+
+   dbUseArea( .T., ( cDriver() ), ( cPatArt() + "TARPREL.DBF" ), ( cCheckArea( "TARPREL", @dbfTarPreL ) ), if(.T. .OR. .F., !.F., NIL), .F.,, )
+   if !lAIS() ; ordListAdd( ( cPatArt() + "TARPREL.CDX" ) ) ; else ; ordSetFocus( 1 ) ; end
+
+   dbUseArea( .T., ( cDriver() ), ( cPatArt() + "PROMOT.DBF" ), ( cCheckArea( "PROMOT", @dbfPromoT ) ), if(.T. .OR. .F., !.F., NIL), .F.,, )
+   if !lAIS() ; ordListAdd( ( cPatArt() + "PROMOT.CDX" ) ) ; else ; ordSetFocus( 1 ) ; end
+
+   dbUseArea( .T., ( cDriver() ), ( cPatArt() + "ARTICULO.DBF" ), ( cCheckArea( "ARTICULO", @dbfArticulo ) ), if(.T. .OR. .F., !.F., NIL), .F.,, )
+   if !lAIS() ; ordListAdd( ( cPatArt() + "ARTICULO.CDX" ) ) ; else ; ordSetFocus( 1 ) ; end
+
+   dbUseArea( .T., ( cDriver() ), ( cPatDat() + "DIVISAS.DBF" ), ( cCheckArea( "DIVISAS", @dbfDiv ) ), if(.T. .OR. .F., !.F., NIL), .F.,, )
+   if !lAIS() ; ordListAdd( ( cPatDat() + "DIVISAS.CDX" ) ) ; else ; ordSetFocus( 1 ) ; end
+
+   dbUseArea( .T., ( cDriver() ), ( cPatDat() + "TVTA.DBF" ), ( cCheckArea( "TVTA", @dbfTVta ) ), if(.T. .OR. .F., !.F., NIL), .F.,, )
+   if !lAIS() ; ordListAdd( ( cPatDat() + "TVTA.CDX" ) ) ; else ; ordSetFocus( 1 ) ; end
+
+   dbUseArea( .T., ( cDriver() ), ( cPatArt() + "ARTKIT.DBF" ), ( cCheckArea( "ARTTIK", @dbfKit ) ), if(.T. .OR. .F., !.F., NIL), .F.,, )
+   if !lAIS() ; ordListAdd( ( cPatArt() + "ARTKIT.CDX" ) ) ; else ; ordSetFocus( 1 ) ; end
+
+   dbUseArea( .T., ( cDriver() ), ( cPatDat() + "USERS.DBF" ), ( cCheckArea( "USERS", @dbfUsr ) ), if(.T. .OR. .F., !.F., NIL), .F.,, )
+   if !lAIS() ; ordListAdd( ( cPatDat() + "USERS.CDX" ) ) ; else ; ordSetFocus( 1 ) ; end
+
+   dbUseArea( .T., ( cDriver() ), ( cPatDat() + "DELEGA.DBF" ), ( cCheckArea( "DELEGA", @dbfDelega ) ), if(.T. .OR. .F., !.F., NIL), .F.,, )
+   if !lAIS() ; ordListAdd( ( cPatDat() + "DELEGA.CDX" ) ) ; else ; ordSetFocus( 1 ) ; end
+
+   dbUseArea( .T., ( cDriver() ), ( cPath + "NCOUNT.DBF" ), ( cCheckArea( "NCOUNT", @dbfCount ) ), if(.T. .OR. .F., !.F., NIL), .F.,, )
+   if !lAIS() ; ordListAdd( ( cPath + "NCOUNT.CDX" ) ) ; else ; ordSetFocus( 1 ) ; end
+
+   dbUseArea( .T., ( cDriver() ), ( cPath + "RDOCUMEN.DBF" ), ( cCheckArea( "RDOCUMEN", @dbfDoc ) ), if(.T. .OR. .F., !.F., NIL), .F.,, )
+   if !lAIS() ; ordListAdd( ( cPath + "RDOCUMEN.CDX" ) ) ; else ; ordSetFocus( 1 ) ; end
+   ordSetFocus( "CTIPO" )
+
+   dbUseArea( .T., ( cDriver() ), ( cPatDat() + "EMPRESA.DBF" ), ( cCheckArea( "EMPRESA", @dbfEmp ) ), if(.T. .OR. .F., !.F., NIL), .F.,, )
+   if !lAIS() ; ordListAdd( ( cPatDat() + "EMPRESA.CDX" ) ) ; else ; ordSetFocus( 1 ) ; end
+
+   oBandera             := TBandera():New()
+
+   oStock               := TStock():Create( cPatGrp() )
+   if !oStock:lOpenFiles()
+      lOpen             := .F.
+   else
+      oStock:cDepAgeT   := dbfDepAgeT
+      oStock:cDepAgeL   := dbfDepAgeL
+      oStock:cKit       := dbfKit
+   end
+
+   RECOVER USING oError
+
+      lOpen             := .F.
+
+      msgStop( "Imposible abrir las bases de datos de depositos." + Chr(13)+Chr(10) + ErrorMessage( oError ) )
+
+   end
+
+   ErrorBlock( oBlock )
+
+   if !lOpen
+      CloseFiles()
+   end
+
+RETURN ( lOpen )
+
+
+
+STATIC FUNCTION CloseFiles()
+
+   ( dbfDepAgeT   )->( dbCloseArea() )
+   ( dbfDepAgeL   )->( dbCloseArea() )
+   ( dbfIva       )->( dbCloseArea() )
+   ( dbfFPago     )->( dbCloseArea() )
+   ( dbfAlmT      )->( dbCloseArea() )
+   ( dbfTarPreL   )->( dbCloseArea() )
+   ( dbfPromoT    )->( dbCloseArea() )
+   ( dbfArticulo  )->( dbCloseArea() )
+   ( dbfDiv       )->( dbCloseArea() )
+   ( dbfTVta      )->( dbCloseArea() )
+   ( dbfKit       )->( dbCloseArea() )
+   ( dbfUsr       )->( dbCloseArea() )
+   ( dbfDelega    )->( dbCloseArea() )
+   ( dbfDoc       )->( dbCloseArea() )
+   ( dbfCount     )->( dbCloseArea() )
+   ( dbfEmp       )->( dbCloseArea() )
+
+   if oStock <> nil
+      oStock:end()
+   end
+
+   dbfDepAgeT     := nil
+   dbfDepAgeL     := nil
+   dbfIva         := nil
+   dbfFPago       := nil
+   dbfAlmT        := nil
+   dbfTarPreL     := nil
+   dbfPromoT      := nil
+   dbfArticulo    := nil
+   dbfDiv         := nil
+   dbfKit         := nil
+   oBandera       := nil
+   oStock         := nil
+   dbfTVta        := nil
+   dbfUsr         := nil
+   dbfDelega      := nil
+   dbfDoc         := nil
+   dbfCount       := nil
+   dbfEmp         := nil
+
+   if oWndBrw <> nil
+      oWndBrw     := nil
+   end
+
+RETURN .T.
+
+
+
+FUNCTION DepAge( oMenuItem, oWnd )
+
+   local oBtnEur
+   local nLevel
+    local lEuro        := .F.
+   local oImp
+   local oPrv
+
+   local aDbfBmp  := {  LoadBitmap( GetResources(), "bGreen" ), LoadBitmap( GetResources(), "bRed" ) }
+
+   IIF( oMenuItem == nil, oMenuItem := "01028", ) ;
+   IIF( oWnd == nil, oWnd := oWnd(), ) ;
+
+    IF oWndBrw == NIL
+
+
+
+
+
+      nLevel            := nLevelUsr( oMenuItem )
+      if nAnd( nLevel, 1 ) <> 0
+         msgStop( "Acceso no permitido." )
+         return nil
+      end
+
+
+
+
+
+      if oWnd <> nil
+         SysRefresh(); oWnd:CloseAll(); SysRefresh()
+      end
+
+      if !OpenFiles()
+         return nil
+      end
+
+
+
+
+
+      AddMnuNext( "Introducción de depósitos", ProcName() )
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+      oWndBrw := TShell():New( 0, 0, 22, 80, "Introducción de depósitos",, oWnd,,, .F.,,, ( dbfDepAgeT ),,,,, {"Número",    "Fecha", "Almacén entrada"}, {||( WinAppRec( oWndBrw:oBrw, bEdit, dbfDepAgeT ) )}, {||( WinEdtRec( oWndBrw:oBrw, bEdit, dbfDepAgeT ) )}, {||( dbDelRec(  oWndBrw:oBrw, dbfDepAgeT, {|| DelDetalle( (dbfDepAgeT)->CSERDEP + Str( (dbfDepAgeT)->NNUMDEP ) + (dbfDepAgeT)->CSUFDEP ) } ) )}, {||( WinDupRec( oWndBrw:oBrw, bEdit, dbfDepAgeT ) )}, nil, nLevel, "Package_add_16", ( 128 + ( 57 * 256 ) + ( 123 * 65536 ) ),,, )
+
+         oWndBrw:lAutoSeek := .F.
+
+      with object ( oWndBrw:AddXCol() )
+         :cHeader          := "Liquidado"
+         :nHeadBmpNo       := 3
+         :bStrData         := {|| "" }
+         :bEditValue       := {|| ( dbfDepAgeT )->lLiqDep }
+         :nWidth           := 20
+         :SetCheck( { "Sel16", "Nil16" } )
+         :AddResource( "ChgPre16" )
+      end
+
+      with object ( oWndBrw:AddXCol() )
+         :cHeader          := "Número"
+         :cSortOrder       := "nNumDep"
+         :bEditValue       := {|| ( dbfDepAgeT )->CSERDEP + "/" + Alltrim( Str( ( dbfDepAgeT )->NNUMDEP ) ) + "/" + ( dbfDepAgeT )->CSUFDEP }
+         :nWidth           := 80
+         :bLClickHeader    := {| nMRow, nMCol, nFlags, oCol | oWndBrw:ClickOnHeader( oCol ) }
+      end
+
+      with object ( oWndBrw:AddXCol() )
+         :cHeader          := "Delegación"
+         :bEditValue       := {|| ( dbfDepAgeT )->cCodDlg }
+         :nWidth           := 40
+      end
+
+      with object ( oWndBrw:AddXCol() )
+         :cHeader          := "Fecha"
+         :bEditValue       := {|| Dtoc( ( dbfDepAgeT )->dFecDep ) }
+         :nWidth           := 80
+      end
+
+      with object ( oWndBrw:AddXCol() )
+         :cHeader          := "Almacén entrada"
+         :cSortOrder       := "cCodAlm"
+         :bEditValue       := {|| ( dbfDepAgeT )->cCodAlm + Space( 1 ) + RetAlmacen( ( dbfDepAgeT )->cCodAlm, dbfAlmT ) }
+         :nWidth           := 180
+         :bLClickHeader    := {| nMRow, nMCol, nFlags, oCol | oWndBrw:ClickOnHeader( oCol ) }
+      end
+
+      with object ( oWndBrw:AddXCol() )
+         :cHeader          := "Almacén salida"
+         :bEditValue       := {|| ( dbfDepAgeT )->cCodAli + Space( 1 ) + RetAlmacen( ( dbfDepAgeT )->cCodAli, dbfAlmT ) }
+         :nWidth           := 180
+         :bLClickHeader    := {| nMRow, nMCol, nFlags, oCol | oWndBrw:ClickOnHeader( oCol ) }
+      end
+
+      with object ( oWndBrw:AddXCol() )
+         :cHeader          := "Total"
+         :bEditValue       := {|| nTotDepAge( ( dbfDepAgeT )->CSERDEP + Str( ( dbfDepAgeT )->NNUMDEP ) + ( dbfDepAgeT )->CSUFDEP, dbfDepAgeT, dbfDepAgeL, dbfIva, dbfDiv, nil, if( lEuro, cDivChg(), cDivEmp() ) ) }
+         :nWidth           := 80
+         :nDataStrAlign    := 1
+         :nHeadStrAlign    := 1
+      end
+
+      with object ( oWndBrw:AddXCol() )
+         :cHeader          := "Div"
+         :bEditValue       := {|| cSimDiv( ( dbfDepAgeT )->cDivDep, dbfDiv ) }
+         :nWidth           := 40
+      end
+
+      oWndBrw:CreateXFromCode()
+
+
+
+
+
+      oWndBrw:NewAt( "BUS",,, {||( oWndBrw:SearchSetFocus() )}, "(B)uscar", "B",,,,, .F. )
+
+      oWndBrw:AddSeaBar()
+
+
+
+
+
+
+
+
+        oWndBrw:NewAt( "NEW",,, {||( oWndBrw:RecAdd() )}, "(A)ñadir", "A",,, 2,, .F. )
+
+
+
+
+
+
+      oWndBrw:NewAt( "DUP",,, {||( oWndBrw:RecDup() )}, "(D)uplicar", "D",,, 2,, .F. )
+
+
+
+
+
+
+        oWndBrw:NewAt( "EDIT",,, {||( oWndBrw:RecEdit() )}, "(M)odificar", "M",,, 4,, .F. )
+
+
+
+
+
+
+        oWndBrw:NewAt( "ZOOM",,, {||( WinZooRec( oWndBrw:oBrw, bEdit, dbfDepAgeT ) )}, "(Z)oom", "Z",,, 8,, .F. )
+
+
+
+
+
+
+        oWndBrw:NewAt( "DEL",,, {||( oWndBrw:RecDel() )}, "(E)liminar", "E",,, 16,, .F. )
+
+
+
+
+
+
+      oImp := oWndBrw:NewAt( "IMP",,, {||( nGenDeposito( .T. ) )}, "(I)mprimir", "I",,, 32,, .F. )
+
+
+      lGenDepAge( oWndBrw:oBrw, oImp, .T. )
+
+
+
+
+
+      oPrv := oWndBrw:NewAt( "PREV1",,, {||( GenDeposito( .F. ) )}, "(P)revisualizar", "P",,, 32,, .F. )
+
+
+      lGenDepAge( oWndBrw:oBrw, oPrv, .F. )
+
+
+
+
+
+      oWndBrw:NewAt( "CHGSTATE",,, {||( ChgState( oWndBrw:oBrw ) )}, "Cambiar Es(t)ado", "T",,, 4,, .F. )
+
+
+
+
+
+        oBtnEur := oWndBrw:NewAt( "BAL_EURO",,, {||( lEuro := !lEuro, oWndBrw:Refresh() )}, "M(o)neda", "O",,,,, .F. )
+
+
+
+
+
+      oWndBrw:NewAt( "END",,, {||( oWndBrw:End() )}, "(S)alir", "S",,,,, .F. )
+
+        oWndBrw:Activate(, oWndBrw:bLClicked, oWndBrw:bRClicked, oWndBrw:bMoved, oWndBrw:bResized, oWndBrw:bPainted, oWndBrw:bKeyDown, oWndBrw:bInit,,,,,,,,, {|| ( CloseFiles() )},, oWndBrw:bLButtonUp )
+
+    ELSE
+
+        oWndBrw:setFocus()
+
+    end
+
+RETURN NIL
+
+
+
+STATIC FUNCTION SetDlgMode( aGet, aTmp, oSayLote, nMode, oSayCaja )
+
+   if !lUseCaj()
+      oSayCaja:hide()
+      aGet[( dbfDepAgeL )->( FieldPos( "NCANENT"  ) )]:hide()
+   end
+
+   aGet[ ( dbfDepAgeL )->( FieldPos( "CTIPMOV"  ) ) ]:lValid()
+
+   DO CASE
+    CASE nMode == 1
+      aGet[( dbfDepAgeL )->( FieldPos( "cLote"    ) )   ]:hide()
+      oSayLote:hide()
+   CASE ( nMode == 2 .OR. nMode == 3 )
+      IF aTmp[( dbfDepAgeL )->( FieldPos( "LLOTE"    ) )]
+         aGet[( dbfDepAgeL )->( FieldPos( "cLote"    ) )   ]:Show()
+         oSayLote:Show()
+      ELSE
+         aGet[( dbfDepAgeL )->( FieldPos( "cLote"    ) )   ]:Hide()
+         oSayLote:Hide()
+      end
+   end
+
+RETURN NIL
+
+
+
+
+
+
+
+STATIC FUNCTION AppDeta(oBrw2, bEdit2, aTmp)
+
+    WinAppRec( oBrw2, bEdit2, dbfTmp, , , aTmp )
+
+RETURN ( nTotDepAge( 0, nil, dbfTmp, dbfIva, dbfDiv, aTmp ) )
+
+
+
+
+
+
+STATIC FUNCTION EdtDeta(oBrw2, bEdit2, aTmp )
+
+    WinEdtRec( oBrw2, bEdit2, dbfTmp, , , aTmp )
+
+RETURN ( nTotDepAge( 0, nil, dbfTmp, dbfIva, dbfDiv, aTmp ) )
+
+
+
+
+
+
+
+STATIC FUNCTION DelDeta( oBrw2, aTmp )
+
+    dbDelRec( oBrw2, dbfTmp )
+
+RETURN ( nTotDepAge( nil, nil, dbfTmp, dbfIva, dbfDiv, aTmp ) )
+
+
+
+
+
+
+
+STATIC FUNCTION EdtZoom( oBrw2, bEdit2, aTmp )
+
+    WinZooRec( oBrw2, bEdit2, dbfTmp )
+
+RETURN NIL
+
+
+
+STATIC FUNCTION SaveDeta( aTmp, aGet, oBrw, oDlg2, nMode, oTotal, aTmpDep, oBtn )
+
+   local nTotUnd     := 0
+   local nStkAct     := 0
+
+   oBtn:SetFocus()
+
+
+
+
+
+   if !Empty( aTmp[ ( dbfDepAgeL )->( FieldPos( "CREF"     ) ) ] ) .AND. ( aTmp[ ( dbfDepAgeL )->( FieldPos( "LNOTVTA"  ) ) ] .OR. aTmp[ ( dbfDepAgeL )->( FieldPos( "LMSGVTA"  ) ) ] )
+
+      nTotUnd        := NotCaja( aTmp[ ( dbfDepAgeL )->( FieldPos( "NCANENT"  ) ) ]  ) * aTmp[ ( dbfDepAgeL )->( FieldPos( "NUNICAJA" ) ) ]
+      nStkAct        := oStock:nStockActual( aTmp[ ( dbfDepAgeL )->( FieldPos( "CREF"     ) ) ], aTmpDep[ ( dbfDepAgeT )->( FieldPos( "CCODALI" ) ) ], , , aTmp[ ( dbfDepAgeL )->( FieldPos( "cLote"    ) ) ] )
+
+      if nTotUnd <> 0
+
+         do case
+            case nStkAct - nTotUnd < 0
+
+               if aTmp[ ( dbfDepAgeL )->( FieldPos( "LNOTVTA"  ) ) ]
+                  MsgStop( "No hay stock suficiente." )
+                  return nil
+               end
+
+               if aTmp[ ( dbfDepAgeL )->( FieldPos( "LMSGVTA"  ) ) ]
+                  if !ApoloMsgNoYes( "No hay stock suficiente.", "¿Desea continuar?" )
+                     return nil
+                  end
+               end
+
+            case nStkAct - nTotUnd < RetFld( aTmp[ ( dbfDepAgeL )->( FieldPos( "CREF"     ) ) ], dbfArticulo, "nMinimo"  )
+
+               if aTmp[ ( dbfDepAgeL )->( FieldPos( "LMSGVTA"  ) ) ]
+                  if !ApoloMsgNoYes( "El stock está por debajo del minimo.", "¿Desea continuar?" )
+                     return nil
+                  end
+               end
+
+         end
+
+      end
+
+   end
+
+   WinGather( aTmp, aGet, dbfTmp, oBrw, nMode )
+
+   IF nMode == 1 .AND. lEntCon()
+        aGet[( dbfDepAgeL )->( FieldPos( "NCANENT"  ) )]:cText( 1 )
+      aGet[( dbfDepAgeL )->( FieldPos( "CREF"     ) )   ]:setFocus()
+      aGet[( dbfDepAgeL )->( FieldPos( "CTIPMOV"  ) ) ]:cText( cDefVta() )
+        oTotal:cText( 0 )
+    ELSE
+      oDlg2:end( 1 )
+    end
+
+RETURN NIL
+
+
+
+STATIC FUNCTION PrnSerie()
+
+    local oDlg
+    local oDocIni
+    local oDocFin
+    local oBtnOk
+    local oBtnCancel
+    local nRecno    := (dbfDepAgeT)->(RecNo())
+    local nOrdAnt    := (dbfDepAgeT)->(OrdSetFocus(1))
+    local nDocIni    := (dbfDepAgeT)->NNUMDEP
+    local nDocFin    := (dbfDepAgeT)->NNUMDEP
+
+   oDlg = TDialog():New(,,,, "Imprimir series de depósitos", "PRNSERIES",, .F.,,,,,, .F.,,,,,, .F., )
+
+
+
+
+    oDocIni := TGetHlp():ReDefine( 110, { | u | If( PCount()==0, nDocIni, nDocIni:= u ) }, oDlg,, "999999999",,,,,,, .F.,,, .F., .F.,,,,,, nil,,, )
+
+
+
+
+    oDocFin := TGetHlp():ReDefine( 120, { | u | If( PCount()==0, nDocFin, nDocFin:= u ) }, oDlg,, "999999999",,,,,,, .F.,,, .F., .F.,,,,,, nil,,, )
+
+
+
+
+    oBtnOk := TButton():ReDefine( 505, {||( StartPrint( nDocIni, nDocFin, oBtnOk, oBtnCancel ), oDlg:end( 1 ) )}, oDlg,,, .F.,,,, .F. )
+
+
+
+
+    oBtnCancel := TButton():ReDefine( 2, {||( oDlg:end() )}, oDlg,,, .F.,,,, .F. )
+
+    oDlg:Activate( oDlg:bLClicked, oDlg:bMoved, oDlg:bPainted, .T.,,,, oDlg:bRClicked,,, )
+
+    ( dbfDepAgeT )->( dbGoTo( nRecNo ) )
+    ( dbfDepAgeT )->( ordSetFocus( nOrdAnt ) )
+
+    oWndBrw:refresh()
+
+RETURN NIL
+
+
+
+STATIC FUNCTION StartPrint( nDocIni, nDocFin, oBtnOk, oBtnCancel )
+
+    oBtnOk:disable()
+    oBtnCancel:disable()
+
+   ( dbfDepAgeT )->( dbSeek( nDocIni, .T. ) )
+
+
+   WHILE (dbfDepAgeT)->CSERDEP + Str( (dbfDepAgeT)->NNUMDEP ) + (dbfDepAgeT)->CSUFDEP >= nDocIni .AND. (dbfDepAgeT)->CSERDEP + Str( (dbfDepAgeT)->NNUMDEP ) + (dbfDepAgeT)->CSUFDEP <= nDocFin
+
+      GenDeposito( .T., "Imprimiendo documento : " + (dbfDepAgeT)->CSERDEP + Str( (dbfDepAgeT)->NNUMDEP ) + (dbfDepAgeT)->CSUFDEP )
+      ( dbfDepAgeT )->( dbSkip() )
+
+    end
+
+    oBtnOk:enable()
+    oBtnCancel:enable()
+
+RETURN NIL
+
+
+
+STATIC FUNCTION GenDeposito( lPrinter, cCaption, cCodDoc, nCopies )
+
+   local cDeposito      := (dbfDepAgeT)->CSERDEP + Str( (dbfDepAgeT)->NNUMDEP ) + (dbfDepAgeT)->CSUFDEP
+   local cCodAlm        := (dbfDepAgeT)->CCODALM
+
+   if ( dbfDepAgeT )->( Lastrec() ) == 0
+      return nil
+   end
+
+   IIF( lPrinter == nil, lPrinter := .F., ) ;
+   IIF( cCaption == nil, cCaption := "Imprimiendo depósitos de almacén", ) ;
+   IIF( cCodDoc == nil, cCodDoc := cFormatoDocumento( ( dbfDepAgeT )->cSerDep, "nDepAge", dbfCount ), ) ;
+   IIF( nCopies == nil, nCopies := nCopiasDocumento( ( dbfDepAgeT )->cSerDep, "nDepAge", dbfCount ), ) ;
+
+   if Empty( cCodDoc )
+      cCodDoc           := if( ( dbfDepAgeT )->cSerDep == "A", "DA1", "DA2" )
+   end
+
+   if !lExisteDocumento( cCodDoc, dbfDoc )
+      return nil
+   end
+
+   if lVisualDocumento( cCodDoc, dbfDoc )
+
+      PrintReportDepAge( if( lPrinter, 1, 2 ), nCopies, nil, dbfDoc )
+
+   else
+
+      nTotDepAge( cDeposito, dbfDepAgeT, dbfDepAgeL, dbfIva, dbfDiv )
+
+      private cDbf         := dbfDepAgeT
+      private cDetalle     := dbfDepAgeL
+      private cDbfCol      := dbfDepAgeL
+      private cIva         := dbfIva
+      private cFPago       := dbfFPago
+      private cDbfVta      := dbfTVta
+      private cPouDivDep   := cPouDiv
+      private cPorDivDep   := cPorDiv
+      private nDouDivDep   := nDouDiv
+      private nDorDivDep   := nDorDiv
+      private nTotArt      := nNumArt
+      private nTotCaj      := nNumCaj
+      private cDbfAlm      := dbfAlmT
+
+
+
+
+
+      (dbfDepAgeL)->( dbSeek( cDeposito ) )
+      (dbfAlmT   )->( dbSeek( cCodAlm ) )
+
+      IF lPrinter
+         oInf := RptBegin({}, {}, {}, {}, {}, .F.,,, .T., .F.,,, cCaption,,, )
+      ELSE
+         oInf := RptBegin({}, {}, {}, {}, {}, .F.,,,, .T.,,, cCaption,,, )
+      end
+
+      if !Empty( oInf ) .AND. oInf:lCreated
+         oInf:lFinish            := .F.
+         oInf:lNoCancel          := .T.
+         oInf:bSkip              := {|| ( dbfDepAgeL )->( dbSkip() ) }
+
+         oInf:oDevice:lPrvModal  := .T.
+
+         SetMargin( cCodDoc, oInf )
+         PrintColum( cCodDoc, oInf )
+
+      end
+
+      RptEnd()
+
+
+
+      oInf:Activate(, {||          ( (dbfDepAgeL)->CSERDEP + Str( (dbfDepAgeL)->NNUMDEP ) + (dbfDepAgeL)->CSUFDEP == cDeposito .AND. !(dbfDepAgeL)->( Eof() ) )},,, {||   EPage( oInf, cCodDoc )},,,,,,,,, )
+
+   end
+
+RETURN NIL
+
+
+
+static function nGenDeposito( lImp, cTitle, cCodDoc, nCopy )
+
+   local nImpYet  := 1
+
+   IIF( lImp == nil, lImp := .T., ) ;
+
+   nCopy          := Max( nCopy, 1 )
+
+   while nImpYet <= nCopy
+      GenDeposito( lImp, cTitle, cCodDoc )
+      nImpYet++
+   end
+
+return nil
+
+
+
+
+
+
+
+FUNCTION nTotDepAge( nNumDep, dbfMaster, dbfLine, cDbfIva, cDbfDiv, aTmp, cDivRet )
+
+   local nRecno
+    local bCondition
+    local cCodDiv
+   local lRecargo    := 0
+   local nDtoEsp     := 0
+   local nDtoPP      := 0
+   local nDtoUno     := 0
+   local nDtoDos     := 0
+    local aTotalDto    := { 0, 0, 0 }
+    local aTotalDPP    := { 0, 0, 0 }
+   local aTotalUno   := { 0, 0, 0 }
+   local aTotalDos   := { 0, 0, 0 }
+
+    IIF( dbfMaster == nil, dbfMaster := dbfDepAgeT, ) ;
+    IIF( dbfLine == nil, dbfLine := dbfDepAgeL, ) ;
+   IIF( cDbfIva == nil, cDbfIva := dbfIva, ) ;
+   IIF( cDbfDiv == nil, cDbfDiv := dbfDiv, ) ;
+   IIF( nNumDep == nil, nNumDep := ( dbfDepAgeT )->cSerDep + Str( ( dbfDepAgeT )->nNumDep ) + ( dbfDepAgeT )->cSufDep, ) ;
+
+   public nTotNet    := 0
+   public nTotBrt    := 0
+   public nTotDto    := 0
+   public nTotDpp    := 0
+   public nTotIva    := 0
+   public nTotReq    := 0
+   public nTotDep    := 0
+   public nTotEur    := 0
+   public aTotIva    := { { 0, 0, nil, 0 }, { 0, 0, nil, 0 }, { 0, 0, nil, 0 } }
+   public aIvaUno    := aTotIva[ 1 ]
+   public aIvaDos    := aTotIva[ 2 ]
+   public aIvaTre    := aTotIva[ 3 ]
+
+   nNumArt           := 0
+   nNumCaj           := 0
+   nRecno            := ( dbfLine )->(RecNo())
+
+   if aTmp <> NIL
+        lRecargo            := aTmp[ ( dbfDepAgeT )->( FieldPos( "LRECARGO") )]
+        nDtoEsp            := aTmp[ ( dbfDepAgeT )->( FieldPos( "NDTOESP" ) ) ]
+        nDtoPP            := aTmp[ ( dbfDepAgeT )->( FieldPos( "NDPP"    ) )    ]
+      nDtoUno        := aTmp[ ( dbfDepAgeT )->( FieldPos( "NDTOUNO" ) ) ]
+      nDtoDos        := aTmp[ ( dbfDepAgeT )->( FieldPos( "NDTODOS" ) ) ]
+        cCodDiv            := aTmp[ ( dbfDepAgeT )->( FieldPos( "CDIVDEP" ) ) ]
+      bCondition     := {|| ( dbfLine )->(!eof() ) }
+      ( dbfLine )->( dbGoTop() )
+   else
+      lRecargo       := ( dbfMaster )->lRecargo
+      nDtoEsp        := ( dbfMaster )->nDtoEsp
+      nDtoPP         := ( dbfMaster )->nDpp
+      nDtoUno        := ( dbfMaster )->nDtoUno
+      nDtoDos        := ( dbfMaster )->nDtoDos
+      cCodDiv        := ( dbfMaster )->cDivDep
+      bCondition     := {|| ( dbfDepAgeL )->CSERDEP + Str( ( dbfDepAgeL )->NNUMDEP ) + ( dbfDepAgeL )->CSUFDEP = nNumDep .AND. ( dbfLine )->( !eof() ) }
+      ( dbfLine )->( dbSeek( nNumDep ) )
+   end
+
+   cPicUnd           := MasUnd()
+   cPouDiv           := cPouDiv( cCodDiv, cDbfDiv )
+   cPorDiv           := cPorDiv( cCodDiv, cDbfDiv )
+   nDouDiv           := nDouDiv( cCodDiv, cDbfDiv )
+   nDorDiv           := nRouDiv( cCodDiv, cDbfDiv )
+   cPpvDiv           := cPpvDiv( cCodDiv, cDbfDiv )
+   nDpvDiv           := nDpvDiv( cCodDiv, cDbfDiv )
+
+    WHILE Eval( bCondition )
+
+        nTotalArt         := nTotLDepAge( dbfLine )
+        nNumArt            += nTotLNumArt( dbfLine )
+      nNumCaj        += ( dbfLine )->nCanEnt
+
+
+
+
+
+        DO CASE
+      CASE aTotIva[ 1, 3 ] == nil .OR. aTotIva[ 1, 3 ] == ( dbfLine )->NIVA
+         aTotIva[ 1, 3 ]   := ( dbfLine )->nIva
+            aTotIva[ 1, 4 ]     := If ( lRecargo, nPReq( dbfIva, aTotIva[ 1, 3 ] ), 0 )
+            aTotIva[ 1, 1 ]     += nTotalArt
+
+      CASE aTotIva[ 2, 3 ] == nil .OR. aTotIva[ 2, 3 ] == ( dbfLine )->NIVA
+         aTotIva[ 2, 3 ]   := ( dbfLine )->nIva
+            aTotIva[ 2, 4 ]     := If ( lRecargo, nPReq( dbfIva, aTotIva[ 2, 3 ] ), 0 )
+            aTotIva[ 2, 1 ]     += nTotalArt
+
+      CASE aTotIva[ 3, 3 ] == nil .OR. aTotIva[ 3, 3 ] == ( dbfLine )->NIVA
+         aTotIva[ 3, 3 ]   := ( dbfLine )->nIva
+            aTotIva[ 3, 4 ]     := If ( lRecargo, nPReq( dbfIva, aTotIva[ 3, 3 ] ), 0 )
+            aTotIva[ 3, 1 ]     += nTotalArt
+
+        end
+
+      ( dbfLine )->(DbSkip())
+
+    end
+
+    ( dbfLine )->( DbGoto( nRecno ) )
+
+
+
+
+
+   aTotIva           := aSort( aTotIva,,, {|x,y| abs( x[1] ) > abs( y[1] ) } )
+   nTotBrt           := aTotIva[ 1, 1 ] + aTotIva[ 2, 1 ] + aTotIva[ 3, 1 ]
+
+   aTotIva[ 1, 2 ]         := aTotIva[ 1, 1 ]
+   aTotIva[ 2, 2 ]         := aTotIva[ 2, 1 ]
+   aTotIva[ 3, 2 ]         := aTotIva[ 3, 1 ]
+
+
+
+
+
+   IF nDtoEsp  <> 0
+      aTotalDto[1]   := Round( aTotIva[ 1, 2 ] * nDtoEsp / 100, nDorDiv )
+      aTotalDto[2]   := Round( aTotIva[ 2, 2 ] * nDtoEsp / 100, nDorDiv )
+      aTotalDto[3]   := Round( aTotIva[ 3, 2 ] * nDtoEsp / 100, nDorDiv )
+
+      nTotDto      := aTotalDto[1] + aTotalDto[2] + aTotalDto[3]
+
+        aTotIva[ 1, 2 ]        -= aTotalDto[1]
+        aTotIva[ 2, 2 ]        -= aTotalDto[2]
+        aTotIva[ 3, 2 ]        -= aTotalDto[3]
+    end
+
+
+
+
+
+    IF nDtoPP    <> 0
+      aTotalDPP[1]   := Round( aTotIva[ 1, 2 ] * nDtoPP / 100, nDorDiv )
+      aTotalDPP[2]   := Round( aTotIva[ 2, 2 ] * nDtoPP / 100, nDorDiv )
+      aTotalDPP[3]   := Round( aTotIva[ 3, 2 ] * nDtoPP / 100, nDorDiv )
+
+      nTotDPP        := aTotalDPP[1] + aTotalDPP[2] + aTotalDPP[3]
+
+        aTotIva[ 1, 2 ]        -= aTotalDPP[1]
+        aTotIva[ 2, 2 ]        -= aTotalDPP[2]
+        aTotIva[ 3, 2 ]        -= aTotalDPP[3]
+    end
+
+   IF nDtoUno  <> 0
+      aTotalUno[1]   := Round( aTotIva[ 1, 2 ] * nDtoUno / 100, nDorDiv )
+      aTotalUno[2]   := Round( aTotIva[ 2, 2 ] * nDtoUno / 100, nDorDiv )
+      aTotalUno[3]   := Round( aTotIva[ 3, 2 ] * nDtoUno / 100, nDorDiv )
+
+      nTotDto        := aTotalUno[1] + aTotalUno[2] + aTotalUno[3]
+
+      aTotIva[ 1, 2 ]      -= aTotalUno[1]
+      aTotIva[ 2, 2 ]      -= aTotalUno[2]
+      aTotIva[ 3, 2 ]      -= aTotalUno[3]
+    end
+
+   IF nDtoDos  <> 0
+      aTotalDos[1]   := Round( aTotIva[ 1, 2 ] * nDtoDos / 100, nDorDiv )
+      aTotalDos[2]   := Round( aTotIva[ 2, 2 ] * nDtoDos / 100, nDorDiv )
+      aTotalDos[3]   := Round( aTotIva[ 3, 2 ] * nDtoDos / 100, nDorDiv )
+
+      nTotDto      := aTotalDos[1] + aTotalDos[2] + aTotalDos[3]
+
+      aTotIva[ 1, 2 ]      -= aTotalDos[1]
+      aTotIva[ 2, 2 ]      -= aTotalDos[2]
+      aTotIva[ 3, 2 ]      -= aTotalDos[3]
+    end
+
+   nTotNet         := aTotIva[ 1, 2 ] + aTotIva[ 2, 2 ] + aTotIva[ 3, 2 ]
+
+
+
+
+
+   nTotIva         := 0
+
+   if aTotIva[ 1, 3 ] <> nil
+      nTotIva      += Round( aTotIva[ 1, 2 ] * aTotIva[ 1, 3 ] / 100, nDorDiv )
+   end
+
+   if aTotIva[ 2, 3 ] <> nil
+      nTotIva      += Round( aTotIva[ 2, 2 ] * aTotIva[ 2, 3 ] / 100, nDorDiv )
+   end
+
+   if aTotIva[ 3, 3 ] <> nil
+      nTotIva      += Round( aTotIva[ 3, 2 ] * aTotIva[ 3, 3 ] / 100, nDorDiv )
+   end
+
+
+
+
+
+   nTotReq         := Round( aTotIva[ 1, 2 ] * aTotIva[ 1, 4 ] / 100, nDorDiv )
+   nTotReq         += Round( aTotIva[ 2, 2 ] * aTotIva[ 2, 4 ] / 100, nDorDiv )
+   nTotReq         += Round( aTotIva[ 3, 2 ] * aTotIva[ 3, 4 ] / 100, nDorDiv )
+
+
+
+
+
+   nTotalImp         := nTotIva + nTotReq
+
+
+
+
+
+   nTotDep         := nTotNet + nTotalImp
+
+   if cDivRet <> nil .AND. cDivRet <> cCodDiv
+      nTotDep   := nCnv2Div( nTotDep, cCodDiv, cDivRet, cDbfDiv )
+      cPorDiv     := cPorDiv( cDivRet, cDbfDiv )
+   end
+
+RETURN ( Trans( nTotDep, cPorDiv ) )
+
+
+
+STATIC FUNCTION nRecTotal( dbfLine, aTmp )
+
+   IIF( dbfLine == nil, dbfLine := dbfDepAgeL, ) ;
+
+   nTotDepAge( 0, nil, dbfLine, dbfIva, dbfDiv, aTmp )
+
+   if oBrwIva <> nil
+      oBrwIva:Refresh()
+   end
+
+   if oGetNet <> NIL
+      oGetNet:SetText( nTotNet )
+   end
+
+   if oGetIva <> NIL
+      oGetIva:SetText( nTotIva )
+   end
+
+   if oGetReq <> NIL
+      oGetReq:SetText( nTotReq )
+   end
+
+   if oGetTotal <> NIL
+      oGetTotal:SetText( nTotDep )
+   end
+
+   if oGetTotEur <> NIL
+      oGetTotEur:SetText( nTotEur )
+   end
+
+RETURN ( .T. )
+
+
+
+
+
+
+
+STATIC FUNCTION DelDetalle( nNumDep )
+
+   CursorWait()
+
+   oStock:DepAge( nNumDep, ( dbfDepAgeT )->cCodAlm, ( dbfDepAgeT )->cCodAli, .T., .T. )
+
+   CursorWe()
+
+RETURN NIL
+
+
+
+
+
+
+STATIC FUNCTION lCalcDeta( aTmp, oTotal )
+
+    local nCalculo := aTmp[( dbfDepAgeL )->( FieldPos( "NPREUNIT" ) )] * aTmp[( dbfDepAgeL )->( FieldPos( "NUNICAJA" ) )]
+
+   IF lCalCaj()
+        nCalculo *= If( aTmp[( dbfDepAgeL )->( FieldPos( "NCANENT"  ) )] <> 0, aTmp[( dbfDepAgeL )->( FieldPos( "NCANENT"  ) )], 1 )
+    end
+
+    IF aTmp[( dbfDepAgeL )->( FieldPos( "NDTO"     ) )] <> 0
+        nCalculo -= nCalculo * aTmp[( dbfDepAgeL )->( FieldPos( "NDTO"     ) )] / 100
+    end
+
+    IF aTmp[( dbfDepAgeL )->( FieldPos( "NDTOPRM"  ) )] <> 0
+        nCalculo -= nCalculo * aTmp[( dbfDepAgeL )->( FieldPos( "NDTOPRM"  ) )] / 100
+    end
+
+    IF oTotal <> NIL
+        oTotal:varPut( nCalculo )
+        oTotal:refresh()
+    end
+
+RETURN .T.
+
+
+
+STATIC FUNCTION LoadAlm( aGet, aTmp, nMode )
+
+    local cAreaAnt := Alias()
+    local lValid     := .F.
+    local xValor     := aGet[( dbfDepAgeT )->( FieldPos( "CCODALM" ) )]:varGet()
+
+    IF Empty( Rtrim( xValor ) )
+        RETURN .T.
+    end
+
+    xValor             := Rjust( xValor, "0" )
+
+    IF (dbfAlmT)->( DbSeek( xValor ) )
+
+
+
+
+
+      aGet[( dbfDepAgeT )->( FieldPos( "CCODALM" ) )]:cText( ( dbfAlmT )->CCODALM )
+      aGet[( dbfDepAgeT )->( FieldPos( "CNOMALM" ) )]:cText( ( dbfAlmT )->CNOMALM )
+      aGet[( dbfDepAgeT )->( FieldPos( "CDIRALM" ) )]:cText( ( dbfAlmT )->CDIRALM )
+      aGet[( dbfDepAgeT )->( FieldPos( "CPOBALM" ) )]:cText( ( dbfAlmT )->CPOBALM )
+      aGet[( dbfDepAgeT )->( FieldPos( "CPRVALM" ) )]:cText( ( dbfAlmT )->CPROALM )
+      aGet[( dbfDepAgeT )->( FieldPos( "CPOSALM" ) )]:cText( ( dbfAlmT )->CPOSALM )
+
+        lValid    := .T.
+
+    ELSE
+
+      msgStop( "Almacén no encontrado" )
+
+    end
+
+    IIF( cAreaAnt <> "", SELECT( cAreaAnt ), )
+
+RETURN lValid
+
+
+
+STATIC FUNCTION LoaArt( aGet, aTmp, aTmpDep, oSayLote )
+
+   local lValid   := .F.
+    local xValor   := aGet[( dbfDepAgeL )->( FieldPos( "CREF"     ) )]:varGet()
+   local cCodFam
+
+   if Empty( xValor )
+
+        aGet[( dbfDepAgeL )->( FieldPos( "NIVA"     ) )]:varPut( 0 )
+      aGet[( dbfDepAgeL )->( FieldPos( "NIVA"     ) )]:bWhen       := {|| .T. }
+        aGet[( dbfDepAgeL )->( FieldPos( "NIVA"     ) )]:refresh()
+
+        aGet[( dbfDepAgeL )->( FieldPos( "CDETALLE" ) )]:varPut( Space( 50 ) )
+        aGet[( dbfDepAgeL )->( FieldPos( "CDETALLE" ) )]:bWhen    := {|| .T. }
+        aGet[( dbfDepAgeL )->( FieldPos( "CDETALLE" ) )]:refresh()
+
+      return .T.
+
+   end
+
+   if ( dbfArticulo )->( dbSeek( xValor ) )
+
+      aGet[( dbfDepAgeL )->( FieldPos( "CREF"     ) )    ]:cText( (dbfArticulo)->Codigo )
+      aGet[( dbfDepAgeL )->( FieldPos( "NUNICAJA" ) )]:cText( (dbfArticulo)->nUniCaja )
+      aGet[( dbfDepAgeL )->( FieldPos( "CUNIDAD"  ) ) ]:cText( (dbfArticulo)->cUnidad )
+
+      cCodFam     := ( dbfArticulo )->Familia
+
+
+
+
+
+
+      if ( dbfArticulo )->lLote
+         oSayLote:Show()
+         aGet[ ( dbfDepAgeL )->( FieldPos( "cLote"    ) ) ]:show()
+      else
+         oSayLote:hide()
+         aGet[ ( dbfDepAgeL )->( FieldPos( "cLote"    ) ) ]:hide()
+      end
+
+      aTmp[ ( dbfDepAgeL )->( FieldPos( "LLOTE"    ) ) ]       := ( dbfArticulo )->lLote
+
+      aTmp[ ( dbfDepAgeL )->( FieldPos( "LMSGVTA"  ) ) ]     := ( dbfArticulo )->lMsgVta
+      aTmp[ ( dbfDepAgeL )->( FieldPos( "LNOTVTA"  ) ) ]     := ( dbfArticulo )->lNotVta
+
+      aGet[ ( dbfDepAgeL )->( FieldPos( "cLote"    ) ) ]:cText(  ( dbfArticulo )->cLote )
+
+
+
+
+
+      if !Empty( aTmpDep[( dbfDepAgeT )->( FieldPos( "CCODTAR" ) )] )
+         aGet[( dbfDepAgeL )->( FieldPos( "NPREUNIT" ) )]:cText( RetPrcTar( ( dbfArticulo )->Codigo, aTmpDep[ ( dbfDepAgeT )->( FieldPos( "CCODTAR" ) ) ], Space(5), Space(5), Space(5), Space(5), dbfTarPreL ) )
+         aGet[( dbfDepAgeL )->( FieldPos( "NDTO"     ) )    ]:cText( RetPctTar( ( dbfArticulo )->Codigo, cCodFam, aTmpDep[ ( dbfDepAgeT )->( FieldPos( "CCODTAR" ) ) ], Space(5), Space(5), Space(5), Space(5), dbfTarPreL ) )
+         aGet[( dbfDepAgeL )->( FieldPos( "NDTOPRM"  ) ) ]:cText( RetDtoPrm( ( dbfArticulo )->Codigo, cCodFam, aTmpDep[ ( dbfDepAgeT )->( FieldPos( "CCODTAR" ) ) ], Space(5), Space(5), Space(5), Space(5), aTmpDep[ ( dbfDepAgeT )->( FieldPos( "DFECDEP" ) ) ], dbfTarPreL ) )
+      else
+         aGet[( dbfDepAgeL )->( FieldPos( "NPREUNIT" ) )]:cText( ( dbfArticulo )->pVenta1 )
+      end
+
+      aGet[( dbfDepAgeL )->( FieldPos( "CDETALLE" ) )]:cText( ( dbfArticulo )->Nombre )
+      aGet[( dbfDepAgeL )->( FieldPos( "CDETALLE" ) )]:bWhen   := {|| .F. }
+
+      if aGet[( dbfDepAgeL )->( FieldPos( "NIVA"     ) )] <> nil
+         aGet[( dbfDepAgeL )->( FieldPos( "NIVA"     ) )]:cText( nIva( dbfIva, ( dbfArticulo )->TipoIva ) )
+         aGet[( dbfDepAgeL )->( FieldPos( "NIVA"     ) )]:bWhen    := {|| .F. }
+      end
+
+      lValid   := .T.
+
+   else
+
+      MsgStop( "Artículo no encontrado" )
+      lValid   := .F.
+
+   end
+
+Return lValid
+
+
+
+STATIC FUNCTION EPage( oInf, cCodDoc )
+
+   private nPagina      := oInf:nPage
+    private lEnd            := oInf:lFinish
+
+
+
+
+
+   PrintItems( cCodDoc, oInf )
+
+RETURN NIL
+
+
+
+FUNCTION mkDepAge( cPath, lAppend, cPathOld, oMeter )
+
+
+    IF oMeter <> NIL
+        oMeter:cText    := "Generando Bases"
+        sysrefresh()
+    end
+
+    CreateFiles( cPath )
+
+   rxDepAge( cPath, oMeter )
+
+    IF lAppend .AND. lIsDir( cPathOld )
+      AppDbf( cPathOld, cPath, "DEPAGET" )
+      AppDbf( cPathOld, cPath, "DEPAGEL" )
+    end
+
+RETURN NIL
+
+
+
+FUNCTION rxDepAge( cPath, oMeter )
+
+    local dbfDepAgeT
+
+   IIF( cPath == nil, cPath := cPatEmp(), ) ;
+
+
+   if !lExistTable( cPath + "DEPAGET.DBF" ) .OR. !lExistTable( cPath + "DEPAGEL.DBF" )
+        CreateFiles( cPath )
+   end
+
+   fEraseIndex( cPath + "DEPAGET.CDX" )
+   fEraseIndex( cPath + "DEPAGEL.CDX" )
+
+   dbUseArea( .T., cDriver(), cPath + "DEPAGET.DBF", cCheckArea( "DEPAGET", @dbfDepAgeT ), .F. )
+
+   if !( dbfDepAgeT )->( neterr() )
+      ( dbfDepAgeT)->( __dbPack() )
+
+      ( dbfDepAgeT)->( ordCondSet("!Deleted()", {||!Deleted()}  ) )
+      ( dbfDepAgeT)->( ordCreate( cPath + "DEPAGET.CDX", "NNUMDEP", "CSERDEP + Str( NNUMDEP ) + CSUFDEP", {|| Field->CSERDEP + Str( Field->NNUMDEP ) + Field->CSUFDEP } ) )
+
+      ( dbfDepAgeT)->( ordCondSet("!Deleted()", {||!Deleted()}  ) )
+      ( dbfDepAgeT)->( ordCreate( cPath + "DEPAGET.CDX", "DFECDEP", "DFECDEP", {|| Field->DFECDEP } ) )
+
+      ( dbfDepAgeT)->( ordCondSet("!Deleted()", {||!Deleted()}  ) )
+      ( dbfDepAgeT)->( ordCreate( cPath + "DEPAGET.CDX", "CCODALM", "CCODALM", {|| Field->CCODALM } ) )
+
+      ( dbfDepAgeT )->( dbCloseArea() )
+   else
+      msgStop( "Imposible abrir en modo exclusivo la tabla de depósitos de almacén" )
+   end
+
+   dbUseArea( .T., cDriver(), cPath + "DEPAGEL.DBF", cCheckArea( "DEPAGEL", @dbfDepAgeL ), .F. )
+
+   if !( dbfDepAgeL )->( neterr() )
+      ( dbfDepAgeL)->( __dbPack() )
+
+      ( dbfDepAgeL)->( ordCondSet("!Deleted()", {||!Deleted()}  ) )
+      ( dbfDepAgeL)->( ordCreate( cPath + "DEPAGEL.CDX", "nNumDep", "cSerDep + Str( nNumDep ) + cSufDep", {|| Field->cSerDep + Str( Field->nNumDep ) + Field->CSUFDEP } ) )
+
+      ( dbfDepAgeL)->( ordCondSet("!Deleted()", {||!Deleted()}  ) )
+      ( dbfDepAgeL)->( ordCreate( cPath + "DEPAGEL.CDX", "CREF", "CREF", {|| Field->CREF } ) )
+
+      ( dbfDepAgeL )->( dbCloseArea() )
+   else
+      msgStop( "Imposible abrir en modo exclusivo la tabla de depósitos de almacén" )
+   end
+
+RETURN NIL
+
+
+
+STATIC FUNCTION BeginTrans( aTmp )
+
+   local oBlock
+   local oError
+   local cDbf     := "DAgeL"
+   local cDeposito:= aTmp[ ( dbfDepAgeT )->( FieldPos( "CSERDEP" ) ) ] + Str( aTmp[ ( dbfDepAgeT )->( FieldPos( "NNUMDEP" ) ) ] ) + aTmp[ ( dbfDepAgeT )->( FieldPos( "CSUFDEP" ) ) ]
+
+   cNewFile       := cGetNewFileName( cPatTmp() + cDbf )
+
+
+
+
+
+   oBlock         := ErrorBlock( {| oError | ApoloBreak( oError ) } )
+   BEGIN SEQUENCE
+
+   dbCreate( cNewFile, aSqlStruct( aColDepAge() ), cLocalDriver() )
+
+   dbUseArea( .T., cLocalDriver(), cNewFile, cCheckArea( cDbf, @dbfTmp ), .F. )
+   if !( dbfTmp )->( NetErr() )
+
+      ( dbfTmp )->( OrdCondSet( "!Deleted()", {||!Deleted() } ) )
+      ( dbfTmp )->( OrdCreate( cNewFile, "Recno", "Str( Recno() )", {|| Str( Recno() ) } ) )
+
+
+
+
+
+      if ( dbfDepAgeL )->( dbSeek( cDeposito ) )
+
+         while ( ( dbfDepAgeL )->cSerDep + Str( ( dbfDepAgeL )->nNumDep ) + ( dbfDepAgeL )->cSufDep == cDeposito .AND. !( dbfDepAgeL )->( Eof() ) )
+
+            dbPass( dbfDepAgeL, dbfTmp, .T. )
+
+            ( dbfDepAgeL )->( dbSkip() )
+
+         end
+
+      end
+
+   end
+
+   RECOVER USING oError
+
+      msgStop( "Imposible abrir todas las bases de datos " + Chr(13)+Chr(10) + ErrorMessage( oError ) )
+
+   end
+
+   ErrorBlock( oBlock )
+
+    ( dbfTmp )->( dbGoTop() )
+
+RETURN NIL
+
+
+
+Static Function EndTrans( aTmp, oBrw, oDlg, nMode )
+
+   local oError
+   local oBlock
+    local aTabla
+
+   if Empty( aTmp[ ( dbfDepAgeT )->( FieldPos( "CCODALM" ) ) ] )
+      MsgStop( "Código almacén de entrada no puede estar vacío" )
+      Return .F.
+   end
+
+   if Empty( aTmp[ ( dbfDepAgeT )->( FieldPos( "CCODALI" ) ) ] )
+      MsgStop( "Código almacén de salida no puede estar vacío" )
+      Return .F.
+   end
+
+   if aTmp[ ( dbfDepAgeT )->( FieldPos( "CCODALM" ) ) ] == aTmp[ ( dbfDepAgeT )->( FieldPos( "CCODALI" ) ) ]
+      MsgStop( "Almacenes de entrada y salida no pueden ser el mismo" )
+      Return .F.
+   end
+
+   oBlock      := ErrorBlock( {| oError | ApoloBreak( oError ) } )
+   BEGIN SEQUENCE
+
+   BeginTransaction()
+
+
+
+
+
+   oMsgProgress():SetRange( 0, ( dbfTmp )->( LastRec() ) )
+
+   do case
+   case nMode == 2 .AND. ( dbfDepAgeL )->( dbSeek( aTmp[ ( dbfDepAgeT )->( FieldPos( "CSERDEP" ) ) ] + Str( aTmp[ ( dbfDepAgeT )->( FieldPos( "NNUMDEP" ) ) ] ) + aTmp[ ( dbfDepAgeT )->( FieldPos( "CSUFDEP" ) ) ] ) )
+
+
+
+
+
+      oStock:DepAge( aTmp[ ( dbfDepAgeT )->( FieldPos( "CSERDEP" ) ) ] + Str( aTmp[ ( dbfDepAgeT )->( FieldPos( "NNUMDEP" ) ) ] ) + aTmp[ ( dbfDepAgeT )->( FieldPos( "CSUFDEP" ) ) ], ( dbfDepAgeT )->cCodAlm, ( dbfDepAgeT )->cCodAli, .T., .T. )
+
+   case nMode == 1 .OR. nMode == 4
+
+      aTmp[ ( dbfDepAgeT )->( FieldPos( "CSERDEP" ) ) ]     := "A"
+      aTmp[ ( dbfDepAgeT )->( FieldPos( "NNUMDEP" ) ) ]     := nNewDoc( "A", dbfDepAgeT, "nDepAge", , dbfCount )
+      aTmp[ ( dbfDepAgeT )->( FieldPos( "CSUFDEP" ) ) ]     := RetSufEmp()
+
+   end
+
+   ( dbfTmp )->( dbGoTop() )
+   while !( dbfTmp )->( eof() )
+
+      aTabla               := dbScatter( dbfTmp )
+      aTabla[ ( dbfDepAgeT )->( FieldPos( "CSERDEP" ) ) ]   := aTmp[ ( dbfDepAgeT )->( FieldPos( "CSERDEP" ) ) ]
+      aTabla[ ( dbfDepAgeT )->( FieldPos( "NNUMDEP" ) ) ]   := aTmp[ ( dbfDepAgeT )->( FieldPos( "NNUMDEP" ) ) ]
+      aTabla[ ( dbfDepAgeT )->( FieldPos( "CSUFDEP" ) ) ]   := aTmp[ ( dbfDepAgeT )->( FieldPos( "CSUFDEP" ) ) ]
+      dbGather( aTabla, dbfDepAgeL, .T. )
+
+      ( dbfTmp )->( dbSkip() )
+
+      oMsgProgress():Deltapos(1)
+
+   end
+
+
+
+
+
+   oStock:DepAge( aTmp[ ( dbfDepAgeT )->( FieldPos( "CSERDEP" ) ) ] + Str( aTmp[ ( dbfDepAgeT )->( FieldPos( "NNUMDEP" ) ) ] ) + aTmp[ ( dbfDepAgeT )->( FieldPos( "CSUFDEP" ) ) ], ( dbfDepAgeT )->cCodAlm, ( dbfDepAgeT )->cCodAli, .F., .F. )
+
+
+
+
+
+   ( dbfTmp )->( dbCloseArea() )
+
+   dbfErase( cNewFile )
+
+
+
+
+
+   WinGather( aTmp, , dbfDepAgeT, oBrw, nMode )
+
+
+
+
+
+   dbCommitAll()
+
+   CommitTransaction()
+
+   RECOVER USING oError
+
+      RollBackTransaction()
+
+      msgStop( "Imposible guadar cambios" + Chr(13)+Chr(10) + ErrorMessage( oError ) )
+
+   end
+   ErrorBlock( oBlock )
+
+
+
+
+
+   EndProgress()
+
+   oDlg:End( 1 )
+
+Return .T.
+
+
+
+STATIC FUNCTION KillTrans()
+
+
+
+
+
+    ( dbfTmp )->( dbCloseArea() )
+
+   dbfErase( cNewFile )
+
+RETURN NIL
+
+
+
+STATIC FUNCTION CreateFiles( cPath )
+
+   dbCreate( cPath + "DEPAGET.DBF", aSqlStruct( aItmDepAge() ), cDriver() )
+   dbCreate( cPath + "DEPAGEL.DBF", aSqlStruct( aColDepAge() ), cDriver() )
+
+RETURN NIL
+
+
+
+
+
+
+
+STATIC FUNCTION nTotLNumArt( dbfDetalle )
+
+    local nCalculo := 0
+
+   IF lCalCaj() .AND. ( dbfDetalle )->nCanEnt <> 0 .AND. ( dbfDetalle )->nPreUnit <> 0
+      nCalculo    := ( dbfDetalle )->nCanEnt
+    end
+
+RETURN ( nCalculo )
+
+
+
+STATIC FUNCTION GenDepAge( lPrinter, cCaption, cDiv, nVdv )
+
+   local nNumDep     := ( dbfDepAgeT )->CSERDEP + Str( ( dbfDepAgeT )->NNUMDEP ) + ( dbfDepAgeT )->CSUFDEP
+    local nCodAlm        := ( dbfDepAgeT )->CCODALM
+    local nOldRecno    := ( dbfDepAgeL )->( recno() )
+
+    IIF( lPrinter == nil, lPrinter := .F., ) ;
+   IIF( cCaption == nil, cCaption := "Imprimiendo deposito", ) ;
+
+    private cDbfCol    := dbfDepAgeL
+
+   ( dbfAlmT    )->( dbSeek( nCodAlm ) )
+    ( dbfDepAgeL )->( dbSeek( nNumDep ) )
+
+    IF lPrinter
+
+
+
+        oInf := RptBegin({}, {}, {}, {}, {}, .F.,,, .T., .F.,,, cCaption,,, )
+
+    ELSE
+
+
+
+        oInf := RptBegin({}, {}, {}, {}, {}, .F.,,,, .T.,,, cCaption,,, )
+
+    end
+
+    IF oInf:lCreated
+
+        oInf:lFinish    := .F.
+        oInf:bSkip         := {|| ( dbfDepAgeL )->( DbSkip() ) }
+        SetMargin(  "DA1", oInf )
+        PrintColum( "DA1", oInf )
+
+    end
+
+    RptEnd()
+
+
+
+    oInf:Activate(, {|| ( ( dbfDepAgeL )->NNUMDEP == nNumDep )},,,, {|| EPage( oInf )},,,,,,,, )
+
+    ( dbfDepAgeL )->( dbGoto( nOldRecno ) )
+
+RETURN NIL
+
+
+
+STATIC FUNCTION ChgState( oBrw )
+
+   dbDialogLock( dbfDepAgeT )
+   ( dbfDepAgeT )->lLiqDep := ! (dbfDepAgeT)->lLiqDep
+   ( dbfDepAgeT )->( dbUnlock() )
+
+   oBrw:DrawSelect()
+
+RETURN NIL
+
+
+
+FUNCTION aDocDepAge()
+
+   local aDoc  := {}
+
+
+
+
+
+   aAdd( aDoc, { "Empresa",         "EM" } )
+   aAdd( aDoc, { "Depositos",       "DA" } )
+   aAdd( aDoc, { "Almacen",         "AL" } )
+   aAdd( aDoc, { "Agentes",         "AG" } )
+   aAdd( aDoc, { "Divisas",         "DV" } )
+   aAdd( aDoc, { "Formas de pago",  "PG" } )
+
+RETURN ( aDoc )
+
+
+
+Static Function lGenDepAge( oBrw, oBtn, lImp )
+
+   local bAction
+
+   IIF( lImp == nil, lImp := .F., ) ;
+
+   if !( dbfDoc )->( dbSeek( "DA" ) )
+
+
+
+
+
+
+
+
+      oWndBrw:NewAt( "DOCUMENT",,, {||( msgStop( "No hay documentos predefinidos" ) )}, "No hay documentos", "N",,, 4, oBtn, .F. )
+
+   else
+
+      while ( dbfDoc )->CTIPO == "DA" .AND. !( dbfDoc )->( eof() )
+
+         bAction  := bGenDepAge( lImp, "Imprimiendo albaranes de clientes", ( dbfDoc )->CODIGO )
+
+         oWndBrw:NewAt( "Document", , , bAction, Rtrim( ( dbfDoc )->cDescrip ) , , , , , oBtn )
+
+         ( dbfDoc )->( dbSkip() )
+
+      end
+
+   end
+
+return nil
+
+
+
+static function bGenDepAge( lImprimir, cTitle, cCodDoc )
+
+   local bGen
+   local lImp  := by( lImprimir )
+   local cTit  := by( cTitle    )
+   local cCod  := by( cCodDoc   )
+
+   if lImp
+      bGen     := {|| nGenDeposito( lImp, cTit, cCod ) }
+   else
+      bGen     := {|| GenDeposito( lImp, cTit, cCod ) }
+   end
+
+return ( bGen )
+
+
+
+function SynDepAge( cPath )
+
+   IIF( cPath == nil, cPath := cPatEmp(), ) ;
+
+   if OpenFiles( cPath )
+
+      while !( dbfDepAgeL )->( eof() )
+
+         if ( dbfDepAgeT )->( dbSeek( ( dbfDepAgeL )->cSerDep + Str( ( dbfDepAgeL )->nNumDep ) + ( dbfDepAgeL )->cSufDep ) )
+
+            if Empty( ( dbfDepAgeL )->cLote ) .AND. !Empty( ( dbfDepAgeL )->nLote )
+
+               if dbLock( dbfDepAgeL )
+
+                  ( dbfDepAgeL )->cLote   := AllTrim( Str( ( dbfDepAgeL )->nLote ) )
+
+                  ( dbfDepAgeL )->( dbUnLock() )
+
+               end
+
+            end
+
+         end
+
+         ( dbfDepAgeL )->( dbSkip() )
+
+         SysRefresh()
+
+      end
+
+   CloseFiles()
+
+   end
+
+return nil
+#line 1832 ".\Prg\Depage.prg"
+Static Function DataReport( oFr )
+
+
+
+
+
+   oFr:ClearDataSets()
+
+   oFr:SetWorkArea(     "Depósitos", ( dbfDepAgeT )->( Select() ), .F., { 1, 1, 0 } )
+   oFr:SetFieldAliases( "Depósitos", cItemsToReport( aItmDepAge() ) )
+
+   oFr:SetWorkArea(     "Lineas de depósitos", ( dbfDepAgeL )->( Select() ) )
+   oFr:SetFieldAliases( "Lineas de depósitos", cItemsToReport( aColDepAge() ) )
+
+   oFr:SetWorkArea(     "Empresa", ( dbfEmp )->( Select() ) )
+   oFr:SetFieldAliases( "Empresa", cItemsToReport( aItmEmp() ) )
+
+   oFr:SetWorkArea(     "Almacenes", ( dbfAlmT )->( Select() ) )
+   oFr:SetFieldAliases( "Almacenes", cItemsToReport( aItmAlm() ) )
+
+   oFr:SetWorkArea(     "Formas de pago", ( dbfFPago )->( Select() ) )
+   oFr:SetFieldAliases( "Formas de pago", cItemsToReport( aItmFPago() ) )
+
+   oFr:SetWorkArea(     "Tipo de venta", ( dbfTVta )->( Select() ) )
+   oFr:SetFieldAliases( "Tipo de venta", cItemsToReport( aItmTVta() ) )
+
+   oFr:SetMasterDetail( "Depósitos", "Lineas de depósitos",     {|| ( dbfDepAgeT )->cSerDep + Str( ( dbfDepAgeT )->nNumDep ) + ( dbfDepAgeT )->cSufDep } )
+   oFr:SetMasterDetail( "Depósitos", "Empresa",                 {|| cCodigoEmpresaEnUso() } )
+   oFr:SetMasterDetail( "Depósitos", "Almacenes",               {|| ( dbfDepAgeT )->cCodAlm } )
+   oFr:SetMasterDetail( "Depósitos", "Formas de pago",          {|| ( dbfDepAgeT )->cCodPgo } )
+
+   oFr:SetMasterDetail( "Lineas de depósitos", "Tipo de venta", {|| ( dbfDepAgeL )->cTipMov } )
+
+   oFr:SetResyncPair(   "Depósitos", "Lineas de depósitos" )
+   oFr:SetResyncPair(   "Depósitos", "Empresa" )
+   oFr:SetResyncPair(   "Depósitos", "Almacenes" )
+   oFr:SetResyncPair(   "Depósitos", "Formas de pago" )
+   oFr:SetResyncPair(   "Lineas de depósitos", "Tipo de venta" )
+
+Return nil
+
+
+
+Static Function VariableReport( oFr )
+
+   oFr:DeleteCategory(  "Depósitos" )
+   oFr:DeleteCategory(  "Lineas de depósitos" )
+
+
+
+
+
+   oFr:AddVariable( "Depósitos",            "Total bruto",                         "GetHbVar('nTotBrt')" )
+   oFr:AddVariable( "Depósitos",            "Total neto",                          "GetHbVar('nTotNet')" )
+   oFr:AddVariable( "Depósitos",            "Total " + cImp(),                           "GetHbVar('nTotIva')" )
+   oFr:AddVariable( "Depósitos",            "Total RE",                            "GetHbVar('nTotReq')" )
+   oFr:AddVariable( "Depósitos",            "Total descuento",                     "GetHbVar('nTotDto')" )
+   oFr:AddVariable( "Depósitos",            "Total descuento pronto pago",         "GetHbVar('nTotDpp')" )
+   oFr:AddVariable( "Depósitos",            "Total depósito",                      "GetHbVar('nTotDep')" )
+   oFr:AddVariable( "Depósitos",            "Bruto primer tipo de " + cImp(),            "GetHbArrayVar('aIvaUno',1)" )
+   oFr:AddVariable( "Depósitos",            "Bruto segundo tipo de " + cImp(),           "GetHbArrayVar('aIvaDos',1)" )
+   oFr:AddVariable( "Depósitos",            "Bruto tercer tipo de " + cImp(),            "GetHbArrayVar('aIvaTre',1)" )
+   oFr:AddVariable( "Depósitos",            "Base primer tipo de " + cImp(),             "GetHbArrayVar('aIvaUno',2)" )
+   oFr:AddVariable( "Depósitos",            "Base segundo tipo de " + cImp(),            "GetHbArrayVar('aIvaDos',2)" )
+   oFr:AddVariable( "Depósitos",            "Base tercer tipo de " + cImp(),             "GetHbArrayVar('aIvaTre',2)" )
+   oFr:AddVariable( "Depósitos",            "Porcentaje primer tipo " + cImp(),          "GetHbArrayVar('aIvaUno',3)" )
+   oFr:AddVariable( "Depósitos",            "Porcentaje segundo tipo " + cImp(),         "GetHbArrayVar('aIvaDos',3)" )
+   oFr:AddVariable( "Depósitos",            "Porcentaje tercer tipo " + cImp(),          "GetHbArrayVar('aIvaTre',3)" )
+   oFr:AddVariable( "Depósitos",            "Porcentaje primer tipo RE",           "GetHbArrayVar('aIvaUno',4)" )
+   oFr:AddVariable( "Depósitos",            "Porcentaje segundo tipo RE",          "GetHbArrayVar('aIvaDos',4)" )
+   oFr:AddVariable( "Depósitos",            "Porcentaje tercer tipo RE",           "GetHbArrayVar('aIvaTre',4)" )
+
+   oFr:AddVariable( "Lineas de depósitos",  "Total unidades artículo",             "CallHbFunc('nTotNDepAge')" )
+   oFr:AddVariable( "Lineas de depósitos",  "Total línea depósito",                "CallHbFunc('nTotLDepAge')" )
+   oFr:AddVariable( "Lineas de depósitos",  "Fecha en juliano 6 meses",            "CallHbFunc('dJulianoDepAge')" )
+   oFr:AddVariable( "Lineas de depósitos",  "Fecha en juliano 8 meses",            "CallHbFunc('dJulianoDepAnio')" )
+
+Return nil
+
+
+
+Function DesignReportDepAge( oFr, dbfDoc )
+
+   if OpenFiles()
+
+
+
+
+
+      DataReport( oFr )
+
+
+
+
+
+      if !Empty( ( dbfDoc )->mReport )
+
+         oFr:LoadFromBlob( ( dbfDoc )->( Select() ), "mReport")
+
+      else
+
+         oFr:SetProperty(     "Report",            "ScriptLanguage", "PascalScript" )
+
+
+
+
+
+
+
+         oFr:SetProperty(     "Report.ScriptText", "Text", +  "procedure DetalleOnMasterDetail(Sender: TfrxComponent);"   + Chr(13) + Chr(10) +  "begin"                                                     + Chr(13) + Chr(10) +  "CallHbFunc('nTotDepAge');"                                 + Chr(13) + Chr(10) +  "end;"                                                      + Chr(13) + Chr(10) +  "begin"                                                     + Chr(13) + Chr(10) +  "end." )
+
+         oFr:AddPage(         "MainPage" )
+
+         oFr:AddBand(         "CabeceraDocumento", "MainPage", 2 )
+         oFr:SetProperty(     "CabeceraDocumento", "Top", 0 )
+         oFr:SetProperty(     "CabeceraDocumento", "Height", 200 )
+
+         oFr:AddBand(         "CabeceraColumnas",  "MainPage", 6 )
+         oFr:SetProperty(     "CabeceraColumnas",  "Top", 200 )
+         oFr:SetProperty(     "CabeceraColumnas",  "Height", 0 )
+         oFr:SetProperty(     "CabeceraColumnas",  "StartNewPage", .T. )
+         oFr:SetObjProperty(  "CabeceraColumnas",  "DataSet", "Depósitos" )
+
+         oFr:AddBand(         "DetalleColumnas",   "MainPage", 7  )
+         oFr:SetProperty(     "DetalleColumnas",   "Top", 230 )
+         oFr:SetProperty(     "DetalleColumnas",   "Height", 28 )
+         oFr:SetObjProperty(  "DetalleColumnas",   "DataSet", "Lineas de depósitos" )
+         oFr:SetProperty(     "DetalleColumnas",   "OnMasterDetail", "DetalleOnMasterDetail" )
+
+         oFr:AddBand(         "PieDocumento",      "MainPage", 3 )
+         oFr:SetProperty(     "PieDocumento",      "Top", 930 )
+         oFr:SetProperty(     "PieDocumento",      "Height", 110 )
+
+      end
+
+
+
+
+
+      VariableReport( oFr )
+
+
+
+
+
+      oFr:DesignReport()
+
+
+
+
+
+      oFr:DestroyFr()
+
+
+
+
+
+      CloseFiles()
+
+   else
+
+      Return .F.
+
+   end
+
+Return .T.
+
+
+
+Function PrintReportDepAge( nDevice, nCopies, cPrinter, dbfDoc )
+
+   local oFr
+
+   IIF( nDevice == nil, nDevice := 2, ) ;
+   IIF( nCopies == nil, nCopies := 1, ) ;
+   IIF( cPrinter == nil, cPrinter := PrnGetName(), ) ;
+
+   SysRefresh()
+
+   oFr                  := frReportManager():New()
+
+   oFr:LoadLangRes(     "Spanish.Xml" )
+
+   oFr:SetIcon( 1 )
+
+   oFr:SetTitle(        "Diseñador de documentos" )
+
+
+
+
+
+   oFr:SetEventHandler( "Designer", "OnSaveReport", {|| oFr:SaveToBlob( ( dbfDoc )->( Select() ), "mReport" ) } )
+
+
+
+
+
+   DataReport( oFr )
+
+
+
+
+
+   if !Empty( ( dbfDoc )->mReport )
+
+      oFr:LoadFromBlob( ( dbfDoc )->( Select() ), "mReport")
+
+
+
+
+
+      VariableReport( oFr )
+
+
+
+
+
+      oFr:PrepareReport()
+
+
+
+
+
+      do case
+         case nDevice == 2
+            oFr:ShowPreparedReport()
+
+         case nDevice == 1
+            oFr:PrintOptions:SetPrinter( cPrinter )
+            oFr:PrintOptions:SetCopies( nCopies )
+            oFr:PrintOptions:SetShowDialog( .F. )
+            oFr:Print()
+
+         case nDevice == 3
+            oFr:SetProperty(  "PDFExport", "EmbeddedFonts",    .T. )
+            oFr:SetProperty(  "PDFExport", "PrintOptimized",   .T. )
+            oFr:SetProperty(  "PDFExport", "Outline",          .T. )
+            oFr:DoExport(     "PDFExport" )
+
+      end
+
+   end
+
+
+
+
+
+   oFr:DestroyFr()
+
+Return .T.
+
+
+
+FUNCTION nTotNDepAge( uDbf )
+
+   local nTotUnd
+
+   IIF( uDbf == nil, uDbf := dbfDepAgeL, ) ;
+
+   do case
+      case ValType( uDbf ) == "A"
+
+      nTotUnd  := NotCaja( uDbf[ ( dbfDepAgeL )->( FieldPos( "NCANENT"  ) ) ] )
+      nTotUnd  *= uDbf[ ( dbfDepAgeL )->( FieldPos( "NUNICAJA" ) ) ]
+
+      case ValType( uDbf ) == "C"
+
+      nTotUnd  := NotCaja( ( uDbf )->nCanEnt )
+      nTotUnd  *=( uDbf )->nUniCaja
+
+      otherwise
+
+      nTotUnd  := NotCaja( uDbf:nCanEnt )
+      nTotUnd  *= uDbf:nUniCaja
+
+   end
+
+Return ( nTotUnd )
+
+
+
+
+
+
+
+
+
+FUNCTION nTotLDepAge( dbfLine )
+
+   local nCalculo    := 0
+
+   IIF( dbfLine == nil, dbfLine := dbfDepAgeL, ) ;
+
+   nCalculo          := ( dbfLine )->nUniCaja * ( dbfLine )->nPreUnit
+
+   if lCalCaj()
+      nCalculo       *= if( ( dbfLine )->NCANENT <> 0, ( dbfLine )->NCANENT, 1 )
+   end
+
+   if ( dbfLine )->NDTO <> 0
+      nCalculo       -= nCalculo * ( dbfLine )->NDTO / 100
+   end
+
+   if ( dbfLine )->NDTOPRM <> 0
+      nCalculo       -= nCalculo * ( dbfLine )->NDTOPRM / 100
+   end
+
+RETURN ( nCalculo )
+
+
+
+STATIC FUNCTION EdtRec( aTmp, aGet, dbfDepAgeT, oBrw, bWhen, bValid, nMode )
+
+    local oDlg
+    local oBrw2
+   local oSay1, oSay2, oSay4, oSay5, oSay6
+   local cSay1, cSay2, cSay4, cSay5, cSay6
+   local oBmpDiv
+   local oFont          := TFont():New( "Arial", 8, 26, .F., .T. )
+   local oBmpGeneral
+
+    IF nMode == 1
+      aTmp[ ( dbfDepAgeT )->( FieldPos( "CSERDEP" ) ) ]  := "A"
+      aTmp[ ( dbfDepAgeT )->( FieldPos( "CCODALI" ) ) ]  := cDefAlm()
+      aTmp[ ( dbfDepAgeT )->( FieldPos( "CCODPGO" ) ) ]  := cDefFpg()
+      aTmp[ ( dbfDepAgeT )->( FieldPos( "CDIVDEP" ) ) ]  := cDivEmp()
+      aTmp[ ( dbfDepAgeT )->( FieldPos( "NVDVDEP" ) ) ]  := nChgDiv( aTmp[ ( dbfDepAgeT )->( FieldPos( "CDIVDEP" ) ) ], dbfDiv )
+      aTmp[ ( dbfDepAgeT )->( FieldPos( "CCODUSR" ) ) ]  := cCurUsr()
+      aTmp[ ( dbfDepAgeT )->( FieldPos( "CCODDLG" ) ) ]  := oUser():cDelegacion()
+    END
+
+   cSay5                := RetFld( aTmp[ ( dbfDepAgeT )->( FieldPos( "CCODUSR" ) ) ], dbfUsr, "cNbrUse" )
+   cSay6                := RetFld( cCodEmp() + aTmp[ ( dbfDepAgeT )->( FieldPos( "CCODDLG" ) ) ], dbfDelega, "cNomDlg" )
+
+   if Empty( aTmp[ ( dbfDepAgeT )->( FieldPos( "CDTOESP" ) ) ] )
+      aTmp[ ( dbfDepAgeT )->( FieldPos( "CDTOESP" ) ) ]  := Padr( "General", 50 )
+   end
+
+   if Empty( aTmp[ ( dbfDepAgeT )->( FieldPos( "CDPP"    ) ) ] )
+      aTmp[ ( dbfDepAgeT )->( FieldPos( "CDPP"    ) ) ]     := Padr( "Pronto pago", 50 )
+   end
+
+    BeginTrans( aTmp )
+
+   cPicUnd              := MasUnd()
+   cPouDiv              := cPouDiv( aTmp[ ( dbfDepAgeT )->( FieldPos( "CDIVDEP" ) ) ], dbfDiv )
+   cPorDiv              := cPorDiv( aTmp[ ( dbfDepAgeT )->( FieldPos( "CDIVDEP" ) ) ], dbfDiv )
+   nDouDiv              := nDouDiv( aTmp[ ( dbfDepAgeT )->( FieldPos( "CDIVDEP" ) ) ], dbfDiv )
+   nDorDiv              := nRouDiv( aTmp[ ( dbfDepAgeT )->( FieldPos( "CDIVDEP" ) ) ], dbfDiv )
+   cPpvDiv              := cPpvDiv( aTmp[ ( dbfDepAgeT )->( FieldPos( "CDIVDEP" ) ) ], dbfDiv )
+   nDpvDiv              := nDpvDiv( aTmp[ ( dbfDepAgeT )->( FieldPos( "CDIVDEP" ) ) ], dbfDiv )
+
+   oDlg = TDialog():New(,,,, LblTitle( nMode ) + "depósitos a almacenes", "DEPAGE",, .F.,,,,,, .F.,,,,,, .F., )
+
+
+
+
+
+      oBmpGeneral := TBitmap():ReDefine( 990, "package_add_48_alpha",, oDlg,,, .F., .F.,,, .F.,,, .T. )
+
+
+
+
+
+      aGet[ ( dbfDepAgeT )->( FieldPos( "NNUMDEP" ) ) ] := TGetHlp():ReDefine( 100, { | u | If( PCount()==0, aTmp[ ( dbfDepAgeT )->( FieldPos( "NNUMDEP" ) ) ], aTmp[ ( dbfDepAgeT )->( FieldPos( "NNUMDEP" ) ) ]:= u ) }, oDlg,, "999999999",,,,,,, .F., {||      ( .F. )},, .F., .F.,,,,,, nil,,, )
+
+
+
+
+
+
+      aGet[ ( dbfDepAgeT )->( FieldPos( "DFECDEP" ) ) ] := TGetHlp():ReDefine( 110, { | u | If( PCount()==0, aTmp[ ( dbfDepAgeT )->( FieldPos( "DFECDEP" ) ) ], aTmp[ ( dbfDepAgeT )->( FieldPos( "DFECDEP" ) ) ]:= u ) }, oDlg,,,, "N/W*",,,,, .F., {||         ( nMode <> 3 )},, .F., .T.,,,,,, nil,,, )
+
+
+
+
+
+      aGet[ ( dbfDepAgeT )->( FieldPos( "CCODUSR" ) ) ] := TGetHlp():ReDefine( 115, { | u | If( PCount()==0, aTmp[ ( dbfDepAgeT )->( FieldPos( "CCODUSR" ) ) ], aTmp[ ( dbfDepAgeT )->( FieldPos( "CCODUSR" ) ) ]:= u ) }, oDlg,,, {||    ( SetUsuario( aGet[ ( dbfDepAgeT )->( FieldPos( "CCODUSR" ) ) ], oSay5, nil, dbfUsr ) )},,,,,, .F., {||     ( .F. )},, .F., .F.,,,,,, nil,,, )
+
+
+
+
+      oSay5 := TGetHlp():ReDefine( 116, { | u | If( PCount()==0, cSay5, cSay5:= u ) }, oDlg,,,,,,,,, .F., {||     ( .F. )},, .F., .F.,,,,,, nil,,, )
+
+
+
+
+      aGet[ ( dbfDepAgeT )->( FieldPos( "CCODDLG" ) ) ] := TGetHlp():ReDefine( 300, { | u | If( PCount()==0, aTmp[ ( dbfDepAgeT )->( FieldPos( "CCODDLG" ) ) ], aTmp[ ( dbfDepAgeT )->( FieldPos( "CCODDLG" ) ) ]:= u ) }, oDlg,,,,,,,,, .F., {||     ( .F. )},, .F., .F.,,,,,, nil,,, )
+
+
+
+
+      oSay6 := TGetHlp():ReDefine( 301, { | u | If( PCount()==0, cSay6, cSay6:= u ) }, oDlg,,,,,,,,, .F., {||     ( .F. )},, .F., .F.,,,,,, nil,,, )
+
+
+
+
+      aGet[( dbfDepAgeT )->( FieldPos( "LLIQDEP" ) )] := TCheckBox():ReDefine( 400, { | u | If( PCount()==0, aTmp[( dbfDepAgeT )->( FieldPos( "LLIQDEP" ) )], aTmp[( dbfDepAgeT )->( FieldPos( "LLIQDEP" ) )]:= u ) }, oDlg,,,,,,, .F., {||         ( nMode <> 3 )}, .F. )
+
+
+
+
+
+
+
+
+      aGet[ ( dbfDepAgeT )->( FieldPos( "CCODALM" ) ) ] := TGetHlp():ReDefine( 130, { | u | If( PCount()==0, aTmp[ ( dbfDepAgeT )->( FieldPos( "CCODALM" ) ) ], aTmp[ ( dbfDepAgeT )->( FieldPos( "CCODALM" ) ) ]:= u ) }, oDlg,,, {||    ( LoadAlm( aGet, aTmp ) )}, "N/W*",,,,, .F., {||         ( nMode <> 3 )},, .F., .F.,,,,, {|Self|( BrwAlmacen( aGet[ ( dbfDepAgeT )->( FieldPos( "CCODALM" ) ) ] ) )}, nil, "LUPA",, )
+
+
+
+
+      aGet[ ( dbfDepAgeT )->( FieldPos( "CNOMALM" ) ) ] := TGetHlp():ReDefine( 131, { | u | If( PCount()==0, aTmp[ ( dbfDepAgeT )->( FieldPos( "CNOMALM" ) ) ], aTmp[ ( dbfDepAgeT )->( FieldPos( "CNOMALM" ) ) ]:= u ) }, oDlg,,,,,,,,, .F., {||     ( nMode <> 3 )},, .F., .F.,,,,,, nil,,, )
+
+
+
+
+      aGet[ ( dbfDepAgeT )->( FieldPos( "CDIRALM" ) ) ] := TGetHlp():ReDefine( 132, { | u | If( PCount()==0, aTmp[ ( dbfDepAgeT )->( FieldPos( "CDIRALM" ) ) ], aTmp[ ( dbfDepAgeT )->( FieldPos( "CDIRALM" ) ) ]:= u ) }, oDlg,,,,,,,,, .F., {||     ( nMode <> 3 )},, .F., .F.,,,,,, nil,,, )
+
+
+
+
+      aGet[ ( dbfDepAgeT )->( FieldPos( "CPOSALM" ) ) ] := TGetHlp():ReDefine( 133, { | u | If( PCount()==0, aTmp[ ( dbfDepAgeT )->( FieldPos( "CPOSALM" ) ) ], aTmp[ ( dbfDepAgeT )->( FieldPos( "CPOSALM" ) ) ]:= u ) }, oDlg,,,,,,,,, .F., {||     ( nMode <> 3 )},, .F., .F.,,,,,, nil,,, )
+
+
+
+
+      aGet[ ( dbfDepAgeT )->( FieldPos( "CPOBALM" ) ) ] := TGetHlp():ReDefine( 134, { | u | If( PCount()==0, aTmp[ ( dbfDepAgeT )->( FieldPos( "CPOBALM" ) ) ], aTmp[ ( dbfDepAgeT )->( FieldPos( "CPOBALM" ) ) ]:= u ) }, oDlg,,,,,,,,, .F., {||     ( nMode <> 3 )},, .F., .F.,,,,,, nil,,, )
+
+
+
+
+      aGet[ ( dbfDepAgeT )->( FieldPos( "CPRVALM" ) ) ] := TGetHlp():ReDefine( 135, { | u | If( PCount()==0, aTmp[ ( dbfDepAgeT )->( FieldPos( "CPRVALM" ) ) ], aTmp[ ( dbfDepAgeT )->( FieldPos( "CPRVALM" ) ) ]:= u ) }, oDlg,,,,,,,,, .F., {||     ( nMode <> 3 )},, .F., .F.,,,,,, nil,,, )
+
+
+
+
+
+
+
+
+
+
+
+      aGet[ ( dbfDepAgeT )->( FieldPos( "CCODALI" ) ) ] := TGetHlp():ReDefine( 160, { | u | If( PCount()==0, aTmp[ ( dbfDepAgeT )->( FieldPos( "CCODALI" ) ) ], aTmp[ ( dbfDepAgeT )->( FieldPos( "CCODALI" ) ) ]:= u ) }, oDlg,,, {||    ( cAlmacen( aGet[ ( dbfDepAgeT )->( FieldPos( "CCODALI" ) ) ], , oSay1 ) )},,,,,, .F., {||         ( nMode <> 3 )},, .F., .F.,,,,, {|Self|( brwAlmacen( aGet[ ( dbfDepAgeT )->( FieldPos( "CCODALI" ) ) ], oSay1 ) )}, nil, "LUPA",, )
+
+
+
+
+      oSay1 := TGetHlp():ReDefine( 161, { | u | If( PCount()==0, cSay1, cSay1:= u ) }, oDlg,,,,,,,,, .F., {||     .F.},, .F., .F.,,,,,, nil,,, )
+
+
+
+
+
+
+
+
+      aGet[ ( dbfDepAgeT )->( FieldPos( "CCODPGO" ) ) ] := TGetHlp():ReDefine( 140, { | u | If( PCount()==0, aTmp[ ( dbfDepAgeT )->( FieldPos( "CCODPGO" ) ) ], aTmp[ ( dbfDepAgeT )->( FieldPos( "CCODPGO" ) ) ]:= u ) }, oDlg,, "@!", {||    ( cFPago( aGet[ ( dbfDepAgeT )->( FieldPos( "CCODPGO" ) ) ], dbfFPago, oSay2 ) )},,,,,, .F., {||         ( nMode <> 3 )},, .F., .F.,,,,, {|Self|( BrwFPago( aGet[ ( dbfDepAgeT )->( FieldPos( "CCODPGO" ) ) ], oSay2 ) )}, nil, "LUPA",, )
+
+
+
+
+
+        oSay2 := TGetHlp():ReDefine( 141, { | u | If( PCount()==0, cSay2, cSay2:= u ) }, oDlg,,,, "N/W*",,,,, .F., {||         .F.},, .F., .F.,,,,,, nil,,, )
+
+
+
+
+
+
+
+
+      aGet[ ( dbfDepAgeT )->( FieldPos( "CCODTAR" ) ) ] := TGetHlp():ReDefine( 150, { | u | If( PCount()==0, aTmp[ ( dbfDepAgeT )->( FieldPos( "CCODTAR" ) ) ], aTmp[ ( dbfDepAgeT )->( FieldPos( "CCODTAR" ) ) ]:= u ) }, oDlg,,, {||     ( cTarifa( aGet[( dbfDepAgeT )->( FieldPos( "CCODTAR" ) )], oSay4 ) )}, "N/W*",,,,, .F., {||         ( nMode <> 3 )},, .F., .F.,,,,, {|Self|( BrwTarifa( aGet[( dbfDepAgeT )->( FieldPos( "CCODTAR" ) )], oSay4 ) )}, nil, "LUPA",, )
+
+
+
+
+        oSay4 := TGetHlp():ReDefine( 151, { | u | If( PCount()==0, cSay4, cSay4:= u ) }, oDlg,,,,,,,,, .F., {||         .F.},, .F., .F.,,,,,, nil,,, )
+
+
+
+
+
+
+
+
+
+
+
+
+        aGet[ ( dbfDepAgeT )->( FieldPos( "CDIVDEP" ) ) ] := TGetHlp():ReDefine( 170, { | u | If( PCount()==0, aTmp[ ( dbfDepAgeT )->( FieldPos( "CDIVDEP" ) ) ], aTmp[ ( dbfDepAgeT )->( FieldPos( "CDIVDEP" ) ) ]:= u ) }, oDlg,, "@!", {||    ( cDivOut( aGet[ ( dbfDepAgeT )->( FieldPos( "CDIVDEP" ) ) ], oBmpDiv, aTmp[ ( dbfDepAgeT )->( FieldPos( "NVDVDEP" ) ) ], @cPouDiv, @nDouDiv, @cPorDiv, @nDorDiv, @cPpvDiv, @nDpvDiv, nil, dbfDiv, oBandera ) )},,,,,, .F., {||         (     nMode == 1 )},, .F., .F.,,,,, {|Self|BrwDiv( aGet[ ( dbfDepAgeT )->( FieldPos( "CDIVDEP" ) ) ], oBmpDiv, aTmp[ ( dbfDepAgeT )->( FieldPos( "NVDVDEP" ) ) ], dbfDiv, oBandera )}, nil, "LUPA",, )
+
+
+
+
+        oBmpDiv := TBitmap():ReDefine( 171, cBmpDiv( aTmp[ ( dbfDepAgeT )->( FieldPos( "CDIVDEP" ) ) ], dbfDiv ),, oDlg,,, .F., .F.,,, .F.,,, .F. )
+
+
+
+
+
+      oBrw2                   := IXBrowse():New( oDlg )
+
+      oBrw2:bClrSel           := {|| { 0, ( 229 + ( 229 * 256 ) + ( 229 * 65536 ) ) } }
+      oBrw2:bClrSelFocus      := {|| { 0, ( 167 + ( 205 * 256 ) + ( 240 * 65536 ) ) } }
+
+      oBrw2:cAlias            := dbfTmp
+
+      oBrw2:nMarqueeStyle     := 6
+      oBrw2:cName             := "Depósitos a almacén detalle"
+
+      oBrw2:CreateFromResource( 200 )
+
+      with object ( oBrw2:AddCol() )
+         :cHeader             := "Código"
+         :bEditValue          := {|| ( dbfTmp )->cRef }
+         :nWidth              := 70
+      end
+
+      with object ( oBrw2:AddCol() )
+         :cHeader             := "Descripción"
+         :bEditValue          := {|| ( dbfTmp )->cDetalle }
+         :nWidth              := 362
+      end
+
+      with object ( oBrw2:AddCol() )
+         :cHeader             := "Unidades"
+         :bEditValue          := {|| nUnitEnt( dbfTmp ) }
+         :cEditPicture        := MasUnd()
+         :nWidth              := 70
+         :nDataStrAlign       := 1
+         :nHeadStrAlign       := 1
+      end
+
+      with object ( oBrw2:AddCol() )
+         :cHeader             := "Precio U."
+         :bEditValue          := {|| (dbfTmp)->NPREUNIT }
+         :cEditPicture        := cPouDiv
+         :nWidth              := 70
+         :nDataStrAlign       := 1
+         :nHeadStrAlign       := 1
+      end
+
+      with object ( oBrw2:AddCol() )
+         :cHeader             := "Dto.%"
+         :bEditValue          := {|| ( dbfTmp )->nDto }
+         :cEditPicture        := "@E 99.99"
+         :nWidth              := 50
+         :nDataStrAlign       := 1
+         :nHeadStrAlign       := 1
+      end
+
+      with object ( oBrw2:AddCol() )
+         :cHeader             := "Dto.P.%"
+         :bEditValue          := {|| ( dbfTmp )->nDtoPrm }
+         :cEditPicture        := "@E 99.99"
+         :nWidth              := 60
+         :nDataStrAlign       := 1
+         :nHeadStrAlign       := 1
+      end
+
+      with object ( oBrw2:AddCol() )
+         :cHeader             := cImp()
+         :bEditValue          := {|| ( dbfTmp )->nIva }
+         :cEditPicture        := "@E 99.9"
+         :nWidth              := 50
+         :nDataStrAlign       := 1
+         :nHeadStrAlign       := 1
+      end
+
+      with object ( oBrw2:AddCol() )
+         :cHeader             := "Importe"
+         :bEditValue          := {|| nTotLDepAge( dbfTmp ) }
+         :cEditPicture        := cPouDiv
+         :nWidth              := 80
+         :nDataStrAlign       := 1
+         :nHeadStrAlign       := 1
+      end
+
+      if nMode <> 3
+         oBrw2:bLDblClick  := {|| EdtDeta( oBrw2, bEdit2, aTmp ) }
+      end
+
+
+
+
+
+
+
+
+      aGet[ ( dbfDepAgeT )->( FieldPos( "CDTOESP" ) ) ] := TGetHlp():ReDefine( 209, { | u | If( PCount()==0, aTmp[ ( dbfDepAgeT )->( FieldPos( "CDTOESP" ) ) ], aTmp[ ( dbfDepAgeT )->( FieldPos( "CDTOESP" ) ) ]:= u ) }, oDlg,,,,,,,,, .F., {||         ( nMode <> 3 )},, .F., .F.,,,,,, nil,,, )
+
+
+
+
+
+
+
+        aGet[( dbfDepAgeT )->( FieldPos( "NDTOESP" ) ) ] := TGetHlp():ReDefine( 210, { | u | If( PCount()==0, aTmp[ ( dbfDepAgeT )->( FieldPos( "NDTOESP" ) ) ], aTmp[ ( dbfDepAgeT )->( FieldPos( "NDTOESP" ) ) ]:= u ) }, oDlg,, "@E 99.99", {||    ( nRecTotal( dbfTmp, aTmp ) )},,,,,, .F., {||         ( nMode <> 3 )},, .F., .T.,,,,,, nil,,, )
+
+
+
+
+      aGet[ ( dbfDepAgeT )->( FieldPos( "CDPP"    ) ) ] := TGetHlp():ReDefine( 219, { | u | If( PCount()==0, aTmp[ ( dbfDepAgeT )->( FieldPos( "CDPP"    ) ) ], aTmp[ ( dbfDepAgeT )->( FieldPos( "CDPP"    ) ) ]:= u ) }, oDlg,,,,,,,,, .F., {||         ( nMode <> 3 )},, .F., .F.,,,,,, nil,,, )
+
+
+
+
+
+
+
+        aGet[ ( dbfDepAgeT )->( FieldPos( "NDPP"    ) ) ] := TGetHlp():ReDefine( 220, { | u | If( PCount()==0, aTmp[ ( dbfDepAgeT )->( FieldPos( "NDPP"    ) ) ], aTmp[ ( dbfDepAgeT )->( FieldPos( "NDPP"    ) ) ]:= u ) }, oDlg,, "@E 99.99", {||    ( nRecTotal( dbfTmp, aTmp ) )},,,,,, .F., {||         ( nMode <> 3 )},, .F., .T.,,,,,, nil,,, )
+
+
+
+
+
+      oBrwIva                        := TXBrowse():New( oDlg )
+
+      oBrwIva:bClrSel                := {|| { 0, ( 229 + ( 229 * 256 ) + ( 229 * 65536 ) ) } }
+      oBrwIva:bClrSelFocus           := {|| { 0, ( 167 + ( 205 * 256 ) + ( 240 * 65536 ) ) } }
+
+      oBrwIva:SetArray( aTotIva, , , .F. )
+
+      oBrwIva:nMarqueeStyle          := 5
+      oBrwIva:lRecordSelector        := .F.
+      oBrwIva:lHScroll               := .F.
+
+      oBrwIva:CreateFromResource( 310 )
+
+      with object ( oBrwIva:AddCol() )
+         :cHeader          := "Base"
+         :bStrData         := {|| if( aTotIva[ oBrwIva:nArrayAt, 3 ] <> nil, Trans( aTotIva[ oBrwIva:nArrayAt, 2 ], cPorDiv ), "" ) }
+         :nWidth           := 120
+         :nDataStrAlign    := 1
+         :nHeadStrAlign    := 1
+      end
+
+      with object ( oBrwIva:AddCol() )
+         :cHeader          := "% " + cImp()
+         :bStrData         := {|| if( aTotIva[ oBrwIva:nArrayAt, 3 ] <> nil, Trans( aTotIva[ oBrwIva:nArrayAt, 3 ], "@E 99.9"), "" ) }
+         :nWidth           := 65
+         :nDataStrAlign    := 1
+         :nHeadStrAlign    := 1
+         :nEditType        := 1
+      end
+
+      with object ( oBrwIva:AddCol() )
+         :cHeader          := cImp()
+         :bStrData         := {|| if( aTotIva[ oBrwIva:nArrayAt, 3 ] <> nil, Trans( aTotIva[ oBrwIva:nArrayAt, 3 ] * aTotIva[ oBrwIva:nArrayAt, 2 ] / 100, cPorDiv ), "" ) }
+         :nWidth           := 75
+         :nDataStrAlign    := 1
+         :nHeadStrAlign    := 1
+      end
+
+      with object ( oBrwIva:AddCol() )
+         :cHeader          := "% R.E."
+         :bStrData         := {|| if( aTotIva[ oBrwIva:nArrayAt, 3 ] <> nil, Trans( aTotIva[ oBrwIva:nArrayAt, 4 ], "@E 99.9"), "" ) }
+         :nWidth           := 60
+         :nDataStrAlign    := 1
+         :nHeadStrAlign    := 1
+      end
+
+      with object ( oBrwIva:AddCol() )
+         :cHeader          := "R.E."
+         :bStrData         := {|| if( aTotIva[ oBrwIva:nArrayAt, 3 ] <> nil, Trans( aTotIva[ oBrwIva:nArrayAt, 4 ] * aTotIva[ oBrwIva:nArrayAt, 2 ] / 100, cPorDiv ), "" ) }
+         :nWidth           := 65
+         :nDataStrAlign    := 1
+         :nHeadStrAlign    := 1
+      end
+
+
+
+
+
+
+
+
+
+        oGetNet := TSay():ReDefine( 420, {|| nGetNet}, oDlg, cPorDiv,,, .F.,, .F., .F. )
+
+
+
+
+        oGetIva := TSay():ReDefine( 430, {|| nGetIva}, oDlg, cPorDiv,,, .F.,, .F., .F. )
+
+
+
+
+        oGetReq := TSay():ReDefine( 440, {|| nGetReq}, oDlg, cPorDiv,,, .F.,, .F., .F. )
+
+
+
+
+
+        aGet[( dbfDepAgeT )->( FieldPos( "LRECARGO") )] := TCheckBox():ReDefine( 450, { | u | If( PCount()==0, aTmp[( dbfDepAgeT )->( FieldPos( "LRECARGO") )], aTmp[( dbfDepAgeT )->( FieldPos( "LRECARGO") )]:= u ) }, oDlg,, {||( nRecTotal( dbfTmp, aTmp ) )},,,,, .F., {||         ( nMode <> 3 )}, .F. )
+
+
+
+
+
+      oGetTotal := TSay():ReDefine( 460, {|| nTotDep}, oDlg, cPorDiv,,, .F., oFont, .F., .F. )
+
+
+
+
+
+        TButton():ReDefine( 500, {||( AppDeta( oBrw2, bEdit2, aTmp ) )}, oDlg,,, .F., {||         ( nMode <> 3 )},,, .F. )
+
+
+
+
+
+        TButton():ReDefine( 501, {||( EdtDeta( oBrw2, bEdit2, aTmp ) )}, oDlg,,, .F., {||         ( nMode <> 3 )},,, .F. )
+
+
+
+
+
+        TButton():ReDefine( 502, {||( DelDeta( oBrw2, aTmp ) )}, oDlg,,, .F., {||         ( nMode <> 3 )},,, .F. )
+
+
+
+
+        TButton():ReDefine( 503, {||( EdtZoom( oBrw2, bEdit2, aTmp ) )}, oDlg,,, .F.,,,, .F. )
+
+
+
+
+
+        TButton():ReDefine( 524, {||( DbSwapUp( dbfTmp, oBrw2 ) )}, oDlg,,, .F., {||         ( nMode <> 3 )},,, .F. )
+
+
+
+
+
+        TButton():ReDefine( 525, {||( DbSwapDown( dbfTmp, oBrw2 ) )}, oDlg,,, .F., {||         ( nMode <> 3 )},,, .F. )
+
+
+
+
+
+
+        TButton():ReDefine( 511, {||( EndTrans( aTmp, oBrw2, oDlg, nMode ) )}, oDlg,,, .F., {||         ( nMode <> 3 )},,, .F. )
+
+
+
+
+
+        TButton():ReDefine( 510, {||( If( ExitNoSave( nMode, dbfTmp ), oDlg:end(), ) )}, oDlg,,, .F.,,,, .T. )
+
+   if nMode <> 3
+      oDlg:AddFastKey( 113, {|| AppDeta( oBrw2, bEdit2, aTmp ) } )
+      oDlg:AddFastKey( 114, {|| EdtDeta( oBrw2, bEdit2, aTmp ) } )
+      oDlg:AddFastKey( 115, {|| DelDeta( oBrw2, aTmp ) } )
+      oDlg:AddFastKey( 116, {|| EndTrans( aTmp, oBrw2, oDlg, nMode ) } )
+   end
+
+   oDlg:bStart    := { || aGet[( dbfDepAgeT )->( FieldPos( "CCODALM" ) )]:SetFocus(), oBrw2:Load() }
+
+
+
+
+
+   oDlg:Activate( oDlg:bLClicked, oDlg:bMoved, oDlg:bPainted := {|hDC,cPS|( EvalGet( aGet, nMode ), nRecTotal( dbfTmp, aTmp ) )}, .T., {|Self|( oFont:end(), .T. )},, {|Self|( nRecTotal( dbfTmp, aTmp ) )}, oDlg:bRClicked,,, )
+
+   oBmpGeneral:End()
+
+   if !Empty( oBrw2 )
+      oBrw2:CloseData()
+      oBrw2:End()
+   end
+
+   KillTrans()
+
+RETURN ( oDlg:nResult == 1 )
+
+
+
+
+
+
+
+STATIC FUNCTION EdtDet( aTmp, aGet, dbfDepAgeL, oBrw, bWhen, bValid, nMode, aTmpDep )
+
+   local oBtn
+   local oGet2
+   local cGet2
+   local oDlg2
+    local oTotal
+   local nTotal         := 0
+   local oSayLote
+   local oSayCaja
+
+    IF nMode    == 1
+      aTmp[( dbfDepAgeT )->( FieldPos( "CSERDEP" ) ) ]   := aTmpDep[( dbfDepAgeT )->( FieldPos( "CSERDEP" ) )]
+      aTmp[( dbfDepAgeT )->( FieldPos( "NNUMDEP" ) ) ]   := aTmpDep[( dbfDepAgeT )->( FieldPos( "NNUMDEP" ) )]
+      aTmp[( dbfDepAgeT )->( FieldPos( "CSUFDEP" ) ) ]   := aTmpDep[( dbfDepAgeT )->( FieldPos( "CSUFDEP" ) )]
+      aTmp[( dbfDepAgeL )->( FieldPos( "NCANENT"  ) ) ]   := 1
+      aTmp[( dbfDepAgeL )->( FieldPos( "NUNICAJA" ) )]   := 1
+      aTmp[( dbfDepAgeL )->( FieldPos( "DFECHA"   ) )  ]   := Date()
+      aTmp[( dbfDepAgeL )->( FieldPos( "CTIPMOV"  ) ) ]   := cDefVta()
+    end
+
+   oDlg2 = TDialog():New(,,,, lblTitle( nMode ) + "lineas de depósitos a almacén", "LDEPAGE",, .F.,,,,,, .F.,,,,,, .F., )
+
+
+
+
+
+
+
+
+        aGet[( dbfDepAgeL )->( FieldPos( "CREF"     ) )] := TGetHlp():ReDefine( 100, { | u | If( PCount()==0, aTmp[( dbfDepAgeL )->( FieldPos( "CREF"     ) )], aTmp[( dbfDepAgeL )->( FieldPos( "CREF"     ) )]:= u ) }, oDlg2,,, {||    ( LoaArt( aGet, aTmp, aTmpDep, oSayLote ) )}, "N/W*",,,,, .F., {||         ( nMode == 1 )},, .F., .F.,,,,, {|Self|( BrwArticulo( aGet[( dbfDepAgeL )->( FieldPos( "CREF"     ) )], aGet[( dbfDepAgeL )->( FieldPos( "CDETALLE" ) )] ) )}, nil, "LUPA",, )
+
+
+
+
+
+        aGet[( dbfDepAgeL )->( FieldPos( "CDETALLE" ) )] := TGetHlp():ReDefine( 110, { | u | If( PCount()==0, aTmp[( dbfDepAgeL )->( FieldPos( "CDETALLE" ) )], aTmp[( dbfDepAgeL )->( FieldPos( "CDETALLE" ) )]:= u ) }, oDlg2,,,, "N/W*",,,,, .F., {||     ( lModDes() .AND. nMode <> 3 )},, .F., .F.,,,,,, nil,,, )
+
+
+
+
+
+
+
+
+      oSayLote := TSay():ReDefine( 113,, oDlg2,,,, .F.,, .F., .F. )
+
+
+
+
+
+      aGet[( dbfDepAgeL )->( FieldPos( "cLote"    ) )] := TGetHlp():ReDefine( 112, { | u | If( PCount()==0, aTmp[( dbfDepAgeL )->( FieldPos( "cLote"    ) )], aTmp[( dbfDepAgeL )->( FieldPos( "cLote"    ) )]:= u ) }, oDlg2,,,, "N/W*",,,,, .F., {||     ( nMode <> 3 )},, .F., .F.,,,,,, nil,,, )
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+      aGet[( dbfDepAgeL )->( FieldPos( "NIVA"     ) )] := TGetHlp():ReDefine( 120, { | u | If( PCount()==0, aTmp[( dbfDepAgeL )->( FieldPos( "NIVA"     ) )], aTmp[( dbfDepAgeL )->( FieldPos( "NIVA"     ) )]:= u ) }, oDlg2,, "@E 99.9", {||     ( lTiva( dbfIva, aTmp[( dbfDepAgeL )->( FieldPos( "NIVA"     ) )] ) )}, "N/W*",,,,, .F., {||     ( lModIva() .AND. nMode <> 3 )},, .F., .F.,,,,, {|Self|( BrwIva( aGet[ ( dbfDepAgeL )->( FieldPos( "NIVA"     ) ) ], dbfIva, , .T. ) )}, nil, "LUPA",, )
+
+
+
+      oSayCaja := TSay():ReDefine( 129,, oDlg2,,,, .F.,, .F., .F. )
+
+
+
+
+
+
+
+
+        aGet[( dbfDepAgeL )->( FieldPos( "NCANENT"  ) )] := TGetHlp():ReDefine( 130, { | u | If( PCount()==0, aTmp[( dbfDepAgeL )->( FieldPos( "NCANENT"  ) )], aTmp[( dbfDepAgeL )->( FieldPos( "NCANENT"  ) )]:= u ) }, oDlg2,, cPicUnd,, "N/W*",,,,, .F., {||     ( lUseCaj() .AND. nMode <> 3 )}, {|nKey,nFlags,Self| ( lCalcDeta( aTmp, oTotal ) ) }, .F., .T.,,,,,, nil,,, )
+
+
+
+
+
+
+
+
+        aGet[( dbfDepAgeL )->( FieldPos( "NUNICAJA" ) )] := TGetHlp():ReDefine( 140, { | u | If( PCount()==0, aTmp[( dbfDepAgeL )->( FieldPos( "NUNICAJA" ) )], aTmp[( dbfDepAgeL )->( FieldPos( "NUNICAJA" ) )]:= u ) }, oDlg2,, cPicUnd,, "N/W*",,,,, .F., {||         ( nMode <> 3 )}, {|nKey,nFlags,Self| ( lCalcDeta( aTmp, oTotal ) ) }, .F., .T.,,,,,, nil,,, )
+
+
+
+
+
+        aGet[( dbfDepAgeL )->( FieldPos( "NPESOKG"  ) )] := TGetHlp():ReDefine( 145, { | u | If( PCount()==0, aTmp[( dbfDepAgeL )->( FieldPos( "NPESOKG"  ) )], aTmp[( dbfDepAgeL )->( FieldPos( "NPESOKG"  ) )]:= u ) }, oDlg2,, "@E 999,999.999999",,,,,,, .F., {||         ( nMode <> 3 )},, .F., .F.,,,,,, nil,,, )
+
+
+
+
+
+        aGet[( dbfDepAgeL )->( FieldPos( "CUNIDAD"  ) )] := TGetHlp():ReDefine( 150, { | u | If( PCount()==0, aTmp[( dbfDepAgeL )->( FieldPos( "CUNIDAD"  ) )], aTmp[( dbfDepAgeL )->( FieldPos( "CUNIDAD"  ) )]:= u ) }, oDlg2,,,, "N/W*",,,,, .F., {||         ( nMode <> 3 )},, .F., .F.,,,,,, nil,,, )
+
+
+
+
+
+
+
+
+        aGet[( dbfDepAgeL )->( FieldPos( "NPREUNIT" ) )] := TGetHlp():ReDefine( 160, { | u | If( PCount()==0, aTmp[( dbfDepAgeL )->( FieldPos( "NPREUNIT" ) )], aTmp[( dbfDepAgeL )->( FieldPos( "NPREUNIT" ) )]:= u ) }, oDlg2,, cPouDiv,, "N/W*",,,,, .F., {||         ( nMode <> 3 )}, {|nKey,nFlags,Self| ( lCalcDeta( aTmp, oTotal ) ) }, .F., .T.,,,,,, nil,,, )
+
+
+
+
+
+
+
+
+        aGet[( dbfDepAgeL )->( FieldPos( "NDTO"     ) )] := TGetHlp():ReDefine( 170, { | u | If( PCount()==0, aTmp[( dbfDepAgeL )->( FieldPos( "NDTO"     ) )], aTmp[( dbfDepAgeL )->( FieldPos( "NDTO"     ) )]:= u ) }, oDlg2,, "@E 999.9",, "N/W*",,,,, .F., {||         ( nMode <> 3 )}, {|nKey,nFlags,Self| ( lCalcDeta( aTmp, oTotal ) ) }, .F., .T.,,,,,, nil,,, )
+
+
+
+
+
+
+
+
+        aGet[( dbfDepAgeL )->( FieldPos( "NDTOPRM"  ) )] := TGetHlp():ReDefine( 175, { | u | If( PCount()==0, aTmp[( dbfDepAgeL )->( FieldPos( "NDTOPRM"  ) )], aTmp[( dbfDepAgeL )->( FieldPos( "NDTOPRM"  ) )]:= u ) }, oDlg2,, "@E 999.9",, "N/W*",,,,, .F., {||         ( nMode <> 3 )}, {|nKey,nFlags,Self| ( lCalcDeta( aTmp, oTotal ) ) }, .F., .T.,,,,,, nil,,, )
+
+
+
+
+
+
+        aGet[( dbfDepAgeL )->( FieldPos( "DFECHA"   ) )] := TGetHlp():ReDefine( 180, { | u | If( PCount()==0, aTmp[( dbfDepAgeL )->( FieldPos( "DFECHA"   ) )], aTmp[( dbfDepAgeL )->( FieldPos( "DFECHA"   ) )]:= u ) }, oDlg2,,,, "N/W*",,,,, .F., {||         ( nMode <> 3 )},, .F., .T.,,,,,, nil,,, )
+
+
+
+
+
+
+
+      aGet[( dbfDepAgeL )->( FieldPos( "CTIPMOV"  ) )] := TGetHlp():ReDefine( 290, { | u | If( PCount()==0, aTmp[ ( dbfDepAgeL )->( FieldPos( "CTIPMOV"  ) ) ], aTmp[ ( dbfDepAgeL )->( FieldPos( "CTIPMOV"  ) ) ]:= u ) }, oDlg2,,, {||    ( cTVta( aGet[( dbfDepAgeL )->( FieldPos( "CTIPMOV"  ) )], dbfTVta, oGet2 ) )},,,,,, .F., {||     ( nMode <> 3  )},, .F., .F.,,,,, {|Self|( BrwTVta( aGet[( dbfDepAgeL )->( FieldPos( "CTIPMOV"  ) )], dbfTVta, oGet2 ) )}, nil, "LUPA",, )
+
+
+
+
+
+        oGet2 := TGetHlp():ReDefine( 291, { | u | If( PCount()==0, cGet2, cGet2:= u ) }, oDlg2,,,, "N/W*",,,,, .F., {||         ( .F. )},, .F., .F.,,,,,, nil,,, )
+
+
+
+
+
+        oTotal := TGetHlp():ReDefine( 190, { | u | If( PCount()==0, nTotal, nTotal:= u ) }, oDlg2,, cPorDiv,,,,,,, .F., {||         .F.},, .F., .F.,,,,,, nil,,, )
+
+
+
+
+
+      oBtn := TButton():ReDefine( 1, {||SaveDeta( aTmp, aGet, oBrw, oDlg2, nMode, oTotal, aTmpDep, oBtn )}, oDlg2,,, .F., {||         ( nMode <> 3 )},,, .F. )
+
+
+
+
+        TButton():ReDefine( 2, {||( oDlg2:end() )}, oDlg2,,, .F.,,,, .F. )
+
+
+
+
+      TButton():ReDefine( 9, {||( ChmHelp ("Añadir_linea_deposito") )}, oDlg2,,, .F.,,,, .F. )
+
+   if nMode <> 3
+      oDlg2:AddFastKey( 116, {|| SaveDeta( aTmp, aGet, oBrw, oDlg2, nMode, oTotal, aTmpDep, oBtn ) } )
+   end
+
+   oDlg2:AddFastKey( 112, {|| ChmHelp ("Añadir_linea_deposito") } )
+
+   oDlg2:bStart := {|| SetDlgMode( aGet, aTmp, oSayLote, nMode, oSayCaja ) }
+
+   oDlg2:Activate( oDlg2:bLClicked, oDlg2:bMoved, oDlg2:bPainted := {|hDC,cPS|( lCalcDeta( aTmp, oTotal ) )}, .T.,,,, oDlg2:bRClicked,,, )
+
+RETURN ( oDlg2:nResult == 1 )
+
+
+
+Function dJulianoDepAge( cDepAgeL )
+
+   IIF( cDepAgeL == nil, cDepAgeL := dbfDepAgeL, ) ;
+
+RETURN ( AddMonth( JulianoToDate( , Val( ( cDepAgeL )->cLote ) ), 6 ) )
+
+
+
+Function dJulianoDepAnio( cDepAgeL )
+
+   IIF( cDepAgeL == nil, cDepAgeL := dbfDepAgeL, ) ;
+
+RETURN ( AddMonth( JulianoToDate( , Val( ( cDepAgeL )->cLote ) ), 8 ) )

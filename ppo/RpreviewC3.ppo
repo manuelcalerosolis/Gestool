@@ -1,0 +1,1095 @@
+#line 112 "hbclass.ch"
+   DYNAMIC DivertConstructorCall
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+DECLARE HBClass  New( cName AS String, OPTIONAL SuperParams ) AS CLASS HBClass  Create() AS Object  Instance() AS Object  AddClsMethod( cName AS String, @MethodName(), nScope AS Numeric, n2 AS Numeric, n3 AS Numeric )  AddDelegate( cName AS String, cDelegate AS String, cObject AS String, nScope AS Numeric, lPersistent AS LOGICAL )  AddMultiClsData( cType AS String, uVal, nScope AS Numeric, aDatas AS Array OF String )  AddMultiData( cType AS String, uVal, nScope AS Numeric, aDatas AS Array OF String, x AS LOGICAL, lPer AS LOGICAL )  AddMethod( cName AS String, @MethodName(), nScope AS Numeric, lPersistent AS LOGICAL )  AddInLine( cName AS String, bBlock AS CodeBlock, nScope AS Numeric, lPersistent AS LOGICAL )  AddVirtual( cName AS String )  ModMethod( cName AS String, @MethodName(), nScope AS Numeric, lPersistent AS LOGICAL )  ModClsMethod( cName AS String, @MethodName(), nScope AS Numeric )  ModInline( cName AS String, bBlock AS CodeBlock, nScope AS Numeric, lPersistent AS LOGICAL )  SetOnError( @MethodName() )
+#line 85 "\Fwh1204\Include\FiveWin.Ch"
+   EXTERNAL GetProcAdd
+   EXTERNAL TActiveX
+
+
+
+
+extern errorsys
+#line 56 ".\Prg\RpreviewC3.prg"
+static oWnd, oMeta1, oMeta2, oPage, oTwoPages, oZoom, oMenuZoom, oMenuTwoPages, oMenuUnZoom, oMenuOnePage, oFactor
+
+static aFactor
+
+static nPage, nZFactor
+
+static lTwoPages, lZoom
+
+
+
+function RPreview( oDevice )
+
+     local aFiles
+     local oSay
+     local oWndMain, oIcon, oBar, oFont
+     local lExit
+     local oHand, cPageNum
+     local oError
+     local oBlock
+
+     if oWnd <> nil
+          MsgStop("Ya existe una Ventana de Previsualización")
+          RETU nil
+     endif
+
+     oBlock    := ErrorBlock( {| oError | ApoloBreak( oError ) } )
+     BEGIN SEQUENCE
+
+     aFiles    := oDevice:aMeta
+     lExit     := .F.
+
+     if oWndMain <> nil
+        oIcon  := oWndMain:oIcon
+     endif
+
+     if oDevice:lPrvModal .AND. oWndMain <> nil
+        oWndMain:Hide()
+     else
+        lExit  := .T.
+     endif
+
+     oFont := TFont():New( GetSysFont(), 0, -12,,,,,,,,,,,,,, )
+
+
+
+
+
+
+     oWnd := TWindow():New( 0, 0, 24, 80, oDevice:cDocument,, BuildMenu(),, oIcon,, .T., .T., 0, 12632256,,, !.F., !.F., !.F., !.F., .F. )
+
+     oWnd:SetFont(oFont)
+
+     oWnd:oVScroll:SetRange(0,0)
+     oWnd:oHScroll:SetRange(0,0)
+
+     oHand := TCursor():New(, Upper("HAND") )
+
+     oBar := TBar():New( oWnd, 26, iif( LargeFonts(), 30, 26), .T.,,, .F., .F. )
+
+     oBar:bRClicked := {|| nil }
+
+
+
+
+     TBtnBmp():NewBar( "Top",,,, "Ir a la primera página", {|This|TopPage()}, .F., oBar, .F.,, Strtran("&Primera","&",""), .F.,, "TopPage()",,,,,, !.T.,,,,, .F. )
+
+
+
+
+     TBtnBmp():NewBar( "Previous",,,, "Ir a la anterior página", {|This|PrevPage()}, .F., oBar, .F.,, Strtran("&Anterior","&",""), .F.,, "PrevPage()",,,,,, !.T.,,,,, .F. )
+
+
+
+
+     TBtnBmp():NewBar( "Next",,,, "Ir a la siguiente página", {|This|NextPage()}, .F., oBar, .F.,, Strtran("&Siguiente","&",""), .F.,, "NextPage()",,,,,, !.T.,,,,, .F. )
+
+
+
+
+     TBtnBmp():NewBar( "Bottom",,,, "Ir a la última página", {|This|BottomPage()}, .F., oBar, .F.,, Strtran("&Ultima","&",""), .F.,, "BottomPage()",,,,,, !.T.,,,,, .F. )
+
+
+
+
+     oZoom := TBtnBmp():NewBar( "PrvZoom",,,, "Zoom de la página", {|This|Zoom()}, .T., oBar, .F.,, Strtran("&Zoom","&",""), .F.,, "Zoom()",,,,,, !.T.,,,,, .F. )
+
+
+
+
+     oTwoPages := TBtnBmp():NewBar( "Two_Pages",,,, "Previsualización en dos páginas", {|This|TwoPages()}, .F., oBar, .F.,, Strtran("Dos pá&ginas","&",""), .F.,, "TwoPages()",,,,,, !.T.,,,,, .F. )
+
+
+
+
+     TBtnBmp():NewBar( "Printer",,,, "Imprimir la página actual", {|This|PrintPage()}, .T., oBar, .F.,, Strtran("&Imprimir","&",""), .F.,, "PrintPage()",,,,,, !.T.,,,,, .F. )
+
+
+
+
+     TBtnBmp():NewBar( "Pdf_16",,,, "Generar fichero pdf", {|This|PrintPdf( oWnd:cargo )}, .T., oBar, .F.,, Strtran("Generar fichero pdf","&",""), .F.,, "PrintPdf( oWnd:cargo )",,,,,, !.T.,,,,, .F. )
+
+
+
+
+     TBtnBmp():NewBar( "Exit",,,, "Salir de la previsualización", {|This|oWnd:End()}, .T., oBar, .F.,, Strtran("&Salir","&",""), .F.,, "oWnd:End()",,,,,, !.T.,,,,, .F. )
+
+     AEval( oBar:aControls, { | o | o:oCursor := oHand } )
+
+
+
+
+
+        TStatusBar():New( oWnd, "  " + "Previsualización",,, )
+
+
+
+
+
+
+
+
+     oMeta1 := TMetaFile():New( 0, 0, 0, 0, aFiles[ 1 ], oWnd, 0, 16777215, oDevice:nHorzRes(), oDevice:nVertRes() )
+
+
+
+
+     oMeta1:blDblClick := { |nRow, nCol, nKeyFlags|  SetOrg1( nCol, nRow, nKeyFlags ) }
+
+     oMeta1:bKeyDown := {|nKey,nFlags| CheckKey(nKey,nFlags)}
+
+     oMeta1:bMouseWheel := { | nKeys, nDelta, nXPos, nYPos |  CheckMouseWheel( nKeys, nDelta, nXPos, nYPos ) }
+
+
+
+     oMeta2    := TMetaFile():New( 0,0,0,0,"", oWnd,0,16777215,oDevice:nHorzRes(), oDevice:nVertRes() )
+
+     oMeta2:blDblClick := {|nRow, nCol, nKeyFlags| SetOrg2( nCol, nRow, nKeyFlags ) }
+
+     oMeta2:hide()
+
+     nPage     := 1
+     nZFactor  := 1
+     lTwoPages := .F.
+     lZoom     := .F.
+
+
+     oSay := TSay():New( 7, 285, {|| "Factor"}, oBar,, oFont, .F., .F., .F., .T.,,, 60, 15, .F., .F., .F., .F., .F., .F., .F. )
+
+
+
+
+     oFactor := TComboBox():New( 3, 335, { | u | If( PCount()==0, nZFactor, nZFactor:= u ) }, {"1","2","3","4","5","6","7","8","9"}, 35, 200, oBar,, {|Self|SetFactor(nZFactor)},,,, .T., oFont,, .F.,, .F.,,,,, )
+
+     if Len( aFiles ) > 1
+        cPageNum = "Número de Página: "+ltrim(str(nPage,4,0)) + " / " + ltrim(str(len(aFiles)))
+     else
+        cPageNum = "Número de Página: "+ltrim(str(nPage,4,0))
+     endif
+
+
+     oPAGE := TSay():New( 7, 380, {|| cPageNum}, oBar,, oFont, .F., .F., .F., .T.,,, 180, 15, .F., .F., .F., .F., .F., .F., .F. )
+
+     oWnd:cargo := oDevice
+
+     WndCenter(oWnd:hWnd)
+
+     SysRefresh()
+
+     oWnd:oHScroll:bPos := {|nPos| hScroll(0, .F., nPos)}
+     oWnd:oVScroll:bPos := {|nPos| vScroll(0, .F., nPos)}
+
+     SetFactor()
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+     oWnd:Activate( Upper("MAXIMIZED"), oWnd:bLClicked, oWnd:bRClicked, oWnd:bMoved, oWnd:bResized := { | nSizeType, nWidth, nHeight | PaintMeta() }, oWnd:bPainted, oWnd:bKeyDown, oWnd:bInit, {||        vScroll(1)}, {||      vScroll(2)}, {||    vScroll(1,.T.)}, {||  vScroll(2,.T.)}, {||      hScroll(1)}, {||     hScroll(2)}, {||  hScroll(1,.T.)}, {|| hScroll(2,.T.)}, {||        (oWnd:oIcon := nil       , oFont:End()             , oMeta1:End()            , oMeta2:End()            , oDevice:End()           , oHand:End()             , oWnd := nil             , lExit := .T.            , .T.)},, oWnd:bLButtonUp )
+
+     StopUntil( {|| lExit} )
+
+     RECOVER USING oError
+
+         msgStop( ErrorMessage( oError ), "Imposible abrir ventana de previsualización" )
+
+     end
+
+     ErrorBlock( oBlock )
+
+return (nil)
+
+
+
+static function BuildMenu()
+
+     local nFor, oMenu
+
+     aFactor := Array(9)
+
+     oMenu := MenuBegin( .F.,,, .F., .F. )
+          MenuAddItem( "&Fichero",, .F.,,,,,,,,, .F.,,, .F. )
+          MenuBegin( .F.,,, .F., .F. )
+
+               MenuAddItem( "&Imprimir", "Imprimir la página actual", .F.,, {|oMenuItem|PrintPage()},, "Printer",,,,, .F.,,, .F. )
+
+               MenuAddItem()
+
+
+               MenuAddItem( "&Salir", "Salir de la previsualización", .F.,, {|oMenuItem|oWnd:End()},, "Exit",,,,, .F.,,, .F. )
+          MenuEnd()
+
+          MenuAddItem( "&Página",, .F.,,,,,,,,, .F.,,, .F. )
+          MenuBegin( .F.,,, .F., .F. )
+
+               MenuAddItem( "&Primera", "Ir a la primera página", .F.,, {|oMenuItem|TopPage()},, "Top",,,,, .F.,,, .F. )
+
+
+               MenuAddItem( "&Anterior", "Ir a la anterior página", .F.,, {|oMenuItem|PrevPage()},, "Previous",,,,, .F.,,, .F. )
+
+
+               MenuAddItem( "&Siguiente", "Ir a la siguiente página", .F.,, {|oMenuItem|NextPage()},, "Next",,,,, .F.,,, .F. )
+
+
+               MenuAddItem( "&Ultima", "Ir a la última página", .F.,, {|oMenuItem|BottomPage()},, "Bottom",,,,, .F.,,, .F. )
+
+               MenuAddItem()
+
+
+
+               oMenuZoom := MenuAddItem( "&Zoom", "Zoom de la página", .F., Upper("ENABLED") == "ENABLED", {|oMenuItem|Zoom(.T.)},, "PrvZoom",,,,, .F.,,, .F. )
+
+
+               oMenuUnZoom := MenuAddItem( "&Normal", "Deshacer Zoom de la página", .F., Upper("DISABLED") == "ENABLED", {|oMenuItem|Zoom(.T.)},, "UnZoom",,,,, .F.,,, .F. )
+               MenuAddItem( "&Factor", "Factor de zoom", .F.,,,,,,,,, .F.,,, .F. )
+               MenuBegin( .F.,,, .F., .F. )
+               FOR nFor := 1 TO len(aFactor)
+
+
+
+
+
+                    aFactor[nFor] := MenuAddItem( "&"+ltrim(str(nFor)), "Factor "+ltrim(str(nFor)), .F.,, {|oMenuItem|( oFactor:Set(oMenuItem:nHelpId ), Eval( oFactor:bChange ) )},,,,,,, .F.,,, .F. )
+
+               NEXT
+               MenuEnd()
+               MenuAddItem()
+
+
+
+               oMenuTwoPages := MenuAddItem( "Dos pá&ginas", "Previsualización en dos páginas", .F., Upper("ENABLED") == "ENABLED", {|oMenuItem|TwoPages(.T.)},, "Two_Pages",,,,, .F.,,, .F. )
+
+
+               oMenuOnePage := MenuAddItem( "Una pá&gina", "Previsualización en una página", .F., Upper("DISABLED") == "ENABLED", {|oMenuItem|TwoPages(.T.)},, "One_Page",,,,, .F.,,, .F. )
+          MenuEnd()
+   MenuEnd()
+
+return oMenu
+
+
+
+static function PaintMeta()
+
+     local oCoors1, oCoors2
+     local aFiles := oWnd:cargo:aMeta
+     local nWidth, nHeight, nFactor, nMetaWidth
+
+     if IsIconic(oWnd:hWnd)
+          RETU nil
+     endif
+
+     DO case
+        case ! lTwoPages
+
+          if ! lZoom
+
+
+             if oWnd:cargo:nHorzSize() >=  oWnd:cargo:nVertSize()
+                nFactor := .4
+             else
+                nFactor := .40
+             endif
+
+          else
+             nFactor := .47
+          endif
+
+          nWidth  = oWnd:nWidth() - If( lZoom, 20, 0 )
+
+          nHeight = oWnd:nHeight() - If( lZoom .AND. nZFactor > 1, 20, 0 ) - 10 -  If( LargeFonts(), 100, 80 )
+
+          if ! lZoom
+             nMetaWidth = ( nHeight - 40 ) * nFactor
+          else
+             nMetaWidth = nWidth * nFactor
+          endif
+
+
+
+
+          oCoors1 := TRect():New( 40, ( nWidth / 2 ) - nMetaWidth, nHeight, ( nWidth / 2 ) + nMetaWidth )
+
+          oMeta2:Hide()
+          oMeta1:SetCoors( oCoors1 )
+          oMeta1:Refresh()
+
+     case lTwoPages
+
+          nFactor := .4
+          aFiles  := oWnd:cargo:aMeta
+
+          nWidth  := oWnd:nWidth()
+          nHeight := oWnd:nHeight() - 10 - If( LargeFonts(), 100, 80 )
+
+          nMetaWidth = ( nHeight - 40 ) * nFactor
+
+
+
+
+          oCoors1 := TRect():New(40, ( nWidth / 4 ) - nMetaWidth, nHeight, ( nWidth / 4 ) + nMetaWidth )
+
+
+
+          oCoors2 := TRect():New(40, ( nWidth / 4 ) - nMetaWidth + ( nWidth / 2 ), nHeight, ( nWidth / 4 ) + nMetaWidth + ( nWidth / 2 ) )
+
+          if nPage == Len(aFiles)
+               oMeta2:SetFile("")
+          else
+               oMeta2:SetFile(aFiles[nPage+1])
+          endif
+
+          oMeta1:SetCoors(oCoors1)
+          oMeta2:SetCoors(oCoors2)
+          oMeta1:Refresh()
+          oMeta2:Show()
+
+     endcase
+
+     oMeta1:SetFocus()
+
+return nil
+
+
+
+static function NextPage()
+
+
+     local aFiles := oWnd:cargo:aMeta
+
+     if nPage == len(aFiles)
+          MessageBeep()
+          RETU nil
+     endif
+
+     nPage++
+
+
+
+     oMeta1:SetFile(aFiles[nPage])
+     oPage:SetText("Número de Página: "+ltrim(str(nPage,4,0))+" / "+ltrim(str(len(aFiles))))
+
+     oMeta1:Refresh()
+
+     if lTwoPages
+          if len(aFiles) >= (nPage+1)
+               oMeta2:SetFile(aFiles[nPage+1])
+          else
+               oMeta2:SetFile("")
+          endif
+          oMeta2:Refresh()
+     endif
+
+     oMeta1:SetFocus()
+
+
+
+return nil
+
+
+
+static function PrevPage()
+
+
+     local aFiles := oWnd:cargo:aMeta
+
+     if nPage == 1
+          MessageBeep()
+          RETU nil
+     endif
+
+     nPage--
+
+
+
+     oMeta1:SetFile(aFiles[nPage])
+     oPage:SetText("Número de Página: "+ltrim(str(nPage,4,0))+" / "+ltrim(str(len(aFiles))))
+     oMeta1:Refresh()
+
+     if lTwoPages
+          if len(aFiles) >= nPage+1
+               oMeta2:SetFile(aFiles[nPage+1])
+          else
+               oMeta2:SetFile("")
+          endif
+          oMeta2:Refresh()
+     endif
+
+     oMeta1:SetFocus()
+
+
+
+return nil
+
+
+
+static function TopPage()
+
+
+     local aFiles := oWnd:cargo:aMeta
+
+     if nPage == 1
+          MessageBeep()
+          RETU nil
+     endif
+
+     nPage   := 1
+
+
+
+     oMeta1:SetFile(aFiles[nPage])
+     oPage:SetText("Número de Página: "+ltrim(str(nPage,4,0))+" / "+ltrim(str(len(aFiles))))
+
+     oMeta1:Refresh()
+
+     if lTwoPages
+          if len(aFiles) >= nPage+1
+               oMeta2:SetFile(aFiles[nPage+1])
+          else
+               oMeta2:SetFile("")
+          endif
+          oMeta2:Refresh()
+     endif
+
+     oMeta1:SetFocus()
+
+
+
+return nil
+
+
+
+static function BottomPage()
+
+
+     local aFiles := oWnd:cargo:aMeta
+
+     if nPage == len(aFiles)
+          MessageBeep()
+          RETU nil
+     endif
+
+     nPage   := len(aFiles)
+
+
+
+     oMeta1:SetFile(aFiles[nPage])
+     oPage:SetText("Número de Página: "+ltrim(str(nPage,4,0))+" / "+ltrim(str(len(aFiles))))
+
+     oMeta1:Refresh()
+
+     if lTwoPages
+          oMeta2:SetFile("")
+          oMeta2:Refresh()
+     endif
+
+     oMeta1:SetFocus()
+
+
+return nil
+
+
+
+static function TwoPages(lMenu)
+
+
+
+
+
+     IIF( lMenu == nil, lMenu := .F., ) ;
+
+     lTwoPages := !lTwoPages
+
+     if lTwoPages
+
+          if len(oWnd:cargo:aMeta) == 1
+               lTwoPages := !lTwoPages
+               MessageBeep()
+
+               RETU nil
+          endif
+
+
+          if oWnd:cargo:nHorzSize() >=  oWnd:cargo:nVertSize()
+               lTwoPages := !lTwoPages
+               MessageBeep()
+
+               RETU nil
+          endif
+
+          if lZoom
+               Zoom(.T.)
+          endif
+
+          oTwoPages:FreeBitmaps()
+          oTwoPages:LoadBitmaps("One_Page")
+          oTwoPages:cMsg      := "Previsualización en una página"
+          oTwoPages:cTooltip  := StrTran("Una pá&gina","&","")
+          oMenuTwoPages:disable()
+          oMenuOnePage:enable()
+
+     else
+
+          oTwoPages:FreeBitmaps()
+          oTwoPages:LoadBitmaps("Two_Pages")
+          oTwoPages:cMsg     := "Previsualización en dos páginas"
+          oTwoPages:cTooltip := StrTran("Dos pá&ginas","&","")
+          oMenuTwoPages:enable()
+          oMenuOnePage:disable()
+
+     endif
+
+     if lMenu
+          oTwoPages:Refresh()
+     endif
+
+     oWnd:Refresh()
+     PaintMeta()
+
+
+return nil
+
+
+
+static function Zoom(lMenu)
+
+
+
+
+
+     IIF( lMenu == nil, lMenu := .F., ) ;
+
+     lZoom := !lZoom
+
+     if lZoom
+
+          if lTwoPages
+               TwoPages(.T.)
+          endif
+
+          oZoom:FreeBitmaps()
+          oZoom:LoadBitmaps("Unzoom")
+          oZoom:cMsg       := "Deshacer Zoom de la página"
+          oZoom:cTooltip   := StrTran("&Normal","&","")
+          oMenuZoom:disable()
+          oMenuUnZoom:enable()
+
+          oWnd:oVScroll:SetRange(1,20*nZFactor)
+          if nZFactor > 1
+             oWnd:oHScroll:SetRange(1,20*nZFactor)
+          endif
+
+          oMeta1:ZoomIn()
+
+     else
+
+          oZoom:FreeBitmaps()
+          oZoom:LoadBitmaps("PrvZoom")
+          oZoom:cMsg := "Zoom de la página"
+          oZoom:cTooltip := StrTran("&Zoom","&","")
+          oMenuZoom:enable()
+          oMenuUnZoom:disable()
+
+          oWnd:oVScroll:SetRange(0,0)
+          oWnd:oHScroll:SetRange(0,0)
+
+          oMeta1:ZoomOut()
+          nZFactor = 1
+
+     endif
+
+     if lMenu
+          oZoom:Refresh()
+     endif
+
+     PaintMeta()
+
+
+return nil
+
+
+
+static function VScroll(nType,lPage, nSteps)
+
+     local nYfactor, nYorig, nStep
+
+     IIF( lPage == nil, lPage := .F., ) ;
+
+     if nType == 1
+        if oWnd:oVScroll:GetPos() <= oWnd:oVScroll:nMin
+           return nil
+        endif
+     else
+        if oWnd:oVScroll:GetPos() > oWnd:oVScroll:nMax
+           return nil
+        endif
+     endif
+
+     nYfactor := Int(oWnd:cargo:nVertRes()/oWnd:oVScroll:nMax)
+
+     if nSteps <> nil
+          nStep := nSteps
+     elseif lPage
+          nStep := oWnd:oVScroll:nMax/10
+     else
+          nStep := 1
+     endif
+
+     if nType == 1
+          nStep := -(nStep)
+     elseif nType == 0
+          oWnd:oVscroll:SetPos(nSteps)
+          nStep := 0
+     endif
+
+     nYorig := nYfactor * (oWnd:oVScroll:GetPos() + nStep - 1)
+
+     if nYorig > oWnd:cargo:nVertRes()
+          nYorig := oWnd:cargo:nVertRes()
+     endif
+
+     if nYorig < 0
+          nYorig := 0
+     endif
+
+
+
+
+        oMeta1:SetOrg( nil, nYorig / oWnd:cargo:nVertRes() * 10 )
+
+
+     oMeta1:Refresh()
+
+return nil
+
+
+
+static function HScroll(nType,lPage, nSteps)
+
+     local nXfactor, nXorig, nStep
+
+     IIF( lPage == nil, lPage := .F., ) ;
+
+     if nType == 1
+        if oWnd:oHScroll:GetPos() <= oWnd:oHScroll:nMin
+           return nil
+        endif
+     else
+        if oWnd:oHScroll:GetPos() > oWnd:oHScroll:nMax
+           return nil
+        endif
+     endif
+
+     nXfactor := Int(oWnd:cargo:nHorzRes()/oWnd:oHScroll:nMax)
+
+     if nSteps <> nil
+          nStep := nSteps
+     elseif lPage
+          nStep := oWnd:oHScroll:nMax/10
+     else
+          nStep := 1
+     endif
+
+     if nType == 1
+          nStep := -(nStep)
+     elseif nType == 0
+          oWnd:oHscroll:SetPos(nSteps)
+          nStep := 0
+     endif
+
+     nXorig := nXfactor * (oWnd:oHScroll:GetPos() + nStep - 1)
+
+     if nXorig > oWnd:cargo:nHorzRes()
+          nXorig := oWnd:cargo:nHorzRes()
+     endif
+
+     if nXorig < 0
+          nXorig := 0
+     endif
+
+
+
+
+        oMeta1:SetOrg( nXorig / oWnd:cargo:nHorzRes() * 10, nil )
+
+
+     oMeta1:Refresh()
+
+return nil
+
+
+
+static function SetOrg1(nX, nY)
+
+     local oCoors
+
+     local nXStep, nYStep, nXFactor, nYFactor, nWidth, nHeight
+
+     if lZoom
+          Zoom(.T.)
+          RETU nil
+     endif
+
+     oCoors   := oMeta1:GetRect()
+     nWidth   := oCoors:nRight - oCoors:nLeft + 1
+     nHeight  := oCoors:nBottom - oCoors:nTop + 1
+     if .F.
+        nXStep   := Max(Int(nX/nWidth*20*nZFactor) - 9, 0)
+        nXFactor := Int(oWnd:cargo:nHorzRes()/20*nZFactor)
+     endif
+     if .F.
+        nYStep   := Max(Int(nY/nHeight*20*nZFactor) - 9, 0)
+        nYFactor := Int(oWnd:cargo:nVertRes()/20*nZFactor)
+     endif
+
+     Zoom(.T.)
+
+     if !empty(nXStep)
+          HScroll(2,,nxStep)
+          oWnd:oHScroll:SetPos(nxStep)
+     endif
+
+     if !empty(nYStep)
+          VScroll(2,,nyStep)
+          oWnd:oVScroll:SetPos(nyStep)
+     endif
+
+return nil
+
+
+
+static function SetOrg2(nX, nY)
+
+     local oCoors
+     local aFiles
+
+     local nXStep, nYStep, nXFactor, nYFactor, nWidth, nHeight
+
+     if oMeta2:cCaption == ""
+          RETU nil
+     endif
+
+     if lZoom
+          Zoom(.T.)
+          RETU nil
+     endif
+
+     oCoors   := oMeta2:GetRect()
+     nWidth   := oCoors:nRight - oCoors:nLeft + 1
+     nHeight  := oCoors:nBottom - oCoors:nTop + 1
+     if .F.
+        nXStep   := Max(Int(nX/nWidth*20*nZFactor) - 9, 0)
+        nXFactor := Int(oWnd:cargo:nHorzRes()/20*nZFactor)
+     endif
+     if .F.
+        nYStep   := Max(Int(nY/nHeight*20*nZFactor) - 9, 0)
+        nYFactor := Int(oWnd:cargo:nVertRes()/20*nZFactor)
+     endif
+
+     oMeta1:SetFile(oMeta2:cCaption)
+
+     aFiles := oWnd:cargo:aMeta
+
+     if nPage = len(aFiles)
+          oMeta2:SetFile("")
+     else
+          oMeta2:SetFile(aFiles[++nPage])
+     endif
+
+     oPage:Refresh()
+
+     Zoom(.T.)
+
+     if !empty(nXStep)
+          HScroll(2,,nxStep)
+          oWnd:oHScroll:SetPos(nxStep)
+     endif
+
+     if !empty(nYStep)
+          VScroll(2,,nyStep)
+          oWnd:oVScroll:SetPos(nyStep)
+     endif
+
+return nil
+
+
+
+static function CheckKey (nKey,nFlags)
+
+     if !lZoom
+          DO case
+             case nKey == 36
+                  TopPage()
+             case nKey == 35
+                  BottomPage()
+             case nKey == 33
+                  PrevPage()
+             case nKey == 34
+                  NextPage()
+          endcase
+     else
+          DO case
+             case nKey == 38
+                  oWnd:oVScroll:GoUp()
+             case nKey == 33
+                  oWnd:oVScroll:PageUp()
+             case nKey == 40
+                  oWnd:oVScroll:GoDown()
+             case nKey == 34
+                  oWnd:oVScroll:PageDown()
+             case nKey == 37
+                  oWnd:oHScroll:GoUp()
+             case nKey == 39
+                  oWnd:oHScroll:GoDown()
+             case nKey == 36
+                  oWnd:oVScroll:GoTop()
+                  oWnd:oHScroll:GoTop()
+                  oMeta1:SetOrg(0,0)
+                  oMeta1:Refresh()
+             case nKey == 35
+                  oWnd:oVScroll:GoBottom()
+                  oWnd:oHScroll:GoBottom()
+                  oMeta1:SetOrg(.8*oWnd:cargo:nHorzRes(),.8*oWnd:cargo:nVertRes())
+                  oMeta1:Refresh()
+          endcase
+     endif
+
+return nil
+
+
+
+static function CheckMouseWheel( nKeys, nDelta, nXPos, nYPos )
+
+   if !lZoom
+      if lAnd( nKeys, 16 )
+         if nDelta > 0
+            TopPage()
+         else
+            BottomPage()
+         endif
+      else
+         if nDelta > 0
+            PrevPage()
+         else
+            NextPage()
+         endif
+      endif
+   else
+      if lAnd( nKeys, 16 )
+         if nDelta > 0
+            if oWnd:oVScroll:GetPos() > oWnd:oVScroll:nMin
+               oWnd:oVScroll:PageUp()
+            endif
+         else
+            if oWnd:oVScroll:GetPos() < oWnd:oVScroll:nMax
+               oWnd:oVScroll:PageDown()
+            endif
+         endif
+      else
+         if nDelta > 0
+            if oWnd:oVScroll:GetPos() > oWnd:oVScroll:nMin
+               oWnd:oVScroll:GoUp()
+            endif
+         else
+            if oWnd:oVScroll:GetPos() < oWnd:oVScroll:nMax
+               oWnd:oVScroll:GoDown()
+            endif
+         endif
+      endif
+   endif
+
+return nil
+
+
+
+static function SetFactor(nValue)
+
+     local lInit := .F.
+
+     if nValue == nil
+          Aeval(aFactor, {|v,e| v:nHelpId := e})
+          nValue := nZFactor
+          lInit  := .T.
+     endif
+
+     Aeval(aFactor, {|val,elem| val:SetCheck( (elem == nZFactor) ) })
+
+     oMeta1:SetZoomFactor(nZFactor, nZFactor*2)
+
+
+     if !lZoom .AND. !lInit
+          Zoom(.T.)
+     endif
+
+     if lZoom
+          oWnd:oVScroll:SetRange( 1, 20*nZFactor )
+          if nZFactor > 1
+             oWnd:oHScroll:SetRange( 1, 20*nZFactor )
+          else
+             oWnd:oHScroll:SetRange( 0, 0 )
+          endif
+     endif
+
+     oMeta1:SetFocus()
+
+return nil
+
+
+
+static function PrintPage()
+
+
+
+
+     local oDlg, oRad, oPageIni, oPageFin
+
+
+
+     local nOption := 1 , nFirst  := 1 , nLast   := len(oWnd:cargo:aMeta)
+
+     if nLast == 1
+          PrintPrv(nil, nOption, nFirst, nLast)
+          RETU nil
+     endif
+
+
+
+     oDlg = TDialog():New(,,,,, "PRINT",, .F.,,,,,, .F.,,,,,, .F., )
+
+
+     TButton():ReDefine( 101, {||PrintPrv(oDlg, nOption, nFirst, nLast)}, oDlg,,, .F.,,,, .F. )
+
+     TButton():ReDefine( 102, {||oDlg:End()}, oDlg,,, .F.,,,, .F. )
+
+
+
+
+     oRad := TRadMenu():Redefine( { | u | If( PCount()==0, nOption, nOption:= u ) }, oDlg,, { 103,104,105 }, {|| iif(nOption==3 , (oPageIni:Enable(),oPageFin:Enable()) , (oPageIni:Disable(),oPageFin:Disable()) )},,,, .F.,, )
+
+
+
+
+
+
+     oPageIni := TGetHlp():ReDefine( 106, { | u | If( PCount()==0, nFirst, nFirst:= u ) }, oDlg,, "@K 99999", {|| iif(nFirst<1 .OR. nFirst>nLast,(MessageBeep(),.F.),.T.)},,,,,, .F.,,, .F., .F.,,,,,, nil,,, )
+
+
+
+
+
+
+
+     oPageFin := TGetHlp():ReDefine( 107, { | u | If( PCount()==0, nLast, nLast:= u ) }, oDlg,, "@K 99999", {|| iif(nLast<nFirst .OR. nLast>len(oWnd:cargo:aMeta),  (MessageBeep(),.F.),.T.)},,,,,, .F.,,, .F., .F.,,,,,, nil,,, )
+
+     oPageIni:Disable()
+     oPageFin:Disable()
+
+
+
+     oDlg:Activate( oDlg:bLClicked, oDlg:bMoved, oDlg:bPainted, .F.,,,, oDlg:bRClicked,,, )
+
+return nil
+
+
+
+static function PrintPrv(oDlg, nOption, nPageIni, nPageEnd)
+
+     local oDevice := oWnd:cargo
+     local aFiles := oDevice:aMeta
+     local hMeta := oMeta1:hMeta
+     local nFor
+
+     CursorWait()
+
+     StartDoc(oDevice:hDC, oDevice:cDocument )
+
+     DO case
+
+     case nOption == 1
+
+          FOR nFor := 1 TO len(aFiles)
+
+
+
+
+
+
+
+                StartPage(oDevice:hDC)
+                hMeta := GetEnhMetaFile(aFiles[nFor])
+                PlayEnhMetaFile( oDevice:hDC, hMeta,, .T. )
+                DeleteEnhMetafile(hMeta)
+                EndPage(oDevice:hDC)
+
+          NEXT
+
+     case nOption == 2
+
+          StartPage(oDevice:hDC)
+          hMeta := oMeta1:hMeta
+
+
+
+             PlayEnhMetaFile( oDevice:hDC, hMeta,, .T. )
+
+          EndPage(oDevice:hDC)
+
+     case nOption == 3
+
+          FOR nFor := nPageIni TO nPageEnd
+               StartPage(oDevice:hDC)
+
+
+
+
+
+                  hMeta := GetEnhMetaFile(aFiles[nFor])
+                  PlayEnhMetaFile( oDevice:hDC, hMeta,, .T. )
+                  DeleteEnhMetafile(hMeta)
+
+               EndPage(oDevice:hDC)
+          NEXT
+
+     endcase
+
+     EndDoc(oDevice:hDC)
+
+     CursorArrow()
+
+     if oDlg <> nil
+          oDlg:End()
+     endif
+
+return nil

@@ -1,0 +1,184 @@
+#line 112 "hbclass.ch"
+   DYNAMIC DivertConstructorCall
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+DECLARE HBClass  New( cName AS String, OPTIONAL SuperParams ) AS CLASS HBClass  Create() AS Object  Instance() AS Object  AddClsMethod( cName AS String, @MethodName(), nScope AS Numeric, n2 AS Numeric, n3 AS Numeric )  AddDelegate( cName AS String, cDelegate AS String, cObject AS String, nScope AS Numeric, lPersistent AS LOGICAL )  AddMultiClsData( cType AS String, uVal, nScope AS Numeric, aDatas AS Array OF String )  AddMultiData( cType AS String, uVal, nScope AS Numeric, aDatas AS Array OF String, x AS LOGICAL, lPer AS LOGICAL )  AddMethod( cName AS String, @MethodName(), nScope AS Numeric, lPersistent AS LOGICAL )  AddInLine( cName AS String, bBlock AS CodeBlock, nScope AS Numeric, lPersistent AS LOGICAL )  AddVirtual( cName AS String )  ModMethod( cName AS String, @MethodName(), nScope AS Numeric, lPersistent AS LOGICAL )  ModClsMethod( cName AS String, @MethodName(), nScope AS Numeric )  ModInline( cName AS String, bBlock AS CodeBlock, nScope AS Numeric, lPersistent AS LOGICAL )  SetOnError( @MethodName() )
+#line 85 "\Fwh1204\Include\FiveWin.Ch"
+   EXTERNAL GetProcAdd
+   EXTERNAL TActiveX
+
+
+
+
+extern errorsys
+#line 17 ".\Prg\Rfile.prg"
+_HB_CLASS TRFile ; UTILITY FUNCTION TRFile(...); static s_oClass ; local oClassInstance ; local nScope ; nScope := 1 ; if s_oClass == NIL ; s_oClass := IIF(.F.,, HBClass():New( "TRFile" , { HBObject():Classh } ) ) ;
+
+     _HB_MEMBER { hDC} ; IIF( !.F., s_oClass:AddMultiData(,, nScope + IIF( .F., 32, 0 ), { "hDC" }, .F., .F. ), )
+     _HB_MEMBER { aRows} ; IIF( !.F., s_oClass:AddMultiData(,, nScope + IIF( .F., 32, 0 ), { "aRows" }, .F., .F. ), )
+     _HB_MEMBER { cDocument} ; IIF( !.F., s_oClass:AddMultiData(,, nScope + IIF( .F., 32, 0 ), { "cDocument" }, .F., .F. ), )
+     _HB_MEMBER { cPrnComp} ; IIF( !.F., s_oClass:AddMultiData(,, nScope + IIF( .F., 32, 0 ), { "cPrnComp" }, .F., .F. ), )
+     _HB_MEMBER { nHeight} ; IIF( !.F., s_oClass:AddMultiData(,, nScope + IIF( .F., 32, 0 ), { "nHeight" }, .F., .F. ), )
+     _HB_MEMBER { nWidth} ; IIF( !.F., s_oClass:AddMultiData(,, nScope + IIF( .F., 32, 0 ), { "nWidth" }, .F., .F. ), )
+     _HB_MEMBER { lPrint} ; IIF( !.F., s_oClass:AddMultiData(, .T., nScope + IIF( .F., 32, 0 ), { "lPrint" }, .F., .F. ), )
+
+     _HB_MEMBER New( cFile) AS CLASS TRFile; IIF( .F., s_oClass:ModMethod( "New", @TRFile_New(), nScope + IIF( .T., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ), s_oClass:AddMethod( "New", @TRFile_New(), nScope + IIF( .T., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ));
+
+     _HB_MEMBER StartPage(); IIF( .F., s_oClass:ModInline( "StartPage", {|Self | Self, Afill(::aRows,"") }, nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ), s_oClass:AddInline( "StartPage", {|Self | Self, Afill(::aRows,"") }, nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ) )
+     _HB_MEMBER EndPage(); IIF( .F., s_oClass:ModMethod( "EndPage", @TRFile_EndPage(), nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ), s_oClass:AddMethod( "EndPage", @TRFile_EndPage(), nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ));
+
+     _HB_MEMBER End(); IIF( .F., s_oClass:ModInline( "End", {|Self | Self, fClose(::hDC) }, nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ), s_oClass:AddInline( "End", {|Self | Self, fClose(::hDC) }, nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ) )
+
+     _HB_MEMBER Say( nRow, nCol, cText, oFont); IIF( .F., s_oClass:ModMethod( "Say", @TRFile_Say(), nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ), s_oClass:AddMethod( "Say", @TRFile_Say(), nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ));
+
+
+     _HB_MEMBER SetHeight(nHeight); IIF( .F., s_oClass:ModInline( "SetHeight", {|Self,nHeight | Self, aSize(::aRows, nHeight) , ::StartPage() }, nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ), s_oClass:AddInline( "SetHeight", {|Self,nHeight | Self, aSize(::aRows, nHeight) , ::StartPage() }, nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ) )
+
+     _HB_MEMBER GetTextWidth(cText); IIF( .F., s_oClass:ModInline( "GetTextWidth", {|Self,cText | Self, len(cText) }, nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ), s_oClass:AddInline( "GetTextWidth", {|Self,cText | Self, len(cText) }, nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ) )
+     _HB_MEMBER GetTextHeight(cText); IIF( .F., s_oClass:ModInline( "GetTextHeight", {|Self,cText | Self, 1 }, nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ), s_oClass:AddInline( "GetTextHeight", {|Self,cText | Self, 1 }, nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ) )
+
+
+     _HB_MEMBER SetSize(nWidth, nHeight); IIF( .F., s_oClass:ModInline( "SetSize", {|Self,nWidth, nHeight | Self, (::nWidth  := nWidth , ::SetHeight(nHeight) ) }, nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ), s_oClass:AddInline( "SetSize", {|Self,nWidth, nHeight | Self, (::nWidth  := nWidth , ::SetHeight(nHeight) ) }, nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ) )
+
+     _HB_MEMBER GetPhySize(); IIF( .F., s_oClass:ModInline( "GetPhySize", {|Self | Self, ({::nWidth, ::nHeight}) }, nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ), s_oClass:AddInline( "GetPhySize", {|Self | Self, ({::nWidth, ::nHeight}) }, nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ) )
+
+     _HB_MEMBER CharWidth(); IIF( .F., s_oClass:ModInline( "CharWidth", {|Self | Self, 1 }, nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ), s_oClass:AddInline( "CharWidth", {|Self | Self, 1 }, nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ) )
+     _HB_MEMBER CharHeight(); IIF( .F., s_oClass:ModInline( "CharHeight", {|Self | Self, 1 }, nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ), s_oClass:AddInline( "CharHeight", {|Self | Self, 1 }, nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ) )
+
+     _HB_MEMBER nVertRes(); IIF( .F., s_oClass:ModInline( "nVertRes", {|Self | Self, ::nHeight }, nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ), s_oClass:AddInline( "nVertRes", {|Self | Self, ::nHeight }, nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ) )
+     _HB_MEMBER nHorzRes(); IIF( .F., s_oClass:ModInline( "nHorzRes", {|Self | Self, ::nWidth }, nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ), s_oClass:AddInline( "nHorzRes", {|Self | Self, ::nWidth }, nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ) )
+
+     _HB_MEMBER nVertSize(); IIF( .F., s_oClass:ModInline( "nVertSize", {|Self | Self, (::nHeight * 25.4) }, nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ), s_oClass:AddInline( "nVertSize", {|Self | Self, (::nHeight * 25.4) }, nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ) )
+     _HB_MEMBER nHorzSize(); IIF( .F., s_oClass:ModInline( "nHorzSize", {|Self | Self, (::nWidth  * 25.4) }, nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ), s_oClass:AddInline( "nHorzSize", {|Self | Self, (::nWidth  * 25.4) }, nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ) )
+
+     _HB_MEMBER nLogPixelX(); IIF( .F., s_oClass:ModInline( "nLogPixelX", {|Self | Self, 1 }, nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ), s_oClass:AddInline( "nLogPixelX", {|Self | Self, 1 }, nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ) )
+     _HB_MEMBER nLogPixelY(); IIF( .F., s_oClass:ModInline( "nLogPixelY", {|Self | Self, 1 }, nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ), s_oClass:AddInline( "nLogPixelY", {|Self | Self, 1 }, nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ) )
+
+     _HB_MEMBER CharSay(nRow, nCol, cText); IIF( .F., s_oClass:ModInline( "CharSay", {|Self,nRow, nCol, cText | Self, ::Say(nRow, nCol, cText) }, nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ), s_oClass:AddInline( "CharSay", {|Self,nRow, nCol, cText | Self, ::Say(nRow, nCol, cText) }, nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ) )
+
+     _HB_MEMBER GetOrientation(); IIF( .F., s_oClass:ModInline( "GetOrientation", {|Self | Self, 2 }, nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ), s_oClass:AddInline( "GetOrientation", {|Self | Self, 2 }, nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ) )
+
+     _HB_MEMBER SayBitmap( ); IIF( !.F., s_oClass:AddVirtual( "SayBitmap" ), )
+     _HB_MEMBER SetPos( ); IIF( !.F., s_oClass:AddVirtual( "SetPos" ), )
+     _HB_MEMBER Line( ); IIF( !.F., s_oClass:AddVirtual( "Line" ), )
+     _HB_MEMBER Box( ); IIF( !.F., s_oClass:AddVirtual( "Box" ), )
+
+     _HB_MEMBER SetPixelMode( ); IIF( !.F., s_oClass:AddVirtual( "SetPixelMode" ), )
+     _HB_MEMBER SetTwipsMode( ); IIF( !.F., s_oClass:AddVirtual( "SetTwipsMode" ), )
+
+     _HB_MEMBER SetLoInchMode( ); IIF( !.F., s_oClass:AddVirtual( "SetLoInchMode" ), )
+     _HB_MEMBER SetHiInchMode( ); IIF( !.F., s_oClass:AddVirtual( "SetHiInchMode" ), )
+
+     _HB_MEMBER SetLoMetricMode( ); IIF( !.F., s_oClass:AddVirtual( "SetLoMetricMode" ), )
+     _HB_MEMBER SetHiMetricMode( ); IIF( !.F., s_oClass:AddVirtual( "SetHiMetricMode" ), )
+
+     _HB_MEMBER SetIsotropicMode( ); IIF( !.F., s_oClass:AddVirtual( "SetIsotropicMode" ), )
+     _HB_MEMBER SetAnisotropicMode( ); IIF( !.F., s_oClass:AddVirtual( "SetAnisotropicMode" ), )
+
+     _HB_MEMBER SetWindowExt( ); IIF( !.F., s_oClass:AddVirtual( "SetWindowExt" ), )
+
+     _HB_MEMBER SetViewPortExt( ); IIF( !.F., s_oClass:AddVirtual( "SetViewPortExt" ), )
+
+     _HB_MEMBER FillRect( ); IIF( !.F., s_oClass:AddVirtual( "FillRect" ), )
+
+     _HB_MEMBER SetLandscape( ); IIF( !.F., s_oClass:AddVirtual( "SetLandscape" ), )
+     _HB_MEMBER SetPortrait( ); IIF( !.F., s_oClass:AddVirtual( "SetPortrait" ), )
+     _HB_MEMBER SetCopies( nCopies ); IIF( !.F., s_oClass:AddVirtual( "SetCopies" ), )
+     _HB_MEMBER Setup( ); IIF( !.F., s_oClass:AddVirtual( "Setup" ), )
+     _HB_MEMBER Rebuild( ); IIF( !.F., s_oClass:AddVirtual( "Rebuild" ), )
+     _HB_MEMBER Font( oFont ); IIF( !.F., s_oClass:AddVirtual( "Font" ), )
+
+     _HB_MEMBER Inch2Pix( ); IIF( !.F., s_oClass:AddVirtual( "Inch2Pix" ), )
+
+; IF .F. ; __clsActive(s_oClass:hClass) ; s_oClass:Refresh() ; ELSE ; s_oClass:Create() ; END ; oClassInstance := __clsInst( s_oClass:hClass ) ; IF __ObjHasMsg( oClassInstance, "InitClass" ); oClassInstance:InitClass( hb_aParams() ) ; END ; ELSE ; oClassInstance := __clsInst( s_oClass:hClass ) ; END ; IF PCount() > 0 ; DIVERT TO (@DivertConstructorCall()) OF s_oClass ; END ; RETURN oClassInstance AS CLASS TRFile ;
+
+
+
+UTILITY STATIC function TRFile_New( cFile) ; local Self AS CLASS TRFile := QSelf() AS CLASS TRFile
+
+     ::cPrnComp := ""
+     ::nHeight  := 1000
+     ::nWidth   := 40
+
+     ::hDC := fCreate(cFile)
+
+     IF ::hDC < 0
+          ::hDC := 0
+     ENDIF
+
+     ::aRows := Array(::nHeight)
+
+RETURN NIL
+
+
+
+UTILITY STATIC function TRFile_EndPage() ; local Self AS CLASS TRFile := QSelf() AS CLASS TRFile
+
+     LOCAL nFor
+
+     IF ::lPrint
+          FOR nFor := 1 TO ::nHeight
+               IF len(::aRows[nFor]) > ::nWidth
+                    fWrite(::hDC, ::cPrnComp)
+                    EXIT
+               ENDIF
+          NEXT
+     ENDIF
+
+     FOR nFor := 1 TO ::nHeight
+          fWrite(::hDC, ::aRows[nFor]+Chr(13)+Chr(10))
+     NEXT
+
+     IF ::lPrint
+          fWrite(::hDC,Chr(12))
+     ENDIF
+
+RETURN NIL
+
+
+
+UTILITY STATIC function TRFile_Say( nRow, nCol, cText, oFont,nMaxSize) ; local Self AS CLASS TRFile := QSelf() AS CLASS TRFile
+
+     LOCAL cBefore, cAfter
+
+     IIF( nMaxSize == nil, nMaxSize := len(cText), ) ;
+
+     IF IsAnsi(cText)
+          cText := AnsiToOem(cText)
+     ENDIF
+
+     nRow++
+
+     IF nRow > len(::aRows) .OR. nRow < 1
+          RETU NIL
+     ENDIF
+
+     IF len(::aRows[nRow]) < nCol
+          cBefore := Padr(::aRows[nRow],nCol-1)
+     ELSE
+          cBefore := Substr(::aRows[nRow],1,nCol-1)
+     ENDIF
+
+     IF len(::aRows[nRow]) < (nCol+nMaxSize-1)
+          cAfter := ""
+     ELSE
+          cAfter := Substr(::aRows[nRow],nCol+nMaxSize)
+     ENDIF
+
+     ::aRows[nRow] := cBefore + Padr(cText, nMaxSize) + cAfter
+
+RETURN NIL

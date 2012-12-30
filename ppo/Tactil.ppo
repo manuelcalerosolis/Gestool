@@ -1,0 +1,1246 @@
+#line 112 "hbclass.ch"
+   DYNAMIC DivertConstructorCall
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+DECLARE HBClass  New( cName AS String, OPTIONAL SuperParams ) AS CLASS HBClass  Create() AS Object  Instance() AS Object  AddClsMethod( cName AS String, @MethodName(), nScope AS Numeric, n2 AS Numeric, n3 AS Numeric )  AddDelegate( cName AS String, cDelegate AS String, cObject AS String, nScope AS Numeric, lPersistent AS LOGICAL )  AddMultiClsData( cType AS String, uVal, nScope AS Numeric, aDatas AS Array OF String )  AddMultiData( cType AS String, uVal, nScope AS Numeric, aDatas AS Array OF String, x AS LOGICAL, lPer AS LOGICAL )  AddMethod( cName AS String, @MethodName(), nScope AS Numeric, lPersistent AS LOGICAL )  AddInLine( cName AS String, bBlock AS CodeBlock, nScope AS Numeric, lPersistent AS LOGICAL )  AddVirtual( cName AS String )  ModMethod( cName AS String, @MethodName(), nScope AS Numeric, lPersistent AS LOGICAL )  ModClsMethod( cName AS String, @MethodName(), nScope AS Numeric )  ModInline( cName AS String, bBlock AS CodeBlock, nScope AS Numeric, lPersistent AS LOGICAL )  SetOnError( @MethodName() )
+#line 85 "\Fwh1204\Include\FiveWin.Ch"
+   EXTERNAL GetProcAdd
+   EXTERNAL TActiveX
+
+
+
+
+extern errorsys
+#line 17 ".\Prg\Tactil.prg"
+memvar cDbfTikT
+memvar cDbfPgo
+memvar cDbfTikP
+memvar cDbfCli
+memvar cPouTik
+memvar cPorTik
+memvar nDouTik
+memvar nDorTik
+memvar cUndTik
+
+static oBmp
+static oMenu
+static lOpenFiles    := .F.
+static lExternal     := .T.
+static dbfTikCliT
+static dbfTikCliL
+static dbfTikCliC
+static dbfClient
+static dbfFPago
+static dbfTikCliP
+static dbfAlbCliT
+static dbfAlbCliL
+static dbfFacCliT
+static dbfFacCliL
+static dbfFacCliP
+static dbfAntCliT
+static dbfIva
+static dbfCajT
+static dbfCount
+static cNewFilT
+static dbfTmpTik
+static dbfDiv
+static dbfEmp
+static dbfDoc
+static cPouDiv
+static cPorDiv
+static cPicEur
+static nDouDiv
+static nDorDiv
+static aTipDoc       := {  "Tiket", "Albarán", "Factura", "Devolución", "Apartado", "Vale" }
+static aTotal        := { 0, 0, 0 }
+static cPgoInUse     := ""
+
+
+
+
+
+
+FUNCTION CuentasClientes( oWnd )
+
+   local oDlg
+   local oBrw
+   local oFntDlg        := TFont():New( "Arial", 12, 32, .F., .T. )
+   local oFntBrw        := TFont():New( "Arial",  0, 14, .F., .F. )
+   local oFntEur        := TFont():New( "Arial",  8, 34, .F., .T. )
+   local oBtnPagos
+   local oCodcli
+   local cCodcli
+   local oNomcli
+   local cNomCli
+   local oCodFpago
+   local cCodFpago
+   local oGetTxt
+   local cGetTxt
+   local oSayEnt
+   local oEntCli
+   local nEntCli        := 0
+   local oPdtCli
+   local nPdtCli        := 0
+   local oSayPdt
+   local oCmbCli
+   local nCmbCli        := nEntCli - nPdtCli
+   local oSayCmb
+
+   IIF( oWnd == nil, oWnd := oWnd(), ) ;
+
+   if !lOpenFiles()
+      return .F.
+   end
+
+   cCodFpago            := cDefFpg()
+   cGetTxt              := RetFld( cCodFpago, dbfFPago )
+
+   oDlg = TDialog():New(,,,, "Cuentas de clientes", "CUENTAS_CLIENTES",, .F.,,,,,, .F.,,,,,, .F., )
+
+
+
+
+
+
+
+
+
+   TButtonBmp():ReDefine( 200, {||( oCodCli:cText( VirtualKey( .F. ) ), cClient( oCodCli, dbfClient, oNomCli ), lLoadClientes( oCodCli:VarGet(), dbfTikCliT, oBrw, oPdtCli, oCmbCli ) )}, oDlg,,, .F.,,,, .F., "Keyboard2_32",, )
+
+
+
+
+
+   TButtonBmp():ReDefine( 100, {||( BrwCliTactil( oCodCli, dbfClient, oNomcli ), cClient( oCodCli, dbfClient, oNomCli ), lLoadClientes( oCodCli:VarGet(), dbfTikCliT, oBrw, oPdtCli, oCmbCli ) )}, oDlg,,, .F.,,,, .F., "User1_32",, )
+
+
+
+
+
+   oCodcli := TGetHlp():ReDefine( 101, { | u | If( PCount()==0, cCodcli, cCodcli:= u ) }, oDlg,,, {||    ( cClient( oCodCli, dbfClient, oNomCli ), lLoadClientes( oCodCli:VarGet(), dbfTikCliT, oBrw, oPdtCli, oCmbCli ) )},,, oFntDlg,,, .F.,,, .F., .F.,,,,,, nil,,, )
+
+
+
+
+   oNomCli := TGetHlp():ReDefine( 102, { | u | If( PCount()==0, cNomCli, cNomCli:= u ) }, oDlg,,,,,, oFntDlg,,, .F.,,, .F., .F.,,,,,, nil,,, )
+
+
+
+
+
+
+
+
+
+   TButtonBmp():ReDefine( 210, {||( oCodFPago:cText( VirtualKey( .F. ) ), cFpago( oCodFPago, dbfFPago, oGetTxt ) )}, oDlg,,, .F.,,,, .F., "Keyboard2_32",, )
+
+
+
+
+
+   TButtonBmp():ReDefine( 110, {||( BrwPgoTactil( oCodFPago, dbfFPago, oGetTxt ), cFpago( oCodFPago, dbfFPago, oGetTxt ) )}, oDlg,,, .F.,,,, .F., "Money2_32",, )
+
+
+
+
+
+
+   oCodFPago := TGetHlp():ReDefine( 111, { | u | If( PCount()==0, cCodFPago, cCodFPago:= u ) }, oDlg,,, {||    ( cFpago( oCodFPago, dbfFPago, oGetTxt ) )},,, oFntDlg,,, .F.,,, .F., .F.,,,,,, nil,,, )
+   oCodFpago:bHelp  := {|| BrwFPago( oCodFPago, oGetTxt, .T. ) }
+
+
+
+
+   oGetTxt := TGetHlp():ReDefine( 112, { | u | If( PCount()==0, cGetTxt, cGetTxt:= u ) }, oDlg,,,,,, oFntDlg,,, .F.,,, .F., .F.,,,,,, nil,,, )
+
+
+
+
+
+   oBrw                 := TXBrowse():New( oDlg )
+
+   oBrw:bClrSel         := {|| { 0, ( 229 + ( 229 * 256 ) + ( 229 * 65536 ) ) } }
+   oBrw:bClrSelFocus    := {|| { 0, ( 167 + ( 205 * 256 ) + ( 240 * 65536 ) ) } }
+
+   oBrw:lFooter         := .T.
+   oBrw:lHScroll        := .F.
+   oBrw:cAlias          := dbfTmpTik
+   oBrw:nMarqueeStyle   := 5
+   oBrw:CreateFromResource( 120 )
+
+   with object ( oBrw:AddCol() )
+      :cHeader          := "Doc."
+      :bEditValue       := {|| aTipDoc[ Max( Val( ( dbfTmpTik )->cTipTik ), 1 ) ] }
+      :nWidth           := 60
+   end
+
+   with object ( oBrw:AddCol() )
+      :cHeader          := "Número"
+      :bEditValue       := {|| ( dbfTmpTik )->cSerTik + "/" + lTrim( ( dbfTmpTik )->cNumTik ) + "/" + ( dbfTmpTik )->cSufTik }
+      :nWidth           := 85
+   end
+
+   with object ( oBrw:AddCol() )
+      :cHeader          := "Fecha"
+      :bEditValue       := {|| dtoc( ( dbfTmpTik )->dFecTik ) }
+      :nWidth           := 65
+   end
+
+   with object ( oBrw:AddCol() )
+      :cHeader          := "Caja"
+      :bEditValue       := {|| ( dbfTmpTik )->cNcjTik }
+      :nWidth           := 35
+   end
+
+   with object ( oBrw:AddCol() )
+      :cHeader          := "Cajero"
+      :bEditValue       := {|| ( dbfTmpTik )->cCcjTik }
+      :nWidth           := 40
+   end
+
+   with object ( oBrw:AddCol() )
+      :cHeader          := "Importe"
+      :bFooter          := {|| aTotal[1] }
+      :bEditValue       := {|| nTotTik( ( dbfTmpTik )->cSerTik + ( dbfTmpTik )->cNumTik + ( dbfTmpTik )->cSufTik, dbfTikCliT, dbfTikCliL, dbfDiv, nil, cDivEmp(), .T. ) }
+      :nWidth           := 65
+      :nDataStrAlign    := 1
+      :nHeadStrAlign    := 1
+      :nFootStrAlign    := 1
+   end
+
+   with object ( oBrw:AddCol() )
+      :cHeader          := "Cobrado"
+      :bFooter          := {|| aTotal[2] }
+      :bEditValue       := {|| nTotCobTik( ( dbfTmpTik )->cSerTik + ( dbfTmpTik )->cNumTik + ( dbfTmpTik )->cSufTik, dbfTikCliP, dbfDiv, cDivEmp(), .T. ) }
+      :nWidth           := 65
+      :nDataStrAlign    := 1
+      :nHeadStrAlign    := 1
+      :nFootStrAlign    := 1
+   end
+
+   with object ( oBrw:AddCol() )
+      :cHeader          := "Pendiente"
+      :bFooter          := {|| aTotal[3] }
+      :bEditValue       := {|| Trans( nPendienteTicket( ( dbfTmpTik )->cSerTik + ( dbfTmpTik )->cNumTik + ( dbfTmpTik )->cSufTik ), cPouDiv ) }
+      :nWidth           := 65
+      :nDataStrAlign    := 1
+      :nHeadStrAlign    := 1
+      :nFootStrAlign    := 1
+   end
+
+
+
+
+
+
+   TButtonBmp():ReDefine( 130, {||( oBrw:GoUp() )}, oDlg,,, .F.,,,, .F., "UP32",, )
+
+
+
+
+   TButtonBmp():ReDefine( 140, {||( oBrw:GoDown() )}, oDlg,,, .F.,,,, .F., "DOWN32",, )
+
+
+
+
+
+
+
+
+
+
+   oPdtCli := TGetHlp():ReDefine( 160, { | u | If( PCount()==0, nPdtCli, nPdtCli:= u ) }, oDlg,, cPorDiv,,,, oFntDlg,,, .F., {||     .F.},, .F., .F.,,,,,, nil,,, )
+
+
+
+
+
+   oSayPdt := TSay():ReDefine( 161, {|| "Pendiente"}, oDlg,,,, .F., oFntDlg, .F., .F. )
+
+
+
+
+
+
+
+
+   TButtonBmp():ReDefine( 220, {||( Calculadora( 0, oEntCli ), oCmbCli:cText( nEntCli - nPdtCli ) )}, oDlg,,, .F.,,,, .F., "Calculator_32",, )
+
+
+
+
+
+   oBtnPagos := TButtonBmp():ReDefine( 230, {||( PagosTikets( oCodCli ) )}, oDlg,,, .F.,,,, .F., "User1_Money2_32",, )
+
+
+
+
+
+
+   oEntCli := TGetHlp():ReDefine( 150, { | u | If( PCount()==0, nEntCli, nEntCli:= u ) }, oDlg,, cPorDiv, {||    ( oCmbCli:cText( nEntCli - nPdtCli ), .T. )},,, oFntDlg,,, .F.,,, .F., .F.,,,,,, nil,,, )
+
+
+
+
+
+   oSayEnt := TSay():ReDefine( 151, {|| "Entrega"}, oDlg,,,, .F., oFntDlg, .F., .F. )
+
+
+
+
+
+
+
+
+
+   oCmbCli := TGetHlp():ReDefine( 170, { | u | If( PCount()==0, nCmbCli, nCmbCli:= u ) }, oDlg,, cPorDiv,,,, oFntDlg,,, .F., {||     .F.},, .F., .F.,,,,,, nil,,, )
+
+
+
+
+
+   oSayCmb := TSay():ReDefine( 171, {|| "Cambio"}, oDlg,,,, .F., oFntDlg, .F., .F. )
+
+
+
+
+
+
+
+
+   TBitmap():ReDefine( 800, "Img500EUROS",, oDlg, { |nRow,nCol,nKeyFlags| ( ClkMoneda( 500, oEntCli, .F. ), oCmbCli:cText( nEntCli - nPdtCli ) ) },, .F., .F.,,, .F.,,, .F. )
+
+
+
+
+
+   TBitmap():ReDefine( 801, "Img200EUROS",, oDlg, { |nRow,nCol,nKeyFlags| ( ClkMoneda( 200, oEntCli, .F. ), oCmbCli:cText( nEntCli - nPdtCli ) ) },, .F., .F.,,, .F.,,, .F. )
+
+
+
+
+
+   TBitmap():ReDefine( 802, "Img100EUROS",, oDlg, { |nRow,nCol,nKeyFlags| ( ClkMoneda( 100, oEntCli, .F. ), oCmbCli:cText( nEntCli - nPdtCli ) ) },, .F., .F.,,, .F.,,, .F. )
+
+
+
+
+
+   TBitmap():ReDefine( 803, "Img50EUROS",, oDlg, { |nRow,nCol,nKeyFlags| ( ClkMoneda( 50, oEntCli, .F. ), oCmbCli:cText( nEntCli - nPdtCli ) ) },, .F., .F.,,, .F.,,, .F. )
+
+
+
+
+
+   TBitmap():ReDefine( 804, "Img20EUROS",, oDlg, { |nRow,nCol,nKeyFlags| ( ClkMoneda( 20, oEntCli, .F. ), oCmbCli:cText( nEntCli - nPdtCli ) ) },, .F., .F.,,, .F.,,, .F. )
+
+
+
+
+
+   TBitmap():ReDefine( 805, "Img10EUROS",, oDlg, { |nRow,nCol,nKeyFlags| ( ClkMoneda( 10, oEntCli, .F. ), oCmbCli:cText( nEntCli - nPdtCli ) ) },, .F., .F.,,, .F.,,, .F. )
+
+
+
+
+
+   TBitmap():ReDefine( 806, "Img5EUROS",, oDlg, { |nRow,nCol,nKeyFlags| ( ClkMoneda( 5, oEntCli, .F. ), oCmbCli:cText( nEntCli - nPdtCli ) ) },, .F., .F.,,, .F.,,, .F. )
+
+
+
+
+
+   TBitmap():ReDefine( 807, "Img2EUROS",, oDlg, { |nRow,nCol,nKeyFlags| ( ClkMoneda( 2, oEntCli, .F. ), oCmbCli:cText( nEntCli - nPdtCli ) ) },, .F., .F.,,, .F.,,, .F. )
+
+
+
+
+
+   TBitmap():ReDefine( 808, "Img1EURO",, oDlg, { |nRow,nCol,nKeyFlags| ( ClkMoneda( 1, oEntCli, .F. ), oCmbCli:cText( nEntCli - nPdtCli ) ) },, .F., .F.,,, .F.,,, .F. )
+
+
+
+
+
+   TBitmap():ReDefine( 809, "Img50CENT",, oDlg, { |nRow,nCol,nKeyFlags| ( ClkMoneda( 0.50, oEntCli, .F. ), oCmbCli:cText( nEntCli - nPdtCli ) ) },, .F., .F.,,, .F.,,, .F. )
+
+
+
+
+
+   TBitmap():ReDefine( 810, "Img20CENT",, oDlg, { |nRow,nCol,nKeyFlags| ( ClkMoneda( 0.20, oEntCli, .F. ), oCmbCli:cText( nEntCli - nPdtCli ) ) },, .F., .F.,,, .F.,,, .F. )
+
+
+
+
+
+   TBitmap():ReDefine( 811, "Img10CENT",, oDlg, { |nRow,nCol,nKeyFlags| ( ClkMoneda( 0.10, oEntCli, .F. ), oCmbCli:cText( nEntCli - nPdtCli ) ) },, .F., .F.,,, .F.,,, .F. )
+
+
+
+
+
+   TBitmap():ReDefine( 812, "Img5CENT",, oDlg, { |nRow,nCol,nKeyFlags| ( ClkMoneda( 0.05, oEntCli, .F. ), oCmbCli:cText( nEntCli - nPdtCli ) ) },, .F., .F.,,, .F.,,, .F. )
+
+
+
+
+
+   TBitmap():ReDefine( 813, "Img2CENT",, oDlg, { |nRow,nCol,nKeyFlags| ( ClkMoneda( 0.02, oEntCli, .F. ), oCmbCli:cText( nEntCli - nPdtCli ) ) },, .F., .F.,,, .F.,,, .F. )
+
+
+
+
+
+   TBitmap():ReDefine( 814, "Img1CENT",, oDlg, { |nRow,nCol,nKeyFlags| ( ClkMoneda( 0.01, oEntCli, .F. ), oCmbCli:cText( nEntCli - nPdtCli ) ) },, .F., .F.,,, .F.,,, .F. )
+
+
+
+
+
+   TBitmap():ReDefine( 815, "Img0EUROS",, oDlg, { |nRow,nCol,nKeyFlags| ( ClkMoneda( 0, oEntCli, .T. ), oCmbCli:cText( nEntCli - nPdtCli ) ) },, .F., .F.,,, .F.,,, .F. )
+
+
+
+
+
+
+
+
+
+   TButton():ReDefine( 550, {||( lFinalizar( oCodCli, oEntCli, oCmbCli, oCodFPago, oDlg, .T. ), oWnd:Refresh() )}, oDlg,,, .F., {||     ( ( dbfTmpTik )->( LastRec() ) <> 0 )},,, .F. )
+
+
+
+
+
+   TButton():ReDefine( 600, {||( lFinalizar( oCodCli, oEntCli, oCmbCli, oCodFPago, oDlg, .F. ), oWnd:Refresh() )}, oDlg,,, .F., {||     ( ( dbfTmpTik )->( LastRec() ) <> 0 )},,, .F. )
+
+
+
+
+   TButton():ReDefine( 650, {||( oDlg:end() )}, oDlg,,, .F.,,,, .F. )
+
+   oDlg:AddFastKey( 116, {|| oDlg:end( 1 ) } )
+
+   oDlg:Activate( oDlg:bLClicked, oDlg:bMoved, oDlg:bPainted, .T.,,,, oDlg:bRClicked,,, )
+
+   aTotal        := { 0, 0, 0 }
+   oFntDlg:End()
+   oFntEur:End()
+   oFntBrw:End()
+
+   Closefiles()
+
+Return ( oDlg:nResult == 1  )
+
+
+
+STATIC FUNCTION lOpenFiles( cPatEmp, lExt )
+
+   local oError
+   local oBlock
+
+   if lOpenFiles
+      MsgStop( "Imposible abrir ficheros de tickets de clientes" )
+      Return ( .F. )
+   end
+
+   IIF( cPatEmp == nil, cPatEmp := cPatEmp(), ) ;
+   IIF( lExt == nil, lExt := .F., ) ;
+
+   lExternal            := lExt
+
+   oBlock               := ErrorBlock( {| oError | ApoloBreak( oError ) } )
+   BEGIN SEQUENCE
+
+      dbUseArea( .T., ( cDriver() ), ( cPatCli() + "CLIENT.DBF" ), ( cCheckArea( "CLIENT", @dbfClient ) ), if(.T. .OR. .F., !.F., NIL), .F.,, )
+      if !lAIS() ; ordListAdd( ( cPatCli() + "CLIENT.CDX" ) ) ; else ; ordSetFocus( 1 ) ; end
+
+      dbUseArea( .T., ( cDriver() ), ( cPatGrp() + "FPAGO.DBF" ), ( cCheckArea( "FPAGO", @dbfFPago ) ), if(.T. .OR. .F., !.F., NIL), .F.,, )
+      if !lAIS() ; ordListAdd( ( cPatGrp() + "FPAGO.CDX" ) ) ; else ; ordSetFocus( 1 ) ; end
+
+      dbUseArea( .T., ( cDriver() ), ( cPatEmp + "TIKET.DBF" ), ( cCheckArea( "TIKET", @dbfTikCliT ) ), if(.T. .OR. .F., !.F., NIL), .F.,, )
+      if !lAIS() ; ordListAdd( ( cPatEmp + "TIKET.CDX" ) ) ; else ; ordSetFocus( 1 ) ; end
+
+      dbUseArea( .T., ( cDriver() ), ( cPatEmp + "TIKEL.DBF" ), ( cCheckArea( "TIKEL", @dbfTikCliL ) ), if(.T. .OR. .F., !.F., NIL), .F.,, )
+      if !lAIS() ; ordListAdd( ( cPatEmp + "TIKEL.CDX" ) ) ; else ; ordSetFocus( 1 ) ; end
+
+      dbUseArea( .T., ( cDriver() ), ( cPatEmp + "TIKEP.DBF" ), ( cCheckArea( "TIKEP", @dbfTikCliP ) ), if(.T. .OR. .F., !.F., NIL), .F.,, )
+      if !lAIS() ; ordListAdd( ( cPatEmp + "TIKEP.CDX" ) ) ; else ; ordSetFocus( 1 ) ; end
+
+      dbUseArea( .T., ( cDriver() ), ( cPatEmp + "TIKEC.DBF" ), ( cCheckArea( "TIKEC", @dbfTikCliC ) ), if(.T. .OR. .F., !.F., NIL), .F.,, )
+      if !lAIS() ; ordListAdd( ( cPatEmp + "TIKEC.CDX" ) ) ; else ; ordSetFocus( 1 ) ; end
+
+      dbUseArea( .T., ( cDriver() ), ( cPatEmp + "ALBCLIT.DBF" ), ( cCheckArea( "ALBCLIT", @dbfAlbCliT ) ), if(.T. .OR. .F., !.F., NIL), .F.,, )
+      if !lAIS() ; ordListAdd( ( cPatEmp + "ALBCLIT.CDX" ) ) ; else ; ordSetFocus( 1 ) ; end
+
+      dbUseArea( .T., ( cDriver() ), ( cPatEmp + "ALBCLIL.DBF" ), ( cCheckArea( "ALBCLIL", @dbfAlbCliL ) ), if(.T. .OR. .F., !.F., NIL), .F.,, )
+      if !lAIS() ; ordListAdd( ( cPatEmp + "ALBCLIL.CDX" ) ) ; else ; ordSetFocus( 1 ) ; end
+
+      dbUseArea( .T., ( cDriver() ), ( cPatEmp + "FACCLIT.DBF" ), ( cCheckArea( "FACCLIT", @dbfFacCliT ) ), if(.T. .OR. .F., !.F., NIL), .F.,, )
+      if !lAIS() ; ordListAdd( ( cPatEmp + "FACCLIT.CDX" ) ) ; else ; ordSetFocus( 1 ) ; end
+
+      dbUseArea( .T., ( cDriver() ), ( cPatEmp + "FACCLIL.DBF" ), ( cCheckArea( "FACCLIL", @dbfFacCliL ) ), if(.T. .OR. .F., !.F., NIL), .F.,, )
+      if !lAIS() ; ordListAdd( ( cPatEmp + "FACCLIL.CDX" ) ) ; else ; ordSetFocus( 1 ) ; end
+
+      dbUseArea( .T., ( cDriver() ), ( cPatEmp + "FACCLIP.DBF" ), ( cCheckArea( "FACCLIP", @dbfFacCliP ) ), if(.T. .OR. .F., !.F., NIL), .F.,, )
+      if !lAIS() ; ordListAdd( ( cPatEmp + "FACCLIP.CDX" ) ) ; else ; ordSetFocus( 1 ) ; end
+
+      dbUseArea( .T., ( cDriver() ), ( cPatDat() + "DIVISAS.DBF" ), ( cCheckArea( "DIVISAS", @dbfDiv ) ), if(.T. .OR. .F., !.F., NIL), .F.,, )
+      if !lAIS() ; ordListAdd( ( cPatDat() + "DIVISAS.CDX" ) ) ; else ; ordSetFocus( 1 ) ; end
+
+      dbUseArea( .T., ( cDriver() ), ( cPatDat() + "TIVA.DBF" ), ( cCheckArea( "TIVA", @dbfIva ) ), if(.T. .OR. .F., !.F., NIL), .F.,, )
+      if !lAIS() ; ordListAdd( ( cPatDat() + "TIVA.CDX" ) ) ; else ; ordSetFocus( 1 ) ; end
+
+      dbUseArea( .T., ( cDriver() ), ( cPatEmp + "ANTCLIT.DBF" ), ( cCheckArea( "ANTCLIT", @dbfAntCliT ) ), if(.T. .OR. .F., !.F., NIL), .F.,, )
+      if !lAIS() ; ordListAdd( ( cPatEmp + "ANTCLIT.CDX" ) ) ; else ; ordSetFocus( 1 ) ; end
+
+      dbUseArea( .T., ( cDriver() ), ( cPatDat() + "CAJAS.DBF" ), ( cCheckArea( "CAJAS", @dbfCajT ) ), if(.T. .OR. .F., !.F., NIL), .F.,, )
+      if !lAIS() ; ordListAdd( ( cPatDat() + "CAJAS.CDX" ) ) ; else ; ordSetFocus( 1 ) ; end
+
+      dbUseArea( .T., ( cDriver() ), ( cPatEmp() + "NCOUNT.DBF" ), ( cCheckArea( "NCOUNT", @dbfCount ) ), if(.T. .OR. .F., !.F., NIL), .F.,, )
+      if !lAIS() ; ordListAdd( ( cPatEmp() + "NCOUNT.CDX" ) ) ; else ; ordSetFocus( 1 ) ; end
+
+      dbUseArea( .T., ( cDriver() ), ( cPatDat() + "EMPRESA.DBF" ), ( cCheckArea( "EMPRESA", @dbfEmp ) ), if(.T. .OR. .F., !.F., NIL), .F.,, )
+      if !lAIS() ; ordListAdd( ( cPatDat() + "EMPRESA.CDX" ) ) ; else ; ordSetFocus( 1 ) ; end
+
+      dbUseArea( .T., ( cDriver() ), ( cPatEmp + "RDOCUMEN.DBF" ), ( cCheckArea( "RDOCUMEN", @dbfDoc ) ), if(.T. .OR. .F., !.F., NIL), .F.,, )
+      if !lAIS() ; ordListAdd( ( cPatEmp + "RDOCUMEN.CDX" ) ) ; else ; ordSetFocus( 1 ) ; end
+      ordSetFocus( "CTIPO" )
+
+
+
+
+
+      cPouDiv           := cPouDiv( cDivEmp(), dbfDiv )
+      cPorDiv           := cPorDiv( cDivEmp(), dbfDiv )
+      cPicEur           := cPorDiv( cDivChg(), dbfDiv )
+      nDouDiv           := nDouDiv( cDivEmp(), dbfDiv )
+      nDorDiv           := nRouDiv( cDivEmp(), dbfDiv )
+
+
+
+
+
+      cNewFilT          := cGetNewFileName( cPatTmp() + "TikT" )
+      dbCreate( cNewFilT, aItmTik(), cDriver() )
+      dbUseArea( .T., cDriver(), cNewFilT, cCheckArea( "TikT", @dbfTmpTik ), .F. )
+
+      lOpenFiles        := .T.
+
+   RECOVER USING oError
+
+      lOpenFiles        := .F.
+
+      msgStop( "Imposible todas las bases de datos" + Chr(13)+Chr(10) + ErrorMessage( oError ) + Chr(13)+Chr(10) )
+      CloseFiles()
+
+   end
+
+   ErrorBlock( oBlock )
+
+RETURN ( lOpenFiles )
+
+
+
+STATIC FUNCTION CloseFiles()
+
+   ( dbfTikCliT )->( dbCloseArea() )
+   ( dbfTikCliL )->( dbCloseArea() )
+   ( dbfClient  )->( dbCloseArea() )
+   ( dbfFPago   )->( dbCloseArea() )
+   ( dbfDiv     )->( dbCloseArea() )
+   ( dbfTikCliP )->( dbCloseArea() )
+   ( dbfTikCliC )->( dbCloseArea() )
+   ( dbfAlbCliT )->( dbCloseArea() )
+   ( dbfAlbCliL )->( dbCloseArea() )
+   ( dbfFacCliT )->( dbCloseArea() )
+   ( dbfFacCliL )->( dbCloseArea() )
+   ( dbfFacCliP )->( dbCloseArea() )
+   ( dbfIva     )->( dbCloseArea() )
+   ( dbfAntCliT )->( dbCloseArea() )
+   ( dbfTmpTik  )->( dbCloseArea() )
+   ( dbfCajT    )->( dbCloseArea() )
+   ( dbfCount   )->( dbCloseArea() )
+   ( dbfEmp     )->( dbCloseArea() )
+   ( dbfDoc     )->( dbCloseArea() )
+
+   dbfTikCliT     := nil
+   dbfTikCliL     := nil
+   dbfTikCliC     := nil
+   dbfClient      := nil
+   dbfFPago       := nil
+   dbfDiv         := nil
+   dbfTikCliP     := nil
+   dbfAlbCliT     := nil
+   dbfAlbCliL     := nil
+   dbfFacCliT     := nil
+   dbfFacCliL     := nil
+   dbfFacCliP     := nil
+   dbfIva         := nil
+   dbfAntCliT     := nil
+   dbfTmpTik      := nil
+   dbfCajT        := nil
+   dbfCount       := nil
+   dbfEmp         := nil
+   dbfDoc         := nil
+
+   lOpenFiles     := .F.
+
+
+
+
+
+   dbfErase( cNewFilT )
+
+RETURN .T.
+
+
+
+Static function ClkMoneda( nImporte, oGet, lInit )
+
+   local nVal  := oGet:VarGet()
+
+   if lInit
+      nVal     := nImporte
+   else
+      nVal     += nImporte
+   end
+
+   oGet:cText( nVal )
+
+Return nil
+
+
+
+
+STATIC FUNCTION lLoadClientes( cCodCli, dbfTikCliT, oBrw, oPdtCli, oCmbCli )
+
+   local nRec           := ( dbfTikCliT )->( Recno() )
+
+   ( dbfTmpTik  )->( __dbZap() )
+   ( dbfTikCliT )->( dbGoTop() )
+
+   while !( dbfTikCliT )->( Eof() )
+
+      if ( dbfTikCliT )->cCliTik == cCodCli .AND. !( dbfTikCliT )->lPgdTik
+
+         dbPass( dbfTikCliT, dbfTmpTik, .T. )
+
+      end
+
+      ( dbfTikCliT )->( dbSkip() )
+
+   end
+
+   nTotales( oPdtCli )
+
+   oCmbCli:Refresh()
+
+   ( dbfTikCliT )->( dbGoTo( nRec ) )
+   ( dbfTmpTik )->( dbGoTop() )
+   oBrw:Refresh()
+
+Return( .T. )
+
+
+
+Static Function nTotales( oPdtCli )
+
+   local nRec     := ( dbfTmpTik )->( Recno() )
+
+   aTotal         := { 0, 0, 0 }
+
+   ( dbfTmpTik )->( dbGoTop() )
+
+   while !( dbfTmpTik )->( Eof() )
+
+      aTotal[1]   += nTotTik( ( dbfTmpTik )->cSerTik + ( dbfTmpTik )->cNumTik + ( dbfTmpTik )->cSufTik, dbfTikCliT, dbfTikCliL, dbfDiv )
+      aTotal[2]   += nTotCobTik( ( dbfTmpTik )->cSerTik + ( dbfTmpTik )->cNumTik + ( dbfTmpTik )->cSufTik, dbfTikCliP, dbfDiv )
+      aTotal[3]   += nPendienteTicket( ( dbfTmpTik )->cSerTik + ( dbfTmpTik )->cNumTik + ( dbfTmpTik )->cSufTik )
+
+      ( dbfTmpTik )->( dbSkip() )
+
+   end
+
+   if oPdtCli <> nil
+      oPdtCli:SetText( aTotal[3] )
+   end
+
+   ( dbfTmpTik )->( dbGoTo( nRec ) )
+
+Return .T.
+
+
+
+
+
+
+Static Function lFinalizar( oCodCli, oEntrega, oCambio, oCodFPago, oDlg, lPrint )
+
+   local nNumPgo     := 0
+   local nPendiente  := 0
+   local nEntrega    := oEntrega:VarGet()
+   local nCambio     := oCambio:VarGet()
+   local cCodPgo     := oCodFPago:VarGet()
+   local cCodCli     := oCodCli:VarGet()
+
+   IIF( lPrint == nil, lPrint := .F., ) ;
+
+   if Empty( cCodCli )
+      MsgStop( "Tiene que seleccionar un cliente para ver las cuentas pendientes" )
+      oCodCli:SetFocus()
+   end
+
+   if ( dbfTmpTik )->( Eof() ) .AND. !Empty( oCodCli:VarGet() )
+      MsgStop( "No existen cuentas pendientes para este cliente" )
+      oCodCli:SetFocus()
+      return .F.
+   end
+
+   if !Empty( cCodCli ) .AND. nEntrega <= 0
+      MsgStop( "Entrega introducida no válida" )
+      oEntrega:SetFocus()
+      return .F.
+   end
+
+   oMsgProgress()
+   oMsgProgress():SetRange( 0, ( dbfTmpTik )->( LastRec() ) )
+
+   oDlg:Disable()
+
+
+
+
+
+   nNumPgo                    := nNewDoc( nil, dbfTikCliC, "NCOBCLI", nil, dbfCount )
+
+
+
+
+
+
+
+
+
+
+
+   cPgoInUse                  := Padl( Str( nNumPgo ), 9 ) + RetSufEmp()
+
+   if dbAppe( dbfTikCliC )
+
+      ( dbfTikCliC )->nNumPgo := nNumPgo
+      ( dbfTikCliC )->cSufPgo := RetSufEmp()
+      ( dbfTikCliC )->cCodCaj := oUser():cCaja()
+      ( dbfTikCliC )->dPgoTik := GetSysDate()
+      ( dbfTikCliC )->cFpgPgo := cCodPgo
+      ( dbfTikCliC )->nImpPgo := nEntrega
+      ( dbfTikCliC )->nDevPgo := nCambio
+      ( dbfTikCliC )->nTotPgo := nEntrega - nCambio
+      ( dbfTikCliC )->cCodCli := cCodCli
+      ( dbfTikCliC )->cDivPgo := cDivEmp()
+      ( dbfTikCliC )->nVdvPgo := nValDiv( cDivEmp(), dbfDiv )
+      ( dbfTikCliC )->cCtaRec := cCtaCob()
+      ( dbfTikCliC )->cTurPgo := cCurSesion()
+
+      ( dbfTikCliC )->( dbUnLock() )
+
+   else
+
+      MsgStop( "No se ha podido añadir el registro de pago" )
+
+   end
+
+
+
+
+
+   while nEntrega > 0 .AND. !( dbfTmpTik )->( Eof() )
+
+      nPendiente  := nPendienteTicket( ( dbfTmpTik )->cSerTik + ( dbfTmpTik )->cNumTik + ( dbfTmpTik )->cSufTik )
+
+      do case
+         case nEntrega >= nPendiente
+
+
+
+
+
+            if dbAppe( dbfTikCliP )
+
+               ( dbfTikCliP )->cCtaRec    := cCtaCob()
+               ( dbfTikCliP )->cTurPgo    := cCurSesion()
+               ( dbfTikCliP )->dPgoTik    := GetSysDate()
+               ( dbfTikCliP )->cCodCaj    := oUser():cCaja()
+               ( dbfTikCliP )->cFpgPgo    := cCodPgo
+               ( dbfTikCliP )->cSerTik    := ( dbfTmpTik )->cSerTik
+               ( dbfTikCliP )->cNumTik    := ( dbfTmpTik )->cNumTik
+               ( dbfTikCliP )->cSufTik    := ( dbfTmpTik )->cSufTik
+               ( dbfTikCliP )->nNumRec    := 0
+               ( dbfTikCliP )->nImpTik    := nPendiente
+               ( dbfTikCliP )->cDivPgo    := ( dbfTmpTik )->cDivTik
+               ( dbfTikCliP )->nVdvPgo    := ( dbfTmpTik )->nVdvTik
+               ( dbfTikCliP )->nDevTik    := 0
+               ( dbfTikCliP )->lCloPgo    := .F.
+               ( dbfTikCliP )->lSndPgo    := .T.
+               ( dbfTikCliP )->nNumPgo    := nNumPgo
+               ( dbfTikCliP )->cSufPgo    := RetSufEmp()
+
+            else
+
+               MsgStop( "No se ha podido añadir el registro de pago" )
+
+            end
+
+
+
+
+
+            if ( dbfTikCliT )->( dbSeek( ( dbfTmpTik )->cSerTik + ( dbfTmpTik )->cNumTik + ( dbfTmpTik )->cSufTik ) )
+
+               if dbLock( dbfTikCliT )
+                  ( dbfTikCliT )->nCobTik    := nPendiente
+                  ( dbfTikCliT )->lPgdTik    := .T.
+                  ( dbfTikCliT )->lSndDoc    := .T.
+                  ( dbfTikCliT )->lLiqTik    := .T.
+                  ( dbfTikCliT )->( dbUnLock() )
+               end
+
+            end
+
+         case nEntrega < nPendiente .AND. nEntrega > 0
+
+
+
+
+
+            if dbAppe( dbfTikCliP )
+
+               ( dbfTikCliP )->cCtaRec    := cCtaCob()
+               ( dbfTikCliP )->cTurPgo    := cCurSesion()
+               ( dbfTikCliP )->dPgoTik    := GetSysDate()
+               ( dbfTikCliP )->cCodCaj    := oUser():cCaja()
+               ( dbfTikCliP )->cFpgPgo    := cCodPgo
+               ( dbfTikCliP )->cSerTik    := ( dbfTmpTik )->cSerTik
+               ( dbfTikCliP )->cNumTik    := ( dbfTmpTik )->cNumTik
+               ( dbfTikCliP )->cSufTik    := ( dbfTmpTik )->cSufTik
+               ( dbfTikCliP )->nNumRec    := 0
+               ( dbfTikCliP )->nImpTik    := nEntrega
+               ( dbfTikCliP )->cDivPgo    := ( dbfTmpTik )->cDivTik
+               ( dbfTikCliP )->nVdvPgo    := ( dbfTmpTik )->nVdvTik
+               ( dbfTikCliP )->nDevTik    := 0
+               ( dbfTikCliP )->lCloPgo    := .F.
+               ( dbfTikCliP )->lSndPgo    := .T.
+               ( dbfTikCliP )->nNumPgo    := nNumPgo
+               ( dbfTikCliP )->cSufPgo    := RetSufEmp()
+
+            else
+
+               MsgStop( "No se ha podido añadir el registro de pago" )
+
+            end
+
+      end
+
+      nEntrega    -= nPendiente
+
+      ( dbfTmpTik )->( dbSkip() )
+
+      oMsgProgress():Deltapos(1)
+
+   end
+
+   EndProgress()
+
+   if !Empty( cCodCli ) .AND. lPrint
+      PrintPagoCliente( .F. )
+   end
+
+   cPgoInUse := ""
+
+   oDlg:Enable()
+   oDlg:end( 1 )
+
+Return .T.
+
+
+
+Static Function PagosTikets( oCodCli )
+
+   local oDlg
+   local oBrw
+   local nRec     := ( dbfTikCliC )->( RecNo() )
+   local nOrdAnt  := ( dbfTikCliC )->( OrdSetFocus( "CCODCLI" ) )
+   local cCliente := oCodCli:VarGet()
+
+   if Empty( cCliente )
+      MsgStop( "Tiene que seleccionar un cliente" )
+      oCodCli:SetFocus()
+      Return .F.
+   end
+
+   ( dbfTikCliC )->( OrdScope( 0, cCliente ) )
+   ( dbfTikCliC )->( OrdScope( 1, cCliente ) )
+
+   oDlg = TDialog():New(,,,, "Pagos de: " + AllTrim( cCliente ) + " - " + RetFld( cCliente, dbfClient ), "PAGOS_CLIENTES",, .F.,,,,,, .F.,,,,,, .F., )
+
+
+
+
+
+   oBrw                 := TXBrowse():New( oDlg )
+
+   oBrw:bClrSel         := {|| { 0, ( 229 + ( 229 * 256 ) + ( 229 * 65536 ) ) } }
+   oBrw:bClrSelFocus    := {|| { 0, ( 167 + ( 205 * 256 ) + ( 240 * 65536 ) ) } }
+
+   oBrw:lHScroll        := .F.
+   oBrw:cAlias          := dbfTikCliC
+   oBrw:nMarqueeStyle   := 5
+   oBrw:CreateFromResource( 100 )
+
+   with object ( oBrw:AddCol() )
+      :cHeader          := "Número"
+      :bEditValue       := {|| AllTrim( Str( ( dbfTikCliC )->nNumPgo ) ) + "/" + ( dbfTikCliC )->cSufPgo }
+      :nWidth           := 80
+   end
+
+   with object ( oBrw:AddCol() )
+      :cHeader          := "Cliente"
+      :bEditValue       := {|| AllTrim( ( dbfTikCliC )->cCodCli ) + " - " + RetFld( ( dbfTikCliC )->cCodCli, dbfClient ) }
+      :nWidth           := 300
+   end
+
+   with object ( oBrw:AddCol() )
+      :cHeader          := "Fecha"
+      :bEditValue       := {|| Dtoc( ( dbfTikCliC )->dPgoTik ) }
+      :nWidth           := 65
+   end
+
+   with object ( oBrw:AddCol() )
+      :cHeader          := "Importe"
+      :bEditValue       := {|| Trans( ( dbfTikCliC )->nImpPgo - ( dbfTikCliC )->nDevPgo, cPorDiv ) }
+      :nWidth           := 50
+      :nDataStrAlign    := 1
+      :nHeadStrAlign    := 1
+   end
+
+
+
+
+
+   TButtonBmp():ReDefine( 110, {||( oBrw:GoUp() )}, oDlg,,, .F.,,,, .F., "UP32",, )
+
+
+
+
+
+   TButtonBmp():ReDefine( 120, {||( oBrw:GoDown() )}, oDlg,,, .F.,,,, .F., "DOWN32",, )
+
+
+
+
+
+   TButtonBmp():ReDefine( 150, {||( PrintPagoCliente( .T. ) )}, oDlg,,, .F.,,,, .F., "PREV1_32",, )
+
+
+
+
+
+   TButtonBmp():ReDefine( 130, {||( PrintPagoCliente( .F. ) )}, oDlg,,, .F.,,,, .F., "IMP32",, )
+
+
+
+
+
+   TButtonBmp():ReDefine( 140, {||( oDlg:end() )}, oDlg,,, .F.,,,, .F., "EXIT_32",, )
+
+   oDlg:Activate( oDlg:bLClicked, oDlg:bMoved, oDlg:bPainted, .T.,,,, oDlg:bRClicked,,, )
+
+   ( dbfTikCliC )->( OrdScope( 0, nil ) )
+   ( dbfTikCliC )->( OrdScope( 1, nil ) )
+   ( dbfTikCliC )->( OrdSetFocus( nOrdAnt ) )
+   ( dbfTikCliC )->( dbGoTo( nRec ) )
+
+Return .T.
+
+
+
+STATIC FUNCTION PrintPagoCliente( lPrev, cCodDoc, cPrinter, nCopies )
+
+   local nImpYet     := 0
+   local nRec        := ( dbfTikCliC )->( Recno() )
+   local nOrdAnt     := ( dbfTikCliC )->( OrdSetFocus( "NNUMPGO" ) )
+   local nRecPagos   := ( dbfTikCliP )->( Recno() )
+   local nOrdPagos   := ( dbfTikCliP )->( OrdSetFocus( "NNUMPGO" ) )
+
+   IIF( lPrev == nil, lPrev := .F., ) ;
+   IIF( cCodDoc == nil, cCodDoc := cFormatoPagoEnCaja( ( dbfTikCliC )->cCodCaj, dbfCajT ), ) ;
+   IIF( cPrinter == nil, cPrinter := cPrinterMetaPago( oUser():cCaja(), dbfCajT ), ) ;
+   IIF( nCopies == nil, nCopies := nCopiasMetaPagosEnCaja( oUser():cCaja(), dbfCajT ), ) ;
+
+   if !Empty( cPgoInUse )
+      ( dbfTikCLiC )->( dbGoTop() )
+      ( dbfTikCliC )->( dbSeek( cPgoInUse ) )
+   end
+
+   if !lExisteDocumento( cCodDoc, dbfDoc )
+      return nil
+   end
+
+   if lPrev
+
+      PrintReportPgoCli( 2 , 1, cPrinter, dbfDoc )
+
+   else
+
+      While nImpYet < nCopies
+
+         if nImpYet < 1 .OR. ApoloMsgNoYes( "¿Desea imprimir el tiket Nº" + Str( nImpYet + 1, 2 ) + "?", "Elija una opción" )
+
+            PrintReportPgoCli( 1 , 1, cPrinter, dbfDoc )
+
+         end
+
+         ++nImpYet
+
+      end
+
+   end
+
+   ( dbfTikCLiC )->( OrdSetFocus( nOrdAnt ) )
+   ( dbfTikCliP )->( OrdSetFocus( nOrdPagos ) )
+   ( dbfTikCliC )->( dbGoTo( nRec ) )
+   ( dbfTikCliP )->( dbGoto( nRecPagos ) )
+
+RETURN nil
+#line 1024 ".\Prg\Tactil.prg"
+Static Function DataReport( oFr )
+
+
+
+
+
+   oFr:ClearDataSets()
+
+   oFr:SetWorkArea(     "Pago cliente", ( dbfTikCliC )->( Select() ), .F., { 1, 1, 0 } )
+   oFr:SetFieldAliases( "Pago cliente", cItemsToReport( aPgoCli() ) )
+
+   oFr:SetWorkArea(     "Pagos tickets", ( dbfTikCliP )->( Select() ) )
+   oFr:SetFieldAliases( "Pagos tickets", cItemsToReport( aPgoTik() ) )
+
+   oFr:SetWorkArea(     "Empresa", ( dbfEmp )->( Select() ) )
+   oFr:SetFieldAliases( "Empresa", cItemsToReport( aItmEmp() ) )
+
+   oFr:SetWorkArea(     "Clientes", ( dbfClient )->( Select() ) )
+   oFr:SetFieldAliases( "Clientes", cItemsToReport( aItmCli() ) )
+
+   oFr:SetWorkArea(     "Formas de pago", ( dbfFpago )->( Select() ) )
+   oFr:SetFieldAliases( "Formas de pago", cItemsToReport( aItmFPago() ) )
+
+   oFr:SetMasterDetail( "Pago cliente", "Pagos tickets",      {|| Str( ( dbfTikCliC )->nNumPgo ) + ( dbfTikCliC )->cSufPgo } )
+   oFr:SetMasterDetail( "Pago cliente", "Empresa",            {|| cCodigoEmpresaEnUso() } )
+   oFr:SetMasterDetail( "Pago cliente", "Clientes",           {|| ( dbfTikCliC )->cCodCli } )
+   oFr:SetMasterDetail( "Pago cliente", "Formas de pago",     {|| ( dbfTikCliC )->cFpgPgo } )
+
+   oFr:SetResyncPair(   "Pago cliente", "Pagos tickets" )
+   oFr:SetResyncPair(   "Pago cliente", "Empresa" )
+   oFr:SetResyncPair(   "Pago cliente", "Clientes" )
+   oFr:SetResyncPair(   "Pago cliente", "Formas de pago" )
+
+Return nil
+
+
+
+Function DesignReportPgoCli( oFr, dbfDoc )
+
+   local nRec
+   local nOrdAnt
+
+   if lOpenFiles()
+
+
+
+
+
+
+      nRec     := ( dbfTikCliP )->( Recno() )
+      nOrdAnt  := ( dbfTikCliP )->( OrdSetFocus( "NNUMPGO" ) )
+
+
+
+
+
+      DataReport( oFr )
+
+
+
+
+
+      if !Empty( ( dbfDoc )->mReport )
+
+         oFr:LoadFromBlob( ( dbfDoc )->( Select() ), "mReport")
+
+      else
+
+         oFr:SetProperty(     "Report",            "ScriptLanguage", "PascalScript" )
+
+         oFr:AddPage(         "MainPage" )
+
+         oFr:AddBand(         "CabeceraDocumento", "MainPage", 2 )
+         oFr:SetProperty(     "CabeceraDocumento", "Top", 0 )
+         oFr:SetProperty(     "CabeceraDocumento", "Height", 200 )
+
+         oFr:AddBand(         "CabeceraColumnas",  "MainPage", 6 )
+         oFr:SetProperty(     "CabeceraColumnas",  "Top", 200 )
+         oFr:SetProperty(     "CabeceraColumnas",  "Height", 0 )
+         oFr:SetProperty(     "CabeceraColumnas",  "StartNewPage", .T. )
+         oFr:SetObjProperty(  "CabeceraColumnas",  "DataSet", "Pago cliente" )
+
+         oFr:AddBand(         "DetalleColumnas",   "MainPage", 7  )
+         oFr:SetProperty(     "DetalleColumnas",   "Top", 230 )
+         oFr:SetProperty(     "DetalleColumnas",   "Height", 28 )
+         oFr:SetObjProperty(  "DetalleColumnas",   "DataSet", "Pagos tickets" )
+         oFr:SetProperty(     "DetalleColumnas",   "OnMasterDetail", "DetalleOnMasterDetail" )
+
+         oFr:AddBand(         "PieDocumento",      "MainPage", 3 )
+         oFr:SetProperty(     "PieDocumento",      "Top", 930 )
+         oFr:SetProperty(     "PieDocumento",      "Height", 110 )
+
+      end
+
+
+
+
+
+      oFr:DesignReport()
+
+
+
+
+
+      oFr:DestroyFr()
+
+
+
+
+
+      ( dbfTikCliP )->( OrdSetFocus( nOrdAnt ) )
+      ( dbfTikCliP )->( dbGoTo( nRec ) )
+
+
+
+
+
+      CloseFiles()
+
+   else
+
+      Return .F.
+
+   end
+
+Return .T.
+
+
+
+Function PrintReportPgoCli( nDevice, nCopies, cPrinter, dbfDoc )
+
+   local oFr
+
+   IIF( nDevice == nil, nDevice := 2, ) ;
+   IIF( nCopies == nil, nCopies := 1, ) ;
+   IIF( cPrinter == nil, cPrinter := PrnGetName(), ) ;
+
+   SysRefresh()
+
+   oFr                  := frReportManager():New()
+
+   oFr:LoadLangRes(     "Spanish.Xml" )
+
+   oFr:SetIcon( 1 )
+
+   oFr:SetTitle(        "Diseñador de documentos" )
+
+
+
+
+
+   oFr:SetEventHandler( "Designer", "OnSaveReport", {|| oFr:SaveToBlob( ( dbfDoc )->( Select() ), "mReport" ) } )
+
+
+
+
+
+   DataReport( oFr )
+
+
+
+
+
+   if !Empty( ( dbfDoc )->mReport )
+
+      oFr:LoadFromBlob( ( dbfDoc )->( Select() ), "mReport")
+
+
+
+
+
+      oFr:PrepareReport()
+
+
+
+
+
+      do case
+         case nDevice == 2
+            oFr:ShowPreparedReport()
+
+         case nDevice == 1
+            oFr:PrintOptions:SetPrinter( cPrinter )
+            oFr:PrintOptions:SetCopies( nCopies )
+            oFr:PrintOptions:SetShowDialog( .F. )
+            oFr:Print()
+
+         case nDevice == 3
+            oFr:SetProperty(  "PDFExport", "EmbeddedFonts",    .T. )
+            oFr:SetProperty(  "PDFExport", "PrintOptimized",   .T. )
+            oFr:SetProperty(  "PDFExport", "Outline",          .T. )
+            oFr:DoExport(     "PDFExport" )
+
+      end
+
+   end
+
+
+
+
+
+   oFr:DestroyFr()
+
+Return .T.
+
+
+
+static function nPendienteTicket( cNumTik )
+
+   local nPendiente  := 0
+
+   nPendiente += nTotTik( ( dbfTmpTik )->cSerTik + ( dbfTmpTik )->cNumTik + ( dbfTmpTik )->cSufTik, dbfTikCliT, dbfTikCliL, dbfDiv, nil )
+   nPendiente -= nTotCobTik( ( dbfTmpTik )->cSerTik + ( dbfTmpTik )->cNumTik + ( dbfTmpTik )->cSufTik, dbfTikCliP, dbfDiv )
+
+return ( nPendiente )

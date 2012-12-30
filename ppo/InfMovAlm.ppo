@@ -1,0 +1,208 @@
+#line 112 "hbclass.ch"
+   DYNAMIC DivertConstructorCall
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+DECLARE HBClass  New( cName AS String, OPTIONAL SuperParams ) AS CLASS HBClass  Create() AS Object  Instance() AS Object  AddClsMethod( cName AS String, @MethodName(), nScope AS Numeric, n2 AS Numeric, n3 AS Numeric )  AddDelegate( cName AS String, cDelegate AS String, cObject AS String, nScope AS Numeric, lPersistent AS LOGICAL )  AddMultiClsData( cType AS String, uVal, nScope AS Numeric, aDatas AS Array OF String )  AddMultiData( cType AS String, uVal, nScope AS Numeric, aDatas AS Array OF String, x AS LOGICAL, lPer AS LOGICAL )  AddMethod( cName AS String, @MethodName(), nScope AS Numeric, lPersistent AS LOGICAL )  AddInLine( cName AS String, bBlock AS CodeBlock, nScope AS Numeric, lPersistent AS LOGICAL )  AddVirtual( cName AS String )  ModMethod( cName AS String, @MethodName(), nScope AS Numeric, lPersistent AS LOGICAL )  ModClsMethod( cName AS String, @MethodName(), nScope AS Numeric )  ModInline( cName AS String, bBlock AS CodeBlock, nScope AS Numeric, lPersistent AS LOGICAL )  SetOnError( @MethodName() )
+#line 85 "\Fwh1204\Include\FiveWin.Ch"
+   EXTERNAL GetProcAdd
+   EXTERNAL TActiveX
+
+
+
+
+extern errorsys
+#line 8 ".\Prg\InfMovAlm.prg"
+_HB_CLASS InfMovAlm ; UTILITY FUNCTION InfMovAlm(...); static s_oClass ; local oClassInstance ; local nScope ; nScope := 1 ; if s_oClass == NIL ; s_oClass := IIF(.F.,, HBClass():New( "InfMovAlm" , {TInfGen():classh} ) ) ; ;
+
+   _HB_MEMBER {AS OBJECT oDbfTMov} ; IIF( !.F., s_oClass:AddMultiData( "OBJECT",, nScope + IIF( .F., 32, 0 ), { "oDbfTMov" }, .F., .F. ), )
+   _HB_MEMBER {AS CHARACTER cTMovOrg} ; IIF( !.F., s_oClass:AddMultiData( "CHARACTER",, nScope + IIF( .F., 32, 0 ), { "cTMovOrg" }, .F., .F. ), )
+   _HB_MEMBER {AS CHARACTER cTMovDes} ; IIF( !.F., s_oClass:AddMultiData( "CHARACTER",, nScope + IIF( .F., 32, 0 ), { "cTMovDes" }, .F., .F. ), )
+   _HB_MEMBER {AS LOGIC lAllTMov} ; IIF( !.F., s_oClass:AddMultiData( "LOGIC", .T., nScope + IIF( .F., 32, 0 ), { "lAllTMov" }, .F., .F. ), )
+
+   _HB_MEMBER Create(); IIF( .F., s_oClass:ModMethod( "Create", @InfMovAlm_Create(), nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ), s_oClass:AddMethod( "Create", @InfMovAlm_Create(), nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ));
+
+   _HB_MEMBER OpenFiles(); IIF( .F., s_oClass:ModMethod( "OpenFiles", @InfMovAlm_OpenFiles(), nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ), s_oClass:AddMethod( "OpenFiles", @InfMovAlm_OpenFiles(), nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ));
+
+   _HB_MEMBER CloseFiles(); IIF( .F., s_oClass:ModMethod( "CloseFiles", @InfMovAlm_CloseFiles(), nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ), s_oClass:AddMethod( "CloseFiles", @InfMovAlm_CloseFiles(), nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ));
+
+   _HB_MEMBER lResource( cFld); IIF( .F., s_oClass:ModMethod( "lResource", @InfMovAlm_lResource(), nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ), s_oClass:AddMethod( "lResource", @InfMovAlm_lResource(), nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ));
+
+   _HB_MEMBER lGenerate(); IIF( .F., s_oClass:ModMethod( "lGenerate", @InfMovAlm_lGenerate(), nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ), s_oClass:AddMethod( "lGenerate", @InfMovAlm_lGenerate(), nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ));
+
+; IF .F. ; __clsActive(s_oClass:hClass) ; s_oClass:Refresh() ; ELSE ; s_oClass:Create() ; END ; oClassInstance := __clsInst( s_oClass:hClass ) ; IF __ObjHasMsg( oClassInstance, "InitClass" ); oClassInstance:InitClass( hb_aParams() ) ; END ; ELSE ; oClassInstance := __clsInst( s_oClass:hClass ) ; END ; IF PCount() > 0 ; DIVERT TO (@DivertConstructorCall()) OF s_oClass ; END ; RETURN oClassInstance AS CLASS InfMovAlm ;
+
+
+
+UTILITY STATIC function InfMovAlm_Create() ; local Self AS CLASS InfMovAlm := QSelf() AS CLASS InfMovAlm
+
+   ::AddField( "cCodMov",   "C",  2, 0, {|| "" },     "Código",            .T., "Tipo de movimiento",         3, .F. )
+   ::AddField( "cDesMov",   "C", 20, 0, {|| "" },     "Nombre",            .T., "Descripción",               30, .F. )
+
+   ::AddTmpIndex ( "cCodMov", "cCodMov" )
+
+   ::lDefFecInf   := .F.
+   ::lDefSerInf   := .F.
+   ::lDefDivInf   := .F.
+
+RETURN ( Self )
+
+
+
+UTILITY STATIC function InfMovAlm_OpenFiles() ; local Self AS CLASS InfMovAlm := QSelf() AS CLASS InfMovAlm
+
+   local lOpen    := .T.
+   local oBlock   := ErrorBlock( {| oError | ApoloBreak( oError ) } )
+
+   BEGIN SEQUENCE
+
+      ::oDbfTMov := DbfServer( "TMOV.DBF", ):NewOpen( "TMOV.DBF",, ( cDriver() ),, ( cPatDat() ), .F., .T., .F., .F. ) ; ::oDbfTMov:AddBag( "TMOV.CDX" ) ; ::oDbfTMov:AddBag( ) ; ::oDbfTMov:AutoIndex()
+
+   RECOVER
+
+      msgStop( "Imposible abrir todas las bases de datos" )
+      ::CloseFiles()
+      lOpen          := .F.
+
+   end
+
+   ErrorBlock( oBlock )
+
+RETURN ( lOpen )
+
+
+
+UTILITY STATIC function InfMovAlm_CloseFiles() ; local Self AS CLASS InfMovAlm := QSelf() AS CLASS InfMovAlm
+
+   if !Empty( ::oDbfTMov ) .AND. ::oDbfTMov:Used()
+      ::oDbfTMov:End()
+   end
+
+   ::oDbfTMov := nil
+
+RETURN ( Self )
+
+
+
+UTILITY STATIC function InfMovAlm_lResource( cFld) ; local Self AS CLASS InfMovAlm := QSelf() AS CLASS InfMovAlm
+
+   local cSayTMovOrg
+   local cSayTMovDes
+   local oSayTMovOrg
+   local oSayTMovDes
+   local oTMovOrg
+   local oTMovDes
+
+   if !::StdResource( "INF_TMOV01" )
+      return .F.
+   end
+
+
+
+
+
+   ::cTMovOrg   := dbFirst( ::oDbfTMov, 1 )
+   ::cTMovDes   := dbLast(  ::oDbfTMov, 1 )
+   cSayTMovOrg  := dbFirst( ::oDbfTMov, 2 )
+   cSayTMovDes  := dbLast(  ::oDbfTMov, 2 )
+
+
+
+   TCheckBox():ReDefine( ( 60 ), { | u | If( PCount()==0, ::lAllTMov, ::lAllTMov:= u ) }, ::oFld:aDialogs[1],,,,,,, .F.,, .F. )
+
+
+
+
+
+
+   oTMovOrg := TGetHlp():ReDefine( ( 70 ), { | u | If( PCount()==0, ::cTMovOrg, ::cTMovOrg:= u ) }, ::oFld:aDialogs[1],,,, "N/W*",,,,, .F., {||     ( !::lAllTMov )},, .F., .F.,,,,,, nil, "LUPA",, )
+
+      oTMovOrg:bValid   := {|| cTMov( oTMovOrg, ::oDbfTMov:cAlias, oSayTMovOrg ) }
+      oTMovOrg:bHelp    := {|| BrwTMov( oTMovOrg, ::oDbfTMov:cAlias, oSayTMovOrg ) }
+
+
+
+
+
+   oSayTMovOrg := TGetHlp():ReDefine( ( 80 ), { | u | If( PCount()==0, cSayTMovOrg, cSayTMovOrg:= u ) }, ::oFld:aDialogs[1],,,, "N/W*",,,,, .F., {||     .F.},, .F., .F.,,,,,, nil,,, )
+
+
+
+
+
+
+   oTMovDes := TGetHlp():ReDefine( ( 90 ), { | u | If( PCount()==0, ::cTMovDes, ::cTMovDes:= u ) }, ::oFld:aDialogs[1],,,, "N/W*",,,,, .F., {||     ( !::lAllTMov )},, .F., .F.,,,,,, nil, "LUPA",, )
+
+      oTMovDes:bValid   := {|| cTMov( oTMovDes, ::oDbfTMov:cAlias, oSayTMovDes ) }
+      oTMovDes:bHelp    := {|| BrwTMov( oTMovDes, ::oDbfTMov:cAlias, oSayTMovDes ) }
+
+
+
+
+   oSayTMovDes := TGetHlp():ReDefine( ( 100 ), { | u | If( PCount()==0, cSayTMovDes, cSayTMovDes:= u ) }, ::oFld:aDialogs[1],,,,,,,,, .F., {||     .F.},, .F., .F.,,,,,, nil,,, )
+
+
+
+
+
+   ::oMtrInf:SetTotal( ::oDbfTMov:Lastrec() )
+
+   ::CreateFilter( aItmMovAlm(), ::oDbfTMov:cAlias )
+
+RETURN .T.
+
+
+
+
+
+
+UTILITY STATIC function InfMovAlm_lGenerate() ; local Self AS CLASS InfMovAlm := QSelf() AS CLASS InfMovAlm
+
+   ::oDlg:Disable()
+   ::oBtnCancel:Enable()
+   ::oDbf:Zap()
+
+
+   ::aHeader      := {  {|| "Fecha        : " + Dtoc( Date() ) }, {|| "Mov. Almacén : " + if( ::lAllTMov, "Todos", AllTrim( ::cTMovOrg ) + " > " + AllTrim( ::cTMovDes ) ) } }
+
+   ::oDbfTMov:OrdSetFocus( "CCODMOV" )
+
+   ::oDbfTMov:GoTop()
+      while !::lBreak .AND. !::oDbfTMov:Eof()
+
+
+      if ( ::lAllTMov .OR. ( ::oDbfTMov:cCodMov >= ::cTMovOrg .AND. ::oDbfTMov:cCodMov <= ::cTMovDes ) ) .AND. ::EvalFilter()
+
+         ::oDbf:Append()
+
+         ::oDbf:cCodMov     := ::oDbfTMov:cCodMov
+         ::oDbf:cDesMov     := ::oDbfTMov:cDesMov
+
+         ::oDbf:Save()
+
+      end
+
+      ::oDbfTMov:Skip()
+
+      ::oMtrInf:AutoInc()
+
+   end
+
+   ::oMtrInf:AutoInc( ::oDbfTMov:LastRec() )
+
+   ::oDlg:Enable()
+
+RETURN ( ::oDbf:LastRec() > 0 )

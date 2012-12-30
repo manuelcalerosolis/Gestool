@@ -1,0 +1,197 @@
+#line 112 "hbclass.ch"
+   DYNAMIC DivertConstructorCall
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+DECLARE HBClass  New( cName AS String, OPTIONAL SuperParams ) AS CLASS HBClass  Create() AS Object  Instance() AS Object  AddClsMethod( cName AS String, @MethodName(), nScope AS Numeric, n2 AS Numeric, n3 AS Numeric )  AddDelegate( cName AS String, cDelegate AS String, cObject AS String, nScope AS Numeric, lPersistent AS LOGICAL )  AddMultiClsData( cType AS String, uVal, nScope AS Numeric, aDatas AS Array OF String )  AddMultiData( cType AS String, uVal, nScope AS Numeric, aDatas AS Array OF String, x AS LOGICAL, lPer AS LOGICAL )  AddMethod( cName AS String, @MethodName(), nScope AS Numeric, lPersistent AS LOGICAL )  AddInLine( cName AS String, bBlock AS CodeBlock, nScope AS Numeric, lPersistent AS LOGICAL )  AddVirtual( cName AS String )  ModMethod( cName AS String, @MethodName(), nScope AS Numeric, lPersistent AS LOGICAL )  ModClsMethod( cName AS String, @MethodName(), nScope AS Numeric )  ModInline( cName AS String, bBlock AS CodeBlock, nScope AS Numeric, lPersistent AS LOGICAL )  SetOnError( @MethodName() )
+#line 85 "\Fwh1204\Include\FiveWin.Ch"
+   EXTERNAL GetProcAdd
+   EXTERNAL TActiveX
+
+
+
+
+extern errorsys
+#line 8 ".\Prg\TInfLArt.prg"
+_HB_CLASS TInfLArt ; UTILITY FUNCTION TInfLArt(...); static s_oClass ; local oClassInstance ; local nScope ; nScope := 1 ; if s_oClass == NIL ; s_oClass := IIF(.F.,, HBClass():New( "TInfLArt" , {TInfGen():classh} ) ) ; ;
+
+   _HB_MEMBER {AS OBJECT oDbfArt} ; IIF( !.F., s_oClass:AddMultiData( "OBJECT",, nScope + IIF( .F., 32, 0 ), { "oDbfArt" }, .F., .F. ), )
+
+   _HB_MEMBER Create(); IIF( .F., s_oClass:ModMethod( "Create", @TInfLArt_Create(), nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ), s_oClass:AddMethod( "Create", @TInfLArt_Create(), nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ));
+
+   _HB_MEMBER lResource( cFld); IIF( .F., s_oClass:ModMethod( "lResource", @TInfLArt_lResource(), nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ), s_oClass:AddMethod( "lResource", @TInfLArt_lResource(), nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ));
+
+   _HB_MEMBER OpenFiles(); IIF( .F., s_oClass:ModMethod( "OpenFiles", @TInfLArt_OpenFiles(), nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ), s_oClass:AddMethod( "OpenFiles", @TInfLArt_OpenFiles(), nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ));
+
+   _HB_MEMBER CloseFiles(); IIF( .F., s_oClass:ModMethod( "CloseFiles", @TInfLArt_CloseFiles(), nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ), s_oClass:AddMethod( "CloseFiles", @TInfLArt_CloseFiles(), nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ));
+
+   _HB_MEMBER lGenerate(); IIF( .F., s_oClass:ModMethod( "lGenerate", @TInfLArt_lGenerate(), nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ), s_oClass:AddMethod( "lGenerate", @TInfLArt_lGenerate(), nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ));
+
+; IF .F. ; __clsActive(s_oClass:hClass) ; s_oClass:Refresh() ; ELSE ; s_oClass:Create() ; END ; oClassInstance := __clsInst( s_oClass:hClass ) ; IF __ObjHasMsg( oClassInstance, "InitClass" ); oClassInstance:InitClass( hb_aParams() ) ; END ; ELSE ; oClassInstance := __clsInst( s_oClass:hClass ) ; END ; IF PCount() > 0 ; DIVERT TO (@DivertConstructorCall()) OF s_oClass ; END ; RETURN oClassInstance AS CLASS TInfLArt ;
+
+
+
+UTILITY STATIC function TInfLArt_OpenFiles() ; local Self AS CLASS TInfLArt := QSelf() AS CLASS TInfLArt
+
+   local lOpen    := .T.
+   local oBlock   := ErrorBlock( {| oError | ApoloBreak( oError ) } )
+
+   BEGIN SEQUENCE
+
+   ::oDbfArt := DbfServer( "ARTICULO.DBF", ):NewOpen( "ARTICULO.DBF",, ( cDriver() ),, ( cPatArt() ), .F., .T., .F., .F. ) ; ::oDbfArt:AddBag( "ARTICULO.CDX" ) ; ::oDbfArt:AddBag( ) ; ::oDbfArt:AutoIndex()
+
+   RECOVER
+
+      msgStop( "Imposible abrir todas las bases de datos" )
+      ::CloseFiles()
+      lOpen          := .F.
+
+   end
+
+   ErrorBlock( oBlock )
+
+RETURN ( lOpen )
+
+
+
+UTILITY STATIC function TInfLArt_CloseFiles() ; local Self AS CLASS TInfLArt := QSelf() AS CLASS TInfLArt
+
+   if !Empty( ::oDbfArt ) .AND. ::oDbfArt:Used()
+      ::oDbfArt:End()
+   end
+
+   ::oDbfArt   := nil
+
+RETURN ( Self )
+
+
+
+UTILITY STATIC function TInfLArt_Create() ; local Self AS CLASS TInfLArt := QSelf() AS CLASS TInfLArt
+
+   ::AddField( "cTypDoc",   "C", 25, 0, {|| "" },         "Tip. Doc.",     .T., "Tipo de documento",     25, .F. )
+   ::AddField( "dFecDoc",   "D",  8, 0, {|| "" },         "Fecha",         .T., "Fecha",                 12, .F. )
+   ::AddField( "cNumDoc",   "C", 12, 0, {|| "" },         "Num. Doc",      .T., "Número de documento",   12, .F. )
+   ::AddField( "cCodDoc",   "C", 12, 0, {|| "" },         "Código",        .F., "Código",                12, .F. )
+   ::AddField( "cNomDoc",   "C", 50, 0, {|| "" },         "Nombre",        .T., "Nombre",                40, .F. )
+   ::AddField( "cAlmDoc",   "C",  3, 0, {|| "" },         "Alm.",          .T., "Almacén",                5, .F. )
+   ::AddField( "nUndDoc",   "N", 16, 6, {|| MasUnd() },   "Unidades",      .T., "Unidades",              12, .T. )
+   ::AddField( "nDtoDoc",   "N", 16, 6, {|| "" },         "Descuento",     .T., "Descuento",             16, .F. )
+   ::AddField( "nImpDoc",   "N", 16, 6, {|| ::cPicImp },  "Importe",       .T., "Importe",               16, .T. )
+   ::AddField( "nTotDoc",   "N", 16, 6, {|| ::cPicImp },  "Total",         .T., "Total",                 16, .T. )
+
+   ::AddTmpIndex ( "dFecDoc", "dFecDoc" )
+
+RETURN ( Self )
+
+
+
+UTILITY STATIC function TInfLArt_lResource( cFld) ; local Self AS CLASS TInfLArt := QSelf() AS CLASS TInfLArt
+
+   if !::StdResource( "INF_ARTL" )
+      return .F.
+   end
+
+   ::oBtnFilter:Disable()
+
+   do case
+      case  ::xOthers[2] == "Todos"
+         ::dIniInf   := CtoD( "01/01/2000" )
+         ::dFinInf   := CtoD( "31/12/2020" )
+      case  Val( ::xOthers[2]) == Year( GetSysDate() )
+         ::dIniInf   := CtoD( "01/01/" + Str( Year( GetSysDate() ) ) )
+         ::dFinInf   := GetSysDate()
+      otherwise
+         ::dIniInf   := CtoD( "01/01/" + ::xOthers[2] )
+         ::dFinInf   := CtoD( "31/12/" + ::xOthers[2] )
+   end
+
+
+
+
+
+   if !::oDefCliInf( 110, 120, 130, 140, , 160 )
+      return .F.
+   end
+
+
+
+
+
+   if !::oDefPrvInf( 70, 80, 90, 100, 150 )
+      return .F.
+   end
+
+
+
+
+
+   ::oMtrInf:SetTotal( ::xOthers[1]:Lastrec() )
+
+RETURN .T.
+
+
+
+
+
+
+UTILITY STATIC function TInfLArt_lGenerate() ; local Self AS CLASS TInfLArt := QSelf() AS CLASS TInfLArt
+
+   ::oDlg:Disable()
+   ::oDbf:Zap()
+
+
+   ::aHeader      := {  {|| "Fecha    : " + Dtoc( Date() ) }, {|| "Artículo : " + AllTrim( ::xOthers[1]:Cargo ) + " - " + retArticulo( ::xOthers[1]:Cargo, ::oDbfArt ) } }
+
+   ::xOthers[1]:GoTop()
+
+   WHILE !::xOthers[1]:Eof()
+
+
+
+
+
+      if ::xOthers[1]:dFecDoc >= ::dIniInf                                                               .AND. ::xOthers[1]:dFecDoc <= ::dFinInf                                                               .AND. ( ::lAllCli .OR. ( ::xOthers[1]:cCodDoc >= ::cCliOrg .AND. ::xOthers[1]:cCodDoc <= ::cCliDes ) )   .AND. ( ::lAllPrv .OR. ( ::xOthers[1]:cCodDoc >= ::cPrvOrg .AND. ::xOthers[1]:cCodDoc <= ::cPrvDes ) )   .AND. lChkSer( left( ::xOthers[1]:cNumDoc, 1 ) , ::aSer )
+
+         ::oDbf:Append()
+
+         ::oDbf:cTypDoc  := cTextDocument( ::xOthers[1]:nTypDoc )
+         ::oDbf:dFecDoc  := ::xOthers[1]:dFecDoc
+         ::oDbf:cNumDoc  := cMaskNumDoc( ::xOthers[1] )
+         ::oDbf:cCodDoc  := ::xOthers[1]:cCodDoc
+         ::oDbf:cNomDoc  := ::xOthers[1]:cNomDoc
+         ::oDbf:cAlmDoc  := ::xOthers[1]:cAlmDoc
+         ::oDbf:nUndDoc  := ::xOthers[1]:nUndDoc
+         ::oDbf:nDtoDoc  := ::xOthers[1]:nDtoDoc
+         ::oDbf:nImpDoc  := ::xOthers[1]:nImpDoc
+         ::oDbf:nTotDoc  := ::xOthers[1]:nTotDoc
+
+         ::oDbf:Save()
+
+      end
+
+      ::xOthers[1]:Skip()
+
+      ::oMtrInf:AutoInc( ::xOthers[1]:OrdKeyNo() )
+
+   end
+
+   ::oMtrInf:AutoInc( ::xOthers[1]:LastRec() )
+
+   ::oDlg:Enable()
+
+   ::oBtnFilter:Disable()
+
+RETURN ( ::oDbf:LastRec() > 0 )

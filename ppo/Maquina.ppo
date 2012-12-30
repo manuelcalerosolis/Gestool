@@ -1,0 +1,629 @@
+#line 112 "hbclass.ch"
+   DYNAMIC DivertConstructorCall
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+DECLARE HBClass  New( cName AS String, OPTIONAL SuperParams ) AS CLASS HBClass  Create() AS Object  Instance() AS Object  AddClsMethod( cName AS String, @MethodName(), nScope AS Numeric, n2 AS Numeric, n3 AS Numeric )  AddDelegate( cName AS String, cDelegate AS String, cObject AS String, nScope AS Numeric, lPersistent AS LOGICAL )  AddMultiClsData( cType AS String, uVal, nScope AS Numeric, aDatas AS Array OF String )  AddMultiData( cType AS String, uVal, nScope AS Numeric, aDatas AS Array OF String, x AS LOGICAL, lPer AS LOGICAL )  AddMethod( cName AS String, @MethodName(), nScope AS Numeric, lPersistent AS LOGICAL )  AddInLine( cName AS String, bBlock AS CodeBlock, nScope AS Numeric, lPersistent AS LOGICAL )  AddVirtual( cName AS String )  ModMethod( cName AS String, @MethodName(), nScope AS Numeric, lPersistent AS LOGICAL )  ModClsMethod( cName AS String, @MethodName(), nScope AS Numeric )  ModInline( cName AS String, bBlock AS CodeBlock, nScope AS Numeric, lPersistent AS LOGICAL )  SetOnError( @MethodName() )
+#line 85 "\Fwh1204\Include\FiveWin.Ch"
+   EXTERNAL GetProcAdd
+   EXTERNAL TActiveX
+
+
+
+
+extern errorsys
+#line 8 ".\Prg\Maquina.prg"
+Function StartTMaquina()
+
+   local oMaquina := TMaquina():New( cPatEmp(), oWnd(), "04006" )
+
+   if !Empty( oMaquina )
+      oMaquina:Activate()
+   end
+
+Return nil
+
+
+
+_HB_CLASS TMaquina ; UTILITY FUNCTION TMaquina(...); static s_oClass ; local oClassInstance ; local nScope ; nScope := 1 ; if s_oClass == NIL ; s_oClass := IIF(.F.,, HBClass():New( "TMaquina" , {TMASDET():classh} ) ) ; ;
+
+   _HB_MEMBER { cMru} ; IIF( !.F., s_oClass:AddMultiData(, "Robot_16", nScope + IIF( .F., 32, 0 ), { "cMru" }, .F., .F. ), )
+   _HB_MEMBER { cBitmap} ; IIF( !.F., s_oClass:AddMultiData(, ( 250 + ( 161 * 256 ) + ( 52 * 65536 ) ), nScope + IIF( .F., 32, 0 ), { "cBitmap" }, .F., .F. ), )
+
+   _HB_MEMBER { oMaquina} ; IIF( !.F., s_oClass:AddMultiData(,, nScope + IIF( .F., 32, 0 ), { "oMaquina" }, .F., .F. ), )
+
+   _HB_MEMBER { oCostes} ; IIF( !.F., s_oClass:AddMultiData(,, nScope + IIF( .F., 32, 0 ), { "oCostes" }, .F., .F. ), )
+   _HB_MEMBER { oDetCostes} ; IIF( !.F., s_oClass:AddMultiData(,, nScope + IIF( .F., 32, 0 ), { "oDetCostes" }, .F., .F. ), )
+   _HB_MEMBER { oSeccion} ; IIF( !.F., s_oClass:AddMultiData(,, nScope + IIF( .F., 32, 0 ), { "oSeccion" }, .F., .F. ), )
+
+   _HB_MEMBER { oGetTot} ; IIF( !.F., s_oClass:AddMultiData(,, nScope + IIF( .F., 32, 0 ), { "oGetTot" }, .F., .F. ), )
+   _HB_MEMBER { nGetTot} ; IIF( !.F., s_oClass:AddMultiData(, 0, nScope + IIF( .F., 32, 0 ), { "nGetTot" }, .F., .F. ), )
+   _HB_MEMBER { oGetHor} ; IIF( !.F., s_oClass:AddMultiData(,, nScope + IIF( .F., 32, 0 ), { "oGetHor" }, .F., .F. ), )
+   _HB_MEMBER { nGetHor} ; IIF( !.F., s_oClass:AddMultiData(, 0, nScope + IIF( .F., 32, 0 ), { "nGetHor" }, .F., .F. ), )
+
+   _HB_MEMBER New( cPath, oWndParent, oMenuItem); IIF( .F., s_oClass:ModMethod( "New", @TMaquina_New(), nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ), s_oClass:AddMethod( "New", @TMaquina_New(), nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ));
+   _HB_MEMBER CreateInit( cPath); IIF( .F., s_oClass:ModMethod( "CreateInit", @TMaquina_CreateInit(), nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ), s_oClass:AddMethod( "CreateInit", @TMaquina_CreateInit(), nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ));
+   _HB_MEMBER Create( cPath); IIF( .F., s_oClass:ModMethod( "Create", @TMaquina_Create(), nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ), s_oClass:AddMethod( "Create", @TMaquina_Create(), nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ));
+
+   _HB_MEMBER OpenFiles( lExclusive); IIF( .F., s_oClass:ModMethod( "OpenFiles", @TMaquina_OpenFiles(), nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ), s_oClass:AddMethod( "OpenFiles", @TMaquina_OpenFiles(), nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ));
+   _HB_MEMBER OpenService( lExclusive); IIF( .F., s_oClass:ModMethod( "OpenService", @TMaquina_OpenService(), nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ), s_oClass:AddMethod( "OpenService", @TMaquina_OpenService(), nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ));
+
+   _HB_MEMBER CloseFiles(); IIF( .F., s_oClass:ModMethod( "CloseFiles", @TMaquina_CloseFiles(), nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ), s_oClass:AddMethod( "CloseFiles", @TMaquina_CloseFiles(), nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ));
+
+   _HB_MEMBER DefineFiles(); IIF( .F., s_oClass:ModMethod( "DefineFiles", @TMaquina_DefineFiles(), nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ), s_oClass:AddMethod( "DefineFiles", @TMaquina_DefineFiles(), nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ));
+
+   _HB_MEMBER Resource( nMode); IIF( .F., s_oClass:ModMethod( "Resource", @TMaquina_Resource(), nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ), s_oClass:AddMethod( "Resource", @TMaquina_Resource(), nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ));
+
+   _HB_MEMBER nTotalVirtual( oDbf); IIF( .F., s_oClass:ModMethod( "nTotalVirtual", @TMaquina_nTotalVirtual(), nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ), s_oClass:AddMethod( "nTotalVirtual", @TMaquina_nTotalVirtual(), nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ));
+   _HB_MEMBER cTotalVirtual( oDbf); IIF( .F., s_oClass:ModMethod( "cTotalVirtual", @TMaquina_cTotalVirtual(), nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ), s_oClass:AddMethod( "cTotalVirtual", @TMaquina_cTotalVirtual(), nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ));
+   _HB_MEMBER lTotalVirtual( oDbf, oGet); IIF( .F., s_oClass:ModMethod( "lTotalVirtual", @TMaquina_lTotalVirtual(), nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ), s_oClass:AddMethod( "lTotalVirtual", @TMaquina_lTotalVirtual(), nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ));
+
+   _HB_MEMBER nTotalCosteDia( oDbf); IIF( .F., s_oClass:ModMethod( "nTotalCosteDia", @TMaquina_nTotalCosteDia(), nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ), s_oClass:AddMethod( "nTotalCosteDia", @TMaquina_nTotalCosteDia(), nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ));
+   _HB_MEMBER cTotalCosteDia( oDbf); IIF( .F., s_oClass:ModMethod( "cTotalCosteDia", @TMaquina_cTotalCosteDia(), nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ), s_oClass:AddMethod( "cTotalCosteDia", @TMaquina_cTotalCosteDia(), nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ));
+   _HB_MEMBER lTotalCosteDia( oDbf, oGet); IIF( .F., s_oClass:ModMethod( "lTotalCosteDia", @TMaquina_lTotalCosteDia(), nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ), s_oClass:AddMethod( "lTotalCosteDia", @TMaquina_lTotalCosteDia(), nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ));
+
+   _HB_MEMBER nTotalCosteHora( cCod, oDbf, oDbfCos); IIF( .F., s_oClass:ModMethod( "nTotalCosteHora", @TMaquina_nTotalCosteHora(), nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ), s_oClass:AddMethod( "nTotalCosteHora", @TMaquina_nTotalCosteHora(), nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ));
+   _HB_MEMBER cTotalCosteHora( cCod, cDiv, oDbf, oDbfCos); IIF( .F., s_oClass:ModMethod( "cTotalCosteHora", @TMaquina_cTotalCosteHora(), nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ), s_oClass:AddMethod( "cTotalCosteHora", @TMaquina_cTotalCosteHora(), nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ));
+   _HB_MEMBER lTotalCosteHora( cCod, oDbf, oDbfCos, oGet); IIF( .F., s_oClass:ModMethod( "lTotalCosteHora", @TMaquina_lTotalCosteHora(), nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ), s_oClass:AddMethod( "lTotalCosteHora", @TMaquina_lTotalCosteHora(), nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ));
+
+   _HB_MEMBER lPreSave( oGet, nMode); IIF( .F., s_oClass:ModMethod( "lPreSave", @TMaquina_lPreSave(), nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ), s_oClass:AddMethod( "lPreSave", @TMaquina_lPreSave(), nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ));
+
+; IF .F. ; __clsActive(s_oClass:hClass) ; s_oClass:Refresh() ; ELSE ; s_oClass:Create() ; END ; oClassInstance := __clsInst( s_oClass:hClass ) ; IF __ObjHasMsg( oClassInstance, "InitClass" ); oClassInstance:InitClass( hb_aParams() ) ; END ; ELSE ; oClassInstance := __clsInst( s_oClass:hClass ) ; END ; IF PCount() > 0 ; DIVERT TO (@DivertConstructorCall()) OF s_oClass ; END ; RETURN oClassInstance AS CLASS TMaquina ;
+
+
+
+UTILITY STATIC function TMaquina_New( cPath, oWndParent, oMenuItem) ; local Self AS CLASS TMaquina := QSelf() AS CLASS TMaquina
+
+   IIF( cPath == nil, cPath := cPatEmp(), ) ;
+   IIF( oWndParent == nil, oWndParent := GetWndFrame(), ) ;
+
+   if oMenuItem <> nil .AND. ::nLevel == nil
+      ::nLevel          := nLevelUsr( oMenuItem )
+   else
+      ::nLevel          := 1
+   end
+
+   if nAnd( ::nLevel, 1 ) <> 0
+      msgStop( "Acceso no permitido." )
+      return nil
+   end
+
+   ::cPath              := cPath
+   ::oWndParent         := oWndParent
+
+   ::bFirstKey          := {|| ::oDbf:cCodMaq }
+
+   ::oCostes            := TCosMaq():Create()
+
+   ::oDetCostes         := TDetCostes():New( cPath, Self )
+   ::AddDetail( ::oDetCostes )
+
+   ::oSeccion           := TSeccion():Create()
+
+RETURN ( Self )
+
+
+
+UTILITY STATIC function TMaquina_CreateInit( cPath) ; local Self AS CLASS TMaquina := QSelf() AS CLASS TMaquina
+
+   IIF( cPath == nil, cPath := cPatEmp(), ) ;
+
+   ::cPath              := cPath
+
+   ::bFirstKey          := {|| ::oDbf:cCodMaq }
+
+   ::oCostes            := TCosMaq():Create( cPath )
+
+   ::oDetCostes         := TDetCostes():New( cPath, Self )
+   ::AddDetail( ::oDetCostes )
+
+   ::oSeccion           := TSeccion():Create( cPath )
+
+RETURN ( Self )
+
+
+
+UTILITY STATIC function TMaquina_Create( cPath) ; local Self AS CLASS TMaquina := QSelf() AS CLASS TMaquina
+
+   IIF( cPath == nil, cPath := cPatEmp(), ) ;
+
+   ::cPath              := cPath
+   ::oDbf               := nil
+
+RETURN ( Self )
+
+
+
+UTILITY STATIC function TMaquina_OpenFiles( lExclusive) ; local Self AS CLASS TMaquina := QSelf() AS CLASS TMaquina
+
+   local lOpen          := .T.
+   local oError
+   local oBlock
+
+   IIF( lExclusive == nil, lExclusive := .F., ) ;
+
+   oBlock               := ErrorBlock( {| oError | ApoloBreak( oError ) } )
+   BEGIN SEQUENCE
+
+      if Empty( ::oDbf )
+         ::DefineFiles()
+      end
+
+      ::oDbf:Activate( .F., !( lExclusive ) )
+
+      ::oDbfDiv := DbfServer( "DIVISAS.DBF", ):NewOpen( "DIVISAS.DBF",, ( cDriver() ),, ( cPatDat() ), .F., .T., .F., .F. ) ; ::oDbfDiv:AddBag( "DIVISAS.CDX" ) ; ::oDbfDiv:AddBag( ) ; ::oDbfDiv:AutoIndex()
+
+      ::oCostes:OpenFiles()
+
+      ::oSeccion:OpenFiles()
+
+      ::OpenDetails()
+
+   RECOVER USING oError
+
+      msgStop( ErrorMessage( oError ), "Imposible abrir todas las bases de datos" )
+
+      ::CloseFiles()
+
+      lOpen             := .F.
+
+   end
+
+   ErrorBlock( oBlock )
+
+RETURN ( lOpen )
+
+
+
+UTILITY STATIC function TMaquina_OpenService( lExclusive) ; local Self AS CLASS TMaquina := QSelf() AS CLASS TMaquina
+
+   local lOpen          := .T.
+   local oError
+   local oBlock         := ErrorBlock( {| oError | ApoloBreak( oError ) } )
+
+   IIF( lExclusive == nil, lExclusive := .F., ) ;
+
+   BEGIN SEQUENCE
+
+      if Empty( ::oDbf )
+         ::DefineFiles()
+      end
+
+      ::oDbf:Activate( .F., !( lExclusive ) )
+
+   RECOVER USING oError
+
+      msgStop( "Imposible abrir todas las bases de datos" + Chr(13)+Chr(10) + ErrorMessage( oError ) )
+
+      ::CloseFiles()
+
+      lOpen             := .F.
+
+   end
+
+   ErrorBlock( oBlock )
+
+RETURN ( lOpen )
+
+
+
+UTILITY STATIC function TMaquina_CloseFiles() ; local Self AS CLASS TMaquina := QSelf() AS CLASS TMaquina
+
+   if ::oDbf <> nil .AND. ::oDbf:Used()
+      ::oDbf:End()
+      ::oDbf      := nil
+   end
+
+   if ::oCostes   <> nil
+      ::oCostes:End()
+   end
+
+   if ::oSeccion <> nil
+      ::oSeccion:End()
+   end
+
+   ::oCostes      := nil
+   ::oSeccion     := nil
+
+   ::CloseDetails()
+
+RETURN .T.
+
+
+
+UTILITY STATIC function TMaquina_DefineFiles( cPath, cDriver) ; local Self AS CLASS TMaquina := QSelf() AS CLASS TMaquina
+
+   IIF( cPath == nil, cPath := ::cPath, ) ;
+   IIF( cDriver == nil, cDriver := cDriver(), ) ;
+
+   ::oDbf := DbfServer( "MaqCosT.Dbf", "MaqCosT" ):New( "MaqCosT.Dbf", "MaqCosT", ( cDriver ), "Maquinaria", ( cPath ) )
+
+      ::oDbf:AddField( "cCodMaq", "C", 3, 0,,,,, "Código", .F., 100, .F., {} )
+      ::oDbf:AddField( "cDesMaq", "C", 35, 0,,,,, "Nombre", .F., 400, .F., {} )
+      ::oDbf:AddField( "cCodSec", "C", 03, 0,,,,, "Sección", .F., 100, .F., {} )
+      ::oDbf:AddField( "cCodDiv", "C", 03, 0,,,,, "Divisa", .F.,, .T., {} )
+      ::oDbf:AddField( "nVdvDiv", "N", 16, 6,,,,, "Valor divisa", .F.,, .T., {} )
+      ::oDbf:AddField( "nHorDia", "N", 16, 6,,,,, "Horas dia", .F.,, .T., {} )
+      ::oDbf:AddField( "nTotCos", "B", 16, 6,,,, {|| ::cTotalCosteDia()}, "Coste dia", .T., 100, .F., {} )
+      ::oDbf:AddField( "nHorCos", "B", 16, 6,,,, {|| ::cTotalCosteHora()}, "Coste hora", .T., 100, .F., {} )
+
+      ::oDbf:AddIndex( "cCodMaq", "MaqCosT.Cdx", "cCodMaq",,, .F., .F., "Código",,, .T., .F. )
+      ::oDbf:AddIndex( "cDesMaq", "MaqCosT.Cdx", "cDesMaq",,, .F., .F., "Nombre",,, .T., .F. )
+      ::oDbf:AddIndex( "cCodSec", "MaqCosT.Cdx", "cCodSec",,, .F., .F., "Sección",,, .T., .F. )
+
+
+
+RETURN ( ::oDbf )
+
+
+
+UTILITY STATIC function TMaquina_Resource( nMode) ; local Self AS CLASS TMaquina := QSelf() AS CLASS TMaquina
+
+    local oDlg
+   local oGet
+   local oBrwCos
+   local oGetSec
+   local oGetHor
+   local oBmpGeneral
+
+   if nMode == 1
+      ::oDbf:cCodDiv       := cDivEmp()
+      ::oDbf:nVdvDiv       := nChgDiv( cDivEmp() )
+   end
+
+   ::lLoadDivisa( ::oDbf:cCodDiv )
+
+   oDlg = TDialog():New(,,,, LblTitle( nMode ) + "maquinaria", "Maquina",, .F.,,,,,, .F.,,,,,, .F., )
+
+
+
+
+
+      oBmpGeneral := TBitmap():ReDefine( 990, "robot_48_alpha",, oDlg,,, .F., .F.,,, .F.,,, .T. )
+
+
+
+
+
+
+      oGet := TGetHlp():ReDefine( 110, { | u | If( PCount()==0, ::oDbf:cCodMaq, ::oDbf:cCodMaq:= u ) }, oDlg,, "@!", {||    NotValid( oGet, ::oDbf:cAlias, .T., "0" )},,,,,, .F., {||     ( nMode == 1 )},, .F., .F.,,,,,, nil,,, )
+
+
+
+
+      TGetHlp():ReDefine( 120, { | u | If( PCount()==0, ::oDbf:cDesMaq, ::oDbf:cDesMaq:= u ) }, oDlg,,,,,,,,, .F., {||     ( nMode <> 3 )},, .F., .F.,,,,,, nil,,, )
+
+
+
+
+
+
+
+
+      oGetHor := TGetHlp():ReDefine( 130, { | u | If( PCount()==0, ::oDbf:nHorDia, ::oDbf:nHorDia:= u ) }, oDlg,, "@E 99.99", {||    ( ::oDbf:nHorDia >= 0 .AND. ::oDbf:nHorDia <= 24 )},,,,,, .F., {||     ( nMode <> 3 )},, .F., .T.,,, {||      0}, {|| 24},, nil,,, )
+
+         oGetHor:bChange := {|| ::lTotalVirtual() }
+
+
+
+
+
+
+      oGetSec := TGetHlp():ReDefine( 140, { | u | If( PCount()==0, ::oDbf:cCodSec, ::oDbf:cCodSec:= u ) }, oDlg,,,,,,,,, .F., {||     ( nMode <> 3 )},, .F., .F.,,,,,, nil, "LUPA",, 141 )
+
+         oGetSec:bHelp     := {|| ::oSeccion:Buscar( oGetSec ) }
+         oGetSec:bValid    := {|| ::oSeccion:Existe( oGetSec, oGetSec:oHelpText, "cDesSec", .T., .T., "0" ) }
+
+
+
+
+
+
+
+
+
+        TButton():ReDefine( 500, {||( ::oDetCostes:Append( oBrwCos ), ::lTotalVirtual() )}, oDlg,,, .F., {||         ( nMode <> 3 )},,, .F. )
+
+
+
+
+
+        TButton():ReDefine( 501, {||( ::oDetCostes:Edit( oBrwCos ), ::lTotalVirtual() )}, oDlg,,, .F., {||         ( nMode <> 3 )},,, .F. )
+
+
+
+
+        TButton():ReDefine( 502, {||( ::oDetCostes:Zoom() )}, oDlg,,, .F.,,,, .F. )
+
+
+
+
+
+      TButton():ReDefine( 503, {||( ::oDetCostes:Del( oBrwCos ), ::lTotalVirtual() )}, oDlg,,, .F., {||         ( nMode <> 3 )},,, .F. )
+
+      oBrwCos                    := IXBrowse():New( oDlg )
+
+      oBrwCos:bClrSel            := {|| { 0, ( 229 + ( 229 * 256 ) + ( 229 * 65536 ) ) } }
+      oBrwCos:bClrSelFocus       := {|| { 0, ( 167 + ( 205 * 256 ) + ( 240 * 65536 ) ) } }
+
+      oBrwCos:SetoDbf( ::oDetCostes:oDbfVir )
+
+      oBrwCos:nMarqueeStyle      := 5
+
+      oBrwCos:bLDblClick         := { || ::oDetCostes:Edit( oBrwCos ), ::lTotalVirtual() }
+
+      oBrwCos:CreateFromResource( 200 )
+
+      with object ( oBrwCos:AddCol() )
+         :cHeader                := "Código"
+         :bStrData               := {|| ::oDetCostes:oDbfVir:cCodCos }
+         :nWidth                 := 70
+      end
+
+      with object ( oBrwCos:AddCol() )
+         :cHeader                := "Descripción"
+         :bStrData               := {|| RetFld( ::oDetCostes:oDbfVir:cCodCos, ::oCostes:oDbf:cAlias , "cDesCos" ) }
+         :nWidth                 := 400
+      end
+
+      with object ( oBrwCos:AddCol() )
+         :cHeader                := "Importe"
+         :bStrData               := {|| Trans( oRetFld( ::oDetCostes:oDbfVir:cCodCos, ::oCostes:oDbf, "nImpCos" ), ::cPorDiv ) }
+         :nWidth                 := 100
+         :nDataStrAlign          := 1
+         :nHeadStrAlign          := 1
+      end
+
+      with object ( oBrwCos:AddCol() )
+         :cHeader                := "%Pct."
+         :bStrData               := {|| Trans( ::oDetCostes:oDbfVir:nPctCos, "@E 999.99" ) }
+         :nWidth                 := 90
+         :nDataStrAlign          := 1
+         :nHeadStrAlign          := 1
+      end
+
+      with object ( oBrwCos:AddCol() )
+         :cHeader                := "Total"
+         :bStrData               := {|| ::oDetCostes:cTotalLinea( ::oDetCostes:oDbfVir ) }
+         :nWidth                 := 100
+         :nDataStrAlign          := 1
+         :nHeadStrAlign          := 1
+      end
+
+
+
+
+
+
+      ::oGetTot := TGetHlp():ReDefine( 300, { | u | If( PCount()==0, ::nGetTot, ::nGetTot:= u ) }, oDlg,, ::cPorDiv,, "N/W*",,,,, .F., {||     ( .F. )},, .F., .F.,,,,,, nil,,, )
+
+
+
+
+
+
+      ::oGetHor := TGetHlp():ReDefine( 310, { | u | If( PCount()==0, ::nGetHor, ::nGetHor:= u ) }, oDlg,, ::cPorDiv,, "N/W*",,,,, .F., {||     ( .F. )},, .F., .F.,,,,,, nil,,, )
+
+
+
+
+
+      TButton():ReDefine( 1, {||( if( ::lPreSave( oGet, nMode ), oDlg:end( 1 ), ) )}, oDlg,,, .F., {||         ( nMode <> 3 )},,, .F. )
+
+
+
+
+
+        TButton():ReDefine( 2, {||( oDlg:end() )}, oDlg,,, .F.,,,, .T. )
+
+
+
+
+
+      TButton():ReDefine( 559, {||( MsgInfo( "Ayuda no definida" ) )}, oDlg,,, .F.,,,, .T. )
+
+      if nMode <> 3
+         oDlg:AddFastKey( 113, {|| ::oDetCostes:Append( oBrwCos ), ::lTotalVirtual() } )
+         oDlg:AddFastKey( 114, {|| ::oDetCostes:Edit( oBrwCos ), ::lTotalVirtual() } )
+         oDlg:AddFastKey( 115, {|| ::oDetCostes:Del( oBrwCos ), ::lTotalVirtual() } )
+         oDlg:AddFastKey( 116, {|| if( ::lPreSave( oGet, nMode ), oDlg:end( 1 ), ) } )
+      end
+
+      oDlg:bStart          := {|| oGet:SetFocus(), oGetSec:lValid(), ::lTotalVirtual() }
+
+    oDlg:Activate( oDlg:bLClicked, oDlg:bMoved, oDlg:bPainted, .T.,,,, oDlg:bRClicked,,, )
+
+   oBmpGeneral:End()
+
+RETURN ( oDlg:nResult == 1 )
+
+
+
+UTILITY STATIC function TMaquina_nTotalVirtual( oDbf) ; local Self AS CLASS TMaquina := QSelf() AS CLASS TMaquina
+
+   local nTotal   := 0
+
+   IIF( oDbf == nil, oDbf := ::oDetCostes:oDbfVir, ) ;
+
+   oDbf:GetStatus()
+
+   oDbf:GoTop()
+   while !oDbf:Eof()
+      nTotal      += ::oDetCostes:nTotalLinea( oDbf )
+      oDbf:Skip()
+   end
+
+   oDbf:SetStatus()
+
+RETURN ( nTotal )
+
+
+
+UTILITY STATIC function TMaquina_cTotalVirtual( oDbf) ; local Self AS CLASS TMaquina := QSelf() AS CLASS TMaquina
+
+   IIF( oDbf == nil, oDbf := ::oDetCostes:oDbfVir, ) ;
+
+RETURN ( Trans( ::nTotalVirtual( oDbf ), ::cPorDiv ) )
+
+
+
+UTILITY STATIC function TMaquina_lTotalVirtual() ; local Self AS CLASS TMaquina := QSelf() AS CLASS TMaquina
+
+   local nTotal   := ::nTotalVirtual( ::oDetCostes:oDbfVir )
+
+   ::oGetTot:cText( nTotal )
+   ::oGetHor:cText( nTotal / ::oDbf:nHorDia )
+
+RETURN ( .T. )
+
+
+
+UTILITY STATIC function TMaquina_nTotalCosteDia( cCod, oDbf) ; local Self AS CLASS TMaquina := QSelf() AS CLASS TMaquina
+
+   local nTotal   := 0
+
+   if Empty( ::oDetCostes )
+      Return ( nTotal )
+   end
+
+   IIF( cCod == nil, cCod := ::oDbf:cCodMaq, ) ;
+   IIF( oDbf == nil, oDbf := ::oDetCostes:oDbf, ) ;
+
+   oDbf:GetStatus()
+
+   if oDbf:Seek( cCod )
+      while oDbf:cCodMaq == cCod .AND. !oDbf:Eof()
+         nTotal   += ::oDetCostes:nTotalLinea( oDbf )
+         oDbf:Skip()
+      end
+   end
+
+   oDbf:SetStatus()
+
+RETURN ( nTotal )
+
+
+
+UTILITY STATIC function TMaquina_cTotalCosteDia( cCod, cDiv, oDbf) ; local Self AS CLASS TMaquina := QSelf() AS CLASS TMaquina
+
+   local cPorDiv
+   local nTotCos  := "0"
+
+   if Empty( ::oDetCostes )
+      Return ( nTotCos )
+   end
+
+   IIF( cCod == nil, cCod := ::oDbf:cCodMaq, ) ;
+   IIF( cDiv == nil, cDiv := ::oDbf:cCodDiv, ) ;
+   IIF( oDbf == nil, oDbf := ::oDetCostes:oDbf, ) ;
+
+   nTotCos        := ::nTotalCosteDia( cCod, oDbf )
+
+   cPorDiv        := cPorDiv( cDiv, ::oDbfDiv )
+
+   if cDiv <> ::oDbf:cCodDiv
+      nTotCos     := nCnv2Div( nTotCos, ::oDbf:cCodDiv, cDiv, ::oDbfDiv )
+   end
+
+RETURN ( Trans( nTotCos, cPorDiv ) )
+
+
+
+UTILITY STATIC function TMaquina_lTotalCosteDia( cCod, oDbf, oGet) ; local Self AS CLASS TMaquina := QSelf() AS CLASS TMaquina
+
+   IIF( cCod == nil, cCod := ::oDbf:cCodMaq, ) ;
+   IIF( oDbf == nil, oDbf := ::oDetCostes:oDbf, ) ;
+   IIF( oGet == nil, oGet := ::oGetTot, ) ;
+
+RETURN ( oGet:SetText( ::nTotalCosteDia( cCod, oDbf ) ), .T. )
+
+
+
+UTILITY STATIC function TMaquina_nTotalCosteHora( cCod, oDbf, oDbfCos) ; local Self AS CLASS TMaquina := QSelf() AS CLASS TMaquina
+
+   local nTotal   := 0
+
+   IIF( cCod == nil, cCod := ::oDbf:cCodMaq, ) ;
+   IIF( oDbf == nil, oDbf := ::oDbf, ) ;
+   IIF( oDbfCos == nil, oDbfCos := ::oDetCostes:oDbf, ) ;
+
+   nTotal         := ::nTotalCosteDia( cCod, oDbfCos ) / oDbf:nHorDia
+
+RETURN ( nTotal )
+
+
+
+UTILITY STATIC function TMaquina_cTotalCosteHora( cCod, cDiv, oDbf, oDbfCos) ; local Self AS CLASS TMaquina := QSelf() AS CLASS TMaquina
+
+   local cPorDiv
+   local nTotCos  := "0"
+
+   if Empty( ::oDetCostes )
+      Return ( nTotCos )
+   end
+
+   IIF( cCod == nil, cCod := ::oDbf:cCodMaq, ) ;
+   IIF( cDiv == nil, cDiv := ::oDbf:cCodDiv, ) ;
+   IIF( oDbf == nil, oDbf := ::oDbf, ) ;
+   IIF( oDbfCos == nil, oDbfCos := ::oDetCostes:oDbf, ) ;
+
+   nTotCos        := ::nTotalCosteHora( cCod, oDbf, oDbfCos )
+
+   cPorDiv        := cPorDiv( cDiv, ::oDbfDiv )
+
+   if cDiv <> ::oDbf:cCodDiv
+      nTotCos     := nCnv2Div( nTotCos, ::oDbf:cCodDiv, cDiv, ::oDbfDiv )
+   end
+
+Return ( Trans( nTotCos, cPorDiv ) )
+
+
+
+UTILITY STATIC function TMaquina_lTotalCosteHora( cCod, oDbf, oDbfCos, oGet) ; local Self AS CLASS TMaquina := QSelf() AS CLASS TMaquina
+
+   IIF( cCod == nil, cCod := ::oDbf:cCodMaq, ) ;
+   IIF( oDbf == nil, oDbf := ::oDbf, ) ;
+   IIF( oDbfCos == nil, oDbfCos := ::oDetCostes:oDbf, ) ;
+   IIF( oGet == nil, oGet := ::oGetTot, ) ;
+
+RETURN ( oGet:SetText( ::nTotalCosteHora( cCod, oDbf, oDbfCos ) ), .T. )
+
+
+
+UTILITY STATIC function TMaquina_lPreSave( oGet, nMode) ; local Self AS CLASS TMaquina := QSelf() AS CLASS TMaquina
+
+   if nMode == 1 .OR. nMode == 4
+
+      if Empty( ::oDbf:cCodMaq )
+         MsgStop( "Código de la máquina no puede estar vacío" )
+         oGet:SetFocus()
+         Return .F.
+      end
+
+      if ::oDbf:SeekInOrd( ::oDbf:cCodMaq, "CCODMAQ" )
+         msgStop( "Código existente" )
+         oGet:SetFocus()
+         return .F.
+      end
+
+   end
+
+   if Empty( ::oDbf:cDesMaq )
+      MsgStop( "La descripción de la máquina no puede estar vacía." )
+      Return .F.
+   end
+
+RETURN .T.

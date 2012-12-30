@@ -1,0 +1,2851 @@
+#line 112 "hbclass.ch"
+   DYNAMIC DivertConstructorCall
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+DECLARE HBClass  New( cName AS String, OPTIONAL SuperParams ) AS CLASS HBClass  Create() AS Object  Instance() AS Object  AddClsMethod( cName AS String, @MethodName(), nScope AS Numeric, n2 AS Numeric, n3 AS Numeric )  AddDelegate( cName AS String, cDelegate AS String, cObject AS String, nScope AS Numeric, lPersistent AS LOGICAL )  AddMultiClsData( cType AS String, uVal, nScope AS Numeric, aDatas AS Array OF String )  AddMultiData( cType AS String, uVal, nScope AS Numeric, aDatas AS Array OF String, x AS LOGICAL, lPer AS LOGICAL )  AddMethod( cName AS String, @MethodName(), nScope AS Numeric, lPersistent AS LOGICAL )  AddInLine( cName AS String, bBlock AS CodeBlock, nScope AS Numeric, lPersistent AS LOGICAL )  AddVirtual( cName AS String )  ModMethod( cName AS String, @MethodName(), nScope AS Numeric, lPersistent AS LOGICAL )  ModClsMethod( cName AS String, @MethodName(), nScope AS Numeric )  ModInline( cName AS String, bBlock AS CodeBlock, nScope AS Numeric, lPersistent AS LOGICAL )  SetOnError( @MethodName() )
+#line 85 "\Fwh1204\Include\FiveWin.Ch"
+   EXTERNAL GetProcAdd
+   EXTERNAL TActiveX
+
+
+
+
+extern errorsys
+#line 9 ".\Prg\Impfactu.prg"
+_HB_CLASS TImpFactu ; UTILITY FUNCTION TImpFactu(...); static s_oClass ; local oClassInstance ; local nScope ; nScope := 1 ; if s_oClass == NIL ; s_oClass := IIF(.F.,, HBClass():New( "TImpFactu" , { HBObject():Classh } ) ) ;
+
+   _HB_MEMBER { oDlg} ; IIF( !.F., s_oClass:AddMultiData(,, nScope + IIF( .F., 32, 0 ), { "oDlg" }, .F., .F. ), )
+
+   _HB_MEMBER { aLgcIndices} ; IIF( !.F., s_oClass:AddMultiData(,, nScope + IIF( .F., 32, 0 ), { "aLgcIndices" }, .F., .F. ), )
+   _HB_MEMBER { aChkIndices} ; IIF( !.F., s_oClass:AddMultiData(,, nScope + IIF( .F., 32, 0 ), { "aChkIndices" }, .F., .F. ), )
+   _HB_MEMBER { aMtrIndices} ; IIF( !.F., s_oClass:AddMultiData(,, nScope + IIF( .F., 32, 0 ), { "aMtrIndices" }, .F., .F. ), )
+   _HB_MEMBER { aNumIndices} ; IIF( !.F., s_oClass:AddMultiData(,, nScope + IIF( .F., 32, 0 ), { "aNumIndices" }, .F., .F. ), )
+
+   _HB_MEMBER { oDbfArtGst} ; IIF( !.F., s_oClass:AddMultiData(,, nScope + IIF( .F., 32, 0 ), { "oDbfArtGst" }, .F., .F. ), )
+   _HB_MEMBER { oDbfArtFac} ; IIF( !.F., s_oClass:AddMultiData(,, nScope + IIF( .F., 32, 0 ), { "oDbfArtFac" }, .F., .F. ), )
+   _HB_MEMBER { oDbfCliGst} ; IIF( !.F., s_oClass:AddMultiData(,, nScope + IIF( .F., 32, 0 ), { "oDbfCliGst" }, .F., .F. ), )
+   _HB_MEMBER { oDbfCliFac} ; IIF( !.F., s_oClass:AddMultiData(,, nScope + IIF( .F., 32, 0 ), { "oDbfCliFac" }, .F., .F. ), )
+   _HB_MEMBER { oDbfGrpCliGst} ; IIF( !.F., s_oClass:AddMultiData(,, nScope + IIF( .F., 32, 0 ), { "oDbfGrpCliGst" }, .F., .F. ), )
+   _HB_MEMBER { oDbfGrpCliFac} ; IIF( !.F., s_oClass:AddMultiData(,, nScope + IIF( .F., 32, 0 ), { "oDbfGrpCliFac" }, .F., .F. ), )
+   _HB_MEMBER { oDbfPrvGst} ; IIF( !.F., s_oClass:AddMultiData(,, nScope + IIF( .F., 32, 0 ), { "oDbfPrvGst" }, .F., .F. ), )
+   _HB_MEMBER { oDbfPrvFac} ; IIF( !.F., s_oClass:AddMultiData(,, nScope + IIF( .F., 32, 0 ), { "oDbfPrvFac" }, .F., .F. ), )
+   _HB_MEMBER { oDbfFamGst} ; IIF( !.F., s_oClass:AddMultiData(,, nScope + IIF( .F., 32, 0 ), { "oDbfFamGst" }, .F., .F. ), )
+   _HB_MEMBER { oDbfFamFac} ; IIF( !.F., s_oClass:AddMultiData(,, nScope + IIF( .F., 32, 0 ), { "oDbfFamFac" }, .F., .F. ), )
+   _HB_MEMBER { oDbfGrpGst} ; IIF( !.F., s_oClass:AddMultiData(,, nScope + IIF( .F., 32, 0 ), { "oDbfGrpGst" }, .F., .F. ), )
+   _HB_MEMBER { oDbfGrpFac} ; IIF( !.F., s_oClass:AddMultiData(,, nScope + IIF( .F., 32, 0 ), { "oDbfGrpFac" }, .F., .F. ), )
+   _HB_MEMBER { oDbfIvaGst} ; IIF( !.F., s_oClass:AddMultiData(,, nScope + IIF( .F., 32, 0 ), { "oDbfIvaGst" }, .F., .F. ), )
+   _HB_MEMBER { oDbfIvaFac} ; IIF( !.F., s_oClass:AddMultiData(,, nScope + IIF( .F., 32, 0 ), { "oDbfIvaFac" }, .F., .F. ), )
+   _HB_MEMBER { oDbfFpgGst} ; IIF( !.F., s_oClass:AddMultiData(,, nScope + IIF( .F., 32, 0 ), { "oDbfFpgGst" }, .F., .F. ), )
+   _HB_MEMBER { oDbfFpgFac} ; IIF( !.F., s_oClass:AddMultiData(,, nScope + IIF( .F., 32, 0 ), { "oDbfFpgFac" }, .F., .F. ), )
+   _HB_MEMBER { oDbfRemGst} ; IIF( !.F., s_oClass:AddMultiData(,, nScope + IIF( .F., 32, 0 ), { "oDbfRemGst" }, .F., .F. ), )
+   _HB_MEMBER { oDbfRemFac} ; IIF( !.F., s_oClass:AddMultiData(,, nScope + IIF( .F., 32, 0 ), { "oDbfRemFac" }, .F., .F. ), )
+   _HB_MEMBER { oDbfCtaRemGst} ; IIF( !.F., s_oClass:AddMultiData(,, nScope + IIF( .F., 32, 0 ), { "oDbfCtaRemGst" }, .F., .F. ), )
+   _HB_MEMBER { oDbfCtaRemFac} ; IIF( !.F., s_oClass:AddMultiData(,, nScope + IIF( .F., 32, 0 ), { "oDbfCtaRemFac" }, .F., .F. ), )
+   _HB_MEMBER { oDbfAlbTGst} ; IIF( !.F., s_oClass:AddMultiData(,, nScope + IIF( .F., 32, 0 ), { "oDbfAlbTGst" }, .F., .F. ), )
+   _HB_MEMBER { oDbfAlbTFac} ; IIF( !.F., s_oClass:AddMultiData(,, nScope + IIF( .F., 32, 0 ), { "oDbfAlbTFac" }, .F., .F. ), )
+   _HB_MEMBER { oDbfAlbLGst} ; IIF( !.F., s_oClass:AddMultiData(,, nScope + IIF( .F., 32, 0 ), { "oDbfAlbLGst" }, .F., .F. ), )
+   _HB_MEMBER { oDbfAlbLFac} ; IIF( !.F., s_oClass:AddMultiData(,, nScope + IIF( .F., 32, 0 ), { "oDbfAlbLFac" }, .F., .F. ), )
+   _HB_MEMBER { oDbfFacTGst} ; IIF( !.F., s_oClass:AddMultiData(,, nScope + IIF( .F., 32, 0 ), { "oDbfFacTGst" }, .F., .F. ), )
+   _HB_MEMBER { oDbfFacTFac} ; IIF( !.F., s_oClass:AddMultiData(,, nScope + IIF( .F., 32, 0 ), { "oDbfFacTFac" }, .F., .F. ), )
+   _HB_MEMBER { oDbfFacLGst} ; IIF( !.F., s_oClass:AddMultiData(,, nScope + IIF( .F., 32, 0 ), { "oDbfFacLGst" }, .F., .F. ), )
+   _HB_MEMBER { oDbfFacLFac} ; IIF( !.F., s_oClass:AddMultiData(,, nScope + IIF( .F., 32, 0 ), { "oDbfFacLFac" }, .F., .F. ), )
+   _HB_MEMBER { oDbfFacRecTGst} ; IIF( !.F., s_oClass:AddMultiData(,, nScope + IIF( .F., 32, 0 ), { "oDbfFacRecTGst" }, .F., .F. ), )
+   _HB_MEMBER { oDbfFacRecLGst} ; IIF( !.F., s_oClass:AddMultiData(,, nScope + IIF( .F., 32, 0 ), { "oDbfFacRecLGst" }, .F., .F. ), )
+   _HB_MEMBER { oDbfFacPGst} ; IIF( !.F., s_oClass:AddMultiData(,, nScope + IIF( .F., 32, 0 ), { "oDbfFacPGst" }, .F., .F. ), )
+   _HB_MEMBER { oDbfFacDFac} ; IIF( !.F., s_oClass:AddMultiData(,, nScope + IIF( .F., 32, 0 ), { "oDbfFacDFac" }, .F., .F. ), )
+   _HB_MEMBER { oDbfProvFac} ; IIF( !.F., s_oClass:AddMultiData(,, nScope + IIF( .F., 32, 0 ), { "oDbfProvFac" }, .F., .F. ), )
+   _HB_MEMBER { oDbfTikTGst} ; IIF( !.F., s_oClass:AddMultiData(,, nScope + IIF( .F., 32, 0 ), { "oDbfTikTGst" }, .F., .F. ), )
+   _HB_MEMBER { oDbfTikLGst} ; IIF( !.F., s_oClass:AddMultiData(,, nScope + IIF( .F., 32, 0 ), { "oDbfTikLGst" }, .F., .F. ), )
+   _HB_MEMBER { oDbfTikTFac} ; IIF( !.F., s_oClass:AddMultiData(,, nScope + IIF( .F., 32, 0 ), { "oDbfTikTFac" }, .F., .F. ), )
+   _HB_MEMBER { oDbfTikLFac} ; IIF( !.F., s_oClass:AddMultiData(,, nScope + IIF( .F., 32, 0 ), { "oDbfTikLFac" }, .F., .F. ), )
+   _HB_MEMBER { oDbfHisTFac} ; IIF( !.F., s_oClass:AddMultiData(,, nScope + IIF( .F., 32, 0 ), { "oDbfHisTFac" }, .F., .F. ), )
+   _HB_MEMBER { oDbfHisLFac} ; IIF( !.F., s_oClass:AddMultiData(,, nScope + IIF( .F., 32, 0 ), { "oDbfHisLFac" }, .F., .F. ), )
+   _HB_MEMBER { oDbfTrnFac} ; IIF( !.F., s_oClass:AddMultiData(,, nScope + IIF( .F., 32, 0 ), { "oDbfTrnFac" }, .F., .F. ), )
+   _HB_MEMBER { oDbfTrnGst} ; IIF( !.F., s_oClass:AddMultiData(,, nScope + IIF( .F., 32, 0 ), { "oDbfTrnGst" }, .F., .F. ), )
+   _HB_MEMBER { oDbfObrGst} ; IIF( !.F., s_oClass:AddMultiData(,, nScope + IIF( .F., 32, 0 ), { "oDbfObrGst" }, .F., .F. ), )
+   _HB_MEMBER { oDbfObrFac} ; IIF( !.F., s_oClass:AddMultiData(,, nScope + IIF( .F., 32, 0 ), { "oDbfObrFac" }, .F., .F. ), )
+   _HB_MEMBER { oDbfAgeGst} ; IIF( !.F., s_oClass:AddMultiData(,, nScope + IIF( .F., 32, 0 ), { "oDbfAgeGst" }, .F., .F. ), )
+   _HB_MEMBER { oDbfAgeFac} ; IIF( !.F., s_oClass:AddMultiData(,, nScope + IIF( .F., 32, 0 ), { "oDbfAgeFac" }, .F., .F. ), )
+   _HB_MEMBER { oDbfAlmGst} ; IIF( !.F., s_oClass:AddMultiData(,, nScope + IIF( .F., 32, 0 ), { "oDbfAlmGst" }, .F., .F. ), )
+   _HB_MEMBER { oDbfAlmFac} ; IIF( !.F., s_oClass:AddMultiData(,, nScope + IIF( .F., 32, 0 ), { "oDbfAlmFac" }, .F., .F. ), )
+   _HB_MEMBER { oDbfTikPGst} ; IIF( !.F., s_oClass:AddMultiData(,, nScope + IIF( .F., 32, 0 ), { "oDbfTikPGst" }, .F., .F. ), )
+   _HB_MEMBER { oDbfRecFac} ; IIF( !.F., s_oClass:AddMultiData(,, nScope + IIF( .F., 32, 0 ), { "oDbfRecFac" }, .F., .F. ), )
+   _HB_MEMBER { oDbfMovTGst} ; IIF( !.F., s_oClass:AddMultiData(,, nScope + IIF( .F., 32, 0 ), { "oDbfMovTGst" }, .F., .F. ), )
+   _HB_MEMBER { oDbfMovTFac} ; IIF( !.F., s_oClass:AddMultiData(,, nScope + IIF( .F., 32, 0 ), { "oDbfMovTFac" }, .F., .F. ), )
+   _HB_MEMBER { oDbfMovLGst} ; IIF( !.F., s_oClass:AddMultiData(,, nScope + IIF( .F., 32, 0 ), { "oDbfMovLGst" }, .F., .F. ), )
+   _HB_MEMBER { oDbfMovLFac} ; IIF( !.F., s_oClass:AddMultiData(,, nScope + IIF( .F., 32, 0 ), { "oDbfMovLFac" }, .F., .F. ), )
+   _HB_MEMBER { oDbfAtpGst} ; IIF( !.F., s_oClass:AddMultiData(,, nScope + IIF( .F., 32, 0 ), { "oDbfAtpGst" }, .F., .F. ), )
+   _HB_MEMBER { oDbfAtpFac} ; IIF( !.F., s_oClass:AddMultiData(,, nScope + IIF( .F., 32, 0 ), { "oDbfAtpFac" }, .F., .F. ), )
+   _HB_MEMBER { oDbfAlpTGst} ; IIF( !.F., s_oClass:AddMultiData(,, nScope + IIF( .F., 32, 0 ), { "oDbfAlpTGst" }, .F., .F. ), )
+   _HB_MEMBER { oDbfAlpTFac} ; IIF( !.F., s_oClass:AddMultiData(,, nScope + IIF( .F., 32, 0 ), { "oDbfAlpTFac" }, .F., .F. ), )
+   _HB_MEMBER { oDbfAlpLGst} ; IIF( !.F., s_oClass:AddMultiData(,, nScope + IIF( .F., 32, 0 ), { "oDbfAlpLGst" }, .F., .F. ), )
+   _HB_MEMBER { oDbfAlpLFac} ; IIF( !.F., s_oClass:AddMultiData(,, nScope + IIF( .F., 32, 0 ), { "oDbfAlpLFac" }, .F., .F. ), )
+   _HB_MEMBER { oDbfFapTGst} ; IIF( !.F., s_oClass:AddMultiData(,, nScope + IIF( .F., 32, 0 ), { "oDbfFapTGst" }, .F., .F. ), )
+   _HB_MEMBER { oDbfFapTFac} ; IIF( !.F., s_oClass:AddMultiData(,, nScope + IIF( .F., 32, 0 ), { "oDbfFapTFac" }, .F., .F. ), )
+   _HB_MEMBER { oDbfFapLGst} ; IIF( !.F., s_oClass:AddMultiData(,, nScope + IIF( .F., 32, 0 ), { "oDbfFapLGst" }, .F., .F. ), )
+   _HB_MEMBER { oDbfFapLFac} ; IIF( !.F., s_oClass:AddMultiData(,, nScope + IIF( .F., 32, 0 ), { "oDbfFapLFac" }, .F., .F. ), )
+   _HB_MEMBER { oDbfFapPGst} ; IIF( !.F., s_oClass:AddMultiData(,, nScope + IIF( .F., 32, 0 ), { "oDbfFapPGst" }, .F., .F. ), )
+   _HB_MEMBER { oDbfFapPFac} ; IIF( !.F., s_oClass:AddMultiData(,, nScope + IIF( .F., 32, 0 ), { "oDbfFapPFac" }, .F., .F. ), )
+   _HB_MEMBER { oDbfCliCom} ; IIF( !.F., s_oClass:AddMultiData(,, nScope + IIF( .F., 32, 0 ), { "oDbfCliCom" }, .F., .F. ), )
+   _HB_MEMBER { oDbfCnt} ; IIF( !.F., s_oClass:AddMultiData(,, nScope + IIF( .F., 32, 0 ), { "oDbfCnt" }, .F., .F. ), )
+   _HB_MEMBER { cPathFac} ; IIF( !.F., s_oClass:AddMultiData(,, nScope + IIF( .F., 32, 0 ), { "cPathFac" }, .F., .F. ), )
+   _HB_MEMBER { cPathMov} ; IIF( !.F., s_oClass:AddMultiData(, "C:\ARCHIV~1\AZUDSO~1\UTILID~1\Datos\TBLS04\", nScope + IIF( .F., 32, 0 ), { "cPathMov" }, .F., .F. ), )
+
+   _HB_MEMBER New(); IIF( .F., s_oClass:ModMethod( "New", @TImpFactu_New(), nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ), s_oClass:AddMethod( "New", @TImpFactu_New(), nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ));
+
+   _HB_MEMBER OpenFiles(); IIF( .F., s_oClass:ModMethod( "OpenFiles", @TImpFactu_OpenFiles(), nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ), s_oClass:AddMethod( "OpenFiles", @TImpFactu_OpenFiles(), nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ));
+
+   _HB_MEMBER CloseFiles(); IIF( .F., s_oClass:ModMethod( "CloseFiles", @TImpFactu_CloseFiles(), nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ), s_oClass:AddMethod( "CloseFiles", @TImpFactu_CloseFiles(), nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ));
+
+   _HB_MEMBER Resource(); IIF( .F., s_oClass:ModMethod( "Resource", @TImpFactu_Resource(), nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ), s_oClass:AddMethod( "Resource", @TImpFactu_Resource(), nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ));
+
+   _HB_MEMBER Importar(); IIF( .F., s_oClass:ModMethod( "Importar", @TImpFactu_Importar(), nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ), s_oClass:AddMethod( "Importar", @TImpFactu_Importar(), nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ));
+
+   _HB_MEMBER SelectChk( lSet); IIF( .F., s_oClass:ModMethod( "SelectChk", @TImpFactu_SelectChk(), nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ), s_oClass:AddMethod( "SelectChk", @TImpFactu_SelectChk(), nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ));
+
+
+; IF .F. ; __clsActive(s_oClass:hClass) ; s_oClass:Refresh() ; ELSE ; s_oClass:Create() ; END ; oClassInstance := __clsInst( s_oClass:hClass ) ; IF __ObjHasMsg( oClassInstance, "InitClass" ); oClassInstance:InitClass( hb_aParams() ) ; END ; ELSE ; oClassInstance := __clsInst( s_oClass:hClass ) ; END ; IF PCount() > 0 ; DIVERT TO (@DivertConstructorCall()) OF s_oClass ; END ; RETURN oClassInstance AS CLASS TImpFactu ;
+
+
+
+
+
+
+
+UTILITY STATIC function TImpFactu_OpenFiles() ; local Self AS CLASS TImpFactu := QSelf() AS CLASS TImpFactu
+
+   local lOpen    := .T.
+   local oError
+   local oBlock   := ErrorBlock( {| oError | ApoloBreak( oError ) } )
+
+   if Empty( ::cPathFac )
+      MsgStop( "Ruta de factuplus ® esta vacia" )
+      return .F.
+   end
+
+   if Right( ::cPathFac, 1 ) <> "\"
+      ::cPathFac  += "\"
+   end
+
+   BEGIN SEQUENCE
+
+   ::oDbfCnt := DbfServer( "nCount.Dbf", "Count" ):NewOpen( "nCount.Dbf",, ( cDriver() ),, ( cPatEmp() ), .F., .T., .F., .F. ) ; ::oDbfCnt:AddBag( "nCount.Cdx" ) ; ::oDbfCnt:AddBag( ) ; ::oDbfCnt:AutoIndex()
+
+   if !File( ::cPathFac + "Articulo.DBF" )
+      ::aChkIndices[ 1 ]:Click( .F. ):Refresh()
+      MsgAlert( "No existe fichero de articulos", ::cPathFac + "ARTICULO.DBF" )
+   else
+      ::oDbfArtGst := DbfServer( "ARTICULO.DBF", "ARTGST" ):NewOpen( "ARTICULO.DBF",, ( cDriver() ),, ( cPatArt() ), .F., .T., .F., .F. ) ; ::oDbfArtGst:AddBag( "ARTICULO.CDX" ) ; ::oDbfArtGst:AddBag( ) ; ::oDbfArtGst:AutoIndex()
+      ::oDbfArtFac := DbfServer( "ARTICULO.DBF", "ARTFAC" ):NewOpen( "ARTICULO.DBF",, ( cDriver() ),, ( ::cPathFac ), .F., .F., .F., .F. ) ; ::oDbfArtFac:AddBag( ) ; ::oDbfArtFac:AddBag( ) ; ::oDbfArtFac:AutoIndex()
+   end
+
+   if !File( ::cPathFac + "FAMILIAS.DBF" )
+      ::aChkIndices[ 2 ]:Click( .F. ):Refresh()
+      MsgAlert( "No existe fichero de familias", ::cPathFac + "FAMILIAS.DBF" )
+   else
+      ::oDbfFamGst := DbfServer( "FAMILIAS.DBF", "FAMGST" ):NewOpen( "FAMILIAS.DBF",, ( cDriver() ),, ( cPatArt() ), .F., .T., .F., .F. ) ; ::oDbfFamGst:AddBag( "FAMILIAS.CDX" ) ; ::oDbfFamGst:AddBag( ) ; ::oDbfFamGst:AutoIndex()
+      ::oDbfFamFac := DbfServer( "FAMILIAS.DBF", "FAMFAC" ):NewOpen( "FAMILIAS.DBF",, ( cDriver() ),, ( ::cPathFac ), .F., .F., .F., .F. ) ; ::oDbfFamFac:AddBag( ) ; ::oDbfFamFac:AddBag( ) ; ::oDbfFamFac:AutoIndex()
+   end
+
+   if !File( ::cPathFac + "GRP_VENT.DBF" )
+      ::aChkIndices[ 3 ]:Click( .F. ):Refresh()
+      MsgAlert( "No existe fichero de grupos de ventas", ::cPathFac + "GRP_VENT.DBF" )
+   else
+      ::oDbfGrpGst := DbfServer( "GRPVENT.DBF", "GRPGST" ):NewOpen( "GRPVENT.DBF",, ( cDriver() ),, ( cPatEmp() ), .F., .T., .F., .F. ) ; ::oDbfGrpGst:AddBag( "GRPVENT.CDX" ) ; ::oDbfGrpGst:AddBag( ) ; ::oDbfGrpGst:AutoIndex()
+      ::oDbfGrpFac := DbfServer( "GRP_VENT.DBF", "GRPFAC" ):NewOpen( "GRP_VENT.DBF",, ( cDriver() ),, ( ::cPathFac ), .F., .F., .F., .F. ) ; ::oDbfGrpFac:AddBag( ) ; ::oDbfGrpFac:AddBag( ) ; ::oDbfGrpFac:AutoIndex()
+   end
+
+   if !File( ::cPathFac + "IVAS.DBF" )
+      ::aChkIndices[ 4 ]:Click( .F. ):Refresh()
+      MsgAlert( "No existe fichero de tipos de " + cImp(), ::cPathFac + "IVAS.DBF" )
+   else
+      ::oDbfIvaGst := DbfServer( "TIVA.DBF", "IVAGST" ):NewOpen( "TIVA.DBF",, ( cDriver() ),, ( cPatDat() ), .F., .T., .F., .F. ) ; ::oDbfIvaGst:AddBag( "TIVA.CDX" ) ; ::oDbfIvaGst:AddBag( ) ; ::oDbfIvaGst:AutoIndex()
+      ::oDbfIvaFac := DbfServer( "IVAS.DBF", "IVAFAC" ):NewOpen( "IVAS.DBF",, ( cDriver() ),, ( ::cPathFac ), .F., .F., .F., .F. ) ; ::oDbfIvaFac:AddBag( ) ; ::oDbfIvaFac:AddBag( ) ; ::oDbfIvaFac:AutoIndex()
+   end
+
+   if !File( ::cPathFac + "GRUPCLI.DBF" )
+      ::aChkIndices[ 18 ]:Click( .F. ):Refresh()
+      MsgAlert( "No existen ficheros de grupos de clientes", ::cPathFac + "GRUPCLI.DBF" )
+   else
+      ::oDbfGrpCliGst := DbfServer( "GRPCLI.DBF", "GRPCLIGST" ):NewOpen( "GRPCLI.DBF",, ( cDriver() ),, ( cPatCli() ), .F., .T., .F., .F. ) ; ::oDbfGrpCliGst:AddBag( "GRPCLI.CDX" ) ; ::oDbfGrpCliGst:AddBag( ) ; ::oDbfGrpCliGst:AutoIndex()
+      ::oDbfGrpCliFac := DbfServer( "GRUPCLI.DBF", "GRPCLIFAC" ):NewOpen( "GRUPCLI.DBF",, ( cDriver() ),, ( ::cPathFac ), .F., .F., .F., .F. ) ; ::oDbfGrpCliFac:AddBag( ) ; ::oDbfGrpCliFac:AddBag( ) ; ::oDbfGrpCliFac:AutoIndex()
+   end
+
+   if !File( ::cPathFac + "CLIENTES.DBF" ) .OR. !File( ::cPathFac + "DIRCLI.DBF" ) .OR. !File( ::cPathFac + "PROVINC.DBF" ) .OR. !File( ::cPathFac + "ATIPICAS.DBF" )
+      ::aChkIndices[ 5 ]:Click( .F. ):Refresh()
+      MsgAlert( "No existen ficheros de clientes ni direcciones", ::cPathFac + "CLIENTES.DBF" + ::cPathFac + "DIRCLI.DBF" )
+   else
+      ::oDbfCliGst := DbfServer( "CLIENT.DBF", "CLIGST" ):NewOpen( "CLIENT.DBF",, ( cDriver() ),, ( cPatCli() ), .F., .T., .F., .F. ) ; ::oDbfCliGst:AddBag( "CLIENT.CDX" ) ; ::oDbfCliGst:AddBag( ) ; ::oDbfCliGst:AutoIndex()
+      ::oDbfObrGst := DbfServer( "OBRAST.DBF", "OBRGST" ):NewOpen( "OBRAST.DBF",, ( cDriver() ),, ( cPatCli() ), .F., .T., .F., .F. ) ; ::oDbfObrGst:AddBag( "OBRAST.CDX" ) ; ::oDbfObrGst:AddBag( ) ; ::oDbfObrGst:AutoIndex()
+      ::oDbfAtpGst := DbfServer( "CLIATP.DBF", "ATPGST" ):NewOpen( "CLIATP.DBF",, ( cDriver() ),, ( cPatCli() ), .F., .T., .F., .F. ) ; ::oDbfAtpGst:AddBag( "CLIATP.CDX" ) ; ::oDbfAtpGst:AddBag( ) ; ::oDbfAtpGst:AutoIndex()
+      ::oDbfCliFac := DbfServer( "CLIENTES.DBF", "CLIFAC" ):NewOpen( "CLIENTES.DBF",, ( cDriver() ),, ( ::cPathFac ), .F., .F., .F., .F. ) ; ::oDbfCliFac:AddBag( ) ; ::oDbfCliFac:AddBag( ) ; ::oDbfCliFac:AutoIndex()
+      ::oDbfObrFac := DbfServer( "DIRCLI.DBF", "OBRFAC" ):NewOpen( "DIRCLI.DBF",, ( cDriver() ),, ( ::cPathFac ), .F., .F., .F., .F. ) ; ::oDbfObrFac:AddBag( ) ; ::oDbfObrFac:AddBag( ) ; ::oDbfObrFac:AutoIndex()
+      ::oDbfAtpFac := DbfServer( "ATIPICAS.DBF", "ATPFAC" ):NewOpen( "ATIPICAS.DBF",, ( cDriver() ),, ( ::cPathFac ), .F., .F., .F., .F. ) ; ::oDbfAtpFac:AddBag( ) ; ::oDbfAtpFac:AddBag( ) ; ::oDbfAtpFac:AutoIndex()
+      ::oDbfProvFac := DbfServer( "PROVINC.DBF", "PROVFAC" ):NewOpen( "PROVINC.DBF",, ( cDriver() ),, ( ::cPathFac ), .F., .T., .F., .F. ) ; ::oDbfProvFac:AddBag( "PROVINC.CDX" ) ; ::oDbfProvFac:AddBag( ) ; ::oDbfProvFac:AutoIndex()
+      ::oDbfCliCom := DbfServer( "ClienteC.Dbf", "ClienteC" ):NewOpen( "ClienteC.Dbf",, ( cDriver() ),, ( ::cPathFac ), .F., .T., .F., .F. ) ; ::oDbfCliCom:AddBag( "ClienteC.Cdx" ) ; ::oDbfCliCom:AddBag( ) ; ::oDbfCliCom:AutoIndex()
+   end
+
+   if !File( ::cPathFac + "FPAGO.DBF" )
+      ::aChkIndices[ 6 ]:Click( .F. ):Refresh()
+      MsgAlert( "No existe fichero de formas de pago", ::cPathFac + "FPAGO.DBF" )
+   else
+      ::oDbfFpgGst := DbfServer( "FPAGO.DBF", "FPGGST" ):NewOpen( "FPAGO.DBF",, ( cDriver() ),, ( cPatGrp() ), .F., .T., .F., .F. ) ; ::oDbfFpgGst:AddBag( "FPAGO.CDX" ) ; ::oDbfFpgGst:AddBag( ) ; ::oDbfFpgGst:AutoIndex()
+      ::oDbfFpgFac := DbfServer( "FPAGO.DBF", "FPGFAC" ):NewOpen( "FPAGO.DBF",, ( cDriver() ),, ( ::cPathFac ), .F., .F., .F., .F. ) ; ::oDbfFpgFac:AddBag( ) ; ::oDbfFpgFac:AddBag( ) ; ::oDbfFpgFac:AutoIndex()
+   end
+
+   if !File( ::cPathFac + "REMESAS.DBF" ) .OR. !File( ::cPathFac + "CTA_REM.DBF" )
+      ::aChkIndices[ 19 ]:Click( .F. ):Refresh()
+      MsgAlert( "No existen ficheros de remesas" )
+   else
+      ::oDbfRemGst := DbfServer( "REMCLIT.DBF", "REMGST" ):NewOpen( "REMCLIT.DBF",, ( cDriver() ),, ( cPatEmp() ), .F., .T., .F., .F. ) ; ::oDbfRemGst:AddBag( "REMCLIT.CDX" ) ; ::oDbfRemGst:AddBag( ) ; ::oDbfRemGst:AutoIndex()
+      ::oDbfRemFac := DbfServer( "REMESAS.DBF", "REMFAC" ):NewOpen( "REMESAS.DBF",, ( cDriver() ),, ( ::cPathFac ), .F., .F., .F., .F. ) ; ::oDbfRemFac:AddBag( ) ; ::oDbfRemFac:AddBag( ) ; ::oDbfRemFac:AutoIndex()
+      ::oDbfCtaRemGst := DbfServer( "CTAREM.DBF", "CTAREMGST" ):NewOpen( "CTAREM.DBF",, ( cDriver() ),, ( cPatEmp() ), .F., .T., .F., .F. ) ; ::oDbfCtaRemGst:AddBag( "CTAREM.CDX" ) ; ::oDbfCtaRemGst:AddBag( ) ; ::oDbfCtaRemGst:AutoIndex()
+      ::oDbfCtaRemFac := DbfServer( "CTA_REM.DBF", "CTAREMFAC" ):NewOpen( "CTA_REM.DBF",, ( cDriver() ),, ( ::cPathFac ), .F., .F., .F., .F. ) ; ::oDbfCtaRemFac:AddBag( ) ; ::oDbfCtaRemFac:AddBag( ) ; ::oDbfCtaRemFac:AutoIndex()
+   end
+
+   if !File( ::cPathFac + "PROVEEDO.DBF" )
+      ::aChkIndices[ 7 ]:Click( .F. ):Refresh()
+      MsgAlert( "No existe fichero de proveedores", ::cPathFac + "PROVEEDO.DBF" )
+   else
+      ::oDbfPrvGst := DbfServer( "PROVEE.DBF", "PRVGST" ):NewOpen( "PROVEE.DBF",, ( cDriver() ),, ( cPatPrv() ), .F., .T., .F., .F. ) ; ::oDbfPrvGst:AddBag( "PROVEE.CDX" ) ; ::oDbfPrvGst:AddBag( ) ; ::oDbfPrvGst:AutoIndex()
+      ::oDbfPrvFac := DbfServer( "PROVEEDO.DBF", "PRVFAC" ):NewOpen( "PROVEEDO.DBF",, ( cDriver() ),, ( ::cPathFac ), .F., .F., .F., .F. ) ; ::oDbfPrvFac:AddBag( ) ; ::oDbfPrvFac:AddBag( ) ; ::oDbfPrvFac:AutoIndex()
+   end
+
+   if !File( ::cPathFac + "AGENTES.DBF" )
+      ::aChkIndices[ 11 ]:Click( .F. ):Refresh()
+      MsgAlert( "No existe fichero de agentes", ::cPathFac + "AGENTES.DBF" )
+   else
+      ::oDbfAgeGst := DbfServer( "AGENTES.DBF", "AGEGST" ):NewOpen( "AGENTES.DBF",, ( cDriver() ),, ( cPatCli() ), .F., .T., .F., .F. ) ; ::oDbfAgeGst:AddBag( "AGENTES.CDX" ) ; ::oDbfAgeGst:AddBag( ) ; ::oDbfAgeGst:AutoIndex()
+      ::oDbfAgeFac := DbfServer( "AGENTES.DBF", "AGEFAC" ):NewOpen( "AGENTES.DBF",, ( cDriver() ),, ( ::cPathFac ), .F., .F., .F., .F. ) ; ::oDbfAgeFac:AddBag( ) ; ::oDbfAgeFac:AddBag( ) ; ::oDbfAgeFac:AutoIndex()
+   end
+
+   if !File( ::cPathFac + "ALMACEN.DBF" )
+      ::aChkIndices[ 12 ]:Click( .F. ):Refresh()
+      MsgAlert( "No existe fichero de almacenes", ::cPathFac + "ALMACEN.DBF" )
+   else
+      ::oDbfAlmGst := DbfServer( "ALMACEN.DBF", "ALMGST" ):NewOpen( "ALMACEN.DBF",, ( cDriver() ),, ( cPatAlm() ), .F., .T., .F., .F. ) ; ::oDbfAlmGst:AddBag( "ALMACEN.CDX" ) ; ::oDbfAlmGst:AddBag( ) ; ::oDbfAlmGst:AutoIndex()
+      ::oDbfAlmFac := DbfServer( "ALMACEN.DBF", "ALMFAC" ):NewOpen( "ALMACEN.DBF",, ( cDriver() ),, ( ::cPathFac ), .F., .F., .F., .F. ) ; ::oDbfAlmFac:AddBag( ) ; ::oDbfAlmFac:AddBag( ) ; ::oDbfAlmFac:AutoIndex()
+   end
+
+   if !File( ::cPathFac + "ALBCLIT.DBF" ) .OR.  !File( ::cPathFac + "ALBCLIL.DBF" )
+      ::aChkIndices[ 8 ]:Click( .F. ):Refresh()
+      MsgAlert( "No existen ficheros de Albaranes", ::cPathFac + "ALBCLIT.DBF, ni " + ::cPathFac + "ALBCLIL.DBF" )
+   else
+      ::oDbfAlbTGst := DbfServer( "ALBCLIT.DBF", "ALBTGST" ):NewOpen( "ALBCLIT.DBF",, ( cDriver() ),, ( cPatEmp() ), .F., .T., .F., .F. ) ; ::oDbfAlbTGst:AddBag( "ALBCLIT.CDX" ) ; ::oDbfAlbTGst:AddBag( ) ; ::oDbfAlbTGst:AutoIndex()
+      ::oDbfAlbTFac := DbfServer( "ALBCLIT.DBF", "ALBTFAC" ):NewOpen( "ALBCLIT.DBF",, ( cDriver() ),, ( ::cPathFac ), .F., .F., .F., .F. ) ; ::oDbfAlbTFac:AddBag( ) ; ::oDbfAlbTFac:AddBag( ) ; ::oDbfAlbTFac:AutoIndex()
+      ::oDbfAlbLGst := DbfServer( "ALBCLIL.DBF", "ALBLGST" ):NewOpen( "ALBCLIL.DBF",, ( cDriver() ),, ( cPatEmp() ), .F., .T., .F., .F. ) ; ::oDbfAlbLGst:AddBag( "ALBCLIL.CDX" ) ; ::oDbfAlbLGst:AddBag( ) ; ::oDbfAlbLGst:AutoIndex()
+      ::oDbfAlbLFac := DbfServer( "ALBCLIL.DBF", "ALBLFAC" ):NewOpen( "ALBCLIL.DBF",, ( cDriver() ),, ( ::cPathFac ), .F., .F., .F., .F. ) ; ::oDbfAlbLFac:AddBag( ) ; ::oDbfAlbLFac:AddBag( ) ; ::oDbfAlbLFac:AutoIndex()
+   end
+
+   if !File( ::cPathFac + "FACCLIT.DBF" ) .OR.  !File( ::cPathFac + "FACCLIL.DBF" ) .OR. !File( ::cPathFac + "RECIBOS.DBF" ) .OR. !File( ::cPathFac + "FACCLID.DBF" )
+      ::aChkIndices[ 9 ]:Click( .F. ):Refresh()
+      MsgAlert( "No existen ficheros de Facturas", ::cPathFac + "FACCLIT.DBF, ni " + ::cPathFac + "FACCLIL.DBF" )
+   else
+      ::oDbfFacTGst := DbfServer( "FACCLIT.DBF", "FACTGST" ):NewOpen( "FACCLIT.DBF",, ( cDriver() ),, ( cPatEmp() ), .F., .T., .F., .F. ) ; ::oDbfFacTGst:AddBag( "FACCLIT.CDX" ) ; ::oDbfFacTGst:AddBag( ) ; ::oDbfFacTGst:AutoIndex()
+      ::oDbfFacTFac := DbfServer( "FACCLIT.DBF", "FACTFAC" ):NewOpen( "FACCLIT.DBF",, ( cDriver() ),, ( ::cPathFac ), .F., .F., .F., .F. ) ; ::oDbfFacTFac:AddBag( ) ; ::oDbfFacTFac:AddBag( ) ; ::oDbfFacTFac:AutoIndex()
+      ::oDbfFacLGst := DbfServer( "FACCLIL.DBF", "FACLGST" ):NewOpen( "FACCLIL.DBF",, ( cDriver() ),, ( cPatEmp() ), .F., .T., .F., .F. ) ; ::oDbfFacLGst:AddBag( "FACCLIL.CDX" ) ; ::oDbfFacLGst:AddBag( ) ; ::oDbfFacLGst:AutoIndex()
+      ::oDbfFacLFac := DbfServer( "FACCLIL.DBF", "FACLFAC" ):NewOpen( "FACCLIL.DBF",, ( cDriver() ),, ( ::cPathFac ), .F., .F., .F., .F. ) ; ::oDbfFacLFac:AddBag( ) ; ::oDbfFacLFac:AddBag( ) ; ::oDbfFacLFac:AutoIndex()
+      ::oDbfFacPGst := DbfServer( "FACCLIP.DBF", "FACPGST" ):NewOpen( "FACCLIP.DBF",, ( cDriver() ),, ( cPatEmp() ), .F., .T., .F., .F. ) ; ::oDbfFacPGst:AddBag( "FACCLIP.CDX" ) ; ::oDbfFacPGst:AddBag( ) ; ::oDbfFacPGst:AutoIndex()
+      ::oDbfRecFac := DbfServer( "RECIBOS.DBF", "RECFAC" ):NewOpen( "RECIBOS.DBF",, ( cDriver() ),, ( ::cPathFac ), .F., .F., .F., .F. ) ; ::oDbfRecFac:AddBag( ) ; ::oDbfRecFac:AddBag( ) ; ::oDbfRecFac:AutoIndex()
+      ::oDbfFacDFac := DbfServer( "FACCLID.DBF", "FACDFAC" ):NewOpen( "FACCLID.DBF",, ( cDriver() ),, ( ::cPathFac ), .F., .T., .F., .F. ) ; ::oDbfFacDFac:AddBag( "FACCLID.CDX" ) ; ::oDbfFacDFac:AddBag( ) ; ::oDbfFacDFac:AutoIndex()
+      ::oDbfFacRecTGst := DbfServer( "FACRECT.DBF", "FACRECT" ):NewOpen( "FACRECT.DBF",, ( cDriver() ),, ( cPatEmp() ), .F., .T., .F., .F. ) ; ::oDbfFacRecTGst:AddBag( "FACRECT.CDX" ) ; ::oDbfFacRecTGst:AddBag( ) ; ::oDbfFacRecTGst:AutoIndex()
+      ::oDbfFacRecLGst := DbfServer( "FACRECL.DBF", "FACRECL" ):NewOpen( "FACRECL.DBF",, ( cDriver() ),, ( cPatEmp() ), .F., .T., .F., .F. ) ; ::oDbfFacRecLGst:AddBag( "FACRECL.CDX" ) ; ::oDbfFacRecLGst:AddBag( ) ; ::oDbfFacRecLGst:AutoIndex()
+   end
+
+   if !File( ::cPathFac + "TICKETT.DBF" ) .OR.  !File( ::cPathFac + "TICKETL.DBF" )
+      ::aChkIndices[ 10 ]:Click( .F. ):Refresh()
+      MsgAlert( "No existen ficheros de Tikets", ::cPathFac + "TICKETT.DBF, ni " + ::cPathFac + "TICKETL.DBF" )
+   else
+      ::oDbfTikTGst := DbfServer( "TIKET.DBF", "TIKTGST" ):NewOpen( "TIKET.DBF",, ( cDriver() ),, ( cPatEmp() ), .F., .T., .F., .F. ) ; ::oDbfTikTGst:AddBag( "TIKET.CDX" ) ; ::oDbfTikTGst:AddBag( ) ; ::oDbfTikTGst:AutoIndex()
+      ::oDbfTikTFac := DbfServer( "TICKETT.DBF", "TIKTFAC" ):NewOpen( "TICKETT.DBF",, ( cDriver() ),, ( ::cPathFac ), .F., .F., .F., .F. ) ; ::oDbfTikTFac:AddBag( ) ; ::oDbfTikTFac:AddBag( ) ; ::oDbfTikTFac:AutoIndex()
+      ::oDbfHisTFac := DbfServer( "HTICKETT.DBF", "HTIKTFAC" ):NewOpen( "HTICKETT.DBF",, ( cDriver() ),, ( ::cPathFac ), .F., .F., .F., .F. ) ; ::oDbfHisTFac:AddBag( ) ; ::oDbfHisTFac:AddBag( ) ; ::oDbfHisTFac:AutoIndex()
+      ::oDbfTikLGst := DbfServer( "TIKEL.DBF", "TIKLGST" ):NewOpen( "TIKEL.DBF",, ( cDriver() ),, ( cPatEmp() ), .F., .T., .F., .F. ) ; ::oDbfTikLGst:AddBag( "TIKEL.CDX" ) ; ::oDbfTikLGst:AddBag( ) ; ::oDbfTikLGst:AutoIndex()
+      ::oDbfTikLFac := DbfServer( "TICKETL.DBF", "TIKLFAC" ):NewOpen( "TICKETL.DBF",, ( cDriver() ),, ( ::cPathFac ), .F., .F., .F., .F. ) ; ::oDbfTikLFac:AddBag( ) ; ::oDbfTikLFac:AddBag( ) ; ::oDbfTikLFac:AutoIndex()
+      ::oDbfHisLFac := DbfServer( "HTICKETL.DBF", "HTIKLFAC" ):NewOpen( "HTICKETL.DBF",, ( cDriver() ),, ( ::cPathFac ), .F., .F., .F., .F. ) ; ::oDbfHisLFac:AddBag( ) ; ::oDbfHisLFac:AddBag( ) ; ::oDbfHisLFac:AutoIndex()
+      ::oDbfTikPGst := DbfServer( "TIKEP.DBF", "TIKPGST" ):NewOpen( "TIKEP.DBF",, ( cDriver() ),, ( cPatEmp() ), .F., .T., .F., .F. ) ; ::oDbfTikPGst:AddBag( "TIKEP.CDX" ) ; ::oDbfTikPGst:AddBag( ) ; ::oDbfTikPGst:AutoIndex()
+   end
+
+   if !File( ::cPathMov + "TRASALMC.DBF" )
+      ::aChkIndices[ 13 ]:Click( .F. ):Refresh()
+   else
+      ::oDbfMovTGst := DbfServer( "REMMOVT.DBF", "MOVTGST" ):NewOpen( "REMMOVT.DBF",, ( cDriver() ),, ( cPatEmp() ), .F., .T., .F., .F. ) ; ::oDbfMovTGst:AddBag( "REMMOVT.CDX" ) ; ::oDbfMovTGst:AddBag( ) ; ::oDbfMovTGst:AutoIndex()
+      ::oDbfMovTFac := DbfServer( "TRASALMC.DBF", "MOVTFAC" ):NewOpen( "TRASALMC.DBF",, ( cDriver() ),, ( ::cPathMov ), .F., .F., .F., .F. ) ; ::oDbfMovTFac:AddBag( ) ; ::oDbfMovTFac:AddBag( ) ; ::oDbfMovTFac:AutoIndex()
+   end
+
+   if !File( ::cPathMov + "TRASALML.DBF" )
+      ::aChkIndices[ 13 ]:Click( .F. ):Refresh()
+   else
+      ::oDbfMovLGst := DbfServer( "HISMOV.DBF", "MOVLGST" ):NewOpen( "HISMOV.DBF",, ( cDriver() ),, ( cPatEmp() ), .F., .T., .F., .F. ) ; ::oDbfMovLGst:AddBag( "HISMOV.CDX" ) ; ::oDbfMovLGst:AddBag( ) ; ::oDbfMovLGst:AutoIndex()
+      ::oDbfMovLFac := DbfServer( "TRASALML.DBF", "MOVLFAC" ):NewOpen( "TRASALML.DBF",, ( cDriver() ),, ( ::cPathMov ), .F., .F., .F., .F. ) ; ::oDbfMovLFac:AddBag( ) ; ::oDbfMovLFac:AddBag( ) ; ::oDbfMovLFac:AutoIndex()
+   end
+
+   if !File( ::cPathFac + "Transpor.Dbf" )
+      ::aChkIndices[ 14 ]:Click( .F. ):Refresh()
+      MsgAlert( "No existe fichero de transportistas", ::cPathFac + "Transpor.Dbf" )
+   else
+      ::oDbfTrnGst := DbfServer( "Transpor.Dbf", "TRNGST" ):NewOpen( "Transpor.Dbf",, ( cDriver() ),, ( cPatGrp() ), .F., .T., .F., .F. ) ; ::oDbfTrnGst:AddBag( "Transpor.Cdx" ) ; ::oDbfTrnGst:AddBag( ) ; ::oDbfTrnGst:AutoIndex()
+      ::oDbfTrnFac := DbfServer( "Transpor.Dbf", "TRNFAC" ):NewOpen( "Transpor.Dbf",, ( cDriver() ),, ( ::cPathFac ), .F., .F., .F., .F. ) ; ::oDbfTrnFac:AddBag( ) ; ::oDbfTrnFac:AddBag( ) ; ::oDbfTrnFac:AutoIndex()
+   end
+
+   if !File( ::cPathFac + "ALBPROT.DBF" ) .OR.  !File( ::cPathFac + "ALBPROL.DBF" )
+      ::aChkIndices[ 15 ]:Click( .F. ):Refresh()
+      MsgAlert( "No existen ficheros de Albaranes de proveedor", ::cPathFac + "ALBPROT.DBF, ni " + ::cPathFac + "ALBPROL.DBF" )
+   else
+      ::oDbfAlpTGst := DbfServer( "ALBPROVT.DBF", "ALPTGST" ):NewOpen( "ALBPROVT.DBF",, ( cDriver() ),, ( cPatEmp() ), .F., .T., .F., .F. ) ; ::oDbfAlpTGst:AddBag( "ALBPROVT.CDX" ) ; ::oDbfAlpTGst:AddBag( ) ; ::oDbfAlpTGst:AutoIndex()
+      ::oDbfAlpTFac := DbfServer( "ALBPROT.DBF", "ALPTFAC" ):NewOpen( "ALBPROT.DBF",, ( cDriver() ),, ( ::cPathFac ), .F., .F., .F., .F. ) ; ::oDbfAlpTFac:AddBag( ) ; ::oDbfAlpTFac:AddBag( ) ; ::oDbfAlpTFac:AutoIndex()
+      ::oDbfAlpLGst := DbfServer( "ALBPROVL.DBF", "ALPLGST" ):NewOpen( "ALBPROVL.DBF",, ( cDriver() ),, ( cPatEmp() ), .F., .T., .F., .F. ) ; ::oDbfAlpLGst:AddBag( "ALBPROVL.CDX" ) ; ::oDbfAlpLGst:AddBag( ) ; ::oDbfAlpLGst:AutoIndex()
+      ::oDbfAlpLFac := DbfServer( "ALBPROL.DBF", "ALPLFAC" ):NewOpen( "ALBPROL.DBF",, ( cDriver() ),, ( ::cPathFac ), .F., .F., .F., .F. ) ; ::oDbfAlpLFac:AddBag( ) ; ::oDbfAlpLFac:AddBag( ) ; ::oDbfAlpLFac:AutoIndex()
+   end
+
+   if !File( ::cPathFac + "FACPROT.DBF" ) .OR.  !File( ::cPathFac + "FACPROL.DBF" ) .OR.  !File( ::cPathFac + "RECIBOSP.DBF" )
+      ::aChkIndices[ 16 ]:Click( .F. ):Refresh()
+      MsgAlert( "No existen ficheros de Facturas de proveedor", ::cPathFac + "FACPROT.DBF, ni " + ::cPathFac + "FACPROL.DBF" )
+   else
+      ::oDbfFapTGst := DbfServer( "FACPRVT.DBF", "FAPTGST" ):NewOpen( "FACPRVT.DBF",, ( cDriver() ),, ( cPatEmp() ), .F., .T., .F., .F. ) ; ::oDbfFapTGst:AddBag( "FACPRVT.CDX" ) ; ::oDbfFapTGst:AddBag( ) ; ::oDbfFapTGst:AutoIndex()
+      ::oDbfFapTFac := DbfServer( "FACPROT.DBF", "FAPTFAC" ):NewOpen( "FACPROT.DBF",, ( cDriver() ),, ( ::cPathFac ), .F., .F., .F., .F. ) ; ::oDbfFapTFac:AddBag( ) ; ::oDbfFapTFac:AddBag( ) ; ::oDbfFapTFac:AutoIndex()
+      ::oDbfFapLGst := DbfServer( "FACPRVL.DBF", "FAPLGST" ):NewOpen( "FACPRVL.DBF",, ( cDriver() ),, ( cPatEmp() ), .F., .T., .F., .F. ) ; ::oDbfFapLGst:AddBag( "FACPRVL.CDX" ) ; ::oDbfFapLGst:AddBag( ) ; ::oDbfFapLGst:AutoIndex()
+      ::oDbfFapLFac := DbfServer( "FACPROL.DBF", "FAPLFAC" ):NewOpen( "FACPROL.DBF",, ( cDriver() ),, ( ::cPathFac ), .F., .F., .F., .F. ) ; ::oDbfFapLFac:AddBag( ) ; ::oDbfFapLFac:AddBag( ) ; ::oDbfFapLFac:AutoIndex()
+      ::oDbfFapPGst := DbfServer( "FACPRVP.DBF", "FAPPGST" ):NewOpen( "FACPRVP.DBF",, ( cDriver() ),, ( cPatEmp() ), .F., .T., .F., .F. ) ; ::oDbfFapPGst:AddBag( "FACPRVP.CDX" ) ; ::oDbfFapPGst:AddBag( ) ; ::oDbfFapPGst:AutoIndex()
+      ::oDbfFapPFac := DbfServer( "RECIBOSP.DBF", "FAPPFAC" ):NewOpen( "RECIBOSP.DBF",, ( cDriver() ),, ( ::cPathFac ), .F., .F., .F., .F. ) ; ::oDbfFapPFac:AddBag( ) ; ::oDbfFapPFac:AddBag( ) ; ::oDbfFapPFac:AutoIndex()
+   end
+
+   if !File( ::cPathFac + "FACCLIT.DBF" ) .OR.  !File( ::cPathFac + "FACCLIL.DBF" ) .OR. !File( ::cPathFac + "RECIBOS.DBF" ) .OR. !File( ::cPathFac + "FACCLID.DBF" )
+      ::aChkIndices[ 17 ]:Click( .F. ):Refresh()
+      MsgAlert( "No existen ficheros de facturas de clientes", ::cPathFac + "FACCLIT.DBF, ni " + ::cPathFac + "FACCLIL.DBF" )
+   end
+
+   RECOVER USING oError
+
+      msgStop( ErrorMessage( oError ), "Imposible abrir todas las bases de datos" )
+
+      ::CloseFiles()
+      lOpen       := .F.
+
+   end
+
+   ErrorBlock( oBlock )
+
+RETURN ( lOpen )
+
+
+
+
+
+
+
+UTILITY STATIC function TImpFactu_CloseFiles() ; local Self AS CLASS TImpFactu := QSelf() AS CLASS TImpFactu
+
+   if !Empty( ::oDbfCnt )
+      ::oDbfCnt:End()
+   else
+      ::oDbfCnt      := nil
+   end
+
+   if !Empty( ::oDbfArtGst )
+      ::oDbfArtGst:End()
+   else
+      ::oDbfArtGst   := nil
+   end
+
+   if !Empty( ::oDbfArtFac )
+      ::oDbfArtFac:End()
+   else
+      ::oDbfArtFac := nil
+   end
+
+   if !Empty( ::oDbfCliGst )
+      ::oDbfCliGst:End()
+   else
+      ::oDbfCliGst := nil
+   end
+
+   if !Empty( ::oDbfCliFac )
+      ::oDbfCliFac:End()
+   else
+      ::oDbfCliFac := nil
+   end
+
+   if !Empty( ::oDbfGrpCliGst )
+      ::oDbfGrpCliGst:End()
+   else
+      ::oDbfGrpCliGst := nil
+   end
+
+   if !Empty( ::oDbfGrpCliFac )
+      ::oDbfGrpCliFac:End()
+   else
+      ::oDbfGrpCliFac := nil
+   end
+
+   if !Empty( ::oDbfCliCom )
+      ::oDbfCliCom:End()
+   else
+      ::oDbfCliCom := nil
+   end
+
+   if !Empty( ::oDbfFamGst )
+      ::oDbfFamGst:End()
+   else
+      ::oDbfFamGst := nil
+   end
+
+   if !Empty( ::oDbfFamFac )
+      ::oDbfFamFac:End()
+   else
+      ::oDbfFamFac := nil
+   end
+
+   if !Empty( ::oDbfGrpGst )
+      ::oDbfGrpGst:End()
+   else
+      ::oDbfGrpGst := nil
+   end
+
+   if !Empty( ::oDbfGrpFac )
+      ::oDbfGrpFac:End()
+   else
+      ::oDbfGrpFac := nil
+   end
+
+   if !Empty( ::oDbfIvaGst )
+      ::oDbfIvaGst:End()
+   else
+      ::oDbfIvaGst := nil
+   end
+
+   if !Empty( ::oDbfIvaFac )
+      ::oDbfIvaFac:End()
+   else
+      ::oDbfIvaFac := nil
+   end
+
+   if !Empty( ::oDbfFpgGst )
+      ::oDbfFpgGst:End()
+   else
+      ::oDbfFpgGst := nil
+   end
+
+   if !Empty( ::oDbfFpgFac )
+      ::oDbfFpgFac:End()
+   else
+      ::oDbfFpgFac := nil
+   end
+
+   if !Empty( ::oDbfRemGst )
+      ::oDbfRemGst:End()
+   else
+      ::oDbfRemGst := nil
+   end
+
+   if !Empty( ::oDbfRemFac )
+      ::oDbfRemFac:End()
+   else
+      ::oDbfRemFac := nil
+   end
+
+   if !Empty( ::oDbfCtaRemGst )
+      ::oDbfCtaRemGst:End()
+   else
+      ::oDbfCtaRemGst := nil
+   end
+
+   if !Empty( ::oDbfCtaRemFac )
+      ::oDbfCtaRemFac:End()
+   else
+      ::oDbfCtaRemFac := nil
+   end
+
+   if !Empty( ::oDbfPrvGst )
+      ::oDbfPrvGst:End()
+   else
+      ::oDbfPrvGst := nil
+   end
+
+   if !Empty( ::oDbfProvFac )
+      ::oDbfProvFac:End()
+   else
+      ::oDbfProvFac := nil
+   end
+
+   if !Empty( ::oDbfAlbTGst )
+      ::oDbfAlbTGst:End()
+   else
+      ::oDbfAlbTGst := nil
+   end
+
+   if !Empty( ::oDbfAlbTFac )
+      ::oDbfAlbTFac:End()
+   else
+      ::oDbfAlbTFac := nil
+   end
+
+   if !Empty( ::oDbfAlbLGst )
+      ::oDbfAlbLGst:End()
+   else
+      ::oDbfAlbLGst := nil
+   end
+
+   if !Empty( ::oDbfAlbLFac )
+      ::oDbfAlbLFac:End()
+   else
+      ::oDbfAlbLFac := nil
+   end
+
+   if !Empty( ::oDbfFacTGst )
+      ::oDbfFacTGst:End()
+   else
+      ::oDbfFacTGst := nil
+   end
+
+   if !Empty( ::oDbfFacTFac )
+      ::oDbfFacTFac:End()
+   else
+      ::oDbfFacTFac := nil
+   end
+
+   if !Empty( ::oDbfFacLGst )
+      ::oDbfFacLGst:End()
+   else
+      ::oDbfFacLGst := nil
+   end
+
+   if !Empty( ::oDbfFacLFac )
+      ::oDbfFacLFac:End()
+   else
+      ::oDbfFacLFac := nil
+   end
+
+   if !Empty( ::oDbfFacRecTGst )
+      ::oDbfFacRecTGst:End()
+   else
+      ::oDbfFacRecTGst := nil
+   end
+
+   if !Empty( ::oDbfFacRecLGst )
+      ::oDbfFacRecLGst:End()
+   else
+      ::oDbfFacRecLGst := nil
+   end
+
+   if !Empty( ::oDbfFacPGst )
+      ::oDbfFacPGst:End()
+   else
+      ::oDbfFacPGst := nil
+   end
+
+   if !Empty( ::oDbfPrvFac )
+      ::oDbfPrvFac:End()
+   else
+      ::oDbfPrvFac := nil
+   end
+
+   if !Empty( ::oDbfRecFac )
+      ::oDbfRecFac:End()
+   else
+      ::oDbfRecFac := nil
+   end
+
+   if !Empty( ::oDbfFacDFac )
+      ::oDbfFacDFac:End()
+   else
+      ::oDbfFacDFac := nil
+   end
+
+   if !Empty( ::oDbfTikTGst )
+      ::oDbfTikTGst:End()
+   else
+      ::oDbfTikTGst := nil
+   end
+
+   if !Empty( ::oDbfTikTFac )
+      ::oDbfTikTFac:End()
+   end
+
+   ::oDbfTikTFac  := nil
+
+   if !Empty( ::oDbfHisTFac )
+      ::oDbfHisTFac:End()
+   end
+
+   ::oDbfHisTFac  := nil
+
+   if !Empty( ::oDbfTikLGst )
+      ::oDbfTikLGst:End()
+   else
+      ::oDbfTikLGst := nil
+   end
+
+   if !Empty( ::oDbfTikLFac )
+      ::oDbfTikLFac:End()
+   else
+      ::oDbfTikLFac := nil
+   end
+
+   if !Empty( ::oDbfHisLFac )
+      ::oDbfHisLFac:End()
+   end
+
+   ::oDbfHisLFac  := nil
+
+   if !Empty( ::oDbfTikPGst )
+      ::oDbfTikPGst:End()
+   else
+      ::oDbfTikPGst := nil
+   end
+
+   if !Empty( ::oDbfObrGst )
+      ::oDbfObrGst:End()
+   else
+      ::oDbfObrGst := nil
+   end
+
+   if !Empty( ::oDbfObrFac )
+      ::oDbfObrFac:End()
+   else
+      ::oDbfObrFac := nil
+   end
+
+   if !Empty( ::oDbfAgeGst )
+      ::oDbfAgeGst:End()
+   else
+      ::oDbfAgeGst := nil
+   end
+
+   if !Empty( ::oDbfAgeFac )
+      ::oDbfAgeFac:End()
+   else
+      ::oDbfAgeFac := nil
+   end
+
+   if !Empty( ::oDbfAlmGst )
+      ::oDbfAlmGst:End()
+   else
+      ::oDbfAlmGst := nil
+   end
+
+   if !Empty( ::oDbfAlmFac )
+      ::oDbfAlmFac:End()
+   else
+      ::oDbfAlmFac := nil
+   end
+
+   if !Empty( ::oDbfMovTGst )
+      ::oDbfMovTGst:End()
+   else
+      ::oDbfMovTGst := nil
+   end
+
+   if !Empty( ::oDbfMovTFac )
+      ::oDbfMovTFac:End()
+   else
+      ::oDbfMovTFac := nil
+   end
+
+   if !Empty( ::oDbfMovLGst )
+      ::oDbfMovLGst:End()
+   else
+      ::oDbfMovLGst := nil
+   end
+
+   if !Empty( ::oDbfMovLFac )
+      ::oDbfMovLFac:End()
+   else
+      ::oDbfMovLFac := nil
+   end
+
+   if !Empty( ::oDbfAtpGst )
+      ::oDbfAtpGst:End()
+   else
+      ::oDbfAtpGst := nil
+   end
+
+   if !Empty( ::oDbfAtpFac )
+      ::oDbfAtpFac:End()
+   else
+      ::oDbfAtpFac   := nil
+   end
+
+   if !Empty( ::oDbfTrnGst )
+      ::oDbfTrnGst:End()
+   else
+      ::oDbfTrnGst   := nil
+   end
+
+   if !Empty( ::oDbfTrnFac )
+      ::oDbfTrnFac:End()
+   else
+      ::oDbfTrnFac   := nil
+   end
+
+   if !Empty( ::oDbfAlpTGst )
+      ::oDbfAlpTGst:End()
+   else
+      ::oDbfAlpTGst := nil
+   end
+
+   if !Empty( ::oDbfAlpTFac )
+      ::oDbfAlpTFac:End()
+   else
+      ::oDbfAlpTFac := nil
+   end
+
+   if !Empty( ::oDbfAlpLGst )
+      ::oDbfAlpLGst:End()
+   else
+      ::oDbfAlpLGst := nil
+   end
+
+   if !Empty( ::oDbfAlpLFac )
+      ::oDbfAlpLFac:End()
+   else
+      ::oDbfAlpLFac := nil
+   end
+
+   if !Empty( ::oDbfFapTGst )
+      ::oDbfFapTGst:End()
+   else
+      ::oDbfFapTGst := nil
+   end
+
+   if !Empty( ::oDbfFapTFac )
+      ::oDbfFapTFac:End()
+   else
+      ::oDbfFapTFac := nil
+   end
+
+   if !Empty( ::oDbfFapLGst )
+      ::oDbfFapLGst:End()
+   else
+      ::oDbfFapLGst := nil
+   end
+
+   if !Empty( ::oDbfFapLFac )
+      ::oDbfFapLFac:End()
+   else
+      ::oDbfFapLFac := nil
+   end
+
+   if !Empty( ::oDbfFapPGst )
+      ::oDbfFapPGst:End()
+   else
+      ::oDbfFapPGst := nil
+   end
+
+   if !Empty( ::oDbfFapPFac )
+      ::oDbfFapPFac:End()
+   else
+      ::oDbfFapPFac := nil
+   end
+
+RETURN .T.
+
+
+
+UTILITY STATIC function TImpFactu_New() ; local Self AS CLASS TImpFactu := QSelf() AS CLASS TImpFactu
+
+   ::cPathFac     := Space( 100 )
+
+   ::aLgcIndices  := Afill( Array( 19 ), .T. )
+   ::aChkIndices  := Array( 19 )
+   ::aMtrIndices  := Array( 19 )
+   ::aNumIndices  := Afill( Array( 19 ), 0 )
+
+RETURN ( Self )
+
+
+
+UTILITY STATIC function TImpFactu_Resource() ; local Self AS CLASS TImpFactu := QSelf() AS CLASS TImpFactu
+
+   local oBmp
+   local oGet
+
+   if nUsrInUse() > 1
+      msgStop( "Hay más de un usuario conectado a la aplicación", "Atención" )
+      return nil
+   end
+
+   if oWnd() <> nil
+      oWnd():CloseAll()
+   end
+
+   ::oDlg = TDialog():New(,,,,, "IMPFACPLUS",, .F.,,,,, oWnd(), .F.,,,,,, .F., )
+
+      oGet := TGetHlp():ReDefine( 100, { | u | If( PCount()==0, ::cPathFac, ::cPathFac:= u ) }, ::oDlg,,,,,,,,, .F.,,, .F., .F.,,,,, {|Self|( oGet:cText( Padr( cGetDir32( "Seleccione destino" ), 100 ) ) )}, nil, "FOLDER",, )
+
+      oBmp := TBitmap():ReDefine( 600, "ImportarFacturaplus",, ::oDlg,,, .F., .F.,,, .F.,,, .F. )
+
+      ::aChkIndices[ 1 ] := TCheckBox():ReDefine( 110, { | u | If( PCount()==0, ::aLgcIndices[ 1 ], ::aLgcIndices[ 1 ]:= u ) }, ::oDlg,,,,,,, .F.,, .F. )
+      ::aChkIndices[ 2 ] := TCheckBox():ReDefine( 120, { | u | If( PCount()==0, ::aLgcIndices[ 2 ], ::aLgcIndices[ 2 ]:= u ) }, ::oDlg,,,,,,, .F.,, .F. )
+      ::aChkIndices[ 3 ] := TCheckBox():ReDefine( 130, { | u | If( PCount()==0, ::aLgcIndices[ 3 ], ::aLgcIndices[ 3 ]:= u ) }, ::oDlg,,,,,,, .F.,, .F. )
+      ::aChkIndices[ 4 ] := TCheckBox():ReDefine( 140, { | u | If( PCount()==0, ::aLgcIndices[ 4 ], ::aLgcIndices[ 4 ]:= u ) }, ::oDlg,,,,,,, .F.,, .F. )
+      ::aChkIndices[ 5 ] := TCheckBox():ReDefine( 150, { | u | If( PCount()==0, ::aLgcIndices[ 5 ], ::aLgcIndices[ 5 ]:= u ) }, ::oDlg,,,,,,, .F.,, .F. )
+      ::aChkIndices[ 6 ] := TCheckBox():ReDefine( 160, { | u | If( PCount()==0, ::aLgcIndices[ 6 ], ::aLgcIndices[ 6 ]:= u ) }, ::oDlg,,,,,,, .F.,, .F. )
+      ::aChkIndices[ 7 ] := TCheckBox():ReDefine( 170, { | u | If( PCount()==0, ::aLgcIndices[ 7 ], ::aLgcIndices[ 7 ]:= u ) }, ::oDlg,,,,,,, .F.,, .F. )
+      ::aChkIndices[ 8 ] := TCheckBox():ReDefine( 180, { | u | If( PCount()==0, ::aLgcIndices[ 8 ], ::aLgcIndices[ 8 ]:= u ) }, ::oDlg,,,,,,, .F.,, .F. )
+      ::aChkIndices[ 9 ] := TCheckBox():ReDefine( 190, { | u | If( PCount()==0, ::aLgcIndices[ 9 ], ::aLgcIndices[ 9 ]:= u ) }, ::oDlg,,,,,,, .F.,, .F. )
+      ::aChkIndices[ 10 ] := TCheckBox():ReDefine( 200, { | u | If( PCount()==0, ::aLgcIndices[ 10 ], ::aLgcIndices[ 10 ]:= u ) }, ::oDlg,,,,,,, .F.,, .F. )
+      ::aChkIndices[ 11 ] := TCheckBox():ReDefine( 220, { | u | If( PCount()==0, ::aLgcIndices[ 11 ], ::aLgcIndices[ 11 ]:= u ) }, ::oDlg,,,,,,, .F.,, .F. )
+      ::aChkIndices[ 12 ] := TCheckBox():ReDefine( 210, { | u | If( PCount()==0, ::aLgcIndices[ 12 ], ::aLgcIndices[ 12 ]:= u ) }, ::oDlg,,,,,,, .F.,, .F. )
+      ::aChkIndices[ 13 ] := TCheckBox():ReDefine( 230, { | u | If( PCount()==0, ::aLgcIndices[ 13 ], ::aLgcIndices[ 13 ]:= u ) }, ::oDlg,,,,,,, .F.,, .F. )
+      ::aChkIndices[ 14 ] := TCheckBox():ReDefine( 240, { | u | If( PCount()==0, ::aLgcIndices[ 14 ], ::aLgcIndices[ 14 ]:= u ) }, ::oDlg,,,,,,, .F.,, .F. )
+      ::aChkIndices[ 15 ] := TCheckBox():ReDefine( 250, { | u | If( PCount()==0, ::aLgcIndices[ 15 ], ::aLgcIndices[ 15 ]:= u ) }, ::oDlg,,,,,,, .F.,, .F. )
+      ::aChkIndices[ 16 ] := TCheckBox():ReDefine( 260, { | u | If( PCount()==0, ::aLgcIndices[ 16 ], ::aLgcIndices[ 16 ]:= u ) }, ::oDlg,,,,,,, .F.,, .F. )
+      ::aChkIndices[ 17 ] := TCheckBox():ReDefine( 270, { | u | If( PCount()==0, ::aLgcIndices[ 17 ], ::aLgcIndices[ 17 ]:= u ) }, ::oDlg,,,,,,, .F.,, .F. )
+      ::aChkIndices[ 18 ] := TCheckBox():ReDefine( 280, { | u | If( PCount()==0, ::aLgcIndices[ 18 ], ::aLgcIndices[ 18 ]:= u ) }, ::oDlg,,,,,,, .F.,, .F. )
+      ::aChkIndices[ 19 ] := TCheckBox():ReDefine( 290, { | u | If( PCount()==0, ::aLgcIndices[ 19 ], ::aLgcIndices[ 19 ]:= u ) }, ::oDlg,,,,,,, .F.,, .F. )
+
+      ::aMtrIndices[ 1 ] := TMeter():ReDefine( 111, { | u | If( PCount()==0, ::aNumIndices[ 1 ], ::aNumIndices[ 1 ]:= u ) },, ::oDlg, .F.,,, .F.,,, ( 128 + ( 255 * 256 ) + ( 0 * 65536 ) ), ( 255 + ( 255 * 256 ) + ( 255 * 65536 ) ) )
+      ::aMtrIndices[ 2 ] := TMeter():ReDefine( 121, { | u | If( PCount()==0, ::aNumIndices[ 2 ], ::aNumIndices[ 2 ]:= u ) },, ::oDlg, .F.,,, .F.,,, ( 128 + ( 255 * 256 ) + ( 0 * 65536 ) ), ( 255 + ( 255 * 256 ) + ( 255 * 65536 ) ) )
+      ::aMtrIndices[ 3 ] := TMeter():ReDefine( 131, { | u | If( PCount()==0, ::aNumIndices[ 3 ], ::aNumIndices[ 3 ]:= u ) },, ::oDlg, .F.,,, .F.,,, ( 128 + ( 255 * 256 ) + ( 0 * 65536 ) ), ( 255 + ( 255 * 256 ) + ( 255 * 65536 ) ) )
+      ::aMtrIndices[ 4 ] := TMeter():ReDefine( 141, { | u | If( PCount()==0, ::aNumIndices[ 4 ], ::aNumIndices[ 4 ]:= u ) },, ::oDlg, .F.,,, .F.,,, ( 128 + ( 255 * 256 ) + ( 0 * 65536 ) ), ( 255 + ( 255 * 256 ) + ( 255 * 65536 ) ) )
+      ::aMtrIndices[ 5 ] := TMeter():ReDefine( 151, { | u | If( PCount()==0, ::aNumIndices[ 5 ], ::aNumIndices[ 5 ]:= u ) },, ::oDlg, .F.,,, .F.,,, ( 128 + ( 255 * 256 ) + ( 0 * 65536 ) ), ( 255 + ( 255 * 256 ) + ( 255 * 65536 ) ) )
+      ::aMtrIndices[ 6 ] := TMeter():ReDefine( 161, { | u | If( PCount()==0, ::aNumIndices[ 6 ], ::aNumIndices[ 6 ]:= u ) },, ::oDlg, .F.,,, .F.,,, ( 128 + ( 255 * 256 ) + ( 0 * 65536 ) ), ( 255 + ( 255 * 256 ) + ( 255 * 65536 ) ) )
+      ::aMtrIndices[ 7 ] := TMeter():ReDefine( 171, { | u | If( PCount()==0, ::aNumIndices[ 7 ], ::aNumIndices[ 7 ]:= u ) },, ::oDlg, .F.,,, .F.,,, ( 128 + ( 255 * 256 ) + ( 0 * 65536 ) ), ( 255 + ( 255 * 256 ) + ( 255 * 65536 ) ) )
+      ::aMtrIndices[ 8 ] := TMeter():ReDefine( 181, { | u | If( PCount()==0, ::aNumIndices[ 8 ], ::aNumIndices[ 8 ]:= u ) },, ::oDlg, .F.,,, .F.,,, ( 128 + ( 255 * 256 ) + ( 0 * 65536 ) ), ( 255 + ( 255 * 256 ) + ( 255 * 65536 ) ) )
+      ::aMtrIndices[ 9 ] := TMeter():ReDefine( 191, { | u | If( PCount()==0, ::aNumIndices[ 9 ], ::aNumIndices[ 9 ]:= u ) },, ::oDlg, .F.,,, .F.,,, ( 128 + ( 255 * 256 ) + ( 0 * 65536 ) ), ( 255 + ( 255 * 256 ) + ( 255 * 65536 ) ) )
+      ::aMtrIndices[ 10 ] := TMeter():ReDefine( 201, { | u | If( PCount()==0, ::aNumIndices[ 10 ], ::aNumIndices[ 10 ]:= u ) },, ::oDlg, .F.,,, .F.,,, ( 128 + ( 255 * 256 ) + ( 0 * 65536 ) ), ( 255 + ( 255 * 256 ) + ( 255 * 65536 ) ) )
+      ::aMtrIndices[ 11 ] := TMeter():ReDefine( 221, { | u | If( PCount()==0, ::aNumIndices[ 11 ], ::aNumIndices[ 11 ]:= u ) },, ::oDlg, .F.,,, .F.,,, ( 128 + ( 255 * 256 ) + ( 0 * 65536 ) ), ( 255 + ( 255 * 256 ) + ( 255 * 65536 ) ) )
+      ::aMtrIndices[ 12 ] := TMeter():ReDefine( 211, { | u | If( PCount()==0, ::aNumIndices[ 12 ], ::aNumIndices[ 12 ]:= u ) },, ::oDlg, .F.,,, .F.,,, ( 128 + ( 255 * 256 ) + ( 0 * 65536 ) ), ( 255 + ( 255 * 256 ) + ( 255 * 65536 ) ) )
+      ::aMtrIndices[ 13 ] := TMeter():ReDefine( 231, { | u | If( PCount()==0, ::aNumIndices[ 13 ], ::aNumIndices[ 13 ]:= u ) },, ::oDlg, .F.,,, .F.,,, ( 128 + ( 255 * 256 ) + ( 0 * 65536 ) ), ( 255 + ( 255 * 256 ) + ( 255 * 65536 ) ) )
+      ::aMtrIndices[ 14 ] := TMeter():ReDefine( 241, { | u | If( PCount()==0, ::aNumIndices[ 14 ], ::aNumIndices[ 14 ]:= u ) },, ::oDlg, .F.,,, .F.,,, ( 128 + ( 255 * 256 ) + ( 0 * 65536 ) ), ( 255 + ( 255 * 256 ) + ( 255 * 65536 ) ) )
+      ::aMtrIndices[ 15 ] := TMeter():ReDefine( 251, { | u | If( PCount()==0, ::aNumIndices[ 15 ], ::aNumIndices[ 15 ]:= u ) },, ::oDlg, .F.,,, .F.,,, ( 128 + ( 255 * 256 ) + ( 0 * 65536 ) ), ( 255 + ( 255 * 256 ) + ( 255 * 65536 ) ) )
+      ::aMtrIndices[ 16 ] := TMeter():ReDefine( 261, { | u | If( PCount()==0, ::aNumIndices[ 16 ], ::aNumIndices[ 16 ]:= u ) },, ::oDlg, .F.,,, .F.,,, ( 128 + ( 255 * 256 ) + ( 0 * 65536 ) ), ( 255 + ( 255 * 256 ) + ( 255 * 65536 ) ) )
+      ::aMtrIndices[ 17 ] := TMeter():ReDefine( 271, { | u | If( PCount()==0, ::aNumIndices[ 17 ], ::aNumIndices[ 17 ]:= u ) },, ::oDlg, .F.,,, .F.,,, ( 128 + ( 255 * 256 ) + ( 0 * 65536 ) ), ( 255 + ( 255 * 256 ) + ( 255 * 65536 ) ) )
+      ::aMtrIndices[ 18 ] := TMeter():ReDefine( 281, { | u | If( PCount()==0, ::aNumIndices[ 18 ], ::aNumIndices[ 18 ]:= u ) },, ::oDlg, .F.,,, .F.,,, ( 128 + ( 255 * 256 ) + ( 0 * 65536 ) ), ( 255 + ( 255 * 256 ) + ( 255 * 65536 ) ) )
+      ::aMtrIndices[ 19 ] := TMeter():ReDefine( 291, { | u | If( PCount()==0, ::aNumIndices[ 19 ], ::aNumIndices[ 19 ]:= u ) },, ::oDlg, .F.,,, .F.,,, ( 128 + ( 255 * 256 ) + ( 0 * 65536 ) ), ( 255 + ( 255 * 256 ) + ( 255 * 65536 ) ) )
+
+      TButton():ReDefine( 500, {||( ::SelectChk( .T. ) )}, ::oDlg,,, .F.,,,, .F. )
+      TButton():ReDefine( 501, {||( ::SelectChk( .F. ) )}, ::oDlg,,, .F.,,,, .F. )
+
+      TButton():ReDefine( 1, {||( ::Importar() )}, ::oDlg,,, .F.,,,, .F. )
+      TButton():ReDefine( 2, {||( ::oDlg:end() )}, ::oDlg,,, .F.,,,, .F. )
+      TButton():ReDefine( 998, {||( ChmHelp( "ImportarFactuplus" ) )}, ::oDlg,,, .F.,,,, .F. )
+
+   ::oDlg:AddFastKey( 112, {|| ChmHelp( "ImportarFactuplus" ) } )
+   ::oDlg:AddFastKey( 116, {|| ::Importar() } )
+
+   ::oDlg:Activate( ::oDlg:bLClicked, ::oDlg:bMoved, ::oDlg:bPainted, .T.,,,, ::oDlg:bRClicked,,, )
+
+   oBmp:End()
+
+RETURN ( Self )
+
+
+
+UTILITY STATIC function TImpFactu_Importar() ; local Self AS CLASS TImpFactu := QSelf() AS CLASS TImpFactu
+
+   local cCodCli  := ""
+   local cNotas   := ""
+   local nCounter := 1
+   local cControl := ""
+
+   ::cPathFac  := AllTrim( ::cPathFac )
+
+   if ::OpenFiles()
+
+      ::oDlg:Disable()
+
+      if ::aLgcIndices[ 1 ]
+
+
+
+
+
+
+
+         ::aMtrIndices[ 1 ]:SetTotal( ::oDbfArtFac:LastRec() )
+
+         ::oDbfArtFac:GoTop()
+         while !( ::oDbfArtFac:eof() )
+
+            while ::oDbfArtGst:Seek( ::oDbfArtFac:cRef )
+               ::oDbfArtGst:Delete( .F. )
+            end
+
+            ::oDbfArtGst:Append()
+
+            ::oDbfArtGst:Codigo     := ::oDbfArtFac:cRef
+            ::oDbfArtGst:Nombre     := ::oDbfArtFac:cDetalle
+            ::oDbfArtGst:pCosto     := ::oDbfArtFac:nCosteProm
+            ::oDbfArtGst:Benef1     := ::oDbfArtFac:nBenefPvp
+            ::oDbfArtGst:Benef2     := ::oDbfArtFac:nBenefMay
+            ::oDbfArtGst:pVenta1    := ::oDbfArtFac:nPvp
+            ::oDbfArtGst:pVtaIva1   := ::oDbfArtFac:nPConIva
+            ::oDbfArtGst:pVenta3    := ::oDbfArtFac:nPvp - ( ::oDbfArtFac:nPvp * ::oDbfArtFac:nDto1 / 100 )
+            ::oDbfArtGst:pVtaIva3   := ::oDbfArtFac:nPConIva - ( ::oDbfArtFac:nPConIva * ::oDbfArtFac:nDto1 / 100 )
+            ::oDbfArtGst:pVenta5    := ::oDbfArtFac:nPreMayor
+            ::oDbfArtGst:pVtaIva5   := ::oDbfArtFac:nPMConIva
+            ::oDbfArtGst:nMinimo    := ::oDbfArtFac:nStockMin
+            ::oDbfArtGst:TipoIva    := ::oDbfArtFac:cTipoIva
+            ::oDbfArtGst:Familia    := ::oDbfArtFac:cCodFAm
+            ::oDbfArtGst:GrpVent    := ::oDbfArtFac:cGrpConta
+            ::oDbfArtGst:cOdeBar    := ::oDbfArtFac:cCodeBar
+            ::oDbfArtGst:nTipBar    := ::oDbfArtFac:nTipoCode
+            ::oDbfArtGst:nLabel     := ::oDbfArtFac:nEtiquetas
+            ::oDbfArtGst:nCtlStock  := 1
+            ::oDbfArtGst:lSelPre    := ::oDbfArtFac:lSelect
+            ::oDbfArtGst:nSelPre    := ::oDbfArtFac:nUnidades
+            ::oDbfArtGst:nPesoKg    := ::oDbfArtFac:nTara
+            ::oDbfArtGst:cImagen    := ::oDbfArtFac:cImagen
+            ::oDbfArtGst:lKitArt    := ::oDbfArtFac:lKit
+            ::oDbfArtGst:cPrvHab    := ::oDbfArtFac:cCodPro
+
+            ::oDbfArtGst:Save()
+
+            ::aMtrIndices[ 1 ]:Set( ::oDbfArtFac:Recno() )
+
+            ::oDbfArtFac:Skip()
+
+         end
+
+      end
+
+
+
+
+
+      if ::aLgcIndices[ 2 ]
+
+
+
+         ::aMtrIndices[ 2 ]:SetTotal( ::oDbfFamFac:LastRec() )
+
+         ::oDbfFamFac:GoTop()
+         while !( ::oDbfFamFac:eof() )
+
+            while ::oDbfFamGst:Seek( ::oDbfFamFac:cCodFam )
+               ::oDbfFamGst:Delete( .F. )
+            end
+
+            ::oDbfFamGst:Append()
+
+            ::oDbfFamGst:cCodFam    := ::oDbfFamFac:cCodFam
+            ::oDbfFamGst:cNomFam    := ::oDbfFamFac:cNomFam
+            ::oDbfFamGst:cCodPrp1   := ::oDbfFamFac:cCodProp1
+            ::oDbfFamGst:cCodPrp2   := ::oDbfFamFac:cCodProp2
+
+            ::oDbfFamGst:Save()
+
+            ::aMtrIndices[ 2 ]:Set( ::oDbfFamFac:Recno() )
+
+            ::oDbfFamFac:Skip()
+
+         end
+
+      end
+
+
+
+
+
+      if ::aLgcIndices[ 3 ]
+
+
+
+         ::aMtrIndices[ 3 ]:SetTotal( ::oDbfGrpFac:LastRec() )
+
+         ::oDbfGrpFac:GoTop()
+         while !( ::oDbfGrpFac:eof() )
+
+            while ::oDbfGrpGst:Seek( ::oDbfGrpFac:cGrpConta )
+               ::oDbfGrpGst:Delete( .F. )
+            end
+
+            ::oDbfGrpGst:Append()
+
+            ::oDbfGrpGst:cGrpConta  := ::oDbfGrpFac:cGrpConta
+            ::oDbfGrpGst:cGrpNom    := ::oDbfGrpFac:cGrpNom
+
+            ::oDbfGrpGst:Save()
+
+            ::aMtrIndices[ 3 ]:Set( ::oDbfGrpFac:Recno() )
+
+            ::oDbfGrpFac:Skip()
+
+         end
+
+      end
+
+
+
+
+
+      if ::aLgcIndices[ 4 ]
+
+
+
+         ::aMtrIndices[ 4 ]:SetTotal( ::oDbfIvaFac:LastRec() )
+
+         ::oDbfIvaFac:GoTop()
+         while !( ::oDbfIvaFac:eof() )
+
+            while ::oDbfIvaGst:Seek( ::oDbfIvaFac:cTipoIva )
+               ::oDbfIvaGst:Delete( .F. )
+            end
+
+            ::oDbfIvaGst:Append()
+
+            ::oDbfIvaGst:Tipo       := ::oDbfIvaFac:cTipoIva
+            ::oDbfIvaGst:DescIva    := ::oDbfIvaFac:cDetIva
+            ::oDbfIvaGst:TpIva      := ::oDbfIvaFac:nPorcIva
+            ::oDbfIvaGst:nRecEq     := ::oDbfIvaFac:nPorcReq
+
+            ::oDbfIvaGst:Save()
+
+            ::aMtrIndices[ 4 ]:Set( ::oDbfIvaFac:Recno() )
+
+            ::oDbfIvaFac:Skip()
+
+         end
+
+      end
+
+
+
+
+
+      if ::aLgcIndices[ 18 ]
+
+         ::aMtrIndices[ 18 ]:SetTotal( ::oDbfGrpCliFac:LastRec() )
+
+         ::oDbfGrpCliFac:GoTop()
+         while !( ::oDbfGrpCliFac:eof() )
+
+            while ::oDbfGrpCliGst:Seek( Padl( AllTrim( ::oDbfGrpCliFac:cCodigo), 4, "0" ) )
+               ::oDbfGrpCliGst:Delete( .F. )
+            end
+
+            ::oDbfGrpCliGst:Append()
+
+            ::oDbfGrpCliGst:cCodGrp    := Padl( AllTrim( ::oDbfGrpCliFac:cCodigo ), 4, "0" )
+            ::oDbfGrpCliGst:cNomGrp    := ::oDbfGrpCliFac:cDescrip
+
+            ::oDbfGrpCliGst:Save()
+
+            ::aMtrIndices[ 18 ]:Set( ::oDbfGrpCliFac:Recno() )
+
+            ::oDbfGrpCliFac:Skip()
+
+         end
+
+      end
+
+
+
+
+
+      if ::aLgcIndices[ 5 ]
+
+
+
+         ::aMtrIndices[ 5 ]:SetTotal( ::oDbfCliFac:LastRec() )
+
+         ::oDbfCliFac:GoTop()
+         while !( ::oDbfCliFac:eof() )
+
+            cCodCli  := SpecialPadr( ::oDbfCliFac:cCodCli, "0", RetNumCodCliEmp() )
+
+            while ::oDbfCliGst:Seek( cCodCli )
+               ::oDbfCliGst:Delete( .F. )
+            end
+
+            ::oDbfCliGst:Append()
+
+            cControl               := cDgtControl( ::oDbfCliFac:cEntidad, ::oDbfCliFac:cAgencia, Space( 2 ), ::oDbfCliFac:cCuenta )
+
+            ::oDbfCliGst:Cod       := cCodCli
+            ::oDbfCliGst:Titulo    := ::oDbfCliFac:cNomCli
+            ::oDbfCliGst:Nif       := ::oDbfCliFac:cDniCif
+            ::oDbfCliGst:Domicilio := ::oDbfCliFac:cDirCli
+            ::oDbfCliGst:Poblacion := ::oDbfCliFac:cPobCli
+            if ::oDbfProvFac:Seek( ::oDbfCliFac:cCodProv )
+               ::oDbfCliGst:Provincia := ::oDbfProvFac:cNomProv
+            end
+            ::oDbfCliGst:CodPostal := ::oDbfCliFac:cPtlCli
+            ::oDbfCliGst:Telefono  := ::oDbfCliFac:cTfO1Cli
+            ::oDbfCliGst:Fax       := ::oDbfCliFac:cFaxCli
+            ::oDbfCliGst:NbrEst    := ::oDbfCliFac:cNomCom
+            ::oDbfCliGst:DiaPago   := ::oDbfCliFac:nDia1Pago
+            ::oDbfCliGst:DiaPago2  := ::oDbfCliFac:nDia2Pago
+            ::oDbfCliGst:Banco     := ::oDbfCliFac:cNbrBco
+            ::oDbfCliGst:DirBanco  := ::oDbfCliFac:cDirBco
+            ::oDbfCliGst:PobBanco  := ::oDbfCliFac:cPobBco
+            ::oDbfCliGst:cProBanco := ::oDbfCliFac:cProvBco
+            ::oDbfCliGst:Cuenta    := ::oDbfCliFac:cEntidad + ::oDbfCliFac:cAgencia + cControl + ::oDbfCliFac:cCuenta
+            ::oDbfCliGst:CodPago   := ::oDbfCliFac:cCodPAgo
+
+            ::oDbfCliGst:nDpp       := ::oDbfCliFac:nDpp
+            ::oDbfCliGst:Riesgo     := ::oDbfCliFac:nRiesgo
+            ::oDbfCliGst:CopiasF    := ::oDbfCliFac:nCopFac
+            ::oDbfCliGst:Serie      := ::oDbfCliFac:cSerieFact
+            ::oDbfCliGst:nRegIva    := ::oDbfCliFac:nIva
+            ::oDbfCliGst:lReq       := ::oDbfCliFac:lReq
+            ::oDbfCliGst:SubCta     := ::oDbfCliFac:cSubCta
+            ::oDbfCliGst:CtaVenta   := ::oDbfCliFac:cCtaVtas
+            ::oDbfCliGst:cAgente    := ::oDbfCliFac:cCodAge
+            ::oDbfCliGst:lBlqCli    := .F.
+
+            if Val( ::oDbfCliFac:cCodCli ) >= 10000 .AND. Val( ::oDbfCliFac:cCodCli ) <= 99999
+               ::oDbfCliGst:lChgPre := .F.
+            else
+               ::oDbfCliGst:lChgPre := .T.
+            end
+
+            if ::oDbfCliFac:FieldPos( "lBloqueado" ) <> 0
+               if ::oDbfCliFac:lBloqueado
+                  ::oDbfCliGst:lChgPre    := .F.
+               end
+            end
+
+            do case
+               case ::oDbfCliFac:nDto == 6 .AND. ::oDbfCliFac:lMayorista
+                  ::oDbfCliGst:nTarifa    := 5
+               case ::oDbfCliFac:nDto == 6 .AND. !::oDbfCliFac:lMayorista
+                  ::oDbfCliGst:nTarifa    := 1
+               otherwise
+                  ::oDbfCliGst:nTarifa    := 3
+            end
+
+            ::oDbfCliGst:nLabel     := ::oDbfCliFac:nEtiquetas
+            ::oDbfCliGst:mComent    := ::oDbfCliFac:cObser2Bco
+            ::oDbfCliGst:cCodGrp    := Padl( AllTrim( ::oDbfCliFac:cCodGrup), 4, "0" )
+            ::oDbfCliGst:cCodRem    := ::oDbfCliFac:cCtaRem
+            ::oDbfCliGst:cMeiInt    := ::oDbfCliFac:eMail
+            ::oDbfCliGst:cUsrDef01  := ::oDbfCliFac:cContacto
+
+
+
+            cNotas                  := ""
+
+            if ::oDbfCliCom:Seek( cCodCli )
+               while Rtrim( ::oDbfCliCom:cCodCli ) == Rtrim( cCodCli )
+                  cNotas            += Rtrim( ::oDbfCliCom:Notas )
+                  ::oDbfCliCom:Skip()
+               end
+            end
+
+            if !Empty( cNotas )
+               ::oDbfCliGst:mComent := cNotas
+            end
+
+            ::oDbfCliGst:Save()
+
+            ::aMtrIndices[ 5 ]:Set( ::oDbfCliFac:Recno() )
+
+            ::oDbfCliFac:Skip()
+
+         end
+
+
+
+
+
+         ::aMtrIndices[ 5 ]:SetTotal( ::oDbfObrFac:LastRec() )
+
+         ::oDbfObrFac:GoTop()
+         while !( ::oDbfObrFac:eof() )
+
+            if ::oDbfObrGst:Seek( SpecialPadr( ::oDbfObrFac:cCodCli, "0", RetNumCodCliEmp() ) + ::oDbfObrFac:cIdenDir )
+               ::oDbfObrGst:Delete( .F. )
+            end
+
+            ::oDbfObrGst:Append()
+
+            ::oDbfObrGst:cCodCli    := SpecialPadr( ::oDbfObrFac:cCodCli, "0", RetNumCodCliEmp() )
+            ::oDbfObrGst:cCodObr    := ::oDbfObrFac:cIdenDir
+            ::oDbfObrGst:cNomObr    := ::oDbfObrFac:cNomCom
+            ::oDbfObrGst:cDirObr    := ::oDbfObrFac:cDirCli
+            ::oDbfObrGst:cPobObr    := ::oDbfObrFac:cPobCli
+            ::oDbfObrGst:cPrvObr    := ::oDbfObrFac:cCodProv
+            ::oDbfObrGst:cPosObr    := ::oDbfObrFac:cPtlCli
+            ::oDbfObrGst:cTelObr    := ::oDbfObrFac:cTfo1Cli
+
+            ::oDbfObrGst:Save()
+
+            ::aMtrIndices[ 5 ]:Set( ::oDbfObrFac:Recno() )
+
+            ::oDbfObrFac:Skip()
+
+         end
+
+
+
+
+
+         ::oDbfAtpFac:GoTop()
+         while !::oDbfAtpGst:Eof()
+            ::oDbfAtpGst:Delete( .F. )
+            ::oDbfAtpGst:Skip()
+         end
+
+         ::aMtrIndices[ 5 ]:SetTotal( ::oDbfAtpFac:LastRec() )
+
+         while !( ::oDbfAtpFac:eof() )
+
+            ::oDbfAtpGst:Append()
+
+            ::oDbfAtpGst:cCodCli    := SpecialPadr( ::oDbfAtpFac:cCodCli, "0", RetNumCodCliEmp() )
+
+            if ::oDbfAtpFac:cClaveA == "P"
+               ::oDbfAtpGst:cCodArt := ::oDbfAtpFac:cRef
+               ::oDbfAtpGst:nTipAtp := 1
+            else
+               ::oDbfAtpGst:cCodFam := left( ::oDbfAtpFac:cRef, 8 )
+               ::oDbfAtpGst:nTipAtp := 2
+            end
+
+            ::oDbfAtpGst:dFecIni    := ::oDbfAtpFac:dFecIni
+            ::oDbfAtpGst:dFecFin    := ::oDbfAtpFac:dFecFin
+            ::oDbfAtpGst:nPrcArt    := ::oDbfAtpFac:nPrecio
+            ::oDbfAtpGst:nPrcArt2   := ::oDbfAtpFac:nPrecio
+            ::oDbfAtpGst:nPrcArt3   := ::oDbfAtpFac:nPrecio
+            ::oDbfAtpGst:nPrcArt4   := ::oDbfAtpFac:nPrecio
+            ::oDbfAtpGst:nPrcArt5   := ::oDbfAtpFac:nPrecio
+            ::oDbfAtpGst:nPrcArt6   := ::oDbfAtpFac:nPrecio
+            ::oDbfAtpGst:nDtoArt    := ::oDbfAtpFac:nDto
+
+
+
+            ::oDbfAtpGst:lAplPre    := .T.
+            ::oDbfAtpGst:lAplPed    := .T.
+            ::oDbfAtpGst:lAplAlb    := .T.
+            ::oDbfAtpGst:lAplFac    := .T.
+
+            ::oDbfAtpGst:Save()
+
+            ::aMtrIndices[ 5 ]:Set( ::oDbfAtpFac:Recno() )
+
+            ::oDbfAtpFac:Skip()
+
+         end
+
+      end
+
+
+
+
+
+      if ::aLgcIndices[ 6 ]
+
+
+
+         ::aMtrIndices[ 6 ]:SetTotal( ::oDbfFpgFac:LastRec() )
+
+         ::oDbfFpgFac:GoTop()
+         while !( ::oDbfFpgFac:eof() )
+
+            while ::oDbfFpgGst:Seek( ::oDbfFpgFac:cCodPago )
+               ::oDbfFpgGst:Delete( .F. )
+            end
+
+            ::oDbfFpgGst:Append()
+
+            ::oDbfFpgGst:cCodPago  := ::oDbfFpgFac:cCodPago
+            ::oDbfFpgGst:cDesPago  := ::oDbfFpgFac:cDesPago
+            ::oDbfFpgGst:nTipPgo   := 1
+            ::oDbfFpgGst:nPctCom   := ::oDbfFpgFac:nComision
+            ::oDbfFpgGst:lEmtRec   := .T.
+            ::oDbfFpgGst:nCobRec   := if( ::oDbfFpgFac:lPagado, 1, 2 )
+            ::oDbfFpgGst:cCtaCobro := ::oDbfFpgFac:cCtaCobro
+
+            ::oDbfFpgGst:Save()
+
+            ::aMtrIndices[ 6 ]:Set( ::oDbfFpgFac:Recno() )
+
+            ::oDbfFpgFac:Skip()
+
+         end
+
+      end
+
+
+
+
+
+      if ::aLgcIndices[ 19 ]
+
+         ::aMtrIndices[ 19 ]:SetTotal( ::oDbfRemFac:LastRec() )
+
+         ::oDbfRemFac:GoTop()
+         while !( ::oDbfRemFac:eof() )
+
+            while ::oDbfRemGst:Seek( Str( ::oDbfRemFac:nNumRem, 9 ) )
+               ::oDbfRemGst:Delete( .F. )
+            end
+
+            ::oDbfRemGst:Append()
+
+            ::oDbfRemGst:lConta     := ::oDbfRemFac:lContab
+            ::oDbfRemGst:nNumRem    := ::oDbfRemFac:nNumRem
+            ::oDbfRemGst:cSufRem    := Space( 2 )
+            ::oDbfRemGst:cCodRem    := Padl( AllTrim( ::oDbfRemFac:cCtaRem ), 3, "0" )
+            ::oDbfRemGst:dFecRem    := ::oDbfRemFac:dFecRem
+            ::oDbfRemGst:nTipRem    := 1
+            ::oDbfRemGst:cCodDiv    := ::oDbfRemFac:cCodDiv
+            ::oDbfRemGst:nVdvDiv    := 1
+
+            ::oDbfRemGst:Save()
+
+            ::aMtrIndices[ 19 ]:Set( ::oDbfRemFac:Recno() )
+
+            ::oDbfRemFac:Skip()
+
+         end
+
+
+
+
+
+         ::aMtrIndices[ 19 ]:SetTotal( ::oDbfCtaRemFac:LastRec() )
+
+         ::oDbfCtaRemFac:GoTop()
+         while !( ::oDbfCtaRemFac:eof() )
+
+            while ::oDbfCtaRemGst:Seek( Padl( AllTrim( ::oDbfCtaRemFac:cCtaRem ), 3, "0" ) )
+               ::oDbfCtaRemGst:Delete( .F. )
+            end
+
+            ::oDbfCtaRemGst:Append()
+
+            ::oDbfCtaRemGst:cCodCta    := Padl( AllTrim( ::oDbfCtaRemFac:cCtaRem ), 3, "0" )
+            ::oDbfCtaRemGst:cNomCta    := ::oDbfCtaRemFac:cNomCta
+            ::oDbfCtaRemGst:cDirCta    := ::oDbfCtaRemFac:cDirCta
+            ::oDbfCtaRemGst:cEntBan    := ::oDbfCtaRemFac:cEntidad
+            ::oDbfCtaRemGst:cAgcBan    := ::oDbfCtaRemFac:cAgencia
+            ::oDbfCtaRemGst:cDgcBan    := cDgtControl( ::oDbfCtaRemFac:cEntidad, ::oDbfCtaRemFac:cAgencia, "", ::oDbfCtaRemFac:cCuenta )
+            ::oDbfCtaRemGst:cCtaBan    := ::oDbfCtaRemFac:cCuenta
+            ::oDbfCtaRemGst:cSufCta    := ::oDbfCtaRemFac:cSufijo
+            ::oDbfCtaRemGst:cSufN58    := ::oDbfCtaRemFac:cSufijo58
+
+            ::oDbfCtaRemGst:Save()
+
+            ::aMtrIndices[ 19 ]:Set( ::oDbfCtaRemFac:Recno() )
+
+            ::oDbfCtaRemFac:Skip()
+
+         end
+
+      end
+
+
+
+
+
+      if ::aLgcIndices[ 7 ]
+
+
+
+         ::aMtrIndices[ 7 ]:SetTotal( ::oDbfPrvFac:LastRec() )
+
+         ::oDbfPrvFac:GoTop()
+         while !( ::oDbfPrvFac:eof() )
+
+            while ::oDbfPrvGst:Seek( SpecialPadr( ::oDbfPrvFac:cCodPro, "0", RetNumCodPrvEmp() ) )
+               ::oDbfPrvGst:Delete( .F. )
+            end
+
+            ::oDbfPrvGst:Append()
+
+            ::oDbfPrvGst:Cod       := SpecialPadr( ::oDbfPrvFac:cCodPro, "0", RetNumCodPrvEmp() )
+            ::oDbfPrvGst:Titulo    := ::oDbfPrvFac:cNomPro
+            ::oDbfPrvGst:Nif       := ::oDbfPrvFac:cNifDni
+            ::oDbfPrvGst:Domicilio := ::oDbfPrvFac:cDirPro
+            ::oDbfPrvGst:Poblacion := ::oDbfPrvFac:cPobPro
+            ::oDbfPrvGst:CodPostal := ::oDbfPrvFac:cPtlPro
+            ::oDbfPrvGst:Telefono  := ::oDbfPrvFac:cTfo1Pro
+            ::oDbfPrvGst:Fax       := ::oDbfPrvFac:cFax
+            ::oDbfPrvGst:DtoPP     := ::oDbfPrvFac:nDto
+            ::oDbfPrvGst:FPago     := ::oDbfPrvFac:cCodPago
+            ::oDbfPrvGst:DiaPago   := ::oDbfPrvFac:nDiaPago
+
+
+
+
+
+            ::oDbfPrvGst:SubCta    := ::oDbfPrvFac:cSubCta
+            ::oDbfPrvGst:lLabel    := ::oDbfPrvFac:lSelect
+            ::oDbfPrvGst:nLabel    := ::oDbfPrvFac:nEtiquetas
+
+            ::oDbfPrvGst:Save()
+
+            ::aMtrIndices[ 7 ]:Set( ::oDbfPrvFac:Recno() )
+
+            ::oDbfPrvFac:Skip()
+
+         end
+
+      end
+
+
+
+
+
+      if ::aLgcIndices[ 11 ]
+
+
+
+         ::aMtrIndices[ 11 ]:SetTotal( ::oDbfAgeFac:LastRec() )
+
+         ::oDbfAgeFac:GoTop()
+         while !( ::oDbfAgeFac:eof() )
+
+            while ::oDbfAgeGst:Seek( SpecialPadr( ::oDbfAgeFac:cCodAge, "0" ) )
+               ::oDbfAgeGst:Delete( .F. )
+            end
+
+            ::oDbfAgeGst:Append()
+
+            ::oDbfAgeGst:cCodAge   := SpecialPadr( ::oDbfAgeFac:cCodAge, "0" )
+            ::oDbfAgeGst:cApeAge   := Left( ::oDbfAgeFac:cApeAge, 30 )
+            ::oDbfAgeGst:cNbrAge   := Left( ::oDbfAgeFac:cNbrAge, 15 )
+            ::oDbfAgeGst:cDniNif   := ::oDbfAgeFac:cDniNif
+            ::oDbfAgeGst:cDirAge   := Left( ::oDbfAgeFac:cDirAge, 35 )
+            ::oDbfAgeGst:cPobAge   := Left( ::oDbfAgeFac:cPobAge, 25 )
+
+            ::oDbfAgeGst:cPtlAge   := Left( ::oDbfAgeFac:cPtlAge, 5 )
+            ::oDbfAgeGst:cTfoAge   := Left( ::oDbfAgeFac:cTfoAge, 12 )
+            ::oDbfAgeGst:cFaxAge   := Left( ::oDbfAgeFac:cFaxAge, 12 )
+
+            ::oDbfAgeGst:nIrpFage   := ::oDbfAgeFac:nIrpFage
+
+            ::oDbfAgeGst:nCom1     := ::oDbfAgeFac:nCom1
+
+
+
+
+
+
+            ::oDbfAgeGst:Save()
+
+            ::aMtrIndices[ 11 ]:Set( ::oDbfAgeFac:Recno() )
+
+            ::oDbfAgeFac:Skip()
+
+         end
+
+      end
+
+
+
+
+
+      if ::aLgcIndices[ 12 ]
+
+
+
+         ::aMtrIndices[ 12 ]:SetTotal( ::oDbfAlmFac:LastRec() )
+
+         ::oDbfAlmFac:GoTop()
+         while !( ::oDbfAlmFac:eof() )
+
+            while ::oDbfAlmGst:Seek( ::oDbfAlmFac:cCodAlm )
+               ::oDbfAlmGst:Delete( .F. )
+            end
+
+            ::oDbfAlmGst:Append()
+
+            ::oDbfAlmGst:cCodAlm   := ::oDbfAlmFac:cCodAlm
+            ::oDbfAlmGst:cNomAlm   := Left( ::oDbfAlmFac:cNomBre, 20 )
+            ::oDbfAlmGst:cDirAlm   := Left( ::oDbfAlmFac:cDirEcc, 50 )
+
+            ::oDbfAlmGst:cPobAlm   := Left( ::oDbfAlmFac:cPobLac, 30 )
+
+            ::oDbfAlmGst:cTfnAlm   := ::oDbfAlmFac:cTfno
+
+
+
+
+            ::oDbfAlmGst:Save()
+
+            ::aMtrIndices[ 12 ]:Set( ::oDbfAlmFac:Recno() )
+
+            ::oDbfAlmFac:Skip()
+
+         end
+
+      end
+
+
+
+
+
+      if ::aLgcIndices[ 8 ]
+
+
+
+         ::aMtrIndices[ 8 ]:SetTotal( ::oDbfAlbTFac:LastRec() )
+
+         ::oDbfAlbTFac:GoTop()
+         while !( ::oDbfAlbTFac:eof() )
+
+            while ::oDbfAlbTGst:Seek( ::oDbfAlbTFac:cSerie + Str( ::oDbfAlbTFac:nNumAlb, 9 ) )
+               ::oDbfAlbTGst:Delete( .F. )
+            end
+
+            while ::oDbfAlbLGst:Seek( ::oDbfAlbTFac:cSerie + Str( ::oDbfAlbTFac:nNumAlb, 9 ) )
+               ::oDbfAlbLGst:Delete( .F. )
+            end
+
+            ::oDbfAlbTGst:Append()
+
+            ::oDbfAlbTGst:cSerAlb      := ::oDbfAlbTFac:cSerie
+            ::oDbfAlbTGst:nNumAlb      := ::oDbfAlbTFac:nNumAlb
+            ::oDbfAlbTGst:cSufAlb      := Space( 2 )
+            ::oDbfAlbTGst:cTurAlb      := cCurSesion()
+            ::oDbfAlbTGst:dFecAlb      := ::oDbfAlbTFac:dFecAlb
+            ::oDbfAlbTGst:cCodCli      := SpecialPadr( ::oDbfAlbTFac:cCodCli, "0", RetNumCodCliEmp() )
+            ::oDbfAlbTGst:cCodAlm      := ::oDbfAlbTFac:cCodAlm
+            ::oDbfAlbTGst:cCodCaj      := "000"
+
+            if ::oDbfCliGst:Seek( SpecialPadr( ::oDbfAlbTFac:cCodCli, "0", RetNumCodCliEmp() ) )
+               ::oDbfAlbTGst:cNomCli   := ::oDbfCliGst:Titulo
+               ::oDbfAlbTGst:cDirCli   := ::oDbfCliGst:Domicilio
+               ::oDbfAlbTGst:cPobCli   := ::oDbfCliGst:Poblacion
+               ::oDbfAlbTGst:cPrvCli   := ::oDbfCliGst:Provincia
+               ::oDbfAlbTGst:cPosCli   := ::oDbfCliGst:CodPostal
+               ::oDbfAlbTGst:cDniCli   := ::oDbfCliGst:Nif
+            end
+
+            ::oDbfAlbTGst:lFacturado   := ::oDbfAlbTFac:lFacturado
+            ::oDbfAlbTGst:dFecEnt      := ::oDbfAlbTFac:dFecEnt
+
+            ::oDbfAlbTGst:cCondEnt     := ::oDbfAlbTFac:cCondEnt
+
+            ::oDbfAlbTGst:mObsErv      := ::oDbfAlbTFac:cObsErv
+            ::oDbfAlbTGst:cCodPago     := ::oDbfAlbTFac:cCodPago
+            ::oDbfAlbTGst:nBulTos      := ::oDbfAlbTFac:nBulTos
+            ::oDbfAlbTGst:nPorTes      := ::oDbfAlbTFac:nPorTes
+            ::oDbfAlbTGst:cCodAge      := SpecialPadr( ::oDbfAlbTFac:cCodAge, "0" )
+
+
+
+
+            ::oDbfAlbTGst:nTipoAlb     := ::oDbfAlbTFac:nTipoAlb
+
+
+
+            ::oDbfAlbTGst:nDtoEsp      := ::oDbfAlbTFac:nDtoEsp
+            ::oDbfAlbTGst:nDpp         := ::oDbfAlbTFac:nDpp
+
+
+
+
+
+
+
+
+
+
+            ::oDbfAlbTGst:nPctComAge   := ::oDbfAlbTFac:nComision
+
+            ::oDbfAlbTGst:cDivAlb      := ::oDbfAlbTFac:cCodDiv
+            ::oDbfAlbTGst:nVdvAlb      := 1
+
+
+
+            ::oDbfAlbTGst:cSuPed       := Left( ::oDbfAlbTFac:cSuPed, 35 )
+
+
+
+
+
+
+
+            ::oDbfAlbTGst:cCodTrn      := ::oDbfAlbTFac:cCodTran
+
+
+
+
+
+            ::oDbfAlbTGst:Save()
+
+            ::aMtrIndices[ 8 ]:Set( ::oDbfAlbTFac:Recno() )
+
+            ::oDbfAlbTFac:Skip()
+
+         end
+
+         ::aMtrIndices[ 8 ]:SetTotal( ::oDbfAlbLFac:LastRec() )
+
+         ::oDbfAlbLFac:GoTop()
+         while !( ::oDbfAlbLFac:eof() )
+
+            ::oDbfAlbLGst:Append()
+
+
+
+
+            ::oDbfAlbTGst:GoTop()
+
+            while !::oDbfAlbTGst:Eof()
+
+               if ::oDbfAlbTGst:nNumAlb == ::oDbfAlbLFac:nNumAlb
+                  ::oDbfAlbLGst:cSerAlb  := ::oDbfAlbTGst:cSerAlb
+               end
+
+               ::oDbfAlbTGst:Skip()
+
+            end
+
+            ::oDbfAlbLGst:nNumAlb      := ::oDbfAlbLFac:nNumAlb
+            ::oDbfAlbLGst:cSufAlb      := Space( 2 )
+            ::oDbfAlbLGst:cRef         := ::oDbfAlbLFac:cRef
+            if Empty( ::oDbfAlbLFac:cRef )
+               ::oDbfAlbLGst:mLngDes   := ::oDbfAlbLFac:cDetalle
+               ::oDbfAlbLGst:cDetalle  := Space( 250 )
+            else
+               ::oDbfAlbLGst:cDetalle  := ::oDbfAlbLFac:cDetalle
+            end
+            ::oDbfAlbLGst:nPreUnit     := ::oDbfAlbLFac:nPreUnit
+
+
+            ::oDbfAlbLGst:nDto         := ::oDbfAlbLFac:nDto
+            ::oDbfAlbLGst:nDtoPrm      := ::oDbfAlbLFac:nDtoProm
+            ::oDbfAlbLGst:nIva         := ::oDbfAlbLFac:nIva
+
+
+            ::oDbfAlbLGst:lConTrol     := ::oDbfAlbLFac:lConTrol
+
+
+            ::oDbfAlbLGst:nComAge      := ::oDbfAlbLFac:nComision
+            ::oDbfAlbLGst:nUniCaja     := ::oDbfAlbLFac:nCanEnt
+
+            ::oDbfAlbLGst:dFecha       := ::oDbfAlbLFac:dFecPed
+
+
+
+
+
+            ::oDbfAlbLGst:cCodPr1      := ::oDbfAlbLFac:cProp1
+            ::oDbfAlbLGst:cCodPr2      := ::oDbfAlbLFac:cProp2
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+            ::oDbfAlbLGst:Save()
+
+            ::aMtrIndices[ 8 ]:Set( ::oDbfAlbLFac:Recno() )
+
+            ::oDbfAlbLFac:Skip()
+
+         end
+
+      end
+
+
+
+
+
+      if ::aLgcIndices[ 9 ]
+
+
+
+         ::aMtrIndices[ 9 ]:SetTotal( ::oDbfFacTFac:LastRec() )
+
+         ::oDbfFacTFac:GoTop()
+         while !( ::oDbfFacTFac:eof() )
+
+            if ::oDbfFacTFac:cSerie == "A" .OR. ::oDbfFacTFac:cSerie == "B"
+
+               while ::oDbfFacTGst:Seek( ::oDbfFacTFac:cSerie + Str( ::oDbfFacTFac:nNumFac, 9 ) )
+                  ::oDbfFacTGst:Delete( .F. )
+               end
+
+               while ::oDbfFacLGst:Seek( ::oDbfFacTFac:cSerie + Str( ::oDbfFacTFac:nNumFac, 9 ) )
+                  ::oDbfFacLGst:Delete( .F. )
+               end
+
+               while ::oDbfFacPGst:Seek( ::oDbfFacTFac:cSerie + Str( ::oDbfFacTFac:nNumFac, 9 ) )
+                  ::oDbfFacPGst:Delete( .F. )
+               end
+
+               ::oDbfFacTGst:Append()
+
+               ::oDbfFacTGst:cSerie          := ::oDbfFacTFac:cSerie
+               ::oDbfFacTGst:nNumFac         := ::oDbfFacTFac:nNumFac
+               ::oDbfFacTGst:cSufFac         := Space( 2 )
+               ::oDbfFacTGst:cTurFac         := cCurSesion()
+               ::oDbfFacTGst:dFecFac         := ::oDbfFacTFac:dFecFac
+
+               if !Empty( ::oDbfFacTFac:cCodCli )
+                  ::oDbfFacTGst:cCodCli      := SpecialPadr( ::oDbfFacTFac:cCodCli, "0", RetNumCodCliEmp() )
+
+                  if ::oDbfCliGst:Seek( SpecialPadr( ::oDbfFacTFac:cCodCli, "0", RetNumCodCliEmp() ) )
+                     ::oDbfFacTGst:cNomCli   := ::oDbfCliGst:Titulo
+                     ::oDbfFacTGst:cDirCli   := ::oDbfCliGst:Domicilio
+                     ::oDbfFacTGst:cPobCli   := ::oDbfCliGst:Poblacion
+                     ::oDbfFacTGst:cPrvCli   := ::oDbfCliGst:Provincia
+                     ::oDbfFacTGst:cPosCli   := ::oDbfCliGst:CodPostal
+                     ::oDbfFacTGst:cDniCli   := ::oDbfCliGst:Nif
+                  end
+               else
+                  ::oDbfFacTGst:cCodCli      := Space( 12 )
+                  if ::oDbfFacDFac:Seek( ::oDbfFacTFac:cSerie + Str( ::oDbfFacTFac:nNumFac ) )
+                     ::oDbfFacTGst:cNomCli   := Left( ::oDbfFacDFac:cNomCli, 50 )
+                     ::oDbfFacTGst:cDirCli   := ::oDbfFacDFac:cDirCli
+                     ::oDbfFacTGst:cPobCli   := Left( ::oDbfFacDFac:cPobCli, 35 )
+                     if ::oDbfProvFac:Seek( ::oDbfFacDFac:cCodProv )
+                        ::oDbfFacTGst:cPrvCli  := ::oDbfProvFac:cNomProv
+                     end
+                     ::oDbfFacTGst:cPosCli   := Left( ::oDbfFacDFac:cPtlCli, 7 )
+                     ::oDbfFacTGst:cDniCli   := ::oDbfFacDFac:cDniCif
+                  end
+               end
+
+               ::oDbfFacTGst:cCodAlm         := ::oDbfFacTFac:cCodAlm
+               ::oDbfFacTGst:cCodCaj         := "000"
+
+
+
+               ::oDbfFacTGst:cCodAge         := SpecialPadr( ::oDbfFacTFac:cCodAge, "0" )
+
+
+
+               ::oDbfFacTGst:nPctComAge      := ::oDbfFacTFac:nComision
+               ::oDbfFacTGst:lLiquidada      := .F.
+               ::oDbfFacTGst:lConTab         := ::oDbfFacTFac:lConTab
+               ::oDbfFacTGst:dFecEnt         := ::oDbfFacTFac:dFecEnt
+               ::oDbfFacTGst:cSuFac          := ::oDbfFacTFac:cSuPed
+
+               ::oDbfFacTGst:cCondEnt        := Left( ::oDbfFacTFac:cCondEnt, 2 )
+
+               ::oDbfFacTGst:mObserv         := Left( ::oDbfFacTFac:cObsErv, 10 )
+               ::oDbfFacTGst:cCodPago        := ::oDbfFacTFac:cCodPago
+               ::oDbfFacTGst:nBulTos         := ::oDbfFacTFac:nBulTos
+               ::oDbfFacTGst:nPorTes         := ::oDbfFacTFac:nPorTes
+
+               ::oDbfFacTGst:cNumAlb         := ::oDbfFacTFac:cSerie + Str( ::oDbfFacTFac:nNumAlb, 9 )
+
+
+               ::oDbfFacTGst:nTipoFac        := ::oDbfFacTFac:nTipoFac
+               ::oDbfFacTGst:nDtoEsp         := ::oDbfFacTFac:nDtoEsp
+               ::oDbfFacTGst:nDpp            := ::oDbfFacTFac:nDpp
+
+
+
+
+
+
+
+
+
+               ::oDbfFacTGst:nTipoIva        := ::oDbfFacTFac:nTipoIva
+               ::oDbfFacTGst:nPorcIva        := ::oDbfFacTFac:nPorcIva
+               ::oDbfFacTGst:lRecargo        := ::oDbfFacTFac:lRecargo
+
+               ::oDbfFacTGst:lIvaInc         := ::oDbfFacTFac:lIvaIncl
+
+               ::oDbfFacTGst:cDivFac         := ::oDbfFacTFac:cCodDiv
+               ::oDbfFacTGst:nVdvFac         := 1
+
+
+
+
+
+
+
+
+
+
+               ::oDbfFacTGst:cCodTrn         := ::oDbfFacTFac:cCodTran
+
+
+
+
+
+
+
+               ::oDbfFacTGst:Save()
+
+            end
+
+         ::aMtrIndices[ 9 ]:Set( ::oDbfFacTFac:Recno() )
+
+         ::oDbfFacTFac:Skip()
+
+         end
+
+
+
+         ::aMtrIndices[ 9 ]:SetTotal( ::oDbfRecFac:LastRec() )
+
+         ::oDbfRecFac:GoTop()
+         while !( ::oDbfRecFac:eof() )
+
+            if ::oDbfRecFac:cSerie == "A" .OR. ::oDbfRecFac:cSerie == "B"
+
+               ::oDbfFacPGst:Append()
+
+               ::oDbfFacPGst:cSerie         := ::oDbfRecFac:cSerie
+               ::oDbfFacPGst:nNumFac        := ::oDbfRecFac:nNumFac
+               ::oDbfFacPGst:cSufFac        := Space( 2 )
+               ::oDbfFacPGst:nNumRec        := Val( ::oDbfRecFac:cContador )
+               ::oDbfFacPGst:cCodCaj        := "000"
+               ::oDbfFacPGst:cTurRec        := cCurSesion()
+               if !Empty( ::oDbfRecFac:cCodCli )
+                  ::oDbfFacPGst:cCodCli     := SpecialPadr( ::oDbfRecFac:cCodCli, "0", RetNumCodCliEmp() )
+               else
+                  ::oDbfFacPGst:cCodCli      := cDefCli()
+               end
+               ::oDbfFacPGst:dEntrada       := ::oDbfRecFac:dFecEmis
+               ::oDbfFacPGst:nImporte       := ::oDbfRecFac:nImporte
+
+               ::oDbfFacPGst:dPreCob        := ::oDbfRecFac:dFecExped
+
+               ::oDbfFacPGst:cDocPgo        := ::oDbfRecFac:cTipoDoc
+               ::oDbfFacPGst:lCobrado       := ( ::oDbfRecFac:nEstado == 2 )
+               ::oDbfFacPGst:cDivPgo        := ::oDbfRecFac:cCodDiv
+               ::oDbfFacPGst:nVdvPgo        := 1
+               ::oDbfFacPGst:lConPgo        := ::oDbfRecFac:lDocContab
+
+               ::oDbfFacPGst:nImpEur        := ::oDbfRecFac:nImporte
+               ::oDbfFacPGst:lImpEur        := .T.
+               ::oDbfFacPGst:nNumRem        := ::oDbfRecFac:nNumRem
+
+               ::oDbfFacPGst:cCtaRem        := ::oDbfRecFac:cCtaRem
+
+
+
+               ::oDbfFacPGst:dFecVto        := ::oDbfRecFac:dFecVcto
+
+
+
+
+
+               ::oDbfFacPGst:cTipRec        := Space(1)
+
+               ::oDbfFacPGst:Save()
+
+            end
+
+            ::aMtrIndices[ 9 ]:Set( ::oDbfRecFac:Recno() )
+
+            ::oDbfRecFac:Skip()
+
+         end
+
+
+
+         ::aMtrIndices[ 9 ]:SetTotal( ::oDbfFacLFac:LastRec() )
+
+         ::oDbfFacLFac:GoTop()
+         while !( ::oDbfFacLFac:eof() )
+
+            if ::oDbfFacLFac:cSerie == "A" .OR. ::oDbfFacLFac:cSerie == "B"
+
+               ::oDbfFacLGst:Append()
+
+               ::oDbfFacLGst:cSerie       := ::oDbfFacLFac:cSerie
+               ::oDbfFacLGst:nNumFac      := ::oDbfFacLFac:nNumFac
+               ::oDbfFacLGst:cSufFac      := Space( 2 )
+               ::oDbfFacLGst:cRef         := ::oDbfFacLFac:cRef
+               if Empty( ::oDbfFacLGst:cRef )
+                  ::oDbfFacLGst:mLngDes   := ::oDbfFacLFac:cDetalle
+               else
+                  ::oDbfFacLGst:cDetalle  := ::oDbfFacLFac:cDetalle
+               end
+               ::oDbfFacLGst:nPreUnit     := ::oDbfFacLFac:nPreUnit
+
+
+               ::oDbfFacLGst:nDto         := ::oDbfFacLFac:nDto
+
+
+               ::oDbfFacLGst:nIva         := ::oDbfFacLFac:nIva
+
+
+               ::oDbfFacLGst:lConTrol     := ::oDbfFacLFac:lConTrol
+
+
+               ::oDbfFacLGst:nComAge      := ::oDbfFacLFac:nComision
+               ::oDbfFacLGst:nUniCaja     := ::oDbfFacLFac:nCanEnt
+
+
+
+
+               ::oDbfFacLGst:dFecAlb      := ::oDbfFacLFac:dFecAlb
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+               ::oDbfFacLGst:Save()
+
+            end
+
+            ::aMtrIndices[ 9 ]:Set( ::oDbfFacLFac:Recno() )
+
+            ::oDbfFacLFac:Skip()
+
+         end
+
+      end
+
+
+
+
+
+      if ::aLgcIndices[ 17 ]
+
+         ::aMtrIndices[ 17 ]:SetTotal( ::oDbfFacTFac:LastRec() )
+
+         ::oDbfFacTFac:GoTop()
+         while !( ::oDbfFacTFac:eof() )
+
+            if ::oDbfFacTFac:cSerie == "R"
+
+               while ::oDbfFacRecTGst:Seek( ::oDbfFacTFac:cSerie + Str( ::oDbfFacTFac:nNumFac, 9 ) )
+                  ::oDbfFacRecTGst:Delete( .F. )
+               end
+
+               while ::oDbfFacRecLGst:Seek( ::oDbfFacTFac:cSerie + Str( ::oDbfFacTFac:nNumFac, 9 ) )
+                  ::oDbfFacRecLGst:Delete( .F. )
+               end
+
+               while ::oDbfFacPGst:Seek( ::oDbfFacTFac:cSerie + Str( ::oDbfFacTFac:nNumFac, 9 ) )
+                  ::oDbfFacPGst:Delete( .F. )
+               end
+
+               ::oDbfFacRecTGst:Append()
+
+               ::oDbfFacRecTGst:cSerie          := ::oDbfFacTFac:cSerie
+               ::oDbfFacRecTGst:nNumFac         := ::oDbfFacTFac:nNumFac
+               ::oDbfFacRecTGst:cSufFac         := Space( 2 )
+               ::oDbfFacRecTGst:cTurFac         := cCurSesion()
+               ::oDbfFacRecTGst:dFecFac         := ::oDbfFacTFac:dFecFac
+
+               if !Empty( ::oDbfFacTFac:cCodCli )
+                  ::oDbfFacRecTGst:cCodCli      := SpecialPadr( ::oDbfFacTFac:cCodCli, "0", RetNumCodCliEmp() )
+
+                  if ::oDbfCliGst:Seek( SpecialPadr( ::oDbfFacTFac:cCodCli, "0", RetNumCodCliEmp() ) )
+                     ::oDbfFacRecTGst:cNomCli   := ::oDbfCliGst:Titulo
+                     ::oDbfFacRecTGst:cDirCli   := ::oDbfCliGst:Domicilio
+                     ::oDbfFacRecTGst:cPobCli   := ::oDbfCliGst:Poblacion
+                     ::oDbfFacRecTGst:cPrvCli   := ::oDbfCliGst:Provincia
+                     ::oDbfFacRecTGst:cPosCli   := ::oDbfCliGst:CodPostal
+                     ::oDbfFacRecTGst:cDniCli   := ::oDbfCliGst:Nif
+                  end
+               else
+                  ::oDbfFacRecTGst:cCodCli      := Space( 12 )
+                  if ::oDbfFacDFac:Seek( ::oDbfFacTFac:cSerie + Str( ::oDbfFacTFac:nNumFac ) )
+                     ::oDbfFacRecTGst:cNomCli   := Left( ::oDbfFacDFac:cNomCli, 50 )
+                     ::oDbfFacRecTGst:cDirCli   := ::oDbfFacDFac:cDirCli
+                     ::oDbfFacRecTGst:cPobCli   := Left( ::oDbfFacDFac:cPobCli, 35 )
+                     if ::oDbfProvFac:Seek( ::oDbfFacDFac:cCodProv )
+                        ::oDbfFacRecTGst:cPrvCli  := ::oDbfProvFac:cNomProv
+                     end
+                     ::oDbfFacRecTGst:cPosCli   := Left( ::oDbfFacDFac:cPtlCli, 7 )
+                     ::oDbfFacRecTGst:cDniCli   := ::oDbfFacDFac:cDniCif
+                  end
+               end
+
+               ::oDbfFacRecTGst:cCodAlm         := ::oDbfFacTFac:cCodAlm
+               ::oDbfFacRecTGst:cCodCaj         := "000"
+               ::oDbfFacRecTGst:cCodAge         := SpecialPadr( ::oDbfFacTFac:cCodAge, "0" )
+               ::oDbfFacRecTGst:nPctComAge      := ::oDbfFacTFac:nComision
+               ::oDbfFacRecTGst:lLiquidada      := .F.
+               ::oDbfFacRecTGst:lConTab         := ::oDbfFacTFac:lConTab
+               ::oDbfFacRecTGst:dFecEnt         := ::oDbfFacTFac:dFecEnt
+               ::oDbfFacRecTGst:cSuFac          := ::oDbfFacTFac:cSuPed
+               ::oDbfFacRecTGst:cCondEnt        := Left( ::oDbfFacTFac:cCondEnt, 2 )
+               ::oDbfFacRecTGst:mObserv         := Left( ::oDbfFacTFac:cObsErv, 10 )
+               ::oDbfFacRecTGst:cCodPago        := ::oDbfFacTFac:cCodPago
+               ::oDbfFacRecTGst:nBulTos         := ::oDbfFacTFac:nBulTos
+               ::oDbfFacRecTGst:nPorTes         := ::oDbfFacTFac:nPorTes
+               ::oDbfFacRecTGst:nTipoFac        := ::oDbfFacTFac:nTipoFac
+               ::oDbfFacRecTGst:nDtoEsp         := ::oDbfFacTFac:nDtoEsp
+               ::oDbfFacRecTGst:nDpp            := ::oDbfFacTFac:nDpp
+               ::oDbfFacRecTGst:nTipoIva        := ::oDbfFacTFac:nTipoIva
+               ::oDbfFacRecTGst:nPorcIva        := ::oDbfFacTFac:nPorcIva
+               ::oDbfFacRecTGst:lRecargo        := ::oDbfFacTFac:lRecargo
+               ::oDbfFacRecTGst:lIvaInc         := ::oDbfFacTFac:lIvaIncl
+               ::oDbfFacRecTGst:cDivFac         := ::oDbfFacTFac:cCodDiv
+               ::oDbfFacRecTGst:nVdvFac         := 1
+               ::oDbfFacRecTGst:cCodTrn         := ::oDbfFacTFac:cCodTran
+
+               ::oDbfFacRecTGst:cNumFac         := SubStr( ::oDbfFacTFac:cNumFacRec, 1, 1 ) +  SubStr( ::oDbfFacTFac:cNumFacRec, 3, 9 )
+
+               ::oDbfFacRecTGst:Save()
+
+            end
+
+         ::aMtrIndices[ 17 ]:Set( ::oDbfFacTFac:Recno() )
+
+         ::oDbfFacTFac:Skip()
+
+         end
+
+         ::aMtrIndices[ 17 ]:SetTotal( ::oDbfRecFac:LastRec() )
+
+         ::oDbfRecFac:GoTop()
+         while !( ::oDbfRecFac:eof() )
+
+            if ::oDbfRecFac:cSerie == "R"
+
+               ::oDbfFacPGst:Append()
+
+               ::oDbfFacPGst:cSerie         := ::oDbfRecFac:cSerie
+               ::oDbfFacPGst:nNumFac        := ::oDbfRecFac:nNumFac
+               ::oDbfFacPGst:cSufFac        := Space( 2 )
+               ::oDbfFacPGst:nNumRec        := Val( ::oDbfRecFac:cContador )
+               ::oDbfFacPGst:cCodCaj        := "000"
+               ::oDbfFacPGst:cTurRec        := cCurSesion()
+               if !Empty( ::oDbfRecFac:cCodCli )
+                  ::oDbfFacPGst:cCodCli     := SpecialPadr( ::oDbfRecFac:cCodCli, "0", RetNumCodCliEmp() )
+               else
+                  ::oDbfFacPGst:cCodCli      := cDefCli()
+               end
+               ::oDbfFacPGst:dEntrada       := ::oDbfRecFac:dFecEmis
+               ::oDbfFacPGst:nImporte       := ::oDbfRecFac:nImporte
+               ::oDbfFacPGst:dPreCob        := ::oDbfRecFac:dFecExped
+               ::oDbfFacPGst:cDocPgo        := ::oDbfRecFac:cTipoDoc
+               ::oDbfFacPGst:lCobrado       := ( ::oDbfRecFac:nEstado == 2 )
+               ::oDbfFacPGst:cDivPgo        := ::oDbfRecFac:cCodDiv
+               ::oDbfFacPGst:nVdvPgo        := 1
+               ::oDbfFacPGst:lConPgo        := ::oDbfRecFac:lDocContab
+               ::oDbfFacPGst:nImpEur        := ::oDbfRecFac:nImporte
+               ::oDbfFacPGst:lImpEur        := .T.
+               ::oDbfFacPGst:nNumRem        := ::oDbfRecFac:nNumRem
+               ::oDbfFacPGst:cCtaRem        := ::oDbfRecFac:cCtaRem
+               ::oDbfFacPGst:dFecVto        := ::oDbfRecFac:dFecVcto
+               ::oDbfFacPGst:cTipRec        := "R"
+
+               ::oDbfFacPGst:Save()
+
+            end
+
+            ::aMtrIndices[ 17 ]:Set( ::oDbfRecFac:Recno() )
+
+            ::oDbfRecFac:Skip()
+
+         end
+
+         ::aMtrIndices[ 17 ]:SetTotal( ::oDbfFacLFac:LastRec() )
+
+         ::oDbfFacLFac:GoTop()
+         while !( ::oDbfFacLFac:eof() )
+
+            if ::oDbfFacLFac:cSerie == "R"
+
+               ::oDbfFacRecLGst:Append()
+
+               ::oDbfFacRecLGst:cSerie       := ::oDbfFacLFac:cSerie
+               ::oDbfFacRecLGst:nNumFac      := ::oDbfFacLFac:nNumFac
+               ::oDbfFacRecLGst:cSufFac      := Space( 2 )
+               ::oDbfFacRecLGst:cRef         := ::oDbfFacLFac:cRef
+               if Empty( ::oDbfFacRecLGst:cRef )
+                  ::oDbfFacRecLGst:mLngDes   := ::oDbfFacLFac:cDetalle
+               else
+                  ::oDbfFacRecLGst:cDetalle  := ::oDbfFacLFac:cDetalle
+               end
+               ::oDbfFacRecLGst:nPreUnit     := ::oDbfFacLFac:nPreUnit
+               ::oDbfFacRecLGst:nDto         := ::oDbfFacLFac:nDto
+               ::oDbfFacRecLGst:nIva         := ::oDbfFacLFac:nIva
+               ::oDbfFacRecLGst:lConTrol     := ::oDbfFacLFac:lConTrol
+               ::oDbfFacRecLGst:nComAge      := ::oDbfFacLFac:nComision
+               ::oDbfFacRecLGst:nUniCaja     := ::oDbfFacLFac:nCanEnt
+               ::oDbfFacRecLGst:dFecAlb      := ::oDbfFacLFac:dFecAlb
+
+               ::oDbfFacRecLGst:Save()
+
+            end
+
+            ::aMtrIndices[ 17 ]:Set( ::oDbfFacLFac:Recno() )
+
+            ::oDbfFacLFac:Skip()
+
+         end
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+      end
+
+
+
+
+
+      if ::aLgcIndices[ 10 ]
+
+
+
+         while !::oDbfTikTGst:Eof()
+            ::oDbfTikTGst:Delete( .F. )
+            ::oDbfTikTGst:Skip()
+         end
+
+         while !::oDbfTikLGst:Eof()
+            ::oDbfTikLGst:Delete( .F. )
+            ::oDbfTikLGst:Skip()
+         end
+
+         while !::oDbfTikPGst:Eof()
+            ::oDbfTikPGst:Delete( .F. )
+            ::oDbfTikPGst:Skip()
+         end
+
+         ::aMtrIndices[ 10 ]:SetTotal( ::oDbfTikTFac:LastRec() )
+
+         ::oDbfTikTFac:GoTop()
+         while !( ::oDbfTikTFac:eof() )
+
+            if ::oDbfTikTFac:nEstado == 3
+
+            ::oDbfTikTGst:Append()
+
+            ::oDbfTikTGst:cSerTik      := "A"
+            ::oDbfTikTGst:cNumTik      := Str( ::oDbfTikTFac:nNumTicket, 10 )
+            ::oDbfTikTGst:cSufTik      := RetSufEmp()
+            ::oDbfTikTGst:cTipTik      := "6"
+            ::oDbfTikTGst:cTurTik      := cCurSesion()
+            ::oDbfTikTGst:dFecTik      := ::oDbfTikTFac:dFecha
+            ::oDbfTikTGst:cHorTik      := ::oDbfTikTFac:cTime
+
+            ::oDbfTikTGst:cNcjTik      := "000"
+            ::oDbfTikTGst:cAlmTik      := ::oDbfTikTFac:cCodAlm
+            ::oDbfTikTGst:cCliTik      := SpecialPadr( ::oDbfTikTFac:cCodCli, "0", RetNumCodCliEmp() )
+            ::oDbfTikTGst:nTarifa      := 1
+            if ::oDbfCliGst:Seek( SpecialPadr( ::oDbfTikTFac:cCodCli, "0", RetNumCodCliEmp() ) )
+               ::oDbfTikTGst:cNomTik   := ::oDbfCliGst:Titulo
+               ::oDbfTikTGst:cDirCli   := ::oDbfCliGst:Domicilio
+               ::oDbfTikTGst:cPobCli   := ::oDbfCliGst:Poblacion
+               ::oDbfTikTGst:cPrvCli   := ::oDbfCliGst:Provincia
+               ::oDbfTikTGst:cPosCli   := ::oDbfCliGst:CodPostal
+               ::oDbfTikTGst:cDniCli   := ::oDbfCliGst:Nif
+            end
+            ::oDbfTikTGst:cFpgTik      := ::oDbfTikTFac:cCodPago
+
+
+            ::oDbfTikTGst:cDivTik      := ::oDbfTikTFac:cCodDiv
+            ::oDbfTikTGst:nVdvTik      := 1
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+            ::oDbfTikTGst:Save()
+
+            ::oDbfTikLGst:Append()
+
+            ::oDbfTikLGst:cSerTil      := "A"
+            ::oDbfTikLGst:cNumTil      := Str( ::oDbfTikTFac:nNumTicket, 10 )
+            ::oDbfTikLGst:cSufTil      := RetSufEmp()
+            ::oDbfTikLGst:cCbaTil      := ""
+            ::oDbfTikLGst:cNomTil      := "Vale"
+            ::oDbfTikLGst:nPvpTil      := ::oDbfTikTFac:nTotal
+            ::oDbfTikLGst:nUntTil      := 1
+            ::oDbfTikLGst:nIvaTil      := 0
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+            ::oDbfTikLGst:Save()
+
+
+
+
+
+            ::oDbfTikPGst:Append()
+
+            ::oDbfTikPGst:cSerTik      := "A"
+            ::oDbfTikPGst:cNumTik      := Str( ::oDbfTikTFac:nNumTicket, 10 )
+            ::oDbfTikPGst:cSufTik      := RetSufEmp()
+            ::oDbfTikPGst:nNumRec      := 1
+            ::oDbfTikPGst:cCodCaj      := "000"
+            ::oDbfTikPGst:dPgoTik      := ::oDbfTikTFac:dFecha
+            ::oDbfTikPGst:nImpTik      := ::oDbfTikTFac:nTotal
+            ::oDbfTikPGst:nDevTik      := 0
+            ::oDbfTikPGst:cPgdPor      := Space( 50 )
+            ::oDbfTikPGst:cDivPgo      := ::oDbfTikTFac:cCodDiv
+            ::oDbfTikPGst:nVdvPgo      := 1
+            ::oDbfTikPGst:lConPgo      := .T.
+            ::oDbfTikPGst:cCtaPgo      := Space( 12 )
+            ::oDbfTikPGst:lCloPgo      := .T.
+            ::oDbfTikPGst:lSndPgo      := .F.
+            ::oDbfTikPGst:cTurPgo      := cCurSesion()
+            ::oDbfTikPGst:cCtaRec      := Space( 12 )
+
+            ::oDbfTikPGst:Save()
+
+            ::aMtrIndices[ 10 ]:Set( ::oDbfTikTFac:Recno() )
+
+            end
+
+            ::oDbfTikTFac:Skip()
+
+         end
+
+
+
+
+
+         ::aMtrIndices[ 10 ]:SetTotal( ::oDbfHisTFac:LastRec() )
+
+         SysRefresh()
+
+         ::oDbfHisTFac:GoTop()
+         while !( ::oDbfHisTFac:eof() )
+
+            ::oDbfTikTGst:Append()
+
+            ::oDbfTikTGst:cSerTik      := ::oDbfHisTFac:cSerie
+            ::oDbfTikTGst:cNumTik      := Str( ::oDbfHisTFac:nNumTicket, 10 )
+            ::oDbfTikTGst:cSufTik      := RetSufEmp()
+            ::oDbfTikTGst:cTipTik      := "1"
+            ::oDbfTikTGst:cTurTik      := cCurSesion()
+            ::oDbfTikTGst:dFecTik      := ::oDbfHisTFac:dFecha
+            ::oDbfTikTGst:cHorTik      := ::oDbfHisTFac:cTime
+
+            ::oDbfTikTGst:cNcjTik      := "000"
+            ::oDbfTikTGst:cAlmTik      := ::oDbfHisTFac:cCodAlm
+            ::oDbfTikTGst:cCliTik      := SpecialPadr( ::oDbfHisTFac:cCodCli, "0", RetNumCodCliEmp() )
+            ::oDbfTikTGst:nTarifa      := 1
+            if ::oDbfCliGst:Seek( SpecialPadr( ::oDbfHisTFac:cCodCli, "0", RetNumCodCliEmp() ) )
+               ::oDbfTikTGst:cNomTik   := ::oDbfCliGst:Titulo
+               ::oDbfTikTGst:cDirCli   := ::oDbfCliGst:Domicilio
+               ::oDbfTikTGst:cPobCli   := ::oDbfCliGst:Poblacion
+               ::oDbfTikTGst:cPrvCli   := ::oDbfCliGst:Provincia
+               ::oDbfTikTGst:cPosCli   := ::oDbfCliGst:CodPostal
+               ::oDbfTikTGst:cDniCli   := ::oDbfCliGst:Nif
+            end
+            ::oDbfTikTGst:cFpgTik      := ::oDbfHisTFac:cCodPago
+            if ::oDbfHisTFac:FieldPos( "cCodDiv" ) <> 0
+               ::oDbfTikTGst:cDivTik   := ::oDbfHisTFac:cCodDiv
+               ::oDbfTikTGst:nVdvTik   := 1
+            else
+               ::oDbfTikTGst:cDivTik   := cDivEmp()
+               ::oDbfTikTGst:nVdvTik   := 1
+            end
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+            ::oDbfTikTGst:Save()
+
+
+
+
+
+            ::oDbfTikPGst:Append()
+
+            ::oDbfTikPGst:cSerTik      := ::oDbfHisTFac:cSerie
+            ::oDbfTikPGst:cNumTik      := Str( ::oDbfHisTFac:nNumTicket, 10 )
+            ::oDbfTikPGst:cSufTik      := RetSufEmp()
+            ::oDbfTikPGst:nNumRec      := 1
+            ::oDbfTikPGst:cCodCaj      := "000"
+            ::oDbfTikPGst:dPgoTik      := ::oDbfHisTFac:dFecha
+            ::oDbfTikPGst:nImpTik      := ::oDbfHisTFac:nEntrega
+            ::oDbfTikPGst:nDevTik      := 0
+            ::oDbfTikPGst:cPgdPor      := Space( 50 )
+
+            if ::oDbfHisTFac:FieldPos( "cCodDiv" ) <> 0
+               ::oDbfTikPGst:cDivPgo   := ::oDbfHisTFac:cCodDiv
+               ::oDbfTikPGst:nVdvPgo   := 1
+            else
+               ::oDbfTikPGst:cDivPgo   := cDivEmp()
+               ::oDbfTikPGst:nVdvPgo   := 1
+            end
+
+            ::oDbfTikPGst:lConPgo      := .T.
+            ::oDbfTikPGst:cCtaPgo      := Space( 12 )
+            ::oDbfTikPGst:lCloPgo      := .T.
+            ::oDbfTikPGst:lSndPgo      := .F.
+            ::oDbfTikPGst:cTurPgo      := cCurSesion()
+            ::oDbfTikPGst:cCtaRec      := Space( 12 )
+
+            ::oDbfTikPGst:Save()
+
+            ::oDbfHisTFac:Skip()
+
+            ::aMtrIndices[ 10 ]:Set( ::oDbfHisTFac:OrdKeyNo() )
+
+         end
+
+         ::aMtrIndices[ 10 ]:SetTotal( ::oDbfHisLFac:LastRec() )
+
+         SysRefresh()
+
+         ::oDbfHisLFac:GoTop()
+         while !( ::oDbfHisLFac:eof() )
+
+
+
+
+
+            ::oDbfTikLGst:Append()
+
+            ::oDbfTikLGst:cSerTil      := ::oDbfHisLFac:cSerie
+            ::oDbfTikLGst:cNumTil      := Str( ::oDbfHisLFac:nNumTicket, 10 )
+            ::oDbfTikLGst:cSufTil      := RetSufEmp()
+            ::oDbfTikLGst:cCbaTil      := ::oDbfHisLFac:cRef
+            ::oDbfTikLGst:cNomTil      := ::oDbfHisLFac:cDetalle
+            ::oDbfTikLGst:nPvpTil      := ::oDbfHisLFac:nPreUnit
+            ::oDbfTikLGst:nUntTil      := ::oDbfHisLFac:nCant
+            ::oDbfTikLGst:nIvaTil      := ::oDbfHisLFac:nIva
+            ::oDbfTikLGst:nDtoLin      := ::oDbfHisLFac:nDto
+            ::oDbfTikLGst:nDtoDiv      := ::oDbfHisLFac:nDtoLin
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+            ::oDbfTikLGst:Save()
+
+            ::oDbfHisLFac:Skip()
+
+            ::aMtrIndices[ 10 ]:Set( ::oDbfHisLFac:OrdKeyNo() )
+
+         end
+
+      end
+
+
+
+      if ::aLgcIndices[ 14 ]
+
+         ::aMtrIndices[ 14 ]:SetTotal( ::oDbfTrnFac:LastRec() )
+
+         SysRefresh()
+
+         ::oDbfTrnFac:GoTop()
+         while !( ::oDbfTrnFac:Eof() )
+
+            ::oDbfTrnGst:Append()
+
+            ::oDbfTrnGst:cCodTrn    := ::oDbfTrnFac:cCodTran
+            ::oDbfTrnGst:cNomTrn    := ::oDbfTrnFac:cNomTran
+            ::oDbfTrnGst:cDirTrn    := ::oDbfTrnFac:cDirTran
+            ::oDbfTrnGst:cLocTrn    := ::oDbfTrnFac:cPobTran
+            ::oDbfTrnGst:cCdpTrn    := ::oDbfTrnFac:cPtlTran
+            ::oDbfTrnGst:cTlfTrn    := ::oDbfTrnFac:cTlfTran
+            ::oDbfTrnGst:cFaxTrn    := ::oDbfTrnFac:cFaxTran
+
+            ::oDbfTrnGst:Save()
+
+            ::oDbfTrnFac:Skip()
+
+            ::aMtrIndices[ 14 ]:Set( ::oDbfTrnFac:OrdKeyNo() )
+
+         end
+
+      end
+
+
+
+      if .F.
+
+
+
+         ::oDbfMovTFac:GoTop()
+         while !( ::oDbfMovTFac:eof() )
+
+            ::oDbfMovTGst:Append()
+
+            nCounter                := Val( Left( ::oDbfMovTFac:cHora, 2 ) + Right( ::oDbfMovTFac:cHora, 2 ) )
+
+            ::oDbfMovTGst:nNumRem   := nCounter
+
+
+            ::oDbfMovTGst:nTipMov   := 1
+
+            ::oDbfMovTGst:cCodUsr   := cCurUsr()
+
+            ::oDbfMovTGst:dFecRem   := ::oDbfMovTFac:dFecha
+            ::oDbfMovTGst:cAlmOrg   := ::oDbfMovTFac:cAlmOri
+            ::oDbfMovTGst:cAlmDes   := ::oDbfMovTFac:cAlmDes
+            ::oDbfMovTGst:cCodDiv   := cDivEmp()
+            ::oDbfMovTGst:nVdvDiv   := 1
+            ::oDbfMovTGst:cComMov   := ::oDbfMovTFac:cMotivo
+            ::oDbfMovTGst:cCodAge   := ::oDbfMovTFac:cCodAge
+
+               ::oDbfMovLFac:GoTop()
+               while !::oDbfMovLFac:Eof()
+
+                  if ::oDbfMovLFac:cHora + dtos( ::oDbfMovLFac:dFecha ) == ::oDbfMovTFac:cHora + dtos( ::oDbfMovTFac:dFecha )
+
+                     ::oDbfMovLGst:Append()
+
+                     ::oDbfMovLGst:dFecMov   := ::oDbfMovLFac:dFecha
+                     ::oDbfMovLGst:nTipMov   := 1
+                     ::oDbfMovLGst:cAliMov   := ::oDbfMovTFac:cAlmOri
+                     ::oDbfMovLGst:cAloMov   := ::oDbfMovTFac:cAlmDes
+                     ::oDbfMovLGst:cRefMov   := ::oDbfMovLFac:cRef
+
+
+
+
+
+
+                     ::oDbfMovLGst:nUndMov   := ::oDbfMovLFac:nCanEnt
+
+
+                     ::oDbfMovLGst:nPreDiv   := ::oDbfMovLFac:nPreUnit
+                     ::oDbfMovLGst:cUsrMov   := cCurUsr()
+
+                     ::oDbfMovLGst:nNumRem   := nCounter
+
+
+
+                     ::oDbfMovLGst:Save()
+
+                  end
+
+                  ::oDbfMovLFac:Skip()
+
+            end
+
+            ::oDbfMovTGst:Save()
+
+            ::oDbfMovTFac:Skip()
+
+            SysRefresh()
+
+         end
+
+      end
+
+
+
+      if ::aLgcIndices[ 15 ]
+
+
+
+         ::aMtrIndices[ 15 ]:SetTotal( ::oDbfAlpTFac:LastRec() )
+
+         ::oDbfAlpTFac:GoTop()
+         while !( ::oDbfAlpTFac:eof() )
+
+
+
+            while ::oDbfAlpTGst:Seek( ::oDbfAlpTFac:cSerie + Str( ::oDbfAlpTFac:nNumAlb, 9 ) )
+               ::oDbfAlpTGst:Delete( .F. )
+            end
+
+            while ::oDbfAlpLGst:Seek( ::oDbfAlpTFac:cSerie + Str( ::oDbfAlpTFac:nNumAlb, 9 ) )
+               ::oDbfAlpLGst:Delete( .F. )
+            end
+
+            ::oDbfAlpTGst:Append()
+
+            ::oDbfAlpTGst:cSerAlb      := ::oDbfAlpTFac:cSerie
+            ::oDbfAlpTGst:nNumAlb      := ::oDbfAlpTFac:nNumAlb
+            ::oDbfAlpTGst:cSufAlb      := Space( 2 )
+            ::oDbfAlpTGst:cTurAlb      := cCurSesion()
+            ::oDbfAlpTGst:dFecAlb      := ::oDbfAlpTFac:dFecAlb
+            ::oDbfAlpTGst:cCodAlm      := ::oDbfAlpTFac:cCodAlm
+            ::oDbfAlpTGst:cCodCaj      := cDefCaj()
+            ::oDbfAlpTGst:cCodPrv      := SpecialPadr( ::oDbfAlpTFac:cCodPro, "0", RetNumCodPrvEmp() )
+            if ::oDbfPrvGst:Seek( SpecialPadr( ::oDbfAlpTFac:cCodPro, "0", RetNumCodPrvEmp() ) )
+               ::oDbfAlpTGst:cNomPrv      := ::oDbfPrvGst:Titulo
+               ::oDbfAlpTGst:cDirPrv      := ::oDbfPrvGst:Domicilio
+               ::oDbfAlpTGst:cPobPrv      := ::oDbfPrvGst:Poblacion
+               ::oDbfAlpTGst:cProPrv      := ::oDbfPrvGst:Provincia
+               ::oDbfAlpTGst:cPosPrv      := ::oDbfPrvGst:CodPostal
+               ::oDbfAlpTGst:cDniPrv      := ::oDbfPrvGst:Nif
+            end
+            ::oDbfAlpTGst:dFecEnt      := ::oDbfAlpTFac:dFecEnt
+            ::oDbfAlpTGst:cSuAlb       := ::oDbfAlpTFac:SuAlbaran
+            ::oDbfAlpTGst:cCodPgo      := ::oDbfAlpTFac:cCodPago
+            ::oDbfAlpTGst:nPortes      := ::oDbfAlpTFac:nPortes
+            ::oDbfAlpTGst:lFacturado   := ::oDbfAlpTFac:lFacturado
+            ::oDbfAlpTGst:cNumFac      := ::oDbfAlpTFac:cFactura
+            ::oDbfAlpTGst:cDivAlb      := ::oDbfAlpTFac:cCodDiv
+            ::oDbfAlpTGst:nVdvAlb      := ::oDbfAlpTFac:nValDiv
+            ::oDbfAlpTGst:lSndDoc      := .F.
+            ::oDbfAlpTGst:cCodUsr      := cCurUsr()
+            ::oDbfAlpTGst:dFecChg      := GetSysDate()
+            ::oDbfAlpTGst:cTimChg      := Time()
+
+            ::oDbfAlpTGst:Save()
+
+         ::aMtrIndices[ 15 ]:Set( ::oDbfAlpTFac:Recno() )
+
+         ::oDbfAlpTFac:Skip()
+
+         end
+
+
+
+         ::aMtrIndices[ 15 ]:SetTotal( ::oDbfAlpLFac:LastRec() )
+
+         ::oDbfAlpLFac:GoTop()
+         while !( ::oDbfAlpLFac:eof() )
+
+            ::oDbfAlpLGst:Append()
+
+
+
+
+            ::oDbfAlpTGst:GoTop()
+
+            while !::oDbfAlpTGst:Eof()
+
+               if ::oDbfAlpTGst:nNumAlb == ::oDbfAlpLFac:nNumAlb
+                  ::oDbfAlpLGst:cSerAlb      := ::oDbfAlpTGst:cSerAlb
+               end
+
+               ::oDbfAlpTGst:Skip()
+
+            end
+
+            ::oDbfAlpLGst:nNumAlb      := ::oDbfAlpLFac:nNumAlb
+            ::oDbfAlpLGst:cSufAlb      := Space( 2 )
+            ::oDbfAlpLGst:cRef         := ::oDbfAlpLFac:cRef
+            ::oDbfAlpLGst:cDetalle     := ::oDbfAlpLFac:cDetalle
+            ::oDbfAlpLGst:nIva         := ::oDbfAlpLFac:nIvaServ
+            ::oDbfAlpLGst:nUniCaja     := ::oDbfAlpLFac:nCanEnt
+            ::oDbfAlpLGst:nCanEnt      := ::oDbfAlpLFac:nUnidades
+            ::oDbfAlpLGst:nPreDiv      := ::oDbfAlpLFac:nPreDiv
+            ::oDbfAlpLGst:nDtoLin      := ::oDbfAlpLFac:nDto
+            ::oDbfAlpLGst:nNumLin      := ::oDbfAlpLFac:nLinea
+            ::oDbfAlpLGst:lControl     := ::oDbfAlpLFac:lControl
+
+            ::oDbfAlpLGst:Save()
+
+            ::aMtrIndices[ 15 ]:Set( ::oDbfAlpLFac:Recno() )
+
+            ::oDbfAlpLFac:Skip()
+
+         end
+
+      end
+
+
+
+
+
+      if ::aLgcIndices[ 16 ]
+
+
+
+         ::aMtrIndices[ 16 ]:SetTotal( ::oDbfFapTFac:LastRec() )
+
+         ::oDbfFapTFac:GoTop()
+         while !( ::oDbfFapTFac:eof() )
+
+
+
+            while ::oDbfFapTGst:Seek( ::oDbfFapTFac:cSerie + Str( ::oDbfFapTFac:nNumFac, 9 ) )
+               ::oDbfFapTGst:Delete( .F. )
+            end
+
+            while ::oDbfFapLGst:Seek( ::oDbfFapTFac:cSerie + Str( ::oDbfFapTFac:nNumFac, 9 ) )
+               ::oDbfFapLGst:Delete( .F. )
+            end
+
+            while ::oDbfFapPGst:Seek( ::oDbfFapTFac:cSerie + Str( ::oDbfFapTFac:nNumFac, 9 ) )
+               ::oDbfFapPGst:Delete( .F. )
+            end
+
+            ::oDbfFapTGst:Append()
+
+            ::oDbfFapTGst:cSerFac    := ::oDbfFapTFac:cSerie
+            ::oDbfFapTGst:nNumFac    := ::oDbfFapTFac:nNumFac
+            ::oDbfFapTGst:cSufFac    := Space( 2 )
+            ::oDbfFapTGst:cTurFac    := cCurSesion()
+            ::oDbfFapTGst:dFecFac    := ::oDbfFapTFac:dFecFac
+            ::oDbfFapTGst:cCodAlm    := ::oDbfFapTFac:cCodAlm
+            ::oDbfFapTGst:cCodCaj    := cDefCaj()
+            ::oDbfFapTGst:cCodPrv    := SpecialPadr( ::oDbfFapTFac:cCodPro, "0", RetNumCodPrvEmp() )
+            if ::oDbfPrvGst:Seek( SpecialPadr( ::oDbfFapTFac:cCodPro, "0", RetNumCodPrvEmp() ) )
+               ::oDbfFapTGst:cNomPrv      := ::oDbfPrvGst:Titulo
+               ::oDbfFapTGst:cDirPrv      := ::oDbfPrvGst:Domicilio
+               ::oDbfFapTGst:cPobPrv      := ::oDbfPrvGst:Poblacion
+               ::oDbfFapTGst:cProvProv    := ::oDbfPrvGst:Provincia
+               ::oDbfFapTGst:cPosPrv      := ::oDbfPrvGst:CodPostal
+               ::oDbfFapTGst:cDniPrv      := ::oDbfPrvGst:Nif
+            end
+            ::oDbfFapTGst:lConTab    := ::oDbfFapTFac:lContab
+            ::oDbfFapTGst:dFecEnt    := ::oDbfFapTFac:dFecEnt
+            ::oDbfFapTGst:cSuPed     := ::oDbfFapTFac:cSuPed
+            ::oDbfFapTGst:cConDent   := ::oDbfFapTFac:cCondEnt
+            ::oDbfFapTGst:cExPed     := ::oDbfFapTFac:cExPed
+            ::oDbfFapTGst:cObserv    := ::oDbfFapTFac:cObserv
+            ::oDbfFapTGst:cCodPago   := ::oDbfFapTFac:cCodPago
+            ::oDbfFapTGst:nBultos    := ::oDbfFapTFac:nBultos
+            ::oDbfFapTGst:nPortes    := ::oDbfFapTFac:nPortes
+            ::oDbfFapTGst:lLiquidada := .F.
+            ::oDbfFapTGst:cNumAlb    := ::oDbfFapTFac:cSerie + Str( ::oDbfFapTFac:nNumAlb, 9 )
+            ::oDbfFapTGst:cSufAlb    := Space( 2 )
+            ::oDbfFapTGst:cDtoEsp    := Padr( "General", 50 )
+            ::oDbfFapTGst:nDtoEsp    := ::oDbfFapTFac:nDtoEsp
+            ::oDbfFapTGst:cDpp       := Padr( "Pronto pago", 50 )
+            ::oDbfFapTGst:nDpp       := ::oDbfFapTFac:nDpp
+            ::oDbfFapTGst:lRecargo   := ::oDbfFapTFac:lRecargo
+            ::oDbfFapTGst:nIrpf      := ::oDbfFapTFac:nIrpf
+            ::oDbfFapTGst:cDivFac    := ::oDbfFapTFac:cCodDiv
+            ::oDbfFapTGst:nVdvFac    := ::oDbfFapTFac:nValDiv
+            ::oDbfFapTGst:lSndDoc    := .F.
+            ::oDbfFapTGst:cCodUsr    := cCurUsr()
+            ::oDbfFapTGst:dFecChg    := GetSysDate()
+            ::oDbfFapTGst:cTimChg    := Time()
+
+            ::oDbfFapTGst:Save()
+
+         ::aMtrIndices[ 16 ]:Set( ::oDbfFapTFac:Recno() )
+
+         ::oDbfFapTFac:Skip()
+
+         end
+
+
+
+         ::oDbfFapPFac:GoTop()
+         while !( ::oDbfFapPFac:eof() )
+
+            ::oDbfFapPGst:Append()
+
+            ::oDbfFapPGst:cSerFac   := ::oDbfFapPFac:cSerie
+            ::oDbfFapPGst:nNumFac   := ::oDbfFapPFac:nNumFac
+            ::oDbfFapPGst:cSufFac   := Space( 2 )
+            ::oDbfFapPGst:nNumRec   := Val( ::oDbfFapPFac:cContador )
+            ::oDbfFapPGst:cCodCaj   := cDefCaj()
+            ::oDbfFapPGst:cCodPrv   := SpecialPadr( ::oDbfFapPFac:cCodPro, "0", RetNumCodPrvEmp() )
+            ::oDbfFapPGst:dEntrada  := ::oDbfFapPFac:dFecExped
+            ::oDbfFapPGst:nImporte  := ::oDbfFapPFac:nImporte
+            ::oDbfFapPGst:dPreCob   := ::oDbfFapPFac:dFecVcto
+            ::oDbfFapPGst:lCobrado  := ( ::oDbfFapPFac:nEstado == 2 )
+            ::oDbfFapPGst:lConPgo   := ::oDbfFapPFac:lDocContab
+            ::oDbfFapPGst:cDivPgo   := ::oDbfFapPFac:cCodDiv
+            ::oDbfFapPGst:nVdvPgo   := ::oDbfFapPFac:nValDiv
+            ::oDbfFapPGst:dFecVto   := ::oDbfFapPFac:dFecVcto
+            ::oDbfFapPGst:cCodUsr   := cCurUsr()
+            ::oDbfFapPGst:dFecChg   := GetSysDate()
+            ::oDbfFapPGst:cTimChg   := Time()
+
+            ::oDbfFapPGst:Save()
+
+         ::aMtrIndices[ 16 ]:Set( ::oDbfFapPFac:Recno() )
+
+         ::oDbfFapPFac:Skip()
+
+         end
+
+
+
+         ::aMtrIndices[ 16 ]:SetTotal( ::oDbfFapLFac:LastRec() )
+
+         ::oDbfFapLFac:GoTop()
+         while !( ::oDbfFapLFac:eof() )
+
+            ::oDbfFapLGst:Append()
+
+            if !Empty( ::oDbfFapLFac:cSerie )
+               ::oDbfFapLGst:cSerFac := ::oDbfFapLFac:cSerie
+            else
+               ::oDbfFapLGst:cSerFac := "A"
+            end
+            ::oDbfFapLGst:nNumFac    := ::oDbfFapLFac:nNumFac
+            ::oDbfFapLGst:cSufFac    := Space( 2 )
+            ::oDbfFapLGst:cRef       := ::oDbfFapLFac:cRef
+            ::oDbfFapLGst:cDetalle   := ::oDbfFapLFac:cDetalle
+            ::oDbfFapLGst:nPreUnit   := ::oDbfFapLFac:nPreUnit
+            ::oDbfFapLGst:nIva       := ::oDbfFapLFac:nIva
+            ::oDbfFapLGst:nCanEnt    := 1
+            ::oDbfFapLGst:lControl   := ::oDbfFapLFac:lControl
+            ::oDbfFapLGst:nUniCaja   := ::oDbfFapLFac:nCanEnt
+            ::oDbfFapLGst:nDtoLin    := ::oDbfFapLFac:nDto
+
+            ::oDbfFapLGst:Save()
+
+            ::aMtrIndices[ 16 ]:Set( ::oDbfFapLFac:Recno() )
+
+            ::oDbfFapLFac:Skip()
+
+         end
+
+      end
+
+      ::CloseFiles()
+
+      SynFacCli( cPatEmp() )
+      SynFacRec( cPatEmp() )
+      SynRecCli( cPatEmp() )
+
+      msgInfo( "Traspaso realizado con éxito.", "Bienvenido a " + "Gestool" + Space( 1 ) + "2K13" )
+
+      ::oDlg:end()
+      ::oDlg:Enable()
+
+   end
+
+   ::cPathFac  := Padr( ::cPathFac, 100 )
+
+RETURN ( Self )
+
+
+
+FUNCTION ImpFactu( oMenuItem, oWnd )
+
+   local oImpFac
+   local nLevel   := nLevelUsr( oMenuItem )
+   if nAnd( nLevel, 1 ) <> 0
+      msgStop( "Acceso no permitido." )
+      return ( nil )
+   end
+
+   oImpFac        := TImpFactu():New():Resource()
+
+RETURN nil
+
+
+
+UTILITY STATIC function TImpFactu_SelectChk( lSet) ; local Self AS CLASS TImpFactu := QSelf() AS CLASS TImpFactu
+
+   local n
+
+   for n := 1 to len( ::aLgcIndices )
+      ::aLgcIndices[n] := lSet
+      ::aChkIndices[n]:Refresh()
+   next
+
+RETURN ( Self )
+
+
+
+Static Function SpecialPadr( cCadena, cChar, nLen )
+
+Return( if( !Empty( cCadena ), Padr( RJust( cCadena, cChar, nLen ), 12, " " ), Space( 12 ) ) )

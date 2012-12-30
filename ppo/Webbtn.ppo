@@ -1,0 +1,863 @@
+#line 112 "hbclass.ch"
+   DYNAMIC DivertConstructorCall
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+DECLARE HBClass  New( cName AS String, OPTIONAL SuperParams ) AS CLASS HBClass  Create() AS Object  Instance() AS Object  AddClsMethod( cName AS String, @MethodName(), nScope AS Numeric, n2 AS Numeric, n3 AS Numeric )  AddDelegate( cName AS String, cDelegate AS String, cObject AS String, nScope AS Numeric, lPersistent AS LOGICAL )  AddMultiClsData( cType AS String, uVal, nScope AS Numeric, aDatas AS Array OF String )  AddMultiData( cType AS String, uVal, nScope AS Numeric, aDatas AS Array OF String, x AS LOGICAL, lPer AS LOGICAL )  AddMethod( cName AS String, @MethodName(), nScope AS Numeric, lPersistent AS LOGICAL )  AddInLine( cName AS String, bBlock AS CodeBlock, nScope AS Numeric, lPersistent AS LOGICAL )  AddVirtual( cName AS String )  ModMethod( cName AS String, @MethodName(), nScope AS Numeric, lPersistent AS LOGICAL )  ModClsMethod( cName AS String, @MethodName(), nScope AS Numeric )  ModInline( cName AS String, bBlock AS CodeBlock, nScope AS Numeric, lPersistent AS LOGICAL )  SetOnError( @MethodName() )
+#line 85 "\Fwh1204\Include\FiveWin.Ch"
+   EXTERNAL GetProcAdd
+   EXTERNAL TActiveX
+
+
+
+
+extern errorsys
+#line 23 ".\Prg\Webbtn.prg"
+_HB_CLASS TWebBtn ; UTILITY FUNCTION TWebBtn(...); static s_oClass ; local oClassInstance ; local nScope ; nScope := 1 ; if s_oClass == NIL ; s_oClass := IIF(.F.,, HBClass():New( "TWebBtn" , {TControl():classh} ) ) ; ;
+
+   _HB_MEMBER {AS LOGICAL lRegistered} ; IIF( !.F., s_oClass:AddMultiClsData("LOGICAL",, nScope + IIF( .F., 32, 0 ) + 64, { "lRegistered" }, .F. ), )
+   _HB_MEMBER {AS ARRAY aBitMaps} ; IIF( !.F., s_oClass:AddMultiClsData("ARRAY", {}, nScope + IIF( .F., 32, 0 ) + 64, { "aBitMaps" }, .F. ), )
+
+   _HB_MEMBER { bAction} ; IIF( !.F., s_oClass:AddMultiData(,, nScope + IIF( .F., 32, 0 ), { "bAction" }, .F., .F. ), )
+   _HB_MEMBER { cAction} ; IIF( !.F., s_oClass:AddMultiData(,, nScope + IIF( .F., 32, 0 ), { "cAction" }, .F., .F. ), )
+   _HB_MEMBER { lPressed} ; IIF( !.F., s_oClass:AddMultiData(,, nScope + IIF( .F., 32, 0 ), { "lPressed" }, .F., .F. ), )
+   _HB_MEMBER { lCaptured} ; IIF( !.F., s_oClass:AddMultiData(,, nScope + IIF( .F., 32, 0 ), { "lCaptured" }, .F., .F. ), )
+   _HB_MEMBER {AS LOGICAL lBeginGrp} ; IIF( !.F., s_oClass:AddMultiData( "LOGICAL",, nScope + IIF( .F., 32, 0 ), { "lBeginGrp" }, .F., .F. ), )
+   _HB_MEMBER { lWorking} ; IIF( !.F., s_oClass:AddMultiData(,, nScope + IIF( .F., 32, 0 ), { "lWorking" }, .F., .F. ), )
+   _HB_MEMBER { lBtnUp, lBtnDown} ; IIF( !.F., s_oClass:AddMultiData(,, nScope + IIF( .F., 32, 0 ), { "lBtnUp" , "lBtnDown" }, .F., .F. ), )
+   _HB_MEMBER { hBmpPal1, hBmpPal2, hBmpPal3} ; IIF( !.F., s_oClass:AddMultiData(,, nScope + IIF( .F., 32, 0 ), { "hBmpPal1" , "hBmpPal2" , "hBmpPal3" }, .F., .F. ), )
+   _HB_MEMBER { cResName1, cResName2, cResName3} ; IIF( !.F., s_oClass:AddMultiData(,, nScope + IIF( .F., 32, 0 ), { "cResName1" , "cResName2" , "cResName3" }, .F., .F. ), )
+   _HB_MEMBER { cBmpFile1, cBmpFile2, cBmpFile3} ; IIF( !.F., s_oClass:AddMultiData(,, nScope + IIF( .F., 32, 0 ), { "cBmpFile1" , "cBmpFile2" , "cBmpFile3" }, .F., .F. ), )
+   _HB_MEMBER {AS LOGICAL lProcessing} ; IIF( !.F., s_oClass:AddMultiData( "LOGICAL", .F., nScope + IIF( .F., 32, 0 ), { "lProcessing" }, .F., .F. ), )
+   _HB_MEMBER {AS LOGICAL lBorder} ; IIF( !.F., s_oClass:AddMultiData( "LOGICAL", .F., nScope + IIF( .F., 32, 0 ), { "lBorder" }, .F., .F. ), )
+   _HB_MEMBER { oFontOver} ; IIF( !.F., s_oClass:AddMultiData(,, nScope + IIF( .F., 32, 0 ), { "oFontOver" }, .F., .F. ), )
+   _HB_MEMBER { nClrTextOver} ; IIF( !.F., s_oClass:AddMultiData(,, nScope + IIF( .F., 32, 0 ), { "nClrTextOver" }, .F., .F. ), )
+   _HB_MEMBER { nClrPaneOver} ; IIF( !.F., s_oClass:AddMultiData(,, nScope + IIF( .F., 32, 0 ), { "nClrPaneOver" }, .F., .F. ), )
+   _HB_MEMBER { nClrBTop} ; IIF( !.F., s_oClass:AddMultiData(,, nScope + IIF( .F., 32, 0 ), { "nClrBTop" }, .F., .F. ), )
+   _HB_MEMBER { nClrBBot} ; IIF( !.F., s_oClass:AddMultiData(,, nScope + IIF( .F., 32, 0 ), { "nClrBBot" }, .F., .F. ), )
+   _HB_MEMBER { nClrBTopOver} ; IIF( !.F., s_oClass:AddMultiData(,, nScope + IIF( .F., 32, 0 ), { "nClrBTopOver" }, .F., .F. ), )
+   _HB_MEMBER { nClrBBotOver} ; IIF( !.F., s_oClass:AddMultiData(,, nScope + IIF( .F., 32, 0 ), { "nClrBBotOver" }, .F., .F. ), )
+   _HB_MEMBER { nPad} ; IIF( !.F., s_oClass:AddMultiData(,, nScope + IIF( .F., 32, 0 ), { "nPad" }, .F., .F. ), )
+   _HB_MEMBER {AS NUMERIC nStepBmp} ; IIF( !.F., s_oClass:AddMultiData( "NUMERIC", 16, nScope + IIF( .F., 32, 0 ), { "nStepBmp" }, .F., .F. ), )
+   _HB_MEMBER { bMenu} ; IIF( !.F., s_oClass:AddMultiData(,, nScope + IIF( .F., 32, 0 ), { "bMenu" }, .F., .F. ), )
+   _HB_MEMBER {AS LOGIC lMenu} ; IIF( !.F., s_oClass:AddMultiData( "LOGIC", .F., nScope + IIF( .F., 32, 0 ), { "lMenu" }, .F., .F. ), )
+   _HB_MEMBER {AS LOGIC lIsOverMenu} ; IIF( !.F., s_oClass:AddMultiData( "LOGIC",, nScope + IIF( .F., 32, 0 ), { "lIsOverMenu" }, .F., .F. ), )
+   _HB_MEMBER {AS LOGIC lOpnGroup} ; IIF( !.F., s_oClass:AddMultiData( "LOGIC", .F., nScope + IIF( .F., 32, 0 ), { "lOpnGroup" }, .F., .F. ), )
+   _HB_MEMBER {AS LOGIC lInGroup} ; IIF( !.F., s_oClass:AddMultiData( "LOGIC", .F., nScope + IIF( .F., 32, 0 ), { "lInGroup" }, .F., .F. ), )
+   _HB_MEMBER {AS LOGIC lSelect} ; IIF( !.F., s_oClass:AddMultiData( "LOGIC", .F., nScope + IIF( .F., 32, 0 ), { "lSelect" }, .F., .F. ), )
+   _HB_MEMBER {AS LOGIC lNowSelect} ; IIF( !.F., s_oClass:AddMultiData( "LOGIC", .F., nScope + IIF( .F., 32, 0 ), { "lNowSelect" }, .F., .F. ), )
+   _HB_MEMBER {AS LOGIC lTransparent} ; IIF( !.F., s_oClass:AddMultiData( "LOGIC", .F., nScope + IIF( .F., 32, 0 ), { "lTransparent" }, .F., .F. ), )
+   _HB_MEMBER {AS LOGIC lSingleLine} ; IIF( !.F., s_oClass:AddMultiData( "LOGIC", .T., nScope + IIF( .F., 32, 0 ), { "lSingleLine" }, .F., .F. ), )
+
+   _HB_MEMBER { nDlgCode} ; IIF( !.F., s_oClass:AddMultiData(, 4, nScope + IIF( .F., 32, 0 ), { "nDlgCode" }, .F., .F. ), )
+
+
+
+
+
+   _HB_MEMBER New( nTop, nLeft, nWidth, nHeight, cResName1, cResName2, cBmpFile1, cBmpFile2, bAction, oWnd, cMsg, bWhen, lUpdate, bSetGet, cPad, oFont, oFontOver, cResName3, cBmpFile3, nClrText, nClrTextOver, nClrPane, nClrPaneOver, lBorder, bMenu, oGroup, lSelect) AS CLASS TWebBtn; IIF( .F., s_oClass:ModMethod( "New", @TWebBtn_New(), nScope + IIF( .T., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ), s_oClass:AddMethod( "New", @TWebBtn_New(), nScope + IIF( .T., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ));
+
+
+
+
+
+   _HB_MEMBER NewBar( cResName1, cResName2, cBmpFile1, cBmpFile2, bAction, oBar, cMsg, bWhen, lUpdate, cPrompt, cPad, oFont, oFontOver, cResName3, cBmpFile3, nClrText, nClrTextOver, nClrPane, nClrPaneOver, lBorder, cToolTip, bDrop, bMenu, lBeginGrp, oGroup) AS CLASS TWebBtn; IIF( .F., s_oClass:ModMethod( "NewBar", @TWebBtn_NewBar(), nScope + IIF( .T., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ), s_oClass:AddMethod( "NewBar", @TWebBtn_NewBar(), nScope + IIF( .T., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ));
+
+
+
+
+
+   _HB_MEMBER ReDefine( nId, cResName1, cResName2, cBmpFile1, cBmpFile2, bAction, oWnd, cMsg, bWhen, lUpdate, bSetGet, cPad, oFont, oFontOver, cResName3, cBmpFile3, nClrText, nClrTextOver, nClrPane, nClrPaneOver, lBorder, cToolTip, bDrop, bMenu, lBeginGrp, oBrush) AS CLASS TWebBtn; IIF( .F., s_oClass:ModMethod( "ReDefine", @TWebBtn_ReDefine(), nScope + IIF( .T., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ), s_oClass:AddMethod( "ReDefine", @TWebBtn_ReDefine(), nScope + IIF( .T., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ));
+
+   _HB_MEMBER Click( lMenu); IIF( .F., s_oClass:ModMethod( "Click", @TWebBtn_Click(), nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ), s_oClass:AddMethod( "Click", @TWebBtn_Click(), nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ));
+
+   _HB_MEMBER Display(); IIF( .F., s_oClass:ModInline( "Display", {|Self | Self, ::BeginPaint(), ::Paint(), ::EndPaint(), 0 }, nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ), s_oClass:AddInline( "Display", {|Self | Self, ::BeginPaint(), ::Paint(), ::EndPaint(), 0 }, nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ) )
+
+   _HB_MEMBER FreeBitmaps(); IIF( .F., s_oClass:ModMethod( "FreeBitmaps", @TWebBtn_FreeBitmaps(), nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ), s_oClass:AddMethod( "FreeBitmaps", @TWebBtn_FreeBitmaps(), nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ));
+
+   _HB_MEMBER HideBitmaps(); IIF( .F., s_oClass:ModMethod( "HideBitmaps", @TWebBtn_HideBitmaps(), nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ), s_oClass:AddMethod( "HideBitmaps", @TWebBtn_HideBitmaps(), nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ));
+
+   _HB_MEMBER GoDown(); IIF( .F., s_oClass:ModInline( "GoDown", {|Self | Self, ::lPressed := ::lBtnDown := .T., ::Refresh() }, nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ), s_oClass:AddInline( "GoDown", {|Self | Self, ::lPressed := ::lBtnDown := .T., ::Refresh() }, nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ) )
+
+   _HB_MEMBER GoUp(); IIF( .F., s_oClass:ModInline( "GoUp", {|Self | Self, ::lPressed := ::lBtnDown := .F., ::Refresh() }, nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ), s_oClass:AddInline( "GoUp", {|Self | Self, ::lPressed := ::lBtnDown := .F., ::Refresh() }, nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ) )
+
+   _HB_MEMBER LButtonDown( nRow, nCol); IIF( .F., s_oClass:ModMethod( "LButtonDown", @TWebBtn_LButtonDown(), nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ), s_oClass:AddMethod( "LButtonDown", @TWebBtn_LButtonDown(), nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ));
+
+   _HB_MEMBER LButtonUp( nRow, nCol); IIF( .F., s_oClass:ModMethod( "LButtonUp", @TWebBtn_LButtonUp(), nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ), s_oClass:AddMethod( "LButtonUp", @TWebBtn_LButtonUp(), nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ));
+
+   _HB_MEMBER LoadBmp( cResName1, cResName2, cBmpFile1, cBmpFile2); IIF( .F., s_oClass:ModMethod( "LoadBmp", @TWebBtn_LoadBmp(), nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ), s_oClass:AddMethod( "LoadBmp", @TWebBtn_LoadBmp(), nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ));
+
+   _HB_MEMBER GotFocus( hCtlLost); IIF( .F., s_oClass:ModMethod( "GotFocus", @TWebBtn_GotFocus(), nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ), s_oClass:AddMethod( "GotFocus", @TWebBtn_GotFocus(), nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ));
+
+   _HB_MEMBER Initiate( hDlg); IIF( .F., s_oClass:ModMethod( "Initiate", @TWebBtn_Initiate(), nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ), s_oClass:AddMethod( "Initiate", @TWebBtn_Initiate(), nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ));
+
+   _HB_MEMBER KeyChar( nKey, nFlags); IIF( .F., s_oClass:ModMethod( "KeyChar", @TWebBtn_KeyChar(), nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ), s_oClass:AddMethod( "KeyChar", @TWebBtn_KeyChar(), nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ));
+
+   _HB_MEMBER LostFocus(); IIF( .F., s_oClass:ModMethod( "LostFocus", @TWebBtn_LostFocus(), nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ), s_oClass:AddMethod( "LostFocus", @TWebBtn_LostFocus(), nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ));
+
+   _HB_MEMBER EraseBkGnd(hDC); IIF( .F., s_oClass:ModInline( "EraseBkGnd", {|Self,hDC | Self, 1 }, nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ), s_oClass:AddInline( "EraseBkGnd", {|Self,hDC | Self, 1 }, nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ) )
+
+   _HB_MEMBER Paint(); IIF( .F., s_oClass:ModMethod( "Paint", @TWebBtn_Paint(), nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ), s_oClass:AddMethod( "Paint", @TWebBtn_Paint(), nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ));
+
+   _HB_MEMBER MouseMove( nRow, nCol, nKeyFlags); IIF( .F., s_oClass:ModMethod( "MouseMove", @TWebBtn_MouseMove(), nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ), s_oClass:AddMethod( "MouseMove", @TWebBtn_MouseMove(), nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ));
+
+   _HB_MEMBER Toggle(); IIF( .F., s_oClass:ModMethod( "Toggle", @TWebBtn_Toggle(), nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ), s_oClass:AddMethod( "Toggle", @TWebBtn_Toggle(), nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ));
+
+
+
+
+   _HB_MEMBER SetText(cText); IIF( .F., s_oClass:ModInline( "SetText", {|Self,cText | Self, (   if ( ::lWhen(), ::cCaption := cValToChar( cText ), ::cCaption := "" ), SetWindowText( ::hWnd, ::cCaption ), ::Refresh() ) }, nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ), s_oClass:AddInline( "SetText", {|Self,cText | Self, (   if ( ::lWhen(), ::cCaption := cValToChar( cText ), ::cCaption := "" ), SetWindowText( ::hWnd, ::cCaption ), ::Refresh() ) }, nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ) )
+
+   _HB_MEMBER cText(cText); _HB_MEMBER _cText(cText); IIF( .F., s_oClass:ModMethod( "cText", @TWebBtn_cText(), 1 + 32, .F. ), s_oClass:AddMethod( "cText", @TWebBtn_cText(), 1 + 32, .F. ) ) ; IIF( .F., s_oClass:ModMethod( "_cText", @TWebBtn_cText() ), s_oClass:AddMethod( "_cText", @TWebBtn_cText() ) ) ;
+
+   _HB_MEMBER End(); IIF( .F., s_oClass:ModInline( "End", {|Self | Self, ( if( ::hWnd == 0, ::Destroy(), ::TControl:End() ) ) }, nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ), s_oClass:AddInline( "End", {|Self | Self, ( if( ::hWnd == 0, ::Destroy(), ::TControl:End() ) ) }, nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ) )
+
+   _HB_MEMBER VarGet(); IIF( .F., s_oClass:ModInline( "VarGet", {|Self | Self, ( ::cCaption ) }, nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ), s_oClass:AddInline( "VarGet", {|Self | Self, ( ::cCaption ) }, nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ) )
+
+   _HB_MEMBER Destroy(); IIF( .F., s_oClass:ModMethod( "Destroy", @TWebBtn_Destroy(), nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ), s_oClass:AddMethod( "Destroy", @TWebBtn_Destroy(), nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ));
+
+   _HB_MEMBER ShowPaint(); IIF( .F., s_oClass:ModInline( "ShowPaint", {|Self | Self, ( ::Show(), ::Paint() ) }, nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ), s_oClass:AddInline( "ShowPaint", {|Self | Self, ( ::Show(), ::Paint() ) }, nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ) )
+
+   _HB_MEMBER SetTransparent(); IIF( .F., s_oClass:ModInline( "SetTransparent", {|Self | Self, ( ::lTransparent := .T. ) }, nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ), s_oClass:AddInline( "SetTransparent", {|Self | Self, ( ::lTransparent := .T. ) }, nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ) )
+
+; IF .F. ; __clsActive(s_oClass:hClass) ; s_oClass:Refresh() ; ELSE ; s_oClass:Create() ; END ; oClassInstance := __clsInst( s_oClass:hClass ) ; IF __ObjHasMsg( oClassInstance, "InitClass" ); oClassInstance:InitClass( hb_aParams() ) ; END ; ELSE ; oClassInstance := __clsInst( s_oClass:hClass ) ; END ; IF PCount() > 0 ; DIVERT TO (@DivertConstructorCall()) OF s_oClass ; END ; RETURN oClassInstance AS CLASS TWebBtn ;
+
+
+
+
+
+
+
+UTILITY STATIC function TWebBtn_New( nTop, nLeft, nWidth, nHeight, cResName1, cResName2, cBmpFile1, cBmpFile2, bAction, oWnd, cMsg, bWhen, lUpdate, bSetGet, cPad, oFont, oFontOver, cResName3, cBmpFile3, nClrText, nClrTextOver, nClrPane, nClrPaneOver, lBorder, bMenu, oGroup, lSelect) ; local Self AS CLASS TWebBtn := QSelf() AS CLASS TWebBtn
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+   IIF( cMsg == nil, cMsg := " ", ) ; IIF( nWidth == nil, nWidth := 20, ); IIF( nHeight == nil, nHeight := 20, ); IIF( lUpdate == nil, lUpdate := .F., ); IIF( oWnd == nil, oWnd := GetWndDefault(), ); IIF( nClrText == nil, nClrText := GetSysColor( 18 ), ); IIF( nClrTextOver == nil, nClrTextOver := GetSysColor( 18 ), ); IIF( nClrPane == nil, nClrPane := if( oWnd <> nil, oWnd:nClrPane, GetSysColor( 15 ) ), ); IIF( nClrPaneOver == nil, nClrPaneOver := if( oWnd <> nil, oWnd:nClrPane, GetSysColor( 15 ) ), ); IIF( cPad == nil, cPad := "LEFT", ); IIF( lBorder == nil, lBorder := .F., ); IIF( oFont == nil, oFont := TFont():New( "Verdana", 0, -10, .F., .T. ), ); IIF( oFontOver == nil, oFontOver := TFont():New( "Verdana", 0, -10, .F., .T., , , , , .T. ), ); IIF( oGroup == nil, oGroup := nil, ); IIF( lSelect == nil, lSelect := .F., );
+
+   ::nStyle       = nOR( 1073741824, 268435456, If( Upper( oWnd:ClassName() ) <> "TWEBBAR", 65536, 0 ) )
+   ::nId          = ::GetNewId()
+   ::oWnd         = oWnd
+   ::bAction      = bAction
+   ::bMenu        = bMenu
+   ::cMsg         = cMsg
+   ::nTop         = nTop
+   ::nLeft        = nLeft
+   ::nBottom      = nTop + nHeight - 1
+   ::nRight       = nLeft + nWidth - 1
+   ::lPressed     = .F.
+   ::lWorking     = .F.
+   ::lDrag        = .F.
+   ::lCaptured    = .F.
+   ::bWhen        = bWhen
+   ::lUpdate      = lUpdate
+   ::lBorder      = lBorder
+   ::lBtnDown     = .F.
+
+   ::hBmpPal1     = 0
+   ::hBmpPal2     = 0
+
+   if ValType( bSetGet ) == "C"
+      ::cCaption  = bSetGet
+   elseif ValType( bSetGet ) == "B" .AND. ::lWhen()
+      ::cCaption  = cValToChar( Eval( bSetGet ) )
+    else
+      ::cCaption  = ""
+    endif
+
+   ::bSetGet      = bSetGet
+   ::nPad         = Max( aScan( {"LEFT", "CENTER", "RIGHT" }, Upper( cPad ) ), 1 )
+   ::oFont        = oFont
+   ::oFontOver    = oFontOver
+
+   ::nClrText     = nClrText
+   ::nClrTextOver = nClrTextOver
+   ::nClrPane     = nClrPane
+   ::nClrPaneOver = nClrPaneOver
+   ::nClrBTop     = nClrText
+   ::nClrBBot     = nClrText
+   ::nClrBTopOver = nClrText
+   ::nClrBBotOver = nClrText
+
+   ::oCursor      = TCursor():New( , "HAND" )
+   ::oBrush       = TBrush():New( "NULL" )
+
+   ::lSelect      = lSelect
+   ::lNowSelect   = .F.
+
+
+
+
+
+
+   ::Register( nOR( 1, 2 ) )
+
+   if ! Empty( oWnd:hWnd )
+      ::Create()
+
+      oWnd:AddControl( Self )
+   else
+      oWnd:DefControl( Self )
+   endif
+
+   ::LoadBmp( cResName1, cResName2, cBmpFile1, cBmpFile2, cResName3, cBmpFile3 )
+
+return Self
+
+
+
+
+
+
+
+UTILITY STATIC function TWebBtn_NewBar( cResName1, cResName2, cBmpFile1, cBmpFile2, bAction, oWnd, cMsg, bWhen, lUpdate, bSetGet, cPad, oFont, oFontOver, cResName3, cBmpFile3, nClrText, nClrTextOver, nClrPane, nClrPaneOver, lBorder, cToolTip, bDrop, bMenu, lBeginGrp, lOpened, oGroup, lSelect) ; local Self AS CLASS TWebBtn := QSelf() AS CLASS TWebBtn
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+   IIF( cMsg == nil, cMsg := " ", ) ; IIF( lUpdate == nil, lUpdate := .F., ); IIF( oWnd == nil, oWnd := GetWndDefault(), ); IIF( nClrText == nil, nClrText := ( 255 + ( 154 * 256 ) + ( 49 * 65536 ) ), ); IIF( nClrTextOver == nil, nClrTextOver := ( 255 + ( 255 * 256 ) + ( 255 * 65536 ) ), ); IIF( nClrPane == nil, nClrPane := GetSysColor( 15 ), ); IIF( nClrPaneOver == nil, nClrPaneOver := GetSysColor( 15 ), ); IIF( cPad == nil, cPad := "LEFT", ); IIF( lBorder == nil, lBorder := .F., ); IIF( oFont == nil, oFont := TFont():New( "Verdana", 0, -10, .F., .F. ), ); IIF( oFontOver == nil, oFontOver := TFont():New( "Verdana", 0, -10, .F., .F., , , , , .T. ), ); IIF( lBeginGrp == nil, lBeginGrp := .F., ); IIF( lOpened == nil, lOpened := .T., ); IIF( oGroup == nil, oGroup := nil, ); IIF( lSelect == nil, lSelect := .F., );
+
+   ::nStyle       = nOR( 1073741824, 268435456 )
+   ::nId          = ::GetNewId()
+   ::oWnd         = oWnd
+   ::bAction      = bAction
+   ::bMenu        = bMenu
+   ::cMsg         = cMsg
+   ::nTop         = 0
+   ::nLeft        = oWnd:nLeftMargin
+   ::nBottom      = oWnd:nCtlHeight
+   ::nRight       = oWnd:nWidth - oWnd:nLeftMargin - oWnd:nRightMargin - 2
+   ::lCaptured    = .F.
+   ::lWorking     = .F.
+   ::lDrag        = .F.
+   ::lBeginGrp    = lBeginGrp
+   ::bWhen        = bWhen
+   ::cToolTip     = cToolTip
+   ::bDropOver    = bDrop
+   ::cResName1    = cResName1
+   ::cResName2    = cResName2
+   ::cBmpFile1    = cBmpFile1
+   ::cBmpFile2    = cBmpFile2
+   ::bAction      = bAction
+   ::oFont        = oFont
+   ::oFontOver    = oFontOver
+   ::lBorder      = lBorder
+   ::lActive      = lOpened
+
+   if ValType( bSetGet ) == "C"
+      ::cCaption  = bSetGet
+   elseif ValType( bSetGet ) == "B" .AND. ::lWhen()
+      ::cCaption  = cValToChar( Eval( bSetGet ) )
+    else
+      ::cCaption  = ""
+    endif
+
+   ::bSetGet      = bSetGet
+   ::hBmpPal1     = 0
+   ::hBmpPal2     = 0
+   ::nPad         = Max( aScan( {"LEFT", "CENTER", "RIGHT" }, Upper( cPad ) ), 1 )
+
+   ::nClrText     = nClrText
+   ::nClrTextOver = nClrTextOver
+   ::nClrPane     = nClrPane
+   ::nClrPaneOver = nClrPaneOver
+   ::nClrBTop     = nClrText
+   ::nClrBBot     = nClrText
+   ::nClrBTopOver = nClrText
+   ::nClrBBotOver = nClrText
+
+   ::oCursor      = TCursor():New( , "HAND" )
+   ::oBrush       = TBrush():New( "NULL" )
+
+   ::lSelect      = lSelect
+
+   ::Register( nOR( 1, 2 ) )
+
+   ::Create()
+
+   oWnd:Add( Self )
+
+   if oGroup <> nil
+      oGroup:AddControl( Self )
+      ::lInGroup  := .T.
+   end
+
+
+
+   ::LoadBmp( cResName1, cResName2, cBmpFile1, cBmpFile2, cResName3, cBmpFile3 )
+
+return Self
+
+
+
+
+
+
+
+UTILITY STATIC function TWebBtn_ReDefine( nId, cResName1, cResName2, cBmpFile1, cBmpFile2, bAction, oWnd, cMsg, bWhen, lUpdate, bSetGet, cPad,  oFont, oFontOver, cResName3, cBmpFile3, nClrText, nClrTextOver, nClrPane, nClrPaneOver, lBorder, cToolTip, bDrop, bMenu, lBeginGrp, oBrush, lOpened, oGroup, lSelect) ; local Self AS CLASS TWebBtn := QSelf() AS CLASS TWebBtn
+
+
+
+
+
+
+
+
+
+
+
+
+   IIF( cMsg == nil, cMsg := " ", ) ; IIF( lUpdate == nil, lUpdate := .F., ); IIF( lBorder == nil, lBorder := .F., ); IIF( oWnd == nil, oWnd := GetWndDefault(), ); IIF( oFont == nil, oFont := TFont():New( GetSysFont(), 0, -12, .F., .F. ), ); IIF( oFontOver == nil, oFontOver := TFont():New( GetSysFont(), 0, -12, .F., .F., , , , , .T. ), ); IIF( cPad == nil, cPad := "LEFT", ); IIF( nClrText == nil, nClrText := GetSysColor( 18 ), ); IIF( nClrTextOver == nil, nClrTextOver := GetSysColor( 18 ), ); IIF( nClrPane == nil, nClrPane := if( oWnd <> nil, oWnd:nClrPane, GetSysColor( 15 ) ), ); IIF( nClrPaneOver == nil, nClrPaneOver := if( oWnd <> nil, oWnd:nClrPane, GetSysColor( 15 ) ), ); IIF( oBrush == nil, oBrush := TBrush():New( "NULL" ), );
+
+   ::nId          = nId
+   ::oWnd         = oWnd
+   ::hWnd         = 0
+   ::bAction      = bAction
+   ::bMenu        = bMenu
+   ::cMsg         = cMsg
+   ::lPressed     = .F.
+   ::lCaptured    = .F.
+   ::lWorking     = .F.
+   ::lDrag        = .F.
+   ::lTransparent = .F.
+   ::oFont        = oFont
+   ::oFontOver    = oFontOver
+   ::nPad         = Max( aScan( {"LEFT", "CENTER", "RIGHT" }, Upper( cPad ) ), 1 )
+   ::nClrText     = nClrText
+   ::nClrTextOver = nClrTextOver
+   ::nClrPane     = nClrPane
+   ::nClrPaneOver = nClrPaneOver
+   ::bWhen        = bWhen
+   ::lUpdate      = lUpdate
+   ::cToolTip     = cToolTip
+   ::oFont        = oFont
+   ::lBorder      = lBorder
+   ::lBtnDown     = .F.
+   ::oCursor      = TCursor():New( , "HAND" )
+   ::nClrBTop     = nClrText
+   ::nClrBBot     = nClrText
+   ::nClrBTopOver = nClrText
+   ::nClrBBotOver = nClrText
+
+   if ValType( bSetGet ) == "C"
+      ::cCaption  = bSetGet
+   elseif ValType( bSetGet ) == "B" .AND. ::lWhen()
+      ::cCaption  = cValToChar( Eval( bSetGet ) )
+    else
+      ::cCaption  = ""
+    endif
+
+   ::bSetGet      = bSetGet
+   ::hBmpPal1     = 0
+   ::hBmpPal2     = 0
+
+   if ::oFont <> nil
+      ::SetFont( ::oFont )
+   else
+      ::SetFont( ::oWnd:oFont )
+   endif
+
+   ::Register( nOR( 1, 2 ) )
+
+   ::LoadBmp( cResName1, cResName2, cBmpFile1, cBmpFile2, cResName3, cBmpFile3 )
+
+   oWnd:DefControl( Self )
+
+   if ::oBrush <> nil
+      ::oBrush:End()
+   endif
+
+   ::oBrush       = oBrush
+
+return Self
+
+
+
+UTILITY STATIC function TWebBtn_Click( lMenu) ; local Self AS CLASS TWebBtn := QSelf() AS CLASS TWebBtn
+
+   IIF( lMenu == nil, lMenu := .F., ) ;
+
+   if !::lProcessing
+      ::lProcessing     := .T.
+
+      if ::bMenu <> nil .AND. lMenu
+         Eval( ::bMenu, Self )
+      elseif ::bAction <> nil
+         Eval( ::bAction, if( !Empty( ::Cargo ), ::Cargo, Self ) )
+      endif
+
+      if ::lSelect
+         if ::oWnd <> nil .AND. ::oWnd:ClassName() == "TWEBBAR"
+            ::oWnd:Reset()
+         end
+         ::lNowSelect   := .T.
+         if ::oWnd <> nil .AND. ::oWnd:ClassName() == "TWEBBAR"
+            ::oWnd:GetOption()
+         end
+      end
+
+      ::TControl:Click()
+      ::lProcessing     := .F.
+   endif
+
+return nil
+
+
+
+UTILITY STATIC function TWebBtn_GotFocus( hCtlLost) ; local Self AS CLASS TWebBtn := QSelf() AS CLASS TWebBtn
+
+return ::TControl:GotFocus()
+
+
+
+UTILITY STATIC function TWebBtn_Initiate( hDlg) ; local Self AS CLASS TWebBtn := QSelf() AS CLASS TWebBtn
+
+   LOCAL aRect
+
+   ::TControl:Initiate( hDlg )
+
+   if ! Empty( ::cCaption )
+      SetWindowText( ::hWnd, ::cCaption )
+   else
+      ::cCaption  := GetWindowText( ::hWnd )
+   endif
+
+   aRect          := GetCoors( ::hWnd )
+
+   ::nTop         := aRect[1]
+   ::nLeft        := aRect[2]
+   ::nBottom      := aRect[3]
+   ::nRight       := aRect[4]
+
+return nil
+
+
+
+UTILITY STATIC function TWebBtn_KeyChar( nKey, nFlags) ; local Self AS CLASS TWebBtn := QSelf() AS CLASS TWebBtn
+
+   if nKey == 13 .OR. nKey == 32
+      ::Click()
+   else
+      return ::TControl:KeyChar( nKey, nFlags )
+   endif
+
+return nil
+
+
+
+UTILITY STATIC function TWebBtn_LostFocus() ; local Self AS CLASS TWebBtn := QSelf() AS CLASS TWebBtn
+
+   if ::lCaptured
+      ::lCaptured = .F.
+      ReleaseCapture()
+   end
+
+   ::Refresh()
+
+return ::TControl:LostFocus()
+
+
+
+UTILITY STATIC function TWebBtn_LButtonDown( nRow, nCol) ; local Self AS CLASS TWebBtn := QSelf() AS CLASS TWebBtn
+
+   if ::oDragCursor <> nil
+      return ::TControl:LButtonDown( nRow, nCol )
+   endif
+
+   ::lWorking = .T.
+   ::lBtnUp   = .F.
+
+   SetFocus( ::hWnd )
+   SysRefresh()
+
+   if GetFocus() == ::hWnd
+      ::lCaptured = .T.
+      ::lPressed  = .T.
+      ::Capture()
+      ::Refresh()
+   endif
+
+   ::lWorking = .F.
+
+   if ::lBtnUp
+      ::LButtonUp( nRow, nCol )
+      ::lBtnUp = .F.
+   endif
+
+return 0
+
+
+
+UTILITY STATIC function TWebBtn_LButtonUp( nRow, nCol) ; local Self AS CLASS TWebBtn := QSelf() AS CLASS TWebBtn
+
+   local lClick := IsOverWnd( ::hWnd, nRow, nCol )
+
+   if ::oDragCursor <> nil
+      return ::TControl:LButtonUp( nRow, nCol )
+   endif
+
+   ::lBtnUp  = .T.
+
+   if ! ::lWorking
+      if ::lCaptured
+         ::lCaptured = .F.
+         ReleaseCapture()
+         if lClick
+            ::Click( nCol > ::nRight - ::nStepBmp )
+         endif
+      endif
+   endif
+
+return 0
+
+
+
+UTILITY STATIC function TWebBtn_Destroy() ; local Self AS CLASS TWebBtn := QSelf() AS CLASS TWebBtn
+
+
+
+
+
+   ::oFont:end()
+   ::oFontOver:end()
+
+   if ::oCursor <> nil
+      ::oCursor:end()
+   end
+
+   if ::oBrush <> nil
+      ::oBrush:end()
+   end
+
+   if ::oDragCursor <> nil
+      ::oDragCursor:end()
+   end
+
+   ::TControl:Destroy()
+
+return 0
+
+
+
+UTILITY STATIC function TWebBtn_FreeBitmaps() ; local Self AS CLASS TWebBtn := QSelf() AS CLASS TWebBtn
+
+   if ::hBmpPal1 <> 0
+      DeleteObject( ::hBmpPal1 )
+   endif
+
+   if ::hBmpPal2 <> 0
+      DeleteObject( ::hBmpPal2 )
+   endif
+
+   if ::hBmpPal3 <> 0
+      DeleteObject( ::hBmpPal3 )
+   endif
+
+   ::hBmpPal1 = 0
+   ::hBmpPal2 = 0
+   ::hBmpPal3 = 0
+
+return nil
+
+
+
+UTILITY STATIC function TWebBtn_HideBitmaps() ; local Self AS CLASS TWebBtn := QSelf() AS CLASS TWebBtn
+
+   ::hBmpPal1 = 0
+   ::hBmpPal2 = 0
+   ::hBmpPal3 = 0
+
+return ( Self )
+
+
+
+UTILITY STATIC function TWebBtn_LoadBmp( cResName1, cResName2, cBmpFile1, cBmpFile2, cResName3, cBmpFile3) ; local Self AS CLASS TWebBtn := QSelf() AS CLASS TWebBtn
+
+   local nPos
+
+   nPos  := aScan( ::aBitMaps, {| cBmp | cBmp[ 1 ] == cResName1 .OR. cBmp[ 1 ] == cBmpFile1 } )
+
+   if nPos <> 0
+
+      ::hBmpPal1     := ::aBitMaps[ nPos, 2 ]
+
+   else
+
+      if !Empty( cResName1 )
+
+
+
+         ::hBmpPal1  := PalBmpLoad( cResName1 )
+
+         ::cBmpFile1 := cResName1
+      endif
+
+      if !Empty( cBmpFile1 ) .AND. File( cBmpFile1 )
+
+         ::cBmpFile1 := cBmpFile1
+
+
+
+         ::hBmpPal1  := PalBmpRead( ::GetDC(), cBmpFile1 )
+
+         ::ReleaseDC()
+      endif
+
+      if  !Empty( ::cBmpFile1 )
+         aAdd( ::aBitMaps, { ::cBmpFile1, ::hBmpPal1 } )
+      end
+
+      if ! Empty( ::hBmpPal1 )
+         PalBmpNew( ::hWnd, ::hBmpPal1 )
+      endif
+
+   end
+
+
+
+
+
+   nPos  := aScan( ::aBitMaps, {| cBmp | cBmp[ 1 ] == cResName2 .OR. cBmp[ 1 ] == cBmpFile2 } )
+
+   if nPos <> 0
+
+      ::hBmpPal2     := ::aBitMaps[ nPos, 2 ]
+
+   else
+
+      if ! Empty( cResName2 )
+
+
+
+         ::hBmpPal2  := PalBmpLoad( cResName2 )
+
+         ::cBmpFile2 := cResName2
+      endif
+
+      if ! Empty( cBmpFile2 ) .AND. File( cBmpFile2 )
+         ::cBmpFile2 := cBmpFile2
+
+
+
+         ::hBmpPal2  := PalBmpRead( ::GetDC(), cBmpFile2 )
+
+         ::ReleaseDC()
+      endif
+
+      if  !Empty( ::cBmpFile2 )
+         aAdd( ::aBitMaps, { ::cBmpFile2, ::hBmpPal2 } )
+      end
+
+      if ! Empty( ::hBmpPal2 )
+         PalBmpNew( ::hWnd, ::hBmpPal2 )
+      endif
+
+   end
+
+
+
+
+
+   nPos  := aScan( ::aBitMaps, {| cBmp | cBmp[ 1 ] == cResName3 .OR. cBmp[ 1 ] == cBmpFile3 } )
+
+   if nPos <> 0
+
+      ::hBmpPal3     := ::aBitMaps[ nPos, 2 ]
+
+   else
+
+      if ! Empty( cResName3 )
+         ::hBmpPal3  := PalBmpLoad( cResName3 )
+
+
+
+         ::hBmpPal3  := PalBmpLoad( cResName3 )
+
+         ::cBmpFile3 := cResName3
+      endif
+
+      if ! Empty( cBmpFile3 ) .AND. File( cBmpFile3 )
+         ::cBmpFile3 := cBmpFile3
+
+
+
+         ::hBmpPal3  := PalBmpRead( ::GetDC(), cBmpFile3 )
+
+         ::ReleaseDC()
+      endif
+
+      if  !Empty( ::cBmpFile3 )
+         aAdd( ::aBitMaps, { ::cBmpFile3, ::hBmpPal3 } )
+      end
+
+      if ! Empty( ::hBmpPal3 )
+         PalBmpNew( ::hWnd, ::hBmpPal3 )
+      endif
+
+   end
+
+return ( Self )
+
+
+
+UTILITY STATIC function TWebBtn_MouseMove( nRow, nCol, nKeyFlags) ; local Self AS CLASS TWebBtn := QSelf() AS CLASS TWebBtn
+
+   local lMenu := nCol > ::nRight - 18 .AND. ::bMenu <> nil
+
+   ::TControl:MouseMove( nRow, nCol, nKeyFlags )
+
+
+
+
+
+   if !::lCaptured
+      ::lIsOverMenu  := lMenu
+   end
+
+
+
+
+
+   if IsOverWnd( ::hWnd, nRow, nCol )
+      if !::lCaptured .OR. ::lIsOverMenu <> lMenu
+         ::lCaptured    := .T.
+         ::lIsOverMenu  := lMenu
+         ::Capture()
+         ::Paint()
+      end
+   else
+      ::lCaptured    := .F.
+      ::lIsOverMenu  := .F.
+      ::Paint()
+      ReleaseCapture()
+   end
+
+   ::oWnd:SetMsg( ::cMsg )
+
+return 0
+
+
+
+UTILITY STATIC function TWebBtn_Toggle() ; local Self AS CLASS TWebBtn := QSelf() AS CLASS TWebBtn
+
+   ::lOpnGroup := !::lOpnGroup
+
+   if !Empty( ::aControls )
+      aEval( ::aControls, {|o| if( ::lOpnGroup, ( o:Enable(), o:Show() ), ( o:Disable(), o:Disable() ) ) } )
+   end
+
+   ::oWnd:Resize()
+   ::oWnd:Refresh()
+
+return ( Self )
+
+
+
+UTILITY STATIC function TWebBtn_Paint() ; local Self AS CLASS TWebBtn := QSelf() AS CLASS TWebBtn
+
+   local lWebBar        := Upper( ::oWnd:ClassName() ) == "TWEBBAR"
+
+   if !::lTransparent
+
+
+
+
+
+
+
+
+   CleanWB( ::hWnd, ::hDC, ::nWidth, ::nHeight, ::nLeft, ::nTop, if( lWebBar, ::oWnd:hBmpPal, nil ), if( ::lCaptured, ::nClrPaneOver, ::nClrPane ) )
+
+   end
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+   PaintWB( ::hWnd, ::hDC, ::lCaptured, ::cCaption, ::bMenu <> nil, ::hBmpPal1, ::oFont:hFont, ::oFontOver:hFont, ::nClrText, ::nClrTextOver, ::nTop, ::nLeft, ::nHeight, ::nWidth, ::nPad, ::hBmpPal2, if( lWebBar, ::oWnd:nLeftMargin,  0 ), if( lWebBar, ::oWnd:nRightMargin, 0 ), if( lWebBar, ::oWnd:nTopMargin,   0 ), if( lWebBar, ::oWnd:nDnMargin,    0 ), ::lIsOverMenu, ::lBorder, ::nClrBTop, ::nClrBBot, ::nClrBTopOver, ::nClrBBotOver, ::lBtnDown, lWebBar, ::lOpnGroup, ::lNowSelect, ::lTransparent, ::lSingleLine )
+
+return nil
+
+
+
+UTILITY STATIC function TWebBtn_cText(uVal) ; local Self AS CLASS TWebBtn := QSelf() AS CLASS TWebBtn
+
+   if PCount() == 1
+      Eval( ::bSetGet, uVal )
+      ::SetText( uVal )
+   endif
+
+return ( GetWindowText( ::hWnd ) )

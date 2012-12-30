@@ -1,0 +1,532 @@
+#line 112 "hbclass.ch"
+   DYNAMIC DivertConstructorCall
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+DECLARE HBClass  New( cName AS String, OPTIONAL SuperParams ) AS CLASS HBClass  Create() AS Object  Instance() AS Object  AddClsMethod( cName AS String, @MethodName(), nScope AS Numeric, n2 AS Numeric, n3 AS Numeric )  AddDelegate( cName AS String, cDelegate AS String, cObject AS String, nScope AS Numeric, lPersistent AS LOGICAL )  AddMultiClsData( cType AS String, uVal, nScope AS Numeric, aDatas AS Array OF String )  AddMultiData( cType AS String, uVal, nScope AS Numeric, aDatas AS Array OF String, x AS LOGICAL, lPer AS LOGICAL )  AddMethod( cName AS String, @MethodName(), nScope AS Numeric, lPersistent AS LOGICAL )  AddInLine( cName AS String, bBlock AS CodeBlock, nScope AS Numeric, lPersistent AS LOGICAL )  AddVirtual( cName AS String )  ModMethod( cName AS String, @MethodName(), nScope AS Numeric, lPersistent AS LOGICAL )  ModClsMethod( cName AS String, @MethodName(), nScope AS Numeric )  ModInline( cName AS String, bBlock AS CodeBlock, nScope AS Numeric, lPersistent AS LOGICAL )  SetOnError( @MethodName() )
+#line 85 "\Fwh1204\Include\FiveWin.Ch"
+   EXTERNAL GetProcAdd
+   EXTERNAL TActiveX
+
+
+
+
+extern errorsys
+#line 8 ".\Prg\Trentfam.prg"
+_HB_CLASS TInfRenFam ; UTILITY FUNCTION TInfRenFam(...); static s_oClass ; local oClassInstance ; local nScope ; nScope := 1 ; if s_oClass == NIL ; s_oClass := IIF(.F.,, HBClass():New( "TInfRenFam" , {TInfGen():classh} ) ) ; ;
+
+   _HB_MEMBER {AS LOGIC lExcMov} ; IIF( !.F., s_oClass:AddMultiData( "LOGIC", .F., nScope + IIF( .F., 32, 0 ), { "lExcMov" }, .F., .F. ), )
+   _HB_MEMBER {AS LOGIC lFactura} ; IIF( !.F., s_oClass:AddMultiData( "LOGIC", .T., nScope + IIF( .F., 32, 0 ), { "lFactura" }, .F., .F. ), )
+   _HB_MEMBER {AS LOGIC lAlbaran} ; IIF( !.F., s_oClass:AddMultiData( "LOGIC", .T., nScope + IIF( .F., 32, 0 ), { "lAlbaran" }, .F., .F. ), )
+   _HB_MEMBER {AS LOGIC lTiket} ; IIF( !.F., s_oClass:AddMultiData( "LOGIC", .T., nScope + IIF( .F., 32, 0 ), { "lTiket" }, .F., .F. ), )
+   _HB_MEMBER {AS OBJECT oEstado} ; IIF( !.F., s_oClass:AddMultiData( "OBJECT",, nScope + IIF( .F., 32, 0 ), { "oEstado" }, .F., .F. ), )
+   _HB_MEMBER {AS OBJECT oFacCliT} ; IIF( !.F., s_oClass:AddMultiData( "OBJECT",, nScope + IIF( .F., 32, 0 ), { "oFacCliT" }, .F., .F. ), )
+   _HB_MEMBER {AS OBJECT oFacCliL} ; IIF( !.F., s_oClass:AddMultiData( "OBJECT",, nScope + IIF( .F., 32, 0 ), { "oFacCliL" }, .F., .F. ), )
+   _HB_MEMBER {AS OBJECT oFacCliP} ; IIF( !.F., s_oClass:AddMultiData( "OBJECT",, nScope + IIF( .F., 32, 0 ), { "oFacCliP" }, .F., .F. ), )
+   _HB_MEMBER {AS OBJECT oAlbCliT} ; IIF( !.F., s_oClass:AddMultiData( "OBJECT",, nScope + IIF( .F., 32, 0 ), { "oAlbCliT" }, .F., .F. ), )
+   _HB_MEMBER {AS OBJECT oAlbCliL} ; IIF( !.F., s_oClass:AddMultiData( "OBJECT",, nScope + IIF( .F., 32, 0 ), { "oAlbCliL" }, .F., .F. ), )
+   _HB_MEMBER {AS OBJECT oTikCliT} ; IIF( !.F., s_oClass:AddMultiData( "OBJECT",, nScope + IIF( .F., 32, 0 ), { "oTikCliT" }, .F., .F. ), )
+   _HB_MEMBER {AS OBJECT oTikCliL} ; IIF( !.F., s_oClass:AddMultiData( "OBJECT",, nScope + IIF( .F., 32, 0 ), { "oTikCliL" }, .F., .F. ), )
+   _HB_MEMBER {AS OBJECT oArt} ; IIF( !.F., s_oClass:AddMultiData( "OBJECT",, nScope + IIF( .F., 32, 0 ), { "oArt" }, .F., .F. ), )
+   _HB_MEMBER {AS OBJECT oIva} ; IIF( !.F., s_oClass:AddMultiData( "OBJECT",, nScope + IIF( .F., 32, 0 ), { "oIva" }, .F., .F. ), )
+   _HB_MEMBER {AS OBJECT oFamilia} ; IIF( !.F., s_oClass:AddMultiData( "OBJECT",, nScope + IIF( .F., 32, 0 ), { "oFamilia" }, .F., .F. ), )
+   _HB_MEMBER {AS OBJECT oDbfTvta} ; IIF( !.F., s_oClass:AddMultiData( "OBJECT",, nScope + IIF( .F., 32, 0 ), { "oDbfTvta" }, .F., .F. ), )
+   _HB_MEMBER {AS ARRAY aEstado} ; IIF( !.F., s_oClass:AddMultiData( "ARRAY", { "Pendiente", "Liquidada", "Todas" }, nScope + IIF( .F., 32, 0 ), { "aEstado" }, .F., .F. ), )
+
+   _HB_MEMBER Create(); IIF( .F., s_oClass:ModMethod( "Create", @TInfRenFam_Create(), nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ), s_oClass:AddMethod( "Create", @TInfRenFam_Create(), nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ));
+
+   _HB_MEMBER OpenFiles(); IIF( .F., s_oClass:ModMethod( "OpenFiles", @TInfRenFam_OpenFiles(), nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ), s_oClass:AddMethod( "OpenFiles", @TInfRenFam_OpenFiles(), nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ));
+
+   _HB_MEMBER CloseFiles(); IIF( .F., s_oClass:ModMethod( "CloseFiles", @TInfRenFam_CloseFiles(), nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ), s_oClass:AddMethod( "CloseFiles", @TInfRenFam_CloseFiles(), nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ));
+
+   _HB_MEMBER lResource( cFld); IIF( .F., s_oClass:ModMethod( "lResource", @TInfRenFam_lResource(), nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ), s_oClass:AddMethod( "lResource", @TInfRenFam_lResource(), nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ));
+
+   _HB_MEMBER lGenerate(); IIF( .F., s_oClass:ModMethod( "lGenerate", @TInfRenFam_lGenerate(), nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ), s_oClass:AddMethod( "lGenerate", @TInfRenFam_lGenerate(), nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ));
+
+   _HB_MEMBER AppAlbaran(); IIF( .F., s_oClass:ModMethod( "AppAlbaran", @TInfRenFam_AppAlbaran(), nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ), s_oClass:AddMethod( "AppAlbaran", @TInfRenFam_AppAlbaran(), nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ));
+
+   _HB_MEMBER AppFactura(); IIF( .F., s_oClass:ModMethod( "AppFactura", @TInfRenFam_AppFactura(), nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ), s_oClass:AddMethod( "AppFactura", @TInfRenFam_AppFactura(), nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ));
+
+   _HB_MEMBER AppTiket(); IIF( .F., s_oClass:ModMethod( "AppTiket", @TInfRenFam_AppTiket(), nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ), s_oClass:AddMethod( "AppTiket", @TInfRenFam_AppTiket(), nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ));
+
+; IF .F. ; __clsActive(s_oClass:hClass) ; s_oClass:Refresh() ; ELSE ; s_oClass:Create() ; END ; oClassInstance := __clsInst( s_oClass:hClass ) ; IF __ObjHasMsg( oClassInstance, "InitClass" ); oClassInstance:InitClass( hb_aParams() ) ; END ; ELSE ; oClassInstance := __clsInst( s_oClass:hClass ) ; END ; IF PCount() > 0 ; DIVERT TO (@DivertConstructorCall()) OF s_oClass ; END ; RETURN oClassInstance AS CLASS TInfRenFam ;
+
+
+
+UTILITY STATIC function TInfRenFam_OpenFiles() ; local Self AS CLASS TInfRenFam := QSelf() AS CLASS TInfRenFam
+
+
+
+
+
+   ::oFacCliT := DbfServer( "FACCLIT.DBF", ):NewOpen( "FACCLIT.DBF",, ( cDriver() ),, ( cPatEmp() ), .F., .T., .F., .F. ) ; ::oFacCliT:AddBag( "FACCLIT.CDX" ) ; ::oFacCliT:AddBag( ) ; ::oFacCliT:AutoIndex()
+
+   ::oFacCliL := DbfServer( "FACCLIL.DBF", ):NewOpen( "FACCLIL.DBF",, ( cDriver() ),, ( cPatEmp() ), .F., .T., .F., .F. ) ; ::oFacCliL:AddBag( "FACCLIL.CDX" ) ; ::oFacCliL:AddBag( ) ; ::oFacCliL:AutoIndex()
+   ::oFacCliL:OrdSetFocus( "CREF" )
+
+   ::oFacCliP := DbfServer( "FACCLIP.DBF", ):NewOpen( "FACCLIP.DBF",, ( cDriver() ),, ( cPatEmp() ), .F., .T., .F., .F. ) ; ::oFacCliP:AddBag( "FACCLIP.CDX" ) ; ::oFacCliP:AddBag( ) ; ::oFacCliP:AutoIndex()
+
+   ::oAlbCliT := DbfServer( "ALBCLIT.DBF", ):NewOpen( "ALBCLIT.DBF",, ( cDriver() ),, ( cPatEmp() ), .F., .T., .F., .F. ) ; ::oAlbCliT:AddBag( "ALBCLIT.CDX" ) ; ::oAlbCliT:AddBag( ) ; ::oAlbCliT:AutoIndex()
+
+   ::oAlbCliL := DbfServer( "ALBCLIL.DBF", ):NewOpen( "ALBCLIL.DBF",, ( cDriver() ),, ( cPatEmp() ), .F., .T., .F., .F. ) ; ::oAlbCliL:AddBag( "ALBCLIL.CDX" ) ; ::oAlbCliL:AddBag( ) ; ::oAlbCliL:AutoIndex()
+   ::oAlbCliL:OrdSetFocus( "CREF" )
+
+   ::oTikCliT := DbfServer( "TIKET.DBF", ):NewOpen( "TIKET.DBF",, ( cDriver() ),, ( cPatEmp() ), .F., .T., .F., .F. ) ; ::oTikCliT:AddBag( "TIKET.CDX" ) ; ::oTikCliT:AddBag( ) ; ::oTikCliT:AutoIndex()
+
+   ::oTikCliL := DbfServer( "TIKEL.DBF", ):NewOpen( "TIKEL.DBF",, ( cDriver() ),, ( cPatEmp() ), .F., .T., .F., .F. ) ; ::oTikCliL:AddBag( "TIKEL.CDX" ) ; ::oTikCliL:AddBag( ) ; ::oTikCliL:AutoIndex()
+   ::oTikCliL:OrdSetFocus( "CREF" )
+
+   ::oArt := DbfServer( "ARTICULO.DBF", ):NewOpen( "ARTICULO.DBF",, ( cDriver() ),, ( cPatArt() ), .F., .T., .F., .F. ) ; ::oArt:AddBag( "ARTICULO.CDX" ) ; ::oArt:AddBag( ) ; ::oArt:AutoIndex()
+
+
+
+   ::oIva := DbfServer( "TIVA.DBF", ):NewOpen( "TIVA.DBF",, ( cDriver() ),, ( cPatDat() ), .F., .T., .F., .F. ) ; ::oIva:AddBag( "TIVA.CDX" ) ; ::oIva:AddBag( ) ; ::oIva:AutoIndex()
+
+
+
+   ::oDbfTvta := DbfServer( "TVTA.DBF", ):NewOpen( "TVTA.DBF",, ( cDriver() ),, ( cPatDat() ), .F., .T., .F., .F. ) ; ::oDbfTvta:AddBag( "TVTA.CDX" ) ; ::oDbfTvta:AddBag( ) ; ::oDbfTvta:AutoIndex()
+
+   ::oFamilia := DbfServer( "FAMILIAS.DBF", ):NewOpen( "FAMILIAS.DBF",, ( cDriver() ),, ( cPatArt() ), .F., .T., .F., .F. ) ; ::oFamilia:AddBag( "FAMILIAS.CDX" ) ; ::oFamilia:AddBag( ) ; ::oFamilia:AutoIndex()
+
+RETURN ( Self )
+
+
+
+UTILITY STATIC function TInfRenFam_CloseFiles() ; local Self AS CLASS TInfRenFam := QSelf() AS CLASS TInfRenFam
+
+   ::oFacCliT:End()
+   ::oFacCliL:End()
+   ::oFacCliP:End()
+   ::oAlbCliT:End()
+   ::oAlbCliL:End()
+   ::oTikCliT:End()
+   ::oTikCliL:End()
+   ::oArt:End()
+   ::oIva:End()
+   ::oDbfTVta:End()
+   ::oFamilia:End()
+
+RETURN ( Self )
+
+
+
+UTILITY STATIC function TInfRenFam_Create() ; local Self AS CLASS TInfRenFam := QSelf() AS CLASS TInfRenFam
+
+   ::AddField( "CCODFAM", "C", 16, 0, {|| "@!" },           "Cod.",              .T., "Código família",   8, .F. )
+   ::AddField( "CNOMFAM", "C", 40, 0, {|| "@!" },           "Família",           .T., "Família",         25, .F. )
+   ::AddField( "NTOTCAJ", "N", 16, 6, {|| MasUnd() },       "Cajas",             .F., "Cajas",           12, .T. )
+   ::AddField( "NTOTUNI", "N", 16, 6, {|| MasUnd() },       "Unds.",             .T., "Unidades",        12, .T. )
+   ::AddField( "NTOTIMP", "N", 16, 6, {|| ::cPicOut },      "Tot. importe",      .T., "Tot. importe",    12, .T. )
+   ::AddField( "NTOTCOS", "N", 16, 6, {|| ::cPicOut },      "Tot. costo",        .T., "Total costo",     12, .T. )
+   ::AddField( "NMARGEN", "N", 16, 6, {|| ::cPicOut },      "Margen",            .T., "Margen",          12, .T. )
+   ::AddField( "NRENTAB", "N", 16, 6, {|| ::cPicOut },      "%Rent.",            .T., "Rentabilidad",    12, .F. )
+   ::AddField( "NPREMED", "N", 16, 6, {|| ::cPicImp },      "Precio medio",      .F., "Precio medio",    12, .F. )
+   ::AddField( "NCOSMED", "N", 16, 6, {|| ::cPicOut },      "Costo medio",       .T., "Costo medio",     12, .F. )
+
+   ::AddTmpIndex( "CCODFAM", "CCODFAM" )
+
+
+
+RETURN ( Self )
+
+
+
+UTILITY STATIC function TInfRenFam_lResource( cFld) ; local Self AS CLASS TInfRenFam := QSelf() AS CLASS TInfRenFam
+
+   local cEstado := "Todas"
+
+   if !::StdResource( "INF_GEN10C" )
+      return .F.
+   end
+
+
+
+
+
+   ::lDefFamInf( 110, 120, 130, 140 )
+
+   ::oDefExcInf( 204 )
+
+
+
+   TCheckBox():ReDefine( ( 203 ), { | u | If( PCount()==0, ::lExcMov, ::lExcMov:= u ) }, ::oFld:aDialogs[1],,,,,,, .F.,, .F. )
+
+
+
+   TCheckBox():ReDefine( 219, { | u | If( PCount()==0, ::lAlbaran, ::lAlbaran:= u ) }, ::oFld:aDialogs[1],,,,,,, .F.,, .F. )
+
+
+
+   TCheckBox():ReDefine( 220, { | u | If( PCount()==0, ::lFactura, ::lFactura:= u ) }, ::oFld:aDialogs[1],,,,,,, .F.,, .F. )
+
+
+
+
+
+
+   ::oEstado := TComboBox():ReDefine( 218, { | u | If( PCount()==0, cEstado, cEstado:= u ) }, ::aEstado, ::oFld:aDialogs[1],,,,,,, .F., {||     ::lFactura},,,,, )
+
+
+
+   TCheckBox():ReDefine( 221, { | u | If( PCount()==0, ::lTiket, ::lTiket:= u ) }, ::oFld:aDialogs[1],,,,,,, .F.,, .F. )
+
+RETURN .T.
+
+
+
+
+
+
+UTILITY STATIC function TInfRenFam_lGenerate() ; local Self AS CLASS TInfRenFam := QSelf() AS CLASS TInfRenFam
+
+   ::oDlg:Disable()
+
+   ::oDbf:Zap()
+
+
+
+
+
+   if ::lAlbaran
+      ::AppAlbaran()
+   end
+
+
+
+
+
+   if ::lFactura
+      ::AppFactura()
+   end
+
+
+
+
+
+   if ::lTiket
+      ::AppTiket()
+   end
+
+   ::oDlg:Enable()
+
+RETURN ( ::oDbf:LastRec() > 0 )
+
+
+
+UTILITY STATIC function TInfRenFam_AppAlbaran() ; local Self AS CLASS TInfRenFam := QSelf() AS CLASS TInfRenFam
+
+   local cCodFam
+   local nTotUni
+   local nTotImpUni
+   local nTotCosUni
+
+
+
+
+
+   ::oMtrInf:SetTotal( ::oAlbCliL:Lastrec() )
+
+   ::oAlbCliL:GoTop()
+
+   while !::oAlbCliL:Eof()
+
+      cCodFam  := cCodFam( ::oAlbCliL:cRef, ::oArt )
+
+
+
+
+
+
+
+
+
+      if cCodFam >= ::cFamOrg                                                                                        .AND. cCodFam <= ::cFamDes                                                                                        .AND. dFecAlbCli( ::oAlbCliL:cSerAlb + Str( ::oAlbCliL:nNumAlb ) + ::oAlbCliL:cSufAlb, ::oAlbCliT ) >= ::dIniInf  .AND. dFecAlbCli( ::oAlbCliL:cSerAlb + Str( ::oAlbCliL:nNumAlb ) + ::oAlbCliL:cSufAlb, ::oAlbCliT ) <= ::dFinInf  .AND. !lFacAlbCli( ::oAlbCliL:cSerAlb + Str( ::oAlbCliL:nNumAlb ) + ::oAlbCliL:cSufAlb, ::oAlbCliT )              .AND. lChkSer( ::oAlbCliL:cSerAlb, ::aSer )                                                                       .AND. !( ::oAlbCliL:lKitChl )                                                                                        .AND. !( ::lExcCero .AND. ( nTotNAlbCli( ::oAlbCliL:cAlias ) == 0 ) )                                             .AND. !( ::lExcMov  .AND. ( nImpLAlbCli( ::oAlbCliT:cAlias, ::oAlbCliL:cAlias, ::nDecOut, ::nDerOut ) == 0  ) )
+
+
+
+
+
+         nTotUni              := nTotNAlbCli( ::oAlbCliL:cAlias )
+         nTotImpUni           := nImpLAlbCli( ::oAlbCliT:cAlias, ::oAlbCliL:cAlias, ::nDecOut, ::nDerOut )
+
+         if ::oAlbCliL:nCosDiv <> 0
+            nTotCosUni        := ::oAlbCliL:nCosDiv * nTotUni
+         else
+            nTotCosUni        := nRetPreCosto( ::oArt:cAlias, ::oAlbCliL:cRef ) * nTotUni
+         end
+
+         if !::oDbf:Seek( cCodFam )
+
+            ::oDbf:Append()
+
+            ::oDbf:cCodFam    := cCodFam
+            ::oDbf:cNomFam    := cNomFam( cCodFam, ::oDbfFam )
+
+            ::oDbf:nTotCaj    := ::oAlbCliL:nCanEnt
+            ::oDbf:nTotUni    := nTotUni
+            ::oDbf:nTotImp    := nTotImpUni
+            ::oDbf:nTotCos    := nTotCosUni
+            ::oDbf:nMargen    := ( nTotImpUni ) - ( nTotCosUni )
+
+            if nTotUni <> 0 .AND. nTotCosUni <> 0
+               ::oDbf:nRentab := ( ( nTotImpUni / nTotCosUni ) - 1 ) * 100
+               ::oDbf:nPreMed := nTotImpUni / nTotUni
+               ::oDbf:nCosMed := nTotCosUni / nTotUni
+            else
+               ::oDbf:nRentab := 0
+               ::oDbf:nPreMed := 0
+               ::oDbf:nCosMed := 0
+            end
+
+            ::oDbf:Save()
+
+         else
+
+            ::oDbf:Load()
+
+            ::oDbf:nTotCaj    += ::oAlbCliL:nCanEnt
+            ::oDbf:nTotUni    += nTotUni
+            ::oDbf:nTotImp    += nTotImpUni
+            ::oDbf:nTotCos    += nTotCosUni
+            ::oDbf:nMargen    += ( nTotImpUni ) - ( nTotCosUni )
+
+            if nTotUni <> 0 .AND. nTotCosUni <> 0
+               ::oDbf:nRentab := ( ( ::oDbf:nTotImp / ::oDbf:nTotCos ) - 1 ) * 100
+               ::oDbf:nPreMed := ::oDbf:nTotImp / ::oDbf:nTotUni
+               ::oDbf:nCosMed := ::oDbf:nTotCos / ::oDbf:nTotUni
+            end
+
+            ::oDbf:Save()
+
+         end
+
+      end
+
+      ::oMtrInf:AutoInc( ::oAlbCliL:OrdKeyNo() )
+
+      ::oAlbCliL:Skip()
+
+   end
+
+RETURN ( Self )
+
+
+
+UTILITY STATIC function TInfRenFam_AppFactura() ; local Self AS CLASS TInfRenFam := QSelf() AS CLASS TInfRenFam
+
+   local cCodFam
+   local dFacCli
+   local nPagFac
+   local nTotUni
+   local nTotImpUni
+   local nTotCosUni
+   local bValid
+
+   do case
+      case ::oEstado:nAt == 1
+         bValid   := {|| nPagFac == 2 }
+      case ::oEstado:nAt == 2
+         bValid   := {|| nPagFac == 1 }
+      case ::oEstado:nAt == 3
+         bValid   := {|| .T. }
+   end
+
+   ::oMtrInf:SetTotal( ::oFacCliL:Lastrec() )
+
+   ::oFacCliL:GoTop()
+
+   WHILE !::oFacCliL:Eof()
+
+      cCodFam  := cCodFam( ::oFacCliL:cRef, ::oArt )
+      dFacCli  := dFecFacCli( ::oFacCliL:cSerie + Str( ::oFacCliL:nNumFac ) + ::oFacCliL:cSufFac, ::oFacCliT )
+      nPagFac  := nChkPagFacCli( ::oFacCliL:cSerie + Str( ::oFacCliL:nNumFac ) + ::oFacCliL:cSufFac, ::oFacCliT:cAlias, ::oFacCliP:cAlias )
+
+
+
+
+
+
+
+
+
+      IF cCodFam >= ::cFamOrg                                                                                        .AND. cCodFam <= ::cFamDes                                                                                        .AND. dFacCli >= ::dIniInf                                                                                        .AND. dFacCli <= ::dFinInf                                                                                        .AND. lChkSer( ::oFacCliL:cSerie, ::aSer )                                                                        .AND. Eval( bValid )                                                                                              .AND. !( ::oFacCliL:lKitChl )                                                                                     .AND. !( ::lExcCero .AND. ( nTotNFacCli( ::oFacCliL:cAlias ) == 0 ) )                                             .AND.  !( ::lExcMov  .AND. ( nImpLFacCli( ::oFacCliT:cAlias, ::oFacCliL:cAlias, ::nDecOut, ::nDerOut ) == 0  ) )
+
+
+
+
+
+         nTotUni              := nTotNFacCli( ::oFacCliL:cAlias )
+         nTotImpUni           := nImpLFacCli( ::oFacCliT:cAlias, ::oFacCliL:cAlias, ::nDecOut, ::nDerOut )
+         nTotCosUni           := ::oFacCliL:nCosDiv * nTotUni
+
+         if !::oDbf:Seek( cCodFam )
+
+            ::oDbf:Append()
+
+            ::oDbf:cCodFam    := cCodFam
+            ::oDbf:cNomFam    := cNomFam( cCodFam, ::oDbfFam )
+
+            ::oDbf:nTotCaj    := ::oFacCliL:nCanEnt
+            ::oDbf:nTotUni    := nTotUni
+            ::oDbf:nTotImp    := nTotImpUni
+            ::oDbf:nTotCos    := nTotCosUni
+            ::oDbf:nMargen    := ( nTotImpUni ) - ( nTotCosUni )
+
+            if nTotUni <> 0 .AND. nTotCosUni <> 0
+               ::oDbf:nRentab := ( ( nTotImpUni / nTotCosUni ) - 1 ) * 100
+               ::oDbf:nPreMed := nTotImpUni / nTotUni
+               ::oDbf:nCosMed := nTotCosUni / nTotUni
+            else
+               ::oDbf:nRentab := 0
+               ::oDbf:nPreMed := 0
+               ::oDbf:nCosMed := 0
+            end
+
+            ::oDbf:Save()
+
+         else
+
+            ::oDbf:Load()
+
+            ::oDbf:nTotCaj    += ::oFacCliL:nCanEnt
+            ::oDbf:nTotUni    += nTotUni
+            ::oDbf:nTotImp    += nTotImpUni
+            ::oDbf:nTotCos    += nTotCosUni
+            ::oDbf:nMargen    += ( nTotImpUni ) - ( nTotCosUni )
+
+            if nTotUni <> 0 .AND. nTotCosUni <> 0
+               ::oDbf:nRentab := ( ( ::oDbf:nTotImp / ::oDbf:nTotCos ) - 1 ) * 100
+               ::oDbf:nPreMed := ::oDbf:nTotImp / ::oDbf:nTotUni
+               ::oDbf:nCosMed := ::oDbf:nTotCos / ::oDbf:nTotUni
+            end
+
+            ::oDbf:Save()
+
+         end
+
+      end
+
+      ::oMtrInf:AutoInc()
+
+      ::oFacCliL:Skip()
+
+   end
+
+   ::oMtrInf:AutoInc()
+
+RETURN ( Self )
+
+
+
+UTILITY STATIC function TInfRenFam_AppTiket() ; local Self AS CLASS TInfRenFam := QSelf() AS CLASS TInfRenFam
+
+   local bValid
+   local cCodFam
+   local nTotUni
+   local nTotImpUni
+   local nTotCosUni
+
+   do case
+      case ::oEstado:nAt == 1
+         bValid      := {|| ::oFacCliT:lLiquidada }
+      case ::oEstado:nAt == 2
+         bValid      := {|| !::oFacCliT:lLiquidada }
+      case ::oEstado:nAt == 3
+         bValid      := {|| .T. }
+   end
+
+   ::oTikCliL:GoTop()
+
+   WHILE !::oTikCliL:Eof()
+
+      cCodFam                 := cCodFam( ::oTikCliL:cCbaTil, ::oArt )
+
+      ::oMtrInf:SetTotal( ::oTikCliL:Lastrec() )
+
+
+
+
+
+
+
+
+
+      IF cCodFam >= ::cFamOrg                                                                                        .AND. cCodFam <= ::cFamDes                                                                                        .AND. dFecTik( ::oTikCliL:cSerTil + ::oTikCliL:cNumTil + ::oTikCliL:cSufTil, ::oTikCliT ) >= ::dIniInf            .AND. dFecTik( ::oTikCliL:cSerTil + ::oTikCliL:cNumTil + ::oTikCliL:cSufTil, ::oTikCliT ) <= ::dFinInf            .AND. cTipTik( ::oTikCliL:cSerTil + ::oTikCliL:cNumTil + ::oTikCliL:cSufTil, ::oTikCliT ) == "1"                  .AND. lChkSer( ::oTikCliL:cSerTil, ::aSer )                                                                       .AND. !( ::oTikCliL:lKitChl )                                                                                     .AND. !( ::lExcCero .AND. ( ::oTikCliL:nUntTil == 0 ) )                                                           .AND. !( ::lExcMov  .AND. ( nImpLTpv( ::oTikCliT, ::oTikCliL:cAlias, ::nDecOut, ::nDerOut ) == 0  ) )
+
+         nTotUni              := ::oTikCliL:nUntTil
+         nTotImpUni           := nTotLTpv( ::oTikCliL:cAlias, ::nDecOut, ::nDerOut )
+
+         if ::oTikCliL:nCosDiv <> 0
+            nTotCosUni        := ::oTikCliL:nCosDiv * nTotUni
+         else
+            nTotCosUni        := nRetPreCosto( ::oArt:cAlias, ::oTikCliL:cCbaTil ) * nTotUni
+         end
+
+         if !::oDbf:Seek( cCodFam )
+
+            ::oDbf:Append()
+
+            ::oDbf:cCodFam    := cCodFam
+            ::oDbf:cNomFam    := cNomFam( cCodFam, ::oDbfFam )
+
+            ::oDbf:nTotUni    := nTotUni
+            ::oDbf:nTotImp    := nTotImpUni
+            ::oDbf:nTotCos    := nTotCosUni
+            ::oDbf:nMargen    := ( nTotImpUni ) - ( nTotCosUni )
+
+            if nTotUni <> 0 .AND. nTotCosUni <> 0
+               ::oDbf:nRentab := ( ( nTotImpUni / nTotCosUni ) - 1 ) * 100
+               ::oDbf:nPreMed := nTotImpUni / nTotUni
+               ::oDbf:nCosMed := nTotCosUni / nTotUni
+            else
+               ::oDbf:nRentab := 0
+               ::oDbf:nPreMed := 0
+               ::oDbf:nCosMed := 0
+            end
+
+            ::oDbf:Save()
+
+         else
+
+            ::oDbf:Load()
+
+
+            ::oDbf:nTotUni    += nTotUni
+            ::oDbf:nTotImp    += nTotImpUni
+            ::oDbf:nTotCos    += nTotCosUni
+            ::oDbf:nMargen    += ( nTotImpUni ) - ( nTotCosUni )
+
+            if nTotUni <> 0 .AND. nTotCosUni <> 0
+               ::oDbf:nRentab := ( ( ::oDbf:nTotImp / ::oDbf:nTotCos ) - 1 ) * 100
+               ::oDbf:nPreMed := ::oDbf:nTotImp / ::oDbf:nTotUni
+               ::oDbf:nCosMed := ::oDbf:nTotCos / ::oDbf:nTotUni
+            end
+
+            ::oDbf:Save()
+
+         end
+
+      end
+
+      ::oMtrInf:AutoInc( ::oTikCliL:OrdKeyNo() )
+
+      ::oTikCliL:Skip()
+
+   end
+
+   ::oMtrInf:AutoInc( ::oTikCliL:OrdKeyNo() )
+
+RETURN ( Self )

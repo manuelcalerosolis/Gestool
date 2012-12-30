@@ -1,0 +1,2762 @@
+#line 112 "hbclass.ch"
+   DYNAMIC DivertConstructorCall
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+DECLARE HBClass  New( cName AS String, OPTIONAL SuperParams ) AS CLASS HBClass  Create() AS Object  Instance() AS Object  AddClsMethod( cName AS String, @MethodName(), nScope AS Numeric, n2 AS Numeric, n3 AS Numeric )  AddDelegate( cName AS String, cDelegate AS String, cObject AS String, nScope AS Numeric, lPersistent AS LOGICAL )  AddMultiClsData( cType AS String, uVal, nScope AS Numeric, aDatas AS Array OF String )  AddMultiData( cType AS String, uVal, nScope AS Numeric, aDatas AS Array OF String, x AS LOGICAL, lPer AS LOGICAL )  AddMethod( cName AS String, @MethodName(), nScope AS Numeric, lPersistent AS LOGICAL )  AddInLine( cName AS String, bBlock AS CodeBlock, nScope AS Numeric, lPersistent AS LOGICAL )  AddVirtual( cName AS String )  ModMethod( cName AS String, @MethodName(), nScope AS Numeric, lPersistent AS LOGICAL )  ModClsMethod( cName AS String, @MethodName(), nScope AS Numeric )  ModInline( cName AS String, bBlock AS CodeBlock, nScope AS Numeric, lPersistent AS LOGICAL )  SetOnError( @MethodName() )
+#line 85 "\Fwh1204\Include\FiveWin.Ch"
+   EXTERNAL GetProcAdd
+   EXTERNAL TActiveX
+
+
+
+
+extern errorsys
+#line 7 ".\Prg\Movilges.prg"
+STATIC oReport
+
+_HB_CLASS TMovilges ; UTILITY FUNCTION TMovilges(...); static s_oClass ; local oClassInstance ; local nScope ; nScope := 1 ; if s_oClass == NIL ; s_oClass := IIF(.F.,, HBClass():New( "TMovilges" , { HBObject():Classh } ) ) ;
+
+   _HB_MEMBER { dbfAgente} ; IIF( !.F., s_oClass:AddMultiData(,, nScope + IIF( .F., 32, 0 ), { "dbfAgente" }, .F., .F. ), )
+   _HB_MEMBER { dbfClient} ; IIF( !.F., s_oClass:AddMultiData(,, nScope + IIF( .F., 32, 0 ), { "dbfClient" }, .F., .F. ), )
+   _HB_MEMBER { dbfFam} ; IIF( !.F., s_oClass:AddMultiData(,, nScope + IIF( .F., 32, 0 ), { "dbfFam" }, .F., .F. ), )
+   _HB_MEMBER { dbfOferta} ; IIF( !.F., s_oClass:AddMultiData(,, nScope + IIF( .F., 32, 0 ), { "dbfOferta" }, .F., .F. ), )
+   _HB_MEMBER { dbfTIva} ; IIF( !.F., s_oClass:AddMultiData(,, nScope + IIF( .F., 32, 0 ), { "dbfTIva" }, .F., .F. ), )
+   _HB_MEMBER { dbfFacCliP} ; IIF( !.F., s_oClass:AddMultiData(,, nScope + IIF( .F., 32, 0 ), { "dbfFacCliP" }, .F., .F. ), )
+   _HB_MEMBER { dbfRuta} ; IIF( !.F., s_oClass:AddMultiData(,, nScope + IIF( .F., 32, 0 ), { "dbfRuta" }, .F., .F. ), )
+   _HB_MEMBER { dbfDiv} ; IIF( !.F., s_oClass:AddMultiData(,, nScope + IIF( .F., 32, 0 ), { "dbfDiv" }, .F., .F. ), )
+   _HB_MEMBER { dbfArticulo} ; IIF( !.F., s_oClass:AddMultiData(,, nScope + IIF( .F., 32, 0 ), { "dbfArticulo" }, .F., .F. ), )
+   _HB_MEMBER { dbfAlbCliT} ; IIF( !.F., s_oClass:AddMultiData(,, nScope + IIF( .F., 32, 0 ), { "dbfAlbCliT" }, .F., .F. ), )
+   _HB_MEMBER { dbfAlbCliL} ; IIF( !.F., s_oClass:AddMultiData(,, nScope + IIF( .F., 32, 0 ), { "dbfAlbCliL" }, .F., .F. ), )
+   _HB_MEMBER { dbfPedCliT} ; IIF( !.F., s_oClass:AddMultiData(,, nScope + IIF( .F., 32, 0 ), { "dbfPedCliT" }, .F., .F. ), )
+   _HB_MEMBER { dbfPedCliL} ; IIF( !.F., s_oClass:AddMultiData(,, nScope + IIF( .F., 32, 0 ), { "dbfPedCliL" }, .F., .F. ), )
+   _HB_MEMBER { dbfFacCliT} ; IIF( !.F., s_oClass:AddMultiData(,, nScope + IIF( .F., 32, 0 ), { "dbfFacCliT" }, .F., .F. ), )
+   _HB_MEMBER { dbfFacCliL} ; IIF( !.F., s_oClass:AddMultiData(,, nScope + IIF( .F., 32, 0 ), { "dbfFacCliL" }, .F., .F. ), )
+   _HB_MEMBER { dbfCliAtp} ; IIF( !.F., s_oClass:AddMultiData(,, nScope + IIF( .F., 32, 0 ), { "dbfCliAtp" }, .F., .F. ), )
+   _HB_MEMBER { dbfAntCliT} ; IIF( !.F., s_oClass:AddMultiData(,, nScope + IIF( .F., 32, 0 ), { "dbfAntCliT" }, .F., .F. ), )
+   _HB_MEMBER { dbfFPago} ; IIF( !.F., s_oClass:AddMultiData(,, nScope + IIF( .F., 32, 0 ), { "dbfFPago" }, .F., .F. ), )
+
+   _HB_MEMBER { nRead} ; IIF( !.F., s_oClass:AddMultiData(,, nScope + IIF( .F., 32, 0 ), { "nRead" }, .F., .F. ), )
+   _HB_MEMBER { nDecimales} ; IIF( !.F., s_oClass:AddMultiData(,, nScope + IIF( .F., 32, 0 ), { "nDecimales" }, .F., .F. ), )
+   _HB_MEMBER { cCodEmp} ; IIF( !.F., s_oClass:AddMultiData(,, nScope + IIF( .F., 32, 0 ), { "cCodEmp" }, .F., .F. ), )
+
+   _HB_MEMBER { nLevel} ; IIF( !.F., s_oClass:AddMultiData(,, nScope + IIF( .F., 32, 0 ), { "nLevel" }, .F., .F. ), )
+   _HB_MEMBER { oDlg} ; IIF( !.F., s_oClass:AddMultiData(,, nScope + IIF( .F., 32, 0 ), { "oDlg" }, .F., .F. ), )
+   _HB_MEMBER { oFld} ; IIF( !.F., s_oClass:AddMultiData(,, nScope + IIF( .F., 32, 0 ), { "oFld" }, .F., .F. ), )
+   _HB_MEMBER { oBrwAgente} ; IIF( !.F., s_oClass:AddMultiData(,, nScope + IIF( .F., 32, 0 ), { "oBrwAgente" }, .F., .F. ), )
+   _HB_MEMBER { bmpSelect} ; IIF( !.F., s_oClass:AddMultiData(,, nScope + IIF( .F., 32, 0 ), { "bmpSelect" }, .F., .F. ), )
+   _HB_MEMBER { bmpUnSelect} ; IIF( !.F., s_oClass:AddMultiData(,, nScope + IIF( .F., 32, 0 ), { "bmpUnSelect" }, .F., .F. ), )
+   _HB_MEMBER { cDirectorio} ; IIF( !.F., s_oClass:AddMultiData(,, nScope + IIF( .F., 32, 0 ), { "cDirectorio" }, .F., .F. ), )
+   _HB_MEMBER { oDirectorio} ; IIF( !.F., s_oClass:AddMultiData(,, nScope + IIF( .F., 32, 0 ), { "oDirectorio" }, .F., .F. ), )
+   _HB_MEMBER { lImportarAlbaran} ; IIF( !.F., s_oClass:AddMultiData(,, nScope + IIF( .F., 32, 0 ), { "lImportarAlbaran" }, .F., .F. ), )
+   _HB_MEMBER { lImportarPedido} ; IIF( !.F., s_oClass:AddMultiData(,, nScope + IIF( .F., 32, 0 ), { "lImportarPedido" }, .F., .F. ), )
+   _HB_MEMBER { lImportarFactura} ; IIF( !.F., s_oClass:AddMultiData(,, nScope + IIF( .F., 32, 0 ), { "lImportarFactura" }, .F., .F. ), )
+   _HB_MEMBER { lImportarPago} ; IIF( !.F., s_oClass:AddMultiData(,, nScope + IIF( .F., 32, 0 ), { "lImportarPago" }, .F., .F. ), )
+   _HB_MEMBER { lExportarCliente} ; IIF( !.F., s_oClass:AddMultiData(,, nScope + IIF( .F., 32, 0 ), { "lExportarCliente" }, .F., .F. ), )
+   _HB_MEMBER { lExportarOferta} ; IIF( !.F., s_oClass:AddMultiData(,, nScope + IIF( .F., 32, 0 ), { "lExportarOferta" }, .F., .F. ), )
+   _HB_MEMBER { lExportarFamilia} ; IIF( !.F., s_oClass:AddMultiData(,, nScope + IIF( .F., 32, 0 ), { "lExportarFamilia" }, .F., .F. ), )
+   _HB_MEMBER { lExportarArticulo} ; IIF( !.F., s_oClass:AddMultiData(,, nScope + IIF( .F., 32, 0 ), { "lExportarArticulo" }, .F., .F. ), )
+   _HB_MEMBER { lExportarRuta} ; IIF( !.F., s_oClass:AddMultiData(,, nScope + IIF( .F., 32, 0 ), { "lExportarRuta" }, .F., .F. ), )
+   _HB_MEMBER { lExportarCobro} ; IIF( !.F., s_oClass:AddMultiData(,, nScope + IIF( .F., 32, 0 ), { "lExportarCobro" }, .F., .F. ), )
+   _HB_MEMBER { lExportarComentario} ; IIF( !.F., s_oClass:AddMultiData(,, nScope + IIF( .F., 32, 0 ), { "lExportarComentario" }, .F., .F. ), )
+   _HB_MEMBER { lExportarAtipica} ; IIF( !.F., s_oClass:AddMultiData(,, nScope + IIF( .F., 32, 0 ), { "lExportarAtipica" }, .F., .F. ), )
+   _HB_MEMBER { oImageList} ; IIF( !.F., s_oClass:AddMultiData(,, nScope + IIF( .F., 32, 0 ), { "oImageList" }, .F., .F. ), )
+   _HB_MEMBER { oTree} ; IIF( !.F., s_oClass:AddMultiData(,, nScope + IIF( .F., 32, 0 ), { "oTree" }, .F., .F. ), )
+   _HB_MEMBER { oSubItem} ; IIF( !.F., s_oClass:AddMultiData(,, nScope + IIF( .F., 32, 0 ), { "oSubItem" }, .F., .F. ), )
+   _HB_MEMBER { oSubItem2} ; IIF( !.F., s_oClass:AddMultiData(,, nScope + IIF( .F., 32, 0 ), { "oSubItem2" }, .F., .F. ), )
+   _HB_MEMBER { oSubItem3} ; IIF( !.F., s_oClass:AddMultiData(,, nScope + IIF( .F., 32, 0 ), { "oSubItem3" }, .F., .F. ), )
+   _HB_MEMBER { oSubItemError} ; IIF( !.F., s_oClass:AddMultiData(,, nScope + IIF( .F., 32, 0 ), { "oSubItemError" }, .F., .F. ), )
+   _HB_MEMBER { oSubItemResultado} ; IIF( !.F., s_oClass:AddMultiData(,, nScope + IIF( .F., 32, 0 ), { "oSubItemResultado" }, .F., .F. ), )
+   _HB_MEMBER { fLog} ; IIF( !.F., s_oClass:AddMultiData(,, nScope + IIF( .F., 32, 0 ), { "fLog" }, .F., .F. ), )
+   _HB_MEMBER { lLog} ; IIF( !.F., s_oClass:AddMultiData(,, nScope + IIF( .F., 32, 0 ), { "lLog" }, .F., .F. ), )
+   _HB_MEMBER { oBotonAceptar} ; IIF( !.F., s_oClass:AddMultiData(,, nScope + IIF( .F., 32, 0 ), { "oBotonAceptar" }, .F., .F. ), )
+   _HB_MEMBER { oBotonImprimir} ; IIF( !.F., s_oClass:AddMultiData(,, nScope + IIF( .F., 32, 0 ), { "oBotonImprimir" }, .F., .F. ), )
+   _HB_MEMBER { nMedidor} ; IIF( !.F., s_oClass:AddMultiData(,, nScope + IIF( .F., 32, 0 ), { "nMedidor" }, .F., .F. ), )
+   _HB_MEMBER { oMedidor} ; IIF( !.F., s_oClass:AddMultiData(,, nScope + IIF( .F., 32, 0 ), { "oMedidor" }, .F., .F. ), )
+   _HB_MEMBER { cLog} ; IIF( !.F., s_oClass:AddMultiData(,, nScope + IIF( .F., 32, 0 ), { "cLog" }, .F., .F. ), )
+
+   _HB_MEMBER New(); IIF( .F., s_oClass:ModMethod( "New", @TMovilges_New(), nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ), s_oClass:AddMethod( "New", @TMovilges_New(), nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ));
+
+   _HB_MEMBER Destroy(); IIF( .F., s_oClass:ModMethod( "Destroy", @TMovilges_Destroy(), nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ), s_oClass:AddMethod( "Destroy", @TMovilges_Destroy(), nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ));
+
+   _HB_MEMBER Activate(); IIF( .F., s_oClass:ModMethod( "Activate", @TMovilges_Activate(), nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ), s_oClass:AddMethod( "Activate", @TMovilges_Activate(), nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ));
+
+   _HB_MEMBER SelAllAgente( lRefrescar, lSel); IIF( .F., s_oClass:ModMethod( "SelAllAgente", @TMovilges_SelAllAgente(), nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ), s_oClass:AddMethod( "SelAllAgente", @TMovilges_SelAllAgente(), nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ));
+
+   _HB_MEMBER SelAgente( lSel); IIF( .F., s_oClass:ModMethod( "SelAgente", @TMovilges_SelAgente(), nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ), s_oClass:AddMethod( "SelAgente", @TMovilges_SelAgente(), nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ));
+
+   _HB_MEMBER OpenFiles(); IIF( .F., s_oClass:ModMethod( "OpenFiles", @TMovilges_OpenFiles(), nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ), s_oClass:AddMethod( "OpenFiles", @TMovilges_OpenFiles(), nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ));
+
+   _HB_MEMBER CloseFiles(); IIF( .F., s_oClass:ModMethod( "CloseFiles", @TMovilges_CloseFiles(), nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ), s_oClass:AddMethod( "CloseFiles", @TMovilges_CloseFiles(), nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ));
+
+   _HB_MEMBER MovilgesProcesar(); IIF( .F., s_oClass:ModMethod( "MovilgesProcesar", @TMovilges_MovilgesProcesar(), nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ), s_oClass:AddMethod( "MovilgesProcesar", @TMovilges_MovilgesProcesar(), nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ));
+
+   _HB_MEMBER MovilgesSalir(); IIF( .F., s_oClass:ModMethod( "MovilgesSalir", @TMovilges_MovilgesSalir(), nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ), s_oClass:AddMethod( "MovilgesSalir", @TMovilges_MovilgesSalir(), nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ));
+
+   _HB_MEMBER MuestraDialogo(); IIF( .F., s_oClass:ModMethod( "MuestraDialogo", @TMovilges_MuestraDialogo(), nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ), s_oClass:AddMethod( "MuestraDialogo", @TMovilges_MuestraDialogo(), nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ));
+
+   _HB_MEMBER MovilGesExportarClientes( cCodAgente); IIF( .F., s_oClass:ModMethod( "MovilGesExportarClientes", @TMovilges_MovilGesExportarClientes(), nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ), s_oClass:AddMethod( "MovilGesExportarClientes", @TMovilges_MovilGesExportarClientes(), nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ));
+
+   _HB_MEMBER MovilgesExportarArticulo( cCodAgente); IIF( .F., s_oClass:ModMethod( "MovilgesExportarArticulo", @TMovilges_MovilgesExportarArticulo(), nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ), s_oClass:AddMethod( "MovilgesExportarArticulo", @TMovilges_MovilgesExportarArticulo(), nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ));
+
+   _HB_MEMBER MovilGesExportarFamilia( cCodAgente); IIF( .F., s_oClass:ModMethod( "MovilGesExportarFamilia", @TMovilges_MovilGesExportarFamilia(), nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ), s_oClass:AddMethod( "MovilGesExportarFamilia", @TMovilges_MovilGesExportarFamilia(), nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ));
+
+   _HB_MEMBER MovilGesExportarOferta( cCodAgente); IIF( .F., s_oClass:ModMethod( "MovilGesExportarOferta", @TMovilges_MovilGesExportarOferta(), nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ), s_oClass:AddMethod( "MovilGesExportarOferta", @TMovilges_MovilGesExportarOferta(), nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ));
+
+   _HB_MEMBER MovilGesExportarPendientesCobro( cCodAgente); IIF( .F., s_oClass:ModMethod( "MovilGesExportarPendientesCobro", @TMovilges_MovilGesExportarPendientesCobro(), nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ), s_oClass:AddMethod( "MovilGesExportarPendientesCobro", @TMovilges_MovilGesExportarPendientesCobro(), nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ));
+
+   _HB_MEMBER MovilGesExportarRuta( cCodAgente); IIF( .F., s_oClass:ModMethod( "MovilGesExportarRuta", @TMovilges_MovilGesExportarRuta(), nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ), s_oClass:AddMethod( "MovilGesExportarRuta", @TMovilges_MovilGesExportarRuta(), nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ));
+
+   _HB_MEMBER MovilGesExportarMsgCli( cCodAgente); IIF( .F., s_oClass:ModMethod( "MovilGesExportarMsgCli", @TMovilges_MovilGesExportarMsgCli(), nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ), s_oClass:AddMethod( "MovilGesExportarMsgCli", @TMovilges_MovilGesExportarMsgCli(), nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ));
+
+   _HB_MEMBER MovilgesImportarPedido( cCodAgente); IIF( .F., s_oClass:ModMethod( "MovilgesImportarPedido", @TMovilges_MovilgesImportarPedido(), nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ), s_oClass:AddMethod( "MovilgesImportarPedido", @TMovilges_MovilgesImportarPedido(), nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ));
+
+   _HB_MEMBER MovilgesExportarAtipicas( cCodAgente); IIF( .F., s_oClass:ModMethod( "MovilgesExportarAtipicas", @TMovilges_MovilgesExportarAtipicas(), nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ), s_oClass:AddMethod( "MovilgesExportarAtipicas", @TMovilges_MovilgesExportarAtipicas(), nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ));
+
+   _HB_MEMBER movilgesImportarAlbaran( cCodAgente); IIF( .F., s_oClass:ModMethod( "movilgesImportarAlbaran", @TMovilges_movilgesImportarAlbaran(), nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ), s_oClass:AddMethod( "movilgesImportarAlbaran", @TMovilges_movilgesImportarAlbaran(), nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ));
+
+   _HB_MEMBER movilgesImportarFactura( cCodAgente); IIF( .F., s_oClass:ModMethod( "movilgesImportarFactura", @TMovilges_movilgesImportarFactura(), nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ), s_oClass:AddMethod( "movilgesImportarFactura", @TMovilges_movilgesImportarFactura(), nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ));
+
+   _HB_MEMBER MovilgesImportarPago( cCodAgente); IIF( .F., s_oClass:ModMethod( "MovilgesImportarPago", @TMovilges_MovilgesImportarPago(), nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ), s_oClass:AddMethod( "MovilgesImportarPago", @TMovilges_MovilgesImportarPago(), nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ));
+
+   _HB_MEMBER LogEscribir( cText); IIF( .F., s_oClass:ModMethod( "LogEscribir", @TMovilges_LogEscribir(), nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ), s_oClass:AddMethod( "LogEscribir", @TMovilges_LogEscribir(), nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ));
+
+   _HB_MEMBER SetTexto( cTexto, nLevel); IIF( .F., s_oClass:ModMethod( "SetTexto", @TMovilges_SetTexto(), nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ), s_oClass:AddMethod( "SetTexto", @TMovilges_SetTexto(), nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ));
+
+   _HB_MEMBER ExportarFPagos(); IIF( .F., s_oClass:ModMethod( "ExportarFPagos", @TMovilges_ExportarFPagos(), nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ), s_oClass:AddMethod( "ExportarFPagos", @TMovilges_ExportarFPagos(), nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ));
+
+   _HB_MEMBER CargarPreferencias(); IIF( .F., s_oClass:ModMethod( "CargarPreferencias", @TMovilges_CargarPreferencias(), nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ), s_oClass:AddMethod( "CargarPreferencias", @TMovilges_CargarPreferencias(), nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ));
+
+   _HB_MEMBER GuardarPreferencias(); IIF( .F., s_oClass:ModMethod( "GuardarPreferencias", @TMovilges_GuardarPreferencias(), nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ), s_oClass:AddMethod( "GuardarPreferencias", @TMovilges_GuardarPreferencias(), nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ));
+
+; IF .F. ; __clsActive(s_oClass:hClass) ; s_oClass:Refresh() ; ELSE ; s_oClass:Create() ; END ; oClassInstance := __clsInst( s_oClass:hClass ) ; IF __ObjHasMsg( oClassInstance, "InitClass" ); oClassInstance:InitClass( hb_aParams() ) ; END ; ELSE ; oClassInstance := __clsInst( s_oClass:hClass ) ; END ; IF PCount() > 0 ; DIVERT TO (@DivertConstructorCall()) OF s_oClass ; END ; RETURN oClassInstance AS CLASS TMovilges ;
+
+
+
+
+
+
+UTILITY STATIC function TMovilges_New( oMenuItem, oWnd) ; local Self AS CLASS TMovilges := QSelf() AS CLASS TMovilges
+
+   ::bmpSelect          := LoadBitmap( GetResources(), "BMPPAGADO1" )
+   ::bmpUnSelect        := LoadBitmap( GetResources(), "BMPPAGADO3" )
+   ::lImportarAlbaran   := .F.
+   ::lImportarPedido    := .F.
+   ::lImportarFactura   := .F.
+   ::lImportarPago      := .F.
+   ::lExportarCliente   := .F.
+   ::lExportarOferta    := .F.
+   ::lExportarFamilia   := .F.
+   ::lExportarArticulo  := .F.
+   ::lExportarRuta      := .F.
+   ::lExportarCobro     := .F.
+   ::lExportarComentario:= .F.
+   ::lExportarAtipica   := .F.
+   ::oImageList         := TImageList():New()
+   ::oImageList:AddMasked( TBitmap():Define( "Folder16" ), ( 255 + ( 0 * 256 ) + ( 255 * 65536 ) ) )
+   ::oImageList:AddMasked( TBitmap():Define( "Folder16" ), ( 255 + ( 0 * 256 ) + ( 255 * 65536 ) ) )
+   ::cCodEmp            := cCodEmp()
+   ::nMedidor           := 0
+
+   if oWnd <> nil
+      SysRefresh(); oWnd:CloseAll(); SysRefresh()
+   end
+
+   ::lLog                  := .T.
+
+   Begin Sequence
+
+      ::cLog               := cGetNewFileName( cPatLog() + "MGES" + Dtos( Date() ) + StrTran( Time(), ":", "" ) ) + ".Txt"
+      ::fLog               := fCreate( ::cLog )
+
+      if Empty( ::fLog )
+
+         ::fLog            := fOpen( ::cLog, 1 )
+
+      end
+
+   Recover
+
+      ::lLog               := .F.
+
+   end
+
+
+
+Return ( Self )
+
+
+
+
+
+
+UTILITY STATIC function TMovilges_Activate() ; local Self AS CLASS TMovilges := QSelf() AS CLASS TMovilges
+
+   if nAnd( ::nLevel, 1 ) <> 0
+
+      msgStop( "Acceso no permitido." )
+
+   elseif nUsrInUse() > 1
+
+      msgStop( "Hay más de un usuario conectado a la aplicación", "Atención" )
+
+   elseif !lEsNumerico( ::cCodEmp )
+
+      msgStop( "El código de su empresa no es válido. Debe ser un numérico.", "Atención" )
+
+   elseif ::OpenFiles()
+
+      ::MuestraDialogo()
+
+   else
+
+
+      ::CloseFiles()
+      ::Destroy()
+
+   end
+
+Return ( Self )
+
+
+
+
+
+
+UTILITY STATIC function TMovilges_Destroy() ; local Self AS CLASS TMovilges := QSelf() AS CLASS TMovilges
+
+   DeleteObject( ::bmpSelect   )
+   DeleteObject( ::bmpUnSelect )
+   ::oImageList:End()
+   ::oTree:Destroy()
+   fClose( ::fLog )
+
+Return ( Self )
+
+
+
+
+
+
+
+UTILITY STATIC function TMovilges_OpenFiles() ; local Self AS CLASS TMovilges := QSelf() AS CLASS TMovilges
+
+   local oBlock   := ErrorBlock( {| oError | ApoloBreak( oError ) } )
+   local lOpen    := .T.
+
+   BEGIN SEQUENCE
+
+      ::dbfAgente := DbfServer( "Agentes.Dbf", ):NewOpen( "Agentes.Dbf",, ( cDriver() ),, ( cPatEmp() ), .F., .T., .F., .F. ) ; ::dbfAgente:AddBag( "Agentes.Cdx" ) ; ::dbfAgente:AddBag( ) ; ::dbfAgente:AutoIndex()
+
+      ::dbfAntCliT := DbfServer( "AntCliT.DBF", ):NewOpen( "AntCliT.DBF",, ( cDriver() ),, ( cPatEmp() ), .F., .T., .F., .F. ) ; ::dbfAntCliT:AddBag( "AntCliT.CDX" ) ; ::dbfAntCliT:AddBag( ) ; ::dbfAntCliT:AutoIndex()
+
+      ::dbfAlbCliL := DbfServer( "ALBCLIL.DBF", ):NewOpen( "ALBCLIL.DBF",, ( cDriver() ),, ( cPatEmp() ), .F., .T., .F., .F. ) ; ::dbfAlbCliL:AddBag( "ALBCLIL.Cdx" ) ; ::dbfAlbCliL:AddBag( ) ; ::dbfAlbCliL:AutoIndex()
+
+      ::dbfAlbCliT := DbfServer( "ALBCLIT.DBF", ):NewOpen( "ALBCLIT.DBF",, ( cDriver() ),, ( cPatEmp() ), .F., .T., .F., .F. ) ; ::dbfAlbCliT:AddBag( "ALBCLIT.Cdx" ) ; ::dbfAlbCliT:AddBag( ) ; ::dbfAlbCliT:AutoIndex()
+
+      ::dbfArticulo := DbfServer( "ARTICULO.DBF", ):NewOpen( "ARTICULO.DBF",, ( cDriver() ),, ( cPatArt() ), .F., .T., .F., .F. ) ; ::dbfArticulo:AddBag( "ARTICULO.Cdx" ) ; ::dbfArticulo:AddBag( ) ; ::dbfArticulo:AutoIndex()
+
+      ::dbfCliAtp := DbfServer( "CLIATP.DBF", ):NewOpen( "CLIATP.DBF",, ( cDriver() ),, ( cPatCli() ), .F., .T., .F., .F. ) ; ::dbfCliAtp:AddBag( "CLIATP.Cdx" ) ; ::dbfCliAtp:AddBag( ) ; ::dbfCliAtp:AutoIndex()
+
+      ::dbfClient := DbfServer( "CLIENT.Dbf", ):NewOpen( "CLIENT.Dbf",, ( cDriver() ),, ( cPatCli() ), .F., .T., .F., .F. ) ; ::dbfClient:AddBag( "CLIENT.Cdx" ) ; ::dbfClient:AddBag( ) ; ::dbfClient:AutoIndex()
+
+      ::dbfDiv := DbfServer( "DIVISAS.Dbf", ):NewOpen( "DIVISAS.Dbf",, ( cDriver() ),, ( cPatDat() ), .F., .T., .F., .F. ) ; ::dbfDiv:AddBag( "DIVISAS.Cdx" ) ; ::dbfDiv:AddBag( ) ; ::dbfDiv:AutoIndex()
+
+      ::dbfFacCliL := DbfServer( "FACCLIL.Dbf", ):NewOpen( "FACCLIL.Dbf",, ( cDriver() ),, ( cPatEmp() ), .F., .T., .F., .F. ) ; ::dbfFacCliL:AddBag( "FACCLIL.Cdx" ) ; ::dbfFacCliL:AddBag( ) ; ::dbfFacCliL:AutoIndex()
+
+      ::dbfFacCliP := DbfServer( "FACCLIP.Dbf", ):NewOpen( "FACCLIP.Dbf",, ( cDriver() ),, ( cPatEmp() ), .F., .T., .F., .F. ) ; ::dbfFacCliP:AddBag( "FACCLIP.Cdx" ) ; ::dbfFacCliP:AddBag( ) ; ::dbfFacCliP:AutoIndex()
+
+      ::dbfFacCliT := DbfServer( "FACCLIT.Dbf", ):NewOpen( "FACCLIT.Dbf",, ( cDriver() ),, ( cPatEmp() ), .F., .T., .F., .F. ) ; ::dbfFacCliT:AddBag( "FACCLIT.Cdx" ) ; ::dbfFacCliT:AddBag( ) ; ::dbfFacCliT:AutoIndex()
+
+      ::dbfFam := DbfServer( "FAMILIAS.Dbf", ):NewOpen( "FAMILIAS.Dbf",, ( cDriver() ),, ( cPatArt() ), .F., .T., .F., .F. ) ; ::dbfFam:AddBag( "FAMILIAS.Cdx" ) ; ::dbfFam:AddBag( ) ; ::dbfFam:AutoIndex()
+
+      ::dbfOferta := DbfServer( "OFERTA.Dbf", ):NewOpen( "OFERTA.Dbf",, ( cDriver() ),, ( cPatArt() ), .F., .T., .F., .F. ) ; ::dbfOferta:AddBag( "OFERTA.Cdx" ) ; ::dbfOferta:AddBag( ) ; ::dbfOferta:AutoIndex()
+
+      ::dbfPedCliL := DbfServer( "PEDCLIL.Dbf", ):NewOpen( "PEDCLIL.Dbf",, ( cDriver() ),, ( cPatEmp() ), .F., .T., .F., .F. ) ; ::dbfPedCliL:AddBag( "PEDCLIL.Cdx" ) ; ::dbfPedCliL:AddBag( ) ; ::dbfPedCliL:AutoIndex()
+
+      ::dbfPedCliT := DbfServer( "PEDCLIT.Dbf", ):NewOpen( "PEDCLIT.Dbf",, ( cDriver() ),, ( cPatEmp() ), .F., .T., .F., .F. ) ; ::dbfPedCliT:AddBag( "PEDCLIT.Cdx" ) ; ::dbfPedCliT:AddBag( ) ; ::dbfPedCliT:AutoIndex()
+
+      ::dbfRuta := DbfServer( "RUTA.Dbf", ):NewOpen( "RUTA.Dbf",, ( cDriver() ),, ( cPatCli() ), .F., .T., .F., .F. ) ; ::dbfRuta:AddBag( "RUTA.Cdx" ) ; ::dbfRuta:AddBag( ) ; ::dbfRuta:AutoIndex()
+
+      ::dbfTIva := DbfServer( "TIVA.Dbf", ):NewOpen( "TIVA.Dbf",, ( cDriver() ),, ( cPatDat() ), .F., .T., .F., .F. ) ; ::dbfTIva:AddBag( "TIVA.Cdx" ) ; ::dbfTIva:AddBag( ) ; ::dbfTIva:AutoIndex()
+
+      ::dbfFPago := DbfServer( "FPAGO.Dbf", ):NewOpen( "FPAGO.Dbf",, ( cDriver() ),, ( cPatGrp() ), .F., .T., .F., .F. ) ; ::dbfFPago:AddBag( "FPAGO.Cdx" ) ; ::dbfFPago:AddBag( ) ; ::dbfFPago:AutoIndex()
+
+   RECOVER
+
+      msgStop( "Imposible abrir todas las bases de datos.","Atención" )
+      lOpen       := .F.
+
+   end
+
+   ErrorBlock( oBlock )
+
+Return ( lOpen )
+
+
+
+
+
+
+UTILITY STATIC function TMovilges_SelAllAgente( lRefrescar, lSel) ; local Self AS CLASS TMovilges := QSelf() AS CLASS TMovilges
+
+   ::dbfAgente:GetStatus()
+
+   ::dbfAgente:GoTop()
+
+   while !::dbfAgente:eof()
+
+
+
+      if ( lEsNumerico( ::dbfAgente:cCodAge ) .AND. lSel ) .OR. !lSel
+
+         ::dbfAgente:Load()
+         ::dbfAgente:lSelAge := lSel
+         ::dbfAgente:Save()
+
+      end
+
+      ::dbfAgente:Skip()
+
+   end
+
+   ::dbfAgente:SetStatus()
+
+   if lRefrescar
+      ::oBrwAgente:Refresh()
+   end
+
+return ( Self )
+
+
+
+
+
+
+UTILITY STATIC function TMovilges_CloseFiles() ; local Self AS CLASS TMovilges := QSelf() AS CLASS TMovilges
+
+   local oBlock   := ErrorBlock( {| oError | ApoloBreak( oError ) } )
+   local lOpen    := .T.
+
+   BEGIN SEQUENCE
+
+      ::dbfAgente:End()
+
+      ::dbfAlbCliT:End()
+
+      ::dbfAlbCliL:End()
+
+      ::dbfAntCliT:End()
+
+      ::dbfArticulo:End()
+
+      ::dbfCliAtp:End()
+
+      ::dbfClient:End()
+
+      ::dbfDiv:End()
+
+      ::dbfFacCliT:End()
+
+      ::dbfFacCliL:End()
+
+      ::dbfFacCliP:End()
+
+      ::dbfFam:End()
+
+      ::dbfOferta:End()
+
+      ::dbfPedCliT:End()
+
+      ::dbfPedCliL:End()
+
+      ::dbfRuta:End()
+
+      ::dbfTIva:End()
+
+      ::dbfFPago:End()
+
+   RECOVER
+
+      msgStop( "Imposible cerrar todas las bases de datos.","Atención" )
+      lOpen       := .F.
+
+   end
+
+   ErrorBlock( oBlock )
+
+RETURN ( lOpen )
+
+
+
+
+
+
+UTILITY STATIC function TMovilges_SelAgente( lSel) ; local Self AS CLASS TMovilges := QSelf() AS CLASS TMovilges
+
+   IIF( lSel == nil, lSel := !::dbfAgente:lSelAge, ) ;
+
+   if ( lEsNumerico( ::dbfAgente:cCodAge ) .AND. lSel ) .OR. !lSel
+
+      ::dbfAgente:Load()
+      ::dbfAgente:lSelAge  := lSel
+      ::dbfAgente:Save()
+      ::oBrwAgente:Refresh()
+
+   else
+
+      msgStop( "El código del agente no es válido. Debe ser numérico.","Atención" )
+
+   end
+
+return nil
+
+
+
+
+
+
+UTILITY STATIC function TMovilges_MuestraDialogo() ; local Self AS CLASS TMovilges := QSelf() AS CLASS TMovilges
+
+
+
+   ::nDecimales     := nDouDiv( cDivEmp(), ::dbfDiv:cAlias )
+
+   ::SelAllAgente( .F., .F. )
+
+
+
+   ::oDlg = TDialog():New(,,,,, "MOVILGES",, .F.,,,,,, .F.,,,,,, .F., )
+
+
+
+
+
+   ::oFld := TFolder():ReDefine( 500, {"&Configuración", "&Resultado"}, { "MOVILGES_1","MOVILGES_2" }, ::oDlg,,,,, .F., )
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+   ::oBrwAgente := TWBrowse():ReDefine( 330, {|| { If( ::dbfAgente:lSelAge, ::bmpSelect, ::bmpUnselect ),  ::dbfAgente:cCodaGE,  RTrim( ::dbfAgente:cApeAge ) + ", " + ::dbfAgente:cNbrAge } }, ::oFld:aDialogs[ 1 ], {"S", "Código", "Apellidos, Nombre"}, {15,    90, 260},,,,,,,,,,,, .F.,,,,, )
+
+   ::dbfAgente:SetBrowse( ::oBrwAgente )
+
+   ::oBrwAgente:bLDblClick := {|| ::SelAgente() }
+   ::oBrwAgente:aJustify   := { .F., .F., .F. }
+
+
+
+
+   TButton():ReDefine( 300, {||( ::SelAgente() )}, ::oFld:aDialogs[ 1 ],,, .F.,,,, .F. )
+
+
+
+
+   TButton():ReDefine( 310, {||( ::SelAllAgente( .T., .T. ) )}, ::oFld:aDialogs[ 1 ],,, .F.,,,, .F. )
+
+
+
+
+   TButton():ReDefine( 320, {||( ::SelAllAgente( .T., .F. ) )}, ::oFld:aDialogs[ 1 ],,, .F.,,,, .F. )
+
+
+
+
+
+
+
+   ::oDirectorio := TGetHlp():ReDefine( 400, { | u | If( PCount()==0, ::cDirectorio, ::cDirectorio:= u ) }, ::oFld:aDialogs[1],,,, "N/W*",,,,, .F.,,, .F., .F.,,,,,, nil, "FOLDER",, )
+
+   ::oDirectorio:bHelp  := {|| ::oDirectorio:cText( cGetDir32( "Seleccione destino" ) ) }
+
+
+
+
+
+
+   ::oBotonAceptar := TButton():ReDefine( 510, {||( ::MovilgesProcesar() )}, ::oDlg,,, .F.,,,, .F. )
+
+
+
+
+   TButton():ReDefine( 520, {||( ::MovilgesSalir() )}, ::oDlg,,, .F.,,,, .F. )
+
+
+
+
+   ::oBotonImprimir := TButton():ReDefine( 540, {||( ImprimirFichero( ::cLog ) )}, ::oDlg,,, .F.,,,, .F. )
+
+
+
+
+
+
+   TCheckBox():ReDefine( 100, { | u | If( PCount()==0, ::lExportarCliente, ::lExportarCliente:= u ) }, ::oFld:aDialogs[1],,,,,,, .F., {||     .T.}, .F. )
+
+
+
+
+   TCheckBox():ReDefine( 110, { | u | If( PCount()==0, ::lExportarRuta, ::lExportarRuta:= u ) }, ::oFld:aDialogs[1],,,,,,, .F., {||     .T.}, .F. )
+
+
+
+
+   TCheckBox():ReDefine( 120, { | u | If( PCount()==0, ::lExportarArticulo, ::lExportarArticulo:= u ) }, ::oFld:aDialogs[1],,,,,,, .F., {||     .T.}, .F. )
+
+
+
+
+   TCheckBox():ReDefine( 130, { | u | If( PCount()==0, ::lExportarCobro, ::lExportarCobro:= u ) }, ::oFld:aDialogs[1],,,,,,, .F., {||     .T.}, .F. )
+
+
+
+
+   TCheckBox():ReDefine( 140, { | u | If( PCount()==0, ::lExportarFamilia, ::lExportarFamilia:= u ) }, ::oFld:aDialogs[1],,,,,,, .F., {||     .T.}, .F. )
+
+
+
+
+   TCheckBox():ReDefine( 150, { | u | If( PCount()==0, ::lExportarComentario, ::lExportarComentario:= u ) }, ::oFld:aDialogs[1],,,,,,, .F., {||     .T.}, .F. )
+
+
+
+
+   TCheckBox():ReDefine( 160, { | u | If( PCount()==0, ::lExportarOferta, ::lExportarOferta:= u ) }, ::oFld:aDialogs[1],,,,,,, .F., {||     .T.}, .F. )
+
+
+
+
+   TCheckBox():ReDefine( 170, { | u | If( PCount()==0, ::lExportarAtipica, ::lExportarAtipica:= u ) }, ::oFld:aDialogs[1],,,,,,, .F., {||     .T.}, .F. )
+
+
+
+
+   TCheckBox():ReDefine( 200, { | u | If( PCount()==0, ::lImportarAlbaran, ::lImportarAlbaran:= u ) }, ::oFld:aDialogs[1],,,,,,, .F., {||     .T.}, .F. )
+
+
+
+
+   TCheckBox():ReDefine( 210, { | u | If( PCount()==0, ::lImportarPedido, ::lImportarPedido:= u ) }, ::oFld:aDialogs[1],,,,,,, .F., {||     .T.}, .F. )
+
+
+
+
+   TCheckBox():ReDefine( 220, { | u | If( PCount()==0, ::lImportarFactura, ::lImportarFactura:= u ) }, ::oFld:aDialogs[1],,,,,,, .F., {||     .T.}, .F. )
+
+
+
+
+   TCheckBox():ReDefine( 230, { | u | If( PCount()==0, ::lImportarPago, ::lImportarPago:= u ) }, ::oFld:aDialogs[1],,,,,,, .F., {||     .T.}, .F. )
+
+
+
+
+
+
+
+   ::oMedidor := TMeter():ReDefine( 600, { | u | If( PCount()==0, ::nMedidor, ::nMedidor:= u ) },, ::oFld:aDialogs[2], .F.,, "Proceso Actual", .F.,,,, )
+
+   ::oTree              := TTreeView():Redefine( 610, ::oFld:aDialogs[ 2 ] )
+   ::oTree:SetImageList( ::oImageList )
+   ::oDlg:bStart        := {|| ::oBotonImprimir:hide(), ::CargarPreferencias() }
+
+   ::oDlg:Activate( ::oDlg:bLClicked, ::oDlg:bMoved, ::oDlg:bPainted, .T.,,,, ::oDlg:bRClicked,,, )
+
+RETURN ( ::oDlg:nResult == 1 )
+
+
+
+
+
+
+UTILITY STATIC function TMovilges_MovilgesProcesar() ; local Self AS CLASS TMovilges := QSelf() AS CLASS TMovilges
+
+   if !Empty( ::oBotonAceptar )
+      ::oBotonAceptar:bAction  := {|| ::MovilgesSalir() }
+      SetWindowText( ::oBotonAceptar:hWnd, "&Terminar" )
+   end
+
+
+
+   if substr( ::cDirectorio, -1 ) <> "\"
+      ::cDirectorio += "\"
+   end
+
+   ::oFld:SetOption( 2 )
+
+   ::SetTexto( "Iniciando proceso.", 1 )
+
+   ::dbfAgente:GoTop()
+
+   while !::dbfAgente:eof()
+
+      ::dbfAgente:GetStatus()
+
+      if ::dbfAgente:lSelAge
+
+         ::SetTexto( "Procesando agente "+ ::dbfAgente:cCodAge, 1 )
+
+         if ::lImportarAlbaran
+            ::SetTexto( "Importando Albaranes", 2 )
+            ::MovilgesImportarAlbaran( ::dbfAgente:cCodAge )
+         end
+
+         if ::lImportarPedido
+            ::SetTexto( "Importando Pedidos", 2 )
+            ::MovilgesImportarPedido( ::dbfAgente:cCodAge )
+         end
+
+         if ::lImportarFactura
+            ::SetTexto( "Importando Facturas", 2 )
+            ::MovilgesImportarFactura( ::dbfAgente:cCodAge )
+         end
+
+         if ::lImportarPago
+            ::SetTexto( "Importando Pagos de clientes", 2 )
+            ::MovilgesImportarPago( ::dbfAgente:cCodAge )
+         end
+
+         if ::lExportarCliente
+            ::SetTexto( "Exportando Clientes", 2 )
+            ::MovilgesExportarClientes( ::dbfAgente:cCodAge )
+         end
+
+         if ::lExportarRuta
+            ::SetTexto( "Exportando Rutas", 2 )
+            ::MovilgesExportarRuta( ::dbfAgente:cCodAge )
+         end
+
+         if ::lExportarArticulo
+            ::SetTexto( "Exportando Artículos", 2 )
+            ::MovilgesExportarArticulo( ::dbfAgente:cCodAge )
+         end
+
+         if ::lExportarCobro
+            ::SetTexto( "Exportando Pagos pendientes", 2 )
+            ::MovilgesExportarPendientesCobro( ::dbfAgente:cCodAge )
+         end
+
+         if ::lExportarFamilia
+            ::SetTexto( "Exportando Familias de productos", 2 )
+            ::MovilgesExportarFamilia( ::dbfAgente:cCodAge )
+         end
+
+         if ::lExportarComentario
+            ::SetTexto( "Exportando Comentarios de clientes", 2 )
+            ::MovilgesExportarMsgCli( ::dbfAgente:cCodAge )
+         end
+
+         if ::lExportarOferta
+            ::SetTexto( "Exportando Ofertas", 2 )
+            ::MovilgesExportarOferta( ::dbfAgente:cCodAge )
+         end
+
+         if ::lExportarAtipica
+            ::SetTexto( "Exportando Atípicas", 2 )
+            ::MovilgesExportarAtipicas( ::dbfAgente:cCodAge )
+         end
+
+         ::SetTexto( "Exportando Formas de Pago", 2 )
+         ::ExportarFPagos()
+
+      end
+
+      ::dbfAgente:SetStatus()
+      ::dbfAgente:Skip()
+
+   end
+
+   ::SetTexto( "Proceso finalizado.", 1 )
+
+   ::GuardarPreferencias()
+
+   ::dbfAgente:GoTop()
+
+   ::oBotonImprimir:Show()
+
+return ( Self )
+
+
+
+
+
+
+UTILITY STATIC function TMovilges_MovilgesSalir() ; local Self AS CLASS TMovilges := QSelf() AS CLASS TMovilges
+
+   ::CloseFiles()
+   ::oDlg:end()
+   ::Destroy()
+
+RETURN ( Self )
+
+
+
+
+
+
+UTILITY STATIC function TMovilges_MovilGesExportarClientes( cCodAgente) ; local Self AS CLASS TMovilges := QSelf() AS CLASS TMovilges
+
+   local cChr
+   local fPda
+   local cFilePda
+
+   cFilePda          := ::cDirectorio + "CLI" + ::cCodEmp + cCodAgente + ".DAT"
+
+
+
+   BEGIN SEQUENCE
+
+      IF file( cFilePda )
+         fErase( cFilePda )
+      end
+
+   RECOVER
+
+      ::SetTexto( "No se ha podido borrar el fichero " + cFilePda, 3 )
+      RETURN NIL
+
+   end
+
+   BEGIN SEQUENCE
+
+      fPda     := fCreate( cFilePda )
+
+   RECOVER
+
+      ::SetTexto( "No se ha podido crear el fichero "+cFilePda, 3 )
+      RETURN NIL
+
+   end
+
+   ::SetTexto( , 40 )
+   ::oMedidor:Set( 0 )
+   ::oMedidor:cText     := "Exportando Clientes"
+   ::oMedidor:SetTotal( ::dbfClient:LastRec() )
+   ::dbfClient:GoTop()
+
+   WHILE !::dbfClient:eof()
+
+      if ::dbfClient:CAGENTE == cCodAgente
+
+         ::oMedidor:Set( ::dbfClient:OrdKeyNo() )
+         cChr  := ""
+
+         cChr  += truncarCadenaDer( ::dbfClient:COD, 1, 10 )
+
+         if !empty( ::dbfClient:NBREST )
+
+            cChr  += truncarCadenaIzq( ::dbfClient:NBREST, 1, 30 )
+
+         else
+
+            cChr  += truncarCadenaIzq( ::dbfClient:TITULO, 1, 30 )
+
+         end
+
+         cChr  += truncarCadena( ::dbfClient:TITULO, 1, 30 )
+         cChr  += truncarCadenaIzq( ::dbfClient:DOMICILIO, 1, 30 )
+         cChr  += truncarCadena( ::dbfClient:POBLACION, 1, 30 )
+         cChr  += truncarCadena( ::dbfClient:NIF, 1, 14 )
+         cChr  += truncarCadena( ::dbfClient:Telefono, 1, 20 )
+         cChr  += truncarCadena( ::dbfClient:CPERCTO, 1, 20 )
+
+         do case
+            case ( ::dbfClient:nRegIva > 1 )
+               cChr += "0"
+            case ( ::dbfClient:nRegIva = 1 .AND. !::dbfClient:lReq )
+               cChr += "1"
+            case ( ::dbfClient:nRegIva = 1 .AND. ::dbfClient:lReq )
+               cChr += "2"
+            case ( ::dbfClient:nRegIva = 0 )
+               cChr += "0"
+         end
+         cChr  += "D"
+         cChr  += truncarNumero( ::dbfClient:nTarifa, 2, 0 )
+         cChr  += "D"
+         cChr  += truncarNumero( ::dbfClient:nDtoCnt, 5, 2 )
+         cChr  += truncarNumero( ::dbfClient:nDtoRap, 5, 2 )
+         cChr  += "00.00"
+         cChr  += truncarCadenaDer( ::dbfClient:CCODGRP, 1, 10 )
+         cChr  += truncarNumero( ::dbfClient:RIESGO, 8, ::nDecimales)
+         cChr  += "0"
+         cChr  += "0"
+         cChr  += "0"
+
+         if( truncarCadena( ::dbfClient:CodPago, 1, 1 ) = " " )
+            cChr += "0"
+         else
+            cChr += truncarCadena( ::dbfClient:CodPago, 1, 1 )
+         end
+
+         cChr  += "0"
+         cChr  += "D"
+         cChr  += "D"
+         cChr  += "D"
+         cChr  += "D"
+         cChr  += "D"
+         cChr  += "          "
+
+         cChr  += Chr(13)+Chr(10)
+
+         ::nRead   := Len( cChr )
+
+         if fwrite( fPda, cChr, ::nRead ) < ::nRead
+
+            ::SetTexto( "El fichero de Clientes no se ha creado correctamente. ( error " + str( fError() ) + " )", 42 )
+            RETURN NIL
+
+         end
+
+         ::SetTexto( "Añadido el cliente " + RTrim( ::dbfClient:Titulo ), 41 )
+
+      end
+
+
+
+      if empty( ::dbfClient:CAGENTE )
+
+         ::SetTexto( "El cliente " + RTrim( ::dbfClient:Titulo ) + " no tiene asignado a ningún agente", 42 )
+
+      end
+
+      ::dbfClient:Skip()
+
+   end
+
+   ::oMedidor:Set( ::dbfClient:LastRec() )
+   ::SetTexto( "Fin de Exportación de clientes", 3 )
+
+   fClose( fPda )
+
+Return ( Self )
+
+
+
+
+
+
+function truncarNumero( nNum, nEnd, nDec )
+
+   local cChar2
+
+   cChar2            := str( nNum, nEnd, nDec )
+
+
+
+   cChar2            := rtrim( cChar2 )
+
+   while ( len( cChar2 ) < nEnd )
+      cChar2         := " " + cChar2
+   ENDDO
+
+RETURN ( cChar2 )
+
+
+
+
+
+
+function truncarCadena( cChar, nStart, nEnd )
+
+   IIF( nStart == nil, nStart := 1, ) ;
+   IIF( nEnd == nil, nEnd := len( cChar ), ) ;
+
+   cChar          := cValToChar( cChar )
+   cChar          := SubStr( cChar, nStart, nEnd )
+
+
+
+   while ( len( cChar ) < nEnd )
+      cChar += " "
+   ENDDO
+
+RETURN ( cChar )
+
+
+
+
+
+
+
+
+
+
+UTILITY STATIC function TMovilges_MovilgesExportarArticulo( cCodAgente) ; local Self AS CLASS TMovilges := QSelf() AS CLASS TMovilges
+
+   local cChr
+   local fPda
+   local cFilePda
+
+   cFilePda          := ::cDirectorio + "ART" + ::cCodEmp + cCodAgente + ".DAT"
+
+
+
+   Begin Sequence
+
+      IF file( cFilePda )
+         fErase( cFilePda )
+      end
+
+   RECOVER
+
+      ::SetTexto( "No se ha podido borrar el fichero " + cFilePda, 3 )
+      RETURN NIL
+
+   end
+
+   Begin Sequence
+
+      fPda     := fCreate( cFilePda )
+
+   RECOVER
+
+      ::SetTexto( "No se ha podido crear el fichero "+cFilePda, 3 )
+      RETURN NIL
+
+   end
+
+   ::SetTexto( , 40 )
+   ::oMedidor:Set( 0 )
+   ::oMedidor:cText     := "Exportando artículos"
+   ::oMedidor:SetTotal( ::dbfArticulo:LastRec() )
+   ::dbfArticulo:OrdsetFocus("MOVART")
+   ::dbfArticulo:GoTop()
+
+   while !::dbfArticulo:eof()
+
+      if !( cCodTerIva( ::dbfArticulo:TipoIva, ::dbfTIva:nArea ) = " " )
+
+         ::oMedidor:Set( ::dbfArticulo:OrdKeyNo() )
+
+         cChr  := ""
+         cChr  += truncarCadenaDer( ::dbfArticulo:CODIGO, 1, 18 )
+         cChr  += truncarCadenaDer( ::dbfArticulo:FAMILIA, 1, 7 )
+         cChr  += truncarCadenaIzq( ::dbfArticulo:NOMBRE, 1, 30 )
+         cChr  += truncarNumero( ::dbfArticulo:PVENTA1, 7, ::nDecimales )
+
+         if( ::dbfArticulo:PVENTA2 > 0 )
+            cChr  += truncarNumero( ::dbfArticulo:PVENTA2, 7, ::nDecimales )
+         else
+            cChr  += truncarNumero( ::dbfArticulo:PVENTA1, 7, ::nDecimales )
+         end
+
+         cChr  += truncarNumero( ::dbfArticulo:PVENTA3, 7, ::nDecimales )
+         cChr  += truncarNumero( ::dbfArticulo:PVENTA4, 7, ::nDecimales )
+         cChr  += truncarNumero( ::dbfArticulo:PVENTA5, 7, ::nDecimales )
+         cChr  += truncarNumero( ::dbfArticulo:PVENTA6, 7, ::nDecimales )
+         cChr  += "      0"
+         cChr  += "      0"
+         cChr  += "      0"
+         cChr  += "      0"
+         cChr  += truncarNumero( ::dbfArticulo:PCOSTO, 7, ::nDecimales )
+         cChr  += truncarCadena( cCodTerIva( ::dbfArticulo:TipoIva, ::dbfTIva:nArea ) )
+         cChr  += truncarNumero( ::dbfArticulo:NCAJPLT, 6, 0 )
+         cChr  += truncarNumero( ::dbfArticulo:NPESOKG, 6, 3 )
+         cChr  += "D"
+         cChr  += "D"
+         cChr  += "D"
+         cChr  += "D"
+         cChr  += "D"
+         cChr  += "                  "
+         cChr  += "1"
+
+         cChr  += Chr(13)+Chr(10)
+
+         ::nRead   := Len( cChr )
+
+         if fwrite( fPda, cChr, ::nRead ) < ::nRead
+
+            ::SetTexto( "El fichero de artículos no se ha creado correctamente. ( error " + str( fError() ) + " )", 3 )
+            RETURN NIL
+
+         end
+
+         ::SetTexto( "Añadido el artículo " + RTrim( ::dbfArticulo:Nombre ), 41 )
+
+      else
+
+
+         ::SetTexto( "El artículo " + RTrim( ::dbfArticulo:Nombre ) + " no tiene asignado ningún código de IGIC.", 42 )
+
+      end
+
+      ::dbfArticulo:Skip()
+
+   end
+
+   ::oMedidor:Set( ::dbfArticulo:LastRec() )
+   ::SetTexto( "Fin de Exportación de artículos.", 3 )
+   fClose( fPda )
+
+RETURN ( Self )
+
+
+
+
+
+
+function truncarCadenaDer( cChar, nStart, nEnd )
+
+   IIF( nStart == nil, nStart := 1, ) ;
+   IIF( nEnd == nil, nEnd := len( cChar ), ) ;
+
+   cChar          := cValToChar( cChar )
+   cChar          := SubStr( cChar, nStart, nEnd )
+
+
+
+   cChar := rtrim(cChar)
+
+   while ( len( cChar ) < nEnd )
+      cChar = " " + cChar
+   ENDDO
+
+RETURN ( cChar )
+
+
+
+
+
+
+UTILITY STATIC function TMovilges_MovilGesExportarFamilia( cCodAgente) ; local Self AS CLASS TMovilges := QSelf() AS CLASS TMovilges
+
+   local cChr
+   local fPda
+   local cFilePda
+
+   cFilePda          := ::cDirectorio + "FAM" + ::cCodEmp + cCodAgente + ".DAT"
+
+
+
+   Begin Sequence
+
+      IF file( cFilePda )
+         fErase( cFilePda )
+      end
+
+   RECOVER
+
+      ::SetTexto( "No se ha podido borrar el fichero " + cFilePda, 3 )
+      RETURN NIL
+
+   end
+
+   Begin Sequence
+
+      fPda     := fCreate( cFilePda )
+
+   RECOVER
+
+      ::SetTexto( "No se ha podido crear el fichero "+cFilePda, 3 )
+      RETURN NIL
+
+   end
+
+   ::SetTexto( , 40 )
+   ::oMedidor:Set( 0 )
+   ::oMedidor:cText     := "Exportando familias"
+   ::oMedidor:SetTotal( ::dbfFam:LastRec() )
+   ::dbfFam:ordSetFocus( "TRMCOD" )
+   ::dbfFam:GoTop()
+
+   WHILE !::dbfFam:eof()
+
+         ::oMedidor:Set( ::dbfFam:OrdKeyNo() )
+
+         cChr  := ""
+
+         cChr += truncarCadenaDer( ::dbfFam:cCodFam, 1, 7 )
+         cChr += truncarCadena( ::dbfFam:cNomFam, 1, 30 )
+
+         cChr += Chr(13)+Chr(10)
+
+         ::nRead   := Len( cChr )
+
+         if fwrite( fPda, cChr, ::nRead ) < ::nRead
+
+            ::SetTexto( "El fichero de familias no se ha creado correctamente. ( error " + str( fError() ) + " )", 42 )
+            RETURN NIL
+
+         end
+
+         ::SetTexto( "Añadida la familia " + RTrim( ::dbfFam:cNomFam ), 41 )
+         ::dbfFam:Skip()
+
+   end
+
+   ::oMedidor:Set( ::dbfFam:LastRec() )
+   ::SetTexto( "Fin de Exportación de familias", 3 )
+   fClose( fPda )
+
+Return ( Self )
+
+
+
+
+
+
+function truncarCadenaIzq( cChar, nStart, nEnd )
+
+   IIF( nStart == nil, nStart := 1, ) ;
+   IIF( nEnd == nil, nEnd := len( cChar ), ) ;
+
+   cChar          := cValToChar( cChar )
+   cChar          := SubStr( cChar, nStart, nEnd )
+
+
+
+   cChar := ltrim(cChar)
+
+   while ( len( cChar ) < nEnd )
+      cChar += " "
+   ENDDO
+
+RETURN ( cChar )
+
+
+
+
+
+
+UTILITY STATIC function TMovilges_MovilGesExportarOferta( cCodAgente) ; local Self AS CLASS TMovilges := QSelf() AS CLASS TMovilges
+
+   local cChr
+   local fPda
+   local cFilePda
+
+   cFilePda          := ::cDirectorio + "OFE" + ::cCodEmp + cCodAgente + ".DAT"
+
+
+
+   Begin Sequence
+
+      IF file( cFilePda )
+         fErase( cFilePda )
+      end
+
+   RECOVER
+
+      ::SetTexto( "No se ha podido borrar el fichero " + cFilePda, 3 )
+      RETURN NIL
+
+   end
+
+   Begin Sequence
+
+      fPda     := fCreate( cFilePda )
+
+   RECOVER
+
+      ::SetTexto( "No se ha podido crear el fichero "+cFilePda, 3 )
+      RETURN NIL
+
+   end
+
+   ::SetTexto( , 40 )
+   ::oMedidor:Set( 0 )
+   ::oMedidor:cText     := "Exportando ofertas"
+   ::oMedidor:SetTotal( ::dbfOferta:LastRec() )
+   ::dbfOferta:GoTop()
+
+   WHILE !::dbfOferta:eof()
+
+     if !empty( ::dbfOferta:cArtOfe )
+
+         ::oMedidor:Set( ::dbfOferta:OrdKeyNo() )
+
+         cChr  := ""
+
+         do case
+            case ::dbfOferta:NCLIOFE <= 1
+               cChr += "3"
+               cChr += "0000000000"
+               cChr += truncarCadenaDer( ::dbfOferta:CARTOFE, 1, 18 )
+            case ::dbfOferta:NCLIOFE == 2
+               cChr += "3"
+               cChr += truncarCadena( ::dbfOferta:CGRPOFE, 1, 10 )
+               cChr += truncarCadenaDer( ::dbfOferta:CARTOFE, 1, 18 )
+            case ::dbfOferta:NCLIOFE == 3
+               cChr += "1"
+               cChr += truncarCadena( ::dbfOferta:CCLIOFE, 1, 10 )
+               cChr += truncarCadenaDer( ::dbfOferta:CARTOFE, 1, 18 )
+         end
+         cChr += truncarNumero( ::dbfOferta:NPREOFE1, 7, ::nDecimales )
+         cChr += truncarNumero( ::dbfOferta:NDTOLIN, 7, ::nDecimales )
+         cChr += truncarNumero( ::dbfOferta:NDTOPCT, 5, 2 )
+         cChr += "00.00"
+         cChr += truncarNumero( ::dbfOferta:NUNCOFE, 7, 0 )
+         cChr += truncarNumero( ( ::dbfOferta:NUNVOFE - ::dbfOferta:NUNVOFE ), 7, 0 )
+         cChr += truncarCadenaDer( ::dbfOferta:CARTOFE, 1, 18 )
+         cChr += cTruncarFecha( ::dbfOferta:DINIOFE )
+         cChr += cTruncarFecha( ::dbfOferta:DFINOFE )
+         cChr += "0000000"
+         cChr += "0000000"
+         cChr += "0000000"
+
+         cChr += Chr(13)+Chr(10)
+
+         ::nRead   := Len( cChr )
+
+         if fwrite( fPda, cChr, ::nRead ) < ::nRead
+
+            ::SetTexto( "El fichero de ofertas no se ha creado correctamente. ( error " + str( fError() ) + " )", 3 )
+            RETURN NIL
+
+         end
+
+         ::SetTexto( "Añadida la oferta " + RTrim( ::dbfOferta:CARTOFE ), 41 )
+
+      else
+
+
+         ::SetTexto( "La oferta " + RTrim( ::dbfOferta:CARTOFE ) + " no es relativa a un artículo", 42 )
+
+      end
+
+      ::dbfOferta:Skip()
+
+   end
+
+   ::SetTexto( "Fin de Exportación de ofertas", 3 )
+   ::oMedidor:SetTotal( ::dbfOferta:LastRec() )
+   fClose( fPda )
+
+Return ( Self )
+
+
+
+
+
+
+function cTruncarFecha( dFecha )
+
+   local char
+
+   char := substr( dtos( dFecha ), 1, 4 ) + "/"
+   char += substr( dtos( dFecha ), 5, 2 ) + "/"
+   char += substr( dtos( dFecha ), 7, 2 )
+
+return char
+
+
+
+
+
+
+UTILITY STATIC function TMovilges_MovilGesExportarPendientesCobro( cCodAgente) ; local Self AS CLASS TMovilges := QSelf() AS CLASS TMovilges
+
+   local cChr
+   local fPda
+   local cFilePda
+
+   cFilePda          := ::cDirectorio + "PEN" + ::cCodEmp + cCodAgente + ".DAT"
+
+
+
+   Begin Sequence
+
+      IF file( cFilePda )
+         fErase( cFilePda )
+      end
+
+   RECOVER
+
+      ::SetTexto( "No se ha podido borrar el fichero " + cFilePda, 3 )
+      RETURN NIL
+
+   end
+
+   Begin Sequence
+
+      fPda     := fCreate( cFilePda )
+
+   RECOVER
+
+      ::SetTexto( "No se ha podido crear el fichero "+cFilePda, 3 )
+      RETURN NIL
+
+   end
+
+   ::SetTexto( , 40 )
+   ::oMedidor:Set( 0 )
+   ::oMedidor:cText     := "Exportando Recibos no cobrados"
+   ::oMedidor:SetTotal( ::dbfFacCliP:LastRec() )
+   ::dbfFacCliP:OrdsetFocus( "cCodCli" )
+   ::dbfFacCliP:GoTop()
+
+   WHILE !::dbfFacCliP:eof()
+
+         if ( ::dbfFacCliP:lCobrado == .F. )
+
+            ::oMedidor:Set( ::dbfFacCliP:OrdKeyNo() )
+
+            cChr  := ""
+
+            cChr += truncarCadenaDer( ::dbfFacCliP:cCodCli, 1, 10 )
+            cChr += cTruncarFecha( ::dbfFacCliP:dPreCob, 1, 10 )
+            cChr += truncarCadena( ( ::dbfFacCliP:cSerie + cValToChar( ::dbfFacCliP:nNumFac ) ), 1, 10 )
+            cChr += "1"
+            cChr += truncarCadenaIzq( truncarNumero( ::dbfFacCliP:nNumRem, 10, ::nDecimales ), 1, 10 )
+            cChr += truncarNumero( ::dbfFacCliP:nImporte, 8, ::nDecimales )
+            cChr += truncarNumero( ::dbfFacCliP:nImporte, 8, ::nDecimales )
+
+            cChr += Chr(13)+Chr(10)
+
+            ::nRead   := Len( cChr )
+
+            if fwrite( fPda, cChr, ::nRead ) < ::nRead
+
+               ::SetTexto( "El fichero de Recibos no se ha creado correctamente. ( error " + str( fError() ) + " )", 3 )
+               RETURN NIL
+
+            end
+
+            ::SetTexto( "Añadido el Recibo " + ::dbfFacCliP:cSerie + "/" + cValToChar( ::dbfFacCliP:nNumFac ) + "-" + cValToChar( ::dbfFacCliP:nNumRec ), 41 )
+
+         end
+
+         ::dbfFacCliP:Skip()
+
+   end
+
+   ::oMedidor:SetTotal( ::dbfFacCliP:LastRec() )
+   ::SetTexto( "Fin de Exportación de Recibos", 3 )
+   fClose( fPda )
+
+Return ( Self )
+
+
+
+
+
+
+
+UTILITY STATIC function TMovilges_MovilGesExportarRuta( cCodAgente) ; local Self AS CLASS TMovilges := QSelf() AS CLASS TMovilges
+
+   local cChr
+   local fPda
+   local cFilePda
+   local nDia
+   local lVisita
+
+   cFilePda          := ::cDirectorio + "RUT" + ::cCodEmp + cCodAgente + ".DAT"
+
+
+
+   Begin Sequence
+
+      IF file( cFilePda )
+         fErase( cFilePda )
+      end
+
+   RECOVER
+
+      ::SetTexto( "No se ha podido borrar el fichero " + cFilePda, 3 )
+      RETURN NIL
+
+   end
+
+   Begin Sequence
+
+      fPda     := fCreate( cFilePda )
+
+   RECOVER
+
+      ::SetTexto( "No se ha podido crear el fichero "+cFilePda, 3 )
+      RETURN NIL
+
+   end
+
+   ::SetTexto( , 40 )
+   ::oMedidor:Set( 0 )
+   ::oMedidor:cText     := "Exportando Rutas"
+   ::oMedidor:SetTotal( ::dbfRuta:LastRec() )
+   ::dbfClient:OrdsetFocus( "CCODRUT" )
+   ::dbfRuta:GoTop()
+
+   WHILE !::dbfRuta:eof()
+
+      ::oMedidor:Set( ::dbfRuta:OrdKeyNo() )
+
+      for nDia := 1 to 7
+
+      ::dbfClient:Seek( ::dbfRuta:CCODRUT )
+
+      WHILE( !::dbfClient:eof() .AND. ::dbfClient:cCodRut == ::dbfRuta:cCodRut )
+
+         lVisita := .F.
+
+         do case
+            case nDia = 1 .AND. ::dbfClient :lVisLun
+               lVisita := .T.
+
+            case nDia = 2 .AND. ::dbfClient :lVisMar
+               lVisita := .T.
+
+            case nDia = 3 .AND. ::dbfClient :lVisMie
+               lVisita := .T.
+
+            case ndia = 4 .AND. ::dbfClient :lVisJue
+               lVisita := .T.
+
+            case ndia = 5 .AND. ::dbfClient :lVisVie
+               lVisita := .T.
+
+            case ndia = 6 .AND. ::dbfClient :lVisSab
+               lVisita := .T.
+
+            case ndia = 7 .AND. ::dbfClient :lVisDom
+               lVisita := .T.
+
+         end
+
+         if( lVisita == .T. )
+            cChr  := ""
+
+            cChr += substr( rtrim( ::dbfClient:cCodRut ), -3 )
+            cChr += Str( nDia, 1 )
+            cChr += truncarCadenaDer( ::dbfClient:Cod, 1, 10 )
+
+            cChr += Chr(13)+Chr(10)
+
+            ::nRead   := Len( cChr )
+
+            if fwrite( fPda, cChr, ::nRead ) < ::nRead
+
+               ::SetTexto( "El fichero de Rutas no se ha creado correctamente. ( error " + str( fError() ) + " )", 3 )
+               RETURN NIL
+
+            end
+
+         end
+
+         ::SetTexto( "Añadida la ruta " + ::dbfClient:cCodRut + " para " + ::dbfClient:Titulo, 41 )
+         ::dbfClient:Skip()
+
+      end
+
+      next
+
+      ::dbfRuta:Skip()
+
+   end
+
+   ::oMedidor:SetTotal( ::dbfRuta:LastRec() )
+   ::SetTexto( "Fin de Exportación de rutas", 3 )
+   fClose( fPda )
+
+Return ( Self )
+
+
+
+
+
+
+UTILITY STATIC function TMovilges_MovilGesExportarMsgCli( cCodAgente) ; local Self AS CLASS TMovilges := QSelf() AS CLASS TMovilges
+
+   local cChr
+   local fPda
+   local cFilePda
+
+   cFilePda          := ::cDirectorio + "MEN" + ::cCodEmp + cCodAgente + ".DAT"
+
+
+
+   Begin Sequence
+
+      IF file( cFilePda )
+         fErase( cFilePda )
+      end
+
+   RECOVER
+
+      ::SetTexto( "No se ha podido borrar el fichero " + cFilePda, 3 )
+      RETURN NIL
+
+   end
+
+   Begin Sequence
+
+      fPda     := fCreate( cFilePda )
+
+   RECOVER
+
+      ::SetTexto( "No se ha podido crear el fichero "+cFilePda, 3 )
+      RETURN NIL
+
+   end
+
+   ::SetTexto( , 40 )
+   ::oMedidor:Set( 0 )
+   ::oMedidor:cText     := "Exportando Comentarios de clientes"
+   ::oMedidor:SetTotal( ::dbfClient:LastRec() )
+   ::dbfClient:GoTop()
+
+   WHILE !::dbfClient:eof()
+
+      if( ( ::dbfClient:lMosCom == .T. ) .AND. ( len( ltrim( ::dbfClient:mComent ) ) > 0 ) )
+
+         ::oMedidor:Set( ::dbfClient:OrdKeyNo() )
+
+         cChr  := ""
+
+         cChr += truncarCadenaDer( ::dbfClient:Cod, 1, 10 )
+         cChr += "1"
+         cChr += truncarCadenaizq( ::dbfClient:mComent, 1, 60 )
+         cChr += "1"
+         cChr += truncarCadenaizq( ::dbfClient:mComent, 61, 60 )
+         cChr += "1"
+         cChr += truncarCadenaizq( ::dbfClient:mComent, 121, 60 )
+         cChr += "1"
+         cChr += truncarCadenaizq( ::dbfClient:mComent, 181, 60 )
+         cChr += "1"
+         cChr += truncarCadenaizq( ::dbfClient:mComent, 241, 60 )
+         cChr += "1"
+         cChr += truncarCadenaizq( ::dbfClient:mComent, 301, 60 )
+
+         cChr += Chr(13)+Chr(10)
+
+         ::nRead   := Len( cChr )
+
+         if fwrite( fPda, cChr, ::nRead ) < ::nRead
+
+            ::SetTexto( "El fichero de Comentarios no se ha creado correctamente. ( error " + str( fError() ) + " )", 3 )
+            RETURN NIL
+
+         end
+
+         ::SetTexto( "Añadido el comentario para " + ::dbfClient:Titulo, 41 )
+
+      else
+
+
+
+      end
+
+      ::dbfClient:Skip()
+
+   end
+
+   ::oMedidor:SetTotal( ::dbfClient:LastRec() )
+   ::SetTexto( "Fin de exportación de comentarios.", 3 )
+   fClose( fPda )
+
+Return ( Self )
+
+
+
+
+
+UTILITY STATIC function TMovilges_MovilgesImportarPedido( cCodAgente) ; local Self AS CLASS TMovilges := QSelf() AS CLASS TMovilges
+
+   local nNumPed
+   local cLinea
+   local cFileCabecera
+   local CFileLinea
+   local oFileCabecera
+   local oFileLote
+   local cFileLote
+   local cLote
+   local lLote
+   local dFecha
+   local oFilelinea
+   local cCabecera
+   local cCodCli
+   local lExentoIva
+
+   cFileCabecera     := ::cDirectorio + "NOC" + ::cCodEmp + cCodAgente + ".DES"
+   cFilelinea        := ::cDirectorio + "NOL" + ::cCodEmp + cCodAgente + ".DES"
+   cFileLote         := ::cDirectorio + "NLO" + ::cCodEmp + cCodAgente + ".DES"
+
+
+
+   if !file( cFileCabecera )
+
+      ::SetTexto( "No existe el fichero " + cFileCabecera, 3 )
+      return nil
+
+   end
+
+   if !file( cFileLinea )
+
+      ::SetTexto( "No existe el fichero " + cFileLinea, 3 )
+      return nil
+
+   end
+
+   oFileCabecera     := TTxtFile():New( cFileCabecera )
+   oFileLinea        := TTxtFile():New( cFileLinea )
+
+   if !file( cFileLote )
+      ::SetTexto( "No hay ficheros de lotes.", 3 )
+      lLote          := .F.
+   else
+      oFileLote      := TTxtFile():New( cFileLote )
+      lLote          := .T.
+   end
+
+
+
+   cCabecera         := oFileCabecera:cLine
+
+   ::SetTexto( , 40 )
+   ::oMedidor:Set( 0 )
+   ::oMedidor:cText     := "Importando pedidos"
+   ::oMedidor:SetTotal( oFileCabecera:LastRec() )
+
+   while( ! oFileCabecera:lEoF() )
+
+      cCodCli        := truncarCadenaIzq( substr( cCabecera, 1, 10 ), 1, 12 )
+
+      if ::dbfClient:Seek( cCodCli ) .AND. ( substr( cCabecera, 21, 1 ) == "9" )
+
+         dFecha                  := dTruncarFecha( substr( cCabecera, 261, 10 ) )
+         lExentoIva              := truncarCadena( cCabecera, 242, 1 ) = "N"
+
+         ::oMedidor:Set( oFileCabecera:nRecNo() )
+
+         nNumPed     := nNewDoc( ::dbfClient:Serie, ::dbfPedCliT:nArea, "NPEDCLI" )
+
+         ::dbfPedCliT:Append()
+         ::dbfPedCliT:cSerPed    := ::dbfClient:Serie
+         ::dbfPedCliT:nNumPed    := nNumPed
+         ::dbfPedCliT:cSufPed    := RetSufEmp()
+         ::dbfPedCliT:cTurPed    := cCurSesion()
+         ::dbfPedCliT:dFecPed    := dFecha
+         ::dbfPedCliT:cCodCli    := ::dbfClient:Cod
+         ::dbfPedCliT:cNomCli    := ::dbfClient:Titulo
+         ::dbfPedCliT:cDirCli    := ::dbfClient:Domicilio
+         ::dbfPedCliT:cPobCli    := ::dbfClient:Poblacion
+         ::dbfPedCliT:cPrvCli    := ::dbfClient:Provincia
+         ::dbfPedCliT:cPosCli    := ::dbfClient:CodPostal
+         ::dbfPedCliT:cDniCli    := ::dbfClient:Nif
+         ::dbfPedCliT:cCodAge    := cCodAgente
+         ::dbfPedCliT:cCodTar    := ::dbfClient :cCodTar
+         ::dbfPedCliT:cCodAlm    := oUser():cAlmacen()
+         ::dbfPedCliT:cCodCaj    := "000"
+         ::dbfPedCliT:cCodPgo    := "0" + substr( cCabecera, 259, 1 )
+         ::dbfPedCliT:cCodRut    := ::dbfClient :cCodRut
+         ::dbfPedCliT:nEstado    := 1
+         ::dbfPedCliT:MobServ    := truncarCadenaDer( cCabecera, 293, 60 )
+         ::dbfPedCliT:nTarifa    := ::dbfClient:nTarifa
+         ::dbfPedCliT:nDtoEsp    := Val( substr( cCabecera, 59, 5 ) )
+         ::dbfPedCliT:nDpp       := Val( substr( cCabecera, 64, 5 ) )
+         ::dbfPedCliT:nDtoUno    := Val( substr( cCabecera, 69, 5 ) )
+         ::dbfPedCliT:cDtoUno    := "Especial 2"
+         ::dbfPedCliT:nDtoDos    := ::dbfClient:nDtoRap
+         ::dbfPedCliT:nDtoCnt    := ::dbfClient:nDtoCnt
+         ::dbfPedCliT:nDtoRap    := ::dbfClient:nDtoRap
+         ::dbfPedCliT:lRecargo   := Val( substr( cCabecera, 194, 8 ) ) <> 0
+         ::dbfPedCliT:cDivPed    := cDivEmp()
+         ::dbfPedCliT:nVdvPed    := nChgDiv( ::dbfPedCliT:cDivPed, ::dbfDiv:nArea )
+         ::dbfPedCliT:nRegIva    := ::dbfClient:nRegIva
+         ::dbfPedCliT:Save()
+
+
+
+         oFileLinea:GoTop()
+         cLinea            := oFileLinea:cLine
+
+         while ! oFileLinea:lEoF()
+
+
+            if( substr( cLinea, 11, 1 ) == "9" .AND. substr( cCabecera, 11, 10 ) == substr( cLinea, 1, 10 ) )
+               ::dbfPedCliL:Append()
+               ::dbfPedCliL:cSerPed := ::dbfPedCliT:cSerPed
+               ::dbfPedCliL:nNumPed := ::dbfPedCliT:nNumPed
+               ::dbfPedCliL:cSufPed := ::dbfPedCliT:cSufPed
+               ::dbfPedCliL:cRef    := truncarCadenaIzq( cLinea, 12, 18 )
+               ::dbfPedCliL:cDetalle:= RetFld( ::dbfPedCliL:cRef, ::dbfArticulo:nArea )
+               if !lExentoIva
+                  ::dbfPedCliL:nIva := nCodigoAsociadoIva( SubStr( cLinea, 76, 1 ) )
+               else
+                  ::dbfPedCliL:nIva := 0
+               end
+               ::dbfPedCliL:nCanPed := Val( SubStr( cLinea, 54, 7 ) )
+               ::dbfPedCliL:nUniCaja:= Val( SubStr( cLinea, 61, 7 ) )
+               ::dbfPedCliL:nPreDiv := Val( SubStr( cLinea, 30, 7 ) )
+               ::dbfPedCliL:nDtoDiv := Val( SubStr( cLinea, 37, 7 ) )
+               ::dbfPedCliL:nDto    := Val( SubStr( cLinea, 44, 5 ) )
+               ::dbfPedCliL:nDtoPrm := Val( SubStr( cLinea, 49, 5 ) )
+               ::dbfPedCliL:lLote   := lLote
+
+               if lLote
+
+                  oFileLote:GoTop()
+                  cLote                := oFileLote:cLine
+
+                  while !oFileLote:lEof()
+
+                     if substr(cLinea, 1, 10 ) = substr( cLote, 1, 10 ) .AND. substr(cLinea, 12, 18 ) = substr( cLote, 12, 18 )
+
+                        ::dbfPedCliL:cLote   := Substr( cLote, 30, 20 )
+
+                     end
+
+                     oFileLote:Skip()
+                     cLote             := oFileLote:ReadLine()
+
+                  end
+
+               end
+               ::dbfPedCliL:Save()
+
+            end
+
+
+
+            oFileLinea:Skip()
+            cLinea    := oFileLinea:ReadLine()
+
+         end
+
+      ::SetTexto( "Añadido pedido " + ::dbfPedCliT:cSerPed + "/" + str( ::dbfPedCliT:nNumPed ) + " para " + ::dbfClient:Titulo, 41 )
+
+      end
+
+      oFileCabecera:Skip()
+      cCabecera    := oFileCabecera:ReadLine()
+
+   end
+
+   ::oMedidor:SetTotal( oFileCabecera:LastRec() )
+   ::SetTexto( "Fin de importación de pedidos.", 3 )
+
+   oFileCabecera:Close()
+   oFileLinea:Close()
+
+   if file( cFileLote )
+
+      oFileLote:Close()
+
+   end
+
+RETURN ( Self )
+
+
+
+
+
+
+FUNCTION nCodigoAsociadoIva( cCodIva, dbfTIva )
+
+   local nOrdFocus
+    local cTemp         := 0
+
+   do case
+   case ValType( dbfTIva ) == "C"
+
+      nOrdFocus      := ( dbfTIva )->( OrdSetFocus( "CodTer" ) )
+
+      if ( dbfTIva )->( dbSeek( cCodIva ) )
+         cTemp       := ( dbfTIva )->TPIva
+      end
+
+      ( dbfTIva )->( OrdSetFocus( nOrdFocus ) )
+
+   case ValType( dbfTIva ) == "O"
+
+      nOrdFocus      := dbfTIva:OrdSetFocus( "CodTer" )
+
+      if dbfTIva:Seek( cCodIva )
+         cTemp       := dbfTIva:TPIva
+      end
+
+      dbfTIva:OrdSetFocus( nOrdFocus )
+
+   end
+
+RETURN cTemp
+
+
+
+
+
+
+FUNCTION dTruncarFecha( cFecha )
+
+   local dFecha
+
+   dFecha   := ctod( substr( cFecha, -2 ) + substr( cFecha, 5, 4 ) + substr( cFecha, 1, 4 ) )
+
+RETURN dFecha
+
+
+
+
+
+
+UTILITY STATIC function TMovilges_MovilgesExportarAtipicas( cCodAgente) ; local Self AS CLASS TMovilges := QSelf() AS CLASS TMovilges
+
+   local cChr
+   local fPda
+   local cFilePda
+
+   cFilePda          := ::cDirectorio + "PRE" + ::cCodEmp + cCodAgente + ".DAT"
+
+
+
+   Begin Sequence
+
+      IF file( cFilePda )
+         fErase( cFilePda )
+      end
+
+   RECOVER
+
+      ::SetTexto( "No se ha podido borrar el fichero " + cFilePda, 3 )
+      RETURN NIL
+
+   end
+
+   Begin Sequence
+
+      fPda     := fCreate( cFilePda )
+
+   RECOVER
+
+      ::SetTexto( "No se ha podido crear el fichero "+cFilePda, 3 )
+      RETURN NIL
+
+   end
+
+   ::SetTexto( , 40 )
+   ::oMedidor:Set( 0 )
+   ::oMedidor:cText     := "Exportando atípicas"
+   ::oMedidor:SetTotal( ::dbfCliAtp:LastRec() )
+   ::dbfCliAtp:OrdSetFocus( "MOVCLI" )
+   ::dbfCliAtp:GoTop()
+
+   WHILE !::dbfCliAtp:eof()
+
+      ::oMedidor:Set( ::dbfCliAtp:OrdKeyNo() )
+
+      cChr  := ""
+
+      if ::dbfCliAtp:nTipAtp <= 1
+         cChr += "1"
+         cChr += truncarCadenaDer( ::dbfCliAtp:cCodCli, 1, 10 )
+         cChr += truncarCadenaDer( ::dbfCliAtp:cCodArt, 1, 18 )
+         cChr += truncarNumero( ::dbfCliAtp:nPrcArt, 7, ::nDecimales )
+      else
+         cChr += "2"
+         cChr += truncarCadenaDer( ::dbfCliAtp:cCodCli, 1, 10 )
+         cChr += truncarCadenaDer( SubStr( ::dbfCliAtp:cCodFam, 1, 7 ), 1, 18 )
+         cChr += truncarNumero( 0, 7, ::nDecimales )
+      end
+
+      cChr += truncarNumero( ::dbfCliAtp:nDtoDiv, 7, ::nDecimales )
+      cChr += truncarNumero( ::dbfCliAtp:nDtoArt, 5, 2 )
+      cChr += truncarNumero( ::dbfCliAtp:nDprArt, 5, 2 )
+
+      cChr += Chr(13)+Chr(10)
+
+      ::nRead   := Len( cChr )
+
+      if fwrite( fPda, cChr, ::nRead ) < ::nRead
+
+         ::SetTexto( "El fichero de atípicas no se ha creado correctamente. ( error " + str( fError() ) + " )", 3 )
+         RETURN NIL
+
+      end
+
+      ::setTexto( "Añadida atípica para el cliente " + ::dbfCliAtp:cCodCli, 41 )
+      ::dbfCliAtp:Skip()
+
+   end
+
+   ::oMedidor:SetTotal( ::dbfCliAtp:LastRec() )
+   ::SetTexto( "Fin de exportación de atípicas.", 3 )
+   fClose( fPda )
+
+RETURN nil
+
+
+
+
+
+
+UTILITY STATIC function TMovilges_movilgesImportarAlbaran( cCodAgente) ; local Self AS CLASS TMovilges := QSelf() AS CLASS TMovilges
+
+   local nNumAlb
+   local cLinea
+   local cFileCabecera
+   local CFileLinea
+   local oFileCabecera
+   local oFileLote
+   local cFileLote
+   local cLote
+   local lLote
+   local dFecha
+   local oFilelinea
+   local cCabecera
+   local cCodCli
+   local lExentoIva
+
+   cFileCabecera     := ::cDirectorio + "NOC" + ::cCodEmp + cCodAgente + ".DES"
+   cFilelinea        := ::cDirectorio + "NOL" + ::cCodEmp + cCodAgente + ".DES"
+   cFileLote         := ::cDirectorio + "NLO" + ::cCodEmp + cCodAgente + ".DES"
+
+
+
+   if !file( cFileCabecera )
+
+      ::SetTexto( "No existe el fichero " + cFileCabecera, 3 )
+      return nil
+
+   end
+
+   if !file( cFileLinea )
+
+      ::SetTexto( "No existe el fichero " + cFileLinea, 3 )
+      return nil
+
+   end
+
+   oFileCabecera     := TTxtFile():New( cFileCabecera )
+   oFileLinea        := TTxtFile():New( cFileLinea )
+
+   if !file( cFileLote )
+
+      ::SetTexto( "No hay ficheros de lotes.", 3 )
+      lLote          := .F.
+
+   else
+      oFileLote      := TTxtFile():New( cFileLote )
+      lLote          := .T.
+   end
+
+
+
+   cCabecera            := oFileCabecera:cLine
+
+   ::SetTexto( , 40 )
+   ::oMedidor:Set( 0 )
+   ::oMedidor:cText     := "Importando albaranes"
+   ::oMedidor:SetTotal( oFileCabecera:LastRec() )
+
+   while( ! oFileCabecera:lEoF() )
+
+      cCodCli        := truncarCadenaIzq( substr( cCabecera, 1, 10 ), 1, 12 )
+
+      if ::dbfClient:Seek( cCodCli ) .AND. ( substr( cCabecera, 21, 1 ) == "2" )
+
+         ::oMedidor:Set( oFileCabecera:nRecNo() )
+
+         dFecha         := dTruncarFecha( substr( cCabecera, 261, 10 ) )
+         lExentoIva     := truncarCadena( cCabecera, 242, 1 ) = "N"
+
+         nNumAlb        := nNewDoc( ::dbfClient :Serie, ::dbfAlbCliT:nArea, "NALBCLI" )
+
+         ::dbfAlbCliT:Append()
+         ::dbfAlbCliT:cSerAlb    := ::dbfClient:Serie
+         ::dbfAlbCliT:nNumAlb    := nNumAlb
+         ::dbfAlbCliT:cSufAlb    := RetSufEmp()
+         ::dbfAlbCliT:dFecAlb    := dFecha
+         ::dbfAlbCliT:cCodAlm    := oUser():cAlmacen()
+         ::dbfAlbCliT:cDivAlb    := cDivEmp()
+         ::dbfAlbCliT:nVdvAlb    := nChgDiv( ::dbfAlbCliT:cDivAlb, ::dbfDiv:nArea )
+         ::dbfAlbCliT:lFacturado := .F.
+         ::dbfAlbCliT:lEntregado := .F.
+         ::dbfAlbCliT:cCodCli    := ::dbfClient:COD
+         ::dbfAlbCliT:cNomCli    := ::dbfClient:TITULO
+         ::dbfAlbCliT:cDirCli    := ::dbfClient:DOMICILIO
+         ::dbfAlbCliT:cPobCli    := ::dbfClient:POBLACION
+         ::dbfAlbCliT:cPrvCli    := ::dbfClient:PROVINCIA
+         ::dbfAlbCliT:cPosCli    := ::dbfClient:CODPOSTAL
+         ::dbfAlbCliT:cDniCli    := ::dbfClient:NIF
+         ::dbfAlbCliT:cCodTar    := ::dbfClient:CCODTAR
+         ::dbfAlbCliT:cCodPago   := "0" + substr( cCabecera, 259, 1 )
+         ::dbfAlbCliT:cCodAge    := ::dbfClient:CAGENTE
+         ::dbfAlbCliT:cCodRut    := ::dbfClient:CCODRUT
+         ::dbfAlbCliT:nTarifa    := ::dbfClient:NTARIFA
+         ::dbfAlbCliT:lRecargo   := Val( substr( cCabecera, 194, 8 ) ) <> 0
+         ::dbfAlbCliT:nDtoEsp    := Val( substr( cCabecera, 59, 5 ) )
+         ::dbfAlbCliT:nDpp       := Val( substr( cCabecera, 64, 5 ) )
+         ::dbfAlbCliT:nDtoUno    := Val( substr( cCabecera, 69, 5 ) )
+         ::dbfAlbCliT:cDtoUno    := "Especial 2"
+         ::dbfAlbCliT:cCodCaj    := cDefCaj()
+         ::dbfAlbCliT:MobServ    := truncarCadenaDer( cCabecera, 293, 60 )
+         ::dbfAlbCliT:cTurAlb    := cCurSesion()
+         ::dbfAlbCliT:Save()
+
+
+
+         oFileLinea:GoTop()
+         cLinea            := oFileLinea:cLine
+
+         while ! oFileLinea:lEoF()
+
+
+            if( substr( cLinea, 11, 1 ) == "2" .AND. substr( cCabecera, 11, 10 ) == substr( cLinea, 1, 10 ) )
+
+               ::dbfAlbCliL:Append()
+               ::dbfAlbCliL:cSerAlb       := ::dbfAlbCliT:cSerAlb
+               ::dbfAlbCliL:nNumAlb       := ::dbfAlbCliT:nNumAlb
+               ::dbfAlbCliL:cSufAlb       := ::dbfAlbCliT:cSufAlb
+               ::dbfAlbCliL:cRef          := Upper( TruncarCadenaIzq( cLinea, 12, 18 ) )
+               ::dbfAlbCliL:cDetalle      := RetFld( ::dbfAlbCliL:cRef, ::dbfArticulo:nArea, "Nombre" )
+               if !lExentoIva
+                  ::dbfAlbCliL:nIva := nCodigoAsociadoIva( SubStr( cLinea, 76, 1 ) )
+               else
+                  ::dbfAlbCliL:nIva := 0
+               end
+               ::dbfAlbCliL:nPreUnit      := Val( SubStr( cLinea, 30, 7 ) )
+               ::dbfAlbCliL:nDtoDiv       := Val( SubStr( cLinea, 37, 7 ) )
+               ::dbfAlbCliL:nDto          := Val( SubStr( cLinea, 44, 5 ) )
+               ::dbfAlbCliL:cUnidad       := SubStr( LTrim( substr( cLinea, 54, 7 ) ), 1, 2 )
+               ::dbfAlbCliL:nUniCaja      := Val( SubStr( cLinea, 61, 7 ) )
+               ::dbfAlbCliL:nDtoPrm       := Val( SubStr( cLinea, 49, 5 ) )
+               ::dbfAlbCliL:lLote         := lLote
+
+               if lLote
+
+                  oFileLote:GoTop()
+                  cLote                := oFileLote:cLine
+
+                  while !oFileLote:lEof()
+
+                     if substr(cLinea, 1, 10 ) = substr( cLote, 1, 10 ) .AND. substr(cLinea, 12, 18 ) = substr( cLote, 12, 18 )
+
+                        ::dbfAlbCliL:cLote   := Substr( cLote, 30, 20 )
+
+                     end
+
+                     oFileLote:Skip()
+                     cLote             := oFileLote:ReadLine()
+
+                  end
+
+               end
+
+               ::dbfAlbCliL:Save()
+
+            end
+
+
+
+            oFileLinea:Skip()
+            cLinea    := oFileLinea:ReadLine()
+
+         end
+
+      end
+
+      oFileCabecera:Skip()
+      cCabecera    := oFileCabecera:ReadLine()
+
+      ::SetTexto( "Añadido albarán " + ::dbfAlbCliT:cSerAlb + "/" + str( ::dbfAlbCliT:nNumAlb ) + " para " + ::dbfClient:Titulo, 41 )
+
+   end
+
+   ::oMedidor:SetTotal( oFileCabecera:LastRec() )
+   ::SetTexto( "Fin de importación de albaranes.", 3 )
+   oFileCabecera:Close()
+   oFileLinea:Close()
+
+   if file( cFileLote )
+
+      oFileLote:Close()
+
+   end
+
+RETURN ( Self )
+
+
+
+
+
+
+UTILITY STATIC function TMovilges_movilgesImportarFactura( cCodAgente) ; local Self AS CLASS TMovilges := QSelf() AS CLASS TMovilges
+
+   local nNumFac
+   local cLinea
+   local cFileCabecera
+   local CFileLinea
+   local oFileLote
+   local cFileLote
+   local cLote
+   local lLote
+   local oFileCabecera
+   local dFecha
+   local oFilelinea
+   local cCabecera
+   local cCodCli
+   local lExentoIva
+
+   cFileCabecera     := ::cDirectorio + "NOC" + ::cCodEmp + cCodAgente + ".DES"
+   cFilelinea        := ::cDirectorio + "NOL" + ::cCodEmp + cCodAgente + ".DES"
+   cFileLote         := ::cDirectorio + "NLO" + ::cCodEmp + cCodAgente + ".DES"
+
+
+
+   if !file( cFileCabecera )
+      ::SetTexto( "No existe el fichero " + cFileCabecera, 3 )
+      return nil
+   end
+
+   if !file( cFileLinea )
+      ::SetTexto( "No existe el fichero " + cFileLinea, 3 )
+      return nil
+   end
+
+   if !file( cFileLote )
+      ::SetTexto( "No hay ficheros de lotes.", 3 )
+      lLote          := .F.
+   else
+      oFileLote      := TTxtFile():New( cFileLote )
+      lLote          := .T.
+   end
+
+   oFileCabecera     := TTxtFile():New( cFileCabecera )
+   oFileLinea        := TTxtFile():New( cFileLinea )
+
+
+
+   cCabecera         := oFileCabecera:cLine
+
+   ::SetTexto( , 40 )
+   ::oMedidor:Set( 0 )
+   ::oMedidor:cText     := "Importando Facturas"
+   ::oMedidor:SetTotal( oFileCabecera:LastRec() )
+
+   while( ! oFileCabecera:lEoF() )
+
+      cCodCli        := truncarCadenaIzq( substr( cCabecera, 1, 10 ), 1, 12 )
+
+      if ::dbfClient:Seek( cCodCli ) .AND. ( substr( cCabecera, 21, 1 ) == "1" )
+
+         ::oMedidor:Set( oFileCabecera:nRecNo() )
+
+         dFecha         := dTruncarFecha( substr( cCabecera, 261, 10 ) )
+         lExentoIva     := truncarCadena( cCabecera, 242, 1 ) = "N"
+
+         nNumFac     := nNewDoc( ::dbfClient:Serie, ::dbfFacCliT:nArea, "NFACCLI" )
+
+         ::dbfFacCliT:Append()
+         ::dbfFacCliT:cSerie     := ::dbfClient:Serie
+         ::dbfFacCliT:nNumFac    := nNumFac
+         ::dbfFacCliT:cSufFac    := RetSufEmp()
+         ::dbfFacCliT:cTurFac    := cCurSesion()
+         ::dbfFacCliT:dFecFac    := dFecha
+         ::dbfFacCliT:cCodCli    := ::dbfClient:Cod
+         ::dbfFacCliT:cNomCli    := ::dbfClient:Titulo
+         ::dbfFacCliT:cDirCli    := ::dbfClient:Domicilio
+         ::dbfFacCliT:cPobCli    := ::dbfClient:Poblacion
+         ::dbfFacCliT:cPrvCli    := ::dbfClient:Provincia
+         ::dbfFacCliT:cPosCli    := ::dbfClient:CodPostal
+         ::dbfFacCliT:cDniCli    := ::dbfClient:Nif
+         ::dbfFacCliT:cCodAge    := cCodAgente
+         ::dbfFacCliT:cCodTar    := ::dbfClient:cCodTar
+         ::dbfFacCliT:cCodAlm    := oUser():cAlmacen()
+         ::dbfFacCliT:cCodCaj    := cDefCaj()
+         ::dbfFacCliT:cCodPago   := "0" + substr( cCabecera, 259, 1 )
+         ::dbfFacCliT:cCodRut    := ::dbfClient:cCodRut
+         ::dbfFacCliT:MobServ    := truncarCadenaDer( cCabecera, 293, 60 )
+         ::dbfFacCliT:nTarifa    := ::dbfClient:nTarifa
+         ::dbfFacCliT:nDtoEsp    := Val( substr( cCabecera, 59, 5 ) )
+         ::dbfFacCliT:nDpp       := Val( substr( cCabecera, 64, 5 ) )
+         ::dbfFacCliT:nDtoUno    := Val( substr( cCabecera, 69, 5 ) )
+         ::dbfFacCliT:cDtoUno    := "Especial 2"
+         ::dbfFacCliT:nDtoDos    := ::dbfClient:nDtoRap
+         ::dbfFacCliT:nDtoCnt    := ::dbfClient:nDtoCnt
+         ::dbfFacCliT:nDtoRap    := ::dbfClient:nDtoRap
+         ::dbfFacCliT:lRecargo   := Val( substr( cCabecera, 194, 8 ) ) <> 0
+         ::dbfFacCliT:cDivFac    := cDivEmp()
+         ::dbfFacCliT:nVdvFac    := nChgDiv( ::dbfFacCliT :cDivFac, ::dbfDiv:nArea )
+         ::dbfFacCliT:nRegIva    := ::dbfClient:nRegIva
+         ::dbfFacCliT:Save()
+
+
+
+          if substr( cCabecera, 259, 1 ) <> "4" .AND. val( substr( cCabecera, 251, 8 ) ) <> 0
+
+             ::dbfFacCliP:Append()
+             ::dbfFacCliP:cSerie     := ::dbfClient:Serie
+             ::dbfFacCliP:nNumFac    := nNumFac
+             ::dbfFacCliP:cSufFac    := RetSufEmp()
+             ::dbfFacCliP:nNumRec    := 1
+             ::dbfFacCliP:cCodCli    := ::dbfClient:Cod
+             ::dbfFacCliP:cCodCaj    := oUser():cCaja()
+             ::dbfFacCliP:nImporte   := val( substr( cCabecera, 251, 8 ) )
+             ::dbfFacCliP:cDescrip   := "Recibo Nº1 de factura " + ::dbfFacCliP:cSerie  + "/" + allTrim( Str( ::dbfFacCliP:nNumFac ) ) + "/" + ::dbfFacCliP:cSufFac
+             ::dbfFacCliP:cDivPgo    := cDivEmp()
+             ::dbfFacCliP:nVdvPgo    := nChgDiv( ::dbfFacCliT:cDivFac, ::dbfDiv:nArea )
+             ::dbfFacCliP:lCobrado   := .T.
+             ::dbfFacCliP:cTurRec    := cCurSesion()
+             ::dbfFacCliP:dPreCob    := dFecha
+             ::dbfFacCliP:dEntrada   := dFecha
+             ::dbfFacCliP:Save()
+
+
+
+             if substr( cCabecera, 60, 1 ) <> "4" .AND. val( substr( cCabecera, 251, 8 ) ) <> val( substr( cCabecera, 243, 8 ) )
+
+               ::dbfFacCliP:Append()
+               ::dbfFacCliP:cSerie     := ::dbfClient:Serie
+               ::dbfFacCliP:nNumFac    := nNumFac
+               ::dbfFacCliP:cSufFac    := RetSufEmp()
+               ::dbfFacCliP:nNumRec    := 2
+               ::dbfFacCliP:cCodCli    := ::dbfClient :Cod
+               ::dbfFacCliP:cCodCaj    := oUser():cCaja()
+               ::dbfFacCliP:nImporte   := val( substr( cCabecera, 243, 8 ) ) - val( substr( cCabecera, 251, 8 ) )
+               ::dbfFacCliP:cDescrip   := "Recibo Nº2 de factura " + ::dbfFacCliP:cSerie  + "/" + allTrim( Str( ::dbfFacCliP:nNumFac ) ) + "/" + ::dbfFacCliP:cSufFac
+               ::dbfFacCliP:cDivPgo    := cDivEmp()
+               ::dbfFacCliP:nVdvPgo    := nChgDiv( ::dbfFacCliT:cDivFac, ::dbfDiv:nArea )
+               ::dbfFacCliP:lCobrado   := .T.
+               ::dbfFacCliP:cTurRec    := cCurSesion()
+               ::dbfFacCliP:dPreCob    := dFecha
+               ::dbfFacCliP:dEntrada   := dFecha
+               ::dbfFacCliP:Save()
+
+            end
+
+
+          elseif substr( cCabecera, 260, 1 ) <> "4" .AND. val( substr( cCabecera, 251, 8 ) ) <> val( substr( cCabecera, 243, 8 ) )
+
+               ::dbfFacCliP:Append()
+               ::dbfFacCliP:cSerie     := ::dbfClient:Serie
+               ::dbfFacCliP:nNumFac    := nNumFac
+               ::dbfFacCliP:cSufFac    := RetSufEmp()
+               ::dbfFacCliP:nNumRec    := 1
+               ::dbfFacCliP:cCodCli    := ::dbfClient:Cod
+               ::dbfFacCliP:cCodCaj    := oUser():cCaja()
+               ::dbfFacCliP:nImporte   := val( substr( cCabecera, 243, 8 ) ) - val( substr( cCabecera, 251, 8 ) )
+               ::dbfFacCliP:cDescrip   := "Recibo Nº1 de factura " + ::dbfFacCliP:cSerie  + "/" + allTrim( Str( ::dbfFacCliP:nNumFac ) ) + "/" + ::dbfFacCliP:cSufFac
+               ::dbfFacCliP:cDivPgo    := cDivEmp()
+               ::dbfFacCliP:nVdvPgo    := nChgDiv( ::dbfFacCliT:cDivFac, ::dbfDiv:nArea )
+               ::dbfFacCliP:lCobrado   := .T.
+               ::dbfFacCliP:cTurRec    := cCurSesion()
+               ::dbfFacCliP:dPreCob    := dFecha
+               ::dbfFacCliP:dEntrada   := dFecha
+               ::dbfFacCliP:Save()
+
+          end
+
+
+
+         oFileLinea:GoTop()
+         cLinea            := oFileLinea:cLine
+
+         while ! oFileLinea:lEoF()
+
+
+            if( substr( cLinea, 11, 1 ) == "1" .AND. substr( cCabecera, 11, 10 ) == substr( cLinea, 1, 10 ) )
+
+               ::dbfFacCliL:Append()
+               ::dbfFacCliL:cSerie := ::dbfFacCliT:cSerie
+               ::dbfFacCliL:nNumFac := ::dbfFacCliT:nNumFac
+               ::dbfFacCliL:cSufFac := ::dbfFacCliT:cSufFac
+               ::dbfFacCliL:cRef    := UPPER( truncarCadenaIzq( cLinea, 12, 18 ) )
+               ::dbfFacCliL:cDetalle:= RetFld( ::dbfFacCliL:cRef, ::dbfArticulo:nArea )
+               if !lExentoIva
+                  ::dbfFacCliL:nIva := nCodigoAsociadoIva( SubStr( cLinea, 76, 1 ) )
+               else
+                  ::dbfFacCliL:nIva := 0
+               end
+               ::dbfFacCliL:nCanEnt := Val( SubStr( cLinea, 54, 7 ) )
+               ::dbfFacCliL:nUniCaja:= Val( SubStr( cLinea, 61, 7 ) )
+               ::dbfFacCliL:nPreUnit:= Val( SubStr( cLinea, 30, 7 ) )
+               ::dbfFacCliL:nDtoDiv := Val( SubStr( cLinea, 37, 7 ) )
+               ::dbfFacCliL:nDto    := Val( SubStr( cLinea, 44, 5 ) )
+               ::dbfFacCliL:nDtoPrm := Val( SubStr( cLinea, 49, 5 ) )
+               ::dbfFacCliL:lLote   := lLote
+
+               if lLote
+
+                  oFileLote:GoTop()
+                  cLote                := oFileLote:cLine
+
+                  while !oFileLote:lEof()
+
+                     if substr(cLinea, 1, 10 ) = substr( cLote, 1, 10 ) .AND. substr(cLinea, 12, 18 ) = substr( cLote, 12, 18 )
+
+                        ::dbfFacCliL:cLote   := Substr( cLote, 30, 20 )
+
+                     end
+
+                     oFileLote:Skip()
+                     cLote             := oFileLote:ReadLine()
+
+                  end
+
+               end
+
+               ::dbfFacCliL:Save()
+
+            end
+
+
+
+            oFileLinea:Skip()
+            cLinea    := oFileLinea:ReadLine()
+
+         end
+
+      end
+
+
+
+      ChkLqdFacCli( nil, ::dbfFacCliT:cAlias, ::dbfFacCliL:cAlias, ::dbfFacCliP:cAlias, ::dbfAntCliT:cAlias, ::dbftiva:cAlias, ::dbfDiv:cAlias )
+
+
+      oFileCabecera:Skip()
+      cCabecera    := oFileCabecera:ReadLine()
+
+      ::SetTexto( "Añadid factura " + ::dbfFacCliT:cSerie + "/" + str( ::dbfFacCliT:nNumFac ) + " para " + ::dbfClient:Titulo, 41 )
+
+   end
+
+   ::oMedidor:SetTotal( oFileCabecera:LastRec() )
+   ::SetTexto( "Fin de importación de facturas.", 3 )
+
+   oFileCabecera:Close()
+   oFileLinea:Close()
+
+   if file( cFileLote )
+
+      oFileLote:Close()
+
+   end
+
+RETURN ( Self )
+
+
+
+
+
+
+
+
+
+UTILITY STATIC function TMovilges_MovilgesImportarPago( cCodAgente) ; local Self AS CLASS TMovilges := QSelf() AS CLASS TMovilges
+
+   local nLinea
+   local nImporte
+   local lCobrado
+   local cLinea
+   local CFileLinea
+   local dFecha
+   local oFilelinea
+
+   cFileLinea        := ::cDirectorio + "COB" + ::cCodEmp + cCodAgente + ".DES"
+
+
+
+   if !file( cFileLinea )
+      ::SetTexto( "No existe el fichero " + cFileLinea, 3 )
+      return nil
+   end
+
+   oFileLinea        := TTxtFile():New( cFileLinea )
+
+   ::dbfFacCliP:GoTop()
+
+   cLinea            := oFileLinea:cLine
+
+   ::SetTexto( , 40 )
+   ::oMedidor:Set( 0 )
+   ::oMedidor:cText     := "Importando recibos cobrados"
+   ::oMedidor:SetTotal( oFileLinea:LastRec() )
+
+   WHILE ! oFileLinea:lEoF()
+
+      ::oMedidor:Set( oFileLinea:nRecNo() )
+      ::dbfClient:Seek( substr( cLinea, 1, 10 ) )
+      dFecha         := dTruncarFecha( substr( cLinea, 60, 10 ) )
+      nLinea         := 1
+      lCobrado       := .F.
+      nImporte       := val( substr( cLinea, 52, 8 ) )
+
+
+
+      while ::dbfFacCliP:seek( substr( cLinea, 11, 10 ) + RetSufEmp() + str( nLinea, 2, 0 ) ) .AND. !lCobrado
+
+         if !::dbfFacCliP:lCobrado
+
+            if nImporte == ::dbfFacCliP:nImporte
+
+               ::dbfFacCliP:Load()
+               ::dbfFacCliP:lCobrado   := .T.
+               ::dbfFacCliP:dEntrada   := dTruncarFecha( substr( cLinea, 32, 10 ) )
+               ::dbfFacCliP:Save()
+
+               lCobrado                := .T.
+               ::dbfFacCliT:Seek( substr( cLinea, 11, 10 ) )
+               ChkLqdFacCli( nil, ::dbfFacCliT:cAlias, ::dbfFacCliL:cAlias, ::dbfFacCliP:cAlias, ::dbfAntCliT:cAlias, ::dbfTiva:cAlias, ::dbfDiv:cAlias )
+
+               ::SetTexto( "Añadido recibo " + substr( cLinea, 11, 10 ) + RetSufEmp() + str( nLinea, 2, 0 ), 41 )
+
+
+
+
+
+
+
+
+
+
+
+            end
+
+         end
+
+         nLinea++
+
+      end
+
+
+      if ! lCobrado
+
+         ::SetTexto( "Recibo no encontrado: " + substr( cLinea, 11, 10 ) + RetSufEmp() + str( nLinea, 2, 0 ), 42 )
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+      end
+
+      oFileLinea:Skip()
+      cLinea                        := oFileLinea:ReadLine()
+
+   end
+
+   ::oMedidor:SetTotal( oFileLinea:LastRec() )
+   ::SetTexto( "Fin de importación de facturas.", 3 )
+   oFileLinea:Close()
+
+RETURN ( Self )
+
+
+
+
+
+
+function lEsNumerico( cNumero )
+
+   local lNumero := .T.
+   local nInicio := 1
+   local nFin    := len( cNumero )
+   local cChar
+
+   while lNumero .AND. nInicio <= nFin
+
+      cChar := substr( cNumero, nInicio, 1 )
+
+      if asc( cChar ) > 57 .OR. asc( cChar ) < 48
+
+         lNumero := .F.
+
+      end
+
+      nInicio++
+
+   end
+
+return lNumero
+
+
+
+
+
+
+UTILITY STATIC function TMovilges_LogEscribir( cTexto) ; local Self AS CLASS TMovilges := QSelf() AS CLASS TMovilges
+
+   local nLenTexto   := Len( cTexto + Chr(13)+Chr(10) )
+
+   if ::lLog
+
+      if fWrite( ::fLog, cTexto + Chr(13)+Chr(10), nLenTexto ) < nLenTexto
+
+         fClose( ::fLog )
+         msgStop( "Imposible escribir en el fichero de log, error " + Str( fError() ) )
+         ::lLog   := .F.
+
+      end
+
+   end
+
+Return ( Self )
+
+
+
+
+
+
+UTILITY STATIC function TMovilges_SetTexto( cTexto, nLevel) ; local Self AS CLASS TMovilges := QSelf() AS CLASS TMovilges
+
+   do case
+
+      case nLevel == 1
+         ::oSubItem := ::oTree:Add( cTexto, 1 )
+         ::LogEscribir( cTexto )
+
+      case nLevel == 2
+         ::oSubItem2 := ::oSubItem:Add( cTexto, 1 )
+         ::oSubItem:Expand()
+         ::LogEscribir( space(3) + cTexto )
+
+      case nLevel == 3
+         ::oSubItem3 := ::oSubItem2:Add( cTexto, 1 )
+         ::LogEscribir( space( 6 ) + cTexto )
+
+      case nLevel == 40
+         ::oSubItemError      := ::oSubItem2:Add( "Errores", 1 )
+         ::oSubItemResultado  := ::oSubItem2:Add( "Resultados", 1 )
+         ::oSubItem2:Expand()
+         ::oTree:Select( ::oSubItemResultado )
+
+      case nLevel == 41
+         ::LogEscribir( Space( 9 ) + cTexto )
+         ::oSubItem3 := ::oSubItemResultado:Add( cTexto, 1 )
+
+      case nLevel == 42
+         ::LogEscribir( Space( 9 ) + cTexto )
+         ::oSubItem3 := ::oSubItemError:Add( cTexto, 1 )
+
+   end
+
+return nil
+
+
+
+
+
+
+Function ImprimirFichero( cFile )
+
+   LOCAL oFont
+
+   if !file( cFile )
+      msgStop( "El fichero " + cFile + " no existe." )
+      return .F.
+   end
+
+   oFont := TFont():New( "Courier New", 0, -12,,,,,,,,,,,,,, )
+
+
+
+
+   oReport := RptBegin({}, {}, {}, {oFont}, {}, .F.,,,, .T.,,, "Imprimir fichero",,, )
+
+      RptAddColumn( {}, , {{|| " "}}, 76, {} ,, .F., ,, .F., .F.,, .F., .F.,,, .F., )
+
+   RptEnd()
+
+   oReport:nTitleUpLine := 0
+   oReport:nTitleDnLine := 0
+
+   oReport:Activate(,, {|| SayMemo( cFile )},,,,,,,,,,, )
+
+   oFont:End()
+
+RETURN NIL
+
+
+
+STATIC Function SayMemo( cFile)
+
+   LOCAL cText, cLine
+   LOCAL nFor, nLines, nPageln
+
+   cText    := Memoread( cFile )
+
+   nLines   := MlCount( cText, 76 )
+   nPageln  := 0
+
+   FOR nFor := 1 TO nLines
+
+        cLine := MemoLine( cText, 76, nFor )
+
+        oReport:StartLine()
+        oReport:Say(1,cLine)
+        oReport:EndLine()
+
+        nPageln := nPageln + 1
+        IF nPageln = 60
+           nFor := GetTop(cText,nFor,nLines)
+           nPageln := 0
+        ENDIF
+
+   NEXT
+
+RETURN NIL
+
+
+
+STATIC FUNCTION GetTop(cText,nFor,nLines)
+
+   local lTest := .T., cLine
+
+   while lTest .AND. nFor <= nLines
+      nFor++
+      cLine := MemoLine( cText, 76, nFor )
+      lTest := Empty( cLine )
+   enddo
+
+   nFor--
+   SysRefresh()
+
+RETURN nFor
+
+
+
+
+
+
+UTILITY STATIC function TMovilges_ExportarFPagos() ; local Self AS CLASS TMovilges := QSelf() AS CLASS TMovilges
+
+   local cChr
+   local fPda
+   local cFilePda
+
+   cFilePda          := ::cDirectorio + "FPG" + ::cCodEmp + ".CFG"
+
+
+
+   BEGIN SEQUENCE
+
+      IF file( cFilePda )
+         fErase( cFilePda )
+      end
+
+   RECOVER
+
+      ::SetTexto( "No se ha podido borrar el fichero " + cFilePda, 3 )
+      RETURN NIL
+
+   end
+
+   BEGIN SEQUENCE
+
+      fPda     := fCreate( cFilePda )
+
+   RECOVER
+
+      ::SetTexto( "No se ha podido crear el fichero "+cFilePda, 3 )
+      RETURN NIL
+
+   end
+
+   ::SetTexto( , 40 )
+   ::oMedidor:Set( 0 )
+   ::oMedidor:cText     := "Exportando Formas de Pago"
+   ::oMedidor:SetTotal( ::dbfFPago:LastRec() )
+   ::dbfFPago:GoTop()
+
+   WHILE !::dbfFPago:eof()
+
+      ::oMedidor:Set( ::dbfFPago:OrdKeyNo() )
+
+      if len( AllTrim( ::dbfFPago:cCodPago ) ) <> 1
+
+         ::SetTexto( "La forma de pago " + AllTrim( ::dbfFPago:cDesPago ) + " (" + AllTrim( ::dbfFPago:cCodPago ) + ") tiene un código superior a un carácter.", 42 )
+
+      else
+
+         cChr  := ""
+
+         cChr  += AllTrim( ::dbfFPago:cCodPago )
+         cChr  += truncarCadenaIzq( ::dbfFPago:CDesPago, 1, 15 )
+
+         if ::dbfFPago:nCobRec == 1
+
+            cChr  += "N1"
+
+         else
+
+            cChr  += "S4"
+
+         end
+
+         cChr  += Chr(13)+Chr(10)
+
+         ::nRead   := Len( cChr )
+
+         if fwrite( fPda, cChr, ::nRead ) < ::nRead
+
+            ::SetTexto( "El fichero de formas de pago no se ha creado correctamente. ( error " + str( fError() ) + " )", 42 )
+            RETURN NIL
+
+         end
+
+         ::SetTexto( "Añadida la forma de pago " + rTrim( ::dbfFPago:cDesPago ), 41 )
+
+      end
+
+      ::dbfFPago:Skip()
+
+   end
+
+   ::oMedidor:Set( ::dbfClient:LastRec() )
+   ::SetTexto( "Fin de Exportación de Formas de pago", 3 )
+
+   fClose( fPda )
+
+Return ( Self )
+
+
+
+UTILITY STATIC function TMovilges_CargarPreferencias() ; local Self AS CLASS TMovilges := QSelf() AS CLASS TMovilges
+
+   local oIniApp
+   local cIniApp  := cPatEmp() + "Empresa.Ini"
+
+   oIniApp := TIni():New( cIniApp )
+
+      ::oDirectorio:cText := oIniApp:Get( "Movilges", "Destino", PadR( cPatSnd(), 100 ), ::oDirectorio:cText )
+
+
+
+return ( Self )
+
+
+
+UTILITY STATIC function TMovilges_GuardarPreferencias() ; local Self AS CLASS TMovilges := QSelf() AS CLASS TMovilges
+
+   local oIniApp
+   local cIniApp  := cPatEmp() + "Empresa.Ini"
+
+   oIniApp := TIni():New( cIniApp )
+      oIniApp:Set( "Movilges", "Destino", ::oDirectorio:cText )
+
+
+return ( Self )

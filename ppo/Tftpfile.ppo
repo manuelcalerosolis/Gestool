@@ -1,0 +1,185 @@
+#line 112 "hbclass.ch"
+   DYNAMIC DivertConstructorCall
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+DECLARE HBClass  New( cName AS String, OPTIONAL SuperParams ) AS CLASS HBClass  Create() AS Object  Instance() AS Object  AddClsMethod( cName AS String, @MethodName(), nScope AS Numeric, n2 AS Numeric, n3 AS Numeric )  AddDelegate( cName AS String, cDelegate AS String, cObject AS String, nScope AS Numeric, lPersistent AS LOGICAL )  AddMultiClsData( cType AS String, uVal, nScope AS Numeric, aDatas AS Array OF String )  AddMultiData( cType AS String, uVal, nScope AS Numeric, aDatas AS Array OF String, x AS LOGICAL, lPer AS LOGICAL )  AddMethod( cName AS String, @MethodName(), nScope AS Numeric, lPersistent AS LOGICAL )  AddInLine( cName AS String, bBlock AS CodeBlock, nScope AS Numeric, lPersistent AS LOGICAL )  AddVirtual( cName AS String )  ModMethod( cName AS String, @MethodName(), nScope AS Numeric, lPersistent AS LOGICAL )  ModClsMethod( cName AS String, @MethodName(), nScope AS Numeric )  ModInline( cName AS String, bBlock AS CodeBlock, nScope AS Numeric, lPersistent AS LOGICAL )  SetOnError( @MethodName() )
+#line 85 "\Fwh1204\Include\FiveWin.Ch"
+   EXTERNAL GetProcAdd
+   EXTERNAL TActiveX
+
+
+
+
+extern errorsys
+#line 17 ".\Prg\Tftpfile.prg"
+_HB_CLASS TFTPFile ; UTILITY FUNCTION TFTPFile(...); static s_oClass ; local oClassInstance ; local nScope ; nScope := 1 ; if s_oClass == NIL ; s_oClass := IIF(.F.,, HBClass():New( "TFTPFile" , { HBObject():Classh } ) ) ;
+
+   _HB_MEMBER { oFTP} ; IIF( !.F., s_oClass:AddMultiData(,, nScope + IIF( .F., 32, 0 ), { "oFTP" }, .F., .F. ), )
+   _HB_MEMBER { cFileName} ; IIF( !.F., s_oClass:AddMultiData(,, nScope + IIF( .F., 32, 0 ), { "cFileName" }, .F., .F. ), )
+   _HB_MEMBER { hFile} ; IIF( !.F., s_oClass:AddMultiData(,, nScope + IIF( .F., 32, 0 ), { "hFile" }, .F., .F. ), )
+   _HB_MEMBER { lBinary} ; IIF( !.F., s_oClass:AddMultiData(,, nScope + IIF( .F., 32, 0 ), { "lBinary" }, .F., .F. ), )
+   _HB_MEMBER { cSortFileName} ; IIF( !.F., s_oClass:AddMultiData(,, nScope + IIF( .F., 32, 0 ), { "cSortFileName" }, .F., .F. ), )
+
+   _HB_MEMBER New( cFileName, oFTP) AS CLASS TFTPFile; IIF( .F., s_oClass:ModMethod( "New", @TFTPFile_New(), nScope + IIF( .T., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ), s_oClass:AddMethod( "New", @TFTPFile_New(), nScope + IIF( .T., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ));
+
+   _HB_MEMBER End(); IIF( .F., s_oClass:ModMethod( "End", @TFTPFile_End(), nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ), s_oClass:AddMethod( "End", @TFTPFile_End(), nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ));
+
+   _HB_MEMBER OpenRead(); IIF( .F., s_oClass:ModMethod( "OpenRead", @TFTPFile_OpenRead(), nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ), s_oClass:AddMethod( "OpenRead", @TFTPFile_OpenRead(), nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ));
+   _HB_MEMBER OpenWrite(); IIF( .F., s_oClass:ModMethod( "OpenWrite", @TFTPFile_OpenWrite(), nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ), s_oClass:AddMethod( "OpenWrite", @TFTPFile_OpenWrite(), nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ));
+
+   _HB_MEMBER PutFile(); IIF( .F., s_oClass:ModMethod( "PutFile", @TFTPFile_PutFile(), nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ), s_oClass:AddMethod( "PutFile", @TFTPFile_PutFile(), nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ));
+
+   _HB_MEMBER Write( cData); IIF( .F., s_oClass:ModMethod( "Write", @TFTPFile_Write(), nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ), s_oClass:AddMethod( "Write", @TFTPFile_Write(), nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ));
+   _HB_MEMBER Read( nBytes); IIF( .F., s_oClass:ModMethod( "Read", @TFTPFile_Read(), nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ), s_oClass:AddMethod( "Read", @TFTPFile_Read(), nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ));
+   _HB_MEMBER Seek( nBytes, nFrom); IIF( .F., s_oClass:ModMethod( "Seek", @TFTPFile_Seek(), nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ), s_oClass:AddMethod( "Seek", @TFTPFile_Seek(), nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ));
+   _HB_MEMBER CreateDir( cDirName); IIF( .F., s_oClass:ModMethod( "CreateDir", @TFTPFile_CreateDir(), nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ), s_oClass:AddMethod( "CreateDir", @TFTPFile_CreateDir(), nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ));
+
+; IF .F. ; __clsActive(s_oClass:hClass) ; s_oClass:Refresh() ; ELSE ; s_oClass:Create() ; END ; oClassInstance := __clsInst( s_oClass:hClass ) ; IF __ObjHasMsg( oClassInstance, "InitClass" ); oClassInstance:InitClass( hb_aParams() ) ; END ; ELSE ; oClassInstance := __clsInst( s_oClass:hClass ) ; END ; IF PCount() > 0 ; DIVERT TO (@DivertConstructorCall()) OF s_oClass ; END ; RETURN oClassInstance AS CLASS TFTPFile ;
+
+
+
+UTILITY STATIC function TFTPFile_New( cFileName, oFTP) ; local Self AS CLASS TFTPFile := QSelf() AS CLASS TFTPFile
+
+   ::cFileName       := cFileName
+   ::cSortFileName   := cNoPath( cFileName )
+   ::oFTP            := oFTP
+   ::lBinary         := .T.
+
+return Self
+
+
+
+UTILITY STATIC function TFTPFile_End() ; local Self AS CLASS TFTPFile := QSelf() AS CLASS TFTPFile
+
+   if ::hFile <> nil
+      InternetCloseHandle_C3( ::hFile )
+      ::hFile        := nil
+   end
+
+return nil
+
+
+
+UTILITY STATIC function TFTPFile_OpenWrite() ; local Self AS CLASS TFTPFile := QSelf() AS CLASS TFTPFile
+
+   ::hFile           := FtpOpenFile_C3( ::oFTP:hFTP, ::cFileName, 1073741824, If( ::lBinary, 2, 1 ), 0 )
+
+return Self
+
+
+
+UTILITY STATIC function TFTPFile_OpenRead() ; local Self AS CLASS TFTPFile := QSelf() AS CLASS TFTPFile
+
+   ::hFile           := FtpOpenFile_C3( ::oFTP:hFTP, ::cFileName, 2147483648, If( ::lBinary, 2, 1 ), 0 )
+
+return Self
+
+
+
+UTILITY STATIC function TFTPFile_Write( cData) ; local Self AS CLASS TFTPFile := QSelf() AS CLASS TFTPFile
+
+   local nWritten    := 0
+   local nToWrite    := Len( cData )
+
+   InternetWriteFile_C3( ::hFile, cData, nToWrite, @nWritten )
+
+return ( nWritten )
+
+
+
+UTILITY STATIC function TFTPFile_Read( nBytes) ; local Self AS CLASS TFTPFile := QSelf() AS CLASS TFTPFile
+
+   local nRead       := 0
+   local cBuffer
+
+   IIF( nBytes == nil, nBytes := 2000, ) ;
+
+   cBuffer           := Space( nBytes )
+
+   InternetReadFile_C3( ::hFile, @cBuffer, nBytes, @nRead )
+
+return ( SubStr( cBuffer, 1, nRead ) )
+
+
+
+UTILITY STATIC function TFTPFile_Seek( nBytes, nFrom) ; local Self AS CLASS TFTPFile := QSelf() AS CLASS TFTPFile
+
+   IIF( nFrom == nil, nFrom := 1, ) ;
+
+return InternetSetFilePointer( ::hFile, nBytes, 0, nFrom, 0 )
+
+
+
+UTILITY STATIC function TFTPFile_CreateDir( cDirName) ; local Self AS CLASS TFTPFile := QSelf() AS CLASS TFTPFile
+
+return FtpCreateDirectory( ::oFtp:hFTP, cDirName )
+
+
+
+UTILITY STATIC function TFTPFile_PutFile( oMeter) ; local Self AS CLASS TFTPFile := QSelf() AS CLASS TFTPFile
+
+   local oFile
+   local nBytes
+   local hSource
+   local lPutFile    := .T.
+   local cBuffer     := Space( 2000 )
+   local nTotalBytes := 0
+   local nWriteBytes := 0
+
+   oFile             := TFtpFile():New( ::cSortFileName, ::oFTP )
+   oFile:OpenWrite()
+
+   nTotalBytes       := nGetBytes( ::cFileName )
+
+   if !Empty( oMeter )
+      oMeter:SetTotal( nTotalBytes )
+   end
+
+   hSource           := fOpen( ::cFileName )
+
+   if fError() == 0
+
+      fSeek( hSource, 0, 0 )
+      while ( nBytes := fRead( hSource, @cBuffer, 2000 ) ) > 0
+
+         nWriteBytes += nBytes
+
+         oFile:Write( SubStr( cBuffer, 1, nBytes ) )
+
+         if !Empty( oMeter )
+            oMeter:Set( nWriteBytes )
+         end
+
+      end
+
+   else
+
+      lPutFile       := .F.
+
+   end
+
+   oFile:End()
+
+   fClose( hSource )
+
+   SysRefresh()
+
+
+
+
+
+Return ( lPutFile )

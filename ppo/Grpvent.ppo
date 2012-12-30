@@ -1,0 +1,648 @@
+#line 112 "hbclass.ch"
+   DYNAMIC DivertConstructorCall
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+DECLARE HBClass  New( cName AS String, OPTIONAL SuperParams ) AS CLASS HBClass  Create() AS Object  Instance() AS Object  AddClsMethod( cName AS String, @MethodName(), nScope AS Numeric, n2 AS Numeric, n3 AS Numeric )  AddDelegate( cName AS String, cDelegate AS String, cObject AS String, nScope AS Numeric, lPersistent AS LOGICAL )  AddMultiClsData( cType AS String, uVal, nScope AS Numeric, aDatas AS Array OF String )  AddMultiData( cType AS String, uVal, nScope AS Numeric, aDatas AS Array OF String, x AS LOGICAL, lPer AS LOGICAL )  AddMethod( cName AS String, @MethodName(), nScope AS Numeric, lPersistent AS LOGICAL )  AddInLine( cName AS String, bBlock AS CodeBlock, nScope AS Numeric, lPersistent AS LOGICAL )  AddVirtual( cName AS String )  ModMethod( cName AS String, @MethodName(), nScope AS Numeric, lPersistent AS LOGICAL )  ModClsMethod( cName AS String, @MethodName(), nScope AS Numeric )  ModInline( cName AS String, bBlock AS CodeBlock, nScope AS Numeric, lPersistent AS LOGICAL )  SetOnError( @MethodName() )
+#line 85 "\Fwh1204\Include\FiveWin.Ch"
+   EXTERNAL GetProcAdd
+   EXTERNAL TActiveX
+
+
+
+
+extern errorsys
+#line 9 ".\Prg\Grpvent.prg"
+static oWndBrw
+static dbfGrpVenta
+
+static bEdit := { |aTemp, aoGet, dbfGrpVenta, oBrw, bWhen, bValid, nMode | EdtRec( aTemp, aoGet, dbfGrpVenta, oBrw, bWhen, bValid, nMode ) }
+
+
+static aBase := { {  "CGRPCONTA",   "C",   9,    0, "Grupo de contabilidad" }, {  "CGRPNOM",     "C",  25,    0, "Nombre del grupo" }      }
+
+
+
+Static Function OpenFiles()
+
+   local lOpen    := .T.
+   local oError
+   local oBlock
+
+   if !lExistTable( cPatEmp() + "GRPVENT.DBF" )
+      mkGrpVenta( cPatEmp() )
+   end
+
+   if !lExistIndex( cPatEmp() + "GRPVENT.CDX" )
+      rxGrpVenta( cPatEmp() )
+   end
+
+   oBlock         := ErrorBlock( {| oError | ApoloBreak( oError ) } )
+   BEGIN SEQUENCE
+
+   dbUseArea( .T., ( cDriver() ), ( cPatEmp() + "GRPVENT.DBF" ), ( cCheckArea( "GRPVENT", @dbfGrpVenta ) ), if(.T. .OR. .F., !.F., NIL), .F.,, )
+   if !lAIS() ; ordListAdd( ( cPatEmp() + "GRPVENT.CDX" ) ) ; else ; ordSetFocus( 1 ) ; end
+
+   RECOVER USING oError
+
+      msgStop( ErrorMessage( oError ), "Imposible abrir todas las bases de datos de grupos de ventas" )
+
+      CloseFiles()
+
+      lOpen          := .F.
+
+   end
+
+   ErrorBlock( oBlock )
+
+Return ( lOpen )
+
+
+
+Static Function CloseFiles( oWndBrw )
+
+   ( dbfGrpVenta )->( dbCloseArea() )
+
+   oWndBrw           := nil
+
+Return .T.
+
+
+
+Function GrpVenta( oMenuItem, oWnd )
+
+   local nLevel
+
+   IIF( oMenuItem == nil, oMenuItem := "01018", ) ;
+   IIF( oWnd == nil, oWnd := oWnd(), ) ;
+
+   if Empty( nLenCuentaContaplus() )
+      msgStop( "No está definido el enlace con Contaplus ®" )
+      return nil
+   end
+
+   if oWndBrw == NIL
+
+
+
+
+
+      nLevel            := nLevelUsr( oMenuItem )
+      if nAnd( nLevel, 1 ) <> 0
+         msgStop( "Acceso no permitido." )
+         return nil
+      end
+
+
+
+
+
+      if oWnd <> nil
+         SysRefresh(); oWnd:CloseAll(); SysRefresh()
+      end
+
+
+
+
+
+      if !OpenFiles()
+         return nil
+      end
+
+
+
+
+
+      AddMnuNext( "Grupos de ventas de contabilidad", ProcName() )
+
+
+
+
+
+
+
+
+
+
+
+
+
+   oWndBrw := TShell():New( 2, 10, 18, 70, "Grupos de ventas de contabilidad",, oWnd,,, .F.,,, ( dbfGrpVenta ),,,,, {"Código",    "Nombre"}, {||( WinAppRec( oWndBrw:oBrw, bEdit, dbfGrpVenta ) )}, {||( WinEdtRec( oWndBrw:oBrw, bEdit, dbfGrpVenta ) )}, {||( WinDelRec( oWndBrw:oBrw, dbfGrpVenta ) )}, {||( WinDupRec( oWndBrw:oBrw, bEdit, dbfGrpVenta ) )}, nil, nLevel, "Index_16",,,, .T. )
+
+      with object ( oWndBrw:AddXCol() )
+         :cHeader          := "Código"
+         :cSortOrder       := "cGrpConta"
+         :bEditValue       := {|| ( dbfGrpVenta )->cGrpConta }
+         :nWidth           := 80
+         :bLClickHeader    := {| nMRow, nMCol, nFlags, oCol | oWndBrw:ClickOnHeader( oCol ) }
+      end
+
+      with object ( oWndBrw:AddXCol() )
+         :cHeader          := "Nombre"
+         :cSortOrder       := "cGrpNom"
+         :bEditValue       := {|| ( dbfGrpVenta )->cGrpNom }
+         :nWidth           := 200
+         :bLClickHeader    := {| nMRow, nMCol, nFlags, oCol | oWndBrw:ClickOnHeader( oCol ) }
+      end
+
+      oWndBrw:cHtmlHelp    := "Grupos de ventas de contabilidad"
+
+      oWndBrw:CreateXFromCode()
+
+
+
+
+
+      oWndBrw:NewAt( "BUS",,, {||( oWndBrw:SearchSetFocus() )}, "(B)uscar", "B",,,,, .F. )
+
+      oWndBrw:AddSeaBar()
+
+
+
+
+
+
+
+
+      oWndBrw:NewAt( "NEW",,, {||( oWndBrw:RecAdd() )}, "(A)ñadir", "A",,, 2,, .F. )
+
+
+
+
+
+
+        oWndBrw:NewAt( "DUP",,, {||( oWndBrw:RecDup() )}, "(D)uplicar", "D",,, 2,, .F. )
+
+
+
+
+
+
+        oWndBrw:NewAt( "EDIT",,, {||( oWndBrw:RecEdit() )}, "(M)odificar", "M",,, 4,, .F. )
+
+
+
+
+
+
+        oWndBrw:NewAt( "ZOOM",,, {||( WinZooRec( oWndBrw:oBrw, bEdit, dbfGrpVenta ) )}, "(Z)oom", "Z",,, 8,, .F. )
+
+
+
+
+
+
+        oWndBrw:NewAt( "DEL",,, {||( oWndBrw:RecDel() )}, "(E)liminar", "E",,, 16,, .F. )
+
+
+
+
+
+
+
+
+      oWndBrw:NewAt( "IMP",,, {||( IGrpVen():New( "Listado de grupos de ventas" ):Play() )}, "(L)istado", "L",,, 32,, .F. )
+
+
+
+
+
+
+
+      oWndBrw:NewAt( "END",,, {||( oWndBrw:End() )}, "(S)alir", "S",,,,, .F. )
+
+
+        oWndBrw:Activate(, oWndBrw:bLClicked, oWndBrw:bRClicked, oWndBrw:bMoved, oWndBrw:bResized, oWndBrw:bPainted, oWndBrw:bKeyDown, oWndBrw:bInit,,,,,,,,, {||    ( CloseFiles( oWndBrw ) )},, oWndBrw:bLButtonUp )
+
+   else
+
+        oWndBrw:SetFocus()
+
+   end
+
+Return Nil
+
+
+
+Static Function EdtRec( aTemp, aoGet, dbfGrpVenta, oBrw, bWhen, bValid, nMode )
+
+    local oDlg
+   local nLen  := nLenCuentaContaplus()
+
+   if nLen == 0
+      msgStop( "No está definido el enlace con Contaplus ®" )
+      return .T.
+   end
+
+    oDlg = TDialog():New(,,,,, "GRPVENTA",, .F.,,,,,, .F.,,,,,, .F., )
+
+
+
+
+
+
+
+        aoGet[1] := TGetHlp():ReDefine( 100, { | u | If( PCount()==0, aTemp[1], aTemp[1]:= u ) }, oDlg,, ( Replicate( "9", nLen ) ), {||    ( ChkValid( aoGet[1], dbfGrpVenta, .T., "0", nLen ) )}, "N/W*",,,,, .F., {||     ( nMode == 1 .OR. nMode == 4 )},, .F., .F.,,,,,, nil,,, )
+
+
+
+
+
+
+      aoGet[2] := TGetHlp():ReDefine( 101, { | u | If( PCount()==0, aTemp[2], aTemp[2]:= u ) }, oDlg,, "@!",, "N/W*",,,,, .F., {||         ( nMode <> 3 )},, .F., .F.,,,,,, nil,,, )
+
+
+
+
+
+      TButton():ReDefine( 1, {||( lPreSave( aTemp, aoGet, dbfGrpVenta, oBrw, nMode, oDlg ) )}, oDlg,,, .F., {||         ( nMode <> 3 )},,, .F. )
+
+
+
+
+
+        TButton():ReDefine( 2, {||( oDlg:end() )}, oDlg,,, .F.,,,, .T. )
+
+
+
+
+   TButton():ReDefine( 9, {||( ChmHelp( "Grupos_de_ventas" ) )}, oDlg,,, .F.,,,, .F. )
+
+   if nMode <> 3
+      oDlg:AddFastKey( 116, {|| lPreSave( aTemp, aoGet, dbfGrpVenta, oBrw, nMode, oDlg ) } )
+   end
+
+   oDlg:AddFastKey ( 112, {|| ChmHelp( "Grupos_de_ventas" ) } )
+
+   oDlg:bStart := {|| aoGet[1]:SetFocus() }
+
+    oDlg:Activate( oDlg:bLClicked, oDlg:bMoved, oDlg:bPainted, .T.,,,, oDlg:bRClicked,,, )
+
+Return ( oDlg:nResult == 1 )
+
+
+
+Static Function lPreSave( aTemp, aoGet, dbfGrpVenta, oBrw, nMode, oDlg )
+
+   if nMode == 1 .OR. nMode == 4
+      if Empty( aTemp[ 1 ] )
+         MsgStop( "Código del grupo no puede estar vacío." )
+         aoGet[1]:SetFocus()
+         Return .F.
+      end
+      if ( dbfGrpVenta )->( dbSeek( aTemp[ 1 ] ) )
+         MsgStop( "Código existente" )
+         aoGet[1]:SetFocus()
+         Return .F.
+      end
+   end
+
+   if Empty( aTemp[ 2 ] )
+      MsgStop( "Nombre del grupo no puede estar vacío." )
+      aoGet[2]:SetFocus()
+      Return .F.
+   end
+
+   WinGather( aTemp, aoGet, dbfGrpVenta, oBrw, nMode )
+
+RETURN ( oDlg:end( 1 ) )
+
+
+
+
+
+
+
+FUNCTION cGrpVenta( oGet, dbfGrp, oGet2 )
+
+   local oBlock
+   local oError
+   local lValid      := .F.
+   local lClose      := .F.
+   local xValor      := oGet:varGet()
+
+   if Empty( xValor )
+
+      if !Empty( oGet2 )
+         oGet2:cText( "" )
+      end
+
+      Return .T.
+
+   end
+
+   oBlock            := ErrorBlock( {| oError | ApoloBreak( oError ) } )
+   BEGIN SEQUENCE
+
+   if Empty( dbfGrp )
+      dbUseArea( .T., ( cDriver() ), ( cPatEmp() + "GrpVent.Dbf" ), ( cCheckArea( "GRPVENT", @dbfGrp ) ), if(.T. .OR. .F., !.F., NIL), .F.,, )
+      if !lAIS() ; ordListAdd( ( cPatEmp() + "GrpVent.Cdx" ) ) ; else ; ordSetFocus( 1 ) ; end
+      lClose         := .T.
+   end
+
+   if Len( Alltrim( xValor ) ) > nLenCuentaContaplus()
+      xValor         := Left( xValor, nLenCuentaContaplus() )
+   else
+      xValor         := Rjust( xValor, "0", nLenCuentaContaplus() )
+   end
+
+   if ( dbfGrp )->( dbSeek( xValor ) )
+
+      oGet:cText( ( dbfGrp )->cGrpConta )
+
+      if !Empty( oGet2 )
+         oGet2:cText( ( dbfGrp )->cGrpNom )
+      end
+
+      lValid         := .T.
+
+   else
+
+        msgStop( "Grupo de venta no encontrado" )
+
+   end
+
+   RECOVER USING oError
+
+      msgStop( "Imposible abrir todas las bases de datos " + Chr(13)+Chr(10) + ErrorMessage( oError ) )
+
+   end
+
+   ErrorBlock( oBlock )
+
+   if ( lClose )
+      ( dbfGrp )->( dbCloseArea() )
+   end
+
+RETURN lValid
+
+
+
+FUNCTION BrwGrpVenta( oGet, dbfGrp, oGet2 )
+
+   local oBlock
+   local oError
+    local oDlg
+    local oBrw
+    local oGet1
+    local cGet1
+   local nOrd     := GetBrwOpt( "BrwGrpVenta" )
+    local nOrdAnt
+    local oCbxOrd
+   local aCbxOrd  := { "Código", "Nombre" }
+   local cCbxOrd
+   local nLevel   := nLevelUsr( "01018" )
+   local lClose   := .F.
+
+   nOrd           := Min( Max( nOrd, 1 ), len( aCbxOrd ) )
+   cCbxOrd        := aCbxOrd[ nOrd ]
+
+   oBlock         := ErrorBlock( {| oError | ApoloBreak( oError ) } )
+   BEGIN SEQUENCE
+
+   if Empty( dbfGrp )
+      dbUseArea( .T., ( cDriver() ), ( cPatEmp() + "GRPVENT.DBF" ), ( cCheckArea( "GRPVENT", @dbfGrp ) ), if(.T. .OR. .F., !.F., NIL), .F.,, )
+      if !lAIS() ; ordListAdd( ( cPatEmp() + "GRPVENT.CDX" ) ) ; else ; ordSetFocus( 1 ) ; end
+      lClose      := .T.
+   end
+
+   nOrdAnt        := ( dbfGrp )->( OrdSetFocus( nOrd ) )
+
+   ( dbfGrp )->( dbGoTop() )
+
+   oDlg = TDialog():New(,,,, "Grupos de ventas", "HELPENTRY",, .F.,,,,,, .F.,,,,,, .F., )
+
+
+
+
+
+
+        oGet1 := TGetHlp():ReDefine( 104, { | u | If( PCount()==0, cGet1, cGet1:= u ) }, oDlg,,, {||    ( OrdClearScope( oBrw, dbfGrp ) )},,,,,, .F.,, {|nKey,nFlags,Self| ( AutoSeek( nKey, nFlags, Self, oBrw, dbfGrp ) ) }, .F., .F.,,,,,, nil, "FIND",, )
+
+
+
+
+
+
+        oCbxOrd := TComboBox():ReDefine( 102, { | u | If( PCount()==0, cCbxOrd, cCbxOrd:= u ) }, aCbxOrd, oDlg,,, {|Self|( ( dbfGrp )->( OrdSetFocus( oCbxOrd:nAt ) ), oBrw:refresh(), oGet1:SetFocus() )},,,, .F.,,,,,, )
+
+
+
+
+
+
+
+
+
+
+
+
+      oBrw                 := IXBrowse():New( oDlg )
+
+      oBrw:bClrSel         := {|| { 0, ( 229 + ( 229 * 256 ) + ( 229 * 65536 ) ) } }
+      oBrw:bClrSelFocus    := {|| { 0, ( 167 + ( 205 * 256 ) + ( 240 * 65536 ) ) } }
+
+      oBrw:cAlias          := dbfGrp
+      oBrw:nMarqueeStyle   := 5
+      oBrw:cName           := "Browse.Grupos de venta"
+
+      with object ( oBrw:AddCol() )
+         :cHeader          := "Código"
+         :cSortOrder       := "cGrpConta"
+         :bEditValue       := {|| ( dbfGrp )->cGrpConta }
+         :nWidth           := 60
+         :bLClickHeader    := {| nMRow, nMCol, nFlags, oCol | oCbxOrd:Set( oCol:cHeader ) }
+      end
+
+      with object ( oBrw:AddCol() )
+         :cHeader          := "Nombre"
+         :cSortOrder       := "cGrpNom"
+         :bEditValue       := {|| ( dbfGrp )->cGrpNom }
+         :nWidth           := 260
+         :bLClickHeader    := {| nMRow, nMCol, nFlags, oCol | oCbxOrd:Set( oCol:cHeader ) }
+      end
+
+      oBrw:bLDblClick      := {|| oDlg:end( 1 ) }
+      oBrw:bRClicked       := {| nRow, nCol, nFlags | oBrw:RButtonDown( nRow, nCol, nFlags ) }
+
+      oBrw:CreateFromResource( 105 )
+
+
+
+
+        TButton():ReDefine( 1, {||( oDlg:end(1) )}, oDlg,,, .F.,,,, .F. )
+
+
+
+
+        TButton():ReDefine( 2, {||( oDlg:end() )}, oDlg,,, .F.,,,, .F. )
+
+
+
+
+
+        TButton():ReDefine( 500, {||( WinAppRec( oBrw, bEdit, dbfGrp ) )}, oDlg,,, .F., {||     ( nAnd( nLevel, 2 ) <> 0 )},,, .F. )
+
+
+
+
+
+        TButton():ReDefine( 501, {||( WinEdtRec( oBrw, bEdit, dbfGrp ) )}, oDlg,,, .F., {||     ( nAnd( nLevel, 4 ) <> 0 )},,, .F. )
+
+      oDlg:AddFastKey( 113,       {|| if( nAnd( nLevel, 2 ) <> 0, WinAppRec( oBrw, bEdit, dbfGrp ), ) } )
+      oDlg:AddFastKey( 114,       {|| if( nAnd( nLevel, 4 ) <> 0, WinEdtRec( oBrw, bEdit, dbfGrp ), ) } )
+      oDlg:AddFastKey( 116,       {|| oDlg:end( 1 ) } )
+      oDlg:AddFastKey( 13,   {|| oDlg:end( 1 ) } )
+
+      oDlg:bStart    := {|| oBrw:Load() }
+
+   oDlg:Activate( oDlg:bLClicked, oDlg:bMoved, oDlg:bPainted, .T.,,,, oDlg:bRClicked,,, )
+
+   if oDlg:nResult == 1
+
+      oGet:cText( ( dbfGrp )->cGrpConta )
+        oGet:lValid()
+
+      if oGet2 <> nil
+         oGet2:cText( ( dbfGrp )->cGrpNom )
+      end
+
+   end
+
+   DestroyFastFilter( dbfGrp )
+
+   SetBrwOpt( "BrwGrpVenta", ( dbfGrp )->( OrdNumber() ) )
+
+   RECOVER USING oError
+
+      msgStop( "Imposible abrir todas las bases de datos " + Chr(13)+Chr(10) + ErrorMessage( oError ) )
+
+   end
+
+   ErrorBlock( oBlock )
+
+   if lClose
+      ( dbfGrp )->( dbCloseArea() )
+   else
+      ( dbfGrp )->( OrdSetFocus( nOrdAnt ) )
+   end
+
+   oGet:SetFocus()
+
+RETURN ( oDlg:nResult == 1 )
+
+
+
+STATIC FUNCTION ChkValid( oGet, dbfGrpVenta, lRjust, cChar, nLen )
+
+    local xClave
+    local nOldTag
+   local lReturn        := .T.
+
+   IIF( nLen == nil, nLen := nLenCuentaContaplus(), ) ;
+   IIF( lRjust == nil, lRjust := .T., ) ;
+    IIF( cChar == nil, cChar := "0", ) ;
+   IIF( dbfGrpVenta == nil, dbfGrpVenta := Alias(), ) ;
+
+   if Empty( ( dbfGrpVenta )->( OrdSetFocus() ) )
+      MsgAlert( "Indice no disponible" + Chr(13)+Chr(10) + "Comprobación imposible", "Aviso del sistema")
+      Return .T.
+   end
+
+
+
+
+
+   nOldTag              := ( dbfGrpVenta )->( OrdSetFocus( 1 ) )
+
+    RJustObj( oGet, cChar, nLen )
+
+   xClave               := oGet:VarGet()
+
+   if Existe( xClave, dbfGrpVenta )
+      MsgStop( "Clave " + xClave + " existente" )
+      lReturn           := .F.
+   end
+
+   ( dbfGrpVenta )->( OrdSetFocus( nOldTag ) )
+
+RETURN lReturn
+
+
+
+FUNCTION mkGrpVenta( cPath, lAppend, cPathOld )
+
+    local dbfGrpVenta
+
+    IIF( lAppend == nil, lAppend := .F., ) ;
+
+   if !lExistTable( cPath + "GrpVent.Dbf" )
+      dbCreate( cPath + "GrpVent.Dbf", aSqlStruct( aItmGrpVta() ), cDriver() )
+   end
+
+   if lAppend .AND. lIsDir( cPathOld )
+      dbUseArea( .T., cDriver(), cPath + "GrpVent.Dbf", cCheckArea( "GRPVENT", @dbfGrpVenta ), .F. )
+      if !( dbfGrpVenta )->( neterr() )
+         ( dbfGrpVenta )->( __dbApp( cPathOld + "GrpVent.Dbf" ) )
+         ( dbfGrpVenta )->( dbCloseArea() )
+      end
+   end
+
+   if !lExistIndex( cPath + "GrpVent.Cdx" )
+      rxGrpVenta( cPath )
+   end
+
+RETURN NIL
+
+
+
+FUNCTION rxGrpVenta( cPath, oMeter )
+
+    local dbfGrpVenta
+
+   IIF( cPath == nil, cPath := cPatEmp(), ) ;
+
+   if !lExistTable( cPath + "GRPVENT.DBF" )
+        mkGrpVenta( cPath )
+   end
+
+   fEraseIndex( cPath + "GRPVENT.CDX" )
+
+   dbUseArea( .T., cDriver(), cPath + "GRPVENT.DBF", cCheckArea( "GRPVENT", @dbfGrpVenta ), .F. )
+   if !( dbfGrpVenta )->( neterr() )
+      ( dbfGrpVenta )->( __dbPack() )
+
+      ( dbfGrpVenta )->( ordCondSet("!Deleted()", {||!Deleted()}  ) )
+      ( dbfGrpVenta )->( ordCreate( cPath + "GRPVENT.CDX", "CGRPCONTA", "Field->CGRPCONTA", {|| Field->CGRPCONTA }, ) )
+
+      ( dbfGrpVenta )->( ordCondSet("!Deleted()", {||!Deleted()}  ) )
+      ( dbfGrpVenta )->( ordCreate( cPath + "GRPVENT.CDX", "CGRPNOM", "Field->CGRPNOM", {|| Field->CGRPNOM } ) )
+
+      ( dbfGrpVenta )->( dbCloseArea() )
+   else
+      msgStop( "Imposible abrir en modo exclusivo la tabla de grupo de ventas" )
+   end
+
+RETURN NIL
+
+
+
+Function aItmGrpVta()
+
+
+   local aBase    := {  {"CGRPCONTA",   "C",   9,    0, "Grupo de contabilidad" }, {"CGRPNOM",     "C",  25,    0, "Nombre del grupo" } }
+
+Return ( aBase )

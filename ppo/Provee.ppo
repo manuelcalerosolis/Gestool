@@ -1,0 +1,6064 @@
+#line 112 "hbclass.ch"
+   DYNAMIC DivertConstructorCall
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+DECLARE HBClass  New( cName AS String, OPTIONAL SuperParams ) AS CLASS HBClass  Create() AS Object  Instance() AS Object  AddClsMethod( cName AS String, @MethodName(), nScope AS Numeric, n2 AS Numeric, n3 AS Numeric )  AddDelegate( cName AS String, cDelegate AS String, cObject AS String, nScope AS Numeric, lPersistent AS LOGICAL )  AddMultiClsData( cType AS String, uVal, nScope AS Numeric, aDatas AS Array OF String )  AddMultiData( cType AS String, uVal, nScope AS Numeric, aDatas AS Array OF String, x AS LOGICAL, lPer AS LOGICAL )  AddMethod( cName AS String, @MethodName(), nScope AS Numeric, lPersistent AS LOGICAL )  AddInLine( cName AS String, bBlock AS CodeBlock, nScope AS Numeric, lPersistent AS LOGICAL )  AddVirtual( cName AS String )  ModMethod( cName AS String, @MethodName(), nScope AS Numeric, lPersistent AS LOGICAL )  ModClsMethod( cName AS String, @MethodName(), nScope AS Numeric )  ModInline( cName AS String, bBlock AS CodeBlock, nScope AS Numeric, lPersistent AS LOGICAL )  SetOnError( @MethodName() )
+#line 85 "\Fwh1204\Include\FiveWin.Ch"
+   EXTERNAL GetProcAdd
+   EXTERNAL TActiveX
+
+
+
+
+extern errorsys
+#line 94 ".\Prg\Provee.prg"
+memvar dbfPrv
+memvar cDbfPrv
+
+
+
+static dbfProvee
+static dbfProveeD
+static dbfIva
+static dbfFlt
+static dbfPedPrvT
+static dbfPedPrvL
+static dbfAlbPrvT
+static dbfAlbPrvL
+static dbfFacPrvT
+static dbfFacPrvL
+static dbfFPago
+static dbfArtPrv
+static dbfArticulo
+static dbfDiv
+static oBandera
+static oPais
+static cPirDiv
+static cPinDiv
+static oWndBrw
+static aIniCli
+static filTmpSubCta
+static dbfTmpSubCta
+static dbfTmpDoc
+static cTmpDoc
+static oMenu
+static dbfTmpBnc
+static cTmpBnc
+static dbfBanco
+static oGrpPrv
+static filProvee
+static tmpProvee
+static dbfDoc
+static oBanco
+
+static oRTF
+static cRTF
+static lBold
+static lItalic
+static lUnderline
+static lBullet
+
+static lOpenFiles := .F.
+static lExternal  := .F.
+
+static nLabels    := 1
+
+static bEdit      := { | aTmp, aGet, dbfProvee, oBrw, bWhen, bValid, nMode | EdtRec( aTmp, aGet, dbfProvee, oBrw, bWhen, bValid, nMode ) }
+static bEdtDoc    := { | aTmp, aGet, dbfProveeD, oBrw, bWhen, bValid, nMode | EdtDoc( aTmp, aGet, dbfProveeD, oBrw, bWhen, bValid, nMode ) }
+static bEdtBnc    := { | aTmp, aGet, dbfBanco, oBrw, bWhen, bValid, nMode, cCodPrv | EdtBnc( aTmp, aGet, dbfBanco, oBrw, bWhen, bValid, nMode, cCodPrv ) }
+
+static oReporting
+
+
+
+
+
+
+
+
+
+STATIC FUNCTION OpenFiles( lExt, cPath )
+
+   local oError
+   local oBlock
+
+   if lOpenFiles
+      MsgStop( "Imposible abrir ficheros de proveedores" )
+      Return ( .F. )
+   end
+
+   IIF( lExt == nil, lExt := .F., ) ;
+   IIF( cPath == nil, cPath := cPatEmp(), ) ;
+
+   lExternal      := lExt
+
+   oBlock         := ErrorBlock( {| oError | ApoloBreak( oError ) } )
+   BEGIN SEQUENCE
+
+      DisableAcceso()
+
+      lOpenFiles  := .T.
+
+      dbUseArea( .T., ( cDriver() ), ( cPatPrv() + "PROVEE.DBF" ), ( cCheckArea( "PROVEE", @dbfProvee ) ), if(.T. .OR. .F., !.F., NIL), .F.,, )
+      if !lAIS() ; ordListAdd( ( cPatPrv() + "PROVEE.CDX" ) ) ; else ; ordSetFocus( 1 ) ; end
+
+      dbUseArea( .T., ( cDriver() ), ( cPatPrv() + "PROVEED.DBF" ), ( cCheckArea( "PROVEED", @dbfProveeD ) ), if(.T. .OR. .F., !.F., NIL), .F.,, )
+      if !lAIS() ; ordListAdd( ( cPatPrv() + "PROVEED.CDX" ) ) ; else ; ordSetFocus( 1 ) ; end
+
+      dbUseArea( .T., ( cDriver() ), ( cPath + "PEDPROVT.DBF" ), ( cCheckArea( "PEDPROVT", @dbfPedPrvT ) ), if(.T. .OR. .F., !.F., NIL), .F.,, )
+      if !lAIS() ; ordListAdd( ( cPath + "PEDPROVT.CDX" ) ) ; else ; ordSetFocus( 1 ) ; end
+      ordSetFocus( "CCODPRV" )
+
+      dbUseArea( .T., ( cDriver() ), ( cPath + "PEDPROVL.DBF" ), ( cCheckArea( "PEDPROVL", @dbfPedPrvL ) ), if(.T. .OR. .F., !.F., NIL), .F.,, )
+      if !lAIS() ; ordListAdd( ( cPath + "PEDPROVL.CDX" ) ) ; else ; ordSetFocus( 1 ) ; end
+
+      dbUseArea( .T., ( cDriver() ), ( cPath + "ALBPROVT.DBF" ), ( cCheckArea( "ALBPROVT", @dbfAlbPrvT ) ), if(.T. .OR. .F., !.F., NIL), .F.,, )
+      if !lAIS() ; ordListAdd( ( cPath + "ALBPROVT.CDX" ) ) ; else ; ordSetFocus( 1 ) ; end
+        ordSetFocus( "CCODPRV" )
+
+      dbUseArea( .T., ( cDriver() ), ( cPath + "ALBPROVL.DBF" ), ( cCheckArea( "ALBPROVL", @dbfAlbPrvL ) ), if(.T. .OR. .F., !.F., NIL), .F.,, )
+      if !lAIS() ; ordListAdd( ( cPath + "ALBPROVL.CDX" ) ) ; else ; ordSetFocus( 1 ) ; end
+
+      dbUseArea( .T., ( cDriver() ), ( cPath + "FACPRVT.DBF" ), ( cCheckArea( "FACPRVT", @dbfFacPrvT ) ), if(.T. .OR. .F., !.F., NIL), .F.,, )
+      if !lAIS() ; ordListAdd( ( cPath + "FACPRVT.CDX" ) ) ; else ; ordSetFocus( 1 ) ; end
+        ordSetFocus( "CCODPRV" )
+
+      dbUseArea( .T., ( cDriver() ), ( cPath + "FACPRVL.DBF" ), ( cCheckArea( "FACPRVL", @dbfFacPrvL ) ), if(.T. .OR. .F., !.F., NIL), .F.,, )
+      if !lAIS() ; ordListAdd( ( cPath + "FACPRVL.CDX" ) ) ; else ; ordSetFocus( 1 ) ; end
+
+      dbUseArea( .T., ( cDriver() ), ( cPatGrp() + "FPAGO.DBF" ), ( cCheckArea( "FPAGO", @dbfFPago ) ), if(.T. .OR. .F., !.F., NIL), .F.,, )
+      if !lAIS() ; ordListAdd( ( cPatGrp() + "FPAGO.CDX" ) ) ; else ; ordSetFocus( 1 ) ; end
+
+      dbUseArea( .T., ( cDriver() ), ( cPatArt() + "PROVART.DBF" ), ( cCheckArea( "PROVART", @dbfArtPrv ) ), if(.T. .OR. .F., !.F., NIL), .F.,, )
+      if !lAIS() ; ordListAdd( ( cPatArt() + "PROVART.CDX" ) ) ; else ; ordSetFocus( 1 ) ; end
+
+      dbUseArea( .T., ( cDriver() ), ( cPatDat() + "TIVA.DBF" ), ( cCheckArea( "TIVA", @dbfIva ) ), if(.T. .OR. .F., !.F., NIL), .F.,, )
+      if !lAIS() ; ordListAdd( ( cPatDat() + "TIVA.CDX" ) ) ; else ; ordSetFocus( 1 ) ; end
+
+      dbUseArea( .T., ( cDriver() ), ( cPatArt() + "ARTICULO.DBF" ), ( cCheckArea( "ARTICULO", @dbfArticulo ) ), if(.T. .OR. .F., !.F., NIL), .F.,, )
+      if !lAIS() ; ordListAdd( ( cPatArt() + "ARTICULO.CDX" ) ) ; else ; ordSetFocus( 1 ) ; end
+
+      dbUseArea( .T., ( cDriver() ), ( cPatDat() + "DIVISAS.DBF" ), ( cCheckArea( "DIVISAS", @dbfDiv ) ), if(.T. .OR. .F., !.F., NIL), .F.,, )
+      if !lAIS() ; ordListAdd( ( cPatDat() + "DIVISAS.CDX" ) ) ; else ; ordSetFocus( 1 ) ; end
+
+      dbUseArea( .T., ( cDriver() ), ( cPatDat() + "CNFFLT.DBF" ), ( cCheckArea( "CNFFLT", @dbfFlt ) ), if(.T. .OR. .F., !.F., NIL), .F.,, )
+      if !lAIS() ; ordListAdd( ( cPatDat() + "CNFFLT.CDX" ) ) ; else ; ordSetFocus( 1 ) ; end
+
+      dbUseArea( .T., ( cDriver() ), ( cPatPrv() + "PRVBNC.DBF" ), ( cCheckArea( "PRVBNC", @dbfBanco ) ), if(.T. .OR. .F., !.F., NIL), .F.,, )
+      if !lAIS() ; ordListAdd( ( cPatPrv() + "PRVBNC.CDX" ) ) ; else ; ordSetFocus( 1 ) ; end
+
+      dbUseArea( .T., ( cDriver() ), ( cPatEmp() + "RDOCUMEN.DBF" ), ( cCheckArea( "RDOCUMEN", @dbfDoc ) ), if(.T. .OR. .F., !.F., NIL), .F.,, )
+      if !lAIS() ; ordListAdd( ( cPatEmp() + "RDOCUMEN.CDX" ) ) ; else ; ordSetFocus( 1 ) ; end
+      ordSetFocus( "CTIPO" )
+
+      oBandera       := TBandera():New
+
+      oPais          := TPais():Create( cPatDat() )
+      if !oPais:OpenFiles()
+         lOpenFiles  := .F.
+      end
+
+      oGrpPrv        := TGrpPrv():Create( cPatPrv() )
+      if !oGrpPrv:OpenFiles()
+         lOpenFiles  := .F.
+      end
+
+      oBanco            := TBancos():Create()
+      oBanco:OpenFiles()
+
+      cPinDiv        := cPinDiv( cDivEmp(), dbfDiv )
+      cPirDiv        := cPirDiv( cDivEmp(), dbfDiv )
+
+      aIniCli        := LoaIniPrv( cPath )
+
+      EnableAcceso()
+
+   RECOVER USING oError
+
+      lOpenFiles     := .F.
+
+      EnableAcceso()
+
+      msgStop( ErrorMessage( oError ), "Imposible abrir todas las bases de datos de proveedores" )
+
+   end
+
+   ErrorBlock( oBlock )
+
+   if !lOpenFiles
+      CloseFiles()
+   end
+
+RETURN ( lOpenFiles )
+
+
+
+FUNCTION Provee( oMenuItem, oWnd )
+
+   local oSnd
+   local nLevel
+   local oRotor
+
+   IIF( oMenuItem == nil, oMenuItem := "01034", ) ;
+   IIF( oWnd == nil, oWnd := oWnd(), ) ;
+
+   if Empty( oWndBrw )
+
+
+
+
+
+      nLevel            := nLevelUsr( oMenuItem )
+      if nAnd( nLevel, 1 ) <> 0
+         msgStop( "Acceso no permitido." )
+         return .F.
+      end
+
+
+
+
+
+      if oWnd <> nil
+         SysRefresh(); oWnd:CloseAll(); SysRefresh()
+      end
+
+
+
+
+
+      if !OpenFiles( .F. )
+         return .F.
+      end
+
+      DisableAcceso()
+
+
+
+
+
+      AddMnuNext( "Proveedores", ProcName() )
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+      oWndBrw := TShell():New( 0, 0, 22, 80, "Proveedores",, oWnd,,, .F.,,, ( dbfProvee ),,,,, {"Código", "Nombre", "NIF/CIF", "Población", "Teléfono" , "Fax", "Domicilio", "Población", "Código postal", "Provincia", "Correo electrónico", "Contacto"}, {||( WinAppRec( oWndBrw:oBrw, bEdit, dbfProvee ) )}, {||( WinEdtRec( oWndBrw:oBrw, bEdit, dbfProvee ) )}, {||( WinDelRec( oWndBrw:oBrw, dbfProvee ) )}, {||( WinDupRec( oWndBrw:oBrw, bEdit, dbfProvee ) )}, nil, nLevel, "Businessman_16", ( ( 0 + ( 114 * 256 ) + ( 198 * 65536 ) ) ),,, .T. )
+
+      with object ( oWndBrw:AddXCol() )
+         :cHeader          := "Bloqueado"
+         :nHeadBmpNo       := 3
+         :bStrData         := {|| "" }
+         :bEditValue       := {|| ( dbfProvee )->lBlqPrv }
+         :nWidth           := 20
+         :SetCheck( { "Sel16", "Nil16" } )
+         :AddResource( "stop_16" )
+      end
+
+      with object ( oWndBrw:AddXCol() )
+         :cHeader          := "Envio"
+         :nHeadBmpNo       := 3
+         :bStrData         := {|| "" }
+         :bEditValue       := {|| ( dbfProvee )->lSndInt }
+         :nWidth           := 20
+         :SetCheck( { "Sel16", "Nil16" } )
+         :AddResource( "Lbl16" )
+      end
+
+      with object ( oWndBrw:AddXCol() )
+         :cHeader          := "Código"
+         :cSortOrder       := "Cod"
+         :bEditValue       := {|| ( dbfProvee )->Cod }
+         :nWidth           := 80
+         :bLClickHeader    := {| nMRow, nMCol, nFlags, oCol | oWndBrw:ClickOnHeader( oCol ) }
+      end
+
+      with object ( oWndBrw:AddXCol() )
+         :cHeader          := "Nombre"
+         :cSortOrder       := "Titulo"
+         :bEditValue       := {|| ( dbfProvee )->Titulo }
+         :nWidth           := 280
+         :bLClickHeader    := {| nMRow, nMCol, nFlags, oCol | oWndBrw:ClickOnHeader( oCol ) }
+      end
+
+      with object ( oWndBrw:AddXCol() )
+         :cHeader          := "NIF/CIF"
+         :cSortOrder       := "Nif"
+         :bEditValue       := {|| ( dbfProvee )->Nif }
+         :nWidth           := 80
+         :bLClickHeader    := {| nMRow, nMCol, nFlags, oCol | oWndBrw:ClickOnHeader( oCol ) }
+      end
+
+      with object ( oWndBrw:AddXCol() )
+         :cHeader          := "Teléfono"
+         :cSortOrder       := "Telefono"
+         :bEditValue       := {|| ( dbfProvee )->Telefono }
+         :nWidth           := 80
+         :bLClickHeader    := {| nMRow, nMCol, nFlags, oCol | oWndBrw:ClickOnHeader( oCol ) }
+      end
+
+      with object ( oWndBrw:AddXCol() )
+         :cHeader          := "Fax"
+         :bEditValue       := {|| ( dbfProvee )->Fax }
+         :nWidth           := 80
+         :bLClickHeader    := {| nMRow, nMCol, nFlags, oCol | oWndBrw:ClickOnHeader( oCol ) }
+      end
+
+      with object ( oWndBrw:AddXCol() )
+         :cHeader          := "Domicilio"
+         :bEditValue       := {|| ( dbfProvee )->Domicilio }
+         :nWidth           := 300
+         :bLClickHeader    := {| nMRow, nMCol, nFlags, oCol | oWndBrw:ClickOnHeader( oCol ) }
+      end
+
+      with object ( oWndBrw:AddXCol() )
+         :cHeader          := "Población"
+         :cSortOrder       := "Poblacion"
+         :bEditValue       := {|| ( dbfProvee )->Poblacion }
+         :nWidth           := 200
+         :bLClickHeader    := {| nMRow, nMCol, nFlags, oCol | oWndBrw:ClickOnHeader( oCol ) }
+      end
+
+      with object ( oWndBrw:AddXCol() )
+         :cHeader          := "Código postal"
+         :cSortOrder       := "CodPostal"
+         :bEditValue       := {|| ( dbfProvee )->CodPostal }
+         :nWidth           := 60
+         :bLClickHeader    := {| nMRow, nMCol, nFlags, oCol | oWndBrw:ClickOnHeader( oCol ) }
+      end
+
+      with object ( oWndBrw:AddXCol() )
+         :cHeader          := "Provincia"
+         :cSortOrder       := "Provincia"
+         :bEditValue       := {|| ( dbfProvee )->Provincia }
+         :nWidth           := 100
+         :bLClickHeader    := {| nMRow, nMCol, nFlags, oCol | oWndBrw:ClickOnHeader( oCol ) }
+      end
+
+      with object ( oWndBrw:AddXCol() )
+         :cHeader          := "Correo electrónico"
+         :cSortOrder       := "cMeiInt"
+         :bEditValue       := {|| ( dbfProvee )->cMeiInt }
+         :nWidth           := 100
+         :bLClickHeader    := {| nMRow, nMCol, nFlags, oCol | oWndBrw:ClickOnHeader( oCol ) }
+      end
+
+      with object ( oWndBrw:AddXCol() )
+         :cHeader          := "Contacto"
+         :bEditValue       := {|| ( dbfProvee )->cPerCto }
+         :nWidth           := 200
+         :bLClickHeader    := {| nMRow, nMCol, nFlags, oCol | oWndBrw:ClickOnHeader( oCol ) }
+      end
+
+      with object ( oWndBrw:AddXCol() )
+         :cHeader          := "Observaciones"
+         :bEditValue       := {|| ( dbfProvee )->mComent }
+         :nWidth           := 200
+      end
+
+      oWndBrw:cHtmlHelp    := "Proveedores"
+
+      oWndBrw:CreateXFromCode()
+
+
+
+
+
+
+      oWndBrw:NewAt( "BUS",,, {||( oWndBrw:SearchSetFocus() )}, "(B)uscar", "B",,,,, .F. )
+      oWndBrw:AddSeaBar()
+
+
+
+
+
+
+
+
+        oWndBrw:NewAt( "NEW",,, {||( oWndBrw:RecAdd() )}, "(A)ñadir", "A",,, 2,, .F. )
+
+
+
+
+
+
+
+        oWndBrw:NewAt( "DUP",,, {||( oWndBrw:RecDup() )}, "(D)uplicar", "D",,, 2,, .F. )
+
+
+
+
+
+
+
+        oWndBrw:NewAt( "EDIT",,, {||( oWndBrw:RecEdit() )}, "(M)odificar", "M",,, 4,, .F. )
+
+
+
+
+
+
+
+        oWndBrw:NewAt( "ZOOM",,, {||( WinZooRec( oWndBrw:oBrw, bEdit, dbfProvee ) )}, "(Z)oom", "Z",,, 8,, .F. )
+
+
+
+
+
+
+
+        oWndBrw:NewAt( "DEL",,, {||( oWndBrw:RecDel() )}, "(E)liminar", "E",,, 16,, .F. )
+
+
+
+
+
+
+
+
+      oWndBrw:NewAt( "INFO",,, {||( BrwComPrv( ( dbfProvee )->Cod, ( dbfProvee )->Titulo, dbfDiv, dbfIva, dbfProvee ) )}, "(I)nforme proveedor", "I",,, 8,, .F. )
+
+
+
+
+
+
+
+
+      oWndBrw:NewAt( "IMP",,, {||( TInfPrv():New( "Listado de proveedores" ):Play() )}, "(L)istado", "L",,,,, .F. )
+
+
+
+
+
+      oWndBrw:NewAt( "Document_Chart_",,, {||( ReportingClient() )}, "Rep(o)rting", "O",,, 32,, .F. )
+
+
+
+
+
+
+
+
+      oWndBrw:NewAt( "RemoteControl_",,, {||( TProveedorLabelGenerator():Create() )}, "Eti(q)uetas", "Q",,, 32,, .F. )
+
+
+
+
+
+
+
+
+      oWndBrw:NewAt( "Mail",,, {||( TGenMailing():ClientResource( dbfProvee, aItmPrv(), oWndBrw ) )}, "Enviar correos", "V",,, 32,, .F. )
+
+
+
+
+
+
+
+      oSnd := oWndBrw:NewAt( "Lbl",,, {||lSndCli( oWndBrw, dbfProvee )}, "En(v)iar", "V",, {|This|This:Toggle()}, 4,, .F. )
+
+
+
+
+
+
+
+         oWndBrw:NewAt( "Lbl",,, {||( lSelectAll( oWndBrw, dbfProvee, "lSndInt", .T., .T., .T. ) )}, "Todos",,,, 4, oSnd, .F. )
+
+
+
+
+
+
+
+         oWndBrw:NewAt( "Lbl",,, {||( lSelectAll( oWndBrw, dbfProvee, "lSndInt", .F., .T., .T. ) )}, "Ninguno",,,, 4, oSnd, .F. )
+
+
+
+
+
+
+      oWndBrw:NewAt( "BMPCONTA",,, {||( ChkAllSubCta() )}, "Com(p)robar subcuentas", "P",,, 4,, .F. )
+
+      if oUser():lAdministrador()
+
+
+
+
+
+         oWndBrw:NewAt( "BMPCHG",,, {||( TDlgFlt():New( aItmPrv(), dbfProvee ):ChgFields(), oWndBrw:Refresh() )}, "Cambiar campos",,,, 4,, .F. )
+
+      end
+
+
+
+
+
+
+      oWndBrw:NewAt( "CNFCLI",,, {||( CnfPrv() )}, "Confi(g)urar campos", "G",,, 4,, .F. )
+
+
+
+
+      oRotor := oWndBrw:NewAt( "ROTOR",,, {||( oRotor:Expand() )}, "Rotor",,,, 4,, .F. )
+
+
+
+
+
+
+         oWndBrw:NewAt( "Clipboard_empty_businessman_",,, {||( PedPrv( nil, oWnd, ( dbfProvee )->Cod, nil ) )}, "Añadir pedido a proveedor",,,, 4, oRotor, .T. )
+
+
+
+
+
+
+         oWndBrw:NewAt( "Document_plain_businessman_",,, {||( AlbPrv( nil, oWnd, ( dbfProvee )->Cod, nil ) )}, "Añadir albarán de proveedor",,,, 4, oRotor, .T. )
+
+
+
+
+
+
+         oWndBrw:NewAt( "Document_businessman_",,, {||( FacPrv( nil, oWnd, ( dbfProvee )->Cod, nil ) )}, "Añadir factura de proveedor",,,, 4, oRotor, .T. )
+
+
+
+
+      oWndBrw:NewAt( "END",,, {||( oWndBrw:End() )}, "(S)alir", "S",,,,, .F. )
+
+
+
+
+
+      oWndBrw:oActiveFilter:aTField       := aItmPrv()
+      oWndBrw:oActiveFilter:cDbfFilter    := dbfFlt
+      oWndBrw:oActiveFilter:cTipFilter    := "22"
+
+        oWndBrw:Activate(, oWndBrw:bLClicked, oWndBrw:bRClicked, oWndBrw:bMoved, oWndBrw:bResized, oWndBrw:bPainted, oWndBrw:bKeyDown, oWndBrw:bInit,,,,,,,,, {|| ( CloseFiles( .T. ) )},, oWndBrw:bLButtonUp )
+
+      EnableAcceso()
+
+    ELSE
+
+        oWndBrw:SetFocus()
+
+    end
+
+Return .T.
+
+
+
+STATIC FUNCTION EdtRec( aTmp, aGet, dbfProvee, oBrw, bWhen, bValid, nMode )
+
+    local oGet
+    local oDlg
+    local oFld
+   local oBrwDoc
+   local oSay[ 3 ]
+   local cSay[ 3 ]
+   local oGetSaldo
+   local nGetSaldo   := 0
+    local oGetSubCta
+    local cGetSubCta
+    local oGetCta
+    local cGetCta
+   local oBrwCta
+   local cSubCtaAnt
+   local aMes        := { "Ninguno", "Enero", "Febrero", "Marzo", "Abril", "Mayo", "Junio", "Julio", "Agosto", "Septiembre", "Octubre", "Noviembre", "Diciembre" }
+   local oBmpDiv
+   local oValPnt
+   local aBnfSobre   := { "Costo", "Venta" }
+   local oBrwBnc
+   local oZoom
+   local cZoom       := "100%"
+   local aZoom       := { "500%", "200%", "150%", "100%", "75%", "50%", "25%", "10%" }
+   local oFuente
+   local cFuente     := "Arial"
+   local aFuente     := aGetFont( oWnd() )
+   local oSize
+   local cSize       := "10"
+   local aSize       := { " 6", " 7", " 8", " 9", "10", "11", "12", "13", "14", "16", "18", "20", "22", "24", "26", "28", "36", "48", "72" }
+   local oClp
+   local oBtn        := Array( 17 )
+   local aRatio      := { { 5, 1 }, { 2, 1 }, { 3, 2 }, { 1, 1 }, { 3, 4 }, { 1, 2 }, { 1, 4 }, { 1, 10 } }
+   local oBmpGeneral
+   local oBmpComercial
+   local oBmpBancos
+   local oBmpComentario
+   local oBmpObservaciones
+   local oBmpDocumentos
+   local oBmpContabilidad
+
+   if BeginTrans( aTmp, nMode )
+      Return nil
+   end
+
+   if nMode == 1
+      aTmp[ 32 ] := 0
+   end
+
+   if nMode == 4
+      aTmp[ 1 ]      := NextKey( aTmp[ 1 ], dbfProvee, "0", RetNumCodPrvEmp() )
+   end
+
+   if Empty( aTmp[ 14 ] )
+      aTmp[ 14 ]  := Padr( "General", 50 )
+   end
+
+   if Empty( aTmp[ 16 ] )
+      aTmp[ 16 ]   := Padr( "Pronto pago", 50 )
+   end
+
+   cSubCtaAnt           := aTmp[ ( dbfProvee )->( fieldpos( "SubCta" ) ) ]
+
+    oDlg = TDialog():New(,,,, lblTitle( nMode ) + "Proveedores : " + Rtrim( aTmp[2] ), "PROVEEDOR",, .F.,,,,,, .F.,,,,,, .F., )
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+    oFld := TFolder():ReDefine( 300, {"&General"           , "Co&mercial"         , "&Bancos", "C&ontabilidad"      , "De&finidos"         , "Doc&umentos"        , "&Observaciones"}, { "PROVEEDOR_1","PROVEEDOR_6","CLIENT_2","PROVEEDOR_5","CLIENT_4","CLIENT_10","CLIENT_14" }, oDlg,,,,, .F., )
+
+
+
+
+
+
+
+
+
+      oBmpGeneral := TBitmap():ReDefine( 500, "User_Alpha_48",, oFld:aDialogs[1],,, .F., .F.,,, .F.,,, .T. )
+
+
+
+
+
+
+
+
+
+      oGet := TGetHlp():ReDefine( 110, { | u | If( PCount()==0, aTmp[ 1 ], aTmp[ 1 ]:= u ) }, oFld:aDialogs[1],, ( Replicate( "X", RetNumCodPrvEmp() ) ), {||    ( NotValid( oGet, dbfProvee, .T., "0", 1, RetNumCodPrvEmp() ) )},,,,,, .F., {||     ( nMode == 1 .OR. nMode == 4 )},, .F., .F.,,,,, {|Self|( oGet:cText( NextKey( aTmp[ 1 ], dbfProvee, "0", RetNumCodPrvEmp() ) ) )}, nil, "BOT",, )
+
+
+
+
+
+
+      aGet[ 2 ] := TGetHlp():ReDefine( 120, { | u | If( PCount()==0, aTmp[ 2 ], aTmp[ 2 ]:= u ) }, oFld:aDialogs[1],, "@!",,,,,,, .F., {||     ( nMode <> 3 )}, {|nKey,nFlags,Self| ( ActTitle( nKey, nFlags, Self, nMode, oDlg ) ) }, .F., .F.,,,,,, nil,,, )
+
+      if uFieldEmpresa( "nCifRut" ) == 1
+
+
+
+
+
+      aGet[ 3 ] := TGetHlp():ReDefine( 130, { | u | If( PCount()==0, aTmp[ 3 ], aTmp[ 3 ]:= u ) }, oFld:aDialogs[ 1 ],,, {||    ( CheckCif( aGet[ 3 ] ) )},,,,,, .F., {||     ( nMode <> 3 )},, .F., .F.,,,,,, nil,,, )
+
+      else
+
+
+
+
+
+
+      aGet[ 3 ] := TGetHlp():ReDefine( 130, { | u | If( PCount()==0, aTmp[ 3 ], aTmp[ 3 ]:= u ) }, oFld:aDialogs[ 1 ],, "@R 999999999-9", {||    ( CheckRut( aGet[ 3 ] ) )},,,,,, .F., {||     ( nMode <> 3 )},, .F., .F.,,,,,, nil,,, )
+
+      end
+
+
+
+
+
+
+      aGet[ 4 ] := TGetHlp():ReDefine( 140, { | u | If( PCount()==0, aTmp[ 4 ], aTmp[ 4 ]:= u ) }, oFld:aDialogs[1],,,,,,,,, .F., {||     ( nMode <> 3 )},, .F., .F.,,,,, {|Self|GoogleMaps( aTmp[ 4 ], Rtrim( aTmp[ 5 ] ) + Space( 1 ) + Rtrim( aTmp[ 6 ] ) )}, nil, "Environnment_View_16",, )
+
+
+
+
+
+      aGet[ 5 ] := TGetHlp():ReDefine( 150, { | u | If( PCount()==0, aTmp[ 5 ], aTmp[ 5 ]:= u ) }, oFld:aDialogs[1],,,, "N/W*",,,,, .F., {||     ( nMode <> 3 )},, .F., .F.,,,,,, nil,,, )
+
+
+
+
+
+      aGet[ 10 ] := TGetHlp():ReDefine( 160, { | u | If( PCount()==0, aTmp[ 10 ], aTmp[ 10 ]:= u ) }, oFld:aDialogs[1],,,, "N/W*",,,,, .F., {||     ( nMode <> 3 )},, .F., .F.,,,,,, nil,,, )
+
+
+
+
+
+      aGet[ 6 ] := TGetHlp():ReDefine( 170, { | u | If( PCount()==0, aTmp[ 6 ], aTmp[ 6 ]:= u ) }, oFld:aDialogs[1],,,, "N/W*",,,,, .F., {||     ( nMode <> 3 )},, .F., .F.,,,,,, nil,,, )
+
+
+
+
+
+
+
+
+      aGet[7] := TGetHlp():ReDefine( 171, { | u | If( PCount()==0, aTmp[7], aTmp[7]:= u ) }, oFld:aDialogs[1],,, {||    ( oPais:Existe( aGet[7], oSay[ 2 ], "cNomPai", .T., .T., "0" ) )}, "N/W*",,,,, .F., {||     ( nMode <> 3 )},, .F., .F.,,,,, {|Self|( oPais:Buscar( aGet[7] ) )}, nil, "LUPA",, )
+
+
+
+
+      oBmpDiv := TBitmap():ReDefine( 172, "BAN_EURO",, oFld:aDialogs[1],,, .F., .F.,,, .F.,,, .F. )
+
+
+
+
+
+
+      oSay[2] := TGetHlp():ReDefine( 173, { | u | If( PCount()==0, cSay[2], cSay[2]:= u ) }, oFld:aDialogs[1],,,, "N/W*",,,,, .F., {||     ( .F. )},, .F., .T.,,,,,, nil,,, )
+
+
+
+
+
+
+      aGet[8] := TGetHlp():ReDefine( 174, { | u | If( PCount()==0, aTmp[8], aTmp[8]:= u ) }, oFld:aDialogs[1],, "@!",, "N/W*",,,,, .F., {||     ( nMode <> 3 )},, .F., .F.,,,,,, nil,,, )
+
+
+
+
+
+        aGet[11] := TGetHlp():ReDefine( 180, { | u | If( PCount()==0, aTmp[11], aTmp[11]:= u ) }, oFld:aDialogs[1],,,, "N/W*",,,,, .F., {||     ( nMode <> 3 )},, .F., .F.,,,,,, nil,,, )
+
+
+
+
+
+        aGet[12] := TGetHlp():ReDefine( 190, { | u | If( PCount()==0, aTmp[12], aTmp[12]:= u ) }, oFld:aDialogs[1],,,, "N/W*",,,,, .F., {||     ( nMode <> 3 )},, .F., .F.,,,,,, nil,,, )
+
+
+
+
+
+      aGet[13] := TGetHlp():ReDefine( 200, { | u | If( PCount()==0, aTmp[13], aTmp[13]:= u ) }, oFld:aDialogs[1],,,, "N/W*",,,,, .F., {||     ( nMode <> 3 )},, .F., .F.,,,,,, nil,,, )
+
+
+
+
+
+
+      aGet[9] := TGetHlp():ReDefine( 191, { | u | If( PCount()==0, aTmp[9], aTmp[9]:= u ) }, oFld:aDialogs[1],, "@!",, "N/W*",,,,, .F., {||     ( nMode <> 3 )},, .F., .F.,,,,,, nil,,, )
+
+
+
+
+
+
+      aGet[ 44 ] := TGetHlp():ReDefine( 720, { | u | If( PCount()==0, aTmp[ 44 ], aTmp[ 44 ]:= u ) }, oFld:aDialogs[1],, "@R ##########",, "N/W*",,,,, .F., {||     ( nMode <> 3 )},, .F., .F.,,,,,, nil,,, )
+
+
+
+
+
+
+
+
+        aGet[18] := TGetHlp():ReDefine( 210, { | u | If( PCount()==0, aTmp[18], aTmp[18]:= u ) }, oFld:aDialogs[1],, "@!", {||    ( cFpago( aGet[18], dbfFPago, oSay[ 1 ] ) )},,,,,, .F., {||         ( nMode <> 3 )},, .F., .F.,,,,, {|Self|( BrwFpago( aGet[18], oSay[ 1 ] ) )}, nil, "LUPA",, )
+
+
+
+
+
+      oSay[ 1 ] := TGetHlp():ReDefine( 330, { | u | If( PCount()==0, cSay[ 1 ], cSay[ 1 ]:= u ) }, oFld:aDialogs[1],,,, "N/W*",,,,, .F., {||         .F.},, .F., .F.,,,,,, nil,,, )
+
+
+
+
+
+
+
+
+      aGet[67] := TGetHlp():ReDefine( 400, { | u | If( PCount()==0, aTmp[67], aTmp[67]:= u ) }, oFld:aDialogs[1],,, {||    ( oGrpPrv:Existe( aGet[67], oSay[ 3 ], "cNomGrp", .T., .T., "0" ) )}, "N/W*",,,,, .F., {||     ( nMode <> 3 )},, .F., .F.,,,,, {|Self|( oGrpPrv:Buscar( aGet[67] ) )}, nil, "LUPA",, )
+
+
+
+
+
+
+      oSay[3] := TGetHlp():ReDefine( 401, { | u | If( PCount()==0, cSay[3], cSay[3]:= u ) }, oFld:aDialogs[1],,,, "N/W*",,,,, .F., {||     ( .F. )},, .F., .T.,,,,,, nil,,, )
+
+
+
+
+
+
+
+        aGet[19] := TGetHlp():ReDefine( 220, { | u | If( PCount()==0, aTmp[19], aTmp[19]:= u ) }, oFld:aDialogs[1],, "99",, "N/W*",,,,, .F., {||         ( nMode <> 3 )},, .F., .T.,,,,,, nil,,, )
+
+
+
+
+
+
+
+      aGet[20] := TGetHlp():ReDefine( 221, { | u | If( PCount()==0, aTmp[20], aTmp[20]:= u ) }, oFld:aDialogs[1],, "99",, "N/W*",,,,, .F., {||         ( nMode <> 3 )},, .F., .T.,,,,,, nil,,, )
+
+
+
+
+
+      aGet[ 31 ] := TComboBox():ReDefine( 230, { | u | If( PCount()==0, aTmp[ 31 ], aTmp[ 31 ]:= u ) }, aMes, oFld:aDialogs[1],,,,,,, .F., {||     ( nMode <> 3 )},,,,, )
+
+
+
+
+
+
+
+
+
+      TGetHlp():ReDefine( 280, { | u | If( PCount()==0, aTmp[32], aTmp[32]:= u ) }, oFld:aDialogs[1],, "9",, "N/W*",,,,, .F., {||     ( nMode <> 3 )},, .F., .T.,,, {||      0}, {||      9},, nil,,, )
+
+
+
+
+
+
+
+
+      aGet[ 26 ] := TGetHlp():ReDefine( 310, { | u | If( PCount()==0, aTmp[ 26 ], aTmp[ 26 ]:= u ) }, oFld:aDialogs[1],,, {||    ( ValidEmailAddress( aTmp[ 26 ], .T. ) )},,,,,, .T., {||         ( nMode <> 3 )},, .F., .F.,,,,, {|Self|( ShellExecute( oDlg:hWnd, "open", "mailto:" + Rtrim( aGet[ 26 ]:cText() ) ) )}, nil, "MAIL16",, )
+
+
+
+
+      aGet[ 69 ] := TCheckBox():ReDefine( 159, { | u | If( PCount()==0, aTmp[ 69 ], aTmp[ 69 ]:= u ) }, oFld:aDialogs[ 1 ],,,,,,, .F., {||     ( nMode <> 3 )}, .F. )
+
+
+
+
+
+
+
+
+
+      aGet[ 75 ] := TGetHlp():ReDefine( 222, { | u | If( PCount()==0, aTmp[ 75 ], aTmp[ 75 ]:= u ) }, oFld:aDialogs[ 1 ],, "@!", {||    ( Empty( aTmp[ 75 ] ) .OR. ( aTmp[ 75 ] >= "A" .AND. aTmp[ 75 ] <= "Z" ) )},,,,,, .F., {||     ( nMode <> 3 )},, .F., .T., {||    ( UpSerie( aGet[ 75 ] ) )}, {||  ( DwSerie( aGet[ 75 ] ) )},,,, nil,,, )
+
+
+
+
+
+
+
+
+
+
+      oBmpComercial := TBitmap():ReDefine( 500, "Address_book2_Alpha_48",, oFld:aDialogs[2],,, .F., .F.,,, .F.,,, .T. )
+
+
+
+
+
+      aGet[73] := TGetHlp():ReDefine( 400, { | u | If( PCount()==0, aTmp[73], aTmp[73]:= u ) }, oFld:aDialogs[2],,,, "N/W*",,,,, .F., {||         ( nMode <> 3 )},, .F., .F.,,,,,, nil,,, )
+
+
+
+
+
+      aGet[74] := TGetHlp():ReDefine( 410, { | u | If( PCount()==0, aTmp[74], aTmp[74]:= u ) }, oFld:aDialogs[2],,,, "N/W*",,,,, .F., {||         ( nMode <> 3 )},, .F., .F.,,,,,, nil,,, )
+
+
+
+
+
+      aGet[27] := TGetHlp():ReDefine( 310, { | u | If( PCount()==0, aTmp[27], aTmp[27]:= u ) }, oFld:aDialogs[2],,,, "N/W*",,,,, .F., {||         ( nMode <> 3 )},, .F., .F.,,,,,, nil,,, )
+
+
+
+
+
+      aGet[28] := TGetHlp():ReDefine( 320, { | u | If( PCount()==0, aTmp[28], aTmp[28]:= u ) }, oFld:aDialogs[2],,,, "N/W*",,,,, .F., {||         ( nMode <> 3 )},, .F., .F.,,,,,, nil,,, )
+
+
+
+
+
+      aGet[29] := TGetHlp():ReDefine( 330, { | u | If( PCount()==0, aTmp[29], aTmp[29]:= u ) }, oFld:aDialogs[2],,,, "N/W*",,,,, .F., {||         ( nMode <> 3 )},, .F., .F.,,,,,, nil,,, )
+
+
+
+
+
+
+
+      aGet[ 64 ] := TCheckBox():ReDefine( 155, { | u | If( PCount()==0, aTmp[ 64 ], aTmp[ 64 ]:= u ) }, oFld:aDialogs[2],, {||( if( aTmp[ 64 ], aGet[ 65 ]:cText( GetSysDate() ), ( aGet[ 65 ]:cText( Ctod("") ), aGet[ 66 ]:cText( Space(50) ) ) ) )},,,,, .F., {||     ( oUser():lAdministrador() .AND. nMode <> 3 )}, .F. )
+
+
+
+
+
+      aGet[ 65 ] := TGetHlp():ReDefine( 156, { | u | If( PCount()==0, aTmp[ 65 ], aTmp[ 65 ]:= u ) }, oFld:aDialogs[2],,,,,,,,, .F., {||     ( oUser():lAdministrador() .AND. nMode <> 3 .AND. aTmp[ 64 ] )},, .F., .T.,,,,,, nil,,, )
+
+
+
+
+      aGet[ 66 ] := TGetHlp():ReDefine( 157, { | u | If( PCount()==0, aTmp[ 66 ], aTmp[ 66 ]:= u ) }, oFld:aDialogs[2],,,,,,,,, .F., {||     ( oUser():lAdministrador() .AND. nMode <> 3 .AND. aTmp[ 64 ] )},, .F., .F.,,,,,, nil,,, )
+
+
+
+
+
+
+      aGet[ 68 ] := TRadMenu():Redefine( { | u | If( PCount()==0, aTmp[ 68 ], aTmp[ 68 ]:= u ) }, oFld:aDialogs[2],, { 270, 271, 272, 273 },,,,, .F., {||     ( nMode <> 3 )}, )
+
+
+
+
+      TCheckBox():ReDefine( 200, { | u | If( PCount()==0, aTmp[72], aTmp[72]:= u ) }, oFld:aDialogs[2],,,,,,, .F., {||     ( aTmp[68] == 1 .AND. nMode <> 3 )}, .F. )
+
+
+
+
+
+
+
+      aGet[ 61 ] := TComboBox():ReDefine( 100, { | u | If( PCount()==0, aTmp[ 61 ], aTmp[ 61 ]:= u ) }, { "Ret. S/Base", "Ret. S/Total" }, oFld:aDialogs[ 2 ],,,,,,, .F., {||     ( nMode <> 3 )},,,,, )
+
+
+
+
+
+
+      aGet[ 62 ] := TGetHlp():ReDefine( 110, { | u | If( PCount()==0, aTmp[ 62 ], aTmp[ 62 ]:= u ) }, oFld:aDialogs[ 2 ],, "@E 999.99",,,,,,, .F., {||     ( nMode <> 3 )},, .F., .T.,,,,,, nil,,, )
+
+
+
+
+      aGet[ 14 ] := TGetHlp():ReDefine( 120, { | u | If( PCount()==0, aTmp[ 14 ], aTmp[ 14 ]:= u ) }, oFld:aDialogs[2],,,,,,,,, .F., {||     ( nMode <> 3 )},, .F., .F.,,,,,, nil,,, )
+
+
+
+
+
+
+      aGet[ 15 ] := TGetHlp():ReDefine( 130, { | u | If( PCount()==0, aTmp[ 15 ], aTmp[ 15 ]:= u ) }, oFld:aDialogs[2],, "@E 999.99",,,,,,, .F., {||     ( nMode <> 3 )},, .F., .T.,,,,,, nil,,, )
+
+
+
+
+      aGet[ 16 ] := TGetHlp():ReDefine( 140, { | u | If( PCount()==0, aTmp[ 16 ], aTmp[ 16 ]:= u ) }, oFld:aDialogs[2],,,,,,,,, .F., {||     ( nMode <> 3 )},, .F., .F.,,,,,, nil,,, )
+
+
+
+
+
+
+      aGet[ 17 ] := TGetHlp():ReDefine( 150, { | u | If( PCount()==0, aTmp[ 17 ], aTmp[ 17 ]:= u ) }, oFld:aDialogs[2],, "@E 999.99",,,,,,, .F., {||     ( nMode <> 3 )},, .F., .T.,,,,,, nil,,, )
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+      aGet[ 63 ] := TGetHlp():ReDefine( 300, { | u | If( PCount()==0, aTmp[ 63 ], aTmp[ 63 ]:= u ) }, oFld:aDialogs[1],, "999", {||    aTmp[ 63 ] > 0},,,,,, .F., {||     ( nMode <> 3 )},, .F., .T.,,, {||      0}, {||      999},, nil,,, )
+
+
+
+
+
+
+
+
+
+      oBmpBancos := TBitmap():ReDefine( 500, "Money_Alpha_48",, oFld:aDialogs[3],,, .F., .F.,,, .F.,,, .T. )
+
+
+
+
+
+
+
+
+
+      TButton():ReDefine( 101, {||( WinAppRec( oBrwBnc, bEdtBnc, dbfTmpBnc, aTmp, , aTmp[1] ) )}, oFld:aDialogs[3],,, .F., {||     ( nMode <> 3 )},,, .F. )
+
+
+
+
+
+      TButton():ReDefine( 102, {||( WinEdtRec( oBrwBnc, bEdtBnc, dbfTmpBnc, aTmp, , aTmp[1] ) )}, oFld:aDialogs[3],,, .F., {||     ( nMode <> 3 )},,, .F. )
+
+
+
+
+      TButton():ReDefine( 103, {||( WinZooRec( oBrwBnc, bEdtBnc, dbfTmpBnc ) )}, oFld:aDialogs[3],,, .F.,,,, .F. )
+
+
+
+
+
+      TButton():ReDefine( 104, {||( DelBnc( aTmp, oBrwBnc, dbfTmpBnc ) )}, oFld:aDialogs[3],,, .F., {||     ( nMode <> 3 )},,, .F. )
+
+      oBrwBnc                 := IXBrowse():New( oFld:aDialogs[3] )
+
+      oBrwBnc:bClrSel         := {|| { 0, ( 229 + ( 229 * 256 ) + ( 229 * 65536 ) ) } }
+      oBrwBnc:bClrSelFocus    := {|| { 0, ( 167 + ( 205 * 256 ) + ( 240 * 65536 ) ) } }
+
+      oBrwBnc:cAlias          := dbfTmpBnc
+      oBrwBnc:nMarqueeStyle   := 5
+      oBrwBnc:cName           := "Proveedores.Bancos"
+
+      with object ( oBrwBnc:AddCol() )
+         :cHeader          := "D.Banco por defecto"
+         :bEditValue       := {|| ( dbfTmpBnc )->lBncDef }
+         :nWidth           := 16
+         :SetCheck( { "Sel16", "Nil16" } )
+      end
+
+      with object ( oBrwBnc:AddCol() )
+         :cHeader          := "Nombre banco"
+         :bEditValue       := {|| ( dbfTmpBnc )->cCodBnc }
+         :nWidth           := 180
+      end
+
+      with object ( oBrwBnc:AddCol() )
+         :cHeader          := "Cuenta"
+         :bEditValue       := {|| ( dbfTmpBnc )->cEntBnc + "-" + ( dbfTmpBnc )->cSucBnc + "-" + ( dbfTmpBnc )->cDigBnc + "-" + ( dbfTmpBnc )->cCtaBnc }
+         :nWidth           := 150
+      end
+
+      with object ( oBrwBnc:AddCol() )
+         :cHeader          := "Domicilio"
+         :bEditValue       := {|| ( dbfTmpBnc )->cDirBnc }
+         :nWidth           := 120
+      end
+
+      with object ( oBrwBnc:AddCol() )
+         :cHeader          := "Población"
+         :bEditValue       := {|| ( dbfTmpBnc )->cPobBnc }
+         :nWidth           := 100
+      end
+
+      with object ( oBrwBnc:AddCol() )
+         :cHeader          := "Código postal"
+         :bEditValue       := {|| ( dbfTmpBnc )->cCPBnc }
+         :nWidth           := 40
+      end
+
+      with object ( oBrwBnc:AddCol() )
+         :cHeader          := "Provincia"
+         :bEditValue       := {|| ( dbfTmpBnc )->cProBnc }
+         :nWidth           := 80
+      end
+
+      with object ( oBrwBnc:AddCol() )
+         :cHeader          := "Teléfono"
+         :bEditValue       := {|| ( dbfTmpBnc )->cTlfBnc }
+         :nWidth           := 80
+      end
+
+      with object ( oBrwBnc:AddCol() )
+         :cHeader          := "Fax"
+         :bEditValue       := {|| ( dbfTmpBnc )->cFaxBnc }
+         :nWidth           := 80
+      end
+
+      with object ( oBrwBnc:AddCol() )
+         :cHeader          := "Contacto"
+         :bEditValue       := {|| ( dbfTmpBnc )->cPContBnc }
+         :nWidth           := 140
+      end
+
+      oBrwBnc:bRClicked       := {| nRow, nCol, nFlags | oBrwBnc:RButtonDown( nRow, nCol, nFlags ) }
+      if nMode <> 3
+         oBrwBnc:bLDblClick   := {|| WinEdtRec( oBrwBnc, bEdtBnc, dbfTmpBnc, aTmp, , aTmp[1] ) }
+      end
+
+      oBrwBnc:CreateFromResource( 100 )
+
+
+
+
+
+
+
+
+
+      oBmpContabilidad := TBitmap():ReDefine( 500, "Folder2_red_Alpha_48",, oFld:aDialogs[4],,, .F., .F.,,, .F.,,, .T. )
+
+
+
+
+
+
+
+
+      aGet[ 21 ] := TGetHlp():ReDefine( 310, { | u | If( PCount()==0, aTmp[ 21 ], aTmp[ 21 ]:= u ) }, oFld:aDialogs[4],, ( Replicate( "X", nLenSubcuentaContaplus() ) ), {||    ( lValidaSubcuenta( aGet, aTmp, oGetSaldo, oGetSubCta, cSubCtaAnt, oBrwCta, dbfTmpSubCta ) )},,,,,, .F., {||     ( nLenCuentaContaplus() <> 0 .AND. nMode <> 3 )},, .F., .F.,,,,, {|Self|( BrwChkSubCta( aGet[ 21 ], oGetSubCta ) )}, nil, "LUPA",, )
+
+
+
+
+        oGetSubCta := TGetHlp():ReDefine( 311, { | u | If( PCount()==0, cGetSubCta, cGetSubCta:= u ) }, oFld:aDialogs[4],,,,,,,,, .F., {||         .F.},, .F., .F.,,,,,, nil,,, )
+
+
+
+
+
+
+
+      aGet[22] := TGetHlp():ReDefine( 320, { | u | If( PCount()==0, aTmp[22], aTmp[22]:= u ) }, oFld:aDialogs[4],,, {||    ( ChkCta( aTmp[22], oGetCta, .F. ) )},,,,,, .F., {||     ( nLenCuentaContaplus() <> 0 .AND. nMode <> 3 )},, .F., .F.,,,,, {|Self|( BrwChkCta( aGet[22], oGetCta ) )}, nil, "LUPA",, )
+
+
+
+
+        oGetCta := TGetHlp():ReDefine( 321, { | u | If( PCount()==0, cGetCta, cGetCta:= u ) }, oFld:aDialogs[4],,,,,,,,, .F., {||         .F.},, .F., .F.,,,,,, nil,,, )
+
+
+
+
+
+      oGetSaldo := TGetHlp():ReDefine( 354, { | u | If( PCount()==0, nGetSaldo, nGetSaldo:= u ) }, oFld:aDialogs[4],, cPirDiv,,,,,,, .F., {||         .F.},, .F., .F.,,,,,, nil,,, )
+
+
+
+
+
+      oBrwCta                 := IXBrowse():New( oFld:aDialogs[ 4 ] )
+
+      oBrwCta:bClrSel         := {|| { 0, ( 229 + ( 229 * 256 ) + ( 229 * 65536 ) ) } }
+      oBrwCta:bClrSelFocus    := {|| { 0, ( 167 + ( 205 * 256 ) + ( 240 * 65536 ) ) } }
+
+      oBrwCta:cAlias          := dbfTmpSubCta
+      oBrwCta:nMarqueeStyle   := 5
+      oBrwCta:cName           := "Proveedores.Contabilidad"
+      oBrwCta:lFooter         := .T.
+
+      with object ( oBrwCta:AddCol() )
+         :cHeader          := "Asiento"
+         :bEditValue       := {|| Trans( ( dbfTmpSubCta )->nAsiento, "9999999" ) }
+         :nWidth           := 80
+      end
+
+      with object ( oBrwCta:AddCol() )
+         :cHeader          := "Fecha"
+         :bEditValue       := {|| Dtoc( ( dbfTmpSubCta )->dFecha ) }
+         :nWidth           := 80
+      end
+
+      with object ( oBrwCta:AddCol() )
+         :cHeader          := "Concepto"
+         :bEditValue       := {|| ( dbfTmpSubCta )->cConcepto }
+         :nWidth           := 180
+      end
+
+      with object ( oBrwCta:AddCol() )
+         :cHeader          := "Debe"
+         :bEditValue       := {|| ( dbfTmpSubCta )->nDebe }
+         :cEditPicture     := cPirDiv
+         :nWidth           := 80
+         :nDataStrAlign    := 1
+         :nHeadStrAlign    := 1
+      end
+
+      with object ( oBrwCta:AddCol() )
+         :cHeader          := "Haber"
+         :bEditValue       := {|| ( dbfTmpSubCta )->nHaber }
+         :cEditPicture     := cPirDiv
+         :nWidth           := 80
+         :nDataStrAlign    := 1
+         :nHeadStrAlign    := 1
+      end
+
+      with object ( oBrwCta:AddCol() )
+         :cHeader          := "Departamento"
+         :bEditValue       := {|| ( dbfTmpSubCta )->cDeparta }
+         :nWidth           := 80
+      end
+
+      with object ( oBrwCta:AddCol() )
+         :cHeader          := "Factura"
+         :bEditValue       := {|| Trans( ( dbfTmpSubCta )->nFactura, "99999999" ) }
+         :nWidth           := 80
+      end
+
+      with object ( oBrwCta:AddCol() )
+         :cHeader          := "Base"
+         :bEditValue       := {|| ( dbfTmpSubCta )->nBase }
+         :cEditPicture     := cPirDiv
+         :nWidth           := 80
+         :nDataStrAlign    := 1
+         :nHeadStrAlign    := 1
+      end
+
+      with object ( oBrwCta:AddCol() )
+         :cHeader          := cImp()
+         :bEditValue       := {|| ( dbfTmpSubCta )->nIva }
+         :cEditPicture     := cPirDiv
+         :nWidth           := 80
+         :nDataStrAlign    := 1
+         :nHeadStrAlign    := 1
+      end
+
+      oBrwCta:bRClicked       := {| nRow, nCol, nFlags | oBrwCta:RButtonDown( nRow, nCol, nFlags ) }
+
+      oBrwCta:CreateFromResource( 120 )
+
+
+
+
+
+
+
+
+
+      oBmpComentario := TBitmap():ReDefine( 500, "Message_Alpha_48",, oFld:aDialogs[5],,, .F., .F.,,, .F.,,, .T. )
+
+
+
+
+      TCheckBox():ReDefine( 380, { | u | If( PCount()==0, aTmp[ 71 ], aTmp[ 71 ]:= u ) }, oFld:aDialogs[5],,,,,,, .F., {||     ( nMode <> 3 )}, .F. )
+
+
+
+
+
+
+      aGet[ 30 ] := TMultiGet():ReDefine( 370, { | u | If( PCount()==0, aTmp[ 30 ], aTmp[ 30 ]:= u ) }, oFld:aDialogs[5],, "N/W*",,,,, .F., {||         ( nMode <> 3 )}, .F.,, )
+
+
+
+        TSay():ReDefine( 105, {|| aIniCli[1]}, oFld:aDialogs[5],,,, .F.,, .F., .F. )
+
+
+
+
+      aGet[ 33 ] := TGetHlp():ReDefine( 110, { | u | If( PCount()==0, aTmp[ 33 ], aTmp[ 33 ]:= u ) }, oFld:aDialogs[5],,,,,,,,, .F., {||     ( nMode <> 3 )},, .F., .F.,,,,,, nil,,, )
+
+
+
+        TSay():ReDefine( 115, {|| aIniCli[2]}, oFld:aDialogs[5],,,, .F.,, .F., .F. )
+
+
+
+
+      aGet[ 34 ] := TGetHlp():ReDefine( 120, { | u | If( PCount()==0, aTmp[ 34 ], aTmp[ 34 ]:= u ) }, oFld:aDialogs[5],,,,,,,,, .F., {||     ( nMode <> 3 )},, .F., .F.,,,,,, nil,,, )
+
+
+
+        TSay():ReDefine( 125, {|| aIniCli[3]}, oFld:aDialogs[5],,,, .F.,, .F., .F. )
+
+
+
+
+      aGet[ 35 ] := TGetHlp():ReDefine( 130, { | u | If( PCount()==0, aTmp[ 35 ], aTmp[ 35 ]:= u ) }, oFld:aDialogs[5],,,,,,,,, .F., {||     ( nMode <> 3 )},, .F., .F.,,,,,, nil,,, )
+
+
+
+        TSay():ReDefine( 135, {|| aIniCli[4]}, oFld:aDialogs[5],,,, .F.,, .F., .F. )
+
+
+
+
+      aGet[ 36 ] := TGetHlp():ReDefine( 140, { | u | If( PCount()==0, aTmp[ 36 ], aTmp[ 36 ]:= u ) }, oFld:aDialogs[5],,,,,,,,, .F., {||     ( nMode <> 3 )},, .F., .F.,,,,,, nil,,, )
+
+
+
+        TSay():ReDefine( 145, {|| aIniCli[5]}, oFld:aDialogs[5],,,, .F.,, .F., .F. )
+
+
+
+
+      aGet[ 37 ] := TGetHlp():ReDefine( 150, { | u | If( PCount()==0, aTmp[ 37 ], aTmp[ 37 ]:= u ) }, oFld:aDialogs[5],,,,,,,,, .F., {||     ( nMode <> 3 )},, .F., .F.,,,,,, nil,,, )
+
+
+
+        TSay():ReDefine( 155, {|| aIniCli[6]}, oFld:aDialogs[5],,,, .F.,, .F., .F. )
+
+
+
+
+      aGet[ 38 ] := TGetHlp():ReDefine( 160, { | u | If( PCount()==0, aTmp[ 38 ], aTmp[ 38 ]:= u ) }, oFld:aDialogs[5],,,,,,,,, .F., {||     ( nMode <> 3 )},, .F., .F.,,,,,, nil,,, )
+
+
+
+        TSay():ReDefine( 165, {|| aIniCli[7]}, oFld:aDialogs[5],,,, .F.,, .F., .F. )
+
+
+
+
+      aGet[ 39 ] := TGetHlp():ReDefine( 170, { | u | If( PCount()==0, aTmp[ 39 ], aTmp[ 39 ]:= u ) }, oFld:aDialogs[5],,,,,,,,, .F., {||     ( nMode <> 3 )},, .F., .F.,,,,,, nil,,, )
+
+
+
+        TSay():ReDefine( 175, {|| aIniCli[8]}, oFld:aDialogs[5],,,, .F.,, .F., .F. )
+
+
+
+
+      aGet[ 40 ] := TGetHlp():ReDefine( 180, { | u | If( PCount()==0, aTmp[ 40 ], aTmp[ 40 ]:= u ) }, oFld:aDialogs[5],,,,,,,,, .F., {||     ( nMode <> 3 )},, .F., .F.,,,,,, nil,,, )
+
+
+
+        TSay():ReDefine( 185, {|| aIniCli[9]}, oFld:aDialogs[5],,,, .F.,, .F., .F. )
+
+
+
+
+      aGet[ 41 ] := TGetHlp():ReDefine( 190, { | u | If( PCount()==0, aTmp[ 41 ], aTmp[ 41 ]:= u ) }, oFld:aDialogs[5],,,,,,,,, .F., {||     ( nMode <> 3 )},, .F., .F.,,,,,, nil,,, )
+
+
+
+        TSay():ReDefine( 195, {|| aIniCli[10]}, oFld:aDialogs[5],,,, .F.,, .F., .F. )
+
+
+
+
+      aGet[ 42 ] := TGetHlp():ReDefine( 200, { | u | If( PCount()==0, aTmp[ 42 ], aTmp[ 42 ]:= u ) }, oFld:aDialogs[5],,,,,,,,, .F., {||     ( nMode <> 3 )},, .F., .F.,,,,,, nil,,, )
+
+
+
+
+
+
+
+
+
+      oBmpDocumentos := TBitmap():ReDefine( 600, "Books_blue_Alpha_48",, oFld:aDialogs[6],,, .F., .F.,,, .F.,,, .T. )
+
+      oBrwDoc                 := IXBrowse():New( oFld:aDialogs[ 6 ] )
+
+      oBrwDoc:bClrSel         := {|| { 0, ( 229 + ( 229 * 256 ) + ( 229 * 65536 ) ) } }
+      oBrwDoc:bClrSelFocus    := {|| { 0, ( 167 + ( 205 * 256 ) + ( 240 * 65536 ) ) } }
+
+      oBrwDoc:cAlias          := dbfTmpDoc
+      oBrwDoc:nMarqueeStyle   := 5
+      oBrwDoc:cName           := "Proveedores.Documentos"
+      oBrwDoc:nRowHeight      := 38
+      oBrwDoc:nDataLines      := 2
+
+      with object ( oBrwDoc:AddCol() )
+         :cHeader          := "Documento"
+         :bEditValue       := {|| Rtrim( ( dbfTmpDoc )->cNombre ) + Chr(13)+Chr(10) + Space( 5 ) + lTrim( ( dbfTmpDoc )->cRuta ) }
+         :nWidth           := 480
+      end
+
+      if ( nMode <> 3 )
+         oBrwDoc:bLDblClick   := {|| ShellExecute( oDlg:hWnd, "open", rTrim( ( dbfTmpDoc )->cRuta ) ) }
+      end
+      oBrwDoc:bRClicked       := {| nRow, nCol, nFlags | oBrwDoc:RButtonDown( nRow, nCol, nFlags ) }
+
+      oBrwDoc:CreateFromResource( 400 )
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+      TButton():ReDefine( 500, {||( WinAppRec( oBrwDoc, bEdtDoc, dbfTmpDoc, nil, nil, aTmp ) )}, oFld:aDialogs[6],,, .F., {||     ( nMode <> 3 )},,, .F. )
+
+
+
+
+
+      TButton():ReDefine( 501, {||( WinEdtRec( oBrwDoc, bEdtDoc, dbfTmpDoc, nil, nil, aTmp ) )}, oFld:aDialogs[6],,, .F., {||     ( nMode <> 3 )},,, .F. )
+
+
+
+
+
+      TButton():ReDefine( 502, {||( DbDelRec( oBrwDoc, dbfTmpDoc, nil, nil, .T. ) )}, oFld:aDialogs[6],,, .F., {||     ( nMode <> 3 )},,, .F. )
+
+
+
+
+      TButton():ReDefine( 503, {||( WinZooRec( oBrwDoc, bEdtDoc, dbfTmpDoc ) )}, oFld:aDialogs[6],,, .F.,,,, .F. )
+
+
+
+
+      TButton():ReDefine( 504, {||( ShellExecute( oDlg:hWnd, "open", rTrim( ( dbfTmpDoc )->cRuta ) ) )}, oFld:aDialogs[6],,, .F.,,,, .F. )
+
+
+
+
+
+
+
+
+
+      oBmpObservaciones := TBitmap():ReDefine( 600, "Information2_Alpha_48",, oFld:aDialogs[7],,, .F., .F.,,, .F.,,, .T. )
+
+      oClp := TClipBoard():New( Upper("TEXT"), oFld:aDialogs[ 7 ] )
+
+
+
+
+
+
+
+
+      oBtn[ 1 ] := TBtnBmp():ReDefine( 100, "IMP16",,,,, {|Self|( oRTF:Print(), oRTF:SetFocus() )}, oFld:aDialogs[ 7 ], .F., {||     ( .T. )}, .F., "Imprimir",,,,, !.T.,, .F.,,, .F., !.F. )
+
+
+
+
+
+
+
+
+      oBtn[ 2 ] := TBtnBmp():ReDefine( 110, "PREV116",,,,, {|Self|( oRTF:Preview( "Class TRichEdit" ) )}, oFld:aDialogs[ 7 ], .F., {||     ( .T. )}, .F., "Previsualizar",,,,, !.T.,, .F.,,, .F., !.F. )
+
+
+
+
+
+
+
+
+      oBtn[ 3 ] := TBtnBmp():ReDefine( 120, "Bus16",,,,, {|Self|( FindRich( oRTF ) )}, oFld:aDialogs[ 7 ], .F., {||     ( .T. )}, .F., "Buscar",,,,, !.T.,, .F.,,, .F., !.F. )
+
+
+
+
+
+
+
+
+      oBtn[ 4 ] := TBtnBmp():ReDefine( 130, "Cut_16",,,,, {|Self|( oRTF:Cut(), oRTF:SetFocus() )}, oFld:aDialogs[ 7 ], .F., {||     ( ! Empty( oRTF:GetSel() ) .AND. ! oRTF:lReadOnly )}, .F., "Cortar",,,,, !.T.,, .F.,,, .F., !.F. )
+
+
+
+
+
+
+
+
+      oBtn[ 5 ] := TBtnBmp():ReDefine( 140, "Copy16",,,,, {|Self|( oRTF:Copy(), oRTF:SetFocus() )}, oFld:aDialogs[ 7 ], .F., {||     ( ! Empty( oRTF:GetSel() ) )}, .F., "Copiar",,,,, !.T.,, .F.,,, .F., !.F. )
+
+
+
+
+
+
+
+
+      oBtn[ 6 ] := TBtnBmp():ReDefine( 150, "Paste_16",,,,, {|Self|( oRTF:Paste(), oRTF:SetFocus() )}, oFld:aDialogs[ 7 ], .F., {||     ( ! Empty( oClp:GetText() ) .AND. ! oRTF:lReadOnly )}, .F., "Pegar",,,,, !.T.,, .F.,,, .F., !.F. )
+
+
+
+
+
+
+
+
+      oBtn[ 7 ] := TBtnBmp():ReDefine( 160, "Undo1_16",,,,, {|Self|( oRTF:Undo(), oRTF:SetFocus() )}, oFld:aDialogs[ 7 ], .F., {||     ( oRTF:SendMsg( 198 ) <> 0 )}, .F., "Deshacer",,,,, !.T.,, .F.,,, .F., !.F. )
+
+
+
+
+
+
+
+
+      oBtn[ 8 ] := TBtnBmp():ReDefine( 170, "Redo_16",,,,, {|Self|( oRTF:Redo(), oRTF:SetFocus() )}, oFld:aDialogs[ 7 ], .F., {||     ( oRTF:SendMsg( ( 1024 + 85 ) ) <> 0 )}, .F., "Rehacer",,,,, !.T.,, .F.,,, .F., !.F. )
+
+
+
+
+      oZoom := TComboBox():ReDefine( 180, { | u | If( PCount()==0, cZoom, cZoom:= u ) }, aZoom, oFld:aDialogs[ 7 ],,,,,,, .F.,,,,,, )
+
+      oZoom:bChange     := {|| oRTF:SetZoom( aRatio[ oZoom:nAt, 1 ], aRatio[ oZoom:nAt, 2 ] ), oRTF:SetFocus()  }
+
+
+
+
+      oFuente := TComboBox():ReDefine( 190, { | u | If( PCount()==0, cFuente, cFuente:= u ) }, aFuente, oFld:aDialogs[ 7 ],,,,,,, .F.,,,,,, )
+
+      oFuente:bChange   := {|| oRTF:SetFontName( oFuente:VarGet() ), oRTF:SetFocus() }
+
+
+
+
+      oSize := TComboBox():ReDefine( 200, { | u | If( PCount()==0, cSize, cSize:= u ) }, aSize, oFld:aDialogs[ 7 ],,,,,,, .F.,,,,,, )
+
+      oSize:bChange     := {|| oRTF:SetFontSize( Val( oSize:VarGet() ) ), oRTF:SetFocus() }
+
+
+
+
+
+
+
+
+
+      oBtn[ 9 ] := TBtnBmp():ReDefine( 210, "Text_Bold",,,,, {|Self|( lBold  := !lBold , oRTF:SetBold( lBold ), oRTF:SetFocus() )}, oFld:aDialogs[ 7 ], .F., {||     ( ! oRTF:lReadOnly )}, .F., "Negrita",,,,, !.T.,, .F.,,, .F., !.F. )
+
+
+
+
+
+
+
+
+
+      oBtn[ 10 ] := TBtnBmp():ReDefine( 220, "Text_Italics_16",,,,, {|Self|( lItalic := !lItalic , oRTF:SetItalic( lItalic ), oRTF:SetFocus() )}, oFld:aDialogs[ 7 ], .F., {||     ( ! oRTF:lReadOnly )}, .F., "Cursiva",,,,, !.T.,, .F.,,, .F., !.F. )
+
+
+
+
+
+
+
+
+
+      oBtn[ 11 ] := TBtnBmp():ReDefine( 230, "Text_Underlined_16",,,,, {|Self|( lUnderline := !lUnderline , oRTF:SetUnderline( lUnderline ), oRTF:SetFocus() )}, oFld:aDialogs[ 7 ], .F., {||     ( ! oRTF:lReadOnly )}, .F., "Subrayado",,,,, !.T.,, .F.,,, .F., !.F. )
+
+
+
+
+
+
+
+
+      oBtn[ 12 ] := TBtnBmp():ReDefine( 240, "Text_Align_Left_16",,,,, {|Self|( oRTF:SetAlign( 1 ), oRTF:SetFocus() )}, oFld:aDialogs[ 7 ], .F., {||     ( ! oRTF:lReadOnly )}, .F., "Izquierda",,,,, !.T.,, .F.,,, .F., !.F. )
+
+
+
+
+
+
+
+
+      oBtn[ 13 ] := TBtnBmp():ReDefine( 250, "Text_Center",,,,, {|Self|( oRTF:SetAlign( 3 ), oRTF:SetFocus() )}, oFld:aDialogs[ 7 ], .F., {||     ( ! oRTF:lReadOnly )}, .F., "Centro",,,,, !.T.,, .F.,,, .F., !.F. )
+
+
+
+
+
+
+
+
+      oBtn[ 14 ] := TBtnBmp():ReDefine( 260, "Text_Align_Right_16",,,,, {|Self|( oRTF:SetAlign( 2 ), oRTF:SetFocus() )}, oFld:aDialogs[ 7 ], .F., {||     ( ! oRTF:lReadOnly )}, .F., "Derecha",,,,, !.T.,, .F.,,, .F., !.F. )
+
+
+
+
+
+
+
+
+      oBtn[ 15 ] := TBtnBmp():ReDefine( 270, "Text_Justified_16",,,,, {|Self|( oRTF:SetAlign( 4 ), oRTF:SetFocus() )}, oFld:aDialogs[ 7 ], .F., {||     ( ! oRTF:lReadOnly )}, .F., "Justificado",,,,, !.T.,, .F.,,, .F., !.F. )
+
+
+
+
+
+
+
+
+
+      oBtn[ 16 ] := TBtnBmp():ReDefine( 280, "Pin_Blue_16",,,,, {|Self|( lBullet := !lBullet , oRTF:SetBullet( lBullet ), oRTF:SetFocus() )}, oFld:aDialogs[ 7 ], .F., {||     ( ! oRTF:lReadOnly .AND. !oRTF:GetNumbering() )}, .F., "Viñetas",,,,, !.T.,, .F.,,, .F., !.F. )
+
+
+
+
+
+
+
+
+      oBtn[ 17 ] := TBtnBmp():ReDefine( 290, "Calendar_16",,,,, {|Self|( DateTimeRich( oRTF ) )}, oFld:aDialogs[ 7 ], .F., {||     ( .T. )}, .F., "Fecha/Hora",,,,, !.T.,, .F.,,, .F., !.F. )
+
+
+
+      oRTF := TRichEdit():ReDefine( 300, { | u | If( PCount()==0, cRTF, cRTF:= u ) }, oFld:aDialogs[ 7 ],,,, .F., .F.,,, .F.,,, )
+
+      oRTF:bChange:= { || RTFRefreshButtons( oRtf, oBtn ) }
+
+
+
+
+
+
+
+
+
+      TButton():ReDefine( 1, {||( lPreSave( aTmp, aGet, dbfProvee, dbfArticulo, oBrw, nMode, oDlg ) )}, oDlg,,, .F., {||         ( nMode <> 3 )},,, .F. )
+
+
+
+
+
+        TButton():ReDefine( 2, {||( oDlg:end() )}, oDlg,,, .F.,,,, .T. )
+
+
+
+
+
+      TButton():ReDefine( 559, {||( GoHelp() )}, oDlg,,, .F.,,,, .T. )
+
+      if nMode <> 3
+
+         oFld:aDialogs[3]:AddFastKey( 113, {|| WinAppRec( oBrwBnc, bEdtBnc, dbfTmpBnc, aTmp, , aTmp[1] ) } )
+         oFld:aDialogs[3]:AddFastKey( 114, {|| WinEdtRec( oBrwBnc, bEdtBnc, dbfTmpBnc, aTmp, , aTmp[1] ) } )
+         oFld:aDialogs[3]:AddFastKey( 115, {|| DbDelRec(  oBrwBnc, dbfTmpBnc ) } )
+
+         oFld:aDialogs[6]:AddFastKey( 113, {|| WinAppRec( oBrwDoc, bEdtDoc, dbfTmpDoc, nil, nil, aTmp ) } )
+         oFld:aDialogs[6]:AddFastKey( 114, {|| WinEdtRec( oBrwDoc, bEdtDoc, dbfTmpDoc, nil, nil, aTmp ) } )
+         oFld:aDialogs[6]:AddFastKey( 115, {|| DbDelRec( oBrwDoc, dbfTmpDoc, nil, nil, .T. ) } )
+
+         oDlg:AddFastKey( 116, {|| lPreSave( aTmp, aGet, dbfProvee, dbfArticulo, oBrw, nMode, oDlg ) } )
+
+      end
+
+      oDlg:AddFastKey ( 112, {|| GoHelp() } )
+
+      oDlg:bStart := { || ShowComentario( aTmp, nMode ), StartEdtRec( aTmp, aGet, oValPnt ), oBrwBnc:Load(), oBrwCta:Load(), oGet:SetFocus() }
+
+
+
+   oDlg:Activate( oDlg:bLClicked, oDlg:bMoved, oDlg:bPainted, .T., {|Self|( KillTrans() )},, {|Self|( EdtRecMenu( aTmp, aGet, dbfProvee, dbfArticulo, oBrw, nMode, oDlg ) )}, oDlg:bRClicked,,, )
+
+   EndEdtRecMenu()
+
+
+
+
+
+   oBrwCta:CloseData()
+   oBrwBnc:CloseData()
+
+   oBmpGeneral:End()
+   oBmpComercial:End()
+   oBmpBancos:End()
+   oBmpComentario:End()
+   oBmpDocumentos:End()
+   oBmpObservaciones:End()
+   oBmpContabilidad:End()
+
+RETURN ( oDlg:nResult == 1 )
+
+
+
+Static Function ShowComentario( aTmp, nMode )
+
+   if ( nMode <> 1 .AND. aTmp[ 71 ] .AND. !Empty( aTmp[ 30 ] ) )
+      MsgInfo( AllTrim( aTmp[ 30 ] ), "Comentario" )
+   end
+
+Return ( .T. )
+
+
+
+STATIC FUNCTION lPreSave( aTmp, aGet, dbfProvee, dbfArticulo, oBrw, nMode, oDlg )
+
+   local oError
+   local oBlock
+
+   if nMode == 1 .OR. nMode == 4
+
+      if Empty( aTmp[ 1 ] )
+         MsgStop( "Código no puede estar vacio" )
+         return .F.
+      end
+
+      if dbSeekInOrd( aTmp[ 1 ], "Cod", dbfProvee )
+         msgStop( "Código ya existe" )
+         return .F.
+      end
+
+   end
+
+   if Empty( aTmp[ 2 ] )
+      MsgStop( "El nombre del proveedor no puede estar vacío." )
+      aGet[ 2 ]:SetFocus()
+      Return .F.
+   end
+
+   CursorWait()
+
+   oBlock      := ErrorBlock( {| oError | ApoloBreak( oError ) } )
+   BEGIN SEQUENCE
+
+      BeginTransaction()
+
+
+
+      while ( dbfProveeD )->( dbSeek( aTmp[ 1 ] ) )
+         if dbLock( dbfProveeD )
+            ( dbfProveeD )->( dbDelete() )
+            ( dbfProveeD )->( dbUnLock() )
+         end
+      end
+
+
+
+      ( dbfTmpDoc )->( dbGoTop() )
+      while ( dbfTmpDoc )->( !eof() )
+
+         ( dbfProveeD )->( dbAppend() )
+
+         ( dbfProveeD )->cCodPrv := aTmp[ 1 ]
+         ( dbfProveeD )->cNombre := ( dbfTmpDoc )->cNombre
+         ( dbfProveeD )->cRuta   := ( dbfTmpDoc )->cRuta
+         ( dbfProveeD )->mObsDoc := ( dbfTmpDoc )->mObsDoc
+
+         ( dbfTmpDoc )->( dbSkip() )
+
+      end
+
+
+
+      while ( dbfBanco )->( dbSeek( aTmp[ 1 ] ) )
+         dbDel( dbfBanco )
+      end
+
+
+
+      ( dbfTmpBnc )->( dbGoTop() )
+      while !( dbfTmpBnc )->( eof() )
+         dbPass( dbfTmpBnc, dbfBanco, .T., aTmp[ 1 ] )
+         ( dbfTmpBnc )->( dbSkip() )
+      end
+
+      if IsMuebles() .AND. ( nMode == 2 )
+         lCambiarPuntos( aTmp, dbfArticulo )
+      end
+
+      aTmp[ 58 ]     := cCurUsr()
+      aTmp[ 59 ]     := GetSysDate()
+      aTmp[ 60 ]     := Time()
+      aTmp[ 70 ]     := oRTF:SaveAsRTF()
+
+      WinGather( aTmp, aGet, dbfProvee, oBrw, nMode )
+
+      CommitTransaction()
+
+   RECOVER USING oError
+
+      RollBackTransaction()
+
+      msgStop( "Imposible eliminar datos anteriores" + Chr(13)+Chr(10) + ErrorMessage( oError ) )
+
+   end
+   ErrorBlock( oBlock )
+
+Return ( oDlg:end( 1 ) )
+
+
+
+Static Function EdtDoc( aTmp, aGet, dbfClientD, oBrw, bWhen, bValid, nMode, aTmpLin )
+
+   local oDlg
+   local oNombre
+   local oRuta
+   local oObservacion
+
+   oDlg = TDialog():New(,,,, LblTitle( nMode ) + "documento de proveedor", "DOCUMENTOS",, .F.,,,,,, .F.,,,,,, .F., )
+
+
+
+
+      oNombre := TGetHlp():ReDefine( 120, { | u | If( PCount()==0, aTmp[ ( dbfTmpDoc )->( FieldPos( "cNombre" ) ) ], aTmp[ ( dbfTmpDoc )->( FieldPos( "cNombre" ) ) ]:= u ) }, oDlg,,,,,,,,, .F., {||     ( nMode <> 3 )},, .F., .F.,,,,,, nil,,, )
+
+
+
+
+
+
+      oRuta := TGetHlp():ReDefine( 100, { | u | If( PCount()==0, aTmp[ ( dbfTmpDoc )->( FieldPos( "cRuta" ) ) ], aTmp[ ( dbfTmpDoc )->( FieldPos( "cRuta" ) ) ]:= u ) }, oDlg,,,,,,,,, .F., {||     ( nMode <> 3 )},, .F., .F.,,,,, {|Self|( oRuta:cText( cGetFile( "Doc ( *.* ) | " + "*.*", "Seleccione el nombre del fichero" ) ) )}, nil, "FOLDER",, )
+
+
+
+
+
+      oObservacion := TMultiGet():ReDefine( 110, { | u | If( PCount()==0, aTmp[ ( dbfTmpDoc )->( FieldPos( "mObsDoc" ) ) ], aTmp[ ( dbfTmpDoc )->( FieldPos( "mObsDoc" ) ) ]:= u ) }, oDlg,,,,,,, .F., {||     ( nMode <> 3 )}, .F.,, )
+
+
+
+
+
+      TButton():ReDefine( 1, {||( WinGather( aTmp, nil, dbfTmpDoc, oBrw, nMode ), oDlg:end( 1 ) )}, oDlg,,, .F., {||     ( nMode <> 3 )},,, .F. )
+
+
+
+
+
+      TButton():ReDefine( 2, {||( oDlg:end() )}, oDlg,,, .F.,,,, .T. )
+
+   if nMode <> 3
+         oDlg:AddFastKey( 116, {|| WinGather( aTmp, nil, dbfTmpDoc, oBrw, nMode ), oDlg:end( 1 ) } )
+      end
+
+   oDlg:Activate( oDlg:bLClicked, oDlg:bMoved, oDlg:bPainted, .T.,,,, oDlg:bRClicked,,, )
+
+Return ( oDlg:nResult == 1 )
+
+
+
+Static function lValidaSubcuenta( aGet, aTmp, oGetSaldo, oGetSubCta, cSubCtaAnt, oBrwCta, dbfTmpSubCta )
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+   MkSubCta( aGet[ 21 ], {  aTmp[ 21    ], aTmp[ 2    ], aTmp[ 3       ], aTmp[ 4 ], aTmp[ 5 ], aTmp[ 6 ], aTmp[ 10 ], aTmp[ 11  ], aTmp[ 12       ], aTmp[ 26   ] }, oGetSubCta, nil, nil, nil, nil, oGetSaldo )
+
+   if aTmp[ ( dbfProvee )->( fieldpos( "SUBCTA" ) ) ] <> cSubCtaAnt
+      LoadSubCta( aTmp[ ( dbfProvee )->( fieldpos( "SUBCTA" ) ) ], cRutCnt(), dbfTmpSubCta )
+      oBrwCta:Refresh()
+   end
+
+Return .T.
+
+
+
+static function BeginTrans( aTmp, nMode )
+
+   local lErrors     := .F.
+   local cCodSubCta  := aTmp[ ( dbfProvee )->( fieldpos( "SubCta" ) ) ]
+   local cCodPrv     := aTmp[ ( dbfProvee )->( fieldpos( "Cod" ) ) ]
+   local cDbfDoc     := "PPrvD"
+   local cDbfBnc     := "PBnc"
+   local oError
+   local oBlock      := ErrorBlock( {| oError | ApoloBreak( oError ) } )
+
+   BEGIN SEQUENCE
+
+   filTmpSubCta      := cGetNewFileName( cPatTmp() + "TmpSubCta" )
+   cTmpDoc           := cGetNewFileName( cPatTmp() + cDbfDoc )
+   cTmpBnc           := cGetNewFileName( cPatTmp() + cDbfBnc )
+
+   dbCreate( filTmpSubCta, aSqlStruct( aItmSubcuenta() ), cLocalDriver() )
+   dbUseArea( .T., cLocalDriver(), filTmpSubCta, cCheckArea( "TmpSubCta", @dbfTmpSubCta ), .F. )
+   if !( dbfTmpSubCta )->( neterr() )
+      ( dbfTmpSubCta )->( OrdCondSet( "!Deleted()", {||!Deleted() } ) )
+      ( dbfTmpSubCta )->( OrdCreate( filTmpSubCta, "dFecha", "dFecha", {|| Field->dFecha } ) )
+   end
+
+   if nMode <> 1
+      LoadSubCta( cCodSubCta, cRutCnt(), dbfTmpSubCta )
+   end
+
+   dbCreate( cTmpDoc, aSqlStruct( aPrvDoc() ), cLocalDriver() )
+   dbUseArea( .T., cLocalDriver(), cTmpDoc, cCheckArea( cDbfDoc, @dbfTmpDoc ), .F. )
+   if !( dbfTmpDoc )->( neterr() )
+      ( dbfTmpDoc )->( ordCondSet( "!Deleted()", {||!Deleted() } ) )
+      ( dbfTmpDoc )->( ordCreate( cTmpDoc, "Recno", "Recno()", {|| Recno() } ) )
+   end
+
+   dbCreate( cTmpBnc, aSqlStruct( aPrvBnc() ), cLocalDriver() )
+   dbUseArea( .T., cLocalDriver(), cTmpBnc, cCheckArea( cDbfBnc, @dbfTmpBnc ), .F. )
+   if !( dbfTmpBnc )->( neterr() )
+      ( dbfTmpBnc )->( ordCondSet( "!Deleted()", {||!Deleted() } ) )
+      ( dbfTmpBnc )->( OrdCreate( cTmpBnc, "CCODPRV", "CCODPRV + CCTABNC + CSUCBNC + CDIGBNC + CCTABNC", {|| Field->CCODPRV + Field->CCTABNC + Field->cSucBnc + Field->CDIGBNC + Field->CCTABNC } ) )
+   end
+
+
+
+
+
+   if ( dbfProveeD )->( dbSeek( cCodPrv ) )
+      while ( ( dbfProveeD )->cCodPrv == cCodPrv ) .AND. ( dbfProveeD )->( !eof() )
+         dbPass( dbfProveeD, dbfTmpDoc, .T. )
+         ( dbfProveeD )->( dbSkip() )
+      end
+   end
+
+   ( dbfTmpDoc )->( dbGoTop() )
+
+
+
+
+
+   if ( dbfBanco )->( dbSeek( cCodPrv ) )
+      while ( ( dbfBanco )->cCodPrv == cCodPrv ) .AND. ( dbfBanco )->( !eof() )
+         dbPass( dbfBanco, dbfTmpBnc, .T. )
+         ( dbfBanco )->( dbSkip() )
+      end
+   end
+
+   ( dbfTmpBnc )->( dbGoTop() )
+
+   RECOVER USING oError
+
+      msgStop( "Imposible crear tablas temporales." + Chr(13)+Chr(10) + ErrorMessage( oError ) )
+
+      KillTrans()
+
+      lErrors     := .T.
+
+   end
+
+    ErrorBlock( oBlock )
+
+return ( lErrors )
+
+
+
+Static Function KillTrans()
+
+   if !Empty( dbfTmpSubCta ) .AND. ( dbfTmpSubCta )->( Used() )
+      ( dbfTmpSubCta )->( dbCloseArea() )
+   end
+
+   if !Empty( dbfTmpDoc ) .AND. ( dbfTmpDoc )->( Used() )
+      ( dbfTmpDoc )->( dbCloseArea() )
+   end
+
+   if !Empty( dbfTmpBnc ) .AND. ( dbfTmpBnc )->( Used() )
+      ( dbfTmpBnc )->( dbCloseArea() )
+   end
+
+   dbfTmpSubCta := nil
+   dbfTmpDoc    := nil
+   dbfTmpBnc    := nil
+
+   dbfErase( filTmpSubCta )
+   dbfErase( cTmpDoc )
+   dbfErase( cTmpBnc )
+
+Return .T.
+
+
+
+Static Function aItmSubcuenta()
+
+   local aBase := {}
+
+   aAdd( aBase, { "nAsiento",  "N",  6, 0, "Asiento"    } )
+   aAdd( aBase, { "dFecha",    "D",  8, 0, "Fecha"      } )
+   aAdd( aBase, { "cConcepto", "C", 25, 0, "Concepto"   } )
+   aAdd( aBase, { "nDebe",     "N", 16, 2, "Debe"       } )
+   aAdd( aBase, { "nHaber",    "N", 16, 2, "Haber"      } )
+   aAdd( aBase, { "cDeparta",  "C",  6, 0, "Departa"    } )
+   aAdd( aBase, { "nFactura",  "N",  8, 0, "Factura"    } )
+   aAdd( aBase, { "nBase",     "N", 16, 2, "Base"       } )
+   aAdd( aBase, { "nIva",      "N",  5, 2, "I.V.A"      } )
+
+Return ( aBase )
+
+
+
+STATIC FUNCTION lCambiarPuntos( aTmp, dbfArticulo )
+
+   if ApoloMsgNoYes(  "¿ Desea actualizar los artículos que tienen este proveedor por defecto ?", "Elija una opción" )
+
+      ( dbfArticulo )->( dbGoTop() )
+
+      while !( dbfArticulo )->( eof() )
+
+         if ( dbfArticulo )->cPrvHab == aTmp[ 1 ] .AND. Empty( ( dbfArticulo )->cCodCat )
+
+            if dbLock( dbfArticulo )
+
+               ( dbfArticulo )->nPunTos     := aTmp[ 43 ]
+               ( dbfArticulo )->nDtoPnt     := aTmp[ 17 ]
+
+               if ( dbfArticulo )->lBnf1
+                  ( dbfArticulo )->Benef1   := aTmp[ 45 ]
+                  ( dbfArticulo )->nBnfSbr1 := aTmp[ 51 ]
+               end
+               if ( dbfArticulo )->lBnf2
+                  ( dbfArticulo )->Benef2   := aTmp[ 46 ]
+                  ( dbfArticulo )->nBnfSbr2 := aTmp[ 52 ]
+               end
+               if ( dbfArticulo )->lBnf3
+                  ( dbfArticulo )->Benef3   := aTmp[ 47 ]
+                  ( dbfArticulo )->nBnfSbr3 := aTmp[ 53 ]
+               end
+               if ( dbfArticulo )->lBnf4
+                  ( dbfArticulo )->Benef4   := aTmp[ 48 ]
+                  ( dbfArticulo )->nBnfSbr4 := aTmp[ 54 ]
+               end
+               if ( dbfArticulo )->lBnf5
+                  ( dbfArticulo )->Benef5   := aTmp[ 49 ]
+                  ( dbfArticulo )->nBnfSbr5 := aTmp[ 55 ]
+               end
+               if ( dbfArticulo )->lBnf6
+                  ( dbfArticulo )->Benef6   := aTmp[ 50 ]
+                  ( dbfArticulo )->nBnfSbr6 := aTmp[ 56 ]
+               end
+
+               ( dbfArticulo )->( dbUnLock() )
+
+            end
+
+         end
+
+        ( dbfArticulo )->( dbSkip() )
+
+      end
+
+   end
+
+RETURN .T.
+
+
+
+STATIC FUNCTION CloseFiles( lDestroy )
+
+    IIF( lDestroy == nil, lDestroy := .F., ) ;
+
+   ( dbfProvee  )->( dbCloseArea() )
+   ( dbfProveeD )->( dbCloseArea() )
+   ( dbfPedPrvT )->( dbCloseArea() )
+   ( dbfPedPrvL )->( dbCloseArea() )
+    ( dbfAlbPrvT )->( dbCloseArea() )
+    ( dbfAlbPrvL )->( dbCloseArea() )
+    ( dbfFacPrvT )->( dbCloseArea() )
+    ( dbfFacPrvL )->( dbCloseArea() )
+   ( dbfFPago   )->( dbCloseArea() )
+   ( dbfArtPrv  )->( dbCloseArea() )
+   ( dbfIva     )->( dbCloseArea() )
+   ( dbfArticulo)->( dbCloseArea() )
+   ( dbfDiv     )->( dbCloseArea() )
+   ( dbfBanco   )->( dbCloseArea() )
+   ( dbfFlt     )->( dbCloseArea() )
+   ( dbfDoc     )->( dbCloseArea() )
+
+   if !Empty( oPais )
+      oPais:End()
+   end
+
+   if !Empty( oGrpPrv )
+      oGrpPrv:End()
+   end
+
+   if !Empty( oBanco )
+      oBanco:End()
+   end
+
+   dbfProvee   := nil
+   dbfProveeD  := nil
+   dbfPedPrvT  := nil
+   dbfPedPrvL  := nil
+   dbfAlbPrvT  := nil
+   dbfAlbPrvL  := nil
+   dbfFacPrvT  := nil
+   dbfFacPrvL  := nil
+   dbfFPago    := nil
+   dbfArtPrv   := nil
+   dbfIva      := nil
+   dbfArticulo := nil
+   dbfDiv      := nil
+   dbfFlt      := nil
+   oBandera    := nil
+   oPais       := nil
+   dbfBanco    := nil
+   oGrpPrv     := nil
+   dbfDoc      := nil
+   oBanco      := nil
+
+   if lDestroy
+      oWndBrw        := nil
+   end
+
+   lOpenFiles  := .F.
+
+Return ( .T. )
+
+
+
+Static Function ActTitle( nKey, nFlags, oGet, nMode, oDlg )
+
+   oDlg:cTitle( LblTitle( nMode ) + " Proveedor : " + Rtrim( oGet:VarGet() ) + Chr( nKey ) )
+
+RETURN NIL
+
+
+
+
+
+
+
+FUNCTION cPrvCta( cCodPrv, dbfProvee )
+
+   local oBlock
+   local oError
+    local cText        := ""
+   local lClose   := .F.
+
+   oBlock         := ErrorBlock( {| oError | ApoloBreak( oError ) } )
+   BEGIN SEQUENCE
+
+   if Empty( dbfProvee )
+      dbUseArea( .T., ( cDriver() ), ( cPatPrv() + "PROVEE.DBF" ), ( cCheckArea( "PROVEE", @dbfProvee ) ), if(.T. .OR. .F., !.F., NIL), .F.,, )
+      if !lAIS() ; ordListAdd( ( cPatPrv() + "PROVEE.CDX" ) ) ; else ; ordSetFocus( 1 ) ; end
+      lClose      := .T.
+   end
+
+   if dbSeekInOrd( cCodPrv, "Cod", dbfProvee )
+      cText       := ( dbfProvee )->SubCta
+   end
+
+   RECOVER USING oError
+
+      msgStop( "Imposible abrir todas las bases de datos " + Chr(13)+Chr(10) + ErrorMessage( oError ) )
+
+   end
+
+   ErrorBlock( oBlock )
+
+   if lClose
+        ( dbfProvee )->( dbCloseArea() )
+   end
+
+RETURN cText
+
+
+
+
+
+
+
+FUNCTION cPrvCtaVta( cCodPrv, dbfProvee )
+
+   local oBlock
+   local oError
+    local cText        := ""
+   local lClose   := .F.
+
+   oBlock         := ErrorBlock( {| oError | ApoloBreak( oError ) } )
+   BEGIN SEQUENCE
+
+   if Empty( dbfProvee )
+      dbUseArea( .T., ( cDriver() ), ( cPatPrv() + "PROVEE.DBF" ), ( cCheckArea( "PROVEE", @dbfProvee ) ), if(.T. .OR. .F., !.F., NIL), .F.,, )
+      if !lAIS() ; ordListAdd( ( cPatPrv() + "PROVEE.CDX" ) ) ; else ; ordSetFocus( 1 ) ; end
+      lClose      := .T.
+   end
+
+   if dbSeekInOrd( cCodPrv , "Cod", dbfProvee )
+      cText       := ( dbfProvee )->CtaVenta
+   end
+
+   RECOVER USING oError
+
+      msgStop( "Imposible abrir todas las bases de datos " + Chr(13)+Chr(10) + ErrorMessage( oError ) )
+
+   end
+
+   ErrorBlock( oBlock )
+
+   if lClose
+        ( dbfProvee )->( dbCloseArea() )
+   end
+
+RETURN cText
+
+
+
+
+
+
+
+FUNCTION cPrvFPago( cCodPrv, dbfProvee )
+
+   local oBlock
+   local oError
+    local cAreaAnt := Alias()
+   local cText    := Space( 2 )
+   local lClose   := .F.
+
+   oBlock            := ErrorBlock( {| oError | ApoloBreak( oError ) } )
+   BEGIN SEQUENCE
+
+    IF dbfProvee == NIL
+      dbUseArea( .T., ( cDriver() ), ( cPatPrv() + "PROVEE.DBF" ), ( cCheckArea( "PROVEE", @dbfProvee ) ), if(.T. .OR. .F., !.F., NIL), .F.,, )
+      if !lAIS() ; ordListAdd( ( cPatPrv() + "PROVEE.CDX" ) ) ; else ; ordSetFocus( 1 ) ; end
+        lClose = .T.
+    end
+
+    IF (dbfProvee)->( DbSeek( Rjust( cCodPrv, "0" ) ) )
+        cText := (dbfProvee)->FPAGO
+    end
+
+   RECOVER USING oError
+
+      msgStop( "Imposible abrir todas las bases de datos " + Chr(13)+Chr(10) + ErrorMessage( oError ) )
+
+   end
+
+   ErrorBlock( oBlock )
+
+    IF lClose
+        ( dbfProvee )->( dbCloseArea() )
+    end
+
+    IF cAreaAnt <> ""
+        dbSelectArea( ( cAreaAnt ) )
+    end
+
+RETURN cText
+
+
+
+
+
+
+
+FUNCTION cPrvCodSnd( cCodPrv, dbfProvee )
+
+   local oBlock
+   local oError
+    local cAreaAnt := Alias()
+    local cText        := ""
+    local lClose     := .F.
+
+   oBlock            := ErrorBlock( {| oError | ApoloBreak( oError ) } )
+   BEGIN SEQUENCE
+
+    IF dbfProvee == NIL
+      dbUseArea( .T., ( cDriver() ), ( cPatPrv() + "PROVEE.DBF" ), ( cCheckArea( "PROVEE", @dbfProvee ) ), if(.T. .OR. .F., !.F., NIL), .F.,, )
+      if !lAIS() ; ordListAdd( ( cPatPrv() + "PROVEE.CDX" ) ) ; else ; ordSetFocus( 1 ) ; end
+        lClose = .T.
+    end
+
+    IF (dbfProvee)->( dbSeek( cCodPrv ) )
+        cText := (dbfProvee)->CCODSND
+    end
+
+   RECOVER USING oError
+
+      msgStop( "Imposible abrir todas las bases de datos " + Chr(13)+Chr(10) + ErrorMessage( oError ) )
+
+   end
+
+   ErrorBlock( oBlock )
+
+    IF lClose
+        ( dbfProvee )->( dbCloseArea() )
+    end
+
+    IF cAreaAnt <> ""
+        dbSelectArea( ( cAreaAnt ) )
+    end
+
+RETURN cText
+
+
+
+STATIC FUNCTION CnfPrv()
+
+    local oDlg
+   local cIniCli  := cPatEmp() + "Provee.Ini"
+   local oCombo
+   local cCombo   := ""
+   local oSay
+   local oGroup
+
+   oDlg = TDialog():New(,,,, "Configurar campos definibles", "CNF_DEF_CLI",, .F.,,,,,, .F.,,,,,, .F., )
+
+
+
+        TGetHlp():ReDefine( 110, { | u | If( PCount()==0, aIniCli[ 1 ], aIniCli[ 1 ]:= u ) }, oDlg,,,,,,,,, .F.,,, .F., .F.,,,,,, nil,,, )
+
+
+
+        TGetHlp():ReDefine( 120, { | u | If( PCount()==0, aIniCli[ 2 ], aIniCli[ 2 ]:= u ) }, oDlg,,,,,,,,, .F.,,, .F., .F.,,,,,, nil,,, )
+
+
+
+        TGetHlp():ReDefine( 130, { | u | If( PCount()==0, aIniCli[ 3 ], aIniCli[ 3 ]:= u ) }, oDlg,,,,,,,,, .F.,,, .F., .F.,,,,,, nil,,, )
+
+
+
+        TGetHlp():ReDefine( 140, { | u | If( PCount()==0, aIniCli[ 4 ], aIniCli[ 4 ]:= u ) }, oDlg,,,,,,,,, .F.,,, .F., .F.,,,,,, nil,,, )
+
+
+
+        TGetHlp():ReDefine( 150, { | u | If( PCount()==0, aIniCli[ 5 ], aIniCli[ 5 ]:= u ) }, oDlg,,,,,,,,, .F.,,, .F., .F.,,,,,, nil,,, )
+
+
+
+        TGetHlp():ReDefine( 160, { | u | If( PCount()==0, aIniCli[ 6 ], aIniCli[ 6 ]:= u ) }, oDlg,,,,,,,,, .F.,,, .F., .F.,,,,,, nil,,, )
+
+
+
+        TGetHlp():ReDefine( 170, { | u | If( PCount()==0, aIniCli[ 7 ], aIniCli[ 7 ]:= u ) }, oDlg,,,,,,,,, .F.,,, .F., .F.,,,,,, nil,,, )
+
+
+
+        TGetHlp():ReDefine( 180, { | u | If( PCount()==0, aIniCli[ 8 ], aIniCli[ 8 ]:= u ) }, oDlg,,,,,,,,, .F.,,, .F., .F.,,,,,, nil,,, )
+
+
+
+        TGetHlp():ReDefine( 190, { | u | If( PCount()==0, aIniCli[ 9 ], aIniCli[ 9 ]:= u ) }, oDlg,,,,,,,,, .F.,,, .F., .F.,,,,,, nil,,, )
+
+
+
+        TGetHlp():ReDefine( 200, { | u | If( PCount()==0, aIniCli[ 10], aIniCli[ 10]:= u ) }, oDlg,,,,,,,,, .F.,,, .F., .F.,,,,,, nil,,, )
+
+
+
+
+      oCombo := TComboBox():ReDefine( 210, { | u | If( PCount()==0, cCombo, cCombo:= u ) }, { "" }, oDlg,,,,,,, .F.,,,,,, )
+
+      oSay := TSay():ReDefine( 220,, oDlg,,,, .F.,, .F., .F. )
+
+      oGroup := TGroup():ReDefine( 230,, oDlg,,,, .T. )
+
+
+
+
+      TButton():ReDefine( 1, {||( WrtIniPrv( aIniCli, cIniCli ), oDlg:end( 1 ) )}, oDlg,,, .F.,,,, .F. )
+
+
+
+
+        TButton():ReDefine( 2, {||( oDlg:end() )}, oDlg,,, .F.,,,, .F. )
+
+   oDlg:AddFastKey( 116, {|| WrtIniPrv( aIniCli, cIniCli ), oDlg:end( 1 ) } )
+
+   oDlg:bStart := {|| oCombo:Hide(), oSay:Hide(), oGroup:Hide() }
+    oDlg:Activate( oDlg:bLClicked, oDlg:bMoved, oDlg:bPainted, .T.,,,, oDlg:bRClicked,,, )
+
+RETURN NIL
+
+
+
+FUNCTION LoaIniPrv( cPath, cIniCli )
+
+    local n
+    local oIniCli
+
+   IIF( cPath == nil, cPath := cPatEmp(), ) ;
+   IIF( cIniCli == nil, cIniCli := cPath + "Provee.Ini", ) ;
+
+   aIniCli           := array( 10 )
+
+
+
+
+
+
+    oIniCli := TIni():New( cIniCli )
+
+      aIniCli[ 1 ] := oIniCli:Get( "campos", "1", Space( 50 ), aIniCli[ 1 ] )
+      aIniCli[ 2 ] := oIniCli:Get( "campos", "2", Space( 50 ), aIniCli[ 2 ] )
+      aIniCli[ 3 ] := oIniCli:Get( "campos", "3", Space( 50 ), aIniCli[ 3 ] )
+      aIniCli[ 4 ] := oIniCli:Get( "campos", "4", Space( 50 ), aIniCli[ 4 ] )
+      aIniCli[ 5 ] := oIniCli:Get( "campos", "5", Space( 50 ), aIniCli[ 5 ] )
+      aIniCli[ 6 ] := oIniCli:Get( "campos", "6", Space( 50 ), aIniCli[ 6 ] )
+      aIniCli[ 7 ] := oIniCli:Get( "campos", "7", Space( 50 ), aIniCli[ 7 ] )
+      aIniCli[ 8 ] := oIniCli:Get( "campos", "8", Space( 50 ), aIniCli[ 8 ] )
+      aIniCli[ 9 ] := oIniCli:Get( "campos", "9", Space( 50 ), aIniCli[ 9 ] )
+      aIniCli[ 10] := oIniCli:Get( "campos", "10", Space( 50 ), aIniCli[ 10] )
+
+
+
+    FOR n := 1 TO 10
+        aIniCli[ n ] := padr( aIniCli[ n ], 50 )
+    NEXT
+
+RETURN ( aIniCli )
+
+
+
+Static Function WrtIniPrv( aIniCli, cIniCli )
+
+    WritePProString( "campos", "1", aIniCli[ 1 ], cIniCli )
+    WritePProString( "campos", "2", aIniCli[ 2 ], cIniCli )
+    WritePProString( "campos", "3", aIniCli[ 3 ], cIniCli )
+    WritePProString( "campos", "4", aIniCli[ 4 ], cIniCli )
+    WritePProString( "campos", "5", aIniCli[ 5 ], cIniCli )
+    WritePProString( "campos", "6", aIniCli[ 6 ], cIniCli )
+    WritePProString( "campos", "7", aIniCli[ 7 ], cIniCli )
+    WritePProString( "campos", "8", aIniCli[ 8 ], cIniCli )
+    WritePProString( "campos", "9", aIniCli[ 9 ], cIniCli )
+    WritePProString( "campos", "10",aIniCli[ 10], cIniCli )
+
+Return nil
+
+
+
+Static Function StartEdtRec( aTmp, aGet, oValPnt )
+
+    local n
+
+   for n := 1 to 10
+      if Empty( Rtrim( aIniCli[ n ] ) ) .AND. !Empty( aGet[ ( dbfProvee )->( fieldpos( "CUSRDEF" + rjust( str( n ), "0", 2 ) ) ) ] )
+         aGet[ ( dbfProvee )->( fieldpos( "CUSRDEF" + rjust( str( n ), "0", 2 ) ) ) ]:hide()
+      end
+   next
+
+
+
+
+
+   oRTF:LoadAsRTF( aTmp[ 70 ] )
+
+   EvalGet( aGet )
+
+Return nil
+
+
+
+FUNCTION EdtPrv( cCodPrv, lOpenBrowse )
+
+   local nLevel         := nLevelUsr( "01032" )
+
+   IIF( lOpenBrowse == nil, lOpenBrowse := .F., ) ;
+
+   if nAnd( nLevel, 1 ) <> 0 .OR. nAnd( nLevel, 4 ) == 0
+      msgStop( "Acceso no permitido." )
+      return .T.
+   end
+
+   if lOpenBrowse
+
+      if Provee()
+         if dbSeekInOrd( cCodPrv, "Cod", dbfProvee )
+            oWndBrw:RecEdit()
+         end
+      end
+
+   else
+
+      if OpenFiles( .T. )
+         if dbSeekInOrd( cCodPrv, "Cod", dbfProvee )
+            WinEdtRec( nil, bEdit, dbfProvee )
+         end
+         CloseFiles()
+      end
+
+   end
+
+RETURN .T.
+
+
+
+FUNCTION AppPrv( lOpenBrowse )
+
+   local nLevel         := nLevelUsr( "01032" )
+
+   IIF( lOpenBrowse == nil, lOpenBrowse := .F., ) ;
+
+   if nAnd( nLevel, 1 ) <> 0 .OR. nAnd( nLevel, 2 ) == 0
+      msgStop( "Acceso no permitido." )
+      return .T.
+   end
+
+   if lOpenBrowse
+
+      if Provee()
+         oWndBrw:RecAdd()
+      end
+
+   else
+
+      if OpenFiles( .T. )
+         WinAppRec( nil, bEdit, dbfProvee )
+         CloseFiles()
+      end
+
+   end
+
+RETURN .T.
+
+
+
+Function InfProveedor( cCodPrv, oBrw )
+
+   local nLevel   := nLevelUsr( "01034" )
+
+   if nAnd( nLevel, 1 ) <> 0 .OR. nAnd( nLevel, 4 ) == 0
+      msgStop( "Acceso no permitido." )
+      return .T.
+   end
+
+   if !OpenFiles( .T. )
+      CloseFiles()
+      return nil
+   end
+
+
+
+   if ( dbfProvee )->( dbSeek( cCodPrv ) )
+      BrwComPrv( cCodPrv, ( dbfProvee )->Titulo, dbfDiv, dbfIva )
+   else
+      MsgStop( "No se encuentra proveedor" )
+   end
+
+
+
+   if oBrw <> nil
+      oBrw:Refresh()
+   end
+
+   CloseFiles()
+
+RETURN .T.
+
+
+
+_HB_CLASS TProveedorSenderReciver ; UTILITY FUNCTION TProveedorSenderReciver(...); static s_oClass ; local oClassInstance ; local nScope ; nScope := 1 ; if s_oClass == NIL ; s_oClass := IIF(.F.,, HBClass():New( "TProveedorSenderReciver" , {TSenderReciverItem():classh} ) ) ; ;
+
+   _HB_MEMBER CreateData(); IIF( .F., s_oClass:ModMethod( "CreateData", @TProveedorSenderReciver_CreateData(), nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ), s_oClass:AddMethod( "CreateData", @TProveedorSenderReciver_CreateData(), nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ));
+
+   _HB_MEMBER RestoreData(); IIF( .F., s_oClass:ModMethod( "RestoreData", @TProveedorSenderReciver_RestoreData(), nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ), s_oClass:AddMethod( "RestoreData", @TProveedorSenderReciver_RestoreData(), nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ));
+
+   _HB_MEMBER SendData(); IIF( .F., s_oClass:ModMethod( "SendData", @TProveedorSenderReciver_SendData(), nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ), s_oClass:AddMethod( "SendData", @TProveedorSenderReciver_SendData(), nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ));
+
+   _HB_MEMBER ReciveData(); IIF( .F., s_oClass:ModMethod( "ReciveData", @TProveedorSenderReciver_ReciveData(), nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ), s_oClass:AddMethod( "ReciveData", @TProveedorSenderReciver_ReciveData(), nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ));
+
+   _HB_MEMBER Process(); IIF( .F., s_oClass:ModMethod( "Process", @TProveedorSenderReciver_Process(), nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ), s_oClass:AddMethod( "Process", @TProveedorSenderReciver_Process(), nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ));
+
+; IF .F. ; __clsActive(s_oClass:hClass) ; s_oClass:Refresh() ; ELSE ; s_oClass:Create() ; END ; oClassInstance := __clsInst( s_oClass:hClass ) ; IF __ObjHasMsg( oClassInstance, "InitClass" ); oClassInstance:InitClass( hb_aParams() ) ; END ; ELSE ; oClassInstance := __clsInst( s_oClass:hClass ) ; END ; IF PCount() > 0 ; DIVERT TO (@DivertConstructorCall()) OF s_oClass ; END ; RETURN oClassInstance AS CLASS TProveedorSenderReciver ;
+
+
+
+UTILITY STATIC function TProveedorSenderReciver_CreateData() ; local Self AS CLASS TProveedorSenderReciver := QSelf() AS CLASS TProveedorSenderReciver
+
+   local oBlock
+   local oError
+   local lSnd        := .F.
+   local tmpPrv
+   local cFileName
+
+   if ::oSender:lServer
+      cFileName      := "Prv" + StrZero( ::nGetNumberToSend(), 6 ) + ".All"
+   else
+      cFileName      := "Prv" + StrZero( ::nGetNumberToSend(), 6 ) + "." + RetSufEmp()
+   end
+
+   ::oSender:SetText( "Enviando proveedores" )
+
+   oBlock            := ErrorBlock( {| oError | ApoloBreak( oError ) } )
+   BEGIN SEQUENCE
+
+   dbUseArea( .T., ( cDriver() ), ( cPatPrv() + "Provee.Dbf" ), ( cCheckArea( "Provee", @dbfProvee ) ), if(.T. .OR. .F., !.F., NIL), .F.,, )
+   if !lAIS() ; ordListAdd( ( cPatPrv() + "Provee.Cdx" ) ) ; else ; ordSetFocus( 1 ) ; end
+   ( dbfProvee )->( OrdSetFocus( "lSndInt" ) )
+
+
+
+
+
+   mkProvee( cPatSnd() )
+   rxProvee( cPatSnd() )
+
+   dbUseArea( .T., cDriver(), cPatSnd() + "Provee.Dbf", cCheckArea( "Provee", @tmpPrv ), .F. )
+   if !( tmpPrv )->( neterr() )
+      ( tmpPrv )->( ordListAdd( cPatSnd() + "Provee.Cdx" ) )
+   end
+
+   if !Empty( ::oSender:oMtr )
+      ::oSender:oMtr:nTotal := ( dbfProvee )->( lastrec() )
+   end
+
+   ( dbfProvee )->( dbGoTop() )
+   while !( dbfProvee )->( eof() )
+
+      if ( dbfProvee )->lSndInt
+
+         lSnd  := .T.
+
+         dbPass( dbfProvee, tmpPrv, .T. )
+         ::oSender:SetText( AllTrim( ( dbfProvee )->Cod ) + "; " + ( dbfProvee )->Titulo )
+
+      end
+
+      SysRefresh()
+
+      ( dbfProvee )->( dbSkip() )
+
+      if !Empty( ::oSender:oMtr )
+         ::oSender:oMtr:Set( ( dbfProvee )->( OrdKeyNo() ) )
+      end
+
+   end
+
+   RECOVER USING oError
+
+      msgStop( "Imposible abrir todas las bases de datos " + Chr(13)+Chr(10) + ErrorMessage( oError ) )
+
+   end
+
+   ErrorBlock( oBlock )
+
+   ( tmpPrv    )->( dbCloseArea() )
+
+
+
+
+
+   if lSnd
+
+      ::oSender:SetText( "Comprimiendo proveedores" )
+
+      if ::oSender:lZipData( cFileName )
+         ::oSender:SetText( "Ficheros comprimidos" )
+      else
+         ::oSender:SetText( "ERROR al crear fichero comprimido" )
+      end
+
+   else
+
+      ::oSender:SetText( "No hay proveedores para enviar" )
+
+   end
+
+Return ( Self )
+
+
+
+UTILITY STATIC function TProveedorSenderReciver_RestoreData() ; local Self AS CLASS TProveedorSenderReciver := QSelf() AS CLASS TProveedorSenderReciver
+
+   local oBlock
+   local oError
+   local dbfProvee
+
+   if ::lSuccesfullSend
+
+      oBlock            := ErrorBlock( {| oError | ApoloBreak( oError ) } )
+      BEGIN SEQUENCE
+
+      dbUseArea( .T., ( cDriver() ), ( cPatPrv() + "Provee.Dbf" ), ( cCheckArea( "Provee", @dbfProvee ) ), if(.T. .OR. .F., !.F., NIL), .F.,, )
+      if !lAIS() ; ordListAdd( ( cPatPrv() + "Provee.Cdx" ) ) ; else ; ordSetFocus( 1 ) ; end
+      ( dbfProvee )->( OrdSetFocus( "lSndInt" ) )
+
+      while !( dbfProvee )->( eof() )
+
+         if ( dbfProvee )->lSndInt .AND. dbLock( dbfProvee )
+            ( dbfProvee )->lSndInt := .F.
+            ( dbfProvee )->( dbUnlock() )
+         end
+
+         ( dbfProvee )->( dbSkip() )
+
+      end
+
+   RECOVER USING oError
+
+      msgStop( "Imposible abrir todas las bases de datos " + Chr(13)+Chr(10) + ErrorMessage( oError ) )
+
+   end
+
+   ErrorBlock( oBlock )
+
+      ( dbfProvee )->( dbCloseArea() )
+
+   end
+
+Return ( Self )
+
+
+
+UTILITY STATIC function TProveedorSenderReciver_SendData() ; local Self AS CLASS TProveedorSenderReciver := QSelf() AS CLASS TProveedorSenderReciver
+
+   local cFileName
+
+   if ::oSender:lServer
+      cFileName      := "Prv" + StrZero( ::nGetNumberToSend(), 6 ) + ".All"
+   else
+      cFileName      := "Prv" + StrZero( ::nGetNumberToSend(), 6 ) + "." + RetSufEmp()
+   end
+
+
+
+
+
+   if file( cPatOut() + cFileName )
+
+
+
+
+
+      if FtpSndFile( cPatOut() + cFileName, cFileName, 2000, ::oSender )
+         ::IncNumberToSend()
+         ::lSuccesfullSend := .T.
+         ::oSender:SetText( "Ficheros de proveedores enviados " + cFileName )
+      else
+         ::oSender:SetText( "ERROR fichero de proveedores no enviado" )
+      end
+   end
+
+Return Self
+
+
+
+UTILITY STATIC function TProveedorSenderReciver_ReciveData() ; local Self AS CLASS TProveedorSenderReciver := QSelf() AS CLASS TProveedorSenderReciver
+
+   local n
+   local aExt
+
+
+
+
+
+   if ::oSender:lServer
+      aExt              := aRetDlgEmp()
+   else
+      aExt              := { "All" }
+   end
+
+   ::oSender:SetText( "Recibiendo proveedores" )
+
+   for n := 1 to len( aExt )
+      FtpGetFiles( "Prv*." + aExt[ n ], cPatIn(), 2000, ::oSender )
+   next
+
+   ::oSender:SetText( "Proveedores recibidos" )
+
+Return Self
+
+
+
+UTILITY STATIC function TProveedorSenderReciver_Process() ; local Self AS CLASS TProveedorSenderReciver := QSelf() AS CLASS TProveedorSenderReciver
+
+   local m
+   local tmpPrv
+   local aFiles               := Directory( cPatIn() + "Prv*.*" )
+   local oBlock
+   local oError
+
+
+
+
+
+   for m := 1 TO len( aFiles )
+
+      ::oSender:SetText( "Procesando fichero : " + aFiles[ m, 1 ] )
+
+      oBlock                  := ErrorBlock( {| oError | ApoloBreak( oError ) } )
+
+      BEGIN SEQUENCE
+
+      if fSize( cPatIn() + aFiles[ m, 1 ] ) > 0
+
+
+
+
+
+         if ::oSender:lUnZipData( cPatIn() + aFiles[ m, 1 ] )
+
+            if lExistTable( cPatSnd() + "Provee.Dbf" )
+
+               dbUseArea( .T., cDriver(), cPatSnd() + "Provee.Dbf", cCheckArea( "Provee", @tmpPrv ), .F. )
+
+               dbUseArea( .T., ( cDriver() ), ( cPatPrv() + "Provee.Dbf" ), ( cCheckArea( "Provee", @dbfProvee ) ), if(.T. .OR. .F., !.F., NIL), .F.,, )
+               if !lAIS() ; ordListAdd( ( cPatPrv() + "Provee.Cdx" ) ) ; else ; ordSetFocus( 1 ) ; end
+
+               if !Empty( ::oSender:oMtr )
+                  ::oSender:oMtr:nTotal := ( tmpPrv )->( OrdKeyCount() )
+               end
+
+               ( tmpPrv )->( dbGoTop() )
+               while !( tmpPrv )->( eof() )
+
+                  if ( dbfProvee )->( dbSeek( ( tmpPrv )->Cod ) )
+                     if !::oSender:lServer
+                        dbPass( tmpPrv, dbfProvee, .F. )
+                        ::oSender:SetText( "Reemplazado : " + AllTrim( ( dbfProvee )->Cod ) + "; " + ( dbfProvee )->Titulo )
+                     else
+                        ::oSender:SetText( "Desestimado : " + AllTrim( ( dbfProvee )->Cod ) + "; " + ( dbfProvee )->Titulo )
+                     end
+                  else
+                        dbPass( tmpPrv, dbfProvee, .T. )
+                        ::oSender:SetText( "Añadido     : " + AllTrim( ( dbfProvee )->Cod ) + "; " + ( dbfProvee )->Titulo )
+                  end
+
+                  ( tmpPrv )->( dbSkip() )
+
+                  if !Empty( ::oSender:oMtr )
+                     ::oSender:oMtr:Set( ( tmpPrv )->( OrdKeyNo() ) )
+                  end
+
+                  SysRefresh()
+
+               end
+
+               ( tmpPrv    )->( dbCloseArea() )
+
+               ::oSender:AppendFileRecive( aFiles[ m, 1 ] )
+
+            else
+
+               ::oSender:SetText( "Ficheros no encontrados" )
+
+               if lExistTable( cPatSnd() + "Provee.Dbf" )
+                  ::oSender:SetText( "Falta" + cPatSnd() + "Provee.Dbf" )
+               end
+
+            end
+
+         else
+
+            ::oSender:SetText( "Error en ficheros comprimidos" )
+
+         end
+
+      else
+
+         ::oSender:SetText( "Fichero vacio" )
+
+      end
+
+      RECOVER USING oError
+
+         ( tmpPrv    )->( dbCloseArea() )
+
+         ::oSender:SetText( "Error procesando fichero " + aFiles[ m, 1 ] )
+         ::oSender:SetText( ErrorMessage( oError ) )
+
+      end
+
+      ErrorBlock( oBlock )
+
+   next
+
+Return Self
+
+
+
+Static Function EdtRecMenu( aTmp, aGet, dbfProvee, dbfArticulo, oBrw, nMode, oDlg )
+
+   oMenu := MenuBegin( .F.,,, .F., .F. )
+
+      MenuAddItem( "&1. Rotor",, .F.,,,,,,,,, .F.,,, .F. )
+
+         MenuBegin( .F.,,, .F., .F. )
+
+
+
+
+
+
+            MenuAddItem( "&1. Informe del proveedor", "Muestra el informe del artículo", .F.,, {|oMenuItem|( BrwComPrv( ( dbfProvee )->Cod, ( dbfProvee )->Titulo, dbfDiv, dbfIva, dbfProvee ) )},, "info16",,,,, .F.,,, .F. )
+
+
+
+            if !lExternal
+
+            MenuAddItem()
+
+
+
+
+            MenuAddItem( "&2. Añadir pedido a proveedor", "Añade un pedido a proveedor", .F.,, {|oMenuItem|( lPreSave( aTmp, aGet, dbfProvee, dbfArticulo, oBrw, nMode, oDlg ), PedPrv( nil, nil, ( dbfProvee )->Cod, nil ) )},, "Clipboard_empty_businessman_16",,,,, .F.,,, .F. )
+
+
+
+
+            MenuAddItem( "&3. Añadir albarán de proveedor", "Añade un albarán de proveedor", .F.,, {|oMenuItem|( lPreSave( aTmp, aGet, dbfProvee, dbfArticulo, oBrw, nMode, oDlg ), AlbPrv( nil, nil, ( dbfProvee )->Cod, nil ) )},, "Document_plain_businessman_16",,,,, .F.,,, .F. )
+
+
+
+
+            MenuAddItem( "&4. Añadir factura de proveedor", "Añade una factura de proveedor", .F.,, {|oMenuItem|( lPreSave( aTmp, aGet, dbfProvee, dbfArticulo, oBrw, nMode, oDlg ), FacPrv( nil, nil, ( dbfProvee )->Cod, nil ) )},, "Document_businessman_16",,,,, .F.,,, .F. )
+
+            end
+
+         MenuEnd()
+
+   MenuEnd()
+
+   oDlg:SetMenu( oMenu )
+
+Return ( oMenu )
+
+
+
+Static Function EndEdtRecMenu()
+
+Return( oMenu:End() )
+
+
+
+Function nTotImpPrv( dbfTmpPrv, dbfDiv, lPicture )
+
+   local nCalculo
+
+   IIF( lPicture == nil, lPicture := .F., ) ;
+
+   nCalculo          := ( dbfTmpPrv )->nImpPrv
+
+   if ( dbfTmpPrv )->nDtoPrv <> 0
+      nCalculo       -= nCalculo * ( dbfTmpPrv )->nDtoPrv / 100
+   end
+
+   if ( dbfTmpPrv )->nDtoPrm <> 0
+      nCalculo       -= nCalculo * ( dbfTmpPrv )->nDtoPrm / 100
+   end
+
+Return ( if( lPicture, Trans( nCalculo, cPirDiv( cDivEmp(), dbfDiv ) ), nCalculo ) )
+
+
+
+Function nTmpImpPrv( aTmp, dbfTmpPrv, dbfDiv, lPicture )
+
+   local nCalculo
+
+   IIF( lPicture == nil, lPicture := .F., ) ;
+
+   nCalculo          := aTmp[ ( dbfTmpPrv )->( FieldPos( "nImpPrv" ) ) ]
+
+   if aTmp[ ( dbfTmpPrv )->( FieldPos( "nDtoPrv" ) ) ] <> 0
+      nCalculo       -= nCalculo * aTmp[ ( dbfTmpPrv )->( FieldPos( "nDtoPrv" ) ) ] / 100
+   end
+
+   if aTmp[ ( dbfTmpPrv )->( FieldPos( "nDtoPrm" ) ) ] <> 0
+      nCalculo       -= nCalculo * aTmp[ ( dbfTmpPrv )->( FieldPos( "nDtoPrm" ) ) ] / 100
+   end
+
+Return ( if( lPicture, Trans( nCalculo, cPirDiv( cDivEmp(), dbfDiv ) ), nCalculo ) )
+
+
+
+Function lTmpImpPrv( aTmp, dbfTmpPrv, dbfDiv, oTotal )
+
+   if oTotal <> nil
+      oTotal:cText( nTmpImpPrv( aTmp, dbfTmpPrv, dbfDiv, .F. ) )
+   end
+
+Return ( .T. )
+
+
+
+
+
+Static Function EdtBnc( aTmp, aGet, dbfTmpBnc, oBrw, bWhen, bValid, nMode, cCodPrv )
+
+   local oDlg
+   local oBmpDiv
+   local oSayPai
+   local cSayPai
+   local cOldCtaBnc  := aTmp[ ( dbfTmpBnc )->( Fieldpos( "cEntBnc" ) ) ] + aTmp[ ( dbfTmpBnc )->( Fieldpos( "cSucBnc" ) ) ] + aTmp[ ( dbfTmpBnc )->( Fieldpos( "cDigBnc" ) ) ] + aTmp[ ( dbfTmpBnc )->( Fieldpos( "cCtaBnc" ) ) ]
+   local lDis        := .F.
+
+
+
+
+
+   if nMode == 1
+      ( dbfTmpBnc )->( dbGoTop() )
+      if ( dbfTmpBnc )->( Eof() )
+         aTmp[ ( dbfTmpBnc )->( FieldPos( "lBncDef" ) ) ] := .T.
+         lDis        := .T.
+      end
+   end
+
+   oDlg = TDialog():New(,,,, LblTitle( nMode ) + "banco de cliente", "Banco",, .F.,,,,,, .F.,,,,,, .F., )
+
+
+
+
+
+
+
+      aGet[ ( dbfTmpBnc )->( FieldPos( "cCodBnc" ) ) ] := TGetHlp():ReDefine( 200, { | u | If( PCount()==0, aTmp[ ( dbfTmpBnc )->( FieldPos( "cCodBnc" ) ) ], aTmp[ ( dbfTmpBnc )->( FieldPos( "cCodBnc" ) ) ]:= u ) }, oDlg,,,,,,,,, .F., {||     ( nMode <> 3 )},, .F., .F.,,,,, {|Self|( lCargaBanco( aGet, aTmp, nMode ) )}, nil, "LUPA",, )
+
+
+
+
+
+      aGet[ ( dbfTmpBnc )->( FieldPos( "cDirBnc" ) ) ] := TGetHlp():ReDefine( 210, { | u | If( PCount()==0, aTmp[ ( dbfTmpBnc )->( FieldPos( "cDirBnc" ) ) ], aTmp[ ( dbfTmpBnc )->( FieldPos( "cDirBnc" ) ) ]:= u ) }, oDlg,,,,,,,,, .F., {||     ( nMode <> 3 )},, .F., .F.,,,,,, nil,,, )
+
+
+
+
+
+      aGet[ ( dbfTmpBnc )->( FieldPos( "cPobBnc" ) ) ] := TGetHlp():ReDefine( 220, { | u | If( PCount()==0, aTmp[ ( dbfTmpBnc )->( FieldPos( "cPobBnc" ) ) ], aTmp[ ( dbfTmpBnc )->( FieldPos( "cPobBnc" ) ) ]:= u ) }, oDlg,,,,,,,,, .F., {||     ( nMode <> 3 )},, .F., .F.,,,,,, nil,,, )
+
+
+
+
+
+      aGet[ ( dbfTmpBnc )->( FieldPos( "cCPBnc" ) ) ] := TGetHlp():ReDefine( 230, { | u | If( PCount()==0, aTmp[ ( dbfTmpBnc )->( FieldPos( "cCPBnc" ) ) ], aTmp[ ( dbfTmpBnc )->( FieldPos( "cCPBnc" ) ) ]:= u ) }, oDlg,,,,,,,,, .F., {||     ( nMode <> 3 )},, .F., .F.,,,,,, nil,,, )
+
+
+
+
+
+      aGet[ ( dbfTmpBnc )->( FieldPos( "cProBnc" ) ) ] := TGetHlp():ReDefine( 240, { | u | If( PCount()==0, aTmp[ ( dbfTmpBnc )->( FieldPos( "cProBnc" ) ) ], aTmp[ ( dbfTmpBnc )->( FieldPos( "cProBnc" ) ) ]:= u ) }, oDlg,,,,,,,,, .F., {||     ( nMode <> 3 )},, .F., .F.,,,,,, nil,,, )
+
+
+
+
+
+
+
+
+
+      aGet[ ( dbfTmpBnc )->( FieldPos( "cPaiBnc" ) ) ] := TGetHlp():ReDefine( 300, { | u | If( PCount()==0, aTmp[ ( dbfTmpBnc )->( FieldPos( "cPaiBnc" ) ) ], aTmp[ ( dbfTmpBnc )->( FieldPos( "cPaiBnc" ) ) ]:= u ) }, oDlg,,, {||    ( oPais:Existe( aGet[ ( dbfTmpBnc )->( FieldPos( "cPaiBnc" ) ) ], oSayPai, "cNomPai", .T., .T., "0" ) )}, "N/W*",,,,, .F., {||     ( nMode <> 3 )},, .F., .F.,,,,, {|Self|( oPais:Buscar( aGet[ ( dbfTmpBnc )->( FieldPos( "cPaiBnc" ) ) ] ) )}, nil, "LUPA",, )
+
+
+
+
+      oBmpDiv := TBitmap():ReDefine( 301, "BAN_EURO",, oDlg,,, .F., .F.,,, .F.,,, .F. )
+
+
+
+
+
+
+      oSayPai := TGetHlp():ReDefine( 302, { | u | If( PCount()==0, cSayPai, cSayPai:= u ) }, oDlg,,,, "N/W*",,,,, .F., {||     ( .F. )},, .F., .T.,,,,,, nil,,, )
+
+
+
+
+
+      aGet[ ( dbfTmpBnc )->( FieldPos( "cTlfBnc" ) ) ] := TGetHlp():ReDefine( 250, { | u | If( PCount()==0, aTmp[ ( dbfTmpBnc )->( FieldPos( "cTlfBnc" ) ) ], aTmp[ ( dbfTmpBnc )->( FieldPos( "cTlfBnc" ) ) ]:= u ) }, oDlg,,,,,,,,, .F., {||     ( nMode <> 3 )},, .F., .F.,,,,,, nil,,, )
+
+
+
+
+
+      aGet[ ( dbfTmpBnc )->( FieldPos( "cFaxBnc" ) ) ] := TGetHlp():ReDefine( 260, { | u | If( PCount()==0, aTmp[ ( dbfTmpBnc )->( FieldPos( "cFaxBnc" ) ) ], aTmp[ ( dbfTmpBnc )->( FieldPos( "cFaxBnc" ) ) ]:= u ) }, oDlg,,,,,,,,, .F., {||     ( nMode <> 3 )},, .F., .F.,,,,,, nil,,, )
+
+
+
+
+
+      aGet[ ( dbfTmpBnc )->( FieldPos( "cPContBnc" ) ) ] := TGetHlp():ReDefine( 270, { | u | If( PCount()==0, aTmp[ ( dbfTmpBnc )->( FieldPos( "cPContBnc" ) ) ], aTmp[ ( dbfTmpBnc )->( FieldPos( "cPContBnc" ) ) ]:= u ) }, oDlg,,,,,,,,, .F., {||     ( nMode <> 3 )},, .F., .F.,,,,,, nil,,, )
+
+
+
+
+
+
+      aGet[ ( dbfTmpBnc )->( FieldPos( "cEntBnc" ) ) ] := TGetHlp():ReDefine( 310, { | u | If( PCount()==0, aTmp[ ( dbfTmpBnc )->( FieldPos( "cEntBnc" ) ) ], aTmp[ ( dbfTmpBnc )->( FieldPos( "cEntBnc" ) ) ]:= u ) }, oDlg,,, {||    ( lCalcDC( aTmp[ ( dbfTmpBnc )->( FieldPos( "cEntBnc" ) ) ], aTmp[ ( dbfTmpBnc )->( FieldPos( "cSucBnc" ) ) ], aTmp[ ( dbfTmpBnc )->( FieldPos( "cDigBnc" ) ) ], aTmp[ ( dbfTmpBnc )->( FieldPos( "cCtaBnc" ) ) ], aGet[ ( dbfTmpBnc )->( FieldPos( "cDigBnc" ) ) ] ) )},,,,,, .F., {||     ( nMode <> 3 )},, .F., .F.,,,,,, nil,,, )
+
+
+
+
+
+
+      aGet[ ( dbfTmpBnc )->( FieldPos( "cSucBnc" ) ) ] := TGetHlp():ReDefine( 320, { | u | If( PCount()==0, aTmp[ ( dbfTmpBnc )->( FieldPos( "cSucBnc" ) ) ], aTmp[ ( dbfTmpBnc )->( FieldPos( "cSucBnc" ) ) ]:= u ) }, oDlg,,, {||    ( lCalcDC( aTmp[ ( dbfTmpBnc )->( FieldPos( "cEntBnc" ) ) ], aTmp[ ( dbfTmpBnc )->( FieldPos( "cSucBnc" ) ) ], aTmp[ ( dbfTmpBnc )->( FieldPos( "cDigBnc" ) ) ], aTmp[ ( dbfTmpBnc )->( FieldPos( "cCtaBnc" ) ) ], aGet[ ( dbfTmpBnc )->( FieldPos( "cDigBnc" ) ) ] ) )},,,,,, .F., {||     ( nMode <> 3 )},, .F., .F.,,,,,, nil,,, )
+
+
+
+
+
+
+      aGet[ ( dbfTmpBnc )->( FieldPos( "cDigBnc" ) ) ] := TGetHlp():ReDefine( 330, { | u | If( PCount()==0, aTmp[ ( dbfTmpBnc )->( FieldPos( "cDigBnc" ) )  ], aTmp[ ( dbfTmpBnc )->( FieldPos( "cDigBnc" ) )  ]:= u ) }, oDlg,,, {||    ( lCalcDC( aTmp[ ( dbfTmpBnc )->( FieldPos( "cEntBnc" ) ) ], aTmp[ ( dbfTmpBnc )->( FieldPos( "cSucBnc" ) ) ], aTmp[ ( dbfTmpBnc )->( FieldPos( "cDigBnc" ) ) ], aTmp[ ( dbfTmpBnc )->( FieldPos( "cCtaBnc" ) ) ], aGet[ ( dbfTmpBnc )->( FieldPos( "cDigBnc" ) ) ] ) )},,,,,, .F., {||     ( nMode <> 3 )},, .F., .F.,,,,,, nil,,, )
+
+
+
+
+
+
+
+      aGet[ ( dbfTmpBnc )->( FieldPos( "cCtaBnc" ) ) ] := TGetHlp():ReDefine( 340, { | u | If( PCount()==0, aTmp[ ( dbfTmpBnc )->( FieldPos( "cCtaBnc" ) ) ], aTmp[ ( dbfTmpBnc )->( FieldPos( "cCtaBnc" ) ) ]:= u ) }, oDlg,, "9999999999", {||    ( lCalcDC( aTmp[ ( dbfTmpBnc )->( FieldPos( "cEntBnc" ) ) ], aTmp[ ( dbfTmpBnc )->( FieldPos( "cSucBnc" ) ) ], aTmp[ ( dbfTmpBnc )->( FieldPos( "cDigBnc" ) ) ], aTmp[ ( dbfTmpBnc )->( FieldPos( "cCtaBnc" ) ) ], aGet[ ( dbfTmpBnc )->( FieldPos( "cDigBnc" ) ) ] ) )},,,,,, .F., {||     ( nMode <> 3 )},, .F., .F.,,,,,, nil,,, )
+
+
+
+
+
+
+      aGet[ ( dbfTmpBnc )->( FieldPos( "nSalIni" ) ) ] := TGetHlp():ReDefine( 350, { | u | If( PCount()==0, aTmp[ ( dbfTmpBnc )->( FieldPos( "nSalIni" ) ) ], aTmp[ ( dbfTmpBnc )->( FieldPos( "nSalIni" ) ) ]:= u ) }, oDlg,, cPorDiv( cDivEmp(), dbfDiv ),,,,,,, .F., {||     ( nMode <> 3 )},, .F., .F.,,,,,, nil,,, )
+
+
+
+
+
+      aGet[ ( dbfTmpBnc )->( FieldPos( "lBncDef" ) ) ] := TCheckBox():ReDefine( 290, { | u | If( PCount()==0, aTmp[ ( dbfTmpBnc )->( FieldPos( "lBncDef" ) ) ], aTmp[ ( dbfTmpBnc )->( FieldPos( "lBncDef" ) ) ]:= u ) }, oDlg,,,,,,, .F., {||     ( nMode <> 3 .AND. !lDis )}, .F. )
+
+
+
+
+
+
+
+
+
+   TButton():ReDefine( 500, {||( EndEdtBnc( aTmp, aGet, dbfTmpBnc, oBrw, nMode, oDlg, cCodPrv, bWhen, cOldCtaBnc ) )}, oDlg,,, .F., {||     ( nMode <> 3 )},,, .F. )
+
+
+
+
+
+      TButton():ReDefine( 550, {||( oDlg:End() )}, oDlg,,, .F.,,,, .T. )
+
+
+
+
+
+   if nMode <> 3
+      oDlg:AddFastKey( 116, {|| EndEdtBnc( aTmp, aGet, dbfTmpBnc, oBrw, nMode, oDlg, cCodPrv, bWhen, cOldCtaBnc ) } )
+   end
+
+   oDlg:bStart := {|| if( aTmp[ ( dbfTmpBnc )->( FieldPos( "lBncDef" ) ) ], aGet[ ( dbfTmpBnc )->( FieldPos( "lBncDef" ) ) ]:Disable(), aGet[ ( dbfTmpBnc )->( FieldPos( "lBncDef" ) ) ]:Enable() ) }
+
+   oDlg:Activate( oDlg:bLClicked, oDlg:bMoved, oDlg:bPainted, .T.,,,, oDlg:bRClicked,,, )
+
+   if !Empty( oBmpDiv )
+      oBmpDiv:end()
+   end
+
+Return ( oDlg:nResult == 1 )
+
+
+
+
+
+
+Static Function EndEdtBnc( aTmp, aGet, dbfTmpBnc, oBrw, nMode, oDlg, cCodPrv, aTmpPrv, cOldCtaBnc )
+
+   local nRec
+
+   aTmp[ ( dbfTmpBnc )->( FieldPos( "cCodPrv" ) ) ]   := cCodPrv
+
+   if cOldCtaBnc <> aTmp[ ( dbfTmpBnc )->( FieldPos( "cEntBnc" ) ) ] + aTmp[ ( dbfTmpBnc )->( FieldPos( "cSucBnc" ) ) ] + aTmp[ ( dbfTmpBnc )->( FieldPos( "cDigBnc" ) ) ] + aTmp[ ( dbfTmpBnc )->( FieldPos( "cCtaBnc" ) ) ]
+
+
+
+
+
+      if Empty( aTmp[ ( dbfTmpBnc )->( FieldPos( "cEntBnc" ) ) ] ) .OR. Empty( aTmp[ ( dbfTmpBnc )->( FieldPos( "cSucBnc" ) ) ] ) .OR. Empty( aTmp[ ( dbfTmpBnc )->( FieldPos( "cDigBnc" ) ) ] ) .OR. Empty( aTmp[ ( dbfTmpBnc )->( FieldPos( "cCtaBnc" ) ) ] ) .OR. Len( AllTrim( aTmp[ ( dbfTmpBnc )->( FieldPos( "cCtaBnc" ) ) ] ) ) < 10
+
+         msgStop( "La cuenta bancaria es incorrecta" )
+
+         aGet[ ( dbfTmpBnc )->( FieldPos( "cCtaBnc" ) ) ]:SetFocus()
+
+         return .F.
+
+      end
+
+      nRec     := ( dbfTmpBnc )->( Recno() )
+
+      if ( dbfTmpBnc )->( dbSeek( cCodPrv + aTmp[ ( dbfTmpBnc )->( FieldPos( "cEntBnc" ) ) ] + aTmp[ ( dbfTmpBnc )->( FieldPos( "cSucBnc" ) ) ] + aTmp[ ( dbfTmpBnc )->( FieldPos( "cDigBnc" ) ) ] + aTmp[ ( dbfTmpBnc )->( FieldPos( "cCtaBnc" ) ) ] ) )
+
+         msgStop( "La cuenta bancaria ya existe" )
+
+         aGet[ ( dbfTmpBnc )->( FieldPos( "cEntBnc" ) ) ]:SetFocus()
+
+         ( dbfTmpBnc )->( dbGoTo( nRec ) )
+
+         return .F.
+
+      end
+
+      ( dbfTmpBnc )->( dbGoTo( nRec ) )
+
+   end
+
+   WinGather( aTmp, aGet, dbfTmpBnc, oBrw, nMode, , .F. )
+
+
+
+
+
+   if aTmp[ ( dbfTmpBnc )->( FieldPos( "lBncDef" ) ) ]
+      lSelDefBnc( aTmp, dbfTmpBnc )
+   end
+
+Return ( oDlg:end( 1 ) )
+
+
+
+
+
+
+Static Function lCargaBanco( aGet, aTmp, nMode )
+
+   local cBanco   := ""
+   local cCuenta  := ""
+
+   oBanco:Buscar( aGet[ ( dbfTmpBnc )->( FieldPos( "cCodBnc" ) ) ], "cCodBnc" )
+
+   cBanco         := aTmp[ ( dbfTmpBnc )->( FieldPos( "cCodBnc" ) ) ]
+
+   aGet[ ( dbfTmpBnc )->( FieldPos( "cCodBnc" ) ) ]:cText( oRetFld( cBanco, oBanco:oDbf, "cNomBnc" ) )
+   aGet[ ( dbfTmpBnc )->( FieldPos( "cDirBnc" ) ) ]:cText( oRetFld( cBanco, oBanco:oDbf, "cDirBnc" ) )
+   aGet[ ( dbfTmpBnc )->( FieldPos( "cPobBnc" ) ) ]:cText( oRetFld( cBanco, oBanco:oDbf, "cPobBnc" ) )
+   aGet[ ( dbfTmpBnc )->( FieldPos( "cProBnc" ) ) ]:cText( oRetFld( cBanco, oBanco:oDbf, "cProBnc" ) )
+   aGet[ ( dbfTmpBnc )->( FieldPos( "cCPBnc"  ) ) ]:cText( oRetFld( cBanco, oBanco:oDbf, "cPosBnc" ) )
+   aGet[ ( dbfTmpBnc )->( FieldPos( "cTlfBnc" ) ) ]:cText( oRetFld( cBanco, oBanco:oDbf, "cTlfBnc" ) )
+   aGet[ ( dbfTmpBnc )->( FieldPos( "cFaxBnc" ) ) ]:cText( oRetFld( cBanco, oBanco:oDbf, "cFaxBnc" ) )
+   aGet[ ( dbfTmpBnc )->( FieldPos( "cPContBnc")) ]:cText( oRetFld( cBanco, oBanco:oDbf, "cPcoBnc" ) )
+   aGet[ ( dbfTmpBnc )->( FieldPos( "cEntBnc" ) ) ]:cText( oRetFld( cBanco, oBanco:oDbf, "cEntBnc" ) )
+   aGet[ ( dbfTmpBnc )->( FieldPos( "cSucBnc" ) ) ]:cText( oRetFld( cBanco, oBanco:oDbf, "cOfiBnc" ) )
+   aGet[ ( dbfTmpBnc )->( FieldPos( "cDigBnc" ) ) ]:cText( Space( 2 ) )
+   aGet[ ( dbfTmpBnc )->( FieldPos( "cCtaBnc" ) ) ]:cText( Space( 10 ) )
+
+Return .T.
+
+
+
+
+
+Static Function lSelDefBnc( aTmp, dbfTmpBnc, oBrw )
+
+   local nRec  := ( dbfTmpBnc )->( RecNo() )
+
+   ( dbfTmpBnc )->( dbGoTop() )
+
+   while !( dbfTmpBnc )->( Eof() )
+
+      if ( dbfTmpBnc )->cCtaBnc <> aTmp[ ( dbfTmpBnc )->( FieldPos( "cCtaBnc" ) ) ]
+         ( dbfTmpBnc )->lBncDef := .F.
+      else
+         ( dbfTmpBnc )->lBncDef := .T.
+      end
+
+      ( dbfTmpBnc )->( dbSkip() )
+
+   end
+
+   ( dbfTmpBnc )->( dbGoto( nRec ) )
+
+   if !Empty( oBrw )
+      oBrw:Refresh()
+   end
+
+Return .T.
+
+
+
+
+Static Function DelBnc( aTmp, oBrwBnc, dbfTmpBnc )
+
+
+
+   if !( dbfTmpBnc )->lBncDef
+
+      DbDelRec( oBrwBnc, dbfTmpBnc )
+
+   else
+
+      if DbDelRec( oBrwBnc, dbfTmpBnc )
+
+
+
+
+         ( dbfTmpBnc )->( dbGoTop() )
+
+         if !( dbfTmpBnc )->( Eof() )
+            ( dbfTmpBnc )->lBncDef  := .T.
+         end
+
+      end
+
+   end
+
+   oBrwBnc:Refresh()
+
+Return ( .T. )
+
+
+
+Function SynProvee( cPath )
+
+   IIF( cPath == nil, cPath := cPatEmp(), ) ;
+
+   if OpenFiles( .F., cPath )
+
+      while !( dbfBanco )->( eof() )
+         if Len( Rtrim( ( dbfBanco )->cCtaBnc ) ) >= 20
+            if dbLock( dbfBanco )
+               ( dbfBanco )->cEntBnc   := SubStr( ( dbfBanco )->cCtaBnc,  1,  4 )
+               ( dbfBanco )->cSucBnc   := SubStr( ( dbfBanco )->cCtaBnc,  5,  4 )
+               ( dbfBanco )->cDigBnc   := SubStr( ( dbfBanco )->cCtaBnc,  9,  2 )
+               ( dbfBanco )->cCtaBnc   := SubStr( ( dbfBanco )->cCtaBnc, 11, 10 )
+               ( dbfBanco )->( dbUnLock() )
+            end
+         end
+         ( dbfBanco )->( dbSkip() )
+      end
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+      CloseFiles()
+
+   end
+
+Return ( nil )
+
+
+
+
+
+Function cRefArtPrv( cCodArt, cCodPrv, dbfArtPrv )
+
+   local nRec        := ( dbfArtPrv )->( RecNo())
+   local nOrdAnt     := ( dbfArtPrv )->( OrdSetFocus( "CCODPRV" ) )
+   local cRefArtPrv  := ""
+
+   if ( dbfArtPrv )->( dbSeek( cCodPrv + cCodArt ) )
+      cRefArtPrv     := ( dbfArtPrv )->cRefPrv
+   end
+
+   ( dbfArtPrv )->( OrdSetFocus( nOrdAnt ) )
+   ( dbfArtPrv )->( dbGoTo( nRec ))
+
+Return cRefArtPrv
+
+
+
+
+
+
+_HB_CLASS TProveedorLabelGenerator ; UTILITY FUNCTION TProveedorLabelGenerator(...); static s_oClass ; local oClassInstance ; local nScope ; nScope := 1 ; if s_oClass == NIL ; s_oClass := IIF(.F.,, HBClass():New( "TProveedorLabelGenerator" , { HBObject():Classh } ) ) ;
+
+   _HB_MEMBER { oDlg} ; IIF( !.F., s_oClass:AddMultiData(,, nScope + IIF( .F., 32, 0 ), { "oDlg" }, .F., .F. ), )
+   _HB_MEMBER { oFld} ; IIF( !.F., s_oClass:AddMultiData(,, nScope + IIF( .F., 32, 0 ), { "oFld" }, .F., .F. ), )
+
+   _HB_MEMBER { oCriterio} ; IIF( !.F., s_oClass:AddMultiData(,, nScope + IIF( .F., 32, 0 ), { "oCriterio" }, .F., .F. ), )
+   _HB_MEMBER { cCriterio} ; IIF( !.F., s_oClass:AddMultiData(,, nScope + IIF( .F., 32, 0 ), { "cCriterio" }, .F., .F. ), )
+   _HB_MEMBER { aCriterio} ; IIF( !.F., s_oClass:AddMultiData(,, nScope + IIF( .F., 32, 0 ), { "aCriterio" }, .F., .F. ), )
+
+   _HB_MEMBER { oGrupoInicio} ; IIF( !.F., s_oClass:AddMultiData(,, nScope + IIF( .F., 32, 0 ), { "oGrupoInicio" }, .F., .F. ), )
+   _HB_MEMBER { cGrupoInicio} ; IIF( !.F., s_oClass:AddMultiData(,, nScope + IIF( .F., 32, 0 ), { "cGrupoInicio" }, .F., .F. ), )
+
+   _HB_MEMBER { oGrupoFin} ; IIF( !.F., s_oClass:AddMultiData(,, nScope + IIF( .F., 32, 0 ), { "oGrupoFin" }, .F., .F. ), )
+   _HB_MEMBER { cGrupoFin} ; IIF( !.F., s_oClass:AddMultiData(,, nScope + IIF( .F., 32, 0 ), { "cGrupoFin" }, .F., .F. ), )
+
+   _HB_MEMBER { oFechaInicio} ; IIF( !.F., s_oClass:AddMultiData(,, nScope + IIF( .F., 32, 0 ), { "oFechaInicio" }, .F., .F. ), )
+   _HB_MEMBER { dFechaInicio} ; IIF( !.F., s_oClass:AddMultiData(,, nScope + IIF( .F., 32, 0 ), { "dFechaInicio" }, .F., .F. ), )
+
+   _HB_MEMBER { oFechaFin} ; IIF( !.F., s_oClass:AddMultiData(,, nScope + IIF( .F., 32, 0 ), { "oFechaFin" }, .F., .F. ), )
+   _HB_MEMBER { dFechaFin} ; IIF( !.F., s_oClass:AddMultiData(,, nScope + IIF( .F., 32, 0 ), { "dFechaFin" }, .F., .F. ), )
+
+   _HB_MEMBER { oInicio} ; IIF( !.F., s_oClass:AddMultiData(,, nScope + IIF( .F., 32, 0 ), { "oInicio" }, .F., .F. ), )
+   _HB_MEMBER { oFin} ; IIF( !.F., s_oClass:AddMultiData(,, nScope + IIF( .F., 32, 0 ), { "oFin" }, .F., .F. ), )
+
+   _HB_MEMBER { oFormatoLabel} ; IIF( !.F., s_oClass:AddMultiData(,, nScope + IIF( .F., 32, 0 ), { "oFormatoLabel" }, .F., .F. ), )
+   _HB_MEMBER { cFormatoLabel} ; IIF( !.F., s_oClass:AddMultiData(,, nScope + IIF( .F., 32, 0 ), { "cFormatoLabel" }, .F., .F. ), )
+
+   _HB_MEMBER { nFilaInicio} ; IIF( !.F., s_oClass:AddMultiData(,, nScope + IIF( .F., 32, 0 ), { "nFilaInicio" }, .F., .F. ), )
+   _HB_MEMBER { nColumnaInicio} ; IIF( !.F., s_oClass:AddMultiData(,, nScope + IIF( .F., 32, 0 ), { "nColumnaInicio" }, .F., .F. ), )
+
+   _HB_MEMBER { cFileTmpLabel} ; IIF( !.F., s_oClass:AddMultiData(,, nScope + IIF( .F., 32, 0 ), { "cFileTmpLabel" }, .F., .F. ), )
+   _HB_MEMBER { cAreaTmpLabel} ; IIF( !.F., s_oClass:AddMultiData(,, nScope + IIF( .F., 32, 0 ), { "cAreaTmpLabel" }, .F., .F. ), )
+
+   _HB_MEMBER { oBrwLabel} ; IIF( !.F., s_oClass:AddMultiData(,, nScope + IIF( .F., 32, 0 ), { "oBrwLabel" }, .F., .F. ), )
+
+   _HB_MEMBER { nCantidadLabels} ; IIF( !.F., s_oClass:AddMultiData(,, nScope + IIF( .F., 32, 0 ), { "nCantidadLabels" }, .F., .F. ), )
+   _HB_MEMBER { nUnidadesLabels} ; IIF( !.F., s_oClass:AddMultiData(,, nScope + IIF( .F., 32, 0 ), { "nUnidadesLabels" }, .F., .F. ), )
+
+   _HB_MEMBER { oMtrLabel} ; IIF( !.F., s_oClass:AddMultiData(,, nScope + IIF( .F., 32, 0 ), { "oMtrLabel" }, .F., .F. ), )
+   _HB_MEMBER { nMtrLabel} ; IIF( !.F., s_oClass:AddMultiData(,, nScope + IIF( .F., 32, 0 ), { "nMtrLabel" }, .F., .F. ), )
+
+   _HB_MEMBER { oFilter} ; IIF( !.F., s_oClass:AddMultiData(,, nScope + IIF( .F., 32, 0 ), { "oFilter" }, .F., .F. ), )
+
+   _HB_MEMBER { oBtnFilter} ; IIF( !.F., s_oClass:AddMultiData(,, nScope + IIF( .F., 32, 0 ), { "oBtnFilter" }, .F., .F. ), )
+   _HB_MEMBER { oBtnSiguiente} ; IIF( !.F., s_oClass:AddMultiData(,, nScope + IIF( .F., 32, 0 ), { "oBtnSiguiente" }, .F., .F. ), )
+   _HB_MEMBER { oBtnAnterior} ; IIF( !.F., s_oClass:AddMultiData(,, nScope + IIF( .F., 32, 0 ), { "oBtnAnterior" }, .F., .F. ), )
+   _HB_MEMBER { oBtnCancel} ; IIF( !.F., s_oClass:AddMultiData(,, nScope + IIF( .F., 32, 0 ), { "oBtnCancel" }, .F., .F. ), )
+
+   _HB_MEMBER { aSearch} ; IIF( !.F., s_oClass:AddMultiData(,, nScope + IIF( .F., 32, 0 ), { "aSearch" }, .F., .F. ), )
+
+   _HB_MEMBER Create(); IIF( .F., s_oClass:ModMethod( "Create", @TProveedorLabelGenerator_Create(), nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ), s_oClass:AddMethod( "Create", @TProveedorLabelGenerator_Create(), nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ));
+   _HB_MEMBER End(); IIF( .F., s_oClass:ModMethod( "End", @TProveedorLabelGenerator_End(), nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ), s_oClass:AddMethod( "End", @TProveedorLabelGenerator_End(), nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ));
+
+   _HB_MEMBER lDefault(); IIF( .F., s_oClass:ModMethod( "lDefault", @TProveedorLabelGenerator_lDefault(), nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ), s_oClass:AddMethod( "lDefault", @TProveedorLabelGenerator_lDefault(), nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ));
+
+   _HB_MEMBER BotonAnterior(); IIF( .F., s_oClass:ModMethod( "BotonAnterior", @TProveedorLabelGenerator_BotonAnterior(), nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ), s_oClass:AddMethod( "BotonAnterior", @TProveedorLabelGenerator_BotonAnterior(), nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ));
+
+   _HB_MEMBER BotonSiguiente(); IIF( .F., s_oClass:ModMethod( "BotonSiguiente", @TProveedorLabelGenerator_BotonSiguiente(), nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ), s_oClass:AddMethod( "BotonSiguiente", @TProveedorLabelGenerator_BotonSiguiente(), nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ));
+
+   _HB_MEMBER PutLabel(); IIF( .F., s_oClass:ModMethod( "PutLabel", @TProveedorLabelGenerator_PutLabel(), nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ), s_oClass:AddMethod( "PutLabel", @TProveedorLabelGenerator_PutLabel(), nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ));
+
+   _HB_MEMBER SelectAllLabels(); IIF( .F., s_oClass:ModMethod( "SelectAllLabels", @TProveedorLabelGenerator_SelectAllLabels(), nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ), s_oClass:AddMethod( "SelectAllLabels", @TProveedorLabelGenerator_SelectAllLabels(), nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ));
+
+   _HB_MEMBER SelectCriterioLabels(); IIF( .F., s_oClass:ModMethod( "SelectCriterioLabels", @TProveedorLabelGenerator_SelectCriterioLabels(), nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ), s_oClass:AddMethod( "SelectCriterioLabels", @TProveedorLabelGenerator_SelectCriterioLabels(), nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ));
+
+   _HB_MEMBER AddLabel(); IIF( .F., s_oClass:ModMethod( "AddLabel", @TProveedorLabelGenerator_AddLabel(), nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ), s_oClass:AddMethod( "AddLabel", @TProveedorLabelGenerator_AddLabel(), nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ));
+
+   _HB_MEMBER DelLabel(); IIF( .F., s_oClass:ModMethod( "DelLabel", @TProveedorLabelGenerator_DelLabel(), nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ), s_oClass:AddMethod( "DelLabel", @TProveedorLabelGenerator_DelLabel(), nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ));
+
+   _HB_MEMBER EditLabel(); IIF( .F., s_oClass:ModMethod( "EditLabel", @TProveedorLabelGenerator_EditLabel(), nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ), s_oClass:AddMethod( "EditLabel", @TProveedorLabelGenerator_EditLabel(), nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ));
+
+   _HB_MEMBER FilterLabel(); IIF( .F., s_oClass:ModMethod( "FilterLabel", @TProveedorLabelGenerator_FilterLabel(), nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ), s_oClass:AddMethod( "FilterLabel", @TProveedorLabelGenerator_FilterLabel(), nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ));
+
+   _HB_MEMBER ChangeCriterio(); IIF( .F., s_oClass:ModMethod( "ChangeCriterio", @TProveedorLabelGenerator_ChangeCriterio(), nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ), s_oClass:AddMethod( "ChangeCriterio", @TProveedorLabelGenerator_ChangeCriterio(), nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ));
+
+   _HB_MEMBER lPrintLabels(); IIF( .F., s_oClass:ModMethod( "lPrintLabels", @TProveedorLabelGenerator_lPrintLabels(), nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ), s_oClass:AddMethod( "lPrintLabels", @TProveedorLabelGenerator_lPrintLabels(), nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ));
+
+   _HB_MEMBER InitLabel( oLabel); IIF( .F., s_oClass:ModMethod( "InitLabel", @TProveedorLabelGenerator_InitLabel(), nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ), s_oClass:AddMethod( "InitLabel", @TProveedorLabelGenerator_InitLabel(), nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ));
+
+   _HB_MEMBER lCreateTemporal(); IIF( .F., s_oClass:ModMethod( "lCreateTemporal", @TProveedorLabelGenerator_lCreateTemporal(), nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ), s_oClass:AddMethod( "lCreateTemporal", @TProveedorLabelGenerator_lCreateTemporal(), nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ));
+
+   _HB_MEMBER PrepareTemporal( oFr); IIF( .F., s_oClass:ModMethod( "PrepareTemporal", @TProveedorLabelGenerator_PrepareTemporal(), nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ), s_oClass:AddMethod( "PrepareTemporal", @TProveedorLabelGenerator_PrepareTemporal(), nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ));
+
+   _HB_MEMBER DestroyTemporal(); IIF( .F., s_oClass:ModMethod( "DestroyTemporal", @TProveedorLabelGenerator_DestroyTemporal(), nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ), s_oClass:AddMethod( "DestroyTemporal", @TProveedorLabelGenerator_DestroyTemporal(), nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ));
+
+   _HB_MEMBER SelectColumn( oCombo); IIF( .F., s_oClass:ModMethod( "SelectColumn", @TProveedorLabelGenerator_SelectColumn(), nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ), s_oClass:AddMethod( "SelectColumn", @TProveedorLabelGenerator_SelectColumn(), nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ));
+
+; IF .F. ; __clsActive(s_oClass:hClass) ; s_oClass:Refresh() ; ELSE ; s_oClass:Create() ; END ; oClassInstance := __clsInst( s_oClass:hClass ) ; IF __ObjHasMsg( oClassInstance, "InitClass" ); oClassInstance:InitClass( hb_aParams() ) ; END ; ELSE ; oClassInstance := __clsInst( s_oClass:hClass ) ; END ; IF PCount() > 0 ; DIVERT TO (@DivertConstructorCall()) OF s_oClass ; END ; RETURN oClassInstance AS CLASS TProveedorLabelGenerator ;
+
+
+
+UTILITY STATIC function TProveedorLabelGenerator_lDefault() ; local Self AS CLASS TProveedorLabelGenerator := QSelf() AS CLASS TProveedorLabelGenerator
+
+   local oError
+   local oBlock
+   local lError         := .F.
+
+   oBlock               := ErrorBlock( {| oError | ApoloBreak( oError ) } )
+   BEGIN SEQUENCE
+
+   ::cCriterio          := "Ningún criterio"
+   ::aCriterio          := { "Ningún criterio", "Grupo proveedores", "Fecha modificación" }
+
+   ::cGrupoInicio       := ( dbfProvee )->cCodGrp
+   ::cGrupoFin          := ( dbfProvee )->cCodGrp
+
+   ::dFechaInicio       := Ctod( "01/" + Str( Month( Date() ), 2 ) + "/" + Str( Year( Date() ), 4 ) )
+   ::dFechaFin          := GetSysDate()
+
+   ::cFormatoLabel      := GetPvProfString( "Etiquetas", "Proveedor", Space( 3 ), cPatEmp() + "Empresa.Ini" )
+   if len( ::cFormatoLabel ) < 3
+      ::cFormatoLabel   := Space( 3 )
+   end
+
+   ::nMtrLabel          := 0
+
+   ::nFilaInicio        := 1
+   ::nColumnaInicio     := 1
+
+   ::nCantidadLabels    := 1
+   ::nUnidadesLabels    := 1
+
+   ::aSearch            := { "Código", "Nombre" }
+
+   RECOVER USING oError
+
+      lError            := .T.
+
+      msgStop( "Error en la creación de generador de etiquetas" + Chr(13)+Chr(10) + ErrorMessage( oError ) )
+
+   end
+   ErrorBlock( oBlock )
+
+Return ( !lError )
+
+
+
+UTILITY STATIC function TProveedorLabelGenerator_Create() ; local Self AS CLASS TProveedorLabelGenerator := QSelf() AS CLASS TProveedorLabelGenerator
+
+   local oBtnPrp
+   local oGetOrd
+   local oCbxOrd
+   local cGetOrd     := Space( 100 )
+   local cCbxOrd     := "Código"
+   local aCbxOrd     := { "Código", "Nombre" }
+
+   if ::lDefault()
+
+      ::oDlg = TDialog():New(,,,,, "SelectLabels_0",, .F.,,,,,, .F.,,,,,, .F., )
+
+
+
+
+
+         ::oFld := TPages():Redefine( 10, ::oDlg, {"SelectLabels_4", "SelectLabels_2"},,,, )
+
+
+
+
+
+
+
+
+
+         TBitmap():ReDefine( 500, "EnvioEtiquetas",, ::oDlg,,, .F., .F.,,, .F.,,, .F. )
+
+
+
+         ::oCriterio := TComboBox():ReDefine( 90, { | u | If( PCount()==0, ::cCriterio, ::cCriterio:= u ) }, ::aCriterio, ::oFld:aDialogs[ 1 ],,,,,,, .F.,,,,,, )
+
+         ::oCriterio:bChange        := {|| ::ChangeCriterio() }
+
+
+
+
+
+         ::oGrupoInicio := TGetHlp():ReDefine( 100, { | u | If( PCount()==0, ::cGrupoInicio, ::cGrupoInicio:= u ) }, ::oFld:aDialogs[ 1 ],,,,,,,,, .F.,,, .F., .F.,,,,,, nil, "LUPA",, 101 )
+
+         ::oGrupoInicio:bValid    := {|| oGrpPrv:Existe( ::cGrupoInicio, ::oGrupoInicio:oHelpText, "cNomGrp", .T., .T., "0" ) }
+         ::oGrupoInicio:bHelp     := {|| oGrpPrv:Buscar( ::oGrupoInicio ) }
+
+
+
+         ::oInicio := TSay():ReDefine( 102,, ::oFld:aDialogs[1],,,, .F.,, .F., .F. )
+
+
+
+
+
+         ::oGrupoFin := TGetHlp():ReDefine( 110, { | u | If( PCount()==0, ::cGrupoFin, ::cGrupoFin:= u ) }, ::oFld:aDialogs[ 1 ],,,,,,,,, .F.,,, .F., .F.,,,,,, nil, "LUPA",, 111 )
+
+         ::oGrupoFin:bValid       := {|| oGrpPrv:Existe( ::cGrupoFin, ::oGrupoFin:oHelpText, "cNomGrp", .T., .T., "0" ) }
+         ::oGrupoFin:bHelp        := {|| oGrpPrv:Buscar( ::oGrupoFin ) }
+
+
+
+         ::oFin := TSay():ReDefine( 112,, ::oFld:aDialogs[1],,,, .F.,, .F., .F. )
+
+
+
+
+         ::oFechaInicio := TGetHlp():ReDefine( 120, { | u | If( PCount()==0, ::dFechaInicio, ::dFechaInicio:= u ) }, ::oFld:aDialogs[1],,,,,,,,, .F.,,, .F., .T.,,,,,, nil,,, )
+
+
+
+
+         ::oFechaFin := TGetHlp():ReDefine( 130, { | u | If( PCount()==0, ::dFechaFin, ::dFechaFin:= u ) }, ::oFld:aDialogs[1],,,,,,,,, .F.,,, .F., .T.,,,,,, nil,,, )
+
+
+
+
+
+         ::oFormatoLabel := TGetHlp():ReDefine( 160, { | u | If( PCount()==0, ::cFormatoLabel, ::cFormatoLabel:= u ) }, ::oFld:aDialogs[ 1 ],,,,,,,,, .F.,,, .F., .F.,,,,,, nil, "LUPA",, 161 )
+
+            ::oFormatoLabel:bValid  := {|| cDocumento( ::oFormatoLabel, ::oFormatoLabel:oHelpText, dbfDoc, "PL" ) }
+            ::oFormatoLabel:bHelp   := {|| BrwDocumento( ::oFormatoLabel, ::oFormatoLabel:oHelpText, "PL" ) }
+
+         TBtnBmp():ReDefine( 220, "Printer_pencil_16",,,,,{|| EdtDocumento( ::cFormatoLabel ) }, ::oFld:aDialogs[ 1 ], .F., , .F., "Modificar formato de etiquetas" )
+
+
+
+
+
+         TGetHlp():ReDefine( 180, { | u | If( PCount()==0, ::nFilaInicio, ::nFilaInicio:= u ) }, ::oFld:aDialogs[ 1 ],, "999",,,,,,, .F.,,, .F., .T.,,,,,, nil,,, )
+
+
+
+
+
+         TGetHlp():ReDefine( 190, { | u | If( PCount()==0, ::nColumnaInicio, ::nColumnaInicio:= u ) }, ::oFld:aDialogs[ 1 ],, "999",,,,,,, .F.,,, .F., .T.,,,,,, nil,,, )
+
+
+
+
+
+
+
+         TGetHlp():ReDefine( 210, { | u | If( PCount()==0, ::nUnidadesLabels, ::nUnidadesLabels:= u ) }, ::oFld:aDialogs[ 1 ],, "99999",,,,,,, .F.,,, .F., .T.,,, {||      1}, {||      99999},, nil,,, )
+
+
+
+
+
+
+
+
+
+         oGetOrd := TGetHlp():ReDefine( 200, { | u | If( PCount()==0, cGetOrd, cGetOrd:= u ) }, ::oFld:aDialogs[ 2 ],,,,,,,,, .F.,,, .F., .F.,,,,,, nil, "FIND",, )
+
+         oGetOrd:bChange   := {| nKey, nFlags, oGet | AutoSeek( nKey, nFlags, oGet, ::oBrwLabel, dbfProvee ) }
+         oGetOrd:bValid    := {|| ( dbfProvee )->( OrdScope( 0, nil ) ), ( dbfProvee )->( OrdScope( 1, nil ) ), ::oBrwLabel:Refresh(), .T. }
+
+
+
+
+
+         oCbxOrd := TComboBox():ReDefine( 210, { | u | If( PCount()==0, cCbxOrd, cCbxOrd:= u ) }, aCbxOrd, ::oFld:aDialogs[ 2 ],,,,,,, .F.,,,,,, )
+
+         oCbxOrd:bChange   := {|| ::SelectColumn( oCbxOrd ) }
+
+
+
+
+         TButton():ReDefine( 100, {||( ::PutLabel() )}, ::oFld:aDialogs[ 2 ],,, .F.,,,, .F. )
+
+
+
+
+         TButton():ReDefine( 110, {||( ::SelectAllLabels( .T. ) )}, ::oFld:aDialogs[ 2 ],,, .F.,,,, .F. )
+
+
+
+
+         TButton():ReDefine( 120, {||( ::SelectAllLabels( .F. ) )}, ::oFld:aDialogs[ 2 ],,, .F.,,,, .F. )
+
+
+
+
+         TButton():ReDefine( 130, {||( ::AddLabel() )}, ::oFld:aDialogs[ 2 ],,, .F.,,,, .F. )
+
+
+
+
+         TButton():ReDefine( 140, {||( ::DelLabel() )}, ::oFld:aDialogs[ 2 ],,, .F.,,,, .F. )
+
+
+
+
+         TButton():ReDefine( 150, {||( ::EditLabel() )}, ::oFld:aDialogs[ 2 ],,, .F.,,,, .F. )
+
+
+
+
+         TButton():ReDefine( 160, {||( WinEdtRec( ::oBrwLabel, bEdit, dbfProvee ) )}, ::oFld:aDialogs[ 2 ],,, .F.,,,, .F. )
+
+
+
+
+         TButton():ReDefine( 165, {||( WinZooRec( ::oBrwLabel, bEdit, dbfProvee ) )}, ::oFld:aDialogs[ 2 ],,, .F.,,,, .F. )
+
+
+
+
+         ::oBtnFilter := TButton():ReDefine( 170, {||( ::FilterLabel() )}, ::oFld:aDialogs[ 2 ],,, .F.,,,, .F. )
+
+
+
+
+         oBtnPrp := TButton():ReDefine( 220, {||( nil )}, ::oFld:aDialogs[ 2 ],,, .F.,,,, .F. )
+
+         ::oBrwLabel                   := TXBrowse():New( ::oFld:aDialogs[ 2 ] )
+
+         ::oBrwLabel:nMarqueeStyle     := 5
+         ::oBrwLabel:nColSel           := 2
+
+         ::oBrwLabel:lHScroll          := .F.
+         ::oBrwLabel:cAlias            := dbfProvee
+
+         ::oBrwLabel:bClrSel           := {|| { 0, ( 229 + ( 229 * 256 ) + ( 229 * 65536 ) ) } }
+         ::oBrwLabel:bClrSelFocus      := {|| { 0, ( 167 + ( 205 * 256 ) + ( 240 * 65536 ) ) } }
+         ::oBrwLabel:bLDblClick        := {|| ::PutLabel() }
+
+         ::oBrwLabel:CreateFromResource( 180 )
+
+         with object ( ::oBrwLabel:AddCol() )
+            :cHeader          := "Sl. Seleccionado"
+            :bStrData         := {|| "" }
+            :bEditValue       := {|| ( dbfProvee )->lLabel }
+            :nWidth           := 20
+            :SetCheck( { "Sel16", "Nil16" } )
+         end
+
+         with object ( ::oBrwLabel:AddCol() )
+            :cHeader          := "Código"
+            :cSortOrder       := "Cod"
+            :bEditValue       := {|| ( dbfProvee )->Cod }
+            :nWidth           := 80
+            :bLClickHeader    := {| nMRow, nMCol, nFlags, oCol | oCbxOrd:Set( oCol:cHeader ) }
+         end
+
+         with object ( ::oBrwLabel:AddCol() )
+            :cHeader          := "Nombre"
+            :cSortOrder       := "Titulo"
+            :bEditValue       := {|| ( dbfProvee )->Titulo }
+            :nWidth           := 280
+            :bLClickHeader    := {| nMRow, nMCol, nFlags, oCol | oCbxOrd:Set( oCol:cHeader ) }
+         end
+
+         with object ( ::oBrwLabel:AddCol() )
+            :cHeader          := "N. etiquetas"
+            :bEditValue       := {|| ( dbfProvee )->nLabel }
+            :cEditPicture     := "@E 99,999"
+            :nWidth           := 80
+            :nDataStrAlign    := 1
+            :nHeadStrAlign    := 1
+            :nEditType        := 1
+            :bOnPostEdit      := {|o,x| if( dbDialogLock( dbfProvee ), ( ( dbfProvee )->nLabel := x, ( dbfProvee )->( dbUnlock() ) ), ) }
+         end
+
+
+
+
+
+
+         ::oMtrLabel := TMeter():ReDefine( 190, { | u | If( PCount()==0, ::nMtrLabel, ::nMtrLabel:= u ) }, ( dbfProvee )->( lastrec() ), ::oFld:aDialogs[ 2 ], .F.,, "", .F.,,,, )
+
+         ::oMtrLabel:nClrText   := ( 128 + ( 255 * 256 ) + ( 0 * 65536 ) )
+         ::oMtrLabel:nClrBar    := ( 128 + ( 255 * 256 ) + ( 0 * 65536 ) )
+         ::oMtrLabel:nClrBText  := ( 128 + ( 255 * 256 ) + ( 0 * 65536 ) )
+
+
+
+
+
+
+
+
+         ::oBtnAnterior := TButton():ReDefine( 20, {||( ::BotonAnterior() )}, ::oDlg,,, .F.,,,, .F. )
+
+
+
+
+         ::oBtnSiguiente := TButton():ReDefine( 30, {||( ::BotonSiguiente() )}, ::oDlg,,, .F.,,,, .F. )
+
+
+
+
+         ::oBtnCancel := TButton():ReDefine( 2, {||( ::oDlg:End() )}, ::oDlg,,, .F.,,,, .F. )
+
+      ::oDlg:bStart  := {|| ::oBtnAnterior:Hide(), ::ChangeCriterio(), ::oFormatoLabel:lValid(), oBtnPrp:Hide() }
+
+      ::oDlg:Activate( ::oDlg:bLClicked, ::oDlg:bMoved, ::oDlg:bPainted, .T.,,,, ::oDlg:bRClicked,,, )
+
+      ::End()
+
+   end
+
+Return ( Self )
+
+
+
+UTILITY STATIC function TProveedorLabelGenerator_BotonAnterior() ; local Self AS CLASS TProveedorLabelGenerator := QSelf() AS CLASS TProveedorLabelGenerator
+
+   ::oFld:GoPrev()
+
+   ::oBtnAnterior:Hide()
+
+   SetWindowText( ::oBtnSiguiente:hWnd, "Siguien&te >" )
+
+Return ( Self )
+
+
+
+UTILITY STATIC function TProveedorLabelGenerator_BotonSiguiente() ; local Self AS CLASS TProveedorLabelGenerator := QSelf() AS CLASS TProveedorLabelGenerator
+
+   do case
+      case ::oFld:nOption == 1
+
+         if Empty( ::cFormatoLabel )
+
+            MsgStop( "Debe cumplimentar un formato de etiquetas" )
+
+         else
+
+            ::oFld:GoNext()
+            ::oBtnAnterior:Show()
+
+            if ::oCriterio:nAt <> 1
+               ::SelectCriterioLabels()
+            end
+
+            SetWindowText( ::oBtnSiguiente:hWnd, "&Terminar" )
+
+         end
+
+      case ::oFld:nOption == 2
+
+         if ::lPrintLabels()
+
+            SetWindowText( ::oBtnCancel:hWnd, "&Cerrar" )
+
+         end
+
+         ::oBrwLabel:Refresh()
+
+   end
+
+Return ( Self )
+
+
+
+UTILITY STATIC function TProveedorLabelGenerator_End() ; local Self AS CLASS TProveedorLabelGenerator := QSelf() AS CLASS TProveedorLabelGenerator
+
+   WritePProString( "Etiquetas", "Proveedor", ::cFormatoLabel, cPatEmp() + "Empresa.Ini" )
+
+Return ( Self )
+
+
+
+UTILITY STATIC function TProveedorLabelGenerator_PutLabel() ; local Self AS CLASS TProveedorLabelGenerator := QSelf() AS CLASS TProveedorLabelGenerator
+
+   if dbLock( dbfProvee )
+      ( dbfProvee )->lLabel := !( dbfProvee )->lLabel
+      ( dbfProvee )->( dbUnLock() )
+   end
+
+   ::oBrwLabel:Refresh()
+   ::oBrwLabel:SetFocus()
+
+Return ( Self )
+
+
+
+UTILITY STATIC function TProveedorLabelGenerator_SelectAllLabels( lSelect) ; local Self AS CLASS TProveedorLabelGenerator := QSelf() AS CLASS TProveedorLabelGenerator
+
+    local n            := 0
+   local nRecno   := ( dbfProvee )->( Recno() )
+
+    CursorWait()
+
+   ( dbfProvee )->( dbGoTop() )
+   while !( dbfProvee )->( eof() )
+
+      if dbLock( dbfProvee )
+         ( dbfProvee )->lLabel := lSelect
+         ( dbfProvee )->( dbUnLock() )
+      end
+
+      ( dbfProvee )->( dbSkip() )
+
+      ::oMtrLabel:Set( ++n )
+
+   end
+
+   ( dbfProvee )->( dbGoTo( nRecno ) )
+
+   ::oBrwLabel:Refresh()
+
+   ::oMtrLabel:Set( 0 )
+   ::oMtrLabel:Refresh()
+
+    CursorArrow()
+
+Return ( Self )
+
+
+
+UTILITY STATIC function TProveedorLabelGenerator_SelectCriterioLabels() ; local Self AS CLASS TProveedorLabelGenerator := QSelf() AS CLASS TProveedorLabelGenerator
+
+    local n            := 0
+   local nRecno   := ( dbfProvee )->( Recno() )
+
+    CursorWait()
+
+   ( dbfProvee )->( dbGoTop() )
+   while !( dbfProvee )->( eof() )
+
+      if dbLock( dbfProvee )
+
+         do case
+            case ::oCriterio:nAt == 2 .AND. ( dbfProvee )->cCodGrp >= ::cGrupoInicio .AND. ( dbfProvee )->cCodGrp <= ::cGrupoFin
+
+               ( dbfProvee )->lLabel := .T.
+               ( dbfProvee )->nLabel := ::nUnidadesLabels
+
+            case ::oCriterio:nAt == 3 .AND. ( dbfProvee )->dFecChg >= ::dFechaInicio .AND. ( dbfProvee )->dFecChg <= ::dFechaFin
+
+               ( dbfProvee )->lLabel := .T.
+               ( dbfProvee )->nLabel := ::nUnidadesLabels
+
+            otherwise
+
+               ( dbfProvee )->lLabel := .F.
+               ( dbfProvee )->nLabel := 1
+
+         end
+
+         ( dbfProvee )->( dbUnLock() )
+
+      end
+
+      ( dbfProvee )->( dbSkip() )
+
+      ::oMtrLabel:Set( ++n )
+
+   end
+
+   ( dbfProvee )->( dbGoTo( nRecno ) )
+
+   ::oBrwLabel:Refresh()
+
+   ::oMtrLabel:Set( 0 )
+   ::oMtrLabel:Refresh()
+
+    CursorArrow()
+
+Return ( Self )
+
+
+
+UTILITY STATIC function TProveedorLabelGenerator_AddLabel() ; local Self AS CLASS TProveedorLabelGenerator := QSelf() AS CLASS TProveedorLabelGenerator
+
+   if dbLock( dbfProvee )
+      ( dbfProvee )->nLabel++
+      ( dbfProvee )->( dbUnLock() )
+   end
+
+   ::oBrwLabel:Refresh()
+   ::oBrwLabel:SetFocus()
+
+Return ( Self )
+
+
+
+UTILITY STATIC function TProveedorLabelGenerator_DelLabel() ; local Self AS CLASS TProveedorLabelGenerator := QSelf() AS CLASS TProveedorLabelGenerator
+
+   if ( dbfProvee )->nLabel > 1
+      if dbLock( dbfProvee )
+         ( dbfProvee )->nLabel--
+         ( dbfProvee )->( dbUnLock() )
+      end
+   end
+
+   ::oBrwLabel:Refresh()
+   ::oBrwLabel:SetFocus()
+
+Return ( Self )
+
+
+
+UTILITY STATIC function TProveedorLabelGenerator_EditLabel() ; local Self AS CLASS TProveedorLabelGenerator := QSelf() AS CLASS TProveedorLabelGenerator
+
+   local uVar     := ( dbfProvee )->nLabel
+    local cPic     := "999"
+   local bValid   := { || .T. }
+   local nCol     := aScan( ::oBrwLabel:aHeaders, "Und." )
+
+   if nCol <> 0
+
+      if ::oBrwLabel:lEditCol( nCol, @uVar, cPic, bValid )
+
+         if dbLock( dbfProvee )
+            ( dbfProvee )->nLabel   := uVar
+            ( dbfProvee )->( dbUnLock() )
+         end
+
+         ::oBrwLabel:DrawSelect()
+
+      end
+
+   end
+
+Return ( Self )
+
+
+
+UTILITY STATIC function TProveedorLabelGenerator_FilterLabel() ; local Self AS CLASS TProveedorLabelGenerator := QSelf() AS CLASS TProveedorLabelGenerator
+
+   if Empty( ::oFilter )
+      ::oFilter      := TDlgFlt():New( aItmPrv(), dbfProvee )
+   end
+
+   if !Empty( ::oFilter )
+
+      ::oFilter:Resource()
+
+      if ::oFilter:cExpFilter <> nil
+         SetWindowText( ::oBtnFilter:hWnd, "Filtro activo" )
+      else
+         SetWindowText( ::oBtnFilter:hWnd, "Filtrar" )
+      end
+
+   end
+
+   ::oBrwLabel:Refresh()
+   ::oBrwLabel:SetFocus()
+
+Return ( Self )
+
+
+
+UTILITY STATIC function TProveedorLabelGenerator_ChangeCriterio() ; local Self AS CLASS TProveedorLabelGenerator := QSelf() AS CLASS TProveedorLabelGenerator
+
+   ::oGrupoInicio:Hide()
+   ::oGrupoFin:Hide()
+   ::oInicio:Hide()
+   ::oFin:Hide()
+   ::oFechaInicio:Hide()
+   ::oFechaFin:Hide()
+
+   do case
+      case ::oCriterio:nAt == 2
+
+         ::oGrupoInicio:Show()
+         ::oGrupoFin:Show()
+         ::oInicio:Show()
+         ::oFin:Show()
+
+      case ::oCriterio:nAt == 3
+
+         ::oFechaInicio:Show()
+         ::oFechaFin:Show()
+         ::oInicio:Show()
+         ::oFin:Show()
+
+   end
+
+Return ( Self )
+
+
+
+UTILITY STATIC function TProveedorLabelGenerator_lPrintLabels() ; local Self AS CLASS TProveedorLabelGenerator := QSelf() AS CLASS TProveedorLabelGenerator
+
+   local oFr
+
+   if !::lCreateTemporal()
+      Return .F.
+   end
+
+   SysRefresh()
+
+   oFr                  := frReportManager():New()
+
+   oFr:LoadLangRes(     "Spanish.Xml" )
+
+   oFr:SetIcon( 1 )
+
+   oFr:SetTitle(        "Diseñador de documentos" )
+
+
+
+
+
+   oFr:SetEventHandler( "Designer", "OnSaveReport", {|| oFr:SaveToBlob( ( dbfDoc )->( Select() ), "mReport" ) } )
+
+
+
+
+
+   DataReport( oFr, .T. )
+
+
+
+
+
+   if !Empty( ( dbfDoc )->mReport )
+
+      oFr:LoadFromBlob( ( dbfDoc )->( Select() ), "mReport")
+
+
+
+
+
+      ::PrepareTemporal( oFr )
+
+
+
+
+
+      oFr:PrepareReport()
+
+
+
+
+
+      oFr:ShowPreparedReport()
+
+   end
+
+
+
+
+
+   oFr:DestroyFr()
+
+
+
+
+
+   ::DestroyTemporal()
+
+Return ( .T. )
+
+
+
+UTILITY STATIC function TProveedorLabelGenerator_InitLabel( oLabel) ; local Self AS CLASS TProveedorLabelGenerator := QSelf() AS CLASS TProveedorLabelGenerator
+
+   local nStartRow
+
+   if ::nFilaInicio > 1
+      nStartRow            := oLabel:nStartRow
+      nStartRow            += ( ::nFilaInicio - 1 ) * ( oLabel:nLblHeight + oLabel:nVSeparator )
+
+      if nStartRow < oLabel:nBottomRow
+         oLabel:nStartRow  := nStartRow
+      end
+   end
+
+   if ::nColumnaInicio > 1 .AND. ::nColumnaInicio <= oLabel:nLblOnLine
+      oLabel:nLblCurrent   := ::nColumnaInicio
+   end
+
+Return ( Self )
+
+
+
+UTILITY STATIC function TProveedorLabelGenerator_lCreateTemporal() ; local Self AS CLASS TProveedorLabelGenerator := QSelf() AS CLASS TProveedorLabelGenerator
+
+   local n
+   local nRec
+   local oBlock
+   local oError
+   local nBlancos
+   local lCreateTemporal   := .T.
+   local lClose            := .F.
+
+   oBlock                  := ErrorBlock( {| oError | ApoloBreak( oError ) } )
+   BEGIN SEQUENCE
+
+      tmpProvee            := "LblPrv"
+      filProvee            := cGetNewFileName( cPatTmp() + "LblPrv" )
+
+      dbCreate( filProvee, aSqlStruct( aItmPrv() ), cLocalDriver() )
+      dbUseArea( .T., cLocalDriver(), filProvee, tmpProvee, .F. )
+
+      ( tmpProvee )->( OrdCondSet( "!Deleted()", {|| !Deleted() } ) )
+      ( tmpProvee )->( OrdCreate( filProvee, "Cod", "Cod", {|| Field->Cod } ) )
+
+      if Empty( dbfProvee )
+         dbUseArea( .T., ( cDriver() ), ( cPatPrv() + "PROVEE.DBF" ), ( cCheckArea( "PROVEE", @dbfProvee ) ), if(.T. .OR. .F., !.F., NIL), .F.,, )
+         if !lAIS() ; ordListAdd( ( cPatPrv() + "PROVEE.CDX" ) ) ; else ; ordSetFocus( 1 ) ; end
+         lClose            := .T.
+      end
+
+      nRec                 := ( dbfProvee )->( Recno() )
+
+      ( dbfProvee )->( dbGoTop() )
+      while !( dbfProvee )->( eof() )
+
+         if ( dbfProvee )->lLabel
+            for n := 1 to ( dbfProvee )->nLabel
+               dbPass( dbfProvee, tmpProvee, .T. )
+            next
+         end
+
+         ( dbfProvee )->( dbSkip() )
+
+      end
+      ( tmpProvee )->( dbGoTop() )
+
+      ( dbfProvee )->( dbGoTo( nRec ) )
+
+      if lClose
+         ( dbfProvee )->( dbCloseArea() )
+         dbfProvee         := nil
+      end
+
+   RECOVER USING oError
+
+      lCreateTemporal      := .F.
+
+      MsgStop( "Imposible abrir ficheros de proveedores" + Chr(13)+Chr(10) + ErrorMessage( oError ) )
+
+   end
+
+   ErrorBlock( oBlock )
+
+Return ( lCreateTemporal )
+
+
+
+UTILITY STATIC function TProveedorLabelGenerator_PrepareTemporal( oFr) ; local Self AS CLASS TProveedorLabelGenerator := QSelf() AS CLASS TProveedorLabelGenerator
+
+   local n
+   local nBlancos       := 0
+   local nPaperHeight   := oFr:GetProperty( "MainPage", "PaperHeight" ) * 3.77953
+   local nHeight        := oFr:GetProperty( "CabeceraColumnas", "Height" )
+   local nColumns       := oFr:GetProperty( "MainPage", "Columns" )
+   local nItemsInColumn := int( nPaperHeight / nHeight )
+
+   nBlancos             := ( ::nColumnaInicio - 1 ) * nItemsInColumn
+   nBlancos             += ( ::nFilaInicio - 1 )
+
+   for n := 1 to nBlancos
+      dbPass( dbBlankRec( dbfProvee ), tmpProvee, .T. )
+   next
+
+   ( tmpProvee )->( dbGoTop() )
+
+Return ( .T. )
+
+
+
+UTILITY STATIC function TProveedorLabelGenerator_DestroyTemporal() ; local Self AS CLASS TProveedorLabelGenerator := QSelf() AS CLASS TProveedorLabelGenerator
+
+   if ( tmpProvee )->( Used() )
+      ( tmpProvee )->( dbCloseArea() )
+   end
+
+   dbfErase( filProvee )
+
+Return ( .T. )
+
+
+
+UTILITY STATIC function TProveedorLabelGenerator_SelectColumn( oCombo) ; local Self AS CLASS TProveedorLabelGenerator := QSelf() AS CLASS TProveedorLabelGenerator
+
+   local oCol
+   local cOrd                    := oCombo:VarGet()
+
+   if ::oBrwLabel <> nil
+
+      with object ::oBrwLabel
+
+         for each oCol in :aCols
+
+            if Eq( cOrd, oCol:cHeader )
+               oCol:cOrder       := "A"
+               oCol:SetOrder()
+            else
+               oCol:cOrder       := " "
+            end
+
+         next
+
+      end
+
+      ::oBrwLabel:Refresh()
+
+   end
+
+Return ( Self )
+
+
+
+
+Static Function lLabel( dbfTmpLbl )
+
+Return ( ( dbfTmpLbl)->lLabel )
+
+
+
+Static Function SkipLabel( dbfProvee, oMtr )
+
+   if ( dbfProvee )->lLabel .AND. ( dbfProvee )->nLabel > nLabels
+      ++nLabels
+   else
+      nLabels  := 1
+      ( dbfProvee )->( dbSkip() )
+   end
+
+   if !Empty( oMtr )
+      oMtr:Set( ( dbfProvee )->( ordKeyNo() ) )
+   end
+
+Return ( ( dbfProvee )->( Recno() ) )
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+Function IsProvee()
+
+   local oError
+   local oBlock
+
+
+   if !lExistTable( cPatPrv() + "PROVEE.Dbf" ) .OR. !lExistTable( cPatPrv() + "PROVEED.Dbf" )
+      mkProvee( cPatPrv() )
+   end
+
+
+   if !lExistIndex( cPatPrv() + "PROVEE.Cdx" ) .OR. !lExistIndex( cPatPrv() + "PROVEED.Cdx" )
+      rxProvee( cPatPrv() )
+   end
+
+Return ( .T. )
+
+
+
+FUNCTION mkProvee( cPath, lAppend, cPathOld, oMeter )
+
+   local dbfPrv
+   local oldPrv
+   local dbfBnc
+   local oldBnc
+   local dbfPrvD
+   local oldPrvD
+
+   IIF( lAppend == nil, lAppend := .F., ) ;
+   IIF( cPath == nil, cPath := cPatPrv(), ) ;
+
+    IF oMeter <> NIL
+        oMeter:cText    := "Generando Bases"
+        sysrefresh()
+    end
+
+   CreateFiles( cPath )
+
+   rxProvee( cPath, oMeter )
+
+    IF lAppend .AND. lIsDir( cPathOld )
+
+      dbUseArea( .T., cDriver(), cPath + "PROVEE.DBF", cCheckArea( "PROVEE", @dbfPrv ), .F. )
+      if !( dbfPrv )->( neterr() )
+         ordListAdd( cPath + "PROVEE.CDX"  )
+      end
+
+      dbUseArea( .T., cDriver(), cPathOld + "PROVEE.DBF", cCheckArea( "PROVEE", @oldPrv ), .F. )
+      if !( oldPrv )->( neterr() )
+         ordListAdd( cPathOld + "PROVEE.CDX"  )
+      end
+
+      dbUseArea( .T., cDriver(), cPath + "PROVEED.DBF", cCheckArea( "PROVEED", @dbfPrvD ), .F. )
+      if !( dbfPrvD )->( neterr() )
+         ordListAdd( cPath + "PROVEED.CDX"  )
+      end
+
+      dbUseArea( .T., cDriver(), cPathOld + "PROVEED.DBF", cCheckArea( "PROVEED", @oldPrvD ), .F. )
+      if !( oldPrvD )->( neterr() )
+         ordListAdd( cPathOld + "PROVEED.CDX"  )
+      end
+
+      dbUseArea( .T., cDriver(), cPath + "PrvBnc.DBF", cCheckArea( "PrvBnc", @dbfBnc ), .F. )
+      if !( dbfBnc )->( neterr() )
+         ordListAdd( cPath + "PrvBnc.CDX"  )
+      end
+
+      dbUseArea( .T., cDriver(), cPathOld + "PrvBnc.DBF", cCheckArea( "PrvBnc", @oldBnc ), .F. )
+      if !( oldBnc )->( neterr() )
+         ordListAdd( cPathOld + "PrvBnc.CDX"  )
+      end
+
+      while !( oldPrv )->( Eof() )
+         dbCopy( oldPrv, dbfPrv, .T. )
+         ( oldPrv )->( dbSkip() )
+      end
+
+      while !( oldPrvD )->( Eof() )
+         dbCopy( oldPrvD, dbfPrvD, .T. )
+         ( oldPrvD )->( dbSkip() )
+      end
+
+      while !( oldBnc )->( Eof() )
+         dbCopy( oldBnc, dbfBnc, .T. )
+         ( oldBnc )->( dbSkip() )
+      end
+
+      ( dbfPrv  )->( dbCloseArea() )
+      ( oldPrv  )->( dbCloseArea() )
+      ( dbfBnc  )->( dbCloseArea() )
+      ( oldBnc  )->( dbCloseArea() )
+      ( dbfPrvD )->( dbCloseArea() )
+      ( oldPrvD )->( dbCloseArea() )
+
+   end
+
+RETURN NIL
+
+
+
+FUNCTION rxProvee( cPath, oMeter )
+
+    local dbfProvee
+   local dbfProveeD
+   local dbfPrvBnc
+
+   IIF( cPath == nil, cPath := cPatPrv(), ) ;
+
+
+
+   if !lExistTable( cPath + "PROVEE.DBF" ) .OR. !lExistTable( cPath + "PRVBNC.DBF" ) .OR. !lExistTable( cPath + "PROVEED.DBF" )
+        CreateFiles( cPath )
+   end
+
+   fEraseIndex( cPath + "PROVEE.Cdx" )
+
+   dbUseArea( .T., cDriver(), cPath + "PROVEE.DBF", cCheckArea( "PROVEE", @dbfProvee ), .F. )
+   if !( dbfProvee )->( neterr() )
+      ( dbfProvee )->( __dbPack() )
+
+      ( dbfProvee )->( ordCondSet("!Deleted()", {||!Deleted()}  ) )
+      ( dbfProvee )->( ordCreate( cPath + "Provee.Cdx", "COD", "COD", {|| Field->COD } )      )
+
+      ( dbfProvee )->( ordCondSet( "!Deleted()", {||!Deleted()}  ) )
+      ( dbfProvee )->( ordCreate( cPath + "Provee.Cdx", "TITULO", "UPPER( TITULO )", {|| UPPER( Field->TITULO ) } ) )
+
+      ( dbfProvee )->( ordCondSet( "!Deleted()", {||!Deleted()}  ) )
+      ( dbfProvee )->( ordCreate( cPath + "Provee.Cdx", "NIF", "NIF", {|| Field->NIF }, ) )
+
+      ( dbfProvee )->( ordCondSet("!Deleted()", {||!Deleted()}  ) )
+      ( dbfProvee )->( ordCreate( cPath + "Provee.Cdx", "POBLACION", "POBLACION", {|| Field->POBLACION } ) )
+
+      ( dbfProvee )->( ordCondSet("!Deleted()", {||!Deleted()}  ) )
+      ( dbfProvee )->( ordCreate( cPath + "Provee.Cdx", "Telefono", "Telefono", {|| Field->Telefono } ) )
+
+      ( dbfProvee )->( ordCondSet("!Deleted()", {||!Deleted()}  ) )
+      ( dbfProvee )->( ordCreate( cPath + "Provee.Cdx", "Fax", "Fax", {|| Field->Fax } ) )
+
+      ( dbfProvee )->( ordCondSet("!Deleted()", {||!Deleted()}  ) )
+      ( dbfProvee )->( ordCreate( cPath + "Provee.Cdx", "CodPostal", "CodPostal", {|| Field->CodPostal } ) )
+
+      ( dbfProvee )->( ordCondSet("!Deleted()", {||!Deleted()}  ) )
+      ( dbfProvee )->( ordCreate( cPath + "Provee.Cdx", "Provincia", "Provincia", {|| Field->Provincia } ) )
+
+      ( dbfProvee )->( ordCondSet("!Deleted()", {||!Deleted()}  ) )
+      ( dbfProvee )->( ordCreate( cPath + "Provee.Cdx", "cMeiInt", "cMeiInt", {|| Field->cMeiInt } ) )
+
+      ( dbfProvee )->( ordCondSet("!Deleted()", {||!Deleted()}  ) )
+      ( dbfProvee )->( ordCreate( cPath + "Provee.Cdx", "cPerCto", "cPerCto", {|| Field->cPerCto } ) )
+
+      ( dbfProvee )->( ordCondSet("!Deleted()", {||!Deleted()}  ) )
+      ( dbfProvee )->( ordCreate( cPath + "Provee.Cdx", "lSndInt", "lSndInt", {|| Field->lSndInt } ) )
+
+      ( dbfProvee )->( ordCondSet( "!Deleted()", {|| !Deleted() }  ) )
+      ( dbfProvee )->( ordCreate( cPath + "Provee.Cdx", "cCodUsr", "Field->cCodUsr + Dtos( Field->dFecChg ) + Field->cTimChg", {|| Field->cCodUsr + Dtos( Field->dFecChg ) + Field->cTimChg } ) )
+
+      ( dbfProvee )->( dbCloseArea() )
+   else
+      msgStop( "Imposible abrir en modo exclusivo la tabla de proveedores" )
+   end
+
+   dbUseArea( .T., cDriver(), cPath + "PROVEED.DBF", cCheckArea( "PROVEED", @dbfProveeD ), .F. )
+   if !( dbfProveeD )->( neterr() )
+      ( dbfProveeD )->( __dbPack() )
+
+      ( dbfProveeD )->( ordCondSet("!Deleted()", {||!Deleted()}  ) )
+      ( dbfProveeD )->( ordCreate( cPath + "PROVEED.CDX", "CCODPRV", "CCODPRV", {|| Field->CCODPRV } )      )
+
+      ( dbfProveeD )->( dbCloseArea() )
+   else
+      msgStop( "Imposible abrir en modo exclusivo la tabla de proveedores" )
+   end
+
+   fEraseIndex( cPath + "PrvBnc.CDX" )
+
+   dbUseArea( .T., cDriver(), cPath + "PRVBNC.DBF", cCheckArea( "PRVBNC", @dbfPrvBnc ), .F. )
+   if !( dbfPrvBnc )->( neterr() )
+      ( dbfPrvBnc )->( __dbPack() )
+
+      ( dbfPrvBnc )->( ordCondSet("!Deleted()", {||!Deleted()}  ) )
+      ( dbfPrvBnc )->( ordCreate( cPath + "PRVBNC.CDX", "CCODPRV", "CCODPRV + CCTABNC", {|| Field->CCODPRV + Field->CCTABNC } ) )
+
+      ( dbfPrvBnc )->( ordCondSet("!Deleted()", {||!Deleted()}  ) )
+      ( dbfPrvBnc )->( ordCreate( cPath + "PRVBNC.CDX", "CCODBNC", "CCODPRV + CCODBNC", {|| Field->CCODPRV + Field->CCODBNC } ) )
+
+      ( dbfPrvBnc )->( ordCondSet("!Deleted() .and. Field->lBncDef", {||!Deleted()  .AND. Field->lBncDef } ) )
+      ( dbfPrvBnc )->( ordCreate( cPath + "PRVBNC.CDX", "CCODDEF", "CCODPRV + CCTABNC", {|| Field->CCODPRV + Field->CCTABNC } ) )
+
+      ( dbfPrvBnc )->( dbCloseArea() )
+   else
+      msgStop( "Imposible abrir en modo exclusivo la tabla de bancos" )
+   end
+
+RETURN NIL
+
+
+
+FUNCTION RetProvee( cCodProv, dbfProvee )
+
+   local oBlock
+   local oError
+    local cAreaAnt     := Alias()
+    local cProveedor     := ""
+    local lClose        := .F.
+
+   oBlock            := ErrorBlock( {| oError | ApoloBreak( oError ) } )
+   BEGIN SEQUENCE
+
+    IF dbfProvee == NIL
+      dbUseArea( .T., ( cDriver() ), ( cPatPrv() + "PROVEE.DBF" ), ( cCheckArea( "PROVEE", @dbfProvee ) ), if(.T. .OR. .F., !.F., NIL), .F.,, )
+      if !lAIS() ; ordListAdd( ( cPatPrv() + "PROVEE.CDX" ) ) ; else ; ordSetFocus( 1 ) ; end
+        lClose    := .T.
+    end
+
+    IF (dbfProvee)->( DbSeek( cCodProv ) )
+        cProveedor := (dbfProvee)->TITULO
+    end
+
+   RECOVER USING oError
+
+      msgStop( "Imposible abrir todas las bases de datos " + Chr(13)+Chr(10) + ErrorMessage( oError ) )
+
+   end
+
+   ErrorBlock( oBlock )
+
+    IF lClose
+        ( dbfProvee )->( dbCloseArea() )
+    end
+
+    IF cAreaAnt <> ""
+        dbSelectArea( ( cAreaAnt ) )
+    end
+
+RETURN cProveedor
+
+
+
+Function cSeekProveedor( cCodArt, dbfArtPrv )
+
+   local nPosComa          := At( ",", cCodArt )
+   local cProveedor        := Left( cCodArt, nPosComa - 1 )
+   local cRefProv          := Right( AllTrim( cCodArt ), len( AllTrim( cCodArt ) ) - nPosComa )
+   local nOrdenAnterior    := ( dbfArtPrv )->( OrdSetFocus( "cRefPrv" ) )
+
+   cProveedor              := RJust( cProveedor, "0", RetNumCodPrvEmp() )
+
+   if ( dbfArtPrv )->( dbSeek( Padr( cProveedor, 12 ) + Padr( cRefProv, 18 ) ) )
+      cCodArt              := ( dbfArtPrv )->cCodArt
+   end
+
+   ( dbfArtPrv )->( OrdSetFocus( nOrdenAnterior ) )
+
+return cCodArt
+
+
+
+STATIC FUNCTION CreateFiles( cPath, oMeter )
+
+   IIF( cPath == nil, cPath := cPatPrv(), ) ;
+
+   IF !lExistTable( cPath + "PROVEE.DBF" )
+      dbCreate( cPath + "PROVEE.DBF", aSqlStruct( aItmPrv() ), cDriver() )
+   end
+
+   IF !lExistTable( cPath + "PROVEED.DBF" )
+      dbCreate( cPath + "PROVEED.DBF", aSqlStruct( aPrvDoc() ), cDriver() )
+   end
+
+   IF !lExistTable( cPath + "PRVBNC.DBF" )
+      dbCreate( cPath + "PRVBNC.DBF", aSqlStruct( aPrvBnc() ), cDriver() )
+   end
+
+RETURN NIL
+
+
+
+FUNCTION aItmPrv()
+
+   local aItmPrv  := {}
+
+   aAdd( aItmPrv, { "COD",       "C", 12, 0, "Código proveedor",                     "",                   "", "( cDbfPrv )" } )
+   aAdd( aItmPrv, { "TITULO",    "C", 80, 0, "Nombre proveedor",                     "",                   "", "( cDbfPrv )" } )
+   aAdd( aItmPrv, { "NIF",       "C", 15, 0, "NIF proveedor",                        "",                   "", "( cDbfPrv )" } )
+   aAdd( aItmPrv, { "DOMICILIO", "C",100, 0, "Domicilio proveedor",                  "",                   "", "( cDbfPrv )" } )
+   aAdd( aItmPrv, { "POBLACION", "C", 25, 0, "Población proveedor",                  "",                   "", "( cDbfPrv )" } )
+   aAdd( aItmPrv, { "PROVINCIA", "C", 20, 0, "Provincia proveedor",                  "",                   "", "( cDbfPrv )" } )
+   aAdd( aItmPrv, { "CCODPAI",   "C",  4, 0, "Código de país" ,                      "",                   "", "( cDbfPrv )" } )
+   aAdd( aItmPrv, { "CPERCTO",   "C", 40, 0, "Persona de contacto",                  "",                   "", "( cDbfPrv )" } )
+   aAdd( aItmPrv, { "CSUCLI",    "C", 14, 0, "Código de su cliente" ,                "",                   "", "( cDbfPrv )" } )
+   aAdd( aItmPrv, { "CODPOSTAL", "C", 15, 0, "Código postal proveedor",              "",                   "", "( cDbfPrv )" } )
+   aAdd( aItmPrv, { "TELEFONO",  "C", 12, 0, "Teléfono proveedor",                   "",                   "", "( cDbfPrv )" } )
+   aAdd( aItmPrv, { "FAX",       "C", 12, 0, "Fax proveedor",                        "",                   "", "( cDbfPrv )" } )
+   aAdd( aItmPrv, { "MOVIL",     "C", 12, 0, "Movil proveedor",                      "",                   "", "( cDbfPrv )" } )
+   aAdd( aItmPrv, { "cDtoEsp",   "C", 50, 0, "Descripción de descuento especial",    "",                   "", "( cDbfPrv )" } )
+   aAdd( aItmPrv, { "nDtoEsp",   "N",  6, 2, "Descuento especial",                   "'@R 99.9 %'",        "", "( cDbfPrv )" } )
+   aAdd( aItmPrv, { "cDtoPp",    "C", 50, 0, "Descripción de descuento pronto pago", "",                   "", "( cDbfPrv )" } )
+   aAdd( aItmPrv, { "DtoPp",     "N",  6, 2, "Descuento pronto pago",                "'@R 99.9 %'",        "", "( cDbfPrv )" } )
+   aAdd( aItmPrv, { "FPAGO",     "C",  2, 0, "Forma de pago proveedor",              "",                   "", "( cDbfPrv )" } )
+   aAdd( aItmPrv, { "DIAPAGO",   "N",  2, 0, "Primer día pago proveedor",            "'99'",               "", "( cDbfPrv )" } )
+   aAdd( aItmPrv, { "DIAPAGO2",  "N",  2, 0, "Segundo día pago proveedor",           "'99'",               "", "( cDbfPrv )" } )
+   aAdd( aItmPrv, { "SUBCTA",    "C", 12, 0, "Subcuenta contaplus proveedor",        "",                   "", "( cDbfPrv )" } )
+   aAdd( aItmPrv, { "CTAVENTA",  "C",  3, 0, "Cuenta contaplus proveedor",           "",                   "", "( cDbfPrv )" } )
+   aAdd( aItmPrv, { "LLABEL",    "L",  1, 0, "Lógico para etiquetas",                "",                   "", "( cDbfPrv )" } )
+   aAdd( aItmPrv, { "NLABEL",    "N",  5, 0, "Número de etiquetas a imprimir",       "",                   "", "( cDbfPrv )" } )
+   aAdd( aItmPrv, { "CCODSND",   "C",  3, 0, "Código de envio proveedor",            "",                   "", "( cDbfPrv )" } )
+   aAdd( aItmPrv, { "CMEIINT",   "C", 65, 0, "Dirección e-mail proveedor",           "",                   "", "( cDbfPrv )" } )
+   aAdd( aItmPrv, { "CWEBINT",   "C",100, 0, "Página web proveedor",                 "",                   "", "( cDbfPrv )" } )
+   aAdd( aItmPrv, { "CUSRINT",   "C", 14, 0, "Usuario para la web del proveedor",    "",                   "", "( cDbfPrv )" } )
+   aAdd( aItmPrv, { "CPSWINT",   "C", 14, 0, "Clave de acceso para la web del proveedor", "",              "", "( cDbfPrv )" } )
+   aAdd( aItmPrv, { "MCOMENT",   "M", 10, 0, "Memo para comentarios",                "",                   "", "( cDbfPrv )" } )
+   aAdd( aItmPrv, { "NMESVAC",   "N",  1, 0, "Mes de vacaciones",                    "",                   "", "( cDbfPrv )" } )
+   aAdd( aItmPrv, { "NCOPIASF",  "N",  1, 0, "Número de facturas a imprimir",        "",                   "", "( cDbfPrv )" } )
+   aAdd( aItmPrv, { "CUSRDEF01", "C",100, 0, "Campo definido 1" ,                    "",                   "", "( cDbfPrv )" } )
+   aAdd( aItmPrv, { "CUSRDEF02", "C",100, 0, "Campo definido 2" ,                    "",                   "", "( cDbfPrv )" } )
+   aAdd( aItmPrv, { "CUSRDEF03", "C",100, 0, "Campo definido 3" ,                    "",                   "", "( cDbfPrv )" } )
+   aAdd( aItmPrv, { "CUSRDEF04", "C",100, 0, "Campo definido 4" ,                    "",                   "", "( cDbfPrv )" } )
+   aAdd( aItmPrv, { "CUSRDEF05", "C",100, 0, "Campo definido 5" ,                    "",                   "", "( cDbfPrv )" } )
+   aAdd( aItmPrv, { "CUSRDEF06", "C",100, 0, "Campo definido 6" ,                    "",                   "", "( cDbfPrv )" } )
+   aAdd( aItmPrv, { "CUSRDEF07", "C",100, 0, "Campo definido 7" ,                    "",                   "", "( cDbfPrv )" } )
+   aAdd( aItmPrv, { "CUSRDEF08", "C",100, 0, "Campo definido 8" ,                    "",                   "", "( cDbfPrv )" } )
+   aAdd( aItmPrv, { "CUSRDEF09", "C",100, 0, "Campo definido 9" ,                    "",                   "", "( cDbfPrv )" } )
+   aAdd( aItmPrv, { "CUSRDEF10", "C",100, 0, "Campo definido 10" ,                   "",                   "", "( cDbfPrv )" } )
+   aAdd( aItmPrv, { "NVALPUNT",  "N", 16, 6, "Valor del punto" ,                     "",                   "", "( cDbfPrv )" } )
+   aAdd( aItmPrv, { "CTELCTO",   "C", 12, 0, "Teléfono del contacto" ,               "",                   "", "( cDbfPrv )" } )
+   aAdd( aItmPrv, { "Benef1",    "N",  6, 2, "Porcentaje de beneficio1" ,            "",                   "", "( cDbfPrv )" } )
+   aAdd( aItmPrv, { "Benef2",    "N",  6, 2, "Porcentaje de beneficio2" ,            "",                   "", "( cDbfPrv )" } )
+   aAdd( aItmPrv, { "Benef3",    "N",  6, 2, "Porcentaje de beneficio3" ,            "",                   "", "( cDbfPrv )" } )
+   aAdd( aItmPrv, { "Benef4",    "N",  6, 2, "Porcentaje de beneficio4" ,            "",                   "", "( cDbfPrv )" } )
+   aAdd( aItmPrv, { "Benef5",    "N",  6, 2, "Porcentaje de beneficio5" ,            "",                   "", "( cDbfPrv )" } )
+   aAdd( aItmPrv, { "Benef6",    "N",  6, 2, "Porcentaje de beneficio6" ,            "",                   "", "( cDbfPrv )" } )
+   aAdd( aItmPrv, { "nBnfSbr1",  "N",  1, 0, "Sobre compra o sobre venta 1" ,        "",                   "", "( cDbfPrv )" } )
+   aAdd( aItmPrv, { "nBnfSbr2",  "N",  1, 0, "Sobre compra o sobre venta 2" ,        "",                   "", "( cDbfPrv )" } )
+   aAdd( aItmPrv, { "nBnfSbr3",  "N",  1, 0, "Sobre compra o sobre venta 3" ,        "",                   "", "( cDbfPrv )" } )
+   aAdd( aItmPrv, { "nBnfSbr4",  "N",  1, 0, "Sobre compra o sobre venta 4" ,        "",                   "", "( cDbfPrv )" } )
+   aAdd( aItmPrv, { "nBnfSbr5",  "N",  1, 0, "Sobre compra o sobre venta 5" ,        "",                   "", "( cDbfPrv )" } )
+   aAdd( aItmPrv, { "nBnfSbr6",  "N",  1, 0, "Sobre compra o sobre venta 6" ,        "",                   "", "( cDbfPrv )" } )
+   aAdd( aItmPrv, { "lSndInt",   "L",  1, 0, "Lógico para envio",                    "",                   "", "( cDbfPrv )" } )
+   aAdd( aItmPrv, { "cCodUsr",   "C",  3, 0, "Código de usuario que realiza el cambio" ,"",                "", "( cDbfPrv )" } )
+   aAdd( aItmPrv, { "dFecChg",   "D",  8, 0, "Fecha de cambio" ,                     "",                   "", "( cDbfPrv )" } )
+   aAdd( aItmPrv, { "cTimChg",   "C",  5, 0, "Hora de cambio" ,                      "",                   "", "( cDbfPrv )" } )
+   aAdd( aItmPrv, { "nTipRet",   "N",  1, 0, "Tipo de retención ( 1. Base / 2. Base+IVA )","",             "", "( cDbfPrv )" } )
+   aAdd( aItmPrv, { "nPctRet",   "N",  6, 2, "Porcentaje de retención",              "",                   "", "( cDbfPrv )" } )
+   aAdd( aItmPrv, { "nPlzEnt",   "N",  3, 0, "Plazo de entrega en días",             "",                   "", "( cDbfPrv )" } )
+   aAdd( aItmPrv, { "lBlqPrv",   "L",  1, 0, "Proveedor bloqueado",                  "",                   "", "( cDbfPrv )" } )
+   aAdd( aItmPrv, { "dFecBlq",   "D",  8, 0, "Fecha de bloqueo del proveedor",       "",                   "", "( cDbfPrv )" } )
+   aAdd( aItmPrv, { "cMotBlq",   "C", 50, 0, "Motivo del bloqueo del proveedor",     "",                   "", "( cDbfPrv )" } )
+   aAdd( aItmPrv, { "cCodGrp",   "C",  4, 0, "Código grupo de proveedor",            "",                   "", "( cDbfPrv )" } )
+   aAdd( aItmPrv, { "nRegIva",   "N",  1, 0, "Regimen de " + cImp(),                    "",                   "", "( cDbfPrv )" } )
+   aAdd( aItmPrv, { "lMail",     "L",  1, 0, "Lógico para enviar mail",              "",                   "", "( cDbfPrv )" } )
+   aAdd( aItmPrv, { "mObserv",   "M", 10, 0, "Observaciones",                        "",                   "", "( cDbfPrv )" } )
+   aAdd( aItmPrv, { "lMosCom",   "L",  1, 0, "Mostrar comentario" ,                  "",                   "", "( cDbfPrv )" } )
+   aAdd( aItmPrv, { "lReq",      "L",  1, 0, "Lógico recargo equivalencia" ,         "",                   "", "( cDbfPrv )" } )
+   aAdd( aItmPrv, { "cNbrEst",   "C",150, 0, "Nombre del establecimiento" ,          "",                   "", "( cDbfPrv )" } )
+   aAdd( aItmPrv, { "cDirEst",   "C",150, 0, "Dirección del establecimiento" ,       "",                   "", "( cDbfPrv )" } )
+   aAdd( aItmPrv, { "Serie",     "C",  1, 0, "Serie del documento" ,                 "",                   "", "( cDbfPrv )" } )
+
+RETURN ( aItmPrv )
+
+
+
+FUNCTION aPrvBnc()
+
+   local aBase := {}
+
+   aAdd( aBase, { "cCodPrv",     "C", 12, 0, "Código",                                    "",         "", "( cDbfBnc )" } )
+   aAdd( aBase, { "lBncDef",     "L",  1, 0, "Banco por defecto",                         "",         "", "( cDbfBnc )" } )
+   aAdd( aBase, { "cCodBnc",     "C", 50, 0, "Nombre del banco",                          "",         "", "( cDbfBnc )" } )
+   aAdd( aBase, { "cDirBnc",     "C", 35, 0, "Domicilio del banco",                       "",         "", "( cDbfBnc )" } )
+   aAdd( aBase, { "cPobBnc",     "C", 25, 0, "Población del banco",                       "",         "", "( cDbfBnc )" } )
+   aAdd( aBase, { "cProBnc",     "C", 20, 0, "Provincia del banco",                       "",         "", "( cDbfBnc )" } )
+   aAdd( aBase, { "cCPBnc",      "C", 15, 0, "Código postal",                             "",         "", "( cDbfBnc )" } )
+   aAdd( aBase, { "cTlfBnc",     "C", 20, 0, "Teléfono",                                  "",         "", "( cDbfBnc )" } )
+   aAdd( aBase, { "cFaxBnc",     "C", 20, 0, "Fax",                                       "",         "", "( cDbfBnc )" } )
+   aAdd( aBase, { "cPContBnc",   "C", 35, 0, "Persona de contacto",                       "",         "", "( cDbfBnc )" } )
+   aAdd( aBase, { "cPaiBnc",     "C",  4, 0, "Pais",                                      "",         "", "( cDbfBnc )" } )
+   aAdd( aBase, { "cEntBnc",     "C",  4, 0, "Entidad de la cuenta bancaria",             "",         "", "( cDbfBnc )" } )
+   aAdd( aBase, { "cSucBnc",     "C",  4, 0, "Sucursal de la cuenta bancaria",            "",         "", "( cDbfBnc )" } )
+   aAdd( aBase, { "cDigBnc",     "C",  2, 0, "Dígito de control de la cuenta bancaria",   "",         "", "( cDbfBnc )" } )
+   aAdd( aBase, { "cCtaBnc",     "C", 20, 0, "Cuenta bancaria",                           "",         "", "( cDbfBnc )" } )
+   aAdd( aBase, { "nSalIni",     "N", 16, 6, "Saldo inicial",                             "",         "", "( cDbfBnc )" } )
+
+RETURN ( aBase )
+
+
+
+function aPrvDoc()
+
+   local aPrvDoc  := {}
+
+   aAdd( aPrvDoc, { "cCodPrv", "C",   12,  0, "Código del proveedor" ,            "",                   "", "( cDbfCol )" } )
+   aAdd( aPrvDoc, { "cNombre", "C",  250,  0, "Nombre del documento" ,            "",                   "", "( cDbfCol )" } )
+   aAdd( aPrvDoc, { "cRuta",   "C",  250,  0, "Ruta del documento" ,              "",                   "", "( cDbfCol )" } )
+   aAdd( aPrvDoc, { "mObsDoc", "M",   10,  0, "Observaciones del documento" ,     "",                   "", "( cDbfCol )" } )
+
+return ( aPrvDoc )
+
+
+
+FUNCTION cProvee( oGet, dbfProvee, oGet2 )
+
+   local oBlock
+   local oError
+   local lClose   := .F.
+   local lValid   := .F.
+    local xValor     := oGet:varGet()
+
+   if Empty( xValor )
+      if !Empty( oGet2 )
+         oGet2:cText( "" )
+      end
+      return .T.
+   elseif At( ".", xValor ) <> 0
+      xValor      := PntReplace( oGet, "0", RetNumCodPrvEmp() )
+   else
+      xValor      := RJustObj( oGet, "0", RetNumCodPrvEmp() )
+   end
+
+   if ( Alltrim( xValor ) == Replicate( "Z", len( Alltrim( xValor ) ) ) )
+      return .T.
+   end
+
+   oBlock         := ErrorBlock( {| oError | ApoloBreak( oError ) } )
+   BEGIN SEQUENCE
+
+   if Empty( dbfProvee )
+      dbUseArea( .T., ( cDriver() ), ( cPatPrv() + "PROVEE.DBF" ), ( cCheckArea( "PROVEE", @dbfProvee ) ), if(.T. .OR. .F., !.F., NIL), .F.,, )
+      if !lAIS() ; ordListAdd( ( cPatPrv() + "PROVEE.CDX" ) ) ; else ; ordSetFocus( 1 ) ; end
+      lClose   := .T.
+   end
+
+   IF ( dbfProvee )->( dbSeek( xValor ) )
+
+      oGet:cText( ( dbfProvee )->Cod )
+
+        IF oGet2 <> NIL
+         oGet2:cText( ( dbfProvee )->Titulo )
+        end
+
+        lValid    := .T.
+
+    ELSE
+
+        msgStop( "Proveedor no encontrado" )
+
+    end
+
+   RECOVER USING oError
+
+      msgStop( "Imposible abrir todas las bases de datos " + Chr(13)+Chr(10) + ErrorMessage( oError ) )
+
+   end
+
+   ErrorBlock( oBlock )
+
+   if lClose
+        (dbfProvee)->( dbCloseArea() )
+   end
+
+RETURN lValid
+
+
+
+FUNCTION BrwProvee( oGet, oGet2, lApp )
+
+    local oDlg
+    local oBrw
+    local oGet1
+    local cGet1
+   local nOrd        := GetBrwOpt( "BrwProvee" )
+    local oCbxOrd
+   local cCbxOrd
+   local cTxtOrigen
+   local cReturn     := Space( 12 )
+   local nLevelUsr   := nLevelUsr( "01034" )
+   local aCbxOrd     := {  "Código", "Nombre", "NIF/CIF", "Población", "Teléfono", "Fax", "Domicilio", "Población", "Código postal", "Provincia", "Correo electrónico", "Contacto" }
+
+   nOrd              := Min( Max( nOrd, 1 ), len( aCbxOrd ) )
+   cCbxOrd           := aCbxOrd[ nOrd ]
+
+
+   if !OpenFiles( .T. )
+      Return nil
+   end
+
+
+
+
+
+
+   IIF( lApp == nil, lApp := .T., ) ;
+
+
+
+
+
+   ( dbfProvee )->( OrdSetFocus( nOrd ) )
+
+   if IsObject( oGet )
+      cTxtOrigen     := oGet:VarGet()
+      if Empty( cTxtOrigen ) .OR. !( dbfProvee )->( dbSeek( cTxtOrigen ) )
+         ( dbfProvee )->( dbGoTop() )
+      end
+   end
+
+
+
+
+
+   if IsPda()
+      oDlg = TDialog():New(,,,, "Seleccionar proveedores", "HELPENTRY_PDA",, .F.,,,,,, .F.,,,,,, .F., )
+   else
+      oDlg = TDialog():New(,,,, "Seleccionar proveedores", "HELPENTRY",, .F.,,,,,, .F.,,,,,, .F., )
+   end
+
+
+
+
+
+
+
+      oGet1 := TGetHlp():ReDefine( 104, { | u | If( PCount()==0, cGet1, cGet1:= u ) }, oDlg,, "@!", {||    ( OrdClearScope( oBrw, dbfProvee ) )},,,,,, .F.,, {|nKey,nFlags,Self| ( AutoSeek( nKey, nFlags, Self, oBrw, dbfProvee ) ) }, .F., .F.,,,,,, nil, "FIND",, )
+
+
+
+
+
+
+      oCbxOrd := TComboBox():ReDefine( 102, { | u | If( PCount()==0, cCbxOrd, cCbxOrd:= u ) }, aCbxOrd, oDlg,,, {|Self|( ( dbfProvee )->( OrdSetFocus( oCbxOrd:nAt ) ), oBrw:refresh(), oGet1:SetFocus() )},,,, .F.,,,,,, )
+
+
+      oBrw                 := IXBrowse():New( oDlg )
+
+
+      oBrw:bClrSel         := {|| { 0, ( 229 + ( 229 * 256 ) + ( 229 * 65536 ) ) } }
+      oBrw:bClrSelFocus    := {|| { 0, ( 167 + ( 205 * 256 ) + ( 240 * 65536 ) ) } }
+
+      oBrw:cAlias          := dbfProvee
+      oBrw:nMarqueeStyle   := 5
+      oBrw:cName           := "Browse.Proveedor"
+
+      with object ( oBrw:AddCol() )
+         :cHeader          := "Código"
+         :cSortOrder       := "Cod"
+         :bEditValue       := {|| ( dbfProvee )->Cod }
+         :nWidth           := 80
+         :bLClickHeader    := {| nMRow, nMCol, nFlags, oCol | oCbxOrd:Set( oCol:cHeader ) }
+      end
+
+      with object ( oBrw:AddCol() )
+         :cHeader          := "Nombre"
+         :cSortOrder       := "Titulo"
+         :bEditValue       := {|| ( dbfProvee )->Titulo }
+         :nWidth           := 260
+         :bLClickHeader    := {| nMRow, nMCol, nFlags, oCol | oCbxOrd:Set( oCol:cHeader ) }
+      end
+
+      with object ( oBrw:AddCol() )
+         :cHeader          := "NIF/CIF"
+         :cSortOrder       := "Nif"
+         :bEditValue       := {|| ( dbfProvee )->Nif }
+         :nWidth           := 80
+         :bLClickHeader    := {| nMRow, nMCol, nFlags, oCol | oCbxOrd:Set( oCol:cHeader ) }
+      end
+
+      with object ( oBrw:AddCol() )
+         :cHeader          := "Teléfono"
+         :cSortOrder       := "Telefono"
+         :bEditValue       := {|| ( dbfProvee )->Telefono }
+         :nWidth           := 80
+         :bLClickHeader    := {| nMRow, nMCol, nFlags, oCol | oCbxOrd:Set( oCol:cHeader ) }
+      end
+
+      with object ( oBrw:AddCol() )
+         :cHeader          := "Fax"
+         :bEditValue       := {|| ( dbfProvee )->Fax }
+         :nWidth           := 80
+         :bLClickHeader    := {| nMRow, nMCol, nFlags, oCol | oCbxOrd:Set( oCol:cHeader ) }
+      end
+
+      with object ( oBrw:AddCol() )
+         :cHeader          := "Domicilio"
+         :bEditValue       := {|| ( dbfProvee )->Domicilio }
+         :nWidth           := 300
+         :bLClickHeader    := {| nMRow, nMCol, nFlags, oCol | oCbxOrd:Set( oCol:cHeader ) }
+      end
+
+      with object ( oBrw:AddCol() )
+         :cHeader          := "Población"
+         :cSortOrder       := "Poblacion"
+         :bEditValue       := {|| ( dbfProvee )->Poblacion }
+         :nWidth           := 200
+         :bLClickHeader    := {| nMRow, nMCol, nFlags, oCol | oCbxOrd:Set( oCol:cHeader ) }
+      end
+
+      with object ( oBrw:AddCol() )
+         :cHeader          := "Código postal"
+         :cSortOrder       := "CodPostal"
+         :bEditValue       := {|| ( dbfProvee )->CodPostal }
+         :nWidth           := 60
+         :bLClickHeader    := {| nMRow, nMCol, nFlags, oCol | oCbxOrd:Set( oCol:cHeader ) }
+      end
+
+      with object ( oBrw:AddCol() )
+         :cHeader          := "Provincia"
+         :cSortOrder       := "Provincia"
+         :bEditValue       := {|| ( dbfProvee )->Provincia }
+         :nWidth           := 100
+         :bLClickHeader    := {| nMRow, nMCol, nFlags, oCol | oCbxOrd:Set( oCol:cHeader ) }
+      end
+
+      with object ( oBrw:AddCol() )
+         :cHeader          := "Correo electrónico"
+         :cSortOrder       := "cMeiInt"
+         :bEditValue       := {|| ( dbfProvee )->cMeiInt }
+         :nWidth           := 100
+         :bLClickHeader    := {| nMRow, nMCol, nFlags, oCol | oCbxOrd:Set( oCol:cHeader ) }
+      end
+
+      with object ( oBrw:AddCol() )
+         :cHeader          := "Contacto"
+         :bEditValue       := {|| ( dbfProvee )->cPerCto }
+         :nWidth           := 200
+         :bLClickHeader    := {| nMRow, nMCol, nFlags, oCol | oCbxOrd:Set( oCol:cHeader ) }
+      end
+
+      with object ( oBrw:AddCol() )
+         :cHeader          := "Observaciones"
+         :bEditValue       := {|| ( dbfProvee )->mComent }
+         :nWidth           := 200
+      end
+
+      oBrw:bLDblClick      := {|| oDlg:end( 1 ) }
+      oBrw:bRClicked       := {| nRow, nCol, nFlags | oBrw:RButtonDown( nRow, nCol, nFlags ) }
+
+      oBrw:CreateFromResource( 105 )
+
+
+
+
+      TButton():ReDefine( 1, {||( oDlg:end( 1 ) )}, oDlg,,, .F.,,,, .F. )
+
+
+
+
+      TButton():ReDefine( 2, {||( oDlg:end() )}, oDlg,,, .F.,,,, .F. )
+
+   if !IsPda()
+
+   if lApp
+
+
+
+
+
+      TButton():ReDefine( 500, {||( WinAppRec( oBrw, bEdit, dbfProvee ) )}, oDlg,,, .F., {||     ( nAnd( nLevelUsr, 2 ) <> 0 .AND. !IsReport() )},,, .F. )
+
+
+
+
+
+      TButton():ReDefine( 501, {||( WinEdtRec( oBrw, bEdit, dbfProvee ) )}, oDlg,,, .F., {||     ( nAnd( nLevelUsr, 4 ) <> 0 .AND. !IsReport() )},,, .F. )
+
+      if nAnd( nLevelUsr, 2 ) <> 0 .AND. !IsReport()
+         oDlg:AddFastKey( 113, {|| WinAppRec( oBrw, bEdit, dbfProvee ) } )
+      end
+
+      if nAnd( nLevelUsr, 4 ) <> 0 .AND. !IsReport()
+         oDlg:AddFastKey( 114, {|| WinEdtRec( oBrw, bEdit, dbfProvee ) } )
+      end
+
+   else
+
+
+
+
+
+      TButton():ReDefine( 500, {||( nil )}, oDlg,,, .F., {||     ( .F. )},,, .F. )
+
+
+
+
+
+      TButton():ReDefine( 501, {||( nil )}, oDlg,,, .F., {||     ( .F. )},,, .F. )
+
+   end
+
+   end
+
+   oDlg:AddFastKey( 116,       {|| oDlg:end( 1 ) } )
+   oDlg:AddFastKey( 13,   {|| oDlg:end( 1 ) } )
+
+   oDlg:bStart := {|| oBrw:Load() }
+
+   oDlg:Activate( oDlg:bLClicked, oDlg:bMoved, oDlg:bPainted, .T.,,,, oDlg:bRClicked,,, )
+
+   if oDlg:nResult == 1
+
+      cReturn     := ( dbfProvee )->Cod
+
+      if IsObject( oGet )
+         oGet:cText( ( dbfProvee )->Cod )
+         oGet:lValid()
+      end
+
+      if IsObject( oGet2 )
+         oGet2:cText( ( dbfProvee )->Titulo )
+      end
+
+   end
+
+   DestroyFastFilter( dbfProvee )
+
+   SetBrwOpt( "BrwProvee", ( dbfProvee )->( OrdNumber() ) )
+
+
+   CloseFiles()
+
+
+
+
+   oGet:SetFocus()
+
+RETURN ( cReturn )
+
+
+
+FUNCTION BrwPrv( oGet, oGet2, dbfProvee )
+
+    local oDlg
+    local oBrw
+    local oGet1
+    local cGet1
+   local nOrd        := GetBrwOpt( "BrwProvee" )
+    local oCbxOrd
+   local cCbxOrd
+   local cTxtOrigen
+   local cReturn     := Space( 12 )
+   local nLevelUsr   := nLevelUsr( "01034" )
+   local aCbxOrd     := {  "Código", "Nombre", "NIF/CIF", "Población", "Teléfono", "Fax", "Domicilio", "Población", "Código postal", "Provincia", "Correo electrónico", "Contacto" }
+
+   nOrd              := Min( Max( nOrd, 1 ), len( aCbxOrd ) )
+   cCbxOrd           := aCbxOrd[ nOrd ]
+
+   nOrd              := ( dbfProvee )->( OrdSetFocus( nOrd ) )
+
+   ( dbfProvee )->( dbGoTop() )
+
+
+
+
+
+
+   oDlg = TDialog():New(,,,, "Seleccionar proveedores", "HELPENTRY",, .F.,,,,,, .F.,,,,,, .F., )
+
+
+
+
+
+
+
+      oGet1 := TGetHlp():ReDefine( 104, { | u | If( PCount()==0, cGet1, cGet1:= u ) }, oDlg,, "@!", {||    ( OrdClearScope( oBrw, dbfProvee ) )},,,,,, .F.,, {|nKey,nFlags,Self| ( AutoSeek( nKey, nFlags, Self, oBrw, dbfProvee ) ) }, .F., .F.,,,,,, nil, "FIND",, )
+
+
+
+
+
+
+      oCbxOrd := TComboBox():ReDefine( 102, { | u | If( PCount()==0, cCbxOrd, cCbxOrd:= u ) }, aCbxOrd, oDlg,,, {|Self|( ( dbfProvee )->( OrdSetFocus( oCbxOrd:nAt ) ), oBrw:refresh(), oGet1:SetFocus() )},,,, .F.,,,,,, )
+
+      oBrw                 := IXBrowse():New( oDlg )
+      oBrw:bClrSel         := {|| { 0, ( 229 + ( 229 * 256 ) + ( 229 * 65536 ) ) } }
+      oBrw:bClrSelFocus    := {|| { 0, ( 167 + ( 205 * 256 ) + ( 240 * 65536 ) ) } }
+
+      oBrw:cAlias          := dbfProvee
+      oBrw:nMarqueeStyle   := 5
+      oBrw:cName           := "Browse.Proveedor.Report"
+
+      with object ( oBrw:AddCol() )
+         :cHeader          := "Código"
+         :cSortOrder       := "Cod"
+         :bEditValue       := {|| ( dbfProvee )->Cod }
+         :nWidth           := 80
+         :bLClickHeader    := {| nMRow, nMCol, nFlags, oCol | oCbxOrd:Set( oCol:cHeader ) }
+      end
+
+      with object ( oBrw:AddCol() )
+         :cHeader          := "Nombre"
+         :cSortOrder       := "Titulo"
+         :bEditValue       := {|| ( dbfProvee )->Titulo }
+         :nWidth           := 260
+         :bLClickHeader    := {| nMRow, nMCol, nFlags, oCol | oCbxOrd:Set( oCol:cHeader ) }
+      end
+
+      with object ( oBrw:AddCol() )
+         :cHeader          := "NIF/CIF"
+         :cSortOrder       := "Nif"
+         :bEditValue       := {|| ( dbfProvee )->Nif }
+         :nWidth           := 80
+         :bLClickHeader    := {| nMRow, nMCol, nFlags, oCol | oCbxOrd:Set( oCol:cHeader ) }
+      end
+
+      with object ( oBrw:AddCol() )
+         :cHeader          := "Teléfono"
+         :cSortOrder       := "Telefono"
+         :bEditValue       := {|| ( dbfProvee )->Telefono }
+         :nWidth           := 80
+         :bLClickHeader    := {| nMRow, nMCol, nFlags, oCol | oCbxOrd:Set( oCol:cHeader ) }
+      end
+
+      with object ( oBrw:AddCol() )
+         :cHeader          := "Fax"
+         :bEditValue       := {|| ( dbfProvee )->Fax }
+         :nWidth           := 80
+         :bLClickHeader    := {| nMRow, nMCol, nFlags, oCol | oCbxOrd:Set( oCol:cHeader ) }
+      end
+
+      with object ( oBrw:AddCol() )
+         :cHeader          := "Domicilio"
+         :bEditValue       := {|| ( dbfProvee )->Domicilio }
+         :nWidth           := 300
+         :bLClickHeader    := {| nMRow, nMCol, nFlags, oCol | oCbxOrd:Set( oCol:cHeader ) }
+      end
+
+      with object ( oBrw:AddCol() )
+         :cHeader          := "Población"
+         :cSortOrder       := "Poblacion"
+         :bEditValue       := {|| ( dbfProvee )->Poblacion }
+         :nWidth           := 200
+         :bLClickHeader    := {| nMRow, nMCol, nFlags, oCol | oCbxOrd:Set( oCol:cHeader ) }
+      end
+
+      with object ( oBrw:AddCol() )
+         :cHeader          := "Código postal"
+         :cSortOrder       := "CodPostal"
+         :bEditValue       := {|| ( dbfProvee )->CodPostal }
+         :nWidth           := 60
+         :bLClickHeader    := {| nMRow, nMCol, nFlags, oCol | oCbxOrd:Set( oCol:cHeader ) }
+      end
+
+      with object ( oBrw:AddCol() )
+         :cHeader          := "Provincia"
+         :cSortOrder       := "Provincia"
+         :bEditValue       := {|| ( dbfProvee )->Provincia }
+         :nWidth           := 100
+         :bLClickHeader    := {| nMRow, nMCol, nFlags, oCol | oCbxOrd:Set( oCol:cHeader ) }
+      end
+
+      with object ( oBrw:AddCol() )
+         :cHeader          := "Correo electrónico"
+         :cSortOrder       := "cMeiInt"
+         :bEditValue       := {|| ( dbfProvee )->cMeiInt }
+         :nWidth           := 100
+         :bLClickHeader    := {| nMRow, nMCol, nFlags, oCol | oCbxOrd:Set( oCol:cHeader ) }
+      end
+
+      with object ( oBrw:AddCol() )
+         :cHeader          := "Contacto"
+         :bEditValue       := {|| ( dbfProvee )->cPerCto }
+         :nWidth           := 200
+         :bLClickHeader    := {| nMRow, nMCol, nFlags, oCol | oCbxOrd:Set( oCol:cHeader ) }
+      end
+
+      with object ( oBrw:AddCol() )
+         :cHeader          := "Observaciones"
+         :bEditValue       := {|| ( dbfProvee )->mComent }
+         :nWidth           := 200
+      end
+
+      oBrw:bLDblClick      := {|| oDlg:end( 1 ) }
+      oBrw:bRClicked       := {| nRow, nCol, nFlags | oBrw:RButtonDown( nRow, nCol, nFlags ) }
+
+      oBrw:CreateFromResource( 105 )
+
+
+
+
+      TButton():ReDefine( 1, {||( oDlg:end( 1 ) )}, oDlg,,, .F.,,,, .F. )
+
+
+
+
+      TButton():ReDefine( 2, {||( oDlg:end() )}, oDlg,,, .F.,,,, .F. )
+
+
+
+
+
+      TButton():ReDefine( 500, {||( nil )}, oDlg,,, .F., {||     ( .F. )},,, .F. )
+
+
+
+
+
+      TButton():ReDefine( 501, {||( nil )}, oDlg,,, .F., {||     ( .F. )},,, .F. )
+
+      oDlg:AddFastKey( 116,       {|| oDlg:end( 1 ) } )
+      oDlg:AddFastKey( 13,   {|| oDlg:end( 1 ) } )
+
+      oDlg:bStart := {|| oBrw:Load() }
+
+   oDlg:Activate( oDlg:bLClicked, oDlg:bMoved, oDlg:bPainted, .T.,,,, oDlg:bRClicked,,, )
+
+   CursorWait()
+
+   if oDlg:nResult == 1
+
+      cReturn     := ( dbfProvee )->Cod
+
+      if IsObject( oGet )
+         oGet:cText( ( dbfProvee )->Cod )
+         oGet:lValid()
+      end
+
+      if IsObject( oGet2 )
+         oGet2:cText( ( dbfProvee )->Titulo )
+      end
+
+   end
+
+   DestroyFastFilter( dbfProvee )
+
+   SetBrwOpt( "BrwProvee", ( dbfProvee )->( OrdNumber() ) )
+
+   ( dbfProvee )->( OrdSetFocus( nOrd ) )
+
+   if !Empty( oBrw )
+      oBrw:end()
+   end
+
+   CursorWE()
+
+   if !Empty( oGet )
+      oGet:SetFocus()
+   end
+
+RETURN ( cReturn )
+
+
+
+
+
+
+Function DesignReportProvee( oFr, dbfDoc )
+
+   local oLabel   := TProveedorLabelGenerator()
+
+   if oLabel:lCreateTemporal()
+
+
+
+
+
+      DataReport( oFr, .T. )
+
+
+
+
+
+      if !Empty( ( dbfDoc )->mReport )
+
+         oFr:LoadFromBlob( ( dbfDoc )->( Select() ), "mReport" )
+
+      else
+
+         oFr:AddPage(         "MainPage" )
+
+         oFr:AddBand(         "CabeceraColumnas",  "MainPage",       6 )
+         oFr:SetProperty(     "CabeceraColumnas",  "Top",            200 )
+         oFr:SetProperty(     "CabeceraColumnas",  "Height",         100 )
+         oFr:SetObjProperty(  "CabeceraColumnas",  "DataSet",        "Proveedores" )
+
+      end
+
+
+
+
+
+      oFr:DesignReport()
+
+
+
+
+
+      oFr:DestroyFr()
+
+
+
+
+
+      oLabel:DestroyTemporal()
+
+   else
+
+      Return .F.
+
+   end
+
+Return .T.
+
+
+
+
+
+Static Function DataReport( oFr, lTemporal )
+
+
+
+
+
+   oFr:ClearDataSets()
+
+   if lTemporal
+      oFr:SetWorkArea(  "Proveedores", ( tmpProvee )->( Select() ), .F., { 0, 0, 0 } )
+   else
+      oFr:SetWorkArea(  "Proveedores", ( dbfProvee )->( Select() ), .F., { 0, 0, 0 } )
+   end
+
+   oFr:SetFieldAliases( "Proveedores", cItemsToReport( aItmPrv() ) )
+
+Return nil
+
+
+
+
+
+
+FUNCTION cCtaBanPrv( cCodPrv, dbfBanco )
+
+   local nRec
+   local oBlock
+   local oError
+   local cText    := ""
+   local lClose   := .F.
+   local nOrdAnt
+
+   oBlock         := ErrorBlock( {| oError | ApoloBreak( oError ) } )
+   BEGIN SEQUENCE
+
+   if Empty( dbfBanco )
+      dbUseArea( .T., ( cDriver() ), ( cPatPrv() + "PRVBNC.DBF" ), ( cCheckArea( "PRVBNC", @dbfBanco ) ), if(.T. .OR. .F., !.F., NIL), .F.,, )
+      if !lAIS() ; ordListAdd( ( cPatPrv() + "PRVBNC.CDX" ) ) ; else ; ordSetFocus( 1 ) ; end
+      ordSetFocus( "CCODDEF" )
+      lClose      := .T.
+   else
+      nRec        := ( dbfBanco )->( Recno() )
+      nOrdAnt     := ( dbfBanco )->( OrdSetFocus( "cCodDef" ) )
+   end
+
+   if ( dbfBanco )->( dbSeek( cCodPrv ) )
+      cText       := ( dbfBanco )->cCtaBnc
+   end
+
+   RECOVER USING oError
+
+      msgStop( ErrorMessage( oError ), "Imposible abrir todas las bases de datos de bancos" )
+
+   end
+   ErrorBlock( oBlock )
+
+   if lClose
+      ( dbfBanco )->( dbCloseArea() )
+   else
+      ( dbfBanco )->( OrdSetFocus( nOrdAnt ) )
+      ( dbfBanco )->( dbGoTo( nRec ) )
+   end
+
+Return ( cText )
+
+static Function ReportingClient()
+
+   oReporting  := TFastVentasProveedores():New()
+   oReporting:Play()
+
+Return( oReporting )
+
+
+
+FUNCTION BrwBncPrv( oGet, oEntBnc, oSucBnc, oDigBnc, oCtaBnc, cCodPrv, dbfBancos )
+
+    local oDlg
+    local oBrw
+   local oFont
+   local oBtn
+    local oGet1
+    local cGet1
+   local nOrd        := GetBrwOpt( "BrwBncPrv" )
+    local oCbxOrd
+   local aCbxOrd     := { "Cuenta" }
+   local cCbxOrd     := "Cuenta"
+   local nLevel      := nLevelUsr( "01110" )
+   local lClose      := .F.
+
+   nOrd              := Min( Max( nOrd, 1 ), len( aCbxOrd ) )
+   cCbxOrd           := aCbxOrd[ nOrd ]
+
+   if Empty( cCodPrv )
+      MsgStop( "Es necesario codificar un proveedor" )
+      return .T.
+   end
+
+   if !lExistTable( cPatPrv() + "PrvBnc.Dbf" )
+      MsgStop( "No existe el fichero de bancos" )
+      Return .F.
+   end
+
+   if Empty( dbfBancos )
+      dbUseArea( .T., ( cDriver() ), ( cPatPrv() + "PrvBnc.Dbf" ), ( cCheckArea( "PRVBNC", @dbfBancos ) ), if(.T. .OR. .F., !.F., NIL), .F.,, )
+      if !lAIS() ; ordListAdd( ( cPatPrv() + "PrvBnc.Cdx" ) ) ; else ; ordSetFocus( 1 ) ; end
+      lClose      := .T.
+   end
+
+   ( dbfBancos )->( ordSetFocus( nOrd ) )
+
+   ( dbfBancos )->( OrdScope( 0, cCodPrv ) )
+   ( dbfBancos )->( OrdScope( 1, cCodPrv ) )
+   ( dbfBancos )->( dbGoTop() )
+
+
+
+   oDlg = TDialog():New(,,,, "Seleccionar cuentas bancarias de proveedores", "HELPENTRY",, .F.,,,,,, .F.,,,,,, .F., )
+
+
+
+
+
+      oGet1 := TGetHlp():ReDefine( 104, { | u | If( PCount()==0, cGet1, cGet1:= u ) }, oDlg,,,,,,,,, .F.,, {|nKey,nFlags,Self| ( AutoSeek( nKey, nFlags, Self, oBrw, dbfBancos, nil, cCodPrv ) ) }, .F., .F.,,,,,, nil, "FIND",, )
+
+
+
+
+
+
+
+
+
+
+        oCbxOrd := TComboBox():ReDefine( 102, { | u | If( PCount()==0, cCbxOrd, cCbxOrd:= u ) }, aCbxOrd, oDlg,,, {|Self|(  ( dbfBancos )->( OrdSetFocus( oCbxOrd:nAt ) ), ( dbfBancos )->( OrdScope( 0, cCodPrv ) ), ( dbfBancos )->( OrdScope( 1, cCodPrv ) ), oBrw:Refresh(), oGet1:SetFocus() )},,,, .F.,,,,,, )
+
+      oBrw                 := TXBrowse():New( oDlg )
+
+      oBrw:bClrSel         := {|| { 0, ( 229 + ( 229 * 256 ) + ( 229 * 65536 ) ) } }
+      oBrw:bClrSelFocus    := {|| { 0, ( 167 + ( 205 * 256 ) + ( 240 * 65536 ) ) } }
+
+      oBrw:cAlias          := dbfBancos
+      oBrw:nMarqueeStyle   := 5
+
+      with object ( oBrw:AddCol() )
+         :cHeader          := "Nombre"
+         :cSortOrder       := "cCodBnc"
+         :bEditValue       := {|| ( dbfBancos )->cCodBnc }
+         :nWidth           := 200
+         :bLClickHeader    := {| nMRow, nMCol, nFlags, oCol | oCbxOrd:Set( oCol:cHeader ) }
+      end
+
+      with object ( oBrw:AddCol() )
+         :cHeader          := "Cuenta"
+         :cSortOrder       := "cCodPrv"
+         :bEditValue       := {|| ( dbfBancos )->cEntBnc + "-" + ( dbfBancos )->cSucBnc + "-" + ( dbfBancos )->cDigBnc + "-" + ( dbfBancos )->cCtaBnc }
+         :nWidth           := 150
+         :bLClickHeader    := {| nMRow, nMCol, nFlags, oCol | oCbxOrd:Set( oCol:cHeader ) }
+      end
+
+      with object ( oBrw:AddCol() )
+         :cHeader          := "Domicilio"
+         :bEditValue       := {|| ( dbfBancos )->cDirBnc }
+         :nWidth           := 120
+      end
+
+      with object ( oBrw:AddCol() )
+         :cHeader          := "Población"
+         :bEditValue       := {|| ( dbfBancos )->cPobBnc }
+         :nWidth           := 100
+      end
+
+      with object ( oBrw:AddCol() )
+         :cHeader          := "Código postal"
+         :bEditValue       := {|| ( dbfBancos )->cCPBnc }
+         :nWidth           := 40
+      end
+
+      with object ( oBrw:AddCol() )
+         :cHeader          := "Provincia"
+         :bEditValue       := {|| ( dbfBancos )->cProBnc }
+         :nWidth           := 80
+      end
+
+      with object ( oBrw:AddCol() )
+         :cHeader          := "Teléfono"
+         :bEditValue       := {|| ( dbfBancos )->cTlfBnc }
+         :nWidth           := 80
+      end
+
+      with object ( oBrw:AddCol() )
+         :cHeader          := "Fax"
+         :bEditValue       := {|| ( dbfBancos )->cFaxBnc }
+         :nWidth           := 80
+      end
+
+      with object ( oBrw:AddCol() )
+         :cHeader          := "Contacto"
+         :bEditValue       := {|| ( dbfBancos )->cPContBnc }
+         :nWidth           := 140
+      end
+
+      oBrw:bLDblClick      := {|| oDlg:end( 1 ) }
+
+      oBrw:CreateFromResource( 105 )
+
+
+
+
+
+        TButton():ReDefine( 500, {||( nil )}, oDlg,,, .F., {||     ( .F. )},,, .F. )
+
+
+
+
+
+        TButton():ReDefine( 501, {||( nil )}, oDlg,,, .F., {||     ( .F. )},,, .F. )
+
+   oDlg:AddFastKey( 116,       {|| oDlg:end( 1 ) } )
+   oDlg:AddFastKey( 13,   {|| oDlg:end( 1 ) } )
+
+   oDlg:Activate( oDlg:bLClicked, oDlg:bMoved, oDlg:bPainted, .T.,,,, oDlg:bRClicked,,, )
+
+   if oDlg:nResult == 1
+
+      oGet:cText( ( dbfBancos )->cCodBnc )
+
+      if oEntBnc <> nil
+         oEntBnc:cText( ( dbfBancos )->cEntBnc )
+      end
+      if oSucBnc <> nil
+         oSucBnc:cText( ( dbfBancos )->cSucBnc )
+      end
+      if oDigBnc <> nil
+         oDigBnc:cText( ( dbfBancos )->cDigBnc )
+      end
+      if oCtaBnc <> nil
+         oCtaBnc:cText( ( dbfBancos )->cCtaBnc )
+      end
+
+   end
+
+   DestroyFastFilter( dbfBancos )
+
+   SetBrwOpt( "BrwBncPrv", ( dbfBancos )->( OrdNumber() ) )
+
+   if lClose
+      ( dbfBancos )->( dbCloseArea() )
+   else
+      ( dbfBancos )->( OrdSetFocus( nOrd ) )
+      ( dbfBancos )->( OrdScope( 0, nil ) )
+      ( dbfBancos )->( OrdScope( 1, nil ) )
+   end
+
+    oGet:setFocus()
+
+RETURN ( oDlg:nResult == 1 )
+
+
+
+
+
+
+
+STATIC FUNCTION ChkAllSubCta()
+
+   local oDlg
+   local cArea
+   local nRecno      := ( dbfProvee )->( RecNo() )
+   local cTag        := ( dbfProvee )->( OrdSetFocus( 1 ) )
+   local cRuta       := cRutCnt()
+   local cCodEmp     := cEmpCnt( "A" )
+   local oChkCreate
+   local lChkCreate  := .F.
+   local oChkCuenta
+   local lChkCuenta  := .F.
+   local aMsg        := {}
+   local oTree
+   local cCliOrg
+   local cCliDes
+   local oCliOrg
+   local oCliDes
+   local oSayCliOrg
+   local oSayCliDes
+   local cSayCliOrg
+   local cSayCliDes
+   local oImageList
+
+   if Empty( cRuta ) .OR. Empty( cCodEmp )
+      msgStop( "No existe enlace a contaplus ®" )
+      return .F.
+   end
+
+   if !OpenSubCuenta( cRuta, cCodEmp, @cArea, .F. )
+      msgStop( "Imposible acceder a ficheros de contaplus ®" )
+      return .T.
+   end
+
+
+
+
+
+   cCliOrg           := dbFirst( dbfProvee, 1 )
+   cCliDes           := dbLast(  dbfProvee, 1 )
+   cSayCliOrg        := dbFirst( dbfProvee, 2 )
+   cSayCliDes        := dbLast(  dbfProvee, 2 )
+
+   oImageList        := TImageList():New( 16, 16 )
+   oImageList:AddMasked( TBitmap():Define( "bRed" ),     ( 255 + ( 0 * 256 ) + ( 255 * 65536 ) ) )
+   oImageList:AddMasked( TBitmap():Define( "bGreen" ),   ( 255 + ( 0 * 256 ) + ( 255 * 65536 ) ) )
+
+
+
+
+
+   oDlg = TDialog():New(,,,,, "ChkAllSubCta",, .F.,,,,,, .F.,,,,,, .F., )
+
+
+
+
+
+
+
+
+
+
+   oCliOrg := TGetHlp():ReDefine( 80, { | u | If( PCount()==0, cCliOrg, cCliOrg:= u ) }, oDlg,,, {||    cProvee( oCliOrg, dbfProvee, oSayCliOrg )},,,,,, .F.,,, .F., .F.,,,,, {|Self|BrwPrv( oCliOrg, oSayCliOrg, dbfProvee )}, nil, "Lupa",, )
+
+
+
+
+   oSayCliOrg := TGetHlp():ReDefine( 81, { | u | If( PCount()==0, cSayCliOrg, cSayCliOrg:= u ) }, oDlg,,,,,,,,, .F., {||     .F.},, .F., .F.,,,,,, nil,,, )
+
+
+
+
+
+
+   oCliDes := TGetHlp():ReDefine( 90, { | u | If( PCount()==0, cCliDes, cCliDes:= u ) }, oDlg,,, {||    cProvee( oCliDes, dbfProvee, oSayCliDes )},,,,,, .F.,,, .F., .F.,,,,, {|Self|BrwPrv( oCliDes, oSayCliDes, dbfProvee )}, nil, "Lupa",, )
+
+
+
+
+   oSayCliDes := TGetHlp():ReDefine( 91, { | u | If( PCount()==0, cSayCliDes, cSayCliDes:= u ) }, oDlg,,,,,,,,, .F., {||     .F.},, .F., .F.,,,,,, nil,,, )
+
+
+
+   oChkCreate := TCheckBox():ReDefine( 100, { | u | If( PCount()==0, lChkCreate, lChkCreate:= u ) }, oDlg,,,,,,, .F.,, .F. )
+
+
+
+   oChkCuenta := TCheckBox():ReDefine( 110, { | u | If( PCount()==0, lChkCuenta, lChkCuenta:= u ) }, oDlg,,,,,,, .F.,, .F. )
+
+   oTree       := TTreeView():Redefine( 170, oDlg )
+
+
+
+
+   TButton():ReDefine( 1, {||( MakAllSubCta( cCliOrg, cCliDes, lChkCuenta, lChkCreate, cArea, aMsg, oTree, oDlg ) )}, oDlg,,, .F.,,,, .F. )
+
+
+
+
+
+   TButton():ReDefine( 2, {||( oDlg:end() )}, oDlg,,, .F.,,,, .T. )
+
+
+
+   oDlg:Activate( oDlg:bLClicked, oDlg:bMoved, oDlg:bPainted, .T.,,, {|Self|( oTree:SetImageList( oImageList ) )}, oDlg:bRClicked,,, )
+
+   ( dbfProvee )->( dbGoTo( nRecno ) )
+   ( dbfProvee )->( OrdSetFocus( cTag ) )
+
+   ( cArea )->( dbCloseArea() )
+
+   oImageList:End()
+
+   oTree:Destroy()
+
+   oWndBrw:oBrw:SetFocus()
+   oWndBrw:oBrw:Refresh()
+
+return .T.
+
+
+
+Static Function MakAllSubCta( cCliOrg, cCliDes, lChkCuenta, lChkCreate, cArea, aMsg, oTree, oDlg )
+
+   local nLen
+   local oItem
+
+   oDlg:Disable()
+
+   oTree:DeleteAll()
+
+   nLen              := nLenCuentaContaplus()
+
+   if ( dbfProvee )->( dbSeek( cCliOrg ) )
+
+      while ( dbfProvee )->Cod <= cCliDes .AND. !( dbfProvee )->( Eof() )
+
+         if Empty( AllTrim( ( dbfProvee )->SubCta ) ) .AND. lChkCuenta
+            if dbLock( dbfProvee )
+               ( dbfProvee )->SubCta      := "400" + Right( Rtrim( ( dbfProvee )->Cod ), nLen )
+               ( dbfProvee )->( dbUnLock() )
+            end
+         end
+
+         if !Empty( AllTrim( ( dbfProvee )->SubCta ) )
+
+            if !( cArea )->( dbSeek( ( dbfProvee )->SubCta, .T. ) )
+
+
+
+               if lChkCreate .OR. ApoloMsgNoYes(   "Subcuenta : " + Rtrim( ( dbfProvee )->SubCta ) + " no existe" + Chr(13)+Chr(10) +  "¿ Desea crearla ?", "Enlace con contaplus ®" )
+
+                  ( cArea )->( dbAppend() )
+                  ( cArea )->Cod          := ( dbfProvee )->Subcta
+                  ( cArea )->Titulo       := ( dbfProvee )->Titulo
+                  ( cArea )->Nif          := ( dbfProvee )->Nif
+                  ( cArea )->Domicilio    := ( dbfProvee )->Domicilio
+                  ( cArea )->Poblacion    := ( dbfProvee )->Poblacion
+                  ( cArea )->Provincia    := ( dbfProvee )->Provincia
+                  ( cArea )->CodPostal    := ( dbfProvee )->CodPostal
+                  ( cArea )->( dbCommit() )
+
+                  oItem := oTree:Add( "Cuenta " + Rtrim( ( dbfProvee )->Subcta ) + " del proveedor " + Rtrim( ( dbfProvee )->Cod ) + ", " + Rtrim( ( dbfProvee )->Titulo ) + " creada", 1 )
+
+               else
+
+                  oItem := oTree:Add( "Cuenta " + Rtrim( ( dbfProvee )->Subcta ) + " del proveedor " + Rtrim( ( dbfProvee )->Cod ) + ", " + Rtrim( ( dbfProvee )->Titulo ) + " creación cancelada", 1 )
+
+               end
+
+            else
+
+               oItem    := oTree:Add( "Cuenta " + Rtrim( ( dbfProvee )->Subcta ) + " del proveedor " + Rtrim( ( dbfProvee )->Cod ) + ", " + Rtrim( ( dbfProvee )->Titulo ) + " ya existe", 0 )
+
+            end
+
+         else
+
+            oItem       := oTree:Add( "El proveedor : " + Rtrim( ( dbfProvee )->Cod ) + ", " + Rtrim( ( dbfProvee )->Titulo ) + " no tiene codificada cuenta en Contaplus", 0 )
+
+         end
+
+         oTree:Select( oItem )
+
+         SysRefresh()
+
+         ( dbfProvee )->( dbSkip() )
+
+      end
+
+   end
+
+   MsgInfo( "Proceso finalizado" )
+
+   oDlg:Enable()
+
+Return nil
+
+
+
+Function cProveeCuenta( cProvee, dbfBncPrv )
+
+   local lCloseBnc   := .F.
+   local cCuenta     := ""
+
+   if Empty( dbfBncPrv )
+      dbUseArea( .T., ( cDriver() ), ( cPatPrv() + "PrvBnc.Dbf" ), ( cCheckArea( "PRVBNC", @dbfBncPrv ) ), if(.T. .OR. .F., !.F., NIL), .F.,, )
+      if !lAIS() ; ordListAdd( ( cPatPrv() + "PrvBnc.Cdx" ) ) ; else ; ordSetFocus( 1 ) ; end
+      lCloseBnc      := .T.
+   end
+
+   if dbSeekInOrd( cProvee, "cCodDef", dbfBncPrv )
+      cCuenta        := ( dbfBncPrv )->cEntBnc + ( dbfBncPrv )->cSucBnc + ( dbfBncPrv )->cDigBnc + ( dbfBncPrv )->cCtaBnc
+   end
+
+   if Empty( cCuenta )
+      if dbSeekInOrd( cProvee, "cCodPrv", dbfBncPrv )
+         cCuenta     := ( dbfBncPrv )->cEntBnc + ( dbfBncPrv )->cSucBnc + ( dbfBncPrv )->cDigBnc + ( dbfBncPrv )->cCtaBnc
+      end
+   end
+
+   if lCloseBnc
+      ( dbfBncPrv )->( dbCloseArea() )
+   end
+
+Return cCuenta
+
+
+
+Function cNombreBancoProvee( cProvee, dbfBncPrv )
+
+   local lCloseBnc   := .F.
+   local cBanco      := ""
+
+   if Empty( dbfBncPrv )
+      dbUseArea( .T., ( cDriver() ), ( cPatPrv() + "PrvBnc.Dbf" ), ( cCheckArea( "PRVBNC", @dbfBncPrv ) ), if(.T. .OR. .F., !.F., NIL), .F.,, )
+      if !lAIS() ; ordListAdd( ( cPatPrv() + "PrvBnc.Cdx" ) ) ; else ; ordSetFocus( 1 ) ; end
+      lCloseBnc      := .T.
+   end
+
+   if dbSeekInOrd( cProvee, "cCodDef", dbfBncPrv )
+      cBanco         := ( dbfBncPrv )->cCodBnc
+   end
+
+   if Empty( cBanco )
+      if dbSeekInOrd( cProvee, "cCodPrv", dbfBncPrv )
+         cBanco      := ( dbfBncPrv )->cCodBnc
+      end
+   end
+
+   if lCloseBnc
+      ( dbfBncPrv )->( dbCloseArea() )
+   end
+
+Return cBanco

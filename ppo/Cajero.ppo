@@ -1,0 +1,699 @@
+#line 112 "hbclass.ch"
+   DYNAMIC DivertConstructorCall
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+DECLARE HBClass  New( cName AS String, OPTIONAL SuperParams ) AS CLASS HBClass  Create() AS Object  Instance() AS Object  AddClsMethod( cName AS String, @MethodName(), nScope AS Numeric, n2 AS Numeric, n3 AS Numeric )  AddDelegate( cName AS String, cDelegate AS String, cObject AS String, nScope AS Numeric, lPersistent AS LOGICAL )  AddMultiClsData( cType AS String, uVal, nScope AS Numeric, aDatas AS Array OF String )  AddMultiData( cType AS String, uVal, nScope AS Numeric, aDatas AS Array OF String, x AS LOGICAL, lPer AS LOGICAL )  AddMethod( cName AS String, @MethodName(), nScope AS Numeric, lPersistent AS LOGICAL )  AddInLine( cName AS String, bBlock AS CodeBlock, nScope AS Numeric, lPersistent AS LOGICAL )  AddVirtual( cName AS String )  ModMethod( cName AS String, @MethodName(), nScope AS Numeric, lPersistent AS LOGICAL )  ModClsMethod( cName AS String, @MethodName(), nScope AS Numeric )  ModInline( cName AS String, bBlock AS CodeBlock, nScope AS Numeric, lPersistent AS LOGICAL )  SetOnError( @MethodName() )
+#line 85 "\Fwh1204\Include\FiveWin.Ch"
+   EXTERNAL GetProcAdd
+   EXTERNAL TActiveX
+
+
+
+
+extern errorsys
+#line 16 ".\Prg\Cajero.prg"
+static oWndBrw
+static nLevel
+static dbfCajero
+static bEdit := { |aTemp, aoGet, dbfCajero, oBrw, bWhen, bValid, nMode | EdtRec( aTemp, aoGet, dbfCajero, oBrw, bWhen, bValid, nMode ) }
+
+
+
+
+
+
+
+
+static aBase := { { "CCODCAJ",    "C",    3,     0 },    { "CNOMCAJ",    "C", 30,  0 },    { "CNIFCAJ",    "C", 15,  0 },    { "CDOMCAJ",    "C", 35,  0 }, { "CPOBCAJ",   "C", 30,  0 },    { "CPRVCAJ",    "C", 20,  0 },    { "CCDPCAJ",    "C",  7,  0 },    { "CTELCAJ",    "C", 12,  0 },    { "CFAXCAJ",    "C", 12,  0 } }
+
+
+
+STATIC FUNCTION OpenFiles()
+
+   local oBlock
+   local oError
+   local lOpen    := .T.
+
+   oBlock         := ErrorBlock( {| oError | ApoloBreak( oError ) } )
+   BEGIN SEQUENCE
+
+      IF !File( cPatEmp() + "CAJERO.DBF" )
+         mkCajero()
+      end
+
+      dbUseArea( .T., ( cDriver() ), ( cPatEmp() + "CAJERO.DBF" ), ( cCheckArea( "CAJERO", @dbfCajero ) ), if(.T. .OR. .F., !.F., NIL), .F.,, )
+      if !lAIS() ; ordListAdd( ( cPatEmp() + "CAJERO.CDX" ) ) ; else ; ordSetFocus( 1 ) ; end
+
+   RECOVER USING oError
+
+      lOpen       := .F.
+
+      MsgStop( "Imposible abrir toda la base de datos" + Chr(13)+Chr(10) + ErrorMessage( oError ))
+
+   end
+
+   ErrorBlock( oBlock )
+
+   if !lOpen
+      CloseFiles()
+   end
+
+RETURN( lOpen )
+
+
+
+STATIC FUNCTION CloseFiles()
+
+   ( dbfCajero )->( dbCloseArea() )
+
+   dbfCajero      := nil
+
+   if oWndBrw <> nil
+      oWndBrw     := nil
+   end
+
+RETURN .T.
+
+
+
+FUNCTION Cajero( oMenuItem, oWnd )
+
+   IIF( oMenuItem == nil, oMenuItem := "01018", ) ;
+   IIF( oWnd == nil, oWnd := oWnd(), ) ;
+
+    IF oWndBrw == NIL
+
+
+
+
+
+      if nLevel == nil
+         nLevel := nLevelUsr( oMenuItem )
+      end
+
+      if nAnd( nLevel, 1 ) <> 0
+         msgStop( "Acceso no permitido." )
+         return nil
+      end
+
+
+
+
+
+      if oWnd <> nil
+         SysRefresh(); oWnd:CloseAll(); SysRefresh()
+      end
+
+
+
+
+
+      IF !OpenFiles()
+         RETURN NIL
+      end
+
+
+
+
+
+      AddMnuNext( "Cajeros", ProcName() )
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+      oWndBrw := TShell():New( 2, 10, 18, 70, "Cajeros",, oWnd,,, .F.,, { {||     (dbfCajero)->CCODCAJ}, {||    (dbfCajero)->CNOMCAJ}, {||    (dbfCajero)->CNIFCAJ} }, ( dbfCajero ), {"Código",    "Nombre",    "N.I.F."},,, {.F., .F., .F.}, {"Código",    "Nombre"}, {||WinAppRec( oWndBrw:oBrw, bEdit, dbfCajero, ,  )}, {||WinEdtRec( oWndBrw:oBrw, bEdit, dbfCajero )}, {||DBDelRec(  oWndBrw:oBrw, dbfCajero )}, {||WinDupRec( oWndBrw:oBrw, bEdit, dbfCajero, , {|oGet| NotValid( oGet, dbfCajero, .T., "0" ) } )}, nil, nLevel, "CCODCAJ + Space( 1 ) + CNOMCAJ",,,, )
+
+
+
+
+
+      oWndBrw:NewAt( "BUS",,, {||( oWndBrw:SearchSetFocus() )}, "(B)uscar", "B",,,,, .F. )
+
+         oWndBrw:AddSeaBar()
+
+
+
+
+
+
+
+
+      oWndBrw:NewAt( "NEW",,, {||( oWndBrw:RecAdd() )}, "(A)ñadir", "A",,, 2,, .F. )
+
+
+
+
+
+
+
+        oWndBrw:NewAt( "DUP",,, {||( oWndBrw:RecDup() )}, "(D)uplicar", "D",,, 2,, .F. )
+
+
+
+
+
+
+
+        oWndBrw:NewAt( "EDIT",,, {||( oWndBrw:RecEdit() )}, "(M)odificar", "M",,, 4,, .F. )
+
+
+
+
+
+
+
+        oWndBrw:NewAt( "ZOOM",,, {||( WinZooRec( oWndBrw:oBrw, bEdit, dbfCajero ) )}, "(Z)oom", "Z",,, 8,, .F. )
+
+
+
+
+
+
+
+        oWndBrw:NewAt( "DEL",,, {||( oWndBrw:RecDel() )}, "(E)liminar", "E",,, 16,, .F. )
+
+
+
+
+
+
+      oWndBrw:NewAt( "IMP",,, {||( GenReport( dbfCajero ) )}, "(L)istado", "L",,, 8,, .F. )
+
+
+
+
+
+      oWndBrw:NewAt( "END",,, {||( oWndBrw:End() )}, "(S)alir", "S",,,,, .F. )
+
+
+        oWndBrw:Activate(, oWndBrw:bLClicked, oWndBrw:bRClicked, oWndBrw:bMoved, oWndBrw:bResized, oWndBrw:bPainted, oWndBrw:bKeyDown, oWndBrw:bInit,,,,,,,,, {|| ( oWndBrw:oBrw:lCloseArea(), oWndBrw := NIL, .T. )},, oWndBrw:bLButtonUp )
+
+    ELSE
+
+        oWndBrw:SetFocus()
+
+    end
+
+RETURN NIL
+
+
+
+STATIC FUNCTION EdtRec( aTemp, aoGet, dbfCajero, oBrw, bWhen, bValid, nMode )
+
+    local oDlg
+    local oGet
+
+    oDlg = TDialog():New(,,,, LblTitle( nMode ) + "Cajero/as", "CAJERO",, .F.,,,,,, .F.,,,,,, .F., )
+
+
+
+
+
+
+        oGet := TGetHlp():ReDefine( 110, { | u | If( PCount()==0, aTemp[1], aTemp[1]:= u ) }, oDlg,,, {||    ( NotValid( oGet, dbfCajero, .T., "0" ) )}, "N/W*",,,,, .F., {||     ( nMode == 1 )},, .F., .F.,,,,,, nil,,, )
+
+
+
+
+
+
+        TGetHlp():ReDefine( 120, { | u | If( PCount()==0, aTemp[2], aTemp[2]:= u ) }, oDlg,, "@!",, "N/W*",,,,, .F., {||         ( nMode <> 3 )},, .F., .F.,,,,,, nil,,, )
+
+
+
+
+
+        TGetHlp():ReDefine( 130, { | u | If( PCount()==0, aTemp[3], aTemp[3]:= u ) }, oDlg,,,, "N/W*",,,,, .F., {||         ( nMode <> 3 )},, .F., .F.,,,,,, nil,,, )
+
+
+
+
+
+        TGetHlp():ReDefine( 140, { | u | If( PCount()==0, aTemp[4], aTemp[4]:= u ) }, oDlg,,,, "N/W*",,,,, .F., {||         ( nMode <> 3 )},, .F., .F.,,,,,, nil,,, )
+
+
+
+
+
+        TGetHlp():ReDefine( 150, { | u | If( PCount()==0, aTemp[5], aTemp[5]:= u ) }, oDlg,,,, "N/W*",,,,, .F., {||         ( nMode <> 3 )},, .F., .F.,,,,,, nil,,, )
+
+
+
+
+
+      TGetHlp():ReDefine( 160, { | u | If( PCount()==0, aTemp[7], aTemp[7]:= u ) }, oDlg,,,, "N/W*",,,,, .F., {||         ( nMode <> 3 )},, .F., .F.,,,,,, nil,,, )
+
+
+
+
+
+        TGetHlp():ReDefine( 170, { | u | If( PCount()==0, aTemp[6], aTemp[6]:= u ) }, oDlg,,,, "N/W*",,,,, .F., {||         ( nMode <> 3 )},, .F., .F.,,,,,, nil,,, )
+
+
+
+
+
+
+      TGetHlp():ReDefine( 180, { | u | If( PCount()==0, aTemp[8], aTemp[8]:= u ) }, oDlg,, "999999999999",, "N/W*",,,,, .F., {||         ( nMode <> 3 )},, .F., .F.,,,,,, nil,,, )
+
+
+
+
+
+
+        TGetHlp():ReDefine( 190, { | u | If( PCount()==0, aTemp[9], aTemp[9]:= u ) }, oDlg,, "999999999999",, "N/W*",,,,, .F., {||         ( nMode <> 3 )},, .F., .F.,,,,,, nil,,, )
+
+
+
+
+
+        TButton():ReDefine( 1, {||( WinGather( aTemp, aoGet, dbfCajero, oBrw, nMode ), oDlg:end( 1 ) )}, oDlg,,, .F., {||         ( nMode <> 3 )},,, .F. )
+
+
+
+
+
+        TButton():ReDefine( 2, {||( oDlg:end() )}, oDlg,,, .F.,,,, .T. )
+
+   oDlg:Activate( oDlg:bLClicked, oDlg:bMoved, oDlg:bPainted := {|hDC,cPS|( EvalGet( aoGet, nMode ) )}, .T.,,,, oDlg:bRClicked,,, )
+
+RETURN ( oDlg:nResult == 1 )
+
+
+
+STATIC FUNCTION GenReport( dbfCajero )
+
+    local oReport
+    local oFont1
+    local oFont2
+    local nDevice        := 1
+    local nRecno         := ( dbfCajero )->( RecNo() )
+   local cTitulo     := Padr( cCodEmp() + " - " + cNbrEmp(), 50 )
+   local cSubTitulo  := Padr( "Listado de cajeros", 50 )
+
+
+
+
+
+    IF SetRep( @cTitulo, @cSubTitulo, @nDevice )
+
+        (dbfCajero)->(dbGoTop())
+
+      oFont1 := TFont():New( "Courier New", 0, -10,, .T.,,,,,,,,,,,, )
+      oFont2 := TFont():New( "Courier New", 0, -10,,,,,,,,,,,,,, )
+
+        IF nDevice == 1
+
+
+
+
+
+
+
+
+            oReport := RptBegin({{||      Rtrim( cTitulo )}, {||    Rtrim( cSubTitulo )}}, {{||     "Fecha: " + dtoc(date())}}, {{||   "Página : " + str( oReport:nPage, 3 )}}, {oFont1, oFont2}, {}, .F.,,,, .T.,,, "Listado de Cajeros",, UPPER("RIGHT"), UPPER("CENTERED") )
+
+        ELSE
+
+
+
+
+
+
+
+
+            oReport := RptBegin({{||      Rtrim( cTitulo )}, {||    Rtrim( cSubTitulo )}}, {{||     "Fecha: " + dtoc(date())}}, {{||   "Página : "  + str( oReport:nPage, 3 )}}, {oFont1, oFont2}, {}, .F.,,, .T., .F.,,, "Listado de Cajeros",, UPPER("RIGHT"), UPPER("CENTERED") )
+
+        end
+
+
+
+         RptAddColumn( {{||   "Codigo"}}, , {{||        (dbfCajero)->CCODCAJ}},, {} , {||        2}, .F., ,, .F., .F.,, .F., .F.,,, .F., )
+
+
+
+         RptAddColumn( {{||   "Nombre"}}, , {{||        (dbfCajero)->CNOMCAJ}},, {} , {||        2}, .F., ,, .F., .F.,, .F., .F.,,, .F., )
+
+
+
+         RptAddColumn( {{||   "N.I.F."}}, , {{||        (dbfCajero)->CNIFCAJ}},, {} , {||        2}, .F., ,, .F., .F.,, .F., .F.,,, .F., )
+
+
+
+
+
+         RptAddColumn( {{||   "Domicilio"} , {|| "Población"}}, , {{||        (dbfCajero)->CDOMCAJ} , {|| (dbfCajero)->CPOBCAJ}},, {} , {|| 2}, .F., ,, .F., .F.,, .F., .F.,,, .F., )
+
+
+
+
+
+
+         RptAddColumn( {{||   "Cod. Postal"}, {|| "Provincia"}}, , {{||        (dbfCajero)->CCDPCAJ} , {|| (dbfCajero)->CPRVCAJ}},, {} , {|| 2}, .F., ,, .F., .F.,, .F., .F.,,, .F., )
+
+
+
+
+
+         RptAddColumn( {{||   "Teléfono"} , {|| "Fax"}}, , {{||        (dbfCajero)->CTELCAJ} , {|| (dbfCajero)->CFAXCAJ}},, {} , {|| 2}, .F., ,, .F., .F.,, .F., .F.,,, .F., )
+
+        RptEnd()
+
+      IF !Empty( oReport ) .AND. oReport:lCreated
+            oReport:Margin(0, 2, 2)
+            oReport:bSkip    := {|| (dbfCajero)->(DbSkip()) }
+        end
+
+        oReport:Activate(, {|| !( dbfCajero )->( Eof() )},,,,,,,,,,,, )
+
+        oFont1:end()
+        oFont2:end()
+      oReport:End()
+
+    end
+
+    (dbfCajero)->( dbGoTo( nRecno ) )
+
+RETURN NIL
+
+
+
+FUNCTION cCajero( oGet, dbfCajero, oGet2 )
+
+
+   local oBlock
+   local oError
+    local cAreaAnt := Alias()
+    local lClose     := .F.
+    local lValid    := .F.
+    local xValor     := oGet:varGet()
+
+    IF Empty( xValor )
+        IF oGet2 <> NIL
+            oGet2:cText( "" )
+        end
+        RETURN .T.
+    end
+
+      oBlock            := ErrorBlock( {| oError | ApoloBreak( oError ) } )
+      BEGIN SEQUENCE
+
+    IF dbfCajero == NIL
+
+      dbUseArea( .T., ( cDriver() ), ( cPatEmp() + "CAJERO.DBF" ), ( cCheckArea( "CAJERO", @dbfCajero ) ), if(.T. .OR. .F., !.F., NIL), .F.,, )
+      if !lAIS() ; ordListAdd( ( cPatEmp() + "CAJERO.CDX" ) ) ; else ; ordSetFocus( 1 ) ; end
+        lClose    := .T.
+
+    end
+
+    IF (dbfCajero)->( DbSeek( xValor ) )
+
+        oGet:cText( (dbfCajero)->CCODCAJ )
+
+        IF oGet2 <> NIL
+            oGet2:cText( (dbfCajero)->CNOMCAJ )
+        end
+
+        lValid    := .T.
+
+    ELSE
+
+      msgStop( "Codigo de Cajero/a no encontrado" )
+
+    end
+
+   RECOVER USING oError
+
+      msgStop( "Imposible abrir todas las bases de datos " + Chr(13)+Chr(10) + ErrorMessage( oError ) )
+
+   end
+
+   ErrorBlock( oBlock )
+
+    IF lClose
+        ( dbfCajero )->( dbCloseArea() )
+    end
+
+    IF cAreaAnt <> ""
+        dbSelectArea( ( cAreaAnt ) )
+    end
+
+RETURN lValid
+
+
+
+FUNCTION BrwCajero( oGet, dbfCajero, oGet2, lBigStyle )
+
+
+   local oBlock
+   local oError
+    local oDlg
+    local oGet1
+    local cGet1
+    local oBrw
+   local nOrd        := GetBrwOpt( "BrwCajero" )
+    local oCbxOrd
+   local aCbxOrd     := { "Código", "Nombre" }
+   local cCbxOrd
+   local lClose      := .F.
+
+   nOrd              := Min( Max( nOrd, 1 ), len( aCbxOrd ) )
+   cCbxOrd           := aCbxOrd[ nOrd ]
+
+   IIF( lBigStyle == nil, lBigStyle := .F., ) ;
+
+   oBlock            := ErrorBlock( {| oError | ApoloBreak( oError ) } )
+   BEGIN SEQUENCE
+
+   if Empty( dbfCajero )
+      dbUseArea( .T., ( cDriver() ), ( cPatEmp() + "CAJERO.DBF" ), ( cCheckArea( "CAJERO", @dbfCajero ) ), if(.T. .OR. .F., !.F., NIL), .F.,, )
+      if !lAIS() ; ordListAdd( ( cPatEmp() + "CAJERO.CDX" ) ) ; else ; ordSetFocus( 1 ) ; end
+      lClose         := .T.
+   end
+
+   ( dbfCajero )->( dbGoTop() )
+
+   oDlg = TDialog():New(,,,, "Seleccionar cajero", "HELPENTRY",, .F.,,,,,, .F.,,,,,, .F., )
+
+
+
+
+
+
+        oGet1 := TGetHlp():ReDefine( 104, { | u | If( PCount()==0, cGet1, cGet1:= u ) }, oDlg,,, {||    ( OrdClearScope( oBrw, dbfCajero ) )},,,,,, .F.,, {|nKey,nFlags,Self| (AutoSeek( nKey, nFlags, Self, oBrw, dbfCajero ) ) }, .F., .F.,,,,,, nil, "FIND",, )
+
+
+
+
+
+
+
+
+        oCbxOrd := TComboBox():ReDefine( 102, { | u | If( PCount()==0, cCbxOrd, cCbxOrd:= u ) }, aCbxOrd, oDlg,,, {|Self|( ( dbfCajero )->( OrdSetFocus( oCbxOrd:nAt ) ),    oBrw:refresh(),    oGet1:SetFocus() )},,,, .F.,,,,,, )
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+        oBrw := TWBrowse():ReDefine( 105, {|| { (dbfCajero)->CCODCAJ, (dbfCajero)->CNOMCAJ } }, oDlg, {"Codigo", "Nombre"}, {30, 200},,,,, {|nRow,nCol,nFlags|( oDlg:end( 1 ) )},,,,,,, .F., (dbfCajero),,,, )
+
+      if lBigStyle
+         oBrw:nHeaderHeight := 36
+         oBrw:nFooterHeight := 36
+         oBrw:nLineHeight   := 36
+      end
+
+
+
+
+        TButton():ReDefine( 1, {||( oDlg:end(1) )}, oDlg,,, .F.,,,, .F. )
+
+
+
+
+
+        TButton():ReDefine( 2, {||( oDlg:end() )}, oDlg,,, .F.,,,, .T. )
+
+
+
+
+
+        TButton():ReDefine( 500, {||( WinAppRec( oBrw, bEdit, dbfCajero, , {|oGet| NotValid(oGet, dbfCajero) } ) )}, oDlg,,, .F.,,,, .F. )
+
+
+
+        TButton():ReDefine( 501, {||( WinEdtRec( oBrw, bEdit, dbfCajero ) )}, oDlg,,, .F.,,,, .F. )
+
+   oDlg:Activate( oDlg:bLClicked, oDlg:bMoved, oDlg:bPainted, .T.,,,, oDlg:bRClicked,,, )
+
+   If oDlg:nResult == 1
+
+        oGet:cText( (dbfCajero)->CCODCAJ )
+        oGet:lValid()
+
+        If ValType( oGet2 ) == "O"
+            oGet2:cText( (dbfCajero)->CNOMCAJ )
+        end
+
+    end
+
+    oGet:setFocus()
+
+   DestroyFastFilter( dbfCajero )
+
+   SetBrwOpt( "BrwCajero", ( dbfCajero )->( OrdNumber() ) )
+
+   RECOVER USING oError
+
+      msgStop( "Imposible abrir todas las bases de datos " + Chr(13)+Chr(10) + ErrorMessage( oError ) )
+
+   end
+
+   ErrorBlock( oBlock )
+
+    IF lClose
+        ( dbfCajero )->( dbCloseArea() )
+    end
+
+RETURN ( oDlg:nResult == 1 )
+
+
+
+FUNCTION mkCajero( cPath, lAppend, cPathOld, oMeter )
+
+   IIF( cPath == nil, cPath := cPatEmp(), ) ;
+    IIF( lAppend == nil, lAppend := .F., ) ;
+
+   dbCreate( cPath + "CAJERO.DBF", aBase, cDriver() )
+    rxCajero( cPath, oMeter )
+
+   if lAppend .AND. lIsDir( cPathOld )
+      AppDbf( cPathOld, cPath, "CAJERO" )
+   end
+
+RETURN NIL
+
+
+
+FUNCTION rxCajero( cPath, oMeter )
+
+   local oBlock
+   local oError
+    local dbfCajero
+
+   IIF( cPath == nil, cPath := cPatDat(), ) ;
+
+   IF !File( cPath + "CAJERO.DBF" )
+      dbCreate( cPath + "CAJERO.DBF", aBase, cDriver() )
+    end
+
+   oBlock            := ErrorBlock( {| oError | ApoloBreak( oError ) } )
+   BEGIN SEQUENCE
+
+   dbUseArea( .T., cDriver(), cPath + "CAJERO.DBF", cCheckArea( "CAJERO", @dbfCajero ), .F. )
+
+    IF oMeter <> NIL
+        oMeter:nTotal := ( dbfCajero )->( LastRec() ) + 1
+      oMeter:cText  := "1 Cajero/as"
+      ordCondSet("!Deleted()", {||!Deleted()},,, {|| oMeter:Set( ( dbfCajero )->( RecNo() ) ), sysrefresh() }, 1, ( dbfCajero )->( RecNo() ), )
+   ELSE
+      ordCondSet("!Deleted()", {||!Deleted()}  )
+   end
+
+   ordCreate( cPath + "CAJERO.CDX", "CCODCAJ", "Field->CCODCAJ", {|| Field->CCODCAJ }, )
+
+    IF oMeter <> NIL
+      oMeter:cText  := "2 Cajero/as"
+        ordCondSet(,,,, {|| oMeter:Set( ( dbfCajero )->( RecNo() ) ), sysrefresh() }, 1, ( dbfCajero )->( RecNo() ), )
+      ordCondSet("!Deleted()", {||!Deleted()},,, {|| oMeter:Set( ( dbfCajero )->( RecNo() ) ), sysrefresh() }, 1, ( dbfCajero )->( RecNo() ), )
+   ELSE
+      ordCondSet("!Deleted()", {||!Deleted()}  )
+   end
+
+   ordCreate( cPath + "CAJERO.CDX", "CNOMCAJ", "Field->CNOMCAJ", {|| Field->CNOMCAJ } )
+
+   RECOVER USING oError
+
+      msgStop( "Imposible abrir todas las bases de datos " + Chr(13)+Chr(10) + ErrorMessage( oError ) )
+
+   end
+
+   ErrorBlock( oBlock )
+
+    ( dbfCajero )->( dbCloseArea() )
+
+RETURN NIL
+
+
+
+FUNCTION RetCajero( cCodCaj, dbfCajero )
+
+   local oBlock
+   local oError
+   local cCajero     := ""
+    local lClose        := .F.
+
+   oBlock            := ErrorBlock( {| oError | ApoloBreak( oError ) } )
+   BEGIN SEQUENCE
+
+   IF dbfCajero == NIL
+      dbUseArea( .T., ( cDriver() ), ( cPatEmp() + "CAJERO.DBF" ), ( cCheckArea( "CAJERO", @dbfCajero ) ), if(.T. .OR. .F., !.F., NIL), .F.,, )
+      if !lAIS() ; ordListAdd( ( cPatEmp() + "CAJERO.CDX" ) ) ; else ; ordSetFocus( 1 ) ; end
+        lClose    := .T.
+    end
+
+   IF ( dbfCajero )->( DbSeek( cCodCaj ) )
+      cCajero := ( dbfCajero )->CNOMCAJ
+    end
+
+   RECOVER USING oError
+
+      msgStop( "Imposible abrir todas las bases de datos " + Chr(13)+Chr(10) + ErrorMessage( oError ) )
+
+   end
+
+   ErrorBlock( oBlock )
+
+    IF lClose
+      ( dbfCajero )->( dbCloseArea() )
+    end
+
+RETURN rtrim( cCajero )

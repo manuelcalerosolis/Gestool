@@ -1,0 +1,149 @@
+#line 112 "hbclass.ch"
+   DYNAMIC DivertConstructorCall
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+DECLARE HBClass  New( cName AS String, OPTIONAL SuperParams ) AS CLASS HBClass  Create() AS Object  Instance() AS Object  AddClsMethod( cName AS String, @MethodName(), nScope AS Numeric, n2 AS Numeric, n3 AS Numeric )  AddDelegate( cName AS String, cDelegate AS String, cObject AS String, nScope AS Numeric, lPersistent AS LOGICAL )  AddMultiClsData( cType AS String, uVal, nScope AS Numeric, aDatas AS Array OF String )  AddMultiData( cType AS String, uVal, nScope AS Numeric, aDatas AS Array OF String, x AS LOGICAL, lPer AS LOGICAL )  AddMethod( cName AS String, @MethodName(), nScope AS Numeric, lPersistent AS LOGICAL )  AddInLine( cName AS String, bBlock AS CodeBlock, nScope AS Numeric, lPersistent AS LOGICAL )  AddVirtual( cName AS String )  ModMethod( cName AS String, @MethodName(), nScope AS Numeric, lPersistent AS LOGICAL )  ModClsMethod( cName AS String, @MethodName(), nScope AS Numeric )  ModInline( cName AS String, bBlock AS CodeBlock, nScope AS Numeric, lPersistent AS LOGICAL )  SetOnError( @MethodName() )
+#line 85 "\Fwh1204\Include\FiveWin.Ch"
+   EXTERNAL GetProcAdd
+   EXTERNAL TActiveX
+
+
+
+
+extern errorsys
+#line 8 ".\Prg\InfAge.prg"
+_HB_CLASS InfAge ; UTILITY FUNCTION InfAge(...); static s_oClass ; local oClassInstance ; local nScope ; nScope := 1 ; if s_oClass == NIL ; s_oClass := IIF(.F.,, HBClass():New( "InfAge" , {TInfGen():classh} ) ) ; ;
+
+   _HB_MEMBER Create(); IIF( .F., s_oClass:ModMethod( "Create", @InfAge_Create(), nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ), s_oClass:AddMethod( "Create", @InfAge_Create(), nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ));
+
+   _HB_MEMBER lResource( cFld); IIF( .F., s_oClass:ModMethod( "lResource", @InfAge_lResource(), nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ), s_oClass:AddMethod( "lResource", @InfAge_lResource(), nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ));
+
+   _HB_MEMBER lGenerate(); IIF( .F., s_oClass:ModMethod( "lGenerate", @InfAge_lGenerate(), nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ), s_oClass:AddMethod( "lGenerate", @InfAge_lGenerate(), nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ));
+
+; IF .F. ; __clsActive(s_oClass:hClass) ; s_oClass:Refresh() ; ELSE ; s_oClass:Create() ; END ; oClassInstance := __clsInst( s_oClass:hClass ) ; IF __ObjHasMsg( oClassInstance, "InitClass" ); oClassInstance:InitClass( hb_aParams() ) ; END ; ELSE ; oClassInstance := __clsInst( s_oClass:hClass ) ; END ; IF PCount() > 0 ; DIVERT TO (@DivertConstructorCall()) OF s_oClass ; END ; RETURN oClassInstance AS CLASS InfAge ;
+
+
+
+UTILITY STATIC function InfAge_Create() ; local Self AS CLASS InfAge := QSelf() AS CLASS InfAge
+
+   ::AddField( "cCodAge",       "C",  3, 0, {|| "" },     "Cod.",             .T., "Código del agente",          5, .F. )
+   ::AddField( "cApeAge",       "C", 30, 0, {|| "" },     "Apellidos",        .F., "Apellidos del agente",      30, .F. )
+   ::AddField( "cNbrAge",       "C", 15, 0, {|| "" },     "Nombre",           .T., "Nombre del agente",         15, .F. )
+   ::AddField( "cDniNif",       "C", 15, 0, {|| "" },     "DNI",              .T., "DNI del agente",            15, .F. )
+   ::AddField( "cDirAge",       "C", 35, 0, {|| "" },     "Domicilio",        .T., "Dirección del agente",      15, .F. )
+   ::AddField( "cPobAge",       "C", 25, 0, {|| "" },     "Población",        .T., "Población del agente",      15, .F. )
+   ::AddField( "cPtlAge",       "C",  5, 0, {|| "" },     "C.P.",             .T., "Código postal del agente",   6, .F. )
+   ::AddField( "cProv",         "C", 15, 0, {|| "" },     "Provincia",        .T., "Provincia del agente",      15, .F. )
+   ::AddField( "cTfoAge",       "C", 12, 0, {|| "" },     "Teléfono",         .F., "Teléfono del agente",       12, .F. )
+   ::AddField( "cFaxAge",       "C", 12, 0, {|| "" },     "Fax",              .F., "Fax del agente",            12, .F. )
+   ::AddField( "cMovAge",       "C", 12, 0, {|| "" },     "Movíl",            .F., "Movíl del agente",          12, .F. )
+   ::AddField( "nIrpfAge",      "N",  5, 2, {|| "" },     "IRPF",             .T., "IRPF del agente",            6, .F. )
+
+   ::AddTmpIndex ( "cCodAge", "cCodAge" )
+
+   ::lDefFecInf   := .F.
+   ::lDefSerInf   := .F.
+   ::lDefDivInf   := .F.
+
+RETURN ( Self )
+
+
+
+UTILITY STATIC function InfAge_lResource( cFld) ; local Self AS CLASS InfAge := QSelf() AS CLASS InfAge
+
+   if !::StdResource( "INF_AGE01" )
+      return .F.
+   end
+
+
+
+
+
+   ::oDefAgeInf( 70, 80, 90, 100, 60 )
+
+
+
+
+
+   ::oMtrInf:SetTotal( ::oDbfAge:Lastrec() )
+
+   ::CreateFilter( aItmAge(), ::oDbfAge:cAlias )
+
+RETURN .T.
+
+
+
+
+
+
+UTILITY STATIC function InfAge_lGenerate() ; local Self AS CLASS InfAge := QSelf() AS CLASS InfAge
+
+   local cExpHead := ""
+
+   ::oDlg:Disable()
+   ::oBtnCancel:Enable()
+   ::oDbf:Zap()
+
+
+   ::aHeader      := {  {|| "Fecha     : " + Dtoc( Date() ) }, {|| "Agentes   : " + if( ::lAgeAll, "Todos", AllTrim( ::cAgeOrg ) + " > " + AllTrim( ::cAgeDes ) ) } }
+
+   ::oDbfAge:OrdSetFocus( "CCODAGE" )
+
+   if !Empty( ::oFilter:cExpFilter )
+      cExpHead       := ::oFilter:cExpFilter
+   else
+      cExpHead       := ".t."
+   end
+
+   ::oDbfAge:AddTmpIndex( cCurUsr(), GetFileNoExt( ::oDbfAge:cFile ), ::oDbfAge:OrdKey(), ( cExpHead ), , , , , , , , .T. )
+
+   ::oDbfAge:GoTop()
+
+   while !::lBreak .AND. !::oDbfAge:Eof()
+
+      if ( ::lAgeAll .OR. ( ::oDbfAge:cCodAge >= ::cAgeOrg .AND. ::oDbfAge:cCodAge <= ::cAgeDes ) )
+
+         ::oDbf:Append()
+         ::oDbf:cCodAge     := ::oDbfAge:cCodAge
+         ::oDbf:cApeAge     := ::oDbfAge:cApeAge
+         ::oDbf:cNbrAge     := ::oDbfAge:cNbrAge
+         ::oDbf:cDniNif     := ::oDbfAge:cDniNif
+         ::oDbf:cDirAge     := ::oDbfAge:cDirAge
+         ::oDbf:cPobAge     := ::oDbfAge:cPobAge
+         ::oDbf:cPtlAge     := ::oDbfAge:cPtlAge
+         ::oDbf:cProv       := ::oDbfAge:cProv
+         ::oDbf:cTfoAge     := ::oDbfAge:cTfoAge
+         ::oDbf:cFaxAge     := ::oDbfAge:cFaxAge
+         ::oDbf:cMovAge     := ::oDbfAge:cMovAge
+         ::oDbf:nIrpfAge    := ::oDbfAge:nIrpfAge
+         ::oDbf:Save()
+
+      end
+
+      ::oDbfAge:Skip()
+
+      ::oMtrInf:AutoInc( ::oDbfAge:OrdKeyNo() )
+
+   end
+
+   ::oDbfAge:IdxDelete( cCurUsr(), GetFileNoExt( ::oDbfAge:cFile ) )
+
+   ::oMtrInf:AutoInc( ::oDbfAge:LastRec() )
+
+   ::oDlg:Enable()
+
+RETURN ( ::oDbf:LastRec() > 0 )

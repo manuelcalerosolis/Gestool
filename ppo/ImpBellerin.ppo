@@ -1,0 +1,294 @@
+#line 112 "hbclass.ch"
+   DYNAMIC DivertConstructorCall
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+DECLARE HBClass  New( cName AS String, OPTIONAL SuperParams ) AS CLASS HBClass  Create() AS Object  Instance() AS Object  AddClsMethod( cName AS String, @MethodName(), nScope AS Numeric, n2 AS Numeric, n3 AS Numeric )  AddDelegate( cName AS String, cDelegate AS String, cObject AS String, nScope AS Numeric, lPersistent AS LOGICAL )  AddMultiClsData( cType AS String, uVal, nScope AS Numeric, aDatas AS Array OF String )  AddMultiData( cType AS String, uVal, nScope AS Numeric, aDatas AS Array OF String, x AS LOGICAL, lPer AS LOGICAL )  AddMethod( cName AS String, @MethodName(), nScope AS Numeric, lPersistent AS LOGICAL )  AddInLine( cName AS String, bBlock AS CodeBlock, nScope AS Numeric, lPersistent AS LOGICAL )  AddVirtual( cName AS String )  ModMethod( cName AS String, @MethodName(), nScope AS Numeric, lPersistent AS LOGICAL )  ModClsMethod( cName AS String, @MethodName(), nScope AS Numeric )  ModInline( cName AS String, bBlock AS CodeBlock, nScope AS Numeric, lPersistent AS LOGICAL )  SetOnError( @MethodName() )
+#line 85 "\Fwh1204\Include\FiveWin.Ch"
+   EXTERNAL GetProcAdd
+   EXTERNAL TActiveX
+
+
+
+
+extern errorsys
+#line 9 ".\Prg\ImpBellerin.prg"
+_HB_CLASS TImpBellerin ; UTILITY FUNCTION TImpBellerin(...); static s_oClass ; local oClassInstance ; local nScope ; nScope := 1 ; if s_oClass == NIL ; s_oClass := IIF(.F.,, HBClass():New( "TImpBellerin" , { HBObject():Classh } ) ) ;
+
+   _HB_MEMBER { nLevel} ; IIF( !.F., s_oClass:AddMultiData(,, nScope + IIF( .F., 32, 0 ), { "nLevel" }, .F., .F. ), )
+   _HB_MEMBER { oDbfCli} ; IIF( !.F., s_oClass:AddMultiData(,, nScope + IIF( .F., 32, 0 ), { "oDbfCli" }, .F., .F. ), )
+
+   _HB_MEMBER New(); IIF( .F., s_oClass:ModMethod( "New", @TImpBellerin_New(), nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ), s_oClass:AddMethod( "New", @TImpBellerin_New(), nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ));
+
+   _HB_MEMBER Create(oMenuItem, oWnd); IIF( .F., s_oClass:ModInline( "Create", {|Self,oMenuItem, oWnd | Self, ( if( ::New( oMenuItem, oWnd ) <> nil, ::Activate(), ) ) }, nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ), s_oClass:AddInline( "Create", {|Self,oMenuItem, oWnd | Self, ( if( ::New( oMenuItem, oWnd ) <> nil, ::Activate(), ) ) }, nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ) )
+
+   _HB_MEMBER lOpenFiles(); IIF( .F., s_oClass:ModMethod( "lOpenFiles", @TImpBellerin_lOpenFiles(), nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ), s_oClass:AddMethod( "lOpenFiles", @TImpBellerin_lOpenFiles(), nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ));
+
+   _HB_MEMBER CloseFiles(); IIF( .F., s_oClass:ModMethod( "CloseFiles", @TImpBellerin_CloseFiles(), nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ), s_oClass:AddMethod( "CloseFiles", @TImpBellerin_CloseFiles(), nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ));
+
+   _HB_MEMBER Activate( oWnd); IIF( .F., s_oClass:ModMethod( "Activate", @TImpBellerin_Activate(), nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ), s_oClass:AddMethod( "Activate", @TImpBellerin_Activate(), nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ));
+
+; IF .F. ; __clsActive(s_oClass:hClass) ; s_oClass:Refresh() ; ELSE ; s_oClass:Create() ; END ; oClassInstance := __clsInst( s_oClass:hClass ) ; IF __ObjHasMsg( oClassInstance, "InitClass" ); oClassInstance:InitClass( hb_aParams() ) ; END ; ELSE ; oClassInstance := __clsInst( s_oClass:hClass ) ; END ; IF PCount() > 0 ; DIVERT TO (@DivertConstructorCall()) OF s_oClass ; END ; RETURN oClassInstance AS CLASS TImpBellerin ;
+
+
+
+
+UTILITY STATIC function TImpBellerin_New( oMenuItem, oWnd) ; local Self AS CLASS TImpBellerin := QSelf() AS CLASS TImpBellerin
+
+   IIF( oMenuItem == nil, oMenuItem := "01102", ) ;
+
+   ::nLevel             := nLevelUsr( oMenuItem )
+
+   if nAnd( ::nLevel, 1 ) <> 0
+      msgStop( "Acceso no permitido." )
+      Return ( nil )
+   end
+
+   if oWnd <> nil
+      SysRefresh(); oWnd:CloseAll(); SysRefresh()
+   end
+
+RETURN ( Self )
+
+
+
+
+UTILITY STATIC function TImpBellerin_lOpenFiles() ; local Self AS CLASS TImpBellerin := QSelf() AS CLASS TImpBellerin
+
+   local lOpen    := .T.
+   local oBlock   := ErrorBlock( {| oError | ApoloBreak( oError ) } )
+
+   BEGIN SEQUENCE
+
+   ::oDbfCli := DbfServer( "CLIENT.DBF", ):NewOpen( "CLIENT.DBF",, ( cLocalDriver() ),, ( cPatCli() ), .F., .T., .F., .F. ) ; ::oDbfCli:AddBag( "CLIENT.CDX" ) ; ::oDbfCli:AddBag( ) ; ::oDbfCli:AutoIndex()
+
+   RECOVER
+
+      msgStop( "Imposible abrir todas las bases de datos" )
+      ::CloseFiles()
+      lOpen       := .F.
+
+   end
+
+   ErrorBlock( oBlock )
+
+RETURN ( lOpen )
+
+
+
+
+UTILITY STATIC function TImpBellerin_CloseFiles() ; local Self AS CLASS TImpBellerin := QSelf() AS CLASS TImpBellerin
+
+   if !Empty ( ::oDbfCli )
+      ::oDbfCli:End()
+   end
+
+   ::oDbfCli     := nil
+
+RETURN ( Self )
+
+
+
+
+UTILITY STATIC function TImpBellerin_Activate( oWnd) ; local Self AS CLASS TImpBellerin := QSelf() AS CLASS TImpBellerin
+
+   local oError
+   local oBlock
+   local cDirectory  := Space( 255 )
+   local aFiles
+   local n           := 1
+   local oOleExcel
+   local cNombre
+   local cDireccion
+   local cPoblacion
+   local cTelefono
+   local cNif
+   local cNewCodCli
+   local cMovil      := Space( 20 )
+   local nPos
+
+   if ! ::lOpenFiles()
+      Return ( Self )
+   end
+
+   MsgGet( "Seleccione un directorio", "Directorio: ", @cDirectory )
+
+   aFiles                              := Directory( AllTrim( cDirectory ) + "*.*" )
+
+   for n := 1 to Len( aFiles )
+
+      msgwait( aFiles[ n, 1 ], "Fichero " + Str( n ), 0.5 )
+
+      cNombre                          := Space(1)
+      cDireccion                       := Space(1)
+      cPoblacion                       := Space(1)
+      cTelefono                        := Space(1)
+      cNif                             := Space(1)
+
+      oBlock                           := ErrorBlock( {| oError | ApoloBreak( oError ) } )
+      BEGIN SEQUENCE
+
+      oOleExcel                        := TOleExcel():New( "Importando hoja de excel", "Conectando...", .F. )
+
+      oOleExcel:oExcel:Visible         := .F.
+      oOleExcel:oExcel:DisplayAlerts   := .F.
+
+      if File( AllTrim( cDirectory ) + aFiles[ n, 1 ] )
+
+         oOleExcel:oExcel:WorkBooks:Open( AllTrim( cDirectory ) + aFiles[ n, 1 ] )
+
+
+
+
+
+         oOleExcel:oExcel:WorkSheets( 1 ):Activate()
+
+         cNombre           := oOleExcel:oExcel:ActiveSheet:Range( "B6" ):Value
+
+         cDireccion        := oOleExcel:oExcel:ActiveSheet:Range( "B7" ):Value
+
+         cPoblacion        := oOleExcel:oExcel:ActiveSheet:Range( "B8" ):Value
+
+         cTelefono         := oOleExcel:oExcel:ActiveSheet:Range( "D8" ):Value
+
+
+         if !Empty( cTelefono ) .AND. ValType( cTelefono ) <> "C"
+
+            cTelefono      := Str( cTelefono )
+
+            if "." $ cTelefono
+               cTelefono   := Left( cTelefono, ( At( ".", cTelefono ) - 1 ) )
+            end
+
+         end
+
+         if oOleExcel:oExcel:WorkSheets:Count >= 4
+
+            oOleExcel:oExcel:WorkSheets( 4 ):Activate()
+
+            cNif              := oOleExcel:oExcel:ActiveSheet:Range( "E6" ):Value
+
+            if ValType( cNif ) <> "C" .AND. cNif <> nil
+               cNif           := Str( cNif )
+            end
+
+         end
+
+         oOleExcel:oExcel:WorkBooks:Close()
+
+
+
+
+
+
+
+         if !Empty( cTelefono )
+
+            if "-" $ cTelefono
+               nPos                    := At( "-", cTelefono )
+               cMovil                  := Right( cTelefono, ( nPos - 1 ) )
+               cTelefono               := Left( cTelefono, ( nPos - 1 ) )
+            end
+
+            if "/" $ cTelefono
+               nPos                    := At( "/", cTelefono )
+               cMovil                  := Right( cTelefono, ( nPos - 1 ) )
+               cTelefono               := Left( cTelefono, ( nPos - 1 ) )
+            end
+
+         end
+
+
+
+
+
+         if !::oDbfCli:SeekInOrd( Padr( cNombre, 80 ), "TITULO" )
+
+            cNewCodCli              := RJust( NextVal( dbLast( ::oDbfCli, 1 ) ), "0", RetNumCodCliEmp() )
+
+            ::oDbfCli:Append()
+
+            ::oDbfCli:Cod           := cNewCodCli
+
+            if !Empty( cNombre )
+               ::oDbfCli:Titulo        := Padr( cNombre, 80 )
+            end
+
+            if !Empty( cNif )
+               ::oDbfCli:Nif           := Padr( cNif, 15 )
+            end
+
+            if !Empty( cDireccion )
+               ::oDbfCli:Domicilio     := Padr( cDireccion, 100 )
+            end
+
+            if !Empty( cPoblacion )
+               ::oDbfCli:Poblacion     := Padr( cPoblacion, 35 )
+            end
+
+            if !Empty( cTelefono )
+               ::oDbfCli:Telefono      := Padr( AllTrim( cTelefono ), 20 )
+            end
+
+
+            if !Empty( cMovil )
+               ::oDbfCli:Movil         := Padr( AllTrim( cMovil ), 20 )
+            end
+
+
+
+            ::oDbfCli:lSndInt       := .T.
+            ::oDbfCli:lModDat       := .F.
+            ::oDbfCli:lChgPre       := .T.
+            ::oDbfCli:CopiasF       := 1
+            ::oDbfCli:nLabel        := 1
+            ::oDbfCli:nTarifa       := 1
+            ::oDbfCli:nTipCli       := 2
+            ::oDbfCli:cDtoEsp       := Padr( "General", 50 )
+            ::oDbfCli:cDpp          := Padr( "Pronto pago", 50 )
+            ::oDbfCli:cDtoAtp       := Padr( "Atipico", 50 )
+            ::oDbfCli:lReq          := .F.
+            ::oDbfCli:lMayorista    := .F.
+            ::oDbfCli:lBlqCli       := .F.
+            ::oDbfCli:lMosCom       := .F.
+            ::oDbfCli:nSbrAtp       := 1
+
+            ::oDbfCli:Save()
+
+         end
+
+      end
+
+      cMovil                        := Space( 20 )
+
+      oOleExcel:oExcel:Quit()
+
+      oOleExcel:oExcel:DisplayAlerts   := .T.
+
+      oOleExcel:End()
+
+      RECOVER USING oError
+
+         msgWait( "Error :" + Chr(13)+Chr(10) + ErrorMessage( oError ), 0.1 )
+
+      end
+      ErrorBlock( oBlock )
+
+   next
+
+   ::CloseFiles()
+
+RETURN ( Self )

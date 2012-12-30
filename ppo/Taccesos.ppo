@@ -1,0 +1,1167 @@
+#line 112 "hbclass.ch"
+   DYNAMIC DivertConstructorCall
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+DECLARE HBClass  New( cName AS String, OPTIONAL SuperParams ) AS CLASS HBClass  Create() AS Object  Instance() AS Object  AddClsMethod( cName AS String, @MethodName(), nScope AS Numeric, n2 AS Numeric, n3 AS Numeric )  AddDelegate( cName AS String, cDelegate AS String, cObject AS String, nScope AS Numeric, lPersistent AS LOGICAL )  AddMultiClsData( cType AS String, uVal, nScope AS Numeric, aDatas AS Array OF String )  AddMultiData( cType AS String, uVal, nScope AS Numeric, aDatas AS Array OF String, x AS LOGICAL, lPer AS LOGICAL )  AddMethod( cName AS String, @MethodName(), nScope AS Numeric, lPersistent AS LOGICAL )  AddInLine( cName AS String, bBlock AS CodeBlock, nScope AS Numeric, lPersistent AS LOGICAL )  AddVirtual( cName AS String )  ModMethod( cName AS String, @MethodName(), nScope AS Numeric, lPersistent AS LOGICAL )  ModClsMethod( cName AS String, @MethodName(), nScope AS Numeric )  ModInline( cName AS String, bBlock AS CodeBlock, nScope AS Numeric, lPersistent AS LOGICAL )  SetOnError( @MethodName() )
+#line 85 "\Fwh1204\Include\FiveWin.Ch"
+   EXTERNAL GetProcAdd
+   EXTERNAL TActiveX
+
+
+
+
+extern errorsys
+#line 8 ".\Prg\Taccesos.prg"
+_HB_CLASS TAcceso ; UTILITY FUNCTION TAcceso(...); static s_oClass ; local oClassInstance ; local nScope ; nScope := 1 ; if s_oClass == NIL ; s_oClass := IIF(.F.,, HBClass():New( "TAcceso" , { HBObject():Classh } ) ) ;
+
+   _HB_MEMBER { oFont} ; IIF( !.F., s_oClass:AddMultiClsData(,, nScope + IIF( .F., 32, 0 ) + 64, { "oFont" }, .F. ), )
+
+   _HB_MEMBER { cDbf} ; IIF( !.F., s_oClass:AddMultiData(,, nScope + IIF( .F., 32, 0 ), { "cDbf" }, .F., .F. ), )
+   _HB_MEMBER { lOpenFiles} ; IIF( !.F., s_oClass:AddMultiData(, .F., nScope + IIF( .F., 32, 0 ), { "lOpenFiles" }, .F., .F. ), )
+
+   _HB_MEMBER { oBmpLogo} ; IIF( !.F., s_oClass:AddMultiData(,, nScope + IIF( .F., 32, 0 ), { "oBmpLogo" }, .F., .F. ), )
+
+   _HB_MEMBER { oImageList} ; IIF( !.F., s_oClass:AddMultiData(,, nScope + IIF( .F., 32, 0 ), { "oImageList" }, .F., .F. ), )
+   _HB_MEMBER { oImageListBig} ; IIF( !.F., s_oClass:AddMultiData(,, nScope + IIF( .F., 32, 0 ), { "oImageListBig" }, .F., .F. ), )
+
+   _HB_MEMBER { oTree} ; IIF( !.F., s_oClass:AddMultiData(,, nScope + IIF( .F., 32, 0 ), { "oTree" }, .F., .F. ), )
+   _HB_MEMBER { oReBar} ; IIF( !.F., s_oClass:AddMultiData(,, nScope + IIF( .F., 32, 0 ), { "oReBar" }, .F., .F. ), )
+   _HB_MEMBER { oToolBar} ; IIF( !.F., s_oClass:AddMultiData(,, nScope + IIF( .F., 32, 0 ), { "oToolBar" }, .F., .F. ), )
+   _HB_MEMBER { oSearchBar} ; IIF( !.F., s_oClass:AddMultiData(,, nScope + IIF( .F., 32, 0 ), { "oSearchBar" }, .F., .F. ), )
+   _HB_MEMBER { oOfficeBar} ; IIF( !.F., s_oClass:AddMultiData(,, nScope + IIF( .F., 32, 0 ), { "oOfficeBar" }, .F., .F. ), )
+   _HB_MEMBER { oFavoritosBar} ; IIF( !.F., s_oClass:AddMultiData(,, nScope + IIF( .F., 32, 0 ), { "oFavoritosBar" }, .F., .F. ), )
+   _HB_MEMBER { oFavoritosGroup} ; IIF( !.F., s_oClass:AddMultiData(,, nScope + IIF( .F., 32, 0 ), { "oFavoritosGroup" }, .F., .F. ), )
+
+   _HB_MEMBER { oGet} ; IIF( !.F., s_oClass:AddMultiData(,, nScope + IIF( .F., 32, 0 ), { "oGet" }, .F., .F. ), )
+   _HB_MEMBER { cGet} ; IIF( !.F., s_oClass:AddMultiData(, Space( 200 ), nScope + IIF( .F., 32, 0 ), { "cGet" }, .F., .F. ), )
+
+   _HB_MEMBER { oComboBox} ; IIF( !.F., s_oClass:AddMultiData(,, nScope + IIF( .F., 32, 0 ), { "oComboBox" }, .F., .F. ), )
+   _HB_MEMBER { cComboBox} ; IIF( !.F., s_oClass:AddMultiData(,, nScope + IIF( .F., 32, 0 ), { "cComboBox" }, .F., .F. ), )
+   _HB_MEMBER { aComboBox} ; IIF( !.F., s_oClass:AddMultiData(, {}, nScope + IIF( .F., 32, 0 ), { "aComboBox" }, .F., .F. ), )
+
+   _HB_MEMBER { oComboFilter} ; IIF( !.F., s_oClass:AddMultiData(,, nScope + IIF( .F., 32, 0 ), { "oComboFilter" }, .F., .F. ), )
+   _HB_MEMBER { cComboFilter} ; IIF( !.F., s_oClass:AddMultiData(, "[Mis filtros]", nScope + IIF( .F., 32, 0 ), { "cComboFilter" }, .F., .F. ), )
+   _HB_MEMBER { aComboFilter} ; IIF( !.F., s_oClass:AddMultiData(, {"[Mis filtros]"}, nScope + IIF( .F., 32, 0 ), { "aComboFilter" }, .F., .F. ), )
+
+   _HB_MEMBER { oYearComboBox} ; IIF( !.F., s_oClass:AddMultiData(,, nScope + IIF( .F., 32, 0 ), { "oYearComboBox" }, .F., .F. ), )
+   _HB_MEMBER { cYearComboBox} ; IIF( !.F., s_oClass:AddMultiData(, "[Todos]", nScope + IIF( .F., 32, 0 ), { "cYearComboBox" }, .F., .F. ), )
+   _HB_MEMBER { aYearComboBox} ; IIF( !.F., s_oClass:AddMultiData(, {}, nScope + IIF( .F., 32, 0 ), { "aYearComboBox" }, .F., .F. ), )
+   _HB_MEMBER { lYearComboBox} ; IIF( !.F., s_oClass:AddMultiData(, .T., nScope + IIF( .F., 32, 0 ), { "lYearComboBox" }, .F., .F. ), )
+
+   _HB_MEMBER { oButtonFilter} ; IIF( !.F., s_oClass:AddMultiData(,, nScope + IIF( .F., 32, 0 ), { "oButtonFilter" }, .F., .F. ), )
+   _HB_MEMBER { oButtonAddFilter} ; IIF( !.F., s_oClass:AddMultiData(,, nScope + IIF( .F., 32, 0 ), { "oButtonAddFilter" }, .F., .F. ), )
+   _HB_MEMBER { oButtonEditFilter} ; IIF( !.F., s_oClass:AddMultiData(,, nScope + IIF( .F., 32, 0 ), { "oButtonEditFilter" }, .F., .F. ), )
+
+   _HB_MEMBER { aAccesos} ; IIF( !.F., s_oClass:AddMultiData(,, nScope + IIF( .F., 32, 0 ), { "aAccesos" }, .F., .F. ), )
+
+   _HB_MEMBER { lBig} ; IIF( !.F., s_oClass:AddMultiData(, .F., nScope + IIF( .F., 32, 0 ), { "lBig" }, .F., .F. ), )
+   _HB_MEMBER { lTactil} ; IIF( !.F., s_oClass:AddMultiData(, .F., nScope + IIF( .F., 32, 0 ), { "lTactil" }, .F., .F. ), )
+
+
+
+   _HB_MEMBER { aStruct} ; IIF( !.F., s_oClass:AddMultiData(, {  { "cCodUse",   "C",  3,  0, "" }, { "cOpcion",   "C", 20,  0, "" }, { "lShow",     "L",  1,  0, "" } }, nScope + IIF( .F., 32, 0 ), { "aStruct" }, .F., .F. ), )
+
+   _HB_MEMBER { nLittleButtons} ; IIF( !.F., s_oClass:AddMultiData(,, nScope + IIF( .F., 32, 0 ), { "nLittleButtons" }, .F., .F. ), )
+
+   _HB_MEMBER { l2k9} ; IIF( !.F., s_oClass:AddMultiData(, .T., nScope + IIF( .F., 32, 0 ), { "l2k9" }, .F., .F. ), )
+
+   _HB_MEMBER New(); IIF( .F., s_oClass:ModMethod( "New", @TAcceso_New(), nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ), s_oClass:AddMethod( "New", @TAcceso_New(), nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ));
+
+   _HB_MEMBER Add(); IIF( .F., s_oClass:ModMethod( "Add", @TAcceso_Add(), nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ), s_oClass:AddMethod( "Add", @TAcceso_Add(), nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ));
+
+   _HB_MEMBER CreateImageList(); IIF( .F., s_oClass:ModMethod( "CreateImageList", @TAcceso_CreateImageList(), nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ), s_oClass:AddMethod( "CreateImageList", @TAcceso_CreateImageList(), nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ));
+   _HB_MEMBER AddImageList( aAccesos); IIF( .F., s_oClass:ModMethod( "AddImageList", @TAcceso_AddImageList(), nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ), s_oClass:AddMethod( "AddImageList", @TAcceso_AddImageList(), nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ));
+   _HB_MEMBER SetImageList(); IIF( .F., s_oClass:ModMethod( "SetImageList", @TAcceso_SetImageList(), nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ), s_oClass:AddMethod( "SetImageList", @TAcceso_SetImageList(), nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ));
+
+   _HB_MEMBER CreateTree(); IIF( .F., s_oClass:ModMethod( "CreateTree", @TAcceso_CreateTree(), nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ), s_oClass:AddMethod( "CreateTree", @TAcceso_CreateTree(), nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ));
+   _HB_MEMBER AddTree( cPrompt, nImage, Cargo); IIF( .F., s_oClass:ModMethod( "AddTree", @TAcceso_AddTree(), nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ), s_oClass:AddMethod( "AddTree", @TAcceso_AddTree(), nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ));
+
+   _HB_MEMBER AddBitmapMasked( oAcceso); IIF( .F., s_oClass:ModMethod( "AddBitmapMasked", @TAcceso_AddBitmapMasked(), nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ), s_oClass:AddMethod( "AddBitmapMasked", @TAcceso_AddBitmapMasked(), nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ));
+
+   _HB_MEMBER EditButtonBar(); IIF( .F., s_oClass:ModMethod( "EditButtonBar", @TAcceso_EditButtonBar(), nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ), s_oClass:AddMethod( "EditButtonBar", @TAcceso_EditButtonBar(), nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ));
+   _HB_MEMBER InitButtonBar(); IIF( .F., s_oClass:ModMethod( "InitButtonBar", @TAcceso_InitButtonBar(), nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ), s_oClass:AddMethod( "InitButtonBar", @TAcceso_InitButtonBar(), nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ));
+
+   _HB_MEMBER Save(); IIF( .F., s_oClass:ModMethod( "Save", @TAcceso_Save(), nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ), s_oClass:AddMethod( "Save", @TAcceso_Save(), nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ));
+   _HB_MEMBER SaveTree( oItem, cCurUsr, cDbf); IIF( .F., s_oClass:ModMethod( "SaveTree", @TAcceso_SaveTree(), nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ), s_oClass:AddMethod( "SaveTree", @TAcceso_SaveTree(), nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ));
+
+   _HB_MEMBER Load(); IIF( .F., s_oClass:ModMethod( "Load", @TAcceso_Load(), nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ), s_oClass:AddMethod( "Load", @TAcceso_Load(), nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ));
+   _HB_MEMBER LoadTree( oItem, cOpcion, lShow); IIF( .F., s_oClass:ModMethod( "LoadTree", @TAcceso_LoadTree(), nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ), s_oClass:AddMethod( "LoadTree", @TAcceso_LoadTree(), nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ));
+   _HB_MEMBER DeleteTree(); IIF( .F., s_oClass:ModMethod( "DeleteTree", @TAcceso_DeleteTree(), nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ), s_oClass:AddMethod( "DeleteTree", @TAcceso_DeleteTree(), nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ));
+   _HB_MEMBER Default(); IIF( .F., s_oClass:ModInline( "Default", {|Self | Self, ( if( ::lOpenDatabase(), ( ::DeleteTree(), ::oTree:DeleteAll(), ::CloseDatabase(), ::CreateTree() ), ) ) }, nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ), s_oClass:AddInline( "Default", {|Self | Self, ( if( ::lOpenDatabase(), ( ::DeleteTree(), ::oTree:DeleteAll(), ::CloseDatabase(), ::CreateTree() ), ) ) }, nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ) )
+
+   _HB_MEMBER MakeDatabase( cPath, oMeter); IIF( .F., s_oClass:ModMethod( "MakeDatabase", @TAcceso_MakeDatabase(), nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ), s_oClass:AddMethod( "MakeDatabase", @TAcceso_MakeDatabase(), nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ));
+   _HB_MEMBER ReindexDatabase( cPath, oMeter); IIF( .F., s_oClass:ModMethod( "ReindexDatabase", @TAcceso_ReindexDatabase(), nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ), s_oClass:AddMethod( "ReindexDatabase", @TAcceso_ReindexDatabase(), nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ));
+
+   _HB_MEMBER lOpenDatabase(); IIF( .F., s_oClass:ModMethod( "lOpenDatabase", @TAcceso_lOpenDatabase(), nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ), s_oClass:AddMethod( "lOpenDatabase", @TAcceso_lOpenDatabase(), nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ));
+   _HB_MEMBER CloseDatabase(); IIF( .F., s_oClass:ModMethod( "CloseDatabase", @TAcceso_CloseDatabase(), nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ), s_oClass:AddMethod( "CloseDatabase", @TAcceso_CloseDatabase(), nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ));
+
+   _HB_MEMBER CreateButtonBar( oWnd); IIF( .F., s_oClass:ModMethod( "CreateButtonBar", @TAcceso_CreateButtonBar(), nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ), s_oClass:AddMethod( "CreateButtonBar", @TAcceso_CreateButtonBar(), nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ));
+
+   _HB_MEMBER CreateFavoritosOfficeBar(); IIF( .F., s_oClass:ModMethod( "CreateFavoritosOfficeBar", @TAcceso_CreateFavoritosOfficeBar(), nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ), s_oClass:AddMethod( "CreateFavoritosOfficeBar", @TAcceso_CreateFavoritosOfficeBar(), nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ));
+
+   _HB_MEMBER CreateToolbar( aAccesos); IIF( .F., s_oClass:ModMethod( "CreateToolbar", @TAcceso_CreateToolbar(), nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ), s_oClass:AddMethod( "CreateToolbar", @TAcceso_CreateToolbar(), nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ));
+   _HB_MEMBER AddToolBar( oToolBar, oAcceso); IIF( .F., s_oClass:ModMethod( "AddToolBar", @TAcceso_AddToolBar(), nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ), s_oClass:AddMethod( "AddToolBar", @TAcceso_AddToolBar(), nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ));
+
+   _HB_MEMBER lGetShowToolBar( oAcceso, cCurUsr); IIF( .F., s_oClass:ModMethod( "lGetShowToolBar", @TAcceso_lGetShowToolBar(), nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ), s_oClass:AddMethod( "lGetShowToolBar", @TAcceso_lGetShowToolBar(), nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ));
+
+   _HB_MEMBER lHideCarpeta( oAcceso, cCurUsr); IIF( .F., s_oClass:ModMethod( "lHideCarpeta", @TAcceso_lHideCarpeta(), nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ), s_oClass:AddMethod( "lHideCarpeta", @TAcceso_lHideCarpeta(), nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ));
+
+   _HB_MEMBER CreateSearchBar(); IIF( .F., s_oClass:ModMethod( "CreateSearchBar", @TAcceso_CreateSearchBar(), nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ), s_oClass:AddMethod( "CreateSearchBar", @TAcceso_CreateSearchBar(), nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ));
+   _HB_MEMBER InsertSearchBand(); IIF( .F., s_oClass:ModInline( "InsertSearchBand", {|Self | Self, ( ::oReBar:InsertBand( ::oSearchBar, "Buscar " ) ) }, nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ), s_oClass:AddInline( "InsertSearchBand", {|Self | Self, ( ::oReBar:InsertBand( ::oSearchBar, "Buscar " ) ) }, nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ) )
+   _HB_MEMBER DeleteSearchBand(); IIF( .F., s_oClass:ModInline( "DeleteSearchBand", {|Self | Self, ( ::oReBar:DeleteBand(), ::oSearchBar := nil ) }, nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ), s_oClass:AddInline( "DeleteSearchBand", {|Self | Self, ( ::oReBar:DeleteBand(), ::oSearchBar := nil ) }, nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ) )
+
+   _HB_MEMBER CreateLogo( oWnd); IIF( .F., s_oClass:ModMethod( "CreateLogo", @TAcceso_CreateLogo(), nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ), s_oClass:AddMethod( "CreateLogo", @TAcceso_CreateLogo(), nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ));
+
+   _HB_MEMBER InsertToolBand(); IIF( .F., s_oClass:ModInline( "InsertToolBand", {|Self | Self, ( ::oReBar:InsertBand( ::oToolBar ) ) }, nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ), s_oClass:AddInline( "InsertToolBand", {|Self | Self, ( ::oReBar:InsertBand( ::oToolBar ) ) }, nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ) )
+   _HB_MEMBER DeleteToolBand(); IIF( .F., s_oClass:ModInline( "DeleteToolBand", {|Self | Self, ( ::oReBar:DeleteBand(), ::oToolBar := nil ) }, nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ), s_oClass:AddInline( "DeleteToolBand", {|Self | Self, ( ::oReBar:DeleteBand(), ::oToolBar := nil ) }, nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ) )
+
+   _HB_MEMBER CreateOfficeBar(); IIF( .F., s_oClass:ModMethod( "CreateOfficeBar", @TAcceso_CreateOfficeBar(), nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ), s_oClass:AddMethod( "CreateOfficeBar", @TAcceso_CreateOfficeBar(), nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ));
+   _HB_MEMBER ReCreateOfficeBar(); IIF( .F., s_oClass:ModMethod( "ReCreateOfficeBar", @TAcceso_ReCreateOfficeBar(), nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ), s_oClass:AddMethod( "ReCreateOfficeBar", @TAcceso_ReCreateOfficeBar(), nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ));
+   _HB_MEMBER InsertOfficeBand(); IIF( .F., s_oClass:ModInline( "InsertOfficeBand", {|Self | Self, ( ::oReBar:InsertBand( ::oOfficeBar ) ) }, nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ), s_oClass:AddInline( "InsertOfficeBand", {|Self | Self, ( ::oReBar:InsertBand( ::oOfficeBar ) ) }, nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ) )
+
+   _HB_MEMBER CreateCarpetaOfficeBar( aAccesos); IIF( .F., s_oClass:ModMethod( "CreateCarpetaOfficeBar", @TAcceso_CreateCarpetaOfficeBar(), nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ), s_oClass:AddMethod( "CreateCarpetaOfficeBar", @TAcceso_CreateCarpetaOfficeBar(), nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ));
+   _HB_MEMBER CreateBotonesOfficeBar( aAcceso, oCarpeta, oGrupo); IIF( .F., s_oClass:ModMethod( "CreateBotonesOfficeBar", @TAcceso_CreateBotonesOfficeBar(), nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ), s_oClass:AddMethod( "CreateBotonesOfficeBar", @TAcceso_CreateBotonesOfficeBar(), nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ));
+
+   _HB_MEMBER SetComboBoxItems(aItems); IIF( .F., s_oClass:ModInline( "SetComboBoxItems", {|Self,aItems | Self, ( if( !Empty( ::oComboBox ), ::oComboBox:SetItems( aItems ), ) ) }, nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ), s_oClass:AddInline( "SetComboBoxItems", {|Self,aItems | Self, ( if( !Empty( ::oComboBox ), ::oComboBox:SetItems( aItems ), ) ) }, nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ) )
+   _HB_MEMBER SetComboBoxSelect(nItems); IIF( .F., s_oClass:ModInline( "SetComboBoxSelect", {|Self,nItems | Self, ( if( !Empty( ::oComboBox ), ( ::oGet:cText( Space( 200 ) ), ::oGet:oGet:Home(), ::oComboBox:Select( nItems ) ), ) ) }, nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ), s_oClass:AddInline( "SetComboBoxSelect", {|Self,nItems | Self, ( if( !Empty( ::oComboBox ), ( ::oGet:cText( Space( 200 ) ), ::oGet:oGet:Home(), ::oComboBox:Select( nItems ) ), ) ) }, nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ) )
+   _HB_MEMBER SetComboBoxSet(cItem); IIF( .F., s_oClass:ModInline( "SetComboBoxSet", {|Self,cItem | Self, ( if( !Empty( ::oComboBox ), ( ::oComboBox:Set( cItem ) ), ) ) }, nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ), s_oClass:AddInline( "SetComboBoxSet", {|Self,cItem | Self, ( if( !Empty( ::oComboBox ), ( ::oComboBox:Set( cItem ) ), ) ) }, nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ) )
+   _HB_MEMBER SetComboBoxChange(bBlock); IIF( .F., s_oClass:ModInline( "SetComboBoxChange", {|Self,bBlock | Self, ( if( !Empty( ::oComboBox ), ( ::oComboBox:bChange := bBlock ), ) ) }, nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ), s_oClass:AddInline( "SetComboBoxChange", {|Self,bBlock | Self, ( if( !Empty( ::oComboBox ), ( ::oComboBox:bChange := bBlock ), ) ) }, nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ) )
+   _HB_MEMBER GetComboBox(); IIF( .F., s_oClass:ModInline( "GetComboBox", {|Self | Self, ( if( !Empty( ::oComboBox ), ( ::oComboBox:VarGet() ), "" ) ) }, nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ), s_oClass:AddInline( "GetComboBox", {|Self | Self, ( if( !Empty( ::oComboBox ), ( ::oComboBox:VarGet() ), "" ) ) }, nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ) )
+   _HB_MEMBER GetComboBoxAt(); IIF( .F., s_oClass:ModInline( "GetComboBoxAt", {|Self | Self, ( if( !Empty( ::oComboBox ), ( ::oComboBox:nAt ), 0 ) ) }, nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ), s_oClass:AddInline( "GetComboBoxAt", {|Self | Self, ( if( !Empty( ::oComboBox ), ( ::oComboBox:nAt ), 0 ) ) }, nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ) )
+
+   _HB_MEMBER DisableComboBox(); IIF( .F., s_oClass:ModInline( "DisableComboBox", {|Self | Self, ( if( !Empty( ::oComboBox ), ( ::SetComboBoxItems( {} ), ::oComboBox:Disable() ), ) ) }, nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ), s_oClass:AddInline( "DisableComboBox", {|Self | Self, ( if( !Empty( ::oComboBox ), ( ::SetComboBoxItems( {} ), ::oComboBox:Disable() ), ) ) }, nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ) )
+   _HB_MEMBER EnableComboBox(aItems); IIF( .F., s_oClass:ModInline( "EnableComboBox", {|Self,aItems | Self, ( if( !Empty( ::oComboBox ), ( ::SetComboBoxItems( aItems ), ::oComboBox:Enable() ), ) ) }, nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ), s_oClass:AddInline( "EnableComboBox", {|Self,aItems | Self, ( if( !Empty( ::oComboBox ), ( ::SetComboBoxItems( aItems ), ::oComboBox:Enable() ), ) ) }, nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ) )
+
+   _HB_MEMBER SetComboFilterItems(aItems); IIF( .F., s_oClass:ModInline( "SetComboFilterItems", {|Self,aItems | Self, ( if( !Empty( ::oComboFilter ), ::oComboFilter:SetItems( aItems ), ) ) }, nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ), s_oClass:AddInline( "SetComboFilterItems", {|Self,aItems | Self, ( if( !Empty( ::oComboFilter ), ::oComboFilter:SetItems( aItems ), ) ) }, nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ) )
+   _HB_MEMBER SetComboFilterSelect(nItems); IIF( .F., s_oClass:ModInline( "SetComboFilterSelect", {|Self,nItems | Self, ( if( !Empty( ::oComboFilter ), ( ::oGet:cText( Space( 200 ) ), ::oGet:oGet:Home(), ::oComboFilter:Select( nItems ) ), ) ) }, nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ), s_oClass:AddInline( "SetComboFilterSelect", {|Self,nItems | Self, ( if( !Empty( ::oComboFilter ), ( ::oGet:cText( Space( 200 ) ), ::oGet:oGet:Home(), ::oComboFilter:Select( nItems ) ), ) ) }, nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ) )
+   _HB_MEMBER SetComboFilterSet(cItem); IIF( .F., s_oClass:ModInline( "SetComboFilterSet", {|Self,cItem | Self, ( if( !Empty( ::oComboFilter ), ( ::oComboFilter:Set( cItem ) ), ) ) }, nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ), s_oClass:AddInline( "SetComboFilterSet", {|Self,cItem | Self, ( if( !Empty( ::oComboFilter ), ( ::oComboFilter:Set( cItem ) ), ) ) }, nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ) )
+   _HB_MEMBER SetComboFilterChange(bBlock); IIF( .F., s_oClass:ModInline( "SetComboFilterChange", {|Self,bBlock | Self, ( if( !Empty( ::oComboFilter ), ( ::oComboFilter:bChange := bBlock ), ) ) }, nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ), s_oClass:AddInline( "SetComboFilterChange", {|Self,bBlock | Self, ( if( !Empty( ::oComboFilter ), ( ::oComboFilter:bChange := bBlock ), ) ) }, nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ) )
+   _HB_MEMBER GetComboFilter(); IIF( .F., s_oClass:ModInline( "GetComboFilter", {|Self | Self, ( if( !Empty( ::oComboFilter ), ( ::oComboFilter:VarGet() ), "" ) ) }, nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ), s_oClass:AddInline( "GetComboFilter", {|Self | Self, ( if( !Empty( ::oComboFilter ), ( ::oComboFilter:VarGet() ), "" ) ) }, nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ) )
+   _HB_MEMBER GetComboFilterAt(); IIF( .F., s_oClass:ModInline( "GetComboFilterAt", {|Self | Self, ( if( !Empty( ::oComboFilter ), ( ::oComboFilter:nAt ), 0 ) ) }, nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ), s_oClass:AddInline( "GetComboFilterAt", {|Self | Self, ( if( !Empty( ::oComboFilter ), ( ::oComboFilter:nAt ), 0 ) ) }, nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ) )
+
+   _HB_MEMBER DisableComboFilter(); IIF( .F., s_oClass:ModInline( "DisableComboFilter", {|Self | Self, ( if( !Empty( ::oComboFilter ), ( ::SetComboFilterItems( {} ), ::oComboFilter:Disable() ), ) ) }, nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ), s_oClass:AddInline( "DisableComboFilter", {|Self | Self, ( if( !Empty( ::oComboFilter ), ( ::SetComboFilterItems( {} ), ::oComboFilter:Disable() ), ) ) }, nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ) )
+   _HB_MEMBER EnableComboFilter( aItems); IIF( .F., s_oClass:ModMethod( "EnableComboFilter", @TAcceso_EnableComboFilter(), nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ), s_oClass:AddMethod( "EnableComboFilter", @TAcceso_EnableComboFilter(), nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ));
+   _HB_MEMBER SetDefaultComboFilter( aItems); IIF( .F., s_oClass:ModMethod( "SetDefaultComboFilter", @TAcceso_SetDefaultComboFilter(), nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ), s_oClass:AddMethod( "SetDefaultComboFilter", @TAcceso_SetDefaultComboFilter(), nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ));
+   _HB_MEMBER SetComboFilter(cItem); IIF( .F., s_oClass:ModInline( "SetComboFilter", {|Self,cItem | Self, ( if( !Empty( ::oComboFilter ) .AND. !Empty( cItem ), ( ::oComboFilter:Set( cItem ), Eval( ::oComboFilter:bChange ) ), ) ) }, nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ), s_oClass:AddInline( "SetComboFilter", {|Self,cItem | Self, ( if( !Empty( ::oComboFilter ) .AND. !Empty( cItem ), ( ::oComboFilter:Set( cItem ), Eval( ::oComboFilter:bChange ) ), ) ) }, nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ) )
+
+   _HB_MEMBER SetGetChange(bBlock); IIF( .F., s_oClass:ModInline( "SetGetChange", {|Self,bBlock | Self, ( if( !Empty( ::oGet ), ( ::oGet:bChange       := bBlock ), ) ) }, nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ), s_oClass:AddInline( "SetGetChange", {|Self,bBlock | Self, ( if( !Empty( ::oGet ), ( ::oGet:bChange       := bBlock ), ) ) }, nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ) )
+   _HB_MEMBER SetGetPostKey(bBlock); IIF( .F., s_oClass:ModInline( "SetGetPostKey", {|Self,bBlock | Self, ( if( !Empty( ::oGet ), ( ::oGet:bPostKey      := bBlock ), ) ) }, nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ), s_oClass:AddInline( "SetGetPostKey", {|Self,bBlock | Self, ( if( !Empty( ::oGet ), ( ::oGet:bPostKey      := bBlock ), ) ) }, nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ) )
+   _HB_MEMBER SetGetValid(bBlock); IIF( .F., s_oClass:ModInline( "SetGetValid", {|Self,bBlock | Self, ( if( !Empty( ::oGet ), ( ::oGet:bValid        := bBlock ), ) ) }, nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ), s_oClass:AddInline( "SetGetValid", {|Self,bBlock | Self, ( if( !Empty( ::oGet ), ( ::oGet:bValid        := bBlock ), ) ) }, nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ) )
+   _HB_MEMBER SetGetLostFocus(bBlock); IIF( .F., s_oClass:ModInline( "SetGetLostFocus", {|Self,bBlock | Self, ( if( !Empty( ::oGet ), ( ::oGet:bLostFocus    := bBlock ), ) ) }, nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ), s_oClass:AddInline( "SetGetLostFocus", {|Self,bBlock | Self, ( if( !Empty( ::oGet ), ( ::oGet:bLostFocus    := bBlock ), ) ) }, nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ) )
+   _HB_MEMBER SetGetKeyDown(bBlock); IIF( .F., s_oClass:ModInline( "SetGetKeyDown", {|Self,bBlock | Self, ( if( !Empty( ::oGet ), ( ::oGet:bKeyDown      := bBlock ), ) ) }, nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ), s_oClass:AddInline( "SetGetKeyDown", {|Self,bBlock | Self, ( if( !Empty( ::oGet ), ( ::oGet:bKeyDown      := bBlock ), ) ) }, nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ) )
+   _HB_MEMBER SetGetKeyChar(bBlock); IIF( .F., s_oClass:ModInline( "SetGetKeyChar", {|Self,bBlock | Self, ( if( !Empty( ::oGet ), ( ::oGet:bKeyChar      := bBlock ), ) ) }, nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ), s_oClass:AddInline( "SetGetKeyChar", {|Self,bBlock | Self, ( if( !Empty( ::oGet ), ( ::oGet:bKeyChar      := bBlock ), ) ) }, nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ) )
+
+   _HB_MEMBER DisableGet(); IIF( .F., s_oClass:ModInline( "DisableGet", {|Self | Self, ( if( !Empty( ::oGet ), ( ::oGet:cText( Space( 200 ) ), ::oGet:Disable(), ::oGet:SetColor( ( 0 + ( 0 * 256 ) + ( 0 * 65536 ) ), ( 255 + ( 255 * 256 ) + ( 255 * 65536 ) ) ) ), ) ) }, nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ), s_oClass:AddInline( "DisableGet", {|Self | Self, ( if( !Empty( ::oGet ), ( ::oGet:cText( Space( 200 ) ), ::oGet:Disable(), ::oGet:SetColor( ( 0 + ( 0 * 256 ) + ( 0 * 65536 ) ), ( 255 + ( 255 * 256 ) + ( 255 * 65536 ) ) ) ), ) ) }, nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ) )
+   _HB_MEMBER EnableGet(); IIF( .F., s_oClass:ModInline( "EnableGet", {|Self | Self, ( if( !Empty( ::oGet ), ( ::oGet:Enable(), ::oGet:SetColor( ( 0 + ( 0 * 256 ) + ( 0 * 65536 ) ), ( 255 + ( 255 * 256 ) + ( 255 * 65536 ) ) ) ), ) ) }, nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ), s_oClass:AddInline( "EnableGet", {|Self | Self, ( if( !Empty( ::oGet ), ( ::oGet:Enable(), ::oGet:SetColor( ( 0 + ( 0 * 256 ) + ( 0 * 65536 ) ), ( 255 + ( 255 * 256 ) + ( 255 * 65536 ) ) ) ), ) ) }, nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ) )
+   _HB_MEMBER CleanGet(); IIF( .F., s_oClass:ModInline( "CleanGet", {|Self | Self, ( if( !Empty( ::oGet ), ( ::oGet:cText( Space( 200 ) ), ::oGet:SetColor( ( 0 + ( 0 * 256 ) + ( 0 * 65536 ) ), ( 255 + ( 255 * 256 ) + ( 255 * 65536 ) ) ) ), ) ) }, nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ), s_oClass:AddInline( "CleanGet", {|Self | Self, ( if( !Empty( ::oGet ), ( ::oGet:cText( Space( 200 ) ), ::oGet:SetColor( ( 0 + ( 0 * 256 ) + ( 0 * 65536 ) ), ( 255 + ( 255 * 256 ) + ( 255 * 65536 ) ) ) ), ) ) }, nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ) )
+   _HB_MEMBER SetGetFocus(); IIF( .F., s_oClass:ModInline( "SetGetFocus", {|Self | Self, ( if( !Empty( ::oGet ), ::oGet:SetFocus(), ) ) }, nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ), s_oClass:AddInline( "SetGetFocus", {|Self | Self, ( if( !Empty( ::oGet ), ::oGet:SetFocus(), ) ) }, nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ) )
+
+   _HB_MEMBER ShowButtonFilter(); IIF( .F., s_oClass:ModInline( "ShowButtonFilter", {|Self | Self, ( if( !Empty( ::oButtonFilter ), ::oButtonFilter:Show(), ) ) }, nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ), s_oClass:AddInline( "ShowButtonFilter", {|Self | Self, ( if( !Empty( ::oButtonFilter ), ::oButtonFilter:Show(), ) ) }, nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ) )
+   _HB_MEMBER HideButtonFilter(); IIF( .F., s_oClass:ModInline( "HideButtonFilter", {|Self | Self, ( if( !Empty( ::oButtonFilter ), ::oButtonFilter:Hide(), ), if( !Empty( ::oComboFilter ), ::oComboFilter:Select( 1 ), ) ) }, nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ), s_oClass:AddInline( "HideButtonFilter", {|Self | Self, ( if( !Empty( ::oButtonFilter ), ::oButtonFilter:Hide(), ), if( !Empty( ::oComboFilter ), ::oComboFilter:Select( 1 ), ) ) }, nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ) )
+   _HB_MEMBER SetKillFilter(bBlock); IIF( .F., s_oClass:ModInline( "SetKillFilter", {|Self,bBlock | Self, ( if( !Empty( ::oButtonFilter ), ( ::oButtonFilter:bAction := bBlock ), ) ) }, nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ), s_oClass:AddInline( "SetKillFilter", {|Self,bBlock | Self, ( if( !Empty( ::oButtonFilter ), ( ::oButtonFilter:bAction := bBlock ), ) ) }, nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ) )
+
+   _HB_MEMBER ShowAddButtonFilter(); IIF( .F., s_oClass:ModInline( "ShowAddButtonFilter", {|Self | Self, ( if( !Empty( ::oButtonAddFilter ), ::oButtonAddFilter:Show(), ) ) }, nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ), s_oClass:AddInline( "ShowAddButtonFilter", {|Self | Self, ( if( !Empty( ::oButtonAddFilter ), ::oButtonAddFilter:Show(), ) ) }, nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ) )
+   _HB_MEMBER HideAddButtonFilter(); IIF( .F., s_oClass:ModInline( "HideAddButtonFilter", {|Self | Self, ( if( !Empty( ::oButtonAddFilter ), ::oButtonAddFilter:Hide(), ) ) }, nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ), s_oClass:AddInline( "HideAddButtonFilter", {|Self | Self, ( if( !Empty( ::oButtonAddFilter ), ::oButtonAddFilter:Hide(), ) ) }, nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ) )
+   _HB_MEMBER SetAddButtonFilter(bAction); IIF( .F., s_oClass:ModInline( "SetAddButtonFilter", {|Self,bAction | Self, ( if( !Empty( ::oButtonAddFilter ), ( ::oButtonAddFilter:bAction := bAction ), ) ) }, nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ), s_oClass:AddInline( "SetAddButtonFilter", {|Self,bAction | Self, ( if( !Empty( ::oButtonAddFilter ), ( ::oButtonAddFilter:bAction := bAction ), ) ) }, nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ) )
+
+   _HB_MEMBER ShowEditButtonFilter(); IIF( .F., s_oClass:ModInline( "ShowEditButtonFilter", {|Self | Self, ( if( !Empty( ::oButtonEditFilter ), ::oButtonEditFilter:Show(), ) ) }, nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ), s_oClass:AddInline( "ShowEditButtonFilter", {|Self | Self, ( if( !Empty( ::oButtonEditFilter ), ::oButtonEditFilter:Show(), ) ) }, nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ) )
+   _HB_MEMBER HideEditButtonFilter(); IIF( .F., s_oClass:ModInline( "HideEditButtonFilter", {|Self | Self, ( if( !Empty( ::oButtonEditFilter ), ::oButtonEditFilter:Hide(), ) ) }, nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ), s_oClass:AddInline( "HideEditButtonFilter", {|Self | Self, ( if( !Empty( ::oButtonEditFilter ), ::oButtonEditFilter:Hide(), ) ) }, nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ) )
+   _HB_MEMBER SetEditButtonFilter(bAction); IIF( .F., s_oClass:ModInline( "SetEditButtonFilter", {|Self,bAction | Self, ( if( !Empty( ::oButtonEditFilter ), ( ::oButtonEditFilter:bAction := bAction ), ) ) }, nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ), s_oClass:AddInline( "SetEditButtonFilter", {|Self,bAction | Self, ( if( !Empty( ::oButtonEditFilter ), ( ::oButtonEditFilter:bAction := bAction ), ) ) }, nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ) )
+
+   _HB_MEMBER ShowYearComboBox(); IIF( .F., s_oClass:ModInline( "ShowYearComboBox", {|Self | Self, ( if( !Empty( ::oYearComboBox ), ( ::lYearComboBox := .T., ::oYearComboBox:Show(), ::oYearComboBox:Set( 1 ) ), ) ) }, nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ), s_oClass:AddInline( "ShowYearComboBox", {|Self | Self, ( if( !Empty( ::oYearComboBox ), ( ::lYearComboBox := .T., ::oYearComboBox:Show(), ::oYearComboBox:Set( 1 ) ), ) ) }, nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ) )
+   _HB_MEMBER HideYearComboBox(); IIF( .F., s_oClass:ModInline( "HideYearComboBox", {|Self | Self, ( if( !Empty( ::oYearComboBox ), ( ::lYearComboBox := .F., ::oYearComboBox:Hide() ), ) ) }, nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ), s_oClass:AddInline( "HideYearComboBox", {|Self | Self, ( if( !Empty( ::oYearComboBox ), ( ::lYearComboBox := .F., ::oYearComboBox:Hide() ), ) ) }, nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ) )
+   _HB_MEMBER lAllYearComboBox(); IIF( .F., s_oClass:ModInline( "lAllYearComboBox", {|Self | Self, ( if( !Empty( ::oYearComboBox ), ( ::oYearComboBox:nAt == 1 ), .F. ) ) }, nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ), s_oClass:AddInline( "lAllYearComboBox", {|Self | Self, ( if( !Empty( ::oYearComboBox ), ( ::oYearComboBox:nAt == 1 ), .F. ) ) }, nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ) )
+   _HB_MEMBER cYearComboBox(); IIF( .F., s_oClass:ModInline( "cYearComboBox", {|Self | Self, ( if( !Empty( ::oYearComboBox ), ( ::oYearComboBox:VarGet() ), "" ) ) }, nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ), s_oClass:AddInline( "cYearComboBox", {|Self | Self, ( if( !Empty( ::oYearComboBox ), ( ::oYearComboBox:VarGet() ), "" ) ) }, nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ) )
+   _HB_MEMBER nYearComboBox(); IIF( .F., s_oClass:ModInline( "nYearComboBox", {|Self | Self, ( if( !Empty( ::oYearComboBox ), ( Val( ::oYearComboBox:VarGet() ) ), 0 ) ) }, nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ), s_oClass:AddInline( "nYearComboBox", {|Self | Self, ( if( !Empty( ::oYearComboBox ), ( Val( ::oYearComboBox:VarGet() ) ), 0 ) ) }, nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ) )
+   _HB_MEMBER SetYearComboBoxChange(bBlock); IIF( .F., s_oClass:ModInline( "SetYearComboBoxChange", {|Self,bBlock | Self, ( if( !Empty( ::oYearComboBox ), ( ::oYearComboBox:bChange  := bBlock ), ) ) }, nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ), s_oClass:AddInline( "SetYearComboBoxChange", {|Self,bBlock | Self, ( if( !Empty( ::oYearComboBox ), ( ::oYearComboBox:bChange  := bBlock ), ) ) }, nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ) )
+
+   _HB_MEMBER Disable(); IIF( .F., s_oClass:ModInline( "Disable", {|Self | Self, ( CursorWait(),  if( !Empty( ::oOfficeBar ), ( ::oOfficeBar:Disable(), SysRefresh() ), ) ) }, nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ), s_oClass:AddInline( "Disable", {|Self | Self, ( CursorWait(),  if( !Empty( ::oOfficeBar ), ( ::oOfficeBar:Disable(), SysRefresh() ), ) ) }, nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ) )
+   _HB_MEMBER Enable(); IIF( .F., s_oClass:ModInline( "Enable", {|Self | Self, ( CursorWE(),    if( !Empty( ::oOfficeBar ), ( ::oOfficeBar:Enable(), SysRefresh() ), ) ) }, nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ), s_oClass:AddInline( "Enable", {|Self | Self, ( CursorWE(),    if( !Empty( ::oOfficeBar ), ( ::oOfficeBar:Enable(), SysRefresh() ), ) ) }, nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ) )
+
+   _HB_MEMBER EndApp(); IIF( .F., s_oClass:ModMethod( "EndApp", @TAcceso_EndApp(), nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ), s_oClass:AddMethod( "EndApp", @TAcceso_EndApp(), nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ));
+
+; IF .F. ; __clsActive(s_oClass:hClass) ; s_oClass:Refresh() ; ELSE ; s_oClass:Create() ; END ; oClassInstance := __clsInst( s_oClass:hClass ) ; IF __ObjHasMsg( oClassInstance, "InitClass" ); oClassInstance:InitClass( hb_aParams() ) ; END ; ELSE ; oClassInstance := __clsInst( s_oClass:hClass ) ; END ; IF PCount() > 0 ; DIVERT TO (@DivertConstructorCall()) OF s_oClass ; END ; RETURN oClassInstance AS CLASS TAcceso ;
+
+
+
+UTILITY STATIC function TAcceso_New() ; local Self AS CLASS TAcceso := QSelf() AS CLASS TAcceso
+
+   local n
+   local nSize
+
+   ::aAccesos        := {}
+   ::oFont           := TFont():New( "Ms Sans Serif", 6, 12, .F. )
+   ::cGet            := Space( 200 )
+   ::cYearComboBox   := "[Todos]"
+
+
+
+
+
+   aAdd( ::aYearComboBox, "[Todos]" )
+   for n := 2000 to Year( Date() )
+      aAdd( ::aYearComboBox, Str( n, 4 ) )
+   next
+
+return Self
+
+
+
+UTILITY STATIC function TAcceso_Add() ; local Self AS CLASS TAcceso := QSelf() AS CLASS TAcceso
+
+   local oAcceso  := TItemAcceso():New()
+
+   aAdd( ::aAccesos, oAcceso )
+
+return oAcceso
+
+
+
+UTILITY STATIC function TAcceso_CreateImageList() ; local Self AS CLASS TAcceso := QSelf() AS CLASS TAcceso
+
+   ::oImageList         := TImageList():New( 16, 16 )
+   ::oImageListBig      := TImageList():New( 32, 32 )
+
+   ::AddImageList( ::aAccesos )
+
+Return ( Self )
+
+
+
+UTILITY STATIC function TAcceso_SetImageList( oTree) ; local Self AS CLASS TAcceso := QSelf() AS CLASS TAcceso
+
+   IIF( oTree == nil, oTree := ::oTree, ) ;
+
+   if Empty( ::oImageList )
+      ::CreateImageList()
+   end
+
+   oTree:SetImagelist( ::oImageList )
+
+Return ( Self )
+
+
+
+UTILITY STATIC function TAcceso_AddImageList( aAccesos) ; local Self AS CLASS TAcceso := QSelf() AS CLASS TAcceso
+
+   local n
+
+   IIF( aAccesos == nil, aAccesos := ::aAccesos, ) ;
+
+   for n := 1 to len( aAccesos )
+      ::AddBitmapMasked( aAccesos[ n ] )
+      if len( aAccesos[ n ]:aAccesos ) > 0
+         ::AddImageList( aAccesos[ n ]:aAccesos )
+      end
+   next
+
+Return ( Self )
+
+
+
+UTILITY STATIC function TAcceso_CreateTree( oTree, aAccesos) ; local Self AS CLASS TAcceso := QSelf() AS CLASS TAcceso
+
+   local n
+
+   IIF( oTree == nil, oTree := ::oTree, ) ;
+   IIF( aAccesos == nil, aAccesos := ::aAccesos, ) ;
+
+   for n := 1 to len( aAccesos )
+
+      if len( aAccesos[ n ]:aAccesos ) > 0
+
+         ::CreateTree( ::AddTree( oTree, aAccesos[ n ] ), aAccesos[ n ]:aAccesos )
+
+      else
+
+         ::AddTree( oTree, aAccesos[ n ] )
+
+      end
+
+   next
+
+Return ( Self )
+
+
+
+UTILITY STATIC function TAcceso_AddTree( oTree, oAcceso) ; local Self AS CLASS TAcceso := QSelf() AS CLASS TAcceso
+
+   local oItemTree   := oTree:Add( oAcceso:cPrompt, oAcceso:nImageList, oAcceso:cId )
+
+   if !Empty( ::oTree )
+      TvSetCheckState( ::oTree:hWnd, oItemTree:hItem, oAcceso:lShow )
+   end
+
+Return ( oItemTree )
+
+
+
+UTILITY STATIC function TAcceso_AddBitmapMasked( oAcceso) ; local Self AS CLASS TAcceso := QSelf() AS CLASS TAcceso
+
+   ::oImageList:AddMasked( TBitmap():Define( oAcceso:cBmp ), ( 255 + ( 0 * 256 ) + ( 255 * 65536 ) ) )
+   ::oImageListBig:AddMasked( TBitmap():Define( oAcceso:cBmpBig ), ( 255 + ( 0 * 256 ) + ( 255 * 65536 ) ) )
+
+   oAcceso:nImageList   := len( ::oImageList:aBitmaps ) - 1
+
+Return nil
+
+
+
+UTILITY STATIC function TAcceso_EditButtonBar( oWnd, oMenuItem) ; local Self AS CLASS TAcceso := QSelf() AS CLASS TAcceso
+
+   local oDlg
+   local nLevel
+   local oBmpGeneral
+
+   IIF( oWnd == nil, oWnd := oWnd(), ) ;
+   IIF( oMenuItem == nil, oMenuItem := "01085", ) ;
+
+   nLevel            := nLevelUsr( oMenuItem )
+
+
+
+
+
+   if nAnd( nLevel, 1 ) <> 0
+      msgStop( "Acceso no permitido." )
+      return nil
+   end
+
+   oDlg = TDialog():New(,,,,, "ButtonBar",, .F.,,,,,, .F.,,,,,, .F., )
+
+
+
+
+
+   oBmpGeneral := TBitmap():ReDefine( 500, "Magic_wand_alpha_48",, oDlg,,, .F., .F.,,, .F.,,, .T. )
+
+   ::oTree     := TTreeView():Redefine( 100, oDlg )
+
+
+
+
+   TButton():ReDefine( 3, {||( ::Default() )}, oDlg,,, .F.,,,, .F. )
+
+
+
+
+   TButton():ReDefine( 1, {||( ::Save(), ::ReCreateOfficeBar( oWnd() ), oDlg:End( 1 ) )}, oDlg,,, .F.,,,, .F. )
+
+
+
+
+
+   TButton():ReDefine( 2, {||( oDlg:End() )}, oDlg,,, .F.,,,, .T. )
+
+   oDlg:AddFastKey( 116, {|| ::Save(), ::ReCreateOfficeBar( oWnd() ), oDlg:End( 1 ) } )
+
+   oDlg:Activate( , , , .T., , , {|| ::InitButtonBar() } )
+
+   if !Empty( oBmpGeneral )
+      oBmpGeneral:End()
+   end
+
+Return ( oDlg:nResult == 1 )
+
+
+
+UTILITY STATIC function TAcceso_InitButtonBar() ; local Self AS CLASS TAcceso := QSelf() AS CLASS TAcceso
+
+   ::SetImageList()
+   ::CreateTree()
+   ::Load()
+
+Return nil
+
+
+
+UTILITY STATIC function TAcceso_Save() ; local Self AS CLASS TAcceso := QSelf() AS CLASS TAcceso
+
+   local cDbf
+   local cCurUsr  := cCurUsr()
+
+   if ::lOpenDatabase()
+      ::DeleteTree( cCurUsr )
+      ::SaveTree( ::oTree:aItems, cCurUsr, cDbf )
+      ::CloseDatabase()
+   end
+
+   oUser():Save( cCurUsr )
+
+Return ( Self )
+
+
+
+UTILITY STATIC function TAcceso_SaveTree( aItems, cCurUsr, cDbf) ; local Self AS CLASS TAcceso := QSelf() AS CLASS TAcceso
+
+   local n
+
+   for n := 1 to len( aItems )
+
+      if !Empty( aItems[ n ]:aItems )
+
+         ( ::cDbf )->( dbAppend() )
+         ( ::cDbf )->cCodUse     := cCurUsr
+         ( ::cDbf )->cOpcion     := aItems[ n ]:cPrompt
+         ( ::cDbf )->lShow       := TvGetCheckState( ::oTree:hWnd, aItems[ n ]:hItem )
+         ( ::cDbf )->( dbUnLock() )
+
+         ::SaveTree( aItems[ n ]:aItems, cCurUsr, cDbf )
+
+      else
+
+         if IsChar( aItems[ n ]:bAction )
+            ( ::cDbf )->( dbAppend() )
+            ( ::cDbf )->cCodUse  := cCurUsr
+            ( ::cDbf )->cOpcion  := aItems[ n ]:bAction
+            ( ::cDbf )->lShow    := TvGetCheckState( ::oTree:hWnd, aItems[ n ]:hItem )
+            ( ::cDbf )->( dbUnLock() )
+         end
+
+      end
+
+   next
+
+Return Self
+
+
+
+UTILITY STATIC function TAcceso_Load() ; local Self AS CLASS TAcceso := QSelf() AS CLASS TAcceso
+
+   local cCurUsr  := cCurUsr()
+
+   if ::lOpenDatabase()
+
+      if ( ::cDbf )->( dbSeek( cCurUsr ) )
+
+         while ( ::cDbf )->cCodUse == cCurUsr .AND. !( ::cDbf )->( eof() )
+
+            ::LoadTree( ::oTree:aItems, ( ::cDbf )->cOpcion, ( ::cDbf )->lShow )
+
+            ( ::cDbf )->( dbSkip() )
+
+         end
+
+      end
+
+   end
+
+   ::CloseDatabase()
+
+Return Self
+
+
+
+UTILITY STATIC function TAcceso_LoadTree( aItems, cOpcion, lShow) ; local Self AS CLASS TAcceso := QSelf() AS CLASS TAcceso
+
+   local n
+
+   if Empty( cOpcion )
+      return nil
+   end
+
+   for n := 1 to Len( aItems )
+
+      if Len( aItems[ n ]:aItems ) > 0
+
+         if !Empty( aItems[ n ] ) .AND. Rtrim( aItems[ n ]:cPrompt ) == Rtrim( cOpcion )
+
+            TvSetCheckState( ::oTree:hWnd, aItems[ n ]:hItem, lShow )
+
+         end
+
+         ::LoadTree( aItems[ n ]:aItems, cOpcion, lShow )
+
+      else
+
+         if !Empty( aItems[ n ]:bAction ) .AND.  Rtrim( aItems[ n ]:bAction ) == Rtrim( cOpcion )
+
+            TvSetCheckState( ::oTree:hWnd, aItems[ n ]:hItem, lShow )
+
+         end
+
+      end
+
+   next
+
+return nil
+
+
+
+UTILITY STATIC function TAcceso_MakeDatabase( cPath, oMeter) ; local Self AS CLASS TAcceso := QSelf() AS CLASS TAcceso
+
+   IIF( cPath == nil, cPath := cPatDat(), ) ;
+
+   if !Empty( oMeter )
+        oMeter:cText    := "Generando Bases"
+      SysRefresh()
+   end
+
+   if !file( cPath + "UsrBtnBar.Dbf" )
+      dbCreate( cPath + "UsrBtnBar.Dbf", ::aStruct, cDriver() )
+   end
+
+   if !file( cPath + "UsrBtnBar.Cdx" )
+      ::ReindexDatabase( cPath, oMeter )
+   end
+
+RETURN .T.
+
+
+
+UTILITY STATIC function TAcceso_ReindexDatabase( cPath, oMeter) ; local Self AS CLASS TAcceso := QSelf() AS CLASS TAcceso
+
+   local dbf
+
+   IIF( cPath == nil, cPath := cPatDat(), ) ;
+
+   if !file( cPath + "UsrBtnBar.Dbf" )
+      dbCreate( cPath + "UsrBtnBar.Dbf", ::aStruct, cDriver() )
+   end
+
+   if file( cPath + "UsrBtnBar.Cdx" )
+      fErase( cPath + "UsrBtnBar.Cdx" )
+   end
+
+   dbUseArea( .T., cDriver(), cPath + "UsrBtnBar.Dbf", cCheckArea( "UsrBtnBar", @dbf ), .F. )
+   if !( dbf )->( neterr() )
+      ( dbf )->( __dbPack() )
+
+      ( dbf )->( ordCondSet( "!Deleted()", {||!Deleted()}  ) )
+      ( dbf )->( ordCreate( cPath + "UsrBtnBar.Cdx", "cCodUse", "Field->cCodUse", {|| Field->cCodUse } ) )
+
+      ( dbf )->( ordCondSet( "!Deleted()", {||!Deleted()}  ) )
+      ( dbf )->( ordCreate( cPath + "UsrBtnBar.Cdx", "cOpcion", "Field->cCodUse + Field->cOpcion", {|| Field->cCodUse  + Field->cOpcion } ) )
+
+      ( dbf )->( dbCloseArea() )
+   else
+      msgStop( "Imposible abrir en modo exclusivo la tabla de usuarios" )
+   end
+
+Return Self
+
+
+
+UTILITY STATIC function TAcceso_CreateButtonBar( oWnd, lCreateButtonBar) ; local Self AS CLASS TAcceso := QSelf() AS CLASS TAcceso
+
+   IIF( lCreateButtonBar == nil, lCreateButtonBar := .T., ) ;
+
+   ::oReBar                   := TPanelEx():New( 0, 0, if( ::lTactil, 124, 150 ), 1000, oWnd, ( 255 + ( 255 * 256 ) + ( 255 * 65536 ) ), .F. )
+
+   oWnd:oTop                  := ::oReBar
+
+   ::CreateOfficeBar( oWnd )
+
+   if !::lTactil
+      ::CreateSearchBar( oWnd )
+      ::HideButtonFilter()
+      ::HideAddButtonFilter()
+      ::HideEditButtonFilter()
+      ::HideYearComboBox()
+   end
+
+Return Self
+
+
+
+UTILITY STATIC function TAcceso_CreateToolbar( aAccesos) ; local Self AS CLASS TAcceso := QSelf() AS CLASS TAcceso
+
+   local n
+   local cCurUsr              := cCurUsr()
+
+   IIF( aAccesos == nil, aAccesos := ::aAccesos, ) ;
+
+   if Empty( ::oToolBar )
+
+      if ::lBig
+         if ::lTactil
+            ::oToolBar        := TToolBar():New( ::oReBar, 50, 50, ::oImageListBig, .T. )
+         else
+            ::oToolBar        := TToolBar():New( ::oReBar, 36, 36, ::oImageListBig, .T. )
+         end
+      else
+         ::oToolBar           := TToolBar():New( ::oReBar, 20, 20, ::oImageList, .T. )
+      end
+
+      ::oToolBar:oBrush       := TBrush():New( , ( 255 + ( 255 * 256 ) + ( 255 * 65536 ) ) )
+      ::oToolBar:nWidth       := 0
+
+   end
+
+   for n := 1 to len( aAccesos )
+
+      if len( aAccesos[ n ]:aAccesos ) > 0
+         ::CreateToolbar( aAccesos[ n ]:aAccesos )
+         ::oToolBar:AddSeparator()
+         ::oToolBar:nWidth    += 4
+      else
+         ::AddToolBar( aAccesos[ n ], cCurUsr )
+      end
+
+   next
+
+Return ( Self )
+
+
+
+UTILITY STATIC function TAcceso_CreateSearchBar( oWnd) ; local Self AS CLASS TAcceso := QSelf() AS CLASS TAcceso
+
+   local oImage
+
+
+
+
+
+   ::oGet := TGetHlp():New( 124, 4, { | u | If( PCount()==0, ::cGet, ::cGet:= u ) }, ::oRebar, 210, 21,,,,, ::oFont, .F.,, .T.,, .F.,, .F., .F.,, .F., .F.,,, .F.,,,,,,,, )
+
+   ::oGet:cBmp       := "Lupa"
+   ::oGet:bLostFocus := {|| ::oGet:cText( Space( 200 ) ), if( !Empty( ::oGet:bChange ), Eval( ::oGet:bChange ), ) }
+   ::oGet:Disable()
+
+
+
+
+
+
+
+   ::oComboBox := TComboBox():New( 124, 220, { | u | If( PCount()==0, ::cComboBox, ::cComboBox:= u ) }, ::aComboBox, 200, 30, ::oRebar,,,,,, .T., ::oFont,, .F.,, .F.,,, 2,, )
+
+   ::oComboBox:Disable()
+
+
+
+
+
+
+
+   ::oComboFilter := TComboBox():New( 124, 426, { | u | If( PCount()==0, ::cComboFilter, ::cComboFilter:= u ) }, ::aComboFilter, 200, 30, ::oRebar,,,,,, .T., ::oFont,, .F.,, .F.,,, 2,, )
+
+   ::oComboFilter:Disable()
+
+
+
+
+
+
+   ::oButtonAddFilter := TBtnBmp():New( 125, 632, 18, 18, "bAddFilter16",,,, {|Self|( msgAlert( "Quitar filtro activo" ) )}, ::oRebar,,, .F., .F.,,,,, !.T.,, .F.,,, .F.,, !.F.,, .F., .F. )
+
+
+
+
+
+
+   ::oButtonEditFilter := TBtnBmp():New( 125, 658, 18, 18, "bFilter16",,,, {|Self|( msgAlert( "Quitar filtro activo" ) )}, ::oRebar,,, .F., .F.,,,,, !.T.,, .F.,,, .F.,, !.F.,, .F., .F. )
+
+
+
+
+
+
+   ::oButtonFilter := TBtnBmp():New( 125, 684, 18, 18, "bNoFilter16",,,, {|Self|( msgAlert( "Quitar filtro activo" ) )}, ::oRebar,,, .F., .F.,,,,, !.T.,, .F.,,, .F.,, !.F.,, .F., .F. )
+
+
+
+
+
+
+
+   ::oYearComboBox := TComboBox():New( 124, 710, { | u | If( PCount()==0, ::cYearComboBox, ::cYearComboBox:= u ) }, ::aYearComboBox, 60, 30, ::oRebar,,,,,, .T., ::oFont,, .F.,, .F.,,, 2,, )
+
+
+
+
+
+
+
+
+
+
+Return ( Self )
+
+
+
+UTILITY STATIC function TAcceso_CreateLogo() ; local Self AS CLASS TAcceso := QSelf() AS CLASS TAcceso
+
+   if Empty( ::oBmpLogo )
+
+
+
+
+
+
+      ::oBmpLogo := TBitmap():New( 120, ( ::oRebar:nWidth() - 138 ),,, "GesTool",, .T., ::oRebar,,, .F., .F.,,, .F.,, .T.,, .F. )
+
+   else
+
+      ::oBmpLogo:Move( 120, ( ::oRebar:nWidth() - 138 ), 134, 32, .T. )
+
+   end
+
+Return ( Self )
+
+
+
+UTILITY STATIC function TAcceso_AddToolBar( oAcceso, cCurUsr) ; local Self AS CLASS TAcceso := QSelf() AS CLASS TAcceso
+
+   if ::lTactil
+      ::oToolBar:AddButton( oAcceso:bAction, oAcceso:nImageList + 1, AnsiToOem( oAcceso:cPrompt ), oAcceso:cPrompt )
+      ::oToolBar:nWidth       += 50
+   else
+      if ::lGetShowToolBar( oAcceso, cCurUsr )
+         ::oToolBar:AddButton( oAcceso:bAction, oAcceso:nImageList + 1, AnsiToOem( oAcceso:cPrompt ) )
+         ::oToolBar:nWidth    += 23
+      end
+   end
+
+Return ( Self )
+
+
+
+UTILITY STATIC function TAcceso_lOpenDatabase() ; local Self AS CLASS TAcceso := QSelf() AS CLASS TAcceso
+
+   local oBlock
+   local oError
+
+   if ::lOpenFiles
+      Return ( ::lOpenFiles )
+   end
+
+   oBlock            := ErrorBlock( {| oError | ApoloBreak( oError ) } )
+   BEGIN SEQUENCE
+
+      ::MakeDatabase()
+
+      dbUseArea( .T., ( cDriver() ), ( cPatDat() + "UsrBtnBar.Dbf" ), ( ::cDbf := cCheckArea( "UsrBtnBar" ) ), if(.T. .OR. .F., !.F., NIL), .F.,, )
+      if !lAIS() ; ordListAdd( ( cPatDat() + "UsrBtnBar.Cdx" ) ) ; else ; ordSetFocus( 1 ) ; end
+
+      ::lOpenFiles   := .T.
+
+   RECOVER USING oError
+
+      msgStop( ErrorMessage( oError ), "Imposible abrir las bases de datos de barras de botones" )
+
+      ( ::cDbf )->( dbCloseArea() )
+
+   end
+
+   ErrorBlock( oBlock )
+
+Return ( ::lOpenFiles )
+
+
+
+UTILITY STATIC function TAcceso_lGetShowToolBar( oAcceso, cCurUsr) ; local Self AS CLASS TAcceso := QSelf() AS CLASS TAcceso
+
+   local lShow       := .F.
+
+   IIF( cCurUsr == nil, cCurUsr := cCurUsr(), ) ;
+
+   if ::lOpenFiles .AND. dbSeekInOrd( cCurUsr + oAcceso:cId, "cOpcion", ::cDbf )
+      lShow          := ( ::cDbf )->lShow
+   else
+      lShow          := oAcceso:lShow
+   end
+
+Return ( lShow )
+
+
+
+UTILITY STATIC function TAcceso_lHideCarpeta( oAcceso, cCurUsr) ; local Self AS CLASS TAcceso := QSelf() AS CLASS TAcceso
+
+   local lHide       := .F.
+
+   IIF( cCurUsr == nil, cCurUsr := cCurUsr(), ) ;
+
+   if ::lOpenFiles .AND. dbSeekInOrd( cCurUsr + oAcceso:cPrompt, "cOpcion", ::cDbf )
+      lHide          := !( ::cDbf )->lShow
+   else
+      lHide          := .F.
+   end
+
+Return ( lHide )
+
+
+
+UTILITY STATIC function TAcceso_CloseDatabase() ; local Self AS CLASS TAcceso := QSelf() AS CLASS TAcceso
+
+   if !Empty( ::cDbf )
+      ( ::cDbf )->( dbCloseArea() )
+   end
+
+   ::lOpenFiles      := .F.
+
+Return ( Self )
+
+
+
+UTILITY STATIC function TAcceso_DeleteTree( cCurUsr) ; local Self AS CLASS TAcceso := QSelf() AS CLASS TAcceso
+
+   IIF( cCurUsr == nil, cCurUsr := cCurUsr(), ) ;
+
+   while ( ::cDbf )->( dbSeek( cCurUsr ) )
+      IIF( ( ::cDbf )->( dbRLock() ), ( ( ::cDbf )->( dbDelete() ), ( ::cDbf )->( dbUnLock() ) ), )
+   end
+
+Return ( Self )
+
+
+
+UTILITY STATIC function TAcceso_CreateOfficeBar( oWnd) ; local Self AS CLASS TAcceso := QSelf() AS CLASS TAcceso
+
+   local oAcceso
+   local oFont
+
+   ::oOfficeBar               := TDotNetBar():New( 0, 0, 1000, 120, ::oReBar, 1 )
+   ::oOfficeBar:lPaintAll     := .F.
+   ::oOfficeBar:lDisenio      := .F.
+   ::oOfficeBar:bRClicked     := {|| ::EditButtonBar() }
+
+   ::oOfficeBar:SetStyle( 1 )
+
+   ::oRebar:oTop              := ::oOfficeBar
+
+
+
+
+
+   if ::lOpenDatabase()
+
+      ::CreateFavoritosOfficeBar()
+
+
+
+
+
+      for each oAcceso in ::aAccesos
+         if len( oAcceso:aAccesos ) > 0
+            ::CreateCarpetaOfficeBar( oAcceso )
+         end
+      next
+
+      ::CloseDatabase()
+
+   end
+
+Return ( Self )
+
+
+
+UTILITY STATIC function TAcceso_ReCreateOfficeBar( oWnd) ; local Self AS CLASS TAcceso := QSelf() AS CLASS TAcceso
+
+   local oCarpeta
+
+
+
+
+
+   if ::lOpenDatabase()
+
+      ::CreateFavoritosOfficeBar()
+
+
+
+
+
+      for each oCarpeta in ::oOfficeBar:aCarpetas
+         oCarpeta:lHide    := ::lHideCarpeta( oCarpeta )
+      next
+
+      ::oOfficeBar:GetCoords()
+      ::oOfficeBar:Refresh()
+
+      ::CloseDatabase()
+
+   end
+
+Return ( Self )
+
+
+
+UTILITY STATIC function TAcceso_CreateCarpetaOfficeBar( oAcceso) ; local Self AS CLASS TAcceso := QSelf() AS CLASS TAcceso
+
+   local oCarpeta
+
+   oCarpeta                   := TCarpeta():New( ::oOfficeBar, oAcceso:cPrompt )
+   oCarpeta:lHide             := ::lHideCarpeta( oAcceso )
+
+   ::CreateBotonesOfficeBar( oAcceso:aAccesos, oCarpeta )
+
+Return ( Self )
+
+
+
+UTILITY STATIC function TAcceso_CreateBotonesOfficeBar( aAcceso, oCarpeta) ; local Self AS CLASS TAcceso := QSelf() AS CLASS TAcceso
+
+   local oBoton
+   local oGrupo
+   local nGroup
+   local oAcceso
+   local nBoton               := 0
+   local nLittleButtons       := 0
+   local aGrupo               := {}
+
+   for each oAcceso in aAcceso
+
+      if !Empty( oAcceso:oGroup )
+
+         if aScan( aGrupo, oAcceso:oGroup:cPrompt ) == 0
+
+            nBoton            := 0
+            nGroup            := ( oAcceso:oGroup:nBigItems * 60 ) + ( oAcceso:oGroup:nLittleItems * 100 ) + 6
+            nLittleButtons    := 0
+
+            oGrupo            := TDotNetGroup():New( oCarpeta, nGroup, oAcceso:oGroup:cPrompt, .F., , oAcceso:oGroup:cBigBitmap )
+
+            aAdd( aGrupo, oAcceso:oGroup:cPrompt )
+
+         end
+
+         if !Empty( oGrupo )
+
+            if !oAcceso:lLittle
+
+               oBoton         := TDotNetButton():New( 60, oGrupo, oAcceso:cBmpBig, oAcceso:cPrompt, ++nBoton, oAcceso:bAction, , , .F., .F., .F. )
+
+            else
+
+               oBoton         := TDotNetButton():New( 100, oGrupo, oAcceso:cBmp, oAcceso:cPrompt, ++nBoton, oAcceso:bAction, , , .F., .F., .F. )
+
+               nLittleButtons++
+
+               if Mod( nLittleButtons, 3 ) <> 0
+                  --nBoton
+               end
+
+            end
+
+            oBoton:lVisible   := !oAcceso:lHide
+
+         end
+
+      end
+
+   next
+
+Return ( Self )
+
+
+
+UTILITY STATIC function TAcceso_CreateFavoritosOfficeBar() ; local Self AS CLASS TAcceso := QSelf() AS CLASS TAcceso
+
+   local nScan
+   local oItem
+   local oAcceso
+   local oBoton
+   local oGrupo
+   local nBoton                  := 0
+   local aGrupo                  := {}
+   local aColor                  := { ( 237 + ( 71 * 256 ) + ( 0 * 65536 ) ), ( 237 + ( 71 * 256 ) + ( 0 * 65536 ) ), , ( 237 + ( 71 * 256 ) + ( 0 * 65536 ) ), 16777215 }
+
+   if ( "TCT" $ cParamsMain() ) .OR. ( "TPV" $ cParamsMain() )
+      Return ( Self )
+   end
+
+
+
+   if Empty( ::oFavoritosBar )
+      ::oFavoritosBar            := TCarpeta():New( ::oOfficeBar, "FAVORITOS", , , aColor )
+   else
+      ::oFavoritosBar:aGrupos    := {}
+   end
+
+   for each oAcceso in ::aAccesos
+
+      if len( oAcceso:aAccesos ) > 0
+
+         for each oItem in oAcceso:aAccesos
+
+            if ::lGetShowToolBar( oItem )
+
+               if !Empty( oItem:oGroup )
+
+                  nScan          := aScan( aGrupo, oItem:oGroup:cPrompt )
+                  if nScan == 0
+                     aAdd( aGrupo, oItem:oGroup:cPrompt )
+                     oGrupo      := TDotNetGroup():New( ::oFavoritosBar, 6, oItem:oGroup:cPrompt, .F., , oItem:oGroup:cBigBitmap )
+                     nBoton      := 0
+                  end
+
+                  if !Empty( oGrupo )
+
+                     oBoton      := TDotNetButton():New( 60, oGrupo, oItem:cBmpBig, oItem:cPrompt, ++nBoton, oItem:bAction, , , .F., .F., .F. )
+
+                     oGrupo:nWidth     += 60
+                     oGrupo:aSize[ 1 ] := oGrupo:nWidth
+
+                     ::oFavoritosBar:CalcSizes()
+                     ::oFavoritosBar:oParent:Refresh()
+
+                  end
+
+               end
+
+            end
+
+         next
+
+      end
+
+   next
+
+   oGrupo   := TDotNetGroup():New( ::oFavoritosBar, 66, "Galería", .F., , "Document_Chart_32" )
+   oBoton   := TDotNetButton():New( 60, oGrupo, "Document_Chart_32", "Galería informe", 1, {|| RunReportGalery() }, , , .F., .F., .F. )
+
+   oGrupo   := TDotNetGroup():New( ::oFavoritosBar, 66, "Salir", .F., , "End32" )
+   oBoton   := TDotNetButton():New( 60, oGrupo, "End32", "Salir", 1, {|| if( !Empty( oWnd() ), oWnd():End(), ) }, , , .F., .F., .F. )
+
+Return ( Self )
+
+
+
+UTILITY STATIC function TAcceso_EnableComboFilter( aItems) ; local Self AS CLASS TAcceso := QSelf() AS CLASS TAcceso
+
+   local aItem
+
+   if !Empty( ::oComboFilter )
+
+      ::cComboFilter       := "[Mis filtros]"
+      ::aComboFilter       := { "[Mis filtros]" }
+
+
+
+      for each aItem in aItems
+         aAdd( ::aComboFilter, aItem[ 1 ] )
+      next
+
+      ::oComboFilter:SetItems( ::aComboFilter )
+      ::oComboFilter:Enable()
+
+   end
+
+Return ( Self )
+
+
+
+UTILITY STATIC function TAcceso_SetDefaultComboFilter( aItems) ; local Self AS CLASS TAcceso := QSelf() AS CLASS TAcceso
+
+   local aItem
+
+   if !Empty( ::oComboFilter )
+
+      ::oComboFilter:Set( "[Mis filtros]" )
+
+      for each aItem in aItems
+
+         if aItem[ 3 ]
+
+            ::oComboFilter:Set( aItem[ 1 ] )
+
+            Eval( ::oComboFilter:bChange )
+
+         end
+
+      next
+
+   end
+
+Return ( Self )
+
+
+
+UTILITY STATIC function TAcceso_EndApp() ; local Self AS CLASS TAcceso := QSelf() AS CLASS TAcceso
+
+   local oBlock
+   local oError
+
+   oBlock            := ErrorBlock( {| oError | ApoloBreak( oError ) } )
+   BEGIN SEQUENCE
+
+      IIF( !Empty( oWnd() ), oWnd():End(), )
+
+   RECOVER
+
+   end
+
+   ErrorBlock( oBlock )
+
+Return ( Self )
+
+
+
+#pragma BEGINDUMP
+
+#include "Windows.h"
+#include "hbapi.h"
+
+HINSTANCE GetResources( void );
+
+//----------------------------------------------------------------------------//
+
+HB_FUNC( GETDEFAULTFONTNAME )
+{
+LOGFONT lf;
+GetObject( ( HFONT ) GetStockObject( DEFAULT_GUI_FONT ) , sizeof( LOGFONT ), &lf );
+hb_retc( lf.lfFaceName );
+}
+
+//----------------------------------------------------------------------------//
+
+HB_FUNC( GETDEFAULTFONTHEIGHT )
+{
+LOGFONT lf;
+GetObject( ( HFONT ) GetStockObject( DEFAULT_GUI_FONT ) , sizeof( LOGFONT ), &lf );
+hb_retni( lf.lfHeight );
+}
+
+HB_FUNC( GETRCDATA )   // ( cnResName, cType ) --> cResourceBytes
+{
+   HMODULE hExe;
+   HRSRC hRes;
+   HGLOBAL hglb;
+   int iResName = hb_parni( 1 );
+
+   hExe = LoadLibrary(hb_parc(2));
+   if (hExe == NULL)
+   {
+       hb_retc("0");
+       return;
+   }
+
+   hRes = FindResource(hExe, MAKEINTRESOURCE(iResName), MAKEINTRESOURCE(10) );
+
+
+
+   if( hRes )
+   {
+      hglb = LoadResource( ( HINSTANCE ) GetResources(), hRes );
+
+      if( hglb ) // && ! ( GlobalFlags( hglb ) && GMEM_DISCARDED ) )
+      {
+
+         hb_retclen( ( LPSTR ) LockResource( hglb ), SizeofResource( GetResources(), hRes ) );
+         //UnlockResource( hglb );
+
+      }
+      else
+         hb_retc( "" );
+   }
+   else
+      hb_retc( "" );
+}
+
+
+#pragma ENDDUMP

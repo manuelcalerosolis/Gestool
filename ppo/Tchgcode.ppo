@@ -1,0 +1,1845 @@
+#line 112 "hbclass.ch"
+   DYNAMIC DivertConstructorCall
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+DECLARE HBClass  New( cName AS String, OPTIONAL SuperParams ) AS CLASS HBClass  Create() AS Object  Instance() AS Object  AddClsMethod( cName AS String, @MethodName(), nScope AS Numeric, n2 AS Numeric, n3 AS Numeric )  AddDelegate( cName AS String, cDelegate AS String, cObject AS String, nScope AS Numeric, lPersistent AS LOGICAL )  AddMultiClsData( cType AS String, uVal, nScope AS Numeric, aDatas AS Array OF String )  AddMultiData( cType AS String, uVal, nScope AS Numeric, aDatas AS Array OF String, x AS LOGICAL, lPer AS LOGICAL )  AddMethod( cName AS String, @MethodName(), nScope AS Numeric, lPersistent AS LOGICAL )  AddInLine( cName AS String, bBlock AS CodeBlock, nScope AS Numeric, lPersistent AS LOGICAL )  AddVirtual( cName AS String )  ModMethod( cName AS String, @MethodName(), nScope AS Numeric, lPersistent AS LOGICAL )  ModClsMethod( cName AS String, @MethodName(), nScope AS Numeric )  ModInline( cName AS String, bBlock AS CodeBlock, nScope AS Numeric, lPersistent AS LOGICAL )  SetOnError( @MethodName() )
+#line 85 "\Fwh1204\Include\FiveWin.Ch"
+   EXTERNAL GetProcAdd
+   EXTERNAL TActiveX
+
+
+
+
+extern errorsys
+#line 8 ".\Prg\Tchgcode.prg"
+_HB_CLASS TChgCode ; UTILITY FUNCTION TChgCode(...); static s_oClass ; local oClassInstance ; local nScope ; nScope := 1 ; if s_oClass == NIL ; s_oClass := IIF(.F.,, HBClass():New( "TChgCode" , { HBObject():Classh } ) ) ;
+
+   _HB_MEMBER { oDlg} ; IIF( !.F., s_oClass:AddMultiData(,, nScope + IIF( .F., 32, 0 ), { "oDlg" }, .F., .F. ), )
+   _HB_MEMBER { oDbfArt} ; IIF( !.F., s_oClass:AddMultiData(,, nScope + IIF( .F., 32, 0 ), { "oDbfArt" }, .F., .F. ), )
+   _HB_MEMBER { oDbfFam} ; IIF( !.F., s_oClass:AddMultiData(,, nScope + IIF( .F., 32, 0 ), { "oDbfFam" }, .F., .F. ), )
+   _HB_MEMBER { oDbfPrv} ; IIF( !.F., s_oClass:AddMultiData(,, nScope + IIF( .F., 32, 0 ), { "oDbfPrv" }, .F., .F. ), )
+   _HB_MEMBER { oDbfPrc} ; IIF( !.F., s_oClass:AddMultiData(,, nScope + IIF( .F., 32, 0 ), { "oDbfPrc" }, .F., .F. ), )
+   _HB_MEMBER { oDbfTar} ; IIF( !.F., s_oClass:AddMultiData(,, nScope + IIF( .F., 32, 0 ), { "oDbfTar" }, .F., .F. ), )
+   _HB_MEMBER { oDbfOfe} ; IIF( !.F., s_oClass:AddMultiData(,, nScope + IIF( .F., 32, 0 ), { "oDbfOfe" }, .F., .F. ), )
+   _HB_MEMBER { oDbfArd} ; IIF( !.F., s_oClass:AddMultiData(,, nScope + IIF( .F., 32, 0 ), { "oDbfArd" }, .F., .F. ), )
+   _HB_MEMBER { oDbfKit} ; IIF( !.F., s_oClass:AddMultiData(,, nScope + IIF( .F., 32, 0 ), { "oDbfKit" }, .F., .F. ), )
+   _HB_MEMBER { oDbfPedPrv} ; IIF( !.F., s_oClass:AddMultiData(,, nScope + IIF( .F., 32, 0 ), { "oDbfPedPrv" }, .F., .F. ), )
+   _HB_MEMBER { oDbfAlbPrv} ; IIF( !.F., s_oClass:AddMultiData(,, nScope + IIF( .F., 32, 0 ), { "oDbfAlbPrv" }, .F., .F. ), )
+   _HB_MEMBER { oDbfFacPrv} ; IIF( !.F., s_oClass:AddMultiData(,, nScope + IIF( .F., 32, 0 ), { "oDbfFacPrv" }, .F., .F. ), )
+   _HB_MEMBER { oDbfHis} ; IIF( !.F., s_oClass:AddMultiData(,, nScope + IIF( .F., 32, 0 ), { "oDbfHis" }, .F., .F. ), )
+   _HB_MEMBER { oDbfPro} ; IIF( !.F., s_oClass:AddMultiData(,, nScope + IIF( .F., 32, 0 ), { "oDbfPro" }, .F., .F. ), )
+   _HB_MEMBER { oDbfDepAge} ; IIF( !.F., s_oClass:AddMultiData(,, nScope + IIF( .F., 32, 0 ), { "oDbfDepAge" }, .F., .F. ), )
+   _HB_MEMBER { oDbfExtAge} ; IIF( !.F., s_oClass:AddMultiData(,, nScope + IIF( .F., 32, 0 ), { "oDbfExtAge" }, .F., .F. ), )
+   _HB_MEMBER { oDbfDepAge} ; IIF( !.F., s_oClass:AddMultiData(,, nScope + IIF( .F., 32, 0 ), { "oDbfDepAge" }, .F., .F. ), )
+   _HB_MEMBER { oDbfExtAge} ; IIF( !.F., s_oClass:AddMultiData(,, nScope + IIF( .F., 32, 0 ), { "oDbfExtAge" }, .F., .F. ), )
+   _HB_MEMBER { oDbfPreCli} ; IIF( !.F., s_oClass:AddMultiData(,, nScope + IIF( .F., 32, 0 ), { "oDbfPreCli" }, .F., .F. ), )
+   _HB_MEMBER { oDbfPedCli} ; IIF( !.F., s_oClass:AddMultiData(,, nScope + IIF( .F., 32, 0 ), { "oDbfPedCli" }, .F., .F. ), )
+   _HB_MEMBER { oDbfAlbCli} ; IIF( !.F., s_oClass:AddMultiData(,, nScope + IIF( .F., 32, 0 ), { "oDbfAlbCli" }, .F., .F. ), )
+   _HB_MEMBER { oDbfFacCli} ; IIF( !.F., s_oClass:AddMultiData(,, nScope + IIF( .F., 32, 0 ), { "oDbfFacCli" }, .F., .F. ), )
+   _HB_MEMBER { oDbfPreCliT} ; IIF( !.F., s_oClass:AddMultiData(,, nScope + IIF( .F., 32, 0 ), { "oDbfPreCliT" }, .F., .F. ), )
+   _HB_MEMBER { oDbfPedCliT} ; IIF( !.F., s_oClass:AddMultiData(,, nScope + IIF( .F., 32, 0 ), { "oDbfPedCliT" }, .F., .F. ), )
+   _HB_MEMBER { oDbfAlbCliT} ; IIF( !.F., s_oClass:AddMultiData(,, nScope + IIF( .F., 32, 0 ), { "oDbfAlbCliT" }, .F., .F. ), )
+   _HB_MEMBER { oDbfFacCliT} ; IIF( !.F., s_oClass:AddMultiData(,, nScope + IIF( .F., 32, 0 ), { "oDbfFacCliT" }, .F., .F. ), )
+   _HB_MEMBER { oDbfFacCliP} ; IIF( !.F., s_oClass:AddMultiData(,, nScope + IIF( .F., 32, 0 ), { "oDbfFacCliP" }, .F., .F. ), )
+   _HB_MEMBER { oDbfTpvCli} ; IIF( !.F., s_oClass:AddMultiData(,, nScope + IIF( .F., 32, 0 ), { "oDbfTpvCli" }, .F., .F. ), )
+   _HB_MEMBER { oDbfCliAtp} ; IIF( !.F., s_oClass:AddMultiData(,, nScope + IIF( .F., 32, 0 ), { "oDbfCliAtp" }, .F., .F. ), )
+   _HB_MEMBER { oDbfTblPro} ; IIF( !.F., s_oClass:AddMultiData(,, nScope + IIF( .F., 32, 0 ), { "oDbfTblPro" }, .F., .F. ), )
+   _HB_MEMBER { oDbfArtKit} ; IIF( !.F., s_oClass:AddMultiData(,, nScope + IIF( .F., 32, 0 ), { "oDbfArtKit" }, .F., .F. ), )
+   _HB_MEMBER { oDbfAgentes} ; IIF( !.F., s_oClass:AddMultiData(,, nScope + IIF( .F., 32, 0 ), { "oDbfAgentes" }, .F., .F. ), )
+   _HB_MEMBER { oDbfClient} ; IIF( !.F., s_oClass:AddMultiData(,, nScope + IIF( .F., 32, 0 ), { "oDbfClient" }, .F., .F. ), )
+   _HB_MEMBER { oDbfTpvCliT} ; IIF( !.F., s_oClass:AddMultiData(,, nScope + IIF( .F., 32, 0 ), { "oDbfTpvCliT" }, .F., .F. ), )
+   _HB_MEMBER { oDbfEmpresa} ; IIF( !.F., s_oClass:AddMultiData(,, nScope + IIF( .F., 32, 0 ), { "oDbfEmpresa" }, .F., .F. ), )
+   _HB_MEMBER { oDbfPedPrvT} ; IIF( !.F., s_oClass:AddMultiData(,, nScope + IIF( .F., 32, 0 ), { "oDbfPedPrvT" }, .F., .F. ), )
+   _HB_MEMBER { oDbfAlbPrvT} ; IIF( !.F., s_oClass:AddMultiData(,, nScope + IIF( .F., 32, 0 ), { "oDbfAlbPrvT" }, .F., .F. ), )
+   _HB_MEMBER { oDbfFacPrvT} ; IIF( !.F., s_oClass:AddMultiData(,, nScope + IIF( .F., 32, 0 ), { "oDbfFacPrvT" }, .F., .F. ), )
+   _HB_MEMBER { oDbfPago} ; IIF( !.F., s_oClass:AddMultiData(,, nScope + IIF( .F., 32, 0 ), { "oDbfPago" }, .F., .F. ), )
+   _HB_MEMBER { oPrcArt} ; IIF( !.F., s_oClass:AddMultiData(,, nScope + IIF( .F., 32, 0 ), { "oPrcArt" }, .F., .F. ), )
+   _HB_MEMBER { oRadCod} ; IIF( !.F., s_oClass:AddMultiData(,, nScope + IIF( .F., 32, 0 ), { "oRadCod" }, .F., .F. ), )
+   _HB_MEMBER {AS NUMERIC nRadCod} ; IIF( !.F., s_oClass:AddMultiData( "NUMERIC", 1, nScope + IIF( .F., 32, 0 ), { "nRadCod" }, .F., .F. ), )
+   _HB_MEMBER { oMtrInf} ; IIF( !.F., s_oClass:AddMultiData(,, nScope + IIF( .F., 32, 0 ), { "oMtrInf" }, .F., .F. ), )
+   _HB_MEMBER {AS NUMERIC nMtrInf} ; IIF( !.F., s_oClass:AddMultiData( "NUMERIC", 0, nScope + IIF( .F., 32, 0 ), { "nMtrInf" }, .F., .F. ), )
+   _HB_MEMBER { oGrpFam} ; IIF( !.F., s_oClass:AddMultiData(,, nScope + IIF( .F., 32, 0 ), { "oGrpFam" }, .F., .F. ), )
+   _HB_MEMBER { cGetGrfOld} ; IIF( !.F., s_oClass:AddMultiData(,, nScope + IIF( .F., 32, 0 ), { "cGetGrfOld" }, .F., .F. ), )
+   _HB_MEMBER { cGetGrfNew} ; IIF( !.F., s_oClass:AddMultiData(,, nScope + IIF( .F., 32, 0 ), { "cGetGrfNew" }, .F., .F. ), )
+   _HB_MEMBER { cGetFamOld} ; IIF( !.F., s_oClass:AddMultiData(,, nScope + IIF( .F., 32, 0 ), { "cGetFamOld" }, .F., .F. ), )
+   _HB_MEMBER { cGetFamNew} ; IIF( !.F., s_oClass:AddMultiData(,, nScope + IIF( .F., 32, 0 ), { "cGetFamNew" }, .F., .F. ), )
+   _HB_MEMBER { cGetArtOld} ; IIF( !.F., s_oClass:AddMultiData(,, nScope + IIF( .F., 32, 0 ), { "cGetArtOld" }, .F., .F. ), )
+   _HB_MEMBER { cGetArtNew} ; IIF( !.F., s_oClass:AddMultiData(,, nScope + IIF( .F., 32, 0 ), { "cGetArtNew" }, .F., .F. ), )
+   _HB_MEMBER { oGetGrfOld} ; IIF( !.F., s_oClass:AddMultiData(,, nScope + IIF( .F., 32, 0 ), { "oGetGrfOld" }, .F., .F. ), )
+   _HB_MEMBER { oGetGrfNew} ; IIF( !.F., s_oClass:AddMultiData(,, nScope + IIF( .F., 32, 0 ), { "oGetGrfNew" }, .F., .F. ), )
+   _HB_MEMBER { oGetFamOld} ; IIF( !.F., s_oClass:AddMultiData(,, nScope + IIF( .F., 32, 0 ), { "oGetFamOld" }, .F., .F. ), )
+   _HB_MEMBER { oGetFamNew} ; IIF( !.F., s_oClass:AddMultiData(,, nScope + IIF( .F., 32, 0 ), { "oGetFamNew" }, .F., .F. ), )
+   _HB_MEMBER { oGetArtOld} ; IIF( !.F., s_oClass:AddMultiData(,, nScope + IIF( .F., 32, 0 ), { "oGetArtOld" }, .F., .F. ), )
+   _HB_MEMBER { oGetArtNew} ; IIF( !.F., s_oClass:AddMultiData(,, nScope + IIF( .F., 32, 0 ), { "oGetArtNew" }, .F., .F. ), )
+   _HB_MEMBER { oSayGrfOld} ; IIF( !.F., s_oClass:AddMultiData(,, nScope + IIF( .F., 32, 0 ), { "oSayGrfOld" }, .F., .F. ), )
+   _HB_MEMBER { oSayGrfNew} ; IIF( !.F., s_oClass:AddMultiData(,, nScope + IIF( .F., 32, 0 ), { "oSayGrfNew" }, .F., .F. ), )
+   _HB_MEMBER { oSayFamOld} ; IIF( !.F., s_oClass:AddMultiData(,, nScope + IIF( .F., 32, 0 ), { "oSayFamOld" }, .F., .F. ), )
+   _HB_MEMBER { oSayFamNew} ; IIF( !.F., s_oClass:AddMultiData(,, nScope + IIF( .F., 32, 0 ), { "oSayFamNew" }, .F., .F. ), )
+   _HB_MEMBER { oSayArtOld} ; IIF( !.F., s_oClass:AddMultiData(,, nScope + IIF( .F., 32, 0 ), { "oSayArtOld" }, .F., .F. ), )
+   _HB_MEMBER { oSayArtNew} ; IIF( !.F., s_oClass:AddMultiData(,, nScope + IIF( .F., 32, 0 ), { "oSayArtNew" }, .F., .F. ), )
+   _HB_MEMBER { cAgenteNew} ; IIF( !.F., s_oClass:AddMultiData(,, nScope + IIF( .F., 32, 0 ), { "cAgenteNew" }, .F., .F. ), )
+   _HB_MEMBER { cAgenteOld} ; IIF( !.F., s_oClass:AddMultiData(,, nScope + IIF( .F., 32, 0 ), { "cAgenteOld" }, .F., .F. ), )
+   _HB_MEMBER { oAgenteNew} ; IIF( !.F., s_oClass:AddMultiData(,, nScope + IIF( .F., 32, 0 ), { "oAgenteNew" }, .F., .F. ), )
+   _HB_MEMBER { oAgenteOld} ; IIF( !.F., s_oClass:AddMultiData(,, nScope + IIF( .F., 32, 0 ), { "oAgenteOld" }, .F., .F. ), )
+   _HB_MEMBER { cSayAgenteNew} ; IIF( !.F., s_oClass:AddMultiData(,, nScope + IIF( .F., 32, 0 ), { "cSayAgenteNew" }, .F., .F. ), )
+   _HB_MEMBER { cSayAgenteOld} ; IIF( !.F., s_oClass:AddMultiData(,, nScope + IIF( .F., 32, 0 ), { "cSayAgenteOld" }, .F., .F. ), )
+   _HB_MEMBER { oSayAgenteNew} ; IIF( !.F., s_oClass:AddMultiData(,, nScope + IIF( .F., 32, 0 ), { "oSayAgenteNew" }, .F., .F. ), )
+   _HB_MEMBER { oSayAgenteOld} ; IIF( !.F., s_oClass:AddMultiData(,, nScope + IIF( .F., 32, 0 ), { "oSayAgenteOld" }, .F., .F. ), )
+   _HB_MEMBER { cPagoNew} ; IIF( !.F., s_oClass:AddMultiData(,, nScope + IIF( .F., 32, 0 ), { "cPagoNew" }, .F., .F. ), )
+   _HB_MEMBER { cPagoOld} ; IIF( !.F., s_oClass:AddMultiData(,, nScope + IIF( .F., 32, 0 ), { "cPagoOld" }, .F., .F. ), )
+   _HB_MEMBER { oPagoNew} ; IIF( !.F., s_oClass:AddMultiData(,, nScope + IIF( .F., 32, 0 ), { "oPagoNew" }, .F., .F. ), )
+   _HB_MEMBER { oPagoOld} ; IIF( !.F., s_oClass:AddMultiData(,, nScope + IIF( .F., 32, 0 ), { "oPagoOld" }, .F., .F. ), )
+   _HB_MEMBER { cSayPagoNew} ; IIF( !.F., s_oClass:AddMultiData(,, nScope + IIF( .F., 32, 0 ), { "cSayPagoNew" }, .F., .F. ), )
+   _HB_MEMBER { cSayPagoOld} ; IIF( !.F., s_oClass:AddMultiData(,, nScope + IIF( .F., 32, 0 ), { "cSayPagoOld" }, .F., .F. ), )
+   _HB_MEMBER { oSayPagoNew} ; IIF( !.F., s_oClass:AddMultiData(,, nScope + IIF( .F., 32, 0 ), { "oSayPagoNew" }, .F., .F. ), )
+   _HB_MEMBER { oSayPagoOld} ; IIF( !.F., s_oClass:AddMultiData(,, nScope + IIF( .F., 32, 0 ), { "oSayPagoOld" }, .F., .F. ), )
+
+   _HB_MEMBER { oGetEscOld} ; IIF( !.F., s_oClass:AddMultiData(,, nScope + IIF( .F., 32, 0 ), { "oGetEscOld" }, .F., .F. ), )
+   _HB_MEMBER { cGetEscOld} ; IIF( !.F., s_oClass:AddMultiData(,, nScope + IIF( .F., 32, 0 ), { "cGetEscOld" }, .F., .F. ), )
+   _HB_MEMBER { oGetEscNew} ; IIF( !.F., s_oClass:AddMultiData(,, nScope + IIF( .F., 32, 0 ), { "oGetEscNew" }, .F., .F. ), )
+   _HB_MEMBER { cGetEscNew} ; IIF( !.F., s_oClass:AddMultiData(,, nScope + IIF( .F., 32, 0 ), { "cGetEscNew" }, .F., .F. ), )
+   _HB_MEMBER { oSayEscOld} ; IIF( !.F., s_oClass:AddMultiData(,, nScope + IIF( .F., 32, 0 ), { "oSayEscOld" }, .F., .F. ), )
+   _HB_MEMBER { cSayEscOld} ; IIF( !.F., s_oClass:AddMultiData(,, nScope + IIF( .F., 32, 0 ), { "cSayEscOld" }, .F., .F. ), )
+   _HB_MEMBER { oSayEscNew} ; IIF( !.F., s_oClass:AddMultiData(,, nScope + IIF( .F., 32, 0 ), { "oSayEscNew" }, .F., .F. ), )
+   _HB_MEMBER { cSayEscNew} ; IIF( !.F., s_oClass:AddMultiData(,, nScope + IIF( .F., 32, 0 ), { "cSayEscNew" }, .F., .F. ), )
+
+
+
+
+
+   _HB_MEMBER { oTxtPr1Old} ; IIF( !.F., s_oClass:AddMultiData(,, nScope + IIF( .F., 32, 0 ), { "oTxtPr1Old" }, .F., .F. ), )
+   _HB_MEMBER { oSayPr1Old} ; IIF( !.F., s_oClass:AddMultiData(,, nScope + IIF( .F., 32, 0 ), { "oSayPr1Old" }, .F., .F. ), )
+   _HB_MEMBER { oGetPr1Old} ; IIF( !.F., s_oClass:AddMultiData(,, nScope + IIF( .F., 32, 0 ), { "oGetPr1Old" }, .F., .F. ), )
+   _HB_MEMBER { cGetPr1Old} ; IIF( !.F., s_oClass:AddMultiData(,, nScope + IIF( .F., 32, 0 ), { "cGetPr1Old" }, .F., .F. ), )
+   _HB_MEMBER { cCodPr1Old} ; IIF( !.F., s_oClass:AddMultiData(,, nScope + IIF( .F., 32, 0 ), { "cCodPr1Old" }, .F., .F. ), )
+
+   _HB_MEMBER { oTxtPr2Old} ; IIF( !.F., s_oClass:AddMultiData(,, nScope + IIF( .F., 32, 0 ), { "oTxtPr2Old" }, .F., .F. ), )
+   _HB_MEMBER { oSayPr2Old} ; IIF( !.F., s_oClass:AddMultiData(,, nScope + IIF( .F., 32, 0 ), { "oSayPr2Old" }, .F., .F. ), )
+   _HB_MEMBER { oGetPr2Old} ; IIF( !.F., s_oClass:AddMultiData(,, nScope + IIF( .F., 32, 0 ), { "oGetPr2Old" }, .F., .F. ), )
+   _HB_MEMBER { cGetPr2Old} ; IIF( !.F., s_oClass:AddMultiData(,, nScope + IIF( .F., 32, 0 ), { "cGetPr2Old" }, .F., .F. ), )
+   _HB_MEMBER { cCodPr2Old} ; IIF( !.F., s_oClass:AddMultiData(,, nScope + IIF( .F., 32, 0 ), { "cCodPr2Old" }, .F., .F. ), )
+
+   _HB_MEMBER { oTxtPr1New} ; IIF( !.F., s_oClass:AddMultiData(,, nScope + IIF( .F., 32, 0 ), { "oTxtPr1New" }, .F., .F. ), )
+   _HB_MEMBER { oSayPr1New} ; IIF( !.F., s_oClass:AddMultiData(,, nScope + IIF( .F., 32, 0 ), { "oSayPr1New" }, .F., .F. ), )
+   _HB_MEMBER { oGetPr1New} ; IIF( !.F., s_oClass:AddMultiData(,, nScope + IIF( .F., 32, 0 ), { "oGetPr1New" }, .F., .F. ), )
+   _HB_MEMBER { cGetPr1New} ; IIF( !.F., s_oClass:AddMultiData(,, nScope + IIF( .F., 32, 0 ), { "cGetPr1New" }, .F., .F. ), )
+   _HB_MEMBER { cCodPr1New} ; IIF( !.F., s_oClass:AddMultiData(,, nScope + IIF( .F., 32, 0 ), { "cCodPr1New" }, .F., .F. ), )
+
+   _HB_MEMBER { oTxtPr2New} ; IIF( !.F., s_oClass:AddMultiData(,, nScope + IIF( .F., 32, 0 ), { "oTxtPr2New" }, .F., .F. ), )
+   _HB_MEMBER { oSayPr2New} ; IIF( !.F., s_oClass:AddMultiData(,, nScope + IIF( .F., 32, 0 ), { "oSayPr2New" }, .F., .F. ), )
+   _HB_MEMBER { oGetPr2New} ; IIF( !.F., s_oClass:AddMultiData(,, nScope + IIF( .F., 32, 0 ), { "oGetPr2New" }, .F., .F. ), )
+   _HB_MEMBER { cGetPr2New} ; IIF( !.F., s_oClass:AddMultiData(,, nScope + IIF( .F., 32, 0 ), { "cGetPr2New" }, .F., .F. ), )
+   _HB_MEMBER { cCodPr2New} ; IIF( !.F., s_oClass:AddMultiData(,, nScope + IIF( .F., 32, 0 ), { "cCodPr2New" }, .F., .F. ), )
+
+   _HB_MEMBER {AS LOGIC lStabilize} ; IIF( !.F., s_oClass:AddMultiData( "LOGIC", .F., nScope + IIF( .F., 32, 0 ), { "lStabilize" }, .F., .F. ), )
+   _HB_MEMBER {AS NUMERIC nRecChanged} ; IIF( !.F., s_oClass:AddMultiData( "NUMERIC", 0, nScope + IIF( .F., 32, 0 ), { "nRecChanged" }, .F., .F. ), )
+
+   _HB_MEMBER New( oMenuItem, oWnd) AS CLASS TChgCode; IIF( .F., s_oClass:ModMethod( "New", @TChgCode_New(), nScope + IIF( .T., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ), s_oClass:AddMethod( "New", @TChgCode_New(), nScope + IIF( .T., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ));
+
+   _HB_MEMBER End(); IIF( .F., s_oClass:ModMethod( "End", @TChgCode_End(), nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ), s_oClass:AddMethod( "End", @TChgCode_End(), nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ));
+
+   _HB_MEMBER OpenFiles(); IIF( .F., s_oClass:ModMethod( "OpenFiles", @TChgCode_OpenFiles(), nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ), s_oClass:AddMethod( "OpenFiles", @TChgCode_OpenFiles(), nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ));
+
+   _HB_MEMBER CloseFiles(); IIF( .F., s_oClass:ModMethod( "CloseFiles", @TChgCode_CloseFiles(), nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ), s_oClass:AddMethod( "CloseFiles", @TChgCode_CloseFiles(), nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ));
+
+   _HB_MEMBER Resource(); IIF( .F., s_oClass:ModMethod( "Resource", @TChgCode_Resource(), nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ), s_oClass:AddMethod( "Resource", @TChgCode_Resource(), nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ));
+
+   _HB_MEMBER ChgCode(); IIF( .F., s_oClass:ModMethod( "ChgCode", @TChgCode_ChgCode(), nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ), s_oClass:AddMethod( "ChgCode", @TChgCode_ChgCode(), nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ));
+
+   _HB_MEMBER loaArtOld(); IIF( .F., s_oClass:ModMethod( "loaArtOld", @TChgCode_loaArtOld(), nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ), s_oClass:AddMethod( "loaArtOld", @TChgCode_loaArtOld(), nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ));
+
+   _HB_MEMBER loaArtNew(); IIF( .F., s_oClass:ModMethod( "loaArtNew", @TChgCode_loaArtNew(), nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ), s_oClass:AddMethod( "loaArtNew", @TChgCode_loaArtNew(), nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ));
+
+; IF .F. ; __clsActive(s_oClass:hClass) ; s_oClass:Refresh() ; ELSE ; s_oClass:Create() ; END ; oClassInstance := __clsInst( s_oClass:hClass ) ; IF __ObjHasMsg( oClassInstance, "InitClass" ); oClassInstance:InitClass( hb_aParams() ) ; END ; ELSE ; oClassInstance := __clsInst( s_oClass:hClass ) ; END ; IF PCount() > 0 ; DIVERT TO (@DivertConstructorCall()) OF s_oClass ; END ; RETURN oClassInstance AS CLASS TChgCode ;
+
+
+
+UTILITY STATIC function TChgCode_New( oMenuItem, oWnd) ; local Self AS CLASS TChgCode := QSelf() AS CLASS TChgCode
+
+   local nLevel
+
+   IIF( oMenuItem == nil, oMenuItem := "01080", ) ;
+   IIF( oWnd == nil, oWnd := oWnd(), ) ;
+
+   nLevel               := nLevelUsr( oMenuItem )
+   if nAnd( nLevel, 1 ) <> 0
+      msgStop( "Acceso no permitido." )
+      return ( Self )
+   end
+
+   if !oUser():lAdministrador()
+      msgStop( "Solo puede cambiar codigos los administradores." )
+      return ( Self )
+   end
+
+   if nUsrInUse() > 1
+      msgStop( "Hay más de un usuario conectado a la aplicación", "Atención" )
+      return ( Self )
+   end
+
+
+
+
+
+   if oWnd <> nil
+      SysRefresh(); oWnd:CloseAll(); SysRefresh()
+   end
+
+   ::cGetGrfOld         := Space( 3 )
+   ::cGetGrfNew         := Space( 3 )
+   ::cGetFamOld         := Space( 8 )
+   ::cGetFamNew         := Space( 8 )
+   ::cGetArtOld         := Space( 18 )
+   ::cGetArtNew         := Space( 18 )
+   ::cGetEscOld         := Space( 18 )
+   ::cGetEscNew         := Space( 18 )
+   ::cGetPr1Old         := Space( 10 )
+   ::cGetPr2Old         := Space( 10 )
+
+   ::oGrpFam            := TGrpFam():Create( cPatArt() )
+
+   ::OpenFiles()
+
+   ::lStabilize         := .T.
+
+RETURN Self
+
+
+
+UTILITY STATIC function TChgCode_OpenFiles() ; local Self AS CLASS TChgCode := QSelf() AS CLASS TChgCode
+
+  local oBlock
+  local oError
+  local lOpen     := .T.
+
+
+
+
+
+   oBlock      := ErrorBlock( {| oError | ApoloBreak( oError ) } )
+   BEGIN SEQUENCE
+
+   ::oDbfFam := DbfServer( "FAMILIAS.DBF", ):NewOpen( "FAMILIAS.DBF",, ( cDriver() ),, ( cPatArt() ), .F., .T., .F., .F. ) ; ::oDbfFam:AddBag( "FAMILIAS.CDX" ) ; ::oDbfFam:AddBag( ) ; ::oDbfFam:AutoIndex()
+
+   ::oDbfArt := DbfServer( "ARTICULO.DBF", ):NewOpen( "ARTICULO.DBF",, ( cDriver() ),, ( cPatArt() ), .F., .T., .F., .F. ) ; ::oDbfArt:AddBag( "ARTICULO.CDX" ) ; ::oDbfArt:AddBag( ) ; ::oDbfArt:AutoIndex()
+
+   ::oDbfArtKit := DbfServer( "ArtKit.Dbf", ):NewOpen( "ArtKit.Dbf",, ( cDriver() ),, ( cPatArt() ), .F., .T., .F., .F. ) ; ::oDbfArtKit:AddBag( "ArtKit.Cdx" ) ; ::oDbfArtKit:AddBag( ) ; ::oDbfArtKit:AutoIndex()
+
+   ::oDbfPrv := DbfServer( "PROVART.DBF", ):NewOpen( "PROVART.DBF",, ( cDriver() ),, ( cPatArt() ), .F., .T., .F., .F. ) ; ::oDbfPrv:AddBag( "PROVART.CDX" ) ; ::oDbfPrv:AddBag( ) ; ::oDbfPrv:AutoIndex()
+
+   ::oDbfTar := DbfServer( "TARPREL.DBF", ):NewOpen( "TARPREL.DBF",, ( cDriver() ),, ( cPatArt() ), .F., .T., .F., .F. ) ; ::oDbfTar:AddBag( "TARPREL.CDX" ) ; ::oDbfTar:AddBag( ) ; ::oDbfTar:AutoIndex()
+
+   ::oDbfOfe := DbfServer( "OFERTA.DBF", ):NewOpen( "OFERTA.DBF",, ( cDriver() ),, ( cPatArt() ), .F., .T., .F., .F. ) ; ::oDbfOfe:AddBag( "OFERTA.CDX" ) ; ::oDbfOfe:AddBag( ) ; ::oDbfOfe:AutoIndex()
+
+   ::oDbfArd := DbfServer( "ARTDIV.DBF", ):NewOpen( "ARTDIV.DBF",, ( cDriver() ),, ( cPatArt() ), .F., .T., .F., .F. ) ; ::oDbfArd:AddBag( "ARTDIV.CDX" ) ; ::oDbfArd:AddBag( ) ; ::oDbfArd:AutoIndex()
+
+   ::oDbfKit := DbfServer( "ARTKIT.DBF", ):NewOpen( "ARTKIT.DBF",, ( cDriver() ),, ( cPatArt() ), .F., .T., .F., .F. ) ; ::oDbfKit:AddBag( "ARTKIT.CDX" ) ; ::oDbfKit:AddBag( ) ; ::oDbfKit:AutoIndex()
+
+   ::oDbfCliAtp := DbfServer( "CLIATP.DBF", ):NewOpen( "CLIATP.DBF",, ( cDriver() ),, ( cPatCli() ), .F., .T., .F., .F. ) ; ::oDbfCliAtp:AddBag( "CLIATP.CDX" ) ; ::oDbfCliAtp:AddBag( ) ; ::oDbfCliAtp:AutoIndex()
+
+   ::oDbfPedPrv := DbfServer( "PEDPROVL.DBF", ):NewOpen( "PEDPROVL.DBF",, ( cDriver() ),, ( cPatEmp() ), .F., .T., .F., .F. ) ; ::oDbfPedPrv:AddBag( "PEDPROVL.CDX" ) ; ::oDbfPedPrv:AddBag( ) ; ::oDbfPedPrv:AutoIndex()
+
+   ::oDbfAlbPrv := DbfServer( "ALBPROVL.DBF", ):NewOpen( "ALBPROVL.DBF",, ( cDriver() ),, ( cPatEmp() ), .F., .T., .F., .F. ) ; ::oDbfAlbPrv:AddBag( "ALBPROVL.CDX" ) ; ::oDbfAlbPrv:AddBag( ) ; ::oDbfAlbPrv:AutoIndex()
+
+   ::oDbfFacPrv := DbfServer( "FACPRVL.DBF", ):NewOpen( "FACPRVL.DBF",, ( cDriver() ),, ( cPatEmp() ), .F., .T., .F., .F. ) ; ::oDbfFacPrv:AddBag( "FACPRVL.CDX" ) ; ::oDbfFacPrv:AddBag( ) ; ::oDbfFacPrv:AutoIndex()
+
+   ::oDbfHis := DbfServer( "HISMOV.DBF", ):NewOpen( "HISMOV.DBF",, ( cDriver() ),, ( cPatEmp() ), .F., .T., .F., .F. ) ; ::oDbfHis:AddBag( "HISMOV.CDX" ) ; ::oDbfHis:AddBag( ) ; ::oDbfHis:AutoIndex()
+
+   ::oDbfDepAge := DbfServer( "DEPAGEL.DBF", ):NewOpen( "DEPAGEL.DBF",, ( cDriver() ),, ( cPatEmp() ), .F., .T., .F., .F. ) ; ::oDbfDepAge:AddBag( "DEPAGEL.CDX" ) ; ::oDbfDepAge:AddBag( ) ; ::oDbfDepAge:AutoIndex()
+
+   ::oDbfExtAge := DbfServer( "EXTAGEL.DBF", ):NewOpen( "EXTAGEL.DBF",, ( cDriver() ),, ( cPatEmp() ), .F., .T., .F., .F. ) ; ::oDbfExtAge:AddBag( "EXTAGEL.CDX" ) ; ::oDbfExtAge:AddBag( ) ; ::oDbfExtAge:AutoIndex()
+
+   ::oDbfPreCli := DbfServer( "PRECLIL.DBF", ):NewOpen( "PRECLIL.DBF",, ( cDriver() ),, ( cPatEmp() ), .F., .T., .F., .F. ) ; ::oDbfPreCli:AddBag( "PRECLIL.CDX" ) ; ::oDbfPreCli:AddBag( ) ; ::oDbfPreCli:AutoIndex()
+
+   ::oDbfPedCli := DbfServer( "PEDCLIL.DBF", ):NewOpen( "PEDCLIL.DBF",, ( cDriver() ),, ( cPatEmp() ), .F., .T., .F., .F. ) ; ::oDbfPedCli:AddBag( "PEDCLIL.CDX" ) ; ::oDbfPedCli:AddBag( ) ; ::oDbfPedCli:AutoIndex()
+
+   ::oDbfAlbCli := DbfServer( "ALBCLIL.DBF", ):NewOpen( "ALBCLIL.DBF",, ( cDriver() ),, ( cPatEmp() ), .F., .T., .F., .F. ) ; ::oDbfAlbCli:AddBag( "ALBCLIL.CDX" ) ; ::oDbfAlbCli:AddBag( ) ; ::oDbfAlbCli:AutoIndex()
+
+   ::oDbfFacCli := DbfServer( "FACCLIL.DBF", ):NewOpen( "FACCLIL.DBF",, ( cDriver() ),, ( cPatEmp() ), .F., .T., .F., .F. ) ; ::oDbfFacCli:AddBag( "FACCLIL.CDX" ) ; ::oDbfFacCli:AddBag( ) ; ::oDbfFacCli:AutoIndex()
+
+   ::oDbfTpvCli := DbfServer( "TIKEL.DBF", ):NewOpen( "TIKEL.DBF",, ( cDriver() ),, ( cPatEmp() ), .F., .T., .F., .F. ) ; ::oDbfTpvCli:AddBag( "TIKEL.CDX" ) ; ::oDbfTpvCli:AddBag( ) ; ::oDbfTpvCli:AutoIndex()
+
+   ::oDbfTpvCliT := DbfServer( "TIKET.DBF", ):NewOpen( "TIKET.DBF",, ( cDriver() ),, ( cPatEmp() ), .F., .T., .F., .F. ) ; ::oDbfTpvCliT:AddBag( "TIKET.CDX" ) ; ::oDbfTpvCliT:AddBag( ) ; ::oDbfTpvCliT:AutoIndex()
+
+   ::oDbfTblPro := DbfServer( "TBLPRO.DBF", ):NewOpen( "TBLPRO.DBF",, ( cDriver() ),, ( cPatArt() ), .F., .T., .F., .F. ) ; ::oDbfTblPro:AddBag( "TBLPRO.CDX" ) ; ::oDbfTblPro:AddBag( ) ; ::oDbfTblPro:AutoIndex()
+
+   ::oDbfAgentes := DbfServer( "AGENTES.DBF", ):NewOpen( "AGENTES.DBF",, ( cDriver() ),, ( cPatCli() ), .F., .T., .F., .F. ) ; ::oDbfAgentes:AddBag( "AGENTES.CDX" ) ; ::oDbfAgentes:AddBag( ) ; ::oDbfAgentes:AutoIndex()
+
+   ::oDbfPreCliT := DbfServer( "PRECLIT.DBF", ):NewOpen( "PRECLIT.DBF",, ( cDriver() ),, ( cPatEmp() ), .F., .T., .F., .F. ) ; ::oDbfPreCliT:AddBag( "PRECLIT.CDX" ) ; ::oDbfPreCliT:AddBag( ) ; ::oDbfPreCliT:AutoIndex()
+
+   ::oDbfPedCliT := DbfServer( "PEDCLIT.DBF", ):NewOpen( "PEDCLIT.DBF",, ( cDriver() ),, ( cPatEmp() ), .F., .T., .F., .F. ) ; ::oDbfPedCliT:AddBag( "PEDCLIT.CDX" ) ; ::oDbfPedCliT:AddBag( ) ; ::oDbfPedCliT:AutoIndex()
+
+   ::oDbfAlbCliT := DbfServer( "ALBCLIT.DBF", ):NewOpen( "ALBCLIT.DBF",, ( cDriver() ),, ( cPatEmp() ), .F., .T., .F., .F. ) ; ::oDbfAlbCliT:AddBag( "ALBCLIT.CDX" ) ; ::oDbfAlbCliT:AddBag( ) ; ::oDbfAlbCliT:AutoIndex()
+
+   ::oDbfFacCliT := DbfServer( "FACCLIT.DBF", ):NewOpen( "FACCLIT.DBF",, ( cDriver() ),, ( cPatEmp() ), .F., .T., .F., .F. ) ; ::oDbfFacCliT:AddBag( "FACCLIT.CDX" ) ; ::oDbfFacCliT:AddBag( ) ; ::oDbfFacCliT:AutoIndex()
+
+   ::oDbfFacCliP := DbfServer( "FACCLIP.DBF", ):NewOpen( "FACCLIP.DBF",, ( cDriver() ),, ( cPatEmp() ), .F., .T., .F., .F. ) ; ::oDbfFacCliP:AddBag( "FACCLIP.CDX" ) ; ::oDbfFacCliP:AddBag( ) ; ::oDbfFacCliP:AutoIndex()
+
+   ::oDbfPago := DbfServer( "FPAGO.DBF", ):NewOpen( "FPAGO.DBF",, ( cDriver() ),, ( cPatGrp() ), .F., .T., .F., .F. ) ; ::oDbfPago:AddBag( "FPAGO.CDX" ) ; ::oDbfPago:AddBag( ) ; ::oDbfPago:AutoIndex()
+
+   ::oDbfEmpresa := DbfServer( "EMPRESA.DBF", ):NewOpen( "EMPRESA.DBF",, ( cDriver() ),, ( cPatDat() ), .F., .T., .F., .F. ) ; ::oDbfEmpresa:AddBag( "EMPRESA.CDX" ) ; ::oDbfEmpresa:AddBag( ) ; ::oDbfEmpresa:AutoIndex()
+
+   ::oDbfPedPrvT := DbfServer( "PEDPROVT.DBF", ):NewOpen( "PEDPROVT.DBF",, ( cDriver() ),, ( cPatEmp() ), .F., .T., .F., .F. ) ; ::oDbfPedPrvT:AddBag( "PEDPROVT.CDX" ) ; ::oDbfPedPrvT:AddBag( ) ; ::oDbfPedPrvT:AutoIndex()
+
+   ::oDbfAlbPrvT := DbfServer( "ALBPROVT.DBF", ):NewOpen( "ALBPROVT.DBF",, ( cDriver() ),, ( cPatEmp() ), .F., .T., .F., .F. ) ; ::oDbfAlbPrvT:AddBag( "ALBPROVT.CDX" ) ; ::oDbfAlbPrvT:AddBag( ) ; ::oDbfAlbPrvT:AutoIndex()
+
+   ::oDbfFacPrvT := DbfServer( "FACPRVT.DBF", ):NewOpen( "FACPRVT.DBF",, ( cDriver() ),, ( cPatEmp() ), .F., .T., .F., .F. ) ; ::oDbfFacPrvT:AddBag( "FACPRVT.CDX" ) ; ::oDbfFacPrvT:AddBag( ) ; ::oDbfFacPrvT:AutoIndex()
+
+   ::oDbfClient := DbfServer( "CLIENT.DBF", ):NewOpen( "CLIENT.DBF",, ( cDriver() ),, ( cPatCli() ), .F., .T., .F., .F. ) ; ::oDbfClient:AddBag( "CLIENT.CDX" ) ; ::oDbfClient:AddBag( ) ; ::oDbfClient:AutoIndex()
+
+   ::oGrpFam:OpenFiles()
+
+   RECOVER USING oError
+
+      lOpen    := .F.
+
+      msgStop( "Imposible abrir todas las bases de datos" )
+      ::CloseFiles()
+
+   end
+
+   ErrorBlock( oBlock )
+
+RETURN ( lOpen )
+
+
+
+UTILITY STATIC function TChgCode_CloseFiles() ; local Self AS CLASS TChgCode := QSelf() AS CLASS TChgCode
+
+   if !Empty( ::oDbfFam ) .AND. ::oDbfFam:Used()
+      ::oDbfFam:End()
+   end
+
+   if !Empty( ::oDbfArt ) .AND. ::oDbfArt:Used()
+      ::oDbfArt:End()
+   end
+
+   if !Empty( ::oDbfArtKit ) .AND. ::oDbfArtKit:Used()
+      ::oDbfArtKit:End()
+   end
+
+   if !Empty( ::oDbfPrv ) .AND. ::oDbfPrv:Used()
+      ::oDbfPrv:End()
+   end
+
+   if !Empty( ::oDbfTar ) .AND. ::oDbfTar:Used()
+      ::oDbfTar:End()
+   end
+
+   if !Empty( ::oDbfOfe ) .AND. ::oDbfOfe:Used()
+      ::oDbfOfe:End()
+   end
+
+   if !Empty( ::oDbfArd ) .AND. ::oDbfArd:Used()
+      ::oDbfArd:End()
+   end
+
+   if !Empty( ::oDbfKit ) .AND. ::oDbfKit:Used()
+      ::oDbfKit:End()
+   end
+
+   if !Empty( ::oDbfCliAtp ) .AND. ::oDbfCliAtp:Used()
+      ::oDbfCliAtp:End()
+   end
+
+   if !Empty( ::oDbfPedPrv ) .AND. ::oDbfPedPrv:Used()
+      ::oDbfPedPrv:End()
+   end
+
+   if !Empty( ::oDbfAlbPrv ) .AND. ::oDbfAlbPrv:Used()
+      ::oDbfAlbPrv:End()
+   end
+
+   if !Empty( ::oDbfFacPrv ) .AND. ::oDbfFacPrv:Used()
+      ::oDbfFacPrv:End()
+   end
+
+   if !Empty( ::oDbfHis ) .AND. ::oDbfHis:Used()
+      ::oDbfHis:End()
+   end
+
+   if !Empty( ::oDbfDepAge ) .AND. ::oDbfDepAge:Used()
+      ::oDbfDepAge:End()
+   end
+
+   if !Empty( ::oDbfExtAge ) .AND. ::oDbfExtAge:Used()
+      ::oDbfExtAge:End()
+   end
+
+  if !Empty( ::oDbfPreCli ) .AND. ::oDbfPreCli:Used()
+      ::oDbfPreCli:End()
+   end
+
+  if !Empty( ::oDbfPedCli ) .AND. ::oDbfPedCli:Used()
+      ::oDbfPedCli:End()
+   end
+
+   if !Empty( ::oDbfAlbCli ) .AND. ::oDbfAlbCli:Used()
+      ::oDbfAlbCli:End()
+   end
+
+   if !Empty( ::oDbfFacCli ) .AND. ::oDbfFacCli:Used()
+      ::oDbfFacCli:End()
+   end
+
+   if !Empty( ::oDbfTpvCli ) .AND. ::oDbfTpvCli:Used()
+      ::oDbfTpvCli:End()
+   end
+
+   if !Empty( ::oDbfTblPro ) .AND. ::oDbfTblPro:Used()
+      ::oDbfTblPro:End()
+   end
+
+   if !Empty( ::oDbfAgentes ) .AND. ::oDbfAgentes:Used()
+      ::oDbfAgentes:End()
+   end
+
+   if !Empty( ::oDbfClient ) .AND. ::oDbfClient:Used()
+      ::oDbfClient:End()
+   end
+
+   if !Empty( ::oDbfTpvCliT ) .AND. ::oDbfTpvCliT:Used()
+      ::oDbfTpvCliT:End()
+   end
+
+   if !Empty( ::oDbfPreCliT ) .AND. ::oDbfPreCliT:Used()
+      ::oDbfPreCliT:End()
+   end
+
+   if !Empty( ::oDbfPedCliT ) .AND. ::oDbfPedCliT:Used()
+      ::oDbfPedCliT:End()
+   end
+
+   if !Empty( ::oDbfAlbCliT ) .AND. ::oDbfAlbCliT:Used()
+      ::oDbfAlbCliT:End()
+   end
+
+  if !Empty( ::oDbfFacCliT ) .AND. ::oDbfFacCliT:Used()
+      ::oDbfFacCliT:End()
+   end
+
+  if !Empty( ::oDbfFacCliP ) .AND. ::oDbfFacCliP:Used()
+      ::oDbfFacCliP:End()
+   end
+
+  if !Empty( ::oDbfPago ) .AND. ::oDbfPago:Used()
+      ::oDbfPago:End()
+   end
+
+  if !Empty( ::oDbfPedPrvT ) .AND. ::oDbfPedPrvT:Used()
+      ::oDbfPedPrvt:End()
+   end
+
+  if !Empty( ::oDbfAlbPrvT ) .AND. ::oDbfAlbPrvT:Used()
+      ::oDbfAlbPrvT:End()
+   end
+
+  if !Empty( ::oDbfFacPrvT ) .AND. ::oDbfFacPrvT:Used()
+      ::oDbfFacPrvT:End()
+   end
+
+   if !Empty( ::oDbfEmpresa ) .AND. ::oDbfEmpresa:Used()
+      ::oDbfEmpresa:End()
+   end
+
+  if !Empty( ::oGrpFam )
+      ::oGrpFam:End()
+   end
+
+RETURN ( Self )
+
+
+
+UTILITY STATIC function TChgCode_Resource( cFldRes) ; local Self AS CLASS TChgCode := QSelf() AS CLASS TChgCode
+
+   local oThis       := Self
+   local cSayGrfOld  := ""
+   local cSayGrfNew  := ""
+   local cSayFamOld  := ""
+   local cSayFamNew  := ""
+   local cSayArtOld  := ""
+   local cTxtPr1Old  := ""
+   local cSayPr1Old  := ""
+   local cTxtPr2Old  := ""
+   local cSayPr2Old  := ""
+   local cSayEscOld  := ""
+   local cSayArtNew  := ""
+   local cTxtPr1New  := ""
+   local cSayPr1New  := ""
+   local cTxtPr2New  := ""
+   local cSayPr2New  := ""
+
+   if !::lStabilize
+      RETURN ( Self )
+   end
+
+
+
+
+
+   ::oDlg = TDialog():New(,,,,, "CHGCODE",, .F.,,,,, oWnd(), .F.,,,,,, .F., )
+
+
+
+   ::oRadCod := TRadMenu():Redefine( { | u | If( PCount()==0, ::nRadCod, ::nRadCod:= u ) }, ::oDlg,, { 100, 101, 102, 103, 104, 105 },,,,, .F.,, )
+
+
+
+
+
+
+
+
+
+
+
+   ::oGetGrfOld := TGetHlp():ReDefine( 110, { | u | If( PCount()==0, ::cGetGrfOld, ::cGetGrfOld:= u ) }, ::oDlg,,, {||    oThis:oGrpFam:Existe( oThis:oGetGrfOld, oThis:oSayGrfOld )},,,,,, .F., {||     ( ::nRadCod == 1 )},, .F., .F.,,,,, {|Self|oThis:oGrpFam:Buscar( oThis:oGetGrfOld )}, nil, "LUPA",, )
+
+
+
+
+   ::oSayGrfOld := TGetHlp():ReDefine( 111, { | u | If( PCount()==0, cSayGrfOld, cSayGrfOld:= u ) }, ::oDlg,,,,,,,,, .F., {||     .F.},, .F., .F.,,,,,, nil,,, )
+
+
+
+
+
+
+
+   ::oGetGrfNew := TGetHlp():ReDefine( 120, { | u | If( PCount()==0, ::cGetGrfNew, ::cGetGrfNew:= u ) }, ::oDlg,,, {||    ( oThis:oGrpFam:Existe( oThis:oGetGrfNew, oThis:oSayGrfNew ), .T. )},,,,,, .F., {||     ( ::nRadCod == 1 )},, .F., .F.,,,,, {|Self|oThis:oGrpFam:Buscar( oThis:oGetGrfNew )}, nil, "LUPA",, )
+
+
+
+
+   ::oSayGrfNew := TGetHlp():ReDefine( 121, { | u | If( PCount()==0, cSayGrfNew, cSayGrfNew:= u ) }, ::oDlg,,,,,,,,, .F., {||     .F.},, .F., .F.,,,,,, nil,,, )
+
+
+
+
+
+
+
+
+
+
+
+   ::oGetFamOld := TGetHlp():ReDefine( 130, { | u | If( PCount()==0, ::cGetFamOld, ::cGetFamOld:= u ) }, ::oDlg,,, {||    ( cFamilia( oThis:oGetFamOld, oThis:oDbfFam:cAlias, oThis:oSayFamOld ) )},,,,,, .F., {||     ( ::nRadCod == 2 )},, .F., .F.,,,,, {|Self|BrwFamilia( oThis:oGetFamOld, oThis:oSayFamOld )}, nil, "LUPA",, )
+
+
+
+
+   ::oSayFamOld := TGetHlp():ReDefine( 131, { | u | If( PCount()==0, cSayFamOld, cSayFamOld:= u ) }, ::oDlg,,,,,,,,, .F., {||     .F.},, .F., .F.,,,,,, nil,,, )
+
+
+
+
+
+
+
+   ::oGetFamNew := TGetHlp():ReDefine( 140, { | u | If( PCount()==0, ::cGetFamNew, ::cGetFamNew:= u ) }, ::oDlg,,, {||    ( cFamilia( oThis:oGetFamNew, oThis:oDbfFam:cAlias, oThis:oSayFamNew, .F. ), .T. )},,,,,, .F., {||     ( ::nRadCod == 2 )},, .F., .F.,,,,, {|Self|BrwFamilia( oThis:oGetFamNew, oThis:oSayFamNew )}, nil, "LUPA",, )
+
+
+
+
+   ::oSayFamNew := TGetHlp():ReDefine( 141, { | u | If( PCount()==0, cSayFamNew, cSayFamNew:= u ) }, ::oDlg,,,,,,,,, .F., {||     .F.},, .F., .F.,,,,,, nil,,, )
+
+
+
+
+
+
+
+
+
+
+
+   ::oGetArtOld := TGetHlp():ReDefine( 150, { | u | If( PCount()==0, ::cGetArtOld, ::cGetArtOld:= u ) }, ::oDlg,,, {||    ( oThis:loaArtOld() )},,,,,, .F., {||     ( ::nRadCod == 3 )},, .F., .F.,,,,, {|Self|BrwArticulo( oThis:oGetArtOld, oThis:oSayArtOld )}, nil, "LUPA",, )
+
+
+
+
+   ::oSayArtOld := TGetHlp():ReDefine( 151, { | u | If( PCount()==0, cSayArtOld, cSayArtOld:= u ) }, ::oDlg,,,,,,,,, .F., {||     .F.},, .F., .F.,,,,,, nil,,, )
+
+
+
+   ::oTxtPr1Old := TSay():ReDefine( 160, {|| cTxtPr1Old}, ::oDlg,,,, .F.,, .F., .F. )
+
+
+
+
+
+
+   ::oGetPr1Old := TGetHlp():ReDefine( 161, { | u | If( PCount()==0, ::cGetPr1Old, ::cGetPr1Old:= u ) }, ::oDlg,,, {||    ( lPrpAct( oThis:oGetPr1Old, oThis:oSayPr1Old, oThis:cCodPr1Old, oThis:oDbfTblPro:cAlias ), .T. )},,,,,, .F.,,, .F., .F.,,,,, {|Self|( brwPrpAct( oThis:oGetPr1Old, oThis:oSayPr1Old, oThis:cCodPr1Old ) )}, nil, "LUPA",, )
+
+
+
+
+   ::oSayPr1Old := TGetHlp():ReDefine( 162, { | u | If( PCount()==0, cSayPr1Old, cSayPr1Old:= u ) }, ::oDlg,,,,,,,,, .F., {||     .F.},, .F., .F.,,,,,, nil,,, )
+
+
+
+   ::oTxtPr2Old := TSay():ReDefine( 170, {|| cTxtPr2Old}, ::oDlg,,,, .F.,, .F., .F. )
+
+
+
+
+
+
+   ::oGetPr2Old := TGetHlp():ReDefine( 171, { | u | If( PCount()==0, ::cGetPr2Old, ::cGetPr2Old:= u ) }, ::oDlg,,, {||    ( lPrpAct( oThis:oGetPr2Old, oThis:oSayPr2Old, oThis:cCodPr2Old, oThis:oDbfTblPro:cAlias ), .T. )},,,,,, .F.,,, .F., .F.,,,,, {|Self|( brwPrpAct( oThis:oGetPr2Old, oThis:oSayPr2Old, oThis:cCodPr2Old ) )}, nil, "LUPA",, )
+
+
+
+
+   ::oSayPr2Old := TGetHlp():ReDefine( 172, { | u | If( PCount()==0, cSayPr2Old, cSayPr2Old:= u ) }, ::oDlg,,,,,,,,, .F., {||     .F.},, .F., .F.,,,,,, nil,,, )
+
+
+
+
+
+
+
+   ::oGetArtNew := TGetHlp():ReDefine( 180, { | u | If( PCount()==0, ::cGetArtNew, ::cGetArtNew:= u ) }, ::oDlg,,, {||    ( oThis:loaArtNew() )},,,,,, .F., {||     ( ::nRadCod == 3 )},, .F., .F.,,,,, {|Self|BrwArticulo( oThis:oGetArtNew, oThis:oSayArtNew )}, nil, "LUPA",, )
+
+
+
+
+   ::oSayArtNew := TGetHlp():ReDefine( 181, { | u | If( PCount()==0, cSayArtNew, cSayArtNew:= u ) }, ::oDlg,,,,,,,,, .F., {||     .F.},, .F., .F.,,,,,, nil,,, )
+
+
+
+   ::oTxtPr1New := TSay():ReDefine( 190, {|| cTxtPr1New}, ::oDlg,,,, .F.,, .F., .F. )
+
+
+
+
+
+
+   ::oGetPr1New := TGetHlp():ReDefine( 191, { | u | If( PCount()==0, ::cGetPr1New, ::cGetPr1New:= u ) }, ::oDlg,,, {||    ( lPrpAct( oThis:oGetPr1New, oThis:oSayPr1New, oThis:cCodPr1New, oThis:oDbfTblPro:cAlias ), .T. )},,,,,, .F.,,, .F., .F.,,,,, {|Self|( brwPrpAct( oThis:oGetPr1New, oThis:oSayPr1New, oThis:cCodPr1New ) )}, nil, "LUPA",, )
+
+
+
+
+   ::oSayPr1New := TGetHlp():ReDefine( 192, { | u | If( PCount()==0, cSayPr1New, cSayPr1New:= u ) }, ::oDlg,,,,,,,,, .F., {||     .F.},, .F., .F.,,,,,, nil,,, )
+
+
+
+   ::oTxtPr2New := TSay():ReDefine( 200, {|| cTxtPr2New}, ::oDlg,,,, .F.,, .F., .F. )
+
+
+
+
+
+
+   ::oGetPr2New := TGetHlp():ReDefine( 201, { | u | If( PCount()==0, ::cGetPr2New, ::cGetPr2New:= u ) }, ::oDlg,,, {||    ( lPrpAct( oThis:oGetPr2New, oThis:oSayPr2New, oThis:cCodPr2New, oThis:oDbfTblPro:cAlias ), .T. )},,,,,, .F.,,, .F., .F.,,,,, {|Self|( brwPrpAct( oThis:oGetPr2New, oThis:oSayPr2New, oThis:cCodPr2New ) )}, nil, "LUPA",, )
+
+
+
+
+   ::oSayPr2New := TGetHlp():ReDefine( 202, { | u | If( PCount()==0, cSayPr2New, cSayPr2New:= u ) }, ::oDlg,,,,,,,,, .F., {||     .F.},, .F., .F.,,,,,, nil,,, )
+
+
+
+
+
+
+
+
+
+
+
+   ::oGetEscOld := TGetHlp():ReDefine( 210, { | u | If( PCount()==0, ::cGetEscOld, ::cGetEscOld:= u ) }, ::oDlg,,, {||    ( cArticulo( oThis:oGetEscOld, ::oDbfArt:cAlias, oThis:oSayEscOld ) )},,,,,, .F., {||     ( ::nRadCod == 4 )},, .F., .F.,,,,, {|Self|BrwArticulo( oThis:oGetEscOld, oThis:oSayEscOld )}, nil, "LUPA",, )
+
+
+
+
+   ::oSayEscOld := TGetHlp():ReDefine( 211, { | u | If( PCount()==0, cSayEscOld, cSayEscOld:= u ) }, ::oDlg,,,,,,,,, .F., {||     .F.},, .F., .F.,,,,,, nil,,, )
+
+
+
+
+
+
+
+   ::oGetEscNew := TGetHlp():ReDefine( 220, { | u | If( PCount()==0, ::cGetEscNew, ::cGetEscNew:= u ) }, ::oDlg,,, {||    ( cArticulo( oThis:oGetEscNew, ::oDbfArt:cAlias, oThis:oSayEscNew ), .T. )},,,,,, .F., {||     ( ::nRadCod == 4 )},, .F., .F.,,,,, {|Self|BrwArticulo( oThis:oGetEscNew, oThis:oSayEscNew )}, nil, "LUPA",, )
+
+
+
+
+   ::oSayEscNew := TGetHlp():ReDefine( 221, { | u | If( PCount()==0, ::cSayEscNew, ::cSayEscNew:= u ) }, ::oDlg,,,,,,,,, .F., {||     .F.},, .F., .F.,,,,,, nil,,, )
+
+
+
+
+
+
+
+
+
+   ::oAgenteOld := TGetHlp():ReDefine( 300, { | u | If( PCount()==0, ::cAgenteOld, ::cAgenteOld:= u ) }, ::oDlg,,, {||    ( cAgentes( oThis:oAgenteOld, ::oDbfAgentes:cAlias, oThis:oSayAgenteOld ) )},,,,,, .F., {||     ( ::nRadCod == 5 )},, .F., .F.,,,,, {|Self|BrwAgentes( oThis:oAgenteOld, oThis:oSayAgenteOld )}, nil, "LUPA",, )
+
+
+
+
+   ::oSayAgenteOld := TGetHlp():ReDefine( 310, { | u | If( PCount()==0, ::cSayAgenteOld, ::cSayAgenteOld:= u ) }, ::oDlg,,,,,,,,, .F., {||     .F.},, .F., .F.,,,,,, nil,,, )
+
+
+
+
+
+
+   ::oAgenteNew := TGetHlp():ReDefine( 320, { | u | If( PCount()==0, ::cAgenteNew, ::cAgenteNew:= u ) }, ::oDlg,,,,,,,,, .F., {||     ( ::nRadCod == 5 )},, .F., .F.,,,,, {|Self|BrwAgentes( oThis:oAgenteNew, oThis:oSayAgenteNew )}, nil, "LUPA",, )
+
+
+
+
+   ::oSayAgenteNew := TGetHlp():ReDefine( 330, { | u | If( PCount()==0, ::cSayAgenteNew, ::cSayAgenteNew:= u ) }, ::oDlg,,,,,,,,, .F., {||     .F.},, .F., .F.,,,,,, nil,,, )
+
+
+
+
+
+
+
+
+
+   ::oPagoOld := TGetHlp():ReDefine( 400, { | u | If( PCount()==0, ::cPagoOld, ::cPagoOld:= u ) }, ::oDlg,,, {||    ( cFPago( oThis:oPagoOld, ::oDbfPago:cAlias, oThis:oSayPagoOld ) )},,,,,, .F., {||     ( ::nRadCod == 6 )},, .F., .F.,,,,, {|Self|BrwFPago( oThis:oPagoOld, oThis:oSayPagoOld )}, nil, "LUPA",, )
+
+
+
+
+   ::oSayPagoOld := TGetHlp():ReDefine( 410, { | u | If( PCount()==0, ::cSayPagoOld, ::cSayPagoOld:= u ) }, ::oDlg,,,,,,,,, .F., {||     .F.},, .F., .F.,,,,,, nil,,, )
+
+
+
+
+
+
+   ::oPagoNew := TGetHlp():ReDefine( 420, { | u | If( PCount()==0, ::cPagoNew, ::cPagoNew:= u ) }, ::oDlg,,,,,,,,, .F., {||     ( ::nRadCod == 6 )},, .F., .F.,,,,, {|Self|BrwFPago( oThis:oPagoNew, oThis:oSayPagoNew )}, nil, "LUPA",, )
+
+
+
+
+   ::oSayPagoNew := TGetHlp():ReDefine( 430, { | u | If( PCount()==0, ::cSayPagoNew, ::cSayPagoNew:= u ) }, ::oDlg,,,,,,,,, .F., {||     .F.},, .F., .F.,,,,,, nil,,, )
+
+
+
+
+
+
+
+
+
+   ::oMtrInf := TMeter():ReDefine( 1160, { | u | If( PCount()==0, ::nMtrInf, ::nMtrInf:= u ) }, 100, ::oDlg, .F.,, "Procesando", .F.,,,, )
+
+
+
+
+   TButton():ReDefine( 1, {||( oThis:ChgCode() )}, ::oDlg,,, .F.,,,, .F. )
+
+
+
+
+   TButton():ReDefine( 2, {||( oThis:End()  )}, ::oDlg,,, .F.,,,, .F. )
+
+   ::oDlg:AddFastKey( 116, {|| oThis:ChgCode() } )
+
+
+
+
+
+
+
+
+
+
+
+
+   ::oDlg:bStart  := {||   ::oTxtPr1Old:hide(), ::oGetPr1Old:hide(), ::oSayPr1Old:hide(), ::oTxtPr2Old:hide(), ::oGetPr2Old:hide(), ::oSayPr2Old:hide(), ::oTxtPr1New:hide(), ::oGetPr1New:hide(), ::oSayPr1New:hide(), ::oTxtPr2New:hide(), ::oGetPr2New:hide(), ::oSayPr2New:hide() }
+
+   ::oDlg:Activate( ::oDlg:bLClicked, ::oDlg:bMoved, ::oDlg:bPainted, .T.,,,, ::oDlg:bRClicked,,, )
+
+RETURN ( Self )
+
+
+
+UTILITY STATIC function TChgCode_ChgCode() ; local Self AS CLASS TChgCode := QSelf() AS CLASS TChgCode
+
+   local pVenta1
+   local pVtaIva1
+   local pVenta2
+   local pVtaIva2
+   local pVenta3
+   local pVtaIva3
+   local pVenta4
+   local pVtaIva4
+   local pVenta5
+   local pVtaIva5
+   local pVenta6
+   local pVtaIva6
+   local lErrors  := .F.
+
+   ::oDlg:Disable()
+
+   ::nRecChanged  := 0
+
+   do case
+      case ::nRadCod == 1
+
+         if Empty( ::cGetGrfOld )
+            MsgStop( "Grupo de familia actual no válido" )
+            lErrors  := .T.
+         end
+
+         if !lErrors .AND. Empty( ::cGetGrfNew )
+            MsgStop( "Grupo de familia nuevo no válido" )
+            lErrors  := .T.
+         end
+
+         if !lErrors .AND. ::cGetGrfOld == ::cGetGrfNew
+            MsgStop( "Grupo de familia actual y nuevo son iguales" )
+            lErrors  := .T.
+         end
+
+         if !lErrors .AND. ::oGrpFam:oDbf:Seek( ::cGetGrfNew ) .AND. !ApoloMsgNoYes( "El grupo de familias nuevo ya existe.", "¿Desea anexar al código existente?" )
+            lErrors  := .T.
+         end
+
+         if !lErrors
+
+         ::oMtrInf:nTotal           := ::oDbfFam:Lastrec()
+
+         ::oDbfFam:OrdSetFocus( 0 )
+         ::oDbfFam:GoTop()
+         while !::oDbfFam:Eof()
+            if ::oDbfFam:cCodGrp == ::cGetGrfOld
+               ::oDbfFam:Load()
+               ::oDbfFam:cCodGrp    := ::cGetGrfNew
+               ::oDbfFam:Save()
+               ::nRecChanged++
+            end
+            ::oDbfFam:Skip()
+            ::oMtrInf:AutoInc( ::oDbfFam:Recno() )
+         end
+
+         if !::oGrpFam:oDbf:Seek( ::cGetGrfNew )
+            if ::oGrpFam:oDbf:Seek( ::cGetGrfOld )
+               ::oGrpFam:oDbf:Load()
+               ::oGrpFam:oDbf:cCodGrp  := ::cGetGrfNew
+               ::oGrpFam:oDbf:Save()
+            end
+         else
+            if ::oGrpFam:oDbf:Seek( ::cGetGrfOld )
+               ::oGrpFam:oDbf:Delete()
+            end
+         end
+
+         MsgInfo( "Total de registros cambiados : " + Str( ::nRecChanged ) )
+
+         ::oGetGrfOld:cText( Space( 3 ) )
+         ::oGetGrfNew:cText( Space( 3 ) )
+         ::oSayGrfOld:cText( "" )
+         ::oSayGrfNew:cText( "" )
+
+         ::oGetGrfOld:SetFocus()
+
+         end
+
+      case ::nRadCod == 2
+
+         if Empty( ::cGetFamOld )
+            MsgStop( "Familia actual no válida" )
+            lErrors  := .T.
+         end
+
+         if !lErrors .AND. Empty( ::cGetFamNew )
+            MsgStop( "Familia nueva no válida" )
+            lErrors  := .T.
+         end
+
+         if !lErrors .AND. ::cGetFamOld == ::cGetFamNew
+            MsgStop( "Familia actual y nueva son iguales" )
+            lErrors  := .T.
+         end
+
+         if !lErrors .AND. ::oDbfFam:Seek( ::cGetFamNew ) .AND. !ApoloMsgNoYes( "La familia nueva ya existe.", "¿Desea anexar al código existente?" )
+            lErrors  := .T.
+         end
+
+         if !lErrors
+
+         ::oMtrInf:nTotal           := ::oDbfArt:Lastrec()
+
+         ::oDbfArt:OrdSetFocus( 0 )
+         ::oDbfArt:GoTop()
+         while !::oDbfArt:Eof()
+            if ::oDbfArt:Familia == ::cGetFamOld
+               ::oDbfArt:Load()
+               ::oDbfArt:Familia    := ::cGetFamNew
+               ::oDbfArt:Save()
+               ::nRecChanged++
+            end
+            ::oDbfArt:Skip()
+            ::oMtrInf:AutoInc( ::oDbfArt:Recno() )
+         end
+
+         if !::oDbfFam:Seek( ::cGetFamNew )
+            if ::oDbfFam:Seek( ::cGetFamOld )
+               ::oDbfFam:Load()
+               ::oDbfFam:cCodFam       := ::cGetFamNew
+               ::oDbfFam:Save()
+            end
+         else
+            if ::oDbfFam:Seek( ::cGetFamOld )
+               ::oDbfFam:Delete()
+            end
+         end
+
+         MsgInfo( "Total de registros cambiados : " + Str( ::nRecChanged ) )
+
+         ::oGetFamOld:cText( Space( 8 ) )
+         ::oGetFamNew:cText( Space( 8 ) )
+         ::oSayFamOld:cText( "" )
+         ::oSayFamNew:cText( "" )
+
+         ::oGetFamOld:SetFocus()
+
+         end
+
+      case ::nRadCod == 3
+
+         if Empty( ::cGetArtOld )
+            MsgStop( "Artículo actual no válido" )
+            lErrors  := .T.
+         end
+
+         if !lErrors .AND. Empty( ::cGetArtNew )
+            MsgStop( "Artículo nuevo no válido" )
+            lErrors  := .T.
+         end
+
+         if !lErrors .AND. ::cGetArtOld == ::cGetArtNew
+            MsgStop( "Artículo actual y nuevo son iguales" )
+            lErrors  := .T.
+         end
+
+         if !lErrors .AND. ::oDbfArt:Seek( ::cGetArtNew ) .AND. !ApoloMsgNoYes( "El artículo nuevo ya existe.", "¿Desea anexar al código existente?" )
+            lErrors  := .T.
+         end
+
+         if !lErrors
+
+         ::oMtrInf:nTotal           := ::oDbfPrv:Lastrec()
+
+         ::oDbfPrv:OrdSetFocus( 0 )
+         ::oDbfPrv:GoTop()
+         while !::oDbfPrv:Eof()
+            if ::oDbfPrv:cCodArt == ::cGetArtOld
+               ::oDbfPrv:Load()
+               ::oDbfPrv:cCodArt    := ::cGetArtNew
+               ::oDbfPrv:Save()
+               ::nRecChanged++
+            end
+            ::oDbfPrv:Skip()
+            ::oMtrInf:AutoInc( ::oDbfPrv:Recno() )
+         end
+
+         ::oMtrInf:nTotal           := ::oDbfTar:Lastrec()
+
+         ::oDbfTar:OrdSetFocus( 0 )
+         ::oDbfTar:GoTop()
+         while !::oDbfTar:Eof()
+
+            if ::oDbfTar:cCodArt == ::cGetArtOld
+               ::oDbfTar:Load()
+               ::oDbfTar:cCodArt    := ::cGetArtNew
+               ::oDbfTar:Save()
+               ::nRecChanged++
+            end
+            ::oDbfTar:Skip()
+            ::oMtrInf:AutoInc( ::oDbfTar:Recno() )
+         end
+
+
+
+
+         ::oMtrInf:nTotal           := ::oDbfOfe:Lastrec()
+
+         ::oDbfOfe:OrdSetFocus( 0 )
+         ::oDbfOfe:GoTop()
+         while !::oDbfOfe:Eof()
+
+            if ::oDbfOfe:cArtOfe == ::cGetArtOld
+               ::oDbfOfe:Load()
+               ::oDbfOfe:cArtOfe    := ::cGetArtNew
+               ::oDbfOfe:Save()
+               ::nRecChanged++
+            end
+            ::oDbfOfe:Skip()
+            ::oMtrInf:AutoInc( ::oDbfOfe:Recno() )
+         end
+
+
+         ::oMtrInf:nTotal           := ::oDbfArd:Lastrec()
+
+         ::oDbfArd:OrdSetFocus( 0 )
+         ::oDbfArd:GoTop()
+         while !::oDbfArd:Eof()
+
+            if ::oDbfArd:cCodArt == ::cGetArtOld
+               ::oDbfArd:Load()
+               ::oDbfArd:cCodArt    := ::cGetArtNew
+               ::oDbfArd:Save()
+               ::nRecChanged++
+            end
+            ::oDbfArd:Skip()
+            ::oMtrInf:AutoInc( ::oDbfArd:Recno() )
+         end
+
+         ::oMtrInf:nTotal           := ::oDbfKit:Lastrec()
+
+         ::oDbfKit:OrdSetFocus( 0 )
+         ::oDbfKit:GoTop()
+         while !::oDbfKit:Eof()
+
+            if ::oDbfKit:cCodKit == ::cGetArtOld
+               ::oDbfKit:Load()
+               ::oDbfKit:cCodKit    := ::cGetArtNew
+               ::oDbfKit:Save()
+               ::nRecChanged++
+            end
+            ::oDbfKit:Skip()
+            ::oMtrInf:AutoInc( ::oDbfKit:Recno() )
+         end
+
+         ::oMtrInf:nTotal           := ::oDbfCliAtp:Lastrec()
+
+         ::oDbfCliAtp:OrdSetFocus( 0 )
+         ::oDbfCliAtp:GoTop()
+         while !::oDbfCliAtp:Eof()
+
+            if ::oDbfCliAtp:cCodArt == ::cGetArtOld
+               ::oDbfCliAtp:Load()
+               ::oDbfCliAtp:cCodArt := ::cGetArtNew
+               ::oDbfCliAtp:Save()
+               ::nRecChanged++
+            end
+            ::oDbfCliAtp:Skip()
+            ::oMtrInf:AutoInc( ::oDbfCliAtp:Recno() )
+         end
+
+         ::oMtrInf:nTotal           := ::oDbfPedPrv:Lastrec()
+
+         ::oDbfPedPrv:OrdSetFocus( 0 )
+         ::oDbfPedPrv:GoTop()
+         while !::oDbfPedPrv:Eof()
+
+            if ::oDbfPedPrv:cRef == ::cGetArtOld
+               ::oDbfPedPrv:Load()
+               ::oDbfPedPrv:cRef    := ::cGetArtNew
+               ::oDbfPedPrv:cCodPr1 := ::cCodPr1New
+               ::oDbfPedPrv:cValPr1 := ::cGetPr1New
+               ::oDbfPedPrv:cCodPr2 := ::cCodPr2New
+               ::oDbfPedPrv:cValPr2 := ::cGetPr2New
+               ::oDbfPedPrv:Save()
+               ::nRecChanged++
+            end
+            ::oDbfPedPrv:Skip()
+            ::oMtrInf:AutoInc( ::oDbfPedPrv:Recno() )
+         end
+
+         ::oMtrInf:nTotal           := ::oDbfAlbPrv:Lastrec()
+
+         ::oDbfAlbPrv:OrdSetFocus( 0 )
+         ::oDbfAlbPrv:GoTop()
+         while !::oDbfAlbPrv:Eof()
+
+            if ::oDbfAlbPrv:cRef == ::cGetArtOld
+               ::oDbfAlbPrv:Load()
+               ::oDbfAlbPrv:cRef    := ::cGetArtNew
+               ::oDbfAlbPrv:cCodPr1 := ::cCodPr1New
+               ::oDbfAlbPrv:cValPr1 := ::cGetPr1New
+               ::oDbfAlbPrv:cCodPr2 := ::cCodPr2New
+               ::oDbfAlbPrv:cValPr2 := ::cGetPr2New
+               ::oDbfAlbPrv:Save()
+               ::nRecChanged++
+            end
+            ::oDbfAlbPrv:Skip()
+            ::oMtrInf:AutoInc( ::oDbfAlbPrv:Recno() )
+         end
+
+         ::oMtrInf:nTotal           := ::oDbfFacPrv:Lastrec()
+
+         ::oDbfFacPrv:OrdSetFocus( 0 )
+         ::oDbfFacPrv:GoTop()
+         while !::oDbfFacPrv:Eof()
+
+            if ::oDbfFacPrv:cRef == ::cGetArtOld
+               ::oDbfFacPrv:Load()
+               ::oDbfFacPrv:cRef    := ::cGetArtNew
+               ::oDbfFacPrv:cCodPr1 := ::cCodPr1New
+               ::oDbfFacPrv:cValPr1 := ::cGetPr1New
+               ::oDbfFacPrv:cCodPr2 := ::cCodPr2New
+               ::oDbfFacPrv:cValPr2 := ::cGetPr2New
+               ::oDbfFacPrv:Save()
+               ::nRecChanged++
+            end
+            ::oDbfFacPrv:Skip()
+            ::oMtrInf:AutoInc( ::oDbfFacPrv:Recno() )
+
+         end
+
+         ::oMtrInf:nTotal           := ::oDbfHis:Lastrec()
+
+         ::oDbfHis:OrdSetFocus( 0 )
+         ::oDbfHis:GoTop()
+         while !::oDbfHis:Eof()
+
+            if ::oDbfHis:cRefMov == ::cGetArtOld
+               ::oDbfHis:Load()
+               ::oDbfHis:cRefMov    := ::cGetArtNew
+               ::oDbfHis:cCodPr1    := ::cCodPr1New
+               ::oDbfHis:cValPr1    := ::cGetPr1New
+               ::oDbfHis:cCodPr2    := ::cCodPr2New
+               ::oDbfHis:cValPr2    := ::cGetPr2New
+               ::oDbfHis:Save()
+               ::nRecChanged++
+            end
+            ::oDbfHis:Skip()
+            ::oMtrInf:AutoInc( ::oDbfHis:Recno() )
+         end
+
+         ::oMtrInf:nTotal           := ::oDbfDepAge:Lastrec()
+
+         ::oDbfDepAge:OrdSetFocus( 0 )
+         ::oDbfDepAge:GoTop()
+         while !::oDbfDepAge:Eof()
+            if ::oDbfDepAge:cRef == ::cGetArtOld
+               ::oDbfDepAge:Load()
+               ::oDbfDepAge:cRef    := ::cGetArtNew
+               ::oDbfDepAge:Save()
+               ::nRecChanged++
+            end
+            ::oDbfDepAge:Skip()
+            ::oMtrInf:AutoInc( ::oDbfDepAge:Recno() )
+         end
+
+         ::oMtrInf:nTotal           := ::oDbfExtAge:Lastrec()
+
+         ::oDbfExtAge:OrdSetFocus( 0 )
+         ::oDbfExtAge:GoTop()
+         while !::oDbfExtAge:Eof()
+            if ::oDbfExtAge:cRef == ::cGetArtOld
+               ::oDbfExtAge:Load()
+               ::oDbfExtAge:cRef    := ::cGetArtNew
+               ::oDbfExtAge:Save()
+               ::nRecChanged++
+            end
+            ::oDbfExtAge:Skip()
+            ::oMtrInf:AutoInc( ::oDbfExtAge:Recno() )
+         end
+
+         ::oMtrInf:nTotal           := ::oDbfPreCli:Lastrec()
+
+         ::oDbfPreCli:OrdSetFocus( 0 )
+         ::oDbfPreCli:GoTop()
+         while !::oDbfPreCli:Eof()
+            if ::oDbfPreCli:cRef == ::cGetArtOld
+               ::oDbfPreCli:Load()
+               ::oDbfPreCli:cRef    := ::cGetArtNew
+               ::oDbfPreCli:cCodPr1 := ::cCodPr1New
+               ::oDbfPreCli:cValPr1 := ::cGetPr1New
+               ::oDbfPreCli:cCodPr2 := ::cCodPr2New
+               ::oDbfPreCli:cValPr2 := ::cGetPr2New
+               ::oDbfPreCli:Save()
+               ::nRecChanged++
+            end
+            ::oDbfPreCli:Skip()
+            ::oMtrInf:AutoInc( ::oDbfPreCli:Recno() )
+         end
+
+         ::oMtrInf:nTotal           := ::oDbfPedCli:Lastrec()
+
+         ::oDbfPedCli:OrdSetFocus( 0 )
+         ::oDbfPedCli:GoTop()
+         while !::oDbfPedCli:Eof()
+            if ::oDbfPedCli:cRef == ::cGetArtOld
+               ::oDbfPedCli:Load()
+               ::oDbfPedCli:cRef    := ::cGetArtNew
+               ::oDbfPedCli:cCodPr1 := ::cCodPr1New
+               ::oDbfPedCli:cValPr1 := ::cGetPr1New
+               ::oDbfPedCli:cCodPr2 := ::cCodPr2New
+               ::oDbfPedCli:cValPr2 := ::cGetPr2New
+               ::oDbfPedCli:Save()
+               ::nRecChanged++
+            end
+            ::oDbfPedCli:Skip()
+            ::oMtrInf:AutoInc( ::oDbfPedCli:Recno() )
+         end
+
+         ::oMtrInf:nTotal           := ::oDbfAlbCli:Lastrec()
+
+         ::oDbfAlbCli:OrdSetFocus( 0 )
+         ::oDbfAlbCli:GoTop()
+         while !::oDbfAlbCli:Eof()
+            if ::oDbfAlbCli:cRef == ::cGetArtOld
+               ::oDbfAlbCli:Load()
+               ::oDbfAlbCli:cRef    := ::cGetArtNew
+               ::oDbfAlbCli:cCodPr1 := ::cCodPr1New
+               ::oDbfAlbCli:cValPr1 := ::cGetPr1New
+               ::oDbfAlbCli:cCodPr2 := ::cCodPr2New
+               ::oDbfAlbCli:cValPr2 := ::cGetPr2New
+               ::oDbfAlbCli:Save()
+               ::nRecChanged++
+            end
+            ::oDbfAlbCli:Skip()
+            ::oMtrInf:AutoInc( ::oDbfAlbCli:Recno() )
+         end
+
+         ::oMtrInf:nTotal           := ::oDbfFacCli:Lastrec()
+
+         ::oDbfFacCli:OrdSetFocus( 0 )
+         ::oDbfFacCli:GoTop()
+         while !::oDbfFacCli:Eof()
+            if ::oDbfFacCli:cRef == ::cGetArtOld
+               ::oDbfFacCli:Load()
+               ::oDbfFacCli:cRef    := ::cGetArtNew
+               ::oDbfFacCli:cCodPr1 := ::cCodPr1New
+               ::oDbfFacCli:cValPr1 := ::cGetPr1New
+               ::oDbfFacCli:cCodPr2 := ::cCodPr2New
+               ::oDbfFacCli:cValPr2 := ::cGetPr2New
+               ::oDbfFacCli:Save()
+               ::nRecChanged++
+            end
+            ::oDbfFacCli:Skip()
+            ::oMtrInf:AutoInc( ::oDbfFacCli:Recno() )
+         end
+
+         ::oMtrInf:nTotal           := ::oDbfTpvCli:Lastrec()
+
+         ::oDbfTpvCli:OrdSetFocus( 0 )
+         ::oDbfTpvCli:GoTop()
+         while !::oDbfTpvCli:Eof()
+            if ::oDbfTpvCli:cCbaTil == ::cGetArtOld
+               ::oDbfTpvCli:Load()
+               ::oDbfTpvCli:cCbaTil := ::cGetArtNew
+               ::oDbfTpvCli:cCodPr1 := ::cCodPr1New
+               ::oDbfTpvCli:cValPr1 := ::cGetPr1New
+               ::oDbfTpvCli:cCodPr2 := ::cCodPr2New
+               ::oDbfTpvCli:cValPr2 := ::cGetPr2New
+               ::oDbfTpvCli:Save()
+               ::nRecChanged++
+            end
+            ::oDbfTpvCli:Skip()
+            ::oMtrInf:AutoInc( ::oDbfTpvCli:Recno() )
+         end
+
+
+
+
+
+         if ::oDbfArt:Seek( ::cGetArtNew )
+
+            if ::oDbfArt:Seek( ::cGetArtOld )
+
+               ::oDbfArt:Load()
+               pVenta1  := ::oDbfArt:pVenta1
+               pVtaIva1 := ::oDbfArt:pVtaIva1
+               pVenta2  := ::oDbfArt:pVenta2
+               pVtaIva2 := ::oDbfArt:pVtaIva2
+               pVenta3  := ::oDbfArt:pVenta3
+               pVtaIva3 := ::oDbfArt:pVtaIva3
+               pVenta4  := ::oDbfArt:pVenta4
+               pVtaIva4 := ::oDbfArt:pVtaIva4
+               pVenta5  := ::oDbfArt:pVenta5
+               pVtaIva5 := ::oDbfArt:pVtaIva5
+               pVenta6  := ::oDbfArt:pVenta6
+               pVtaIva6 := ::oDbfArt:pVtaIva6
+               ::oDbfArt:Save()
+
+            end
+
+            if ::oDbfArt:Seek( ::cGetArtNew )
+
+               ::oDbfArt:Load()
+               ::oDbfArt:pVenta1    := pVenta1
+               ::oDbfArt:pVtaIva1   := pVtaIva1
+               ::oDbfArt:pVenta2    := pVenta2
+               ::oDbfArt:pVtaIva2   := pVtaIva2
+               ::oDbfArt:pVenta3    := pVenta3
+               ::oDbfArt:pVtaIva3   := pVtaIva3
+               ::oDbfArt:pVenta4    := pVenta4
+               ::oDbfArt:pVtaIva4   := pVtaIva4
+               ::oDbfArt:pVenta5    := pVenta5
+               ::oDbfArt:pVtaIva5   := pVtaIva5
+               ::oDbfArt:pVenta6    := pVenta6
+               ::oDbfArt:pVtaIva6   := pVtaIva6
+               ::oDbfArt:Save()
+
+            end
+
+         else
+
+            if ::oDbfArt:Seek( ::cGetArtOld )
+               ::oDbfArt:Load()
+               ::oDbfArt:Codigo     := ::cGetArtNew
+               ::oDbfArt:Save()
+            end
+
+         end
+
+         MsgInfo( "Total de registros cambiados : " + Str( ::nRecChanged ) )
+
+         ::oGetArtOld:cText( Space( 18 ) )
+         ::oGetArtNew:cText( Space( 18 ) )
+         ::oGetPr1Old:cText( Space( 10 ) )
+         ::oGetPr2Old:cText( Space( 10 ) )
+         ::oSayArtOld:cText( "" )
+         ::oSayPr1Old:cText( "" )
+         ::oSayPr2Old:cText( "" )
+         ::oSayArtNew:cText( "" )
+         ::oSayPr1New:cText( "" )
+         ::oSayPr2New:cText( "" )
+
+         ::oGetArtOld:SetFocus()
+
+         end
+
+      case ::nRadCod == 4
+
+         if Empty( ::cGetEscOld )
+            MsgStop( "Artículo actual no válido" )
+            lErrors  := .T.
+         end
+
+         if !lErrors .AND. Empty( ::cGetEscNew )
+            MsgStop( "Artículo nuevo no válido" )
+            lErrors  := .T.
+         end
+
+         if !lErrors .AND. ::cGetEscOld == ::cGetEscNew
+            MsgStop( "Artículo actual y nuevo son iguales" )
+            lErrors  := .T.
+         end
+
+         if !lErrors
+
+         ::oMtrInf:nTotal           := ::oDbfArtKit:Lastrec()
+
+         ::oDbfArtKit:OrdSetFocus( 0 )
+         ::oDbfArtKit:GoTop()
+         while !::oDbfArtKit:Eof()
+            if ::oDbfArtKit:cRefKit == ::cGetEscOld
+               ::oDbfArtKit:Load()
+               ::oDbfArtKit:cRefKit := ::cGetEscNew
+               if !Empty( ::cSayEscNew )
+                  ::oDbfArtKit:cDesKit := ::cSayEscNew
+               end
+               ::oDbfArtKit:Save()
+               ::nRecChanged++
+            end
+            ::oDbfArtKit:Skip()
+            ::oMtrInf:AutoInc( ::oDbfArtKit:Recno() )
+         end
+
+         MsgInfo( "Total de registros cambiados : " + Str( ::nRecChanged ) )
+
+         ::oGetEscOld:cText( Space( 18 ) )
+         ::oGetEscNew:cText( Space( 18 ) )
+         ::oSayEscOld:cText( "" )
+         ::oSayEscNew:cText( "" )
+
+         ::oGetEscOld:SetFocus()
+
+         end
+
+
+
+      case ::nRadCod == 5
+
+         if Empty( ::cAgenteOld )
+            MsgStop( "Agente actual no válido" )
+            lErrors  := .T.
+         end
+
+         if !lErrors .AND. Empty( ::cAgenteNew )
+            MsgStop( "Agente nuevo no válido" )
+            lErrors  := .T.
+         end
+
+         if !lErrors .AND. ::cAgenteOld == ::cAgenteNew
+            MsgStop( "Agente actual y nuevo son iguales" )
+            lErrors  := .T.
+         end
+
+         if !lErrors .AND. ::oDbfAgentes:Seek( ::cAgenteNew ) .AND. !ApoloMsgNoYes( "El agente nuevo ya existe.", "¿Desea anexar al código existente?" )
+            lErrors  := .T.
+         end
+
+
+
+         if !lErrors
+
+         ::oMtrInf:nTotal           := ::oDbfClient:Lastrec()
+
+         ::oDbfClient:OrdSetFocus( 0 )
+         ::oDbfClient:GoTop()
+         while !::oDbfClient:Eof()
+            if ::oDbfClient:cAgente == ::cAgenteOld
+               ::oDbfClient:Load()
+               ::oDbfClient:cAgente := ::cAgenteNew
+               ::oDbfClient:Save()
+               ::nRecChanged++
+            end
+            ::oDbfClient:Skip()
+            ::oMtrInf:AutoInc( ::oDbfClient:Recno() )
+         end
+
+
+
+         ::oMtrInf:nTotal           := ::oDbfPreCliT:Lastrec()
+
+         ::oDbfPreCliT:OrdSetFocus( 0 )
+         ::oDbfPreCliT:GoTop()
+         while !::oDbfPreCliT:Eof()
+            if ::oDbfPreCliT:cCodAge == ::cAgenteOld
+               ::oDbfPreCliT:Load()
+               ::oDbfPreCliT:cCodAge := ::cAgenteNew
+               ::oDbfPreCliT:Save()
+               ::nRecChanged++
+            end
+            ::oDbfPreCliT:Skip()
+            ::oMtrInf:AutoInc( ::oDbfPreCliT:Recno() )
+         end
+
+         ::oMtrInf:nTotal           := ::oDbfPedCliT:Lastrec()
+
+         ::oDbfPedCliT:OrdSetFocus( 0 )
+         ::oDbfPedCliT:GoTop()
+         while !::oDbfPedCliT:Eof()
+            if ::oDbfPedCliT:cCodAge == ::cAgenteOld
+               ::oDbfPedCliT:Load()
+               ::oDbfPedCliT:cCodAge := ::cAgenteNew
+               ::oDbfPedCliT:Save()
+               ::nRecChanged++
+            end
+            ::oDbfPedCliT:Skip()
+            ::oMtrInf:AutoInc( ::oDbfPedCliT:Recno() )
+         end
+
+         ::oMtrInf:nTotal           := ::oDbfAlbCliT:Lastrec()
+
+         ::oDbfAlbCliT:OrdSetFocus( 0 )
+         ::oDbfAlbCliT:GoTop()
+         while !::oDbfAlbCliT:Eof()
+            if ::oDbfAlbCliT:cCodAge == ::cAgenteOld
+               ::oDbfAlbCliT:Load()
+               ::oDbfAlbCliT:cCodAge := ::cAgenteNew
+               ::oDbfAlbCliT:Save()
+               ::nRecChanged++
+            end
+            ::oDbfAlbCliT:Skip()
+            ::oMtrInf:AutoInc( ::oDbfAlbCliT:RecNo() )
+         end
+
+         ::oMtrInf:nTotal           := ::oDbfFacCliT:Lastrec()
+
+         ::oDbfFacCliT:OrdSetFocus( 0 )
+         ::oDbfFacCliT:GoTop()
+         while !::oDbfFacCliT:Eof()
+            if ::oDbfFacCliT:cCodAge == ::cAgenteOld
+               ::oDbfFacCliT:Load()
+               ::oDbfFacCliT:cCodAge := ::cAgenteNew
+               ::oDbfFacCliT:Save()
+               ::nRecChanged++
+            end
+            ::oDbfFacCliT:Skip()
+            ::oMtrInf:AutoInc( ::oDbfFacCliT:RecNo() )
+         end
+
+         ::oMtrInf:nTotal           := ::oDbfTpvCliT:Lastrec()
+
+         ::oDbfTpvCliT:OrdSetFocus( 0 )
+         ::oDbfTpvCliT:GoTop()
+         while !::oDbfTpvCliT:Eof()
+            if ::oDbfTpvCliT:cCodAge == ::cAgenteOld
+               ::oDbfTpvCliT:Load()
+               ::oDbfTpvCliT:cCodAge := ::cAgenteNew
+               ::oDbfTpvCliT:Save()
+               ::nRecChanged++
+            end
+            ::oDbfTpvCliT:Skip()
+            ::oMtrInf:AutoInc( ::oDbfTpvCliT:RecNo() )
+         end
+
+         ::oMtrInf:nTotal           := ::oDbfFacCliP:Lastrec()
+
+         ::oDbfFacCliP:OrdSetFocus( 0 )
+         ::oDbfFacCliP:GoTop()
+         while !::oDbfFacCliP:Eof()
+            if ::oDbfFacCliP:cCodAge == ::cAgenteOld
+               ::oDbfFacCliP:Load()
+               ::oDbfFacCliP:cCodAge := ::cAgenteNew
+               ::oDbfFacCliP:Save()
+               ::nRecChanged++
+            end
+            ::oDbfFacCliP:Skip()
+            ::oMtrInf:AutoInc( ::oDbfFacCliP:RecNo() )
+         end
+
+         if !::oDbfAgentes:Seek( ::cAgenteNew )
+            if ::oDbfAgentes:Seek( ::cAgenteOld )
+               ::oDbfAgentes:Load()
+               ::oDbfAgentes:cCodAge := ::cAgenteNew
+               ::oDbfAgentes:Save()
+            end
+         else
+            if ::oDbfAgentes:Seek( ::cAgenteOld )
+               ::oDbfAgentes:Delete()
+            end
+         end
+
+         MsgInfo( "Total de registros cambiados : " + Str( ::nRecChanged ) )
+
+         ::oAgenteOld:cText( Space( 18 ) )
+         ::oAgenteNew:cText( Space( 18 ) )
+         ::oSayAgenteOld:cText( "" )
+         ::oSayAgenteNew:cText( "" )
+
+         ::oAgenteOld:SetFocus()
+
+         end
+
+
+
+      case ::nRadCod == 6
+
+         if Empty( ::cPagoOld )
+            MsgStop( "Forma de pago actual no válida" )
+            lErrors  := .T.
+         end
+
+         if !lErrors .AND. Empty( ::cPagoNew )
+            MsgStop( "Forma de pago nueva no válida" )
+            lErrors  := .T.
+         end
+
+         if !lErrors .AND. ::cPagoOld == ::cPagoNew
+            MsgStop( "Forma de pago actual y nueva son iguales" )
+            lErrors  := .T.
+         end
+
+         if !lErrors .AND. ::oDbfPago:Seek( ::cPagoNew ) .AND. !ApoloMsgNoYes( "La forma de pago nueva ya existe.", "¿Desea anexar al código existente?" )
+            lErrors  := .T.
+         end
+
+         if !lErrors
+
+         ::oMtrInf:nTotal           := ::oDbfPreCliT:Lastrec()
+         ::oMtrInf:AutoInc( 0 )
+
+
+         ::oDbfPreCliT:OrdSetFocus( 0 )
+         ::oDbfPreCliT:GoTop()
+         while !::oDbfPreCliT:Eof()
+            if ::oDbfPreCliT:cCodPgo == ::cPagoOld
+               ::oDbfPreCliT:Load()
+               ::oDbfPreCliT:cCodPgo := ::cPagoNew
+               ::oDbfPreCliT:Save()
+               ::nRecChanged++
+            end
+            ::oDbfPreCliT:Skip()
+            ::oMtrInf:AutoInc( ::oDbfPreCliT:RecNo() )
+         end
+
+
+         ::oMtrInf:nTotal           := ::oDbfPedCliT:Lastrec()
+         ::oMtrInf:AutoInc( 0 )
+
+         ::oDbfPedCliT:OrdSetFocus( 0 )
+         ::oDbfPedCliT:GoTop()
+         while !::oDbfPedCliT:Eof()
+            if ::oDbfPedCliT:cCodPgo == ::cPagoOld
+               ::oDbfPedCliT:Load()
+               ::oDbfPedCliT:cCodPgo := ::cPagoNew
+               ::oDbfPedCliT:Save()
+               ::nRecChanged++
+            end
+            ::oDbfPedCliT:Skip()
+            ::oMtrInf:AutoInc( ::oDbfPedCliT:RecNo() )
+         end
+
+
+         ::oMtrInf:nTotal           := ::oDbfAlbCliT:Lastrec()
+         ::oMtrInf:AutoInc( 0 )
+
+         ::oDbfAlbCliT:OrdSetFocus( 0 )
+         ::oDbfAlbCliT:GoTop()
+         while !::oDbfAlbCliT:Eof()
+            if ::oDbfAlbCliT:cCodPago == ::cPagoOld
+               ::oDbfAlbCliT:Load()
+               ::oDbfAlbCliT:cCodPago := ::cPagoNew
+               ::oDbfAlbCliT:Save()
+               ::nRecChanged++
+            end
+            ::oDbfAlbCliT:Skip()
+            ::oMtrInf:AutoInc( ::oDbfAlbCliT:RecNo() )
+         end
+
+
+         ::oMtrInf:nTotal           := ::oDbfFacCliT:Lastrec()
+
+         ::oDbfFacCliT:OrdSetFocus( 0 )
+         ::oDbfFacCliT:GoTop()
+         while !::oDbfFacCliT:Eof()
+            if ::oDbfFacCliT:cCodPago == ::cPagoOld
+               ::oDbfFacCliT:Load()
+               ::oDbfFacCliT:cCodPago := ::cPagoNew
+               ::oDbfFacCliT:Save()
+               ::nRecChanged++
+            end
+            ::oDbfFacCliT:Skip()
+            ::oMtrInf:AutoInc( ::oDbfFacCliT:Recno() )
+         end
+
+
+         ::oMtrInf:nTotal           := ::oDbfPedPrvT:Lastrec()
+
+         ::oDbfPedPrvT:OrdSetFocus( 0 )
+         ::oDbfPedPrvT:GoTop()
+         while !::oDbfPedPrvT:Eof()
+            if ::oDbfPedPrvT:cCodPgo == ::cPagoOld
+               ::oDbfPedPrvT:Load()
+               ::oDbfPedPrvT:cCodPgo := ::cPagoNew
+               ::oDbfPedPrvT:Save()
+               ::nRecChanged++
+            end
+            ::oDbfPedPrvT:Skip()
+            ::oMtrInf:AutoInc( ::oDbfPedPrvT:Recno() )
+         end
+
+
+         ::oMtrInf:nTotal           := ::oDbfAlbPrvT:Lastrec()
+
+         ::oDbfAlbPrvT:OrdSetFocus( 0 )
+         ::oDbfAlbPrvT:GoTop()
+         while !::oDbfAlbPrvT:Eof()
+            if ::oDbfAlbPrvT:cCodPgo == ::cPagoOld
+               ::oDbfAlbPrvT:Load()
+               ::oDbfAlbPrvT:cCodPgo := ::cPagoNew
+               ::oDbfAlbPrvT:Save()
+               ::nRecChanged++
+            end
+            ::oDbfAlbPrvT:Skip()
+            ::oMtrInf:AutoInc( ::oDbfAlbPrvT:Recno() )
+         end
+
+
+         ::oMtrInf:nTotal           := ::oDbfFacPrvT:Lastrec()
+
+         ::oDbfFacPrvT:OrdSetFocus( 0 )
+         ::oDbfFacPrvT:GoTop()
+         while !::oDbfFacPrvT:Eof()
+            if ::oDbfFacPrvT:cCodPago == ::cPagoOld
+               ::oDbfFacPrvT:Load()
+               ::oDbfFacPrvT:cCodPago := ::cPagoNew
+               ::oDbfFacPrvT:Save()
+               ::nRecChanged++
+            end
+            ::oDbfFacPrvT:Skip()
+            ::oMtrInf:AutoInc( ::oDbfFacPrvT:Recno() )
+         end
+
+
+
+         ::oMtrInf:nTotal           := ::oDbfTpvCliT:Lastrec()
+         ::oMtrInf:AutoInc( 0 )
+
+         ::oDbfTpvCliT:OrdSetFocus( 0 )
+         ::oDbfTpvCliT:GoTop()
+         while !::oDbfTpvCliT:Eof()
+            if ::oDbfTpvCliT:cFpgTik == ::cPagoOld
+               ::oDbfTpvCliT:Load()
+               ::oDbfTpvCliT:cFpgTik := ::cPagoNew
+               ::oDbfTpvCliT:Save()
+               ::nRecChanged++
+            end
+            ::oDbfTpvCliT:Skip()
+            ::oMtrInf:AutoInc( ::oDbfTpvCliT:Recno() )
+         end
+
+
+
+         ::oDbfEmpresa:Seek( cCodEmp() )
+         if ::oDbfEmpresa:cDefFPg == ::cPagoOld
+
+            ::oDbfEmpresa:Load()
+            ::oDbfEmpresa:cDefFPg := ::cPagoNew
+            ::oDbfEmpresa:Save()
+
+         end
+
+         if !::oDbfPago:Seek( ::cPagoNew )
+            if ::oDbfPago:Seek( ::cPagoOld )
+               ::oDbfPago:Load()
+               ::oDbfPago:cCodPago := ::cPagoNew
+               ::oDbfPago:Save()
+            end
+         else
+            if ::oDbfPago:Seek( ::cPagoOld )
+               ::oDbfPago:Delete()
+            end
+         end
+
+         MsgInfo( "Total de registros cambiados : " + Str( ::nRecChanged ) )
+
+         ::oPagoOld:cText( Space( 18 ) )
+         ::oPagoNew:cText( Space( 18 ) )
+         ::oSayPagoNew:cText( "" )
+         ::oSayPagoOld:cText( "" )
+
+         ::oPagoOld:SetFocus()
+
+         end
+
+   end
+
+   ::oDlg:Enable()
+
+RETURN ( Self )
+
+
+
+UTILITY STATIC function TChgCode_End() ; local Self AS CLASS TChgCode := QSelf() AS CLASS TChgCode
+
+   ::oDlg:End()
+
+   ::CloseFiles()
+
+   Self           := nil
+
+RETURN .T.
+
+
+
+UTILITY STATIC function TChgCode_loaArtOld() ; local Self AS CLASS TChgCode := QSelf() AS CLASS TChgCode
+
+   if ::oDbfArt:Seek( ::cGetArtOld )
+
+      ::oSayArtOld:cText( ::oDbfArt:Nombre )
+
+      if ::oDbfFam:Seek( ::oDbfArt:Familia )
+         ::cCodPr1Old      := ::oDbfFam:cCodPrp1
+         ::cCodPr2Old      := ::oDbfFam:cCodPrp2
+      else
+         ::cCodPr1Old      := ""
+         ::cCodPr2Old      := ""
+      end
+
+      if !empty( ::cCodPr1Old )
+         ::oGetPr1Old:show()
+         ::oSayPr1Old:show()
+         ::oTxtPr1Old:show()
+         ::oTxtPr1Old:SetText( retProp( ::cCodPr1Old ) )
+      else
+         ::oTxtPr1Old:hide()
+         ::oGetPr1Old:hide()
+         ::oSayPr1Old:hide()
+      end
+
+      if !empty( ::cCodPr2Old )
+         ::oGetPr2Old:show()
+         ::oSayPr2Old:show()
+         ::oTxtPr2Old:show()
+         ::oTxtPr2Old:SetText( retProp( ::cCodPr2Old ) )
+      else
+         ::oTxtPr2Old:hide()
+         ::oGetPr2Old:hide()
+         ::oSayPr2Old:hide()
+      end
+
+   end
+
+return .T.
+
+
+
+UTILITY STATIC function TChgCode_loaArtNew() ; local Self AS CLASS TChgCode := QSelf() AS CLASS TChgCode
+
+   if ::oDbfArt:Seek( ::cGetArtNew )
+      ::oSayArtNew:cText( ::oDbfArt:Nombre )
+
+      if ::oDbfFam:Seek( ::oDbfArt:Familia )
+         ::cCodPr1New      := ::oDbfFam:cCodPrp1
+         ::cCodPr2New      := ::oDbfFam:cCodPrp2
+      else
+         ::cCodPr1New      := ""
+         ::cCodPr2New      := ""
+      end
+
+      if !empty( ::cCodPr1Old )
+         ::oGetPr1New:show()
+         ::oSayPr1New:show()
+         ::oTxtPr1New:show()
+         ::oTxtPr1New:SetText( retProp( ::cCodPr1New ) )
+      else
+         ::oTxtPr1New:hide()
+         ::oGetPr1New:hide()
+         ::oSayPr1New:hide()
+      end
+
+      if !empty( ::cCodPr2Old )
+         ::oGetPr2New:show()
+         ::oSayPr2New:show()
+         ::oTxtPr2New:show()
+         ::oTxtPr2New:SetText( retProp( ::cCodPr2New ) )
+      else
+         ::oTxtPr2New:hide()
+         ::oGetPr2New:hide()
+         ::oSayPr2New:hide()
+      end
+
+   else
+
+      if !empty( ::cCodPr1Old )
+         ::cCodPr1New      := ::cCodPr1Old
+         ::oGetPr1New:cText( ::cCodPr1Old )
+         ::oGetPr1New:show()
+         ::oSayPr1New:show()
+         ::oTxtPr1New:show()
+         ::oTxtPr1New:SetText( retProp( ::cCodPr1Old ) )
+      else
+         ::oTxtPr1New:hide()
+         ::oGetPr1New:hide()
+         ::oSayPr1New:hide()
+      end
+
+      if !empty( ::cCodPr2Old )
+         ::cCodPr2New      := ::cCodPr2Old
+         ::oGetPr2New:cText( ::cCodPr2Old )
+         ::oGetPr2New:show()
+         ::oSayPr2New:show()
+         ::oTxtPr2New:show()
+         ::oTxtPr2New:SetText( retProp( ::cCodPr2Old ) )
+      else
+         ::oTxtPr2New:hide()
+         ::oGetPr2New:hide()
+         ::oSayPr2New:hide()
+      end
+
+   end
+
+return .T.

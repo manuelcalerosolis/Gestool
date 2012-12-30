@@ -1,0 +1,222 @@
+#line 112 "hbclass.ch"
+   DYNAMIC DivertConstructorCall
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+DECLARE HBClass  New( cName AS String, OPTIONAL SuperParams ) AS CLASS HBClass  Create() AS Object  Instance() AS Object  AddClsMethod( cName AS String, @MethodName(), nScope AS Numeric, n2 AS Numeric, n3 AS Numeric )  AddDelegate( cName AS String, cDelegate AS String, cObject AS String, nScope AS Numeric, lPersistent AS LOGICAL )  AddMultiClsData( cType AS String, uVal, nScope AS Numeric, aDatas AS Array OF String )  AddMultiData( cType AS String, uVal, nScope AS Numeric, aDatas AS Array OF String, x AS LOGICAL, lPer AS LOGICAL )  AddMethod( cName AS String, @MethodName(), nScope AS Numeric, lPersistent AS LOGICAL )  AddInLine( cName AS String, bBlock AS CodeBlock, nScope AS Numeric, lPersistent AS LOGICAL )  AddVirtual( cName AS String )  ModMethod( cName AS String, @MethodName(), nScope AS Numeric, lPersistent AS LOGICAL )  ModClsMethod( cName AS String, @MethodName(), nScope AS Numeric )  ModInline( cName AS String, bBlock AS CodeBlock, nScope AS Numeric, lPersistent AS LOGICAL )  SetOnError( @MethodName() )
+#line 85 "\Fwh1204\Include\FiveWin.Ch"
+   EXTERNAL GetProcAdd
+   EXTERNAL TActiveX
+
+
+
+
+extern errorsys
+#line 6 ".\Prg\Tsysdata.prg"
+_HB_CLASS TSysData ; UTILITY FUNCTION TSysData(...); static s_oClass ; local oClassInstance ; local nScope ; nScope := 1 ; if s_oClass == NIL ; s_oClass := IIF(.F.,, HBClass():New( "TSysData" , { HBObject():Classh } ) ) ;
+
+    _HB_MEMBER { oDict} ; IIF( !.F., s_oClass:AddMultiData(,, nScope + IIF( .F., 32, 0 ), { "oDict" }, .F., .F. ), )
+
+    _HB_MEMBER New( cPath) AS CLASS TSysData; IIF( .F., s_oClass:ModMethod( "New", @TSysData_New(), nScope + IIF( .T., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ), s_oClass:AddMethod( "New", @TSysData_New(), nScope + IIF( .T., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ));
+
+    _HB_MEMBER cDbfByName(cName); IIF( .F., s_oClass:ModInline( "cDbfByName", {|Self,cName | Self, ::oDict:cDbfByName( cName ) }, nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ), s_oClass:AddInline( "cDbfByName", {|Self,cName | Self, ::oDict:cDbfByName( cName ) }, nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ) )
+
+    _HB_MEMBER Activate(oDb); IIF( .F., s_oClass:ModInline( "Activate", {|Self,oDb | Self, ::oDict:Activate( oDb ) }, nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ), s_oClass:AddInline( "Activate", {|Self,oDb | Self, ::oDict:Activate( oDb ) }, nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ) )
+
+    _HB_MEMBER SyncAllDbf( cPathTmp); IIF( .F., s_oClass:ModMethod( "SyncAllDbf", @TSysData_SyncAllDbf(), nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ), s_oClass:AddMethod( "SyncAllDbf", @TSysData_SyncAllDbf(), nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ));
+
+; IF .F. ; __clsActive(s_oClass:hClass) ; s_oClass:Refresh() ; ELSE ; s_oClass:Create() ; END ; oClassInstance := __clsInst( s_oClass:hClass ) ; IF __ObjHasMsg( oClassInstance, "InitClass" ); oClassInstance:InitClass( hb_aParams() ) ; END ; ELSE ; oClassInstance := __clsInst( s_oClass:hClass ) ; END ; IF PCount() > 0 ; DIVERT TO (@DivertConstructorCall()) OF s_oClass ; END ; RETURN oClassInstance AS CLASS TSysData ;
+
+
+
+UTILITY STATIC function TSysData_New( cPath) ; local Self AS CLASS TSysData := QSelf() AS CLASS TSysData
+
+   local aoDbf    := Array( 3 )
+
+   IIF( cPath == nil, cPath := cPatEmp(), ) ;
+
+   ::oDict := TDict():New( ( cDriver() ), "cPath", !.T., .T., .F., .F., .F., "Diccionario de datos" )
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+      aoDbf[1] := DbfServer( "Agenda.Dbf", "AGENDA" ):New( "Agenda.Dbf", "AGENDA", ( cDriver() ), "Listin telefonico", ( cPatDat() ) )
+
+      aoDbf[1]:AddField( "CNIF", "C", 15, 0,, "CIF",,, "NIF", .F.,, .F., {} )
+      aoDbf[1]:AddField( "CAPELLIDOS", "C", 40, 0,, "Nombre completo",,, "Nombre completo", .F.,, .F., {} )
+      aoDbf[1]:AddField( "CDOMICILIO", "C", 40, 0,, "Domicilio",,, "Domicilio", .F.,, .F., {} )
+      aoDbf[1]:AddField( "CPOBLACION", "C", 30, 0,, "Población",,, "Población", .F.,, .F., {} )
+      aoDbf[1]:AddField( "CPROVINCIA", "C", 30, 0,, "Provincia",,, "Provincia", .F.,, .F., {} )
+      aoDbf[1]:AddField( "CCODPOSTAL", "C", 5, 0,,,,, "Codigo Postal", .F.,, .F., {} )
+      aoDbf[1]:AddField( "CTEL", "C", 12, 0,,,,, "Teléfono 1", .F.,, .F., {} )
+      aoDbf[1]:AddField( "CMOV", "C", 12, 0,,,,, "Móvil", .F.,, .F., {} )
+      aoDbf[1]:AddField( "CFAX", "C", 12, 0,,,,, "Fax", .F.,, .F., {} )
+      aoDbf[1]:AddField( "CDESTEL", "C", 20, 0,,,,, "Nombre teléfono 1", .F.,, .F., {} )
+      aoDbf[1]:AddField( "CDESMOV", "C", 20, 0,,,,, "Nombre móvil", .F.,, .F., {} )
+      aoDbf[1]:AddField( "CDESFAX", "C", 20, 0,,,,, "Nombre fax", .F.,, .F., {} )
+      aoDbf[1]:AddField( "COBSERVA", "C", 250, 0,, "Observaciones",,, "Observaciones", .F.,, .F., {} )
+      aoDbf[1]:AddField( "LSELECT", "L", 1, 0,,,,, "", .F.,, .F., {} )
+
+      aoDbf[1]:AddIndex( "CAPELLIDOS", "AGENDA.CDX", "UPPER( CAPELLIDOS )",,, .F., .F.,,,, .F., .F. )
+      aoDbf[1]:AddIndex( "CNIF", "AGENDA.CDX", "CNIF",,, .F., .F.,,,, .F., .F. )
+
+      ::oDict:AddDBF( aoDbf[1],,,,, )
+
+
+
+
+
+      aoDbf[2] := DbfServer( "Tankes.Dbf", "TANKES" ):New( "Tankes.Dbf", "TANKES", ( cDriver() ), "Tanques de combustible", ( cPatEmp() ) )
+
+      aoDbf[2]:AddField( "CCODTNK", "C", 3, 0,, "01",,, "Código", .F.,, .F., {} )
+      aoDbf[2]:AddField( "CNOMTNK", "C", 35, 0,, "Nombre completo",,, "Nombre del tanque", .F.,, .F., {} )
+      aoDbf[2]:AddField( "NLTRTNK", "N", 13, 0, "@EZ 999,999,999.999", 0,,, "Capacidad", .F.,, .F., {} )
+      aoDbf[2]:AddField( "LSELECT", "L", 1, 0,,,,, "", .F.,, .T., {} )
+
+      aoDbf[2]:AddIndex( "CCODTNK", "TANKES.CDX", "CCODTNK",,, .F., .F., "Código",,, .T., .F. )
+      aoDbf[2]:AddIndex( "CNOMTNK", "TANKES.CDX", "CNOMTNK",,, .F., .F., "Nombre",,, .T., .F. )
+
+      ::oDict:AddDBF( aoDbf[2],,,,, )
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+RETURN ( Self )
+
+
+
+UTILITY STATIC function TSysData_SyncAllDbf( cPathTmp) ; local Self AS CLASS TSysData := QSelf() AS CLASS TSysData
+
+   local n
+
+   FOR n := 1 TO ::oDict:nDbfCount
+      lCheckDbf( ::oDict:aTDbf[ n ] )
+   NEXT
+
+RETURN ( Self )

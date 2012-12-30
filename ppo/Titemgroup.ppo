@@ -1,0 +1,85 @@
+#line 112 "hbclass.ch"
+   DYNAMIC DivertConstructorCall
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+DECLARE HBClass  New( cName AS String, OPTIONAL SuperParams ) AS CLASS HBClass  Create() AS Object  Instance() AS Object  AddClsMethod( cName AS String, @MethodName(), nScope AS Numeric, n2 AS Numeric, n3 AS Numeric )  AddDelegate( cName AS String, cDelegate AS String, cObject AS String, nScope AS Numeric, lPersistent AS LOGICAL )  AddMultiClsData( cType AS String, uVal, nScope AS Numeric, aDatas AS Array OF String )  AddMultiData( cType AS String, uVal, nScope AS Numeric, aDatas AS Array OF String, x AS LOGICAL, lPer AS LOGICAL )  AddMethod( cName AS String, @MethodName(), nScope AS Numeric, lPersistent AS LOGICAL )  AddInLine( cName AS String, bBlock AS CodeBlock, nScope AS Numeric, lPersistent AS LOGICAL )  AddVirtual( cName AS String )  ModMethod( cName AS String, @MethodName(), nScope AS Numeric, lPersistent AS LOGICAL )  ModClsMethod( cName AS String, @MethodName(), nScope AS Numeric )  ModInline( cName AS String, bBlock AS CodeBlock, nScope AS Numeric, lPersistent AS LOGICAL )  SetOnError( @MethodName() )
+#line 85 "\Fwh1204\Include\FiveWin.Ch"
+   EXTERNAL GetProcAdd
+   EXTERNAL TActiveX
+
+
+
+
+extern errorsys
+#line 5 ".\Prg\Titemgroup.prg"
+_HB_CLASS TItemGroup ; UTILITY FUNCTION TItemGroup(...); static s_oClass ; local oClassInstance ; local nScope ; nScope := 1 ; if s_oClass == NIL ; s_oClass := IIF(.F.,, HBClass():New( "TItemGroup" , { HBObject():Classh } ) ) ;
+
+   _HB_MEMBER { Nombre} ; IIF( !.F., s_oClass:AddMultiData(,, nScope + IIF( .F., 32, 0 ), { "Nombre" }, .F., .F. ), )
+
+   _HB_MEMBER { Expresion} ; IIF( !.F., s_oClass:AddMultiData(,, nScope + IIF( .F., 32, 0 ), { "Expresion" }, .F., .F. ), )
+
+   _HB_MEMBER { Valor} ; IIF( !.F., s_oClass:AddMultiData(,, nScope + IIF( .F., 32, 0 ), { "Valor" }, .F., .F. ), )
+
+   _HB_MEMBER { Todos} ; IIF( !.F., s_oClass:AddMultiData(,, nScope + IIF( .F., 32, 0 ), { "Todos" }, .F., .F. ), )
+   _HB_MEMBER { Desde} ; IIF( !.F., s_oClass:AddMultiData(,, nScope + IIF( .F., 32, 0 ), { "Desde" }, .F., .F. ), )
+   _HB_MEMBER { Hasta} ; IIF( !.F., s_oClass:AddMultiData(,, nScope + IIF( .F., 32, 0 ), { "Hasta" }, .F., .F. ), )
+
+   _HB_MEMBER { HelpDesde} ; IIF( !.F., s_oClass:AddMultiData(,, nScope + IIF( .F., 32, 0 ), { "HelpDesde" }, .F., .F. ), )
+   _HB_MEMBER { HelpHasta} ; IIF( !.F., s_oClass:AddMultiData(,, nScope + IIF( .F., 32, 0 ), { "HelpHasta" }, .F., .F. ), )
+
+   _HB_MEMBER { ValidDesde} ; IIF( !.F., s_oClass:AddMultiData(,, nScope + IIF( .F., 32, 0 ), { "ValidDesde" }, .F., .F. ), )
+   _HB_MEMBER { ValidHasta} ; IIF( !.F., s_oClass:AddMultiData(,, nScope + IIF( .F., 32, 0 ), { "ValidHasta" }, .F., .F. ), )
+
+   _HB_MEMBER { TextDesde} ; IIF( !.F., s_oClass:AddMultiData(,, nScope + IIF( .F., 32, 0 ), { "TextDesde" }, .F., .F. ), )
+   _HB_MEMBER { TextHasta} ; IIF( !.F., s_oClass:AddMultiData(,, nScope + IIF( .F., 32, 0 ), { "TextHasta" }, .F., .F. ), )
+
+   _HB_MEMBER { Imagen} ; IIF( !.F., s_oClass:AddMultiData(,, nScope + IIF( .F., 32, 0 ), { "Imagen" }, .F., .F. ), )
+   _HB_MEMBER { bCondition} ; IIF( !.F., s_oClass:AddMultiData(,, nScope + IIF( .F., 32, 0 ), { "bCondition" }, .F., .F. ), )
+   _HB_MEMBER { lImprimir} ; IIF( !.F., s_oClass:AddMultiData(,, nScope + IIF( .F., 32, 0 ), { "lImprimir" }, .F., .F. ), )
+
+   _HB_MEMBER { cPicDesde} ; IIF( !.F., s_oClass:AddMultiData(,, nScope + IIF( .F., 32, 0 ), { "cPicDesde" }, .F., .F. ), )
+   _HB_MEMBER { cPicHasta} ; IIF( !.F., s_oClass:AddMultiData(,, nScope + IIF( .F., 32, 0 ), { "cPicHasta" }, .F., .F. ), )
+
+   _HB_MEMBER { cBitmap} ; IIF( !.F., s_oClass:AddMultiData(,, nScope + IIF( .F., 32, 0 ), { "cBitmap" }, .F., .F. ), )
+
+   _HB_MEMBER { bValidMayorIgual} ; IIF( !.F., s_oClass:AddMultiData(,, nScope + IIF( .F., 32, 0 ), { "bValidMayorIgual" }, .F., .F. ), )
+   _HB_MEMBER { bValidMenorIgual} ; IIF( !.F., s_oClass:AddMultiData(,, nScope + IIF( .F., 32, 0 ), { "bValidMenorIgual" }, .F., .F. ), )
+
+   _HB_MEMBER ValidMayorIgual( uVal, uMayor); IIF( .F., s_oClass:ModMethod( "ValidMayorIgual", @TItemGroup_ValidMayorIgual(), nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ), s_oClass:AddMethod( "ValidMayorIgual", @TItemGroup_ValidMayorIgual(), nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ));
+   _HB_MEMBER ValidMenorIgual( uVal, uMenor); IIF( .F., s_oClass:ModMethod( "ValidMenorIgual", @TItemGroup_ValidMenorIgual(), nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ), s_oClass:AddMethod( "ValidMenorIgual", @TItemGroup_ValidMenorIgual(), nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ));
+
+; IF .F. ; __clsActive(s_oClass:hClass) ; s_oClass:Refresh() ; ELSE ; s_oClass:Create() ; END ; oClassInstance := __clsInst( s_oClass:hClass ) ; IF __ObjHasMsg( oClassInstance, "InitClass" ); oClassInstance:InitClass( hb_aParams() ) ; END ; ELSE ; oClassInstance := __clsInst( s_oClass:hClass ) ; END ; IF PCount() > 0 ; DIVERT TO (@DivertConstructorCall()) OF s_oClass ; END ; RETURN oClassInstance AS CLASS TItemGroup ;
+
+
+
+UTILITY STATIC function TItemGroup_ValidMayorIgual( uVal, uMayor) ; local Self AS CLASS TItemGroup := QSelf() AS CLASS TItemGroup
+
+   if IsBlock( ::bValidMayorIgual )
+      Return ( Eval( ::bValidMayorIgual, uVal, uMayor ) )
+   end
+
+Return ( .T. )
+
+
+
+UTILITY STATIC function TItemGroup_ValidMenorIgual( uVal, uMenor) ; local Self AS CLASS TItemGroup := QSelf() AS CLASS TItemGroup
+
+   if IsBlock( ::bValidMenorIgual )
+      Return ( Eval( ::bValidMenorIgual, uVal, uMenor ) )
+   end
+
+Return ( .T. )

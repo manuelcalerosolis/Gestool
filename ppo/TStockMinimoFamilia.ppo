@@ -1,0 +1,335 @@
+#line 112 "hbclass.ch"
+   DYNAMIC DivertConstructorCall
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+DECLARE HBClass  New( cName AS String, OPTIONAL SuperParams ) AS CLASS HBClass  Create() AS Object  Instance() AS Object  AddClsMethod( cName AS String, @MethodName(), nScope AS Numeric, n2 AS Numeric, n3 AS Numeric )  AddDelegate( cName AS String, cDelegate AS String, cObject AS String, nScope AS Numeric, lPersistent AS LOGICAL )  AddMultiClsData( cType AS String, uVal, nScope AS Numeric, aDatas AS Array OF String )  AddMultiData( cType AS String, uVal, nScope AS Numeric, aDatas AS Array OF String, x AS LOGICAL, lPer AS LOGICAL )  AddMethod( cName AS String, @MethodName(), nScope AS Numeric, lPersistent AS LOGICAL )  AddInLine( cName AS String, bBlock AS CodeBlock, nScope AS Numeric, lPersistent AS LOGICAL )  AddVirtual( cName AS String )  ModMethod( cName AS String, @MethodName(), nScope AS Numeric, lPersistent AS LOGICAL )  ModClsMethod( cName AS String, @MethodName(), nScope AS Numeric )  ModInline( cName AS String, bBlock AS CodeBlock, nScope AS Numeric, lPersistent AS LOGICAL )  SetOnError( @MethodName() )
+#line 85 "\Fwh1204\Include\FiveWin.Ch"
+   EXTERNAL GetProcAdd
+   EXTERNAL TActiveX
+
+
+
+
+extern errorsys
+#line 7 ".\Prg\TStockMinimoFamilia.prg"
+_HB_CLASS TInfStockMinimoFamilia ; UTILITY FUNCTION TInfStockMinimoFamilia(...); static s_oClass ; local oClassInstance ; local nScope ; nScope := 1 ; if s_oClass == NIL ; s_oClass := IIF(.F.,, HBClass():New( "TInfStockMinimoFamilia" , {TInfGen():classh} ) ) ; ;
+
+   _HB_MEMBER {AS LOGIC lResumen} ; IIF( !.F., s_oClass:AddMultiData( "LOGIC", .F., nScope + IIF( .F., 32, 0 ), { "lResumen" }, .F., .F. ), )
+   _HB_MEMBER {AS LOGIC lExcCero} ; IIF( !.F., s_oClass:AddMultiData( "LOGIC", .F., nScope + IIF( .F., 32, 0 ), { "lExcCero" }, .F., .F. ), )
+   _HB_MEMBER {AS LOGIC lMinCero} ; IIF( !.F., s_oClass:AddMultiData( "LOGIC", .T., nScope + IIF( .F., 32, 0 ), { "lMinCero" }, .F., .F. ), )
+   _HB_MEMBER {AS NUMERIC nEstado} ; IIF( !.F., s_oClass:AddMultiData( "NUMERIC", 2, nScope + IIF( .F., 32, 0 ), { "nEstado" }, .F., .F. ), )
+   _HB_MEMBER {AS OBJECT oDbfArt} ; IIF( !.F., s_oClass:AddMultiData( "OBJECT",, nScope + IIF( .F., 32, 0 ), { "oDbfArt" }, .F., .F. ), )
+   _HB_MEMBER {AS OBJECT oStock} ; IIF( !.F., s_oClass:AddMultiData( "OBJECT",, nScope + IIF( .F., 32, 0 ), { "oStock" }, .F., .F. ), )
+   _HB_MEMBER {AS OBJECT oAlbPrvL} ; IIF( !.F., s_oClass:AddMultiData( "OBJECT",, nScope + IIF( .F., 32, 0 ), { "oAlbPrvL" }, .F., .F. ), )
+   _HB_MEMBER {AS OBJECT oFacPrvL} ; IIF( !.F., s_oClass:AddMultiData( "OBJECT",, nScope + IIF( .F., 32, 0 ), { "oFacPrvL" }, .F., .F. ), )
+   _HB_MEMBER {AS OBJECT oAlbCliL} ; IIF( !.F., s_oClass:AddMultiData( "OBJECT",, nScope + IIF( .F., 32, 0 ), { "oAlbCliL" }, .F., .F. ), )
+   _HB_MEMBER {AS OBJECT oFacCliL} ; IIF( !.F., s_oClass:AddMultiData( "OBJECT",, nScope + IIF( .F., 32, 0 ), { "oFacCliL" }, .F., .F. ), )
+   _HB_MEMBER {AS OBJECT oFacRecL} ; IIF( !.F., s_oClass:AddMultiData( "OBJECT",, nScope + IIF( .F., 32, 0 ), { "oFacRecL" }, .F., .F. ), )
+   _HB_MEMBER {AS OBJECT oTikCliL} ; IIF( !.F., s_oClass:AddMultiData( "OBJECT",, nScope + IIF( .F., 32, 0 ), { "oTikCliL" }, .F., .F. ), )
+   _HB_MEMBER {AS OBJECT oProLin} ; IIF( !.F., s_oClass:AddMultiData( "OBJECT",, nScope + IIF( .F., 32, 0 ), { "oProLin" }, .F., .F. ), )
+   _HB_MEMBER {AS OBJECT oProMat} ; IIF( !.F., s_oClass:AddMultiData( "OBJECT",, nScope + IIF( .F., 32, 0 ), { "oProMat" }, .F., .F. ), )
+   _HB_MEMBER {AS OBJECT oHisMov} ; IIF( !.F., s_oClass:AddMultiData( "OBJECT",, nScope + IIF( .F., 32, 0 ), { "oHisMov" }, .F., .F. ), )
+
+   _HB_MEMBER Create(); IIF( .F., s_oClass:ModMethod( "Create", @TInfStockMinimoFamilia_Create(), nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ), s_oClass:AddMethod( "Create", @TInfStockMinimoFamilia_Create(), nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ));
+
+   _HB_MEMBER OpenFiles(); IIF( .F., s_oClass:ModMethod( "OpenFiles", @TInfStockMinimoFamilia_OpenFiles(), nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ), s_oClass:AddMethod( "OpenFiles", @TInfStockMinimoFamilia_OpenFiles(), nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ));
+
+   _HB_MEMBER CloseFiles(); IIF( .F., s_oClass:ModMethod( "CloseFiles", @TInfStockMinimoFamilia_CloseFiles(), nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ), s_oClass:AddMethod( "CloseFiles", @TInfStockMinimoFamilia_CloseFiles(), nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ));
+
+   _HB_MEMBER lResource( cFld); IIF( .F., s_oClass:ModMethod( "lResource", @TInfStockMinimoFamilia_lResource(), nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ), s_oClass:AddMethod( "lResource", @TInfStockMinimoFamilia_lResource(), nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ));
+
+   _HB_MEMBER lGenerate(); IIF( .F., s_oClass:ModMethod( "lGenerate", @TInfStockMinimoFamilia_lGenerate(), nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ), s_oClass:AddMethod( "lGenerate", @TInfStockMinimoFamilia_lGenerate(), nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ));
+
+   _HB_MEMBER oDefDivInf( ); IIF( !.F., s_oClass:AddVirtual( "oDefDivInf" ), )
+   _HB_MEMBER oDefIniInf( ); IIF( !.F., s_oClass:AddVirtual( "oDefIniInf" ), )
+   _HB_MEMBER oDefFinInf( ); IIF( !.F., s_oClass:AddVirtual( "oDefFinInf" ), )
+
+   ; IF .F. ; __clsActive(s_oClass:hClass) ; s_oClass:Refresh() ; ELSE ; s_oClass:Create() ; END ; oClassInstance := __clsInst( s_oClass:hClass ) ; IF __ObjHasMsg( oClassInstance, "InitClass" ); oClassInstance:InitClass( hb_aParams() ) ; END ; ELSE ; oClassInstance := __clsInst( s_oClass:hClass ) ; END ; IF PCount() > 0 ; DIVERT TO (@DivertConstructorCall()) OF s_oClass ; END ; RETURN oClassInstance AS CLASS TInfStockMinimoFamilia ;
+
+
+
+UTILITY STATIC function TInfStockMinimoFamilia_Create() ; local Self AS CLASS TInfStockMinimoFamilia := QSelf() AS CLASS TInfStockMinimoFamilia
+
+   ::AddField ( "cCodAlm", "C",  3, 0, {|| "@!" },            "Alm.",            .F., "Código almacén",     03 )
+   ::AddField ( "cCodArt", "C", 18, 0, {|| "@!" },            "Cod. Art.",       .T., "Código artículo",    14 )
+   ::AddField ( "cNomArt", "C",100, 0, {|| "@!" },            "Artículo",        .T., "Artículo",           40 )
+   ::AddField ( "cCodFam", "C", 16, 0, {|| "@!" },            "Cod. Fam.",       .F., "Código familia",     05 )
+   ::AddField ( "cNomFam", "C", 30, 0, {|| "@!" },            "Familia",         .F., "Nombre familia",     30 )
+   ::AddField ( "cCodPrv", "C", 12, 0, {|| "@!" },            "Cod. Prv.",       .F., "Código proveedor",   09 )
+   ::AddField ( "cNomPrv", "C", 80, 0, {|| "@!" },            "Proveedor",       .F., "Nombre proveedor",   30 )
+   ::AddField ( "nNumUnd", "N", 13, 6, {|| MasUnd() },        cNombreUnidades(), .T., cNombreunidades(),    12 )
+   ::AddField ( "nUndMin", "N", 13, 6, {|| MasUnd() },        "Mínimo",          .T., "Mínimo unidades",    12 )
+
+   ::AddTmpIndex( "CCODALM", "CCODALM + CCODFAM + CCODART" )
+
+   ::AddGroup( {|| ::oDbf:cCodAlm }, {|| "Almacén  : " + Rtrim( ::oDbf:cCodAlm ) + "-" + oRetFld( ::oDbf:cCodAlm, ::oDbfAlm ) }, {||"Total almacén..."} )
+   ::AddGroup( {|| ::oDbf:cCodAlm + ::oDbf:cCodFam }, {|| "Família : " + Rtrim( ::oDbf:cCodFam ) + "-" + oRetFld( ::oDbf:cCodFam, ::oDbfFam ) }, {|| Space(1) } )
+
+RETURN ( self )
+
+
+
+UTILITY STATIC function TInfStockMinimoFamilia_OpenFiles() ; local Self AS CLASS TInfStockMinimoFamilia := QSelf() AS CLASS TInfStockMinimoFamilia
+
+   local lOpen    := .T.
+   local oBlock   := ErrorBlock( {| oError | ApoloBreak( oError ) } )
+
+   BEGIN SEQUENCE
+
+      ::oDbfArt := DbfServer( "ARTICULO.DBF", ):NewOpen( "ARTICULO.DBF",, ( cDriver() ),, ( cPatArt() ), .F., .T., .F., .F. ) ; ::oDbfArt:AddBag( "ARTICULO.CDX" ) ; ::oDbfArt:AddBag( ) ; ::oDbfArt:AutoIndex()
+
+      ::oAlbPrvL := DbfServer( "ALBPROVL.DBF", ):NewOpen( "ALBPROVL.DBF",, ( cDriver() ),, ( cPatEmp() ), .F., .T., .F., .F. ) ; ::oAlbPrvL:AddBag( "ALBPROVL.CDX" ) ; ::oAlbPrvL:AddBag( ) ; ::oAlbPrvL:AutoIndex()
+
+      ::oFacPrvL := DbfServer( "FACPRVL.DBF", ):NewOpen( "FACPRVL.DBF",, ( cDriver() ),, ( cPatEmp() ), .F., .T., .F., .F. ) ; ::oFacPrvL:AddBag( "FACPRVL.CDX" ) ; ::oFacPrvL:AddBag( ) ; ::oFacPrvL:AutoIndex()
+
+      ::oAlbCliL := DbfServer( "ALBCLIL.DBF", ):NewOpen( "ALBCLIL.DBF",, ( cDriver() ),, ( cPatEmp() ), .F., .T., .F., .F. ) ; ::oAlbCliL:AddBag( "ALBCLIL.CDX" ) ; ::oAlbCliL:AddBag( ) ; ::oAlbCliL:AutoIndex()
+
+      ::oFacCliL := DbfServer( "FACCLIL.DBF", ):NewOpen( "FACCLIL.DBF",, ( cDriver() ),, ( cPatEmp() ), .F., .T., .F., .F. ) ; ::oFacCliL:AddBag( "FACCLIL.CDX" ) ; ::oFacCliL:AddBag( ) ; ::oFacCliL:AutoIndex()
+
+      ::oFacRecL := DbfServer( "FACRECL.DBF", ):NewOpen( "FACRECL.DBF",, ( cDriver() ),, ( cPatEmp() ), .F., .T., .F., .F. ) ; ::oFacRecL:AddBag( "FACRECL.CDX" ) ; ::oFacRecL:AddBag( ) ; ::oFacRecL:AutoIndex()
+
+      ::oTikCliL := DbfServer( "TIKEL.DBF", ):NewOpen( "TIKEL.DBF",, ( cDriver() ),, ( cPatEmp() ), .F., .T., .F., .F. ) ; ::oTikCliL:AddBag( "TIKEL.CDX" ) ; ::oTikCliL:AddBag( ) ; ::oTikCliL:AutoIndex()
+
+      ::oProLin := DbfServer( "PROLIN.DBF", ):NewOpen( "PROLIN.DBF",, ( cDriver() ),, ( cPatEmp() ), .F., .T., .F., .F. ) ; ::oProLin:AddBag( "PROLIN.CDX" ) ; ::oProLin:AddBag( ) ; ::oProLin:AutoIndex()
+
+      ::oProMat := DbfServer( "PROMAT.DBF", ):NewOpen( "PROMAT.DBF",, ( cDriver() ),, ( cPatEmp() ), .F., .T., .F., .F. ) ; ::oProMat:AddBag( "PROMAT.CDX" ) ; ::oProMat:AddBag( ) ; ::oProMat:AutoIndex()
+
+      ::oHisMov := DbfServer( "HISMOV.DBF", ):NewOpen( "HISMOV.DBF",, ( cDriver() ),, ( cPatEmp() ), .F., .T., .F., .F. ) ; ::oHisMov:AddBag( "HISMOV.CDX" ) ; ::oHisMov:AddBag( ) ; ::oHisMov:AutoIndex()
+
+      ::oStock    := TStock():New()
+      if !::oStock:lOpenFiles()
+         lOpen    := .F.
+      else
+         ::oStock:cAlbPrvL   := ::oAlbPrvL:cAlias
+         ::oStock:cFacPrvL   := ::oFacPrvL:cAlias
+         ::oStock:cAlbCliL   := ::oAlbCliL:cAlias
+         ::oStock:cFacCliL   := ::oFacCliL:cAlias
+         ::oStock:cFacRecL   := ::oFacRecL:cAlias
+         ::oStock:cTikL      := ::oTikCliL:cAlias
+         ::oStock:cProducL   := ::oProLin:cAlias
+         ::oStock:cProducM   := ::oProMat:cAlias
+         ::oStock:cHisMov    := ::oHisMov:cAlias
+      end
+
+   RECOVER
+
+      lOpen       := .F.
+      msgStop( "Imposible abrir todas las bases de datos" )
+
+   end
+
+   ErrorBlock( oBlock )
+
+   if !lOpen
+      ::CloseFiles()
+   end
+
+RETURN ( lOpen )
+
+
+
+UTILITY STATIC function TInfStockMinimoFamilia_CloseFiles() ; local Self AS CLASS TInfStockMinimoFamilia := QSelf() AS CLASS TInfStockMinimoFamilia
+
+   if !Empty( ::oDbfArt ) .AND. ::oDbfArt:Used()
+      ::oDbfArt:End()
+   end
+
+   if !Empty( ::oAlbPrvL ) .AND. ::oAlbPrvL:Used()
+      ::oAlbPrvL:End()
+   end
+
+   if !Empty( ::oFacPrvL ) .AND. ::oFacPrvL:Used()
+      ::oFacPrvL:End()
+   end
+
+   if !Empty( ::oAlbCliL ) .AND. ::oAlbCliL:Used()
+      ::oAlbCliL:End()
+   end
+
+   if !Empty( ::oFacCliL ) .AND. ::oFacCliL:Used()
+      ::oFacCliL:End()
+   end
+
+   if !Empty( ::oFacRecL ) .AND. ::oFacRecL:Used()
+      ::oFacRecL:End()
+   end
+
+   if !Empty( ::oTikCliL ) .AND. ::oTikCliL:Used()
+      ::oTikCliL:End()
+   end
+
+   if !Empty( ::oProLin ) .AND. ::oProLin:Used()
+      ::oProLin:End()
+   end
+
+   if !Empty( ::oProMat ) .AND. ::oProMat:Used()
+      ::oProMat:End()
+   end
+
+   if !Empty( ::oHisMov ) .AND. ::oHisMov:Used()
+      ::oHisMov:End()
+   end
+
+   if !Empty( ::oStock )
+      ::oStock:End()
+   end
+
+   ::oDbfArt   := nil
+   ::oStock    := nil
+   ::oAlbPrvL  := nil
+   ::oFacPrvL  := nil
+   ::oAlbCliL  := nil
+   ::oFacCliL  := nil
+   ::oFacRecL  := nil
+   ::oTikCliL  := nil
+   ::oProLin   := nil
+   ::oProMat   := nil
+   ::oHisMov   := nil
+
+RETURN ( Self )
+
+
+
+UTILITY STATIC function TInfStockMinimoFamilia_lResource( cFld) ; local Self AS CLASS TInfStockMinimoFamilia := QSelf() AS CLASS TInfStockMinimoFamilia
+
+   ::lDefSerInf   := .F.
+
+   if !::StdResource( "STK_MIN_FAM" )
+      return .F.
+   end
+
+
+
+
+
+   if !::oDefAlmInf( 70, 80, 90, 100, 700 )
+      return .F.
+   end
+
+
+
+
+
+   if !::lDefFamInf( 150, 160, 170, 180, 900 )
+      return .F.
+   end
+
+
+
+   TCheckBox():ReDefine( ( 203 ), { | u | If( PCount()==0, ::lMinCero, ::lMinCero:= u ) }, ::oFld:aDialogs[1],,,,,,, .F.,, .F. )
+
+
+
+   TRadMenu():Redefine( { | u | If( PCount()==0, ::nEstado, ::nEstado:= u ) }, ::oFld:aDialogs[1],, { 201, 202 },,,,, .F.,, )
+
+
+
+
+
+   ::oMtrInf:SetTotal( ::oDbfArt:Lastrec() )
+
+   ::CreateFilter( aItmArt(), ::oDbfArt:cAlias )
+
+RETURN .T.
+
+
+
+
+
+
+UTILITY STATIC function TInfStockMinimoFamilia_lGenerate() ; local Self AS CLASS TInfStockMinimoFamilia := QSelf() AS CLASS TInfStockMinimoFamilia
+
+   local cExpArt        := ""
+   local nStockActual   := 0
+
+   ::oDlg:Disable()
+   ::oBtnCancel:Enable()
+   ::oDbf:Zap()
+
+   ::oDbfAlm:GoTop()
+
+
+
+
+
+   ::aHeader   := {  {|| "Fecha       : " + Dtoc( Date() ) }, {|| "Almacenes   : " + if( ::lAllAlm, "Todos", AllTrim( ::cAlmOrg ) + " > " + AllTrim( ::cAlmDes ) ) }, {|| "Familias    : " + if( ::lAllFam, "Todas", AllTrim( ::cFamOrg ) + " > " + AllTrim( ::cFamDes ) ) }, {|| if( ::nEstado == 1, "Solo artículos con stock bajo mínimo", "Todos los artículos" ) }, {|| if( ::lMinCero, "Solo artículos con stock mínimo distinto de 0", ""  ) } }
+
+   ::oDbfArt:OrdSetFocus( "CODIGO" )
+
+   cExpArt           := "nCtlStock == 1 .and. !lKitArt"
+
+   if !::lAllFam
+      cExpArt        += ' .and. Familia >= "' + Rtrim( ::cFamOrg ) + '" .and. Familia <= "' + Rtrim( ::cFamDes ) + '"'
+   end
+
+   if !Empty( ::oFilter:cExpFilter )
+      cExpArt        += " .and. " + ::oFilter:cExpFilter
+   end
+
+   ::oDbfArt:AddTmpIndex( cCurUsr(), GetFileNoExt( ::oDbfArt:cFile ), ::oDbfArt:OrdKey(), ( cExpArt ), , , , , , , , .T. )
+
+   while !::lBreak .AND. !::oDbfAlm:Eof()
+
+      if ( ::lAllAlm .OR. ( ::oDbfAlm:cCodAlm >= ::cAlmOrg .AND. ::oDbfAlm:cCodAlm <= ::cAlmDes ) )
+
+      ::oMtrInf:SetTotal( ::oDbfArt:OrdKeyCount() )
+
+      ::oDbfArt:GoTop()
+
+      while !::lBreak .AND. !::oDbfArt:Eof()
+
+         if ( !::lMinCero .OR. ::oDbfArt:nMinimo <> 0 )
+
+            nStockActual   := ::oStock:nStockAlmacen( ::oDbfArt:Codigo, ::oDbfAlm:cCodAlm )
+
+            if ( ::nEstado == 1 .OR. nStockActual < ::oDbfArt:nMinimo )
+
+               ::oDbf:Append()
+               ::oDbf:cCodAlm := ::oDbfAlm:cCodAlm
+               ::oDbf:cCodFam := ::oDbfArt:Familia
+               ::oDbf:cNomFam := oRetFld( ::oDbf:cCodFam, ::oDbfFam )
+               ::oDbf:cCodArt := ::oDbfArt:Codigo
+               ::oDbf:cNomArt := ::oDbfArt:Nombre
+               ::oDbf:nNumUnd := nStockActual
+               ::oDbf:nUndMin := ::oDbfArt:nMinimo
+               ::oDbf:cCodPrv := ::oDbfArt:cPrvHab
+               ::oDbf:cNomPrv := oRetFld( ::oDbf:cCodPrv, ::oDbfFam )
+               ::oDbf:Save()
+
+            end
+
+         end
+
+         ::oDbfArt:Skip()
+
+         ::oMtrInf:AutoInc( ::oDbfArt:OrdKeyNo() )
+
+      end
+
+      ::oMtrInf:AutoInc( ::oDbfArt:LastRec() )
+
+      end
+
+      ::oDbfAlm:Skip()
+
+   end
+
+   ::oDbfArt:IdxDelete( cCurUsr(), GetFileNoExt( ::oDbfArt:cFile ) )
+
+   ::oDlg:Enable()
+
+RETURN ( ::oDbf:LastRec() > 0 )

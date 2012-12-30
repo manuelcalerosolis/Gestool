@@ -1,0 +1,205 @@
+#line 112 "hbclass.ch"
+   DYNAMIC DivertConstructorCall
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+DECLARE HBClass  New( cName AS String, OPTIONAL SuperParams ) AS CLASS HBClass  Create() AS Object  Instance() AS Object  AddClsMethod( cName AS String, @MethodName(), nScope AS Numeric, n2 AS Numeric, n3 AS Numeric )  AddDelegate( cName AS String, cDelegate AS String, cObject AS String, nScope AS Numeric, lPersistent AS LOGICAL )  AddMultiClsData( cType AS String, uVal, nScope AS Numeric, aDatas AS Array OF String )  AddMultiData( cType AS String, uVal, nScope AS Numeric, aDatas AS Array OF String, x AS LOGICAL, lPer AS LOGICAL )  AddMethod( cName AS String, @MethodName(), nScope AS Numeric, lPersistent AS LOGICAL )  AddInLine( cName AS String, bBlock AS CodeBlock, nScope AS Numeric, lPersistent AS LOGICAL )  AddVirtual( cName AS String )  ModMethod( cName AS String, @MethodName(), nScope AS Numeric, lPersistent AS LOGICAL )  ModClsMethod( cName AS String, @MethodName(), nScope AS Numeric )  ModInline( cName AS String, bBlock AS CodeBlock, nScope AS Numeric, lPersistent AS LOGICAL )  SetOnError( @MethodName() )
+#line 85 "\Fwh1204\Include\FiveWin.Ch"
+   EXTERNAL GetProcAdd
+   EXTERNAL TActiveX
+
+
+
+
+extern errorsys
+#line 8 ".\Prg\TInfChgCBr.prg"
+_HB_CLASS TInfChgCBr ; UTILITY FUNCTION TInfChgCBr(...); static s_oClass ; local oClassInstance ; local nScope ; nScope := 1 ; if s_oClass == NIL ; s_oClass := IIF(.F.,, HBClass():New( "TInfChgCBr" , {TInfGen():classh} ) ) ; ;
+
+   _HB_MEMBER {AS OBJECT oDbfBar} ; IIF( !.F., s_oClass:AddMultiData( "OBJECT",, nScope + IIF( .F., 32, 0 ), { "oDbfBar" }, .F., .F. ), )
+
+   _HB_MEMBER create(); IIF( .F., s_oClass:ModMethod( "create", @TInfChgCBr_create(), nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ), s_oClass:AddMethod( "create", @TInfChgCBr_create(), nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ));
+
+   _HB_MEMBER OpenFiles(); IIF( .F., s_oClass:ModMethod( "OpenFiles", @TInfChgCBr_OpenFiles(), nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ), s_oClass:AddMethod( "OpenFiles", @TInfChgCBr_OpenFiles(), nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ));
+
+   _HB_MEMBER CloseFiles(); IIF( .F., s_oClass:ModMethod( "CloseFiles", @TInfChgCBr_CloseFiles(), nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ), s_oClass:AddMethod( "CloseFiles", @TInfChgCBr_CloseFiles(), nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ));
+
+   _HB_MEMBER lResource( cFld); IIF( .F., s_oClass:ModMethod( "lResource", @TInfChgCBr_lResource(), nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ), s_oClass:AddMethod( "lResource", @TInfChgCBr_lResource(), nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ));
+
+   _HB_MEMBER lGenerate(); IIF( .F., s_oClass:ModMethod( "lGenerate", @TInfChgCBr_lGenerate(), nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ), s_oClass:AddMethod( "lGenerate", @TInfChgCBr_lGenerate(), nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ));
+
+; IF .F. ; __clsActive(s_oClass:hClass) ; s_oClass:Refresh() ; ELSE ; s_oClass:Create() ; END ; oClassInstance := __clsInst( s_oClass:hClass ) ; IF __ObjHasMsg( oClassInstance, "InitClass" ); oClassInstance:InitClass( hb_aParams() ) ; END ; ELSE ; oClassInstance := __clsInst( s_oClass:hClass ) ; END ; IF PCount() > 0 ; DIVERT TO (@DivertConstructorCall()) OF s_oClass ; END ; RETURN oClassInstance AS CLASS TInfChgCBr ;
+
+
+
+UTILITY STATIC function TInfChgCBr_create() ; local Self AS CLASS TInfChgCBr := QSelf() AS CLASS TInfChgCBr
+
+   ::AddField( "cCodArt",  "C", 18, 0, {|| "@!" },        "Cod. art.",                 .F., "Cod. artículo"            , 15, .F. )
+   ::AddField( "cNomArt",  "C",100, 0, {|| "@!" },        "Descripción",               .F., "Descripción"              , 50, .F. )
+   ::AddField( "cCodBar",  "C", 20, 0, {|| "@!" },        "Código de barras",          .T., "Código de barras"         , 25, .F. )
+   ::AddField( "cTipBar",  "C", 40, 0, {|| "@!" },        "Tipo de código de barras",  .T., "Tipo de código de barras" , 40, .F. )
+   ::AddField( "cDefecto", "C", 10, 0, {|| "@!" },        "Defecto",                   .T., "Defecto"                  , 10, .F. )
+   ::AddField( "LastChg",  "D",  8, 0, {|| "@!" },        "Cambio",                    .F., "Fecha de cambio"          , 10, .F. )
+
+   ::AddTmpIndex( "CCODART", "CCODART + CCODBAR" )
+
+   ::AddGroup( {|| ::oDbf:cCodArt }, {|| "Artículo  : " + Rtrim( ::oDbf:cCodArt ) + "-" + Rtrim( ::oDbf:cNomArt ) }, {||""} )
+
+   ::dIniInf      := GetSysDate()
+   ::lDefSerInf   := .F.
+   ::lDefDivInf   := .F.
+
+RETURN ( self )
+
+
+
+UTILITY STATIC function TInfChgCBr_OpenFiles() ; local Self AS CLASS TInfChgCBr := QSelf() AS CLASS TInfChgCBr
+
+   local lOpen    := .T.
+   local oBlock   := ErrorBlock( {| oError | ApoloBreak( oError ) } )
+
+   BEGIN SEQUENCE
+
+      ::oDbfBar := DbfServer( "ARTCODEBAR.DBF", ):NewOpen( "ARTCODEBAR.DBF",, ( cDriver() ),, ( cPatArt() ), .F., .T., .F., .F. ) ; ::oDbfBar:AddBag( "ARTCODEBAR.CDX" ) ; ::oDbfBar:AddBag( ) ; ::oDbfBar:AutoIndex()
+
+   RECOVER
+
+      msgStop( "Imposible abrir todas las bases de datos" )
+      ::CloseFiles()
+      lOpen       := .F.
+
+   end
+
+   ErrorBlock( oBlock )
+
+RETURN ( lOpen )
+
+
+
+UTILITY STATIC function TInfChgCBr_CloseFiles() ; local Self AS CLASS TInfChgCBr := QSelf() AS CLASS TInfChgCBr
+
+   if !Empty( ::oDbfBar ) .AND. ::oDbfBar:Used()
+      ::oDbfBar:End()
+   end
+
+   ::oDbfBar      := nil
+
+RETURN ( Self )
+
+
+
+UTILITY STATIC function TInfChgCBr_lResource( cFld) ; local Self AS CLASS TInfChgCBr := QSelf() AS CLASS TInfChgCBr
+
+   if !::StdResource( "INFCHGBAR" )
+      return .F.
+   end
+
+   if !::lDefArtInf( 110, 120, 130, 140, 600 )
+      return .F.
+   end
+
+
+
+
+
+   ::oMtrInf:SetTotal( ::oDbfArt:Lastrec() )
+
+   ::CreateFilter( aItmArt(), ::oDbfArt:cAlias )
+
+RETURN .T.
+
+
+
+
+
+
+UTILITY STATIC function TInfChgCBr_lGenerate() ; local Self AS CLASS TInfChgCBr := QSelf() AS CLASS TInfChgCBr
+
+   local cExpHead := ""
+
+   ::oDlg:Disable()
+   ::oDbf:Zap()
+
+
+
+   ::aHeader      := {  {|| "Fecha     : " + Dtoc( Date() ) }, {|| "Periodo   : " + Dtoc( ::dIniInf ) + " > " + Dtoc( ::dFinInf ) }, {|| "Artículos : " + if( ::lAllArt, "Todos", AllTrim( ::cArtOrg ) + " > " + AllTrim( ::cArtDes ) ) } }
+
+   cExpHead       := 'LastChg >= Ctod( "' + Dtoc( ::dIniInf ) + '" ) .and. LastChg <= Ctod( "' + Dtoc( ::dFinInf ) + '" )'
+
+   if !::lAllArt
+      cExpHead    += ' .and. Codigo >= "' + Rtrim( ::cArtOrg ) + '" .and. Codigo <= "' + Rtrim( ::cArtDes ) + '"'
+   end
+
+   if !Empty( ::oFilter:cExpFilter )
+      cExpHead    := " .and. " + ::oFilter:cExpFilter
+   end
+
+   ::oDbfArt:AddTmpIndex( cCurUsr(), GetFileNoExt( ::oDbfArt:cFile ), ::oDbfArt:OrdKey(), ( cExpHead ), , , , , , , , .T. )
+
+   ::oMtrInf:SetTotal( ::oDbfArt:OrdKeyCount() )
+
+   ::oDbfArt:OrdSetFocus( "Codigo" )
+
+   ::oDbfArt:GoTop()
+
+   while !::oDbfArt:Eof()
+
+      if ::oDbfBar:SeekInOrd( ::oDbfArt:Codigo, "cCodArt" )
+
+         while ::oDbfBar:cCodArt == ::oDbfArt:Codigo .AND. !::oDbfBar:Eof()
+
+            ::oDbf:Append()
+
+            ::oDbf:LastChg          := ::oDbfArt:LastChg
+            ::oDbf:cCodArt          := ::oDbfArt:Codigo
+            ::oDbf:cNomArt          := ::oDbfArt:Nombre
+            ::oDbf:cCodBar          := ::oDbfBar:cCodBar
+
+            if ::oDbfBar:lDefBar
+               ::oDbf:cDefecto      := "Si"
+            else
+               ::oDbf:cDefecto      := ""
+            end
+
+            do case
+               case ::oDbfBar:nTipBar == 1
+                  ::oDbf:cTipBar    := "Ean13"
+               case ::oDbfBar:nTipBar == 2
+                  ::oDbf:cTipBar    := "Code39"
+               case ::oDbfBar:nTipBar == 3
+                  ::oDbf:cTipBar    := "Code128"
+            end
+
+            ::oDbf:Save()
+
+            ::oDbfBar:Skip()
+
+         end
+
+      end
+
+      ::oDbfArt:Skip()
+
+      ::oMtrInf:AutoInc( ::oDbfArt:OrdKeyNo() )
+
+   end
+
+   ::oDbfArt:IdxDelete( cCurUsr(), GetFileNoExt( ::oDbfArt:cFile ) )
+
+   ::oMtrInf:AutoInc( ::oDbfArt:Lastrec() )
+
+   ::oDlg:Enable()
+
+RETURN ( ::oDbf:LastRec() > 0 )

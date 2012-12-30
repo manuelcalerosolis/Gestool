@@ -1,0 +1,375 @@
+#line 112 "hbclass.ch"
+   DYNAMIC DivertConstructorCall
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+DECLARE HBClass  New( cName AS String, OPTIONAL SuperParams ) AS CLASS HBClass  Create() AS Object  Instance() AS Object  AddClsMethod( cName AS String, @MethodName(), nScope AS Numeric, n2 AS Numeric, n3 AS Numeric )  AddDelegate( cName AS String, cDelegate AS String, cObject AS String, nScope AS Numeric, lPersistent AS LOGICAL )  AddMultiClsData( cType AS String, uVal, nScope AS Numeric, aDatas AS Array OF String )  AddMultiData( cType AS String, uVal, nScope AS Numeric, aDatas AS Array OF String, x AS LOGICAL, lPer AS LOGICAL )  AddMethod( cName AS String, @MethodName(), nScope AS Numeric, lPersistent AS LOGICAL )  AddInLine( cName AS String, bBlock AS CodeBlock, nScope AS Numeric, lPersistent AS LOGICAL )  AddVirtual( cName AS String )  ModMethod( cName AS String, @MethodName(), nScope AS Numeric, lPersistent AS LOGICAL )  ModClsMethod( cName AS String, @MethodName(), nScope AS Numeric )  ModInline( cName AS String, bBlock AS CodeBlock, nScope AS Numeric, lPersistent AS LOGICAL )  SetOnError( @MethodName() )
+#line 85 "\Fwh1204\Include\FiveWin.Ch"
+   EXTERNAL GetProcAdd
+   EXTERNAL TActiveX
+
+
+
+
+extern errorsys
+#line 21 ".\Prg\RocolumnC3.prg"
+_HB_CLASS TROColumn ; UTILITY FUNCTION TROColumn(...); static s_oClass ; local oClassInstance ; local nScope ; nScope := 1 ; if s_oClass == NIL ; s_oClass := IIF(.F.,, HBClass():New( "TROColumn" , { HBObject():Classh } ) ) ;
+
+     _HB_MEMBER { oReport} ; IIF( !.F., s_oClass:AddMultiData(,, nScope + IIF( .F., 32, 0 ), { "oReport" }, .F., .F. ), )
+     _HB_MEMBER { aData, aTitle, aPicture} ; IIF( !.F., s_oClass:AddMultiData(,, nScope + IIF( .F., 32, 0 ), { "aData" , "aTitle" , "aPicture" }, .F., .F. ), )
+     _HB_MEMBER { oDataFont, oTitleFont, oTotalFont, bTotalExpr, bColor} ; IIF( !.F., s_oClass:AddMultiData(,, nScope + IIF( .F., 32, 0 ), { "oDataFont" , "oTitleFont" , "oTotalFont" , "bTotalExpr" , "bColor" }, .F., .F. ), )
+     _HB_MEMBER { cTotalPict} ; IIF( !.F., s_oClass:AddMultiData(,, nScope + IIF( .F., 32, 0 ), { "cTotalPict" }, .F., .F. ), )
+
+     _HB_MEMBER { nWidth, nHeight, nDataHeight, nTitleHeight, nTotal, nCol, nSize, nPad, nPen, nOrder, nCalCol, nCurLine} ; IIF( !.F., s_oClass:AddMultiData(,, nScope + IIF( .F., 32, 0 ), { "nWidth" , "nHeight" , "nDataHeight" , "nTitleHeight" , "nTotal" , "nCol" , "nSize" , "nPad" , "nPen" , "nOrder" , "nCalCol" , "nCurLine" }, .F., .F. ), )
+
+     _HB_MEMBER { lTotal, lShadow, lGrid, lTotalExpr, lUnderline, lDobleUnd, lTextUnd, lSeparator} ; IIF( !.F., s_oClass:AddMultiData(,, nScope + IIF( .F., 32, 0 ), { "lTotal" , "lShadow" , "lGrid" , "lTotalExpr" , "lUnderline" , "lDobleUnd" , "lTextUnd" , "lSeparator" }, .F., .F. ), )
+     _HB_MEMBER { Cargo} ; IIF( !.F., s_oClass:AddMultiData(,, nScope + IIF( .F., 32, 0 ), { "Cargo" }, .F., .F. ), )
+     _HB_MEMBER { nColor} ; IIF( !.F., s_oClass:AddMultiData(,, nScope + IIF( .F., 32, 0 ), { "nColor" }, .F., .F. ), )
+     _HB_MEMBER { lNewLine} ; IIF( !.F., s_oClass:AddMultiData(,, nScope + IIF( .F., 32, 0 ), { "lNewLine" }, .F., .F. ), )
+
+
+
+     _HB_MEMBER New( aTitle, nCol, aData, nSize, aPicture, oFont, lTotal, bTotalExpr, cFmt, lShadow, lGrid, lNewLine, oReport) AS CLASS TROColumn; IIF( .F., s_oClass:ModMethod( "New", @TROColumn_New(), nScope + IIF( .T., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ), s_oClass:AddMethod( "New", @TROColumn_New(), nScope + IIF( .T., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ));
+
+     _HB_MEMBER Stabilize(); IIF( .F., s_oClass:ModMethod( "Stabilize", @TROColumn_Stabilize(), nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ), s_oClass:AddMethod( "Stabilize", @TROColumn_Stabilize(), nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ));
+
+     _HB_MEMBER SayTitle( nRow, nCol, nLine); IIF( .F., s_oClass:ModMethod( "SayTitle", @TROColumn_SayTitle(), nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ), s_oClass:AddMethod( "SayTitle", @TROColumn_SayTitle(), nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ));
+     _HB_MEMBER SayData( nRow, nCol, nLine); IIF( .F., s_oClass:ModMethod( "SayData", @TROColumn_SayData(), nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ), s_oClass:AddMethod( "SayData", @TROColumn_SayData(), nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ));
+     _HB_MEMBER SayTotal( nRow, nCol); IIF( .F., s_oClass:ModMethod( "SayTotal", @TROColumn_SayTotal(), nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ), s_oClass:AddMethod( "SayTotal", @TROColumn_SayTotal(), nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ));
+     _HB_MEMBER Separator( nDataLine, nRow); IIF( .F., s_oClass:ModMethod( "Separator", @TROColumn_Separator(), nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ), s_oClass:AddMethod( "Separator", @TROColumn_Separator(), nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ));
+     _HB_MEMBER Underline( lTextLength, lDouble, nDataLine, nRow); IIF( .F., s_oClass:ModMethod( "Underline", @TROColumn_Underline(), nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ), s_oClass:AddMethod( "Underline", @TROColumn_Underline(), nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ));
+     _HB_MEMBER TitleHeight( nLine); IIF( .F., s_oClass:ModMethod( "TitleHeight", @TROColumn_TitleHeight(), nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ), s_oClass:AddMethod( "TitleHeight", @TROColumn_TitleHeight(), nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ));
+
+; IF .F. ; __clsActive(s_oClass:hClass) ; s_oClass:Refresh() ; ELSE ; s_oClass:Create() ; END ; oClassInstance := __clsInst( s_oClass:hClass ) ; IF __ObjHasMsg( oClassInstance, "InitClass" ); oClassInstance:InitClass( hb_aParams() ) ; END ; ELSE ; oClassInstance := __clsInst( s_oClass:hClass ) ; END ; IF PCount() > 0 ; DIVERT TO (@DivertConstructorCall()) OF s_oClass ; END ; RETURN oClassInstance AS CLASS TROColumn ;
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+UTILITY STATIC function TROColumn_New( aTitle     , nCol       , aData      , nSize      , aPicture   , oFont      , oTitleFont , oTotalFont , lTotal     , bTotalExpr , nFmt       , lShadow    , lGrid      , lNewLine   , nPen       , nColor     , nHeight    , oReport) ; local Self AS CLASS TROColumn := QSelf() AS CLASS TROColumn
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+     IIF( aTitle == nil, aTitle := {{|| ""} }, ) ; IIF( aData == nil, aData := {{|| ""} }, ); IIF( nSize == nil, nSize := 0, ); IIF( aPicture == nil, aPicture := {{|| ""} }, ); IIF( nCol == nil, nCol := 0, ); IIF( oFont == nil, oFont := TFont():New( "Ms Sans Serif", 6, 12, .F. ), ); IIF( oTitleFont == nil, oTitleFont := TFont():New( "Ms Sans Serif", 6, 12, .F. ), ); IIF( oTotalFont == nil, oTotalFont := TFont():New( "Ms Sans Serif", 6, 12, .F. ), ); IIF( nPen == nil, nPen := 1, ); IIF( lTotal == nil, lTotal := .F., ); IIF( lShadow == nil, lShadow := .F., ); IIF( lGrid == nil, lGrid := .F., ); IIF( lNewLine == nil, lNewLine := .F., ); IIF( nColor == nil, nColor := 0, ); IIF( nHeight == nil, nHeight := 0, ); IIF( nFmt == nil, nFmt := iif(Valtype(Eval(aData[1]))=="N",2, 1), );
+
+     ::aTitle     = aTitle
+     ::aData      = aData
+     ::nSize      = nSize
+     ::aPicture   = aPicture
+     ::oDataFont  = oFont
+     ::oTitleFont = oTitleFont
+     ::oTotalFont = oTotalFont
+     ::lTotal     = lTotal
+     ::lShadow    = lShadow
+     ::lGrid      = lGrid
+     ::lNewLine   = lNewLine
+     ::lUnderline = .F.
+     ::lDobleUnd  = .F.
+     ::lSeparator = .T.
+     ::lTextUnd   = .F.
+     ::nPen       = nPen
+     ::nTotal     = 0
+     ::oReport    = oReport
+     ::bTotalExpr = bTotalExpr
+     ::nCol       = nCol
+     ::cTotalPict = iif(len(aPicture)>0, aPicture[1], "")
+     ::nWidth     = 0
+     ::nCalCol    = 0
+     ::nOrder     = 0
+     ::nColor     = nColor
+     ::nHeight    = nHeight
+     ::nPad       = nFmt
+
+     ::lTotalExpr = !(bTotalExpr == NIL)
+
+     while len(::aPicture) < len(::aData)
+          Aadd(::aPicture,::cTotalPict)
+     ENDDO
+
+RETURN Self
+
+
+
+UTILITY STATIC function TROColumn_Stabilize( nOrder) ; local Self AS CLASS TROColumn := QSelf() AS CLASS TROColumn
+
+     LOCAL nFor, nWidth, nLen
+
+     ::nDataHeight  := ::oReport:oDevice:GetTextHeight(::oReport:cCharPattern, ::oDataFont )
+     ::nTitleHeight := ::oReport:oDevice:GetTextHeight(::oReport:cCharPattern, ::oTitleFont )
+
+     IF !empty(::nSize)
+          ::nWidth := ::oReport:oDevice:GetTextWidth( Replicate(::oReport:cCharPattern, ::nSize), ::oDataFont )
+          RETU NIL
+     ENDIF
+
+
+     FOR nFor := 1 TO len(::aData)
+          nLen      := len(cValtoChar(Transform(eval(::aData[nFor]),eval(::aPicture[nFor]))))
+          nWidth    := ::oReport:oDevice:GetTextWidth(Replicate(::oReport:cCharPattern,nLen),::oDataFont )
+          ::nWidth  := Max(::nWidth,nWidth)
+     NEXT
+
+     FOR nFor := 1 TO len(::aTitle)
+          nLen      := len(eval(::aTitle[nFor]))
+          nWidth    := ::oReport:oDevice:GetTextWidth(Replicate(::oReport:cCharPattern,nLen),::oTitleFont )
+          ::nWidth  := Max(::nWidth,nWidth)
+     NEXT
+
+     ::nOrder := nOrder
+
+RETURN NIL
+
+
+
+UTILITY STATIC function TROColumn_SayTitle( nRow, nCol, nLine) ; local Self AS CLASS TROColumn := QSelf() AS CLASS TROColumn
+
+     LOCAL cTitle
+
+
+
+     IIF( nRow == nil, nRow := 0, ) ; IIF( nCol == nil, nCol := ::nCol, ); IIF( nLine == nil, nLine := 1, );
+
+     IF nLine > len(::aTitle)
+          RETU NIL
+     ENDIF
+
+     cTitle := eval(::aTitle[nLine])
+
+     ::nCurLine := nLine
+
+     ::oReport:oDevice:Say(nRow, nCol, cTitle, ::oTitleFont, ::nWidth, ::nColor, , ::nPad-1)
+
+RETURN NIL
+
+
+
+
+UTILITY STATIC function TROColumn_SayData( nRow, nCol, nLine) ; local Self AS CLASS TROColumn := QSelf() AS CLASS TROColumn
+
+   LOCAL cText
+   LOCAL cLine
+   LOCAL nFor
+   LOCAL nWidth
+   LOCAL uData
+
+
+
+   IIF( nRow == nil, nRow := 0, ) ; IIF( nCol == nil, nCol := ::nCol, ); IIF( nLine == nil, nLine := 1, );
+
+   IF nLine > len(::aData)
+      Return Nil
+   ENDIF
+
+   ::nCurLine  := nLine
+
+   uData       := Eval( ::aData[ nLine ] )
+
+   if Valtype( uData ) == "C" .AND. File( Rtrim( uData ) )
+      ::oReport:oDevice:SayBitmap( nRow, nCol, Rtrim( uData ), ::nSize, ::nHeight )
+      ::oReport:EndLine( ::nHeight )
+      Return nil
+   end
+
+   cText    := Transform( uData, Eval( ::aPicture[nLine] ) )
+   nWidth   := ::oReport:oDevice:GetTextWidth( cText, ::oDataFont )
+
+   IF Valtype( uData ) == "C" .AND. len( AllTrim( cText ) ) > ::nSize
+
+      nLine := mlCount( cText, ::nSize )
+
+      FOR nFor := 1 TO nLine
+         cLine := AllTrim( MemoLine( cText, ::nSize, nFor ) )
+         ::oReport:StartLine()
+         ::oReport:oDevice:Say( ::oReport:nRow, nCol, cLine, ::oDataFont, ::nWidth, ::nColor, , ::nPad - 1 )
+         ::oReport:EndLine()
+      NEXT
+
+      if !::lNewLine
+         ::oReport:BackLine( 1 )
+      end
+
+
+   ELSE
+
+      ::oReport:oDevice:Say( nRow, nCol, cText, ::oDataFont, ::nWidth, ::nColor, , ::nPad - 1 )
+
+      if ::lNewLine
+         ::oReport:StartLine()
+         ::oReport:EndLine()
+      end
+
+   end
+
+   IF ::lUnderline
+      ::Underline( ::lTextUnd, ::lDobleUnd, nLine , nRow + ::nDataHeight )
+   ENDIF
+
+RETURN NIL
+
+
+
+UTILITY STATIC function TROColumn_SayTotal( nRow, nCol) ; local Self AS CLASS TROColumn := QSelf() AS CLASS TROColumn
+
+     LOCAL cText
+
+
+     IIF( nRow == nil, nRow := 0, ) ; IIF( nCol == nil, nCol := ::nCol, );
+
+     IF !::lTotal
+          RETU NIL
+     ENDIF
+
+     cText := Transform(::nTotal,::cTotalPict)
+
+     ::oReport:oDevice:Say(nRow, nCol, cText, ::oDataFont, ::nWidth, ::nColor, , ::nPad-1)
+
+RETURN NIL
+
+
+
+UTILITY STATIC function TROColumn_TitleHeight( nLine) ; local Self AS CLASS TROColumn := QSelf() AS CLASS TROColumn
+
+     LOCAL cText, cChar
+     LOCAL nFor, nWidth, nLen, nLenData
+
+     IF !empty(::nWidth)
+          RETU NIL
+     ENDIF
+
+     cChar := ::oReport:cCharPattern
+
+     ::nDataHeight  := len(::aData) * ::oReport:oDevice:GetTextHeight(cChar, ::oDataFont)
+     ::nTitleHeight := len(::aTitle) * ::oReport:oDevice:GetTextHeight(cChar, ::oFontTitle)
+
+     nLenData := len(::aData)
+
+     FOR nFor := 1 TO nLenData
+          cText    := Transform(eval(::aData[nLine]),eval(::aPicture[nLine]))
+          nLen     := len(cText)
+          nWidth   := ::oReport:oDevice:GetTextWidth(Replicate(cChar,nLen), ::oDataFont)
+          ::nWidth := Max(::nWidth,nWidth)
+     NEXT
+
+RETURN NIL
+
+
+
+UTILITY STATIC function TROColumn_Underline( lTextUnd, lDobleUnd, nLine, nRow) ; local Self AS CLASS TROColumn := QSelf() AS CLASS TROColumn
+
+     LOCAL nLeft, nRight, nWidth
+
+
+
+
+     IIF( lTextUnd == nil, lTextUnd := ::lTextUnd, ) ; IIF( lDobleUnd == nil, lDobleUnd := ::lDobleUnd, ); IIF( nLine == nil, nLine := 1, ); IIF( nRow == nil, nRow := ::oReport:nRow, );
+
+     DO CASE
+     CASE !lTextUnd .AND. ::lGrid
+          nLeft  := ::nCalCol  + Int(::oReport:nSeparator/2)
+          nRight := nLeft + ::nWidth + Int(::oReport:nSeparator/2)
+     CASE lTextUnd
+
+          nWidth := ::oReport:oDevice:GetTextWidth(alltrim( Transform(eval(::aData[nLine]),eval(::aPicture[nLine]))),::oDataFont)
+          DO CASE
+               CASE ::nPad == 2
+                    nLeft := ::nCalCol+::nWidth-nWidth
+               CASE ::nPad == 3
+                    nLeft := ::nCalCol+Int(::nWidth/2)-Int(nWidth/2)
+               OTHERWISE
+                    nLeft := ::nCalCol
+          ENDCASE
+          nRight := nLeft + nWidth
+     OTHERWISE
+          nLeft  := ::nCalCol
+          nRight := nLeft + ::nWidth
+     ENDCASE
+
+
+     IF lDobleUnd
+          nWidth := ::oReport:aPen[::nPen]:nWidth
+
+
+
+
+          ::oReport:oDevice:Line(nRow-nWidth, nLeft, nRow-nWidth, nRight, ::oReport:aPen[::nPen])
+
+
+
+
+
+          ::oReport:oDevice:Line(nRow+nWidth, nLeft, nRow+nWidth, nRight, ::oReport:aPen[::nPen])
+     ELSE
+
+
+
+
+          ::oReport:oDevice:Line(nRow, nLeft, nRow, nRight, ::oReport:aPen[::nPen])
+     ENDIF
+
+RETURN NIL
+
+
+
+UTILITY STATIC function TROColumn_Separator( nRow, lForced) ; local Self AS CLASS TROColumn := QSelf() AS CLASS TROColumn
+
+   LOCAL nLeft, nRight, nSep
+
+
+   IIF( nRow == nil, nRow := ::oReport:nRow, ) ; IIF( lForced == nil, lForced := .F., );
+
+   IF !::lSeparator .AND. !lForced
+      RETURN NIL
+   ENDIF
+
+   nSep   := iif( ::lGrid, Int(::oReport:nSeparator/2), 0)
+   nLeft  := ::nCalCol  - nSep
+   nRight := nLeft + ::nWidth + (nSep*2)
+
+
+
+
+
+   ::oReport:oDevice:Line(nRow, nLeft, nRow, nRight, ::oReport:aPen[::nPen])
+
+RETURN NIL

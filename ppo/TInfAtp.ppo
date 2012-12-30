@@ -1,0 +1,1045 @@
+#line 112 "hbclass.ch"
+   DYNAMIC DivertConstructorCall
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+DECLARE HBClass  New( cName AS String, OPTIONAL SuperParams ) AS CLASS HBClass  Create() AS Object  Instance() AS Object  AddClsMethod( cName AS String, @MethodName(), nScope AS Numeric, n2 AS Numeric, n3 AS Numeric )  AddDelegate( cName AS String, cDelegate AS String, cObject AS String, nScope AS Numeric, lPersistent AS LOGICAL )  AddMultiClsData( cType AS String, uVal, nScope AS Numeric, aDatas AS Array OF String )  AddMultiData( cType AS String, uVal, nScope AS Numeric, aDatas AS Array OF String, x AS LOGICAL, lPer AS LOGICAL )  AddMethod( cName AS String, @MethodName(), nScope AS Numeric, lPersistent AS LOGICAL )  AddInLine( cName AS String, bBlock AS CodeBlock, nScope AS Numeric, lPersistent AS LOGICAL )  AddVirtual( cName AS String )  ModMethod( cName AS String, @MethodName(), nScope AS Numeric, lPersistent AS LOGICAL )  ModClsMethod( cName AS String, @MethodName(), nScope AS Numeric )  ModInline( cName AS String, bBlock AS CodeBlock, nScope AS Numeric, lPersistent AS LOGICAL )  SetOnError( @MethodName() )
+#line 85 "\Fwh1204\Include\FiveWin.Ch"
+   EXTERNAL GetProcAdd
+   EXTERNAL TActiveX
+
+
+
+
+extern errorsys
+#line 8 ".\Prg\TInfAtp.prg"
+_HB_CLASS TInfAtp ; UTILITY FUNCTION TInfAtp(...); static s_oClass ; local oClassInstance ; local nScope ; nScope := 1 ; if s_oClass == NIL ; s_oClass := IIF(.F.,, HBClass():New( "TInfAtp" , {TInfGen():classh} ) ) ; ;
+
+   _HB_MEMBER {AS OBJECT cArtOrg} ; IIF( !.F., s_oClass:AddMultiData( "OBJECT",, nScope + IIF( .F., 32, 0 ), { "cArtOrg" }, .F., .F. ), )
+   _HB_MEMBER {AS OBJECT cArtDes} ; IIF( !.F., s_oClass:AddMultiData( "OBJECT",, nScope + IIF( .F., 32, 0 ), { "cArtDes" }, .F., .F. ), )
+   _HB_MEMBER {AS OBJECT oDbfArt} ; IIF( !.F., s_oClass:AddMultiData( "OBJECT",, nScope + IIF( .F., 32, 0 ), { "oDbfArt" }, .F., .F. ), )
+   _HB_MEMBER {AS OBJECT oDbfArtKit} ; IIF( !.F., s_oClass:AddMultiData( "OBJECT",, nScope + IIF( .F., 32, 0 ), { "oDbfArtKit" }, .F., .F. ), )
+   _HB_MEMBER {AS OBJECT oDbfCli} ; IIF( !.F., s_oClass:AddMultiData( "OBJECT",, nScope + IIF( .F., 32, 0 ), { "oDbfCli" }, .F., .F. ), )
+   _HB_MEMBER {AS LOGIC lAllArt} ; IIF( !.F., s_oClass:AddMultiData( "LOGIC", .T., nScope + IIF( .F., 32, 0 ), { "lAllArt" }, .F., .F. ), )
+
+   _HB_MEMBER Create(); IIF( .F., s_oClass:ModMethod( "Create", @TInfAtp_Create(), nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ), s_oClass:AddMethod( "Create", @TInfAtp_Create(), nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ));
+
+   _HB_MEMBER lResource( cFld); IIF( .F., s_oClass:ModMethod( "lResource", @TInfAtp_lResource(), nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ), s_oClass:AddMethod( "lResource", @TInfAtp_lResource(), nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ));
+
+   _HB_MEMBER OpenFiles(); IIF( .F., s_oClass:ModMethod( "OpenFiles", @TInfAtp_OpenFiles(), nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ), s_oClass:AddMethod( "OpenFiles", @TInfAtp_OpenFiles(), nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ));
+
+   _HB_MEMBER CloseFiles(); IIF( .F., s_oClass:ModMethod( "CloseFiles", @TInfAtp_CloseFiles(), nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ), s_oClass:AddMethod( "CloseFiles", @TInfAtp_CloseFiles(), nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ));
+
+   _HB_MEMBER lGenerate(); IIF( .F., s_oClass:ModMethod( "lGenerate", @TInfAtp_lGenerate(), nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ), s_oClass:AddMethod( "lGenerate", @TInfAtp_lGenerate(), nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ));
+
+   _HB_MEMBER cArt( aGet, aGet2); IIF( .F., s_oClass:ModMethod( "cArt", @TInfAtp_cArt(), nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ), s_oClass:AddMethod( "cArt", @TInfAtp_cArt(), nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ));
+
+   _HB_MEMBER BrwAtipica( aGet, aGet2); IIF( .F., s_oClass:ModMethod( "BrwAtipica", @TInfAtp_BrwAtipica(), nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ), s_oClass:AddMethod( "BrwAtipica", @TInfAtp_BrwAtipica(), nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ));
+
+; IF .F. ; __clsActive(s_oClass:hClass) ; s_oClass:Refresh() ; ELSE ; s_oClass:Create() ; END ; oClassInstance := __clsInst( s_oClass:hClass ) ; IF __ObjHasMsg( oClassInstance, "InitClass" ); oClassInstance:InitClass( hb_aParams() ) ; END ; ELSE ; oClassInstance := __clsInst( s_oClass:hClass ) ; END ; IF PCount() > 0 ; DIVERT TO (@DivertConstructorCall()) OF s_oClass ; END ; RETURN oClassInstance AS CLASS TInfAtp ;
+
+
+
+UTILITY STATIC function TInfAtp_Create() ; local Self AS CLASS TInfAtp := QSelf() AS CLASS TInfAtp
+
+   ::AddField( "cCodArt",     "C", 18, 0, {|| "@!" },          "Cod. Art.",       .F., "Código del artículo",         12, .F. )
+   ::AddField( "cNomArt",     "C",100, 0, {|| "@!" },          "Nom. Art.",       .T., "Nombre del artículo",         40, .F. )
+   ::AddField( "nCosto",      "N", 16, 6, {|| ::cPicCom },     "Coste" ,          .T., "Precio de costo",             12, .F. )
+   ::AddField( "dFecIni",     "D",  8, 0, {|| "" },            "Inicio" ,         .T., "Fecha inicio",                 8, .F. )
+   ::AddField( "dFecFin",     "D",  8, 0, {|| "" },            "Fin" ,            .T., "Fecha fin",                    8, .F. )
+   ::AddField( "nTarifa1",    "N", 16, 6, {|| ::cPicImp },     "Tarifa 1" ,       .T., "Tarifa cliente 1" ,           12, .F. )
+   ::AddField( "nTarifa2",    "N", 16, 6, {|| ::cPicImp },     "Tarifa 2" ,       .F., "Tarifa cliente 2" ,           12, .F. )
+   ::AddField( "nTarifa3",    "N", 16, 6, {|| ::cPicImp },     "Tarifa 3" ,       .F., "Tarifa cliente 3" ,           12, .F. )
+   ::AddField( "nTarifa4",    "N", 16, 6, {|| ::cPicImp },     "Tarifa 4" ,       .F., "Tarifa cliente 4" ,           12, .F. )
+   ::AddField( "nTarifa5",    "N", 16, 6, {|| ::cPicImp },     "Tarifa 5" ,       .F., "Tarifa cliente 5" ,           12, .F. )
+   ::AddField( "nTarifa6",    "N", 16, 6, {|| ::cPicImp },     "Tarifa 6" ,       .F., "Tarifa cliente 6" ,           12, .F. )
+   ::AddField( "nProXY",      "C", 10, 0, {|| "@!" },          "Pro. X*Y" ,       .T., "Promoción X*Y" ,              10, .F. )
+   ::AddField( "nDtoArt",     "N",  6, 2, {|| "@E 999.99" },   "Dto. art. %" ,    .T., "Descuento artículo" ,         12, .F. )
+   ::AddField( "nDtoLin",     "N", 16, 6, {|| ::cPicImp },     "Dto. lineal" ,    .F., "Descuento lineal" ,           12, .F. )
+   ::AddField( "nDtoProm",    "N",  6, 2, {|| "@E 999.99" },   "Dto. promo. %" ,  .F., "Descuento promoción" ,        12, .F. )
+   ::AddField( "nComAge",     "N",  6, 2, {|| "@E 999.99" },   "Com. agente %" ,  .F., "Comisión de agente" ,         15, .F. )
+   ::AddField( "nDtoGen",     "N",  6, 2, {|| "@E 999.99" },   "Dto. def1 %" ,    .F., "Descuento definido 1" ,       12, .F. )
+   ::AddField( "nDtoPP",      "N",  6, 2, {|| "@E 999.99" },   "Dto. def2 %" ,    .F., "Descuento definido 2" ,       12, .F. )
+   ::AddField( "nDtoDef1",    "N",  6, 2, {|| "@E 999.99" },   "Dto. def3 %" ,    .F., "Descuento definido 3" ,       12, .F. )
+   ::AddField( "nDtoDef2",    "N",  6, 2, {|| "@E 999.99" },   "Dto. def4 %" ,    .F., "Descuento definido 4" ,       12, .F. )
+   ::AddField( "nDtoAtp",     "N",  6, 2, {|| "@E 999.99" },   "Dto. atp. %" ,    .F., "Descuento atipico" ,          12, .F. )
+   ::AddField( "nNeto1",      "N", 16, 6, {|| ::cPicImp },     "Tar. neta 1" ,    .T., "Tarifa neta 1" ,              15, .F. )
+   ::AddField( "nNeto2",      "N", 16, 6, {|| ::cPicImp },     "Tar. neta 2" ,    .F., "Tarifa neta 2" ,              15, .F. )
+   ::AddField( "nNeto3",      "N", 16, 6, {|| ::cPicImp },     "Tar. neta 3" ,    .F., "Tarifa neta 3" ,              15, .F. )
+   ::AddField( "nNeto4",      "N", 16, 6, {|| ::cPicImp },     "Tar. neta 4" ,    .F., "Tarifa neta 4" ,              15, .F. )
+   ::AddField( "nNeto5",      "N", 16, 6, {|| ::cPicImp },     "Tar. neta 5" ,    .F., "Tarifa neta 5" ,              15, .F. )
+   ::AddField( "nNeto6",      "N", 16, 6, {|| ::cPicImp },     "Tar. neta 6" ,    .F., "Tarifa neta 6" ,              15, .F. )
+   ::AddField( "nPntVer",     "N", 16, 6, {|| ::cPicPnt },     "Punto verde" ,    .F., "Punto verde",                 12, .F. )
+   ::AddField( "nNetVer1",    "N", 16, 6, {|| ::cPicImp },     "Neto Ver. 1" ,    .F., "Neto 1 con punto verde" ,     15, .F. )
+   ::AddField( "nNetVer2",    "N", 16, 6, {|| ::cPicImp },     "Neto Ver. 2" ,    .F., "Neto 2 con punto verde" ,     15, .F. )
+   ::AddField( "nNetVer3",    "N", 16, 6, {|| ::cPicImp },     "Neto Ver. 3" ,    .F., "Neto 3 con punto verde" ,     15, .F. )
+   ::AddField( "nNetVer4",    "N", 16, 6, {|| ::cPicImp },     "Neto Ver. 4" ,    .F., "Neto 4 con punto verde" ,     15, .F. )
+   ::AddField( "nNetVer5",    "N", 16, 6, {|| ::cPicImp },     "Neto Ver. 5" ,    .F., "Neto 5 con punto verde" ,     15, .F. )
+   ::AddField( "nNetVer6",    "N", 16, 6, {|| ::cPicImp },     "Neto Ver. 6" ,    .F., "Neto 6 con punto verde" ,     15, .F. )
+   ::AddField( "nMarUnd1",    "N", 16, 6, {|| ::cPicImp },     "Mar. und. 1" ,    .T., "Margen unidad 1" ,            12, .F. )
+   ::AddField( "nMarUnd2",    "N", 16, 6, {|| ::cPicImp },     "Mar. und. 2" ,    .F., "Margen unidad 2" ,            12, .F. )
+   ::AddField( "nMarUnd3",    "N", 16, 6, {|| ::cPicImp },     "Mar. und. 3" ,    .F., "Margen unidad 3" ,            12, .F. )
+   ::AddField( "nMarUnd4",    "N", 16, 6, {|| ::cPicImp },     "Mar. und. 4" ,    .F., "Margen unidad 4" ,            12, .F. )
+   ::AddField( "nMarUnd5",    "N", 16, 6, {|| ::cPicImp },     "Mar. und. 5" ,    .F., "Margen unidad 5" ,            12, .F. )
+   ::AddField( "nMarUnd6",    "N", 16, 6, {|| ::cPicImp },     "Mar. und. 6" ,    .F., "Margen unidad 6" ,            12, .F. )
+   ::AddField( "nMarCaj1",    "N", 16, 6, {|| ::cPicImp },     "Mar. caj. 1" ,    .T., "Margen caja 1" ,              12, .F. )
+   ::AddField( "nMarCaj2",    "N", 16, 6, {|| ::cPicImp },     "Mar. caj. 2" ,    .F., "Margen caja 2" ,              12, .F. )
+   ::AddField( "nMarCaj3",    "N", 16, 6, {|| ::cPicImp },     "Mar. caj. 3" ,    .F., "Margen caja 3" ,              12, .F. )
+   ::AddField( "nMarCaj4",    "N", 16, 6, {|| ::cPicImp },     "Mar. caj. 4" ,    .F., "Margen caja 4" ,              12, .F. )
+   ::AddField( "nMarCaj5",    "N", 16, 6, {|| ::cPicImp },     "Mar. caj. 5" ,    .F., "Margen caja 5" ,              12, .F. )
+   ::AddField( "nMarCaj6",    "N", 16, 6, {|| ::cPicImp },     "Mar. caj. 6" ,    .F., "Margen caja 6" ,              12, .F. )
+   ::AddField( "nRenCos1",    "N", 16, 6, {|| "@E 999.99" },   "Ren. costo 1 %" , .T., "Rentabilidad sobre costo 1" , 15, .F. )
+   ::AddField( "nRenCos2",    "N", 16, 6, {|| "@E 999.99" },   "Ren. costo 2 %" , .F., "Rentabilidad sobre costo 2" , 15, .F. )
+   ::AddField( "nRenCos3",    "N", 16, 6, {|| "@E 999.99" },   "Ren. costo 3 %" , .F., "Rentabilidad sobre costo 3" , 15, .F. )
+   ::AddField( "nRenCos4",    "N", 16, 6, {|| "@E 999.99" },   "Ren. costo 4 %" , .F., "Rentabilidad sobre costo 4" , 15, .F. )
+   ::AddField( "nRenCos5",    "N", 16, 6, {|| "@E 999.99" },   "Ren. costo 5 %" , .F., "Rentabilidad sobre costo 5" , 15, .F. )
+   ::AddField( "nRenCos6",    "N", 16, 6, {|| "@E 999.99" },   "Ren. costo 6 %" , .F., "Rentabilidad sobre costo 6" , 15, .F. )
+   ::AddField( "nRenVta1",    "N", 16, 6, {|| "@E 999.99" },   "Ren. venta 1 %" , .T., "Rentabilidad sobre venta 1" , 15, .F. )
+   ::AddField( "nRenVta2",    "N", 16, 6, {|| "@E 999.99" },   "Ren. venta 2 %" , .F., "Rentabilidad sobre venta 2" , 15, .F. )
+   ::AddField( "nRenVta3",    "N", 16, 6, {|| "@E 999.99" },   "Ren. venta 3 %" , .F., "Rentabilidad sobre venta 3" , 15, .F. )
+   ::AddField( "nRenVta4",    "N", 16, 6, {|| "@E 999.99" },   "Ren. venta 4 %" , .F., "Rentabilidad sobre venta 4" , 15, .F. )
+   ::AddField( "nRenVta5",    "N", 16, 6, {|| "@E 999.99" },   "Ren. venta 5 %" , .F., "Rentabilidad sobre venta 5" , 15, .F. )
+   ::AddField( "nRenVta6",    "N", 16, 6, {|| "@E 999.99" },   "Ren. venta 6 %" , .F., "Rentabilidad sobre venta 6" , 15, .F. )
+
+   ::AddTmpIndex ( "cCodArt", "cCodArt" )
+
+   ::lDefFecInf := .F.
+   ::lDefSerInf := .F.
+
+RETURN ( Self )
+
+
+
+UTILITY STATIC function TInfAtp_OpenFiles() ; local Self AS CLASS TInfAtp := QSelf() AS CLASS TInfAtp
+
+   local lOpen    := .T.
+   local oBlock   := ErrorBlock( {| oError | ApoloBreak( oError ) } )
+
+   BEGIN SEQUENCE
+
+   ::oDbfArt := DbfServer( "ARTICULO.DBF", ):NewOpen( "ARTICULO.DBF",, ( cDriver() ),, ( cPatArt() ), .F., .T., .F., .F. ) ; ::oDbfArt:AddBag( "ARTICULO.CDX" ) ; ::oDbfArt:AddBag( ) ; ::oDbfArt:AutoIndex()
+
+   ::oDbfArtKit := DbfServer( "ARTKIT.DBF", ):NewOpen( "ARTKIT.DBF",, ( cDriver() ),, ( cPatArt() ), .F., .T., .F., .F. ) ; ::oDbfArtKit:AddBag( "ARTKIT.CDX" ) ; ::oDbfArtKit:AddBag( ) ; ::oDbfArtKit:AutoIndex()
+
+   ::oDbfCli := DbfServer( "CLIENT.DBF", ):NewOpen( "CLIENT.DBF",, ( cDriver() ),, ( cPatCli() ), .F., .T., .F., .F. ) ; ::oDbfCli:AddBag( "CLIENT.CDX" ) ; ::oDbfCli:AddBag( ) ; ::oDbfCli:AutoIndex()
+
+   RECOVER
+
+      msgStop( "Imposible abrir todas las bases de datos" )
+      ::CloseFiles()
+      lOpen          := .F.
+
+   end
+
+   ErrorBlock( oBlock )
+
+RETURN ( lOpen )
+
+
+
+UTILITY STATIC function TInfAtp_CloseFiles() ; local Self AS CLASS TInfAtp := QSelf() AS CLASS TInfAtp
+
+   if !Empty( ::oDbfArt ) .AND. ::oDbfArt:Used()
+      ::oDbfArt:End()
+   end
+   if !Empty( ::oDbfArtKit ) .AND. ::oDbfArtKit:Used()
+      ::oDbfArtKit:End()
+   end
+   if !Empty( ::oDbfCli ) .AND. ::oDbfCli:Used()
+      ::oDbfCli:End()
+   end
+
+   ::oDbfArt      := nil
+   ::oDbfArtKit   := nil
+   ::oDbfCli      := nil
+
+RETURN ( Self )
+
+
+
+UTILITY STATIC function TInfAtp_lResource( cFld) ; local Self AS CLASS TInfAtp := QSelf() AS CLASS TInfAtp
+
+   local oArtOrg
+   local oArtDes
+   local cSayArtOrg
+   local oSayArtOrg
+   local cSayArtDes
+   local oSayArtDes
+   local dbfTmpAtp   := ::xOthers[1]
+
+   if !::StdResource( "INF_ATIPICA" )
+      return .F.
+   end
+
+   ::oBtnFilter:Disable()
+
+
+
+   ::cArtOrg   := dbFirst( dbfTmpAtp, 2 )
+   ::cArtDes   := dbLast(  dbfTmpAtp, 2 )
+   cSayArtOrg  := oRetFld( ::cArtOrg, ::oDbfArt )
+   cSayArtDes  := oRetFld( ::cArtDes, ::oDbfArt )
+
+
+
+   TCheckBox():ReDefine( 240, { | u | If( PCount()==0, ::lAllArt, ::lAllArt:= u ) }, ::oFld:aDialogs[1],,,,,,, .F.,, .F. )
+
+
+
+
+
+
+   oArtOrg := TGetHlp():ReDefine( ( 200 ), { | u | If( PCount()==0, ::cArtOrg, ::cArtOrg:= u ) }, ::oFld:aDialogs[1],,, {||    ( ::cArt( oArtOrg, oSayArtOrg ) )},,,,,, .F., {||     ( !::lAllArt )},, .F., .F.,,,,,, nil, "LUPA",, )
+
+      oArtOrg:bHelp  :={|| ::BrwAtipica( oArtOrg, oSayArtOrg ) }
+
+
+
+
+   oSayArtOrg := TGetHlp():ReDefine( ( 210 ), { | u | If( PCount()==0, cSayArtOrg, cSayArtOrg:= u ) }, ::oFld:aDialogs[1],,,,,,,,, .F., {||         .F.},, .F., .F.,,,,,, nil,,, )
+
+
+
+
+
+
+   oArtDes := TGetHlp():ReDefine( ( 220 ), { | u | If( PCount()==0, ::cArtDes, ::cArtDes:= u ) }, ::oFld:aDialogs[1],,, {||    ( ::cArt( oArtDes, oSayArtDes ) )},,,,,, .F., {||     ( !::lAllArt )},, .F., .F.,,,,,, nil, "LUPA",, )
+
+      oArtDes:bHelp  :={|| ::BrwAtipica( oArtDes, oSayArtDes ) }
+
+
+
+
+   oSayArtDes := TGetHlp():ReDefine( ( 230 ), { | u | If( PCount()==0, cSayArtDes, cSayArtDes:= u ) }, ::oFld:aDialogs[1],,,,,,,,, .F., {||         .F.},, .F., .F.,,,,,, nil,,, )
+
+
+
+   ::oMtrInf:SetTotal( ( dbfTmpAtp )->( Lastrec() ) )
+
+RETURN .T.
+
+
+
+
+
+
+UTILITY STATIC function TInfAtp_lGenerate() ; local Self AS CLASS TInfAtp := QSelf() AS CLASS TInfAtp
+
+   local dbfTmpAtp   := ::xOthers[1]
+   local aGetCli     := ::xOthers[2]
+   local aTmpCli     := ::xOthers[3]
+   local nUniCaja    := 0
+   local nDtoAtipico := 0
+   local nSbrAtp     := aGetCli[ ::oDbfCli:fieldpos( "nSbrAtp" ) ]:nAt
+
+   ::oDlg:Disable()
+   ::oDbf:Zap()
+
+
+
+   ::aHeader         := {}
+
+   aAdd( ::aHeader, {|| "Cliente           : " + AllTrim( aTmpCli[ ::oDbfCli:fieldpos( "Cod" ) ] ) + " - " + AllTrim( aTmpCli[ ::oDbfCli:fieldpos( "Titulo" ) ] ) } )
+   aAdd( ::aHeader, {|| "Fecha             : " + Dtoc( Date() ) } )
+   aAdd( ::aHeader, {|| "Artículos         : " + if( ::lAllArt, "Todos", AllTrim( ::cArtOrg ) + " > " + AllTrim( ::cArtDes ) ) } )
+
+   if aTmpCli[ ::oDbfCli:fieldpos( "nDtoEsp" ) ] <> 0
+      aAdd( ::aHeader, {|| Left( aTmpCli[ ::oDbfCli:fieldpos( "cDtoEsp" ) ], 17 ) + " : " + AllTrim( Str( aTmpCli[ ::oDbfCli:fieldpos( "nDtoEsp" ) ] ) ) + " %" } )
+   end
+
+   if aTmpCli[ ::oDbfCli:fieldpos( "nDpp"    ) ] <> 0
+      aAdd( ::aHeader, {|| Left( aTmpCli[ ::oDbfCli:fieldpos( "cDpp" )    ], 17 ) + " : " + AllTrim( Str( aTmpCli[ ::oDbfCli:fieldpos( "nDpp"    ) ] ) ) + " %" } )
+   end
+
+   if aTmpCli[ ::oDbfCli:fieldpos( "nDtoCnt" ) ] <> 0
+      aAdd( ::aHeader, {|| Left( aTmpCli[ ::oDbfCli:fieldpos( "cDtoUno" ) ], 17 ) + " : " + AllTrim( Str( aTmpCli[ ::oDbfCli:fieldpos( "nDtoCnt" ) ] ) ) + " %" } )
+   end
+
+   if aTmpCli[ ::oDbfCli:fieldpos( "nDtoRap" ) ] <> 0
+      aAdd( ::aHeader, {|| Left( aTmpCli[ ::oDbfCli:fieldpos( "cDtoDos" ) ], 17 ) + " : " + AllTrim( Str( aTmpCli[ ::oDbfCli:fieldpos( "nDtoRap" ) ] ) ) + " %" } )
+   end
+
+   if aTmpCli[ ::oDbfCli:fieldpos( "nDtoAtp" ) ] <> 0
+      aAdd( ::aHeader, {|| Left( aTmpCli[ ::oDbfCli:fieldpos( "cDtoAtp" ) ], 17 ) + " : " + AllTrim( Str( aTmpCli[ ::oDbfCli:fieldpos( "nDtoAtp" ) ] ) ) + " %" } )
+   end
+
+   ( dbfTmpAtp )->( dbGoTop() )
+
+   while !( dbfTmpAtp )->( Eof() )
+
+      if ( ::lAllArt .OR. ( ( dbfTmpAtp )->cCodArt >= ::cArtOrg .AND. ( dbfTmpAtp )->cCodArt <= ::cArtDes ) )
+
+         if ::oDbfArt:Seek( ( dbfTmpAtp )->cCodArt )
+
+         ::oDbf:Append()
+
+
+
+         ::oDbf:cCodArt     := ::oDbfArt:Codigo
+         ::oDbf:cNomArt     := ::oDbfArt:Nombre
+
+         ::oDbf:dFecIni     := ( dbfTmpAtp )->dFecIni
+         ::oDbf:dFecFin     := ( dbfTmpAtp )->dFecFin
+
+
+
+
+
+         if ::cDivInf == cDivChg()
+
+            if ( dbfTmpAtp )->lPrcCom
+               ::oDbf:nCosto   := nCnv2Div( ( dbfTmpAtp )->nPrcCom, cDivEmp(), cDivChg(), ::oDbfDiv:cAlias )
+            else
+               ::oDbf:nCosto   := nCnv2Div( nCosto( nil, ::oDbfArt:cAlias, ::oDbfArtKit:cAlias ), cDivEmp(), cDivChg(), ::oDbfDiv:cAlias )
+            end
+
+            ::oDbf:nTarifa1    := nCnv2Div( ( dbfTmpAtp )->nPrcArt, cDivEmp(), cDivChg(), ::oDbfDiv:cAlias )
+            ::oDbf:nTarifa2    := nCnv2Div( ( dbfTmpAtp )->nPrcArt2, cDivEmp(), cDivChg(), ::oDbfDiv:cAlias )
+            ::oDbf:nTarifa3    := nCnv2Div( ( dbfTmpAtp )->nPrcArt3, cDivEmp(), cDivChg(), ::oDbfDiv:cAlias )
+            ::oDbf:nTarifa4    := nCnv2Div( ( dbfTmpAtp )->nPrcArt4, cDivEmp(), cDivChg(), ::oDbfDiv:cAlias )
+            ::oDbf:nTarifa5    := nCnv2Div( ( dbfTmpAtp )->nPrcArt5, cDivEmp(), cDivChg(), ::oDbfDiv:cAlias )
+            ::oDbf:nTarifa6    := nCnv2Div( ( dbfTmpAtp )->nPrcArt6, cDivEmp(), cDivChg(), ::oDbfDiv:cAlias )
+
+            ::oDbf:nDtoLin     := nCnv2Div( ( dbfTmpAtp )->nDtoDiv, cDivEmp(), cDivChg(), ::oDbfDiv:cAlias )
+
+         end
+
+         if ::cDivInf == cDivEmp()
+
+            if ( dbfTmpAtp )->lPrcCom
+               ::oDbf:nCosto   := ( dbfTmpAtp )->nPrcCom
+            else
+               ::oDbf:nCosto   := nCosto( nil, ::oDbfArt:cAlias, ::oDbfArtKit:cAlias )
+            end
+
+            ::oDbf:nTarifa1    := ( dbfTmpAtp )->nPrcArt
+            ::oDbf:nTarifa2    := ( dbfTmpAtp )->nPrcArt2
+            ::oDbf:nTarifa3    := ( dbfTmpAtp )->nPrcArt3
+            ::oDbf:nTarifa4    := ( dbfTmpAtp )->nPrcArt4
+            ::oDbf:nTarifa5    := ( dbfTmpAtp )->nPrcArt5
+            ::oDbf:nTarifa6    := ( dbfTmpAtp )->nPrcArt6
+
+            ::oDbf:nDtoLin     := ( dbfTmpAtp )->nDtoDiv
+
+         end
+
+
+
+
+         do case
+            case ( dbfTmpAtp )->nUncOfe == 0 .OR. ( dbfTmpAtp )->nUnvOfe == 0
+               ::oDbf:nProXY   := ""
+            case ( dbfTmpAtp )->nUncOfe == 1 .OR. ( dbfTmpAtp )->nUnvOfe == 1
+               ::oDbf:nProXY   := "1 + 0"
+            case ( dbfTmpAtp )->nUncOfe <> 1 .OR. ( dbfTmpAtp )->nUnvOfe <> 1
+               ::oDbf:nProXY   := AllTrim( Str( ( dbfTmpAtp )->nUncOfe ) ) +  " + " + AllTrim( Str( ( dbfTmpAtp )->nUnvOfe - ( dbfTmpAtp )->nUncOfe ) )
+         end
+
+         ::oDbf:nDtoArt        := ( dbfTmpAtp )->nDtoArt
+         ::oDbf:nDtoProm       := ( dbfTmpAtp )->nDprArt
+         ::oDbf:nComAge        := ( dbfTmpAtp )->nComAge
+         ::oDbf:nDtoGen        := aTmpCli[ ::oDbfCli:fieldpos( "nDtoEsp" ) ]
+         ::oDbf:nDtoPP         := aTmpCli[ ::oDbfCli:fieldpos( "nDpp"    ) ]
+         ::oDbf:nDtoDef1       := aTmpCli[ ::oDbfCli:fieldpos( "nDtoCnt" ) ]
+         ::oDbf:nDtoDef2       := aTmpCli[ ::oDbfCli:fieldpos( "nDtoRap" ) ]
+         ::oDbf:nDtoAtp        := aTmpCli[ ::oDbfCli:fieldpos( "nDtoAtp" ) ]
+
+
+
+
+
+         ::oDbf:nNeto1         :=  ( dbfTmpAtp )->nPrcArt
+
+         if ( dbfTmpAtp )->nUncOfe <> 0 .AND. ( dbfTmpAtp )->nUnvOfe <> 0
+            if ( dbfTmpAtp )->nUncOfe <> 1 .OR. ( dbfTmpAtp )->nUnvOfe <> 1
+               ::oDbf:nNeto1   := ( ( ::oDbf:nNeto1 * ( dbfTmpAtp )->nUncOfe ) / ( dbfTmpAtp )->nUnvOfe )
+            end
+         end
+
+         if ( dbfTmpAtp )->nDtoArt  <> 0
+            ::oDbf:nNeto1      -= ( ( ::oDbf:nNeto1 * ( dbfTmpAtp )->nDtoArt ) / 100 )
+         end
+
+         if ( dbfTmpAtp )->nDtoDiv <> 0
+            ::oDbf:nNeto1      -= ( dbfTmpAtp )->nDtoDiv
+         end
+
+         if ( dbfTmpAtp )->nDprArt <> 0
+            ::oDbf:nNeto1      -= ( ( ::oDbf:nNeto1 * ( dbfTmpAtp )->nDprArt ) / 100 )
+         end
+
+         if ( dbfTmpAtp )->lComAge .AND. ( dbfTmpAtp )->nComAge <> 0
+            ::oDbf:nNeto1      -= ( ( ::oDbf:nNeto1 * ( dbfTmpAtp )->nComAge ) / 100 )
+         end
+
+
+
+         if nSbrAtp == 1 .AND. aTmpCli[ ::oDbfCli:fieldpos( "nDtoAtp" ) ] <> 0
+            nDtoAtipico        := ( ( ::oDbf:nNeto1 * aTmpCli[ ::oDbfCli:fieldpos( "nDtoAtp" ) ] ) / 100 )
+         end
+
+         if aTmpCli[ ::oDbfCli:fieldpos( "nDtoEsp" ) ] <> 0
+            ::oDbf:nNeto1      -= ( ( ::oDbf:nNeto1 * aTmpCli[ ::oDbfCli:fieldpos( "nDtoEsp" ) ] ) / 100 )
+         end
+
+
+
+         if nSbrAtp == 2 .AND. aTmpCli[ ::oDbfCli:fieldpos( "nDtoAtp" ) ] <> 0
+            nDtoAtipico        := ( ( ::oDbf:nNeto1 * aTmpCli[ ::oDbfCli:fieldpos( "nDtoAtp" ) ] ) / 100 )
+         end
+
+         if aTmpCli[ ::oDbfCli:fieldpos( "nDpp" ) ] <> 0
+            ::oDbf:nNeto1      -= ( ( ::oDbf:nNeto1 * aTmpCli[ ::oDbfCli:fieldpos( "nDpp" ) ] ) / 100 )
+         end
+
+
+
+         if nSbrAtp == 3 .AND. aTmpCli[ ::oDbfCli:fieldpos( "nDtoAtp" ) ] <> 0
+            nDtoAtipico        := ( ( ::oDbf:nNeto1 * aTmpCli[ ::oDbfCli:fieldpos( "nDtoAtp" ) ] ) / 100 )
+         end
+
+         if aTmpCli[ ::oDbfCli:fieldpos( "nDtoCnt" ) ] <> 0
+            ::oDbf:nNeto1      -= ( ( ::oDbf:nNeto1 * aTmpCli[ ::oDbfCli:fieldpos( "nDtoCnt" ) ] ) / 100 )
+         end
+
+
+
+         if nSbrAtp == 4 .AND. aTmpCli[ ::oDbfCli:fieldpos( "nDtoAtp" ) ] <> 0
+            nDtoAtipico        := ( ( ::oDbf:nNeto1 * aTmpCli[ ::oDbfCli:fieldpos( "nDtoAtp" ) ] ) / 100 )
+         end
+
+         if aTmpCli[ ::oDbfCli:fieldpos( "nDtoRap" ) ] <> 0
+            ::oDbf:nNeto1      -= ( ( ::oDbf:nNeto1 * aTmpCli[ ::oDbfCli:fieldpos( "nDtoRap" ) ] ) / 100 )
+         end
+
+
+
+         if nSbrAtp == 5 .AND. aTmpCli[ ::oDbfCli:fieldpos( "nDtoAtp" ) ] <> 0
+            nDtoAtipico        := ( ( ::oDbf:nNeto1 * aTmpCli[ ::oDbfCli:fieldpos( "nDtoAtp" ) ] ) / 100 )
+         end
+
+         ::oDbf:nNeto1          -= nDtoAtipico
+
+         if ::cDivInf == cDivChg()
+            ::oDbf:nNeto1      := nCnv2Div( ::oDbf:nNeto1, cDivEmp(), cDivChg(), ::oDbfDiv:cAlias )
+         end
+
+
+
+         ::oDbf:nNeto2         :=  ( dbfTmpAtp )->nPrcArt2
+
+         if ( dbfTmpAtp )->nUncOfe <> 0 .AND. ( dbfTmpAtp )->nUnvOfe <> 0
+            if ( dbfTmpAtp )->nUncOfe <> 1 .OR. ( dbfTmpAtp )->nUnvOfe <> 1
+               ::oDbf:nNeto2   := ( ( ::oDbf:nNeto2 * ( dbfTmpAtp )->nUncOfe ) / ( dbfTmpAtp )->nUnvOfe )
+            end
+         end
+
+         if ( dbfTmpAtp )->nDtoArt  <> 0
+            ::oDbf:nNeto2      -= ( ( ::oDbf:nNeto2 * ( dbfTmpAtp )->nDtoArt ) / 100 )
+         end
+
+         if ( dbfTmpAtp )->nDtoDiv <> 0
+            ::oDbf:nNeto2      -= ( dbfTmpAtp )->nDtoDiv
+         end
+
+         if ( dbfTmpAtp )->nDprArt <> 0
+            ::oDbf:nNeto2      -= ( ( ::oDbf:nNeto2 * ( dbfTmpAtp )->nDprArt ) / 100 )
+         end
+
+         if ( dbfTmpAtp )->lComAge .AND. ( dbfTmpAtp )->nComAge <> 0
+            ::oDbf:nNeto2      -= ( ( ::oDbf:nNeto2 * ( dbfTmpAtp )->nComAge ) / 100 )
+         end
+
+
+
+         if nSbrAtp == 1 .AND. aTmpCli[ ::oDbfCli:fieldpos( "nDtoAtp" ) ] <> 0
+            nDtoAtipico        := ( ( ::oDbf:nNeto2 * aTmpCli[ ::oDbfCli:fieldpos( "nDtoAtp" ) ] ) / 100 )
+         end
+
+         if aTmpCli[ ::oDbfCli:fieldpos( "nDtoEsp" ) ] <> 0
+            ::oDbf:nNeto2      -= ( ( ::oDbf:nNeto2 * aTmpCli[ ::oDbfCli:fieldpos( "nDtoEsp" ) ] ) / 100 )
+         end
+
+
+
+         if nSbrAtp == 2 .AND. aTmpCli[ ::oDbfCli:fieldpos( "nDtoAtp" ) ] <> 0
+            nDtoAtipico        := ( ( ::oDbf:nNeto2 * aTmpCli[ ::oDbfCli:fieldpos( "nDtoAtp" ) ] ) / 100 )
+         end
+
+         if aTmpCli[ ::oDbfCli:fieldpos( "nDpp" ) ] <> 0
+            ::oDbf:nNeto2      -= ( ( ::oDbf:nNeto2 * aTmpCli[ ::oDbfCli:fieldpos( "nDpp" ) ] ) / 100 )
+         end
+
+
+
+         if nSbrAtp == 3 .AND. aTmpCli[ ::oDbfCli:fieldpos( "nDtoAtp" ) ] <> 0
+            nDtoAtipico        := ( ( ::oDbf:nNeto2 * aTmpCli[ ::oDbfCli:fieldpos( "nDtoAtp" ) ] ) / 100 )
+         end
+
+         if aTmpCli[ ::oDbfCli:fieldpos( "nDtoCnt" ) ] <> 0
+            ::oDbf:nNeto2      -= ( ( ::oDbf:nNeto2 * aTmpCli[ ::oDbfCli:fieldpos( "nDtoCnt" ) ] ) / 100 )
+         end
+
+
+
+         if nSbrAtp == 4 .AND. aTmpCli[ ::oDbfCli:fieldpos( "nDtoAtp" ) ] <> 0
+            nDtoAtipico        := ( ( ::oDbf:nNeto2 * aTmpCli[ ::oDbfCli:fieldpos( "nDtoAtp" ) ] ) / 100 )
+         end
+
+         if aTmpCli[ ::oDbfCli:fieldpos( "nDtoRap" ) ] <> 0
+            ::oDbf:nNeto2      -= ( ( ::oDbf:nNeto2 * aTmpCli[ ::oDbfCli:fieldpos( "nDtoRap" ) ] ) / 100 )
+         end
+
+
+
+         if nSbrAtp == 5 .AND. aTmpCli[ ::oDbfCli:fieldpos( "nDtoAtp" ) ] <> 0
+            nDtoAtipico        := ( ( ::oDbf:nNeto2 * aTmpCli[ ::oDbfCli:fieldpos( "nDtoAtp" ) ] ) / 100 )
+         end
+
+         ::oDbf:nNeto2         -= nDtoAtipico
+
+         if ::cDivInf == cDivChg()
+            ::oDbf:nNeto2      := nCnv2Div( ::oDbf:nNeto2, cDivEmp(), cDivChg(), ::oDbfDiv:cAlias )
+         end
+
+
+
+         ::oDbf:nNeto3         :=  ( dbfTmpAtp )->nPrcArt3
+
+         if ( dbfTmpAtp )->nUncOfe <> 0 .AND. ( dbfTmpAtp )->nUnvOfe <> 0
+            if ( dbfTmpAtp )->nUncOfe <> 1 .OR. ( dbfTmpAtp )->nUnvOfe <> 1
+               ::oDbf:nNeto3   := ( ( ::oDbf:nNeto3 * ( dbfTmpAtp )->nUncOfe ) / ( dbfTmpAtp )->nUnvOfe )
+            end
+         end
+
+         if ( dbfTmpAtp )->nDtoArt  <> 0
+            ::oDbf:nNeto3      -= ( ( ::oDbf:nNeto3 * ( dbfTmpAtp )->nDtoArt ) / 100 )
+         end
+
+         if ( dbfTmpAtp )->nDtoDiv <> 0
+            ::oDbf:nNeto3      -= ( dbfTmpAtp )->nDtoDiv
+         end
+
+         if ( dbfTmpAtp )->nDprArt <> 0
+            ::oDbf:nNeto3      -= ( ( ::oDbf:nNeto3 * ( dbfTmpAtp )->nDprArt ) / 100 )
+         end
+
+         if ( dbfTmpAtp )->lComAge .AND. ( dbfTmpAtp )->nComAge <> 0
+            ::oDbf:nNeto3      -= ( ( ::oDbf:nNeto3 * ( dbfTmpAtp )->nComAge ) / 100 )
+         end
+
+
+
+         if nSbrAtp == 1 .AND. aTmpCli[ ::oDbfCli:fieldpos( "nDtoAtp" ) ] <> 0
+            nDtoAtipico        := ( ( ::oDbf:nNeto3 * aTmpCli[ ::oDbfCli:fieldpos( "nDtoAtp" ) ] ) / 100 )
+         end
+
+         if aTmpCli[ ::oDbfCli:fieldpos( "nDtoEsp" ) ] <> 0
+            ::oDbf:nNeto3      -= ( ( ::oDbf:nNeto3 * aTmpCli[ ::oDbfCli:fieldpos( "nDtoEsp" ) ] ) / 100 )
+         end
+
+
+
+         if nSbrAtp == 2 .AND. aTmpCli[ ::oDbfCli:fieldpos( "nDtoAtp" ) ] <> 0
+            nDtoAtipico        := ( ( ::oDbf:nNeto3 * aTmpCli[ ::oDbfCli:fieldpos( "nDtoAtp" ) ] ) / 100 )
+         end
+
+         if aTmpCli[ ::oDbfCli:fieldpos( "nDpp" ) ] <> 0
+            ::oDbf:nNeto3      -= ( ( ::oDbf:nNeto3 * aTmpCli[ ::oDbfCli:fieldpos( "nDpp" ) ] ) / 100 )
+         end
+
+
+
+         if nSbrAtp == 3 .AND. aTmpCli[ ::oDbfCli:fieldpos( "nDtoAtp" ) ] <> 0
+            nDtoAtipico        := ( ( ::oDbf:nNeto3 * aTmpCli[ ::oDbfCli:fieldpos( "nDtoAtp" ) ] ) / 100 )
+         end
+
+         if aTmpCli[ ::oDbfCli:fieldpos( "nDtoCnt" ) ] <> 0
+            ::oDbf:nNeto3      -= ( ( ::oDbf:nNeto3 * aTmpCli[ ::oDbfCli:fieldpos( "nDtoCnt" ) ] ) / 100 )
+         end
+
+
+
+         if nSbrAtp == 4 .AND. aTmpCli[ ::oDbfCli:fieldpos( "nDtoAtp" ) ] <> 0
+            nDtoAtipico        := ( ( ::oDbf:nNeto3 * aTmpCli[ ::oDbfCli:fieldpos( "nDtoAtp" ) ] ) / 100 )
+         end
+
+         if aTmpCli[ ::oDbfCli:fieldpos( "nDtoRap" ) ] <> 0
+            ::oDbf:nNeto3      -= ( ( ::oDbf:nNeto3 * aTmpCli[ ::oDbfCli:fieldpos( "nDtoRap" ) ] ) / 100 )
+         end
+
+
+
+         if nSbrAtp == 5 .AND. aTmpCli[ ::oDbfCli:fieldpos( "nDtoAtp" ) ] <> 0
+            nDtoAtipico        := ( ( ::oDbf:nNeto3 * aTmpCli[ ::oDbfCli:fieldpos( "nDtoAtp" ) ] ) / 100 )
+         end
+
+         ::oDbf:nNeto3         -= nDtoAtipico
+
+         if ::cDivInf == cDivChg()
+            ::oDbf:nNeto3      := nCnv2Div( ::oDbf:nNeto3, cDivEmp(), cDivChg(), ::oDbfDiv:cAlias )
+         end
+
+
+
+         ::oDbf:nNeto4         :=  ( dbfTmpAtp )->nPrcArt4
+
+         if ( dbfTmpAtp )->nUncOfe <> 0 .AND. ( dbfTmpAtp )->nUnvOfe <> 0
+            if ( dbfTmpAtp )->nUncOfe <> 1 .OR. ( dbfTmpAtp )->nUnvOfe <> 1
+               ::oDbf:nNeto4   := ( ( ::oDbf:nNeto4 * ( dbfTmpAtp )->nUncOfe ) / ( dbfTmpAtp )->nUnvOfe )
+            end
+         end
+
+         if ( dbfTmpAtp )->nDtoArt  <> 0
+            ::oDbf:nNeto4      -= ( ( ::oDbf:nNeto4 * ( dbfTmpAtp )->nDtoArt ) / 100 )
+         end
+
+         if ( dbfTmpAtp )->nDtoDiv <> 0
+            ::oDbf:nNeto4      -= ( dbfTmpAtp )->nDtoDiv
+         end
+
+         if ( dbfTmpAtp )->nDprArt <> 0
+            ::oDbf:nNeto4      -= ( ( ::oDbf:nNeto4 * ( dbfTmpAtp )->nDprArt ) / 100 )
+         end
+
+         if ( dbfTmpAtp )->lComAge .AND. ( dbfTmpAtp )->nComAge <> 0
+            ::oDbf:nNeto4     -= ( ( ::oDbf:nNeto4 * ( dbfTmpAtp )->nComAge ) / 100 )
+         end
+
+
+
+         if nSbrAtp == 1 .AND. aTmpCli[ ::oDbfCli:fieldpos( "nDtoAtp" ) ] <> 0
+            nDtoAtipico        := ( ( ::oDbf:nNeto4 * aTmpCli[ ::oDbfCli:fieldpos( "nDtoAtp" ) ] ) / 100 )
+         end
+
+         if aTmpCli[ ::oDbfCli:fieldpos( "nDtoEsp" ) ] <> 0
+            ::oDbf:nNeto4      -= ( ( ::oDbf:nNeto4 * aTmpCli[ ::oDbfCli:fieldpos( "nDtoEsp" ) ] ) / 100 )
+         end
+
+
+
+         if nSbrAtp == 2 .AND. aTmpCli[ ::oDbfCli:fieldpos( "nDtoAtp" ) ] <> 0
+            nDtoAtipico        := ( ( ::oDbf:nNeto4 * aTmpCli[ ::oDbfCli:fieldpos( "nDtoAtp" ) ] ) / 100 )
+         end
+
+         if aTmpCli[ ::oDbfCli:fieldpos( "nDpp" ) ] <> 0
+            ::oDbf:nNeto4      -= ( ( ::oDbf:nNeto4 * aTmpCli[ ::oDbfCli:fieldpos( "nDpp" ) ] ) / 100 )
+         end
+
+
+
+         if nSbrAtp == 3 .AND. aTmpCli[ ::oDbfCli:fieldpos( "nDtoAtp" ) ] <> 0
+            nDtoAtipico        := ( ( ::oDbf:nNeto4 * aTmpCli[ ::oDbfCli:fieldpos( "nDtoAtp" ) ] ) / 100 )
+         end
+
+         if aTmpCli[ ::oDbfCli:fieldpos( "nDtoCnt" ) ] <> 0
+            ::oDbf:nNeto4      -= ( ( ::oDbf:nNeto4 * aTmpCli[ ::oDbfCli:fieldpos( "nDtoCnt" ) ] ) / 100 )
+         end
+
+
+
+         if nSbrAtp == 4 .AND. aTmpCli[ ::oDbfCli:fieldpos( "nDtoAtp" ) ] <> 0
+            nDtoAtipico        := ( ( ::oDbf:nNeto4 * aTmpCli[ ::oDbfCli:fieldpos( "nDtoAtp" ) ] ) / 100 )
+         end
+
+         if aTmpCli[ ::oDbfCli:fieldpos( "nDtoRap" ) ] <> 0
+            ::oDbf:nNeto4      -= ( ( ::oDbf:nNeto4 * aTmpCli[ ::oDbfCli:fieldpos( "nDtoRap" ) ] ) / 100 )
+         end
+
+
+
+         if nSbrAtp == 5 .AND. aTmpCli[ ::oDbfCli:fieldpos( "nDtoAtp" ) ] <> 0
+            nDtoAtipico        := ( ( ::oDbf:nNeto4 * aTmpCli[ ::oDbfCli:fieldpos( "nDtoAtp" ) ] ) / 100 )
+         end
+
+         ::oDbf:nNeto4         -= nDtoAtipico
+
+         if ::cDivInf == cDivChg()
+            ::oDbf:nNeto4      := nCnv2Div( ::oDbf:nNeto4, cDivEmp(), cDivChg(), ::oDbfDiv:cAlias )
+         end
+
+
+
+         ::oDbf:nNeto5         :=  ( dbfTmpAtp )->nPrcArt5
+
+         if ( dbfTmpAtp )->nUncOfe <> 0 .AND. ( dbfTmpAtp )->nUnvOfe <> 0
+            if ( dbfTmpAtp )->nUncOfe <> 1 .OR. ( dbfTmpAtp )->nUnvOfe <> 1
+               ::oDbf:nNeto5   := ( ( ::oDbf:nNeto5 * ( dbfTmpAtp )->nUncOfe ) / ( dbfTmpAtp )->nUnvOfe )
+            end
+         end
+
+         if ( dbfTmpAtp )->nDtoArt  <> 0
+            ::oDbf:nNeto5      -= ( ( ::oDbf:nNeto5 * ( dbfTmpAtp )->nDtoArt ) / 100 )
+         end
+
+         if ( dbfTmpAtp )->nDtoDiv <> 0
+            ::oDbf:nNeto5      -= ( dbfTmpAtp )->nDtoDiv
+         end
+
+         if ( dbfTmpAtp )->nDprArt <> 0
+            ::oDbf:nNeto5      -= ( ( ::oDbf:nNeto5 * ( dbfTmpAtp )->nDprArt ) / 100 )
+         end
+
+         if ( dbfTmpAtp )->lComAge .AND. ( dbfTmpAtp )->nComAge <> 0
+            ::oDbf:nNeto5      -= ( ( ::oDbf:nNeto5 * ( dbfTmpAtp )->nComAge ) / 100 )
+         end
+
+
+
+         if nSbrAtp == 1 .AND. aTmpCli[ ::oDbfCli:fieldpos( "nDtoAtp" ) ] <> 0
+            nDtoAtipico        := ( ( ::oDbf:nNeto5 * aTmpCli[ ::oDbfCli:fieldpos( "nDtoAtp" ) ] ) / 100 )
+         end
+
+         if aTmpCli[ ::oDbfCli:fieldpos( "nDtoEsp" ) ] <> 0
+            ::oDbf:nNeto5      -= ( ( ::oDbf:nNeto5 * aTmpCli[ ::oDbfCli:fieldpos( "nDtoEsp" ) ] ) / 100 )
+         end
+
+
+
+         if nSbrAtp == 2 .AND. aTmpCli[ ::oDbfCli:fieldpos( "nDtoAtp" ) ] <> 0
+            nDtoAtipico        := ( ( ::oDbf:nNeto5 * aTmpCli[ ::oDbfCli:fieldpos( "nDtoAtp" ) ] ) / 100 )
+         end
+
+         if aTmpCli[ ::oDbfCli:fieldpos( "nDpp" ) ] <> 0
+            ::oDbf:nNeto5      -= ( ( ::oDbf:nNeto5 * aTmpCli[ ::oDbfCli:fieldpos( "nDpp" ) ] ) / 100 )
+         end
+
+
+
+         if nSbrAtp == 3 .AND. aTmpCli[ ::oDbfCli:fieldpos( "nDtoAtp" ) ] <> 0
+            nDtoAtipico        := ( ( ::oDbf:nNeto5 * aTmpCli[ ::oDbfCli:fieldpos( "nDtoAtp" ) ] ) / 100 )
+         end
+
+         if aTmpCli[ ::oDbfCli:fieldpos( "nDtoCnt" ) ] <> 0
+            ::oDbf:nNeto5      -= ( ( ::oDbf:nNeto5 * aTmpCli[ ::oDbfCli:fieldpos( "nDtoCnt" ) ] ) / 100 )
+         end
+
+
+
+         if nSbrAtp == 4 .AND. aTmpCli[ ::oDbfCli:fieldpos( "nDtoAtp" ) ] <> 0
+            nDtoAtipico        := ( ( ::oDbf:nNeto5 * aTmpCli[ ::oDbfCli:fieldpos( "nDtoAtp" ) ] ) / 100 )
+         end
+
+         if aTmpCli[ ::oDbfCli:fieldpos( "nDtoRap" ) ] <> 0
+            ::oDbf:nNeto5      -= ( ( ::oDbf:nNeto5 * aTmpCli[ ::oDbfCli:fieldpos( "nDtoRap" ) ] ) / 100 )
+         end
+
+
+
+         if nSbrAtp == 5 .AND. aTmpCli[ ::oDbfCli:fieldpos( "nDtoAtp" ) ] <> 0
+            nDtoAtipico        := ( ( ::oDbf:nNeto5 * aTmpCli[ ::oDbfCli:fieldpos( "nDtoAtp" ) ] ) / 100 )
+         end
+
+         ::oDbf:nNeto5         -= nDtoAtipico
+
+         if ::cDivInf == cDivChg()
+            ::oDbf:nNeto5      := nCnv2Div( ::oDbf:nNeto5, cDivEmp(), cDivChg(), ::oDbfDiv:cAlias )
+         end
+
+
+
+         ::oDbf:nNeto6         :=  ( dbfTmpAtp )->nPrcArt6
+
+         if ( dbfTmpAtp )->nUncOfe <> 0 .AND. ( dbfTmpAtp )->nUnvOfe <> 0
+            if ( dbfTmpAtp )->nUncOfe <> 1 .OR. ( dbfTmpAtp )->nUnvOfe <> 1
+               ::oDbf:nNeto6   := ( ( ::oDbf:nNeto6 * ( dbfTmpAtp )->nUncOfe ) / ( dbfTmpAtp )->nUnvOfe )
+            end
+         end
+
+         if ( dbfTmpAtp )->nDtoArt  <> 0
+            ::oDbf:nNeto6      -= ( ( ::oDbf:nNeto6 * ( dbfTmpAtp )->nDtoArt ) / 100 )
+         end
+
+         if ( dbfTmpAtp )->nDtoDiv <> 0
+            ::oDbf:nNeto6      -= ( dbfTmpAtp )->nDtoDiv
+         end
+
+         if ( dbfTmpAtp )->nDprArt <> 0
+            ::oDbf:nNeto6      -= ( ( ::oDbf:nNeto6 * ( dbfTmpAtp )->nDprArt ) / 100 )
+         end
+
+         if ( dbfTmpAtp )->lComAge .AND. ( dbfTmpAtp )->nComAge <> 0
+            ::oDbf:nNeto6      -= ( ( ::oDbf:nNeto6 * ( dbfTmpAtp )->nComAge ) / 100 )
+         end
+
+
+
+         if nSbrAtp == 1 .AND. aTmpCli[ ::oDbfCli:fieldpos( "nDtoAtp" ) ] <> 0
+            nDtoAtipico        := ( ( ::oDbf:nNeto6 * aTmpCli[ ::oDbfCli:fieldpos( "nDtoAtp" ) ] ) / 100 )
+         end
+
+         if aTmpCli[ ::oDbfCli:fieldpos( "nDtoEsp" ) ] <> 0
+            ::oDbf:nNeto6      -= ( ( ::oDbf:nNeto6 * aTmpCli[ ::oDbfCli:fieldpos( "nDtoEsp" ) ] ) / 100 )
+         end
+
+
+
+         if nSbrAtp == 2 .AND. aTmpCli[ ::oDbfCli:fieldpos( "nDtoAtp" ) ] <> 0
+            nDtoAtipico        := ( ( ::oDbf:nNeto6 * aTmpCli[ ::oDbfCli:fieldpos( "nDtoAtp" ) ] ) / 100 )
+         end
+
+         if aTmpCli[ ::oDbfCli:fieldpos( "nDpp" ) ] <> 0
+            ::oDbf:nNeto6      -= ( ( ::oDbf:nNeto6 * aTmpCli[ ::oDbfCli:fieldpos( "nDpp" ) ] ) / 100 )
+         end
+
+
+
+         if nSbrAtp == 3 .AND. aTmpCli[ ::oDbfCli:fieldpos( "nDtoAtp" ) ] <> 0
+            nDtoAtipico        := ( ( ::oDbf:nNeto6 * aTmpCli[ ::oDbfCli:fieldpos( "nDtoAtp" ) ] ) / 100 )
+         end
+
+         if aTmpCli[ ::oDbfCli:fieldpos( "nDtoCnt" ) ] <> 0
+            ::oDbf:nNeto6      -= ( ( ::oDbf:nNeto6 * aTmpCli[ ::oDbfCli:fieldpos( "nDtoCnt" ) ] ) / 100 )
+         end
+
+
+
+         if nSbrAtp == 4 .AND. aTmpCli[ ::oDbfCli:fieldpos( "nDtoAtp" ) ] <> 0
+            nDtoAtipico        := ( ( ::oDbf:nNeto6 * aTmpCli[ ::oDbfCli:fieldpos( "nDtoAtp" ) ] ) / 100 )
+         end
+
+         if aTmpCli[ ::oDbfCli:fieldpos( "nDtoRap" ) ] <> 0
+            ::oDbf:nNeto6      -= ( ( ::oDbf:nNeto6 * aTmpCli[ ::oDbfCli:fieldpos( "nDtoRap" ) ] ) / 100 )
+         end
+
+
+
+         if nSbrAtp == 5 .AND. aTmpCli[ ::oDbfCli:fieldpos( "nDtoAtp" ) ] <> 0
+            nDtoAtipico        := ( ( ::oDbf:nNeto6 * aTmpCli[ ::oDbfCli:fieldpos( "nDtoAtp" ) ] ) / 100 )
+         end
+
+         ::oDbf:nNeto6         -= nDtoAtipico
+
+         if ::cDivInf == cDivChg()
+            ::oDbf:nNeto6      := nCnv2Div( ::oDbf:nNeto6, cDivEmp(), cDivChg(), ::oDbfDiv:cAlias )
+         end
+
+
+
+         ::oDbf:nPntVer        := ::oDbfArt:nPntVer1
+
+         if ::cDivInf == cDivChg()
+            ::oDbf:nPntVer     := nCnv2Div( ::oDbf:nPntVer, cDivEmp(), cDivChg(), ::oDbfDiv:cAlias )
+         end
+
+         ::oDbf:nNetVer1       := ::oDbf:nNeto1 + ::oDbf:nPntVer
+         ::oDbf:nNetVer2       := ::oDbf:nNeto2 + ::oDbf:nPntVer
+         ::oDbf:nNetVer3       := ::oDbf:nNeto3 + ::oDbf:nPntVer
+         ::oDbf:nNetVer4       := ::oDbf:nNeto4 + ::oDbf:nPntVer
+         ::oDbf:nNetVer5       := ::oDbf:nNeto5 + ::oDbf:nPntVer
+         ::oDbf:nNetVer6       := ::oDbf:nNeto6 + ::oDbf:nPntVer
+
+
+
+         ::oDbf:nMarUnd1     := ::oDbf:nNeto1 - ::oDbf:nCosto
+         ::oDbf:nMarUnd2     := ::oDbf:nNeto2 - ::oDbf:nCosto
+         ::oDbf:nMarUnd3     := ::oDbf:nNeto3 - ::oDbf:nCosto
+         ::oDbf:nMarUnd4     := ::oDbf:nNeto4 - ::oDbf:nCosto
+         ::oDbf:nMarUnd5     := ::oDbf:nNeto5 - ::oDbf:nCosto
+         ::oDbf:nMarUnd6     := ::oDbf:nNeto6 - ::oDbf:nCosto
+
+
+
+         if ::oDbfArt:Seek ( ( dbfTmpAtp )->cCodArt )
+            nUnicaja         := ::oDbfArt:nUniCaja
+         end
+
+         ::oDbf:nMarCaj1     := ( ::oDbf:nNeto1 - ::oDbf:nCosto ) * nUniCaja
+         ::oDbf:nMarCaj2     := ( ::oDbf:nNeto2 - ::oDbf:nCosto ) * nUniCaja
+         ::oDbf:nMarCaj3     := ( ::oDbf:nNeto3 - ::oDbf:nCosto ) * nUniCaja
+         ::oDbf:nMarCaj4     := ( ::oDbf:nNeto4 - ::oDbf:nCosto ) * nUniCaja
+         ::oDbf:nMarCaj5     := ( ::oDbf:nNeto5 - ::oDbf:nCosto ) * nUniCaja
+         ::oDbf:nMarCaj6     := ( ::oDbf:nNeto6 - ::oDbf:nCosto ) * nUniCaja
+
+
+
+         ::oDbf:nRenCos1     := ( ( ::oDbf:nNeto1 / ::oDbf:nCosto ) -1 ) * 100
+         ::oDbf:nRenCos2     := ( ( ::oDbf:nNeto2 / ::oDbf:nCosto ) -1 ) * 100
+         ::oDbf:nRenCos3     := ( ( ::oDbf:nNeto3 / ::oDbf:nCosto ) -1 ) * 100
+         ::oDbf:nRenCos4     := ( ( ::oDbf:nNeto4 / ::oDbf:nCosto ) -1 ) * 100
+         ::oDbf:nRenCos5     := ( ( ::oDbf:nNeto5 / ::oDbf:nCosto ) -1 ) * 100
+         ::oDbf:nRenCos6     := ( ( ::oDbf:nNeto6 / ::oDbf:nCosto ) -1 ) * 100
+
+
+
+         ::oDbf:nRenVta1     := ( ( ::oDbf:nNeto1 - ::oDbf:nCosto ) / ::oDbf:nNeto1 ) * 100
+         ::oDbf:nRenVta2     := ( ( ::oDbf:nNeto2 - ::oDbf:nCosto ) / ::oDbf:nNeto2 ) * 100
+         ::oDbf:nRenVta3     := ( ( ::oDbf:nNeto3 - ::oDbf:nCosto ) / ::oDbf:nNeto3 ) * 100
+         ::oDbf:nRenVta4     := ( ( ::oDbf:nNeto4 - ::oDbf:nCosto ) / ::oDbf:nNeto4 ) * 100
+         ::oDbf:nRenVta5     := ( ( ::oDbf:nNeto5 - ::oDbf:nCosto ) / ::oDbf:nNeto5 ) * 100
+         ::oDbf:nRenVta6     := ( ( ::oDbf:nNeto6 - ::oDbf:nCosto ) / ::oDbf:nNeto6 ) * 100
+
+         ::oDbf:Save()
+
+         end
+
+      end
+
+      ( dbfTmpAtp )->( dbSkip() )
+
+      ::oMtrInf:AutoInc( ( dbfTmpAtp )->( OrdKeyNo() ) )
+
+   end
+
+   ::oMtrInf:AutoInc( ( dbfTmpAtp )->( LastRec() ) )
+
+   ::oDlg:Enable()
+
+   ::oBtnFilter:Disable()
+
+   ( dbfTmpAtp )->( dbGoTop() )
+
+RETURN ( ::oDbf:LastRec() > 0 )
+
+
+
+
+
+UTILITY STATIC function TInfAtp_cArt( aGet, aGet2) ; local Self AS CLASS TInfAtp := QSelf() AS CLASS TInfAtp
+
+   local nOrdArt
+   local nOrdAtp
+   local lValid      := .F.
+    local cCodArt        := aGet:varGet()
+   local dbfTmpAtp   := ::xOthers[1]
+
+   if Empty( cCodArt )
+      return .T.
+   end
+
+   nOrdArt  := ::oDbfArt:OrdSetFocus( "CODIGO" )
+   nOrdAtp  := ( dbfTmpAtp )->( ordSetFocus( "CCODART" ) )
+
+   if ( dbfTmpAtp )->( dbSeek( cCodArt ) ) .AND. ::oDbfArt:Seek( cCodArt )
+
+      aGet:cText( ::oDbfArt:Codigo )
+
+      if aGet2 <> NIL
+         aGet2:cText( ::oDbfArt:Nombre )
+      end
+
+      lValid   := .T.
+
+   else
+
+      msgStop( "Artículo no encontrado" )
+
+   end
+
+   ::oDbfArt:OrdSetFocus( nOrdAtp )
+   ( dbfTmpAtp )->( ordSetFocus( nOrdArt ) )
+
+RETURN lValid
+
+
+
+
+
+UTILITY STATIC function TInfAtp_BrwAtipica( aGet, aGet2) ; local Self AS CLASS TInfAtp := QSelf() AS CLASS TInfAtp
+
+    local oDlg
+    local oBrw
+   local aGet1
+   local cGet1
+   local nOrdAnt
+    local oCbxOrd
+   local aCbxOrd     := { "Código" }
+   local cCbxOrd     := "Código"
+   local dbfTmpAtp   := ::xOthers[1]
+
+   nOrdAnt           := ( dbfTmpAtp )->( OrdSetFocus( "CCODART" ) )
+
+   ( dbfTmpAtp )->( dbGoTop() )
+
+      oDlg = TDialog():New(,,,, "Seleccionar artículos", "HELPENTRY",, .F.,,,,,, .F.,,,,,, .F., )
+
+
+
+
+
+
+      aGet1 := TGetHlp():ReDefine( 104, { | u | If( PCount()==0, cGet1, cGet1:= u ) }, oDlg,,, {||    ( OrdClearScope( oBrw, dbfTmpAtp ) )},,,,,, .F.,, {|nKey,nFlags,Self| ( AutoSeek( nKey, nFlags, Self, oBrw, dbfTmpAtp ) ) }, .F., .F.,,,,,, nil, "FIND",, )
+
+
+
+
+
+
+        oCbxOrd := TComboBox():ReDefine( 102, { | u | If( PCount()==0, cCbxOrd, cCbxOrd:= u ) }, aCbxOrd, oDlg,,, {|Self|( ( dbfTmpAtp )->( OrdSetFocus( "CCODART" ) ), oBrw:refresh(), aGet1:SetFocus() )},,,, .F.,,,,,, )
+
+      oBrw                 := TXBrowse():New( oDlg )
+
+      oBrw:bClrSel         := {|| { 0, ( 229 + ( 229 * 256 ) + ( 229 * 65536 ) ) } }
+      oBrw:bClrSelFocus    := {|| { 0, ( 167 + ( 205 * 256 ) + ( 240 * 65536 ) ) } }
+
+      oBrw:cAlias          := dbfTmpAtp
+      oBrw:nMarqueeStyle   := 5
+
+      oBrw:bLDblClick      := {|| oDlg:end( 1 ) }
+
+      oBrw:CreateFromResource( 105 )
+
+      with object ( oBrw:AddCol() )
+         :cHeader          := "Código"
+         :bEditValue       := {|| ( dbfTmpAtp )->cCodArt }
+         :nWidth           := 80
+      end
+
+      with object ( oBrw:AddCol() )
+         :cHeader          := "Nombre"
+         :bEditValue       := {|| oRetFld( ( dbfTmpAtp )->cCodArt, ::oDbfArt ) }
+         :nWidth           := 400
+      end
+
+
+
+
+        TButton():ReDefine( 1, {||( oDlg:end(1) )}, oDlg,,, .F.,,,, .F. )
+
+
+
+
+        TButton():ReDefine( 2, {||( oDlg:end() )}, oDlg,,, .F.,,,, .F. )
+
+
+
+
+
+        TButton():ReDefine( 500, {||( nil )}, oDlg,,, .F., {||     .F.},,, .F. )
+
+
+
+
+
+        TButton():ReDefine( 501, {||( nil )}, oDlg,,, .F., {||     .F.},,, .F. )
+
+   oDlg:AddFastKey( 13, {|| oDlg:end(1) } )
+   oDlg:AddFastKey( 116, {|| oDlg:end(1) } )
+
+   oDlg:Activate( oDlg:bLClicked, oDlg:bMoved, oDlg:bPainted, .T.,,,, oDlg:bRClicked,,, )
+
+   if oDlg:nResult == 1
+
+      aGet:cText( ( dbfTmpAtp )->cCodArt )
+      aGet2:cText( oRetFld( ( dbfTmpAtp )->cCodArt, ::oDbfArt ) )
+
+   end
+
+   ( dbfTmpAtp )->( OrdSetFocus( nOrdAnt ) )
+
+   aGet:setFocus()
+
+RETURN ( .T. )

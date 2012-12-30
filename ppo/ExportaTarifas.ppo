@@ -1,0 +1,1144 @@
+#line 112 "hbclass.ch"
+   DYNAMIC DivertConstructorCall
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+DECLARE HBClass  New( cName AS String, OPTIONAL SuperParams ) AS CLASS HBClass  Create() AS Object  Instance() AS Object  AddClsMethod( cName AS String, @MethodName(), nScope AS Numeric, n2 AS Numeric, n3 AS Numeric )  AddDelegate( cName AS String, cDelegate AS String, cObject AS String, nScope AS Numeric, lPersistent AS LOGICAL )  AddMultiClsData( cType AS String, uVal, nScope AS Numeric, aDatas AS Array OF String )  AddMultiData( cType AS String, uVal, nScope AS Numeric, aDatas AS Array OF String, x AS LOGICAL, lPer AS LOGICAL )  AddMethod( cName AS String, @MethodName(), nScope AS Numeric, lPersistent AS LOGICAL )  AddInLine( cName AS String, bBlock AS CodeBlock, nScope AS Numeric, lPersistent AS LOGICAL )  AddVirtual( cName AS String )  ModMethod( cName AS String, @MethodName(), nScope AS Numeric, lPersistent AS LOGICAL )  ModClsMethod( cName AS String, @MethodName(), nScope AS Numeric )  ModInline( cName AS String, bBlock AS CodeBlock, nScope AS Numeric, lPersistent AS LOGICAL )  SetOnError( @MethodName() )
+#line 85 "\Fwh1204\Include\FiveWin.ch"
+   EXTERNAL GetProcAdd
+   EXTERNAL TActiveX
+
+
+
+
+extern errorsys
+#line 7 ".\Prg\ExportaTarifas.prg"
+memvar oFacCliT
+memvar oFacCliL
+memvar oDbfArt
+memvar oDbfCli
+
+
+
+_HB_CLASS TExportaTarifas ; UTILITY FUNCTION TExportaTarifas(...); static s_oClass ; local oClassInstance ; local nScope ; nScope := 1 ; if s_oClass == NIL ; s_oClass := IIF(.F.,, HBClass():New( "TExportaTarifas" , {TNewInfGen():classh} ) ) ; ;
+
+   _HB_MEMBER { nLevel} ; IIF( !.F., s_oClass:AddMultiData(,, nScope + IIF( .F., 32, 0 ), { "nLevel" }, .F., .F. ), )
+
+   _HB_MEMBER { cFileTmp} ; IIF( !.F., s_oClass:AddMultiData(, Space( 1 ), nScope + IIF( .F., 32, 0 ), { "cFileTmp" }, .F., .F. ), )
+
+   _HB_MEMBER { oBrwLin} ; IIF( !.F., s_oClass:AddMultiData(,, nScope + IIF( .F., 32, 0 ), { "oBrwLin" }, .F., .F. ), )
+   _HB_MEMBER { oBtnAdd} ; IIF( !.F., s_oClass:AddMultiData(,, nScope + IIF( .F., 32, 0 ), { "oBtnAdd" }, .F., .F. ), )
+   _HB_MEMBER { oBtnEdit} ; IIF( !.F., s_oClass:AddMultiData(,, nScope + IIF( .F., 32, 0 ), { "oBtnEdit" }, .F., .F. ), )
+   _HB_MEMBER { oBtnDel} ; IIF( !.F., s_oClass:AddMultiData(,, nScope + IIF( .F., 32, 0 ), { "oBtnDel" }, .F., .F. ), )
+   _HB_MEMBER { oBtnUp} ; IIF( !.F., s_oClass:AddMultiData(,, nScope + IIF( .F., 32, 0 ), { "oBtnUp" }, .F., .F. ), )
+   _HB_MEMBER { oBtnDown} ; IIF( !.F., s_oClass:AddMultiData(,, nScope + IIF( .F., 32, 0 ), { "oBtnDown" }, .F., .F. ), )
+   _HB_MEMBER { oBtnSave} ; IIF( !.F., s_oClass:AddMultiData(,, nScope + IIF( .F., 32, 0 ), { "oBtnSave" }, .F., .F. ), )
+   _HB_MEMBER { oBtnLoad} ; IIF( !.F., s_oClass:AddMultiData(,, nScope + IIF( .F., 32, 0 ), { "oBtnLoad" }, .F., .F. ), )
+
+   _HB_MEMBER { oGetAncho} ; IIF( !.F., s_oClass:AddMultiData(,, nScope + IIF( .F., 32, 0 ), { "oGetAncho" }, .F., .F. ), )
+   _HB_MEMBER { oGetExpresion} ; IIF( !.F., s_oClass:AddMultiData(,, nScope + IIF( .F., 32, 0 ), { "oGetExpresion" }, .F., .F. ), )
+   _HB_MEMBER { oSayExpresion} ; IIF( !.F., s_oClass:AddMultiData(,, nScope + IIF( .F., 32, 0 ), { "oSayExpresion" }, .F., .F. ), )
+
+   _HB_MEMBER { oTreeCampos} ; IIF( !.F., s_oClass:AddMultiData(,, nScope + IIF( .F., 32, 0 ), { "oTreeCampos" }, .F., .F. ), )
+
+   _HB_MEMBER { aTipoExpresion} ; IIF( !.F., s_oClass:AddMultiData(, { "Campo", "Expresión", "Constante" }, nScope + IIF( .F., 32, 0 ), { "aTipoExpresion" }, .F., .F. ), )
+   _HB_MEMBER { oTipoExpresion} ; IIF( !.F., s_oClass:AddMultiData(,, nScope + IIF( .F., 32, 0 ), { "oTipoExpresion" }, .F., .F. ), )
+
+   _HB_MEMBER { aAlign} ; IIF( !.F., s_oClass:AddMultiData(, { "Izquierda", "Derecha" }, nScope + IIF( .F., 32, 0 ), { "aAlign" }, .F., .F. ), )
+   _HB_MEMBER { oAlign} ; IIF( !.F., s_oClass:AddMultiData(,, nScope + IIF( .F., 32, 0 ), { "oAlign" }, .F., .F. ), )
+
+   _HB_MEMBER { aFieldFacT} ; IIF( !.F., s_oClass:AddMultiData(, aItmFacCli(), nScope + IIF( .F., 32, 0 ), { "aFieldFacT" }, .F., .F. ), )
+   _HB_MEMBER { aFieldFacL} ; IIF( !.F., s_oClass:AddMultiData(, aColFacCli(), nScope + IIF( .F., 32, 0 ), { "aFieldFacL" }, .F., .F. ), )
+   _HB_MEMBER { aFieldArt} ; IIF( !.F., s_oClass:AddMultiData(, aItmArt(), nScope + IIF( .F., 32, 0 ), { "aFieldArt" }, .F., .F. ), )
+   _HB_MEMBER { aFieldCli} ; IIF( !.F., s_oClass:AddMultiData(, aItmCli(), nScope + IIF( .F., 32, 0 ), { "aFieldCli" }, .F., .F. ), )
+
+   _HB_MEMBER { lChangeDbf} ; IIF( !.F., s_oClass:AddMultiData(, .F., nScope + IIF( .F., 32, 0 ), { "lChangeDbf" }, .F., .F. ), )
+
+   _HB_MEMBER { oFacCliL} ; IIF( !.F., s_oClass:AddMultiData(,, nScope + IIF( .F., 32, 0 ), { "oFacCliL" }, .F., .F. ), )
+
+   _HB_MEMBER { cTextoFinal} ; IIF( !.F., s_oClass:AddMultiData(, "", nScope + IIF( .F., 32, 0 ), { "cTextoFinal" }, .F., .F. ), )
+
+   _HB_MEMBER New( oMenuItem, oWnd); IIF( .F., s_oClass:ModMethod( "New", @TExportaTarifas_New(), nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ), s_oClass:AddMethod( "New", @TExportaTarifas_New(), nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ));
+
+   _HB_MEMBER CreateTemporal(); IIF( .F., s_oClass:ModMethod( "CreateTemporal", @TExportaTarifas_CreateTemporal(), nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ), s_oClass:AddMethod( "CreateTemporal", @TExportaTarifas_CreateTemporal(), nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ));
+
+   _HB_MEMBER Play(); IIF( .F., s_oClass:ModMethod( "Play", @TExportaTarifas_Play(), nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ), s_oClass:AddMethod( "Play", @TExportaTarifas_Play(), nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ));
+
+   _HB_MEMBER OpenFiles(); IIF( .F., s_oClass:ModMethod( "OpenFiles", @TExportaTarifas_OpenFiles(), nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ), s_oClass:AddMethod( "OpenFiles", @TExportaTarifas_OpenFiles(), nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ));
+
+   _HB_MEMBER CloseFiles(); IIF( .F., s_oClass:ModMethod( "CloseFiles", @TExportaTarifas_CloseFiles(), nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ), s_oClass:AddMethod( "CloseFiles", @TExportaTarifas_CloseFiles(), nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ));
+
+   _HB_MEMBER lResource( cFld); IIF( .F., s_oClass:ModMethod( "lResource", @TExportaTarifas_lResource(), nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ), s_oClass:AddMethod( "lResource", @TExportaTarifas_lResource(), nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ));
+
+   _HB_MEMBER Activate(); IIF( .F., s_oClass:ModMethod( "Activate", @TExportaTarifas_Activate(), nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ), s_oClass:AddMethod( "Activate", @TExportaTarifas_Activate(), nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ));
+
+   _HB_MEMBER InitDialog(); IIF( .F., s_oClass:ModMethod( "InitDialog", @TExportaTarifas_InitDialog(), nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ), s_oClass:AddMethod( "InitDialog", @TExportaTarifas_InitDialog(), nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ));
+
+   _HB_MEMBER Detalle( nMode); IIF( .F., s_oClass:ModMethod( "Detalle", @TExportaTarifas_Detalle(), nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ), s_oClass:AddMethod( "Detalle", @TExportaTarifas_Detalle(), nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ));
+
+   _HB_MEMBER EndDetalle( nMode); IIF( .F., s_oClass:ModMethod( "EndDetalle", @TExportaTarifas_EndDetalle(), nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ), s_oClass:AddMethod( "EndDetalle", @TExportaTarifas_EndDetalle(), nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ));
+
+   _HB_MEMBER DelRegTemporal(); IIF( .F., s_oClass:ModMethod( "DelRegTemporal", @TExportaTarifas_DelRegTemporal(), nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ), s_oClass:AddMethod( "DelRegTemporal", @TExportaTarifas_DelRegTemporal(), nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ));
+
+   _HB_MEMBER SetDlgMode( lStart); IIF( .F., s_oClass:ModMethod( "SetDlgMode", @TExportaTarifas_SetDlgMode(), nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ), s_oClass:AddMethod( "SetDlgMode", @TExportaTarifas_SetDlgMode(), nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ));
+
+   _HB_MEMBER lCargaTreeCampos(); IIF( .F., s_oClass:ModMethod( "lCargaTreeCampos", @TExportaTarifas_lCargaTreeCampos(), nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ), s_oClass:AddMethod( "lCargaTreeCampos", @TExportaTarifas_lCargaTreeCampos(), nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ));
+
+   _HB_MEMBER Cancelar(); IIF( .F., s_oClass:ModMethod( "Cancelar", @TExportaTarifas_Cancelar(), nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ), s_oClass:AddMethod( "Cancelar", @TExportaTarifas_Cancelar(), nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ));
+
+   _HB_MEMBER SaveConf(); IIF( .F., s_oClass:ModMethod( "SaveConf", @TExportaTarifas_SaveConf(), nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ), s_oClass:AddMethod( "SaveConf", @TExportaTarifas_SaveConf(), nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ));
+
+   _HB_MEMBER LoadConf(); IIF( .F., s_oClass:ModMethod( "LoadConf", @TExportaTarifas_LoadConf(), nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ), s_oClass:AddMethod( "LoadConf", @TExportaTarifas_LoadConf(), nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ));
+
+   _HB_MEMBER Exportacion(); IIF( .F., s_oClass:ModMethod( "Exportacion", @TExportaTarifas_Exportacion(), nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ), s_oClass:AddMethod( "Exportacion", @TExportaTarifas_Exportacion(), nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ));
+
+   _HB_MEMBER DblClickTree(); IIF( .F., s_oClass:ModMethod( "DblClickTree", @TExportaTarifas_DblClickTree(), nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ), s_oClass:AddMethod( "DblClickTree", @TExportaTarifas_DblClickTree(), nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ));
+
+; IF .F. ; __clsActive(s_oClass:hClass) ; s_oClass:Refresh() ; ELSE ; s_oClass:Create() ; END ; oClassInstance := __clsInst( s_oClass:hClass ) ; IF __ObjHasMsg( oClassInstance, "InitClass" ); oClassInstance:InitClass( hb_aParams() ) ; END ; ELSE ; oClassInstance := __clsInst( s_oClass:hClass ) ; END ; IF PCount() > 0 ; DIVERT TO (@DivertConstructorCall()) OF s_oClass ; END ; RETURN oClassInstance AS CLASS TExportaTarifas ;
+
+
+
+UTILITY STATIC function TExportaTarifas_New( oMenuItem, oWndParent) ; local Self AS CLASS TExportaTarifas := QSelf() AS CLASS TExportaTarifas
+
+   IIF( oMenuItem == nil, oMenuItem := "01112", ) ;
+   IIF( oWndParent == nil, oWndParent := GetWndFrame(), ) ;
+
+   ::nLevel             := nLevelUsr( oMenuItem )
+
+   if oWndParent <> nil
+      oWndParent:CloseAll()
+   end
+
+   ::oDbf               := nil
+
+RETURN Self
+
+
+
+UTILITY STATIC function TExportaTarifas_Play( uParam) ; local Self AS CLASS TExportaTarifas := QSelf() AS CLASS TExportaTarifas
+
+   if nAnd( ::nLevel, 1 ) <> 0
+      msgStop( "Acceso no permitido." )
+      Return ( Self )
+   end
+
+   if ::OpenFiles()
+
+      if ::lResource()
+         ::Activate()
+      end
+
+   end
+
+   ::CloseFiles()
+
+RETURN ( Self )
+
+
+
+UTILITY STATIC function TExportaTarifas_CreateTemporal() ; local Self AS CLASS TExportaTarifas := QSelf() AS CLASS TExportaTarifas
+
+   ::cFileTmp       := cGetNewFileName( cPatTmp() + "TExp" )
+
+   ::oDbf := DbfServer( ( ::cFileTmp ), "TExp" ):New( ( ::cFileTmp ), "TExp", ( cLocalDriver() ), "Exportación", ( cPatTmp() ) )
+
+      ::oDbf:AddField( "NTIPO", "N", 1, 0,,,,, "Tipo", .F.,, .F., {} )
+      ::oDbf:AddField( "CCAMPO", "C", 25, 0,,,,, "Campo", .F.,, .F., {} )
+      ::oDbf:AddField( "CDESCRIP", "C", 100, 0,,,,, "Nombre", .F.,, .F., {} )
+      ::oDbf:AddField( "CTABLA", "C", 25, 0,,,,, "Alias", .F.,, .F., {} )
+      ::oDbf:AddField( "MEXPRE", "M", 10, 0,,,,, "Expresion", .F.,, .F., {} )
+      ::oDbf:AddField( "NANCHO", "N", 5, 0,,,,, "Ancho", .F.,, .F., {} )
+      ::oDbf:AddField( "NALIGN", "N", 1, 0,,,,, "Alineación", .F.,, .F., {} )
+
+      ::oDbf:AddIndex( ( Str( ::oDbf:Recno() ) ), ( ::cFileTmp ), ( Str( ::oDbf:Recno() ) ),,, .F., .F., "Orden",,, .T., .F. )
+
+
+
+RETURN ::oDbf
+
+
+
+UTILITY STATIC function TExportaTarifas_OpenFiles() ; local Self AS CLASS TExportaTarifas := QSelf() AS CLASS TExportaTarifas
+
+
+
+
+
+   ::CreateTemporal()
+
+   ::oDbf:Activate( .F., .F. )
+
+   ::oFacCliL := DbfServer( "FACCLIL.DBF", ):NewOpen( "FACCLIL.DBF",, ( cDriver() ),, ( cPatEmp() ), .F., .T., .F., .F. ) ; ::oFacCliL:AddBag( "FACCLIL.CDX" ) ; ::oFacCliL:AddBag( ) ; ::oFacCliL:AutoIndex()
+
+RETURN ( .T. )
+
+
+
+UTILITY STATIC function TExportaTarifas_CloseFiles() ; local Self AS CLASS TExportaTarifas := QSelf() AS CLASS TExportaTarifas
+
+   if ::oDbfRut <> nil .AND. ::oDbfRut:Used()
+      ::oDbfRut:End()
+   end
+
+   if ::oDbfCli <> nil .AND. ::oDbfCli:Used()
+      ::oDbfCli:End()
+   end
+
+   if ::oDbfArt <> nil .AND. ::oDbfArt:Used()
+      ::oDbfArt:End()
+   end
+
+   if ::oFacCliT <> nil .AND. ::oFacCliT:Used()
+      ::oFacCliT:End()
+   end
+
+   if ::oFacCliL <> nil .AND. ::oFacCliL:Used()
+      ::oFacCliL:End()
+   end
+
+   if ::oGrpCli <> nil
+      ::oGrpCli:End()
+   end
+
+   if ::oDbf <> nil .AND. ::oDbf:Used()
+      ::oDbf:End()
+   end
+
+   ::oGrpCli      := nil
+   ::oDbfRut      := nil
+   ::oDbfCli      := nil
+   ::oDbfArt      := nil
+   ::oFacCliT     := nil
+   ::oFacCliL     := nil
+   ::oDbf         := nil
+
+
+
+
+
+   dbfErase( ::cFileTmp )
+
+RETURN ( .T. )
+
+
+
+UTILITY STATIC function TExportaTarifas_lResource( cFld) ; local Self AS CLASS TExportaTarifas := QSelf() AS CLASS TExportaTarifas
+
+   ::lNewInforme  := .T.
+
+
+
+
+
+   ::lCreaArrayPeriodos()
+
+   ::oDlg = TDialog():New(,,,, "Exportación de tarifas", "EXPTARIFA",, .F.,,,,, oWnd(), .F.,,,,,, .F., )
+
+
+
+
+
+   ::oDefIniInf( 1110, ::oDlg )
+
+   ::oDefFinInf( 1120, ::oDlg )
+
+   ::lPeriodoInforme( 220, ::oDlg )
+
+
+
+
+
+   ::oImageList                     := TImageList():New( 16, 16 )
+   ::oTreeRango                     := TTreeView():Redefine( 100, ::oDlg )
+   ::oTreeRango:bChanged            := {|| ::ChangeRango() }
+   ::oTreeRango:bLostFocus          := {|| ::ChangeValor() }
+
+   ::oDefTodos( 140, ::oDlg )
+   ::oDefDesde( 110, 111, ::oDlg )
+   ::oDefHasta( 120, 121, ::oDlg )
+
+
+
+
+
+   ::lGrupoGCliente()
+
+   ::lGrupoRuta()
+
+   ::lGrupoCliente()
+
+   ::lGrupoArticulo()
+
+   ::lGrupoFacturas()
+
+
+
+
+
+   ::oDefSerInf( ::oDlg )
+
+
+
+
+
+   ::oBrwLin                  := TXBrowse():New( ::oDlg )
+
+   ::oBrwLin:bClrSel          := {|| { 0, ( 229 + ( 229 * 256 ) + ( 229 * 65536 ) ) } }
+   ::oBrwLin:bClrSelFocus     := {|| { 0, ( 167 + ( 205 * 256 ) + ( 240 * 65536 ) ) } }
+
+   ::oDbf:SetBrowse( ::oBrwLin )
+
+   ::oBrwLin:nMarqueeStyle    := 5
+   ::oBrwLin:lHScroll         := .F.
+
+   ::oBrwLin:bLDblClick       := {|| ::Detalle( 2 ) }
+
+   ::oBrwLin:CreateFromResource( 400 )
+
+   with object ( ::oBrwLin:AddCol() )
+      :cHeader                := "Tipo"
+      :bEditValue             := {|| ::aTipoExpresion[ Max( ::oDbf:FieldGetByName( "nTipo" ), 1 ) ] }
+      :nWidth                 := 90
+   end
+
+   with object ( ::oBrwLin:AddCol() )
+      :cHeader                := "Expresión"
+      :bEditValue             := {|| if( ::oDbf:FieldGetByName( "nTipo" ) > 1, ::oDbf:FieldGetByName( "mExpre" ), ::oDbf:FieldGetByName( "cDescrip" ) ) }
+      :nWidth                 := 230
+   end
+
+   with object ( ::oBrwLin:AddCol() )
+      :cHeader                := "Alineación"
+      :bEditValue             := {|| ::aAlign[ Max( ::oDbf:FieldGetByName( "nAlign" ), 1 ) ] }
+      :nWidth                 := 80
+   end
+
+   with object ( ::oBrwLin:AddCol() )
+      :cHeader                := "Ancho"
+      :bEditValue             := {|| ::oDbf:FieldGetByName( "nAncho" ) }
+      :nWidth                 := 60
+      :nDataStrAlign          := 1
+      :nHeadStrAlign          := 1
+   end
+
+
+
+
+
+
+
+
+   ::oBtnAdd := TButton():ReDefine( 410, {||( ::Detalle( 1 ) )}, ::oDlg,,, .F.,,,, .F. )
+
+
+
+
+   ::oBtnEdit := TButton():ReDefine( 420, {||( ::Detalle( 2 ) )}, ::oDlg,,, .F.,,,, .F. )
+
+
+
+
+   ::oBtnDel := TButton():ReDefine( 430, {||( ::DelRegTemporal() )}, ::oDlg,,, .F.,,,, .F. )
+
+
+
+
+   ::oBtnUp := TButton():ReDefine( 440, {||( DbSwapUp( ::oDbf:cAlias, ::oBrwLin ) )}, ::oDlg,,, .F.,,,, .F. )
+
+
+
+
+   ::oBtnDown := TButton():ReDefine( 450, {||( DbSwapDown( ::oDbf:cAlias, ::oBrwLin ) )}, ::oDlg,,, .F.,,,, .F. )
+
+
+
+
+   ::oBtnSave := TButton():ReDefine( 460, {||( ::SaveConf() )}, ::oDlg,,, .F.,,,, .F. )
+
+
+
+
+   ::oBtnLoad := TButton():ReDefine( 470, {||( ::LoadConf() )}, ::oDlg,,, .F.,,,, .F. )
+
+
+
+
+
+   ::oDefMetInf( 1160, ::oDlg )
+
+   ::oMtrInf:nClrText   := ( 128 + ( 255 * 256 ) + ( 0 * 65536 ) )
+   ::oMtrInf:nClrBar    := ( 128 + ( 255 * 256 ) + ( 0 * 65536 ) )
+   ::oMtrInf:nClrBText  := ( 128 + ( 255 * 256 ) + ( 0 * 65536 ) )
+
+
+
+
+
+
+
+
+   ::oBtnAction := TButton():ReDefine( 500, {||( ::Exportacion() )}, ::oDlg,,, .F.,,,, .F. )
+
+
+
+
+
+   ::oBtnCancel := TButton():ReDefine( 550, {||( ::Cancelar() )}, ::oDlg,,, .F.,,,, .T. )
+
+RETURN ( .T. )
+
+
+
+UTILITY STATIC function TExportaTarifas_Activate() ; local Self AS CLASS TExportaTarifas := QSelf() AS CLASS TExportaTarifas
+
+   local lActivate
+
+   if !Empty( ::oDlg )
+
+      ::oDlg:AddFastKey( 113, {|| ::Detalle( 1 ) } )
+      ::oDlg:AddFastKey( 114, {|| ::Detalle( 2 ) } )
+      ::oDlg:AddFastKey( 115, {|| ::DelRegTemporal() } )
+      ::oDlg:AddFastKey( 116, {|| ::Exportacion() } )
+
+      if ::lNewInforme
+         ::oDlg:bStart  := {|| ::InitDialog(), ::lRecargaFecha() }
+      end
+
+      ::oDlg:Activate( , , , .T. )
+
+      lActivate         := ( ::oDlg:nResult == 1 )
+
+   end
+
+RETURN ( lActivate )
+
+
+
+UTILITY STATIC function TExportaTarifas_InitDialog() ; local Self AS CLASS TExportaTarifas := QSelf() AS CLASS TExportaTarifas
+
+   local n
+
+   if !Empty( ::aSelectionRango )
+
+      for n := 1 to len( ::aSelectionRango )
+         with object ( ::oTreeRango:Add( ::aSelectionRango[ n ]:Cargo:Nombre, n - 1 ) )
+            :Cargo := ::aSelectionRango[ n ]
+         end
+      next
+
+
+
+
+
+      if len( ::oTreeRango:aItems ) > 0
+         ::oTreeRango:Select( ::oTreeRango:aItems[ 1 ] )
+         ::ChangeRango()
+      end
+
+   end
+
+   ::oTreeRango:SetImagelist( ::oImageList )
+
+RETURN ( Self )
+
+
+
+UTILITY STATIC function TExportaTarifas_Detalle( nMode) ; local Self AS CLASS TExportaTarifas := QSelf() AS CLASS TExportaTarifas
+
+   local oDlg
+
+   do case
+      case nMode == 1
+
+         ::oDbf:Blank()
+
+         ::oDbf:nTipo   := 1
+         ::oDbf:nAncho  := 1
+         ::oDbf:nAlign  := 1
+
+      case nMode == 2
+
+         if ::oDbf:RecCount() == 0
+            Return .F.
+         end
+
+         ::oDbf:Load()
+
+   end
+
+   ::lChangeDbf         := .T.
+
+   oDlg = TDialog():New(,,,, "Exportación de tarifas", "LEXPTARIFA",, .F.,,,,,, .F.,,,,,, .F., )
+
+
+
+
+   ::oTipoExpresion := TComboBox():ReDefine( 100, { | u | If( PCount()==0, ::oDbf:nTipo, ::oDbf:nTipo:= u ) }, ::aTipoExpresion, oDlg,,,,,,, .F.,,,,,, )
+
+      ::oTipoExpresion:bChange   := { || ::SetDlgMode( .F. ) }
+
+
+
+
+
+   ::oGetAncho := TGetHlp():ReDefine( 110, { | u | If( PCount()==0, ::oDbf:nAncho, ::oDbf:nAncho:= u ) }, oDlg,, "99999",,,,,,, .F.,,, .F., .T.,,,,,, nil,,, )
+
+   ::oTreeCampos                 := TTreeView():Redefine( 120, oDlg )
+   ::oTreeCampos:bLDblClick      := {|| ::DblClickTree( nMode, oDlg ) }
+
+
+
+   ::oGetExpresion := TMultiGet():ReDefine( 130, { | u | If( PCount()==0, ::oDbf:mExpre, ::oDbf:mExpre:= u ) }, oDlg,,,,,,, .F.,, .F.,, )
+
+
+
+   ::oSayExpresion := TSay():ReDefine( 131,, oDlg,,,, .F.,, .F., .F. )
+
+
+
+
+   ::oAlign := TComboBox():ReDefine( 140, { | u | If( PCount()==0, ::oDbf:nAlign, ::oDbf:nAlign:= u ) }, ::aAlign, oDlg,,,,,,, .F.,,,,,, )
+
+
+
+
+   TButton():ReDefine( 500, {||( ::EndDetalle( nMode, oDlg ) )}, oDlg,,, .F.,,,, .F. )
+
+
+
+
+
+   ::oBtnCancel := TButton():ReDefine( 550, {||( oDlg:End() )}, oDlg,,, .F.,,,, .T. )
+
+   oDlg:bStart := {|| ::SetDlgMode( .T.) }
+
+   oDlg:AddFastKey( 116, {|| ::EndDetalle( nMode, oDlg ) } )
+
+   oDlg:Activate( oDlg:bLClicked, oDlg:bMoved, oDlg:bPainted, .T.,,,, oDlg:bRClicked,,, )
+
+
+
+
+
+   if oDlg:nResult == 1
+
+      do case
+         case nMode == 1
+            ::oDbf:Insert()
+
+         case nMode == 2
+            ::oDbf:Save()
+      end
+
+   else
+      ::oDbf:Cancel()
+   end
+
+   ::oBrwLin:Refresh()
+
+Return ( Self )
+
+
+
+UTILITY STATIC function TExportaTarifas_DblClickTree( nMode, oDlg) ; local Self AS CLASS TExportaTarifas := QSelf() AS CLASS TExportaTarifas
+
+   local oSelect   := ::oTreeCampos:GetItem()
+
+   if Len( oSelect:aItems ) <> 0
+      oSelect:Expand()
+   else
+      ::EndDetalle( nMode, oDlg )
+   end
+
+Return ( Self )
+
+
+
+UTILITY STATIC function TExportaTarifas_EndDetalle( nMode, oDlg) ; local Self AS CLASS TExportaTarifas := QSelf() AS CLASS TExportaTarifas
+
+   local cFieldSelect   := ""
+   local nPos
+
+   if ::oDbf:nAncho < 1
+      msgStop( "El ancho del campo tiene que ser mayor que 1." )
+      ::oGetAncho:SetFocus()
+      Return .F.
+   end
+
+   if ::oDbf:nTipo <> 1
+
+      if Empty( ::oDbf:mExpre )
+         msgStop( "La expresión no puede estar vacía." )
+         ::oGetExpresion:SetFocus()
+         Return .F.
+      end
+
+   else
+
+      cFieldSelect   := ::oTreeCampos:GetSelText()
+
+
+
+
+
+      if Empty( cFieldSelect )                           .OR. AllTrim( cFieldSelect ) == "Facturas"           .OR. AllTrim( cFieldSelect ) == "Lineas de facturas" .OR. AllTrim( cFieldSelect ) == "Artículos"          .OR. AllTrim( cFieldSelect ) == "Clientes"
+         msgStop( "Tiene que seleccionar un campo." )
+         ::oTreeCampos:SetFocus()
+         Return .F.
+      end
+
+
+
+
+
+      do case
+         case ( nPos := aScan( ::aFieldFacT, {|a| a[5] == cFieldSelect } ) ) <> 0
+
+            ::oDbf:cCampo      := ::aFieldFacT[ nPos, 1 ]
+            ::oDbf:cDescrip    := cFieldSelect
+            ::oDbf:cTabla      := "Cabecera"
+
+         case ( nPos := aScan( ::aFieldFacL, {|a| a[5] == cFieldSelect } ) ) <> 0
+
+            ::oDbf:cCampo   := ::aFieldFacL[ nPos, 1 ]
+            ::oDbf:cDescrip := cFieldSelect
+            ::oDbf:cTabla   := "Lineas"
+
+         case ( nPos := aScan( ::aFieldArt, {|a| a[5] == cFieldSelect } ) ) <> 0
+
+            ::oDbf:cCampo   := ::aFieldArt[ nPos, 1 ]
+            ::oDbf:cDescrip := cFieldSelect
+            ::oDbf:cTabla   := "Artículos"
+
+         case ( nPos := aScan( ::aFieldCli, {|a| a[5] == cFieldSelect } ) ) <> 0
+
+            ::oDbf:cCampo   := ::aFieldCli[ nPos, 1 ]
+            ::oDbf:cDescrip := cFieldSelect
+            ::oDbf:cTabla   := "Clientes"
+
+      end
+
+   end
+
+   if ::oDbf:nAlign < 1
+      ::oDbf:Align          := 1
+   end
+
+   oDlg:End( 1 )
+
+Return ( .T. )
+
+
+
+UTILITY STATIC function TExportaTarifas_SetDlgMode( lStart) ; local Self AS CLASS TExportaTarifas := QSelf() AS CLASS TExportaTarifas
+
+   IIF( lStart == nil, lStart := .F., ) ;
+
+   do case
+      case ::oDbf:nTipo <= 1
+         ::oGetExpresion:Hide()
+         ::oTreeCampos:Show()
+         ::oSayExpresion:SetText( "Campo" )
+         ::lCargaTreeCampos()
+
+      case ::oDbf:nTipo == 2
+         ::oGetExpresion:Show()
+         ::oTreeCampos:Hide()
+         ::oSayExpresion:SetText( "Expresión" )
+
+      case ::oDbf:nTipo == 3
+         ::oGetExpresion:Show()
+         ::oTreeCampos:Hide()
+         ::oSayExpresion:SetText( "Constante" )
+
+   end
+
+
+
+
+
+   if !lStart
+      ::oGetExpresion:cText( "" )
+   end
+
+
+Return ( .T. )
+
+
+
+UTILITY STATIC function TExportaTarifas_DelRegTemporal() ; local Self AS CLASS TExportaTarifas := QSelf() AS CLASS TExportaTarifas
+
+   ::lChangeDbf   := .T.
+
+   WinDelRec( , ::oDbf:cAlias )
+
+   ::oBrwLin:Refresh()
+
+Return ( .T. )
+
+
+
+UTILITY STATIC function TExportaTarifas_lCargaTreeCampos() ; local Self AS CLASS TExportaTarifas := QSelf() AS CLASS TExportaTarifas
+
+   local oTree
+   local aField
+
+   if ::oTreeCampos <> nil
+
+      ::oTreeCampos:DeleteAll()
+
+
+
+
+
+      oTree    := ::oTreeCampos:Add( "Clientes" , 0 )
+
+      for each aField in ::aFieldCli
+         if !Empty( aField[ 5 ] )
+            oTree:Add( aField[ 5 ], 1 )
+         end
+      next
+
+
+
+
+
+      oTree    := ::oTreeCampos:Add( "Artículos" , 0 )
+
+      for each aField in ::aFieldArt
+         if !Empty( aField[ 5 ] )
+            oTree:Add( aField[ 5 ], 1 )
+         end
+      next
+
+
+
+
+
+      oTree    := ::oTreeCampos:Add( "Facturas" , 0 )
+
+      for each aField in ::aFieldFacT
+         if !Empty( aField[ 5 ] )
+            oTree:Add( aField[ 5 ], 1 )
+         end
+      next
+
+
+
+
+
+      oTree    := ::oTreeCampos:Add( "Lineas de facturas" , 0 )
+
+      for each aField in ::aFieldFacL
+         if !Empty( aField[ 5 ] )
+            oTree:Add( aField[ 5 ], 1 )
+         end
+      next
+
+      ::oTreeCampos:Refresh()
+
+   end
+
+Return ( .T. )
+
+
+
+UTILITY STATIC function TExportaTarifas_SaveConf() ; local Self AS CLASS TExportaTarifas := QSelf() AS CLASS TExportaTarifas
+
+   local cGetFile
+   local nHandle
+   local aDir          := {}
+
+   if ::oDbf:RecCount() == 0
+      Return .F.
+   end
+
+   cGetFile      := cGetFile( "*.zip", "Seleccione el nombre del fichero a guardar" )
+
+   if Empty( cGetFile )
+      Return .F.
+   end
+
+   nHandle := fCreate( cGetFile )
+   if nHandle <> -1
+
+      if fClose( nHandle ) .AND. ( fErase( cGetFile ) == 0 )
+
+         aDir     := Directory( ::cFileTmp + ".*" )
+
+         ::oDbf:Close()
+
+         hb_SetDiskZip( {|| nil } )
+         aEval( aDir, { | cName, nIndex | hb_ZipFile( cGetFile, cPatTmp() + cName[ 1 ], 9 ) } )
+         hb_gcAll()
+
+         ::oDbf:ReActivate()
+
+         msgInfo( "Documento exportado satisfactoriamente" )
+
+      else
+
+         MsgStop( "Error en la unidad" )
+
+      end
+
+   else
+
+      MsgStop( "Ruta no válida" )
+
+   end
+
+   ::oBrwLin:Refresh()
+
+Return ( .T. )
+
+
+
+UTILITY STATIC function TExportaTarifas_LoadConf() ; local Self AS CLASS TExportaTarifas := QSelf() AS CLASS TExportaTarifas
+
+   local cGetFile    := cGetFile( "*.zip", "Selección de fichero" )
+   local aFiles      := {}
+   local cNameFile
+
+   if Empty( cGetFile )
+      Return .F.
+   end
+
+
+
+
+
+   if !file( cGetFile )
+      MsgStop( "El fichero " + cGetFile + " no existe." )
+      Return .F.
+   end
+
+
+
+
+
+   aFiles            := Hb_GetFilesInZip( cGetFile )
+
+   if !Hb_UnZipFile( cGetFile, , , , cEmpTmp(), aFiles )
+      MsgStop( "No se ha descomprimido el fichero " + cGetFile, "Error" )
+      Return .F.
+   end
+
+   hb_gcAll()
+
+
+
+
+
+   cNameFile         := Left( aFiles[ 1 ], At( ".", aFiles[ 1 ] ) - 1 )
+
+
+
+
+
+   ::oDbf:Zap()
+   ::oDbf:AppendFrom( cEmpTmp() + cNameFile + ".Dbf" )
+   ::oDbf:ReindexAll()
+   ::oDbf:GoTop()
+
+   ::oBrwLin:Refresh()
+
+
+
+
+
+   lRdDir( cEmpTmp(), cNameFile + ".*" )
+
+   ::lChangeDbf      := .F.
+
+Return ( .T. )
+
+
+
+UTILITY STATIC function TExportaTarifas_Cancelar() ; local Self AS CLASS TExportaTarifas := QSelf() AS CLASS TExportaTarifas
+
+
+
+   if ::lChangeDbf            .AND. ::oDbf:RecCount() <> 0  .AND. ApoloMsgNoYes(  "¿ Desea guardar los cambios en la configuración de la exportación ?", "Elija una opción" )
+
+      ::SaveConf()
+
+   end
+
+   ::oDlg:End()
+
+Return ( .T. )
+
+
+
+UTILITY STATIC function TExportaTarifas_Exportacion() ; local Self AS CLASS TExportaTarifas := QSelf() AS CLASS TExportaTarifas
+
+   local nHand
+   local cExpHead    := ""
+   local cExpLine    := ""
+   local cGetFile
+   local uField
+   local lFirstLine  := .T.
+   local lErrorBlock := .F.
+
+   public oFacCliT   := ::oFacCliT
+   public oFacCliL   := ::oFacCliL
+   public oDbfArt    := ::oDbfArt
+   public oDbfCli    := ::oDbfCli
+
+   if ::oDbf:RecCount() == 0
+      MsgStop( "Tiene que cargar una configuración" )
+      return .F.
+   end
+
+   cGetFile          := cGetFile( "*.txt", "Selección de fichero" )
+
+   if Empty( cGetFile )
+      return .F.
+   end
+
+
+
+
+
+   ::cTextoFinal     := ""
+
+
+
+
+
+   ::oFacCliT:OrdSetFocus( "dFecFac" )
+   ::oFacCliL:OrdSetFocus( "nNumFac" )
+   ::oDbfArt:OrdSetFocus( "Codigo" )
+
+   cExpHead          := 'dFecFac >= Ctod( "' + Dtoc( ::dIniInf ) + '" ) .and. dFecFac <= Ctod( "' + Dtoc( ::dFinInf ) + '" )'
+
+   if !::oGrupoFacturas:Cargo:Todos
+      cExpHead       += ' .and. cSerie + Str( nNumFac ) + cSufFac >= "' + ::oGrupoFacturas:Cargo:Desde + '" .and. cSerie + Str( nNumFac ) + cSufFac <= "' + ::oGrupoFacturas:Cargo:Hasta + '"'
+   end
+
+   if !::oGrupoRuta:Cargo:Todos
+      cExpHead       += ' .and. cCodRut >= "' + Rtrim( ::oGrupoRuta:Cargo:Desde ) + '" .and. cCodRut <= "' + Rtrim( ::oGrupoRuta:Cargo:Hasta ) + '"'
+   end
+
+   if !::oGrupoCliente:Cargo:Todos
+      cExpHead       += ' .and. cCodCli >= "' + Rtrim( ::oGrupoCliente:Cargo:Desde ) + '" .and. cCodCli <= "' + Rtrim( ::oGrupoCliente:Cargo:Hasta ) + '"'
+   end
+
+   ::oFacCliT:AddTmpIndex( cCurUsr(), GetFileNoExt( ::oFacCliT:cFile ), ::oFacCliT:OrdKey(), ( cExpHead ), , , , , , , , .T. )
+
+   ::oMtrInf:SetTotal( ::oFacCliT:OrdKeyCount() )
+
+   cExpLine          := "!lTotLin .and. !lControl"
+
+   if !::oGrupoArticulo:Cargo:Todos
+      cExpLine       += ' .and. cRef >= "' + ::oGrupoArticulo:Cargo:Desde + '" .and. cRef <= "' + ::oGrupoArticulo:Cargo:Hasta + '"'
+   end
+
+   ::oFacCliL:AddTmpIndex( cCurUsr(), GetFileNoExt( ::oFacCliL:cFile ), ::oFacCliL:OrdKey(), cAllTrimer( cExpLine ), , , , , , , , .T. )
+
+   ::oFacCliT:GoTop()
+
+    while !::oFacCliT:Eof()
+
+
+
+
+      if lChkSer( ::oFacCliT:cSerie, ::aSer )                                          .AND. ( ::oGrupoGCliente:Cargo:Todos                                                .OR. ( cGruCli( ::oFacCliT:cCodCli, ::oDbfCli ) >= ::oGrupoGCliente:Cargo:Desde    .AND. cGruCli( ::oFacCliT:cCodCli, ::oDbfCli ) <= ::oGrupoGCliente:Cargo:Hasta ) )
+
+         if ::oFacCliL:Seek( ::oFacCliT:cSerie + Str( ::oFacCliT:nNumFac ) + ::oFacCliT:cSufFac )
+
+            while ::oFacCliT:cSerie + Str( ::oFacCliT:nNumFac ) + ::oFacCliT:cSufFac == ::oFacCliL:cSerie + Str( ::oFacCliL:nNumFac ) + ::oFacCliL:cSufFac .AND. !::oFacCliL:eof()
+
+               if ::oDbfArt:Seek( ::oFacCliL:cRef )
+
+                  ::oDbf:GoTop()
+
+                  while !::oDbf:Eof()
+
+
+
+
+
+                     do case
+
+
+
+
+
+                        case ::oDbf:nTipo <= 1
+
+                           do case
+                              case AllTrim( ::oDbf:cTabla )  == "Cabecera"
+
+                                 if ::oDbf:nAlign <= 1
+
+                                    ::cTextoFinal     += Padr( AllTrim( cValToText( ::oFacCliT:FieldGetByName( AllTrim( ::oDbf:cCampo ) ) ) ), ::oDbf:nAncho )
+
+                                 elseif ::oDbf:nAlign == 2
+
+                                    ::cTextoFinal     += Padl( AllTrim( cValToText( ::oFacCliT:FieldGetByName( AllTrim( ::oDbf:cCampo ) ) ) ), ::oDbf:nAncho )
+
+                                 end
+
+                              case AllTrim( ::oDbf:cTabla ) == "Lineas"
+
+                                 if ::oDbf:nAlign <= 1
+
+                                    ::cTextoFinal     += Padr( AllTrim( cValToText( ::oFacCliL:FieldGetByName( AllTrim( ::oDbf:cCampo ) ) ) ), ::oDbf:nAncho )
+
+                                 elseif ::oDbf:nAlign == 2
+
+                                    ::cTextoFinal     += Padl( AllTrim( cValToText( ::oFacCliL:FieldGetByName( AllTrim( ::oDbf:cCampo ) ) ) ), ::oDbf:nAncho )
+
+                                 end
+
+                              case AllTrim( ::oDbf:cTabla ) == "Artículos"
+
+                                 if ::oDbf:nAlign <= 1
+
+                                    ::cTextoFinal     += Padr( AllTrim( cValToText( ::oDbfArt:FieldGetByName( AllTrim( ::oDbf:cCampo ) ) ) ), ::oDbf:nAncho )
+
+                                 elseif ::oDbf:nAlign == 2
+
+                                    ::cTextoFinal     += Padl( AllTrim( cValToText( ::oDbfArt:FieldGetByName( AllTrim( ::oDbf:cCampo ) ) ) ), ::oDbf:nAncho )
+
+                                 end
+
+                              case AllTrim( ::oDbf:cTabla ) == "Clientes"
+
+                                 if ::oDbf:nAlign <= 1
+
+                                    ::cTextoFinal     += Padr( AllTrim( cValToText( ::oDbfCli:FieldGetByName( AllTrim( ::oDbf:cCampo ) ) ) ), ::oDbf:nAncho )
+
+                                 elseif ::oDbf:nAlign == 2
+
+                                    ::cTextoFinal     += Padl( AllTrim( cValToText( ::oDbfCli:FieldGetByName( AllTrim( ::oDbf:cCampo ) ) ) ), ::oDbf:nAncho )
+
+                                 end
+
+                           end
+
+
+
+
+
+                        case ::oDbf:nTipo == 2
+
+                           uField               := bCheck2Block( AllTrim( ::oDbf:mExpre ), lFirstLine )
+
+                           if uField <> nil
+                              uField            := Eval( uField )
+                           else
+                              lErrorBlock       := .T.
+                           end
+
+                           if ::oDbf:nAlign <= 1
+
+                              ::cTextoFinal        += Padr( AllTrim( cValToText( uField ) ), ::oDbf:nAncho )
+
+                           elseif ::oDbf:nAlign == 2
+
+                              ::cTextoFinal        += Padl( AllTrim( cValToText( uField ) ), ::oDbf:nAncho )
+
+                           end
+
+
+
+
+
+                        case ::oDbf:nTipo >= 3
+
+                           if ::oDbf:nAlign <= 1
+
+                              ::cTextoFinal        += Padr( AllTrim( ::oDbf:mExpre ), ::oDbf:nAncho )
+
+                           elseif ::oDbf:nAlign == 2
+
+                              ::cTextoFinal        += Padl( AllTrim( ::oDbf:mExpre ), ::oDbf:nAncho )
+
+                           end
+
+                     end
+
+                     ::oDbf:Skip()
+
+                  end
+
+                  ::cTextoFinal                 += Chr(13)+Chr(10)
+
+                  lFirstLine                    := .F.
+
+               end
+
+               ::oFacCliL:Skip()
+
+            end
+
+         end
+
+      end
+
+      ::oFacCliT:Skip()
+
+      ::oMtrInf:AutoInc()
+
+   end
+
+   ::oMtrInf:AutoInc( ::oFacCliT:Lastrec() )
+
+
+
+
+
+   ::oFacCliT:IdxDelete( cCurUsr(), GetFileNoExt( ::oFacCliT:cFile ) )
+
+   ::oFacCliL:IdxDelete( cCurUsr(), GetFileNoExt( ::oFacCliL:cFile ) )
+
+   if !lErrorBlock
+
+
+
+
+
+      fErase( cGetFile )
+      nHand       := fCreate( cGetFile )
+      fWrite( nHand, ::cTextoFinal )
+      fClose( nHand )
+
+
+
+
+
+
+      if ApoloMsgNoYes( "Proceso de exportación realizado con éxito" + Chr(13)+Chr(10) +  "¿ Desea abrir el fichero resultante ?", "Elija una opción." )
+         ShellExecute( 0, "open", cGetFile, , , 1 )
+      end
+
+   else
+
+      MsgStop( "Error en el proceso de exportación" )
+
+   end
+
+
+
+
+
+   ::oDbf:GoTop()
+   ::oBrwLin:Refresh()
+
+RETURN ( .T. )

@@ -1,0 +1,266 @@
+#line 112 "hbclass.ch"
+   DYNAMIC DivertConstructorCall
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+DECLARE HBClass  New( cName AS String, OPTIONAL SuperParams ) AS CLASS HBClass  Create() AS Object  Instance() AS Object  AddClsMethod( cName AS String, @MethodName(), nScope AS Numeric, n2 AS Numeric, n3 AS Numeric )  AddDelegate( cName AS String, cDelegate AS String, cObject AS String, nScope AS Numeric, lPersistent AS LOGICAL )  AddMultiClsData( cType AS String, uVal, nScope AS Numeric, aDatas AS Array OF String )  AddMultiData( cType AS String, uVal, nScope AS Numeric, aDatas AS Array OF String, x AS LOGICAL, lPer AS LOGICAL )  AddMethod( cName AS String, @MethodName(), nScope AS Numeric, lPersistent AS LOGICAL )  AddInLine( cName AS String, bBlock AS CodeBlock, nScope AS Numeric, lPersistent AS LOGICAL )  AddVirtual( cName AS String )  ModMethod( cName AS String, @MethodName(), nScope AS Numeric, lPersistent AS LOGICAL )  ModClsMethod( cName AS String, @MethodName(), nScope AS Numeric )  ModInline( cName AS String, bBlock AS CodeBlock, nScope AS Numeric, lPersistent AS LOGICAL )  SetOnError( @MethodName() )
+#line 85 "\Fwh1204\Include\FiveWin.ch"
+   EXTERNAL GetProcAdd
+   EXTERNAL TActiveX
+
+
+
+
+extern errorsys
+#line 30 ".\Prg\MdiClien.prg"
+_HB_CLASS TMdiClient ; UTILITY FUNCTION TMdiClient(...); static s_oClass ; local oClassInstance ; local nScope ; nScope := 1 ; if s_oClass == NIL ; s_oClass := IIF(.F.,, HBClass():New( "TMdiClient" , {TWindow():classh} ) ) ; ;
+
+   _HB_MEMBER {AS LOGICAL lRegistered} ; IIF( !.F., s_oClass:AddMultiClsData("LOGICAL",, nScope + IIF( .F., 32, 0 ) + 64, { "lRegistered" }, .F. ), )
+
+   _HB_MEMBER { aWnd} ; IIF( !.F., s_oClass:AddMultiData(,, nScope + IIF( .F., 32, 0 ), { "aWnd" }, .F., .F. ), )
+
+
+   _HB_MEMBER New( oWnd, nSubMenu, nIdChildFirst, oBrush, lVScroll, lHScroll) AS CLASS TMdiClient; IIF( .F., s_oClass:ModMethod( "New", @TMdiClient_New(), nScope + IIF( .T., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ), s_oClass:AddMethod( "New", @TMdiClient_New(), nScope + IIF( .T., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ));
+
+   _HB_MEMBER Display(); IIF( .F., s_oClass:ModInline( "Display", {|Self | Self, ::BeginPaint(), ::Paint(), ::EndPaint(), 0 }, nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ), s_oClass:AddInline( "Display", {|Self | Self, ::BeginPaint(), ::Paint(), ::EndPaint(), 0 }, nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ) )
+
+
+   _HB_MEMBER Tile(lHor); IIF( .F., s_oClass:ModInline( "Tile", {|Self,lHor | Self, lHor := If( lHor == nil, .F., lHor ), ::SendMsg( 550, If( lHor, 1, 0 ) ) }, nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ), s_oClass:AddInline( "Tile", {|Self,lHor | Self, lHor := If( lHor == nil, .F., lHor ), ::SendMsg( 550, If( lHor, 1, 0 ) ) }, nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ) )
+
+   _HB_MEMBER Cascade(); IIF( .F., s_oClass:ModInline( "Cascade", {|Self | Self, ::SendMsg( 551 ) }, nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ), s_oClass:AddInline( "Cascade", {|Self | Self, ::SendMsg( 551 ) }, nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ) )
+   _HB_MEMBER ArrangeIcons(); IIF( .F., s_oClass:ModInline( "ArrangeIcons", {|Self | Self, ::SendMsg( 552 ) }, nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ), s_oClass:AddInline( "ArrangeIcons", {|Self | Self, ::SendMsg( 552 ) }, nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ) )
+   _HB_MEMBER NextWindow(); IIF( .F., s_oClass:ModInline( "NextWindow", {|Self | Self, ::SendMsg( 548,, 1 ) }, nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ), s_oClass:AddInline( "NextWindow", {|Self | Self, ::SendMsg( 548,, 1 ) }, nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ) )
+   _HB_MEMBER PrevWindow(); IIF( .F., s_oClass:ModInline( "PrevWindow", {|Self | Self, ::SendMsg( 548 ) }, nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ), s_oClass:AddInline( "PrevWindow", {|Self | Self, ::SendMsg( 548 ) }, nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ) )
+
+   _HB_MEMBER GetActive(); IIF( .F., s_oClass:ModMethod( "GetActive", @TMdiClient_GetActive(), nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ), s_oClass:AddMethod( "GetActive", @TMdiClient_GetActive(), nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ));
+   _HB_MEMBER Add(oWnd); IIF( .F., s_oClass:ModInline( "Add", {|Self,oWnd | Self, AAdd( ::aWnd, oWnd ) }, nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ), s_oClass:AddInline( "Add", {|Self,oWnd | Self, AAdd( ::aWnd, oWnd ) }, nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ) )
+
+   _HB_MEMBER ChildNew( nTop, nLeft, nBottom, nRight, cTitle, nStyle); IIF( .F., s_oClass:ModMethod( "ChildNew", @TMdiClient_ChildNew(), nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ), s_oClass:AddMethod( "ChildNew", @TMdiClient_ChildNew(), nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ));
+
+   _HB_MEMBER ChildActivate(oWnd); IIF( .F., s_oClass:ModInline( "ChildActivate", {|Self,oWnd | Self, ::SendMsg( 546, oWnd:hWnd ) }, nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ), s_oClass:AddInline( "ChildActivate", {|Self,oWnd | Self, ::SendMsg( 546, oWnd:hWnd ) }, nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ) )
+
+   _HB_MEMBER ChildMaximize(oWnd); IIF( .F., s_oClass:ModInline( "ChildMaximize", {|Self,oWnd | Self, ::SendMsg( 549, oWnd:hWnd ) }, nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ), s_oClass:AddInline( "ChildMaximize", {|Self,oWnd | Self, ::SendMsg( 549, oWnd:hWnd ) }, nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ) )
+
+   _HB_MEMBER ChildRestore(oWnd); IIF( .F., s_oClass:ModInline( "ChildRestore", {|Self,oWnd | Self, ::SendMsg( 547, oWnd:hWnd ) }, nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ), s_oClass:AddInline( "ChildRestore", {|Self,oWnd | Self, ::SendMsg( 547, oWnd:hWnd ) }, nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ) )
+
+   _HB_MEMBER ChildClose( oWnd); IIF( .F., s_oClass:ModMethod( "ChildClose", @TMdiClient_ChildClose(), nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ), s_oClass:AddMethod( "ChildClose", @TMdiClient_ChildClose(), nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ));
+
+
+
+   _HB_MEMBER ChildNext(oWnd, lPrev); IIF( .F., s_oClass:ModInline( "ChildNext", {|Self,oWnd, lPrev | Self, lPrev := If( lPrev == nil, .F., lPrev ), ::SendMsg( 548, oWnd:hWnd, If( lPrev, 1, 0 ) ) }, nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ), s_oClass:AddInline( "ChildNext", {|Self,oWnd, lPrev | Self, lPrev := If( lPrev == nil, .F., lPrev ), ::SendMsg( 548, oWnd:hWnd, If( lPrev, 1, 0 ) ) }, nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ) )
+
+
+
+   _HB_MEMBER ReSize( nSizeType, nWidth, nHeigh ); IIF( !.F., s_oClass:AddVirtual( "ReSize" ), )
+
+   _HB_MEMBER lCloseAll(); IIF( .F., s_oClass:ModMethod( "lCloseAll", @TMdiClient_lCloseAll(), nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ), s_oClass:AddMethod( "lCloseAll", @TMdiClient_lCloseAll(), nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ));
+
+
+
+
+      _HB_MEMBER IconizeAll(); IIF( .F., s_oClass:ModInline( "IconizeAll", {|Self | Self, ASend( ::aWnd, "Iconize()" ) }, nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ), s_oClass:AddInline( "IconizeAll", {|Self | Self, ASend( ::aWnd, "Iconize()" ) }, nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ) )
+
+
+   _HB_MEMBER Select(nWindow); IIF( .F., s_oClass:ModMethod( "Select", @TMdiClient__Select(), nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ) ), s_oClass:AddMethod( "Select", @TMdiClient__Select(), nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ) ) );
+
+   _HB_MEMBER SetMenu( oMenu, nMenuInfo); IIF( .F., s_oClass:ModMethod( "SetMenu", @TMdiClient_SetMenu(), nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ), s_oClass:AddMethod( "SetMenu", @TMdiClient_SetMenu(), nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ));
+
+   _HB_MEMBER KeyDown( nKey, nFlags); IIF( .F., s_oClass:ModMethod( "KeyDown", @TMdiClient_KeyDown(), nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ), s_oClass:AddMethod( "KeyDown", @TMdiClient_KeyDown(), nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ));
+
+
+   _HB_MEMBER MouseMove(nRow, nCol, nFlags); IIF( .F., s_oClass:ModInline( "MouseMove", {|Self,nRow, nCol, nFlags | Self, ::oWnd:SetMsg(), ::TWindow:MouseMove( nRow, nCol, nFlags ) }, nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ), s_oClass:AddInline( "MouseMove", {|Self,nRow, nCol, nFlags | Self, ::oWnd:SetMsg(), ::TWindow:MouseMove( nRow, nCol, nFlags ) }, nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ) )
+
+
+
+
+   _HB_MEMBER GotFocus(); IIF( .F., s_oClass:ModInline( "GotFocus", {|Self | Self, ::lFocused := .T., If( ::bGotFocus <> nil, Eval( ::bGotFocus ),), nil }, nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ), s_oClass:AddInline( "GotFocus", {|Self | Self, ::lFocused := .T., If( ::bGotFocus <> nil, Eval( ::bGotFocus ),), nil }, nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ) )
+
+; IF .F. ; __clsActive(s_oClass:hClass) ; s_oClass:Refresh() ; ELSE ; s_oClass:Create() ; END ; oClassInstance := __clsInst( s_oClass:hClass ) ; IF __ObjHasMsg( oClassInstance, "InitClass" ); oClassInstance:InitClass( hb_aParams() ) ; END ; ELSE ; oClassInstance := __clsInst( s_oClass:hClass ) ; END ; IF PCount() > 0 ; DIVERT TO (@DivertConstructorCall()) OF s_oClass ; END ; RETURN oClassInstance AS CLASS TMdiClient ;
+
+
+
+UTILITY STATIC function TMdiClient_New( oWnd, nSubMenu, nIdChildFirst, oBrush, lVscroll, lHScroll) ; local Self AS CLASS TMdiClient := QSelf() AS CLASS TMdiClient
+
+   local cClientCreateStruct
+
+
+
+
+
+
+
+
+      cClientCreateStruct :=  L2Bin( GetSubMenu( oWnd:oMenu:hMenu, nSubMenu - 1 ) ) +  L2Bin( nIdChildFirst )
+
+
+   IIF( lVScroll == nil, lVScroll := .F., ) ; IIF( lHScroll == nil, lHScroll := .F., );
+
+
+
+
+   ::nStyle = nOr( 1073741824, 268435456, 67108864, 33554432, 1, If( lVScroll, 2097152, 0 ), If( lHScroll, 1048576, 0 ) )
+
+   ::aWnd    = {}
+   ::oWnd    = oWnd
+   ::oBrush  = oBrush
+   ::nTop    = 0
+   ::nLeft   = 0
+   ::nBottom = 0
+   ::nRight  = 0
+
+   ::hWnd    = CreateWindow( "MDICLIENT", "", ::nStyle, 0, 0, 0, 0, oWnd:hWnd, 1, cClientCreateStruct )
+   ::Link()
+   ::lVisible    = .T.
+   ::lValidating = .F.
+
+
+
+
+
+   if lVScroll
+      ::oVScroll := TScrollBar():WinNew( 1, 10, 1, (!.F.) .OR. .T., Self,,,,,,,,, .F.,, )
+   endif
+
+   if lHScroll
+      ::oHScroll := TScrollBar():WinNew( 1, 10, 1, (!.T.), Self,,,,,,,,, .F.,, )
+   endif
+
+   ::GetFont()
+
+return Self
+
+
+
+UTILITY STATIC function TMdiClient_ChildNew( nTop, nLeft, nBottom, nRight, cTitle, nStyle) ; local Self AS CLASS TMdiClient := QSelf() AS CLASS TMdiClient
+
+
+   local oWndChild := TMdiChild():New( nTop, nLeft, nBottom, nRight, cTitle, nStyle,, ::oWnd )
+
+   oWndChild:Show()
+   oWndChild:SetFocus()
+
+return oWndChild
+
+
+
+UTILITY STATIC function TMdiClient_GetActive() ; local Self AS CLASS TMdiClient := QSelf() AS CLASS TMdiClient
+
+
+
+
+      local hWndAt := ::SendMsg( 553 )
+
+
+   local oWnd, nAt
+
+   if hWndAt <> 0
+      if ( nAt := AScan( ::aWnd, { | oWnd | oWnd:hWnd == hWndAt } ) ) <> 0
+         oWnd = ::aWnd[ nAt ]
+      endif
+   endif
+
+return oWnd
+
+
+
+UTILITY STATIC function TMdiClient_ChildClose( oWnd) ; local Self AS CLASS TMdiClient := QSelf() AS CLASS TMdiClient
+
+   local nAt := AScan( ::aWnd, { | oChild | oChild:hWnd == oWnd:hWnd } )
+
+   if nAt <> 0
+      ::SendMsg( 545, oWnd:hWnd )
+      ADel( ::aWnd, nAt )
+      ASize( ::aWnd, Len( ::aWnd ) - 1 )
+      SetWndDefault( nil )
+      if ::oWnd:oWndActive == oWnd
+         ::oWnd:oWndActive = nil
+      endif
+   endif
+
+return nil
+
+
+
+UTILITY STATIC function TMdiClient_lCloseAll() ; local Self AS CLASS TMdiClient := QSelf() AS CLASS TMdiClient
+
+   while Len( ::aWnd ) > 0  .AND. ATail( ::aWnd ):End()
+      SysRefresh()
+   end
+
+return Len( ::aWnd ) == 0
+
+
+
+UTILITY STATIC function TMdiClient__Select(nWindow) ; local Self AS CLASS TMdiClient := QSelf() AS CLASS TMdiClient
+
+   IIF( nWindow == nil, nWindow := 0, ) ;
+
+   if ! Empty( ::aWnd ) .AND. nWindow >= 1 .AND. nWindow <= Len( ::aWnd )
+      ::SendMsg( 546, ::aWnd[ nWindow ]:hWnd )
+   else
+      ::SendMsg( 546, 0 )
+   endif
+
+return nil
+
+
+
+UTILITY STATIC function TMdiClient_KeyDown( nKey, nFlags) ; local Self AS CLASS TMdiClient := QSelf() AS CLASS TMdiClient
+
+
+
+
+
+   if nKey == 115 .AND. GetKeyState( 17 )
+      SendMessage( ::SendMsg( 553 ), 274, 61536 )
+      return 0
+   endif
+
+   if nKey == 117 .AND. GetKeyState( 17 )
+      SendMessage( ::SendMsg( 553 ), 274, 61504 )
+      return 0
+   endif
+
+   if nKey == 13
+      SendMessage( ::SendMsg( 553 ), 274, 61728 )
+      return 0
+   endif
+
+return ::TWindow:KeyDown( nKey, nFlags )
+
+
+
+UTILITY STATIC function TMdiClient_SetMenu( oMenu, nMenuInfo) ; local Self AS CLASS TMdiClient := QSelf() AS CLASS TMdiClient
+
+   if oMenu <> nil
+      IIF( nMenuInfo == nil, nMenuInfo := Len( oMenu:aItems ), ) ;
+
+
+
+
+
+
+         ::SendMsg( 560, oMenu:hMenu, GetSubMenu( oMenu:hMenu, nMenuInfo - 1 ) )
+
+
+      if oMenu:oAccTable <> nil
+         oMenu:oAcctable:Activate()
+      endif
+
+      DrawMenuBar( ::oWnd:hWnd )
+   endif
+
+return nil

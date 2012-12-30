@@ -1,0 +1,974 @@
+#line 112 "hbclass.ch"
+   DYNAMIC DivertConstructorCall
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+DECLARE HBClass  New( cName AS String, OPTIONAL SuperParams ) AS CLASS HBClass  Create() AS Object  Instance() AS Object  AddClsMethod( cName AS String, @MethodName(), nScope AS Numeric, n2 AS Numeric, n3 AS Numeric )  AddDelegate( cName AS String, cDelegate AS String, cObject AS String, nScope AS Numeric, lPersistent AS LOGICAL )  AddMultiClsData( cType AS String, uVal, nScope AS Numeric, aDatas AS Array OF String )  AddMultiData( cType AS String, uVal, nScope AS Numeric, aDatas AS Array OF String, x AS LOGICAL, lPer AS LOGICAL )  AddMethod( cName AS String, @MethodName(), nScope AS Numeric, lPersistent AS LOGICAL )  AddInLine( cName AS String, bBlock AS CodeBlock, nScope AS Numeric, lPersistent AS LOGICAL )  AddVirtual( cName AS String )  ModMethod( cName AS String, @MethodName(), nScope AS Numeric, lPersistent AS LOGICAL )  ModClsMethod( cName AS String, @MethodName(), nScope AS Numeric )  ModInline( cName AS String, bBlock AS CodeBlock, nScope AS Numeric, lPersistent AS LOGICAL )  SetOnError( @MethodName() )
+#line 85 "\Fwh1204\Include\FiveWin.Ch"
+   EXTERNAL GetProcAdd
+   EXTERNAL TActiveX
+
+
+
+
+extern errorsys
+#line 5 ".\Prg\Ubicacion.prg"
+static oWndBrw
+static dbfUbicaT
+static dbfUbicaL
+static dbfTmpUbiL
+static cTmpUbiLin
+static bEdit      := { |aTmp, aGet, dbf, oBrw, bWhen, bValid, nMode | EdtRec( aTmp, aGet, dbf, oBrw, bWhen, bValid, nMode ) }
+static bEdtDet    := { |aTmp, aGet, dbf, oBrw, bWhen, bValid, nMode, cCodArt | EdtDet( aTmp, aGet, dbf, oBrw, bWhen, bValid, nMode, cCodArt ) }
+
+
+
+STATIC FUNCTION OpenFiles()
+
+
+   local lOpen    := .T.
+   local oBlock   := ErrorBlock( {| oError | ApoloBreak( oError ) } )
+
+   BEGIN SEQUENCE
+
+   dbUseArea( .T., ( cDriver() ), ( cPatAlm() + "UBICAT.DBF" ), ( cCheckArea( "UBICAT", @dbfUbicaT ) ), if(.T. .OR. .F., !.F., NIL), .F.,, )
+   if !lAIS() ; ordListAdd( ( cPatAlm() + "UBICAT.CDX" ) ) ; else ; ordSetFocus( 1 ) ; end
+
+   dbUseArea( .T., ( cDriver() ), ( cPatAlm() + "UBICAL.DBF" ), ( cCheckArea( "UBICAL", @dbfUbicaL ) ), if(.T. .OR. .F., !.F., NIL), .F.,, )
+   if !lAIS() ; ordListAdd( ( cPatAlm() + "UBICAL.CDX" ) ) ; else ; ordSetFocus( 1 ) ; end
+
+   RECOVER
+
+      msgStop( "Imposible abrir todas las bases de datos" )
+      CloseFiles()
+      lOpen          := .F.
+
+   end
+
+   ErrorBlock( oBlock )
+
+RETURN ( lOpen )
+
+
+
+STATIC FUNCTION CloseFiles()
+
+
+   if dbfUbicaT <> nil
+      ( dbfUbicaT )->( dbCloseArea() )
+   end
+   if dbfUbicaL <> nil
+      ( dbfUbicaL )->( dbCloseArea() )
+   end
+
+   dbfUbicaT  := nil
+   dbfUbicaL  := nil
+   oWndBrw    := nil
+
+RETURN .T.
+
+
+
+
+
+
+FUNCTION Ubicacion( oMenuItem, oWnd )
+
+   local nLevel
+
+   IIF( oMenuItem == nil, oMenuItem := "01088", ) ;
+   IIF( oWnd == nil, oWnd := oWnd(), ) ;
+
+    IF oWndBrw == NIL
+
+
+
+
+
+      nLevel            := nLevelUsr( oMenuItem )
+
+      if nAnd( nLevel, 1 ) <> 0
+         msgStop( "Acceso no permitido." )
+         return nil
+      end
+
+
+
+
+
+      if oWnd <> nil
+         SysRefresh(); oWnd:CloseAll(); SysRefresh()
+      end
+
+
+
+
+
+      IF !OpenFiles()
+         RETURN NIL
+      end
+
+
+
+
+
+      AddMnuNext( "Ubicaciones de almacenes", ProcName() )
+
+
+
+
+
+
+
+
+
+
+
+
+   oWndBrw := TShell():New( 2, 10, 18, 70, "Ubicaciones de almacenes",, oWnd,,, .F.,,, ( dbfUbicaT ),,,,,, {||( WinAppRec( oWndBrw:oBrw, bEdit, dbfUbicaT ) )}, {||( WinEdtRec( oWndBrw:oBrw, bEdit, dbfUbicaT ) )}, {||( WinDelRec( oWndBrw:oBrw, dbfUbicaT, {|| QuiUbi( dbfUbicaT ) } ) )}, {||( WinDupRec( oWndBrw:oBrw, bEdit, dbfUbicaT ) )}, nil, nLevel, "Forklifter_16", ( 106 + ( 70 * 256 ) + ( 18 * 65536 ) ),,, .T. )
+
+      with object ( oWndBrw:AddXCol() )
+         :cHeader          := "Código"
+         :cSortOrder       := "cCodUbi"
+         :bEditValue       := {|| ( dbfUbicaT )->cCodUbi }
+         :nWidth           := 80
+         :bLClickHeader    := {| nMRow, nMCol, nFlags, oCol | oWndBrw:ClickOnHeader( oCol ) }
+      end
+
+      with object ( oWndBrw:AddXCol() )
+         :cHeader          := "Nombre"
+         :cSortOrder       := "cNomUbi"
+         :bEditValue       := {|| ( dbfUbicaT )->cNomUbi }
+         :nWidth           := 280
+         :bLClickHeader    := {| nMRow, nMCol, nFlags, oCol | oWndBrw:ClickOnHeader( oCol ) }
+      end
+
+      oWndBrw:cHtmlHelp    := "Ubicaciones de almacónes"
+
+      oWndBrw:CreateXFromCode()
+
+
+
+
+
+      oWndBrw:NewAt( "BUS",,, {||( oWndBrw:SearchSetFocus() )}, "(B)uscar", "B",,,,, .F. )
+
+      oWndBrw:AddSeaBar()
+
+
+
+
+
+
+
+
+      oWndBrw:NewAt( "NEW",,, {||( oWndBrw:RecAdd() )}, "(A)ñadir", "A",,, 2,, .F. )
+
+
+
+
+
+
+
+        oWndBrw:NewAt( "EDIT",,, {||( oWndBrw:RecEdit() )}, "(M)odificar", "M",,, 4,, .F. )
+
+
+
+
+
+
+
+        oWndBrw:NewAt( "ZOOM",,, {||( WinZooRec( oWndBrw:oBrw, bEdit, dbfUbicaT ) )}, "(Z)oom", "Z",,, 8,, .F. )
+
+
+
+
+
+
+
+        oWndBrw:NewAt( "DEL",,, {||( oWndBrw:RecDel() )}, "(E)liminar", "E",,, 16,, .F. )
+
+
+
+
+
+
+
+
+
+      oWndBrw:NewAt( "IMP",,, {||( InfUbi():New( "Listado de ubicaciones" ):Play() )}, "(L)istado", "L",,, 16,, .F. )
+
+
+
+
+
+
+
+      oWndBrw:NewAt( "END",,, {||( oWndBrw:end() )}, "(S)alir", "S",,,,, .F. )
+
+        oWndBrw:Activate(, oWndBrw:bLClicked, oWndBrw:bRClicked, oWndBrw:bMoved, oWndBrw:bResized, oWndBrw:bPainted, oWndBrw:bKeyDown, oWndBrw:bInit,,,,,,,,, {|| ( CloseFiles() )},, oWndBrw:bLButtonUp )
+
+    ELSE
+
+        oWndBrw:SetFocus()
+
+    end
+
+RETURN NIL
+
+
+
+STATIC FUNCTION EdtRec( aTmp, aGet, dbfUbicaT, oBrw, bWhen, bValid, nMode )
+
+   local oDlg
+
+   BeginTrans( aTmp, nMode, ( dbfUbicaT )->cCodUbi )
+
+   oDlg = TDialog():New(,,,, LblTitle( nMode ) + "ubicaciones", "UBICACION",, .F.,,,,,, .F.,,,,,, .F., )
+
+
+
+
+
+
+
+
+      aGet[ ( dbfUbicaT )->( FieldPos( "cCodUbi" ) ) ] := TGetHlp():ReDefine( 100, { | u | If( PCount()==0, aTmp[ ( dbfUbicaT )->( FieldPos( "cCodUbi" ) ) ], aTmp[ ( dbfUbicaT )->( FieldPos( "cCodUbi" ) ) ]:= u ) }, oDlg,, "@!", {||    ( NotValid( aGet[ ( dbfUbicaT )->( FieldPos( "cCodUbi" ) ) ], dbfUbicaT ) )},,,,,, .T., {||     ( nMode == 1 )},, .F., .F.,,,,,, nil,,, )
+
+
+
+
+
+      aGet[ ( dbfUbicaT )->( FieldPos( "cNomUbi" ) ) ] := TGetHlp():ReDefine( 110, { | u | If( PCount()==0, aTmp[ ( dbfUbicaT )->( FieldPos( "cNomUbi" ) ) ], aTmp[ ( dbfUbicaT )->( FieldPos( "cNomUbi" ) ) ]:= u ) }, oDlg,,,,,,,,, .F., {||     ( nMode <> 3 )},, .F., .F.,,,,,, nil,,, )
+
+      oBrw                 := TXBrowse():New( oDlg )
+
+      oBrw:bClrSel         := {|| { 0, ( 229 + ( 229 * 256 ) + ( 229 * 65536 ) ) } }
+      oBrw:bClrSelFocus    := {|| { 0, ( 167 + ( 205 * 256 ) + ( 240 * 65536 ) ) } }
+
+      oBrw:nMarqueeStyle   := 6
+
+      oBrw:cAlias          := dbfTmpUbiL
+
+      oBrw:CreateFromResource( 120 )
+
+      with object ( oBrw:addCol() )
+         :cHeader       := "Código"
+         :bStrData      := {|| ( dbfTmpUbiL )->cUbiLin }
+         :nWidth        := 80
+      end
+
+      with object ( oBrw:addCol() )
+         :cHeader       := "Nombre"
+         :bStrData      := {|| ( dbfTmpUbiL )->cNomUbiL }
+         :nWidth        := 180
+      end
+
+      if ( nMode <> 3 )
+         oBrw:bLDblClick   := {|| WinEdtRec( oBrw, bEdtDet, dbfTmpUbiL ) }
+      end
+
+
+
+
+
+      TButton():ReDefine( 500, {||( WinAppRec( oBrw, bEdtDet, dbfTmpUbiL ) )}, oDlg,,, .F., {||         ( nMode <> 3 )},,, .F. )
+
+
+
+
+
+      TButton():ReDefine( 501, {||( WinEdtRec( oBrw, bEdtDet, dbfTmpUbiL ) )}, oDlg,,, .F., {||         ( nMode <> 3 )},,, .F. )
+
+
+
+
+
+      TButton():ReDefine( 502, {||( WinDelRec( oBrw, dbfTmpUbiL ) )}, oDlg,,, .F., {||         ( nMode <> 3 )},,, .F. )
+
+
+
+
+
+      TButton():ReDefine( 1, {||( EndTrans( aTmp, aGet, dbfUbicaT, nMode, oDlg ) )}, oDlg,,, .F., {||         ( nMode <> 3 )},,, .F. )
+
+
+
+
+
+        TButton():ReDefine( 2, {||( oDlg:end() )}, oDlg,,, .F.,,,, .T. )
+
+
+
+
+      TButton():ReDefine( 559, {||( ChmHelp( "Ubicaciones" ) )}, oDlg,,, .F.,,,, .F. )
+
+   if nMode <> 3
+      oDlg:AddFastKey( 113, {|| WinAppRec( oBrw, bEdtDet, dbfTmpUbiL ), oBrw:refresh() } )
+      oDlg:AddFastKey( 114, {|| WinEdtRec( oBrw, bEdtDet, dbfTmpUbiL ), oBrw:refresh() } )
+      oDlg:AddFastKey( 115, {|| DelDet(), oBrw:refresh() } )
+      oDlg:AddFastKey( 116, {|| if( nMode == 4, if( aGet[ ( dbfUbicaT )->( FieldPos( "cCodUbi" ) ) ]:lValid(), EndTrans( aTmp, aGet, dbfUbicaT, nMode, oDlg ), ), EndTrans( aTmp, aGet, dbfUbicaT, nMode, oDlg ) ) } )
+   end
+
+   oDlg:AddFastKey ( 112, {|| ChmHelp( "Ubicaciones" ) } )
+
+   oDlg:bStart := {|| aGet[ ( dbfUbicaT )->( FieldPos( "cCodUbi" ) ) ]:SetFocus() }
+
+   oDlg:Activate( oDlg:bLClicked, oDlg:bMoved, oDlg:bPainted, .T.,,,, oDlg:bRClicked,,, )
+
+   KillTrans()
+
+RETURN ( oDlg:nResult == 1 )
+
+
+
+STATIC FUNCTION BeginTrans( aTmp, nMode, cCodUbi )
+
+   local nOrdAnt
+
+   cTmpUbiLin         := cGetNewFileName( cPatTmp() + "TmpUbiLin" )
+
+   dbCreate( cTmpUbiLin, aSqlStruct( aItmUbiLin() ), cLocalDriver() )
+   dbUseArea( .T., cLocalDriver(), cTmpUbiLin, cCheckArea( "TmpUbiLin", @dbfTmpUbiL ), .F. )
+
+   if !( dbfTmpUbiL )->( neterr() )
+      ( dbfTmpUbiL )->( OrdCondSet( "!Deleted()", {||!Deleted() } ) )
+      ( dbfTmpUbiL )->( OrdCreate( cTmpUbiLin, "CCODUBI", "cCodUbi", {|| Field->cCodUbi } ) )
+
+      nOrdAnt := ( dbfUbicaL )->( OrdSetFocus( 2 ) )
+
+      ( dbfUbicaL )->( dbGoTop() )
+      if nMode <> 1 .AND. ( dbfUbicaL )->( dbSeek( cCodUbi ) )
+         while ( dbfUbicaL )->cCodUbi == cCodUbi .AND. !( dbfUbicaL )->( eof() )
+            dbPass( dbfUbicaL, dbfTmpUbiL, .T. )
+            ( dbfUbicaL )->( dbSkip() )
+         end
+      end
+
+      ( dbfTmpUbiL )->( dbGoTop() )
+      ( dbfUbicaL )->( OrdSetFocus( nOrdAnt ) )
+      ( dbfUbicaL )->( dbGoTop() )
+
+   end
+
+RETURN .T.
+
+
+
+Function aItmUbiLin()
+
+   local aBase := {}
+
+   aAdd( aBase, { "CCODUBI",   "C",  5, 0, "Código ubicación" }    )
+   aAdd( aBase, { "CUBILIN",   "C",  5, 0, "Código de línea de ubicación" }   )
+   aAdd( aBase, { "CNOMUBIL",  "C", 30, 0, "Nombre de línea de ubicación" }   )
+
+return ( aBase )
+
+
+
+Function aItmUbi()
+
+   local aItmUbi  := {}
+
+   aAdd( aItmUbi, { "CCODUBI",   "C",  5, 0, "Código ubicación" } )
+   aAdd( aItmUbi, { "CNOMUBI",   "C", 35, 0, "Nombre ubicación" } )
+
+Return ( aItmUbi )
+
+
+
+STATIC FUNCTION EndTrans( aTmp, aGet, dbfUbicaT, nMode, oDlg )
+
+   local oError
+   local oBlock
+   local nOrdAnt
+
+   if nMode == 1
+
+      if Empty( aTmp[ ( dbfUbicaT )->( FieldPos( "cCodUbi" ) ) ] )
+         MsgStop( "El código de la ubicación no puede estas vacío" )
+         aGet[ ( dbfUbicaT )->( FieldPos( "cCodUbi" ) ) ]:SetFocus()
+         Return nil
+      end
+
+      if dbSeekInOrd( aTmp[ ( dbfUbicaT )->( FieldPos( "cCodUbi" ) ) ], "CCODUBI", dbfUbicaT )
+         MsgStop( "Código ya existe " + Rtrim( aTmp[ ( dbfUbicaT )->( FieldPos( "cCodUbi" ) ) ] ) )
+         return nil
+      end
+
+   end
+
+   if Empty( aTmp[ ( dbfUbicaT )->( FieldPos( "cNomUbi" ) ) ] )
+      MsgStop( "El nombre de la ubicación no puede estas vacío" )
+      aGet[ ( dbfUbicaT )->( FieldPos( "cNomUbi" ) ) ]:SetFocus()
+      Return nil
+   end
+
+   oBlock      := ErrorBlock( {| oError | ApoloBreak( oError ) } )
+   BEGIN SEQUENCE
+
+   BeginTransaction()
+
+   nOrdAnt := ( dbfUbicaL )->( OrdSetFocus( 2 ) )
+   ( dbfUbicaL )->( dbGoTop() )
+
+   if ( dbfUbicaL )->( dbSeek( aTmp[ ( dbfUbicaT )->( FieldPos( "cCodUbi" ) ) ] ) )
+
+      while ( dbfUbicaL )->cCodUbi == aTmp[ ( dbfUbicaT )->( FieldPos( "cCodUbi" ) ) ] .AND. !( dbfUbicaL )->( eof() )
+         if dbLock( dbfUbicaL )
+               ( dbfUbicaL )->( dbDelete() )
+               ( dbfUbicaL )->( dbUnLock() )
+         end
+      ( dbfUbicaL )->( dbSkip() )
+      end
+
+   end
+
+   ( dbfTmpUbiL )->( dbGoTop() )
+   while !( dbfTmpUbiL )->( eof() )
+      ( dbfUbicaL )->( dbAppend() )
+      ( dbfUbicaL )->cCodUbi   := aTmp[ ( dbfUbicaT )->( FieldPos( "cCodUbi" ) ) ]
+      ( dbfUbicaL )->cUbiLin   := ( dbfTmpUbiL )->cUbiLin
+      ( dbfUbicaL )->cNomUbiL  := ( dbfTmpUbiL )->cNomUbiL
+      ( dbfUbicaL )->( dbUnLock() )
+   ( dbfTmpUbiL )->( dbSkip() )
+   end
+
+   WinGather( aTmp, aGet, dbfUbicaT, nil, nMode )
+
+   ( dbfUbicaL )->( OrdSetFocus( nOrdAnt ) )
+   ( dbfUbicaL )->( dbGoTop() )
+   ( dbfUbicaT )->( dbGoTop() )
+
+   CommitTransaction()
+
+   RECOVER USING oError
+
+      RollBackTransaction()
+      msgStop( "Imposible eliminar datos anteriores" + Chr(13)+Chr(10) + ErrorMessage( oError ) )
+
+   end
+   ErrorBlock( oBlock )
+
+RETURN ( oDlg:end( 1 ) )
+
+
+
+STATIC FUNCTION KillTrans()
+
+   if !Empty( dbfTmpUbiL ) .AND. ( dbfTmpUbiL )->( Used() )
+      ( dbfTmpUbiL )->( dbCloseArea() )
+   end
+
+   dbfTmpUbiL  := nil
+
+   dbfErase( cTmpUbiLin )
+
+RETURN nil
+
+
+
+STATIC FUNCTION EdtDet( aTmp, aGet, dbf, oBrw, bWhen, bValid, nMode, cCodArt )
+
+   local oDlg
+
+   oDlg = TDialog():New(,,,, LblTitle( nMode ) + "ubicación", "UBIDET",, .F.,,,,,, .F.,,,,,, .F., )
+
+
+
+
+
+
+
+
+      aGet[ ( dbfUbicaL )->( FieldPos( "cUbiLin" ) ) ] := TGetHlp():ReDefine( 100, { | u | If( PCount()==0, aTmp[ ( dbfUbicaL )->( FieldPos( "cUbiLin" ) ) ], aTmp[ ( dbfUbicaL )->( FieldPos( "cUbiLin" ) ) ]:= u ) }, oDlg,, "@!", {||    ( !Empty( aTmp[ ( dbfUbicaL )->( FieldPos( "cUbiLin" ) ) ] ) )},,,,,, .T., {||     ( nMode == 1 )},, .F., .F.,,,,,, nil,,, )
+
+
+
+
+
+
+
+      aGet[ ( dbfUbicaL )->( FieldPos( "cNomUbiL" ) ) ] := TGetHlp():ReDefine( 110, { | u | If( PCount()==0, aTmp[ ( dbfUbicaL )->( FieldPos( "cNomUbiL" ) ) ], aTmp[ ( dbfUbicaL )->( FieldPos( "cNomUbiL" ) ) ]:= u ) }, oDlg,, "@!",,,,,,, .T., {||         ( nMode <> 3 )},, .F., .F.,,,,,, nil,,, )
+
+
+
+
+
+      TButton():ReDefine( 1, {||( WinGather( aTmp, aGet, dbfTmpUbiL, oBrw, nMode ), oDlg:end( 1 ) )}, oDlg,,, .F., {||         ( nMode <> 3 )},,, .F. )
+
+
+
+
+
+        TButton():ReDefine( 2, {||( oDlg:end() )}, oDlg,,, .F.,,,, .T. )
+
+
+
+
+     TButton():ReDefine( 9, {||( ChmHelp( "Ubicaciones" ) )}, oDlg,,, .F.,,,, .F. )
+
+    if nMode <> 3
+      oDlg:AddFastKey( 116, {|| if( aGet[ ( dbfUbicaL )->( FieldPos( "cUbiLin" ) ) ]:lValid(), ( WinGather( aTmp, aGet, dbfTmpUbiL, oBrw, nMode ), oDlg:end( 1 ) ), ) } )
+   end
+
+   oDlg:AddFastKey ( 112, {|| ChmHelp( "Ubicaciones" ) } )
+
+   oDlg:Activate( oDlg:bLClicked, oDlg:bMoved, oDlg:bPainted, .T.,,,, oDlg:bRClicked,,, )
+
+RETURN ( oDlg:nResult == 1 )
+
+
+
+FUNCTION mkUbi( cPath, lAppend, cPathOld, oMeter )
+
+   local dbfUbicaT
+   local dbfUbicaL
+
+   IIF( cPath == nil, cPath := cPatAlm(), ) ;
+    IIF( lAppend == nil, lAppend := .F., ) ;
+
+   if !lExistTable( cPath + "Ubicat.Dbf" )
+      dbCreate( cPath + "Ubicat.Dbf", aSqlStruct( aItmUbi() ), cDriver() )
+   end
+
+   if !lExistTable( cPath + "Ubical.Dbf" )
+      dbCreate( cPath + "Ubical.Dbf", aSqlStruct( aItmUbiLin() ), cDriver() )
+   end
+
+   if lAppend .AND. lIsDir( cPathOld )
+      appDbf( cPathOld, cPath, "Ubicat" )
+      appDbf( cPathOld, cPath, "Ubical" )
+   end
+
+RETURN NIL
+
+
+
+FUNCTION rxUbi( cPath, oMeter )
+
+   local dbfUbi
+   local dbfUbiLin
+
+   IIF( cPath == nil, cPath := cPatAlm(), ) ;
+
+   IF !lExistTable( cPath + "UBICAT.DBF" ) .OR. !lExistTable( cPath + "UBICAL.DBF" )
+      mkUbi( cPath )
+   end
+
+   fEraseIndex( cPath + "UBICAT.CDX" )
+   fEraseIndex( cPath + "UBICAL.CDX" )
+
+   if lExistTable( cPath + "UBICAT.DBF" )
+      dbUseArea( .T., cDriver(), cPath + "UBICAT.DBF", cCheckArea( "UBICAT", @dbfUbi ), .F. )
+
+      if !( dbfUbi )->( neterr() )
+         ( dbfUbi )->( __dbPack() )
+
+         ( dbfUbi )->( ordCondSet("!Deleted()", {||!Deleted()}  ) )
+         ( dbfUbi )->( ordCreate( cPath + "UBICAT.CDX", "CCODUBI", "Field->cCodUbi", {|| Field->cCodUbi } ) )
+
+         ( dbfUbi )->( dbCloseArea() )
+      else
+         msgStop( "Imposible abrir en modo exclusivo las cabeceras de ubicaiones" )
+      end
+   end
+
+   if lExistTable( cPath + "UBICAL.DBF" )
+      dbUseArea( .T., cDriver(), cPath + "UBICAL.DBF", cCheckArea( "UBICAL", @dbfUbiLin ), .F. )
+
+      if !( dbfUbiLin )->( neterr() )
+         ( dbfUbiLin )->( __dbPack() )
+
+         ( dbfUbiLin )->( ordCondSet("!Deleted()", {||!Deleted()}  ) )
+         ( dbfUbiLin )->( ordCreate( cPath + "UBICAL.CDX", "CUBILIN", "Field->cCodUbi + Field->cUbiLin", {|| Field->cCodUbi + Field->cUbiLin } ) )
+
+         ( dbfUbiLin )->( ordCondSet("!Deleted()", {||!Deleted()}  ) )
+         ( dbfUbiLin )->( ordCreate( cPath + "UBICAL.CDX", "CCODUBI", "Field->cCodUbi", {|| Field->cCodUbi } ) )
+
+         ( dbfUbiLin )->( dbCloseArea() )
+      else
+         msgStop( "Imposible abrir en modo exclusivo las líneas de ubicaciones." )
+      end
+   end
+
+RETURN NIL
+
+
+
+
+
+
+Static Function QuiUbi( dbfUbicaT )
+
+   local nOrdAnt  := ( dbfUbicaL )->( OrdSetFocus( "cCodUbi" ) )
+
+   while ( dbfUbicaL )->( dbSeek( ( dbfUbicaT )->cCodUbi ) )
+      if dbLock( dbfUbicaL )
+         ( dbfUbicaL )->( dbDelete() )
+         ( dbfUbicaL )->( dbUnLock() )
+      end
+   end
+
+   ( dbfUbicaL )->( OrdSetFocus( nOrdAnt ) )
+   ( dbfUbicaL )->( dbGoTop() )
+
+Return .T.
+
+
+
+Static Function DelDet()
+
+   if oUser():lNotConfirmDelete() .OR. ApoloMsgNoYes( "¿Desea eliminar el registro en curso?", "Confirme supresión" )
+
+      if dbLock( dbfTmpUbiL )
+         ( dbfTmpUbiL )->( dbDelete() )
+         ( dbfTmpUbiL )->( dbUnLock() )
+      end
+
+   end
+
+Return .T.
+
+
+
+FUNCTION BrwUbicacion( oGet, dbfUbicaT, oGet2 )
+
+    local oDlg
+    local oBrw
+    local oGet1
+    local cGet1
+   local nOrdAnt        := 1
+    local oCbxOrd
+   local aCbxOrd        := { "Código" }
+   local cCbxOrd
+   local nRec           := ( dbfUbicaT )->( RecNo() )
+
+   nOrdAnt              := Min( Max( nOrdAnt, 1 ), len( aCbxOrd ) )
+   cCbxOrd              := aCbxOrd[ nOrdAnt ]
+
+   nOrdAnt  := ( dbfUbicaT )->( OrdSetFocus( nOrdAnt ) )
+
+   ( dbfUbicaT )->( DbGoTop() )
+
+   oDlg = TDialog():New(,,,, "Seleccionar ubicación", "HELPENTRY",, .F.,,,,,, .F.,,,,,, .F., )
+
+
+
+
+
+
+   oGet1 := TGetHlp():ReDefine( 104, { | u | If( PCount()==0, cGet1, cGet1:= u ) }, oDlg,,, {||    ( OrdClearScope( oBrw, dbfUbicaT ) )},,,,,, .F.,, {|nKey,nFlags,Self| ( AutoSeek( nKey, nFlags, Self, oBrw, dbfUbicaT ) ) }, .F., .F.,,,,,, nil, "FIND",, )
+
+
+
+
+
+
+   oCbxOrd := TComboBox():ReDefine( 102, { | u | If( PCount()==0, cCbxOrd, cCbxOrd:= u ) }, aCbxOrd, oDlg,,, {|Self|( ( dbfUbicaT )->( OrdSetFocus( oCbxOrd:nAt ) ), oBrw:refresh(), oGet1:SetFocus() )},,,, .F.,,,,,, )
+
+   oBrw                 := TXBrowse():New( oDlg )
+
+   oBrw:bClrSel         := {|| { 0, ( 229 + ( 229 * 256 ) + ( 229 * 65536 ) ) } }
+   oBrw:bClrSelFocus    := {|| { 0, ( 167 + ( 205 * 256 ) + ( 240 * 65536 ) ) } }
+
+   oBrw:cAlias          := dbfUbicaT
+   oBrw:nMarqueeStyle   := 5
+
+   oBrw:bLDblClick      := {|| oDlg:end( 1 ) }
+
+   oBrw:CreateFromResource( 105 )
+
+   with object ( oBrw:AddCol() )
+      :cHeader          := "Código"
+      :bEditValue       := {|| ( dbfUbicaT )->cCodUbi }
+      :nWidth           := 80
+   end
+
+   with object ( oBrw:AddCol() )
+      :cHeader          := "Nombre"
+      :bEditValue       := {|| ( dbfUbicaT )->cNomUbi }
+      :nWidth           := 400
+   end
+
+
+
+
+
+   TButton():ReDefine( 500, {||( nil )}, oDlg,,, .F., {||     .F.},,, .F. )
+
+
+
+
+
+   TButton():ReDefine( 501, {||( nil )}, oDlg,,, .F., {||     .F.},,, .F. )
+
+
+
+
+   TButton():ReDefine( 1, {||( oDlg:end(1) )}, oDlg,,, .F.,,,, .F. )
+
+
+
+
+   TButton():ReDefine( 2, {||( oDlg:end() )}, oDlg,,, .F.,,,, .F. )
+
+   oDlg:AddFastKey( 116, {|| oDlg:end( 1 ) } )
+   oDlg:AddFastKey( 13, {|| oDlg:end( 1 ) } )
+
+   oDlg:Activate( oDlg:bLClicked, oDlg:bMoved, oDlg:bPainted, .T.,,,, oDlg:bRClicked,,, )
+
+   IF oDlg:nResult == 1
+
+      oGet:cText( ( dbfUbicaT )->cCodUbi )
+      oGet:lValid()
+
+      IF ValType( oGet2 ) == "O"
+         oGet2:cText( ( dbfUbicaT )->cNomUbi )
+      end
+
+   end
+
+   DestroyFastFilter( dbfUbicaT )
+
+   SetBrwOpt( "BrwUbicacion", ( dbfUbicaT )->( OrdNumber() ) )
+
+   ( dbfUbicaT )->( OrdSetFocus( nOrdAnt ) )
+   ( dbfUbicaT )->( dbGoTo( nRec ) )
+
+   oGet:setFocus()
+
+RETURN ( .T. )
+
+
+
+FUNCTION BrwUbiLin( oGet, oGet2, cCodUbi, dbfUbicaL )
+
+    local oDlg
+    local oBrw
+    local oGet1
+    local cGet1
+   local nOrdAnt        := 1
+    local oCbxOrd
+   local aCbxOrd        := { "Código" }
+   local cCbxOrd        := aCbxOrd[ nOrdAnt ]
+   local dbfTmpBrw
+   local cTmpBrw
+   local nOrdTmp
+
+   nOrdAnt              := Min( Max( nOrdAnt, 1 ), len( aCbxOrd ) )
+   cCbxOrd              := aCbxOrd[ nOrdAnt ]
+
+
+
+   cTmpBrw         := cGetNewFileName( cPatTmp() + "TmpBrw" )
+
+   dbCreate( cTmpBrw, aSqlStruct( aItmTmpBrw() ), cDriver() )
+   dbUseArea( .T., cDriver(), cTmpBrw, cCheckArea( "TmpBrw", @dbfTmpBrw ), .F. )
+   if !( dbfTmpBrw )->( neterr() )
+      ( dbfTmpBrw )->( OrdCondSet( "!Deleted()", {||!Deleted()}  ) )
+      ( dbfTmpBrw )->( OrdCreate( cTmpBrw, "CUBILIN", "cUbiLin", {|| Field->cUbiLin } ) )
+   end
+
+   nOrdTmp := ( dbfUbicaL )->( OrdSetFocus( 2 ) )
+   ( dbfUbicaL )->( dbGoTop() )
+   if ( dbfUbicaL )->( dbSeek( cCodUbi ) )
+      while ( dbfUbicaL )->cCodUbi == cCodUbi .AND. !( dbfUbicaL )->( eof() )
+         ( dbfTmpBrw )->( dbAppend() )
+         ( dbfTmpBrw )->cUbiLin  := ( dbfUbicaL )->cUbiLin
+         ( dbfTmpBrw )->cNomUbiL := ( dbfUbicaL )->cNomUbiL
+         ( dbfTmpBrw )->( dbUnLock() )
+         ( dbfUbicaL )->( dbSkip() )
+      end
+   end
+   ( dbfTmpBrw )->( dbGoTop() )
+   ( dbfUbicaL )->( OrdSetFocus( nOrdTmp ) )
+   ( dbfUbicaL )->( dbGoTop() )
+
+   nOrdAnt  := ( dbfTmpBrw )->( OrdSetFocus( nOrdAnt ) )
+
+   ( dbfTmpBrw )->( dbGoTop() )
+
+   oDlg = TDialog():New(,,,, "Seleccionar ubicación", "HELPENTRY",, .F.,,,,,, .F.,,,,,, .F., )
+
+
+
+
+
+
+   oGet1 := TGetHlp():ReDefine( 104, { | u | If( PCount()==0, cGet1, cGet1:= u ) }, oDlg,,, {||    ( OrdClearScope( oBrw, dbfTmpBrw ) )},,,,,, .F.,, {|nKey,nFlags,Self| ( AutoSeek( nKey, nFlags, Self, oBrw, dbfTmpBrw ) ) }, .F., .F.,,,,,, nil, "FIND",, )
+
+
+
+
+
+
+   oCbxOrd := TComboBox():ReDefine( 102, { | u | If( PCount()==0, cCbxOrd, cCbxOrd:= u ) }, aCbxOrd, oDlg,,, {|Self|( ( dbfTmpBrw )->( OrdSetFocus( oCbxOrd:nAt ) ), oBrw:refresh(), oGet1:SetFocus() )},,,, .F.,,,,,, )
+
+   oBrw                 := TXBrowse():New( oDlg )
+
+   oBrw:bClrSel         := {|| { 0, ( 229 + ( 229 * 256 ) + ( 229 * 65536 ) ) } }
+   oBrw:bClrSelFocus    := {|| { 0, ( 167 + ( 205 * 256 ) + ( 240 * 65536 ) ) } }
+
+   oBrw:cAlias          := dbfTmpBrw
+   oBrw:nMarqueeStyle   := 5
+
+   oBrw:bLDblClick      := {|| oDlg:end( 1 ) }
+
+   oBrw:CreateFromResource( 105 )
+
+   with object ( oBrw:AddCol() )
+      :cHeader          := "Código"
+      :bEditValue       := {|| ( dbfTmpBrw )->cUbiLin }
+      :nWidth           := 80
+   end
+
+   with object ( oBrw:AddCol() )
+      :cHeader          := "Nombre"
+      :bEditValue       := {|| ( dbfTmpBrw )->cNomUbiL }
+      :nWidth           := 400
+   end
+
+
+
+
+
+   TButton():ReDefine( 500, {||( nil )}, oDlg,,, .F., {||     .F.},,, .F. )
+
+
+
+
+
+   TButton():ReDefine( 501, {||( nil )}, oDlg,,, .F., {||     .F.},,, .F. )
+
+
+
+
+   TButton():ReDefine( 1, {||( oDlg:end(1) )}, oDlg,,, .F.,,,, .F. )
+
+
+
+
+   TButton():ReDefine( 2, {||( oDlg:end() )}, oDlg,,, .F.,,,, .F. )
+
+   oDlg:AddFastKey( 116, {|| oDlg:end(1) } )
+   oDlg:AddFastKey( 13, {|| oDlg:end(1) } )
+
+   oDlg:Activate( oDlg:bLClicked, oDlg:bMoved, oDlg:bPainted, .T.,,,, oDlg:bRClicked,,, )
+
+   IF oDlg:nResult == 1
+
+      oGet:cText( ( dbfTmpBrw )->cUbiLin )
+      oGet:lValid()
+
+      IF ValType( oGet2 ) == "O"
+         oGet2:cText( ( dbfTmpBrw )->cNomUbiL )
+      end
+
+   end
+
+   DestroyFastFilter( dbfTmpBrw )
+
+   SetBrwOpt( "BrwUbicacionLin", ( dbfTmpBrw )->( OrdNumber() ) )
+
+   CloseFiles()
+
+   oGet:setFocus()
+
+   if !Empty( dbfTmpBrw ) .AND. ( dbfTmpBrw )->( Used() )
+      ( dbfTmpBrw )->( dbCloseArea() )
+   end
+
+   dbfTmpBrw  := nil
+
+   dbfErase( cTmpBrw )
+
+RETURN ( .T. )
+
+
+
+Static Function aItmTmpBrw()
+
+   local aBase := {}
+
+   aAdd( aBase, { "CUBILIN",   "C",  5, 0, "Código de línea de ubicación" }   )
+   aAdd( aBase, { "CNOMUBIL",  "C", 30, 0, "Nombre de línea de ubicación" }   )
+
+return ( aBase )
+
+
+
+FUNCTION cUbica( oGet, dbfUbiT, oGet2 )
+
+   local lValid   := .F.
+   local xValor   := oGet:VarGet()
+
+   if Empty( xValor )
+      IIF( oGet2 <> nil, oGet2:cText( "" ), )
+      return .T.
+   end
+
+   do case
+      case Valtype( dbfUbiT ) == "C"
+
+         if ( dbfUbiT )->( dbSeek( xValor ) )
+            oGet:cText( ( dbfUbiT )->cCodUbi )
+            IIF( oGet2 <> nil, oGet2:cText( ( dbfUbiT )->cNomUbi ), )
+            lValid   := .T.
+         else
+            oGet:Refresh()
+            msgStop( "Ubicación no encontrada" )
+         end
+
+      case Valtype( dbfUbiT ) == "O"
+
+         if dbfUbiT:Seek( xValor )
+            oGet:cText( dbfUbiT:cCodUbi )
+            IIF( oGet2 <> nil, oGet2:cText( dbfUbiT:cNomUbi ), )
+            lValid   := .T.
+         else
+            oGet:Refresh()
+            msgStop( "Ubicación no encontrada" )
+         end
+
+   end
+
+RETURN lValid
+
+
+
+FUNCTION cUbicaLin( oGet, oGet2, cCodUbi, dbfUbicaL )
+
+   local lValid   := .F.
+   local xValor   := oGet:VarGet()
+
+   if Empty( xValor )
+      IIF( oGet2 <> nil, oGet2:cText( "" ), )
+      return .T.
+   end
+
+   if dbSeekInOrd( cCodUbi + xValor, "CUBILIN", dbfUbicaL )
+      oGet:cText( ( dbfUbicaL )->cUbiLin )
+      IIF( oGet2 <> nil, oGet2:cText( ( dbfUbicaL )->cNomUbiL ), )
+      lValid   := .T.
+   else
+      oGet:Refresh()
+      oGet:SetFocus()
+      msgStop( "Ubicación no encontrada" )
+   end
+
+RETURN lValid

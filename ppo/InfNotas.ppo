@@ -1,0 +1,160 @@
+#line 112 "hbclass.ch"
+   DYNAMIC DivertConstructorCall
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+DECLARE HBClass  New( cName AS String, OPTIONAL SuperParams ) AS CLASS HBClass  Create() AS Object  Instance() AS Object  AddClsMethod( cName AS String, @MethodName(), nScope AS Numeric, n2 AS Numeric, n3 AS Numeric )  AddDelegate( cName AS String, cDelegate AS String, cObject AS String, nScope AS Numeric, lPersistent AS LOGICAL )  AddMultiClsData( cType AS String, uVal, nScope AS Numeric, aDatas AS Array OF String )  AddMultiData( cType AS String, uVal, nScope AS Numeric, aDatas AS Array OF String, x AS LOGICAL, lPer AS LOGICAL )  AddMethod( cName AS String, @MethodName(), nScope AS Numeric, lPersistent AS LOGICAL )  AddInLine( cName AS String, bBlock AS CodeBlock, nScope AS Numeric, lPersistent AS LOGICAL )  AddVirtual( cName AS String )  ModMethod( cName AS String, @MethodName(), nScope AS Numeric, lPersistent AS LOGICAL )  ModClsMethod( cName AS String, @MethodName(), nScope AS Numeric )  ModInline( cName AS String, bBlock AS CodeBlock, nScope AS Numeric, lPersistent AS LOGICAL )  SetOnError( @MethodName() )
+#line 85 "\Fwh1204\Include\FiveWin.Ch"
+   EXTERNAL GetProcAdd
+   EXTERNAL TActiveX
+
+
+
+
+extern errorsys
+#line 8 ".\Prg\InfNotas.prg"
+_HB_CLASS InfNotas ; UTILITY FUNCTION InfNotas(...); static s_oClass ; local oClassInstance ; local nScope ; nScope := 1 ; if s_oClass == NIL ; s_oClass := IIF(.F.,, HBClass():New( "InfNotas" , {TInfGen():classh} ) ) ; ;
+
+   _HB_MEMBER Create(); IIF( .F., s_oClass:ModMethod( "Create", @InfNotas_Create(), nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ), s_oClass:AddMethod( "Create", @InfNotas_Create(), nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ));
+
+   _HB_MEMBER lResource( cFld); IIF( .F., s_oClass:ModMethod( "lResource", @InfNotas_lResource(), nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ), s_oClass:AddMethod( "lResource", @InfNotas_lResource(), nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ));
+
+   _HB_MEMBER lGenerate(); IIF( .F., s_oClass:ModMethod( "lGenerate", @InfNotas_lGenerate(), nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ), s_oClass:AddMethod( "lGenerate", @InfNotas_lGenerate(), nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ));
+
+; IF .F. ; __clsActive(s_oClass:hClass) ; s_oClass:Refresh() ; ELSE ; s_oClass:Create() ; END ; oClassInstance := __clsInst( s_oClass:hClass ) ; IF __ObjHasMsg( oClassInstance, "InitClass" ); oClassInstance:InitClass( hb_aParams() ) ; END ; ELSE ; oClassInstance := __clsInst( s_oClass:hClass ) ; END ; IF PCount() > 0 ; DIVERT TO (@DivertConstructorCall()) OF s_oClass ; END ; RETURN oClassInstance AS CLASS InfNotas ;
+
+
+
+UTILITY STATIC function InfNotas_Create() ; local Self AS CLASS InfNotas := QSelf() AS CLASS InfNotas
+
+   ::AddField( "dFecNot", "D",   8, 0, {|| "@!" },  "Fecha",       .T., "Fecha",             12 )
+   ::AddField( "cHorNot", "C",   4, 0, {|| "@!" },  "Hora",        .F., "Hora",              10 )
+   ::AddField( "cTexNot", "C", 100, 0, {|| "@!" },  "Asunto",      .T., "Asunto",            50 )
+   ::AddField( "cIntNot", "C",  35, 0, {|| "@!" },  "Interesado",  .F., "Interesado",        20 )
+   ::AddField( "cCodigo", "C",  12, 0, {|| "@!" },  "Código",      .T., "Código",            12 )
+   ::AddField( "cNombre", "C", 100, 0, {|| "@!" },  "Nombre",      .T., "Nombre",            35 )
+   ::AddField( "cTipNot", "C",  30, 0, {|| "@!" },  "Tipo",        .T., "Tipo",              20 )
+   ::AddField( "dVctNot", "D",   8, 0, {|| "@!" },  "Vencim.",     .F., "Vencimiento",       12 )
+   ::AddField( "cEstNot", "C",  50, 0, {|| "@!" },  "Estado",      .T., "Estado",            25 )
+   ::AddField( "cUsrNot", "C",   3, 0, {|| "@!" },  "Usuario",     .F., "Usuario",            5 )
+   ::AddField( "cTipDoc", "C",  20, 0, {|| "@!" },  "Tipo doc.",   .F., "Tipo de documento", 20 )
+   ::AddField( "cNumDoc", "C",  12, 0, {|| "@!" },  "Documento",   .T., "Documento",         18 )
+   ::AddField( "mDesNot", "M",  10, 0, {|| "@!" },  "Descrip.",    .F., "Texto largo nota",  20 )
+   ::AddField( "mObsNot", "M",  10, 0, {|| "@!" },  "Observa.",    .F., "Observaciones",     20 )
+
+   ::AddTmpIndex( "dFecNot", "dFecNot" )
+
+RETURN ( Self )
+
+
+
+UTILITY STATIC function InfNotas_lResource( cFld) ; local Self AS CLASS InfNotas := QSelf() AS CLASS InfNotas
+
+   ::lDefDivInf   := .F.
+   ::lDefSerInf   := .F.
+
+   if !::StdResource( "INF_ENT01" )
+      return .F.
+   end
+
+   ::oMtrInf:SetTotal( ::xOthers:Lastrec() )
+
+   ::CreateFilter( ,::xOthers )
+
+RETURN .T.
+
+
+
+
+
+
+UTILITY STATIC function InfNotas_lGenerate() ; local Self AS CLASS InfNotas := QSelf() AS CLASS InfNotas
+
+   local nRec     := ::xOthers:Recno()
+   local cExpHead := ""
+
+   ::oDlg:Disable()
+   ::oBtnCancel:Enable()
+   ::oDbf:Zap()
+
+
+   ::aHeader   := {  {|| "Fecha     : " + Dtoc( Date() ) }, {|| "Periodo   : " + Dtoc( ::dIniInf ) + " > " + Dtoc( ::dFinInf ) } }
+
+   ::xOthers:OrdSetFocus( "DFECNOT" )
+
+   if !Empty( ::oFilter:cExpFilter )
+      cExpHead       := ::oFilter:cExpFilter
+   else
+      cExpHead       := ".t."
+   end
+
+   ::xOthers:AddTmpIndex( cCurUsr(), GetFileNoExt( ::xOthers:cFile ), ::xOthers:OrdKey(), ( cExpHead ), , , , , , , , .T. )
+
+   ::xOthers:GoTop()
+
+   while !::lBreak .AND. !::xOthers:Eof()
+
+      if ::xOthers:dFecNot >= ::dIniInf .AND. ::xOthers:dFecNot <= ::dFinInf
+
+         ::oDbf:Append()
+
+         ::oDbf:dFecNot  := ::xOthers:dFecNot
+         ::oDbf:cHorNot  := ::xOthers:cHorNot
+         ::oDbf:cTexNot  := ::xOthers:cTexNot
+
+         do case
+            case ::xOthers:nIntNot  == 1
+               ::oDbf:cIntNot  := "Cliente"
+            case ::xOthers:nIntNot  == 2
+               ::oDbf:cIntNot  := "Proveedor"
+            case ::xOthers:nIntNot  == 3
+               ::oDbf:cIntNot  := "Artículo"
+            case ::xOthers:nIntNot  == 4
+               ::oDbf:cIntNot  := "Agente"
+            case ::xOthers:nIntNot  == 5
+               ::oDbf:cIntNot  := "Almacén"
+         end
+
+         ::oDbf:cCodigo  := ::xOthers:cIntNot
+         ::oDbf:cNombre  := ::xOthers:cNomNot
+         ::oDbf:cTipNot  := ::xOthers:cTipNot
+         ::oDbf:dVctNot  := ::xOthers:dVctNot
+         ::oDbf:cEstNot  := ::xOthers:cEstNot
+         ::oDbf:cUsrNot  := ::xOthers:cUsrNot
+         ::oDbf:cTipDoc  := cTextDocument( ::xOthers:cTipDoc )
+         ::oDbf:cNumDoc  := ::xOthers:cNumDoc
+         ::oDbf:mDesNot  := ::xOthers:cDesNot
+         ::oDbf:mObsNot  := ::xOthers:cObsNot
+
+         ::oDbf:Save()
+
+      end
+
+      ::xOthers:Skip()
+
+      ::oMtrInf:AutoInc( ::xOthers:OrdKeyNo() )
+
+   end
+
+   ::xOthers:IdxDelete( cCurUsr(), GetFileNoExt( ::xOthers:cFile ) )
+
+   ::oMtrInf:AutoInc( ::xOthers:Lastrec() )
+
+   ::oDlg:Enable()
+
+   ::xOthers:GoTo( nRec )
+
+RETURN ( ::oDbf:LastRec() > 0 )

@@ -1,0 +1,268 @@
+#line 112 "hbclass.ch"
+   DYNAMIC DivertConstructorCall
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+DECLARE HBClass  New( cName AS String, OPTIONAL SuperParams ) AS CLASS HBClass  Create() AS Object  Instance() AS Object  AddClsMethod( cName AS String, @MethodName(), nScope AS Numeric, n2 AS Numeric, n3 AS Numeric )  AddDelegate( cName AS String, cDelegate AS String, cObject AS String, nScope AS Numeric, lPersistent AS LOGICAL )  AddMultiClsData( cType AS String, uVal, nScope AS Numeric, aDatas AS Array OF String )  AddMultiData( cType AS String, uVal, nScope AS Numeric, aDatas AS Array OF String, x AS LOGICAL, lPer AS LOGICAL )  AddMethod( cName AS String, @MethodName(), nScope AS Numeric, lPersistent AS LOGICAL )  AddInLine( cName AS String, bBlock AS CodeBlock, nScope AS Numeric, lPersistent AS LOGICAL )  AddVirtual( cName AS String )  ModMethod( cName AS String, @MethodName(), nScope AS Numeric, lPersistent AS LOGICAL )  ModClsMethod( cName AS String, @MethodName(), nScope AS Numeric )  ModInline( cName AS String, bBlock AS CodeBlock, nScope AS Numeric, lPersistent AS LOGICAL )  SetOnError( @MethodName() )
+#line 85 "\Fwh1204\Include\FiveWin.ch"
+   EXTERNAL GetProcAdd
+   EXTERNAL TActiveX
+
+
+
+
+extern errorsys
+#line 8 ".\Prg\InfPreCli.prg"
+_HB_CLASS InfPreCli ; UTILITY FUNCTION InfPreCli(...); static s_oClass ; local oClassInstance ; local nScope ; nScope := 1 ; if s_oClass == NIL ; s_oClass := IIF(.F.,, HBClass():New( "InfPreCli" , {TNewInfGen():classh} ) ) ; ;
+
+   _HB_MEMBER {AS OBJECT oFacCliP} ; IIF( !.F., s_oClass:AddMultiData( "OBJECT",, nScope + IIF( .F., 32, 0 ), { "oFacCliP" }, .F., .F. ), )
+   _HB_MEMBER {AS OBJECT oFacCliT} ; IIF( !.F., s_oClass:AddMultiData( "OBJECT",, nScope + IIF( .F., 32, 0 ), { "oFacCliT" }, .F., .F. ), )
+
+   _HB_MEMBER Create(); IIF( .F., s_oClass:ModMethod( "Create", @InfPreCli_Create(), nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ), s_oClass:AddMethod( "Create", @InfPreCli_Create(), nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ));
+
+   _HB_MEMBER lResource( cFld); IIF( .F., s_oClass:ModMethod( "lResource", @InfPreCli_lResource(), nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ), s_oClass:AddMethod( "lResource", @InfPreCli_lResource(), nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ));
+
+   _HB_MEMBER OpenFiles(); IIF( .F., s_oClass:ModMethod( "OpenFiles", @InfPreCli_OpenFiles(), nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ), s_oClass:AddMethod( "OpenFiles", @InfPreCli_OpenFiles(), nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ));
+
+   _HB_MEMBER CloseFiles(); IIF( .F., s_oClass:ModMethod( "CloseFiles", @InfPreCli_CloseFiles(), nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ), s_oClass:AddMethod( "CloseFiles", @InfPreCli_CloseFiles(), nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ));
+
+   _HB_MEMBER lGenerate(); IIF( .F., s_oClass:ModMethod( "lGenerate", @InfPreCli_lGenerate(), nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ), s_oClass:AddMethod( "lGenerate", @InfPreCli_lGenerate(), nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ));
+
+; IF .F. ; __clsActive(s_oClass:hClass) ; s_oClass:Refresh() ; ELSE ; s_oClass:Create() ; END ; oClassInstance := __clsInst( s_oClass:hClass ) ; IF __ObjHasMsg( oClassInstance, "InitClass" ); oClassInstance:InitClass( hb_aParams() ) ; END ; ELSE ; oClassInstance := __clsInst( s_oClass:hClass ) ; END ; IF PCount() > 0 ; DIVERT TO (@DivertConstructorCall()) OF s_oClass ; END ; RETURN oClassInstance AS CLASS InfPreCli ;
+
+
+
+UTILITY STATIC function InfPreCli_Create() ; local Self AS CLASS InfPreCli := QSelf() AS CLASS InfPreCli
+
+   ::AddField( "cTipDoc",   "C", 20, 0, {|| "@!" },      "Tipo",              .F., "Tipo documento",                    15, .F. )
+   ::AddField( "cNumDoc",   "C", 17, 0, {|| "@!" },      "N. Recibo",         .T., "Número recibo",                     15, .F. )
+   ::AddField( "cCodGCli",  "C",  4, 0, {|| "@!" },      "Grp. cli.",         .F., "Cod. grupo cliente",                 9, .F. )
+   ::AddField( "cNomGCli",  "C", 30, 0, {|| "@!" },      "Grupo",             .F., "Nombre grupo",                      35, .F. )
+   ::AddField( "cCodCli",   "C", 12, 0, {|| "@!" },      "Cod. cli.",         .F., "Cod. cliente",                       9, .F. )
+   ::AddField( "cNomCli",   "C", 50, 0, {|| "@!" },      "Cliente",           .F., "Nombre cliente",                    35, .F. )
+   ::AddField( "cCodFpg",   "C",  2, 0, {|| "@!" },      "Cod. pago",         .F., "Cod. pago",                          9, .F. )
+   ::AddField( "cNomFpg",   "C", 30, 0, {|| "@!" },      "Forma de pago",     .F., "Forma de pago",                     35, .F. )
+   ::AddField( "dFecMov",   "D",  8, 0, {|| "@!" },      "F. Exped.",         .T., "Fecha expedición",                  12, .F. )
+   ::AddField( "dFecPre",   "D",  8, 0, {|| "@!" },      "F. Vncto.",         .T., "Fecha de vencimiento",              12, .F. )
+   ::AddField( "cDescrip",  "C",100, 0, {|| "@!" },      "Descrip.",          .T., "Concepto del pago",                 50, .F. )
+   ::AddField( "nImporte",  "N", 16, 3, {|| ::cPicOut }, "Importe",           .T., "Importe",                           15, .F. )
+   ::AddField( "cBanco",    "C", 50, 0, {|| "@!" },      "Banco cliente",     .F., "Nombre del banco del cliente",      20, .F. )
+   ::AddField( "cCuenta",   "C", 30, 0, {|| "@!" },      "Cuenta cliente",    .F., "Cuenta bancaria del cliente",       35, .F. )
+   ::AddField( "cBncEmp",   "C", 50, 0, {|| "@!" },      "Banco empresa",     .F., "Nombre del banco de la empresa",    20, .F. )
+   ::AddField( "cCtaEmp",   "C", 30, 0, {|| "@!" },      "Cuenta empresa",    .F., "Cuenta bancaria de la empresa",     35, .F. )
+
+   ::AddTmpIndex ( "cNumDoc", "cNumDoc" )
+   ::AddTmpIndex ( "dFecMov", "dFecMov" )
+   ::AddTmpIndex ( "dFecPre", "dFecPre" )
+
+   ::lExcCero  := .F.
+
+RETURN ( Self )
+
+
+
+UTILITY STATIC function InfPreCli_OpenFiles() ; local Self AS CLASS InfPreCli := QSelf() AS CLASS InfPreCli
+
+   local lOpen    := .T.
+   local oBlock   := ErrorBlock( {| oError | ApoloBreak( oError ) } )
+
+   BEGIN SEQUENCE
+
+   ::oFacCliP := DbfServer( "FACCLIP.DBF", ):NewOpen( "FACCLIP.DBF",, ( cDriver() ),, ( cPatEmp() ), .F., .T., .F., .F. ) ; ::oFacCliP:AddBag( "FACCLIP.CDX" ) ; ::oFacCliP:AddBag( ) ; ::oFacCliP:AutoIndex()
+
+   ::oFacCliT := DbfServer( "FACCLIT.DBF", ):NewOpen( "FACCLIT.DBF",, ( cDriver() ),, ( cPatEmp() ), .F., .T., .F., .F. ) ; ::oFacCliT:AddBag( "FACCLIT.CDX" ) ; ::oFacCliT:AddBag( ) ; ::oFacCliT:AutoIndex()
+
+   RECOVER
+
+      msgStop( "Imposible abrir todas las bases de datos" )
+      ::CloseFiles()
+      lOpen          := .F.
+
+   end
+
+   ErrorBlock( oBlock )
+
+RETURN ( lOpen )
+
+
+
+UTILITY STATIC function InfPreCli_CloseFiles() ; local Self AS CLASS InfPreCli := QSelf() AS CLASS InfPreCli
+
+   if !Empty( ::oFacCliP ) .AND. ::oFacCliP:Used()
+      ::oFacCliP:End()
+   end
+
+   if !Empty( ::oFacCliT ) .AND. ::oFacCliT:Used()
+      ::oFacCliT:End()
+   end
+
+   ::oFacCliP := nil
+   ::oFacCliT := nil
+
+RETURN ( Self )
+
+
+
+UTILITY STATIC function InfPreCli_lResource( cFld) ; local Self AS CLASS InfPreCli := QSelf() AS CLASS InfPreCli
+
+   ::dIniInf            := nFirstDay( Month( Date() ) )
+   ::lGrpFecInf         := .F.
+   ::lNewInforme        := .T.
+   ::lDefCondiciones    := .F.
+   ::lDefEstadoUno      := .T.
+   ::lDefEstadoDos      := .T.
+   ::cEstadoUno         := "Ordenar por número"
+   ::aEstadoUno         := { "Ordenar por número", "Ordenar por fecha exp.", "Ordenar por fecha prev." }
+   ::cEstadoDos         := "Facturas"
+   ::aEstadoDos         := { "Todas", "Facturas", "Rectificativas" }
+
+   if !::NewResource( "INF_GEN_02" )
+      return .F.
+   end
+
+   if !::lGrupoGCliente( .F. )
+      return .F.
+   end
+
+   if !::lGrupoCliente( .F. )
+      return .F.
+   end
+
+   if !::lGrupoFPago( .F. )
+      return .F.
+   end
+
+   ::oDefExcInf( 1515 )
+
+   ::CreateFilter( aItmRecCli(), ::oFacCliP:cAlias )
+
+   ::oMtrInf:SetTotal( ::oFacCliP:Lastrec() )
+
+RETURN .T.
+
+
+
+
+
+
+UTILITY STATIC function InfPreCli_lGenerate() ; local Self AS CLASS InfPreCli := QSelf() AS CLASS InfPreCli
+
+   local cCodGCli
+   local cExpHead := ""
+
+   ::oDlg:Disable()
+   ::oDbf:Zap()
+
+
+   ::aHeader      := {  {|| "Fecha    : " + Dtoc( Date() ) }, {|| "Periodo  : " + Dtoc( ::dIniInf ) + " > " + Dtoc( ::dFinInf ) } }
+
+   if !::oGrupoGCliente:Cargo:Todos
+      aAdd( ::aHeader, {|| Padr( "Grp. cliente", 13 ) + ": " + AllTrim( ::oGrupoGCliente:Cargo:Desde ) + " > " + AllTrim( ::oGrupoGCliente:Cargo:Hasta ) } )
+   end
+
+   if !::oGrupoCliente:Cargo:Todos
+      aAdd( ::aHeader, {|| Padr( "Cliente", 13 ) + ": " + AllTrim( ::oGrupoCliente:Cargo:Desde ) + " > " + AllTrim( ::oGrupoCliente:Cargo:Hasta ) } )
+   end
+
+   if !::oGrupoFPago:Cargo:Todos
+      aAdd( ::aHeader, {|| Padr( "Forma de pago", 13 ) + ": " + AllTrim( ::oGrupoFPago:Cargo:Desde ) + " > " + AllTrim( ::oGrupoFPago:Cargo:Hasta ) } )
+   end
+
+   ::oFacCliP:OrdSetFocus( "nNumFac" )
+
+   if ::lExcCero
+      cExpHead       := '!lCobrado .and. ( ( dFecVto >= Ctod( "' + Dtoc( ::dIniInf ) + '" ) .and. dFecVto <= Ctod( "' + Dtoc( ::dFinInf ) + '" ) ) .or. Empty( dFecVto ) )'
+   else
+      cExpHead       := '!lCobrado .and. ( ( dFecVto >= Ctod( "' + Dtoc( ::dIniInf ) + '" ) .and. dFecVto <= Ctod( "' + Dtoc( ::dFinInf ) + '" ) ) )'
+   end
+
+   if !::oGrupoCliente:Cargo:Todos
+      cExpHead    += '.and. cCodCli >= "' + Rtrim( ::oGrupoCliente:Cargo:Desde ) + '" .and. cCodCli <= "' + Rtrim( ::oGrupoFCliente:Cargo:Hasta ) + '"'
+   end
+
+   if !::oGrupoFPago:Cargo:Todos
+      cExpHead    += '.and. cCodPgo >= "' + Rtrim( ::oGrupoFPago:Cargo:Desde ) + '" .and. cCodPgo <= "' + Rtrim( ::oGrupoFPago:Cargo:Hasta ) + '"'
+   end
+
+   if !Empty( ::oFilter:cExpFilter )
+      cExpHead    += " .and. " + ::oFilter:cExpFilter
+   end
+
+   ::oFacCliP:AddTmpIndex( cCurUsr(), GetFileNoExt( ::oFacCliP:cFile ), ::oFacCliP:OrdKey(), ( cExpHead ), , , , , , , , .T. )
+
+   ::oMtrInf:SetTotal( ::oFacCliP:OrdKeyCount() )
+
+   ::oFacCliP:GoTop()
+
+   while !::oFacCliP:Eof()
+
+      cCodGCli     := oRetFld( ::oFacCliP:cCodCli, ::oGrpCli:oDbf, "cCodGrp" )
+
+
+
+
+
+      if ( ::oGrupoGCliente:Cargo:Todos .OR. ( cCodGCli >= ::oGrupoGCliente:Cargo:Desde .AND. cCodGCli <= ::oGrupoGCliente:Cargo:Hasta ) )    .AND. Empty( ::oFacCliP:dEntrada )                                                                                                         .AND. ( ::oEstadoDos:nAt == 1                                     .OR. ( ::oEstadoDos:nAt == 2 .AND. Empty( ::oFacCliP:cTipRec ) ) .OR. ( ::oEstadoDos:nAt == 3 .AND. !Empty( ::oFacCliP:cTipRec ) ) )
+
+         ::oDbf:Append()
+
+         ::oDbf:cTipDoc   := if( !Empty( ::oFacCliP:cTipRec ), "Rectificativa", "Factura" )
+         ::oDbf:cNumDoc   := ::oFacCliP:cSerie + "/" + AllTrim( Str( ::oFacCliP:nNumFac ) ) + if( Empty( ::oFacCliP:cSufFac ), "" + "-" + AllTrim( Str( ::oFacCliP:nNumRec ) ), "/" + ::oFacCliP:cSufFac + "-" + AllTrim( Str( ::oFacCliP:nNumRec ) ) )
+         ::oDbf:cCodGCli  := cCodGCli
+         ::oDbf:cNomGCli  := oRetFld( cCodGCli, ::oGrpCli:oDbf )
+         ::oDbf:cCodCli   := ::oFacCliP:cCodCli
+         ::oDbf:cNomCli   := ::oFacCliP:cNomCli
+         ::oDbf:cCodFpg   := ::oFacCliP:cCodPgo
+         ::oDbf:cNomFpg   := oRetFld( ::oFacCliP:cCodPgo, ::oDbfFpg )
+         ::oDbf:dFecMov   := ::oFacCliP:dPreCob
+         ::oDbf:dFecPre   := ::oFacCliP:dFecVto
+         ::oDbf:cDescrip  := ::oFacCliP:cDesCrip
+         ::oDbf:nImporte  := ::oFacCliP:nImporte / ::oFacCliP:nVdvPgo
+         ::oDbf:cBanco    := ::oFacCliP:cBncCli
+         ::oDbf:cCuenta   := Trans( cClientCuenta( ::oFacCliP:cCodCli ), "@R ####-####-##-##########" )
+
+         ::oDbf:cBncEmp   := ::oFacCliP:cBncEmp
+         ::oDbf:cCtaEmp   := ::oFacCliP:cEntEmp + "-" + ::oFacCliP:cSucEmp + "-" + ::oFacCliP:cDigEmp + "-" + ::oFacCliP:cCtaEmp
+
+         ::oDbf:Save()
+
+      end
+
+      ::oFacCliP:Skip()
+
+      ::oMtrInf:AutoInc( ::oFacCliP:OrdKeyNo() )
+
+   end
+
+   ::oMtrInf:AutoInc( ::oFacCliP:LastRec() )
+
+   ::oFacCliP:IdxDelete( cCurUsr(), GetFileNoExt( ::oFacCliP:cFile ) )
+
+   do case
+      case ::oEstadoUno:nAt == 1
+         ::oDbf:OrdSetFocus( "cNumDoc" )
+
+      case ::oEstadoUno:nAt == 2
+         ::oDbf:OrdSetFocus( "dFecMov" )
+
+      case ::oEstadoUno:nAt == 3
+         ::oDbf:OrdSetFocus( "dFecPre" )
+
+   end
+
+   ::oDlg:Enable()
+
+RETURN ( ::oDbf:LastRec() > 0 )
