@@ -2576,7 +2576,7 @@ Static Function LoadMovimientosAlmacen( cCodArt, nYear )
                oDbfTmp:nUndDoc   := nTotNMovAlm( dbfMovAlm )
                oDbfTmp:nImpDoc   := ( dbfMovAlm )->nPreDiv
                oDbfTmp:nTotDoc   := nTotLMovAlm( dbfMovAlm )
-               oDbfTmp:nDtoDoc   := ( dbfMovAlm )->( Recno() )    // Lo usamos como referencia al registro
+               oDbfTmp:nDtoDoc   := 0 //( dbfMovAlm )->( Recno() )    // Lo usamos como referencia al registro
                oDbfTmp:Save()
             end if
 
@@ -2595,7 +2595,7 @@ Static Function LoadMovimientosAlmacen( cCodArt, nYear )
                oDbfTmp:nUndDoc   := - nTotNMovAlm( dbfMovAlm )
                oDbfTmp:nImpDoc   := ( dbfMovAlm )->nPreDiv
                oDbfTmp:nTotDoc   := - nTotLMovAlm( dbfMovAlm )
-               oDbfTmp:nDtoDoc   := ( dbfMovAlm )->( Recno() )       // Lo usamos como referencia al registro
+               oDbfTmp:nDtoDoc   := 0 //( dbfMovAlm )->( Recno() )       // Lo usamos como referencia al registro
                oDbfTmp:Save()
             end if
 
