@@ -11,6 +11,8 @@
 [Pp]po/
 [Dd]atos/
 [Ff]ont/
+[Cc]lient/
+[Ii]ss/[Ee]xe/
 *.tmp
 *.bak
 *.swp

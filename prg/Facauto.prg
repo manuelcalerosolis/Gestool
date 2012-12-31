@@ -1765,7 +1765,13 @@ RETURN ( .t. )
 
 METHOD StartAsistente()
 
+   local oTreeMes
+   local nTreeMes
+   
+   local nTreeSemana
    local oTreeSemana
+
+   nTreeSemana    := if( Dow( GetSysDate() ) = 1 , 7 , Dow( GetSysDate() - 1 ) )
 
    ::oBtnInforme:Disable()  
 
@@ -1779,7 +1785,26 @@ METHOD StartAsistente()
    oTreeSemana:Add( "Sábado"     )
    oTreeSemana:Add( "Domingo"    )
 
+   tvSetCheckState( ::oTreeSelector:hWnd, oTreeSemana:aItems[ nTreeSemana ]:hItem, .t. ) 
+   sysrefresh()
+
+   oTreeMes       := ::oTreeSelector:Add( "Mes" ) 
+ 
+   oTreeMes:Add( "Enero"        )
+   oTreeMes:Add( "Febrero"      )
+   oTreeMes:Add( "Marzo"        )
+   oTreeMes:Add( "Abril"        )
+   oTreeMes:Add( "Mayo"         )
+   oTreeMes:Add( "Junio"        )
+   oTreeMes:Add( "Julio"        )
+   oTreeMes:Add( "Agosto"       )
+   oTreeMes:Add( "Septiembre"   )
+   oTreeMes:Add( "Octubre"      )
+   oTreeMes:Add( "Noviembre"    )
+   oTreeMes:Add( "Diciembre"    )
+
    oTreeSemana:Expand()
+   oTreeMes:Expand()
 
 RETURN ( Self )
 
@@ -1995,18 +2020,18 @@ RETURN ( .f. )
 
 METHOD lDiaSeleccionado() CLASS TCreaFacAutomaticas
 
-   local nMes
-   local aMes
+   local nDia
+   local aDia
 
    if !::oFacAutT:oDbf:lDiaSel
       Return ( .t. )
    end if
 
-   aMes           := hb_atokens( Alltrim( ::oFacAutT:oDbf:cDiaSel ), "," )
-   nMes           := if( Dow( GetSysDate() ) = 1 , 7 , Dow( GetSysDate() - 1 ) )
+   aDia           := hb_atokens( Alltrim( ::oFacAutT:oDbf:cDiaSel ), "," )
+   nDia           := if( Dow( GetSysDate() ) = 1 , 7 , Dow( GetSysDate() - 1 ) )
 
-   if nMes >= 1 .and. nMes <= len( aMes )
-      if aMes[ nMes ] == ".T."
+   if nDia >= 1 .and. nDia <= len( aDia )
+      if aDia[ nDia ] == ".T."
          RETURN ( .t. )
       end if
    end if
