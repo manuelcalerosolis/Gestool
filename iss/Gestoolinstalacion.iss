@@ -108,7 +108,7 @@ Source: "c:\fw195\gestool\bin\image2pdf stdcall.dll";  DestDir: "{app}"; Flags: 
 
 Source: "c:\fw195\gestool\bin\libmysql.dll";           DestDir: "{app}"; Flags: ignoreversion
 Source: "c:\fw195\gestool\bin\freeImage.dll";          DestDir: "{app}"; Flags: ignoreversion
-Source: "c:\fw195\gestool\bin\frSysth.dll";            DestDir: "{app}"; Flags: ignoreversion
+Source: "c:\fw195\gestool\bin\frsysth.dll";            DestDir: "{app}"; Flags: ignoreversion
 
 Source: "c:\fw195\gestool\bin\ace32.dll";              DestDir: "{app}"; Flags: ignoreversion
 Source: "c:\fw195\gestool\bin\adsloc32.dll";           DestDir: "{app}"; Flags: ignoreversion
