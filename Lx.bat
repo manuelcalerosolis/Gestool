@@ -2,7 +2,7 @@ cd \fw195\gestool\
 
 del \fw195\gestool\obj\rptgal.obj
 
-\Bcc55\Bin\Make -S -fLx.Mak -D__GST__
+\bcc55\bin\make -S -fLx.mak -D__GST__
 
 cd \fw195\gestool\bin
 

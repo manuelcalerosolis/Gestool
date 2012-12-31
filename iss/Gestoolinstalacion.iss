@@ -152,13 +152,13 @@ Source: "c:\fw195\gestool\bmp\imgpedprv.bmp";         DestDir: "{app}\Bmp"; Flag
 Source: "c:\fw195\gestool\bmp\imgsndint.bmp";         DestDir: "{app}\Bmp"; Flags: ignoreversion
 Source: "c:\fw195\gestool\bmp\imgpleasewait.bmp";     DestDir: "{app}\Bmp"; Flags: ignoreversion
 
-Source: "c:\fw195\actualiza\chkEmp.nil";          DestDir: "{app}";           Flags: ignoreversion
+Source: "c:\fw195\actualiza\chkemp.nil";          DestDir: "{app}";           Flags: ignoreversion
 Source: "c:\fw195\actualiza\in\*.*";              DestDir: "{app}\In";        Flags: ignoreversion onlyifdoesntexist
 Source: "c:\fw195\actualiza\out\*.*";             DestDir: "{app}\Out";       Flags: ignoreversion onlyifdoesntexist
 Source: "c:\fw195\actualiza\log\*.*";             DestDir: "{app}\Log";       Flags: ignoreversion onlyifdoesntexist
 Source: "c:\fw195\actualiza\htm\*.*";             DestDir: "{app}\Htm";       Flags: ignoreversion onlyifdoesntexist
 Source: "c:\fw195\actualiza\tmp\*.*";             DestDir: "{app}\Tmp";       Flags: ignoreversion onlyifdoesntexist
-Source: "c:\fw195\actualiza\emptmp\*.*";          DestDir: "{app}\EmpTmp";    Flags: ignoreversion onlyifdoesntexist
+Source: "c:\fw195\actualiza\emptmp\*.*";          DestDir: "{app}\Emptmp";    Flags: ignoreversion onlyifdoesntexist
 Source: "c:\fw195\actualiza\safe\*.*";            DestDir: "{app}\Safe";      Flags: ignoreversion onlyifdoesntexist
 Source: "c:\fw195\actualiza\empvg\*.*";           DestDir: "{app}\EmpVG";     Flags: ignoreversion onlyifdoesntexist
 Source: "c:\fw195\actualiza\datos\*.*";           DestDir: "{app}\Datos";     Flags: ignoreversion onlyifdoesntexist

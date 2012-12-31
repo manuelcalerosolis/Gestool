@@ -808,7 +808,7 @@ $(EXE)                  : $( PRG:.PRG=.OBJ )
 
 $(EXE)                  : $( C:.C=.OBJ )
 
-$(EXE): $(RESOURCE)\GstDialog.Res $(OBJS)
+$(EXE)					: $(RESOURCE)\GstDialog.Res $(OBJS)
   	$(BORLAND)\Bin\iLink32 @&&|
   	-Gn -aa -Tpe -s -r -m -V4.0 +
 (BORLAND)\lib\c0w32.obj         +
