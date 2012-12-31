@@ -1757,7 +1757,7 @@ METHOD Create( lMensaje, cCodigoFactura, lAsistente ) CLASS TCreaFacAutomaticas
 
    if !Empty( oBmp )
       oBmp:End()
-   end if
+   end if 
 
 RETURN ( .t. )
 
@@ -1765,17 +1765,21 @@ RETURN ( .t. )
 
 METHOD StartAsistente()
 
-   ::oBtnInforme:Disable()  
- 
-   ::oTreeSelector:Add( "Lunes"      ) 
-   ::oTreeSelector:Add( "Martes"     )
-   ::oTreeSelector:Add( "Miércoles"  ) 
-   ::oTreeSelector:Add( "Jueves"     )
-   ::oTreeSelector:Add( "Viernes"    )
-   ::oTreeSelector:Add( "Sábado"     )
-   ::oTreeSelector:Add( "Domingo"    )
+   local oTreeSemana
 
-   ::oTreeSelector:Expand()
+   ::oBtnInforme:Disable()  
+
+   oTreeSemana    := ::oTreeSelector:Add( "Semana" ) 
+ 
+   oTreeSemana:Add( "Lunes"      ) 
+   oTreeSemana:Add( "Martes"     )
+   oTreeSemana:Add( "Miércoles"  ) 
+   oTreeSemana:Add( "Jueves"     )
+   oTreeSemana:Add( "Viernes"    )
+   oTreeSemana:Add( "Sábado"     )
+   oTreeSemana:Add( "Domingo"    )
+
+   oTreeSemana:Expand()
 
 RETURN ( Self )
 

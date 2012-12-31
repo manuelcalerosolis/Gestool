@@ -1748,17 +1748,21 @@ RETURN ( .T. )
 
 UTILITY STATIC function TCreaFacAutomaticas_StartAsistente() ; local Self AS CLASS TCreaFacAutomaticas := QSelf() AS CLASS TCreaFacAutomaticas
 
+   local oTreeSemana
+
    ::oBtnInforme:Disable()
 
-   ::oTreeSelector:Add( "Lunes"      )
-   ::oTreeSelector:Add( "Martes"     )
-   ::oTreeSelector:Add( "Miércoles"  )
-   ::oTreeSelector:Add( "Jueves"     )
-   ::oTreeSelector:Add( "Viernes"    )
-   ::oTreeSelector:Add( "Sábado"     )
-   ::oTreeSelector:Add( "Domingo"    )
+   oTreeSemana    := ::oTreeSelector:Add( "Semana" )
 
-   ::oTreeSelector:Expand()
+   oTreeSemana:Add( "Lunes"      )
+   oTreeSemana:Add( "Martes"     )
+   oTreeSemana:Add( "Miércoles"  )
+   oTreeSemana:Add( "Jueves"     )
+   oTreeSemana:Add( "Viernes"    )
+   oTreeSemana:Add( "Sábado"     )
+   oTreeSemana:Add( "Domingo"    )
+
+   oTreeSemana:Expand()
 
 RETURN ( Self )
 
