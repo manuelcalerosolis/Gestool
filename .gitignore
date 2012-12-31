@@ -16,7 +16,6 @@
 *.tmp
 *.bak
 *.swp
-*~.nib
 *.res
 *.log
 
