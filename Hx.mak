@@ -19,7 +19,7 @@ SOURCEPRG 		= 		Prg
 SOURCEC 		=		C
 PPO 			= 		Ppo
 
-EXE 			= 		Bin\GstApolo.exe
+EXE 			= 		Bin\Gestool.exe
 
 .path.prg       = 		.\$(SOURCEPRG)
 .path.c       	= 		.\$(SOURCEC)

@@ -4,7 +4,7 @@
 
 //----------------------------------------------------------------------------//
 
-CLASS TAgenda FROM TMANT
+CLASS TAgenda FROM TMANT 
 
    METHOD Create( cPath )
 
