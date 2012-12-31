@@ -1772,6 +1772,7 @@ METHOD StartAsistente()
    local oTreeSemana
 
    nTreeSemana    := if( Dow( GetSysDate() ) = 1 , 7 , Dow( GetSysDate() - 1 ) )
+   nTreeMes       := Month( GetSysDate() )  
 
    ::oBtnInforme:Disable()  
 
@@ -1788,7 +1789,7 @@ METHOD StartAsistente()
    tvSetCheckState( ::oTreeSelector:hWnd, oTreeSemana:aItems[ nTreeSemana ]:hItem, .t. ) 
    sysrefresh()
 
-   oTreeMes       := ::oTreeSelector:Add( "Mes" ) 
+   oTreeMes       := ::oTreeSelector:Add( "Mes" )  
  
    oTreeMes:Add( "Enero"        )
    oTreeMes:Add( "Febrero"      )
@@ -1802,6 +1803,9 @@ METHOD StartAsistente()
    oTreeMes:Add( "Octubre"      )
    oTreeMes:Add( "Noviembre"    )
    oTreeMes:Add( "Diciembre"    )
+
+   tvSetCheckState( ::oTreeSelector:hWnd, oTreeMes:aItems[ nTreeMes ]:hItem, .t. ) 
+   sysrefresh()
 
    oTreeSemana:Expand()
    oTreeMes:Expand()

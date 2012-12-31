@@ -4,6 +4,10 @@
 		"selected_items":
 		[
 			[
+				"nTre",
+				"nTreeMes"
+			],
+			[
 				"oTre",
 				"oTreeSemana"
 			],
@@ -99,8 +103,24 @@
 	},
 	"buffers":
 	[
+		{
+			"file": "prg/Facauto.prg",
+			"settings":
+			{
+				"buffer_size": 87884,
+				"line_ending": "Windows"
+			}
+		},
+		{
+			"file": "/C/Users/Calero/AppData/Roaming/Sublime Text 2/Packages/harbour/Harbour.sublime-completions",
+			"settings":
+			{
+				"buffer_size": 2792,
+				"line_ending": "Windows"
+			}
+		}
 	],
-	"build_system": "Packages/User/Gestool.sublime-build",
+	"build_system": "Packages/AAAPackageDev/Support/JSON to Property List.sublime-build",
 	"command_palette":
 	{
 		"height": 58.0,
@@ -220,6 +240,8 @@
 	},
 	"file_history":
 	[
+		"/C/Users/Calero/AppData/Roaming/Sublime Text 2/Packages/harbour/Harbour.JSON-tmlanguage",
+		"/C/fw195/gestool/prg/Activex.prg",
 		"/C/fw195/gestool/.gitignore",
 		"/C/fw195/gestool/.gitattributes",
 		"/C/fw195/gestool/prg/Facauto.prg",
@@ -258,7 +280,6 @@
 		"/C/fw195/camero/prg/Factprv.prg",
 		"/C/fw195/camero/prg/Facrec.prg",
 		"/C/Users/Calero/AppData/Roaming/Sublime Text 2/Packages/harbour/Harbour.sublime-completions",
-		"/C/Users/Calero/AppData/Roaming/Sublime Text 2/Packages/harbour/Harbour.JSON-tmlanguage",
 		"/C/fw195/camero/prg/Tfastventasarticulos.prg",
 		"/C/fw195/camero/prg/Tfastventasarticulos.BAK",
 		"/C/fw195/camero/prg/Tfacrec.prg",
@@ -345,6 +366,7 @@
 		"case_sensitive": false,
 		"find_history":
 		[
+			"od star",
 			"od start",
 			"od stat",
 			"lMesSeleccionado",
@@ -443,8 +465,70 @@
 	"groups":
 	[
 		{
+			"selected": 1,
 			"sheets":
 			[
+				{
+					"buffer": 0,
+					"file": "prg/Facauto.prg",
+					"settings":
+					{
+						"buffer_size": 87884,
+						"regions":
+						{
+						},
+						"selection":
+						[
+							[
+								52826,
+								52826
+							]
+						],
+						"settings":
+						{
+							"encoding_helper_confidence": 0.5,
+							"encoding_helper_encoding": "ISO-8859-1",
+							"encoding_helper_encoding_sublime": "Western (Windows 1252)",
+							"syntax": "Packages/harbour/Harbour.tmLanguage",
+							"tab_size": 3,
+							"translate_tabs_to_spaces": true
+						},
+						"translation.x": 0.0,
+						"translation.y": 31835.0,
+						"zoom_level": 1.0
+					},
+					"type": "text"
+				},
+				{
+					"buffer": 1,
+					"file": "/C/Users/Calero/AppData/Roaming/Sublime Text 2/Packages/harbour/Harbour.sublime-completions",
+					"settings":
+					{
+						"buffer_size": 2792,
+						"regions":
+						{
+						},
+						"selection":
+						[
+							[
+								2649,
+								2649
+							]
+						],
+						"settings":
+						{
+							"encoding_helper_confidence": 1.0,
+							"encoding_helper_encoding": "UTF-8",
+							"encoding_helper_encoding_sublime": "UTF-8",
+							"syntax": "Packages/AAAPackageDev/Support/Sublime Completions.tmLanguage",
+							"translate_tabs_to_spaces": false
+						},
+						"translation.x": 0.0,
+						"translation.y": 594.0,
+						"zoom_level": 1.0
+					},
+					"type": "text"
+				}
 			]
 		}
 	],

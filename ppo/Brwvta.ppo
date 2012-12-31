@@ -2588,7 +2588,7 @@ Static Function LoadMovimientosAlmacen( cCodArt, nYear )
                oDbfTmp:nUndDoc   := nTotNMovAlm( dbfMovAlm )
                oDbfTmp:nImpDoc   := ( dbfMovAlm )->nPreDiv
                oDbfTmp:nTotDoc   := nTotLMovAlm( dbfMovAlm )
-               oDbfTmp:nDtoDoc   := ( dbfMovAlm )->( Recno() )
+               oDbfTmp:nDtoDoc   := 0
                oDbfTmp:Save()
             end
 
@@ -2607,7 +2607,7 @@ Static Function LoadMovimientosAlmacen( cCodArt, nYear )
                oDbfTmp:nUndDoc   := - nTotNMovAlm( dbfMovAlm )
                oDbfTmp:nImpDoc   := ( dbfMovAlm )->nPreDiv
                oDbfTmp:nTotDoc   := - nTotLMovAlm( dbfMovAlm )
-               oDbfTmp:nDtoDoc   := ( dbfMovAlm )->( Recno() )
+               oDbfTmp:nDtoDoc   := 0
                oDbfTmp:Save()
             end
 

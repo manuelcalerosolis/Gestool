@@ -1755,6 +1755,7 @@ UTILITY STATIC function TCreaFacAutomaticas_StartAsistente() ; local Self AS CLA
    local oTreeSemana
 
    nTreeSemana    := if( Dow( GetSysDate() ) = 1 , 7 , Dow( GetSysDate() - 1 ) )
+   nTreeMes       := Month( GetSysDate() )
 
    ::oBtnInforme:Disable()
 
@@ -1785,6 +1786,9 @@ UTILITY STATIC function TCreaFacAutomaticas_StartAsistente() ; local Self AS CLA
    oTreeMes:Add( "Octubre"      )
    oTreeMes:Add( "Noviembre"    )
    oTreeMes:Add( "Diciembre"    )
+
+   tvSetCheckState( ::oTreeSelector:hWnd, oTreeMes:aItems[ nTreeMes ]:hItem, .T. )
+   sysrefresh()
 
    oTreeSemana:Expand()
    oTreeMes:Expand()
