@@ -5890,7 +5890,7 @@ STATIC FUNCTION cAlbCli( aGet, aTmp, oBrwLin, oBrwPgo, nMode )
          CursorWait()
 
          aGet[ _CSERIE  ]:cText( ( dbfAlbCliT )->cSerAlb )
-         aGet[ _CSERIE  ]:bWhen    := {|| .f. }
+         //aGet[ _CSERIE  ]:bWhen    := {|| .f. }
 
          aGet[ _CCODCLI ]:cText( ( dbfAlbCliT )->cCodCli )
          aGet[ _CCODCLI ]:bWhen    := {|| .f. }
