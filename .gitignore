@@ -14,11 +14,13 @@
 [Cc]lient/
 [Ii]ss/[Ee]xe/
 [Ee]xe/
+*.exe
 *.tmp
 *.bak
 *.swp
 *.res
 *.log
+iss/exe/**/*
 
 local.properties
 .classpath
