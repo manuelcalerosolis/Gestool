@@ -1569,6 +1569,8 @@ CLASS TCreaFacAutomaticas
    DATA oBtnInicio
    DATA oBtnInforme
 
+   DATA oBtnIgnoraProcesado 
+
    DATA cPorDiv
 
    DATA cFilTxt
@@ -1611,6 +1613,10 @@ CLASS TCreaFacAutomaticas
 
    METHOD lSeekClient( cCodFac )
 
+   METHOD OnClickRefreshAsistente()    INLINE   ( MsgStop( "Refresh") ) 
+
+   METHOD OnClickIgnoraProcesado()     INLINE   ( ::oBtnIgnoraProcesado:Toggle() )
+
 ENDCLASS
 
 //---------------------------------------------------------------------------//
@@ -1652,12 +1658,16 @@ METHOD Create( lMensaje, cCodigoFactura, lAsistente ) CLASS TCreaFacAutomaticas
          PROMPT   "Plantillas",;
                   "Proceso" ;
          DIALOGS  "AssDocAuto_2",;
-                  "AssDocAuto_1"
+                  "AssDocAuto_1" 
 
       REDEFINE GET ::oFecDocumento VAR ::dFecDocumento ;
          ID       110 ;
          SPINNER ;
          OF       oFld:aDialogs[ 1 ]
+
+      TBtnBmp():ReDefine( 120, "Recycle_16",,,,, {|| ::OnClickRefreshAsistente() }, oFld:aDialogs[ 1 ], .f., , .f., "Selecionar plnatillas" )
+
+      ::oBtnIgnoraProcesado            := TBtnBmp():ReDefine( 130, "Document_gear_16",,,,, {|| ::OnClickIgnoraProcesado() }, oFld:aDialogs[ 1 ], .f., , .f., "Incluir plantillas con documentos generados" )
 
       /*
       Plantillas para el proceso-----------------------------------------------
@@ -1771,9 +1781,6 @@ METHOD StartAsistente()
    local nTreeSemana
    local oTreeSemana
 
-   nTreeSemana    := if( Dow( GetSysDate() ) = 1 , 7 , Dow( GetSysDate() - 1 ) )
-   nTreeMes       := Month( GetSysDate() )  
-
    ::oBtnInforme:Disable()  
 
    oTreeSemana    := ::oTreeSelector:Add( "Semana" ) 
@@ -1785,9 +1792,6 @@ METHOD StartAsistente()
    oTreeSemana:Add( "Viernes"    )
    oTreeSemana:Add( "Sábado"     )
    oTreeSemana:Add( "Domingo"    )
-
-   tvSetCheckState( ::oTreeSelector:hWnd, oTreeSemana:aItems[ nTreeSemana ]:hItem, .t. ) 
-   sysrefresh()
 
    oTreeMes       := ::oTreeSelector:Add( "Mes" )  
  
@@ -1804,11 +1808,21 @@ METHOD StartAsistente()
    oTreeMes:Add( "Noviembre"    )
    oTreeMes:Add( "Diciembre"    )
 
-   tvSetCheckState( ::oTreeSelector:hWnd, oTreeMes:aItems[ nTreeMes ]:hItem, .t. ) 
-   sysrefresh()
-
    oTreeSemana:Expand()
    oTreeMes:Expand()
+ 
+   nTreeSemana    := if( Dow( GetSysDate() ) = 1 , 7 , Dow( GetSysDate() - 1 ) )
+   nTreeMes       := Month( GetSysDate() )  
+
+   sysrefresh()
+
+   tvSetCheckState( ::oTreeSelector:hWnd, oTreeSemana:aItems[ nTreeSemana ]:hItem, .t. ) 
+
+   sysrefresh()
+
+   tvSetCheckState( ::oTreeSelector:hWnd, oTreeMes:aItems[ nTreeMes ]:hItem, .t. ) 
+
+   sysrefresh()
 
 RETURN ( Self )
 

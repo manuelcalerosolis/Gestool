@@ -1552,6 +1552,8 @@ _HB_CLASS TCreaFacAutomaticas ; UTILITY FUNCTION TCreaFacAutomaticas(...); stati
    _HB_MEMBER { oBtnInicio} ; IIF( !.F., s_oClass:AddMultiData(,, nScope + IIF( .F., 32, 0 ), { "oBtnInicio" }, .F., .F. ), )
    _HB_MEMBER { oBtnInforme} ; IIF( !.F., s_oClass:AddMultiData(,, nScope + IIF( .F., 32, 0 ), { "oBtnInforme" }, .F., .F. ), )
 
+   _HB_MEMBER { oBtnIgnoraProcesado} ; IIF( !.F., s_oClass:AddMultiData(,, nScope + IIF( .F., 32, 0 ), { "oBtnIgnoraProcesado" }, .F., .F. ), )
+
    _HB_MEMBER { cPorDiv} ; IIF( !.F., s_oClass:AddMultiData(,, nScope + IIF( .F., 32, 0 ), { "cPorDiv" }, .F., .F. ), )
 
    _HB_MEMBER { cFilTxt} ; IIF( !.F., s_oClass:AddMultiData(,, nScope + IIF( .F., 32, 0 ), { "cFilTxt" }, .F., .F. ), )
@@ -1593,6 +1595,10 @@ _HB_CLASS TCreaFacAutomaticas ; UTILITY FUNCTION TCreaFacAutomaticas(...); stati
    _HB_MEMBER ActionTree(); IIF( .F., s_oClass:ModMethod( "ActionTree", @TCreaFacAutomaticas_ActionTree(), nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ), s_oClass:AddMethod( "ActionTree", @TCreaFacAutomaticas_ActionTree(), nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ));
 
    _HB_MEMBER lSeekClient( cCodFac); IIF( .F., s_oClass:ModMethod( "lSeekClient", @TCreaFacAutomaticas_lSeekClient(), nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ), s_oClass:AddMethod( "lSeekClient", @TCreaFacAutomaticas_lSeekClient(), nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ));
+
+   _HB_MEMBER OnClickRefreshAsistente(); IIF( .F., s_oClass:ModInline( "OnClickRefreshAsistente", {|Self | Self, ( MsgStop( "Refresh") ) }, nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ), s_oClass:AddInline( "OnClickRefreshAsistente", {|Self | Self, ( MsgStop( "Refresh") ) }, nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ) )
+
+   _HB_MEMBER OnClickIgnoraProcesado(); IIF( .F., s_oClass:ModInline( "OnClickIgnoraProcesado", {|Self | Self, ( ::oBtnIgnoraProcesado:Toggle() ) }, nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ), s_oClass:AddInline( "OnClickIgnoraProcesado", {|Self | Self, ( ::oBtnIgnoraProcesado:Toggle() ) }, nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ) )
 
 ; IF .F. ; __clsActive(s_oClass:hClass) ; s_oClass:Refresh() ; ELSE ; s_oClass:Create() ; END ; oClassInstance := __clsInst( s_oClass:hClass ) ; IF __ObjHasMsg( oClassInstance, "InitClass" ); oClassInstance:InitClass( hb_aParams() ) ; END ; ELSE ; oClassInstance := __clsInst( s_oClass:hClass ) ; END ; IF PCount() > 0 ; DIVERT TO (@DivertConstructorCall()) OF s_oClass ; END ; RETURN oClassInstance AS CLASS TCreaFacAutomaticas ;
 
@@ -1641,6 +1647,10 @@ UTILITY STATIC function TCreaFacAutomaticas_Create( lMensaje, cCodigoFactura, lA
 
 
       ::oFecDocumento := TGetHlp():ReDefine( 110, { | u | If( PCount()==0, ::dFecDocumento, ::dFecDocumento:= u ) }, oFld:aDialogs[ 1 ],,,,,,,,, .F.,,, .F., .T.,,,,,, nil,,, )
+
+      TBtnBmp():ReDefine( 120, "Recycle_16",,,,, {|| ::OnClickRefreshAsistente() }, oFld:aDialogs[ 1 ], .F., , .F., "Selecionar plnatillas" )
+
+      ::oBtnIgnoraProcesado            := TBtnBmp():ReDefine( 130, "Document_gear_16",,,,, {|| ::OnClickIgnoraProcesado() }, oFld:aDialogs[ 1 ], .F., , .F., "Incluir plantillas con documentos generados" )
 
 
 
@@ -1754,9 +1764,6 @@ UTILITY STATIC function TCreaFacAutomaticas_StartAsistente() ; local Self AS CLA
    local nTreeSemana
    local oTreeSemana
 
-   nTreeSemana    := if( Dow( GetSysDate() ) = 1 , 7 , Dow( GetSysDate() - 1 ) )
-   nTreeMes       := Month( GetSysDate() )
-
    ::oBtnInforme:Disable()
 
    oTreeSemana    := ::oTreeSelector:Add( "Semana" )
@@ -1768,9 +1775,6 @@ UTILITY STATIC function TCreaFacAutomaticas_StartAsistente() ; local Self AS CLA
    oTreeSemana:Add( "Viernes"    )
    oTreeSemana:Add( "Sábado"     )
    oTreeSemana:Add( "Domingo"    )
-
-   tvSetCheckState( ::oTreeSelector:hWnd, oTreeSemana:aItems[ nTreeSemana ]:hItem, .T. )
-   sysrefresh()
 
    oTreeMes       := ::oTreeSelector:Add( "Mes" )
 
@@ -1787,11 +1791,21 @@ UTILITY STATIC function TCreaFacAutomaticas_StartAsistente() ; local Self AS CLA
    oTreeMes:Add( "Noviembre"    )
    oTreeMes:Add( "Diciembre"    )
 
-   tvSetCheckState( ::oTreeSelector:hWnd, oTreeMes:aItems[ nTreeMes ]:hItem, .T. )
-   sysrefresh()
-
    oTreeSemana:Expand()
    oTreeMes:Expand()
+
+   nTreeSemana    := if( Dow( GetSysDate() ) = 1 , 7 , Dow( GetSysDate() - 1 ) )
+   nTreeMes       := Month( GetSysDate() )
+
+   sysrefresh()
+
+   tvSetCheckState( ::oTreeSelector:hWnd, oTreeSemana:aItems[ nTreeSemana ]:hItem, .T. )
+
+   sysrefresh()
+
+   tvSetCheckState( ::oTreeSelector:hWnd, oTreeMes:aItems[ nTreeMes ]:hItem, .T. )
+
+   sysrefresh()
 
 RETURN ( Self )
 

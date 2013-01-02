@@ -4,15 +4,23 @@
 		"selected_items":
 		[
 			[
+				"OnClick",
+				"OnClickIgnoraPreocesado"
+			],
+			[
+				"oTree",
+				"oTreeSelector"
+			],
+			[
+				"nTree",
+				"nTreeSemana"
+			],
+			[
 				"nTre",
 				"nTreeMes"
 			],
 			[
 				"oTre",
-				"oTreeSemana"
-			],
-			[
-				"oTree",
 				"oTreeSemana"
 			],
 			[
@@ -107,7 +115,39 @@
 			"file": "prg/Facauto.prg",
 			"settings":
 			{
-				"buffer_size": 87884,
+				"buffer_size": 88440,
+				"line_ending": "Windows"
+			}
+		},
+		{
+			"file": "prg/Btnbmp.prg",
+			"settings":
+			{
+				"buffer_size": 39829,
+				"line_ending": "Windows"
+			}
+		},
+		{
+			"file": "prg/Bancos.prg",
+			"settings":
+			{
+				"buffer_size": 46669,
+				"line_ending": "Windows"
+			}
+		},
+		{
+			"file": "Hx.mak",
+			"settings":
+			{
+				"buffer_size": 34729,
+				"line_ending": "Windows"
+			}
+		},
+		{
+			"file": "Hx.bat",
+			"settings":
+			{
+				"buffer_size": 125,
 				"line_ending": "Windows"
 			}
 		},
@@ -120,7 +160,7 @@
 			}
 		}
 	],
-	"build_system": "Packages/AAAPackageDev/Support/JSON to Property List.sublime-build",
+	"build_system": "Packages/User/Gestool.sublime-build",
 	"command_palette":
 	{
 		"height": 58.0,
@@ -240,9 +280,13 @@
 	},
 	"file_history":
 	[
+		"/C/fw195/gestool/prg/Articulo.prg",
+		"/C/fw195/gestool/Hr.bat",
+		"/C/fw195/gestool/.gitignore",
+		"/C/fw195/gestool/.git/info/exclude",
+		"/C/fw195/gestool/.git/config",
 		"/C/Users/Calero/AppData/Roaming/Sublime Text 2/Packages/harbour/Harbour.JSON-tmlanguage",
 		"/C/fw195/gestool/prg/Activex.prg",
-		"/C/fw195/gestool/.gitignore",
 		"/C/fw195/gestool/.gitattributes",
 		"/C/fw195/gestool/prg/Facauto.prg",
 		"/C/fw195/gestool/Hx.bat",
@@ -346,7 +390,7 @@
 	},
 	"find_in_files":
 	{
-		"height": 0.0,
+		"height": 90.0,
 		"where_history":
 		[
 			"C:\\fw195\\camero\\prg",
@@ -366,6 +410,13 @@
 		"case_sensitive": false,
 		"find_history":
 		[
+			"gear_16",
+			"pencil_16",
+			"lpressed",
+			"obtnign",
+			"IGONORA",
+			"refreshas",
+			"brc",
 			"od star",
 			"od start",
 			"od stat",
@@ -465,7 +516,7 @@
 	"groups":
 	[
 		{
-			"selected": 1,
+			"selected": 0,
 			"sheets":
 			[
 				{
@@ -473,15 +524,15 @@
 					"file": "prg/Facauto.prg",
 					"settings":
 					{
-						"buffer_size": 87884,
+						"buffer_size": 88440,
 						"regions":
 						{
 						},
 						"selection":
 						[
 							[
-								52826,
-								52826
+								49498,
+								49498
 							]
 						],
 						"settings":
@@ -494,13 +545,133 @@
 							"translate_tabs_to_spaces": true
 						},
 						"translation.x": 0.0,
-						"translation.y": 31835.0,
+						"translation.y": 29675.0,
 						"zoom_level": 1.0
 					},
 					"type": "text"
 				},
 				{
 					"buffer": 1,
+					"file": "prg/Btnbmp.prg",
+					"settings":
+					{
+						"buffer_size": 39829,
+						"regions":
+						{
+						},
+						"selection":
+						[
+							[
+								3901,
+								3895
+							]
+						],
+						"settings":
+						{
+							"encoding_helper_confidence": 1.0,
+							"encoding_helper_encoding": "UTF-8",
+							"encoding_helper_encoding_sublime": "UTF-8",
+							"syntax": "Packages/harbour/Harbour.tmLanguage",
+							"tab_size": 3,
+							"translate_tabs_to_spaces": true
+						},
+						"translation.x": 0.0,
+						"translation.y": 2325.0,
+						"zoom_level": 1.0
+					},
+					"type": "text"
+				},
+				{
+					"buffer": 2,
+					"file": "prg/Bancos.prg",
+					"settings":
+					{
+						"buffer_size": 46669,
+						"regions":
+						{
+						},
+						"selection":
+						[
+							[
+								21956,
+								21966
+							]
+						],
+						"settings":
+						{
+							"encoding_helper_confidence": 0.5,
+							"encoding_helper_encoding": "ISO-8859-1",
+							"encoding_helper_encoding_sublime": "Western (Windows 1252)",
+							"syntax": "Packages/harbour/Harbour.tmLanguage",
+							"tab_size": 3,
+							"translate_tabs_to_spaces": true
+						},
+						"translation.x": 0.0,
+						"translation.y": 12809.0,
+						"zoom_level": 1.0
+					},
+					"type": "text"
+				},
+				{
+					"buffer": 3,
+					"file": "Hx.mak",
+					"settings":
+					{
+						"buffer_size": 34729,
+						"regions":
+						{
+						},
+						"selection":
+						[
+							[
+								20912,
+								20912
+							]
+						],
+						"settings":
+						{
+							"encoding_helper_confidence": 1.0,
+							"encoding_helper_encoding": "UTF-8",
+							"encoding_helper_encoding_sublime": "UTF-8",
+							"syntax": "Packages/Text/Plain text.tmLanguage"
+						},
+						"translation.x": 0.0,
+						"translation.y": 970.0,
+						"zoom_level": 1.0
+					},
+					"type": "text"
+				},
+				{
+					"buffer": 4,
+					"file": "Hx.bat",
+					"settings":
+					{
+						"buffer_size": 125,
+						"regions":
+						{
+						},
+						"selection":
+						[
+							[
+								0,
+								0
+							]
+						],
+						"settings":
+						{
+							"encoding_helper_confidence": 1.0,
+							"encoding_helper_encoding": "UTF-8",
+							"encoding_helper_encoding_sublime": "UTF-8",
+							"syntax": "Packages/Batch File/Batch File.tmLanguage"
+						},
+						"translation.x": 0.0,
+						"translation.y": 0.0,
+						"zoom_level": 1.0
+					},
+					"type": "text"
+				},
+				{
+					"buffer": 5,
 					"file": "/C/Users/Calero/AppData/Roaming/Sublime Text 2/Packages/harbour/Harbour.sublime-completions",
 					"settings":
 					{
