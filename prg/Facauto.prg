@@ -1569,7 +1569,8 @@ CLASS TCreaFacAutomaticas
    DATA oBtnInicio
    DATA oBtnInforme
 
-   DATA oBtnIgnoraProcesado 
+   DATA oChkIgnoraProcesado 
+   DATA lChkIgnoraProcesado         INIT .f.
 
    DATA cPorDiv
 
@@ -1586,6 +1587,8 @@ CLASS TCreaFacAutomaticas
    DATA lAsistente      
 
    DATA oTreeSelector
+   DATA oTreeSemana
+   DATA oTreeMes
 
    METHOD Create()
 
@@ -1613,7 +1616,7 @@ CLASS TCreaFacAutomaticas
 
    METHOD lSeekClient( cCodFac )
 
-   METHOD OnClickRefreshAsistente()    INLINE   ( MsgStop( "Refresh") ) 
+   METHOD OnClickRefreshAsistente()    INLINE   ( ::lLanzaAsistente(), ::oBrwPlantilla:SetArray( ::aPlantilla, , , .f. ) ) 
 
    METHOD OnClickIgnoraProcesado()     INLINE   ( ::oBtnIgnoraProcesado:Toggle() )
 
@@ -1667,7 +1670,10 @@ METHOD Create( lMensaje, cCodigoFactura, lAsistente ) CLASS TCreaFacAutomaticas
 
       TBtnBmp():ReDefine( 120, "Recycle_16",,,,, {|| ::OnClickRefreshAsistente() }, oFld:aDialogs[ 1 ], .f., , .f., "Selecionar plnatillas" )
 
-      ::oBtnIgnoraProcesado            := TBtnBmp():ReDefine( 130, "Document_gear_16",,,,, {|| ::OnClickIgnoraProcesado() }, oFld:aDialogs[ 1 ], .f., , .f., "Incluir plantillas con documentos generados" )
+      REDEFINE CHECKBOX ::oChkIgnoraProcesado ;
+         VAR      ::lChkIgnoraProcesado ;
+         ID       130 ;
+         OF       oFld:aDialogs[ 1 ]
 
       /*
       Plantillas para el proceso-----------------------------------------------
@@ -1702,7 +1708,7 @@ METHOD Create( lMensaje, cCodigoFactura, lAsistente ) CLASS TCreaFacAutomaticas
       end with
 
       with object ( ::oBrwPlantilla:AddCol() )
-         :cHeader          := "Nombre"
+         :cHeader          := "Nombre plantilla"
          :bEditValue       := {|| ::aPlantilla[ ::oBrwPlantilla:nArrayAt, 3 ] }
          :nWidth           := 200
       end with
@@ -1775,52 +1781,49 @@ RETURN ( .t. )
 
 METHOD StartAsistente()
 
-   local oTreeMes
    local nTreeMes
-   
    local nTreeSemana
-   local oTreeSemana
-
+   
    ::oBtnInforme:Disable()  
 
-   oTreeSemana    := ::oTreeSelector:Add( "Semana" ) 
+   ::oTreeSemana     := ::oTreeSelector:Add( "Semana" ) 
  
-   oTreeSemana:Add( "Lunes"      ) 
-   oTreeSemana:Add( "Martes"     )
-   oTreeSemana:Add( "Miércoles"  ) 
-   oTreeSemana:Add( "Jueves"     )
-   oTreeSemana:Add( "Viernes"    )
-   oTreeSemana:Add( "Sábado"     )
-   oTreeSemana:Add( "Domingo"    )
+   ::oTreeSemana:Add( "Lunes"      ) 
+   ::oTreeSemana:Add( "Martes"     )
+   ::oTreeSemana:Add( "Miércoles"  ) 
+   ::oTreeSemana:Add( "Jueves"     )
+   ::oTreeSemana:Add( "Viernes"    )
+   ::oTreeSemana:Add( "Sábado"     )
+   ::oTreeSemana:Add( "Domingo"    )
 
-   oTreeMes       := ::oTreeSelector:Add( "Mes" )  
+   ::oTreeMes        := ::oTreeSelector:Add( "Mes" )  
  
-   oTreeMes:Add( "Enero"        )
-   oTreeMes:Add( "Febrero"      )
-   oTreeMes:Add( "Marzo"        )
-   oTreeMes:Add( "Abril"        )
-   oTreeMes:Add( "Mayo"         )
-   oTreeMes:Add( "Junio"        )
-   oTreeMes:Add( "Julio"        )
-   oTreeMes:Add( "Agosto"       )
-   oTreeMes:Add( "Septiembre"   )
-   oTreeMes:Add( "Octubre"      )
-   oTreeMes:Add( "Noviembre"    )
-   oTreeMes:Add( "Diciembre"    )
+   ::oTreeMes:Add( "Enero"        )
+   ::oTreeMes:Add( "Febrero"      )
+   ::oTreeMes:Add( "Marzo"        )
+   ::oTreeMes:Add( "Abril"        )
+   ::oTreeMes:Add( "Mayo"         )
+   ::oTreeMes:Add( "Junio"        )
+   ::oTreeMes:Add( "Julio"        )
+   ::oTreeMes:Add( "Agosto"       )
+   ::oTreeMes:Add( "Septiembre"   )
+   ::oTreeMes:Add( "Octubre"      )
+   ::oTreeMes:Add( "Noviembre"    )
+   ::oTreeMes:Add( "Diciembre"    )
 
-   oTreeSemana:Expand()
-   oTreeMes:Expand()
+   ::oTreeSemana:Expand()
+   ::oTreeMes:Expand()
  
-   nTreeSemana    := if( Dow( GetSysDate() ) = 1 , 7 , Dow( GetSysDate() - 1 ) )
-   nTreeMes       := Month( GetSysDate() )  
+   nTreeSemana       := if( Dow( GetSysDate() ) = 1 , 7 , Dow( GetSysDate() - 1 ) )
+   nTreeMes          := Month( GetSysDate() )  
 
    sysrefresh()
 
-   tvSetCheckState( ::oTreeSelector:hWnd, oTreeSemana:aItems[ nTreeSemana ]:hItem, .t. ) 
+   tvSetCheckState( ::oTreeSelector:hWnd, ::oTreeSemana:aItems[ nTreeSemana ]:hItem, .t. ) 
 
    sysrefresh()
 
-   tvSetCheckState( ::oTreeSelector:hWnd, oTreeMes:aItems[ nTreeMes ]:hItem, .t. ) 
+   tvSetCheckState( ::oTreeSelector:hWnd, ::oTreeMes:aItems[ nTreeMes ]:hItem, .t. ) 
 
    sysrefresh()
 
@@ -2022,15 +2025,41 @@ RETURN ( .t. )
 METHOD lMesSeleccionado() CLASS TCreaFacAutomaticas
 
    local nMes
-   local aMes     := hb_atokens( Alltrim( ::oFacAutT:oDbf:cMesSel ), "," )
+   local aMes     
+   local oItem
 
-   nMes           := Month( GetSysDate() )
+   aMes           := hb_atokens( Alltrim( ::oFacAutT:oDbf:cMesSel ), "," )
 
-   if nMes >= 1 .and. nMes <= len( aMes )
-      if aMes[ nMes ] == ".T."
-         RETURN ( .t. )
+   if !Empty( ::oTreeMes )
+
+      for each oItem in ::oTreeMes:aItems
+
+         if tvGetCheckState( ::oTreeSelector:hWnd, ::oTreeMes:aItems[ hb_enumindex() ]:hItem )         
+
+            nMes  := hb_enumindex()
+
+            if nMes >= 1 .and. nMes <= len( aMes )
+               if aMes[ nMes ] == ".T."
+                  RETURN ( .t. )
+               end if
+            end if
+
+         end if
+
+      next
+
+   else
+
+      nMes        := Month( GetSysDate() )
+
+      if nMes >= 1 .and. nMes <= len( aMes )
+         if aMes[ nMes ] == ".T."
+            RETURN ( .t. )
+         end if
       end if
+
    end if
+
 
 RETURN ( .f. )
 
@@ -2040,18 +2069,42 @@ METHOD lDiaSeleccionado() CLASS TCreaFacAutomaticas
 
    local nDia
    local aDia
+   local oItem
 
    if !::oFacAutT:oDbf:lDiaSel
       Return ( .t. )
    end if
 
    aDia           := hb_atokens( Alltrim( ::oFacAutT:oDbf:cDiaSel ), "," )
-   nDia           := if( Dow( GetSysDate() ) = 1 , 7 , Dow( GetSysDate() - 1 ) )
 
-   if nDia >= 1 .and. nDia <= len( aDia )
-      if aDia[ nDia ] == ".T."
-         RETURN ( .t. )
+   if !Empty( ::oTreeSemana )
+
+      for each oItem in ::oTreeSemana:aItems
+
+         if tvGetCheckState( ::oTreeSelector:hWnd, ::oTreeSemana:aItems[ hb_enumindex() ]:hItem )         
+
+            nDia  := hb_enumindex()
+
+            if nDia >= 1 .and. nDia <= len( aDia )
+               if aDia[ nDia ] == ".T."
+                  RETURN ( .t. )
+               end if
+            end if
+
+         end if
+
+      next
+
+   else
+
+      nDia        := if( Dow( GetSysDate() ) = 1 , 7 , Dow( GetSysDate() - 1 ) )
+
+      if nDia >= 1 .and. nDia <= len( aDia )
+         if aDia[ nDia ] == ".T."
+            RETURN ( .t. )
+         end if
       end if
+
    end if
 
 RETURN ( .f. )
@@ -2070,6 +2123,8 @@ METHOD lLanzaAsistente( cCodFac ) CLASS TCreaFacAutomaticas
 
    ::aPlantilla                           := {}
    ::cErrorMessage                        := ""
+
+   CursorWait()
 
    oBlock                                 := ErrorBlock( {| oError | ApoloBreak( oError ) } )
    BEGIN SEQUENCE
@@ -2145,6 +2200,10 @@ METHOD lLanzaAsistente( cCodFac ) CLASS TCreaFacAutomaticas
 
    ErrorBlock( oBlock )
 
+
+
+   CursorWE()
+
 RETURN ( lLanza )
 
 //---------------------------------------------------------------------------//
@@ -2176,11 +2235,12 @@ Return lSeek
 METHOD IniciarAsistente( oFld, oDlg ) CLASS TCreaFacAutomaticas
 
    local oItem
+   local aPlantilla
 
    ::oBtnInicio:Disable()
    ::oFecDocumento:Disable()
 
-   oFld:SetOption( 1 )
+   oFld:SetOption( 2 )
 
    CursorWait()
 
@@ -2197,66 +2257,59 @@ METHOD IniciarAsistente( oFld, oDlg ) CLASS TCreaFacAutomaticas
 
    ::oTree:Select( ::oTree:Add( "Proceso iniciado " + AllTrim( Dtoc( GetSysDate() ) ) ) )
 
-   ::oMetMsg:SetTotal( ::oFacAutT:oDbf:OrdKeyCount() )
+   /*
+   Recorremos la plantilla-----------------------------------------------------
+   */
 
-   ::oFacAutT:oDbf:GoTop()
+   ::oMetMsg:SetTotal( len( ::aPlantilla ) )
 
-   while !::oFacAutT:oDbf:Eof()
+   for each aPlantilla in ::aPlantilla
 
-      if ( ( Empty( ::oFacAutT:oDbf:dFecIni ) .and. Empty( ::oFacAutT:oDbf:dFecFin ) )                .or.;
-         ( ::oFacAutT:oDbf:dFecIni <= GetSysDate() .and. ::oFacAutT:oDbf:dFecFin >= GetSysDate() ) )  .and.;
-         ::lMesSeleccionado()                                                                         .and.;
-         ::lDiaSeleccionado()                                                                         .and.;
-         ::lCompruebaFecha()
+      if aPlantilla[ 1 ] .and. ::oFacAutT:oDbf:Seek( aPlantilla[ 2 ] )
 
-         //if ::oDbfCli:Seek( ::oFacAutT:oDbf:cCodFac )
+         fWrite( ::hFilTxt, "Procesando plantilla " + AllTrim( ::oFacAutT:oDbf:cCodFac ) + " - " + AllTrim( ::oFacAutT:oDbf:cNomFac ) + CRLF )
 
-            ::oDbfCli:GoTop()
+         ::oTree:Select( ::oTree:Add( "Procesando pantilla " + AllTrim( ::oFacAutT:oDbf:cCodFac ) + " - " + AllTrim( ::oFacAutT:oDbf:cNomFac ) ) )
 
-            fWrite( ::hFilTxt, "Procesando plantilla " + AllTrim( ::oFacAutT:oDbf:cCodFac ) + " - " + AllTrim( ::oFacAutT:oDbf:cNomFac ) + CRLF )
+         ::oDbfCli:GoTop()
+         while !::oDbfCli:Eof()
 
-            ::oTree:Select( ::oTree:Add( "Procesando pantilla " + AllTrim( ::oFacAutT:oDbf:cCodFac ) + " - " + AllTrim( ::oFacAutT:oDbf:cNomFac ) ) )
+            if At( AllTrim( ::oFacAutT:oDbf:cCodFac ), ::oDbfCli:mFacAut ) != 0
 
-            //while ::oDbfCli:cFacAut == ::oFacAutT:oDbf:cCodFac .and. !::oDbfCli:Eof()
-
-            while !::oDbfCli:Eof()
-
-               if At( AllTrim( ::oFacAutT:oDbf:cCodFac ), ::oDbfCli:mFacAut ) != 0
-
-                  if ::oFacAutT:oDbf:nTipDoc != 2
-                     ::CreaAlbaran()
-                  else
-                     ::CreaFactura()
-                  end if
-
+               if ::oFacAutT:oDbf:nTipDoc != 2
+                  ::CreaAlbaran()
+               else
+                  ::CreaFactura()
                end if
 
-               ::oDbfCli:Skip()
+            end if
 
-            end while
+            ::oDbfCli:Skip()
 
-         //end if
+         end while
+
+         /*
+         Guardamos en el histórico del documento automático--------------------
+         */
+
+         ::oFacAutI:oDbf:Append()
+
+         ::oFacAutI:oDbf:cCodFac    := ::oFacAutT:oDbf:cCodFac
+         ::oFacAutI:oDbf:dFecha     := GetSysDate()
+         ::oFacAutI:oDbf:cHora      := Time()
+         ::oFacAutI:oDbf:cFichero   := ::cFilTxt
+
+         ::oFacAutI:oDbf:Save()
 
       end if
 
       /*
-      Guardamos en el histórico del documento automático--------------
+      Actualizamos el meter----------------------------------------------------
       */
-
-      ::oFacAutI:oDbf:Append()
-
-      ::oFacAutI:oDbf:cCodFac    := ::oFacAutT:oDbf:cCodFac
-      ::oFacAutI:oDbf:dFecha     := GetSysDate()
-      ::oFacAutI:oDbf:cHora      := Time()
-      ::oFacAutI:oDbf:cFichero   := ::cFilTxt
-
-      ::oFacAutI:oDbf:Save()
-
-      ::oFacAutT:oDbf:Skip()
 
       ::oMetMsg:AutoInc()
 
-   end while
+   next
 
    ::oMetMsg:AutoInc( ::oFacAutT:oDbf:Lastrec() )
 
@@ -2786,6 +2839,10 @@ RETURN ( Self )
 METHOD lCompruebaFecha() CLASS TCreaFacAutomaticas
 
    local lReturn        := .t.
+
+   if ::lChkIgnoraProcesado
+      RETURN .t.
+   end if
 
    ::oFacAutI:oDbf:OrdScope( ::oFacAutT:oDbf:cCodFac )
    ::oFacAutI:oDbf:GoBottom()

@@ -1552,7 +1552,8 @@ _HB_CLASS TCreaFacAutomaticas ; UTILITY FUNCTION TCreaFacAutomaticas(...); stati
    _HB_MEMBER { oBtnInicio} ; IIF( !.F., s_oClass:AddMultiData(,, nScope + IIF( .F., 32, 0 ), { "oBtnInicio" }, .F., .F. ), )
    _HB_MEMBER { oBtnInforme} ; IIF( !.F., s_oClass:AddMultiData(,, nScope + IIF( .F., 32, 0 ), { "oBtnInforme" }, .F., .F. ), )
 
-   _HB_MEMBER { oBtnIgnoraProcesado} ; IIF( !.F., s_oClass:AddMultiData(,, nScope + IIF( .F., 32, 0 ), { "oBtnIgnoraProcesado" }, .F., .F. ), )
+   _HB_MEMBER { oChkIgnoraProcesado} ; IIF( !.F., s_oClass:AddMultiData(,, nScope + IIF( .F., 32, 0 ), { "oChkIgnoraProcesado" }, .F., .F. ), )
+   _HB_MEMBER { lChkIgnoraProcesado} ; IIF( !.F., s_oClass:AddMultiData(, .F., nScope + IIF( .F., 32, 0 ), { "lChkIgnoraProcesado" }, .F., .F. ), )
 
    _HB_MEMBER { cPorDiv} ; IIF( !.F., s_oClass:AddMultiData(,, nScope + IIF( .F., 32, 0 ), { "cPorDiv" }, .F., .F. ), )
 
@@ -1569,6 +1570,8 @@ _HB_CLASS TCreaFacAutomaticas ; UTILITY FUNCTION TCreaFacAutomaticas(...); stati
    _HB_MEMBER { lAsistente} ; IIF( !.F., s_oClass:AddMultiData(,, nScope + IIF( .F., 32, 0 ), { "lAsistente" }, .F., .F. ), )
 
    _HB_MEMBER { oTreeSelector} ; IIF( !.F., s_oClass:AddMultiData(,, nScope + IIF( .F., 32, 0 ), { "oTreeSelector" }, .F., .F. ), )
+   _HB_MEMBER { oTreeSemana} ; IIF( !.F., s_oClass:AddMultiData(,, nScope + IIF( .F., 32, 0 ), { "oTreeSemana" }, .F., .F. ), )
+   _HB_MEMBER { oTreeMes} ; IIF( !.F., s_oClass:AddMultiData(,, nScope + IIF( .F., 32, 0 ), { "oTreeMes" }, .F., .F. ), )
 
    _HB_MEMBER Create(); IIF( .F., s_oClass:ModMethod( "Create", @TCreaFacAutomaticas_Create(), nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ), s_oClass:AddMethod( "Create", @TCreaFacAutomaticas_Create(), nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ));
 
@@ -1596,7 +1599,7 @@ _HB_CLASS TCreaFacAutomaticas ; UTILITY FUNCTION TCreaFacAutomaticas(...); stati
 
    _HB_MEMBER lSeekClient( cCodFac); IIF( .F., s_oClass:ModMethod( "lSeekClient", @TCreaFacAutomaticas_lSeekClient(), nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ), s_oClass:AddMethod( "lSeekClient", @TCreaFacAutomaticas_lSeekClient(), nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ));
 
-   _HB_MEMBER OnClickRefreshAsistente(); IIF( .F., s_oClass:ModInline( "OnClickRefreshAsistente", {|Self | Self, ( MsgStop( "Refresh") ) }, nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ), s_oClass:AddInline( "OnClickRefreshAsistente", {|Self | Self, ( MsgStop( "Refresh") ) }, nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ) )
+   _HB_MEMBER OnClickRefreshAsistente(); IIF( .F., s_oClass:ModInline( "OnClickRefreshAsistente", {|Self | Self, ( ::lLanzaAsistente(), ::oBrwPlantilla:SetArray( ::aPlantilla, , , .F. ) ) }, nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ), s_oClass:AddInline( "OnClickRefreshAsistente", {|Self | Self, ( ::lLanzaAsistente(), ::oBrwPlantilla:SetArray( ::aPlantilla, , , .F. ) ) }, nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ) )
 
    _HB_MEMBER OnClickIgnoraProcesado(); IIF( .F., s_oClass:ModInline( "OnClickIgnoraProcesado", {|Self | Self, ( ::oBtnIgnoraProcesado:Toggle() ) }, nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ), s_oClass:AddInline( "OnClickIgnoraProcesado", {|Self | Self, ( ::oBtnIgnoraProcesado:Toggle() ) }, nScope + IIF( .F., 16, 0 ) + IIF( .F., 1024, 0 ), .F. ) )
 
@@ -1650,7 +1653,10 @@ UTILITY STATIC function TCreaFacAutomaticas_Create( lMensaje, cCodigoFactura, lA
 
       TBtnBmp():ReDefine( 120, "Recycle_16",,,,, {|| ::OnClickRefreshAsistente() }, oFld:aDialogs[ 1 ], .F., , .F., "Selecionar plnatillas" )
 
-      ::oBtnIgnoraProcesado            := TBtnBmp():ReDefine( 130, "Document_gear_16",,,,, {|| ::OnClickIgnoraProcesado() }, oFld:aDialogs[ 1 ], .F., , .F., "Incluir plantillas con documentos generados" )
+
+
+
+      ::oChkIgnoraProcesado := TCheckBox():ReDefine( 130, { | u | If( PCount()==0, ::lChkIgnoraProcesado, ::lChkIgnoraProcesado:= u ) }, oFld:aDialogs[ 1 ],,,,,,, .F.,, .F. )
 
 
 
@@ -1685,7 +1691,7 @@ UTILITY STATIC function TCreaFacAutomaticas_Create( lMensaje, cCodigoFactura, lA
       end
 
       with object ( ::oBrwPlantilla:AddCol() )
-         :cHeader          := "Nombre"
+         :cHeader          := "Nombre plantilla"
          :bEditValue       := {|| ::aPlantilla[ ::oBrwPlantilla:nArrayAt, 3 ] }
          :nWidth           := 200
       end
@@ -1758,52 +1764,49 @@ RETURN ( .T. )
 
 UTILITY STATIC function TCreaFacAutomaticas_StartAsistente() ; local Self AS CLASS TCreaFacAutomaticas := QSelf() AS CLASS TCreaFacAutomaticas
 
-   local oTreeMes
    local nTreeMes
-
    local nTreeSemana
-   local oTreeSemana
 
    ::oBtnInforme:Disable()
 
-   oTreeSemana    := ::oTreeSelector:Add( "Semana" )
+   ::oTreeSemana     := ::oTreeSelector:Add( "Semana" )
 
-   oTreeSemana:Add( "Lunes"      )
-   oTreeSemana:Add( "Martes"     )
-   oTreeSemana:Add( "Miércoles"  )
-   oTreeSemana:Add( "Jueves"     )
-   oTreeSemana:Add( "Viernes"    )
-   oTreeSemana:Add( "Sábado"     )
-   oTreeSemana:Add( "Domingo"    )
+   ::oTreeSemana:Add( "Lunes"      )
+   ::oTreeSemana:Add( "Martes"     )
+   ::oTreeSemana:Add( "Miércoles"  )
+   ::oTreeSemana:Add( "Jueves"     )
+   ::oTreeSemana:Add( "Viernes"    )
+   ::oTreeSemana:Add( "Sábado"     )
+   ::oTreeSemana:Add( "Domingo"    )
 
-   oTreeMes       := ::oTreeSelector:Add( "Mes" )
+   ::oTreeMes        := ::oTreeSelector:Add( "Mes" )
 
-   oTreeMes:Add( "Enero"        )
-   oTreeMes:Add( "Febrero"      )
-   oTreeMes:Add( "Marzo"        )
-   oTreeMes:Add( "Abril"        )
-   oTreeMes:Add( "Mayo"         )
-   oTreeMes:Add( "Junio"        )
-   oTreeMes:Add( "Julio"        )
-   oTreeMes:Add( "Agosto"       )
-   oTreeMes:Add( "Septiembre"   )
-   oTreeMes:Add( "Octubre"      )
-   oTreeMes:Add( "Noviembre"    )
-   oTreeMes:Add( "Diciembre"    )
+   ::oTreeMes:Add( "Enero"        )
+   ::oTreeMes:Add( "Febrero"      )
+   ::oTreeMes:Add( "Marzo"        )
+   ::oTreeMes:Add( "Abril"        )
+   ::oTreeMes:Add( "Mayo"         )
+   ::oTreeMes:Add( "Junio"        )
+   ::oTreeMes:Add( "Julio"        )
+   ::oTreeMes:Add( "Agosto"       )
+   ::oTreeMes:Add( "Septiembre"   )
+   ::oTreeMes:Add( "Octubre"      )
+   ::oTreeMes:Add( "Noviembre"    )
+   ::oTreeMes:Add( "Diciembre"    )
 
-   oTreeSemana:Expand()
-   oTreeMes:Expand()
+   ::oTreeSemana:Expand()
+   ::oTreeMes:Expand()
 
-   nTreeSemana    := if( Dow( GetSysDate() ) = 1 , 7 , Dow( GetSysDate() - 1 ) )
-   nTreeMes       := Month( GetSysDate() )
-
-   sysrefresh()
-
-   tvSetCheckState( ::oTreeSelector:hWnd, oTreeSemana:aItems[ nTreeSemana ]:hItem, .T. )
+   nTreeSemana       := if( Dow( GetSysDate() ) = 1 , 7 , Dow( GetSysDate() - 1 ) )
+   nTreeMes          := Month( GetSysDate() )
 
    sysrefresh()
 
-   tvSetCheckState( ::oTreeSelector:hWnd, oTreeMes:aItems[ nTreeMes ]:hItem, .T. )
+   tvSetCheckState( ::oTreeSelector:hWnd, ::oTreeSemana:aItems[ nTreeSemana ]:hItem, .T. )
+
+   sysrefresh()
+
+   tvSetCheckState( ::oTreeSelector:hWnd, ::oTreeMes:aItems[ nTreeMes ]:hItem, .T. )
 
    sysrefresh()
 
@@ -2005,15 +2008,41 @@ RETURN ( .T. )
 UTILITY STATIC function TCreaFacAutomaticas_lMesSeleccionado() ; local Self AS CLASS TCreaFacAutomaticas := QSelf() AS CLASS TCreaFacAutomaticas
 
    local nMes
-   local aMes     := hb_atokens( Alltrim( ::oFacAutT:oDbf:cMesSel ), "," )
+   local aMes
+   local oItem
 
-   nMes           := Month( GetSysDate() )
+   aMes           := hb_atokens( Alltrim( ::oFacAutT:oDbf:cMesSel ), "," )
 
-   if nMes >= 1 .AND. nMes <= len( aMes )
-      if aMes[ nMes ] == ".T."
-         RETURN ( .T. )
+   if !Empty( ::oTreeMes )
+
+      for each oItem in ::oTreeMes:aItems
+
+         if tvGetCheckState( ::oTreeSelector:hWnd, ::oTreeMes:aItems[ hb_enumindex() ]:hItem )
+
+            nMes  := hb_enumindex()
+
+            if nMes >= 1 .AND. nMes <= len( aMes )
+               if aMes[ nMes ] == ".T."
+                  RETURN ( .T. )
+               end
+            end
+
+         end
+
+      next
+
+   else
+
+      nMes        := Month( GetSysDate() )
+
+      if nMes >= 1 .AND. nMes <= len( aMes )
+         if aMes[ nMes ] == ".T."
+            RETURN ( .T. )
+         end
       end
+
    end
+
 
 RETURN ( .F. )
 
@@ -2023,18 +2052,42 @@ UTILITY STATIC function TCreaFacAutomaticas_lDiaSeleccionado() ; local Self AS C
 
    local nDia
    local aDia
+   local oItem
 
    if !::oFacAutT:oDbf:lDiaSel
       Return ( .T. )
    end
 
    aDia           := hb_atokens( Alltrim( ::oFacAutT:oDbf:cDiaSel ), "," )
-   nDia           := if( Dow( GetSysDate() ) = 1 , 7 , Dow( GetSysDate() - 1 ) )
 
-   if nDia >= 1 .AND. nDia <= len( aDia )
-      if aDia[ nDia ] == ".T."
-         RETURN ( .T. )
+   if !Empty( ::oTreeSemana )
+
+      for each oItem in ::oTreeSemana:aItems
+
+         if tvGetCheckState( ::oTreeSelector:hWnd, ::oTreeSemana:aItems[ hb_enumindex() ]:hItem )
+
+            nDia  := hb_enumindex()
+
+            if nDia >= 1 .AND. nDia <= len( aDia )
+               if aDia[ nDia ] == ".T."
+                  RETURN ( .T. )
+               end
+            end
+
+         end
+
+      next
+
+   else
+
+      nDia        := if( Dow( GetSysDate() ) = 1 , 7 , Dow( GetSysDate() - 1 ) )
+
+      if nDia >= 1 .AND. nDia <= len( aDia )
+         if aDia[ nDia ] == ".T."
+            RETURN ( .T. )
+         end
       end
+
    end
 
 RETURN ( .F. )
@@ -2053,6 +2106,8 @@ UTILITY STATIC function TCreaFacAutomaticas_lLanzaAsistente( cCodFac) ; local Se
 
    ::aPlantilla                           := {}
    ::cErrorMessage                        := ""
+
+   CursorWait()
 
    oBlock                                 := ErrorBlock( {| oError | ApoloBreak( oError ) } )
    BEGIN SEQUENCE
@@ -2128,6 +2183,10 @@ UTILITY STATIC function TCreaFacAutomaticas_lLanzaAsistente( cCodFac) ; local Se
 
    ErrorBlock( oBlock )
 
+
+
+   CursorWE()
+
 RETURN ( lLanza )
 
 
@@ -2159,11 +2218,12 @@ Return lSeek
 UTILITY STATIC function TCreaFacAutomaticas_IniciarAsistente( oFld, oDlg) ; local Self AS CLASS TCreaFacAutomaticas := QSelf() AS CLASS TCreaFacAutomaticas
 
    local oItem
+   local aPlantilla
 
    ::oBtnInicio:Disable()
    ::oFecDocumento:Disable()
 
-   oFld:SetOption( 1 )
+   oFld:SetOption( 2 )
 
    CursorWait()
 
@@ -2180,45 +2240,49 @@ UTILITY STATIC function TCreaFacAutomaticas_IniciarAsistente( oFld, oDlg) ; loca
 
    ::oTree:Select( ::oTree:Add( "Proceso iniciado " + AllTrim( Dtoc( GetSysDate() ) ) ) )
 
-   ::oMetMsg:SetTotal( ::oFacAutT:oDbf:OrdKeyCount() )
-
-   ::oFacAutT:oDbf:GoTop()
-
-   while !::oFacAutT:oDbf:Eof()
 
 
 
 
+   ::oMetMsg:SetTotal( len( ::aPlantilla ) )
 
-      if ( ( Empty( ::oFacAutT:oDbf:dFecIni ) .AND. Empty( ::oFacAutT:oDbf:dFecFin ) )                .OR. ( ::oFacAutT:oDbf:dFecIni <= GetSysDate() .AND. ::oFacAutT:oDbf:dFecFin >= GetSysDate() ) )  .AND. ::lMesSeleccionado()                                                                         .AND. ::lDiaSeleccionado()                                                                         .AND. ::lCompruebaFecha()
+   for each aPlantilla in ::aPlantilla
 
+      if aPlantilla[ 1 ] .AND. ::oFacAutT:oDbf:Seek( aPlantilla[ 2 ] )
 
+         fWrite( ::hFilTxt, "Procesando plantilla " + AllTrim( ::oFacAutT:oDbf:cCodFac ) + " - " + AllTrim( ::oFacAutT:oDbf:cNomFac ) + Chr(13)+Chr(10) )
 
-            ::oDbfCli:GoTop()
+         ::oTree:Select( ::oTree:Add( "Procesando pantilla " + AllTrim( ::oFacAutT:oDbf:cCodFac ) + " - " + AllTrim( ::oFacAutT:oDbf:cNomFac ) ) )
 
-            fWrite( ::hFilTxt, "Procesando plantilla " + AllTrim( ::oFacAutT:oDbf:cCodFac ) + " - " + AllTrim( ::oFacAutT:oDbf:cNomFac ) + Chr(13)+Chr(10) )
+         ::oDbfCli:GoTop()
+         while !::oDbfCli:Eof()
 
-            ::oTree:Select( ::oTree:Add( "Procesando pantilla " + AllTrim( ::oFacAutT:oDbf:cCodFac ) + " - " + AllTrim( ::oFacAutT:oDbf:cNomFac ) ) )
+            if At( AllTrim( ::oFacAutT:oDbf:cCodFac ), ::oDbfCli:mFacAut ) <> 0
 
-
-
-            while !::oDbfCli:Eof()
-
-               if At( AllTrim( ::oFacAutT:oDbf:cCodFac ), ::oDbfCli:mFacAut ) <> 0
-
-                  if ::oFacAutT:oDbf:nTipDoc <> 2
-                     ::CreaAlbaran()
-                  else
-                     ::CreaFactura()
-                  end
-
+               if ::oFacAutT:oDbf:nTipDoc <> 2
+                  ::CreaAlbaran()
+               else
+                  ::CreaFactura()
                end
-
-               ::oDbfCli:Skip()
 
             end
 
+            ::oDbfCli:Skip()
 
+         end
+
+
+
+
+
+         ::oFacAutI:oDbf:Append()
+
+         ::oFacAutI:oDbf:cCodFac    := ::oFacAutT:oDbf:cCodFac
+         ::oFacAutI:oDbf:dFecha     := GetSysDate()
+         ::oFacAutI:oDbf:cHora      := Time()
+         ::oFacAutI:oDbf:cFichero   := ::cFilTxt
+
+         ::oFacAutI:oDbf:Save()
 
       end
 
@@ -2226,20 +2290,9 @@ UTILITY STATIC function TCreaFacAutomaticas_IniciarAsistente( oFld, oDlg) ; loca
 
 
 
-      ::oFacAutI:oDbf:Append()
-
-      ::oFacAutI:oDbf:cCodFac    := ::oFacAutT:oDbf:cCodFac
-      ::oFacAutI:oDbf:dFecha     := GetSysDate()
-      ::oFacAutI:oDbf:cHora      := Time()
-      ::oFacAutI:oDbf:cFichero   := ::cFilTxt
-
-      ::oFacAutI:oDbf:Save()
-
-      ::oFacAutT:oDbf:Skip()
-
       ::oMetMsg:AutoInc()
 
-   end
+   next
 
    ::oMetMsg:AutoInc( ::oFacAutT:oDbf:Lastrec() )
 
@@ -2769,6 +2822,10 @@ RETURN ( Self )
 UTILITY STATIC function TCreaFacAutomaticas_lCompruebaFecha() ; local Self AS CLASS TCreaFacAutomaticas := QSelf() AS CLASS TCreaFacAutomaticas
 
    local lReturn        := .T.
+
+   if ::lChkIgnoraProcesado
+      RETURN .T.
+   end
 
    ::oFacAutI:oDbf:OrdScope( ::oFacAutT:oDbf:cCodFac )
    ::oFacAutI:oDbf:GoBottom()
