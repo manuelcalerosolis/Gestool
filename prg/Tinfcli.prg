@@ -5,7 +5,7 @@
 
 //---------------------------------------------------------------------------//
 
-CLASS TInfCli FROM TInfGen
+CLASS TInfCli FROM TInfGen 
 
    METHOD DetCreateFields()
 
