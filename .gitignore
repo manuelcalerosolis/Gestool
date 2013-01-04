@@ -20,6 +20,8 @@
 *.swp
 *.res
 *.log
+*.sublime-workspace
+*.sublime-project
 iss/exe/**/*
 
 local.properties
