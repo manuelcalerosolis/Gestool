@@ -16637,7 +16637,9 @@ Function BrwSelArticulo( oGetCodigo, oGetNombre, lCodeBar, lAppend, lEdit, oBtnS
          oGetNombre:cText( ( dbfArticulo )->Nombre )
       end if
 
-      if !Empty( oBrwStock ) .and. lPropiedades
+      if !Empty( oBrwStock )              .and.;
+         lPropiedades                     .and.;
+         Len(oBrwStock:aArrayData) != 0
 
          if !Empty( oGetLote )
             oGetLote:cText( oBrwStock:aArrayData[ oBrwStock:nArrayAt ]:cLote )
