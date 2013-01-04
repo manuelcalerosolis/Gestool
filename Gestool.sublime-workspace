@@ -11,14 +11,6 @@
 	},
 	"buffers":
 	[
-		{
-			"file": "prg/Tinfcli.prg",
-			"settings":
-			{
-				"buffer_size": 45003,
-				"line_ending": "Windows"
-			}
-		}
 	],
 	"build_system": "Packages/User/gestool.sublime-build",
 	"command_palette":
@@ -52,10 +44,10 @@
 	},
 	"file_history":
 	[
+		"/C/fw195/Gestool/prg/Tinfcli.prg",
 		"/C/fw195/Gestool/prg/Rptgal.prg",
 		"/C/fw195/Gestool/prg/Tinfcvta.prg",
 		"/C/fw195/Gestool/prg/Tinfgen.prg",
-		"/C/fw195/Gestool/prg/Tinfcli.prg",
 		"/C/fw195/Gestool/prg/tinfgen",
 		"/C/fw195/Gestool/prg/Mscolcontainer.prg",
 		"/C/fw195/Gestool/prg/rptgal",
@@ -106,37 +98,8 @@
 	"groups":
 	[
 		{
-			"selected": 0,
 			"sheets":
 			[
-				{
-					"buffer": 0,
-					"file": "prg/Tinfcli.prg",
-					"settings":
-					{
-						"buffer_size": 45003,
-						"regions":
-						{
-						},
-						"selection":
-						[
-							[
-								191,
-								191
-							]
-						],
-						"settings":
-						{
-							"syntax": "Packages/harbour/harbour/Harbour.tmLanguage",
-							"tab_size": 3,
-							"translate_tabs_to_spaces": true
-						},
-						"translation.x": 0.0,
-						"translation.y": 0.0,
-						"zoom_level": 1.0
-					},
-					"type": "text"
-				}
 			]
 		}
 	],
