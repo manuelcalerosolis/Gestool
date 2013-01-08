@@ -4825,7 +4825,8 @@ FONT 8, "Helv"
 {
   CONTROL "", 100, "Edit", WS_BORDER|WS_TABSTOP, 50, 12, 60, 12
   CONTROL "", 110, "Edit", WS_BORDER|WS_TABSTOP, 50, 26, 210, 12
-  CONTROL "Propiedad de tipo color", 200, "Button", BS_AUTOCHECKBOX|WS_TABSTOP, 10, 43, 88, 10
+  CONTROL "Propiedad de tipo color", 200, "Button", BS_AUTOCHECKBOX|WS_TABSTOP, 10, 41, 88, 10
+  CONTROL "", 130, "Edit", WS_BORDER|WS_TABSTOP, 50, 54, 85, 12
   CONTROL "Publicar en internet", 150, "Button", BS_AUTOCHECKBOX|WS_TABSTOP, 10, 84, 88, 10
   CONTROL "", 160, "Edit", WS_BORDER|WS_TABSTOP, 50, 95, 210, 12
   CONTROL "Aña&dir [F2]", 500, "Button", WS_TABSTOP, 10, 126, 50, 14
@@ -4843,8 +4844,7 @@ FONT 8, "Helv"
   CONTROL "Subir", 503, "Button", WS_TABSTOP, 192, 126, 34, 14
   CONTROL "Comercio electrónico", -1, "Button", BS_GROUPBOX, 2, 73, 264, 39
   CONTROL "Descripción", -1, "Static", WS_GROUP, 10, 99, 38, 8
-  CONTROL "", 130, "Edit", WS_BORDER|WS_TABSTOP, 50, 55, 85, 12
-  CONTROL "Externo", -1, "Static", WS_GROUP, 10, 59, 30, 8
+  CONTROL "Externo", -1, "Static", WS_GROUP, 10, 58, 30, 8
 }
 
 PROVEEDOR DIALOG DISCARDABLE 120, -71, 504, 306
