@@ -4,6 +4,58 @@
 		"selected_items":
 		[
 			[
+				"cCodigoT",
+				"cCodigoTipoBestseller"
+			],
+			[
+				"cCod",
+				"cCodTip"
+			],
+			[
+				"cC",
+				"cCodigoPropiedadBestseller"
+			],
+			[
+				"cCodigc",
+				"cCodigoCategriaBestseller"
+			],
+			[
+				"cCodigoC",
+				"cCodigoCategoria"
+			],
+			[
+				"cCodigoCa",
+				"cCodigoCategriaBestseller"
+			],
+			[
+				"dbf",
+				"dbfCategorias"
+			],
+			[
+				"st",
+				"static"
+			],
+			[
+				"s",
+				"static"
+			],
+			[
+				"F",
+				"Familia"
+			],
+			[
+				"fa",
+				"Familia"
+			],
+			[
+				"cN",
+				"cNombreFamilia"
+			],
+			[
+				"cCodigo",
+				"cCodigoFamiliaBestseller"
+			],
+			[
 				"db",
 				"dbfArticulo"
 			],
@@ -36,10 +88,6 @@
 				"Codigo"
 			],
 			[
-				"dbf",
-				"dbfArticulo"
-			],
-			[
 				"Proc",
 				"ProccessArticulo"
 			],
@@ -56,14 +104,6 @@
 				"cData"
 			],
 			[
-				"F",
-				"Function"
-			],
-			[
-				"cN",
-				"cNodeName"
-			],
-			[
 				"h",
 				"hArticulo"
 			],
@@ -78,10 +118,6 @@
 			[
 				"do",
 				"cDocumentXml"
-			],
-			[
-				"s",
-				"Static"
 			],
 			[
 				"cX",
@@ -220,10 +256,6 @@
 				"Plantilla"
 			],
 			[
-				"cC",
-				"cCodigoFactura"
-			],
-			[
 				"mta",
 				"meta"
 			],
@@ -295,7 +327,7 @@
 			"file": "prg/Familia.prg",
 			"settings":
 			{
-				"buffer_size": 97496,
+				"buffer_size": 94327,
 				"line_ending": "Windows"
 			}
 		},
@@ -308,42 +340,37 @@
 			}
 		},
 		{
-			"file": "prg/Comun.prg",
-			"settings":
-			{
-				"buffer_size": 75464,
-				"line_ending": "Windows"
-			}
-		},
-		{
-			"file": "prg/Utildbf.prg",
-			"settings":
-			{
-				"buffer_size": 70266,
-				"line_ending": "Windows"
-			}
-		},
-		{
 			"file": "prg/Tscripts.prg",
 			"settings":
 			{
-				"buffer_size": 9472,
+				"buffer_size": 9473,
 				"line_ending": "Windows"
 			}
 		},
 		{
-			"file": "include/Mesdbf.ch",
-			"settings":
-			{
-				"buffer_size": 855,
-				"line_ending": "Windows"
-			}
-		},
-		{
+			"contents": "#include \"HbXml.ch\"\n#include \"TDbfDbf.ch\"\n\n//---------------------------------------------------------------------------//\n\nstatic aXmlDocuments\nstatic oXmlDocument\n\nstatic oXmlNode\n\nstatic cDirectoryXml\n\nstatic hArticulo\n\nstatic dbfArticulo\nstatic dbfCodebar\nstatic dbfFamilia\nstatic dbfPropieades\nstatic dbfCategorias\nstatic dbfTipoArticulo\n\n//---------------------------------------------------------------------------//\n\nFunction ImportaXmlBestseller()\n\n   local cDocumentXml\n\n   dbUseArea( .t., ( cDriver() ), ( cPatArt() + \"Articulo.Dbf\" ), ( cCheckArea( \"Articulo\", @dbfArticulo ) ), .t., .f. )\n   if !lAIS() ; ordListAdd( ( cPatArt() + \"Articulo.Cdx\" ) ) ; else ; ordSetFocus( 1 ) ; end\n\n   dbUseArea( .t., ( cDriver() ), ( cPatArt() + \"ArtCodebar.Dbf\" ), ( cCheckArea( \"ArtCodebar\", @dbfCodebar ) ), .t., .f. )\n   if !lAIS() ; ordListAdd( ( cPatArt() + \"ArtCodebar.Cdx\" ) ) ; else ; ordSetFocus( 1 ) ; end\n\n   dbUseArea( .t., ( cDriver() ), ( cPatArt() + \"Familias.Dbf\" ), ( cCheckArea( \"Familias\", @dbfFamilia ) ), .t., .f. )\n   if !lAIS() ; ordListAdd( ( cPatArt() + \"Familias.Cdx\" ) ) ; else ; ordSetFocus( 1 ) ; end\n\n   dbUseArea( .t., ( cDriver() ), cPatArt() + \"Pro.Dbf\", cCheckArea( \"Pro\", @dbfPropieades ), .f. )\n   if !lAIS() ; ordListAdd( ( cPatArt() + \"Pro.Cdx\" ) ) ; else ; ordSetFocus( 1 ) ; end\n\n   dbUseArea( .t., ( cDriver() ), cPatArt() + \"Categorias.Dbf\", cCheckArea( \"Categorias\", @dbfCategorias ), .f. )\n   if !lAIS() ; ordListAdd( ( cPatArt() + \"Categorias.Cdx\" ) ) ; else ; ordSetFocus( 1 ) ; end\n\n   dbUseArea( .t., ( cDriver() ), cPatArt() + \"Tipart.Dbf\", cCheckArea( \"Tipart\", @dbfTipoArticulo ), .f. )\n   if !lAIS() ; ordListAdd( ( cPatArt() + \"Tipart.Cdx\" ) ) ; else ; ordSetFocus( 1 ) ; end\n\n   cDirectoryXml        := \"c:\\Users\\Calero\\Desktop\\Pricat\" //cGetDir( \"Selecciona directorio\")\n\n   aXmlDocuments        := Directory( cDirectoryXml + \"\\*.*\" )\n\n   if !Empty( aXmlDocuments )\n\n      for each cDocumentXml in aXmlDocuments\n         ProccessXml( cDocumentXml[ 1 ] )\n      next\n\n   else\n\n      msgStop( \"No hay ficheros en el directorio\")\n\n   end if \n\n   ( dbfArticulo )->( dbCloseArea() )\n   ( dbfCodebar  )->( dbCloseArea() )\n   ( dbfFamilia  )->( dbCloseArea() )\n   ( dbfPropieades )->( dbCloseArea() )\n   ( dbfCategorias )->( dbCloseArea() )\n   ( dbfTipoArticulo )->( dbCloseArea() )\n\nReturn ( nil )\n\n//---------------------------------------------------------------------------//\n\nStatic Function ProccessXml( cDocumentXml )\n\n   local cXml\n\n   hArticulo            := {=>}\n\n   cDocumentXml         := cDirectoryXml + \"\\\" + cDocumentXml\n\n   // msgStop( cDocumentXml, \"cDocumentXml\" )\n\n   oXmlDocument         := TXmlDocument():New( cDocumentXml )\n\n   if oXmlDocument:nStatus != HBXML_STATUS_OK\n\n      switch oXmlDocument:nStatus\n         case HBXML_STATUS_ERROR\n            msgStop( \"Ay! pillin, nos jorobo alguna cosa....!!\" )\n         case HBXML_STATUS_MALFORMED\n            msgStop( \"No es un documento xml\" )\n      end\n\n   else\n\n      oXmlNode                := oXmlDocument:oRoot\n\n      while !Empty( oXmlNode )\n\n/*         cXml                 := oXmlNode:Path()\n         if Empty( cXml )\n            cXml              :=  \"(Node without path)\"\n         end if \n\n         logwrite( \"cName: \"        + Valtoprg( oXmlNode:cName ) )\n         logwrite( \"aAttributes: \"  + ValToPrg( oXmlNode:aAttributes ) ) \n         logwrite( \"cData: \"        + valtoprg( oXmlNode:cData ) ) \n         logwrite( \"aArray: \"       + valtoprg( oXmlNode:ToArray() ) )\n         logwrite( replicate( \"-\", 80 ) ) */\n\n         ProccessNode( oXmlNode ) \n\n         oXmlNode             := oXmlDocument:Next()\n\n      end while\n\n   end if\n\n   ProccessArticulo()\n\nReturn ( nil )\n\n//---------------------------------------------------------------------------//\n\nStatic Function ProccessNode( oXmlNode ) \n\n   local cNodeName   := cValtoChar( oXmlNode:cName )\n\n   do case\n      case cNodeName == \"cac:SellersItemIdentification\" \n         IteratorCodigoArticulo( oXmlNode )       \n\n      case cNodeName == \"cac:Item\"\n         IteratorNombreArticulo( oXmlNode )       \n\n      case cNodeName == \"cac:Price\"\n         IteratorPrieceArticulo( oXmlNode )   \n\n      case cNodeName == \"cac:LineValidityPeriod\"\n         IteratorTemporadaArticulo( oXmlNode )\n\n      case cNodeName == \"cac:CommodityClassification\"\n         IteratorPrimeraPropiedad( oXmlNode )\n\n   end case\n \nReturn ( nil )\n\n//---------------------------------------------------------------------------//\n\nStatic Function IteratorCodigoArticulo( oXmlNode )\n\n   local oIter\n   local oNode\n\n   oIter                := TXMLIteratorScan():New( oXmlNode )\n\n   oNode                := oIter:Find( \"cbc:ID\" ) \n\n   if !Empty( oNode )\n      hSet( hArticulo, \"Codigo\", oNode:cData )\n   end if \n\nReturn ( nil )\n\n//---------------------------------------------------------------------------//\n\nStatic Function IteratorNombreArticulo( oXmlNode )\n\n   local oIter\n   local oNode\n\n   oIter                := TXMLIteratorScan():New( oXmlNode )\n\n   oNode                := oIter:Find( \"cbc:Description\" ) \n\n   if !Empty( oNode )\n      hSet( hArticulo, \"Nombre\", Upper( oNode:cData ) )\n   end if \n\n   oNode                := oIter:Find( \"cbc:BrandName\" ) \n\n   if !Empty( oNode )\n      hSet( hArticulo, \"Familia\", Upper( oNode:cData ) )\n   end if \n\n   oNode                := oIter:Find( \"cbc:ModelName\" ) \n\n   if !Empty( oNode )\n      hSet( hArticulo, \"Tipo\", Upper( oNode:cData ) )\n   end if \n\nReturn ( nil )\n\n//---------------------------------------------------------------------------//\n\nStatic Function IteratorPrieceArticulo( oXmlNode )       \n\n   local oIter\n   local oNode\n   local nPrice\n\n   oIter                := TXMLIteratorScan():New( oXmlNode )\n\n   oNode                := oIter:Find( \"cbc:PriceAmount\" ) \n\n   if !Empty( oNode )\n      nPrice            := Val( oNode:cData )\n   end if \n\n   oNode                := oIter:Find( \"cbc:PriceTypeCode\" ) \n\n   if !Empty( oNode ) .and. ( oNode:cData == \"GRP\" )\n      hSet( hArticulo, \"Costo\", nPrice )\n   end if\n\n   if !Empty( oNode ) .and. ( oNode:cData == \"SRP\" )\n      hSet( hArticulo, \"Venta\", nPrice )\n   end if\n   \nReturn ( nil )\n\n//---------------------------------------------------------------------------//\n\nStatic Function IteratorTemporadaArticulo( oXmlNode )\n\n   local oIter\n   local oNode\n\n   oIter                := TXMLIteratorScan():New( oXmlNode )\n\n   oNode                := oIter:Find( \"cbc:Description\" ) \n\n   if !Empty( oNode )\n      hSet( hArticulo, \"Temporada\", Upper( oNode:cData ) )\n   end if \n\nReturn ( nil )\n\n//---------------------------------------------------------------------------//\n\nStatic Function IteratorPrimeraPropiedad( oXmlNode )\n\n   local oIter\n   local oNode\n\n   oIter                := TXMLIteratorScan():New( oXmlNode )\n\n   oNode                := oIter:Find( \"cbc:CommodityCode\" ) \n\n   if !Empty( oNode )\n      hSet( hArticulo, \"Primera propiedad\", oNode:cData )\n   end if \n\nReturn ( nil )\n\n//---------------------------------------------------------------------------//\n\nStatic Function ProccessArticulo()\n\n   local lAppend\n\n   lAppend              := !( dbfArticulo )->( dbSeek( hGet( hArticulo, \"Codigo\" ) ) )\n\n   if dbDialogLock( dbfArticulo, lAppend )\n\n      ( dbfArticulo )->Codigo    := hGet( hArticulo, \"Codigo\" )\n      ( dbfArticulo )->Nombre    := hGet( hArticulo, \"Nombre\" )\n\n      ( dbfArticulo )->pCosto    := hGet( hArticulo, \"Costo\" )\n      ( dbfArticulo )->pVtaIva1  := hGet( hArticulo, \"Venta\" )\n\n      ( dbfArticulo )->lIvaInc   := .t.\n      ( dbfArticulo )->TipoIva   := cDefIva()\n\n      ( dbfArticulo )->Familia   := cCodigoFamiliaBestseller( hGet( hArticulo, \"Familia\") )\n\n      ( dbfArticulo )->cCodPrp1  := cCodigoPropiedadBestseller( hGet( hArticulo, \"Primera propiedad\" ) )\n      ( dbfArticulo )->cCodPrp2  := \"003\" // Colores bestseller\n\n      ( dbfArticulo )->cCodTip   := cCodigoTipoBestseller( hGet( hArticulo, \"Tipo\" ) )\n\n      ( dbfArticulo )->( dbUnlock() )\n   \n   end if\n\n   msgStop( valtoprg( hArticulo ), if( lAppend, \"Añadido\", \"Modificado\" ) )\n\nReturn ( nil )   \n\n//---------------------------------------------------------------------------//\n\nFunction cCodigoFamiliaBestseller( cNombreFamilia )\n\n   local cFamilia\n   local cSubFamilia\n   local cCodigoFamiliaBestseller   := \"\"\n\n   cFamilia                         := substr( cNombreFamilia, 1, at( \"/\", cNombreFamilia ) - 1 ) \n   cSubFamilia                      := substr( cNombreFamilia, at( \"/\", cNombreFamilia ) + 1 ) \n\n   if dbSeekInOrd( cSubFamilia, \"cNomFam\", dbfFamilia )\n      cCodigoFamiliaBestseller      := ( dbfFamilia )->cCodFam\n   end if\n\n   if Empty( cCodigoFamiliaBestseller )\n      if dbSeekInOrd( cFamilia, \"cNomFam\", dbfFamilia )\n         cCodigoFamiliaBestseller   := ( dbfFamilia )->cCodFam\n      end if\n   end if\n\nReturn ( cCodigoFamiliaBestseller )\n\n//---------------------------------------------------------------------------//\n\nFunction cCodigoPropiedadBestseller( cCodigoExterno )\n\n   local cCodigoPropiedadBestseller := \"\"\n\n   if dbSeekInOrd( cCodigoExterno, \"cCodExt\", dbfPropieades )\n      cCodigoPropiedadBestseller    := ( dbfPropieades )->cCodPro \n   end if\n\nReturn ( cCodigoPropiedadBestseller )\n\n//---------------------------------------------------------------------------//\n\nFunction cCodigoTipoBestseller( cCodigoTipo )\n\n   local cCodigoTipoBestseller      := \"\"\n\n   if dbSeekInOrd( cCodigoTipo, \"cNomTip\", dbfTipoArticulo )\n      cCodigoCategriaBestseller     := ( dbfTipoArticulo )->cCodTip\n   end if\n\nReturn ( cCodigoTipoBestseller )\n\n//---------------------------------------------------------------------------//\n\n",
 			"file": "bin/script/XLM.prg",
+			"file_size": 9940,
+			"file_write_time": 130021618827027595,
 			"settings":
 			{
-				"buffer_size": 6652,
+				"buffer_size": 9600,
+				"line_ending": "Windows"
+			}
+		},
+		{
+			"file": "prg/Tipart.prg",
+			"settings":
+			{
+				"buffer_size": 10834,
+				"line_ending": "Windows"
+			}
+		},
+		{
+			"file": "prg/Articulo.prg",
+			"settings":
+			{
+				"buffer_size": 661418,
 				"line_ending": "Windows"
 			}
 		},
@@ -359,36 +386,12 @@
 			"file": "/C/Users/Calero/AppData/Roaming/Sublime Text 2/Packages/harbour/Harbour.sublime-completions",
 			"settings":
 			{
-				"buffer_size": 3707,
-				"line_ending": "Windows"
-			}
-		},
-		{
-			"file": "bin/Trace.Log",
-			"settings":
-			{
-				"buffer_size": 0,
-				"line_ending": "Windows"
-			}
-		},
-		{
-			"file": "/C/Users/Calero/Desktop/Test/Index.html",
-			"settings":
-			{
-				"buffer_size": 560,
-				"line_ending": "Windows"
-			}
-		},
-		{
-			"file": "prg/Usuario.prg",
-			"settings":
-			{
-				"buffer_size": 80126,
+				"buffer_size": 4129,
 				"line_ending": "Windows"
 			}
 		}
 	],
-	"build_system": "Packages/User/Gestool.sublime-build",
+	"build_system": "Packages/AAAPackageDev/Support/JSON to Property List.sublime-build",
 	"command_palette":
 	{
 		"height": 58.0,
@@ -508,6 +511,14 @@
 	},
 	"file_history":
 	[
+		"/C/fw195/gestool/bin/Trace.Log",
+		"/C/Users/Calero/Desktop/Test/Index.html",
+		"/C/fw195/gestool/prg/Categoria.prg",
+		"/C/fw195/gestool/prg/Usuario.prg",
+		"/C/fw195/gestool/prg/Abnprv.prg",
+		"/C/fw195/gestool/include/Mesdbf.ch",
+		"/C/fw195/gestool/prg/Utildbf.prg",
+		"/C/fw195/gestool/prg/Comun.prg",
 		"/C/fw195/gestool/prg/Articulo.prg",
 		"/C/fw195/gestool/ppo/Articulo.ppo",
 		"/C/Users/Calero/Desktop/Pricat/PRICAT_b6f57e03-9596-46c3-98fd-126090ff2a58.xml",
@@ -516,7 +527,6 @@
 		"/C/fw195/gestool/bin/script/std.ch",
 		"/C/fw195/gestool/ppo/OAcuAAlb.ppo",
 		"/C/Users/Calero/AppData/Roaming/Sublime Text 2/Packages/harbour/Harbour.sublime-completions",
-		"/C/fw195/gestool/bin/Trace.Log",
 		"/C/Users/Calero/Desktop/PRICAT_19a08a1b-940a-4b39-83d4-396f5f549580.xml",
 		"/C/fw195/gestool/prg/Facauto.prg",
 		"/C/fw195/gestool/prg/Divisas.prg",
@@ -545,7 +555,6 @@
 		"/C/fw195/gestool/resource/Rptapolo.rc",
 		"/C/fw195/gestool/resource/Gstimage12.rc",
 		"/C/fw195/gestool/resource/Gstdialog.rc",
-		"/C/fw195/gestool/prg/Abnprv.prg",
 		"/C/fw195/gestool/mak/Hx.bat",
 		"/C/fw195/gestool/mak/Hr.bat",
 		"/C/fw195/gestool/mak/Hx.mak",
@@ -616,7 +625,6 @@
 		"/C/gestool/httpdocs/wp-content/themes/Tersus/lib/adm/inc/advanced-excerpt/advanced-excerpt.php",
 		"/C/gestool/httpdocs/wp-includes/class-http.php",
 		"/C/Users/Calero/AppData/Roaming/Microsoft/Firmas/Gestool.htm",
-		"/C/Users/Calero/Desktop/Test/Index.html",
 		"/C/Users/Calero/Desktop/Test/ccs/estilos.ccs",
 		"/C/Users/Calero/AppData/Roaming/Sublime Text 2/Packages/User/Default (Windows).sublime-keymap",
 		"/C/fw195/camero/FACTU.PRG",
@@ -630,7 +638,7 @@
 	},
 	"find_in_files":
 	{
-		"height": 0.0,
+		"height": 90.0,
 		"where_history":
 		[
 			"C:\\fw195\\gestool\\prg",
@@ -655,6 +663,21 @@
 		"case_sensitive": false,
 		"find_history":
 		[
+			"		{ \"trigger\": \"iscntrl\", \"contents\": \"int(${1:cString})\" },\n",
+			")\n",
+			"   if dbSeekInOrd( cCodigoTipo, \"cNomTip\", dbfTipoArticulo )\n",
+			"Return ( cCodigoTipoBestseller )\n",
+			"Return ( cCodigoTipoBestseller )",
+			"ccodigoTip",
+			"tipo",
+			"ttipart",
+			"tipo de a",
+			"dbseekin",
+			"on rx",
+			"excelwirex",
+			"SubStr(",
+			"on ccod",
+			"dbDialogLock",
 			"on wingather",
 			"gather",
 			"on aGather",
@@ -767,22 +790,7 @@
 			"on rx",
 			"class",
 			"from",
-			"class",
-			"lLanzaAsistente",
-			"TCreaFacAutomaticas",
-			"Presupuestos",
-			"PreCli",
-			"::cTypeName == \"Informe de presupuestos\"",
-			"MARQSTYLE_HIGHLWIN7",
-			"ppo",
-			"database",
-			"database new",
-			"\\\n",
-			"database new",
-			"database ",
-			"\\\n",
-			"130",
-			"path"
+			"class"
 		],
 		"highlight": true,
 		"in_selection": false,
@@ -811,7 +819,7 @@
 	"groups":
 	[
 		{
-			"selected": 3,
+			"selected": 4,
 			"sheets":
 			[
 				{
@@ -839,7 +847,7 @@
 							"translate_tabs_to_spaces": true
 						},
 						"translation.x": 0.0,
-						"translation.y": 76733.0,
+						"translation.y": 85257.0,
 						"zoom_level": 1.0
 					},
 					"type": "text"
@@ -849,15 +857,15 @@
 					"file": "prg/Familia.prg",
 					"settings":
 					{
-						"buffer_size": 97496,
+						"buffer_size": 94327,
 						"regions":
 						{
 						},
 						"selection":
 						[
 							[
-								39134,
-								39134
+								54725,
+								54725
 							]
 						],
 						"settings":
@@ -870,7 +878,7 @@
 							"translate_tabs_to_spaces": true
 						},
 						"translation.x": 0.0,
-						"translation.y": 23249.0,
+						"translation.y": 38477.0,
 						"zoom_level": 1.0
 					},
 					"type": "text"
@@ -907,79 +915,18 @@
 				},
 				{
 					"buffer": 3,
-					"file": "prg/Comun.prg",
-					"settings":
-					{
-						"buffer_size": 75464,
-						"regions":
-						{
-						},
-						"selection":
-						[
-							[
-								60025,
-								60025
-							]
-						],
-						"settings":
-						{
-							"encoding_helper_confidence": 0.5,
-							"encoding_helper_encoding": "ISO-8859-1",
-							"encoding_helper_encoding_sublime": "Western (Windows 1252)",
-							"syntax": "Packages/harbour/Harbour.tmLanguage",
-							"tab_size": 3,
-							"translate_tabs_to_spaces": true
-						},
-						"translation.x": 0.0,
-						"translation.y": 41501.0,
-						"zoom_level": 1.0
-					},
-					"type": "text"
-				},
-				{
-					"buffer": 4,
-					"file": "prg/Utildbf.prg",
-					"settings":
-					{
-						"buffer_size": 70266,
-						"regions":
-						{
-						},
-						"selection":
-						[
-							[
-								49772,
-								49800
-							]
-						],
-						"settings":
-						{
-							"encoding_helper_encoding_sublime": "Western (Windows 1252)",
-							"encoding_helper_loading": true,
-							"syntax": "Packages/harbour/Harbour.tmLanguage",
-							"tab_size": 3,
-							"translate_tabs_to_spaces": true
-						},
-						"translation.x": 0.0,
-						"translation.y": 36664.0,
-						"zoom_level": 1.0
-					},
-					"type": "text"
-				},
-				{
-					"buffer": 5,
 					"file": "prg/Tscripts.prg",
 					"settings":
 					{
-						"buffer_size": 9472,
+						"buffer_size": 9473,
 						"regions":
 						{
 						},
 						"selection":
 						[
 							[
-								9472,
-								9472
+								8769,
+								8769
 							]
 						],
 						"settings":
@@ -992,54 +939,25 @@
 							"translate_tabs_to_spaces": true
 						},
 						"translation.x": 0.0,
-						"translation.y": 6227.0,
+						"translation.y": 6280.0,
 						"zoom_level": 1.0
 					},
 					"type": "text"
 				},
 				{
-					"buffer": 6,
-					"file": "include/Mesdbf.ch",
-					"settings":
-					{
-						"buffer_size": 855,
-						"regions":
-						{
-						},
-						"selection":
-						[
-							[
-								0,
-								0
-							]
-						],
-						"settings":
-						{
-							"encoding_helper_confidence": 0.5,
-							"encoding_helper_encoding": "ISO-8859-1",
-							"encoding_helper_encoding_sublime": "Western (Windows 1252)",
-							"syntax": "Packages/harbour/Harbour.tmLanguage"
-						},
-						"translation.x": 0.0,
-						"translation.y": 0.0,
-						"zoom_level": 1.0
-					},
-					"type": "text"
-				},
-				{
-					"buffer": 7,
+					"buffer": 4,
 					"file": "bin/script/XLM.prg",
 					"settings":
 					{
-						"buffer_size": 6652,
+						"buffer_size": 9600,
 						"regions":
 						{
 						},
 						"selection":
 						[
 							[
-								1139,
-								1146
+								8994,
+								8994
 							]
 						],
 						"settings":
@@ -1052,25 +970,25 @@
 							"translate_tabs_to_spaces": true
 						},
 						"translation.x": 0.0,
-						"translation.y": 0.0,
+						"translation.y": 6208.0,
 						"zoom_level": 1.0
 					},
 					"type": "text"
 				},
 				{
-					"buffer": 8,
-					"file": "prg/Pro.prg",
+					"buffer": 5,
+					"file": "prg/Tipart.prg",
 					"settings":
 					{
-						"buffer_size": 67406,
+						"buffer_size": 10834,
 						"regions":
 						{
 						},
 						"selection":
 						[
 							[
-								57464,
-								57464
+								2296,
+								2296
 							]
 						],
 						"settings":
@@ -1083,25 +1001,108 @@
 							"translate_tabs_to_spaces": true
 						},
 						"translation.x": 0.0,
-						"translation.y": 35723.0,
+						"translation.y": 2040.0,
 						"zoom_level": 1.0
 					},
 					"type": "text"
 				},
 				{
-					"buffer": 9,
-					"file": "/C/Users/Calero/AppData/Roaming/Sublime Text 2/Packages/harbour/Harbour.sublime-completions",
+					"buffer": 6,
+					"file": "prg/Articulo.prg",
 					"settings":
 					{
-						"buffer_size": 3707,
+						"buffer_size": 661418,
 						"regions":
 						{
 						},
 						"selection":
 						[
 							[
-								3564,
-								3564
+								556105,
+								556109
+							]
+						],
+						"settings":
+						{
+							"encoding_helper_confidence": 0.5,
+							"encoding_helper_encoding": "ISO-8859-1",
+							"encoding_helper_encoding_sublime": "Western (Windows 1252)",
+							"syntax": "Packages/harbour/Harbour.tmLanguage",
+							"tab_size": 3,
+							"translate_tabs_to_spaces": true
+						},
+						"translation.x": 80.0,
+						"translation.y": 309508.0,
+						"zoom_level": 1.0
+					},
+					"type": "text"
+				},
+				{
+					"buffer": 7,
+					"file": "prg/Pro.prg",
+					"settings":
+					{
+						"buffer_size": 67406,
+						"regions":
+						{
+						},
+						"selection":
+						[
+							[
+								44148,
+								44148
+							]
+						],
+						"settings":
+						{
+							"encoding_helper_confidence": 0.5,
+							"encoding_helper_encoding": "ISO-8859-1",
+							"encoding_helper_encoding_sublime": "Western (Windows 1252)",
+							"syntax": "Packages/harbour/Harbour.tmLanguage",
+							"tab_size": 3,
+							"translate_tabs_to_spaces": true
+						},
+						"translation.x": 0.0,
+						"translation.y": 30940.0,
+						"zoom_level": 1.0
+					},
+					"type": "text"
+				},
+				{
+					"buffer": 8,
+					"file": "/C/Users/Calero/AppData/Roaming/Sublime Text 2/Packages/harbour/Harbour.sublime-completions",
+					"settings":
+					{
+						"buffer_size": 4129,
+						"regions":
+						{
+							"bookmarks":
+							{
+								"flags": 144,
+								"icon": "bookmark",
+								"regions":
+								[
+									[
+										90,
+										90
+									],
+									[
+										2712,
+										2712
+									],
+									[
+										3846,
+										3846
+									]
+								],
+								"scope": "bookmarks"
+							}
+						},
+						"selection":
+						[
+							[
+								4058,
+								4058
 							]
 						],
 						"settings":
@@ -1113,98 +1114,7 @@
 							"translate_tabs_to_spaces": false
 						},
 						"translation.x": 0.0,
-						"translation.y": 955.0,
-						"zoom_level": 1.0
-					},
-					"type": "text"
-				},
-				{
-					"buffer": 10,
-					"file": "bin/Trace.Log",
-					"settings":
-					{
-						"buffer_size": 0,
-						"regions":
-						{
-						},
-						"selection":
-						[
-							[
-								0,
-								0
-							]
-						],
-						"settings":
-						{
-							"encoding_helper_confidence": 1.0,
-							"encoding_helper_encoding": "UTF-8",
-							"encoding_helper_encoding_sublime": "UTF-8",
-							"syntax": "Packages/Text/Plain text.tmLanguage",
-							"tab_size": 3,
-							"translate_tabs_to_spaces": true
-						},
-						"translation.x": 0.0,
-						"translation.y": 428695.0,
-						"zoom_level": 1.0
-					},
-					"type": "text"
-				},
-				{
-					"buffer": 11,
-					"file": "/C/Users/Calero/Desktop/Test/Index.html",
-					"settings":
-					{
-						"buffer_size": 560,
-						"regions":
-						{
-						},
-						"selection":
-						[
-							[
-								468,
-								468
-							]
-						],
-						"settings":
-						{
-							"encoding_helper_confidence": 1.0,
-							"encoding_helper_encoding": "UTF-8",
-							"encoding_helper_encoding_sublime": "UTF-8",
-							"syntax": "Packages/HTML/HTML.tmLanguage"
-						},
-						"translation.x": 0.0,
-						"translation.y": 0.0,
-						"zoom_level": 1.0
-					},
-					"type": "text"
-				},
-				{
-					"buffer": 12,
-					"file": "prg/Usuario.prg",
-					"settings":
-					{
-						"buffer_size": 80126,
-						"regions":
-						{
-						},
-						"selection":
-						[
-							[
-								69001,
-								68978
-							]
-						],
-						"settings":
-						{
-							"encoding_helper_confidence": 0.5,
-							"encoding_helper_encoding": "ISO-8859-1",
-							"encoding_helper_encoding_sublime": "Western (Windows 1252)",
-							"syntax": "Packages/harbour/Harbour.tmLanguage",
-							"tab_size": 3,
-							"translate_tabs_to_spaces": true
-						},
-						"translation.x": 0.0,
-						"translation.y": 46217.0,
+						"translation.y": 1105.0,
 						"zoom_level": 1.0
 					},
 					"type": "text"
