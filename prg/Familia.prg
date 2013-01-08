@@ -747,6 +747,7 @@ Static Function EdtRec( aTmp, aGet, dbfFamilia, oBrw, bWhen, bValid, nMode )
          REDEFINE GET aGet[ _CNOMFAM ] VAR aTmp[ _CNOMFAM ] ;
             ID       110 ;
             WHEN     ( nMode != ZOOM_MODE ) ;
+            PICTURE  "@!" ;
             OF       oFld:aDialogs[1]
 
          REDEFINE CHECKBOX aTmp[ _LPUBINT ] ;
