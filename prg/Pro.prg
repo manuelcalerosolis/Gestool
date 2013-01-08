@@ -1,14 +1,7 @@
-#ifndef __PDA__
-   #include "FiveWin.Ch"
-   #include "Factu.ch"
-   #include "MesDbf.ch"
-   #include "xbrowse.ch"
-#else
-   #include "FWCE.ch"
-   REQUEST DBFCDX
-#endif
-
-#ifndef __PDA__
+#include "FiveWin.Ch"
+#include "Factu.ch"
+#include "MesDbf.ch"
+#include "xbrowse.ch"
 
 static oWndBrw
 static dbfProT
@@ -18,13 +11,9 @@ static cTmpProLin
 static bEdit      := { |aTmp, aGet, dbf, oBrw, bWhen, bValid, nMode | EdtRec( aTmp, aGet, dbf, oBrw, bWhen, bValid, nMode ) }
 static bEdtDet    := { |aTmp, aGet, dbf, oBrw, bWhen, bValid, nMode, cCodArt | EdtDet( aTmp, aGet, dbf, oBrw, bWhen, bValid, nMode, cCodArt ) }
 
-#endif
-
 //----------------------------------------------------------------------------//
 //Funciones del programa
 //----------------------------------------------------------------------------//
-
-#ifndef __PDA__
 
 FUNCTION Prop( oMenuItem, oWnd )
 
@@ -235,6 +224,13 @@ STATIC FUNCTION EdtRec( aTmp, aGet, dbfProT, oWndBrw, bWhen, bValid, nMode )
             ID       150 ;
             WHEN     ( nMode != ZOOM_MODE ) ;
             ON CHANGE( ChangePublicar( aTmp ) ) ;
+            OF       oDlg
+
+         REDEFINE GET aGet[ ( dbfProT )->( FieldPos( "cCodExt" ) ) ] ;
+            VAR      aTmp[ ( dbfProT )->( FieldPos( "cCodExt" ) ) ] ;
+            UPDATE ;
+            ID       130 ;
+            WHEN     ( nMode != ZOOM_MODE ) ;
             OF       oDlg
 
          REDEFINE CHECKBOX aTmp[ ( dbfProT )->( FieldPos( "lColor" ) ) ] ;
@@ -1522,100 +1518,6 @@ Method FromString( cString ) CLASS TPropertiesItems
 
 Return ( Self )
 
-#else
-
-//---------------------------------------------------------------------------//
-//Funciones de pda
-//---------------------------------------------------------------------------//
-
-CLASS pdaProSenderReciver
-
-   Method CreateData()
-
-END CLASS
-
-//----------------------------------------------------------------------------//
-
-Method CreateData( oPgrActual, oSayStatus ) CLASS pdaProSenderReciver
-
-   local pdaPro
-   local pdaTblPro
-   local pcPro
-   local pcTblPro
-   local lExist      := .f.
-   local cFileName
-
-   USE ( cPatArt() + "Pro.Dbf" ) NEW VIA ( cDriver() ) SHARED ALIAS ( cCheckArea( "Pro", @pdaPro ) )
-   SET ADSINDEX TO ( cPatArt() + "Pro.Cdx" ) ADDITIVE
-
-   USE ( cPatArt() + "TblPro.Dbf" ) NEW VIA ( cDriver() ) SHARED ALIAS ( cCheckArea( "TblPro", @pdaTblPro ) )
-   SET ADSINDEX TO ( cPatArt() + "TblPro.Cdx" ) ADDITIVE
-
-   dbUseArea( .t., cDriver(), cPatPc() + "Pro.Dbf", cCheckArea( "Pro", @pcPro ), .t. )
-   ( pcPro )->( ordListAdd( cPatPc() + "Pro.Cdx" ) )
-
-   dbUseArea( .t., cDriver(), cPatPc() + "TblPro.Dbf", cCheckArea( "TblPro", @pcTblPro ), .t. )
-   ( pcTblPro )->( ordListAdd( cPatPc() + "TblPro.Cdx" ) )
-
-   if !Empty( oPgrActual )
-      oPgrActual:SetRange( 0, ( pcPro )->( OrdKeyCount() ) )
-   end if
-
-   ( pcPro )->( dbGoTop() )
-   while !( pcPro )->( eof() )
-
-      if ( pdaPro )->( dbSeek( ( pcPro )->cCodPro ) )
-         dbPass( pcPro, pdaPro, .f. )
-      else
-         dbPass( pcPro, pdaPro, .t. )
-      end if
-
-      while ( pdaTblPro )->( dbSeek( ( pcPro )->cCodPro ) )
-         if dbLock( pdaTblPro )
-            ( pdaTblPro )->( dbDelete() )
-            ( pdaTblPro )->( dbUnLock() )
-         endif
-      end while
-
-      if ( pcTblPro )->( dbSeek( ( pcPro )->cCodPro ) )
-
-         while ( pcPro )->cCodPro == ( pcTblPro )->cCodPro .and. !( pcTblPro )->( eof() )
-
-            dbPass( pcTblPro, pdaTblPro, .t. )
-
-            ( pcTblPro )->( dbSkip() )
-
-         end while
-
-      end if
-
-      ( pcPro )->( dbSkip() )
-
-      if !Empty( oSayStatus )
-         oSayStatus:SetText( "Sincronizando propiedades " + Alltrim( Str( ( pcPro )->( OrdKeyNo() ) ) ) + " de " + Alltrim( Str( ( pcPro )->( OrdKeyCount() ) ) ) )
-      end if
-
-      SysRefresh()
-
-      if !Empty( oPgrActual )
-         oPgrActual:SetPos( ( pcPro )->( OrdKeyNo() ) )
-      end if
-
-      SysRefresh()
-
-   end while
-
-   CLOSE ( pcPro )
-   CLOSE ( pcTblPro )
-   CLOSE ( pdaPro )
-   CLOSE ( pdaTblPro )
-
-Return ( Self )
-
-//---------------------------------------------------------------------------//
-
-#endif
-
 //---------------------------------------------------------------------------//
 //Funciones comunes del programa y pda
 //----------------------------------------------------------------------------//
@@ -2060,9 +1962,12 @@ Function rxPro( cPath, oMeter )
          ( dbfPro )->( ordCondSet("!Deleted()", {||!Deleted()}  ) )
          ( dbfPro )->( ordCreate( cPath + "PRO.CDX", "CCODWEB", "Str( Field->cCodWeb, 11 )", {|| Str( Field->cCodWeb, 11 ) } ) )
 
+         ( dbfPro )->( ordCondSet( "!Deleted()", {|| !Deleted() }  ) )
+         ( dbfPro )->( ordCreate( cPath + "PRO.CDX", "cCodExt", "Field->cCodExt", {|| Field->cCodExt } ) ) 
+
          ( dbfPro )->( dbCloseArea() )
       else
-         msgStop( "Imposible abrir en modo exclusivo la tabla de promociones" )
+         msgStop( "Imposible abrir en modo exclusivo la tabla de promociones" ) 
       end if
 
       dbUseArea( .t., cDriver(), cPath + "TBLPRO.DBF", cCheckArea( "TBLPRO", @dbfPro ), .f. )
@@ -2110,6 +2015,7 @@ Static Function aPro()
    aAdd( aBase, { "lSndDoc",   "L",  1, 0, "Lógico de propiedad para envio"         } )
    aAdd( aBase, { "cNomInt",   "C", 50, 0, "Nombre de la propiedad en la web"       } )
    aAdd( aBase, { "lColor",    "L",  1, 0, "Lógico tipo color"                      } )
+   aAdd( aBase, { "cCodExt",   "C", 18, 0, "Código externo"                         } ) 
 
 return ( aBase )
 
@@ -2140,7 +2046,6 @@ Function nCosPro( cCodArt, cCodPr1, cValPr1, cCodPr2, cValPr2, dbfArtDiv )
    end if
 
 Return ( nPreCos )
-
 
 //---------------------------------------------------------------------------//
 
@@ -2481,4 +2386,3 @@ Return ( cMemo )
 
 //---------------------------------------------------------------------------//
 
-#endif

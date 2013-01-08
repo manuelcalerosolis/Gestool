@@ -26,6 +26,8 @@ CLASS TScripts FROM TMant
 
    METHOD EjecutarScript()
 
+   METHOD CompilarEjecutarScript( cCodScr )  INLINE ( fErase( cPatScript() + cCodScr + ".hrb" ), ::EjecutarScript() )
+
 END CLASS
 
 //---------------------------------------------------------------------------//
@@ -34,7 +36,7 @@ METHOD OpenFiles( lExclusive ) CLASS TScripts
 
    local lOpen          := .t.
    local oError
-   local oBlock         := ErrorBlock( {| oError | ApoloBreak( oError ) } )
+   local oBlock         := ErrorBlock( {| oError | ( oError ) } )
 
    DEFAULT  lExclusive  := .f.
 
@@ -66,10 +68,10 @@ METHOD DefineFiles( cPath, cDriver ) CLASS TScripts
 
    DEFINE TABLE ::oDbf FILE "Scripts.Dbf" CLASS "Scripts" ALIAS "Scri" PATH ( cPath ) VIA ( cDriver() ) COMMENT "Scripts"
 
-      FIELD NAME "cCodScr"    TYPE "C" LEN   3  DEC 0 COMMENT "C骴igo"        COLSIZE 100          OF ::oDbf
+      FIELD NAME "cCodScr"    TYPE "C" LEN   3  DEC 0 COMMENT "C贸digo"        COLSIZE 100          OF ::oDbf
       FIELD NAME "cDesScr"    TYPE "C" LEN  35  DEC 0 COMMENT "Nombre"        COLSIZE 400          OF ::oDbf
 
-      INDEX TO "Scripts.Cdx" TAG "cCodScr" ON "cCodScr" COMMENT "C骴igo" NODELETED OF ::oDbf
+      INDEX TO "Scripts.Cdx" TAG "cCodScr" ON "cCodScr" COMMENT "C贸digo" NODELETED OF ::oDbf
       INDEX TO "Scripts.Cdx" TAG "cDesScr" ON "cDesScr" COMMENT "Nombre" NODELETED OF ::oDbf
 
    END DATABASE ::oDbf
@@ -116,7 +118,7 @@ METHOD Activate() CLASS TScripts
          NOBORDER ;
          ACTION   ( ::oWndBrw:RecAdd() );
          ON DROP  ( ::oWndBrw:RecAdd() );
-         TOOLTIP  "(A)馻dir";
+         TOOLTIP  "(A)帽adir";
          BEGIN GROUP ;
          HOTKEY   "A" ;
          LEVEL    ACC_APPD
@@ -166,6 +168,15 @@ METHOD Activate() CLASS TScripts
          ACTION   ( ::EjecutarScript() ) ;
          TOOLTIP  "E(j)ecutar";
          HOTKEY   "J" ;
+         LEVEL    ACC_ZOOM
+
+      DEFINE BTNSHELL ;
+         RESOURCE "Flash_" ;
+         OF       ::oWndBrw ;
+         NOBORDER ;
+         ACTION   ( ::CompilarEjecutarScript( ::oDbf:cCodScr ) ) ;
+         TOOLTIP  "C(o)mpilar y ejecutar";
+         HOTKEY   "O" ;
          LEVEL    ACC_ZOOM
 
       ::oWndBrw:EndButtons( Self )
@@ -265,14 +276,14 @@ METHOD lPreSave( nMode, cScript ) CLASS TScripts
    if nMode == APPD_MODE .or. nMode == DUPL_MODE
 
       if ::oDbf:SeekInOrd( ::oDbf:cCodScr, "cCodScr" )
-         MsgStop( "C骴igo ya existe " + Rtrim( ::oDbf:cCodScr ) )
+         MsgStop( "C贸digo ya existe " + Rtrim( ::oDbf:cCodScr ) )
          Return .f.
       end if
 
    end if
 
    if Empty( ::oDbf:cDesScr )
-      MsgStop( "La descripci髇 del Script no puede estar vac韆." )
+      MsgStop( "La descripci贸n del Script no puede estar vac铆a." )
       Return .f.
    end if
 
@@ -300,9 +311,28 @@ c:\xharbour\bin>harbour c:\test.prg /gh /n
 
 METHOD CompilarScript( cCodScr ) CLASS TScripts
 
-   local cFichero    := cPatScript() + cCodScr + ".prg"
+   local cFicheroPrg    := cPatScript() + cCodScr + ".prg"
+   local cFicheroHbr    := cPatScript() + cCodScr + ".hrb"
 
-   WinExec( FullCurDir() + "harbour.exe " + cFichero + " /gh /n /o" + cPatScript(), 2 ) // Minimized
+   if !File( FullCurDir() + "harbour.exe" )
+      msgStop( "No existe compilador" )
+      Return .t.
+   end if 
+
+   if !File( cFicheroPrg )
+      msgStop( "No existe el fichero " + cFicheroPrg )
+      Return .t.
+   end if 
+
+   fErase( cFicheroHbr )
+
+   WinExec( FullCurDir() + "harbour.exe " + cFicheroPrg + " /gh /n /o" + cPatScript(), 2 ) // Minimized
+
+   msgStop( cFicheroHbr )
+
+   if !File( cFicheroHbr )
+      msgStop( "Error al compilar el fichero" )
+   end if
 
 Return .t.
 
@@ -310,9 +340,14 @@ Return .t.
 
 METHOD EjecutarScript() CLASS TScripts
 
+   local u
+   local pHrb
+   local oError
+   local oBlock
    local cFichero
-   Local pHrb
-   Local u
+
+   oBlock         := ErrorBlock( {| oError | ApoloBreak( oError ) } )
+   BEGIN SEQUENCE
 
    /*
    Comprobamos que el script haya sido compilado-------------------------------
@@ -335,6 +370,14 @@ METHOD EjecutarScript() CLASS TScripts
       __hrbUnload( pHrb )
 
    end if
+
+   RECOVER USING oError
+
+      msgStop( "Error de ejecuci贸n." + CRLF + ErrorMessage( oError ) )
+
+   END SEQUENCE
+
+   ErrorBlock( oBlock ) 
 
 Return .t.
 

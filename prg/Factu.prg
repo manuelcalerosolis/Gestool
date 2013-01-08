@@ -276,6 +276,8 @@ function Main( cParams )
 
    cNameVersion()
 
+   SetDemoMode()
+
    // Chequeamos los datos de los usuarios
 
    if !TReindex():lFreeHandle()
@@ -420,37 +422,20 @@ Return Nil
 
 FUNCTION CtrlApp()
 
-   local n
-   local oDlg
+   local n 
    local oBmp
+   local oDlg
    local oBrush
    local oSerialHD
+   local nSerialHD
+   local nSerialCRC
    local aSerialCRC  := {}
-   local nSerialCRC  := 0
    local nSerialUSR  := 0
-   local nSerialHD   := Abs( nSerialHD() )
    local cFileIni    := FullCurDir() + "2K10.Num"
 
-   if Empty( nSerialHD )
-      lDemoMode( .f. )
+   if !lDemoMode() 
       Return .t.
-   end if
-
-   for n := 1 to 50
-
-      nSerialCRC     := Val( GetPvProfString( "Main", "Access code " + Str( n, 2 ), "0", cFileIni ) )
-
-      if !Empty( nSerialCRC )
-
-         aAdd( aSerialCRC, nSerialCRC )
-         if nSerialCRC == nXor( nSerialHD, SERIALNUMBER )
-            lDemoMode( .f. )
-            return .t.
-         end if
-
-      end if
-
-   next
+   end if 
 
    DEFINE BRUSH oBrush COLOR Rgb( 255, 255, 255 )
 
@@ -512,6 +497,19 @@ FUNCTION CtrlApp()
 
    if oDlg:nResult == IDOK
 
+      CursorWait()
+
+      // Cargamos el array con los codigos-------------------------------------
+
+      for n := 1 to 50
+         nSerialCRC     := Val( GetPvProfString( "Main", "Access code " + Str( n, 2 ), "0", cFileIni ) )
+         if !Empty( nSerialCRC )
+            aAdd( aSerialCRC, nSerialCRC )
+         end if
+      next
+
+      // Comprobamos que exista------------------------------------------------
+
       if nXor( nSerialHD, SERIALNUMBER ) == nSerialUSR
 
          aAdd( aSerialCRC, nSerialUSR )
@@ -524,8 +522,6 @@ FUNCTION CtrlApp()
 
          MsgInfo( "Programa registrado con éxito" )
 
-         return .t.
-
       else
 
          MsgStop( "Número invalido" )
@@ -534,9 +530,11 @@ FUNCTION CtrlApp()
 
       end if
 
+      CursorWE()
+
    end if
 
-return .t.
+RETURN .t.
 
 //----------------------------------------------------------------------------//
 
@@ -5913,8 +5911,6 @@ Function cBmpVersion()
 Return ( cBmpVersion )
 
 //---------------------------------------------------------------------------//
-
-
 /*
 Damos valor a la estatica para la versión Oscommerce
 */
@@ -5984,7 +5980,41 @@ Return ( cParamsMain )
 
 //---------------------------------------------------------------------------//
 
-#ifndef __PDA__
+Function SetDemoMode()
+
+   local n 
+   local oSerialHD
+   local aSerialCRC  := {}
+   local nSerialCRC  := 0
+   local nSerialHD   := Abs( nSerialHD() )
+   local cFileIni    := FullCurDir() + "2K10.Num"
+
+   if Empty( nSerialHD )
+      lDemoMode( .f. )
+      Return .t.
+   end if
+
+   for n := 1 to 50
+
+      nSerialCRC     := Val( GetPvProfString( "Main", "Access code " + Str( n, 2 ), "0", cFileIni ) )
+
+      if !Empty( nSerialCRC )
+
+         aAdd( aSerialCRC, nSerialCRC )
+         
+         if nSerialCRC == nXor( nSerialHD, SERIALNUMBER )
+            lDemoMode( .f. )
+            Return .t.
+         end if
+
+      end if
+
+   next
+
+Return nil
+
+//---------------------------------------------------------------------------//
+
 
 Static Function SetFidelity( oBtnFidelity )
 
@@ -6002,8 +6032,6 @@ Static Function SetFidelity( oBtnFidelity )
    end if
 
 Return ( lFidelity )
-
-#endif
 
 //---------------------------------------------------------------------------//
 
@@ -6043,43 +6071,3 @@ FUNCTION Test()
 RETURN .t.
 
 //--------------------------------------------------------------------------//
-/*
-#include "FastRepH.ch"
-
-function Codiguito()
-
-   local oFr
-
-   RddSetDefault( 'DBFCDX' )
-
-   dbUseArea( .t., "DBFCDX", "AUTOS.dbf", "AUTOS", .t. )
-   AUTOS->( ordListAdd( "Autos.Cdx" ) )
-
-   dbUseArea( .t., "DBFCDX", "D_PAGOS_AUTOS.dbf", "D_PAGOS_AUTOS", .t. )
-   D_PAGOS_AUTOS->( ordListAdd( "D_PAGOS_AUTOS.Cdx" ) )
-
-   oFr         := frReportManager():New()
-   oFr:LoadLangRes( "spanish.xml" )
-   oFr:SetIcon( 1 )
-   oFr:SetTitle( "Imprimir Directorio clientes" )
-
-   oFr:PreviewOptions:SetAllowEdit(.F.)
-
-   oFr:SetWorkArea( "AUTOS", AUTOS->( Select() ), .f., { FR_RB_CURRENT, FR_RB_CURRENT, 0 } )
-
-   oFr:SetWorkArea( "D_PAGOS_AUTOS", D_PAGOS_AUTOS->( Select() ) )
-
-   oFr:SetMasterDetail( "AUTOS", "D_PAGOS_AUTOS", {|| Autos->Poliza } )
-   oFr:SetResyncPair( "AUTOS", "D_PAGOS_AUTOS" )
-
-   oFr:LoadFromFile( "pagostotales.fr3"   )
-
-   oFr:DesignReport()
-
-   oFr:ClearDataSets()
-   oFr:DestroyFr()
-
-   dbCloseAll()
-
-Return nil
-*/

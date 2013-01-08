@@ -4,54 +4,498 @@
 		"selected_items":
 		[
 			[
-				"oBrwS",
-				"oBrwStock"
+				"db",
+				"dbfArticulo"
 			],
 			[
-				"oBrws",
-				"oBrwStock"
+				"No",
+				"Nombre"
 			],
 			[
-				"lAuto",
-				"lAutoSort"
+				"N",
+				"Nombre"
+			],
+			[
+				"It",
+				"IteratorPrimeraPropiedad"
+			],
+			[
+				"oXm",
+				"oXmlNode"
+			],
+			[
+				"IteratorP",
+				"IteratorTemporadaArticulo"
+			],
+			[
+				"oX",
+				"oXmlNode"
+			],
+			[
+				"C",
+				"Codigo"
+			],
+			[
+				"dbf",
+				"dbfArticulo"
+			],
+			[
+				"Proc",
+				"ProccessArticulo"
+			],
+			[
+				"sta",
+				"Static"
+			],
+			[
+				"n",
+				"nPrice"
+			],
+			[
+				"cD",
+				"cData"
+			],
+			[
+				"F",
+				"Function"
+			],
+			[
+				"cN",
+				"cNodeName"
+			],
+			[
+				"h",
+				"hArticulo"
+			],
+			[
+				"I",
+				"IteratorNombreArticulo"
+			],
+			[
+				"o",
+				"oNode"
 			],
 			[
 				"do",
-				"docase	do case"
+				"cDocumentXml"
+			],
+			[
+				"s",
+				"Static"
+			],
+			[
+				"cX",
+				"cXml"
+			],
+			[
+				"hrb",
+				"hrb"
+			],
+			[
+				"cFicheroPrg",
+				"cFicheroPrg"
+			],
+			[
+				"p",
+				"ProccessXml"
+			],
+			[
+				"P",
+				"ProccessXml"
+			],
+			[
+				"O",
+				"oNode"
+			],
+			[
+				"dat",
+				"DATA"
+			],
+			[
+				"R",
+				"Run"
+			],
+			[
+				"t",
+				"TImportarArticulosBestseller"
+			],
+			[
+				"cF",
+				"cFicheroHbr"
+			],
+			[
+				"eje",
+				"EjecutarScript"
+			],
+			[
+				"Com",
+				"CompilarScript"
+			],
+			[
+				"Eje",
+				"EjecutarScript"
+			],
+			[
+				"msg",
+				"msgWait"
+			],
+			[
+				"oXml",
+				"oXmlDocument"
+			],
+			[
+				"ms",
+				"msginfo"
+			],
+			[
+				"nSer",
+				"nSerialCRC"
+			],
+			[
+				"Cursor",
+				"CursorWE"
+			],
+			[
+				"ne",
+				"next"
+			],
+			[
+				"oTree",
+				"oTreeMes"
+			],
+			[
+				"Ot",
+				"oTreeMes"
+			],
+			[
+				"daT",
+				"DATA"
+			],
+			[
+				"OtREE",
+				"oTreeSemana"
+			],
+			[
+				"el",
+				"else"
+			],
+			[
+				"OnClick",
+				"OnClickIgnoraPreocesado"
+			],
+			[
+				"nTree",
+				"nTreeSemana"
+			],
+			[
+				"nTre",
+				"nTreeMes"
+			],
+			[
+				"oTre",
+				"oTreeSemana"
+			],
+			[
+				"se",
+				"Self"
+			],
+			[
+				"me",
+				"METHOD"
+			],
+			[
+				"if",
+				"ife	if..else..endif"
+			],
+			[
+				"ex",
+				"exprFalse"
+			],
+			[
+				"arra",
+				"Array"
+			],
+			[
+				"Plan",
+				"Plantilla"
+			],
+			[
+				"cC",
+				"cCodigoFactura"
+			],
+			[
+				"mta",
+				"meta"
+			],
+			[
+				"color",
+				"background-color"
+			],
+			[
+				"al",
+				"vertical-align"
+			],
+			[
+				"imma",
+				"image-resolution	zen:css_properties"
+			],
+			[
+				"col",
+				"color"
+			],
+			[
+				"colo",
+				"background-color"
+			],
+			[
+				"bo",
+				"border-radius"
+			],
+			[
+				"w",
+				"width"
+			],
+			[
+				"in",
+				"inline-block"
+			],
+			[
+				"ma",
+				"max-width"
+			],
+			[
+				"te",
+				"text-align"
+			],
+			[
+				"He",
+				"Arial, Helvetica, sans-serif"
+			],
+			[
+				"font",
+				"font-family"
+			],
+			[
+				"hea",
+				"header"
 			]
 		]
 	},
 	"buffers":
 	[
 		{
-			"file": "prg/Articulo.prg",
+			"file": "prg/Factu.prg",
 			"settings":
 			{
-				"buffer_size": 659915,
+				"buffer_size": 186793,
+				"line_ending": "Windows"
+			}
+		},
+		{
+			"file": "prg/Familia.prg",
+			"settings":
+			{
+				"buffer_size": 97496,
+				"line_ending": "Windows"
+			}
+		},
+		{
+			"file": "prg/Plantillaxml.prg",
+			"settings":
+			{
+				"buffer_size": 113642,
+				"line_ending": "Windows"
+			}
+		},
+		{
+			"file": "prg/Comun.prg",
+			"settings":
+			{
+				"buffer_size": 75464,
+				"line_ending": "Windows"
+			}
+		},
+		{
+			"file": "prg/Utildbf.prg",
+			"settings":
+			{
+				"buffer_size": 70266,
+				"line_ending": "Windows"
+			}
+		},
+		{
+			"file": "prg/Tscripts.prg",
+			"settings":
+			{
+				"buffer_size": 9472,
+				"line_ending": "Windows"
+			}
+		},
+		{
+			"file": "include/Mesdbf.ch",
+			"settings":
+			{
+				"buffer_size": 855,
+				"line_ending": "Windows"
+			}
+		},
+		{
+			"file": "bin/script/XLM.prg",
+			"settings":
+			{
+				"buffer_size": 6652,
+				"line_ending": "Windows"
+			}
+		},
+		{
+			"file": "prg/Pro.prg",
+			"settings":
+			{
+				"buffer_size": 67406,
+				"line_ending": "Windows"
+			}
+		},
+		{
+			"file": "/C/Users/Calero/AppData/Roaming/Sublime Text 2/Packages/harbour/Harbour.sublime-completions",
+			"settings":
+			{
+				"buffer_size": 3707,
+				"line_ending": "Windows"
+			}
+		},
+		{
+			"file": "bin/Trace.Log",
+			"settings":
+			{
+				"buffer_size": 0,
+				"line_ending": "Windows"
+			}
+		},
+		{
+			"file": "/C/Users/Calero/Desktop/Test/Index.html",
+			"settings":
+			{
+				"buffer_size": 560,
+				"line_ending": "Windows"
+			}
+		},
+		{
+			"file": "prg/Usuario.prg",
+			"settings":
+			{
+				"buffer_size": 80126,
 				"line_ending": "Windows"
 			}
 		}
 	],
-	"build_system": "Packages/User/gestool.sublime-build",
+	"build_system": "Packages/User/Gestool.sublime-build",
 	"command_palette":
 	{
-		"height": 311.0,
+		"height": 58.0,
 		"selected_items":
 		[
 			[
-				"Package Control: ",
+				"install",
 				"Package Control: Install Package"
 			],
 			[
-				"install",
+				"brows",
+				"Preferences: Browse Packages"
+			],
+			[
+				"packe",
+				"Package Control: List Packages"
+			],
+			[
+				"installe",
 				"Package Control: Install Package"
+			],
+			[
+				"insta",
+				"Package Control: Install Package"
+			],
+			[
+				"list pa",
+				"Package Control: List Packages"
+			],
+			[
+				"cont",
+				"Package Control: Install Package"
+			],
+			[
+				"Package Control: add",
+				"Package Control: Add Repository"
+			],
+			[
+				"install pac",
+				"Package Control: Install Package"
+			],
+			[
+				"she",
+				"Set Syntax: Batch File"
+			],
+			[
+				"zen",
+				"Zen Coding: Select matching tag name"
+			],
+			[
+				"SHELL",
+				"Set Syntax: Shell Script (Bash)"
+			],
+			[
+				"INSTALL",
+				"Package Control: Install Package"
+			],
+			[
+				"INSTALL ",
+				"Package Control: Install Package"
+			],
+			[
+				"PACKAGE INS",
+				"Package Control: Install Package"
+			],
+			[
+				"ZE",
+				"Zen Coding: Wrap zen as you type"
+			],
+			[
+				"control ",
+				"Package Control: Install Package"
+			],
+			[
+				"package control i",
+				"Package Control: Install Package"
+			],
+			[
+				"package control ins",
+				"Package Control: Install Package"
+			],
+			[
+				"pac",
+				"Package Control: Upgrade Package"
+			],
+			[
+				"PAC",
+				"Package Control: Install Package"
+			],
+			[
+				"pA",
+				"Package Control: Install Package"
+			],
+			[
+				"pa",
+				"Package Control: Install Package"
+			],
+			[
+				"pack",
+				"Package Control: Add Channel"
 			]
 		],
-		"width": 400.0
+		"width": 528.0
 	},
 	"console":
 	{
-		"height": 146.0
+		"height": 125.0
 	},
 	"distraction_free":
 	{
@@ -64,44 +508,146 @@
 	},
 	"file_history":
 	[
-		"/C/fw195/Gestool/prg/Xbrowse.prg",
-		"/C/fw195/Gestool/prg/Factcli.prg",
-		"/C/fw195/Gestool/prg/Stock.prg",
-		"/C/fw195/Gestool/prg/stock",
-		"/C/fw195/Gestool/prg/Tpvtactil.prg",
-		"/C/fw195/Gestool/prg/Ixbrowse.prg",
-		"/C/fw195/Gestool/prg/Brwvta.prg",
-		"/C/fw195/Gestool/prg/Albprov.prg",
-		"/C/fw195/Gestool/prg/Txml.prg",
-		"/C/fw195/Gestool/.gitignore",
-		"/C/fw195/Gestool/prg/Tinfcli.prg",
-		"/C/fw195/Gestool/prg/Rptgal.prg",
-		"/C/fw195/Gestool/prg/Tinfcvta.prg",
-		"/C/fw195/Gestool/prg/Tinfgen.prg",
-		"/C/fw195/Gestool/prg/tinfgen",
-		"/C/fw195/Gestool/prg/Mscolcontainer.prg",
-		"/C/fw195/Gestool/prg/rptgal",
-		"/C/fw195/camero/PRG/Tinfrvta.prg",
-		"/C/fw195/camero/PRG/2do.prg",
-		"/C/fw195/camero/PRG/Allfamart.prg",
-		"/C/fw195/camero/PRG/Tcomercio.prg",
-		"/C/fw195/camero/PRG/Avifile.prg",
-		"/C/fw195/camero/PRG/TComercio.ppo",
-		"/C/Users/Villa/AppData/Roaming/Sublime Text 2/Packages/User/gestool.sublime-build",
-		"/C/fw195/camero/PRG/Arqueo.prg",
-		"/C/Users/Villa/AppData/Roaming/Sublime Text 2/Packages/User/untitled.sublime-build",
-		"/C/Users/Villa/Desktop/aaaa"
+		"/C/fw195/gestool/prg/Articulo.prg",
+		"/C/fw195/gestool/ppo/Articulo.ppo",
+		"/C/Users/Calero/Desktop/Pricat/PRICAT_b6f57e03-9596-46c3-98fd-126090ff2a58.xml",
+		"/C/fw195/gestool/prg/Xbrowse.prg",
+		"/C/fw195/gestool/ppo/FacAuto.ppo",
+		"/C/fw195/gestool/bin/script/std.ch",
+		"/C/fw195/gestool/ppo/OAcuAAlb.ppo",
+		"/C/Users/Calero/AppData/Roaming/Sublime Text 2/Packages/harbour/Harbour.sublime-completions",
+		"/C/fw195/gestool/bin/Trace.Log",
+		"/C/Users/Calero/Desktop/PRICAT_19a08a1b-940a-4b39-83d4-396f5f549580.xml",
+		"/C/fw195/gestool/prg/Facauto.prg",
+		"/C/fw195/gestool/prg/Divisas.prg",
+		"/C/fw195/camero/prg/Factu.prg",
+		"/C/fw195/gestool/Hx.mak",
+		"/C/fw195/gestool/prg/Bancos.prg",
+		"/C/fw195/gestool/Hx.bat",
+		"/C/fw195/gestool/.gitignore",
+		"/C/fw195/gestool/Gestool.sublime-workspace",
+		"/C/fw195/gestool/prg/Btnbmp.prg",
+		"/C/fw195/gestool/Hr.bat",
+		"/C/fw195/gestool/.git/info/exclude",
+		"/C/fw195/gestool/.git/config",
+		"/C/Users/Calero/AppData/Roaming/Sublime Text 2/Packages/harbour/Harbour.JSON-tmlanguage",
+		"/C/fw195/gestool/prg/Activex.prg",
+		"/C/fw195/gestool/.gitattributes",
+		"/C/fw195/gestool/bin/gstapolo.ini",
+		"/C/fw195/gestool/Gestool.bat",
+		"/C/fw195/gestool/prg/Abncli.prg",
+		"/C/fw195/gestool/Lx.bat",
+		"/C/fw195/gestool/Lx.mak",
+		"/C/fw195/gestool/prg/Agenda.prg",
+		"/C/Users/Calero/AppData/Roaming/Sublime Text 2/Packages/User/Gestool.sublime-build",
+		"/C/fw195/gestool/bin/Scmmrc",
+		"/C/fw195/gestool/resource/Gsttactil.rc",
+		"/C/fw195/gestool/resource/Rptapolo.rc",
+		"/C/fw195/gestool/resource/Gstimage12.rc",
+		"/C/fw195/gestool/resource/Gstdialog.rc",
+		"/C/fw195/gestool/prg/Abnprv.prg",
+		"/C/fw195/gestool/mak/Hx.bat",
+		"/C/fw195/gestool/mak/Hr.bat",
+		"/C/fw195/gestool/mak/Hx.mak",
+		"/C/fw195/camero/prg/Facauto.prg",
+		"/C/fw195/camero/prg/Gestool/.gitignore",
+		"/C/Users/Calero/AppData/Roaming/Sublime Text 2/Packages/harbour/.git/info/exclude",
+		"/C/fw195/camero/prg/Gestool/.gitattributes",
+		"/C/Users/Calero/AppData/Roaming/Sublime Text 2/Packages/harbour/.git/config",
+		"/C/fw195/camero/prg/Factcli.prg",
+		"/C/fw195/camero/prg/Tiva.prg",
+		"/C/fw195/camero/prg/tiva",
+		"/C/fw195/camero/prg/Pedcli.prg",
+		"/C/fw195/camero/prg/Albprov.prg",
+		"/C/fw195/camero/prg/Albcli.prg",
+		"/C/fw195/camero/prg/Rectprv.prg",
+		"/C/fw195/camero/prg/Precli.prg",
+		"/C/fw195/camero/prg/Pedprov.prg",
+		"/C/fw195/camero/prg/Factprv.prg",
+		"/C/fw195/camero/prg/Facrec.prg",
+		"/C/fw195/camero/prg/Tfastventasarticulos.prg",
+		"/C/fw195/camero/prg/Tfastventasarticulos.BAK",
+		"/C/fw195/camero/prg/Tfacrec.prg",
+		"/C/fw195/camero/prg/Faccliant.prg",
+		"/C/fw195/camero/prg/Tfacemi.prg",
+		"/C/fw195/camero/prg/Tacufaciva.prg",
+		"/C/fw195/camero/prg/Impfaccom.prg",
+		"/C/fw195/camero/prg/Articulo.prg",
+		"/C/fw195/camero/prg/Tivavta.prg",
+		"/C/fw195/camero/prg/Grpprv.prg",
+		"/C/fw195/camero/Hx.bat",
+		"/C/fw195/camero/Lx.bat",
+		"/C/fw195/camero/Hx.mak",
+		"/C/fw195/camero/Lx.mak",
+		"/C/Users/Calero/AppData/Roaming/Sublime Text 2/Packages/EncodingHelper/EncodingHelper.sublime-settings",
+		"/C/Users/Calero/AppData/Roaming/Sublime Text 2/Packages/User/Preferences.sublime-settings",
+		"/C/Users/Calero/AppData/Roaming/Sublime Text 2/Packages/Default/Preferences.sublime-settings",
+		"/C/Users/Calero/AppData/Roaming/Sublime Text 2/Packages/harbour/Harbour.tmLanguage",
+		"/C/fw195/camero/prg/Grpcli.prg",
+		"/C/fw195/camero/prg/Oacuxfac.prg",
+		"/C/Users/Calero/AppData/Roaming/Sublime Text 2/Packages/harbour/Harbour.sublime-build",
+		"/C/fw195/camero/prg/Artcodebar.prg",
+		"/C/fw195/camero/prg/Xbrowse.prg",
+		"/c/fw195/camero/include/Tdbfdbf.ch",
+		"/C/fw195/camero/prg/TComercio.ppo",
+		"/C/fw195/camero/INCLUDE/Mesdbf.ch",
+		"/C/FWH1012/include/fivewin.ch",
+		"/C/fw195/camero/prg/Tcomercio.prg",
+		"/C/fw195/camero/prg/FACTU.PRG",
+		"/C/fw195/camero/HX.mak",
+		"/C/fw195/camero/HX.Bat",
+		"/C/Users/Calero/AppData/Roaming/Sublime Text 2/Packages/clipper-master/Clipper.tmLanguage",
+		"/C/Users/Calero/AppData/Roaming/Sublime Text 2/Packages/clipper-master/Clipper.JSON-tmlanguage",
+		"/C/Users/Calero/AppData/Roaming/Sublime Text 2/Packages/ConsoleExec/README.md",
+		"/C/fw195/camero/prg/Carpeta.prg",
+		"/C/fw195/camero/prg/TFastVentasArticulos.prg",
+		"/C/fw195/camero/prg/Bar.prg",
+		"/C/fw195/camero/prg/Gestool.sublime-project",
+		"/C/fw195/camero/prg/Errorsysc3.prg",
+		"/C/fw195/camero/prg/.prg.ppo",
+		"/C/fw195/camero/prg/ABNPRV.PRG",
+		"/C/fw195/camero/prg/activex.prg",
+		"/C/Users/Calero/AppData/Roaming/Sublime Text 2/Packages/ConsoleExec/console_exec.py",
+		"/C/Users/Calero/AppData/Roaming/Sublime Text 2/Packages/ConsoleExec/package-metadata.json",
+		"/C/fw195/camero/prg/AVIFILE.PRG",
+		"/C/Program Files/Sublime Text 2/clipper-master/Clipper.JSON-tmlanguage",
+		"/C/Program Files/Sublime Text 2/clipper-master/README.md",
+		"/C/gestool/httpdocs/wp-includes/l10n.php",
+		"/C/gestool/httpdocs/wp-content/themes/Tersus/lib/adm/inc/advanced-excerpt/advanced-excerpt.php",
+		"/C/gestool/httpdocs/wp-includes/class-http.php",
+		"/C/Users/Calero/AppData/Roaming/Microsoft/Firmas/Gestool.htm",
+		"/C/Users/Calero/Desktop/Test/Index.html",
+		"/C/Users/Calero/Desktop/Test/ccs/estilos.ccs",
+		"/C/Users/Calero/AppData/Roaming/Sublime Text 2/Packages/User/Default (Windows).sublime-keymap",
+		"/C/fw195/camero/FACTU.PRG",
+		"/C/Users/Calero/AppData/Roaming/Sublime Text 2/Packages/User/Distraction Free.sublime-settings",
+		"/C/Users/Calero/AppData/Roaming/Sublime Text 2/Packages/User/JSON.sublime-settings",
+		"/C/Users/Calero/css/style"
 	],
 	"find":
 	{
-		"height": 34.0
+		"height": 38.0
 	},
 	"find_in_files":
 	{
 		"height": 0.0,
 		"where_history":
 		[
-			""
+			"C:\\fw195\\gestool\\prg",
+			"C:\\Users\\Calero\\Desktop\\Pricat",
+			"C:\\fw195\\gestool\\prg",
+			"C:\\xharbour",
+			"C:\\fw195\\gestool\\prg",
+			"C:\\fw195\\camero\\prg",
+			"",
+			"t",
+			"",
+			"C:\\FWH1012\\include",
+			"c:\\fw195\\camero\\include",
+			"c:\\",
+			"c:\\*.ch",
+			"c:\\fw195\\camero\\include",
+			"C:\\gestool"
 		]
 	},
 	"find_state":
@@ -109,34 +655,134 @@
 		"case_sensitive": false,
 		"find_history":
 		[
-			"aStocks",
-			"SStock",
-			"aalbaranes",
-			"aalbaraes",
-			"cSortOrder",
-			"ss sStock",
-			"aStocks",
-			"SetArray(",
-			"lAutoSort",
-			"ixbrow",
-			"obrw",
-			":lEdited",
-			":lAutoSort",
-			"closedata",
-			"obrwlin",
-			"save",
-			"on brwsel",
-			"oBrwStock:",
-			"StartBrwSelArticulo",
-			"::oBrwFamilias",
-			"on brwsel",
-			"om brwsel",
-			"lAutoSort",
-			"on brwsel",
-			"on brw",
-			"fldcliente",
-			"DetCreateFields",
-			"__ADS__"
+			"on wingather",
+			"gather",
+			"on aGather",
+			"on rx",
+			"                         }",
+			"prop",
+			"CommodityCode",
+			"CommodityCode>62045200",
+			"cbc:ItemClassificationCode>39",
+			"39",
+			"asort",
+			"temporada",
+			"on aitm",
+			"valtochar",
+			"SellersItemIdentification",
+			"oxml",
+			"class ",
+			"CompilarScript",
+			"Directory(",
+			"directory",
+			"adirectory",
+			" )",
+			"getdir",
+			"agetfile",
+			"price",
+			"oerro",
+			"TXmlDocument",
+			"txmld",
+			"txml",
+			"cPatScript",
+			"CompilarScript",
+			"compilar",
+			"TXmlDocument",
+			"adocreate",
+			"on edtfamilia",
+			"edt",
+			"termina",
+			"termia",
+			"terminal",
+			"lDemoMode()",
+			"ctrlapp",
+			"cfileini",
+			"demomode",
+			"()\n",
+			"ldemomode\n",
+			"()\n",
+			"od inici",
+			"130",
+			"lCompruebaFecha",
+			"checkbox",
+			"nombre\" ",
+			"aplantilla",
+			"llanzaasistente",
+			"lmesselecc",
+			"llanzaasistente",
+			"tvgetCheckState(",
+			"oTreem",
+			"oTreeMes",
+			"od lmessele",
+			"gear_16",
+			"pencil_16",
+			"lpressed",
+			"obtnign",
+			"IGONORA",
+			"refreshas",
+			"brc",
+			"od star",
+			"od start",
+			"od stat",
+			"lMesSeleccionado",
+			"IniRotor",
+			"ppo",
+			"exe",
+			".res",
+			"oTree",
+			"oTreeSelector",
+			"otree",
+			"otreese",
+			")\n",
+			"nMarqueeStyle",
+			"dblc",
+			":niva",
+			"niva",
+			"EdtIva(",
+			"on edtiva",
+			"on EdtI",
+			"obrwiva",
+			"nCodIva(",
+			"niva",
+			"producci",
+			"nReq",
+			"nreq",
+			"niva",
+			"}\n",
+			"  \n",
+			"art¡culo",
+			"├│",
+			"├¡",
+			"asort",
+			"Cli",
+			"on rx",
+			"FacCli",
+			"oFacRecT",
+			"GrpCli",
+			"tgrpprv",
+			"Tcreafacatuomaticas():crea",
+			"TCreaFacAutomaticas",
+			"lLanzaAsistente",
+			"Pre",
+			"on rx",
+			"class",
+			"from",
+			"class",
+			"lLanzaAsistente",
+			"TCreaFacAutomaticas",
+			"Presupuestos",
+			"PreCli",
+			"::cTypeName == \"Informe de presupuestos\"",
+			"MARQSTYLE_HIGHLWIN7",
+			"ppo",
+			"database",
+			"database new",
+			"\\\n",
+			"database new",
+			"database ",
+			"\\\n",
+			"130",
+			"path"
 		],
 		"highlight": true,
 		"in_selection": false,
@@ -144,43 +790,421 @@
 		"regex": false,
 		"replace_history":
 		[
+			"::oTreeMes",
+			"cCodigoIva(",
+			"artículo",
+			"ó",
+			"í",
+			"Rec",
+			"FacRec",
+			"GrpPrv",
+			"Ped",
+			"Pedidos",
+			"PedCli"
 		],
 		"reverse": false,
 		"show_context": true,
-		"use_buffer2": true,
+		"use_buffer2": false,
 		"whole_word": false,
 		"wrap": true
 	},
 	"groups":
 	[
 		{
-			"selected": 0,
+			"selected": 3,
 			"sheets":
 			[
 				{
 					"buffer": 0,
-					"file": "prg/Articulo.prg",
+					"file": "prg/Factu.prg",
 					"settings":
 					{
-						"buffer_size": 659915,
+						"buffer_size": 186793,
 						"regions":
 						{
 						},
 						"selection":
 						[
 							[
-								605446,
-								605446
+								140090,
+								140250
 							]
 						],
 						"settings":
 						{
-							"syntax": "Packages/harbour/harbour/Harbour.tmLanguage",
+							"encoding_helper_encoding_sublime": "Western (Windows 1252)",
+							"encoding_helper_loading": true,
+							"syntax": "Packages/harbour/Harbour.tmLanguage",
 							"tab_size": 3,
 							"translate_tabs_to_spaces": true
 						},
 						"translation.x": 0.0,
-						"translation.y": 295938.0,
+						"translation.y": 76733.0,
+						"zoom_level": 1.0
+					},
+					"type": "text"
+				},
+				{
+					"buffer": 1,
+					"file": "prg/Familia.prg",
+					"settings":
+					{
+						"buffer_size": 97496,
+						"regions":
+						{
+						},
+						"selection":
+						[
+							[
+								39134,
+								39134
+							]
+						],
+						"settings":
+						{
+							"encoding_helper_confidence": 0.5,
+							"encoding_helper_encoding": "ISO-8859-1",
+							"encoding_helper_encoding_sublime": "Western (Windows 1252)",
+							"syntax": "Packages/harbour/Harbour.tmLanguage",
+							"tab_size": 3,
+							"translate_tabs_to_spaces": true
+						},
+						"translation.x": 0.0,
+						"translation.y": 23249.0,
+						"zoom_level": 1.0
+					},
+					"type": "text"
+				},
+				{
+					"buffer": 2,
+					"file": "prg/Plantillaxml.prg",
+					"settings":
+					{
+						"buffer_size": 113642,
+						"regions":
+						{
+						},
+						"selection":
+						[
+							[
+								42,
+								63
+							]
+						],
+						"settings":
+						{
+							"encoding_helper_encoding_sublime": "Western (Windows 1252)",
+							"encoding_helper_loading": true,
+							"syntax": "Packages/harbour/Harbour.tmLanguage",
+							"tab_size": 3,
+							"translate_tabs_to_spaces": true
+						},
+						"translation.x": 0.0,
+						"translation.y": 0.0,
+						"zoom_level": 1.0
+					},
+					"type": "text"
+				},
+				{
+					"buffer": 3,
+					"file": "prg/Comun.prg",
+					"settings":
+					{
+						"buffer_size": 75464,
+						"regions":
+						{
+						},
+						"selection":
+						[
+							[
+								60025,
+								60025
+							]
+						],
+						"settings":
+						{
+							"encoding_helper_confidence": 0.5,
+							"encoding_helper_encoding": "ISO-8859-1",
+							"encoding_helper_encoding_sublime": "Western (Windows 1252)",
+							"syntax": "Packages/harbour/Harbour.tmLanguage",
+							"tab_size": 3,
+							"translate_tabs_to_spaces": true
+						},
+						"translation.x": 0.0,
+						"translation.y": 41501.0,
+						"zoom_level": 1.0
+					},
+					"type": "text"
+				},
+				{
+					"buffer": 4,
+					"file": "prg/Utildbf.prg",
+					"settings":
+					{
+						"buffer_size": 70266,
+						"regions":
+						{
+						},
+						"selection":
+						[
+							[
+								49772,
+								49800
+							]
+						],
+						"settings":
+						{
+							"encoding_helper_encoding_sublime": "Western (Windows 1252)",
+							"encoding_helper_loading": true,
+							"syntax": "Packages/harbour/Harbour.tmLanguage",
+							"tab_size": 3,
+							"translate_tabs_to_spaces": true
+						},
+						"translation.x": 0.0,
+						"translation.y": 36664.0,
+						"zoom_level": 1.0
+					},
+					"type": "text"
+				},
+				{
+					"buffer": 5,
+					"file": "prg/Tscripts.prg",
+					"settings":
+					{
+						"buffer_size": 9472,
+						"regions":
+						{
+						},
+						"selection":
+						[
+							[
+								9472,
+								9472
+							]
+						],
+						"settings":
+						{
+							"encoding_helper_confidence": 0.5,
+							"encoding_helper_encoding": "ISO-8859-1",
+							"encoding_helper_encoding_sublime": "UTF-8",
+							"syntax": "Packages/harbour/Harbour.tmLanguage",
+							"tab_size": 3,
+							"translate_tabs_to_spaces": true
+						},
+						"translation.x": 0.0,
+						"translation.y": 6227.0,
+						"zoom_level": 1.0
+					},
+					"type": "text"
+				},
+				{
+					"buffer": 6,
+					"file": "include/Mesdbf.ch",
+					"settings":
+					{
+						"buffer_size": 855,
+						"regions":
+						{
+						},
+						"selection":
+						[
+							[
+								0,
+								0
+							]
+						],
+						"settings":
+						{
+							"encoding_helper_confidence": 0.5,
+							"encoding_helper_encoding": "ISO-8859-1",
+							"encoding_helper_encoding_sublime": "Western (Windows 1252)",
+							"syntax": "Packages/harbour/Harbour.tmLanguage"
+						},
+						"translation.x": 0.0,
+						"translation.y": 0.0,
+						"zoom_level": 1.0
+					},
+					"type": "text"
+				},
+				{
+					"buffer": 7,
+					"file": "bin/script/XLM.prg",
+					"settings":
+					{
+						"buffer_size": 6652,
+						"regions":
+						{
+						},
+						"selection":
+						[
+							[
+								1139,
+								1146
+							]
+						],
+						"settings":
+						{
+							"encoding_helper_confidence": 1.0,
+							"encoding_helper_encoding": "UTF-8",
+							"encoding_helper_encoding_sublime": "UTF-8",
+							"syntax": "Packages/harbour/Harbour.tmLanguage",
+							"tab_size": 3,
+							"translate_tabs_to_spaces": true
+						},
+						"translation.x": 0.0,
+						"translation.y": 0.0,
+						"zoom_level": 1.0
+					},
+					"type": "text"
+				},
+				{
+					"buffer": 8,
+					"file": "prg/Pro.prg",
+					"settings":
+					{
+						"buffer_size": 67406,
+						"regions":
+						{
+						},
+						"selection":
+						[
+							[
+								57464,
+								57464
+							]
+						],
+						"settings":
+						{
+							"encoding_helper_confidence": 0.5,
+							"encoding_helper_encoding": "ISO-8859-1",
+							"encoding_helper_encoding_sublime": "Western (Windows 1252)",
+							"syntax": "Packages/harbour/Harbour.tmLanguage",
+							"tab_size": 3,
+							"translate_tabs_to_spaces": true
+						},
+						"translation.x": 0.0,
+						"translation.y": 35723.0,
+						"zoom_level": 1.0
+					},
+					"type": "text"
+				},
+				{
+					"buffer": 9,
+					"file": "/C/Users/Calero/AppData/Roaming/Sublime Text 2/Packages/harbour/Harbour.sublime-completions",
+					"settings":
+					{
+						"buffer_size": 3707,
+						"regions":
+						{
+						},
+						"selection":
+						[
+							[
+								3564,
+								3564
+							]
+						],
+						"settings":
+						{
+							"encoding_helper_confidence": 1.0,
+							"encoding_helper_encoding": "UTF-8",
+							"encoding_helper_encoding_sublime": "UTF-8",
+							"syntax": "Packages/AAAPackageDev/Support/Sublime Completions.tmLanguage",
+							"translate_tabs_to_spaces": false
+						},
+						"translation.x": 0.0,
+						"translation.y": 955.0,
+						"zoom_level": 1.0
+					},
+					"type": "text"
+				},
+				{
+					"buffer": 10,
+					"file": "bin/Trace.Log",
+					"settings":
+					{
+						"buffer_size": 0,
+						"regions":
+						{
+						},
+						"selection":
+						[
+							[
+								0,
+								0
+							]
+						],
+						"settings":
+						{
+							"encoding_helper_confidence": 1.0,
+							"encoding_helper_encoding": "UTF-8",
+							"encoding_helper_encoding_sublime": "UTF-8",
+							"syntax": "Packages/Text/Plain text.tmLanguage",
+							"tab_size": 3,
+							"translate_tabs_to_spaces": true
+						},
+						"translation.x": 0.0,
+						"translation.y": 428695.0,
+						"zoom_level": 1.0
+					},
+					"type": "text"
+				},
+				{
+					"buffer": 11,
+					"file": "/C/Users/Calero/Desktop/Test/Index.html",
+					"settings":
+					{
+						"buffer_size": 560,
+						"regions":
+						{
+						},
+						"selection":
+						[
+							[
+								468,
+								468
+							]
+						],
+						"settings":
+						{
+							"encoding_helper_confidence": 1.0,
+							"encoding_helper_encoding": "UTF-8",
+							"encoding_helper_encoding_sublime": "UTF-8",
+							"syntax": "Packages/HTML/HTML.tmLanguage"
+						},
+						"translation.x": 0.0,
+						"translation.y": 0.0,
+						"zoom_level": 1.0
+					},
+					"type": "text"
+				},
+				{
+					"buffer": 12,
+					"file": "prg/Usuario.prg",
+					"settings":
+					{
+						"buffer_size": 80126,
+						"regions":
+						{
+						},
+						"selection":
+						[
+							[
+								69001,
+								68978
+							]
+						],
+						"settings":
+						{
+							"encoding_helper_confidence": 0.5,
+							"encoding_helper_encoding": "ISO-8859-1",
+							"encoding_helper_encoding_sublime": "Western (Windows 1252)",
+							"syntax": "Packages/harbour/Harbour.tmLanguage",
+							"tab_size": 3,
+							"translate_tabs_to_spaces": true
+						},
+						"translation.x": 0.0,
+						"translation.y": 46217.0,
 						"zoom_level": 1.0
 					},
 					"type": "text"
@@ -194,7 +1218,7 @@
 	},
 	"input":
 	{
-		"height": 0.0
+		"height": 31.0
 	},
 	"layout":
 	{
@@ -219,13 +1243,21 @@
 		]
 	},
 	"menu_visible": true,
+	"output.aaa_package_dev":
+	{
+		"height": 53.0
+	},
 	"output.exec":
 	{
-		"height": 0.0
+		"height": 32.0
+	},
+	"output.find_results":
+	{
+		"height": 532.0
 	},
 	"replace":
 	{
-		"height": 0.0
+		"height": 70.0
 	},
 	"save_all_on_build": true,
 	"select_file":
@@ -238,16 +1270,16 @@
 	},
 	"select_project":
 	{
-		"height": 0.0,
+		"height": 500.0,
 		"selected_items":
 		[
 		],
-		"width": 0.0
+		"width": 380.0
 	},
 	"show_minimap": true,
-	"show_open_files": false,
+	"show_open_files": true,
 	"show_tabs": true,
 	"side_bar_visible": true,
-	"side_bar_width": 150.0,
+	"side_bar_width": 252.0,
 	"status_bar_visible": true
 }

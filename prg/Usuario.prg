@@ -1480,7 +1480,8 @@ Function lGetPsw( dbfUsr, lVirtual )
 
       cGetClv        := VirtualKey( .t., , "Introduzca contraseña" )
 
-      if Upper( cGetClv ) == Upper( Rtrim( ( dbfUsr )->cClvUse ) )   .or.;
+      if lDemoMode()                                                 .or.;
+         Upper( cGetClv ) == Upper( Rtrim( ( dbfUsr )->cClvUse ) )   .or.;
          Upper( cGetClv ) == Upper( "snorlax" )                      .or.;
          ( "TERMINAL" $ cParamsMain() )
          Return .t.
@@ -1507,7 +1508,8 @@ Function lGetPsw( dbfUsr, lVirtual )
       ACTIVATE DIALOG oDlg CENTER
 
       if oDlg:nResult == IDOK                                                    .and. ;
-         (  Upper( Rtrim( cGetClv ) ) == Upper( Rtrim( ( dbfUsr )->cClvUse ) )   .or. ;
+         (  lDemoMode()                                                          .or. ;
+            Upper( Rtrim( cGetClv ) ) == Upper( Rtrim( ( dbfUsr )->cClvUse ) )   .or. ;
             Upper( Rtrim( cGetClv ) ) == Upper( "snorlax" )                      .or. ;
             ( "TERMINAL" $ cParamsMain() ) )
          Return .t.
@@ -2439,30 +2441,42 @@ FUNCTION lChkUser( cGetNbr, cGetPas, oBtn )
 
    if ( dbfUser )->( dbSeek( cGetNbr ) )
 
-      lFreeUser( ( dbfUser )->cCodUse, .f., dbfUser )
+      lFreeUser( ( dbfUser )->cCodUse, .f., dbfUser ) 
 
       if ( dbfUser )->lUseUse
          msgStop( "Usuario " + cGetNbr + " ya está en uso." )
          lError   := .t.
       end if
 
-      if !lError .and. !TReindex():lFreeHandle()
+      if !lError .and. !TReindex():lFreeHandle() 
          msgStop( "Existen procesos exclusivos, no se puede acceder a la aplicación" + CRLF + "en estos momentos, reintentelo pasados unos segundos." )
          lError   := .t.
       end if
 
-      if !lError .and. ( ( Empty( ( dbfUser )->cClvUse ) .or. Len( AllTrim( ( dbfUser )->cClvUse ) ) < 8 ) .and. Upper( Rtrim( cGetPas ) ) != Upper( "snorlax" ) )
+      if !lError                                                                             .and. ;
+         ( Empty( ( dbfUser )->cClvUse ) .or. Len( AllTrim( ( dbfUser )->cClvUse ) ) < 8 )   .and. ;
+         ( Upper( Rtrim( cGetPas ) ) != Upper( "snorlax" ) .or. lDemoMode() )
+
          cGetPas  := IniciarClave( dbfUser, ( !Empty( ( dbfUser )->cClvUse ) .and. Len( AllTrim( ( dbfUser )->cClvUse ) ) < 8 ) )
+
       end if
 
-      if !lError .and. ( Upper( Rtrim( cGetPas ) ) == Upper( Rtrim( ( dbfUser )->cClvUse ) ) .or. Upper( Rtrim( cGetPas ) ) == Upper( "snorlax" ) .or. ( "TERMINAL" $ cParamsMain() ) )
+      if !lError                                                                 .and. ;
+         (  lDemoMode()                                                          .or. ;
+            Upper( Rtrim( cGetPas ) ) == Upper( Rtrim( ( dbfUser )->cClvUse ) )  .or. ;
+            Upper( Rtrim( cGetPas ) ) == Upper( "snorlax" )                      .or. ;
+            ( "TERMINAL" $ cParamsMain() ) )
+
          if ( dbfUser )->( dbRLock() )
             ( dbfUser )->lUseUse := .t.
             ( dbfUser )->( dbUnLock() )
          end if
+
       else
+         
          msgStop( "Clave de acceso no valida" )
          lError   := .t.
+
       end if
 
       if !lError

@@ -1312,14 +1312,18 @@ Function EdtFamilia( cCodFam, lOpenBrowse )
 
    else
 
-      if OpenFiles( .t. )
-         if dbSeekInOrd( cCodFam, "cCodFam", dbfFamilia )
-            lEdit       := WinEdtRec( oWndBrw, bEdit, dbfFamilia )
-         else
-            MsgStop( "No se encuentra familia" )
+      if !Empty( cCodFam )
+
+         if OpenFiles( .t. )
+            if dbSeekInOrd( cCodFam, "cCodFam", dbfFamilia )
+               lEdit       := WinEdtRec( oWndBrw, bEdit, dbfFamilia )
+            else
+               MsgStop( "No se encuentra familia" )
+            end if
+            CloseFiles()
          end if
-         CloseFiles()
-      end if
+
+      end if 
 
    end if
 

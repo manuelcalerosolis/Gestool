@@ -2328,7 +2328,7 @@ FUNCTION CtrlConnection( cIp )
    		REDEFINE BUTTON ;
       		ID       IDCANCEL ;
       		OF       oDlg ;
-      		ACTION   ( lRetry := .f., oDlg:End() )
+      		ACTION   ( lRetry := .f., oDlg:End() ) 
 
    		ACTIVATE DIALOG oDlg CENTER
 

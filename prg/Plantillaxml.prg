@@ -1213,7 +1213,7 @@ Method AdoCreateObject( cPlantilla, cFichero ) CLASS TPlantillaXML
       ::oOleExcel:oExcel:DisplayAlerts    := .t.
 
       ::oOleExcel:End()
-
+   
    RECOVER USING oError
 
       msgStop( "Error al crear el objeto Excel." + CRLF + ErrorMessage( oError ) )
@@ -1526,6 +1526,8 @@ METHOD AdoFindData( cPlantilla ) CLASS TPlantillaXML
    */
 
    oTreeNode               := ::oSubTreeImportacion:Add( "Busqueda de valores :" + ::oDbf:cDescrip )
+
+
 
    for each a in ::aMessage
       oTreeNode:Add( a )
@@ -3721,3 +3723,44 @@ CLASS sCamposLineas
 END CLASS
 
 //----------------------------------------------------------------------------//
+/*
+#include "HbXml.ch"
+
+Function ImportaXmlBestseller()
+
+   local cXml
+   local oNode
+   local oXmlDocument := TXmlDocument():New( "C:/Users/Calero/Desktop/Des.xml" )
+
+   if oXmlDocument:nStatus != HBXML_STATUS_OK
+
+      switch oXml:nStatus
+         case HBXML_STATUS_ERROR
+            msgStop( "Ay! pillin, nos jorobo alguna cosa....!!" )
+         case HBXML_STATUS_MALFORMED
+            msgStop( "No es un documento xml" )
+      end
+
+   else
+
+      oNode                := oXmlDocument:oRoot
+
+      while !Empty( oNode )
+
+      cXml                 := oNode:Path()
+      
+      if Empty( cXml )
+         cXml              :=  "(Node without path)"
+      end if 
+
+      msgWait( Alltrim( Str( oNode:nType ) ) + "cName : " + oNode:cName + " aAttributes: " + ValToPrg( oNode:aAttributes ) + " cData: " + oNode:cData + " xml: " + cXml, , .5 )
+
+      oNode                := oXmlDocument:Next()
+
+      end while
+
+   end if
+
+Return nil
+
+*/
