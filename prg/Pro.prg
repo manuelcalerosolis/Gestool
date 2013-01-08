@@ -1824,8 +1824,8 @@ Static Function aItmTmpBrw()
 
    local aBase := {}
 
-   aAdd( aBase, { "CCODTBL",  "C", 10, 0, "Código de línea de propiedad"   } )
-   aAdd( aBase, { "CDESTBL",  "C", 30, 0, "Nombre de línea de propiedad"   } )
+   aAdd( aBase, { "CCODTBL",  "C", 10, 0, "Código de línea de propiedadades"   } )
+   aAdd( aBase, { "CDESTBL",  "C", 30, 0, "Nombre de línea de propiedadades"   } )
 
 return ( aBase )
 
