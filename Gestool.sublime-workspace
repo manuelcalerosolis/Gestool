@@ -4,6 +4,18 @@
 		"selected_items":
 		[
 			[
+				"oBrwS",
+				"oBrwStock"
+			],
+			[
+				"oBrws",
+				"oBrwStock"
+			],
+			[
+				"lAuto",
+				"lAutoSort"
+			],
+			[
 				"do",
 				"docase	do case"
 			]
@@ -11,6 +23,14 @@
 	},
 	"buffers":
 	[
+		{
+			"file": "prg/Articulo.prg",
+			"settings":
+			{
+				"buffer_size": 659915,
+				"line_ending": "Windows"
+			}
+		}
 	],
 	"build_system": "Packages/User/gestool.sublime-build",
 	"command_palette":
@@ -44,6 +64,16 @@
 	},
 	"file_history":
 	[
+		"/C/fw195/Gestool/prg/Xbrowse.prg",
+		"/C/fw195/Gestool/prg/Factcli.prg",
+		"/C/fw195/Gestool/prg/Stock.prg",
+		"/C/fw195/Gestool/prg/stock",
+		"/C/fw195/Gestool/prg/Tpvtactil.prg",
+		"/C/fw195/Gestool/prg/Ixbrowse.prg",
+		"/C/fw195/Gestool/prg/Brwvta.prg",
+		"/C/fw195/Gestool/prg/Albprov.prg",
+		"/C/fw195/Gestool/prg/Txml.prg",
+		"/C/fw195/Gestool/.gitignore",
 		"/C/fw195/Gestool/prg/Tinfcli.prg",
 		"/C/fw195/Gestool/prg/Rptgal.prg",
 		"/C/fw195/Gestool/prg/Tinfcvta.prg",
@@ -71,6 +101,7 @@
 		"height": 0.0,
 		"where_history":
 		[
+			""
 		]
 	},
 	"find_state":
@@ -78,6 +109,31 @@
 		"case_sensitive": false,
 		"find_history":
 		[
+			"aStocks",
+			"SStock",
+			"aalbaranes",
+			"aalbaraes",
+			"cSortOrder",
+			"ss sStock",
+			"aStocks",
+			"SetArray(",
+			"lAutoSort",
+			"ixbrow",
+			"obrw",
+			":lEdited",
+			":lAutoSort",
+			"closedata",
+			"obrwlin",
+			"save",
+			"on brwsel",
+			"oBrwStock:",
+			"StartBrwSelArticulo",
+			"::oBrwFamilias",
+			"on brwsel",
+			"om brwsel",
+			"lAutoSort",
+			"on brwsel",
+			"on brw",
 			"fldcliente",
 			"DetCreateFields",
 			"__ADS__"
@@ -98,8 +154,37 @@
 	"groups":
 	[
 		{
+			"selected": 0,
 			"sheets":
 			[
+				{
+					"buffer": 0,
+					"file": "prg/Articulo.prg",
+					"settings":
+					{
+						"buffer_size": 659915,
+						"regions":
+						{
+						},
+						"selection":
+						[
+							[
+								605446,
+								605446
+							]
+						],
+						"settings":
+						{
+							"syntax": "Packages/harbour/harbour/Harbour.tmLanguage",
+							"tab_size": 3,
+							"translate_tabs_to_spaces": true
+						},
+						"translation.x": 0.0,
+						"translation.y": 295938.0,
+						"zoom_level": 1.0
+					},
+					"type": "text"
+				}
 			]
 		}
 	],

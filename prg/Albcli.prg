@@ -17741,7 +17741,7 @@ Function dJulianoAlbCli( cAlbCliL )
       cLote          := Substr( ( cAlbCliL )->cLote, 2 )
    end if
 
-RETURN ( AddMonth( JulianoToDate( , Val( cLote ) ), 6 ) )
+RETURN ( AddMonth( JulianoToDate( Year( ( cAlbCliL )->dFecAlb ), Val( cLote ) ), 6 ) )
 
 //---------------------------------------------------------------------------//
 
@@ -17760,7 +17760,7 @@ Function dJulianoAlbAnio( cAlbCliL )
       cLote          := Substr( ( cAlbCliL )->cLote, 2 )
    end if
 
-RETURN ( AddMonth( JulianoToDate( , Val( cLote ) ), 8 ) )
+RETURN ( AddMonth( JulianoToDate( Year( ( cAlbCliL )->dFecAlb ), Val( cLote ) ), 8 ) )
 
 #endif
 //---------------------------------------------------------------------------//

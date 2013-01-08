@@ -16457,8 +16457,6 @@ Function BrwSelArticulo( oGetCodigo, oGetNombre, lCodeBar, lAppend, lEdit, oBtnS
             oBrwStock:bClrSel                := {|| { CLR_BLACK, Rgb( 229, 229, 229 ) } }
             oBrwStock:bClrSelFocus           := {|| { CLR_BLACK, Rgb( 167, 205, 240 ) } }
 
-            oBrwStock:SetArray( oStock:aStocks, , , .f. )
-
             oBrwStock:lFooter                := .t.
             oBrwStock:lHScroll               := .f.
             oBrwStock:nMarqueeStyle          := 5
@@ -16467,8 +16465,10 @@ Function BrwSelArticulo( oGetCodigo, oGetNombre, lCodeBar, lAppend, lEdit, oBtnS
 
             with object ( oBrwStock:AddCol() )
                :cHeader             := "Código"
+               :cOrder              := "Código"
                :nWidth              := 40
                :bStrData            := {|| if( !Empty( oBrwStock:aArrayData ), oBrwStock:aArrayData[ oBrwStock:nArrayAt ]:cCodigoAlmacen, "" ) }
+               :bLClickHeader       := {| nMRow, nMCol, nFlags, oCol | cOrdenColumnaBrw( oCol, oBrwStock ) }
             end with
 
             with object ( oBrwStock:AddCol() )
@@ -16493,6 +16493,7 @@ Function BrwSelArticulo( oGetCodigo, oGetNombre, lCodeBar, lAppend, lEdit, oBtnS
                :cHeader             := "Lote"
                :nWidth              := 60
                :bStrData            := {|| if( !Empty( oBrwStock:aArrayData ), oBrwStock:aArrayData[ oBrwStock:nArrayAt ]:cLote, "" ) }
+               :bLClickHeader       := {| nMRow, nMCol, nFlags, oCol | cOrdenColumnaBrw( oCol, oBrwStock ) }
             end with
 
             with object ( oBrwStock:AddCol() )
@@ -16500,12 +16501,14 @@ Function BrwSelArticulo( oGetCodigo, oGetNombre, lCodeBar, lAppend, lEdit, oBtnS
                :nWidth              := 60
                :bStrData            := {|| if( !Empty( oBrwStock:aArrayData ), oBrwStock:aArrayData[ oBrwStock:nArrayAt ]:dFechaCaducidad, "" ) }
                :lHide               := .t.
+               :bLClickHeader       := {| nMRow, nMCol, nFlags, oCol | cOrdenColumnaBrw( oCol, oBrwStock ) }
             end with
 
             with object ( oBrwStock:AddCol() )
                :cHeader             := "Num. serie"
                :nWidth              := 60
                :bStrData            := {|| if( !Empty( oBrwStock:aArrayData ), oBrwStock:aArrayData[ oBrwStock:nArrayAt ]:cNumeroSerie, "" ) }
+               :bLClickHeader       := {| nMRow, nMCol, nFlags, oCol | cOrdenColumnaBrw( oCol, oBrwStock ) }
             end with
 
             with object ( oBrwStock:AddCol() )
@@ -16517,6 +16520,7 @@ Function BrwSelArticulo( oGetCodigo, oGetNombre, lCodeBar, lAppend, lEdit, oBtnS
                :nDataStrAlign       := AL_RIGHT
                :nHeadStrAlign       := AL_RIGHT
                :nFootStrAlign       := AL_RIGHT
+               :bLClickHeader       := {| nMRow, nMCol, nFlags, oCol | cOrdenColumnaBrw( oCol, oBrwStock ) }
             end with
 
             with object ( oBrwStock:AddCol() )
@@ -16541,6 +16545,7 @@ Function BrwSelArticulo( oGetCodigo, oGetNombre, lCodeBar, lAppend, lEdit, oBtnS
                :nFootStrAlign       := AL_RIGHT
             end with
 
+            oBrwStock:SetArray( oStock:aStocks, .t., , .f. )
             oBrwStock:CreateFromResource( 320 )
 
          end if
@@ -16677,6 +16682,14 @@ Function BrwSelArticulo( oGetCodigo, oGetNombre, lCodeBar, lAppend, lEdit, oBtnS
 
    SetBrwOpt( "BrwArticulo", if( ( dbfArticulo )->( OrdSetFocus() ) == "CodObs", 1, 2 ) )
 
+   if !Empty( oBrw )
+      oBrw:CloseData()
+   end if
+
+   if !Empty( oBrwStock )
+      oBrwStock:CloseData()
+   end if
+
    if lCloseFiles
 
       CloseFiles()
@@ -16733,6 +16746,73 @@ Static Function StartBrwSelArticulo( oGetLote, oBrw, oBrwStock, oBtnAceptarpropi
    end if
 
 RETURN ( nil )
+
+//---------------------------------------------------------------------------//
+
+static function cOrdenColumnaBrw( oCol, oBrwStock )
+
+   local oColumn
+
+   if !Empty( oBrwStock )
+
+      do case
+         case AllTrim( oCol:cHeader ) == "Código"
+
+            aSort( oBrwStock:aArrayData, , , {|x,y| x:cCodigoAlmacen < y:cCodigoAlmacen } )
+
+            for each oColumn in oBrwStock:aCols
+               oColumn:cOrder := ""
+            next
+
+            oCol:cOrder := "Código"
+
+         case AllTrim( oCol:cHeader ) == "Lote"
+
+            aSort( oBrwStock:aArrayData, , , {|x,y| x:cLote < y:cLote } )
+
+            for each oColumn in oBrwStock:aCols
+               oColumn:cOrder := ""
+            next
+
+            oCol:cOrder := "Lote"
+
+         case AllTrim( oCol:cHeader ) == "Caducidad"
+
+            aSort( oBrwStock:aArrayData, , , {|x,y| x:dFechaCaducidad < y:dFechaCaducidad } )
+
+            for each oColumn in oBrwStock:aCols
+               oColumn:cOrder := ""
+            next
+
+            oCol:cOrder := "Caducidad"
+
+         case AllTrim( oCol:cHeader ) == "Num. serie"
+
+            aSort( oBrwStock:aArrayData, , , {|x,y| x:cNumeroSerie < y:cNumeroSerie } )   
+
+            for each oColumn in oBrwStock:aCols
+               oColumn:cOrder := ""
+            next
+
+            oCol:cOrder := "Num. serie"
+
+         case AllTrim( oCol:cHeader ) == "Unidades"
+
+            aSort( oBrwStock:aArrayData, , , {|x,y| x:nUnidades < y:nUnidades } )
+
+            for each oColumn in oBrwStock:aCols
+               oColumn:cOrder := ""
+            next
+
+            oCol:cOrder := "Unidades"
+
+      end case   
+
+      oBrwStock:Refresh()
+
+   end if
+
+return .t.               
 
 //---------------------------------------------------------------------------//
 
