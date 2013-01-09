@@ -16741,7 +16741,7 @@ Static Function StartBrwSelArticulo( oGetLote, oBrw, oBrwStock, oBtnAceptarpropi
 
 RETURN ( nil )
 
-//---------------------------------------------------------------------------//
+//---------------------------------------------------------------------------// 
 
 static function cOrdenColumnaBrw( oCol, oBrwStock )
 
