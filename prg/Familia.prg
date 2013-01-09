@@ -747,6 +747,7 @@ Static Function EdtRec( aTmp, aGet, dbfFamilia, oBrw, bWhen, bValid, nMode )
          REDEFINE GET aGet[ _CNOMFAM ] VAR aTmp[ _CNOMFAM ] ;
             ID       110 ;
             WHEN     ( nMode != ZOOM_MODE ) ;
+            PICTURE  "@!" ;
             OF       oFld:aDialogs[1]
 
          REDEFINE CHECKBOX aTmp[ _LPUBINT ] ;
@@ -1925,113 +1926,6 @@ STATIC FUNCTION lSelFam( lSel, oBrw, dbf )
 RETURN NIL
 
 //---------------------------------------------------------------------------//
-//---------------------------------------------------------------------------//
-
-Function ExcelWirex( dbfArticulo, dbfFam )
-
-   local n
-   local nRec
-   local nOrd
-   local cPreFam     := ""
-   local cCodFam     := ""
-   local cCodArt     := ""
-   local cNomArt     := ""
-   local nPvdArt     := 0
-   local nPvpArt     := 0
-   local nIvaArt     := 0
-   local oOleExcel
-   local cFileExcel  := cGetFile32( "Excel ( *.Xls ) | " + "*.Xls", "Seleccione la hoja de calculo" )
-
-   if File( cFileExcel )
-
-      nRec           := ( dbfArticulo )->( RecNo() )
-      nOrd           := ( dbfArticulo )->( OrdSetFocus( 1 ) )
-
-      CreateWaitMeter( "Importando de Excel", "Tarifa de wirex", 4000 )
-
-      oOleExcel      := CreateObject( "Excel.Application" )
-
-      oOleExcel:Visible       := .f.
-      oOleExcel:DisplayAlerts := .f.
-      oOleExcel:WorkBooks:Open( cFileExcel )
-
-      oOleExcel:WorkSheets( 1 ):Activate()
-
-      for n := 8 to 4000
-
-         cPreFam  := oOleExcel:ActiveSheet:Range( "A" + lTrim( Str( n ) ) ):Text
-         cCodFam  := if( !Empty( cPreFam ), cPreFam, cCodFam )
-         cCodArt  := oOleExcel:ActiveSheet:Range( "B" + lTrim( Str( n ) ) ):Text
-         cNomArt  := oOleExcel:ActiveSheet:Range( "C" + lTrim( Str( n ) ) ):Text
-         nPvdArt  := oOleExcel:ActiveSheet:Range( "E" + lTrim( Str( n ) ) ):Value
-         nPvpArt  := oOleExcel:ActiveSheet:Range( "F" + lTrim( Str( n ) ) ):Value
-         nIvaArt  := oOleExcel:ActiveSheet:Range( "G" + lTrim( Str( n ) ) ):Value
-
-         if !Empty( cPreFam )
-
-            if !( dbfFam )->( dbSeek( cPreFam ) )
-               ( dbfFam )->( dbAppend() )
-            else
-               ( dbfFam )->( dbRLock() )
-            end if
-
-               ( dbfFam )->cCodFam  := cPreFam
-               ( dbfFam )->cNomFam  := cCodArt
-
-               ( dbfFam )->( dbUnLock() )
-
-         end if
-
-         if !Empty( cCodArt ) .and. !Empty( nPvdArt ) .and. !Empty( nPvpArt ) .and. !Empty( nPvdArt )
-
-            if !( dbfArticulo )->( dbSeek( cCodArt ) )
-               ( dbfArticulo )->( dbAppend() )
-            else
-               ( dbfArticulo )->( dbRLock() )
-            end if
-
-               ( dbfArticulo )->Codigo    := cCodArt
-               ( dbfArticulo )->Nombre    := cNomArt
-               ( dbfArticulo )->Familia   := cCodFam
-
-               if Valtype( nPvdArt ) != "N"
-                  nPvdArt                 := Val( nPvdArt )
-               end if
-               ( dbfArticulo )->pCosto    := nPvdArt
-
-               if Valtype( nPvpArt ) != "N"
-                  nPvpArt                 := Val( nPvpArt )
-               end if
-               ( dbfArticulo )->pVenta1   := nPvpArt
-
-               if Valtype( nIvaArt ) != "N"
-                  nIvaArt                 := Val( nIvaArt )
-               end if
-               ( dbfArticulo )->pVtaIva1  := nIvaArt
-
-               ( dbfArticulo )->TipoIva   := cDefIva()
-
-               ( dbfArticulo )->( dbUnLock() )
-
-         end if
-
-         RefreshWaitMeter( n )
-
-      next
-
-      oOleExcel:DisplayAlerts := .t.
-
-      oOleExcel:Quit()
-
-      ( dbfArticulo )->( dbGoTo( nRec ) )
-      ( dbfArticulo )->( OrdSetFocus( nOrd ) )
-
-      EndWaitMeter()
-
-   end if
-
-Return nil
-
 //---------------------------------------------------------------------------//
 
 Function SetHeadDiv( lEur, oWndBrw, cChrSea )

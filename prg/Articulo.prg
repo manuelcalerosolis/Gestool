@@ -1303,12 +1303,6 @@ Function Articulo( oMenuItem, oWnd, bOnInit )
          TOOLTIP  "Infortisa" ;
          LEVEL    ACC_EDIT
 
-      DEFINE BTNSHELL RESOURCE "BMPEXPTAR" OF oWndBrw ;
-			NOBORDER ;
-         ACTION   ( ExcelWirex( dbfArticulo, dbfFam ) ) ;
-         TOOLTIP  "Wirex" ;
-         LEVEL    ACC_EDIT
-
       end if
 
       DEFINE BTNSHELL oRotor RESOURCE "ROTOR" GROUP OF oWndBrw ;
