@@ -12,7 +12,7 @@ CLASS TAcuUVta FROM TInfRut
    DATA  oTikCliL    AS OBJECT
    DATA  oAlbCliT    AS OBJECT
    DATA  oAlbCliL    AS OBJECT
-   DATA  oFacCliT    AS OBJECT
+   DATA  oFacCliT    AS OBJECT 
    DATA  oFacCliL    AS OBJECT
    DATA  oFacRecT    AS OBJECT
    DATA  oFacRecL    AS OBJECT

@@ -47,7 +47,7 @@ Function aItmCategoria()
    local aBase := { }
 
    aAdd( aBase, { "cCodigo",   "C",  3, 0, "Código de la categoría" ,   "",   "", "( cDbfCategoria )"} )
-  * aAdd( aBase, { "cNombre",   "C", 50, 0, "Nombre de la categoría" ,   "",   "", "( cDbfCategoria )"} )
+   aAdd( aBase, { "cNombre",   "C", 50, 0, "Nombre de la categoría" ,   "",   "", "( cDbfCategoria )"} )
    aAdd( aBase, { "cTipo",     "C", 30, 0, "Tipo de la categoría" ,     "",   "", "( cDbfCategoria )"} )
 
 Return ( aBase )
