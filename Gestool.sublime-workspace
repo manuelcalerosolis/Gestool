@@ -348,13 +348,10 @@
 			}
 		},
 		{
-			"contents": "#include \"HbXml.ch\"\n#include \"TDbfDbf.ch\"\n\n//---------------------------------------------------------------------------//\n\nstatic aXmlDocuments\nstatic oXmlDocument\n\nstatic oXmlNode\n\nstatic cDirectoryXml\n\nstatic hArticulo\n\nstatic dbfArticulo\nstatic dbfCodebar\nstatic dbfFamilia\nstatic dbfPropieades\nstatic dbfCategorias\nstatic dbfTipoArticulo\n\n//---------------------------------------------------------------------------//\n\nFunction ImportaXmlBestseller()\n\n   local cDocumentXml\n\n   dbUseArea( .t., ( cDriver() ), ( cPatArt() + \"Articulo.Dbf\" ), ( cCheckArea( \"Articulo\", @dbfArticulo ) ), .t., .f. )\n   if !lAIS() ; ordListAdd( ( cPatArt() + \"Articulo.Cdx\" ) ) ; else ; ordSetFocus( 1 ) ; end\n\n   dbUseArea( .t., ( cDriver() ), ( cPatArt() + \"ArtCodebar.Dbf\" ), ( cCheckArea( \"ArtCodebar\", @dbfCodebar ) ), .t., .f. )\n   if !lAIS() ; ordListAdd( ( cPatArt() + \"ArtCodebar.Cdx\" ) ) ; else ; ordSetFocus( 1 ) ; end\n\n   dbUseArea( .t., ( cDriver() ), ( cPatArt() + \"Familias.Dbf\" ), ( cCheckArea( \"Familias\", @dbfFamilia ) ), .t., .f. )\n   if !lAIS() ; ordListAdd( ( cPatArt() + \"Familias.Cdx\" ) ) ; else ; ordSetFocus( 1 ) ; end\n\n   dbUseArea( .t., ( cDriver() ), cPatArt() + \"Pro.Dbf\", cCheckArea( \"Pro\", @dbfPropieades ), .f. )\n   if !lAIS() ; ordListAdd( ( cPatArt() + \"Pro.Cdx\" ) ) ; else ; ordSetFocus( 1 ) ; end\n\n   dbUseArea( .t., ( cDriver() ), cPatArt() + \"Categorias.Dbf\", cCheckArea( \"Categorias\", @dbfCategorias ), .f. )\n   if !lAIS() ; ordListAdd( ( cPatArt() + \"Categorias.Cdx\" ) ) ; else ; ordSetFocus( 1 ) ; end\n\n   dbUseArea( .t., ( cDriver() ), cPatArt() + \"Tipart.Dbf\", cCheckArea( \"Tipart\", @dbfTipoArticulo ), .f. )\n   if !lAIS() ; ordListAdd( ( cPatArt() + \"Tipart.Cdx\" ) ) ; else ; ordSetFocus( 1 ) ; end\n\n   cDirectoryXml        := \"c:\\Users\\Calero\\Desktop\\Pricat\" //cGetDir( \"Selecciona directorio\")\n\n   aXmlDocuments        := Directory( cDirectoryXml + \"\\*.*\" )\n\n   if !Empty( aXmlDocuments )\n\n      for each cDocumentXml in aXmlDocuments\n         ProccessXml( cDocumentXml[ 1 ] )\n      next\n\n   else\n\n      msgStop( \"No hay ficheros en el directorio\")\n\n   end if \n\n   ( dbfArticulo )->( dbCloseArea() )\n   ( dbfCodebar  )->( dbCloseArea() )\n   ( dbfFamilia  )->( dbCloseArea() )\n   ( dbfPropieades )->( dbCloseArea() )\n   ( dbfCategorias )->( dbCloseArea() )\n   ( dbfTipoArticulo )->( dbCloseArea() )\n\nReturn ( nil )\n\n//---------------------------------------------------------------------------//\n\nStatic Function ProccessXml( cDocumentXml )\n\n   local cXml\n\n   hArticulo            := {=>}\n\n   cDocumentXml         := cDirectoryXml + \"\\\" + cDocumentXml\n\n   // msgStop( cDocumentXml, \"cDocumentXml\" )\n\n   oXmlDocument         := TXmlDocument():New( cDocumentXml )\n\n   if oXmlDocument:nStatus != HBXML_STATUS_OK\n\n      switch oXmlDocument:nStatus\n         case HBXML_STATUS_ERROR\n            msgStop( \"Ay! pillin, nos jorobo alguna cosa....!!\" )\n         case HBXML_STATUS_MALFORMED\n            msgStop( \"No es un documento xml\" )\n      end\n\n   else\n\n      oXmlNode                := oXmlDocument:oRoot\n\n      while !Empty( oXmlNode )\n\n/*         cXml                 := oXmlNode:Path()\n         if Empty( cXml )\n            cXml              :=  \"(Node without path)\"\n         end if \n\n         logwrite( \"cName: \"        + Valtoprg( oXmlNode:cName ) )\n         logwrite( \"aAttributes: \"  + ValToPrg( oXmlNode:aAttributes ) ) \n         logwrite( \"cData: \"        + valtoprg( oXmlNode:cData ) ) \n         logwrite( \"aArray: \"       + valtoprg( oXmlNode:ToArray() ) )\n         logwrite( replicate( \"-\", 80 ) ) */\n\n         ProccessNode( oXmlNode ) \n\n         oXmlNode             := oXmlDocument:Next()\n\n      end while\n\n   end if\n\n   ProccessArticulo()\n\nReturn ( nil )\n\n//---------------------------------------------------------------------------//\n\nStatic Function ProccessNode( oXmlNode ) \n\n   local cNodeName   := cValtoChar( oXmlNode:cName )\n\n   do case\n      case cNodeName == \"cac:SellersItemIdentification\" \n         IteratorCodigoArticulo( oXmlNode )       \n\n      case cNodeName == \"cac:Item\"\n         IteratorNombreArticulo( oXmlNode )       \n\n      case cNodeName == \"cac:Price\"\n         IteratorPrieceArticulo( oXmlNode )   \n\n      case cNodeName == \"cac:LineValidityPeriod\"\n         IteratorTemporadaArticulo( oXmlNode )\n\n      case cNodeName == \"cac:CommodityClassification\"\n         IteratorPrimeraPropiedad( oXmlNode )\n\n   end case\n \nReturn ( nil )\n\n//---------------------------------------------------------------------------//\n\nStatic Function IteratorCodigoArticulo( oXmlNode )\n\n   local oIter\n   local oNode\n\n   oIter                := TXMLIteratorScan():New( oXmlNode )\n\n   oNode                := oIter:Find( \"cbc:ID\" ) \n\n   if !Empty( oNode )\n      hSet( hArticulo, \"Codigo\", oNode:cData )\n   end if \n\nReturn ( nil )\n\n//---------------------------------------------------------------------------//\n\nStatic Function IteratorNombreArticulo( oXmlNode )\n\n   local oIter\n   local oNode\n\n   oIter                := TXMLIteratorScan():New( oXmlNode )\n\n   oNode                := oIter:Find( \"cbc:Description\" ) \n\n   if !Empty( oNode )\n      hSet( hArticulo, \"Nombre\", Upper( oNode:cData ) )\n   end if \n\n   oNode                := oIter:Find( \"cbc:BrandName\" ) \n\n   if !Empty( oNode )\n      hSet( hArticulo, \"Familia\", Upper( oNode:cData ) )\n   end if \n\n   oNode                := oIter:Find( \"cbc:ModelName\" ) \n\n   if !Empty( oNode )\n      hSet( hArticulo, \"Tipo\", Upper( oNode:cData ) )\n   end if \n\nReturn ( nil )\n\n//---------------------------------------------------------------------------//\n\nStatic Function IteratorPrieceArticulo( oXmlNode )       \n\n   local oIter\n   local oNode\n   local nPrice\n\n   oIter                := TXMLIteratorScan():New( oXmlNode )\n\n   oNode                := oIter:Find( \"cbc:PriceAmount\" ) \n\n   if !Empty( oNode )\n      nPrice            := Val( oNode:cData )\n   end if \n\n   oNode                := oIter:Find( \"cbc:PriceTypeCode\" ) \n\n   if !Empty( oNode ) .and. ( oNode:cData == \"GRP\" )\n      hSet( hArticulo, \"Costo\", nPrice )\n   end if\n\n   if !Empty( oNode ) .and. ( oNode:cData == \"SRP\" )\n      hSet( hArticulo, \"Venta\", nPrice )\n   end if\n   \nReturn ( nil )\n\n//---------------------------------------------------------------------------//\n\nStatic Function IteratorTemporadaArticulo( oXmlNode )\n\n   local oIter\n   local oNode\n\n   oIter                := TXMLIteratorScan():New( oXmlNode )\n\n   oNode                := oIter:Find( \"cbc:Description\" ) \n\n   if !Empty( oNode )\n      hSet( hArticulo, \"Temporada\", Upper( oNode:cData ) )\n   end if \n\nReturn ( nil )\n\n//---------------------------------------------------------------------------//\n\nStatic Function IteratorPrimeraPropiedad( oXmlNode )\n\n   local oIter\n   local oNode\n\n   oIter                := TXMLIteratorScan():New( oXmlNode )\n\n   oNode                := oIter:Find( \"cbc:CommodityCode\" ) \n\n   if !Empty( oNode )\n      hSet( hArticulo, \"Primera propiedad\", oNode:cData )\n   end if \n\nReturn ( nil )\n\n//---------------------------------------------------------------------------//\n\nStatic Function ProccessArticulo()\n\n   local lAppend\n\n   lAppend              := !( dbfArticulo )->( dbSeek( hGet( hArticulo, \"Codigo\" ) ) )\n\n   if dbDialogLock( dbfArticulo, lAppend )\n\n      ( dbfArticulo )->Codigo    := hGet( hArticulo, \"Codigo\" )\n      ( dbfArticulo )->Nombre    := hGet( hArticulo, \"Nombre\" )\n\n      ( dbfArticulo )->pCosto    := hGet( hArticulo, \"Costo\" )\n      ( dbfArticulo )->pVtaIva1  := hGet( hArticulo, \"Venta\" )\n\n      ( dbfArticulo )->lIvaInc   := .t.\n      ( dbfArticulo )->TipoIva   := cDefIva()\n\n      ( dbfArticulo )->Familia   := cCodigoFamiliaBestseller( hGet( hArticulo, \"Familia\") )\n\n      ( dbfArticulo )->cCodPrp1  := cCodigoPropiedadBestseller( hGet( hArticulo, \"Primera propiedad\" ) )\n      ( dbfArticulo )->cCodPrp2  := \"003\" // Colores bestseller\n\n      ( dbfArticulo )->cCodTip   := cCodigoTipoBestseller( hGet( hArticulo, \"Tipo\" ) )\n\n      ( dbfArticulo )->( dbUnlock() )\n   \n   end if\n\n   msgStop( valtoprg( hArticulo ), if( lAppend, \"Añadido\", \"Modificado\" ) )\n\nReturn ( nil )   \n\n//---------------------------------------------------------------------------//\n\nFunction cCodigoFamiliaBestseller( cNombreFamilia )\n\n   local cFamilia\n   local cSubFamilia\n   local cCodigoFamiliaBestseller   := \"\"\n\n   cFamilia                         := substr( cNombreFamilia, 1, at( \"/\", cNombreFamilia ) - 1 ) \n   cSubFamilia                      := substr( cNombreFamilia, at( \"/\", cNombreFamilia ) + 1 ) \n\n   if dbSeekInOrd( cSubFamilia, \"cNomFam\", dbfFamilia )\n      cCodigoFamiliaBestseller      := ( dbfFamilia )->cCodFam\n   end if\n\n   if Empty( cCodigoFamiliaBestseller )\n      if dbSeekInOrd( cFamilia, \"cNomFam\", dbfFamilia )\n         cCodigoFamiliaBestseller   := ( dbfFamilia )->cCodFam\n      end if\n   end if\n\nReturn ( cCodigoFamiliaBestseller )\n\n//---------------------------------------------------------------------------//\n\nFunction cCodigoPropiedadBestseller( cCodigoExterno )\n\n   local cCodigoPropiedadBestseller := \"\"\n\n   if dbSeekInOrd( cCodigoExterno, \"cCodExt\", dbfPropieades )\n      cCodigoPropiedadBestseller    := ( dbfPropieades )->cCodPro \n   end if\n\nReturn ( cCodigoPropiedadBestseller )\n\n//---------------------------------------------------------------------------//\n\nFunction cCodigoTipoBestseller( cCodigoTipo )\n\n   local cCodigoTipoBestseller      := \"\"\n\n   if dbSeekInOrd( cCodigoTipo, \"cNomTip\", dbfTipoArticulo )\n      cCodigoCategriaBestseller     := ( dbfTipoArticulo )->cCodTip\n   end if\n\nReturn ( cCodigoTipoBestseller )\n\n//---------------------------------------------------------------------------//\n\n",
 			"file": "bin/script/XLM.prg",
-			"file_size": 9940,
-			"file_write_time": 130021618827027595,
 			"settings":
 			{
-				"buffer_size": 9600,
+				"buffer_size": 9567,
 				"line_ending": "Windows"
 			}
 		},
@@ -378,7 +375,15 @@
 			"file": "prg/Pro.prg",
 			"settings":
 			{
-				"buffer_size": 67406,
+				"buffer_size": 67414,
+				"line_ending": "Windows"
+			}
+		},
+		{
+			"file": "/C/Users/Calero/Desktop/Test/Index.html",
+			"settings":
+			{
+				"buffer_size": 560,
 				"line_ending": "Windows"
 			}
 		},
@@ -389,14 +394,26 @@
 				"buffer_size": 4129,
 				"line_ending": "Windows"
 			}
+		},
+		{
+			"file": "/C/Users/Calero/AppData/Roaming/Sublime Text 2/Packages/harbour/Harbour.JSON-tmlanguage",
+			"settings":
+			{
+				"buffer_size": 24043,
+				"line_ending": "Windows"
+			}
 		}
 	],
 	"build_system": "Packages/AAAPackageDev/Support/JSON to Property List.sublime-build",
 	"command_palette":
 	{
-		"height": 58.0,
+		"height": 392.0,
 		"selected_items":
 		[
+			[
+				"",
+				"Convert Case: Swap Case"
+			],
 			[
 				"install",
 				"Package Control: Install Package"
@@ -638,7 +655,7 @@
 	},
 	"find_in_files":
 	{
-		"height": 90.0,
+		"height": 96.0,
 		"where_history":
 		[
 			"C:\\fw195\\gestool\\prg",
@@ -663,6 +680,9 @@
 		"case_sensitive": false,
 		"find_history":
 		[
+			"tipos de art",
+			"tipos de",
+			"buscando tipos de",
 			"		{ \"trigger\": \"iscntrl\", \"contents\": \"int(${1:cString})\" },\n",
 			")\n",
 			"   if dbSeekInOrd( cCodigoTipo, \"cNomTip\", dbfTipoArticulo )\n",
@@ -787,10 +807,7 @@
 			"TCreaFacAutomaticas",
 			"lLanzaAsistente",
 			"Pre",
-			"on rx",
-			"class",
-			"from",
-			"class"
+			"on rx"
 		],
 		"highlight": true,
 		"in_selection": false,
@@ -819,7 +836,7 @@
 	"groups":
 	[
 		{
-			"selected": 4,
+			"selected": 10,
 			"sheets":
 			[
 				{
@@ -895,8 +912,8 @@
 						"selection":
 						[
 							[
-								42,
-								63
+								10674,
+								10674
 							]
 						],
 						"settings":
@@ -908,7 +925,7 @@
 							"translate_tabs_to_spaces": true
 						},
 						"translation.x": 0.0,
-						"translation.y": 0.0,
+						"translation.y": 8400.0,
 						"zoom_level": 1.0
 					},
 					"type": "text"
@@ -949,15 +966,15 @@
 					"file": "bin/script/XLM.prg",
 					"settings":
 					{
-						"buffer_size": 9600,
+						"buffer_size": 9567,
 						"regions":
 						{
 						},
 						"selection":
 						[
 							[
-								8994,
-								8994
+								4379,
+								4379
 							]
 						],
 						"settings":
@@ -970,7 +987,7 @@
 							"translate_tabs_to_spaces": true
 						},
 						"translation.x": 0.0,
-						"translation.y": 6208.0,
+						"translation.y": 2453.0,
 						"zoom_level": 1.0
 					},
 					"type": "text"
@@ -987,8 +1004,8 @@
 						"selection":
 						[
 							[
-								2296,
-								2296
+								1901,
+								1901
 							]
 						],
 						"settings":
@@ -1001,7 +1018,7 @@
 							"translate_tabs_to_spaces": true
 						},
 						"translation.x": 0.0,
-						"translation.y": 2040.0,
+						"translation.y": 1683.0,
 						"zoom_level": 1.0
 					},
 					"type": "text"
@@ -1042,15 +1059,19 @@
 					"file": "prg/Pro.prg",
 					"settings":
 					{
-						"buffer_size": 67406,
+						"buffer_size": 67414,
 						"regions":
 						{
 						},
 						"selection":
 						[
 							[
-								44148,
-								44148
+								51122,
+								51122
+							],
+							[
+								51205,
+								51205
 							]
 						],
 						"settings":
@@ -1063,13 +1084,42 @@
 							"translate_tabs_to_spaces": true
 						},
 						"translation.x": 0.0,
-						"translation.y": 30940.0,
+						"translation.y": 36365.0,
 						"zoom_level": 1.0
 					},
 					"type": "text"
 				},
 				{
 					"buffer": 8,
+					"file": "/C/Users/Calero/Desktop/Test/Index.html",
+					"settings":
+					{
+						"buffer_size": 560,
+						"regions":
+						{
+						},
+						"selection":
+						[
+							[
+								0,
+								0
+							]
+						],
+						"settings":
+						{
+							"encoding_helper_confidence": 1.0,
+							"encoding_helper_encoding": "UTF-8",
+							"encoding_helper_encoding_sublime": "UTF-8",
+							"syntax": "Packages/HTML/HTML.tmLanguage"
+						},
+						"translation.x": 0.0,
+						"translation.y": 0.0,
+						"zoom_level": 1.0
+					},
+					"type": "text"
+				},
+				{
+					"buffer": 9,
 					"file": "/C/Users/Calero/AppData/Roaming/Sublime Text 2/Packages/harbour/Harbour.sublime-completions",
 					"settings":
 					{
@@ -1114,7 +1164,38 @@
 							"translate_tabs_to_spaces": false
 						},
 						"translation.x": 0.0,
-						"translation.y": 1105.0,
+						"translation.y": 380.0,
+						"zoom_level": 1.0
+					},
+					"type": "text"
+				},
+				{
+					"buffer": 10,
+					"file": "/C/Users/Calero/AppData/Roaming/Sublime Text 2/Packages/harbour/Harbour.JSON-tmlanguage",
+					"settings":
+					{
+						"buffer_size": 24043,
+						"regions":
+						{
+						},
+						"selection":
+						[
+							[
+								2427,
+								2427
+							]
+						],
+						"settings":
+						{
+							"encoding_helper_confidence": 0.761939721327,
+							"encoding_helper_encoding": "UTF-8",
+							"encoding_helper_encoding_sublime": "UTF-8",
+							"syntax": "Packages/AAAPackageDev/Support/Sublime JSON Syntax Definition.tmLanguage",
+							"tab_size": 3,
+							"translate_tabs_to_spaces": true
+						},
+						"translation.x": 0.0,
+						"translation.y": 1140.0,
 						"zoom_level": 1.0
 					},
 					"type": "text"
@@ -1163,7 +1244,7 @@
 	},
 	"output.find_results":
 	{
-		"height": 532.0
+		"height": 403.0
 	},
 	"replace":
 	{
@@ -1189,7 +1270,7 @@
 	"show_minimap": true,
 	"show_open_files": true,
 	"show_tabs": true,
-	"side_bar_visible": true,
+	"side_bar_visible": false,
 	"side_bar_width": 252.0,
 	"status_bar_visible": true
 }

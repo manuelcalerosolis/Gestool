@@ -120,10 +120,10 @@ METHOD DefineFiles( cPath, cDriver )
       FIELD NAME "cCodWeb" TYPE "N"    LEN  11  DEC 0 COMMENT "Código Web"     HIDE                         OF ::oDbf
       FIELD NAME "cImgTip" TYPE "C"    LEN 250  DEC 0 COMMENT "Imagen"         HIDE                         OF ::oDbf
       FIELD NAME "nPosInt" TYPE "N"    LEN   3  DEC 0 COMMENT "nPosInt"        HIDE                         OF ::oDbf
-      FIELD NAME "cNomInt" TYPE "C"    LEN 100  DEC 0 COMMENT "Nombre Int"     HIDE                         OF ::oDbf
+      FIELD NAME "cNomInt" TYPE "C"    LEN 100  DEC 0 COMMENT "Nombre comercio electrónico"                 OF ::oDbf
 
       INDEX TO "TipArt.CDX" TAG "cCodTip" ON "cCodTip"            COMMENT "Código"           NODELETED      OF ::oDbf
-      INDEX TO "TipArt.CDX" TAG "cNomTip" ON "cNomTip"            COMMENT "Nombre"           NODELETED      OF ::oDbf
+      INDEX TO "TipArt.CDX" TAG "cNomTip" ON "Upper( cNomTip )"   COMMENT "Nombre"           NODELETED      OF ::oDbf
       INDEX TO "TipArt.CDX" TAG "cCodWeb" ON "Str( cCodWeb, 11 )" COMMENT "Códigoweb"        NODELETED      OF ::oDbf
 
    END DATABASE ::oDbf
