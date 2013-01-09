@@ -867,7 +867,7 @@ function BrwVtaComArt( cCodArt, cNomArt, cDiv, cIva, cAlm, cArticulo )
    with object ( oBrwTmp:addCol() )
       :cHeader       := "%Dto."
       :bEditValue    := {|| oDbfTmp:nDtoDoc }
-      :cEditPicture  := "@E 999,99"
+      :cEditPicture  := "@E 999.99"
       :nWidth        := 40
       :nDataStrAlign := 1
       :nHeadStrAlign := 1
