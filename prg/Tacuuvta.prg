@@ -361,10 +361,6 @@ METHOD lGenerate() CLASS TAcuUVta
 
    ::oTikCliT:AddTmpIndex( cCurUsr(), GetFileNoExt( ::oTikCliT:cFile ), ::oTikCliT:OrdKey(), ( cExpHead ), , , , , , , , .t. )
 
-   cExpLine          := '!lControl'
-
-   ::oTikCliL:AddTmpIndex( cCurUsr(), GetFileNoExt( ::oTikCliL:cFile ), ::oTikCliL:OrdKey(), cAllTrimer( cExpLine ), , , , , , , , .t. )
-
    ::oMtrInf:cText := "Procesando tikets"
    ::oMtrInf:SetTotal( ::oTikCliT:OrdKeyCount() )
 
@@ -379,6 +375,7 @@ METHOD lGenerate() CLASS TAcuUVta
             while ::oTikCliT:cSerTik + ::oTikCliT:cNumTik + ::oTikCliT:cSufTik == ::oTikCliL:cSerTil + ::oTikCliL:cNumTil + ::oTikCliL:cSufTil .and. !::oTikCliL:Eof()
 
                if !Empty( ::oTikCliL:cCbaTil )                       .AND.;
+                  !::oTikCliL:lControl                               .AND.; 
                   !( ::lExcCero .AND. ::oTikCliL:nPvpTil == 0 )
 
                   ::AddTik( ::oTikCliL:cCbaTil, 1, .t. )
@@ -386,6 +383,7 @@ METHOD lGenerate() CLASS TAcuUVta
                end if
 
                if !Empty( ::oTikCliL:cComTil )                       .AND.;
+                  !::oTikCliL:lControl                               .AND.; 
                   !( ::lExcCero .AND. ::oTikCliL:nPcmTil == 0 )
 
                   ::AddTik( ::oTikCliL:cComTil, 2, .t. )
@@ -407,7 +405,6 @@ METHOD lGenerate() CLASS TAcuUVta
    end while
 
    ::oTikCliT:IdxDelete( cCurUsr(), GetFileNoExt( ::oTikCliT:cFile ) )
-   ::oTikCliL:IdxDelete( cCurUsr(), GetFileNoExt( ::oTikCliL:cFile ) )
 
    ::oMtrInf:AutoInc( ::oTikCliT:Lastrec() )
 
