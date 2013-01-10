@@ -226,13 +226,6 @@ STATIC FUNCTION EdtRec( aTmp, aGet, dbfProT, oWndBrw, bWhen, bValid, nMode )
             ON CHANGE( ChangePublicar( aTmp ) ) ;
             OF       oDlg
 
-         REDEFINE GET aGet[ ( dbfProT )->( FieldPos( "cCodExt" ) ) ] ;
-            VAR      aTmp[ ( dbfProT )->( FieldPos( "cCodExt" ) ) ] ;
-            UPDATE ;
-            ID       130 ;
-            WHEN     ( nMode != ZOOM_MODE ) ;
-            OF       oDlg
-
          REDEFINE CHECKBOX aTmp[ ( dbfProT )->( FieldPos( "lColor" ) ) ] ;
             ID       200 ;
             WHEN     ( nMode != ZOOM_MODE ) ;
@@ -1648,11 +1641,7 @@ FUNCTION brwPrpAct( oGet, oSay, cPrp )
 
    // Mostramos el dialogo-----------------------------------------------------
 
-   if ( "PDA" $ cParamsMain() )
-   DEFINE DIALOG oDlg RESOURCE "HELPENTRY_PDA"  TITLE cTitle
-   else
    DEFINE DIALOG oDlg RESOURCE "HELPENTRY"      TITLE cTitle
-   end if
 
       REDEFINE GET oGetNbr VAR cGetNbr ;
 			ID 		104 ;
@@ -1666,8 +1655,6 @@ FUNCTION brwPrpAct( oGet, oSay, cPrp )
          ITEMS    aCbxOrd ;
          ON CHANGE( ( dbfTmpBrw )->( OrdSetFocus( oCbxOrd:nAt ) ), ( dbfTmpBrw )->( dbGoTop() ), oBrw:Refresh(), oGetNbr:SetFocus(), oCbxOrd:Refresh() ) ;
 			OF 		oDlg
-
-#ifndef __PDA__
 
       oBrw                 := TXBrowse():New( oDlg )
 
@@ -1699,31 +1686,17 @@ FUNCTION brwPrpAct( oGet, oSay, cPrp )
 
       oBrw:CreateFromResource( 105 )
 
-#endif
+      REDEFINE BUTTON ;
+         ID       500 ;
+         OF       oDlg ;
+         WHEN     .f. ;
+         ACTION   nil
 
-      if ( "PDA" $ cParamsMain() )
-
-         REDEFINE SAY oSayText VAR cSayText ;
-            ID       100 ;
-            OF       oDlg
-
-      end if
-
-      if !( "PDA" $ cParamsMain() )
-
-         REDEFINE BUTTON ;
-            ID       500 ;
-            OF       oDlg ;
-            WHEN     .f. ;
-            ACTION   nil
-
-         REDEFINE BUTTON ;
-            ID       501 ;
-            OF       oDlg ;
-            WHEN     .f. ;
-            ACTION   nil
-
-      end if
+      REDEFINE BUTTON ;
+         ID       501 ;
+         OF       oDlg ;
+         WHEN     .f. ;
+         ACTION   nil
 
       REDEFINE BUTTON ;
          ID       IDOK ;
@@ -1744,7 +1717,7 @@ FUNCTION brwPrpAct( oGet, oSay, cPrp )
 
       oGet:cText( ( dbfTmpBrw )->cCodTbl )
 
-      if ValType( oSay ) == "O"
+      if IsObject( oSay )
          oSay:SetText( ( dbfTmpBrw )->cDesTbl )
       end if
 
@@ -1962,12 +1935,9 @@ Function rxPro( cPath, oMeter )
          ( dbfPro )->( ordCondSet("!Deleted()", {||!Deleted()}  ) )
          ( dbfPro )->( ordCreate( cPath + "PRO.CDX", "CCODWEB", "Str( Field->cCodWeb, 11 )", {|| Str( Field->cCodWeb, 11 ) } ) )
 
-         ( dbfPro )->( ordCondSet( "!Deleted()", {|| !Deleted() }  ) )
-         ( dbfPro )->( ordCreate( cPath + "PRO.CDX", "cCodExt", "Field->cCodExt", {|| Field->cCodExt } ) ) 
-
          ( dbfPro )->( dbCloseArea() )
       else
-         msgStop( "Imposible abrir en modo exclusivo la tabla de promociones" ) 
+         msgStop( "Imposible abrir en modo exclusivo la tabla de propiedades" ) 
       end if
 
       dbUseArea( .t., cDriver(), cPath + "TBLPRO.DBF", cCheckArea( "TBLPRO", @dbfPro ), .f. )
@@ -1995,7 +1965,7 @@ Function rxPro( cPath, oMeter )
 
          ( dbfPro )->( dbCloseArea() )
       else
-         msgStop( "Imposible abrir en modo exclusivo la tabla de promociones" )
+         msgStop( "Imposible abrir en modo exclusivo la tabla de lineas de propiedades" )
       end if
 
    end if
@@ -2015,7 +1985,6 @@ Static Function aPro()
    aAdd( aBase, { "lSndDoc",   "L",  1, 0, "Lógico de propiedad para envio"         } )
    aAdd( aBase, { "cNomInt",   "C", 50, 0, "Nombre de la propiedad en la web"       } )
    aAdd( aBase, { "lColor",    "L",  1, 0, "Lógico tipo color"                      } )
-   aAdd( aBase, { "cCodExt",   "C", 18, 0, "Código externo"                         } ) 
 
 return ( aBase )
 
