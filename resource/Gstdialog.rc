@@ -24,6 +24,8 @@ FONT 8, "MS Sans Serif"
   CONTROL "", 200, "Static", SS_BITMAP|SS_CENTERIMAGE, 2, 229, 34, 30
   CONTROL "", 240, "msctls_progress32", NOT WS_VISIBLE, 2, 262, 500, 4
   CONTROL "Usuario", 100, "Static", WS_GROUP, 267, 104, 29, 9, WS_EX_TRANSPARENT
+  CONTROL "", 600, "Static", SS_BITMAP|SS_CENTERIMAGE, 2, 2, 156, 224
+  CONTROL "", 610, "Static", SS_BITMAP|SS_CENTERIMAGE, 290, 2, 206, 45
 }
 
 REINDEX DIALOG DISCARDABLE 92, 84, 386, 228
@@ -5163,8 +5165,8 @@ FONT 8, "MS Sans Serif"
   CONTROL "&Salir", IDCANCEL, "Button", WS_TABSTOP, 275, 127, 50, 14
   CONTROL "Clave de protección", 120, "Static", WS_GROUP, 140, 15, 70, 8, WS_EX_TRANSPARENT
   CONTROL "Clave de acceso", 130, "Static", SS_NOPREFIX|WS_GROUP, 140, 28, 70, 8, WS_EX_TRANSPARENT
-  CONTROL "Para obtener las claves de acceso :", 140, "Static", SS_LEFTNOWORDWRAP|WS_GROUP, 104, 44, 157, 10
-  CONTROL "Para probar el programa", 180, "Static", SS_LEFTNOWORDWRAP|WS_GROUP, 104, 91, 157, 10
+  CONTROL "Para obtener las claves de acceso :", 140, "Static", SS_LEFTNOWORDWRAP|WS_GROUP, 123, 44, 119, 10
+  CONTROL "Para probar el programa", 180, "Static", SS_LEFTNOWORDWRAP|WS_GROUP, 123, 91, 81, 10
   CONTROL "1.- Tome la factura del programa.", 150, "Static", WS_GROUP, 140, 56, 146, 9
   CONTROL "2.- Marque el teléfono siguiente 902.930.252", 160, "Static", WS_GROUP, 140, 67, 146, 9
   CONTROL "3.- Comunique la clave de protección.", 170, "Static", WS_GROUP, 140, 79, 153, 9
