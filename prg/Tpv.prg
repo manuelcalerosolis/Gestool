@@ -10828,7 +10828,7 @@ STATIC FUNCTION lIsCode( aTmp, dbfTmpL, oBrw )
       Comprobamos que el codigo y el precio sean iguales y que no sean ofertas-
       */
 
-      if ( dbfTmpL )->cCbaTil == aTmp[ _CCBATIL ]                    .and. ;
+      if ( dbfTmpL )->cCbaTil == Padr( aTmp[ _CCBATIL ], 18 )        .and. ;
          ( dbfTmpL )->cComTil == aTmp[ _CCOMTIL ]                    .and. ;
          ( dbfTmpL )->cCodPr1 == aTmp[ _CCODPR1 ]                    .and. ;
          ( dbfTmpL )->cValPr1 == aTmp[ _CVALPR1 ]                    .and. ;
