@@ -5506,11 +5506,10 @@ STATIC FUNCTION LoaArt( aGet, aTmp, aTmpFac, oFld, oSayPr1, oSayPr2, oSayVp1, oS
 		aGet[_CDETALLE]:show()
 		aGet[_MLNGDES ]:hide()
 
+/*
       if !( ( dbfArticulo )->( dbSeek( cCodArt ) ) .or. ( dbfArticulo )->( dbSeek( Upper( cCodArt ) ) ) )
 
-         /*
-         Busqueda por codigo de proveedor-----------------------------------------
-         */
+         // Busqueda por codigo de proveedor-----------------------------------------
 
          nOrdAnt                 := ( dbfArtPrv )->( OrdSetFocus( "cRefPrv" ) )
 
@@ -5520,9 +5519,7 @@ STATIC FUNCTION LoaArt( aGet, aTmp, aTmpFac, oFld, oSayPr1, oSayPr2, oSayVp1, oS
 
          ( dbfArtPrv )->( ordSetFocus( nOrdAnt ) )
 
-         /*
-         Primero buscamos por codigos de barra------------------------------------
-         */
+         // Primero buscamos por codigos de barra------------------------------------
 
          cCodArt                 := cSeekCodebar( cCodArt, dbfCodebar, dbfArticulo )
 
@@ -5533,14 +5530,9 @@ STATIC FUNCTION LoaArt( aGet, aTmp, aTmpFac, oFld, oSayPr1, oSayPr2, oSayVp1, oS
          lSeek                   := .t.
 
       end if
+*/
 
-      /*
-      Ahora buscamos por el codigo interno-------------------------------------
-      */
-
-      //if ( dbfArticulo )->( dbSeek( cCodArt ) ) .or. ( dbfArticulo )->( dbSeek( Upper( cCodArt ) ) )
-
-      if lSeek
+      if lIntelliArtciculoSearch( cCodArt, cCodPrv, dbfArticulo, dbfArtPrv, dbfCodebar )
 
          if ( lChgCodArt )
 

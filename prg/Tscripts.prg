@@ -68,10 +68,10 @@ METHOD DefineFiles( cPath, cDriver ) CLASS TScripts
 
    DEFINE TABLE ::oDbf FILE "Scripts.Dbf" CLASS "Scripts" ALIAS "Scri" PATH ( cPath ) VIA ( cDriver() ) COMMENT "Scripts"
 
-      FIELD NAME "cCodScr"    TYPE "C" LEN   3  DEC 0 COMMENT "C骴igo"        COLSIZE 100          OF ::oDbf
+      FIELD NAME "cCodScr"    TYPE "C" LEN   3  DEC 0 COMMENT "C贸digo"        COLSIZE 100          OF ::oDbf
       FIELD NAME "cDesScr"    TYPE "C" LEN  35  DEC 0 COMMENT "Nombre"        COLSIZE 400          OF ::oDbf
 
-      INDEX TO "Scripts.Cdx" TAG "cCodScr" ON "cCodScr" COMMENT "C骴igo" NODELETED OF ::oDbf
+      INDEX TO "Scripts.Cdx" TAG "cCodScr" ON "cCodScr" COMMENT "C贸digo" NODELETED OF ::oDbf
       INDEX TO "Scripts.Cdx" TAG "cDesScr" ON "cDesScr" COMMENT "Nombre" NODELETED OF ::oDbf
 
    END DATABASE ::oDbf
@@ -118,7 +118,7 @@ METHOD Activate() CLASS TScripts
          NOBORDER ;
          ACTION   ( ::oWndBrw:RecAdd() );
          ON DROP  ( ::oWndBrw:RecAdd() );
-         TOOLTIP  "(A)馻dir";
+         TOOLTIP  "(A)帽adir";
          BEGIN GROUP ;
          HOTKEY   "A" ;
          LEVEL    ACC_APPD
@@ -276,14 +276,14 @@ METHOD lPreSave( nMode, cScript ) CLASS TScripts
    if nMode == APPD_MODE .or. nMode == DUPL_MODE
 
       if ::oDbf:SeekInOrd( ::oDbf:cCodScr, "cCodScr" )
-         MsgStop( "C骴igo ya existe " + Rtrim( ::oDbf:cCodScr ) )
+         MsgStop( "C贸digo ya existe " + Rtrim( ::oDbf:cCodScr ) )
          Return .f.
       end if
 
    end if
 
    if Empty( ::oDbf:cDesScr )
-      MsgStop( "La descripci髇 del Script no puede estar vac韆." )
+      MsgStop( "La descripci贸n del Script no puede estar vac铆a." )
       Return .f.
    end if
 
@@ -373,7 +373,7 @@ METHOD EjecutarScript() CLASS TScripts
 
    RECOVER USING oError
 
-      msgStop( "Error de ejecuci髇." + CRLF + ErrorMessage( oError ) )
+      msgStop( "Error de ejecuci贸n." + CRLF + ErrorMessage( oError ) )
 
    END SEQUENCE
 
@@ -382,3 +382,4 @@ METHOD EjecutarScript() CLASS TScripts
 Return .t.
 
 //---------------------------------------------------------------------------//
+

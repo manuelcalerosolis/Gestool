@@ -5719,12 +5719,11 @@ STATIC FUNCTION LoaArt( aGet, aTmp, aTmpFac, oFld, oSayPr1, oSayPr2, oSayVp1, oS
       aGet[_CREF    ]:Show()
       aGet[_CDETALLE]:Show()
       aGet[_MLNGDES ]:Hide()
-
+  
+/*
       if !( ( dbfArticulo )->( dbSeek( cCodArt ) ) .or. ( dbfArticulo )->( dbSeek( Upper( cCodArt ) ) ) )
 
-         /*
-         Busqueda por codigo de proveedor-----------------------------------------
-         */
+         // Busqueda por codigo de proveedor-----------------------------------------
 
          nOrdAnt                 := ( dbfArtPrv )->( OrdSetFocus( "cRefPrv" ) )
 
@@ -5734,15 +5733,11 @@ STATIC FUNCTION LoaArt( aGet, aTmp, aTmpFac, oFld, oSayPr1, oSayPr2, oSayVp1, oS
 
          ( dbfArtPrv )->( ordSetFocus( nOrdAnt ) )
 
-         /*
-         Primero buscamos por codigos de barra------------------------------------
-         */
+         // Primero buscamos por codigos de barra------------------------------------
 
          cCodArt                 := cSeekCodebar( cCodArt, dbfCodebar, dbfArticulo )
 
-         /*
-         Ahora buscamos por el codigo interno-------------------------------------
-         */
+         // Ahora buscamos por el codigo interno-------------------------------------
 
          lSeek                   := ( ( dbfArticulo )->( dbSeek( cCodArt ) ) .or. ( dbfArticulo )->( dbSeek( Upper( cCodArt ) ) ) )
 
@@ -5751,14 +5746,13 @@ STATIC FUNCTION LoaArt( aGet, aTmp, aTmpFac, oFld, oSayPr1, oSayPr2, oSayVp1, oS
          lSeek                   := .t.
 
       end if
+*/
 
       /*
       Ahora buscamos por el codigo interno-------------------------------------
       */
 
-      //if ( dbfArticulo )->( dbSeek( cCodArt ) ) .or. ( dbfArticulo )->( dbSeek( Upper( cCodArt ) ) )
-
-      if lSeek
+      if lIntelliArtciculoSearch( cCodArt, cCodPrv, dbfArticulo, dbfArtPrv, dbfCodebar )
 
          if ( lChgCodArt )
 
@@ -13045,3 +13039,71 @@ FUNCTION lValidInformeFacPrv( oGet, oGet2 )
 RETURN lValid
 
 //---------------------------------------------------------------------------//
+
+Function lIntelliArtciculoSearch( cCodArt, cCodPrv, dbfArticulo, dbfArtPrv, dbfCodebar )
+
+   local nOrdAnt
+   local cCodigoArticulo   
+   local cCodigoProveedor
+
+   /*
+   Busqueda por codigo interno-------------------------------------------------
+   */
+
+   cCodArt                 := cSeekCodebar( cCodArt, dbfCodebar, dbfArticulo )
+
+   if ( dbfArticulo )->( dbSeek( cCodArt ) ) .or. ( dbfArticulo )->( dbSeek( Upper( cCodArt ) ) )
+      cCodigoArticulo      := ( dbfArticulo )->Codigo 
+   end if
+
+   /*
+   Busqueda por codigo de proveedor--------------------------------------------
+   */
+
+   nOrdAnt                 := ( dbfArtPrv )->( OrdSetFocus( "cRefPrv" ) )
+
+   if ( dbfArtPrv )->( dbSeek( cCodPrv + cCodArt ) )
+      cCodigoProveedor     := ( dbfArtPrv )->cCodArt 
+   end if
+
+   ( dbfArtPrv )->( ordSetFocus( nOrdAnt ) )
+
+   /*
+   Vamos a ver q ha pasado-----------------------------------------------------
+   */
+
+   do case
+      case Empty( cCodigoArticulo ) .and. Empty( cCodigoProveedor )
+
+         Return ( .f. )
+
+      case !Empty( cCodigoArticulo ) .and. Empty( cCodigoProveedor )
+
+         if ( dbfArticulo )->( dbSeek( cCodigoArticulo ) )
+            Return ( .t. )
+         end if 
+      
+      case Empty( cCodigoArticulo ) .and. !Empty( cCodigoProveedor )
+
+         if ( dbfArticulo )->( dbSeek( cCodigoProveedor ) )
+            Return ( .t. )
+         end if
+
+      case !Empty( cCodigoArticulo ) .and. !Empty( cCodigoProveedor )
+         
+         if uFieldEmpresa( "nCopSea") == 1
+            if ( dbfArticulo )->( dbSeek( cCodigoArticulo ) )
+               Return ( .t. )
+            end if 
+         else
+            if ( dbfArticulo )->( dbSeek( cCodigoProveedor ) )
+               Return ( .t. )
+            end if
+         end if 
+
+   end case
+
+Return ( .f. )
+
+//---------------------------------------------------------------------------//
+
