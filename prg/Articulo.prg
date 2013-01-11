@@ -15832,10 +15832,15 @@ Function nRetPreArt( nTarifa, cCodDiv, lIvaInc, dbfArticulo, dbfDiv, dbfArtKit, 
    local nPre              := 0
    local nPreIva           := 0
    local nPreCos           := nil
+   local oError
+   local oBlock
 
    DEFAULT nTarifa         := 1
    DEFAULT lIvaInc         := .f.
    DEFAULT lBuscaImportes  := lBuscaImportes()
+
+   oBlock                  := ErrorBlock( {| oError | ApoloBreak( oError ) } )
+   BEGIN SEQUENCE
 
    if nTarifa == 0
       nTarifa        := 1
@@ -15960,11 +15965,17 @@ Function nRetPreArt( nTarifa, cCodDiv, lIvaInc, dbfArticulo, dbfDiv, dbfArtKit, 
       oTarifa:cText( nTarifa )
    end if
 
-   /*
+/*
    if cCodDiv != cDivEmp()
       nPre  := nCnv2Div( nPre, cDivEmp(), cCodDiv, dbfDiv )
    end if
-   */
+*/
+
+   RECOVER USING oError
+
+   END SEQUENCE
+
+   ErrorBlock( oBlock )  
 
 Return ( if( lIvaInc, nPreIva, nPre ) )
 
