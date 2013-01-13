@@ -1,4 +1,4 @@
-#ifndef __PDA__
+#ifndef __PDA__ 
    #include "FiveWin.Ch"
    #include "Folder.ch"
    #include "Label.ch"
@@ -18323,7 +18323,8 @@ Function nCostoUltimaCompra( cCodArt, dbfAlbPrvL, dbfFacPrvL )
 
    local nCosto   := 0
 
-   /*do case //Lo cambiamos para que coge el costo con los descuentos
+/* 
+   do case //Lo cambiamos para que coge el costo con los descuentos
       case  ( dbfAlbPrvL )->( dbSeek( cCodArt ) ) .and. ( dbfFacPrvL )->( dbSeek( cCodArt ) )
 
          if ( dbfAlbPrvL )->dFecAlb > ( dbfFacPrvL )->dFecFac
@@ -18340,7 +18341,8 @@ Function nCostoUltimaCompra( cCodArt, dbfAlbPrvL, dbfFacPrvL )
 
          nCosto   := ( dbfAlbPrvL )->nPreDiv
 
-   end case*/
+   end case
+*/
 
    do case
       case  ( dbfAlbPrvL )->( dbSeek( cCodArt ) ) .and. ( dbfFacPrvL )->( dbSeek( cCodArt ) )

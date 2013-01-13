@@ -5185,6 +5185,9 @@ FUNCTION rxPedPrv( cPath, oMeter )
       ( dbfPedPrvT)->( ordCreate( cPath + "PEDPROVL.CDX", "Lote", "cLote", {|| Field->cLote }, ) )
 
       ( dbfPedPrvT)->( ordCondSet("!Deleted()", {||!Deleted()}  ) )
+      ( dbfPedPrvT)->( ordCreate( cPath + "PEDPROVL.CDX", "cRefLote", "cRef + cLote", {|| Field->cRef + Field->cLote } ) )
+
+      ( dbfPedPrvT)->( ordCondSet("!Deleted()", {||!Deleted()}  ) )
       ( dbfPedPrvT)->( ordCreate( cPath + "PEDPROVL.CDX", "cPedCliRef", "cPedCli + cRef + cValPr1 + cValPr2", {|| Field->cPedCli + Field->cRef + Field->cValPr1 + Field->cValPr2 } ) )
 
       ( dbfPedPrvT)->( ordCondSet("!Deleted()", {||!Deleted()}  ) )
