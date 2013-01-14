@@ -108,6 +108,7 @@ Source: "c:\fw195\gestool\bin\image2pdf stdcall.dll";  DestDir: "{app}"; Flags: 
 
 Source: "c:\fw195\gestool\bin\libmysql.dll";           DestDir: "{app}"; Flags: ignoreversion
 Source: "c:\fw195\gestool\bin\freeImage.dll";          DestDir: "{app}"; Flags: ignoreversion
+
 Source: "c:\fw195\gestool\bin\frsysth.dll";            DestDir: "{app}"; Flags: ignoreversion
 
 Source: "c:\fw195\gestool\bin\ace32.dll";              DestDir: "{app}"; Flags: ignoreversion
@@ -116,7 +117,7 @@ Source: "c:\fw195\gestool\bin\aicu32.dll";             DestDir: "{app}"; Flags: 
 Source: "c:\fw195\gestool\bin\axcws32.dll";            DestDir: "{app}"; Flags: ignoreversion
 
 Source: "c:\fw195\gestool\bin\rmphtml.ocx";            DestDir: "{app}"; Flags: ignoreversion regserver
-Source: "c:\fw195\gestool\bin\rmphtml.dll";            DestDir: "{app}"; Flags: ignoreversion regserver
+Source: "c:\fw195\gestool\bin\rmphtml.dll";            DestDir: "{app}"; Flags: ignoreversion 
 Source: "c:\fw195\gestool\bin\axrmphtml.dll";          DestDir: "{app}"; Flags: ignoreversion 
 Source: "c:\fw195\gestool\bin\spanish.xml";            DestDir: "{app}"; Flags: ignoreversion
 Source: "c:\fw195\gestool\bin\rhtmleditor.lic";        DestDir: "{app}"; Flags: ignoreversion
@@ -130,12 +131,13 @@ Source: "c:\fw195\gestool\bin\jmail.dll";              DestDir: "{app}"; Flags: 
 
 Source: "c:\fw195\gestool\bin\aeatfact.dll";           DestDir: "{app}"; Flags: ignoreversion regserver
 
-Source: "c:\fw195\gestool\bin\adslocal.Cfg";           DestDir: "{app}"; Flags: ignoreversion
+Source: "c:\fw195\gestool\bin\adslocal.cfg";           DestDir: "{app}"; Flags: ignoreversion
 Source: "c:\fw195\gestool\bin\ads.ini";                DestDir: "{app}"; Flags: ignoreversion
 
 Source: "c:\fw195\gestool\bin\ansi.chr";               DestDir: "{app}"; Flags: ignoreversion
 Source: "c:\fw195\gestool\bin\extend.chr";             DestDir: "{app}"; Flags: ignoreversion
 
+Source: "c:\fw195\gestool\bmp\gestoollogo.bmp";        DestDir: "{app}\Bmp"; Flags: ignoreversion
 Source: "c:\fw195\gestool\bmp\gestoolpro.bmp";         DestDir: "{app}\Bmp"; Flags: ignoreversion
 Source: "c:\fw195\gestool\bmp\gestoollite.bmp";        DestDir: "{app}\Bmp"; Flags: ignoreversion
 Source: "c:\fw195\gestool\bmp\gestoolstandard.bmp";    DestDir: "{app}\Bmp"; Flags: ignoreversion

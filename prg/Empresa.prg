@@ -1955,6 +1955,10 @@ STATIC FUNCTION EdtCnf( aTmp, aGet, dbfEmp, oBrw, nSelFolder, bValid, nMode )
          VALID    ( aTmp[ _NDECESC ] >= 0 .AND. aTmp[ _NDECESC ]  <= 6 ) ;
          OF       oFld:aDialogs[3]
 
+      REDEFINE RADIO aTmp[ _NCOPSEA ] ; 
+         ID       760, 761, 762 ;
+         OF       oFld:aDialogs[ 3 ]
+
       /*
       Page 4 Contadores--------------------------------------------------------
       */
@@ -7183,6 +7187,7 @@ FUNCTION aItmEmp()
    aAdd( aDbf, {"lRecoger",   "L",  1, 0, "Lógico realizar para recoger en táctil",                "", "", "aEmp()", .t. } )
    aAdd( aDbf, {"nAutSer",    "N", 16, 0, "Número de autserializado",                              "", "", "aEmp()", 1 } )
    aAdd( aDbf, {"lEncargar",  "L",  1, 0, "Lógico realizar para encargos en táctil",               "", "", "aEmp()", .t. } )
+   aAdd( aDbf, {"nCopSea",    "N",  1, 0, "Número para comportamiento en caso de conflicto",       "", "", "aEmp()", 1 } )
 
 Return ( aDbf  )
 

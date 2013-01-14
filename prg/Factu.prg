@@ -427,7 +427,7 @@ FUNCTION CtrlApp()
    local oDlg
    local oBrush
    local oSerialHD
-   local nSerialHD
+   local nSerialHD   := Abs( nSerialHD() )
    local nSerialCRC
    local aSerialCRC  := {}
    local nSerialUSR  := 0

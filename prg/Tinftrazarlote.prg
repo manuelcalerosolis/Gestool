@@ -40,11 +40,12 @@ METHOD Create()
    ::AddField( "cNumDoc",  "C",12, 0, {|| "@!" },     "Num. Doc.",    .t., "Número del documento",  15, .f.  )
    ::AddField( "dFecDoc",  "D", 8, 0, {|| "@!" },     "Fecha",        .t., "Fecha del documento",   12, .f.  )
    ::AddField( "cCodCli",  "C",12, 0, {|| "@!" },     "Cod. Cli/Prv", .t., "Código del Cli/Prv",    15, .f.  )
-   ::AddField( "cCliPrv",  "C",50, 0, {|| "@!" },     "Nom. Cli/Prv", .t., "Nombre del Cli/Prv",    50, .f.  )
+   ::AddField( "cNomCli",  "C",50, 0, {|| "@!" },     "Nom. Cli/Prv", .t., "Nombre del Cli/Prv",    50, .f.  )
    ::AddField( "cCodObr",  "C",10, 0, {|| "@!" },     "Obra",         .f., "Obra",                  10, .f.  )
    ::AddField( "cCodArt",  "C",18, 0, {|| "@!" },     "Cod. Art.",    .t., "Código del artículo",   18, .f.  )
    ::AddField( "cNomArt",  "C",100, 0, {|| "@!" },    "Nom. Art.",    .t., "Nombre del artículo",   20, .f.  )
    ::AddField( "nUnidades","N",16, 6, {|| MasUnd() }, "Und.",         .t., "Unidades de artículo",  10, .t.  )
+   ::AddField( "cLote",    "C",12, 0, {|| "@!" },     "Lote",         .t., "Lote",                  10, .f.  )
 
    ::AddTmpIndex ( "cTipDoc", "cTipDoc + Dtos( dFecDoc )" )
 
@@ -99,29 +100,30 @@ METHOD lGenerate()
          ::oDbf:cNomArt     := AllTrim( ::oDbfTmp:cNomArt )
 
          do case
-            case ( AllTrim( ::oDbfTmp:cTipDoc )  == "Pedido a proveedor"              .or.;
-                 AllTrim( ::oDbfTmp:cTipDoc ) == "Albarán de proveedor"               .or.;
-                 AllTrim( ::oDbfTmp:cTipDoc ) == "Factura de proveedor"               .or.;
-                 AllTrim( ::oDbfTmp:cTipDoc ) == "Movimiento de almacén"              .or.;
-                 AllTrim( ::oDbfTmp:cTipDoc ) == "Material producido" )
+            case (  AllTrim( ::oDbfTmp:cTipDoc )  == "Pedido a proveedor"               .or.;
+                    AllTrim( ::oDbfTmp:cTipDoc ) == "Albarán de proveedor"              .or.;
+                    AllTrim( ::oDbfTmp:cTipDoc ) == "Factura de proveedor"              .or.;
+                    AllTrim( ::oDbfTmp:cTipDoc ) == "Movimiento de almacén"             .or.;
+                    AllTrim( ::oDbfTmp:cTipDoc ) == "Material producido" )
 
-                 ::oDbf:nUnidades   := ::oDbfTmp:nUnidades
+              ::oDbf:nUnidades   := ::oDbfTmp:nUnidades
 
-            case ( AllTrim( ::oDbfTmp:cTipDoc ) == "Presupuesto de cliente"           .or.;
-                 AllTrim( ::oDbfTmp:cTipDoc ) == "Pedido de cliente"                  .or.;
-                 AllTrim( ::oDbfTmp:cTipDoc ) == "Albarán de cliente"                 .or.;
-                 AllTrim( ::oDbfTmp:cTipDoc ) == "Factura de cliente"                 .or.;
-                 AllTrim( ::oDbfTmp:cTipDoc ) == "Factura rectificativa de cliente"   .or.;
-                 AllTrim( ::oDbfTmp:cTipDoc ) == "Material consumido" )
+            case (  AllTrim( ::oDbfTmp:cTipDoc ) == "Presupuesto de cliente"            .or.;
+                    AllTrim( ::oDbfTmp:cTipDoc ) == "Pedido de cliente"                 .or.;
+                    AllTrim( ::oDbfTmp:cTipDoc ) == "Albarán de cliente"                .or.;
+                    AllTrim( ::oDbfTmp:cTipDoc ) == "Factura de cliente"                .or.;
+                    AllTrim( ::oDbfTmp:cTipDoc ) == "Factura rectificativa de cliente"  .or.;
+                    AllTrim( ::oDbfTmp:cTipDoc ) == "Material consumido" )
 
-                 ::oDbf:nUnidades   := -( ::oDbfTmp:nUnidades )
+              ::oDbf:nUnidades   := -( ::oDbfTmp:nUnidades )
 
          end case
 
          ::oDbf:dFecDoc     := ::oDbfTmp:dFecDoc
          ::oDbf:cCodCli     := ::oDbfTmp:cCodCli
-         ::oDbf:cCliPrv     := ::oDbfTmp:cCliPrv
+         ::oDbf:cNomCli     := ::oDbfTmp:cNomCli
          ::oDbf:cCodObr     := ::oDbfTmp:cCodObr
+         ::oDbf:cLote       := ::oDbfTmp:cLote
 
          ::oDbf:Save()
 

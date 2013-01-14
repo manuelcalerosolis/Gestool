@@ -94,14 +94,10 @@ METHOD Resource() CLASS AccessCode
 
    local oDlg
    local oIcoApp
+   local oBmpLogo
+   local oBmpVersion
 
-   // Iconos
-
-   /*
-   if File( FullCurDir() + __GSTICON__ )
-      DEFINE ICON oIcoApp FILENAME ( FullCurDir() + __GSTICON__ )
-   end if
-   */
+   // Iconos-------------------------------------------------------------------
 
    DEFINE ICON oIcoApp RESOURCE "Gestool"
 
@@ -121,11 +117,19 @@ METHOD Resource() CLASS AccessCode
    Preparamos el dialogo-------------------------------------------------------
    */
 
-   if !( Os_IsWTSClient() )
-      DEFINE BRUSH ::oBrush FILE ( cBmpVersion() )
-   end if
+   DEFINE BRUSH ::oBrush COLOR Rgb( 255, 255, 255 ) // FILE ( cBmpVersion() )
 
    DEFINE DIALOG oDlg RESOURCE "Bienvenidos" TITLE "Bienvenidos a " + __GSTROTOR__ + Space( 1 ) + __GSTVERSION__ + " - " + __GSTFACTORY__ BRUSH ::oBrush ICON oIcoApp
+
+   REDEFINE BITMAP oBmpVersion ;
+      FILE     cBmpVersion() ;
+      ID       600 ;
+      OF       oDlg
+
+   REDEFINE BITMAP oBmpLogo ;
+      FILE     ( FullCurDir() + "Bmp\Gestoollogo.bmp" ) ;
+      ID       610 ;
+      OF       oDlg
 
    do case
       case lAds()
@@ -211,6 +215,14 @@ METHOD Resource() CLASS AccessCode
       oIcoApp:end()
    end if
 
+   if !Empty( oBmpLogo )
+      oBmpLogo:End()
+   end if 
+
+   if !Empty( oBmpVersion )
+      oBmpVersion:End()
+   end if 
+
    if !Empty( ::oBrush )
       ::oBrush:End()
    end if
@@ -289,6 +301,7 @@ METHOD TactilResource() CLASS AccessCode
    local oIcoApp
    local oImgUsr
    local oLstUsr
+   local oBmpVersion
 
    /*
    Comprobamos que exista el direcotrio USR------------------------------------
@@ -297,26 +310,28 @@ METHOD TactilResource() CLASS AccessCode
    if( !lIsDir( cPatUsr() ), MakeDir( cNamePath( cPatUsr() ) ), )
 
    /*
-   Iconos
+   Iconos----------------------------------------------------------------------
    */
 
-   if File( FullCurDir() + __GSTICON__ )
-      DEFINE ICON oIcoApp FILENAME ( FullCurDir() + __GSTICON__ )
-   end if
+   DEFINE ICON oIcoApp RESOURCE "Gestool"
+
 
    /*
    Preparamos el dialogo-------------------------------------------------------
    */
 
-   if !( Os_IsWTSClient() .or. "PDA" $ cParamsMain() )
-      DEFINE BRUSH ::oBrush FILE ( cBmpVersion() )
-   end if
+   DEFINE BRUSH ::oBrush COLOR Rgb( 255, 255, 255 ) // FILE ( cBmpVersion() )
 
    /*
    Montamos el diálogo con la imágen de fondo--------------------------------
    */
 
-   DEFINE DIALOG oDlg RESOURCE "WelSerTactil" TITLE __GSTROTOR__ + Space( 1 ) + __GSTVERSION__ + " - " + __GSTFACTORY__ BRUSH ::oBrush
+   DEFINE DIALOG oDlg RESOURCE "BienvenidosTactil" TITLE __GSTROTOR__ + Space( 1 ) + __GSTVERSION__ + " - " + __GSTFACTORY__ BRUSH ::oBrush
+
+   REDEFINE BITMAP oBmpVersion ;
+      FILE     cBmpVersion() ;
+      ID       600 ;
+      OF       oDlg
 
       /*
       Montamos la lista con los usuarios-------------------------------------
@@ -386,9 +401,17 @@ METHOD TactilResource() CLASS AccessCode
       oIcoApp:end()
    end if
 
+   if !Empty( oBmpVersion )
+      oBmpVersion:End()
+   end if 
+
    if !Empty( oLstUsr )
       oLstUsr:End()
    end if
+
+   if !Empty( ::oBrush )
+      ::oBrush:End()
+   end if  
 
 RETURN ( oDlg:nResult == IDOK )
 

@@ -13232,6 +13232,9 @@ FUNCTION rxAlbCli( cPath, oMeter )
       ( dbfAlbCliT )->( ordCondSet( "!Deleted()", {|| !Deleted() } ) )
       ( dbfAlbCliT )->( ordCreate( cPath + "ALBCLIL.CDX", "Lote", "cLote" , {|| Field->cLote } ) )
 
+      ( dbfAlbCliT )->( ordCondSet("!Deleted()", {||!Deleted()}  ) )
+      ( dbfAlbCliT )->( ordCreate( cPath + "AlbCLIL.CDX", "cRefLote", "cRef + cLote", {|| Field->cRef + Field->cLote } ) )
+
       ( dbfAlbCliT )->( ordCondSet( "!Deleted()", {|| !Deleted() } ) )
       ( dbfAlbCliT )->( ordCreate( cPath + "ALBCLIL.CDX", "cNumPed", "cNumPed", {|| Field->cNumPed } ) )
 

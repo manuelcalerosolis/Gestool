@@ -1714,10 +1714,15 @@ METHOD nTotStockAct( cCodArt, cCodAlm, cValPr1, cValPr2, cLote, lKitArt, nKitStk
 
    local aSta
    local nUnits         := 0
+   local oError
+   local oBlock
 
    DEFAULT lKitArt      := .t.
    DEFAULT nKitStk      := 0
    DEFAULT nCtlStk      := 1
+
+   oBlock               := ErrorBlock( {| oError | ApoloBreak( oError ) } )
+   BEGIN SEQUENCE
 
    if nCtlStk <= 1
 
@@ -1746,6 +1751,12 @@ METHOD nTotStockAct( cCodArt, cCodAlm, cValPr1, cValPr2, cLote, lKitArt, nKitStk
       end if
 
    end if
+
+   RECOVER USING oError
+
+   END SEQUENCE
+
+   ErrorBlock( oBlock )
 
 RETURN ( nUnits )
 
@@ -4608,8 +4619,6 @@ METHOD nStockAlmacen( cCodArt, cCodAlm, cValPr1, cValPr2, cLote ) CLASS TStock
    if( !Empty( ::cHisMov  ), ( ::cHisMov  )->( OrdSetFocus( nOrdHisMov  ) ), )
 
    RECOVER USING oError
-
-      msgStop( ErrorMessage( oError ), "Calculo de stock" )
 
    END SEQUENCE
 

@@ -24,6 +24,8 @@ FONT 8, "MS Sans Serif"
   CONTROL "", 200, "Static", SS_BITMAP|SS_CENTERIMAGE, 2, 229, 34, 30
   CONTROL "", 240, "msctls_progress32", NOT WS_VISIBLE, 2, 262, 500, 4
   CONTROL "Usuario", 100, "Static", WS_GROUP, 267, 104, 29, 9, WS_EX_TRANSPARENT
+  CONTROL "", 600, "Static", SS_BITMAP|SS_CENTERIMAGE, 2, 2, 156, 224
+  CONTROL "", 610, "Static", SS_BITMAP|SS_CENTERIMAGE, 290, 2, 206, 45
 }
 
 REINDEX DIALOG DISCARDABLE 92, 84, 386, 228
@@ -3136,43 +3138,47 @@ FONT 8, "MS Sans Serif"
   CONTROL "", 630, "ComboBox", WS_BORDER|CBS_DROPDOWNLIST|WS_TABSTOP, 373, 115, 50, 84
   CONTROL "", 800, "Edit", ES_RIGHT|WS_VSCROLL|WS_BORDER|WS_TABSTOP, 162, 128, 42, 11
   CONTROL "", 810, "Edit", ES_RIGHT|WS_VSCROLL|WS_BORDER|WS_TABSTOP, 162, 141, 42, 11
-  CONTROL "", 740, "Edit", ES_RIGHT|WS_VSCROLL|WS_BORDER|WS_TABSTOP, 162, 154, 42, 11
-  CONTROL "", 750, "Edit", ES_RIGHT|WS_VSCROLL|WS_BORDER|WS_TABSTOP, 162, 167, 42, 11
-  CONTROL "Habilitar cajas", 250, "Button", BS_AUTOCHECKBOX|WS_TABSTOP, 50, 197, 57, 10
-  CONTROL "Cajas en cálculos", 260, "Button", BS_AUTOCHECKBOX|WS_TABSTOP, 60, 210, 69, 10
-  CONTROL "", 270, "Edit", WS_BORDER|WS_TABSTOP, 244, 196, 179, 11
-  CONTROL "", 280, "Edit", WS_BORDER|WS_TABSTOP, 244, 209, 179, 11
-  CONTROL "Mostrar ventana de stocks en artículos", 770, "Button", BS_AUTOCHECKBOX|WS_TABSTOP, 50, 237, 137, 10
-  CONTROL "No mostrar stock en almacenes a cero", 193, "Button", BS_AUTOCHECKBOX|WS_TABSTOP, 50, 250, 135, 10
-  CONTROL "No permitir ventas números de series sin stock", 196, "Button", BS_AUTOCHECKBOX|WS_TABSTOP, 50, 263, 159, 10
-  CONTROL "No calcular stock actual en compras y ventas", 194, "Button", BS_AUTOCHECKBOX|WS_TABSTOP, 244, 237, 157, 10
-  CONTROL "No calcular stock por lotes", 197, "Button", BS_AUTOCHECKBOX|WS_TABSTOP, 244, 250, 99, 10
-  CONTROL "No calcular stock por números de serie", 198, "Button", BS_AUTOCHECKBOX|WS_TABSTOP, 244, 263, 138, 10
-  CONTROL "", 700, "Edit", ES_RIGHT|WS_VSCROLL|WS_BORDER|WS_TABSTOP, 100, 291, 38, 11
-  CONTROL "", 710, "Edit", ES_RIGHT|WS_VSCROLL|WS_BORDER|WS_TABSTOP, 100, 304, 38, 11
-  CONTROL "", 720, "Edit", ES_RIGHT|WS_VSCROLL|WS_BORDER|WS_TABSTOP, 296, 291, 38, 11
-  CONTROL "", 730, "Edit", ES_RIGHT|WS_VSCROLL|WS_BORDER|WS_TABSTOP, 296, 304, 38, 11
-  CONTROL "Mascaras para cantidades", -1, "Button", BS_GROUPBOX, 44, 280, 191, 39
-  CONTROL "Enteros", -1, "Static", WS_GROUP, 50, 294, 30, 8
-  CONTROL "Decimales", -1, "Static", WS_GROUP, 50, 307, 38, 8
-  CONTROL "Mascaras para escandallos", -1, "Button", BS_GROUPBOX, 237, 280, 191, 39
+  CONTROL "", 740, "Edit", ES_RIGHT|WS_VSCROLL|WS_BORDER|WS_TABSTOP, 329, 128, 42, 11
+  CONTROL "", 750, "Edit", ES_RIGHT|WS_VSCROLL|WS_BORDER|WS_TABSTOP, 329, 141, 42, 11
+  CONTROL "Habilitar cajas", 250, "Button", BS_AUTOCHECKBOX|WS_TABSTOP, 50, 171, 57, 10
+  CONTROL "Cajas en cálculos", 260, "Button", BS_AUTOCHECKBOX|WS_TABSTOP, 60, 184, 69, 10
+  CONTROL "", 270, "Edit", WS_BORDER|WS_TABSTOP, 244, 170, 179, 11
+  CONTROL "", 280, "Edit", WS_BORDER|WS_TABSTOP, 244, 183, 179, 11
+  CONTROL "Mostrar ventana de stocks en artículos", 770, "Button", BS_AUTOCHECKBOX|WS_TABSTOP, 50, 211, 137, 10
+  CONTROL "No mostrar stock en almacenes a cero", 193, "Button", BS_AUTOCHECKBOX|WS_TABSTOP, 50, 224, 135, 10
+  CONTROL "No permitir ventas números de series sin stock", 196, "Button", BS_AUTOCHECKBOX|WS_TABSTOP, 50, 237, 159, 10
+  CONTROL "No calcular stock actual en compras y ventas", 194, "Button", BS_AUTOCHECKBOX|WS_TABSTOP, 244, 211, 157, 10
+  CONTROL "No calcular stock por lotes", 197, "Button", BS_AUTOCHECKBOX|WS_TABSTOP, 244, 224, 99, 10
+  CONTROL "No calcular stock por números de serie", 198, "Button", BS_AUTOCHECKBOX|WS_TABSTOP, 244, 237, 138, 10
+  CONTROL "", 700, "Edit", ES_RIGHT|WS_VSCROLL|WS_BORDER|WS_TABSTOP, 100, 265, 38, 11
+  CONTROL "", 710, "Edit", ES_RIGHT|WS_VSCROLL|WS_BORDER|WS_TABSTOP, 100, 278, 38, 11
+  CONTROL "", 720, "Edit", ES_RIGHT|WS_VSCROLL|WS_BORDER|WS_TABSTOP, 296, 265, 38, 11
+  CONTROL "", 730, "Edit", ES_RIGHT|WS_VSCROLL|WS_BORDER|WS_TABSTOP, 296, 278, 38, 11
+  CONTROL "Primero código del articulo", 760, "Button", BS_AUTORADIOBUTTON, 50, 306, 96, 10
+  CONTROL "Primero código del proveedor", 761, "Button", BS_AUTORADIOBUTTON, 50, 319, 105, 10
+  CONTROL "Preguntar al usuario", 762, "Button", BS_AUTORADIOBUTTON, 50, 332, 76, 10
+  CONTROL "Mascaras para cantidades", -1, "Button", BS_GROUPBOX, 44, 254, 191, 39
+  CONTROL "Enteros", -1, "Static", WS_GROUP, 50, 268, 30, 8
+  CONTROL "Decimales", -1, "Static", WS_GROUP, 50, 281, 38, 8
+  CONTROL "Mascaras para escandallos", -1, "Button", BS_GROUPBOX, 237, 254, 191, 39
   CONTROL "Sobre", -1, "Static", WS_GROUP, 373, 41, 24, 8
-  CONTROL "Precios", -1, "Button", BS_GROUPBOX, 44, 30, 384, 153
+  CONTROL "Precios", -1, "Button", BS_GROUPBOX, 44, 30, 384, 127
   CONTROL "Nombre", -1, "Static", WS_GROUP, 94, 41, 30, 8
   CONTROL "% Beneficio", -1, "Static", WS_GROUP, 329, 41, 42, 8
-  CONTROL "Enteros", -1, "Static", WS_GROUP, 244, 294, 30, 8
-  CONTROL "Decimales", -1, "Static", WS_GROUP, 244, 307, 38, 8
+  CONTROL "Enteros", -1, "Static", WS_GROUP, 244, 268, 30, 8
+  CONTROL "Decimales", -1, "Static", WS_GROUP, 244, 281, 38, 8
   CONTROL "Visible", -1, "Static", WS_GROUP, 50, 41, 30, 8
-  CONTROL "Precio del producto para táctil", -1, "Static", WS_GROUP, 50, 158, 97, 8
-  CONTROL "Precio del combinado para táctil", -1, "Static", WS_GROUP, 50, 171, 104, 8
-  CONTROL "Precio por defecto", -1, "Static", WS_GROUP, 50, 132, 97, 8
-  CONTROL "Precio Web por defecto", -1, "Static", WS_GROUP, 50, 145, 97, 8
-  CONTROL "Stocks", -1, "Button", BS_GROUPBOX, 44, 226, 384, 52
+  CONTROL "Precio del producto para táctil", -1, "Static", WS_GROUP, 217, 131, 97, 8
+  CONTROL "Precio del combinado para táctil", -1, "Static", WS_GROUP, 217, 144, 104, 8
+  CONTROL "Precio por defecto", -1, "Static", WS_GROUP, 50, 131, 97, 8
+  CONTROL "Precio Web por defecto", -1, "Static", WS_GROUP, 50, 144, 97, 8
+  CONTROL "Stocks", -1, "Button", BS_GROUPBOX, 44, 200, 384, 52
   CONTROL "", 500, "Static", SS_BITMAP|SS_CENTERIMAGE, 4, 3, 34, 30
   CONTROL "Valores por defecto para artículos", -1, "Static", SS_LEFTNOWORDWRAP|WS_GROUP, 44, 3, 384, 8
-  CONTROL "Texto para cajas", -1, "Static", WS_GROUP, 162, 199, 58, 8
-  CONTROL "Texto para unidades", -1, "Static", WS_GROUP, 162, 212, 70, 8
-  CONTROL "Utilización de cajas", -1, "Button", BS_GROUPBOX, 44, 185, 384, 39
+  CONTROL "Texto para cajas", -1, "Static", WS_GROUP, 162, 173, 58, 8
+  CONTROL "Texto para unidades", -1, "Static", WS_GROUP, 162, 186, 70, 8
+  CONTROL "Utilización de cajas", -1, "Button", BS_GROUPBOX, 44, 159, 384, 39
+  CONTROL "Busquedas en caso de conflicto en compras", -1, "Button", BS_GROUPBOX, 44, 295, 384, 51
 }
 
 EDTEMPCNT DIALOG DISCARDABLE 117, 177, 288, 59
@@ -5163,8 +5169,8 @@ FONT 8, "MS Sans Serif"
   CONTROL "&Salir", IDCANCEL, "Button", WS_TABSTOP, 275, 127, 50, 14
   CONTROL "Clave de protección", 120, "Static", WS_GROUP, 140, 15, 70, 8, WS_EX_TRANSPARENT
   CONTROL "Clave de acceso", 130, "Static", SS_NOPREFIX|WS_GROUP, 140, 28, 70, 8, WS_EX_TRANSPARENT
-  CONTROL "Para obtener las claves de acceso :", 140, "Static", SS_LEFTNOWORDWRAP|WS_GROUP, 104, 44, 157, 10
-  CONTROL "Para probar el programa", 180, "Static", SS_LEFTNOWORDWRAP|WS_GROUP, 104, 91, 157, 10
+  CONTROL "Para obtener las claves de acceso :", 140, "Static", SS_LEFTNOWORDWRAP|WS_GROUP, 123, 44, 119, 10
+  CONTROL "Para probar el programa", 180, "Static", SS_LEFTNOWORDWRAP|WS_GROUP, 123, 91, 81, 10
   CONTROL "1.- Tome la factura del programa.", 150, "Static", WS_GROUP, 140, 56, 146, 9
   CONTROL "2.- Marque el teléfono siguiente 902.930.252", 160, "Static", WS_GROUP, 140, 67, 146, 9
   CONTROL "3.- Comunique la clave de protección.", 170, "Static", WS_GROUP, 140, 79, 153, 9

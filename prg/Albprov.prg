@@ -4996,11 +4996,10 @@ Static Function LoaArt( aGet, aTmp, aTmpAlb, oFld, oSayPr1, oSayPr2, oSayVp1, oS
       aGet[ _CDETALLE ]:show()
       aGet[ _MLNGDES  ]:Hide()
 
+/*
       if !( ( dbfArticulo )->( dbSeek( cCodArt ) ) .or. ( dbfArticulo )->( dbSeek( Upper( cCodArt ) ) ) )
 
-         /*
-         Busqueda por codigo de proveedor-----------------------------------------
-         */
+         // Busqueda por codigo de proveedor-----------------------------------------
 
          nOrdAnt                 := ( dbfArtPrv )->( OrdSetFocus( "cRefPrv" ) )
 
@@ -5012,15 +5011,11 @@ Static Function LoaArt( aGet, aTmp, aTmpAlb, oFld, oSayPr1, oSayPr2, oSayVp1, oS
 
          ( dbfArtPrv )->( ordSetFocus( nOrdAnt ) )
 
-         /*
-         Primero buscamos por codigos de barra------------------------------------
-            */
+         // Primero buscamos por codigos de barra------------------------------------
 
          cCodArt                 := cSeekCodebar( cCodArt, dbfCodebar, dbfArticulo )
 
-         /*
-         Ahora buscamos por el codigo interno-------------------------------------
-         */
+         // Ahora buscamos por el codigo interno-------------------------------------
 
          lSeek                   := ( dbfArticulo )->( dbSeek( cCodArt ) ) .or. ( dbfArticulo )->( dbSeek( Upper( cCodArt ) ) )
 
@@ -5029,10 +5024,9 @@ Static Function LoaArt( aGet, aTmp, aTmpAlb, oFld, oSayPr1, oSayPr2, oSayVp1, oS
          lSeek                   := .t.
 
       end if
+*/
 
-      //if ( dbfArticulo )->( dbSeek( cCodArt ) ) .or. ( dbfArticulo )->( dbSeek( Upper( cCodArt ) ) )
-
-      if lSeek
+      if lIntelliArtciculoSearch( cCodArt, cCodPrv, dbfArticulo, dbfArtPrv, dbfCodebar )
 
          if ( lChgCodArt )
 
@@ -6357,8 +6351,11 @@ FUNCTION rxAlbPrv( cPath, oMeter )
       ( dbfAlbPrvT )->( ordCondSet( "!lFacturado .and. !Deleted()", {|| !Field->lFacturado .and. !Deleted() } ) )
       ( dbfAlbPrvT )->( ordCreate( cPath + "AlbProvL.Cdx", "cRefLote", "cRef + cValPr1 + cValPr2 + cLote", {|| Field->cRef + Field->cValPr1 + Field->cValPr2 + Field->cLote } ) )
 
-      ( dbfAlbPrvT )->( ordCondSet("!Deleted()", {||!Deleted()}  ) )
+      ( dbfAlbPrvT )->( ordCondSet( "!Deleted()", {||!Deleted()}  ) )
       ( dbfAlbPrvT )->( ordCreate( cPath + "AlbProvL.Cdx", "Lote", "cLote", {|| Field->cLote } ) )
+
+      ( dbfAlbPrvT )->( ordCondSet( "!Deleted()", {||!Deleted()}  ) )
+      ( dbfAlbPrvT )->( ordCreate( cPath + "AlbProvL.Cdx", "cRefLote", "cRef + cLote", {|| Field->cRef + Field->cLote } ) )
 
       ( dbfAlbPrvT)->( ordCondSet("!Deleted()", {||!Deleted()}  ) )
       ( dbfAlbPrvT)->( ordCreate( cPath + "AlbProvL.Cdx", "cNumPed", "cNumPed", {|| Field->cNumPed } ) )
