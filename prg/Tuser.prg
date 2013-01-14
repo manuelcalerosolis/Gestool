@@ -184,10 +184,10 @@ Method OpenFiles( dbfUser, dbfCajas )
    if Empty( dbfUser )
 
       dbUseArea( .t., cDriver(), ( cPatDat() + "Users.Dbf" ), ( ::oDbf := cCheckArea( "Users" ) ), .t. )
-      ( ::oDbf )->( OrdListAdd( cPatDat() + "Users.Cdx" ) )
+      if !lAIS() ; ( ::oDbf )->( OrdListAdd( cPatDat() + "Users.Cdx" ) ) ; else ; ordSetFocus( 1 ) ; end
 
       dbUseArea( .t., cDriver(), ( cPatDat() + "Cajas.Dbf" ), ( ::oDbfCajas := cCheckArea( "Cajas" ) ), .t. )
-      ( ::oDbfCajas )->( OrdListAdd( cPatDat() + "Cajas.Cdx" ) )
+      if !lAIS() ; ( ::oDbfCajas )->( OrdListAdd( cPatDat() + "Cajas.Cdx" ) ) ; else ; ordSetFocus( 1 ) ; end
 
       ::lCloseFiles  := .t.
 

@@ -1940,7 +1940,7 @@ METHOD Reindexa( cPath )
       ::oDbfSenderReciver:End()
    end if
 
-   if Empty( ::oDbfFilesReciver )
+   if !Empty( ::oDbfFilesReciver )
       ::oDbfFilesReciver:IdxFDel()
       ::oDbfFilesReciver:Activate( .f., .t., .f. )
       ::oDbfFilesReciver:Pack()

@@ -800,18 +800,11 @@ METHOD Search( oLote, oBtnCancel, oBtnBuscar )
 
       ::oMetMsg:SetTotal( ::oProducL:OrdKeyCount() )
 
-      ? "producidos"
-
       if ::oProducL:Seek( ::cCodigo )
-
-      ? "fund producidos"
 
          while ( ::cCodigo == ::oProducL:cCodArt ) .and. !( ::oProducL:Eof() )
 
             if ( ::cLote == ::oProducL:cLote .or. Empty( ::cLote ) )
-      
-            ? "AddProducido"
-
                ::AddProducido()
             end if
 
@@ -822,8 +815,6 @@ METHOD Search( oLote, oBtnCancel, oBtnBuscar )
          end while
 
       end if
-
-      ? "Materiales"
 
       // Materiales consumidos-------------------------------------------------
 
@@ -925,19 +916,19 @@ RETURN ( Self )
 
 METHOD AddPreCli()
 
-         ::oDbfTmp:Append()
-         ::oDbfTmp:cTipDoc    := "Presupuesto de cliente"
-         ::oDbfTmp:cNumDoc    := ::oPreCliL:cSerPre + "/" + Ltrim( Str( ::oPreCliL:nNumPre ) ) + "/" + ::oPreCliL:cSufPre
-         ::oDbfTmp:cDoc       := ::oPreCliL:cSerPre + Str( ::oPreCliL:nNumPre ) + ::oPreCliL:cSufPre
-         ::oDbfTmp:cCodigo    := ::oPreCliL:cRef
-         ::oDbfTmp:cNomArt    := ::oPreCliL:cDetalle
-         ::oDbfTmp:cLote      := ::oPreCliL:cLote
-         ::oDbfTmp:nUnidades  := nTotNPreCli( ::oPreCliL:cName )
-         ::oDbfTmp:dFecDoc    := oRetFld( ::oPreCliL:cSerPre + Str( ::oPreCliL:nNumPre ) + ::oPreCliL:cSufPre, ::oPreCliT, "dFecPre" )
-         ::oDbfTmp:cCodCli    := oRetFld( ::oPreCliL:cSerPre + Str( ::oPreCliL:nNumPre ) + ::oPreCliL:cSufPre, ::oPreCliT, "cCodCli" )
-         ::oDbfTmp:cNomCli    := oRetFld( ::oPreCliL:cSerPre + Str( ::oPreCliL:nNumPre ) + ::oPreCliL:cSufPre, ::oPreCliT, "cNomCli" )
-         ::oDbfTmp:cCodObr    := oRetFld( ::oPreCliL:cSerPre + Str( ::oPreCliL:nNumPre ) + ::oPreCliL:cSufPre, ::oPreCliT, "cCodObr" )
-         ::oDbfTmp:Save()
+   ::oDbfTmp:Append()
+   ::oDbfTmp:cTipDoc    := "Presupuesto de cliente"
+   ::oDbfTmp:cNumDoc    := ::oPreCliL:cSerPre + "/" + Ltrim( Str( ::oPreCliL:nNumPre ) ) + "/" + ::oPreCliL:cSufPre
+   ::oDbfTmp:cDoc       := ::oPreCliL:cSerPre + Str( ::oPreCliL:nNumPre ) + ::oPreCliL:cSufPre
+   ::oDbfTmp:cCodigo    := ::oPreCliL:cRef
+   ::oDbfTmp:cNomArt    := ::oPreCliL:cDetalle
+   ::oDbfTmp:cLote      := ::oPreCliL:cLote
+   ::oDbfTmp:nUnidades  := nTotNPreCli( ::oPreCliL:cName )
+   ::oDbfTmp:dFecDoc    := oRetFld( ::oPreCliL:cSerPre + Str( ::oPreCliL:nNumPre ) + ::oPreCliL:cSufPre, ::oPreCliT, "dFecPre" )
+   ::oDbfTmp:cCodCli    := oRetFld( ::oPreCliL:cSerPre + Str( ::oPreCliL:nNumPre ) + ::oPreCliL:cSufPre, ::oPreCliT, "cCodCli" )
+   ::oDbfTmp:cNomCli    := oRetFld( ::oPreCliL:cSerPre + Str( ::oPreCliL:nNumPre ) + ::oPreCliL:cSufPre, ::oPreCliT, "cNomCli" )
+   ::oDbfTmp:cCodObr    := oRetFld( ::oPreCliL:cSerPre + Str( ::oPreCliL:nNumPre ) + ::oPreCliL:cSufPre, ::oPreCliT, "cCodObr" )
+   ::oDbfTmp:Save()
 
 RETURN ( Self )
 
@@ -945,19 +936,19 @@ RETURN ( Self )
 
 METHOD AddPedCli()
 
-         ::oDbfTmp:Append()
-         ::oDbfTmp:cTipDoc    := "Pedido de cliente"
-         ::oDbfTmp:cNumDoc    := ::oPedCliL:cSerPed + "/" + Ltrim( Str( ::oPedCliL:nNumPed ) ) + "/" + ::oPedCliL:cSufPed
-         ::oDbfTmp:cDoc       := ::oPedCliL:cSerPed + Str( ::oPedCliL:nNumPed ) + ::oPedCliL:cSufPed
-         ::oDbfTmp:cCodigo    := ::oPedCliL:cRef
-         ::oDbfTmp:cNomArt    := ::oPedCliL:cDetalle
-         ::oDbfTmp:cLote      := ::oPedCliL:cLote
-         ::oDbfTmp:nUnidades  := nTotNPedCli( ::oPedCliL:cName )
-         ::oDbfTmp:dFecDoc    := oRetFld( ::oPedCliL:cSerPed + Str( ::oPedCliL:nNumPed ) + ::oPedCliL:cSufPed, ::oPedCliT, "dFecPed" )
-         ::oDbfTmp:cCodCli    := oRetFld( ::oPedCliL:cSerPed + Str( ::oPedCliL:nNumPed ) + ::oPedCliL:cSufPed, ::oPedCliT, "cCodCli" )
-         ::oDbfTmp:cNomCli    := oRetFld( ::oPedCliL:cSerPed + Str( ::oPedCliL:nNumPed ) + ::oPedCliL:cSufPed, ::oPedCliT, "cNomCli" )
-         ::oDbfTmp:cCodObr    := oRetFld( ::oPedCliL:cSerPed + Str( ::oPedCliL:nNumPed ) + ::oPedCliL:cSufPed, ::oPedCliT, "cCodObr" )
-         ::oDbfTmp:Save()
+   ::oDbfTmp:Append()
+   ::oDbfTmp:cTipDoc    := "Pedido de cliente"
+   ::oDbfTmp:cNumDoc    := ::oPedCliL:cSerPed + "/" + Ltrim( Str( ::oPedCliL:nNumPed ) ) + "/" + ::oPedCliL:cSufPed
+   ::oDbfTmp:cDoc       := ::oPedCliL:cSerPed + Str( ::oPedCliL:nNumPed ) + ::oPedCliL:cSufPed
+   ::oDbfTmp:cCodigo    := ::oPedCliL:cRef
+   ::oDbfTmp:cNomArt    := ::oPedCliL:cDetalle
+   ::oDbfTmp:cLote      := ::oPedCliL:cLote
+   ::oDbfTmp:nUnidades  := nTotNPedCli( ::oPedCliL:cName )
+   ::oDbfTmp:dFecDoc    := oRetFld( ::oPedCliL:cSerPed + Str( ::oPedCliL:nNumPed ) + ::oPedCliL:cSufPed, ::oPedCliT, "dFecPed" )
+   ::oDbfTmp:cCodCli    := oRetFld( ::oPedCliL:cSerPed + Str( ::oPedCliL:nNumPed ) + ::oPedCliL:cSufPed, ::oPedCliT, "cCodCli" )
+   ::oDbfTmp:cNomCli    := oRetFld( ::oPedCliL:cSerPed + Str( ::oPedCliL:nNumPed ) + ::oPedCliL:cSufPed, ::oPedCliT, "cNomCli" )
+   ::oDbfTmp:cCodObr    := oRetFld( ::oPedCliL:cSerPed + Str( ::oPedCliL:nNumPed ) + ::oPedCliL:cSufPed, ::oPedCliT, "cCodObr" )
+   ::oDbfTmp:Save()
 
 RETURN ( Self )
 
@@ -965,19 +956,19 @@ RETURN ( Self )
 
 METHOD AddAlbCli()
 
-         ::oDbfTmp:Append()
-         ::oDbfTmp:cTipDoc    := "Albarán de cliente"
-         ::oDbfTmp:cNumDoc    := ::oAlbCliL:cSerAlb + "/" + Ltrim( Str( ::oAlbCliL:nNumAlb ) ) + "/" + ::oAlbCliL:cSufAlb
-         ::oDbfTmp:cDoc       := ::oAlbCliL:cSerAlb + Str( ::oAlbCliL:nNumAlb ) + ::oAlbCliL:cSufAlb
-         ::oDbfTmp:cCodigo    := ::oAlbCliL:cRef
-         ::oDbfTmp:cNomArt    := ::oAlbCliL:cDetalle
-         ::oDbfTmp:cLote      := ::oAlbCliL:cLote
-         ::oDbfTmp:nUnidades  := nTotNAlbCli( ::oAlbCliL:cName )
-         ::oDbfTmp:dFecDoc    := oRetFld( ::oAlbCliL:cSerAlb + Str( ::oAlbCliL:nNumAlb ) + ::oAlbCliL:cSufAlb, ::oAlbCliT, "dFecAlb" )
-         ::oDbfTmp:cCodCli    := oRetFld( ::oAlbCliL:cSerAlb + Str( ::oAlbCliL:nNumAlb ) + ::oAlbCliL:cSufAlb, ::oAlbCliT, "cCodCli" )
-         ::oDbfTmp:cNomCli    := oRetFld( ::oAlbCliL:cSerAlb + Str( ::oAlbCliL:nNumAlb ) + ::oAlbCliL:cSufAlb, ::oAlbCliT, "cNomCli" )
-         ::oDbfTmp:cCodObr    := oRetFld( ::oAlbCliL:cSerAlb + Str( ::oAlbCliL:nNumAlb ) + ::oAlbCliL:cSufAlb, ::oAlbCliT, "cCodObr" )
-         ::oDbfTmp:Save()
+   ::oDbfTmp:Append()
+   ::oDbfTmp:cTipDoc    := "Albarán de cliente"
+   ::oDbfTmp:cNumDoc    := ::oAlbCliL:cSerAlb + "/" + Ltrim( Str( ::oAlbCliL:nNumAlb ) ) + "/" + ::oAlbCliL:cSufAlb
+   ::oDbfTmp:cDoc       := ::oAlbCliL:cSerAlb + Str( ::oAlbCliL:nNumAlb ) + ::oAlbCliL:cSufAlb
+   ::oDbfTmp:cCodigo    := ::oAlbCliL:cRef
+   ::oDbfTmp:cNomArt    := ::oAlbCliL:cDetalle
+   ::oDbfTmp:cLote      := ::oAlbCliL:cLote
+   ::oDbfTmp:nUnidades  := nTotNAlbCli( ::oAlbCliL:cName )
+   ::oDbfTmp:dFecDoc    := oRetFld( ::oAlbCliL:cSerAlb + Str( ::oAlbCliL:nNumAlb ) + ::oAlbCliL:cSufAlb, ::oAlbCliT, "dFecAlb" )
+   ::oDbfTmp:cCodCli    := oRetFld( ::oAlbCliL:cSerAlb + Str( ::oAlbCliL:nNumAlb ) + ::oAlbCliL:cSufAlb, ::oAlbCliT, "cCodCli" )
+   ::oDbfTmp:cNomCli    := oRetFld( ::oAlbCliL:cSerAlb + Str( ::oAlbCliL:nNumAlb ) + ::oAlbCliL:cSufAlb, ::oAlbCliT, "cNomCli" )
+   ::oDbfTmp:cCodObr    := oRetFld( ::oAlbCliL:cSerAlb + Str( ::oAlbCliL:nNumAlb ) + ::oAlbCliL:cSufAlb, ::oAlbCliT, "cCodObr" )
+   ::oDbfTmp:Save()
 
 RETURN ( Self )
 
@@ -985,19 +976,19 @@ RETURN ( Self )
 
 METHOD AddFacCli()
 
-         ::oDbfTmp:Append()
-         ::oDbfTmp:cTipDoc    := "Factura de cliente"
-         ::oDbfTmp:cNumDoc    := ::oFacCliL:cSerie + "/" + Ltrim( Str( ::oFacCliL:nNumFac ) ) + "/" + ::oFacCliL:cSufFac
-         ::oDbfTmp:cDoc       := ::oFacCliL:cSerie + Str( ::oFacCliL:nNumFac ) + ::oFacCliL:cSufFac
-         ::oDbfTmp:cCodigo    := ::oFacCliL:cRef
-         ::oDbfTmp:cNomArt    := ::oFacCliL:cDetalle
-         ::oDbfTmp:cLote      := ::oFacCliL:cLote
-         ::oDbfTmp:nUnidades  := nTotNFacCli( ::oFacCliL:cName )
-         ::oDbfTmp:dFecDoc    := oRetFld( ::oFacCliL:cSerie + Str( ::oFacCliL:nNumFac ) + ::oFacCliL:cSufFac, ::oFacCliT, "dFecFac" )
-         ::oDbfTmp:cCodCli    := oRetFld( ::oFacCliL:cSerie + Str( ::oFacCliL:nNumFac ) + ::oFacCliL:cSufFac, ::oFacCliT, "cCodCli" )
-         ::oDbfTmp:cNomCli    := oRetFld( ::oFacCliL:cSerie + Str( ::oFacCliL:nNumFac ) + ::oFacCliL:cSufFac, ::oFacCliT, "cNomCli" )
-         ::oDbfTmp:cCodObr    := oRetFld( ::oFacCliL:cSerie + Str( ::oFacCliL:nNumFac ) + ::oFacCliL:cSufFac, ::oFacCliT, "cCodObr" )
-         ::oDbfTmp:Save()
+   ::oDbfTmp:Append()
+   ::oDbfTmp:cTipDoc    := "Factura de cliente"
+   ::oDbfTmp:cNumDoc    := ::oFacCliL:cSerie + "/" + Ltrim( Str( ::oFacCliL:nNumFac ) ) + "/" + ::oFacCliL:cSufFac
+   ::oDbfTmp:cDoc       := ::oFacCliL:cSerie + Str( ::oFacCliL:nNumFac ) + ::oFacCliL:cSufFac
+   ::oDbfTmp:cCodigo    := ::oFacCliL:cRef
+   ::oDbfTmp:cNomArt    := ::oFacCliL:cDetalle
+   ::oDbfTmp:cLote      := ::oFacCliL:cLote
+   ::oDbfTmp:nUnidades  := nTotNFacCli( ::oFacCliL:cName )
+   ::oDbfTmp:dFecDoc    := oRetFld( ::oFacCliL:cSerie + Str( ::oFacCliL:nNumFac ) + ::oFacCliL:cSufFac, ::oFacCliT, "dFecFac" )
+   ::oDbfTmp:cCodCli    := oRetFld( ::oFacCliL:cSerie + Str( ::oFacCliL:nNumFac ) + ::oFacCliL:cSufFac, ::oFacCliT, "cCodCli" )
+   ::oDbfTmp:cNomCli    := oRetFld( ::oFacCliL:cSerie + Str( ::oFacCliL:nNumFac ) + ::oFacCliL:cSufFac, ::oFacCliT, "cNomCli" )
+   ::oDbfTmp:cCodObr    := oRetFld( ::oFacCliL:cSerie + Str( ::oFacCliL:nNumFac ) + ::oFacCliL:cSufFac, ::oFacCliT, "cCodObr" )
+   ::oDbfTmp:Save()
 
 RETURN ( Self )
 
@@ -1005,19 +996,19 @@ RETURN ( Self )
 
 METHOD AddFacRec()
 
-         ::oDbfTmp:Append()
-         ::oDbfTmp:cTipDoc    := "Factura rectificativa de cliente"
-         ::oDbfTmp:cNumDoc    := ::oFacRecL:cSerie + "/" + Ltrim( Str( ::oFacRecL:nNumFac ) ) + "/" + ::oFacRecL:cSufFac
-         ::oDbfTmp:cDoc       := ::oFacRecL:cSerie + Str( ::oFacRecL:nNumFac ) + ::oFacRecL:cSufFac
-         ::oDbfTmp:cCodigo    := ::oFacRecL:cRef
-         ::oDbfTmp:cNomArt    := ::oFacRecL:cDetalle
-         ::oDbfTmp:cLote      := ::oFacRecL:cLote
-         ::oDbfTmp:nUnidades  := nTotNFacRec( ::oFacRecL:cName )
-         ::oDbfTmp:dFecDoc    := oRetFld( ::oFacRecL:cSerie + Str( ::oFacRecL:nNumFac ) + ::oFacRecL:cSufFac, ::oFacRecT, "dFecFac" )
-         ::oDbfTmp:cCodCli    := oRetFld( ::oFacRecL:cSerie + Str( ::oFacRecL:nNumFac ) + ::oFacRecL:cSufFac, ::oFacRecT, "cCodCli" )
-         ::oDbfTmp:cNomCli    := oRetFld( ::oFacRecL:cSerie + Str( ::oFacRecL:nNumFac ) + ::oFacRecL:cSufFac, ::oFacRecT, "cNomCli" )
-         ::oDbfTmp:cCodObr    := oRetFld( ::oFacRecL:cSerie + Str( ::oFacRecL:nNumFac ) + ::oFacRecL:cSufFac, ::oFacRecT, "cCodObr" )
-         ::oDbfTmp:Save()
+   ::oDbfTmp:Append()
+   ::oDbfTmp:cTipDoc    := "Factura rectificativa de cliente"
+   ::oDbfTmp:cNumDoc    := ::oFacRecL:cSerie + "/" + Ltrim( Str( ::oFacRecL:nNumFac ) ) + "/" + ::oFacRecL:cSufFac
+   ::oDbfTmp:cDoc       := ::oFacRecL:cSerie + Str( ::oFacRecL:nNumFac ) + ::oFacRecL:cSufFac
+   ::oDbfTmp:cCodigo    := ::oFacRecL:cRef
+   ::oDbfTmp:cNomArt    := ::oFacRecL:cDetalle
+   ::oDbfTmp:cLote      := ::oFacRecL:cLote
+   ::oDbfTmp:nUnidades  := nTotNFacRec( ::oFacRecL:cName )
+   ::oDbfTmp:dFecDoc    := oRetFld( ::oFacRecL:cSerie + Str( ::oFacRecL:nNumFac ) + ::oFacRecL:cSufFac, ::oFacRecT, "dFecFac" )
+   ::oDbfTmp:cCodCli    := oRetFld( ::oFacRecL:cSerie + Str( ::oFacRecL:nNumFac ) + ::oFacRecL:cSufFac, ::oFacRecT, "cCodCli" )
+   ::oDbfTmp:cNomCli    := oRetFld( ::oFacRecL:cSerie + Str( ::oFacRecL:nNumFac ) + ::oFacRecL:cSufFac, ::oFacRecT, "cNomCli" )
+   ::oDbfTmp:cCodObr    := oRetFld( ::oFacRecL:cSerie + Str( ::oFacRecL:nNumFac ) + ::oFacRecL:cSufFac, ::oFacRecT, "cCodObr" )
+   ::oDbfTmp:Save()
 
 RETURN ( Self )
 
@@ -1044,7 +1035,6 @@ RETURN ( Self )
 //---------------------------------------------------------------------------//
 
 METHOD AddProducido()
-
 
    ::oDbfTmp:Append()
    ::oDbfTmp:cTipDoc    := "Material producido"

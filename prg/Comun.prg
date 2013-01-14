@@ -726,32 +726,32 @@ Function aEmpresa( cEmp, dbfEmp, dbfDlg, dbfUser, lRptGal )
    DEFAULT lRptGal   := .f.
 
    aDlgEmp           := {}
-
+/*
    oBlock            := ErrorBlock( {| oError | ApoloBreak( oError ) } )
    BEGIN SEQUENCE
-
+*/
    if dbfEmp == nil
       USE ( cPatDat() + "EMPRESA.DBF" ) NEW VIA ( cDriver() ) SHARED ALIAS ( cCheckArea( "EMPRESA", @dbfEmp ) )
       SET ADSINDEX TO ( cPatDat() + "EMPRESA.CDX" ) ADDITIVE
-      lCloEmp   := .t.
+      lCloEmp        := .t.
    end if
 
    if dbfUser == nil
       USE ( cPatDat() + "USERS.DBF" ) NEW VIA ( cDriver() ) SHARED ALIAS ( cCheckArea( "USERS", @dbfUser ) )
       SET ADSINDEX TO ( cPatDat() + "USERS.CDX" ) ADDITIVE
-      lCloUsr  := .t.
+      lCloUsr        := .t.
    end if
 
    if dbfDlg == nil
       USE ( cPatDat() + "DELEGA.DBF" ) NEW VIA ( cDriver() ) SHARED ALIAS ( cCheckArea( "DELEGA", @dbfDlg ) )
       SET ADSINDEX TO ( cPatDat() + "DELEGA.CDX" ) ADDITIVE
-      lCloDlg  := .t.
+      lCloDlg        := .t.
    end if
 
    //if ( dbfEmp )->( dbSeek( cEmp ) )
    if dbSeekInOrd( cEmp, "CodEmp", dbfEmp )
 
-      aEmpresa    := dbScatter( dbfEmp )
+      aEmpresa       := dbScatter( dbfEmp )
 
       /*
       Configuraciones desde el usuario-----------------------------------------
@@ -784,16 +784,16 @@ Function aEmpresa( cEmp, dbfEmp, dbfDlg, dbfUser, lRptGal )
 
       else
 
-         aDlgEmp  := { "" }
+         aDlgEmp     := { "" }
 
       end if
 
    else
 
-      lEmpFnd  := .f.
+      lEmpFnd        := .f.
 
    end if
-
+/*
    RECOVER USING oError
 
       msgStop( "Imposible abrir todas las bases de datos " + CRLF + ErrorMessage( oError ) )
@@ -801,7 +801,7 @@ Function aEmpresa( cEmp, dbfEmp, dbfDlg, dbfUser, lRptGal )
    END SEQUENCE
 
    ErrorBlock( oBlock )
-
+*/
    if lCloDlg
       CLOSE ( dbfDlg )
    end if

@@ -68,6 +68,7 @@ FONT 8, "MS Sans Serif"
   CONTROL "Los datos serán comprimidos y guardados en una carpeta para el efecto.", 120, "Static", WS_GROUP, 268, 224, 234, 11
   CONTROL "automática para minimizar la posibilidad de perdidas de datos", 110, "Static", WS_GROUP, 268, 209, 196, 10
   CONTROL "", 200, "TAnimat", 0x00800000, 0, 238, 504, 5
+  CONTROL "", 600, "Static", SS_BITMAP|SS_CENTERIMAGE, 2, 2, 156, 224
 }
 
 LALBPRV DIALOG DISCARDABLE 9, -5, 404, 258
@@ -19006,12 +19007,13 @@ FONT 8, "MS Sans Serif"
   CONTROL "Empresas", -1, "Button", BS_GROUPBOX, 44, 30, 574, 219
   CONTROL "", -1, "Static", SS_BITMAP|SS_CENTERIMAGE, 4, 3, 34, 30
   CONTROL "Creación de diccionario de datos para ADS", -1, "Static", WS_GROUP, 44, 3, 141, 8
-  CONTROL "Progreso", -1, "Button", BS_GROUPBOX, 43, 251, 574, 36
+  CONTROL "Progreso", -1, "Button", BS_GROUPBOX, 44, 251, 574, 36
   CONTROL "", 100, "TXBrowse", WS_TABSTOP|0x00300000, 48, 41, 566, 203
   CONTROL "&Aceptar [F5]", IDOK, "Button", BS_DEFPUSHBUTTON|WS_TABSTOP, 512, 291, 50, 14
   CONTROL "&Cancelar", IDCANCEL, "Button", WS_TABSTOP, 567, 291, 50, 14
   CONTROL "", 500, "msctls_progress32", 0x00000000, 48, 272, 566, 5
   CONTROL "", 510, "msctls_progress32", 0x00000000, 48, 278, 566, 5
+  CONTROL "Actualizar bases de datos", 600, "Button", BS_AUTOCHECKBOX|WS_TABSTOP, 44, 295, 94, 10
 }
 
 LANGUAGE LANG_SPANISH,SUBLANG_SPANISH_MODERN

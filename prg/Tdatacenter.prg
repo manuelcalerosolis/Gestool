@@ -56,6 +56,8 @@ CLASS TDataCenter
    DATA        lEdit                      INIT .t.
    DATA        lDelete                    INIT .t.
 
+   DATA        lActualizaBaseDatos        INIT  .t.
+
    METHOD CreateDataDictionary()
    METHOD ConnectDataDictionary()
 
@@ -203,6 +205,10 @@ METHOD lAdministratorTask()
 
       ::oMtrDiccionario    := TMeter():ReDefine( 510, { | u | if( pCount() == 0, ::nMtrDiccionario, ::nMtrDiccionario := u ) }, 10, ::oDlg, .f., , , .t., rgb( 255,255,255 ), , rgb( 128,255,0 ) )
 
+      REDEFINE CHECKBOX    ::lActualizaBaseDatos ;
+         ID                600 ;
+         OF                ::oDlg
+
       REDEFINE BUTTON ::oBtnOk ;
          ID                IDOK ;
          OF                ::oDlg ;
@@ -243,6 +249,8 @@ METHOD StartAdministratorTask()
    Recorremos el array de las empresas par actualizarlas--------------------
    */
 
+   if ::lActualizaBaseDatos
+
    ::oBrwEmpresas:GoTop()
 
    for each cEmp in ::aEmpresas
@@ -264,6 +272,8 @@ METHOD StartAdministratorTask()
       ::oBrwEmpresas:Refresh()
 
    next
+
+   end if 
 
    ::oMtrDiccionario:Set( 1 )
 
@@ -1222,7 +1232,7 @@ METHOD BuildEmpresa()
    ::AddEmpresaTable( oDataTable )
 
    /*
-   Articulos
+   Articulos-------------------------------------------------------------------
    */
 
    oDataTable              := TDataTable()
