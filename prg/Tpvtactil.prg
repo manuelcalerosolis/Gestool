@@ -61,6 +61,7 @@ CLASS TpvTactil
 
    DATA oWnd
    DATA oDlg
+   DATA oFld
    DATA nScreenHorzRes
    DATA nScreenVertRes
 
@@ -182,6 +183,7 @@ CLASS TpvTactil
    DATA oBtnNum
    DATA oFntNum
    DATA oFntEur
+   DATA oFntFld
    DATA oFntBrw
    DATA oFntDlg
    DATA oFntDto
@@ -1382,6 +1384,7 @@ METHOD New( oMenuItem, oWnd ) CLASS TpvTactil
 
    ::oFntNum                  := TFont():New( "Segoe UI",  0, 46, .f., .f. )
    ::oFntEur                  := TFont():New( "Segoe UI",  0, 30, .f., .f. )
+   ::oFntFld                  := TFont():New( "Segoe UI",  0, 24, .f., .f. )
    ::oFntBrw                  := TFont():New( "Segoe UI",  0, 20, .f., .t. )
    ::oFntDlg                  := TFont():New( "Segoe UI", 12, 32, .f., .f. )
    ::oFntDto                  := TFont():New( "Segoe UI",  0, 40, .f., .f. )
@@ -1416,8 +1419,12 @@ METHOD End() CLASS TpvTactil
       ::oFntNum:End()
    end if
 
+   if !Empty( ::oFntFld )
+      ::oFntDlg:End()
+   end if
+
    if !Empty( ::oFntEur )
-      ::oFntEur:End()
+      ::oFntFld:End()
    end if
 
    if !Empty( ::oFntBrw )
@@ -1486,6 +1493,7 @@ METHOD End() CLASS TpvTactil
 
    ::oFntNum         := nil
    ::oFntEur         := nil
+   ::oFntFld         := nil
    ::oFntBrw         := nil
    ::oFntDlg         := nil
    ::oFntDto         := nil
@@ -2345,6 +2353,12 @@ METHOD Resource() CLASS TpvTactil
    */
 
    DEFINE DIALOG ::oDlg RESOURCE ( ::cResource )
+
+   REDEFINE FOLDER ::oFld ID 220 OF ::oDlg ;
+         PROMPT   "A/555", "A/555", "A/3", "A/4", "A/5", "A/6"
+
+   ::oFld:SetFont( ::oFntFld )
+
 
    /*
    Browse de familias-------------------------------------------------------

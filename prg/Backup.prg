@@ -1004,6 +1004,8 @@ Method RestoreZipFiles()
 
          else
 
+            lErrors  := .t.
+
             MsgStop( "Fichero " + cZipFile + " no encontrado" )
 
          end if
