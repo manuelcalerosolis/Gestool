@@ -30,6 +30,7 @@ Factu.prg               \
 Font.prg                \
 DialogHb.prg            \
 Window.prg              \
+Mdiframe.prg 			\
 Brush.prg               \
 Bitmap.prg              \
 Rect.prg                \
@@ -420,6 +421,7 @@ TXml.obj                \
 Font.obj                \
 DialogHb.obj            \
 Window.obj              \
+Mdiframe.obj 			\
 Rect.obj                \
 Buttonb.obj             \
 Brush.obj               \
@@ -824,6 +826,7 @@ $(OBJ)\AccessCode.obj           +
 $(OBJ)\TXml.obj                 +
 $(OBJ)\DialogHb.obj             +
 $(OBJ)\Window.obj               +
+$(OBJ)\Mdiframe.obj 			+
 $(OBJ)\Rect.obj                 +
 $(OBJ)\Buttonb.obj              +
 $(OBJ)\Brush.obj                +

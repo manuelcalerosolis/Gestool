@@ -3109,7 +3109,8 @@ Function SetEmpresa( cCodEmp, dbfEmp, dbfDlg, dbfUsr, oBrw, oWnd, lSoft )
    end if
 
    CursorWait()
-   /*
+
+/*
    oBlock            := ErrorBlock( {| oError | ApoloBreak( oError ) } )
    BEGIN SEQUENCE
    */
@@ -3355,15 +3356,15 @@ Function SetEmpresa( cCodEmp, dbfEmp, dbfDlg, dbfUsr, oBrw, oWnd, lSoft )
       oMsgText( 'Comprobando bancos' )
       IsBancos()
 
-      /*
-      Chequeo del turno-----------------------------------------------------------
-      */
-
-      oMsgText( 'Seleccionado sesión actual' )
-
-      ChkTurno( , oWnd )
-
    end if
+
+   /*
+   Chequeo del turno-----------------------------------------------------------
+   */
+
+   oMsgText( 'Seleccionado sesión actual' )
+
+   ChkTurno( , oWnd )
 
    /*
    Cerrando ficheros-----------------------------------------------------------

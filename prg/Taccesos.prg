@@ -490,11 +490,11 @@ Method MakeDatabase( cPath, oMeter )
       SysRefresh()
    end if
 
-   if !file( cPath + "UsrBtnBar.Dbf" )
+   if !lExistTable( cPath + "UsrBtnBar.Dbf" )
       dbCreate( cPath + "UsrBtnBar.Dbf", ::aStruct, cDriver() )
    end if
 
-   if !file( cPath + "UsrBtnBar.Cdx" )
+   if !lExistIndex( cPath + "UsrBtnBar.Cdx" )
       ::ReindexDatabase( cPath, oMeter )
    end if
 
@@ -508,13 +508,11 @@ Method ReindexDatabase( cPath, oMeter )
 
    DEFAULT cPath     := cPatDat()
 
-   if !file( cPath + "UsrBtnBar.Dbf" )
+   if !lExistTable( cPath + "UsrBtnBar.Dbf" )
       dbCreate( cPath + "UsrBtnBar.Dbf", ::aStruct, cDriver() )
    end if
 
-   if file( cPath + "UsrBtnBar.Cdx" )
-      fErase( cPath + "UsrBtnBar.Cdx" )
-   end if
+   fEraseIndex( cPath + "UsrBtnBar.Cdx" )
 
    dbUseArea( .t., cDriver(), cPath + "UsrBtnBar.Dbf", cCheckArea( "UsrBtnBar", @dbf ), .f. )
    if !( dbf )->( neterr() )
@@ -1005,7 +1003,7 @@ Method CreateFavoritosOfficeBar()
    oBoton   := TDotNetButton():New( 60, oGrupo, "Document_Chart_32", "Galería informe", 1, {|| RunReportGalery() }, , , .f., .f., .f. )
 
    oGrupo   := TDotNetGroup():New( ::oFavoritosBar, 66, "Salir", .f., , "End32" )
-   oBoton   := TDotNetButton():New( 60, oGrupo, "End32", "Salir", 1, {|| if( !Empty( oWnd() ), oWnd():End(), ) }, , , .f., .f., .f. )
+   oBoton   := TDotNetButton():New( 60, oGrupo, "End32", "Salir", 1, {|| if ( !Empty( oWnd() ), oWnd():End(), ) }, , , .f., .f., .f. )
 
 Return ( Self )
 
@@ -1080,6 +1078,27 @@ Method EndApp()
 Return ( Self )
 
 //---------------------------------------------------------------------------//
+
+Static Function lEndApp()
+
+   local oBlock
+   local oError
+
+   oBlock            := ErrorBlock( {| oError | ApoloBreak( oError ) } )
+   BEGIN SEQUENCE
+
+      if ( !Empty( oWnd() ), oWnd():End(), )
+
+   RECOVER
+
+   END SEQUENCE
+
+   ErrorBlock( oBlock )
+
+Return ( nil )
+
+//---------------------------------------------------------------------------//
+
 
 #pragma BEGINDUMP
 

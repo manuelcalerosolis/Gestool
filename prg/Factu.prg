@@ -392,9 +392,10 @@ Static Function CreateMainWindow( oIconApp )
    ACTIVATE WINDOW oWnd ;
       MAXIMIZED ;
       ON PAINT    ( WndPaint( hDC, oWnd, oBmp ) );
-      ON INIT     ( lStartCheck() );
       ON RESIZE   ( WndResize( oWnd ) );
+      ON INIT     ( lStartCheck() );
       VALID       ( EndApp() )
+
 
 Return nil
 
@@ -642,6 +643,12 @@ Return
 
 Function WndResize( oWnd )
 
+   local oBlock
+   local oError
+
+   oBlock         := ErrorBlock( {| oError | ApoloBreak( oError ) } )
+   BEGIN SEQUENCE
+
    if !Empty( oWnd )
 
       aEval( oWnd:oWndClient:aWnd, {|o| oWnd:oWndClient:ChildMaximize( o ) } )
@@ -651,6 +658,12 @@ Function WndResize( oWnd )
       end if
 
    end if
+
+   RECOVER
+
+   END SEQUENCE
+
+   ErrorBlock( oBlock )
 
 Return nil
 
