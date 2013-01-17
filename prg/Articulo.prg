@@ -1,4 +1,4 @@
-#ifndef __PDA__ 
+#ifndef __PDA__
    #include "FiveWin.Ch"
    #include "Folder.ch"
    #include "Label.ch"
@@ -15975,7 +15975,7 @@ Function nRetPreArt( nTarifa, cCodDiv, lIvaInc, dbfArticulo, dbfDiv, dbfArtKit, 
 
    END SEQUENCE
 
-   ErrorBlock( oBlock )  
+   ErrorBlock( oBlock )
 
 Return ( if( lIvaInc, nPreIva, nPre ) )
 
@@ -16752,7 +16752,7 @@ Static Function StartBrwSelArticulo( oGetLote, oBrw, oBrwStock, oBtnAceptarpropi
 
 RETURN ( nil )
 
-//---------------------------------------------------------------------------// 
+//---------------------------------------------------------------------------//
 
 static function cOrdenColumnaBrw( oCol, oBrwStock )
 
@@ -16793,7 +16793,7 @@ static function cOrdenColumnaBrw( oCol, oBrwStock )
 
          case AllTrim( oCol:cHeader ) == "Num. serie"
 
-            aSort( oBrwStock:aArrayData, , , {|x,y| x:cNumeroSerie < y:cNumeroSerie } )   
+            aSort( oBrwStock:aArrayData, , , {|x,y| x:cNumeroSerie < y:cNumeroSerie } )
 
             for each oColumn in oBrwStock:aCols
                oColumn:cOrder := ""
@@ -16811,13 +16811,13 @@ static function cOrdenColumnaBrw( oCol, oBrwStock )
 
             oCol:cOrder := "Unidades"
 
-      end case   
+      end case
 
       oBrwStock:Refresh()
 
    end if
 
-return .t.               
+return .t.
 
 //---------------------------------------------------------------------------//
 
@@ -17337,15 +17337,15 @@ Static Function DataReport( oFr, lTemporal )
       oFr:SetMasterDetail( "Artículos",   "Códigos de barras",       {|| ( dbfArticulo )->Codigo } )
    end if
 
-   oFr:SetResyncPair(   "Artículos",      "Precios por propiedades" )
-   oFr:SetResyncPair(   "Artículos",      "Ofertas" )
-   oFr:SetResyncPair(   "Artículos",      "Familias" )
-   oFr:SetResyncPair(   "Artículos",      "Categoria" )
-   oFr:SetResyncPair(   "Artículos",      "Temporada" )
-   oFr:SetResyncPair(   "Artículos",      "Tipo artículo" )
-   oFr:SetResyncPair(   "Artículos",      "Fabricante" )
-   oFr:SetResyncPair(   "Artículos",      "Unidad de medición" )
-   oFr:SetResyncPair(   "Artículos",      "Códigos de barras" )
+   oFr:SetResyncPair(      "Artículos",   "Precios por propiedades" )
+   oFr:SetResyncPair(      "Artículos",   "Ofertas" )
+   oFr:SetResyncPair(      "Artículos",   "Familias" )
+   oFr:SetResyncPair(      "Artículos",   "Categoria" )
+   oFr:SetResyncPair(      "Artículos",   "Temporada" )
+   oFr:SetResyncPair(      "Artículos",   "Tipo artículo" )
+   oFr:SetResyncPair(      "Artículos",   "Fabricante" )
+   oFr:SetResyncPair(      "Artículos",   "Unidad de medición" )
+   oFr:SetResyncPair(      "Artículos",   "Códigos de barras" )
 
    RECOVER USING oError
 

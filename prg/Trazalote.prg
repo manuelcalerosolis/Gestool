@@ -444,6 +444,13 @@ METHOD Activate( oMenuItem, oWnd )
    ::oBrw:SetoDbf( ::oDbfTmp )
 
       with object ( ::oBrw:AddCol() )
+         :cHeader          := "Lote"
+         :cSortOrder       := "cLote"
+         :bStrData         := {|| ::oDbfTmp:cLote }
+         :nWidth           := 120
+      end with
+
+      with object ( ::oBrw:AddCol() )
          :cHeader          := "Tipo de documento"
          :cSortOrder       := "cTipDoc"
          :bStrData         := {|| ::oDbfTmp:cTipDoc }
@@ -470,7 +477,7 @@ METHOD Activate( oMenuItem, oWnd )
          :cHeader          := "Cliente/Proveedor"
          :cSortOrder       := "cCodCli"
          :bStrData         := {|| Rtrim( ::oDbfTmp:cCodCli ) + Space( 1 ) + Rtrim( ::oDbfTmp:cNomCli ) }
-         :nWidth           := 300
+         :nWidth           := 240
       end with
 
       with object ( ::oBrw:AddCol() )
@@ -496,12 +503,6 @@ METHOD Activate( oMenuItem, oWnd )
          :nWidth           := 120
       end with
 
-      with object ( ::oBrw:AddCol() )
-         :cHeader          := "Lote"
-         :cSortOrder       := "cLote"
-         :bStrData         := {|| ::oDbfTmp:cLote }
-         :nWidth           := 120
-      end with
 
       ::oBrw:bRClicked     := {| nRow, nCol, nFlags | ::oBrw:RButtonDown( nRow, nCol, nFlags ) }
       ::oBrw:bLDblClick    := {|| ::Zoom() }

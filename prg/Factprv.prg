@@ -1164,7 +1164,7 @@ FUNCTION FacPrv( oMenuItem, oWnd, cCodPrv, cCodArt, cNumAlb )
          :cHeader          := "Nombre"
          :cSortOrder       := "cNomPrv"
          :bEditValue       := {|| ( dbfFacPrvT )->cNomPrv }
-         :nWidth           := 180
+         :nWidth           := 260
          :bLClickHeader    := {| nMRow, nMCol, nFlags, oCol | oWndBrw:ClickOnHeader( oCol ) }
       end with
 

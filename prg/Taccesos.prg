@@ -597,8 +597,6 @@ Return ( Self )
 
 Method CreateSearchBar( oWnd )
 
-   local oImage
-
    @ 124, 4 GET     ::oGet ;
             VAR      ::cGet ;
             OF       ::oRebar ;
@@ -657,15 +655,6 @@ Method CreateSearchBar( oWnd )
             OF       ::oRebar ;
             FONT     ::oFont ;
             PIXEL    SIZE 60, 30
-
-   /*
-   @ 124, 1000 IMAGE oImage ;
-            SIZE     134, 32 ;
-            PIXEL ;
-            OF       ::oRebar
-
-   oImage:LoadFromMemory( GETRCDATA( 9001, GetModuleFileName( GetInstance() ) ) )
-   */
 
 Return ( Self )
 
