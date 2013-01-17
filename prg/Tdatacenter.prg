@@ -56,7 +56,16 @@ CLASS TDataCenter
    DATA        lEdit                      INIT .t.
    DATA        lDelete                    INIT .t.
 
-   DATA        lActualizaBaseDatos        INIT  .t.
+   DATA        lActualizaBaseDatos        INIT .t.
+
+   DATA        aLgcIndices                INIT { .t., .t. }
+   DATA        aChkIndices                INIT Array( 2 )
+
+   DATA        aProgress                  INIT Array( 2 )
+   DATA        nProgress                  INIT { 0, 0 }
+
+   DATA        cMsg                       INIT ""
+   DATA        oMsg
 
    METHOD CreateDataDictionary()
    METHOD ConnectDataDictionary()
@@ -113,6 +122,9 @@ CLASS TDataCenter
    METHOD lCreaArrayPeriodos()
 
    METHOD lRecargaFecha()
+
+   METHOD Resource( nId )
+   METHOD Reindex()
 
 END CLASS
 
@@ -2696,6 +2708,120 @@ METHOD cTableDescription( cTableName )
 Return ( cDescription )
 
 //---------------------------------------------------------------------------//
+
+METHOD Resource( nId )
+
+   local n
+   local oBmp
+
+   if nAnd( nId, 1 ) != 0
+      msgStop( "Acceso no permitido." )
+      return nil
+   end if
+
+   if oWnd() != nil
+      oWnd():CloseAll()
+   end if
+
+   if nUsrInUse() > 1
+      msgStop( "Hay más de un usuario conectado a la aplicación", "Atención" )
+      return nil
+   end if
+
+   if !TReindex():lCreateHandle()
+      msgStop( "Esta opción ya ha sido inicada por otro usuario", "Atención" )
+      return nil
+   end if
+
+   /*
+   Montamos el dialogo---------------------------------------------------------
+   */
+
+   DEFINE DIALOG ::oDlg RESOURCE "ReindexADS" OF oWnd()
+
+      REDEFINE BITMAP oBmp RESOURCE "RegenerarIndices" ID 600 OF ::oDlg
+
+      REDEFINE CHECKBOX ::aChkIndices[ 1 ] VAR ::aLgcIndices[ 1 ] ID 100 OF ::oDlg
+      REDEFINE CHECKBOX ::aChkIndices[ 2 ] VAR ::aLgcIndices[ 2 ] ID 101 OF ::oDlg
+
+      ::aProgress[ 1 ]  := TMeter():ReDefine( 200, { | u | if( pCount() == 0, ::nProgress[ 1 ], ::nProgress[ 1 ] := u ) }, 10, ::oDlg, .f., , , .t., rgb( 255,255,255 ), , rgb( 128,255,0 ) )
+      ::aProgress[ 2 ]  := TMeter():ReDefine( 210, { | u | if( pCount() == 0, ::nProgress[ 2 ], ::nProgress[ 2 ] := u ) }, 10, ::oDlg, .f., , , .t., rgb( 255,255,255 ), , rgb( 128,255,0 ) )
+
+      REDEFINE SAY ::oMsg PROMPT ::cMsg ID 110 OF ::oDlg
+
+      /*
+      Botones------------------------------------------------------------------
+      */
+
+      REDEFINE BUTTON ID IDOK       OF ::oDlg ACTION ( ::Reindex() )
+      REDEFINE BUTTON ID IDCANCEL   OF ::oDlg ACTION ( ::oDlg:end() )
+
+      ::oDlg:AddFastKey( VK_F5, {|| ::Reindex() } )
+
+   ACTIVATE DIALOG ::oDlg CENTER
+
+   TReindex():lCloseHandle()
+
+   // Cerramos posibles tablas-------------------------------------------------
+
+   dbCloseAll()
+
+   // Iniciamos los servicios--------------------------------------------------
+
+   InitServices()
+
+   oBmp:End()
+
+RETURN ( Self )
+
+//---------------------------------------------------------------------------//
+
+METHOD Reindex()
+
+   local oTable
+   local cAlias
+
+   CursorWait()
+
+   ::BuildData()
+
+   ::aProgress[ 1 ]:SetTotal( len( ::aDataTables ) )
+
+   for each oTable in ::aDataTables
+
+      dbUseArea( .t., cDriver(), ( oTable:cName + ".Dbf" ), "Table", .f. )
+      ( "Table" )->( OrdSetFocus( 1 ) )
+      ( "Table" )->( OrdListRebuild() )
+      ( "Table" )->( dbCloseArea() )
+
+      ::aProgress[ 1 ]:Set( hb_EnumIndex() )
+
+   next
+
+   ::BuildEmpresa()
+
+   ::aProgress[ 2 ]:SetTotal( len( ::aEmpresaTables ) )
+
+   for each oTable in ::aEmpresaTables
+
+      dbUseArea( .t., cDriver(), ( oTable:cName + ".Dbf" ), "Table", .f. )
+      ( "Table" )->( OrdSetFocus( 1 ) )
+      ( "Table" )->( OrdListRebuild() )
+      ( "Table" )->( dbCloseArea() )
+
+      ::aProgress[ 2 ]:Set( hb_EnumIndex() )
+
+   next
+
+   CursorWE()
+
+   msgInfo( "Proceso finalizado con exito.")
+
+   ::oDlg:End()
+
+Return ( Self )
+
+//---------------------------------------------------------------------------//
 //---------------------------------------------------------------------------//
 //---------------------------------------------------------------------------//
 //---------------------------------------------------------------------------//
@@ -2862,3 +2988,4 @@ Function ADSExecuteSQLScript( cScript )
 Return ( aData )
 
 //---------------------------------------------------------------------------//
+

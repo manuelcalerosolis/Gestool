@@ -2646,7 +2646,7 @@ Function CreateAcceso( oWnd )
    oItem:oGroup         := oGrupo
    oItem:cPrompt        := 'Regenerar índices'
    oItem:cMessage       := 'Regenerar índices'
-   oItem:bAction        := {|| TReindex():New( oWnd, "01067" ):Resource() }
+   oItem:bAction        := {|| Reindexa() }
    oItem:cId            := "01067"
    oItem:cBmp           := "Recycle_16"
    oItem:cBmpBig        := "Recycle_32"
@@ -6088,6 +6088,18 @@ FUNCTION Test()
    ? Test->nInc
 
    Test->( dbCloseArea() )
+
+RETURN .t.
+
+//--------------------------------------------------------------------------//
+
+FUNCTION Reindexa()
+
+   if lAis()
+      TDataCenter():Resource( "01067" )
+   else
+      TReindex():New( oWnd(), "01067" ):Resource()
+   end if
 
 RETURN .t.
 

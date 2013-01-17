@@ -13,11 +13,7 @@ return ( TReindex():New( oWnd, oMenuItem ):Resource() )
 
 CLASS TReindex
 
-#ifdef __SQLLIB__
-   CLASSDATA cFile         INIT FullCurDir() + "SqlApolo.usr"
-#else
    CLASSDATA cFile         INIT FullCurDir() + "GstApolo.usr"
-#endif
 
    CLASSDATA nHandle
 
@@ -599,11 +595,6 @@ METHOD Resource( lAutoInit )
       oWnd():CloseAll()
    end if
 
-   if lAIS()
-      msgStop( "Esta opción no es necesaria con bases de datos Advantage", "Atención" )
-      return nil
-   end if
-
    if nUsrInUse() > 1
       msgStop( "Hay más de un usuario conectado a la aplicación", "Atención" )
       return nil
@@ -611,6 +602,11 @@ METHOD Resource( lAutoInit )
 
    if !::lCreateHandle()
       msgStop( "Esta opción ya ha sido inicada por otro usuario", "Atención" )
+      return nil
+   end if
+
+   if lAIS()
+      TDataCenter():Reindex()
       return nil
    end if
 

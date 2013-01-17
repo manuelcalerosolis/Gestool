@@ -17564,35 +17564,30 @@ STATIC FUNCTION LoaArt( cCodArt, aTmp, aGet, aTmpPed, oStkAct, oSayPr1, oSayPr2,
 
             //--Buscamos si existen ofertas para este articulo y le cambiamos el precio--//
 
-            /*nImpOfe     := nImpOferta( cCodArt, aTmpPed[ _CCODCLI ], aTmpPed[ _CCODGRP ], aTmp[ _NUNICAJA ], aTmpPed[ _DFECPED ], dbfOferta, aTmp[ _NTARLIN ], , aTmp[ _CCODPR1 ], aTmp[_CCODPR2], aTmp[_CVALPR1], aTmp[_CVALPR2] )
-
+            nImpOfe     := nImpOferta( cCodArt, aTmpPed[ _CCODCLI ], aTmpPed[ _CCODGRP ], aTmp[ _NUNICAJA ], aTmpPed[ _DFECPED ], dbfOferta, aTmp[ _NTARLIN ], , aTmp[ _CCODPR1 ], aTmp[_CCODPR2], aTmp[_CVALPR1], aTmp[_CVALPR2] )
             if nImpOfe  != 0
                aGet[ _NPREDIV ]:cText( nImpOfe )
-            end if*/
+            end if
 
             //--Buscamos si existen descuentos en las ofertas--//
 
-            /*nImpOfe     := nDtoOferta( cCodArt, aTmpPed[ _CCODCLI ], aTmpPed[ _CCODGRP ], aTmp[ _NUNICAJA ], aTmpPed[ _DFECPED ], dbfOferta, aTmp[_CCODPR1], aTmp[_CCODPR2], aTmp[_CVALPR1], aTmp[_CVALPR2] )
+            nImpOfe     := nDtoOferta( cCodArt, aTmpPed[ _CCODCLI ], aTmpPed[ _CCODGRP ], aTmp[ _NUNICAJA ], aTmpPed[ _DFECPED ], dbfOferta, aTmp[_CCODPR1], aTmp[_CCODPR2], aTmp[_CVALPR1], aTmp[_CVALPR2] )
             if nImpOfe  != 0
                aGet[ _NDTO ]:cText( nImpOfe )
-            end if*/
+            end if
 
             //--Buscamos si existen descuentos lineales en las ofertas--//
 
-            /*nImpOfe     := nDtoLineal( cCodArt, aTmpPed[ _CCODCLI ], aTmpPed[ _CCODGRP ], aTmp[ _NUNICAJA ], aTmpPed[ _DFECPED ], dbfOferta, aTmp[_CCODPR1], aTmp[_CCODPR2], aTmp[_CVALPR1], aTmp[_CVALPR2] )
+            nImpOfe     := nDtoLineal( cCodArt, aTmpPed[ _CCODCLI ], aTmpPed[ _CCODGRP ], aTmp[ _NUNICAJA ], aTmpPed[ _DFECPED ], dbfOferta, aTmp[_CCODPR1], aTmp[_CCODPR2], aTmp[_CVALPR1], aTmp[_CVALPR2] )
             if nImpOfe  != 0
                if !Empty( aGet[ _NDTODIV ] )
                   aGet[ _NDTODIV ]:cText( nImpOfe )
                else
                   aGet[ _NDTODIV ]  := nImpOfe
                end if
-            end if*/
-
-         #ifndef __PDA__
-            if !IsPda()
-                ValidaMedicion( aTmp, aGet )
             end if
-         #endif
+
+            ValidaMedicion( aTmp, aGet )
 
          end if
 
@@ -18453,11 +18448,17 @@ static function lBuscaOferta( cCodArt, aGet, aTmp, aTmpPed, dbfOferta, dbfArticu
 
       sOfeArt     := sOfertaArticulo( cCodArt, aTmpPed[ _CCODCLI ], aTmpPed[ _CCODGRP ], aTmp[ _NUNICAJA ], aTmpPed[ _DFECPED ], dbfOferta, aTmp[ _NTARLIN ], , aTmp[_CCODPR1], aTmp[_CCODPR2], aTmp[_CVALPR1], aTmp[_CVALPR2], aTmp[ _CDIVPED ], dbfArticulo, dbfDiv, dbfKit, dbfIva, aTmp[ _NCANPED ], nTotalLinea )
 
-      if !Empty( sOfeArt ) .and. sOfeArt:nPrecio != 0
-         aGet[ _NPREDIV ]:cText( sOfeArt:nPrecio )
-         aGet[ _NDTO ]:cText( sOfeArt:nDtoPorcentual )
-         aGet[ _NDTODIV ]:cText( sOfeArt:nDtoLineal )
-         aTmp[ _LLINOFE ]  := .t.
+      if !Empty( sOfeArt ) 
+         if ( sOfeArt:nPrecio != 0 )
+            aGet[ _NPREDIV ]:cText( sOfeArt:nPrecio )
+         end if 
+         if ( sOfeArt:nDtoPorcentual != 0 )
+            aGet[ _NDTO    ]:cText( sOfeArt:nDtoPorcentual )
+         end if 
+         if ( sOfeArt:nDtoLineal != 0)
+            aGet[ _NDTODIV ]:cText( sOfeArt:nDtoLineal )
+         end if 
+         aTmp[ _LLINOFE  ] := .t.
       end if
 
       if !aTmp[ _LLINOFE ]
@@ -18468,9 +18469,13 @@ static function lBuscaOferta( cCodArt, aGet, aTmp, aTmpPed, dbfOferta, dbfArticu
 
          sOfeArt     := sOfertaFamilia( ( dbfArticulo )->Familia, aTmpPed[ _CCODCLI ], aTmpPed[ _CCODGRP ], aTmpPed[ _DFECPED ], dbfOferta, aTmp[ _NTARLIN ], dbfArticulo, aTmp[ _NUNICAJA ], aTmp[ _NCANPED ], nTotalLinea )
 
-         if !Empty( sOfeArt ) .and. ( sOfeArt:nDtoPorcentual != 0 .or. sOfeArt:nDtoLineal != 0 )
-            aGet[ _NDTO ]:cText( sOfeArt:nDtoPorcentual )
-            aGet[ _NDTODIV ]:cText( sOfeArt:nDtoLineal )
+         if !Empty( sOfeArt ) 
+            if ( sOfeArt:nDtoPorcentual != 0 )
+               aGet[ _NDTO    ]:cText( sOfeArt:nDtoPorcentual )
+            end if 
+            if ( sOfeArt:nDtoLineal != 0 )
+               aGet[ _NDTODIV ]:cText( sOfeArt:nDtoLineal )
+            end if 
             aTmp[ _LLINOFE ]  := .t.
          end if
 
@@ -18484,9 +18489,13 @@ static function lBuscaOferta( cCodArt, aGet, aTmp, aTmpPed, dbfOferta, dbfArticu
 
          sOfeArt     := sOfertaTipoArticulo( ( dbfArticulo )->cCodTip, aTmpPed[ _CCODCLI ], aTmpPed[ _CCODGRP ], aTmpPed[ _DFECPED ], dbfOferta, aTmp[ _NTARLIN ], dbfArticulo, aTmp[ _NUNICAJA ], aTmp[ _NCANPED ], nTotalLinea )
 
-         if !Empty( sOfeArt ) .and. ( sOfeArt:nDtoPorcentual != 0 .or. sOfeArt:nDtoLineal != 0 )
-            aGet[ _NDTO ]:cText( sOfeArt:nDtoPorcentual )
-            aGet[ _NDTODIV ]:cText( sOfeArt:nDtoLineal )
+         if !Empty( sOfeArt ) 
+            if ( sOfeArt:nDtoPorcentual != 0 )
+               aGet[ _NDTO    ]:cText( sOfeArt:nDtoPorcentual )
+            end if 
+            if ( sOfeArt:nDtoLineal != 0 )
+               aGet[ _NDTODIV ]:cText( sOfeArt:nDtoLineal )
+            end if 
             aTmp[ _LLINOFE ]  := .t.
          end if
 
@@ -18500,9 +18509,13 @@ static function lBuscaOferta( cCodArt, aGet, aTmp, aTmpPed, dbfOferta, dbfArticu
 
          sOfeArt     := sOfertaCategoria( ( dbfArticulo )->cCodCate, aTmpPed[ _CCODCLI ], aTmpPed[ _CCODGRP ], aTmpPed[ _DFECPED ], dbfOferta, aTmp[ _NTARLIN ], dbfArticulo, aTmp[ _NUNICAJA ], aTmp[ _NCANPED ], nTotalLinea )
 
-         if !Empty( sOfeArt ) .and. ( sOfeArt:nDtoPorcentual != 0 .or. sOfeArt:nDtoLineal != 0 )
-            aGet[ _NDTO ]:cText( sOfeArt:nDtoPorcentual )
-            aGet[ _NDTODIV ]:cText( sOfeArt:nDtoLineal )
+         if !Empty( sOfeArt ) 
+            if ( sOfeArt:nDtoPorcentual != 0 )
+               aGet[ _NDTO    ]:cText( sOfeArt:nDtoPorcentual )
+            end if 
+            if ( sOfeArt:nDtoLineal != 0 )
+               aGet[ _NDTODIV ]:cText( sOfeArt:nDtoLineal )
+            end if 
             aTmp[ _LLINOFE ]  := .t.
          end if
 
@@ -18516,9 +18529,13 @@ static function lBuscaOferta( cCodArt, aGet, aTmp, aTmpPed, dbfOferta, dbfArticu
 
          sOfeArt     := sOfertaTemporada( ( dbfArticulo )->cCodTemp, aTmpPed[ _CCODCLI ], aTmpPed[ _CCODGRP ], aTmpPed[ _DFECPED ], dbfOferta, aTmp[ _NTARLIN ], dbfArticulo, aTmp[ _NUNICAJA ], aTmp[ _NCANPED ], nTotalLinea )
 
-         if !Empty( sOfeArt ) .and. ( sOfeArt:nDtoPorcentual != 0 .or. sOfeArt:nDtoLineal != 0 )
-            aGet[ _NDTO ]:cText( sOfeArt:nDtoPorcentual )
-            aGet[ _NDTODIV ]:cText( sOfeArt:nDtoLineal )
+         if !Empty( sOfeArt ) 
+            if ( sOfeArt:nDtoPorcentual != 0 )
+               aGet[ _NDTO    ]:cText( sOfeArt:nDtoPorcentual )
+            end if 
+            if ( sOfeArt:nDtoLineal != 0 )
+               aGet[ _NDTODIV ]:cText( sOfeArt:nDtoLineal )
+            end if 
             aTmp[ _LLINOFE ]  := .t.
          end if
 
@@ -18532,9 +18549,13 @@ static function lBuscaOferta( cCodArt, aGet, aTmp, aTmpPed, dbfOferta, dbfArticu
 
          sOfeArt     := sOfertaFabricante( ( dbfArticulo )->cCodFab, aTmpPed[ _CCODCLI ], aTmpPed[ _CCODGRP ], aTmpPed[ _DFECPED ], dbfOferta, aTmp[ _NTARLIN ], dbfArticulo, aTmp[ _NUNICAJA ], aTmp[ _NCANPED ], nTotalLinea )
 
-         if !Empty( sOfeArt ) .and. ( sOfeArt:nDtoPorcentual != 0 .or. sOfeArt:nDtoLineal != 0 )
-            aGet[ _NDTO ]:cText( sOfeArt:nDtoPorcentual )
-            aGet[ _NDTODIV ]:cText( sOfeArt:nDtoLineal )
+         if !Empty( sOfeArt ) 
+            if ( sOfeArt:nDtoPorcentual != 0 )
+               aGet[ _NDTO    ]:cText( sOfeArt:nDtoPorcentual )
+            end if 
+            if ( sOfeArt:nDtoLineal != 0 )
+               aGet[ _NDTODIV ]:cText( sOfeArt:nDtoLineal )
+            end if 
             aTmp[ _LLINOFE ]  := .t.
          end if
 

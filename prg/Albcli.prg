@@ -16252,7 +16252,7 @@ STATIC FUNCTION LoaArt( cCodArt, aTmp, aGet, aTmpAlb, oStkAct, oSayPr1, oSayPr2,
             aTmp[_NPVPREC ]      := ( dbfArticulo )->PvpRec
 
             if !Empty( aGet[_NPNTVER ] )
-                  aGet[_NPNTVER ]:cText( ( dbfArticulo )->nPntVer1 )
+               aGet[_NPNTVER ]:cText( ( dbfArticulo )->nPntVer1 )
             end if
 
             /*
@@ -16471,9 +16471,9 @@ STATIC FUNCTION LoaArt( cCodArt, aTmp, aGet, aTmpAlb, oStkAct, oSayPr1, oSayPr2,
                      aGet[ _NDTODIV ]:cText( ( dbfCliAtp )->nDtoDiv )
                   end if
 
-            //--Atipicas de clientes por familias--//
+               //--Atipicas de clientes por familias--//
 
-            case  lSeekAtpFam( aTmpAlb[ _CCODCLI ] + aTmp[ _CCODFAM ], aTmpAlb[ _DFECALB ], dbfCliAtp ) .and. ;
+               case  lSeekAtpFam( aTmpAlb[ _CCODCLI ] + aTmp[ _CCODFAM ], aTmpAlb[ _DFECALB ], dbfCliAtp ) .and. ;
                   ( dbfCliAtp )->lAplAlb
 
                   if ( dbfCliAtp )->nDtoArt != 0
@@ -16481,45 +16481,20 @@ STATIC FUNCTION LoaArt( cCodArt, aTmp, aGet, aTmpAlb, oStkAct, oSayPr1, oSayPr2,
                   end if
 
                   if ( dbfCliAtp )->nDprArt != 0
-                     aGet[_NDTOPRM ]:cText( ( dbfCliAtp )->nDprArt )
+                     aGet[ _NDTOPRM ]:cText( ( dbfCliAtp )->nDprArt )
                   end if
 
                   if ( dbfCliAtp )->nComAge != 0
-                     aGet[_NCOMAGE ]:cText( ( dbfCliAtp )->nComAge )
+                     aGet[ _NCOMAGE ]:cText( ( dbfCliAtp )->nComAge )
                   end if
 
                   if ( dbfCliAtp )->nDtoDiv != 0
-                     aGet[_NDTODIV]:cText( ( dbfCliAtp )->nDtoDiv )
+                     aGet[ _NDTODIV ]:cText( ( dbfCliAtp )->nDtoDiv )
                   end if
 
             end case
 
-            //--Buscamos si existen ofertas para este articulo y le cambiamos el precio--//
-
-            /*nImpOfe     := nImpOferta( cCodArt, aTmpAlb[ _CCODCLI ], aTmpAlb[ _CCODGRP ], aTmp[ _NUNICAJA ], aTmpAlb[ _DFECALB ], dbfOferta, aTmp[ _NTARLIN ], nil, aTmp[_CCODPR1], aTmp[_CCODPR2], aTmp[_CVALPR1], aTmp[_CVALPR2] )
-            if nImpOfe  != 0
-               aGet[ _NPREUNIT ]:cText( nCnv2Div( nImpOfe, cDivEmp(), aTmpAlb[ _CDIVALB ], dbfDiv ) )
-            end if
-
-            //--Buscamos si existen descuentos en las ofertas--//
-
-            nImpOfe     := nDtoOferta( cCodArt, aTmpAlb[ _CCODCLI ], aTmpAlb[ _CCODGRP ], aTmp[ _NUNICAJA ], aTmpAlb[ _DFECALB ], dbfOferta, aTmp[_CCODPR1], aTmp[_CCODPR2], aTmp[_CVALPR1], aTmp[_CVALPR2] )
-            if nImpOfe  != 0
-               aGet[ _NDTO ]:cText( nImpOfe )
-            end if
-
-            //--Buscamos si existen descuentos lineales en las ofertas--//
-
-            nImpOfe     := nDtoLineal( cCodArt, aTmpAlb[ _CCODCLI ], aTmpAlb[ _CCODGRP ], aTmp[ _NUNICAJA ], aTmpAlb[ _DFECALB ], dbfOferta, aTmp[_CCODPR1], aTmp[_CCODPR2], aTmp[_CVALPR1], aTmp[_CVALPR2] )
-            if nImpOfe  != 0
-               aGet[ _NDTODIV ]:cText( nImpOfe )
-            end if*/
-
-#ifndef __PDA__
-            if !IsPda()
-               ValidaMedicion( aTmp, aGet )
-            end if
-#endif
+            ValidaMedicion( aTmp, aGet )
 
          end if
 
@@ -16541,6 +16516,7 @@ STATIC FUNCTION LoaArt( cCodArt, aTmp, aGet, aTmpAlb, oStkAct, oSayPr1, oSayPr2,
          */
 
          if Empty( aTmp[ _NPREUNIT ] ) .or. lUsrMaster() .or. oUser():lCambiarPrecio()
+
             if !Empty( aGet[ _NPREUNIT ] )
                 aGet[ _NPREUNIT ]:HardEnable()
             end if
@@ -17727,8 +17703,6 @@ RETURN ( if( cPorDiv != nil, Trans( nCalculo, cPorDiv ), nCalculo ) )
 
 //----------------------------------------------------------------------------//
 
-#ifndef __PDA__
-
 Function dJulianoAlbCli( cAlbCliL )
 
    local cPrefijo
@@ -17765,7 +17739,6 @@ Function dJulianoAlbAnio( cAlbCliL )
 
 RETURN ( AddMonth( JulianoToDate( Year( ( cAlbCliL )->dFecAlb ), Val( cLote ) ), 8 ) )
 
-#endif
 //---------------------------------------------------------------------------//
 
 Static Function YearComboBoxChange()
@@ -17784,112 +17757,12 @@ Static Function YearComboBoxChange()
 
 Return nil
 
-//---------------------------------------------------------------------------//
-
-#ifdef __PDA__
-
-Static Function QuiAlbPda()
-
-   local nOrdLin  := ( dbfAlbCliL )->( OrdSetFocus( "NNUMALB" ) )
-   local nOrdPgo  := ( dbfAlbCliP )->( OrdSetFocus( "NNUMALB" ) )
-   local nOrdInc  := ( dbfAlbCliI )->( OrdSetFocus( "NNUMALB" ) )
-   local nOrdDoc  := ( dbfAlbCliD )->( OrdSetFocus( "NNUMALB" ) )
-
-   /*
-   Detalle---------------------------------------------------------------------
-   */
-
-   if ( dbfAlbCliL )->( dbSeek( ( dbfAlbCliT )->cSerAlb + Str( ( dbfAlbCliT )->nNumAlb ) + ( dbfAlbCliT  )->cSufAlb ) )
-
-      while ( ( dbfAlbCliL )->cSerAlb + Str( ( dbfAlbCliL )->nNumAlb ) + ( dbfAlbCliL )->cSufAlb == ( dbfAlbCliT )->cSerAlb + Str( ( dbfAlbCliT )->nNumAlb ) + ( dbfAlbCliT )->cSufAlb ) .and. !( dbfAlbCliL )->( eof() )
-
-         if dbLock( dbfAlbCliL )
-            ( dbfAlbCliL )->( dbDelete() )
-            ( dbfAlbCliL )->( dbUnLock() )
-         end if
-
-         ( dbfAlbCliL )->( dbSkip() )
-
-      end while
-
-   end if
-
-   /*
-   Eliminamos las entregas-----------------------------------------------------
-   */
-
-   while ( dbfAlbCliP )->( dbSeek( ( dbfAlbCliT )->cSerAlb + Str( ( dbfAlbCliT )->nNumAlb ) + ( dbfAlbCliT )->cSufAlb ) ) .and. !( dbfAlbCliP )->( eof() )
-
-      if ( dbfPedCliP )->( dbSeek( ( dbfAlbCliP )->cNumRec ) )
-         if dbLock( dbfPedCliP )
-            ( dbfPedCliP )->lPasado := .f.
-            ( dbfPedCliP )->( dbUnLock() )
-         end if
-      end if
-
-      if dbDialogLock( dbfAlbCliP )
-         ( dbfAlbCliP )->( dbDelete() )
-         ( dbfAlbCliP )->( dbUnLock() )
-      end if
-
-      ( dbfAlbCliP )->( dbSkip() )
-
-   end do
-
-   /*
-   Incidencias-----------------------------------------------------------------
-   */
-
-   if ( dbfAlbCliI )->( dbSeek( ( dbfAlbCliT )->cSerAlb + Str( ( dbfAlbCliT )->nNumAlb ) + ( dbfAlbCliT  )->cSufAlb ) )
-
-      while ( ( dbfAlbCliI )->cSerAlb + Str( ( dbfAlbCliI )->nNumAlb ) + ( dbfAlbCliI )->cSufAlb == ( dbfAlbCliT )->cSerAlb + Str( ( dbfAlbCliT )->nNumAlb ) + ( dbfAlbCliT  )->cSufAlb ) .and. !( dbfAlbCliI )->( eof() )
-
-         if dbLock( dbfAlbCliI )
-            ( dbfAlbCliI )->( dbDelete() )
-            ( dbfAlbCliI )->( dbUnLock() )
-         end if
-
-         ( dbfAlbCliI )->( dbSkip() )
-
-      end while
-
-   end if
-
-   /*
-   Documentos------------------------------------------------------------------
-   */
-
-   if ( dbfAlbCliD )->( dbSeek( ( dbfAlbCliT )->cSerAlb + Str( ( dbfAlbCliT )->nNumAlb ) + ( dbfAlbCliT  )->cSufAlb ) )
-
-      while ( ( dbfAlbCliD )->cSerAlb + Str( ( dbfAlbCliD )->nNumAlb ) + ( dbfAlbCliD )->cSufAlb == ( dbfAlbCliT )->cSerAlb + Str( ( dbfAlbCliT )->nNumAlb ) + ( dbfAlbCliT  )->cSufAlb ) .and. !( dbfAlbCliD )->( eof() )
-
-         if dbLock( dbfAlbCliD )
-            ( dbfAlbCliD )->( dbDelete() )
-            ( dbfAlbCliD )->( dbUnLock() )
-         end if
-
-         ( dbfAlbCliD )->( dbSkip() )
-
-      end while
-
-   end if
-
-   ( dbfAlbCliL )->( OrdSetFocus( nOrdLin ) )
-   ( dbfAlbCliP )->( OrdSetFocus( nOrdPgo ) )
-   ( dbfAlbCliI )->( OrdSetFocus( nOrdInc ) )
-   ( dbfAlbCliD )->( OrdSetFocus( nOrdDoc ) )
-
-Return .t.
-
 //--------------------------------------------------------------------------//
 
-#endif
-
-static function lBuscaOferta( cCodArt, aGet, aTmp, aTmpAlb, dbfOferta, dbfArticulo, dbfDiv, dbfKit, dbfIva  )
+Static Function lBuscaOferta( cCodArt, aGet, aTmp, aTmpAlb, dbfOferta, dbfArticulo, dbfDiv, dbfKit, dbfIva  )
 
    local sOfeArt
    local nTotalLinea    := 0
-
 
    if ( dbfArticulo )->Codigo == cCodArt .or. ( dbfArticulo )->( dbSeek( cCodArt ) )
 
@@ -17901,88 +17774,114 @@ static function lBuscaOferta( cCodArt, aGet, aTmp, aTmpAlb, dbfOferta, dbfArticu
 
       sOfeArt     := sOfertaArticulo( cCodArt, aTmpAlb[ _CCODCLI ], aTmpAlb[ _CCODGRP ], aTmp[ _NUNICAJA ], aTmpAlb[ _DFECALB ], dbfOferta, aTmp[ _NTARLIN ], , aTmp[_CCODPR1], aTmp[_CCODPR2], aTmp[_CVALPR1], aTmp[_CVALPR2], aTmp[ _CDIVALB ], dbfArticulo, dbfDiv, dbfKit, dbfIva, aTmp[ _NCANENT ], nTotalLinea )
 
-      if !Empty( sOfeArt ) .and. sOfeArt:nPrecio != 0
-         aGet[ _NPREUNIT ]:cText( sOfeArt:nPrecio )
-         aGet[ _NDTO     ]:cText( sOfeArt:nDtoPorcentual )
-         aGet[ _NDTODIV  ]:cText( sOfeArt:nDtoLineal )
+      if !Empty( sOfeArt ) 
+         if ( sOfeArt:nPrecio != 0 )
+            aGet[ _NPREUNIT ]:cText( sOfeArt:nPrecio )
+         end if 
+         if ( sOfeArt:nDtoPorcentual != 0 )
+            aGet[ _NDTO     ]:cText( sOfeArt:nDtoPorcentual )
+         end if 
+         if ( sOfeArt:nDtoLineal != 0)
+            aGet[ _NDTODIV  ]:cText( sOfeArt:nDtoLineal )
+         end if 
          aTmp[ _LLINOFE  ] := .t.
       end if
 
-      if !aTmp[ _LLINOFE ]
+      /*
+      Buscamos si existen ofertas por familia----------------------------
+      */
 
-         /*
-         Buscamos si existen ofertas por familia----------------------------
-         */
+      if !aTmp[ _LLINOFE ]
 
          sOfeArt     := sOfertaFamilia( ( dbfArticulo )->Familia, aTmpAlb[ _CCODCLI ], aTmpAlb[ _CCODGRP ], aTmpAlb[ _DFECALB ], dbfOferta, aTmp[ _NTARLIN ], dbfArticulo, aTmp[ _NUNICAJA ], aTmp[ _NCANENT ], nTotalLinea )
 
-         if !Empty( sOfeArt ) .and. ( sOfeArt:nDtoPorcentual != 0 .or. sOfeArt:nDtoLineal != 0 )
-            aGet[ _NDTO ]:cText( sOfeArt:nDtoPorcentual )
-            aGet[ _NDTODIV ]:cText( sOfeArt:nDtoLineal )
+         if !Empty( sOfeArt ) 
+            if ( sOfeArt:nDtoPorcentual != 0 )
+               aGet[ _NDTO    ]:cText( sOfeArt:nDtoPorcentual )
+            end if 
+            if ( sOfeArt:nDtoLineal != 0 )
+               aGet[ _NDTODIV ]:cText( sOfeArt:nDtoLineal )
+            end if 
             aTmp[ _LLINOFE ]  := .t.
          end if
 
       end if
 
-      if !aTmp[ _LLINOFE ]
+      /*
+      Buscamos si existen ofertas por tipos de articulos--------------
+      */
 
-         /*
-         Buscamos si existen ofertas por tipos de articulos--------------
-         */
+      if !aTmp[ _LLINOFE ]
 
          sOfeArt     := sOfertaTipoArticulo( ( dbfArticulo )->cCodTip, aTmpAlb[ _CCODCLI ], aTmpAlb[ _CCODGRP ], aTmpAlb[ _DFECALB ], dbfOferta, aTmp[ _NTARLIN ], dbfArticulo, aTmp[ _NUNICAJA ], aTmp[ _NCANENT ], nTotalLinea )
 
-         if !Empty( sOfeArt ) .and. ( sOfeArt:nDtoPorcentual != 0 .or. sOfeArt:nDtoLineal != 0 )
-            aGet[ _NDTO    ]:cText( sOfeArt:nDtoPorcentual )
-            aGet[ _NDTODIV ]:cText( sOfeArt:nDtoLineal )
+         if !Empty( sOfeArt )
+            if ( sOfeArt:nDtoPorcentual != 0 )
+               aGet[ _NDTO    ]:cText( sOfeArt:nDtoPorcentual )
+            end if 
+            if ( sOfeArt:nDtoLineal != 0 )
+               aGet[ _NDTODIV ]:cText( sOfeArt:nDtoLineal )
+            end if 
             aTmp[ _LLINOFE ]  := .t.
          end if
 
       end if
 
-      if !aTmp[ _LLINOFE ]
+      /*
+      Buscamos si existen ofertas por tipos de articulos--------------
+      */
 
-         /*
-         Buscamos si existen ofertas por tipos de articulos--------------
-         */
+      if !aTmp[ _LLINOFE ]
 
          sOfeArt     := sOfertaCategoria( ( dbfArticulo )->cCodCate, aTmpAlb[ _CCODCLI ], aTmpAlb[ _CCODGRP ], aTmpAlb[ _DFECALB ], dbfOferta, aTmp[ _NTARLIN ], dbfArticulo, aTmp[ _NUNICAJA ], aTmp[ _NCANENT ], nTotalLinea )
 
-         if !Empty( sOfeArt ) .and. ( sOfeArt:nDtoPorcentual != 0 .or. sOfeArt:nDtoLineal != 0 )
-            aGet[ _NDTO    ]:cText( sOfeArt:nDtoPorcentual )
-            aGet[ _NDTODIV ]:cText( sOfeArt:nDtoLineal )
+         if !Empty( sOfeArt )
+            if ( sOfeArt:nDtoPorcentual != 0 )
+               aGet[ _NDTO    ]:cText( sOfeArt:nDtoPorcentual )
+            end if 
+            if ( sOfeArt:nDtoLineal != 0 )
+               aGet[ _NDTODIV ]:cText( sOfeArt:nDtoLineal )
+            end if 
             aTmp[ _LLINOFE ]  := .t.
          end if
 
       end if
 
-      if !aTmp[ _LLINOFE ]
+      /*
+      Buscamos si existen ofertas por temporadas-------------------------------
+      */
 
-         /*
-         Buscamos si existen ofertas por temporadas----------------------
-         */
+      if !aTmp[ _LLINOFE ]
 
          sOfeArt     := sOfertaTemporada( ( dbfArticulo )->cCodTemp, aTmpAlb[ _CCODCLI ], aTmpAlb[ _CCODGRP ], aTmpAlb[ _DFECALB ], dbfOferta, aTmp[ _NTARLIN ], dbfArticulo, aTmp[ _NUNICAJA ], aTmp[ _NCANENT ], nTotalLinea )
 
          if !Empty( sOfeArt ) .and. ( sOfeArt:nDtoPorcentual != 0 .or. sOfeArt:nDtoLineal != 0 )
-            aGet[ _NDTO    ]:cText( sOfeArt:nDtoPorcentual )
-            aGet[ _NDTODIV ]:cText( sOfeArt:nDtoLineal )
+            if ( sOfeArt:nDtoPorcentual != 0 )
+               aGet[ _NDTO    ]:cText( sOfeArt:nDtoPorcentual )
+            end if 
+            if ( sOfeArt:nDtoLineal != 0 )
+               aGet[ _NDTODIV ]:cText( sOfeArt:nDtoLineal )
+            end if 
             aTmp[ _LLINOFE ]  := .t.
          end if
 
       end if
 
-      if !aTmp[ _LLINOFE ]
+      /*
+      Buscamos si existen ofertas por fabricantes---------------------------
+      */
 
-         /*
-         Buscamos si existen ofertas por fabricantes---------------------------
-         */
+      if !aTmp[ _LLINOFE ]
 
          sOfeArt     := sOfertaFabricante( ( dbfArticulo )->cCodFab, aTmpAlb[ _CCODCLI ], aTmpAlb[ _CCODGRP ], aTmpAlb[ _DFECALB ], dbfOferta, aTmp[ _NTARLIN ], dbfArticulo, aTmp[ _NUNICAJA ], aTmp[ _NCANENT ], nTotalLinea )
 
-         if !Empty( sOfeArt ) .and. ( sOfeArt:nDtoPorcentual != 0 .or. sOfeArt:nDtoLineal != 0 )
-            aGet[ _NDTO    ]:cText( sOfeArt:nDtoPorcentual )
-            aGet[ _NDTODIV ]:cText( sOfeArt:nDtoLineal )
+         if !Empty( sOfeArt )
+            if ( sOfeArt:nDtoPorcentual != 0 )
+               aGet[ _NDTO    ]:cText( sOfeArt:nDtoPorcentual )
+            end if 
+            if ( sOfeArt:nDtoLineal != 0 )
+               aGet[ _NDTODIV ]:cText( sOfeArt:nDtoLineal )
+            end if 
             aTmp[ _LLINOFE ]  := .t.
          end if
 
