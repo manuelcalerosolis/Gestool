@@ -6075,7 +6075,7 @@ FUNCTION Test()
 
    if Test->( dbAppend() )
       Test->nNum := 2
-      Test->( dbUnLock() )
+      Test->( dbUnLock() ) 
    end if
 
    ? Test->nInc
