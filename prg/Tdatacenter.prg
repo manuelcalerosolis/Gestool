@@ -329,7 +329,7 @@ METHOD StartAdministratorTask()
 
          SetEmpresa( cEmp[ 1 ], , , , , , .t. )
 
-         ::BuildEmpresa()
+         ::BuildEmpresa()     
          ::CreateEmpresaTable()
 
          cEmp[ 5 ]   := .t.

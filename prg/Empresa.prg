@@ -3110,10 +3110,9 @@ Function SetEmpresa( cCodEmp, dbfEmp, dbfDlg, dbfUsr, oBrw, oWnd, lSoft )
 
    CursorWait()
 
-/*
    oBlock            := ErrorBlock( {| oError | ApoloBreak( oError ) } )
    BEGIN SEQUENCE
-   */
+   
    if Empty( dbfEmp )
       USE ( cPatDat() + "EMPRESA.DBF" ) NEW VIA ( cDriver() ) SHARED ALIAS ( cCheckArea( "EMPRESA", @dbfEmp ) )
       SET ADSINDEX TO ( cPatDat() + "EMPRESA.CDX" ) ADDITIVE
@@ -3362,9 +3361,13 @@ Function SetEmpresa( cCodEmp, dbfEmp, dbfDlg, dbfUsr, oBrw, oWnd, lSoft )
    Chequeo del turno-----------------------------------------------------------
    */
 
-   oMsgText( 'Seleccionado sesión actual' )
+   if !lSoft
 
-   ChkTurno( , oWnd )
+      oMsgText( 'Seleccionado sesión actual' )
+
+      ChkTurno( , oWnd )
+
+   end if
 
    /*
    Cerrando ficheros-----------------------------------------------------------
@@ -3388,7 +3391,7 @@ Function SetEmpresa( cCodEmp, dbfEmp, dbfDlg, dbfUsr, oBrw, oWnd, lSoft )
       oBrw:Refresh()
       oBrw:SetFocus()
    end if
-   /*
+
    RECOVER USING oError
 
       msgStop( "Imposible seleccionar empresa" + CRLF + ErrorMessage( oError ) )
@@ -3396,7 +3399,7 @@ Function SetEmpresa( cCodEmp, dbfEmp, dbfDlg, dbfUsr, oBrw, oWnd, lSoft )
    END SEQUENCE
 
    ErrorBlock( oBlock )
-   */
+
    CursorWE()
 
    if !Empty( oWnd )
@@ -3539,21 +3542,13 @@ FUNCTION mkPathEmp( cCodEmpNew, cNomEmpNew, cCodEmpOld, aImportacion, lDialog, l
    local lEnd           := .f.
    local acImages       := { "BAR_01" }
    local cMsg           := "Creando nueva empresa"
-
-#ifdef __SQLLIB__
-   local cPath          := "EMP" + cCodEmpNew + "\"
-   local cPathOld       := if( !empty( cCodEmpOld ), "EMP" + cCodEmpOld + "\", nil )
-#else
    local cPath          := cPatEmpOld( cCodEmpNew )
    local cPathOld       := if( !Empty( cCodEmpOld ), cPatEmpOld( cCodEmpOld ), nil )
-#endif
 
    DEFAULT lDialog      := .f.
    DEFAULT lNewEmp      := .f.
    DEFAULT cNomEmpNew   := ""
    DEFAULT aImportacion := aImportacion():False()
-
-#ifndef __SQLLIB__
 
    if IsDirectory( cPath )
       lRdDir( cPath )
@@ -3561,8 +3556,6 @@ FUNCTION mkPathEmp( cCodEmpNew, cNomEmpNew, cCodEmpOld, aImportacion, lDialog, l
          msgStop( "Error al borrar el directorio " + Str( fError() ), cNamePath( cPath ) )
       end if
    end if
-
-#endif
 
    /*
    Dialogo para mostrar nueva empresa------------------------------------------
@@ -3607,9 +3600,16 @@ Static Function StartPathEmp( cPath, cPathOld, cCodEmpNew, cNomEmpNew, cCodEmpOl
    local oBlock
    local cCodGrp        := Space( 2 )
    local cPathGrp       := ""
+   local lAIS           := lAIS()
+
 
    oBlock               := ErrorBlock( {| oError | ApoloBreak( oError ) } )
    BEGIN SEQUENCE
+
+   if lAIS
+      lAIS( .f. ) 
+      lCdx( .t. )
+   end if
 
    SysRefresh()
 
@@ -4157,6 +4157,26 @@ Static Function StartPathEmp( cPath, cPathOld, cCodEmpNew, cNomEmpNew, cCodEmpOl
             :cPatGrp       := cPatGrp( cCodEmpNew, .f., .t. )
             :GenIndices( oMsg )
          end with
+
+      end if
+
+      /*
+      Tipo de driver q usamos--------------------------------------------------
+      */
+
+      if lAIS
+
+         msgStop( "Tenemos q meter esta empresa en el diccionario de datos")
+
+         with object ( TDataCenter() )
+            :CreateEmpresaTable()
+            :BuildEmpresa()     
+         end with
+
+         lCdx( .f. )
+         lAIS( .t. )
+
+         msgStop( "Proceso finalizado")
 
       end if
 

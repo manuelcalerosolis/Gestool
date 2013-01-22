@@ -2266,12 +2266,9 @@ Function LogWrite( cText, cFileName )
         nHand  := fOpen( cFileName, 1 )
       endif
 
-      fSeek( nHand, 0 , 2 )
+      fSeek( nHand, 0, 2 )
 
-
-      #ifndef __PDA__
-         fWrite( nHand, Time() + '-' + Trans( Seconds(), "999999.9999" ) + Space( 1 ) )
-      #endif
+      fWrite( nHand, Time() + '-' + Trans( Seconds(), "999999.9999" ) + Space( 1 ) )
 
       fWrite( nHand, cValToChar( cText ) + CRLF )
       fClose( nHand )

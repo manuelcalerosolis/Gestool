@@ -4543,7 +4543,7 @@ Return Nil
 
 Method lAnyCajaSelect()
 
-   local lAny  := .f.
+   local lAny  := .f. 
 
    ::oDbfCaj:GetRecno()
 
@@ -11493,28 +11493,11 @@ Function cCurSesion( cCurSes, lDelega )
 
    DEFAULT lDelega      := .t.
 
-#ifndef __PDA__
-
    oTurno               := TTurno()
 
    if cCurSes != nil
       oTurno:cCurTurno  := cCurSes
    end if
-
-#else
-
-   oTurno               := TTurno()
-
-   if cCurSes != nil
-      oTurno:cCurTurno  := cCurSes
-   end if
-
-   if oTurno:OpenService()
-      oTurno:CurTurno( lDelega )
-      oTurno:CloseService()
-   end if
-
-#endif
 
 Return ( if( lDelega, oTurno:cCurTurno, SubStr( oTurno:cCurTurno, 1, 6 ) ) )
 
