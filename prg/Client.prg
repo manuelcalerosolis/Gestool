@@ -14506,12 +14506,12 @@ Return ( nTotal )
 
 //---------------------------------------------------------------------------//
 
-static Function ReportingClient()
+Static Function ReportingClient()
 
-   oReporting  := TFastVentasClientes():New()
+   oReporting        := TFastVentasClientes():New()
    oReporting:Play()
 
-Return( oReporting )
+Return ( oReporting )
 
 //---------------------------------------------------------------------------//
 
