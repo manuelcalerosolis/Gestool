@@ -1035,12 +1035,12 @@ return ( cNumDoc )
 
 //----------------------------------------------------------------------------//
 
-Function MsgDbfInfo( dbfAlias )
+Function MsgDbfInfo( dbfAlias, cTitle )
 
    local oDlg
    local oTreeInfo
 
-   DEFINE DIALOG oDlg RESOURCE "DBINFO"
+   DEFINE DIALOG oDlg RESOURCE "dbInfo" TITLE ( cTitle )
 
       oTreeInfo   := TTreeView():Redefine( 100, oDlg )
 

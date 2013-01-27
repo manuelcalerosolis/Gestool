@@ -11364,7 +11364,7 @@ FUNCTION rxClient( cPath, oMeter )
       ( dbfClient )->( __dbPack() )
 
       ( dbfClient )->( ordCondSet("!Deleted()", {||!Deleted()}  ) )
-      ( dbfClient )->( ordCreate( cPath + "OBRAST.CDX", "CCODCLI", "cCodCli + cCodObr", {|| Field->cCodCli + Field->cCodObr } ) )
+      ( dbfClient )->( ordCreate( cPath + "ObrasT.CDX", "CCODCLI", "cCodCli + cCodObr", {|| Field->cCodCli + Field->cCodObr } ) )
 
       ( dbfClient )->( ordCondSet( "!Deleted()", {||!Deleted()}  ) )
       ( dbfClient )->( ordCreate( cPath + "ObrasT.Cdx", "CNOMOBR", "cCodCli + cNomObr", {|| Field->cCodCli + Field->cNomObr } ) )
