@@ -72,8 +72,10 @@ METHOD Create()
    ::AddField( "nPreKgr", "N", 16, 6, {|| ::cPicImp },     "Pre. Kg.",             .f., "Precio kilo"               , 12, .f. )
    ::AddField( "nTotVol", "N", 16, 6, {|| MasUnd() },      "Tot. vol.",            .f., "Total volumen"             , 12, .t. )
    ::AddField( "nPreVol", "N", 16, 6, {|| ::cPicImp },     "Pre. vol.",            .f., "Precio volumen"            , 12, .f. )
-   ::AddField( "nIvaTot", "N", 16, 6, {|| ::cPicOut },     cImp(),               .t., cImp()                    , 12, .t. )
+   ::AddField( "nIvaTot", "N", 16, 6, {|| ::cPicOut },     cImp(),                 .t., cImp()                      , 12, .t. )
    ::AddField( "nTotFin", "N", 16, 6, {|| ::cPicOut },     "Total",                .t., "Total"                     , 12, .t. )
+   ::AddField( "cNbrEst", "C", 35, 0, {|| "@!" },          "Establecimiento",      .f., "Nombre establecimiento"    , 50 )
+   ::AddField( "cSituac", "C", 20, 0, {|| "@!" },          "Siruació",             .f., "Situación"                 , 50 )
 
    ::AddTmpIndex( "CCODCLI", "CCODCLI + CCODART + CCODPR1 + CCODPR2 + CVALPR1 + CVALPR2 + CLOTE" )
 
@@ -255,10 +257,12 @@ METHOD lGenerate() CLASS TInfCPed
                   ::oDbf:Load()
                   ::oDbf:nUniEnt    := nUnidadesRecibidasAlbCli( ::oPedCliL:cSerPed + Str( ::oPedCliL:nNumPed ) + ::oPedCliL:cSufPed, ::oPedCliL:cRef, ::oPedCliL:cCodPr1, ::oPedCliL:cCodPr2, ::oPedCliL:cRefPrv, ::oPedCliL:cDetalle, ::oAlbCliL:cAlias )
                   ::oDbf:nUniPnt    := ::oDbf:nNumUni - ::oDbf:nUniEnt
-                  ::oDbf:nImpTot    := ::oDbf:nUniPnt * ::oDbf:nImpArt
+                  ::oDbf:nImpTot    := (::oDbf:nNumUni - ::oDbf:nUniEnt) * ::oDbf:nImpArt
                   ::oDbf:nIvaTot    := Round( ::oDbf:nImpTot * ::oPedCliL:nIva / 100, ::nDecOut )
                   ::oDbf:nTotFin    := ::oDbf:nImpTot + ::oDbf:nIvaTot
                   ::oDbf:dFecEnt    := ::oPedCliT:dFecEnt
+                  ::oDbf:cSituac    := ::oPedCliT:cSituac
+
                   ::oDbf:Save()
 
                end if

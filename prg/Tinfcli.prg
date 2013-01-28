@@ -89,6 +89,7 @@ METHOD DetCreateFields()
    ::AddField( "nPreVol", "N", 16, 6, {|| ::cPicImp },     "Pre. vol.",                .f., "Precio volumen"            , 12, .f. )
    ::AddField( "nIvaTot", "N", 16, 6, {|| ::cPicOut },     cImp(),                   .t., cImp()                    , 12, .t. )
    ::AddField( "nTotFin", "N", 16, 6, {|| ::cPicOut },     "Total",                    .t., "Total"                     , 12, .t. )
+   
 
 RETURN ( self )
 

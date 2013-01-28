@@ -38,4 +38,6 @@ shoppingbasket_full_160 BITMAP "..\\bmp\\shoppingbasket_full_160.bmp"
 address_book2_160 BITMAP "..\\bmp\\address_book2_160.bmp"
 CASHIER_160 BITMAP "..\\bmp\\Cashier_160.bmp"
 WHEEL_160 BITMAP "..\\bmp\\Wheel_160.bmp"
+navigate_left2 BITMAP "..\\bmp\\navigate_left2.bmp"
+navigate_right2 BITMAP "..\\bmp\\navigate_right2.bmp"
 

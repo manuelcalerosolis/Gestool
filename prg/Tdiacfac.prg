@@ -53,6 +53,9 @@ METHOD create()
    ::AddField( "nBase10", "N", 16, 6, {|| ::cPicOut },            "Base 10%",  .f., "Base al 10%",          10, .t. )
    ::AddField( "nIva10",  "N", 16, 6, {|| ::cPicOut },            "IVA. 10%",  .f., "IVA al 10%",           10, .t. )
    ::AddField( "nReq10",  "N", 16, 6, {|| ::cPicOut },            "REQ. 10%",  .f., "R.E. al 10%",          10, .t. )
+   ::AddField( "nBase4",  "N", 16, 6, {|| ::cPicOut },            "Base 4%",   .f., "Base al 4%",           10, .t. )
+   ::AddField( "nIva4",   "N", 16, 6, {|| ::cPicOut },            "IVA. 4%",   .f., "IVA al 4%",            10, .t. )
+   ::AddField( "nReq4",   "N", 16, 6, {|| ::cPicOut },            "REQ. 4%",   .f., "R.E. al 4%",           10, .t. )
    ::AddField( "nBase0",  "N", 16, 6, {|| ::cPicOut },            "Base 0%",   .f., "Base al 0%",           10, .t. )
    ::AddField( "nIva0",   "N", 16, 6, {|| ::cPicOut },            "IVA. 0%",   .f., "IVA al 0%",            10, .t. )
    ::AddField( "nReq0",   "N", 16, 6, {|| ::cPicOut },            "REQ. 0%",   .f., "R.E. al 0%",           10, .t. )
@@ -301,6 +304,9 @@ METHOD lGenerate() CLASS TDiaCFac
             ::oDbf:nBase10          := 0
             ::oDbf:nIva10           := 0
             ::oDbf:nReq10           := 0
+            ::oDbf:nBase4           := 0
+            ::oDbf:nIva4            := 0
+            ::oDbf:nReq4            := 0
             ::oDbf:nBase0           := 0
             ::oDbf:nIva0            := 0
             ::oDbf:nReq0            := 0
@@ -371,6 +377,23 @@ METHOD lGenerate() CLASS TDiaCFac
                   ::oDbf:nBase8     := aTotTmp[8][3,2] + aTotTmp[8][3,6]
                   ::oDbf:nIva8      := aTotTmp[8][3,8]
                   ::oDbf:nReq8      := aTotTmp[8][3,9]
+            end case
+
+            do case
+               case aTotTmp[8][1,3] == 4
+                  ::oDbf:nBase4     := aTotTmp[8][1,2] + aTotTmp[8][1,6]
+                  ::oDbf:nIva4      := aTotTmp[8][1,8]
+                  ::oDbf:nReq4      := aTotTmp[8][1,9]
+
+               case aTotTmp[8][2,3] == 4
+                  ::oDbf:nBase4     := aTotTmp[8][2,2] + aTotTmp[8][2,6]
+                  ::oDbf:nIva4      := aTotTmp[8][2,8]
+                  ::oDbf:nReq4      := aTotTmp[8][2,9]
+
+               case aTotTmp[8][3,3] == 4
+                  ::oDbf:nBase4     := aTotTmp[8][3,2] + aTotTmp[8][3,6]
+                  ::oDbf:nIva4      := aTotTmp[8][3,8]
+                  ::oDbf:nReq4      := aTotTmp[8][3,9]
             end case
 
             do case
@@ -469,6 +492,9 @@ METHOD lGenerate() CLASS TDiaCFac
             ::oDbf:nBase10          := 0
             ::oDbf:nIva10           := 0
             ::oDbf:nReq10           := 0
+            ::oDbf:nBase4           := 0
+            ::oDbf:nIva4            := 0
+            ::oDbf:nReq4            := 0
             ::oDbf:nBase0           := 0
             ::oDbf:nIva0            := 0
             ::oDbf:nReq0            := 0
@@ -509,9 +535,9 @@ METHOD lGenerate() CLASS TDiaCFac
 
             do case
                case aTotTmp[8][1,3] == 10
-                  ::oDbf:nBase21    := aTotTmp[8][1,2] + aTotTmp[8][1,6]
-                  ::oDbf:nIva21     := aTotTmp[8][1,8]
-                  ::oDbf:nReq21     := aTotTmp[8][1,9]
+                  ::oDbf:nBase10    := aTotTmp[8][1,2] + aTotTmp[8][1,6]
+                  ::oDbf:nIva10     := aTotTmp[8][1,8]
+                  ::oDbf:nReq10     := aTotTmp[8][1,9]
 
                case aTotTmp[8][2,3] == 10
                   ::oDbf:nBase10    := aTotTmp[8][2,2] + aTotTmp[8][2,6]
@@ -540,6 +566,24 @@ METHOD lGenerate() CLASS TDiaCFac
                   ::oDbf:nBase8     := aTotTmp[8][3,2] + aTotTmp[8][3,6]
                   ::oDbf:nIva8      := aTotTmp[8][3,8]
                   ::oDbf:nReq8      := aTotTmp[8][3,9]
+            end case
+
+            do case
+
+               case aTotTmp[8][1,3] == 4
+                  ::oDbf:nBase4     := aTotTmp[8][1,2] + aTotTmp[8][1,6]
+                  ::oDbf:nIva4      := aTotTmp[8][1,8]
+                  ::oDbf:nReq4      := aTotTmp[8][1,9]
+
+               case aTotTmp[8][2,3] == 4
+                  ::oDbf:nBase4     := aTotTmp[8][2,2] + aTotTmp[8][2,6]
+                  ::oDbf:nIva4      := aTotTmp[8][2,8]
+                  ::oDbf:nReq4      := aTotTmp[8][2,9]
+
+               case aTotTmp[8][3,3] == 4
+                  ::oDbf:nBase4     := aTotTmp[8][3,2] + aTotTmp[8][3,6]
+                  ::oDbf:nIva4      := aTotTmp[8][3,8]
+                  ::oDbf:nReq4      := aTotTmp[8][3,9]
             end case
 
             do case

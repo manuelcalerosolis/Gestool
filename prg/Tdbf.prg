@@ -260,6 +260,10 @@ CLASS TDbf
 
     Method lExistFile( cFile )            INLINE ( ::cRDD != "DBFCDX" .or. File( cFile ) )
 
+    Method aScatter()
+
+    Method aDbfToArray()
+
 ENDCLASS
 
 //----------------------------------------------------------------------------//
@@ -2189,6 +2193,42 @@ METHOD AppendFromObject( oDbf ) CLASS TDbf
    end if
 
 Return ( Self )
+
+//----------------------------------------------------------------------------//
+
+Method aScatter() class TDbf
+
+  local i
+  local aField  := {}
+  local nField  := ::FCount()
+
+  for i := 1 to nField
+      aAdd( aField, ::FieldGet(i) )
+  next
+
+Return ( aField )
+
+//----------------------------------------------------------------------------//
+
+Method aDbfToArray() class TDbf
+
+  local aDbf  := {}
+
+  ::GetStatus()
+
+  ::First()
+
+  while !( ::nArea )->( Eof() )  
+
+    aAdd( aDbf, ::aScatter() )
+
+    ( ::nArea )->( dbSkip() )
+
+  end while  
+
+  ::SetStatus()
+
+Return ( aDbf )
 
 //----------------------------------------------------------------------------//
 //------ Funciones amigas ----------------------------------------------------//
