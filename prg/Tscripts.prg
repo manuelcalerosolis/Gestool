@@ -34,9 +34,9 @@ CLASS TScripts FROM TMant
 
    METHOD   EjecutarScript()
 
-   METHOD   CompilarEjecutarScript( cCodScr )  INLINE ( fErase( cPatScript() + cCodScr + ".hrb" ), ::EjecutarScript() )
+   METHOD   CompilarEjecutarScript( cCodScr )  INLINE ( fErase( cPatScript() + cCodScr + ".hrb" ), ::EjecutarScript( cCodScr ) )
 
-   METHOD   LoadTimer()
+   METHOD   StartTimer()
 
    METHOD   EndTimer()
 
@@ -94,6 +94,8 @@ RETURN ( ::oDbf )
 //---------------------------------------------------------------------------//
 
 METHOD Activate() CLASS TScripts
+
+   ::EndTimer()
  
    if nAnd( ::nLevel, 1 ) == 0
 
@@ -178,7 +180,7 @@ METHOD Activate() CLASS TScripts
          RESOURCE "Flash_" ;
          OF       ::oWndBrw ;
          NOBORDER ;
-         ACTION   ( ::EjecutarScript() ) ;
+         ACTION   ( ::EjecutarScript( ::oDbf:cCodScr ) ) ;
          TOOLTIP  "E(j)ecutar";
          HOTKEY   "J" ;
          LEVEL    ACC_ZOOM
@@ -198,7 +200,7 @@ METHOD Activate() CLASS TScripts
          ::oWndBrw:cHtmlHelp  := ::cHtmlHelp
       end if
 
-      ::oWndBrw:Activate( nil, nil, nil, nil, nil, nil, nil, nil, nil, nil, nil, nil, nil, nil, nil, nil, {|| ::CloseFiles() } )
+      ::oWndBrw:Activate( nil, nil, nil, nil, nil, nil, nil, nil, nil, nil, nil, nil, nil, nil, nil, nil, {|| ::CloseFiles(), ::StartTimer() } )
 
    else
 
@@ -364,7 +366,7 @@ Return .t.
 
 //---------------------------------------------------------------------------//
 
-METHOD EjecutarScript() CLASS TScripts
+METHOD EjecutarScript( cCodigoScript ) CLASS TScripts
 
    local u
    local pHrb
@@ -379,10 +381,10 @@ METHOD EjecutarScript() CLASS TScripts
    Comprobamos que el script haya sido compilado-------------------------------
    */
 
-   cFichero       := cPatScript() + ::oDbf:cCodScr + ".hrb"
+   cFichero       := cPatScript() + cCodigoScript + ".hrb"
 
    if !File( cFichero )
-      ::CompilarScript( ::oDbf:cCodScr )
+      ::CompilarScript( cCodigoScript )
    end if
 
    /*
@@ -409,14 +411,26 @@ Return .t.
 
 //---------------------------------------------------------------------------//
 
-METHOD LoadTimer()
+METHOD StartTimer()
+
+   local cCodScr
+   local oTimer
+
+   ::aTimer          := {}   
 
    if ::OpenFiles()
 
       while !::oDbf:Eof()
 
          if ::oDbf:nMinScr != 0
-            ::aadd(::aTimer, TTimer():New( ::oDbf:nMinScr, 60000, {|| msgAlert( by( ::oDbf:cCodScr ) ) } ):Activate())
+            
+            cCodScr  := by( ::oDbf:cCodScr )
+
+            oTimer   := TTimer():New( ::oDbf:nMinScr * 60000, {|| ::EjecutarScript( cCodScr ) }, oWnd() )
+            oTimer:Activate()
+
+            aAdd( ::aTimer, oTimer ) 
+
          end if
 
          ::oDbf:Skip()

@@ -774,12 +774,6 @@ FUNCTION lInitCheck( lDir, oMessage, oProgress )
    SetEmpresa( , , , , , oWnd )
 
    if !Empty( oMessage )
-      oMessage:SetText( 'Iniciando los servicios' )
-   end if
-
-   InitServices()
-
-   if !Empty( oMessage )
       oMessage:SetText( 'Comprobaciones finalizadas' )
    end if
 
@@ -841,25 +835,21 @@ Function lStartCheck()
 
    lPedidosWeb()
 
-   // Compilamos y ejecutamos un prg en tiempo de ejecución--------------------
-
-   //Ejecutascript()
-
-   // Colocamos los avisos pa las notas----------------------------------------
-
-   oMsgText( 'Emision de alertas' )
-
-   if oUser():lAlerta()
-      SetNotas()
-   end if
-
-   // Navegación------------------------------------------------------------
+   // Navegación---------------------------------------------------------------
 
    oMsgText( 'Abriendo panel de navegación' )
 
    if !Empty( oWnd ) .and. !( Os_IsWTSClient() )
        OpenWebBrowser( oWnd )
    end if
+
+   // Colocamos los avisos pa las notas----------------------------------------
+
+   oMsgText( 'Servicios de timers' )
+
+   InitServices()
+
+   // Texto limpio y a trabajar------------------------------------------------
 
    oMsgText()
 
@@ -5188,12 +5178,8 @@ Function InitServices()
       SetNotas()
    end if
 
-   /*
-   with object ( TScripts():New( cPatEmp() ) 
-      :loadTimer()
-   end with*/
+   TScripts():New( cPatEmp() ):StartTimer()
    
-
    // Auto recepción de pedidos por internet-----------------------------------
 
    // SetAutoRecive()
@@ -5205,7 +5191,7 @@ Return ( nil )
 //---------------------------------------------------------------------------//
 
 Function StopServices()
-
+ 
    // Informe rapido de articulos----------------------------------------------
 
    CloseInfoArticulo()
@@ -5224,6 +5210,8 @@ Function StopServices()
 
       // AdsCloseCachedTables()
    end if
+
+   TScripts():EndTimer()
 
 Return ( nil )
 
