@@ -959,40 +959,40 @@ METHOD OpenFiles( lExclusive )
 
       ::oDbfDet:Activate(     .f., !( lExclusive ) )
 
-      DATABASE NEW ::oUser    PATH ( cPatDat() ) FILE "USERS.DBF"          VIA ( cDriver() ) SHARED INDEX "USERS.CDX"
+      DATABASE NEW ::oUser       PATH ( cPatDat() ) FILE "USERS.DBF"          VIA ( cDriver() ) SHARED INDEX "USERS.CDX"
 
-      DATABASE NEW ::oDbfDiv  PATH ( cPatDat() ) FILE "DIVISAS.DBF"        VIA ( cDriver() ) SHARED INDEX "DIVISAS.CDX"
+      DATABASE NEW ::oDbfDiv     PATH ( cPatDat() ) FILE "DIVISAS.DBF"        VIA ( cDriver() ) SHARED INDEX "DIVISAS.CDX"
 
-      DATABASE NEW ::oIvaImp  PATH ( cPatDat() ) FILE "TIVA.DBF"           VIA ( cDriver() ) SHARED INDEX "TIVA.CDX"
+      DATABASE NEW ::oIvaImp     PATH ( cPatDat() ) FILE "TIVA.DBF"           VIA ( cDriver() ) SHARED INDEX "TIVA.CDX"
 
-      DATABASE NEW ::oImpTik  PATH ( cPatDat() ) FILE "ImpTik.Dbf"         VIA ( cDriver() ) SHARED INDEX "ImpTik.Cdx"
+      DATABASE NEW ::oImpTik     PATH ( cPatDat() ) FILE "ImpTik.Dbf"         VIA ( cDriver() ) SHARED INDEX "ImpTik.Cdx"
 
-      DATABASE NEW ::oCaja    PATH ( cPatDat() ) FILE "Cajas.Dbf"          VIA ( cDriver() ) SHARED INDEX "Cajas.Cdx"
+      DATABASE NEW ::oCaja       PATH ( cPatDat() ) FILE "Cajas.Dbf"          VIA ( cDriver() ) SHARED INDEX "Cajas.Cdx"
 
-      DATABASE NEW ::oDbfUsr  PATH ( cPatDat() ) FILE "Users.Dbf"          VIA ( cDriver() ) SHARED INDEX "Users.Cdx"
+      DATABASE NEW ::oDbfUsr     PATH ( cPatDat() ) FILE "Users.Dbf"          VIA ( cDriver() ) SHARED INDEX "Users.Cdx"
 
-      DATABASE NEW ::oEntSal  PATH ( cPatEmp() ) FILE "EntSal.Dbf"         VIA ( cDriver() ) SHARED INDEX "EntSal.Cdx"
+      DATABASE NEW ::oEntSal     PATH ( cPatEmp() ) FILE "EntSal.Dbf"         VIA ( cDriver() ) SHARED INDEX "EntSal.Cdx"
       ::oEntSal:OrdSetFocus( "cTurEnt" )
 
-      DATABASE NEW ::oTikT    PATH ( cPatEmp() ) FILE "TIKET.DBF"          VIA ( cDriver() ) SHARED INDEX "TIKET.CDX"
+      DATABASE NEW ::oTikT       PATH ( cPatEmp() ) FILE "TIKET.DBF"          VIA ( cDriver() ) SHARED INDEX "TIKET.CDX"
       ::oTikT:OrdSetFocus( "cTurTik" )
 
-      DATABASE NEW ::oTikL    PATH ( cPatEmp() ) FILE "TIKEL.DBF"          VIA ( cDriver() ) SHARED INDEX "TIKEL.CDX"
+      DATABASE NEW ::oTikL       PATH ( cPatEmp() ) FILE "TIKEL.DBF"          VIA ( cDriver() ) SHARED INDEX "TIKEL.CDX"
 
-      DATABASE NEW ::oTikP    PATH ( cPatEmp() ) FILE "TIKEP.DBF"          VIA ( cDriver() ) SHARED INDEX "TIKEP.CDX"
+      DATABASE NEW ::oTikP       PATH ( cPatEmp() ) FILE "TIKEP.DBF"          VIA ( cDriver() ) SHARED INDEX "TIKEP.CDX"
       ::oTikP:OrdSetFocus( "cTurPgo" )
 
-      DATABASE NEW ::oPreCliT PATH ( cPatEmp() ) FILE "PRECLIT.DBF"        VIA ( cDriver() ) SHARED INDEX "PRECLIT.CDX"
+      DATABASE NEW ::oPreCliT    PATH ( cPatEmp() ) FILE "PRECLIT.DBF"        VIA ( cDriver() ) SHARED INDEX "PRECLIT.CDX"
       ::oPreCliT:OrdSetFocus( "CTURPRE" )
 
-      DATABASE NEW ::oPreCliL PATH ( cPatEmp() ) FILE "PRECLIL.DBF"        VIA ( cDriver() ) SHARED INDEX "PRECLIL.CDX"
+      DATABASE NEW ::oPreCliL    PATH ( cPatEmp() ) FILE "PRECLIL.DBF"        VIA ( cDriver() ) SHARED INDEX "PRECLIL.CDX"
 
-      DATABASE NEW ::oPedCliT PATH ( cPatEmp() ) FILE "PEDCLIT.DBF"        VIA ( cDriver() ) SHARED INDEX "PEDCLIT.CDX"
+      DATABASE NEW ::oPedCliT    PATH ( cPatEmp() ) FILE "PEDCLIT.DBF"        VIA ( cDriver() ) SHARED INDEX "PEDCLIT.CDX"
       ::oPedCliT:OrdSetFocus( "CTURPED" )
 
-      DATABASE NEW ::oPedCliL PATH ( cPatEmp() ) FILE "PEDCLIL.DBF"        VIA ( cDriver() ) SHARED INDEX "PEDCLIL.CDX"
+      DATABASE NEW ::oPedCliL    PATH ( cPatEmp() ) FILE "PEDCLIL.DBF"        VIA ( cDriver() ) SHARED INDEX "PEDCLIL.CDX"
 
-      DATABASE NEW ::oPedCliP PATH ( cPatEmp() ) FILE "PEDCLIP.DBF"        VIA ( cDriver() ) SHARED INDEX "PEDCLIP.CDX"
+      DATABASE NEW ::oPedCliP    PATH ( cPatEmp() ) FILE "PEDCLIP.DBF"        VIA ( cDriver() ) SHARED INDEX "PEDCLIP.CDX"
       ::oPedCliP:OrdSetFocus( "cTurRec" )
 
       DATABASE NEW ::oFacCliT    PATH ( cPatEmp() ) FILE "FACCLIT.DBF"     VIA ( cDriver() ) SHARED INDEX "FACCLIT.CDX"
@@ -1062,31 +1062,31 @@ METHOD OpenFiles( lExclusive )
 
       DATABASE NEW ::oLogPorta   PATH ( cPatEmp() ) FILE "LogPorta.Dbf"    VIA ( cDriver() ) SHARED INDEX "LogPorta.Cdx"
 
-      ::oTipInv         := TInvitacion():Create( cPatGrp() )
+      ::oTipInv                  := TInvitacion():Create( cPatGrp() )
       if !::oTipInv:OpenFiles( .f. )
-         lOpen          := .f.
+         lOpen                   := .f.
       end if
 
-      ::oBandera        := TBandera():New()
+      ::oBandera                 := TBandera():New()
 
-      ::oNewImp         := TNewImp():Create( cPatEmp() )
+      ::oNewImp                  := TNewImp():Create( cPatEmp() )
       if !::oNewImp:OpenFiles( .f. )
-         lOpen          := .f.
+         lOpen                   := .f.
       end if
 
-      ::oTipArt         := TTipArt():Create( cPatArt() )
+      ::oTipArt                  := TTipArt():Create( cPatArt() )
       if !::oTipArt:OpenFiles()
-         lOpen          := .f.
+         lOpen                   := .f.
       end if
 
-      ::oFabricante        := TFabricantes():Create( cPatArt() )
+      ::oFabricante              := TFabricantes():Create( cPatArt() )
       if !::oFabricante:OpenFiles()
-         lOpen             := .f.
+         lOpen                   := .f.
       end if
 
-      ::oCuentasBancarias  := TCuentasBancarias():Create( cPatEmp() )
+      ::oCuentasBancarias        := TCuentasBancarias():Create( cPatEmp() )
       if !::oCuentasBancarias:OpenFiles()
-         lOpen             := .f.
+         lOpen                   := .f.
       end if
 
       ::lLoadDivisa()
@@ -4543,7 +4543,7 @@ Return Nil
 
 Method lAnyCajaSelect()
 
-   local lAny  := .f.
+   local lAny  := .f. 
 
    ::oDbfCaj:GetRecno()
 
@@ -7469,17 +7469,15 @@ RETURN ( Self )
 
 METHOD lNowOpen( oWnd )
 
-   if( oWnd == nil, oWnd := oWnd(), )
-
-   !( oRetFld( oUser():cCaja(), ::oCaja, "lNoArq" ) )
+   if ( oWnd == nil, oWnd := oWnd(), )
 
    if ( !::lOpenTurno() .or. !::lOpenCaja() ) .and. !( oRetFld( oUser():cCaja(), ::oCaja, "lNoArq" ) )
 
       if !::lCreateTurno()
 
-         MsgStop( "Es necesario iniciar una sesión para trabajar." )
+         MsgStop( "Es necesario iniciar una sesión para trabajar." ) 
 
-         /*if  !Empty( oWnd )
+/*       if  !Empty( oWnd )
 
             SysRefresh(); oWnd:CloseAll(); SysRefresh()
 
@@ -7909,6 +7907,10 @@ Function ChkTurno( oMenuItem, oWnd )
          end if
 
          oTurno:CloseFiles()
+
+      else
+
+         msgStop( "No se han abierto las tablas de turnos.")
 
       end if
 
@@ -11491,28 +11493,11 @@ Function cCurSesion( cCurSes, lDelega )
 
    DEFAULT lDelega      := .t.
 
-#ifndef __PDA__
-
    oTurno               := TTurno()
 
    if cCurSes != nil
       oTurno:cCurTurno  := cCurSes
    end if
-
-#else
-
-   oTurno               := TTurno()
-
-   if cCurSes != nil
-      oTurno:cCurTurno  := cCurSes
-   end if
-
-   if oTurno:OpenService()
-      oTurno:CurTurno( lDelega )
-      oTurno:CloseService()
-   end if
-
-#endif
 
 Return ( if( lDelega, oTurno:cCurTurno, SubStr( oTurno:cCurTurno, 1, 6 ) ) )
 

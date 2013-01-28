@@ -392,9 +392,10 @@ Static Function CreateMainWindow( oIconApp )
    ACTIVATE WINDOW oWnd ;
       MAXIMIZED ;
       ON PAINT    ( WndPaint( hDC, oWnd, oBmp ) );
-      ON INIT     ( lStartCheck() );
       ON RESIZE   ( WndResize( oWnd ) );
+      ON INIT     ( lStartCheck() );
       VALID       ( EndApp() )
+
 
 Return nil
 
@@ -548,6 +549,7 @@ STATIC FUNCTION EndApp()
    local oBtnOk
    local oBtnZip
    local oBtnCancel
+   local oBmpVersion
 
    oBlock         := ErrorBlock( {| oError | ApoloBreak( oError ) } )
    BEGIN SEQUENCE
@@ -560,11 +562,14 @@ STATIC FUNCTION EndApp()
 
       SysRefresh()
 
-      if !( Os_IsWTSClient() )
-         DEFINE BRUSH oBrush FILE ( cBmpVersion() )
-      end if
+      DEFINE BRUSH oBrush COLOR Rgb( 255, 255, 255 ) // FILE ( cBmpVersion() )
 
       DEFINE DIALOG oDlg RESOURCE "EndApp" BRUSH oBrush
+
+         REDEFINE BITMAP oBmpVersion ;
+            FILE     cBmpVersion() ;
+            ID       600 ;
+            OF       oDlg
 
          TWebBtn():Redefine( 100,,,,,, oDlg,,,,, "LEFT",,,,, Rgb( 0, 0, 0 ), Rgb( 255, 255, 255 ) ):SetTransparent()
          TWebBtn():Redefine( 110,,,,,, oDlg,,,,, "LEFT",,,,, Rgb( 0, 0, 0 ), Rgb( 255, 255, 255 ) ):SetTransparent()
@@ -584,9 +589,13 @@ STATIC FUNCTION EndApp()
 
       ACTIVATE DIALOG oDlg CENTER
 
-      if oBrush != nil
+      if !Empty( oBrush )
          oBrush:End()
       end if
+
+      if !Empty( oBmpVersion )
+         oBmpVersion:End()
+      end if 
 
       if oDlg:nResult == IDOK
 
@@ -634,6 +643,12 @@ Return
 
 Function WndResize( oWnd )
 
+   local oBlock
+   local oError
+
+   oBlock         := ErrorBlock( {| oError | ApoloBreak( oError ) } )
+   BEGIN SEQUENCE
+
    if !Empty( oWnd )
 
       aEval( oWnd:oWndClient:aWnd, {|o| oWnd:oWndClient:ChildMaximize( o ) } )
@@ -643,6 +658,12 @@ Function WndResize( oWnd )
       end if
 
    end if
+
+   RECOVER
+
+   END SEQUENCE
+
+   ErrorBlock( oBlock )
 
 Return nil
 
@@ -2625,7 +2646,7 @@ Function CreateAcceso( oWnd )
    oItem:oGroup         := oGrupo
    oItem:cPrompt        := 'Regenerar índices'
    oItem:cMessage       := 'Regenerar índices'
-   oItem:bAction        := {|| TReindex():New( oWnd, "01067" ):Resource() }
+   oItem:bAction        := {|| Reindexa() }
    oItem:cId            := "01067"
    oItem:cBmp           := "Recycle_16"
    oItem:cBmpBig        := "Recycle_32"
@@ -6054,7 +6075,7 @@ FUNCTION Test()
 
    if Test->( dbAppend() )
       Test->nNum := 2
-      Test->( dbUnLock() )
+      Test->( dbUnLock() ) 
    end if
 
    ? Test->nInc
@@ -6067,6 +6088,18 @@ FUNCTION Test()
    ? Test->nInc
 
    Test->( dbCloseArea() )
+
+RETURN .t.
+
+//--------------------------------------------------------------------------//
+
+FUNCTION Reindexa()
+
+   if lAis()
+      TDataCenter():Resource( "01067" )
+   else
+      TReindex():New( oWnd(), "01067" ):Resource()
+   end if
 
 RETURN .t.
 

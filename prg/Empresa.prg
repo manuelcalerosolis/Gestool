@@ -1,15 +1,8 @@
-#ifndef __PDA__
 #include "FiveWin.Ch"
 #include "Factu.ch"
 #include "Empresa.ch"
 #include "Image.ch"
 #include "Xbrowse.ch"
-#else
-#include "FWCE.ch"
-REQUEST DBFCDX
-#endif
-
-#ifndef __PDA__
 
 #define _MENUITEM_   "01003"
 
@@ -42,11 +35,12 @@ static bEdtGrp       := {| aTmp, aGet, dbfEmp, oBrw, bWhen, bValid, nMode | EdtG
 static bEdtC         := {| aTmp, aGet, dbfEmp, oBrw, bWhen, bValid, nMode | EdtCnf( aTmp, aGet, dbfEmp, oBrw, bWhen, bValid, nMode ) }
 static bEdtDlg       := {| aTmp, aGet, dbfEmp, oBrw, bWhen, bValid, nMode, cCod | EdtDet( aTmp, aGet, dbfEmp, oBrw, bWhen, bValid, nMode, cCod ) }
 
-#endif
-
 static aItmEmp       := {}
 static aTiempo       := { "0 min.", "1 min.", "2 min.", "5 min.", "10 min.", "15 min.", "30 min.", "45 min.", "1 hora", "2 horas", "4 horas", "8 horas" }
 static aTiempoImp    := { "0 seg.", "5 seg.", "10 seg.", "15 seg.", "20 seg.", "25 seg.", "30 seg.", "35 seg.", "40 seg.", "45 seg.", "50 seg.", "55 seg.", "60 seg." }
+
+static aDocumentos    
+static aImagenes
 
 //----------------------------------------------------------------------------//
 
@@ -90,6 +84,58 @@ STATIC FUNCTION OpenFiles( lCount )
       oPais:OpenFiles()
 
       oBandera    := TBandera():New()
+
+      aDocumentos := {  "Pedido a proveedores",;
+                        "Albaran de proveedores",;
+                        "Facturas de proveedores",;
+                        "Facturas rectificativas de proveedores",;
+                        "Presupuestos a clientes",;
+                        "Pedido de clientes",;
+                        "Albaranes de clientes",;
+                        "Facturas a clientes",;
+                        "Anticipos de facturas clientes",;
+                        "Facturas rectificativas",;
+                        "Introducción depósitos",;
+                        "Estado depósitos",;
+                        "Tickets a clientes",;
+                        "Partes de producción",;
+                        "Expedientes",;
+                        "Movimientos de almacén",;
+                        "Sesiónes",;
+                        "Remesas bancarias",;
+                        "Ordenes de carga",;
+                        "Cobros de clientes",;
+                        "Recibos de proveedor",;
+                        "Recibos de clientes",;
+                        "Liquidación de agentes",;
+                        "Entrega a cuenta pedido",;
+                        "Entrega a cuenta albarán" }
+
+      aImagenes   := {   "Clipboard_empty_businessman_16",;
+                         "Document_plain_businessman_16",;
+                         "Document_businessman_16",;
+                         "Document_businessman_16",;
+                         "Notebook_user1_16",;
+                         "Clipboard_empty_user1_16",;
+                         "Document_plain_user1_16",;
+                         "Document_user1_16",;
+                         "Document_money2_16",;
+                         "Document_delete_16",;
+                         "Package_add_16",;
+                         "Package_ok_16",;
+                         "Cashier_user1_16",;
+                         "Worker2_Form_Red_16",;
+                         "Folder_document_16",;
+                         "Pencil_Package_16",;
+                         "Stopwatch_16",;
+                         "Briefcase_document_16",;
+                         "Truck_blue_document_16",;
+                         "User1_16",;
+                         "Money2_businessman_16",;
+                         "Briefcase_user1_16",;
+                         "Briefcase_security_agent_16",;
+                         "Clipboard_Empty_Moneybag_16",;
+                         "Document_Plain_Moneybag_16" }
 
    RECOVER USING oError
 
@@ -1129,7 +1175,8 @@ STATIC FUNCTION EdtCnf( aTmp, aGet, dbfEmp, oBrw, nSelFolder, bValid, nMode )
    local oFld
    local oSay                    := Array( 46 )
    local cSay                    := AFill( Array( 46 ), "" )
-   local oTree
+   local oCmbDocumentos
+   local cCmbDocumentos          := aDocumentos[ 1 ]
    local oError
    local oBlock
    local oBrwEmp
@@ -1964,13 +2011,19 @@ STATIC FUNCTION EdtCnf( aTmp, aGet, dbfEmp, oBrw, nSelFolder, bValid, nMode )
       */
 
       REDEFINE BITMAP oBmpContadores ;
-         ID       500 ;
-         RESOURCE "document_edit_48_alpha" ;
-         TRANSPARENT ;
-         OF       oFld:aDialogs[4]
+            ID       500 ;
+            RESOURCE "document_edit_48_alpha" ;
+            TRANSPARENT ;
+            OF       oFld:aDialogs[4]
 
-      oTree          := TTreeView():Redefine( 100, oFld:aDialogs[ 4 ] )
-      oTree:bChanged := {|| TreeChanged( oTree, oCmbSerie, oGetSerie, oGetContador, oGetFormato, oGetCopias, oGetNFCPrefijo, oGetNFCContador, oGroupNFC, oGetPlantillaDefecto ) }
+      REDEFINE COMBOBOX oCmbDocumentos VAR cCmbDocumentos ;
+            ID       100;
+            OF       oFld:aDialogs[ 4 ] ;
+            WHEN     ( nMode != ZOOM_MODE ) ;
+            ITEMS    aDocumentos ;
+            BITMAPS  aImagenes
+
+      oCmbDocumentos:bChange  := {|| CmbDocumentosChanged( cCmbDocumentos, oCmbSerie, oGetSerie, oGetContador, oGetFormato, oGetCopias, oGetNFCPrefijo, oGetNFCContador, oGroupNFC, oGetPlantillaDefecto ) }
 
       REDEFINE GET oGetSerie VAR cGetSerie ;
             ID       150 ;
@@ -1983,32 +2036,7 @@ STATIC FUNCTION EdtCnf( aTmp, aGet, dbfEmp, oBrw, nSelFolder, bValid, nMode )
             OF       oFld:aDialogs[ 4 ]
 
       REDEFINE COMBOBOX oCmbSerie VAR cCmbSerie ;
-            ITEMS {  "Propiedades de la serie [A]",;
-                     "Propiedades de la serie [B]",;
-                     "Propiedades de la serie [C]",;
-                     "Propiedades de la serie [D]",;
-                     "Propiedades de la serie [E]",;
-                     "Propiedades de la serie [F]",;
-                     "Propiedades de la serie [G]",;
-                     "Propiedades de la serie [H]",;
-                     "Propiedades de la serie [I]",;
-                     "Propiedades de la serie [J]",;
-                     "Propiedades de la serie [K]",;
-                     "Propiedades de la serie [L]",;
-                     "Propiedades de la serie [M]",;
-                     "Propiedades de la serie [N]",;
-                     "Propiedades de la serie [O]",;
-                     "Propiedades de la serie [P]",;
-                     "Propiedades de la serie [Q]",;
-                     "Propiedades de la serie [R]",;
-                     "Propiedades de la serie [S]",;
-                     "Propiedades de la serie [T]",;
-                     "Propiedades de la serie [U]",;
-                     "Propiedades de la serie [V]",;
-                     "Propiedades de la serie [W]",;
-                     "Propiedades de la serie [X]",;
-                     "Propiedades de la serie [Y]",;
-                     "Propiedades de la serie [Z]" };
+            ITEMS    { "A", "B", "C", "D", "E", "F", "G", "H", "I", "J", "K", "L", "M", "N", "O", "P", "Q", "R", "S", "T", "U", "V", "W", "X", "Y", "Z" } ;
             ID       110 ;
             ON CHANGE( CmbSerieChanged( oCmbSerie, oGetContador, oGetFormato, oGetCopias, oGetNFCPrefijo, oGetNFCContador ) );
             OF       oFld:aDialogs[ 4 ]
@@ -2050,10 +2078,6 @@ STATIC FUNCTION EdtCnf( aTmp, aGet, dbfEmp, oBrw, nSelFolder, bValid, nMode )
             IDSAY    171 ;
             OF       oFld:aDialogs[ 4 ]
 
-      REDEFINE GROUP oGroupNFC ;
-            ID       180 ;
-            OF       oFld:aDialogs[ 4 ] ;
-            TRANSPARENT
 
       REDEFINE GET oGetPlantillaDefecto VAR cGetPlantillaDefecto ;
             ID       190 ;
@@ -2420,7 +2444,7 @@ STATIC FUNCTION EdtCnf( aTmp, aGet, dbfEmp, oBrw, nSelFolder, bValid, nMode )
       REDEFINE BUTTON;
             ID       IDOK ;
             OF       oDlg ;
-            ACTION   ( SaveEdtCnf( aTmp, oSay, oTree, oCmbSerie, oGetSerie, oGetContador, oGetFormato, oGetCopias, oGetNFCPrefijo, oGetNFCContador, oBrw, dbfEmp, nMode, cTiempoPed, oDlg, oNomSer ) )
+            ACTION   ( SaveEdtCnf( aTmp, oSay, oCmbSerie, oGetSerie, oGetContador, oGetFormato, oGetCopias, oGetNFCPrefijo, oGetNFCContador, oBrw, dbfEmp, nMode, cTiempoPed, oDlg, oNomSer ) )
 
       REDEFINE BUTTON ;
             ID       IDCANCEL ;
@@ -2431,12 +2455,12 @@ STATIC FUNCTION EdtCnf( aTmp, aGet, dbfEmp, oBrw, nSelFolder, bValid, nMode )
       oFld:aDialogs[ 4 ]:AddFastKey( VK_F3, {|| EdtCon( oBrwCon ) } )
       oFld:aDialogs[ 5 ]:AddFastKey( VK_F3, {|| EditConta( oBrwEmp:nAt, aTmp ), oBrwEmp:Refresh() } )
 
-      oDlg:AddFastKey( VK_F5, {|| SaveEdtCnf( aTmp, oSay, oTree, oCmbSerie, oGetSerie, oGetContador, oGetFormato, oGetCopias, oGetNFCPrefijo, oGetNFCContador, oBrw, dbfEmp, nMode, cTiempoPed, oDlg, oNomSer ) } )
+      oDlg:AddFastKey( VK_F5, {|| SaveEdtCnf( aTmp, oSay, oCmbSerie, oGetSerie, oGetContador, oGetFormato, oGetCopias, oGetNFCPrefijo, oGetNFCContador, oBrw, dbfEmp, nMode, cTiempoPed, oDlg, oNomSer ) } )
 
       oDlg:bStart    := {|| aEvalValid( oFld:aDialogs[ 2 ] ), aEvalValid( oFld:aDialogs[ 5 ] ) }
 
    ACTIVATE DIALOG oDlg ;
-      ON INIT        ( InitEdtCnf( nSelFolder, oFld, oTree, oBrwCfg ) ) ;
+      ON INIT        ( InitEdtCnf( oFld, nSelFolder ) ) ;
       CENTER
 
    /*
@@ -2528,70 +2552,7 @@ Return nil
 
 //------------------------------------------------------------------------//
 
-Static Function InitEdtCnf( nSelFolder, oFld, oTree, oBrwCfg )
-
-   local oRoot
-   local oPrincipal
-   local oTreeImageList    := TImageList():New( 16, 16 )
-
-   /*
-   Tree de los formatos de impresión-------------------------------------------
-   */
-
-   oTreeImageList:AddMasked( TBitmap():Define( "Clipboard_empty_businessman_16" ),  Rgb( 255, 0, 255 ) )
-   oTreeImageList:AddMasked( TBitmap():Define( "Document_plain_businessman_16" ),   Rgb( 255, 0, 255 ) )
-   oTreeImageList:AddMasked( TBitmap():Define( "Document_businessman_16" ),         Rgb( 255, 0, 255 ) )
-   oTreeImageList:AddMasked( TBitmap():Define( "Notebook_user1_16" ),               Rgb( 255, 0, 255 ) )
-   oTreeImageList:AddMasked( TBitmap():Define( "Clipboard_empty_user1_16" ),        Rgb( 255, 0, 255 ) )
-   oTreeImageList:AddMasked( TBitmap():Define( "Document_plain_user1_16" ),         Rgb( 255, 0, 255 ) )
-   oTreeImageList:AddMasked( TBitmap():Define( "Document_user1_16" ),               Rgb( 255, 0, 255 ) )
-   oTreeImageList:AddMasked( TBitmap():Define( "Document_money2_16" ),              Rgb( 255, 0, 255 ) )
-   oTreeImageList:AddMasked( TBitmap():Define( "Document_delete_16" ),              Rgb( 255, 0, 255 ) )
-   oTreeImageList:AddMasked( TBitmap():Define( "Package_add_16" ),                  Rgb( 255, 0, 255 ) )
-   oTreeImageList:AddMasked( TBitmap():Define( "Package_ok_16" ),                   Rgb( 255, 0, 255 ) )
-   oTreeImageList:AddMasked( TBitmap():Define( "Cashier_user1_16" ),                Rgb( 255, 0, 255 ) )
-   oTreeImageList:AddMasked( TBitmap():Define( "Worker2_Form_Red_16" ),             Rgb( 255, 0, 255 ) )
-   oTreeImageList:AddMasked( TBitmap():Define( "Folder_document_16" ),              Rgb( 255, 0, 255 ) )
-   oTreeImageList:AddMasked( TBitmap():Define( "Pencil_Package_16" ),               Rgb( 255, 0, 255 ) )
-   oTreeImageList:AddMasked( TBitmap():Define( "Stopwatch_16" ),                    Rgb( 255, 0, 255 ) )
-   oTreeImageList:AddMasked( TBitmap():Define( "Briefcase_document_16" ),           Rgb( 255, 0, 255 ) )
-   oTreeImageList:AddMasked( TBitmap():Define( "Truck_blue_document_16" ),          Rgb( 255, 0, 255 ) )
-   oTreeImageList:AddMasked( TBitmap():Define( "User1_16" ),                        Rgb( 255, 0, 255 ) )
-   oTreeImageList:AddMasked( TBitmap():Define( "Money2_businessman_16" ),           Rgb( 255, 0, 255 ) )
-   oTreeImageList:AddMasked( TBitmap():Define( "Briefcase_user1_16" ),              Rgb( 255, 0, 255 ) )
-   oTreeImageList:AddMasked( TBitmap():Define( "Briefcase_security_agent_16" ),     Rgb( 255, 0, 255 ) )
-   oTreeImageList:AddMasked( TBitmap():Define( "Clipboard_Empty_Moneybag_16" ),     Rgb( 255, 0, 255 ) )
-   oTreeImageList:AddMasked( TBitmap():Define( "Document_Plain_Moneybag_16" ),      Rgb( 255, 0, 255 ) )
-
-   oTree:SetImageList( oTreeImageList )
-
-   oRoot                   := oTree:Add( "Pedido a proveedores",                    0 )
-                              oTree:Add( "Albaran de proveedores",                  1 )
-                              oTree:Add( "Facturas de proveedores",                 2 )
-                              oTree:Add( "Facturas rectificativas de proveedores", 21 )
-                              oTree:Add( "Presupuestos a clientes",                 3 )
-                              oTree:Add( "Pedido de clientes",                      4 )
-                              oTree:Add( "Albaranes de clientes",                   5 )
-                              oTree:Add( "Facturas a clientes",                     6 )
-                              oTree:Add( "Anticipos de facturas clientes",          7 )
-                              oTree:Add( "Facturas rectificativas",                 8 )
-                              oTree:Add( "Introducción depósitos",                  9 )
-                              oTree:Add( "Estado depósitos",                        10 )
-                              oTree:Add( "Tickets a clientes",                      11 )
-                              oTree:Add( "Partes de producción",                    12 )
-                              oTree:Add( "Expedientes",                             13 )
-                              oTree:Add( "Movimientos de almacén",                  14 )
-                              oTree:Add( "Sesiónes",                                15 )
-                              oTree:Add( "Remesas bancarias",                       16 )
-                              oTree:Add( "Ordenes de carga",                        17 )
-                              oTree:Add( "Cobros de clientes",                      18 )
-                              oTree:Add( "Recibos de proveedor",                    19 )
-                              oTree:Add( "Recibos de clientes",                     20 )
-                              oTree:Add( "Liquidación de agentes",                  21 )
-                              oTree:Add( "Entrega a cuenta pedido",                 22 )
-                              oTree:Add( "Entrega a cuenta albarán",                23 )
-
-   oTree:Select( oRoot )
+Static Function InitEdtCnf( oFld, nSelFolder )
 
    oFld:SetOption( nSelFolder )
 
@@ -2608,7 +2569,7 @@ Return nil
 
 //---------------------------------------------------------------------------//
 
-Static Function TreeChanged( oTree, oCmbSerie, oGetSerie, oGetContador, oGetFormato, oGetCopias, oGetNFCPrefijo, oGetNFCContador, oGroupNFC, oGetPlantillaDefecto )
+Static Function CmbDocumentosChanged( cCmbDocumentos, oCmbSerie, oGetSerie, oGetContador, oGetFormato, oGetCopias, oGetNFCPrefijo, oGetNFCContador, oGroupNFC, oGetPlantillaDefecto )
 
    local cSerie
    local cSerieDefault
@@ -2624,7 +2585,7 @@ Static Function TreeChanged( oTree, oCmbSerie, oGetSerie, oGetContador, oGetForm
    Documento seleccionado------------------------------------------------------
    */
 
-   cItemText            := Upper( Rtrim( oTree:GetSelText() ) )
+   cItemText            := Upper( Rtrim( cCmbDocumentos ) )
    if Empty( cItemText )
       return ( nil )
    end if
@@ -2633,7 +2594,7 @@ Static Function TreeChanged( oTree, oCmbSerie, oGetSerie, oGetContador, oGetForm
    Guradamos la serie por defecto al cambiar el documento----------------------
    */
 
-   cSerie               := oCmbSerie:VarGet()[ 26 ]
+   cSerie               := oCmbSerie:VarGet()
    cSerieDefault        := oGetSerie:VarGet()
    nContador            := oGetContador:VarGet()
    cFormato             := oGetFormato:VarGet()
@@ -2660,7 +2621,7 @@ Static Function TreeChanged( oTree, oCmbSerie, oGetSerie, oGetContador, oGetForm
 
       end if
 
-      ( tmpDlgCon )->cPltDfl                                      := cPlantillaDefecto
+      ( tmpDlgCon )->cPltDfl  := cPlantillaDefecto
 
       ( tmpDlgCon )->( dbUnLock() )
 
@@ -2704,11 +2665,9 @@ Static Function TreeChanged( oTree, oCmbSerie, oGetSerie, oGetContador, oGetForm
       if ( tmpDlgCon )->lNFC
          oGetNFCPrefijo:Show()
          oGetNFCContador:Show()
-         oGroupNFC:Show()
       else
          oGetNFCPrefijo:Hide()
          oGetNFCContador:Hide()
-         oGroupNFC:Hide()
       end if
 
       if !Empty( oCmbSerie:bChange )
@@ -2755,7 +2714,7 @@ Return ( .t. )
 
 Static Function CmbSerieChanged( oCmbSerie, oGetContador, oGetFormato, oGetCopias, oGetNFCPrefijo, oGetNFCContador )
 
-   local cSerie         := oCmbSerie:VarGet()[ 26 ]
+   local cSerie         := oCmbSerie:VarGet()
 
    if !Empty( cOldSerie ) .and. ( cOldSerie != cSerie )
       CmbSerieSave( cOldSerie, oGetContador, oGetFormato, oGetCopias, oGetNFCPrefijo, oGetNFCContador )
@@ -3109,10 +3068,10 @@ Function SetEmpresa( cCodEmp, dbfEmp, dbfDlg, dbfUsr, oBrw, oWnd, lSoft )
    end if
 
    CursorWait()
-   /*
+
    oBlock            := ErrorBlock( {| oError | ApoloBreak( oError ) } )
    BEGIN SEQUENCE
-   */
+   
    if Empty( dbfEmp )
       USE ( cPatDat() + "EMPRESA.DBF" ) NEW VIA ( cDriver() ) SHARED ALIAS ( cCheckArea( "EMPRESA", @dbfEmp ) )
       SET ADSINDEX TO ( cPatDat() + "EMPRESA.CDX" ) ADDITIVE
@@ -3355,9 +3314,13 @@ Function SetEmpresa( cCodEmp, dbfEmp, dbfDlg, dbfUsr, oBrw, oWnd, lSoft )
       oMsgText( 'Comprobando bancos' )
       IsBancos()
 
-      /*
-      Chequeo del turno-----------------------------------------------------------
-      */
+   end if
+
+   /*
+   Chequeo del turno-----------------------------------------------------------
+   */
+
+   if !lSoft
 
       oMsgText( 'Seleccionado sesión actual' )
 
@@ -3387,7 +3350,7 @@ Function SetEmpresa( cCodEmp, dbfEmp, dbfDlg, dbfUsr, oBrw, oWnd, lSoft )
       oBrw:Refresh()
       oBrw:SetFocus()
    end if
-   /*
+
    RECOVER USING oError
 
       msgStop( "Imposible seleccionar empresa" + CRLF + ErrorMessage( oError ) )
@@ -3395,7 +3358,7 @@ Function SetEmpresa( cCodEmp, dbfEmp, dbfDlg, dbfUsr, oBrw, oWnd, lSoft )
    END SEQUENCE
 
    ErrorBlock( oBlock )
-   */
+
    CursorWE()
 
    if !Empty( oWnd )
@@ -3430,23 +3393,11 @@ STATIC FUNCTION WinDelEmp( oBrw, dbfEmp )
 
          if ApoloMsgNoYes( "Eliminara DEFINITIVAMENTE los datos de la empresa : " + Rtrim( ( dbfEmp )->cNombre ), "Confirme supresión de empresa" )
 
-#ifdef __SQLLIB__
-
-            ? cPath
-
-#else
-
             CursorWait()
 
             if IsDirectory( cPath )
 
                lRdDir( cPath )
-
-               /*
-               if DirRemove( cPath ) != 0
-                  msgStop( "Error al borrar el directorio " + Str( fError() ), cPath )
-               end if
-               */
 
             end if
 
@@ -3462,7 +3413,6 @@ STATIC FUNCTION WinDelEmp( oBrw, dbfEmp )
             lRet  := .t.
 
             CursorWE()
-#endif
 
          end if
 
@@ -3498,14 +3448,7 @@ STATIC FUNCTION WinDelGrp( oBrw, dbfEmp )
 
    if ApoloMsgNoYes( "Confirme eliminación de grupo", "Supresión de grupo" )
 
-      if ApoloMsgNoYes(   "Eliminara DEFINITIVAMENTE los datos del grupo: " + Rtrim( ( dbfEmp )->cNombre ),;
-                     "Confirme supresión de grupo" )
-
-#ifdef __SQLLIB__
-
-            ? cPath
-
-#else
+      if ApoloMsgNoYes( "Eliminara DEFINITIVAMENTE los datos del grupo: " + Rtrim( ( dbfEmp )->cNombre ), "Confirme supresión de grupo" )
 
          CursorWait()
 
@@ -3518,10 +3461,9 @@ STATIC FUNCTION WinDelGrp( oBrw, dbfEmp )
 
          DelRecno( dbfEmp, oBrw )
 
-         lRet  := .t.
+         lRet     := .t.
 
          CursorWE()
-#endif
 
       end if
 
@@ -3538,21 +3480,13 @@ FUNCTION mkPathEmp( cCodEmpNew, cNomEmpNew, cCodEmpOld, aImportacion, lDialog, l
    local lEnd           := .f.
    local acImages       := { "BAR_01" }
    local cMsg           := "Creando nueva empresa"
-
-#ifdef __SQLLIB__
-   local cPath          := "EMP" + cCodEmpNew + "\"
-   local cPathOld       := if( !empty( cCodEmpOld ), "EMP" + cCodEmpOld + "\", nil )
-#else
    local cPath          := cPatEmpOld( cCodEmpNew )
    local cPathOld       := if( !Empty( cCodEmpOld ), cPatEmpOld( cCodEmpOld ), nil )
-#endif
 
    DEFAULT lDialog      := .f.
    DEFAULT lNewEmp      := .f.
    DEFAULT cNomEmpNew   := ""
    DEFAULT aImportacion := aImportacion():False()
-
-#ifndef __SQLLIB__
 
    if IsDirectory( cPath )
       lRdDir( cPath )
@@ -3560,8 +3494,6 @@ FUNCTION mkPathEmp( cCodEmpNew, cNomEmpNew, cCodEmpOld, aImportacion, lDialog, l
          msgStop( "Error al borrar el directorio " + Str( fError() ), cNamePath( cPath ) )
       end if
    end if
-
-#endif
 
    /*
    Dialogo para mostrar nueva empresa------------------------------------------
@@ -3606,9 +3538,16 @@ Static Function StartPathEmp( cPath, cPathOld, cCodEmpNew, cNomEmpNew, cCodEmpOl
    local oBlock
    local cCodGrp        := Space( 2 )
    local cPathGrp       := ""
+   local lAIS           := lAIS()
+
 
    oBlock               := ErrorBlock( {| oError | ApoloBreak( oError ) } )
    BEGIN SEQUENCE
+
+   if lAIS
+      lAIS( .f. ) 
+      lCdx( .t. )
+   end if
 
    SysRefresh()
 
@@ -4156,6 +4095,26 @@ Static Function StartPathEmp( cPath, cPathOld, cCodEmpNew, cNomEmpNew, cCodEmpOl
             :cPatGrp       := cPatGrp( cCodEmpNew, .f., .t. )
             :GenIndices( oMsg )
          end with
+
+      end if
+
+      /*
+      Tipo de driver q usamos--------------------------------------------------
+      */
+
+      if lAIS
+
+         msgStop( "Tenemos q meter esta empresa en el diccionario de datos")
+
+         with object ( TDataCenter() )
+            :CreateEmpresaTable()
+            :BuildEmpresa()     
+         end with
+
+         lCdx( .f. )
+         lAIS( .t. )
+
+         msgStop( "Proceso finalizado")
 
       end if
 
@@ -5949,7 +5908,7 @@ RETURN ( nil )
 
 //---------------------------------------------------------------------------//
 
-static function SaveEdtCnf( aTmp, oSay, oTree, oCmbSerie, oGetSerie, oGetContador, oGetFormato, oGetCopias, oGetNFCPrefijo, oGetNFCContador, oBrw, dbfEmp, nMode, cTiempoPed, oDlg, oNomSer )
+static function SaveEdtCnf( aTmp, oSay, oCmbSerie, oGetSerie, oGetContador, oGetFormato, oGetCopias, oGetNFCPrefijo, oGetNFCContador, oBrw, dbfEmp, nMode, cTiempoPed, oDlg, oNomSer )
 
    local cItemText
    local cSerie
@@ -5973,8 +5932,6 @@ static function SaveEdtCnf( aTmp, oSay, oTree, oCmbSerie, oGetSerie, oGetContado
    /*
    Guarda los cambios----------------------------------------------------------
    */
-
-   cItemText            := Upper( Rtrim( oTree:GetSelText() ) )
 
    if !Empty( cItemText )
 

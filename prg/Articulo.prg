@@ -1,4 +1,4 @@
-#ifndef __PDA__ 
+#ifndef __PDA__
    #include "FiveWin.Ch"
    #include "Folder.ch"
    #include "Label.ch"
@@ -12406,276 +12406,6 @@ Return ( .f. )
 
 //---------------------------------------------------------------------------//
 
-/*Static Function BrwArtCliente( oGet, oGet2 )
-
-   local oDlg
-   local oFld
-   local oBrw
-   local oBrwPrv
-   local aGet1
-   local cGet1
-   local nOrd        := GetBrwOpt( "BrwArticulo" )
-   local oCbxOrd
-   local aCbxOrd     := { "Código", "Nombre" }
-   local cCbxOrd
-   local nLevel      := nLevelUsr( "01014" )
-   local oGetPrv
-   local cGetPrv
-   local oSayPrv
-   local cSayPrv
-   local oRefPrv
-   local cRefPrv
-
-   nOrd              := Min( Max( nOrd, 1 ), len( aCbxOrd ) )
-   cCbxOrd           := aCbxOrd[ nOrd ]
-
-   if !OpenFiles( .t. )
-      return nil
-   end if
-
-   ( dbfArticulo )->( OrdSetFocus( "CODIGO" ) )
-   ( dbfArticulo )->( dbGoTop() )
-
-   DEFINE DIALOG oDlg RESOURCE "HELPENTRYPRV" TITLE "Seleccionar artículos"
-
-      REDEFINE FOLDER oFld ;
-         ID       400 ;
-         OF       oDlg ;
-         PROMPT   "&Cliente",       "A&rtículo" ;
-         DIALOGS  "HELPENTRYPRV_1", "HELPENTRYPRV_2"
-
-      oFld:bChange   := { |nOption| lChgOrdDbf( nOption, dbfArticulo, aCbxOrd, oCbxOrd, oBrw, oBrwPrv ) }
-
-      /*
-      Búsqueda por proveedor---------------------------------------------------
-
-      REDEFINE GET oGetPrv VAR cGetPrv;
-         ID       100 ;
-         VALID    ( cProvee( oGetPrv, dbfProv, oSayPrv ) ) ;
-         BITMAP   "LUPA" ;
-         ON HELP  ( BrwProvee( oGetPrv, oSayPrv ) ) ;
-         OF       fldGeneral
-
-      REDEFINE GET oSayPrv VAR cSayPrv ;
-         WHEN     .f. ;
-         ID       101 ;
-         OF       fldGeneral
-
-      REDEFINE GET oRefPrv VAR cRefPrv;
-         ID       110 ;
-         ON CHANGE( SeekPrvArt( nKey, nFlags, oRefPrv, oBrwPrv, dbfArtPrv, dbfArticulo, oGetPrv ) );
-         VALID    ( OrdClearScope( oBrwPrv, dbfArticulo ) );
-         OF       fldGeneral
-
-      REDEFINE IBROWSE oBrwPrv ;
-			FIELDS ;
-                  (dbfArticulo)->Nombre,;
-                  cRefPrvArt( ( dbfArticulo )->Codigo, ( dbfArticulo )->cPrvHab, dbfArtPrv ),;
-                  if( !Empty( ( dbfArticulo )->cPrvHab ), AllTrim( ( dbfArticulo )->cPrvHab ) + " - " + RetProvee( ( dbfArticulo )->cPrvHab, dbfProv ), "" ),;
-                  Trans( if( ( dbfArticulo )->nCtlStock <= 1, oStock:nTotStockAct( ( dbfArticulo )->Codigo, , , , , ( dbfArticulo )->lKitArt, ( dbfArticulo )->nKitStk ), 0 ), cPicUnd ),;
-                  TransPrecio( nRetPreArt( 1, nil, .f., dbfArticulo, dbfDiv, dbfArtKit, dbfIva ), .f. ),;
-                  TransPrecio( nRetPreArt( 1, nil, .t., dbfArticulo, dbfDiv, dbfArtKit, dbfIva ), .f. ),;
-                  TransPrecio( nRetPreArt( 2, nil, .f., dbfArticulo, dbfDiv, dbfArtKit, dbfIva ), .f. ),;
-                  TransPrecio( nRetPreArt( 2, nil, .t., dbfArticulo, dbfDiv, dbfArtKit, dbfIva ), .f. ),;
-                  TransPrecio( nRetPreArt( 3, nil, .f., dbfArticulo, dbfDiv, dbfArtKit, dbfIva ), .f. ),;
-                  TransPrecio( nRetPreArt( 3, nil, .t., dbfArticulo, dbfDiv, dbfArtKit, dbfIva ), .f. ),;
-                  TransPrecio( nRetPreArt( 4, nil, .f., dbfArticulo, dbfDiv, dbfArtKit, dbfIva ), .f. ),;
-                  TransPrecio( nRetPreArt( 4, nil, .t., dbfArticulo, dbfDiv, dbfArtKit, dbfIva ), .f. ),;
-                  TransPrecio( nRetPreArt( 5, nil, .f., dbfArticulo, dbfDiv, dbfArtKit, dbfIva ), .f. ),;
-                  TransPrecio( nRetPreArt( 5, nil, .t., dbfArticulo, dbfDiv, dbfArtKit, dbfIva ), .f. ),;
-                  TransPrecio( nRetPreArt( 6, nil, .f., dbfArticulo, dbfDiv, dbfArtKit, dbfIva ), .f. ),;
-                  TransPrecio( nRetPreArt( 6, nil, .t., dbfArticulo, dbfDiv, dbfArtKit, dbfIva ), .f. ),;
-                  if( oUser():lNotCostos(), "", nCosto( nil, dbfArticulo, dbfArtKit, .t., cDivEmp(), dbfDiv ) );
-         HEAD;
-                  "Nombre",;
-                  "Ref. Provee.",;
-                  "Proveedor",;
-                  "Stock",;
-                  "Precio 1" ,;
-                  "Precio 1 " + __IMP__ ,;
-                  "Precio 2" ,;
-                  "Precio 2 " + __IMP__ ,;
-                  "Precio 3" ,;
-                  "Precio 3 " + __IMP__ ,;
-                  "Precio 4" ,;
-                  "Precio 4 " + __IMP__ ,;
-                  "Precio 5" ,;
-                  "Precio 5 " + __IMP__ ,;
-                  "Precio 6" ,;
-                  "Precio 6 " + __IMP__ ,;
-                  "Costo" ;
-         FIELDSIZES ;
-                  300,;
-                  80,;
-                  250,;
-                  80 ,;
-                  90 ,;
-                  90 ,;
-                  90 ,;
-                  90 ,;
-                  90 ,;
-                  90 ,;
-                  90 ,;
-                  90 ,;
-                  90 ,;
-                  90 ,;
-                  90 ,;
-                  90 ,;
-                  90  ;
-         JUSTIFY  .f., .f., .f., .t., .t., .t., .t., .t., .t., .t., .t., .t., .t., .t., .t., .t., .t. ;
-         ALIAS    ( dbfArticulo );
-         ID       105 ;
-         OF       fldGeneral
-
-         oBrwPrv:bLDblClick   := {|| oDlg:end( IDOK ) }
-         oBrwPrv:cWndName     := "Browse ProArt"
-
-         oBrwPrv:LoadData()
-
-      /*
-      Búsqueda por artículos---------------------------------------------------
-
-      REDEFINE GET aGet1 VAR cGet1;
-			ID 		104 ;
-			PICTURE	"@!" ;
-         ON CHANGE( SpecialSeek( nKey, nFlags, aGet1, oBrw, oCbxOrd, dbfArticulo, dbfCodebar ) );
-         VALID    ( OrdClearScope( oBrw, dbfArticulo ) );
-         COLOR    CLR_GET ;
-         OF       fldPrecios
-
-		REDEFINE COMBOBOX oCbxOrd ;
-			VAR 		cCbxOrd ;
-			ID 		102 ;
-         ITEMS    aCbxOrd ;
-         ON CHANGE( ( dbfArticulo )->( OrdSetFocus( oCbxOrd:nAt ) ), oBrw:refresh(), aGet1:SetFocus() ) ;
-         OF       fldPrecios
-
-      REDEFINE IBROWSE oBrw ;
-			FIELDS ;
-                  (dbfArticulo)->Nombre,;
-                  ( dbfArticulo )->Codigo,;
-                  Trans( if( ( dbfArticulo )->nCtlStock <= 1, oStock:nTotStockAct( ( dbfArticulo )->Codigo, , , , , ( dbfArticulo )->lKitArt, ( dbfArticulo )->nKitStk ), 0 ), cPicUnd ),;
-                  if( !Empty( ( dbfArticulo )->cPrvHab ), AllTrim( ( dbfArticulo )->cPrvHab ) + " - " + RetProvee( ( dbfArticulo )->cPrvHab, dbfProv ), "" ),;
-                  TransPrecio( nRetPreArt( 1, nil, .f., dbfArticulo, dbfDiv, dbfArtKit, dbfIva ), .f. ),;
-                  TransPrecio( nRetPreArt( 1, nil, .t., dbfArticulo, dbfDiv, dbfArtKit, dbfIva ), .f. ),;
-                  TransPrecio( nRetPreArt( 2, nil, .f., dbfArticulo, dbfDiv, dbfArtKit, dbfIva ), .f. ),;
-                  TransPrecio( nRetPreArt( 2, nil, .t., dbfArticulo, dbfDiv, dbfArtKit, dbfIva ), .f. ),;
-                  TransPrecio( nRetPreArt( 3, nil, .f., dbfArticulo, dbfDiv, dbfArtKit, dbfIva ), .f. ),;
-                  TransPrecio( nRetPreArt( 3, nil, .t., dbfArticulo, dbfDiv, dbfArtKit, dbfIva ), .f. ),;
-                  TransPrecio( nRetPreArt( 4, nil, .f., dbfArticulo, dbfDiv, dbfArtKit, dbfIva ), .f. ),;
-                  TransPrecio( nRetPreArt( 4, nil, .t., dbfArticulo, dbfDiv, dbfArtKit, dbfIva ), .f. ),;
-                  TransPrecio( nRetPreArt( 5, nil, .f., dbfArticulo, dbfDiv, dbfArtKit, dbfIva ), .f. ),;
-                  TransPrecio( nRetPreArt( 5, nil, .t., dbfArticulo, dbfDiv, dbfArtKit, dbfIva ), .f. ),;
-                  TransPrecio( nRetPreArt( 6, nil, .f., dbfArticulo, dbfDiv, dbfArtKit, dbfIva ), .f. ),;
-                  TransPrecio( nRetPreArt( 6, nil, .t., dbfArticulo, dbfDiv, dbfArtKit, dbfIva ), .f. ),;
-                  if( oUser():lNotCostos(), "", nCosto( nil, dbfArticulo, dbfArtKit, .t., cDivEmp(), dbfDiv ) );
-         HEAD;
-                  "Nombre" ,;
-                  "Código",;
-                  "Stock",;
-                  "Proveedor",;
-                  "Precio 1" ,;
-                  "Precio 1 " + __IMP__ ,;
-                  "Precio 2" ,;
-                  "Precio 2 " + __IMP__ ,;
-                  "Precio 3" ,;
-                  "Precio 3 " + __IMP__ ,;
-                  "Precio 4" ,;
-                  "Precio 4 " + __IMP__ ,;
-                  "Precio 5" ,;
-                  "Precio 5 " + __IMP__ ,;
-                  "Precio 6" ,;
-                  "Precio 6 " + __IMP__ ,;
-                  "Costo" ;
-         FIELDSIZES ;
-                  300 ,;
-                  80 ,;
-                  80,;
-                  250,;
-                  90 ,;
-                  90 ,;
-                  90 ,;
-                  90 ,;
-                  90 ,;
-                  90 ,;
-                  90 ,;
-                  90 ,;
-                  90 ,;
-                  90 ,;
-                  90 ,;
-                  90 ,;
-                  90  ;
-         JUSTIFY  .f., .f., .t., .f., .t., .t., .t., .t., .t., .t., .t., .t., .t., .t., .t., .t., .t. ;
-         ALIAS    ( dbfArticulo );
-         ID       105 ;
-         OF       fldPrecios
-
-         oBrw:aActions     := {| nCol | lPressCol( nCol, oBrw, oCbxOrd, aCbxOrd, dbfArticulo ) }
-         oBrw:bLDblClick   := {|| oDlg:end( IDOK ) }
-         oBrw:cWndName     := "Linea artículo detalle"
-
-         oBrw:LoadData()
-
-      REDEFINE BUTTON ;
-			ID 		500 ;
-			OF 		oDlg ;
-         WHEN     ( nAnd( nLevel, ACC_APPD ) != 0 .and. !IsReport() );
-         ACTION   ( WinAppRec( oBrw, bEdit2, dbfArticulo ) )
-
-		REDEFINE BUTTON ;
-			ID 		501 ;
-			OF 		oDlg ;
-         WHEN     ( nAnd( nLevel, ACC_EDIT ) != 0 .and. !IsReport() );
-         ACTION   ( WinEdtRec( oBrw, bEdit, dbfArticulo ) )
-
-      REDEFINE BUTTON ;
-         ID       502 ;
-			OF 		oDlg ;
-         ACTION   ( oDlg:end( IDOK ) )
-
-		REDEFINE BUTTON ;
-         ID       503 ;
-			OF 		oDlg ;
-         CANCEL ;
-         ACTION   ( oDlg:end() )
-
-   oDlg:AddFastKey( VK_F2,       {|| if( nAnd( nLevel, ACC_APPD ) != 0, WinAppRec( oBrw, bEdit2, dbfArticulo ), ) } )
-   oDlg:AddFastKey( VK_F3,       {|| if( nAnd( nLevel, ACC_EDIT ) != 0, WinEdtRec( oBrw, bEdit, dbfArticulo ), ) } )
-   oDlg:AddFastKey( VK_F5,       {|| oDlg:end(IDOK) } )
-   oDlg:AddFastKey( VK_RETURN,   {|| oDlg:end(IDOK) } )
-
-   oDlg:bStart    := {|| oGetPrv:SetFocus() }
-
-   ACTIVATE DIALOG oDlg CENTER
-
-   if oDlg:nResult == IDOK
-
-      if oGet != Nil
-         oGet:cText( ( dbfArticulo )->Codigo )
-         oGet:lValid()
-      end if
-
-      if oGet2 != Nil
-         oGet2:cText( ( dbfArticulo )->Nombre )
-      end if
-
-   end if
-
-   DestroyFastFilter( dbfArticulo )
-
-   if oFld:nOption == 2
-      SetBrwOpt( "BrwArticulo", ( dbfArticulo )->( OrdNumber() ) )
-   end if
-
-   CloseFiles()
-
-   oBrw:CloseData()
-   oBrwPrv:CloseData()
-
-Return oDlg:nResult == IDOK
-*/
-//---------------------------------------------------------------------------//
-
 Static Function lValidUndMedicion( aTmp, aGet )
 
    //si el campo unidad de medición esta vacio oculto las tres dimensiones
@@ -15975,7 +15705,7 @@ Function nRetPreArt( nTarifa, cCodDiv, lIvaInc, dbfArticulo, dbfDiv, dbfArtKit, 
 
    END SEQUENCE
 
-   ErrorBlock( oBlock )  
+   ErrorBlock( oBlock )
 
 Return ( if( lIvaInc, nPreIva, nPre ) )
 
@@ -16752,7 +16482,7 @@ Static Function StartBrwSelArticulo( oGetLote, oBrw, oBrwStock, oBtnAceptarpropi
 
 RETURN ( nil )
 
-//---------------------------------------------------------------------------// 
+//---------------------------------------------------------------------------//
 
 static function cOrdenColumnaBrw( oCol, oBrwStock )
 
@@ -16793,7 +16523,7 @@ static function cOrdenColumnaBrw( oCol, oBrwStock )
 
          case AllTrim( oCol:cHeader ) == "Num. serie"
 
-            aSort( oBrwStock:aArrayData, , , {|x,y| x:cNumeroSerie < y:cNumeroSerie } )   
+            aSort( oBrwStock:aArrayData, , , {|x,y| x:cNumeroSerie < y:cNumeroSerie } )
 
             for each oColumn in oBrwStock:aCols
                oColumn:cOrder := ""
@@ -16811,13 +16541,13 @@ static function cOrdenColumnaBrw( oCol, oBrwStock )
 
             oCol:cOrder := "Unidades"
 
-      end case   
+      end case
 
       oBrwStock:Refresh()
 
    end if
 
-return .t.               
+return .t.
 
 //---------------------------------------------------------------------------//
 
@@ -17337,15 +17067,15 @@ Static Function DataReport( oFr, lTemporal )
       oFr:SetMasterDetail( "Artículos",   "Códigos de barras",       {|| ( dbfArticulo )->Codigo } )
    end if
 
-   oFr:SetResyncPair(   "Artículos",      "Precios por propiedades" )
-   oFr:SetResyncPair(   "Artículos",      "Ofertas" )
-   oFr:SetResyncPair(   "Artículos",      "Familias" )
-   oFr:SetResyncPair(   "Artículos",      "Categoria" )
-   oFr:SetResyncPair(   "Artículos",      "Temporada" )
-   oFr:SetResyncPair(   "Artículos",      "Tipo artículo" )
-   oFr:SetResyncPair(   "Artículos",      "Fabricante" )
-   oFr:SetResyncPair(   "Artículos",      "Unidad de medición" )
-   oFr:SetResyncPair(   "Artículos",      "Códigos de barras" )
+   oFr:SetResyncPair(      "Artículos",   "Precios por propiedades" )
+   oFr:SetResyncPair(      "Artículos",   "Ofertas" )
+   oFr:SetResyncPair(      "Artículos",   "Familias" )
+   oFr:SetResyncPair(      "Artículos",   "Categoria" )
+   oFr:SetResyncPair(      "Artículos",   "Temporada" )
+   oFr:SetResyncPair(      "Artículos",   "Tipo artículo" )
+   oFr:SetResyncPair(      "Artículos",   "Fabricante" )
+   oFr:SetResyncPair(      "Artículos",   "Unidad de medición" )
+   oFr:SetResyncPair(      "Artículos",   "Códigos de barras" )
 
    RECOVER USING oError
 

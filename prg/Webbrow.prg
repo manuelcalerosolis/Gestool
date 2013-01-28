@@ -82,6 +82,12 @@ Return ( nil )
 
 Function CloseWebBrowser( oWnd )
 
+   local oBlock
+   local oError
+
+   oBlock                  := ErrorBlock( {| oError | ApoloBreak( oError ) } )
+   BEGIN SEQUENCE
+
    DEFAULT oWnd            := oWnd()
 
    if !Empty( oWnd ) .and. !Empty( oWndBrowser )
@@ -90,11 +96,16 @@ Function CloseWebBrowser( oWnd )
 
       if !Empty( oWnd:oWndClient )
          oWnd:oWndClient:End()
+         oWnd:oWndClient   := nil
       end if
 
-      oWnd:oWndClient      := nil
-
    end if
+
+   RECOVER USING oError
+
+   END SEQUENCE
+
+   ErrorBlock( oBlock )
 
 Return nil
 

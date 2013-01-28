@@ -419,6 +419,9 @@ Function CreateFastFilter( cExpFilter, cAlias, lInclude, oMeter, cExpUsuario, cE
       return .f.
    end if
 
+   oBlock                  := ErrorBlock( {| oError | ApoloBreak( oError ) } )
+   BEGIN SEQUENCE
+
    if !Empty( cExpUsuario )
       cFiltroUsuario       := cExpUsuario
    else
@@ -465,9 +468,6 @@ Function CreateFastFilter( cExpFilter, cAlias, lInclude, oMeter, cExpUsuario, cE
       end if
 
    else
-
-   oBlock                  := ErrorBlock( {| oError | ApoloBreak( oError ) } )
-   BEGIN SEQUENCE
 
       nRecAnterior         := ( cAlias )->( Recno() )
       cOldIndexName        := ( cAlias )->( OrdSetFocus() )
@@ -518,6 +518,8 @@ Function CreateFastFilter( cExpFilter, cAlias, lInclude, oMeter, cExpUsuario, cE
          cBagAnterior      := nil
       end if
 
+   end if
+
    RECOVER USING oError
 
       bExpFilter           := nil
@@ -528,7 +530,6 @@ Function CreateFastFilter( cExpFilter, cAlias, lInclude, oMeter, cExpUsuario, cE
 
    ErrorBlock( oBlock )
 
-   end if
 
 Return ( bExpFilter != nil )
 

@@ -113,8 +113,6 @@ METHOD Resource( nMode )
    Etiquetas-------------------------------------------------------------------
    */
 
-   msgStop( ::oParent:oDetPersonal:oDbfVir:cCodTra )
-
    if Empty( ::oParent:oDetPersonal:oDbfVir:cCodTra )
       msgStop( "Es necesario codificar un trabajador" )
       Return .f.

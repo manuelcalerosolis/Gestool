@@ -1043,6 +1043,8 @@ METHOD FastSeek( oGet, xCadena ) CLASS TShell
       Return .f.
    end if
 
+   CursorWait()
+
    /*
    Estudiamos la cadena de busqueda
    */
@@ -1050,30 +1052,29 @@ METHOD FastSeek( oGet, xCadena ) CLASS TShell
    xCadena           := Alltrim( Upper( cValToChar( xCadena ) ) )
    xCadena           := StrTran( xCadena, Chr( 8 ), "" )
 
+/*
    if Empty( xCadena )
       Return .f.
-   end if
+   end if*/
 
    /*
-   Guradamos valores iniciales
+   Guradamos valores iniciales-------------------------------------------------
    */
 
    nRec              := ( cAlias )->( RecNo() )
    cOrd              := ( cAlias )->( OrdSetFocus() )
 
    /*
-   Comenzamos la busqueda
+   Comenzamos la busqueda------------------------------------------------------
    */
 
-   lSeek             := ::FastFilter( xCadena, cAlias )
+   lSeek             := ::FastFilter( xCadena, cAlias ) // 
 
    if !lSeek
 
       lSeek          := lMiniSeek( nil, xCadena, cAlias )
 
-      /*
-      Si no conseguimos encontrarla en el orden actial nos movemos por todos los posibles ordendenes del browse
-      */
+      // Si no conseguimos encontrarla en el orden actial nos movemos por todos los posibles ordendenes del browse
 
       if !lSeek .and. uFieldEmpresa( "lBusCir" )
 
@@ -1098,14 +1099,11 @@ METHOD FastSeek( oGet, xCadena ) CLASS TShell
 
    end if
 
-   if lSeek .or. Empty( xCadena )
+   if lSeek .or. !Empty( xCadena )
 
       oGet:SetColor( Rgb( 0, 0, 0 ), Rgb( 255, 255, 255 ) )
 
    else
-
-      ( cAlias )->( OrdSetFocus( cOrd ) )
-      ( cAlias )->( dbGoTo( nRec ) )
 
       oGet:SetColor( Rgb( 255, 255, 255 ), Rgb( 255, 102, 102 ) )
 
@@ -1113,7 +1111,9 @@ METHOD FastSeek( oGet, xCadena ) CLASS TShell
 
    ::oBrw:Select( 0 )
    ::oBrw:Select( 1 )
-   ::oBrw:Refresh()
+   ::oBrw:Refresh( .t. )
+
+   CursorWE()
 
 Return ( lSeek )
 
@@ -1128,8 +1128,6 @@ METHOD FastFilter( xCadena, cAlias )
    if Left( xCadena, 1 ) == "*"
 
       if Right( xCadena, 1 ) == "*" .and. len( Rtrim( xCadena ) ) > 1
-
-         // ( cAlias )->( OrdWildSeek( Alltrim( xCadena ) ) )
 
          CreateFastFilter( SubStr( xCadena, 2, len( xCadena ) - 2 ), cAlias, .t. )
 
@@ -2575,6 +2573,8 @@ Method CreateXBrowse() CLASS TShell
 
       ::oBrw:bClrSel          := {|| { CLR_BLACK, Rgb( 229, 229, 229 ) } }
       ::oBrw:bClrSelFocus     := {|| { CLR_BLACK, Rgb( 167, 205, 240 ) } }
+
+      ::oBrw:bSeek            := { |c,u| ::oBrw:RddIncrSeek( c, @u ) }
 
       do case
       case IsObject( ::xAlias )

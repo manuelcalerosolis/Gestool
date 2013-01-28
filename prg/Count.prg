@@ -255,6 +255,9 @@ FUNCTION rxNewCount( cPath, oMeter )
       ( dbf )->( ordCondSet( "!Deleted()", {|| !Deleted() } ) )
       ( dbf )->( ordCreate( cPath + "nCount.Cdx", "Des", "Upper( Des )", {|| Upper( Field->Des ) } ) )
 
+      ( dbf )->( ordCondSet( "!Deleted()", {|| !Deleted() } ) )
+      ( dbf )->( ordCreate( cPath + "nCount.Cdx", "cCodDlg", "cCodDlg", {|| Field->cCodDlg } ) )
+
       ( dbf )->( dbCloseArea() )
 
    else
@@ -364,6 +367,7 @@ Function aItmCount()
 
    local aItmCount   := {}
 
+   aAdd( aItmCount,  {  "cCodDlg", "C",  2, 0 } )
    aAdd( aItmCount,  {  "Doc",     "C", 10, 0 } )
    aAdd( aItmCount,  {  "Des",     "C", 30, 0 } )
    aAdd( aItmCount,  {  "lSerie",  "L",  1, 0 } )

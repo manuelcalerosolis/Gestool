@@ -10,6 +10,10 @@ CLASS TFastVentasClientes FROM TFastReportInfGen
 
    DATA  cResource       INIT "FastReportArticulos"
 
+   DATA  oObras
+   DATA  oBancos
+   DATA  oCliAtp
+
    METHOD lResource( cFld )
 
    METHOD Create()
@@ -78,10 +82,6 @@ METHOD lResource( cFld ) CLASS TFastVentasClientes
       return .f.
    end if
 
-   if !::lGrupoIva( .t. )
-      return .f.
-   end if
-
    ::CreateFilter( , ::oDbf )
 
 RETURN .t.
@@ -119,6 +119,12 @@ METHOD OpenFiles() CLASS TFastVentasClientes
       DATABASE NEW ::oTikCliT PATH ( cPatEmp() ) CLASS "TIKET"   FILE "TIKET.DBF"   VIA ( cDriver() ) SHARED INDEX "TIKET.CDX"
 
       DATABASE NEW ::oTikCliL PATH ( cPatEmp() ) CLASS "TIKEL"   FILE "TIKEL.DBF"   VIA ( cDriver() ) SHARED INDEX "TIKEL.CDX"
+
+      DATABASE NEW ::oObras   PATH ( cPatCli() ) CLASS "OBRAST"  FILE "ObrasT.DBF"  VIA ( cDriver() ) SHARED INDEX "ObrasT.CDX"
+
+      DATABASE NEW ::oBancos  PATH ( cPatCli() ) CLASS "CliBnc"  FILE "CliBnc.DBF"  VIA ( cDriver() ) SHARED INDEX "CliBnc.CDX"
+
+      DATABASE NEW ::oCliAtp  PATH ( cPatCli() ) CLASS "CliAtp"   FILE "CliAtp.Dbf" VIA ( cDriver() ) SHARED INDEX "CliAtp.Cdx"
 
    RECOVER USING oError
 
@@ -178,16 +184,27 @@ METHOD CloseFiles() CLASS TFastVentasClientes
       ::oTikCliL:End()
    end if
 
+   if !Empty( ::oObras ) .and. ( ::oObras:Used() )
+      ::oObras:End()
+   end if
+
+   if !Empty( ::oBancos ) .and. ( ::oBancos:Used() )
+      ::oBancos:End()
+   end if
+
+   if !Empty( ::oCliAtp ) .and. ( ::oCliAtp:Used() )
+      ::oCliAtp:End()
+   end if 
+
 RETURN .t.
 
 //---------------------------------------------------------------------------//
 
 METHOD Create( uParam ) CLASS TFastVentasClientes
 
-   ::AddField( "cCodCli",  "C", 18, 0, {|| "@!" }, "Código cliente"                          )
-   ::AddField( "cNomcli",  "C",100, 0, {|| ""   }, "Nombre cliente"                          )
+   ::AddField( "cCodCli",  "C", 12, 0, {|| "@!" }, "Código cliente"                          )
+   ::AddField( "cNomCli",  "C",100, 0, {|| ""   }, "Nombre cliente"                          )
 
-   ::AddField( "cTipIva",  "C",  1, 0, {|| "@!" }, "Código del tipo de " + cImp()            )
    ::AddField( "cCodTip",  "C", 12, 0, {|| "@!" }, "Código del tipo de cliente"              )
    ::AddField( "cCodGrp",  "C", 12, 0, {|| "@!" }, "Código grupo de cliente"                 )
    ::AddField( "cCodPgo",  "C",  2, 0, {|| "@!" }, "Código de forma de pago"                 )
@@ -303,11 +320,17 @@ METHOD DataReport( oFr ) CLASS TFastVentasClientes
    ::oFastReport:SetWorkArea(       "Grupos de cliente",                ::oGrpCli:Select() )
    ::oFastReport:SetFieldAliases(   "Grupos de cliente",                cObjectsToReport( ::oGrpCli:oDbf ) )
 
-   ::oFastReport:SetWorkArea(       "Usuarios",                         ::oDbfUsr:nArea )
+   ::oFastReport:SetWorkArea(       "Usuarios",                         ::oDbfUsr:nArea ) 
    ::oFastReport:SetFieldAliases(   "Usuarios",                         cItemsToReport( aItmUsr() ) )
 
-   ::oFastReport:SetWorkArea(       "Tipos de " + cImp(),               ::oDbfIva:nArea )
-   ::oFastReport:SetFieldAliases(   "Tipos de " + cImp(),               cItemsToReport( aItmTIva() ) )
+   ::oFastReport:SetWorkArea(       "Direcciones",                      ::oObras:nArea )
+   ::oFastReport:SetFieldAliases(   "Direcciones",                      cItemsToReport( aItmObr() ) )
+
+   ::oFastReport:SetWorkArea(       "Bancos",                           ::oBancos:nArea )
+   ::oFastReport:SetFieldAliases(   "Bancos",                           cItemsToReport( aCliBnc() ) )
+
+   ::oFastReport:SetWorkArea(       "Tarfias de cliente",               ::oCliAtp:nArea )
+   ::oFastReport:SetFieldAliases(   "Tarifas de cliente",               cItemsToReport( aItmAtp() ) )
 
    ::oFastReport:SetWorkArea(       "Facturas",                         ::oFacCliT:nArea )
    ::oFastReport:SetFieldAliases(   "Facturas",                         cItemsToReport( aItmFacCli() ) )
@@ -316,22 +339,27 @@ METHOD DataReport( oFr ) CLASS TFastVentasClientes
    ::oFastReport:SetFieldAliases(   "Lineas de facturas",               cItemsToReport( aColFacCli() ) )
 
    ::oFastReport:SetMasterDetail(   "Informe", "Empresa",               {|| cCodEmp() } )
-   ::oFastReport:SetMasterDetail(   "Informe", "Tipos de " + cImp(),    {|| ::oDbf:cTipIva } )
+   ::oFastReport:SetMasterDetail(   "Informe", "Direcciones",           {|| ::oDbf:cCodCli } )
+   ::oFastReport:SetMasterDetail(   "Informe", "Bancos",                {|| ::oDbf:cCodCli } )
    ::oFastReport:SetMasterDetail(   "Informe", "Facturas",              {|| ::oDbf:cCodCli } )
-   ::oFastReport:SetMasterDetail(   "Informe", "Clientes",              {|| ::oDbf:cCodCli } )
    ::oFastReport:SetMasterDetail(   "Informe", "Agentes",               {|| ::oDbf:cCodAge } )
+   ::oFastReport:SetMasterDetail(   "Informe", "Clientes",              {|| ::oDbf:cCodCli } )
+   ::oFastReport:SetMasterDetail(   "Informe", "Tarifas de cliente",    {|| ::oDbf:cCodCli } )
 
    ::oFastReport:SetMasterDetail(   "Clientes", "Rutas",                {|| ::oDbfCli:cCodRut } )
    ::oFastReport:SetMasterDetail(   "Clientes", "Grupos de cliente",    {|| ::oDbfCli:cCodGrp } )
    ::oFastReport:SetMasterDetail(   "Clientes", "Formas de pago",       {|| ::oDbfCli:CodPago } )
    ::oFastReport:SetMasterDetail(   "Clientes", "Usuarios",             {|| ::oDbfCli:cCodUsr } )
+
    ::oFastReport:SetMasterDetail(   "Facturas", "Lineas de facturas",   {|| ::oFacCliT:cSerie + Str( ::oFacCliT:nNumFac ) + ::oFacCliT:cSufFac } )
 
    ::oFastReport:SetResyncPair(     "Informe", "Empresa" )
-   ::oFastReport:SetResyncPair(     "Informe", "Tipos de " + cImp() )
-   ::oFastReport:SetResyncPair(     "Informe", "Clientes" )
    ::oFastReport:SetResyncPair(     "Informe", "Facturas" )
    ::oFastReport:SetResyncPair(     "Informe", "Agentes" )
+   ::oFastReport:SetResyncPair(     "Informe", "Direcciones" )
+   ::oFastReport:SetResyncPair(     "Informe", "Bancos" )
+   ::oFastReport:SetResyncPair(     "Informe", "Clientes" )
+   ::oFastReport:SetResyncPair(     "Informe", "Tarifas de cliente" )
 
    ::oFastReport:SetResyncPair(     "Clientes", "Rutas" )
    ::oFastReport:SetResyncPair(     "Clientes", "Grupos de cliente" )
@@ -340,7 +368,7 @@ METHOD DataReport( oFr ) CLASS TFastVentasClientes
 
    ::oFastReport:SetResyncPair(     "Facturas", "Lineas de facturas" )
 
-   ::AddVariable()
+   // ::AddVariable()
 
 Return ( Self )
 
@@ -402,6 +430,8 @@ METHOD lGenerate() CLASS TFastVentasClientes
          ::AddClientes()
 
    end case
+
+   ::oDbf:GoTop()
 
 RETURN ( ::oDbf:LastRec() > 0 )
 

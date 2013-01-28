@@ -3810,8 +3810,7 @@ METHOD SetRDD( lAddColumns, lAutoOrder, aFldNames, aRows ) CLASS TXBrowse
                                      ( ::cAlias )->( DbGoto( n );
                                     ) ) }
 
-   If ( "ADS" $ ( ::cAlias )->( RddName() ) .or. 'ADT' $ ( ::cAlias )->( RddName() ) ) .and. ;
-      ( ::cAlias )->( LastRec() ) > 200
+   If ( "ADS" $ ( ::cAlias )->( RddName() ) .or. 'ADT' $ ( ::cAlias )->( RddName() ) ) .and. ( ::cAlias )->( LastRec() ) > 200
 
       // Modified in FWH 9.06
       // AdsGetRelKeyPos() returns approximate position as % and when multipilied by 100 and rounded off
@@ -4724,25 +4723,31 @@ METHOD RddIncrSeek( cExpr, uSeek ) CLASS TXBrowse
    local lSoft       := .t.
    local cTemp, uOrdKeyVal, cOrdKeyType
 
+   // msgStop( cExpr, "cExpr" )
+   // msgStop( ::lIncrFilter, "::lIncrFilter" )
+
    if ::lIncrFilter
       return ::RDDIncrFilter( cExpr, @uSeek )
    endif
 
-   if Empty( OrdSetFocus() ) //.or. Empty( cExpr )
+   if Empty( ( ::cAlias )->( OrdSetFocus() ) ) //.or. Empty( cExpr )
       return .f.
    endif
 
-   uOrdKeyVal  := OrdKeyVal()
+   uOrdKeyVal  := ( ::cAlias )->( OrdKeyVal() )
    cOrdKeyType := ValType( uOrdKeyVal )
 
    if cOrdKeyType == 'C'
+
+      ::lSeekWild := "*" $ cExpr 
+
       if ::lSeekWild
-         if "UPPER" $ Upper( OrdKey() )
+         if "UPPER" $ Upper( ( ::cAlias )->( OrdKey() ) )
             cExpr := Upper( cExpr )
          endif
-         lFound   := OrdWildSeek( StrTran( "*" + cExpr + "*", "**", "*" ) )
+         lFound   := ( ::cAlias )->( OrdWildSeek( StrTran( cExpr + "*", "**", "*" ) ) )
       else
-         lFound   := DbSeek( Upper( cExpr ) ) .or. DbSeek( cExpr )
+         lFound   := ( ::cAlias )->( DbSeek( Upper( cExpr ) ) .or. ( ::cAlias )->( DbSeek( cExpr ) ) )
       endif
    else
       do case
@@ -4755,7 +4760,7 @@ METHOD RddIncrSeek( cExpr, uSeek ) CLASS TXBrowse
       otherwise
          lSoft    := .f.
       endcase
-      DbSeek( cExpr, lSoft )
+      ( ::cAlias )->( DbSeek( cExpr, lSoft ) )
       lFound      := !Eof()
    endif
 

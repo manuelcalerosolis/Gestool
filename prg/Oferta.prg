@@ -2129,8 +2129,8 @@ FUNCTION nDtoOferta( cCodArt, cCodCli, cGrpCli, nUndVen, dFecOfe, dbfOferta, cCo
    if ( dbfOferta )->( dbSeek( cCodArt + cCodPr1 + cCodPr2 + cValPr1 + cValPr2 ) )
 
       while ( dbfOferta )->CARTOFE + ( dbfOferta )->CCODPR1 + ( dbfOferta )->CCODPR2 + ( dbfOferta )->CVALPR1 + ( dbfOferta )->CVALPR2 == cCodArt + cCodPr1 + cCodPr2 + cValPr1 + cValPr2
-
-			/*
+			
+         /*
 			Comprobamos si esta entre las fechas
 			*/
 
@@ -2246,7 +2246,7 @@ FUNCTION sOfertaArticulo( cCodArt, cCodCli, cGrpCli, nUndVen, dFecOfe, dbfOferta
       while ( dbfOferta )->cArtOfe + ( dbfOferta )->cCodPr1 + ( dbfOferta )->cCodPr2 + ( dbfOferta )->cValPr1 + ( dbfOferta )->cValPr2 == cCodArt + cCodPr1 + cCodPr2 + cValPr1 + cValPr2
 
          /*
-         Comprobamos si esta entre las fechas
+         Comprobamos si esta entre las fechas----------------------------------
          */
 
          if ( dbfOferta )->nTblOfe < 2                                                    .and.;
@@ -2277,7 +2277,7 @@ FUNCTION sOfertaArticulo( cCodArt, cCodCli, cGrpCli, nUndVen, dFecOfe, dbfOferta
                   nPreOfe              :=  if( lIvaInc, ( dbfOferta )->nPreIva6, ( dbfOferta )->nPreOfe6 )
             end case
 
-            if nPreAnt  == 0 .or. nPreOfe < nPreAnt
+            if nPreAnt == 0 .or. nPreOfe < nPreAnt
                sPrecio                 := sPrecioOferta()
                sPrecio:nPrecio         := nPreOfe
                sPrecio:nDtoPorcentual  := ( dbfOferta )->nDtoPct
@@ -2294,7 +2294,7 @@ FUNCTION sOfertaArticulo( cCodArt, cCodCli, cGrpCli, nUndVen, dFecOfe, dbfOferta
 
    end if
 
-RETURN sPrecio
+RETURN ( sPrecio )
 
 //---------------------------------------------------------------------------//
 /*

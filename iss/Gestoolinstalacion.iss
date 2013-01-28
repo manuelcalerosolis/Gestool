@@ -99,6 +99,19 @@ Source: "c:\fw195\gestool\bin\prfsnl.";           DestDir: "{app}"; Flags: ignor
 Source: "c:\fw195\gestool\bin\scmmrc.";           DestDir: "{app}"; Flags: ignoreversion
 #endif
 
+#ifdef ActualizacionStandard
+Source: "c:\fw195\gestool\bin\stndrd.";           DestDir: "{app}"; Flags: ignoreversion
+#endif
+
+#ifdef ActualizacionProfesional
+Source: "c:\fw195\gestool\bin\prfsnl.";           DestDir: "{app}"; Flags: ignoreversion
+#endif
+
+#ifdef ActualizacionPrestashop
+Source: "c:\fw195\gestool\bin\scmmrc.";           DestDir: "{app}"; Flags: ignoreversion
+#endif
+
+
 Source: "c:\fw195\gestool\bin\gestool.exe";       DestDir: "{app}"; Flags: ignoreversion;
 Source: "c:\fw195\gestool\resource\gestool.ico";  DestDir: "{app}"; Flags: ignoreversion
 
