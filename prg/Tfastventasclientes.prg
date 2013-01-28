@@ -13,6 +13,8 @@ CLASS TFastVentasClientes FROM TFastReportInfGen
    DATA  oObras
    DATA  oBancos
    DATA  oCliAtp
+   DATA  oCliDoc
+   DATA  oCliInc
 
    METHOD lResource( cFld )
 
@@ -126,6 +128,10 @@ METHOD OpenFiles() CLASS TFastVentasClientes
 
       DATABASE NEW ::oCliAtp  PATH ( cPatCli() ) CLASS "CliAtp"   FILE "CliAtp.Dbf" VIA ( cDriver() ) SHARED INDEX "CliAtp.Cdx"
 
+      DATABASE NEW ::oCliDoc  PATH ( cPatCli() ) CLASS "CliDoc"   FILE "ClientD.Dbf" VIA ( cDriver() ) SHARED INDEX "ClientD.Cdx"
+
+      DATABASE NEW ::oCliInc  PATH ( cPatCli() ) CLASS "CliInc"   FILE "CliInc.Dbf" VIA ( cDriver() ) SHARED INDEX "CliInc.Cdx"
+
    RECOVER USING oError
 
       msgStop( ErrorMessage( oError ), "Imposible abrir las bases de datos de clientes" )
@@ -194,6 +200,14 @@ METHOD CloseFiles() CLASS TFastVentasClientes
 
    if !Empty( ::oCliAtp ) .and. ( ::oCliAtp:Used() )
       ::oCliAtp:End()
+   end if 
+
+   if !Empty( ::oCliDoc ) .and. ( ::oCliDoc:Used() )
+      ::oCliDoc:End()
+   end if 
+
+   if !Empty( ::oCliInc ) .and. ( ::oCliInc:Used() )
+      ::oCliInc:End()
    end if 
 
 RETURN .t.
@@ -266,8 +280,9 @@ METHOD BuildTree( oTree, lSubNode ) CLASS TFastVentasClientes
 
    DEFAULT lSubNode        := .t.
 
+   oTree:Add( "Listado", 19, "Listado"  )
+
    oTreeVentas             := oTree:Add( "Ventas", 11 )
-   oTreeVentas:Add( "Listado",                 19, "Listado"  )
    oTreeVentas:Add( "Informe de presupuestos",  5, "Informe de presupuestos" )
    oTreeVentas:Add( "Informe de pedidos",       6, "Informe de pedidos" )
    oTreeVentas:Add( "Informe de albaranes",     7, "Informe de albaranes" )
@@ -332,6 +347,12 @@ METHOD DataReport( oFr ) CLASS TFastVentasClientes
    ::oFastReport:SetWorkArea(       "Tarfias de cliente",               ::oCliAtp:nArea )
    ::oFastReport:SetFieldAliases(   "Tarifas de cliente",               cItemsToReport( aItmAtp() ) )
 
+   ::oFastReport:SetWorkArea(       "Documentos",                       ::oCliDoc:nArea )
+   ::oFastReport:SetFieldAliases(   "Documentos",                       cItemsToReport( aCliDoc() ) )
+
+   ::oFastReport:SetWorkArea(       "Incidencias",                      ::oCliInc:nArea )
+   ::oFastReport:SetFieldAliases(   "Incidencias",                      cItemsToReport( aCliInc() ) )
+
    ::oFastReport:SetWorkArea(       "Facturas",                         ::oFacCliT:nArea )
    ::oFastReport:SetFieldAliases(   "Facturas",                         cItemsToReport( aItmFacCli() ) )
 
@@ -345,6 +366,8 @@ METHOD DataReport( oFr ) CLASS TFastVentasClientes
    ::oFastReport:SetMasterDetail(   "Informe", "Agentes",               {|| ::oDbf:cCodAge } )
    ::oFastReport:SetMasterDetail(   "Informe", "Clientes",              {|| ::oDbf:cCodCli } )
    ::oFastReport:SetMasterDetail(   "Informe", "Tarifas de cliente",    {|| ::oDbf:cCodCli } )
+   ::oFastReport:SetMasterDetail(   "Informe", "Documentos",            {|| ::oDbf:cCodCli } )
+   ::oFastReport:SetMasterDetail(   "Informe", "Incidencias",           {|| ::oDbf:cCodCli } )
 
    ::oFastReport:SetMasterDetail(   "Clientes", "Rutas",                {|| ::oDbfCli:cCodRut } )
    ::oFastReport:SetMasterDetail(   "Clientes", "Grupos de cliente",    {|| ::oDbfCli:cCodGrp } )
@@ -360,6 +383,8 @@ METHOD DataReport( oFr ) CLASS TFastVentasClientes
    ::oFastReport:SetResyncPair(     "Informe", "Bancos" )
    ::oFastReport:SetResyncPair(     "Informe", "Clientes" )
    ::oFastReport:SetResyncPair(     "Informe", "Tarifas de cliente" )
+   ::oFastReport:SetResyncPair(     "Informe", "Documentos" )
+   ::oFastReport:SetResyncPair(     "Informe", "Incidencias" )
 
    ::oFastReport:SetResyncPair(     "Clientes", "Rutas" )
    ::oFastReport:SetResyncPair(     "Clientes", "Grupos de cliente" )
@@ -368,7 +393,7 @@ METHOD DataReport( oFr ) CLASS TFastVentasClientes
 
    ::oFastReport:SetResyncPair(     "Facturas", "Lineas de facturas" )
 
-   // ::AddVariable()
+   ::AddVariable()
 
 Return ( Self )
 
