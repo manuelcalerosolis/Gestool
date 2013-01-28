@@ -7727,21 +7727,33 @@ Return ( Self )
 
 METHOD AceptarDividirMesa( oDlg ) Class TpvTactil
 
+   local cOldTicket := ::oTiketCabecera:cSerTik + ::oTiketCabecera:cNumTik + ::oTiketCabecera:cSufTik
+
    /*
    Pasar la temporal-----------------------------------------------------------
    */
 
    ::GuardaTemporal()
 
+   if ::GuardaDocumentoPendiente()
+
+      /*
+      Creamos el nuevo ticket-----------------------------------------------------
+      */
+
+      //::CreaNuevoTicket( oDlg )
+
+      /*
+      Limpiamos y recargamos los temporales---------------------------------------
+      */
+
+   end if
+
    /*
-   Creamos el nuevo ticket-----------------------------------------------------
+   Volvemos al ticket que estabamos-----------
    */
 
-   ::CreaNuevoTicket()
-
-   /*
-   Cerramos el dialogo---------------------------------------------------------
-   */
+   ::CargaDocumento( cOldTicket )
 
    oDlg:End( IDOK )
 
@@ -7753,21 +7765,36 @@ Return ( Self )
 
 METHOD AceptarNuevoTicketDividirMesa( oDlg ) Class TpvTactil
 
+   local cOldTicket := ::oTiketCabecera:cSerTik + ::oTiketCabecera:cNumTik + ::oTiketCabecera:cSufTik
+
    /*
    Pasar la temporal-----------------------------------------------------------
    */
 
    ::GuardaTemporal()
 
+   if ::GuardaDocumentoPendiente()
+
+      /*
+      Creamos el nuevo ticket-----------------------------------------------------
+      */
+
+      //::CreaNuevoTicket( oDlg )
+
+      /*
+      Limpiamos y recargamos los temporales---------------------------------------
+      */
+
+      end if
+
+
    /*
-   Creamos el nuevo ticket-----------------------------------------------------
+   Volvemos al ticket que estabamos-----------
    */
 
-   ::CreaNuevoTicket( oDlg )
+   ::CargaDocumento( cOldTicket )
 
-   /*
-   Limpiamos y recargamos los temporales---------------------------------------
-   */
+   ::oBrwLineas:Refresh()
    
 Return ( Self )
 
@@ -7800,39 +7827,39 @@ METHOD CreaNuevoTicket( oDlg, lZap, nSave ) Class TpvTactil
    local oError
    local oBlock
    local sCobro
+   local cCodSala       := ::oTiketCabecera:cCodSala
+   local cPntVenta      := ::oTiketCabecera:cPntVenta
+   local nUbiTik        := ::oTiketCabecera:nUbiTik
 
    CursorWait()
 
    DEFAULT lZap                     := .t.
    DEFAULT nSave                    := SAVTIK
 
+   ::oTiketCabecera:GetStatus()
+
    oDlg:Disable()
 
-   //::CargaValoresDefecto()
-
-   oBlock                           := ErrorBlock( {| oError | ApoloBreak( oError ) } )
-   BEGIN SEQUENCE
+   /*oBlock                           := ErrorBlock( {| oError | ApoloBreak( oError ) } )
+   BEGIN SEQUENCE*/
 
       /*
       Si el numero de ticket esta vacio debemos tomar un nuevo numero-------------
       */
 
-      if Empty( ::oTiketCabecera:cNumTik )
+      ::InitDocumento( ubiSala )
 
-         ::oTiketCabecera:cNumTik   := ::nNuevoNumeroTicket()
-         ::oTiketCabecera:Insert()
+      ::oTiketCabecera:cCodSala     := cCodSala
+      ::oTiketCabecera:cPntVenta    := cPntVenta
+      ::oTiketCabecera:nUbiTik      := nUbiTik
 
-      else
-
-         ::oTiketCabecera:Save()
-
-      end if
+      ::GuardaDocumentoPendiente()
 
       /*
       Guarda las lineas del ticket---------------------------------------------
       */
 
-      ::oTemporalLinea:GetStatus()
+      /*::oTemporalLinea:GetStatus()
       ::oTemporalLinea:OrdSetFocus( "lRecNum" )
 
       ::oProgressBar:SetTotal( ::oTemporalLinea:RecCount() )
@@ -7852,31 +7879,19 @@ METHOD CreaNuevoTicket( oDlg, lZap, nSave ) Class TpvTactil
 
          ::oTemporalLinea:Skip()
 
-      end while
+      end while*/
 
       /*
       Pasamos del array de cobros al fichero definitivo------------------------
       */
 
-      ::oTpvCobros:GuardaCobros()
+      //::oTpvCobros:GuardaCobros()
 
       /*
       Inicializa los cobros para el proximo ticket-----------------------------
       */
 
-      ::oTpvCobros:InitCobros()
-
-      /*
-      Vaciamos las lineas------------------------------------------------------
-      */
-
-      ::oTemporalLinea:SetStatus()
-
-      if !lZap
-         ::oTiketCabecera:Load()
-      else
-         ::oTemporalLinea:Zap()
-      end if
+      //::oTpvCobros:InitCobros()
 
       /*
       Refrescamos las lineas---------------------------------------------------
@@ -7884,26 +7899,21 @@ METHOD CreaNuevoTicket( oDlg, lZap, nSave ) Class TpvTactil
 
       ::oBrwLineas:Refresh()
 
-      /*
-      Barra de progreso vuelve a su estado----------------------------------------
-      */
-
-      ::oProgressBar:Set( 0 )
-      ::oProgressBar:Refresh()
-
-   RECOVER USING oError
+   /*RECOVER USING oError
 
       msgStop( "Error al grabar el ticket" + CRLF + ErrorMessage( oError ) )
 
    END SEQUENCE
 
-   ErrorBlock( oBlock )
+   ErrorBlock( oBlock )*/
 
    /*
    Dialogo se vuelve a habilitar para volcer al trabajo------------------------
    */
 
    oDlg:Enable()
+
+   ::oTiketCabecera:SetStatus()
 
    CursorWE()
 

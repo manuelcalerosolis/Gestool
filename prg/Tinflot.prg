@@ -130,7 +130,7 @@ METHOD Create() CLASS TInfLot
    ::AddField( "cNumDoc", "C", 14, 0, {|| "@!" },           "Documento",         .t., "Documento",       12, .f. )
    ::AddField( "dFecDoc", "D",  8, 0, {|| "@!" },           "Fecha",             .t., "Fecha",           12, .f. )
 
-   ::AddTmpIndex( "cNumLot", "cNumLot + cCodArt + cCodCli + dtos( dFecDoc )" )
+   ::AddTmpIndex( "cNumLot", "cNumLot + cCodArt + cNumDoc + dtos( dFecDoc )" )
 
    ::AddGroup( {|| ::oDbf:cNumLot }, {|| "Lote : " + ::oDbf:cNumLot }, {|| Space(1) } )
 
