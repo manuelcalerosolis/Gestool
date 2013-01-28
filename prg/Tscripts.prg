@@ -6,27 +6,39 @@
 
 CLASS TScripts FROM TMant
 
-   DATA   cMru          INIT "text_code_colored_16"
-   DATA   cBitmap       INIT "WebTopBlack"
-   DATA   oBtnEjecutar
-   DATA   oBtnCompilar
-   DATA   cFicheroPRG
+   DATA     cMru           INIT "text_code_colored_16"
+   DATA     cBitmap        INIT "WebTopBlack"
+   DATA     oBtnEjecutar
+   DATA     oBtnCompilar
+   DATA     cFicheroPRG
 
-   METHOD Activate()
+   DATA     oTime
+   DATA     cTime
+   DATA     aTime          INIT { "0 min.", "1 min.", "2 min.", "5 min.", "10 min.", "15 min.", "30 min.", "45 min.", "1 hora", "2 horas", "4 horas", "8 horas" }
 
-   METHOD OpenFiles( lExclusive )
+   DATA     aMinutes       INIT { 0, 1, 2, 5, 10, 15, 30, 45, 60, 120, 240, 480 }
 
-   METHOD DefineFiles()
+   CLASSDATA   aTimer      INIT {}
 
-   METHOD Resource( nMode )
+   METHOD   Activate()
 
-   METHOD lPreSave()
+   METHOD   OpenFiles( lExclusive )
 
-   METHOD CompilarScript()
+   METHOD   DefineFiles()
 
-   METHOD EjecutarScript()
+   METHOD   Resource( nMode )
 
-   METHOD CompilarEjecutarScript( cCodScr )  INLINE ( fErase( cPatScript() + cCodScr + ".hrb" ), ::EjecutarScript() )
+   METHOD   lPreSave()
+
+   METHOD   CompilarScript()
+
+   METHOD   EjecutarScript()
+
+   METHOD   CompilarEjecutarScript( cCodScr )  INLINE ( fErase( cPatScript() + cCodScr + ".hrb" ), ::EjecutarScript() )
+
+   METHOD   LoadTimer()
+
+   METHOD   EndTimer()
 
 END CLASS
 
@@ -52,7 +64,7 @@ METHOD OpenFiles( lExclusive ) CLASS TScripts
 
       msgStop( "Imposible abrir todas las bases de datos" + CRLF + ErrorMessage( oError )  )
       ::CloseFiles()
-      lOpen          := .f.
+      lOpen             := .f.
 
    END SEQUENCE
 
@@ -70,6 +82,7 @@ METHOD DefineFiles( cPath, cDriver ) CLASS TScripts
 
       FIELD NAME "cCodScr"    TYPE "C" LEN   3  DEC 0 COMMENT "Código"        COLSIZE 100          OF ::oDbf
       FIELD NAME "cDesScr"    TYPE "C" LEN  35  DEC 0 COMMENT "Nombre"        COLSIZE 400          OF ::oDbf
+      FIELD NAME "nMinScr"    TYPE "N" LEN   3  DEC 0 COMMENT "Minutos"       HIDE                 OF ::oDbf
 
       INDEX TO "Scripts.Cdx" TAG "cCodScr" ON "cCodScr" COMMENT "Código" NODELETED OF ::oDbf
       INDEX TO "Scripts.Cdx" TAG "cDesScr" ON "cDesScr" COMMENT "Nombre" NODELETED OF ::oDbf
@@ -203,6 +216,7 @@ METHOD Resource( nMode ) CLASS TScripts
    local oGet
    local oScript
    local cScript
+   local nMinScr
    local oFont       := TFont():New( "Courier New", 8, 18, .f., .t. )
 
    if nMode != APPD_MODE
@@ -215,7 +229,12 @@ METHOD Resource( nMode ) CLASS TScripts
 
    end if
 
-   DEFINE DIALOG oDlg RESOURCE "SCRIPTS" TITLE LblTitle( nMode ) + "Script"
+   nMinScr           := aScan( ::aMinutes, ::oDbf:nMinScr )
+   nMinScr           := Min( Max( nMinScr, 1 ), len( ::aMinutes ) )
+
+   ::cTime           := ::aTime[ nMinScr ]
+
+   DEFINE DIALOG oDlg RESOURCE "Scripts" TITLE LblTitle( nMode ) + "Script"
 
       REDEFINE GET oGet VAR ::oDbf:cCodScr ;
          ID       100 ;
@@ -228,6 +247,11 @@ METHOD Resource( nMode ) CLASS TScripts
          ID       110 ;
          WHEN     ( nMode != ZOOM_MODE ) ;
 			OF 		oDlg
+
+      REDEFINE COMBOBOX ::oTime VAR ::cTime ;
+         ITEMS    ::aTime ;
+         ID       120 ;
+         OF       oDlg
 
       REDEFINE GET oScript VAR cScript MEMO ;
          ID       200 ;
@@ -286,6 +310,8 @@ METHOD lPreSave( nMode, cScript ) CLASS TScripts
       MsgStop( "La descripción del Script no puede estar vacía." )
       Return .f.
    end if
+
+   ::oDbf:nMinScr       := ::aMinutes[ ::oTime:nAt ]
 
    if nMode != ZOOM_MODE
 
@@ -383,3 +409,36 @@ Return .t.
 
 //---------------------------------------------------------------------------//
 
+METHOD LoadTimer()
+
+   if ::OpenFiles()
+
+      while !::oDbf:Eof()
+
+         if ::oDbf:nMinScr != 0
+            ::aadd(::aTimer, TTimer():New( ::oDbf:nMinScr, 60000, {|| msgAlert( by( ::oDbf:cCodScr ) ) } ):Activate())
+         end if
+
+         ::oDbf:Skip()
+
+      end while
+
+      ::CloseFiles()
+
+   end if
+
+Return .t.
+
+//---------------------------------------------------------------------------//
+
+METHOD EndTimer()
+
+   local oTimer
+
+   for each oTimer in ::aTimer
+      oTimer:End()
+   next
+
+Return .t.
+
+//---------------------------------------------------------------------------//

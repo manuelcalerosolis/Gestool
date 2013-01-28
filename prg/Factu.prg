@@ -5188,6 +5188,12 @@ Function InitServices()
       SetNotas()
    end if
 
+   /*
+   with object ( TScripts():New( cPatEmp() ) 
+      :loadTimer()
+   end with*/
+   
+
    // Auto recepción de pedidos por internet-----------------------------------
 
    // SetAutoRecive()
