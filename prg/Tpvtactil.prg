@@ -7826,97 +7826,98 @@ METHOD CreaNuevoTicket( oDlg, lZap, nSave ) Class TpvTactil
 
    local oError
    local oBlock
-   local sCobro
-   local cCodSala       := ::oTiketCabecera:cCodSala
-   local cPntVenta      := ::oTiketCabecera:cPntVenta
-   local nUbiTik        := ::oTiketCabecera:nUbiTik
+   local cNumeroTicket
+   local cValeTicket
+   local lValePromocion
+   local nValePromocion             := 0
+   local nPorcentajePromocion       := 0
 
-   CursorWait()
+   if Empty( ::oTiketCabecera:cCliTik )
+      Return ( .f. )
+   end if
 
-   DEFAULT lZap                     := .t.
-   DEFAULT nSave                    := SAVTIK
+   /*
+   Capturanmos el porcentaje de promoción--------------------------------------
+   */
 
-   ::oTiketCabecera:GetStatus()
+   nPorcentajePromocion             := ::oFideliza:nPorcentajePrograma( ::sTotal:nPromocion )
 
-   oDlg:Disable()
+   if ( nPorcentajePromocion == 0 )
+      Return ( .f. )
+   end if
 
-   /*oBlock                           := ErrorBlock( {| oError | ApoloBreak( oError ) } )
-   BEGIN SEQUENCE*/
+   if ( ::sTotal:nPromocion == 0 )
+      Return ( .f. )
+   end if
+
+   ::oDlg:Disable()
+
+   oBlock                           := ErrorBlock( {| oError | ApoloBreak( oError ) } )
+   BEGIN SEQUENCE
+
+      cNumeroTicket                 := ::cNumeroTicket()
+
+      lValePromocion                := !oRetFld( ::oTiketCabecera:cCliTik, ::oCliente, "lExcFid" )
+      if lValePromocion
+         nValePromocion             := Round( ::sTotal:nPromocion * nPorcentajePromocion / 100, ::nDecimalesTotal )
+      end if
+
+      cValeTicket                   := ::cValeTicket( cNumeroTicket )
 
       /*
       Si el numero de ticket esta vacio debemos tomar un nuevo numero-------------
       */
 
-      ::InitDocumento( ubiSala )
+      if !Empty( cValeTicket ) .and. ::oTiketCabecera:Seek( cValeTicket )
 
-      ::oTiketCabecera:cCodSala     := cCodSala
-      ::oTiketCabecera:cPntVenta    := cPntVenta
-      ::oTiketCabecera:nUbiTik      := nUbiTik
+         ::oTiketCabecera:Load()
+         ::oTiketCabecera:nTotNet   := nValePromocion
+         ::oTiketCabecera:nTotTik   := nValePromocion
+         ::oTiketCabecera:Save()
 
-      ::GuardaDocumentoPendiente()
+      else
 
-      /*
-      Guarda las lineas del ticket---------------------------------------------
-      */
+         ::oTiketCabecera:Load()
+         ::oTiketCabecera:cNumTik   := ::nNuevoNumeroTicket()
+         ::oTiketCabecera:cTipTik   := SAVVAL
+         ::oTiketCabecera:lCloTik   := .f.
+         ::oTiketCabecera:nTotNet   := nValePromocion
+         ::oTiketCabecera:nTotTik   := nValePromocion
+         ::oTiketCabecera:cTikVal   := cNumeroTicket
+         ::oTiketCabecera:Insert()
 
-      /*::oTemporalLinea:GetStatus()
-      ::oTemporalLinea:OrdSetFocus( "lRecNum" )
-
-      ::oProgressBar:SetTotal( ::oTemporalLinea:RecCount() )
-
-      ::oTemporalLinea:GoTop()
-      while !::oTemporalLinea:eof()
-
-         ::oTemporalLinea:cSerTil   := ::oTiketCabecera:cSerTik
-         ::oTemporalLinea:cNumTil   := ::oTiketCabecera:cNumTik
-         ::oTemporalLinea:cSufTil   := ::oTiketCabecera:cSufTik
-         ::oTemporalLinea:cTipTil   := ::oTiketCabecera:cTipTik
-         ::oTemporalLinea:dFecTik   := ::oTiketCabecera:dFecTik
-
-         ::oTiketLinea:AppendFromObject( ::oTemporalLinea )
-
-         ::oProgressBar:Set( ::oTemporalLinea:RecNo() )
-
-         ::oTemporalLinea:Skip()
-
-      end while*/
+      end if
 
       /*
-      Pasamos del array de cobros al fichero definitivo------------------------
+      Ahora metemos una linea-----------------------------------------------------
       */
 
-      //::oTpvCobros:GuardaCobros()
+      while ::oTiketLinea:Seek( ::cNumeroTicket() )
+         ::oTiketLinea:Delete()
+      end while
 
-      /*
-      Inicializa los cobros para el proximo ticket-----------------------------
-      */
+      ::oTiketLinea:Blank()
+      ::oTiketLinea:cSerTil         := ::oTiketCabecera:cSerTik
+      ::oTiketLinea:cNumTil         := ::oTiketCabecera:cNumTik
+      ::oTiketLinea:cSufTil         := ::oTiketCabecera:cSufTik
+      ::oTiketLinea:cTipTil         := ::oTiketCabecera:cTipTik
+      ::oTiketLinea:dFecTik         := ::oTiketCabecera:dFecTik
+      ::oTiketLinea:nUntTil         := 1
+      ::oTiketLinea:nNumLin         := 1
+      ::oTiketLinea:cNomTil         := "Vale por promoción"
+      ::oTiketLinea:nPvpTil         := nValePromocion
+      ::oTiketLinea:Insert()
 
-      //::oTpvCobros:InitCobros()
+   RECOVER USING oError
 
-      /*
-      Refrescamos las lineas---------------------------------------------------
-      */
-
-      ::oBrwLineas:Refresh()
-
-   /*RECOVER USING oError
-
-      msgStop( "Error al grabar el ticket" + CRLF + ErrorMessage( oError ) )
+      msgStop( ErrorMessage( oError ), "Error al generar vale" )
 
    END SEQUENCE
 
-   ErrorBlock( oBlock )*/
+   ErrorBlock( oBlock )
 
-   /*
-   Dialogo se vuelve a habilitar para volcer al trabajo------------------------
-   */
-
-   oDlg:Enable()
-
-   ::oTiketCabecera:SetStatus()
-
-   CursorWE()
-
+   ::oDlg:Enable()
+   
 Return ( Self )
 
 //---------------------------------------------------------------------------//
