@@ -12919,3 +12919,31 @@ Static Function YearComboBoxChange()
 Return nil
 
 //---------------------------------------------------------------------------//
+
+Function sTotPreCli( cPresupuesto, dbfMaster, dbfLine, dbfIva, dbfDiv, cDivRet, lExcCnt )
+
+   local sTotal
+
+   nTotAlbCli( cPresupuesto, dbfMaster, dbfLine, dbfIva, dbfDiv, nil, cDivRet, .f., lExcCnt )
+
+   sTotal                                 := sTotal()
+   sTotal:nTotalBruto                     := nTotBrt
+   sTotal:nTotalNeto                      := nTotNet
+   sTotal:nTotalIva                       := nTotIva
+   sTotal:aTotalIva                       := aTotIva
+   sTotal:nTotalRecargoEquivalencia       := nTotReq
+   sTotal:nTotalDocumento                 := nTotPre
+   sTotal:nTotalPuntoVerde                := nTotPnt
+   sTotal:nTotalTransporte                := nTotTrn
+   sTotal:nTotalAgente                    := nTotAge
+   sTotal:nTotalCosto                     := nTotCos
+   sTotal:nTotalImpuestoHidrocarburos     := nTotIvm
+   sTotal:nTotalRentabilidad              := nTotRnt
+   sTotal:nTotalDescuentoGeneral          := nTotDto
+   sTotal:nTotalDescuentoProntoPago       := nTotDpp
+   sTotal:nTotalDescuentoUno              := nTotUno
+   sTotal:nTotalDescuentoDos              := nTotDos
+
+Return ( sTotal )
+
+//---------------------------------------------------------------------------//

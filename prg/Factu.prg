@@ -75,7 +75,7 @@ static cNameVersion
 static cBmpVersion
 
 //---------------------------------------------------------------------------//
-//Comenzamos la parte de código que se compila para el ejecutable normal
+//Comenzamos la parte de cÃ³digo que se compila para el ejecutable normal
 
 #ifndef __PDA__
 
@@ -162,7 +162,7 @@ function Main( cParams )
       nError      := AdsIsServerLoaded( cAdsIp )
       if nError == 0
          adsGetLastError( @cError )
-         msgStop( cError, "Salida de la aplicación" )
+         msgStop( cError, "Salida de la aplicaciÃ³n" )
          Return .f.
       end if
 
@@ -268,7 +268,7 @@ function Main( cParams )
 
    if( !lIsDir( cPatDat() ),  MakeDir( cNamePath( cPatDat() ) ), )
 
-   // Obtenemos la versión del programa
+   // Obtenemos la versiÃ³n del programa
 
    IsStandard()
    IsProfesional()
@@ -281,7 +281,7 @@ function Main( cParams )
    // Chequeamos los datos de los usuarios
 
    if !TReindex():lFreeHandle()
-      msgStop( "Existen procesos exclusivos, no se puede acceder a la aplicación" + CRLF + ;
+      msgStop( "Existen procesos exclusivos, no se puede acceder a la aplicaciÃ³n" + CRLF + ;
                "en estos momentos, reintentelo pasados unos segundos." )
       return .f.
    end if
@@ -383,9 +383,9 @@ Static Function CreateMainWindow( oIconApp )
 
    oMsgCaja                   := TMsgItem():New( oWnd:oMsgBar, "Caja : "      + oUser():cCaja(), 100,,,, .t., {|| SelectCajas() } )
 
-   oMsgAlmacen                := TMsgItem():New( oWnd:oMsgBar, "Almacén : "   + oUser():cAlmacen(), 100,,,, .t., {|| SelectAlmacen() } )
+   oMsgAlmacen                := TMsgItem():New( oWnd:oMsgBar, "AlmacÃ©n : "   + oUser():cAlmacen(), 100,,,, .t., {|| SelectAlmacen() } )
 
-   oMsgSesion                 := TMsgItem():New( oWnd:oMsgBar, "Sesión : "    + Transform( cCurSesion(), "######" ), 100,,,, .t. )
+   oMsgSesion                 := TMsgItem():New( oWnd:oMsgBar, "SesiÃ³n : "    + Transform( cCurSesion(), "######" ), 100,,,, .t. )
 
    // Abrimos la ventana
 
@@ -440,7 +440,7 @@ FUNCTION CtrlApp()
 
    DEFINE BRUSH oBrush COLOR Rgb( 255, 255, 255 )
 
-   DEFINE DIALOG oDlg RESOURCE "GETSERIALNO" TITLE "Sistema de protección : " + Str( nSerialHD ) BRUSH oBrush
+   DEFINE DIALOG oDlg RESOURCE "GETSERIALNO" TITLE "Sistema de protecciÃ³n : " + Str( nSerialHD ) BRUSH oBrush
 
    REDEFINE BITMAP oBmp ;
       RESOURCE "Lock_48" ;
@@ -464,13 +464,13 @@ FUNCTION CtrlApp()
    REDEFINE SAY COLOR Rgb( 0, 0, 0 ), Rgb( 255, 255, 255 ) ID 140 OF oDlg
    REDEFINE SAY COLOR Rgb( 0, 0, 0 ), Rgb( 255, 255, 255 ) ID 150 OF oDlg
 
-   REDEFINE SAY PROMPT "2.- Marque el teléfono siguiente " + __GSTTELEFONO__ COLOR Rgb( 0, 0, 0 ), Rgb( 255, 255, 255 ) ID 160 OF oDlg
+   REDEFINE SAY PROMPT "2.- Marque el telÃ©fono siguiente " + __GSTTELEFONO__ COLOR Rgb( 0, 0, 0 ), Rgb( 255, 255, 255 ) ID 160 OF oDlg
 
    REDEFINE SAY COLOR Rgb( 0, 0, 0 ), Rgb( 255, 255, 255 ) ID 170 OF oDlg
    REDEFINE SAY COLOR Rgb( 0, 0, 0 ), Rgb( 255, 255, 255 ) ID 180 OF oDlg
    REDEFINE SAY COLOR Rgb( 0, 0, 0 ), Rgb( 255, 255, 255 ) ID 190 OF oDlg
 
-   with object ( TWebBtn():Redefine( 200,,,,,  {|| goWeb( __GSTWEB__ ) }, oDlg,,,,, "LEFT",,,,, Rgb( 0, 0, 255 ), Rgb( 0, 0, 255 ),,,, "Ir a la página web de " + __GSTFACTORY__ ) )
+   with object ( TWebBtn():Redefine( 200,,,,,  {|| goWeb( __GSTWEB__ ) }, oDlg,,,,, "LEFT",,,,, Rgb( 0, 0, 255 ), Rgb( 0, 0, 255 ),,,, "Ir a la pÃ¡gina web de " + __GSTFACTORY__ ) )
       :SetTransparent()
       :SetText( __GSTFACTORY__ )
    end with
@@ -521,11 +521,11 @@ FUNCTION CtrlApp()
 
          lDemoMode( .f. )
 
-         MsgInfo( "Programa registrado con éxito" )
+         MsgInfo( "Programa registrado con Ã©xito" )
 
       else
 
-         MsgStop( "Número invalido" )
+         MsgStop( "NÃºmero invalido" )
 
          PostQuitMessage()
 
@@ -708,7 +708,7 @@ FUNCTION lInitCheck( lDir, oMessage, oProgress )
    if( !lIsDir( cPatEmpTmp() ),  MakeDir( cNamePath( cPatEmpTmp() ) ), )
    if( !lIsDir( cPatScript() ),  MakeDir( cNamePath( cPatScript() ) ), )
 
-   // Elimina los temporales de la aplicación----------------------------------
+   // Elimina los temporales de la aplicaciÃ³n----------------------------------
 
    lRdDir( cPatTmp(), "*.*" )
    lRdDir( cPatLog(), "*.*" )
@@ -752,7 +752,7 @@ FUNCTION lInitCheck( lDir, oMessage, oProgress )
    // Inicializamos classes----------------------------------------------------
 
    if !Empty( oMessage )
-      oMessage:SetText( 'Inicializamos las clases de la aplicación' )
+      oMessage:SetText( 'Inicializamos las clases de la aplicaciÃ³n' )
    end if
 
    if !Empty( oProgress )
@@ -764,7 +764,7 @@ FUNCTION lInitCheck( lDir, oMessage, oProgress )
    // Apertura de ficheros-----------------------------------------------------
 
    if !Empty( oMessage )
-      oMessage:SetText( 'Selección de la empresa actual' )
+      oMessage:SetText( 'SelecciÃ³n de la empresa actual' )
    end if
 
    if !Empty( oProgress )
@@ -799,33 +799,33 @@ Function lStartCheck()
 
    SetTituloEmpresa()
 
-   // Controla de acceso a la aplicación---------------------------------------
+   // Controla de acceso a la aplicaciÃ³n---------------------------------------
 
-   oMsgText( 'Control de acceso a la aplicación' )
+   oMsgText( 'Control de acceso a la aplicaciÃ³n' )
 
    CtrlApp()
 
    // Opciones de inicio-------------------------------------------------------
 
-   oMsgText( 'Selección del cajón' )
+   oMsgText( 'SelecciÃ³n del cajÃ³n' )
 
    SelectCajon()
 
-   oMsgText( 'Selección del la caja' )
+   oMsgText( 'SelecciÃ³n del la caja' )
 
    if uFieldEmpresa( "lSelCaj", .f. )
       SelectCajas()
    end if
 
-   oMsgText( 'Selección del almacen' )
+   oMsgText( 'SelecciÃ³n del almacen' )
 
    if uFieldEmpresa( "lSelAlm", .f. )
       SelectAlmacen()
    end if
 
-   // Lanzamos para los documentos automáticos---------------------------------
+   // Lanzamos para los documentos automÃ¡ticos---------------------------------
 
-   oMsgText( 'Facturas automáticas' )
+   oMsgText( 'Facturas automÃ¡ticas' )
 
    TCreaFacAutomaticas():Create()
 
@@ -835,9 +835,9 @@ Function lStartCheck()
 
    lPedidosWeb()
 
-   // Navegación---------------------------------------------------------------
+   // NavegaciÃ³n---------------------------------------------------------------
 
-   oMsgText( 'Abriendo panel de navegación' )
+   oMsgText( 'Abriendo panel de navegaciÃ³n' )
 
    if !Empty( oWnd ) .and. !( Os_IsWTSClient() )
        OpenWebBrowser( oWnd )
@@ -900,7 +900,7 @@ Function Ejecutascript()
    end if
 
    /*
-   Anotamos la fecha del último envio de script--------------------------------
+   Anotamos la fecha del Ãºltimo envio de script--------------------------------
    */
 
    WritePProString( "SCRIPT", "Fecha", Dtoc( GetSysDate() ), FullCurDir() + "GstApolo.Ini" )
@@ -1153,10 +1153,10 @@ init procedure RddInit()
 
 
    REQUEST HB_LANG_ES         // Para establecer idioma de Mensajes, fechas, etc..
-   REQUEST HB_CODEPAGE_ESWIN  // Para establecer código de página a Español (Ordenación, etc..)
+   REQUEST HB_CODEPAGE_ESWIN  // Para establecer cÃ³digo de pÃ¡gina a EspaÃ±ol (OrdenaciÃ³n, etc..)
 
    HB_LangSelect( "ES" )      // Para mensajes, fechas, etc..
-   HB_SetCodePage( "ESWIN" )  // Para ordenación (arrays, cadenas, etc..) *Requiere CodePage.lib
+   HB_SetCodePage( "ESWIN" )  // Para ordenaciÃ³n (arrays, cadenas, etc..) *Requiere CodePage.lib
 
    hDLLRich    := LoadLibrary( "Riched20.dll" ) // Cargamos la libreria para richedit
 
@@ -1187,7 +1187,7 @@ Return ( cCaj )
 Function cAlmUsr( cAlm )
 
    if cAlm != nil .and. oMsgAlmacen != nil
-      oMsgAlmacen:SetText( "Almacén : " + RTrim( cAlm ) )
+      oMsgAlmacen:SetText( "AlmacÃ©n : " + RTrim( cAlm ) )
    end if
 
 Return ( cAlm )
@@ -1213,7 +1213,7 @@ Function RunReportGalery()
       nHndReport  := WinExec( FullCurDir() + "RptApolo.Exe " + cCodEmp() + " " + cCurUsr(), 1 )
 
       if !( nHndReport > 21 .or. nHndReport < 0 )
-         MsgStop( "Error en la ejecución de la galeria de informes" )
+         MsgStop( "Error en la ejecuciÃ³n de la galeria de informes" )
       end if
 
    end if
@@ -1231,7 +1231,7 @@ Function RunAsistenciaRemota()
       nHnd     := WinExec( FullCurDir() + "Client\Client.Exe" , 1 )
 
       if !( nHnd > 21 .or. nHnd < 0 )
-         MsgStop( "Error en la ejecución de la asistencia remota" )
+         MsgStop( "Error en la ejecuciÃ³n de la asistencia remota" )
       end if
 
    else
@@ -1286,8 +1286,8 @@ Function CreateAcceso( oWnd )
 
    oItem                := oItemArchivo:Add()
    oItem:oGroup         := oGrupo
-   oItem:cPrompt        := 'Gestión de cartera'
-   oItem:cMessage       := 'Gestión de cartera'
+   oItem:cPrompt        := 'GestiÃ³n de cartera'
+   oItem:cMessage       := 'GestiÃ³n de cartera'
    oItem:bAction        := {|| PageIni( "01004", oWnd() ) }
    oItem:cId            := "01004"
    oItem:cBmp           := "briefcase2_column-chart_16"
@@ -1295,8 +1295,8 @@ Function CreateAcceso( oWnd )
 
    oItem                := oItemArchivo:Add()
    oItem:oGroup         := oGrupo
-   oItem:cPrompt        := 'Iniciar sesión'
-   oItem:cMessage       := 'Inicia una nueva sesión de trabajo'
+   oItem:cPrompt        := 'Iniciar sesiÃ³n'
+   oItem:cMessage       := 'Inicia una nueva sesiÃ³n de trabajo'
    oItem:bAction        := {|| ChkTurno( "01000", oWnd() ) }
    oItem:cId            := "01000"
    oItem:cBmp           := "clock_run_16"
@@ -1306,7 +1306,7 @@ Function CreateAcceso( oWnd )
    oItem                := oItemArchivo:Add()
    oItem:oGroup         := oGrupo
    oItem:cPrompt        := 'Arqueo parcial (X)'
-   oItem:cMessage       := 'Inicia una nueva sesión de trabajo'
+   oItem:cMessage       := 'Inicia una nueva sesiÃ³n de trabajo'
    oItem:bAction        := {|| CloseTurno( "01001", oWnd(), .f., .t. ) }
    oItem:cId            := "01001"
    oItem:cBmp           := "Stopwatch_Refresh_16"
@@ -1315,8 +1315,8 @@ Function CreateAcceso( oWnd )
 
    oItem                := oItemArchivo:Add()
    oItem:oGroup         := oGrupo
-   oItem:cPrompt        := 'Cerrar sesión (Z)'
-   oItem:cMessage       := 'Cierra la sesión de trabajo actual'
+   oItem:cPrompt        := 'Cerrar sesiÃ³n (Z)'
+   oItem:cMessage       := 'Cierra la sesiÃ³n de trabajo actual'
    oItem:bAction        := {|| CloseTurno( "01006", oWnd() ) }
    oItem:cId            := "01006"
    oItem:cBmp           := "clock_stop_16"
@@ -1363,7 +1363,7 @@ Function CreateAcceso( oWnd )
    oGrupo               := TGrupoAcceso()
    oGrupo:nBigItems     := 3
    oGrupo:nLittleItems  := 3
-   oGrupo:cPrompt       := 'Artículos'
+   oGrupo:cPrompt       := 'ArtÃ­culos'
    oGrupo:cLittleBitmap := "Cube_Yellow_16"
    oGrupo:cBigBitmap    := "Cube_Yellow_32"
 
@@ -1389,8 +1389,8 @@ Function CreateAcceso( oWnd )
 
    oItem                := oItemArchivo:Add()
    oItem:oGroup         := oGrupo
-   oItem:cPrompt        := 'Artículos'
-   oItem:cMessage       := 'Acceso al fichero de artículo'
+   oItem:cPrompt        := 'ArtÃ­culos'
+   oItem:cMessage       := 'Acceso al fichero de artÃ­culo'
    oItem:bAction        := {|| Articulo( "01014", oWnd ) }
    oItem:cId            := "01014"
    oItem:cBmp           := "Cube_Yellow_16"
@@ -1400,7 +1400,7 @@ Function CreateAcceso( oWnd )
    oItem                := oItemArchivo:Add()
    oItem:oGroup         := oGrupo
    oItem:cPrompt        := 'Fabricantes'
-   oItem:cMessage       := 'Clasificación de artículos por fabricantes'
+   oItem:cMessage       := 'ClasificaciÃ³n de artÃ­culos por fabricantes'
    oItem:bAction        := {|| TFabricantes():New( cPatArt(), oWnd, "01070" ):Activate() }
    oItem:cId            := "01070"
    oItem:cBmp           := "Nut_and_bolt_16"
@@ -1411,7 +1411,7 @@ Function CreateAcceso( oWnd )
    oItem                := oItemArchivo:Add()
    oItem:oGroup         := oGrupo
    oItem:cPrompt        := 'Comentarios'
-   oItem:cMessage       := 'Acceso a los comentarios de los artículos'
+   oItem:cMessage       := 'Acceso a los comentarios de los artÃ­culos'
    oItem:bAction        := {|| TComentarios():New( cPatArt(), oWnd, "04002" ):Activate() }
    oItem:cId            := "04002"
    oItem:cBmp           := "message_16"
@@ -1422,8 +1422,8 @@ Function CreateAcceso( oWnd )
    /*
    oItem                := oItemArchivo:Add()
    oItem:oGroup         := oGrupo
-   oItem:cPrompt        := 'Códigos barras'
-   oItem:cMessage       := 'Acceso a los códigos de barras de los artículos'
+   oItem:cPrompt        := 'CÃ³digos barras'
+   oItem:cMessage       := 'Acceso a los cÃ³digos de barras de los artÃ­culos'
    oItem:bAction        := {|| ArtCodebar( "01024", oWnd ) }
    oItem:cId            := "01024"
    oItem:cBmp           := "Remotecontrol_16"
@@ -1435,7 +1435,7 @@ Function CreateAcceso( oWnd )
    oItem                := oItemArchivo:Add()
    oItem:oGroup         := oGrupo
    oItem:cPrompt        := 'Propiedades'
-   oItem:cMessage       := 'Acceso a las propiedades los artículos'
+   oItem:cMessage       := 'Acceso a las propiedades los artÃ­culos'
    oItem:bAction        := {|| Prop( "01015", oWnd ) }
    oItem:cId            := "01015"
    oItem:cBmp           := "Die_Gold_16"
@@ -1445,8 +1445,8 @@ Function CreateAcceso( oWnd )
 
    oItem                := oItemArchivo:Add()
    oItem:oGroup         := oGrupo
-   oItem:cPrompt        := 'Factores conversión'
-   oItem:cMessage       := 'Acceso a los factores de conversion de los artículos'
+   oItem:cPrompt        := 'Factores conversiÃ³n'
+   oItem:cMessage       := 'Acceso a los factores de conversion de los artÃ­culos'
    oItem:bAction        := {|| TblCnv( "01016", oWnd ) }
    oItem:cId            := "01016"
    oItem:cBmp           := "Tape_Measure2_16"
@@ -1467,8 +1467,8 @@ Function CreateAcceso( oWnd )
 
    oItem                := oItemArchivo:Add()
    oItem:oGroup         := oGrupo
-   oItem:cPrompt        := 'Unidades medición'
-   oItem:cMessage       := 'Unidades de Medición'
+   oItem:cPrompt        := 'Unidades mediciÃ³n'
+   oItem:cMessage       := 'Unidades de MediciÃ³n'
    oItem:bAction        := {|| UniMedicion():New( cPatGrp(), oWnd, "01103" ):Activate() }
    oItem:cId            := "01103"
    oItem:cBmp           := "Tape_Measure1_16"
@@ -1479,7 +1479,7 @@ Function CreateAcceso( oWnd )
    oItem                := oItemArchivo:Add()
    oItem:oGroup         := oGrupo
    oItem:cPrompt        := 'Tipos'
-   oItem:cMessage       := 'Clasificación de artículos por tipos'
+   oItem:cMessage       := 'ClasificaciÃ³n de artÃ­culos por tipos'
    oItem:bAction        := {|| TTipArt():New( cPatArt(), oWnd, "01013" ):Activate() }
    oItem:cId            := "01013"
    oItem:cBmp           := "Cubes_Blue_16"
@@ -1489,8 +1489,8 @@ Function CreateAcceso( oWnd )
 
    oItem                := oItemArchivo:Add()
    oItem:oGroup         := oGrupo
-   oItem:cPrompt        := 'Categorías'
-   oItem:cMessage       := 'Acceso al fichero de categorías'
+   oItem:cPrompt        := 'CategorÃ­as'
+   oItem:cMessage       := 'Acceso al fichero de categorÃ­as'
    oItem:bAction        := {|| Categoria( "01101", oWnd() ) }
    oItem:cId            := "01101"
    oItem:cBmp           := "Colors_16"
@@ -1531,7 +1531,7 @@ Function CreateAcceso( oWnd )
    oItem                := oItemArchivo:Add()
    oItem:oGroup         := oGrupo
    oItem:cPrompt        := 'Ofertas'
-   oItem:cMessage       := 'Acceso a las ofertas de artículos'
+   oItem:cMessage       := 'Acceso a las ofertas de artÃ­culos'
    oItem:bAction        := {|| Oferta( "01020", oWnd ) }
    oItem:cId            := "01020"
    oItem:cBmp           := "Star_Red_16"
@@ -1554,14 +1554,14 @@ Function CreateAcceso( oWnd )
 
    oGrupo               := TGrupoAcceso()
    oGrupo:nBigItems     := 2
-   oGrupo:cPrompt       := 'Búsquedas'
+   oGrupo:cPrompt       := 'BÃºsquedas'
    oGrupo:cLittleBitmap := "Package_Find_16"
    oGrupo:cBigBitmap    := "Package_Find_32"
 
    oItem                := oItemArchivo:Add()
    oItem:oGroup         := oGrupo
-   oItem:cPrompt        := 'Búsqueda por series'
-   oItem:cMessage       := 'Búsqueda por series'
+   oItem:cPrompt        := 'BÃºsqueda por series'
+   oItem:cMessage       := 'BÃºsqueda por series'
    oItem:bAction        := {|| TSeaNumSer():Activate( "01022", oWnd ) }
    oItem:cId            := "01022"
    oItem:cBmp           := "Package_Find_16"
@@ -1571,8 +1571,8 @@ Function CreateAcceso( oWnd )
 
    oItem                := oItemArchivo:Add()
    oItem:oGroup         := oGrupo
-   oItem:cPrompt        := 'Búsqueda por lotes'
-   oItem:cMessage       := 'Búsqueda por lotes'
+   oItem:cPrompt        := 'BÃºsqueda por lotes'
+   oItem:cMessage       := 'BÃºsqueda por lotes'
    oItem:bAction        := {|| TTrazarLote():Activate( "01023", oWnd ) }
    oItem:cId            := "01023"
    oItem:cBmp           := "Package_View_16"
@@ -1900,7 +1900,7 @@ Function CreateAcceso( oWnd )
    oItem                := oItemAlmacen:Add()
    oItem:oGroup         := oGrupo
    oItem:cPrompt        := "Tipos de movimientos"
-   oItem:cMessage       := "Acceso a los tipos de movimientos de almacén"
+   oItem:cMessage       := "Acceso a los tipos de movimientos de almacÃ©n"
    oItem:bAction        := {|| TMov( "01042", oWnd ) }
    oItem:cId            := "01042"
    oItem:cBmp           := "Package_replace2_16"
@@ -1920,15 +1920,15 @@ Function CreateAcceso( oWnd )
    /*
    oGrupo               := TGrupoAcceso()
    oGrupo:nBigItems     := 2
-   oGrupo:cPrompt       := 'Movimientos almacén'
+   oGrupo:cPrompt       := 'Movimientos almacÃ©n'
    oGrupo:cLittleBitmap := "Pencil_Package_16"
    oGrupo:cBigBitmap    := "Pencil_Package_32"
    */
 
    oItem                := oItemAlmacen:Add()
    oItem:oGroup         := oGrupo
-   oItem:cPrompt        := 'Movimientos almacén'
-   oItem:cMessage       := 'Acceso a los movimientos de almacén'
+   oItem:cPrompt        := 'Movimientos almacÃ©n'
+   oItem:cMessage       := 'Acceso a los movimientos de almacÃ©n'
    oItem:bAction        := {|| RemMovAlm( "01050", oWnd ) }
    oItem:cId            := "01050"
    oItem:cBmp           := "Pencil_Package_16"
@@ -1939,7 +1939,7 @@ Function CreateAcceso( oWnd )
    oItem                := oItemAlmacen:Add()
    oItem:oGroup         := oGrupo
    oItem:cPrompt        := 'Historico movimientos'
-   oItem:cMessage       := 'Acceso a los movimientos historicos de almacén'
+   oItem:cMessage       := 'Acceso a los movimientos historicos de almacÃ©n'
    oItem:bAction        := {|| HisMovAlm( "01051", oWnd ) }
    oItem:cId            := "01051"
    oItem:cBmp           := "Package_book_red_16"
@@ -1949,14 +1949,14 @@ Function CreateAcceso( oWnd )
 
    oGrupo               := TGrupoAcceso()
    oGrupo:nBigItems     := 3
-   oGrupo:cPrompt       := 'Depósitos'
+   oGrupo:cPrompt       := 'DepÃ³sitos'
    oGrupo:cLittleBitmap := "Pencil_Package_16"
    oGrupo:cBigBitmap    := "Pencil_Package_32"
 
    oItem                := oItemAlmacen:Add()
    oItem:oGroup         := oGrupo
-   oItem:cPrompt        := 'Introducción depósitos'
-   oItem:cMessage       := 'Acceso a la introducción de depósitos de almacén'
+   oItem:cPrompt        := 'IntroducciÃ³n depÃ³sitos'
+   oItem:cMessage       := 'Acceso a la introducciÃ³n de depÃ³sitos de almacÃ©n'
    oItem:bAction        := {|| DepAge( "01052", oWnd ) }
    oItem:cId            := "01052"
    oItem:cBmp           := "Package_add_16"
@@ -1965,8 +1965,8 @@ Function CreateAcceso( oWnd )
 
    oItem                := oItemAlmacen:Add()
    oItem:oGroup         := oGrupo
-   oItem:cPrompt        := 'Estado depósitos'
-   oItem:cMessage       := 'Acceso a los estados de depósitos de almacén'
+   oItem:cPrompt        := 'Estado depÃ³sitos'
+   oItem:cMessage       := 'Acceso a los estados de depÃ³sitos de almacÃ©n'
    oItem:bAction        := {|| ExtAge( "01053", oWnd ) }
    oItem:cId            := "01053"
    oItem:cBmp           := "Package_ok_16"
@@ -1975,8 +1975,8 @@ Function CreateAcceso( oWnd )
 
    oItem                := oItemAlmacen:Add()
    oItem:oGroup         := oGrupo
-   oItem:cPrompt        := 'Liquidación depósitos'
-   oItem:cMessage       := 'Acceso a las liquidaciones de depósitos de almacén'
+   oItem:cPrompt        := 'LiquidaciÃ³n depÃ³sitos'
+   oItem:cMessage       := 'Acceso a las liquidaciones de depÃ³sitos de almacÃ©n'
    oItem:bAction        := {|| LqdAlm( "01054", oWnd ) }
    oItem:cId            := "01054"
    oItem:cBmp           := "Package_preferences_16"
@@ -1985,12 +1985,12 @@ Function CreateAcceso( oWnd )
 
    end if
 
-   // Producción---------------------------------------------------------------
+   // ProducciÃ³n---------------------------------------------------------------
 
    if IsProfesional()
 
    oItemProduccion            := oAcceso:Add()
-   oItemProduccion:cPrompt    := 'PRODUCCIÓN' 
+   oItemProduccion:cPrompt    := 'PRODUCCIÃ“N' 
    oItemProduccion:cBmp       := "Folder16"
    oItemProduccion:cBmpBig    := "Folder_32"
    oItemProduccion:lShow      := .t. 
@@ -2004,7 +2004,7 @@ Function CreateAcceso( oWnd )
    oItem                := oItemProduccion:Add()
    oItem:oGroup         := oGrupo
    oItem:cPrompt        := 'Secciones'
-   oItem:cMessage       := 'Acceso a las secciones de producción'
+   oItem:cMessage       := 'Acceso a las secciones de producciÃ³n'
    oItem:bAction        := {|| TSeccion():New( cPatEmp(), oWnd, "04001" ):Activate() }
    oItem:cId            := "04001"
    oItem:cBmp           := "Group_Worker2_16"
@@ -2024,7 +2024,7 @@ Function CreateAcceso( oWnd )
    oItem                := oItemProduccion:Add()
    oItem:oGroup         := oGrupo  
    oItem:cPrompt        := 'Tipos de horas'
-   oItem:cMessage       := 'Acceso a tipos de horas de producción'
+   oItem:cMessage       := 'Acceso a tipos de horas de producciÃ³n'
    oItem:bAction        := {|| THoras():New( cPatEmp(), oWnd, "04003" ):Activate() }
    oItem:cId            := "04003"
    oItem:cBmp           := "Worker2_Clock_16"
@@ -2073,14 +2073,14 @@ Function CreateAcceso( oWnd )
 
    oGrupo               := TGrupoAcceso()
    oGrupo:nBigItems     := 2
-   oGrupo:cPrompt       := 'Producción'
+   oGrupo:cPrompt       := 'ProducciÃ³n'
    oGrupo:cLittleBitmap := "Worker2_Form_Red_16"
    oGrupo:cBigBitmap    := "Worker2_Form_Red_32"
 
    oItem                := oItemProduccion:Add()
    oItem:oGroup         := oGrupo
-   oItem:cPrompt        := 'Partes producción'
-   oItem:cMessage       := 'Acceso a los partes de producción'
+   oItem:cPrompt        := 'Partes producciÃ³n'
+   oItem:cMessage       := 'Acceso a los partes de producciÃ³n'
    oItem:bAction        := {|| StartTProduccion() }
    oItem:cId            := "04008"
    oItem:cBmp           := "Worker2_Form_Red_16"
@@ -2099,7 +2099,7 @@ Function CreateAcceso( oWnd )
 
    end if
 
-   // Producción---------------------------------------------------------------
+   // ProducciÃ³n---------------------------------------------------------------
 
    if IsProfesional()
 
@@ -2227,8 +2227,8 @@ Function CreateAcceso( oWnd )
 
    oItem                := oItemVentas:Add()
    oItem:oGroup         := oGrupo
-   oItem:cPrompt        := 'Programa de fidelización'
-   oItem:cMessage       := 'Acceso al programa de fidelización'
+   oItem:cPrompt        := 'Programa de fidelizaciÃ³n'
+   oItem:cMessage       := 'Acceso al programa de fidelizaciÃ³n'
    oItem:bAction        := {|| StartTFideliza() }
    oItem:cId            := "04006"
    oItem:cBmp           := "Cli"
@@ -2237,8 +2237,8 @@ Function CreateAcceso( oWnd )
 
    oItem                := oItemVentas:Add()
    oItem:oGroup         := oGrupo
-   oItem:cPrompt        := 'Plantillas automáticas'
-   oItem:cMessage       := 'Acceso a plantillas de ventas automáticas'
+   oItem:cPrompt        := 'Plantillas automÃ¡ticas'
+   oItem:cMessage       := 'Acceso a plantillas de ventas automÃ¡ticas'
    oItem:bAction        := {|| StartTFacAutomatica() }
    oItem:cId            := "04015"
    oItem:cBmp           := "document_gear_16"
@@ -2359,7 +2359,7 @@ Function CreateAcceso( oWnd )
 
    oItem                := oItemVentas:Add()
    oItem:oGroup         := oGrupo
-   oItem:cPrompt        := 'Liquidación de agentes'
+   oItem:cPrompt        := 'LiquidaciÃ³n de agentes'
    oItem:cMessage       := 'Acceso a las liquidaciones de agentes'
    oItem:bAction        := {|| StartTCobAge() }
    oItem:cId            := "01061"
@@ -2373,14 +2373,14 @@ Function CreateAcceso( oWnd )
 
    oGrupo               := TGrupoAcceso()
    oGrupo:nBigItems     := 2
-   oGrupo:cPrompt       := 'Comercio electrónico'
+   oGrupo:cPrompt       := 'Comercio electrÃ³nico'
    oGrupo:cLittleBitmap := "ComercioElectronico_16"
    oGrupo:cBigBitmap    := "ComercioElectronico_32"
 
    oItem                := oItemVentas:Add()
    oItem:oGroup         := oGrupo
-   oItem:cPrompt        := 'Comercio electrónico'
-   oItem:cMessage       := 'Comercio electrónico'
+   oItem:cPrompt        := 'Comercio electrÃ³nico'
+   oItem:cMessage       := 'Comercio electrÃ³nico'
    oItem:bAction        := {|| TComercio():New( "01108", oWnd ):Activate() }
    oItem:cId            := "01108"
    oItem:cBmp           := "ComercioElectronico_16"
@@ -2389,8 +2389,8 @@ Function CreateAcceso( oWnd )
 
    oItem                := oItemVentas:Add()
    oItem:oGroup         := oGrupo
-   oItem:cPrompt        := 'Pedidos electrónicos'
-   oItem:cMessage       := 'Pedidos de clientes recibidos de comercio electrónico'
+   oItem:cPrompt        := 'Pedidos electrÃ³nicos'
+   oItem:cMessage       := 'Pedidos de clientes recibidos de comercio electrÃ³nico'
    oItem:bAction        := {|| PedCli( "01056", oWnd, , , , .t. ) }
    oItem:cId            := "01109"
    oItem:cBmp           := "Clipboard_Empty_Earth_16"
@@ -2425,8 +2425,8 @@ Function CreateAcceso( oWnd )
 
    oItem                := oItemTpv:Add()
    oItem:oGroup         := oGrupo
-   oItem:cPrompt        := 'T.P.V. táctil'
-   oItem:cMessage       := 'Acceso a terminal punto de venta táctil'
+   oItem:cPrompt        := 'T.P.V. tÃ¡ctil'
+   oItem:cMessage       := 'Acceso a terminal punto de venta tÃ¡ctil'
    oItem:bAction        := {|| TpvTactil():New():Activate() } // TactilTpv( "01064", oWnd ) }  // {|| TpvTactil():New( oWnd, "01116" ):Activate() } //
    oItem:cId            := "01064"
    oItem:cBmp           := "Cashier_hand_point_16"
@@ -2466,7 +2466,7 @@ Function CreateAcceso( oWnd )
    oGrupo               := TGrupoAcceso()
    oGrupo:nBigItems     := 1
    oGrupo:nLittleItems  := 1
-   oGrupo:cPrompt       := 'Útiles'
+   oGrupo:cPrompt       := 'Ãštiles'
    oGrupo:cLittleBitmap := "Window_edit_16"
    oGrupo:cBigBitmap    := "Window_edit_32"
 
@@ -2504,8 +2504,8 @@ Function CreateAcceso( oWnd )
 
    oItem                := oItemTPV:Add()
    oItem:oGroup         := oGrupo
-   oItem:cPrompt        := 'Cajón portamonedas'
-   oItem:cMessage       := 'Cajón portamonedas'
+   oItem:cPrompt        := 'CajÃ³n portamonedas'
+   oItem:cMessage       := 'CajÃ³n portamonedas'
    oItem:bAction        := {|| ConfCajPorta( "01091", oWnd ) }
    oItem:cId            := "01091"
    oItem:cBmp           := "Harddisk_16"
@@ -2570,8 +2570,8 @@ Function CreateAcceso( oWnd )
 
    oItem                := oItemHerramientas:Add()
    oItem:oGroup         := oGrupo
-   oItem:cPrompt        := 'Centro de contabilización'
-   oItem:cMessage       := 'Centro de contabilización'
+   oItem:cPrompt        := 'Centro de contabilizaciÃ³n'
+   oItem:cMessage       := 'Centro de contabilizaciÃ³n'
    oItem:bAction        := {|| TTurno():Build( cPatEmp(), oWnd, "01086" ) }
    oItem:cId            := "01086"
    oItem:cBmp           := "BmpConta16"
@@ -2582,14 +2582,14 @@ Function CreateAcceso( oWnd )
 
    oGrupo               := TGrupoAcceso()
    oGrupo:nBigItems     := 4
-   oGrupo:cPrompt       := 'Útiles'
+   oGrupo:cPrompt       := 'Ãštiles'
    oGrupo:cLittleBitmap := "Note_16"
    oGrupo:cBigBitmap    := "Note_32"
 
    oItem                := oItemHerramientas:Add()
    oItem:oGroup         := oGrupo
-   oItem:cPrompt        := 'Cambiar códigos'
-   oItem:cMessage       := 'Cambiar códigos'
+   oItem:cPrompt        := 'Cambiar cÃ³digos'
+   oItem:cMessage       := 'Cambiar cÃ³digos'
    oItem:bAction        := {|| TChgCode():New( "01073", oWnd ):Resource() }
    oItem:cId            := "01073"
    oItem:cBmp           := "Replace_16"
@@ -2608,8 +2608,8 @@ Function CreateAcceso( oWnd )
 
    oItem                := oItemHerramientas:Add()
    oItem:oGroup         := oGrupo
-   oItem:cPrompt        := 'Listín telefónico'
-   oItem:cMessage       := 'Acceso al listín telefónico'
+   oItem:cPrompt        := 'ListÃ­n telefÃ³nico'
+   oItem:cMessage       := 'Acceso al listÃ­n telefÃ³nico'
    oItem:bAction        := {|| TAgenda():New( cPatDat(), oWnd, "01076" ):Activate() }
    oItem:cId            := "01076"
    oItem:cBmp           := "Telephone_16"
@@ -2634,8 +2634,8 @@ Function CreateAcceso( oWnd )
 
    oItem                := oItemHerramientas:Add()
    oItem:oGroup         := oGrupo
-   oItem:cPrompt        := 'Regenerar índices'
-   oItem:cMessage       := 'Regenerar índices'
+   oItem:cPrompt        := 'Regenerar Ã­ndices'
+   oItem:cMessage       := 'Regenerar Ã­ndices'
    oItem:bAction        := {|| Reindexa() }
    oItem:cId            := "01067"
    oItem:cBmp           := "Recycle_16"
@@ -2663,8 +2663,8 @@ Function CreateAcceso( oWnd )
 
    oItem                := oItemHerramientas:Add()
    oItem:oGroup         := oGrupo
-   oItem:cPrompt        := 'Envío y recepción'
-   oItem:cMessage       := 'Envío y recepción de información a las delegaciones'
+   oItem:cPrompt        := 'EnvÃ­o y recepciÃ³n'
+   oItem:cMessage       := 'EnvÃ­o y recepciÃ³n de informaciÃ³n a las delegaciones'
    oItem:bAction        := {|| TSndRecInf():New( "01078", oWnd ):Activate() }
    oItem:cId            := "01078"
    oItem:cBmp           := "Satellite_dish_16"
@@ -2706,8 +2706,8 @@ Function CreateAcceso( oWnd )
 
    oItem                := oItemHerramientas:Add()
    oItem:oGroup         := oGrupo
-   oItem:cPrompt        := 'Factuplus®'
-   oItem:cMessage       := 'Imp. factuplus®'
+   oItem:cPrompt        := 'FactuplusÂ®'
+   oItem:cMessage       := 'Imp. factuplusÂ®'
    oItem:bAction        := {|| ImpFactu( "01080", oWnd ) }
    oItem:cId            := "01080"
    oItem:cBmp           := "Import16"
@@ -2717,8 +2717,8 @@ Function CreateAcceso( oWnd )
 
    oItem                := oItemHerramientas:Add()
    oItem:oGroup         := oGrupo
-   oItem:cPrompt        := 'Factucont®'
-   oItem:cMessage       := 'Imp. factucont®'
+   oItem:cPrompt        := 'FactucontÂ®'
+   oItem:cMessage       := 'Imp. factucontÂ®'
    oItem:bAction        := {|| ImpFacCom( "01100", oWnd ) }
    oItem:cId            := "01100"
    oItem:cBmp           := "Import16"
@@ -2728,8 +2728,8 @@ Function CreateAcceso( oWnd )
 
    oItem                := oItemHerramientas:Add()
    oItem:oGroup         := oGrupo
-   oItem:cPrompt        := 'Tarifas artículos'
-   oItem:cMessage       := 'Importa tarifa de artículos desde Excel'
+   oItem:cPrompt        := 'Tarifas artÃ­culos'
+   oItem:cMessage       := 'Importa tarifa de artÃ­culos desde Excel'
    oItem:bAction        := {|| TImpEstudio():New( "01102", oWnd ):Activate() }
    oItem:cId            := "01102"
    oItem:cBmp           := "Import16"
@@ -2843,7 +2843,7 @@ Function CreateAcceso( oWnd )
    oItem                := oItemAyudas:Add()
    oItem:oGroup         := oGrupo
    oItem:cPrompt        := 'Ayuda'
-   oItem:cMessage       := 'Ayuda de la aplicación'
+   oItem:cMessage       := 'Ayuda de la aplicaciÃ³n'
    oItem:bAction        := {|| goWeb( __GSTHELP__ ) }
    oItem:cId            := "01093"
    oItem:cBmp           := "Lifebelt_16"
@@ -2918,8 +2918,8 @@ Function BuildMenu()
                HELPID   "01004" ;
                RESOURCE "briefcase2_column_chart_16" ;
 
-            MENUITEM    "&2. Iniciar sesión...";
-               MESSAGE  "Inicia una nueva sesión de trabajo" ;
+            MENUITEM    "&2. Iniciar sesiÃ³n...";
+               MESSAGE  "Inicia una nueva sesiÃ³n de trabajo" ;
                ACTION   ( ChkTurno( oMenuItem, oWnd ) );
                HELPID   "01000" ;
                RESOURCE "Stopwatch_run_16" ;
@@ -2927,14 +2927,14 @@ Function BuildMenu()
 
             MENUITEM    "&3. Arqueo parcial (X)" ;
                HELPID   "01001" ;
-               MESSAGE  "Arqueo parcial de la sesión de trabajo actual";
+               MESSAGE  "Arqueo parcial de la sesiÃ³n de trabajo actual";
                ACTION   ( CloseTurno( oMenuItem, oWnd, .f., .t. ) );
                RESOURCE "Stopwatch_Refresh_16" ;
                WHEN     lCurSesion()
 
-            MENUITEM    "&4. Cerrar sesión (Z)" ;
+            MENUITEM    "&4. Cerrar sesiÃ³n (Z)" ;
                HELPID   "01001" ;
-               MESSAGE  "Cierra la sesión de trabajo actual";
+               MESSAGE  "Cierra la sesiÃ³n de trabajo actual";
                ACTION   ( CloseTurno( oMenuItem, oWnd ) );
                RESOURCE "Stopwatch_stop_16" ;
                WHEN     lCurSesion()
@@ -2955,8 +2955,8 @@ Function BuildMenu()
 
             SEPARATOR
 
-            MENUITEM    "&7. Artículos";
-               MESSAGE  "Ficheros relacionados con artículos" ;
+            MENUITEM    "&7. ArtÃ­culos";
+               MESSAGE  "Ficheros relacionados con artÃ­culos" ;
                RESOURCE "Cube_Yellow_16" ;
 
                MENU
@@ -2968,14 +2968,14 @@ Function BuildMenu()
                      RESOURCE "Folder_Cubes_Color_16" ;
 
                   MENUITEM    "&2. Familias";
-                     MESSAGE  "Base de datos de las familias de artículos" ;
+                     MESSAGE  "Base de datos de las familias de artÃ­culos" ;
                      HELPID   "01012" ;
                      ACTION   ( Familia( oMenuItem, oWnd ) );
                      RESOURCE "Cubes_16" ;
 
                   MENUITEM    "&3. Tipos";
                      HELPID   "01013" ;
-                     MESSAGE  "Clasificacion de artículos" ;
+                     MESSAGE  "Clasificacion de artÃ­culos" ;
                      ACTION   ( TTipArt():New( cPatArt(), oWnd, oMenuItem ):Activate() );
                      RESOURCE "Cubes_Blue_16" ;
 
@@ -2987,8 +2987,8 @@ Function BuildMenu()
 
                   SEPARATOR
 
-                  MENUITEM    "&5. Artículos" + Chr( 9 ) + "Alt-F2";
-                     MESSAGE  "Base de datos de artículos" ;
+                  MENUITEM    "&5. ArtÃ­culos" + Chr( 9 ) + "Alt-F2";
+                     MESSAGE  "Base de datos de artÃ­culos" ;
                      ACTION   ( Articulo( oMenuItem, oWnd ) ) ;
                      HELPID   "01014" ;
                      ACCELERATOR ACC_ALT, VK_F2;
@@ -2996,12 +2996,12 @@ Function BuildMenu()
 
                   MENUITEM    "&6. Comentarios";
                      HELPID   "04002" ;
-                     MESSAGE  "Comentarios para los artículos";
+                     MESSAGE  "Comentarios para los artÃ­culos";
                      ACTION   ( TComentarios():New( cPatArt(), oWnd, oMenuItem ):Activate() );
                      RESOURCE "message_16" ;
 
-                 /* MENUITEM    "&7. Códigos de barras";
-                     MESSAGE  "Acceso a los códigos de barras de los artículos" ;
+                 /* MENUITEM    "&7. CÃ³digos de barras";
+                     MESSAGE  "Acceso a los cÃ³digos de barras de los artÃ­culos" ;
                      ACTION   ( ArtCodebar( oMenuItem, oWnd ) ) ;
                      HELPID   "01024" ;
                      RESOURCE "Remotecontrol_16" ;
@@ -3009,15 +3009,15 @@ Function BuildMenu()
 
                   SEPARATOR
 
-                  MENUITEM    "&7. Propiedades de artículos" ;
+                  MENUITEM    "&7. Propiedades de artÃ­culos" ;
                      HELPID   "01015" ;
-                     MESSAGE  "Base de datos con las propiedades de los artículos" ;
+                     MESSAGE  "Base de datos con las propiedades de los artÃ­culos" ;
                      ACTION   ( Prop( oMenuItem, oWnd ) );
                      RESOURCE "Die_Gold_16" ;
 
-                  MENUITEM    "&8. Factores de conversión";
+                  MENUITEM    "&8. Factores de conversiÃ³n";
                      HELPID   "01016" ;
-                     MESSAGE  "Factores de conversión" ;
+                     MESSAGE  "Factores de conversiÃ³n" ;
                      ACTION   ( TblCnv( oMenuItem, oWnd ) );
                      RESOURCE "Tape_Measure2_16" ;
 
@@ -3027,20 +3027,20 @@ Function BuildMenu()
                      ACTION   ( TTankes():New( cPatEmp(), oWnd, oMenuItem ):Activate() );
                      RESOURCE "Potion_Red_16" ;
 
-                  MENUITEM    "&A. Unidades de Medición";
-                     MESSAGE  "Unidades de medición de artículos" ;
+                  MENUITEM    "&A. Unidades de MediciÃ³n";
+                     MESSAGE  "Unidades de mediciÃ³n de artÃ­culos" ;
                      ACTION   ( UniMedicion():New( cPatGrp(), oWnd, oMenuItem ):Activate() ) ;
                      HELPID   "01103" ;
                      RESOURCE "Tape_Measure1_16" ;
 
-                  MENUITEM    "&B. Categorías";
-                     MESSAGE  "Categorías de artículos" ;
+                  MENUITEM    "&B. CategorÃ­as";
+                     MESSAGE  "CategorÃ­as de artÃ­culos" ;
                      ACTION   ( Categoria( oMenuItem, oWnd ) ) ;
                      HELPID   "01101" ;
                      RESOURCE "Colors_16" ;
 
                   MENUITEM    "&C. Temporadas";
-                     MESSAGE  "Temporadas de artículos" ;
+                     MESSAGE  "Temporadas de artÃ­culos" ;
                      ACTION   ( Temporada( oMenuItem, oWnd ) ) ;
                      HELPID   "01114" ;
                      RESOURCE "Sun_and_cloud_16"
@@ -3054,7 +3054,7 @@ Function BuildMenu()
                      RESOURCE "Percent_16" ;
 
                   MENUITEM    "&E. Ofertas";
-                     MESSAGE  "Base de datos de las ofertas de artículos" ;
+                     MESSAGE  "Base de datos de las ofertas de artÃ­culos" ;
                      HELPID   "01020" ;
                      ACTION   ( Oferta( oMenuItem, oWnd ) );
                      RESOURCE "Star_Red_16" ;
@@ -3067,14 +3067,14 @@ Function BuildMenu()
 
                   SEPARATOR
 
-                  MENUITEM    "&G. Búsqueda por series";
-                     MESSAGE  "Búsqueda por números de serie" ;
+                  MENUITEM    "&G. BÃºsqueda por series";
+                     MESSAGE  "BÃºsqueda por nÃºmeros de serie" ;
                      ACTION   ( TSeaNumSer():Activate( oMenuItem, oWnd ) ) ;
                      HELPID   "01022" ;
                      RESOURCE "Package_Find_16" ;
 
-                  MENUITEM    "&H. Búsqueda por lotes";
-                     MESSAGE  "Búsqueda por lotes" ;
+                  MENUITEM    "&H. BÃºsqueda por lotes";
+                     MESSAGE  "BÃºsqueda por lotes" ;
                      ACTION   ( TTrazarLote():Activate( oMenuItem, oWnd ) ) ;
                      HELPID   "01023" ;
                      RESOURCE "Package_View_16" ;
@@ -3114,15 +3114,15 @@ Function BuildMenu()
                      ACTION   ( Agentes( oMenuItem, oWnd ) ) ;
                      RESOURCE "Security_Agent_16" ;
 
-                  MENUITEM    "5. Programa de fidelización";
-                     MESSAGE  "Programa de fidelización" ;
+                  MENUITEM    "5. Programa de fidelizaciÃ³n";
+                     MESSAGE  "Programa de fidelizaciÃ³n" ;
                      HELPID   "04006" ;
                      ACTION   ( TFideliza():New( cPatArt(), oWnd, "04006" ):Activate() ) ;
                      RESOURCE "Cli" ;
 
-                  MENUITEM    "&6. Plantillas de ventas automáticas";
+                  MENUITEM    "&6. Plantillas de ventas automÃ¡ticas";
                      HELPID   "04015" ;
-                     MESSAGE  "Plantillas de ventas automáticas" ;
+                     MESSAGE  "Plantillas de ventas automÃ¡ticas" ;
                      ACTION   ( TFacAutomatica():New( cPatEmp(), oWnd, "04015" ):Activate() );
                      RESOURCE "document_gear_16" ;
 
@@ -3162,9 +3162,9 @@ Function BuildMenu()
                      ACTION   ( Almacen( oMenuItem, oWnd  ) );
                      RESOURCE "Package_16" ;
 
-                  MENUITEM    "&2. Tipos de movimientos de almacén";
+                  MENUITEM    "&2. Tipos de movimientos de almacÃ©n";
                      HELPID   "01042" ;
-                     MESSAGE  "Tipos de movimientos de almacén" ;
+                     MESSAGE  "Tipos de movimientos de almacÃ©n" ;
                      ACTION   ( TMov( oMenuItem, oWnd ) );
                      RESOURCE "Package_replace2_16" ;
 
@@ -3231,7 +3231,7 @@ Function BuildMenu()
             SEPARATOR
 
             MENUITEM    "&J. Frases publicitarias";
-               MESSAGE  "Frases publicitarias de artículos" ;
+               MESSAGE  "Frases publicitarias de artÃ­culos" ;
                ACTION   ( TFrasesPublicitarias():New( cPatArt(), oWnd, oMenuItem ):Activate() ) ;
                HELPID   "01104" ;
                RESOURCE "Led_Red_16" ;
@@ -3341,46 +3341,46 @@ Function BuildMenu()
 
          MENU
 
-            MENUITEM    "&1. Movimientos de almacén";
+            MENUITEM    "&1. Movimientos de almacÃ©n";
                HELPID   "01050" ;
-               MESSAGE  "Base de datos de movimientos de almacén";
+               MESSAGE  "Base de datos de movimientos de almacÃ©n";
                ACTION   ( RemMovAlm( "01050", oWnd ) );
                WHEN     lCurSesion() ;
                RESOURCE "Pencil_Package_16"
             /*
-            MENUITEM    "&2. Historico de movimientos de almacén";
+            MENUITEM    "&2. Historico de movimientos de almacÃ©n";
                HELPID   "01051" ;
-               MESSAGE  "Base de datos de movimientos de almacén";
+               MESSAGE  "Base de datos de movimientos de almacÃ©n";
                ACTION   ( HisMovAlm( oMenuItem, oWnd ) );
                WHEN     lCurSesion() ;
                RESOURCE "Package_book_red_16"
             */
             SEPARATOR
 
-            MENUITEM    "&3. Introducción depósitos";
+            MENUITEM    "&3. IntroducciÃ³n depÃ³sitos";
                HELPID   "01052" ;
-               MESSAGE  "Introducción de dépositos de almacén";
+               MESSAGE  "IntroducciÃ³n de dÃ©positos de almacÃ©n";
                ACTION   ( DepAge( oMenuItem, oWnd ) );
                RESOURCE "Package_add_16" ;
                WHEN     lCurSesion()
 
-            MENUITEM    "&4. Estado depósitos";
+            MENUITEM    "&4. Estado depÃ³sitos";
                HELPID   "01053" ;
-               MESSAGE  "Estado de los dépositos";
+               MESSAGE  "Estado de los dÃ©positos";
                ACTION   ( ExtAge( oMenuItem, oWnd ) );
                WHEN     lCurSesion() ;
                RESOURCE "Package_ok_16" ;
 
-            MENUITEM    "&5. Liquidación de depósitos";
+            MENUITEM    "&5. LiquidaciÃ³n de depÃ³sitos";
                HELPID   "01054" ;
-               MESSAGE  "Liquidación de depósitos";
+               MESSAGE  "LiquidaciÃ³n de depÃ³sitos";
                ACTION   ( LqdAlm( oMenuItem, oWnd ) );
                WHEN     lCurSesion() ;
                RESOURCE "Package_preferences_16" ;
 
          ENDMENU
 
-         MENUITEM "&4. Producción"
+         MENUITEM "&4. ProducciÃ³n"
 
          MENU
 
@@ -3439,9 +3439,9 @@ Function BuildMenu()
 
             SEPARATOR
 
-            MENUITEM    "&8. Partes de producción";
+            MENUITEM    "&8. Partes de producciÃ³n";
                HELPID   "04007" ;
-               MESSAGE  "Partes de producción" ;
+               MESSAGE  "Partes de producciÃ³n" ;
                ACTION   ( TProduccion():New( cPatEmp(), oWnd, oMenuItem ):Activate() );
                RESOURCE "Worker2_Form_Red_16" ;
                WHEN     lCurSesion()
@@ -3576,9 +3576,9 @@ Function BuildMenu()
             //   WHEN     lCurSesion()
 
             //
-            //MENUITEM    "&4. Liquidación de agentes";
+            //MENUITEM    "&4. LiquidaciÃ³n de agentes";
             //   HELPID   "01060" ;
-            //   MESSAGE  "Liquidación comisiones a agentes" ;
+            //   MESSAGE  "LiquidaciÃ³n comisiones a agentes" ;
             //   ACTION   ( LiqAge( oMenuItem, oWnd ) );
             //   WHEN     lCurSesion()
 
@@ -3586,7 +3586,7 @@ Function BuildMenu()
 
             MENUITEM    "&9. Ordenes de carga";
                HELPID   "01062" ;
-               MESSAGE  "Liquidación comisiones a agentes" ;
+               MESSAGE  "LiquidaciÃ³n comisiones a agentes" ;
                ACTION   ( TOrdCarga():New( cPatEmp(), oMenuItem, oWnd ):Activate() );
                WHEN     lCurSesion() ;
                RESOURCE "Truck_blue_document_16"
@@ -3605,9 +3605,9 @@ Function BuildMenu()
                WHEN     lCurSesion() ;
                RESOURCE "Cashier_user1_16"
 
-            MENUITEM    "&2. T. P. V. táctil";
+            MENUITEM    "&2. T. P. V. tÃ¡ctil";
                HELPID   "01064" ;
-               MESSAGE  "Pasar a venta por mostrador táctil";
+               MESSAGE  "Pasar a venta por mostrador tÃ¡ctil";
                ACTION   ( TactilTpv( oMenuItem, oWnd ) );
                WHEN     lCurSesion() ;
                RESOURCE "Cashier_hand_point_16"
@@ -3635,8 +3635,8 @@ Function BuildMenu()
 
          ENDMENU
 
-         MENUITEM    "&8. Galería de informes";
-            MESSAGE  "Galería de informes" ;
+         MENUITEM    "&8. GalerÃ­a de informes";
+            MESSAGE  "GalerÃ­a de informes" ;
             HELPID   "01066" ;
             ACTION   ( RunReportGalery() )
 
@@ -3644,7 +3644,7 @@ Function BuildMenu()
 
          MENU
 
-            MENUITEM    "&1. Regenerar índices";
+            MENUITEM    "&1. Regenerar Ã­ndices";
                MESSAGE  "Regenera todos los indices y empaqueta los datos" ;
                HELPID   "01067" ;
                ACTION   ( Reindexa( oWnd, "01067" ) );
@@ -3653,7 +3653,7 @@ Function BuildMenu()
             SEPARATOR
 
             MENUITEM    "&2. Usuarios y grupos";
-               MESSAGE  "Usuarios y tipos de acceso a la aplicación" ;
+               MESSAGE  "Usuarios y tipos de acceso a la aplicaciÃ³n" ;
                HELPID   "01074" ;
                ACTION   ( Usuarios( oMenuItem, oWnd ) );
                RESOURCE "Businessmen_16"
@@ -3683,7 +3683,7 @@ Function BuildMenu()
             SEPARATOR
 
             MENUITEM    "&5. Dispositivos";
-               MESSAGE  "Configurar los dispositivos de la aplicación, impresora de tickets, visores, cajones" ;
+               MESSAGE  "Configurar los dispositivos de la aplicaciÃ³n, impresora de tickets, visores, cajones" ;
                RESOURCE "Printer_16" ;
 
                MENU
@@ -3700,8 +3700,8 @@ Function BuildMenu()
                      ACTION   ( ConfVisor ( oMenuItem, oWnd ) );
                      RESOURCE "Console_network_16"
 
-                  MENUITEM    "&3. Configurar cajón portamonedas";
-                     MESSAGE  "Configurar cajón portamonedas" ;
+                  MENUITEM    "&3. Configurar cajÃ³n portamonedas";
+                     MESSAGE  "Configurar cajÃ³n portamonedas" ;
                      HELPID   "01091" ;
                      ACTION   ( ConfCajPorta( oMenuItem, oWnd )  );
                      RESOURCE "Harddisk_16"
@@ -3715,8 +3715,8 @@ Function BuildMenu()
 
             SEPARATOR
 
-            MENUITEM    "&6. Cambiar códigos";
-               MESSAGE  "Cambiar códigos de la aplicación" ;
+            MENUITEM    "&6. Cambiar cÃ³digos";
+               MESSAGE  "Cambiar cÃ³digos de la aplicaciÃ³n" ;
                HELPID   "01073" ;
                ACTION   ( TChgCode():New( oMenuItem, oWnd ):Resource() );
                RESOURCE "Replace_16"
@@ -3727,9 +3727,9 @@ Function BuildMenu()
                ACTION   ( TNotas():New( cPatDat(), oWnd, oMenuItem ):Activate() );
                RESOURCE "Note_16"
 
-            MENUITEM    "&8. Listín telefónico";
+            MENUITEM    "&8. ListÃ­n telefÃ³nico";
                HELPID   "01076" ;
-               MESSAGE  "Acceso a lista de Telefonos de la Aplicación" ;
+               MESSAGE  "Acceso a lista de Telefonos de la AplicaciÃ³n" ;
                ACTION   ( TAgenda():New( cPatDat(), oWnd, oMenuItem ):Activate() );
                RESOURCE "Telephone_16"
 
@@ -3743,8 +3743,8 @@ Function BuildMenu()
 
             SEPARATOR
 
-            MENUITEM    "&A. Envío y recepción de información";
-               MESSAGE  "Conectarse al servidor para enviar y recibir información" ;
+            MENUITEM    "&A. EnvÃ­o y recepciÃ³n de informaciÃ³n";
+               MESSAGE  "Conectarse al servidor para enviar y recibir informaciÃ³n" ;
                HELPID   "01078" ;
                ACTION   ( TSndRecInf():New( oMenuItem, oWnd ):Activate() );
                RESOURCE "Satellite_dish_16"
@@ -3755,21 +3755,21 @@ Function BuildMenu()
                ACTION   ( TEdm():Activate( oMenuItem, oWnd ) );
                RESOURCE "Pda_16"
 
-            MENUITEM    "&C. Comercio electrónico";
-               MESSAGE  "Comercio electrónico" ;
+            MENUITEM    "&C. Comercio electrÃ³nico";
+               MESSAGE  "Comercio electrÃ³nico" ;
                RESOURCE "ComercioElectronico_16"
 
                MENU
 
-               MENUITEM    "&1. Comercio electrónico";
+               MENUITEM    "&1. Comercio electrÃ³nico";
                   HELPID   "01108" ;
-                  MESSAGE  "Comercio electrónico" ;
+                  MESSAGE  "Comercio electrÃ³nico" ;
                   ACTION   ( TComercio():New( oMenuItem, oWnd ):Activate() ) ;
                   RESOURCE "ComercioElectronico_16"
 
-               MENUITEM    "&2. Pedidos electrónicos";
+               MENUITEM    "&2. Pedidos electrÃ³nicos";
                   HELPID   "01109" ;
-                  MESSAGE  "Pedidos de clientes recibidos de comercio electrónico" ;
+                  MESSAGE  "Pedidos de clientes recibidos de comercio electrÃ³nico" ;
                   ACTION   ( PedCli( "01056", oWnd, , , , .t. ) ) ;
                   RESOURCE "Clipboard_Empty_Earth_16"
 
@@ -3778,26 +3778,26 @@ Function BuildMenu()
             SEPARATOR
 
             MENUITEM    "&D. Importar datos";
-               MESSAGE  "Importa los datos de otras aplicaciones a nuestra aplicación" ;
+               MESSAGE  "Importa los datos de otras aplicaciones a nuestra aplicaciÃ³n" ;
                RESOURCE "Import16" ;
 
                MENU
 
-                  MENUITEM    "&1. Factuplus ®";
+                  MENUITEM    "&1. Factuplus Â®";
                      HELPID   "01080" ;
-                     MESSAGE  "Importa los datos de Factuplus a nuestra aplicación" ;
+                     MESSAGE  "Importa los datos de Factuplus a nuestra aplicaciÃ³n" ;
                      ACTION   ( ImpFactu( oMenuItem, oWnd ) );
                      RESOURCE "Import16"
 
-                  MENUITEM    "&2. Factucont ®";
+                  MENUITEM    "&2. Factucont Â®";
                      HELPID   "01100" ;
-                     MESSAGE  "Importa los datos de Factucont a nuestra aplicación" ;
+                     MESSAGE  "Importa los datos de Factucont a nuestra aplicaciÃ³n" ;
                      ACTION   ( ImpFacCom( oMenuItem, oWnd ) );
                      RESOURCE "Import16"
 
-                  MENUITEM    "&3. Tarifas de artículos ";
+                  MENUITEM    "&3. Tarifas de artÃ­culos ";
                      HELPID   "01102" ;
-                     MESSAGE  "Importa tarifa de artículos desde Excel" ;
+                     MESSAGE  "Importa tarifa de artÃ­culos desde Excel" ;
                      ACTION   ( TImpEstudio():New( oMenuItem, oWnd ):Activate() );
                      RESOURCE "Import16"
 
@@ -3805,13 +3805,13 @@ Function BuildMenu()
 
             SEPARATOR
 
-            MENUITEM    "&E. Exportación de ventas";
+            MENUITEM    "&E. ExportaciÃ³n de ventas";
                HELPID   "01113" ;
                MESSAGE  "Exporta datos de ventas";
                ACTION   ( TExportaTarifas():New( "01111", oWnd ):Play() );
                RESOURCE "Export16"
 
-            MENUITEM    "&F. Exportación de compras";
+            MENUITEM    "&F. ExportaciÃ³n de compras";
                HELPID   "01112" ;
                MESSAGE  "Exporta datos de compras";
                ACTION   ( TExportaCompras():New( "01112", oWnd ):Play() );
@@ -3842,7 +3842,7 @@ Function BuildMenu()
                RESOURCE "Calculator_16"
 
             MENUITEM    "&K. Fecha de trabajo";
-               MESSAGE  "Permite cambiar la fecha de trabajo de la aplicación" ;
+               MESSAGE  "Permite cambiar la fecha de trabajo de la aplicaciÃ³n" ;
                HELPID   "01084" ;
                ACTION   ( SelSysDate( "01084" ) ) ;
                RESOURCE "Calendar_16"
@@ -3854,7 +3854,7 @@ Function BuildMenu()
                RESOURCE "text_code_colored_16"
 
          /*
-            MENUITEM    "&K. Importación a mysql" ;
+            MENUITEM    "&K. ImportaciÃ³n a mysql" ;
                HELPID   "01112" ;
                ACTION   ( TImpDbfToSql():Activate( "01112", oWnd ) ) ;
                RESOURCE "Data_Replace_16"
@@ -3899,7 +3899,7 @@ Function BuildMenu()
                RESOURCE "Doctor_16"
 
             MENUITEM    "&0. Test nuevo report";
-               ACTION   ( TFastReportInfGen():New( "Acumulado de unidades vendidas por artículo y fecha" ):Play() ) ;
+               ACTION   ( TFastReportInfGen():New( "Acumulado de unidades vendidas por artÃ­culo y fecha" ):Play() ) ;
                RESOURCE "Doctor_16"
 
             MENUITEM    "&1. Test factura electrinoca";
@@ -3911,7 +3911,7 @@ Function BuildMenu()
          ENDMENU
 
          MENUITEM    "&S. Salir";
-            MESSAGE  "Salir de la aplicación" ;
+            MESSAGE  "Salir de la aplicaciÃ³n" ;
             ACTION   ( oWnd:End() )
 
       ENDMENU
@@ -3945,7 +3945,7 @@ Function BuildPdaMenu()
       ENDMENU
 
       MENUITEM    "&9. Salir";
-         MESSAGE  "Salir de la aplicación" ;
+         MESSAGE  "Salir de la aplicaciÃ³n" ;
          ACTION   ( oWnd:End() )
 
    ENDMENU
@@ -3981,7 +3981,7 @@ Function About()
 
    ACTIVATE DIALOG oDlg ;
       ON INIT     (  oTree:SetImageList( oImgLst ),;
-                     oTree:Add( "Manuel Calero Solís",         0 ),;
+                     oTree:Add( "Manuel Calero SolÃ­s",         0 ),;
                      oTree:Add( "Antonio Ebrero Burgos",       1 ),;
                      oTree:Add( "Dario Cruz Mauro",            3 ) ) ;
       CENTER
@@ -4244,7 +4244,7 @@ FUNCTION AccesTctCode()
          DEFINE BRUSH oBrush FILE ( cBmpVersion() )
       end if
 
-      //Montamos el diálogo con la imágen de fondo--------------------------------
+      //Montamos el diÃ¡logo con la imÃ¡gen de fondo--------------------------------
 
       DEFINE DIALOG  oDlg ;
          RESOURCE    "WelSerTactil" ;
@@ -4262,7 +4262,7 @@ FUNCTION AccesTctCode()
          oLstUsr:bClick    := {| nOpt | if( SelBrwBigUser( nOpt, oLstUsr, dbfUser ), oDlg:End( IDOK ), ) }
 
       /*
-      Botones de la caja de diálogo--------------------------------------------
+      Botones de la caja de diÃ¡logo--------------------------------------------
       */
 
       REDEFINE BUTTON ;
@@ -4271,7 +4271,7 @@ FUNCTION AccesTctCode()
             ACTION   ( oDlg:end() )
 
       /*
-      Al iniciar el diálogo cargamos las imágenes de los usuarios--------------
+      Al iniciar el diÃ¡logo cargamos las imÃ¡genes de los usuarios--------------
       */
 
       ACTIVATE DIALOG oDlg ;
@@ -4379,7 +4379,7 @@ Function InitBrw( oDlg, oImgUsr, oLstUsr, dbfUsr )
 RETURN ( nil )
 
 //---------------------------------------------------------------------------//
-//Función que chequea el usuario, la clave y nos deja pasar
+//FunciÃ³n que chequea el usuario, la clave y nos deja pasar
 
 Static Function SelBrwBigUser( nOpt, oLstUsr, dbfUsr )
 
@@ -4477,13 +4477,13 @@ STATIC FUNCTION lTctInitCheck( lDir, oMessage, oProgress )
 
       // Inicializamos classes----------------------------------------------------
 
-      oMsgText( 'Inicializamos las clases de la aplicación' )
+      oMsgText( 'Inicializamos las clases de la aplicaciÃ³n' )
 
       InitClasses()
 
       // Comprobamos q exista al menos un almacen---------------------------------
 
-      oMsgText( 'Control de tablas de almacén' )
+      oMsgText( 'Control de tablas de almacÃ©n' )
 
       IsAlmacen()
 
@@ -4543,25 +4543,25 @@ Function TctCreateButtonBar()
 
    oItem                := oItemArchivo:Add()
    oItem:oGroup         := oGrupo
-   oItem:cPrompt        := 'Iniciar sesión'
-   oItem:cMessage       := 'Inicia una nueva sesión de trabajo'
-   oItem:bAction        := {|| if( !lCurSesion(), ChkTurno( "01000", oWnd() ), MsgStop( "Tiene una sesión en curso" ) ) }
+   oItem:cPrompt        := 'Iniciar sesiÃ³n'
+   oItem:cMessage       := 'Inicia una nueva sesiÃ³n de trabajo'
+   oItem:bAction        := {|| if( !lCurSesion(), ChkTurno( "01000", oWnd() ), MsgStop( "Tiene una sesiÃ³n en curso" ) ) }
    oItem:cBmp           := "Stopwatch_run_16"
    oItem:cBmpBig        := "Stopwatch_run_32"
 
    oItem                := oItemArchivo:Add()
    oItem:oGroup         := oGrupo
    oItem:cPrompt        := 'Arqueo parcial (X)'
-   oItem:cMessage       := 'arqueo parcial de la sesión de trabajo actual'
-   oItem:bAction        := {|| if( lCurSesion(), CloseTurno( "01001", oWnd(), .t., .t. ), MsgStop( "No hay sesión en curso para cerrar" ) ) }
+   oItem:cMessage       := 'arqueo parcial de la sesiÃ³n de trabajo actual'
+   oItem:bAction        := {|| if( lCurSesion(), CloseTurno( "01001", oWnd(), .t., .t. ), MsgStop( "No hay sesiÃ³n en curso para cerrar" ) ) }
    oItem:cBmp           := "Stopwatch_Refresh_16"
    oItem:cBmpBig        := "Stopwatch_Refresh_32"
 
    oItem                := oItemArchivo:Add()
    oItem:oGroup         := oGrupo
-   oItem:cPrompt        := 'Cerrar sesión (Z)'
-   oItem:cMessage       := 'Cierra la sesión de trabajo actual'
-   oItem:bAction        := {|| if( lCurSesion(), CloseTurno( "01001", oWnd(), .t. ), MsgStop( "No hay sesión en curso para cerrar" ) ) }
+   oItem:cPrompt        := 'Cerrar sesiÃ³n (Z)'
+   oItem:cMessage       := 'Cierra la sesiÃ³n de trabajo actual'
+   oItem:bAction        := {|| if( lCurSesion(), CloseTurno( "01001", oWnd(), .t. ), MsgStop( "No hay sesiÃ³n en curso para cerrar" ) ) }
    oItem:cBmp           := "Stopwatch_stop_16"
    oItem:cBmpBig        := "Stopwatch_stop_32"
 
@@ -4612,7 +4612,7 @@ Function TctCreateButtonBar()
    oItem                := oItemArchivo:Add()
    oItem:oGroup         := oGrupo
    oItem:cPrompt        := 'Ayuda'
-   oItem:cMessage       := 'Ayuda de la aplicación'
+   oItem:cMessage       := 'Ayuda de la aplicaciÃ³n'
    oItem:bAction        := {|| goWeb( __GSTHELP__ ) }
    oItem:cId            := "01093"
    oItem:cBmp           := "Lifebelt_16"
@@ -4679,8 +4679,8 @@ Function BuildTctMenu()
 
       MENU
 
-         MENUITEM    "&1. Iniciar sesión...";
-            MESSAGE  "Inicia una nueva sesión de trabajo" ;
+         MENUITEM    "&1. Iniciar sesiÃ³n...";
+            MESSAGE  "Inicia una nueva sesiÃ³n de trabajo" ;
             ACTION   ( ChkTurno( oMenuItem, oWnd ) );
             HELPID   "01000" ;
             RESOURCE "Stopwatch_run_16" ;
@@ -4688,14 +4688,14 @@ Function BuildTctMenu()
 
          MENUITEM    "&2. Arqueo parcial (X)" ;
             HELPID   "01001" ;
-            MESSAGE  "Arqueo parcial de la sesión de trabajo actual";
+            MESSAGE  "Arqueo parcial de la sesiÃ³n de trabajo actual";
             ACTION   ( CloseTurno( oMenuItem, oWnd, .t., .t. ) );
             RESOURCE "Stopwatch_Refresh_16" ;
             WHEN     lCurSesion()
 
-         MENUITEM    "&3. Cerrar sesión (Z)" ;
+         MENUITEM    "&3. Cerrar sesiÃ³n (Z)" ;
             HELPID   "01001" ;
-            MESSAGE  "Cierra la sesión de trabajo actual";
+            MESSAGE  "Cierra la sesiÃ³n de trabajo actual";
             ACTION   ( CloseTurno( oMenuItem, oWnd, .t. ) );
             RESOURCE "Stopwatch_stop_16" ;
             WHEN     lCurSesion()
@@ -4754,7 +4754,7 @@ Function BuildTctMenu()
       ENDMENU
 
       MENUITEM    "&3. Salir";
-         MESSAGE  "Salir de la aplicación" ;
+         MESSAGE  "Salir de la aplicaciÃ³n" ;
          ACTION   ( oWnd:End() )
 
    ENDMENU
@@ -4818,13 +4818,13 @@ STATIC FUNCTION lTPVInitCheck( lDir )
 
       // Inicializamos classes----------------------------------------------------
 
-      oMsgText( 'Inicializamos las clases de la aplicación' )
+      oMsgText( 'Inicializamos las clases de la aplicaciÃ³n' )
 
       InitClasses()
 
       // Comprobamos q exista al menos un almacen---------------------------------
 
-      oMsgText( 'Control de tablas de almacén' )
+      oMsgText( 'Control de tablas de almacÃ©n' )
 
       IsAlmacen()
 
@@ -4885,23 +4885,23 @@ Function TPVCreateButtonBar()
 
    oItem                := oItemArchivo:Add()
    oItem:oGroup         := oGrupo
-   oItem:cPrompt        := 'Iniciar sesión'
-   oItem:cMessage       := 'Inicia una nueva sesión de trabajo'
-   oItem:bAction        := {|| if( !lCurSesion(), ChkTurno( "01000", oWnd() ), MsgStop( "Tiene una sesión en curso" ) ) }
+   oItem:cPrompt        := 'Iniciar sesiÃ³n'
+   oItem:cMessage       := 'Inicia una nueva sesiÃ³n de trabajo'
+   oItem:bAction        := {|| if( !lCurSesion(), ChkTurno( "01000", oWnd() ), MsgStop( "Tiene una sesiÃ³n en curso" ) ) }
    oItem:cBmpBig        := "Stopwatch_run_32"
 
    oItem                := oItemArchivo:Add()
    oItem:oGroup         := oGrupo
    oItem:cPrompt        := 'Arqueo parcial (X)'
-   oItem:cMessage       := 'Arqueo parcial de la sesión de trabajo actual'
-   oItem:bAction        := {|| if( lCurSesion(), CloseTurno( "01001", oWnd(), .f., .t. ), MsgStop( "No hay sesión en curso para cerrar" ) ) }
+   oItem:cMessage       := 'Arqueo parcial de la sesiÃ³n de trabajo actual'
+   oItem:bAction        := {|| if( lCurSesion(), CloseTurno( "01001", oWnd(), .f., .t. ), MsgStop( "No hay sesiÃ³n en curso para cerrar" ) ) }
    oItem:cBmpBig        := "Stopwatch_Refresh_32"
 
    oItem                := oItemArchivo:Add()
    oItem:oGroup         := oGrupo
-   oItem:cPrompt        := 'Cerrar sesión (Z)'
-   oItem:cMessage       := 'Cierra la sesión de trabajo actual'
-   oItem:bAction        := {|| if( lCurSesion(), CloseTurno( "01001", oWnd(), .f. ), MsgStop( "No hay sesión en curso para cerrar" ) ) }
+   oItem:cPrompt        := 'Cerrar sesiÃ³n (Z)'
+   oItem:cMessage       := 'Cierra la sesiÃ³n de trabajo actual'
+   oItem:bAction        := {|| if( lCurSesion(), CloseTurno( "01001", oWnd(), .f. ), MsgStop( "No hay sesiÃ³n en curso para cerrar" ) ) }
    oItem:cBmpBig        := "Stopwatch_stop_32"
 
    oItem                := oItemArchivo:Add()
@@ -4946,7 +4946,7 @@ Function TPVCreateButtonBar()
    oItem                := oItemArchivo:Add()
    oItem:oGroup         := oGrupo
    oItem:cPrompt        := 'Ayuda'
-   oItem:cMessage       := 'Ayuda de la aplicación'
+   oItem:cMessage       := 'Ayuda de la aplicaciÃ³n'
    oItem:bAction        := {|| goWeb( __GSTHELP__ ) }
    oItem:cBmp           := "Lifebelt_16"
    oItem:cBmpBig        := "Lifebelt_32"
@@ -5010,8 +5010,8 @@ Function BuildTpvMenu()
 
       MENU
 
-         MENUITEM    "&1. Iniciar sesión...";
-            MESSAGE  "Inicia una nueva sesión de trabajo" ;
+         MENUITEM    "&1. Iniciar sesiÃ³n...";
+            MESSAGE  "Inicia una nueva sesiÃ³n de trabajo" ;
             ACTION   ( ChkTurno( oMenuItem, oWnd ) );
             HELPID   "01000" ;
             RESOURCE "Stopwatch_run_16" ;
@@ -5019,14 +5019,14 @@ Function BuildTpvMenu()
 
          MENUITEM    "&2. Arqueo parcial (X)" ;
             HELPID   "01001" ;
-            MESSAGE  "Cierra la sesión de trabajo actual";
+            MESSAGE  "Cierra la sesiÃ³n de trabajo actual";
             ACTION   ( CloseTurno( oMenuItem, oWnd, .f., .t. ) );
             RESOURCE "Stopwatch_Refresh_16" ;
             WHEN     lCurSesion()
 
-         MENUITEM    "&3. Cerrar sesión (Z)" ;
+         MENUITEM    "&3. Cerrar sesiÃ³n (Z)" ;
             HELPID   "01001" ;
-            MESSAGE  "Cierra la sesión de trabajo actual";
+            MESSAGE  "Cierra la sesiÃ³n de trabajo actual";
             ACTION   ( CloseTurno( oMenuItem, oWnd, .f. ) );
             RESOURCE "Stopwatch_stop_16" ;
             WHEN     lCurSesion()
@@ -5085,7 +5085,7 @@ Function BuildTpvMenu()
       ENDMENU
 
       MENUITEM    "&3. Salir";
-         MESSAGE  "Salir de la aplicación" ;
+         MESSAGE  "Salir de la aplicaciÃ³n" ;
          ACTION   ( oWnd:End() )
 
    ENDMENU
@@ -5180,7 +5180,7 @@ Function InitServices()
 
    TScripts():New( cPatEmp() ):StartTimer()
    
-   // Auto recepción de pedidos por internet-----------------------------------
+   // Auto recepciÃ³n de pedidos por internet-----------------------------------
 
    // SetAutoRecive()
 
@@ -5202,7 +5202,7 @@ Function StopServices()
       CloseNotas()
    end if
 
-   // Auto recepción de pedidos por internet-----------------------------------
+   // Auto recepciÃ³n de pedidos por internet-----------------------------------
 
    if lAds()
 
@@ -5249,7 +5249,7 @@ function Main()
       DEFINE FONT oFont NAME "Verdana" SIZE 0, -14
 
    /*
-   Si estamos para versión Ventas
+   Si estamos para versiÃ³n Ventas
    */
 
 #ifdef __PDAPRE__
@@ -5404,7 +5404,7 @@ function Main()
 #endif
 
    /*
-   Si estamos para versión tpv
+   Si estamos para versiÃ³n tpv
    */
 
 #ifdef __PDATPV__
@@ -5813,7 +5813,7 @@ Function PdalInitCheck()
       CursorWait()
 
       /*
-      Configuración inicial de la PDA---------------------------------------------
+      ConfiguraciÃ³n inicial de la PDA---------------------------------------------
       */
 
       LoadConfig()
@@ -5866,7 +5866,7 @@ Return ( .f. )
 
 //---------------------------------------------------------------------------//
 /*
-Guardamos el nombre de la versión
+Guardamos el nombre de la versiÃ³n
 */
 
 Function cNameVersion()
@@ -5927,7 +5927,7 @@ Return ( cBmpVersion )
 
 //---------------------------------------------------------------------------//
 /*
-Damos valor a la estatica para la versión Oscommerce
+Damos valor a la estatica para la versiÃ³n Oscommerce
 */
 
 Function IsOsCommerce()
@@ -5946,7 +5946,7 @@ Return lOsCommerce
 
 //---------------------------------------------------------------------------//
 /*
-Damos valor a la estatica para la versión Profesional
+Damos valor a la estatica para la versiÃ³n Profesional
 */
 
 Function IsProfesional()
@@ -5966,7 +5966,7 @@ Return lProfesional
 
 //---------------------------------------------------------------------------//
 /*
-Damos valor a la estatica para la versión Standard
+Damos valor a la estatica para la versiÃ³n Standard
 */
 
 Function IsStandard()
@@ -6087,14 +6087,3 @@ RETURN .t.
 
 //--------------------------------------------------------------------------//
 
-FUNCTION Reindexa()
-
-   if lAis()
-      TDataCenter():Resource( "01067" )
-   else
-      TReindex():New( oWnd(), "01067" ):Resource()
-   end if
-
-RETURN .t.
-
-//--------------------------------------------------------------------------//

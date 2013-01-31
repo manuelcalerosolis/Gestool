@@ -30,6 +30,7 @@ CLASS TFastVentasClientes FROM TFastReportInfGen
    METHOD StartDialog()
    METHOD BuildTree( oTree )
 
+   METHOD AddPresupuestoCliente()
    METHOD AddAlbaranCliente()
    METHOD AddFacturaCliente()
    METHOD AddFacturaRectificativa()
@@ -84,6 +85,10 @@ METHOD lResource( cFld ) CLASS TFastVentasClientes
       return .f.
    end if
 
+   if !::lGrupoIva( .t. )
+      return .t.
+   end if
+
    ::CreateFilter( , ::oDbf )
 
 RETURN .t.
@@ -98,6 +103,11 @@ METHOD OpenFiles() CLASS TFastVentasClientes
 
    oBlock         := ErrorBlock( {| oError | ApoloBreak( oError ) } )
    BEGIN SEQUENCE
+
+      DATABASE NEW ::oPreCliT PATH ( cPatEmp() ) CLASS "PreCliT" FILE "PreCliT.DBF" VIA ( cDriver() ) SHARED INDEX "PreCliT.CDX"
+
+      DATABASE NEW ::oPreCliL PATH ( cPatEmp() ) CLASS "PreCliL" FILE "PreCliL.DBF" VIA ( cDriver() ) SHARED INDEX "PreCliL.CDX"
+      ::oPreCliL:OrdSetFocus( "cStkFast" )
 
       DATABASE NEW ::oAlbCliT PATH ( cPatEmp() ) CLASS "ALBCLIT" FILE "ALBCLIT.DBF" VIA ( cDriver() ) SHARED INDEX "ALBCLIT.CDX"
 
@@ -149,6 +159,14 @@ RETURN ( lOpen )
 //---------------------------------------------------------------------------//
 
 METHOD CloseFiles() CLASS TFastVentasClientes
+
+   if !Empty( ::oPreCliL ) .and. ( ::oPreCliL:Used() )
+      ::oPreCliL:end()
+   end if
+
+   if !Empty( ::oPreCliT ) .and. ( ::oPreCliT:Used() )
+      ::oPreCliT:end()
+   end if
 
    if !Empty( ::oAlbCliL ) .and. ( ::oAlbCliL:Used() )
       ::oAlbCliL:end()
@@ -239,7 +257,7 @@ METHOD Create( uParam ) CLASS TFastVentasClientes
    ::AddField( "cMinDoc",  "C",  2, 0, {|| "" },   "Minutos del documento"                   )
 
    ::AddField( "nTotNet",  "N", 16, 6, {|| "" },   "Total neto"                              )
-   ::AddField( "nTotIva",  "N", 16, 6, {|| "" },   "Total " + cImp()                               )
+   ::AddField( "nTotIva",  "N", 16, 6, {|| "" },   "Total " + cImp()                         )
    ::AddField( "nTotReq",  "N", 16, 6, {|| "" },   "Total RE"                                )
    ::AddField( "nTotDoc",  "N", 16, 6, {|| "" },   "Total documento"                         )
    ::AddField( "nTotPnt",  "N", 16, 6, {|| "" },   "Total punto verde"                       )
@@ -420,6 +438,10 @@ METHOD lGenerate() CLASS TFastVentasClientes
    */
 
    do case
+      case ::cReportName == "Informe de presupuestos"
+
+         ::AddPresupuestoCliente()
+
       case ::cReportName == "Informe de albaranes"
 
    //      ::AddAlbaranCliente( .t. )
@@ -481,6 +503,106 @@ Method lValidRegister( cCodigoCliente ) CLASS TFastVentasClientes
    end if
 
 RETURN ( .f. )
+
+//---------------------------------------------------------------------------//
+
+METHOD AddPresupuestoCliente( cCodigoCliente ) CLASS TFastVentasClientes
+
+   local sTot
+   local oError
+   local oBlock
+   local cExpHead
+   
+   oBlock               := ErrorBlock( {| oError | ApoloBreak( oError ) } )
+   BEGIN SEQUENCE
+   
+      ::InitPresupuestosClientes()
+
+      ::oPreCliT:OrdSetFocus( "dFecFac" )
+
+      cExpHead          := 'dFecFac >= Ctod( "' + Dtoc( ::dIniInf ) + '" ) .and. dFecFac <= Ctod( "' + Dtoc( ::dFinInf ) + '" )'
+      cExpHead          += ' .and. Rtrim( cCodCli ) >= "' + Rtrim( ::oGrupoCliente:Cargo:Desde )   + '" .and. Rtrim( cCodCli ) <= "' + Rtrim( ::oGrupoCliente:Cargo:Hasta ) + '"'
+      cExpHead          += ' .and. cSerie >= "' + Rtrim( ::oGrupoSerie:Cargo:Desde ) + '" .and. cSerie <= "'    + Rtrim( ::oGrupoSerie:Cargo:Hasta ) + '"'
+
+      ::oPreCliT:AddTmpIndex( cCurUsr(), GetFileNoExt( ::oPreCliT:cFile ), ::oPreCliT:OrdKey(), ( cExpHead ), , , , , , , , .t. )
+
+      ::oMtrInf:cText   := "Procesando presupuestos"
+      ::oMtrInf:SetTotal( ::oPreCliT:OrdKeyCount() )
+
+      ::oPreCliT:GoTop()
+      while !::lBreak .and. !::oPreCliT:Eof()
+
+         if lChkSer( ::oPreCliT:cSerie, ::aSer )
+
+            sTot              := sTotPreCli( ::oPreCliT:cSerie + Str( ::oPreCliT:nNumFac ) + ::oPreCliT:cSufFac, ::oPreCliT:cAlias, ::oPreCliL:cAlias, ::oDbfIva:cAlias, ::oDbfDiv:cAlias, ::oPreCliP:cAlias, ::oAntCliT:cAlias )
+
+            ::oDbf:Blank()
+
+            ::oDbf:cCodCli    := ::oPreCliT:cCodCli
+            ::oDbf:cNomCli    := ::oPreCliT:cNomCli
+            ::oDbf:cCodAge    := ::oPreCliT:cCodAge
+            ::oDbf:cCodPgo    := ::oPreCliT:cCodPago
+            ::oDbf:cCodRut    := ::oPreCliT:cCodRut
+            ::oDbf:cCodUsr    := ::oPreCliT:cCodUsr
+
+            ::oDbf:cCodGrp    := cGruCli( ::oPreCliT:cCodCli, ::oDbfCli )
+
+            ::oDbf:cTipDoc    := "Presupuesto clientes"
+            ::oDbf:cSerDoc    := ::oPreCliT:cSerie
+            ::oDbf:cNumDoc    := Str( ::oPreCliT:nNumFac )
+            ::oDbf:cSufDoc    := ::oPreCliT:cSufFac
+            ::oDbf:cIdeDoc    := Upper( ::oDbf:cTipDoc ) + ::oDbf:cSerDoc + ::oDbf:cNumDoc + ::oDbf:cSufDoc
+
+            ::oDbf:nAnoDoc    := Year( ::oPreCliT:dFecFac )
+            ::oDbf:nMesDoc    := Month( ::oPreCliT:dFecFac )
+            ::oDbf:dFecDoc    := ::oPreCliT:dFecFac
+            ::oDbf:cHorDoc    := SubStr( ::oPreCliT:cTimCre, 1, 2 )
+            ::oDbf:cMinDoc    := SubStr( ::oPreCliT:cTimCre, 3, 2 )
+
+            ::oDbf:nTotNet    := sTot:nTotalNeto
+            ::oDbf:nTotIva    := sTot:nTotalIva
+            ::oDbf:nTotReq    := sTot:nTotalRecargoEquivalencia
+            ::oDbf:nTotDoc    := sTot:nTotalDocumento
+            ::oDbf:nTotPnt    := sTot:nTotalPuntoVerde
+            ::oDbf:nTotTrn    := sTot:nTotalTransporte
+            ::oDbf:nTotAge    := sTot:nTotalAgente
+            ::oDbf:nTotCos    := sTot:nTotalCosto
+            ::oDbf:nTotIvm    := sTot:nTotalImpuestoHidrocarburos
+            ::oDbf:nTotRnt    := sTot:nTotalRentabilidad
+            ::oDbf:nTotRet    := sTot:nTotalRetencion
+            ::oDbf:nTotCob    := sTot:nTotalCobrado
+
+            /*
+            Añadimos un nuevo registro--------------------------------------------
+            */
+
+            if ::lValidRegister()
+               ::oDbf:Insert()
+            else
+               ::oDbf:Cancel()
+            end if
+
+            ::addPresupuestosClientes()
+
+         end if
+
+         ::oPreCliT:Skip()
+
+         ::oMtrInf:AutoInc()
+
+      end while
+
+      ::oPreCliT:IdxDelete( cCurUsr(), GetFileNoExt( ::oPreCliT:cFile ) )
+   
+   RECOVER USING oError
+
+      msgStop( ErrorMessage( oError ), "Imposible añadir Presupuestos de clientes" )
+
+   END SEQUENCE
+
+   ErrorBlock( oBlock )
+   
+RETURN ( Self )
 
 //---------------------------------------------------------------------------//
 
@@ -855,10 +977,10 @@ METHOD AddFacturaCliente( cCodigoCliente ) CLASS TFastVentasClientes
    local oError
    local oBlock
    local cExpHead
-   /*
+   
    oBlock               := ErrorBlock( {| oError | ApoloBreak( oError ) } )
    BEGIN SEQUENCE
-   */
+   
       ::InitFacturasClientes()
 
       ::oFacCliT:OrdSetFocus( "dFecFac" )
@@ -936,7 +1058,7 @@ METHOD AddFacturaCliente( cCodigoCliente ) CLASS TFastVentasClientes
       end while
 
       ::oFacCliT:IdxDelete( cCurUsr(), GetFileNoExt( ::oFacCliT:cFile ) )
-   /*
+   
    RECOVER USING oError
 
       msgStop( ErrorMessage( oError ), "Imposible añadir facturas de clientes" )
@@ -944,7 +1066,8 @@ METHOD AddFacturaCliente( cCodigoCliente ) CLASS TFastVentasClientes
    END SEQUENCE
 
    ErrorBlock( oBlock )
-   */
+   
 RETURN ( Self )
 
 //---------------------------------------------------------------------------//
+

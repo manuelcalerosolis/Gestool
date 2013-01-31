@@ -54,20 +54,25 @@ CLASS TFastReportInfGen FROM TNewInfGen
 
    DATA  oExt
 
-   DATA  nTotalRemesasAgentes       INIT 0
+   DATA  nTotalRemesasAgentes          INIT 0
 
-   DATA  nBaseAlbaranesClientes     INIT 0
-   DATA  nIVAAlbaranesClientes      INIT 0
-   DATA  nRecargoAlbaranesClientes  INIT 0
-   DATA  nTotalAlbaranesClientes    INIT 0
+   DATA  nBasePresupuestosClientes     INIT 0
+   DATA  nIVAPresupuestosClientes      INIT 0
+   DATA  nRecargoPresupuestosClientes  INIT 0
+   DATA  nTotalPresupuestosClientes    INIT 0
 
-   DATA  nBaseFacturasClientes      INIT 0
-   DATA  nIVAFacturasClientes       INIT 0
-   DATA  nRecargoFacturasClientes   INIT 0
-   DATA  nTotalFacturasClientes     INIT 0
+   DATA  nBaseAlbaranesClientes        INIT 0
+   DATA  nIVAAlbaranesClientes         INIT 0
+   DATA  nRecargoAlbaranesClientes     INIT 0
+   DATA  nTotalAlbaranesClientes       INIT 0
 
-   DATA  nTotalPagosClientes        INIT 0
-   DATA  nTotalPendientesClientes   INIT 0
+   DATA  nBaseFacturasClientes         INIT 0
+   DATA  nIVAFacturasClientes          INIT 0
+   DATA  nRecargoFacturasClientes      INIT 0
+   DATA  nTotalFacturasClientes        INIT 0
+
+   DATA  nTotalPagosClientes           INIT 0
+   DATA  nTotalPendientesClientes      INIT 0
 
    //------------------------------------------------------------------------//
 
@@ -391,6 +396,32 @@ CLASS TFastReportInfGen FROM TNewInfGen
       end if
 
       RETURN ( nTotal )
+
+   ENDMETHOD
+
+   //------------------------------------------------------------------------//
+
+   INLINE METHOD InitPresupuestosClientes()
+
+      ::nBasePresupuestosClientes       := 0
+      ::nIVAPresupuestosClientes        := 0
+      ::nRecargoPresupuestosClientes    := 0
+      ::nTotalPresupuestosClientes      := 0
+
+      RETURN ( Self )
+
+   ENDMETHOD
+
+   //------------------------------------------------------------------------//
+
+   INLINE METHOD AddPresupuestosClientes()
+
+      ::nBasePresupuestosClientes       += ::oFacCliT:nTotNet
+      ::nIVAPresupuestosClientes        += ::oFacCliT:nTotIva
+      ::nRecargoPresupuestosClientes    += ::oFacCliT:nTotReq
+      ::nTotalPresupuestosClientes      += ::oFacCliT:nTotFac
+
+      RETURN ( Self )
 
    ENDMETHOD
 

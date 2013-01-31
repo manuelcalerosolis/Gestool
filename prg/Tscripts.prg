@@ -34,11 +34,13 @@ CLASS TScripts FROM TMant
 
    METHOD   EjecutarScript()
 
-   METHOD   CompilarEjecutarScript( cCodScr )  INLINE ( fErase( cPatScript() + cCodScr + ".hrb" ), ::EjecutarScript( cCodScr ) )
+   METHOD   CompilarEjecutarScript( cCodScr )   INLINE ( fErase( cPatScript() + cCodScr + ".hrb" ), ::EjecutarScript( cCodScr ) )
 
    METHOD   StartTimer()
-
    METHOD   EndTimer()
+
+   METHOD   ActivateAllTimer()                  INLINE ( aEval( ::aTimer, {|o| o:Activate() } ) )
+   METHOD   DeActivateAllTimer()                INLINE ( aEval( ::aTimer, {|o| o:DeActivate() } ) )
 
 END CLASS
 
@@ -378,6 +380,12 @@ METHOD EjecutarScript( cCodigoScript ) CLASS TScripts
    BEGIN SEQUENCE
 
    /*
+   Desactivamos todos los Scripts----------------------------------------------
+   */
+
+   ::DeActivateAllTimer()
+
+   /*
    Comprobamos que el script haya sido compilado-------------------------------
    */
 
@@ -406,6 +414,12 @@ METHOD EjecutarScript( cCodigoScript ) CLASS TScripts
    END SEQUENCE
 
    ErrorBlock( oBlock ) 
+
+   /*
+   Activamos todos los scripts-------------------------------------------------
+   */
+
+   ::ActivateAllTimer()
 
 Return .t.
 

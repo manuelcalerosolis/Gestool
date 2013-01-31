@@ -5,9 +5,15 @@
 
 //--------------------------------------------------------------------------//
 
-function Reindexa( oWnd, oMenuItem )
+FUNCTION Reindexa()
 
-return ( TReindex():New( oWnd, oMenuItem ):Resource() )
+   if lAis()
+      TDataCenter():Resource( "01067" )
+   else
+      TReindex():New( oWnd(), "01067" ):Resource()
+   end if
+
+RETURN .t.
 
 //--------------------------------------------------------------------------//
 
