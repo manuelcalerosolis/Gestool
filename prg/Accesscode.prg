@@ -800,7 +800,7 @@ Method InitialCheck() CLASS AccessCode
       if !Empty( ::oMessage )
          ::oMessage:SetText( "Comprobando tipos de impresoras..." )
       end if
-
+ 
       while !IsTipImp()
          rxTImp( cPatDat() )
       end while

@@ -196,10 +196,10 @@ RETURN ( Self )
 
 METHOD Create( cPath ) CLASS TMant
 
-   DEFAULT cPath     := cPatEmp()
+   DEFAULT cPath        := cPatEmp()
 
-   ::cPath           := cPath
-   ::oDbf            := nil
+   ::cPath              := cPath
+   ::oDbf               := nil
 
 RETURN ( Self )
 

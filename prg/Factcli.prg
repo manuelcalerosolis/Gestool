@@ -24,8 +24,8 @@
 #define CLR_BAR              14197607
 #define CLR_KIT              Rgb( 239, 239, 239 )
 
-#define IGIC_DESG             1
-#define IGIC_INCL             2
+#define IGIC_DESG            1
+#define IGIC_INCL            2
 
 #define _CSERIE              1      //,"C",  1, 0, "Serie de la factura A o B" },;
 #define _NNUMFAC             2      //,"N",  9, 0, "Numero de la factura" },;
@@ -19967,60 +19967,79 @@ STATIC FUNCTION EndTrans( aTmp, aGet, oBrw, oBrwDet, oBrwPgo, aNumAlb, nMode, oD
          Rollback de todos los articulos si la factura no se importo de albaranes-
          */
 
-         while ( dbfFacCliL )->( dbSeek( cSerFac + str( nNumFac ) + cSufFac ) )
+         /*
+         ADSExecuteSQLScript( "DELETE FROM " + cPatEmp() + "FACCLIL" + " WHERE cSerie = " + Quoted( cSerFac ) + " AND nNumFac = " + Alltrim( Str( nNumFac ) ) + " AND cSufFac = " + Quoted( cSufFac ) )
+         */
+
+         while ( dbfFacCliL )->( dbSeek( cSerFac + str( nNumFac ) + cSufFac ) ) .and. !( dbfFacCliL )->( eof() ) 
             if dbLock( dbfFacCliL )
                ( dbfFacCliL )->( dbDelete() )
                ( dbfFacCliL )->( dbUnLock() )
             end if
+            SysRefresh()
          end while
-
+         
          /*
          Eliminamos las incidencias anteriores------------------------------------
          */
+
+         oMsgText( "Eliminando incidencias anteriores" )
 
          while ( ( dbfFacCliI )->( dbSeek( cSerFac + Str( nNumFac ) + cSufFac ) ) .and. !( dbfFacCliI )->( eof() ) )
             if dbLock( dbfFacCliI )
                ( dbfFacCliI )->( dbDelete() )
                ( dbfFacCliI )->( dbUnLock() )
             end if
+            SysRefresh()
          end while
 
          /*
          Eliminamos las incidencias anteriores------------------------------------
          */
 
+         oMsgText( "Eliminando documentos anteriores" )
+
          while ( ( dbfFacCliD )->( dbSeek( cSerFac + Str( nNumFac ) + cSufFac ) ) .and. !( dbfFacCliD )->( eof() ) )
             if dbLock( dbfFacCliD )
                ( dbfFacCliD )->( dbDelete() )
                ( dbfFacCliD )->( dbUnLock() )
             end if
+            SysRefresh()
          end while
 
          /*
          Eliminamos los pagos anteriores------------------------------------------
          */
 
+         oMsgText( "Eliminando pagos anteriores" )
+
          while ( ( dbfFacCliP )->( dbSeek( cSerFac + Str( nNumFac ) + cSufFac ) ) .and. !( dbfFacCliP )->( eof() ) )
             if dbLock( dbfFacCliP )
                ( dbfFacCliP )->( dbDelete() )
                ( dbfFacCliP )->( dbUnLock() )
             end if
+            SysRefresh()
          end while
 
          /*
          Eliminamos las series anteriores------------------------------------------
          */
 
+         oMsgText( "Eliminando series anteriores" )
+
          while ( ( dbfFacCliS )->( dbSeek( cSerFac + Str( nNumFac ) + cSufFac ) ) .and. !( dbfFacCliS )->( eof() ) )
             if dbLock( dbfFacCliS )
                ( dbfFacCliS )->( dbDelete() )
                ( dbfFacCliS )->( dbUnLock() )
             end if
+            SysRefresh()
          end while
 
          /*
          Eliminamos los anticipos anteriores--------------------------------------
          */
+
+         oMsgText( "Eliminando anticipos anteriores" )
 
          nOrd                             := ( dbfAntCliT )->( OrdSetFocus( "cNumDoc" ) )
          while ( ( dbfAntCliT )->( dbSeek( cSerFac + Str( nNumFac ) + cSufFac ) ) .and. !( dbfAntCliT )->( eof() ) )
@@ -20029,6 +20048,7 @@ STATIC FUNCTION EndTrans( aTmp, aGet, oBrw, oBrwDet, oBrwPgo, aNumAlb, nMode, oD
                ( dbfAntCliT )->cNumDoc    := ""
                ( dbfAntCliT )->( dbUnLock() )
             end if
+            SysRefresh()
          end while
          ( dbfAntCliT )->( OrdSetFocus( nOrd ) )
 
@@ -20046,41 +20066,53 @@ STATIC FUNCTION EndTrans( aTmp, aGet, oBrw, oBrwDet, oBrwPgo, aNumAlb, nMode, oD
          ( dbfTmpLin )->dFecFac  := dFecFac
          dbPass( dbfTmpLin, dbfFacCliL, .t., cSerFac, nNumFac, cSufFac )
          ( dbfTmpLin )->( dbSkip() )
+         SysRefresh()
       end while
 
       /*
       Ahora escribimos en el fichero definitivo de inicdencias--------------------
       */
 
+      oMsgText( "Almacenando incidencias" )
+
       ( dbfTmpInc )->( dbGoTop() )
       while ( dbfTmpInc )->( !eof() )
          dbPass( dbfTmpInc, dbfFacCliI, .t., cSerFac, nNumFac, cSufFac )
          ( dbfTmpInc )->( dbSkip() )
+         SysRefresh()
       end while
 
       /*
       Ahora escribimos en el fichero definitivo de documentos--------------------
       */
 
+      oMsgText( "Almacenando documentos" )
+
       ( dbfTmpDoc )->( dbGoTop() )
       while ( dbfTmpDoc )->( !eof() )
          dbPass( dbfTmpDoc, dbfFacCliD, .t., cSerFac, nNumFac, cSufFac )
          ( dbfTmpDoc )->( dbSkip() )
+         SysRefresh()
       end while
 
       /*
       Ahora escribimos en el fichero definitivo de series----------------------
       */
 
+      oMsgText( "Almacenando series" )
+
       ( dbfTmpSer )->( dbGoTop() )
       while ( dbfTmpSer )->( !eof() )
          dbPass( dbfTmpSer, dbfFacCliS, .t., cSerFac, nNumFac, cSufFac, dFecFac )
          ( dbfTmpSer )->( dbSkip() )
+         SysRefresh()
       end while
 
       /*
       Ahora escribimos en el fichero definitivo de anticipos----------------------
       */
+
+      oMsgText( "Almacenando anticipos" )
 
       ( dbfTmpAnt )->( dbGoTop() )
       while ( dbfTmpAnt )->( !eof() )
@@ -20096,11 +20128,14 @@ STATIC FUNCTION EndTrans( aTmp, aGet, oBrw, oBrwDet, oBrwPgo, aNumAlb, nMode, oD
             end if
          end if
          ( dbfTmpAnt )->( dbSkip() )
+         SysRefresh()
       end while
 
       /*
       Si cambia el cliente en la factura, lo cambiamos en los recibos-------------
       */
+
+      oMsgText( "Clientes en recibos" )
 
       ( dbfTmpPgo )->( dbGoTop() )
 
@@ -20116,16 +20151,21 @@ STATIC FUNCTION EndTrans( aTmp, aGet, oBrw, oBrwDet, oBrwPgo, aNumAlb, nMode, oD
 
          ( dbfTmpPgo )->( dbSkip() )
 
+         SysRefresh()
+
       end while
 
       /*
       Ahora escribimos en el fichero definitivo de pagos--------------------------
       */
 
+      oMsgText( "Almacenando pagos" )
+
       ( dbfTmpPgo )->( dbGoTop() )
       while ( dbfTmpPgo )->( !eof() )
          dbPass( dbfTmpPgo, dbfFacCliP, .t., cSerFac, nNumFac, cSufFac )
          ( dbfTmpPgo )->( dbSkip() )
+         SysRefresh()
       end while
 
       /*
@@ -20193,6 +20233,8 @@ STATIC FUNCTION EndTrans( aTmp, aGet, oBrw, oBrwDet, oBrwPgo, aNumAlb, nMode, oD
 
                ( dbfPedCliP )->( dbSkip() )
 
+               SysRefresh()
+
             end while
 
          end if
@@ -20218,6 +20260,8 @@ STATIC FUNCTION EndTrans( aTmp, aGet, oBrw, oBrwDet, oBrwPgo, aNumAlb, nMode, oD
                end if
 
                ( dbfAlbCliP )->( dbSkip() )
+
+               SysRefresh()
 
             end while
 
@@ -20247,10 +20291,12 @@ STATIC FUNCTION EndTrans( aTmp, aGet, oBrw, oBrwDet, oBrwPgo, aNumAlb, nMode, oD
       Escribe los datos pendientes------------------------------------------------
       */
 
-      oMsgText( "Finalizamos la transacción" )
-      oMeter:Set( 9 )
+      oMsgText( "Escritura definitiva" )
 
       dbCommitAll()
+
+      oMsgText( "Finalizamos la transacción" )
+      oMeter:Set( 9 )
 
       CommitTransaction()
 

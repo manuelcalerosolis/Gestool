@@ -50,10 +50,11 @@ METHOD OpenFiles( lExclusive ) CLASS TScripts
 
    local lOpen          := .t.
    local oError
-   local oBlock         := ErrorBlock( {| oError | ( oError ) } )
+   local oBlock
 
    DEFAULT  lExclusive  := .f.
 
+   oBlock               := ErrorBlock( {| oError | ( oError ) } ) 
    BEGIN SEQUENCE
 
    if Empty( ::oDbf )
@@ -65,7 +66,9 @@ METHOD OpenFiles( lExclusive ) CLASS TScripts
    RECOVER USING oError
 
       msgStop( "Imposible abrir todas las bases de datos" + CRLF + ErrorMessage( oError )  )
+
       ::CloseFiles()
+
       lOpen             := .f.
 
    END SEQUENCE
@@ -80,7 +83,7 @@ METHOD DefineFiles( cPath, cDriver ) CLASS TScripts
 
    DEFAULT cPath        := ::cPath
 
-   DEFINE TABLE ::oDbf FILE "Scripts.Dbf" CLASS "Scripts" ALIAS "Scri" PATH ( cPath ) VIA ( cDriver() ) COMMENT "Scripts"
+   DEFINE TABLE ::oDbf FILE "Scripts.Dbf" CLASS "Scripts" ALIAS "Scripts" PATH ( cPath ) VIA ( cDriver() ) COMMENT "Scripts"
 
       FIELD NAME "cCodScr"    TYPE "C" LEN   3  DEC 0 COMMENT "Código"        COLSIZE 100          OF ::oDbf
       FIELD NAME "cDesScr"    TYPE "C" LEN  35  DEC 0 COMMENT "Nombre"        COLSIZE 400          OF ::oDbf

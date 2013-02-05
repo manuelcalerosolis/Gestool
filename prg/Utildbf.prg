@@ -2928,6 +2928,12 @@ Return ( if( oError:GenCode == EG_ZERODIV, 0, Break( oError ) ) )
 
 //---------------------------------------------------------------------------//
 
+Function Quoted( cString )
+
+Return ( "'" + cString + "'" )
+
+//---------------------------------------------------------------------------//
+
 /*
 function AddResource( nHResource, cType )
 

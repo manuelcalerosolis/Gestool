@@ -388,7 +388,7 @@ STATIC FUNCTION OpenFiles( lExt, cPath )
 
       end if
 
-      oTankes              := TTankes():Create( cPath )
+      oTankes              := TTankes():Create( cPatArt() )
       if !oTankes:OpenFiles()
          lOpenFiles        := .f.
       end if

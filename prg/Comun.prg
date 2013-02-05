@@ -1850,8 +1850,6 @@ Return ( if( lFull, FullCurDir(), "" ) + cPatGrp + "\" )
 
 //---------------------------------------------------------------------------//
 
-#ifndef __PDA__
-
 FUNCTION cPatCli( cPath, lFull, lEmpresa )
 
    DEFAULT lFull     := .f.
@@ -1883,15 +1881,7 @@ FUNCTION cPatCli( cPath, lFull, lEmpresa )
 
 Return ( if( lFull, FullCurDir(), "" ) + cPatCli + "\" )
 
-#else
-
-FUNCTION cPatCli(); Return ( cPatGrp() )
-
-#endif
-
 //---------------------------------------------------------------------------//
-
-#ifndef __PDA__
 
 FUNCTION cPatArt( cPath, lFull, lEmpresa )
 
@@ -1925,12 +1915,6 @@ FUNCTION cPatArt( cPath, lFull, lEmpresa )
    end if
 
 Return ( if( lFull, FullCurDir(), "" ) + cPatArt + "\" )
-
-#else
-
-FUNCTION cPatArt(); Return ( cPatGrp() )
-
-#endif
 
 //---------------------------------------------------------------------------//
 
