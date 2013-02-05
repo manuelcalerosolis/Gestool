@@ -1,42 +1,24 @@
-#ifndef __PDA__ 
+#include "FiveWin.Ch"
+#include "Menu.ch"
+#include "Font.ch"
+#include "Inkey.ch"
+#include "Factu.ch"
+#include "Ads.ch"
+#include "Xbrowse.ch"
 
-   #include "FiveWin.Ch"
-   #include "Menu.ch"
-   #include "Font.ch"
-   #include "Inkey.ch"
-   #include "Factu.ch"
-   #include "Ads.ch"
-   #include "Xbrowse.ch"
+#define GR_GDIOBJECTS     0       /* Count of GDI objects */
+#define GR_USEROBJECTS    1       /* Count of USER objects */
 
-   #define GR_GDIOBJECTS     0       /* Count of GDI objects */
-   #define GR_USEROBJECTS    1       /* Count of USER objects */
+#define CS_DBLCLKS        8
 
-   #define CS_DBLCLKS        8
+ANNOUNCE RDDSYS
 
-   ANNOUNCE RDDSYS
+REQUEST ADS, DBFCDX, DBFFPT
 
-   REQUEST ADS, DBFCDX, DBFFPT
-
-   REQUEST AdsKeyNo
-   REQUEST AdsKeyCount
-   REQUEST AdsGetRelKeyPos
-   REQUEST AdsSetRelKeyPos
-
-#else
-
-   #include "FWCE.ch"
-   #include "Vkey.Ch"
-
-   REQUEST DBFCDX
-
-#endif
-
-#ifdef __SQLLIB__
-   #include "sqlrdd.ch"          // Needed if you plan to use native connection to MySQL
-   #include "mysql.ch"           // Needed if you plan to use native connection to MySQL
-#endif
-
-#ifndef __PDA__
+REQUEST AdsKeyNo
+REQUEST AdsKeyCount
+REQUEST AdsGetRelKeyPos
+REQUEST AdsSetRelKeyPos
 
 static oWndBar
 static oMenu
@@ -54,14 +36,6 @@ static cParamsMain
 static nHndReport
 
 static hDLLRich
-
-#else
-
-static dbfUser
-static dbfCaj
-static lOpenFiles    := .f.
-
-#endif
 
 static oWnd
 static oBmp
@@ -387,7 +361,7 @@ Static Function CreateMainWindow( oIconApp )
 
    oMsgSesion                 := TMsgItem():New( oWnd:oMsgBar, "Sesión : "    + Transform( cCurSesion(), "######" ), 100,,,, .t. )
 
-   // Abrimos la ventana
+   // Abrimos la ventana-------------------------------------------------------
 
    ACTIVATE WINDOW oWnd ;
       MAXIMIZED ;
