@@ -31,13 +31,12 @@ CLASS TScripts FROM TMant
    METHOD   lPreSave()
 
    METHOD   CompilarScript()
-
    METHOD   EjecutarScript()
-
    METHOD   CompilarEjecutarScript( cCodScr )   INLINE ( fErase( cPatScript() + cCodScr + ".hrb" ), ::EjecutarScript( cCodScr ) )
 
    METHOD   StartTimer()
    METHOD   EndTimer()
+   METHOD   ReStartTimer()                      INLINE ( ::EndTimer(), ::StartTimer() )
 
    METHOD   ActivateAllTimer()                  INLINE ( aEval( ::aTimer, {|o| o:Activate() } ) )
    METHOD   DeActivateAllTimer()                INLINE ( aEval( ::aTimer, {|o| o:DeActivate() } ) )
@@ -213,7 +212,7 @@ METHOD Activate() CLASS TScripts
       msgStop( "Acceso no permitido." )
 
    end if
-
+   
 RETURN ( Self )
 
 //----------------------------------------------------------------------------//
@@ -313,7 +312,7 @@ RETURN ( oDlg:nResult == IDOK )
 
 //---------------------------------------------------------------------------//
 
-METHOD lPreSave( nMode, cScript ) CLASS TScripts
+METHOD lPreSave( nMode, cScript ) CLASS TScripts 
 
    if nMode == APPD_MODE .or. nMode == DUPL_MODE
 
@@ -336,13 +335,13 @@ METHOD lPreSave( nMode, cScript ) CLASS TScripts
       /*
       Guardamos el fichero prg con lo que tenemos escrito en el Memo-----------
       */
-
+   
       if Empty( ::cFicheroPRG )
          ::cFicheroPRG  := cPatScript() + ::oDbf:cCodScr + ".prg"
       end if
-
+   
       MemoWrit( ::cFicheroPRG, cScript )
-
+   
    end if
 
 Return .t.
