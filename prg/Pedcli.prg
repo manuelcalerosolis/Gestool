@@ -14642,8 +14642,7 @@ FUNCTION nTotPedCli( cPedido, cPedCliT, cPedCliL, cIva, cDiv, cFpago, aTmp, cDiv
 	Estudio de la Forma de Pago
 	*/
 
-   /*IF cFpago != nil                                    .and. ;
-      ( cFpago )->( dbSeek( ( cPedCliT )->cCodPgo ) )
+   if !Empty( cFpago ) .and. ( cFpago )->( dbSeek( ( cPedCliT )->cCodPgo ) )
 
       nTotAcu        := nTotPed
 
@@ -14655,11 +14654,11 @@ FUNCTION nTotPedCli( cPedido, cPedCliT, cPedCliL, cIva, cDiv, cFpago, aTmp, cDiv
 
          aAdd( aImpVto, if( n != ( cFPago )->nPlazos, Round( nTotPed / ( cFPago )->nPlazos, nRouDiv ), Round( nTotAcu, nRouDiv ) ) )
 
-         aAdd( aDatVto, dNexDay( dFecPed + ( cFPago )->nPlaUno + ( ( cFPago )->nDiaPla * ( n - 1 ) ), cdbfClient ) )
+         aAdd( aDatVto, dNexDay( dFecPed + ( cFPago )->nPlaUno + ( ( cFPago )->nDiaPla * ( n - 1 ) ), cDbfClient ) )
 
       next
 
-   END IF*/
+   end if
 
    ( cPedCliL )->( dbGoTo( nRecno) )
 
@@ -18568,11 +18567,11 @@ return .t.
 
 //--------------------------------------------------------------------------//
 
-Function sTotPedCli( cPedido, dbfMaster, dbfLine, dbfIva, dbfDiv, cDivRet, lExcCnt )
+Function sTotPedCli( cPedido, dbfMaster, dbfLine, dbfIva, dbfDiv, cDivRet )
 
    local sTotal
 
-   nTotPedCli( cPedido, dbfMaster, dbfLine, dbfIva, dbfDiv, nil, cDivRet, .f., lExcCnt )
+   nTotPedCli( cPedido, dbfMaster, dbfLine, dbfIva, dbfDiv, nil, nil, cDivRet, .f. )
 
    sTotal                                 := sTotal()
    sTotal:nTotalBruto                     := nTotBrt

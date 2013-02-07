@@ -100,11 +100,7 @@ METHOD lGenerate()
 
          ::oDbf:cTipDoc     := ::oDbfTmp:cTipDoc
          ::oDbf:cNumDoc     := ::oDbfTmp:cNumDoc
-<<<<<<< HEAD
-         ::oDbf:cCodArt     := ::oDbfTmp:cCodigo
-=======
          ::oDbf:cCodigo     := ::oDbfTmp:cCodigo
->>>>>>> 15d9ede9bc069002b8e94f4abfe2372cadceae25
          ::oDbf:cNomArt     := AllTrim( ::oDbfTmp:cNomArt )
          ::oDbf:dFecDoc     := ::oDbfTmp:dFecDoc
          ::oDbf:cCodCli     := ::oDbfTmp:cCodCli
