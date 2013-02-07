@@ -250,7 +250,7 @@ FUNCTION BrwContactos( oGet, oGet2, cCodCli, dbfContactos )
       return .t.
    end if
 
-   if !File( cPatCli() + "CliContactos.dbf" )
+   if !lExistTable( cPatCli() + "CliContactos.dbf" )
       MsgStop( 'No existe el fichero de obras' )
       Return .f.
    end if
@@ -279,7 +279,7 @@ FUNCTION BrwContactos( oGet, oGet2, cCodCli, dbfContactos )
 			VAR 		cCbxOrd ;
 			ID 		102 ;
          ITEMS    aCbxOrd ;
-         ON CHANGE(  ( dbfContactos )->( OrdSetFocus( oCbxOrd:nAt ) ), oBrw:Refresh(), oGet1:SetFocus() );
+         ON CHANGE( ( dbfContactos )->( OrdSetFocus( oCbxOrd:nAt ) ), oBrw:Refresh(), oGet1:SetFocus() );
 			OF 		oDlg
 
       oBrw                 := TXBrowse():New( oDlg )

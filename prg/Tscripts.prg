@@ -57,11 +57,11 @@ METHOD OpenFiles( lExclusive ) CLASS TScripts
    oBlock               := ErrorBlock( {| oError | ( oError ) } ) 
    BEGIN SEQUENCE
 
-   if Empty( ::oDbf )
-      ::DefineFiles()
-   end if
+      if Empty( ::oDbf )
+         ::DefineFiles()
+      end if
 
-   ::oDbf:Activate( .f., !( lExclusive ) )
+      ::oDbf:Activate( .f., !( lExclusive ) )
 
    RECOVER USING oError
 
@@ -87,7 +87,8 @@ METHOD DefineFiles( cPath, cDriver ) CLASS TScripts
 
       FIELD NAME "cCodScr"    TYPE "C" LEN   3  DEC 0 COMMENT "Código"        COLSIZE 100          OF ::oDbf
       FIELD NAME "cDesScr"    TYPE "C" LEN  35  DEC 0 COMMENT "Nombre"        COLSIZE 400          OF ::oDbf
-      FIELD NAME "nMinScr"    TYPE "N" LEN   3  DEC 0 COMMENT "Minutos"       HIDE                 OF ::oDbf
+      FIELD NAME "nMinScr"    TYPE "N" LEN   3  DEC 0 COMMENT "Minutos"             HIDE           OF ::oDbf
+      FIELD NAME "cCodUsr"    TYPE "C" LEN   3  DEC 0 COMMENT "Código de usuario"   HIDE           OF ::oDbf
 
       INDEX TO "Scripts.Cdx" TAG "cCodScr" ON "cCodScr" COMMENT "Código" NODELETED OF ::oDbf
       INDEX TO "Scripts.Cdx" TAG "cDesScr" ON "cDesScr" COMMENT "Nombre" NODELETED OF ::oDbf
@@ -221,6 +222,7 @@ METHOD Resource( nMode ) CLASS TScripts
 
    local oDlg
    local oGet
+   local oGetUsuario
    local oScript
    local cScript
    local nMinScr
@@ -254,6 +256,15 @@ METHOD Resource( nMode ) CLASS TScripts
          ID       110 ;
          WHEN     ( nMode != ZOOM_MODE ) ;
 			OF 		oDlg
+
+      REDEFINE GET oGetUsuario VAR ::oDbf:cCodUsr;
+         ID       130 ;
+         IDTEXT   131 ;
+         BITMAP   "LUPA" ;
+         VALID    ( cUser( oGetUsuario, nil, oGetUsuario:oHelpText ) );        
+         OF       oDlg
+
+      oGetUsuario:bHelp := {|| BrwUser( oGetUsuario, nil, oGetUsuario:oHelpText, .f., .f., .f., .t. ) }
 
       REDEFINE COMBOBOX ::oTime VAR ::cTime ;
          ITEMS    ::aTime ;
@@ -439,7 +450,7 @@ METHOD StartTimer()
 
       while !::oDbf:Eof()
 
-         if ::oDbf:nMinScr != 0
+         if ( ::oDbf:nMinScr != 0 ) .and. ( Empty( ::oDbf:cCodUsr ) .or. ( ::oDbf:cCodUsr == cCurUsr() ) )
             
             cCodScr  := by( ::oDbf:cCodScr )
 

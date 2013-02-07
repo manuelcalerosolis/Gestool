@@ -529,7 +529,7 @@ FUNCTION pdaBrwObras( oGet, oGet2, cCodCli, dbfObrasT )
       return .t.
    end if
 
-   if !File( cPatCli() + "ObrasT.Dbf" )
+   if !lExistTable( cPatCli() + "ObrasT.Dbf" )
       MsgStop( 'No existe el fichero de obras' )
       Return .f.
    end if
@@ -759,7 +759,7 @@ FUNCTION BrwObras( oGet, oGet2, cCodCli, dbfObrasT )
       return .t.
    end if
 
-   if !File( cPatCli() + "ObrasT.Dbf" )
+   if !lExistTable( cPatCli() + "ObrasT.Dbf" )
       MsgStop( 'No existe el fichero de obras' )
       Return .f.
    end if
@@ -838,8 +838,8 @@ FUNCTION BrwObras( oGet, oGet2, cCodCli, dbfObrasT )
          ACTION   ( WinEdtRec( oBrw, bEdit, dbfObrasT, nil, nil, cCodCli ) )
 
       if !IsReport()
-         oDlg:AddFastKey( VK_F2,    {|| if( nAnd( nLevel, ACC_APPD ) != 0, WinAppRec( oBrw, bEdit, dbfObrasT, nil, nil, cCodCli ), ) } )
-         oDlg:AddFastKey( VK_F3,    {|| if( nAnd( nLevel, ACC_EDIT ) != 0, WinEdtRec( oBrw, bEdit, dbfObrasT, nil, nil, cCodCli ), ) } )
+         oDlg:AddFastKey( VK_F2, {|| if( nAnd( nLevel, ACC_APPD ) != 0, WinAppRec( oBrw, bEdit, dbfObrasT, nil, nil, cCodCli ), ) } )
+         oDlg:AddFastKey( VK_F3, {|| if( nAnd( nLevel, ACC_EDIT ) != 0, WinEdtRec( oBrw, bEdit, dbfObrasT, nil, nil, cCodCli ), ) } )
       end if
 
    oDlg:AddFastKey( VK_F5,       {|| oDlg:end( IDOK ) } )
@@ -908,7 +908,7 @@ FUNCTION cObras( oGet, oGet2, cCodCli, dbfObrasT )
       oGet:cText( ( dbfObrasT )->CCODOBR )
 
 		IF oGet2 != NIL
-			oGet2:cText( (dbfObrasT)->CNOMOBR )
+			oGet2:cText( ( dbfObrasT )->CNOMOBR )
 		END IF
 
       lValid   := .T.

@@ -31,6 +31,7 @@ CLASS TFastVentasClientes FROM TFastReportInfGen
    METHOD BuildTree( oTree )
 
    METHOD AddPresupuestoCliente()
+   METHOD AddPedidoCliente( cCodigoCliente )
    METHOD AddAlbaranCliente()
    METHOD AddFacturaCliente()
    METHOD AddFacturaRectificativa()
@@ -104,10 +105,10 @@ METHOD OpenFiles() CLASS TFastVentasClientes
    oBlock         := ErrorBlock( {| oError | ApoloBreak( oError ) } )
    BEGIN SEQUENCE
 
-      DATABASE NEW ::oPreCliT PATH ( cPatEmp() ) CLASS "PreCliT" FILE "PreCliT.DBF" VIA ( cDriver() ) SHARED INDEX "PreCliT.CDX"
+      DATABASE NEW ::oPedCliT PATH ( cPatEmp() ) CLASS "PedCliT" FILE "PedCliT.DBF" VIA ( cDriver() ) SHARED INDEX "PedCliT.CDX"
 
-      DATABASE NEW ::oPreCliL PATH ( cPatEmp() ) CLASS "PreCliL" FILE "PreCliL.DBF" VIA ( cDriver() ) SHARED INDEX "PreCliL.CDX"
-      ::oPreCliL:OrdSetFocus( "cStkFast" )
+      DATABASE NEW ::oPedCliL PATH ( cPatEmp() ) CLASS "PedCliL" FILE "PedCliL.DBF" VIA ( cDriver() ) SHARED INDEX "PedCliL.CDX"
+      ::oPedCliL:OrdSetFocus( "cStkFast" )
 
       DATABASE NEW ::oAlbCliT PATH ( cPatEmp() ) CLASS "ALBCLIT" FILE "ALBCLIT.DBF" VIA ( cDriver() ) SHARED INDEX "ALBCLIT.CDX"
 
@@ -160,12 +161,12 @@ RETURN ( lOpen )
 
 METHOD CloseFiles() CLASS TFastVentasClientes
 
-   if !Empty( ::oPreCliL ) .and. ( ::oPreCliL:Used() )
-      ::oPreCliL:end()
+   if !Empty( ::oPedCliL ) .and. ( ::oPedCliL:Used() )
+      ::oPedCliL:end()
    end if
 
-   if !Empty( ::oPreCliT ) .and. ( ::oPreCliT:Used() )
-      ::oPreCliT:end()
+   if !Empty( ::oPedCliT ) .and. ( ::oPedCliT:Used() )
+      ::oPedCliT:end()
    end if
 
    if !Empty( ::oAlbCliL ) .and. ( ::oAlbCliL:Used() )
@@ -442,6 +443,10 @@ METHOD lGenerate() CLASS TFastVentasClientes
 
          ::AddPresupuestoCliente()
 
+      case ::cReportName == "Informe de pedidos"
+
+         ::AddPedidoCliente()
+         
       case ::cReportName == "Informe de albaranes"
 
    //      ::AddAlbaranCliente( .t. )
@@ -518,46 +523,46 @@ METHOD AddPresupuestoCliente( cCodigoCliente ) CLASS TFastVentasClientes
    
       ::InitPresupuestosClientes()
 
-      ::oPreCliT:OrdSetFocus( "dFecFac" )
+      ::oPedCliT:OrdSetFocus( "dFecFac" )
 
       cExpHead          := 'dFecFac >= Ctod( "' + Dtoc( ::dIniInf ) + '" ) .and. dFecFac <= Ctod( "' + Dtoc( ::dFinInf ) + '" )'
       cExpHead          += ' .and. Rtrim( cCodCli ) >= "' + Rtrim( ::oGrupoCliente:Cargo:Desde )   + '" .and. Rtrim( cCodCli ) <= "' + Rtrim( ::oGrupoCliente:Cargo:Hasta ) + '"'
       cExpHead          += ' .and. cSerie >= "' + Rtrim( ::oGrupoSerie:Cargo:Desde ) + '" .and. cSerie <= "'    + Rtrim( ::oGrupoSerie:Cargo:Hasta ) + '"'
 
-      ::oPreCliT:AddTmpIndex( cCurUsr(), GetFileNoExt( ::oPreCliT:cFile ), ::oPreCliT:OrdKey(), ( cExpHead ), , , , , , , , .t. )
+      ::oPedCliT:AddTmpIndex( cCurUsr(), GetFileNoExt( ::oPedCliT:cFile ), ::oPedCliT:OrdKey(), ( cExpHead ), , , , , , , , .t. )
 
       ::oMtrInf:cText   := "Procesando presupuestos"
-      ::oMtrInf:SetTotal( ::oPreCliT:OrdKeyCount() )
+      ::oMtrInf:SetTotal( ::oPedCliT:OrdKeyCount() )
 
-      ::oPreCliT:GoTop()
-      while !::lBreak .and. !::oPreCliT:Eof()
+      ::oPedCliT:GoTop()
+      while !::lBreak .and. !::oPedCliT:Eof()
 
-         if lChkSer( ::oPreCliT:cSerie, ::aSer )
+         if lChkSer( ::oPedCliT:cSerie, ::aSer )
 
-            sTot              := sTotPreCli( ::oPreCliT:cSerie + Str( ::oPreCliT:nNumFac ) + ::oPreCliT:cSufFac, ::oPreCliT:cAlias, ::oPreCliL:cAlias, ::oDbfIva:cAlias, ::oDbfDiv:cAlias, ::oPreCliP:cAlias, ::oAntCliT:cAlias )
+            sTot              := sTotPedCli( ::oPedCliT:cSerie + Str( ::oPedCliT:nNumFac ) + ::oPedCliT:cSufFac, ::oPedCliT:cAlias, ::oPedCliL:cAlias, ::oDbfIva:cAlias, ::oDbfDiv:cAlias, ::oPedCliP:cAlias, ::oAntCliT:cAlias )
 
             ::oDbf:Blank()
 
-            ::oDbf:cCodCli    := ::oPreCliT:cCodCli
-            ::oDbf:cNomCli    := ::oPreCliT:cNomCli
-            ::oDbf:cCodAge    := ::oPreCliT:cCodAge
-            ::oDbf:cCodPgo    := ::oPreCliT:cCodPago
-            ::oDbf:cCodRut    := ::oPreCliT:cCodRut
-            ::oDbf:cCodUsr    := ::oPreCliT:cCodUsr
+            ::oDbf:cCodCli    := ::oPedCliT:cCodCli
+            ::oDbf:cNomCli    := ::oPedCliT:cNomCli
+            ::oDbf:cCodAge    := ::oPedCliT:cCodAge
+            ::oDbf:cCodPgo    := ::oPedCliT:cCodPago
+            ::oDbf:cCodRut    := ::oPedCliT:cCodRut
+            ::oDbf:cCodUsr    := ::oPedCliT:cCodUsr
 
-            ::oDbf:cCodGrp    := cGruCli( ::oPreCliT:cCodCli, ::oDbfCli )
+            ::oDbf:cCodGrp    := cGruCli( ::oPedCliT:cCodCli, ::oDbfCli )
 
             ::oDbf:cTipDoc    := "Presupuesto clientes"
-            ::oDbf:cSerDoc    := ::oPreCliT:cSerie
-            ::oDbf:cNumDoc    := Str( ::oPreCliT:nNumFac )
-            ::oDbf:cSufDoc    := ::oPreCliT:cSufFac
+            ::oDbf:cSerDoc    := ::oPedCliT:cSerie
+            ::oDbf:cNumDoc    := Str( ::oPedCliT:nNumFac )
+            ::oDbf:cSufDoc    := ::oPedCliT:cSufFac
             ::oDbf:cIdeDoc    := Upper( ::oDbf:cTipDoc ) + ::oDbf:cSerDoc + ::oDbf:cNumDoc + ::oDbf:cSufDoc
 
-            ::oDbf:nAnoDoc    := Year( ::oPreCliT:dFecFac )
-            ::oDbf:nMesDoc    := Month( ::oPreCliT:dFecFac )
-            ::oDbf:dFecDoc    := ::oPreCliT:dFecFac
-            ::oDbf:cHorDoc    := SubStr( ::oPreCliT:cTimCre, 1, 2 )
-            ::oDbf:cMinDoc    := SubStr( ::oPreCliT:cTimCre, 3, 2 )
+            ::oDbf:nAnoDoc    := Year( ::oPedCliT:dFecFac )
+            ::oDbf:nMesDoc    := Month( ::oPedCliT:dFecFac )
+            ::oDbf:dFecDoc    := ::oPedCliT:dFecFac
+            ::oDbf:cHorDoc    := SubStr( ::oPedCliT:cTimCre, 1, 2 )
+            ::oDbf:cMinDoc    := SubStr( ::oPedCliT:cTimCre, 3, 2 )
 
             ::oDbf:nTotNet    := sTot:nTotalNeto
             ::oDbf:nTotIva    := sTot:nTotalIva
@@ -586,13 +591,113 @@ METHOD AddPresupuestoCliente( cCodigoCliente ) CLASS TFastVentasClientes
 
          end if
 
-         ::oPreCliT:Skip()
+         ::oPedCliT:Skip()
 
          ::oMtrInf:AutoInc()
 
       end while
 
-      ::oPreCliT:IdxDelete( cCurUsr(), GetFileNoExt( ::oPreCliT:cFile ) )
+      ::oPedCliT:IdxDelete( cCurUsr(), GetFileNoExt( ::oPedCliT:cFile ) )
+   
+   RECOVER USING oError
+
+      msgStop( ErrorMessage( oError ), "Imposible añadir Presupuestos de clientes" )
+
+   END SEQUENCE
+
+   ErrorBlock( oBlock )
+   
+RETURN ( Self )
+
+//---------------------------------------------------------------------------//
+
+METHOD AddPedidoCliente( cCodigoCliente ) CLASS TFastVentasClientes
+
+   local sTot
+   local oError
+   local oBlock
+   local cExpHead
+   
+   oBlock               := ErrorBlock( {| oError | ApoloBreak( oError ) } )
+   BEGIN SEQUENCE
+   
+      ::InitPresupuestosClientes()
+
+      ::oPedCliT:OrdSetFocus( "dFecFac" )
+
+      cExpHead          := 'dFecFac >= Ctod( "' + Dtoc( ::dIniInf ) + '" ) .and. dFecFac <= Ctod( "' + Dtoc( ::dFinInf ) + '" )'
+      cExpHead          += ' .and. Rtrim( cCodCli ) >= "' + Rtrim( ::oGrupoCliente:Cargo:Desde )   + '" .and. Rtrim( cCodCli ) <= "' + Rtrim( ::oGrupoCliente:Cargo:Hasta ) + '"'
+      cExpHead          += ' .and. cSerie >= "' + Rtrim( ::oGrupoSerie:Cargo:Desde ) + '" .and. cSerie <= "'    + Rtrim( ::oGrupoSerie:Cargo:Hasta ) + '"'
+
+      ::oPedCliT:AddTmpIndex( cCurUsr(), GetFileNoExt( ::oPedCliT:cFile ), ::oPedCliT:OrdKey(), ( cExpHead ), , , , , , , , .t. )
+
+      ::oMtrInf:cText   := "Procesando presupuestos"
+      ::oMtrInf:SetTotal( ::oPedCliT:OrdKeyCount() )
+
+      ::oPedCliT:GoTop()
+      while !::lBreak .and. !::oPedCliT:Eof()
+
+         if lChkSer( ::oPedCliT:cSerie, ::aSer )
+
+            sTot              := sTotPedCli( ::oPedCliT:cSerie + Str( ::oPedCliT:nNumFac ) + ::oPedCliT:cSufFac, ::oPedCliT:cAlias, ::oPedCliL:cAlias, ::oDbfIva:cAlias, ::oDbfDiv:cAlias, ::oPedCliP:cAlias, ::oAntCliT:cAlias )
+
+            ::oDbf:Blank()
+
+            ::oDbf:cCodCli    := ::oPedCliT:cCodCli
+            ::oDbf:cNomCli    := ::oPedCliT:cNomCli
+            ::oDbf:cCodAge    := ::oPedCliT:cCodAge
+            ::oDbf:cCodPgo    := ::oPedCliT:cCodPago
+            ::oDbf:cCodRut    := ::oPedCliT:cCodRut
+            ::oDbf:cCodUsr    := ::oPedCliT:cCodUsr
+
+            ::oDbf:cCodGrp    := cGruCli( ::oPedCliT:cCodCli, ::oDbfCli )
+
+            ::oDbf:cTipDoc    := "Presupuesto clientes"
+            ::oDbf:cSerDoc    := ::oPedCliT:cSerie
+            ::oDbf:cNumDoc    := Str( ::oPedCliT:nNumFac )
+            ::oDbf:cSufDoc    := ::oPedCliT:cSufFac
+            ::oDbf:cIdeDoc    := Upper( ::oDbf:cTipDoc ) + ::oDbf:cSerDoc + ::oDbf:cNumDoc + ::oDbf:cSufDoc
+
+            ::oDbf:nAnoDoc    := Year( ::oPedCliT:dFecFac )
+            ::oDbf:nMesDoc    := Month( ::oPedCliT:dFecFac )
+            ::oDbf:dFecDoc    := ::oPedCliT:dFecFac
+            ::oDbf:cHorDoc    := SubStr( ::oPedCliT:cTimCre, 1, 2 )
+            ::oDbf:cMinDoc    := SubStr( ::oPedCliT:cTimCre, 3, 2 )
+
+            ::oDbf:nTotNet    := sTot:nTotalNeto
+            ::oDbf:nTotIva    := sTot:nTotalIva
+            ::oDbf:nTotReq    := sTot:nTotalRecargoEquivalencia
+            ::oDbf:nTotDoc    := sTot:nTotalDocumento
+            ::oDbf:nTotPnt    := sTot:nTotalPuntoVerde
+            ::oDbf:nTotTrn    := sTot:nTotalTransporte
+            ::oDbf:nTotAge    := sTot:nTotalAgente
+            ::oDbf:nTotCos    := sTot:nTotalCosto
+            ::oDbf:nTotIvm    := sTot:nTotalImpuestoHidrocarburos
+            ::oDbf:nTotRnt    := sTot:nTotalRentabilidad
+            ::oDbf:nTotRet    := sTot:nTotalRetencion
+            ::oDbf:nTotCob    := sTot:nTotalCobrado
+
+            /*
+            Añadimos un nuevo registro--------------------------------------------
+            */
+
+            if ::lValidRegister()
+               ::oDbf:Insert()
+            else
+               ::oDbf:Cancel()
+            end if
+
+            ::addPedidosClientes()
+
+         end if
+
+         ::oPedCliT:Skip()
+
+         ::oMtrInf:AutoInc()
+
+      end while
+
+      ::oPedCliT:IdxDelete( cCurUsr(), GetFileNoExt( ::oPedCliT:cFile ) )
    
    RECOVER USING oError
 
