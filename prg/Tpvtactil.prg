@@ -3011,9 +3011,9 @@ METHOD StartResource() CLASS TpvTactil
 
       oGrupo                     := TDotNetGroup():New( oCarpeta, 246, "Otros", .f., , "Cashier_32" )
          oBoton                  := TDotNetButton():New( 60, oGrupo, "Media_stop_replace2_32",        "Cambiar ubicación", 1, {|| ::OnClickCambiaUbicacion() }, , , .f., .f., .f. )
-         oBoton                  := TDotNetButton():New( 60, oGrupo, "Cashier_32",                    "Seleccionar cajas", 2, {|| ::OnClickSeleccionarCajas() }, , , .f., .f., .f. )
-         oBoton                  := TDotNetButton():New( 60, oGrupo, "Cashier_replace_32",            "Entrada y salida",  3, {|| ::OnclickEntrdaSalida() }, , , .f., .f., .f. )
-         oBoton                  := TDotNetButton():New( 60, oGrupo, "note_cut_32",                   "Dividir mesa",      4, {|| ::OnclickDividirMesa() }, , , .f., .f., .f. )
+         oBoton                  := TDotNetButton():New( 60, oGrupo, "note_cut_32",                   "Dividir mesa",      2, {|| ::OnclickDividirMesa() }, , , .f., .f., .f. )
+         oBoton                  := TDotNetButton():New( 60, oGrupo, "Cashier_32",                    "Seleccionar cajas", 3, {|| ::OnClickSeleccionarCajas() }, , , .f., .f., .f. )
+         oBoton                  := TDotNetButton():New( 60, oGrupo, "Cashier_replace_32",            "Entrada y salida",  4, {|| ::OnclickEntrdaSalida() }, , , .f., .f., .f. )
 
       oGrupo                     := TDotNetGroup():New( oCarpeta, 186, "Arqueos/Sesiones", .f., , "Stopwatch_stop_32" )
          oBoton                  := TDotNetButton():New( 60, oGrupo, "Stopwatch_refresh_32",          "Arqueo parcial [X]",   1, {|| ::OnClickCloseTurno( .t. ) }, , , .f., .f., .f. )
@@ -3022,8 +3022,8 @@ METHOD StartResource() CLASS TpvTactil
 
       oGrupo                     := TDotNetGroup():New( oCarpeta, 66, "Salida", .f. )
          oBoton                  := TDotNetButton():New( 60, oGrupo, "End32",                         "Salida",            1, {|| ::oDlg:End() }, , , .f., .f., .f. )
-
-      /*
+ 
+      /* 
       Segunda pestaña de tpv tactil--------------------------------------------
       */
 
