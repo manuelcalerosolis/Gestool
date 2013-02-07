@@ -1211,14 +1211,6 @@ Return ( aSqlStruct )
 
 Function lExistTable( cTable, cVia )
 
-#ifdef __SQLLIB__
-   DEFAULT cVia   := cDriver()
-
-   if cVia == "SQLRDD"
-      Return ( SR_ExistTable( cTable ) )
-   end if
-#endif
-
    if lAIS()
       return .t.
    end if
@@ -1228,14 +1220,6 @@ Return ( File( cTable ) ) // dbExists( cTable ) )
 //----------------------------------------------------------------------------//
 
 Function lExistIndex( cIndex, cVia )
-
-#ifdef __SQLLIB__
-   DEFAULT cVia   := cDriver()
-
-   if cVia == "SQLRDD"
-      Return ( SR_ExistIndex( cIndex ) )
-   end if
-#endif
 
    if lAIS()
       return .t.
@@ -2927,6 +2911,19 @@ Function ApoloBreak( oError )
 Return ( if( oError:GenCode == EG_ZERODIV, 0, Break( oError ) ) )
 
 //---------------------------------------------------------------------------//
+
+Function Quoted( cString )
+
+Return ( "'" + cString + "'" )
+
+//---------------------------------------------------------------------------//
+
+Function Chiled( cString )
+
+Return ( Space( 3 ) + "<" + Alltrim( cString ) + ">" )
+
+//---------------------------------------------------------------------------//
+
 
 /*
 function AddResource( nHResource, cType )

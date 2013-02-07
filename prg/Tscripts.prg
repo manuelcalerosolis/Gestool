@@ -6,27 +6,41 @@
 
 CLASS TScripts FROM TMant
 
-   DATA   cMru          INIT "text_code_colored_16"
-   DATA   cBitmap       INIT "WebTopBlack"
-   DATA   oBtnEjecutar
-   DATA   oBtnCompilar
-   DATA   cFicheroPRG
+   DATA     cMru           INIT "text_code_colored_16"
+   DATA     cBitmap        INIT "WebTopBlack"
+   DATA     oBtnEjecutar
+   DATA     oBtnCompilar
+   DATA     cFicheroPRG
 
-   METHOD Activate()
+   DATA     oTime
+   DATA     cTime
+   DATA     aTime          INIT { "0 min.", "1 min.", "2 min.", "5 min.", "10 min.", "15 min.", "30 min.", "45 min.", "1 hora", "2 horas", "4 horas", "8 horas" }
 
-   METHOD OpenFiles( lExclusive )
+   DATA     aMinutes       INIT { 0, 1, 2, 5, 10, 15, 30, 45, 60, 120, 240, 480 }
 
-   METHOD DefineFiles()
+   CLASSDATA   aTimer      INIT {}
 
-   METHOD Resource( nMode )
+   METHOD   Activate()
 
-   METHOD lPreSave()
+   METHOD   OpenFiles( lExclusive )
 
-   METHOD CompilarScript()
+   METHOD   DefineFiles()
 
-   METHOD EjecutarScript()
+   METHOD   Resource( nMode )
 
-   METHOD CompilarEjecutarScript( cCodScr )  INLINE ( fErase( cPatScript() + cCodScr + ".hrb" ), ::EjecutarScript() )
+   METHOD   lPreSave()
+
+   METHOD   CompilarScript()
+
+   METHOD   EjecutarScript()
+
+   METHOD   CompilarEjecutarScript( cCodScr )   INLINE ( fErase( cPatScript() + cCodScr + ".hrb" ), ::EjecutarScript( cCodScr ) )
+
+   METHOD   StartTimer()
+   METHOD   EndTimer()
+
+   METHOD   ActivateAllTimer()                  INLINE ( aEval( ::aTimer, {|o| o:Activate() } ) )
+   METHOD   DeActivateAllTimer()                INLINE ( aEval( ::aTimer, {|o| o:DeActivate() } ) )
 
 END CLASS
 
@@ -36,23 +50,26 @@ METHOD OpenFiles( lExclusive ) CLASS TScripts
 
    local lOpen          := .t.
    local oError
-   local oBlock         := ErrorBlock( {| oError | ( oError ) } )
+   local oBlock
 
    DEFAULT  lExclusive  := .f.
 
+   oBlock               := ErrorBlock( {| oError | ( oError ) } ) 
    BEGIN SEQUENCE
 
-   if Empty( ::oDbf )
-      ::DefineFiles()
-   end if
+      if Empty( ::oDbf )
+         ::DefineFiles()
+      end if
 
-   ::oDbf:Activate( .f., !( lExclusive ) )
+      ::oDbf:Activate( .f., !( lExclusive ) )
 
    RECOVER USING oError
 
       msgStop( "Imposible abrir todas las bases de datos" + CRLF + ErrorMessage( oError )  )
+
       ::CloseFiles()
-      lOpen          := .f.
+
+      lOpen             := .f.
 
    END SEQUENCE
 
@@ -66,10 +83,12 @@ METHOD DefineFiles( cPath, cDriver ) CLASS TScripts
 
    DEFAULT cPath        := ::cPath
 
-   DEFINE TABLE ::oDbf FILE "Scripts.Dbf" CLASS "Scripts" ALIAS "Scri" PATH ( cPath ) VIA ( cDriver() ) COMMENT "Scripts"
+   DEFINE TABLE ::oDbf FILE "Scripts.Dbf" CLASS "Scripts" ALIAS "Scripts" PATH ( cPath ) VIA ( cDriver() ) COMMENT "Scripts"
 
       FIELD NAME "cCodScr"    TYPE "C" LEN   3  DEC 0 COMMENT "Código"        COLSIZE 100          OF ::oDbf
       FIELD NAME "cDesScr"    TYPE "C" LEN  35  DEC 0 COMMENT "Nombre"        COLSIZE 400          OF ::oDbf
+      FIELD NAME "nMinScr"    TYPE "N" LEN   3  DEC 0 COMMENT "Minutos"             HIDE           OF ::oDbf
+      FIELD NAME "cCodUsr"    TYPE "C" LEN   3  DEC 0 COMMENT "Código de usuario"   HIDE           OF ::oDbf
 
       INDEX TO "Scripts.Cdx" TAG "cCodScr" ON "cCodScr" COMMENT "Código" NODELETED OF ::oDbf
       INDEX TO "Scripts.Cdx" TAG "cDesScr" ON "cDesScr" COMMENT "Nombre" NODELETED OF ::oDbf
@@ -81,6 +100,8 @@ RETURN ( ::oDbf )
 //---------------------------------------------------------------------------//
 
 METHOD Activate() CLASS TScripts
+
+   ::EndTimer()
  
    if nAnd( ::nLevel, 1 ) == 0
 
@@ -165,7 +186,7 @@ METHOD Activate() CLASS TScripts
          RESOURCE "Flash_" ;
          OF       ::oWndBrw ;
          NOBORDER ;
-         ACTION   ( ::EjecutarScript() ) ;
+         ACTION   ( ::EjecutarScript( ::oDbf:cCodScr ) ) ;
          TOOLTIP  "E(j)ecutar";
          HOTKEY   "J" ;
          LEVEL    ACC_ZOOM
@@ -185,7 +206,7 @@ METHOD Activate() CLASS TScripts
          ::oWndBrw:cHtmlHelp  := ::cHtmlHelp
       end if
 
-      ::oWndBrw:Activate( nil, nil, nil, nil, nil, nil, nil, nil, nil, nil, nil, nil, nil, nil, nil, nil, {|| ::CloseFiles() } )
+      ::oWndBrw:Activate( nil, nil, nil, nil, nil, nil, nil, nil, nil, nil, nil, nil, nil, nil, nil, nil, {|| ::CloseFiles(), ::StartTimer() } )
 
    else
 
@@ -201,8 +222,10 @@ METHOD Resource( nMode ) CLASS TScripts
 
    local oDlg
    local oGet
+   local oGetUsuario
    local oScript
    local cScript
+   local nMinScr
    local oFont       := TFont():New( "Courier New", 8, 18, .f., .t. )
 
    if nMode != APPD_MODE
@@ -215,7 +238,12 @@ METHOD Resource( nMode ) CLASS TScripts
 
    end if
 
-   DEFINE DIALOG oDlg RESOURCE "SCRIPTS" TITLE LblTitle( nMode ) + "Script"
+   nMinScr           := aScan( ::aMinutes, ::oDbf:nMinScr )
+   nMinScr           := Min( Max( nMinScr, 1 ), len( ::aMinutes ) )
+
+   ::cTime           := ::aTime[ nMinScr ]
+
+   DEFINE DIALOG oDlg RESOURCE "Scripts" TITLE LblTitle( nMode ) + "Script"
 
       REDEFINE GET oGet VAR ::oDbf:cCodScr ;
          ID       100 ;
@@ -228,6 +256,20 @@ METHOD Resource( nMode ) CLASS TScripts
          ID       110 ;
          WHEN     ( nMode != ZOOM_MODE ) ;
 			OF 		oDlg
+
+      REDEFINE GET oGetUsuario VAR ::oDbf:cCodUsr;
+         ID       130 ;
+         IDTEXT   131 ;
+         BITMAP   "LUPA" ;
+         VALID    ( cUser( oGetUsuario, nil, oGetUsuario:oHelpText ) );        
+         OF       oDlg
+
+      oGetUsuario:bHelp := {|| BrwUser( oGetUsuario, nil, oGetUsuario:oHelpText, .f., .f., .f., .t. ) }
+
+      REDEFINE COMBOBOX ::oTime VAR ::cTime ;
+         ITEMS    ::aTime ;
+         ID       120 ;
+         OF       oDlg
 
       REDEFINE GET oScript VAR cScript MEMO ;
          ID       200 ;
@@ -287,6 +329,8 @@ METHOD lPreSave( nMode, cScript ) CLASS TScripts
       Return .f.
    end if
 
+   ::oDbf:nMinScr       := ::aMinutes[ ::oTime:nAt ]
+
    if nMode != ZOOM_MODE
 
       /*
@@ -338,7 +382,7 @@ Return .t.
 
 //---------------------------------------------------------------------------//
 
-METHOD EjecutarScript() CLASS TScripts
+METHOD EjecutarScript( cCodigoScript ) CLASS TScripts
 
    local u
    local pHrb
@@ -350,13 +394,19 @@ METHOD EjecutarScript() CLASS TScripts
    BEGIN SEQUENCE
 
    /*
+   Desactivamos todos los Scripts----------------------------------------------
+   */
+
+   ::DeActivateAllTimer()
+
+   /*
    Comprobamos que el script haya sido compilado-------------------------------
    */
 
-   cFichero       := cPatScript() + ::oDbf:cCodScr + ".hrb"
+   cFichero       := cPatScript() + cCodigoScript + ".hrb"
 
    if !File( cFichero )
-      ::CompilarScript( ::oDbf:cCodScr )
+      ::CompilarScript( cCodigoScript )
    end if
 
    /*
@@ -379,7 +429,58 @@ METHOD EjecutarScript() CLASS TScripts
 
    ErrorBlock( oBlock ) 
 
+   /*
+   Activamos todos los scripts-------------------------------------------------
+   */
+
+   ::ActivateAllTimer()
+
 Return .t.
 
 //---------------------------------------------------------------------------//
 
+METHOD StartTimer()
+
+   local cCodScr
+   local oTimer
+
+   ::aTimer          := {}   
+
+   if ::OpenFiles()
+
+      while !::oDbf:Eof()
+
+         if ( ::oDbf:nMinScr != 0 ) .and. ( Empty( ::oDbf:cCodUsr ) .or. ( ::oDbf:cCodUsr == cCurUsr() ) )
+            
+            cCodScr  := by( ::oDbf:cCodScr )
+
+            oTimer   := TTimer():New( ::oDbf:nMinScr * 60000, {|| ::EjecutarScript( cCodScr ) }, oWnd() )
+            oTimer:Activate()
+
+            aAdd( ::aTimer, oTimer ) 
+
+         end if
+
+         ::oDbf:Skip()
+
+      end while
+
+      ::CloseFiles()
+
+   end if
+
+Return .t.
+
+//---------------------------------------------------------------------------//
+
+METHOD EndTimer()
+
+   local oTimer
+
+   for each oTimer in ::aTimer
+      oTimer:End()
+   next
+
+Return .t.
+
+//---------------------------------------------------------------------------//

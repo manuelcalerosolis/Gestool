@@ -3148,13 +3148,13 @@ Function SetEmpresa( cCodEmp, dbfEmp, dbfDlg, dbfUsr, oBrw, oWnd, lSoft )
          else
 
             if dbLock( dbfEmp )
-               ( dbfEmp )->lActiva    := .t.
+               ( dbfEmp )->lActiva  := .t.
                ( dbfEmp )->( dbUnLock() )
             end if
 
             MsgAlert( "La nueva empresa activa es " + ( dbfEmp )->CodEmp + " - " + Rtrim( ( dbfEmp )->cNombre ) )
 
-            cCodEmp  := ( dbfEmp )->CodEmp
+            cCodEmp                 := ( dbfEmp )->CodEmp
 
             exit
 
@@ -3172,9 +3172,10 @@ Function SetEmpresa( cCodEmp, dbfEmp, dbfDlg, dbfUsr, oBrw, oWnd, lSoft )
 
    /*
    Directorios si no tiene grupo-----------------------------------------------
+
    */
 
-   if Empty( ( dbfEmp )->cCodGrp )
+   if Empty( ( dbfEmp )->cCodGrp ) 
 
       cPatGrp( cCodEmp, nil, .t. )
 
@@ -3196,7 +3197,7 @@ Function SetEmpresa( cCodEmp, dbfEmp, dbfDlg, dbfUsr, oBrw, oWnd, lSoft )
 
       cPatGrp( ( dbfEmp )->cCodGrp, nil, .f. )
 
-      if RetFld( cCodEmp, dbfEmp, "lGrpCli", "CodEmp" )
+      if RetFld( cCodEmp, dbfEmp, "lGrpCli", "CodEmp" ) .and. !lAIS()   // Aun no van los 
          cPatCli( ( dbfEmp )->cCodGrp, nil, .f. )
       else
          cPatCli( cCodEmp, nil, .t. )
@@ -4939,7 +4940,7 @@ Static Function ActDbfEmp( cCodEmp, aMsg, oAni, oDlg, oMsg, oMet, lActEmp )
          TDetActuacion():Create():SyncAllDbf()
 
          oMsg:SetText( "Añadiendo tanques de combustible" )
-         TTankes():Create():SyncAllDbf()
+         TTankes():Create( cPatArt() ):SyncAllDbf()
 
          oMsg:SetText( "Añadiendo comentarios" )
          TComentarios():Create():SyncAllDbf()

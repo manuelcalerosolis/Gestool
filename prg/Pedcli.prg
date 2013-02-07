@@ -18566,3 +18566,31 @@ static function lBuscaOferta( cCodArt, aGet, aTmp, aTmpPed, dbfOferta, dbfArticu
 return .t.
 
 //--------------------------------------------------------------------------//
+
+Function sTotPedCli( cPedido, dbfMaster, dbfLine, dbfIva, dbfDiv, cDivRet, lExcCnt )
+
+   local sTotal
+
+   nTotPedCli( cPedido, dbfMaster, dbfLine, dbfIva, dbfDiv, nil, cDivRet, .f., lExcCnt )
+
+   sTotal                                 := sTotal()
+   sTotal:nTotalBruto                     := nTotBrt
+   sTotal:nTotalNeto                      := nTotNet
+   sTotal:nTotalIva                       := nTotIva
+   sTotal:aTotalIva                       := aTotIva
+   sTotal:nTotalRecargoEquivalencia       := nTotReq
+   sTotal:nTotalDocumento                 := nTotPed
+   sTotal:nTotalPuntoVerde                := nTotPnt
+   sTotal:nTotalTransporte                := nTotTrn
+   sTotal:nTotalAgente                    := nTotAge
+   sTotal:nTotalCosto                     := nTotCos
+   sTotal:nTotalImpuestoHidrocarburos     := nTotIvm
+   sTotal:nTotalRentabilidad              := nTotRnt
+   sTotal:nTotalDescuentoGeneral          := nTotDto
+   sTotal:nTotalDescuentoProntoPago       := nTotDpp
+   sTotal:nTotalDescuentoUno              := nTotUno
+   sTotal:nTotalDescuentoDos              := nTotDos
+
+Return ( sTotal )
+
+//--------------------------------------------------------------------------//

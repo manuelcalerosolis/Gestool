@@ -6794,6 +6794,8 @@ METHOD ToExcel( bProgress, nGroupBy, aCols ) CLASS TXBrowse
    local aTotals  := {}, lAnyTotals := .f.
    local aWidths  := {}
    local lContinue   := .t.
+   local oBlock
+   local oError
 
    if lExcelInstl == .f.
       // already checked and found excel not installed
@@ -6825,6 +6827,10 @@ METHOD ToExcel( bProgress, nGroupBy, aCols ) CLASS TXBrowse
          return ::ToCalc( bProgress, nGroupBy, , , aCols )
       endif
    endif
+
+   oBlock         := ErrorBlock( {| oError | ApoloBreak( oError ) } )
+   BEGIN SEQUENCE
+
    lExcelInstl    := .t.
 
    if nxlLangID == nil
@@ -6832,7 +6838,8 @@ METHOD ToExcel( bProgress, nGroupBy, aCols ) CLASS TXBrowse
    endif
 
    oExcel:ScreenUpdating := .f.
-   oBook   := oExcel:WorkBooks:Add()
+
+   oBook    := oExcel:WorkBooks:Add()
    oSheet   := oExcel:ActiveSheet
 
    uBookMark   := EVAL( ::bBookMark )
@@ -7070,6 +7077,14 @@ METHOD ToExcel( bProgress, nGroupBy, aCols ) CLASS TXBrowse
    oExcel:visible          := .T.
    ShowWindow( oExcel:hWnd, 3 )
    BringWindowToTop( oExcel:hWnd )
+
+   RECOVER USING oError
+
+      msgStop( ErrorMessage( oError ), "Imposible establecer lenguaje de Excel" )
+
+   END SEQUENCE
+
+   ErrorBlock( oBlock )
 
 return oSheet
 
@@ -8168,12 +8183,12 @@ return excelCell( r1, c1 ) + ":" + excelCell( r2, c2 )
 static function SetExcelLanguage( oExcel )
 
    local aEng     := { 1033, 2057, 10249, 4105, 9225, 14345, 6153, 8201, 5129, 13321, 7177, 11273, 12297 }
-   local aSpanish := {3082,1034,11274,16394,13322,9226,5130,7178,12298,17418,4106,18442,;
-                     58378,2058,19466,6154,15370,10250,20490,21514,14346,8202}
+   local aSpanish := { 3082,1034,11274,16394,13322,9226,5130,7178,12298,17418,4106,18442,58378,2058,19466,6154,15370,10250,20490,21514,14346,8202}
    local aGerman  := {1031,3079,5127,4103,2055}
    local aFrench  := {1036,2060,11276,3084,9228,12300,15372,5132,13324,6156,14348,58380,8204,10252,4108,7180}
 
    if nxlLangID == nil
+
       if ( oExcel := ExcelObj() ) == nil
          nxlLangID := 0
          return nil
@@ -8215,6 +8230,7 @@ static function SetExcelLanguage( oExcel )
             cxlTrue     := "=(1=1)"
             cxlFalse    := "=(1=0)"
       endcase
+
    endif
 
 return nil

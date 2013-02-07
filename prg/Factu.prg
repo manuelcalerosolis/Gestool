@@ -1,42 +1,24 @@
-#ifndef __PDA__ 
+#include "FiveWin.Ch"
+#include "Menu.ch"
+#include "Font.ch"
+#include "Inkey.ch"
+#include "Factu.ch"
+#include "Ads.ch"
+#include "Xbrowse.ch"
 
-   #include "FiveWin.Ch"
-   #include "Menu.ch"
-   #include "Font.ch"
-   #include "Inkey.ch"
-   #include "Factu.ch"
-   #include "Ads.ch"
-   #include "Xbrowse.ch"
+#define GR_GDIOBJECTS     0       /* Count of GDI objects */
+#define GR_USEROBJECTS    1       /* Count of USER objects */
 
-   #define GR_GDIOBJECTS     0       /* Count of GDI objects */
-   #define GR_USEROBJECTS    1       /* Count of USER objects */
+#define CS_DBLCLKS        8
 
-   #define CS_DBLCLKS        8
+ANNOUNCE RDDSYS
 
-   ANNOUNCE RDDSYS
+REQUEST ADS, DBFCDX, DBFFPT
 
-   REQUEST ADS, DBFCDX, DBFFPT
-
-   REQUEST AdsKeyNo
-   REQUEST AdsKeyCount
-   REQUEST AdsGetRelKeyPos
-   REQUEST AdsSetRelKeyPos
-
-#else
-
-   #include "FWCE.ch"
-   #include "Vkey.Ch"
-
-   REQUEST DBFCDX
-
-#endif
-
-#ifdef __SQLLIB__
-   #include "sqlrdd.ch"          // Needed if you plan to use native connection to MySQL
-   #include "mysql.ch"           // Needed if you plan to use native connection to MySQL
-#endif
-
-#ifndef __PDA__
+REQUEST AdsKeyNo
+REQUEST AdsKeyCount
+REQUEST AdsGetRelKeyPos
+REQUEST AdsSetRelKeyPos
 
 static oWndBar
 static oMenu
@@ -54,14 +36,6 @@ static cParamsMain
 static nHndReport
 
 static hDLLRich
-
-#else
-
-static dbfUser
-static dbfCaj
-static lOpenFiles    := .f.
-
-#endif
 
 static oWnd
 static oBmp
@@ -387,7 +361,7 @@ Static Function CreateMainWindow( oIconApp )
 
    oMsgSesion                 := TMsgItem():New( oWnd:oMsgBar, "Sesión : "    + Transform( cCurSesion(), "######" ), 100,,,, .t. )
 
-   // Abrimos la ventana
+   // Abrimos la ventana-------------------------------------------------------
 
    ACTIVATE WINDOW oWnd ;
       MAXIMIZED ;
@@ -764,7 +738,7 @@ FUNCTION lInitCheck( lDir, oMessage, oProgress )
    // Apertura de ficheros-----------------------------------------------------
 
    if !Empty( oMessage )
-      oMessage:SetText( 'Selección de la empresa actual' )
+      oMessage:SetText( 'Selección de la empresa actual' ) 
    end if
 
    if !Empty( oProgress )
@@ -772,12 +746,6 @@ FUNCTION lInitCheck( lDir, oMessage, oProgress )
    end if
 
    SetEmpresa( , , , , , oWnd )
-
-   if !Empty( oMessage )
-      oMessage:SetText( 'Iniciando los servicios' )
-   end if
-
-   InitServices()
 
    if !Empty( oMessage )
       oMessage:SetText( 'Comprobaciones finalizadas' )
@@ -797,11 +765,11 @@ Function lStartCheck()
 
    CursorWait()
 
+   oMsgText( 'Chequeando versión de empresa' )
+
    // Chequeamos los cambios de versiones--------------------------------------
 
    ChkAllEmp()
-
-   // Ponemos el titulo de la empresa------------------------------------------
 
    SetTituloEmpresa()
 
@@ -841,25 +809,21 @@ Function lStartCheck()
 
    lPedidosWeb()
 
-   // Compilamos y ejecutamos un prg en tiempo de ejecución--------------------
-
-   //Ejecutascript()
-
-   // Colocamos los avisos pa las notas----------------------------------------
-
-   oMsgText( 'Emision de alertas' )
-
-   if oUser():lAlerta()
-      SetNotas()
-   end if
-
-   // Navegación------------------------------------------------------------
+   // Navegación---------------------------------------------------------------
 
    oMsgText( 'Abriendo panel de navegación' )
 
    if !Empty( oWnd ) .and. !( Os_IsWTSClient() )
        OpenWebBrowser( oWnd )
    end if
+
+   // Colocamos los avisos pa las notas----------------------------------------
+
+   oMsgText( 'Servicios de timers' )
+
+   InitServices()
+
+   // Texto limpio y a trabajar------------------------------------------------
 
    oMsgText()
 
@@ -1050,6 +1014,8 @@ Function oMsgText( cText )
          oWnd:oMsgBar:SetMsg( cText )
       end if
    end if
+
+   logwrite( cText ) 
 
 Return ( nil )
 
@@ -1468,7 +1434,7 @@ Function CreateAcceso( oWnd )
    oItem:oGroup         := oGrupo
    oItem:cPrompt        := 'Tanques'
    oItem:cMessage       := 'Acceso a los tanques de combustible'
-   oItem:bAction        := {|| TTankes():New( cPatEmp(), oWnd, "01017" ):Activate() }
+   oItem:bAction        := {|| TTankes():New( cPatArt(), oWnd, "01017" ):Activate() }
    oItem:cId            := "01017"
    oItem:cBmp           := "Potion_Red_16"
    oItem:cBmpBig        := "Potion_Red_32"
@@ -3034,7 +3000,7 @@ Function BuildMenu()
                   MENUITEM    "&9. Tanques de combustible";
                      HELPID   "01017" ;
                      MESSAGE  "Tanques de combustible" ;
-                     ACTION   ( TTankes():New( cPatEmp(), oWnd, oMenuItem ):Activate() );
+                     ACTION   ( TTankes():New( cPatArt(), oWnd, oMenuItem ):Activate() );
                      RESOURCE "Potion_Red_16" ;
 
                   MENUITEM    "&A. Unidades de Medición";
@@ -5188,6 +5154,8 @@ Function InitServices()
       SetNotas()
    end if
 
+   TScripts():New( cPatEmp() ):StartTimer()
+   
    // Auto recepción de pedidos por internet-----------------------------------
 
    // SetAutoRecive()
@@ -5199,7 +5167,7 @@ Return ( nil )
 //---------------------------------------------------------------------------//
 
 Function StopServices()
-
+ 
    // Informe rapido de articulos----------------------------------------------
 
    CloseInfoArticulo()
@@ -5218,6 +5186,8 @@ Function StopServices()
 
       // AdsCloseCachedTables()
    end if
+
+   TScripts():EndTimer()
 
 Return ( nil )
 
@@ -6093,14 +6063,3 @@ RETURN .t.
 
 //--------------------------------------------------------------------------//
 
-FUNCTION Reindexa()
-
-   if lAis()
-      TDataCenter():Resource( "01067" )
-   else
-      TReindex():New( oWnd(), "01067" ):Resource()
-   end if
-
-RETURN .t.
-
-//--------------------------------------------------------------------------//

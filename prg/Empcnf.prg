@@ -404,12 +404,11 @@ FUNCTION lImporteExacto() ; RETURN ( aEmp()[ _LIMPEXA ] )
 
 FUNCTION lShwKit( lShwKit )
 
-   if ValType( lShwKit ) == "L"
-      aEmp()[ _LSHWKIT ] := lShwKit
+   if IsLogic( lShwKit )
       SetFieldEmpresa( lShwKit, "lShwKit" )
    end if
 
-RETURN ( aEmp()[ _LSHWKIT ] )
+RETURN ( uFieldEmpresa( "lShwKit" ) )
 
 //---------------------------------------------------------------------------//
 
