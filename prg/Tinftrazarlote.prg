@@ -96,7 +96,7 @@ METHOD lGenerate()
 
          ::oDbf:cTipDoc     := AllTrim( ::oDbfTmp:cTipDoc )
          ::oDbf:cNumDoc     := ::oDbfTmp:cNumDoc
-         ::oDbf:cCodArt     := ::oDbfTmp:cCodArt
+         ::oDbf:cCodArt     := ::oDbfTmp:cCodigo
          ::oDbf:cNomArt     := AllTrim( ::oDbfTmp:cNomArt )
 
          do case
@@ -133,7 +133,7 @@ METHOD lGenerate()
 
       ::oMtrInf:AutoInc( ::oDbfTmp:OrdKeyNo() )
 
-   end do
+   end while
 
    ::oMtrInf:AutoInc( ::oDbfTmp:LastRec() )
 

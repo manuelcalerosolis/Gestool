@@ -40,4 +40,5 @@ CASHIER_160 BITMAP "..\\bmp\\Cashier_160.bmp"
 WHEEL_160 BITMAP "..\\bmp\\Wheel_160.bmp"
 navigate_left2 BITMAP "..\\bmp\\navigate_left2.bmp"
 navigate_right2 BITMAP "..\\bmp\\navigate_right2.bmp"
-
+document_text_printer2_32 BITMAP "..\\bmp\\document_text_printer2_32.bmp"
+note_cut_32 BITMAP "..\\bmp\\note_cut_32.bmp"

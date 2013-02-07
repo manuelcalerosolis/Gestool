@@ -125,6 +125,8 @@ CLASS sTpvPunto
    DATA lAbierto
    DATA nUbicacion
 
+   DATA lMultiple          INIT .f.
+
    DATA nType
 
    DATA nTop               INIT 0
@@ -163,6 +165,10 @@ CLASS sTpvPunto
    Method lEncargar()       INLINE ( ::nUbicacion == ubiEncargar )
 
    Method oTiketCabecera() INLINE ( ::oSender:oSender:oSender:oTiketCabecera )
+
+   METHOD lMultipleTicket()
+
+   METHOD nTotalMultipleTicket()
 
    //------------------------------------------------------------------------//
 
@@ -441,6 +447,7 @@ Method LoadMesa() CLASS sTpvPunto
    ::cNombre      := ""
    ::nTotal       := 0
    ::nEstado      := 1
+   ::lMultiple    := .f.
 
    if ::oTiketCabecera():SeekInOrd( ::cPunto(), "cCodSal" )
       ::cSerie    := ::oTiketCabecera():FieldGetByName( "cSerTik"   )
@@ -448,10 +455,78 @@ Method LoadMesa() CLASS sTpvPunto
       ::cSufijo   := ::oTiketCabecera():FieldGetByName( "cSufTik"   )
       ::cAlias    := ::oTiketCabecera():FieldGetByName( "cAliasTik" )
       ::cNombre   := ::oTiketCabecera():FieldGetByName( "cNomTik"   )
-      ::nTotal    := ::oTiketCabecera():FieldGetByName( "nTotTik"   )
       ::nEstado   := if( ::oTiketCabecera():FieldGetByName( "lAbierto" ), 2, 3 )
+      ::lMultiple := ::lMultipleTicket()
+
+      if ::lMultiple 
+         ::nTotal := ::nTotalMultipleTicket()
+      else
+         ::nTotal := ::oTiketCabecera():FieldGetByName( "nTotTik"   )   
+      end if
+
    end if
 
 Return ( Self )
+
+//---------------------------------------------------------------------------//
+
+METHOD lMultipleTicket()
+
+   local lMultiple   := .t.
+   local aNumeros    := {}
+
+   with object ( ::oTiketCabecera() )
+      
+      :GetStatus()
+
+      :OrdSetFocus( "cCodSal" )
+
+      if :Seek( ::cCodigoSala + Padr( ::cPuntoVenta, 30 ) )
+
+         while :FieldGetByName( "cCodSala" ) + :FieldGetByName( "cPntVenta" ) == ::cCodigoSala + Padr( ::cPuntoVenta, 30 ) .and. !:Eof()
+
+            aAdd( aNumeros, :FieldGetByName( "cSerTik" ) + :FieldGetByName( "cNumTik" ) + :FieldGetByName( "cSufTik" ) )
+
+            :Skip()
+
+         end while
+
+      end if
+
+      :SetStatus()
+
+   end with
+
+Return ( Len( aNumeros ) > 1 )
+
+//---------------------------------------------------------------------------//
+
+METHOD nTotalMultipleTicket()
+
+   local nTotal      := 0
+
+   with object ( ::oTiketCabecera() )
+      
+      :GetStatus()
+
+      :OrdSetFocus( "cCodSal" )
+
+      if :Seek( ::cCodigoSala + Padr( ::cPuntoVenta, 30 ) )
+
+         while :FieldGetByName( "cCodSala" ) + :FieldGetByName( "cPntVenta" ) == ::cCodigoSala + Padr( ::cPuntoVenta, 30 ) .and. !:Eof()
+
+            nTotal   += :FieldGetByName( "nTotTik" )
+
+            :Skip()
+
+         end while
+
+      end if
+
+      :SetStatus()
+
+   end with
+
+Return nTotal
 
 //---------------------------------------------------------------------------//

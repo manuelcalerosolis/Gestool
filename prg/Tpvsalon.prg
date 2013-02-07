@@ -20,13 +20,13 @@
 #define DT_INTERNAL                          4096
 #define DT_LEFT                              0
 #define DT_NOCLIP                            256
-#define DT_NOPREFIX                          2048
+#define DT_NOPREFIX                          2048   
 #define DT_RIGHT                             2
 #define DT_SINGLELINE                        32
 #define DT_TABSTOP                           128
 #define DT_TOP                               0
 #define DT_VCENTER                           4
-#define DT_WORDBREAK                         16
+#define DT_WORDBREAK                                                                        16
 #define DT_WORD_ELLIPSIS                     0x00040000
 
 #define BITMAP_HANDLE                        1
@@ -209,6 +209,21 @@ CLASS TTpvSalon
    METHOD CreateItem()
 
    METHOD LoadFromMemory()
+
+   METHOD aNumerosTickets()
+
+   METHOD oTactil()        INLINE ( ::oSender:oSender )
+
+   METHOD lBrowseMultiplesTickets( aNumerosTickets )
+
+   METHOD StartResource( oDlg )
+
+   METHOD LineaPrimera( oBrw )      INLINE ( oBrw:GoTop(),    oBrw:Select(0), oBrw:Select(1) )
+   METHOD PaginaAnterior( oBrw )    INLINE ( oBrw:PageUp(),   oBrw:Select(0), oBrw:Select(1) )
+   METHOD PaginaSiguiente( oBrw )   INLINE ( oBrw:PageDown(), oBrw:Select(0), oBrw:Select(1) )
+   METHOD LineaAnterior( oBrw )     INLINE ( oBrw:GoUp(),     oBrw:Select(0), oBrw:Select(1) )
+   METHOD LineaSiguiente( oBrw )    INLINE ( oBrw:GoDown(),   oBrw:Select(0), oBrw:Select(1) )
+   METHOD LineaUltima( oBrw )       INLINE ( oBrw:GoBottom(), oBrw:Select(0), oBrw:Select(1) )
 
 END CLASS
 
@@ -422,11 +437,201 @@ Return ( Self )
 
 METHOD SelectPunto( oPunto ) CLASS TTpvSalon
 
-   ::oSelectedPunto           := oPunto
+   if Len( ::aNumerosTickets( oPunto ) ) > 1
 
-   ::Close( IDOK )
+      if ::lBrowseMultiplesTickets( oPunto )
+
+         ::oSelectedPunto  := oPunto
+         ::Close( IDOK )
+
+      end if   
+
+   else   
+
+      ::oSelectedPunto     := oPunto
+      ::Close( IDOK )
+
+   end if
 
 RETURN nil
+
+//---------------------------------------------------------------------------//
+
+METHOD aNumerosTickets( oPunto ) Class TTpvSalon
+
+   local aNumeros    := {}
+
+   with object ( ::oTactil():oTiketCabecera )
+      
+      :GetStatus()
+
+      :OrdSetFocus( "cCodSal" )
+
+      if :Seek( oPunto:cCodigoSala + Padr( oPunto:cPuntoVenta, 30 ) )
+
+         while :FieldGetByName( "cCodSala" ) + :FieldGetByName( "cPntVenta" ) == oPunto:cCodigoSala + Padr( oPunto:cPuntoVenta, 30 ) .and. !:Eof()
+
+            aAdd( aNumeros, :FieldGetByName( "cSerTik" ) + :FieldGetByName( "cNumTik" ) + :FieldGetByName( "cSufTik" ) )
+
+            :Skip()
+
+         end while
+
+      end if
+
+      :SetStatus()
+
+   end with
+
+Return ( aNumeros )
+
+//---------------------------------------------------------------------------//
+
+Method lBrowseMultiplesTickets( oPunto ) Class TTpvSalon
+
+   local oDlg
+   local oBrw
+   local oFont                := TFont():New( "Segoe UI",  0, 20, .f., .t. )
+
+   ::oTactil():oTiketCabecera:GetStatus()
+
+   ::oTactil():oTiketCabecera:OrdSetFocus( "cCodSal" )
+   ::oTactil():oTiketCabecera:OrdScope( oPunto:cCodigoSala + Padr( oPunto:cPuntoVenta, 30 ) )
+   
+   ::oTactil():oTiketCabecera:GoTop()
+
+   DEFINE DIALOG oDlg RESOURCE ( "Tpv_Lista_Multiples" )
+
+      oBrw                   := IXBrowse():New( oDlg )
+
+      oBrw:lRecordSelector   := .f.
+      oBrw:lHScroll          := .f.
+      oBrw:lVScroll          := .t.
+      oBrw:nHeaderLines      := 2
+      oBrw:nDataLines        := 2
+      oBrw:cName             := "Tpv.Lista multiples tickets"
+      oBrw:nRowHeight        := 54
+
+      oBrw:nMarqueeStyle     := 5
+      oBrw:nRowDividerStyle  := 4
+
+      oBrw:bClrSel           := {|| { CLR_WHITE, RGB( 53, 142, 182 ) } }
+      oBrw:bClrSelFocus      := {|| { CLR_WHITE, RGB( 53, 142, 182 ) } }
+
+      oBrw:bLDblClick        := {|| oDlg:End( IDOK ) }
+
+      oBrw:oFont             := oFont
+
+      ::oTactil():oTiketCabecera:SetBrowse( oBrw )
+
+      oBrw:CreateFromResource( 100 )
+
+      with object ( oBrw:AddCol() )
+         :cHeader          := "Número"
+         :bEditValue       := {|| ::oTactil():oTiketCabecera:FieldGetByName( "cSerTik" ) + "/" + AllTrim( ::oTactil():oTiketCabecera:FieldGetByName( "cNumTik" ) ) + "/" + ::oTactil():oTiketCabecera:FieldGetByName( "cSufTik" ) }
+         :nWidth           := 90
+      end with
+
+      with object ( oBrw:AddCol() )
+         :cHeader          := "Fecha" + CRLF + "Hora"
+         :bEditValue       := {|| dToc( ::oTactil():oTiketCabecera:FieldGetByName( "dFecTik" ) ) + CRLF + ::oTactil():oTiketCabecera:FieldGetByName( "cHorTik" ) }
+         :nWidth           := 100
+      end with
+
+      with object ( oBrw:AddCol() )
+         :cHeader          := "Caja"
+         :bEditValue       := {|| ::oTactil():oTiketCabecera:FieldGetByName( "cNcjTik" ) }
+         :nWidth           := 75
+      end with
+
+      with object ( oBrw:AddCol() )
+         :cHeader          := "Usuario"
+         :bEditValue       := {|| ::oTactil():oTiketCabecera:FieldGetByName( "cCcjTik" ) }
+         :nWidth           := 75
+      end with
+
+      with object ( oBrw:AddCol() )
+         :cHeader          := "Estado"
+         :bEditValue       := {|| ::oTactil():cEstado() }
+         :nWidth           := 90
+      end with
+
+      with object ( oBrw:AddCol() )
+         :cHeader          := "Cliente"
+         :bEditValue       := {|| ::oTactil():oTiketCabecera:FieldGetByName( "cCliTik" ) + CRLF + ::oTactil():oTiketCabecera:FieldGetByName( "cNomTik" ) }
+         :nWidth           := 275
+      end with
+
+      with object ( oBrw:AddCol() )
+         :cHeader          := "Total"
+         :bEditValue       := {|| ::oTactil():oTiketCabecera:FieldGetByName( "nTotTik" ) }
+         :cEditPicture     := ::oTactil():cPictureTotal
+         :nDataStrAlign    := 1
+         :nHeadStrAlign    := 1
+         :nWidth           := 100
+      end with
+
+      oDlg:bStart          := {|| ::StartResource( oBrw, oDlg ) }
+
+   ACTIVATE DIALOG oDlg CENTER
+
+   if oDlg:nResult == IDOK
+
+      oPunto:cSerie        := ::oTactil():oTiketCabecera:FieldGetByName( "cSerTik" )
+      oPunto:cNumero       := ::oTactil():oTiketCabecera:FieldGetByName( "cNumTik" )
+      oPunto:cSufijo       := ::oTactil():oTiketCabecera:FieldGetByName( "cSufTik" )
+
+   end if
+
+   ::oTactil():oTiketCabecera:OrdClearScope()
+
+   ::oTactil():oTiketCabecera:SetStatus()
+
+   oFont:End()
+
+Return ( oDlg:nResult == IDOK )
+
+//---------------------------------------------------------------------------//
+
+METHOD StartResource( oBrw, oDlg ) CLASS TTpvSalon
+
+   local oBoton
+   local oGrupo
+   local oCarpeta
+   local oOfficeBar
+
+   if Empty( oOfficeBar )
+
+      /*
+      Calculo la longitud para oGrpSalones
+      */
+
+      oOfficeBar            := TDotNetBar():New( 0, 0, 1020, 120, oDlg, 1 )
+
+      oOfficeBar:lPaintAll  := .f.
+      oOfficeBar:lDisenio   := .f.
+
+      oOfficeBar:SetStyle( 1 )
+
+      oDlg:oTop    := oOfficeBar
+
+      oCarpeta       := TCarpeta():New( oOfficeBar, "Inicio" )
+
+      oGrupo         := TDotNetGroup():New( oCarpeta, 366,  "Seleción de tickets", .f. )
+         oBoton      := TDotNetButton():New( 60, oGrupo,    "navigate_top_32",         "Primera línea",      1, {|| ::LineaPrimera( oBrw ) } )
+         oBoton      := TDotNetButton():New( 60, oGrupo,    "Navigate_end_32",         "Última línea",       2, {|| ::LineaUltima( oBrw ) } )
+         oBoton      := TDotNetButton():New( 60, oGrupo,    "Navigate_up2",            "Página anterior",    3, {|| ::PaginaAnterior( oBrw ) } )
+         oBoton      := TDotNetButton():New( 60, oGrupo,    "Navigate_down2",          "Página siguiente",   4, {|| ::PaginaSiguiente( oBrw ) } )
+         oBoton      := TDotNetButton():New( 60, oGrupo,    "Navigate_up",             "Línea anterior",     5, {|| ::LineaAnterior( oBrw ) } )
+         oBoton      := TDotNetButton():New( 60, oGrupo,    "Navigate_down",           "Línea siguiente",    6, {|| ::LineaSiguiente( oBrw ) } )
+
+      oGrupo         := TDotNetGroup():New( oCarpeta, 126,  "Salida", .f. )
+         oBoton      := TDotNetButton():New( 60, oGrupo,    "Check_32",                "Aceptar",            1, {|| oDlg:End( IDOK ) }, , , .f., .f., .f. )
+         oBoton      := TDotNetButton():New( 60, oGrupo,    "End32",                   "Salida",             2, {|| oDlg:End() }, , , .f., .f., .f. )
+
+   end if
+
+Return ( nil )
 
 //---------------------------------------------------------------------------//
 
@@ -944,10 +1149,11 @@ Method InitSelector( lPuntosPendientes, lShowLlevar, nSelectOption ) CLASS TTpvS
    oGrupo                     := TDotNetGroup():New( oCarpeta, 66, "Acciones", .f., , "Exit_32" )
       oBoton                  := TDotNetButton():New( 60, oGrupo, "End32",       "Salir",          1, {|| ::oSelectedPunto := nil, ::Close( IDCANCEL ) }, , , .f., .f., .f. )
 
-   oGrupo                     := TDotNetGroup():New( oCarpeta, 126, "Leyenda", .f., , "" )
-      oBoton                  := TDotNetButton():New( 120, oGrupo, "Bullet_Square_Green_16",    "Libre",             1, nil, , , .f., .f., .f. )
-      oBoton                  := TDotNetButton():New( 120, oGrupo, "Bullet_Square_Yellow_16",   "Ocupada",           1, nil, , , .f., .f., .f. )
-      oBoton                  := TDotNetButton():New( 120, oGrupo, "Bullet_Square_Red_16",      "Ticket entregado",  1, nil, , , .f., .f., .f. )
+   oGrupo                     := TDotNetGroup():New( oCarpeta, 246, "Leyenda ubicaciones", .f., , "" )
+      oBoton                  := TDotNetButton():New( 120, oGrupo, "Bullet_Square_Green_16",    "Libre",                   1, nil, , , .f., .f., .f. )
+      oBoton                  := TDotNetButton():New( 120, oGrupo, "Bullet_Square_Yellow_16",   "Ocupada",                 1, nil, , , .f., .f., .f. )
+      oBoton                  := TDotNetButton():New( 120, oGrupo, "Bullet_Square_Red_16",      "Ticket entregado",        1, nil, , , .f., .f., .f. )
+      oBoton                  := TDotNetButton():New( 120, oGrupo, "",                          "[...] Multiples tickets", 2, nil, , , .f., .f., .f. )
 
    ::oWnd:oClient             := TPanelEx():New()
 
@@ -998,7 +1204,7 @@ Method InitSelector( lPuntosPendientes, lShowLlevar, nSelectOption ) CLASS TTpvS
 
    ErrorBlock( oBlock )
 
-   SysRefresh() // ? "Salida de Method InitSelector( lPuntosPendientes, lLlevar ) CLASS TTpvSalon "
+   SysRefresh()
 
 Return ( Self )
 

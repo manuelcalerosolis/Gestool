@@ -129,6 +129,8 @@ CLASS TTpvMesa FROM TControl
    DATA nProductos         INIT 0
    DATA nTiempoOcupacion   INIT 0
 
+   DATA lMultiple          INIT .f.
+
    DATA cImagen
    DATA nPrecio
    DATA nPreCmb
@@ -252,6 +254,7 @@ METHOD LoadFromPunto( oSender ) CLASS TTpvMesa
       ::nUbicacion   := oSender:nUbicacion
 
       ::nTotal       := oSender:nTotal
+      ::lMultiple    := oSender:lMultiple
 
       ::cPuntoVenta  := Rtrim( oSender:cPuntoVenta )
 
@@ -464,7 +467,9 @@ METHOD RButtonDown( nRow, nCol, nKeyFlags ) CLASS TTpvMesa
 
    else
 
-      ::uCreaToolTip( nRow, nCol, nKeyFlags )
+      if !::oSender:lMultiple
+         ::uCreaToolTip( nRow, nCol, nKeyFlags )
+      end if
 
    end if
 
@@ -481,68 +486,76 @@ METHOD uCreaToolTip( nRow, nCol, nKeyFlags )
 
    aLineasToolTip    := ::aCargaLineasToolTip()
 
-   DEFINE DIALOG oDlgToolTip RESOURCE "ToolTipSala"
+   if Len( aLineasToolTip ) == 0
 
-   REDEFINE BITMAP oBmp ;
-      ID       500 ;
-      RESOURCE "Note_48_Alpha" ;
-      TRANSPARENT ;
-      OF       oDlgToolTip
+      return .f.
 
-   oBrwLinToolTip                        := IXBrowse():New( oDlgToolTip )
+   else
 
-   oBrwLinToolTip:bClrSel                := {|| { CLR_BLACK, Rgb( 229, 229, 229 ) } }
-   oBrwLinToolTip:bClrSelFocus           := {|| { CLR_BLACK, Rgb( 167, 205, 240 ) } }
+      DEFINE DIALOG oDlgToolTip RESOURCE "ToolTipSala"
 
-   oBrwLinToolTip:SetArray( aLineasToolTip, , , .f. )
+      REDEFINE BITMAP oBmp ;
+         ID       500 ;
+         RESOURCE "Note_48_Alpha" ;
+         TRANSPARENT ;
+         OF       oDlgToolTip
 
-   oBrwLinToolTip:lFooter                := .t.
-   oBrwLinToolTip:lHScroll               := .f.
-   oBrwLinToolTip:nMarqueeStyle          := 5
-   oBrwLinToolTip:cName                  := "Tooltip mesas"
-   oBrwLinToolTip:oFont                  := ::oSender:oSender:oSender:oSender:oFntBrw
-   oBrwLinToolTip:lRecordSelector        := .f.
+      oBrwLinToolTip                        := IXBrowse():New( oDlgToolTip )
 
-   with object ( oBrwLinToolTip:AddCol() )
-      :cHeader             := "Und"
-      :nWidth              := 50
-      :bEditValue          := {|| oBrwLinToolTip:aArrayData[ oBrwLinToolTip:nArrayAt ]:nUnidades }
-      :cEditPicture        := MasUnd()
-      :nDataStrAlign       := AL_RIGHT
-      :nHeadStrAlign       := AL_RIGHT
-   end with
+      oBrwLinToolTip:bClrSel                := {|| { CLR_BLACK, Rgb( 229, 229, 229 ) } }
+      oBrwLinToolTip:bClrSelFocus           := {|| { CLR_BLACK, Rgb( 167, 205, 240 ) } }
 
-   with object ( oBrwLinToolTip:AddCol() )
-      :cHeader             := "Nombre"
-      :nWidth              := 200
-      :bStrData            := {|| oBrwLinToolTip:aArrayData[ oBrwLinToolTip:nArrayAt ]:cNomArt }
-   end with
+      oBrwLinToolTip:SetArray( aLineasToolTip, , , .f. )
 
-   with object ( oBrwLinToolTip:AddCol() )
-      :cHeader             := "Total"
-      :nWidth              := 62
-      :bEditValue          := {|| Trans( oBrwLinToolTip:aArrayData[ oBrwLinToolTip:nArrayAt ]:nImporte, ::oSender:oSender:oSender:oSender:cPictureImporte ) }
-      :bFooter             := {|| Trans( ::nTotLinToolTip( aLineasToolTip ), ::oSender:oSender:oSender:oSender:cPictureImporte ) }
-      :nDataStrAlign       := AL_RIGHT
-      :nHeadStrAlign       := AL_RIGHT
-      :nFootStrAlign       := AL_RIGHT
-   end with
+      oBrwLinToolTip:lFooter                := .t.
+      oBrwLinToolTip:lHScroll               := .f.
+      oBrwLinToolTip:nMarqueeStyle          := 5
+      oBrwLinToolTip:cName                  := "Tooltip mesas"
+      oBrwLinToolTip:oFont                  := ::oSender:oSender:oSender:oSender:oFntBrw
+      oBrwLinToolTip:lRecordSelector        := .f.
 
-   oBrwLinToolTip:CreateFromResource( 100 )
+      with object ( oBrwLinToolTip:AddCol() )
+         :cHeader             := "Und"
+         :nWidth              := 50
+         :bEditValue          := {|| oBrwLinToolTip:aArrayData[ oBrwLinToolTip:nArrayAt ]:nUnidades }
+         :cEditPicture        := MasUnd()
+         :nDataStrAlign       := AL_RIGHT
+         :nHeadStrAlign       := AL_RIGHT
+      end with
 
-   REDEFINE BUTTONBMP BITMAP "Navigate_up" ID 120 OF oDlgToolTip ACTION ( oBrwLinToolTip:GoUp() )
+      with object ( oBrwLinToolTip:AddCol() )
+         :cHeader             := "Nombre"
+         :nWidth              := 200
+         :bStrData            := {|| oBrwLinToolTip:aArrayData[ oBrwLinToolTip:nArrayAt ]:cNomArt }
+      end with
 
-   REDEFINE BUTTONBMP BITMAP "Navigate_down" ID 130 OF oDlgToolTip ACTION ( oBrwLinToolTip:GoDown() )
+      with object ( oBrwLinToolTip:AddCol() )
+         :cHeader             := "Total"
+         :nWidth              := 62
+         :bEditValue          := {|| Trans( oBrwLinToolTip:aArrayData[ oBrwLinToolTip:nArrayAt ]:nImporte, ::oSender:oSender:oSender:oSender:cPictureImporte ) }
+         :bFooter             := {|| Trans( ::nTotLinToolTip( aLineasToolTip ), ::oSender:oSender:oSender:oSender:cPictureImporte ) }
+         :nDataStrAlign       := AL_RIGHT
+         :nHeadStrAlign       := AL_RIGHT
+         :nFootStrAlign       := AL_RIGHT
+      end with
 
-   REDEFINE BUTTONBMP BITMAP "Check_32" ID IDOK OF oDlgToolTip ACTION ( oDlgToolTip:End( IDOK ), ::LButtonUp( nRow, nCol, nKeyFlags ) )
+      oBrwLinToolTip:CreateFromResource( 100 )
 
-   REDEFINE BUTTONBMP BITMAP "Delete_32" ID IDCANCEL OF oDlgToolTip ACTION ( oDlgToolTip:End() )
+      REDEFINE BUTTONBMP BITMAP "Navigate_up" ID 120 OF oDlgToolTip ACTION ( oBrwLinToolTip:GoUp() )
 
-   oDlgToolTip:bStart      := {|| oBrwLinToolTip:Load() }
+      REDEFINE BUTTONBMP BITMAP "Navigate_down" ID 130 OF oDlgToolTip ACTION ( oBrwLinToolTip:GoDown() )
 
-   ACTIVATE DIALOG oDlgToolTip
+      REDEFINE BUTTONBMP BITMAP "Check_32" ID IDOK OF oDlgToolTip ACTION ( oDlgToolTip:End( IDOK ), ::LButtonUp( nRow, nCol, nKeyFlags ) )
 
-   oBrwLinToolTip:CloseData()
+      REDEFINE BUTTONBMP BITMAP "Delete_32" ID IDCANCEL OF oDlgToolTip ACTION ( oDlgToolTip:End() )
+
+      oDlgToolTip:bStart      := {|| oBrwLinToolTip:Load() }
+
+      ACTIVATE DIALOG oDlgToolTip
+
+      oBrwLinToolTip:CloseData()
+
+   end if   
 
    if !Empty( oBmp )
       oBmp:End()
@@ -590,11 +603,11 @@ return aLineas
 
 METHOD nTotLinToolTip( aLineasToolTip )
 
-   local nTotal         := 0
+   local nTotal      := 0
    local aLinToolTip
 
    for each aLinToolTip in aLineasToolTip
-       nTotal           += aLinToolTip:nImporte
+       nTotal              += aLinToolTip:nImporte
    next
 
 Return nTotal
@@ -802,7 +815,13 @@ METHOD Paint() CLASS TTpvMesa
    // Total de la mesa---------------------------------------------------------
 
    if !Empty( ::nTotal )
-      DrawText( ::hDC, Alltrim( Trans( ::nTotal, cPorDiv() ) ) + cSimDiv(), { nRowTotal, 0, ::nBmpHeight, ::nBmpWidth }, nOR( DT_CENTER, DT_WORDBREAK, DT_WORD_ELLIPSIS, DT_TOP ) )
+
+      if ::lMultiple
+         DrawText( ::hDC, "[" + Alltrim( Trans( ::nTotal, cPorDiv() ) ) + cSimDiv() + "]", { nRowTotal, 0, ::nBmpHeight, ::nBmpWidth }, nOR( DT_CENTER, DT_WORDBREAK, DT_WORD_ELLIPSIS, DT_TOP ) )
+      else
+         DrawText( ::hDC, Alltrim( Trans( ::nTotal, cPorDiv() ) ) + cSimDiv(), { nRowTotal, 0, ::nBmpHeight, ::nBmpWidth }, nOR( DT_CENTER, DT_WORDBREAK, DT_WORD_ELLIPSIS, DT_TOP ) )   
+      end if
+
    end if
 
    SetBkMode   ( ::hDC, nMode    )

@@ -8,6 +8,7 @@
 #define exitAceptarImprimir         2
 #define exitAceptar                 3
 #define exitCancelar                4
+#define exitAceptarDesglosado       5
 
 #define ubiGeneral                  0
 #define ubiLlevar                   1
@@ -518,6 +519,7 @@ METHOD StartResource() CLASS TpvCobros
    local oBoton
    local oGrupo
    local oCarpeta
+   local oGrupoImprimir
 
    ::oOfficeBar            := TDotNetBar():New( 0, 0, 1020, 120, ::oDlg, 1 )
 
@@ -528,24 +530,32 @@ METHOD StartResource() CLASS TpvCobros
 
    oCarpeta                := TCarpeta():New( ::oOfficeBar, "Gestión de cobros" )
 
-   ::oGrupoCobro           := TDotNetGroup():New( oCarpeta, ( ( ::nButtonsCobro() * 60 ) + 6 ), "Formas", .f. )
+   ::oGrupoCobro              := TDotNetGroup():New( oCarpeta, ( ( ::nButtonsCobro() * 60 ) + 6 ), "Formas", .f. )
       ::CreateButtonsCobro()
 
-   oGrupo                  := TDotNetGroup():New( oCarpeta, 66,   "Vales", .f. )
-                              TDotNetButton():New( 60, oGrupo,    "Document_Money2_32",         "Liquidar vales",             1, {|| ::OnClickAnnadirVales() }, , , .f., .f., .f. )
+   oGrupo                     := TDotNetGroup():New( oCarpeta, 66,   "Vales", .f. )
+                                 TDotNetButton():New( 60, oGrupo,    "Document_Money2_32",               "Liquidar vales",     1, {|| ::OnClickAnnadirVales() }, , , .f., .f., .f. )
 
-   oGrupo                  := TDotNetGroup():New( oCarpeta, 126,  "Cobro combinado", .f. )
-                              TDotNetButton():New( 60, oGrupo,    "Money2_Add2_32",             "Añadir cobro",               1, {|| ::OnClickAnnadirCobro() }, , , .f., .f., .f. )
-                              TDotNetButton():New( 60, oGrupo,    "Money2_Minus_32",            "Eliminar cobro",             2, {|| ::OnClickEliminarCobro() }, , , .f., .f., .f. )
+   oGrupo                     := TDotNetGroup():New( oCarpeta, 126,  "Cobro combinado", .f. )
+                                 TDotNetButton():New( 60, oGrupo,    "Money2_Add2_32",                   "Añadir cobro",       1, {|| ::OnClickAnnadirCobro() }, , , .f., .f., .f. )
+                                 TDotNetButton():New( 60, oGrupo,    "Money2_Minus_32",                  "Eliminar cobro",     2, {|| ::OnClickEliminarCobro() }, , , .f., .f., .f. )
 
-   oGrupo                  := TDotNetGroup():New( oCarpeta, 246,  "Salida", .f. )
-                              TDotNetButton():New( 60, oGrupo,    "Check2_Printer2_32",         "Aceptar e imprimir [F6]",    1, {|| ::OnClickAceptar( exitAceptarImprimir ) }, , , .f., .f., .f. )
-                              TDotNetButton():New( 60, oGrupo,    "package_new_printer2_32",    "Aceptar y regalo",           2, {|| ::OnClickAceptar( exitAceptarRegalo ) }, , , .f., .f., .f. )
-                              TDotNetButton():New( 60, oGrupo,    "Check_32",                   "Aceptar sin imprimir [F5]",  3, {|| ::OnClickAceptar( exitAceptar ) }, , , .f., .f., .f. )
-                              TDotNetButton():New( 60, oGrupo,    "End32",                      "Salida",                     4, {|| ::oDlg:End() }, , , .f., .f., .f. )
+   oGrupoImprimir             := TDotNetGroup():New( oCarpeta, 186,  "Imprimir", .f. )
+                              
+                                 TDotNetButton():New( 60, oGrupoImprimir,   "Check2_Printer2_32",        "Aceptar [F6]",       1, {|| ::OnClickAceptar( exitAceptarImprimir ) }, , , .f., .f., .f. )
+                                 TDotNetButton():New( 60, oGrupoImprimir,   "package_new_printer2_32",   "Aceptar regalo",     2, {|| ::OnClickAceptar( exitAceptarRegalo ) }, , , .f., .f., .f. )
+                                 TDotNetButton():New( 60, oGrupoImprimir,   "document_text_printer2_32", "Aceptar desglosado", 3, {|| ::OnClickAceptar( exitAceptarDesglosado ) }, , , .f., .f., .f. )
+                              
+   oGrupo                     := TDotNetGroup():New( oCarpeta, 66,  "No imprimir", .f. )
+                              
+                                 TDotNetButton():New( 60, oGrupo,   "Check_32",                          "Aceptar [F5]",       1, {|| ::OnClickAceptar( exitAceptar ) }, , , .f., .f., .f. )
 
-   ::oDlg:oTop             := ::oOfficeBar
+   oGrupo                     := TDotNetGroup():New( oCarpeta, 66,  "Salida", .f. )
+                              
+                                 TDotNetButton():New( 60, oGrupo,    "End32",                            "Salida",             1, {|| ::oDlg:End() }, , , .f., .f., .f. )                           
 
+   ::oDlg:oTop                := ::oOfficeBar
+   
 Return .t.
 
 //-------------------------------------------------------------------------//
