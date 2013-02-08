@@ -15,6 +15,7 @@ CLASS TInfCPed FROM TInfCli
    DATA  oAlbCliL    AS OBJECT
    DATA  oDbfTvta    AS OBJECT
    DATA  aEstado     AS ARRAY    INIT  { "Pendiente", "Parcialmente", "Pendiente y parcialmente", "Entregado", "Todos" }
+   DATA  aProduccion AS ARRAY    INIT  { "Producido", "En producción", "Pendiente de producción" }
 
    METHOD Create()
 
@@ -76,6 +77,7 @@ METHOD Create()
    ::AddField( "nTotFin", "N", 16, 6, {|| ::cPicOut },     "Total",                .t., "Total"                     , 12, .t. )
    ::AddField( "cNbrEst", "C", 35, 0, {|| "@!" },          "Establecimiento",      .f., "Nombre establecimiento"    , 50 )
    ::AddField( "cSituac", "C", 20, 0, {|| "@!" },          "Siruació",             .f., "Situación"                 , 50 )
+   ::AddField( "cEstPro", "C", 50, 0, {|| "@!" },          "Producido",            .f., "Producido"                 , 50 )
 
    ::AddTmpIndex( "CCODCLI", "CCODCLI + CCODART + CCODPR1 + CCODPR2 + CVALPR1 + CVALPR2 + CLOTE" )
 
@@ -262,6 +264,7 @@ METHOD lGenerate() CLASS TInfCPed
                   ::oDbf:nTotFin    := ::oDbf:nImpTot + ::oDbf:nIvaTot
                   ::oDbf:dFecEnt    := ::oPedCliT:dFecEnt
                   ::oDbf:cSituac    := ::oPedCliT:cSituac
+                  ::oDbf:cEstPro    := ::aProduccion[ Max( ::oPedCliT:nProduc + 1, 1 ) ]
 
                   ::oDbf:Save()
 
