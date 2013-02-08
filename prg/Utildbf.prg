@@ -1414,10 +1414,12 @@ FUNCTION WinAppRec( oBrw, bEdit, cAlias, bWhen, bValid, xOthers )
       nOrd        := ( cAlias )->( OrdSetFocus( 1 ) )
    end if
 
+   /*
    if lAdsRDD()
       ( cAlias )->( dbClearFilter() )
    end if
-
+   */
+   
    aTmp           := dbBlankRec( cAlias )
 
    aGet           := Array( ( cAlias )->( fCount() ) )

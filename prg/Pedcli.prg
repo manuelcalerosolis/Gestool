@@ -3808,19 +3808,19 @@ Edita las lineas de Detalle
 
 STATIC FUNCTION EdtDet( aTmp, aGet, dbfPedCliL, oBrw, lTotLin, cCodArtEnt, nMode, aTmpPed )
 
-   local oDlg
-   local oFld
-   local oBtn
-   local oBrwResCli
-   local oBrwAlbCli
-   local oBrwFacCli
-   local oBrwAlbPrv
+   	local oDlg
+   	local oFld
+   	local oBtn
+   	local oBrwResCli
+   	local oBrwAlbCli
+   	local oBrwFacCli
+   	local oBrwAlbPrv
 	local oGet2
-   local cGet2
-   local oGet3
-   local cGet3
-   local oTot           := Array( 6 )
-   local oTotal
+   	local cGet2
+   	local oGet3
+   	local cGet3
+   	local oTot           := Array( 6 )
+   	local oTotal
 	local nTotal
    local oSayPr1
    local oSayPr2
@@ -5469,14 +5469,14 @@ FUNCTION BrwPedCli( oGet, dbfPedCliT, dbfPedCliL, dbfIva, dbfDiv, dbfFPago, oIva
 
 	local oDlg
 	local oBrw
-   local oGet1
-   local cGet1
-   local nOrd     := GetBrwOpt( "BrwPedCli" )
+	local oGet1
+	local cGet1
+	local nOrd     := GetBrwOpt( "BrwPedCli" )
 	local nOrdAnt
-   local nRecAnt
+	local nRecAnt
 	local oCbxOrd
-   local aCbxOrd  := { "Número", "Fecha", "Cliente", "Nombre" }
-   local cCbxOrd
+	local aCbxOrd  := { "Número", "Fecha", "Cliente", "Nombre" }
+	local cCbxOrd
 
    nOrd           := Min( Max( nOrd, 1 ), len( aCbxOrd ) )
    cCbxOrd        := aCbxOrd[ nOrd ]
