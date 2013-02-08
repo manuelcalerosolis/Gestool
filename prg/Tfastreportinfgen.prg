@@ -61,6 +61,11 @@ CLASS TFastReportInfGen FROM TNewInfGen
    DATA  nRecargoPresupuestosClientes  INIT 0
    DATA  nTotalPresupuestosClientes    INIT 0
 
+   DATA  nBasePedidosClientes          INIT 0
+   DATA  nIVAPedidosClientes           INIT 0
+   DATA  nRecargoPedidosClientes       INIT 0
+   DATA  nTotalPedidosClientes         INIT 0
+
    DATA  nBaseAlbaranesClientes        INIT 0
    DATA  nIVAAlbaranesClientes         INIT 0
    DATA  nRecargoAlbaranesClientes     INIT 0
@@ -416,10 +421,36 @@ CLASS TFastReportInfGen FROM TNewInfGen
 
    INLINE METHOD AddPresupuestosClientes()
 
-      ::nBasePresupuestosClientes       += ::oFacCliT:nTotNet
-      ::nIVAPresupuestosClientes        += ::oFacCliT:nTotIva
-      ::nRecargoPresupuestosClientes    += ::oFacCliT:nTotReq
-      ::nTotalPresupuestosClientes      += ::oFacCliT:nTotFac
+      ::nBasePresupuestosClientes       += ::oPreCliT:nTotNet
+      ::nIVAPresupuestosClientes        += ::oPreCliT:nTotIva
+      ::nRecargoPresupuestosClientes    += ::oPreCliT:nTotReq
+      ::nTotalPresupuestosClientes      += ::oPreCliT:nTotPre
+
+      RETURN ( Self )
+
+   ENDMETHOD
+
+   //------------------------------------------------------------------------//
+
+   INLINE METHOD InitPedidosClientes()
+
+      ::nBasePedidosClientes           := 0
+      ::nIVAPedidosClientes            := 0
+      ::nRecargoPedidosClientes        := 0
+      ::nTotalPedidosClientes          := 0
+
+      RETURN ( Self )
+
+   ENDMETHOD
+
+   //------------------------------------------------------------------------//
+
+   INLINE METHOD AddPedidosClientes()
+
+      ::nBasePedidosClientes           += ::oPedCliT:nTotNet
+      ::nIVAPedidosClientes            += ::oPedCliT:nTotIva
+      ::nRecargoPedidosClientes        += ::oPedCliT:nTotReq
+      ::nTotalPedidosClientes          += ::oPedCliT:nTotPed
 
       RETURN ( Self )
 
@@ -429,10 +460,10 @@ CLASS TFastReportInfGen FROM TNewInfGen
 
    INLINE METHOD InitFacturasClientes()
 
-      ::nBaseFacturasClientes       := 0
-      ::nIVAFacturasClientes        := 0
-      ::nRecargoFacturasClientes    := 0
-      ::nTotalFacturasClientes      := 0
+      ::nBaseFacturasClientes          := 0
+      ::nIVAFacturasClientes           := 0
+      ::nRecargoFacturasClientes       := 0
+      ::nTotalFacturasClientes         := 0
 
       RETURN ( Self )
 

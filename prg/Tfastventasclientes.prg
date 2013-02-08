@@ -568,16 +568,16 @@ METHOD AddPresupuestoCliente( cCodigoCliente ) CLASS TFastVentasClientes
       ::oPreCliT:GoTop()
       while !::lBreak .and. !::oPreCliT:Eof()
 
-         if lChkSer( ::oPreCliT:cSerie, ::aSer )
+         if lChkSer( ::oPreCliT:cSerPre, ::aSer )
 
-            sTot              := sTotPreCli( ::oPreCliT:cSerie + Str( ::oPreCliT:nNumFac ) + ::oPreCliT:cSufFac, ::oPreCliT:cAlias, ::oPreCliL:cAlias, ::oDbfIva:cAlias, ::oDbfDiv:cAlias, ::oPreCliP:cAlias, ::oAntCliT:cAlias )
+            sTot              := sTotPreCli( ::oPreCliT:cSerPre + Str( ::oPreCliT:nNumPre ) + ::oPreCliT:cSufPre, ::oPreCliT:cAlias, ::oPreCliL:cAlias, ::oDbfIva:cAlias, ::oDbfDiv:cAlias )
 
             ::oDbf:Blank()
 
             ::oDbf:cCodCli    := ::oPreCliT:cCodCli
             ::oDbf:cNomCli    := ::oPreCliT:cNomCli
             ::oDbf:cCodAge    := ::oPreCliT:cCodAge
-            ::oDbf:cCodPgo    := ::oPreCliT:cCodPago
+            ::oDbf:cCodPgo    := ::oPreCliT:cCodPgo
             ::oDbf:cCodRut    := ::oPreCliT:cCodRut
             ::oDbf:cCodUsr    := ::oPreCliT:cCodUsr
 
@@ -628,7 +628,7 @@ METHOD AddPresupuestoCliente( cCodigoCliente ) CLASS TFastVentasClientes
 
       end while
 
-      ::oPreCliT:IdxDelete( cCurUsr(), GetFileNoExt( ::oPreCliT:cFile ) )
+      ::oPreCliT:IdxDelete( cCurUsr(), GetFileNoExt( ::oPreCliT:cFile ) ) 
    
    RECOVER USING oError
 
@@ -652,7 +652,7 @@ METHOD AddPedidoCliente( cCodigoCliente ) CLASS TFastVentasClientes
    oBlock               := ErrorBlock( {| oError | ApoloBreak( oError ) } )
    BEGIN SEQUENCE
    */
-      ::InitPresupuestosClientes()
+      ::InitPedidosClientes()
 
       ::oPedCliT:OrdSetFocus( "dFecPed" )
 
@@ -668,16 +668,16 @@ METHOD AddPedidoCliente( cCodigoCliente ) CLASS TFastVentasClientes
       ::oPedCliT:GoTop()
       while !::lBreak .and. !::oPedCliT:Eof()
 
-         if lChkSer( ::oPedCliT:cSerie, ::aSer )
+         if lChkSer( ::oPedCliT:cSerPed, ::aSer )
 
-            sTot              := sTotPedCli( ::oPedCliT:cSerie + Str( ::oPedCliT:nNumFac ) + ::oPedCliT:cSufFac, ::oPedCliT:cAlias, ::oPedCliL:cAlias, ::oDbfIva:cAlias, ::oDbfDiv:cAlias, ::oPedCliP:cAlias, ::oAntCliT:cAlias )
+            sTot              := sTotPedCli( ::oPedCliT:cSerPed + Str( ::oPedCliT:nNumPed ) + ::oPedCliT:cSufPed, ::oPedCliT:cAlias, ::oPedCliL:cAlias, ::oDbfIva:cAlias, ::oDbfDiv:cAlias )
 
             ::oDbf:Blank()
 
             ::oDbf:cCodCli    := ::oPedCliT:cCodCli
             ::oDbf:cNomCli    := ::oPedCliT:cNomCli
             ::oDbf:cCodAge    := ::oPedCliT:cCodAge
-            ::oDbf:cCodPgo    := ::oPedCliT:cCodPago
+            ::oDbf:cCodPgo    := ::oPedCliT:cCodPgo
             ::oDbf:cCodRut    := ::oPedCliT:cCodRut
             ::oDbf:cCodUsr    := ::oPedCliT:cCodUsr
 
