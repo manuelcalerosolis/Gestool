@@ -31,6 +31,8 @@ CLASS TImpFactu
    DATA oDbfIvaFac
    DATA oDbfFpgGst
    DATA oDbfFpgFac
+   DATA oDbfFacIGst
+   DATA oDbfFacCFac
    DATA oDbfRemGst
    DATA oDbfRemFac
    DATA oDbfCtaRemGst
@@ -54,6 +56,8 @@ CLASS TImpFactu
    DATA oDbfTikLFac
    DATA oDbfHisTFac
    DATA oDbfHisLFac
+   DATA oDbfFapIGst
+   DATA oDbfFapCFac
    DATA oDbfTrnFac
    DATA oDbfTrnGst
    DATA oDbfObrGst
@@ -244,6 +248,8 @@ METHOD OpenFiles()
       DATABASE NEW ::oDbfFacDFac    PATH ( ::cPathFac )  FILE "FACCLID.DBF"   VIA ( cDriver() )CLASS "FACDFAC" SHARED INDEX "FACCLID.CDX"
       DATABASE NEW ::oDbfFacRecTGst PATH ( cPatEmp() )   FILE "FACRECT.DBF"   VIA ( cDriver() )CLASS "FACRECT" SHARED INDEX "FACRECT.CDX"
       DATABASE NEW ::oDbfFacRecLGst PATH ( cPatEmp() )   FILE "FACRECL.DBF"   VIA ( cDriver() )CLASS "FACRECL" SHARED INDEX "FACRECL.CDX"
+      DATABASE NEW ::oDbfFacIGst    PATH ( cPatEmp() )   FILE "FACCLII.DBF"   VIA ( cDriver() )CLASS "INCGST"  SHARED INDEX "FACCLII.CDX"
+      DATABASE NEW ::oDbfFacCFac    PATH ( ::cPathFac )  FILE "FACCLIC.DBF"   VIA ( cDriver() )CLASS "INCFAC" 
    end if
 
    if !File( ::cPathFac + "TICKETT.DBF" ) .or.  !File( ::cPathFac + "TICKETL.DBF" )
@@ -301,6 +307,9 @@ METHOD OpenFiles()
       DATABASE NEW ::oDbfFapLFac PATH ( ::cPathFac ) FILE "FACPROL.DBF"  VIA ( cDriver() )CLASS "FAPLFAC"
       DATABASE NEW ::oDbfFapPGst PATH ( cPatEmp() )  FILE "FACPRVP.DBF"  VIA ( cDriver() )CLASS "FAPPGST"  SHARED INDEX "FACPRVP.CDX"
       DATABASE NEW ::oDbfFapPFac PATH ( ::cPathFac ) FILE "RECIBOSP.DBF" VIA ( cDriver() )CLASS "FAPPFAC"
+      DATABASE NEW ::oDbfFapIGst PATH ( cPatEmp() )  FILE "FACPRVI.DBF"   VIA ( cDriver() )CLASS "INCGSTP" SHARED INDEX "FACPRVI.CDX"
+      DATABASE NEW ::oDbfFapCFac PATH ( ::cPathFac ) FILE "FACPROC.DBF"   VIA ( cDriver() )CLASS "INCFACP"  
+
    end if
 
    if !File( ::cPathFac + "FACCLIT.DBF" ) .or.  !File( ::cPathFac + "FACCLIL.DBF" ) .or. !File( ::cPathFac + "RECIBOS.DBF" ) .or. !File( ::cPathFac + "FACCLID.DBF" )
@@ -729,6 +738,30 @@ METHOD CloseFiles()
       ::oDbfFapPFac:End()
    else
       ::oDbfFapPFac := nil
+   end if
+
+   if !Empty( ::oDbfFacCFac )
+      ::oDbfFacCFac:End()
+   else
+      ::oDbfFacCFac := nil
+   end if
+
+   if !Empty( ::oDbfFacIGst )
+      ::oDbfFacIGst:End()
+   else
+      ::oDbfFacIGst := nil
+   end if
+
+   if !Empty( ::oDbfFapCFac )
+      ::oDbfFapCFac:End()
+   else
+      ::oDbfFapCFac := nil
+   end if
+
+   if !Empty( ::oDbfFapIGst )
+      ::oDbfFapIGst:End()
+   else
+      ::oDbfFapIGst := nil
    end if
 
 RETURN .T.
@@ -1850,8 +1883,10 @@ METHOD Importar()
                ::oDbfFacLGst:nNumFac      := ::oDbfFacLFac:nNumFac
                ::oDbfFacLGst:cSufFac      := Space( 2 )
                ::oDbfFacLGst:cRef         := ::oDbfFacLFac:cRef
+
                if Empty( ::oDbfFacLGst:cRef )
                   ::oDbfFacLGst:mLngDes   := ::oDbfFacLFac:cDetalle
+                  ::oDbfFacLGst:cDetalle  := Space(250)
                else
                   ::oDbfFacLGst:cDetalle  := ::oDbfFacLFac:cDetalle
                end if
@@ -1908,6 +1943,33 @@ METHOD Importar()
             ::aMtrIndices[ 9 ]:Set( ::oDbfFacLFac:Recno() )
 
             ::oDbfFacLFac:Skip()
+
+         end while
+
+         /*
+         Pasamos las incidencias-----------------------------------------------
+         */
+         
+         ::aMtrIndices[ 9 ]:SetTotal( ::oDbfFacCFac:LastRec() )
+
+         ::oDbfFacCFac:GoTop()
+         while !( ::oDbfFacCFac:eof() )
+
+            if ::oDbfFacCFac:cSerie == "A" .or. ::oDbfFacCFac:cSerie == "B"
+
+               ::oDbfFacIGst:Append()
+
+               ::oDbfFacIGst:cSerie       := ::oDbfFacCFac:cSerie
+               ::oDbfFacIGst:nNumFac      := ::oDbfFacCFac:nNumFac
+               ::oDbfFacIGst:mDesInc      := ::oDbfFacCFac:cComent
+
+               ::oDbfFacIGst:Save()
+
+            end if
+
+            ::aMtrIndices[ 9 ]:Set( ::oDbfFacCFac:Recno() )
+
+            ::oDbfFacCFac:Skip()
 
          end while
 
@@ -2774,6 +2836,33 @@ METHOD Importar()
             ::aMtrIndices[ 16 ]:Set( ::oDbfFapLFac:Recno() )
 
             ::oDbfFapLFac:Skip()
+
+         end while
+
+         /*
+         Pasamos las incidencias-----------------------------------------------
+         */
+         
+         ::aMtrIndices[ 16 ]:SetTotal( ::oDbfFapCFac:LastRec() )
+
+         ::oDbfFapCFac:GoTop()
+         while !( ::oDbfFapCFac:eof() )
+
+            if ::oDbfFapCFac:cSerie == "A" .or. ::oDbfFapCFac:cSerie == "B"
+
+               ::oDbfFapIGst:Append()
+
+               ::oDbfFapIGst:cSerie       := ::oDbfFapCFac:cSerie
+               ::oDbfFapIGst:nNumFac      := ::oDbfFapCFac:nNumFac
+               ::oDbfFapIGst:mDesInc      := ::oDbfFapCFac:cComent
+
+               ::oDbfFapIGst:Save()
+
+            end if
+
+            ::aMtrIndices[ 16 ]:Set( ::oDbfFapCFac:Recno() )
+
+            ::oDbfFapCFac:Skip()
 
          end while
 
