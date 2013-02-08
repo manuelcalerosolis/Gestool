@@ -2411,7 +2411,6 @@ Method LoadData()
 
             case IsChar( ::xAlias ) .and. ( ::xAlias )->( Used() )
 
-               msgAlert( ( ::xAlias )->( OrdSetFocus( ::nTab ) ), "Resultado de OrdSetFocus" )
                ( ::xAlias )->( dbGoTo( ::nRec ) )
 
                if ( ::xAlias )->( Recno() ) != ::nRec .or. ::nRec > ( ::xAlias )->( Lastrec() )
