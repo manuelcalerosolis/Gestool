@@ -5817,8 +5817,6 @@ return ( nEstado )
 
 //---------------------------------------------------------------------------//
 
-#ifndef __PDA__
-
 Static Function FilterRecibos( lCobrado )
 
    with object ( TDlgFlt():Init( oWndBrw ) )
@@ -5837,8 +5835,6 @@ Static Function FilterRecibos( lCobrado )
    end with
 
 return ( nil )
-
-#endif
 
 //---------------------------------------------------------------------------//
 

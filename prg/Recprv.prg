@@ -3230,7 +3230,7 @@ Return .t.
 
 Static Function FilterRecibos( lCobrado )
 
-   with object ( TDlgFlt():Init( dbfFacPrvP, oWndBrw ) )
+   with object ( TDlgFlt():Init( oWndBrw ) )
 
       do case
          case IsTrue( lCobrado )

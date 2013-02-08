@@ -501,14 +501,10 @@ METHOD Activate(  cShow, bLClicked, bRClicked, bMoved, bResized, bPainted,;
 
    ::oBtnMain:Expand()
 
-   if !Empty( ::nTab ) .and. ::nTab != 0
-      ::ChgCombo( ::nTab )
-   end if
-
    // Seleccion de oden de la columna------------------------------------------
 
    do case
-      case IsObject( ::xAlias ) .and. ::xAlias:Used()
+      case IsObject( ::xAlias ) .and. ( ::xAlias:Used() )
 
          if !Empty( ::oBrw )
             aEval( ::oBrw:aCols, {|oCol| if( oCol:cSortOrder == ::xAlias:OrdSetFocus(), ( oCol:SetOrder(), oCol:Adjust() ), ) } )
@@ -542,6 +538,10 @@ METHOD Activate(  cShow, bLClicked, bRClicked, bMoved, bResized, bPainted,;
 
       if ::lFechado
          ::oWndBar:ShowYearCombobox()
+      end if
+
+      if !Empty( ::nTab ) 
+         ::ChgCombo( ::nTab )
       end if
 
    end if
@@ -1961,9 +1961,9 @@ METHOD ChgTabs( nTab ) CLASS TShell
    DEFAULT nTab   := ::oTabs:nOption
 
    do case
-      case ValType( ::xAlias ) == "O"
+      case IsObject( ::xAlias ) .and. ::xAlias:Used()
          ::xAlias:SetOrder( nTab )
-      case ValType( ::xAlias ) == "C" .and. ( ::xAlias )->( Used() )
+      case IsChar( ::xAlias ) .and. ( ::xAlias )->( Used() )
          (::xAlias)->( dbSetOrder( nTab ) )
    end case
 
@@ -2400,7 +2400,7 @@ Method LoadData()
       if ::lAutoPos
 
          do case
-            case IsObject( ::xAlias ) .and. ::xAlias:Used()
+            case IsObject( ::xAlias ) .and. ( ::xAlias:Used() )
 
                ::xAlias:OrdSetFocus( ::nTab )
                ::xAlias:GoTo( ::nRec )
@@ -2416,8 +2416,6 @@ Method LoadData()
                if ( ::xAlias )->( Recno() ) != ::nRec .or. ::nRec > ( ::xAlias )->( Lastrec() )
                   ( ::xAlias )->( dbGoTop() )
                end if
-
-
 
          end case
 
@@ -2460,6 +2458,7 @@ Method SaveData( lSaveBrowseState )
          if ( ::dbfUsr )->( dbRLock() )
             ( ::dbfUsr )->nRecCfg   := ::nRec
             ( ::dbfUsr )->nTabCfg   := ::nTab
+
             if lSaveBrowseState
             ( ::dbfUsr )->cBrwCfg   := ::oBrw:SaveState()
             end if
@@ -2816,6 +2815,7 @@ Function aItmHea()
    aAdd( aBase, { "cNomCfg",  "C", 30, 0, "Nombre ventana"           } )
    aAdd( aBase, { "nRecCfg",  "N", 10, 0, "Recno de la ventana"      } )
    aAdd( aBase, { "nTabCfg",  "N", 10, 0, "Orden de la ventana"      } )
+   aAdd( aBase, { "cOrdCfg",  "C", 60, 0, "Tag de la ventana"        } )
    aAdd( aBase, { "cBrwCfg",  "M", 10, 0, "Configuración del browse" } )
 
 Return ( aBase )

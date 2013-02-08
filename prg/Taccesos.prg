@@ -100,6 +100,8 @@ CLASS TAcceso
    Method lHideCarpeta( oAcceso, cCurUsr )
 
    Method CreateSearchBar()
+   Method HideSearchBar()                 INLINE ( ::HideGet(), ::HideComboBox(), ::HideComboFilter(), ::HideButtonFilter(), ::HideAddButtonFilter(), ::HideEditButtonFilter(), ::HideYearComboBox() )
+
    Method InsertSearchBand()              INLINE ( ::oReBar:InsertBand( ::oSearchBar, "Buscar " ) )
    Method DeleteSearchBand()              INLINE ( ::oReBar:DeleteBand(), ::oSearchBar := nil )
 
@@ -122,8 +124,9 @@ CLASS TAcceso
    Method GetComboBox()                   INLINE ( if( !Empty( ::oComboBox ), ( ::oComboBox:VarGet() ), "" ) )
    Method GetComboBoxAt()                 INLINE ( if( !Empty( ::oComboBox ), ( ::oComboBox:nAt ), 0 ) )
 
-   Method DisableComboBox()               INLINE ( if( !Empty( ::oComboBox ), ( ::SetComboBoxItems( {} ), ::oComboBox:Disable() ), ) )
-   Method EnableComboBox( aItems )        INLINE ( if( !Empty( ::oComboBox ), ( ::SetComboBoxItems( aItems ), ::oComboBox:Enable() ), ) )
+   Method DisableComboBox()               INLINE ( if( !Empty( ::oComboBox ), ( ::SetComboBoxItems( {} ), ::oComboBox:Hide() ), ) )
+   Method EnableComboBox( aItems )        INLINE ( if( !Empty( ::oComboBox ), ( ::SetComboBoxItems( aItems ), ::oComboBox:Show(), ::oComboBox:Enable() ), ) )
+   Method HideComboBox()                  INLINE ( if( !Empty( ::oComboBox ), ::oComboBox:Hide(), ) )
 
    Method SetComboFilterItems( aItems )   INLINE ( if( !Empty( ::oComboFilter ), ::oComboFilter:SetItems( aItems ), ) )
    Method SetComboFilterSelect( nItems )  INLINE ( if( !Empty( ::oComboFilter ), ( ::oGet:cText( Space( 200 ) ), ::oGet:oGet:Home(), ::oComboFilter:Select( nItems ) ), ) )
@@ -131,8 +134,9 @@ CLASS TAcceso
    Method SetComboFilterChange( bBlock )  INLINE ( if( !Empty( ::oComboFilter ), ( ::oComboFilter:bChange := bBlock ), ) )
    Method GetComboFilter()                INLINE ( if( !Empty( ::oComboFilter ), ( ::oComboFilter:VarGet() ), "" ) )
    Method GetComboFilterAt()              INLINE ( if( !Empty( ::oComboFilter ), ( ::oComboFilter:nAt ), 0 ) )
+   Method HideComboFilter()               INLINE ( if( !Empty( ::oComboFilter ), ::oComboFilter:Hide(), ) )
 
-   Method DisableComboFilter()            INLINE ( if( !Empty( ::oComboFilter ), ( ::SetComboFilterItems( {} ), ::oComboFilter:Disable() ), ) )
+   Method DisableComboFilter()            INLINE ( if( !Empty( ::oComboFilter ), ( ::SetComboFilterItems( {} ), ::oComboFilter:Hide() ), ) )
    Method EnableComboFilter( aItems )
    Method SetDefaultComboFilter( aItems )
    Method SetComboFilter( cItem )         INLINE ( if( !Empty( ::oComboFilter ) .and. !Empty( cItem ), ( ::oComboFilter:Set( cItem ), Eval( ::oComboFilter:bChange ) ), ) )
@@ -144,10 +148,11 @@ CLASS TAcceso
    Method SetGetKeyDown( bBlock )         INLINE ( if( !Empty( ::oGet ), ( ::oGet:bKeyDown      := bBlock ), ) )
    Method SetGetKeyChar( bBlock )         INLINE ( if( !Empty( ::oGet ), ( ::oGet:bKeyChar      := bBlock ), ) )
 
-   Method DisableGet()                    INLINE ( if( !Empty( ::oGet ), ( ::oGet:cText( Space( 200 ) ), ::oGet:Disable(), ::oGet:SetColor( Rgb( 0, 0, 0 ), Rgb( 255, 255, 255 ) ) ), ) )
-   Method EnableGet()                     INLINE ( if( !Empty( ::oGet ), ( ::oGet:Enable(), ::oGet:SetColor( Rgb( 0, 0, 0 ), Rgb( 255, 255, 255 ) ) ), ) )
+   Method DisableGet()                    INLINE ( if( !Empty( ::oGet ), ( ::oGet:cText( Space( 200 ) ), ::oGet:Hide(), ::oGet:SetColor( Rgb( 0, 0, 0 ), Rgb( 255, 255, 255 ) ) ), ) )
+   Method EnableGet()                     INLINE ( if( !Empty( ::oGet ), ( ::oGet:Enable(), ::oGet:Show(), ::oGet:SetColor( Rgb( 0, 0, 0 ), Rgb( 255, 255, 255 ) ) ), ) )
    Method CleanGet()                      INLINE ( if( !Empty( ::oGet ), ( ::oGet:cText( Space( 200 ) ), ::oGet:SetColor( Rgb( 0, 0, 0 ), Rgb( 255, 255, 255 ) ) ), ) )
    Method SetGetFocus()                   INLINE ( if( !Empty( ::oGet ), ::oGet:SetFocus(), ) )
+   Method HideGet()                       INLINE ( if( !Empty( ::oGet ), ::oGet:Hide(), ) )
 
    Method ShowButtonFilter()              INLINE ( if( !Empty( ::oButtonFilter ), ::oButtonFilter:Show(), ) )
    Method HideButtonFilter()              INLINE ( if( !Empty( ::oButtonFilter ), ::oButtonFilter:Hide(), ), if( !Empty( ::oComboFilter ), ::oComboFilter:Select( 1 ), ) )
@@ -545,10 +550,7 @@ Method CreateButtonBar( oWnd, lCreateButtonBar )
 
    if !::lTactil
       ::CreateSearchBar( oWnd )
-      ::HideButtonFilter()
-      ::HideAddButtonFilter()
-      ::HideEditButtonFilter()
-      ::HideYearComboBox()
+      ::HideSearchBar()
    end if
 
 Return Self
@@ -605,7 +607,6 @@ Method CreateSearchBar( oWnd )
 
    ::oGet:cBmp       := "Lupa"
    ::oGet:bLostFocus := {|| ::oGet:cText( Space( 200 ) ), if( !Empty( ::oGet:bChange ), Eval( ::oGet:bChange ), ) }
-   ::oGet:Disable()
 
    @ 124, 220 COMBOBOX ::oComboBox ;
             VAR      ::cComboBox ;
@@ -614,8 +615,6 @@ Method CreateSearchBar( oWnd )
             OF       ::oRebar ;
             FONT     ::oFont ;
             PIXEL    SIZE 200, 30
-
-   ::oComboBox:Disable()
 
    @ 124, 426 COMBOBOX ::oComboFilter ;
             VAR      ::cComboFilter ;
@@ -1014,6 +1013,7 @@ Method EnableComboFilter( aItems )
       next
 
       ::oComboFilter:SetItems( ::aComboFilter )
+      ::oComboFilter:Show()
       ::oComboFilter:Enable()
 
    end if
