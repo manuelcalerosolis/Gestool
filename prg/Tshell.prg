@@ -2400,7 +2400,7 @@ Method LoadData()
       if ::lAutoPos
 
          do case
-            case ValType( ::xAlias ) == "O" .and. ::xAlias:Used()
+            case IsObject( ::xAlias ) .and. ::xAlias:Used()
 
                ::xAlias:OrdSetFocus( ::nTab )
                ::xAlias:GoTo( ::nRec )
@@ -2409,14 +2409,16 @@ Method LoadData()
                   ::xAlias:GoTop()
                end if
 
-            case ValType( ::xAlias ) == "C" .and. ( ::xAlias )->( Used() )
+            case IsChar( ::xAlias ) .and. ( ::xAlias )->( Used() )
 
-               ( ::xAlias )->( OrdSetFocus( ::nTab ) )
+               msgAlert( ( ::xAlias )->( OrdSetFocus( ::nTab ) ), "Resultado de OrdSetFocus" )
                ( ::xAlias )->( dbGoTo( ::nRec ) )
 
                if ( ::xAlias )->( Recno() ) != ::nRec .or. ::nRec > ( ::xAlias )->( Lastrec() )
                   ( ::xAlias )->( dbGoTop() )
                end if
+
+
 
          end case
 
