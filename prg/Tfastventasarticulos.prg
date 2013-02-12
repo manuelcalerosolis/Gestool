@@ -2234,8 +2234,8 @@ METHOD DataReport( oFr ) CLASS TFastVentasArticulos
    ::oFastReport:SetMasterDetail(   "Informe", "Clientes",                          {|| ::oDbf:cCodCli } )
    ::oFastReport:SetMasterDetail(   "Informe", "Empresa",                           {|| cCodEmp() } )
 
-   ::oFastReport:SetMasterDetail(   "Informe", "Presupuestos de clientes",          {|| Padr( Upper( ::oDbf:cTipDoc ), 30 ) + ::oDbf:cSerDoc + ::oDbf:cNumDoc + ::oDbf:cSufDoc } )
-   ::oFastReport:SetMasterDetail(   "Informe", "Lineas presupuestos de clientes",   {|| Padr( Upper( ::oDbf:cTipDoc ), 30 ) + ::oDbf:cSerDoc + ::oDbf:cNumDoc + ::oDbf:cSufDoc } )
+   ::oFastReport:SetMasterDetail(   "Informe", "Presupuestos de clientes",          {|| msgAlert( ::oDbf:cClsDoc + ::oDbf:cSerDoc + ::oDbf:cNumDoc + ::oDbf:cSufDoc ), ::oDbf:cClsDoc + ::oDbf:cSerDoc + ::oDbf:cNumDoc + ::oDbf:cSufDoc } )
+   ::oFastReport:SetMasterDetail(   "Informe", "Lineas presupuestos de clientes",   {|| ::oDbf:cClsDoc + ::oDbf:cSerDoc + ::oDbf:cNumDoc + ::oDbf:cSufDoc } )
 
    ::oFastReport:SetMasterDetail(   "Informe", "Pedidos de clientes",               {|| Padr( Upper( ::oDbf:cTipDoc ), 30 ) + ::oDbf:cSerDoc + ::oDbf:cNumDoc + ::oDbf:cSufDoc } )
    ::oFastReport:SetMasterDetail(   "Informe", "Lineas pedidos de clientes",        {|| Padr( Upper( ::oDbf:cTipDoc ), 30 ) + ::oDbf:cSerDoc + ::oDbf:cNumDoc + ::oDbf:cSufDoc } )

@@ -8337,7 +8337,7 @@ FUNCTION cArticulo( aGet, dbfArticulo, aGet2, lCodeBar )
 
 	DEFAULT lCodeBar	:= .F.
 
-	IF Empty( cCodArt )
+	IF Empty( cCodArt ) .or. ( cCodArt == Replicate( "Z", 18 ) )
 		RETURN .T.
 	END IF
 
@@ -8353,7 +8353,7 @@ FUNCTION cArticulo( aGet, dbfArticulo, aGet2, lCodeBar )
 	IF lCodeBar
 		nOrdAnt	:= ( dbfArticulo )->( ordSetFocus( "CODEBAR" ) )
    ELSE
-      nOrdAnt  := ( dbfArticulo )->( ordSetFocus( "CODIGO" ) )
+      nOrdAnt  := ( dbfArticulo )->( ordSetFocus( "CODIGO" ) ) 
 	END IF
 
 	IF (dbfArticulo)->( DbSeek( cCodArt ) )
@@ -15927,6 +15927,8 @@ Function BrwSelArticulo( oGetCodigo, oGetNombre, lCodeBar, lAppend, lEdit, oBtnS
    local lPropiedades   := .f.
    local oBtnAceptarpropiedades
 
+   msgalert( nOrd, "valor q recoje de BrwArticulo")
+
    nOrd                 := Min( Max( nOrd, 1 ), len( aCbxOrd ) )
    cCbxOrd              := aCbxOrd[ nOrd ]
 
@@ -16307,22 +16309,6 @@ Function BrwSelArticulo( oGetCodigo, oGetNombre, lCodeBar, lAppend, lEdit, oBtnS
          CANCEL ;
          ACTION   ( oDlg:end() )
 
-      /*
-      if !Empty( oBtnSaveLine )
-
-      REDEFINE BUTTON ;
-         ID       3 ;
-			OF 		oDlg ;
-         WHEN     ( !IsReport() );
-         ACTION   ( InsertBrwSelArticulo( @aGet, lCodeBar, oBtnSaveLine ) )
-
-         if !IsReport()
-            oDlg:AddFastKey( VK_F4, {|| InsertBrwSelArticulo( aGet, lCodeBar, oBtnSaveLine ) } )
-         end if
-
-      end if
-      */
-
       REDEFINE BUTTON ;
 			ID 		500 ;
 			OF 		oDlg ;
@@ -16415,7 +16401,7 @@ Function BrwSelArticulo( oGetCodigo, oGetNombre, lCodeBar, lAppend, lEdit, oBtnS
 
    DestroyFastFilter( dbfArticulo )
 
-   SetBrwOpt( "BrwArticulo", if( ( dbfArticulo )->( OrdSetFocus() ) == "CodObs", 1, 2 ) )
+   SetBrwOpt( "BrwArticulo", if( ( dbfArticulo )->( OrdSetFocus() ) == "CODOBS", 1, 2 ) )
 
    if !Empty( oBrw )
       oBrw:CloseData()
@@ -16426,13 +16412,9 @@ Function BrwSelArticulo( oGetCodigo, oGetNombre, lCodeBar, lAppend, lEdit, oBtnS
    end if
 
    if lCloseFiles
-
       CloseFiles()
-
    else
-
       ( dbfArticulo )->( dbGoTo( nRecAnt ) )
-
    end if
 
    if oBmpImage != nil
