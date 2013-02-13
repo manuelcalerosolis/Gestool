@@ -4804,7 +4804,10 @@ METHOD AddCliente( cCodCli, oDbfDocT, lTiket )
          ::oDbf:cDefI08 := ::oDbfCli:CusRDef08
          ::oDbf:cDefI09 := ::oDbfCli:CusRDef09
          ::oDbf:cDefI10 := ::oDbfCli:CusRDef10
-         ::oDbf:cNbrEst := ::oDbfCli:NbrEst
+
+         if ::oDbf:FieldPos( "cNbrEst" ) != 0
+            ::oDbf:cNbrEst := ::oDbfCli:NbrEst
+         end if
 
       end if
 

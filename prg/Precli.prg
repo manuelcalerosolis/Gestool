@@ -4969,7 +4969,7 @@ RETURN NIL
 
 //--------------------------------------------------------------------------//
 
-FUNCTION nTotPreCli( cPresupuesto, cPreCliT, cPreCliL, cIva, cDiv, cFPago, aTmp, cDivRet, lPic, cDbfClient )
+FUNCTION nTotPreCli( cPresupuesto, cPreCliT, cPreCliL, cIva, cDiv, cFPago, aTmp, cDivRet, lPic )
 
 	local nRecno
 	local cCodDiv
@@ -5001,7 +5001,6 @@ FUNCTION nTotPreCli( cPresupuesto, cPreCliT, cPreCliL, cIva, cDiv, cFPago, aTmp,
 
    DEFAULT cPreCliT        := dbfPreCliT
    DEFAULT cPreCliL        := dbfPreCliL
-   DEFAULT cDbfClient      := dbfClient
    DEFAULT cIva            := dbfIva
    DEFAULT cDiv            := dbfDiv
    DEFAULT cFPago          := dbfFPago
@@ -7590,10 +7589,10 @@ FUNCTION rxPreCli( cPath, oMeter )
       ( dbfPreCliT )->( ordCreate( cPath + "PreCliT.CDX", "lSndDoc", "lSndDoc", {|| Field->lSndDoc } ) )
 
       ( dbfPreCliT )->( ordCondSet( "!Deleted()", {||!Deleted()}  ) )
-      ( dbfPreCliT )->( ordCreate( cPath + "PreCliT.Cdx", "cCodUsr", "Field->cCodUsr + Dtos( Field->dFecCre ) + Field->cTimCre", {|| Field->cCodUsr + Dtos( Field->dFecCre ) + Field->cTimCre } ) )
+      ( dbfPreCliT )->( ordCreate( cPath + "PreCliT.Cdx", "cCodUsr", "cCodUsr + Dtos( dFecCre ) + cTimCre", {|| Field->cCodUsr + Dtos( Field->dFecCre ) + Field->cTimCre } ) )
 
       ( dbfPreCliT )->( ordCondSet( "!Deleted()", {|| !Deleted() } ) )
-      ( dbfPreCliT )->( ordCreate( cPath + "PreCliT.Cdx", "iNumPre", "'PRESUPUESTO CLIENTES          ' + cSerPre + Str( nNumPre ) + cSufPre", {|| 'PRESUPUESTO CLIENTES          ' + Field->cSerPre + Str( Field->nNumPre ) + Field->cSufPre } ) )
+      ( dbfPreCliT )->( ordCreate( cPath + "PreCliT.Cdx", "iNumPre", "'08' + cSerPre + Str( nNumPre ) + cSufPre", {|| '08' + Field->cSerPre + Str( Field->nNumPre ) + Field->cSufPre } ) )
 
       ( dbfPreCliT )->( dbCloseArea() )
 
@@ -7615,7 +7614,7 @@ FUNCTION rxPreCli( cPath, oMeter )
       ( dbfPreCliT )->( ordCreate( cPath + "PreCliL.Cdx", "Lote", "cLote", {|| Field->cLote }, ) )
 
       ( dbfPreCliT )->( ordCondSet( "!Deleted()", {|| !Deleted() } ) )
-      ( dbfPreCliT )->( ordCreate( cPath + "PreCliL.Cdx", "iNumPre", "'PRESUPUESTO CLIENTES          ' + cSerPre + Str( nNumPre ) + cSufPre", {|| 'PRESUPUESTO CLIENTES          ' + Field->cSerPre + Str( Field->nNumPre ) + Field->cSufPre } ) )
+      ( dbfPreCliT )->( ordCreate( cPath + "PreCliL.Cdx", "iNumPre", "'08' + cSerPre + Str( nNumPre ) + cSufPre", {|| '08' + Field->cSerPre + Str( Field->nNumPre ) + Field->cSufPre } ) )
 
       ( dbfPreCliT )->( ordCondSet("!Deleted()", {||!Deleted()}  ) )
       ( dbfPreCliT )->( ordCreate( cPath + "PreCliL.Cdx", "nNumLin", "Str( NNUMPRE ) + Str( nNumLin )", {|| Str( Field->nNumPre ) + Str( Field->nNumLin ) }, ) )
@@ -7632,6 +7631,9 @@ FUNCTION rxPreCli( cPath, oMeter )
       ( dbfPreCliT )->( ordCondSet("!Deleted()", {||!Deleted()}  ) )
       ( dbfPreCliT )->( ordCreate( cPath + "PRECLII.CDX", "NNUMPRE", "CSERPRE + STR( NNUMPRE ) + CSUFPRE", {|| Field->CSERPRE + STR(Field->NNUMPRE) + Field->CSUFPRE } ) )
 
+      ( dbfPreCliT )->( ordCondSet( "!Deleted()", {|| !Deleted() } ) )
+      ( dbfPreCliT )->( ordCreate( cPath + "PreCliI.Cdx", "iNumPre", "'08' + cSerPre + Str( nNumPre ) + cSufPre", {|| '08' + Field->cSerPre + Str( Field->nNumPre ) + Field->cSufPre } ) )
+
       ( dbfPreCliT )->( dbCloseArea() )
    else
       msgStop( "Imposible abrir en modo exclusivo la tabla de presupuestos de clientes" )
@@ -7644,39 +7646,13 @@ FUNCTION rxPreCli( cPath, oMeter )
       ( dbfPreCliT )->( ordCondSet("!Deleted()", {||!Deleted()}  ) )
       ( dbfPreCliT )->( ordCreate( cPath + "PRECLID.CDX", "NNUMPRE", "CSERPRE + STR( NNUMPRE ) + CSUFPRE", {|| Field->CSERPRE + STR(Field->NNUMPRE) + Field->CSUFPRE } ) )
 
-      ( dbfPreCliT )->( dbCloseArea() )
-   else
-      msgStop( "Imposible abrir en modo exclusivo la tabla de presupuestos de clientes" )
-   end if
-
-   /*
-   dbUseArea( .t., cDriver(), cPath + "PLTCLIT.DBF", cCheckArea( "PLTCLIT", @dbfPreCliT ) )
-   if !( dbfPreCliT )->( neterr() )
-      ( dbfPreCliT )->( __dbPack() )
-
-      ( dbfPreCliT )->( ordCondSet("!Deleted()", {||!Deleted()}  ) )
-      ( dbfPreCliT )->( ordCreate( cPath + "PLTCLIT.CDX", "CCODPLT", "CCODPLT", {|| Field->CCODPLT } ) )
-
-      ( dbfPreCliT )->( ordCondSet("!Deleted()", {||!Deleted()}  ) )
-      ( dbfPreCliT )->( ordCreate( cPath + "PLTCLIT.CDX", "CDESPLT", "CDESPLT", {|| Field->CDESPLT } ) )
+      ( dbfPreCliT )->( ordCondSet( "!Deleted()", {|| !Deleted() } ) )
+      ( dbfPreCliT )->( ordCreate( cPath + "PreCliD.Cdx", "iNumPre", "'08' + cSerPre + Str( nNumPre ) + cSufPre", {|| '08' + Field->cSerPre + Str( Field->nNumPre ) + Field->cSufPre } ) )
 
       ( dbfPreCliT )->( dbCloseArea() )
    else
       msgStop( "Imposible abrir en modo exclusivo la tabla de presupuestos de clientes" )
    end if
-
-   dbUseArea( .t., cDriver(), cPath + "PLTCLIL.DBF", cCheckArea( "PLTCLIL", @dbfPreCliT ) )
-   if !( dbfPreCliT )->( neterr() )
-      ( dbfPreCliT )->( __dbPack() )
-
-      ( dbfPreCliT )->( ordCondSet("!Deleted()", {||!Deleted()}  ) )
-      ( dbfPreCliT )->( ordCreate( cPath + "PLTCLIL.CDX", "CCODPLT", "CCODPLT", {|| Field->CCODPLT } ) )
-
-      ( dbfPreCliT )->( dbCloseArea() )
-   else
-      msgStop( "Imposible abrir en modo exclusivo la tabla de presupuestos de clientes" )
-   end if
-   */
 
 RETURN NIL
 
@@ -12927,7 +12903,7 @@ Function sTotPreCli( cPresupuesto, dbfMaster, dbfLine, dbfIva, dbfDiv, cDivRet, 
 
    local sTotal
 
-   nTotAlbCli( cPresupuesto, dbfMaster, dbfLine, dbfIva, dbfDiv, nil, cDivRet, .f., lExcCnt )
+   nTotPreCli( cPresupuesto, dbfMaster, dbfLine, dbfIva, dbfDiv, nil, nil, cDivRet, .f., lExcCnt )
 
    sTotal                                 := sTotal()
    sTotal:nTotalBruto                     := nTotBrt

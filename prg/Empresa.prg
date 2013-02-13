@@ -39,8 +39,43 @@ static aItmEmp       := {}
 static aTiempo       := { "0 min.", "1 min.", "2 min.", "5 min.", "10 min.", "15 min.", "30 min.", "45 min.", "1 hora", "2 horas", "4 horas", "8 horas" }
 static aTiempoImp    := { "0 seg.", "5 seg.", "10 seg.", "15 seg.", "20 seg.", "25 seg.", "30 seg.", "35 seg.", "40 seg.", "45 seg.", "50 seg.", "55 seg.", "60 seg." }
 
+static cTiempoPed
+
 static aDocumentos    
 static aImagenes
+
+static oCmbDocumentos
+static cCmbDocumentos
+
+static oNombreSerie
+static cNombreSerie
+
+static oCmbSerie
+static cCmbSerie
+
+static oGetSerie
+static cGetSerie
+
+static oGetContador
+static nGetContador
+
+static oGetFormato
+static cGetFormato
+
+static oGetCopias
+static nGetCopias
+
+static oGetNFCPrefijo
+static cGetNFCPrefijo
+
+static oGetNFCContador
+static cGetNFCContador
+
+static oGroupNFC
+static cGrupoNFC
+
+static oGetPlantillaDefecto
+static cGetPlantillaDefecto
 
 //----------------------------------------------------------------------------//
 
@@ -194,10 +229,7 @@ Static Function CloseFiles()
    dbfCount    := nil
    oBanco      := nil
    oPais       := nil
-
-   if oWndBrw != nil
-      oWndBrw  := nil
-   end if
+   oWndBrw     := nil
 
 Return .t.
 
@@ -844,106 +876,6 @@ STATIC FUNCTION EdtRec( aTmp, aGet, dbfEmp, oBrw, bWhen, bValid, nMode )
 
       oBrwDet:CreateFromResource( 100 )
 
-      /*
-      Botones de bancos --------------------------------------------------------------------
-
-      REDEFINE BITMAP oBmpBancos ;
-         ID       600 ;
-         RESOURCE "Office_Building_48_Alpha" ;
-         TRANSPARENT ;
-         OF       oFld:aDialogs[ if( nMode == APPD_MODE, 4, 3 ) ] ;
-
-      REDEFINE BUTTON;
-			ID 		500 ;
-         OF       oFld:aDialogs[ if( nMode == APPD_MODE, 4, 3 ) ] ;
-         WHEN     ( nMode != ZOOM_MODE ) ;
-         ACTION   ( WinAppRec( oBrwBnc, bEdtBnc, tmpBnc, , , aTmp[ _CODEMP ] ) )
-
-      REDEFINE BUTTON;
-			ID 		501 ;
-         OF       oFld:aDialogs[ if( nMode == APPD_MODE, 4, 3 ) ] ;
-         WHEN     ( nMode != ZOOM_MODE ) ;
-         ACTION   ( WinEdtRec( oBrwBnc, bEdtBnc, tmpBnc ) )
-
-      REDEFINE BUTTON;
-			ID 		502 ;
-         OF       oFld:aDialogs[ if( nMode == APPD_MODE, 4, 3 ) ] ;
-         WHEN     ( nMode != ZOOM_MODE ) ;
-         ACTION   ( DbDelRec( oBrwBnc, tmpBnc ) )
-
-
-      oBrwBnc                 := IXBrowse():New( if( nMode == APPD_MODE, oFld:aDialogs[ 4 ], oFld:aDialogs[ 3 ] ) )
-
-      oBrwBnc:bClrSel         := {|| { CLR_BLACK, Rgb( 229, 229, 229 ) } }
-      oBrwBnc:bClrSelFocus    := {|| { CLR_BLACK, Rgb( 167, 205, 240 ) } }
-
-      oBrwBnc:cAlias          := tmpBnc
-      oBrwBnc:nMarqueeStyle   := 6
-      oBrwBnc:cName           := "Bancos.Empresa"
-
-      with object ( oBrwBnc:AddCol() )
-         :cHeader             := "Nombre banco"
-         :bEditValue          := {|| ( tmpBnc )->cCodBnc }
-         :nWidth              := 180
-      end with
-
-      with object ( oBrwBnc:AddCol() )
-         :cHeader             := "Cuenta"
-         :bEditValue          := {|| ( tmpBnc )->cEntBnc + "-" + ( tmpBnc )->cSucBnc + "-" + ( tmpBnc )->cDigBnc + "-" + ( tmpBnc )->cCtaBnc }
-         :nWidth              := 150
-      end with
-
-      with object ( oBrwBnc:AddCol() )
-         :cHeader             := "Domicilio"
-         :bEditValue          := {|| ( tmpBnc )->cDirBnc }
-         :nWidth              := 120
-      end with
-
-      with object ( oBrwBnc:AddCol() )
-         :cHeader             := "Población"
-         :bEditValue          := {|| ( tmpBnc )->cPobBnc }
-         :nWidth              := 100
-      end with
-
-      with object ( oBrwBnc:AddCol() )
-         :cHeader             := "Código postal"
-         :bEditValue          := {|| ( tmpBnc )->cCPBnc }
-         :nWidth              := 40
-      end with
-
-      with object ( oBrwBnc:AddCol() )
-         :cHeader             := "Provincia"
-         :bEditValue          := {|| ( tmpBnc )->cProBnc }
-         :nWidth              := 80
-      end with
-
-      with object ( oBrwBnc:AddCol() )
-         :cHeader             := "Teléfono"
-         :bEditValue          := {|| ( tmpBnc )->cTlfBnc }
-         :nWidth              := 80
-      end with
-
-      with object ( oBrwBnc:AddCol() )
-         :cHeader             := "Fax"
-         :bEditValue          := {|| ( tmpBnc )->cFaxBnc }
-         :nWidth              := 80
-      end with
-
-      with object ( oBrwBnc:AddCol() )
-         :cHeader             := "Contacto"
-         :bEditValue          := {|| ( tmpBnc )->cPContBnc }
-         :nWidth              := 140
-      end with
-
-      oBrwBnc:bRClicked       := {| nRow, nCol, nFlags | oBrwBnc:RButtonDown( nRow, nCol, nFlags ) }
-
-      if ( nMode != ZOOM_MODE )
-         oBrwBnc:bLDblClick   := {|| WinEdtRec( oBrwBnc, bEdtBnc, tmpBnc ) }
-      end if
-
-      oBrwBnc:CreateFromResource( 100 )
-      */
-
    /*
    Botones --------------------------------------------------------------------
    */
@@ -965,7 +897,6 @@ STATIC FUNCTION EdtRec( aTmp, aGet, dbfEmp, oBrw, bWhen, bValid, nMode )
          OF       oDlg ;
          CANCEL ;
          ACTION   ( oDlg:end() )
-
 
       if nMode != ZOOM_MODE
          oFld:aDialogs[2]:AddFastKey( VK_F2, {|| WinAppRec( oBrwDet, bEdtDlg, tmpDlg, , , aTmp[_CODEMP] ), oBrwDet:DrawSelect() } )
@@ -1175,35 +1106,13 @@ STATIC FUNCTION EdtCnf( aTmp, aGet, dbfEmp, oBrw, nSelFolder, bValid, nMode )
    local oFld
    local oSay                    := Array( 46 )
    local cSay                    := AFill( Array( 46 ), "" )
-   local oCmbDocumentos
-   local cCmbDocumentos          := aDocumentos[ 1 ]
    local oError
    local oBlock
+
    local oBrwEmp
    local oBrwCon
-   local aBnfSobre               := { "Costo", "Venta" }
-   local aCifRut                 := { "Cálculo de C.I.F.", "Cálculo de R.U.T." }
-   local oCmbSerie
-   local cCmbSerie               := "A"
-   local oGetContador
-   local nGetContador            := 1
-   local aPrinters               := GetPrinters()
-   local oGetFormato
-   local cGetFormato             := Space( 3 )
-   local oSayFmt
-   local cSayFmt                 := ""
-   local oGetCopias
-   local nGetCopias              := 1
-   local oGetSerie
-   local cGetSerie               := Space( 1 )
-   local cTiempoPed
-   local oGetNFCPrefijo
-   local cGetNFCPrefijo
-   local oGetNFCContador
-   local cGetNFCContador
-   local oGetPlantillaDefecto
-   local cGetPlantillaDefecto    := Space( 250 )
    local oBrwCfg
+
    local oBmpComportamiento
    local oBmpDefecto
    local oBmpArticulos
@@ -1211,11 +1120,15 @@ STATIC FUNCTION EdtCnf( aTmp, aGet, dbfEmp, oBrw, nSelFolder, bValid, nMode )
    local oBmpContabilidad
    local oBmpEnvios
    local oBmpComunicacion
+
+   local aBnfSobre               := { "Costo", "Venta" }
+   local aCifRut                 := { "Cálculo de C.I.F.", "Cálculo de R.U.T." }
+   local aPrinters               := GetPrinters()
+   local oSayFmt
+   local cSayFmt                 := ""
    local oGroupNFC
    local oSerie
    local cSerie                  := "A"
-   local oNomSer
-   local cNomSer                 := aTmp[ _CNOMSERA ]
    local aItems                  := {  {  "Wrench_48_alpha",            "General"               },;
                                        {  "Preferences_Edit_48_alpha",  "Valores por defecto"   },;
                                        {  "Cube_Yellow_Alpha_48",       "Artículos"             },;
@@ -1240,6 +1153,16 @@ STATIC FUNCTION EdtCnf( aTmp, aGet, dbfEmp, oBrw, nSelFolder, bValid, nMode )
    if BeginEdtCnf( aTmp, nMode )
       return .f.
    end if
+
+   cCmbDocumentos                := aDocumentos[ 1 ]
+   cCmbSerie                     := "A"
+   nGetContador                  := 1
+   cGetFormato                   := Space( 3 )
+   cGetPlantillaDefecto          := Space( 250 )
+   nGetCopias                    := 1
+   cGetSerie                     := Space( 1 )  
+
+   cNombreSerie                  := aTmp[ _CNOMSERA ]
 
    // Detenemos los servicios -------------------------------------------------
 
@@ -1718,14 +1641,14 @@ STATIC FUNCTION EdtCnf( aTmp, aGet, dbfEmp, oBrw, nSelFolder, bValid, nMode )
          ID       290 ;
          PICTURE  "@!" ;
          SPINNER ;
-         ON UP    ( ChangeSerie( aGet, aTmp, oSerie, cSerie, oNomSer, cNomSer, .f. ) );
-         ON DOWN  ( ChangeSerie( aGet, aTmp, oSerie, cSerie, oNomSer, cNomSer, .t. ) );
+         ON UP    ( ChangeSerie( aGet, aTmp, oSerie, cSerie, .f. ) );
+         ON DOWN  ( ChangeSerie( aGet, aTmp, oSerie, cSerie, .t. ) );
          VALID    ( cSerie >= "A" .AND. cSerie <= "Z" ) ;
          OF       oFld:aDialogs[2]
 
-      REDEFINE GET oNomSer VAR cNomSer ;
+      REDEFINE GET oNombreSerie VAR cNombreSerie ;
          ID       291;
-         VALID    ( GuardaNombreSerie( aTmp, cSerie, cNomSer ) );
+         VALID    ( GuardaNombreSerie( aTmp, cSerie ) );
          OF       oFld:aDialogs[2]
 
       REDEFINE GET aGet[ _NAUTSER ] VAR aTmp[ _NAUTSER ] ;
@@ -2014,7 +1937,7 @@ STATIC FUNCTION EdtCnf( aTmp, aGet, dbfEmp, oBrw, nSelFolder, bValid, nMode )
             ID       500 ;
             RESOURCE "document_edit_48_alpha" ;
             TRANSPARENT ;
-            OF       oFld:aDialogs[4]
+            OF       oFld:aDialogs[ 4 ]
 
       REDEFINE COMBOBOX oCmbDocumentos VAR cCmbDocumentos ;
             ID       100;
@@ -2023,7 +1946,7 @@ STATIC FUNCTION EdtCnf( aTmp, aGet, dbfEmp, oBrw, nSelFolder, bValid, nMode )
             ITEMS    aDocumentos ;
             BITMAPS  aImagenes
 
-      oCmbDocumentos:bChange  := {|| CmbDocumentosChanged( cCmbDocumentos, oCmbSerie, oGetSerie, oGetContador, oGetFormato, oGetCopias, oGetNFCPrefijo, oGetNFCContador, oGroupNFC, oGetPlantillaDefecto ) }
+      oCmbDocumentos:bChange  := {|| CmbDocumentosChanged() }
 
       REDEFINE GET oGetSerie VAR cGetSerie ;
             ID       150 ;
@@ -2038,8 +1961,9 @@ STATIC FUNCTION EdtCnf( aTmp, aGet, dbfEmp, oBrw, nSelFolder, bValid, nMode )
       REDEFINE COMBOBOX oCmbSerie VAR cCmbSerie ;
             ITEMS    { "A", "B", "C", "D", "E", "F", "G", "H", "I", "J", "K", "L", "M", "N", "O", "P", "Q", "R", "S", "T", "U", "V", "W", "X", "Y", "Z" } ;
             ID       110 ;
-            ON CHANGE( CmbSerieChanged( oCmbSerie, oGetContador, oGetFormato, oGetCopias, oGetNFCPrefijo, oGetNFCContador ) );
             OF       oFld:aDialogs[ 4 ]
+
+      oCmbSerie:bChange       := {|| CmbSerieChanged() }
 
       REDEFINE GET oGetContador VAR nGetContador ;
             ID       120 ;
@@ -2053,8 +1977,8 @@ STATIC FUNCTION EdtCnf( aTmp, aGet, dbfEmp, oBrw, nSelFolder, bValid, nMode )
             ID       130 ;
             IDTEXT   131 ;
             IDSAY    132 ;
-            VALID    ( cDocumento( oGetFormato, oGetFormato:oHelpText ) ) ;
             BITMAP   "LUPA" ;
+            VALID    ( cDocumento( oGetFormato, oGetFormato:oHelpText ) ) ;
             ON HELP  ( brwDocumento( oGetFormato, oGetFormato:oHelpText ) ) ;
             OF       oFld:aDialogs[ 4 ]
 
@@ -2316,10 +2240,10 @@ STATIC FUNCTION EdtCnf( aTmp, aGet, dbfEmp, oBrw, nSelFolder, bValid, nMode )
       */
 
       REDEFINE BITMAP oBmpComunicacion ;
-         ID       500 ;
-         RESOURCE "Earth2_Alpha_48" ;
-         TRANSPARENT ;
-         OF       oFld:aDialogs[7]
+            ID       500 ;
+            RESOURCE "Earth2_Alpha_48" ;
+            TRANSPARENT ;
+            OF       oFld:aDialogs[7]
 
       REDEFINE GET aTmp[ _CSRVMAI ] ;
             ID       160;
@@ -2399,8 +2323,8 @@ STATIC FUNCTION EdtCnf( aTmp, aGet, dbfEmp, oBrw, nSelFolder, bValid, nMode )
             OF       oFld:aDialogs[ 7 ]
 
       REDEFINE CHECKBOX aGet[ _LAPELNOMB ] VAR aTmp[ _LAPELNOMB ] ;
-         ID       199 ;
-         OF       oFld:aDialogs[7]
+            ID       199 ;
+            OF       oFld:aDialogs[7]
 
       REDEFINE GET aTmp[ _CHOSTFTPIMG ] ;
             ID       250;
@@ -2444,7 +2368,7 @@ STATIC FUNCTION EdtCnf( aTmp, aGet, dbfEmp, oBrw, nSelFolder, bValid, nMode )
       REDEFINE BUTTON;
             ID       IDOK ;
             OF       oDlg ;
-            ACTION   ( SaveEdtCnf( aTmp, oSay, oCmbSerie, oGetSerie, oGetContador, oGetFormato, oGetCopias, oGetNFCPrefijo, oGetNFCContador, oBrw, dbfEmp, nMode, cTiempoPed, oDlg, oNomSer ) )
+            ACTION   ( SaveEdtCnf( aTmp, oSay, oBrw, oDlg, nMode ) )
 
       REDEFINE BUTTON ;
             ID       IDCANCEL ;
@@ -2455,9 +2379,9 @@ STATIC FUNCTION EdtCnf( aTmp, aGet, dbfEmp, oBrw, nSelFolder, bValid, nMode )
       oFld:aDialogs[ 4 ]:AddFastKey( VK_F3, {|| EdtCon( oBrwCon ) } )
       oFld:aDialogs[ 5 ]:AddFastKey( VK_F3, {|| EditConta( oBrwEmp:nAt, aTmp ), oBrwEmp:Refresh() } )
 
-      oDlg:AddFastKey( VK_F5, {|| SaveEdtCnf( aTmp, oSay, oCmbSerie, oGetSerie, oGetContador, oGetFormato, oGetCopias, oGetNFCPrefijo, oGetNFCContador, oBrw, dbfEmp, nMode, cTiempoPed, oDlg, oNomSer ) } )
+      oDlg:AddFastKey( VK_F5, {|| SaveEdtCnf( aTmp, oSay, oBrw, oDlg, nMode ) } )
 
-      oDlg:bStart    := {|| aEvalValid( oFld:aDialogs[ 2 ] ), aEvalValid( oFld:aDialogs[ 5 ] ) }
+      oDlg:bStart    := {|| aEvalValid( oFld:aDialogs[ 2 ] ), aEvalValid( oFld:aDialogs[ 5 ] ), CmbDocumentosChanged( .f. ) }
 
    ACTIVATE DIALOG oDlg ;
       ON INIT        ( InitEdtCnf( oFld, nSelFolder ) ) ;
@@ -2554,78 +2478,44 @@ Return nil
 
 Static Function InitEdtCnf( oFld, nSelFolder )
 
-   oFld:SetOption( nSelFolder )
+   oFld:SetOption( nSelFolder ) 
 
 Return ( nil )
 
 //--------------------------------------------------------------------------//
 
-static Function ChangeTreeCfg( oBrwCfg, oFld )
+Static Function ChangeTreeCfg( oBrwCfg, oFld )
 
    oFld:SetOption( oBrwCfg:nArrayAt )
+   
    oBrwCfg:Refresh()
 
 Return nil
 
 //---------------------------------------------------------------------------//
 
-Static Function CmbDocumentosChanged( cCmbDocumentos, oCmbSerie, oGetSerie, oGetContador, oGetFormato, oGetCopias, oGetNFCPrefijo, oGetNFCContador, oGroupNFC, oGetPlantillaDefecto )
+Static Function CmbDocumentosChanged( lCmbSerieSaved )
 
-   local cSerie
-   local cSerieDefault
-   local nContador
-   local cFormato
-   local nCopias
    local cItemText
-   local cNFCPrefijo
-   local cNFCContador
-   local cPlantillaDefecto
+
+   DEFAULT lCmbSerieSaved  := .t.
 
    /*
    Documento seleccionado------------------------------------------------------
    */
 
-   cItemText            := Upper( Rtrim( cCmbDocumentos ) )
+   cItemText               := Upper( Rtrim( cCmbDocumentos ) )
    if Empty( cItemText )
-      return ( nil )
+      return ( .t. )
    end if
 
    /*
-   Guradamos la serie por defecto al cambiar el documento----------------------
+   Guardamos los datos de las series-------------------------------------------
    */
 
-   cSerie               := oCmbSerie:VarGet()
-   cSerieDefault        := oGetSerie:VarGet()
-   nContador            := oGetContador:VarGet()
-   cFormato             := oGetFormato:VarGet()
-   nCopias              := oGetCopias:VarGet()
-
-   cNFCPrefijo          := oGetNFCPrefijo:VarGet()
-   cNFCContador         := oGetNFCContador:VarGet()
-   cPlantillaDefecto    := oGetPlantillaDefecto:VarGet()
-
-   if dbDialogLock( tmpDlgCon )
-
-      if !Empty( cSerie )
-
-         ( tmpDlgCon )->( FieldPut( FieldPos( cSerie ),              nContador      ) )
-         ( tmpDlgCon )->( FieldPut( FieldPos( "Doc" + cSerie ),      cFormato       ) )
-         ( tmpDlgCon )->( FieldPut( FieldPos( "Copias" + cSerie ),   nCopias        ) )
-
-         ( tmpDlgCon )->( FieldPut( FieldPos( "cNFC" + cSerie ),     cNFCPrefijo    ) )
-         ( tmpDlgCon )->( FieldPut( FieldPos( "nNFC" + cSerie ),     cNFCContador   ) )
-
-         if !Empty( cSerieDefault )
-            ( tmpDlgCon )->( FieldPut( FieldPos( "cSerie" ),         cSerieDefault  ) )
-         end if
-
-      end if
-
-      ( tmpDlgCon )->cPltDfl  := cPlantillaDefecto
-
-      ( tmpDlgCon )->( dbUnLock() )
-
-   end if
+   if lCmbSerieSaved
+      CmbSerieSave( oCmbSerie )
+   end if 
 
    /*
    Nuevo tipo de documento-----------------------------------------------------
@@ -2670,41 +2560,47 @@ Static Function CmbDocumentosChanged( cCmbDocumentos, oCmbSerie, oGetSerie, oGet
          oGetNFCContador:Hide()
       end if
 
-      if !Empty( oCmbSerie:bChange )
-         Eval( oCmbSerie:bChange )
-      end if
+      /*
+      Cargamos los datos de la serie-------------------------------------------
+      */
+
+      CmbSerieChanged()
 
    end if
 
-Return ( nil )
+Return ( .t. )
 
 //--------------------------------------------------------------------------//
 
-Static Function CmbSerieSave( cSerie, oGetContador, oGetFormato, oGetCopias, oGetNFCPrefijo, oGetNFCContador )
+Static Function CmbSerieSave( uSerie )
 
-   local nContador
-   local cFormato
-   local nCopias
-   local cNFCPrefijo
-   local cNFCContador
+   local cSerie
+
+   do case
+      case isObject( uSerie )
+         cSerie         := uSerie:VarGet()
+      case isChar( uSerie)
+         cSerie         := uSerie
+   end case 
 
    if Empty( cSerie )
       Return ( .t. )
    end if
 
-   nContador            := oGetContador:VarGet()
-   cFormato             := oGetFormato:VarGet()
-   nCopias              := oGetCopias:VarGet()
-
-   cNFCPrefijo          := oGetNFCPrefijo:VarGet()
-   cNFCContador         := oGetNFCContador:VarGet()
+   /*
+   msgStop( "Serie q voy a guardar :" + cSerie     + CRLF + ;
+            "nGetContador :" + Str( nGetContador)  + CRLF + ;
+            "cGetFormato : " + cGetFormato         + CRLF + ;
+            "nGetCopias : " + Str( nGetCopias )    + CRLF + ;
+            "nGetNFCPrefijo : " + cGetNFCPrefijo   + CRLF + ;
+            "cGetNFCContador : " + cGetNFCContador, "CmbSerieSave" ) */
 
    if !Empty( cSerie ) .and. dbDialogLock( tmpDlgCon )
-      ( tmpDlgCon )->( FieldPut( FieldPos( cSerie ), nContador                 ) )
-      ( tmpDlgCon )->( FieldPut( FieldPos( "Doc"    + cSerie ), cFormato       ) )
-      ( tmpDlgCon )->( FieldPut( FieldPos( "Copias" + cSerie ), nCopias        ) )
-      ( tmpDlgCon )->( FieldPut( FieldPos( "cNCF"   + cSerie ), cNFCPrefijo    ) )
-      ( tmpDlgCon )->( FieldPut( FieldPos( "nCNF"   + cSerie ), cNFCContador   ) )
+      ( tmpDlgCon )->( FieldPut( FieldPos( cSerie ),              nGetContador      ) )
+      ( tmpDlgCon )->( FieldPut( FieldPos( "Doc"    + cSerie ),   cGetFormato       ) )
+      ( tmpDlgCon )->( FieldPut( FieldPos( "Copias" + cSerie ),   nGetCopias        ) )
+      ( tmpDlgCon )->( FieldPut( FieldPos( "cNCF"   + cSerie ),   cGetNFCPrefijo    ) )
+      ( tmpDlgCon )->( FieldPut( FieldPos( "nCNF"   + cSerie ),   cGetNFCContador   ) )
       ( tmpDlgCon )->( dbUnLock() )
    end if
 
@@ -2712,12 +2608,12 @@ Return ( .t. )
 
 //--------------------------------------------------------------------------//
 
-Static Function CmbSerieChanged( oCmbSerie, oGetContador, oGetFormato, oGetCopias, oGetNFCPrefijo, oGetNFCContador )
+Static Function CmbSerieChanged()
 
    local cSerie         := oCmbSerie:VarGet()
 
    if !Empty( cOldSerie ) .and. ( cOldSerie != cSerie )
-      CmbSerieSave( cOldSerie, oGetContador, oGetFormato, oGetCopias, oGetNFCPrefijo, oGetNFCContador )
+      CmbSerieSave( cOldSerie )
    end if
 
    oGetContador:cText(     ( tmpDlgCon )->( FieldGet( FieldPos( cSerie ) ) ) )
@@ -2731,7 +2627,7 @@ Static Function CmbSerieChanged( oCmbSerie, oGetContador, oGetFormato, oGetCopia
 
    cOldSerie            := cSerie
 
-Return ( nil )
+Return ( .t. )
 
 //--------------------------------------------------------------------------//
 
@@ -5143,29 +5039,6 @@ Static Function BeginEdtRec( aTmp )
 
    end if
 
-   /*
-   Bancos----------------------------------------------------------------------
-
-   cNewBnc        := cGetNewFileName( cPatTmp() + "Bnc"  )
-
-   dbCreate( cNewBnc, aSqlStruct( aItmBnc() ), cLocalDriver() )
-   dbUseArea( .t., cLocalDriver(), cNewBnc, cCheckArea( "Bnc", @tmpBnc ), .f. )
-
-   if !NetErr() .and. ( tmpBnc )->( Used() )
-
-      ( tmpBnc )->( ordCondSet( "!Deleted()", {|| !Deleted() } ) )
-      ( tmpBnc )->( OrdCreate( cNewBnc, "Recno", "Recno()", {|| Recno() } ) )
-
-      ( tmpBnc )->( ordCondSet( "!Deleted()", {|| !Deleted() } ) )
-      ( tmpBnc )->( OrdCreate( cNewBnc, "cCodEmp", "cCodEmp + cEntBnc + cSucBnc + cDigBnc + cCtaBnc", {|| Field->cCodEmp + Field->cEntBnc + Field->cSucBnc + Field->cDigBnc + Field->cCtaBnc } ) )
-
-   else
-
-      lErrors     := .t.
-
-   end if
-   */
-
 	/*
    Añadimos a los temporales---------------------------------------------------
 	*/
@@ -5909,16 +5782,7 @@ RETURN ( nil )
 
 //---------------------------------------------------------------------------//
 
-static function SaveEdtCnf( aTmp, oSay, oCmbSerie, oGetSerie, oGetContador, oGetFormato, oGetCopias, oGetNFCPrefijo, oGetNFCContador, oBrw, dbfEmp, nMode, cTiempoPed, oDlg, oNomSer )
-
-   local cItemText
-   local cSerie
-   local cSerieDefecto
-   local nContador
-   local cFormato
-   local nCopias
-   local cNFCPrefijo
-   local cNFCContador
+Static Function SaveEdtCnf( aTmp, oSay, oBrw, oDlg, nMode )
 
    CursorWait()
 
@@ -5928,40 +5792,17 @@ static function SaveEdtCnf( aTmp, oSay, oCmbSerie, oGetSerie, oGetContador, oGet
    Ejecutamos el valid para que guarde el nombre de la serie-------------------
    */
 
-   oNomSer:lValid()
+   oNombreSerie:lValid()
+
+   /*
+   Guardamos los datos de las series-------------------------------------------
+   */
+
+   CmbSerieSave( oCmbSerie )
 
    /*
    Guarda los cambios----------------------------------------------------------
    */
-
-   if !Empty( cItemText )
-
-      cSerie            := oCmbSerie:VarGet()[ 26 ]
-      cSerieDefecto     := oGetSerie:VarGet()
-      nContador         := oGetContador:VarGet()
-      cFormato          := oGetFormato:VarGet()
-      nCopias           := oGetCopias:VarGet()
-      cNFCPrefijo       := oGetNFCPrefijo:VarGet()
-      cNFCContador      := oGetNFCContador:VarGet()
-
-      if dbSeekInOrd( cItemText, "Des", tmpDlgCon )
-
-         if dbDialogLock( tmpDlgCon )
-
-            ( tmpDlgCon )->( FieldPut( FieldPos( "cSerie" ),          cSerieDefecto  ) )
-            ( tmpDlgCon )->( FieldPut( FieldPos( cSerie ),            nContador      ) )
-            ( tmpDlgCon )->( FieldPut( FieldPos( "Doc" + cSerie ),    cFormato       ) )
-            ( tmpDlgCon )->( FieldPut( FieldPos( "Copias" + cSerie ), nCopias        ) )
-            ( tmpDlgCon )->( FieldPut( FieldPos( "cNFC" + cSerie ),   cNFCPrefijo    ) )
-            ( tmpDlgCon )->( FieldPut( FieldPos( "nNFC" + cSerie ),   cNFCContador   ) )
-
-            ( tmpDlgCon )->( dbUnLock() )
-
-         end if
-
-      end if
-
-   end if
 
    aTmp[ _CCODEMPA ]    := aItmEmp[ 1, 2 ]
    aTmp[ _CCODEMPB ]    := aItmEmp[ 2, 2 ]
@@ -6048,6 +5889,7 @@ static function SaveEdtCnf( aTmp, oSay, oCmbSerie, oGetSerie, oGetContador, oGet
    WinGather( aTmp, , dbfEmp, oBrw, nMode )
 
    oDlg:Enable()
+   
    oDlg:End( IDOK )
 
    CursorWE()
@@ -6095,8 +5937,8 @@ return nil
 
 Function PosEmpresa( cCodEmp, dbfEmp, oWndBrw )
 
-   local nRec     := ( dbfEmp )->( Recno() )
-   local nOrd     := ( dbfEmp )->( OrdSetFocus( "CodEmp" ) )
+   local nRec           := ( dbfEmp )->( Recno() )
+   local nOrd           := ( dbfEmp )->( OrdSetFocus( "CodEmp" ) )
 
    if !( dbfEmp )->( dbSeek( cCodEmp ) )
       ( dbfEmp )->( dbGoTo( nRec ) )
@@ -8507,13 +8349,13 @@ RETURN ( oDlg:nResult == IDOK )
 
 //---------------------------------------------------------------------------//
 
-static function ChangeSerie( aGet, aTmp, oSerie, cSerie, oNomSer, cNomSer, lDown )
+static function ChangeSerie( aGet, aTmp, oSerie, cSerie, lDown )
 
    /*
    Guardamos el nombre de la serie que tenemos seleccionada--------------------
    */
 
-   GuardaNombreSerie( aTmp, cSerie, cNomSer )
+   GuardaNombreSerie( aTmp, cSerie )
 
    /*
    Cambiamos la serie----------------------------------------------------------
@@ -8529,128 +8371,128 @@ static function ChangeSerie( aGet, aTmp, oSerie, cSerie, oNomSer, cNomSer, lDown
    Cargamos la nueva serie-----------------------------------------------------
    */
 
-   CargaNombreSerie( aTmp, oSerie, oNomSer )
+   CargaNombreSerie( aTmp, oSerie )
 
 return ( .t. )
 
 //---------------------------------------------------------------------------//
 
-static function GuardaNombreSerie( aTmp, cSerie, cNomSer )
+static function GuardaNombreSerie( aTmp, cSerie )
 
-   do Case
+   do case
       case cSerie == "A"
-         aTmp[ _CNOMSERA ] := cNomSer
+         aTmp[ _CNOMSERA ] := cNombreSerie
       case cSerie == "B"
-         aTmp[ _CNOMSERB ] := cNomSer
+         aTmp[ _CNOMSERB ] := cNombreSerie
       case cSerie == "C"
-         aTmp[ _CNOMSERC ] := cNomSer
+         aTmp[ _CNOMSERC ] := cNombreSerie
       case cSerie == "D"
-         aTmp[ _CNOMSERD ] := cNomSer
+         aTmp[ _CNOMSERD ] := cNombreSerie
       case cSerie == "E"
-         aTmp[ _CNOMSERE ] := cNomSer
+         aTmp[ _CNOMSERE ] := cNombreSerie
       case cSerie == "F"
-         aTmp[ _CNOMSERF ] := cNomSer
+         aTmp[ _CNOMSERF ] := cNombreSerie
       case cSerie == "G"
-         aTmp[ _CNOMSERG ] := cNomSer
+         aTmp[ _CNOMSERG ] := cNombreSerie
       case cSerie == "H"
-         aTmp[ _CNOMSERH ] := cNomSer
+         aTmp[ _CNOMSERH ] := cNombreSerie
       case cSerie == "I"
-         aTmp[ _CNOMSERI ] := cNomSer
+         aTmp[ _CNOMSERI ] := cNombreSerie
       case cSerie == "J"
-         aTmp[ _CNOMSERJ ] := cNomSer
+         aTmp[ _CNOMSERJ ] := cNombreSerie
       case cSerie == "K"
-         aTmp[ _CNOMSERK ] := cNomSer
+         aTmp[ _CNOMSERK ] := cNombreSerie
       case cSerie == "L"
-         aTmp[ _CNOMSERL ] := cNomSer
+         aTmp[ _CNOMSERL ] := cNombreSerie
       case cSerie == "M"
-         aTmp[ _CNOMSERM ] := cNomSer
+         aTmp[ _CNOMSERM ] := cNombreSerie
       case cSerie == "N"
-         aTmp[ _CNOMSERN ] := cNomSer
+         aTmp[ _CNOMSERN ] := cNombreSerie
       case cSerie == "O"
-         aTmp[ _CNOMSERO ] := cNomSer
+         aTmp[ _CNOMSERO ] := cNombreSerie
       case cSerie == "P"
-         aTmp[ _CNOMSERP ] := cNomSer
+         aTmp[ _CNOMSERP ] := cNombreSerie
       case cSerie == "Q"
-         aTmp[ _CNOMSERQ ] := cNomSer
+         aTmp[ _CNOMSERQ ] := cNombreSerie
       case cSerie == "R"
-         aTmp[ _CNOMSERR ] := cNomSer
+         aTmp[ _CNOMSERR ] := cNombreSerie
       case cSerie == "S"
-         aTmp[ _CNOMSERS ] := cNomSer
+         aTmp[ _CNOMSERS ] := cNombreSerie
       case cSerie == "T"
-         aTmp[ _CNOMSERT ] := cNomSer
+         aTmp[ _CNOMSERT ] := cNombreSerie
       case cSerie == "U"
-         aTmp[ _CNOMSERU ] := cNomSer
+         aTmp[ _CNOMSERU ] := cNombreSerie
       case cSerie == "V"
-         aTmp[ _CNOMSERV ] := cNomSer
+         aTmp[ _CNOMSERV ] := cNombreSerie
       case cSerie == "W"
-         aTmp[ _CNOMSERW ] := cNomSer
+         aTmp[ _CNOMSERW ] := cNombreSerie
       case cSerie == "X"
-         aTmp[ _CNOMSERX ] := cNomSer
+         aTmp[ _CNOMSERX ] := cNombreSerie
       case cSerie == "Y"
-         aTmp[ _CNOMSERY ] := cNomSer
+         aTmp[ _CNOMSERY ] := cNombreSerie
       case cSerie == "Z"
-         aTmp[ _CNOMSERZ ] := cNomSer
+         aTmp[ _CNOMSERZ ] := cNombreSerie
    end case
 
 return ( .t. )
 
 //---------------------------------------------------------------------------//
 
-static function CargaNombreSerie( aTmp, oSerie, oNomSer )
+static function CargaNombreSerie( aTmp, oSerie )
 
    do Case
       case oSerie:VarGet() == "A"
-         oNomSer:cText( aTmp[ _CNOMSERA ] )
+         oNombreSerie:cText( aTmp[ _CNOMSERA ] )
       case oSerie:VarGet() == "B"
-         oNomSer:cText( aTmp[ _CNOMSERB ] )
+         oNombreSerie:cText( aTmp[ _CNOMSERB ] )
       case oSerie:VarGet() == "C"
-         oNomSer:cText( aTmp[ _CNOMSERC ] )
+         oNombreSerie:cText( aTmp[ _CNOMSERC ] )
       case oSerie:VarGet() == "D"
-         oNomSer:cText( aTmp[ _CNOMSERD ] )
+         oNombreSerie:cText( aTmp[ _CNOMSERD ] )
       case oSerie:VarGet() == "E"
-         oNomSer:cText( aTmp[ _CNOMSERE ] )
+         oNombreSerie:cText( aTmp[ _CNOMSERE ] )
       case oSerie:VarGet() == "F"
-         oNomSer:cText( aTmp[ _CNOMSERF ] )
+         oNombreSerie:cText( aTmp[ _CNOMSERF ] )
       case oSerie:VarGet() == "G"
-         oNomSer:cText( aTmp[ _CNOMSERG ] )
+         oNombreSerie:cText( aTmp[ _CNOMSERG ] )
       case oSerie:VarGet() == "H"
-         oNomSer:cText( aTmp[ _CNOMSERH ] )
+         oNombreSerie:cText( aTmp[ _CNOMSERH ] )
       case oSerie:VarGet() == "I"
-         oNomSer:cText( aTmp[ _CNOMSERI ] )
+         oNombreSerie:cText( aTmp[ _CNOMSERI ] )
       case oSerie:VarGet() == "J"
-         oNomSer:cText( aTmp[ _CNOMSERJ ] )
+         oNombreSerie:cText( aTmp[ _CNOMSERJ ] )
       case oSerie:VarGet() == "K"
-         oNomSer:cText( aTmp[ _CNOMSERK ] )
+         oNombreSerie:cText( aTmp[ _CNOMSERK ] )
       case oSerie:VarGet() == "L"
-         oNomSer:cText( aTmp[ _CNOMSERL ] )
+         oNombreSerie:cText( aTmp[ _CNOMSERL ] )
       case oSerie:VarGet() == "M"
-         oNomSer:cText( aTmp[ _CNOMSERM ] )
+         oNombreSerie:cText( aTmp[ _CNOMSERM ] )
       case oSerie:VarGet() == "N"
-         oNomSer:cText( aTmp[ _CNOMSERN ] )
+         oNombreSerie:cText( aTmp[ _CNOMSERN ] )
       case oSerie:VarGet() == "O"
-         oNomSer:cText( aTmp[ _CNOMSERO ] )
+         oNombreSerie:cText( aTmp[ _CNOMSERO ] )
       case oSerie:VarGet() == "P"
-         oNomSer:cText( aTmp[ _CNOMSERP ] )
+         oNombreSerie:cText( aTmp[ _CNOMSERP ] )
       case oSerie:VarGet() == "Q"
-         oNomSer:cText( aTmp[ _CNOMSERQ ] )
+         oNombreSerie:cText( aTmp[ _CNOMSERQ ] )
       case oSerie:VarGet() == "R"
-         oNomSer:cText( aTmp[ _CNOMSERR ] )
+         oNombreSerie:cText( aTmp[ _CNOMSERR ] )
       case oSerie:VarGet() == "S"
-         oNomSer:cText( aTmp[ _CNOMSERS ] )
+         oNombreSerie:cText( aTmp[ _CNOMSERS ] )
       case oSerie:VarGet() == "T"
-         oNomSer:cText( aTmp[ _CNOMSERT ] )
+         oNombreSerie:cText( aTmp[ _CNOMSERT ] )
       case oSerie:VarGet() == "U"
-         oNomSer:cText( aTmp[ _CNOMSERU ] )
+         oNombreSerie:cText( aTmp[ _CNOMSERU ] )
       case oSerie:VarGet() == "V"
-         oNomSer:cText( aTmp[ _CNOMSERV ] )
+         oNombreSerie:cText( aTmp[ _CNOMSERV ] )
       case oSerie:VarGet() == "W"
-         oNomSer:cText( aTmp[ _CNOMSERW ] )
+         oNombreSerie:cText( aTmp[ _CNOMSERW ] )
       case oSerie:VarGet() == "X"
-         oNomSer:cText( aTmp[ _CNOMSERX ] )
+         oNombreSerie:cText( aTmp[ _CNOMSERX ] )
       case oSerie:VarGet() == "Y"
-         oNomSer:cText( aTmp[ _CNOMSERY ] )
+         oNombreSerie:cText( aTmp[ _CNOMSERY ] )
       case oSerie:VarGet() == "Z"
-         oNomSer:cText( aTmp[ _CNOMSERZ ] )
+         oNombreSerie:cText( aTmp[ _CNOMSERZ ] )
    end case
 
 return ( .t. )

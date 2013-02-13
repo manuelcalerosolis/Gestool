@@ -1259,7 +1259,7 @@ METHOD Importar()
             end case
 
             ::oDbfCliGst:nLabel     := ::oDbfCliFac:nEtiquetas
-            ::oDbfCliGst:mComent    := ::oDbfCliFac:cObser2Bco  // Solo para Arguelles
+            ::oDbfCliGst:mComent    := ::oDbfCliFac:cObser2Bco  // -1para Arguelles
             ::oDbfCliGst:cCodGrp    := Padl( AllTrim( ::oDbfCliFac:cCodGrup), 4, "0" )
             ::oDbfCliGst:cCodRem    := ::oDbfCliFac:cCtaRem
             ::oDbfCliGst:cMeiInt    := ::oDbfCliFac:eMail
