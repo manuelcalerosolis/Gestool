@@ -12924,7 +12924,7 @@ FUNCTION rxPedCli( cPath, oMeter )
       ( dbfPedCliT )->( ordCreate( cPath + "PedCliT.Cdx", "cCodWeb", "Str( cCodWeb )", {|| Str( Field->cCodWeb ) } ) )
 
       ( dbfPedCliT )->( ordCondSet( "!Deleted()", {|| !Deleted() } ) )
-      ( dbfPedCliT )->( ordCreate( cPath + "PedCliT.Cdx", "iNumPre", "'PEDIDO CLIENTES               ' + cSerPed + Str( nNumPed ) + cSufPed", {|| 'PEDIDO CLIENTES               ' + Field->cSerPed + Str( Field->nNumPed ) + Field->cSufPed } ) )
+      ( dbfPedCliT )->( ordCreate( cPath + "PedCliT.Cdx", "iNumPed", "'09' + cSerPed + Str( nNumPed ) + Space( 1 ) + cSufPed", {|| '09' + Field->cSerPed + Str( Field->nNumPed ) + Space( 1 ) + Field->cSufPed } ) )
 
       ( dbfPedCliT )->( dbCloseArea() )
    else
@@ -12945,7 +12945,7 @@ FUNCTION rxPedCli( cPath, oMeter )
       ( dbfPedCliT )->( ordCreate( cPath + "PEDCLIL.CDX", "Lote", "cLote", {|| Field->cLote } ) )
 
       ( dbfPedCliT )->( ordCondSet( "!Deleted()", {|| !Deleted() } ) )
-      ( dbfPedCliT )->( ordCreate( cPath + "PedCliL.Cdx", "iNumPre", "'PEDIDO CLIENTES               ' + cSerPed + Str( nNumPed ) + cSufPed", {|| 'PEDIDO CLIENTES               ' + Field->cSerPed + Str( Field->nNumPed ) + Field->cSufPed } ) )
+      ( dbfPedCliT )->( ordCreate( cPath + "PedCliL.Cdx", "iNumPed", "'09' + cSerPed + Str( nNumPed ) + Space( 1 ) + cSufPed", {|| '09' + Field->cSerPed + Str( Field->nNumPed ) + Space( 1 ) + Field->cSufPed } ) )
 
       ( dbfPedCliT )->( dbCloseArea() )
    else
@@ -12962,6 +12962,9 @@ FUNCTION rxPedCli( cPath, oMeter )
       ( dbfPedCliT )->( ordCondSet("!Deleted()", {||!Deleted()}  ) )
       ( dbfPedCliT )->( ordCreate( cPath + "PEDCLIR.CDX", "CREF", "CREF + CVALPR1 + CVALPR2", {|| Field->CREF + Field->CVALPR1 + Field->CVALPR2 } ) )
 
+      ( dbfPedCliT )->( ordCondSet( "!Deleted()", {|| !Deleted() } ) )
+      ( dbfPedCliT )->( ordCreate( cPath + "PedCliR.Cdx", "iNumPed", "'09' + cSerPed + Str( nNumPed ) + Space( 1 ) + cSufPed", {|| '09' + Field->cSerPed + Str( Field->nNumPed ) + Space( 1 ) + Field->cSufPed } ) )
+
       ( dbfPedCliT )->( dbCloseArea() )
    else
       msgStop( "Imposible abrir en modo exclusivo la tabla de pedidos de clientes" )
@@ -12977,6 +12980,9 @@ FUNCTION rxPedCli( cPath, oMeter )
       ( dbfPedCliT )->( ordCondSet("!Deleted() .and. !lSndWeb ", {||!Deleted() .and. !Field->lSndWeb }  ) )
       ( dbfPedCliT )->( ordCreate( cPath + "PedCliI.CDX", "lSndWeb", "CSERPED + STR( NNUMPED ) + CSUFPED", {|| Field->CSERPED + STR( Field->NNUMPED ) + Field->CSUFPED } ) )
 
+      ( dbfPedCliT )->( ordCondSet( "!Deleted()", {|| !Deleted() } ) )
+      ( dbfPedCliT )->( ordCreate( cPath + "PedCliI.Cdx", "iNumPed", "'09' + cSerPed + Str( nNumPed ) + Space( 1 ) + cSufPed", {|| '09' + Field->cSerPed + Str( Field->nNumPed ) + Space( 1 ) + Field->cSufPed } ) )
+
       ( dbfPedCliT )->( dbCloseArea() )
    else
       msgStop( "Imposible abrir en modo exclusivo la tabla de pedidos de clientes" )
@@ -12990,6 +12996,9 @@ FUNCTION rxPedCli( cPath, oMeter )
 
       ( dbfPedCliT )->( ordCondSet("!Deleted()", {||!Deleted()}  ) )
       ( dbfPedCliT )->( ordCreate( cPath + "PedCliD.CDX", "NNUMPED", "CSERPED + STR( NNUMPED ) + CSUFPED", {|| Field->CSERPED + STR( Field->NNUMPED ) + Field->CSUFPED } ) )
+
+      ( dbfPedCliT )->( ordCondSet( "!Deleted()", {|| !Deleted() } ) )
+      ( dbfPedCliT )->( ordCreate( cPath + "PedCliD.Cdx", "iNumPed", "'09' + cSerPed + Str( nNumPed ) + Space( 1 ) + cSufPed", {|| '09' + Field->cSerPed + Str( Field->nNumPed ) + Space( 1 ) + Field->cSufPed } ) )
 
       ( dbfPedCliT )->( dbCloseArea() )
 
@@ -13180,7 +13189,7 @@ function aColPedCli()
    aAdd( aColPedCli, { "CCODPR2",   "C",   10,  0, "Código de la segunda propiedad",  "",                   "", "( cDbfCol )", nil } )
    aAdd( aColPedCli, { "CVALPR1",   "C",   10,  0, "Valor de la primera propiedad",   "",                   "", "( cDbfCol )", nil } )
    aAdd( aColPedCli, { "CVALPR2",   "C",   10,  0, "Valor de la segunda propiedad",   "",                   "", "( cDbfCol )", nil } )
-   aAdd( aColPedCli, { "CDETALLE",  "C",  250,  0, "",                                "",                   "", "( cDbfCol )", nil } )
+   aAdd( aColPedCli, { "CDETALLE",  "C",  250,  0, "Descripción de artículo",         "",                   "", "( cDbfCol )", nil } )
    aAdd( aColPedCli, { "NIVA"    ,  "N",    6,  2, "Porcentaje de impuesto",          "'@E 99.99'",         "", "( cDbfCol )", nil } )
    aAdd( aColPedCli, { "NCANPED" ,  "N",   16,  6, "Cantidad pedida",                 "MasUnd()",           "", "( cDbfCol )", nil } )
    aAdd( aColPedCli, { "NUNICAJA",  "N",   16,  6, "Unidades por caja",               "MasUnd()",           "", "( cDbfCol )", nil } )

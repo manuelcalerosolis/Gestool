@@ -7592,7 +7592,7 @@ FUNCTION rxPreCli( cPath, oMeter )
       ( dbfPreCliT )->( ordCreate( cPath + "PreCliT.Cdx", "cCodUsr", "cCodUsr + Dtos( dFecCre ) + cTimCre", {|| Field->cCodUsr + Dtos( Field->dFecCre ) + Field->cTimCre } ) )
 
       ( dbfPreCliT )->( ordCondSet( "!Deleted()", {|| !Deleted() } ) )
-      ( dbfPreCliT )->( ordCreate( cPath + "PreCliT.Cdx", "iNumPre", "'08' + cSerPre + Str( nNumPre ) + cSufPre", {|| '08' + Field->cSerPre + Str( Field->nNumPre ) + Field->cSufPre } ) )
+      ( dbfPreCliT )->( ordCreate( cPath + "PreCliT.Cdx", "iNumPre", "'08' + cSerPre + Str( nNumPre ) + Space( 1 ) + cSufPre", {|| '08' + Field->cSerPre + Str( Field->nNumPre ) + Space( 1 ) + Field->cSufPre } ) )
 
       ( dbfPreCliT )->( dbCloseArea() )
 
@@ -7614,7 +7614,7 @@ FUNCTION rxPreCli( cPath, oMeter )
       ( dbfPreCliT )->( ordCreate( cPath + "PreCliL.Cdx", "Lote", "cLote", {|| Field->cLote }, ) )
 
       ( dbfPreCliT )->( ordCondSet( "!Deleted()", {|| !Deleted() } ) )
-      ( dbfPreCliT )->( ordCreate( cPath + "PreCliL.Cdx", "iNumPre", "'08' + cSerPre + Str( nNumPre ) + cSufPre", {|| '08' + Field->cSerPre + Str( Field->nNumPre ) + Field->cSufPre } ) )
+      ( dbfPreCliT )->( ordCreate( cPath + "PreCliL.Cdx", "iNumPre", "'08' + cSerPre + Str( nNumPre ) + Space( 1 ) + cSufPre", {|| '08' + Field->cSerPre + Str( Field->nNumPre ) + Space( 1 ) + Field->cSufPre } ) )
 
       ( dbfPreCliT )->( ordCondSet("!Deleted()", {||!Deleted()}  ) )
       ( dbfPreCliT )->( ordCreate( cPath + "PreCliL.Cdx", "nNumLin", "Str( NNUMPRE ) + Str( nNumLin )", {|| Str( Field->nNumPre ) + Str( Field->nNumLin ) }, ) )
@@ -7632,7 +7632,7 @@ FUNCTION rxPreCli( cPath, oMeter )
       ( dbfPreCliT )->( ordCreate( cPath + "PRECLII.CDX", "NNUMPRE", "CSERPRE + STR( NNUMPRE ) + CSUFPRE", {|| Field->CSERPRE + STR(Field->NNUMPRE) + Field->CSUFPRE } ) )
 
       ( dbfPreCliT )->( ordCondSet( "!Deleted()", {|| !Deleted() } ) )
-      ( dbfPreCliT )->( ordCreate( cPath + "PreCliI.Cdx", "iNumPre", "'08' + cSerPre + Str( nNumPre ) + cSufPre", {|| '08' + Field->cSerPre + Str( Field->nNumPre ) + Field->cSufPre } ) )
+      ( dbfPreCliT )->( ordCreate( cPath + "PreCliI.Cdx", "iNumPre", "'08' + cSerPre + Str( nNumPre ) + Space( 1 ) + cSufPre", {|| '08' + Field->cSerPre + Str( Field->nNumPre ) + Space( 1 ) + Field->cSufPre } ) )
 
       ( dbfPreCliT )->( dbCloseArea() )
    else
@@ -7647,7 +7647,7 @@ FUNCTION rxPreCli( cPath, oMeter )
       ( dbfPreCliT )->( ordCreate( cPath + "PRECLID.CDX", "NNUMPRE", "CSERPRE + STR( NNUMPRE ) + CSUFPRE", {|| Field->CSERPRE + STR(Field->NNUMPRE) + Field->CSUFPRE } ) )
 
       ( dbfPreCliT )->( ordCondSet( "!Deleted()", {|| !Deleted() } ) )
-      ( dbfPreCliT )->( ordCreate( cPath + "PreCliD.Cdx", "iNumPre", "'08' + cSerPre + Str( nNumPre ) + cSufPre", {|| '08' + Field->cSerPre + Str( Field->nNumPre ) + Field->cSufPre } ) )
+      ( dbfPreCliT )->( ordCreate( cPath + "PreCliD.Cdx", "iNumPre", "'08' + cSerPre + Str( nNumPre ) + Space( 1 ) + cSufPre", {|| '08' + Field->cSerPre + Str( Field->nNumPre ) + Space( 1 ) + Field->cSufPre } ) )
 
       ( dbfPreCliT )->( dbCloseArea() )
    else
@@ -8935,8 +8935,8 @@ function aColPreCli()
    aAdd( aColPreCli, { "NNUMPRE", "N",    9,  0, "Numero de presupuesto" ,           "'999999999'",        "", "( cDbfCol )" } )
    aAdd( aColPreCli, { "CSUFPRE", "C",    2,  0, "Sufijo de presupuesto" ,           "",                   "", "( cDbfCol )" } )
    aAdd( aColPreCli, { "CREF",    "C",   18,  0, "Referencia del producto" ,         "",                   "", "( cDbfCol )" } )
-   aAdd( aColPreCli, { "CDETALLE","C",  250,  0, "" ,                                "",                   "", "( cDbfCol )" } )
-   aAdd( aColPreCli, { "NIVA"    ,"N",    6,  2, "Importe del " + cImp() ,                 "'@E 99.9'",          "", "( cDbfCol )" } )
+   aAdd( aColPreCli, { "CDETALLE","C",  250,  0, "Descripción de artículo" ,         "",                   "", "( cDbfCol )" } )
+   aAdd( aColPreCli, { "NIVA"    ,"N",    6,  2, "Importe del " + cImp() ,           "'@E 99.9'",          "", "( cDbfCol )" } )
    aAdd( aColPreCli, { "NCANPRE" ,"N",   16,  6, "Cantidad pedida" ,                 "MasUnd()",           "", "( cDbfCol )" } )
    aAdd( aColPreCli, { "NUNICAJA","N",   16,  6, "Unidades por caja" ,               "MasUnd()",           "", "( cDbfCol )" } )
    aAdd( aColPreCli, { "LCONTROL","L",    1,  0, "" ,                                "",                   "", "( cDbfCol )" } )

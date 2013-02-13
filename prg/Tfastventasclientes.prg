@@ -461,26 +461,25 @@ METHOD DataReport() CLASS TFastVentasClientes
 
    ::oFastReport:SetMasterDetail(   "Informe", "Agentes",               {|| ::oDbf:cCodAge } )
 
-   ::oFastReport:SetMasterDetail(   "Informe", "Presupuestos de clientes",          {|| msgAlert( ::oDbf:cClsDoc + ::oDbf:cSerDoc + ::oDbf:cNumDoc + ::oDbf:cSufDoc ), ::oDbf:cClsDoc + ::oDbf:cSerDoc + ::oDbf:cNumDoc + ::oDbf:cSufDoc } )
+   ::oFastReport:SetMasterDetail(   "Informe", "Presupuestos de clientes",                   {|| ::cIdeDocumento() } )
+   ::oFastReport:SetMasterDetail(   "Informe", "Lineas presupuestos de clientes",            {|| ::cIdeDocumento() } )
 
-   ::oFastReport:SetMasterDetail(   "Informe", "Pedidos de clientes",               {|| Padr( Upper( ::oDbf:cTipDoc ), 30 ) + ::oDbf:cSerDoc + ::oDbf:cNumDoc + ::oDbf:cSufDoc } )
-   ::oFastReport:SetMasterDetail(   "Informe", "Lineas pedidos de clientes",        {|| Padr( Upper( ::oDbf:cTipDoc ), 30 ) + ::oDbf:cSerDoc + ::oDbf:cNumDoc + ::oDbf:cSufDoc } )
+   ::oFastReport:SetMasterDetail(   "Informe", "Pedidos de clientes",                        {|| ::cIdeDocumento() } )
+   ::oFastReport:SetMasterDetail(   "Informe", "Lineas pedidos de clientes",                 {|| ::cIdeDocumento() } )
 
-   ::oFastReport:SetMasterDetail(   "Informe", "Albaranes de clientes",             {|| Padr( Upper( ::oDbf:cTipDoc ), 30 ) + ::oDbf:cSerDoc + ::oDbf:cNumDoc + ::oDbf:cSufDoc } )
-   ::oFastReport:SetMasterDetail(   "Informe", "Lineas albaranes de clientes",      {|| Padr( Upper( ::oDbf:cTipDoc ), 30 ) + ::oDbf:cSerDoc + ::oDbf:cNumDoc + ::oDbf:cSufDoc } )
+   ::oFastReport:SetMasterDetail(   "Informe", "Albaranes de clientes",                      {|| ::cIdeDocumento() } )
+   ::oFastReport:SetMasterDetail(   "Informe", "Lineas albaranes de clientes",               {|| ::cIdeDocumento() } )
 
-   ::oFastReport:SetMasterDetail(   "Informe", "Facturas de clientes",              {|| Padr( Upper( ::oDbf:cTipDoc ), 30 ) + ::oDbf:cSerDoc + ::oDbf:cNumDoc + ::oDbf:cSufDoc } )
-   ::oFastReport:SetMasterDetail(   "Informe", "Lineas facturas de clientes",       {|| Padr( Upper( ::oDbf:cTipDoc ), 30 ) + ::oDbf:cSerDoc + ::oDbf:cNumDoc + ::oDbf:cSufDoc } )
+   ::oFastReport:SetMasterDetail(   "Informe", "Facturas de clientes",                       {|| ::cIdeDocumento() } )
+   ::oFastReport:SetMasterDetail(   "Informe", "Lineas facturas de clientes",                {|| ::cIdeDocumento() } )
 
-   ::oFastReport:SetMasterDetail(   "Informe", "Facturas rectificativas de clientes",        {|| Padr( Upper( ::oDbf:cTipDoc ), 30 ) + ::oDbf:cSerDoc + ::oDbf:cNumDoc + ::oDbf:cSufDoc } )
-   ::oFastReport:SetMasterDetail(   "Informe", "Lineas facturas rectificativas de clientes", {|| Padr( Upper( ::oDbf:cTipDoc ), 30 ) + ::oDbf:cSerDoc + ::oDbf:cNumDoc + ::oDbf:cSufDoc } )
+   ::oFastReport:SetMasterDetail(   "Informe", "Facturas rectificativas de clientes",        {|| ::cIdeDocumento() } )
+   ::oFastReport:SetMasterDetail(   "Informe", "Lineas facturas rectificativas de clientes", {|| ::cIdeDocumento() } )
 
    ::oFastReport:SetMasterDetail(   "Clientes", "Rutas",                {|| ::oDbfCli:cCodRut } )
    ::oFastReport:SetMasterDetail(   "Clientes", "Grupos de cliente",    {|| ::oDbfCli:cCodGrp } )
    ::oFastReport:SetMasterDetail(   "Clientes", "Formas de pago",       {|| ::oDbfCli:CodPago } )
    ::oFastReport:SetMasterDetail(   "Clientes", "Usuarios",             {|| ::oDbfCli:cCodUsr } )
-
-   // ::oFastReport:SetMasterDetail(   "Presupuestos de clientes", "Lineas presupuestos de clientes", {|| '08' + ::oPreCliT:cSerPre + Str( ::oPreCliT:nNumPre ) + ::oPreCliT:cSufPre } )
 
    ::oFastReport:SetResyncPair(     "Informe", "Empresa" )
    ::oFastReport:SetResyncPair(     "Informe", "Facturas" )
@@ -493,6 +492,7 @@ METHOD DataReport() CLASS TFastVentasClientes
    ::oFastReport:SetResyncPair(     "Informe", "Incidencias" )
 
    ::oFastReport:SetResyncPair(     "Informe", "Presupuestos de clientes" )
+   ::oFastReport:SetResyncPair(     "Informe", "Lineas presupuestos de clientes" )
 
    ::oFastReport:SetResyncPair(     "Informe", "Pedidos de clientes" )
    ::oFastReport:SetResyncPair(     "Informe", "Lineas pedidos de clientes" )
@@ -507,10 +507,6 @@ METHOD DataReport() CLASS TFastVentasClientes
    ::oFastReport:SetResyncPair(     "Clientes", "Grupos de cliente" )
    ::oFastReport:SetResyncPair(     "Clientes", "Formas de pago" )
    ::oFastReport:SetResyncPair(     "Clientes", "Usuarios" )
-
-   // ( ::oPreCliT:nArea )->( dbSetRelation( ::oPreCliL:nArea, {|| '08' + ::oPreCliT:cSerPre + Str( ::oPreCliT:nNumPre ) + ::oPreCliT:cSufPre } ) )
-
-   // ::oFastReport:SetResyncPair(     "Presupuestos de clientes",   "Lineas presupuestos de clientes" )
 
    ::AddVariable()
 
@@ -549,7 +545,7 @@ METHOD lGenerate() CLASS TFastVentasClientes
          
       case ::cReportName == "Informe de albaranes"
 
-   //      ::AddAlbaranCliente( .t. )
+         ::AddAlbaranCliente( .t. )
 
       case ::cTypeName == "Informe de facturas"
 
@@ -755,6 +751,7 @@ METHOD AddPedidoCliente( cCodigoCliente ) CLASS TFastVentasClientes
             ::oDbf:cCodGrp    := cGruCli( ::oPedCliT:cCodCli, ::oDbfCli )
 
             ::oDbf:cTipDoc    := "Pedidos clientes"
+            ::oDbf:cClsDoc    := PED_CLI
             ::oDbf:cSerDoc    := ::oPedCliT:cSerPed
             ::oDbf:cNumDoc    := Str( ::oPedCliT:nNumPed )
             ::oDbf:cSufDoc    := ::oPedCliT:cSufPed
@@ -815,106 +812,106 @@ RETURN ( Self )
 
 METHOD AddAlbaranCliente( lFacturados ) CLASS TFastVentasClientes
 
+   local sTot
+   local oError
+   local oBlock
    local cExpHead
-   local cExpLine
-
+   
    DEFAULT lFacturados  := .f.
 
-   ::oAlbCliT:OrdSetFocus( "dFecAlb" )
-   ::oAlbCliL:OrdSetFocus( "nNumAlb" )
+   oBlock               := ErrorBlock( {| oError | ApoloBreak( oError ) } )
+   BEGIN SEQUENCE
+   
+      ::InitAlbidosClientes()
 
-   if lFacturados
-      cExpHead          := '!lFacturado .and. dFecAlb >= Ctod( "' + Dtoc( ::dIniInf ) + '" ) .and. dFecAlb <= Ctod( "' + Dtoc( ::dFinInf ) + '" )'
-   else
-      cExpHead          := 'dFecAlb >= Ctod( "' + Dtoc( ::dIniInf ) + '" ) .and. dFecAlb <= Ctod( "' + Dtoc( ::dFinInf ) + '" )'
-   end if
+      ::oAlbCliT:OrdSetFocus( "dFecAlb" )
 
-   cExpHead             += ' .and. cCodCli >= "' + Rtrim( ::oGrupoCliente:Cargo:Desde ) + '" .and. cCodCli <= "' + Rtrim( ::oGrupoCliente:Cargo:Hasta ) + '"'
+      if lFacturados
+         cExpHead       := '!lFacturado .and. dFecAlb >= Ctod( "' + Dtoc( ::dIniInf ) + '" ) .and. dFecAlb <= Ctod( "' + Dtoc( ::dFinInf ) + '" )'
+      else
+         cExpHead       := 'dFecAlb >= Ctod( "' + Dtoc( ::dIniInf ) + '" ) .and. dFecAlb <= Ctod( "' + Dtoc( ::dFinInf ) + '" )'
+      end if
+      cExpHead          += ' .and. Rtrim( cCodCli ) >= "' + Rtrim( ::oGrupoCliente:Cargo:Desde )   + '" .and. Rtrim( cCodCli ) <= "' + Rtrim( ::oGrupoCliente:Cargo:Hasta ) + '"'
+      cExpHead          += ' .and. cSerAlb >= "' + Rtrim( ::oGrupoSerie:Cargo:Desde ) + '" .and. cSerAlb <= "'    + Rtrim( ::oGrupoSerie:Cargo:Hasta ) + '"'
 
-   /*
-   if !Empty( ::oFilter:aExpFilter ) .and. len( ::oFilter:aExpFilter ) >= 1
-      cExpHead       += ' .and. ' + ::oFilter:aExpFilter[ 1 ]
-   end if
-   */
+      ::oAlbCliT:AddTmpIndex( cCurUsr(), GetFileNoExt( ::oAlbCliT:cFile ), ::oAlbCliT:OrdKey(), ( cExpHead ), , , , , , , , .t. )
 
-   ::oAlbCliT:AddTmpIndex( cCurUsr(), GetFileNoExt( ::oAlbCliT:cFile ), ::oAlbCliT:OrdKey(), ( cExpHead ), , , , , , , , .t. )
+      ::oMtrInf:cText   := "Procesando albaranes"
+      ::oMtrInf:SetTotal( ::oAlbCliT:OrdKeyCount() )
 
-   ::oMtrInf:cText   := "Procesando albaranes"
-   ::oMtrInf:SetTotal( ::oAlbCliT:OrdKeyCount() )
+      ::oAlbCliT:GoTop()
+      while !::lBreak .and. !::oAlbCliT:Eof()
 
-   /*
-   Lineas de albaranes---------------------------------------------------------
-   */
+         if lChkSer( ::oAlbCliT:cSerAlb, ::aSer )
 
-   cExpLine          := '!lTotLin .and. !lControl'
+            sTot              := sTotAlbCli( ::oAlbCliT:cSerAlb + Str( ::oAlbCliT:nNumAlb ) + ::oAlbCliT:cSufAlb, ::oAlbCliT:cAlias, ::oAlbCliL:cAlias, ::oDbfIva:cAlias, ::oDbfDiv:cAlias )
 
-   if !::lAllArt
-      cExpLine       += ' .and. cRef >= "' + ::oGrupoArticulo:Cargo:Desde + '" .and. cRef <= "' + ::oGrupoArticulo:Cargo:Hasta + '"'
-   end if
+            ::oDbf:Blank()
 
-   ::oAlbCliL:AddTmpIndex( cCurUsr(), GetFileNoExt( ::oAlbCliL:cFile ), ::oAlbCliL:OrdKey(), cAllTrimer( cExpLine ), , , , , , , , .t. )
+            ::oDbf:cCodCli    := ::oAlbCliT:cCodCli
+            ::oDbf:cNomCli    := ::oAlbCliT:cNomCli
+            ::oDbf:cCodAge    := ::oAlbCliT:cCodAge
+            ::oDbf:cCodPgo    := ::oAlbCliT:cCodPgo
+            ::oDbf:cCodRut    := ::oAlbCliT:cCodRut
+            ::oDbf:cCodUsr    := ::oAlbCliT:cCodUsr
 
-   ::oAlbCliT:GoTop()
+            ::oDbf:cCodGrp    := cGruCli( ::oAlbCliT:cCodCli, ::oDbfCli )
 
-   while !::lBreak .and. !::oAlbCliT:Eof()
+            ::oDbf:cTipDoc    := "Albaranes clientes"
+            ::oDbf:cClsDoc    := ALB_CLI
+            ::oDbf:cSerDoc    := ::oAlbCliT:cSerAlb
+            ::oDbf:cNumDoc    := Str( ::oAlbCliT:nNumAlb )
+            ::oDbf:cSufDoc    := ::oAlbCliT:cSufAlb
+            ::oDbf:cIdeDoc    := Upper( ::oDbf:cTipDoc ) + ::oDbf:cSerDoc + ::oDbf:cNumDoc + ::oDbf:cSufDoc
 
-      if lChkSer( ::oAlbCliT:cSerAlb, ::aSer )
+            ::oDbf:nAnoDoc    := Year( ::oAlbCliT:dFecAlb )
+            ::oDbf:nMesDoc    := Month( ::oAlbCliT:dFecAlb )
+            ::oDbf:dFecDoc    := ::oAlbCliT:dFecAlb
+            ::oDbf:cHorDoc    := SubStr( ::oAlbCliT:cTimCre, 1, 2 )
+            ::oDbf:cMinDoc    := SubStr( ::oAlbCliT:cTimCre, 3, 2 )
 
-         if ::oAlbCliL:Seek( ::oAlbCliT:cSerAlb + Str( ::oAlbCliT:nNumAlb ) + ::oAlbCliT:cSufAlb )
+            ::oDbf:nTotNet    := sTot:nTotalNeto
+            ::oDbf:nTotIva    := sTot:nTotalIva
+            ::oDbf:nTotReq    := sTot:nTotalRecargoEquivalencia
+            ::oDbf:nTotDoc    := sTot:nTotalDocumento
+            ::oDbf:nTotPnt    := sTot:nTotalPuntoVerde
+            ::oDbf:nTotTrn    := sTot:nTotalTransporte
+            ::oDbf:nTotAge    := sTot:nTotalAgente
+            ::oDbf:nTotCos    := sTot:nTotalCosto
+            ::oDbf:nTotIvm    := sTot:nTotalImpuestoHidrocarburos
+            ::oDbf:nTotRnt    := sTot:nTotalRentabilidad
+            ::oDbf:nTotRet    := sTot:nTotalRetencion
+            ::oDbf:nTotCob    := sTot:nTotalCobrado
 
-            while !::lBreak .and. ( ::oAlbCliT:cSerAlb + Str( ::oAlbCliT:nNumAlb ) + ::oAlbCliT:cSufAlb == ::oAlbCliL:cSerAlb + Str( ::oAlbCliL:nNumAlb ) + ::oAlbCliL:cSufAlb ) .and. !( ::oAlbCliL:eof() )
+            /*
+            Añadimos un nuevo registro--------------------------------------------
+            */
 
-               if !( ::lExcCero  .and. nTotNAlbCli( ::oAlbCliL:cAlias ) == 0 )  .and.;
-                  !( ::lExcImp   .and. nImpLAlbCli( ::oAlbCliT:cAlias, ::oAlbCliL:cAlias, ::nDecOut, ::nDerOut, ::nValDiv ) == 0 )
+            if ::lValidRegister()
+               ::oDbf:Insert()
+            else
+               ::oDbf:Cancel()
+            end if
 
-                  /*
-                  Añadimos un nuevo registro-----------------------------------
-                  */
-
-                  ::oDbf:Blank()
-                  ::oDbf:cCodArt  := ::oAlbCliL:cRef
-                  ::oDbf:cNomArt  := ::oAlbCliL:cDetalle
-
-                  ::oDbf:cCodTip  := RetFld( ::oAlbCliL:cRef, ::oDbfArt:cAlias, "cCodTip", "Codigo" )
-                  ::oDbf:cCodCli  := ::oAlbCliT:cCodCli
-                  ::oDbf:cCodGrp  := RetFld( ::oAlbCliL:cRef, ::oDbfArt:cAlias, "GrpVent", "Codigo" )
-                  ::oDbf:cCodPago := ::oAlbCliT:cCodPago
-                  ::oDbf:cCodRut  := ::oAlbCliT:cCodRut
-                  ::oDbf:cAgente  := ::oAlbCliT:cCodAge
-                  ::oDbf:cCodUsr  := ::oAlbCliT:cCodUsr
-
-                  ::oDbf:cSerDoc  := ::oAlbCliT:cSerAlb
-                  ::oDbf:cNumDoc  := Str( ::oAlbCliT:nNumAlb )
-                  ::oDbf:cSufDoc  := ::oAlbCliT:cSufAlb
-
-                  /*
-                  Añadimos un nuevo registro-----------------------------------
-                  */
-
-                  if ::lValidRegister()
-                     ::oDbf:Insert()
-                  else
-                     ::oDbf:Cancel()
-                  end if
-
-               end if
-
-               ::oAlbCliL:Skip()
-
-            end while
+            ::addAlbaranesClientes()
 
          end if
 
-      end if
+         ::oAlbCliT:Skip()
 
-      ::oAlbCliT:Skip()
+         ::oMtrInf:AutoInc()
 
-      ::oMtrInf:AutoInc()
+      end while
 
-   end while
+      ::oAlbCliT:IdxDelete( cCurUsr(), GetFileNoExt( ::oAlbCliT:cFile ) )
+   
+   RECOVER USING oError
 
-   ::oAlbCliT:IdxDelete( cCurUsr(), GetFileNoExt( ::oAlbCliT:cFile ) )
-   ::oAlbCliL:IdxDelete( cCurUsr(), GetFileNoExt( ::oAlbCliL:cFile ) )
+      msgStop( ErrorMessage( oError ), "Imposible añadir albaranes de clientes" )
+
+   END SEQUENCE
+
+   ErrorBlock( oBlock )
 
 RETURN ( Self )
 
@@ -1278,12 +1275,18 @@ RETURN ( Self )
 
 //---------------------------------------------------------------------------//
 
-METHOD preCliInfo( cTitle )
+METHOD preCliInfo()
 
-   msgStop( cTitle )
-   msgStop( ( ::oPreCliT:nArea )->( dbGoTop() ),      "GoTop" )
-   msgStop( ( ::oPreCliT:nArea )->( OrdSetFocus() ),  "OrdSetFocus" )
-   msgStop( ( ::oPreCliT:nArea )->( OrdKey() ),       "OrdKey" )
-   msgStop( ( ::oPreCliT:nArea )->( OrdKeyVal() ),    "OrdKeyVal" )
+   local cKey  := ::oDbf:cClsDoc + ::oDbf:cSerDoc + ::oDbf:cNumDoc + ::oDbf:cSufDoc
+
+   msgAlert( cKey, str( len( cKey ) ) )
+
+   if ::oPreCliT:Seek( cKey )
+      msgInfo( cKey, "found" )
+   else
+      msgStop( cKey, "not found" )
+      msgStop( len( cvaltochar( ::oPreCliT:OrdKeyVal() ) ), "len OrdKeyVal")
+      msgStop( ::oPreCliT:OrdSetFocus(), "ordsetfocus" )
+   end if
 
 return nil 

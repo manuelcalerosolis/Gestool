@@ -6,14 +6,14 @@
 
 #include "Factu.ch"
 
-#define SchemaVersion         '3.1'
-#define Modality              'I'   // "individual" (I)
-#define InvoiceIssuerType     'EM'
-#define InvoicesCount         '1'
-#define EquivalentInEuros     '0.00'
-#define InvoiceDocumentType   'FC'
-#define InvoiceClass          'OO'
-#define TaxTypeCode           '01'
+#define SchemaVersion            '3.1'
+#define Modality                 'I'   // "individual" (I)
+#define InvoiceIssuerType        'EM'
+#define InvoicesCount            '1'
+#define EquivalentInEuros        '0.00'
+#define InvoiceDocumentType      'FC'
+#define InvoiceClass             'OO'
+#define TaxTypeCode              '01'
 
 #define DoubleTwoDecimalPicture  "999,999,999.99"
 #define DoubleFourDecimalPicture "999,999,999.9999"
