@@ -75,8 +75,8 @@ METHOD Create()
    ::AddField( "nPreVol", "N", 16, 6, {|| ::cPicImp },     "Pre. vol.",            .f., "Precio volumen"            , 12, .f. )
    ::AddField( "nIvaTot", "N", 16, 6, {|| ::cPicOut },     cImp(),                 .t., cImp()                      , 12, .t. )
    ::AddField( "nTotFin", "N", 16, 6, {|| ::cPicOut },     "Total",                .t., "Total"                     , 12, .t. )
-   ::AddField( "cNbrEst", "C", 35, 0, {|| "@!" },          "Establecimiento",      .f., "Nombre establecimiento"    , 50 )
-   ::AddField( "cSituac", "C", 20, 0, {|| "@!" },          "Siruació",             .f., "Situación"                 , 50 )
+   ::AddField( "cNbrEst", "C", 35, 0, {|| "@!" },          "Establecimiento ",     .f., "Nombre establecimiento"    , 50 )
+   ::AddField( "cSituac", "C", 20, 0, {|| "@!" },          "Siruación",            .f., "Situación"                 , 50 )
    ::AddField( "cEstPro", "C", 50, 0, {|| "@!" },          "Producido",            .f., "Producido"                 , 50 )
 
    ::AddTmpIndex( "CCODCLI", "CCODCLI + CCODART + CCODPR1 + CCODPR2 + CVALPR1 + CVALPR2 + CLOTE" )
@@ -264,7 +264,7 @@ METHOD lGenerate() CLASS TInfCPed
                   ::oDbf:nTotFin    := ::oDbf:nImpTot + ::oDbf:nIvaTot
                   ::oDbf:dFecEnt    := ::oPedCliT:dFecEnt
                   ::oDbf:cSituac    := ::oPedCliT:cSituac
-                  ::oDbf:cEstPro    := ::aProduccion[ Max( ::oPedCliT:nProduc + 1, 1 ) ]
+                  ::oDbf:cEstPro    := ::aProduccion[ Max( ::oPedCliL:nProduc + 1, 1 ) ]
 
                   ::oDbf:Save()
 

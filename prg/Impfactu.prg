@@ -37,6 +37,14 @@ CLASS TImpFactu
    DATA oDbfRemFac
    DATA oDbfCtaRemGst
    DATA oDbfCtaRemFac
+   DATA oDbfPreTGst
+   DATA oDbfPreTFac
+   DATA oDbfPreLGst
+   DATA oDbfPreLFac
+   DATA oDbfPedTGst
+   DATA oDbfPedTFac
+   DATA oDbfPedLGst
+   DATA oDbfPedLFac
    DATA oDbfAlbTGst
    DATA oDbfAlbTFac
    DATA oDbfAlbLGst
@@ -74,6 +82,10 @@ CLASS TImpFactu
    DATA oDbfMovLFac
    DATA oDbfAtpGst
    DATA oDbfAtpFac
+   DATA oDbfPepTGst
+   DATA oDbfPepTFac
+   DATA oDbfPepLGst
+   DATA oDbfPepLFac
    DATA oDbfAlpTGst
    DATA oDbfAlpTFac
    DATA oDbfAlpLGst
@@ -101,7 +113,6 @@ CLASS TImpFactu
 
    METHOD SelectChk( lSet )
 
-
 END CLASS
 
 //---------------------------------------------------------------------------//
@@ -112,9 +123,9 @@ Abrimos los ficheros
 
 METHOD OpenFiles()
 
-   local lOpen    := .t.
+   local lOpen       := .t.
    local oError
-   local oBlock   := ErrorBlock( {| oError | ApoloBreak( oError ) } )
+   local oBlock      := ErrorBlock( {| oError | ApoloBreak( oError ) } )
 
    if Empty( ::cPathFac )
       MsgStop( "Ruta de factuplus ® esta vacia" )
@@ -225,6 +236,26 @@ METHOD OpenFiles()
       DATABASE NEW ::oDbfAlmFac PATH ( ::cPathFac ) FILE "ALMACEN.DBF"   VIA ( cDriver() )CLASS "ALMFAC"
    end if
 
+   if !File( ::cPathFac + "PRECLIT.DBF" ) .or.  !File( ::cPathFac + "PRECLIL.DBF" )
+      ::aChkIndices[ 20 ]:Click( .f. ):Refresh()
+      MsgAlert( "No existen ficheros de presupuestos", ::cPathFac + "PRECLIT.DBF, ni " + ::cPathFac + "PRECLIL.DBF" )
+   else
+      DATABASE NEW ::oDbfPreTGst PATH ( cPatEmp() )  FILE "PRECLIT.DBF"   VIA ( cDriver() )CLASS "PRETGST"  SHARED INDEX "PRECLIT.CDX"
+      DATABASE NEW ::oDbfPreTFac PATH ( ::cPathFac ) FILE "PRECLIT.DBF"   VIA ( cDriver() )CLASS "PRETFAC"
+      DATABASE NEW ::oDbfPreLGst PATH ( cPatEmp() )  FILE "PRECLIL.DBF"   VIA ( cDriver() )CLASS "PRELGST"  SHARED INDEX "PRECLIL.CDX"
+      DATABASE NEW ::oDbfPreLFac PATH ( ::cPathFac ) FILE "PRECLIL.DBF"   VIA ( cDriver() )CLASS "PRELFAC"
+   end if   
+
+   if !File( ::cPathFac + "PEDCLIT.DBF" ) .or.  !File( ::cPathFac + "PEDCLIL.DBF" )
+      ::aChkIndices[ 21 ]:Click( .f. ):Refresh()
+      MsgAlert( "No existen ficheros de pedidos", ::cPathFac + "PEDCLIT.DBF, ni " + ::cPathFac + "PEDCLIL.DBF" )
+   else
+      DATABASE NEW ::oDbfPedTGst PATH ( cPatEmp() )  FILE "PEDCLIT.DBF"   VIA ( cDriver() )CLASS "PEDTGST"  SHARED INDEX "PEDCLIT.CDX"
+      DATABASE NEW ::oDbfPedTFac PATH ( ::cPathFac ) FILE "PEDCLIT.DBF"   VIA ( cDriver() )CLASS "PEDTFAC"
+      DATABASE NEW ::oDbfPedLGst PATH ( cPatEmp() )  FILE "PEDCLIL.DBF"   VIA ( cDriver() )CLASS "PEDLGST"  SHARED INDEX "PEDCLIL.CDX"
+      DATABASE NEW ::oDbfPedLFac PATH ( ::cPathFac ) FILE "PEDCLIL.DBF"   VIA ( cDriver() )CLASS "PEDLFAC"
+   end if   
+
    if !File( ::cPathFac + "ALBCLIT.DBF" ) .or.  !File( ::cPathFac + "ALBCLIL.DBF" )
       ::aChkIndices[ 8 ]:Click( .f. ):Refresh()
       MsgAlert( "No existen ficheros de Albaranes", ::cPathFac + "ALBCLIT.DBF, ni " + ::cPathFac + "ALBCLIL.DBF" )
@@ -285,6 +316,18 @@ METHOD OpenFiles()
    else
       DATABASE NEW ::oDbfTrnGst PATH ( cPatGrp() )  FILE "Transpor.Dbf"    VIA ( cDriver() )CLASS "TRNGST"  SHARED INDEX "Transpor.Cdx"
       DATABASE NEW ::oDbfTrnFac PATH ( ::cPathFac ) FILE "Transpor.Dbf"    VIA ( cDriver() )CLASS "TRNFAC"
+   end if
+
+   
+
+   if !File( ::cPathFac + "PEDPROT.DBF" ) .or.  !File( ::cPathFac + "PEDPROL.DBF" )
+      ::aChkIndices[ 22 ]:Click( .f. ):Refresh()
+      MsgAlert( "No existen ficheros de pedidos de proveedor", ::cPathFac + "PEDPROT.DBF, ni " + ::cPathFac + "PEDPROL.DBF" )
+   else
+      DATABASE NEW ::oDbfPepTGst PATH ( cPatEmp() )  FILE "PEDPROVT.DBF"  VIA ( cDriver() )CLASS "PEPTGST"  SHARED INDEX "PEDPROVT.CDX"
+      DATABASE NEW ::oDbfPepTFac PATH ( ::cPathFac ) FILE "PEDPROT.DBF"   VIA ( cDriver() )CLASS "PEPTFAC"
+      DATABASE NEW ::oDbfPepLGst PATH ( cPatEmp() )  FILE "PEDPROVL.DBF"  VIA ( cDriver() )CLASS "PEPLGST"  SHARED INDEX "PEDPROVL.CDX"
+      DATABASE NEW ::oDbfPepLFac PATH ( ::cPathFac ) FILE "PEDPROL.DBF"   VIA ( cDriver() )CLASS "PEPLFAC"
    end if
 
    if !File( ::cPathFac + "ALBPROT.DBF" ) .or.  !File( ::cPathFac + "ALBPROL.DBF" )
@@ -764,6 +807,78 @@ METHOD CloseFiles()
       ::oDbfFapIGst := nil
    end if
 
+   if !Empty( ::oDbfPreTGst )
+      ::oDbfPreTGst:End()
+   else
+      ::oDbfPreTGst := nil
+   end if
+
+   if !Empty( ::oDbfPreTFac )
+      ::oDbfPreTFac:End()
+   else
+      ::oDbfPreTFac := nil
+   end if
+
+   if !Empty( ::oDbfPreLGst )
+      ::oDbfPreLGst:End()
+   else
+      ::oDbfPreLGst := nil
+   end if
+
+   if !Empty( ::oDbfPreLFac )
+      ::oDbfPreLFac:End()
+   else
+      ::oDbfPreLFac := nil
+   end if
+
+   if !Empty( ::oDbfPedTGst )
+      ::oDbfPedTGst:End()
+   else
+      ::oDbfPedTGst := nil
+   end if
+
+   if !Empty( ::oDbfPedTFac )
+      ::oDbfPedTFac:End()
+   else
+      ::oDbfPedTFac := nil
+   end if
+
+   if !Empty( ::oDbfPedLGst )
+      ::oDbfPedLGst:End()
+   else
+      ::oDbfPedLGst := nil
+   end if
+
+   if !Empty( ::oDbfPedLFac )
+      ::oDbfPedLFac:End()
+   else
+      ::oDbfPedLFac := nil
+   end if
+
+   if !Empty( ::oDbfPepTGst )
+      ::oDbfPepTGst:End()
+   else
+      ::oDbfPepTGst := nil
+   end if
+
+   if !Empty( ::oDbfPepTFac )
+      ::oDbfPepTFac:End()
+   else
+      ::oDbfPepTFac := nil
+   end if
+
+   if !Empty( ::oDbfPepLGst )
+      ::oDbfPepLGst:End()
+   else
+      ::oDbfPepLGst := nil
+   end if
+
+   if !Empty( ::oDbfPepLFac )
+      ::oDbfPepLFac:End()
+   else
+      ::oDbfPepLFac := nil
+   end if
+
 RETURN .T.
 
 // ----------------------------------------------------------------------------- //
@@ -772,10 +887,10 @@ METHOD New()
 
    ::cPathFac     := Space( 100 )
 
-   ::aLgcIndices  := Afill( Array( 19 ), .t. )
-   ::aChkIndices  := Array( 19 )
-   ::aMtrIndices  := Array( 19 )
-   ::aNumIndices  := Afill( Array( 19 ), 0 )
+   ::aLgcIndices  := Afill( Array( 22 ), .t. )
+   ::aChkIndices  := Array( 22 )
+   ::aMtrIndices  := Array( 22 )
+   ::aNumIndices  := Afill( Array( 22 ), 0 )
 
 RETURN ( Self )
 
@@ -820,6 +935,9 @@ METHOD Resource()
       REDEFINE CHECKBOX ::aChkIndices[ 17 ]  VAR ::aLgcIndices[ 17 ] ID 270 OF ::oDlg
       REDEFINE CHECKBOX ::aChkIndices[ 18 ]  VAR ::aLgcIndices[ 18 ] ID 280 OF ::oDlg
       REDEFINE CHECKBOX ::aChkIndices[ 19 ]  VAR ::aLgcIndices[ 19 ] ID 290 OF ::oDlg
+      REDEFINE CHECKBOX ::aChkIndices[ 20 ]  VAR ::aLgcIndices[ 20 ] ID 300 OF ::oDlg
+      REDEFINE CHECKBOX ::aChkIndices[ 21 ]  VAR ::aLgcIndices[ 21 ] ID 310 OF ::oDlg
+      REDEFINE CHECKBOX ::aChkIndices[ 22 ]  VAR ::aLgcIndices[ 22 ] ID 320 OF ::oDlg
 
       REDEFINE METER ::aMtrIndices[ 1 ]      VAR ::aNumIndices[ 1 ]  ID 111 OF ::oDlg BARCOLOR Rgb( 128,255,0 ) , Rgb( 255,255,255 )
       REDEFINE METER ::aMtrIndices[ 2 ]      VAR ::aNumIndices[ 2 ]  ID 121 OF ::oDlg BARCOLOR Rgb( 128,255,0 ) , Rgb( 255,255,255 )
@@ -840,6 +958,9 @@ METHOD Resource()
       REDEFINE METER ::aMtrIndices[ 17 ]     VAR ::aNumIndices[ 17 ] ID 271 OF ::oDlg BARCOLOR Rgb( 128,255,0 ) , Rgb( 255,255,255 )
       REDEFINE METER ::aMtrIndices[ 18 ]     VAR ::aNumIndices[ 18 ] ID 281 OF ::oDlg BARCOLOR Rgb( 128,255,0 ) , Rgb( 255,255,255 )
       REDEFINE METER ::aMtrIndices[ 19 ]     VAR ::aNumIndices[ 19 ] ID 291 OF ::oDlg BARCOLOR Rgb( 128,255,0 ) , Rgb( 255,255,255 )
+      REDEFINE METER ::aMtrIndices[ 20 ]     VAR ::aNumIndices[ 20 ] ID 301 OF ::oDlg BARCOLOR Rgb( 128,255,0 ) , Rgb( 255,255,255 )
+      REDEFINE METER ::aMtrIndices[ 21 ]     VAR ::aNumIndices[ 21 ] ID 311 OF ::oDlg BARCOLOR Rgb( 128,255,0 ) , Rgb( 255,255,255 )
+      REDEFINE METER ::aMtrIndices[ 22 ]     VAR ::aNumIndices[ 22 ] ID 321 OF ::oDlg BARCOLOR Rgb( 128,255,0 ) , Rgb( 255,255,255 )
 
       REDEFINE BUTTON ID 500        OF ::oDlg ACTION ( ::SelectChk( .t. ) )
       REDEFINE BUTTON ID 501        OF ::oDlg ACTION ( ::SelectChk( .f. ) )
@@ -861,12 +982,16 @@ RETURN ( Self )
 
 METHOD Importar()
 
-   local cCodCli  := ""
-   local cNotas   := ""
-   local nCounter := 1
-   local cControl := ""
+   local n                 := 0
+   local cCodCli           := ""
+   local cNotas            := ""
+   local nCounter          := 1
+   local cControl          := ""
+   local aTemporalLineas   := {}
+   local oTemporal
+   local aLinea
 
-   ::cPathFac  := AllTrim( ::cPathFac )
+   ::cPathFac              := AllTrim( ::cPathFac )
 
    if ::OpenFiles()
 
@@ -1489,6 +1614,308 @@ METHOD Importar()
             ::oDbfAlmFac:Skip()
 
          end while
+
+      end if
+
+      /*
+      Trasbase de presupuestos de clientes-------------------------------------
+      */
+
+      if ::aLgcIndices[ 20 ]
+
+         ::aMtrIndices[ 20 ]:SetTotal( ::oDbfPreTFac:LastRec() )
+
+         ::oDbfPreTFac:GoTop()
+         while !( ::oDbfPreTFac:eof() )
+
+            while ::oDbfPreTGst:Seek( "A" + Str( ::oDbfPreTFac:nNumPre, 9 ) )
+               ::oDbfPreTGst:Delete( .f. )
+            end
+
+            while ::oDbfPreLGst:Seek( "A" + Str( ::oDbfPreTFac:nNumPre, 9 ) )
+               ::oDbfPreLGst:Delete( .f. )
+            end
+
+            ::oDbfPreTGst:Append()
+
+            ::oDbfPreTGst:cSerPre      := "A"
+            ::oDbfPreTGst:nNumPre      := ::oDbfPreTFac:nNumPre
+            ::oDbfPreTGst:cSufPre      := Space( 2 )
+            ::oDbfPreTGst:cTurPre      := cCurSesion()
+            ::oDbfPreTGst:dFecPre      := ::oDbfPreTFac:dFecPre
+            ::oDbfPreTGst:cCodAlm      := ::oDbfPreTFac:cCodAlm
+            ::oDbfPreTGst:cCodCli      := SpecialPadr( ::oDbfPreTFac:cCodCli, "0", RetNumCodCliEmp() )
+            ::oDbfPreTGst:cCodCaj      := "000"
+            ::oDbfPreTGst:cCodPgo      := ::oDbfPreTFac:cCodPago
+            ::oDbfPreTGst:mObsErv      := ::oDbfPreTFac:cObsErv
+            ::oDbfPreTGst:nTarifa      := 1
+            ::oDbfPreTGst:lEstado      := ( ::oDbfPreTFac:cEstado == "T" )
+            
+            if ::oDbfCliGst:Seek( SpecialPadr( ::oDbfPreTFac:cCodCli, "0", RetNumCodCliEmp() ) )
+               ::oDbfPreTGst:cNomCli   := ::oDbfCliGst:Titulo
+               ::oDbfPreTGst:cDirCli   := ::oDbfCliGst:Domicilio
+               ::oDbfPreTGst:cPobCli   := ::oDbfCliGst:Poblacion
+               ::oDbfPreTGst:cPrvCli   := ::oDbfCliGst:Provincia
+               ::oDbfPreTGst:cPosCli   := ::oDbfCliGst:CodPostal
+               ::oDbfPreTGst:cDniCli   := ::oDbfCliGst:Nif
+               ::oDbfPreTGst:cTlfCli   := ::oDbfCliGst:Telefono
+            end if
+
+            ::oDbfPreTGst:cDpp         := "Descuento"
+            ::oDbfPreTGst:cDtoEsp      := "Descuento"
+            ::oDbfPreTGst:nDpp         := ::oDbfPreTFac:nDpp
+            ::oDbfPreTGst:nDtoEsp      := ::oDbfPreTFac:nDtoEsp
+            ::oDbfPreTGst:cDivPre      := ::oDbfPreTFac:cCodDiv
+            ::oDbfPreTGst:nVdvPre      := 1
+            ::oDbfPreTGst:nTotPre      := ::oDbfPreTFac:nTotPre 
+
+            ::oDbfPreTGst:Save()
+
+            ::aMtrIndices[ 20 ]:Set( ::oDbfPreTFac:Recno() )
+
+            ::oDbfPreTFac:Skip()
+
+         end while
+
+         ::aMtrIndices[ 20 ]:SetTotal( ::oDbfPreLFac:LastRec() )
+
+         ::oDbfPreLGst:OrdSetFocus( "nNumLin" )
+
+         ::oDbfPreLFac:GoTop()
+
+         while !( ::oDbfPreLFac:eof() )
+
+            n := aScan( aTemporalLineas, {|o| o:nNumPre == ::oDbfPreLFac:nNumPre .and. o:nNumLin == ::oDbfPreLFac:nServicio } )
+
+            if n == 0
+
+               oTemporal               := SLineasPresupuestos()
+               oTemporal:cSerPre       := "A"  
+               oTemporal:nNumPre       := ::oDbfPreLFac:nNumPre
+               oTemporal:cSufPre       := Space( 2 )
+               oTemporal:cRef          := ::oDbfPreLFac:cRef
+               if Empty( ::oDbfPreLFac:cRef )
+                  oTemporal:mLngDes    := ::oDbfPreLFac:cDetalle
+                  oTemporal:cDetalle   := Space( 250 )
+               else
+                  oTemporal:cDetalle   := ::oDbfPreLFac:cDetalle
+               end if
+               oTemporal:nIva          := ::oDbfPreLFac:nIva
+               oTemporal:nUniCaja      := ::oDbfPreLFac:nCanPed
+               oTemporal:nPreDiv       := ::oDbfPreLFac:nPreUnit
+               oTemporal:nDto          := ::oDbfPreLFac:nDto
+               oTemporal:cLote         := ::oDbfPreLFac:cLote
+               oTemporal:nNumLin       := ::oDbfPreLFac:nServicio
+
+               aAdd( aTemporalLineas, oTemporal )   
+
+            else
+            
+               if Empty( aTemporalLineas[n]:mLngDes )
+                  aTemporalLineas[n]:mLngDes := ::oDbfPreLFac:cDetalle   
+               else
+                  aTemporalLineas[n]:mLngDes += ::oDbfPreLFac:cDetalle
+               end if
+
+               if aTemporalLineas[n]:nUniCaja == 0
+                  aTemporalLineas[n]:nUniCaja := ::oDbfPreLFac:nCanPed
+               end if
+
+               if aTemporalLineas[n]:nPreDiv == 0
+                  aTemporalLineas[n]:nPreDiv := ::oDbfPreLFac:nPreUnit
+               end if
+
+               if aTemporalLineas[n]:nDto == 0
+                  aTemporalLineas[n]:nDto := ::oDbfPreLFac:nDto
+               end if
+
+               if aTemporalLineas[n]:nIva == 0
+                  aTemporalLineas[n]:nIva := ::oDbfPreLFac:nIva
+               end if
+
+            end if   
+
+            ::aMtrIndices[ 20 ]:Set( ::oDbfPreLFac:Recno() )
+
+            ::oDbfPreLFac:Skip()
+
+         end while
+
+         /*
+         Pasamos los datos del array a la base de datos------------------------
+         */
+
+         for each aLinea in aTemporalLineas
+
+            ::oDbfPreLGst:Append()
+
+            ::oDbfPreLGst:cSerPre      := aLinea:cSerPre
+            ::oDbfPreLGst:nNumPre      := aLinea:nNumPre
+            ::oDbfPreLGst:cSufPre      := aLinea:cSufPre
+            ::oDbfPreLGst:cRef         := aLinea:cRef
+            ::oDbfPreLGst:mLngDes      := aLinea:mLngDes
+            ::oDbfPreLGst:cDetalle     := aLinea:cDetalle
+            ::oDbfPreLGst:nIva         := aLinea:nIva
+            ::oDbfPreLGst:nUniCaja     := aLinea:nUniCaja
+            ::oDbfPreLGst:nPreDiv      := aLinea:nPreDiv
+            ::oDbfPreLGst:nDto         := aLinea:nDto
+            ::oDbfPreLGst:cLote        := aLinea:cLote
+            ::oDbfPreLGst:nNumLin      := aLinea:nNumLin
+
+            ::oDbfPreLGst:Save()
+
+         next
+
+      end if
+
+      /*
+      Trasbase de predidos de clientes-----------------------------------------
+      */
+
+      if ::aLgcIndices[ 21 ]
+
+         ::aMtrIndices[ 21 ]:SetTotal( ::oDbfPedTFac:LastRec() )
+
+         ::oDbfPedTFac:GoTop()
+         while !( ::oDbfPedTFac:eof() )
+
+            while ::oDbfPedTGst:Seek( "A" + Str( ::oDbfPedTFac:nNumPed, 9 ) )
+               ::oDbfPedTGst:Delete( .f. )
+            end
+
+            while ::oDbfPedLGst:Seek( "A" + Str( ::oDbfPedTFac:nNumPed, 9 ) )
+               ::oDbfPedLGst:Delete( .f. )
+            end
+
+            ::oDbfPedTGst:Append()
+
+            ::oDbfPedTGst:cSerPed      := "A"
+            ::oDbfPedTGst:nNumPed      := ::oDbfPedTFac:nNumPed
+            ::oDbfPedTGst:cSufPed      := Space( 2 )
+            ::oDbfPedTGst:cTurPed      := cCurSesion()
+            ::oDbfPedTGst:dFecPed      := ::oDbfPedTFac:dFecPed
+            ::oDbfPedTGst:cCodAlm      := ::oDbfPedTFac:cCodAlm
+            ::oDbfPedTGst:cCodCli      := SpecialPadr( ::oDbfPedTFac:cCodCli, "0", RetNumCodCliEmp() )
+            ::oDbfPedTGst:cCodCaj      := "000"
+            ::oDbfPedTGst:cCodPgo      := ::oDbfPedTFac:cCodPago
+            ::oDbfPedTGst:mObsErv      := ::oDbfPedTFac:cObsErv
+            ::oDbfPedTGst:nTarifa      := 1
+            ::oDbfPedTGst:nEstado      := if( ::oDbfPedTFac:cEstado == "T", 3, 1 )
+            
+            if ::oDbfCliGst:Seek( SpecialPadr( ::oDbfPedTFac:cCodCli, "0", RetNumCodCliEmp() ) )
+               ::oDbfPedTGst:cNomCli   := ::oDbfCliGst:Titulo
+               ::oDbfPedTGst:cDirCli   := ::oDbfCliGst:Domicilio
+               ::oDbfPedTGst:cPobCli   := ::oDbfCliGst:Poblacion
+               ::oDbfPedTGst:cPrvCli   := ::oDbfCliGst:Provincia
+               ::oDbfPedTGst:cPosCli   := ::oDbfCliGst:CodPostal
+               ::oDbfPedTGst:cDniCli   := ::oDbfCliGst:Nif
+               ::oDbfPedTGst:cTlfCli   := ::oDbfCliGst:Telefono
+            end if
+
+            ::oDbfPedTGst:cDpp         := "Descuento"
+            ::oDbfPedTGst:cDtoEsp      := "Descuento"
+            ::oDbfPedTGst:nDpp         := ::oDbfPedTFac:nDpp
+            ::oDbfPedTGst:nDtoEsp      := ::oDbfPedTFac:nDtoEsp
+            ::oDbfPedTGst:cDivPed      := ::oDbfPedTFac:cCodDiv
+            ::oDbfPedTGst:nVdvPed      := 1
+            ::oDbfPedTGst:nTotPed      := ::oDbfPedTFac:nTotPed 
+
+            ::oDbfPedTGst:Save()
+
+            ::aMtrIndices[ 21 ]:Set( ::oDbfPedTFac:Recno() )
+
+            ::oDbfPedTFac:Skip()
+
+         end while
+
+         ::aMtrIndices[ 21 ]:SetTotal( ::oDbfPedLFac:LastRec() )
+
+         ::oDbfPedLGst:OrdSetFocus( "nNumLin" )
+
+         ::oDbfPedLFac:GoTop()
+
+         while !( ::oDbfPedLFac:eof() )
+
+            n := aScan( aTemporalLineas, {|o| o:nNumPed == ::oDbfPedLFac:nNumPed .and. o:nNumLin == ::oDbfPedLFac:nServicio } )
+
+            if n == 0
+
+               oTemporal               := SLineasPedidos()
+               oTemporal:cSerPed       := "A"  
+               oTemporal:nNumPed       := ::oDbfPedLFac:nNumPed   
+               oTemporal:cSufPed       := Space( 2 )
+               oTemporal:cRef          := ::oDbfPedLFac:cRef
+               if Empty( ::oDbfPedLFac:cRef )
+                  oTemporal:mLngDes    := ::oDbfPedLFac:cDetalle
+                  oTemporal:cDetalle   := Space( 250 )
+               else
+                  oTemporal:cDetalle   := ::oDbfPedLFac:cDetalle
+               end if
+               oTemporal:nIva          := ::oDbfPedLFac:nIva
+               oTemporal:nUniCaja      := ::oDbfPedLFac:nCanPed
+               oTemporal:nPreDiv       := ::oDbfPedLFac:nPreUnit
+               oTemporal:nDto          := ::oDbfPedLFac:nDto
+               oTemporal:cLote         := ::oDbfPedLFac:cLote
+               oTemporal:nNumLin       := ::oDbfPedLFac:nServicio
+
+               aAdd( aTemporalLineas, oTemporal )   
+
+            else
+            
+               if Empty( aTemporalLineas[n]:mLngDes )
+                  aTemporalLineas[n]:mLngDes := ::oDbfPedLFac:cDetalle   
+               else
+                  aTemporalLineas[n]:mLngDes += ::oDbfPedLFac:cDetalle
+               end if
+
+               if aTemporalLineas[n]:nUniCaja == 0
+                  aTemporalLineas[n]:nUniCaja := ::oDbfPedLFac:nCanPed
+               end if
+
+               if aTemporalLineas[n]:nPreDiv == 0
+                  aTemporalLineas[n]:nPreDiv := ::oDbfPedLFac:nPreUnit
+               end if
+
+               if aTemporalLineas[n]:nDto == 0
+                  aTemporalLineas[n]:nDto := ::oDbfPedLFac:nDto
+               end if
+
+               if aTemporalLineas[n]:nIva == 0
+                  aTemporalLineas[n]:nIva := ::oDbfPedLFac:nIva
+               end if
+
+            end if   
+
+            ::aMtrIndices[ 21 ]:Set( ::oDbfPedeLFac:Recno() )
+
+            ::oDbfPedLFac:Skip()
+
+         end while
+
+         /*
+         Pasamos los datos del array a la base de datos------------------------
+         */
+
+         for each aLinea in aTemporalLineas
+
+            ::oDbfPedLGst:Append()
+
+            ::oDbfPedLGst:cSerPed      := aLinea:cSerPed
+            ::oDbfPedLGst:nNumPed      := aLinea:nNumPed
+            ::oDbfPedLGst:cSufPed      := aLinea:cSufPed
+            ::oDbfPedLGst:cRef         := aLinea:cRef
+            ::oDbfPedLGst:mLngDes      := aLinea:mLngDes 
+            ::oDbfPedLGst:cDetalle     := aLinea:cDetalle
+            ::oDbfPedLGst:nIva         := aLinea:nIva
+            ::oDbfPedLGst:nUniCaja     := aLinea:nUniCaja 
+            ::oDbfPedLGst:nPreDiv      := aLinea:nPreDiv
+            ::oDbfPedLGst:nDto         := aLinea:nDto
+            ::oDbfPedLGst:cLote        := aLinea:cLote
+            ::oDbfPedLGst:nNumLin      := aLinea:nNumLin
+
+            ::oDbfPedLGst:Save()
+
+         next
 
       end if
 
@@ -2589,6 +3016,157 @@ METHOD Importar()
 
       end if
 
+      /*
+      Trasbase de predidos a proveedor-----------------------------------------
+      */
+
+      if ::aLgcIndices[ 22 ]
+
+         ::aMtrIndices[ 22 ]:SetTotal( ::oDbfPepTFac:LastRec() )
+
+         ::oDbfPepTFac:GoTop()
+         while !( ::oDbfPepTFac:eof() )
+
+            while ::oDbfPepTGst:Seek( "A" + Str( ::oDbfPepTFac:nNumPed, 9 ) )
+               ::oDbfPepTGst:Delete( .f. )
+            end
+
+            while ::oDbfPepLGst:Seek( "A" + Str( ::oDbfPepTFac:nNumPed, 9 ) )
+               ::oDbfPepLGst:Delete( .f. )
+            end
+
+            ::oDbfPepTGst:Append()
+
+            ::oDbfPepTGst:cSerPed      := "A"
+            ::oDbfPepTGst:nNumPed      := ::oDbfPepTFac:nNumPed
+            ::oDbfPepTGst:cSufPed      := Space( 2 )
+            ::oDbfPepTGst:cTurPed      := cCurSesion()
+            ::oDbfPepTGst:dFecPed      := ::oDbfPepTFac:dFecPed
+            ::oDbfPepTGst:cCodAlm      := ::oDbfPepTFac:cCodAlm
+            ::oDbfPepTGst:cCodCli      := SpecialPadr( ::oDbfPepTFac:cCodCli, "0", RetNumCodCliEmp() )
+            ::oDbfPepTGst:cCodCaj      := "000"
+            ::oDbfPepTGst:cCodPgo      := ::oDbfPepTFac:cCodPago
+            ::oDbfPepTGst:mObsErv      := ::oDbfPepTFac:cObserv
+            ::oDbfPepTGst:nTarifa      := 1
+            ::oDbfPepTGst:nEstado      := if( ::oDbfPepTFac:cEstado == "T", 3, 1 )
+            
+            if ::oDbfCliGst:Seek( SpecialPadr( ::oDbfPepTFac:cCodCli, "0", RetNumCodCliEmp() ) )
+               ::oDbfPepTGst:cNomCli   := ::oDbfCliGst:Titulo
+               ::oDbfPepTGst:cDirCli   := ::oDbfCliGst:Domicilio
+               ::oDbfPepTGst:cPobCli   := ::oDbfCliGst:Poblacion
+               ::oDbfPepTGst:cPrvCli   := ::oDbfCliGst:Provincia  
+               ::oDbfPepTGst:cPosCli   := ::oDbfCliGst:CodPostal
+               ::oDbfPepTGst:cDniCli   := ::oDbfCliGst:Nif
+               ::oDbfPepTGst:cTlfCli   := ::oDbfCliGst:Telefono
+            end if
+
+            ::oDbfPepTGst:cDpp         := "Descuento"
+            ::oDbfPepTGst:cDtoEsp      := "Descuento"
+            ::oDbfPepTGst:nDpp         := ::oDbfPepTFac:nDpp
+            ::oDbfPepTGst:nDtoEsp      := ::oDbfPepTFac:nDtoEsp
+            ::oDbfPepTGst:cDivPed      := ::oDbfPepTFac:cCodDiv
+            ::oDbfPepTGst:nVdvPed      := 1
+            ::oDbfPepTGst:nTotPed      := ::oDbfPepTFac:nTotPed 
+
+            ::oDbfPepTGst:Save()
+
+            ::aMtrIndices[ 22 ]:Set( ::oDbfPepTFac:Recno() )
+
+            ::oDbfPepTFac:Skip()
+
+         end while
+
+         ::aMtrIndices[ 22 ]:SetTotal( ::oDbfPepLFac:LastRec() )
+
+         ::oDbfPepLGst:OrdSetFocus( "nNumLin" )
+
+         ::oDbfPepLFac:GoTop()
+
+         while !( ::oDbfPepLFac:eof() )
+
+            n := aScan( aTemporalLineas, {|o| o:nNumPed == ::oDbfPepLFac:nNumPed .and. o:nNumLin == ::oDbfPepLFac:nServicio } )
+
+            if n == 0
+
+               oTemporal               := SLineasPedidos()
+               oTemporal:cSerPed       := "A"  
+               oTemporal:nNumPed       := ::oDbfPepLFac:nNumPed   
+               oTemporal:cSufPed       := Space( 2 )
+               oTemporal:cRef          := ::oDbfPepLFac:cRef
+               if Empty( ::oDbfPepLFac:cRef )
+                  oTemporal:mLngDes    := ::oDbfPepLFac:cDetalle
+                  oTemporal:cDetalle   := Space( 250 )
+               else
+                  oTemporal:cDetalle   := ::oDbfPepLFac:cDetalle
+               end if
+               oTemporal:nIva          := ::oDbfPepLFac:nIva
+               oTemporal:nUniCaja      := ::oDbfPepLFac:nCanPed
+               oTemporal:nPreDiv       := ::oDbfPepLFac:nPreUnit
+               oTemporal:nDto          := ::oDbfPepLFac:nDto
+               oTemporal:cLote         := ::oDbfPepLFac:cLote
+               oTemporal:nNumLin       := ::oDbfPepLFac:nServicio
+
+               aAdd( aTemporalLineas, oTemporal )   
+
+            else
+            
+               if Empty( aTemporalLineas[n]:mLngDes )
+                  aTemporalLineas[n]:mLngDes := ::oDbfPepLFac:cDetalle   
+               else
+                  aTemporalLineas[n]:mLngDes += ::oDbfPepLFac:cDetalle
+               end if
+
+               if aTemporalLineas[n]:nUniCaja == 0
+                  aTemporalLineas[n]:nUniCaja := ::oDbfPepLFac:nCanPed
+               end if
+
+               if aTemporalLineas[n]:nPreDiv == 0
+                  aTemporalLineas[n]:nPreDiv := ::oDbfPepLFac:nPreUnit
+               end if
+
+               if aTemporalLineas[n]:nDto == 0
+                  aTemporalLineas[n]:nDto := ::oDbfPepLFac:nDto
+               end if
+
+               if aTemporalLineas[n]:nIva == 0
+                  aTemporalLineas[n]:nIva := ::oDbfPepLFac:nIva
+               end if
+
+            end if   
+
+            ::aMtrIndices[ 22 ]:Set( ::oDbfPepLFac:Recno() )
+
+            ::oDbfPepLFac:Skip()
+
+         end while
+
+         /*
+         Pasamos los datos del array a la base de datos------------------------
+         */
+
+         for each aLinea in aTemporalLineas
+
+            ::oDbfPepLGst:Append()
+
+            ::oDbfPepLGst:cSerPed      := aLinea:cSerPed
+            ::oDbfPepLGst:nNumPed      := aLinea:nNumPed
+            ::oDbfPepLGst:cSufPed      := aLinea:cSufPed
+            ::oDbfPepLGst:cRef         := aLinea:cRef
+            ::oDbfPepLGst:mLngDes      := aLinea:mLngDes 
+            ::oDbfPepLGst:cDetalle     := aLinea:cDetalle
+            ::oDbfPepLGst:nIva         := aLinea:nIva
+            ::oDbfPepLGst:nUniCaja     := aLinea:nUniCaja 
+            ::oDbfPepLGst:nPreDiv      := aLinea:nPreDiv
+            ::oDbfPepLGst:nDto         := aLinea:nDto
+            ::oDbfPepLGst:cLote        := aLinea:cLote
+            ::oDbfPepLGst:nNumLin      := aLinea:nNumLin
+
+            ::oDbfPepLGst:Save()
+
+         next
+
+      end if
+
       /* Trasbase de albaranes de compras */
 
       if ::aLgcIndices[ 15 ]
@@ -2918,3 +3496,48 @@ RETURN ( Self )
 Static Function SpecialPadr( cCadena, cChar, nLen )
 
 Return( if( !Empty( cCadena ), Padr( RJust( cCadena, cChar, nLen ), 12, ' ' ), Space( 12 ) ) )
+
+
+//---------------------------------------------------------------------------//
+//---------------------------------------------------------------------------//
+//---------------------------------------------------------------------------//
+//---------------------------------------------------------------------------//
+//---------------------------------------------------------------------------//
+
+CLASS SLineasPresupuestos
+
+   DATA cSerPre
+   DATA nNumPre
+   DATA cSufPre
+   DATA cRef
+   DATA mLngDes
+   DATA cDetalle
+   DATA nIva
+   DATA nUniCaja
+   DATA nPreDiv
+   DATA nDto
+   DATA cLote
+   DATA nNumLin
+
+END CLASS
+
+//---------------------------------------------------------------------------//
+
+CLASS SLineasPedidos
+
+   DATA cSerPed
+   DATA nNumPed
+   DATA cSufPed
+   DATA cRef
+   DATA mLngDes
+   DATA cDetalle
+   DATA nIva
+   DATA nUniCaja
+   DATA nPreDiv
+   DATA nDto
+   DATA cLote
+   DATA nNumLin
+
+END CLASS
+
+//---------------------------------------------------------------------------//

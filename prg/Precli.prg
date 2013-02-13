@@ -7586,7 +7586,7 @@ FUNCTION rxPreCli( cPath, oMeter )
       ( dbfPreCliT )->( ordCondSet("!Deleted()", {||!Deleted()}  ) )
       ( dbfPreCliT )->( ordCreate( cPath + "PRECLIT.CDX", "CTURPRE", "CTURPRE + CSUFPRE + cCodCaj", {|| Field->CTURPRE + Field->CSUFPRE + Field->cCodCaj } ) )
 
-      ( dbfPreCliT )->( ordCondSet( "!Deleted()", {|| !Deleted() } ))
+      ( dbfPreCliT )->( ordCondSet( "!Deleted()", {|| !Deleted() } ) )
       ( dbfPreCliT )->( ordCreate( cPath + "PreCliT.CDX", "lSndDoc", "lSndDoc", {|| Field->lSndDoc } ) )
 
       ( dbfPreCliT )->( ordCondSet( "!Deleted()", {||!Deleted()}  ) )
@@ -7616,6 +7616,9 @@ FUNCTION rxPreCli( cPath, oMeter )
 
       ( dbfPreCliT )->( ordCondSet( "!Deleted()", {|| !Deleted() } ) )
       ( dbfPreCliT )->( ordCreate( cPath + "PreCliL.Cdx", "iNumPre", "'PRESUPUESTO CLIENTES          ' + cSerPre + Str( nNumPre ) + cSufPre", {|| 'PRESUPUESTO CLIENTES          ' + Field->cSerPre + Str( Field->nNumPre ) + Field->cSufPre } ) )
+
+      ( dbfPreCliT )->( ordCondSet("!Deleted()", {||!Deleted()}  ) )
+      ( dbfPreCliT )->( ordCreate( cPath + "PreCliL.Cdx", "nNumLin", "Str( NNUMPRE ) + Str( nNumLin )", {|| Str( Field->nNumPre ) + Str( Field->nNumLin ) }, ) )
 
       ( dbfPreCliT )->( dbCloseArea() )
    else

@@ -11252,7 +11252,7 @@ FONT 8, "MS Sans Serif"
   CONTROL "Series", -1, "Button", BS_GROUPBOX|WS_TABSTOP, 309, 2, 118, 194
 }
 
-IMPFACPLUS DIALOG DISCARDABLE 83, 45, 366, 332
+IMPFACPLUS DIALOG DISCARDABLE 83, 45, 365, 354
 STYLE WS_POPUP|DS_MODALFRAME|DS_3DLOOK|WS_CAPTION|WS_VISIBLE
 CAPTION "Importación de factuplus ®"
 FONT 8, "MS Sans Serif"
@@ -11267,21 +11267,24 @@ FONT 8, "MS Sans Serif"
   CONTROL "Proveedores", 170, "Button", BS_AUTOCHECKBOX|WS_TABSTOP, 5, 142, 75, 10
   CONTROL "Almacenes", 210, "Button", BS_AUTOCHECKBOX|WS_TABSTOP, 5, 154, 75, 10
   CONTROL "Agentes", 220, "Button", BS_AUTOCHECKBOX|WS_TABSTOP, 5, 166, 75, 10
-  CONTROL "Albaranes clientes", 180, "Button", BS_AUTOCHECKBOX|WS_TABSTOP, 5, 178, 75, 10
-  CONTROL "Facturas clientes", 190, "Button", BS_AUTOCHECKBOX|WS_TABSTOP, 5, 190, 75, 10
-  CONTROL "Tikets clientes", 200, "Button", BS_AUTOCHECKBOX|WS_TABSTOP, 5, 202, 75, 10
-  CONTROL "Especiales", 230, "Button", BS_AUTOCHECKBOX|WS_TABSTOP, 5, 214, 75, 10
-  CONTROL "Transportistas", 240, "Button", BS_AUTOCHECKBOX|WS_TABSTOP, 5, 226, 75, 10
-  CONTROL "Albaranes proveedor", 250, "Button", BS_AUTOCHECKBOX|WS_TABSTOP, 5, 238, 79, 10
-  CONTROL "Facturas proveedor", 260, "Button", BS_AUTOCHECKBOX|WS_TABSTOP, 5, 250, 75, 10
-  CONTROL "Facturas rectificativas", 270, "Button", BS_AUTOCHECKBOX|WS_TABSTOP, 5, 262, 80, 10
-  CONTROL "Grupos de clientes", 280, "Button", BS_AUTOCHECKBOX|WS_TABSTOP, 5, 274, 79, 10
-  CONTROL "Remesas bancarias", 290, "Button", BS_AUTOCHECKBOX|WS_TABSTOP, 5, 286, 75, 10
-  CONTROL "&Todos", 500, "Button", WS_TABSTOP, 2, 312, 50, 14
-  CONTROL "&Ninguno", 501, "Button", WS_TABSTOP, 57, 312, 50, 14
-  CONTROL "&Aceptar [F5]", IDOK, "Button", WS_TABSTOP, 201, 312, 50, 14
-  CONTROL "&Cancelar", IDCANCEL, "Button", WS_TABSTOP, 256, 312, 50, 14
-  CONTROL "A&yuda", 998, "Button", WS_TABSTOP, 311, 312, 50, 14
+  CONTROL "Presupuestos clientes", 300, "Button", BS_AUTOCHECKBOX|WS_TABSTOP, 5, 178, 80, 10
+  CONTROL "Pedidos clientes", 310, "Button", BS_AUTOCHECKBOX|WS_TABSTOP, 5, 190, 75, 10
+  CONTROL "Albaranes clientes", 180, "Button", BS_AUTOCHECKBOX|WS_TABSTOP, 5, 202, 75, 10
+  CONTROL "Facturas clientes", 190, "Button", BS_AUTOCHECKBOX|WS_TABSTOP, 5, 214, 75, 10
+  CONTROL "Tikets clientes", 200, "Button", BS_AUTOCHECKBOX|WS_TABSTOP, 5, 226, 75, 10
+  CONTROL "Especiales", 230, "Button", BS_AUTOCHECKBOX|WS_TABSTOP, 5, 238, 75, 10
+  CONTROL "Transportistas", 240, "Button", BS_AUTOCHECKBOX|WS_TABSTOP, 5, 250, 75, 10
+  CONTROL "Pedidos proveedor", 320, "Button", BS_AUTOCHECKBOX|WS_TABSTOP, 5, 262, 79, 10
+  CONTROL "Albaranes proveedor", 250, "Button", BS_AUTOCHECKBOX|WS_TABSTOP, 5, 274, 79, 10
+  CONTROL "Facturas proveedor", 260, "Button", BS_AUTOCHECKBOX|WS_TABSTOP, 5, 286, 75, 10
+  CONTROL "Facturas rectificativas", 270, "Button", BS_AUTOCHECKBOX|WS_TABSTOP, 5, 298, 80, 10
+  CONTROL "Grupos de clientes", 280, "Button", BS_AUTOCHECKBOX|WS_TABSTOP, 5, 310, 79, 10
+  CONTROL "Remesas bancarias", 290, "Button", BS_AUTOCHECKBOX|WS_TABSTOP, 5, 322, 75, 10
+  CONTROL "&Todos", 500, "Button", WS_TABSTOP, 2, 340, 50, 14
+  CONTROL "&Ninguno", 501, "Button", WS_TABSTOP, 57, 340, 50, 14
+  CONTROL "&Aceptar [F5]", IDOK, "Button", WS_TABSTOP, 201, 340, 50, 14
+  CONTROL "&Cancelar", IDCANCEL, "Button", WS_TABSTOP, 256, 340, 50, 14
+  CONTROL "A&yuda", 998, "Button", WS_TABSTOP, 311, 340, 50, 14
   CONTROL "TMeter", 111, "TMeter", 0x00800000, 87, 70, 270, 10
   CONTROL "TMeter", 121, "TMeter", 0x00800000, 87, 82, 270, 10
   CONTROL "TMeter", 131, "TMeter", 0x00800000, 87, 94, 270, 10
@@ -11291,21 +11294,24 @@ FONT 8, "MS Sans Serif"
   CONTROL "TMeter", 171, "TMeter", 0x00800000, 87, 142, 270, 10
   CONTROL "TMeter", 211, "TMeter", 0x00800000, 87, 154, 270, 10
   CONTROL "TMeter", 221, "TMeter", 0x00800000, 87, 166, 270, 10
-  CONTROL "TMeter", 181, "TMeter", 0x00800000, 87, 178, 270, 10
-  CONTROL "TMeter", 191, "TMeter", 0x00800000, 87, 190, 270, 10
-  CONTROL "TMeter", 201, "TMeter", 0x00800000, 87, 202, 270, 10
-  CONTROL "TMeter", 231, "TMeter", 0x00800000, 87, 214, 270, 10
+  CONTROL "TMeter", 181, "TMeter", 0x00800000, 87, 202, 270, 10
+  CONTROL "TMeter", 191, "TMeter", 0x00800000, 87, 214, 270, 10
+  CONTROL "TMeter", 201, "TMeter", 0x00800000, 87, 226, 270, 10
+  CONTROL "TMeter", 231, "TMeter", 0x00800000, 87, 238, 270, 10
   CONTROL "Importación", -1, "Button", BS_GROUPBOX, 2, 40, 360, 24
-  CONTROL "", -1, "Button", BS_GROUPBOX, 2, 64, 360, 238
+  CONTROL "", -1, "Button", BS_GROUPBOX, 2, 64, 360, 274
   CONTROL "Directorio de factuplus", -1, "Static", WS_GROUP, 5, 52, 74, 8
-  CONTROL "TMeter", 241, "TMeter", 0x00800000, 87, 226, 270, 10
+  CONTROL "TMeter", 241, "TMeter", 0x00800000, 87, 250, 270, 10
   CONTROL "", 600, "Static", SS_BITMAP|SS_CENTERIMAGE|SS_REALSIZEIMAGE, 0, 0, 365, 34
   CONTROL "", -1, "Static", SS_ETCHEDHORZ, 0, 32, 365, 1
-  CONTROL "TMeter", 251, "TMeter", 0x00800000, 87, 238, 270, 10
-  CONTROL "TMeter", 261, "TMeter", 0x00800000, 87, 250, 270, 10
-  CONTROL "TMeter", 271, "TMeter", 0x00800000, 87, 262, 270, 10
-  CONTROL "TMeter", 281, "TMeter", 0x00800000, 87, 274, 270, 10
-  CONTROL "TMeter", 291, "TMeter", 0x00800000, 87, 286, 270, 10
+  CONTROL "TMeter", 251, "TMeter", 0x00800000, 87, 274, 270, 10
+  CONTROL "TMeter", 261, "TMeter", 0x00800000, 87, 286, 270, 10
+  CONTROL "TMeter", 271, "TMeter", 0x00800000, 87, 298, 270, 10
+  CONTROL "TMeter", 281, "TMeter", 0x00800000, 87, 310, 270, 10
+  CONTROL "TMeter", 291, "TMeter", 0x00800000, 87, 322, 270, 10
+  CONTROL "TMeter", 301, "TMeter", 0x00800000, 87, 178, 270, 10
+  CONTROL "TMeter", 321, "TMeter", 0x00800000, 87, 262, 270, 10
+  CONTROL "TMeter", 311, "TMeter", 0x00800000, 87, 190, 270, 10
 }
 
 TIKITEMS DIALOG DISCARDABLE 61, -26, 426, 253

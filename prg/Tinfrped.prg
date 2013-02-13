@@ -14,6 +14,7 @@ CLASS TInfRPed FROM TInfPArt
    DATA  oPedCliL    AS OBJECT
    DATA  oDbfTvta    AS OBJECT
    DATA  aEstado     AS ARRAY    INIT  { "Pendiente", "Parcialmente", "Entregado", "Todos" }
+   DATA  aProduccion AS ARRAY    INIT  { "Producido", "En producción", "Pendiente de producción" }
 
    METHOD Create()
 
@@ -32,6 +33,8 @@ END CLASS
 METHOD Create()
 
    ::DetCreateFields()
+   ::AddField( "cSituac", "C", 20, 0, {|| "@!" },          "Siruación",            .f., "Situación"                 , 50 )
+   ::AddField( "cEstPro", "C", 50, 0, {|| "@!" },          "Producido",            .f., "Producido"                 , 50 )
 
    ::AddTmpIndex( "CCODART", "CCODART + CCODPR1 + CCODPR2 + CVALPR1 + CVALPR2 + CLOTE" )
 
@@ -194,6 +197,10 @@ METHOD lGenerate()
                   !( ::lExcImp .AND. nImpLPedCli( ::oPedCliT:cAlias, ::oPedCliL:cAlias, ::nDecOut, ::nDerOut, ::nValDiv ) == 0 )
 
                   ::AddPed( .f. )
+                  ::oDbf:Load()
+                  ::oDbf:cSituac    := ::oPedCliT:cSituac
+                  ::oDbf:cEstPro    := ::aProduccion[ Max( ::oPedCliL:nProduc + 1, 1 ) ]   
+                  ::oDbf:Save()
 
                end if
 
