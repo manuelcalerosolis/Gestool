@@ -76,6 +76,16 @@ CLASS TFastReportInfGen FROM TNewInfGen
    DATA  nRecargoFacturasClientes      INIT 0
    DATA  nTotalFacturasClientes        INIT 0
 
+   DATA  nBaseFacturasRectificativasClientes    INIT 0
+   DATA  nIVAFacturasRectificativasClientes     INIT 0
+   DATA  nRecargoFacturasRectificativasClientes INIT 0
+   DATA  nTotalFacturasRectificativasClientes   INIT 0
+
+   DATA  nBaseTicketsClientes          INIT 0
+   DATA  nIVATicketsClientes           INIT 0
+   DATA  nRecargoTicketsClientes       INIT 0
+   DATA  nTotalTicketsClientes         INIT 0
+
    DATA  nTotalPagosClientes           INIT 0
    DATA  nTotalPendientesClientes      INIT 0
 
@@ -458,6 +468,32 @@ CLASS TFastReportInfGen FROM TNewInfGen
 
    //------------------------------------------------------------------------//
 
+   INLINE METHOD InitAlbaranesClientes()
+
+      ::nBaseAlbaranesClientes      := 0
+      ::nIVAAlbaranesClientes       := 0
+      ::nRecargoAlbaranesClientes   := 0
+      ::nTotalAlbaranesClientes     := 0
+
+      RETURN ( Self )
+
+   ENDMETHOD
+
+   //------------------------------------------------------------------------//
+
+   INLINE METHOD AddAlbaranesClientes()
+
+      ::nBaseAlbaranesClientes            += ::oAlbCliT:nTotNet
+      ::nIVAAlbaranesClientes             += ::oAlbCliT:nTotIva
+      ::nRecargoAlbaranesClientes         += ::oAlbCliT:nTotReq
+      ::nTotalAlbaranesClientes           += ::oAlbCliT:nTotAlb
+
+      RETURN ( Self )
+
+   ENDMETHOD
+
+   //------------------------------------------------------------------------//
+
    INLINE METHOD InitFacturasClientes()
 
       ::nBaseFacturasClientes          := 0
@@ -484,12 +520,12 @@ CLASS TFastReportInfGen FROM TNewInfGen
 
    //------------------------------------------------------------------------//
 
-   INLINE METHOD InitAlbaranesClientes()
+   INLINE METHOD InitFacturasRectificativasClientes()
 
-      ::nBaseAlbaranesClientes      := 0
-      ::nIVAAlbaranesClientes       := 0
-      ::nRecargoAlbaranesClientes   := 0
-      ::nTotalAlbaranesClientes     := 0
+      ::nBaseFacturasRectificativasClientes       := 0
+      ::nIVAFacturasRectificativasClientes        := 0
+      ::nRecargoFacturasRectificativasClientes    := 0
+      ::nTotalFacturasRectificativasClientes      := 0
 
       RETURN ( Self )
 
@@ -497,12 +533,38 @@ CLASS TFastReportInfGen FROM TNewInfGen
 
    //------------------------------------------------------------------------//
 
-   INLINE METHOD AddAlbaranesClientes()
+   INLINE METHOD AddFacturasRectificativasClientes()
 
-      ::nBaseAlbaranesClientes            += ::oAlbCliT:nTotNet
-      ::nIVAAlbaranesClientes             += ::oAlbCliT:nTotIva
-      ::nRecargoAlbaranesClientes         += ::oAlbCliT:nTotReq
-      ::nTotalAlbaranesClientes           += ::oAlbCliT:nTotAlb
+      ::nBaseFacturasRectificativasClientes       += ::oFacRecT:nTotNet
+      ::nIVAFacturasRectificativasClientes        += ::oFacRecT:nTotIva
+      ::nRecargoFacturasRectificativasClientes    += ::oFacRecT:nTotReq
+      ::nTotalFacturasRectificativasClientes      += ::oFacRecT:nTotFac
+
+      RETURN ( Self )
+
+   ENDMETHOD
+
+   //------------------------------------------------------------------------//
+
+   INLINE METHOD InitTicketsClientes()
+
+      ::nBaseTicketsClientes       := 0
+      ::nIVATicketsClientes        := 0
+      ::nRecargoTicketsClientes    := 0
+      ::nTotalTicketsClientes      := 0
+
+      RETURN ( Self )
+
+   ENDMETHOD
+
+   //------------------------------------------------------------------------//
+
+   INLINE METHOD AddTicketsClientes()
+
+      ::nBaseTicketsClientes       += ::oTikCliT:nTotNet
+      ::nIVATicketsClientes        += ::oTikCliT:nTotIva
+      ::nRecargoTicketsClientes    += ::oTikCliT:nTotReq
+      ::nTotalTicketsClientes      += ::oTikCliT:nTotTik
 
       RETURN ( Self )
 

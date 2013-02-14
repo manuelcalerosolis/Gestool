@@ -15462,7 +15462,7 @@ FUNCTION rxFacCli( cPath, oMeter )
       ( dbfFacCliL )->( ordCreate( cPath + "FACCLIL.CDX", "cNumPed", "cNumPed", {|| Field->cNumPed } ) )
 
       ( dbfFacCliL)->( ordCondSet( "!Deleted()", {|| !Deleted() }  ) )
-      ( dbfFacCliL )->( ordCreate( cPath + "FacCliL.Cdx", "iNumFac", "'FACTURA CLIENTES              ' + cSerie + Str( nNumFac ) + cSufFac", {|| 'FACTURA CLIENTES              ' + Field->cSerie + Str( Field->nNumFac ) + Field->cSufFac } ) )
+      ( dbfFacCliL )->( ordCreate( cPath + "FacCliL.Cdx", "iNumFac", "'11' + cSerie + Str( nNumFac ) + Space( 1 ) + cSufFac", {|| '11' + Field->cSerie + Str( Field->nNumFac ) + Space( 1 ) + Field->cSufFac } ) )
 
       ( dbfFacCliL )->( dbCloseArea() )
    else
@@ -15476,6 +15476,9 @@ FUNCTION rxFacCli( cPath, oMeter )
       ( dbfFacCliI )->( ordCondSet("!Deleted()", {||!Deleted()}  ) )
       ( dbfFacCliI )->( ordCreate( cPath + "FacCliI.Cdx", "nNumFac", "cSerie + STR( nNumFac ) + cSufFac", {|| Field->cSerie + Str( Field->nNumFac ) + Field->cSufFac } ) )
 
+      ( dbfFacCliI)->( ordCondSet( "!Deleted()", {|| !Deleted() }  ) )
+      ( dbfFacCliI )->( ordCreate( cPath + "FacCliI.Cdx", "iNumFac", "'11' + cSerie + Str( nNumFac ) + Space( 1 ) + cSufFac", {|| '11' + Field->cSerie + Str( Field->nNumFac ) + Space( 1 ) + Field->cSufFac } ) )
+
       ( dbfFacCliI )->( dbCloseArea() )
    else
       msgStop( "Imposible abrir en modo exclusivo la tabla de facturas de clientes" )
@@ -15487,6 +15490,9 @@ FUNCTION rxFacCli( cPath, oMeter )
 
       ( dbfFacCliD )->( ordCondSet("!Deleted()", {||!Deleted()}  ) )
       ( dbfFacCliD )->( ordCreate( cPath + "FacCliD.Cdx", "nNumFac", "cSerFac + STR( nNumFac ) + cSufFac", {|| Field->cSerFac + Str( Field->nNumFac ) + Field->cSufFac } ) )
+
+      ( dbfFacCliD)->( ordCondSet( "!Deleted()", {|| !Deleted() }  ) )
+      ( dbfFacCliD )->( ordCreate( cPath + "FacCliD.Cdx", "iNumFac", "'11' + cSerFac + Str( nNumFac ) + Space( 1 ) + cSufFac", {|| '11' + Field->cSerFac + Str( Field->nNumFac ) + Space( 1 ) + Field->cSufFac } ) )
 
       ( dbfFacCliD )->( dbCloseArea() )
    else
@@ -15565,7 +15571,7 @@ FUNCTION rxFacCli( cPath, oMeter )
       ( dbfFacCliT )->( ordCreate( cPath + "FacCliT.Cdx", "cNfc", "cNfc", {|| Field->cNfc } ) )
 
       ( dbfFacCliT)->( ordCondSet( "!Deleted()", {|| !Deleted() }  ) )
-      ( dbfFacCliT )->( ordCreate( cPath + "FacCliT.Cdx", "iNumFac", "'FACTURA CLIENTES              ' + cSerie + Str( nNumFac ) + cSufFac", {|| 'FACTURA CLIENTES              ' + Field->cSerie + Str( Field->nNumFac ) + Field->cSufFac } ) )
+      ( dbfFacCliT )->( ordCreate( cPath + "FacCliT.Cdx", "iNumFac", "'11' + cSerie + Str( nNumFac ) + Space( 1 ) + cSufFac", {|| '11' + Field->cSerie + Str( Field->nNumFac ) + Space( 1 ) + Field->cSufFac } ) )
 
       ( dbfFacCliT )->( dbCloseArea() )
 
@@ -15586,6 +15592,9 @@ FUNCTION rxFacCli( cPath, oMeter )
 
       ( dbfFacCliT )->( ordCondSet( "!Deleted()", {|| !Deleted() } ) )
       ( dbfFacCliT )->( ordCreate( cPath + "FacCliS.CDX", "cNumSer", "cNumSer", {|| Field->cNumSer } ) )
+
+      ( dbfFacCliT )->( ordCondSet( "!Deleted()", {|| !Deleted() }  ) )
+      ( dbfFacCliT )->( ordCreate( cPath + "FacCliS.Cdx", "iNumFac", "'11' + cSerFac + Str( nNumFac ) + Space( 1 ) + cSufFac", {|| '11' + Field->cSerFac + Str( Field->nNumFac ) + Space( 1 ) + Field->cSufFac } ) )
 
       ( dbfFacCliT )->( dbCloseArea() )
    else

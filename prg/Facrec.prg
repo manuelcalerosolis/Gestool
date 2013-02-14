@@ -5929,10 +5929,10 @@ FUNCTION nTotFacRec( cFactura, cFacRecT, cFacRecL, cIva, cDiv, aTmp, cDivRet, lP
 
    local nRec
    local bCondition
-	local lRecargo
-	local nDtoUno
-	local nDtoDos
-	local nDtoEsp
+   local lRecargo
+   local nDtoUno
+   local nDtoDos
+   local nDtoEsp
    local nPctRet
    local nDtoPP
    local nPorte
@@ -7553,7 +7553,7 @@ FUNCTION rxFacRec( cPath, oMeter )
       ( dbfFacRecL )->( ordCreate( cPath + "FacRecL.CDX", "Lote", "cLote", {|| Field->cLote }, ) )
 
       ( dbfFacRecL)->( ordCondSet( "!Deleted()", {|| !Deleted() }  ) )
-      ( dbfFacRecL )->( ordCreate( cPath + "FacRecL.Cdx", "iNumFac", "'FACTURA RECTIFICATIVA         ' + cSerie + Str( nNumFac ) + cSufFac", {|| 'FACTURA RECTIFICATIVA         ' + Field->cSerie + Str( Field->nNumFac ) + Field->cSufFac } ) )
+      ( dbfFacRecL )->( ordCreate( cPath + "FacRecL.Cdx", "iNumFac", "'14' + cSerie + Str( nNumFac ) + Space( 1 ) + cSufFac", {|| '14' + Field->cSerie + Str( Field->nNumFac ) + Space( 1 ) + Field->cSufFac } ) )
 
       ( dbfFacRecL )->( dbCloseArea() )
    else
@@ -7567,6 +7567,9 @@ FUNCTION rxFacRec( cPath, oMeter )
       ( dbfFacRecI )->( ordCondSet("!Deleted()", {||!Deleted()}  ) )
       ( dbfFacRecI )->( ordCreate( cPath + "FacRecI.Cdx", "nNumFac", "cSerie + STR( nNumFac ) + cSufFac", {|| Field->cSerie + Str( Field->nNumFac ) + Field->cSufFac } ) )
 
+      ( dbfFacRecI )->( ordCondSet( "!Deleted()", {|| !Deleted() }  ) )
+      ( dbfFacRecI )->( ordCreate( cPath + "FacRecI.Cdx", "iNumFac", "'14' + cSerie + Str( nNumFac ) + Space( 1 ) + cSufFac", {|| '14' + Field->cSerie + Str( Field->nNumFac ) + Space( 1 ) + Field->cSufFac } ) )
+
       ( dbfFacRecI )->( dbCloseArea() )
    else
       msgStop( "Imposible abrir en modo exclusivo la tabla de facturas rectificativas de clientes" )
@@ -7578,6 +7581,9 @@ FUNCTION rxFacRec( cPath, oMeter )
 
       ( dbfFacRecD )->( ordCondSet("!Deleted()", {||!Deleted()}  ) )
       ( dbfFacRecD )->( ordCreate( cPath + "FacRecD.Cdx", "nNumFac", "cSerFac + STR( nNumFac ) + cSufFac", {|| Field->cSerFac + Str( Field->nNumFac ) + Field->cSufFac } ) )
+
+      ( dbfFacRecD )->( ordCondSet( "!Deleted()", {|| !Deleted() }  ) )
+      ( dbfFacRecD )->( ordCreate( cPath + "FacRecD.Cdx", "iNumFac", "'14' + cSerFac + Str( nNumFac ) + Space( 1 ) + cSufFac", {|| '14' + Field->cSerFac + Str( Field->nNumFac ) + Space( 1 ) + Field->cSufFac } ) )
 
       ( dbfFacRecD )->( dbCloseArea() )
    else
@@ -7643,7 +7649,7 @@ FUNCTION rxFacRec( cPath, oMeter )
       ( dbfFacRecT )->( ordCreate( cPath + "FacRecT.Cdx", "cNumFac", "Field->cNumFac", {|| Field->cNumFac } ) )
 
       ( dbfFacRecT )->( ordCondSet( "!Deleted()", {|| !Deleted() }  ) )
-      ( dbfFacRecT )->( ordCreate( cPath + "FacRecT.Cdx", "iNumFac", "'FACTURA RECTIFICATIVA         ' + cSerie + Str( nNumFac ) + cSufFac", {|| 'FACTURA RECTIFICATIVA         ' + Field->cSerie + Str( Field->nNumFac ) + Field->cSufFac } ) )
+      ( dbfFacRecT )->( ordCreate( cPath + "FacRecT.Cdx", "iNumFac", "'14' + cSerie + Str( nNumFac ) + Space( 1 ) + cSufFac", {|| '14' + Field->cSerie + Str( Field->nNumFac ) + Space( 1 ) + Field->cSufFac } ) )
 
       ( dbfFacRecT )->( dbCloseArea() )
 
@@ -7664,6 +7670,9 @@ FUNCTION rxFacRec( cPath, oMeter )
 
       ( dbfFacRecT )->( ordCondSet( "!Deleted()", {|| !Deleted() } ) )
       ( dbfFacRecT )->( ordCreate( cPath + "FacRecS.CDX", "cNumSer", "cNumSer", {|| Field->cNumSer } ) )
+
+      ( dbfFacRecT )->( ordCondSet( "!Deleted()", {|| !Deleted() } ) )
+      ( dbfFacRecT )->( ordCreate( cPath + "FacRecS.Cdx", "iNumFac", "'14' + cSerFac + Str( nNumFac ) + Space( 1 ) + cSufFac", {|| '14' + Field->cSerFac + Str( Field->nNumFac ) + Space( 1 ) + Field->cSufFac } ) )
 
       ( dbfFacRecT )->( dbCloseArea() )
    else
@@ -13850,3 +13859,37 @@ Function nImportaLineas()
 RETURN ( nOption )
 
 //----------------------------------------------------------------------------//
+
+FUNCTION sTotFacRec( cFactura, dbfFacRecT, dbfFacRecL, dbfIva, dbfDiv, cDivRet )
+
+   local sTotal
+
+   nTotFacRec( cFactura, dbfFacRecT, dbfFacRecL, dbfIva, dbfDiv, nil, cDivRet )
+
+   sTotal                                 := sTotal()
+
+   sTotal:nTotalBruto                     := nTotBrt
+   sTotal:nTotalNeto                      := nTotNet
+   sTotal:nTotalIva                       := nTotIva
+   sTotal:nTotalRecargoEquivalencia       := nTotReq
+   sTotal:nTotalRetencion                 := nTotRet
+   sTotal:nTotalDocumento                 := nTotFac
+   sTotal:nTotalPuntoVerde                := nTotPnt
+   sTotal:nTotalTransporte                := nTotTrn
+   sTotal:nTotalAgente                    := nTotAge
+   sTotal:nTotalCosto                     := nTotCos
+   sTotal:nTotalImpuestoHidrocarburos     := nTotIvm
+   sTotal:nTotalRentabilidad              := nTotRnt
+
+   sTotal:nTotalDescuentoGeneral          := nTotDto
+   sTotal:nTotalDescuentoProntoPago       := nTotDpp
+   sTotal:nTotalDescuentoUno              := nTotUno
+   sTotal:nTotalDescuentoDos              := nTotDos
+
+   sTotal:nTotalCobrado                   := nTotCob
+
+   sTotal:aTotalIva                       := aTotIva
+
+Return ( sTotal )
+
+//--------------------------------------------------------------------------//
