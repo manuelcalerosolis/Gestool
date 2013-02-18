@@ -235,7 +235,7 @@ function aColDepAge()
    aAdd( aColDepAge, { "NPREUNIT",  "N", 16, 6, "Precio artículo",                  "" ,           "",                            "( cDbfCol )"} )
    aAdd( aColDepAge, { "NDTO",      "N",  6, 2, "Descuento de artículo",            "" ,           "",                            "( cDbfCol )"} )
    aAdd( aColDepAge, { "NDTOPRM",   "N",  6, 2, "Descuento de promoción",           "" ,           "",                            "( cDbfCol )"} )
-   aAdd( aColDepAge, { "NIVA",      "N",  4, 1, cImp() + " del artículo",                 "" ,           "",                            "( cDbfCol )"} )
+   aAdd( aColDepAge, { "NIVA",      "N",  4, 1, cImp() + " del artículo",           "" ,           "",                            "( cDbfCol )"} )
    aAdd( aColDepAge, { "NCANENT",   "N", 16, 6, "Cantidad entrada",                 "" ,           "",                            "( cDbfCol )"} )
    aAdd( aColDepAge, { "NPESOKG",   "N", 16, 6, "Peso en kg. del producto",         "" ,           "",                            "( cDbfCol )"} )
    aAdd( aColDepAge, { "CUNIDAD",   "C",  2, 0, "Unidades",                         "" ,           "",                            "( cDbfCol )"} )
@@ -247,6 +247,7 @@ function aColDepAge()
    aAdd( aColDepAge, { "CLOTE",     "C", 12, 0, "Número de lote",                   "" ,           "",                            "( cDbfCol )"} )
    aAdd( aColDepAge, { "LMSGVTA",   "L",  1, 0, "Avisar depósito sin stocks",       "" ,           "",                            "( cDbfCol )"} )
    aAdd( aColDepAge, { "LNOTVTA",   "L",  1, 0, "No permitir depósito sin stocks",  "" ,           "",                            "( cDbfCol )"} )
+   aAdd( aColDepAge, { "NFACCNV",   "N", 16, 6, "",                                 "",            "",                            "( cDbfCol )"} )
 
 return ( aColDepAge )
 
@@ -1517,8 +1518,8 @@ Static Function EndTrans( aTmp, oBrw, oDlg, nMode )
       Return .f.
    end if
 
-   oBlock      := ErrorBlock( {| oError | ApoloBreak( oError ) } )
-   BEGIN SEQUENCE
+   /*oBlock      := ErrorBlock( {| oError | ApoloBreak( oError ) } )
+   BEGIN SEQUENCE*/
 
    BeginTransaction()
 
@@ -1588,14 +1589,14 @@ Static Function EndTrans( aTmp, oBrw, oDlg, nMode )
 
    CommitTransaction()
 
-   RECOVER USING oError
+   /*RECOVER USING oError
 
       RollBackTransaction()
 
       msgStop( "Imposible guadar cambios" + CRLF + ErrorMessage( oError ) )
 
    END SEQUENCE
-   ErrorBlock( oBlock )
+   ErrorBlock( oBlock )*/
 
    /*
    Cerramos el meter-----------------------------------------------------------

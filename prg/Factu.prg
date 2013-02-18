@@ -40,6 +40,7 @@ static hDLLRich
 static oWnd
 static oBmp
 static lDemoMode     := .t.
+static lNumReg       := .f.
 
 static lStandard
 static lProfesional
@@ -395,123 +396,377 @@ Return Nil
 //----------------------------------------------------------------------------//
 //Procesos de comprobaciones iniciales y lectura de archivos .INI, cuando existan
 
-FUNCTION CtrlApp()
+FUNCTION ControlAplicacion()
 
-   local n 
    local oBmp
    local oDlg
-   local oBrush
    local oSerialHD
-   local nSerialHD   := Abs( nSerialHD() )
-   local nSerialCRC
-   local aSerialCRC  := {}
-   local nSerialUSR  := 0
-   local cFileIni    := FullCurDir() + "2K10.Num"
+   local nSerialHD      := Abs( nSerialHD() )
+   local oSerialUSR
+   local nSerialUSR     := 0
+   local oLicencia
+   local nlicencia      := 1
+   local oSayPerpetua   := Array( 2 )
+   local oSayDemo
+   local oSayAlquiler   := Array( 8 )
+   local cSayAlquiler   := Array( 8 )
 
-   if !lDemoMode() 
+   if ControlAcceso() 
       Return .t.
    end if 
 
-   DEFINE BRUSH oBrush COLOR Rgb( 255, 255, 255 )
-
-   DEFINE DIALOG oDlg RESOURCE "GETSERIALNO" TITLE "Sistema de protección : " + Str( nSerialHD ) BRUSH oBrush
+   DEFINE DIALOG oDlg RESOURCE "GETSERIALNO" TITLE "Sistema de protección"
 
    REDEFINE BITMAP oBmp ;
       RESOURCE "Lock_48" ;
-      ID       600;
+      ID       500;
       OF       oDlg
+
+   /*
+   Licencia perpetua-----------------------------------------------------------
+   */
+
+   REDEFINE RADIO oLicencia VAR nLicencia ;
+      ID        100, 200, 300 ;
+      ON CHANGE ( ChangeLicenciaMode( nLicencia, oSerialHd, oSerialUsr, oSayPerpetua, oSayAlquiler, oSayDemo ) ) ;
+      OF        oDlg
 
    REDEFINE SAY oSerialHD ;
       PROMPT   nSerialHD ;
-      COLOR    Rgb( 0, 0, 0 ), Rgb( 255, 255, 255 ) ;
-      ID       100 ;
+      ID       110 ;
       OF       oDlg
 
-   REDEFINE GET nSerialUSR ;
-      ID       110 ;
-      COLOR    Rgb( 0, 0, 0 ), Rgb( 255, 255, 255 ) ;
+   REDEFINE SAY oSayPerpetua[1] ID 111 OF oDlg   
+
+   REDEFINE GET oSerialUsr ;
+      VAR      nSerialUSR ;
+      ID       120 ;
+      IDSAY    121 ;
       PICTURE  "99999999999999" ;
       OF       oDlg
 
-   REDEFINE SAY COLOR Rgb( 0, 0, 0 ), Rgb( 255, 255, 255 ) ID 120 OF oDlg
-   REDEFINE SAY COLOR Rgb( 0, 0, 0 ), Rgb( 255, 255, 255 ) ID 130 OF oDlg
-   REDEFINE SAY COLOR Rgb( 0, 0, 0 ), Rgb( 255, 255, 255 ) ID 140 OF oDlg
-   REDEFINE SAY COLOR Rgb( 0, 0, 0 ), Rgb( 255, 255, 255 ) ID 150 OF oDlg
+   REDEFINE SAY oSayPerpetua[2] ID 130 OF oDlg
 
-   REDEFINE SAY PROMPT "2.- Marque el teléfono siguiente " + __GSTTELEFONO__ COLOR Rgb( 0, 0, 0 ), Rgb( 255, 255, 255 ) ID 160 OF oDlg
+   /*
+   Licencia Alquiler-----------------------------------------------------------
+   */
 
-   REDEFINE SAY COLOR Rgb( 0, 0, 0 ), Rgb( 255, 255, 255 ) ID 170 OF oDlg
-   REDEFINE SAY COLOR Rgb( 0, 0, 0 ), Rgb( 255, 255, 255 ) ID 180 OF oDlg
-   REDEFINE SAY COLOR Rgb( 0, 0, 0 ), Rgb( 255, 255, 255 ) ID 190 OF oDlg
+   REDEFINE GET oSayAlquiler[1] ;
+      VAR      cSayAlquiler[1] ;
+      ID       210 ;
+      IDSAY    211 ;
+      OF       oDlg
 
-   with object ( TWebBtn():Redefine( 200,,,,,  {|| goWeb( __GSTWEB__ ) }, oDlg,,,,, "LEFT",,,,, Rgb( 0, 0, 255 ), Rgb( 0, 0, 255 ),,,, "Ir a la página web de " + __GSTFACTORY__ ) )
+   REDEFINE GET oSayAlquiler[2] ;
+      VAR      cSayAlquiler[2] ;
+      ID       220 ;
+      IDSAY    221 ;
+      OF       oDlg
+
+   REDEFINE GET oSayAlquiler[3] ;
+      VAR      cSayAlquiler[3] ;
+      ID       230 ;
+      IDSAY    231 ;
+      OF       oDlg
+
+   REDEFINE GET oSayAlquiler[4] ;
+      VAR      cSayAlquiler[4] ;
+      ID       240 ;
+      IDSAY    241 ;
+      OF       oDlg
+
+   REDEFINE GET oSayAlquiler[5] ;
+      VAR      cSayAlquiler[5] ;
+      ID       250 ;
+      IDSAY    251 ;
+      OF       oDlg
+
+   REDEFINE GET oSayAlquiler[6] ;
+      VAR      cSayAlquiler[6] ;
+      ID       260 ;
+      IDSAY    261 ;
+      OF       oDlg
+
+   REDEFINE GET oSayAlquiler[7] ;
+      VAR      cSayAlquiler[7] ;
+      ID       270 ;
+      IDSAY    271 ;
+      OF       oDlg
+
+   REDEFINE GET oSayAlquiler[8] ;
+      VAR      cSayAlquiler[8] ;
+      ID       280 ;
+      OF       oDlg
+
+   /*
+   Licencia demo---------------------------------------------------------------
+   */
+
+   REDEFINE SAY oSayDemo ID 310 OF oDlg
+
+   with object ( TWebBtn():Redefine( 400,,,,,  {|| goWeb( __GSTWEB__ ) }, oDlg,,,,, "LEFT",,,,, Rgb( 0, 0, 255 ), Rgb( 0, 0, 255 ),,,, "Ir a la página web de " + __GSTFACTORY__ ) )
       :SetTransparent()
-      :SetText( __GSTFACTORY__ )
-   end with
+      :SetText( __GSTWEB__ )
+   end with 
 
    REDEFINE BUTTON ;
-      ID       552 ;
+      ID       IDOK ; 
       OF       oDlg ;
-      CANCEL ;
-      ACTION   ( oDlg:End() )
+      ACTION   ( ExitDialog( oDlg, nLicencia, nSerialHD, nSerialUSR, oSerialUsr, oSayAlquiler, cSayAlquiler ) )
 
-   REDEFINE BUTTON ;
-      ID       IDOK ;
-      OF       oDlg ;
-      ACTION   ( oDlg:End( IDOK ) )
-
-   REDEFINE BUTTON ;
-      ID       IDCANCEL ;
-      OF       oDlg ;
-      ACTION   ( oDlg:End(), PostQuitMessage() )
+      oDlg:bStart := {|| ChangeLicenciaMode( nLicencia, oSerialHd, oSerialUsr, oSayPerpetua, oSayAlquiler, oSayDemo ) }
 
    ACTIVATE DIALOG oDlg CENTER
 
-   oBmp:end()
-   oBrush:end()
-
-   if oDlg:nResult == IDOK
-
-      CursorWait()
-
-      // Cargamos el array con los codigos-------------------------------------
-
-      for n := 1 to 50
-         nSerialCRC     := Val( GetPvProfString( "Main", "Access code " + Str( n, 2 ), "0", cFileIni ) )
-         if !Empty( nSerialCRC )
-            aAdd( aSerialCRC, nSerialCRC )
-         end if
-      next
-
-      // Comprobamos que exista------------------------------------------------
-
-      if nXor( nSerialHD, SERIALNUMBER ) == nSerialUSR
-
-         aAdd( aSerialCRC, nSerialUSR )
-
-         for n := 1 to len( aSerialCRC )
-            WritePProString( "Main", "Access code " + Str( n, 2 ), cValToChar( aSerialCRC[ n ] ), cFileIni )
-         next
-
-         lDemoMode( .f. )
-
-         MsgInfo( "Programa registrado con éxito" )
-
-      else
-
-         MsgStop( "Número invalido" )
-
-         PostQuitMessage()
-
-      end if
-
-      CursorWE()
-
-   end if
+   oBmp:end() 
+   
 
 RETURN .t.
 
-//----------------------------------------------------------------------------//
+//---------------------------------------------------------------------------//
+
+FUNCTION ChangeLicenciaMode( nLicencia, oSerialHd, oSerialUsr, oSayPerpetua, oSayAlquiler, oSayDemo )
+
+   do case
+      case nLicencia == 1
+
+         oSerialHd:Show()
+         oSerialUsr:Show()
+         aEval( oSayPerpetua, { |o| o:Show() } )
+         aEval( oSayAlquiler, { |o| o:Hide() } )
+         oSayDemo:Hide()   
+
+      case nLicencia == 2
+
+         oSerialHd:Hide()
+         oSerialUsr:Hide()
+         aEval( oSayPerpetua, { |o| o:Hide() } )
+         aEval( oSayAlquiler, { |o| o:Show() } )   
+         oSayDemo:Hide()   
+
+      case nLicencia == 3
+
+         oSerialHd:Hide()
+         oSerialUsr:Hide()
+         aEval( oSayPerpetua, { |o| o:Hide() } )
+         aEval( oSayAlquiler, { |o| o:Hide() } ) 
+         oSayDemo:Show()   
+
+   end case
+
+Return .t.
+
+//---------------------------------------------------------------------------//
+
+Function ExitDialog( oDlg, nLicencia, nSerialHD, nSerialUSR, oSerialUsr, oSayAlquiler, cSayAlquiler )
+
+   local n 
+   local nSerialCRC
+   local aSerialCRC     := {}
+   local cFileIni       := FullCurDir() + "2K10.Num"
+
+   CursorWait()
+
+   do case
+      case nLicencia == 1
+
+         // Cargamos el array con los codigos-------------------------------------
+      
+         for n := 1 to 50
+            nSerialCRC     := Val( GetPvProfString( "Main", "Access code " + Str( n, 2 ), "0", cFileIni ) )
+            if !Empty( nSerialCRC )
+               aAdd( aSerialCRC, nSerialCRC )
+            end if
+         next
+      
+         // Comprobamos que exista------------------------------------------------ 
+     
+         if nXor( nSerialHD, SERIALNUMBER ) == nSerialUSR
+      
+            aAdd( aSerialCRC, nSerialUSR )
+      
+            for n := 1 to len( aSerialCRC )
+               WritePProString( "Main", "Access code " + Str( n, 2 ), cValToChar( aSerialCRC[ n ] ), cFileIni )
+            next
+      
+            lDemoMode( .f. )
+      
+            MsgInfo( "Programa registrado con éxito" )
+
+            oDlg:End( IDOK )
+      
+         else
+      
+            MsgStop( "Número invalido" )
+
+            oSerialUsr:SetFocus()
+
+            Return .f.
+      
+         end if
+
+      case nLicencia == 2
+
+         if Empty( cSayAlquiler[1] )
+            MsgStop( "El campo N.I.F./ C.I.F. no puede estar vacío" )
+            oSayAlquiler[1]:SetFocus()
+            Return .f.
+         end if
+
+         if Empty( cSayAlquiler[2] )
+            MsgStop( "El campo nombre no puede estar vacío" )
+            oSayAlquiler[2]:SetFocus()
+            Return .f.
+         end if
+
+         if Empty( cSayAlquiler[3] )
+            MsgStop( "El campo domicilio no puede estar vacío" )
+            oSayAlquiler[3]:SetFocus()
+            Return .f.
+         end if
+
+         if Empty( cSayAlquiler[4] )
+            MsgStop( "El campo población no puede estar vacío" )
+            oSayAlquiler[4]:SetFocus()
+            Return .f.
+         end if
+
+         if Empty( cSayAlquiler[5] )
+            MsgStop( "El campo código postal no puede estar vacío" )
+            oSayAlquiler[5]:SetFocus()
+            Return .f.
+         end if
+
+         if Empty( cSayAlquiler[6] )
+            MsgStop( "El campo email no puede estar vacío" )
+            oSayAlquiler[6]:SetFocus()
+            Return .f.
+         end if
+
+         if Empty( cSayAlquiler[7] )
+            MsgStop( "El campo teléfono no puede estar vacío" )
+            oSayAlquiler[7]:SetFocus()
+            Return .f.
+         end if
+
+         if Empty( cSayAlquiler[8] )
+            MsgStop( "El campo provincia no puede estar vacío" )
+            oSayAlquiler[8]:SetFocus()
+            Return .f.
+         end if
+
+         lEnviarCorreoWatchdog( cSayAlquiler, oDlg )
+
+         lEnviarCorreoCliente( cSayAlquiler, oDlg )
+
+         oDlg:End( IDOK )
+
+      case nLicencia == 3
+
+         oDlg:End( IDOK )
+
+   end case      
+
+   CursorWE()
+
+Return ( .t. )
+
+//---------------------------------------------------------------------------//
+
+Function lEnviarCorreoWatchdog( cSay, oDlg )
+
+   oDlg:Disable()
+
+   CursorWait()
+
+   with object ( TGenMailing():Create() )
+
+      /*
+      Introducimos los datos del servidor a fuego------------------------------
+      */
+
+      :MailServer          := "smtp.gestool.es"
+      :MailServerPort      := 587
+      :MailServerUserName  := "info@gestool.es"
+      :MailServerPassword  := "123Ab456"
+
+      /*
+      Creamos el cuerpo del mensaje--------------------------------------------
+      */
+
+      :SetDe(              "Gestool sistema de registro" )
+      :SetPara(            "registro@gestool.es" )
+      :SetAsunto(          "Registro de usuario de Gestool SAAS." )
+      :cGetMensaje         := "Datos de registro de usuario de Gestool SAAS" + "<br>"
+      :cGetMensaje         += "NIF: " + AllTrim( cSay[1] ) + "<br>"
+      :cGetMensaje         += "Nombre: " + AllTrim( cSay[2] ) + "<br>"
+      :cGetMensaje         += "Domicilio: " + AllTrim( cSay[3] ) + "<br>"
+      :cGetMensaje         += "Población: " + AllTrim( cSay[4] ) + "<br>"
+      :cGetMensaje         += "Cod. postal: " + AllTrim( cSay[5] ) + "<br>"
+      :cGetMensaje         += "Provincia: " + AllTrim( cSay[8] ) + "<br>"
+      :cGetMensaje         += "Email: " + AllTrim( cSay[6] ) + "<br>"
+      :cGetMensaje         += "Teléfono: " + AllTrim( cSay[7] )
+
+      /*
+      Mandamos el Mail---------------------------------------------------------
+      */
+
+      :lExternalSendMail()
+
+   end with
+
+   CursorWe()
+
+   oDlg:Enable()
+
+Return ( .t. )
+
+//---------------------------------------------------------------------------//
+         
+Function lEnviarCorreoCliente( cSay, oDlg )
+
+   oDlg:Disable()
+
+   CursorWait()
+
+   with object ( TGenMailing():Create() )
+
+      /*
+      Introducimos los datos del servidor a fuego------------------------------
+      */
+
+      :MailServer            := "smtp.gestool.es"
+      :MailServerPort        := 587
+      :MailServerUserName    := "info@gestool.es"
+      :MailServerPassword    := "123Ab456"
+
+      /*
+      Creamos el cuerpo del mensaje--------------------------------------------
+      */
+
+      :SetDe(           "Gestool sistema de registro" )
+      :SetPara(         AllTrim( cSay[6] ) )
+      :SetAsunto(       "Registro de Gestool." )
+      :cGetMensaje           := "Su petición de registro está siendo procesada. En breve nos pondremos en contacto con usted "
+      :cGetMensaje           += "para finalizar el proceso de registro." + "<br>"
+      :cGetMensaje           += "Puede ponerse en contacto con nosotros mediante email en registro@gestool.es; o en el teléfono 902 930 252" + "<br>"
+      :cGetMensaje           += "de 09:00 a 14:00 y de 17:00 a 21:00"
+
+      /*
+      Mandamos el Mail---------------------------------------------------------
+      */
+
+      :lExternalSendMail()
+
+   end with
+
+   CursorWe()
+
+   oDlg:Enable()
+
+Return ( .t. )
+
+//---------------------------------------------------------------------------//
 
 STATIC FUNCTION EndApp()
 
@@ -777,8 +1032,8 @@ Function lStartCheck()
 
    oMsgText( 'Control de acceso a la aplicación' )
 
-   CtrlApp()
-
+   ControlAplicacion()
+ 
    // Opciones de inicio-------------------------------------------------------
 
    oMsgText( 'Selección del cajón' )
@@ -5826,6 +6081,23 @@ Function oWnd() ; Return oWnd
 
 //---------------------------------------------------------------------------//
 
+function ControlAcceso()
+
+   if lNumReg
+      Return .t.
+   else
+
+      if lCheckSaasMode()
+            lDemoMode( .f. )
+            Return .t.
+      end if
+           
+   end if
+
+Return .f.
+
+//---------------------------------------------------------------------------//
+
 Function lDemoMode( lDemo )
 
    if lDemo != nil
@@ -5975,10 +6247,10 @@ Function SetDemoMode()
 
    local n 
    local oSerialHD
-   local aSerialCRC  := {}
-   local nSerialCRC  := 0
-   local nSerialHD   := Abs( nSerialHD() )
-   local cFileIni    := FullCurDir() + "2K10.Num"
+   local aSerialCRC     := {}
+   local nSerialCRC     := 0
+   local nSerialHD      := Abs( nSerialHD() )
+   local cFileIni       := FullCurDir() + "2K10.Num"
 
    if Empty( nSerialHD )
       lDemoMode( .f. )
@@ -5987,13 +6259,14 @@ Function SetDemoMode()
 
    for n := 1 to 50
 
-      nSerialCRC     := Val( GetPvProfString( "Main", "Access code " + Str( n, 2 ), "0", cFileIni ) )
+      nSerialCRC        := Val( GetPvProfString( "Main", "Access code " + Str( n, 2 ), "0", cFileIni ) )
 
       if !Empty( nSerialCRC )
 
          aAdd( aSerialCRC, nSerialCRC )
          
          if nSerialCRC == nXor( nSerialHD, SERIALNUMBER )
+            lNumReg     := .t.
             lDemoMode( .f. )
             Return .t.
          end if
@@ -6006,6 +6279,140 @@ Return nil
 
 //---------------------------------------------------------------------------//
 
+function lCheckSaasMode()
+
+   local oCon
+   local oQuery
+   local oQuery2
+   local nIdClient
+   local lCheck            := .t.
+
+   oCon                    := TMSConnect():New()
+
+   if oCon:Connect( "www.watchdog.es", "watchdog_root", "Nidorino1234", "watchdog_gestool_saas", "3306" )
+
+      oQuery               := TMSQuery():New( oCon, "SELECT * FROM numerosserie WHERE serial='" + AllTrim( Str( Abs( nSerialHD() ) ) ) + "'" )
+
+      if oQuery:Open() .and. oQuery:RecCount() > 0
+
+         if oQuery:FieldGetByName( "activo" ) != 0
+
+            nIdClient      := oQuery:FieldGetByName( "id_client" )
+
+            oQuery2        := TMSQuery():New( oCon, "SELECT * FROM clientes WHERE id='" + AllTrim( Str( nIdClient ) ) + "'" )
+
+            if oQuery2:Open() .and. oQuery2:RecCount() > 0
+
+               if oQuery2:FieldGetByName( "activo" ) == 0
+
+                  lCheck   := .f.
+
+               end if
+
+            end if
+
+         else
+
+            lCheck         := .f.
+
+         end if   
+
+      end if
+
+      oCon:Destroy()
+
+   end if
+
+Return ( lCheck )
+
+//---------------------------------------------------------------------------//
+
+//Procesos de comprobaciones iniciales para la aplicación como servicio--------
+
+FUNCTION ControlSaas()
+
+   local n 
+   local oBmp
+   local oDlg
+   local oBrush
+   local oSerialHD
+   local nSerialHD   := Abs( nSerialHD() )
+   local nSerialCRC
+   local aSerialCRC  := {}
+   local nSerialUSR  := 0
+   local cFileIni    := FullCurDir() + "2K10.Num"
+
+
+   ?"Control SAAS"
+
+
+   if lCheckSaasMode() 
+      Return .t.
+   end if 
+
+   DEFINE BRUSH oBrush COLOR Rgb( 255, 255, 255 )
+
+   DEFINE DIALOG oDlg RESOURCE "GETSERIALNO" TITLE "Sistema de protección : " + Str( nSerialHD ) BRUSH oBrush
+
+   REDEFINE BITMAP oBmp ;
+      RESOURCE "Lock_48" ;
+      ID       600;
+      OF       oDlg
+
+   REDEFINE SAY oSerialHD ;
+      PROMPT   nSerialHD ;
+      COLOR    Rgb( 0, 0, 0 ), Rgb( 255, 255, 255 ) ;
+      ID       100 ;
+      OF       oDlg
+
+   REDEFINE GET nSerialUSR ;
+      ID       110 ;
+      COLOR    Rgb( 0, 0, 0 ), Rgb( 255, 255, 255 ) ;
+      PICTURE  "99999999999999" ;
+      OF       oDlg
+
+   REDEFINE SAY COLOR Rgb( 0, 0, 0 ), Rgb( 255, 255, 255 ) ID 120 OF oDlg
+   REDEFINE SAY COLOR Rgb( 0, 0, 0 ), Rgb( 255, 255, 255 ) ID 130 OF oDlg
+   REDEFINE SAY COLOR Rgb( 0, 0, 0 ), Rgb( 255, 255, 255 ) ID 140 OF oDlg
+   REDEFINE SAY COLOR Rgb( 0, 0, 0 ), Rgb( 255, 255, 255 ) ID 150 OF oDlg
+
+   REDEFINE SAY PROMPT "2.- Marque el teléfono siguiente " + __GSTTELEFONO__ COLOR Rgb( 0, 0, 0 ), Rgb( 255, 255, 255 ) ID 160 OF oDlg
+
+   REDEFINE SAY COLOR Rgb( 0, 0, 0 ), Rgb( 255, 255, 255 ) ID 170 OF oDlg
+   REDEFINE SAY COLOR Rgb( 0, 0, 0 ), Rgb( 255, 255, 255 ) ID 180 OF oDlg
+   REDEFINE SAY COLOR Rgb( 0, 0, 0 ), Rgb( 255, 255, 255 ) ID 190 OF oDlg
+
+   with object ( TWebBtn():Redefine( 200,,,,,  {|| goWeb( __GSTWEB__ ) }, oDlg,,,,, "LEFT",,,,, Rgb( 0, 0, 255 ), Rgb( 0, 0, 255 ),,,, "Ir a la página web de " + __GSTFACTORY__ ) )
+      :SetTransparent()
+      :SetText( __GSTFACTORY__ )
+   end with
+
+   REDEFINE BUTTON ;
+      ID       552 ;
+      OF       oDlg ;
+      CANCEL ;
+      ACTION   ( oDlg:End() )
+
+   REDEFINE BUTTON ;
+      ID       IDOK ;
+      OF       oDlg ;
+      ACTION   ( oDlg:End( IDOK ) )
+
+   REDEFINE BUTTON ;
+      ID       IDCANCEL ;
+      OF       oDlg ;
+      ACTION   ( oDlg:End(), PostQuitMessage() )
+
+   ACTIVATE DIALOG oDlg CENTER
+
+   oBmp:end()
+   oBrush:end()
+
+RETURN .t.
+
+//----------------------------------------------------------------------------//
+
+//---------------------------------------------------------------------------//
 
 Static Function SetFidelity( oBtnFidelity )
 
@@ -6024,7 +6431,7 @@ Static Function SetFidelity( oBtnFidelity )
 
 Return ( lFidelity )
 
-//---------------------------------------------------------------------------//
+//--------------------------------------------------------------------------//   
 
 FUNCTION Test()
 

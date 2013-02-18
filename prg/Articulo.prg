@@ -15927,8 +15927,6 @@ Function BrwSelArticulo( oGetCodigo, oGetNombre, lCodeBar, lAppend, lEdit, oBtnS
    local lPropiedades   := .f.
    local oBtnAceptarpropiedades
 
-   msgalert( nOrd, "valor q recoje de BrwArticulo")
-
    nOrd                 := Min( Max( nOrd, 1 ), len( aCbxOrd ) )
    cCbxOrd              := aCbxOrd[ nOrd ]
 
@@ -16447,7 +16445,7 @@ Static Function StartBrwSelArticulo( oGetLote, oBrw, oBrwStock, oBtnAceptarpropi
    end if
 
    if !Empty( oBrwStock )
-      oBrwStock:Load()
+      oBrwStock:Load() 
    end if
 
    if !IsReport()

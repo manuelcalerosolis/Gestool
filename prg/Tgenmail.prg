@@ -98,6 +98,8 @@ CLASS TGenMailing
 
    Method New()
 
+   Method Create()
+
    Method Init()
 
    Method ClientResource( dbfAlias )
@@ -181,6 +183,19 @@ Method New() CLASS TGenMailing
    ::MailServerUserName    := Rtrim( uFieldEmpresa( "cCtaMai" ) )
    ::MailServerPassword    := Rtrim( uFieldEmpresa( "cPssMai" ) )
    ::MailServerConCopia    := Rtrim( uFieldEmpresa( "cCcpMai" ) )
+
+Return ( Self )
+
+//---------------------------------------------------------------------------//
+
+Method Create() CLASS TGenMailing
+
+   ::cGetAsunto            := Space( 254 )
+   ::cGetAdjunto           := Space( 254 )
+   ::cGetHtml              := Space( 254 )
+
+   ::cGetMensaje           := ""
+   ::cCmbMensaje           := "Sin formato"
 
 Return ( Self )
 
