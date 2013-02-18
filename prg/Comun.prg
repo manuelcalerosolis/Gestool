@@ -2053,11 +2053,7 @@ FUNCTION cPatEmp( cPath, lFull )
       Return ( FullCurDir() + cPatEmp + "\" )
    end if
 
-#ifdef __SQLLIB__
-Return ( cPatEmp + "\" )
-#else
 Return ( if( lFull, FullCurDir(), "" ) + cPatEmp + "\" )
-#endif
 
 //---------------------------------------------------------------------------//
 
@@ -2080,6 +2076,12 @@ RETURN WinExec( ( "HH " + cPatHelp() + "HELP.CHM::/" + AllTrim( cTema ) + ".HTM"
 Function cPatHelp()
 
 Return ( FullCurDir() + "Help\" )
+
+//----------------------------------------------------------------------------//
+
+Function cPatReporting()
+
+Return ( FullCurDir() + "Reporting\" )
 
 //----------------------------------------------------------------------------//
 

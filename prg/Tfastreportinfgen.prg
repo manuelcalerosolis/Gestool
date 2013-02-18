@@ -563,7 +563,6 @@ CLASS TFastReportInfGen FROM TNewInfGen
 
       ::nBaseTicketsClientes       += ::oTikCliT:nTotNet
       ::nIVATicketsClientes        += ::oTikCliT:nTotIva
-      ::nRecargoTicketsClientes    += ::oTikCliT:nTotReq
       ::nTotalTicketsClientes      += ::oTikCliT:nTotTik
 
       RETURN ( Self )
@@ -2108,6 +2107,12 @@ METHOD LoadReport() CLASS TFastReportInfGen
 
    end if
 
+   if Empty( ::cInformeFastReport )
+      if File( cPatReporting() + Upper( ::cReportName ) + ".fr3" )
+         ::cInformeFastReport       := MemoRead( cPatReporting() + Upper( ::cReportName ) + ".fr3" )
+      end if
+   end if
+
 RETURN ( Self )
 
 //---------------------------------------------------------------------------//
@@ -2178,7 +2183,7 @@ METHOD DlgExportDocument( oWndBrw )
    */
 
    cGetFile             := Padr( FullCurDir() + "Informe.Dat", 100 )
-
+ 
    DEFINE DIALOG oDlg RESOURCE "ExpDocs" TITLE "Exportar documento"
 
       REDEFINE SAY PROMPT ::cTypeName ;

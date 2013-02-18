@@ -1171,8 +1171,8 @@ Function DirectEjecutaScript()
          Ejecutamos el script--------------------------------------------------
          */
 
-         pHrb := __hrbLoad( cPatScript() + cScript[1] )
-         u := __hrbDo( pHrb )
+         pHrb  := __hrbLoad( cPatScript() + cScript[1] )
+         u     := __hrbDo( pHrb )
          __hrbUnload( pHrb )
 
       next

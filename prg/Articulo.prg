@@ -5795,7 +5795,9 @@ STATIC FUNCTION EdtDet( aTmp, aGet, dbfArtPrv, oBrw, bWhen, bValid, nMode )
 
    if nMode == APPD_MODE
 
-      /*Control para que el primer proveedor que metamos se ponga por defecto*/
+      /*
+      Control para que el primer proveedor que metamos se ponga por defecto
+      */
 
       ( dbfTmpPrv )->( dbGoTop() )
 

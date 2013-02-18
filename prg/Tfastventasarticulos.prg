@@ -2305,7 +2305,7 @@ METHOD TreeReportingChanged() CLASS TFastVentasArticulos
       ::lShowFecha()
    end if
 
-   ::oDlg:cTitle( "Reporting : " + cTitle )
+   ::oDlg:cTitle( "Reporting : [" + cTitle + "]" )
 
 Return ( Self )
 

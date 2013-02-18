@@ -16429,26 +16429,6 @@ FUNCTION nTotFacCli( cFactura, cFacCliT, cFacCliL, cIva, cDiv, cFacCliP, cAntCli
                _NBASIVA1      -= nTotAnt
             end if
 
-            /*
-            do case
-               case _NPCTIVA1 == nil .OR. _NPCTIVA1 == ( cAntCliT )->nPctIva
-                  _NPCTIVA1   := ( cAntCliT )->nPctIva
-                  _NPCTREQ1   := ( cAntCliT )->nReq
-                  _NBASIVA1   -= nTotAnt
-
-               case _NPCTIVA2 == nil .OR. _NPCTIVA2 == ( cAntCliT )->nPctIva
-                  _NPCTIVA2   := ( cAntCliT )->nPctIva
-                  _NPCTREQ2   := ( cAntCliT )->nReq
-                  _NBASIVA2   -= nTotAnt
-
-               case _NPCTIVA3 == nil .OR. _NPCTIVA3 == ( cAntCliT )->nPctIva
-                  _NPCTIVA3   := ( cAntCliT )->nPctIva
-                  _NPCTREQ3   := ( cAntCliT )->nReq
-                  _NBASIVA3   -= nTotAnt
-
-            end case
-            */
-
             ( cAntCliT )->( dbSkip() )
 
          end while
@@ -16473,25 +16453,6 @@ FUNCTION nTotFacCli( cFactura, cFacCliT, cFacCliL, cIva, cDiv, cFacCliP, cAntCli
                if _NBASIVA1 != 0
                   _NBASIVA1      -= nTotAnt
                end if
-
-               /*
-               do case
-                  case _NPCTIVA1 == nil .OR. _NPCTIVA1 == ( cAntCliT )->nPctIva
-                     _NPCTIVA1   := ( cAntCliT )->nPctIva
-                     _NPCTREQ1   := If ( lRecargo, nPReq( cIva, _NPCTIVA1 ), 0 )
-                     _NBASIVA1   -= nTotAnt
-
-                  case _NPCTIVA2 == nil .OR. _NPCTIVA2 == ( cAntCliT )->nPctIva
-                     _NPCTIVA2   := ( cAntCliT )->nPctIva
-                     _NPCTREQ2   := If ( lRecargo, nPReq( cIva, _NPCTIVA2 ), 0 )
-                     _NBASIVA2   -= nTotAnt
-
-                  case _NPCTIVA3 == nil .OR. _NPCTIVA3 == ( cAntCliT )->nPctIva
-                     _NPCTIVA3   := ( cAntCliT )->nPctIva
-                     _NPCTREQ3   := If ( lRecargo, nPReq( cIva, _NPCTIVA2 ), 0 )
-                     _NBASIVA3   -= nTotAnt
-               end case
-               */
 
                ( cAntCliT )->( dbSkip() )
 

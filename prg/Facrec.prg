@@ -2659,21 +2659,21 @@ STATIC FUNCTION EdtRec( aTmp, aGet, dbfFacRecT, oBrw, cCodCli, cCodArt, nMode, a
          :cHeader             := "Código proveedor"
          :bEditValue          := {|| AllTrim( ( dbfTmpLin )->cCodPrv ) }
          :nWidth              := 50
-         :lHide               := !( IsMuebles() )
+         :lHide               := .t.
       end with
 
       with object ( oBrwLin:AddCol() )
          :cHeader             := "Nombre proveedor"
          :bEditValue          := {|| AllTrim( ( dbfTmpLin )->cNomPrv ) }
          :nWidth              := 150
-         :lHide               := !( IsMuebles() )
+         :lHide               := .t.
       end with
 
       with object ( oBrwLin:AddCol() )
          :cHeader             := "Referencia proveedor"
          :bEditValue          := {|| AllTrim( ( dbfTmpLin )->cRefPrv ) }
          :nWidth              := 50
-         :lHide               := !( IsMuebles() )
+         :lHide               := .t.
       end with
 
       with object ( oBrwLin:AddCol() )
@@ -3955,16 +3955,6 @@ STATIC FUNCTION EdtDet( aTmp, aGet, dbfFacRecL, oBrw, lTotLin, cCodArtEnt, nMode
       -------------------------------------------------------------------------
       */
 
-      if "MUEBLES" $ cParamsMain()
-
-         REDEFINE GET aGet[ _CREFPRV ] VAR aTmp[ _CREFPRV ] ;
-            ID       500 ;
-            IDSAY    501 ;
-            WHEN     ( nMode != ZOOM_MODE ) ;
-            OF       oFld:aDialogs[1]
-
-      end if
-
       REDEFINE GET aGet[ _NIVA ] VAR aTmp[ _NIVA ] ;
 			ID 		120 ;
          WHEN     ( lModIva() .AND. nMode != ZOOM_MODE ) ;
@@ -4053,18 +4043,6 @@ STATIC FUNCTION EdtDet( aTmp, aGet, dbfFacRecL, oBrw, lTotLin, cCodArtEnt, nMode
          OF       oFld:aDialogs[1]
 
          aGet[ ( dbfFacRecL )->( fieldpos( "nMedTre" ) ) ]:oSay:SetColor( CLR_BLUE )
-
-if "MUEBLES" $ cParamsMain()
-
-      REDEFINE BTNBMP ;
-         ID       155 ;
-         OF       oFld:aDialogs[1] ;
-         RESOURCE "Money2_16" ;
-         NOBORDER ;
-         TOOLTIP  "Desglose de puntos" ;
-         ACTION   ( DesgPnt( cCodArt, aTmp, aTmp[ _NTARLIN ], aGet[ _NPREUNIT ], aGet[ _NCOSDIV ], nMode ), lCalcDeta( aTmp, aTmpFac ) )
-
-end if
 
       REDEFINE GET aGet[ _NPREUNIT ] VAR aTmp[ _NPREUNIT ] ;
          ID       150 ;
@@ -4351,22 +4329,6 @@ end if
          ID       110 ;
          WHEN     ( nMode != ZOOM_MODE ) ;
          OF       oFld:aDialogs[3]
-
-if "MUEBLES" $ cParamsMain()
-
-    REDEFINE GET aGet[ _CCODPRV ] VAR aTmp[ _CCODPRV ] ;
-         ID       800 ;
-         WHEN     ( .f. ) ;
-         COLOR    CLR_GET ;
-         OF       oFld:aDialogs[1]
-
-    REDEFINE GET aGet[ _CNOMPRV ] VAR aTmp[ _CNOMPRV ] ;
-         ID       801 ;
-         WHEN     ( .f. ) ;
-         COLOR    CLR_GET ;
-         OF       oFld:aDialogs[1]
-
-end if
 
       REDEFINE BITMAP bmpImage ;
          ID       220 ;
@@ -5125,9 +5087,6 @@ Static Function EdtInc( aTmp, aGet, dbfFacRecI, oBrw, bWhen, bValid, nMode, aTmp
       aTmp[ _CSERIE   ] := aTmpFac[ _CSERIE  ]
       aTmp[ _NNUMFAC  ] := aTmpFac[ _NNUMFAC ]
       aTmp[ _CSUFFAC  ] := aTmpFac[ _CSUFFAC ]
-      if "MUEBLES" $ cParamsMain()
-         aTmp[ ( dbfTmpInc )->( FieldPos( "lAviso" ) ) ]  := .t.
-      end if
    end if
 
    DEFINE DIALOG oDlg RESOURCE "INCIDENCIA" TITLE LblTitle( nMode ) + "incidencias de facturas rectificativas"
@@ -6441,15 +6400,15 @@ FUNCTION nTotFacRec( cFactura, cFacRecT, cFacRecL, cIva, cDiv, aTmp, cDivRet, lP
    */
 
    if cDivRet != nil .and. cDivRet != cCodDiv
-      nTotNet     := nCnv2Div( nTotNet, cCodDiv, cDivRet, cDiv )
-      nTotIva     := nCnv2Div( nTotIva, cCodDiv, cDivRet, cDiv )
-      nTotReq     := nCnv2Div( nTotReq, cCodDiv, cDivRet, cDiv )
-      nTotFac     := nCnv2Div( nTotFac, cCodDiv, cDivRet, cDiv )
-      nTotRet     := nCnv2Div( nTotRet, cCodDiv, cDivRet, cDiv )
-      nTotPnt     := nCnv2Div( nTotPnt, cCodDiv, cDivRet, cDiv )
-      nTotTrn     := nCnv2Div( nTotTrn, cCodDiv, cDivRet, cDiv )
-      nTotAnt     := nCnv2Div( nTotAnt, cCodDiv, cDivRet, cDiv )
-      cPorDiv     := cPorDiv( cDivRet, cDiv )
+      nTotNet     	:= nCnv2Div( nTotNet, cCodDiv, cDivRet, cDiv )
+      nTotIva     	:= nCnv2Div( nTotIva, cCodDiv, cDivRet, cDiv )
+      nTotReq     	:= nCnv2Div( nTotReq, cCodDiv, cDivRet, cDiv )
+      nTotFac     	:= nCnv2Div( nTotFac, cCodDiv, cDivRet, cDiv )
+      nTotRet     	:= nCnv2Div( nTotRet, cCodDiv, cDivRet, cDiv )
+      nTotPnt     	:= nCnv2Div( nTotPnt, cCodDiv, cDivRet, cDiv )
+      nTotTrn     	:= nCnv2Div( nTotTrn, cCodDiv, cDivRet, cDiv )
+      nTotAnt     	:= nCnv2Div( nTotAnt, cCodDiv, cDivRet, cDiv )
+      cPorDiv     	:= cPorDiv( cDivRet, cDiv )
    end if
 
 RETURN ( if( lPic, Trans( nTotFac, cPorDiv ), nTotFac ) ) //
@@ -6559,7 +6518,7 @@ Carga los articulos en la factura
 
 STATIC FUNCTION LoaArt( aGet, bmpImage, aTmp, aTmpFac, oStkAct, oSayPr1, oSayPr2, oSayVp1, oSayVp2, nMode, lFocused )
 
-	local nDtoAge
+   local nDtoAge
    local nImpAtp
    local nImpOfe
    local nCosPro
@@ -6654,20 +6613,10 @@ STATIC FUNCTION LoaArt( aGet, bmpImage, aTmp, aTmpFac, oStkAct, oSayPr1, oSayPr2
             aTmp[ _CCODPRV ]  := cProveedor
             aTmp[ _CNOMPRV ]  := AllTrim( RetProvee( cProveedor ) )
             aTmp[ _CREFPRV ]  := Padr( cRefPrvArt( cCodArt, Padr( cProveedor, 12 ) , dbfArtPrv ), 18 )
-            if "MUEBLES" $ cParamsMain()
-               aGet[ _CCODPRV ]:cText( cProveedor )
-               aGet[ _CNOMPRV ]:cText( AllTrim( RetProvee( cProveedor ) ) )
-               aGet[ _CREFPRV ]:cText( Padr( cRefPrvArt( cCodArt, Padr( cProveedor, 12 ) , dbfArtPrv ), 18 ) )
-            end if
          else
             aTmp[ _CCODPRV ]  := (dbfArticulo)->cPrvHab
             aTmp[ _CNOMPRV ]  := AllTrim( RetProvee( (dbfArticulo)->cPrvHab ) )
             aTmp[ _CREFPRV ]  := Padr( cRefPrvArt( cCodArt, (dbfArticulo)->cPrvHab, dbfArtPrv ), 18 )
-            if "MUEBLES" $ cParamsMain()
-               aGet[ _CCODPRV ]:cText( (dbfArticulo)->cPrvHab )
-               aGet[ _CNOMPRV ]:cText( AllTrim( RetProvee( (dbfArticulo)->cPrvHab ) ) )
-               aGet[ _CREFPRV ]:cText( Padr( cRefPrvArt( cCodArt, (dbfArticulo)->cPrvHab, dbfArtPrv ), 18 ) )
-            end if
          end if
 
          aGet[_CDETALLE]:show()
@@ -7041,14 +6990,9 @@ STATIC FUNCTION LoaArt( aGet, bmpImage, aTmp, aTmpFac, oStkAct, oSayPr1, oSayPr2
             cCodFam        := aTmp[_CCODFAM]
          end if
 
-if "MUEBLES" $ cParamsMain()
-         aTmp[ _NPUNTOS ]     := ( dbfArticulo )->pCosto
-         aTmp[ _NVALPNT ]     := ( dbfArticulo )->nPuntos
-         aTmp[ _NDTOPNT ]     := ( dbfArticulo )->nDtoPnt
-         aTmp[ _NINCPNT ]     := 0
-end if
-
-         /*Cargamos el precio recomendado ,el precio de costo y el punto verde*/
+         /*
+         Cargamos el precio recomendado ,el precio de costo y el punto verde
+         */
 
          aGet[ _NPNTVER ]:cText( ( dbfArticulo )->nPntVer1 )
          aTmp[ _NPVPREC ]   := ( dbfArticulo )->PvpRec
@@ -11480,12 +11424,12 @@ Devuelve el total de pagos de una factura
 
 FUNCTION nPagFacRec( cFactura, dbfFacRecT, dbfFacRecL, dbfFacCliP, dbfIva, dbfDiv, cDivRet, lOnlyCob, lPic )
 
+   local nOrd
+   local nRec
    local cPorDiv
    local nRouDiv        := 2
    local nTotalPagado   := 0
    local cCodDiv        := cDivEmp()
-   local nOrd
-   local nRec
 
    DEFAULT lOnlyCob     := .t.
    DEFAULT lPic         := .f.
@@ -11989,11 +11933,11 @@ RETURN nBitmap
 
 FUNCTION ChkLqdFacRec( aTmp, dbfFacRecT, dbfFacRecL, dbfFacCliP, dbfIva, dbfDiv )
 
+   local nTotal
    local lChkLqd
+   local cDivFac
    local cFactura
    local nPagFacCli
-	local nTotal
-   local cDivFac
    local nRec     := ( dbfFacCliP )->( RecNo() )
 
    if aTmp != nil
@@ -13860,11 +13804,12 @@ RETURN ( nOption )
 
 //----------------------------------------------------------------------------//
 
-FUNCTION sTotFacRec( cFactura, dbfFacRecT, dbfFacRecL, dbfIva, dbfDiv, cDivRet )
+FUNCTION sTotFacRec( cFactura, dbfFacRecT, dbfFacRecL, dbfIva, dbfDiv, dbfFacCliP, cDivRet )
 
    local sTotal
+   local nCobro
 
-   nTotFacRec( cFactura, dbfFacRecT, dbfFacRecL, dbfIva, dbfDiv, nil, cDivRet )
+   nTotFacRec( cFactura, dbfFacRecT, dbfFacRecL, dbfIva, dbfDiv, nil, cDivRet, .f. )
 
    sTotal                                 := sTotal()
 
@@ -13886,9 +13831,11 @@ FUNCTION sTotFacRec( cFactura, dbfFacRecT, dbfFacRecL, dbfIva, dbfDiv, cDivRet )
    sTotal:nTotalDescuentoUno              := nTotUno
    sTotal:nTotalDescuentoDos              := nTotDos
 
-   sTotal:nTotalCobrado                   := nTotCob
-
    sTotal:aTotalIva                       := aTotIva
+
+   nCobro 								  := nPagFacRec( cFactura, dbfFacRecT, dbfFacRecL, dbfFacCliP, dbfIva, dbfDiv, nil, .t. )
+
+   sTotal:nTotalCobrado                   := nCobro
 
 Return ( sTotal )
 

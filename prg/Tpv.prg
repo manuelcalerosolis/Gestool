@@ -21624,6 +21624,7 @@ FUNCTION nTotTik( cNumTik, cTikT, cTikL, cDiv, aTmp, cDivRet, lPic, lExcCnt )
    public nTotDtoEsp    := 0
    public nTotDpp       := 0
    public nTotNet       := 0
+   public nTotBrt       := 0
    public nTotIva       := 0
    public nTotIvm       := 0
    public aBrtTik       := { 0, 0, 0 }
@@ -24232,6 +24233,8 @@ FUNCTION sTotTikCli( cNumTik, cTikT, cTikL, cDiv, cDivRet )
    local sTotal
 
    nTotTik( cNumTik, cTikT, cTikL, cDiv, nil, cDivRet )   
+
+
 
    sTotal                                 := sTotal()
 

@@ -136,7 +136,6 @@ METHOD OpenFiles() CLASS TFastVentasClientes
       DATABASE NEW ::oFacRecT PATH ( cPatEmp() ) CLASS "FACRECT" FILE "FACRECT.DBF" VIA ( cDriver() ) SHARED INDEX "FACRECT.CDX"
 
       DATABASE NEW ::oFacRecL PATH ( cPatEmp() ) CLASS "FACRECL" FILE "FACRECL.DBF" VIA ( cDriver() ) SHARED INDEX "FACRECL.CDX"
-      ::oFacRecL:OrdSetFocus( "cRef" )
 
       DATABASE NEW ::oTikCliT PATH ( cPatEmp() ) CLASS "TIKET"   FILE "TIKET.DBF"   VIA ( cDriver() ) SHARED INDEX "TIKET.CDX"
 
@@ -328,9 +327,10 @@ METHOD BuildTree( oTree, lSubNode ) CLASS TFastVentasClientes
    oTreeFacturas           := oTreeVentas:Add( "Informe de facturas",   8 )
 
    if lSubNode
-      oTreeFacturas:Add( "Relación de facturas",                                                8, "Informe de facturas" )
-      oTreeFacturas:Add( "Declaración anual de operaciones con terceras personas. Modelo 347",  8, "Informe de facturas" )
+      oTreeFacturas:Add( "Relación de facturas",                                           8, "Informe de facturas" )
    end if
+
+   oTreeVentas:Add( "Declaración anual de operaciones con terceras personas. Modelo 347",  8, "Informe de ventas consolidadas" )
 
    oTreeVentas:Add( "Informe de facturas rectificativas", 9, "Informe de facturas rectificativas" )
 
@@ -563,7 +563,7 @@ METHOD TreeReportingChanged() CLASS TFastVentasClientes
       ::lShowFecha()
    end if
 
-   ::oDlg:cTitle( "Reporting : " + cTitle )
+   ::oDlg:cTitle( "Reporting : [" + cTitle + "]" )
 
 Return ( Self )
 
@@ -616,6 +616,14 @@ METHOD lGenerate() CLASS TFastVentasClientes
 
    //      ::AddTicket()
 
+      case ::cReportName == "Declaración anual de operaciones con terceras personas. Modelo 347" // "Informe de ventas consolidadas" 
+
+         ::AddFacturaCliente()
+
+         ::AddFacturaRectificativa()
+
+         ::AddTicket()
+
       case ::cTypeName == "Listado"
 
          ::AddClientes()
@@ -663,6 +671,7 @@ METHOD AddPresupuestoCliente( cCodigoCliente ) CLASS TFastVentasClientes
       ::InitPresupuestosClientes()
 
       ::oPreCliT:OrdSetFocus( "cCodCli" )
+      ::oPreCliL:OrdSetFocus( "nNumPre" )
 
       cExpHead          := 'dFecPre >= Ctod( "' + Dtoc( ::dIniInf ) + '" ) .and. dFecPre <= Ctod( "' + Dtoc( ::dFinInf ) + '" )'
       cExpHead          += ' .and. Rtrim( cCodCli ) >= "' + Rtrim( ::oGrupoCliente:Cargo:Desde )   + '" .and. Rtrim( cCodCli ) <= "' + Rtrim( ::oGrupoCliente:Cargo:Hasta ) + '"'
@@ -765,6 +774,7 @@ METHOD AddPedidoCliente( cCodigoCliente ) CLASS TFastVentasClientes
       ::InitPedidosClientes()
 
       ::oPedCliT:OrdSetFocus( "dFecPed" )
+      ::oPedCliL:OrdSetFocus( "nNumPed" )
 
       cExpHead          := 'dFecPed >= Ctod( "' + Dtoc( ::dIniInf ) + '" ) .and. dFecPed <= Ctod( "' + Dtoc( ::dFinInf ) + '" )'
       cExpHead          += ' .and. Rtrim( cCodCli ) >= "' + Rtrim( ::oGrupoCliente:Cargo:Desde )   + '" .and. Rtrim( cCodCli ) <= "' + Rtrim( ::oGrupoCliente:Cargo:Hasta ) + '"'
@@ -868,6 +878,7 @@ METHOD AddAlbaranCliente( lFacturados ) CLASS TFastVentasClientes
       ::InitAlbaranesClientes()
 
       ::oAlbCliT:OrdSetFocus( "dFecAlb" )
+      ::oAlbCliL:OrdSetFocus( "nNumAlb" )
 
       if lFacturados
          cExpHead       := '!lFacturado .and. dFecAlb >= Ctod( "' + Dtoc( ::dIniInf ) + '" ) .and. dFecAlb <= Ctod( "' + Dtoc( ::dFinInf ) + '" )'
@@ -973,6 +984,7 @@ METHOD AddFacturaCliente( cCodigoCliente ) CLASS TFastVentasClientes
       ::InitFacturasClientes()
 
       ::oFacCliT:OrdSetFocus( "dFecFac" )
+      ::oFacCliL:OrdSetFocus( "nNumFac" )
 
       cExpHead          := 'dFecFac >= Ctod( "' + Dtoc( ::dIniInf ) + '" ) .and. dFecFac <= Ctod( "' + Dtoc( ::dFinInf ) + '" )'
       cExpHead          += ' .and. Rtrim( cCodCli ) >= "' + Rtrim( ::oGrupoCliente:Cargo:Desde )   + '" .and. Rtrim( cCodCli ) <= "' + Rtrim( ::oGrupoCliente:Cargo:Hasta ) + '"'
@@ -1074,6 +1086,7 @@ METHOD AddFacturaRectificativa( cCodigoCliente ) CLASS TFastVentasClientes
       ::InitFacturasRectificativasClientes()
 
       ::oFacRecT:OrdSetFocus( "dFecFac" )
+      ::oFacRecL:OrdSetFocus( "nNumFac" )
 
       cExpHead          := 'dFecFac >= Ctod( "' + Dtoc( ::dIniInf ) + '" ) .and. dFecFac <= Ctod( "' + Dtoc( ::dFinInf ) + '" )'
       cExpHead          += ' .and. Rtrim( cCodCli ) >= "' + Rtrim( ::oGrupoCliente:Cargo:Desde )   + '" .and. Rtrim( cCodCli ) <= "' + Rtrim( ::oGrupoCliente:Cargo:Hasta ) + '"'
@@ -1089,7 +1102,7 @@ METHOD AddFacturaRectificativa( cCodigoCliente ) CLASS TFastVentasClientes
 
          if lChkSer( ::oFacRecT:cSerie, ::aSer )
 
-            sTot              := sTotFacRec( ::oFacRecT:cSerie + Str( ::oFacRecT:nNumFac ) + ::oFacRecT:cSufFac, ::oFacRecT:cAlias, ::oFacRecL:cAlias, ::oDbfIva:cAlias, ::oDbfDiv:cAlias )
+            sTot              := sTotFacRec( ::oFacRecT:cSerie + Str( ::oFacRecT:nNumFac ) + ::oFacRecT:cSufFac, ::oFacRecT:cAlias, ::oFacRecL:cAlias, ::oDbfIva:cAlias, ::oDbfDiv:cAlias, ::oFacCliP:cAlias )
 
             ::oDbf:Blank()
 
@@ -1157,7 +1170,7 @@ METHOD AddFacturaRectificativa( cCodigoCliente ) CLASS TFastVentasClientes
    END SEQUENCE
 
    ErrorBlock( oBlock )
-   
+
 RETURN ( Self )
 
 //---------------------------------------------------------------------------//
@@ -1168,13 +1181,14 @@ METHOD AddTicket() CLASS TFastVentasClientes
    local oError
    local oBlock
    local cExpHead
-   /*
+   
    oBlock               := ErrorBlock( {| oError | ApoloBreak( oError ) } )
-   BEGIN SEQUENCE*/
+   BEGIN SEQUENCE
    
       ::InitTicketsClientes()
 
       ::oTikCliT:OrdSetFocus( "dFecTik" )
+      ::oTikCliL:OrdSetFocus( "cNumTik" )
 
       cExpHead          := 'dFecTik >= Ctod( "' + Dtoc( ::dIniInf ) + '" ) .and. dFecTik <= Ctod( "' + Dtoc( ::dFinInf ) + '" )'
       cExpHead          += ' .and. Rtrim( cCliTik ) >= "' + Rtrim( ::oGrupoCliente:Cargo:Desde )   + '" .and. Rtrim( cCliTik ) <= "' + Rtrim( ::oGrupoCliente:Cargo:Hasta ) + '"'
@@ -1188,7 +1202,7 @@ METHOD AddTicket() CLASS TFastVentasClientes
       ::oTikCliT:GoTop()
       while !::lBreak .and. !::oTikCliT:Eof()
 
-         if lChkSer( ::oTikCliT:cSerie, ::aSer )
+         if lChkSer( ::oTikCliT:cSerTik, ::aSer )
 
             sTot              := sTotTikCli( ::oTikCliT:cSerTik + ::oTikCliT:cNumTik + ::oTikCliT:cSufTik, ::oTikCliT:cAlias, ::oTikCliL:cAlias, ::oDbfDiv:cAlias )
 
@@ -1206,7 +1220,7 @@ METHOD AddTicket() CLASS TFastVentasClientes
             ::oDbf:cTipDoc    := "Tickets clientes"
             ::oDbf:cClsDoc    := TIK_CLI          
             ::oDbf:cSerDoc    := ::oTikCliT:cSerTik
-            ::oDbf:cNumDoc    := ::oTikCliT:nNumTik
+            ::oDbf:cNumDoc    := ::oTikCliT:cNumTik
             ::oDbf:cSufDoc    := ::oTikCliT:cSufTik
             ::oDbf:cIdeDoc    := Upper( ::oDbf:cTipDoc ) + ::oDbf:cSerDoc + ::oDbf:cNumDoc + ::oDbf:cSufDoc
 
@@ -1218,15 +1232,11 @@ METHOD AddTicket() CLASS TFastVentasClientes
 
             ::oDbf:nTotNet    := sTot:nTotalNeto
             ::oDbf:nTotIva    := sTot:nTotalIva
-            ::oDbf:nTotReq    := sTot:nTotalRecargoEquivalencia
             ::oDbf:nTotDoc    := sTot:nTotalDocumento
-            ::oDbf:nTotPnt    := sTot:nTotalPuntoVerde
-            ::oDbf:nTotTrn    := sTot:nTotalTransporte
             ::oDbf:nTotAge    := sTot:nTotalAgente
             ::oDbf:nTotCos    := sTot:nTotalCosto
             ::oDbf:nTotIvm    := sTot:nTotalImpuestoHidrocarburos
             ::oDbf:nTotRnt    := sTot:nTotalRentabilidad
-            ::oDbf:nTotRet    := sTot:nTotalRetencion
             ::oDbf:nTotCob    := sTot:nTotalCobrado
 
             /*
@@ -1250,7 +1260,7 @@ METHOD AddTicket() CLASS TFastVentasClientes
       end while
 
       ::oTikCliT:IdxDelete( cCurUsr(), GetFileNoExt( ::oTikCliT:cFile ) )
-   /*
+   
    RECOVER USING oError
 
       msgStop( ErrorMessage( oError ), "Imposible añadir facturas de clientes" )
@@ -1258,7 +1268,7 @@ METHOD AddTicket() CLASS TFastVentasClientes
    END SEQUENCE
 
    ErrorBlock( oBlock )
-*/
+
 RETURN ( Self )
 
 //---------------------------------------------------------------------------//
@@ -1267,7 +1277,7 @@ METHOD AddClientes() CLASS TFastVentasClientes
 
    ::oMtrInf:SetTotal( ::oDbfCli:OrdKeyCount() )
 
-   ::oMtrInf:cText         := "Procesando clientes"
+   ::oMtrInf:cText   := "Procesando clientes"
 
    /*
    Recorremos clientes---------------------------------------------------------
@@ -1321,3 +1331,5 @@ METHOD preCliInfo()
    end if
 
 return nil 
+
+//---------------------------------------------------------------------------//
