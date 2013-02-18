@@ -13208,10 +13208,10 @@ FUNCTION rxAlbCli( cPath, oMeter )
       ( dbfAlbCliT )->( ordCreate( cPath + "AlbCliT.Cdx", "lCodCli", "Field->cCodCli", {|| Field->cCodCli } ) )
 
       ( dbfAlbCliT )->( ordCondSet( "!Deleted()", {|| !Deleted() } ) )
-      ( dbfAlbCliT )->( ordCreate( cPath + "AlbCliT.Cdx", "iNumAlb", "'ALBARAN CLIENTES              ' + cSerAlb + Str( nNumAlb ) + cSufAlb", {|| 'ALBARAN CLIENTES              ' + Field->cSerAlb + Str( Field->nNumAlb ) + Field->cSufAlb } ) )
+      ( dbfAlbCliT )->( ordCreate( cPath + "AlbCliT.CDX", "cSuPed", "cSuPed", {|| Field->cSuPed } ) )
 
       ( dbfAlbCliT )->( ordCondSet( "!Deleted()", {|| !Deleted() } ) )
-      ( dbfAlbCliT )->( ordCreate( cPath + "AlbCliT.CDX", "cSuPed", "cSuPed", {|| Field->cSuPed } ) )
+      ( dbfAlbCliT )->( ordCreate( cPath + "AlbCliT.Cdx", "iNumAlb", "'10' + cSerAlb + Str( nNumAlb ) + Space( 1 ) + cSufAlb", {|| '10' + Field->cSerAlb + Str( Field->nNumAlb ) + Space( 1 ) + Field->cSufAlb } ) )
 
       ( dbfAlbCliT )->( dbCloseArea() )
    else
@@ -13253,8 +13253,8 @@ FUNCTION rxAlbCli( cPath, oMeter )
       ( dbfAlbCliT )->( ordCondSet( "!Deleted()", {|| !Deleted() } ) )
       ( dbfAlbCliT )->( ordCreate( cPath + "ALBCLIL.CDX", "cPedRef", "cNumPed + cRef", {|| Field->cNumPed + Field->cRef } ) )
 
-      ( dbfAlbCliT )->( ordCondSet( "!Deleted()", {|| !Deleted() }  ) )
-      ( dbfAlbCliT )->( ordCreate( cPath + "AlbCliL.Cdx", "iNumAlb", "'ALBARAN CLIENTES              ' + cSerAlb + Str( nNumAlb ) + cSufAlb", {|| 'ALBARAN CLIENTES              ' + Field->cSerAlb + Str( Field->nNumAlb ) + Field->cSufAlb } ) )
+      ( dbfAlbCliT )->( ordCondSet( "!Deleted()", {|| !Deleted() } ) )
+      ( dbfAlbCliT )->( ordCreate( cPath + "AlbCliL.Cdx", "iNumAlb", "'10' + cSerAlb + Str( nNumAlb ) + Space( 1 ) + cSufAlb", {|| '10' + Field->cSerAlb + Str( Field->nNumAlb ) + Space( 1 ) + Field->cSufAlb } ) )
 
       ( dbfAlbCliT )->( dbCloseArea() )
    else
@@ -13283,6 +13283,9 @@ FUNCTION rxAlbCli( cPath, oMeter )
       ( dbfAlbCliT )->( ordCondSet("!Deleted() .and. !Field->lPasado", {|| !Deleted() .and. !Field->lPasado } ) )
       ( dbfAlbCliT )->( ordCreate( cPath + "AlbCliP.Cdx", "lCtaBnc", "Field->cEntEmp + Field->cSucEmp + Field->cDigEmp + Field->cCtaEmp", {|| Field->cEntEmp + Field->cSucEmp + Field->cDigEmp + Field->cCtaEmp } ) )
 
+      ( dbfAlbCliT )->( ordCondSet( "!Deleted()", {|| !Deleted() } ) )
+      ( dbfAlbCliT )->( ordCreate( cPath + "AlbCliP.Cdx", "iNumAlb", "'10' + cSerAlb + Str( nNumAlb ) + Space( 1 ) + cSufAlb", {|| '10' + Field->cSerAlb + Str( Field->nNumAlb ) + Space( 1 ) + Field->cSufAlb } ) )
+
       ( dbfAlbCliT )->( dbCloseArea() )
    else
       msgStop( "Imposible abrir en modo exclusivo la tabla de albaranes de clientes" )
@@ -13296,6 +13299,9 @@ FUNCTION rxAlbCli( cPath, oMeter )
       ( dbfAlbCliT )->( ordCondSet("!Deleted()", {||!Deleted()}  ) )
       ( dbfAlbCliT )->( ordCreate( cPath + "AlbCliI.CDX", "NNUMALB", "CSERALB + STR( NNUMALB ) + CSUFALB", {|| Field->CSERALB + STR( Field->NNUMALB ) + Field->CSUFALB } ) )
 
+      ( dbfAlbCliT )->( ordCondSet( "!Deleted()", {|| !Deleted() } ) )
+      ( dbfAlbCliT )->( ordCreate( cPath + "AlbCliI.Cdx", "iNumAlb", "'10' + cSerAlb + Str( nNumAlb ) + Space( 1 ) + cSufAlb", {|| '10' + Field->cSerAlb + Str( Field->nNumAlb ) + Space( 1 ) + Field->cSufAlb } ) )
+
       ( dbfAlbCliT )->( dbCloseArea() )
    else
       msgStop( "Imposible abrir en modo exclusivo la tabla de albaranes de clientes" )
@@ -13308,6 +13314,9 @@ FUNCTION rxAlbCli( cPath, oMeter )
 
       ( dbfAlbCliT )->( ordCondSet("!Deleted()", {||!Deleted()}  ) )
       ( dbfAlbCliT )->( ordCreate( cPath + "AlbCliD.CDX", "NNUMALB", "CSERALB + STR( NNUMALB ) + CSUFALB", {|| Field->CSERALB + STR( Field->NNUMALB ) + Field->CSUFALB } ) )
+
+      ( dbfAlbCliT )->( ordCondSet( "!Deleted()", {|| !Deleted() } ) )
+      ( dbfAlbCliT )->( ordCreate( cPath + "AlbCliD.Cdx", "iNumAlb", "'10' + cSerAlb + Str( nNumAlb ) + Space( 1 ) + cSufAlb", {|| '10' + Field->cSerAlb + Str( Field->nNumAlb ) + Space( 1 ) + Field->cSufAlb } ) )
 
       ( dbfAlbCliT )->( dbCloseArea() )
    else
@@ -13327,6 +13336,9 @@ FUNCTION rxAlbCli( cPath, oMeter )
 
       ( dbfAlbCliT )->( ordCondSet( "!lFacturado .and. !Deleted()", {|| !Field->lFacturado .and. !Deleted() } ) )
       ( dbfAlbCliT )->( ordCreate( cPath + "AlbCliS.CDX", "cNumSer", "cNumSer", {|| Field->cNumSer } ) )
+
+      ( dbfAlbCliT )->( ordCondSet( "!Deleted()", {|| !Deleted() } ) )
+      ( dbfAlbCliT )->( ordCreate( cPath + "AlbCliS.Cdx", "iNumAlb", "'10' + cSerAlb + Str( nNumAlb ) + Space( 1 ) + cSufAlb", {|| '10' + Field->cSerAlb + Str( Field->nNumAlb ) + Space( 1 ) + Field->cSufAlb } ) )
 
       ( dbfAlbCliT )->( dbCloseArea() )
    else

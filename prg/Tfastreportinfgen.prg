@@ -76,6 +76,16 @@ CLASS TFastReportInfGen FROM TNewInfGen
    DATA  nRecargoFacturasClientes      INIT 0
    DATA  nTotalFacturasClientes        INIT 0
 
+   DATA  nBaseFacturasRectificativasClientes    INIT 0
+   DATA  nIVAFacturasRectificativasClientes     INIT 0
+   DATA  nRecargoFacturasRectificativasClientes INIT 0
+   DATA  nTotalFacturasRectificativasClientes   INIT 0
+
+   DATA  nBaseTicketsClientes          INIT 0
+   DATA  nIVATicketsClientes           INIT 0
+   DATA  nRecargoTicketsClientes       INIT 0
+   DATA  nTotalTicketsClientes         INIT 0
+
    DATA  nTotalPagosClientes           INIT 0
    DATA  nTotalPendientesClientes      INIT 0
 
@@ -458,32 +468,6 @@ CLASS TFastReportInfGen FROM TNewInfGen
 
    //------------------------------------------------------------------------//
 
-   INLINE METHOD InitFacturasClientes()
-
-      ::nBaseFacturasClientes          := 0
-      ::nIVAFacturasClientes           := 0
-      ::nRecargoFacturasClientes       := 0
-      ::nTotalFacturasClientes         := 0
-
-      RETURN ( Self )
-
-   ENDMETHOD
-
-   //------------------------------------------------------------------------//
-
-   INLINE METHOD AddFacturasClientes()
-
-      ::nBaseFacturasClientes       += ::oFacCliT:nTotNet
-      ::nIVAFacturasClientes        += ::oFacCliT:nTotIva
-      ::nRecargoFacturasClientes    += ::oFacCliT:nTotReq
-      ::nTotalFacturasClientes      += ::oFacCliT:nTotFac
-
-      RETURN ( Self )
-
-   ENDMETHOD
-
-   //------------------------------------------------------------------------//
-
    INLINE METHOD InitAlbaranesClientes()
 
       ::nBaseAlbaranesClientes      := 0
@@ -510,19 +494,107 @@ CLASS TFastReportInfGen FROM TNewInfGen
 
    //------------------------------------------------------------------------//
 
+   INLINE METHOD InitFacturasClientes()
+
+      ::nBaseFacturasClientes          := 0
+      ::nIVAFacturasClientes           := 0
+      ::nRecargoFacturasClientes       := 0
+      ::nTotalFacturasClientes         := 0
+
+      RETURN ( Self )
+
+   ENDMETHOD
+
+   //------------------------------------------------------------------------//
+
+   INLINE METHOD AddFacturasClientes()
+
+      ::nBaseFacturasClientes       += ::oFacCliT:nTotNet
+      ::nIVAFacturasClientes        += ::oFacCliT:nTotIva
+      ::nRecargoFacturasClientes    += ::oFacCliT:nTotReq
+      ::nTotalFacturasClientes      += ::oFacCliT:nTotFac
+
+      RETURN ( Self )
+
+   ENDMETHOD
+
+   //------------------------------------------------------------------------//
+
+   INLINE METHOD InitFacturasRectificativasClientes()
+
+      ::nBaseFacturasRectificativasClientes       := 0
+      ::nIVAFacturasRectificativasClientes        := 0
+      ::nRecargoFacturasRectificativasClientes    := 0
+      ::nTotalFacturasRectificativasClientes      := 0
+
+      RETURN ( Self )
+
+   ENDMETHOD
+
+   //------------------------------------------------------------------------//
+
+   INLINE METHOD AddFacturasRectificativasClientes()
+
+      ::nBaseFacturasRectificativasClientes       += ::oFacRecT:nTotNet
+      ::nIVAFacturasRectificativasClientes        += ::oFacRecT:nTotIva
+      ::nRecargoFacturasRectificativasClientes    += ::oFacRecT:nTotReq
+      ::nTotalFacturasRectificativasClientes      += ::oFacRecT:nTotFac
+
+      RETURN ( Self )
+
+   ENDMETHOD
+
+   //------------------------------------------------------------------------//
+
+   INLINE METHOD InitTicketsClientes()
+
+      ::nBaseTicketsClientes       := 0
+      ::nIVATicketsClientes        := 0
+      ::nRecargoTicketsClientes    := 0
+      ::nTotalTicketsClientes      := 0
+
+      RETURN ( Self )
+
+   ENDMETHOD
+
+   //------------------------------------------------------------------------//
+
+   INLINE METHOD AddTicketsClientes()
+
+      ::nBaseTicketsClientes       += ::oTikCliT:nTotNet
+      ::nIVATicketsClientes        += ::oTikCliT:nTotIva
+      ::nRecargoTicketsClientes    += ::oTikCliT:nTotReq
+      ::nTotalTicketsClientes      += ::oTikCliT:nTotTik
+
+      RETURN ( Self )
+
+   ENDMETHOD
+
+   //------------------------------------------------------------------------//
+
    INLINE METHOD AddVariable()
 
       Super:AddVariable()
 
-      ::oFastReport:AddVariable(    "Facturas clientes",          "Total base facturas clientes",           "CallHbFunc( 'oTinfGen', ['nBaseFacturasClientes'])"     )
-      ::oFastReport:AddVariable(    "Facturas clientes",          "Total " + cImp() + " facturas clientes", "CallHbFunc( 'oTinfGen', ['nIVAFacturasClientes'])"      )
-      ::oFastReport:AddVariable(    "Facturas clientes",          "Total recargo facturas clientes",        "CallHbFunc( 'oTinfGen', ['nRecargoFacturasClientes'])"  )
-      ::oFastReport:AddVariable(    "Facturas clientes",          "Total facturas clientes",                "CallHbFunc( 'oTinfGen', ['nTotalFacturasClientes'])"    )
+      ::oFastReport:AddVariable(    "Presupuestos clientes",      "Total base presupuestos clientes",            "CallHbFunc( 'oTinfGen', ['nBasePresupuestosClientes'])"    )
+      ::oFastReport:AddVariable(    "Presupuestos clientes",      "Total " + cImp() + " presupuestos clientes",  "CallHbFunc( 'oTinfGen', ['nIVAPresupuestosClientes'])"     )
+      ::oFastReport:AddVariable(    "Presupuestos clientes",      "Total recargo presupuestos clientes",         "CallHbFunc( 'oTinfGen', ['nRecargoPresupuestosClientes'])" )
+      ::oFastReport:AddVariable(    "Presupuestos clientes",      "Total presupuestos clientes",                 "CallHbFunc( 'oTinfGen', ['nTotalPresupuestosClientes'])"   )
+
+      ::oFastReport:AddVariable(    "Pedidos clientes",           "Total base pedidos clientes",            "CallHbFunc( 'oTinfGen', ['nBasePedidosClientes'])"    )
+      ::oFastReport:AddVariable(    "Pedidos clientes",           "Total " + cImp() + " pedidos clientes",  "CallHbFunc( 'oTinfGen', ['nIVAPedidosClientes'])"     )
+      ::oFastReport:AddVariable(    "Pedidos clientes",           "Total recargo pedidos clientes",         "CallHbFunc( 'oTinfGen', ['nRecargoPedidosClientes'])" )
+      ::oFastReport:AddVariable(    "Pedidos clientes",           "Total pedidos clientes",                 "CallHbFunc( 'oTinfGen', ['nTotalPedidosClientes'])"   )
 
       ::oFastReport:AddVariable(    "Albaranes clientes",         "Total base albaranes clientes",          "CallHbFunc( 'oTinfGen', ['nBaseAlbaranesClientes'])"    )
       ::oFastReport:AddVariable(    "Albaranes clientes",         "Total " + cImp() + " albaranes clientes","CallHbFunc( 'oTinfGen', ['nIVAAlbaranesClientes'])"     )
       ::oFastReport:AddVariable(    "Albaranes clientes",         "Total recargo albaranes clientes",       "CallHbFunc( 'oTinfGen', ['nRecargoAlbaranesClientes'])" )
       ::oFastReport:AddVariable(    "Albaranes clientes",         "Total albaranes clientes",               "CallHbFunc( 'oTinfGen', ['nTotalAlbaranesClientes'])"   )
+
+      ::oFastReport:AddVariable(    "Facturas clientes",          "Total base facturas clientes",           "CallHbFunc( 'oTinfGen', ['nBaseFacturasClientes'])"     )
+      ::oFastReport:AddVariable(    "Facturas clientes",          "Total " + cImp() + " facturas clientes", "CallHbFunc( 'oTinfGen', ['nIVAFacturasClientes'])"      )
+      ::oFastReport:AddVariable(    "Facturas clientes",          "Total recargo facturas clientes",        "CallHbFunc( 'oTinfGen', ['nRecargoFacturasClientes'])"  )
+      ::oFastReport:AddVariable(    "Facturas clientes",          "Total facturas clientes",                "CallHbFunc( 'oTinfGen', ['nTotalFacturasClientes'])"    )
 
       ::oFastReport:AddVariable(    "Liquidación de agentes",     "Total liquidación de agentes",           "GetHbVar('nTotalRemesasAgentes')"                       )
 

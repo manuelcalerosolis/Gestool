@@ -21183,6 +21183,9 @@ FUNCTION rxTpv( cPath, oMeter )
       ( dbfTikT )->( ordCondSet( "!Deleted() .and. !lCloTik", {|| !Deleted() .and. !Field->lCloTik } ) )
       ( dbfTikT )->( ordCreate( cPath + "TikeT.Cdx", "lCloUbiTik", "Str( nUbiTik ) + cSerTik + cNumTik + cSufTik", {|| Str( Field->nUbiTik ) + Field->cSerTik + Field->cNumTik + Field->cSufTik } ) )
 
+      ( dbfTikT )->( ordCondSet( "!Deleted()", {||!Deleted()}  ) )
+      ( dbfTikT )->( ordCreate( cPath + "TikeT.Cdx", "iNumTik", "'12' + CSERTIK + CNUMTIK + CSUFTIK", {|| '12' + Field->cSerTik + Field->cNumTik + Field->cSufTik } ) )
+
       ( dbfTikT )->( dbCloseArea() )
    else
       msgStop( "Imposible abrir en modo exclusivo la tabla de tikets" )
@@ -21223,6 +21226,9 @@ FUNCTION rxTpv( cPath, oMeter )
       ( dbfTikL )->( ordCondSet("!Deleted()", {||!Deleted()}  ) )
       ( dbfTikL )->( ordCreate( cPath + "TikeL.Cdx", "cDevTik", "cNumDev", {|| Field->cNumDev } ) )
 
+      ( dbfTikL )->( ordCondSet( "!Deleted()", {||!Deleted()}  ) )
+      ( dbfTikL )->( ordCreate( cPath + "TikeL.Cdx", "iNumTik", "'12' + cSerTil + cNumTil + cSufTil", {|| '12' + Field->cSerTil + Field->cNumTil + Field->cSufTil } ) )
+
       ( dbfTikL )->( dbCloseArea() )
    else
       msgStop( "Imposible abrir en modo exclusivo la tabla de tikets" )
@@ -21246,6 +21252,9 @@ FUNCTION rxTpv( cPath, oMeter )
 
       ( dbfTikP )->( ordCondSet( "!Deleted()", {|| !Deleted() } ) )
       ( dbfTikP )->( ordCreate( cPath + "TIKEP.CDX", "NNUMPGO", "Str( nNumPgo ) + cSufPgo", {|| Str( Field->nNumPgo ) + Field->cSufPgo } ) )
+
+      ( dbfTikP )->( ordCondSet( "!Deleted()", {||!Deleted()}  ) )
+      ( dbfTikP )->( ordCreate( cPath + "TikeP.Cdx", "iNumTik", "'12' + cSerTik + cNumTik + cSufTik", {|| '12' + Field->cSerTik + Field->cNumTik + Field->cSufTik } ) )
 
       ( dbfTikP )->( dbCloseArea() )
    else
@@ -21310,6 +21319,9 @@ FUNCTION rxTpv( cPath, oMeter )
 
       ( dbfTikS )->( ordCondSet( "!Deleted()", {|| !Deleted() } ) )
       ( dbfTikS )->( ordCreate( cPath + "TikeS.Cdx", "cNumSer", "cNumSer", {|| Field->cNumSer } ) )
+
+      ( dbfTikS )->( ordCondSet( "!Deleted()", {||!Deleted()}  ) )
+      ( dbfTikS )->( ordCreate( cPath + "TikeS.Cdx", "iNumTik", "'12' + cSerTik + cNumTik + cSufTik", {|| '12' + Field->cSerTik + Field->cNumTik + Field->cSufTik } ) )
 
       ( dbfTikS )->( dbCloseArea() )
    else
@@ -24214,3 +24226,27 @@ Static Function lAddCobro( aTmp, oTotDiv, oBrwPgo )
 Return ( nil )
 
 //----------------------------------------------------------------------------//
+
+FUNCTION sTotTikCli( cNumTik, cTikT, cTikL, cDiv, cDivRet )
+
+   local sTotal
+
+   nTotTik( cNumTik, cTikT, cTikL, cDiv, nil, cDivRet )   
+
+   sTotal                                 := sTotal()
+
+   sTotal:nTotalBruto                     := nTotBrt
+   sTotal:nTotalNeto                      := nTotNet
+   sTotal:nTotalIva                       := nTotIva
+   sTotal:nTotalDocumento                 := nTotTik
+   sTotal:nTotalCosto                     := nTotCos
+   sTotal:nTotalImpuestoHidrocarburos     := nTotIvm
+   sTotal:nTotalRentabilidad              := nTotRnt
+
+   sTotal:nTotalDescuentoProntoPago       := nTotDpp
+
+   sTotal:aTotalIva                       := aImpTik
+
+Return ( sTotal )
+
+//--------------------------------------------------------------------------//

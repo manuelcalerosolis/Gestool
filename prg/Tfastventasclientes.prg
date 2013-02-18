@@ -332,6 +332,8 @@ METHOD BuildTree( oTree, lSubNode ) CLASS TFastVentasClientes
       oTreeFacturas:Add( "Declaración anual de operaciones con terceras personas. Modelo 347",  8, "Informe de facturas" )
    end if
 
+   oTreeVentas:Add( "Informe de facturas rectificativas", 9, "Informe de facturas rectificativas" )
+
    oTreeVentas:Add( "Informe de tickets",       10, "Informe de tickets" )
    oTreeVentas:Add( "Informe de ventas",        11, "Informe de ventas" )
 
@@ -451,6 +453,34 @@ METHOD DataReport() CLASS TFastVentasClientes
    Rectificativas--------------------------------------------------------------
    */
 
+   ::oFacRecT:OrdSetFocus( "iNumFac" )
+
+   ::oFastReport:SetWorkArea(       "Facturas rectificativas de clientes", ::oFacRecT:nArea )
+   ::oFastReport:SetFieldAliases(   "Facturas rectificativas de clientes", cItemsToReport( aItmFacRec() ) )
+
+   ::oFacRecL:OrdSetFocus( "iNumFac" )
+
+   ::oFastReport:SetWorkArea(       "Lineas facturas rectificativas de clientes", ::oFacRecL:nArea )
+   ::oFastReport:SetFieldAliases(   "Lineas facturas rectificativas de clientes", cItemsToReport( aColFacRec() ) )
+
+   /*
+   Tickets--------------------------------------------------------------------
+   */
+
+   ::oTikCliT:OrdSetFocus( "iNumTik" )
+
+   ::oFastReport:SetWorkArea(       "Tickets de clientes", ::oTikCliT:nArea )
+   ::oFastReport:SetFieldAliases(   "Tickets de clientes", cItemsToReport( aItmTik() ) )
+
+   ::oTikCliL:OrdSetFocus( "iNumTik" )
+
+   ::oFastReport:SetWorkArea(       "Lineas tickets de clientes", ::oTikCliL:nArea )
+   ::oFastReport:SetFieldAliases(   "Lineas tickets de clientes", cItemsToReport( aColTik() ) )
+
+   /*
+   Relaciones------------------------------------------------------------------
+   */
+
    ::oFastReport:SetMasterDetail(   "Informe", "Empresa",               {|| cCodEmp() } )
    ::oFastReport:SetMasterDetail(   "Informe", "Direcciones",           {|| ::oDbf:cCodCli } )
    ::oFastReport:SetMasterDetail(   "Informe", "Bancos",                {|| ::oDbf:cCodCli } )
@@ -461,26 +491,28 @@ METHOD DataReport() CLASS TFastVentasClientes
 
    ::oFastReport:SetMasterDetail(   "Informe", "Agentes",               {|| ::oDbf:cCodAge } )
 
-   ::oFastReport:SetMasterDetail(   "Informe", "Presupuestos de clientes",          {|| msgAlert( ::oDbf:cClsDoc + ::oDbf:cSerDoc + ::oDbf:cNumDoc + ::oDbf:cSufDoc ), ::oDbf:cClsDoc + ::oDbf:cSerDoc + ::oDbf:cNumDoc + ::oDbf:cSufDoc } )
+   ::oFastReport:SetMasterDetail(   "Informe", "Presupuestos de clientes",                   {|| ::cIdeDocumento() } )
+   ::oFastReport:SetMasterDetail(   "Informe", "Lineas presupuestos de clientes",            {|| ::cIdeDocumento() } )
 
-   ::oFastReport:SetMasterDetail(   "Informe", "Pedidos de clientes",               {|| Padr( Upper( ::oDbf:cTipDoc ), 30 ) + ::oDbf:cSerDoc + ::oDbf:cNumDoc + ::oDbf:cSufDoc } )
-   ::oFastReport:SetMasterDetail(   "Informe", "Lineas pedidos de clientes",        {|| Padr( Upper( ::oDbf:cTipDoc ), 30 ) + ::oDbf:cSerDoc + ::oDbf:cNumDoc + ::oDbf:cSufDoc } )
+   ::oFastReport:SetMasterDetail(   "Informe", "Pedidos de clientes",                        {|| ::cIdeDocumento() } )
+   ::oFastReport:SetMasterDetail(   "Informe", "Lineas pedidos de clientes",                 {|| ::cIdeDocumento() } )
 
-   ::oFastReport:SetMasterDetail(   "Informe", "Albaranes de clientes",             {|| Padr( Upper( ::oDbf:cTipDoc ), 30 ) + ::oDbf:cSerDoc + ::oDbf:cNumDoc + ::oDbf:cSufDoc } )
-   ::oFastReport:SetMasterDetail(   "Informe", "Lineas albaranes de clientes",      {|| Padr( Upper( ::oDbf:cTipDoc ), 30 ) + ::oDbf:cSerDoc + ::oDbf:cNumDoc + ::oDbf:cSufDoc } )
+   ::oFastReport:SetMasterDetail(   "Informe", "Albaranes de clientes",                      {|| ::cIdeDocumento() } )
+   ::oFastReport:SetMasterDetail(   "Informe", "Lineas albaranes de clientes",               {|| ::cIdeDocumento() } )
 
-   ::oFastReport:SetMasterDetail(   "Informe", "Facturas de clientes",              {|| Padr( Upper( ::oDbf:cTipDoc ), 30 ) + ::oDbf:cSerDoc + ::oDbf:cNumDoc + ::oDbf:cSufDoc } )
-   ::oFastReport:SetMasterDetail(   "Informe", "Lineas facturas de clientes",       {|| Padr( Upper( ::oDbf:cTipDoc ), 30 ) + ::oDbf:cSerDoc + ::oDbf:cNumDoc + ::oDbf:cSufDoc } )
+   ::oFastReport:SetMasterDetail(   "Informe", "Facturas de clientes",                       {|| ::cIdeDocumento() } )
+   ::oFastReport:SetMasterDetail(   "Informe", "Lineas facturas de clientes",                {|| ::cIdeDocumento() } )
 
-   ::oFastReport:SetMasterDetail(   "Informe", "Facturas rectificativas de clientes",        {|| Padr( Upper( ::oDbf:cTipDoc ), 30 ) + ::oDbf:cSerDoc + ::oDbf:cNumDoc + ::oDbf:cSufDoc } )
-   ::oFastReport:SetMasterDetail(   "Informe", "Lineas facturas rectificativas de clientes", {|| Padr( Upper( ::oDbf:cTipDoc ), 30 ) + ::oDbf:cSerDoc + ::oDbf:cNumDoc + ::oDbf:cSufDoc } )
+   ::oFastReport:SetMasterDetail(   "Informe", "Facturas rectificativas de clientes",        {|| ::cIdeDocumento() } )
+   ::oFastReport:SetMasterDetail(   "Informe", "Lineas facturas rectificativas de clientes", {|| ::cIdeDocumento() } )
+
+   ::oFastReport:SetMasterDetail(   "Informe", "Tickets de clientes",                        {|| ::cIdeDocumento() } )
+   ::oFastReport:SetMasterDetail(   "Informe", "Lineas tickets de clientes",                 {|| ::cIdeDocumento() } )
 
    ::oFastReport:SetMasterDetail(   "Clientes", "Rutas",                {|| ::oDbfCli:cCodRut } )
    ::oFastReport:SetMasterDetail(   "Clientes", "Grupos de cliente",    {|| ::oDbfCli:cCodGrp } )
    ::oFastReport:SetMasterDetail(   "Clientes", "Formas de pago",       {|| ::oDbfCli:CodPago } )
    ::oFastReport:SetMasterDetail(   "Clientes", "Usuarios",             {|| ::oDbfCli:cCodUsr } )
-
-   // ::oFastReport:SetMasterDetail(   "Presupuestos de clientes", "Lineas presupuestos de clientes", {|| '08' + ::oPreCliT:cSerPre + Str( ::oPreCliT:nNumPre ) + ::oPreCliT:cSufPre } )
 
    ::oFastReport:SetResyncPair(     "Informe", "Empresa" )
    ::oFastReport:SetResyncPair(     "Informe", "Facturas" )
@@ -493,6 +525,7 @@ METHOD DataReport() CLASS TFastVentasClientes
    ::oFastReport:SetResyncPair(     "Informe", "Incidencias" )
 
    ::oFastReport:SetResyncPair(     "Informe", "Presupuestos de clientes" )
+   ::oFastReport:SetResyncPair(     "Informe", "Lineas presupuestos de clientes" )
 
    ::oFastReport:SetResyncPair(     "Informe", "Pedidos de clientes" )
    ::oFastReport:SetResyncPair(     "Informe", "Lineas pedidos de clientes" )
@@ -503,14 +536,16 @@ METHOD DataReport() CLASS TFastVentasClientes
    ::oFastReport:SetResyncPair(     "Informe", "Facturas de clientes" )
    ::oFastReport:SetResyncPair(     "Informe", "Lineas facturas de clientes" )
 
+   ::oFastReport:SetResyncPair(     "Informe", "Facturas rectificativas de clientes" )
+   ::oFastReport:SetResyncPair(     "Informe", "Lineas facturas rectificativas de clientes" )
+
+   ::oFastReport:SetResyncPair(     "Informe", "Tickets de clientes" )
+   ::oFastReport:SetResyncPair(     "Informe", "Lineas tickets de clientes" )
+
    ::oFastReport:SetResyncPair(     "Clientes", "Rutas" )
    ::oFastReport:SetResyncPair(     "Clientes", "Grupos de cliente" )
    ::oFastReport:SetResyncPair(     "Clientes", "Formas de pago" )
    ::oFastReport:SetResyncPair(     "Clientes", "Usuarios" )
-
-   // ( ::oPreCliT:nArea )->( dbSetRelation( ::oPreCliL:nArea, {|| '08' + ::oPreCliT:cSerPre + Str( ::oPreCliT:nNumPre ) + ::oPreCliT:cSufPre } ) )
-
-   // ::oFastReport:SetResyncPair(     "Presupuestos de clientes",   "Lineas presupuestos de clientes" )
 
    ::AddVariable()
 
@@ -520,11 +555,15 @@ Return ( Self )
 
 METHOD TreeReportingChanged() CLASS TFastVentasClientes
 
-   if ::oTreeReporting:GetSelText() == "Listado"
+   local cTitle   := ::oTreeReporting:GetSelText()
+
+   if cTitle == "Listado"
       ::lHideFecha()
    else
       ::lShowFecha()
    end if
+
+   ::oDlg:cTitle( "Reporting : " + cTitle )
 
 Return ( Self )
 
@@ -549,7 +588,7 @@ METHOD lGenerate() CLASS TFastVentasClientes
          
       case ::cReportName == "Informe de albaranes"
 
-   //      ::AddAlbaranCliente( .t. )
+         ::AddAlbaranCliente( .t. )
 
       case ::cTypeName == "Informe de facturas"
 
@@ -561,11 +600,11 @@ METHOD lGenerate() CLASS TFastVentasClientes
 
       case ::cReportName == "Informe de facturas rectificativas"
 
-   //      ::AddFacturaRectificativa( .t. )
+         ::AddFacturaRectificativa()
 
       case ::cReportName == "Informe de tickets"
 
-   //      ::AddTicket( .t. )
+         ::AddTicket( .t. )
 
       case ::cReportName == "Informe de ventas"
 
@@ -755,6 +794,7 @@ METHOD AddPedidoCliente( cCodigoCliente ) CLASS TFastVentasClientes
             ::oDbf:cCodGrp    := cGruCli( ::oPedCliT:cCodCli, ::oDbfCli )
 
             ::oDbf:cTipDoc    := "Pedidos clientes"
+            ::oDbf:cClsDoc    := PED_CLI
             ::oDbf:cSerDoc    := ::oPedCliT:cSerPed
             ::oDbf:cNumDoc    := Str( ::oPedCliT:nNumPed )
             ::oDbf:cSufDoc    := ::oPedCliT:cSufPed
@@ -815,364 +855,106 @@ RETURN ( Self )
 
 METHOD AddAlbaranCliente( lFacturados ) CLASS TFastVentasClientes
 
+   local sTot
+   local oError
+   local oBlock
    local cExpHead
-   local cExpLine
-
+   
    DEFAULT lFacturados  := .f.
 
-   ::oAlbCliT:OrdSetFocus( "dFecAlb" )
-   ::oAlbCliL:OrdSetFocus( "nNumAlb" )
-
-   if lFacturados
-      cExpHead          := '!lFacturado .and. dFecAlb >= Ctod( "' + Dtoc( ::dIniInf ) + '" ) .and. dFecAlb <= Ctod( "' + Dtoc( ::dFinInf ) + '" )'
-   else
-      cExpHead          := 'dFecAlb >= Ctod( "' + Dtoc( ::dIniInf ) + '" ) .and. dFecAlb <= Ctod( "' + Dtoc( ::dFinInf ) + '" )'
-   end if
-
-   cExpHead             += ' .and. cCodCli >= "' + Rtrim( ::oGrupoCliente:Cargo:Desde ) + '" .and. cCodCli <= "' + Rtrim( ::oGrupoCliente:Cargo:Hasta ) + '"'
-
-   /*
-   if !Empty( ::oFilter:aExpFilter ) .and. len( ::oFilter:aExpFilter ) >= 1
-      cExpHead       += ' .and. ' + ::oFilter:aExpFilter[ 1 ]
-   end if
-   */
-
-   ::oAlbCliT:AddTmpIndex( cCurUsr(), GetFileNoExt( ::oAlbCliT:cFile ), ::oAlbCliT:OrdKey(), ( cExpHead ), , , , , , , , .t. )
-
-   ::oMtrInf:cText   := "Procesando albaranes"
-   ::oMtrInf:SetTotal( ::oAlbCliT:OrdKeyCount() )
-
-   /*
-   Lineas de albaranes---------------------------------------------------------
-   */
-
-   cExpLine          := '!lTotLin .and. !lControl'
-
-   if !::lAllArt
-      cExpLine       += ' .and. cRef >= "' + ::oGrupoArticulo:Cargo:Desde + '" .and. cRef <= "' + ::oGrupoArticulo:Cargo:Hasta + '"'
-   end if
-
-   ::oAlbCliL:AddTmpIndex( cCurUsr(), GetFileNoExt( ::oAlbCliL:cFile ), ::oAlbCliL:OrdKey(), cAllTrimer( cExpLine ), , , , , , , , .t. )
-
-   ::oAlbCliT:GoTop()
-
-   while !::lBreak .and. !::oAlbCliT:Eof()
-
-      if lChkSer( ::oAlbCliT:cSerAlb, ::aSer )
-
-         if ::oAlbCliL:Seek( ::oAlbCliT:cSerAlb + Str( ::oAlbCliT:nNumAlb ) + ::oAlbCliT:cSufAlb )
-
-            while !::lBreak .and. ( ::oAlbCliT:cSerAlb + Str( ::oAlbCliT:nNumAlb ) + ::oAlbCliT:cSufAlb == ::oAlbCliL:cSerAlb + Str( ::oAlbCliL:nNumAlb ) + ::oAlbCliL:cSufAlb ) .and. !( ::oAlbCliL:eof() )
-
-               if !( ::lExcCero  .and. nTotNAlbCli( ::oAlbCliL:cAlias ) == 0 )  .and.;
-                  !( ::lExcImp   .and. nImpLAlbCli( ::oAlbCliT:cAlias, ::oAlbCliL:cAlias, ::nDecOut, ::nDerOut, ::nValDiv ) == 0 )
-
-                  /*
-                  Añadimos un nuevo registro-----------------------------------
-                  */
-
-                  ::oDbf:Blank()
-                  ::oDbf:cCodArt  := ::oAlbCliL:cRef
-                  ::oDbf:cNomArt  := ::oAlbCliL:cDetalle
-
-                  ::oDbf:cCodTip  := RetFld( ::oAlbCliL:cRef, ::oDbfArt:cAlias, "cCodTip", "Codigo" )
-                  ::oDbf:cCodCli  := ::oAlbCliT:cCodCli
-                  ::oDbf:cCodGrp  := RetFld( ::oAlbCliL:cRef, ::oDbfArt:cAlias, "GrpVent", "Codigo" )
-                  ::oDbf:cCodPago := ::oAlbCliT:cCodPago
-                  ::oDbf:cCodRut  := ::oAlbCliT:cCodRut
-                  ::oDbf:cAgente  := ::oAlbCliT:cCodAge
-                  ::oDbf:cCodUsr  := ::oAlbCliT:cCodUsr
-
-                  ::oDbf:cSerDoc  := ::oAlbCliT:cSerAlb
-                  ::oDbf:cNumDoc  := Str( ::oAlbCliT:nNumAlb )
-                  ::oDbf:cSufDoc  := ::oAlbCliT:cSufAlb
-
-                  /*
-                  Añadimos un nuevo registro-----------------------------------
-                  */
-
-                  if ::lValidRegister()
-                     ::oDbf:Insert()
-                  else
-                     ::oDbf:Cancel()
-                  end if
-
-               end if
-
-               ::oAlbCliL:Skip()
-
-            end while
-
-         end if
-
-      end if
-
-      ::oAlbCliT:Skip()
-
-      ::oMtrInf:AutoInc()
-
-   end while
-
-   ::oAlbCliT:IdxDelete( cCurUsr(), GetFileNoExt( ::oAlbCliT:cFile ) )
-   ::oAlbCliL:IdxDelete( cCurUsr(), GetFileNoExt( ::oAlbCliL:cFile ) )
-
-RETURN ( Self )
-
-//---------------------------------------------------------------------------//
-
-METHOD AddFacturaRectificativa( cCodigoCliente ) CLASS TFastVentasClientes
-
-   local cExpHead
-   local cExpLine
-
-   ::oFacRecT:OrdSetFocus( "dFecFac" )
-   ::oFacRecL:OrdSetFocus( "nNumFac" )
-
-   cExpHead          := 'dFecFac >= Ctod( "' + Dtoc( ::dIniInf ) + '" ) .and. dFecFac <= Ctod( "' + Dtoc( ::dFinInf ) + '" )'
-   cExpHead          += ' .and. cCodCli >= "' + Rtrim( ::oGrupoCliente:Cargo:Desde ) + '" .and. cCodCli <= "' + Rtrim( ::oGrupoCliente:Cargo:Hasta ) + '"'
-
-   /*
-   if !Empty( ::oFilter:aExpFilter ) .and. len( ::oFilter:aExpFilter ) >= 1
-      cExpHead       += ' .and. ' + ::oFilter:aExpFilter[ 1 ]
-   end if
-   */
-
-   ::oFacRecT:AddTmpIndex( cCurUsr(), GetFileNoExt( ::oFacRecT:cFile ), ::oFacRecT:OrdKey(), ( cExpHead ), , , , , , , , .t. )
-
-   ::oMtrInf:cText   := "Procesando facturas rectificativas"
-   ::oMtrInf:SetTotal( ::oFacRecT:OrdKeyCount() )
-
-   // Lineas de facturas rectificativas----------------------------------------
-
-   cExpLine          := '!lTotLin .and. !lControl'
-
-   if !::lAllArt
-      cExpLine       += ' .and. cRef >= "' + ::oGrupoArticulo:Cargo:Desde + '" .and. cRef <= "' + ::oGrupoArticulo:Cargo:Hasta + '"'
-   end if
-
-   ::oFacRecL:AddTmpIndex( cCurUsr(), GetFileNoExt( ::oFacRecL:cFile ), ::oFacRecL:OrdKey(), cAllTrimer( cExpLine ), , , , , , , , .t. )
-
-   ::oFacRecT:GoTop()
-
-   while !::lBreak .and. !::oFacRecT:Eof()
-
-      if lChkSer( ::oFacRecT:cSerie, ::aSer )
-
-         if ::oFacRecL:Seek( ::oFacRecT:cSerie + Str( ::oFacRecT:nNumFac ) + ::oFacRecT:cSufFac )
-
-            while !::lBreak .and. ( ::oFacRecT:cSerie + Str( ::oFacRecT:nNumFac ) + ::oFacRecT:cSufFac == ::oFacRecL:cSerie + Str( ::oFacRecL:nNumFac ) + ::oFacRecL:cSufFac )
-
-               if !( ::lExcCero  .and. nTotNFacRec ( ::oFacRecL:cAlias ) == 0 )  .and.;
-                  !( ::lExcImp   .and. nImpLFacRec ( ::oFacRecT:cAlias, ::oFacRecL:cAlias, ::nDecOut, ::nDerOut, ::nValDiv ) == 0 )
-
-                  // Añadimos un nuevo registro--------------------------------
-
-                  if ::lValidRegister( ::oFacRecL:cRef )
-
-                     ::oDbf:Append()
-
-                     ::oDbf:cCodArt  := ::oFacRecL:cRef
-                     ::oDbf:cNomArt  := ::oFacRecL:cDetalle
-
-                     //::oDbf:tipoiva  := ::oFacRecL:tipoiva
-                     ::oDbf:cCodCli  := ::oFacRecT:cCodCli
-                     ::oDbf:cCodGrp  := RetFld( ::oFacRecL:cRef, ::oDbfArt:cAlias, "GrpVent", "Codigo" )
-                     ::oDbf:cCodPago := ::oFacRecT:cCodPago
-                     ::oDbf:cCodRut  := ::oFacRecT:cCodRut
-                     ::oDbf:cAgente  := ::oFacRecT:cCodAge
-                     ::oDbf:cCodUsr  := ::oFacRecT:cCodUsr
-
-                     ::oDbf:cSerDoc := ::oFacRecT:cSerie
-                     ::oDbf:cNumDoc := Str( ::oFacRecT:nNumFac )
-                     ::oDbf:cSufDoc := ::oFacRecT:cSufFac
-
-                     ::oDbf:Save()
-
-                  end if
-
-               end if
-
-               ::oFacRecL:Skip()
-
-            end while
-
-         end if
-
-      end if
-
-      ::oFacRecT:Skip()
-
-      ::oMtrInf:AutoInc()
-
-   end while
-
-   ::oFacRecT:IdxDelete( cCurUsr(), GetFileNoExt( ::oFacRecT:cFile ) )
-   ::oFacRecL:IdxDelete( cCurUsr(), GetFileNoExt( ::oFacRecL:cFile ) )
-
-RETURN ( Self )
-
-//---------------------------------------------------------------------------//
-
-METHOD AddTicket() CLASS TFastVentasClientes
-
-   local cExpHead
-   local cExpLine
-
-   ::oTikCliT:OrdSetFocus( "dFecTik" )
-   ::oTikCliL:OrdSetFocus( "cNumTil" )
-
-   cExpHead       := 'dFecTik >= Ctod( "' + Dtoc( ::dIniInf ) + '" ) .and. dFecTik <= Ctod( "' + Dtoc( ::dFinInf ) + '" )'
-   cExpHead       += ' .and. ( cTipTik == "1" .or. cTipTik == "4" )'
-   cExpHead       += ' .and. cCliTik >= "' + Rtrim( ::oGrupoCliente:Cargo:Desde ) + '" .and. cCliTik <= "' + Rtrim( ::oGrupoCliente:Cargo:Hasta ) + '"'
-
-   /*
-   if !Empty( ::oFilter:aExpFilter ) .and. len( ::oFilter:aExpFilter ) >= 4
-      cExpHead       += ' .and. ' + ::oFilter:aExpFilter[ 4 ]
-   end if
-   */
-
-   ::oTikCliT:AddTmpIndex( cCurUsr(), GetFileNoExt( ::oTikCliT:cFile ), ::oTikCliT:OrdKey(), ( cExpHead ), , , , , , , , .t. )
-
-   ::oMtrInf:cText := "Procesando tikets"
-
-   ::oMtrInf:SetTotal( ::oTikCliT:OrdKeyCount() )
-
-   // Lineas de tickets -------------------------------------------------------
-
-   cExpLine       := 'cCbaTil >= "' + ::oGrupoArticulo:Cargo:Desde + '" .and. cCbaTil <= "' + ::oGrupoArticulo:Cargo:Hasta + '" .or. '
-   cExpLine       += 'cComTil >= "' + ::oGrupoArticulo:Cargo:Desde + '" .and. cComTil <= "' + ::oGrupoArticulo:Cargo:Hasta + ' )"'
-
-   ::oTikCliL:AddTmpIndex( cCurUsr(), GetFileNoExt( ::oTikCliL:cFile ), ::oTikCliL:OrdKey(), ( cExpLine ), , , , , , , , .t. )
-
-   // Proceso -----------------------------------------------------------------
-
-   ::oTikCliT:GoTop()
-
-   while !::lBreak .and. !::oTikCliT:Eof()
-
-      if lChkSer( ::oTikCliT:cSerTik, ::aSer ) .and. ::oTikCliL:Seek( ::oTikCliT:cSerTik + ::oTikCliT:cNumTik + ::oTikCliT:cSufTik )
-
-         while ::oTikCliT:cSerTik + ::oTikCliT:cNumTik + ::oTikCliT:cSufTik == ::oTikCliL:cSerTil + ::oTikCliL:cNumTil + ::oTikCliL:cSufTil .and. !::oTikCliL:Eof()
-
-            if !Empty( ::oTikCliL:cCbaTil ) .and. !( ::oTikCliL:lControl )
-
-               // Añadimos un nuevo registro--------------------------------
-
-               if ::lValidRegister( ::oTikCliL:cCbaTil )
-
-                  ::oDbf:Append()
-                  ::oDbf:cCodArt  := ::oTikCliL:cCbaTil
-                  ::oDbf:cNomArt  := ::oTikCliL:cDetalle
-
-                   //::oDbf:tipoiva  := ::oTikCliL:tipoiva
-                   ::oDbf:cCodCli  := ::oTikCliT:cCodCli
-                   ::oDbf:cCodGrp  := RetFld( ::oTikCliL:cRef, ::oDbfArt:cAlias, "GrpVent", "Codigo" )
-                   ::oDbf:cCodPago := ::oTikCliT:cCodPago
-                   ::oDbf:cCodRut  := ::oTikCliT:cCodRut
-                   ::oDbf:cagente  := ::oTikCliT:cCodAge
-                   ::oDbf:cCodUsr  := ::oTikCliT:cCodUsr
-
-                  if ::oTikCliT:cTipTik == "4"
-                     ::oDbf:nUniArt := - ::oTikCliL:nUntTil
-                  else
-                     ::oDbf:nUniArt := ::oTikCliL:nUntTil
-                  end if
-
-                  ::oDbf:cSerDoc  := ::oTikCliT:cSerTik
-                  ::oDbf:cNumDoc  := ::oTikCliT:cNumTik
-                  ::oDbf:cSufDoc  := ::oTikCliT:cSufTik
-                  ::oDbf:Save()
-
-               end if
-
-            end if
-
-            if !Empty( ::oTikCliL:cComTil ) .and. !( ::oTikCliL:lControl )
-
-               // Añadimos un nuevo registro--------------------------------
-
-               if ::lValidRegister( ::oTikCliL:cComTil )
-
-                  ::oDbf:Append()
-                  ::oDbf:cCodArt  := ::oTikCliL:cComTil
-                  ::oDbf:cNomArt  := ::oFacRecL:cDetalle
-
-                   //::oDbf:tipoiva  := ::oTikCliL:tipoiva
-                   ::oDbf:cCodCli  := ::oTikCliT:cCodCli
-                   ::oDbf:cCodGrp  := RetFld( ::oTikCliL:cRef, ::oDbfArt:cAlias, "GRPVENT", "Codigo" )
-                   ::oDbf:cCodPago := ::oTikCliT:cCodPago
-                   ::oDbf:cCodRut  := ::oTikCliT:cCodRut
-                   ::oDbf:cagente  := ::oTikCliT:cCodAge
-                   ::oDbf:cCodUsr  := ::oTikCliT:cCodUsr
-
-                  ::oDbf:cSerDoc  := ::oTikCliT:cSerTik
-                  ::oDbf:cNumDoc  := ::oTikCliT:cNumTik
-                  ::oDbf:cSufDoc  := ::oTikCliT:cSufTik
-                  ::oDbf:Save()
-
-               end if
-
-            end if
-
-            ::oTikCliL:Skip()
-
-         end while
-
-      end if
-
-      ::oTikCliT:Skip()
-
-      ::oMtrInf:AutoInc()
-
-   end while
-
-   ::oMtrInf:Set( ::oTikCliT:OrdKeyCount() )
-
-   ::oTikCliT:IdxDelete( cCurUsr(), GetFileNoExt( ::oTikCliT:cFile ) )
-   ::oTikCliL:IdxDelete( cCurUsr(), GetFileNoExt( ::oTikCliL:cFile ) )
-
-RETURN ( Self )
-
-//---------------------------------------------------------------------------//
-
-METHOD AddClientes() CLASS TFastVentasClientes
-
-   ::oMtrInf:SetTotal( ::oDbfCli:OrdKeyCount() )
-
-   ::oMtrInf:cText         := "Procesando clientes"
-
-   /*
-   Recorremos clientes---------------------------------------------------------
-   */
-
-   ::oMtrInf:AutoInc( ::oDbfCli:LastRec() )
-
-   ::oDbfCli:GoTop()
-   while !::oDbfCli:Eof() .and. !::lBreak
-
-      ::oDbf:Blank()
-
-      ::oDbf:cCodCli := ::oDbfCli:Cod
-      ::oDbf:cNomCli := ::oDbfCli:Titulo
-      ::oDbf:cCodGrp := ::oDbfCli:cCodGrp
-      ::oDbf:cCodPgo := ::oDbfCli:CodPago
-      ::oDbf:cCodRut := ::oDbfCli:cCodRut
-      ::oDbf:cCodAge := ::oDbfCli:cAgente
-      ::oDbf:cCodUsr := ""
-
-      if ::lValidRegister()
-         ::oDbf:Insert()
+   oBlock               := ErrorBlock( {| oError | ApoloBreak( oError ) } )
+   BEGIN SEQUENCE
+   
+      ::InitAlbaranesClientes()
+
+      ::oAlbCliT:OrdSetFocus( "dFecAlb" )
+
+      if lFacturados
+         cExpHead       := '!lFacturado .and. dFecAlb >= Ctod( "' + Dtoc( ::dIniInf ) + '" ) .and. dFecAlb <= Ctod( "' + Dtoc( ::dFinInf ) + '" )'
       else
-         ::oDbf:Save()
+         cExpHead       := 'dFecAlb >= Ctod( "' + Dtoc( ::dIniInf ) + '" ) .and. dFecAlb <= Ctod( "' + Dtoc( ::dFinInf ) + '" )'
       end if
+      cExpHead          += ' .and. Rtrim( cCodCli ) >= "' + Rtrim( ::oGrupoCliente:Cargo:Desde )   + '" .and. Rtrim( cCodCli ) <= "' + Rtrim( ::oGrupoCliente:Cargo:Hasta ) + '"'
+      cExpHead          += ' .and. cSerAlb >= "' + Rtrim( ::oGrupoSerie:Cargo:Desde ) + '" .and. cSerAlb <= "'    + Rtrim( ::oGrupoSerie:Cargo:Hasta ) + '"'
 
-      ::oDbfCli:Skip()
+      ::oAlbCliT:AddTmpIndex( cCurUsr(), GetFileNoExt( ::oAlbCliT:cFile ), ::oAlbCliT:OrdKey(), ( cExpHead ), , , , , , , , .t. )
 
-      ::oMtrInf:AutoInc()
+      ::oMtrInf:cText   := "Procesando albaranes"
+      ::oMtrInf:SetTotal( ::oAlbCliT:OrdKeyCount() )
 
-   end while
+      ::oAlbCliT:GoTop()
+      while !::lBreak .and. !::oAlbCliT:Eof()
 
-   ::oMtrInf:AutoInc( ::oDbfCli:OrdKeyCount() )
+         if lChkSer( ::oAlbCliT:cSerAlb, ::aSer )
+
+            sTot              := sTotAlbCli( ::oAlbCliT:cSerAlb + Str( ::oAlbCliT:nNumAlb ) + ::oAlbCliT:cSufAlb, ::oAlbCliT:cAlias, ::oAlbCliL:cAlias, ::oDbfIva:cAlias, ::oDbfDiv:cAlias )
+
+            ::oDbf:Blank()
+
+            ::oDbf:cCodCli    := ::oAlbCliT:cCodCli
+            ::oDbf:cNomCli    := ::oAlbCliT:cNomCli
+            ::oDbf:cCodAge    := ::oAlbCliT:cCodAge
+            ::oDbf:cCodPgo    := ::oAlbCliT:cCodPago
+            ::oDbf:cCodRut    := ::oAlbCliT:cCodRut
+            ::oDbf:cCodUsr    := ::oAlbCliT:cCodUsr
+
+            ::oDbf:cCodGrp    := cGruCli( ::oAlbCliT:cCodCli, ::oDbfCli )
+
+            ::oDbf:cTipDoc    := "Albaranes clientes"
+            ::oDbf:cClsDoc    := ALB_CLI
+            ::oDbf:cSerDoc    := ::oAlbCliT:cSerAlb
+            ::oDbf:cNumDoc    := Str( ::oAlbCliT:nNumAlb )
+            ::oDbf:cSufDoc    := ::oAlbCliT:cSufAlb
+            ::oDbf:cIdeDoc    := Upper( ::oDbf:cTipDoc ) + ::oDbf:cSerDoc + ::oDbf:cNumDoc + ::oDbf:cSufDoc
+
+            ::oDbf:nAnoDoc    := Year( ::oAlbCliT:dFecAlb )
+            ::oDbf:nMesDoc    := Month( ::oAlbCliT:dFecAlb )
+            ::oDbf:dFecDoc    := ::oAlbCliT:dFecAlb
+            ::oDbf:cHorDoc    := SubStr( ::oAlbCliT:cTimCre, 1, 2 )
+            ::oDbf:cMinDoc    := SubStr( ::oAlbCliT:cTimCre, 3, 2 )
+
+            ::oDbf:nTotNet    := sTot:nTotalNeto
+            ::oDbf:nTotIva    := sTot:nTotalIva
+            ::oDbf:nTotReq    := sTot:nTotalRecargoEquivalencia
+            ::oDbf:nTotDoc    := sTot:nTotalDocumento
+            ::oDbf:nTotPnt    := sTot:nTotalPuntoVerde
+            ::oDbf:nTotTrn    := sTot:nTotalTransporte
+            ::oDbf:nTotAge    := sTot:nTotalAgente
+            ::oDbf:nTotCos    := sTot:nTotalCosto
+            ::oDbf:nTotIvm    := sTot:nTotalImpuestoHidrocarburos
+            ::oDbf:nTotRnt    := sTot:nTotalRentabilidad
+            ::oDbf:nTotRet    := sTot:nTotalRetencion
+            ::oDbf:nTotCob    := sTot:nTotalCobrado
+
+            /*
+            Añadimos un nuevo registro--------------------------------------------
+            */
+
+            if ::lValidRegister()
+               ::oDbf:Insert()
+            else
+               ::oDbf:Cancel()
+            end if
+
+            ::addAlbaranesClientes()
+
+         end if
+
+         ::oAlbCliT:Skip()
+
+         ::oMtrInf:AutoInc()
+
+      end while
+
+      ::oAlbCliT:IdxDelete( cCurUsr(), GetFileNoExt( ::oAlbCliT:cFile ) )
+   
+   RECOVER USING oError
+
+      msgStop( ErrorMessage( oError ), "Imposible añadir albaranes de clientes" )
+
+   END SEQUENCE
+
+   ErrorBlock( oBlock )
 
 RETURN ( Self )
 
@@ -1220,6 +1002,7 @@ METHOD AddFacturaCliente( cCodigoCliente ) CLASS TFastVentasClientes
             ::oDbf:cCodGrp    := cGruCli( ::oFacCliT:cCodCli, ::oDbfCli )
 
             ::oDbf:cTipDoc    := "Factura clientes"
+            ::oDbf:cClsDoc    := FAC_CLI          
             ::oDbf:cSerDoc    := ::oFacCliT:cSerie
             ::oDbf:cNumDoc    := Str( ::oFacCliT:nNumFac )
             ::oDbf:cSufDoc    := ::oFacCliT:cSufFac
@@ -1278,12 +1061,263 @@ RETURN ( Self )
 
 //---------------------------------------------------------------------------//
 
-METHOD preCliInfo( cTitle )
+METHOD AddFacturaRectificativa( cCodigoCliente ) CLASS TFastVentasClientes
 
-   msgStop( cTitle )
-   msgStop( ( ::oPreCliT:nArea )->( dbGoTop() ),      "GoTop" )
-   msgStop( ( ::oPreCliT:nArea )->( OrdSetFocus() ),  "OrdSetFocus" )
-   msgStop( ( ::oPreCliT:nArea )->( OrdKey() ),       "OrdKey" )
-   msgStop( ( ::oPreCliT:nArea )->( OrdKeyVal() ),    "OrdKeyVal" )
+   local sTot
+   local oError
+   local oBlock
+   local cExpHead
+   
+   oBlock               := ErrorBlock( {| oError | ApoloBreak( oError ) } )
+   BEGIN SEQUENCE
+   
+      ::InitFacturasRectificativasClientes()
+
+      ::oFacRecT:OrdSetFocus( "dFecFac" )
+
+      cExpHead          := 'dFecFac >= Ctod( "' + Dtoc( ::dIniInf ) + '" ) .and. dFecFac <= Ctod( "' + Dtoc( ::dFinInf ) + '" )'
+      cExpHead          += ' .and. Rtrim( cCodCli ) >= "' + Rtrim( ::oGrupoCliente:Cargo:Desde )   + '" .and. Rtrim( cCodCli ) <= "' + Rtrim( ::oGrupoCliente:Cargo:Hasta ) + '"'
+      cExpHead          += ' .and. cSerie >= "' + Rtrim( ::oGrupoSerie:Cargo:Desde ) + '" .and. cSerie <= "'    + Rtrim( ::oGrupoSerie:Cargo:Hasta ) + '"'
+
+      ::oFacRecT:AddTmpIndex( cCurUsr(), GetFileNoExt( ::oFacRecT:cFile ), ::oFacRecT:OrdKey(), ( cExpHead ), , , , , , , , .t. )
+
+      ::oMtrInf:cText   := "Procesando facturas rectificativas"
+      ::oMtrInf:SetTotal( ::oFacRecT:OrdKeyCount() )
+
+      ::oFacRecT:GoTop()
+      while !::lBreak .and. !::oFacRecT:Eof()
+
+         if lChkSer( ::oFacRecT:cSerie, ::aSer )
+
+            sTot              := sTotFacRec( ::oFacRecT:cSerie + Str( ::oFacRecT:nNumFac ) + ::oFacRecT:cSufFac, ::oFacRecT:cAlias, ::oFacRecL:cAlias, ::oDbfIva:cAlias, ::oDbfDiv:cAlias )
+
+            ::oDbf:Blank()
+
+            ::oDbf:cCodCli    := ::oFacRecT:cCodCli
+            ::oDbf:cNomCli    := ::oFacRecT:cNomCli
+            ::oDbf:cCodAge    := ::oFacRecT:cCodAge
+            ::oDbf:cCodPgo    := ::oFacRecT:cCodPago
+            ::oDbf:cCodRut    := ::oFacRecT:cCodRut
+            ::oDbf:cCodUsr    := ::oFacRecT:cCodUsr
+
+            ::oDbf:cCodGrp    := cGruCli( ::oFacRecT:cCodCli, ::oDbfCli )
+
+            ::oDbf:cTipDoc    := "Factura rectificativa"
+            ::oDbf:cClsDoc    := FAC_REC
+            ::oDbf:cSerDoc    := ::oFacRecT:cSerie
+            ::oDbf:cNumDoc    := Str( ::oFacRecT:nNumFac )
+            ::oDbf:cSufDoc    := ::oFacRecT:cSufFac
+            ::oDbf:cIdeDoc    := Upper( ::oDbf:cTipDoc ) + ::oDbf:cSerDoc + ::oDbf:cNumDoc + ::oDbf:cSufDoc
+
+            ::oDbf:nAnoDoc    := Year( ::oFacRecT:dFecFac )
+            ::oDbf:nMesDoc    := Month( ::oFacRecT:dFecFac )
+            ::oDbf:dFecDoc    := ::oFacRecT:dFecFac
+            ::oDbf:cHorDoc    := SubStr( ::oFacRecT:cTimCre, 1, 2 )
+            ::oDbf:cMinDoc    := SubStr( ::oFacRecT:cTimCre, 3, 2 )
+
+            ::oDbf:nTotNet    := sTot:nTotalNeto
+            ::oDbf:nTotIva    := sTot:nTotalIva
+            ::oDbf:nTotReq    := sTot:nTotalRecargoEquivalencia
+            ::oDbf:nTotDoc    := sTot:nTotalDocumento
+            ::oDbf:nTotPnt    := sTot:nTotalPuntoVerde
+            ::oDbf:nTotTrn    := sTot:nTotalTransporte
+            ::oDbf:nTotAge    := sTot:nTotalAgente
+            ::oDbf:nTotCos    := sTot:nTotalCosto
+            ::oDbf:nTotIvm    := sTot:nTotalImpuestoHidrocarburos
+            ::oDbf:nTotRnt    := sTot:nTotalRentabilidad
+            ::oDbf:nTotRet    := sTot:nTotalRetencion
+            ::oDbf:nTotCob    := sTot:nTotalCobrado
+
+            /*
+            Añadimos un nuevo registro--------------------------------------------
+            */
+
+            if ::lValidRegister()
+               ::oDbf:Insert()
+            else
+               ::oDbf:Cancel()
+            end if
+
+            ::addFacturasRectificativasClientes()
+
+         end if
+
+         ::oFacRecT:Skip()
+
+         ::oMtrInf:AutoInc()
+
+      end while
+
+      ::oFacRecT:IdxDelete( cCurUsr(), GetFileNoExt( ::oFacRecT:cFile ) )
+   
+   RECOVER USING oError
+
+      msgStop( ErrorMessage( oError ), "Imposible añadir facturas rectificativa" )
+
+   END SEQUENCE
+
+   ErrorBlock( oBlock )
+   
+RETURN ( Self )
+
+//---------------------------------------------------------------------------//
+
+METHOD AddTicket() CLASS TFastVentasClientes
+
+   local sTot
+   local oError
+   local oBlock
+   local cExpHead
+   /*
+   oBlock               := ErrorBlock( {| oError | ApoloBreak( oError ) } )
+   BEGIN SEQUENCE*/
+   
+      ::InitTicketsClientes()
+
+      ::oTikCliT:OrdSetFocus( "dFecTik" )
+
+      cExpHead          := 'dFecTik >= Ctod( "' + Dtoc( ::dIniInf ) + '" ) .and. dFecTik <= Ctod( "' + Dtoc( ::dFinInf ) + '" )'
+      cExpHead          += ' .and. Rtrim( cCliTik ) >= "' + Rtrim( ::oGrupoCliente:Cargo:Desde )   + '" .and. Rtrim( cCliTik ) <= "' + Rtrim( ::oGrupoCliente:Cargo:Hasta ) + '"'
+      cExpHead          += ' .and. cSerTik >= "' + Rtrim( ::oGrupoSerie:Cargo:Desde ) + '" .and. cSerTik <= "'    + Rtrim( ::oGrupoSerie:Cargo:Hasta ) + '"'
+
+      ::oTikCliT:AddTmpIndex( cCurUsr(), GetFileNoExt( ::oTikCliT:cFile ), ::oTikCliT:OrdKey(), ( cExpHead ), , , , , , , , .t. )
+
+      ::oMtrInf:cText   := "Procesando tickets"
+      ::oMtrInf:SetTotal( ::oTikCliT:OrdKeyCount() )
+
+      ::oTikCliT:GoTop()
+      while !::lBreak .and. !::oTikCliT:Eof()
+
+         if lChkSer( ::oTikCliT:cSerie, ::aSer )
+
+            sTot              := sTotTikCli( ::oTikCliT:cSerTik + ::oTikCliT:cNumTik + ::oTikCliT:cSufTik, ::oTikCliT:cAlias, ::oTikCliL:cAlias, ::oDbfDiv:cAlias )
+
+            ::oDbf:Blank()
+
+            ::oDbf:cCodCli    := ::oTikCliT:cCliTik
+            ::oDbf:cNomCli    := ::oTikCliT:cNomTik
+            ::oDbf:cCodAge    := ::oTikCliT:cCodAge
+            ::oDbf:cCodPgo    := ::oTikCliT:cFpgTik
+            ::oDbf:cCodRut    := ::oTikCliT:cCodRut
+            ::oDbf:cCodUsr    := ::oTikCliT:cCcjTik
+
+            ::oDbf:cCodGrp    := cGruCli( ::oTikCliT:cCliTik, ::oDbfCli )
+
+            ::oDbf:cTipDoc    := "Tickets clientes"
+            ::oDbf:cClsDoc    := TIK_CLI          
+            ::oDbf:cSerDoc    := ::oTikCliT:cSerTik
+            ::oDbf:cNumDoc    := ::oTikCliT:nNumTik
+            ::oDbf:cSufDoc    := ::oTikCliT:cSufTik
+            ::oDbf:cIdeDoc    := Upper( ::oDbf:cTipDoc ) + ::oDbf:cSerDoc + ::oDbf:cNumDoc + ::oDbf:cSufDoc
+
+            ::oDbf:nAnoDoc    := Year( ::oTikCliT:dFecTik )
+            ::oDbf:nMesDoc    := Month( ::oTikCliT:dFecTik )
+            ::oDbf:dFecDoc    := ::oTikCliT:dFecTik
+            ::oDbf:cHorDoc    := SubStr( ::oTikCliT:cTimCre, 1, 2 )
+            ::oDbf:cMinDoc    := SubStr( ::oTikCliT:cTimCre, 3, 2 )
+
+            ::oDbf:nTotNet    := sTot:nTotalNeto
+            ::oDbf:nTotIva    := sTot:nTotalIva
+            ::oDbf:nTotReq    := sTot:nTotalRecargoEquivalencia
+            ::oDbf:nTotDoc    := sTot:nTotalDocumento
+            ::oDbf:nTotPnt    := sTot:nTotalPuntoVerde
+            ::oDbf:nTotTrn    := sTot:nTotalTransporte
+            ::oDbf:nTotAge    := sTot:nTotalAgente
+            ::oDbf:nTotCos    := sTot:nTotalCosto
+            ::oDbf:nTotIvm    := sTot:nTotalImpuestoHidrocarburos
+            ::oDbf:nTotRnt    := sTot:nTotalRentabilidad
+            ::oDbf:nTotRet    := sTot:nTotalRetencion
+            ::oDbf:nTotCob    := sTot:nTotalCobrado
+
+            /*
+            Añadimos un nuevo registro--------------------------------------------
+            */
+
+            if ::lValidRegister()
+               ::oDbf:Insert()
+            else
+               ::oDbf:Cancel()
+            end if
+
+            ::addTicketsClientes()
+
+         end if
+
+         ::oTikCliT:Skip()
+
+         ::oMtrInf:AutoInc()
+
+      end while
+
+      ::oTikCliT:IdxDelete( cCurUsr(), GetFileNoExt( ::oTikCliT:cFile ) )
+   /*
+   RECOVER USING oError
+
+      msgStop( ErrorMessage( oError ), "Imposible añadir facturas de clientes" )
+
+   END SEQUENCE
+
+   ErrorBlock( oBlock )
+*/
+RETURN ( Self )
+
+//---------------------------------------------------------------------------//
+
+METHOD AddClientes() CLASS TFastVentasClientes
+
+   ::oMtrInf:SetTotal( ::oDbfCli:OrdKeyCount() )
+
+   ::oMtrInf:cText         := "Procesando clientes"
+
+   /*
+   Recorremos clientes---------------------------------------------------------
+   */
+
+   ::oMtrInf:AutoInc( ::oDbfCli:LastRec() )
+
+   ::oDbfCli:GoTop()
+   while !::oDbfCli:Eof() .and. !::lBreak
+
+      ::oDbf:Blank()
+
+      ::oDbf:cCodCli := ::oDbfCli:Cod
+      ::oDbf:cNomCli := ::oDbfCli:Titulo
+      ::oDbf:cCodGrp := ::oDbfCli:cCodGrp
+      ::oDbf:cCodPgo := ::oDbfCli:CodPago
+      ::oDbf:cCodRut := ::oDbfCli:cCodRut
+      ::oDbf:cCodAge := ::oDbfCli:cAgente
+      ::oDbf:cCodUsr := ""
+
+      if ::lValidRegister()
+         ::oDbf:Insert()
+      else
+         ::oDbf:Save()
+      end if
+
+      ::oDbfCli:Skip()
+
+      ::oMtrInf:AutoInc()
+
+   end while
+
+   ::oMtrInf:AutoInc( ::oDbfCli:OrdKeyCount() )
+
+RETURN ( Self )
+
+//---------------------------------------------------------------------------//
+
+METHOD preCliInfo()
+
+   local cKey  := ::oDbf:cClsDoc + ::oDbf:cSerDoc + ::oDbf:cNumDoc + ::oDbf:cSufDoc
+
+   msgAlert( cKey, str( len( cKey ) ) )
+
+   if ::oPreCliT:Seek( cKey )
+      msgInfo( cKey, "found" )
+   else
+      msgStop( cKey, "not found" )
+      msgStop( len( cvaltochar( ::oPreCliT:OrdKeyVal() ) ), "len OrdKeyVal")
+      msgStop( ::oPreCliT:OrdSetFocus(), "ordsetfocus" )
+   end if
 
 return nil 

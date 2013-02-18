@@ -2297,11 +2297,15 @@ Return ( Super:AddVariable() )
 
 METHOD TreeReportingChanged() CLASS TFastVentasArticulos
 
-   if ::oTreeReporting:GetSelText() == "Listado"
+   local cTitle   := ::oTreeReporting:GetSelText()
+
+   if cTitle == "Listado"
       ::lHideFecha()
    else
       ::lShowFecha()
    end if
+
+   ::oDlg:cTitle( "Reporting : " + cTitle )
 
 Return ( Self )
 
