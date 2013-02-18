@@ -11,6 +11,8 @@
 
 #define CS_DBLCLKS        8
 
+#define  HKEY_LOCAL_MACHINE      2147483650
+
 ANNOUNCE RDDSYS
 
 REQUEST ADS, DBFCDX, DBFFPT
@@ -40,7 +42,6 @@ static hDLLRich
 static oWnd
 static oBmp
 static lDemoMode     := .t.
-static lNumReg       := .f.
 
 static lStandard
 static lProfesional
@@ -178,10 +179,6 @@ function Main( cParams )
 
                Return nil
 
-            else
-
-               // :Auditor()
-
             end if
 
          end if
@@ -250,8 +247,6 @@ function Main( cParams )
    IsOsCommerce()
 
    cNameVersion()
-
-   SetDemoMode()
 
    // Chequeamos los datos de los usuarios
 
@@ -401,102 +396,112 @@ FUNCTION ControlAplicacion()
    local oBmp
    local oDlg
    local oSerialHD
-   local nSerialHD      := Abs( nSerialHD() )
+   local nSerialHD      
    local oSerialUSR
-   local nSerialUSR     := 0
+   local nSerialUSR     
    local oLicencia
-   local nlicencia      := 1
-   local oSayPerpetua   := Array( 2 )
+   local nlicencia      
+   local oSayPerpetua   
    local oSayDemo
-   local oSayAlquiler   := Array( 8 )
-   local cSayAlquiler   := Array( 8 )
+   local oSayAlquiler   
+   local cSayAlquiler   
 
-   if ControlAcceso() 
+   msgStop( lControlAcceso(), "lControlAcceso" )
+
+   if lControlAcceso() 
       Return .t.
    end if 
+
+   nSerialHD      := Abs( nSerialHD() )
+   nSerialUSR     := 0
+   nlicencia      := 1
+   oSayPerpetua   := Array( 2 )
+   oSayAlquiler   := Array( 8 )
+   cSayAlquiler   := Array( 8 )
 
    DEFINE DIALOG oDlg RESOURCE "GETSERIALNO" TITLE "Sistema de protección"
 
    REDEFINE BITMAP oBmp ;
-      RESOURCE "Lock_48" ;
-      ID       500;
-      OF       oDlg
+      RESOURCE    "Lock_48" ;
+      ID          500;
+      OF          oDlg
 
    /*
    Licencia perpetua-----------------------------------------------------------
    */
 
-   REDEFINE RADIO oLicencia VAR nLicencia ;
-      ID        100, 200, 300 ;
-      ON CHANGE ( ChangeLicenciaMode( nLicencia, oSerialHd, oSerialUsr, oSayPerpetua, oSayAlquiler, oSayDemo ) ) ;
-      OF        oDlg
+   REDEFINE RADIO oLicencia ;
+      VAR         nLicencia ;
+      ID          100, 200, 300 ;
+      ON CHANGE   ( ChangeLicenciaMode( nLicencia, oSerialHd, oSerialUsr, oSayPerpetua, oSayAlquiler, oSayDemo ) ) ;
+      OF          oDlg
 
-   REDEFINE SAY oSerialHD ;
-      PROMPT   nSerialHD ;
-      ID       110 ;
-      OF       oDlg
+   REDEFINE SAY   oSerialHD ;
+      PROMPT      nSerialHD ;
+      ID          110 ;
+      OF          oDlg
 
-   REDEFINE SAY oSayPerpetua[1] ID 111 OF oDlg   
+   REDEFINE SAY   oSayPerpetua[1] ID 111 OF oDlg   
 
-   REDEFINE GET oSerialUsr ;
-      VAR      nSerialUSR ;
-      ID       120 ;
-      IDSAY    121 ;
-      PICTURE  "99999999999999" ;
-      OF       oDlg
+   REDEFINE GET   oSerialUsr ;
+      VAR         nSerialUSR ;
+      ID          120 ;
+      IDSAY       121 ;
+      PICTURE     "99999999999999" ;
+      OF          oDlg
 
-   REDEFINE SAY oSayPerpetua[2] ID 130 OF oDlg
+   REDEFINE SAY   oSayPerpetua[2] ID 130 OF oDlg
 
    /*
    Licencia Alquiler-----------------------------------------------------------
    */
 
-   REDEFINE GET oSayAlquiler[1] ;
-      VAR      cSayAlquiler[1] ;
-      ID       210 ;
-      IDSAY    211 ;
-      OF       oDlg
+   REDEFINE GET   oSayAlquiler[1] ;
+      VAR         cSayAlquiler[1] ;
+      ID          210 ;
+      IDSAY       211 ;
+      OF          oDlg
 
-   REDEFINE GET oSayAlquiler[2] ;
-      VAR      cSayAlquiler[2] ;
-      ID       220 ;
-      IDSAY    221 ;
-      OF       oDlg
+   REDEFINE GET   oSayAlquiler[2] ;
+      VAR         cSayAlquiler[2] ;
+      ID          220 ;
+      IDSAY       221 ;
+      OF          oDlg
 
-   REDEFINE GET oSayAlquiler[3] ;
-      VAR      cSayAlquiler[3] ;
-      ID       230 ;
-      IDSAY    231 ;
-      OF       oDlg
+   REDEFINE GET   oSayAlquiler[3] ;
+      VAR         cSayAlquiler[3] ;
+      ID          230 ;
+      IDSAY       231 ;
+      OF          oDlg
 
-   REDEFINE GET oSayAlquiler[4] ;
-      VAR      cSayAlquiler[4] ;
-      ID       240 ;
-      IDSAY    241 ;
-      OF       oDlg
+   REDEFINE GET   oSayAlquiler[4] ;
+      VAR         cSayAlquiler[4] ;
+      ID          240 ;
+      IDSAY       241 ;
+      OF          oDlg
 
-   REDEFINE GET oSayAlquiler[5] ;
-      VAR      cSayAlquiler[5] ;
-      ID       250 ;
-      IDSAY    251 ;
-      OF       oDlg
+   REDEFINE GET   oSayAlquiler[5] ;
+      VAR         cSayAlquiler[5] ;
+      ID          250 ;
+      IDSAY       251 ;
+      OF          oDlg
 
-   REDEFINE GET oSayAlquiler[6] ;
-      VAR      cSayAlquiler[6] ;
-      ID       260 ;
-      IDSAY    261 ;
-      OF       oDlg
+   REDEFINE GET   oSayAlquiler[6] ;
+      VAR         cSayAlquiler[6] ;
+      ID          260 ;
+      IDSAY       261 ;
+      OF          oDlg
 
-   REDEFINE GET oSayAlquiler[7] ;
-      VAR      cSayAlquiler[7] ;
-      ID       270 ;
-      IDSAY    271 ;
-      OF       oDlg
+   REDEFINE GET   oSayAlquiler[7] ;
+      VAR         cSayAlquiler[7] ;
+      ID          270 ;
+      IDSAY       271 ;
+      OF          oDlg
 
-   REDEFINE GET oSayAlquiler[8] ;
-      VAR      cSayAlquiler[8] ;
-      ID       280 ;
-      OF       oDlg
+   REDEFINE GET   oSayAlquiler[8] ;
+      VAR         cSayAlquiler[8] ;
+      ID          280 ;
+      OF          oDlg
 
    /*
    Licencia demo---------------------------------------------------------------
@@ -510,16 +515,15 @@ FUNCTION ControlAplicacion()
    end with 
 
    REDEFINE BUTTON ;
-      ID       IDOK ; 
-      OF       oDlg ;
-      ACTION   ( ExitDialog( oDlg, nLicencia, nSerialHD, nSerialUSR, oSerialUsr, oSayAlquiler, cSayAlquiler ) )
+      ID          IDOK ; 
+      OF          oDlg ;
+      ACTION      ( ExitDialog( oDlg, nLicencia, nSerialHD, nSerialUSR, oSerialUsr, oSayAlquiler, cSayAlquiler ) )
 
       oDlg:bStart := {|| ChangeLicenciaMode( nLicencia, oSerialHd, oSerialUsr, oSayPerpetua, oSayAlquiler, oSayDemo ) }
 
    ACTIVATE DIALOG oDlg CENTER
 
    oBmp:end() 
-   
 
 RETURN .t.
 
@@ -565,45 +569,22 @@ Function ExitDialog( oDlg, nLicencia, nSerialHD, nSerialUSR, oSerialUsr, oSayAlq
    local aSerialCRC     := {}
    local cFileIni       := FullCurDir() + "2K10.Num"
 
-   CursorWait()
-
    do case
       case nLicencia == 1
 
-         // Cargamos el array con los codigos-------------------------------------
-      
-         for n := 1 to 50
-            nSerialCRC     := Val( GetPvProfString( "Main", "Access code " + Str( n, 2 ), "0", cFileIni ) )
-            if !Empty( nSerialCRC )
-               aAdd( aSerialCRC, nSerialCRC )
-            end if
-         next
-      
-         // Comprobamos que exista------------------------------------------------ 
-     
-         if nXor( nSerialHD, SERIALNUMBER ) == nSerialUSR
-      
-            aAdd( aSerialCRC, nSerialUSR )
-      
-            for n := 1 to len( aSerialCRC )
-               WritePProString( "Main", "Access code " + Str( n, 2 ), cValToChar( aSerialCRC[ n ] ), cFileIni )
-            next
-      
-            lDemoMode( .f. )
-      
+         if lCheckPerpetuoMode( nSerialUSR )
+
             MsgInfo( "Programa registrado con éxito" )
 
             oDlg:End( IDOK )
-      
+
          else
-      
+            
             MsgStop( "Número invalido" )
 
             oSerialUsr:SetFocus()
 
-            Return .f.
-      
-         end if
+         end if 
 
       case nLicencia == 2
 
@@ -655,19 +636,21 @@ Function ExitDialog( oDlg, nLicencia, nSerialHD, nSerialUSR, oSerialUsr, oSayAlq
             Return .f.
          end if
 
+         CursorWait()
+
          lEnviarCorreoWatchdog( cSayAlquiler, oDlg )
 
          lEnviarCorreoCliente( cSayAlquiler, oDlg )
 
          oDlg:End( IDOK )
+   
+         CursorWE()
 
       case nLicencia == 3
 
          oDlg:End( IDOK )
 
    end case      
-
-   CursorWE()
 
 Return ( .t. )
 
@@ -4672,17 +4655,18 @@ STATIC FUNCTION lTctInitCheck( lDir, oMessage, oProgress )
 
       // Comprobamos que exista los directorios necesarios------------------------
 
-      if( !lIsDir( cPatDat() ),     MakeDir( cNamePath( cPatDat() ) ), )
-      if( !lIsDir( cPatIn()  ),     MakeDir( cNamePath( cPatIn()  ) ), )
-      if( !lIsDir( cPatTmp() ),     MakeDir( cNamePath( cPatTmp() ) ), )
-      if( !lIsDir( cPatOut() ),     MakeDir( cNamePath( cPatOut() ) ), )
-      if( !lIsDir( cPatSnd() ),     MakeDir( cNamePath( cPatSnd() ) ), )
-      if( !lIsDir( cPatLog() ),     MakeDir( cNamePath( cPatLog() ) ), )
-      if( !lIsDir( cPatBmp() ),     MakeDir( cNamePath( cPatBmp() ) ), )
-      if( !lIsDir( cPatHtm() ),     MakeDir( cNamePath( cPatHtm() ) ), )
-      if( !lIsDir( cPatSafe() ),    MakeDir( cNamePath( cPatSafe()) ), )
-      if( !lIsDir( cPatPsion()),    MakeDir( cNamePath( cPatPsion())), )
-      if( !lIsDir( cPatEmpTmp() ),  MakeDir( cNamePath( cPatEmpTmp() ) ), )
+      if( !lIsDir( cPatDat() ),        MakeDir( cNamePath( cPatDat() ) ), )
+      if( !lIsDir( cPatIn()  ),        MakeDir( cNamePath( cPatIn()  ) ), )
+      if( !lIsDir( cPatTmp() ),        MakeDir( cNamePath( cPatTmp() ) ), )
+      if( !lIsDir( cPatOut() ),        MakeDir( cNamePath( cPatOut() ) ), )
+      if( !lIsDir( cPatSnd() ),        MakeDir( cNamePath( cPatSnd() ) ), )
+      if( !lIsDir( cPatLog() ),        MakeDir( cNamePath( cPatLog() ) ), )
+      if( !lIsDir( cPatBmp() ),        MakeDir( cNamePath( cPatBmp() ) ), )
+      if( !lIsDir( cPatHtm() ),        MakeDir( cNamePath( cPatHtm() ) ), )
+      if( !lIsDir( cPatSafe() ),       MakeDir( cNamePath( cPatSafe() ) ), )
+      if( !lIsDir( cPatPsion() ),      MakeDir( cNamePath( cPatPsion() ) ), )
+      if( !lIsDir( cPatEmpTmp() ),     MakeDir( cNamePath( cPatEmpTmp() ) ), )
+      if( !lIsDir( cPatReporting() ),  MakeDir( cNamePath( cPatReporting() ) ), )
 
       // Borrar los ficheros de los directorios temporales------------------------
 
@@ -6081,17 +6065,22 @@ Function oWnd() ; Return oWnd
 
 //---------------------------------------------------------------------------//
 
-function ControlAcceso()
+Static Function lControlAcceso()
 
-   if lNumReg
-      Return .t.
-   else
+   if lCheckPerpetuoMode()
 
-      if lCheckSaasMode()
-            lDemoMode( .f. )
-            Return .t.
-      end if
-           
+      lDemoMode( .f. )
+
+      return .t.
+
+   end if 
+
+   if lCheckSaasMode()
+
+      lDemoMode( .f. )
+
+      return .t.
+
    end if
 
 Return .f.
@@ -6243,39 +6232,48 @@ Return ( cParamsMain )
 
 //---------------------------------------------------------------------------//
 
-Function SetDemoMode()
+Function lCheckPerpetuoMode( nSerialUSR )
 
    local n 
    local oSerialHD
+   local nSerialHD      := Abs( nSerialHD() )
    local aSerialCRC     := {}
    local nSerialCRC     := 0
-   local nSerialHD      := Abs( nSerialHD() )
    local cFileIni       := FullCurDir() + "2K10.Num"
 
    if Empty( nSerialHD )
-      lDemoMode( .f. )
-      Return .t.
+      Return .f.
    end if
 
-   for n := 1 to 50
+   if !Empty( nSerialUSR )
 
-      nSerialCRC        := Val( GetPvProfString( "Main", "Access code " + Str( n, 2 ), "0", cFileIni ) )
-
-      if !Empty( nSerialCRC )
-
-         aAdd( aSerialCRC, nSerialCRC )
-         
-         if nSerialCRC == nXor( nSerialHD, SERIALNUMBER )
-            lNumReg     := .t.
-            lDemoMode( .f. )
-            Return .t.
-         end if
-
+      if nSerialUSR == nXor( nSerialHD, SERIALNUMBER )
+         return .t.
       end if
 
-   next
+   else 
 
-Return nil
+      for n := 1 to 50
+   
+         nSerialCRC        := Val( GetPvProfString( "Main", "Access code " + Str( n, 2 ), "0", cFileIni ) )
+   
+         if !Empty( nSerialCRC )
+   
+            aAdd( aSerialCRC, nSerialCRC )
+            
+            if nSerialCRC == nXor( nSerialHD, SERIALNUMBER )
+               
+               Return .t.
+   
+            end if
+   
+         end if
+   
+      next
+
+   end if
+
+Return .f.
 
 //---------------------------------------------------------------------------//
 
@@ -6285,35 +6283,23 @@ function lCheckSaasMode()
    local oQuery
    local oQuery2
    local nIdClient
-   local lCheck            := .t.
+   local lCheck            := .f.
 
    oCon                    := TMSConnect():New()
 
    if oCon:Connect( "www.watchdog.es", "watchdog_root", "Nidorino1234", "watchdog_gestool_saas", "3306" )
 
-      oQuery               := TMSQuery():New( oCon, "SELECT * FROM numerosserie WHERE serial='" + AllTrim( Str( Abs( nSerialHD() ) ) ) + "'" )
+      oQuery               := TMSQuery():New( oCon, "SELECT * FROM numerosserie WHERE serial='" + AllTrim( Str( Abs( nSerialHD() ) ) ) + "' AND activo" )
 
       if oQuery:Open() .and. oQuery:RecCount() > 0
 
-         if oQuery:FieldGetByName( "activo" ) != 0
+         nIdClient         := oQuery:FieldGetByName( "id_client" )
 
-            nIdClient      := oQuery:FieldGetByName( "id_client" )
+         oQuery2           := TMSQuery():New( oCon, "SELECT * FROM clientes WHERE id='" + AllTrim( Str( nIdClient ) ) + "' AND activo" )
 
-            oQuery2        := TMSQuery():New( oCon, "SELECT * FROM clientes WHERE id='" + AllTrim( Str( nIdClient ) ) + "'" )
+         if oQuery2:Open() .and. oQuery2:RecCount() > 0
 
-            if oQuery2:Open() .and. oQuery2:RecCount() > 0
-
-               if oQuery2:FieldGetByName( "activo" ) == 0
-
-                  lCheck   := .f.
-
-               end if
-
-            end if
-
-         else
-
-            lCheck         := .f.
+            lCheck         := .t.
 
          end if   
 
@@ -6340,11 +6326,7 @@ FUNCTION ControlSaas()
    local nSerialCRC
    local aSerialCRC  := {}
    local nSerialUSR  := 0
-   local cFileIni    := FullCurDir() + "2K10.Num"
-
-
-   ?"Control SAAS"
-
+   local cFileIni    := FullCurDir() + "2K10.Num" 
 
    if lCheckSaasMode() 
       Return .t.
@@ -6412,8 +6394,6 @@ RETURN .t.
 
 //----------------------------------------------------------------------------//
 
-//---------------------------------------------------------------------------//
-
 Static Function SetFidelity( oBtnFidelity )
 
    local lFidelity            := !uFieldEmpresa( "lFidelity" )
@@ -6470,3 +6450,37 @@ RETURN .t.
 
 //--------------------------------------------------------------------------//
 
+//---------------------------------------------------------------------------//
+
+Static Function WriteRegistro()
+
+   LOCAL oReg, cName, uVar
+
+   oReg := TReg32():Create( HKEY_LOCAL_MACHINE, "SOFTWARE\FiveWin\Reg32 Class Test" )
+
+   // Call Set with an empty string to access the default key
+
+   oReg:Set( "", "This is the default value" )
+   oReg:Set( "A number", 12345 )
+   oReg:Set( "A Date", DATE() )
+   oReg:Set( "A logical value", .F. )
+   MsgStop( "Windows registry updated!" )
+
+   oReg:Close()
+
+   oReg := TReg32():New( HKEY_LOCAL_MACHINE, "SOFTWARE\FiveWin\Reg32 Class Test" )
+
+   uVar := oReg:Get( "", "This is the default value" )
+   MsgStop( uVar, "Default: VALTYPE()= " + VALTYPE( uVar ) )
+   uVar := oReg:Get( "A number", 12345 )
+   MsgStop( uVar, "A number: VALTYPE()= " + VALTYPE( uVar ) )
+   uVar := oReg:Get( "A Date", DATE() )
+   MsgStop( uVar, "A Date: VALTYPE()= " + VALTYPE( uVar ) )
+   uVar := oReg:Get( "A logical value", .F. )
+   MsgStop( uVar,"Logic: VALTYPE()= " + VALTYPE( uVar ) )
+
+   oReg:Close()
+
+return nil
+
+//---------------------------------------------------------------------------//
