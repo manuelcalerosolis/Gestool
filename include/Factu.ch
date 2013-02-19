@@ -62,7 +62,7 @@ Fichero de Cabecera para la Aplcaci¢n de Facturaci¢n 3.0 para Windows
 #define SERIALNUMBER                    9876556789
 #endif
 
-#define __IMP__                         "IVA"
+#define __DAYS__                        5
 
 #define clrTopArchivos                  Rgb( 104, 0, 63 )
 #define clrTopCompras                   Rgb( 0, 114, 198 )

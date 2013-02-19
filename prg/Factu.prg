@@ -6,12 +6,12 @@
 #include "Ads.ch"
 #include "Xbrowse.ch"
 
-#define GR_GDIOBJECTS     0       /* Count of GDI objects */
-#define GR_USEROBJECTS    1       /* Count of USER objects */
+#define GR_GDIOBJECTS         0      /* Count of GDI objects */
+#define GR_USEROBJECTS        1      /* Count of USER objects */
 
-#define CS_DBLCLKS        8
+#define CS_DBLCLKS            8
 
-#define  HKEY_LOCAL_MACHINE      2147483650
+#define HKEY_LOCAL_MACHINE    2147483650
 
 ANNOUNCE RDDSYS
 
@@ -49,6 +49,7 @@ static lOsCommerce
 
 static cNameVersion
 static cBmpVersion
+static cTypeVersion  := ""
 
 //---------------------------------------------------------------------------//
 //Comenzamos la parte de código que se compila para el ejecutable normal
@@ -232,7 +233,7 @@ function Main( cParams )
 
    end case
 
-   // Iconos
+   // Iconos-------------------------------------------------------------------
 
    DEFINE ICON oIconApp RESOURCE "Gestool"
 
@@ -240,7 +241,7 @@ function Main( cParams )
 
    if( !lIsDir( cPatDat() ),  MakeDir( cNamePath( cPatDat() ) ), )
 
-   // Obtenemos la versión del programa
+   // Obtenemos la versión del programa----------------------------------------
 
    IsStandard()
    IsProfesional()
@@ -248,7 +249,7 @@ function Main( cParams )
 
    cNameVersion()
 
-   // Chequeamos los datos de los usuarios
+   // Chequeamos los datos de los usuarios-------------------------------------
 
    if !TReindex():lFreeHandle()
       msgStop( "Existen procesos exclusivos, no se puede acceder a la aplicación" + CRLF + ;
@@ -387,9 +388,8 @@ Static Function StdKey( nKey )
 Return Nil
 
 //---------------------------------------------------------------------------//
-
-//----------------------------------------------------------------------------//
 //Procesos de comprobaciones iniciales y lectura de archivos .INI, cuando existan
+//
 
 FUNCTION ControlAplicacion()
 
@@ -405,8 +405,6 @@ FUNCTION ControlAplicacion()
    local oSayDemo
    local oSayAlquiler   
    local cSayAlquiler   
-
-   msgStop( lControlAcceso(), "lControlAcceso" )
 
    if lControlAcceso() 
       Return .t.
@@ -624,6 +622,12 @@ Function ExitDialog( oDlg, nLicencia, nSerialHD, nSerialUSR, oSerialUsr, oSayAlq
             Return .f.
          end if
 
+         if !lValidMail( cSayAlquiler[6] )
+            MsgStop( "El campo email no es valido" )
+            oSayAlquiler[6]:SetFocus()
+            Return .f.
+         end if
+
          if Empty( cSayAlquiler[7] )
             MsgStop( "El campo teléfono no puede estar vacío" )
             oSayAlquiler[7]:SetFocus()
@@ -647,6 +651,8 @@ Function ExitDialog( oDlg, nLicencia, nSerialHD, nSerialUSR, oSerialUsr, oSayAlq
          CursorWE()
 
       case nLicencia == 3
+
+         cTypeVersion( "[VERSIÓN DEMO]" )
 
          oDlg:End( IDOK )
 
@@ -688,7 +694,9 @@ Function lEnviarCorreoWatchdog( cSay, oDlg )
       :cGetMensaje         += "Cod. postal: " + AllTrim( cSay[5] ) + "<br>"
       :cGetMensaje         += "Provincia: " + AllTrim( cSay[8] ) + "<br>"
       :cGetMensaje         += "Email: " + AllTrim( cSay[6] ) + "<br>"
-      :cGetMensaje         += "Teléfono: " + AllTrim( cSay[7] )
+      :cGetMensaje         += "Teléfono: " + AllTrim( cSay[7] ) + "<br>"
+      :cGetMensaje         += "<br>"
+      :cGetMensaje         += "Serial : " + Str( Abs( nSerialHD() ) ) + "<br>"
 
       /*
       Mandamos el Mail---------------------------------------------------------
@@ -727,9 +735,9 @@ Function lEnviarCorreoCliente( cSay, oDlg )
       Creamos el cuerpo del mensaje--------------------------------------------
       */
 
-      :SetDe(           "Gestool sistema de registro" )
-      :SetPara(         AllTrim( cSay[6] ) )
-      :SetAsunto(       "Registro de Gestool." )
+      :SetDe(                "Gestool sistema de registro" )
+      :SetPara(              AllTrim( cSay[6] ) )
+      :SetAsunto(            "Registro de Gestool." )
       :cGetMensaje           := "Su petición de registro está siendo procesada. En breve nos pondremos en contacto con usted "
       :cGetMensaje           += "para finalizar el proceso de registro." + "<br>"
       :cGetMensaje           += "Puede ponerse en contacto con nosotros mediante email en registro@gestool.es; o en el teléfono 902 930 252" + "<br>"
@@ -1009,14 +1017,16 @@ Function lStartCheck()
 
    ChkAllEmp()
 
-   SetTituloEmpresa()
-
    // Controla de acceso a la aplicación---------------------------------------
 
    oMsgText( 'Control de acceso a la aplicación' )
 
    ControlAplicacion()
+
+   // Titulo de la aplicacion con la empresa y version-------------------------
  
+   SetTituloEmpresa()
+
    // Opciones de inicio-------------------------------------------------------
 
    oMsgText( 'Selección del cajón' )
@@ -1364,7 +1374,6 @@ init procedure RddInit()
    REQUEST SQLRDD             // SQLRDD should be linked in
    REQUEST SR_MYSQL           // Needed if you plan to use native connection to MySQL
 #endif
-
 
    REQUEST HB_LANG_ES         // Para establecer idioma de Mensajes, fechas, etc..
    REQUEST HB_CODEPAGE_ESWIN  // Para establecer código de página a Español (Ordenación, etc..)
@@ -4723,6 +4732,7 @@ STATIC FUNCTION lTctInitCheck( lDir, oMessage, oProgress )
    RECOVER USING oError
 
       msgStop( ErrorMessage( oError ), 'Imposible realizar comprobaciones iniciales' )
+
       lCheck   := .f.
 
    END SEQUENCE
@@ -5434,629 +5444,9 @@ Return ( nil )
 
 #else
 
-//---------------------------------------------------------------------------//
-
-function Main()
-
-   local oFont
-   local oSayTit
-   local oBtn        := Array( 19 )
-   local oBtnTpv     := Array( 9 )
-
-   SET DATE FORMAT   "dd/mm/yyyy"
-   SET DELETED       ON
-   SET EPOCH         TO 2000
-   SET OPTIMIZE      ON
-   SET EXACT         ON
-
-   RddSetDefault( cLocalDriver() )
-
-   /*
-   Comprobaciones iniciales----------------------------------------------------
-   */
-
-   if pdalInitCheck()
-
-      /*
-      Una vez comprobado el usuario, montamos la ventana principal-------------
-      */
-
-      DEFINE FONT oFont NAME "Verdana" SIZE 0, -14
-
-   /*
-   Si estamos para versión Ventas
-   */
-
-#ifdef __PDAPRE__
-
-      DEFINE DIALOG oWnd RESOURCE "MENU_PDA"
-
-         REDEFINE SAY oSayTit ;
-            ID       160 ;
-            COLOR    "N/W*" ;
-            FONT     oFont ;
-            OF       oWnd
-
-         REDEFINE BTNBMP oBtn[ 1 ] ;
-            ID       100 ;
-            OF       oWnd ;
-            FILE     ( cPatBmp() + "Mda_16.bmp" ) ;
-            NOBORDER ;
-            ACTION      ( nil )
-
-         oBtn[ 1 ]:SetColor( 0, nRGB( 255, 255, 255 )  )
-
-         REDEFINE BTNBMP oBtn[ 6 ] ;
-            ID       170 ;
-            OF       oWnd ;
-            FILE     ( cPatBmp() + "Cubes_24.bmp" ) ;
-            NOBORDER ;
-            ACTION   ( pdaFamilia() )
-
-         oBtn[ 6 ]:SetColor( 0, nRGB( 255, 255, 255 )  )
-
-         REDEFINE BTNBMP oBtn[ 7 ] ;
-            ID       171 ;
-            OF       oWnd ;
-            FILE     ( cPatBmp() + "Cube_yellow_24.bmp" ) ;
-            NOBORDER ;
-            ACTION   ( pdaArticulo() )
-
-         oBtn[ 7 ]:SetColor( 0, nRGB( 255, 255, 255 )  )
-
-         REDEFINE BTNBMP oBtn[ 8 ] ;
-            ID       172 ;
-            OF       oWnd ;
-            FILE     ( cPatBmp() + "ClipBoard_empty_user1_24.bmp" ) ;
-            NOBORDER ;
-            ACTION   ( pdaPedCli() )
-
-         oBtn[ 8 ]:SetColor( 0, nRGB( 255, 255, 255 )  )
-
-         REDEFINE BTNBMP oBtn[ 9 ] ;
-            ID       173 ;
-            OF       oWnd ;
-            FILE     ( cPatBmp() + "Document_plain_user1_24.bmp" ) ;
-            NOBORDER ;
-            ACTION   ( pdaAlbCli() )
-
-         oBtn[ 9 ]:SetColor( 0, nRGB( 255, 255, 255 )  )
-
-         REDEFINE BTNBMP oBtn[ 10 ] ;
-            ID       174 ;
-            OF       oWnd ;
-            FILE     ( cPatBmp() + "Document_user1_24.bmp" ) ;
-            NOBORDER ;
-            ACTION   ( pdaFacCli() )
-
-         oBtn[ 10 ]:SetColor( 0, nRGB( 255, 255, 255 )  )
-
-         REDEFINE BTNBMP oBtn[ 11 ] ;
-            ID       175 ;
-            OF       oWnd ;
-            FILE     ( cPatBmp() + "gear_24.bmp" ) ;
-            NOBORDER ;
-            ACTION   ( pdaConfig() )
-
-         oBtn[ 11 ]:SetColor( 0, nRGB( 255, 255, 255 )  )
-
-         REDEFINE BTNBMP oBtn[ 12 ] ;
-            ID       176 ;
-            OF       oWnd ;
-            FILE     ( cPatBmp() + "sync.bmp" ) ;
-            NOBORDER ;
-            ACTION   ( SincronizarDB() )
-
-         oBtn[ 12 ]:SetColor( 0, nRGB( 255, 255, 255 )  )
-
-         REDEFINE BTNBMP oBtn[ 13 ] ;
-            ID       177 ;
-            OF       oWnd ;
-            FILE     ( cPatBmp() + "recycle.bmp" ) ;
-            NOBORDER ;
-            ACTION   ( RegIndices() )
-
-         oBtn[ 13 ]:SetColor( 0, nRGB( 255, 255, 255 )  )
-
-         REDEFINE BTNBMP oBtn[ 14 ] ;
-            ID       178 ;
-            OF       oWnd ;
-            FILE     ( cPatBmp() + "user1_24.bmp" ) ;
-            NOBORDER ;
-            ACTION   ( pdaOrdenar() )
-
-         oBtn[ 14 ]:SetColor( 0, nRGB( 255, 255, 255 )  )
-
-         REDEFINE BTNBMP oBtn[ 15 ] ;
-            ID       179 ;
-            OF       oWnd ;
-            FILE     ( cPatBmp() + "money2.bmp" ) ;
-            NOBORDER ;
-            ACTION   ( pdaVentas() )
-
-         oBtn[ 15 ]:SetColor( 0, nRGB( 255, 255, 255 )  )
-
-         REDEFINE BTNBMP oBtn[ 16 ] ;
-            ID       180 ;
-            OF       oWnd ;
-            FILE     ( cPatBmp() + "moneybag_euro_24.bmp" ) ;
-            NOBORDER ;
-            ACTION   ( pdaLiquidaciones() )
-
-         oBtn[ 16 ]:SetColor( 0, nRGB( 255, 255, 255 )  )
-
-         REDEFINE BTNBMP oBtn[ 17 ] ;
-            ID       181 ;
-            OF       oWnd ;
-            FILE     ( cPatBmp() + "Pencil_Package_24.bmp" ) ;
-            NOBORDER ;
-            ACTION   ( PdaMovAlm() )
-
-         oBtn[ 17 ]:SetColor( 0, nRGB( 255, 255, 255 )  )
-
-         REDEFINE BTNBMP oBtn[ 18 ] ;
-            ID       182 ;
-            OF       oWnd ;
-            FILE     ( cPatBmp() + "folder_refresh_24.bmp" ) ;
-            NOBORDER ;
-            ACTION   ( ActFicheros() )
-
-         oBtn[ 18 ]:SetColor( 0, nRGB( 255, 255, 255 )  )
-
-         REDEFINE BTNBMP oBtn[ 19 ] ;
-            ID       183 ;
-            OF       oWnd ;
-            FILE     ( cPatBmp() + "preferences_24.bmp" ) ;
-            NOBORDER ;
-            ACTION   ( pdaEstado() )
-
-         oBtn[ 19 ]:SetColor( 0, nRGB( 255, 255, 255 )  )
-
-      ACTIVATE DIALOG oWnd ;
-         VALID       ( PdaEndPda( oWnd ) ) ;
-         ON INIT     ( oWnd:SetMenu( PdaBuildMenu( oWnd ) ) )
-
 #endif
 
-   /*
-   Si estamos para versión tpv
-   */
-
-#ifdef __PDATPV__
-
-   DEFINE DIALOG oWnd RESOURCE "MENU_PDA_1"
-
-         REDEFINE SAY oSayTit ;
-            ID       160 ;
-            COLOR    "N/W*" ;
-            FONT     oFont ;
-            OF       oWnd
-
-         REDEFINE BTNBMP oBtnTpv[ 1 ] ;
-            ID       100 ;
-            OF       oWnd ;
-            FILE     ( cPatBmp() + "Mda_16.bmp" ) ;
-            NOBORDER ;
-            ACTION      ( nil )
-
-         oBtnTpv[ 1 ]:SetColor( 0, nRGB( 255, 255, 255 )  )
-
-         REDEFINE BTNBMP oBtnTpv[ 2 ] ;
-            ID       170 ;
-            OF       oWnd ;
-            FILE     ( cPatBmp() + "Cubes_24.bmp" ) ;
-            NOBORDER ;
-            ACTION   ( pdaFamilia() )
-
-         oBtnTpv[ 2 ]:SetColor( 0, nRGB( 255, 255, 255 )  )
-
-         REDEFINE BTNBMP oBtnTpv[ 3 ] ;
-            ID       171 ;
-            OF       oWnd ;
-            FILE     ( cPatBmp() + "Cube_yellow_24.bmp" ) ;
-            NOBORDER ;
-            ACTION   ( pdaArticulo() )
-
-         oBtnTpv[ 3 ]:SetColor( 0, nRGB( 255, 255, 255 )  )
-
-         REDEFINE BTNBMP oBtnTpv[ 4 ] ;
-            ID       175 ;
-            OF       oWnd ;
-            FILE     ( cPatBmp() + "gear_24.bmp" ) ;
-            NOBORDER ;
-            ACTION   ( pdaConfig() )
-
-         oBtnTpv[ 4 ]:SetColor( 0, nRGB( 255, 255, 255 )  )
-
-         REDEFINE BTNBMP oBtnTpv[ 5 ] ;
-            ID       176 ;
-            OF       oWnd ;
-            FILE     ( cPatBmp() + "sync.bmp" ) ;
-            NOBORDER ;
-            ACTION   ( SincronizarDB() )
-
-         oBtnTpv[ 5 ]:SetColor( 0, nRGB( 255, 255, 255 )  )
-
-         REDEFINE BTNBMP oBtnTpv[ 9 ] ;
-            ID       172 ;
-            OF       oWnd ;
-            FILE     ( cPatBmp() + "folder_refresh_24.bmp" ) ;
-            NOBORDER ;
-            ACTION   ( ActFicheros() )
-
-         oBtnTpv[ 9 ]:SetColor( 0, nRGB( 255, 255, 255 )  )
-
-         REDEFINE BTNBMP oBtnTpv[ 6 ] ;
-            ID       177 ;
-            OF       oWnd ;
-            FILE     ( cPatBmp() + "recycle.bmp" ) ;
-            NOBORDER ;
-            ACTION   ( RegIndices() )
-
-         oBtnTpv[ 6 ]:SetColor( 0, nRGB( 255, 255, 255 )  )
-
-         REDEFINE BTNBMP oBtnTpv[ 7 ] ;
-            ID       182 ;
-            OF       oWnd ;
-            FILE     ( cPatBmp() + "cashier_user1_24.bmp" ) ;
-            NOBORDER ;
-            ACTION   ( pdaticket() )
-
-         oBtnTpv[ 7 ]:SetColor( 0, nRGB( 255, 255, 255 )  )
-
-         REDEFINE BTNBMP oBtnTpv[ 8 ] ;
-            ID       178 ;
-            OF       oWnd ;
-            FILE     ( cPatBmp() + "user1_24.bmp" ) ;
-            NOBORDER ;
-            ACTION   ( pdaOrdenar() )
-
-         oBtnTpv[ 8 ]:SetColor( 0, nRGB( 255, 255, 255 )  )
-
-      if lInitTpv()
-         oWnd:bStart := {|| pdaTicket() }
-      end if
-
-      ACTIVATE DIALOG oWnd ;
-         VALID       ( PdaEndPda( oWnd ) ) ;
-         ON INIT     ( oWnd:SetMenu( PdaBuildMenu( oWnd ) ) )
-
-#endif
-      oFont:End()
-
-   end if
-
-Return Nil
-
 //---------------------------------------------------------------------------//
-
-static function pdaAbout()
-
-   local oDlf
-   local aBtn     := Array ( 5 )
-   local btnClose
-
-   DEFINE DIALOG oDlg RESOURCE "Dlg_about"
-
-         REDEFINE BTNBMP aBtn[1];
-         ID       100 ;
-         OF       oDlg ;
-         FILE     ( cPatBmp() + "logo.bmp" ) ;
-         NOBORDER ;
-         ACTION      ( nil )
-
-         aBtn[1]:SetColor( 0, nRGB( 255, 255, 255 )  )
-
-         REDEFINE BTNBMP aBtn[2];
-         ID       120 ;
-         OF       oDlg ;
-         FILE     ( cPatBmp() + "angel.bmp" ) ;
-         NOBORDER ;
-         ACTION      ( nil )
-
-         aBtn[2]:SetColor( 0, nRGB( 255, 255, 255 )  )
-
-         REDEFINE BTNBMP aBtn[3];
-         ID       130 ;
-         OF       oDlg ;
-         FILE     ( cPatBmp() + "security_agent.bmp" ) ;
-         NOBORDER ;
-         ACTION      ( nil )
-
-         aBtn[3]:SetColor( 0, nRGB( 255, 255, 255 )  )
-
-         REDEFINE BTNBMP aBtn[4];
-         ID       140 ;
-         OF       oDlg ;
-         FILE     ( cPatBmp() + "dude2.bmp" ) ;
-         NOBORDER ;
-         ACTION      ( nil )
-
-         aBtn[4]:SetColor( 0, nRGB( 255, 255, 255 )  )
-
-         REDEFINE BTNBMP aBtn[5];
-         ID       180 ;
-         OF       oDlg ;
-         FILE     ( cPatBmp() + "worker2.bmp" ) ;
-         NOBORDER ;
-         ACTION      ( nil )
-
-         aBtn[5]:SetColor( 0, nRGB( 255, 255, 255 )  )
-
-      ACTIVATE DIALOG oDlg ;
-         ON INIT ( pdaMenuAbout( oDlg ) )
-
-Return ( oDlg:nResult == IDOK )
-
-//---------------------------------------------------------------------------//
-
-static function pdaMenuAbout( oDlg )
-
-   local oMenu
-
-   DEFINE MENU oMenu ;
-      RESOURCE 400 ;
-      BITMAPS  50 ; // bitmaps resoruces ID
-      IMAGES   1     // number of images in the bitmap
-
-      REDEFINE MENUITEM ID 410 OF oMenu ACTION ( oDlg:End( IDCANCEL ) )
-
-   oDlg:SetMenu( oMenu )
-
-Return oMenu
-
-//---------------------------------------------------------------------------//
-
-static function PdaBuildMenu( oWnd )
-
-   local oMenu
-
-   DEFINE MENU oMenu RESOURCE 130 ;
-      BITMAPS 30 ; // bitmap resources ID
-      IMAGES 2     // number of images in the bitmap
-
-      REDEFINE MENUITEM ID 140 OF oMenu ACTION ( pdaAbout() )
-
-      REDEFINE MENUITEM ID 150 OF oMenu ACTION ( oWnd:End() )
-
-Return oMenu
-
-//---------------------------------------------------------------------------//
-
-static function PdaEndPda( oWnd )
-
-   lFreeUser()
-
-return .t.
-
-//---------------------------------------------------------------------------//
-
-Function ErrorMessage()
-
-Return ( "" )
-
-//---------------------------------------------------------------------------//
-
-Function PdalInitCheck()
-
-   local lcheck := .f.
-   local aFile
-   local oError
-   local oBlock
-
-   oBlock         := ErrorBlock( {| oError | ApoloBreak( oError ) } )
-   BEGIN SEQUENCE
-
-   CursorWait()
-
-   // Comprobamos que existan todos los directorios----------------------------
-
-   if( !lIsDir( cPatDat() ),  MakeDir( cNamePath( cPatDat() ) ), )
-
-   if( !lIsDir( cPatBmp() ),  MakeDir( cNamePath( cPatBmp() ) ), )
-
-   if !lIsDir( cPatTmp() )
-      MakeDir( cNamePath( cPatTmp() ) )
-   else
-      aFile := Directory( cPatTmp() + "*.*" )
-      AEval(aFile,{|aFile| FErase( cPatTmp() + aFile[ 1 ] ) } )
-   end if
-
-   if( !lIsDir( FullCurDir() + "EMP00\" ), MakeDir( cNamePath( FullCurDir() + "EMP00\" ) ), )
-
-   if( !lIsDir( FullCurDir() + "GRP00\" ), MakeDir( cNamePath( FullCurDir() + "GRP00\" ) ), )
-
-   if( !lIsDir( FullCurDir() + "USR\" ), MakeDir( cNamePath( FullCurDir() + "USR\" ) ), )
-
-   if( !lIsDir( FullCurDir() + "TMP\" ), MakeDir( cNamePath( FullCurDir() + "TMP\" ) ), )
-
-   CursorWait()
-
-   // Comprobamos q exista al menos un usuario master--------------------------
-
-   IF !File( cPatDat() + "USERS.DBF" )
-		mkUsuario()
-   END IF
-
-   IF !File( cPatDat() + "USERS.CDX" )
-      rxUsuario()
-	END IF
-
-   CursorWait()
-
-   // Comprobamos que exista el usuario Master---------------------------------
-
-   IsMaster()
-
-   CursorWe()
-
-   if pdalSelUsuario()
-
-      // Comprobaciones iniciales de la empresa-----------------------------------
-
-      //TstEmpresa()
-
-      //CursorWait()
-
-      // Seleccionamos la empresa-------------------------------------------------
-
-      //SetEmpresa( , , , , , oWnd )
-
-      cPatEmp( "00" )
-      cPatGrp( "00" )
-      cPatCli( "00" )
-      cPatArt( "00" )
-
-      // Comprobacion de almacen--------------------------------------------------
-
-      IsAlmacen()
-
-      CursorWait()
-
-      // Seleccion de almacen-----------------------------------------------------
-
-      /*if uFieldEmpresa( "lSelAlm" )
-         SelectAlmacen()
-      end if*/
-
-      CursorWait()
-
-      // Forma de pago------------------------------------------------------------
-
-      IsFPago()
-
-      CursorWait()
-
-      // Comprobamos q exista al menos una divisa---------------------------------
-
-      IsDiv()
-
-      CursorWait()
-
-      // Comprobamos q exista las tablas
-
-      IsFamilia()
-
-      CursorWait()
-
-      IsArticulo()
-
-      CursorWait()
-
-      IsIva()
-
-      CursorWait()
-
-      IsClient()
-
-      CursorWait()
-
-      IsAgentes()
-
-      CursorWait()
-
-      IsRuta()
-
-      CursorWait()
-
-      IsCount()
-
-      CursorWait()
-
-      IsSitua()
-
-      CursorWait()
-
-      IsTipInci()
-
-      CursorWait()
-
-      IsPro()
-
-      CursorWait()
-
-      IsOferta()
-
-      CursorWait()
-
-      IsProvee()
-
-      CursorWait()
-
-      IsPedCli()
-
-      CursorWait()
-
-      IsAlbCli()
-
-      CursorWait()
-
-      IsFacCli()
-
-      CursorWait()
-
-      IsRecCli()
-
-      CursorWait()
-
-      IsAntCli()
-
-      CursorWait()
-
-      IsConfig()
-
-      CursorWait()
-
-      IsRemMov()
-
-      CursorWait()
-
-      IsTranspor()
-
-      CursorWait()
-
-      IsSalaVta()
-
-      CursorWait()
-
-      IsTblcnv()
-
-      CursorWait()
-
-      IsTMov()
-
-      CursorWait()
-
-      /*
-      Configuración inicial de la PDA---------------------------------------------
-      */
-
-      LoadConfig()
-
-      lCheck := .t.
-
-   endif
-
-   CursorWe()
-
-   RECOVER USING oError
-
-      lCheck        := .f.
-
-      MsgInfo( "Necesita actualizar ficheros" )
-
-      ActFicheros()
-
-   END SEQUENCE
-
-   ErrorBlock( oBlock )
-
-RETURN ( lCheck )
-
-//---------------------------------------------------------------------------//
-
-#endif
-
 //---------------------------------------------------------------------------//
 //Funciones comunes tanto para el ejecutable de pda como para el normal
 //---------------------------------------------------------------------------//
@@ -6163,6 +5553,16 @@ Function cBmpVersion()
 Return ( cBmpVersion )
 
 //---------------------------------------------------------------------------//
+
+Function cTypeVersion( cType )
+
+   if !Empty( cType )
+      cTypeVersion   := cType
+   end if 
+
+Return ( cTypeVersion )
+
+//---------------------------------------------------------------------------//
 /*
 Damos valor a la estatica para la versión Oscommerce
 */
@@ -6245,31 +5645,41 @@ Function lCheckPerpetuoMode( nSerialUSR )
       Return .f.
    end if
 
-   if !Empty( nSerialUSR )
+   // Leemos las claves--------------------------------------------------------
 
-      if nSerialUSR == nXor( nSerialHD, SERIALNUMBER )
-         return .t.
-      end if
+   for n := 1 to 50
 
-   else 
-
-      for n := 1 to 50
+      nSerialCRC        := Val( GetPvProfString( "Main", "Access code " + Str( n, 2 ), "0", cFileIni ) )
    
-         nSerialCRC        := Val( GetPvProfString( "Main", "Access code " + Str( n, 2 ), "0", cFileIni ) )
+      if !Empty( nSerialCRC )
    
-         if !Empty( nSerialCRC )
-   
-            aAdd( aSerialCRC, nSerialCRC )
+         aAdd( aSerialCRC, nSerialCRC )
             
-            if nSerialCRC == nXor( nSerialHD, SERIALNUMBER )
+         if nSerialCRC == nXor( nSerialHD, SERIALNUMBER )
                
-               Return .t.
-   
-            end if
+            Return .t.
    
          end if
    
-      next
+      end if
+   
+   next
+
+   // Parametro para registrar la aplicacion-----------------------------------
+
+   if !Empty( nSerialUSR )
+
+      if nSerialUSR == nXor( nSerialHD, SERIALNUMBER )
+
+         aAdd( aSerialCRC, nSerialUSR )
+
+         for n := 1 to len( aSerialCRC )
+            WritePProString( "Main", "Access code " + Str( n, 2 ), cValToChar( aSerialCRC[ n ] ), cFileIni )
+         next
+
+         return .t.
+
+      end if
 
    end if
 
@@ -6283,25 +5693,83 @@ function lCheckSaasMode()
    local oQuery
    local oQuery2
    local nIdClient
+   local nDaySaas          := nDaySaas()
    local lCheck            := .f.
 
    oCon                    := TMSConnect():New()
 
    if oCon:Connect( "www.watchdog.es", "watchdog_root", "Nidorino1234", "watchdog_gestool_saas", "3306" )
 
-      oQuery               := TMSQuery():New( oCon, "SELECT * FROM numerosserie WHERE serial='" + AllTrim( Str( Abs( nSerialHD() ) ) ) + "' AND activo" )
+      oQuery               := TMSQuery():New( oCon, "SELECT * FROM numerosserie WHERE serial='" + AllTrim( Str( Abs( nSerialHD() ) ) ) + "'" )
 
-      if oQuery:Open() .and. oQuery:RecCount() > 0
+      if oQuery:Open() 
 
-         nIdClient         := oQuery:FieldGetByName( "id_client" )
+         // Existe el registro en la base de datos-----------------------------
 
-         oQuery2           := TMSQuery():New( oCon, "SELECT * FROM clientes WHERE id='" + AllTrim( Str( nIdClient ) ) + "' AND activo" )
+         if oQuery:RecCount() > 0
 
-         if oQuery2:Open() .and. oQuery2:RecCount() > 0
+            // El numero de serie no esta activo-------------------------------
 
-            lCheck         := .t.
+            if oQuery:FieldGetByName( "activo" ) != 0
 
-         end if   
+               nIdClient      := oQuery:FieldGetByName( "id_client" )
+
+               oQuery2        := TMSQuery():New( oCon, "SELECT * FROM clientes WHERE id='" + AllTrim( Str( nIdClient ) ) + "' AND activo" )
+
+               if oQuery2:Open() .and. oQuery2:RecCount() > 0
+
+                  lCheck      := .t.
+
+                  cTypeVersion( "[Saas]")
+
+                  DeleteDaySaas()
+
+               else 
+
+                  // Cliente esta bloqueado------------------------------------
+
+                  if nDaySaas > 0
+                     
+                     lCheck   := .t.
+
+                     cTypeVersion( "[Saas dias: " + Alltrim( Str( nDaySaas ) ) +" ]")
+                     
+                     msgStop( "Le quedan " + Alltrim( Str( nDaySaas ) ) + " dias para activar su licencia", "Cliente inactivo." )
+
+                  else 
+
+                     cTypeVersion( "[Demo finalización licencia]" )
+
+                     msgStop( "Periodo de gracia expirado, el programa pasara a modo demo", "¡Atención!")
+
+                  end if 
+
+               end if   
+
+            else
+
+               // Numero de serie no esta activo ver numeros de gracia---------------
+
+
+               if nDaySaas > 0
+                  
+                  lCheck      := .t.
+
+                  cTypeVersion( "[Saas dias: " + Alltrim( Str( nDaySaas ) ) +" ]")
+                  
+                  msgStop( "Le quedan " + Alltrim( Str( nDaySaas ) ) + " dias para activar su licencia", "Licencia inactiva." )
+
+               else 
+
+                  cTypeVersion( "[Demo finalización licencia]" )
+
+                  msgStop( "Periodo de gracia expirado, el programa pasara a modo demo", "¡Atención!")
+
+               end if 
+
+            end if 
+
+         end if
 
       end if
 
@@ -6312,87 +5780,6 @@ function lCheckSaasMode()
 Return ( lCheck )
 
 //---------------------------------------------------------------------------//
-
-//Procesos de comprobaciones iniciales para la aplicación como servicio--------
-
-FUNCTION ControlSaas()
-
-   local n 
-   local oBmp
-   local oDlg
-   local oBrush
-   local oSerialHD
-   local nSerialHD   := Abs( nSerialHD() )
-   local nSerialCRC
-   local aSerialCRC  := {}
-   local nSerialUSR  := 0
-   local cFileIni    := FullCurDir() + "2K10.Num" 
-
-   if lCheckSaasMode() 
-      Return .t.
-   end if 
-
-   DEFINE BRUSH oBrush COLOR Rgb( 255, 255, 255 )
-
-   DEFINE DIALOG oDlg RESOURCE "GETSERIALNO" TITLE "Sistema de protección : " + Str( nSerialHD ) BRUSH oBrush
-
-   REDEFINE BITMAP oBmp ;
-      RESOURCE "Lock_48" ;
-      ID       600;
-      OF       oDlg
-
-   REDEFINE SAY oSerialHD ;
-      PROMPT   nSerialHD ;
-      COLOR    Rgb( 0, 0, 0 ), Rgb( 255, 255, 255 ) ;
-      ID       100 ;
-      OF       oDlg
-
-   REDEFINE GET nSerialUSR ;
-      ID       110 ;
-      COLOR    Rgb( 0, 0, 0 ), Rgb( 255, 255, 255 ) ;
-      PICTURE  "99999999999999" ;
-      OF       oDlg
-
-   REDEFINE SAY COLOR Rgb( 0, 0, 0 ), Rgb( 255, 255, 255 ) ID 120 OF oDlg
-   REDEFINE SAY COLOR Rgb( 0, 0, 0 ), Rgb( 255, 255, 255 ) ID 130 OF oDlg
-   REDEFINE SAY COLOR Rgb( 0, 0, 0 ), Rgb( 255, 255, 255 ) ID 140 OF oDlg
-   REDEFINE SAY COLOR Rgb( 0, 0, 0 ), Rgb( 255, 255, 255 ) ID 150 OF oDlg
-
-   REDEFINE SAY PROMPT "2.- Marque el teléfono siguiente " + __GSTTELEFONO__ COLOR Rgb( 0, 0, 0 ), Rgb( 255, 255, 255 ) ID 160 OF oDlg
-
-   REDEFINE SAY COLOR Rgb( 0, 0, 0 ), Rgb( 255, 255, 255 ) ID 170 OF oDlg
-   REDEFINE SAY COLOR Rgb( 0, 0, 0 ), Rgb( 255, 255, 255 ) ID 180 OF oDlg
-   REDEFINE SAY COLOR Rgb( 0, 0, 0 ), Rgb( 255, 255, 255 ) ID 190 OF oDlg
-
-   with object ( TWebBtn():Redefine( 200,,,,,  {|| goWeb( __GSTWEB__ ) }, oDlg,,,,, "LEFT",,,,, Rgb( 0, 0, 255 ), Rgb( 0, 0, 255 ),,,, "Ir a la página web de " + __GSTFACTORY__ ) )
-      :SetTransparent()
-      :SetText( __GSTFACTORY__ )
-   end with
-
-   REDEFINE BUTTON ;
-      ID       552 ;
-      OF       oDlg ;
-      CANCEL ;
-      ACTION   ( oDlg:End() )
-
-   REDEFINE BUTTON ;
-      ID       IDOK ;
-      OF       oDlg ;
-      ACTION   ( oDlg:End( IDOK ) )
-
-   REDEFINE BUTTON ;
-      ID       IDCANCEL ;
-      OF       oDlg ;
-      ACTION   ( oDlg:End(), PostQuitMessage() )
-
-   ACTIVATE DIALOG oDlg CENTER
-
-   oBmp:end()
-   oBrush:end()
-
-RETURN .t.
-
-//----------------------------------------------------------------------------//
 
 Static Function SetFidelity( oBtnFidelity )
 
@@ -6450,37 +5837,40 @@ RETURN .t.
 
 //--------------------------------------------------------------------------//
 
+Static Function nDaySaas()
+
+   local oReg
+   local cRef
+   local uVar
+
+   cRef     := "SOFTWARE\" + ( "GestoolSaaS" ) //+ HB_Crypt( "Gestool", SERIALNUMBER )
+   oReg     := TReg32():Create( HKEY_LOCAL_MACHINE, cRef )
+   uVar     := oReg:Get( "Date", Date() )
+
+   if Empty( uVar )
+      oReg:Set( "Date", Date() )
+   end if
+
+   oReg:Close()
+
+   if Empty( uVar )
+      uVar  := Date()
+   end if 
+      
+Return ( uVar + __DAYS__ - Date() )
+
 //---------------------------------------------------------------------------//
 
-Static Function WriteRegistro()
+Static Function DeleteDaySaas()
 
-   LOCAL oReg, cName, uVar
+   local oReg
+   local cRef
 
-   oReg := TReg32():Create( HKEY_LOCAL_MACHINE, "SOFTWARE\FiveWin\Reg32 Class Test" )
-
-   // Call Set with an empty string to access the default key
-
-   oReg:Set( "", "This is the default value" )
-   oReg:Set( "A number", 12345 )
-   oReg:Set( "A Date", DATE() )
-   oReg:Set( "A logical value", .F. )
-   MsgStop( "Windows registry updated!" )
-
+   cRef     := "SOFTWARE\" + ( "GestoolSaaS" ) //+ HB_Crypt( "Gestool", SERIALNUMBER )
+   oReg     := TReg32():Create( HKEY_LOCAL_MACHINE ) // , cRef )
+   msgAlert( oReg:Delete( cRef ), "delete registro" )
    oReg:Close()
 
-   oReg := TReg32():New( HKEY_LOCAL_MACHINE, "SOFTWARE\FiveWin\Reg32 Class Test" )
-
-   uVar := oReg:Get( "", "This is the default value" )
-   MsgStop( uVar, "Default: VALTYPE()= " + VALTYPE( uVar ) )
-   uVar := oReg:Get( "A number", 12345 )
-   MsgStop( uVar, "A number: VALTYPE()= " + VALTYPE( uVar ) )
-   uVar := oReg:Get( "A Date", DATE() )
-   MsgStop( uVar, "A Date: VALTYPE()= " + VALTYPE( uVar ) )
-   uVar := oReg:Get( "A logical value", .F. )
-   MsgStop( uVar,"Logic: VALTYPE()= " + VALTYPE( uVar ) )
-
-   oReg:Close()
-
-return nil
+Return ( nil )
 
 //---------------------------------------------------------------------------//
