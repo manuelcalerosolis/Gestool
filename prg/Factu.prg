@@ -393,12 +393,14 @@ Return Nil
 
 FUNCTION ControlAplicacion()
 
-   local oBmp
    local oDlg
+   local oBmpPerpetua
+   local oBmpSaas
+   local oBmpDemo
    local oSerialHD
-   local nSerialHD      
+   local nSerialHD
    local oSerialUSR
-   local nSerialUSR     
+   local nSerialUSR
    local oLicencia
    local nlicencia      
    local oSayPerpetua   
@@ -419,9 +421,19 @@ FUNCTION ControlAplicacion()
 
    DEFINE DIALOG oDlg RESOURCE "GETSERIALNO" TITLE "Sistema de protección"
 
-   REDEFINE BITMAP oBmp ;
-      RESOURCE    "Lock_48" ;
+   REDEFINE BITMAP oBmpPerpetua ;
+      RESOURCE    "certificate_32_alpha" ;
       ID          500;
+      OF          oDlg
+
+   REDEFINE BITMAP oBmpSaas ;
+      RESOURCE    "lock_32_alpha" ;
+      ID          510;
+      OF          oDlg
+      
+   REDEFINE BITMAP oBmpDemo ;
+      RESOURCE    "piggy_bank_32_alpha" ;
+      ID          520;
       OF          oDlg
 
    /*
@@ -521,7 +533,9 @@ FUNCTION ControlAplicacion()
 
    ACTIVATE DIALOG oDlg CENTER
 
-   oBmp:end() 
+   oBmpPerpetua:end()
+   oBmpSaas:end()
+   oBmpDemo:end() 
 
 RETURN .t.
 

@@ -982,7 +982,7 @@ METHOD Exportar() CLASS TComercio
 
                sysRefresh()
                if ::lIva .or. ::lSincAll
-                  ::MeterGlobalText( "Actualizando tipos de " + __IMP__ )
+                  ::MeterGlobalText( "Actualizando tipos de " + cImp() )
                   ::AppendIva( odb )
                   sysRefresh()
                end if
@@ -1095,7 +1095,7 @@ METHOD Importar() CLASS TComercio
             sysRefresh()
 
             if ::lIva .or. ::lSincAll
-               ::MeterGlobalText( "Descargando tipos de " + __IMP__ )
+               ::MeterGlobalText( "Descargando tipos de " + cImp() )
                ::AppendIva_bd( odb )
                sysRefresh()
             end if
@@ -6717,7 +6717,7 @@ Method ImportarPrestashop()
             sysRefresh()
 
             if ::lIva .or. ::lSincAll
-               ::MeterGlobalText( "Descargando tipos de " + __IMP__ )
+               ::MeterGlobalText( "Descargando tipos de " + cImp() )
                ::AppendIva_bd( odb )
                sysRefresh()
             end if

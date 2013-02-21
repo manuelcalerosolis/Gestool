@@ -922,6 +922,7 @@ static function nGenDeposito( lImp, cTitle, cCodDoc, nCopy )
    local nImpYet  := 1
 
    DEFAULT lImp   := .t.
+   DEFAULT nCopy  := 1
 
    nCopy          := Max( nCopy, 1 )
 
