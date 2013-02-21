@@ -1,5 +1,5 @@
 #include "FiveWin.Ch"
-#include "Menu.ch"
+#include "Menu.ch" 
 #include "Font.ch"
 #include "Inkey.ch"
 #include "Factu.ch"
@@ -4258,19 +4258,6 @@ Return nil
 
 Static Function ExecuteMainPdaWindow( oListView, oDlg )
 
-   do case
-      case oListView:nOption == 1
-         TNotas():New( cPatDat(), nil, "01075" ):Dialog()
-      case oListView:nOption == 2
-         PreCliDialog()
-      case oListView:nOption == 3
-         // PedCliDialog()
-      case oListView:nOption == 4
-         //AlbCliDialog()
-      case oListView:nOption == 5
-         //FactCliDialog()
-   end case
-
 Return nil
 
 //---------------------------------------------------------------------------//
@@ -5857,7 +5844,7 @@ Static Function nDaySaas()
    local cRef
    local uVar
 
-   cRef     := "SOFTWARE\" + ( "GestoolSaaS" ) //+ HB_Crypt( "Gestool", SERIALNUMBER )
+   cRef     := "SOFTWARE\" + HB_Crypt( "Gestool", SERIALNUMBER )
    oReg     := TReg32():Create( HKEY_LOCAL_MACHINE, cRef )
    uVar     := oReg:Get( "Date", Date() )
 
@@ -5880,9 +5867,9 @@ Static Function DeleteDaySaas()
    local oReg
    local cRef
 
-   cRef     := "SOFTWARE\" + ( "GestoolSaaS" ) //+ HB_Crypt( "Gestool", SERIALNUMBER )
-   oReg     := TReg32():Create( HKEY_LOCAL_MACHINE ) // , cRef )
-   msgAlert( oReg:Delete( cRef ), "delete registro" )
+   cRef     := "SOFTWARE\" + HB_Crypt( "Gestool", SERIALNUMBER )
+   oReg     := TReg32():Create( HKEY_LOCAL_MACHINE )
+   oReg:Delete( cRef )
    oReg:Close()
 
 Return ( nil )

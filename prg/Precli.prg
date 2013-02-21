@@ -375,9 +375,7 @@ static oTipArt
 static oGrpFam
 static oFraPub
 static bEdtRec          := { | aTmp, aGet, dbfPreCliT, oBrw, bWhen, bValid, nMode | EdtRec( aTmp, aGet, dbfPreCliT, oBrw, bWhen, bValid, nMode ) }
-static bEdtPda          := { | aTmp, aGet, dbfPreCliT, oBrw, bWhen, bValid, nMode | EdtPda( aTmp, aGet, dbfPreCliT, oBrw, bWhen, bValid, nMode ) }
 static bEdtDet          := { | aTmp, aGet, dbfPreCliL, oBrw, bWhen, bValid, nMode, aTmpPre | EdtDet( aTmp, aGet, dbfPreCliL, oBrw, bWhen, bValid, nMode, aTmpPre ) }
-static bDetPda          := { | aTmp, aGet, dbfPreCliL, oBrw, bWhen, bValid, nMode, aTmpPre | DetPda( aTmp, aGet, dbfPreCliL, oBrw, bWhen, bValid, nMode, aTmpPre ) }
 static bEdtInc          := { | aTmp, aGet, dbfPreCliL, oBrw, bWhen, bValid, nMode, aTmpPre | EdtInc( aTmp, aGet, dbfPreCliI, oBrw, bWhen, bValid, nMode, aTmpPre ) }
 static bEdtDoc          := { | aTmp, aGet, dbfPreCliD, oBrw, bWhen, bValid, nMode, aTmpPre | EdtDoc( aTmp, aGet, dbfPreCliD, oBrw, bWhen, bValid, nMode, aTmpPre ) }
 static nNumArt          := 0
@@ -386,6 +384,7 @@ static cOldCodCli       := ""
 static cOldCodArt       := ""
 static cOldPrpArt       := ""
 static cOldUndMed       := ""
+static cOldSituacion    := ""
 static lOpenFiles       := .f.
 static lExternal        := .f.
 static aTipPre          := { "Venta", "Alquiler" }
@@ -1828,10 +1827,11 @@ STATIC FUNCTION EdtRec( aTmp, aGet, dbfPreCliT, oBrw, cCodCli, cCodArt, nMode )
    local oBmpGeneral
 
    /*
-   Este valor los guaradamos para detectar los posibles cambios
+   Este valor los guaradamos para detectar los posibles cambios----------------
    */
 
    cOldCodCli           := aTmp[_CCODCLI]
+   cOldSituacion        := aTmp[ _CSITUAC ]
 
    do case
    case nMode == APPD_MODE
@@ -1922,10 +1922,10 @@ STATIC FUNCTION EdtRec( aTmp, aGet, dbfPreCliT, oBrw, cCodCli, cCodArt, nMode )
       Return .f.
    end if
 
-   cAprovado            := if( aTmp[_LESTADO], "Aprobado", "" )
+   cAprovado            := if( aTmp[ _LESTADO ], "Aprobado", "" )
 
    /*
-   Mostramos datos de clientes
+   Mostramos datos de clientes-------------------------------------------------
    */
 
    if Empty( aTmp[ _CTLFCLI ] )
@@ -6457,32 +6457,6 @@ end if
 
             end case
 
-            /*
-            Buscamos si existen ofertas para este articulo y le cambiamos el precio
-            */
-
-            /*nImpOfe     := nImpOferta( cCodArt, aTmpPre[ _CCODCLI ], aTmpPre[ _CCODGRP ], aTmp[ _NUNICAJA ], aTmpPre[ _DFECPRE ], dbfOferta, aTmp[ _NTARLIN ], , aTmp[_CCODPR1], aTmp[_CCODPR2], aTmp[_CVALPR1], aTmp[_CVALPR2], aTmp[ _CDIVPRE ], dbfArticulo, dbfDiv, dbfKit, dbfIva )
-            if nImpOfe  != 0
-               aGet[ _NPREDIV ]:cText( nImpOfe )
-            end if
-
-            /*
-            Buscamos si existen descuentos en las ofertas
-            */
-
-            /*nImpOfe     := nDtoOferta( cCodArt, aTmpPre[ _CCODCLI ], aTmpPre[ _CCODGRP ], aTmp[ _NUNICAJA ], aTmpPre[ _DFECPRE ], dbfOferta, aTmp[_CCODPR1], aTmp[_CCODPR2], aTmp[_CVALPR1], aTmp[_CVALPR2] )
-            if nImpOfe  != 0
-               aGet[ _NDTO ]:cText( nImpOfe )
-            end if
-
-            nImpOfe     := nDtoLineal( cCodArt, aTmpPre[ _CCODCLI ], aTmpPre[ _CCODGRP ], aTmp[ _NUNICAJA ], aTmpPre[ _DFECPRE ], dbfOferta, aTmp[_CCODPR1], aTmp[_CCODPR2], aTmp[_CVALPR1], aTmp[_CVALPR2] )
-            if nImpOfe  != 0
-               aGet[ _NDTODIV ]:cText( nImpOfe )
-            end if
-            */
-
-            if !IsPda()
-
             if oUndMedicion:oDbf:Seek( ( dbfArticulo )->cUnidad )
 
                if oUndMedicion:oDbf:nDimension >= 1 .and. !Empty( oUndMedicion:oDbf:cTextoDim1 )
@@ -6522,8 +6496,6 @@ end if
 
                aGet[ ( dbfPreCliL )->( fieldpos( "nMedTre" ) ) ]:cText( 0 )
                aGet[ ( dbfPreCliL )->( fieldpos( "nMedTre" ) ) ]:Hide()
-
-            end if
 
             end if
 
@@ -7806,7 +7778,7 @@ STATIC FUNCTION EndTrans( aTmp, aGet, nMode, oBrwLin, oBrw, oBrwInc, oDlg )
    Comprobamos la fecha del documento
    */
 
-   if !lValidaOperacion( aTmp[_DFECPRE] )
+   if !lValidaOperacion( aTmp[ _DFECPRE ] )
       Return .f.
    end if
 
@@ -7850,20 +7822,30 @@ STATIC FUNCTION EndTrans( aTmp, aGet, nMode, oBrwLin, oBrw, oBrwInc, oDlg )
    oMsgText( "Archivando" )
 
    /*
-   Quitamos los filtros
+   Anotamos los cambios de estado en las inicidencias--------------------------
+   */
+
+   if ( cOldSituacion != aTmp[ _CSITUAC ] )
+      ( dbfTmpInc )->( dbAppend() )
+      ( dbfTmpInc )->dFecInc     := GetSysDate()
+      ( dbfTmpInc )->mDesInc     := "Cambio de estado de " + AllTrim( cOldSituacion ) + " a " + Alltrim( aTmp[ _CSITUAC ] ) + "."
+   end if 
+
+   /*
+   Quitamos los filtros--------------------------------------------------------
    */
 
    ( dbfTmpLin )->( dbClearFilter() )
 
 	/*
-	Primero hacer el RollBack
+	Primero hacer el RollBack---------------------------------------------------
 	*/
 
    aTmp[ _DFECCRE ]        := Date()
    aTmp[ _CTIMCRE ]        := Time()
 
    /*
-   Guardamos el tipo para alquileres
+   Guardamos el tipo para alquileres-------------------------------------------
    */
 
    if !Empty( oTipPre ) .and. oTipPre:nAt == 2
@@ -7875,7 +7857,7 @@ STATIC FUNCTION EndTrans( aTmp, aGet, nMode, oBrwLin, oBrw, oBrwInc, oDlg )
    do case
    case nMode == APPD_MODE .or. nMode == DUPL_MODE
 
-      nNumPre              := nNewDoc( cSerPre, dbfPreCliT, "NPRECLI", , dbfCount )
+      nNumPre              := nNewDoc( cSerPre, dbfPreCliT, "nPreCli", , dbfCount )
       aTmp[ _NNUMPRE ]     := nNumPre
 
    case nMode == EDIT_MODE
@@ -7921,7 +7903,7 @@ STATIC FUNCTION EndTrans( aTmp, aGet, nMode, oBrwLin, oBrw, oBrwInc, oDlg )
    end if
 
 	/*
-	Ahora escribimos en el fichero definitivo
+	Ahora escribimos en el fichero definitivo-----------------------------------
 	*/
 
    ( dbfTmpLin )->( dbGoTop() )
@@ -7937,7 +7919,7 @@ STATIC FUNCTION EndTrans( aTmp, aGet, nMode, oBrwLin, oBrw, oBrwInc, oDlg )
    end while
 
    /*
-	Ahora escribimos en el fichero definitivo
+	Ahora escribimos en el fichero incidencias----------------------------------
 	*/
 
    ( dbfTmpInc )->( dbGoTop() )
@@ -9925,11 +9907,7 @@ FUNCTION ZooPreCli( cNumPre, lOpenBrowse, lPda )
       if OpenFiles( .t. )
 
          if dbSeekInOrd( cNumPre, "nNumPre", dbfPreCliT )
-            if lPda
-               WinZooRec( nil, bEdtPda, dbfPreCliT )
-            else
-               WinZooRec( nil, bEdtRec, dbfPreCliT )
-            end if
+            WinZooRec( nil, bEdtRec, dbfPreCliT )
          end if
 
          CloseFiles()
@@ -10072,6 +10050,7 @@ FUNCTION QuiPreCli()
    nOrdDet        := ( dbfPreCliL )->( OrdSetFocus( "nNumPre" ) )
    nOrdInc        := ( dbfPreCliI )->( OrdSetFocus( "nNumPre" ) )
    nOrdDoc        := ( dbfPreCliD )->( OrdSetFocus( "nNumPre" ) )
+
 
    /*
    Detalle---------------------------------------------------------------------
@@ -10252,1146 +10231,6 @@ Return ( .t. )
 
 //---------------------------------------------------------------------------//
 
-Function PreCliDialog()
-
-   local oDlg
-   local oBrw
-   local nLevel
-   local oGetBuscar
-   local cGetBuscar     := Space( 100 )
-   local oCbxOrden
-   local cCbxOrden      := "Número"
-
-   nLevel               := nLevelUsr( _MENUITEM_ )
-   if nAnd( nLevel, 1 ) != 0
-      msgStop( "Acceso no permitido." )
-      return .f.
-   end if
-
-   /*
-   Abrimos los ficheros--------------------------------------------------------
-   */
-
-   if !OpenFiles()
-      return .f.
-   end if
-
-   /*
-   Creamos el Shell------------------------------------------------------------
-   */
-
-   DEFINE DIALOG oDlg RESOURCE "Dialog_Pda"
-
-      REDEFINE GET oGetBuscar ;
-         VAR      cGetBuscar;
-         ID       100 ;
-         BITMAP   "FIND" ;
-         OF       oDlg
-
-      oGetBuscar:bChange   := {| nKey, nFlags | AutoSeek( nKey, nFlags, oGetBuscar, oBrw, dbfPreCliT ) }
-
-      REDEFINE COMBOBOX oCbxOrden ;
-         VAR      cCbxOrden ;
-         ID       110 ;
-         ITEMS    { "Número", "Fecha", "Código", "Nombre" } ;
-			OF 		oDlg
-
-      oCbxOrden:bChange    := {|| ( dbfPreCliT )->( OrdSetFocus( oCbxOrden:nAt ) ), ( dbfPreCliT )->( dbGoTop() ), oBrw:Refresh(), oGetBuscar:SetFocus() }
-
-#ifdef __PDA__
-
-      REDEFINE IBROWSE oBrw;
-         FIELDS   If( (dbfPreCliT)->lEstado, aDbfBmp[ 1 ], aDbfBmp[ 3 ] ),;
-                  nEstadoIncidencia( ( dbfPreCliT )->cSerPre + Str( ( dbfPreCliT )->nNumPre ) + ( dbfPreCliT )->cSufPre ),;
-                  (dbfPreCliT)->cSerPre + "/" + AllTrim( Str( ( dbfPreCliT )->nNumPre ) ) + "/" + ( dbfPreCliT )->cSufPre ,;
-                  Dtoc( (dbfPreCliT)->dFecPre ),;
-                  (dbfPreCliT)->cSituac,;
-                  (dbfPreCliT)->cCodCli,;
-                  (dbfPreCliT)->cNomCli,;
-                  (dbfPreCliT)->cCodAge,;
-                  (dbfPreCliT)->cCodRut,;
-                  (dbfPreCliT)->cCodAlm,;
-                  (dbfPreCliT)->cCodObr,;
-                  hBmpDiv( (dbfPreCliT)->cDivPre, dbfDiv, oBandera ),;
-                  nTotPreCli( ( dbfPreCliT )->cSerPre + Str( ( dbfPreCliT )->nNumPre ) + ( dbfPreCliT )->cSufPre, dbfPreCliT, dbfPreCliL, dbfIva, dbfDiv, dbfFPago, nil, cDivEmp(), .t. );
-         HEAD     "E",;
-                  "I",;
-                  "Número",;
-                  "Fecha",;
-                  "Situación",;
-                  "Código",;
-                  "Nombre",;
-                  "Agente" ,;
-                  "Ruta" ,;
-                  "Almacén",;
-                  "Obra" ,;
-                  "Div.",;
-                  "Importe " + cDivEmp() ;
-         FIELDSIZES ;
-                  17,;
-                  17,;
-                  60,;
-                  60,;
-                  80,;
-                  70,;
-                  150,;
-                  40,;
-                  40,;
-                  40,;
-                  40,;
-                  25,;
-                  100;
-         JUSTIFY  .f.,;
-                  .f.,;
-                  .f.,;
-                  .f.,;
-                  .f.,;
-                  .f.,;
-                  .f.,;
-                  .f.,;
-                  .f.,;
-                  .f.,;
-                  .f.,;
-                  .f.,;
-                  .t. ;
-         ALIAS    ( dbfPreCliT ) ;
-         ID       200 ;
-         OF       oDlg
-
-   oBrw:cWndName        := "Presupuestos a cliente.PDA"
-   oBrw:bLDblClick      := {|| WinEdtRec( oBrw, bEdtPda, dbfPreCliT ) }
-   oBrw:LoadData()
-
-   oBrw:CloseData()
-
-#endif
-
-   oDlg:Activate( , , , .t., , , {|| EditMenu( nLevel, oBrw, oDlg ) } )
-
-   CloseFiles()
-
-RETURN ( nil )
-
-//----------------------------------------------------------------------------//
-
-Static Function EditMenu( nLevel, oBrw, oDlg )
-
-   MENU oMenu
-
-      MENUITEM    "Presupuestos"
-
-      MENUITEM    "&1. Edición"
-
-         MENU
-
-            MENUITEM    "&1. Añadir";
-               ACTION   ( if( nAnd( nLevel, ACC_APPD ) != 0, WinAppRec( oBrw, bEdtPda, dbfPreCliT ),  MsgStop( "Acceso no permitido" ) ) );
-
-            MENUITEM    "&2. Modificar";
-               ACTION   ( if( nAnd( nLevel, ACC_EDIT ) != 0, WinEdtRec( oBrw, bEdtPda, dbfPreCliT ),  MsgStop( "Acceso no permitido" ) ) );
-
-            MENUITEM    "&3. Eliminar";
-               ACTION   ( if( nAnd( nLevel, ACC_DELE ) != 0, WinDelRec( oBrw, dbfPreCliT ) ,          MsgStop( "Acceso no permitido" ) ) );
-
-            MENUITEM    "&4. Zoom";
-               ACTION   ( if( nAnd( nLevel, ACC_ZOOM ) != 0, WinZooRec( oBrw, bEdtPda, dbfPreCliT ),  MsgStop( "Acceso no permitido" ) ) );
-
-            MENUITEM    "&5. Generar nota";
-               ACTION   ( if( nAnd( nLevel, ACC_ZOOM ) != 0, PreCliNotas(),                           MsgStop( "Acceso no permitido" ) ) );
-
-         ENDMENU
-
-      MENUITEM    "&S. Salir";
-         MESSAGE  "Salir de la ventana actual" ;
-         RESOURCE "End" ;
-         ACTION   ( oDlg:End() );
-
-   ENDMENU
-
-   oDlg:SetMenu( oMenu )
-
-Return ( oMenu )
-
-//---------------------------------------------------------------------------//
-//
-
-STATIC FUNCTION EdtPda( aTmp, aGet, dbfPreCliT, oBrw, cCodCli, cCodArt, nMode )
-
-   local oDlg
-   local oFld
-   local nOrd
-   local oBrwLin
-   local oBrwInc
-   local cAprovado
-   //local oFaxCli
-   //local cFaxCli
-   //local oMovCli
-   //local cMovCli
-   local cNbrObr
-   local oNbrObr
-   local oSayPgo
-   local cSayPgo
-   local cRuta
-   local oRuta
-   local nRieCli
-   local oRieCli
-   local oTitulo
-   local cTitulo              := LblTitle( nMode ) + " presupuesto de cliente"
-   local oTlfCli
-   local cTlfCli
-
-   /*
-   Este valor los guaradamos para detectar los posibles cambios
-   */
-
-   cOldCodCli           := aTmp[ _CCODCLI ]
-
-   do case
-   case nMode == APPD_MODE
-
-      if !lCajaOpen( oUser():cCaja() ) .and. !oUser():lAdministrador()
-         msgStop( "Esta caja " + oUser():cCaja() + " esta cerrada." )
-         Return .f.
-      end if
-
-      aTmp[ _CSERPRE ]  := cNewSer( "nPreCli" )
-      aTmp[ _CTURPRE ]  := cCurSesion()
-      aTmp[ _CCODALM ]  := oUser():cAlmacen()
-      aTmp[ _CDIVPRE ]  := cDivEmp()
-      aTmp[ _CCODCAJ ]  := oUser():cCaja()
-      aTmp[ _CCODPGO ]  := cDefFpg()
-      aTmp[ _CCODUSR ]  := cCurUsr()
-      aTmp[ _NVDVPRE ]  := nChgDiv( aTmp[ _CDIVPRE ], dbfDiv )
-      aTmp[ _LESTADO ]  := .f.
-      aTmp[ _CSUFPRE ]  := RetSufEmp()
-      aTmp[ _NDIAVAL ]  := nDiasValidez()
-      aTmp[ _LSNDDOC ]  := .t.
-      aTmp[ _CCODDLG ]  := oUser():cDelegacion()
-      aTmp[ _CMANOBR ]  := Padr( "Gastos", 250 )
-
-      if !Empty( cCodCli )
-         aTmp[ _CCODCLI ]  := cCodCli
-      end if
-
-   case nMode == EDIT_MODE
-
-      if aTmp[ _LCLOPRE ] .and. !oUser():lAdministrador()
-         msgStop( "Solo puede modificar los presupuestos cerrados los administradores." )
-         Return .f.
-      end if
-
-   case nMode == DUPL_MODE
-
-      if !lCajaOpen( oUser():cCaja() ) .and. !oUser():lAdministrador()
-         msgStop( "Esta caja " + oUser():cCaja() + " esta cerrada." )
-         Return .f.
-      end if
-
-      aTmp[ _LESTADO ]  := .f.
-      aTmp[ _LCLOPRE ]  := .f.
-
-   end case
-
-   if Empty( aTmp[ _CSERPRE ] )
-      aTmp[ _CSERPRE ]  := "A"
-   end if
-
-   if Empty( aTmp[_NTARIFA] )
-      aTmp[ _NTARIFA ]  := 1
-   end if
-
-   if Empty( aTmp[ _CDTOESP ] )
-      aTmp[ _CDTOESP ]  := Padr( "General", 50 )
-   end if
-
-   if Empty( aTmp[ _CDPP ] )
-      aTmp[ _CDPP ]     := Padr( "Pronto pago", 50 )
-   end if
-
-   /*
-   Comineza la transaccion-----------------------------------------------------
-   */
-
-   if BeginTrans( aTmp, .f. )
-      Return .f.
-   end if
-
-   cAprovado            := if( aTmp[ _LESTADO ], "Aprobado", "" )
-
-   /*
-   Necestamos el orden el la primera clave
-   */
-
-   nOrd                 := ( dbfPreCliT )->( ordSetFocus( 1 ) )
-   cPicUnd              := MasUnd()
-   cPouDiv              := cPouDiv( aTmp[ _CDIVPRE ], dbfDiv ) // Picture de la divisa
-   cPorDiv              := cPorDiv( aTmp[ _CDIVPRE ], dbfDiv ) // Picture de la divisa
-   nDouDiv              := nDouDiv( aTmp[ _CDIVPRE ], dbfDiv )
-   nRouDiv              := nRouDiv( aTmp[ _CDIVPRE ], dbfDiv )
-
-
-   /*
-   Etiquetas-------------------------------------------------------------------
-   */
-
-   // cTlfCli              := RetFld( aTmp[ _CCODCLI ], dbfClient, "Telefono" )
-   // cFaxCli              := RetFld( aTmp[ _CCODCLI ], dbfClient, "Fax" )
-   // cMovCli              := RetFld( aTmp[ _CCODCLI ], dbfClient, "Movil" )
-   cNbrObr              := RetFld( aTmp[ _CCODCLI ] + aTmp[ _CCODOBR ], dbfObrasT, "cNomObr" )
-   cSayPgo              := RetFld( aTmp[ _CCODPGO ], dbfFPago, "CDESPAGO")
-   cRuta                := RetFld( aTmp[ _CCODRUT ], dbfRuta,  "CDESRUT")
-
-
-   DEFINE DIALOG oDlg RESOURCE "PRECLI_PDA_0"
-
-   REDEFINE FOLDER oFld ;
-      ID          200 ;
-      OF          oDlg ;
-      PROMPT      "Cabecera",       "Líneas",         "Incidencias",    "Totales" ;
-      DIALOGS     "PRECLI_PDA_1",   "PRECLI_PDA_2",   "PRECLI_PDA_2",   "PRECLI_PDA_3"
-
-      REDEFINE GET aGet[ _CSERPRE ] ;
-         VAR      aTmp[ _CSERPRE ] ;
-         ID       100 ;
-         PICTURE  "@!" ;
-			COLOR 	CLR_GET ;
-         SPINNER ;
-         ON UP    ( UpSerie( aGet[_CSERPRE] ) );
-         ON DOWN  ( DwSerie( aGet[_CSERPRE] ) );
-         WHEN     ( nMode == APPD_MODE .OR. nMode == DUPL_MODE );
-         VALID    ( aTmp[_CSERPRE] >= "A" .AND. aTmp[_CSERPRE] <= "Z"  );
-         OF       oFld:aDialogs[1]
-
-		REDEFINE GET aGet[_NNUMPRE] VAR aTmp[_NNUMPRE];
-         ID       101 ;
-			PICTURE 	"999999999" ;
-			WHEN 		.F. ;
-			OF 		oFld:aDialogs[1]
-
-		REDEFINE GET aGet[_CSUFPRE] VAR aTmp[_CSUFPRE];
-         ID       102 ;
-			WHEN 		.F. ;
-			OF 		oFld:aDialogs[1]
-
-      REDEFINE GET cAprovado;
-         ID       103 ;
-			WHEN 		( .F. ) ;
-         OF       oFld:aDialogs[1]
-
-      REDEFINE GET aGet[_DFECPRE] VAR aTmp[_DFECPRE];
-         ID       110 ;
-			SPINNER;
-			WHEN 		( nMode != ZOOM_MODE ) ;
-         OF       oFld:aDialogs[1]
-
-      REDEFINE COMBOBOX aGet[ _CSITUAC ] VAR aTmp[ _CSITUAC ] ;
-         ID       111 ;
-         WHEN     ( nMode != ZOOM_MODE ) ;
-         ITEMS    ( aSituacion( dbfSitua ) ) ;
-         OF       oFld:aDialogs[1]
-
-      REDEFINE GET aGet[ _NTARIFA ] VAR aTmp[ _NTARIFA ];
-			ID 		132 ;
-         SPINNER ;
-         MIN      1 ;
-         MAX      6 ;
-         PICTURE  "9" ;
-         VALID    ( aTmp[ _NTARIFA ] >= 1 .AND. aTmp[ _NTARIFA ] <= 6 );
-         WHEN     ( nMode != ZOOM_MODE ) ;
-         OF       oFld:aDialogs[1]
-
-      REDEFINE GET aGet[ _CCODCLI ] VAR aTmp[ _CCODCLI ] ;
-         ID       120 ;
-         PICTURE  RetPicCodCliEmp() ;
-			WHEN 		( nMode != ZOOM_MODE ) ;
-         VALID    ( LoaCli( aGet, aTmp, nMode, oRieCli, oTlfCli ) ) ;
-         BITMAP   "LUPA" ;
-         ON HELP  ( BrwClient( aGet[ _CCODCLI ] ) ) ;
-			OF 		oFld:aDialogs[1]
-
-      REDEFINE GET aGet[ _CNOMCLI ] VAR aTmp[ _CNOMCLI ] ;
-         ID       121 ;
-         WHEN     ( nMode != ZOOM_MODE ) ;
-			OF 		oFld:aDialogs[1]
-
-      REDEFINE GET aGet[ _CDIRCLI ] VAR aTmp[ _CDIRCLI ] ;
-         ID       130 ;
-			WHEN 		( nMode != ZOOM_MODE ) ;
-         OF       oFld:aDialogs[1]
-
-      REDEFINE GET aGet[ _CPOSCLI ] VAR aTmp[ _CPOSCLI ] ;
-         ID       140 ;
-			WHEN 		( nMode != ZOOM_MODE ) ;
-         OF       oFld:aDialogs[1]
-
-      REDEFINE GET aGet[ _CPOBCLI ] VAR aTmp[ _CPOBCLI ] ;
-         ID       141 ;
-			WHEN 		( nMode != ZOOM_MODE ) ;
-         OF       oFld:aDialogs[1]
-
-       REDEFINE GET oTlfCli VAR cTlfCli ;
-         ID       150 ;
-         WHEN     ( .f. );
-         OF       oFld:aDialogs[1]
-
-      REDEFINE GET oRieCli VAR nRieCli ;
-         ID       151 ;
-         WHEN     ( nMode != ZOOM_MODE ) ;
-         PICTURE  cPorDiv ;
-         OF       oFld:aDialogs[1]
-
-      REDEFINE GET aGet[ _CCODOBR ] VAR aTmp[ _CCODOBR ] ;
-         ID       160 ;
-			WHEN 		( nMode != ZOOM_MODE ) ;
-         VALID    ( cObras( aGet[ _CCODOBR ], oNbrObr, aTmp[ _CCODCLI ], dbfObrasT ) ) ;
-         BITMAP   "LUPA" ;
-         ON HELP  ( BrwObras( aGet[ _CCODOBR ], oNbrObr, aTmp[ _CCODCLI ], dbfObrasT ) ) ;
-			OF 		oFld:aDialogs[1]
-
-      REDEFINE GET oNbrObr VAR cNbrObr ;
-         WHEN     .f. ;
-         ID       161 ;
-         OF       oFld:aDialogs[1]
-
-      REDEFINE GET aGet[ _CCODRUT ] VAR aTmp[ _CCODRUT ] ;
-          ID       170 ;
-          WHEN     (nMode != ZOOM_MODE) ;
-          VALID    (cRuta( aGet[ _CCODRUT ], dbfRuta, oRuta ) ) ;
-          BITMAP   "LUPA" ;
-          ON HELP  ( BrwRuta( aGet[ _CCODRUT ], dbfRuta, oRuta ) ) ;
-          OF       oFld:aDialogs[1]
-
-      REDEFINE GET oRuta VAR cRuta ;
-          ID       171 ;
-          WHEN     .f. ;
-          OF       oFld:aDialogs[1]
-
-      REDEFINE GET aGet[ _CRETPOR ] VAR aTmp[ _CRETPOR ] ;
-         ID       180 ;
-         WHEN     ( nMode != ZOOM_MODE ) ;
-         OF       oFld:aDialogs[1]
-
-      REDEFINE GET aGet[ _CRETMAT ] VAR aTmp[ _CRETMAT ] ;
-         ID       181 ;
-			WHEN 		( nMode != ZOOM_MODE ) ;
-         OF       oFld:aDialogs[1]
-
-      REDEFINE GET aGet[ _CCODPGO ] VAR aTmp[ _CCODPGO ] ;
-         ID       190 ;
-         WHEN     ( nMode != ZOOM_MODE ) ;
-         VALID    ( cFpago( aGet[ _CCODPGO ], dbfFPago, oSayPgo ) ) ;
-         BITMAP   "LUPA" ;
-         ON HELP  ( pdaBrwFPago( aGet[ _CCODPGO ],dbfFPago, oSayPgo ) ) ;
-         OF       oFld:aDialogs[1]
-
-      REDEFINE GET oSayPgo VAR cSayPgo  ;
-          ID       191 ;
-          WHEN     .f. ;
-          OF       oFld:aDialogs[1]
-
-
-
-
-
-
-      /*
-      REDEFINE GET oTlfCli VAR cTlfCli;
-         ID       210 ;
-         WHEN     ( .f. );
-			OF 		oFld:aDialogs[1]
-
-      REDEFINE GET oFaxCli VAR cFaxCli;
-         ID       220 ;
-         WHEN     ( .f. );
-			OF 		oFld:aDialogs[1]
-
-      REDEFINE GET oMovCli VAR cMovCli;
-         ID       230 ;
-         WHEN     ( .f. );
-			OF 		oFld:aDialogs[1]
-      */
-
-		/*
-		Almacen________________________________________________________________
-
-		REDEFINE GET aGet[_CCODALM] VAR aTmp[_CCODALM] ;
-			ID 		160 ;
-			WHEN 		( nMode != ZOOM_MODE ) ;
-         VALID    ( cAlmacen( aGet[_CCODALM], , oSay[ 4 ] ) ) ;
-         BITMAP   "LUPA" ;
-         ON HELP  ( BrwAlmacen( aGet[_CCODALM], oSay[ 4 ] ) ) ;
-			COLOR 	CLR_GET ;
-			OF 		oFld:aDialogs[1]
-
-      REDEFINE GET oSay[ 4 ] VAR cSay[ 4 ] ;
-			WHEN 		.F. ;
-			ID 		161 ;
-			OF 		oFld:aDialogs[1]
-      */
-
-		/*
-		Forma de Pago__________________________________________________________
-
-      REDEFINE GET aGet[_CCODPGO] ;
-         VAR      aTmp[_CCODPGO] ;
-			ID 		170 ;
-         PICTURE  "@!" ;
-			WHEN 		( nMode != ZOOM_MODE ) ;
-         VALID    ( cFPago( aGet[_CCODPGO], dbfFPago, oSay[ 5 ] ) ) ;
-         BITMAP   "LUPA" ;
-         ON HELP  ( BrwFPago( aGet[_CCODPGO], dbfFPago, oSay[ 5 ] ) ) ;
-			COLOR 	CLR_GET ;
-			OF 		oFld:aDialogs[1]
-
-      REDEFINE GET oSay[ 5 ] VAR cSay[ 5 ] ;
-			WHEN 		.F. ;
-			ID 		171 ;
-			OF 		oFld:aDialogs[1]
-      */
-
-		/*
-		Agente_________________________________________________________________
-
-      REDEFINE GET aGet[_CCODAGE] ;
-         VAR      aTmp[_CCODAGE] ;
-			ID 		180 ;
-			WHEN 		( nMode != ZOOM_MODE ) ;
-         VALID    ( cAgentes( aGet[_CCODAGE], dbfAgent, oSay[ 6 ], aGet[_NPCTCOMAGE] ) ) ;
-         BITMAP   "LUPA" ;
-         ON HELP  ( BrwAgentes( aGet[_CCODAGE], dbfAgent, oSay[ 6 ] ) ) ;
-			COLOR 	CLR_GET ;
-			OF 		oFld:aDialogs[1]
-
-      REDEFINE GET oSay[ 6 ] VAR cSay[ 6 ] ;
-			WHEN 		.F. ;
-			ID 		181 ;
-			OF 		oFld:aDialogs[1]
-      */
-
-      /*
-		Ruta____________________________________________________________________
-
-		REDEFINE GET aGet[_CCODRUT] VAR aTmp[_CCODRUT] ;
-         ID       190 ;
-			COLOR 	CLR_GET ;
-			WHEN 		( nMode != ZOOM_MODE ) ;
-         VALID    ( cRuta( aGet[_CCODRUT], dbfRuta, oSay[ 7 ] ) );
-         BITMAP   "LUPA" ;
-         ON HELP  ( BrwRuta( aGet[_CCODRUT ], dbfRuta, oSay[ 7 ] ) );
-         OF       oFld:aDialogs[1]
-
-      REDEFINE GET oSay[ 7 ] VAR cSay[ 7 ] ;
-         ID       191 ;
-			WHEN 		.F. ;
-			COLOR 	CLR_GET ;
-         OF       oFld:aDialogs[1]
-      */
-
-      /*
-		Detalle________________________________________________________________
-      */
-
-#ifdef __PDA__
-
-      REDEFINE IBROWSE oBrwLin ;
-			FIELDS ;
-                  if( ( dbfTmpLin )->lKitChl, "", Trans( (dbfTmpLin)->nNumLin, "9999" ) ),;
-                  (dbfTmpLin)->CREF, ;
-                  If( Empty( (dbfTmpLin)->CREF ), (dbfTmpLin)->MLNGDES, (dbfTmpLin)->CDETALLE ),;
-                  If( !( dbfTmpLin )->lTotLin .and. !( dbfTmpLin )->lControl, Trans( nTotNPreCli( dbfTmpLin ), cPicUnd ), "" ) ,;
-                  If( !( dbfTmpLin )->lTotLin, Trans( nTotUPreCli( dbfTmpLin, nDouDiv ), cPouDiv ), "" ) ,;
-                  If( !( dbfTmpLin )->lControl, nTotFPreCli( dbfTmpLin, nDouDiv, nRouDiv, nil, nil, nil, nil, cPorDiv ), "" ),;
-                  If( !( dbfTmpLin )->lTotLin .and. !( dbfTmpLin )->lControl, Trans( nDtoUPreCli( dbfTmpLin, nDouDiv ), cPouDiv ), "" ),;
-                  If( !( dbfTmpLin )->lTotLin .and. !( dbfTmpLin )->lControl, Trans( (dbfTmpLin)->NDTO,      "@E 99.99"), "" ), ;
-                  If( !( dbfTmpLin )->lTotLin .and. !( dbfTmpLin )->lControl, Trans( (dbfTmpLin)->NDTOPRM,   "@E 99.99"), "" ), ;
-                  If( !( dbfTmpLin )->lTotLin .and. !( dbfTmpLin )->lControl, Trans( (dbfTmpLin)->NCOMAGE,   "@E 99.99"), "" ), ;
-                  If( !( dbfTmpLin )->lTotLin .and. !( dbfTmpLin )->lControl, Trans( (dbfTmpLin)->NIVA,      "@E 99.9" ), "" ), ;
-                  If( !( dbfTmpLin )->lTotLin, Trans( nTrnUPreCli( dbfTmpLin, nDouDiv ), cPouDiv ), "" ) ,;
-                  If( !( dbfTmpLin )->lTotLin .and. !( dbfTmpLin )->lControl, Trans( nPntUPreCli( dbfTmpLin, nDouDiv ), cPouDiv ), "" ) ;
-         FIELDSIZES ;
-                  15,;
-                  50,;
-                  100,;
-                  50,;
-                  50,;
-                  50,;
-                  30,;
-                  30,;
-                  30,;
-                  30,;
-                  30,;
-                  50,;
-                  50;
-         HEAD ;
-                  "N." ,;
-                  "Código",;
-                  "Detalle",;
-                  cNombreUnidades(),;
-                  "Precio",;
-                  "Total",;
-                  "%Dto.Lin",;
-                  "%Dto.",;
-                  "%Prm.",;
-                  "%Age.",;
-                  "%IVA",;
-                  "Portes",;
-                  "P.Verde";
-         JUSTIFY  .t.,;
-                  .f.,;
-                  .f.,;
-                  .t.,;
-                  .t.,;
-                  .t.,;
-                  .t.,;
-                  .t.,;
-                  .t.,;
-                  .t.,;
-                  .t.,;
-                  .t.,;
-                  .t. ;
-         ALIAS    ( dbfTmpLin );
-         ID       200 ;
-         OF       oFld:aDialogs[2]
-
-         oBrwLin:nClrPane       := { || nClrPane( dbfTmpLin ) }
-         oBrwLin:nClrText       := { || nClrText( dbfTmpLin ) }
-         oBrwLin:cWndName       := "Presupuesto a cliente.PDA"
-
-         oBrwLin:LoadData()
-
-#endif
-
-      REDEFINE BTNBMP ;
-         ID       100 ;
-         WHEN     ( nMode != ZOOM_MODE ) ;
-         OF       oFld:aDialogs[ 2 ] ;
-         RESOURCE "New16" ;
-         NOBORDER ;
-         TOOLTIP  "Añadir línea" ;
-         ACTION   ( AppDeta( oBrwLin, bDetPda, aTmp ) )
-
-      REDEFINE BTNBMP ;
-         ID       110 ;
-         WHEN     ( nMode != ZOOM_MODE ) ;
-         OF       oFld:aDialogs[ 2 ] ;
-         RESOURCE "Edit16" ;
-         NOBORDER ;
-         TOOLTIP  "Editar línea" ;
-         ACTION   ( EdtDeta( oBrwLin, bDetPda, aTmp ) )
-
-      REDEFINE BTNBMP ;
-         ID       120 ;
-         WHEN     ( nMode != ZOOM_MODE ) ;
-         OF       oFld:aDialogs[ 2 ] ;
-         RESOURCE "Del16" ;
-         NOBORDER ;
-         TOOLTIP  "Eliminar línea" ;
-         ACTION   ( DelDeta( oBrwLin, aTmp ) )
-
-      REDEFINE BTNBMP ;
-         ID       130 ;
-         OF       oFld:aDialogs[ 2 ] ;
-         RESOURCE "Zoom16" ;
-         NOBORDER ;
-         TOOLTIP  "Zoom línea" ;
-         ACTION   ( EdtZoom( oBrwLin, bDetPda, aTmp ) )
-
-      /*
-		Detalle________________________________________________________________
-      */
-
-      /*
-      Caja de diálogo de incidencias-------------------------------------------
-      */
-
-#ifdef __PDA__
-
-      REDEFINE IBROWSE oBrwInc ;
-			FIELDS ;
-                  If( ( dbfTmpInc )->lListo, aDbfBmp[ 6 ], aDbfBmp[ 8 ] ),;
-                  ( dbfTmpInc )->cCodTip ,;
-                  cNomInci( ( dbfTmpInc )->cCodTip, dbfInci ) ,;
-                  Dtoc( ( dbfTmpInc )->dFecInc ),;
-                  ( dbfTmpInc )->mDesInc ;
-			FIELDSIZES ;
-                  20,;
-                  40,;
-                  60,;
-                  60,;
-                  400;
-         HEAD ;
-                  "R",;
-                  "Código" ,;
-                  "Tipo de incidencia" ,;
-                  "Fecha" ,;
-                  "Incidencia";
-         JUSTIFY  .f.,;
-                  .f.,;
-                  .f.,;
-                  .f.,;
-                  .f. ;
-         ALIAS    ( dbfTmpInc );
-         ID       200 ;
-         OF       oFld:aDialogs[3]
-
-         if nMode != ZOOM_MODE
-            oBrwInc:bLDblClick   := {|| WinEdtRec( oBrwInc, bEdtInc, dbfTmpInc, nil, nil, aTmp ) }
-            oBrwInc:bAdd         := {|| WinAppRec( oBrwInc, bEdtInc, dbfTmpInc, nil, nil, aTmp ) }
-            oBrwInc:bEdit        := {|| WinEdtRec( oBrwInc, bEdtInc, dbfTmpInc, nil, nil, aTmp ) }
-            oBrwInc:bDel         := {|| DbDelRec(  oBrwInc, dbfTmpInc, nil, nil, .t. ) }
-         else
-            oBrwInc:bLDblClick   := {|| WinZooRec( oBrwInc, bEdtInc, dbfTmpInc ) }
-         end if
-
-         oBrwInc:cWndName        := "Presupuesto a cliente.Incidencia.PDA"
-         oBrwInc:LoadData()
-
-#endif
-
-      REDEFINE BTNBMP ;
-         ID       100 ;
-         WHEN     ( nMode != ZOOM_MODE ) ;
-         OF       oFld:aDialogs[3] ;
-         RESOURCE "New16" ;
-         NOBORDER ;
-         TOOLTIP  "Añadir incidencia" ;
-         ACTION   ( WinAppRec( oBrwInc, bEdtInc, dbfTmpInc, nil, nil, aTmp ) )
-
-      REDEFINE BTNBMP ;
-         ID       110 ;
-         WHEN     ( nMode != ZOOM_MODE ) ;
-         OF       oFld:aDialogs[3] ;
-         RESOURCE "Edit16" ;
-         NOBORDER ;
-         TOOLTIP  "Editar incidencia" ;
-         ACTION   ( WinEdtRec( oBrwInc, bEdtInc, dbfTmpInc, nil, nil, aTmp ) )
-
-      REDEFINE BTNBMP ;
-         ID       120 ;
-         WHEN     ( nMode != ZOOM_MODE ) ;
-         OF       oFld:aDialogs[3] ;
-         RESOURCE "Del16" ;
-         NOBORDER ;
-         TOOLTIP  "Eliminar incidencia" ;
-         ACTION   ( DbDelRec( oBrwInc, dbfTmpInc, nil, nil, .t. ) )
-
-      REDEFINE BTNBMP ;
-         ID       130 ;
-         OF       oFld:aDialogs[3] ;
-         RESOURCE "Zoom16" ;
-         NOBORDER ;
-         TOOLTIP  "Zoom incidencia" ;
-         ACTION   ( WinZooRec( oBrwInc, bEdtInc, dbfTmpInc ) )
-
-      /*
-		Descuentos______________________________________________________________
-      */
-
-      REDEFINE GET aGet[ _CDTOESP ] VAR aTmp[ _CDTOESP ] ;
-         ID       100 ;
-			WHEN 		( nMode != ZOOM_MODE ) ;
-         OF       oFld:aDialogs[4]
-
-      REDEFINE GET aGet[ _NDTOESP ] VAR aTmp[ _NDTOESP ] ;
-         ID       101 ;
-			PICTURE 	"@E 99.99" ;
-         SPINNER ;
-         VALID    ( RecalculaTotal( aTmp ) );
-         ON CHANGE( RecalculaTotal( aTmp ) );
-         WHEN     ( nMode != ZOOM_MODE ) ;
-         OF       oFld:aDialogs[4]
-
-      REDEFINE GET aGet[ _CDPP ] VAR aTmp[ _CDPP ] ;
-         ID       110 ;
-			WHEN 		( nMode != ZOOM_MODE ) ;
-         OF       oFld:aDialogs[4]
-
-		REDEFINE GET aGet[ _NDPP ] VAR aTmp[ _NDPP ];
-         ID       111 ;
-			PICTURE 	"@E 99.99" ;
-         SPINNER ;
-         VALID    ( RecalculaTotal( aTmp ) );
-         ON CHANGE( RecalculaTotal( aTmp ) );
-         WHEN     ( nMode != ZOOM_MODE ) ;
-         OF       oFld:aDialogs[4]
-
-		REDEFINE GET aGet[ _CDTOUNO ] VAR aTmp[ _CDTOUNO ] ;
-         ID       120 ;
-			PICTURE 	"@!" ;
-			WHEN 		( nMode != ZOOM_MODE ) ;
-         OF       oFld:aDialogs[4]
-
-		REDEFINE GET aGet[ _NDTOUNO ] VAR aTmp[ _NDTOUNO ];
-         ID       121 ;
-			PICTURE 	"@E 99.99" ;
-         SPINNER ;
-         VALID    ( RecalculaTotal( aTmp ) );
-         ON CHANGE( RecalculaTotal( aTmp ) );
-         WHEN     ( nMode != ZOOM_MODE ) ;
-         OF       oFld:aDialogs[4]
-
-      REDEFINE GET aGet[ _CDTODOS ] VAR aTmp[ _CDTODOS ] ;
-         ID       130 ;
-			PICTURE 	"@!" ;
-			WHEN 		( nMode != ZOOM_MODE ) ;
-         OF       oFld:aDialogs[4]
-
-      REDEFINE GET aGet[ _NDTODOS ] VAR aTmp[ _NDTODOS ];
-         ID       131 ;
-			PICTURE 	"@E 99.99" ;
-         SPINNER ;
-         VALID    ( RecalculaTotal( aTmp ) );
-         ON CHANGE( RecalculaTotal( aTmp ) );
-         WHEN     ( nMode != ZOOM_MODE ) ;
-         OF       oFld:aDialogs[4]
-
-      /*
-      Margen
-      */
-
-       REDEFINE GET oGetRnt VAR nTotRnt;
-         ID       140 ;
-         WHEN     ( nMode != ZOOM_MODE ) ;
-         OF       oFld:aDialogs[4]
-
-		/*
-		Cajas de Totales
-		------------------------------------------------------------------------
-      */
-
-      REDEFINE GET aGet[ _CMANOBR ] VAR aTmp[ _CMANOBR ] ;
-         ID       151 ;
-         WHEN     ( nMode != ZOOM_MODE ) ;
-         OF       oFld:aDialogs[4]
-
-      REDEFINE GET aGet[ _NMANOBR ] VAR aTmp[ _NMANOBR ] ;
-         ID       150 ;
-         PICTURE  cPorDiv ;
-         WHEN     ( nMode != ZOOM_MODE ) ;
-         VALID    ( nTotPreCli( nil, dbfPreCliT, dbfTmpLin, dbfIva, dbfDiv, dbfFPago, aTmp ), .t. );
-         ON CHANGE( nTotPreCli( nil, dbfPreCliT, dbfTmpLin, dbfIva, dbfDiv, dbfFPago, aTmp ) );
-         OF       oFld:aDialogs[4]
-
-      REDEFINE CHECKBOX aGet[ _LRECARGO ] VAR aTmp[ _LRECARGO ] ;
-         ID       430 ;
-			WHEN 		( nMode != ZOOM_MODE ) ;
-         ON CHANGE( nTotPreCli( nil, dbfPreCliT, dbfTmpLin, dbfIva, dbfDiv, dbfFPago, aTmp ) );
-         OF       oFld:aDialogs[4]
-
-      REDEFINE SAY oGetNet VAR nTotNet ;
-         ID       400 ;
-         OF       oFld:aDialogs[4]
-
-      REDEFINE SAY oGetIva VAR nTotIva ;
-         ID       420 ;
-         OF       oFld:aDialogs[4]
-
-      REDEFINE SAY oGetReq VAR nTotReq ;
-         ID       440 ;
-         OF       oFld:aDialogs[4]
-
-      REDEFINE SAY oGetTotal VAR nTotPre ;
-         ID       450 ;
-         FONT     oFont ;
-         OF       oFld:aDialogs[4]
-
-       REDEFINE SAY oTitulo VAR cTitulo;
-         ID       100 ;
-         OF       oDlg
-
-		/*
-		Botones comunes a la caja de dialogo____________________________________
-      */
-
-		REDEFINE BUTTON ;
-         ID       IDOK ;
-			OF 		oDlg ;
-			WHEN 		( nMode != ZOOM_MODE ) ;
-         ACTION   ( EndTrans( aTmp, aGet, nMode, oBrwLin, oBrw, oBrwInc, oDlg ) )
-
-      REDEFINE BUTTON ;
-         ID       IDCANCEL ;
-			OF 		oDlg ;
-         ACTION   ( If( ExitNoSave( nMode, dbfTmpLin ), oDlg:end(), ) )
-
-      oDlg:AddFastKey( VK_F5, {|| EndTrans( aTmp, aGet, nMode, oBrwLin, oBrw, oBrwInc, oDlg ) } )
-
-      oDlg:bStart := {|| aGet[ _CCODCLI ]:SetFocus() }
-
-   ACTIVATE DIALOG oDlg ;
-         CENTER ;
-         ON INIT ( RecalculaTotal( aTmp ) )
-
-   ( dbfPreCliT )->( ordSetFocus( nOrd ) )
-
-#ifdef __PDA__
-
-   oBrwLin:CloseData()
-
-#endif
-
-   KillTrans( oBrwLin )
-
-RETURN ( oDlg:nResult == IDOK )
-
-//---------------------------------------------------------------------------//
-
-Static Function DetPda( aTmp, aGet, dbfPreCliL, oBrw, lTotLin, cCodArtEnt, nMode, aTmpPre )
-
-   local oDlg
-   local oBtn
-	local oTotal
-   local nTotPreCli
-   local cCodArt     := Padr( aTmp[ _CREF ], 32 )
-   local oLinea
-   local cLinea      := LblTitle( nMode ) + " linea de presupuesto"
-   local oSayPr1
-   local oSayPr2
-   local cSayPr1     := ""
-   local cSayPr2     := ""
-   local oSayVp1
-   local oSayVp2
-   local cSayVp1     := ""
-   local cSayVp2     := ""
-
-
-
-   DEFAULT lTotLin   := .f.
-
-   SysRefresh()
-
-   do case
-   case nMode == APPD_MODE
-      aTmp[ _CSERPRE  ] := aTmpPre[ _CSERPRE ]
-      aTmp[ _NNUMPRE  ] := aTmpPre[ _NNUMPRE ]
-      aTmp[ _CSUFPRE  ] := aTmpPre[ _CSUFPRE ]
-      aTmp[ _NUNICAJA ] := 1
-      aTmp[ _CTIPMOV  ] := cDefVta()
-      aTmp[ _LTOTLIN  ] := lTotLin
-      aTmp[ _NCANPRE  ] := 1
-      aTmp[ _LIVALIN  ] := aTmpPre[ _LIVAINC ]
-      aTmp[ _CALMLIN  ] := aTmpPre[ _CCODALM ]
-      if !Empty( cCodArtEnt )
-         cCodArt        := Padr( cCodArtEnt, 32 )
-      end if
-
-   case nMode == EDIT_MODE
-      lTotLin           := aTmp[ _LTOTLIN ]
-
-   end case
-
-   /*
-   Este valor los guaradamos para detectar los posibles cambios----------------
-   */
-
-   cOldCodArt           := aTmp[ _CREF ]
-   cOldPrpArt           := aTmp[ _CCODPR1 ] + aTmp[ _CCODPR2 ] + aTmp[ _CVALPR1 ] + aTmp[ _CVALPR2 ]
-
-   DEFINE DIALOG oDlg RESOURCE "PRECLI_LIN_PDA"
-
-
-      REDEFINE GET aGet[_CREF] VAR cCodArt;
-         ID       100 ;
-         WHEN     ( nMode != ZOOM_MODE ) ;
-         VALID    ( LoaArt( aTmp, aGet, aTmpPre, ,oSayPr1 ,oSayPr2 ,oSayVp1 ,oSayVp2 , , , nMode ) ) ;
-         BITMAP   "LUPA" ;
-         ON HELP  ( BrwArticulo( aGet[_CREF], aGet[_CDETALLE] ) ) ;
-         OF       oDlg
-
-      REDEFINE GET aGet[_CDETALLE] VAR aTmp[_CDETALLE] ;
-         ID       110 ;
-         WHEN     ( lModDes() .AND. nMode != ZOOM_MODE );
-         OF       oDlg
-
-      REDEFINE GET aGet[ _MLNGDES ] VAR aTmp[ _MLNGDES ] ;
-         MEMO ;
-         ID       111 ;
-         WHEN     ( nMode != ZOOM_MODE ) ;
-         COLOR    CLR_GET ;
-         OF       oDlg
-
-
-      /*
-      Propiedades
-      -------------------------------------------------------------------------
-      */
-
-      REDEFINE GET aGet[_CVALPR1] VAR aTmp[_CVALPR1];
-         ID       251 ;
-         WHEN     ( nMode != ZOOM_MODE ) ;
-			COLOR 	CLR_GET ;
-         BITMAP   "LUPA" ;
-         VALID    ( if( lPrpAct( aTmp[_CVALPR1], oSayVp1, aTmp[_CCODPR1 ], dbfTblPro ),;
-                        LoaArt( aTmp, aGet, aTmpPre, , oSayPr1, oSayPr2, oSayVp1, oSayVp2, , , nMode ),;
-                        .f. ) );
-         ON HELP  ( brwPrpAct( aGet[_CVALPR1], oSayVp1, aTmp[_CCODPR1 ] ) ) ;
-         OF       oDlg
-
-         aGet[ _CVALPR1 ]:bChange   := {|| aGet[ _CVALPR1 ]:Assign(), if( !uFieldEmpresa( "lNStkAct" ), oStock:nPutStockActual( aTmp[ _CREF ], aTmp[ _CALMLIN ], aTmp[ _CVALPR1 ], aTmp[ _CVALPR2 ], aTmp[ _CLOTE ], aTmp[ _LKITART ], aTmp[ _NCTLSTK ] ), .t. ) }
-
-      REDEFINE SAY oSayPr1 VAR cSayPr1;
-         ID       250 ;
-         OF       oDlg
-
-      REDEFINE GET oSayVp1 VAR cSayVp1;
-         ID       252 ;
-         WHEN     .f. ;
-         COLOR    CLR_GET ;
-         OF       oDlg
-
-      REDEFINE GET aGet[_CVALPR2] VAR aTmp[_CVALPR2];
-         ID       261 ;
-         WHEN     ( nMode != ZOOM_MODE ) ;
-			COLOR 	CLR_GET ;
-         BITMAP   "LUPA" ;
-         VALID    ( if( lPrpAct( aTmp[_CVALPR2], oSayVp2, aTmp[_CCODPR2 ], dbfTblPro ),;
-                        LoaArt( aTmp, aGet, aTmpPre, , oSayPr1, oSayPr2, oSayVp1, oSayVp2, , , nMode ),;
-                        .f. ) );
-         ON HELP  ( brwPrpAct( aGet[_CVALPR2], oSayVp2, aTmp[_CCODPR2 ] ) ) ;
-         OF       oDlg
-
-         aGet[ _CVALPR2 ]:bChange   := {|| aGet[ _CVALPR2 ]:Assign(), if( !uFieldEmpresa( "lNStkAct" ), oStock:nPutStockActual( aTmp[ _CREF ], aTmp[ _CALMLIN ], aTmp[ _CVALPR1 ], aTmp[ _CVALPR2 ], aTmp[ _CLOTE ], aTmp[ _LKITART ], aTmp[ _NCTLSTK ] ), .t. ) }
-
-      REDEFINE SAY oSayPr2 VAR cSayPr2;
-         ID       260 ;
-         OF       oDlg
-
-      REDEFINE GET oSayVp2 VAR cSayVp2;
-         ID       262 ;
-         WHEN     .f. ;
-         COLOR    CLR_GET ;
-         OF       oDlg
-
-      /*
-      fin de propiedades
-      -------------------------------------------------------------------------
-      */
-
-      REDEFINE GET aGet[ _NIVA ] VAR aTmp[ _NIVA ] ;
-         ID       120 ;
-         WHEN     ( lModIva() .AND. nMode != ZOOM_MODE .AND. !lTotLin ) ;
-         PICTURE  "@E 99.99" ;
-         COLOR    CLR_GET ;
-         VALID    ( lTiva( dbfIva, aTmp[ _NIVA ], @aTmp[ _NREQ ] ) );
-         BITMAP   "LUPA" ;
-         ON HELP  ( BrwIva( aGet[ _NIVA ], dbfIva, , .t. ) ) ;
-         OF       oDlg
-
-      REDEFINE GET aGet[ _NCANPRE ] VAR aTmp[ _NCANPRE ];
-         ID       130 ;
-         SPINNER ;
-         WHEN     ( lUseCaj() .AND. nMode != ZOOM_MODE .AND. !lTotLin ) ;
-         ON CHANGE( RecalculaLinea( aTmp, nDouDiv, oTotal ) );
-         VALID    ( RecalculaLinea( aTmp, nDouDiv, oTotal ) );
-         PICTURE  cPicUnd ;
-         OF       oDlg ;
-         IDSAY    131
-
-      REDEFINE GET aGet[_NUNICAJA] VAR aTmp[_NUNICAJA];
-         ID       140 ;
-         SPINNER ;
-         WHEN     ( nMode != ZOOM_MODE .AND. !lTotLin ) ;
-         ON CHANGE( RecalculaLinea( aTmp, nDouDiv, oTotal ) );
-         VALID    ( RecalculaLinea( aTmp, nDouDiv, oTotal ) );
-         PICTURE  cPicUnd ;
-         OF       oDlg ;
-         IDSAY    141
-
-      REDEFINE GET aGet[_NPREDIV] VAR aTmp[_NPREDIV] ;
-         ID       150 ;
-         SPINNER ;
-         WHEN     ( nMode != ZOOM_MODE .and. !lTotLin ) ;
-         ON CHANGE( RecalculaLinea( aTmp, nDouDiv, oTotal ) );
-         VALID    ( RecalculaLinea( aTmp, nDouDiv, oTotal ) );
-         COLOR    CLR_GET ;
-         PICTURE  cPouDiv ;
-         OF       oDlg
-
-      REDEFINE GET aGet[ _NIMPTRN ] VAR aTmp[ _NIMPTRN ] ;
-         ID       350 ;
-         SPINNER ;
-         WHEN     ( nMode != ZOOM_MODE .AND. !lTotLin ) ;
-         ON CHANGE( RecalculaLinea( aTmp, nDouDiv, oTotal ) );
-         VALID    ( RecalculaLinea( aTmp, nDouDiv, oTotal ) );
-         PICTURE  cPouDiv ;
-         OF       oDlg
-
-      REDEFINE GET aGet[_NDTO] VAR aTmp[_NDTO] ;
-         ID       180 ;
-         SPINNER ;
-         ON CHANGE( RecalculaLinea( aTmp, nDouDiv, oTotal ) );
-         WHEN     ( nMode != ZOOM_MODE .and. !lTotLin ) ;
-         VALID    ( RecalculaLinea( aTmp, nDouDiv, oTotal ) );
-         PICTURE  "@E 99.99" ;
-         OF       oDlg
-
-      REDEFINE GET aGet[_NDTOPRM] VAR aTmp[_NDTOPRM] ;
-         ID       190 ;
-         SPINNER ;
-         ON CHANGE( RecalculaLinea( aTmp, nDouDiv, oTotal ) );
-         WHEN     ( nMode != ZOOM_MODE .and. !lTotLin ) ;
-         VALID    ( RecalculaLinea( aTmp, nDouDiv, oTotal ) );
-         PICTURE  "@E 99.99";
-         OF       oDlg
-
-      REDEFINE GET aGet[_NCOMAGE] VAR aTmp[_NCOMAGE] ;
-         ID       200 ;
-         WHEN     ( nMode != ZOOM_MODE .AND. !lTotLin ) ;
-         PICTURE  "@E 99.99" ;
-         SPINNER ;
-         OF       oDlg
-
-      REDEFINE GET oTotal VAR nTotPre ;
-         ID       220 ;
-         WHEN     .F. ;
-         PICTURE  cPorDiv ;
-         OF       oDlg
-
-      /*
-      Codigo de almacen--------------------------------------------------------
-      */
-
-      REDEFINE GET aGet[ _CALMLIN ] VAR aTmp[ _CALMLIN ] ;
-         ID       300 ;
-			WHEN 		( nMode != ZOOM_MODE ) ;
-         VALID    ( cAlmacen( aGet[ _CALMLIN ] ) ) ;
-         BITMAP   "LUPA" ;
-         ON HELP  ( BrwAlmacen( aGet[ _CALMLIN ] ) ) ;
-			COLOR 	CLR_GET ;
-         OF       oDlg
-
-      REDEFINE SAY oLinea VAR cLinea;
-         ID       230 ;
-         OF       oDlg
-
-
-      /*
-      Botones generales--------------------------------------------------------
-      */
-
-      REDEFINE BUTTON oBtn;
-         ID       IDOK ;
-         OF       oDlg ;
-         WHEN     ( nMode != ZOOM_MODE ) ;
-         ACTION   ( SaveDeta( aTmp, aTmpPre, aGet, oDlg, oBrw, , nMode, ,oSayPr1 ,oSayPr2 ,oSayVp1 , oSayVp2 , , oTotal, , cCodArt, oBtn ) )
-
-     REDEFINE BUTTON ;
-         ID       IDCANCEL ;
-         OF       oDlg ;
-         CANCEL ;
-         ACTION   ( oDlg:end() )
-
-      oDlg:bStart := {|| SetDlgMode( aTmp, aGet, nMode, , oSayPr1, oSayPr2, oSayVp1, oSayVp2, , oTotal, aTmpPre, , ) }
-
-      if nMode != ZOOM_MODE
-         oDlg:AddFastKey( VK_F5, {|| SaveDeta( aTmp, aTmpPre, aGet, oDlg, oBrw, , nMode, , , , , , , oTotal, , cCodArt, oBtn ) } )
-      end if
-
-   ACTIVATE DIALOG oDlg ;
-      CENTER ;
-      ON PAINT ( RecalculaLinea( aTmp, nDouDiv, oTotal ) )
-
-RETURN ( oDlg:nResult == IDOK )
 
 //--------------------------------------------------------------------------//
 
@@ -11919,7 +10758,7 @@ STATIC FUNCTION DupPresupuesto( cFecDoc )
       while ( dbfPreCliT )->cSerPre + Str( ( dbfPreCliT )->nNumPre ) + ( dbfPreCliT )->cSufPre == ( dbfPreCliL )->cSerPre + Str( ( dbfPreCliL )->nNumPre ) + ( dbfPreCliL )->cSufPre .and. ;
             !( dbfPreCliL )->( Eof() )
 
-            PreRecDup( dbfPreCliL, ( dbfPreCliT )->cSerPre, nNewNumPre, ( dbfPreCliT )->cSufPre, .f. )
+         PreRecDup( dbfPreCliL, ( dbfPreCliT )->cSerPre, nNewNumPre, ( dbfPreCliT )->cSufPre, .f. )
 
          ( dbfPreCliL )->( dbSkip() )
 
@@ -11934,7 +10773,7 @@ STATIC FUNCTION DupPresupuesto( cFecDoc )
       while ( dbfPreCliT )->cSerPre + Str( ( dbfPreCliT )->nNumPre ) + ( dbfPreCliT )->cSufPre == ( dbfPreCliD )->cSerPre + Str( ( dbfPreCliD )->nNumPre ) + ( dbfPreCliD )->cSufPre .and. ;
             !( dbfPreCliD )->( Eof() )
 
-            PreRecDup( dbfPreCliD, ( dbfPreCliT )->cSerPre, nNewNumPre, ( dbfPreCliT )->cSufPre, .f. )
+         PreRecDup( dbfPreCliD, ( dbfPreCliT )->cSerPre, nNewNumPre, ( dbfPreCliT )->cSufPre, .f. )
 
          ( dbfPreCliD )->( dbSkip() )
 
