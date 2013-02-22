@@ -34,6 +34,10 @@ CLASS TGrpFam FROM TMant
 
    METHOD lPreSave( oGet, oDlg )
 
+   METHOD Actualizaweb()
+
+   METHOD lPubGrp()
+
 END CLASS
 
 //----------------------------------------------------------------------------//
@@ -227,9 +231,15 @@ METHOD lPreSave( oGet, oGet2, oDlg, nMode )
 
    ::oDbf:lSndDoc    := .t.
 
+   /*
+   Actualizamos el grupo de familia en la web----------------------------------
+   */
+
+   ::Actualizaweb()
+
 RETURN ( oDlg:end( IDOK ) )
 
-//--------------------------------------------------------------------------//
+//---------------------------------------------------------------------------//
 
 METHOD Activate() CLASS TGrpFam
 
@@ -276,8 +286,6 @@ METHOD Publicar( lLoad ) CLASS TGrpFam
       ::oDbf:lSndDoc := ::oDbf:lPubInt
    end if
 
-      ::oDbf:cCodWeb := 0
-
    if lLoad
       ::oDbf:Save()
       ::oWndBrw:Refresh()
@@ -296,14 +304,72 @@ METHOD Enviar( lLoad ) CLASS TGrpFam
       ::oDbf:lSndDoc := !::oDbf:lSndDoc
    end if
 
-      ::oDbf:cCodWeb := 0
-
    if lLoad
       ::oDbf:Save()
       ::oWndBrw:Refresh()
    end if
 
 RETURN ( Self )
+
+//----------------------------------------------------------------------------//
+
+METHOD Actualizaweb() Class TGrpFam
+
+   ?"Entramos a actualizar el grupo de familia"
+   ?::oDbf:cNomGrp
+   ?::oDbf:cCodWeb
+
+   if ::lPubGrp()    
+
+      with object ( TComercio():New() )
+
+         if :ConectBBDD()
+
+            ?"conectado"
+
+            if !::oDbf:lPubInt .and. ::oDbf:cCodWeb != 0
+
+               ?"Elimino"
+
+            else
+
+               ?"Update total"
+
+               :UpdateGrupoCategoriesPrestashop( ::oDbf )
+
+            end if
+
+            :DisconectBBDD()
+
+         end if   
+
+      end with
+
+   end if
+
+Return .t.
+
+//----------------------------------------------------------------------------//
+
+METHOD lPubGrp() Class TGrpFam
+
+   local lPub  := .f.
+
+   if ::oDbf:lPubInt
+
+      lPub     := .t.
+
+   else
+
+      if ::oDbf:cCodWeb != 0
+
+         lPub  := .t.
+
+      end if
+
+   end if
+
+Return lPub
 
 //----------------------------------------------------------------------------//
 

@@ -427,12 +427,12 @@ FUNCTION ControlAplicacion()
       OF          oDlg
 
    REDEFINE BITMAP oBmpSaas ;
-      RESOURCE    "lock_32_alpha" ;
+      RESOURCE    "piggy_bank_32_alpha" ;
       ID          510;
       OF          oDlg
       
    REDEFINE BITMAP oBmpDemo ;
-      RESOURCE    "piggy_bank_32_alpha" ;
+      RESOURCE    "lock_32_alpha" ;
       ID          520;
       OF          oDlg
 
