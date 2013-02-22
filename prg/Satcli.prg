@@ -11,19 +11,19 @@ REQUEST DBFCDX
 
 #ifndef __PDA__
 
-#define CLR_BAR             14197607
+#define CLR_BAR                  14197607
 
-#define _MENUITEM_           "01055"
+#define _MENUITEM_               "01099"
 
 /*
-Definici¢n de la base de datos de presupuestos a clientes
+Definici¢n de la base de datos de S.A.T. a clientes
 */
 
-#define _CSERPRE                   1      //   C      1     0
-#define _NNUMPRE                   2      //   N      9     0
-#define _CSUFPRE                   3      //   C      2     0
-#define _CTURPRE                   4      //   C      2     0
-#define _DFECPRE                   5      //   D      8     0
+#define _CSERSAT                   1      //   C      1     0
+#define _NNUMSAT                   2      //   N      9     0
+#define _CSUFSAT                   3      //   C      2     0
+#define _CTURSAT                   4      //   C      2     0
+#define _DFECSAT                   5      //   D      8     0
 #define _CCODCLI                   6      //   C     10     0
 #define _CNOMCLI                   7      //   C     35     0
 #define _CDIRCLI                   8      //   C     35     0
@@ -41,7 +41,7 @@ Definici¢n de la base de datos de presupuestos a clientes
 #define _CCODRUT                  20      //   C      2     0
 #define _DFECENT                  21      //   D      8     0
 #define _LESTADO                  22      //   L      1     0
-#define _CSUPRE                   23      //   C     10     0
+#define _CSUSAT                   23      //   C     10     0
 #define _CCONDENT                 24      //   C     20     0
 #define _MCOMENT                  25      //   M     10     0
 #define _MOBSERV                  26      //   M     10     0
@@ -63,9 +63,9 @@ Definici¢n de la base de datos de presupuestos a clientes
 #define _LRECARGO                 42      //   L      1     0
 #define _NPCTCOMAGE               43      //   N      5     2
 #define _NBULTOS                  44      //   N      3     0
-#define _CNUMALB                  45      //   C     10     0
-#define _CDIVPRE                  46      //   C      3     0
-#define _NVDVPRE                  47      //   C     10     4
+#define _CNUMSat                  45      //   C     10     0
+#define _CDIVSAT                  46      //   C      3     0
+#define _NVDVSAT                  47      //   C     10     4
 #define _LSNDDOC                  48      //   L      1     0
 #define _CRETPOR                  49
 #define _CRETMAT                  50
@@ -75,7 +75,7 @@ Definici¢n de la base de datos de presupuestos a clientes
 #define _NMANOBR                  54
 #define _CCODTRN                  55
 #define _NKGSTRN                  56
-#define _LCLOPRE                  57
+#define _LCLOSAT                  57
 #define _CCODUSR                  58
 #define _DFECCRE                  59
 #define _CTIMCRE                  60
@@ -97,7 +97,7 @@ Definici¢n de la base de datos de presupuestos a clientes
 #define _NTOTNET                  76
 #define _NTOTIVA                  77
 #define _NTOTREQ                  78
-#define _NTOTPRE                  79
+#define _NTOTSAT                  79
 #define _LOPERPV                  80
 
 /*
@@ -107,7 +107,7 @@ Definici¢n de la base de datos de lineas de detalle
 #define _CREF                      4
 #define _CDETALLE                  5
 #define _NIVA                      6
-#define _NCANPRE                   7
+#define _NCANSAT                   7
 #define _NUNICAJA                  8
 #define _LCONTROL                  9
 #define _NUNDKIT                  10
@@ -135,7 +135,7 @@ Definici¢n de la base de datos de lineas de detalle
 #define _NNUMLIN                  32
 #define _NCTLSTK                  33
 #define _NCOSDIV                  34
-#define _NPVPREC                  35
+#define _NPVSATC                  35
 #define _CALMLIN                  36
 #define _LIVALIN                  37
 #define _CCODIMP                  38
@@ -193,7 +193,7 @@ Array para IGIC
 #define _NIVMIVA1                aTotIva[ 1, 6 ]
 #define _NTRNIVA1                aTotIva[ 1, 7 ]
 #define _NIMPIVA1                aTotIva[ 1, 8 ]
-#define _NIMPREQ1                aTotIva[ 1, 9 ]
+#define _NIMSATQ1                aTotIva[ 1, 9 ]
 #define _NBRTIVA2                aTotIva[ 2, 1 ]
 #define _NBASIVA2                aTotIva[ 2, 2 ]
 #define _NPCTIVA2                aTotIva[ 2, 3 ]
@@ -202,7 +202,7 @@ Array para IGIC
 #define _NIVMIVA2                aTotIva[ 2, 6 ]
 #define _NTRNIVA2                aTotIva[ 2, 7 ]
 #define _NIMPIVA2                aTotIva[ 2, 8 ]
-#define _NIMPREQ2                aTotIva[ 2, 9 ]
+#define _NIMSATQ2                aTotIva[ 2, 9 ]
 #define _NBRTIVA3                aTotIva[ 3, 1 ]
 #define _NBASIVA3                aTotIva[ 3, 2 ]
 #define _NPCTIVA3                aTotIva[ 3, 3 ]
@@ -211,7 +211,7 @@ Array para IGIC
 #define _NIVMIVA3                aTotIva[ 3, 6 ]
 #define _NTRNIVA3                aTotIva[ 3, 7 ]
 #define _NIMPIVA3                aTotIva[ 3, 8 ]
-#define _NIMPREQ3                aTotIva[ 3, 9 ]
+#define _NIMSATQ3                aTotIva[ 3, 9 ]
 
 memvar cDbf
 memvar cDbfCol
@@ -226,8 +226,6 @@ memvar cFPago
 memvar cDbfIva
 memvar cDbfUsr
 memvar cIva
-memvar cTarPreL
-memvar cTarPreS
 memvar cPromoL
 memvar cDbfPromol
 memvar cDbfRut
@@ -241,7 +239,7 @@ memvar nTotBrt
 memvar nTotIva
 memvar nTotReq
 memvar nTotImp
-memvar nTotPre
+memvar nTotSat
 memvar nTotDto
 memvar nTotDpp
 memvar nTotUno
@@ -267,13 +265,13 @@ memvar nTotUnd
 memvar nTotPage
 memvar aImpVto
 memvar aDatVto
-memvar cPicUndPre
-memvar nVdvDivPre
-memvar cPouDivPre
-memvar cPorDivPre
-memvar cPouChgPre
-memvar nDouDivPre
-memvar nRouDivPre
+memvar cPicUndSat
+memvar nVdvDivSat
+memvar cPouDivSat
+memvar cPorDivSat
+memvar cPouChgSat
+memvar nDouDivSat
+memvar nRouDivSat
 memvar nTotArt
 memvar nTotCaj
 memvar nPagina
@@ -286,10 +284,11 @@ static oWndBrw
 static oBrwIva
 static dbfUsr
 static dbfRuta
-static dbfPreCliT
-static dbfPreCliL
-static dbfPreCliI
-static dbfPreCliD
+static dbfSatCliT
+static dbfSatCliL
+static dbfSatCliI
+static dbfSatCliD
+static dbfSatCliS
 static dbfClient
 static dbfCliInc
 static dbfArtPrv
@@ -310,6 +309,7 @@ static dbfIva
 static dbfTmpLin
 static dbfTmpInc
 static dbfTmpDoc
+static dbfTmpSer
 static dbfKit
 static dbfFPago
 static dbfObrasT
@@ -332,12 +332,12 @@ static dbfPedPrvL
 static dbfAlbPrvL
 static dbfFacPrvL
 static dbfRctPrvL
+static dbfPreCliT
+static dbfPreCliL
 static dbfPedCliL
-static dbfAlbCliL
 static dbfFacCliL
 static dbfFacRecL
 static dbfTikCliL
-static dbfAlbCliT
 static dbfFacCliP
 static dbfAntCliT
 static dbfTikCliT
@@ -348,6 +348,7 @@ static dbfSitua
 static cTmpLin
 static cTmpInc
 static cTmpDoc
+static cTmpSer
 static oGetNet
 static oGetTrn
 static oGetIva
@@ -374,10 +375,10 @@ static oStock
 static oTipArt
 static oGrpFam
 static oFraPub
-static bEdtRec          := { | aTmp, aGet, dbfPreCliT, oBrw, bWhen, bValid, nMode | EdtRec( aTmp, aGet, dbfPreCliT, oBrw, bWhen, bValid, nMode ) }
-static bEdtDet          := { | aTmp, aGet, dbfPreCliL, oBrw, bWhen, bValid, nMode, aTmpPre | EdtDet( aTmp, aGet, dbfPreCliL, oBrw, bWhen, bValid, nMode, aTmpPre ) }
-static bEdtInc          := { | aTmp, aGet, dbfPreCliL, oBrw, bWhen, bValid, nMode, aTmpPre | EdtInc( aTmp, aGet, dbfPreCliI, oBrw, bWhen, bValid, nMode, aTmpPre ) }
-static bEdtDoc          := { | aTmp, aGet, dbfPreCliD, oBrw, bWhen, bValid, nMode, aTmpPre | EdtDoc( aTmp, aGet, dbfPreCliD, oBrw, bWhen, bValid, nMode, aTmpPre ) }
+static bEdtRec          := { | aTmp, aGet, dbfSatCliT, oBrw, bWhen, bValid, nMode | EdtRec( aTmp, aGet, dbfSatCliT, oBrw, bWhen, bValid, nMode ) }
+static bEdtDet          := { | aTmp, aGet, dbfSatCliL, oBrw, bWhen, bValid, nMode, aTmpSat | EdtDet( aTmp, aGet, dbfSatCliL, oBrw, bWhen, bValid, nMode, aTmpSat ) }
+static bEdtInc          := { | aTmp, aGet, dbfSatCliL, oBrw, bWhen, bValid, nMode, aTmpSat | EdtInc( aTmp, aGet, dbfSatCliI, oBrw, bWhen, bValid, nMode, aTmpSat ) }
+static bEdtDoc          := { | aTmp, aGet, dbfSatCliD, oBrw, bWhen, bValid, nMode, aTmpSat | EdtDoc( aTmp, aGet, dbfSatCliD, oBrw, bWhen, bValid, nMode, aTmpSat ) }
 static nNumArt          := 0
 static nNumCaj          := 0
 static cOldCodCli       := ""
@@ -387,15 +388,15 @@ static cOldUndMed       := ""
 static cOldSituacion    := ""
 static lOpenFiles       := .f.
 static lExternal        := .f.
-static aTipPre          := { "Venta", "Alquiler" }
-static oTipPre
+static aTipSat          := { "Venta", "Alquiler" }
+static oTipSat
 static oUndMedicion
 static cFiltroUsuario   := ""
 
-static nTarifaPrecio    := 0
+static nTarifaSatcio    := 0
 
 static oComisionLinea
-static nComisionLinea      := 0
+static nComisionLinea   := 0
 
 #endif
 
@@ -405,22 +406,22 @@ static nComisionLinea      := 0
 //Funciones del programa
 //----------------------------------------------------------------------------//
 
-FUNCTION GenPreCli( nDevice, cCaption, cCodDoc, cPrinter, nCopies )
+FUNCTION GenSatCli( nDevice, cCaption, cCodDoc, cPrinter, nCopies )
 
    local oInf
    local oDevice
-   local nNumPre
+   local nNumSat
 
-   if ( dbfPreCliT )->( Lastrec() ) == 0
+   if ( dbfSatCliT )->( Lastrec() ) == 0
       return nil
    end if
 
-   nNumPre              := ( dbfPreCliT )->cSerPre + Str( ( dbfPreCliT )->nNumPre ) + ( dbfPreCliT )->cSufPre
+   nNumSat              := ( dbfSatCliT )->cSerSat + Str( ( dbfSatCliT )->nNumSat ) + ( dbfSatCliT )->cSufSat
 
    DEFAULT nDevice      := IS_PRINTER
-   DEFAULT cCaption     := "Imprimiendo presupuesto"
-   DEFAULT cCodDoc      := cFormatoDocumento( ( dbfPreCliT )->cSerPre, "nPreCli", dbfCount )
-   DEFAULT nCopies      := if( nCopiasDocumento( ( dbfPreCliT )->cSerPre, "nPreCli", dbfCount ) == 0, Max( Retfld( ( dbfPreCliT )->cCodCli, dbfClient, "CopiasF" ), 1 ), nCopiasDocumento( ( dbfPreCliT )->cSerPre, "nPreCli", dbfCount ) )
+   DEFAULT cCaption     := "Imprimiendo S.A.T."
+   DEFAULT cCodDoc      := cFormatoDocumento( ( dbfSatCliT )->cSerSat, "nSatCli", dbfCount )
+   DEFAULT nCopies      := if( nCopiasDocumento( ( dbfSatCliT )->cSerSat, "nSatCli", dbfCount ) == 0, Max( Retfld( ( dbfSatCliT )->cCodCli, dbfClient, "CopiasF" ), 1 ), nCopiasDocumento( ( dbfSatCliT )->cSerSat, "nSatCli", dbfCount ) )
 
    if Empty( cCodDoc )
       cCodDoc           := cFirstDoc( "RC", dbfDoc )
@@ -431,148 +432,22 @@ FUNCTION GenPreCli( nDevice, cCaption, cCodDoc, cPrinter, nCopies )
    end if
 
    /*
-   Informacion al Auditor------------------------------------------------------
-   */
-
-   if !Empty( oAuditor() )
-      if nDevice == IS_PRINTER
-         oAuditor():AddEvent( PRINT_PRESUPUESTO_CLIENTES,    nNumPre, PRE_CLI )
-      else
-         oAuditor():AddEvent( PREVIEW_PRESUPUESTO_CLIENTES,  nNumPre, PRE_CLI )
-      end if
-   end if
-
-   /*
    Si el documento es de tipo visual-------------------------------------------
    */
 
-   if lVisualDocumento( cCodDoc, dbfDoc )
+   PrintReportSatCli( nDevice, nCopies, cPrinter, dbfDoc )
 
-      PrintReportPreCli( nDevice, nCopies, cPrinter, dbfDoc )
-
-   else
-
-      /*
-      Recalculo del total
-      */
-
-      nTotPreCli( nNumPre, dbfPreCliT, dbfPreCliL, dbfIva, dbfDiv, dbfFpago, nil, nil, .t. )
-
-      /*
-      Posicionamiento
-      */
-
-      ( dbfPreCliL )->( dbSeek( nNumPre ) )
-      ( dbfClient  )->( dbSeek( ( dbfPreCliT )->CCODCLI ) )
-      ( dbfAgent   )->( dbSeek( ( dbfPreCliT )->CCODAGE ) )
-      ( dbfFPago   )->( dbSeek( ( dbfPreCliT )->CCODPGO ) )
-      ( dbfRuta    )->( dbSeek( ( dbfPreCliT )->cCodRut ) )
-      ( dbfObrasT  )->( dbSeek( ( dbfPreCliT )->CCODCLI + ( dbfPreCliT )->CCODOBR ) )
-
-      oTrans:oDbf:Seek( ( dbfPreCliT )->cCodTrn )
-
-      private cDbf         := dbfPreCliT
-      private cDbfCol      := dbfPreCliL
-      private cDetalle     := dbfPreCliL
-      private cCliente     := dbfClient
-      private cDbfCli      := dbfClient
-      private cDbfObr      := dbfObrasT
-      private cDbfAge      := dbfAgent
-      private cAgente      := dbfAgent
-      private cDbfPgo      := dbfFPago
-      private cFPago       := dbfFPago
-      private cDbfIva      := dbfIva
-      private cIva         := dbfIva
-      private cTarPreL     := dbfTarPreL
-      private cTarPreS     := dbfTarPreS
-      private cPromoL      := dbfPromoL
-      private cDbfPromol   := dbfPromoL
-      private cDbfRut      := dbfRuta
-      private cDbfUsr      := dbfUsr
-      private cDbfTrn      := oTrans:GetAlias()
-      private cDbfPro      := dbfPro
-      private cDbfTblPro   := dbfTblPro
-      private nTotPage     := nTotLPreCli( dbfPreCliT, dbfPreCliL )
-      private cPicUndPre   := cPicUnd
-      private nVdvDivPre   := nVdvDiv
-      private cPouDivPre   := cPouDiv
-      private cPorDivPre   := cPorDiv
-      private cPouChgPre   := cPouDiv( cDivChg(), dbfDiv )            // Picture del euro
-      private nDouDivPre   := nDouDiv
-      private nRouDivPre   := nRouDiv
-
-      private nTotArt      := nNumArt
-      private nTotCaj      := nNumCaj
-
-      DEFAULT cCaption     := "Imprimiendo presupuesto"
-      DEFAULT cCodDoc      := "RC1"
-
-      if !Empty( cPrinter )
-         oDevice              := TPrinter():New( cCaption, .f., .t., cPrinter )
-         REPORT oInf CAPTION cCaption TO DEVICE oDevice
-      else
-         REPORT oInf CAPTION cCaption PREVIEW
-      end if
-
-      if !Empty( oInf ) .and. oInf:lCreated
-
-         private oReport      := oInf
-
-         oInf:lAutoland       := .f.
-         oInf:lFinish         := .f.
-         oInf:lNoCancel       := .t.
-         oInf:bSkip           := {|| PreCliReportSkipper( dbfPreCliT, dbfPreCliL ) }
-
-         oInf:oDevice:lPrvModal  := .t.
-
-         do case
-            case nDevice == IS_PRINTER
-
-               oInf:oDevice:SetCopies( nCopies )
-
-               oInf:bPreview  := {| oDevice | PrintPreview( oDevice ) }
-
-            case nDevice == IS_PDF
-
-               oInf:bPreview  := {| oDevice | PrintPdf( oDevice ) }
-
-         end case
-
-         SetMargin(  cCodDoc, oInf )
-         PrintColum( cCodDoc, oInf )
-
-      end if
-
-      END REPORT
-
-      if !Empty( oInf )
-
-         ACTIVATE REPORT oInf ;
-            WHILE             ( ( dbfPreCliL )->cSerPre + Str( ( dbfPreCliL )->nNumPre ) + ( dbfPreCliL )->cSufPre == nNumPre .and. !( dbfPreCliL )->( Eof() ));
-            FOR               ( !( dbfPreCliL )->lImpLin ) ;
-            ON ENDPAGE        ePage( oInf, cCodDoc )
-
-         if nDevice == IS_PRINTER
-            oInf:oDevice:end()
-         end if
-
-      end if
-
-      oInf                 := nil
-
-   end if
-
-   lChgImpDoc( dbfPreCliT )
+   lChgImpDoc( dbfSatCliT )
 
 RETURN NIL
 
 //--------------------------------------------------------------------------//
 
-Static Function PreCliReportSkipper( dbfPreCliT, dbfPreCliL )
+Static Function SatCliReportSkipper( dbfSatCliT, dbfSatCliL )
 
-   ( dbfPreCliL )->( dbSkip() )
+   ( dbfSatCliL )->( dbSkip() )
 
-   nTotPage              += nTotLPreCli( dbfPreCliT, dbfPreCliL )
+   nTotPage              += nTotLSatCli( dbfSatCliT, dbfSatCliL )
 
 Return nil
 
@@ -595,7 +470,7 @@ STATIC FUNCTION OpenFiles( lExt )
    local oBlock
 
    if lOpenFiles
-      MsgStop( 'Imposible abrir ficheros de presupuestos de clientes' )
+      MsgStop( 'Imposible abrir ficheros de S.A.T. de clientes' )
       Return ( .f. )
    end if
 
@@ -607,21 +482,24 @@ STATIC FUNCTION OpenFiles( lExt )
 
    BEGIN SEQUENCE
 
-      DisableAcceso()
+      DisableAcceso() 
 
       lOpenFiles        := .t.
 
-      USE ( cPatEmp() + "PRECLIT.DBF" ) NEW VIA ( cDriver() ) SHARED ALIAS ( cCheckArea( "PRECLIT", @dbfPreCliT ) )
-      SET ADSINDEX TO ( cPatEmp() + "PRECLIT.CDX" ) ADDITIVE
+      USE ( cPatEmp() + "SATCLIT.DBF" ) NEW VIA ( cDriver() ) SHARED ALIAS ( cCheckArea( "SATCLIT", @dbfSatCliT ) )
+      SET ADSINDEX TO ( cPatEmp() + "SATCLIT.CDX" ) ADDITIVE
 
-      USE ( cPatEmp() + "PRECLIL.DBF" ) NEW VIA ( cDriver() ) SHARED ALIAS ( cCheckArea( "PRECLIL", @dbfPreCliL ) )
-      SET ADSINDEX TO ( cPatEmp() + "PRECLIL.CDX" ) ADDITIVE
+      USE ( cPatEmp() + "SATCLIL.DBF" ) NEW VIA ( cDriver() ) SHARED ALIAS ( cCheckArea( "SATCLIL", @dbfSatCliL ) )
+      SET ADSINDEX TO ( cPatEmp() + "SATCLIL.CDX" ) ADDITIVE
 
-      USE ( cPatEmp() + "PRECLII.DBF" ) NEW VIA ( cDriver() ) SHARED ALIAS ( cCheckArea( "PRECLII", @dbfPreCliI ) )
-      SET ADSINDEX TO ( cPatEmp() + "PRECLII.CDX" ) ADDITIVE
+      USE ( cPatEmp() + "SATCLII.DBF" ) NEW VIA ( cDriver() ) SHARED ALIAS ( cCheckArea( "SATCLII", @dbfSatCliI ) )
+      SET ADSINDEX TO ( cPatEmp() + "SATCLII.CDX" ) ADDITIVE
 
-      USE ( cPatEmp() + "PRECLID.DBF" ) NEW VIA ( cDriver() ) SHARED ALIAS ( cCheckArea( "PRECLID", @dbfPreCliD ) )
-      SET ADSINDEX TO ( cPatEmp() + "PRECLID.CDX" ) ADDITIVE
+      USE ( cPatEmp() + "SATCLID.DBF" ) NEW VIA ( cDriver() ) SHARED ALIAS ( cCheckArea( "SATCLID", @dbfSatCliD ) )
+      SET ADSINDEX TO ( cPatEmp() + "SATCLID.CDX" ) ADDITIVE
+
+      USE ( cPatEmp() + "SATCLIS.DBF" ) NEW VIA ( cDriver() ) SHARED ALIAS ( cCheckArea( "SATCLIS", @dbfSatCliS ) )
+      SET ADSINDEX TO ( cPatEmp() + "SATCLIS.CDX" ) ADDITIVE
 
       USE ( cPatDat() + "TIVA.DBF" ) NEW VIA ( cDriver() ) SHARED ALIAS ( cCheckArea( "TIVA", @dbfIva ) )
       SET ADSINDEX TO ( cPatDat() + "TIVA.CDX" ) ADDITIVE
@@ -647,11 +525,11 @@ STATIC FUNCTION OpenFiles( lExt )
       USE ( cPatArt() + "ArtCodebar.Dbf" ) NEW VIA ( cDriver() ) SHARED ALIAS ( cCheckArea( "CODEBAR", @dbfCodebar ) )
       SET ADSINDEX TO ( cPatArt() + "ArtCodebar.Cdx" ) ADDITIVE
 
-      USE ( cPatArt() + "TARPREL.DBF" ) NEW VIA ( cDriver() ) SHARED ALIAS ( cCheckArea( "TARPREL", @dbfTarPreL ) )
-      SET ADSINDEX TO ( cPatArt() + "TARPREL.CDX" ) ADDITIVE
+      USE ( cPatArt() + "TarPreL.DBF" ) NEW VIA ( cDriver() ) SHARED ALIAS ( cCheckArea( "TarPreL", @dbfTarPreL ) )
+      SET ADSINDEX TO ( cPatArt() + "TarPreL.CDX" ) ADDITIVE
 
-      USE ( cPatArt() + "TARPRES.DBF" ) NEW VIA ( cDriver() ) SHARED ALIAS ( cCheckArea( "TARPRES", @dbfTarPreS ) )
-      SET ADSINDEX TO ( cPatArt() + "TARPRES.CDX" ) ADDITIVE
+      USE ( cPatArt() + "TarPreS.DBF" ) NEW VIA ( cDriver() ) SHARED ALIAS ( cCheckArea( "TarPreS", @dbfTarPreS ) )
+      SET ADSINDEX TO ( cPatArt() + "TarPreS.CDX" ) ADDITIVE
 
       USE ( cPatArt() + "PROMOT.DBF" ) NEW VIA ( cDriver() ) SHARED ALIAS ( cCheckArea( "PROMOT", @dbfPromoT ) )
       SET ADSINDEX TO ( cPatArt() + "PROMOT.CDX" ) ADDITIVE
@@ -726,14 +604,14 @@ STATIC FUNCTION OpenFiles( lExt )
       USE ( cPatEmp() + "NCOUNT.DBF" ) NEW VIA ( cDriver() ) SHARED ALIAS ( cCheckArea( "NCOUNT", @dbfCount ) )
       SET ADSINDEX TO ( cPatEmp() + "NCOUNT.CDX" ) ADDITIVE
 
-      USE ( cPatDat() + "EMPRESA.DBF" ) NEW SHARED VIA ( cDriver() )ALIAS ( cCheckArea( "EMPRESA", @dbfEmp ) )
-      SET ADSINDEX TO ( cPatDat() + "EMPRESA.CDX" ) ADDITIVE
+      USE ( cPatDat() + "Empresa.DBF" ) NEW SHARED VIA ( cDriver() )ALIAS ( cCheckArea( "Empresa", @dbfEmp ) )
+      SET ADSINDEX TO ( cPatDat() + "Empresa.CDX" ) ADDITIVE
 
       USE ( cPatEmp() + "PedProvL.DBF" ) NEW VIA ( cDriver() ) SHARED ALIAS ( cCheckArea( "PedProvL", @dbfPedPrvL ) )
       SET ADSINDEX TO ( cPatEmp() + "PedProvL.CDX" ) ADDITIVE
 
-      USE ( cPatEmp() + "ALBPROVL.DBF" ) NEW VIA ( cDriver() ) SHARED ALIAS ( cCheckArea( "ALBPROVL", @dbfAlbPrvL ) )
-      SET ADSINDEX TO ( cPatEmp() + "ALBPROVL.CDX" ) ADDITIVE
+      USE ( cPatEmp() + "AlbProvL.DBF" ) NEW VIA ( cDriver() ) SHARED ALIAS ( cCheckArea( "AlbPROVL", @dbfAlbPrvL ) )
+      SET ADSINDEX TO ( cPatEmp() + "AlbProvL.CDX" ) ADDITIVE
       SET TAG TO "cStkFast"
 
       USE ( cPatEmp() + "FACPRVL.DBF" ) NEW VIA ( cDriver() ) SHARED ALIAS ( cCheckArea( "FACPRVL", @dbfFacPrvL ) )
@@ -747,8 +625,8 @@ STATIC FUNCTION OpenFiles( lExt )
       USE ( cPatEmp() + "PedCliL.DBF" ) NEW VIA ( cDriver() ) SHARED ALIAS ( cCheckArea( "PedCliL", @dbfPedCliL ) )
       SET ADSINDEX TO ( cPatEmp() + "PedCliL.CDX" ) ADDITIVE
 
-      USE ( cPatEmp() + "ALBCLIL.DBF" ) NEW VIA ( cDriver() ) SHARED ALIAS ( cCheckArea( "ALBCLIL", @dbfAlbCliL ) )
-      SET ADSINDEX TO ( cPatEmp() + "ALBCLIL.CDX" ) ADDITIVE
+      USE ( cPatEmp() + "PreCLIL.DBF" ) NEW VIA ( cDriver() ) SHARED ALIAS ( cCheckArea( "PreCLIL", @dbfPreCliL ) )
+      SET ADSINDEX TO ( cPatEmp() + "PreCLIL.CDX" ) ADDITIVE
       SET TAG TO "cStkFast"
 
       USE ( cPatEmp() + "FACCLIL.DBF" ) NEW VIA ( cDriver() ) SHARED ALIAS ( cCheckArea( "FACCLIL", @dbfFacCliL ) )
@@ -781,8 +659,8 @@ STATIC FUNCTION OpenFiles( lExt )
       USE ( cPatDat() + "SITUA.DBF" ) NEW VIA ( cDriver() ) SHARED ALIAS ( cCheckArea( "SITUA", @dbfSitua ) )
       SET ADSINDEX TO ( cPatDat() + "SITUA.CDX" ) ADDITIVE
 
-      USE ( cPatEmp() + "ALBCLIT.DBF" ) NEW VIA ( cDriver() ) SHARED ALIAS ( cCheckArea( "ALBCLIT", @dbfAlbCliT ) )
-      SET ADSINDEX TO ( cPatEmp() + "ALBCLIT.CDX" ) ADDITIVE
+      USE ( cPatEmp() + "SatCLIT.DBF" ) NEW VIA ( cDriver() ) SHARED ALIAS ( cCheckArea( "SatCLIT", @dbfSatCliT ) )
+      SET ADSINDEX TO ( cPatEmp() + "SatCLIT.CDX" ) ADDITIVE
 
       USE ( cPatEmp() + "FacCliP.Dbf" ) NEW VIA ( cDriver() ) SHARED ALIAS ( cCheckArea( "FacCliP", @dbfFacCliP ) )
       SET ADSINDEX TO ( cPatEmp() + "FacCliP.Cdx" ) ADDITIVE
@@ -804,9 +682,6 @@ STATIC FUNCTION OpenFiles( lExt )
          oStock:cRctPrvL   := dbfRctPrvL
 
          oStock:cPedCliL   := dbfPedCliL
-
-         oStock:cAlbCliT   := dbfAlbCliT
-         oStock:cAlbCliL   := dbfAlbCliL
 
          oStock:cFacCliL   := dbfFacCliL
          oStock:cFacCliP   := dbfFacCliP
@@ -866,7 +741,7 @@ STATIC FUNCTION OpenFiles( lExt )
       Declaración variables públicas-------------------------------------------
       */
 
-      public nTotPre    := 0
+      public nTotSat    := 0
       public nTotDto    := 0
       public nTotDPP    := 0
       public nTotNet    := 0
@@ -936,26 +811,30 @@ STATIC FUNCTION CloseFiles()
 
    DisableAcceso()
 
-   DestroyFastFilter( dbfPreCliT, .t., .t. )
+   DestroyFastFilter( dbfSatCliT, .t., .t. )
 
    if !Empty( oFont )
       oFont:end()
    end if
 
-   if ( dbfPreCliT ) != nil
-      ( dbfPreCliT )->( dbCloseArea() )
+   if ( dbfSatCliT ) != nil
+      ( dbfSatCliT )->( dbCloseArea() )
    end if
 
-   if !Empty( dbfPreCliL   )
-      ( dbfPreCliL   )->( dbCloseArea() )
+   if !Empty( dbfSatCliL   )
+      ( dbfSatCliL   )->( dbCloseArea() )
    end if
 
-   if !Empty( dbfPreCliI   )
-      ( dbfPreCliI   )->( dbCloseArea() )
+   if !Empty( dbfSatCliI   )
+      ( dbfSatCliI   )->( dbCloseArea() )
    end if
 
-   if !Empty( dbfPreCliD   )
-      ( dbfPreCliD   )->( dbCloseArea() )
+   if !Empty( dbfSatCliD   )
+      ( dbfSatCliD   )->( dbCloseArea() )
+   end if
+
+   if !Empty( dbfSatCliS   )
+      ( dbfSatCliS   )->( dbCloseArea() )
    end if
 
    if !Empty( dbfClient )
@@ -1114,12 +993,12 @@ STATIC FUNCTION CloseFiles()
       ( dbfPedCliL )->( dbCloseArea() )
    end if
 
-   if !Empty( dbfAlbCliT )
-      ( dbfAlbCliT )->( dbCloseArea() )
+   if !Empty( dbfPreCliT )
+      ( dbfPreCliT )->( dbCloseArea() )
    end if
 
-   if dbfAlbCliL != nil
-      ( dbfAlbCliL )->( dbCloseArea() )
+   if dbfPreCliL != nil
+      ( dbfPreCliL )->( dbCloseArea() )
    end if
 
    if dbfFacCliL != nil
@@ -1194,10 +1073,10 @@ STATIC FUNCTION CloseFiles()
       oFraPub:end()
    end if
 
-   dbfPreCliT     := nil
-   dbfPreCliL     := nil
-   dbfPreCliI     := nil
-   dbfPreCliD     := nil
+   dbfSatCliT     := nil
+   dbfSatCliL     := nil
+   dbfSatCliI     := nil
+   dbfSatCliD     := nil
    dbfClient      := nil
    dbfArtPrv      := nil
    dbfIva         := nil
@@ -1244,7 +1123,7 @@ STATIC FUNCTION CloseFiles()
    dbfFacPrvL     := nil
 
    dbfPedCliL     := nil
-   dbfAlbCliL     := nil
+   dbfPedCliL     := nil
    dbfFacCliL     := nil
    dbfFacRecL     := nil
    dbfTikCliL     := nil
@@ -1264,7 +1143,7 @@ RETURN .T.
 
 //----------------------------------------------------------------------------//
 
-FUNCTION PreCli( oMenuItem, oWnd, cCodCli, cCodArt )
+FUNCTION SatCli( oMenuItem, oWnd, cCodCli, cCodArt )
 
    local oSnd
    local oRpl
@@ -1310,7 +1189,7 @@ FUNCTION PreCli( oMenuItem, oWnd, cCodCli, cCodArt )
 
    DEFINE SHELL oWndBrw FROM 0, 0 TO 22, 80 ;
       XBROWSE ;
-      TITLE    "Presupuestos a clientes" ;
+      TITLE    "S.A.T. a clientes" ;
       PROMPT   "Número",;
                "Fecha",;
                "Código",;
@@ -1319,18 +1198,18 @@ FUNCTION PreCli( oMenuItem, oWnd, cCodCli, cCodArt )
                "Agente";
       MRU      "Notebook_user1_16";
       BITMAP   clrTopArchivos ;
-      ALIAS    ( dbfPreCliT );
-      APPEND   ( WinAppRec( oWndBrw:oBrw, bEdtRec, dbfPreCliT, cCodCli, cCodArt ) );
-      DUPLICAT ( WinDupRec( oWndBrw:oBrw, bEdtRec, dbfPreCliT, cCodCli, cCodArt ) );
-      EDIT     ( WinEdtRec( oWndBrw:oBrw, bEdtRec, dbfPreCliT, cCodCli, cCodArt ) );
-      ZOOM     ( WinZooRec( oWndBrw:oBrw, bEdtRec, dbfPreCliT ) );
-      DELETE   ( WinDelRec( oWndBrw:oBrw, dbfPreCliT, {|| QuiPreCli() } ) ) ;
+      ALIAS    ( dbfSatCliT );
+      APPEND   ( WinAppRec( oWndBrw:oBrw, bEdtRec, dbfSatCliT, cCodCli, cCodArt ) );
+      DUPLICAT ( WinDupRec( oWndBrw:oBrw, bEdtRec, dbfSatCliT, cCodCli, cCodArt ) );
+      EDIT     ( WinEdtRec( oWndBrw:oBrw, bEdtRec, dbfSatCliT, cCodCli, cCodArt ) );
+      ZOOM     ( WinZooRec( oWndBrw:oBrw, bEdtRec, dbfSatCliT ) );
+      DELETE   ( WinDelRec( oWndBrw:oBrw, dbfSatCliT, {|| QuiSatCli() } ) ) ;
       LEVEL    nLevel ;
       OF       oWnd
 
 	  oWndBrw:lFechado     := .t.
 
-	  oWndBrw:bChgIndex    := {|| if( oUser():lFiltroVentas(), CreateFastFilter( cFiltroUsuario, dbfPreCliT, .f., , cFiltroUsuario ), CreateFastFilter( "", dbfPreCliT, .f. ) ) }
+	  oWndBrw:bChgIndex    := {|| if( oUser():lFiltroVentas(), CreateFastFilter( cFiltroUsuario, dbfSatCliT, .f., , cFiltroUsuario ), CreateFastFilter( "", dbfSatCliT, .f. ) ) }
 
 	  oWndBrw:SetYearComboBoxChange( {|| YearComboBoxChange() } )
 
@@ -1338,7 +1217,7 @@ FUNCTION PreCli( oMenuItem, oWnd, cCodCli, cCodArt )
          :cHeader          := "Sesión cerrada"
          :nHeadBmpNo       := 3
          :bStrData         := {|| "" }
-         :bEditValue       := {|| ( dbfPreCliT )->lCloPre }
+         :bEditValue       := {|| ( dbfSatCliT )->lCloSat }
          :nWidth           := 20
          :SetCheck( { "Sel16", "Nil16" } )
          :AddResource( "Zoom16" )
@@ -1349,7 +1228,7 @@ FUNCTION PreCli( oMenuItem, oWnd, cCodCli, cCodArt )
          :cHeader          := "Estado"
          :nHeadBmpNo       := 3
          :bStrData         := {|| "" }
-         :bEditValue       := {|| ( dbfPreCliT )->lEstado }
+         :bEditValue       := {|| ( dbfSatCliT )->lEstado }
          :nWidth           := 20
          :SetCheck( { "Bullet_Square_Green_16", "Bullet_Square_Red_16" } )
          :AddResource( "trafficlight_on_16" )
@@ -1359,7 +1238,7 @@ FUNCTION PreCli( oMenuItem, oWnd, cCodCli, cCodArt )
          :cHeader          := "Envio"
          :nHeadBmpNo       := 3
          :bStrData         := {|| "" }
-         :bEditValue       := {|| ( dbfPreCliT )->lSndDoc }
+         :bEditValue       := {|| ( dbfSatCliT )->lSndDoc }
          :nWidth           := 20
          :SetCheck( { "Sel16", "Nil16" } )
          :AddResource( "Lbl16" )
@@ -1370,7 +1249,7 @@ FUNCTION PreCli( oMenuItem, oWnd, cCodCli, cCodArt )
          :cHeader          := "Incidencia"
          :nHeadBmpNo       := 4
          :bStrData         := {|| "" }
-         :bBmpData         := {|| nEstadoIncidencia( ( dbfPreCliT )->cSerPre + Str( ( dbfPreCliT )->nNumPre ) + ( dbfPreCliT )->cSufPre ) }
+         :bBmpData         := {|| nEstadoIncidencia( ( dbfSatCliT )->cSerSat + Str( ( dbfSatCliT )->nNumSat ) + ( dbfSatCliT )->cSufSat ) }
          :nWidth           := 20
          :lHide            := .t.
          :AddResource( "Bullet_Square_Red_16" )
@@ -1383,7 +1262,7 @@ FUNCTION PreCli( oMenuItem, oWnd, cCodCli, cCodArt )
          :cHeader          := "Imprimir"
          :nHeadBmpNo       := 3
          :bStrData         := {|| "" }
-         :bEditValue       := {|| ( dbfPreCliT )->lImprimido }
+         :bEditValue       := {|| ( dbfSatCliT )->lImprimido }
          :nWidth           := 20
          :lHide            := .t.
          :SetCheck( { "Sel16", "Nil16" } )
@@ -1392,29 +1271,29 @@ FUNCTION PreCli( oMenuItem, oWnd, cCodCli, cCodArt )
 
       with object ( oWndBrw:AddXCol() )
          :cHeader          := "Tipo"
-         :bEditValue       := {|| aTipPre[ if( ( dbfPreCliT )->lAlquiler, 2, 1 ) ] }
+         :bEditValue       := {|| aTipSat[ if( ( dbfSatCliT )->lAlquiler, 2, 1 ) ] }
          :nWidth           := 50
          :lHide            := .t.
       end with
 
       with object ( oWndBrw:AddXCol() )
          :cHeader          := "Número"
-         :cSortOrder       := "nNumPre"
-         :bEditValue       := {|| ( dbfPreCliT )->cSerPre + "/" + AllTrim( Str( ( dbfPreCliT )->nNumPre ) ) + "/" + ( dbfPreCliT )->cSufPre }
+         :cSortOrder       := "nNumSat"
+         :bEditValue       := {|| ( dbfSatCliT )->cSerSat + "/" + AllTrim( Str( ( dbfSatCliT )->nNumSat ) ) + "/" + ( dbfSatCliT )->cSufSat }
          :nWidth           := 80
          :bLClickHeader    := {| nMRow, nMCol, nFlags, oCol | oWndBrw:ClickOnHeader( oCol ) }
       end with
 
       with object ( oWndBrw:AddXCol() )
          :cHeader          := "Delegación"
-         :bEditValue       := {|| ( dbfPreCliT )->cCodDlg }
+         :bEditValue       := {|| ( dbfSatCliT )->cCodDlg }
          :nWidth           := 20
          :lHide            := .t.
       end with
 
       with object ( oWndBrw:AddXCol() )
          :cHeader          := "Sesión"
-         :bEditValue       := {|| Trans( ( dbfPreCliT )->cTurPre, "######" ) }
+         :bEditValue       := {|| Trans( ( dbfSatCliT )->cTurSat, "######" ) }
          :nWidth           := 40
          :lHide            := .t.
          :nDataStrAlign    := 1
@@ -1423,29 +1302,29 @@ FUNCTION PreCli( oMenuItem, oWnd, cCodCli, cCodArt )
 
       with object ( oWndBrw:AddXCol() )
          :cHeader          := "Fecha"
-         :cSortOrder       := "dFecPre"
-         :bEditValue       := {|| Dtoc( ( dbfPreCliT )->dFecPre ) }
+         :cSortOrder       := "dFecSat"
+         :bEditValue       := {|| Dtoc( ( dbfSatCliT )->dFecSat ) }
          :nWidth           := 80
          :bLClickHeader    := {| nMRow, nMCol, nFlags, oCol | oWndBrw:ClickOnHeader( oCol ) }
       end with
 
       with object ( oWndBrw:AddXCol() )
          :cHeader          := "Caja"
-         :bEditValue       := {|| ( dbfPreCliT )->cCodCaj }
+         :bEditValue       := {|| ( dbfSatCliT )->cCodCaj }
          :nWidth           := 40
          :lHide            := .t.
       end with
 
       with object ( oWndBrw:AddXCol() )
          :cHeader          := "Usuario"
-         :bEditValue       := {|| ( dbfPreCliT )->cCodUsr }
+         :bEditValue       := {|| ( dbfSatCliT )->cCodUsr }
          :nWidth           := 40
          :lHide            := .t.
       end with
 
       with object ( oWndBrw:AddXCol() )
          :cHeader          := "Situación"
-         :bEditValue       := {|| AllTrim( ( dbfPreCliT )->cSituac ) }
+         :bEditValue       := {|| AllTrim( ( dbfSatCliT )->cSituac ) }
          :nWidth           := 80
          :lHide            := .t.
       end with
@@ -1453,7 +1332,7 @@ FUNCTION PreCli( oMenuItem, oWnd, cCodCli, cCodArt )
       with object ( oWndBrw:AddXCol() )
          :cHeader          := "Código"
          :cSortOrder       := "cCodCli"
-         :bEditValue       := {|| AllTrim( ( dbfPreCliT )->cCodCli ) }
+         :bEditValue       := {|| AllTrim( ( dbfSatCliT )->cCodCli ) }
          :nWidth           := 70
          :bLClickHeader    := {| nMRow, nMCol, nFlags, oCol | oWndBrw:ClickOnHeader( oCol ) }
       end with
@@ -1461,7 +1340,7 @@ FUNCTION PreCli( oMenuItem, oWnd, cCodCli, cCodArt )
       with object ( oWndBrw:AddXCol() )
          :cHeader          := "Nombre"
          :cSortOrder       := "cNomCli"
-         :bEditValue       := {|| ( dbfPreCliT )->cNomCli }
+         :bEditValue       := {|| ( dbfSatCliT )->cNomCli }
          :nWidth           := 180
          :bLClickHeader    := {| nMRow, nMCol, nFlags, oCol | oWndBrw:ClickOnHeader( oCol ) }
       end with
@@ -1469,35 +1348,35 @@ FUNCTION PreCli( oMenuItem, oWnd, cCodCli, cCodArt )
       with object ( oWndBrw:AddXCol() )
          :cHeader          := "Agente"
          :cSortOrder       := "cCodAge"
-         :bEditValue       := {|| ( dbfPreCliT )->cCodAge }
+         :bEditValue       := {|| ( dbfSatCliT )->cCodAge }
          :nWidth           := 50
          :bLClickHeader    := {| nMRow, nMCol, nFlags, oCol | oWndBrw:ClickOnHeader( oCol ) }
       end with
 
       with object ( oWndBrw:AddXCol() )
          :cHeader          := "Ruta"
-         :bEditValue       := {|| ( dbfPreCliT )->cCodRut }
+         :bEditValue       := {|| ( dbfSatCliT )->cCodRut }
          :nWidth           := 40
       end with
 
       with object ( oWndBrw:AddXCol() )
          :cHeader          := "Almacén"
-         :bEditValue       := {|| ( dbfPreCliT )->cCodAlm }
+         :bEditValue       := {|| ( dbfSatCliT )->cCodAlm }
          :nWidth           := 60
       end with
 
       with object ( oWndBrw:AddXCol() )
          :cHeader          := "Obra"
          :cSortOrder       := "cCodObr"
-         :bEditValue       := {|| ( dbfPreCliT )->cCodObr }
+         :bEditValue       := {|| ( dbfSatCliT )->cCodObr }
          :nWidth           := 50
          :bLClickHeader    := {| nMRow, nMCol, nFlags, oCol | oWndBrw:ClickOnHeader( oCol ) }
       end with
 
       with object ( oWndBrw:AddXCol() )
          :cHeader          := "Base"
-         :bEditValue       := {|| ( dbfPreCliT )->nTotNet }
-         :cEditPicture     := cPorDiv( ( dbfPreCliT )->cDivPre, dbfDiv )
+         :bEditValue       := {|| ( dbfSatCliT )->nTotNet }
+         :cEditPicture     := cPorDiv( ( dbfSatCliT )->cDivSat, dbfDiv )
          :nWidth           := 80
          :nDataStrAlign    := 1
          :nHeadStrAlign    := 1
@@ -1506,8 +1385,8 @@ FUNCTION PreCli( oMenuItem, oWnd, cCodCli, cCodArt )
 
       with object ( oWndBrw:AddXCol() )
          :cHeader          := cImp()
-         :bEditValue       := {|| ( dbfPreCliT )->nTotIva }
-         :cEditPicture     := cPorDiv( ( dbfPreCliT )->cDivPre, dbfDiv )
+         :bEditValue       := {|| ( dbfSatCliT )->nTotIva }
+         :cEditPicture     := cPorDiv( ( dbfSatCliT )->cDivSat, dbfDiv )
          :nWidth           := 80
          :nDataStrAlign    := 1
          :nHeadStrAlign    := 1
@@ -1516,8 +1395,8 @@ FUNCTION PreCli( oMenuItem, oWnd, cCodCli, cCodArt )
 
       with object ( oWndBrw:AddXCol() )
          :cHeader          := "R.E."
-         :bEditValue       := {|| ( dbfPreCliT )->nTotReq }
-         :cEditPicture     := cPorDiv( ( dbfPreCliT )->cDivPre, dbfDiv )
+         :bEditValue       := {|| ( dbfSatCliT )->nTotReq }
+         :cEditPicture     := cPorDiv( ( dbfSatCliT )->cDivSat, dbfDiv )
          :nWidth           := 80
          :nDataStrAlign    := 1
          :nHeadStrAlign    := 1
@@ -1526,8 +1405,8 @@ FUNCTION PreCli( oMenuItem, oWnd, cCodCli, cCodArt )
 
       with object ( oWndBrw:AddXCol() )
          :cHeader          := "Total"
-         :bEditValue       := {|| ( dbfPreCliT )->nTotPre }
-         :cEditPicture     := cPorDiv( ( dbfPreCliT )->cDivPre, dbfDiv )
+         :bEditValue       := {|| ( dbfSatCliT )->nTotSat }
+         :cEditPicture     := cPorDiv( ( dbfSatCliT )->cDivSat, dbfDiv )
          :nWidth           := 80
          :nDataStrAlign    := 1
          :nHeadStrAlign    := 1
@@ -1535,7 +1414,7 @@ FUNCTION PreCli( oMenuItem, oWnd, cCodCli, cCodArt )
 
       with object ( oWndBrw:AddXCol() )
          :cHeader          := "Div."
-         :bEditValue       := {|| cSimDiv( if( lEuro, cDivChg(), ( dbfPreCliT )->cDivPre ), dbfDiv ) }
+         :bEditValue       := {|| cSimDiv( if( lEuro, cDivChg(), ( dbfSatCliT )->cDivSat ), dbfDiv ) }
          :nWidth           := 30
          :nDataStrAlign    := 1
          :nHeadStrAlign    := 1
@@ -1599,14 +1478,14 @@ FUNCTION PreCli( oMenuItem, oWnd, cCodCli, cCodArt )
 
    DEFINE BTNSHELL oPrv RESOURCE "IMP" GROUP OF oWndBrw ;
       NOBORDER ;
-      ACTION   ( GenPreCli( IS_PRINTER ), oWndBrw:Refresh() ) ;
+      ACTION   ( GenSatCli( IS_PRINTER ), oWndBrw:Refresh() ) ;
       MENU     This:Toggle() ;
       TOOLTIP  "(I)mprimir";
       MESSAGE  "Imprimir pedidos" ;
       HOTKEY   "I";
       LEVEL    ACC_IMPR
 
-      lGenPreCli( oWndBrw:oBrw, oPrv, IS_PRINTER ) ;
+      lGenSatCli( oWndBrw:oBrw, oPrv, IS_PRINTER ) ;
 
    DEFINE BTNSHELL RESOURCE "SERIE1" OF oWndBrw ;
       NOBORDER ;
@@ -1618,32 +1497,32 @@ FUNCTION PreCli( oMenuItem, oWnd, cCodCli, cCodArt )
    DEFINE BTNSHELL oImp RESOURCE "PREV1" GROUP OF oWndBrw ;
       NOBORDER ;
       MENU     This:Toggle() ;
-      ACTION   ( GenPreCli( IS_SCREEN ), oWndBrw:Refresh() ) ;
+      ACTION   ( GenSatCli( IS_SCREEN ), oWndBrw:Refresh() ) ;
       TOOLTIP  "(P)revisualizar";
-      MESSAGE  "Previsualizar pedidos" ;
+      MESSAGE  "Satvisualizar pedidos" ;
       HOTKEY   "P";
       LEVEL    ACC_IMPR
 
-      lGenPreCli( oWndBrw:oBrw, oImp, IS_SCREEN ) ;
+      lGenSatCli( oWndBrw:oBrw, oImp, IS_SCREEN ) ;
 
    DEFINE BTNSHELL oPdf RESOURCE "DOCLOCK" OF oWndBrw ;
       NOBORDER ;
       MENU     This:Toggle() ;
-      ACTION   ( GenPreCli( IS_PDF ) ) ;
+      ACTION   ( GenSatCli( IS_PDF ) ) ;
       TOOLTIP  "Pd(f)";
       HOTKEY   "F";
       LEVEL    ACC_IMPR
 
-      lGenPreCli( oWndBrw:oBrw, oPdf, IS_PDF ) ;
+      lGenSatCli( oWndBrw:oBrw, oPdf, IS_PDF ) ;
 
    DEFINE BTNSHELL oMail RESOURCE "Mail" OF oWndBrw ;
       NOBORDER ;
       MENU     This:Toggle() ;
-      ACTION   ( GenPreCli( IS_MAIL ) ) ;
+      ACTION   ( GenSatCli( IS_MAIL ) ) ;
       TOOLTIP  "Correo electrónico";
       LEVEL    ACC_IMPR
 
-      lGenPreCli( oWndBrw:oBrw, oMail, IS_MAIL ) ;
+      lGenSatCli( oWndBrw:oBrw, oMail, IS_MAIL ) ;
 
    if oUser():lAdministrador()
 
@@ -1660,14 +1539,14 @@ FUNCTION PreCli( oMenuItem, oWnd, cCodCli, cCodArt )
       NOBORDER ;
       MENU     This:Toggle() ;
       TOOLTIP  "En(v)iar" ;
-      MESSAGE  "Seleccionar presupuestos para ser enviados" ;
-      ACTION   lSnd( oWndBrw, dbfPreCliT ) ;
+      MESSAGE  "Seleccionar S.A.T. para ser enviados" ;
+      ACTION   lSnd( oWndBrw, dbfSatCliT ) ;
       HOTKEY   "V";
       LEVEL    ACC_EDIT
 
       DEFINE BTNSHELL RESOURCE "LBL" OF oWndBrw ;
          NOBORDER ;
-         ACTION   ( lSelectAll( oWndBrw, dbfPreCliT, "lSndDoc", .t., .t., .t. ) );
+         ACTION   ( lSelectAll( oWndBrw, dbfSatCliT, "lSndDoc", .t., .t., .t. ) );
          TOOLTIP  "Todos" ;
          FROM     oSnd ;
          CLOSED ;
@@ -1675,7 +1554,7 @@ FUNCTION PreCli( oMenuItem, oWnd, cCodCli, cCodArt )
 
       DEFINE BTNSHELL RESOURCE "LBL" OF oWndBrw ;
          NOBORDER ;
-         ACTION   ( lSelectAll( oWndBrw, dbfPreCliT, "lSndDoc", .f., .t., .t. ) );
+         ACTION   ( lSelectAll( oWndBrw, dbfSatCliT, "lSndDoc", .f., .t., .t. ) );
          TOOLTIP  "Ninguno" ;
          FROM     oSnd ;
          CLOSED ;
@@ -1683,7 +1562,7 @@ FUNCTION PreCli( oMenuItem, oWnd, cCodCli, cCodArt )
 
       DEFINE BTNSHELL RESOURCE "LBL" OF oWndBrw ;
          NOBORDER ;
-         ACTION   ( lSelectAll( oWndBrw, dbfPreCliT, "lSndDoc", .t., .f., .t. ) );
+         ACTION   ( lSelectAll( oWndBrw, dbfSatCliT, "lSndDoc", .t., .f., .t. ) );
          TOOLTIP  "Abajo" ;
          FROM     oSnd ;
          CLOSED ;
@@ -1700,13 +1579,13 @@ FUNCTION PreCli( oMenuItem, oWnd, cCodCli, cCodArt )
       DEFINE BTNSHELL oRpl RESOURCE "BMPCHG" GROUP OF oWndBrw ;
          NOBORDER ;
          MENU     This:Toggle() ;
-         ACTION   ( TDlgFlt():New( aItmPreCli(), dbfPreCliT ):ChgFields(), oWndBrw:Refresh() ) ;
+         ACTION   ( TDlgFlt():New( aItmSatCli(), dbfSatCliT ):ChgFields(), oWndBrw:Refresh() ) ;
          TOOLTIP  "Cambiar campos" ;
          LEVEL    ACC_EDIT
 
          DEFINE BTNSHELL RESOURCE "BMPCHG" OF oWndBrw ;
             NOBORDER ;
-            ACTION   ( TDlgFlt():New( aColPreCli(), dbfPreCliL ):ChgFields(), oWndBrw:Refresh() ) ;
+            ACTION   ( TDlgFlt():New( aColSatCli(), dbfSatCliL ):ChgFields(), oWndBrw:Refresh() ) ;
             TOOLTIP  "Lineas" ;
             FROM     oRpl ;
             CLOSED ;
@@ -1716,7 +1595,7 @@ FUNCTION PreCli( oMenuItem, oWnd, cCodCli, cCodArt )
 
    DEFINE BTNSHELL RESOURCE "INFO" GROUP OF oWndBrw ;
       NOBORDER ;
-      ACTION   ( TTrazaDocumento():Activate( PRE_CLI, ( dbfPreCliT )->cSerPre + Str( ( dbfPreCliT )->nNumPre ) + ( dbfPreCliT )->cSufPre ) ) ;
+      ACTION   ( TTrazaDocumento():Activate( SAT_CLI, ( dbfSatCliT )->cSerSat + Str( ( dbfSatCliT )->nNumSat ) + ( dbfSatCliT )->cSufSat ) ) ;
       TOOLTIP  "I(n)forme documento" ;
       HOTKEY   "N" ;
       LEVEL    ACC_EDIT
@@ -1728,52 +1607,47 @@ FUNCTION PreCli( oMenuItem, oWnd, cCodCli, cCodArt )
          TOOLTIP  "Rotor" ;
 
       DEFINE BTNSHELL RESOURCE "USER1_" OF oWndBrw ;
-            ACTION   ( EdtCli( ( dbfPreCliT )->cCodCli ) );
+            ACTION   ( EdtCli( ( dbfSatCliT )->cCodCli ) );
             TOOLTIP  "Modificar cliente" ;
             FROM     oRotor ;
 
       DEFINE BTNSHELL RESOURCE "INFO" OF oWndBrw ;
-            ACTION   ( InfCliente( ( dbfPreCliT )->cCodCli ) );
+            ACTION   ( InfCliente( ( dbfSatCliT )->cCodCli ) );
             TOOLTIP  "Informe de cliente" ;
             FROM     oRotor ;
 
       DEFINE BTNSHELL RESOURCE "Worker" OF oWndBrw ;
-            ACTION   ( if( !Empty( ( dbfPreCliT )->cCodObr ), EdtObras( ( dbfPreCliT )->cCodCli, ( dbfPreCliT )->cCodObr, dbfObrasT ), MsgStop( "No hay obra asociada al presupuesto" ) ) );
+            ACTION   ( if( !Empty( ( dbfSatCliT )->cCodObr ), EdtObras( ( dbfSatCliT )->cCodCli, ( dbfSatCliT )->cCodObr, dbfObrasT ), MsgStop( "No hay obra asociada al S.A.T." ) ) );
             TOOLTIP  "Modificar obra" ;
             FROM     oRotor ;
 
       DEFINE BTNSHELL RESOURCE "CLIPBOARD_EMPTY_USER1_" OF oWndBrw ;
             ALLOW    EXIT ;
-            ACTION   ( if( !( dbfPreCliT )->lEstado, PedCli( nil, nil, nil, nil, ( dbfPreCliT )->cSerPre + Str( ( dbfPreCliT )->nNumPre ) + ( dbfPreCliT )->cSufPre ), MsgStop( "El presupuesto ya ha sido aceptado" ) ) );
+            ACTION   ( if( !( dbfSatCliT )->lEstado, PedCli( nil, nil, nil, nil, ( dbfSatCliT )->cSerSat + Str( ( dbfSatCliT )->nNumSat ) + ( dbfSatCliT )->cSufSat ), MsgStop( "El S.A.T. ya ha sido aceptado" ) ) );
             TOOLTIP  "Generar pedido" ;
-            FROM     oRotor ;
-
-      DEFINE BTNSHELL RESOURCE "CLIPBOARD_EMPTY_USER1_" OF oWndBrw ;
-            ACTION   ( Pre2Ped( ( dbfPreCliT )->cSerPre + Str( ( dbfPreCliT )->nNumPre ) + ( dbfPreCliT )->cSufPre ) );
-            TOOLTIP  "Modificar pedido" ;
             FROM     oRotor ;
 
       DEFINE BTNSHELL RESOURCE "DOCUMENT_PLAIN_USER1_" OF oWndBrw ;
             ALLOW    EXIT ;
-            ACTION   ( if( ( dbfPreCliT )->lEstado, AlbCli( nil, nil, nil, nil, { nil, ( dbfPreCliT )->cSerPre + Str( ( dbfPreCliT )->nNumPre ) + ( dbfPreCliT )->cSufPre } ), MsgStop( "El presupuesto ya ha sido aceptado" ) ) );
-            TOOLTIP  "Generar albarán" ;
+            ACTION   ( if( ( dbfSatCliT )->lEstado, SatCli( nil, nil, nil, nil, { nil, ( dbfSatCliT )->cSerSat + Str( ( dbfSatCliT )->nNumSat ) + ( dbfSatCliT )->cSufSat } ), MsgStop( "El S.A.T. ya ha sido aceptado" ) ) );
+            TOOLTIP  "Generar Satarán" ;
             FROM     oRotor ;
 
       DEFINE BTNSHELL RESOURCE "DOCUMENT_USER1_" OF oWndBrw ;
             ALLOW    EXIT ;
-            ACTION   ( if( !( dbfPreCliT )->lEstado, FactCli( nil, nil, nil, nil, nil, { ( dbfPreCliT )->cSerPre + Str( ( dbfPreCliT )->nNumPre ) + ( dbfPreCliT )->cSufPre, nil, nil, nil } ), MsgStop( "El presupuesto ya ha sido aceptado" ) ) );
+            ACTION   ( if( !( dbfSatCliT )->lEstado, FactCli( nil, nil, nil, nil, nil, { ( dbfSatCliT )->cSerSat + Str( ( dbfSatCliT )->nNumSat ) + ( dbfSatCliT )->cSufSat, nil, nil, nil } ), MsgStop( "El S.A.T. ya ha sido aceptado" ) ) );
             TOOLTIP  "Generar factura" ;
             FROM     oRotor ;
 
       DEFINE BTNSHELL RESOURCE "Note_" OF oWndBrw ;
             ALLOW    EXIT ;
-            ACTION   ( PreCliNotas() );
+            ACTION   ( SatCliNotas() );
             TOOLTIP  "Generar nota de agenda" ;
             FROM     oRotor ;
 
       DEFINE BTNSHELL RESOURCE "CASHIER_USER1_" OF oWndBrw ;
             ALLOW    EXIT ;
-            ACTION   ( if( !( dbfPreCliT )->lEstado .and. Empty( ( dbfPreCliT )->cNumTik ), FrontTpv( nil, nil, nil, nil, .f., .f., { ( dbfPreCliT )->cSerPre + Str( ( dbfPreCliT )->nNumPre ) + ( dbfPreCliT )->cSufPre, nil, nil } ), MsgStop( "Presupuesto aceptado o convertido a ticket" ) ) );
+            ACTION   ( if( !( dbfSatCliT )->lEstado .and. Empty( ( dbfSatCliT )->cNumTik ), FrontTpv( nil, nil, nil, nil, .f., .f., { ( dbfSatCliT )->cSerSat + Str( ( dbfSatCliT )->nNumSat ) + ( dbfSatCliT )->cSufSat, nil, nil } ), MsgStop( "Satsupuesto aceptado o convertido a ticket" ) ) );
             TOOLTIP  "Convertir a ticket" ;
             FROM     oRotor ;
 
@@ -1784,9 +1658,9 @@ FUNCTION PreCli( oMenuItem, oWnd, cCodCli, cCodArt )
       HOTKEY   "S"
 
    if !oUser():lFiltroVentas()
-      oWndBrw:oActiveFilter:aTField       := aItmPreCli()
+      oWndBrw:oActiveFilter:aTField       := aItmSatCli()
       oWndBrw:oActiveFilter:cDbfFilter    := dbfFlt
-      oWndBrw:oActiveFilter:cTipFilter    := PRE_CLI
+      oWndBrw:oActiveFilter:cTipFilter    := SAT_CLI
    end if
 
    ACTIVATE WINDOW oWndBrw VALID ( CloseFiles() )
@@ -1803,7 +1677,7 @@ Return .t.
 
 //----------------------------------------------------------------------------//
 
-STATIC FUNCTION EdtRec( aTmp, aGet, dbfPreCliT, oBrw, cCodCli, cCodArt, nMode )
+STATIC FUNCTION EdtRec( aTmp, aGet, dbfSatCliT, oBrw, cCodCli, cCodArt, nMode )
 
    local oDlg
    local oFld
@@ -1823,11 +1697,11 @@ STATIC FUNCTION EdtRec( aTmp, aGet, dbfPreCliT, oBrw, cCodCli, cCodArt, nMode )
    local nRieCli
    local oTlfCli
    local cTlfCli
-   local cSerie         := cNewSer( "nPreCli", dbfCount )
+   local cSerie         := cNewSer( "nSatCli", dbfCount )
    local oAprovado
    local cAprovado
    local oSayGetRnt
-   local cTipPre
+   local cTipSat
    local oSayDias
    local oSayTxtDias
    local oBmpGeneral
@@ -1852,15 +1726,15 @@ STATIC FUNCTION EdtRec( aTmp, aGet, dbfPreCliT, oBrw, cCodCli, cCodArt, nMode )
          Return .f.
       end if
 
-      aTmp[ _CTURPRE ]  := cCurSesion()
+      aTmp[ _CTURSAT ]  := cCurSesion()
       aTmp[ _CCODALM ]  := oUser():cAlmacen()
-      aTmp[ _CDIVPRE ]  := cDivEmp()
+      aTmp[ _CDIVSAT ]  := cDivEmp()
       aTmp[ _CCODCAJ ]  := oUser():cCaja()
       aTmp[ _CCODPGO ]  := cDefFpg()
       aTmp[ _CCODUSR ]  := cCurUsr()
-      aTmp[ _NVDVPRE ]  := nChgDiv( aTmp[ _CDIVPRE ], dbfDiv )
+      aTmp[ _NVDVSAT ]  := nChgDiv( aTmp[ _CDIVSAT ], dbfDiv )
       aTmp[ _LESTADO ]  := .f.
-      aTmp[ _CSUFPRE ]  := RetSufEmp()
+      aTmp[ _CSUFSAT ]  := RetSufEmp()
       aTmp[ _NDIAVAL ]  := nDiasValidez()
       aTmp[ _LSNDDOC ]  := .t.
       aTmp[ _CCODDLG ]  := oUser():cDelegacion()
@@ -1874,8 +1748,8 @@ STATIC FUNCTION EdtRec( aTmp, aGet, dbfPreCliT, oBrw, cCodCli, cCodArt, nMode )
 
    case nMode == EDIT_MODE
 
-      if aTmp[ _LCLOPRE ] .and. !oUser():lAdministrador()
-         msgStop( "El presupuesto está cerrado." )
+      if aTmp[ _LCLOSAT ] .and. !oUser():lAdministrador()
+         msgStop( "El S.A.T. está cerrado." )
          Return .f.
       end if
 
@@ -1891,15 +1765,15 @@ STATIC FUNCTION EdtRec( aTmp, aGet, dbfPreCliT, oBrw, cCodCli, cCodArt, nMode )
          Return .f.
       end if
 
-      aTmp[ _DFECPRE ]   := GetSysDate()
-      aTmp[ _CTURPRE ]  := cCurSesion()
+      aTmp[ _DFECSAT ]   := GetSysDate()
+      aTmp[ _CTURSAT ]  := cCurSesion()
       aTmp[ _LESTADO ]  := .f.
-      aTmp[ _LCLOPRE ]  := .f.
+      aTmp[ _LCLOSAT ]  := .f.
 
    end case
 
-   if Empty( Rtrim( aTmp[ _CSERPRE ] ) )
-      aTmp[ _CSERPRE ]  := cSerie
+   if Empty( Rtrim( aTmp[ _CSERSAT ] ) )
+      aTmp[ _CSERSAT ]  := cSerie
    end if
 
    if Empty( aTmp[ _NTARIFA ] )
@@ -1915,10 +1789,10 @@ STATIC FUNCTION EdtRec( aTmp, aGet, dbfPreCliT, oBrw, cCodCli, cCodArt, nMode )
    end if
 
    /*
-   Tipo de presupuesto---------------------------------------------------------
+   Tipo de S.A.T.---------------------------------------------------------
    */
 
-   cTipPre              := aTipPre[ if( aTmp[ _LALQUILER ], 2, 1  ) ]
+   cTipSat              := aTipSat[ if( aTmp[ _LALQUILER ], 2, 1  ) ]
 
    /*
    Comineza la transaccion-----------------------------------------------------
@@ -1942,13 +1816,13 @@ STATIC FUNCTION EdtRec( aTmp, aGet, dbfPreCliT, oBrw, cCodCli, cCodArt, nMode )
    Necestamos el orden el la primera clave-------------------------------------
    */
 
-   nOrd                 := ( dbfPreCliT )->( ordSetFocus( 1 ) )
+   nOrd                 := ( dbfSatCliT )->( ordSetFocus( 1 ) )
 
    cPicUnd              := MasUnd()
-   cPouDiv              := cPouDiv( aTmp[ _CDIVPRE ], dbfDiv ) // Picture de la divisa
-   cPorDiv              := cPorDiv( aTmp[ _CDIVPRE ], dbfDiv ) // Picture de la divisa
-   nDouDiv              := nDouDiv( aTmp[ _CDIVPRE ], dbfDiv )
-   nRouDiv              := nRouDiv( aTmp[ _CDIVPRE ], dbfDiv )
+   cPouDiv              := cPouDiv( aTmp[ _CDIVSAT ], dbfDiv ) // Picture de la divisa
+   cPorDiv              := cPorDiv( aTmp[ _CDIVSAT ], dbfDiv ) // Picture de la divisa
+   nDouDiv              := nDouDiv( aTmp[ _CDIVSAT ], dbfDiv )
+   nRouDiv              := nRouDiv( aTmp[ _CDIVSAT ], dbfDiv )
 
    /*
    Etiquetas-------------------------------------------------------------------
@@ -1979,12 +1853,12 @@ STATIC FUNCTION EdtRec( aTmp, aGet, dbfPreCliT, oBrw, cCodCli, cCodArt, nMode )
    Comienza el dialogo---------------------------------------------------------
    */
 
-   DEFINE DIALOG oDlg RESOURCE "PEDCLI" TITLE LblTitle( nMode ) + "presupuestos a clientes"
+   DEFINE DIALOG oDlg RESOURCE "PEDCLI" TITLE LblTitle( nMode ) + "S.A.T. a clientes"
 
       REDEFINE FOLDER oFld ;
          ID       200 ;
          OF       oDlg ;
-         PROMPT   "&Presupuesto",;
+         PROMPT   "&Satsupuesto",;
                   "Da&tos",;
                   "&Incidencias",;
                   "D&ocumentos" ;
@@ -1999,7 +1873,7 @@ STATIC FUNCTION EdtRec( aTmp, aGet, dbfPreCliT, oBrw, cCodCli, cCodArt, nMode )
 
       REDEFINE BITMAP oBmpGeneral ;
         ID       990 ;
-        RESOURCE "presupuesto_cliente_48_alpha" ;
+        RESOURCE "S.A.T._cliente_48_alpha" ;
         TRANSPARENT ;
         OF       oFld:aDialogs[1]
 
@@ -2068,7 +1942,7 @@ STATIC FUNCTION EdtRec( aTmp, aGet, dbfPreCliT, oBrw, cCodCli, cCodArt, nMode )
          MAX      6 ;
          PICTURE  "9" ;
          VALID    ( ChangeTarifaCabecera( aTmp[ _NTARIFA ], dbfTmpLin, oBrwLin ) ) ;
-         WHEN     ( nMode != ZOOM_MODE .and. ( lUsrMaster() .or. oUser():lCambiarPrecio() ) );
+         WHEN     ( nMode != ZOOM_MODE .and. ( lUsrMaster() .or. oUser():lCambiarSatcio() ) );
          OF       oFld:aDialogs[1]
 
       REDEFINE GET oRieCli VAR nRieCli;
@@ -2220,14 +2094,14 @@ STATIC FUNCTION EdtRec( aTmp, aGet, dbfPreCliT, oBrw, cCodCli, cCodArt, nMode )
 		Divisa____________________________________________________________________
 		*/
 
-		REDEFINE GET aGet[ _CDIVPRE ] VAR aTmp[ _CDIVPRE ];
+		REDEFINE GET aGet[ _CDIVSAT ] VAR aTmp[ _CDIVSAT ];
          WHEN     ( nMode == APPD_MODE .AND. ( dbfTmpLin )->( LastRec() ) == 0 ) ;
-         VALID    ( cDivOut( aGet[ _CDIVPRE ], oBmpDiv, aGet[ _NVDVPRE ], @cPouDiv, @nDouDiv, @cPorDiv, @nRouDiv, nil, nil, oGetMasDiv, dbfDiv, oBandera ) );
+         VALID    ( cDivOut( aGet[ _CDIVSAT ], oBmpDiv, aGet[ _NVDVSAT ], @cPouDiv, @nDouDiv, @cPorDiv, @nRouDiv, nil, nil, oGetMasDiv, dbfDiv, oBandera ) );
 			PICTURE	"@!";
 			ID 		200 ;
 			COLOR 	CLR_GET ;
          BITMAP   "LUPA" ;
-         ON HELP  BrwDiv( aGet[ _CDIVPRE ], oBmpDiv, aGet[ _NVDVPRE ], dbfDiv, oBandera ) ;
+         ON HELP  BrwDiv( aGet[ _CDIVSAT ], oBmpDiv, aGet[ _NVDVSAT ], dbfDiv, oBandera ) ;
 			OF 		oFld:aDialogs[1]
 
 		REDEFINE BITMAP oBmpDiv ;
@@ -2240,7 +2114,7 @@ STATIC FUNCTION EdtRec( aTmp, aGet, dbfPreCliT, oBrw, cCodCli, cCodArt, nMode )
 		*/
 
       REDEFINE BITMAP oBmpEmp ;
-         FILE     "Bmp\ImgPreCli.bmp" ;
+         FILE     "Bmp\ImgSatCli.bmp" ;
          ID       500 ;
          OF       oDlg
 
@@ -2256,7 +2130,7 @@ STATIC FUNCTION EdtRec( aTmp, aGet, dbfPreCliT, oBrw, cCodCli, cCodArt, nMode )
       oBrwLin:cAlias          := dbfTmpLin
 
       oBrwLin:nMarqueeStyle   := 6
-      oBrwLin:cName           := "Presupuesto a cliente.Detalle"
+      oBrwLin:cName           := "Satsupuesto a cliente.Detalle"
 
       oBrwLin:CreateFromResource( 210 )
 
@@ -2340,7 +2214,7 @@ STATIC FUNCTION EdtRec( aTmp, aGet, dbfPreCliT, oBrw, cCodCli, cCodArt, nMode )
 
       with object ( oBrwLin:AddCol() )
          :cHeader             := cNombreUnidades()
-         :bEditValue          := {|| nTotNPreCli( dbfTmpLin ) }
+         :bEditValue          := {|| nTotNSatCli( dbfTmpLin ) }
          :cEditPicture        := cPicUnd
          :nWidth              := 60
          :nDataStrAlign       := 1
@@ -2360,8 +2234,8 @@ STATIC FUNCTION EdtRec( aTmp, aGet, dbfPreCliT, oBrw, cCodCli, cCodArt, nMode )
       end with
 
       with object ( oBrwLin:AddCol() )
-         :cHeader             := "Precio"
-         :bEditValue          := {|| nImpUPreCli( dbfTmpLin, nDouDiv ) }
+         :cHeader             := "Satcio"
+         :bEditValue          := {|| nImpUSatCli( dbfTmpLin, nDouDiv ) }
          :cEditPicture        := cPouDiv
          :nWidth              := 80
          :nDataStrAlign       := 1
@@ -2379,7 +2253,7 @@ STATIC FUNCTION EdtRec( aTmp, aGet, dbfPreCliT, oBrw, cCodCli, cCodArt, nMode )
 
       with object ( oBrwLin:AddCol() )
          :cHeader             := "Dto. Lin."
-         :bEditValue          := {|| nDtoUPreCli( dbfTmpLin, nDouDiv ) }
+         :bEditValue          := {|| nDtoUSatCli( dbfTmpLin, nDouDiv ) }
          :cEditPicture        := cPouDiv
          :nWidth              := 50
          :nDataStrAlign       := 1
@@ -2418,7 +2292,7 @@ STATIC FUNCTION EdtRec( aTmp, aGet, dbfPreCliT, oBrw, cCodCli, cCodArt, nMode )
 
       with object ( oBrwLin:AddCol() )
          :cHeader             := "Portes"
-         :bEditValue          := {|| nTrnUPreCli( dbfTmpLin, nDouDiv ) }
+         :bEditValue          := {|| nTrnUSatCli( dbfTmpLin, nDouDiv ) }
          :cEditPicture        := cPouDiv
          :nWidth              := 70
          :nDataStrAlign       := 1
@@ -2428,7 +2302,7 @@ STATIC FUNCTION EdtRec( aTmp, aGet, dbfPreCliT, oBrw, cCodCli, cCodArt, nMode )
 
       with object ( oBrwLin:AddCol() )
          :cHeader             := "P. verde"
-         :bEditValue          := {|| nPntUPreCli( dbfTmpLin, nDouDiv ) }
+         :bEditValue          := {|| nPntUSatCli( dbfTmpLin, nDouDiv ) }
          :cEditPicture        := cPouDiv
          :nWidth              := 70
          :nDataStrAlign       := 1
@@ -2438,7 +2312,7 @@ STATIC FUNCTION EdtRec( aTmp, aGet, dbfPreCliT, oBrw, cCodCli, cCodArt, nMode )
 
       with object ( oBrwLin:AddCol() )
          :cHeader             := "Total"
-         :bEditValue          := {|| nTotLPreCli( , dbfTmpLin, nDouDiv, nRouDiv, , , aTmp[ _LOPERPV ] ) }
+         :bEditValue          := {|| nTotLSatCli( , dbfTmpLin, nDouDiv, nRouDiv, , , aTmp[ _LOPERPV ] ) }
          :cEditPicture        := cPorDiv
          :nWidth              := 80
          :nDataStrAlign       := 1
@@ -2653,7 +2527,7 @@ STATIC FUNCTION EdtRec( aTmp, aGet, dbfPreCliT, oBrw, cCodCli, cCodArt, nMode )
 			FONT 		oFont ;
 			OF 		oFld:aDialogs[1]
 
-      REDEFINE SAY oGetTotal VAR nTotPre ;
+      REDEFINE SAY oGetTotal VAR nTotSat ;
          ID       420 ;
 			FONT 		oFont ;
 			OF 		oFld:aDialogs[1]
@@ -2684,7 +2558,7 @@ STATIC FUNCTION EdtRec( aTmp, aGet, dbfPreCliT, oBrw, cCodCli, cCodArt, nMode )
 			ID 		502 ;
 			OF 		oFld:aDialogs[1] ;
 			WHEN 		( nMode != ZOOM_MODE ) ;
-         ACTION   ( DelDeta( oBrwLin, aTmp ), oTipPre:Refresh() )
+         ACTION   ( DelDeta( oBrwLin, aTmp ), oTipSat:Refresh() )
 
 		REDEFINE BUTTON ;
 			ID 		503 ;
@@ -2706,31 +2580,31 @@ STATIC FUNCTION EdtRec( aTmp, aGet, dbfPreCliT, oBrw, cCodCli, cCodArt, nMode )
       REDEFINE BUTTON oBtnKit;
          ID       526 ;
 			OF 		oFld:aDialogs[1] ;
-         ACTION   ( ShowKit( dbfPreCliT, dbfTmpLin, oBtnKit, oBrwLin ) )
+         ACTION   ( ShowKit( dbfSatCliT, dbfTmpLin, oBtnKit, oBrwLin ) )
 
-      REDEFINE GET aGet[_CSERPRE] VAR aTmp[_CSERPRE] ;
+      REDEFINE GET aGet[_CSERSAT] VAR aTmp[_CSERSAT] ;
          ID       90 ;
          PICTURE  "@!" ;
 			COLOR 	CLR_GET ;
          SPINNER ;
-         ON UP    ( UpSerie( aGet[_CSERPRE] ) );
-         ON DOWN  ( DwSerie( aGet[_CSERPRE] ) );
+         ON UP    ( UpSerie( aGet[_CSERSAT] ) );
+         ON DOWN  ( DwSerie( aGet[_CSERSAT] ) );
          WHEN     ( nMode == APPD_MODE .OR. nMode == DUPL_MODE );
-         VALID    ( aTmp[_CSERPRE] >= "A" .AND. aTmp[_CSERPRE] <= "Z"  );
+         VALID    ( aTmp[_CSERSAT] >= "A" .AND. aTmp[_CSERSAT] <= "Z"  );
          OF       oFld:aDialogs[1]
 
-		REDEFINE GET aGet[_NNUMPRE] VAR aTmp[_NNUMPRE];
+		REDEFINE GET aGet[_NNUMSAT] VAR aTmp[_NNUMSAT];
 			ID 		100 ;
 			PICTURE 	"999999999" ;
 			WHEN 		.F. ;
 			OF 		oFld:aDialogs[1]
 
-		REDEFINE GET aGet[_CSUFPRE] VAR aTmp[_CSUFPRE];
+		REDEFINE GET aGet[_CSUFSAT] VAR aTmp[_CSUFSAT];
 			ID 		105 ;
 			WHEN 		.F. ;
 			OF 		oFld:aDialogs[1]
 
-		REDEFINE GET aGet[_DFECPRE] VAR aTmp[_DFECPRE];
+		REDEFINE GET aGet[_DFECSAT] VAR aTmp[_DFECSAT];
 			ID 		110 ;
 			SPINNER;
 			WHEN 		( nMode != ZOOM_MODE ) ;
@@ -2777,14 +2651,14 @@ STATIC FUNCTION EdtRec( aTmp, aGet, dbfPreCliT, oBrw, cCodCli, cCodArt, nMode )
          ITEMS    ( aSituacion( dbfSitua ) ) ;
          OF       oFld:aDialogs[1]
 
-      REDEFINE COMBOBOX oTipPre VAR cTipPre ;
+      REDEFINE COMBOBOX oTipSat VAR cTipSat ;
          ID       217 ;
          WHEN     ( ( dbfTmpLin )->( LastRec() ) == 0 ) ;
-         ITEMS    aTipPre ;
+         ITEMS    aTipSat ;
          ON CHANGE(SetDialog( aGet, oSayDias, oSayTxtDias, oSayGetRnt, oGetRnt ) );
          OF       oFld:aDialogs[1]
 
-		REDEFINE GET aGet[_CSUPRE] VAR aTmp[_CSUPRE] ;
+		REDEFINE GET aGet[_CSUSAT] VAR aTmp[_CSUSAT] ;
          ID       122 ;
          IDSAY    123 ;
 			WHEN 		( nMode != ZOOM_MODE ) ;
@@ -2954,7 +2828,7 @@ STATIC FUNCTION EdtRec( aTmp, aGet, dbfPreCliT, oBrw, cCodCli, cCodArt, nMode )
       oBrwInc:cAlias          := dbfTmpInc
 
       oBrwInc:nMarqueeStyle   := 6
-      oBrwInc:cName           := "Presupuesto a cliente.Incidencias"
+      oBrwInc:cName           := "Satsupuesto a cliente.Incidencias"
 
          with object ( oBrwInc:AddCol() )
             :cHeader          := "Resuelta"
@@ -3080,7 +2954,7 @@ STATIC FUNCTION EdtRec( aTmp, aGet, dbfPreCliT, oBrw, cCodCli, cCodArt, nMode )
          ID       3 ;
          OF       oDlg ;
          WHEN     ( nMode != ZOOM_MODE ) ;
-         ACTION   ( RecPreCli( aTmp ), nTotPreCli( nil, dbfPreCliT, dbfTmpLin, dbfIva, dbfDiv, dbfFPago, aTmp ) )
+         ACTION   ( RecSatCli( aTmp ), nTotSatCli( nil, dbfSatCliT, dbfTmpLin, dbfIva, dbfDiv, dbfFPago, aTmp ) )
 
 		REDEFINE BUTTON ;
          ID       IDOK ;
@@ -3092,7 +2966,7 @@ STATIC FUNCTION EdtRec( aTmp, aGet, dbfPreCliT, oBrw, cCodCli, cCodArt, nMode )
          ID       4 ;
 			OF 		oDlg ;
          WHEN     ( nMode != ZOOM_MODE ) ;
-         ACTION   ( if( EndTrans( aTmp, aGet, nMode, oBrwLin, oBrw, oBrwInc, oDlg ), GenPreCli( IS_PRINTER ), ) )
+         ACTION   ( if( EndTrans( aTmp, aGet, nMode, oBrwLin, oBrw, oBrwInc, oDlg ), GenSatCli( IS_PRINTER ), ) )
 
       REDEFINE BUTTON ;
          ID       IDCANCEL ;
@@ -3113,7 +2987,7 @@ STATIC FUNCTION EdtRec( aTmp, aGet, dbfPreCliT, oBrw, cCodCli, cCodArt, nMode )
 
       oFld:aDialogs[1]:AddFastKey( VK_F2, {|| AppDeta( oBrwLin, bEdtDet, aTmp, .f. ) } )
       oFld:aDialogs[1]:AddFastKey( VK_F3, {|| EdtDeta( oBrwLin, bEdtDet, aTmp ) } )
-      oFld:aDialogs[1]:AddFastKey( VK_F4, {|| DelDeta( oBrwLin, aTmp ), oTipPre:Refresh() } )
+      oFld:aDialogs[1]:AddFastKey( VK_F4, {|| DelDeta( oBrwLin, aTmp ), oTipSat:Refresh() } )
 
       oFld:aDialogs[3]:AddFastKey( VK_F2, {|| WinAppRec( oBrwInc, bEdtInc, dbfTmpInc, nil, nil, aTmp ) } )
       oFld:aDialogs[3]:AddFastKey( VK_F3, {|| WinEdtRec( oBrwInc, bEdtInc, dbfTmpInc, nil, nil, aTmp ) } )
@@ -3124,13 +2998,13 @@ STATIC FUNCTION EdtRec( aTmp, aGet, dbfPreCliT, oBrw, cCodCli, cCodArt, nMode )
       oFld:aDialogs[4]:AddFastKey( VK_F4, {|| WinDelRec( oBrwDoc, dbfTmpDoc ) } )
 
       oDlg:AddFastKey( VK_F5, {|| EndTrans( aTmp, aGet, nMode, oBrwLin, oBrw, oBrwInc, oDlg ) } )
-      oDlg:AddFastKey( VK_F6, {|| if( EndTrans( aTmp, aGet, nMode, oBrwLin, oBrw, oBrwInc, oDlg ), GenPreCli( IS_PRINTER ), ) } )
+      oDlg:AddFastKey( VK_F6, {|| if( EndTrans( aTmp, aGet, nMode, oBrwLin, oBrw, oBrwInc, oDlg ), GenSatCli( IS_PRINTER ), ) } )
 
       oDlg:AddFastKey( 65,    {|| if( GetKeyState( VK_CONTROL ), CreateInfoArticulo(), ) } )
 
    end if
 
-   oDlg:AddFastKey( VK_F1, {|| ChmHelp( "Presupuesto" ) } )
+   oDlg:AddFastKey( VK_F1, {|| ChmHelp( "Satsupuesto" ) } )
 
    do case
       case nMode == APPD_MODE .and. lRecogerUsuario() .and. Empty( cCodArt )
@@ -3143,7 +3017,7 @@ STATIC FUNCTION EdtRec( aTmp, aGet, dbfPreCliT, oBrw, cCodCli, cCodArt, nMode )
          oDlg:bStart := {|| AppDeta( oBrwLin, bEdtDet, aTmp, nil, cCodArt ) }
 
       otherwise
-         oDlg:bStart := {|| ShowKit( dbfPreCliT, dbfTmpLin, oBtnKit, oBrwLin, .f., dbfTmpInc, cCodCli, dbfClient, oRieCli, oGetRnt, aGet, oSayGetRnt ) }
+         oDlg:bStart := {|| ShowKit( dbfSatCliT, dbfTmpLin, oBtnKit, oBrwLin, .f., dbfTmpInc, cCodCli, dbfClient, oRieCli, oGetRnt, aGet, oSayGetRnt ) }
 
    end case
 
@@ -3161,7 +3035,7 @@ STATIC FUNCTION EdtRec( aTmp, aGet, dbfPreCliT, oBrw, cCodCli, cCodArt, nMode )
    oBmpDiv:end()
    oBmpGeneral:End()
 
-   ( dbfPreCliT )->( ordSetFocus( nOrd ) )
+   ( dbfSatCliT )->( ordSetFocus( nOrd ) )
 
    KillTrans( oBrwLin )
 
@@ -3198,7 +3072,7 @@ Static Function EdtRecMenu( aTmp, oDlg )
             MENUITEM    "&3. Modificar obra";
                MESSAGE  "Modificar ficha de la obra" ;
                RESOURCE "Worker16" ;
-               ACTION   ( if( !Empty( aTmp[ _CCODOBR ] ), EdtObras( aTmp[ _CCODCLI ], aTmp[ _CCODOBR ], dbfObrasT ), MsgStop( "No hay obra asociada para el presupuesto" ) ) )
+               ACTION   ( if( !Empty( aTmp[ _CCODOBR ] ), EdtObras( aTmp[ _CCODCLI ], aTmp[ _CCODOBR ], dbfObrasT ), MsgStop( "No hay obra asociada para el S.A.T." ) ) )
 
             SEPARATOR
 
@@ -3207,7 +3081,7 @@ Static Function EdtRecMenu( aTmp, oDlg )
             MENUITEM    "&4. Informe del documento";
                MESSAGE  "Abrir el informe del documento" ;
                RESOURCE "Info16" ;
-               ACTION   ( TTrazaDocumento():Activate( PRE_CLI, aTmp[ _CSERPRE ] + Str( aTmp[ _NNUMPRE ] ) + aTmp[ _CSUFPRE ] ) )
+               ACTION   ( TTrazaDocumento():Activate( SAT_CLI, aTmp[ _CSERSAT ] + Str( aTmp[ _NNUMSAT ] ) + aTmp[ _CSUFSAT ] ) )
 
          ENDMENU
 
@@ -3286,17 +3160,18 @@ RETURN WinZooRec( oBrwLin, bEdtDet, dbfTmpLin, .f., nil, aTmp )
 Edita las lineas de Detalle
 */
 
-STATIC FUNCTION EdtDet( aTmp, aGet, dbfPreCliL, oBrw, lTotLin, cCodArtEnt, nMode, aTmpPre )
+STATIC FUNCTION EdtDet( aTmp, aGet, dbfSatCliL, oBrw, lTotLin, cCodArtEnt, nMode, aTmpSat )
 
    local oDlg
    local oFld
    local oBtn
 	local oTotal
-   local nTotPreCli
+   local nTotSatCli
    local cGet2
    local oGet2
    local cGet3
    local oGet3
+   local oBtnSer
    local oSayPr1
    local oSayPr2
    local cSayPr1           := ""
@@ -3318,7 +3193,7 @@ STATIC FUNCTION EdtDet( aTmp, aGet, dbfPreCliL, oBrw, lTotLin, cCodArtEnt, nMode
    local cCodArt           := Padr( aTmp[ _CREF ], 32 )
    local oRentLin
    local cRentLin
-   local cCodDiv           := aTmpPre[ _CDIVPRE ]
+   local cCodDiv           := aTmpSat[ _CDIVSAT ]
    local oSayDias
    local oGetCaducidad
    local dGetCaducidad
@@ -3329,27 +3204,27 @@ STATIC FUNCTION EdtDet( aTmp, aGet, dbfPreCliL, oBrw, lTotLin, cCodArtEnt, nMode
 
    do case
    case nMode == APPD_MODE
-      aTmp[ _CSERPRE  ]    := aTmpPre[ _CSERPRE ]
-      aTmp[ _NNUMPRE  ]    := aTmpPre[ _NNUMPRE ]
-      aTmp[ _CSUFPRE  ]    := aTmpPre[ _CSUFPRE ]
+      aTmp[ _CSERSAT  ]    := aTmpSat[ _CSERSAT ]
+      aTmp[ _NNUMSAT  ]    := aTmpSat[ _NNUMSAT ]
+      aTmp[ _CSUFSAT  ]    := aTmpSat[ _CSUFSAT ]
       aTmp[ _NUNICAJA ]    := 1
       aTmp[ _CTIPMOV  ]    := cDefVta()
       aTmp[ _LTOTLIN  ]    := lTotLin
-      aTmp[ _NCANPRE  ]    := 1
-      aTmp[ _LIVALIN  ]    := aTmpPre[ _LIVAINC ]
-      aTmp[ _CALMLIN  ]    := aTmpPre[ _CCODALM ]
-      aTmp[ _NTARLIN  ]    := aTmpPre[ _NTARIFA ]
+      aTmp[ _NCANSAT  ]    := 1
+      aTmp[ _LIVALIN  ]    := aTmpSat[ _LIVAINC ]
+      aTmp[ _CALMLIN  ]    := aTmpSat[ _CCODALM ]
+      aTmp[ _NTARLIN  ]    := aTmpSat[ _NTARIFA ]
       aTmp[ _LIMPFRA  ]    := .t.
 
       if !Empty( cCodArtEnt )
          cCodArt           := Padr( cCodArtEnt, 32 )
       end if
 
-      aTmp[ __DFECSAL ]    := aTmpPre[ _DFECSAL ]
-      aTmp[ __DFECENT ]    := aTmpPre[ _DFECENTR ]
+      aTmp[ __DFECSAL ]    := aTmpSat[ _DFECSAL ]
+      aTmp[ __DFECENT ]    := aTmpSat[ _DFECENTR ]
 
-      if !Empty( oTipPre )
-         if oTipPre:nAt == 2
+      if !Empty( oTipSat )
+         if oTipSat:nAt == 2
             aTmp[ __LALQUILER ]  := .t.
          else
             aTmp[ __LALQUILER ]  := .f.
@@ -3376,29 +3251,24 @@ STATIC FUNCTION EdtDet( aTmp, aGet, dbfPreCliL, oBrw, lTotLin, cCodArtEnt, nMode
    cSayGrp              := RetFld( aTmp[ _CGRPFAM ], oGrpFam:GetAlias() )
    cSayFam              := RetFld( aTmp[ _CCODFAM ], dbfFamilia )
 
-   DEFINE DIALOG oDlg RESOURCE "LFACCLI" TITLE LblTitle( nMode ) + "líneas de presupuestos a clientes"
+   DEFINE DIALOG oDlg RESOURCE "LFACCLI" TITLE LblTitle( nMode ) + "líneas de S.A.T. a clientes"
 
-      if aTmp[ __LALQUILER ]
-
-         REDEFINE FOLDER oFld ID 400 OF oDlg ;
-            PROMPT   "&General",    "Da&tos",    "&Observaciones" ;
-            DIALOGS  "LPRECLI_4",   "LALBCLI_2", "LFACCLI_3"
-
-      else
-
-         REDEFINE FOLDER oFld ID 400 OF oDlg ;
-            PROMPT   "&General",    "Da&tos",    "&Observaciones" ;
-            DIALOGS  "LFACCLI_1",   "LALBCLI_2", "LFACCLI_3"
-
-      end if
+      REDEFINE FOLDER oFld ;
+         ID       400 ;
+         OF       oDlg ;
+         PROMPT   "&General",;
+                  "Da&tos",;
+                  "&Observaciones" ;
+         DIALOGS  "LFACCLI_1",;
+                  "LALBCLI_2",;
+                  "LFACCLI_3"
 
       REDEFINE GET aGet[ _CREF ] VAR cCodArt;
          ID       100 ;
          WHEN     ( nMode != ZOOM_MODE ) ;
-         VALID    ( LoaArt( aTmp, aGet, aTmpPre, oStkAct, oSayPr1, oSayPr2, oSayVp1, oSayVp2, bmpImage, oSayLote, nMode ) ) ;
+         VALID    ( LoaArt( aTmp, aGet, aTmpSat, oStkAct, oSayPr1, oSayPr2, oSayVp1, oSayVp2, bmpImage, oSayLote, nMode ) ) ;
          BITMAP   "LUPA" ;
-         ON HELP  ( BrwArticulo( aGet[_CREF], aGet[_CDETALLE] ) ) ;
-         COLOR    CLR_GET ;
+         ON HELP  ( BrwArticulo( aGet[ _CREF ], aGet[ _CDETALLE ] ) ) ;
          OF       oFld:aDialogs[1]
 
       REDEFINE GET aGet[ _CDETALLE ] VAR aTmp[ _CDETALLE ] ;
@@ -3410,7 +3280,6 @@ STATIC FUNCTION EdtDet( aTmp, aGet, dbfPreCliL, oBrw, lTotLin, cCodArtEnt, nMode
          MEMO ;
          ID       111 ;
          WHEN     ( ( lModDes() .or. Empty( aTmp[ _MLNGDES ] ) ) .AND. nMode != ZOOM_MODE );
-         COLOR    CLR_GET ;
          OF       oFld:aDialogs[1]
 
       /*
@@ -3454,7 +3323,7 @@ STATIC FUNCTION EdtDet( aTmp, aGet, dbfPreCliL, oBrw, lTotLin, cCodArtEnt, nMode
 			COLOR 	CLR_GET ;
          BITMAP   "LUPA" ;
          VALID    ( if( lPrpAct( aTmp[_CVALPR1], oSayVp1, aTmp[_CCODPR1 ], dbfTblPro ),;
-                        LoaArt( aTmp, aGet, aTmpPre, oStkAct, oSayPr1, oSayPr2, oSayVp1, oSayVp2, bmpImage, oSayLote, nMode, .f. ),;
+                        LoaArt( aTmp, aGet, aTmpSat, oStkAct, oSayPr1, oSayPr2, oSayVp1, oSayVp2, bmpImage, oSayLote, nMode, .f. ),;
                         .f. ) );
          ON HELP  ( brwPrpAct( aGet[_CVALPR1], oSayVp1, aTmp[_CCODPR1 ] ) ) ;
          OF       oFld:aDialogs[1]
@@ -3477,7 +3346,7 @@ STATIC FUNCTION EdtDet( aTmp, aGet, dbfPreCliL, oBrw, lTotLin, cCodArtEnt, nMode
 			COLOR 	CLR_GET ;
          BITMAP   "LUPA" ;
          VALID    ( if( lPrpAct( aTmp[_CVALPR2], oSayVp2, aTmp[_CCODPR2 ], dbfTblPro ),;
-                        LoaArt( aTmp, aGet, aTmpPre, oStkAct, oSayPr1, oSayPr2, oSayVp1, oSayVp2, bmpImage, oSayLote, nMode, .f. ),;
+                        LoaArt( aTmp, aGet, aTmpSat, oStkAct, oSayPr1, oSayPr2, oSayVp1, oSayVp2, bmpImage, oSayLote, nMode, .f. ),;
                         .f. ) );
          ON HELP  ( brwPrpAct( aGet[_CVALPR2], oSayVp2, aTmp[_CCODPR2 ] ) ) ;
          OF       oFld:aDialogs[1]
@@ -3512,41 +3381,41 @@ STATIC FUNCTION EdtDet( aTmp, aGet, dbfPreCliL, oBrw, lTotLin, cCodArtEnt, nMode
 
       // Campos de las descripciones de la unidad de medición
 
-      REDEFINE GET aGet[ ( dbfPreCliL )->( fieldpos( "nMedUno" ) ) ] ;
-         VAR      aTmp[ ( dbfPreCliL )->( fieldpos( "nMedUno" ) ) ] ;
+      REDEFINE GET aGet[ ( dbfSatCliL )->( fieldpos( "nMedUno" ) ) ] ;
+         VAR      aTmp[ ( dbfSatCliL )->( fieldpos( "nMedUno" ) ) ] ;
          ID       520 ;
          IDSAY    521 ;
          SPINNER ;
          WHEN     ( nMode != ZOOM_MODE ) ;
-         ON CHANGE( RecalculaLinea( aTmp, aTmpPre, nDouDiv, oTotal, oRentLin, cCodDiv ) );
+         ON CHANGE( RecalculaLinea( aTmp, aTmpSat, nDouDiv, oTotal, oRentLin, cCodDiv ) );
          PICTURE  MasUnd() ;
          OF       oFld:aDialogs[1]
 
-         aGet[ ( dbfPreCliL )->( fieldpos( "nMedUno" ) ) ]:oSay:SetColor( CLR_BLUE )
+         aGet[ ( dbfSatCliL )->( fieldpos( "nMedUno" ) ) ]:oSay:SetColor( CLR_BLUE )
 
-      REDEFINE GET aGet[ ( dbfPreCliL )->( fieldpos( "nMedDos" ) ) ] ;
-         VAR      aTmp[ ( dbfPreCliL )->( fieldpos( "nMedDos" ) ) ] ;
+      REDEFINE GET aGet[ ( dbfSatCliL )->( fieldpos( "nMedDos" ) ) ] ;
+         VAR      aTmp[ ( dbfSatCliL )->( fieldpos( "nMedDos" ) ) ] ;
          ID       530 ;
          IDSAY    531 ;
          SPINNER ;
          WHEN     ( nMode != ZOOM_MODE ) ;
-         ON CHANGE( RecalculaLinea( aTmp, aTmpPre, nDouDiv, oTotal, oRentLin, cCodDiv ) );
+         ON CHANGE( RecalculaLinea( aTmp, aTmpSat, nDouDiv, oTotal, oRentLin, cCodDiv ) );
          PICTURE  MasUnd() ;
          OF       oFld:aDialogs[1]
 
-         aGet[ ( dbfPreCliL )->( fieldpos( "nMedDos" ) ) ]:oSay:SetColor( CLR_BLUE )
+         aGet[ ( dbfSatCliL )->( fieldpos( "nMedDos" ) ) ]:oSay:SetColor( CLR_BLUE )
 
-      REDEFINE GET aGet[ ( dbfPreCliL )->( fieldpos( "nMedTre" ) ) ] ;
-         VAR      aTmp[ ( dbfPreCliL )->( fieldpos( "nMedTre" ) ) ] ;
+      REDEFINE GET aGet[ ( dbfSatCliL )->( fieldpos( "nMedTre" ) ) ] ;
+         VAR      aTmp[ ( dbfSatCliL )->( fieldpos( "nMedTre" ) ) ] ;
          ID       540 ;
          IDSAY    541 ;
          SPINNER ;
          WHEN     ( nMode != ZOOM_MODE ) ;
-         ON CHANGE( RecalculaLinea( aTmp, aTmpPre, nDouDiv, oTotal, oRentLin, cCodDiv ) );
+         ON CHANGE( RecalculaLinea( aTmp, aTmpSat, nDouDiv, oTotal, oRentLin, cCodDiv ) );
          PICTURE  MasUnd() ;
          OF       oFld:aDialogs[1]
 
-         aGet[ ( dbfPreCliL )->( fieldpos( "nMedTre" ) ) ]:oSay:SetColor( CLR_BLUE )
+         aGet[ ( dbfSatCliL )->( fieldpos( "nMedTre" ) ) ]:oSay:SetColor( CLR_BLUE )
 
       if IsMuebles()
 
@@ -3574,16 +3443,16 @@ STATIC FUNCTION EdtDet( aTmp, aGet, dbfPreCliL, oBrw, lTotLin, cCodArtEnt, nMode
          ID       420 ;
 			SPINNER ;
          WHEN     ( nMode != ZOOM_MODE ) ;
-         VALID    ( RecalculaLinea( aTmp, aTmpPre, nDouDiv, oTotal, oRentLin, cCodDiv ) );
-         ON CHANGE( RecalculaLinea( aTmp, aTmpPre, nDouDiv, oTotal, oRentLin, cCodDiv ), oSayDias:Refresh() );
+         VALID    ( RecalculaLinea( aTmp, aTmpSat, nDouDiv, oTotal, oRentLin, cCodDiv ) );
+         ON CHANGE( RecalculaLinea( aTmp, aTmpSat, nDouDiv, oTotal, oRentLin, cCodDiv ), oSayDias:Refresh() );
          OF       oFld:aDialogs[1]
 
       REDEFINE GET aGet[ __DFECENT ] VAR aTmp[ __DFECENT ];
          ID       430 ;
 			SPINNER ;
          WHEN     ( nMode != ZOOM_MODE ) ;
-         VALID    ( RecalculaLinea( aTmp, aTmpPre, nDouDiv, oTotal, oRentLin, cCodDiv ) );
-         ON CHANGE( RecalculaLinea( aTmp, aTmpPre, nDouDiv, oTotal, oRentLin, cCodDiv ), oSayDias:Refresh() );
+         VALID    ( RecalculaLinea( aTmp, aTmpSat, nDouDiv, oTotal, oRentLin, cCodDiv ) );
+         ON CHANGE( RecalculaLinea( aTmp, aTmpSat, nDouDiv, oTotal, oRentLin, cCodDiv ), oSayDias:Refresh() );
          OF       oFld:aDialogs[1]
 
       REDEFINE SAY oSayDias ;
@@ -3600,18 +3469,18 @@ STATIC FUNCTION EdtDet( aTmp, aGet, dbfPreCliL, oBrw, lTotLin, cCodArtEnt, nMode
          SPINNER ;
          WHEN     ( nMode != ZOOM_MODE ) ;
          PICTURE  cPouDiv ;
-         ON CHANGE( RecalculaLinea( aTmp, aTmpPre, nDouDiv, oTotal, oRentLin, cCodDiv ) );
+         ON CHANGE( RecalculaLinea( aTmp, aTmpSat, nDouDiv, oTotal, oRentLin, cCodDiv ) );
          ON HELP  ( oNewImp:nBrwImp( aGet[ _NVALIMP ] ) );
          OF       oFld:aDialogs[1]
 
       end if
 
-      REDEFINE GET aGet[ _NCANPRE ] VAR aTmp[ _NCANPRE ];
+      REDEFINE GET aGet[ _NCANSAT ] VAR aTmp[ _NCANSAT ];
          ID       130 ;
          SPINNER ;
          WHEN     ( lUseCaj() .AND. nMode != ZOOM_MODE .AND. !lTotLin ) ;
-         ON CHANGE( RecalculaLinea( aTmp, aTmpPre, nDouDiv, oTotal, oRentLin, cCodDiv ), LoaArt( aTmp, aGet, aTmpPre, oStkAct, oSayPr1, oSayPr2, oSayVp1, oSayVp2, bmpImage, oSayLote, nMode, .f. ) );
-         VALID    ( RecalculaLinea( aTmp, aTmpPre, nDouDiv, oTotal, oRentLin, cCodDiv ), LoaArt( aTmp, aGet, aTmpPre, oStkAct, oSayPr1, oSayPr2, oSayVp1, oSayVp2, bmpImage, oSayLote, nMode, .f. ) );
+         ON CHANGE( RecalculaLinea( aTmp, aTmpSat, nDouDiv, oTotal, oRentLin, cCodDiv ), LoaArt( aTmp, aGet, aTmpSat, oStkAct, oSayPr1, oSayPr2, oSayVp1, oSayVp2, bmpImage, oSayLote, nMode, .f. ) );
+         VALID    ( RecalculaLinea( aTmp, aTmpSat, nDouDiv, oTotal, oRentLin, cCodDiv ), LoaArt( aTmp, aGet, aTmpSat, oStkAct, oSayPr1, oSayPr2, oSayVp1, oSayVp2, bmpImage, oSayLote, nMode, .f. ) );
          PICTURE  cPicUnd ;
          OF       oFld:aDialogs[1];
          IDSAY    131
@@ -3620,8 +3489,8 @@ STATIC FUNCTION EdtDet( aTmp, aGet, dbfPreCliL, oBrw, lTotLin, cCodArtEnt, nMode
          ID       140 ;
          SPINNER ;
          WHEN     ( nMode != ZOOM_MODE .AND. !lTotLin ) ;
-         ON CHANGE( RecalculaLinea( aTmp, aTmpPre, nDouDiv, oTotal, oRentLin, cCodDiv ), LoaArt( aTmp, aGet, aTmpPre, oStkAct, oSayPr1, oSayPr2, oSayVp1, oSayVp2, bmpImage, oSayLote, nMode, .f. ) );
-         VALID    ( RecalculaLinea( aTmp, aTmpPre, nDouDiv, oTotal, oRentLin, cCodDiv ), LoaArt( aTmp, aGet, aTmpPre, oStkAct, oSayPr1, oSayPr2, oSayVp1, oSayVp2, bmpImage, oSayLote, nMode, .f. ) );
+         ON CHANGE( RecalculaLinea( aTmp, aTmpSat, nDouDiv, oTotal, oRentLin, cCodDiv ), LoaArt( aTmp, aGet, aTmpSat, oStkAct, oSayPr1, oSayPr2, oSayVp1, oSayVp2, bmpImage, oSayLote, nMode, .f. ) );
+         VALID    ( RecalculaLinea( aTmp, aTmpSat, nDouDiv, oTotal, oRentLin, cCodDiv ), LoaArt( aTmp, aGet, aTmpSat, oStkAct, oSayPr1, oSayPr2, oSayVp1, oSayVp2, bmpImage, oSayLote, nMode, .f. ) );
          PICTURE  cPicUnd ;
          OF       oFld:aDialogs[1] ;
          IDSAY    141
@@ -3630,8 +3499,8 @@ STATIC FUNCTION EdtDet( aTmp, aGet, dbfPreCliL, oBrw, lTotLin, cCodArtEnt, nMode
          ID       150 ;
          SPINNER ;
          WHEN     ( nMode != ZOOM_MODE .and. !lTotLin ) ;
-         ON CHANGE( RecalculaLinea( aTmp, aTmpPre, nDouDiv, oTotal, oRentLin, cCodDiv ) );
-         VALID    ( RecalculaLinea( aTmp, aTmpPre, nDouDiv, oTotal, oRentLin, cCodDiv ) );
+         ON CHANGE( RecalculaLinea( aTmp, aTmpSat, nDouDiv, oTotal, oRentLin, cCodDiv ) );
+         VALID    ( RecalculaLinea( aTmp, aTmpSat, nDouDiv, oTotal, oRentLin, cCodDiv ) );
          COLOR    CLR_GET ;
          PICTURE  cPouDiv ;
          OF       oFld:aDialogs[1]
@@ -3643,8 +3512,8 @@ STATIC FUNCTION EdtDet( aTmp, aGet, dbfPreCliL, oBrw, lTotLin, cCodArtEnt, nMode
          MAX      6 ;
          PICTURE  "9" ;
          VALID    ( aTmp[ _NTARLIN ] >= 1 .AND. aTmp[ _NTARLIN ] <= 6 );
-         WHEN     ( nMode != ZOOM_MODE .and. ( lUsrMaster() .or. oUser():lCambiarPrecio() ) );
-         ON CHANGE( ChangeTarifa( aTmp, aGet, aTmpPre ), RecalculaLinea( aTmp, aTmpPre, nDouDiv, oTotal, oRentLin, cCodDiv ) );
+         WHEN     ( nMode != ZOOM_MODE .and. ( lUsrMaster() .or. oUser():lCambiarSatcio() ) );
+         ON CHANGE( ChangeTarifa( aTmp, aGet, aTmpSat ), RecalculaLinea( aTmp, aTmpSat, nDouDiv, oTotal, oRentLin, cCodDiv ) );
          OF       oFld:aDialogs[1]
 
       /*
@@ -3657,8 +3526,8 @@ STATIC FUNCTION EdtDet( aTmp, aGet, dbfPreCliL, oBrw, lTotLin, cCodArtEnt, nMode
             ID       250 ;
             SPINNER ;
             WHEN     ( nMode != ZOOM_MODE .and. !lTotLin ) ;
-            ON CHANGE( RecalculaLinea( aTmp, aTmpPre, nDouDiv, oTotal, oRentLin, cCodDiv ) );
-            VALID    ( RecalculaLinea( aTmp, aTmpPre, nDouDiv, oTotal, oRentLin, cCodDiv ) );
+            ON CHANGE( RecalculaLinea( aTmp, aTmpSat, nDouDiv, oTotal, oRentLin, cCodDiv ) );
+            VALID    ( RecalculaLinea( aTmp, aTmpSat, nDouDiv, oTotal, oRentLin, cCodDiv ) );
             COLOR    CLR_GET ;
             PICTURE  cPouDiv ;
             OF       oFld:aDialogs[1]
@@ -3670,8 +3539,8 @@ STATIC FUNCTION EdtDet( aTmp, aGet, dbfPreCliL, oBrw, lTotLin, cCodArtEnt, nMode
          IDSAY    351 ;
          SPINNER ;
          WHEN     ( nMode != ZOOM_MODE .AND. !lTotLin ) ;
-         ON CHANGE( RecalculaLinea( aTmp, aTmpPre, nDouDiv, oTotal, oRentLin, cCodDiv ) );
-         VALID    ( RecalculaLinea( aTmp, aTmpPre, nDouDiv, oTotal, oRentLin, cCodDiv ) );
+         ON CHANGE( RecalculaLinea( aTmp, aTmpSat, nDouDiv, oTotal, oRentLin, cCodDiv ) );
+         VALID    ( RecalculaLinea( aTmp, aTmpSat, nDouDiv, oTotal, oRentLin, cCodDiv ) );
          PICTURE  cPouDiv ;
          OF       oFld:aDialogs[1]
 
@@ -3680,8 +3549,8 @@ STATIC FUNCTION EdtDet( aTmp, aGet, dbfPreCliL, oBrw, lTotLin, cCodArtEnt, nMode
          IDSAY    152 ;
          SPINNER ;
          PICTURE  cPpvDiv ;
-         ON CHANGE( RecalculaLinea( aTmp, aTmpPre, nDouDiv, oTotal, oRentLin, cCodDiv ) );
-         VALID    ( RecalculaLinea( aTmp, aTmpPre, nDouDiv, oTotal, oRentLin, cCodDiv ) );
+         ON CHANGE( RecalculaLinea( aTmp, aTmpSat, nDouDiv, oTotal, oRentLin, cCodDiv ) );
+         VALID    ( RecalculaLinea( aTmp, aTmpSat, nDouDiv, oTotal, oRentLin, cCodDiv ) );
          WHEN     ( nMode != ZOOM_MODE .and. !lTotLin ) ;
          OF       oFld:aDialogs[1]
 
@@ -3718,17 +3587,17 @@ STATIC FUNCTION EdtDet( aTmp, aGet, dbfPreCliL, oBrw, lTotLin, cCodArtEnt, nMode
          ID       180 ;
          SPINNER ;
          WHEN     ( nMode != ZOOM_MODE .and. !lTotLin ) ;
-         ON CHANGE( RecalculaLinea( aTmp, aTmpPre, nDouDiv, oTotal, oRentLin, cCodDiv ) );
-         VALID    ( RecalculaLinea( aTmp, aTmpPre, nDouDiv, oTotal, oRentLin, cCodDiv ) );
+         ON CHANGE( RecalculaLinea( aTmp, aTmpSat, nDouDiv, oTotal, oRentLin, cCodDiv ) );
+         VALID    ( RecalculaLinea( aTmp, aTmpSat, nDouDiv, oTotal, oRentLin, cCodDiv ) );
          PICTURE  "@E 999.99" ;
          OF       oFld:aDialogs[1]
 
       REDEFINE GET aGet[ _NDTOPRM ] VAR aTmp[ _NDTOPRM ] ;
          ID       190 ;
          SPINNER ;
-         ON CHANGE( RecalculaLinea( aTmp, aTmpPre, nDouDiv, oTotal, oRentLin, cCodDiv ) );
+         ON CHANGE( RecalculaLinea( aTmp, aTmpSat, nDouDiv, oTotal, oRentLin, cCodDiv ) );
          WHEN     ( nMode != ZOOM_MODE .and. !lTotLin ) ;
-         VALID    ( RecalculaLinea( aTmp, aTmpPre, nDouDiv, oTotal, oRentLin, cCodDiv ) );
+         VALID    ( RecalculaLinea( aTmp, aTmpSat, nDouDiv, oTotal, oRentLin, cCodDiv ) );
          PICTURE  "@E 99.99";
          OF       oFld:aDialogs[1]
 
@@ -3756,13 +3625,13 @@ STATIC FUNCTION EdtDet( aTmp, aGet, dbfPreCliL, oBrw, lTotLin, cCodArtEnt, nMode
 			SPINNER ;
          MIN      0 ;
          COLOR    Rgb( 255, 0, 0 ) ;
-         ON CHANGE( RecalculaLinea( aTmp, aTmpPre, nDouDiv, oTotal, oRentLin, cCodDiv ) );
-         VALID    ( RecalculaLinea( aTmp, aTmpPre, nDouDiv, oTotal, oRentLin, cCodDiv ) .and. aTmp[_NDTODIV] >= 0 );
+         ON CHANGE( RecalculaLinea( aTmp, aTmpSat, nDouDiv, oTotal, oRentLin, cCodDiv ) );
+         VALID    ( RecalculaLinea( aTmp, aTmpSat, nDouDiv, oTotal, oRentLin, cCodDiv ) .and. aTmp[_NDTODIV] >= 0 );
          WHEN     ( nMode != ZOOM_MODE .AND. !lTotLin ) ;
          PICTURE  cPouDiv ;
          OF       oFld:aDialogs[1]
 
-      REDEFINE GET oTotal VAR nTotPre ;
+      REDEFINE GET oTotal VAR nTotSat ;
          ID       220 ;
          COLOR    CLR_GET ;
          WHEN     .F. ;
@@ -3868,8 +3737,8 @@ STATIC FUNCTION EdtDet( aTmp, aGet, dbfPreCliL, oBrw, lTotLin, cCodArtEnt, nMode
          OF       oFld:aDialogs[1] ;
          IDSAY    321 ;
 
-      REDEFINE GET aGet[ _NPVPREC ] ;
-         VAR      aTmp[ _NPVPREC ] ;
+      REDEFINE GET aGet[ _NPVSATC ] ;
+         VAR      aTmp[ _NPVSATC ] ;
          ID       140 ;
 			COLOR 	CLR_GET ;
          WHEN     ( .f. ) ;
@@ -4000,7 +3869,7 @@ end if
          ID       IDOK ;
          OF       oDlg ;
          WHEN     ( nMode != ZOOM_MODE ) ;
-         ACTION   ( SaveDeta( aTmp, aTmpPre, aGet, oDlg, oBrw, bmpImage, nMode, oStkAct, oSayPr1, oSayPr2, oSayVp1, oSayVp2, oGet2, oTotal, oSayLote, cCodArt, oBtn ) )
+         ACTION   ( SaveDeta( aTmp, aTmpSat, aGet, oDlg, oBrw, bmpImage, nMode, oStkAct, oSayPr1, oSayPr2, oSayVp1, oSayVp2, oGet2, oTotal, oSayLote, cCodArt, oBtn, oBtnSer ) )
 
       REDEFINE BUTTON ;
          ID       IDCANCEL ;
@@ -4013,20 +3882,26 @@ end if
          OF       oDlg ;
          ACTION   ( ChmHelp( "Añadir_v" ) )
 
+      REDEFINE BUTTON oBtnSer;
+         ID       552 ;
+         OF       oDlg ;
+         ACTION   ( EditarNumeroSerie( aTmp, oStock, nMode ) )
+
       if nMode != ZOOM_MODE
          oDlg:AddFastKey( VK_F5, {|| oBtn:SetFocus(), oBtn:Click() } )
+         oDlg:AddFastKey( VK_F6, {|| oBtnSer:Click() } )
       end if
 
       oDlg:AddFastKey( VK_F1, {|| ChmHelp( "Añadir_v" ) } )
 
-      oDlg:bStart := {||   SetDlgMode( aTmp, aGet, nMode, oStkAct, oSayPr1, oSayPr2, oSayVp1, oSayVp2, oGet2, oTotal, aTmpPre, oSayLote, oRentLin ),;
+      oDlg:bStart := {||   SetDlgMode( aTmp, aGet, nMode, oStkAct, oSayPr1, oSayPr2, oSayVp1, oSayVp2, oGet2, oTotal, aTmpSat, oSayLote, oRentLin ),;
                            if( !Empty( oGetCaducidad ), oGetCaducidad:Hide(), ),;
                            if( !Empty( cCodArtEnt ), aGet[ _CREF ]:lValid(), ),;
                            aGet[ _CUNIDAD ]:lValid() }
 
    ACTIVATE DIALOG oDlg CENTER ;
          ON INIT  ( EdtDetMenu( aGet[ _CREF ], oDlg ) );
-         ON PAINT ( RecalculaLinea( aTmp, aTmpPre, nDouDiv, oTotal, oRentLin, cCodDiv ) )
+         ON PAINT ( RecalculaLinea( aTmp, aTmpSat, nDouDiv, oTotal, oRentLin, cCodDiv ) )
 
    EndDetMenu()
 
@@ -4038,15 +3913,15 @@ RETURN ( oDlg:nResult == IDOK )
 Estudiamos la posiblidades que se pueden dar en una linea de detalle
 */
 
-STATIC FUNCTION SetDlgMode( aTmp, aGet, nMode, oStkAct, oSayPr1, oSayPr2, oSayVp1, oSayVp2, oGet2, oTotal, aTmpPre, oSayLote, oRentLin )
+STATIC FUNCTION SetDlgMode( aTmp, aGet, nMode, oStkAct, oSayPr1, oSayPr2, oSayVp1, oSayVp2, oGet2, oTotal, aTmpSat, oSayLote, oRentLin )
 
    local cCodArt  := aGet[ _CREF ]:varGet()
 
-   if aGet[ _NCANPRE ] != nil
+   if aGet[ _NCANSAT ] != nil
       if !lUseCaj()
-         aGet[ _NCANPRE ]:hide()
+         aGet[ _NCANSAT ]:hide()
       else
-         aGet[ _NCANPRE ]:SetText( cNombreCajas() )
+         aGet[ _NCANSAT ]:SetText( cNombreCajas() )
       end if
    end if
 
@@ -4071,7 +3946,7 @@ STATIC FUNCTION SetDlgMode( aTmp, aGet, nMode, oStkAct, oSayPr1, oSayPr2, oSayVp
    end if
 
    if aGet[ _NPNTVER ] != nil
-      if !uFieldEmpresa( "lUsePnt" ) .or. !aTmpPre[ _LOPERPV ]
+      if !uFieldEmpresa( "lUsePnt" ) .or. !aTmpSat[ _LOPERPV ]
          aGet[ _NPNTVER ]:Hide()
       end if
    end if
@@ -4095,15 +3970,15 @@ STATIC FUNCTION SetDlgMode( aTmp, aGet, nMode, oStkAct, oSayPr1, oSayPr2, oSayVp
    case nMode == APPD_MODE
 
       aTmp[ _CREF    ]  := Space( 32 )
-      aTmp[ _LIVALIN ]  := aTmpPre[ _LIVAINC ]
+      aTmp[ _LIVALIN ]  := aTmpSat[ _LIVAINC ]
 
       if aGet[ _NNUMLIN ] != nil
          aGet[ _NNUMLIN ]:cText( nLastNum( dbfTmpLin ) )
       end if
 
-      aGet[ _NCANPRE ]:cText( 1 )
+      aGet[ _NCANSAT ]:cText( 1 )
       aGet[ _NUNICAJA ]:cText( 1 )
-      aGet[ _CALMLIN  ]:cText( aTmpPre[ _CCODALM ] )
+      aGet[ _CALMLIN  ]:cText( aTmpSat[ _CCODALM ] )
       aGet[ _CDETALLE ]:show()
 
       if aGet[ _MLNGDES ] != nil
@@ -4118,7 +3993,7 @@ STATIC FUNCTION SetDlgMode( aTmp, aGet, nMode, oStkAct, oSayPr1, oSayPr2, oSayVp
          oSayLote:Hide()
       end if
 
-      if aTmpPre[ _NREGIVA ] <= 1
+      if aTmpSat[ _NREGIVA ] <= 1
          aGet[ _NIVA ]:cText( nIva( dbfIva, cDefIva() ) )
       end if
 
@@ -4257,9 +4132,9 @@ STATIC FUNCTION SetDlgMode( aTmp, aGet, nMode, oStkAct, oSayPr1, oSayPr2, oSayVp
 
    if Empty( aTmp[ _NTARLIN ] )
       if !Empty( aGet[ _NTARLIN ] )
-         aGet[ _NTARLIN ]:cText( aTmpPre[ _NTARIFA ] )
+         aGet[ _NTARLIN ]:cText( aTmpSat[ _NTARIFA ] )
       else
-         aTmp[ _NTARLIN ]     := aTmpPre[ _NTARIFA ]
+         aTmp[ _NTARLIN ]     := aTmpSat[ _NTARIFA ]
       end if
    end if
 
@@ -4297,7 +4172,7 @@ STATIC FUNCTION SetDlgMode( aTmp, aGet, nMode, oStkAct, oSayPr1, oSayPr2, oSayVp
    Solo pueden modificar los precios los administradores--------------------
    */
 
-   if ( Empty( aTmp[ _NPREDIV ] ) .or. lUsrMaster() .or. oUser():lCambiarPrecio() ) .and. nMode != ZOOM_MODE
+   if ( Empty( aTmp[ _NPREDIV ] ) .or. lUsrMaster() .or. oUser():lCambiarSatcio() ) .and. nMode != ZOOM_MODE
 
       aGet[ _NPREDIV ]:HardEnable()
       aGet[ _NDTO    ]:HardEnable()
@@ -4337,33 +4212,33 @@ STATIC FUNCTION SetDlgMode( aTmp, aGet, nMode, oStkAct, oSayPr1, oSayPr2, oSayVp
 
    // Ocultamos o mostramos las tres unidades de medicion----------------------
 
-   if !Empty( aGet[ ( dbfPreCliL )->( fieldpos( "nMedUno" ) ) ] )
-      aGet[ ( dbfPreCliL )->( fieldpos( "nMedUno" ) ) ]:Hide()
+   if !Empty( aGet[ ( dbfSatCliL )->( fieldpos( "nMedUno" ) ) ] )
+      aGet[ ( dbfSatCliL )->( fieldpos( "nMedUno" ) ) ]:Hide()
    end if
 
-   if !Empty( aGet[ ( dbfPreCliL )->( fieldpos( "nMedDos" ) ) ] )
-      aGet[ ( dbfPreCliL )->( fieldpos( "nMedDos" ) ) ]:Hide()
+   if !Empty( aGet[ ( dbfSatCliL )->( fieldpos( "nMedDos" ) ) ] )
+      aGet[ ( dbfSatCliL )->( fieldpos( "nMedDos" ) ) ]:Hide()
    end if
 
-   if !Empty( aGet[ ( dbfPreCliL )->( fieldpos( "nMedTre" ) ) ] )
-      aGet[ ( dbfPreCliL )->( fieldpos( "nMedTre" ) ) ]:Hide()
+   if !Empty( aGet[ ( dbfSatCliL )->( fieldpos( "nMedTre" ) ) ] )
+      aGet[ ( dbfSatCliL )->( fieldpos( "nMedTre" ) ) ]:Hide()
    end if
 
    if oUndMedicion:oDbf:Seek(  aTmp[ _CUNIDAD ] )
 
-      if !Empty( aGet[ ( dbfPreCliL )->( fieldpos( "nMedUno" ) ) ] ) .and. oUndMedicion:oDbf:nDimension >= 1 .and. !Empty( oUndMedicion:oDbf:cTextoDim1 )
-         aGet[ ( dbfPreCliL )->( fieldpos( "nMedUno" ) ) ]:oSay:SetText( oUndMedicion:oDbf:cTextoDim1 )
-         aGet[ ( dbfPreCliL )->( fieldpos( "nMedUno" ) ) ]:Show()
+      if !Empty( aGet[ ( dbfSatCliL )->( fieldpos( "nMedUno" ) ) ] ) .and. oUndMedicion:oDbf:nDimension >= 1 .and. !Empty( oUndMedicion:oDbf:cTextoDim1 )
+         aGet[ ( dbfSatCliL )->( fieldpos( "nMedUno" ) ) ]:oSay:SetText( oUndMedicion:oDbf:cTextoDim1 )
+         aGet[ ( dbfSatCliL )->( fieldpos( "nMedUno" ) ) ]:Show()
       end if
 
-      if !Empty( aGet[ ( dbfPreCliL )->( fieldpos( "nMedDos" ) ) ] ) .and. oUndMedicion:oDbf:nDimension >= 2 .and. !Empty( oUndMedicion:oDbf:cTextoDim2 )
-         aGet[ ( dbfPreCliL )->( fieldpos( "nMedDos" ) ) ]:oSay:SetText( oUndMedicion:oDbf:cTextoDim2 )
-         aGet[ ( dbfPreCliL )->( fieldpos( "nMedDos" ) ) ]:Show()
+      if !Empty( aGet[ ( dbfSatCliL )->( fieldpos( "nMedDos" ) ) ] ) .and. oUndMedicion:oDbf:nDimension >= 2 .and. !Empty( oUndMedicion:oDbf:cTextoDim2 )
+         aGet[ ( dbfSatCliL )->( fieldpos( "nMedDos" ) ) ]:oSay:SetText( oUndMedicion:oDbf:cTextoDim2 )
+         aGet[ ( dbfSatCliL )->( fieldpos( "nMedDos" ) ) ]:Show()
       end if
 
-      if !Empty( aGet[ ( dbfPreCliL )->( fieldpos( "nMedTre" ) ) ] ) .and. oUndMedicion:oDbf:nDimension >= 3 .and. !Empty( oUndMedicion:oDbf:cTextoDim3 )
-         aGet[ ( dbfPreCliL )->( fieldpos( "nMedTre" ) ) ]:oSay:SetText( oUndMedicion:oDbf:cTextoDim3 )
-         aGet[ ( dbfPreCliL )->( fieldpos( "nMedTre" ) ) ]:Show()
+      if !Empty( aGet[ ( dbfSatCliL )->( fieldpos( "nMedTre" ) ) ] ) .and. oUndMedicion:oDbf:nDimension >= 3 .and. !Empty( oUndMedicion:oDbf:cTextoDim3 )
+         aGet[ ( dbfSatCliL )->( fieldpos( "nMedTre" ) ) ]:oSay:SetText( oUndMedicion:oDbf:cTextoDim3 )
+         aGet[ ( dbfSatCliL )->( fieldpos( "nMedTre" ) ) ]:Show()
       end if
 
    end if
@@ -4372,7 +4247,7 @@ Return nil
 
 //--------------------------------------------------------------------------//
 
-STATIC FUNCTION SaveDeta( aTmp, aTmpPre, aGet, oDlg2, oBrw, bmpImage, nMode, oStkAct, oSayPr1, oSayPr2, oSayVp1, oSayVp2, oGet2, oTotal, oSayLote, cCodArt, oBtn )
+STATIC FUNCTION SaveDeta( aTmp, aTmpSat, aGet, oDlg2, oBrw, bmpImage, nMode, oStkAct, oSayPr1, oSayPr2, oSayVp1, oSayVp2, oGet2, oTotal, oSayLote, cCodArt, oBtn, oBtnSer )
 
    local aXbyStr
    local aClo     := aClone( aTmp )
@@ -4397,6 +4272,16 @@ STATIC FUNCTION SaveDeta( aTmp, aTmpPre, aGet, oDlg2, oBrw, bmpImage, nMode, oSt
       Return nil
    end if
 
+   /*
+   Comprobamos si tiene que introducir números de serie------------------------
+   */
+
+   if ( nMode == APPD_MODE ) .and. RetFld( aTmp[ _CREF ], dbfArticulo, "lNumSer" ) .and. !( dbfTmpSer )->( dbSeek( Str( aTmp[ _NNUMLIN ], 4 ) + aTmp[ _CREF ] ) )
+      MsgStop( "Tiene que introducir números de serie para este artículo." )
+      oBtnSer:Click()
+      Return .f.
+   end if
+
    if nMode == APPD_MODE
 
       aTmp[_CREF]    := cCodArt
@@ -4409,7 +4294,7 @@ STATIC FUNCTION SaveDeta( aTmp, aTmpPre, aGet, oDlg2, oBrw, bmpImage, nMode, oSt
       Chequeamos las atipicas X * Y--------------------------------------------
       */
 
-      aXbYStr                    := nXbYAtipica( aTmp[ _CREF ], aTmpPre[ _CCODCLI ], aTmp[ _NCANPRE ], aTmp[ _NUNICAJA ], aTmpPre[ _DFECPRE ], dbfCliAtp )
+      aXbYStr                    := nXbYAtipica( aTmp[ _CREF ], aTmpSat[ _CCODCLI ], aTmp[ _NCANSAT ], aTmp[ _NUNICAJA ], aTmpSat[ _DFECSAT ], dbfCliAtp )
 
       if aXbYStr[ 1 ] == 0
 
@@ -4419,7 +4304,7 @@ STATIC FUNCTION SaveDeta( aTmp, aTmpPre, aGet, oDlg2, oBrw, bmpImage, nMode, oSt
 
          if !aTmp[ _LLINOFE ]
 
-            aXbyStr              := nXbYOferta( aTmp[ _CREF ], aTmpPre[ _CCODCLI ], aTmpPre[ _CCODGRP ], aTmp[ _NCANPRE ], aTmp[ _NUNICAJA ], aTmpPre[ _DFECPRE ], dbfOferta, 1 )
+            aXbyStr              := nXbYOferta( aTmp[ _CREF ], aTmpSat[ _CCODCLI ], aTmpSat[ _CCODGRP ], aTmp[ _NCANSAT ], aTmp[ _NUNICAJA ], aTmpSat[ _DFECSAT ], dbfOferta, 1 )
 
             if aXbYStr[ 1 ] != 0
                aTmp[ _LLINOFE ]  := .t.
@@ -4433,7 +4318,7 @@ STATIC FUNCTION SaveDeta( aTmp, aTmpPre, aGet, oDlg2, oBrw, bmpImage, nMode, oSt
 
          if !aTmp[ _LLINOFE ]
 
-            aXbyStr              := nXbYOferta( RetFld( aTmp[ _CREF ], dbfArticulo, "FAMILIA", "CODIGO" ), aTmpPre[ _CCODCLI ], aTmpPre[ _CCODGRP ], aTmp[ _NCANPRE ], aTmp[ _NUNICAJA ], aTmpPre[ _DFECPRE ], dbfOferta, 2 )
+            aXbyStr              := nXbYOferta( RetFld( aTmp[ _CREF ], dbfArticulo, "FAMILIA", "CODIGO" ), aTmpSat[ _CCODCLI ], aTmpSat[ _CCODGRP ], aTmp[ _NCANSAT ], aTmp[ _NUNICAJA ], aTmpSat[ _DFECSAT ], dbfOferta, 2 )
 
             if aXbYStr[ 1 ] != 0
                aTmp[ _LLINOFE ]  := .t.
@@ -4447,7 +4332,7 @@ STATIC FUNCTION SaveDeta( aTmp, aTmpPre, aGet, oDlg2, oBrw, bmpImage, nMode, oSt
 
          if !aTmp[ _LLINOFE ]
 
-            aXbyStr              := nXbYOferta( RetFld( aTmp[ _CREF ], dbfArticulo, "CCODTIP", "CODIGO" ), aTmpPre[ _CCODCLI ], aTmpPre[ _CCODGRP ], aTmp[ _NCANPRE ], aTmp[ _NUNICAJA ], aTmpPre[ _DFECPRE ], dbfOferta, 3 )
+            aXbyStr              := nXbYOferta( RetFld( aTmp[ _CREF ], dbfArticulo, "CCODTIP", "CODIGO" ), aTmpSat[ _CCODCLI ], aTmpSat[ _CCODGRP ], aTmp[ _NCANSAT ], aTmp[ _NUNICAJA ], aTmpSat[ _DFECSAT ], dbfOferta, 3 )
 
             if aXbYStr[ 1 ] != 0
                aTmp[ _LLINOFE ]  := .t.
@@ -4461,7 +4346,7 @@ STATIC FUNCTION SaveDeta( aTmp, aTmpPre, aGet, oDlg2, oBrw, bmpImage, nMode, oSt
 
          if !aTmp[ _LLINOFE ]
 
-            aXbyStr              := nXbYOferta( RetFld( aTmp[ _CREF ], dbfArticulo, "CCODCATE", "CODIGO" ), aTmpPre[ _CCODCLI ], aTmpPre[ _CCODGRP ], aTmp[ _NCANPRE ], aTmp[ _NUNICAJA ], aTmpPre[ _DFECPRE ], dbfOferta, 4 )
+            aXbyStr              := nXbYOferta( RetFld( aTmp[ _CREF ], dbfArticulo, "CCODCATE", "CODIGO" ), aTmpSat[ _CCODCLI ], aTmpSat[ _CCODGRP ], aTmp[ _NCANSAT ], aTmp[ _NUNICAJA ], aTmpSat[ _DFECSAT ], dbfOferta, 4 )
 
             if aXbYStr[ 1 ] != 0
                aTmp[ _LLINOFE ]  := .t.
@@ -4475,7 +4360,7 @@ STATIC FUNCTION SaveDeta( aTmp, aTmpPre, aGet, oDlg2, oBrw, bmpImage, nMode, oSt
 
          if !aTmp[ _LLINOFE ]
 
-            aXbyStr              := nXbYOferta( RetFld( aTmp[ _CREF ], dbfArticulo, "CCODTEMP", "CODIGO" ), aTmpPre[ _CCODCLI ], aTmpPre[ _CCODGRP ], aTmp[ _NCANPRE ], aTmp[ _NUNICAJA ], aTmpPre[ _DFECPRE ], dbfOferta, 5 )
+            aXbyStr              := nXbYOferta( RetFld( aTmp[ _CREF ], dbfArticulo, "CCODTEMP", "CODIGO" ), aTmpSat[ _CCODCLI ], aTmpSat[ _CCODGRP ], aTmp[ _NCANSAT ], aTmp[ _NUNICAJA ], aTmpSat[ _DFECSAT ], dbfOferta, 5 )
 
             if aXbYStr[ 1 ] != 0
                aTmp[ _LLINOFE ]  := .t.
@@ -4489,7 +4374,7 @@ STATIC FUNCTION SaveDeta( aTmp, aTmpPre, aGet, oDlg2, oBrw, bmpImage, nMode, oSt
 
          if !aTmp[ _LLINOFE ]
 
-            aXbyStr              := nXbYOferta( RetFld( aTmp[ _CREF ], dbfArticulo, "CCODFAB", "CODIGO" ), aTmpPre[ _CCODCLI ], aTmpPre[ _CCODGRP ], aTmp[ _NCANPRE ], aTmp[ _NUNICAJA ], aTmpPre[ _DFECPRE ], dbfOferta, 6 )
+            aXbyStr              := nXbYOferta( RetFld( aTmp[ _CREF ], dbfArticulo, "CCODFAB", "CODIGO" ), aTmpSat[ _CCODCLI ], aTmpSat[ _CCODGRP ], aTmp[ _NCANSAT ], aTmp[ _NUNICAJA ], aTmpSat[ _DFECSAT ], dbfOferta, 6 )
 
             if aXbYStr[ 1 ] != 0
                aTmp[ _LLINOFE ]  := .t.
@@ -4515,21 +4400,21 @@ STATIC FUNCTION SaveDeta( aTmp, aTmpPre, aGet, oDlg2, oBrw, bmpImage, nMode, oSt
             Ofertas de cajas
             */
 
-            aTmp[ _NCANPRE  ] -= aXbyStr[ 2 ]
+            aTmp[ _NCANSAT  ] -= aXbyStr[ 2 ]
 
             WinGather( aTmp, , dbfTmpLin, oBrw, nMode, nil, .f. )
 
             if aClo[ _LKITART ]
-               AppendKit( aClo, aTmpPre )
+               AppendKit( aClo, aTmpSat )
             end if
 
-            aTmp[ _NCANPRE  ] := aXbYStr[ 2 ]
+            aTmp[ _NCANSAT  ] := aXbYStr[ 2 ]
             aTmp[ _NPREDIV  ] := 0
 
             WinGather( aTmp, aGet, dbfTmpLin, oBrw, nMode )
 
             if aClo[ _LKITART ]
-               AppendKit( aClo, aTmpPre )
+               AppendKit( aClo, aTmpSat )
             end if
 
          else
@@ -4547,7 +4432,7 @@ STATIC FUNCTION SaveDeta( aTmp, aTmpPre, aGet, oDlg2, oBrw, bmpImage, nMode, oSt
             WinGather( aTmp, , dbfTmpLin, oBrw, nMode, nil, .f. )
 
             if aClo[ _LKITART ]
-               AppendKit( aClo, aTmpPre )
+               AppendKit( aClo, aTmpSat )
             end if
 
             if aTmp[ _NUNICAJA ] < 0
@@ -4561,7 +4446,7 @@ STATIC FUNCTION SaveDeta( aTmp, aTmpPre, aGet, oDlg2, oBrw, bmpImage, nMode, oSt
             WinGather( aTmp, aGet, dbfTmpLin, oBrw, nMode )
 
             if aClo[ _LKITART ]
-               AppendKit( aClo, aTmpPre )
+               AppendKit( aClo, aTmpSat )
             end if
 
          end if
@@ -4575,7 +4460,7 @@ STATIC FUNCTION SaveDeta( aTmp, aTmpPre, aGet, oDlg2, oBrw, bmpImage, nMode, oSt
          WinGather( aTmp, aGet, dbfTmpLin, oBrw, nMode )
 
          if aClo[ _LKITART ]
-            AppendKit( aClo, aTmpPre )
+            AppendKit( aClo, aTmpSat )
          end if
 
       end if
@@ -4610,19 +4495,20 @@ STATIC FUNCTION SaveDeta( aTmp, aTmpPre, aGet, oDlg2, oBrw, bmpImage, nMode, oSt
    */
 
    if bmpImage != nil
+
       bmpImage:Hide()
 
       if !Empty( bmpImage:hBitmap )
-         PalBmpFree( bmpImage:hBitmap, bmpImage:hPalette )
+         PalbmpFree( bmpImage:hBitmap, bmpImage:hPalette )
       endif
 
    end if
 
-   if nMode == APPD_MODE .AND. lEntCon()
+   if nMode == APPD_MODE .and. lEntCon()
 
-      nTotPreCli( nil, dbfPreCliT, dbfTmpLin, dbfIva, dbfDiv, dbfFPago, aTmpPre )
+      nTotSatCli( nil, dbfSatCliT, dbfTmpLin, dbfIva, dbfDiv, dbfFPago, aTmpSat )
 
-      SetDlgMode( aTmp, aGet, nMode, oStkAct, oSayPr1, oSayPr2, oSayVp1, oSayVp2, oGet2, oTotal, aTmpPre, oSayLote )
+      SetDlgMode( aTmp, aGet, nMode, oStkAct, oSayPr1, oSayPr2, oSayVp1, oSayVp2, oGet2, oTotal, aTmpSat, oSayLote )
 
       SysRefresh()
 
@@ -4640,7 +4526,33 @@ RETURN NIL
 
 //--------------------------------------------------------------------------//
 
-Static Function EdtInc( aTmp, aGet, dbfPreCliI, oBrw, bWhen, bValid, nMode, aTmpPre )
+Static Function EditarNumeroSerie( aTmp, oStock, nMode )
+
+   with object ( TNumerosSerie() )
+
+      :nMode            := nMode
+
+      :cCodArt          := aTmp[ _CREF    ]
+      :cCodAlm          := aTmp[ _CALMLIN ]
+      :nNumLin          := aTmp[ _NNUMLIN ]
+
+      :lCompras         := .t.
+
+      :nTotalUnidades   := nTotNSatCli( aTmp )
+
+      :oStock           := oStock
+
+      :uTmpSer          := dbfTmpSer
+
+      :Resource()
+
+   end with
+
+Return ( nil )
+
+//--------------------------------------------------------------------------//
+
+Static Function EdtInc( aTmp, aGet, dbfSatCliI, oBrw, bWhen, bValid, nMode, aTmpSat )
 
    local oDlg
    local oNomInci
@@ -4651,9 +4563,9 @@ Static Function EdtInc( aTmp, aGet, dbfPreCliI, oBrw, bWhen, bValid, nMode, aTmp
    end if
 
    if ( "PDA" $ cParamsMain() )
-   DEFINE DIALOG oDlg RESOURCE "PRECLI_INC_PDA"
+   DEFINE DIALOG oDlg RESOURCE "SATCLI_INC_PDA"
    else
-   DEFINE DIALOG oDlg RESOURCE "INCIDENCIA" TITLE LblTitle( nMode ) + "incidencias de presupuestos a clientes"
+   DEFINE DIALOG oDlg RESOURCE "INCIDENCIA" TITLE LblTitle( nMode ) + "incidencias de S.A.T. a clientes"
    end if
 
       REDEFINE GET aGet[ ( dbfTmpInc )->( FieldPos( "cCodTip" ) ) ];
@@ -4714,14 +4626,14 @@ RETURN ( oDlg:nResult == IDOK )
 
 //---------------------------------------------------------------------------//
 
-Static Function EdtDoc( aTmp, aGet, dbfPreCliD, oBrw, bWhen, bValid, nMode, aTmpLin )
+Static Function EdtDoc( aTmp, aGet, dbfSatCliD, oBrw, bWhen, bValid, nMode, aTmpLin )
 
    local oDlg
    local oRuta
    local oNombre
    local oObservacion
 
-   DEFINE DIALOG oDlg RESOURCE "DOCUMENTOS" TITLE LblTitle( nMode ) + "documento de presupuesto a cliente"
+   DEFINE DIALOG oDlg RESOURCE "DOCUMENTOS" TITLE LblTitle( nMode ) + "documento de S.A.T. a cliente"
 
       REDEFINE GET oNombre VAR aTmp[ ( dbfTmpDoc )->( FieldPos( "cNombre" ) ) ] ;
          ID       120 ;
@@ -4767,25 +4679,25 @@ STATIC FUNCTION PrnSerie()
 
 	local oDlg
    local oFmtDoc
-   local cFmtDoc     := cFormatoDocumento( ( dbfPreCliT )->cSerPre, "nPreCli", dbfCount )
+   local cFmtDoc     := cFormatoDocumento( ( dbfSatCliT )->cSerSat, "nSatCli", dbfCount )
    local oSayFmt
    local cSayFmt
    local oSerIni
    local oSerFin
-   local nRecno      := ( dbfPreCliT )->( recno() )
-   local nOrdAnt     := ( dbfPreCliT )->( OrdSetFocus(1) )
-   local cSerIni     := ( dbfPreCliT )->cSerPre
-   local cSerFin     := ( dbfPreCliT )->cSerPre
-   local nDocIni     := ( dbfPreCliT )->nNumPre
-   local nDocFin     := ( dbfPreCliT )->nNumPre
-   local cSufIni     := ( dbfPreCliT )->cSufPre
-   local cSufFin     := ( dbfPreCliT )->cSufPre
+   local nRecno      := ( dbfSatCliT )->( recno() )
+   local nOrdAnt     := ( dbfSatCliT )->( OrdSetFocus(1) )
+   local cSerIni     := ( dbfSatCliT )->cSerSat
+   local cSerFin     := ( dbfSatCliT )->cSerSat
+   local nDocIni     := ( dbfSatCliT )->nNumSat
+   local nDocFin     := ( dbfSatCliT )->nNumSat
+   local cSufIni     := ( dbfSatCliT )->cSufSat
+   local cSufFin     := ( dbfSatCliT )->cSufSat
    local oPrinter
    local cPrinter    := PrnGetName()
-   local lCopiasPre  := .t.
+   local lCopiasSat  := .t.
    local lInvOrden   := .f.
    local oNumCop
-   local nNumCop     := if( nCopiasDocumento( ( dbfPreCliT )->cSerPre, "nPreCli", dbfCount ) == 0, Max( Retfld( ( dbfPreCliT )->cCodCli, dbfClient, "CopiasF" ), 1 ), nCopiasDocumento( ( dbfPreCliT )->cSerPre, "nPreCli", dbfCount ) )
+   local nNumCop     := if( nCopiasDocumento( ( dbfSatCliT )->cSerSat, "nSatCli", dbfCount ) == 0, Max( Retfld( ( dbfSatCliT )->cCodCli, dbfClient, "CopiasF" ), 1 ), nCopiasDocumento( ( dbfSatCliT )->cSerSat, "nSatCli", dbfCount ) )
 
    if Empty( cFmtDoc )
       cFmtDoc           := cSelPrimerDoc( "RC" )
@@ -4793,7 +4705,7 @@ STATIC FUNCTION PrnSerie()
 
    cSayFmt           := cNombreDoc( cFmtDoc )
 
-   DEFINE DIALOG oDlg RESOURCE "IMPSERDOC" TITLE "Imprimir series de presupuestos"
+   DEFINE DIALOG oDlg RESOURCE "IMPSERDOC" TITLE "Imprimir series de S.A.T."
 
    REDEFINE GET oSerIni VAR cSerIni ;
       ID       100 ;
@@ -4841,13 +4753,13 @@ STATIC FUNCTION PrnSerie()
       ID       500 ;
       OF       oDlg
 
-   REDEFINE CHECKBOX lCopiasPre ;
+   REDEFINE CHECKBOX lCopiasSat ;
       ID       170 ;
       OF       oDlg
 
    REDEFINE GET oNumCop VAR nNumCop;
       ID       180 ;
-      WHEN     !lCopiasPre ;
+      WHEN     !lCopiasSat ;
       VALID    nNumCop > 0 ;
 		PICTURE 	"999999999" ;
       SPINNER ;
@@ -4881,7 +4793,7 @@ STATIC FUNCTION PrnSerie()
    REDEFINE BUTTON ;
       ID       IDOK ;
 		OF 		oDlg ;
-      ACTION   (  StartPrint( SubStr( cFmtDoc, 1, 3 ), cSerIni + Str( nDocIni, 9 ) + cSufIni, cSerFin + Str( nDocFin, 9 ) + cSufFin, oDlg, nil, lCopiasPre, nNumCop, lInvOrden ),;
+      ACTION   (  StartPrint( SubStr( cFmtDoc, 1, 3 ), cSerIni + Str( nDocIni, 9 ) + cSufIni, cSerFin + Str( nDocFin, 9 ) + cSufFin, oDlg, nil, lCopiasSat, nNumCop, lInvOrden ),;
                   oDlg:end( IDOK ) )
 
    REDEFINE BUTTON ;
@@ -4890,14 +4802,14 @@ STATIC FUNCTION PrnSerie()
       CANCEL ;
       ACTION   ( oDlg:end() )
 
-   oDlg:AddFastKey( VK_F5, {|| StartPrint( SubStr( cFmtDoc, 1, 3 ), cSerIni + Str( nDocIni, 9 ) + cSufIni, cSerFin + Str( nDocFin, 9 ) + cSufFin, oDlg, nil, lCopiasPre, nNumCop, lInvOrden ), oDlg:end( IDOK ) } )
+   oDlg:AddFastKey( VK_F5, {|| StartPrint( SubStr( cFmtDoc, 1, 3 ), cSerIni + Str( nDocIni, 9 ) + cSufIni, cSerFin + Str( nDocFin, 9 ) + cSufFin, oDlg, nil, lCopiasSat, nNumCop, lInvOrden ), oDlg:end( IDOK ) } )
 
    oDlg:bStart := { || oSerIni:SetFocus() }
 
    ACTIVATE DIALOG oDlg CENTER
 
-   (dbfPreCliT)->( dbGoTo( nRecNo ) )
-   (dbfPreCliT)->( ordSetFocus( nOrdAnt ) )
+   (dbfSatCliT)->( dbGoTo( nRecNo ) )
+   (dbfSatCliT)->( ordSetFocus( nOrdAnt ) )
 
 	oWndBrw:oBrw:refresh()
 
@@ -4905,7 +4817,7 @@ RETURN NIL
 
 //--------------------------------------------------------------------------//
 
-STATIC FUNCTION StartPrint( cFmtDoc, cDocIni, cDocFin, oDlg, cPrinter, lCopiasPre, nNumCop, lInvOrden )
+STATIC FUNCTION StartPrint( cFmtDoc, cDocIni, cDocFin, oDlg, cPrinter, lCopiasSat, nNumCop, lInvOrden )
 
    local nCopyClient
 
@@ -4913,27 +4825,27 @@ STATIC FUNCTION StartPrint( cFmtDoc, cDocIni, cDocFin, oDlg, cPrinter, lCopiasPr
 
    if ! lInvOrden
 
-      if ( dbfPreCliT )->( dbSeek( cDocIni, .t. ) )
+      if ( dbfSatCliT )->( dbSeek( cDocIni, .t. ) )
 
-         while ( dbfPreCliT )->cSerPre + Str( ( dbfPreCliT )->nNumPre ) + ( dbfPreCliT )->cSufPre >= cDocIni   .and. ;
-               ( dbfPreCliT )->cSerPre + Str( ( dbfPreCliT )->nNumPre ) + ( dbfPreCliT )->cSufPre <= cDocFin   .and. ;
-               !( dbfPreCliT )->( Eof() )
+         while ( dbfSatCliT )->cSerSat + Str( ( dbfSatCliT )->nNumSat ) + ( dbfSatCliT )->cSufSat >= cDocIni   .and. ;
+               ( dbfSatCliT )->cSerSat + Str( ( dbfSatCliT )->nNumSat ) + ( dbfSatCliT )->cSufSat <= cDocFin   .and. ;
+               !( dbfSatCliT )->( Eof() )
 
-               lChgImpDoc( dbfPreCliT )
+               lChgImpDoc( dbfSatCliT )
 
-            if lCopiasPre
+            if lCopiasSat
 
-               nCopyClient := if( nCopiasDocumento( ( dbfPreCliT )->cSerPre, "nPreCli", dbfCount ) == 0, Max( Retfld( ( dbfPreCliT )->cCodCli, dbfClient, "CopiasF" ), 1 ), nCopiasDocumento( ( dbfPreCliT )->cSerPre, "nPreCli", dbfCount ) )
+               nCopyClient := if( nCopiasDocumento( ( dbfSatCliT )->cSerSat, "nSatCli", dbfCount ) == 0, Max( Retfld( ( dbfSatCliT )->cCodCli, dbfClient, "CopiasF" ), 1 ), nCopiasDocumento( ( dbfSatCliT )->cSerSat, "nSatCli", dbfCount ) )
 
-               GenPreCli( IS_PRINTER, "Imprimiendo documento : " + ( dbfPreCliT )->cSerPre + Str( ( dbfPreCliT )->nNumPre ) + ( dbfPreCliT )->cSufPre, cFmtDoc, cPrinter, nCopyClient )
+               GenSatCli( IS_PRINTER, "Imprimiendo documento : " + ( dbfSatCliT )->cSerSat + Str( ( dbfSatCliT )->nNumSat ) + ( dbfSatCliT )->cSufSat, cFmtDoc, cPrinter, nCopyClient )
 
             else
 
-               GenPreCli( IS_PRINTER, "Imprimiendo documento : " + ( dbfPreCliT )->cSerPre + Str( ( dbfPreCliT )->nNumPre ) + ( dbfPreCliT )->cSufPre, cFmtDoc, cPrinter, nNumCop )
+               GenSatCli( IS_PRINTER, "Imprimiendo documento : " + ( dbfSatCliT )->cSerSat + Str( ( dbfSatCliT )->nNumSat ) + ( dbfSatCliT )->cSufSat, cFmtDoc, cPrinter, nNumCop )
 
             end if
 
-            ( dbfPreCliT )->( dbSkip() )
+            ( dbfSatCliT )->( dbSkip() )
 
          end do
 
@@ -4941,27 +4853,27 @@ STATIC FUNCTION StartPrint( cFmtDoc, cDocIni, cDocFin, oDlg, cPrinter, lCopiasPr
 
    else
 
-      if ( dbfPreCliT )->( dbSeek( cDocFin ) )
+      if ( dbfSatCliT )->( dbSeek( cDocFin ) )
 
-         while ( dbfPreCliT )->cSerPre + Str( ( dbfPreCliT )->nNumPre ) + ( dbfPreCliT )->cSufPre >= cDocIni   .and.;
-               ( dbfPreCliT )->cSerPre + Str( ( dbfPreCliT )->nNumPre ) + ( dbfPreCliT )->cSufPre <= cDocFin   .and.;
-               !( dbfPreCliT )->( Bof() )
+         while ( dbfSatCliT )->cSerSat + Str( ( dbfSatCliT )->nNumSat ) + ( dbfSatCliT )->cSufSat >= cDocIni   .and.;
+               ( dbfSatCliT )->cSerSat + Str( ( dbfSatCliT )->nNumSat ) + ( dbfSatCliT )->cSufSat <= cDocFin   .and.;
+               !( dbfSatCliT )->( Bof() )
 
-               lChgImpDoc( dbfPreCliT )
+               lChgImpDoc( dbfSatCliT )
 
-            if lCopiasPre
+            if lCopiasSat
 
-               nCopyClient := if( nCopiasDocumento( ( dbfPreCliT )->cSerPre, "nPreCli", dbfCount ) == 0, Max( Retfld( ( dbfPreCliT )->cCodCli, dbfClient, "CopiasF" ), 1 ), nCopiasDocumento( ( dbfPreCliT )->cSerPre, "nPreCli", dbfCount ) )
+               nCopyClient := if( nCopiasDocumento( ( dbfSatCliT )->cSerSat, "nSatCli", dbfCount ) == 0, Max( Retfld( ( dbfSatCliT )->cCodCli, dbfClient, "CopiasF" ), 1 ), nCopiasDocumento( ( dbfSatCliT )->cSerSat, "nSatCli", dbfCount ) )
 
-               GenPreCli( IS_PRINTER, "Imprimiendo documento : " + ( dbfPreCliT )->cSerPre + Str( ( dbfPreCliT )->nNumPre ) + ( dbfPreCliT )->cSufPre, cFmtDoc, cPrinter, nCopyClient )
+               GenSatCli( IS_PRINTER, "Imprimiendo documento : " + ( dbfSatCliT )->cSerSat + Str( ( dbfSatCliT )->nNumSat ) + ( dbfSatCliT )->cSufSat, cFmtDoc, cPrinter, nCopyClient )
 
             else
 
-               GenPreCli( IS_PRINTER, "Imprimiendo documento : " + ( dbfPreCliT )->cSerPre + Str( ( dbfPreCliT )->nNumPre ) + ( dbfPreCliT )->cSufPre, cFmtDoc, cPrinter, nNumCop )
+               GenSatCli( IS_PRINTER, "Imprimiendo documento : " + ( dbfSatCliT )->cSerSat + Str( ( dbfSatCliT )->nNumSat ) + ( dbfSatCliT )->cSufSat, cFmtDoc, cPrinter, nNumCop )
 
             end if
 
-            ( dbfPreCliT )->( dbSkip( -1 ) )
+            ( dbfSatCliT )->( dbSkip( -1 ) )
 
          end while
 
@@ -4975,7 +4887,7 @@ RETURN NIL
 
 //--------------------------------------------------------------------------//
 
-FUNCTION nTotPreCli( cPresupuesto, cPreCliT, cPreCliL, cIva, cDiv, cFPago, aTmp, cDivRet, lPic )
+FUNCTION nTotSatCli( cSatsupuesto, cSatCliT, cSatCliL, cIva, cDiv, cFPago, aTmp, cDivRet, lPic )
 
 	local nRecno
 	local cCodDiv
@@ -5005,19 +4917,19 @@ FUNCTION nTotPreCli( cPresupuesto, cPreCliT, cPreCliL, cIva, cDiv, cFPago, aTmp,
    local n
    local nDescuentosLineas := 0
 
-   DEFAULT cPreCliT        := dbfPreCliT
-   DEFAULT cPreCliL        := dbfPreCliL
+   DEFAULT cSatCliT        := dbfSatCliT
+   DEFAULT cSatCliL        := dbfSatCliL
    DEFAULT cIva            := dbfIva
    DEFAULT cDiv            := dbfDiv
    DEFAULT cFPago          := dbfFPago
-   DEFAULT cPresupuesto    := ( cPreCliT )->cSerPre + Str( ( cPreCliT )->nNumPre ) + ( cPreCliT )->cSufPre
+   DEFAULT cSatsupuesto    := ( cSatCliT )->cSerSat + Str( ( cSatCliT )->nNumSat ) + ( cSatCliT )->cSufSat
    DEFAULT lPic            := .f.
 
-   if Empty( Select( cPreCliT ) )
+   if Empty( Select( cSatCliT ) )
       Return ( 0 )
    end if
 
-   if Empty( Select( cPreCliL ) )
+   if Empty( Select( cSatCliL ) )
       Return ( 0 )
    end if
 
@@ -5030,7 +4942,7 @@ FUNCTION nTotPreCli( cPresupuesto, cPreCliT, cPreCliL, cIva, cDiv, cFPago, aTmp,
    end if
 
    public nTotBrt    := 0
-   public nTotPre    := 0
+   public nTotSat    := 0
    public nTotDto    := 0
    public nTotDPP    := 0
    public nTotNet    := 0
@@ -5068,9 +4980,9 @@ FUNCTION nTotPreCli( cPresupuesto, cPreCliT, cPreCliL, cIva, cDiv, cFPago, aTmp,
 
    public nTotalDto  := 0
 
-   public cCtaCli    := cClientCuenta( ( cPreCliT )->cCodCli )
+   public cCtaCli    := cClientCuenta( ( cSatCliT )->cCodCli )
 
-   nRecno            := ( cPreCliL )->( RecNo() )
+   nRecno            := ( cSatCliL )->( RecNo() )
 
    if aTmp != nil
 		lRecargo			:= aTmp[ _LRECARGO]
@@ -5078,9 +4990,9 @@ FUNCTION nTotPreCli( cPresupuesto, cPreCliT, cPreCliL, cIva, cDiv, cFPago, aTmp,
 		nDtoPP			:= aTmp[ _NDPP    ]
 		nDtoUno			:= aTmp[ _NDTOUNO ]
 		nDtoDos			:= aTmp[ _NDTODOS ]
-      cCodDiv        := aTmp[ _CDIVPRE ]
-		nVdvDiv			:= aTmp[ _NVDVPRE ]
-      dFecFac        := aTmp[ _DFECPRE ]
+      cCodDiv        := aTmp[ _CDIVSAT ]
+		nVdvDiv			:= aTmp[ _NVDVSAT ]
+      dFecFac        := aTmp[ _DFECSAT ]
       lIvaInc        := aTmp[ _LIVAINC ]
       nIvaMan        := aTmp[ _NIVAMAN ]
       nManObr        := aTmp[ _NMANOBR ]
@@ -5088,26 +5000,26 @@ FUNCTION nTotPreCli( cPresupuesto, cPreCliT, cPreCliL, cIva, cDiv, cFPago, aTmp,
       nSbrAtp        := aTmp[ _NSBRATP ]
       nKgsTrn        := aTmp[ _NKGSTRN ]
       lPntVer        := aTmp[ _LOPERPV ]
-      bCondition     := {|| !( cPreCliL )->( eof() ) }
-      ( cPreCliL )->( dbGoTop() )
+      bCondition     := {|| !( cSatCliL )->( eof() ) }
+      ( cSatCliL )->( dbGoTop() )
    else
-      lRecargo       := ( cPreCliT )->lRecargo
-      nDtoEsp        := ( cPreCliT )->nDtoEsp
-      nDtoPP         := ( cPreCliT )->nDpp
-      nDtoUno        := ( cPreCliT )->nDtoUno
-      nDtoDos        := ( cPreCliT )->nDtoDos
-      cCodDiv        := ( cPreCliT )->cDivPre
-      nVdvDiv        := ( cPreCliT )->nVdvPre
-      dFecFac        := ( cPreCliT )->dFecPre
-      nIvaMan        := ( cPreCliT )->nIvaMan
-      lIvaInc        := ( cPreCliT )->lIvaInc
-      nManObr        := ( cPreCliT )->nManObr
-      nDtoAtp        := ( cPreCliT )->nDtoAtp
-      nSbrAtp        := ( cPreCliT )->nSbrAtp
-      nKgsTrn        := ( cPreCliT )->nKgsTrn
-      lPntVer        := ( cPreCliT )->lOperPV
-      bCondition     := {|| ( cPreCliL )->cSerPre + Str( ( cPreCliL )->nNumPre ) + ( cPreCliL )->cSufPre == cPresupuesto .and. !( cPreCliL )->( eof() ) }
-      ( cPreCliL )->( dbSeek( cPresupuesto ) )
+      lRecargo       := ( cSatCliT )->lRecargo
+      nDtoEsp        := ( cSatCliT )->nDtoEsp
+      nDtoPP         := ( cSatCliT )->nDpp
+      nDtoUno        := ( cSatCliT )->nDtoUno
+      nDtoDos        := ( cSatCliT )->nDtoDos
+      cCodDiv        := ( cSatCliT )->cDivSat
+      nVdvDiv        := ( cSatCliT )->nVdvSat
+      dFecFac        := ( cSatCliT )->dFecSat
+      nIvaMan        := ( cSatCliT )->nIvaMan
+      lIvaInc        := ( cSatCliT )->lIvaInc
+      nManObr        := ( cSatCliT )->nManObr
+      nDtoAtp        := ( cSatCliT )->nDtoAtp
+      nSbrAtp        := ( cSatCliT )->nSbrAtp
+      nKgsTrn        := ( cSatCliT )->nKgsTrn
+      lPntVer        := ( cSatCliT )->lOperPV
+      bCondition     := {|| ( cSatCliL )->cSerSat + Str( ( cSatCliL )->nNumSat ) + ( cSatCliL )->cSufSat == cSatsupuesto .and. !( cSatCliL )->( eof() ) }
+      ( cSatCliL )->( dbSeek( cSatsupuesto ) )
    end if
 
    /*
@@ -5123,20 +5035,20 @@ FUNCTION nTotPreCli( cPresupuesto, cPreCliT, cPreCliL, cIva, cDiv, cFPago, aTmp,
 
 	WHILE Eval( bCondition )
 
-      if lValLine( cPreCliL )
+      if lValLine( cSatCliL )
 
-         if ( cPreCliL )->lTotLin
+         if ( cSatCliL )->lTotLin
 
             /*
             Esto es para evitar escirbir en el fichero muchas veces
             */
 
-            if ( cPreCliL )->nPreDiv != nTotalLin .OR. ( cPreCliL )->nUniCaja != nTotalUnd
+            if ( cSatCliL )->nSatDiv != nTotalLin .OR. ( cSatCliL )->nUniCaja != nTotalUnd
 
-               if ( cPreCliL )->( dbRLock() )
-                  ( cPreCliL )->nPreDiv    := nTotalLin
-                  ( cPreCliL )->nUniCaja   := nTotalUnd
-                  ( cPreCliL )->( dbUnLock() )
+               if ( cSatCliL )->( dbRLock() )
+                  ( cSatCliL )->nSatDiv    := nTotalLin
+                  ( cSatCliL )->nUniCaja   := nTotalUnd
+                  ( cSatCliL )->( dbUnLock() )
                end if
 
             end if
@@ -5150,53 +5062,53 @@ FUNCTION nTotPreCli( cPresupuesto, cPreCliT, cPreCliL, cIva, cDiv, cFPago, aTmp,
 
          else
 
-            nTotArt           := nTotLPreCli( cPreCliT, cPreCliL, nDouDiv, nRouDiv, , , .f., .f. )
-            nTotPnt           := if( lPntVer, nPntLPreCli( cPreCliL, nDpvDiv ), 0 )
-            nTotTrn           := nTrnLPreCli( cPreCliL, nDouDiv )
-            nTotIvm           := nTotIPreCli( cPreCliL, nDouDiv, nRouDiv )
-            nTotCos           += nTotCPreCli( cPreCliL, nDouDiv, nRouDiv )
-            nTotPes           += nPesLPreCli( cPreCliL )
-            nDescuentosLineas += nTotDtoLPreCli( cPreCliL, nDouDiv )
+            nTotArt           := nTotLSatCli( cSatCliT, cSatCliL, nDouDiv, nRouDiv, , , .f., .f. )
+            nTotPnt           := if( lPntVer, nPntLSatCli( cSatCliL, nDpvDiv ), 0 )
+            nTotTrn           := nTrnLSatCli( cSatCliL, nDouDiv )
+            nTotIvm           := nTotISatCli( cSatCliL, nDouDiv, nRouDiv )
+            nTotCos           += nTotCSatCli( cSatCliL, nDouDiv, nRouDiv )
+            nTotPes           += nPesLSatCli( cSatCliL )
+            nDescuentosLineas += nTotDtoLSatCli( cSatCliL, nDouDiv )
 
             if aTmp != nil
-               nTotAge        += nComLPreCli( aTmp, cPreCliL, nDouDiv, nRouDiv )
+               nTotAge        += nComLSatCli( aTmp, cSatCliL, nDouDiv, nRouDiv )
             else
-               nTotAge        += nComLPreCli( cPreCliT, cPreCliL, nDouDiv, nRouDiv )
+               nTotAge        += nComLSatCli( cSatCliT, cSatCliL, nDouDiv, nRouDiv )
             end if
 
-            nNumArt           += nTotNPreCli( cPreCliL )
-            nNumCaj           += ( cPreCliL )->nCanPre
+            nNumArt           += nTotNSatCli( cSatCliL )
+            nNumCaj           += ( cSatCliL )->nCanSat
 
             /*
             Acumuladores para las lineas de totales
             */
 
-            nTotUnd           += nTotNPreCli( cPreCliL )
+            nTotUnd           += nTotNSatCli( cSatCliL )
 
             /*
             Estudio de IGIC-----------------------------------------------------
             */
 
             DO CASE
-            CASE _NPCTIVA1 == nil .OR. _NPCTIVA1 == ( cPreCliL )->nIva
-               _NPCTIVA1      := ( cPreCliL )->nIva
-               _NPCTREQ1      := ( cPreCliL )->nReq
+            CASE _NPCTIVA1 == nil .OR. _NPCTIVA1 == ( cSatCliL )->nIva
+               _NPCTIVA1      := ( cSatCliL )->nIva
+               _NPCTREQ1      := ( cSatCliL )->nReq
                _NBRTIVA1      += nTotArt
                _NIVMIVA1      += nTotIvm
                _NTRNIVA1      += nTotTrn
                _NPNTVER1      += nTotPnt
 
-            CASE _NPCTIVA2 == NIL .OR. _NPCTIVA2 == ( cPreCliL )->nIva
-               _NPCTIVA2      := ( cPreCliL )->nIva
-               _NPCTREQ2      := ( cPreCliL )->nReq
+            CASE _NPCTIVA2 == NIL .OR. _NPCTIVA2 == ( cSatCliL )->nIva
+               _NPCTIVA2      := ( cSatCliL )->nIva
+               _NPCTREQ2      := ( cSatCliL )->nReq
                _NBRTIVA2      += nTotArt
                _NIVMIVA2      += nTotIvm
                _NTRNIVA2      += nTotTrn
                _NPNTVER2      += nTotPnt
 
-            CASE _NPCTIVA3 == NIL .OR. _NPCTIVA3 == ( cPreCliL )->nIva
-               _NPCTIVA3      := ( cPreCliL )->nIva
-               _NPCTREQ3      := ( cPreCliL )->nReq
+            CASE _NPCTIVA3 == NIL .OR. _NPCTIVA3 == ( cSatCliL )->nIva
+               _NPCTIVA3      := ( cSatCliL )->nIva
+               _NPCTREQ3      := ( cSatCliL )->nReq
                _NBRTIVA3      += nTotArt
                _NIVMIVA3      += nTotIvm
                _NTRNIVA3      += nTotTrn
@@ -5207,22 +5119,22 @@ FUNCTION nTotPreCli( cPresupuesto, cPreCliT, cPreCliL, cIva, cDiv, cFPago, aTmp,
             /*
             Estudio de IVMH-----------------------------------------------------
             */
-            if ( cPreCliL )->nValImp != 0
+            if ( cSatCliL )->nValImp != 0
 
                do case
-                  case aTotIvm[ 1, 2 ] == nil .or. aTotIvm[ 1, 2 ] == ( cPreCliL )->nValImp
-                     aTotIvm[ 1, 1 ]      += nTotNPreCli( cPreCliL ) * if( ( cPreCliL )->lVolImp, NotCero( ( cPreCliL )->nVolumen ), 1 )
-                     aTotIvm[ 1, 2 ]      := ( cPreCliL )->nValImp
+                  case aTotIvm[ 1, 2 ] == nil .or. aTotIvm[ 1, 2 ] == ( cSatCliL )->nValImp
+                     aTotIvm[ 1, 1 ]      += nTotNSatCli( cSatCliL ) * if( ( cSatCliL )->lVolImp, NotCero( ( cSatCliL )->nVolumen ), 1 )
+                     aTotIvm[ 1, 2 ]      := ( cSatCliL )->nValImp
                      aTotIvm[ 1, 3 ]      := aTotIvm[ 1, 1 ] * aTotIvm[ 1, 2 ]
 
-                  case aTotIvm[ 2, 2 ] == nil .or. aTotIvm[ 2, 2 ] == ( cPreCliL )->nValImp
-                     aTotIvm[ 2, 1 ]      += nTotNPreCli( cPreCliL ) * if( ( cPreCliL )->lVolImp, NotCero( ( cPreCliL )->nVolumen ), 1 )
-                     aTotIvm[ 2, 2 ]      := ( cPreCliL )->nValImp
+                  case aTotIvm[ 2, 2 ] == nil .or. aTotIvm[ 2, 2 ] == ( cSatCliL )->nValImp
+                     aTotIvm[ 2, 1 ]      += nTotNSatCli( cSatCliL ) * if( ( cSatCliL )->lVolImp, NotCero( ( cSatCliL )->nVolumen ), 1 )
+                     aTotIvm[ 2, 2 ]      := ( cSatCliL )->nValImp
                      aTotIvm[ 2, 3 ]      := aTotIvm[ 2, 1 ] * aTotIvm[ 2, 2 ]
 
-                  case aTotIvm[ 3, 2 ] == nil .or. aTotIvm[ 3, 2 ] == ( cPreCliL )->nValImp
-                     aTotIvm[ 3, 1 ]      += nTotNPreCli( cPreCliL ) * if( ( cPreCliL )->lVolImp, NotCero( ( cPreCliL )->nVolumen ), 1 )
-                     aTotIvm[ 3, 2 ]      := ( cPreCliL )->nValImp
+                  case aTotIvm[ 3, 2 ] == nil .or. aTotIvm[ 3, 2 ] == ( cSatCliL )->nValImp
+                     aTotIvm[ 3, 1 ]      += nTotNSatCli( cSatCliL ) * if( ( cSatCliL )->lVolImp, NotCero( ( cSatCliL )->nVolumen ), 1 )
+                     aTotIvm[ 3, 2 ]      := ( cSatCliL )->nValImp
                      aTotIvm[ 3, 3 ]      := aTotIvm[ 3, 1 ] * aTotIvm[ 3, 2 ]
 
                end case
@@ -5233,11 +5145,11 @@ FUNCTION nTotPreCli( cPresupuesto, cPreCliT, cPreCliL, cIva, cDiv, cFPago, aTmp,
 
       end if
 
-      ( cPreCliL )->( dbSkip() )
+      ( cSatCliL )->( dbSkip() )
 
    end while
 
-   ( cPreCliL )->( dbGoto( nRecno ) )
+   ( cSatCliL )->( dbGoto( nRecno ) )
 
    /*
    Ordenamos los IGICS de menor a mayor
@@ -5452,9 +5364,9 @@ FUNCTION nTotPreCli( cPresupuesto, cPreCliT, cPreCliL, cIva, cDiv, cFPago, aTmp,
       */
 
       if lRecargo
-         _NIMPREQ1   := if( _NPCTIVA1 != NIL, Round( _NBASIVA1 * _NPCTREQ1 / 100, nRouDiv ), 0 )
-         _NIMPREQ2   := if( _NPCTIVA2 != NIL, Round( _NBASIVA2 * _NPCTREQ2 / 100, nRouDiv ), 0 )
-         _NIMPREQ3   := if( _NPCTIVA3 != NIL, Round( _NBASIVA3 * _NPCTREQ3 / 100, nRouDiv ), 0 )
+         _NIMSATQ1   := if( _NPCTIVA1 != NIL, Round( _NBASIVA1 * _NPCTREQ1 / 100, nRouDiv ), 0 )
+         _NIMSATQ2   := if( _NPCTIVA2 != NIL, Round( _NBASIVA2 * _NPCTREQ2 / 100, nRouDiv ), 0 )
+         _NIMSATQ3   := if( _NPCTIVA3 != NIL, Round( _NBASIVA3 * _NPCTREQ3 / 100, nRouDiv ), 0 )
       end if
 
       _NBASIVA1      -= _NIVMIVA1
@@ -5475,13 +5387,13 @@ FUNCTION nTotPreCli( cPresupuesto, cPreCliT, cPreCliL, cIva, cDiv, cFPago, aTmp,
 
       if lRecargo
          if _NPCTREQ1 != 0
-            _NIMPREQ1   := if( _NPCTIVA1 != NIL, Round( _NBASIVA1 / ( 100 / _NPCTREQ1 + 1 ), nRouDiv ), 0 )
+            _NIMSATQ1   := if( _NPCTIVA1 != NIL, Round( _NBASIVA1 / ( 100 / _NPCTREQ1 + 1 ), nRouDiv ), 0 )
          end if
          if _NPCTREQ3 != 0
-            _NIMPREQ2   := if( _NPCTIVA2 != NIL, Round( _NBASIVA2 / ( 100 / _NPCTREQ2 + 1 ), nRouDiv ), 0 )
+            _NIMSATQ2   := if( _NPCTIVA2 != NIL, Round( _NBASIVA2 / ( 100 / _NPCTREQ2 + 1 ), nRouDiv ), 0 )
          end if
          if _NPCTREQ3 != 0
-            _NIMPREQ3   := if( _NPCTIVA3 != NIL, Round( _NBASIVA3 / ( 100 / _NPCTREQ3 + 1 ), nRouDiv ), 0 )
+            _NIMSATQ3   := if( _NPCTIVA3 != NIL, Round( _NBASIVA3 / ( 100 / _NPCTREQ3 + 1 ), nRouDiv ), 0 )
          end if
       end if
 
@@ -5489,14 +5401,14 @@ FUNCTION nTotPreCli( cPresupuesto, cPreCliT, cPreCliL, cIva, cDiv, cFPago, aTmp,
       _NBASIVA2      -= _NIMPIVA2
       _NBASIVA3      -= _NIMPIVA3
 
-      _NBASIVA1      -= _NIMPREQ1
-      _NBASIVA2      -= _NIMPREQ2
-      _NBASIVA3      -= _NIMPREQ3
+      _NBASIVA1      -= _NIMSATQ1
+      _NBASIVA2      -= _NIMSATQ2
+      _NBASIVA3      -= _NIMSATQ3
 
    end if
 
    /*
-   Redondeo del neto de la presupuesto
+   Redondeo del neto de la S.A.T.
    */
 
    nTotNet           := Round( _NBASIVA1 + _NBASIVA2 + _NBASIVA3, nRouDiv )
@@ -5539,7 +5451,7 @@ FUNCTION nTotPreCli( cPresupuesto, cPreCliT, cPreCliL, cIva, cDiv, cFPago, aTmp,
    Total de R.E.
 	*/
 
-   nTotReq           := Round( _NIMPREQ1 + _NIMPREQ2 + _NIMPREQ3, nRouDiv )
+   nTotReq           := Round( _NIMSATQ1 + _NIMSATQ2 + _NIMSATQ3, nRouDiv )
 
 	/*
 	Total de impuestos
@@ -5559,7 +5471,7 @@ FUNCTION nTotPreCli( cPresupuesto, cPreCliT, cPreCliL, cIva, cDiv, cFPago, aTmp,
 	Total facturas
 	*/
 
-   nTotPre           := nTotNet + nTotImp
+   nTotSat           := nTotNet + nTotImp
 
    /*
    Total de descuentos del precupuesto-----------------------------------------
@@ -5572,17 +5484,17 @@ FUNCTION nTotPreCli( cPresupuesto, cPreCliT, cPreCliL, cIva, cDiv, cFPago, aTmp,
 	*/
 
    /*if cFPago != nil                                      .and. ;
-      ( cFPago )->( dbSeek( ( cPreCliT )->cCodPgo ) )
+      ( cFPago )->( dbSeek( ( cSatCliT )->cCodPgo ) )
 
-      nTotAcu        := nTotPre
+      nTotAcu        := nTotSat
 
       for n := 1 to ( cFPago )->nPlazos
 
          if n != ( cFPago )->nPlazos
-            nTotAcu  -= Round( nTotPre / ( cFPago )->nPlazos, nRouDiv )
+            nTotAcu  -= Round( nTotSat / ( cFPago )->nPlazos, nRouDiv )
          end if
 
-         aAdd( aImpVto, if( n != ( cFPago )->nPlazos, Round( nTotPre / ( cFPago )->nPlazos, nRouDiv ), Round( nTotAcu, nRouDiv ) ) )
+         aAdd( aImpVto, if( n != ( cFPago )->nPlazos, Round( nTotSat / ( cFPago )->nPlazos, nRouDiv ), Round( nTotAcu, nRouDiv ) ) )
 
          aAdd( aDatVto, dNexDay( dFecFac + ( cFPago )->nPlaUno + ( ( cFPago )->nDiaPla * ( n - 1 ) ), cDbfClient ) )
 
@@ -5590,7 +5502,7 @@ FUNCTION nTotPreCli( cPresupuesto, cPreCliT, cPreCliL, cIva, cDiv, cFPago, aTmp,
 
    end if*/
 
-   ( cPreCliL )->( dbGoTo( nRecno) )
+   ( cSatCliL )->( dbGoTo( nRecno) )
 
    /*
    Solicitan una divisa distinta a la q se hizo originalmente la factura
@@ -5601,19 +5513,19 @@ FUNCTION nTotPreCli( cPresupuesto, cPreCliT, cPreCliL, cIva, cDiv, cFPago, aTmp,
       nTotIvm     := nCnv2Div( nTotIvm, cCodDiv, cDivRet, cDiv )
       nTotIva     := nCnv2Div( nTotIva, cCodDiv, cDivRet, cDiv )
       nTotReq     := nCnv2Div( nTotReq, cCodDiv, cDivRet, cDiv )
-      nTotPre     := nCnv2Div( nTotPre, cCodDiv, cDivRet, cDiv )
+      nTotSat     := nCnv2Div( nTotSat, cCodDiv, cDivRet, cDiv )
       nTotPnt     := nCnv2Div( nTotPnt, cCodDiv, cDivRet, cDiv )
       nTotTrn     := nCnv2Div( nTotTrn, cCodDiv, cDivRet, cDiv )
       cPorDiv     := cPorDiv( cDivRet, cDiv )
    end if
 
-RETURN ( if( lPic, Trans( nTotPre, cPorDiv ), nTotPre ) )
+RETURN ( if( lPic, Trans( nTotSat, cPorDiv ), nTotSat ) )
 
 //--------------------------------------------------------------------------//
 
 STATIC FUNCTION RecalculaTotal( aTmp )
 
-   nTotPreCli( nil, dbfPreCliT, dbfTmpLin, dbfIva, dbfDiv, dbfFPago, aTmp )
+   nTotSatCli( nil, dbfSatCliT, dbfTmpLin, dbfIva, dbfDiv, dbfFPago, aTmp )
 
    /*
    Refrescos en Pantalla-------------------------------------------------------
@@ -5638,7 +5550,7 @@ STATIC FUNCTION RecalculaTotal( aTmp )
    end if
 
    if oGetRnt != nil
-      oGetRnt:cText( AllTrim( Trans( nTotRnt, cPorDiv ) + Space( 1 ) + AllTrim( cSimDiv( aTmp[ _CDIVPRE ], dbfDiv ) ) + " : " + AllTrim( Trans( nPctRnt, "999.99" ) ) + "%" ) )
+      oGetRnt:cText( AllTrim( Trans( nTotRnt, cPorDiv ) + Space( 1 ) + AllTrim( cSimDiv( aTmp[ _CDIVSAT ], dbfDiv ) ) + " : " + AllTrim( Trans( nPctRnt, "999.99" ) ) + "%" ) )
    end if
 
    IF oGetIva != nil
@@ -5658,7 +5570,7 @@ STATIC FUNCTION RecalculaTotal( aTmp )
    end if
 
    if oGetTotal != nil
-      oGetTotal:SetText( Trans( nTotPre, cPorDiv ) )
+      oGetTotal:SetText( Trans( nTotSat, cPorDiv ) )
    end if
 
    if oGetAge != nil
@@ -5677,15 +5589,15 @@ Return .t.
 
 //--------------------------------------------------------------------------//
 
-FUNCTION aTotPreCli( cPre, dbfMaster, dbfLine, dbfIva, dbfDiv, dbfFPago, cDivRet )
+FUNCTION aTotSatCli( cSat, dbfMaster, dbfLine, dbfIva, dbfDiv, dbfFPago, cDivRet )
 
-   nTotPreCli( cPre, dbfMaster, dbfLine, dbfIva, dbfDiv, dbfFPago, nil, cDivRet )
+   nTotSatCli( cSat, dbfMaster, dbfLine, dbfIva, dbfDiv, dbfFPago, nil, cDivRet )
 
-RETURN ( { nTotNet, nTotIva, nTotReq, nTotPre, nTotPnt, nTotTrn, nTotAge, nTotCos } )
+RETURN ( { nTotNet, nTotIva, nTotReq, nTotSat, nTotPnt, nTotTrn, nTotAge, nTotCos } )
 
 //--------------------------------------------------------------------------//
 
-STATIC FUNCTION LoaArt( aTmp, aGet, aTmpPre, oStkAct, oSayPr1, oSayPr2, oSayVp1, oSayVp2, bmpImage, oSayLote, nMode, lFocused )
+STATIC FUNCTION LoaArt( aTmp, aGet, aTmpSat, oStkAct, oSayPr1, oSayPr2, oSayVp1, oSayVp2, bmpImage, oSayLote, nMode, lFocused )
 
 	local nDtoAge
    local nImpAtp
@@ -5899,10 +5811,10 @@ end if
             */
 
             if ( dbfArticulo )->nCajEnt != 0
-               if  aGet[ _NCANPRE ] != nil
-                   aGet[ _NCANPRE ]:cText( ( dbfArticulo )->nCajEnt )
+               if  aGet[ _NCANSAT ] != nil
+                   aGet[ _NCANSAT ]:cText( ( dbfArticulo )->nCajEnt )
                else
-                   aTmp[ _NCANPRE ] := ( dbfArticulo )->nCajEnt
+                   aTmp[ _NCANSAT ] := ( dbfArticulo )->nCajEnt
 
                end if
             end if
@@ -5916,10 +5828,10 @@ end if
             end if
 
             /*
-            Preguntamos si el regimen de " + cImp() + " es distinto de Exento
+            Satguntamos si el regimen de " + cImp() + " es distinto de Exento
             */
 
-            if aTmpPre[ _NREGIVA ] <= 1
+            if aTmpSat[ _NREGIVA ] <= 1
 
                if aGet[ _NIVA ] != nil
                   aGet[ _NIVA ]:cText( nIva( dbfIva, ( dbfArticulo )->TipoIva ) )
@@ -5985,9 +5897,9 @@ end if
                aTmp[ _CCODIMP ]     := ( dbfArticulo )->cCodImp
 
                if aGet[ _NVALIMP ] != nil
-                  aGet[ _NVALIMP ]:cText( oNewImp:nValImp( ( dbfArticulo )->cCodImp, aTmpPre[ _LIVAINC ], aTmp[ _NIVA ] ) )
+                  aGet[ _NVALIMP ]:cText( oNewImp:nValImp( ( dbfArticulo )->cCodImp, aTmpSat[ _LIVAINC ], aTmp[ _NIVA ] ) )
                else
-                  aTmp[ _NVALIMP ]  := oNewImp:nValImp( ( dbfArticulo )->cCodImp, aTmpPre[ _LIVAINC ], aTmp[ _NIVA ] )
+                  aTmp[ _NVALIMP ]  := oNewImp:nValImp( ( dbfArticulo )->cCodImp, aTmpSat[ _LIVAINC ], aTmp[ _NIVA ] )
                end if
 
                aTmp[ _LVOLIMP ]     := RetFld( ( dbfArticulo )->cCodImp, oNewImp:oDbf:cAlias, "lIvaVol" )
@@ -6097,7 +6009,7 @@ end if
             Si la comisi¢n del articulo hacia el agente es distinto de cero----
             */
 
-            aGet[ _NCOMAGE ]:cText( aTmpPre[ _NPCTCOMAGE ] )
+            aGet[ _NCOMAGE ]:cText( aTmpSat[ _NPCTCOMAGE ] )
 
             /*
             Peso y volumen
@@ -6211,7 +6123,7 @@ end if
                aTmp[ _NPNTVER ]  := ( dbfArticulo )->nPntVer1
             end if
 
-            aTmp[ _NPVPREC ]     := ( dbfArticulo )->PvpRec
+            aTmp[ _NPVSATC ]     := ( dbfArticulo )->PvpRec
 
             /*
             Cargamos los costos
@@ -6236,7 +6148,7 @@ end if
             Descuento de artículo----------------------------------------------
             */
 
-            nNumDto              := RetFld( aTmpPre[ _CCODCLI ], dbfClient, "nDtoArt" )
+            nNumDto              := RetFld( aTmpSat[ _CCODCLI ], dbfClient, "nDtoArt" )
 
             if nNumDto != 0
 
@@ -6329,10 +6241,10 @@ end if
 
             if !aTmp[ __LALQUILER ]
 
-               nPrePro        := nPrePro( aTmp[ _CREF ], aTmp[ _CCODPR1 ], aTmp[ _CVALPR1 ], aTmp[ _CCODPR2 ], aTmp[ _CVALPR2 ], aTmp[ _NTARLIN ], aTmpPre[ _LIVAINC ], dbfArtDiv, dbfTarPreL, aTmpPre[_CCODTAR] )
+               nPrePro        := nPrePro( aTmp[ _CREF ], aTmp[ _CCODPR1 ], aTmp[ _CVALPR1 ], aTmp[ _CCODPR2 ], aTmp[ _CVALPR2 ], aTmp[ _NTARLIN ], aTmpSat[ _LIVAINC ], dbfArtDiv, dbfTarPreL, aTmpSat[_CCODTAR] )
 
                if nPrePro == 0
-                  aGet[ _NPREDIV ]:cText( nRetPreArt( aTmp[ _NTARLIN ], aTmpPre[ _CDIVPRE ], aTmpPre[_LIVAINC], dbfArticulo, dbfDiv, dbfKit, dbfIva, , aGet[ _NTARLIN ] ) )
+                  aGet[ _NPREDIV ]:cText( nRetPreArt( aTmp[ _NTARLIN ], aTmpSat[ _CDIVSAT ], aTmpSat[_LIVAINC], dbfArticulo, dbfDiv, dbfKit, dbfIva, , aGet[ _NTARLIN ] ) )
                else
                   aGet[ _NPREDIV ]:cText( nPrePro )
                end if
@@ -6340,7 +6252,7 @@ end if
             else
 
                aGet[ _NPREDIV ]:cText( 0 )
-               aGet[ _NPREALQ ]:cText( nPreAlq( aTmp[ _CREF ], aTmp[ _NTARLIN ], aTmpPre[_LIVAINC], dbfArticulo ) )
+               aGet[ _NPREALQ ]:cText( nPreAlq( aTmp[ _CREF ], aTmp[ _NTARLIN ], aTmpSat[_LIVAINC], dbfArticulo ) )
 
             end if
 
@@ -6348,35 +6260,35 @@ end if
             Usando Tarifas-----------------------------------------------------
             */
 
-            if !Empty( aTmpPre[ _CCODTAR ] )
+            if !Empty( aTmpSat[ _CCODTAR ] )
 
                /*
                Cojemos el descuento fijo y el precio del Articulo
                */
 
-               nImpOfe     := RetPrcTar( cCodArt, aTmpPre[_CCODTAR], aTmp[_CCODPR1], aTmp[_CCODPR2], aTmp[_CVALPR1], aTmp[_CVALPR2], dbfTarPreL, aTmp[ _NTARLIN ] )
+               nImpOfe     := RetPrcTar( cCodArt, aTmpSat[_CCODTAR], aTmp[_CCODPR1], aTmp[_CCODPR2], aTmp[_CVALPR1], aTmp[_CVALPR2], dbfTarPreL, aTmp[ _NTARLIN ] )
                if nImpOfe  != 0
                   aGet[ _NPREDIV ]:cText( nImpOfe )
                end if
 
-               nImpOfe     := RetPctTar( cCodArt, cCodFam, aTmpPre[_CCODTAR], aTmp[_CCODPR1], aTmp[_CCODPR2], aTmp[_CVALPR1], aTmp[_CVALPR2], dbfTarPreL )
+               nImpOfe     := RetPctTar( cCodArt, cCodFam, aTmpSat[_CCODTAR], aTmp[_CCODPR1], aTmp[_CCODPR2], aTmp[_CVALPR1], aTmp[_CVALPR2], dbfTarPreL )
                if nImpOfe  != 0
                   aGet[ _NDTO ]:cText( nImpOfe )
                end if
 
-               nImpOfe     := RetLinTar( cCodArt, cCodFam, aTmpPre[_CCODTAR], aTmp[_CCODPR1], aTmp[_CCODPR2], aTmp[_CVALPR1], aTmp[_CVALPR2], dbfTarPreL )
+               nImpOfe     := RetLinTar( cCodArt, cCodFam, aTmpSat[_CCODTAR], aTmp[_CCODPR1], aTmp[_CCODPR2], aTmp[_CVALPR1], aTmp[_CVALPR2], dbfTarPreL )
                if nImpOfe  != 0
                   aGet[ _NDTODIV ]:cText( nImpOfe )
                end if
 
-               nImpOfe     := RetComTar( cCodArt, cCodFam, aTmpPre[_CCODTAR], aTmp[_CCODPR1], aTmp[_CCODPR2], aTmp[_CVALPR1], aTmp[_CVALPR2], aTmpPre[_CCODAGE], dbfTarPreL, dbfTarPreS )
+               nImpOfe     := RetComTar( cCodArt, cCodFam, aTmpSat[_CCODTAR], aTmp[_CCODPR1], aTmp[_CCODPR2], aTmp[_CVALPR1], aTmp[_CVALPR2], aTmpSat[_CCODAGE], dbfTarPreL, dbfTarPreS )
                if nImpOfe  != 0
                   aGet[ _NCOMAGE ]:cText( nImpOfe )
                end if
 
                /*Descuento de promoci¢n*/
 
-               nImpOfe     := RetDtoPrm( cCodArt, cCodFam, aTmpPre[_CCODTAR], aTmp[_CCODPR1], aTmp[_CCODPR2], aTmp[_CVALPR1], aTmp[_CVALPR2], aTmpPre[_DFECPRE], dbfTarPreL )
+               nImpOfe     := RetDtoPrm( cCodArt, cCodFam, aTmpSat[_CCODTAR], aTmp[_CCODPR1], aTmp[_CCODPR2], aTmp[_CVALPR1], aTmp[_CVALPR2], aTmpSat[_DFECSAT], dbfTarPreL )
                if nImpOfe  != 0
                   aGet[ _NDTOPRM ]:cText( nImpOfe )
                end if
@@ -6385,7 +6297,7 @@ end if
                Obtenemos el descuento de Agente
                */
 
-               nDtoAge     := RetDtoAge( cCodArt, cCodFam, aTmpPre[_CCODTAR], aTmp[_CCODPR1], aTmp[_CCODPR2], aTmp[_CVALPR1], aTmp[_CVALPR2], aTmpPre[_DFECPRE], aTmpPre[_CCODAGE], dbfTarPreL, dbfTarPreS )
+               nDtoAge     := RetDtoAge( cCodArt, cCodFam, aTmpSat[_CCODTAR], aTmp[_CCODPR1], aTmp[_CCODPR2], aTmp[_CVALPR1], aTmp[_CVALPR2], aTmpSat[_DFECSAT], aTmpSat[_CCODAGE], dbfTarPreL, dbfTarPreS )
                if nDtoAge  != 0
                   aGet[ _NCOMAGE ]:cText( nDtoAge )
                end if
@@ -6397,8 +6309,8 @@ end if
             */
 
             do case
-            case  lSeekAtpArt( aTmpPre[ _CCODCLI ] + cCodArt, aTmp[ _CCODPR1 ] + aTmp[ _CCODPR2 ], aTmp[ _CVALPR1 ] + aTmp[ _CVALPR2 ], aTmpPre[ _DFECPRE ], dbfCliAtp ) .AND. ;
-                  ( dbfCliAtp )->lAplPre
+            case  lSeekAtpArt( aTmpSat[ _CCODCLI ] + cCodArt, aTmp[ _CCODPR1 ] + aTmp[ _CCODPR2 ], aTmp[ _CVALPR1 ] + aTmp[ _CVALPR2 ], aTmpSat[ _DFECSAT ], dbfCliAtp ) .AND. ;
+                  ( dbfCliAtp )->lAplSat
 
                nImpAtp     := nImpAtp( nTarOld, dbfCliAtp, , , aGet[ _NTARLIN ] )
                if nImpAtp  != 0
@@ -6438,8 +6350,8 @@ end if
             Atipicas de clientes por familias
             */
 
-            case lSeekAtpFam( aTmpPre[ _CCODCLI ] + aTmp[ _CCODFAM ], aTmpPre[ _DFECPRE ], dbfCliAtp ) .and. ;
-                  ( dbfCliAtp )->lAplPre
+            case lSeekAtpFam( aTmpSat[ _CCODCLI ] + aTmp[ _CCODFAM ], aTmpSat[ _DFECSAT ], dbfCliAtp ) .and. ;
+                  ( dbfCliAtp )->lAplSat
 
                if ( dbfCliAtp )->nDtoArt != 0
                   aGet[_NDTO   ]:cText( ( dbfCliAtp )->nDtoArt )
@@ -6466,42 +6378,42 @@ end if
             if oUndMedicion:oDbf:Seek( ( dbfArticulo )->cUnidad )
 
                if oUndMedicion:oDbf:nDimension >= 1 .and. !Empty( oUndMedicion:oDbf:cTextoDim1 )
-                  aGet[ ( dbfPreCliL )->( fieldpos( "nMedUno" ) ) ]:oSay:SetText( oUndMedicion:oDbf:cTextoDim1 )
-                  aGet[ ( dbfPreCliL )->( fieldpos( "nMedUno" ) ) ]:cText( ( dbfArticulo )->nLngArt )
-                  aGet[ ( dbfPreCliL )->( fieldpos( "nMedUno" ) ) ]:Show()
+                  aGet[ ( dbfSatCliL )->( fieldpos( "nMedUno" ) ) ]:oSay:SetText( oUndMedicion:oDbf:cTextoDim1 )
+                  aGet[ ( dbfSatCliL )->( fieldpos( "nMedUno" ) ) ]:cText( ( dbfArticulo )->nLngArt )
+                  aGet[ ( dbfSatCliL )->( fieldpos( "nMedUno" ) ) ]:Show()
                else
-                  aGet[ ( dbfPreCliL )->( fieldpos( "nMedUno" ) ) ]:cText( 0 )
-                  aGet[ ( dbfPreCliL )->( fieldpos( "nMedUno" ) ) ]:Hide()
+                  aGet[ ( dbfSatCliL )->( fieldpos( "nMedUno" ) ) ]:cText( 0 )
+                  aGet[ ( dbfSatCliL )->( fieldpos( "nMedUno" ) ) ]:Hide()
                end if
 
                if oUndMedicion:oDbf:nDimension >= 2 .and. !Empty( oUndMedicion:oDbf:cTextoDim2 )
-                  aGet[ ( dbfPreCliL )->( fieldpos( "nMedDos" ) ) ]:oSay:SetText( oUndMedicion:oDbf:cTextoDim2 )
-                  aGet[ ( dbfPreCliL )->( fieldpos( "nMedDos" ) ) ]:cText( ( dbfArticulo )->nAltArt )
-                  aGet[ ( dbfPreCliL )->( fieldpos( "nMedDos" ) ) ]:Show()
+                  aGet[ ( dbfSatCliL )->( fieldpos( "nMedDos" ) ) ]:oSay:SetText( oUndMedicion:oDbf:cTextoDim2 )
+                  aGet[ ( dbfSatCliL )->( fieldpos( "nMedDos" ) ) ]:cText( ( dbfArticulo )->nAltArt )
+                  aGet[ ( dbfSatCliL )->( fieldpos( "nMedDos" ) ) ]:Show()
                else
-                  aGet[ ( dbfPreCliL )->( fieldpos( "nMedDos" ) ) ]:cText( 0 )
-                  aGet[ ( dbfPreCliL )->( fieldpos( "nMedDos" ) ) ]:Hide()
+                  aGet[ ( dbfSatCliL )->( fieldpos( "nMedDos" ) ) ]:cText( 0 )
+                  aGet[ ( dbfSatCliL )->( fieldpos( "nMedDos" ) ) ]:Hide()
                end if
 
                if oUndMedicion:oDbf:nDimension >= 3 .and. !Empty( oUndMedicion:oDbf:cTextoDim3 )
-                  aGet[ ( dbfPreCliL )->( fieldpos( "nMedTre" ) ) ]:oSay:SetText( oUndMedicion:oDbf:cTextoDim3 )
-                  aGet[ ( dbfPreCliL )->( fieldpos( "nMedTre" ) ) ]:cText( ( dbfArticulo )->nAncArt )
-                  aGet[ ( dbfPreCliL )->( fieldpos( "nMedTre" ) ) ]:Show()
+                  aGet[ ( dbfSatCliL )->( fieldpos( "nMedTre" ) ) ]:oSay:SetText( oUndMedicion:oDbf:cTextoDim3 )
+                  aGet[ ( dbfSatCliL )->( fieldpos( "nMedTre" ) ) ]:cText( ( dbfArticulo )->nAncArt )
+                  aGet[ ( dbfSatCliL )->( fieldpos( "nMedTre" ) ) ]:Show()
                else
-                  aGet[ ( dbfPreCliL )->( fieldpos( "nMedTre" ) ) ]:cText( 0 )
-                  aGet[ ( dbfPreCliL )->( fieldpos( "nMedTre" ) ) ]:Hide()
+                  aGet[ ( dbfSatCliL )->( fieldpos( "nMedTre" ) ) ]:cText( 0 )
+                  aGet[ ( dbfSatCliL )->( fieldpos( "nMedTre" ) ) ]:Hide()
                end if
 
             else
 
-               aGet[ ( dbfPreCliL )->( fieldpos( "nMedUno" ) ) ]:cText( 0 )
-               aGet[ ( dbfPreCliL )->( fieldpos( "nMedUno" ) ) ]:Hide()
+               aGet[ ( dbfSatCliL )->( fieldpos( "nMedUno" ) ) ]:cText( 0 )
+               aGet[ ( dbfSatCliL )->( fieldpos( "nMedUno" ) ) ]:Hide()
 
-               aGet[ ( dbfPreCliL )->( fieldpos( "nMedDos" ) ) ]:cText( 0 )
-               aGet[ ( dbfPreCliL )->( fieldpos( "nMedDos" ) ) ]:Hide()
+               aGet[ ( dbfSatCliL )->( fieldpos( "nMedDos" ) ) ]:cText( 0 )
+               aGet[ ( dbfSatCliL )->( fieldpos( "nMedDos" ) ) ]:Hide()
 
-               aGet[ ( dbfPreCliL )->( fieldpos( "nMedTre" ) ) ]:cText( 0 )
-               aGet[ ( dbfPreCliL )->( fieldpos( "nMedTre" ) ) ]:Hide()
+               aGet[ ( dbfSatCliL )->( fieldpos( "nMedTre" ) ) ]:cText( 0 )
+               aGet[ ( dbfSatCliL )->( fieldpos( "nMedTre" ) ) ]:Hide()
 
             end if
 
@@ -6511,7 +6423,7 @@ end if
          Buscamos si hay ofertas-----------------------------------------------
          */
 
-         lBuscaOferta( cCodArt, aGet, aTmp, aTmpPre, dbfOferta, dbfArticulo, dbfDiv, dbfKit, dbfIva  )
+         lBuscaOferta( cCodArt, aGet, aTmp, aTmpSat, dbfOferta, dbfArticulo, dbfDiv, dbfKit, dbfIva  )
 
          /*
          Cargamos los valores para los cambios---------------------------------
@@ -6524,7 +6436,7 @@ end if
          Solo pueden modificar los precios los administradores-----------------
          */
 
-         if Empty( aTmp[ _NPREDIV ] ) .or. lUsrMaster() .or. oUser():lCambiarPrecio()
+         if Empty( aTmp[ _NPREDIV ] ) .or. lUsrMaster() .or. oUser():lCambiarSatcio()
             aGet[ _NPREDIV ]:HardEnable()
             aGet[ _NDTO    ]:HardEnable()
             aGet[ _NDTOPRM ]:HardEnable()
@@ -6565,7 +6477,7 @@ Return .t.
 
 //--------------------------------------------------------------------------//
 
-static function lBuscaOferta( cCodArt, aGet, aTmp, aTmpPre, dbfOferta, dbfArticulo, dbfDiv, dbfKit, dbfIva  )
+static function lBuscaOferta( cCodArt, aGet, aTmp, aTmpSat, dbfOferta, dbfArticulo, dbfDiv, dbfKit, dbfIva  )
 
    local sOfeArt
    local nTotalLinea    := 0
@@ -6577,13 +6489,13 @@ static function lBuscaOferta( cCodArt, aGet, aTmp, aTmpPre, dbfOferta, dbfArticu
       Buscamos si existen ofertas por artículo----------------------------
       */
 
-      nTotalLinea := RecalculaLinea( aTmp, aTmpPre, nDouDiv, , , aTmpPre[ _CDIVPRE ], .t. )
+      nTotalLinea := RecalculaLinea( aTmp, aTmpSat, nDouDiv, , , aTmpSat[ _CDIVSAT ], .t. )
 
-      sOfeArt     := sOfertaArticulo( cCodArt, aTmpPre[ _CCODCLI ], aTmpPre[ _CCODGRP ], aTmp[ _NUNICAJA ], aTmpPre[ _DFECPRE ], dbfOferta, aTmp[ _NTARLIN ], , aTmp[_CCODPR1], aTmp[_CCODPR2], aTmp[_CVALPR1], aTmp[_CVALPR2], aTmp[ _CDIVPRE ], dbfArticulo, dbfDiv, dbfKit, dbfIva, aTmp[ _NCANPRE ], nTotalLinea )
+      sOfeArt     := sOfertaArticulo( cCodArt, aTmpSat[ _CCODCLI ], aTmpSat[ _CCODGRP ], aTmp[ _NUNICAJA ], aTmpSat[ _DFECSAT ], dbfOferta, aTmp[ _NTARLIN ], , aTmp[_CCODPR1], aTmp[_CCODPR2], aTmp[_CVALPR1], aTmp[_CVALPR2], aTmp[ _CDIVSAT ], dbfArticulo, dbfDiv, dbfKit, dbfIva, aTmp[ _NCANSAT ], nTotalLinea )
 
       if !Empty( sOfeArt ) 
-         if ( sOfeArt:nPrecio != 0 )
-            aGet[ _NPREDIV ]:cText( sOfeArt:nPrecio )
+         if ( sOfeArt:nSatcio != 0 )
+            aGet[ _NPREDIV ]:cText( sOfeArt:nSatcio )
          end if 
          if ( sOfeArt:nDtoPorcentual != 0 )
             aGet[ _NDTO     ]:cText( sOfeArt:nDtoPorcentual )
@@ -6600,7 +6512,7 @@ static function lBuscaOferta( cCodArt, aGet, aTmp, aTmpPre, dbfOferta, dbfArticu
          Buscamos si existen ofertas por familia----------------------------
          */
 
-         sOfeArt     := sOfertaFamilia( ( dbfArticulo )->Familia, aTmpPre[ _CCODCLI ], aTmpPre[ _CCODGRP ], aTmpPre[ _DFECPRE ], dbfOferta, aTmp[ _NTARLIN ], dbfArticulo, aTmp[ _NUNICAJA ], aTmp[ _NCANPRE ], nTotalLinea )
+         sOfeArt     := sOfertaFamilia( ( dbfArticulo )->Familia, aTmpSat[ _CCODCLI ], aTmpSat[ _CCODGRP ], aTmpSat[ _DFECSAT ], dbfOferta, aTmp[ _NTARLIN ], dbfArticulo, aTmp[ _NUNICAJA ], aTmp[ _NCANSAT ], nTotalLinea )
 
          if !Empty( sOfeArt ) 
             if ( sOfeArt:nDtoPorcentual != 0 )
@@ -6620,7 +6532,7 @@ static function lBuscaOferta( cCodArt, aGet, aTmp, aTmpPre, dbfOferta, dbfArticu
          Buscamos si existen ofertas por tipos de articulos--------------
          */
 
-         sOfeArt     := sOfertaTipoArticulo( ( dbfArticulo )->cCodTip, aTmpPre[ _CCODCLI ], aTmpPre[ _CCODGRP ], aTmpPre[ _DFECPRE ], dbfOferta, aTmp[ _NTARLIN ], dbfArticulo, aTmp[ _NUNICAJA ], aTmp[ _NCANPRE ], nTotalLinea )
+         sOfeArt     := sOfertaTipoArticulo( ( dbfArticulo )->cCodTip, aTmpSat[ _CCODCLI ], aTmpSat[ _CCODGRP ], aTmpSat[ _DFECSAT ], dbfOferta, aTmp[ _NTARLIN ], dbfArticulo, aTmp[ _NUNICAJA ], aTmp[ _NCANSAT ], nTotalLinea )
 
          if !Empty( sOfeArt ) 
             if ( sOfeArt:nDtoPorcentual != 0 )
@@ -6640,7 +6552,7 @@ static function lBuscaOferta( cCodArt, aGet, aTmp, aTmpPre, dbfOferta, dbfArticu
          Buscamos si existen ofertas por tipos de articulos--------------
          */
 
-         sOfeArt     := sOfertaCategoria( ( dbfArticulo )->cCodCate, aTmpPre[ _CCODCLI ], aTmpPre[ _CCODGRP ], aTmpPre[ _DFECPRE ], dbfOferta, aTmp[ _NTARLIN ], dbfArticulo, aTmp[ _NUNICAJA ], aTmp[ _NCANPRE ], nTotalLinea )
+         sOfeArt     := sOfertaCategoria( ( dbfArticulo )->cCodCate, aTmpSat[ _CCODCLI ], aTmpSat[ _CCODGRP ], aTmpSat[ _DFECSAT ], dbfOferta, aTmp[ _NTARLIN ], dbfArticulo, aTmp[ _NUNICAJA ], aTmp[ _NCANSAT ], nTotalLinea )
 
          if !Empty( sOfeArt ) 
             if ( sOfeArt:nDtoPorcentual != 0 )
@@ -6660,7 +6572,7 @@ static function lBuscaOferta( cCodArt, aGet, aTmp, aTmpPre, dbfOferta, dbfArticu
          Buscamos si existen ofertas por temporadas----------------------
          */
 
-         sOfeArt     := sOfertaTemporada( ( dbfArticulo )->cCodTemp, aTmpPre[ _CCODCLI ], aTmpPre[ _CCODGRP ], aTmpPre[ _DFECPRE ], dbfOferta, aTmp[ _NTARLIN ], dbfArticulo, aTmp[ _NUNICAJA ], aTmp[ _NCANPRE ], nTotalLinea )
+         sOfeArt     := sOfertaTemporada( ( dbfArticulo )->cCodTemp, aTmpSat[ _CCODCLI ], aTmpSat[ _CCODGRP ], aTmpSat[ _DFECSAT ], dbfOferta, aTmp[ _NTARLIN ], dbfArticulo, aTmp[ _NUNICAJA ], aTmp[ _NCANSAT ], nTotalLinea )
 
          if !Empty( sOfeArt ) 
             if ( sOfeArt:nDtoPorcentual != 0 )
@@ -6680,7 +6592,7 @@ static function lBuscaOferta( cCodArt, aGet, aTmp, aTmpPre, dbfOferta, dbfArticu
          Buscamos si existen ofertas por fabricantes---------------------------
          */
 
-         sOfeArt     := sOfertaFabricante( ( dbfArticulo )->cCodFab, aTmpPre[ _CCODCLI ], aTmpPre[ _CCODGRP ], aTmpPre[ _DFECPRE ], dbfOferta, aTmp[ _NTARLIN ], dbfArticulo, aTmp[ _NUNICAJA ], aTmp[ _NCANPRE ], nTotalLinea )
+         sOfeArt     := sOfertaFabricante( ( dbfArticulo )->cCodFab, aTmpSat[ _CCODCLI ], aTmpSat[ _CCODGRP ], aTmpSat[ _DFECSAT ], dbfOferta, aTmp[ _NTARLIN ], dbfArticulo, aTmp[ _NUNICAJA ], aTmp[ _NCANSAT ], nTotalLinea )
 
          if !Empty( sOfeArt ) 
             if ( sOfeArt:nDtoPorcentual != 0 )
@@ -6700,13 +6612,13 @@ return .t.
 
 //--------------------------------------------------------------------------//
 
-FUNCTION BrwPreCli( oGet, dbfPreCliT, dbfPreCliL, dbfIva, dbfDiv, dbfFPago, oIva )
+FUNCTION BrwSatCli( oGet, dbfSatCliT, dbfSatCliL, dbfIva, dbfDiv, dbfFPago, oIva )
 
 	local oDlg
 	local oBrw
    local oGet1
    local cGet1
-   local nOrd     := GetBrwOpt( "BrwPreCli" )
+   local nOrd     := GetBrwOpt( "BrwSatCli" )
    local lIva     := oIva:VarGet()
 	local oCbxOrd
    local aCbxOrd  := { "Número", "Fecha", "Cliente", "Nombre" }
@@ -6716,18 +6628,18 @@ FUNCTION BrwPreCli( oGet, dbfPreCliT, dbfPreCliL, dbfIva, dbfDiv, dbfFPago, oIva
 
    nOrd           := Min( Max( nOrd, 1 ), len( aCbxOrd ) )
    cCbxOrd        := aCbxOrd[ nOrd ]
-   nOrdAnt        := ( dbfPreCliT )->( OrdSetFocus( nOrd ) )
-   nRecAnt        := ( dbfPreCliT )->( Recno() )
+   nOrdAnt        := ( dbfSatCliT )->( OrdSetFocus( nOrd ) )
+   nRecAnt        := ( dbfSatCliT )->( Recno() )
 
-   ( dbfPreCliT )->( dbSetFilter( {|| !Field->lEstado .and. Field->lIvaInc == lIva }, "!lEstado .and. lIvaInc == lIva" ) )
-   ( dbfPreCliT )->( dbGoTop() )
+   ( dbfSatCliT )->( dbSetFilter( {|| !Field->lEstado .and. Field->lIvaInc == lIva }, "!lEstado .and. lIvaInc == lIva" ) )
+   ( dbfSatCliT )->( dbGoTop() )
 
-   DEFINE DIALOG oDlg RESOURCE "HELPENTRY" TITLE if( lIva, "Presupuestos de clientes con " + cImp() + " incluido", "Presupuestos de clientes con " + cImp() + " desglosado" )
+   DEFINE DIALOG oDlg RESOURCE "HELPENTRY" TITLE if( lIva, "S.A.T. de clientes con " + cImp() + " incluido", "S.A.T. de clientes con " + cImp() + " desglosado" )
 
 		REDEFINE GET oGet1 VAR cGet1;
 			ID 		104 ;
-         ON CHANGE( AutoSeek( nKey, nFlags, Self, oBrw, dbfPreCliT, .t., nil, .f. ) );
-         VALID    ( OrdClearScope( oBrw, dbfPreCliT ) );
+         ON CHANGE( AutoSeek( nKey, nFlags, Self, oBrw, dbfSatCliT, .t., nil, .f. ) );
+         VALID    ( OrdClearScope( oBrw, dbfSatCliT ) );
          BITMAP   "FIND" ;
          OF       oDlg
 
@@ -6735,7 +6647,7 @@ FUNCTION BrwPreCli( oGet, dbfPreCliT, dbfPreCliL, dbfIva, dbfDiv, dbfFPago, oIva
 			VAR 		cCbxOrd ;
 			ID 		102 ;
          ITEMS    aCbxOrd ;
-         ON CHANGE( ( dbfPreCliT )->( ordSetFocus( oCbxOrd:nAt ) ), oBrw:Refresh(), oGet1:SetFocus() ) ;
+         ON CHANGE( ( dbfSatCliT )->( ordSetFocus( oCbxOrd:nAt ) ), oBrw:Refresh(), oGet1:SetFocus() ) ;
 			OF 		oDlg
 
       oBrw                 := IXBrowse():New( oDlg )
@@ -6743,9 +6655,9 @@ FUNCTION BrwPreCli( oGet, dbfPreCliT, dbfPreCliL, dbfIva, dbfDiv, dbfFPago, oIva
       oBrw:bClrSel         := {|| { CLR_BLACK, Rgb( 229, 229, 229 ) } }
       oBrw:bClrSelFocus    := {|| { CLR_BLACK, Rgb( 167, 205, 240 ) } }
 
-      oBrw:cAlias          := dbfPreCliT
+      oBrw:cAlias          := dbfSatCliT
       oBrw:nMarqueeStyle   := 5
-      oBrw:cName           := "Presupuesto a cliente.Browse"
+      oBrw:cName           := "Satsupuesto a cliente.Browse"
 
       oBrw:bLDblClick      := {|| oDlg:end( IDOK ) }
 
@@ -6753,23 +6665,23 @@ FUNCTION BrwPreCli( oGet, dbfPreCliT, dbfPreCliL, dbfIva, dbfDiv, dbfFPago, oIva
 
       with object ( oBrw:AddCol() )
          :cHeader          := "Tipo"
-         :bEditValue       := {|| aTipPre[ if( ( dbfPreCliT )->lAlquiler, 2, 1  ) ] }
+         :bEditValue       := {|| aTipSat[ if( ( dbfSatCliT )->lAlquiler, 2, 1  ) ] }
          :nWidth           := 50
          :lHide            := .t.
       end with
 
       with object ( oBrw:AddCol() )
          :cHeader          := "Número"
-         :cSortOrder       := "nNumPre"
-         :bEditValue       := {|| ( dbfPreCliT )->cSerPre + "/" + AllTrim( Str( ( dbfPreCliT )->nNumPre ) ) + "/" + ( dbfPreCliT )->cSufPre }
+         :cSortOrder       := "nNumSat"
+         :bEditValue       := {|| ( dbfSatCliT )->cSerSat + "/" + AllTrim( Str( ( dbfSatCliT )->nNumSat ) ) + "/" + ( dbfSatCliT )->cSufSat }
          :nWidth           := 60
          :bLClickHeader    := {| nMRow, nMCol, nFlags, oCol | oCbxOrd:Set( oCol:cHeader ) }
       end with
 
       with object ( oBrw:AddCol() )
          :cHeader          := "Fecha"
-         :cSortOrder       := "dFecPre"
-         :bEditValue       := {|| dtoc( ( dbfPreCliT )->dFecPre ) }
+         :cSortOrder       := "dFecSat"
+         :bEditValue       := {|| dtoc( ( dbfSatCliT )->dFecSat ) }
          :nWidth           := 80
          :bLClickHeader    := {| nMRow, nMCol, nFlags, oCol | oCbxOrd:Set( oCol:cHeader ) }
       end with
@@ -6777,7 +6689,7 @@ FUNCTION BrwPreCli( oGet, dbfPreCliT, dbfPreCliL, dbfIva, dbfDiv, dbfFPago, oIva
       with object ( oBrw:AddCol() )
          :cHeader          := "Cliente"
          :cSortOrder       := "cCodCli"
-         :bEditValue       := {|| AllTrim( ( dbfPreCliT )->cCodCli ) }
+         :bEditValue       := {|| AllTrim( ( dbfSatCliT )->cCodCli ) }
          :nWidth           := 80
          :bLClickHeader    := {| nMRow, nMCol, nFlags, oCol | oCbxOrd:Set( oCol:cHeader ) }
       end with
@@ -6785,14 +6697,14 @@ FUNCTION BrwPreCli( oGet, dbfPreCliT, dbfPreCliL, dbfIva, dbfDiv, dbfFPago, oIva
       with object ( oBrw:AddCol() )
          :cHeader          := "Nombre"
          :cSortOrder       := "cNomCli"
-         :bEditValue       := {|| AllTrim( ( dbfPreCliT )->cNomCli ) }
+         :bEditValue       := {|| AllTrim( ( dbfSatCliT )->cNomCli ) }
          :nWidth           := 200
          :bLClickHeader    := {| nMRow, nMCol, nFlags, oCol | oCbxOrd:Set( oCol:cHeader ) }
       end with
 
       with object ( oBrw:AddCol() )
          :cHeader          := "Importe"
-         :bEditValue       := {|| nTotPreCli( ( dbfPreCliT )->cSerPre + Str( ( dbfPreCliT )->nNumPre ) + ( dbfPreCliT )->cSufPre, dbfPreCliT, dbfPreCliL, dbfIva, dbfDiv, dbfFPago, nil, cDivEmp(), .t. ) }
+         :bEditValue       := {|| nTotSatCli( ( dbfSatCliT )->cSerSat + Str( ( dbfSatCliT )->nNumSat ) + ( dbfSatCliT )->cSufSat, dbfSatCliT, dbfSatCliL, dbfIva, dbfDiv, dbfFPago, nil, cDivEmp(), .t. ) }
          :nWidth           := 80
          :nDataStrAlign    := 1
          :nHeadStrAlign    := 1
@@ -6826,49 +6738,49 @@ FUNCTION BrwPreCli( oGet, dbfPreCliT, dbfPreCliL, dbfIva, dbfDiv, dbfFPago, oIva
    ON INIT ( oBrw:Load() ) ;
    CENTER
 
-   DestroyFastFilter( dbfPreCliT )
+   DestroyFastFilter( dbfSatCliT )
 
-   SetBrwOpt( "BrwPreCli", ( dbfPreCliT )->( OrdNumber() ) )
+   SetBrwOpt( "BrwSatCli", ( dbfSatCliT )->( OrdNumber() ) )
 
    if oDlg:nResult == IDOK
-      oGet:cText( ( dbfPreCliT )->cSerPre + Str( ( dbfPreCliT )->nNumPre ) + ( dbfPreCliT )->cSufPre )
+      oGet:cText( ( dbfSatCliT )->cSerSat + Str( ( dbfSatCliT )->nNumSat ) + ( dbfSatCliT )->cSufSat )
       oGet:lValid()
    end if
 
-   ( dbfPreCliT )->( dbClearFilter() )
-   ( dbfPreCliT )->( ordSetFocus( nOrdAnt ) )
-   ( dbfPreCliT )->( dbGoTo( nRecAnt ) )
+   ( dbfSatCliT )->( dbClearFilter() )
+   ( dbfSatCliT )->( ordSetFocus( nOrdAnt ) )
+   ( dbfSatCliT )->( dbGoTo( nRecAnt ) )
 
 RETURN ( oDlg:nResult == IDOK )
 
 //---------------------------------------------------------------------------//
 
-FUNCTION ChgPreCli( cPre, nMode, dbfPreCliT )
+FUNCTION ChgSatCli( cSat, nMode, dbfSatCliT )
 
    local oBlock
    local oError
 	local lExito := .T.
 	local lClose := .F.
 
-   IF nMode != APPD_MODE .OR. Empty( cPre )
+   IF nMode != APPD_MODE .OR. Empty( cSat )
 		RETURN NIL
 	END IF
 
    oBlock            := ErrorBlock( {| oError | ApoloBreak( oError ) } )
    BEGIN SEQUENCE
 
-	IF dbfPreCliT == NIL
+	IF dbfSatCliT == NIL
 
-      USE ( cPatEmp() + "PRECLI.DBF" ) NEW VIA ( cDriver() ) SHARED ALIAS ( cCheckArea( "PRECLI", @dbfPreCliT ) )
-      SET ADSINDEX TO ( cPatEmp() + "PRECLI.CDX" ) ADDITIVE
+      USE ( cPatEmp() + "SATCLI.DBF" ) NEW VIA ( cDriver() ) SHARED ALIAS ( cCheckArea( "SATCLI", @dbfSatCliT ) )
+      SET ADSINDEX TO ( cPatEmp() + "SATCLI.CDX" ) ADDITIVE
 		lClose := .T.
 
    END IF
 
-   IF (dbfPreCliT)->( dbSeek( cPre ) )
-      if dbDialogLock( dbfPreCliT )
-         (dbfPreCliT)->lEstado   := .t.
-         (dbfPreCliT)->( dbUnLock() )
+   IF (dbfSatCliT)->( dbSeek( cSat ) )
+      if dbDialogLock( dbfSatCliT )
+         (dbfSatCliT)->lEstado   := .t.
+         (dbfSatCliT)->( dbUnLock() )
       end if
 	ELSE
 		lExito := .F.
@@ -6883,7 +6795,7 @@ FUNCTION ChgPreCli( cPre, nMode, dbfPreCliT )
    ErrorBlock( oBlock )
 
 	IF lClose
-		CLOSE (dbfPreCliT)
+		CLOSE (dbfSatCliT)
 	END IF
 
 RETURN lExito
@@ -6894,7 +6806,7 @@ RETURN lExito
 Calcula totales en las lineas de Detalle
 */
 
-STATIC FUNCTION RecalculaLinea( aTmp, aTmpPre, nDec, oTotal, oMargen, cCodDiv, lTotal )
+STATIC FUNCTION RecalculaLinea( aTmp, aTmpSat, nDec, oTotal, oMargen, cCodDiv, lTotal )
 
    local nCalculo
    local nUnidades
@@ -6905,7 +6817,7 @@ STATIC FUNCTION RecalculaLinea( aTmp, aTmpPre, nDec, oTotal, oMargen, cCodDiv, l
 
    DEFAULT lTotal := .f.
 
-   nUnidades      := nTotNPreCli( aTmp )
+   nUnidades      := nTotNSatCli( aTmp )
 
    if aTmp[ __LALQUILER ]
       nCalculo    := aTmp[ _NPREALQ  ]
@@ -6975,7 +6887,7 @@ STATIC FUNCTION RecalculaLinea( aTmp, aTmpPre, nDec, oTotal, oMargen, cCodDiv, l
    Punto Verde
    */
 
-   if aTmpPre[ _LOPERPV ] .and. aTmp[ _NPNTVER ] != 0
+   if aTmpSat[ _LOPERPV ] .and. aTmp[ _NPNTVER ] != 0
       nCalculo    += aTmp[ _NPNTVER  ] * nUnidades
    end if
 
@@ -6997,11 +6909,11 @@ return if( !lTotal, .t., nCalculo )
 
 //---------------------------------------------------------------------------//
 
-FUNCTION nTotUPreCli( uTmpLin, nDec, nVdv )
+FUNCTION nTotUSatCli( uTmpLin, nDec, nVdv )
 
    local nCalculo       := 0
 
-   DEFAULT uTmpLin      := dbfPreCliL
+   DEFAULT uTmpLin      := dbfSatCliL
    DEFAULT nDec         := nDouDiv()
    DEFAULT nVdv         := 1
 
@@ -7032,7 +6944,7 @@ RETURN ( Round( nCalculo, nDec ) )
 
 //---------------------------------------------------------------------------//
 
-FUNCTION nImpUPreCli( uTmpLin, nDec, nVdv, cPorDiv )
+FUNCTION nImpUSatCli( uTmpLin, nDec, nVdv, cPorDiv )
 
    local nCalculo    := 0
 
@@ -7087,15 +6999,15 @@ Return ( if( cPorDiv != nil, Trans( nCalculo, cPorDiv ), nCalculo ) )
 
 //---------------------------------------------------------------------------//
 
-FUNCTION nBrtLPreCli( uTmpLin, nDec, nRec, nVdv, cPorDiv )
+FUNCTION nBrtLSatCli( uTmpLin, nDec, nRec, nVdv, cPorDiv )
 
    local nCalculo    := 0
 
    DEFAULT nDec      := 2
    DEFAULT nVdv      := 1
 
-   nCalculo          := nImpUPreCli( uTmpLin, nDec, nVdv, cPorDiv )
-   nCalculo          *= nTotNPreCli( uTmpLin )
+   nCalculo          := nImpUSatCli( uTmpLin, nDec, nVdv, cPorDiv )
+   nCalculo          *= nTotNSatCli( uTmpLin )
 
    nCalculo          := Round( nCalculo / nVdv, nRec )
 
@@ -7103,14 +7015,14 @@ Return ( if( cPorDiv != nil, Trans( nCalculo, cPorDiv ), nCalculo ) )
 
 //---------------------------------------------------------------------------//
 
-FUNCTION nIvaUPreCli( dbfTmpLin, nDec, nVdv )
+FUNCTION nIvaUSatCli( dbfTmpLin, nDec, nVdv )
 
    local nCalculo
 
    DEFAULT nDec   := 0
    DEFAULT nVdv   := 1
 
-   nCalculo       := nTotUPreCli( dbfTmpLin, nDec, nVdv )
+   nCalculo       := nTotUSatCli( dbfTmpLin, nDec, nVdv )
    nCalculo       := nCalculo * ( dbfTmpLin )->nIva / 100
 
    if nVdv != 0
@@ -7124,11 +7036,11 @@ RETURN ( Round( nCalculo, nDec ) )
 Devuelve el total de una linea con impuestos incluidos
 */
 
-FUNCTION nTotFPreCli( dbfLin, nDec, nRou, nVdv, lDto, lPntVer, lImpTrn, cPorDiv )
+FUNCTION nTotFSatCli( dbfLin, nDec, nRou, nVdv, lDto, lPntVer, lImpTrn, cPorDiv )
 
    local nCalculo    := 0
 
-   DEFAULT dbfLin    := dbfPreCliL
+   DEFAULT dbfLin    := dbfSatCliL
    DEFAULT nDec      := nDouDiv()
    DEFAULT nRou      := nRouDiv()
    DEFAULT nVdv      := 1
@@ -7136,70 +7048,70 @@ FUNCTION nTotFPreCli( dbfLin, nDec, nRou, nVdv, lDto, lPntVer, lImpTrn, cPorDiv 
    DEFAULT lPntVer   := .t.
    DEFAULT lImpTrn   := .t.
 
-   nCalculo          += nTotLPreCli( dbfLin, nDec, nRou, nVdv, lDto, lPntVer, lImpTrn )
-   nCalculo          += nTotIPreCli( dbfLin, nDec, nRou, nVdv )
+   nCalculo          += nTotLSatCli( dbfLin, nDec, nRou, nVdv, lDto, lPntVer, lImpTrn )
+   nCalculo          += nTotISatCli( dbfLin, nDec, nRou, nVdv )
 
 return ( if( cPorDiv != nil, Trans( nCalculo, cPorDiv ), nCalculo ) )
 
 //---------------------------------------------------------------------------//
 
-FUNCTION cDesPreCli( cPreCliL )
+FUNCTION cDesSatCli( cSatCliL )
 
-   DEFAULT cPreCliL  := dbfPreCliL
+   DEFAULT cSatCliL  := dbfSatCliL
 
-RETURN ( Descrip( cPreCliL ) )
+RETURN ( Descrip( cSatCliL ) )
 
 //---------------------------------------------------------------------------//
 
-FUNCTION nTotLPreCli( cPreCliT, cPreCliL, nDec, nRou, nVdv, lDto, lPntVer, lImpTrn, cPouDiv )
+FUNCTION nTotLSatCli( cSatCliT, cSatCliL, nDec, nRou, nVdv, lDto, lPntVer, lImpTrn, cPouDiv )
 
    local nCalculo
 
-   DEFAULT cPreCliT     := dbfPreCliT
-   DEFAULT cPreCliL     := dbfPreCliL
+   DEFAULT cSatCliT     := dbfSatCliT
+   DEFAULT cSatCliL     := dbfSatCliL
    DEFAULT nDec         := nDouDiv()
    DEFAULT nRou         := nRouDiv()
    DEFAULT nVdv         := 1
    DEFAULT lDto         := .t.
-   DEFAULT lPntVer      := ( cPreCliT )->lOperPv
+   DEFAULT lPntVer      := ( cSatCliT )->lOperPv
    DEFAULT lImpTrn      := .t.
 
-   if ( cPreCliL )->lTotLin
+   if ( cSatCliL )->lTotLin
 
-      nCalculo          := nTotUPreCli( cPreCliL, nDec )
+      nCalculo          := nTotUSatCli( cSatCliL, nDec )
 
    else
 
-      nCalculo          := nTotUPreCli( cPreCliL, nDec ) * nTotNPreCli( cPreCliL )
+      nCalculo          := nTotUSatCli( cSatCliL, nDec ) * nTotNSatCli( cSatCliL )
 
       /*
       Descuentos---------------------------------------------------------------
       */
 
-      nCalculo          -= Round( ( cPreCliL )->nDtoDiv / nVdv , nDec )
+      nCalculo          -= Round( ( cSatCliL )->nDtoDiv / nVdv , nDec )
 
-      if ( cPreCliL )->nDto != 0 .AND. lDto
-         nCalculo       -= nCalculo * ( cPreCliL )->nDto / 100
+      if ( cSatCliL )->nDto != 0 .AND. lDto
+         nCalculo       -= nCalculo * ( cSatCliL )->nDto / 100
       end if
 
-      if ( cPreCliL )->nDtoPrm != 0 .AND. lDto
-         nCalculo       -= nCalculo * ( cPreCliL )->nDtoPrm / 100
+      if ( cSatCliL )->nDtoPrm != 0 .AND. lDto
+         nCalculo       -= nCalculo * ( cSatCliL )->nDtoPrm / 100
       end if
 
       /*
       Punto Verde
       */
 
-      if lPntVer .and. ( cPreCliL )->nPntVer != 0
-         nCalculo       += ( cPreCliL )->nPntVer * nTotNPreCli( cPreCliL )
+      if lPntVer .and. ( cSatCliL )->nPntVer != 0
+         nCalculo       += ( cSatCliL )->nPntVer * nTotNSatCli( cSatCliL )
       end if
 
       /*
       Transporte---------------------------------------------------------------
       */
 
-      if lImpTrn .and. ( cPreCliL )->nImpTrn != 0
-         nCalculo       += ( cPreCliL )->nImpTrn * nTotNPreCli( cPreCliL )
+      if lImpTrn .and. ( cSatCliL )->nImpTrn != 0
+         nCalculo       += ( cSatCliL )->nImpTrn * nTotNSatCli( cSatCliL )
       end if
 
    end if
@@ -7216,7 +7128,7 @@ RETURN ( if( cPouDiv != nil, Trans( nCalculo, cPouDiv ), nCalculo ) )
 
 //---------------------------------------------------------------------------//
 
-FUNCTION nTotCPreCli( dbfLine, nDec, nRec, nVdv, cPouDiv )
+FUNCTION nTotCSatCli( dbfLine, nDec, nRec, nVdv, cPouDiv )
 
    local nCalculo       := 0
 
@@ -7225,7 +7137,7 @@ FUNCTION nTotCPreCli( dbfLine, nDec, nRec, nVdv, cPouDiv )
    DEFAULT nVdv         := 1
 
    if !( dbfLine )->lKitChl
-      nCalculo          := nTotNPreCli( dbfLine )
+      nCalculo          := nTotNSatCli( dbfLine )
       nCalculo          *= ( dbfLine )->nCosDiv
    end if
 
@@ -7239,35 +7151,35 @@ RETURN ( if( cPouDiv != nil, Trans( nCalculo, cPouDiv ), nCalculo ) )
 
 //---------------------------------------------------------------------------//
 
-FUNCTION nPesLPreCli( cPreCliL )
+FUNCTION nPesLSatCli( cSatCliL )
 
    local nCalculo    := 0
 
-   DEFAULT cPreCliL  := dbfPreCliL
+   DEFAULT cSatCliL  := dbfSatCliL
 
-   if !( cPreCliL )->lTotLin .and. !( cPreCliL )->lControl
-      nCalculo       := Abs( nTotNPreCli( cPreCliL ) ) * ( cPreCliL )->nPesoKg
+   if !( cSatCliL )->lTotLin .and. !( cSatCliL )->lControl
+      nCalculo       := Abs( nTotNSatCli( cSatCliL ) ) * ( cSatCliL )->nPesoKg
    end if
 
 RETURN ( nCalculo )
 
 //---------------------------------------------------------------------------//
 
-FUNCTION nVolLPreCli( dbfLine )
+FUNCTION nVolLSatCli( dbfLine )
 
    local nCalculo    := 0
 
    if !( dbfLine )->lTotLin .and. !( dbfLine )->lControl
-      nCalculo       := nTotNPreCli( dbfLine ) * ( dbfLine )->nVolumen
+      nCalculo       := nTotNSatCli( dbfLine ) * ( dbfLine )->nVolumen
    end if
 
 RETURN ( nCalculo )
 
 //---------------------------------------------------------------------------//
 
-FUNCTION nIvaLPreCli( dbfT, dbfLin, nDec, nRouDec, nVdv, lDto, lPntVer, lImpTrn, cPouDiv )
+FUNCTION nIvaLSatCli( dbfT, dbfLin, nDec, nRouDec, nVdv, lDto, lPntVer, lImpTrn, cPouDiv )
 
-   local nCalculo := nTotLPreCli( dbfT, dbfLin, nDec, nRouDec, nVdv, lDto, lPntVer, lImpTrn, cPouDiv )
+   local nCalculo := nTotLSatCli( dbfT, dbfLin, nDec, nRouDec, nVdv, lDto, lPntVer, lImpTrn, cPouDiv )
 
    if !( dbfLin )->lIvaLin
       nCalculo    := nCalculo * ( dbfLin )->nIva / 100
@@ -7279,7 +7191,7 @@ RETURN ( if( cPouDiv != nil, Trans( nCalculo, cPouDiv ), nCalculo ) )
 
 //---------------------------------------------------------------------------//
 
-Function nPntUPreCli( dbfTmpLin, nDec, nVdv )
+Function nPntUSatCli( dbfTmpLin, nDec, nVdv )
 
 	local nCalculo
 
@@ -7296,11 +7208,11 @@ RETURN ( round( nCalculo, nDec ) )
 
 //---------------------------------------------------------------------------//
 
-FUNCTION nPntLPreCli( dbfLin, nDec, nVdv )
+FUNCTION nPntLSatCli( dbfLin, nDec, nVdv )
 
    local nPntVer
 
-   DEFAULT dbfLin    := dbfPreCliL
+   DEFAULT dbfLin    := dbfSatCliL
    DEFAULT nDec      := 2
    DEFAULT nVdv      := 1
 
@@ -7308,14 +7220,14 @@ FUNCTION nPntLPreCli( dbfLin, nDec, nVdv )
    Punto Verde
    */
 
-   nPntVer           := nPntUPreCli( dbfLin, nDec, nVdv )
-   nPntVer           *= nTotNPreCli( dbfLin )
+   nPntVer           := nPntUSatCli( dbfLin, nDec, nVdv )
+   nPntVer           *= nTotNSatCli( dbfLin )
 
 RETURN ( Round( nPntVer, nDec ) )
 
 //---------------------------------------------------------------------------//
 
-FUNCTION nTrnUPreCli( dbfTmpLin, nDec, nVdv )
+FUNCTION nTrnUSatCli( dbfTmpLin, nDec, nVdv )
 
 	local nCalculo
 
@@ -7332,11 +7244,11 @@ RETURN ( Round( nCalculo, nDec ) )
 
 //---------------------------------------------------------------------------//
 
-FUNCTION nTrnLPreCli( dbfLin, nDec, nRou, nVdv )
+FUNCTION nTrnLSatCli( dbfLin, nDec, nRou, nVdv )
 
    local nImpTrn
 
-   DEFAULT dbfLin    := dbfPreCliL
+   DEFAULT dbfLin    := dbfSatCliL
    DEFAULT nDec      := 2
    DEFAULT nRou      := 2
    DEFAULT nVdv      := 1
@@ -7345,7 +7257,7 @@ FUNCTION nTrnLPreCli( dbfLin, nDec, nRou, nVdv )
    Punto Verde
    */
 
-   nImpTrn           := nTrnUPreCli( dbfLin, nDec ) * nTotNPreCli( dbfLin )
+   nImpTrn           := nTrnUSatCli( dbfLin, nDec ) * nTotNSatCli( dbfLin )
 
    IF nVdv != 0
       nImpTrn        := nImpTrn / nVdv
@@ -7355,7 +7267,7 @@ RETURN ( Round( nImpTrn, nRou ) )
 
 //---------------------------------------------------------------------------//
 
-FUNCTION nDtoUPreCli( dbfTmpLin, nDec, nVdv )
+FUNCTION nDtoUSatCli( dbfTmpLin, nDec, nVdv )
 
    local nCalculo := ( dbfTmpLin )->nDtoDiv
 
@@ -7370,12 +7282,12 @@ RETURN ( round( nCalculo, nDec ) )
 
 //---------------------------------------------------------------------------//
 
-STATIC FUNCTION nTotLAgePre( dbfDetalle )
+STATIC FUNCTION nTotLAgeSat( dbfDetalle )
 
    local nCalculo := ( dbfDetalle )->nPreDiv * (dbfDetalle)->nUniCaja
 
    IF lCalCaj()
-      nCalculo    *= If( ( dbfDetalle )->nCanPre != 0, ( dbfDetalle )->nCanPre, 1 )
+      nCalculo    *= If( ( dbfDetalle )->nCanSat != 0, ( dbfDetalle )->nCanSat, 1 )
 	END IF
 
    nCalculo       := Round( nCalculo * ( dbfDetalle )->nComAge / 100, 0 )
@@ -7392,24 +7304,24 @@ STATIC FUNCTION nTotLNumArt( dbfDetalle )
 
 	local nCalculo := 0
 
-   IF lCalCaj() .AND. (dbfDetalle)->NCANPRE != 0 .AND. (dbfDetalle)->NPREDIV != 0
-		nCalculo := (dbfDetalle)->NCANPRE
+   IF lCalCaj() .AND. (dbfDetalle)->NCANSAT != 0 .AND. (dbfDetalle)->NPreDiv != 0
+		nCalculo := (dbfDetalle)->NCANSAT
 	END IF
 
 RETURN ( nCalculo )
 
 //---------------------------------------------------------------------------//
 
-FUNCTION mkPreCli( cPath, lAppend, cPathOld, oMeter, bFor )
+FUNCTION mkSatCli( cPath, lAppend, cPathOld, oMeter, bFor )
 
-	local dbfPreCliT
-   local dbfPreCliL
-   local dbfPreCliI
-   local dbfPreCliD
-   local oldPreCliT
-   local oldPreCliL
-   local oldPreCliI
-   local oldPreCliD
+	local dbfSatCliT
+   local dbfSatCliL
+   local dbfSatCliI
+   local dbfSatCliD
+   local oldSatCliT
+   local oldSatCliL
+   local oldSatCliI
+   local oldSatCliD
 
    if oMeter != NIL
 		oMeter:cText	:= "Generando Bases"
@@ -7419,100 +7331,100 @@ FUNCTION mkPreCli( cPath, lAppend, cPathOld, oMeter, bFor )
    DEFAULT bFor   := {|| .t. }
 
    CreateFiles( cPath )
-   rxPreCli( cPath, oMeter )
+   rxSatCli( cPath, oMeter )
 
    If lAppend .and. lIsDir( cPathOld )
 
-      dbUseArea( .t., cDriver(), cPath + "PRECLIT.DBF", cCheckArea( "PRECLIT", @dbfPreCliT ), .f. )
-      if !( dbfPreCliT )->( neterr() )
-         ( dbfPreCliT )->( ordListAdd( cPath + "PRECLIT.CDX" ) )
+      dbUseArea( .t., cDriver(), cPath + "SATCLIT.DBF", cCheckArea( "SATCLIT", @dbfSatCliT ), .f. )
+      if !( dbfSatCliT )->( neterr() )
+         ( dbfSatCliT )->( ordListAdd( cPath + "SATCLIT.CDX" ) )
       end if
 
-      dbUseArea( .t., cDriver(), cPath + "PreCliL.DBF", cCheckArea( "PreCliL", @dbfPreCliL ), .f. )
-      if !( dbfPreCliL )->( neterr() )
-         ( dbfPreCliL )->( ordListAdd( cPath + "PreCliL.CDX" ) )
+      dbUseArea( .t., cDriver(), cPath + "SatCliL.DBF", cCheckArea( "SatCliL", @dbfSatCliL ), .f. )
+      if !( dbfSatCliL )->( neterr() )
+         ( dbfSatCliL )->( ordListAdd( cPath + "SatCliL.CDX" ) )
       end if
 
-      dbUseArea( .t., cDriver(), cPath + "PreCliI.Dbf", cCheckArea( "PreCliI", @dbfPreCliI ), .f. )
-      if !( dbfPreCliI )->( neterr() )
-         ( dbfPreCliI )->( ordListAdd( cPath + "PreCliI.Cdx" ) )
+      dbUseArea( .t., cDriver(), cPath + "SatCliI.Dbf", cCheckArea( "SatCliI", @dbfSatCliI ), .f. )
+      if !( dbfSatCliI )->( neterr() )
+         ( dbfSatCliI )->( ordListAdd( cPath + "SatCliI.Cdx" ) )
       end if
 
-      dbUseArea( .t., cDriver(), cPath + "PreCliD.Dbf", cCheckArea( "PreCliD", @dbfPreCliD ), .f. )
-      if !( dbfPreCliD )->( neterr() )
-         ( dbfPreCliD )->( ordListAdd( cPath + "PreCliD.Cdx" ) )
+      dbUseArea( .t., cDriver(), cPath + "SatCliD.Dbf", cCheckArea( "SatCliD", @dbfSatCliD ), .f. )
+      if !( dbfSatCliD )->( neterr() )
+         ( dbfSatCliD )->( ordListAdd( cPath + "SatCliD.Cdx" ) )
       end if
 
       /*
       Bases de datos de la empresa a importar----------------------------------
       */
 
-      dbUseArea( .t., cDriver(), cPathOld + "PreCliT.DBF", cCheckArea( "PreCliT", @oldPreCliT ), .f. )
-      if !( dbfPreCliT )->( neterr() )
-         ( oldPreCliT )->( ordListAdd( cPathOld + "PreCliT.CDX" ) )
+      dbUseArea( .t., cDriver(), cPathOld + "SatCliT.DBF", cCheckArea( "SatCliT", @oldSatCliT ), .f. )
+      if !( dbfSatCliT )->( neterr() )
+         ( oldSatCliT )->( ordListAdd( cPathOld + "SatCliT.CDX" ) )
       end if
 
-      dbUseArea( .t., cDriver(), cPathOld + "PreCliL.DBF", cCheckArea( "PreCliL", @oldPreCliL ), .f. )
-      if !( oldPreCliL )->( neterr() )
-         ( oldPreCliL )->( ordListAdd( cPathOld + "PreCliL.CDX" ) )
+      dbUseArea( .t., cDriver(), cPathOld + "SatCliL.DBF", cCheckArea( "SatCliL", @oldSatCliL ), .f. )
+      if !( oldSatCliL )->( neterr() )
+         ( oldSatCliL )->( ordListAdd( cPathOld + "SatCliL.CDX" ) )
       end if
 
-      dbUseArea( .t., cDriver(), cPathOld + "PreCliI.DBF", cCheckArea( "PreCliI", @oldPreCliI ), .f. )
-      if !( oldPreCliI )->( neterr() )
-         ( oldPreCliI )->( ordListAdd( cPathOld + "PreCliI.CDX"  ) )
+      dbUseArea( .t., cDriver(), cPathOld + "SatCliI.DBF", cCheckArea( "SatCliI", @oldSatCliI ), .f. )
+      if !( oldSatCliI )->( neterr() )
+         ( oldSatCliI )->( ordListAdd( cPathOld + "SatCliI.CDX"  ) )
       end if
 
-      dbUseArea( .t., cDriver(), cPathOld + "PreCliD.DBF", cCheckArea( "PreCliD", @oldPreCliD ), .f. )
-      if !( oldPreCliD )->( neterr() )
-         ( oldPreCliD )->( ordListAdd( cPathOld + "PreCliD.CDX"  ) )
+      dbUseArea( .t., cDriver(), cPathOld + "SatCliD.DBF", cCheckArea( "SatCliD", @oldSatCliD ), .f. )
+      if !( oldSatCliD )->( neterr() )
+         ( oldSatCliD )->( ordListAdd( cPathOld + "SatCliD.CDX"  ) )
       end if
 
       /*
       Proceso de importacion --------------------------------------------------
       */
 
-      while !( oldPreCliT )->( eof() )
+      while !( oldSatCliT )->( eof() )
 
-         if eval( bFor, oldPreCliT )
+         if eval( bFor, oldSatCliT )
 
-            dbCopy( oldPreCliT, dbfPreCliT, .t. )
+            dbCopy( oldSatCliT, dbfSatCliT, .t. )
 
-            if ( oldPreCliL )->( dbSeek( ( oldPreCliT )->cSerPre + Str( ( oldPreCliT )->nNumPre ) + ( oldPreCliT )->cSufPre ) )
-               while ( oldPreCliL )->cSerPre + Str( ( oldPreCliL )->nNumPre ) + ( oldPreCliL )->cSufPre == ( oldPreCliT )->cSerPre + Str( ( oldPreCliT )->nNumPre ) + ( oldPreCliT )->cSufPre .and. !( oldPreCliL )->( eof() )
-                  dbCopy( oldPreCliL, dbfPreCliL, .t. )
-                  ( oldPreCliL )->( dbSkip() )
+            if ( oldSatCliL )->( dbSeek( ( oldSatCliT )->cSerSat + Str( ( oldSatCliT )->nNumSat ) + ( oldSatCliT )->cSufSat ) )
+               while ( oldSatCliL )->cSerSat + Str( ( oldSatCliL )->nNumSat ) + ( oldSatCliL )->cSufSat == ( oldSatCliT )->cSerSat + Str( ( oldSatCliT )->nNumSat ) + ( oldSatCliT )->cSufSat .and. !( oldSatCliL )->( eof() )
+                  dbCopy( oldSatCliL, dbfSatCliL, .t. )
+                  ( oldSatCliL )->( dbSkip() )
                end while
             end if
 
-            if ( oldPreCliI )->( dbSeek( ( oldPreCliT )->cSerPre + Str( ( oldPreCliT )->nNumPre ) + ( oldPreCliT )->cSufPre ) )
-               while ( oldPreCliI )->cSerPre + Str( ( oldPreCliI )->nNumPre ) + ( oldPreCliI )->cSufPre == ( oldPreCliT )->cSerPre + Str( ( oldPreCliT )->nNumPre ) + ( oldPreCliT )->cSufPre .and. !( oldPreCliI )->( eof() )
-                  dbCopy( oldPreCliI, dbfPreCliI, .t. )
-                  ( oldPreCliI )->( dbSkip() )
+            if ( oldSatCliI )->( dbSeek( ( oldSatCliT )->cSerSat + Str( ( oldSatCliT )->nNumSat ) + ( oldSatCliT )->cSufSat ) )
+               while ( oldSatCliI )->cSerSat + Str( ( oldSatCliI )->nNumSat ) + ( oldSatCliI )->cSufSat == ( oldSatCliT )->cSerSat + Str( ( oldSatCliT )->nNumSat ) + ( oldSatCliT )->cSufSat .and. !( oldSatCliI )->( eof() )
+                  dbCopy( oldSatCliI, dbfSatCliI, .t. )
+                  ( oldSatCliI )->( dbSkip() )
                end while
             end if
 
-            if ( oldPreCliD )->( dbSeek( ( oldPreCliT )->cSerPre + Str( ( oldPreCliT )->nNumPre ) + ( oldPreCliT )->cSufPre ) )
-               while ( oldPreCliD )->cSerPre + Str( ( oldPreCliD )->nNumPre ) + ( oldPreCliD )->cSufPre == ( oldPreCliT )->cSerPre + Str( ( oldPreCliT )->nNumPre ) + ( oldPreCliT )->cSufPre .and. !( oldPreCliI )->( eof() )
-                  dbCopy( oldPreCliD, dbfPreCliD, .t. )
-                  ( oldPreCliD )->( dbSkip() )
+            if ( oldSatCliD )->( dbSeek( ( oldSatCliT )->cSerSat + Str( ( oldSatCliT )->nNumSat ) + ( oldSatCliT )->cSufSat ) )
+               while ( oldSatCliD )->cSerSat + Str( ( oldSatCliD )->nNumSat ) + ( oldSatCliD )->cSufSat == ( oldSatCliT )->cSerSat + Str( ( oldSatCliT )->nNumSat ) + ( oldSatCliT )->cSufSat .and. !( oldSatCliI )->( eof() )
+                  dbCopy( oldSatCliD, dbfSatCliD, .t. )
+                  ( oldSatCliD )->( dbSkip() )
                end while
             end if
 
          end if
 
-         ( oldPreCliT )->( dbSkip() )
+         ( oldSatCliT )->( dbSkip() )
 
       end while
 
-		( dbfPreCliT )->( dbCloseArea() )
-      ( dbfPreCliL )->( dbCloseArea() )
-      ( dbfPreCliI )->( dbCloseArea() )
-      ( dbfPreCliD )->( dbCloseArea() )
+		( dbfSatCliT )->( dbCloseArea() )
+      ( dbfSatCliL )->( dbCloseArea() )
+      ( dbfSatCliI )->( dbCloseArea() )
+      ( dbfSatCliD )->( dbCloseArea() )
 
-      ( oldPreCliT )->( dbCloseArea() )
-      ( oldPreCliL )->( dbCloseArea() )
-      ( oldPreCliI )->( dbCloseArea() )
-      ( oldPreCliD )->( dbCloseArea() )
+      ( oldSatCliT )->( dbCloseArea() )
+      ( oldSatCliL )->( dbCloseArea() )
+      ( oldSatCliI )->( dbCloseArea() )
+      ( oldSatCliD )->( dbCloseArea() )
 
    End If
 
@@ -7520,116 +7432,140 @@ Return Nil
 
 //---------------------------------------------------------------------------//
 
-FUNCTION rxPreCli( cPath, oMeter )
+FUNCTION rxSatCli( cPath, oMeter )
 
-	local dbfPreCliT
+	local dbfSatCliT
 
    DEFAULT cPath  := cPatEmp()
 
-   if !lExistTable( cPath + "PRECLIT.DBF" ) .OR. ;
-      !lExistTable( cPath + "PRECLIL.DBF" ) .OR. ;
-      !lExistTable( cPath + "PRECLII.DBF" ) .OR. ;
-      !lExistTable( cPath + "PRECLID.DBF" )
+   if !lExistTable( cPath + "SATCLIT.DBF" ) .OR. ;
+      !lExistTable( cPath + "SATCLIL.DBF" ) .OR. ;
+      !lExistTable( cPath + "SATCLII.DBF" ) .OR. ;
+      !lExistTable( cPath + "SATCLID.DBF" )
+      !lExistTable( cPath + "SATCLIS.DBF" )
       CreateFiles( cPath )
    end if
 
-   fEraseIndex( cPath + "PRECLIT.CDX" )
-   fEraseIndex( cPath + "PRECLIL.CDX" )
-   fEraseIndex( cPath + "PRECLII.CDX" )
-   fEraseIndex( cPath + "PRECLID.CDX" )
+   fEraseIndex( cPath + "SATCLIT.CDX" )
+   fEraseIndex( cPath + "SATCLIL.CDX" )
+   fEraseIndex( cPath + "SATCLII.CDX" )
+   fEraseIndex( cPath + "SATCLID.CDX" )
+   fEraseIndex( cPath + "SatCliS.Cdx" )
 
-   dbUseArea( .t., cDriver(), cPath + "PRECLIT.DBF", cCheckArea( "PRECLIT", @dbfPreCliT ), .f. )
-   if !( dbfPreCliT )->( neterr() )
-      ( dbfPreCliT )->( __dbPack() )
+   dbUseArea( .t., cDriver(), cPath + "SATCLIT.DBF", cCheckArea( "SATCLIT", @dbfSatCliT ), .f. )
+   if !( dbfSatCliT )->( neterr() )
+      ( dbfSatCliT )->( __dbPack() )
 
-      ( dbfPreCliT )->( ordCondSet("!Deleted()", {||!Deleted()}  ) )
-      ( dbfPreCliT )->( ordCreate( cPath + "PRECLIT.CDX", "NNUMPRE", "CSERPRE + STR( NNUMPRE ) + CSUFPRE", {|| Field->CSERPRE + STR(Field->NNUMPRE) + Field->CSUFPRE } ) )
+      ( dbfSatCliT )->( ordCondSet("!Deleted()", {||!Deleted()}  ) )
+      ( dbfSatCliT )->( ordCreate( cPath + "SATCLIT.CDX", "NNUMSAT", "CSERSAT + STR( NNUMSAT ) + CSUFSAT", {|| Field->CSERSAT + STR(Field->NNUMSAT) + Field->CSUFSAT } ) )
 
-      ( dbfPreCliT )->( ordCondSet("!Deleted()", {||!Deleted()}  ) )
-      ( dbfPreCliT )->( ordCreate( cPath + "PRECLIT.CDX", "DFECPRE", "DFECPRE", {|| Field->DFECPRE } ) )
+      ( dbfSatCliT )->( ordCondSet("!Deleted()", {||!Deleted()}  ) )
+      ( dbfSatCliT )->( ordCreate( cPath + "SATCLIT.CDX", "DFECSAT", "DFECSAT", {|| Field->DFECSAT } ) )
 
-      ( dbfPreCliT )->( ordCondSet("!Deleted()", {||!Deleted()}  ) )
-      ( dbfPreCliT )->( ordCreate( cPath + "PRECLIT.CDX", "CCODCLI", "CCODCLI + Dtos( dFecPre )", {|| Field->CCODCLI + Dtos( Field->dFecPre ) } ) )
+      ( dbfSatCliT )->( ordCondSet("!Deleted()", {||!Deleted()}  ) )
+      ( dbfSatCliT )->( ordCreate( cPath + "SATCLIT.CDX", "CCODCLI", "CCODCLI + Dtos( dFecSat )", {|| Field->CCODCLI + Dtos( Field->dFecSat ) } ) )
 
-      ( dbfPreCliT )->( ordCondSet("!Deleted()", {||!Deleted()}  ) )
-      ( dbfPreCliT )->( ordCreate( cPath + "PRECLIT.CDX", "CNOMCLI", "cNomCli + Dtos( dFecPre )", {|| Field->cNomCli + Dtos( Field->dFecPre ) } ) )
+      ( dbfSatCliT )->( ordCondSet("!Deleted()", {||!Deleted()}  ) )
+      ( dbfSatCliT )->( ordCreate( cPath + "SATCLIT.CDX", "CNOMCLI", "cNomCli + Dtos( dFecSat )", {|| Field->cNomCli + Dtos( Field->dFecSat ) } ) )
 
-      ( dbfPreCliT )->( ordCondSet("!Deleted()", {||!Deleted()}  ) )
-      ( dbfPreCliT )->( ordCreate( cPath + "PRECLIT.CDX", "cCodObr", "cCodObr", {|| Field->cCodObr } ) )
+      ( dbfSatCliT )->( ordCondSet("!Deleted()", {||!Deleted()}  ) )
+      ( dbfSatCliT )->( ordCreate( cPath + "SATCLIT.CDX", "cCodObr", "cCodObr", {|| Field->cCodObr } ) )
 
-      ( dbfPreCliT )->( ordCondSet("!Deleted()", {||!Deleted()}  ) )
-      ( dbfPreCliT )->( ordCreate( cPath + "PRECLIT.CDX", "cCodAge", "cCodAge", {|| Field->cCodAge } ) )
+      ( dbfSatCliT )->( ordCondSet("!Deleted()", {||!Deleted()}  ) )
+      ( dbfSatCliT )->( ordCreate( cPath + "SATCLIT.CDX", "cCodAge", "cCodAge", {|| Field->cCodAge } ) )
 
-      ( dbfPreCliT )->( ordCondSet("!Deleted()", {||!Deleted()}  ) )
-      ( dbfPreCliT )->( ordCreate( cPath + "PRECLIT.CDX", "CTURPRE", "CTURPRE + CSUFPRE + cCodCaj", {|| Field->CTURPRE + Field->CSUFPRE + Field->cCodCaj } ) )
+      ( dbfSatCliT )->( ordCondSet("!Deleted()", {||!Deleted()}  ) )
+      ( dbfSatCliT )->( ordCreate( cPath + "SATCLIT.CDX", "CTURSAT", "CTURSAT + CSUFSAT + cCodCaj", {|| Field->CTURSAT + Field->CSUFSAT + Field->cCodCaj } ) )
 
-      ( dbfPreCliT )->( ordCondSet( "!Deleted()", {|| !Deleted() } ) )
-      ( dbfPreCliT )->( ordCreate( cPath + "PreCliT.CDX", "lSndDoc", "lSndDoc", {|| Field->lSndDoc } ) )
+      ( dbfSatCliT )->( ordCondSet( "!Deleted()", {|| !Deleted() } ) )
+      ( dbfSatCliT )->( ordCreate( cPath + "SatCliT.CDX", "lSndDoc", "lSndDoc", {|| Field->lSndDoc } ) )
 
-      ( dbfPreCliT )->( ordCondSet( "!Deleted()", {||!Deleted()}  ) )
-      ( dbfPreCliT )->( ordCreate( cPath + "PreCliT.Cdx", "cCodUsr", "cCodUsr + Dtos( dFecCre ) + cTimCre", {|| Field->cCodUsr + Dtos( Field->dFecCre ) + Field->cTimCre } ) )
+      ( dbfSatCliT )->( ordCondSet( "!Deleted()", {||!Deleted()}  ) )
+      ( dbfSatCliT )->( ordCreate( cPath + "SatCliT.Cdx", "cCodUsr", "cCodUsr + Dtos( dFecCre ) + cTimCre", {|| Field->cCodUsr + Dtos( Field->dFecCre ) + Field->cTimCre } ) )
 
-      ( dbfPreCliT )->( ordCondSet( "!Deleted()", {|| !Deleted() } ) )
-      ( dbfPreCliT )->( ordCreate( cPath + "PreCliT.Cdx", "iNumPre", "'08' + cSerPre + Str( nNumPre ) + Space( 1 ) + cSufPre", {|| '08' + Field->cSerPre + Str( Field->nNumPre ) + Space( 1 ) + Field->cSufPre } ) )
+      ( dbfSatCliT )->( ordCondSet( "!Deleted()", {|| !Deleted() } ) )
+      ( dbfSatCliT )->( ordCreate( cPath + "SatCliT.Cdx", "iNumSat", "'32' + cSerSat + Str( nNumSat ) + Space( 1 ) + cSufSat", {|| '32' + Field->cSerSat + Str( Field->nNumSat ) + Space( 1 ) + Field->cSufSat } ) )
 
-      ( dbfPreCliT )->( dbCloseArea() )
+      ( dbfSatCliT )->( dbCloseArea() )
 
    else
-      msgStop( "Imposible abrir en modo exclusivo la tabla de presupuestos de clientes" )
+      msgStop( "Imposible abrir en modo exclusivo la tabla de S.A.T. de clientes" )
    end if
 
-   dbUseArea( .t., cDriver(), cPath + "PRECLIL.DBF", cCheckArea( "PRECLIL", @dbfPreCliT ), .f. )
-   if !( dbfPreCliT )->( neterr() )
-      ( dbfPreCliT )->( __dbPack() )
+   dbUseArea( .t., cDriver(), cPath + "SATCLIL.DBF", cCheckArea( "SATCLIL", @dbfSatCliT ), .f. )
+   if !( dbfSatCliT )->( neterr() )
+      ( dbfSatCliT )->( __dbPack() )
 
-      ( dbfPreCliT )->( ordCondSet("!Deleted()", {||!Deleted()}  ) )
-      ( dbfPreCliT )->( ordCreate( cPath + "PreCliL.Cdx", "NNUMPRE", "CSERPRE + STR( NNUMPRE ) + CSUFPRE", {|| Field->CSERPRE + STR( Field->NNUMPRE ) + Field->CSUFPRE } ) )
+      ( dbfSatCliT )->( ordCondSet("!Deleted()", {||!Deleted()}  ) )
+      ( dbfSatCliT )->( ordCreate( cPath + "SatCliL.Cdx", "NNUMSAT", "CSERSAT + STR( NNUMSAT ) + CSUFSAT", {|| Field->CSERSAT + STR( Field->NNUMSAT ) + Field->CSUFSAT } ) )
 
-      ( dbfPreCliT )->( ordCondSet("!Deleted()", {||!Deleted()}  ) )
-      ( dbfPreCliT )->( ordCreate( cPath + "PreCliL.Cdx", "CREF", "CREF", {|| Field->CREF }, ) )
+      ( dbfSatCliT )->( ordCondSet("!Deleted()", {||!Deleted()}  ) )
+      ( dbfSatCliT )->( ordCreate( cPath + "SatCliL.Cdx", "CREF", "CREF", {|| Field->CREF }, ) )
 
-      ( dbfPreCliT )->( ordCondSet("!Deleted()", {||!Deleted()}  ) )
-      ( dbfPreCliT )->( ordCreate( cPath + "PreCliL.Cdx", "Lote", "cLote", {|| Field->cLote }, ) )
+      ( dbfSatCliT )->( ordCondSet("!Deleted()", {||!Deleted()}  ) )
+      ( dbfSatCliT )->( ordCreate( cPath + "SatCliL.Cdx", "Lote", "cLote", {|| Field->cLote }, ) )
 
-      ( dbfPreCliT )->( ordCondSet( "!Deleted()", {|| !Deleted() } ) )
-      ( dbfPreCliT )->( ordCreate( cPath + "PreCliL.Cdx", "iNumPre", "'08' + cSerPre + Str( nNumPre ) + Space( 1 ) + cSufPre", {|| '08' + Field->cSerPre + Str( Field->nNumPre ) + Space( 1 ) + Field->cSufPre } ) )
+      ( dbfSatCliT )->( ordCondSet( "!Deleted()", {|| !Deleted() } ) )
+      ( dbfSatCliT )->( ordCreate( cPath + "SatCliL.Cdx", "iNumSat", "'32' + cSerSat + Str( nNumSat ) + Space( 1 ) + cSufSat", {|| '32' + Field->cSerSat + Str( Field->nNumSat ) + Space( 1 ) + Field->cSufSat } ) )
 
-      ( dbfPreCliT )->( ordCondSet("!Deleted()", {||!Deleted()}  ) )
-      ( dbfPreCliT )->( ordCreate( cPath + "PreCliL.Cdx", "nNumLin", "Str( NNUMPRE ) + Str( nNumLin )", {|| Str( Field->nNumPre ) + Str( Field->nNumLin ) }, ) )
+      ( dbfSatCliT )->( ordCondSet("!Deleted()", {||!Deleted()}  ) )
+      ( dbfSatCliT )->( ordCreate( cPath + "SatCliL.Cdx", "nNumLin", "Str( NNUMSAT ) + Str( nNumLin )", {|| Str( Field->nNumSat ) + Str( Field->nNumLin ) }, ) )
 
-      ( dbfPreCliT )->( dbCloseArea() )
+      ( dbfSatCliT )->( dbCloseArea() )
    else
-      msgStop( "Imposible abrir en modo exclusivo la tabla de presupuestos de clientes" )
+      msgStop( "Imposible abrir en modo exclusivo la tabla de S.A.T. de clientes" )
    end if
 
-   dbUseArea( .t., cDriver(), cPath + "PRECLII.DBF", cCheckArea( "PRECLII", @dbfPreCliT ), .f. )
-   if !( dbfPreCliT )->( neterr() )
-      ( dbfPreCliT )->( __dbPack() )
+   dbUseArea( .t., cDriver(), cPath + "SATCLII.DBF", cCheckArea( "SATCLII", @dbfSatCliT ), .f. )
+   if !( dbfSatCliT )->( neterr() )
+      ( dbfSatCliT )->( __dbPack() )
 
-      ( dbfPreCliT )->( ordCondSet("!Deleted()", {||!Deleted()}  ) )
-      ( dbfPreCliT )->( ordCreate( cPath + "PRECLII.CDX", "NNUMPRE", "CSERPRE + STR( NNUMPRE ) + CSUFPRE", {|| Field->CSERPRE + STR(Field->NNUMPRE) + Field->CSUFPRE } ) )
+      ( dbfSatCliT )->( ordCondSet("!Deleted()", {||!Deleted()}  ) )
+      ( dbfSatCliT )->( ordCreate( cPath + "SATCLII.CDX", "NNUMSAT", "CSERSAT + STR( NNUMSAT ) + CSUFSAT", {|| Field->CSERSAT + STR(Field->NNUMSAT) + Field->CSUFSAT } ) )
 
-      ( dbfPreCliT )->( ordCondSet( "!Deleted()", {|| !Deleted() } ) )
-      ( dbfPreCliT )->( ordCreate( cPath + "PreCliI.Cdx", "iNumPre", "'08' + cSerPre + Str( nNumPre ) + Space( 1 ) + cSufPre", {|| '08' + Field->cSerPre + Str( Field->nNumPre ) + Space( 1 ) + Field->cSufPre } ) )
+      ( dbfSatCliT )->( ordCondSet( "!Deleted()", {|| !Deleted() } ) )
+      ( dbfSatCliT )->( ordCreate( cPath + "SatCliI.Cdx", "iNumSat", "'32' + cSerSat + Str( nNumSat ) + Space( 1 ) + cSufSat", {|| '32' + Field->cSerSat + Str( Field->nNumSat ) + Space( 1 ) + Field->cSufSat } ) )
 
-      ( dbfPreCliT )->( dbCloseArea() )
+      ( dbfSatCliT )->( dbCloseArea() )
    else
-      msgStop( "Imposible abrir en modo exclusivo la tabla de presupuestos de clientes" )
+      msgStop( "Imposible abrir en modo exclusivo la tabla de S.A.T. de clientes" )
    end if
 
-   dbUseArea( .t., cDriver(), cPath + "PRECLID.DBF", cCheckArea( "PRECLID", @dbfPreCliT ), .f. )
-   if !( dbfPreCliT )->( neterr() )
-      ( dbfPreCliT )->( __dbPack() )
+   dbUseArea( .t., cDriver(), cPath + "SATCLID.DBF", cCheckArea( "SATCLID", @dbfSatCliT ), .f. )
+   if !( dbfSatCliT )->( neterr() )
+      ( dbfSatCliT )->( __dbPack() )
 
-      ( dbfPreCliT )->( ordCondSet("!Deleted()", {||!Deleted()}  ) )
-      ( dbfPreCliT )->( ordCreate( cPath + "PRECLID.CDX", "NNUMPRE", "CSERPRE + STR( NNUMPRE ) + CSUFPRE", {|| Field->CSERPRE + STR(Field->NNUMPRE) + Field->CSUFPRE } ) )
+      ( dbfSatCliT )->( ordCondSet("!Deleted()", {||!Deleted()}  ) )
+      ( dbfSatCliT )->( ordCreate( cPath + "SATCLID.CDX", "NNUMSAT", "CSERSAT + STR( NNUMSAT ) + CSUFSAT", {|| Field->CSERSAT + STR(Field->NNUMSAT) + Field->CSUFSAT } ) )
 
-      ( dbfPreCliT )->( ordCondSet( "!Deleted()", {|| !Deleted() } ) )
-      ( dbfPreCliT )->( ordCreate( cPath + "PreCliD.Cdx", "iNumPre", "'08' + cSerPre + Str( nNumPre ) + Space( 1 ) + cSufPre", {|| '08' + Field->cSerPre + Str( Field->nNumPre ) + Space( 1 ) + Field->cSufPre } ) )
+      ( dbfSatCliT )->( ordCondSet( "!Deleted()", {|| !Deleted() } ) )
+      ( dbfSatCliT )->( ordCreate( cPath + "SatCliD.Cdx", "iNumSat", "'32' + cSerSat + Str( nNumSat ) + Space( 1 ) + cSufSat", {|| '32' + Field->cSerSat + Str( Field->nNumSat ) + Space( 1 ) + Field->cSufSat } ) )
 
-      ( dbfPreCliT )->( dbCloseArea() )
+      ( dbfSatCliT )->( dbCloseArea() )
    else
-      msgStop( "Imposible abrir en modo exclusivo la tabla de presupuestos de clientes" )
+      msgStop( "Imposible abrir en modo exclusivo la tabla de S.A.T. de clientes" )
+   end if
+
+   dbUseArea( .t., cDriver(), cPath + "SatCliS.Dbf", cCheckArea( "SatCliS", @dbfSatCliT ), .f. )
+
+   if !( dbfSatCliT )->( neterr() )
+      ( dbfSatCliT )->( __dbPack() )
+
+      ( dbfSatCliT )->( ordCondSet( "!Deleted()", {||!Deleted()}  ) )
+      ( dbfSatCliT )->( ordCreate( cPath + "SatCliS.CDX", "nNumSat", "cSerSat + Str( nNumSat ) + cSufSat + Str( nNumLin )", {|| Field->cSerSat + Str( Field->nNumSat ) + Field->cSufSat + Str( Field->nNumLin ) } ) )
+
+      ( dbfSatCliT )->( ordCondSet( "!Deleted()", {|| ! !Deleted() } ) )
+      ( dbfSatCliT )->( ordCreate( cPath + "SatCliS.CDX", "cRefSer", "cRef + cAlmLin + cNumSer", {|| Field->cRef + Field->cAlmLin + Field->cNumSer } ) )
+
+      ( dbfSatCliT )->( ordCondSet( "!Deleted()", {|| !Deleted() } ) )
+      ( dbfSatCliT )->( ordCreate( cPath + "SatCliS.CDX", "cNumSer", "cNumSer", {|| Field->cNumSer } ) )
+
+      ( dbfSatCliT )->( ordCondSet( "!Deleted()", {|| !Deleted() } ) )
+      ( dbfSatCliT )->( ordCreate( cPath + "SatCliS.Cdx", "iNumSat", "'32' + cSerSat + Str( nNumSat ) + Space( 1 ) + cSufSat", {|| '32' + Field->cSerSat + Str( Field->nNumSat ) + Space( 1 ) + Field->cSufSat } ) )
+
+      ( dbfSatCliT )->( dbCloseArea() )
+   else
+      msgStop( "Imposible abrir en modo exclusivo la tabla de numeros de series de Sataranes de clientes" )
    end if
 
 RETURN NIL
@@ -7642,23 +7578,26 @@ STATIC FUNCTION BeginTrans( aTmp, lIndex )
    local cDbfLin  := "PCliL"
    local cDbfInc  := "PCliI"
    local cDbfDoc  := "PCliD"
-   local cPre     := aTmp[ _CSERPRE ] + Str( aTmp[ _NNUMPRE ] ) + aTmp[ _CSUFPRE ]
+   local cDbfSer  := "SCliS"
+   local cSat     := aTmp[ _CSERSAT ] + Str( aTmp[ _NNUMSAT ] ) + aTmp[ _CSUFSAT ]
    local oError
-   local oBlock   := ErrorBlock( {| oError | ApoloBreak( oError ) } )
+   local oBlock   
 
    DEFAULT lIndex := .t.
 
-   BEGIN SEQUENCE
+   /*oBlock         := ErrorBlock( {| oError | ApoloBreak( oError ) } )   
+   BEGIN SEQUENCE*/
 
    cTmpLin        := cGetNewFileName( cPatTmp() + cDbfLin )
    cTmpInc        := cGetNewFileName( cPatTmp() + cDbfInc )
    cTmpDoc        := cGetNewFileName( cPatTmp() + cDbfDoc )
+   cTmpSer        := cGetNewFileName( cPatTmp() + cDbfSer )
 
 	/*
 	Primero Crear la base de datos local
 	*/
 
-   dbCreate( cTmpInc, aSqlStruct( aIncPreCli() ), cLocalDriver() )
+   dbCreate( cTmpInc, aSqlStruct( aIncSatCli() ), cLocalDriver() )
    dbUseArea( .t., cLocalDriver(), cTmpInc, cCheckArea( cDbfInc, @dbfTmpInc ), .f. )
    if lIndex
       if !NetErr()
@@ -7669,7 +7608,7 @@ STATIC FUNCTION BeginTrans( aTmp, lIndex )
       end if
    end if
 
-   dbCreate( cTmpDoc, aSqlStruct( aPreCliDoc() ), cLocalDriver() )
+   dbCreate( cTmpDoc, aSqlStruct( aSatCliDoc() ), cLocalDriver() )
    dbUseArea( .t., cLocalDriver(), cTmpDoc, cCheckArea( cDbfDoc, @dbfTmpDoc ), .f. )
    if lIndex
       if !NetErr()
@@ -7680,7 +7619,7 @@ STATIC FUNCTION BeginTrans( aTmp, lIndex )
       end if
    end if
 
-   dbCreate( cTmpLin, aSqlStruct( aColPreCli() ), cLocalDriver() )
+   dbCreate( cTmpLin, aSqlStruct( aColSatCli() ), cLocalDriver() )
    dbUseArea( .t., cLocalDriver(), cTmpLin, cCheckArea( cDbfLin, @dbfTmpLin ), .f. )
    if lIndex
       if !NetErr()
@@ -7700,12 +7639,12 @@ STATIC FUNCTION BeginTrans( aTmp, lIndex )
 	A¤adimos desde el fichero de lineas
 	*/
 
-   if ( dbfPreCliL )->( dbSeek( cPre ) )
+   if ( dbfSatCliL )->( dbSeek( cSat ) )
 
-      while ( ( dbfPreCliL )->cSerPre + Str( ( dbfPreCliL )->NNUMPRE ) + ( dbfPreCliL )->CSUFPRE == cPre .AND. !( dbfPreCliL )->( eof() ) )
+      while ( ( dbfSatCliL )->cSerSat + Str( ( dbfSatCliL )->NNUMSAT ) + ( dbfSatCliL )->CSUFSAT == cSat .AND. !( dbfSatCliL )->( eof() ) )
 
-         dbPass( dbfPreCliL, dbfTmpLin, .t. )
-         ( dbfPreCliL )->( dbSkip() )
+         dbPass( dbfSatCliL, dbfTmpLin, .t. )
+         ( dbfSatCliL )->( dbSkip() )
 
       end while
 
@@ -7717,12 +7656,12 @@ STATIC FUNCTION BeginTrans( aTmp, lIndex )
    A¤adimos desde el fichero de incidencias
 	*/
 
-   if ( dbfPreCliI )->( dbSeek( cPre ) )
+   if ( dbfSatCliI )->( dbSeek( cSat ) )
 
-      do while ( ( dbfPreCliI )->cSerPre + Str( ( dbfPreCliI )->NNUMPRE ) + ( dbfPreCliI )->CSUFPRE == cPre .AND. !( dbfPreCliI )->( eof() ) )
+      do while ( ( dbfSatCliI )->cSerSat + Str( ( dbfSatCliI )->NNUMSAT ) + ( dbfSatCliI )->CSUFSAT == cSat .AND. !( dbfSatCliI )->( eof() ) )
 
-         dbPass( dbfPreCliI, dbfTmpInc, .t. )
-         ( dbfPreCliI )->( DbSkip() )
+         dbPass( dbfSatCliI, dbfTmpInc, .t. )
+         ( dbfSatCliI )->( DbSkip() )
 
       end while
 
@@ -7734,12 +7673,12 @@ STATIC FUNCTION BeginTrans( aTmp, lIndex )
    A¤adimos desde el fichero de documentos
 	*/
 
-   if ( dbfPreCliD )->( dbSeek( cPre ) )
+   if ( dbfSatCliD )->( dbSeek( cSat ) )
 
-      do while ( ( dbfPreCliD )->cSerPre + Str( ( dbfPreCliD )->NNUMPRE ) + ( dbfPreCliD )->CSUFPRE == cPre .AND. !( dbfPreCliD )->( eof() ) )
+      do while ( ( dbfSatCliD )->cSerSat + Str( ( dbfSatCliD )->NNUMSAT ) + ( dbfSatCliD )->CSUFSAT == cSat .AND. !( dbfSatCliD )->( eof() ) )
 
-         dbPass( dbfPreCliD, dbfTmpDoc, .t. )
-         ( dbfPreCliD )->( dbSkip() )
+         dbPass( dbfSatCliD, dbfTmpDoc, .t. )
+         ( dbfSatCliD )->( dbSkip() )
 
       end while
 
@@ -7747,7 +7686,38 @@ STATIC FUNCTION BeginTrans( aTmp, lIndex )
 
    ( dbfTmpDoc )->( dbGoTop() )
 
-   RECOVER USING oError
+   /*
+   Creamos el fichero de series------------------------------------------------
+   */
+   
+   dbCreate( cTmpSer, aSqlStruct( aSerSatCli() ), cLocalDriver() )
+
+   dbUseArea( .t., cLocalDriver(), cTmpSer, cCheckArea( cDbfSer, @dbfTmpSer ), .f. )
+
+   if !( dbfTmpSer )->( NetErr() )
+
+      ( dbfTmpSer )->( OrdCondSet( "!Deleted()", {||!Deleted() } ) )
+      ( dbfTmpSer )->( OrdCreate( cTmpSer, "nNumLin", "Str( nNumLin, 4 ) + cRef", {|| Str( Field->nNumLin, 4 ) + Field->cRef } ) )
+
+      if ( dbfSatCliS )->( dbSeek( cSat ) )
+
+         while ( ( dbfSatCliS )->cSerSat + Str( ( dbfSatCliS )->nNumSat ) + ( dbfSatCliS )->cSufSat == cSat ) .and. !( dbfSatCliS )->( eof() )
+      
+            dbPass( dbfSatCliS, dbfTmpSer, .t. )
+      
+            ( dbfSatCliS )->( dbSkip() )
+      
+         end while
+      
+      end if
+
+      ( dbfTmpSer )->( dbGoTop() )
+
+   else
+      lErrors     := .t.
+   end if
+
+   /*RECOVER USING oError
 
       msgStop( "Imposible crear tablas temporales" + CRLF + ErrorMessage( oError ) )
 
@@ -7757,7 +7727,7 @@ STATIC FUNCTION BeginTrans( aTmp, lIndex )
 
    END SEQUENCE
 
-   ErrorBlock( oBlock )
+   ErrorBlock( oBlock )*/
 
 RETURN ( lErrors )
 
@@ -7768,23 +7738,25 @@ STATIC FUNCTION EndTrans( aTmp, aGet, nMode, oBrwLin, oBrw, oBrwInc, oDlg )
 	local aTabla
    local oError
    local oBlock
-   local cSerPre
-   local nNumPre
-   local cSufPre
+   local cSerSat
+   local nNumSat
+   local cSufSat
+   local dFecSat
 
-   if Empty( aTmp[ _CSERPRE ] )
-      aTmp[ _CSERPRE ]  := "A"
+   if Empty( aTmp[ _CSERSAT ] )
+      aTmp[ _CSERSAT ]  := "A"
    end if
 
-   cSerPre              := aTmp[ _CSERPRE ]
-   nNumPre              := aTmp[ _NNUMPRE ]
-   cSufPre              := aTmp[ _CSUFPRE ]
+   cSerSat              := aTmp[ _CSERSAT ]
+   nNumSat              := aTmp[ _NNUMSAT ]
+   cSufSat              := aTmp[ _CSUFSAT ]
+   dFecSat              := aTmp[ _DFECSAT ]
 
    /*
    Comprobamos la fecha del documento
    */
 
-   if !lValidaOperacion( aTmp[ _DFECPRE ] )
+   if !lValidaOperacion( aTmp[ _DFECSAT ] )
       Return .f.
    end if
 
@@ -7806,9 +7778,9 @@ STATIC FUNCTION EndTrans( aTmp, aGet, nMode, oBrwLin, oBrw, oBrwInc, oDlg )
       return .f.
    end if
 
-   if Empty( aTmp[ _CDIVPRE ] )
+   if Empty( aTmp[ _CDIVSAT ] )
       MsgStop( "No puede almacenar documento sin código de divisa." )
-      aGet[ _CDIVPRE ]:SetFocus()
+      aGet[ _CDIVSAT ]:SetFocus()
       return .f.
    end if
 
@@ -7854,7 +7826,7 @@ STATIC FUNCTION EndTrans( aTmp, aGet, nMode, oBrwLin, oBrw, oBrwInc, oDlg )
    Guardamos el tipo para alquileres-------------------------------------------
    */
 
-   if !Empty( oTipPre ) .and. oTipPre:nAt == 2
+   if !Empty( oTipSat ) .and. oTipSat:nAt == 2
       aTmp[ _LALQUILER ]   := .t.
    else
       aTmp[ _LALQUILER ]   := .f.
@@ -7863,39 +7835,39 @@ STATIC FUNCTION EndTrans( aTmp, aGet, nMode, oBrwLin, oBrw, oBrwInc, oDlg )
    do case
    case nMode == APPD_MODE .or. nMode == DUPL_MODE
 
-      nNumPre              := nNewDoc( cSerPre, dbfPreCliT, "nPreCli", , dbfCount )
-      aTmp[ _NNUMPRE ]     := nNumPre
+      nNumSat              := nNewDoc( cSerSat, dbfSatCliT, "nSatCli", , dbfCount )
+      aTmp[ _NNUMSAT ]     := nNumSat
 
    case nMode == EDIT_MODE
 
-      if nNumPre != 0 .AND. ( dbfPreCliL )->( dbSeek( cSerPre + str( nNumPre ) + cSufPre ) )
+      if nNumSat != 0 .AND. ( dbfSatCliL )->( dbSeek( cSerSat + str( nNumSat ) + cSufSat ) )
 
-         do while ( ( dbfPreCliL )->cSerPre + Str( ( dbfPreCliL )->nNumPre ) + ( dbfPreCliL )->cSufPre == cSerPre + str( nNumPre ) + cSufPre )
+         do while ( ( dbfSatCliL )->cSerSat + Str( ( dbfSatCliL )->nNumSat ) + ( dbfSatCliL )->cSufSat == cSerSat + str( nNumSat ) + cSufSat )
 
-            if dbLock( dbfPreCliL )
-               ( dbfPreCliL )->( dbDelete() )
-               ( dbfPreCliL )->( dbUnLock() )
+            if dbLock( dbfSatCliL )
+               ( dbfSatCliL )->( dbDelete() )
+               ( dbfSatCliL )->( dbUnLock() )
             end if
 
-            ( dbfPreCliL )->( dbSkip() )
+            ( dbfSatCliL )->( dbSkip() )
 
          end while
 
       end if
 
-      if nNumPre != 0
+      if nNumSat != 0
 
-         while ( dbfPreCliI )->( dbSeek( cSerPre + str( nNumPre ) + cSufPre ) )
-            if dbLock( dbfPreCliI )
-               ( dbfPreCliI )->( dbDelete() )
-               ( dbfPreCliI )->( dbUnLock() )
+         while ( dbfSatCliI )->( dbSeek( cSerSat + str( nNumSat ) + cSufSat ) )
+            if dbLock( dbfSatCliI )
+               ( dbfSatCliI )->( dbDelete() )
+               ( dbfSatCliI )->( dbUnLock() )
             end if
          end while
 
-         while ( dbfPreCliD )->( dbSeek( cSerPre + str( nNumPre ) + cSufPre ) )
-            if dbLock( dbfPreCliD )
-               ( dbfPreCliD )->( dbDelete() )
-               ( dbfPreCliD )->( dbUnLock() )
+         while ( dbfSatCliD )->( dbSeek( cSerSat + str( nNumSat ) + cSufSat ) )
+            if dbLock( dbfSatCliD )
+               ( dbfSatCliD )->( dbDelete() )
+               ( dbfSatCliD )->( dbUnLock() )
             end if
          end while
 
@@ -7903,10 +7875,8 @@ STATIC FUNCTION EndTrans( aTmp, aGet, nMode, oBrwLin, oBrw, oBrwInc, oDlg )
 
    end case
 
-   if !( "PDA" $ cParamsMain() )
-      oMsgProgress()
-      oMsgProgress():SetRange( 0, ( dbfTmpLin )->( LastRec() ) )
-   end if
+   oMsgProgress()
+   oMsgProgress():SetRange( 0, ( dbfTmpLin )->( LastRec() ) )
 
 	/*
 	Ahora escribimos en el fichero definitivo-----------------------------------
@@ -7915,12 +7885,10 @@ STATIC FUNCTION EndTrans( aTmp, aGet, nMode, oBrwLin, oBrw, oBrwInc, oDlg )
    ( dbfTmpLin )->( dbGoTop() )
    do while !( dbfTmpLin )->( Eof() )
 
-      dbPass( dbfTmpLin, dbfPreCliL, .t., cSerPre, nNumPre, cSufPre )
+      dbPass( dbfTmpLin, dbfSatCliL, .t., cSerSat, nNumSat, cSufSat )
       ( dbfTmpLin )->( dbSkip() )
 
-      if !( "PDA" $ cParamsMain() )
-         oMsgProgress():Deltapos(1)
-      end if
+      oMsgProgress():Deltapos(1)
 
    end while
 
@@ -7931,7 +7899,7 @@ STATIC FUNCTION EndTrans( aTmp, aGet, nMode, oBrwLin, oBrw, oBrwInc, oDlg )
    ( dbfTmpInc )->( dbGoTop() )
    do while !( dbfTmpInc )->( Eof() )
 
-      dbPass( dbfTmpInc, dbfPreCliI, .t., cSerPre, nNumPre, cSufPre )
+      dbPass( dbfTmpInc, dbfSatCliI, .t., cSerSat, nNumSat, cSufSat )
       ( dbfTmpInc )->( dbSkip() )
 
    end while
@@ -7943,8 +7911,22 @@ STATIC FUNCTION EndTrans( aTmp, aGet, nMode, oBrwLin, oBrw, oBrwInc, oDlg )
    ( dbfTmpDoc )->( dbGoTop() )
    do while !( dbfTmpDoc )->( Eof() )
 
-      dbPass( dbfTmpDoc, dbfPreCliD, .t., cSerPre, nNumPre, cSufPre )
+      dbPass( dbfTmpDoc, dbfSatCliD, .t., cSerSat, nNumSat, cSufSat )
+
       ( dbfTmpDoc )->( dbSkip() )
+
+   end while
+
+   /*
+   Ahora escribimos en el fichero definitivo-----------------------------------
+   */
+
+   ( dbfTmpSer )->( dbGoTop() )
+   while ( dbfTmpSer )->( !eof() )
+
+      dbPass( dbfTmpSer, dbfSatCliS, .t., cSerSat, nNumSat, cSufSat, dFecSat )
+
+      ( dbfTmpSer )->( dbSkip() )
 
    end while
 
@@ -7955,9 +7937,9 @@ STATIC FUNCTION EndTrans( aTmp, aGet, nMode, oBrwLin, oBrw, oBrwInc, oDlg )
    aTmp[ _NTOTNET ]     := nTotNet
    aTmp[ _NTOTIVA ]     := nTotIva
    aTmp[ _NTOTREQ ]     := nTotReq
-   aTmp[ _NTOTPRE ]     := nTotPre
+   aTmp[ _NTOTSAT ]     := nTotSat
 
-   WinGather( aTmp, , dbfPreCliT, , nMode )
+   WinGather( aTmp, , dbfSatCliT, , nMode )
 
    /*
    Escribe los datos pendientes------------------------------------------------
@@ -7965,12 +7947,10 @@ STATIC FUNCTION EndTrans( aTmp, aGet, nMode, oBrwLin, oBrw, oBrwInc, oDlg )
 
    dbCommitAll()
 
-   if !( "PDA" $ cParamsMain() )
-      oMsgProgress()
-      oMsgText()
+   oMsgProgress()
+   oMsgText()
 
-      EndProgress()
-   end if
+   EndProgress()
 
    oDlg:Enable()
    oDlg:End( IDOK )
@@ -7996,10 +7976,15 @@ Static Function KillTrans( oBrwLin )
    if !Empty( dbfTmpDoc ) .and. ( dbfTmpDoc )->( Used() )
       ( dbfTmpDoc )->( dbCloseArea() )
    end if
+      
+   if !Empty( dbfTmpSer ) .and. ( dbfTmpSer )->( Used() )
+      ( dbfTmpSer )->( dbCloseArea() )
+   end if
 
    dbfErase( cTmpLin )
    dbfErase( cTmpInc )
    dbfErase( cTmpDoc )
+   dbfErase( cTmpSer )
 
 Return .t.
 
@@ -8102,16 +8087,16 @@ STATIC FUNCTION LoaCli( aGet, aTmp, nMode, oRieCli, oTlfCli )
          Si estamos a¤adiendo cargamos todos los datos del cliente
          */
 
-         if Empty( aTmp[ _CSERPRE ] )
+         if Empty( aTmp[ _CSERSAT ] )
 
             if !Empty( ( dbfClient )->Serie )
-               aGet[ _CSERPRE ]:cText( ( dbfClient )->Serie )
+               aGet[ _CSERSAT ]:cText( ( dbfClient )->Serie )
             end if
 
          else
 
-            if !Empty( ( dbfClient )->Serie ) .and. aTmp[ _CSERPRE ] != ( dbfClient )->Serie .and. ApoloMsgNoYes( "La serie del cliente seleccionado es distinta a la anterior.", "¿Desea cambiar la serie?" )
-               aGet[ _CSERPRE ]:cText( ( dbfClient )->Serie )
+            if !Empty( ( dbfClient )->Serie ) .and. aTmp[ _CSERSAT ] != ( dbfClient )->Serie .and. ApoloMsgNoYes( "La serie del cliente seleccionado es distinta a la anterior.", "¿Desea cambiar la serie?" )
+               aGet[ _CSERSAT ]:cText( ( dbfClient )->Serie )
             end if
 
          end if
@@ -8167,22 +8152,6 @@ STATIC FUNCTION LoaCli( aGet, aTmp, nMode, oRieCli, oTlfCli )
             end if
 
             /*
-            Retenciones desde la ficha de cliente----------------------------------
-
-            if !Empty( aGet[ _NTIPRET ] )
-               aGet[ _NTIPRET  ]:Select( ( dbfClient )->nTipRet )
-            else
-               aTmp[ _NTIPRET  ] := ( dbfClient )->nTipRet
-            end if
-
-            if !Empty( aGet[ _NPCTRET ] )
-               aGet[ _NPCTRET  ]:cText( ( dbfClient )->nPctRet )
-            else
-               aTmp[ _NPCTRET  ] := ( dbfClient )->nPctRet
-            end if
-            */
-
-            /*
             Descuentos desde la ficha de cliente----------------------------------
             */
 
@@ -8229,31 +8198,25 @@ RETURN lValid
 
 STATIC FUNCTION CreateFiles( cPath )
 
-   if !lExistTable( cPath + "PreCliT.Dbf" )
-      dbCreate( cPath + "PreCliT.Dbf", aSqlStruct( aItmPreCli() ), cDriver() )
+   if !lExistTable( cPath + "SatCliT.Dbf" )
+      dbCreate( cPath + "SatCliT.Dbf", aSqlStruct( aItmSatCli() ), cDriver() )
    end if
 
-   if !lExistTable( cPath + "PreCliL.Dbf" )
-      dbCreate( cPath + "PreCliL.Dbf", aSqlStruct( aColPreCli() ),  cDriver() )
+   if !lExistTable( cPath + "SatCliL.Dbf" )
+      dbCreate( cPath + "SatCliL.Dbf", aSqlStruct( aColSatCli() ),  cDriver() )
    end if
 
-   if !lExistTable( cPath + "PreCliI.Dbf" )
-      dbCreate( cPath + "PreCliI.Dbf", aSqlStruct( aIncPreCli() ),  cDriver() )
+   if !lExistTable( cPath + "SatCliI.Dbf" )
+      dbCreate( cPath + "SatCliI.Dbf", aSqlStruct( aIncSatCli() ),  cDriver() )
    end if
 
-   if !lExistTable( cPath + "PreCliD.Dbf" )
-      dbCreate( cPath + "PreCliD.Dbf", aSqlStruct( aPreCliDoc() ),  cDriver() )
+   if !lExistTable( cPath + "SatCliD.Dbf" )
+      dbCreate( cPath + "SatCliD.Dbf", aSqlStruct( aSatCliDoc() ),  cDriver() )
    end if
 
-   /*
-   if !File( cPath + "PltCliT.Dbf" )
-      dbCreate( cPath + "PltCliT.Dbf", aPltCliT,      cDriver() )
+   if !lExistTable( cPath + "SatCliS.Dbf" )
+      dbCreate( cPath + "SatCliS.Dbf", aSqlStruct( aSerSatCli() ),  cDriver() )
    end if
-
-   if !File( cPath + "PltCliL.Dbf" )
-      dbCreate( cPath + "PltCliL.Dbf", aPltCliL,      cDriver() )
-   end if
-   */
 
 RETURN NIL
 
@@ -8265,11 +8228,11 @@ STATIC FUNCTION ChgState( oBrw )
 
    for each nRec in ( oBrw:aSelected )
 
-      ( dbfPreCliT )->( dbGoTo( nRec ) )
+      ( dbfSatCliT )->( dbGoTo( nRec ) )
 
-      if dbLock( dbfPreCliT )
-         ( dbfPreCliT )->lEstado := !( dbfPreCliT )->lEstado
-         ( dbfPreCliT )->( dbRUnlock() )
+      if dbLock( dbfSatCliT )
+         ( dbfSatCliT )->lEstado := !( dbfSatCliT )->lEstado
+         ( dbfSatCliT )->( dbRUnlock() )
       end if
 
    next
@@ -8304,36 +8267,7 @@ RETURN .F.
 
 //---------------------------------------------------------------------------//
 
-/*FUNCTION DocPreCli( dbfDocFld, dbfDocCol )
-
-   local aCalc1
-
-   /*
-   Itmes-----------------------------------------------------------------------
-   */
-
-/*   AppDocItm( dbfDocFld, "RC", aItmPreCli() )   // Campos
-   AppDocCal( dbfDocFld, "RC", aCalc1 )         // Datos calculados
-   AppDocItm( dbfDocFld, "RC", aItmCli() )      // Clientes
-   AppDocItm( dbfDocFld, "RC", aItmObr() )      // Obras
-   AppDocItm( dbfDocFld, "RC", aItmAge() )      // Agentes
-   AppDocItm( dbfDocFld, "RC", aItmAlm() )      // Almacen
-   AppDocItm( dbfDocFld, "RC", aItmRut() )      // Ruta
-   AppDocItm( dbfDocFld, "RC", aItmDiv() )      // Divisas
-   AppDocItm( dbfDocFld, "RC", aItmFPago() )    // Formas de pago
-
-   /*
-   Columnas--------------------------------------------------------------------
-   */
-
-/*   AppDocItm( dbfDocCol, "RC", aColPreCli() )   // Detalle
-   AppDocCal( dbfDocCol, "RC", aCocPreCli() )   // Datos calculados del detalle
-
-RETURN NIL*/
-
-//---------------------------------------------------------------------------//
-
-static function lGenPreCli( oBrw, oBtn, nDevice )
+static function lGenSatCli( oBrw, oBtn, nDevice )
 
    local bAction
 
@@ -8358,7 +8292,7 @@ static function lGenPreCli( oBrw, oBtn, nDevice )
 
       WHILE ( dbfDoc )->CTIPO == "RC" .AND. !( dbfDoc )->( eof() )
 
-         bAction  := bGenPreCli( nDevice, "Imprimiendo presupuestos a clientes", ( dbfDoc )->CODIGO )
+         bAction  := bGenSatCli( nDevice, "Imprimiendo S.A.T. a clientes", ( dbfDoc )->CODIGO )
 
          oWndBrw:NewAt( "Document", , , bAction, Rtrim( ( dbfDoc )->cDescrip ) , , , , , oBtn )
 
@@ -8374,7 +8308,7 @@ return nil
 
 //---------------------------------------------------------------------------//
 
-static function bGenPreCli( nDevice, cTitle, cCodDoc )
+static function bGenSatCli( nDevice, cTitle, cCodDoc )
 
    local bGen
    local nDev  := by( nDevice )
@@ -8382,49 +8316,49 @@ static function bGenPreCli( nDevice, cTitle, cCodDoc )
    local cCod  := by( cCodDoc   )
 
    if nDev == IS_PRINTER
-      bGen     := {|| nGenPreCli( nDev, cTit, cCod ) }
+      bGen     := {|| nGenSatCli( nDev, cTit, cCod ) }
    else
-      bGen     := {|| GenPreCli( nDev, cTit, cCod ) }
+      bGen     := {|| GenSatCli( nDev, cTit, cCod ) }
    end if
 
 return ( bGen )
 
 //---------------------------------------------------------------------------//
 
-static function nGenPreCli( nDevice, cTitle, cCodDoc, cPrinter, nCopy )
+static function nGenSatCli( nDevice, cTitle, cCodDoc, cPrinter, nCopy )
 
    local nImpYet     := 1
-   local nCopyClient := Retfld( ( dbfPreCliT )->cCodCli, dbfClient, "CopiasF" )
+   local nCopyClient := Retfld( ( dbfSatCliT )->cCodCli, dbfClient, "CopiasF" )
 
    DEFAULT nDevice   := IS_PRINTER
-   DEFAULT nCopy     := Max( nCopyClient, nCopiasDocumento( ( dbfPreCliT )->cSerPre, "nPreCli", dbfCount ) )
+   DEFAULT nCopy     := Max( nCopyClient, nCopiasDocumento( ( dbfSatCliT )->cSerSat, "nSatCli", dbfCount ) )
 
    nCopy             := Max( nCopy, 1 )
 
    while nImpYet <= nCopy
-      GenPreCli( nDevice, cTitle, cCodDoc, cPrinter )
+      GenSatCli( nDevice, cTitle, cCodDoc, cPrinter )
       nImpYet++
    end while
 
    //Funcion para marcar el documento como imprimido
-   lChgImpDoc( dbfPreCliT )
+   lChgImpDoc( dbfSatCliT )
 
 return nil
 
 //--------------------------------------------------------------------------//
 
-FUNCTION nTotNPreCli( uDbf )
+FUNCTION nTotNSatCli( uDbf )
 
    local nTotUnd
 
-   DEFAULT uDbf   := dbfPreCliL
+   DEFAULT uDbf   := dbfSatCliL
 
    do case
    case ValType( uDbf ) == "A"
 
       if uDbf[ __LALQUILER ]
 
-         nTotUnd  := NotCaja( uDbf[ _NCANPRE ] )
+         nTotUnd  := NotCaja( uDbf[ _NCANSAT ] )
          nTotUnd  *= uDbf[ _NUNICAJA ]
          nTotUnd  *= NotCero( uDbf[ _NUNDKIT ] )
          nTotUnd  *= NotCero( uDbf[ __DFECENT ] - uDbf[ __DFECSAL ] )
@@ -8434,7 +8368,7 @@ FUNCTION nTotNPreCli( uDbf )
 
       else
 
-         nTotUnd  := NotCaja( uDbf[ _NCANPRE ] )
+         nTotUnd  := NotCaja( uDbf[ _NCANSAT ] )
          nTotUnd  *= uDbf[ _NUNICAJA ]
          nTotUnd  *= NotCero( uDbf[ _NUNDKIT ] )
          nTotUnd  *= NotCero( uDbf[ _NMEDUNO ] )
@@ -8447,7 +8381,7 @@ FUNCTION nTotNPreCli( uDbf )
 
       if uDbf:lAlquiler
 
-         nTotUnd  := NotCaja( uDbf:nCanPre )
+         nTotUnd  := NotCaja( uDbf:nCanSat )
          nTotUnd  *= uDbf:nUniCaja
          nTotUnd  *= NotCero( uDbf:nUndKit )
          nTotUnd  *= NotCero( uDbf:dFecEnt - uDbf:dFecSal )
@@ -8457,7 +8391,7 @@ FUNCTION nTotNPreCli( uDbf )
 
       else
 
-         nTotUnd  := NotCaja( uDbf:nCanPre )
+         nTotUnd  := NotCaja( uDbf:nCanSat )
          nTotUnd  *= uDbf:nUniCaja
          nTotUnd  *= NotCero( uDbf:nUndKit )
          nTotUnd  *= NotCero( uDbf:nMedUno )
@@ -8470,7 +8404,7 @@ FUNCTION nTotNPreCli( uDbf )
 
       if ( uDbf )->lAlquiler
 
-         nTotUnd  := NotCaja( ( uDbf )->nCanPre )
+         nTotUnd  := NotCaja( ( uDbf )->nCanSat )
          nTotUnd  *= ( uDbf )->nUniCaja
          nTotUnd  *= NotCero( ( uDbf )->nUndKit )
          nTotUnd  *= NotCero( ( uDbf )->dFecEnt - ( uDbf )->dFecSal )
@@ -8480,7 +8414,7 @@ FUNCTION nTotNPreCli( uDbf )
 
       else
 
-         nTotUnd  := NotCaja( ( uDbf )->nCanPre )
+         nTotUnd  := NotCaja( ( uDbf )->nCanSat )
          nTotUnd  *= ( uDbf )->nUniCaja
          nTotUnd  *= NotCero( ( uDbf )->nUndKit )
          nTotUnd  *= NotCero( ( uDbf )->nMedUno )
@@ -8523,11 +8457,11 @@ return cClr
 
 //----------------------------------------------------------------------------//
 
-FUNCTION nTotIPreCli( dbfLin, nDec, nRouDec, nVdv, cPorDiv )
+FUNCTION nTotISatCli( dbfLin, nDec, nRouDec, nVdv, cPorDiv )
 
    local nCalculo    := 0
 
-   DEFAULT dbfLin    := dbfPreCliL
+   DEFAULT dbfLin    := dbfSatCliL
    DEFAULT nDec      := 0
    DEFAULT nRouDec   := 0
    DEFAULT nVdv      := 1
@@ -8544,7 +8478,7 @@ FUNCTION nTotIPreCli( dbfLin, nDec, nRouDec, nVdv, cPorDiv )
       Unidades-----------------------------------------------------------------
       */
 
-      nCalculo       *= nTotNPreCli( dbfLin )
+      nCalculo       *= nTotNSatCli( dbfLin )
 
          if ( dbfLin )->LVOLIMP
             nCalculo *= NotCero( ( dbfLin )->nVolumen )
@@ -8558,7 +8492,7 @@ RETURN ( if( cPorDiv != NIL, Trans( nCalculo, cPorDiv ), nCalculo ) )
 
 //----------------------------------------------------------------------------//
 
-FUNCTION nImpLPreCli( uPreCliT, dbfPreCliL, nDec, nRou, nVdv, lIva, lDto, lPntVer, lImpTrn, cPouDiv )
+FUNCTION nImpLSatCli( uSatCliT, dbfSatCliL, nDec, nRou, nVdv, lIva, lDto, lPntVer, lImpTrn, cPouDiv )
 
    local nCalculo
    local lIvaInc
@@ -8571,30 +8505,30 @@ FUNCTION nImpLPreCli( uPreCliT, dbfPreCliL, nDec, nRou, nVdv, lIva, lDto, lPntVe
    DEFAULT lPntVer   := .f.
    DEFAULT lImpTrn   := .f.
 
-   nCalculo          := nTotLPreCli( uPreCliT, dbfPreCliL, nDec, nRou, nVdv, .t., lPntVer, lImpTrn )
+   nCalculo          := nTotLSatCli( uSatCliT, dbfSatCliL, nDec, nRou, nVdv, .t., lPntVer, lImpTrn )
 
-   if ValType( uPreCliT ) == "A"
-      nCalculo       -= Round( nCalculo * uPreCliT[ _NDTOESP ]  / 100, nRou )
-      nCalculo       -= Round( nCalculo * uPreCliT[ _NDPP    ]  / 100, nRou )
-      nCalculo       -= Round( nCalculo * uPreCliT[ _NDTOUNO ]  / 100, nRou )
-      nCalculo       -= Round( nCalculo * uPreCliT[ _NDTODOS ]  / 100, nRou )
-      lIvaInc        := uPreCliT[ _LIVAINC ]
+   if ValType( uSatCliT ) == "A"
+      nCalculo       -= Round( nCalculo * uSatCliT[ _NDTOESP ]  / 100, nRou )
+      nCalculo       -= Round( nCalculo * uSatCliT[ _NDPP    ]  / 100, nRou )
+      nCalculo       -= Round( nCalculo * uSatCliT[ _NDTOUNO ]  / 100, nRou )
+      nCalculo       -= Round( nCalculo * uSatCliT[ _NDTODOS ]  / 100, nRou )
+      lIvaInc        := uSatCliT[ _LIVAINC ]
    else
-      nCalculo       -= Round( nCalculo * ( uPreCliT )->nDtoEsp / 100, nRou )
-      nCalculo       -= Round( nCalculo * ( uPreCliT )->nDpp    / 100, nRou )
-      nCalculo       -= Round( nCalculo * ( uPreCliT )->nDtoUno / 100, nRou )
-      nCalculo       -= Round( nCalculo * ( uPreCliT )->nDtoDos / 100, nRou )
-      lIvaInc        := ( uPreCliT )->lIvaInc
+      nCalculo       -= Round( nCalculo * ( uSatCliT )->nDtoEsp / 100, nRou )
+      nCalculo       -= Round( nCalculo * ( uSatCliT )->nDpp    / 100, nRou )
+      nCalculo       -= Round( nCalculo * ( uSatCliT )->nDtoUno / 100, nRou )
+      nCalculo       -= Round( nCalculo * ( uSatCliT )->nDtoDos / 100, nRou )
+      lIvaInc        := ( uSatCliT )->lIvaInc
    end if
 
-   if ( dbfPreCliL )->nIva != 0
+   if ( dbfSatCliL )->nIva != 0
       if lIva  // lo quermos con IGIC
          if !lIvaInc
-            nCalculo += Round( nCalculo * ( dbfPreCliL )->nIva / 100, nRou )
+            nCalculo += Round( nCalculo * ( dbfSatCliL )->nIva / 100, nRou )
          end if
       else     // lo queremos sin IGIC
          if lIvaInc
-            nCalculo -= Round( nCalculo / ( 100 / ( dbfPreCliL )->nIva  + 1 ), nRou )
+            nCalculo -= Round( nCalculo / ( 100 / ( dbfSatCliL )->nIva  + 1 ), nRou )
          end if
       end if
    end if
@@ -8603,7 +8537,7 @@ RETURN ( if( cPouDiv != nil, Trans( nCalculo, cPouDiv ), nCalculo ) )
 
 //----------------------------------------------------------------------------//
 
-FUNCTION nDtoAtpPreCli( uPreCliT, dbfPreCliL, nDec, nRou, nVdv, lPntVer, lImpTrn )
+FUNCTION nDtoAtpSatCli( uSatCliT, dbfSatCliL, nDec, nRou, nVdv, lPntVer, lImpTrn )
 
    local nCalculo    := 0
    local nDtoAtp     := 0
@@ -8614,145 +8548,145 @@ FUNCTION nDtoAtpPreCli( uPreCliT, dbfPreCliL, nDec, nRou, nVdv, lPntVer, lImpTrn
    DEFAULT lPntVer   := .f.
    DEFAULT lImpTrn   := .f.
 
-   nCalculo          := nTotLPreCli( uPreCliT, dbfPreCliL, nDec, nRou, nVdv, .t., lPntVer, lImpTrn )
+   nCalculo          := nTotLSatCli( uSatCliT, dbfSatCliL, nDec, nRou, nVdv, .t., lPntVer, lImpTrn )
 
-   if ( uPreCliT )->nSbrAtp <= 1 .and. ( uPreCliT )->nDtoAtp != 0
-      nDtoAtp     += Round( nCalculo * ( uPreCliT )->nDtoAtp / 100, nRou )
+   if ( uSatCliT )->nSbrAtp <= 1 .and. ( uSatCliT )->nDtoAtp != 0
+      nDtoAtp     += Round( nCalculo * ( uSatCliT )->nDtoAtp / 100, nRou )
    end if
 
-   nCalculo       -= Round( nCalculo * ( uPreCliT )->nDtoEsp / 100, nRou )
+   nCalculo       -= Round( nCalculo * ( uSatCliT )->nDtoEsp / 100, nRou )
 
-   if ( uPreCliT )->nSbrAtp == 2 .and. ( uPreCliT )->nDtoAtp != 0
-      nDtoAtp     += Round( nCalculo * ( uPreCliT )->nDtoAtp / 100, nRou )
+   if ( uSatCliT )->nSbrAtp == 2 .and. ( uSatCliT )->nDtoAtp != 0
+      nDtoAtp     += Round( nCalculo * ( uSatCliT )->nDtoAtp / 100, nRou )
    end if
 
-   nCalculo       -= Round( nCalculo * ( uPreCliT )->nDpp    / 100, nRou )
+   nCalculo       -= Round( nCalculo * ( uSatCliT )->nDpp    / 100, nRou )
 
-   if ( uPreCliT )->nSbrAtp == 3 .and. ( uPreCliT )->nDtoAtp != 0
-      nDtoAtp     += Round( nCalculo * ( uPreCliT )->nDtoAtp / 100, nRou )
+   if ( uSatCliT )->nSbrAtp == 3 .and. ( uSatCliT )->nDtoAtp != 0
+      nDtoAtp     += Round( nCalculo * ( uSatCliT )->nDtoAtp / 100, nRou )
    end if
 
-   nCalculo       -= Round( nCalculo * ( uPreCliT )->nDtoUno / 100, nRou )
+   nCalculo       -= Round( nCalculo * ( uSatCliT )->nDtoUno / 100, nRou )
 
-   if ( uPreCliT )->nSbrAtp == 4 .and. ( uPreCliT )->nDtoAtp != 0
-      nDtoAtp     += Round( nCalculo * ( uPreCliT )->nDtoAtp / 100, nRou )
+   if ( uSatCliT )->nSbrAtp == 4 .and. ( uSatCliT )->nDtoAtp != 0
+      nDtoAtp     += Round( nCalculo * ( uSatCliT )->nDtoAtp / 100, nRou )
    end if
 
-   nCalculo       -= Round( nCalculo * ( uPreCliT )->nDtoDos / 100, nRou )
+   nCalculo       -= Round( nCalculo * ( uSatCliT )->nDtoDos / 100, nRou )
 
-   if ( uPreCliT )->nSbrAtp == 5 .and. ( uPreCliT )->nDtoAtp != 0
-      nDtoAtp     += Round( nCalculo * ( uPreCliT )->nDtoAtp / 100, nRou )
+   if ( uSatCliT )->nSbrAtp == 5 .and. ( uSatCliT )->nDtoAtp != 0
+      nDtoAtp     += Round( nCalculo * ( uSatCliT )->nDtoAtp / 100, nRou )
    end if
 
 RETURN ( nDtoAtp )
 
 //----------------------------------------------------------------------------//
 
-FUNCTION nComLPreCli( dbfPreCliT, dbfPreCliL, nDecOut, nDerOut )
+FUNCTION nComLSatCli( dbfSatCliT, dbfSatCliL, nDecOut, nDerOut )
 
-   local nImp        := nImpLPreCli( dbfPreCliT, dbfPreCliL, nDecOut, nDerOut )
+   local nImp        := nImpLSatCli( dbfSatCliT, dbfSatCliL, nDecOut, nDerOut )
 
-RETURN ( nImp * ( dbfPreCliL )->nComAge / 100 )
+RETURN ( nImp * ( dbfSatCliL )->nComAge / 100 )
 
 //--------------------------------------------------------------------------//
 
-FUNCTION dFecPreCli( cPreCli, dbfPreCliT )
+FUNCTION dFecSatCli( cSatCli, dbfSatCliT )
 
-   local dFecPre  := CtoD("")
+   local dFecSat  := CtoD("")
 
-   IF ( dbfPreCliT )->( dbSeek( cPreCli ) )
-      dFecPre  := ( dbfPreCliT )->dFecPre
+   IF ( dbfSatCliT )->( dbSeek( cSatCli ) )
+      dFecSat  := ( dbfSatCliT )->dFecSat
    END IF
 
-RETURN ( dFecPre )
+RETURN ( dFecSat )
 
 //---------------------------------------------------------------------------//
 
-FUNCTION lEstPreCli( cPreCli, dbfPreCliT )
+FUNCTION lEstSatCli( cSatCli, dbfSatCliT )
 
-   local lEstPre  := .f.
+   local lEstSat  := .f.
 
-   IF ( dbfPreCliT )->( dbSeek( cPreCli ) )
-      lEstPre     := ( dbfPreCliT )->lEstado
+   IF ( dbfSatCliT )->( dbSeek( cSatCli ) )
+      lEstSat     := ( dbfSatCliT )->lEstado
    END IF
 
-RETURN ( lEstPre )
+RETURN ( lEstSat )
 
 //---------------------------------------------------------------------------//
 
-FUNCTION cNbrPreCli( cPreCli, dbfPreCliT )
+FUNCTION cNbrSatCli( cSatCli, dbfSatCliT )
 
    local cNomCli  := ""
 
-   IF ( dbfPreCliT )->( dbSeek( cPreCli ) )
-      cNomCli  := ( dbfPreCliT )->CNOMCLI
+   IF ( dbfSatCliT )->( dbSeek( cSatCli ) )
+      cNomCli  := ( dbfSatCliT )->CNOMCLI
 	END IF
 
 RETURN ( cNomCli )
 
 //----------------------------------------------------------------------------//
 //
-// Devuelve el total de la compra en albaranes de clientes de un articulo
+// Devuelve el total de la compra en Sataranes de clientes de un articulo
 //
 
-function nTotDPreCli( cCodArt, dbfPreCliL )
+function nTotDSatCli( cCodArt, dbfSatCliL )
 
    local nTotVta  := 0
-   local nRecno   := ( dbfPreCliL )->( Recno() )
+   local nRecno   := ( dbfSatCliL )->( Recno() )
 
-   if ( dbfPreCliL )->( dbSeek( cCodArt ) )
+   if ( dbfSatCliL )->( dbSeek( cCodArt ) )
 
-      while ( dbfPreCliL )->CREF == cCodArt .and. !( dbfPreCliL )->( eof() )
+      while ( dbfSatCliL )->CREF == cCodArt .and. !( dbfSatCliL )->( eof() )
 
-         If !( dbfPreCliL )->LTOTLIN
-            nTotVta += nTotNPreCli( dbfPreCliL )
+         If !( dbfSatCliL )->LTOTLIN
+            nTotVta += nTotNSatCli( dbfSatCliL )
          end if
 
-         ( dbfPreCliL )->( dbSkip() )
+         ( dbfSatCliL )->( dbSkip() )
 
       end while
 
    end if
 
-   ( dbfPreCliL )->( dbGoTo( nRecno ) )
+   ( dbfSatCliL )->( dbGoTo( nRecno ) )
 
 return ( nTotVta )
 
 //---------------------------------------------------------------------------//
 
-function nVtaPreCli( cCodCli, dDesde, dHasta, dbfPreCliT, dbfPreCliL, dbfIva, dbfDiv )
+function nVtaSatCli( cCodCli, dDesde, dHasta, dbfSatCliT, dbfSatCliL, dbfIva, dbfDiv )
 
    local nCon     := 0
-   local nRec     := ( dbfPreCliT )->( Recno() )
+   local nRec     := ( dbfSatCliT )->( Recno() )
 
    /*
    Facturas a Clientes -------------------------------------------------------
    */
 
-   if ( dbfPreCliT )->( dbSeek( cCodCli ) )
+   if ( dbfSatCliT )->( dbSeek( cCodCli ) )
 
-      while ( dbfPreCliT )->cCodCli == cCodCli .and. !( dbfPreCliT )->( Eof() )
+      while ( dbfSatCliT )->cCodCli == cCodCli .and. !( dbfSatCliT )->( Eof() )
 
-         if ( dDesde == nil .or. ( dbfPreCliT )->dFecPre >= dDesde )    .and.;
-            ( dHasta == nil .or. ( dbfPreCliT )->dFecPre <= dHasta )
+         if ( dDesde == nil .or. ( dbfSatCliT )->dFecSat >= dDesde )    .and.;
+            ( dHasta == nil .or. ( dbfSatCliT )->dFecSat <= dHasta )
 
-            nCon  += nTotPreCli( ( dbfPreCliT )->cSerPre + Str( ( dbfPreCliT )->nNumPre ) + ( dbfPreCliT )->cSufPre, dbfPreCliT, dbfPreCliL, dbfIva, dbfDiv, nil, nil, cDivEmp(), .f. )
+            nCon  += nTotSatCli( ( dbfSatCliT )->cSerSat + Str( ( dbfSatCliT )->nNumSat ) + ( dbfSatCliT )->cSufSat, dbfSatCliT, dbfSatCliL, dbfIva, dbfDiv, nil, nil, cDivEmp(), .f. )
 
          end if
 
-         ( dbfPreCliT )->( dbSkip() )
+         ( dbfSatCliT )->( dbSkip() )
 
       end while
 
    end if
 
-   ( dbfPreCliT )->( dbGoTo( nRec ) )
+   ( dbfSatCliT )->( dbGoTo( nRec ) )
 
 return nCon
 
 //----------------------------------------------------------------------------//
 
-FUNCTION aDocPreCli()
+FUNCTION aDocSatCli()
 
    local aDoc  := {}
 
@@ -8761,7 +8695,7 @@ FUNCTION aDocPreCli()
    */
 
    aAdd( aDoc, { "Empresa",         "EM" } )
-   aAdd( aDoc, { "Presupuesto",     "RC" } )
+   aAdd( aDoc, { "Satsupuesto",     "RC" } )
    aAdd( aDoc, { "Cliente",         "CL" } )
    aAdd( aDoc, { "Almacen",         "AL" } )
    aAdd( aDoc, { "Obras",           "OB" } )
@@ -8775,281 +8709,299 @@ RETURN ( aDoc )
 
 //---------------------------------------------------------------------------//
 
-function aItmPreCli()
+function aItmSatCli()
 
-   local aItmPreCli :=  {}
+   local aItmSatCli :=  {}
 
-   aAdd( aItmPreCli, { "CSERPRE",   "C",  1,  0, "Serie de presupuesto" ,           "",                   "", "( cDbf )"} )
-   aAdd( aItmPreCli, { "NNUMPRE",   "N",  9,  0, "Número de presupuesto" ,          "'999999999'",        "", "( cDbf )"} )
-   aAdd( aItmPreCli, { "CSUFPRE",   "C",  2,  0, "Sufijo de presupuesto" ,          "",                   "", "( cDbf )"} )
-   aAdd( aItmPreCli, { "CTURPRE",   "C",  6,  0, "Sesión del presupuesto",          "",                   "", "( cDbf )"} )
-   aAdd( aItmPreCli, { "DFECPRE",   "D",  8,  0, "Fecha del presupuesto",           "",                   "", "( cDbf )"} )
-   aAdd( aItmPreCli, { "CCODCLI",   "C", 12,  0, "Código del cliente",              "",                   "", "( cDbf )"} )
-   aAdd( aItmPreCli, { "CNOMCLI",   "C", 80,  0, "Nombre del cliente",              "'@!'",               "", "( cDbf )"} )
-   aAdd( aItmPreCli, { "CDIRCLI",   "C",100,  0, "Domicilio del cliente",           "'@!'",               "", "( cDbf )"} )
-   aAdd( aItmPreCli, { "CPOBCLI",   "C", 35,  0, "Población del cliente",           "'@!'",               "", "( cDbf )"} )
-   aAdd( aItmPreCli, { "CPRVCLI",   "C", 20,  0, "Provincia del cliente",           "'@!'",               "", "( cDbf )"} )
-   aAdd( aItmPreCli, { "CPOSCLI",   "C", 15,  0, "Código postal del cliente",       "'@!'",               "", "( cDbf )"} )
-   aAdd( aItmPreCli, { "CDNICLI",   "C", 30,  0, "DNI del cliente",                 "'@!'",               "", "( cDbf )"} )
-   aAdd( aItmPreCli, { "LMODCLI",   "L",  1,  0, "Modificar datos del cliente",     "",                   "", "( cDbf )"} )
-   aAdd( aItmPreCli, { "CCODAGE",   "C",  3,  0, "Código del agente",               "",                   "", "( cDbf )"} )
-   aAdd( aItmPreCli, { "CCODOBR",   "C", 10,  0, "Código de obra",                  "",                   "", "( cDbf )"} )
-   aAdd( aItmPreCli, { "CCODTAR",   "C",  5,  0, "Código de tarifa",                "",                   "", "( cDbf )"} )
-   aAdd( aItmPreCli, { "CCODALM",   "C",  3,  0, "Código del almacen",              "",                   "", "( cDbf )"} )
-   aAdd( aItmPreCli, { "CCODCAJ",   "C",  3,  0, "Código de caja",                  "",                   "", "( cDbf )"} )
-   aAdd( aItmPreCli, { "CCODPGO",   "C",  2,  0, "Código de pago",                  "",                   "", "( cDbf )"} )
-   aAdd( aItmPreCli, { "CCODRUT",   "C",  4,  0, "Código de la ruta",               "",                   "", "( cDbf )"} )
-   aAdd( aItmPreCli, { "DFECENT",   "D",  8,  0, "Fecha de entrada",                "",                   "", "( cDbf )"} )
-   aAdd( aItmPreCli, { "LESTADO",   "L",  1,  0, "Estado del presupuesto",          "",                   "", "( cDbf )"} )
-   aAdd( aItmPreCli, { "CSUPRE",    "C", 10,  0, "Su presupuesto",                  "",                   "", "( cDbf )"} )
-   aAdd( aItmPreCli, { "CCONDENT",  "C",100,  0, "",                                "",                   "", "( cDbf )"} )
-   aAdd( aItmPreCli, { "MCOMENT",   "M", 10,  0, "Comentarios",                     "",                   "", "( cDbf )"} )
-   aAdd( aItmPreCli, { "MOBSERV",   "M", 10,  0, "Observaciones",                   "",                   "", "( cDbf )"} )
-   aAdd( aItmPreCli, { "LMAYOR",    "L",  1,  0, "" ,                               "",                   "", "( cDbf )"} )
-   aAdd( aItmPreCli, { "NTARIFA",   "N",  1,  0, "Tarifa de precio aplicada" ,      "",                   "", "( cDbf )"} )
-   aAdd( aItmPreCli, { "CDTOESP",   "C", 50,  0, "Descripción del descuento",       "",                   "", "( cDbf )"} )
-   aAdd( aItmPreCli, { "NDTOESP",   "N",  5,  2, "Porcentaje de descuento",         "'@EZ 99,99'",        "", "( cDbf )"} )
-   aAdd( aItmPreCli, { "CDPP",      "C", 50,  0, "Descripción del descuento por pronto pago","",          "", "( cDbf )"} )
-   aAdd( aItmPreCli, { "NDPP",      "N",  5,  2, "Pct. de dto. por pronto pago",    "'@EZ 99,99'",        "", "( cDbf )"} )
-   aAdd( aItmPreCli, { "CDTOUNO",   "C", 50,  0, "Desc. del primer descuento pers.","'@!'",               "", "( cDbf )"} )
-   aAdd( aItmPreCli, { "NDTOUNO",   "N",  5,  2, "Pct. del primer descuento pers.", "'@EZ 99,99'",        "", "( cDbf )"} )
-   aAdd( aItmPreCli, { "CDTODOS",   "C", 50,  0, "Desc. del segundo descuento pers.","'@!'",              "", "( cDbf )"} )
-   aAdd( aItmPreCli, { "NDTODOS",   "N",  5,  2, "Pct. del segundo descuento pers.","'@EZ 99,99'",        "", "( cDbf )"} )
-   aAdd( aItmPreCli, { "NDTOCNT",   "N",  5,  2, "Pct. de dto. por pago contado",   "'@EZ 99,99'",        "", "( cDbf )"} )
-   aAdd( aItmPreCli, { "NDTORAP",   "N",  5,  2, "Pct. de dto. por rappel",         "'@EZ 99,99'",        "", "( cDbf )"} )
-   aAdd( aItmPreCli, { "NDTOPUB",   "N",  5,  2, "Pct. de dto. por publicidad",     "'@EZ 99,99'",        "", "( cDbf )"} )
-   aAdd( aItmPreCli, { "NDTOPGO",   "N",  5,  2, "Pct. de dto. por pago centralizado", "'@EZ 99,99'",     "", "( cDbf )"} )
-   aAdd( aItmPreCli, { "NDTOPTF",   "N",  7,  2, "",                                "",                   "", "( cDbf )"} )
-   aAdd( aItmPreCli, { "LRECARGO",  "L",  1,  0, "Aplicar recargo de equivalencia", "",                   "", "( cDbf )"} )
-   aAdd( aItmPreCli, { "NPCTCOMAGE","N",  5,  2, "Pct. de comisión del agente",     "",                   "", "( cDbf )"} )
-   aAdd( aItmPreCli, { "NBULTOS",   "N",  3,  0, "Numero de bultos",                "'999'",              "", "( cDbf )"} )
-   aAdd( aItmPreCli, { "CNUMALB",   "C", 10,  0, "" ,                               "",                   "", "( cDbf )"} )
-   aAdd( aItmPreCli, { "CDIVPRE",   "C",  3,  0, "Código de divisa",                "",                   "", "( cDbf )"} )
-   aAdd( aItmPreCli, { "NVDVPRE",   "N", 10,  4, "Valor del cambio de la divisa",   "'@EZ 999,999.9999'", "", "( cDbf )"} )
-   aAdd( aItmPreCli, { "LSNDDOC",   "L",  1,  0, "Valor lógico documento enviado",  "",                   "", "( cDbf )"} )
-   aAdd( aItmPreCli, { "CRETPOR",   "C",150,  0, "Retirado por" ,                   "",                   "", "( cDbf )"} )
-   aAdd( aItmPreCli, { "CRETMAT",   "C",150,  0, "Matrícula" ,                      "",                   "", "( cDbf )"} )
-   aAdd( aItmPreCli, { "NREGIVA",   "N",  1,  0, "Regimen de " + cImp() ,           "",                   "", "( cDbf )"} )
-   aAdd( aItmPreCli, { "LIVAINC",   "L",  1,  0, "Lógico de " + cImp() + " incluido" ,        "",                   "", "( cDbf )"} )
-   aAdd( aItmPreCli, { "NIVAMAN",   "N",  6,  2, "Porcentaje de " + cImp() + " del gasto" ,   "'@EZ 999,99'",       "", "( cDbf )"} )
-   aAdd( aItmPreCli, { "NMANOBR",   "N", 16,  6, "Gastos" ,                         "cPorDivPre",         "", "( cDbf )"} )
-   aAdd( aItmPreCli, { "cCodTrn",   "C",  9,  0, "Código de transportista" ,        "",                   "", "( cDbf )"} )
-   aAdd( aItmPreCli, { "nKgsTrn"   ,"N", 16,  6, "TARA del transportista" ,         "",                   "", "( cDbf )"} )
-   aAdd( aItmPreCli, { "lCloPre",   "L",  1,  0, "" ,                               "",                   "", "( cDbf )"} )
-   aAdd( aItmPreCli, { "cCodUsr",   "C",  3,  0, "Código de usuario",               "",                   "", "( cDbf )"} )
-   aAdd( aItmPreCli, { "dFecCre",   "D",  8,  0, "Fecha de creación del documento", "",                   "", "( cDbf )"} )
-   aAdd( aItmPreCli, { "cTimCre",   "C",  5,  0, "Hora de creación del documento",  "",                   "", "( cDbf )"} )
-   aAdd( aItmPreCli, { "cSituac",   "C", 20,  0, "Situación del documento",         "",                   "", "( cDbf )"} )
-   aAdd( aItmPreCli, { "nDiaVal",   "N",  3,  0, "Dias de validez",                 "",                   "", "( cDbf )"} )
-   aAdd( aItmPreCli, { "cCodGrp",   "C",  4,  0, "Código de grupo de cliente",      "",                   "", "( cDbf )"} )
-   aAdd( aItmPreCli, { "lImprimido","L",  1,  0, "Lógico de imprimido del documento",                 "", "", "( cDbf )"} )
-   aAdd( aItmPreCli, { "dFecImp",   "D",  8,  0, "Última fecha de impresión del documento",           "", "", "( cDbf )"} )
-   aAdd( aItmPreCli, { "cHorImp",   "C",  5,  0, "Hora de la última impresión del documento",         "", "", "( cDbf )"} )
-   aAdd( aItmPreCli, { "cCodDlg",   "C",  2,  0, "Código delegación" ,                                "", "", "( cDbf )"} )
-   aAdd( aItmPreCli, { "nDtoAtp",   "N",  6,  2, "Porcentaje de descuento atípico",                   "", "", "( cDbf )"} )
-   aAdd( aItmPreCli, { "nSbrAtp",   "N",  1,  0, "Lugar donde aplicar dto atípico",                   "", "", "( cDbf )"} )
-   aAdd( aItmPreCli, { "dFecEntr",  "D",  8,  0, "Fecha de entrada de alquiler",                      "", "", "( cDbf )"} )
-   aAdd( aItmPreCli, { "dFecSal",   "D",  8,  0, "fecha de salidad de alquiler",                      "", "", "( cDbf )"} )
-   aAdd( aItmPreCli, { "lAlquiler", "L",  1,  0, "Lógico de alquiler",                                "", "", "( cDbf )"} )
-   aAdd( aItmPreCli, { "cManObr",   "C",250,  0, "Literal de gastos" ,                                "", "", "( cDbf )"} )
-   aAdd( aItmPreCli, { "cNumTik",   "C", 13,  0, "Número del ticket generado" ,                       "", "", "( cDbf )"} )
-   aAdd( aItmPreCli, { "CTLFCLI",   "C", 20,  0, "Teléfono del cliente" ,                             "", "", "( cDbf )"} )
-   aAdd( aItmPreCli, { "nTotNet",   "N", 16,  6, "Total neto" ,                                       "", "", "( cDbf )"} )
-   aAdd( aItmPreCli, { "nTotIva",   "N", 16,  6, "Total " + cImp() ,                                  "", "", "( cDbf )"} )
-   aAdd( aItmPreCli, { "nTotReq",   "N", 16,  6, "Total recargo" ,                                    "", "", "( cDbf )"} )
-   aAdd( aItmPreCli, { "nTotPre",   "N", 16,  6, "Total presupuesto" ,                                "", "", "( cDbf )"} )
-   aAdd( aItmPreCli, { "lOperPV",   "L",  1,  0, "Lógico para operar con punto verde" ,               "", "", "( cDbf )", .t.} )
+   aAdd( aItmSatCli, { "CSERSAT",   "C",  1,  0, "Serie de S.A.T." ,           "",                   "", "( cDbf )"} )
+   aAdd( aItmSatCli, { "NNUMSAT",   "N",  9,  0, "Número de S.A.T." ,          "'999999999'",        "", "( cDbf )"} )
+   aAdd( aItmSatCli, { "CSUFSAT",   "C",  2,  0, "Sufijo de S.A.T." ,          "",                   "", "( cDbf )"} )
+   aAdd( aItmSatCli, { "CTURSAT",   "C",  6,  0, "Sesión del S.A.T.",          "",                   "", "( cDbf )"} )
+   aAdd( aItmSatCli, { "DFECSAT",   "D",  8,  0, "Fecha del S.A.T.",           "",                   "", "( cDbf )"} )
+   aAdd( aItmSatCli, { "CCODCLI",   "C", 12,  0, "Código del cliente",              "",                   "", "( cDbf )"} )
+   aAdd( aItmSatCli, { "CNOMCLI",   "C", 80,  0, "Nombre del cliente",              "'@!'",               "", "( cDbf )"} )
+   aAdd( aItmSatCli, { "CDIRCLI",   "C",100,  0, "Domicilio del cliente",           "'@!'",               "", "( cDbf )"} )
+   aAdd( aItmSatCli, { "CPOBCLI",   "C", 35,  0, "Población del cliente",           "'@!'",               "", "( cDbf )"} )
+   aAdd( aItmSatCli, { "CPRVCLI",   "C", 20,  0, "Provincia del cliente",           "'@!'",               "", "( cDbf )"} )
+   aAdd( aItmSatCli, { "CPOSCLI",   "C", 15,  0, "Código postal del cliente",       "'@!'",               "", "( cDbf )"} )
+   aAdd( aItmSatCli, { "CDNICLI",   "C", 30,  0, "DNI del cliente",                 "'@!'",               "", "( cDbf )"} )
+   aAdd( aItmSatCli, { "LMODCLI",   "L",  1,  0, "Modificar datos del cliente",     "",                   "", "( cDbf )"} )
+   aAdd( aItmSatCli, { "CCODAGE",   "C",  3,  0, "Código del agente",               "",                   "", "( cDbf )"} )
+   aAdd( aItmSatCli, { "CCODOBR",   "C", 10,  0, "Código de obra",                  "",                   "", "( cDbf )"} )
+   aAdd( aItmSatCli, { "CCODTAR",   "C",  5,  0, "Código de tarifa",                "",                   "", "( cDbf )"} )
+   aAdd( aItmSatCli, { "CCODALM",   "C",  3,  0, "Código del almacen",              "",                   "", "( cDbf )"} )
+   aAdd( aItmSatCli, { "CCODCAJ",   "C",  3,  0, "Código de caja",                  "",                   "", "( cDbf )"} )
+   aAdd( aItmSatCli, { "CCODPGO",   "C",  2,  0, "Código de pago",                  "",                   "", "( cDbf )"} )
+   aAdd( aItmSatCli, { "CCODRUT",   "C",  4,  0, "Código de la ruta",               "",                   "", "( cDbf )"} )
+   aAdd( aItmSatCli, { "DFECENT",   "D",  8,  0, "Fecha de entrada",                "",                   "", "( cDbf )"} )
+   aAdd( aItmSatCli, { "LESTADO",   "L",  1,  0, "Estado del S.A.T.",          "",                   "", "( cDbf )"} )
+   aAdd( aItmSatCli, { "CSUSAT",    "C", 10,  0, "Su S.A.T.",                  "",                   "", "( cDbf )"} )
+   aAdd( aItmSatCli, { "CCONDENT",  "C",100,  0, "",                                "",                   "", "( cDbf )"} )
+   aAdd( aItmSatCli, { "MCOMENT",   "M", 10,  0, "Comentarios",                     "",                   "", "( cDbf )"} )
+   aAdd( aItmSatCli, { "MOBSERV",   "M", 10,  0, "Observaciones",                   "",                   "", "( cDbf )"} )
+   aAdd( aItmSatCli, { "LMAYOR",    "L",  1,  0, "" ,                               "",                   "", "( cDbf )"} )
+   aAdd( aItmSatCli, { "NTARIFA",   "N",  1,  0, "Tarifa de precio aplicada" ,      "",                   "", "( cDbf )"} )
+   aAdd( aItmSatCli, { "CDTOESP",   "C", 50,  0, "Descripción del descuento",       "",                   "", "( cDbf )"} )
+   aAdd( aItmSatCli, { "NDTOESP",   "N",  5,  2, "Porcentaje de descuento",         "'@EZ 99,99'",        "", "( cDbf )"} )
+   aAdd( aItmSatCli, { "CDPP",      "C", 50,  0, "Descripción del descuento por pronto pago","",          "", "( cDbf )"} )
+   aAdd( aItmSatCli, { "NDPP",      "N",  5,  2, "Pct. de dto. por pronto pago",    "'@EZ 99,99'",        "", "( cDbf )"} )
+   aAdd( aItmSatCli, { "CDTOUNO",   "C", 50,  0, "Desc. del primer descuento pers.","'@!'",               "", "( cDbf )"} )
+   aAdd( aItmSatCli, { "NDTOUNO",   "N",  5,  2, "Pct. del primer descuento pers.", "'@EZ 99,99'",        "", "( cDbf )"} )
+   aAdd( aItmSatCli, { "CDTODOS",   "C", 50,  0, "Desc. del segundo descuento pers.","'@!'",              "", "( cDbf )"} )
+   aAdd( aItmSatCli, { "NDTODOS",   "N",  5,  2, "Pct. del segundo descuento pers.","'@EZ 99,99'",        "", "( cDbf )"} )
+   aAdd( aItmSatCli, { "NDTOCNT",   "N",  5,  2, "Pct. de dto. por pago contado",   "'@EZ 99,99'",        "", "( cDbf )"} )
+   aAdd( aItmSatCli, { "NDTORAP",   "N",  5,  2, "Pct. de dto. por rappel",         "'@EZ 99,99'",        "", "( cDbf )"} )
+   aAdd( aItmSatCli, { "NDTOPUB",   "N",  5,  2, "Pct. de dto. por publicidad",     "'@EZ 99,99'",        "", "( cDbf )"} )
+   aAdd( aItmSatCli, { "NDTOPGO",   "N",  5,  2, "Pct. de dto. por pago centralizado", "'@EZ 99,99'",     "", "( cDbf )"} )
+   aAdd( aItmSatCli, { "NDTOPTF",   "N",  7,  2, "",                                "",                   "", "( cDbf )"} )
+   aAdd( aItmSatCli, { "LRECARGO",  "L",  1,  0, "Aplicar recargo de equivalencia", "",                   "", "( cDbf )"} )
+   aAdd( aItmSatCli, { "NPCTCOMAGE","N",  5,  2, "Pct. de comisión del agente",     "",                   "", "( cDbf )"} )
+   aAdd( aItmSatCli, { "NBULTOS",   "N",  3,  0, "Numero de bultos",                "'999'",              "", "( cDbf )"} )
+   aAdd( aItmSatCli, { "CNUMSat",   "C", 10,  0, "" ,                               "",                   "", "( cDbf )"} )
+   aAdd( aItmSatCli, { "CDIVSAT",   "C",  3,  0, "Código de divisa",                "",                   "", "( cDbf )"} )
+   aAdd( aItmSatCli, { "NVDVSAT",   "N", 10,  4, "Valor del cambio de la divisa",   "'@EZ 999,999.9999'", "", "( cDbf )"} )
+   aAdd( aItmSatCli, { "LSNDDOC",   "L",  1,  0, "Valor lógico documento enviado",  "",                   "", "( cDbf )"} )
+   aAdd( aItmSatCli, { "CRETPOR",   "C",150,  0, "Retirado por" ,                   "",                   "", "( cDbf )"} )
+   aAdd( aItmSatCli, { "CRETMAT",   "C",150,  0, "Matrícula" ,                      "",                   "", "( cDbf )"} )
+   aAdd( aItmSatCli, { "NREGIVA",   "N",  1,  0, "Regimen de " + cImp() ,           "",                   "", "( cDbf )"} )
+   aAdd( aItmSatCli, { "LIVAINC",   "L",  1,  0, "Lógico de " + cImp() + " incluido" ,        "",                   "", "( cDbf )"} )
+   aAdd( aItmSatCli, { "NIVAMAN",   "N",  6,  2, "Porcentaje de " + cImp() + " del gasto" ,   "'@EZ 999,99'",       "", "( cDbf )"} )
+   aAdd( aItmSatCli, { "NMANOBR",   "N", 16,  6, "Gastos" ,                         "cPorDivSat",         "", "( cDbf )"} )
+   aAdd( aItmSatCli, { "cCodTrn",   "C",  9,  0, "Código de transportista" ,        "",                   "", "( cDbf )"} )
+   aAdd( aItmSatCli, { "nKgsTrn"   ,"N", 16,  6, "TARA del transportista" ,         "",                   "", "( cDbf )"} )
+   aAdd( aItmSatCli, { "lCloSat",   "L",  1,  0, "" ,                               "",                   "", "( cDbf )"} )
+   aAdd( aItmSatCli, { "cCodUsr",   "C",  3,  0, "Código de usuario",               "",                   "", "( cDbf )"} )
+   aAdd( aItmSatCli, { "dFecCre",   "D",  8,  0, "Fecha de creación del documento", "",                   "", "( cDbf )"} )
+   aAdd( aItmSatCli, { "cTimCre",   "C",  5,  0, "Hora de creación del documento",  "",                   "", "( cDbf )"} )
+   aAdd( aItmSatCli, { "cSituac",   "C", 20,  0, "Situación del documento",         "",                   "", "( cDbf )"} )
+   aAdd( aItmSatCli, { "nDiaVal",   "N",  3,  0, "Dias de validez",                 "",                   "", "( cDbf )"} )
+   aAdd( aItmSatCli, { "cCodGrp",   "C",  4,  0, "Código de grupo de cliente",      "",                   "", "( cDbf )"} )
+   aAdd( aItmSatCli, { "lImprimido","L",  1,  0, "Lógico de imprimido del documento",                 "", "", "( cDbf )"} )
+   aAdd( aItmSatCli, { "dFecImp",   "D",  8,  0, "Última fecha de impresión del documento",           "", "", "( cDbf )"} )
+   aAdd( aItmSatCli, { "cHorImp",   "C",  5,  0, "Hora de la última impresión del documento",         "", "", "( cDbf )"} )
+   aAdd( aItmSatCli, { "cCodDlg",   "C",  2,  0, "Código delegación" ,                                "", "", "( cDbf )"} )
+   aAdd( aItmSatCli, { "nDtoAtp",   "N",  6,  2, "Porcentaje de descuento atípico",                   "", "", "( cDbf )"} )
+   aAdd( aItmSatCli, { "nSbrAtp",   "N",  1,  0, "Lugar donde aplicar dto atípico",                   "", "", "( cDbf )"} )
+   aAdd( aItmSatCli, { "dFecEntr",  "D",  8,  0, "Fecha de entrada de alquiler",                      "", "", "( cDbf )"} )
+   aAdd( aItmSatCli, { "dFecSal",   "D",  8,  0, "fecha de salidad de alquiler",                      "", "", "( cDbf )"} )
+   aAdd( aItmSatCli, { "lAlquiler", "L",  1,  0, "Lógico de alquiler",                                "", "", "( cDbf )"} )
+   aAdd( aItmSatCli, { "cManObr",   "C",250,  0, "Literal de gastos" ,                                "", "", "( cDbf )"} )
+   aAdd( aItmSatCli, { "cNumTik",   "C", 13,  0, "Número del ticket generado" ,                       "", "", "( cDbf )"} )
+   aAdd( aItmSatCli, { "CTLFCLI",   "C", 20,  0, "Teléfono del cliente" ,                             "", "", "( cDbf )"} )
+   aAdd( aItmSatCli, { "nTotNet",   "N", 16,  6, "Total neto" ,                                       "", "", "( cDbf )"} )
+   aAdd( aItmSatCli, { "nTotIva",   "N", 16,  6, "Total " + cImp() ,                                  "", "", "( cDbf )"} )
+   aAdd( aItmSatCli, { "nTotReq",   "N", 16,  6, "Total recargo" ,                                    "", "", "( cDbf )"} )
+   aAdd( aItmSatCli, { "nTotSat",   "N", 16,  6, "Total S.A.T." ,                                "", "", "( cDbf )"} )
+   aAdd( aItmSatCli, { "lOperPV",   "L",  1,  0, "Lógico para operar con punto verde" ,               "", "", "( cDbf )", .t.} )
 
-return ( aItmPreCli )
+return ( aItmSatCli )
 
 //---------------------------------------------------------------------------//
 
-function aCalPreCli()
+function aCalSatCli()
 
-   local aCalPreCli  := {  { "nTotArt",                                                   "N", 16,  6, "Total artículos",             "cPicUndPre",  "" },;
-                           { "nTotCaj",                                                   "N", 16,  6, "Total cajas",                 "cPicUndPre",  "" },;
-                           { "aTotIva[1,1]",                                              "N", 16,  6, "Bruto primer tipo de " + cImp(),    "cPorDivPre",  "aTotIva[1,1] != 0" },;
-                           { "aTotIva[2,1]",                                              "N", 16,  6, "Bruto segundo tipo de " + cImp(),   "cPorDivPre",  "aTotIva[2,1] != 0" },;
-                           { "aTotIva[3,1]",                                              "N", 16,  6, "Bruto tercer tipo de " + cImp(),    "cPorDivPre",  "aTotIva[3,1] != 0" },;
-                           { "aTotIva[1,2]",                                              "N", 16,  6, "Base primer tipo de " + cImp(),     "cPorDivPre",  "aTotIva[1,2] != 0" },;
-                           { "aTotIva[2,2]",                                              "N", 16,  6, "Base segundo tipo de " + cImp(),    "cPorDivPre",  "aTotIva[2,2] != 0" },;
-                           { "aTotIva[3,2]",                                              "N", 16,  6, "Base tercer tipo de " + cImp(),     "cPorDivPre",  "aTotIva[3,2] != 0" },;
+   local aCalSatCli  := {  { "nTotArt",                                                   "N", 16,  6, "Total artículos",             "cPicUndSat",  "" },;
+                           { "nTotCaj",                                                   "N", 16,  6, "Total cajas",                 "cPicUndSat",  "" },;
+                           { "aTotIva[1,1]",                                              "N", 16,  6, "Bruto primer tipo de " + cImp(),    "cPorDivSat",  "aTotIva[1,1] != 0" },;
+                           { "aTotIva[2,1]",                                              "N", 16,  6, "Bruto segundo tipo de " + cImp(),   "cPorDivSat",  "aTotIva[2,1] != 0" },;
+                           { "aTotIva[3,1]",                                              "N", 16,  6, "Bruto tercer tipo de " + cImp(),    "cPorDivSat",  "aTotIva[3,1] != 0" },;
+                           { "aTotIva[1,2]",                                              "N", 16,  6, "Base primer tipo de " + cImp(),     "cPorDivSat",  "aTotIva[1,2] != 0" },;
+                           { "aTotIva[2,2]",                                              "N", 16,  6, "Base segundo tipo de " + cImp(),    "cPorDivSat",  "aTotIva[2,2] != 0" },;
+                           { "aTotIva[3,2]",                                              "N", 16,  6, "Base tercer tipo de " + cImp(),     "cPorDivSat",  "aTotIva[3,2] != 0" },;
                            { "aTotIva[1,3]",                                              "N",  5,  2, "Porcentaje primer tipo " + cImp(),  "'@R 99.99%'", "aTotIva[1,3] != 0" },;
                            { "aTotIva[2,3]",                                              "N",  5,  2, "Porcentaje segundo tipo " + cImp(), "'@R 99.99%'", "aTotIva[2,3] != 0" },;
                            { "aTotIva[3,3]",                                              "N",  5,  2, "Porcentaje tercer tipo " + cImp(),  "'@R 99.99%'", "aTotIva[3,3] != 0" },;
                            { "aTotIva[1,4]",                                              "N",  5,  2, "Porcentaje primer tipo RE",   "'@R 99.99%'", "aTotIva[1,4] != 0" },;
                            { "aTotIva[2,4]",                                              "N",  5,  2, "Porcentaje segundo tipo RE",  "'@R 99.99%'", "aTotIva[2,4] != 0" },;
                            { "aTotIva[3,4]",                                              "N",  5,  2, "Porcentaje tercer tipo RE",   "'@R 99.99%'", "aTotIva[3,4] != 0" },;
-                           { "round( aTotIva[1,2] * aTotIva[1,3] / 100, nDouDivPre )",    "N", 16,  6, "Importe primer tipo " + cImp(),     "cPorDivPre",  "aTotIva[1,2] != 0" },;
-                           { "round( aTotIva[2,2] * aTotIva[2,3] / 100, nDouDivPre )",    "N", 16,  6, "Importe segundo tipo " + cImp(),    "cPorDivPre",  "aTotIva[2,2] != 0" },;
-                           { "round( aTotIva[3,2] * aTotIva[3,3] / 100, nDouDivPre )",    "N", 16,  6, "Importe tercer tipo " + cImp(),     "cPorDivPre",  "aTotIva[3,2] != 0" },;
-                           { "round( aTotIva[1,2] * aTotIva[1,4] / 100, nDouDivPre )",    "N", 16,  6, "Importe primer RE",           "cPorDivPre",  "aTotIva[1,2] != 0" },;
-                           { "round( aTotIva[2,2] * aTotIva[2,4] / 100, nDouDivPre )",    "N", 16,  6, "Importe segundo RE",          "cPorDivPre",  "aTotIva[2,2] != 0" },;
-                           { "round( aTotIva[3,2] * aTotIva[3,4] / 100, nDouDivPre )",    "N", 16,  6, "Importe tercer RE",           "cPorDivPre",  "aTotIva[3,2] != 0" },;
-                           { "aTotIvm[1,1]",                                              "N", 16,  6, "Total unidades primer tipo de impuestos especiales",    "cPorDivPre",  "aTotIvm[1,1] != 0" },;
-                           { "aTotIvm[2,1]",                                              "N", 16,  6, "Total unidades segundo tipo de impuestos especiales",   "cPorDivPre",  "aTotIvm[2,1] != 0" },;
-                           { "aTotIvm[3,1]",                                              "N", 16,  6, "Total unidades tercer tipo de impuestos especiales",    "cPorDivPre",  "aTotIvm[3,1] != 0" },;
-                           { "aTotIva[1,2]",                                              "N", 16,  6, "Importe del primer tipo de impuestos especiales",       "cPorDivPre",  "aTotIvm[1,2] != 0" },;
-                           { "aTotIva[2,2]",                                              "N", 16,  6, "Importe del segundo tipo de impuestos especiales",      "cPorDivPre",  "aTotIvm[2,2] != 0" },;
-                           { "aTotIva[3,2]",                                              "N", 16,  6, "Importe del tercer tipo de impuestos especiales",       "cPorDivPre",  "aTotIvm[3,2] != 0" },;
-                           { "aTotIvm[1,3]",                                              "N", 16,  6, "Total importe primer tipo de impuestos especiales",     "cPorDivPre",  "aTotIvm[1,3] != 0" },;
-                           { "aTotIvm[2,3]",                                              "N", 16,  6, "Total importe segundo tipo de impuestos especiales",    "cPorDivPre",  "aTotIvm[2,3] != 0" },;
-                           { "aTotIvm[3,3]",                                              "N", 16,  6, "Total importe tercer tipo de impuestos especiales",     "cPorDivPre",  "aTotIvm[3,3] != 0" },;
-                           { "nTotBrt",                                                   "N", 16,  6, "Total bruto",                 "cPorDivPre",  "lEnd" },;
-                           { "nTotDto",                                                   "N", 16,  6, "Total descuento",             "cPorDivPre",  "lEnd" },;
-                           { "nTotDpp",                                                   "N", 16,  6, "Total descuento pronto pago", "cPorDivPre",  "lEnd" },;
-                           { "nTotNet",                                                   "N", 16,  6, "Total neto",                  "cPorDivPre",  "lEnd" },;
-                           { "nTotIva",                                                   "N", 16,  6, "Total " + cImp(),             "cPorDivPre",  "lEnd" },;
-                           { "nTotIvm",                                                   "N", 16,  6, "Total IVMH",                  "cPorDivPre",  "lEnd" },;
-                           { "nTotReq",                                                   "N", 16,  6, "Total RE",                    "cPorDivPre",  "lEnd" },;
-                           { "nTotPre",                                                   "N", 16,  6, "Total presupuesto",           "cPorDivPre",  "lEnd" },;
+                           { "round( aTotIva[1,2] * aTotIva[1,3] / 100, nDouDivSat )",    "N", 16,  6, "Importe primer tipo " + cImp(),     "cPorDivSat",  "aTotIva[1,2] != 0" },;
+                           { "round( aTotIva[2,2] * aTotIva[2,3] / 100, nDouDivSat )",    "N", 16,  6, "Importe segundo tipo " + cImp(),    "cPorDivSat",  "aTotIva[2,2] != 0" },;
+                           { "round( aTotIva[3,2] * aTotIva[3,3] / 100, nDouDivSat )",    "N", 16,  6, "Importe tercer tipo " + cImp(),     "cPorDivSat",  "aTotIva[3,2] != 0" },;
+                           { "round( aTotIva[1,2] * aTotIva[1,4] / 100, nDouDivSat )",    "N", 16,  6, "Importe primer RE",           "cPorDivSat",  "aTotIva[1,2] != 0" },;
+                           { "round( aTotIva[2,2] * aTotIva[2,4] / 100, nDouDivSat )",    "N", 16,  6, "Importe segundo RE",          "cPorDivSat",  "aTotIva[2,2] != 0" },;
+                           { "round( aTotIva[3,2] * aTotIva[3,4] / 100, nDouDivSat )",    "N", 16,  6, "Importe tercer RE",           "cPorDivSat",  "aTotIva[3,2] != 0" },;
+                           { "aTotIvm[1,1]",                                              "N", 16,  6, "Total unidades primer tipo de impuestos especiales",    "cPorDivSat",  "aTotIvm[1,1] != 0" },;
+                           { "aTotIvm[2,1]",                                              "N", 16,  6, "Total unidades segundo tipo de impuestos especiales",   "cPorDivSat",  "aTotIvm[2,1] != 0" },;
+                           { "aTotIvm[3,1]",                                              "N", 16,  6, "Total unidades tercer tipo de impuestos especiales",    "cPorDivSat",  "aTotIvm[3,1] != 0" },;
+                           { "aTotIva[1,2]",                                              "N", 16,  6, "Importe del primer tipo de impuestos especiales",       "cPorDivSat",  "aTotIvm[1,2] != 0" },;
+                           { "aTotIva[2,2]",                                              "N", 16,  6, "Importe del segundo tipo de impuestos especiales",      "cPorDivSat",  "aTotIvm[2,2] != 0" },;
+                           { "aTotIva[3,2]",                                              "N", 16,  6, "Importe del tercer tipo de impuestos especiales",       "cPorDivSat",  "aTotIvm[3,2] != 0" },;
+                           { "aTotIvm[1,3]",                                              "N", 16,  6, "Total importe primer tipo de impuestos especiales",     "cPorDivSat",  "aTotIvm[1,3] != 0" },;
+                           { "aTotIvm[2,3]",                                              "N", 16,  6, "Total importe segundo tipo de impuestos especiales",    "cPorDivSat",  "aTotIvm[2,3] != 0" },;
+                           { "aTotIvm[3,3]",                                              "N", 16,  6, "Total importe tercer tipo de impuestos especiales",     "cPorDivSat",  "aTotIvm[3,3] != 0" },;
+                           { "nTotBrt",                                                   "N", 16,  6, "Total bruto",                 "cPorDivSat",  "lEnd" },;
+                           { "nTotDto",                                                   "N", 16,  6, "Total descuento",             "cPorDivSat",  "lEnd" },;
+                           { "nTotDpp",                                                   "N", 16,  6, "Total descuento pronto pago", "cPorDivSat",  "lEnd" },;
+                           { "nTotNet",                                                   "N", 16,  6, "Total neto",                  "cPorDivSat",  "lEnd" },;
+                           { "nTotIva",                                                   "N", 16,  6, "Total " + cImp(),             "cPorDivSat",  "lEnd" },;
+                           { "nTotIvm",                                                   "N", 16,  6, "Total IVMH",                  "cPorDivSat",  "lEnd" },;
+                           { "nTotReq",                                                   "N", 16,  6, "Total RE",                    "cPorDivSat",  "lEnd" },;
+                           { "nTotSat",                                                   "N", 16,  6, "Total S.A.T.",           "cPorDivSat",  "lEnd" },;
                            { "nTotPes",                                                   "N", 16,  6, "Total peso",                  "'@E 99,999.99'","lEnd" },;
-                           { "nTotCos",                                                   "N", 16,  6, "Total costo",                 "cPorDivPre",  "lEnd" },;
-                           { "nTotPage",                                                  "N", 16,  6, "Total página",                "cPorDivPre",  "!lEnd" },;
-                           { "nImpEuros( nTotPre, (cDbf)->cDivPre, cDbfDiv )",            "N", 16,  6, "Total Presupuesto (Euros)",   "",            "lEnd" },;
-                           { "nImpPesetas( nTotPre, (cDbf)->cDivPre, cDbfDiv )",          "N", 16,  6, "Total Presupuesto (Pesetas)", "",            "lEnd" },;
+                           { "nTotCos",                                                   "N", 16,  6, "Total costo",                 "cPorDivSat",  "lEnd" },;
+                           { "nTotPage",                                                  "N", 16,  6, "Total página",                "cPorDivSat",  "!lEnd" },;
+                           { "nImpEuros( nTotSat, (cDbf)->cDivSat, cDbfDiv )",            "N", 16,  6, "Total Satsupuesto (Euros)",   "",            "lEnd" },;
+                           { "nImpPesetas( nTotSat, (cDbf)->cDivSat, cDbfDiv )",          "N", 16,  6, "Total Satsupuesto (Pesetas)", "",            "lEnd" },;
                            { "nPagina",                                                   "N",  2,  0, "Numero de página",            "'99'",        "" },;
                            { "lEnd",                                                      "L",  1,  0, "Fin del documento",           "",            "" } }
 
-return ( aCalPreCli )
+return ( aCalSatCli )
 
 //---------------------------------------------------------------------------//
 
-function aColPreCli()
+function aColSatCli()
 
-   local aColPreCli  := {}
+   local aColSatCli  := {}
 
-   aAdd( aColPreCli, { "CSERPRE", "C",    1,  0, "Serie de presupuesto" ,            "",                   "", "( cDbfCol )" } )
-   aAdd( aColPreCli, { "NNUMPRE", "N",    9,  0, "Numero de presupuesto" ,           "'999999999'",        "", "( cDbfCol )" } )
-   aAdd( aColPreCli, { "CSUFPRE", "C",    2,  0, "Sufijo de presupuesto" ,           "",                   "", "( cDbfCol )" } )
-   aAdd( aColPreCli, { "CREF",    "C",   18,  0, "Referencia del producto" ,         "",                   "", "( cDbfCol )" } )
-   aAdd( aColPreCli, { "CDETALLE","C",  250,  0, "Descripción de artículo" ,         "",                   "", "( cDbfCol )" } )
-   aAdd( aColPreCli, { "NIVA"    ,"N",    6,  2, "Importe del " + cImp() ,           "'@E 99.9'",          "", "( cDbfCol )" } )
-   aAdd( aColPreCli, { "NCANPRE" ,"N",   16,  6, "Cantidad pedida" ,                 "MasUnd()",           "", "( cDbfCol )" } )
-   aAdd( aColPreCli, { "NUNICAJA","N",   16,  6, "Unidades por caja" ,               "MasUnd()",           "", "( cDbfCol )" } )
-   aAdd( aColPreCli, { "LCONTROL","L",    1,  0, "" ,                                "",                   "", "( cDbfCol )" } )
-   aAdd( aColPreCli, { "NUNDKIT", "N",   16,  6, "Unidades tipo kit" ,               "MasUnd()",           "", "( cDbfCol )" } )
-   aAdd( aColPreCli, { "NPREDIV" ,"N",   16,  6, "Importe del producto" ,            "cPorDivPre",         "", "( cDbfCol )" } )
-   aAdd( aColPreCli, { "NPNTVER", "N",   16,  6, "Importe punto verde" ,             "cPorDivPre",         "", "( cDbfCol )" } )
-   aAdd( aColPreCli, { "nImpTrn", "N",   16,  6, "Importe del transporte",           "cPorDivPre",         "", "( cDbfCol )" } )
-   aAdd( aColPreCli, { "NDTO",    "N",    6,  2, "Descuento del producto" ,          "'@E 99.99'",         "", "( cDbfCol )" } )
-   aAdd( aColPreCli, { "NDTOPRM", "N",    6,  2, "Descuento de la promoción" ,       "'@E 99.99'",         "", "( cDbfCol )" } )
-   aAdd( aColPreCli, { "NCOMAGE", "N",    6,  2, "Comisión del agente" ,             "'@E 99.99'",         "", "( cDbfCol )" } )
-   aAdd( aColPreCli, { "NCANENT", "N",   16,  6, "Unidades de entrada" ,             "MasUnd()",           "", "( cDbfCol )" } )
-   aAdd( aColPreCli, { "CUNIDAD", "C",    2,  0, "Unidad de venta" ,                 "",                   "", "( cDbfCol )" } )
-   aAdd( aColPreCli, { "NPESOKG", "N",   16,  6, "Peso del producto" ,               "",                   "", "( cDbfCol )" } )
-   aAdd( aColPreCli, { "cPesoKg", "C",    2,  0, "Unidad de peso del producto" ,     "",                   "", "( cDbfCol )" } )
-   aAdd( aColPreCli, { "DFECHA",  "D",    8,  0, "Fecha de entrega",                 "",                   "", "( cDbfCol )" } )
-   aAdd( aColPreCli, { "MLNGDES", "M",   10,  0, "Descripción de artículo sin codificar", "",              "", "( cDbfCol )" } )
-   aAdd( aColPreCli, { "LTOTLIN", "L",    1,  0, "Linea de total" ,                  "",                   "", "( cDbfCol )" } )
-   aAdd( aColPreCli, { "LIMPLIN", "L",    1,  0, "Linea no imprimible" ,             "",                   "", "( cDbfCol )" } )
-   aAdd( aColPreCli, { "CCODPR1", "C",   10,  0, "Código de la primera propiedad",   "",                   "", "( cDbfCol )" } )
-   aAdd( aColPreCli, { "CCODPR2", "C",   10,  0, "Código de la segunda propiedad",   "",                   "", "( cDbfCol )" } )
-   aAdd( aColPreCli, { "CVALPR1", "C",   10,  0, "Valor de la primera propiedad",    "",                   "", "( cDbfCol )" } )
-   aAdd( aColPreCli, { "CVALPR2", "C",   10,  0, "Valor de la segunda propiedad",    "",                   "", "( cDbfCol )" } )
-   aAdd( aColPreCli, { "NFACCNV", "N",   16,  6, "Factor de conversión de la compra","",                   "", "( cDbfCol )" } )
-   aAdd( aColPreCli, { "NDTODIV", "N",   16,  6, "Descuento lineal de la compra",    "",                   "", "( cDbfCol )" } )
-   aAdd( aColPreCli, { "CTIPMOV", "C",    2,  0, "Tipo de movimiento",               "",                   "", "( cDbfCol )" } )
-   aAdd( aColPreCli, { "NNUMLIN", "N",    4,  0, "Numero de la línea",               "'9999'",             "", "( cDbfCol )" } )
-   aAdd( aColPreCli, { "NCTLSTK", "N",    1,  0, "Tipo de stock de la línea",        "'9'",                "", "( cDbfCol )" } )
-   aAdd( aColPreCli, { "NCOSDIV", "N",   16,  6, "Costo del producto" ,              "cPorDivPre",         "", "( cDbfCol )" } )
-   aAdd( aColPreCli, { "NPVPREC", "N",   16,  6, "Precio de venta recomendado" ,     "cPorDivPre",         "", "( cDbfCol )" } )
-   aAdd( aColPreCli, { "CALMLIN", "C",    3,  0, "Código de almacén" ,               "",                   "", "( cDbfCol )" } )
-   aAdd( aColPreCli, { "LIVALIN", "L",    1,  0, "Línea con " + cImp() + " incluido",           "",                   "", "( cDbfCol )" } )
-   aAdd( aColPreCli, { "CCODIMP", "C",    3,  0, "Código del impuesto especial",     "",                   "", "( cDbfCol )" } )
-   aAdd( aColPreCli, { "NVALIMP", "N",   16,  6, "Importe de impuesto",              "",                   "", "( cDbfCol )" } )
-   aAdd( aColPreCli, { "LLOTE",   "L",    1,  0, "",                                 "",                   "", "( cDbfCol )" } )
-   aAdd( aColPreCli, { "NLOTE",   "N",    9,  0, "",                                 "'999999999'",        "", "( cDbfCol )" } )
-   aAdd( aColPreCli, { "CLOTE",   "C",   12,  0, "Número de Lote",                   "",                   "", "( cDbfCol )" } )
-   aAdd( aColPreCli, { "LKITART", "L",    1,  0, "Línea con escandallo",             "" ,                  "", "( cDbfCol )" } )
-   aAdd( aColPreCli, { "LKITCHL", "L",    1,  0, "Línea pertenciente a escandallo",  "" ,                  "", "( cDbfCol )" } )
-   aAdd( aColPreCli, { "LKITPRC", "L",    1,  0, "",                                 "" ,                  "", "( cDbfCol )" } )
-   aAdd( aColPreCli, { "NMESGRT", "N",    2,  0, "Meses de garantía",                "'99'",               "", "( cDbfCol )" } )
-   aAdd( aColPreCli, { "LMSGVTA", "L",    1,  0, "Avisar en venta sin stocks",       "",                   "", "( cDbfCol )" } )
-   aAdd( aColPreCli, { "LNOTVTA", "L",    1,  0, "No permitir venta sin stocks",     "",                   "", "( cDbfCol )" } )
-   aAdd( aColPreCli, { "MNUMSER", "M",   10,  0, "" ,                                "",                   "", "( cDbfCol )" } )
-   aAdd( aColPreCli, { "CCODTIP", "C",    3,  0, "Código del tipo de artículo",      "",                   "", "( cDbfCol )" } )
-   aAdd( aColPreCli, { "CCODFAM", "C",   16,  0, "Código de familia",                "",                   "", "( cDbfCol )" } )
-   aAdd( aColPreCli, { "CGRPFAM", "C",    3,  0, "Código del grupo de familia",      "",                   "", "( cDbfCol )" } )
-   aAdd( aColPreCli, { "NREQ",    "N",    6,  2, "Recargo de equivalencia",          "",                   "", "( cDbfCol )" } )
-   aAdd( aColPreCli, { "MOBSLIN", "M",   10,  0, "Observacion de línea",             "",                   "", "( cDbfCol )" } )
-   aAdd( aColPreCli, { "CCODPRV", "C",   12,  0, "Código del proveedor",             "",                   "", "( cDbfCol )" } )
-   aAdd( aColPreCli, { "CNOMPRV", "C",   30,  0, "Nombre del proveedor",             "",                   "", "( cDbfCol )" } )
-   aAdd( aColPreCli, { "CIMAGEN", "C",  250,  0, "Fichero de imagen" ,               "",                   "", "( cDbfCol )", .t. } )
-   aAdd( aColPreCli, { "NPUNTOS", "N",   15,  6, "Puntos del artículo",              "",                   "", "( cDbfCol )" } )
-   aAdd( aColPreCli, { "NVALPNT", "N",   16,  6, "Valor del punto",                  "",                   "", "( cDbfCol )" } )
-   aAdd( aColPreCli, { "NDTOPNT", "N",    5,  2, "Descuento puntos",                 "",                   "", "( cDbfCol )" } )
-   aAdd( aColPreCli, { "NINCPNT", "N",    5,  2, "Incremento porcentual",            "",                   "", "( cDbfCol )" } )
-   aAdd( aColPreCli, { "CREFPRV", "C",   18,  0, "Referencia artículo proveedor",    "",                   "", "( cDbfCol )" } )
-   aAdd( aColPreCli, { "NVOLUMEN","N",   16,  6, "Volumen del producto" ,            "'@E 9,999.99'",      "", "( cDbfCol )" } )
-   aAdd( aColPreCli, { "CVOLUMEN","C",    2,  0, "Unidad del volumen" ,              "",                   "", "( cDbfCol )" } )
-   aAdd( aColPreCli, { "DFECENT" ,"D",    8,  0, "Fecha de entrada del alquiler",    "",                   "", "( cDbfCol )" } )
-   aAdd( aColPreCli, { "DFECSAL" ,"D",    8,  0, "Fecha de salida del alquiler",     "",                   "", "( cDbfCol )" } )
-   aAdd( aColPreCli, { "nPreAlq" ,"N",   16,  6, "Precio de alquiler",               "",                   "", "( cDbfCol )" } )
-   aAdd( aColPreCli, { "lAlquiler","L",   1,  0, "Lógico de alquiler",               "",                   "", "( cDbfCol )" } )
-   aAdd( aColPreCli, { "nNumMed"  ,"N",   1,  0, "Número de mediciones",             "MasUnd()",           "", "( cDbfCol )" } )
-   aAdd( aColPreCli, { "nMedUno"  ,"N",  16,  6, "Primera unidad de medición",       "MasUnd()",           "", "( cDbfCol )" } )
-   aAdd( aColPreCli, { "nMedDos"  ,"N",  16,  6, "Segunda unidad de medición",       "MasUnd()",           "", "( cDbfCol )" } )
-   aAdd( aColPreCli, { "nMedTre"  ,"N",  16,  6, "Tercera unidad de medición",       "MasUnd()",           "", "( cDbfCol )" } )
-   aAdd( aColPreCli, { "nTarLin"  ,"N",   1,  0, "Tarifa de precio aplicada" ,       "",                   "", "( cDbfCol )" } )
-   aAdd( aColPreCli, { "lImpFra"  ,"L",   1,  0, "Lógico de imprimir frase publicitaria", "",              "", "( cDbfCol )" } )
-   aAdd( aColPreCli, { "cCodFra"  ,"C",   3,  0, "Código de frase publicitaria",     "",                   "", "( cDbfCol )" } )
-   aAdd( aColPreCli, { "cTxtFra"  ,"C", 250,  0, "",                                 "",                   "", "( cDbfCol )" } )
-   aAdd( aColPreCli, { "Descrip"  ,"M",  10,  0, "Descripción larga",                "",                   "", "( cDbfCol )" } )
-   aAdd( aColPreCli, { "lLinOfe"  ,"L",   1,  0, "Línea con oferta",                 "",                   "", "( cDbfCol )" } )
-   aAdd( aColPreCli, { "lVolImp"  ,"L",   1,  0, "Lógico aplicar volumen con IpusEsp",  "",                "", "( cDbfCol )" } )
+   aAdd( aColSatCli, { "CSERSAT", "C",    1,  0, "Serie de S.A.T." ,            "",                   "", "( cDbfCol )" } )
+   aAdd( aColSatCli, { "NNUMSAT", "N",    9,  0, "Numero de S.A.T." ,           "'999999999'",        "", "( cDbfCol )" } )
+   aAdd( aColSatCli, { "CSUFSAT", "C",    2,  0, "Sufijo de S.A.T." ,           "",                   "", "( cDbfCol )" } )
+   aAdd( aColSatCli, { "CREF",    "C",   18,  0, "Referencia del producto" ,         "",                   "", "( cDbfCol )" } )
+   aAdd( aColSatCli, { "CDETALLE","C",  250,  0, "Descripción de artículo" ,         "",                   "", "( cDbfCol )" } )
+   aAdd( aColSatCli, { "NIVA"    ,"N",    6,  2, "Importe del " + cImp() ,           "'@E 99.9'",          "", "( cDbfCol )" } )
+   aAdd( aColSatCli, { "NCANSAT" ,"N",   16,  6, "Cantidad pedida" ,                 "MasUnd()",           "", "( cDbfCol )" } )
+   aAdd( aColSatCli, { "NUNICAJA","N",   16,  6, "Unidades por caja" ,               "MasUnd()",           "", "( cDbfCol )" } )
+   aAdd( aColSatCli, { "LCONTROL","L",    1,  0, "" ,                                "",                   "", "( cDbfCol )" } )
+   aAdd( aColSatCli, { "NUNDKIT", "N",   16,  6, "Unidades tipo kit" ,               "MasUnd()",           "", "( cDbfCol )" } )
+   aAdd( aColSatCli, { "NPreDiv" ,"N",   16,  6, "Importe del producto" ,            "cPorDivSat",         "", "( cDbfCol )" } )
+   aAdd( aColSatCli, { "NPNTVER", "N",   16,  6, "Importe punto verde" ,             "cPorDivSat",         "", "( cDbfCol )" } )
+   aAdd( aColSatCli, { "nImpTrn", "N",   16,  6, "Importe del transporte",           "cPorDivSat",         "", "( cDbfCol )" } )
+   aAdd( aColSatCli, { "NDTO",    "N",    6,  2, "Descuento del producto" ,          "'@E 99.99'",         "", "( cDbfCol )" } )
+   aAdd( aColSatCli, { "NDTOPRM", "N",    6,  2, "Descuento de la promoción" ,       "'@E 99.99'",         "", "( cDbfCol )" } )
+   aAdd( aColSatCli, { "NCOMAGE", "N",    6,  2, "Comisión del agente" ,             "'@E 99.99'",         "", "( cDbfCol )" } )
+   aAdd( aColSatCli, { "NCANENT", "N",   16,  6, "Unidades de entrada" ,             "MasUnd()",           "", "( cDbfCol )" } )
+   aAdd( aColSatCli, { "CUNIDAD", "C",    2,  0, "Unidad de venta" ,                 "",                   "", "( cDbfCol )" } )
+   aAdd( aColSatCli, { "NPESOKG", "N",   16,  6, "Peso del producto" ,               "",                   "", "( cDbfCol )" } )
+   aAdd( aColSatCli, { "cPesoKg", "C",    2,  0, "Unidad de peso del producto" ,     "",                   "", "( cDbfCol )" } )
+   aAdd( aColSatCli, { "DFECHA",  "D",    8,  0, "Fecha de entrega",                 "",                   "", "( cDbfCol )" } )
+   aAdd( aColSatCli, { "MLNGDES", "M",   10,  0, "Descripción de artículo sin codificar", "",              "", "( cDbfCol )" } )
+   aAdd( aColSatCli, { "LTOTLIN", "L",    1,  0, "Linea de total" ,                  "",                   "", "( cDbfCol )" } )
+   aAdd( aColSatCli, { "LIMPLIN", "L",    1,  0, "Linea no imprimible" ,             "",                   "", "( cDbfCol )" } )
+   aAdd( aColSatCli, { "CCODPR1", "C",   10,  0, "Código de la primera propiedad",   "",                   "", "( cDbfCol )" } )
+   aAdd( aColSatCli, { "CCODPR2", "C",   10,  0, "Código de la segunda propiedad",   "",                   "", "( cDbfCol )" } )
+   aAdd( aColSatCli, { "CVALPR1", "C",   10,  0, "Valor de la primera propiedad",    "",                   "", "( cDbfCol )" } )
+   aAdd( aColSatCli, { "CVALPR2", "C",   10,  0, "Valor de la segunda propiedad",    "",                   "", "( cDbfCol )" } )
+   aAdd( aColSatCli, { "NFACCNV", "N",   16,  6, "Factor de conversión de la compra","",                   "", "( cDbfCol )" } )
+   aAdd( aColSatCli, { "NDTODIV", "N",   16,  6, "Descuento lineal de la compra",    "",                   "", "( cDbfCol )" } )
+   aAdd( aColSatCli, { "CTIPMOV", "C",    2,  0, "Tipo de movimiento",               "",                   "", "( cDbfCol )" } )
+   aAdd( aColSatCli, { "NNUMLIN", "N",    4,  0, "Numero de la línea",               "'9999'",             "", "( cDbfCol )" } )
+   aAdd( aColSatCli, { "NCTLSTK", "N",    1,  0, "Tipo de stock de la línea",        "'9'",                "", "( cDbfCol )" } )
+   aAdd( aColSatCli, { "NCOSDIV", "N",   16,  6, "Costo del producto" ,              "cPorDivSat",         "", "( cDbfCol )" } )
+   aAdd( aColSatCli, { "NPVSATC", "N",   16,  6, "Satcio de venta recomendado" ,     "cPorDivSat",         "", "( cDbfCol )" } )
+   aAdd( aColSatCli, { "CALMLIN", "C",    3,  0, "Código de almacén" ,               "",                   "", "( cDbfCol )" } )
+   aAdd( aColSatCli, { "LIVALIN", "L",    1,  0, "Línea con " + cImp() + " incluido",           "",                   "", "( cDbfCol )" } )
+   aAdd( aColSatCli, { "CCODIMP", "C",    3,  0, "Código del impuesto especial",     "",                   "", "( cDbfCol )" } )
+   aAdd( aColSatCli, { "NVALIMP", "N",   16,  6, "Importe de impuesto",              "",                   "", "( cDbfCol )" } )
+   aAdd( aColSatCli, { "LLOTE",   "L",    1,  0, "",                                 "",                   "", "( cDbfCol )" } )
+   aAdd( aColSatCli, { "NLOTE",   "N",    9,  0, "",                                 "'999999999'",        "", "( cDbfCol )" } )
+   aAdd( aColSatCli, { "CLOTE",   "C",   12,  0, "Número de Lote",                   "",                   "", "( cDbfCol )" } )
+   aAdd( aColSatCli, { "LKITART", "L",    1,  0, "Línea con escandallo",             "" ,                  "", "( cDbfCol )" } )
+   aAdd( aColSatCli, { "LKITCHL", "L",    1,  0, "Línea pertenciente a escandallo",  "" ,                  "", "( cDbfCol )" } )
+   aAdd( aColSatCli, { "LKITPRC", "L",    1,  0, "",                                 "" ,                  "", "( cDbfCol )" } )
+   aAdd( aColSatCli, { "NMESGRT", "N",    2,  0, "Meses de garantía",                "'99'",               "", "( cDbfCol )" } )
+   aAdd( aColSatCli, { "LMSGVTA", "L",    1,  0, "Avisar en venta sin stocks",       "",                   "", "( cDbfCol )" } )
+   aAdd( aColSatCli, { "LNOTVTA", "L",    1,  0, "No permitir venta sin stocks",     "",                   "", "( cDbfCol )" } )
+   aAdd( aColSatCli, { "MNUMSER", "M",   10,  0, "" ,                                "",                   "", "( cDbfCol )" } )
+   aAdd( aColSatCli, { "CCODTIP", "C",    3,  0, "Código del tipo de artículo",      "",                   "", "( cDbfCol )" } )
+   aAdd( aColSatCli, { "CCODFAM", "C",   16,  0, "Código de familia",                "",                   "", "( cDbfCol )" } )
+   aAdd( aColSatCli, { "CGRPFAM", "C",    3,  0, "Código del grupo de familia",      "",                   "", "( cDbfCol )" } )
+   aAdd( aColSatCli, { "NREQ",    "N",    6,  2, "Recargo de equivalencia",          "",                   "", "( cDbfCol )" } )
+   aAdd( aColSatCli, { "MOBSLIN", "M",   10,  0, "Observacion de línea",             "",                   "", "( cDbfCol )" } )
+   aAdd( aColSatCli, { "CCODPRV", "C",   12,  0, "Código del proveedor",             "",                   "", "( cDbfCol )" } )
+   aAdd( aColSatCli, { "CNOMPRV", "C",   30,  0, "Nombre del proveedor",             "",                   "", "( cDbfCol )" } )
+   aAdd( aColSatCli, { "CIMAGEN", "C",  250,  0, "Fichero de imagen" ,               "",                   "", "( cDbfCol )", .t. } )
+   aAdd( aColSatCli, { "NPUNTOS", "N",   15,  6, "Puntos del artículo",              "",                   "", "( cDbfCol )" } )
+   aAdd( aColSatCli, { "NVALPNT", "N",   16,  6, "Valor del punto",                  "",                   "", "( cDbfCol )" } )
+   aAdd( aColSatCli, { "NDTOPNT", "N",    5,  2, "Descuento puntos",                 "",                   "", "( cDbfCol )" } )
+   aAdd( aColSatCli, { "NINCPNT", "N",    5,  2, "Incremento porcentual",            "",                   "", "( cDbfCol )" } )
+   aAdd( aColSatCli, { "CREFPRV", "C",   18,  0, "Referencia artículo proveedor",    "",                   "", "( cDbfCol )" } )
+   aAdd( aColSatCli, { "NVOLUMEN","N",   16,  6, "Volumen del producto" ,            "'@E 9,999.99'",      "", "( cDbfCol )" } )
+   aAdd( aColSatCli, { "CVOLUMEN","C",    2,  0, "Unidad del volumen" ,              "",                   "", "( cDbfCol )" } )
+   aAdd( aColSatCli, { "DFECENT" ,"D",    8,  0, "Fecha de entrada del alquiler",    "",                   "", "( cDbfCol )" } )
+   aAdd( aColSatCli, { "DFECSAL" ,"D",    8,  0, "Fecha de salida del alquiler",     "",                   "", "( cDbfCol )" } )
+   aAdd( aColSatCli, { "nPreAlq" ,"N",   16,  6, "Satcio de alquiler",               "",                   "", "( cDbfCol )" } )
+   aAdd( aColSatCli, { "lAlquiler","L",   1,  0, "Lógico de alquiler",               "",                   "", "( cDbfCol )" } )
+   aAdd( aColSatCli, { "nNumMed"  ,"N",   1,  0, "Número de mediciones",             "MasUnd()",           "", "( cDbfCol )" } )
+   aAdd( aColSatCli, { "nMedUno"  ,"N",  16,  6, "Primera unidad de medición",       "MasUnd()",           "", "( cDbfCol )" } )
+   aAdd( aColSatCli, { "nMedDos"  ,"N",  16,  6, "Segunda unidad de medición",       "MasUnd()",           "", "( cDbfCol )" } )
+   aAdd( aColSatCli, { "nMedTre"  ,"N",  16,  6, "Tercera unidad de medición",       "MasUnd()",           "", "( cDbfCol )" } )
+   aAdd( aColSatCli, { "nTarLin"  ,"N",   1,  0, "Tarifa de precio aplicada" ,       "",                   "", "( cDbfCol )" } )
+   aAdd( aColSatCli, { "lImpFra"  ,"L",   1,  0, "Lógico de imprimir frase publicitaria", "",              "", "( cDbfCol )" } )
+   aAdd( aColSatCli, { "cCodFra"  ,"C",   3,  0, "Código de frase publicitaria",     "",                   "", "( cDbfCol )" } )
+   aAdd( aColSatCli, { "cTxtFra"  ,"C", 250,  0, "",                                 "",                   "", "( cDbfCol )" } )
+   aAdd( aColSatCli, { "Descrip"  ,"M",  10,  0, "Descripción larga",                "",                   "", "( cDbfCol )" } )
+   aAdd( aColSatCli, { "lLinOfe"  ,"L",   1,  0, "Línea con oferta",                 "",                   "", "( cDbfCol )" } )
+   aAdd( aColSatCli, { "lVolImp"  ,"L",   1,  0, "Lógico aplicar volumen con IpusEsp",  "",                "", "( cDbfCol )" } )
 
-return ( aColPreCli )
-
-//---------------------------------------------------------------------------//
-
-function aCocPreCli()
-
-   local aCocPreCli :=  {}
-
-   aAdd( aCocPreCli, { "Descrip( cDbfCol )",                                         "C", 50, 0, "Detalle del artículo",       "",            "Descripción", "" } )
-   aAdd( aCocPreCli, { "nTotNPreCli( cDbfCol )",                                     "N", 16, 6, "Total articulos",            "MasUnd()",    "Unidades",    "" } )
-   aAdd( aCocPreCli, { "nTotUPreCli( cDbfCol, nDouDivPre, nVdvDivPre )",             "N", 16, 6, "Precio unitario",            "cPouDivPre",  "Precio",      "" } )
-   aAdd( aCocPreCli, { "nTotLPreCli( cDbfCol, nDouDivPre, nRouDivPre, nVdvDivPre )", "N", 16, 6, "Total línea de presupuesto", "cPorDivPre",  "Total",       "" } )
-   aAdd( aCocPreCli, { "cFrasePublicitaria( cDbfCol )",                              "C", 50, 0, "Texto de frase publicitaria","",            "Publicidad",  "" } )
-
-return ( aCocPreCli )
+return ( aColSatCli )
 
 //---------------------------------------------------------------------------//
 
-function aIncPreCli()
+function aCocSatCli()
 
-   local aColPreCli  := {}
+   local aCocSatCli :=  {}
 
-   aAdd( aColPreCli, { "cSerPre", "C",    1,  0, "Serie de presupuesto" ,            "",                   "", "( cDbfCol )" } )
-   aAdd( aColPreCli, { "nNumPre", "N",    9,  0, "Numero de presupuesto" ,           "'999999999'",        "", "( cDbfCol )" } )
-   aAdd( aColPreCli, { "cSufPre", "C",    2,  0, "Sufijo de presupuesto" ,           "",                   "", "( cDbfCol )" } )
-   aAdd( aColPreCli, { "cCodTip", "C",    3,  0, "Tipo de incidencia" ,              "",                   "", "( cDbfCol )" } )
-   aAdd( aColPreCli, { "dFecInc", "D",    8,  0, "Fecha de la incidencia" ,          "",                   "", "( cDbfCol )" } )
-   aAdd( aColPreCli, { "mDesInc", "M",   10,  0, "Descripción de la incidencia" ,    "",                   "", "( cDbfCol )" } )
-   aAdd( aColPreCli, { "lListo",  "L",    1,  0, "Lógico de listo" ,                 "",                   "", "( cDbfCol )" } )
-   aAdd( aColPreCli, { "lAviso",  "L",    1,  0, "Lógico de aviso" ,                 "",                   "", "( cDbfCol )" } )
+   aAdd( aCocSatCli, { "Descrip( cDbfCol )",                                         "C", 50, 0, "Detalle del artículo",       "",            "Descripción", "" } )
+   aAdd( aCocSatCli, { "nTotNSatCli( cDbfCol )",                                     "N", 16, 6, "Total articulos",            "MasUnd()",    "Unidades",    "" } )
+   aAdd( aCocSatCli, { "nTotUSatCli( cDbfCol, nDouDivSat, nVdvDivSat )",             "N", 16, 6, "Satcio unitario",            "cPouDivSat",  "Satcio",      "" } )
+   aAdd( aCocSatCli, { "nTotLSatCli( cDbfCol, nDouDivSat, nRouDivSat, nVdvDivSat )", "N", 16, 6, "Total línea de S.A.T.", "cPorDivSat",  "Total",       "" } )
+   aAdd( aCocSatCli, { "cFrasePublicitaria( cDbfCol )",                              "C", 50, 0, "Texto de frase publicitaria","",            "Publicidad",  "" } )
 
-return ( aColPreCli )
+return ( aCocSatCli )
 
 //---------------------------------------------------------------------------//
 
-function aPreCliDoc()
+function aIncSatCli()
 
-   local aPreCliDoc  := {}
+   local aColSatCli  := {}
 
-   aAdd( aPreCliDoc, { "cSerPre", "C",    1,  0, "Serie de presupuesto" ,            "",                   "", "( cDbfCol )" } )
-   aAdd( aPreCliDoc, { "nNumPre", "N",    9,  0, "Numero de presupuesto" ,           "'999999999'",        "", "( cDbfCol )" } )
-   aAdd( aPreCliDoc, { "cSufPre", "C",    2,  0, "Sufijo de presupuesto" ,           "",                   "", "( cDbfCol )" } )
-   aAdd( aPreCliDoc, { "cNombre", "C",  250,  0, "Nombre del documento" ,            "",                   "", "( cDbfCol )" } )
-   aAdd( aPreCliDoc, { "cRuta",   "C",  250,  0, "Ruta del documento" ,              "",                   "", "( cDbfCol )" } )
-   aAdd( aPreCliDoc, { "mObsDoc", "M",   10,  0, "Observaciones del documento" ,     "",                   "", "( cDbfCol )" } )
+   aAdd( aColSatCli, { "cSerSat", "C",    1,  0, "Serie de S.A.T." ,            "",                   "", "( cDbfCol )" } )
+   aAdd( aColSatCli, { "nNumSat", "N",    9,  0, "Numero de S.A.T." ,           "'999999999'",        "", "( cDbfCol )" } )
+   aAdd( aColSatCli, { "cSufSat", "C",    2,  0, "Sufijo de S.A.T." ,           "",                   "", "( cDbfCol )" } )
+   aAdd( aColSatCli, { "cCodTip", "C",    3,  0, "Tipo de incidencia" ,              "",                   "", "( cDbfCol )" } )
+   aAdd( aColSatCli, { "dFecInc", "D",    8,  0, "Fecha de la incidencia" ,          "",                   "", "( cDbfCol )" } )
+   aAdd( aColSatCli, { "mDesInc", "M",   10,  0, "Descripción de la incidencia" ,    "",                   "", "( cDbfCol )" } )
+   aAdd( aColSatCli, { "lListo",  "L",    1,  0, "Lógico de listo" ,                 "",                   "", "( cDbfCol )" } )
+   aAdd( aColSatCli, { "lAviso",  "L",    1,  0, "Lógico de aviso" ,                 "",                   "", "( cDbfCol )" } )
 
-return ( aPreCliDoc )
+return ( aColSatCli )
 
 //---------------------------------------------------------------------------//
 
-STATIC FUNCTION RecPreCli( aTmpPre )
+function aSatCliDoc()
+
+   local aSatCliDoc  := {}
+
+   aAdd( aSatCliDoc, { "cSerSat", "C",    1,  0, "Serie de S.A.T." ,            "",                   "", "( cDbfCol )" } )
+   aAdd( aSatCliDoc, { "nNumSat", "N",    9,  0, "Numero de S.A.T." ,           "'999999999'",        "", "( cDbfCol )" } )
+   aAdd( aSatCliDoc, { "cSufSat", "C",    2,  0, "Sufijo de S.A.T." ,           "",                   "", "( cDbfCol )" } )
+   aAdd( aSatCliDoc, { "cNombre", "C",  250,  0, "Nombre del documento" ,            "",                   "", "( cDbfCol )" } )
+   aAdd( aSatCliDoc, { "cRuta",   "C",  250,  0, "Ruta del documento" ,              "",                   "", "( cDbfCol )" } )
+   aAdd( aSatCliDoc, { "mObsDoc", "M",   10,  0, "Observaciones del documento" ,     "",                   "", "( cDbfCol )" } )
+
+return ( aSatCliDoc )
+
+//---------------------------------------------------------------------------//
+
+function aSerSatCli()
+
+   local aColSatCli  := {}
+
+   aAdd( aColSatCli,  { "cSerSat",     "C",  1,   0, "",                                 "",                  "", "( cDbfCol )" } )
+   aAdd( aColSatCli,  { "nNumSat",     "N",  9,   0, "",                                 "",                  "", "( cDbfCol )" } )
+   aAdd( aColSatCli,  { "cSufSat",     "C",  2,   0, "",                                 "",                  "", "( cDbfCol )" } )
+   aAdd( aColSatCli,  { "dFecSat",     "D",  8,   0, "",                                 "",                  "", "( cDbfCol )" } )
+   aAdd( aColSatCli,  { "nNumLin",     "N",  4,   0, "Número de la línea",               "'9999'",            "", "( cDbfCol )" } )
+   aAdd( aColSatCli,  { "lUndNeg",     "L",  1,   0, "Lógico de unidades en negativo",   "",                  "", "( cDbfCol )" } )
+   aAdd( aColSatCli,  { "cRef",        "C", 18,   0, "Referencia del artículo",          "",                  "", "( cDbfCol )" } )
+   aAdd( aColSatCli,  { "cAlmLin",     "C",  3,   0, "Almacen del artículo",             "",                  "", "( cDbfCol )" } )
+   aAdd( aColSatCli,  { "cNumSer",     "C", 30,   0, "Número de serie",                  "",                  "", "( cDbfCol )" } )
+
+return ( aColSatCli )
+
+//---------------------------------------------------------------------------//
+
+STATIC FUNCTION RecSatCli( aTmpSat )
 
 	local nDtoAge
    local nImpAtp  := 0
@@ -9077,7 +9029,7 @@ STATIC FUNCTION RecPreCli( aTmpPre )
 
       if ( dbfArticulo )->( dbSeek( ( dbfTmpLin )->cRef ) )
 
-         if aTmpPre[ _NREGIVA ] <= 1
+         if aTmpSat[ _NREGIVA ] <= 1
             ( dbfTmpLin )->nIva     := nIva( dbfIva, ( dbfArticulo )->TipoIva )
             ( dbfTmpLin )->nReq     := nReq( dbfIva, ( dbfArticulo )->TipoIva )
          end if
@@ -9088,14 +9040,14 @@ STATIC FUNCTION RecPreCli( aTmpPre )
 
          if !Empty( ( dbfArticulo )->cCodImp )
             ( dbfTmpLin )->cCodImp  := ( dbfArticulo )->cCodImp
-            ( dbfTmpLin )->nValImp  := oNewImp:nValImp( ( dbfArticulo )->cCodImp, aTmpPre[ _LIVAINC ], ( dbfTmpLin )->nIva )
+            ( dbfTmpLin )->nValImp  := oNewImp:nValImp( ( dbfArticulo )->cCodImp, aTmpSat[ _LIVAINC ], ( dbfTmpLin )->nIva )
          end if
 
          /*
          Tomamos los precios de la base de datos de articulos---------------------
          */
 
-         ( dbfTmpLin )->nPreDiv  := nRetPreArt( ( dbfTmpLin )->nTarLin, aTmpPre[ _CDIVPRE ], aTmpPre[ _LIVAINC ], dbfArticulo, dbfDiv, dbfKit, dbfIva )
+         ( dbfTmpLin )->nPreDiv  := nRetPreArt( ( dbfTmpLin )->nTarLin, aTmpSat[ _CDIVSAT ], aTmpSat[ _LIVAINC ], dbfArticulo, dbfDiv, dbfKit, dbfIva )
 
          /*
          Linea por contadores-----------------------------------------------------
@@ -9116,8 +9068,8 @@ STATIC FUNCTION RecPreCli( aTmpPre )
          */
 
          do case
-         case lSeekAtpArt( aTmpPre[ _CCODCLI ] + ( dbfTmpLin )->cRef, ( dbfTmpLin )->cCodPr1 + ( dbfTmpLin )->cCodPr2, ( dbfTmpLin )->cValPr1 + ( dbfTmpLin )->cValPr2, aTmpPre[ _DFECPRE ], dbfCliAtp ) .and. ;
-               ( dbfCliAtp )->lAplPre
+         case lSeekAtpArt( aTmpSat[ _CCODCLI ] + ( dbfTmpLin )->cRef, ( dbfTmpLin )->cCodPr1 + ( dbfTmpLin )->cCodPr2, ( dbfTmpLin )->cValPr1 + ( dbfTmpLin )->cValPr2, aTmpSat[ _DFECSAT ], dbfCliAtp ) .and. ;
+               ( dbfCliAtp )->lAplSat
 
                nImpAtp  := nImpAtp( ( dbfTmpLin )->nTarLin, dbfCliAtp )
                if nImpAtp != 0
@@ -9138,24 +9090,24 @@ STATIC FUNCTION RecPreCli( aTmpPre )
                end if
 
          /*
-         Precios en tarifas
+         Satcios en tarifas
          */
 
-         case !Empty( aTmpPre[ _CCODTAR ] )
+         case !Empty( aTmpSat[ _CCODTAR ] )
 
             cCodFam  := ( dbfTmpLin )->cCodFam
 
-            nImpOfe  := RetPrcTar( ( dbfTmpLin )->cRef, aTmpPre[ _CCODTAR ], ( dbfTmpLin )->cCodPr1, ( dbfTmpLin )->cCodPr2, ( dbfTmpLin )->cValPr1, ( dbfTmpLin )->cValPr2, dbfTarPreL, ( dbfTmpLin )->nTarLin )
+            nImpOfe  := RetPrcTar( ( dbfTmpLin )->cRef, aTmpSat[ _CCODTAR ], ( dbfTmpLin )->cCodPr1, ( dbfTmpLin )->cCodPr2, ( dbfTmpLin )->cValPr1, ( dbfTmpLin )->cValPr2, dbfTarPreL, ( dbfTmpLin )->nTarLin )
             if nImpOfe != 0
                ( dbfTmpLin )->nPreDiv  := nImpOfe
             end if
 
-            nImpOfe  := RetPctTar( ( dbfTmpLin )->cRef, cCodFam, aTmpPre[ _CCODTAR ], ( dbfTmpLin )->cCodPr1, ( dbfTmpLin )->cCodPr2, ( dbfTmpLin )->cValPr1, ( dbfTmpLin )->cValPr2, dbfTarPreL )
+            nImpOfe  := RetPctTar( ( dbfTmpLin )->cRef, cCodFam, aTmpSat[ _CCODTAR ], ( dbfTmpLin )->cCodPr1, ( dbfTmpLin )->cCodPr2, ( dbfTmpLin )->cValPr1, ( dbfTmpLin )->cValPr2, dbfTarPreL )
             if nImpOfe != 0
                ( dbfTmpLin )->nDto     := nImpOfe
             end if
 
-            nImpOfe  := RetComTar( ( dbfTmpLin )->cRef, cCodFam, aTmpPre[ _CCODTAR ], ( dbfTmpLin )->cCodPr1, ( dbfTmpLin )->cCodPr2, ( dbfTmpLin )->cValPr1, ( dbfTmpLin )->cValPr2, aTmpPre[ _CCODAGE ], dbfTarPreL, dbfTarPreS )
+            nImpOfe  := RetComTar( ( dbfTmpLin )->cRef, cCodFam, aTmpSat[ _CCODTAR ], ( dbfTmpLin )->cCodPr1, ( dbfTmpLin )->cCodPr2, ( dbfTmpLin )->cValPr1, ( dbfTmpLin )->cValPr2, aTmpSat[ _CCODAGE ], dbfTarPreL, dbfTarPreS )
             if nImpOfe != 0
                ( dbfTmpLin )->nComAge  := nImpOfe
             end if
@@ -9164,7 +9116,7 @@ STATIC FUNCTION RecPreCli( aTmpPre )
             Descuento de promoci¢n, esta funci¢n comprueba si existe y si es asi devuelve el descunto de la promoci¢n.
             */
 
-            nImpOfe  := RetDtoPrm( ( dbfTmpLin )->cRef, cCodFam, aTmpPre[ _CCODTAR ], ( dbfTmpLin )->cCodPr1, ( dbfTmpLin )->cCodPr2, ( dbfTmpLin )->cValPr1, ( dbfTmpLin )->cValPr2, aTmpPre[ _DFECPRE ], dbfTarPreL )
+            nImpOfe  := RetDtoPrm( ( dbfTmpLin )->cRef, cCodFam, aTmpSat[ _CCODTAR ], ( dbfTmpLin )->cCodPr1, ( dbfTmpLin )->cCodPr2, ( dbfTmpLin )->cValPr1, ( dbfTmpLin )->cValPr2, aTmpSat[ _DFECSAT ], dbfTarPreL )
             if nImpOfe != 0
                ( dbfTmpLin )->nDtoPrm  := nImpOfe
             end if
@@ -9173,7 +9125,7 @@ STATIC FUNCTION RecPreCli( aTmpPre )
             Obtenemos el descuento de Agente
             */
 
-            nDtoAge  := RetDtoAge( ( dbfTmpLin )->cRef, cCodFam, aTmpPre[ _CCODTAR ], ( dbfTmpLin )->cCodPr1, ( dbfTmpLin )->cCodPr2, ( dbfTmpLin )->cValPr1, ( dbfTmpLin )->cValPr2, aTmpPre[ _DFECPRE ], aTmpPre[ _CCODAGE ], dbfTarPreL, dbfTarPreS )
+            nDtoAge  := RetDtoAge( ( dbfTmpLin )->cRef, cCodFam, aTmpSat[ _CCODTAR ], ( dbfTmpLin )->cCodPr1, ( dbfTmpLin )->cCodPr2, ( dbfTmpLin )->cValPr1, ( dbfTmpLin )->cValPr2, aTmpSat[ _DFECSAT ], aTmpSat[ _CCODAGE ], dbfTarPreL, dbfTarPreS )
             if nDtoAge != 0
                ( dbfTmpLin )->nComAge  := nDtoAge
             end if
@@ -9184,16 +9136,16 @@ STATIC FUNCTION RecPreCli( aTmpPre )
          Buscamos si existen ofertas para este articulo y le cambiamos el precio
          */
 
-         nImpOfe     := nImpOferta( ( dbfTmpLin )->cRef, aTmpPre[ _CCODCLI ], aTmpPre[ _CCODGRP ], ( dbfTmpLin )->nUniCaja, aTmpPre[ _DFECPRE ], dbfOferta, ( dbfTmpLin )->nTarLin, nil, ( dbfTmpLin )->cCodPr1, ( dbfTmpLin )->cCodPr2, ( dbfTmpLin )->cValPr1, ( dbfTmpLin )->cValPr2 )
+         nImpOfe     := nImpOferta( ( dbfTmpLin )->cRef, aTmpSat[ _CCODCLI ], aTmpSat[ _CCODGRP ], ( dbfTmpLin )->nUniCaja, aTmpSat[ _DFECSAT ], dbfOferta, ( dbfTmpLin )->nTarLin, nil, ( dbfTmpLin )->cCodPr1, ( dbfTmpLin )->cCodPr2, ( dbfTmpLin )->cValPr1, ( dbfTmpLin )->cValPr2 )
          if nImpOfe  != 0
-            ( dbfTmpLin )->nPreDiv     := nCnv2Div( nImpOfe, cDivEmp(), aTmpPre[ _CDIVPRE ], dbfDiv )
+            ( dbfTmpLin )->nPreDiv     := nCnv2Div( nImpOfe, cDivEmp(), aTmpSat[ _CDIVSAT ], dbfDiv )
          end if
 
          /*
          Buscamos si existen descuentos en las ofertas
          */
 
-         nImpOfe     := nDtoOferta( ( dbfTmpLin )->cRef, aTmpPre[ _CCODCLI ], aTmpPre[ _CCODGRP ], ( dbfTmpLin )->nUniCaja, aTmpPre[ _DFECPRE ], dbfOferta, ( dbfTmpLin )->cCodPr1, ( dbfTmpLin )->cCodPr2, ( dbfTmpLin )->cValPr1, ( dbfTmpLin )->cValPr2 )
+         nImpOfe     := nDtoOferta( ( dbfTmpLin )->cRef, aTmpSat[ _CCODCLI ], aTmpSat[ _CCODGRP ], ( dbfTmpLin )->nUniCaja, aTmpSat[ _DFECSAT ], dbfOferta, ( dbfTmpLin )->cCodPr1, ( dbfTmpLin )->cCodPr2, ( dbfTmpLin )->cValPr1, ( dbfTmpLin )->cValPr2 )
          if nImpOfe  != 0
             ( dbfTmpLin )->nDtoPrm  := nImpOfe
          end if
@@ -9210,23 +9162,23 @@ return nil
 
 //--------------------------------------------------------------------------//
 
-Function SynPreCli( cPath )
+Function SynSatCli( cPath )
 
    local oError
    local oBlock
-   local aTotPre
+   local aTotSat
 
    oBlock               := ErrorBlock( {| oError | ApoloBreak( oError ) } )
    BEGIN SEQUENCE
 
-   USE ( cPatEmp() + "PRECLIT.DBF" )   NEW VIA ( cDriver() ) ALIAS ( cCheckArea( "PRECLIT", @dbfPreCliT ) ) EXCLUSIVE
-   SET ADSINDEX TO ( cPatEmp() + "PRECLIT.CDX" ) ADDITIVE
+   USE ( cPatEmp() + "SATCLIT.DBF" )   NEW VIA ( cDriver() ) ALIAS ( cCheckArea( "SATCLIT", @dbfSatCliT ) ) EXCLUSIVE
+   SET ADSINDEX TO ( cPatEmp() + "SATCLIT.CDX" ) ADDITIVE
 
-   USE ( cPatEmp() + "PRECLIL.DBF" )   NEW VIA ( cDriver() ) ALIAS ( cCheckArea( "PRECLIL", @dbfPreCliL ) ) EXCLUSIVE
-   SET ADSINDEX TO ( cPatEmp() + "PRECLIL.CDX" ) ADDITIVE
+   USE ( cPatEmp() + "SATCLIL.DBF" )   NEW VIA ( cDriver() ) ALIAS ( cCheckArea( "SATCLIL", @dbfSatCliL ) ) EXCLUSIVE
+   SET ADSINDEX TO ( cPatEmp() + "SATCLIL.CDX" ) ADDITIVE
 
-   USE ( cPatEmp() + "PRECLII.DBF" )   NEW VIA ( cDriver() ) ALIAS ( cCheckArea( "PRECLII", @dbfPreCliI ) ) EXCLUSIVE
-   SET ADSINDEX TO ( cPatEmp() + "PRECLII.CDX" ) ADDITIVE
+   USE ( cPatEmp() + "SATCLII.DBF" )   NEW VIA ( cDriver() ) ALIAS ( cCheckArea( "SATCLII", @dbfSatCliI ) ) EXCLUSIVE
+   SET ADSINDEX TO ( cPatEmp() + "SATCLII.CDX" ) ADDITIVE
 
    USE ( cPatArt() + "ARTICULO.DBF" )  NEW VIA ( cDriver() ) ALIAS ( cCheckArea( "ARTICULO", @dbfArticulo ) ) EXCLUSIVE
    SET ADSINDEX TO ( cPatArt() + "ARTICULO.CDX" ) ADDITIVE
@@ -9243,84 +9195,84 @@ Function SynPreCli( cPath )
    USE ( cPatDat() + "DIVISAS.DBF" )   NEW VIA ( cDriver() ) ALIAS ( cCheckArea( "DIVISAS", @dbfDiv ) ) SHARED
    SET ADSINDEX TO ( cPatDat() + "DIVISAS.CDX" ) ADDITIVE
 
-      while !( dbfPreCliT )->( eof() )
+      while !( dbfSatCliT )->( eof() )
 
-         if Empty( ( dbfPreCliT )->cCodCaj )
-            ( dbfPreCliT )->cCodCaj := "000"
+         if Empty( ( dbfSatCliT )->cCodCaj )
+            ( dbfSatCliT )->cCodCaj := "000"
          end if
 
-         if Empty( ( dbfPreCliT )->cCodGrp )
-            ( dbfPreCliT )->cCodGrp := RetGrpCli( ( dbfPreCliT )->cCodCli, dbfClient )
+         if Empty( ( dbfSatCliT )->cCodGrp )
+            ( dbfSatCliT )->cCodGrp := RetGrpCli( ( dbfSatCliT )->cCodCli, dbfClient )
          end if
 
-         if !( ( dbfPreCliT )->cSerPre >= "A" .and. ( dbfPreCliT )->cSerPre <= "Z" )
-            ( dbfPreCliT )->( dbDelete() )
+         if !( ( dbfSatCliT )->cSerSat >= "A" .and. ( dbfSatCliT )->cSerSat <= "Z" )
+            ( dbfSatCliT )->( dbDelete() )
          end if
 
          /*
          Rellenamos los campos de totales
          */
 
-         if ( dbfPreCliT )->nTotPre == 0 .and. dbLock( dbfPreCliT )
+         if ( dbfSatCliT )->nTotSat == 0 .and. dbLock( dbfSatCliT )
 
-            aTotPre                 := aTotPreCli( ( dbfPreCliT )->cSerPre + Str( ( dbfPreCliT )->nNumPre ) + ( dbfPreCliT )->cSufPre, dbfPreCliT, dbfPreCliL, dbfIva, dbfDiv, dbfFPago, ( dbfPreCliT )->cDivPre )
+            aTotSat                 := aTotSatCli( ( dbfSatCliT )->cSerSat + Str( ( dbfSatCliT )->nNumSat ) + ( dbfSatCliT )->cSufSat, dbfSatCliT, dbfSatCliL, dbfIva, dbfDiv, dbfFPago, ( dbfSatCliT )->cDivSat )
 
-            ( dbfPreCliT )->nTotNet := aTotPre[1]
-            ( dbfPreCliT )->nTotIva := aTotPre[2]
-            ( dbfPreCliT )->nTotReq := aTotPre[3]
-            ( dbfPreCliT )->nTotPre := aTotPre[4]
+            ( dbfSatCliT )->nTotNet := aTotSat[1]
+            ( dbfSatCliT )->nTotIva := aTotSat[2]
+            ( dbfSatCliT )->nTotReq := aTotSat[3]
+            ( dbfSatCliT )->nTotSat := aTotSat[4]
 
-            ( dbfPreCliT )->( dbUnLock() )
+            ( dbfSatCliT )->( dbUnLock() )
 
          end if
 
-         ( dbfPreCliT )->( dbSkip() )
+         ( dbfSatCliT )->( dbSkip() )
 
       end while
 
-      while !( dbfPreCliL )->( eof() )
+      while !( dbfSatCliL )->( eof() )
 
-         if !( dbfPreCliT )->( dbSeek( ( dbfPreCliL )->cSerPre + Str( ( dbfPreCliL )->nNumPre ) + ( dbfPreCliL )->cSufPre ) )
+         if !( dbfSatCliT )->( dbSeek( ( dbfSatCliL )->cSerSat + Str( ( dbfSatCliL )->nNumSat ) + ( dbfSatCliL )->cSufSat ) )
 
-            ( dbfPreCliL )->( dbDelete() )
+            ( dbfSatCliL )->( dbDelete() )
 
          else
 
-            if Empty( ( dbfPreCliL )->cLote ) .and. !Empty( ( dbfPreCliL )->nLote )
-               ( dbfPreCliL )->cLote   := AllTrim( Str( ( dbfPreCliL )->nLote ) )
+            if Empty( ( dbfSatCliL )->cLote ) .and. !Empty( ( dbfSatCliL )->nLote )
+               ( dbfSatCliL )->cLote   := AllTrim( Str( ( dbfSatCliL )->nLote ) )
             end if
 
-            if ( dbfPreCliL )->lIvaLin == ( dbfPreCliT )->lIvaInc
-               ( dbfPreCliL )->lIvaLin := ( dbfPreCliT )->lIvaInc
+            if ( dbfSatCliL )->lIvaLin == ( dbfSatCliT )->lIvaInc
+               ( dbfSatCliL )->lIvaLin := ( dbfSatCliT )->lIvaInc
             end if
 
-            if !Empty( ( dbfPreCliL )->cRef ) .and. Empty( ( dbfPreCliL )->cCodFam )
-               ( dbfPreCliL )->cCodFam := RetFamArt( ( dbfPreCliL )->cRef, dbfArticulo )
+            if !Empty( ( dbfSatCliL )->cRef ) .and. Empty( ( dbfSatCliL )->cCodFam )
+               ( dbfSatCliL )->cCodFam := RetFamArt( ( dbfSatCliL )->cRef, dbfArticulo )
             end if
 
-            if !Empty( ( dbfPreCliL )->cRef ) .and. !Empty( ( dbfPreCliL )->cCodFam )
-               ( dbfPreCliL )->cGrpFam := cGruFam( ( dbfPreCliL )->cCodFam, dbfFamilia )
+            if !Empty( ( dbfSatCliL )->cRef ) .and. !Empty( ( dbfSatCliL )->cCodFam )
+               ( dbfSatCliL )->cGrpFam := cGruFam( ( dbfSatCliL )->cCodFam, dbfFamilia )
             end if
 
-            if Empty( ( dbfPreCliL )->nReq )
-               ( dbfPreCliL )->nReq    := nPReq( dbfIva, ( dbfPreCliL )->nIva )
+            if Empty( ( dbfSatCliL )->nReq )
+               ( dbfSatCliL )->nReq    := nPReq( dbfIva, ( dbfSatCliL )->nIva )
             end if
 
          end if
 
-         ( dbfPreCliL )->( dbSkip() )
+         ( dbfSatCliL )->( dbSkip() )
 
          SysRefresh()
 
       end while
 
-      while !( dbfPreCliI )->( eof() )
+      while !( dbfSatCliI )->( eof() )
 
-         if !( dbfPreCliT )->( dbSeek( ( dbfPreCliI )->cSerPre + Str( ( dbfPreCliI )->nNumPre ) + ( dbfPreCliI )->cSufPre ) )
-            ( dbfPreCliI )->( dbDelete() )
+         if !( dbfSatCliT )->( dbSeek( ( dbfSatCliI )->cSerSat + Str( ( dbfSatCliI )->nNumSat ) + ( dbfSatCliI )->cSufSat ) )
+            ( dbfSatCliI )->( dbDelete() )
          end if
 
-         ( dbfPreCliI )->( dbSkip() )
+         ( dbfSatCliI )->( dbSkip() )
 
          SysRefresh()
 
@@ -9334,9 +9286,9 @@ Function SynPreCli( cPath )
 
    ErrorBlock( oBlock )
 
-   CLOSE ( dbfPreCliT )
-   CLOSE ( dbfPreCliL )
-   CLOSE ( dbfPreCliI )
+   CLOSE ( dbfSatCliT )
+   CLOSE ( dbfSatCliL )
+   CLOSE ( dbfSatCliI )
    CLOSE ( dbfArticulo)
    CLOSE ( dbfFamilia )
    CLOSE ( dbfIva     )
@@ -9347,60 +9299,7 @@ return nil
 
 //------------------------------------------------------------------------//
 
-Function EdtIva( oColumn, uVal, nIvaAnt, dbfTmpLin, dbfIva, oBrw )
-
-   local nRec        := ( dbfTmpLin )->( Recno() )
-
-   if Valtype( uVal ) != "N"
-      uVal           := Val( uVal )
-   end if
-
-   if uVal != nIvaAnt
-
-      if lTiva( dbfIva, uVal )
-
-         /*
-         Si tiene filtrado los escandallos, le quitamos el filtro--------------
-         */
-
-         if !lShwKit()
-            ( dbfTmpLin )->( dbClearFilter() )
-         end if
-
-         ( dbfTmpLin )->( dbGoTop() )
-
-         while !( dbfTmpLin )->( eof() )
-
-            if ( dbfTmpLin )->nIva == nIvaAnt
-               ( dbfTmpLin )->nIva := uVal
-               ( dbfTmpLin )->nReq := nPorcentajeRE( dbfIva, uVal )
-            end if
-
-            ( dbfTmpLin )->( dbSkip() )
-
-         end while
-
-         /*
-         Volvemos a ponerle el filtro para que no muestre los escandallos------
-         */
-
-         if !lShwKit()
-            ( dbfTmpLin )->( dbSetFilter( {|| ! Field->lKitChl }, "!lKitChl" ) )
-         end if
-
-         ( dbfTmpLin )->( dbGoTo( nRec ) )
-
-      end if
-
-      oBrw:Refresh()
-
-   end if
-
-return .t.
-
-//---------------------------------------------------------------------------//
-
-CLASS TPresupuestosClientesSenderReciver FROM TSenderReciverItem
+CLASS TSATClientesSenderReciver FROM TSenderReciverItem
 
    Method CreateData()
 
@@ -9421,76 +9320,76 @@ Method CreateData()
    local oBlock
    local oError
    local lSnd        := .f.
-   local dbfPreCliT
-   local dbfPreCliL
-   local dbfPreCliI
-   local tmpPreCliT
-   local tmpPreCliL
-   local tmpPreCliI
-   local cFileName   := "PreCli" + StrZero( ::nGetNumberToSend(), 6 ) + "." + RetSufEmp()
+   local dbfSatCliT
+   local dbfSatCliL
+   local dbfSatCliI
+   local tmpSatCliT
+   local tmpSatCliL
+   local tmpSatCliI
+   local cFileName   := "SatCli" + StrZero( ::nGetNumberToSend(), 6 ) + "." + RetSufEmp()
 
-   ::oSender:SetText( "Enviando presupuestos de clientes" )
+   ::oSender:SetText( "Enviando S.A.T. de clientes" )
 
    oBlock            := ErrorBlock( {| oError | ApoloBreak( oError ) } )
    BEGIN SEQUENCE
 
-   USE ( cPatEmp() + "PreCliT.DBF" ) NEW VIA ( cDriver() ) SHARED ALIAS ( cCheckArea( "PreCliT", @dbfPreCliT ) )
-   SET ADSINDEX TO ( cPatEmp() + "PreCliT.CDX" ) ADDITIVE
+   USE ( cPatEmp() + "SatCliT.DBF" ) NEW VIA ( cDriver() ) SHARED ALIAS ( cCheckArea( "SatCliT", @dbfSatCliT ) )
+   SET ADSINDEX TO ( cPatEmp() + "SatCliT.CDX" ) ADDITIVE
 
-   USE ( cPatEmp() + "PreCliL.DBF" ) NEW VIA ( cDriver() ) SHARED ALIAS ( cCheckArea( "PreCliL", @dbfPreCliL ) )
-   SET ADSINDEX TO ( cPatEmp() + "PreCliL.CDX" ) ADDITIVE
+   USE ( cPatEmp() + "SatCliL.DBF" ) NEW VIA ( cDriver() ) SHARED ALIAS ( cCheckArea( "SatCliL", @dbfSatCliL ) )
+   SET ADSINDEX TO ( cPatEmp() + "SatCliL.CDX" ) ADDITIVE
 
-   USE ( cPatEmp() + "PreCliI.DBF" ) NEW VIA ( cDriver() ) SHARED ALIAS ( cCheckArea( "PreCliI", @dbfPreCliI ) )
-   SET ADSINDEX TO ( cPatEmp() + "PreCliI.CDX" ) ADDITIVE
+   USE ( cPatEmp() + "SatCliI.DBF" ) NEW VIA ( cDriver() ) SHARED ALIAS ( cCheckArea( "SatCliI", @dbfSatCliI ) )
+   SET ADSINDEX TO ( cPatEmp() + "SatCliI.CDX" ) ADDITIVE
 
    /*
    Creamos todas las bases de datos relacionadas con Articulos
    */
 
-   rxPreCli( cPatSnd() )
+   rxSatCli( cPatSnd() )
 
-   USE ( cPatSnd() + "PreCliT.DBF" ) NEW VIA ( cDriver() ) SHARED ALIAS ( cCheckArea( "PreCliT", @tmpPreCliT ) )
-   SET ADSINDEX TO ( cPatSnd() + "PreCliT.CDX" ) ADDITIVE
+   USE ( cPatSnd() + "SatCliT.DBF" ) NEW VIA ( cDriver() ) SHARED ALIAS ( cCheckArea( "SatCliT", @tmpSatCliT ) )
+   SET ADSINDEX TO ( cPatSnd() + "SatCliT.CDX" ) ADDITIVE
 
-   USE ( cPatSnd() + "PreCliL.DBF" ) NEW VIA ( cDriver() ) SHARED ALIAS ( cCheckArea( "PreCliL", @tmpPreCliL ) )
-   SET ADSINDEX TO ( cPatSnd() + "PreCliL.CDX" ) ADDITIVE
+   USE ( cPatSnd() + "SatCliL.DBF" ) NEW VIA ( cDriver() ) SHARED ALIAS ( cCheckArea( "SatCliL", @tmpSatCliL ) )
+   SET ADSINDEX TO ( cPatSnd() + "SatCliL.CDX" ) ADDITIVE
 
-   USE ( cPatSnd() + "PreCliI.DBF" ) NEW VIA ( cDriver() ) SHARED ALIAS ( cCheckArea( "PreCliI", @tmpPreCliI ) )
-   SET ADSINDEX TO ( cPatSnd() + "PreCliI.CDX" ) ADDITIVE
+   USE ( cPatSnd() + "SatCliI.DBF" ) NEW VIA ( cDriver() ) SHARED ALIAS ( cCheckArea( "SatCliI", @tmpSatCliI ) )
+   SET ADSINDEX TO ( cPatSnd() + "SatCliI.CDX" ) ADDITIVE
 
    if !Empty( ::oSender:oMtr )
-      ::oSender:oMtr:nTotal := ( dbfPreCliT )->( LastRec() )
+      ::oSender:oMtr:nTotal := ( dbfSatCliT )->( LastRec() )
    end if
 
-   while !( dbfPreCliT )->( eof() )
+   while !( dbfSatCliT )->( eof() )
 
-      if ( dbfPreCliT )->lSndDoc
+      if ( dbfSatCliT )->lSndDoc
 
          lSnd  := .t.
 
-         dbPass( dbfPreCliT, tmpPreCliT, .t. )
-         ::oSender:SetText( ( dbfPreCliT )->cSerPre + "/" + AllTrim( Str( ( dbfPreCliT )->nNumPre ) ) + "/" + AllTrim( ( dbfPreCliT )->cSufPre ) + "; " + Dtoc( ( dbfPreCliT )->dFecPre ) + "; " + AllTrim( ( dbfPreCliT )->cCodCli ) + "; " + ( dbfPreCliT )->cNomCli )
+         dbPass( dbfSatCliT, tmpSatCliT, .t. )
+         ::oSender:SetText( ( dbfSatCliT )->cSerSat + "/" + AllTrim( Str( ( dbfSatCliT )->nNumSat ) ) + "/" + AllTrim( ( dbfSatCliT )->cSufSat ) + "; " + Dtoc( ( dbfSatCliT )->dFecSat ) + "; " + AllTrim( ( dbfSatCliT )->cCodCli ) + "; " + ( dbfSatCliT )->cNomCli )
 
-         if ( dbfPreCliL )->( dbSeek( ( dbfPreCliT )->CSERPre + Str( ( dbfPreCliT )->NNUMPre ) + ( dbfPreCliT )->CSUFPre ) )
-            while ( ( dbfPreCliL )->cSerPre + Str( ( dbfPreCliL )->NNUMPre ) + ( dbfPreCliL )->CSUFPre ) == ( ( dbfPreCliT )->CSERPre + Str( ( dbfPreCliT )->NNUMPre ) + ( dbfPreCliT )->CSUFPre ) .AND. !( dbfPreCliL )->( eof() )
-               dbPass( dbfPreCliL, tmpPreCliL, .t. )
-               ( dbfPreCliL )->( dbSkip() )
+         if ( dbfSatCliL )->( dbSeek( ( dbfSatCliT )->CSERSat + Str( ( dbfSatCliT )->NNUMSat ) + ( dbfSatCliT )->CSUFSat ) )
+            while ( ( dbfSatCliL )->cSerSat + Str( ( dbfSatCliL )->NNUMSat ) + ( dbfSatCliL )->CSUFSat ) == ( ( dbfSatCliT )->CSERSat + Str( ( dbfSatCliT )->NNUMSat ) + ( dbfSatCliT )->CSUFSat ) .AND. !( dbfSatCliL )->( eof() )
+               dbPass( dbfSatCliL, tmpSatCliL, .t. )
+               ( dbfSatCliL )->( dbSkip() )
             end do
          end if
 
-         if ( dbfPreCliI )->( dbSeek( ( dbfPreCliT )->cSerPre + Str( ( dbfPreCliT )->nNumPre ) + ( dbfPreCliT )->cSufPre ) )
-            while ( ( dbfPreCliI )->cSerPre + Str( ( dbfPreCliI )->nNumPre ) + ( dbfPreCliI )->cSufPre ) == ( ( dbfPreCliT )->cSerPre + Str( ( dbfPreCliT )->nNumPre ) + ( dbfPreCliT )->cSufPre ) .AND. !( dbfPreCliI )->( eof() )
-               dbPass( dbfPreCliI, tmpPreCliI, .t. )
-               ( dbfPreCliI )->( dbSkip() )
+         if ( dbfSatCliI )->( dbSeek( ( dbfSatCliT )->cSerSat + Str( ( dbfSatCliT )->nNumSat ) + ( dbfSatCliT )->cSufSat ) )
+            while ( ( dbfSatCliI )->cSerSat + Str( ( dbfSatCliI )->nNumSat ) + ( dbfSatCliI )->cSufSat ) == ( ( dbfSatCliT )->cSerSat + Str( ( dbfSatCliT )->nNumSat ) + ( dbfSatCliT )->cSufSat ) .AND. !( dbfSatCliI )->( eof() )
+               dbPass( dbfSatCliI, tmpSatCliI, .t. )
+               ( dbfSatCliI )->( dbSkip() )
             end do
          end if
 
       end if
 
-      ( dbfPreCliT )->( dbSkip() )
+      ( dbfSatCliT )->( dbSkip() )
 
       if !Empty( ::oSender:oMtr )
-         ::oSender:oMtr:Set( ( dbfPreCliT )->( OrdKeyNo() ) )
+         ::oSender:oMtr:Set( ( dbfSatCliT )->( OrdKeyNo() ) )
       end if
 
    END DO
@@ -9503,12 +9402,12 @@ Method CreateData()
 
    ErrorBlock( oBlock )
 
-   CLOSE ( dbfPreCliT )
-   CLOSE ( dbfPreCliL )
-   CLOSE ( dbfPreCliI )
-   CLOSE ( tmpPreCliT )
-   CLOSE ( tmpPreCliL )
-   CLOSE ( tmpPreCliI )
+   CLOSE ( dbfSatCliT )
+   CLOSE ( dbfSatCliL )
+   CLOSE ( dbfSatCliI )
+   CLOSE ( tmpSatCliT )
+   CLOSE ( tmpSatCliL )
+   CLOSE ( tmpSatCliI )
 
    if lSnd
 
@@ -9516,7 +9415,7 @@ Method CreateData()
       Comprimir los archivos---------------------------------------------------
       */
 
-      ::oSender:SetText( "Comprimiendo presupuestos a clientes" )
+      ::oSender:SetText( "Comprimiendo S.A.T. a clientes" )
 
       if ::oSender:lZipData( cFileName )
          ::oSender:SetText( "Ficheros comprimidos" )
@@ -9526,7 +9425,7 @@ Method CreateData()
 
    else
 
-      ::oSender:SetText( "No hay presupuestos a clientes para enviar" )
+      ::oSender:SetText( "No hay S.A.T. a clientes para enviar" )
 
    end if
 
@@ -9538,7 +9437,7 @@ Method RestoreData()
 
    local oBlock
    local oError
-   local dbfPreCliT
+   local dbfSatCliT
 
    if ::lSuccesfullSend
 
@@ -9549,14 +9448,14 @@ Method RestoreData()
       oBlock            := ErrorBlock( {| oError | ApoloBreak( oError ) } )
       BEGIN SEQUENCE
 
-      USE ( cPatEmp() + "PreCliT.Dbf" ) NEW VIA ( cDriver() ) SHARED ALIAS ( cCheckArea( "PreCliT", @dbfPreCliT ) )
-      SET ADSINDEX TO ( cPatEmp() + "PreCliT.Cdx" ) ADDITIVE
-      ( dbfPreCliT )->( OrdSetFocus( "lSndDoc" ) )
+      USE ( cPatEmp() + "SatCliT.Dbf" ) NEW VIA ( cDriver() ) SHARED ALIAS ( cCheckArea( "SatCliT", @dbfSatCliT ) )
+      SET ADSINDEX TO ( cPatEmp() + "SatCliT.Cdx" ) ADDITIVE
+      ( dbfSatCliT )->( OrdSetFocus( "lSndDoc" ) )
 
-      while ( dbfPreCliT )->( dbSeek( .t. ) ) .and. !( dbfPreCliT )->( eof() )
-         if ( dbfPreCliT )->( dbRLock() )
-            ( dbfPreCliT )->lSndDoc := .f.
-            ( dbfPreCliT )->( dbRUnlock() )
+      while ( dbfSatCliT )->( dbSeek( .t. ) ) .and. !( dbfSatCliT )->( eof() )
+         if ( dbfSatCliT )->( dbRLock() )
+            ( dbfSatCliT )->lSndDoc := .f.
+            ( dbfSatCliT )->( dbRUnlock() )
          end if
       end do
 
@@ -9568,7 +9467,7 @@ Method RestoreData()
 
    ErrorBlock( oBlock )
 
-      CLOSE ( dbfPreCliT )
+      CLOSE ( dbfSatCliT )
 
    end if
 
@@ -9578,7 +9477,7 @@ Return ( Self )
 
 Method SendData()
 
-   local cFileName         := "PreCli" + StrZero( ::nGetNumberToSend(), 6 ) + "." + RetSufEmp()
+   local cFileName         := "SatCli" + StrZero( ::nGetNumberToSend(), 6 ) + "." + RetSufEmp()
 
    if File( cPatOut() + cFileName )
 
@@ -9609,13 +9508,13 @@ Method ReciveData()
    Recibirlo de internet
    */
 
-   ::oSender:SetText( "Recibiendo presupuestos de clientes" )
+   ::oSender:SetText( "Recibiendo S.A.T. de clientes" )
 
    for n := 1 to len( aExt )
-      ftpGetFiles( "PreCli*." + aExt[ n ], cPatIn(), 2000, ::oSender )
+      ftpGetFiles( "SatCli*." + aExt[ n ], cPatIn(), 2000, ::oSender )
    next
 
-   ::oSender:SetText( "Presupuestos de clientes recibidos" )
+   ::oSender:SetText( "S.A.T. de clientes recibidos" )
 
 Return Self
 
@@ -9626,15 +9525,15 @@ Method Process()
    local m
    local oBlock
    local oError
-   local dbfPreCliT
-   local dbfPreCliL
-   local dbfPreCliI
-   local dbfPreClid
-   local tmpPreCliT
-   local tmpPreCliL
-   local tmpPreCliI
-   local tmpPreCliD
-   local aFiles      := Directory( cPatIn() + "PreCli*.*" )
+   local dbfSatCliT
+   local dbfSatCliL
+   local dbfSatCliI
+   local dbfSatClid
+   local tmpSatCliT
+   local tmpSatCliL
+   local tmpSatCliI
+   local tmpSatCliD
+   local aFiles      := Directory( cPatIn() + "SatCli*.*" )
 
    for m := 1 to len( aFiles )
 
@@ -9650,79 +9549,79 @@ Method Process()
             Ficheros temporales
             */
 
-            if lExistTable( cPatSnd() + "PreCliT.DBF" )   .and.;
-               lExistTable( cPatSnd() + "PreCliL.DBF" )   .and.;
-               lExistTable( cPatSnd() + "PreCliI.DBF" )
+            if lExistTable( cPatSnd() + "SatCliT.DBF" )   .and.;
+               lExistTable( cPatSnd() + "SatCliL.DBF" )   .and.;
+               lExistTable( cPatSnd() + "SatCliI.DBF" )
 
-               USE ( cPatSnd() + "PreCliT.DBF" ) NEW VIA ( cDriver() )READONLY ALIAS ( cCheckArea( "PreCliT", @tmpPreCliT ) )
-               SET ADSINDEX TO ( cPatSnd() + "PreCliT.CDX" ) ADDITIVE
+               USE ( cPatSnd() + "SatCliT.DBF" ) NEW VIA ( cDriver() )READONLY ALIAS ( cCheckArea( "SatCliT", @tmpSatCliT ) )
+               SET ADSINDEX TO ( cPatSnd() + "SatCliT.CDX" ) ADDITIVE
 
-               USE ( cPatSnd() + "PreCliL.DBF" ) NEW VIA ( cDriver() )READONLY ALIAS ( cCheckArea( "PreCliL", @tmpPreCliL ) )
-               SET ADSINDEX TO ( cPatSnd() + "PreCliL.CDX" ) ADDITIVE
+               USE ( cPatSnd() + "SatCliL.DBF" ) NEW VIA ( cDriver() )READONLY ALIAS ( cCheckArea( "SatCliL", @tmpSatCliL ) )
+               SET ADSINDEX TO ( cPatSnd() + "SatCliL.CDX" ) ADDITIVE
 
-               USE ( cPatSnd() + "PreCliI.DBF" ) NEW VIA ( cDriver() )READONLY ALIAS ( cCheckArea( "PreCliI", @tmpPreCliI ) )
-               SET ADSINDEX TO ( cPatSnd() + "PreCliI.CDX" ) ADDITIVE
+               USE ( cPatSnd() + "SatCliI.DBF" ) NEW VIA ( cDriver() )READONLY ALIAS ( cCheckArea( "SatCliI", @tmpSatCliI ) )
+               SET ADSINDEX TO ( cPatSnd() + "SatCliI.CDX" ) ADDITIVE
 
-               USE ( cPatSnd() + "PreCliD.DBF" ) NEW VIA ( cDriver() )READONLY ALIAS ( cCheckArea( "PreCliD", @tmpPreCliD ) )
-               SET ADSINDEX TO ( cPatSnd() + "PreCliD.CDX" ) ADDITIVE
+               USE ( cPatSnd() + "SatCliD.DBF" ) NEW VIA ( cDriver() )READONLY ALIAS ( cCheckArea( "SatCliD", @tmpSatCliD ) )
+               SET ADSINDEX TO ( cPatSnd() + "SatCliD.CDX" ) ADDITIVE
 
-               USE ( cPatEmp() + "PreCliT.DBF" ) NEW VIA ( cDriver() ) SHARED ALIAS ( cCheckArea( "PreCliT", @dbfPreCliT ) )
-               SET ADSINDEX TO ( cPatEmp() + "PreCliT.CDX" ) ADDITIVE
+               USE ( cPatEmp() + "SatCliT.DBF" ) NEW VIA ( cDriver() ) SHARED ALIAS ( cCheckArea( "SatCliT", @dbfSatCliT ) )
+               SET ADSINDEX TO ( cPatEmp() + "SatCliT.CDX" ) ADDITIVE
 
-               USE ( cPatEmp() + "PreCliL.DBF" ) NEW VIA ( cDriver() ) SHARED ALIAS ( cCheckArea( "PreCliL", @dbfPreCliL ) )
-               SET ADSINDEX TO ( cPatEmp() + "PreCliL.CDX" ) ADDITIVE
+               USE ( cPatEmp() + "SatCliL.DBF" ) NEW VIA ( cDriver() ) SHARED ALIAS ( cCheckArea( "SatCliL", @dbfSatCliL ) )
+               SET ADSINDEX TO ( cPatEmp() + "SatCliL.CDX" ) ADDITIVE
 
-               USE ( cPatEmp() + "PreCliI.DBF" ) NEW VIA ( cDriver() ) SHARED ALIAS ( cCheckArea( "PreCliI", @dbfPreCliI ) )
-               SET ADSINDEX TO ( cPatEmp() + "PreCliI.CDX" ) ADDITIVE
+               USE ( cPatEmp() + "SatCliI.DBF" ) NEW VIA ( cDriver() ) SHARED ALIAS ( cCheckArea( "SatCliI", @dbfSatCliI ) )
+               SET ADSINDEX TO ( cPatEmp() + "SatCliI.CDX" ) ADDITIVE
 
-               USE ( cPatEmp() + "PreCliD.DBF" ) NEW VIA ( cDriver() ) SHARED ALIAS ( cCheckArea( "PreCliD", @dbfPreCliD ) )
-               SET ADSINDEX TO ( cPatEmp() + "PreCliD.CDX" ) ADDITIVE
+               USE ( cPatEmp() + "SatCliD.DBF" ) NEW VIA ( cDriver() ) SHARED ALIAS ( cCheckArea( "SatCliD", @dbfSatCliD ) )
+               SET ADSINDEX TO ( cPatEmp() + "SatCliD.CDX" ) ADDITIVE
 
-               while !( tmpPreCliT )->( eof() )
+               while !( tmpSatCliT )->( eof() )
 
-                  if lValidaOperacion( ( tmpPreCliT )->dFecPre, .f. ) .and. ;
-                     !( dbfPreCliT )->( dbSeek( ( tmpPreCliT )->cSerPre + Str( ( tmpPreCliT )->nNumPre ) + ( tmpPreCliT )->cSufPre ) )
+                  if lValidaOperacion( ( tmpSatCliT )->dFecSat, .f. ) .and. ;
+                     !( dbfSatCliT )->( dbSeek( ( tmpSatCliT )->cSerSat + Str( ( tmpSatCliT )->nNumSat ) + ( tmpSatCliT )->cSufSat ) )
 
-                     dbPass( tmpPreCliT, dbfPreCliT, .t. )
-                     ::oSender:SetText( "Añadido     : " + ( tmpPreCliL )->cSerPre + "/" + AllTrim( Str( ( tmpPreCliL )->nNumPre ) ) + "/" + AllTrim( ( tmpPreCliL )->cSufPre ) + "; " + Dtoc( ( tmpPreCliT )->dFecPre ) + "; " + AllTrim( ( tmpPreCliT )->cCodCli ) + "; " + ( tmpPreCliT )->cNomCli )
+                     dbPass( tmpSatCliT, dbfSatCliT, .t. )
+                     ::oSender:SetText( "Añadido     : " + ( tmpSatCliL )->cSerSat + "/" + AllTrim( Str( ( tmpSatCliL )->nNumSat ) ) + "/" + AllTrim( ( tmpSatCliL )->cSufSat ) + "; " + Dtoc( ( tmpSatCliT )->dFecSat ) + "; " + AllTrim( ( tmpSatCliT )->cCodCli ) + "; " + ( tmpSatCliT )->cNomCli )
 
-                     if ( tmpPreCliL )->( dbSeek( ( tmpPreCliT )->cSerPre + Str( ( tmpPreCliT )->nNumPre ) + ( tmpPreCliT )->cSufPre ) )
-                        do while ( tmpPreCliL )->cSerPre + Str( ( tmpPreCliL )->nNumPre ) + ( tmpPreCliL )->cSufPre == ( tmpPreCliT )->cSerPre + Str( ( tmpPreCliT )->nNumPre ) + ( tmpPreCliT )->cSufPre .and. !( tmpPreCliL )->( eof() )
-                           dbPass( tmpPreCliL, dbfPreCliL, .t. )
-                           ( tmpPreCliL )->( dbSkip() )
+                     if ( tmpSatCliL )->( dbSeek( ( tmpSatCliT )->cSerSat + Str( ( tmpSatCliT )->nNumSat ) + ( tmpSatCliT )->cSufSat ) )
+                        do while ( tmpSatCliL )->cSerSat + Str( ( tmpSatCliL )->nNumSat ) + ( tmpSatCliL )->cSufSat == ( tmpSatCliT )->cSerSat + Str( ( tmpSatCliT )->nNumSat ) + ( tmpSatCliT )->cSufSat .and. !( tmpSatCliL )->( eof() )
+                           dbPass( tmpSatCliL, dbfSatCliL, .t. )
+                           ( tmpSatCliL )->( dbSkip() )
                         end do
                      end if
 
-                     if ( tmpPreCliI )->( dbSeek( ( tmpPreCliT )->cSerPre + Str( ( tmpPreCliT )->nNumPre ) + ( tmpPreCliT )->cSufPre ) )
-                        do while ( tmpPreCliI )->cSerPre + Str( ( tmpPreCliI )->nNumPre ) + ( tmpPreCliI )->cSufPre == ( tmpPreCliT )->cSerPre + Str( ( tmpPreCliT )->nNumPre ) + ( tmpPreCliT )->cSufPre .and. !( tmpPreCliI )->( eof() )
-                           dbPass( tmpPreCliI, dbfPreCliI, .t. )
-                           ( tmpPreCliI )->( dbSkip() )
+                     if ( tmpSatCliI )->( dbSeek( ( tmpSatCliT )->cSerSat + Str( ( tmpSatCliT )->nNumSat ) + ( tmpSatCliT )->cSufSat ) )
+                        do while ( tmpSatCliI )->cSerSat + Str( ( tmpSatCliI )->nNumSat ) + ( tmpSatCliI )->cSufSat == ( tmpSatCliT )->cSerSat + Str( ( tmpSatCliT )->nNumSat ) + ( tmpSatCliT )->cSufSat .and. !( tmpSatCliI )->( eof() )
+                           dbPass( tmpSatCliI, dbfSatCliI, .t. )
+                           ( tmpSatCliI )->( dbSkip() )
                         end do
                      end if
 
-                     if ( tmpPreCliD )->( dbSeek( ( tmpPreCliT )->cSerPre + Str( ( tmpPreCliT )->nNumPre ) + ( tmpPreCliT )->cSufPre ) )
-                        do while ( tmpPreCliD )->cSerPre + Str( ( tmpPreCliD )->nNumPre ) + ( tmpPreCliD )->cSufPre == ( tmpPreCliT )->cSerPre + Str( ( tmpPreCliT )->nNumPre ) + ( tmpPreCliT )->cSufPre .and. !( tmpPreCliD )->( eof() )
-                           dbPass( tmpPreCliD, dbfPreCliD, .t. )
-                           ( tmpPreCliD )->( dbSkip() )
+                     if ( tmpSatCliD )->( dbSeek( ( tmpSatCliT )->cSerSat + Str( ( tmpSatCliT )->nNumSat ) + ( tmpSatCliT )->cSufSat ) )
+                        do while ( tmpSatCliD )->cSerSat + Str( ( tmpSatCliD )->nNumSat ) + ( tmpSatCliD )->cSufSat == ( tmpSatCliT )->cSerSat + Str( ( tmpSatCliT )->nNumSat ) + ( tmpSatCliT )->cSufSat .and. !( tmpSatCliD )->( eof() )
+                           dbPass( tmpSatCliD, dbfSatCliD, .t. )
+                           ( tmpSatCliD )->( dbSkip() )
                         end do
                      end if
 
                   else
 
-                     ::oSender:SetText( "Desestimado : " + ( tmpPreCliL )->cSerPre + "/" + AllTrim( Str( ( tmpPreCliL )->nNumPre ) ) + "/" + AllTrim( ( tmpPreCliL )->cSufPre ) + "; " + Dtoc( ( tmpPreCliT )->dFecPre ) + "; " + AllTrim( ( tmpPreCliT )->cCodCli ) + "; " + ( tmpPreCliT )->cNomCli )
+                     ::oSender:SetText( "Desestimado : " + ( tmpSatCliL )->cSerSat + "/" + AllTrim( Str( ( tmpSatCliL )->nNumSat ) ) + "/" + AllTrim( ( tmpSatCliL )->cSufSat ) + "; " + Dtoc( ( tmpSatCliT )->dFecSat ) + "; " + AllTrim( ( tmpSatCliT )->cCodCli ) + "; " + ( tmpSatCliT )->cNomCli )
 
                   end if
 
-                  ( tmpPreCliT )->( dbSkip() )
+                  ( tmpSatCliT )->( dbSkip() )
 
                end do
 
-               CLOSE ( dbfPreCliT )
-               CLOSE ( dbfPreCliL )
-               CLOSE ( dbfPreCliI )
-               CLOSE ( tmpPreCliT )
-               CLOSE ( tmpPreCliL )
-               CLOSE ( tmpPreCliI )
+               CLOSE ( dbfSatCliT )
+               CLOSE ( dbfSatCliL )
+               CLOSE ( dbfSatCliI )
+               CLOSE ( tmpSatCliT )
+               CLOSE ( tmpSatCliL )
+               CLOSE ( tmpSatCliI )
 
                ::oSender:AppendFileRecive( aFiles[ m, 1 ] )
 
@@ -9730,28 +9629,28 @@ Method Process()
 
                ::oSender:SetText( "Faltan ficheros" )
 
-               if !lExistTable( cPatSnd() + "PreCliT.DBF" )
-                  ::oSender:SetText( "Falta " + cPatSnd() + "PreCliT.DBF" )
+               if !lExistTable( cPatSnd() + "SatCliT.DBF" )
+                  ::oSender:SetText( "Falta " + cPatSnd() + "SatCliT.DBF" )
                end if
 
-               if !lExistTable( cPatSnd() + "PreCliL.DBF" )
-                  ::oSender:SetText( "Falta " + cPatSnd() + "PreCliL.DBF" )
+               if !lExistTable( cPatSnd() + "SatCliL.DBF" )
+                  ::oSender:SetText( "Falta " + cPatSnd() + "SatCliL.DBF" )
                end if
 
-               if !lExistTable( cPatSnd() + "PreCliI.DBF" )
-                  ::oSender:SetText( "Falta " + cPatSnd() + "PreCliL.DBF" )
+               if !lExistTable( cPatSnd() + "SatCliI.DBF" )
+                  ::oSender:SetText( "Falta " + cPatSnd() + "SatCliL.DBF" )
                end if
 
-               if !lExistTable( cPatSnd() + "PreCliD.DBF" )
-                  ::oSender:SetText( "Falta " + cPatSnd() + "PreCliD.DBF" )
+               if !lExistTable( cPatSnd() + "SatCliD.DBF" )
+                  ::oSender:SetText( "Falta " + cPatSnd() + "SatCliD.DBF" )
                end if
 
             end if
 
-            fErase( cPatSnd() + "PreCliT.DBF" )
-            fErase( cPatSnd() + "PreCliL.DBF" )
-            fErase( cPatSnd() + "PreCliI.DBF" )
-            fErase( cPatSnd() + "PreCliD.DBF" )
+            fErase( cPatSnd() + "SatCliT.DBF" )
+            fErase( cPatSnd() + "SatCliL.DBF" )
+            fErase( cPatSnd() + "SatCliI.DBF" )
+            fErase( cPatSnd() + "SatCliD.DBF" )
 
          else
 
@@ -9761,14 +9660,14 @@ Method Process()
 
       RECOVER USING oError
 
-         CLOSE ( dbfPreCliT )
-         CLOSE ( dbfPreCliL )
-         CLOSE ( dbfPreCliI )
-         CLOSE ( dbfPreCliD )
-         CLOSE ( tmpPreCliT )
-         CLOSE ( tmpPreCliL )
-         CLOSE ( tmpPreCliI )
-         CLOSE ( tmpPreCliD )
+         CLOSE ( dbfSatCliT )
+         CLOSE ( dbfSatCliL )
+         CLOSE ( dbfSatCliI )
+         CLOSE ( dbfSatCliD )
+         CLOSE ( tmpSatCliT )
+         CLOSE ( tmpSatCliL )
+         CLOSE ( tmpSatCliI )
+         CLOSE ( tmpSatCliD )
 
          ::oSender:SetText( "Error procesando fichero " + aFiles[ m, 1 ] )
          ::oSender:SetText( ErrorMessage( oError ) )
@@ -9783,15 +9682,15 @@ Return Self
 
 //----------------------------------------------------------------------------//
 
-Static Function nEstadoIncidencia( cNumPre )
+Static Function nEstadoIncidencia( cNumSat )
 
    local nEstado  := 0
 
-   if ( dbfPreCliI )->( dbSeek( cNumPre ) )
+   if ( dbfSatCliI )->( dbSeek( cNumSat ) )
 
-      while ( dbfPreCliI )->cSerPre + Str( ( dbfPreCliI )->nNumPre ) + ( dbfPreCliI )->cSufPre == cNumPre .and. !( dbfPreCliI )->( Eof() )
+      while ( dbfSatCliI )->cSerSat + Str( ( dbfSatCliI )->nNumSat ) + ( dbfSatCliI )->cSufSat == cNumSat .and. !( dbfSatCliI )->( Eof() )
 
-         if ( dbfPreCliI )->lListo
+         if ( dbfSatCliI )->lListo
             do case
                case nEstado == 0 .or. nEstado == 3
                     nEstado := 3
@@ -9807,7 +9706,7 @@ Static Function nEstadoIncidencia( cNumPre )
             end case
          end if
 
-         ( dbfPreCliI )->( dbSkip() )
+         ( dbfSatCliI )->( dbSkip() )
 
       end while
 
@@ -9817,7 +9716,7 @@ Return ( nEstado )
 
 //----------------------------------------------------------------------------//
 
-Function AppPreCli( cCodCli, cCodArt, lOpenBrowse )
+Function AppSatCli( cCodCli, cCodArt, lOpenBrowse )
 
    local nLevel         := nLevelUsr( _MENUITEM_ )
 
@@ -9830,14 +9729,14 @@ Function AppPreCli( cCodCli, cCodArt, lOpenBrowse )
 
    if lOpenBrowse
 
-      if PreCli( nil, nil, cCodCli, cCodArt )
+      if SatCli( nil, nil, cCodCli, cCodArt )
          oWndBrw:RecAdd()
       end if
 
    else
 
       if OpenFiles( .t. )
-         WinAppRec( nil, bEdtRec, dbfPreCliT, cCodCli, cCodArt )
+         WinAppRec( nil, bEdtRec, dbfSatCliT, cCodCli, cCodArt )
          CloseFiles()
       end if
 
@@ -9847,7 +9746,7 @@ RETURN .t.
 
 //----------------------------------------------------------------------------//
 
-FUNCTION EdtPreCli( cNumPre, lOpenBrowse )
+FUNCTION EdtSatCli( cNumSat, lOpenBrowse )
 
    local nLevel         := nLevelUsr( _MENUITEM_ )
 
@@ -9860,11 +9759,11 @@ FUNCTION EdtPreCli( cNumPre, lOpenBrowse )
 
    if lOpenBrowse
 
-      if PreCli()
-         if dbSeekInOrd( cNumPre, "nNumPre", dbfPreCliT )
+      if SatCli()
+         if dbSeekInOrd( cNumSat, "nNumSat", dbfSatCliT )
             oWndBrw:RecEdit()
          else
-            MsgStop( "No se encuentra presupuesto" )
+            MsgStop( "No se encuentra S.A.T." )
          end if
       end if
 
@@ -9872,8 +9771,8 @@ FUNCTION EdtPreCli( cNumPre, lOpenBrowse )
 
       if OpenFiles( .t. )
 
-         if dbSeekInOrd( cNumPre, "nNumPre", dbfPreCliT )
-            WinEdtRec( nil, bEdtRec, dbfPreCliT )
+         if dbSeekInOrd( cNumSat, "nNumSat", dbfSatCliT )
+            WinEdtRec( nil, bEdtRec, dbfSatCliT )
          end if
 
          CloseFiles()
@@ -9886,7 +9785,7 @@ Return .t.
 
 //----------------------------------------------------------------------------//
 
-FUNCTION ZooPreCli( cNumPre, lOpenBrowse, lPda )
+FUNCTION ZooSatCli( cNumSat, lOpenBrowse, lPda )
 
    local nLevel         := nLevelUsr( _MENUITEM_ )
 
@@ -9900,11 +9799,11 @@ FUNCTION ZooPreCli( cNumPre, lOpenBrowse, lPda )
 
    if lOpenBrowse
 
-      if PreCli()
-         if dbSeekInOrd( cNumPre, "nNumPre", dbfPreCliT )
+      if SatCli()
+         if dbSeekInOrd( cNumSat, "nNumSat", dbfSatCliT )
             oWndBrw:RecZoom()
          else
-            MsgStop( "No se encuentra presupuesto" )
+            MsgStop( "No se encuentra S.A.T." )
          end if
       end if
 
@@ -9912,8 +9811,8 @@ FUNCTION ZooPreCli( cNumPre, lOpenBrowse, lPda )
 
       if OpenFiles( .t. )
 
-         if dbSeekInOrd( cNumPre, "nNumPre", dbfPreCliT )
-            WinZooRec( nil, bEdtRec, dbfPreCliT )
+         if dbSeekInOrd( cNumSat, "nNumSat", dbfSatCliT )
+            WinZooRec( nil, bEdtRec, dbfSatCliT )
          end if
 
          CloseFiles()
@@ -9926,7 +9825,7 @@ Return .t.
 
 //----------------------------------------------------------------------------//
 
-FUNCTION DelPreCli( cNumPre, lOpenBrowse )
+FUNCTION DelSatCli( cNumSat, lOpenBrowse )
 
    local nLevel         := nLevelUsr( _MENUITEM_ )
 
@@ -9939,11 +9838,11 @@ FUNCTION DelPreCli( cNumPre, lOpenBrowse )
 
    if lOpenBrowse
 
-      if PreCli()
-         if dbSeekInOrd( cNumPre, "nNumPre", dbfPreCliT )
-            WinDelRec( nil, dbfPreCliT, {|| QuiPreCli() } )
+      if SatCli()
+         if dbSeekInOrd( cNumSat, "nNumSat", dbfSatCliT )
+            WinDelRec( nil, dbfSatCliT, {|| QuiSatCli() } )
          else
-            MsgStop( "No se encuentra presupuesto" )
+            MsgStop( "No se encuentra S.A.T." )
          end if
       end if
 
@@ -9951,8 +9850,8 @@ FUNCTION DelPreCli( cNumPre, lOpenBrowse )
 
       if OpenFiles( .t. )
 
-         if dbSeekInOrd( cNumPre, "nNumPre", dbfPreCliT )
-            WinDelRec( nil, dbfPreCliT, {|| QuiPreCli() } )
+         if dbSeekInOrd( cNumSat, "nNumSat", dbfSatCliT )
+            WinDelRec( nil, dbfSatCliT, {|| QuiSatCli() } )
          end if
 
          CloseFiles()
@@ -9965,7 +9864,7 @@ Return .t.
 
 //----------------------------------------------------------------------------//
 
-FUNCTION PrnPreCli( cNumPre, lOpenBrowse )
+FUNCTION PrnSatCli( cNumSat, lOpenBrowse )
 
    local nLevel         := nLevelUsr( _MENUITEM_ )
 
@@ -9978,21 +9877,21 @@ FUNCTION PrnPreCli( cNumPre, lOpenBrowse )
 
    if lOpenBrowse
 
-      if PreCli()
-         if dbSeekInOrd( cNumPre, "nNumPre", dbfPreCliT )
-            GenPreCli( IS_PRINTER )
+      if SatCli()
+         if dbSeekInOrd( cNumSat, "nNumSat", dbfSatCliT )
+            GenSatCli( IS_PRINTER )
          else
-            MsgStop( "No se encuentra presupuesto" )
+            MsgStop( "No se encuentra S.A.T." )
          end if
       end if
 
    else
 
       if OpenFiles( .t. )
-         if dbSeekInOrd( cNumPre, "nNumPre", dbfPreCliT )
-            GenPreCli( IS_PRINTER )
+         if dbSeekInOrd( cNumSat, "nNumSat", dbfSatCliT )
+            GenSatCli( IS_PRINTER )
          else
-            MsgStop( "No se encuentra presupuesto" )
+            MsgStop( "No se encuentra S.A.T." )
          end if
          CloseFiles()
       end if
@@ -10003,7 +9902,7 @@ Return .t.
 
 //----------------------------------------------------------------------------//
 
-FUNCTION VisPreCli( cNumPre, lOpenBrowse )
+FUNCTION VisSatCli( cNumSat, lOpenBrowse )
 
    local nLevel         := nLevelUsr( _MENUITEM_ )
 
@@ -10016,11 +9915,11 @@ FUNCTION VisPreCli( cNumPre, lOpenBrowse )
 
    if lOpenBrowse
 
-      if PreCli()
-         if dbSeekInOrd( cNumPre, "nNumPre", dbfPreCliT )
-            GenPreCli( IS_SCREEN )
+      if SatCli()
+         if dbSeekInOrd( cNumSat, "nNumSat", dbfSatCliT )
+            GenSatCli( IS_SCREEN )
          else
-            MsgStop( "No se encuentra presupuesto" )
+            MsgStop( "No se encuentra S.A.T." )
          end if
       end if
 
@@ -10028,8 +9927,8 @@ FUNCTION VisPreCli( cNumPre, lOpenBrowse )
 
       if OpenFiles( .t. )
 
-         if dbSeekInOrd( cNumPre, "nNumPre", dbfPreCliT )
-            GenPreCli( IS_SCREEN )
+         if dbSeekInOrd( cNumSat, "nNumSat", dbfSatCliT )
+            GenSatCli( IS_SCREEN )
          end if
 
          CloseFiles()
@@ -10042,30 +9941,30 @@ Return .t.
 
 //----------------------------------------------------------------------------//
 
-FUNCTION QuiPreCli()
+FUNCTION QuiSatCli()
 
    local nOrdDet
    local nOrdInc
    local nOrdDoc
 
-   if ( dbfPreCliT )->lCloPre .and. !oUser():lAdministrador()
-      msgStop( "Solo puede eliminar presupuestos cerrados los administradores." )
+   if ( dbfSatCliT )->lCloSat .and. !oUser():lAdministrador()
+      msgStop( "Solo puede eliminar S.A.T. cerrados los administradores." )
       Return .f.
    end if
 
-   nOrdDet        := ( dbfPreCliL )->( OrdSetFocus( "nNumPre" ) )
-   nOrdInc        := ( dbfPreCliI )->( OrdSetFocus( "nNumPre" ) )
-   nOrdDoc        := ( dbfPreCliD )->( OrdSetFocus( "nNumPre" ) )
+   nOrdDet        := ( dbfSatCliL )->( OrdSetFocus( "nNumSat" ) )
+   nOrdInc        := ( dbfSatCliI )->( OrdSetFocus( "nNumSat" ) )
+   nOrdDoc        := ( dbfSatCliD )->( OrdSetFocus( "nNumSat" ) )
 
 
    /*
    Detalle---------------------------------------------------------------------
    */
 
-   while ( dbfPreCliL )->( dbSeek( ( dbfPreCliT )->cSerPre + Str( ( dbfPreCliT )->nNumPre ) + ( dbfPreCliT  )->cSufPre ) ) .and. !( dbfPreCliL )->( eof() )
-      if dbLock( dbfPreCliL )
-         ( dbfPreCliL )->( dbDelete() )
-         ( dbfPreCliL )->( dbUnLock() )
+   while ( dbfSatCliL )->( dbSeek( ( dbfSatCliT )->cSerSat + Str( ( dbfSatCliT )->nNumSat ) + ( dbfSatCliT  )->cSufSat ) ) .and. !( dbfSatCliL )->( eof() )
+      if dbLock( dbfSatCliL )
+         ( dbfSatCliL )->( dbDelete() )
+         ( dbfSatCliL )->( dbUnLock() )
       end if
    end while
 
@@ -10073,10 +9972,10 @@ FUNCTION QuiPreCli()
    Documentos------------------------------------------------------------------
    */
 
-   while ( dbfPreCliI )->( dbSeek( ( dbfPreCliT )->cSerPre + Str( ( dbfPreCliT )->nNumPre ) + ( dbfPreCliT  )->cSufPre ) ) .and. !( dbfPreCliI )->( eof() )
-      if dbLock( dbfPreCliI )
-         ( dbfPreCliI )->( dbDelete() )
-         ( dbfPreCliI )->( dbUnLock() )
+   while ( dbfSatCliI )->( dbSeek( ( dbfSatCliT )->cSerSat + Str( ( dbfSatCliT )->nNumSat ) + ( dbfSatCliT  )->cSufSat ) ) .and. !( dbfSatCliI )->( eof() )
+      if dbLock( dbfSatCliI )
+         ( dbfSatCliI )->( dbDelete() )
+         ( dbfSatCliI )->( dbUnLock() )
       end if
    end while
 
@@ -10084,198 +9983,39 @@ FUNCTION QuiPreCli()
    Incidencias-----------------------------------------------------------------
    */
 
-   while ( dbfPreCliD )->( dbSeek( ( dbfPreCliT )->cSerPre + Str( ( dbfPreCliT )->nNumPre ) + ( dbfPreCliT  )->cSufPre ) ) .and. !( dbfPreCliD )->( eof() )
-      if dbLock( dbfPreCliD )
-         ( dbfPreCliD )->( dbDelete() )
-         ( dbfPreCliD )->( dbUnLock() )
+   while ( dbfSatCliD )->( dbSeek( ( dbfSatCliT )->cSerSat + Str( ( dbfSatCliT )->nNumSat ) + ( dbfSatCliT  )->cSufSat ) ) .and. !( dbfSatCliD )->( eof() )
+      if dbLock( dbfSatCliD )
+         ( dbfSatCliD )->( dbDelete() )
+         ( dbfSatCliD )->( dbUnLock() )
       end if
    end while
 
-   ( dbfPreCliL )->( OrdSetFocus( nOrdDet ) )
-   ( dbfPreCliI )->( OrdSetFocus( nOrdInc ) )
-   ( dbfPreCliD )->( OrdSetFocus( nOrdDoc ) )
+   ( dbfSatCliL )->( OrdSetFocus( nOrdDet ) )
+   ( dbfSatCliI )->( OrdSetFocus( nOrdInc ) )
+   ( dbfSatCliD )->( OrdSetFocus( nOrdDoc ) )
 
 Return .t.
 
 //---------------------------------------------------------------------------//
 
-Static Function DesgPnt( cCodArt, aTmp, nTarifa, oPreDiv, oCosDiv, nMode )
-
-   local oDlg
-   local oPuntos
-   local oValorPunto
-   local oDtoPnt
-   local oIncPnt
-   local oImporte
-   local nPuntos     := 0
-   local nValorPunto := 0
-   local nDtoPnt     := 0
-   local nIncPnt     := 0
-
-   /*comprobamos que no esté vacío el artículo*/
-
-   if Empty( cCodArt )
-      MsgInfo( "Debe seleccinar un artículo", "Código vacío" )
-      return .f.
-   end if
-
-   /*Cargamos valores por defecto*/
-
-   nPuntos           := aTmp[ _NPUNTOS ]
-   nValorPunto       := aTmp[ _NVALPNT ]
-   nDtoPnt           := aTmp[ _NDTOPNT ]
-   nIncPnt           := aTmp[ _NINCPNT ]
-
-   DEFINE DIALOG oDlg RESOURCE "DESGPUNTOS" TITLE "Desglose de puntos"
-
-   REDEFINE GET oPuntos VAR nPuntos ;
-      ID       200 ;
-      SPINNER ;
-      ON CHANGE( oImporte:Refresh() ) ;
-      WHEN     ( nMode != ZOOM_MODE ) ;
-      PICTURE  cPouDiv ;
-      OF       oDlg
-
-   REDEFINE GET oValorPunto VAR nValorPunto ;
-      ID       210 ;
-      SPINNER ;
-      ON CHANGE( oImporte:Refresh() ) ;
-      WHEN     ( nMode != ZOOM_MODE ) ;
-      PICTURE  cPouDiv ;
-      OF       oDlg
-
-   REDEFINE GET oDtoPnt VAR nDtoPnt ;
-      ID       220 ;
-      SPINNER ;
-      MIN      0 ;
-      MAX      100 ;
-      ON CHANGE( oImporte:Refresh() ) ;
-      WHEN     ( nMode != ZOOM_MODE ) ;
-      PICTURE  "999.99" ;
-      OF       oDlg
-
-   REDEFINE GET oIncPnt VAR nIncPnt ;
-      ID       230 ;
-      SPINNER ;
-      MIN      0 ;
-      MAX      100 ;
-      ON CHANGE( oImporte:Refresh() ) ;
-      WHEN     ( nMode != ZOOM_MODE ) ;
-      PICTURE  "999.99" ;
-      OF       oDlg
-
-   REDEFINE SAY oImporte PROMPT nCalculoPuntos( nPuntos, nValorPunto, nDtoPnt, nIncPnt ) ;
-      ID       240 ;
-      PICTURE  cPouDiv ;
-      COLOR    CLR_GET ;
-      OF       oDlg
-
-   REDEFINE BUTTON ;
-      ID       500 ;
-      OF       oDlg ;
-      WHEN     ( nMode != ZOOM_MODE ) ;
-      ACTION   ( EndDesgPnt( cCodArt, nTarifa, oPreDiv, oImporte, dbfArticulo, nDouDiv ), oDlg:end( IDOK ) )
-
-   REDEFINE BUTTON ;
-      ID       550 ;
-      OF       oDlg ;
-      ACTION   ( oDlg:end() )
-
-   if nMode != ZOOM_MODE
-      oDlg:AddFastKey( VK_F5, {|| EndDesgPnt( cCodArt, nTarifa, oPreDiv, oImporte, dbfArticulo, nDouDiv ), oDlg:end( IDOK ) } )
-   end if
-
-   ACTIVATE DIALOG oDlg CENTER
-
-   if oDlg:nResult == IDOK
-
-      aTmp[ _NPUNTOS ]     := nPuntos
-      aTmp[ _NVALPNT ]     := nValorPunto
-      aTmp[ _NDTOPNT ]     := nDtoPnt
-      aTmp[ _NINCPNT ]     := nIncPnt
-      oCosDiv:cText( oImporte:VarGet() )
-      oCosDiv:Refresh()
-
-   end if
-
-Return ( .t. )
-
-//---------------------------------------------------------------------------//
-
-Function EndDesgPnt( cCodArt, nTarifa, oPreDiv, oImporte, dbfArticulo, nDouDiv )
-
-   local nCosto   := oImporte:VarGet()
-   local nRec     := ( dbfArticulo )->( RecNo() )
-   local nNewPre
-
-   if ( dbfArticulo )->( dbSeek( cCodArt ) )
-
-      do case
-         case nTarifa == 1
-            nNewPre := CalPre( if( ( dbfArticulo )->nBnfSbr1 <= 1, .t., .f. ), nCosto, .t., ( dbfArticulo )->Benef1, ( dbfArticulo )->TipoIva, nil, nil, nDouDiv, ( dbfArticulo )->cCodImp, nil )
-         case nTarifa == 2
-            nNewPre := CalPre( if( ( dbfArticulo )->nBnfSbr2 <= 1, .t., .f. ), nCosto, .t., ( dbfArticulo )->Benef2, ( dbfArticulo )->TipoIva, nil, nil, nDouDiv, ( dbfArticulo )->cCodImp, nil )
-         case nTarifa == 3
-            nNewPre := CalPre( if( ( dbfArticulo )->nBnfSbr3 <= 1, .t., .f. ), nCosto, .t., ( dbfArticulo )->Benef3, ( dbfArticulo )->TipoIva, nil, nil, nDouDiv, ( dbfArticulo )->cCodImp, nil )
-         case nTarifa == 4
-            nNewPre := CalPre( if( ( dbfArticulo )->nBnfSbr4 <= 1, .t., .f. ), nCosto, .t., ( dbfArticulo )->Benef4, ( dbfArticulo )->TipoIva, nil, nil, nDouDiv, ( dbfArticulo )->cCodImp, nil )
-         case nTarifa == 5
-            nNewPre := CalPre( if( ( dbfArticulo )->nBnfSbr5 <= 1, .t., .f. ), nCosto, .t., ( dbfArticulo )->Benef5, ( dbfArticulo )->TipoIva, nil, nil, nDouDiv, ( dbfArticulo )->cCodImp, nil )
-         case nTarifa == 6
-            nNewPre := CalPre( if( ( dbfArticulo )->nBnfSbr6 <= 1, .t., .f. ), nCosto, .t., ( dbfArticulo )->Benef6, ( dbfArticulo )->TipoIva, nil, nil, nDouDiv, ( dbfArticulo )->cCodImp, nil )
-      end case
-
-   end if
-
-   oPreDiv:cText( nNewPre )
-
-   oPreDiv:Refresh()
-
-   ( dbfArticulo )->( dbGoTo( nRec ) )
-
-Return ( .t. )
-
-//---------------------------------------------------------------------------//
-
-
-//--------------------------------------------------------------------------//
-
-Static Function PreCliNotas()
+Static Function SatCliNotas()
 
    local cObserv  := ""
    local aData    := {}
 
-   aAdd( aData, "Presupuesto " + ( dbfPreCliT )->cSerPre + "/" + AllTrim( Str( ( dbfPreCliT )->nNumPre ) ) + "/" + Alltrim( ( dbfPreCliT )->cSufPre ) + " de " + Rtrim( ( dbfPreCliT )->cNomCli ) )
-   aAdd( aData, PRE_CLI )
-   aAdd( aData, ( dbfPreCliT )->cCodCli )
-   aAdd( aData, ( dbfPreCliT )->cNomCli )
-   aAdd( aData, ( dbfPreCliT )->cSerPre + Str( ( dbfPreCliT )->nNumPre ) + ( dbfPreCliT )->cSufPre )
+   aAdd( aData, "S.A.T. " + ( dbfSatCliT )->cSerSat + "/" + AllTrim( Str( ( dbfSatCliT )->nNumSat ) ) + "/" + Alltrim( ( dbfSatCliT )->cSufSat ) + " de " + Rtrim( ( dbfSatCliT )->cNomCli ) )
+   aAdd( aData, SAT_CLI )
+   aAdd( aData, ( dbfSatCliT )->cCodCli )
+   aAdd( aData, ( dbfSatCliT )->cNomCli )
+   aAdd( aData, ( dbfSatCliT )->cSerSat + Str( ( dbfSatCliT )->nNumSat ) + ( dbfSatCliT )->cSufSat )
 
-   if !Empty( ( dbfPreCliT )->cRetPor )
-      cObserv     += Rtrim( ( dbfPreCliT )->cRetPor ) + Space( 1 )
+   if !Empty( ( dbfSatCliT )->cRetPor )
+      cObserv     += Rtrim( ( dbfSatCliT )->cRetPor ) + Space( 1 )
    end if
 
-   if !Empty( ( dbfPreCliT )->cRetMat )
-      cObserv     += Rtrim( ( dbfPreCliT )->cRetMat ) + Space( 1 )
+   if !Empty( ( dbfSatCliT )->cRetMat )
+      cObserv     += Rtrim( ( dbfSatCliT )->cRetMat ) + Space( 1 )
    end if
-
-   /*
-   if ( dbfClient )->( dbSeek( ( dbfPreCliT )->cCodCli ) )
-
-      if !Empty( ( dbfClient )->Telefono )
-         cObserv  += "Télefono : " + Rtrim( ( dbfClient )->Telefono ) + Space( 1 )
-      end if
-
-      if !Empty( ( dbfClient )->Movil )
-         cObserv  += "Móvil : " + Rtrim( ( dbfClient )->Movil ) + Space( 1 )
-      end if
-
-      if !Empty( ( dbfClient )->Fax )
-         cObserv  += "Fax : " + Rtrim( ( dbfClient )->Fax ) + Space( 1 )
-      end if
-
-   end if
-   */
 
    aAdd( aData, cObserv )
 
@@ -10285,14 +10025,14 @@ Return ( nil )
 
 //---------------------------------------------------------------------------//
 
-Static Function AppendKit( uTmpLin, aTmpPre )
+Static Function AppendKit( uTmpLin, aTmpSat )
 
    local cCodArt
-   local cSerPre
-   local nNumPre
-   local cSufPre
-   local nCanPre
-   local dFecPre
+   local cSerSat
+   local nNumSat
+   local cSufSat
+   local nCanSat
+   local dFecSat
    local cTipMov
    local cAlmLin
    local nIvaLin
@@ -10310,11 +10050,11 @@ Static Function AppendKit( uTmpLin, aTmpPre )
 
    if ValType( uTmpLin ) == "A"
       cCodArt                          := uTmpLin[ _CREF    ]
-      cSerPre                          := uTmpLin[ _CSERPRE ]
-      nNumPre                          := uTmpLin[ _NNUMPRE ]
-      cSufPre                          := uTmpLin[ _CSUFPRE ]
-      nCanPre                          := uTmpLin[ _NCANPRE ]
-      dFecPre                          := uTmpLin[ _DFECHA  ]
+      cSerSat                          := uTmpLin[ _CSERSAT ]
+      nNumSat                          := uTmpLin[ _NNUMSAT ]
+      cSufSat                          := uTmpLin[ _CSUFSAT ]
+      nCanSat                          := uTmpLin[ _NCANSAT ]
+      dFecSat                          := uTmpLin[ _DFECHA  ]
       cTipMov                          := uTmpLin[ _CTIPMOV ]
       cAlmLin                          := uTmpLin[ _CALMLIN ]
       nIvaLin                          := uTmpLin[ _NIVA    ]
@@ -10328,11 +10068,11 @@ Static Function AppendKit( uTmpLin, aTmpPre )
       nTarLin                          := uTmpLin[ _NTARLIN ]
    else
       cCodArt                          := ( uTmpLin )->cRef
-      cSerPre                          := ( uTmpLin )->cSerPre
-      nNumPre                          := ( uTmpLin )->nNumPre
-      cSufPre                          := ( uTmpLin )->cSufPre
-      nCanPre                          := ( uTmpLin )->nCanPre
-      dFecPre                          := ( uTmpLin )->dFecha
+      cSerSat                          := ( uTmpLin )->cSerSat
+      nNumSat                          := ( uTmpLin )->nNumSat
+      cSufSat                          := ( uTmpLin )->cSufSat
+      nCanSat                          := ( uTmpLin )->nCanSat
+      dFecSat                          := ( uTmpLin )->dFecha
       cTipMov                          := ( uTmpLin )->cTipMov
       cAlmLin                          := ( uTmpLin )->cAlmLin
       nIvaLin                          := ( uTmpLin )->nIva
@@ -10384,11 +10124,11 @@ Static Function AppendKit( uTmpLin, aTmpPre )
                ( dbfTmpLin )->nFacCnv  := ( dbfArticulo )->nFacCnv
             end if
 
-            ( dbfTmpLin )->cSerPre     := cSerPre
-            ( dbfTmpLin )->nNumPre     := nNumPre
-            ( dbfTmpLin )->cSufPre     := cSufPre
-            ( dbfTmpLin )->nCanPre     := nCanPre
-            ( dbfTmpLin )->dFecha      := dFecPre
+            ( dbfTmpLin )->cSerSat     := cSerSat
+            ( dbfTmpLin )->nNumSat     := nNumSat
+            ( dbfTmpLin )->cSufSat     := cSufSat
+            ( dbfTmpLin )->nCanSat     := nCanSat
+            ( dbfTmpLin )->dFecha      := dFecSat
             ( dbfTmpLin )->cTipMov     := cTipMov
             ( dbfTmpLin )->cAlmLin     := cAlmLin
             ( dbfTmpLin )->lIvaLin     := lIvaLin
@@ -10408,7 +10148,7 @@ Static Function AppendKit( uTmpLin, aTmpPre )
             ( dbfTmpLin )->nUniCaja    := nUniCaj * ( dbfKit )->nUndKit
 
             if ( dbfTmpLin )->lKitPrc
-               ( dbfTmpLin )->nPreDiv  := nRetPreArt( nTarLin, aTmpPre[ _CDIVPRE ], aTmpPre[ _LIVAINC ], dbfArticulo, dbfDiv, dbfKit, dbfIva )
+               ( dbfTmpLin )->nPreDiv  := nRetPreArt( nTarLin, aTmpSat[ _CDIVSAT ], aTmpSat[ _LIVAINC ], dbfArticulo, dbfDiv, dbfKit, dbfIva )
             end if
 
             /*
@@ -10440,7 +10180,7 @@ Static Function AppendKit( uTmpLin, aTmpPre )
             end if
 
             if ( dbfArticulo )->lKitArt
-               AppendKit( dbfTmpLin, aTmpPre )
+               AppendKit( dbfTmpLin, aTmpSat )
             end if
 
             /*
@@ -10492,9 +10232,9 @@ STATIC FUNCTION DupSerie( oWndBrw )
    local oSerFin
    local oTxtDup
    local nTxtDup     := 0
-   local nRecno      := ( dbfPreCliT )->( Recno() )
-   local nOrdAnt     := ( dbfPreCliT )->( OrdSetFocus( 1 ) )
-   local oDesde      := TDesdeHasta():Init( ( dbfPreCliT )->cSerPre, ( dbfPreCliT )->nNumPre, ( dbfPreCliT )->cSufPre, GetSysDate() )
+   local nRecno      := ( dbfSatCliT )->( Recno() )
+   local nOrdAnt     := ( dbfSatCliT )->( OrdSetFocus( 1 ) )
+   local oDesde      := TDesdeHasta():Init( ( dbfSatCliT )->cSerSat, ( dbfSatCliT )->nNumSat, ( dbfSatCliT )->cSufSat, GetSysDate() )
    local lCancel     := .f.
    local oBtnAceptar
    local oBtnCancel
@@ -10503,7 +10243,7 @@ STATIC FUNCTION DupSerie( oWndBrw )
 
    DEFINE DIALOG oDlg ;
       RESOURCE "DUPSERDOC" ;
-      TITLE    "Duplicar series de presupuestos" ;
+      TITLE    "Duplicar series de S.A.T." ;
       OF       oWndBrw
 
    REDEFINE RADIO oDesde:nRadio ;
@@ -10589,15 +10329,15 @@ STATIC FUNCTION DupSerie( oWndBrw )
    REDEFINE METER oTxtDup VAR nTxtDup ;
       ID       160 ;
       NOPERCENTAGE ;
-      TOTAL    ( dbfPreCliT )->( OrdKeyCount() ) ;
+      TOTAL    ( dbfSatCliT )->( OrdKeyCount() ) ;
       OF       oDlg
 
       oDlg:AddFastKey( VK_F5, {|| DupStart( oDesde, oDlg, oBtnAceptar, oBtnCancel, oTxtDup, @lCancel, cFecDoc ) } )
 
    ACTIVATE DIALOG oDlg CENTER VALID ( lCancel )
 
-   ( dbfPreCliT )->( dbGoTo( nRecNo ) )
-   ( dbfPreCliT )->( ordSetFocus( nOrdAnt ) )
+   ( dbfSatCliT )->( dbGoTo( nRecNo ) )
+   ( dbfSatCliT )->( ordSetFocus( nOrdAnt ) )
 
    oWndBrw:SetFocus()
    oWndBrw:Refresh()
@@ -10617,28 +10357,28 @@ STATIC FUNCTION DupStart( oDesde, oDlg, oBtnAceptar, oBtnCancel, oTxtDup, lCance
 
    if oDesde:nRadio == 1
 
-      nOrd              := ( dbfPreCliT )->( OrdSetFocus( "nNumPre" ) )
+      nOrd              := ( dbfSatCliT )->( OrdSetFocus( "nNumSat" ) )
 
-      ( dbfPreCliT )->( dbSeek( oDesde:cNumeroInicio(), .t. ) )
+      ( dbfSatCliT )->( dbSeek( oDesde:cNumeroInicio(), .t. ) )
 
-      while !lCancel .and. ( dbfPreCliT )->( !eof() )
+      while !lCancel .and. ( dbfSatCliT )->( !eof() )
 
-         if ( dbfPreCliT )->cSerPre >= oDesde:cSerieInicio  .and.;
-            ( dbfPreCliT )->cSerPre <= oDesde:cSerieFin     .and.;
-            ( dbfPreCliT )->nNumPre >= oDesde:nNumeroInicio .and.;
-            ( dbfPreCliT )->nNumPre <= oDesde:nNumeroFin    .and.;
-            ( dbfPreCliT )->cSufPre >= oDesde:cSufijoInicio .and.;
-            ( dbfPreCliT )->cSufPre <= oDesde:cSufijoFin
+         if ( dbfSatCliT )->cSerSat >= oDesde:cSerieInicio  .and.;
+            ( dbfSatCliT )->cSerSat <= oDesde:cSerieFin     .and.;
+            ( dbfSatCliT )->nNumSat >= oDesde:nNumeroInicio .and.;
+            ( dbfSatCliT )->nNumSat <= oDesde:nNumeroFin    .and.;
+            ( dbfSatCliT )->cSufSat >= oDesde:cSufijoInicio .and.;
+            ( dbfSatCliT )->cSufSat <= oDesde:cSufijoFin
 
             ++nDuplicados
 
-            oTxtDup:cText  := "Duplicando : " + ( dbfPreCliT )->cSerPre + "/" + Alltrim( Str( ( dbfPreCliT )->nNumPre ) ) + "/" + ( dbfPreCliT )->cSufPre
+            oTxtDup:cText  := "Duplicando : " + ( dbfSatCliT )->cSerSat + "/" + Alltrim( Str( ( dbfSatCliT )->nNumSat ) ) + "/" + ( dbfSatCliT )->cSufSat
 
-            DupPresupuesto( cFecDoc )
+            DupSatsupuesto( cFecDoc )
 
          end if
 
-         ( dbfPreCliT )->( dbSkip() )
+         ( dbfSatCliT )->( dbSkip() )
 
          ++nProcesed
 
@@ -10646,28 +10386,28 @@ STATIC FUNCTION DupStart( oDesde, oDlg, oBtnAceptar, oBtnCancel, oTxtDup, lCance
 
       end do
 
-      ( dbfPreCliT )->( OrdSetFocus( nOrd ) )
+      ( dbfSatCliT )->( OrdSetFocus( nOrd ) )
 
    else
 
-      nOrd              := ( dbfPreCliT )->( OrdSetFocus( "dFecPre" ) )
+      nOrd              := ( dbfSatCliT )->( OrdSetFocus( "dFecSat" ) )
 
-      ( dbfPreCliT )->( dbSeek( oDesde:dFechaInicio, .t. ) )
+      ( dbfSatCliT )->( dbSeek( oDesde:dFechaInicio, .t. ) )
 
-      while !lCancel .and. ( dbfPreCliT )->( !eof() )
+      while !lCancel .and. ( dbfSatCliT )->( !eof() )
 
-         if ( dbfPreCliT )->dFecPre >= oDesde:dFechaInicio  .and.;
-            ( dbfPreCliT )->dFecPre <= oDesde:dFechaFin
+         if ( dbfSatCliT )->dFecSat >= oDesde:dFechaInicio  .and.;
+            ( dbfSatCliT )->dFecSat <= oDesde:dFechaFin
 
             ++nDuplicados
 
-            oTxtDup:cText  := "Duplicando : " + ( dbfPreCliT )->cSerPre + "/" + Alltrim( Str( ( dbfPreCliT )->nNumPre ) ) + "/" + ( dbfPreCliT )->cSufPre
+            oTxtDup:cText  := "Duplicando : " + ( dbfSatCliT )->cSerSat + "/" + Alltrim( Str( ( dbfSatCliT )->nNumSat ) ) + "/" + ( dbfSatCliT )->cSufSat
 
-            DupPresupuesto( cFecDoc )
+            DupSatsupuesto( cFecDoc )
 
          end if
 
-         ( dbfPreCliT )->( dbSkip() )
+         ( dbfSatCliT )->( dbSkip() )
 
          ++nProcesed
 
@@ -10675,7 +10415,7 @@ STATIC FUNCTION DupStart( oDesde, oDlg, oBtnAceptar, oBtnCancel, oTxtDup, lCance
 
       end do
 
-      ( dbfPreCliT )->( OrdSetFocus( nOrd ) )
+      ( dbfSatCliT )->( OrdSetFocus( nOrd ) )
 
    end if
 
@@ -10693,7 +10433,7 @@ RETURN ( oDlg:End() )
 
 //---------------------------------------------------------------------------//
 
-STATIC FUNCTION PreRecDup( cDbf, xField1, xField2, xField3, lCab, cFecDoc )
+STATIC FUNCTION SatRecDup( cDbf, xField1, xField2, xField3, lCab, cFecDoc )
 
    local nRec           := ( cDbf )->( Recno() )
    local aTabla         := {}
@@ -10702,21 +10442,21 @@ STATIC FUNCTION PreRecDup( cDbf, xField1, xField2, xField3, lCab, cFecDoc )
    DEFAULT lCab         := .f.
 
    aTabla               := DBScatter( cDbf )
-   aTabla[ _CSERPRE ]   := xField1
-   aTabla[ _NNUMPRE ]   := xField2
-   aTabla[ _CSUFPRE ]   := xField3
+   aTabla[ _CSERSAT ]   := xField1
+   aTabla[ _NNUMSAT ]   := xField2
+   aTabla[ _CSUFSAT ]   := xField3
 
    if lCab
 
-      aTabla[ _CTURPRE     ]  := cCurSesion()
+      aTabla[ _CTURSAT     ]  := cCurSesion()
       if !Empty( cFecDoc )
-         aTabla[ _DFECPRE  ]  := cFecDoc
+         aTabla[ _DFECSAT  ]  := cFecDoc
       end if
       aTabla[ _CCODCAJ     ]  := oUser():cCaja()
       aTabla[ _DFECENT     ]  := Ctod("")
-      aTabla[ _CNUMALB     ]  := Space( 12 )
+      aTabla[ _CNUMSat     ]  := Space( 12 )
       aTabla[ _LSNDDOC     ]  := .t.
-      aTabla[ _LCLOPRE     ]  := .f.
+      aTabla[ _LCLOSAT     ]  := .f.
       aTabla[ _CCODUSR     ]  := cCurUsr()
       aTabla[ _DFECCRE     ]  := GetSysDate()
       aTabla[ _CTIMCRE     ]  := Time()
@@ -10726,7 +10466,7 @@ STATIC FUNCTION PreRecDup( cDbf, xField1, xField2, xField3, lCab, cFecDoc )
       aTabla[ _CCODDLG     ]  := oUser():cDelegacion()
       aTabla[ _LESTADO     ]  := .f.
 
-      nOrdAnt                 := ( cDbf )->( OrdSetFocus( "NNUMPRE" ) )
+      nOrdAnt                 := ( cDbf )->( OrdSetFocus( "NNUMSAT" ) )
 
    end if
 
@@ -10745,28 +10485,28 @@ RETURN ( .t. )
 
 //---------------------------------------------------------------------------//
 
-STATIC FUNCTION DupPresupuesto( cFecDoc )
+STATIC FUNCTION DupSatsupuesto( cFecDoc )
 
-   local nNewNumPre  := 0
+   local nNewNumSat  := 0
 
-   //Recogemos el nuevo numero de presupuesto--------------------------------------
+   //Recogemos el nuevo numero de S.A.T.--------------------------------------
 
-   nNewNumPre  := nNewDoc( ( dbfPreCliT )->cSerPre, dbfPreCliT, "NPRECLI" )
+   nNewNumSat  := nNewDoc( ( dbfSatCliT )->cSerSat, dbfSatCliT, "NSATCLI" )
 
    //Duplicamos las cabeceras--------------------------------------------------
 
-   PreRecDup( dbfPreCliT, ( dbfPreCliT )->cSerPre, nNewNumPre, ( dbfPreCliT )->cSufPre, .t., cFecDoc )
+   SatRecDup( dbfSatCliT, ( dbfSatCliT )->cSerSat, nNewNumSat, ( dbfSatCliT )->cSufSat, .t., cFecDoc )
 
    //Duplicamos las lineas del documento---------------------------------------
 
-   if ( dbfPreCliL )->( dbSeek( ( dbfPreCliT )->cSerPre + Str( ( dbfPreCliT )->nNumPre ) + ( dbfPreCliT )->cSufPre ) )
+   if ( dbfSatCliL )->( dbSeek( ( dbfSatCliT )->cSerSat + Str( ( dbfSatCliT )->nNumSat ) + ( dbfSatCliT )->cSufSat ) )
 
-      while ( dbfPreCliT )->cSerPre + Str( ( dbfPreCliT )->nNumPre ) + ( dbfPreCliT )->cSufPre == ( dbfPreCliL )->cSerPre + Str( ( dbfPreCliL )->nNumPre ) + ( dbfPreCliL )->cSufPre .and. ;
-            !( dbfPreCliL )->( Eof() )
+      while ( dbfSatCliT )->cSerSat + Str( ( dbfSatCliT )->nNumSat ) + ( dbfSatCliT )->cSufSat == ( dbfSatCliL )->cSerSat + Str( ( dbfSatCliL )->nNumSat ) + ( dbfSatCliL )->cSufSat .and. ;
+            !( dbfSatCliL )->( Eof() )
 
-         PreRecDup( dbfPreCliL, ( dbfPreCliT )->cSerPre, nNewNumPre, ( dbfPreCliT )->cSufPre, .f. )
+         SatRecDup( dbfSatCliL, ( dbfSatCliT )->cSerSat, nNewNumSat, ( dbfSatCliT )->cSufSat, .f. )
 
-         ( dbfPreCliL )->( dbSkip() )
+         ( dbfSatCliL )->( dbSkip() )
 
       end while
 
@@ -10774,14 +10514,14 @@ STATIC FUNCTION DupPresupuesto( cFecDoc )
 
    //Duplicamos los documentos-------------------------------------------------
 
-   if ( dbfPreCliD )->( dbSeek( ( dbfPreCliT )->cSerPre + Str( ( dbfPreCliT )->nNumPre ) + ( dbfPreCliT )->cSufPre ) )
+   if ( dbfSatCliD )->( dbSeek( ( dbfSatCliT )->cSerSat + Str( ( dbfSatCliT )->nNumSat ) + ( dbfSatCliT )->cSufSat ) )
 
-      while ( dbfPreCliT )->cSerPre + Str( ( dbfPreCliT )->nNumPre ) + ( dbfPreCliT )->cSufPre == ( dbfPreCliD )->cSerPre + Str( ( dbfPreCliD )->nNumPre ) + ( dbfPreCliD )->cSufPre .and. ;
-            !( dbfPreCliD )->( Eof() )
+      while ( dbfSatCliT )->cSerSat + Str( ( dbfSatCliT )->nNumSat ) + ( dbfSatCliT )->cSufSat == ( dbfSatCliD )->cSerSat + Str( ( dbfSatCliD )->nNumSat ) + ( dbfSatCliD )->cSufSat .and. ;
+            !( dbfSatCliD )->( Eof() )
 
-         PreRecDup( dbfPreCliD, ( dbfPreCliT )->cSerPre, nNewNumPre, ( dbfPreCliT )->cSufPre, .f. )
+         SatRecDup( dbfSatCliD, ( dbfSatCliT )->cSerSat, nNewNumSat, ( dbfSatCliT )->cSufSat, .f. )
 
-         ( dbfPreCliD )->( dbSkip() )
+         ( dbfSatCliD )->( dbSkip() )
 
       end while
 
@@ -10793,11 +10533,11 @@ RETURN ( .t. )
 
 STATIC FUNCTION SetDialog( aGet, oSayDias, oSayTxtDias, oSayGetRnt, oGetRnt )
 
-   if oTipPre:nAt == 2
+   if oTipSat:nAt == 2
 
       aGet[ _DFECENTR ]:Show()
       aGet[ _DFECSAL  ]:Show()
-      aGet[ _CSUPRE   ]:Hide()
+      aGet[ _CSUSAT   ]:Hide()
 
       oSayDias:Show()
       oSayTxtDias:Show()
@@ -10806,7 +10546,7 @@ STATIC FUNCTION SetDialog( aGet, oSayDias, oSayTxtDias, oSayGetRnt, oGetRnt )
 
       aGet[ _DFECENTR ]:Hide()
       aGet[ _DFECSAL  ]:Hide()
-      aGet[ _CSUPRE   ]:Show()
+      aGet[ _CSUSAT   ]:Show()
 
       oSayDias:Hide()
       oSayTxtDias:Hide()
@@ -10815,7 +10555,7 @@ STATIC FUNCTION SetDialog( aGet, oSayDias, oSayTxtDias, oSayGetRnt, oGetRnt )
 
    aGet[ _DFECENTR ]:Refresh()
    aGet[ _DFECSAL  ]:Refresh()
-   aGet[ _CSUPRE   ]:Refresh()
+   aGet[ _CSUSAT   ]:Refresh()
 
    oSayDias:Refresh()
    oSayTxtDias:Refresh()
@@ -10836,109 +10576,16 @@ Return nil
 
 //---------------------------------------------------------------------------//
 
-Function ExpAlmacen( cCodAlm, dbfTmpLin, oBrw )
-
-   local nRec  := ( dbfTmpLin )->( Recno() )
-
-   ( dbfTmpLin )->( dbGoTop() )
-   while !( dbfTmpLin )->( eof() )
-
-      if ( dbfTmpLin )->cAlmLin != cCodAlm
-         ( dbfTmpLin )->cAlmLin := cCodAlm
-      end if
-
-      ( dbfTmpLin )->( dbSkip() )
-
-   end while
-
-   ( dbfTmpLin )->( dbGoTo( nRec ) )
-
-   oBrw:Refresh()
-
-Return nil
-
-//---------------------------------------------------------------------------//
-
-Function ExpAgente( cCodAge, nComAge, dbfTmpLin, oBrw )
-
-   local nRec  := ( dbfTmpLin )->( Recno() )
-
-   ( dbfTmpLin )->( dbGoTop() )
-   while !( dbfTmpLin )->( eof() )
-
-      if ( dbfTmpLin )->nComAge != nComAge
-         ( dbfTmpLin )->nComAge := nComAge
-      end if
-
-      ( dbfTmpLin )->( dbSkip() )
-
-   end while
-
-   ( dbfTmpLin )->( dbGoTo( nRec ) )
-
-   oBrw:Refresh()
-
-Return nil
-
-//---------------------------------------------------------------------------//
-
-Function ChangeTarifaCabecera( nNumTar, dbfTmpLin, oBrw )
-
-   local nRec
-
-   if ( nNumTar >= 1 .and. nNumTar <= 6 )
-
-      if ( nNumTar != nTarifaPrecio .and. ( dbfTmpLin )->( LastRec() ) > 0 )
-
-         if ApoloMsgNoYes( "¿ Desea cambiar todas las tarifas de precios a todas las líneas del documento ?" )
-
-            nRec        := ( dbfTmpLin )->( Recno() )
-
-            ( dbfTmpLin )->( dbGoTop() )
-            while !( dbfTmpLin )->( eof() )
-
-               if ( dbfTmpLin )->nTarLin != nNumTar
-                  ( dbfTmpLin )->nTarLin := nNumTar
-               end if
-
-               ( dbfTmpLin )->( dbSkip() )
-
-            end while
-
-            ( dbfTmpLin )->( dbGoTo( nRec ) )
-
-            oBrw:Refresh()
-
-         end if
-
-         nTarifaPrecio  := nNumTar
-
-      end if
-
-   end if
-
-Return .t.
-
-//---------------------------------------------------------------------------//
-
-Function InitTarifaCabecera( nNumTar )
-
-   nTarifaPrecio  := nNumTar
-
-Return .t.
-
-//---------------------------------------------------------------------------//
-
-STATIC FUNCTION ChangeTarifa( aTmp, aGet, aTmpPre )
+STATIC FUNCTION ChangeTarifa( aTmp, aGet, aTmpSat )
 
    local nPrePro  := 0
 
    if !aTmp[ __LALQUILER ]
 
-      nPrePro     := nPrePro( aTmp[ _CREF ], aTmp[ _CCODPR1 ], aTmp[ _CVALPR1 ], aTmp[ _CCODPR2 ], aTmp[ _CVALPR2 ], aTmp[ _NTARLIN ], aTmpPre[ _LIVAINC ], dbfArtDiv, dbfTarPreL, aTmpPre[ _CCODTAR ] )
+      nPrePro     := nPrePro( aTmp[ _CREF ], aTmp[ _CCODPR1 ], aTmp[ _CVALPR1 ], aTmp[ _CCODPR2 ], aTmp[ _CVALPR2 ], aTmp[ _NTARLIN ], aTmpSat[ _LIVAINC ], dbfArtDiv, dbfTarPreL, aTmpSat[ _CCODTAR ] )
 
       if nPrePro == 0
-         nPrePro  := nRetPreArt( aTmp[ _NTARLIN ], aTmpPre[ _CDIVPRE ], aTmpPre[ _LIVAINC ], dbfArticulo, dbfDiv, dbfKit, dbfIva )
+         nPrePro  := nRetPreArt( aTmp[ _NTARLIN ], aTmpSat[ _CDIVSAT ], aTmpSat[ _LIVAINC ], dbfArticulo, dbfDiv, dbfKit, dbfIva )
       end if
 
       if nPrePro != 0
@@ -10950,7 +10597,7 @@ STATIC FUNCTION ChangeTarifa( aTmp, aGet, aTmpPre )
 
       aGet[ _NPREDIV ]:cText( 0 )
 
-      nPrePro := nPreAlq( aTmp[ _CREF ], aTmp[ _NTARLIN ], aTmpPre[ _LIVAINC ], dbfArticulo )
+      nPrePro := nPreAlq( aTmp[ _CREF ], aTmp[ _NTARLIN ], aTmpSat[ _LIVAINC ], dbfArticulo )
 
       if nPrePro != 0
          aGet[ _NPREALQ ]:cText( nPrePro )
@@ -10975,72 +10622,72 @@ Static Function ValidaMedicion( aTmp, aGet )
       if oUndMedicion:oDbf:Seek( aTmp[ _CUNIDAD ] )
 
          if oUndMedicion:oDbf:nDimension >= 1 .and. !Empty( oUndMedicion:oDbf:cTextoDim1 )
-            if !Empty( aGet[ ( dbfPreCliL )->( fieldpos( "nMedUno" ) ) ] )
-               aGet[ ( dbfPreCliL )->( fieldpos( "nMedUno" ) ) ]:oSay:SetText( oUndMedicion:oDbf:cTextoDim1 )
-               aGet[ ( dbfPreCliL )->( fieldpos( "nMedUno" ) ) ]:cText( ( dbfArticulo )->nLngArt )
-               aGet[ ( dbfPreCliL )->( fieldpos( "nMedUno" ) ) ]:Show()
+            if !Empty( aGet[ ( dbfSatCliL )->( fieldpos( "nMedUno" ) ) ] )
+               aGet[ ( dbfSatCliL )->( fieldpos( "nMedUno" ) ) ]:oSay:SetText( oUndMedicion:oDbf:cTextoDim1 )
+               aGet[ ( dbfSatCliL )->( fieldpos( "nMedUno" ) ) ]:cText( ( dbfArticulo )->nLngArt )
+               aGet[ ( dbfSatCliL )->( fieldpos( "nMedUno" ) ) ]:Show()
             else
-               aTmp[ ( dbfPreCliL )->( fieldpos( "nMedUno" ) ) ]  := ( dbfArticulo )->nLngArt
+               aTmp[ ( dbfSatCliL )->( fieldpos( "nMedUno" ) ) ]  := ( dbfArticulo )->nLngArt
             end if
          else
-            if !Empty( aGet[ ( dbfPreCliL )->( fieldpos( "nMedUno" ) ) ] )
-               aGet[ ( dbfPreCliL )->( fieldpos( "nMedUno" ) ) ]:cText( 0 )
-               aGet[ ( dbfPreCliL )->( fieldpos( "nMedUno" ) ) ]:Hide()
+            if !Empty( aGet[ ( dbfSatCliL )->( fieldpos( "nMedUno" ) ) ] )
+               aGet[ ( dbfSatCliL )->( fieldpos( "nMedUno" ) ) ]:cText( 0 )
+               aGet[ ( dbfSatCliL )->( fieldpos( "nMedUno" ) ) ]:Hide()
             else
-               aTmp[ ( dbfPreCliL )->( fieldpos( "nMedUno" ) ) ]  := 0
+               aTmp[ ( dbfSatCliL )->( fieldpos( "nMedUno" ) ) ]  := 0
             end if
          end if
 
          if oUndMedicion:oDbf:nDimension >= 2 .and. !Empty( oUndMedicion:oDbf:cTextoDim2 )
-            if !Empty( aGet[ ( dbfPreCliL )->( fieldpos( "nMedDos" ) ) ] )
-               aGet[ ( dbfPreCliL )->( fieldpos( "nMedDos" ) ) ]:oSay:SetText( oUndMedicion:oDbf:cTextoDim2 )
-               aGet[ ( dbfPreCliL )->( fieldpos( "nMedDos" ) ) ]:cText( ( dbfArticulo )->nAltArt )
-               aGet[ ( dbfPreCliL )->( fieldpos( "nMedDos" ) ) ]:Show()
+            if !Empty( aGet[ ( dbfSatCliL )->( fieldpos( "nMedDos" ) ) ] )
+               aGet[ ( dbfSatCliL )->( fieldpos( "nMedDos" ) ) ]:oSay:SetText( oUndMedicion:oDbf:cTextoDim2 )
+               aGet[ ( dbfSatCliL )->( fieldpos( "nMedDos" ) ) ]:cText( ( dbfArticulo )->nAltArt )
+               aGet[ ( dbfSatCliL )->( fieldpos( "nMedDos" ) ) ]:Show()
             else
-               aTmp[ ( dbfPreCliL )->( fieldpos( "nMedDos" ) ) ]  := ( dbfArticulo )->nAltArt
+               aTmp[ ( dbfSatCliL )->( fieldpos( "nMedDos" ) ) ]  := ( dbfArticulo )->nAltArt
             end if
 
          else
-            if !Empty( aGet[ ( dbfPreCliL )->( fieldpos( "nMedDos" ) ) ] )
-               aGet[ ( dbfPreCliL )->( fieldpos( "nMedDos" ) ) ]:cText( 0 )
-               aGet[ ( dbfPreCliL )->( fieldpos( "nMedDos" ) ) ]:Hide()
+            if !Empty( aGet[ ( dbfSatCliL )->( fieldpos( "nMedDos" ) ) ] )
+               aGet[ ( dbfSatCliL )->( fieldpos( "nMedDos" ) ) ]:cText( 0 )
+               aGet[ ( dbfSatCliL )->( fieldpos( "nMedDos" ) ) ]:Hide()
             else
-               aTmp[ ( dbfPreCliL )->( fieldpos( "nMedDos" ) ) ]  := 0
+               aTmp[ ( dbfSatCliL )->( fieldpos( "nMedDos" ) ) ]  := 0
             end if
          end if
 
          if oUndMedicion:oDbf:nDimension >= 3 .and. !Empty( oUndMedicion:oDbf:cTextoDim3 )
-            if !Empty( aGet[ ( dbfPreCliL )->( fieldpos( "nMedTre" ) ) ] )
-               aGet[ ( dbfPreCliL )->( fieldpos( "nMedTre" ) ) ]:oSay:SetText( oUndMedicion:oDbf:cTextoDim3 )
-               aGet[ ( dbfPreCliL )->( fieldpos( "nMedTre" ) ) ]:cText( ( dbfArticulo ) ->nAncArt )
-               aGet[ ( dbfPreCliL )->( fieldpos( "nMedTre" ) ) ]:Show()
+            if !Empty( aGet[ ( dbfSatCliL )->( fieldpos( "nMedTre" ) ) ] )
+               aGet[ ( dbfSatCliL )->( fieldpos( "nMedTre" ) ) ]:oSay:SetText( oUndMedicion:oDbf:cTextoDim3 )
+               aGet[ ( dbfSatCliL )->( fieldpos( "nMedTre" ) ) ]:cText( ( dbfArticulo ) ->nAncArt )
+               aGet[ ( dbfSatCliL )->( fieldpos( "nMedTre" ) ) ]:Show()
             else
-               aTmp[ ( dbfPreCliL )->( fieldpos( "nMedTre" ) ) ]  := ( dbfArticulo )->nAncArt
+               aTmp[ ( dbfSatCliL )->( fieldpos( "nMedTre" ) ) ]  := ( dbfArticulo )->nAncArt
             end if
          else
-            if !Empty( aGet[ ( dbfPreCliL )->( fieldpos( "nMedTre" ) ) ] )
-               aGet[ ( dbfPreCliL )->( fieldpos( "nMedTre" ) ) ]:cText( 0 )
-               aGet[ ( dbfPreCliL )->( fieldpos( "nMedTre" ) ) ]:Hide()
+            if !Empty( aGet[ ( dbfSatCliL )->( fieldpos( "nMedTre" ) ) ] )
+               aGet[ ( dbfSatCliL )->( fieldpos( "nMedTre" ) ) ]:cText( 0 )
+               aGet[ ( dbfSatCliL )->( fieldpos( "nMedTre" ) ) ]:Hide()
             else
-               aTmp[ ( dbfPreCliL )->( fieldpos( "nMedTre" ) ) ]  := 0
+               aTmp[ ( dbfSatCliL )->( fieldpos( "nMedTre" ) ) ]  := 0
             end if
          end if
 
       else
 
-         if !Empty( aGet[ ( dbfPreCliL )->( fieldpos( "nMedUno" ) ) ] )
-            aGet[ ( dbfPreCliL )->( fieldpos( "nMedUno" ) ) ]:Hide()
-            aGet[ ( dbfPreCliL )->( fieldpos( "nMedUno" ) ) ]:cText( 0 )
+         if !Empty( aGet[ ( dbfSatCliL )->( fieldpos( "nMedUno" ) ) ] )
+            aGet[ ( dbfSatCliL )->( fieldpos( "nMedUno" ) ) ]:Hide()
+            aGet[ ( dbfSatCliL )->( fieldpos( "nMedUno" ) ) ]:cText( 0 )
          end if
 
-         if !Empty( aGet[ ( dbfPreCliL )->( fieldpos( "nMedDos" ) ) ] )
-            aGet[ ( dbfPreCliL )->( fieldpos( "nMedDos" ) ) ]:Hide()
-            aGet[ ( dbfPreCliL )->( fieldpos( "nMedDos" ) ) ]:cText( 0 )
+         if !Empty( aGet[ ( dbfSatCliL )->( fieldpos( "nMedDos" ) ) ] )
+            aGet[ ( dbfSatCliL )->( fieldpos( "nMedDos" ) ) ]:Hide()
+            aGet[ ( dbfSatCliL )->( fieldpos( "nMedDos" ) ) ]:cText( 0 )
          end if
 
-         if !Empty( aGet[ ( dbfPreCliL )->( fieldpos( "nMedTre" ) ) ] )
-            aGet[ ( dbfPreCliL )->( fieldpos( "nMedTre" ) ) ]:Hide()
-            aGet[ ( dbfPreCliL )->( fieldpos( "nMedTre" ) ) ]:cText( 0 )
+         if !Empty( aGet[ ( dbfSatCliL )->( fieldpos( "nMedTre" ) ) ] )
+            aGet[ ( dbfSatCliL )->( fieldpos( "nMedTre" ) ) ]:Hide()
+            aGet[ ( dbfSatCliL )->( fieldpos( "nMedTre" ) ) ]:cText( 0 )
          end if
 
       end if
@@ -11093,32 +10740,32 @@ Return ( cTxtFra )
 
 //---------------------------------------------------------------------------//
 
-FUNCTION IsPreCli( cPath )
+FUNCTION IsSatCli( cPath )
 
    DEFAULT cPath  := cPatEmp()
 
-   if !lExistTable( cPath + "PreCliT.Dbf" )
-      dbCreate( cPath + "PreCliT.Dbf", aSqlStruct( aItmPreCli() ), cDriver() )
+   if !lExistTable( cPath + "SatCliT.Dbf" )
+      dbCreate( cPath + "SatCliT.Dbf", aSqlStruct( aItmSatCli() ), cDriver() )
    end if
 
-   if !lExistTable( cPath + "PreCliL.Dbf" )
-      dbCreate( cPath + "PreCliL.Dbf", aSqlStruct( aColPreCli() ), cDriver() )
+   if !lExistTable( cPath + "SatCliL.Dbf" )
+      dbCreate( cPath + "SatCliL.Dbf", aSqlStruct( aColSatCli() ), cDriver() )
    end if
 
-   if !lExistTable( cPath + "PreCliI.Dbf" )
-      dbCreate( cPath + "PreCliI.Dbf", aSqlStruct( aIncPreCli() ), cDriver() )
+   if !lExistTable( cPath + "SatCliI.Dbf" )
+      dbCreate( cPath + "SatCliI.Dbf", aSqlStruct( aIncSatCli() ), cDriver() )
    end if
 
-   if !lExistTable( cPath + "PreCliD.Dbf" )
-      dbCreate( cPath + "PreCliD.Dbf", aSqlStruct( aPreCliDoc() ), cDriver() )
+   if !lExistTable( cPath + "SatCliD.Dbf" )
+      dbCreate( cPath + "SatCliD.Dbf", aSqlStruct( aSatCliDoc() ), cDriver() )
    end if
 
-   if !lExistIndex( cPath + "PreCliT.Cdx" ) .or. ;
-      !lExistIndex( cPath + "PreCliL.Cdx" ) .or. ;
-      !lExistIndex( cPath + "PreCliI.Cdx" ) .or. ;
-      !lExistTable( cPath + "PreCliD.Cdx" )
+   if !lExistIndex( cPath + "SatCliT.Cdx" ) .or. ;
+      !lExistIndex( cPath + "SatCliL.Cdx" ) .or. ;
+      !lExistIndex( cPath + "SatCliI.Cdx" ) .or. ;
+      !lExistTable( cPath + "SatCliD.Cdx" )
 
-      rxPreCli( cPath )
+      rxSatCli( cPath )
 
    end if
 
@@ -11136,17 +10783,17 @@ Static Function DataReport( oFr )
 
    oFr:ClearDataSets()
 
-   oFr:SetWorkArea(     "Presupuestos", ( dbfPreCliT )->( Select() ), .f., { FR_RB_CURRENT, FR_RB_CURRENT, 0 } )
-   oFr:SetFieldAliases( "Presupuestos", cItemsToReport( aItmPreCli() ) )
+   oFr:SetWorkArea(     "S.A.T. ", ( dbfSatCliT )->( Select() ), .f., { FR_RB_CURRENT, FR_RB_CURRENT, 0 } )
+   oFr:SetFieldAliases( "S.A.T. ", cItemsToReport( aItmSatCli() ) )
 
-   oFr:SetWorkArea(     "Lineas de presupuestos", ( dbfPreCliL )->( Select() ) )
-   oFr:SetFieldAliases( "Lineas de presupuestos", cItemsToReport( aColPreCli() ) )
+   oFr:SetWorkArea(     "Lineas de S.A.T.", ( dbfSatCliL )->( Select() ) )
+   oFr:SetFieldAliases( "Lineas de S.A.T.", cItemsToReport( aColSatCli() ) )
 
-   oFr:SetWorkArea(     "Incidencias de presupuestos", ( dbfPreCliI )->( Select() ) )
-   oFr:SetFieldAliases( "Incidencias de presupuestos", cItemsToReport( aIncPreCli() ) )
+   oFr:SetWorkArea(     "Incidencias de S.A.T.", ( dbfSatCliI )->( Select() ) )
+   oFr:SetFieldAliases( "Incidencias de S.A.T.", cItemsToReport( aIncSatCli() ) )
 
-   oFr:SetWorkArea(     "Documentos de presupuestos", ( dbfPreCliD )->( Select() ) )
-   oFr:SetFieldAliases( "Documentos de presupuestos", cItemsToReport( aPreCliDoc() ) )
+   oFr:SetWorkArea(     "Documentos de S.A.T.", ( dbfSatCliD )->( Select() ) )
+   oFr:SetFieldAliases( "Documentos de S.A.T.", cItemsToReport( aSatCliDoc() ) )
 
    oFr:SetWorkArea(     "Empresa", ( dbfEmp )->( Select() ) )
    oFr:SetFieldAliases( "Empresa", cItemsToReport( aItmEmp() ) )
@@ -11181,37 +10828,37 @@ Static Function DataReport( oFr )
    oFr:SetWorkArea(     "Unidades de medición",  oUndMedicion:Select() )
    oFr:SetFieldAliases( "Unidades de medición",  cObjectsToReport( oUndMedicion:oDbf ) )
 
-   oFr:SetMasterDetail( "Presupuestos", "Lineas de presupuestos",          {|| ( dbfPreCliT )->cSerPre + Str( ( dbfPreCliT )->nNumPre ) + ( dbfPreCliT )->cSufPre } )
-   oFr:SetMasterDetail( "Presupuestos", "Incidencias de presupuestos",     {|| ( dbfPreCliT )->cSerPre + Str( ( dbfPreCliT )->nNumPre ) + ( dbfPreCliT )->cSufPre } )
-   oFr:SetMasterDetail( "Presupuestos", "Documentos de presupuestos",      {|| ( dbfPreCliT )->cSerPre + Str( ( dbfPreCliT )->nNumPre ) + ( dbfPreCliT )->cSufPre } )
-   oFr:SetMasterDetail( "Presupuestos", "Empresa",                         {|| cCodigoEmpresaEnUso() } )
-   oFr:SetMasterDetail( "Presupuestos", "Clientes",                        {|| ( dbfPreCliT )->cCodCli } )
-   oFr:SetMasterDetail( "Presupuestos", "Obras",                           {|| ( dbfPreCliT )->cCodCli + ( dbfPreCliT )->cCodObr } )
-   oFr:SetMasterDetail( "Presupuestos", "Almacen",                         {|| ( dbfPreCliT )->cCodAlm } )
-   oFr:SetMasterDetail( "Presupuestos", "Rutas",                           {|| ( dbfPreCliT )->cCodRut } )
-   oFr:SetMasterDetail( "Presupuestos", "Agentes",                         {|| ( dbfPreCliT )->cCodAge } )
-   oFr:SetMasterDetail( "Presupuestos", "Formas de pago",                  {|| ( dbfPreCliT )->cCodPgo } )
-   oFr:SetMasterDetail( "Presupuestos", "Transportistas",                  {|| ( dbfPreCliT )->cCodTrn } )
+   oFr:SetMasterDetail( "S.A.T. ", "Lineas de S.A.T.",          {|| ( dbfSatCliT )->cSerSat + Str( ( dbfSatCliT )->nNumSat ) + ( dbfSatCliT )->cSufSat } )
+   oFr:SetMasterDetail( "S.A.T. ", "Incidencias de S.A.T.",     {|| ( dbfSatCliT )->cSerSat + Str( ( dbfSatCliT )->nNumSat ) + ( dbfSatCliT )->cSufSat } )
+   oFr:SetMasterDetail( "S.A.T. ", "Documentos de S.A.T.",      {|| ( dbfSatCliT )->cSerSat + Str( ( dbfSatCliT )->nNumSat ) + ( dbfSatCliT )->cSufSat } )
+   oFr:SetMasterDetail( "S.A.T. ", "Empresa",                         {|| cCodigoEmpresaEnUso() } )
+   oFr:SetMasterDetail( "S.A.T. ", "Clientes",                        {|| ( dbfSatCliT )->cCodCli } )
+   oFr:SetMasterDetail( "S.A.T. ", "Obras",                           {|| ( dbfSatCliT )->cCodCli + ( dbfSatCliT )->cCodObr } )
+   oFr:SetMasterDetail( "S.A.T. ", "Almacen",                         {|| ( dbfSatCliT )->cCodAlm } )
+   oFr:SetMasterDetail( "S.A.T. ", "Rutas",                           {|| ( dbfSatCliT )->cCodRut } )
+   oFr:SetMasterDetail( "S.A.T. ", "Agentes",                         {|| ( dbfSatCliT )->cCodAge } )
+   oFr:SetMasterDetail( "S.A.T. ", "Formas de pago",                  {|| ( dbfSatCliT )->cCodPgo } )
+   oFr:SetMasterDetail( "S.A.T. ", "Transportistas",                  {|| ( dbfSatCliT )->cCodTrn } )
 
-   oFr:SetMasterDetail( "Lineas de presupuestos", "Artículos",             {|| ( dbfPreCliL )->cRef } )
-   oFr:SetMasterDetail( "Lineas de presupuestos", "Ofertas",               {|| ( dbfPreCliL )->cRef } )
-   oFr:SetMasterDetail( "Lineas de presupuestos", "Unidades de medición",  {|| ( dbfPreCliL )->cUnidad } )
+   oFr:SetMasterDetail( "Lineas de S.A.T.", "Artículos",             {|| ( dbfSatCliL )->cRef } )
+   oFr:SetMasterDetail( "Lineas de S.A.T.", "Ofertas",               {|| ( dbfSatCliL )->cRef } )
+   oFr:SetMasterDetail( "Lineas de S.A.T.", "Unidades de medición",  {|| ( dbfSatCliL )->cUnidad } )
 
-   oFr:SetResyncPair(   "Presupuestos", "Lineas de presupuestos" )
-   oFr:SetResyncPair(   "Presupuestos", "Incidencias de presupuestos" )
-   oFr:SetResyncPair(   "Presupuestos", "Documentos de presupuestos" )
-   oFr:SetResyncPair(   "Presupuestos", "Empresa" )
-   oFr:SetResyncPair(   "Presupuestos", "Clientes" )
-   oFr:SetResyncPair(   "Presupuestos", "Obras" )
-   oFr:SetResyncPair(   "Presupuestos", "Almacenes" )
-   oFr:SetResyncPair(   "Presupuestos", "Rutas" )
-   oFr:SetResyncPair(   "Presupuestos", "Agentes" )
-   oFr:SetResyncPair(   "Presupuestos", "Formas de pago" )
-   oFr:SetResyncPair(   "Presupuestos", "Transportistas" )
+   oFr:SetResyncPair(   "S.A.T. ", "Lineas de S.A.T." )
+   oFr:SetResyncPair(   "S.A.T. ", "Incidencias de S.A.T." )
+   oFr:SetResyncPair(   "S.A.T. ", "Documentos de S.A.T." )
+   oFr:SetResyncPair(   "S.A.T. ", "Empresa" )
+   oFr:SetResyncPair(   "S.A.T. ", "Clientes" )
+   oFr:SetResyncPair(   "S.A.T. ", "Obras" )
+   oFr:SetResyncPair(   "S.A.T. ", "Almacenes" )
+   oFr:SetResyncPair(   "S.A.T. ", "Rutas" )
+   oFr:SetResyncPair(   "S.A.T. ", "Agentes" )
+   oFr:SetResyncPair(   "S.A.T. ", "Formas de pago" )
+   oFr:SetResyncPair(   "S.A.T. ", "Transportistas" )
 
-   oFr:SetResyncPair(   "Lineas de presupuestos", "Artículos" )
-   oFr:SetResyncPair(   "Lineas de presupuestos", "Ofertas" )
-   oFr:SetResyncPair(   "Lineas de presupuestos", "Unidades de medición" )
+   oFr:SetResyncPair(   "Lineas de S.A.T.", "Artículos" )
+   oFr:SetResyncPair(   "Lineas de S.A.T.", "Ofertas" )
+   oFr:SetResyncPair(   "Lineas de S.A.T.", "Unidades de medición" )
 
 Return nil
 
@@ -11219,85 +10866,85 @@ Return nil
 
 Static Function VariableReport( oFr )
 
-   oFr:DeleteCategory(  "Presupuestos" )
-   oFr:DeleteCategory(  "Lineas de presupuestos" )
+   oFr:DeleteCategory(  "S.A.T. " )
+   oFr:DeleteCategory(  "Lineas de S.A.T." )
 
    /*
    Creación de variables----------------------------------------------------
    */
 
-   oFr:AddVariable(     "Presupuestos",             "Total bruto",                         "GetHbVar('nTotBrt')" )
-   oFr:AddVariable(     "Presupuestos",             "Total presupuesto",                   "GetHbVar('nTotPre')" )
-   oFr:AddVariable(     "Presupuestos",             "Total descuento",                     "GetHbVar('nTotDto')" )
-   oFr:AddVariable(     "Presupuestos",             "Total descuento pronto pago",         "GetHbVar('nTotDpp')" )
-   oFr:AddVariable(     "Presupuestos",             "Total descuentos",                    "GetHbVar('nTotalDto')" )
-   oFr:AddVariable(     "Presupuestos",             "Total neto",                          "GetHbVar('nTotNet')" )
-   oFr:AddVariable(     "Presupuestos",             "Total primer descuento definible",    "GetHbVar('nTotUno')" )
-   oFr:AddVariable(     "Presupuestos",             "Total segundo descuento definible",   "GetHbVar('nTotDos')" )
-   oFr:AddVariable(     "Presupuestos",             "Total " + cImp(),                     "GetHbVar('nTotIva')" )
-   oFr:AddVariable(     "Presupuestos",             "Total RE",                            "GetHbVar('nTotReq')" )
-   oFr:AddVariable(     "Presupuestos",             "Total página",                        "GetHbVar('nTotPag')" )
-   oFr:AddVariable(     "Presupuestos",             "Total retención",                     "GetHbVar('nTotRet')" )
-   oFr:AddVariable(     "Presupuestos",             "Total peso",                          "GetHbVar('nTotPes')" )
-   oFr:AddVariable(     "Presupuestos",             "Total costo",                         "GetHbVar('nTotCos')" )
-   oFr:AddVariable(     "Presupuestos",             "Total anticipado",                    "GetHbVar('nTotAnt')" )
-   oFr:AddVariable(     "Presupuestos",             "Total cobrado",                       "GetHbVar('nTotCob')" )
-   oFr:AddVariable(     "Presupuestos",             "Total artículos",                     "GetHbVar('nTotArt')" )
-   oFr:AddVariable(     "Presupuestos",             "Total cajas",                         "GetHbVar('nTotCaj')" )
-   oFr:AddVariable(     "Presupuestos",             "Cuenta por defecto del cliente",      "GetHbVar('cCtaCli')" )
+   oFr:AddVariable(     "S.A.T. ",             "Total bruto",                         "GetHbVar('nTotBrt')" )
+   oFr:AddVariable(     "S.A.T. ",             "Total S.A.T.",                   "GetHbVar('nTotSat')" )
+   oFr:AddVariable(     "S.A.T. ",             "Total descuento",                     "GetHbVar('nTotDto')" )
+   oFr:AddVariable(     "S.A.T. ",             "Total descuento pronto pago",         "GetHbVar('nTotDpp')" )
+   oFr:AddVariable(     "S.A.T. ",             "Total descuentos",                    "GetHbVar('nTotalDto')" )
+   oFr:AddVariable(     "S.A.T. ",             "Total neto",                          "GetHbVar('nTotNet')" )
+   oFr:AddVariable(     "S.A.T. ",             "Total primer descuento definible",    "GetHbVar('nTotUno')" )
+   oFr:AddVariable(     "S.A.T. ",             "Total segundo descuento definible",   "GetHbVar('nTotDos')" )
+   oFr:AddVariable(     "S.A.T. ",             "Total " + cImp(),                     "GetHbVar('nTotIva')" )
+   oFr:AddVariable(     "S.A.T. ",             "Total RE",                            "GetHbVar('nTotReq')" )
+   oFr:AddVariable(     "S.A.T. ",             "Total página",                        "GetHbVar('nTotPag')" )
+   oFr:AddVariable(     "S.A.T. ",             "Total retención",                     "GetHbVar('nTotRet')" )
+   oFr:AddVariable(     "S.A.T. ",             "Total peso",                          "GetHbVar('nTotPes')" )
+   oFr:AddVariable(     "S.A.T. ",             "Total costo",                         "GetHbVar('nTotCos')" )
+   oFr:AddVariable(     "S.A.T. ",             "Total anticipado",                    "GetHbVar('nTotAnt')" )
+   oFr:AddVariable(     "S.A.T. ",             "Total cobrado",                       "GetHbVar('nTotCob')" )
+   oFr:AddVariable(     "S.A.T. ",             "Total artículos",                     "GetHbVar('nTotArt')" )
+   oFr:AddVariable(     "S.A.T. ",             "Total cajas",                         "GetHbVar('nTotCaj')" )
+   oFr:AddVariable(     "S.A.T. ",             "Cuenta por defecto del cliente",      "GetHbVar('cCtaCli')" )
 
-   oFr:AddVariable(     "Presupuestos",             "Bruto primer tipo de " + cImp(),      "GetHbArrayVar('aIvaUno',1)" )
-   oFr:AddVariable(     "Presupuestos",             "Bruto segundo tipo de " + cImp(),     "GetHbArrayVar('aIvaDos',1)" )
-   oFr:AddVariable(     "Presupuestos",             "Bruto tercer tipo de " + cImp(),      "GetHbArrayVar('aIvaTre',1)" )
-   oFr:AddVariable(     "Presupuestos",             "Base primer tipo de " + cImp(),       "GetHbArrayVar('aIvaUno',2)" )
-   oFr:AddVariable(     "Presupuestos",             "Base segundo tipo de " + cImp(),      "GetHbArrayVar('aIvaDos',2)" )
-   oFr:AddVariable(     "Presupuestos",             "Base tercer tipo de " + cImp(),       "GetHbArrayVar('aIvaTre',2)" )
-   oFr:AddVariable(     "Presupuestos",             "Porcentaje primer tipo " + cImp(),    "GetHbArrayVar('aIvaUno',3)" )
-   oFr:AddVariable(     "Presupuestos",             "Porcentaje segundo tipo " + cImp(),   "GetHbArrayVar('aIvaDos',3)" )
-   oFr:AddVariable(     "Presupuestos",             "Porcentaje tercer tipo " + cImp(),    "GetHbArrayVar('aIvaTre',3)" )
-   oFr:AddVariable(     "Presupuestos",             "Porcentaje primer tipo RE",           "GetHbArrayVar('aIvaUno',4)" )
-   oFr:AddVariable(     "Presupuestos",             "Porcentaje segundo tipo RE",          "GetHbArrayVar('aIvaDos',4)" )
-   oFr:AddVariable(     "Presupuestos",             "Porcentaje tercer tipo RE",           "GetHbArrayVar('aIvaTre',4)" )
-   oFr:AddVariable(     "Presupuestos",             "Importe primer tipo " + cImp(),       "GetHbArrayVar('aIvaUno',8)" )
-   oFr:AddVariable(     "Presupuestos",             "Importe segundo tipo " + cImp(),      "GetHbArrayVar('aIvaDos',8)" )
-   oFr:AddVariable(     "Presupuestos",             "Importe tercer tipo " + cImp(),       "GetHbArrayVar('aIvaTre',8)" )
-   oFr:AddVariable(     "Presupuestos",             "Importe primer RE",                   "GetHbArrayVar('aIvaUno',9)" )
-   oFr:AddVariable(     "Presupuestos",             "Importe segundo RE",                  "GetHbArrayVar('aIvaDos',9)" )
-   oFr:AddVariable(     "Presupuestos",             "Importe tercer RE",                   "GetHbArrayVar('aIvaTre',9)" )
+   oFr:AddVariable(     "S.A.T. ",             "Bruto primer tipo de " + cImp(),      "GetHbArrayVar('aIvaUno',1)" )
+   oFr:AddVariable(     "S.A.T. ",             "Bruto segundo tipo de " + cImp(),     "GetHbArrayVar('aIvaDos',1)" )
+   oFr:AddVariable(     "S.A.T. ",             "Bruto tercer tipo de " + cImp(),      "GetHbArrayVar('aIvaTre',1)" )
+   oFr:AddVariable(     "S.A.T. ",             "Base primer tipo de " + cImp(),       "GetHbArrayVar('aIvaUno',2)" )
+   oFr:AddVariable(     "S.A.T. ",             "Base segundo tipo de " + cImp(),      "GetHbArrayVar('aIvaDos',2)" )
+   oFr:AddVariable(     "S.A.T. ",             "Base tercer tipo de " + cImp(),       "GetHbArrayVar('aIvaTre',2)" )
+   oFr:AddVariable(     "S.A.T. ",             "Porcentaje primer tipo " + cImp(),    "GetHbArrayVar('aIvaUno',3)" )
+   oFr:AddVariable(     "S.A.T. ",             "Porcentaje segundo tipo " + cImp(),   "GetHbArrayVar('aIvaDos',3)" )
+   oFr:AddVariable(     "S.A.T. ",             "Porcentaje tercer tipo " + cImp(),    "GetHbArrayVar('aIvaTre',3)" )
+   oFr:AddVariable(     "S.A.T. ",             "Porcentaje primer tipo RE",           "GetHbArrayVar('aIvaUno',4)" )
+   oFr:AddVariable(     "S.A.T. ",             "Porcentaje segundo tipo RE",          "GetHbArrayVar('aIvaDos',4)" )
+   oFr:AddVariable(     "S.A.T. ",             "Porcentaje tercer tipo RE",           "GetHbArrayVar('aIvaTre',4)" )
+   oFr:AddVariable(     "S.A.T. ",             "Importe primer tipo " + cImp(),       "GetHbArrayVar('aIvaUno',8)" )
+   oFr:AddVariable(     "S.A.T. ",             "Importe segundo tipo " + cImp(),      "GetHbArrayVar('aIvaDos',8)" )
+   oFr:AddVariable(     "S.A.T. ",             "Importe tercer tipo " + cImp(),       "GetHbArrayVar('aIvaTre',8)" )
+   oFr:AddVariable(     "S.A.T. ",             "Importe primer RE",                   "GetHbArrayVar('aIvaUno',9)" )
+   oFr:AddVariable(     "S.A.T. ",             "Importe segundo RE",                  "GetHbArrayVar('aIvaDos',9)" )
+   oFr:AddVariable(     "S.A.T. ",             "Importe tercer RE",                   "GetHbArrayVar('aIvaTre',9)" )
 
-   oFr:AddVariable(     "Presupuestos",             "Total unidades primer tipo de impuestos especiales",            "GetHbArrayVar('aIvmUno',1 )" )
-   oFr:AddVariable(     "Presupuestos",             "Total unidades segundo tipo de impuestos especiales",           "GetHbArrayVar('aIvmDos',1 )" )
-   oFr:AddVariable(     "Presupuestos",             "Total unidades tercer tipo de impuestos especiales",            "GetHbArrayVar('aIvmTre',1 )" )
-   oFr:AddVariable(     "Presupuestos",             "Importe del primer tipo de impuestos especiales",               "GetHbArrayVar('aIvmUno',2 )" )
-   oFr:AddVariable(     "Presupuestos",             "Importe del segundo tipo de impuestos especiales",              "GetHbArrayVar('aIvmDos',2 )" )
-   oFr:AddVariable(     "Presupuestos",             "Importe del tercer tipo de impuestos especiales",               "GetHbArrayVar('aIvmTre',2 )" )
-   oFr:AddVariable(     "Presupuestos",             "Total importe primer tipo de impuestos especiales",             "GetHbArrayVar('aIvmUno',3 )" )
-   oFr:AddVariable(     "Presupuestos",             "Total importe segundo tipo de impuestos especiales",            "GetHbArrayVar('aIvmDos',3 )" )
-   oFr:AddVariable(     "Presupuestos",             "Total importe tercer tipo de impuestos especiales",             "GetHbArrayVar('aIvmTre',3 )" )
+   oFr:AddVariable(     "S.A.T. ",             "Total unidades primer tipo de impuestos especiales",            "GetHbArrayVar('aIvmUno',1 )" )
+   oFr:AddVariable(     "S.A.T. ",             "Total unidades segundo tipo de impuestos especiales",           "GetHbArrayVar('aIvmDos',1 )" )
+   oFr:AddVariable(     "S.A.T. ",             "Total unidades tercer tipo de impuestos especiales",            "GetHbArrayVar('aIvmTre',1 )" )
+   oFr:AddVariable(     "S.A.T. ",             "Importe del primer tipo de impuestos especiales",               "GetHbArrayVar('aIvmUno',2 )" )
+   oFr:AddVariable(     "S.A.T. ",             "Importe del segundo tipo de impuestos especiales",              "GetHbArrayVar('aIvmDos',2 )" )
+   oFr:AddVariable(     "S.A.T. ",             "Importe del tercer tipo de impuestos especiales",               "GetHbArrayVar('aIvmTre',2 )" )
+   oFr:AddVariable(     "S.A.T. ",             "Total importe primer tipo de impuestos especiales",             "GetHbArrayVar('aIvmUno',3 )" )
+   oFr:AddVariable(     "S.A.T. ",             "Total importe segundo tipo de impuestos especiales",            "GetHbArrayVar('aIvmDos',3 )" )
+   oFr:AddVariable(     "S.A.T. ",             "Total importe tercer tipo de impuestos especiales",             "GetHbArrayVar('aIvmTre',3 )" )
 
-   oFr:AddVariable(     "Presupuestos",             "Fecha del primer vencimiento",        "GetHbArrayVar('aDatVto',1)" )
-   oFr:AddVariable(     "Presupuestos",             "Fecha del segundo vencimiento",       "GetHbArrayVar('aDatVto',2)" )
-   oFr:AddVariable(     "Presupuestos",             "Fecha del tercer vencimiento",        "GetHbArrayVar('aDatVto',3)" )
-   oFr:AddVariable(     "Presupuestos",             "Fecha del cuarto vencimiento",        "GetHbArrayVar('aDatVto',4)" )
-   oFr:AddVariable(     "Presupuestos",             "Fecha del quinto vencimiento",        "GetHbArrayVar('aDatVto',5)" )
-   oFr:AddVariable(     "Presupuestos",             "Importe del primer vencimiento",      "GetHbArrayVar('aImpVto',1)" )
-   oFr:AddVariable(     "Presupuestos",             "Importe del segundo vencimiento",     "GetHbArrayVar('aImpVto',2)" )
-   oFr:AddVariable(     "Presupuestos",             "Importe del tercero vencimiento",     "GetHbArrayVar('aImpVto',3)" )
-   oFr:AddVariable(     "Presupuestos",             "Importe del cuarto vencimiento",      "GetHbArrayVar('aImpVto',4)" )
-   oFr:AddVariable(     "Presupuestos",             "Importe del quinto vencimiento",      "GetHbArrayVar('aImpVto',5)" )
+   oFr:AddVariable(     "S.A.T. ",             "Fecha del primer vencimiento",        "GetHbArrayVar('aDatVto',1)" )
+   oFr:AddVariable(     "S.A.T. ",             "Fecha del segundo vencimiento",       "GetHbArrayVar('aDatVto',2)" )
+   oFr:AddVariable(     "S.A.T. ",             "Fecha del tercer vencimiento",        "GetHbArrayVar('aDatVto',3)" )
+   oFr:AddVariable(     "S.A.T. ",             "Fecha del cuarto vencimiento",        "GetHbArrayVar('aDatVto',4)" )
+   oFr:AddVariable(     "S.A.T. ",             "Fecha del quinto vencimiento",        "GetHbArrayVar('aDatVto',5)" )
+   oFr:AddVariable(     "S.A.T. ",             "Importe del primer vencimiento",      "GetHbArrayVar('aImpVto',1)" )
+   oFr:AddVariable(     "S.A.T. ",             "Importe del segundo vencimiento",     "GetHbArrayVar('aImpVto',2)" )
+   oFr:AddVariable(     "S.A.T. ",             "Importe del tercero vencimiento",     "GetHbArrayVar('aImpVto',3)" )
+   oFr:AddVariable(     "S.A.T. ",             "Importe del cuarto vencimiento",      "GetHbArrayVar('aImpVto',4)" )
+   oFr:AddVariable(     "S.A.T. ",             "Importe del quinto vencimiento",      "GetHbArrayVar('aImpVto',5)" )
 
-   oFr:AddVariable(     "Lineas de presupuestos",   "Detalle del artículo",                "CallHbFunc('cDesPreCli')"  )
-   oFr:AddVariable(     "Lineas de presupuestos",   "Total unidades artículo",             "CallHbFunc('nTotNPreCli')" )
-   oFr:AddVariable(     "Lineas de presupuestos",   "Precio unitario del artículo",        "CallHbFunc('nTotUPreCli')" )
-   oFr:AddVariable(     "Lineas de presupuestos",   "Total línea de presupuesto",          "CallHbFunc('nTotLPreCli')" )
-   oFr:AddVariable(     "Lineas de presupuestos",   "Total peso por línea",                "CallHbFunc('nPesLPreCli')" )
-   oFr:AddVariable(     "Lineas de presupuestos",   "Total final línea del presupuesto",   "CallHbFunc('nTotFPreCli')" )
+   oFr:AddVariable(     "Lineas de S.A.T.",   "Detalle del artículo",                "CallHbFunc('cDesSatCli')"  )
+   oFr:AddVariable(     "Lineas de S.A.T.",   "Total unidades artículo",             "CallHbFunc('nTotNSatCli')" )
+   oFr:AddVariable(     "Lineas de S.A.T.",   "Satcio unitario del artículo",        "CallHbFunc('nTotUSatCli')" )
+   oFr:AddVariable(     "Lineas de S.A.T.",   "Total línea de S.A.T.",          "CallHbFunc('nTotLSatCli')" )
+   oFr:AddVariable(     "Lineas de S.A.T.",   "Total peso por línea",                "CallHbFunc('nPesLSatCli')" )
+   oFr:AddVariable(     "Lineas de S.A.T.",   "Total final línea del S.A.T.",   "CallHbFunc('nTotFSatCli')" )
 
 Return nil
 
 //---------------------------------------------------------------------------//
 
-Function DesignReportPreCli( oFr, dbfDoc )
+Function DesignReportSatCli( oFr, dbfDoc )
 
    local lOpen    := .f.
    local lFlag    := .f.
@@ -11340,7 +10987,7 @@ Function DesignReportPreCli( oFr, dbfDoc )
                                                    + ;
                                                    "procedure DetalleOnMasterDetail(Sender: TfrxComponent);"   + Chr(13) + Chr(10) + ;
                                                    "begin"                                                     + Chr(13) + Chr(10) + ;
-                                                   "   CallHbFunc('nTotPreCli');"                              + Chr(13) + Chr(10) + ;
+                                                   "   CallHbFunc('nTotSatCli');"                              + Chr(13) + Chr(10) + ;
                                                    "end;"                                                      + Chr(13) + Chr(10) + ;
                                                    "begin"                                                     + Chr(13) + Chr(10) + ;
                                                    "end." )
@@ -11355,12 +11002,12 @@ Function DesignReportPreCli( oFr, dbfDoc )
          oFr:SetProperty(     "CabeceraColumnas",  "Top", 200 )
          oFr:SetProperty(     "CabeceraColumnas",  "Height", 0 )
          oFr:SetProperty(     "CabeceraColumnas",  "StartNewPage", .t. )
-         oFr:SetObjProperty(  "CabeceraColumnas",  "DataSet", "Presupuestos" )
+         oFr:SetObjProperty(  "CabeceraColumnas",  "DataSet", "S.A.T. " )
 
          oFr:AddBand(         "DetalleColumnas",   "MainPage", frxDetailData  )
          oFr:SetProperty(     "DetalleColumnas",   "Top", 230 )
          oFr:SetProperty(     "DetalleColumnas",   "Height", 28 )
-         oFr:SetObjProperty(  "DetalleColumnas",   "DataSet", "Lineas de presupuestos" )
+         oFr:SetObjProperty(  "DetalleColumnas",   "DataSet", "Lineas de S.A.T." )
          oFr:SetProperty(     "DetalleColumnas",   "OnMasterDetail", "DetalleOnMasterDetail" )
 
          oFr:AddBand(         "PieDocumento",      "MainPage", frxPageFooter )
@@ -11405,11 +11052,11 @@ Return .t.
 
 //---------------------------------------------------------------------------//
 
-Function PrintReportPreCli( nDevice, nCopies, cPrinter, dbfDoc )
+Function PrintReportSatCli( nDevice, nCopies, cPrinter, dbfDoc )
 
    local oFr
 
-  local cFilePdf       := cPatTmp() + "PresupuestoCliente" + StrTran( ( dbfPreCliT )->cSerPre + Str( ( dbfPreCliT )->nNumPre ) + ( dbfPreCliT )->cSufPre, " ", "" ) + ".Pdf"
+  local cFilePdf       := cPatTmp() + "SATCliente" + StrTran( ( dbfSatCliT )->cSerSat + Str( ( dbfSatCliT )->nNumSat ) + ( dbfSatCliT )->cSufSat, " ", "" ) + ".Pdf"
 
    DEFAULT nDevice      := IS_SCREEN
    DEFAULT nCopies      := 1
@@ -11452,10 +11099,10 @@ Function PrintReportPreCli( nDevice, nCopies, cPrinter, dbfDoc )
       VariableReport( oFr )
 
       /*
-      Preparar el report-------------------------------------------------------
+      Satparar el report-------------------------------------------------------
       */
 
-      oFr:PrepareReport()
+      oFr:SatpareReport()
 
       /*
       Imprimir el informe------------------------------------------------------
@@ -11464,7 +11111,7 @@ Function PrintReportPreCli( nDevice, nCopies, cPrinter, dbfDoc )
       do case
          case nDevice == IS_SCREEN
 
-            oFr:ShowPreparedReport()
+            oFr:ShowSatparedReport()
 
          case nDevice == IS_PRINTER
 
@@ -11499,19 +11146,19 @@ Function PrintReportPreCli( nDevice, nCopies, cPrinter, dbfDoc )
 
                with object ( TGenMailing():New() )
 
-                  :SetTypeDocument( "nPreCli" )
+                  :SetTypeDocument( "nSatCli" )
                   :SetDe(           uFieldEmpresa( "cNombre" ) )
                   :SetCopia(        uFieldEmpresa( "cCcpMai" ) )
                   :SetAdjunto(      cFilePdf )
-                  :SetPara(         RetFld( ( dbfPreCliT )->cCodCli, dbfClient, "cMeiInt" ) )
-                  :SetAsunto(       "Envio de presupuesto de cliente número " + ( dbfPreCliT )->cSerPre + "/" + Alltrim( Str( ( dbfPreCliT )->nNumPre ) ) )
-                  :SetMensaje(      "Adjunto le remito nuestro presupuesto de cliente " + ( dbfPreCliT )->cSerPre + "/" + Alltrim( Str( ( dbfPreCliT )->nNumPre ) ) + Space( 1 ) )
-                  :SetMensaje(      "de fecha " + Dtoc( ( dbfPreCliT )->dFecPre ) + Space( 1 ) )
+                  :SetPara(         RetFld( ( dbfSatCliT )->cCodCli, dbfClient, "cMeiInt" ) )
+                  :SetAsunto(       "Envio de S.A.T. de cliente número " + ( dbfSatCliT )->cSerSat + "/" + Alltrim( Str( ( dbfSatCliT )->nNumSat ) ) )
+                  :SetMensaje(      "Adjunto le remito nuestro S.A.T. de cliente " + ( dbfSatCliT )->cSerSat + "/" + Alltrim( Str( ( dbfSatCliT )->nNumSat ) ) + Space( 1 ) )
+                  :SetMensaje(      "de fecha " + Dtoc( ( dbfSatCliT )->dFecSat ) + Space( 1 ) )
                   :SetMensaje(      CRLF )
                   :SetMensaje(      CRLF )
                   :SetMensaje(      "Reciba un cordial saludo." )
 
-                  :GeneralResource( dbfPreCliT, aItmPreCli() )
+                  :GeneralResource( dbfSatCliT, aItmSatCli() )
 
                end with
 
@@ -11537,167 +11184,16 @@ Return .t.
 //Funciones comunes del programa y pda
 //----------------------------------------------------------------------------//
 
-FUNCTION nRentabilidad( nImporte, nDtoAtipico, nCosto )
-
-   if nCosto == 0
-      Return ( 100 )
-   end if
-
-RETURN( ( ( ( nImporte - nDtoAtipico ) / nCosto ) - 1 ) * 100  )
-
-//---------------------------------------------------------------------------//
-
-FUNCTION nRentabilidadVentas( nImporte, nDtoAtipico, nCosto )
-
-   if nImporte == 0
-      Return ( 100 )
-   end if
-
-RETURN( ( 1 - Div( nCosto, ( nImporte - nDtoAtipico ) ) ) * 100  )
-
-//----------------------------------------------------------------------------//
-
-Function lValLine( dbfLine )
-
-   local lVal  := .t.
-
-   if ( dbfLine )->lControl
-      Return .f.
-   end if
-
-   if ( dbfLine )->lKitArt .or. ( dbfLine )->lKitChl
-      lVal     := ( dbfLine )->lKitPrc
-   end if
-
-Return ( lVal )
-
-//---------------------------------------------------------------------------//
-
-FUNCTION UpSerie( oGet )
-
-   local nAsc
-   local cChr
-   local cSer  := oGet:VarGet()
-
-   if Empty( cSer ) .or. cSer < "A"
-      cSer     := "A"
-      nAsc     := Asc( cSer )
-   else
-      nAsc     := Asc( cSer ) + 1
-   end if
-
-   cChr        := Chr( nAsc )
-
-   if cChr <= "Z"
-      oGet:cText( cChr )
-   end if
-
-return nil
-
-//----------------------------------------------------------------------------//
-
-FUNCTION DwSerie( oGet )
-
-   local nAsc
-   local cChr
-   local cSer  := oGet:VarGet()
-
-   nAsc        := Asc( cSer ) - 1
-   cChr        := Chr( nAsc )
-
-   if cChr >= "A"
-      oGet:cText( cChr )
-   end if
-
-return nil
-
-//----------------------------------------------------------------------------//
-
-Function nLastNum( uTmpLin, cFieldName )
-
-   local nRec
-   local nNum           := 0
-
-   DEFAULT cFieldName   := "nNumLin"
-
-   do case
-   case IsChar( uTmpLin )
-
-      nRec              := ( uTmpLin )->( RecNo() )
-      ( uTmpLin )->( dbGoTop() )
-
-      while !( uTmpLin )->( eof() )
-         nNum           := Max( nNum, ( uTmpLin )->( FieldGet( FieldPos( cFieldName ) ) ) )
-         ( uTmpLin )->( dbSkip() )
-      end while
-
-      ( uTmpLin )->( dbGoTo( nRec ) )
-
-   case IsObject( uTmpLin )
-
-      nRec              := uTmpLin:RecNo()
-      uTmpLin:GoTop()
-
-      while !( uTmpLin:eof() )
-         nNum           := Max( nNum, uTmpLin:FieldGetByName( cFieldName ) )
-         uTmpLin:Skip()
-      end while
-
-      uTmpLin:GoTo( nRec )
-
-   end case
-
-Return ( ++nNum )
-
-//---------------------------------------------------------------------------//
-
-Function nCalculoPuntos( nPuntos, nValorPunto, nDtoPnt, nIncPnt )
-
-   local nTotal   := 0
-
-   nTotal         := nPuntos * nValorPunto
-   nTotal         -= ( nTotal * nDtoPnt ) / 100
-
-   if nIncPnt != 0
-      nTotal      := nTotal + ( ( nIncPnt * nTotal ) / 100 )
-   end if
-
-Return ( nTotal )
-
-//---------------------------------------------------------------------------//
-
-Function cRefPrvArt( cCodArt, cCodPrv, dbfArtPrv )
-
-   local cReferencia := ""
-   local nRec        := ( dbfArtPrv )->( RecNo() )
-   local nOrdAnt     := ( dbfArtPrv )->( OrdSetFocus( "cCodPrv" ) )
-
-   if ( dbfArtPrv )->( dbSeek( cCodPrv + cCodArt ) )
-      cReferencia    := AllTrim( ( dbfArtPrv )->cRefPrv )
-   end if
-
-   ( dbfArtPrv )->( OrdSetFocus( nOrdAnt ) )
-   ( dbfArtPrv )->( dbGoTo( nRec ) )
-
-Return cReferencia
-
-//---------------------------------------------------------------------------//
-//
-// Devuelve el importe del descuento lineal
-//
-
-#ifndef __PDA__
-
-FUNCTION nDtoLPreCli( dbfLin, nDec, nVdv, cPorDiv )
+FUNCTION nDtoLSatCli( dbfLin, nDec, nVdv, cPorDiv )
 
    local nCalculo    := 0
 
-   DEFAULT dbfLin    := dbfPreCliL
+   DEFAULT dbfLin    := dbfSatCliL
    DEFAULT nDec      := nDouDiv()
    DEFAULT nVdv      := 1
 
    if ( dbfLin )->nDto != 0
-      nCalculo       := nTotUPreCli( dbfLin, nDec ) * ( dbfLin )->nDto / 100
+      nCalculo       := nTotUSatCli( dbfLin, nDec ) * ( dbfLin )->nDto / 100
       nCalculo       := Round( nCalculo / nVdv, nDec )
    end if
 
@@ -11705,15 +11201,15 @@ RETURN ( if( cPorDiv != nil, Trans( nCalculo, cPorDiv ), nCalculo ) )
 
 //---------------------------------------------------------------------------//
 
-Function nTotDtoLPreCli( dbfLin, nDec, nVdv, cPorDiv )
+Function nTotDtoLSatCli( dbfLin, nDec, nVdv, cPorDiv )
 
    local nCalculo
 
-   DEFAULT dbfLin    := dbfPreCliL
+   DEFAULT dbfLin    := dbfSatCliL
    DEFAULT nDec      := nDouDiv()
    DEFAULT nVdv      := 1
 
-   nCalculo          := nDtoLPreCli( dbfLin, nDec, nVdv ) * nTotNPreCli( dbfLin )
+   nCalculo          := nDtoLSatCli( dbfLin, nDec, nVdv ) * nTotNSatCli( dbfLin )
 
    if nVdv != 0
       nCalculo       := nCalculo / nVdv
@@ -11723,20 +11219,19 @@ Function nTotDtoLPreCli( dbfLin, nDec, nVdv, cPorDiv )
 
 RETURN ( if( cPorDiv != nil, Trans( nCalculo, cPorDiv ), nCalculo ) )
 
-#endif
 //----------------------------------------------------------------------------//
 
 Static Function YearComboBoxChange()
 
 	 if oWndBrw:oWndBar:lAllYearComboBox()
-		DestroyFastFilter( dbfPreCliT )
-      CreateUserFilter( "", dbfPreCliT, .f., , , "all" )
+		DestroyFastFilter( dbfSatCliT )
+      CreateUserFilter( "", dbfSatCliT, .f., , , "all" )
 	 else
-		DestroyFastFilter( dbfPreCliT )
-      CreateUserFilter( "Year( Field->dFecPre ) == " + oWndBrw:oWndBar:cYearComboBox(), dbfPreCliT, .f., , , "Year( Field->dFecPre ) == " + oWndBrw:oWndBar:cYearComboBox() )
+		DestroyFastFilter( dbfSatCliT )
+      CreateUserFilter( "Year( Field->dFecSat ) == " + oWndBrw:oWndBar:cYearComboBox(), dbfSatCliT, .f., , , "Year( Field->dFecSat ) == " + oWndBrw:oWndBar:cYearComboBox() )
 	 end if
 
-	 ( dbfPreCliT )->( dbGoTop() )
+	 ( dbfSatCliT )->( dbGoTop() )
 
 	 oWndBrw:Refresh()
 
@@ -11744,19 +11239,19 @@ Return nil
 
 //---------------------------------------------------------------------------//
 
-Function sTotPreCli( cPresupuesto, dbfMaster, dbfLine, dbfIva, dbfDiv, cDivRet, lExcCnt )
+Function sTotSatCli( cSatsupuesto, dbfMaster, dbfLine, dbfIva, dbfDiv, cDivRet, lExcCnt )
 
    local sTotal
 
-   nTotPreCli( cPresupuesto, dbfMaster, dbfLine, dbfIva, dbfDiv, nil, nil, cDivRet, .f., lExcCnt )
+   nTotSatCli( cSatsupuesto, dbfMaster, dbfLine, dbfIva, dbfDiv, nil, nil, cDivRet, .f., lExcCnt )
 
    sTotal                                 := sTotal()
-   sTotal:nTotalBruto                     := nTotBrt
+   sTotal:nTotSatruto                     := nTotBrt
    sTotal:nTotalNeto                      := nTotNet
    sTotal:nTotalIva                       := nTotIva
    sTotal:aTotalIva                       := aTotIva
    sTotal:nTotalRecargoEquivalencia       := nTotReq
-   sTotal:nTotalDocumento                 := nTotPre
+   sTotal:nTotalDocumento                 := nTotSat
    sTotal:nTotalPuntoVerde                := nTotPnt
    sTotal:nTotalTransporte                := nTotTrn
    sTotal:nTotalAgente                    := nTotAge

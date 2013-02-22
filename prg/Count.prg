@@ -10,6 +10,7 @@ static aDoc          := {  {"NPEDPRV", "Pedido a proveedores"                   
                            {"NALBPRV", "Albaran de proveedores"                  , .t., .t., .t., .f. },;
                            {"NFACPRV", "Facturas de proveedores"                 , .t., .t., .t., .t. },;
                            {"NRCTPRV", "Facturas rectificativas de proveedores"  , .t., .t., .t., .t. },;
+                           {"NSATCLI", "S.A.T. a clientes"                       , .t., .t., .t., .f. },;
                            {"NPRECLI", "Presupuestos a clientes"                 , .t., .t., .t., .f. },;
                            {"NPEDCLI", "Pedido de clientes"                      , .t., .t., .t., .f. },;
                            {"NALBCLI", "Albaranes de clientes"                   , .t., .t., .t., .f. },;

@@ -2240,7 +2240,7 @@ STATIC FUNCTION loaCli( aGet, aTmp, nMode, oRieCli )
       Si tenemos parcado en la empresa que mostremos el saldo pendiente del cliente
       */
 
-      if uFieldEmpresa( "lSalPdt" )
+      if uFieldEmpresa( "lSalPdt" ) .and. ( dbfCli )->Riesgo > 0
          if ( dbfCli )->nImpRie > ( dbfCli )->Riesgo
             msgStop( "El riesgo del cliente supera el límite establecido", "Riesgo: " + Trans( ( dbfCli )->nImpRie, "@E 999999.99" ) )
          end if
@@ -2260,8 +2260,8 @@ STATIC FUNCTION loaCli( aGet, aTmp, nMode, oRieCli )
          aGet[_CNOMCLI]:SetColor( , ( dbfCli )->nColor )
       end if
 
-      if Empty( aGet[_CNOMCLI]:varGet() ) .or. lChgCodCli
-         aGet[_CNOMCLI]:cText( ( dbfCli )->Titulo )
+      if Empty( aGet[ _CNOMCLI ]:varGet() ) .or. lChgCodCli
+         aGet[ _CNOMCLI ]:cText( ( dbfCli )->Titulo )
       end if
 
       if Empty( aGet[ _CTLFCLI ]:varGet() ) .or. lChgCodCli

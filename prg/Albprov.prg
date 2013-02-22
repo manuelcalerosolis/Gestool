@@ -11582,7 +11582,7 @@ FUNCTION IcgAlbPrv( aFichero, oDlg, oInforme )
 
             cBuffer        := Alltrim( cBuffer )
 
-            cDesLin        := Upper( AllTrim( SubStr( cBuffer, 26, 30 ) ) )
+            cDesLin        := Upper( AllTrim( SubStr( cBuffer, 21, 30 ) ) )
 
             nUntLin        := SubStr( cBuffer, 57, 5 )
 
@@ -11599,7 +11599,7 @@ FUNCTION IcgAlbPrv( aFichero, oDlg, oInforme )
 
             if ( nDtoLin >= 100 )
 
-               cRefLin     := Alltrim( SubStr( cBuffer, 88, 8 ) )
+               cRefLin     := Alltrim( SubStr( cBuffer, 87, 8 ) )
 
                // Desplazamiento por los melones de Andel----------------------
 
@@ -11616,6 +11616,13 @@ FUNCTION IcgAlbPrv( aFichero, oDlg, oInforme )
             end if
 
             SysRefresh()
+
+            MsgStop( "deslin :" + cvaltochar( cDesLin ) + CRLF + ;
+                     "nUntLin :" + cvaltochar( nUntLin) + CRLF + ;
+                     "nPvpLin :" + cvaltochar( nPvpLin) + CRLF + ;
+                     "nDtoLin :" + cvaltochar( nDtoLin) + CRLF + ;
+                     "cRefLin :" + cvaltochar( cRefLin) + CRLF,;
+                     cBuffer )
 
             cBuffer        := Space( _ICG_LINE_LEN_ )
 
