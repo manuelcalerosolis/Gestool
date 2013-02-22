@@ -151,8 +151,8 @@ STATIC FUNCTION OpenFiles( lCount )
                          "Document_plain_businessman_16",;
                          "Document_businessman_16",;
                          "Document_businessman_16",;
+                         "Power-drill_user1_16",;
                          "Notebook_user1_16",;
-                         "Clipboard_empty_user1_16",;
                          "Clipboard_empty_user1_16",;
                          "Document_plain_user1_16",;
                          "Document_user1_16",;

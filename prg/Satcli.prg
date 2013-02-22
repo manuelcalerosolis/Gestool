@@ -13,7 +13,7 @@ REQUEST DBFCDX
 
 #define CLR_BAR                  14197607
 
-#define _MENUITEM_               "01099"
+#define _MENUITEM_               "01098"
 
 /*
 Definici¢n de la base de datos de S.A.T. a clientes
@@ -1196,7 +1196,7 @@ FUNCTION SatCli( oMenuItem, oWnd, cCodCli, cCodArt )
                "Nombre",;
                "Obra",;
                "Agente";
-      MRU      "Notebook_user1_16";
+      MRU      "Power-drill_user1_16";
       BITMAP   clrTopArchivos ;
       ALIAS    ( dbfSatCliT );
       APPEND   ( WinAppRec( oWndBrw:oBrw, bEdtRec, dbfSatCliT, cCodCli, cCodArt ) );
@@ -1957,17 +1957,6 @@ STATIC FUNCTION EdtRec( aTmp, aGet, dbfSatCliT, oBrw, cCodCli, cCodArt, nMode )
          WHEN     ( nMode != ZOOM_MODE .and. ( !aTmp[ _LMODCLI ] .or. oUser():lAdministrador() ) ) ;
          OF       oFld:aDialogs[1]
 
-      REDEFINE GET aGet[ _CCODUSR ] VAR aTmp[ _CCODUSR ];
-         ID       125 ;
-         WHEN     ( .f. ) ;
-         VALID    ( SetUsuario( aGet[ _CCODUSR ], oSay[ 10 ], nil, dbfUsr ) );
-         OF       oFld:aDialogs[2]
-
-      REDEFINE GET oSay[ 10 ] VAR cSay[ 10 ] ;
-         ID       126 ;
-         WHEN     ( .f. ) ;
-         OF       oFld:aDialogs[2]
-
 		/*
 		Tarifa_________________________________________________________________
 		*/
@@ -2670,7 +2659,20 @@ STATIC FUNCTION EdtRec( aTmp, aGet, dbfSatCliT, oBrw, cCodCli, cCodArt, nMode )
          WHEN     ( ( dbfTmpLin )->( LastRec() ) == 0 ) ;
          OF       oFld:aDialogs[1]
 
-      //Segunda caja de dialogo
+      /*
+      Segunda caja de dialogo--------------------------------------------------
+      */
+
+      REDEFINE GET aGet[ _CCODUSR ] VAR aTmp[ _CCODUSR ];
+         ID       115 ;
+         WHEN     ( .f. ) ;
+         VALID    ( SetUsuario( aGet[ _CCODUSR ], oSay[ 10 ], nil, dbfUsr ) );
+         OF       oFld:aDialogs[2]
+
+      REDEFINE GET oSay[ 10 ] VAR cSay[ 10 ] ;
+         ID       116 ;
+         WHEN     ( .f. ) ;
+         OF       oFld:aDialogs[2]
 
       REDEFINE GET aGet[ _CCODDLG ] VAR aTmp[ _CCODDLG ] ;
          ID       300 ;
@@ -2724,20 +2726,11 @@ STATIC FUNCTION EdtRec( aTmp, aGet, dbfSatCliT, oBrw, cCodCli, cCodArt, nMode )
 			COLOR 	CLR_GET ;
          OF       oFld:aDialogs[2]
 
-     REDEFINE GET aGet[_NBULTOS] VAR aTmp[_NBULTOS];
+     REDEFINE GET aGet[ _NBULTOS ] VAR aTmp[ _NBULTOS ];
          ID       128 ;
 			SPINNER;
          PICTURE  "999" ;
 			WHEN 		( nMode != ZOOM_MODE ) ;
-			COLOR 	CLR_GET ;
-         OF       oFld:aDialogs[2]
-
-      REDEFINE GET aGet[ _NDIAVAL ] VAR aTmp[ _NDIAVAL ];
-         ID       219 ;
-         PICTURE  "999" ;
-			SPINNER;
-			WHEN 		( nMode != ZOOM_MODE ) ;
-			COLOR 	CLR_GET ;
          OF       oFld:aDialogs[2]
 
       /*
@@ -2760,28 +2753,19 @@ STATIC FUNCTION EdtRec( aTmp, aGet, dbfSatCliT, oBrw, cCodCli, cCodArt, nMode )
 		Comentarios_____________________________________________________________
 		*/
 
-      REDEFINE GET aGet[_DFECENT] VAR aTmp[_DFECENT];
-         ID       127 ;
-			SPINNER;
-			WHEN 		( nMode != ZOOM_MODE ) ;
-			COLOR 	CLR_GET ;
-         OF       oFld:aDialogs[2]
-
-		REDEFINE GET aGet[_CCONDENT] VAR aTmp[_CCONDENT] ;
+		REDEFINE GET aGet[ _CCONDENT ] VAR aTmp[ _CCONDENT ] ;
 			ID 		230 ;
-			COLOR 	CLR_GET ;
 			WHEN 		( nMode != ZOOM_MODE ) ;
 			OF 		oFld:aDialogs[2]
 
-		REDEFINE GET aGet[_MCOMENT] VAR aTmp[_MCOMENT] MEMO ;
+		REDEFINE GET aGet[ _MCOMENT ] VAR aTmp[ _MCOMENT ] MEMO ;
          ID       250 ;
 			COLOR 	CLR_GET ;
 			WHEN 		( nMode != ZOOM_MODE ) ;
 			OF 		oFld:aDialogs[2]
 
-		REDEFINE GET aGet[_MOBSERV] VAR aTmp[_MOBSERV] MEMO ;
+		REDEFINE GET aGet[ _MOBSERV ] VAR aTmp[ _MOBSERV ] MEMO ;
          ID       240 ;
-			COLOR 	CLR_GET ;
 			WHEN 		( nMode != ZOOM_MODE ) ;
 			OF 		oFld:aDialogs[2]
 
@@ -3463,7 +3447,8 @@ STATIC FUNCTION EdtDet( aTmp, aGet, dbfSatCliL, oBrw, lTotLin, cCodArtEnt, nMode
 
       else
 
-      REDEFINE GET aGet[ _NVALIMP ] VAR aTmp[ _NVALIMP ] ;
+      REDEFINE GET aGet[ _NVALIMP ] ;
+         VAR      aTmp[ _NVALIMP ] ;
          ID       125 ;
          IDSAY    126 ;
          SPINNER ;
@@ -3471,11 +3456,12 @@ STATIC FUNCTION EdtDet( aTmp, aGet, dbfSatCliL, oBrw, lTotLin, cCodArtEnt, nMode
          PICTURE  cPouDiv ;
          ON CHANGE( RecalculaLinea( aTmp, aTmpSat, nDouDiv, oTotal, oRentLin, cCodDiv ) );
          ON HELP  ( oNewImp:nBrwImp( aGet[ _NVALIMP ] ) );
-         OF       oFld:aDialogs[1]
+         OF       oFld:aDialogs[ 1 ]
 
       end if
 
-      REDEFINE GET aGet[ _NCANSAT ] VAR aTmp[ _NCANSAT ];
+      REDEFINE GET aGet[ _NCANSAT ] ;
+         VAR      aTmp[ _NCANSAT ];
          ID       130 ;
          SPINNER ;
          WHEN     ( lUseCaj() .AND. nMode != ZOOM_MODE .AND. !lTotLin ) ;
@@ -7585,8 +7571,8 @@ STATIC FUNCTION BeginTrans( aTmp, lIndex )
 
    DEFAULT lIndex := .t.
 
-   /*oBlock         := ErrorBlock( {| oError | ApoloBreak( oError ) } )   
-   BEGIN SEQUENCE*/
+   oBlock         := ErrorBlock( {| oError | ApoloBreak( oError ) } )   
+   BEGIN SEQUENCE
 
    cTmpLin        := cGetNewFileName( cPatTmp() + cDbfLin )
    cTmpInc        := cGetNewFileName( cPatTmp() + cDbfInc )
@@ -7717,7 +7703,7 @@ STATIC FUNCTION BeginTrans( aTmp, lIndex )
       lErrors     := .t.
    end if
 
-   /*RECOVER USING oError
+   RECOVER USING oError
 
       msgStop( "Imposible crear tablas temporales" + CRLF + ErrorMessage( oError ) )
 
@@ -7727,7 +7713,7 @@ STATIC FUNCTION BeginTrans( aTmp, lIndex )
 
    END SEQUENCE
 
-   ErrorBlock( oBlock )*/
+   ErrorBlock( oBlock )
 
 RETURN ( lErrors )
 
@@ -8690,11 +8676,11 @@ function aItmSatCli()
 
    local aItmSatCli :=  {}
 
-   aAdd( aItmSatCli, { "CSERSAT",   "C",  1,  0, "Serie de S.A.T." ,           "",                   "", "( cDbf )"} )
-   aAdd( aItmSatCli, { "NNUMSAT",   "N",  9,  0, "Número de S.A.T." ,          "'999999999'",        "", "( cDbf )"} )
-   aAdd( aItmSatCli, { "CSUFSAT",   "C",  2,  0, "Sufijo de S.A.T." ,          "",                   "", "( cDbf )"} )
-   aAdd( aItmSatCli, { "CTURSAT",   "C",  6,  0, "Sesión del S.A.T.",          "",                   "", "( cDbf )"} )
-   aAdd( aItmSatCli, { "DFECSAT",   "D",  8,  0, "Fecha del S.A.T.",           "",                   "", "( cDbf )"} )
+   aAdd( aItmSatCli, { "CSERSAT",   "C",  1,  0, "Serie de S.A.T." ,           "",                        "", "( cDbf )"} )
+   aAdd( aItmSatCli, { "NNUMSAT",   "N",  9,  0, "Número de S.A.T." ,          "'999999999'",             "", "( cDbf )"} )
+   aAdd( aItmSatCli, { "CSUFSAT",   "C",  2,  0, "Sufijo de S.A.T." ,          "",                        "", "( cDbf )"} )
+   aAdd( aItmSatCli, { "CTURSAT",   "C",  6,  0, "Sesión del S.A.T.",          "",                        "", "( cDbf )"} )
+   aAdd( aItmSatCli, { "DFECSAT",   "D",  8,  0, "Fecha del S.A.T.",           "",                        "", "( cDbf )"} )
    aAdd( aItmSatCli, { "CCODCLI",   "C", 12,  0, "Código del cliente",              "",                   "", "( cDbf )"} )
    aAdd( aItmSatCli, { "CNOMCLI",   "C", 80,  0, "Nombre del cliente",              "'@!'",               "", "( cDbf )"} )
    aAdd( aItmSatCli, { "CDIRCLI",   "C",100,  0, "Domicilio del cliente",           "'@!'",               "", "( cDbf )"} )
@@ -8711,11 +8697,11 @@ function aItmSatCli()
    aAdd( aItmSatCli, { "CCODPGO",   "C",  2,  0, "Código de pago",                  "",                   "", "( cDbf )"} )
    aAdd( aItmSatCli, { "CCODRUT",   "C",  4,  0, "Código de la ruta",               "",                   "", "( cDbf )"} )
    aAdd( aItmSatCli, { "DFECENT",   "D",  8,  0, "Fecha de entrada",                "",                   "", "( cDbf )"} )
-   aAdd( aItmSatCli, { "LESTADO",   "L",  1,  0, "Estado del S.A.T.",          "",                   "", "( cDbf )"} )
-   aAdd( aItmSatCli, { "CSUSAT",    "C", 10,  0, "Su S.A.T.",                  "",                   "", "( cDbf )"} )
+   aAdd( aItmSatCli, { "LESTADO",   "L",  1,  0, "Estado del S.A.T.",               "",                   "", "( cDbf )"} )
+   aAdd( aItmSatCli, { "CSUSAT",    "C", 10,  0, "",                                "",                   "", "( cDbf )"} )
    aAdd( aItmSatCli, { "CCONDENT",  "C",100,  0, "",                                "",                   "", "( cDbf )"} )
    aAdd( aItmSatCli, { "MCOMENT",   "M", 10,  0, "Comentarios",                     "",                   "", "( cDbf )"} )
-   aAdd( aItmSatCli, { "MOBSERV",   "M", 10,  0, "Observaciones",                   "",                   "", "( cDbf )"} )
+   aAdd( aItmSatCli, { "MOBSERV",   "M", 10,  0, "Averia",                          "",                   "", "( cDbf )"} )
    aAdd( aItmSatCli, { "LMAYOR",    "L",  1,  0, "" ,                               "",                   "", "( cDbf )"} )
    aAdd( aItmSatCli, { "NTARIFA",   "N",  1,  0, "Tarifa de precio aplicada" ,      "",                   "", "( cDbf )"} )
    aAdd( aItmSatCli, { "CDTOESP",   "C", 50,  0, "Descripción del descuento",       "",                   "", "( cDbf )"} )
@@ -8768,7 +8754,7 @@ function aItmSatCli()
    aAdd( aItmSatCli, { "nTotNet",   "N", 16,  6, "Total neto" ,                                       "", "", "( cDbf )"} )
    aAdd( aItmSatCli, { "nTotIva",   "N", 16,  6, "Total " + cImp() ,                                  "", "", "( cDbf )"} )
    aAdd( aItmSatCli, { "nTotReq",   "N", 16,  6, "Total recargo" ,                                    "", "", "( cDbf )"} )
-   aAdd( aItmSatCli, { "nTotSat",   "N", 16,  6, "Total S.A.T." ,                                "", "", "( cDbf )"} )
+   aAdd( aItmSatCli, { "nTotSat",   "N", 16,  6, "Total S.A.T." ,                                     "", "", "( cDbf )"} )
    aAdd( aItmSatCli, { "lOperPV",   "L",  1,  0, "Lógico para operar con punto verde" ,               "", "", "( cDbf )", .t.} )
 
 return ( aItmSatCli )
@@ -10808,6 +10794,9 @@ Static Function DataReport( oFr )
    oFr:SetWorkArea(     "Unidades de medición",  oUndMedicion:Select() )
    oFr:SetFieldAliases( "Unidades de medición",  cObjectsToReport( oUndMedicion:oDbf ) )
 
+   oFr:SetWorkArea(     "Usuarios", ( dbfUsr )->( Select() ) )
+   oFr:SetFieldAliases( "Usuarios", cItemsToReport( aItmUsr() ) )
+
    oFr:SetMasterDetail( "SAT", "Lineas de SAT",                   {|| ( dbfSatCliT )->cSerSat + Str( ( dbfSatCliT )->nNumSat ) + ( dbfSatCliT )->cSufSat } )
    oFr:SetMasterDetail( "SAT", "Series de lineas de SAT",         {|| ( dbfSatCliT )->cSerSat + Str( ( dbfSatCliT )->nNumSat ) + ( dbfSatCliT )->cSufSat } )
    oFr:SetMasterDetail( "SAT", "Incidencias de SAT",              {|| ( dbfSatCliT )->cSerSat + Str( ( dbfSatCliT )->nNumSat ) + ( dbfSatCliT )->cSufSat } )
@@ -10820,6 +10809,7 @@ Static Function DataReport( oFr )
    oFr:SetMasterDetail( "SAT", "Agentes",                         {|| ( dbfSatCliT )->cCodAge } )
    oFr:SetMasterDetail( "SAT", "Formas de pago",                  {|| ( dbfSatCliT )->cCodPgo } )
    oFr:SetMasterDetail( "SAT", "Transportistas",                  {|| ( dbfSatCliT )->cCodTrn } )
+   oFr:SetMasterDetail( "SAT", "Usuarios",                        {|| ( dbfSatCliT )->cCodUsr } )
 
    oFr:SetMasterDetail( "Lineas de SAT", "Artículos",             {|| ( dbfSatCliL )->cRef } )
    oFr:SetMasterDetail( "Lineas de SAT", "Ofertas",               {|| ( dbfSatCliL )->cRef } )
@@ -10837,6 +10827,7 @@ Static Function DataReport( oFr )
    oFr:SetResyncPair(   "SAT", "Agentes" )
    oFr:SetResyncPair(   "SAT", "Formas de pago" )
    oFr:SetResyncPair(   "SAT", "Transportistas" )
+   oFr:SetResyncPair(   "SAT", "Usuarios" )
 
    oFr:SetResyncPair(   "Lineas de SAT", "Artículos" )
    oFr:SetResyncPair(   "Lineas de SAT", "Ofertas" )
@@ -11221,14 +11212,14 @@ Return nil
 
 //---------------------------------------------------------------------------//
 
-Function sTotSatCli( cSatsupuesto, dbfMaster, dbfLine, dbfIva, dbfDiv, cDivRet, lExcCnt )
+Function sTotSatCli( cSat, dbfMaster, dbfLine, dbfIva, dbfDiv, cDivRet, lExcCnt )
 
    local sTotal
 
-   nTotSatCli( cSatsupuesto, dbfMaster, dbfLine, dbfIva, dbfDiv, nil, nil, cDivRet, .f., lExcCnt )
+   nTotSatCli( cSat, dbfMaster, dbfLine, dbfIva, dbfDiv, nil, nil, cDivRet, .f., lExcCnt )
 
    sTotal                                 := sTotal()
-   sTotal:nTotSatruto                     := nTotBrt
+   sTotal:nTotalBruto                     := nTotBrt
    sTotal:nTotalNeto                      := nTotNet
    sTotal:nTotalIva                       := nTotIva
    sTotal:aTotalIva                       := aTotIva

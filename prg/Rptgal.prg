@@ -2527,6 +2527,15 @@ Function TTpvRestaurante()
 
 Return nil
 
+Function cTypeVersion( cType )
+
+Return nil 
+
+Function TComercio()
+
+Return nil
+
+
 /*
 //---------------------------------------------------------------------------//
 
