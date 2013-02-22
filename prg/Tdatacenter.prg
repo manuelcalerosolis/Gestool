@@ -1821,6 +1821,37 @@ METHOD BuildEmpresa()
    ::AddEmpresaTable( oDataTable )
 
    /*
+   SAT Clientes
+   */
+
+   oDataTable              := TDataTable()
+   oDataTable:cName        := cPatEmp() + "SatCliT"
+   oDataTable:cDataFile    := cPatEmp( , .t. ) + "SatCliT.Dbf"
+   oDataTable:cIndexFile   := cPatEmp( , .t. ) + "SatCliT.Cdx"
+   ::AddEmpresaTable( oDataTable )
+
+   oDataTable              := TDataTable()
+   oDataTable:cName        := cPatEmp() + "SatCliL"
+   oDataTable:cDataFile    := cPatEmp( , .t. ) + "SatCliL.Dbf"
+   oDataTable:cIndexFile   := cPatEmp( , .t. ) + "SatCliL.Cdx"
+   oDataTable:lTrigger     := .f.
+   ::AddEmpresaTable( oDataTable )
+
+   oDataTable              := TDataTable()
+   oDataTable:cName        := cPatEmp() + "SatCliI"
+   oDataTable:cDataFile    := cPatEmp( , .t. ) + "SatCliI.Dbf"
+   oDataTable:cIndexFile   := cPatEmp( , .t. ) + "SatCliI.Cdx"
+   oDataTable:lTrigger     := .f.
+   ::AddEmpresaTable( oDataTable )
+
+   oDataTable              := TDataTable()
+   oDataTable:cName        := cPatEmp() + "SatCliD"
+   oDataTable:cDataFile    := cPatEmp( , .t. ) + "SatCliD.Dbf"
+   oDataTable:cIndexFile   := cPatEmp( , .t. ) + "SatCliD.Cdx"
+   oDataTable:lTrigger     := .f.
+   ::AddEmpresaTable( oDataTable )
+
+   /*
    Presupuestos Clientes
    */
 

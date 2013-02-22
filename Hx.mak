@@ -84,6 +84,7 @@ Extage.prg              \
 Lqdalm.prg              \
 Pedcli.prg              \
 Precli.prg              \
+Satcli.prg 				\
 Factcli.prg             \
 Facant.prg              \
 Facrec.prg              \
@@ -460,6 +461,7 @@ Extage.obj              \
 Lqdalm.obj              \
 Pedcli.obj              \
 Precli.obj              \
+Satcli.obj 				\
 Factcli.obj             \
 Facant.obj              \
 Facrec.obj              \
@@ -862,6 +864,7 @@ $(OBJ)\Extage.obj               +
 $(OBJ)\Lqdalm.obj               +
 $(OBJ)\Pedcli.obj               +
 $(OBJ)\Precli.obj               +
+$(OBJ)\Satcli.obj               +
 $(OBJ)\Factcli.obj              +
 $(OBJ)\Facant.obj               +
 $(OBJ)\Facrec.obj               +

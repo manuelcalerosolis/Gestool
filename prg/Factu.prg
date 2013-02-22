@@ -2487,12 +2487,22 @@ Function CreateAcceso( oWnd )
    // Ventas-------------------------------------------------------------------
 
    oGrupo               := TGrupoAcceso()
-   oGrupo:nBigItems     := 7
+   oGrupo:nBigItems     := 8
    oGrupo:cPrompt       := 'Ventas'
    oGrupo:cLittleBitmap := "Document_user1_16"
    oGrupo:cBigBitmap    := "Document_user1_32"
 
    if IsStandard()
+
+   oItem                := oItemVentas:Add()
+   oItem:oGroup         := oGrupo
+   oItem:cPrompt        := 'S.A.T.'
+   oItem:cMessage       := 'Acceso al S.A.T. de clientes'
+   oItem:bAction        := {|| SatCli( "01099", oWnd ) }
+   oItem:cId            := "01099"
+   oItem:cBmp           := "Notebook_user1_16"
+   oItem:cBmpBig        := "Notebook_user1_32"
+   oItem:lShow          := .f.
 
    oItem                := oItemVentas:Add()
    oItem:oGroup         := oGrupo

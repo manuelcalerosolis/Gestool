@@ -51,73 +51,74 @@ Definición de la base de datos de albaranes a CLIENTES
 #define _CCODTAR                  28
 #define _CCODRUT                  29
 #define _CNUMPED                  30
-#define _NTIPOALB                 31
-#define _CNUMFAC                  32
-#define _LMAYOR                   33
-#define _NTARIFA                  34
-#define _CDTOESP                  35
-#define _NDTOESP                  36
-#define _CDPP                     37
-#define _NDPP                     38
-#define _CDTOUNO                  39
-#define _NDTOUNO                  40
-#define _CDTODOS                  41
-#define _NDTODOS                  42
-#define _NDTOCNT                  43
-#define _NDTORAP                  44
-#define _NDTOPUB                  45
-#define _NDTOPGO                  46
-#define _NDTOPTF                  47
-#define _LRECARGO                 48
-#define _NPCTCOMAGE               49
-#define _LSNDDOC                  50
-#define _CDIVALB                  51
-#define _NVDVALB                  52
-#define _CRETPOR                  53
-#define _CRETMAT                  54
-#define _CNUMDOC                  55
-#define _CSUPED                   56
-#define _LIVAINC                  57
-#define _NREGIVA                  58
-#define _LGENLQD                  59
-#define _NNUMORD                  60
-#define _CSUFORD                  61
-#define _DFECORD                  62
-#define _NIVAMAN                  63
-#define _NMANOBR                  64
-#define _CCODTRN                  65
-#define _NKGSTRN                  66
-#define _LCLOALB                  67
-#define _CCODUSR                  68
-#define _DFECCRE                  69
-#define _CTIMCRE                  70
-#define _DFECENV                  71
-#define _CCODGRP                  72
-#define _LIMPRIMIDO               73
-#define _DFECIMP                  74
-#define _CHORIMP                  75
-#define _CCODDLG                  76
-#define _NDTOATP                  77
-#define _NSBRATP                  78
-#define _NMONTAJE                 79
-#define _DFECENTR                 80
-#define _DFECSAL                  81
-#define _LALQUILER                82
-#define _CMANOBR                  83
-#define _LORDCAR                  84
-#define _CNUMTIK                  85
-#define _CTLFCLI                  86
-#define _NTOTNET                  87
-#define _NTOTIVA                  88
-#define _NTOTREQ                  89
-#define _NTOTALB                  90
-#define _NTOTPAG                  91
-#define _LOPERPV                  92
-#define _CBANCO                   93
-#define _CENTBNC                  94
-#define _CSUCBNC                  95
-#define _CDIGBNC                  96
-#define _CCTABNC                  97
+#define _CNUMPRE                  31
+#define _NTIPOALB                 32
+#define _CNUMFAC                  33 
+#define _LMAYOR                   34
+#define _NTARIFA                  35
+#define _CDTOESP                  36
+#define _NDTOESP                  37
+#define _CDPP                     38
+#define _NDPP                     39
+#define _CDTOUNO                  40
+#define _NDTOUNO                  41
+#define _CDTODOS                  42
+#define _NDTODOS                  43
+#define _NDTOCNT                  44
+#define _NDTORAP                  45
+#define _NDTOPUB                  46
+#define _NDTOPGO                  47
+#define _NDTOPTF                  48
+#define _LRECARGO                 49
+#define _NPCTCOMAGE               50
+#define _LSNDDOC                  51
+#define _CDIVALB                  52
+#define _NVDVALB                  53
+#define _CRETPOR                  54
+#define _CRETMAT                  55
+#define _CNUMDOC                  56
+#define _CSUPED                   57
+#define _LIVAINC                  58
+#define _NREGIVA                  59
+#define _LGENLQD                  60
+#define _NNUMORD                  61
+#define _CSUFORD                  62
+#define _DFECORD                  63
+#define _NIVAMAN                  64
+#define _NMANOBR                  65
+#define _CCODTRN                  66
+#define _NKGSTRN                  67
+#define _LCLOALB                  68
+#define _CCODUSR                  69
+#define _DFECCRE                  70
+#define _CTIMCRE                  71
+#define _DFECENV                  72
+#define _CCODGRP                  73
+#define _LIMPRIMIDO               74
+#define _DFECIMP                  75
+#define _CHORIMP                  76
+#define _CCODDLG                  77
+#define _NDTOATP                  78
+#define _NSBRATP                  79
+#define _NMONTAJE                 80
+#define _DFECENTR                 81
+#define _DFECSAL                  82
+#define _LALQUILER                83
+#define _CMANOBR                  84
+#define _LORDCAR                  85
+#define _CNUMTIK                  86
+#define _CTLFCLI                  87
+#define _NTOTNET                  88
+#define _NTOTIVA                  89
+#define _NTOTREQ                  90
+#define _NTOTALB                  91
+#define _NTOTPAG                  92
+#define _LOPERPV                  93
+#define _CBANCO                   94
+#define _CENTBNC                  95
+#define _CSUCBNC                  96
+#define _CDIGBNC                  97
+#define _CCTABNC                  98
 
 /*
 Definici¢n de la base de datos de lineas de detalle
@@ -374,6 +375,10 @@ static dbfPedCliR
 static dbfPedCliP
 static dbfPedCliI
 static dbfPedCliD
+static dbfPreCliT
+static dbfPreCliL
+static dbfPreCliI
+static dbfPreCliD
 static dbfFacCliT
 static dbfFacCliL
 static dbfFacCliS
@@ -451,6 +456,9 @@ static oTipArt
 static oGrpFam
 static oFraPub
 
+static oBtnPre
+static oBtnGrp
+
 static aNumPed          := {}
 static oGetAlb
 static oGetEnt
@@ -473,7 +481,7 @@ static oTotAlbLin
 
 #ifndef __PDA__
 
-static bEdtRec          := { | aTmp, aGet, dbfAlbCliT, oBrw, bWhen, bValid, nMode, cCodPed | EdtRec( aTmp, aGet, dbfAlbCliT, oBrw, bWhen, bValid, nMode, cCodPed ) }
+static bEdtRec          := { | aTmp, aGet, dbfAlbCliT, oBrw, bWhen, bValid, nMode, aNumDoc | EdtRec( aTmp, aGet, dbfAlbCliT, oBrw, bWhen, bValid, nMode, aNumDoc ) }
 static bEdtDet          := { | aTmp, aGet, dbfAlbCliL, oBrw, bWhen, bValid, nMode, aTmpAlb | EdtDet( aTmp, aGet, dbfAlbCliL, oBrw, bWhen, bValid, nMode, aTmpAlb ) }
 static bEdtInc          := { | aTmp, aGet, dbfAlbCliI, oBrw, bWhen, bValid, nMode, aTmpLin | EdtInc( aTmp, aGet, dbfAlbCliI, oBrw, bWhen, bValid, nMode, aTmpLin ) }
 static bEdtDoc          := { | aTmp, aGet, dbfAlbCliD, oBrw, bWhen, bValid, nMode, aTmpLin | EdtDoc( aTmp, aGet, dbfAlbCliD, oBrw, bWhen, bValid, nMode, aTmpLin ) }
@@ -527,6 +535,18 @@ STATIC FUNCTION OpenFiles()
 
       USE ( cPatEmp() + "ALBCLIS.DBF" ) NEW VIA ( cDriver() ) SHARED ALIAS ( cCheckArea( "ALBCLIS", @dbfAlbCliS ) )
       SET ADSINDEX TO ( cPatEmp() + "ALBCLIS.CDX" ) ADDITIVE
+
+      USE ( cPatEmp() + "PRECLIT.DBF" ) NEW VIA ( cDriver() ) SHARED ALIAS ( cCheckArea( "PRECLIT", @dbfPreCliT ) )
+      SET ADSINDEX TO ( cPatEmp() + "PRECLIT.CDX" ) ADDITIVE
+
+      USE ( cPatEmp() + "PRECLIL.DBF" ) NEW VIA ( cDriver() ) SHARED ALIAS ( cCheckArea( "PRECLIT", @dbfPreCliL ) )
+      SET ADSINDEX TO ( cPatEmp() + "PRECLIL.CDX" ) ADDITIVE
+
+      USE ( cPatEmp() + "PRECLII.DBF" ) NEW VIA ( cDriver() ) SHARED ALIAS ( cCheckArea( "PRECLII", @dbfPreCliI ) )
+      SET ADSINDEX TO ( cPatEmp() + "PRECLII.CDX" ) ADDITIVE
+
+      USE ( cPatEmp() + "PRECLID.DBF" ) NEW VIA ( cDriver() ) SHARED ALIAS ( cCheckArea( "PRECLID", @dbfPreCliD ) )
+      SET ADSINDEX TO ( cPatEmp() + "PRECLID.CDX" ) ADDITIVE
 
       USE ( cPatEmp() + "PEDCLIT.DBF" ) NEW VIA ( cDriver() ) SHARED ALIAS ( cCheckArea( "PEDCLIT", @dbfPedCliT ) )
       SET ADSINDEX TO ( cPatEmp() + "PEDCLIT.CDX" ) ADDITIVE
@@ -933,6 +953,18 @@ STATIC FUNCTION CloseFiles()
    end if
    if !Empty( dbfTikT )
       ( dbfTikT      )->( dbCloseArea() )
+   end if
+   if !Empty( dbfPreCliT )
+      ( dbfPreCliT )->( dbCloseArea() )
+   end if
+   if !Empty( dbfPreCliL )
+      ( dbfPreCliL )->( dbCloseArea() )
+   end if
+   if !Empty( dbfPreCliI )
+      ( dbfPreCliI )->( dbCloseArea() )
+   end if
+   if !Empty( dbfPreCliD )
+      ( dbfPreCliD )->( dbCloseArea() )
    end if
    if !Empty( dbfPedCliT )
       ( dbfPedCliT   )->( dbCloseArea() )
@@ -1445,7 +1477,7 @@ RETURN NIL
 
 //--------------------------------------------------------------------------//
 
-FUNCTION AlbCli( oMenuItem, oWnd, cCodCli, cCodArt, cCodPed )
+FUNCTION AlbCli( oMenuItem, oWnd, cCodCli, cCodArt, aNumDoc )
 
    local oRpl
    local oSnd
@@ -1464,13 +1496,17 @@ FUNCTION AlbCli( oMenuItem, oWnd, cCodCli, cCodArt, cCodPed )
    DEFAULT  oWnd        := oWnd()
    DEFAULT  cCodCli     := ""
    DEFAULT  cCodArt     := ""
-   DEFAULT  cCodPed     := ""
+   DEFAULT  aNumDoc     := Array( 2 )
 
    nLevel               := nLevelUsr( oMenuItem )
    if nAnd( nLevel, 1 ) != 0
       msgStop( "Acceso no permitido." )
       return .f.
    end if
+
+   if IsChar( aNumDoc )
+      aNumDoc           := { aNumDoc, nil }
+   end if 
 
    /*
    Cerramos todas las ventanas
@@ -1500,9 +1536,9 @@ FUNCTION AlbCli( oMenuItem, oWnd, cCodCli, cCodArt, cCodPed )
       MRU      "Document_plain_user1_16";
       BITMAP   clrTopArchivos ;
       ALIAS    ( dbfAlbCliT );
-      APPEND   ( WinAppRec( oWndBrw:oBrw, bEdtRec, dbfAlbCliT, cCodCli, cCodArt, cCodPed ) );
-      DUPLICAT ( WinDupRec( oWndBrw:oBrw, bEdtRec, dbfAlbCliT, cCodCli, cCodArt, cCodPed ) );
-      EDIT     ( WinEdtRec( oWndBrw:oBrw, bEdtRec, dbfAlbCliT, cCodCli, cCodArt, cCodPed ) );
+      APPEND   ( WinAppRec( oWndBrw:oBrw, bEdtRec, dbfAlbCliT, cCodCli, cCodArt, aNumDoc ) );
+      DUPLICAT ( WinDupRec( oWndBrw:oBrw, bEdtRec, dbfAlbCliT, cCodCli, cCodArt, aNumDoc ) );
+      EDIT     ( WinEdtRec( oWndBrw:oBrw, bEdtRec, dbfAlbCliT, cCodCli, cCodArt, aNumDoc ) );
       ZOOM     ( WinZooRec( oWndBrw:oBrw, bEdtRec, dbfAlbCliT ) );
       DELETE   ( WinDelRec( oWndBrw:oBrw, dbfAlbCliT, {|| QuiAlbCli() } ) ) ;
       LEVEL    nLevel ;
@@ -2066,7 +2102,7 @@ FUNCTION AlbCli( oMenuItem, oWnd, cCodCli, cCodArt, cCodPed )
 
    EnableAcceso()
 
-   if !Empty( cCodCli ) .or. !Empty( cCodArt ) .or. !Empty( cCodPed )
+   if !Empty( cCodCli ) .or. !Empty( cCodArt ) .or. !Empty( aNumDoc[ 1 ] ) .or. !Empty( aNumDoc[ 2 ] )
 
       if !Empty( oWndBrw )
          oWndBrw:RecAdd()
@@ -2074,7 +2110,7 @@ FUNCTION AlbCli( oMenuItem, oWnd, cCodCli, cCodArt, cCodPed )
 
       cCodCli  := nil
       cCodArt  := nil
-      cCodPed  := nil
+      aNumDoc  := Array( 2 )
 
    end if
 
@@ -2082,7 +2118,7 @@ Return .t.
 
 //---------------------------------------------------------------------------//
 
-STATIC FUNCTION EdtRec( aTmp, aGet, dbfAlbCliT, oBrw, cCodCli, cCodArt, nMode, cCodPed )
+STATIC FUNCTION EdtRec( aTmp, aGet, dbfAlbCliT, oBrw, cCodCli, cCodArt, nMode, aNumDoc )
 
 	local oDlg
    local oBrwLin
@@ -2111,7 +2147,13 @@ STATIC FUNCTION EdtRec( aTmp, aGet, dbfAlbCliT, oBrw, cCodCli, cCodArt, nMode, c
 
    DEFAULT cCodCli   := ""
    DEFAULT cCodArt   := ""
-   DEFAULT cCodPed   := ""
+
+   do case
+      case IsNil( aNumDoc )
+         aNumDoc     := Array( 5 )
+      case IsArray( aNumDoc )
+         ASize( aNumDoc, 5 )
+   end if
 
    /*
    Este valor los guaradamos para detectar los posibles cambios----------------
@@ -2149,10 +2191,6 @@ STATIC FUNCTION EdtRec( aTmp, aGet, dbfAlbCliT, oBrw, cCodCli, cCodArt, nMode, c
          aTmp[ _LIVAINC   ]   := uFieldEmpresa( "lIvaInc" )
          aTmp[ _NIVAMAN   ]   := nIva( dbfIva, cDefIva() )
          aTmp[ _CMANOBR   ]   := Padr( "Gastos", 250 )
-
-         if !Empty( cCodPed )
-            aTmp[ _CNUMPED ]  := cCodPed
-         end if
 
       case nMode == DUPL_MODE
 
@@ -2205,10 +2243,10 @@ STATIC FUNCTION EdtRec( aTmp, aGet, dbfAlbCliT, oBrw, cCodCli, cCodArt, nMode, c
    end if
 
    /*
-   tipo de presupuesto
+   tipo de presupuesto---------------------------------------------------------
    */
 
-   cTipAlb           := aTipAlb[ if( aTmp[ _LALQUILER ], 2, 1  ) ]
+   cTipAlb                    := aTipAlb[ if( aTmp[ _LALQUILER ], 2, 1  ) ]
 
    /*
    Comineza la transaccion-----------------------------------------------------
@@ -2388,12 +2426,12 @@ STATIC FUNCTION EdtRec( aTmp, aGet, dbfAlbCliT, oBrw, cCodCli, cCodArt, nMode, c
       Codigo de Tarifa_______________________________________________________________
       */
 
-      REDEFINE GET aGet[_CCODTAR] VAR aTmp[_CCODTAR] ;
+      REDEFINE GET aGet[ _CCODTAR ] VAR aTmp[ _CCODTAR ] ;
 			ID 		180 ;
          WHEN     ( lWhen .and. oUser():lAdministrador() ) ;
-         VALID    ( cTarifa( aGet[_CCODTAR], oSay[ 5 ] ) ) ;
+         VALID    ( cTarifa( aGet[ _CCODTAR ], oSay[ 5 ] ) ) ;
          BITMAP   "LUPA" ;
-         ON HELP  ( BrwTarifa( aGet[_CCODTAR], oSay[ 5 ] ) ) ;
+         ON HELP  ( BrwTarifa( aGet[ _CCODTAR ], oSay[ 5 ] ) ) ;
 			COLOR 	CLR_GET ;
 			OF 		oFld:aDialogs[1]
 
@@ -3078,7 +3116,7 @@ STATIC FUNCTION EdtRec( aTmp, aGet, dbfAlbCliT, oBrw, cCodCli, cCodArt, nMode, c
 			OF 		oFld:aDialogs[1] ;
          ACTION   ( WinZooRec( oBrwLin, bEdtDet, dbfTmpLin, .f., nMode, aTmp ) )
 
-		REDEFINE BUTTON ;
+		REDEFINE BUTTON oBtnGrp;
          ID       512 ;
 			OF 		oFld:aDialogs[1] ;
          WHEN     ( nMode == APPD_MODE .and. Empty( aTmp[ _CNUMPED ] ) ) ;
@@ -3173,6 +3211,14 @@ STATIC FUNCTION EdtRec( aTmp, aGet, dbfAlbCliT, oBrw, cCodCli, cCodArt, nMode, c
          COLOR    CLR_GET ;
 			OF 		oFld:aDialogs[1]
 
+      REDEFINE BTNBMP oBtnPre ;
+         ID       601 ;
+         OF       oFld:aDialogs[1] ;
+         RESOURCE "Notebook_user1_16" ;
+         NOBORDER ;
+         TOOLTIP  "Importar presupuesto" ;
+         ACTION   ( BrwPreCli( aGet[ _CNUMPRE ], dbfPreCliT, dbfPreCliL, dbfIva, dbfDiv, dbfFPago, aGet[ _LIVAINC ] ) )
+
          /*
          Comentado para Gorka
          VALID    IsCodSuAlb( aTmp[_CCODSUALB], dbfAlbCliT, nMode );
@@ -3187,6 +3233,13 @@ STATIC FUNCTION EdtRec( aTmp, aGet, dbfAlbCliT, oBrw, cCodCli, cCodArt, nMode, c
          ON HELP  ( BrwPedCli( aGet[ _CNUMPED ], dbfPedCliT, dbfPedCliL, dbfIva, dbfDiv, dbfFPago, aGet[ _LIVAINC ] ),;
                     RecalculaTotal( aTmp ) ) ;
          BITMAP   "LUPA" ;
+         OF       oFld:aDialogs[1]
+
+      REDEFINE GET aGet[ _CNUMPRE ] VAR aTmp[ _CNUMPRE ] ;
+         ID       151 ;
+         WHEN     ( .f. ) ;
+         VALID    ( cPreCli( aGet, aTmp, oBrwLin, nMode ), RecalculaTotal( aTmp ), SetDialog( aGet, oSayDias, oSayTxtDias, oSayGetRnt, oGetRnt ) ) ;
+         PICTURE  "@R #/#########/##" ;
          OF       oFld:aDialogs[1]
 
       REDEFINE GET aGet[ _LFACTURADO ] VAR cEstAlb;
@@ -3296,19 +3349,16 @@ STATIC FUNCTION EdtRec( aTmp, aGet, dbfAlbCliT, oBrw, cCodCli, cCodArt, nMode, c
 
 		REDEFINE GET aGet[_CCONDENT] VAR aTmp[_CCONDENT] ;
 			ID 		230 ;
-			COLOR 	CLR_GET ;
          WHEN     ( lWhen ) ;
 			OF 		oFld:aDialogs[2]
 
       REDEFINE GET aGet[_MOBSERV] VAR aTmp[_MOBSERV] MEMO ;
          ID       240 ;
-			COLOR 	CLR_GET ;
          WHEN     ( lWhen ) ;
          OF       oFld:aDialogs[2]
 
       REDEFINE GET aGet[_MCOMENT] VAR aTmp[_MCOMENT] MEMO ;
          ID       250 ;
-			COLOR 	CLR_GET ;
          WHEN     ( lWhen ) ;
          OF       oFld:aDialogs[2]
 
@@ -3681,22 +3731,17 @@ STATIC FUNCTION EdtRec( aTmp, aGet, dbfAlbCliT, oBrw, cCodCli, cCodArt, nMode, c
    end case
 
    ACTIVATE DIALOG   oDlg ;
-      ON INIT        (  EdtRecMenu( aTmp, oDlg ), ;
-                        SetDialog( aGet, oSayDias, oSayTxtDias, oSayGetRnt, oGetRnt ),;
-                        oBrwLin:Load() ,;
-                        oBrwInc:Load() ,;
-                        oBrwPgo:Load() ,;
-                        if( !Empty( cCodPed ), aGet[ _CNUMPED ]:lValid(), ) );
+      ON INIT        (  InitEdtRec( aTmp, aGet, oDlg, oSayDias, oSayTxtDias, oSayGetRnt, oGetRnt, oBrwLin, oBrwInc, oBrwPgo, aNumDoc ) );
       ON PAINT       (  RecalculaTotal( aTmp ) );
       CENTER
 
-   oMenu:End()
+   oMenu:end()
 
    oFont:end()
 
    oBmpEmp:end()
    oBmpDiv:end()
-   oBmpGeneral:End()
+   oBmpGeneral:end()
 
    oBrwLin:CloseData()
    oBrwPgo:CloseData()
@@ -3709,6 +3754,32 @@ STATIC FUNCTION EdtRec( aTmp, aGet, dbfAlbCliT, oBrw, cCodCli, cCodArt, nMode, c
 RETURN ( oDlg:nResult == IDOK )
 
 //---------------------------------------------------------------------------//
+
+Static Function InitEdtRec( aTmp, aGet, oDlg, oSayDias, oSayTxtDias, oSayGetRnt, oGetRnt, oBrwLin, oBrwInc, oBrwPgo, aNumDoc )
+
+   EdtRecMenu( aTmp, oDlg )
+                        
+   SetDialog( aGet, oSayDias, oSayTxtDias, oSayGetRnt, oGetRnt )
+
+   oBrwLin:Load()
+   oBrwInc:Load()
+   oBrwPgo:Load()
+
+   if IsArray( aNumDoc ) .and. !Empty( aNumDoc[ 1 ] )
+      aGet[ _CNUMPED ]:cText( aNumDoc[ 1 ] )
+      aGet[ _CNUMPED ]:lValid()
+   end if
+
+   if IsArray( aNumDoc ) .and. !Empty( aNumDoc[ 2 ] )
+      aGet[ _CNUMPRE ]:cText( aNumDoc[ 2 ] )
+      aGet[ _CNUMPRE ]:lValid()
+   end if
+
+RETURN ( nil )
+
+//---------------------------------------------------------------------------//
+
+
 
 Static Function EdtRecMenu( aTmp, oDlg )
 
@@ -4490,7 +4561,7 @@ STATIC FUNCTION EdtDet( aTmp, aGet, dbfAlbCliL, oBrw, lTotLin, cCodArtEnt, nMode
          WHEN     ( nMode != ZOOM_MODE ) ;
          OF       oFld:aDialogs[ 2 ]
 
-      REDEFINE GET aGet[_MOBSLIN] VAR aTmp[_MOBSLIN] ;
+      REDEFINE GET aGet[ _MOBSLIN ] VAR aTmp[ _MOBSLIN ] ;
          MEMO ;
          ID       100 ;
          WHEN     ( nMode != ZOOM_MODE ) ;
@@ -6295,6 +6366,8 @@ STATIC FUNCTION GrpPed( aGet, aTmp, oBrw )
    */
 
    if oDlg:nResult == IDOK .AND. Len( aAlbaranes ) >= 1
+
+      oBtnPre:Hide()
 
       /*
       A¤adimos los albaranes seleccionado para despues
@@ -13493,7 +13566,7 @@ Function aColAlbCli()
    aAdd( aColAlbCli, { "nCosDiv",   "N", 16, 6, "Precio de costo",               "cPouDivAlb",        "", "( cDbfCol )" } )
    aAdd( aColAlbCli, { "nPvpRec",   "N", 16, 6, "Precio de venta recomendado",   "cPouDivAlb",        "", "( cDbfCol )" } )
    aAdd( aColAlbCli, { "cAlmLin",   "C",  3, 0, "Código del almacen",            "",                  "", "( cDbfCol )" } )
-   aAdd( aColAlbCli, { "lIvaLin",   "L",  1, 0, cImp() + " incluido",                  "",                  "", "( cDbfCol )" } )
+   aAdd( aColAlbCli, { "lIvaLin",   "L",  1, 0, cImp() + " incluido",            "",                  "", "( cDbfCol )" } )
    aAdd( aColAlbCli, { "nValImp",   "N", 16, 6, "Importe de impuesto",           "",                  "", "( cDbfCol )" } )
    aAdd( aColAlbCli, { "cCodImp",   "C",  3, 0, "Código del IVMH",               "",                  "", "( cDbfCol )" } )
    aAdd( aColAlbCli, { "lLote",     "L",  1, 0, "",                              "",                  "", "( cDbfCol )" } )
@@ -13587,6 +13660,7 @@ Function aItmAlbCli()
    aAdd( aItmAlbCli, { "CCODTAR"   ,"C",  5, 0, "Código de tarifa" ,                                     "'@!'",               "", "( cDbf )"} )
    aAdd( aItmAlbCli, { "CCODRUT"   ,"C",  4, 0, "Código de ruta" ,                                       "'@!'",               "", "( cDbf )"} )
    aAdd( aItmAlbCli, { "CNUMPED"   ,"C", 12, 0, "Número del pedido" ,                                    "",                   "", "( cDbf )"} )
+   aAdd( aItmAlbCli, { "cNumPre"   ,"C", 12, 0, "Número del presupuesto" ,                               "",                   "", "( cDbf )"} )
    aAdd( aItmAlbCli, { "NTIPOALB"  ,"N",  1, 0, "Tipo de albarán" ,                                      "",                   "", "( cDbf )"} )
    aAdd( aItmAlbCli, { "CNUMFAC"   ,"C", 12, 0, "Número del documento facturado" ,                       "",                   "", "( cDbf )"} )
    aAdd( aItmAlbCli, { "LMAYOR"    ,"L",  1, 0, "" ,                                                     "",                   "", "( cDbf )"} )
@@ -16580,7 +16654,7 @@ STATIC FUNCTION SaveDeta( aTmp, aTmpAlb, oFld, aGet, oBrw, bmpImage, oDlg, nMode
       return nil
    end if
 
-   if !lMoreIva( aTmp[_NIVA] )
+   if !lMoreIva( aTmp[ _NIVA ] )
       return nil
    end if
 
@@ -17168,8 +17242,8 @@ STATIC FUNCTION EndTrans( aTmp, aGet, oBrw, oBrwInc, nMode, oDlg )
    local nNumAlb
    local cSufAlb
    local cNumPed
-   local aNumPed
    local dFecAlb
+   local aAlbaran
 
    if Empty( aTmp[ _CSERALB ] )
       aTmp[ _CSERALB ]  := "A"
@@ -17384,12 +17458,6 @@ STATIC FUNCTION EndTrans( aTmp, aGet, oBrw, oBrwInc, nMode, oDlg )
 
    WinGather( aTmp, , dbfAlbCliT, , nMode )
 
-#ifdef __PDA__
-   if ApoloMsgNoYes( "Imprimiendo albaranes.", "¿Desea continuar?" )
-      pdaGenAlbCli( oBrw, dbfAlbCliT, dbfAlbCliL )
-   end if
-#endif
-
    /*
    Ahora escribimos en el fichero definitivo-----------------------------------
 	*/
@@ -17469,11 +17537,11 @@ STATIC FUNCTION EndTrans( aTmp, aGet, oBrw, oBrwInc, nMode, oDlg )
 
    if Len( aAlbaranes ) != 0
 
-      for each aNumPed in aAlbaranes
+      for each aAlbaran in aAlbaranes
 
-         oStock:SetEstadoPedCli( aNumPed[ 3 ], .t., cSerAlb + Str( nNumAlb ) + cSufAlb )
+         oStock:SetEstadoPedCli( aAlbaran[ 3 ], .t., cSerAlb + Str( nNumAlb ) + cSufAlb )
 
-         if dbSeekInOrd( aNumPed[ 3 ], "nNumPed", dbfPedCliT )
+         if dbSeekInOrd( aAlbaran[ 3 ], "nNumPed", dbfPedCliT )
 
             if dbLock( dbfPedCliT )
                ( dbfPedCliT )->cNumAlb    := cSerAlb + Str( nNumAlb ) + cSufAlb
@@ -17498,20 +17566,12 @@ STATIC FUNCTION EndTrans( aTmp, aGet, oBrw, oBrwInc, nMode, oDlg )
 
       RollBackTransaction()
 
-#ifndef __PDA__
       msgStop( "Imposible almacenar documento" + CRLF + ErrorMessage( oError ) )
-#endif
 
    END SEQUENCE
    ErrorBlock( oBlock )
 
-#ifndef __PDA__
    oMsgText()
-
-   if !( "PDA" $ cParamsMain() )
-      EndProgress()
-   end if
-#endif
 
    oDlg:Enable()
    oDlg:End( IDOK )
@@ -17939,169 +17999,6 @@ Return ( nil )
 
 //--------------------------------------------------------------------------//
 
-Static Function OldEditarNumeroSerie( aTmp, oStock, nMode )
-
-   local n
-   local oDlg
-   local nTotUnd
-   local cCodArt
-   local cCodAlm
-   local oBrwSer
-   local aNumSer
-   local aValSer
-   local cPreFix  := Space( 18 )
-   local oSerIni
-   local nSerIni  := 0
-   local oSerFin
-   local nSerFin  := 0
-   local oNumGen
-   local nNumGen  := 0
-   local oSaySer
-   local cSaySer  := ""
-   local oProSer
-   local nProSer
-
-   DEFAULT nMode  := APPD_MODE
-
-   nTotUnd        := Abs( nTotNAlbCli( aTmp ) )
-
-   if nTotUnd == 0
-      MsgStop( "No hay unidades para asignar números de serie." )
-      Return ( nil )
-   end if
-
-   n              := 1
-
-   cCodArt        := aTmp[ _CREF    ]
-   cCodAlm        := aTmp[ _CALMLIN ]
-
-   aNumSer        := Afill( Array( nTotUnd ), Space( 30 ) )
-   aValSer        := Afill( Array( nTotUnd ), .f. )
-
-   if ( dbfTmpSer )->( dbSeek( Str( aTmp[ _NNUMLIN ], 4 ) + aTmp[ _CREF ] ) )
-      while ( Str( ( dbfTmpSer )->nNumLin, 4 ) + ( dbfTmpSer )->cRef == Str( aTmp[ _NNUMLIN ], 4 ) + aTmp[ _CREF ] ) .and. !( dbfTmpSer )->( Eof() )
-         if ( n <= nTotUnd )
-            aNumSer[ n ]   := ( dbfTmpSer )->cNumSer
-         end if
-         ( dbfTmpSer )->( dbSkip() )
-         n++
-      end while
-   end if
-
-   DEFINE DIALOG oDlg RESOURCE "VTANUMSER"
-
-      REDEFINE GET nTotUnd ;
-			ID 		100 ;
-         PICTURE  MasUnd() ;
-         WHEN     .f. ;
-         OF       oDlg
-
-      REDEFINE GET cPreFix ;
-         ID       110 ;
-         WHEN     ( nMode != ZOOM_MODE ) ;
-         OF       oDlg
-
-      REDEFINE GET oSerIni VAR nSerIni ;
-         ID       120 ;
-         PICTURE  "99999999999999999999" ;
-         SPINNER ;
-         WHEN     ( nMode != ZOOM_MODE ) ;
-         VALID    ( oSerFin:cText( nSerIni + nTotUnd ), .t. ) ;
-         OF       oDlg
-
-      REDEFINE GET oSerFin VAR nSerFin ;
-         ID       130 ;
-         PICTURE  "99999999999999999999" ;
-         WHEN     .f. ;
-         OF       oDlg
-
-      REDEFINE GET oNumGen VAR nNumGen ;
-         ID       140 ;
-         SPINNER ;
-         WHEN     ( nMode != ZOOM_MODE ) ;
-         PICTURE  "99999999999999999999" ;
-         OF       oDlg
-
-      REDEFINE BUTTON ;
-         ID       500 ;
-         OF       oDlg ;
-         WHEN     ( nMode != ZOOM_MODE ) ;
-         ACTION   ( oDlg:Disable(), GenNumSer( cPreFix, aNumSer, nSerIni, nNumGen, oBrwSer, oProSer ), lValSer( cCodArt, cCodAlm, aNumSer, aValSer, nTotUnd, oStock, oBrwSer, oProSer, oSaySer ), oDlg:Enable() )
-
-      oBrwSer                 := TXBrowse():New( oDlg )
-
-      oBrwSer:bClrSel         := {|| { CLR_BLACK, Rgb( 229, 229, 229 ) } }
-      oBrwSer:bClrSelFocus    := {|| { CLR_BLACK, Rgb( 167, 205, 240 ) } }
-
-      oBrwSer:lHScroll        := .f.
-      oBrwSer:lRecordSelector := .t.
-      oBrwSer:lFastEdit       := .t.
-
-      oBrwSer:nMarqueeStyle   := MARQSTYLE_HIGHLCELL
-
-      oBrwSer:SetArray( aNumSer, , , .f. )
-
-      oBrwSer:nColSel         := 2
-
-      with object ( oBrwSer:addCol() )
-         :cHeader             := "N."
-         :bStrData            := {|| Trans( oBrwSer:nArrayAt, "999999" ) }
-         :nWidth              := 60
-         :nDataStrAlign       := 1
-         :nHeadStrAlign       := 1
-      end with
-
-      with object ( oBrwSer:addCol() )
-         :cHeader             := "Serie"
-         :bEditValue          := {|| aNumSer[ oBrwSer:nArrayAt ] }
-         :nWidth              := 220
-         if nMode != ZOOM_MODE
-            :nEditType        := 1
-         end if
-         :bOnPostEdit         := {|o,x| aNumSer[ oBrwSer:nArrayAt ] := x, aValSer[ oBrwSer:nArrayAt ] := oStock:lValidNumeroSerie( cCodArt, cCodAlm, x ) }
-      end whit
-
-      with object ( oBrwSer:addCol() )
-         :cHeader             := "Es."
-         :nHeadBmpNo          := 4
-         :bStrData            := {|| "" }
-         :bBmpData            := {|| if( aValSer[ oBrwSer:nArrayAt ], 3, 1 ) }
-         :nWidth              := 20
-         :AddResource( "Bullet_Square_Red_16" )
-         :AddResource( "Bullet_Square_Yellow_16" )
-         :AddResource( "Bullet_Square_Green_16" )
-         :AddResource( "Informacion_16" )
-      end with
-
-      oBrwSer:CreateFromResource( 150 )
-
-      REDEFINE SAY oSaySer VAR cSaySer ;
-         ID       230 ;
-         OF       oDlg
-
-      oProSer     := TMeter():ReDefine( 240, { | u | if( pCount() == 0, nProSer, nProSer := u ) }, 10, oDlg, .f., , , .t., rgb( 255,255,255 ), , rgb( 128,255,0 ) )
-
-      REDEFINE BUTTON ;
-         ID       510 ;
-         OF       oDlg ;
-         WHEN     ( nMode != ZOOM_MODE ) ;
-         ACTION   ( if( lChkSer( aValSer, nTotUnd, oProSer, oBrwSer ), SalvarNumeroSerie( aNumSer, aTmp, oProSer, oDlg ), ) )
-
-      REDEFINE BUTTON ;
-         ID       520 ;
-         OF       oDlg ;
-         ACTION   ( oDlg:End() )
-
-      oDlg:bStart := {|| oDlg:Disable(), lValSer( cCodArt, cCodAlm, aNumSer, aValSer, nTotUnd, oStock, oBrwSer, oProSer, oSaySer ), oDlg:Enable() }
-
-      oDlg:AddFastKey( VK_F5, {|| if( lChkSer( aValSer, nTotUnd, oProSer, oBrwSer ), SalvarNumeroSerie( aNumSer, aTmp, oProSer, oDlg ), ) } )
-
-   ACTIVATE DIALOG oDlg CENTER
-
-Return ( nil )
-
-//--------------------------------------------------------------------------//
-
 Static Function lValSer( cCodArt, cCodAlm, aNumSer, aValSer, nTotUnd, oStock, oBrwSer, oProSer, oSaySer )
 
    local n
@@ -18258,4 +18155,248 @@ Static Function EliminarNumeroSerie( aTmp )
 
 Return ( nil )
 
-//----------------------------------------------------------------------------//
+//---------------------------------------------------------------------------//
+//
+// Importa presupuestos de clientes
+//
+
+STATIC FUNCTION cPreCli( aGet, aTmp, oBrw, nMode )
+
+   local cDesAlb
+   local cPedido  := aGet[ _CNUMPRE ]:VarGet()
+   local lValid   := .f.
+
+   if nMode != APPD_MODE .OR. Empty( cPedido )
+      return .t.
+   end if
+
+   if dbSeekInOrd( cPedido, "nNumPre", dbfPreCliT )
+
+      if ( dbfPreCliT )->lEstado
+
+         MsgStop( "Presupuesto ya aprobado" )
+         lValid   := .f.
+
+      else
+
+         CursorWait()
+
+         aGet[ _CCODCLI ]:cText( ( dbfPreCliT )->CCODCLI )
+         aGet[ _CCODCLI ]:lValid()
+         aGet[ _CCODCLI ]:Disable()
+
+         aGet[ _CNOMCLI ]:cText( ( dbfPreCliT )->CNOMCLI )
+         aGet[ _CDIRCLI ]:cText( ( dbfPreCliT )->CDIRCLI )
+         aGet[ _CPOBCLI ]:cText( ( dbfPreCliT )->CPOBCLI )
+         aGet[ _CPRVCLI ]:cText( ( dbfPreCliT )->CPRVCLI )
+         aGet[ _CPOSCLI ]:cText( ( dbfPreCliT )->CPOSCLI )
+         aGet[ _CDNICLI ]:cText( ( dbfPreCliT )->CDNICLI )
+         aGet[ _CTLFCLI ]:cText( ( dbfPreCliT )->CTLFCLI )
+
+         aGet[ _CCODALM ]:cText( ( dbfPreCliT )->CCODALM )
+         aGet[ _CCODALM ]:lValid()
+
+         aGet[ _CCODCAJ ]:cText( ( dbfPreCliT )->cCodCaj )
+         aGet[ _CCODCAJ ]:lValid()
+
+         aGet[ _CCODPAGO]:cText( ( dbfPreCliT )->CCODPGO )
+         aGet[ _CCODPAGO]:lValid()
+
+         aGet[ _CCODAGE ]:cText( ( dbfPreCliT )->CCODAGE )
+         aGet[ _CCODAGE ]:lValid()
+
+         aGet[ _NPCTCOMAGE]:cText( ( dbfPreCliT )->nPctComAge )
+
+         aGet[ _CCODTAR ]:cText( ( dbfPreCliT )->CCODTAR )
+         aGet[ _CCODTAR ]:lValid()
+
+         aGet[ _CCODOBR ]:cText( ( dbfPreCliT )->CCODOBR )
+         aGet[ _CCODOBR ]:lValid()
+
+         aGet[ _NTARIFA ]:cText( ( dbfPreCliT )->nTarifa )
+
+         aGet[ _CCODTRN ]:cText( ( dbfPreCliT )->cCodTrn )
+         aGet[ _CCODTRN ]:lValid() 
+
+         aGet[ _LIVAINC ]:Click( ( dbfPreCliT )->lIvaInc )
+         aGet[ _LRECARGO]:Click( ( dbfPreCliT )->lRecargo )
+         aGet[ _LOPERPV ]:Click( ( dbfPreCliT )->lOperPv )
+
+         aGet[ _CCONDENT]:cText( ( dbfPreCliT )->cCondEnt )
+         aGet[ _MCOMENT ]:cText( ( dbfPreCliT )->mComent )
+         aGet[ _MOBSERV ]:cText( ( dbfPreCliT )->mObserv )
+
+         aGet[ _CDTOESP ]:cText( ( dbfPreCliT )->cDtoEsp )
+         aGet[ _CDPP    ]:cText( ( dbfPreCliT )->cDpp    )
+         aGet[ _NDTOESP ]:cText( ( dbfPreCliT )->nDtoEsp )
+         aGet[ _NDPP    ]:cText( ( dbfPreCliT )->nDpp    )
+         aGet[ _CDTOUNO ]:cText( ( dbfPreCliT )->cDtoUno )
+         aGet[ _NDTOUNO ]:cText( ( dbfPreCliT )->nDtoUno )
+         aGet[ _CDTODOS ]:cText( ( dbfPreCliT )->cDtoDos )
+         aGet[ _NDTODOS ]:cText( ( dbfPreCliT )->nDtoDos )
+         aGet[ _CMANOBR ]:cText( ( dbfPreCliT )->cManObr )
+         aGet[ _NIVAMAN ]:cText( ( dbfPreCliT )->nIvaMan )
+         aGet[ _NMANOBR ]:cText( ( dbfPreCliT )->nManObr )
+         aGet[ _NBULTOS ]:cText( ( dbfPreCliT )->nBultos )
+
+         aTmp[ _CCODGRP]         := ( dbfPreCliT )->cCodGrp
+         aTmp[ _LMODCLI]         := ( dbfPreCliT )->lModCli
+
+         /*
+         Datos de alquileres---------------------------------------------------
+         */
+
+         aTmp[ _LALQUILER ]      := ( dbfPreCliT )->lAlquiler
+         aTmp[ _DFECENTR  ]      := ( dbfPreCliT )->dFecEntr
+         aTmp[ _DFECSAL   ]      := ( dbfPreCliT )->dFecSal
+
+         if ( dbfPreCliL )->( dbSeek( cPedido ) )
+
+            ( dbfTmpLin )->( dbAppend() )
+            cDesAlb                    := ""
+            cDesAlb                    += "Presupuesto Nº " + ( dbfPreCliT )->cSerPre + "/" + AllTrim( Str( ( dbfPreCliT )->nNumPre ) ) + "/" + ( dbfPreCliT )->cSufPre
+            cDesAlb                    += " - Fecha " + Dtoc( ( dbfPreCliT )->dFecPre )
+            ( dbfTmpLin )->MLNGDES     := cDesAlb
+            ( dbfTmpLin )->LCONTROL    := .t.
+
+            while ( (dbfPreCliL)->cSerPre + Str( (dbfPreCliL)->nNumPre ) + (dbfPreCliL)->cSufPre == cPedido )
+
+               (dbfTmpLin)->( dbAppend() )
+
+               (dbfTmpLin)->nNumLin    := (dbfPreCliL)->nNumLin
+               (dbfTmpLin)->cRef       := (dbfPreCliL)->cRef
+               (dbfTmpLin)->cDetalle   := (dbfPreCliL)->cDetAlle
+               (dbfTmpLin)->mLngDes    := (dbfPreCliL)->mLngDes
+               (dbfTmpLin)->mNumSer    := (dbfPreCliL)->mNumSer
+               (dbfTmpLin)->nPreUnit   := (dbfPreCliL)->nPreDiv
+               (dbfTmpLin)->nPntVer    := (dbfPreCliL)->nPntVer
+               (dbfTmpLin)->nImpTrn    := (dbfPreCliL)->nImpTrn
+               (dbfTmpLin)->nPESOKG    := (dbfPreCliL)->nPesOkg
+               (dbfTmpLin)->cPESOKG    := (dbfPreCliL)->cPesOkg
+               (dbfTmpLin)->cUnidad    := (dbfPreCliL)->cUnidad
+               (dbfTmpLin)->nVolumen   := (dbfPreCliL)->nVolumen
+               (dbfTmpLin)->cVolumen   := (dbfPreCliL)->cVolumen
+               (dbfTmpLin)->nIVA       := (dbfPreCliL)->nIva
+               (dbfTmpLin)->nReq       := (dbfPreCliL)->nReq
+               (dbfTmpLin)->cUNIDAD    := (dbfPreCliL)->cUnidad
+               (dbfTmpLin)->nDTO       := (dbfPreCliL)->nDto
+               (dbfTmpLin)->nDTOPRM    := (dbfPreCliL)->nDtoPrm
+               (dbfTmpLin)->nCOMAGE    := (dbfPreCliL)->nComAge
+               (dbfTmpLin)->lTOTLIN    := (dbfPreCliL)->lTotLin
+               (dbfTmpLin)->nDtoDiv    := (dbfPreCliL)->nDtoDiv
+               (dbfTmpLin)->nCtlStk    := (dbfPreCliL)->nCtlStk
+               (dbfTmpLin)->nCosDiv    := (dbfPreCliL)->nCosDiv
+               (dbfTmpLin)->nPvpRec    := (dbfPreCliL)->nPvpRec
+               (dbfTmpLin)->cTipMov    := (dbfPreCliL)->cTipMov
+               (dbfTmpLin)->cAlmLin    := (dbfPreCliL)->cAlmLin
+               (dbfTmpLin)->cCodImp    := (dbfPedCLiL)->cCodImp
+               (dbfTmpLin)->nValImp    := (dbfPreCliL)->nValImp
+               (dbfTmpLin)->CCODPR1    := (dbfPreCliL)->cCodPr1
+               (dbfTmpLin)->CCODPR2    := (dbfPreCliL)->cCodPr2
+               (dbfTmpLin)->CVALPR1    := (dbfPreCliL)->cValPr1
+               (dbfTmpLin)->CVALPR2    := (dbfPreCliL)->cValPr2
+               (dbfTmpLin)->nCanEnt    := (dbfPreCLiL)->nCanPre
+               (dbfTmpLin)->nUniCaja   := (dbfPreCLiL)->nUniCaja
+               (dbfTmpLin)->nUndKit    := (dbfPreCLiL)->nUndKit
+               (dbfTmpLin)->lKitArt    := (dbfPreCLiL)->lKitArt
+               (dbfTmpLin)->lKitChl    := (dbfPreCLiL)->lKitChl
+               (dbfTmpLin)->lKitPrc    := (dbfPreCliL)->lKitPrc
+               (dbfTmpLin)->nMesGrt    := (dbfPreCLiL)->nMesGrt
+               (dbfTmpLin)->lLote      := (dbfPreCliL)->lLote
+               (dbfTmpLin)->nLote      := (dbfPreCliL)->nLote
+               (dbfTmpLin)->cLote      := (dbfPreCliL)->cLote
+               (dbfTmpLin)->lMsgVta    := (dbfPreCliL)->lMsgVta
+               (dbfTmpLin)->lNotVta    := (dbfPreCliL)->lNotVta
+               (dbfTmpLin)->lImpLin    := (dbfPreCliL)->lImpLin
+               (dbfTmpLin)->cCodTip    := (dbfPreCliL)->cCodTip
+               (dbfTmpLin)->mObsLin    := (dbfPreCliL)->mObsLin
+               (dbfTmpLin)->Descrip    := (dbfPedCliL)->Descrip
+               (dbfTmpLin)->cCodPrv    := (dbfPreCliL)->cCodPrv
+               (dbfTmpLin)->cNomPrv    := (dbfPreCliL)->cNomPrv
+               (dbfTmpLin)->cImagen    := (dbfPreCliL)->cImagen
+               (dbfTmpLin)->cCodFam    := (dbfPreCliL)->cCodFam
+               (dbfTmpLin)->cGrpFam    := (dbfPreCliL)->cGrpFam
+               (dbfTmpLin)->cRefPrv    := (dbfPreCliL)->cRefPrv
+               (dbfTmpLin)->dFecEnt    := (dbfPreCliL)->dFecEnt
+               (dbfTmpLin)->dFecSal    := (dbfPreCliL)->dFecSal
+               (dbfTmpLin)->nPreAlq    := (dbfPreCliL)->nPreAlq
+               (dbfTmpLin)->lAlquiler  := (dbfPreCliL)->lAlquiler
+               (dbfTmpLin)->nNumMed    := (dbfPreCliL)->nNumMed
+               (dbfTmpLin)->nMedUno    := (dbfPreCliL)->nMedUno
+               (dbfTmpLin)->nMedDos    := (dbfPreCliL)->nMedDos
+               (dbfTmpLin)->nMedTre    := (dbfPreCliL)->nMedTre
+               (dbfTmpLin)->nPuntos    := (dbfPreCliL)->nPuntos
+               (dbfTmpLin)->nValPnt    := (dbfPreCliL)->nValPnt
+               (dbfTmpLin)->nDtoPnt    := (dbfPreCliL)->nDtoPnt
+               (dbfTmpLin)->nIncPnt    := (dbfPreCliL)->nIncPnt
+               (dbfTmpLin)->lControl   := (dbfPreCliL)->lControl
+               (dbfTmpLin)->lLinOfe    := (dbfPreCliL)->lLinOfe
+
+               (dbfPreCliL)->( dbSkip() )
+
+            end while
+
+            ( dbfTmpLin )->( dbGoTop() )
+
+            /*
+            Pasamos las incidencias del presupuesto----------------------------
+            */
+
+            if ( dbfPreCliI )->( dbSeek( cPedido ) )
+
+               while ( dbfPreCliI )->cSerPre + Str( ( dbfPreCliI )->nNumPre ) + ( dbfPreCliI )->cSufPre == cPedido .and. !( dbfPreCliI )->( Eof() )
+                  dbPass( dbfPreCliI, dbfTmpInc, .t. )
+                  ( dbfPreCliI )->( dbSkip() )
+               end while
+
+            end if
+
+            ( dbfPreCliI )->( dbGoTop() )
+
+            /*
+            Pasamos los documentos del presupuesto-----------------------------
+            */
+
+            if ( dbfPreCliD )->( dbSeek( cPedido ) )
+
+               while ( dbfPreCliD )->cSerPre + Str( ( dbfPreCliD )->nNumPre ) + ( dbfPreCliD )->cSufPre == cPedido .and. !( dbfPreCliD )->( Eof() )
+                  dbPass( dbfPreCliD, dbfTmpDoc, .t. )
+                  ( dbfPreCliD )->( dbSkip() )
+               end while
+
+            end if 
+
+            ( dbfPreCliD )->( dbGoTop() )
+
+            oBrw:refresh()
+            oBrw:setFocus()
+
+         end if
+
+         lValid   := .t.
+
+         if ( dbfPreCliT )->( dbRLock() )
+            ( dbfPreCliT )->lEstado := .t.
+            ( dbfPreCliT )->( dbUnlock() )
+         end if
+
+         CursorWE()
+
+      end if
+
+      aGet[ _CNUMPED ]:Hide()
+      aGet[ _CNUMPRE ]:Show()
+
+      oBtnPre:Disable()
+
+      oBtnGrp:bWhen  := {|| .f. }
+
+   else
+
+      MsgStop( "Presupuesto no existe" )
+
+   end if
+
+RETURN lValid
+
+//---------------------------------------------------------------------------//

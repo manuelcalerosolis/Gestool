@@ -303,7 +303,7 @@ METHOD GenIndices( oMsg )
       if !Empty( ::aProgress[ 3 ] )
 
          if ::lNotGrupo .and. ::lDatos
-            ::nProgress[ 3 ]     := 48
+            ::nProgress[ 3 ]     := 49
          end if
 
          ::aProgress[ 3 ]:SetTotal( ::nProgress[ 3 ] )
@@ -320,6 +320,7 @@ METHOD GenIndices( oMsg )
          ::SetText( "Generando índices : Facturas rectificativas de proveedor", ::aProgress[ 3 ] );   rxRctPrv( ::cPathEmp )
          ::SetText( "Generando índices : Recibos de proveedor", ::aProgress[ 3 ] );                   rxRecPrv( ::cPathEmp )
          ::SetText( "Generando índices : Presupuestos de clientes", ::aProgress[ 3 ] );               rxPreCli( ::cPathEmp )
+         ::SetText( "Generando índices : S.A.T. de clientes", ::aProgress[ 3 ] );                     rxSatCli( ::cPathEmp )
          ::SetText( "Generando índices : Pedidos de clientes", ::aProgress[ 3 ] );                    rxPedCli( ::cPathEmp )
          ::SetText( "Generando índices : Albaranes de clientes", ::aProgress[ 3 ] );                  rxAlbCli( ::cPathEmp )
          ::SetText( "Generando índices : Facturas de clientes", ::aProgress[ 3 ] );                   rxFacCli( ::cPathEmp )
