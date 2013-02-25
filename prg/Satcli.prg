@@ -1621,34 +1621,16 @@ FUNCTION SatCli( oMenuItem, oWnd, cCodCli, cCodArt )
             TOOLTIP  "Modificar obra" ;
             FROM     oRotor ;
 
-      DEFINE BTNSHELL RESOURCE "CLIPBOARD_EMPTY_USER1_" OF oWndBrw ;
-            ALLOW    EXIT ;
-            ACTION   ( if( !( dbfSatCliT )->lEstado, PedCli( nil, nil, nil, nil, ( dbfSatCliT )->cSerSat + Str( ( dbfSatCliT )->nNumSat ) + ( dbfSatCliT )->cSufSat ), MsgStop( "El S.A.T. ya ha sido aceptado" ) ) );
-            TOOLTIP  "Generar pedido" ;
-            FROM     oRotor ;
-
       DEFINE BTNSHELL RESOURCE "DOCUMENT_PLAIN_USER1_" OF oWndBrw ;
             ALLOW    EXIT ;
-            ACTION   ( if( ( dbfSatCliT )->lEstado, SatCli( nil, nil, nil, nil, { nil, ( dbfSatCliT )->cSerSat + Str( ( dbfSatCliT )->nNumSat ) + ( dbfSatCliT )->cSufSat } ), MsgStop( "El S.A.T. ya ha sido aceptado" ) ) );
-            TOOLTIP  "Generar Satarán" ;
+            ACTION   ( if( !( dbfSatCliT )->lEstado, AlbCli( nil, nil, nil, nil, { nil, ( dbfSatCliT )->cSerSat + Str( ( dbfSatCliT )->nNumSat ) + ( dbfSatCliT )->cSufSat } ), MsgStop( "El S.A.T. ya ha sido aceptado" ) ) );
+            TOOLTIP  "Generar albarán" ;
             FROM     oRotor ;
 
       DEFINE BTNSHELL RESOURCE "DOCUMENT_USER1_" OF oWndBrw ;
             ALLOW    EXIT ;
             ACTION   ( if( !( dbfSatCliT )->lEstado, FactCli( nil, nil, nil, nil, nil, { ( dbfSatCliT )->cSerSat + Str( ( dbfSatCliT )->nNumSat ) + ( dbfSatCliT )->cSufSat, nil, nil, nil } ), MsgStop( "El S.A.T. ya ha sido aceptado" ) ) );
             TOOLTIP  "Generar factura" ;
-            FROM     oRotor ;
-
-      DEFINE BTNSHELL RESOURCE "Note_" OF oWndBrw ;
-            ALLOW    EXIT ;
-            ACTION   ( SatCliNotas() );
-            TOOLTIP  "Generar nota de agenda" ;
-            FROM     oRotor ;
-
-      DEFINE BTNSHELL RESOURCE "CASHIER_USER1_" OF oWndBrw ;
-            ALLOW    EXIT ;
-            ACTION   ( if( !( dbfSatCliT )->lEstado .and. Empty( ( dbfSatCliT )->cNumTik ), FrontTpv( nil, nil, nil, nil, .f., .f., { ( dbfSatCliT )->cSerSat + Str( ( dbfSatCliT )->nNumSat ) + ( dbfSatCliT )->cSufSat, nil, nil } ), MsgStop( "Satsupuesto aceptado o convertido a ticket" ) ) );
-            TOOLTIP  "Convertir a ticket" ;
             FROM     oRotor ;
 
    DEFINE BTNSHELL RESOURCE "END" GROUP OF oWndBrw ;
@@ -7469,6 +7451,9 @@ FUNCTION rxSatCli( cPath, oMeter )
       ( dbfSatCliT )->( ordCondSet( "!Deleted()", {||!Deleted()}  ) )
       ( dbfSatCliT )->( ordCreate( cPath + "SatCliT.Cdx", "cCodUsr", "cCodUsr + Dtos( dFecCre ) + cTimCre", {|| Field->cCodUsr + Dtos( Field->dFecCre ) + Field->cTimCre } ) )
 
+      ( dbfSatCliT )->( ordCondSet( "!Deleted()", {||!Deleted()}  ) )
+      ( dbfSatCliT )->( ordCreate( cPath + "SatCliT.Cdx", "cNumAlb", "cNumAlb", {|| Field->cNumAlb } ) )
+
       ( dbfSatCliT )->( ordCondSet( "!Deleted()", {|| !Deleted() } ) )
       ( dbfSatCliT )->( ordCreate( cPath + "SatCliT.Cdx", "iNumSat", "'32' + cSerSat + Str( nNumSat ) + Space( 1 ) + cSufSat", {|| '32' + Field->cSerSat + Str( Field->nNumSat ) + Space( 1 ) + Field->cSufSat } ) )
 
@@ -8756,6 +8741,7 @@ function aItmSatCli()
    aAdd( aItmSatCli, { "nTotReq",   "N", 16,  6, "Total recargo" ,                                    "", "", "( cDbf )"} )
    aAdd( aItmSatCli, { "nTotSat",   "N", 16,  6, "Total S.A.T." ,                                     "", "", "( cDbf )"} )
    aAdd( aItmSatCli, { "lOperPV",   "L",  1,  0, "Lógico para operar con punto verde" ,               "", "", "( cDbf )", .t.} )
+   aAdd( aItmSatCli, { "cNumAlb",  "C",  12,  0, "Número del albarán donde se agrupa" , "",               "", "( cDbf )", nil } )
 
 return ( aItmSatCli )
 
@@ -9017,7 +9003,6 @@ STATIC FUNCTION RecSatCli( aTmpSat )
          */
 
          ( dbfTmpLin )->nCtlStk  := ( dbfArticulo )->nCtlStock
-         ( dbfTmpLin )->nPvpRec  := ( dbfArticulo )->PvpRec
          ( dbfTmpLin )->nCosDiv  := nCosto( nil, dbfArticulo, dbfKit )
 
          /*
@@ -10074,7 +10059,6 @@ Static Function AppendKit( uTmpLin, aTmpSat )
             ( dbfTmpLin )->nVolumen    := ( dbfArticulo )->nVolumen
             ( dbfTmpLin )->cVolumen    := ( dbfArticulo )->cVolumen
 
-            ( dbfTmpLin )->nPvpRec     := ( dbfArticulo )->PvpRec
             ( dbfTmpLin )->cCodImp     := ( dbfArticulo )->cCodImp
             ( dbfTmpLin )->lLote       := ( dbfArticulo )->lLote
             ( dbfTmpLin )->nLote       := ( dbfArticulo )->nLote
