@@ -315,37 +315,9 @@ RETURN ( Self )
 
 METHOD Actualizaweb() Class TGrpFam
 
-   ?"Entramos a actualizar el grupo de familia"
-   ?::oDbf:cNomGrp
-   ?::oDbf:cCodWeb
-
    if ::lPubGrp()    
-
-      with object ( TComercio():New() )
-
-         if :ConectBBDD()
-
-            ?"conectado"
-
-            if !::oDbf:lPubInt .and. ::oDbf:cCodWeb != 0
-
-               ?"Elimino"
-
-            else
-
-               ?"Update total"
-
-               :UpdateGrupoCategoriesPrestashop( ::oDbf )
-
-            end if
-
-            :DisconectBBDD()
-
-         end if   
-
-      end with
-
-   end if
+      TComercio():New():ActualizaGrupoCategoriesPrestashop( ::oDbf )
+   end if   
 
 Return .t.
 
