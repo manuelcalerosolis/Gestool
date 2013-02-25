@@ -13,7 +13,7 @@ REQUEST DBFCDX
 
 #define CLR_BAR                  14197607
 
-#define _MENUITEM_               "01099"
+#define _MENUITEM_               "01098"
 
 /*
 Definici¢n de la base de datos de S.A.T. a clientes
@@ -393,7 +393,7 @@ static oTipSat
 static oUndMedicion
 static cFiltroUsuario   := ""
 
-static nTarifaSatcio    := 0
+static nTarifaPrecio    := 0
 
 static oComisionLinea
 static nComisionLinea   := 0
@@ -424,7 +424,7 @@ FUNCTION GenSatCli( nDevice, cCaption, cCodDoc, cPrinter, nCopies )
    DEFAULT nCopies      := if( nCopiasDocumento( ( dbfSatCliT )->cSerSat, "nSatCli", dbfCount ) == 0, Max( Retfld( ( dbfSatCliT )->cCodCli, dbfClient, "CopiasF" ), 1 ), nCopiasDocumento( ( dbfSatCliT )->cSerSat, "nSatCli", dbfCount ) )
 
    if Empty( cCodDoc )
-      cCodDoc           := cFirstDoc( "RC", dbfDoc )
+      cCodDoc           := cFirstDoc( "SC", dbfDoc )
    end if
 
    if !lExisteDocumento( cCodDoc, dbfDoc )
@@ -1196,7 +1196,7 @@ FUNCTION SatCli( oMenuItem, oWnd, cCodCli, cCodArt )
                "Nombre",;
                "Obra",;
                "Agente";
-      MRU      "Notebook_user1_16";
+      MRU      "Power-drill_user1_16";
       BITMAP   clrTopArchivos ;
       ALIAS    ( dbfSatCliT );
       APPEND   ( WinAppRec( oWndBrw:oBrw, bEdtRec, dbfSatCliT, cCodCli, cCodArt ) );
@@ -1621,34 +1621,16 @@ FUNCTION SatCli( oMenuItem, oWnd, cCodCli, cCodArt )
             TOOLTIP  "Modificar obra" ;
             FROM     oRotor ;
 
-      DEFINE BTNSHELL RESOURCE "CLIPBOARD_EMPTY_USER1_" OF oWndBrw ;
-            ALLOW    EXIT ;
-            ACTION   ( if( !( dbfSatCliT )->lEstado, PedCli( nil, nil, nil, nil, ( dbfSatCliT )->cSerSat + Str( ( dbfSatCliT )->nNumSat ) + ( dbfSatCliT )->cSufSat ), MsgStop( "El S.A.T. ya ha sido aceptado" ) ) );
-            TOOLTIP  "Generar pedido" ;
-            FROM     oRotor ;
-
       DEFINE BTNSHELL RESOURCE "DOCUMENT_PLAIN_USER1_" OF oWndBrw ;
             ALLOW    EXIT ;
-            ACTION   ( if( ( dbfSatCliT )->lEstado, SatCli( nil, nil, nil, nil, { nil, ( dbfSatCliT )->cSerSat + Str( ( dbfSatCliT )->nNumSat ) + ( dbfSatCliT )->cSufSat } ), MsgStop( "El S.A.T. ya ha sido aceptado" ) ) );
-            TOOLTIP  "Generar Satarán" ;
+            ACTION   ( if( !( dbfSatCliT )->lEstado, AlbCli( nil, nil, nil, nil, { nil, ( dbfSatCliT )->cSerSat + Str( ( dbfSatCliT )->nNumSat ) + ( dbfSatCliT )->cSufSat } ), MsgStop( "El S.A.T. ya ha sido aceptado" ) ) );
+            TOOLTIP  "Generar albarán" ;
             FROM     oRotor ;
 
       DEFINE BTNSHELL RESOURCE "DOCUMENT_USER1_" OF oWndBrw ;
             ALLOW    EXIT ;
             ACTION   ( if( !( dbfSatCliT )->lEstado, FactCli( nil, nil, nil, nil, nil, { ( dbfSatCliT )->cSerSat + Str( ( dbfSatCliT )->nNumSat ) + ( dbfSatCliT )->cSufSat, nil, nil, nil } ), MsgStop( "El S.A.T. ya ha sido aceptado" ) ) );
             TOOLTIP  "Generar factura" ;
-            FROM     oRotor ;
-
-      DEFINE BTNSHELL RESOURCE "Note_" OF oWndBrw ;
-            ALLOW    EXIT ;
-            ACTION   ( SatCliNotas() );
-            TOOLTIP  "Generar nota de agenda" ;
-            FROM     oRotor ;
-
-      DEFINE BTNSHELL RESOURCE "CASHIER_USER1_" OF oWndBrw ;
-            ALLOW    EXIT ;
-            ACTION   ( if( !( dbfSatCliT )->lEstado .and. Empty( ( dbfSatCliT )->cNumTik ), FrontTpv( nil, nil, nil, nil, .f., .f., { ( dbfSatCliT )->cSerSat + Str( ( dbfSatCliT )->nNumSat ) + ( dbfSatCliT )->cSufSat, nil, nil } ), MsgStop( "Satsupuesto aceptado o convertido a ticket" ) ) );
-            TOOLTIP  "Convertir a ticket" ;
             FROM     oRotor ;
 
    DEFINE BTNSHELL RESOURCE "END" GROUP OF oWndBrw ;
@@ -1858,12 +1840,12 @@ STATIC FUNCTION EdtRec( aTmp, aGet, dbfSatCliT, oBrw, cCodCli, cCodArt, nMode )
       REDEFINE FOLDER oFld ;
          ID       200 ;
          OF       oDlg ;
-         PROMPT   "&Satsupuesto",;
+         PROMPT   "&S.A.T.",;
                   "Da&tos",;
                   "&Incidencias",;
                   "D&ocumentos" ;
-         DIALOGS  "PRECLI_1",;
-                  "PRECLI_2",;
+         DIALOGS  "SATCLI_1",;
+                  "SATCLI_2",;
                   "PEDCLI_3",;
                   "PEDCLI_4"
 
@@ -1942,7 +1924,7 @@ STATIC FUNCTION EdtRec( aTmp, aGet, dbfSatCliT, oBrw, cCodCli, cCodArt, nMode )
          MAX      6 ;
          PICTURE  "9" ;
          VALID    ( ChangeTarifaCabecera( aTmp[ _NTARIFA ], dbfTmpLin, oBrwLin ) ) ;
-         WHEN     ( nMode != ZOOM_MODE .and. ( lUsrMaster() .or. oUser():lCambiarSatcio() ) );
+         WHEN     ( nMode != ZOOM_MODE .and. ( lUsrMaster() .or. oUser():lCambiarPrecio() ) );
          OF       oFld:aDialogs[1]
 
       REDEFINE GET oRieCli VAR nRieCli;
@@ -1956,17 +1938,6 @@ STATIC FUNCTION EdtRec( aTmp, aGet, dbfSatCliT, oBrw, cCodCli, cCodArt, nMode )
          COLOR    CLR_GET ;
          WHEN     ( nMode != ZOOM_MODE .and. ( !aTmp[ _LMODCLI ] .or. oUser():lAdministrador() ) ) ;
          OF       oFld:aDialogs[1]
-
-      REDEFINE GET aGet[ _CCODUSR ] VAR aTmp[ _CCODUSR ];
-         ID       125 ;
-         WHEN     ( .f. ) ;
-         VALID    ( SetUsuario( aGet[ _CCODUSR ], oSay[ 10 ], nil, dbfUsr ) );
-         OF       oFld:aDialogs[2]
-
-      REDEFINE GET oSay[ 10 ] VAR cSay[ 10 ] ;
-         ID       126 ;
-         WHEN     ( .f. ) ;
-         OF       oFld:aDialogs[2]
 
 		/*
 		Tarifa_________________________________________________________________
@@ -2234,7 +2205,7 @@ STATIC FUNCTION EdtRec( aTmp, aGet, dbfSatCliT, oBrw, cCodCli, cCodArt, nMode )
       end with
 
       with object ( oBrwLin:AddCol() )
-         :cHeader             := "Satcio"
+         :cHeader             := "Precio"
          :bEditValue          := {|| nImpUSatCli( dbfTmpLin, nDouDiv ) }
          :cEditPicture        := cPouDiv
          :nWidth              := 80
@@ -2670,7 +2641,20 @@ STATIC FUNCTION EdtRec( aTmp, aGet, dbfSatCliT, oBrw, cCodCli, cCodArt, nMode )
          WHEN     ( ( dbfTmpLin )->( LastRec() ) == 0 ) ;
          OF       oFld:aDialogs[1]
 
-      //Segunda caja de dialogo
+      /*
+      Segunda caja de dialogo--------------------------------------------------
+      */
+
+      REDEFINE GET aGet[ _CCODUSR ] VAR aTmp[ _CCODUSR ];
+         ID       115 ;
+         WHEN     ( .f. ) ;
+         VALID    ( SetUsuario( aGet[ _CCODUSR ], oSay[ 10 ], nil, dbfUsr ) );
+         OF       oFld:aDialogs[2]
+
+      REDEFINE GET oSay[ 10 ] VAR cSay[ 10 ] ;
+         ID       116 ;
+         WHEN     ( .f. ) ;
+         OF       oFld:aDialogs[2]
 
       REDEFINE GET aGet[ _CCODDLG ] VAR aTmp[ _CCODDLG ] ;
          ID       300 ;
@@ -2724,20 +2708,11 @@ STATIC FUNCTION EdtRec( aTmp, aGet, dbfSatCliT, oBrw, cCodCli, cCodArt, nMode )
 			COLOR 	CLR_GET ;
          OF       oFld:aDialogs[2]
 
-     REDEFINE GET aGet[_NBULTOS] VAR aTmp[_NBULTOS];
+     REDEFINE GET aGet[ _NBULTOS ] VAR aTmp[ _NBULTOS ];
          ID       128 ;
 			SPINNER;
          PICTURE  "999" ;
 			WHEN 		( nMode != ZOOM_MODE ) ;
-			COLOR 	CLR_GET ;
-         OF       oFld:aDialogs[2]
-
-      REDEFINE GET aGet[ _NDIAVAL ] VAR aTmp[ _NDIAVAL ];
-         ID       219 ;
-         PICTURE  "999" ;
-			SPINNER;
-			WHEN 		( nMode != ZOOM_MODE ) ;
-			COLOR 	CLR_GET ;
          OF       oFld:aDialogs[2]
 
       /*
@@ -2760,28 +2735,19 @@ STATIC FUNCTION EdtRec( aTmp, aGet, dbfSatCliT, oBrw, cCodCli, cCodArt, nMode )
 		Comentarios_____________________________________________________________
 		*/
 
-      REDEFINE GET aGet[_DFECENT] VAR aTmp[_DFECENT];
-         ID       127 ;
-			SPINNER;
-			WHEN 		( nMode != ZOOM_MODE ) ;
-			COLOR 	CLR_GET ;
-         OF       oFld:aDialogs[2]
-
-		REDEFINE GET aGet[_CCONDENT] VAR aTmp[_CCONDENT] ;
+		REDEFINE GET aGet[ _CCONDENT ] VAR aTmp[ _CCONDENT ] ;
 			ID 		230 ;
-			COLOR 	CLR_GET ;
 			WHEN 		( nMode != ZOOM_MODE ) ;
 			OF 		oFld:aDialogs[2]
 
-		REDEFINE GET aGet[_MCOMENT] VAR aTmp[_MCOMENT] MEMO ;
+		REDEFINE GET aGet[ _MCOMENT ] VAR aTmp[ _MCOMENT ] MEMO ;
          ID       250 ;
 			COLOR 	CLR_GET ;
 			WHEN 		( nMode != ZOOM_MODE ) ;
 			OF 		oFld:aDialogs[2]
 
-		REDEFINE GET aGet[_MOBSERV] VAR aTmp[_MOBSERV] MEMO ;
+		REDEFINE GET aGet[ _MOBSERV ] VAR aTmp[ _MOBSERV ] MEMO ;
          ID       240 ;
-			COLOR 	CLR_GET ;
 			WHEN 		( nMode != ZOOM_MODE ) ;
 			OF 		oFld:aDialogs[2]
 
@@ -3463,7 +3429,8 @@ STATIC FUNCTION EdtDet( aTmp, aGet, dbfSatCliL, oBrw, lTotLin, cCodArtEnt, nMode
 
       else
 
-      REDEFINE GET aGet[ _NVALIMP ] VAR aTmp[ _NVALIMP ] ;
+      REDEFINE GET aGet[ _NVALIMP ] ;
+         VAR      aTmp[ _NVALIMP ] ;
          ID       125 ;
          IDSAY    126 ;
          SPINNER ;
@@ -3471,11 +3438,12 @@ STATIC FUNCTION EdtDet( aTmp, aGet, dbfSatCliL, oBrw, lTotLin, cCodArtEnt, nMode
          PICTURE  cPouDiv ;
          ON CHANGE( RecalculaLinea( aTmp, aTmpSat, nDouDiv, oTotal, oRentLin, cCodDiv ) );
          ON HELP  ( oNewImp:nBrwImp( aGet[ _NVALIMP ] ) );
-         OF       oFld:aDialogs[1]
+         OF       oFld:aDialogs[ 1 ]
 
       end if
 
-      REDEFINE GET aGet[ _NCANSAT ] VAR aTmp[ _NCANSAT ];
+      REDEFINE GET aGet[ _NCANSAT ] ;
+         VAR      aTmp[ _NCANSAT ];
          ID       130 ;
          SPINNER ;
          WHEN     ( lUseCaj() .AND. nMode != ZOOM_MODE .AND. !lTotLin ) ;
@@ -3512,7 +3480,7 @@ STATIC FUNCTION EdtDet( aTmp, aGet, dbfSatCliL, oBrw, lTotLin, cCodArtEnt, nMode
          MAX      6 ;
          PICTURE  "9" ;
          VALID    ( aTmp[ _NTARLIN ] >= 1 .AND. aTmp[ _NTARLIN ] <= 6 );
-         WHEN     ( nMode != ZOOM_MODE .and. ( lUsrMaster() .or. oUser():lCambiarSatcio() ) );
+         WHEN     ( nMode != ZOOM_MODE .and. ( lUsrMaster() .or. oUser():lCambiarPrecio() ) );
          ON CHANGE( ChangeTarifa( aTmp, aGet, aTmpSat ), RecalculaLinea( aTmp, aTmpSat, nDouDiv, oTotal, oRentLin, cCodDiv ) );
          OF       oFld:aDialogs[1]
 
@@ -4172,7 +4140,7 @@ STATIC FUNCTION SetDlgMode( aTmp, aGet, nMode, oStkAct, oSayPr1, oSayPr2, oSayVp
    Solo pueden modificar los precios los administradores--------------------
    */
 
-   if ( Empty( aTmp[ _NPREDIV ] ) .or. lUsrMaster() .or. oUser():lCambiarSatcio() ) .and. nMode != ZOOM_MODE
+   if ( Empty( aTmp[ _NPREDIV ] ) .or. lUsrMaster() .or. oUser():lCambiarPrecio() ) .and. nMode != ZOOM_MODE
 
       aGet[ _NPREDIV ]:HardEnable()
       aGet[ _NDTO    ]:HardEnable()
@@ -4700,7 +4668,7 @@ STATIC FUNCTION PrnSerie()
    local nNumCop     := if( nCopiasDocumento( ( dbfSatCliT )->cSerSat, "nSatCli", dbfCount ) == 0, Max( Retfld( ( dbfSatCliT )->cCodCli, dbfClient, "CopiasF" ), 1 ), nCopiasDocumento( ( dbfSatCliT )->cSerSat, "nSatCli", dbfCount ) )
 
    if Empty( cFmtDoc )
-      cFmtDoc           := cSelPrimerDoc( "RC" )
+      cFmtDoc           := cSelPrimerDoc( "SC" )
    end if
 
    cSayFmt           := cNombreDoc( cFmtDoc )
@@ -4772,7 +4740,7 @@ STATIC FUNCTION PrnSerie()
       COLOR    CLR_GET ;
       VALID    ( cDocumento( oFmtDoc, oSayFmt, dbfDoc ) ) ;
       BITMAP   "LUPA" ;
-      ON HELP  ( BrwDocumento( oFmtDoc, oSayFmt, "RC" ) ) ;
+      ON HELP  ( BrwDocumento( oFmtDoc, oSayFmt, "SC" ) ) ;
       OF       oDlg
 
    REDEFINE GET oSayFmt VAR cSayFmt ;
@@ -6436,7 +6404,7 @@ end if
          Solo pueden modificar los precios los administradores-----------------
          */
 
-         if Empty( aTmp[ _NPREDIV ] ) .or. lUsrMaster() .or. oUser():lCambiarSatcio()
+         if Empty( aTmp[ _NPREDIV ] ) .or. lUsrMaster() .or. oUser():lCambiarPrecio()
             aGet[ _NPREDIV ]:HardEnable()
             aGet[ _NDTO    ]:HardEnable()
             aGet[ _NDTOPRM ]:HardEnable()
@@ -6494,8 +6462,8 @@ static function lBuscaOferta( cCodArt, aGet, aTmp, aTmpSat, dbfOferta, dbfArticu
       sOfeArt     := sOfertaArticulo( cCodArt, aTmpSat[ _CCODCLI ], aTmpSat[ _CCODGRP ], aTmp[ _NUNICAJA ], aTmpSat[ _DFECSAT ], dbfOferta, aTmp[ _NTARLIN ], , aTmp[_CCODPR1], aTmp[_CCODPR2], aTmp[_CVALPR1], aTmp[_CVALPR2], aTmp[ _CDIVSAT ], dbfArticulo, dbfDiv, dbfKit, dbfIva, aTmp[ _NCANSAT ], nTotalLinea )
 
       if !Empty( sOfeArt ) 
-         if ( sOfeArt:nSatcio != 0 )
-            aGet[ _NPREDIV ]:cText( sOfeArt:nSatcio )
+         if ( sOfeArt:nPrecio != 0 )
+            aGet[ _NPREDIV ]:cText( sOfeArt:nPrecio )
          end if 
          if ( sOfeArt:nDtoPorcentual != 0 )
             aGet[ _NDTO     ]:cText( sOfeArt:nDtoPorcentual )
@@ -7483,6 +7451,9 @@ FUNCTION rxSatCli( cPath, oMeter )
       ( dbfSatCliT )->( ordCondSet( "!Deleted()", {||!Deleted()}  ) )
       ( dbfSatCliT )->( ordCreate( cPath + "SatCliT.Cdx", "cCodUsr", "cCodUsr + Dtos( dFecCre ) + cTimCre", {|| Field->cCodUsr + Dtos( Field->dFecCre ) + Field->cTimCre } ) )
 
+      ( dbfSatCliT )->( ordCondSet( "!Deleted()", {||!Deleted()}  ) )
+      ( dbfSatCliT )->( ordCreate( cPath + "SatCliT.Cdx", "cNumAlb", "cNumAlb", {|| Field->cNumAlb } ) )
+
       ( dbfSatCliT )->( ordCondSet( "!Deleted()", {|| !Deleted() } ) )
       ( dbfSatCliT )->( ordCreate( cPath + "SatCliT.Cdx", "iNumSat", "'32' + cSerSat + Str( nNumSat ) + Space( 1 ) + cSufSat", {|| '32' + Field->cSerSat + Str( Field->nNumSat ) + Space( 1 ) + Field->cSufSat } ) )
 
@@ -7585,8 +7556,8 @@ STATIC FUNCTION BeginTrans( aTmp, lIndex )
 
    DEFAULT lIndex := .t.
 
-   /*oBlock         := ErrorBlock( {| oError | ApoloBreak( oError ) } )   
-   BEGIN SEQUENCE*/
+   oBlock         := ErrorBlock( {| oError | ApoloBreak( oError ) } )   
+   BEGIN SEQUENCE
 
    cTmpLin        := cGetNewFileName( cPatTmp() + cDbfLin )
    cTmpInc        := cGetNewFileName( cPatTmp() + cDbfInc )
@@ -7717,7 +7688,7 @@ STATIC FUNCTION BeginTrans( aTmp, lIndex )
       lErrors     := .t.
    end if
 
-   /*RECOVER USING oError
+   RECOVER USING oError
 
       msgStop( "Imposible crear tablas temporales" + CRLF + ErrorMessage( oError ) )
 
@@ -7727,7 +7698,7 @@ STATIC FUNCTION BeginTrans( aTmp, lIndex )
 
    END SEQUENCE
 
-   ErrorBlock( oBlock )*/
+   ErrorBlock( oBlock )
 
 RETURN ( lErrors )
 
@@ -8277,7 +8248,7 @@ static function lGenSatCli( oBrw, oBtn, nDevice )
       return nil
    end if
 
-   IF !( dbfDoc )->( dbSeek( "RC" ) )
+   IF !( dbfDoc )->( dbSeek( "SC" ) )
 
          DEFINE BTNSHELL RESOURCE "DOCUMENT" OF oWndBrw ;
             NOBORDER ;
@@ -8290,7 +8261,7 @@ static function lGenSatCli( oBrw, oBtn, nDevice )
 
    ELSE
 
-      WHILE ( dbfDoc )->CTIPO == "RC" .AND. !( dbfDoc )->( eof() )
+      WHILE ( dbfDoc )->CTIPO == "SC" .AND. !( dbfDoc )->( eof() )
 
          bAction  := bGenSatCli( nDevice, "Imprimiendo S.A.T. a clientes", ( dbfDoc )->CODIGO )
 
@@ -8686,38 +8657,15 @@ return nCon
 
 //----------------------------------------------------------------------------//
 
-FUNCTION aDocSatCli()
-
-   local aDoc  := {}
-
-   /*
-   Itmes-----------------------------------------------------------------------
-   */
-
-   aAdd( aDoc, { "Empresa",         "EM" } )
-   aAdd( aDoc, { "Satsupuesto",     "RC" } )
-   aAdd( aDoc, { "Cliente",         "CL" } )
-   aAdd( aDoc, { "Almacen",         "AL" } )
-   aAdd( aDoc, { "Obras",           "OB" } )
-   aAdd( aDoc, { "Rutas",           "RT" } )
-   aAdd( aDoc, { "Agentes",         "AG" } )
-   aAdd( aDoc, { "Divisas",         "DV" } )
-   aAdd( aDoc, { "Formas de pago",  "PG" } )
-   aAdd( aDoc, { "Transportistas",  "TR" } )
-
-RETURN ( aDoc )
-
-//---------------------------------------------------------------------------//
-
 function aItmSatCli()
 
    local aItmSatCli :=  {}
 
-   aAdd( aItmSatCli, { "CSERSAT",   "C",  1,  0, "Serie de S.A.T." ,           "",                   "", "( cDbf )"} )
-   aAdd( aItmSatCli, { "NNUMSAT",   "N",  9,  0, "Número de S.A.T." ,          "'999999999'",        "", "( cDbf )"} )
-   aAdd( aItmSatCli, { "CSUFSAT",   "C",  2,  0, "Sufijo de S.A.T." ,          "",                   "", "( cDbf )"} )
-   aAdd( aItmSatCli, { "CTURSAT",   "C",  6,  0, "Sesión del S.A.T.",          "",                   "", "( cDbf )"} )
-   aAdd( aItmSatCli, { "DFECSAT",   "D",  8,  0, "Fecha del S.A.T.",           "",                   "", "( cDbf )"} )
+   aAdd( aItmSatCli, { "CSERSAT",   "C",  1,  0, "Serie de S.A.T." ,           "",                        "", "( cDbf )"} )
+   aAdd( aItmSatCli, { "NNUMSAT",   "N",  9,  0, "Número de S.A.T." ,          "'999999999'",             "", "( cDbf )"} )
+   aAdd( aItmSatCli, { "CSUFSAT",   "C",  2,  0, "Sufijo de S.A.T." ,          "",                        "", "( cDbf )"} )
+   aAdd( aItmSatCli, { "CTURSAT",   "C",  6,  0, "Sesión del S.A.T.",          "",                        "", "( cDbf )"} )
+   aAdd( aItmSatCli, { "DFECSAT",   "D",  8,  0, "Fecha del S.A.T.",           "",                        "", "( cDbf )"} )
    aAdd( aItmSatCli, { "CCODCLI",   "C", 12,  0, "Código del cliente",              "",                   "", "( cDbf )"} )
    aAdd( aItmSatCli, { "CNOMCLI",   "C", 80,  0, "Nombre del cliente",              "'@!'",               "", "( cDbf )"} )
    aAdd( aItmSatCli, { "CDIRCLI",   "C",100,  0, "Domicilio del cliente",           "'@!'",               "", "( cDbf )"} )
@@ -8734,11 +8682,11 @@ function aItmSatCli()
    aAdd( aItmSatCli, { "CCODPGO",   "C",  2,  0, "Código de pago",                  "",                   "", "( cDbf )"} )
    aAdd( aItmSatCli, { "CCODRUT",   "C",  4,  0, "Código de la ruta",               "",                   "", "( cDbf )"} )
    aAdd( aItmSatCli, { "DFECENT",   "D",  8,  0, "Fecha de entrada",                "",                   "", "( cDbf )"} )
-   aAdd( aItmSatCli, { "LESTADO",   "L",  1,  0, "Estado del S.A.T.",          "",                   "", "( cDbf )"} )
-   aAdd( aItmSatCli, { "CSUSAT",    "C", 10,  0, "Su S.A.T.",                  "",                   "", "( cDbf )"} )
+   aAdd( aItmSatCli, { "LESTADO",   "L",  1,  0, "Estado del S.A.T.",               "",                   "", "( cDbf )"} )
+   aAdd( aItmSatCli, { "CSUSAT",    "C", 10,  0, "",                                "",                   "", "( cDbf )"} )
    aAdd( aItmSatCli, { "CCONDENT",  "C",100,  0, "",                                "",                   "", "( cDbf )"} )
    aAdd( aItmSatCli, { "MCOMENT",   "M", 10,  0, "Comentarios",                     "",                   "", "( cDbf )"} )
-   aAdd( aItmSatCli, { "MOBSERV",   "M", 10,  0, "Observaciones",                   "",                   "", "( cDbf )"} )
+   aAdd( aItmSatCli, { "MOBSERV",   "M", 10,  0, "Averia",                          "",                   "", "( cDbf )"} )
    aAdd( aItmSatCli, { "LMAYOR",    "L",  1,  0, "" ,                               "",                   "", "( cDbf )"} )
    aAdd( aItmSatCli, { "NTARIFA",   "N",  1,  0, "Tarifa de precio aplicada" ,      "",                   "", "( cDbf )"} )
    aAdd( aItmSatCli, { "CDTOESP",   "C", 50,  0, "Descripción del descuento",       "",                   "", "( cDbf )"} )
@@ -8791,8 +8739,9 @@ function aItmSatCli()
    aAdd( aItmSatCli, { "nTotNet",   "N", 16,  6, "Total neto" ,                                       "", "", "( cDbf )"} )
    aAdd( aItmSatCli, { "nTotIva",   "N", 16,  6, "Total " + cImp() ,                                  "", "", "( cDbf )"} )
    aAdd( aItmSatCli, { "nTotReq",   "N", 16,  6, "Total recargo" ,                                    "", "", "( cDbf )"} )
-   aAdd( aItmSatCli, { "nTotSat",   "N", 16,  6, "Total S.A.T." ,                                "", "", "( cDbf )"} )
+   aAdd( aItmSatCli, { "nTotSat",   "N", 16,  6, "Total S.A.T." ,                                     "", "", "( cDbf )"} )
    aAdd( aItmSatCli, { "lOperPV",   "L",  1,  0, "Lógico para operar con punto verde" ,               "", "", "( cDbf )", .t.} )
+   aAdd( aItmSatCli, { "cNumAlb",  "C",  12,  0, "Número del albarán donde se agrupa" , "",               "", "( cDbf )", nil } )
 
 return ( aItmSatCli )
 
@@ -8853,26 +8802,26 @@ function aColSatCli()
 
    local aColSatCli  := {}
 
-   aAdd( aColSatCli, { "CSERSAT", "C",    1,  0, "Serie de S.A.T." ,            "",                   "", "( cDbfCol )" } )
-   aAdd( aColSatCli, { "NNUMSAT", "N",    9,  0, "Numero de S.A.T." ,           "'999999999'",        "", "( cDbfCol )" } )
-   aAdd( aColSatCli, { "CSUFSAT", "C",    2,  0, "Sufijo de S.A.T." ,           "",                   "", "( cDbfCol )" } )
-   aAdd( aColSatCli, { "CREF",    "C",   18,  0, "Referencia del producto" ,         "",                   "", "( cDbfCol )" } )
+   aAdd( aColSatCli, { "CSERSAT", "C",    1,  0, "Serie de S.A.T." ,                 "",                   "", "( cDbfCol )" } )
+   aAdd( aColSatCli, { "NNUMSAT", "N",    9,  0, "Numero de S.A.T." ,                "'999999999'",        "", "( cDbfCol )" } )
+   aAdd( aColSatCli, { "CSUFSAT", "C",    2,  0, "Sufijo de S.A.T." ,                "",                   "", "( cDbfCol )" } )
+   aAdd( aColSatCli, { "CREF",    "C",   18,  0, "Referencia del artículo" ,         "",                   "", "( cDbfCol )" } )
    aAdd( aColSatCli, { "CDETALLE","C",  250,  0, "Descripción de artículo" ,         "",                   "", "( cDbfCol )" } )
-   aAdd( aColSatCli, { "NIVA"    ,"N",    6,  2, "Importe del " + cImp() ,           "'@E 99.9'",          "", "( cDbfCol )" } )
+   aAdd( aColSatCli, { "NIVA"    ,"N",    6,  2, "Porcentaje de " + cImp() ,         "'@E 99.9'",          "", "( cDbfCol )" } )
    aAdd( aColSatCli, { "NCANSAT" ,"N",   16,  6, "Cantidad pedida" ,                 "MasUnd()",           "", "( cDbfCol )" } )
    aAdd( aColSatCli, { "NUNICAJA","N",   16,  6, "Unidades por caja" ,               "MasUnd()",           "", "( cDbfCol )" } )
    aAdd( aColSatCli, { "LCONTROL","L",    1,  0, "" ,                                "",                   "", "( cDbfCol )" } )
    aAdd( aColSatCli, { "NUNDKIT", "N",   16,  6, "Unidades tipo kit" ,               "MasUnd()",           "", "( cDbfCol )" } )
-   aAdd( aColSatCli, { "NPreDiv" ,"N",   16,  6, "Importe del producto" ,            "cPorDivSat",         "", "( cDbfCol )" } )
+   aAdd( aColSatCli, { "NPreDiv" ,"N",   16,  6, "Importe del artículo" ,            "cPorDivSat",         "", "( cDbfCol )" } )
    aAdd( aColSatCli, { "NPNTVER", "N",   16,  6, "Importe punto verde" ,             "cPorDivSat",         "", "( cDbfCol )" } )
    aAdd( aColSatCli, { "nImpTrn", "N",   16,  6, "Importe del transporte",           "cPorDivSat",         "", "( cDbfCol )" } )
-   aAdd( aColSatCli, { "NDTO",    "N",    6,  2, "Descuento del producto" ,          "'@E 99.99'",         "", "( cDbfCol )" } )
+   aAdd( aColSatCli, { "NDTO",    "N",    6,  2, "Descuento del artículo" ,          "'@E 99.99'",         "", "( cDbfCol )" } )
    aAdd( aColSatCli, { "NDTOPRM", "N",    6,  2, "Descuento de la promoción" ,       "'@E 99.99'",         "", "( cDbfCol )" } )
    aAdd( aColSatCli, { "NCOMAGE", "N",    6,  2, "Comisión del agente" ,             "'@E 99.99'",         "", "( cDbfCol )" } )
    aAdd( aColSatCli, { "NCANENT", "N",   16,  6, "Unidades de entrada" ,             "MasUnd()",           "", "( cDbfCol )" } )
    aAdd( aColSatCli, { "CUNIDAD", "C",    2,  0, "Unidad de venta" ,                 "",                   "", "( cDbfCol )" } )
-   aAdd( aColSatCli, { "NPESOKG", "N",   16,  6, "Peso del producto" ,               "",                   "", "( cDbfCol )" } )
-   aAdd( aColSatCli, { "cPesoKg", "C",    2,  0, "Unidad de peso del producto" ,     "",                   "", "( cDbfCol )" } )
+   aAdd( aColSatCli, { "NPESOKG", "N",   16,  6, "Peso del artículo" ,               "",                   "", "( cDbfCol )" } )
+   aAdd( aColSatCli, { "cPesoKg", "C",    2,  0, "Unidad de peso del artículo" ,     "",                   "", "( cDbfCol )" } )
    aAdd( aColSatCli, { "DFECHA",  "D",    8,  0, "Fecha de entrega",                 "",                   "", "( cDbfCol )" } )
    aAdd( aColSatCli, { "MLNGDES", "M",   10,  0, "Descripción de artículo sin codificar", "",              "", "( cDbfCol )" } )
    aAdd( aColSatCli, { "LTOTLIN", "L",    1,  0, "Linea de total" ,                  "",                   "", "( cDbfCol )" } )
@@ -8886,10 +8835,10 @@ function aColSatCli()
    aAdd( aColSatCli, { "CTIPMOV", "C",    2,  0, "Tipo de movimiento",               "",                   "", "( cDbfCol )" } )
    aAdd( aColSatCli, { "NNUMLIN", "N",    4,  0, "Numero de la línea",               "'9999'",             "", "( cDbfCol )" } )
    aAdd( aColSatCli, { "NCTLSTK", "N",    1,  0, "Tipo de stock de la línea",        "'9'",                "", "( cDbfCol )" } )
-   aAdd( aColSatCli, { "NCOSDIV", "N",   16,  6, "Costo del producto" ,              "cPorDivSat",         "", "( cDbfCol )" } )
-   aAdd( aColSatCli, { "NPVSATC", "N",   16,  6, "Satcio de venta recomendado" ,     "cPorDivSat",         "", "( cDbfCol )" } )
+   aAdd( aColSatCli, { "NCOSDIV", "N",   16,  6, "Costo del artículo" ,              "cPorDivSat",         "", "( cDbfCol )" } )
+   aAdd( aColSatCli, { "NPVSATC", "N",   16,  6, "Precio de venta recomendado" ,     "cPorDivSat",         "", "( cDbfCol )" } )
    aAdd( aColSatCli, { "CALMLIN", "C",    3,  0, "Código de almacén" ,               "",                   "", "( cDbfCol )" } )
-   aAdd( aColSatCli, { "LIVALIN", "L",    1,  0, "Línea con " + cImp() + " incluido",           "",                   "", "( cDbfCol )" } )
+   aAdd( aColSatCli, { "LIVALIN", "L",    1,  0, "Línea con " + cImp() + " incluido","",                   "", "( cDbfCol )" } )
    aAdd( aColSatCli, { "CCODIMP", "C",    3,  0, "Código del impuesto especial",     "",                   "", "( cDbfCol )" } )
    aAdd( aColSatCli, { "NVALIMP", "N",   16,  6, "Importe de impuesto",              "",                   "", "( cDbfCol )" } )
    aAdd( aColSatCli, { "LLOTE",   "L",    1,  0, "",                                 "",                   "", "( cDbfCol )" } )
@@ -8915,11 +8864,11 @@ function aColSatCli()
    aAdd( aColSatCli, { "NDTOPNT", "N",    5,  2, "Descuento puntos",                 "",                   "", "( cDbfCol )" } )
    aAdd( aColSatCli, { "NINCPNT", "N",    5,  2, "Incremento porcentual",            "",                   "", "( cDbfCol )" } )
    aAdd( aColSatCli, { "CREFPRV", "C",   18,  0, "Referencia artículo proveedor",    "",                   "", "( cDbfCol )" } )
-   aAdd( aColSatCli, { "NVOLUMEN","N",   16,  6, "Volumen del producto" ,            "'@E 9,999.99'",      "", "( cDbfCol )" } )
+   aAdd( aColSatCli, { "NVOLUMEN","N",   16,  6, "Volumen del artículo" ,            "'@E 9,999.99'",      "", "( cDbfCol )" } )
    aAdd( aColSatCli, { "CVOLUMEN","C",    2,  0, "Unidad del volumen" ,              "",                   "", "( cDbfCol )" } )
    aAdd( aColSatCli, { "DFECENT" ,"D",    8,  0, "Fecha de entrada del alquiler",    "",                   "", "( cDbfCol )" } )
    aAdd( aColSatCli, { "DFECSAL" ,"D",    8,  0, "Fecha de salida del alquiler",     "",                   "", "( cDbfCol )" } )
-   aAdd( aColSatCli, { "nPreAlq" ,"N",   16,  6, "Satcio de alquiler",               "",                   "", "( cDbfCol )" } )
+   aAdd( aColSatCli, { "nPreAlq" ,"N",   16,  6, "Precio de alquiler",               "",                   "", "( cDbfCol )" } )
    aAdd( aColSatCli, { "lAlquiler","L",   1,  0, "Lógico de alquiler",               "",                   "", "( cDbfCol )" } )
    aAdd( aColSatCli, { "nNumMed"  ,"N",   1,  0, "Número de mediciones",             "MasUnd()",           "", "( cDbfCol )" } )
    aAdd( aColSatCli, { "nMedUno"  ,"N",  16,  6, "Primera unidad de medición",       "MasUnd()",           "", "( cDbfCol )" } )
@@ -8941,11 +8890,11 @@ function aCocSatCli()
 
    local aCocSatCli :=  {}
 
-   aAdd( aCocSatCli, { "Descrip( cDbfCol )",                                         "C", 50, 0, "Detalle del artículo",       "",            "Descripción", "" } )
-   aAdd( aCocSatCli, { "nTotNSatCli( cDbfCol )",                                     "N", 16, 6, "Total articulos",            "MasUnd()",    "Unidades",    "" } )
-   aAdd( aCocSatCli, { "nTotUSatCli( cDbfCol, nDouDivSat, nVdvDivSat )",             "N", 16, 6, "Satcio unitario",            "cPouDivSat",  "Satcio",      "" } )
-   aAdd( aCocSatCli, { "nTotLSatCli( cDbfCol, nDouDivSat, nRouDivSat, nVdvDivSat )", "N", 16, 6, "Total línea de S.A.T.", "cPorDivSat",  "Total",       "" } )
-   aAdd( aCocSatCli, { "cFrasePublicitaria( cDbfCol )",                              "C", 50, 0, "Texto de frase publicitaria","",            "Publicidad",  "" } )
+   aAdd( aCocSatCli, { "Descrip( cDbfCol )",                                         "C", 50, 0, "Detalle del artículo",         "",            "Descripción", "" } )
+   aAdd( aCocSatCli, { "nTotNSatCli( cDbfCol )",                                     "N", 16, 6, "Total articulos",              "MasUnd()",    "Unidades",    "" } )
+   aAdd( aCocSatCli, { "nTotUSatCli( cDbfCol, nDouDivSat, nVdvDivSat )",             "N", 16, 6, "Precio unitario",              "cPouDivSat",  "Precio",      "" } )
+   aAdd( aCocSatCli, { "nTotLSatCli( cDbfCol, nDouDivSat, nRouDivSat, nVdvDivSat )", "N", 16, 6, "Total línea de S.A.T.",        "cPorDivSat",  "Total",       "" } )
+   aAdd( aCocSatCli, { "cFrasePublicitaria( cDbfCol )",                              "C", 50, 0, "Texto de frase publicitaria",  "",            "Publicidad",  "" } )
 
 return ( aCocSatCli )
 
@@ -8955,14 +8904,14 @@ function aIncSatCli()
 
    local aColSatCli  := {}
 
-   aAdd( aColSatCli, { "cSerSat", "C",    1,  0, "Serie de S.A.T." ,            "",                   "", "( cDbfCol )" } )
-   aAdd( aColSatCli, { "nNumSat", "N",    9,  0, "Numero de S.A.T." ,           "'999999999'",        "", "( cDbfCol )" } )
-   aAdd( aColSatCli, { "cSufSat", "C",    2,  0, "Sufijo de S.A.T." ,           "",                   "", "( cDbfCol )" } )
-   aAdd( aColSatCli, { "cCodTip", "C",    3,  0, "Tipo de incidencia" ,              "",                   "", "( cDbfCol )" } )
-   aAdd( aColSatCli, { "dFecInc", "D",    8,  0, "Fecha de la incidencia" ,          "",                   "", "( cDbfCol )" } )
-   aAdd( aColSatCli, { "mDesInc", "M",   10,  0, "Descripción de la incidencia" ,    "",                   "", "( cDbfCol )" } )
-   aAdd( aColSatCli, { "lListo",  "L",    1,  0, "Lógico de listo" ,                 "",                   "", "( cDbfCol )" } )
-   aAdd( aColSatCli, { "lAviso",  "L",    1,  0, "Lógico de aviso" ,                 "",                   "", "( cDbfCol )" } )
+   aAdd( aColSatCli, { "cSerSat", "C",    1,  0, "Serie de S.A.T." ,                "",                   "", "( cDbfCol )" } )
+   aAdd( aColSatCli, { "nNumSat", "N",    9,  0, "Numero de S.A.T." ,               "'999999999'",        "", "( cDbfCol )" } )
+   aAdd( aColSatCli, { "cSufSat", "C",    2,  0, "Sufijo de S.A.T." ,               "",                   "", "( cDbfCol )" } )
+   aAdd( aColSatCli, { "cCodTip", "C",    3,  0, "Tipo de incidencia" ,             "",                   "", "( cDbfCol )" } )
+   aAdd( aColSatCli, { "dFecInc", "D",    8,  0, "Fecha de la incidencia" ,         "",                   "", "( cDbfCol )" } )
+   aAdd( aColSatCli, { "mDesInc", "M",   10,  0, "Descripción de la incidencia" ,   "",                   "", "( cDbfCol )" } )
+   aAdd( aColSatCli, { "lListo",  "L",    1,  0, "Lógico de listo" ,                "",                   "", "( cDbfCol )" } )
+   aAdd( aColSatCli, { "lAviso",  "L",    1,  0, "Lógico de aviso" ,                "",                   "", "( cDbfCol )" } )
 
 return ( aColSatCli )
 
@@ -8972,12 +8921,12 @@ function aSatCliDoc()
 
    local aSatCliDoc  := {}
 
-   aAdd( aSatCliDoc, { "cSerSat", "C",    1,  0, "Serie de S.A.T." ,            "",                   "", "( cDbfCol )" } )
-   aAdd( aSatCliDoc, { "nNumSat", "N",    9,  0, "Numero de S.A.T." ,           "'999999999'",        "", "( cDbfCol )" } )
-   aAdd( aSatCliDoc, { "cSufSat", "C",    2,  0, "Sufijo de S.A.T." ,           "",                   "", "( cDbfCol )" } )
-   aAdd( aSatCliDoc, { "cNombre", "C",  250,  0, "Nombre del documento" ,            "",                   "", "( cDbfCol )" } )
-   aAdd( aSatCliDoc, { "cRuta",   "C",  250,  0, "Ruta del documento" ,              "",                   "", "( cDbfCol )" } )
-   aAdd( aSatCliDoc, { "mObsDoc", "M",   10,  0, "Observaciones del documento" ,     "",                   "", "( cDbfCol )" } )
+   aAdd( aSatCliDoc, { "cSerSat", "C",    1,  0, "Serie de S.A.T." ,                "",                   "", "( cDbfCol )" } )
+   aAdd( aSatCliDoc, { "nNumSat", "N",    9,  0, "Numero de S.A.T." ,               "'999999999'",        "", "( cDbfCol )" } )
+   aAdd( aSatCliDoc, { "cSufSat", "C",    2,  0, "Sufijo de S.A.T." ,               "",                   "", "( cDbfCol )" } )
+   aAdd( aSatCliDoc, { "cNombre", "C",  250,  0, "Nombre del documento" ,           "",                   "", "( cDbfCol )" } )
+   aAdd( aSatCliDoc, { "cRuta",   "C",  250,  0, "Ruta del documento" ,             "",                   "", "( cDbfCol )" } )
+   aAdd( aSatCliDoc, { "mObsDoc", "M",   10,  0, "Observaciones del documento" ,    "",                   "", "( cDbfCol )" } )
 
 return ( aSatCliDoc )
 
@@ -9054,7 +9003,6 @@ STATIC FUNCTION RecSatCli( aTmpSat )
          */
 
          ( dbfTmpLin )->nCtlStk  := ( dbfArticulo )->nCtlStock
-         ( dbfTmpLin )->nPvpRec  := ( dbfArticulo )->PvpRec
          ( dbfTmpLin )->nCosDiv  := nCosto( nil, dbfArticulo, dbfKit )
 
          /*
@@ -9090,7 +9038,7 @@ STATIC FUNCTION RecSatCli( aTmpSat )
                end if
 
          /*
-         Satcios en tarifas
+         Precios en tarifas
          */
 
          case !Empty( aTmpSat[ _CCODTAR ] )
@@ -10111,7 +10059,6 @@ Static Function AppendKit( uTmpLin, aTmpSat )
             ( dbfTmpLin )->nVolumen    := ( dbfArticulo )->nVolumen
             ( dbfTmpLin )->cVolumen    := ( dbfArticulo )->cVolumen
 
-            ( dbfTmpLin )->nPvpRec     := ( dbfArticulo )->PvpRec
             ( dbfTmpLin )->cCodImp     := ( dbfArticulo )->cCodImp
             ( dbfTmpLin )->lLote       := ( dbfArticulo )->lLote
             ( dbfTmpLin )->nLote       := ( dbfArticulo )->nLote
@@ -10783,17 +10730,20 @@ Static Function DataReport( oFr )
 
    oFr:ClearDataSets()
 
-   oFr:SetWorkArea(     "S.A.T. ", ( dbfSatCliT )->( Select() ), .f., { FR_RB_CURRENT, FR_RB_CURRENT, 0 } )
-   oFr:SetFieldAliases( "S.A.T. ", cItemsToReport( aItmSatCli() ) )
+   oFr:SetWorkArea(     "SAT", ( dbfSatCliT )->( Select() ), .f., { FR_RB_CURRENT, FR_RB_CURRENT, 0 } )
+   oFr:SetFieldAliases( "SAT", cItemsToReport( aItmSatCli() ) )
 
-   oFr:SetWorkArea(     "Lineas de S.A.T.", ( dbfSatCliL )->( Select() ) )
-   oFr:SetFieldAliases( "Lineas de S.A.T.", cItemsToReport( aColSatCli() ) )
+   oFr:SetWorkArea(     "Lineas de SAT", ( dbfSatCliL )->( Select() ) )
+   oFr:SetFieldAliases( "Lineas de SAT", cItemsToReport( aColSatCli() ) )
 
-   oFr:SetWorkArea(     "Incidencias de S.A.T.", ( dbfSatCliI )->( Select() ) )
-   oFr:SetFieldAliases( "Incidencias de S.A.T.", cItemsToReport( aIncSatCli() ) )
+   oFr:SetWorkArea(     "Incidencias de SAT", ( dbfSatCliI )->( Select() ) )
+   oFr:SetFieldAliases( "Incidencias de SAT", cItemsToReport( aIncSatCli() ) )
 
-   oFr:SetWorkArea(     "Documentos de S.A.T.", ( dbfSatCliD )->( Select() ) )
-   oFr:SetFieldAliases( "Documentos de S.A.T.", cItemsToReport( aSatCliDoc() ) )
+   oFr:SetWorkArea(     "Documentos de SAT", ( dbfSatCliD )->( Select() ) )
+   oFr:SetFieldAliases( "Documentos de SAT", cItemsToReport( aSatCliDoc() ) )
+
+   oFr:SetWorkArea(     "Series de lineas de SAT", ( dbfSatCliS )->( Select() ) )
+   oFr:SetFieldAliases( "Series de lineas de SAT", cItemsToReport( aSerSatCli() ) )
 
    oFr:SetWorkArea(     "Empresa", ( dbfEmp )->( Select() ) )
    oFr:SetFieldAliases( "Empresa", cItemsToReport( aItmEmp() ) )
@@ -10828,37 +10778,44 @@ Static Function DataReport( oFr )
    oFr:SetWorkArea(     "Unidades de medición",  oUndMedicion:Select() )
    oFr:SetFieldAliases( "Unidades de medición",  cObjectsToReport( oUndMedicion:oDbf ) )
 
-   oFr:SetMasterDetail( "S.A.T. ", "Lineas de S.A.T.",          {|| ( dbfSatCliT )->cSerSat + Str( ( dbfSatCliT )->nNumSat ) + ( dbfSatCliT )->cSufSat } )
-   oFr:SetMasterDetail( "S.A.T. ", "Incidencias de S.A.T.",     {|| ( dbfSatCliT )->cSerSat + Str( ( dbfSatCliT )->nNumSat ) + ( dbfSatCliT )->cSufSat } )
-   oFr:SetMasterDetail( "S.A.T. ", "Documentos de S.A.T.",      {|| ( dbfSatCliT )->cSerSat + Str( ( dbfSatCliT )->nNumSat ) + ( dbfSatCliT )->cSufSat } )
-   oFr:SetMasterDetail( "S.A.T. ", "Empresa",                         {|| cCodigoEmpresaEnUso() } )
-   oFr:SetMasterDetail( "S.A.T. ", "Clientes",                        {|| ( dbfSatCliT )->cCodCli } )
-   oFr:SetMasterDetail( "S.A.T. ", "Obras",                           {|| ( dbfSatCliT )->cCodCli + ( dbfSatCliT )->cCodObr } )
-   oFr:SetMasterDetail( "S.A.T. ", "Almacen",                         {|| ( dbfSatCliT )->cCodAlm } )
-   oFr:SetMasterDetail( "S.A.T. ", "Rutas",                           {|| ( dbfSatCliT )->cCodRut } )
-   oFr:SetMasterDetail( "S.A.T. ", "Agentes",                         {|| ( dbfSatCliT )->cCodAge } )
-   oFr:SetMasterDetail( "S.A.T. ", "Formas de pago",                  {|| ( dbfSatCliT )->cCodPgo } )
-   oFr:SetMasterDetail( "S.A.T. ", "Transportistas",                  {|| ( dbfSatCliT )->cCodTrn } )
+   oFr:SetWorkArea(     "Usuarios", ( dbfUsr )->( Select() ) )
+   oFr:SetFieldAliases( "Usuarios", cItemsToReport( aItmUsr() ) )
 
-   oFr:SetMasterDetail( "Lineas de S.A.T.", "Artículos",             {|| ( dbfSatCliL )->cRef } )
-   oFr:SetMasterDetail( "Lineas de S.A.T.", "Ofertas",               {|| ( dbfSatCliL )->cRef } )
-   oFr:SetMasterDetail( "Lineas de S.A.T.", "Unidades de medición",  {|| ( dbfSatCliL )->cUnidad } )
+   oFr:SetMasterDetail( "SAT", "Lineas de SAT",                   {|| ( dbfSatCliT )->cSerSat + Str( ( dbfSatCliT )->nNumSat ) + ( dbfSatCliT )->cSufSat } )
+   oFr:SetMasterDetail( "SAT", "Series de lineas de SAT",         {|| ( dbfSatCliT )->cSerSat + Str( ( dbfSatCliT )->nNumSat ) + ( dbfSatCliT )->cSufSat } )
+   oFr:SetMasterDetail( "SAT", "Incidencias de SAT",              {|| ( dbfSatCliT )->cSerSat + Str( ( dbfSatCliT )->nNumSat ) + ( dbfSatCliT )->cSufSat } )
+   oFr:SetMasterDetail( "SAT", "Documentos de SAT",               {|| ( dbfSatCliT )->cSerSat + Str( ( dbfSatCliT )->nNumSat ) + ( dbfSatCliT )->cSufSat } )
+   oFr:SetMasterDetail( "SAT", "Empresa",                         {|| cCodigoEmpresaEnUso() } )
+   oFr:SetMasterDetail( "SAT", "Clientes",                        {|| ( dbfSatCliT )->cCodCli } )
+   oFr:SetMasterDetail( "SAT", "Obras",                           {|| ( dbfSatCliT )->cCodCli + ( dbfSatCliT )->cCodObr } )
+   oFr:SetMasterDetail( "SAT", "Almacen",                         {|| ( dbfSatCliT )->cCodAlm } )
+   oFr:SetMasterDetail( "SAT", "Rutas",                           {|| ( dbfSatCliT )->cCodRut } )
+   oFr:SetMasterDetail( "SAT", "Agentes",                         {|| ( dbfSatCliT )->cCodAge } )
+   oFr:SetMasterDetail( "SAT", "Formas de pago",                  {|| ( dbfSatCliT )->cCodPgo } )
+   oFr:SetMasterDetail( "SAT", "Transportistas",                  {|| ( dbfSatCliT )->cCodTrn } )
+   oFr:SetMasterDetail( "SAT", "Usuarios",                        {|| ( dbfSatCliT )->cCodUsr } )
 
-   oFr:SetResyncPair(   "S.A.T. ", "Lineas de S.A.T." )
-   oFr:SetResyncPair(   "S.A.T. ", "Incidencias de S.A.T." )
-   oFr:SetResyncPair(   "S.A.T. ", "Documentos de S.A.T." )
-   oFr:SetResyncPair(   "S.A.T. ", "Empresa" )
-   oFr:SetResyncPair(   "S.A.T. ", "Clientes" )
-   oFr:SetResyncPair(   "S.A.T. ", "Obras" )
-   oFr:SetResyncPair(   "S.A.T. ", "Almacenes" )
-   oFr:SetResyncPair(   "S.A.T. ", "Rutas" )
-   oFr:SetResyncPair(   "S.A.T. ", "Agentes" )
-   oFr:SetResyncPair(   "S.A.T. ", "Formas de pago" )
-   oFr:SetResyncPair(   "S.A.T. ", "Transportistas" )
+   oFr:SetMasterDetail( "Lineas de SAT", "Artículos",             {|| ( dbfSatCliL )->cRef } )
+   oFr:SetMasterDetail( "Lineas de SAT", "Ofertas",               {|| ( dbfSatCliL )->cRef } )
+   oFr:SetMasterDetail( "Lineas de SAT", "Unidades de medición",  {|| ( dbfSatCliL )->cUnidad } )
 
-   oFr:SetResyncPair(   "Lineas de S.A.T.", "Artículos" )
-   oFr:SetResyncPair(   "Lineas de S.A.T.", "Ofertas" )
-   oFr:SetResyncPair(   "Lineas de S.A.T.", "Unidades de medición" )
+   oFr:SetResyncPair(   "SAT", "Lineas de SAT" )
+   oFr:SetResyncPair(   "SAT", "Series de lineas de SAT" )
+   oFr:SetResyncPair(   "SAT", "Incidencias de SAT" )
+   oFr:SetResyncPair(   "SAT", "Documentos de SAT" )
+   oFr:SetResyncPair(   "SAT", "Empresa" )
+   oFr:SetResyncPair(   "SAT", "Clientes" )
+   oFr:SetResyncPair(   "SAT", "Obras" )
+   oFr:SetResyncPair(   "SAT", "Almacenes" )
+   oFr:SetResyncPair(   "SAT", "Rutas" )
+   oFr:SetResyncPair(   "SAT", "Agentes" )
+   oFr:SetResyncPair(   "SAT", "Formas de pago" )
+   oFr:SetResyncPair(   "SAT", "Transportistas" )
+   oFr:SetResyncPair(   "SAT", "Usuarios" )
+
+   oFr:SetResyncPair(   "Lineas de SAT", "Artículos" )
+   oFr:SetResyncPair(   "Lineas de SAT", "Ofertas" )
+   oFr:SetResyncPair(   "Lineas de SAT", "Unidades de medición" )
 
 Return nil
 
@@ -10866,79 +10823,79 @@ Return nil
 
 Static Function VariableReport( oFr )
 
-   oFr:DeleteCategory(  "S.A.T. " )
-   oFr:DeleteCategory(  "Lineas de S.A.T." )
+   oFr:DeleteCategory(  "SAT" )
+   oFr:DeleteCategory(  "Lineas de SAT" )
 
    /*
    Creación de variables----------------------------------------------------
    */
 
-   oFr:AddVariable(     "S.A.T. ",             "Total bruto",                         "GetHbVar('nTotBrt')" )
-   oFr:AddVariable(     "S.A.T. ",             "Total S.A.T.",                   "GetHbVar('nTotSat')" )
-   oFr:AddVariable(     "S.A.T. ",             "Total descuento",                     "GetHbVar('nTotDto')" )
-   oFr:AddVariable(     "S.A.T. ",             "Total descuento pronto pago",         "GetHbVar('nTotDpp')" )
-   oFr:AddVariable(     "S.A.T. ",             "Total descuentos",                    "GetHbVar('nTotalDto')" )
-   oFr:AddVariable(     "S.A.T. ",             "Total neto",                          "GetHbVar('nTotNet')" )
-   oFr:AddVariable(     "S.A.T. ",             "Total primer descuento definible",    "GetHbVar('nTotUno')" )
-   oFr:AddVariable(     "S.A.T. ",             "Total segundo descuento definible",   "GetHbVar('nTotDos')" )
-   oFr:AddVariable(     "S.A.T. ",             "Total " + cImp(),                     "GetHbVar('nTotIva')" )
-   oFr:AddVariable(     "S.A.T. ",             "Total RE",                            "GetHbVar('nTotReq')" )
-   oFr:AddVariable(     "S.A.T. ",             "Total página",                        "GetHbVar('nTotPag')" )
-   oFr:AddVariable(     "S.A.T. ",             "Total retención",                     "GetHbVar('nTotRet')" )
-   oFr:AddVariable(     "S.A.T. ",             "Total peso",                          "GetHbVar('nTotPes')" )
-   oFr:AddVariable(     "S.A.T. ",             "Total costo",                         "GetHbVar('nTotCos')" )
-   oFr:AddVariable(     "S.A.T. ",             "Total anticipado",                    "GetHbVar('nTotAnt')" )
-   oFr:AddVariable(     "S.A.T. ",             "Total cobrado",                       "GetHbVar('nTotCob')" )
-   oFr:AddVariable(     "S.A.T. ",             "Total artículos",                     "GetHbVar('nTotArt')" )
-   oFr:AddVariable(     "S.A.T. ",             "Total cajas",                         "GetHbVar('nTotCaj')" )
-   oFr:AddVariable(     "S.A.T. ",             "Cuenta por defecto del cliente",      "GetHbVar('cCtaCli')" )
+   oFr:AddVariable(     "SAT",             "Total bruto",                        "GetHbVar('nTotBrt')" )
+   oFr:AddVariable(     "SAT",             "Total SAT",                          "GetHbVar('nTotSat')" )
+   oFr:AddVariable(     "SAT",             "Total descuento",                    "GetHbVar('nTotDto')" )
+   oFr:AddVariable(     "SAT",             "Total descuento pronto pago",        "GetHbVar('nTotDpp')" )
+   oFr:AddVariable(     "SAT",             "Total descuentos",                   "GetHbVar('nTotalDto')" )
+   oFr:AddVariable(     "SAT",             "Total neto",                         "GetHbVar('nTotNet')" )
+   oFr:AddVariable(     "SAT",             "Total primer descuento definible",   "GetHbVar('nTotUno')" )
+   oFr:AddVariable(     "SAT",             "Total segundo descuento definible",  "GetHbVar('nTotDos')" )
+   oFr:AddVariable(     "SAT",             "Total " + cImp(),                    "GetHbVar('nTotIva')" )
+   oFr:AddVariable(     "SAT",             "Total RE",                           "GetHbVar('nTotReq')" )
+   oFr:AddVariable(     "SAT",             "Total página",                       "GetHbVar('nTotPag')" )
+   oFr:AddVariable(     "SAT",             "Total retención",                    "GetHbVar('nTotRet')" )
+   oFr:AddVariable(     "SAT",             "Total peso",                         "GetHbVar('nTotPes')" )
+   oFr:AddVariable(     "SAT",             "Total costo",                        "GetHbVar('nTotCos')" )
+   oFr:AddVariable(     "SAT",             "Total anticipado",                   "GetHbVar('nTotAnt')" )
+   oFr:AddVariable(     "SAT",             "Total cobrado",                      "GetHbVar('nTotCob')" )
+   oFr:AddVariable(     "SAT",             "Total artículos",                    "GetHbVar('nTotArt')" )
+   oFr:AddVariable(     "SAT",             "Total cajas",                        "GetHbVar('nTotCaj')" )
+   oFr:AddVariable(     "SAT",             "Cuenta por defecto del cliente",     "GetHbVar('cCtaCli')" )
 
-   oFr:AddVariable(     "S.A.T. ",             "Bruto primer tipo de " + cImp(),      "GetHbArrayVar('aIvaUno',1)" )
-   oFr:AddVariable(     "S.A.T. ",             "Bruto segundo tipo de " + cImp(),     "GetHbArrayVar('aIvaDos',1)" )
-   oFr:AddVariable(     "S.A.T. ",             "Bruto tercer tipo de " + cImp(),      "GetHbArrayVar('aIvaTre',1)" )
-   oFr:AddVariable(     "S.A.T. ",             "Base primer tipo de " + cImp(),       "GetHbArrayVar('aIvaUno',2)" )
-   oFr:AddVariable(     "S.A.T. ",             "Base segundo tipo de " + cImp(),      "GetHbArrayVar('aIvaDos',2)" )
-   oFr:AddVariable(     "S.A.T. ",             "Base tercer tipo de " + cImp(),       "GetHbArrayVar('aIvaTre',2)" )
-   oFr:AddVariable(     "S.A.T. ",             "Porcentaje primer tipo " + cImp(),    "GetHbArrayVar('aIvaUno',3)" )
-   oFr:AddVariable(     "S.A.T. ",             "Porcentaje segundo tipo " + cImp(),   "GetHbArrayVar('aIvaDos',3)" )
-   oFr:AddVariable(     "S.A.T. ",             "Porcentaje tercer tipo " + cImp(),    "GetHbArrayVar('aIvaTre',3)" )
-   oFr:AddVariable(     "S.A.T. ",             "Porcentaje primer tipo RE",           "GetHbArrayVar('aIvaUno',4)" )
-   oFr:AddVariable(     "S.A.T. ",             "Porcentaje segundo tipo RE",          "GetHbArrayVar('aIvaDos',4)" )
-   oFr:AddVariable(     "S.A.T. ",             "Porcentaje tercer tipo RE",           "GetHbArrayVar('aIvaTre',4)" )
-   oFr:AddVariable(     "S.A.T. ",             "Importe primer tipo " + cImp(),       "GetHbArrayVar('aIvaUno',8)" )
-   oFr:AddVariable(     "S.A.T. ",             "Importe segundo tipo " + cImp(),      "GetHbArrayVar('aIvaDos',8)" )
-   oFr:AddVariable(     "S.A.T. ",             "Importe tercer tipo " + cImp(),       "GetHbArrayVar('aIvaTre',8)" )
-   oFr:AddVariable(     "S.A.T. ",             "Importe primer RE",                   "GetHbArrayVar('aIvaUno',9)" )
-   oFr:AddVariable(     "S.A.T. ",             "Importe segundo RE",                  "GetHbArrayVar('aIvaDos',9)" )
-   oFr:AddVariable(     "S.A.T. ",             "Importe tercer RE",                   "GetHbArrayVar('aIvaTre',9)" )
+   oFr:AddVariable(     "SAT",             "Bruto primer tipo de " + cImp(),     "GetHbArrayVar('aIvaUno',1)" )
+   oFr:AddVariable(     "SAT",             "Bruto segundo tipo de " + cImp(),    "GetHbArrayVar('aIvaDos',1)" )
+   oFr:AddVariable(     "SAT",             "Bruto tercer tipo de " + cImp(),     "GetHbArrayVar('aIvaTre',1)" )
+   oFr:AddVariable(     "SAT",             "Base primer tipo de " + cImp(),      "GetHbArrayVar('aIvaUno',2)" )
+   oFr:AddVariable(     "SAT",             "Base segundo tipo de " + cImp(),     "GetHbArrayVar('aIvaDos',2)" )
+   oFr:AddVariable(     "SAT",             "Base tercer tipo de " + cImp(),      "GetHbArrayVar('aIvaTre',2)" )
+   oFr:AddVariable(     "SAT",             "Porcentaje primer tipo " + cImp(),   "GetHbArrayVar('aIvaUno',3)" )
+   oFr:AddVariable(     "SAT",             "Porcentaje segundo tipo " + cImp(),  "GetHbArrayVar('aIvaDos',3)" )
+   oFr:AddVariable(     "SAT",             "Porcentaje tercer tipo " + cImp(),   "GetHbArrayVar('aIvaTre',3)" )
+   oFr:AddVariable(     "SAT",             "Porcentaje primer tipo RE",          "GetHbArrayVar('aIvaUno',4)" )
+   oFr:AddVariable(     "SAT",             "Porcentaje segundo tipo RE",         "GetHbArrayVar('aIvaDos',4)" )
+   oFr:AddVariable(     "SAT",             "Porcentaje tercer tipo RE",          "GetHbArrayVar('aIvaTre',4)" )
+   oFr:AddVariable(     "SAT",             "Importe primer tipo " + cImp(),      "GetHbArrayVar('aIvaUno',8)" )
+   oFr:AddVariable(     "SAT",             "Importe segundo tipo " + cImp(),     "GetHbArrayVar('aIvaDos',8)" )
+   oFr:AddVariable(     "SAT",             "Importe tercer tipo " + cImp(),      "GetHbArrayVar('aIvaTre',8)" )
+   oFr:AddVariable(     "SAT",             "Importe primer RE",                  "GetHbArrayVar('aIvaUno',9)" )
+   oFr:AddVariable(     "SAT",             "Importe segundo RE",                 "GetHbArrayVar('aIvaDos',9)" )
+   oFr:AddVariable(     "SAT",             "Importe tercer RE",                  "GetHbArrayVar('aIvaTre',9)" )
 
-   oFr:AddVariable(     "S.A.T. ",             "Total unidades primer tipo de impuestos especiales",            "GetHbArrayVar('aIvmUno',1 )" )
-   oFr:AddVariable(     "S.A.T. ",             "Total unidades segundo tipo de impuestos especiales",           "GetHbArrayVar('aIvmDos',1 )" )
-   oFr:AddVariable(     "S.A.T. ",             "Total unidades tercer tipo de impuestos especiales",            "GetHbArrayVar('aIvmTre',1 )" )
-   oFr:AddVariable(     "S.A.T. ",             "Importe del primer tipo de impuestos especiales",               "GetHbArrayVar('aIvmUno',2 )" )
-   oFr:AddVariable(     "S.A.T. ",             "Importe del segundo tipo de impuestos especiales",              "GetHbArrayVar('aIvmDos',2 )" )
-   oFr:AddVariable(     "S.A.T. ",             "Importe del tercer tipo de impuestos especiales",               "GetHbArrayVar('aIvmTre',2 )" )
-   oFr:AddVariable(     "S.A.T. ",             "Total importe primer tipo de impuestos especiales",             "GetHbArrayVar('aIvmUno',3 )" )
-   oFr:AddVariable(     "S.A.T. ",             "Total importe segundo tipo de impuestos especiales",            "GetHbArrayVar('aIvmDos',3 )" )
-   oFr:AddVariable(     "S.A.T. ",             "Total importe tercer tipo de impuestos especiales",             "GetHbArrayVar('aIvmTre',3 )" )
+   oFr:AddVariable(     "SAT",             "Total unidades primer tipo de impuestos especiales",            "GetHbArrayVar('aIvmUno',1 )" )
+   oFr:AddVariable(     "SAT",             "Total unidades segundo tipo de impuestos especiales",           "GetHbArrayVar('aIvmDos',1 )" )
+   oFr:AddVariable(     "SAT",             "Total unidades tercer tipo de impuestos especiales",            "GetHbArrayVar('aIvmTre',1 )" )
+   oFr:AddVariable(     "SAT",             "Importe del primer tipo de impuestos especiales",               "GetHbArrayVar('aIvmUno',2 )" )
+   oFr:AddVariable(     "SAT",             "Importe del segundo tipo de impuestos especiales",              "GetHbArrayVar('aIvmDos',2 )" )
+   oFr:AddVariable(     "SAT",             "Importe del tercer tipo de impuestos especiales",               "GetHbArrayVar('aIvmTre',2 )" )
+   oFr:AddVariable(     "SAT",             "Total importe primer tipo de impuestos especiales",             "GetHbArrayVar('aIvmUno',3 )" )
+   oFr:AddVariable(     "SAT",             "Total importe segundo tipo de impuestos especiales",            "GetHbArrayVar('aIvmDos',3 )" )
+   oFr:AddVariable(     "SAT",             "Total importe tercer tipo de impuestos especiales",             "GetHbArrayVar('aIvmTre',3 )" )
 
-   oFr:AddVariable(     "S.A.T. ",             "Fecha del primer vencimiento",        "GetHbArrayVar('aDatVto',1)" )
-   oFr:AddVariable(     "S.A.T. ",             "Fecha del segundo vencimiento",       "GetHbArrayVar('aDatVto',2)" )
-   oFr:AddVariable(     "S.A.T. ",             "Fecha del tercer vencimiento",        "GetHbArrayVar('aDatVto',3)" )
-   oFr:AddVariable(     "S.A.T. ",             "Fecha del cuarto vencimiento",        "GetHbArrayVar('aDatVto',4)" )
-   oFr:AddVariable(     "S.A.T. ",             "Fecha del quinto vencimiento",        "GetHbArrayVar('aDatVto',5)" )
-   oFr:AddVariable(     "S.A.T. ",             "Importe del primer vencimiento",      "GetHbArrayVar('aImpVto',1)" )
-   oFr:AddVariable(     "S.A.T. ",             "Importe del segundo vencimiento",     "GetHbArrayVar('aImpVto',2)" )
-   oFr:AddVariable(     "S.A.T. ",             "Importe del tercero vencimiento",     "GetHbArrayVar('aImpVto',3)" )
-   oFr:AddVariable(     "S.A.T. ",             "Importe del cuarto vencimiento",      "GetHbArrayVar('aImpVto',4)" )
-   oFr:AddVariable(     "S.A.T. ",             "Importe del quinto vencimiento",      "GetHbArrayVar('aImpVto',5)" )
+   oFr:AddVariable(     "SAT",             "Fecha del primer vencimiento",        "GetHbArrayVar('aDatVto',1)" )
+   oFr:AddVariable(     "SAT",             "Fecha del segundo vencimiento",       "GetHbArrayVar('aDatVto',2)" )
+   oFr:AddVariable(     "SAT",             "Fecha del tercer vencimiento",        "GetHbArrayVar('aDatVto',3)" )
+   oFr:AddVariable(     "SAT",             "Fecha del cuarto vencimiento",        "GetHbArrayVar('aDatVto',4)" )
+   oFr:AddVariable(     "SAT",             "Fecha del quinto vencimiento",        "GetHbArrayVar('aDatVto',5)" )
+   oFr:AddVariable(     "SAT",             "Importe del primer vencimiento",      "GetHbArrayVar('aImpVto',1)" )
+   oFr:AddVariable(     "SAT",             "Importe del segundo vencimiento",     "GetHbArrayVar('aImpVto',2)" )
+   oFr:AddVariable(     "SAT",             "Importe del tercero vencimiento",     "GetHbArrayVar('aImpVto',3)" )
+   oFr:AddVariable(     "SAT",             "Importe del cuarto vencimiento",      "GetHbArrayVar('aImpVto',4)" )
+   oFr:AddVariable(     "SAT",             "Importe del quinto vencimiento",      "GetHbArrayVar('aImpVto',5)" )
 
-   oFr:AddVariable(     "Lineas de S.A.T.",   "Detalle del artículo",                "CallHbFunc('cDesSatCli')"  )
-   oFr:AddVariable(     "Lineas de S.A.T.",   "Total unidades artículo",             "CallHbFunc('nTotNSatCli')" )
-   oFr:AddVariable(     "Lineas de S.A.T.",   "Satcio unitario del artículo",        "CallHbFunc('nTotUSatCli')" )
-   oFr:AddVariable(     "Lineas de S.A.T.",   "Total línea de S.A.T.",          "CallHbFunc('nTotLSatCli')" )
-   oFr:AddVariable(     "Lineas de S.A.T.",   "Total peso por línea",                "CallHbFunc('nPesLSatCli')" )
-   oFr:AddVariable(     "Lineas de S.A.T.",   "Total final línea del S.A.T.",   "CallHbFunc('nTotFSatCli')" )
+   oFr:AddVariable(     "Lineas de SAT",   "Detalle del artículo",                "CallHbFunc('cDesSatCli')"  )
+   oFr:AddVariable(     "Lineas de SAT",   "Total unidades artículo",             "CallHbFunc('nTotNSatCli')" )
+   oFr:AddVariable(     "Lineas de SAT",   "Precio unitario del artículo",        "CallHbFunc('nTotUSatCli')" )
+   oFr:AddVariable(     "Lineas de SAT",   "Total línea de SAT",                  "CallHbFunc('nTotLSatCli')" )
+   oFr:AddVariable(     "Lineas de SAT",   "Total peso por línea",                "CallHbFunc('nPesLSatCli')" )
+   oFr:AddVariable(     "Lineas de SAT",   "Total final línea del SAT",           "CallHbFunc('nTotFSatCli')" )
 
 Return nil
 
@@ -11002,12 +10959,12 @@ Function DesignReportSatCli( oFr, dbfDoc )
          oFr:SetProperty(     "CabeceraColumnas",  "Top", 200 )
          oFr:SetProperty(     "CabeceraColumnas",  "Height", 0 )
          oFr:SetProperty(     "CabeceraColumnas",  "StartNewPage", .t. )
-         oFr:SetObjProperty(  "CabeceraColumnas",  "DataSet", "S.A.T. " )
+         oFr:SetObjProperty(  "CabeceraColumnas",  "DataSet", "SAT" )
 
          oFr:AddBand(         "DetalleColumnas",   "MainPage", frxDetailData  )
          oFr:SetProperty(     "DetalleColumnas",   "Top", 230 )
          oFr:SetProperty(     "DetalleColumnas",   "Height", 28 )
-         oFr:SetObjProperty(  "DetalleColumnas",   "DataSet", "Lineas de S.A.T." )
+         oFr:SetObjProperty(  "DetalleColumnas",   "DataSet", "Lineas de SAT" )
          oFr:SetProperty(     "DetalleColumnas",   "OnMasterDetail", "DetalleOnMasterDetail" )
 
          oFr:AddBand(         "PieDocumento",      "MainPage", frxPageFooter )
@@ -11102,7 +11059,7 @@ Function PrintReportSatCli( nDevice, nCopies, cPrinter, dbfDoc )
       Satparar el report-------------------------------------------------------
       */
 
-      oFr:SatpareReport()
+      oFr:PrepareReport()
 
       /*
       Imprimir el informe------------------------------------------------------
@@ -11111,7 +11068,7 @@ Function PrintReportSatCli( nDevice, nCopies, cPrinter, dbfDoc )
       do case
          case nDevice == IS_SCREEN
 
-            oFr:ShowSatparedReport()
+            oFr:ShowPreparedReport()
 
          case nDevice == IS_PRINTER
 
@@ -11239,14 +11196,14 @@ Return nil
 
 //---------------------------------------------------------------------------//
 
-Function sTotSatCli( cSatsupuesto, dbfMaster, dbfLine, dbfIva, dbfDiv, cDivRet, lExcCnt )
+Function sTotSatCli( cSat, dbfMaster, dbfLine, dbfIva, dbfDiv, cDivRet, lExcCnt )
 
    local sTotal
 
-   nTotSatCli( cSatsupuesto, dbfMaster, dbfLine, dbfIva, dbfDiv, nil, nil, cDivRet, .f., lExcCnt )
+   nTotSatCli( cSat, dbfMaster, dbfLine, dbfIva, dbfDiv, nil, nil, cDivRet, .f., lExcCnt )
 
    sTotal                                 := sTotal()
-   sTotal:nTotSatruto                     := nTotBrt
+   sTotal:nTotalBruto                     := nTotBrt
    sTotal:nTotalNeto                      := nTotNet
    sTotal:nTotalIva                       := nTotIva
    sTotal:aTotalIva                       := aTotIva

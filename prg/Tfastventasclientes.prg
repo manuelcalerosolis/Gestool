@@ -30,6 +30,7 @@ CLASS TFastVentasClientes FROM TFastReportInfGen
    METHOD StartDialog()
    METHOD BuildTree( oTree )
 
+   METHOD AddSATCliente()
    METHOD AddPresupuestoCliente()
    METHOD AddPedidoCliente( cCodigoCliente )
    METHOD AddAlbaranCliente()
@@ -109,6 +110,11 @@ METHOD OpenFiles() CLASS TFastVentasClientes
    oBlock         := ErrorBlock( {| oError | ApoloBreak( oError ) } )
    BEGIN SEQUENCE
 
+      DATABASE NEW ::oSatCliT PATH ( cPatEmp() ) CLASS "SatCliT" FILE "SatCliT.DBF" VIA ( cDriver() ) SHARED INDEX "SatCliT.CDX"
+      ::oSatCliT:OrdSetFocus( "cCodCli" )
+
+      DATABASE NEW ::oSatCliL PATH ( cPatEmp() ) CLASS "SatCliL" FILE "SatCliL.DBF" VIA ( cDriver() ) SHARED INDEX "SatCliL.CDX"
+
       DATABASE NEW ::oPreCliT PATH ( cPatEmp() ) CLASS "PreCliT" FILE "PreCliT.DBF" VIA ( cDriver() ) SHARED INDEX "PreCliT.CDX"
       ::oPreCliT:OrdSetFocus( "cCodCli" )
 
@@ -168,6 +174,14 @@ RETURN ( lOpen )
 //---------------------------------------------------------------------------//
 
 METHOD CloseFiles() CLASS TFastVentasClientes
+
+   if !Empty( ::oSatCliL ) .and. ( ::oSatCliL:Used() )
+      ::oSatCliL:end()
+   end if
+
+   if !Empty( ::oSatCliT ) .and. ( ::oSatCliT:Used() )
+      ::oSatCliT:end()
+   end if
 
    if !Empty( ::oPreCliL ) .and. ( ::oPreCliL:Used() )
       ::oPreCliL:end()
@@ -320,9 +334,10 @@ METHOD BuildTree( oTree, lSubNode ) CLASS TFastVentasClientes
    oTree:Add( "Listado", 19, "Listado"  )
 
    oTreeVentas             := oTree:Add( "Ventas", 11 )
-   oTreeVentas:Add( "Informe de presupuestos",  5, "Informe de presupuestos" )
-   oTreeVentas:Add( "Informe de pedidos",       6, "Informe de pedidos" )
-   oTreeVentas:Add( "Informe de albaranes",     7, "Informe de albaranes" )
+   oTreeVentas:Add( "Informe de S.A.T.",        20,   "Informe de S.A.T." )
+   oTreeVentas:Add( "Informe de presupuestos",  5,    "Informe de presupuestos" )
+   oTreeVentas:Add( "Informe de pedidos",       6,    "Informe de pedidos" )
+   oTreeVentas:Add( "Informe de albaranes",     7,    "Informe de albaranes" )
 
    oTreeFacturas           := oTreeVentas:Add( "Informe de facturas",   8 )
 
@@ -334,8 +349,8 @@ METHOD BuildTree( oTree, lSubNode ) CLASS TFastVentasClientes
 
    oTreeVentas:Add( "Informe de facturas rectificativas", 9, "Informe de facturas rectificativas" )
 
-   oTreeVentas:Add( "Informe de tickets",       10, "Informe de tickets" )
-   oTreeVentas:Add( "Informe de ventas",        11, "Informe de ventas" )
+   oTreeVentas:Add( "Informe de tickets",       10,   "Informe de tickets" )
+   oTreeVentas:Add( "Informe de ventas",        11,   "Informe de ventas" )
 
    oTreeVentas:Expand()
    oTreeFacturas:Expand()
@@ -392,6 +407,20 @@ METHOD DataReport() CLASS TFastVentasClientes
 
    ::oFastReport:SetWorkArea(       "Incidencias",                      ::oCliInc:nArea )
    ::oFastReport:SetFieldAliases(   "Incidencias",                      cItemsToReport( aCliInc() ) )
+
+   /*
+   SAT----------------------------------------------------------------
+   */
+
+   ::oSatCliT:OrdSetFocus( "iNumSat" )
+
+   ::oFastReport:SetWorkArea(       "SAT de clientes", ::oSatCliT:nArea )
+   ::oFastReport:SetFieldAliases(   "SAT de clientes", cItemsToReport( aItmSatCli() ) )
+
+   ::oSatCliL:OrdSetFocus( "iNumSat" )
+
+   ::oFastReport:SetWorkArea(       "Lineas SAT de clientes", ::oSatCliL:nArea )
+   ::oFastReport:SetFieldAliases(   "Lineas SAT de clientes", cItemsToReport( aColSatCli() ) )
 
    /*
    Presupuestos----------------------------------------------------------------
@@ -578,6 +607,10 @@ METHOD lGenerate() CLASS TFastVentasClientes
    */
 
    do case
+      case ::cReportName == "Informe de S.A.T."
+
+         ::AddSATCliente()
+
       case ::cReportName == "Informe de presupuestos"
 
          ::AddPresupuestoCliente()
@@ -655,6 +688,109 @@ Method lValidRegister( cCodigoCliente ) CLASS TFastVentasClientes
    end if
 
 RETURN ( .f. )
+
+//---------------------------------------------------------------------------//
+
+METHOD AddSATCliente( cCodigoCliente ) CLASS TFastVentasClientes
+
+   local sTot
+   local oError
+   local oBlock
+   local cExpHead
+   
+   oBlock               := ErrorBlock( {| oError | ApoloBreak( oError ) } )
+   BEGIN SEQUENCE
+   
+      ::InitSATClientes()
+
+      ::oSatCliT:OrdSetFocus( "cCodCli" )
+      ::oSatCliL:OrdSetFocus( "nNumSat" )
+
+      cExpHead          := 'dFecSat >= Ctod( "' + Dtoc( ::dIniInf ) + '" ) .and. dFecSat <= Ctod( "' + Dtoc( ::dFinInf ) + '" )'
+      cExpHead          += ' .and. Rtrim( cCodCli ) >= "' + Rtrim( ::oGrupoCliente:Cargo:Desde )   + '" .and. Rtrim( cCodCli ) <= "' + Rtrim( ::oGrupoCliente:Cargo:Hasta ) + '"'
+      cExpHead          += ' .and. cSerSat >= "' + Rtrim( ::oGrupoSerie:Cargo:Desde ) + '" .and. cSerSat <= "'    + Rtrim( ::oGrupoSerie:Cargo:Hasta ) + '"'
+
+      ::oSatCliT:AddTmpIndex( cCurUsr(), GetFileNoExt( ::oSatCliT:cFile ), ::oSatCliT:OrdKey(), ( cExpHead ), , , , , , , , .t. )
+
+      ::oMtrInf:cText   := "Procesando SAT"
+      ::oMtrInf:SetTotal( ::oSatCliT:OrdKeyCount() )
+
+      ::oSatCliT:GoTop()
+      while !::lBreak .and. !::oSatCliT:Eof()
+
+         if lChkSer( ::oSatCliT:cSerSat, ::aSer )
+
+            sTot              := sTotSatCli( ::oSatCliT:cSerSat + Str( ::oSatCliT:nNumSat ) + ::oSatCliT:cSufSat, ::oSatCliT:cAlias, ::oSatCliL:cAlias, ::oDbfIva:cAlias, ::oDbfDiv:cAlias )
+
+            ::oDbf:Blank()
+
+            ::oDbf:cCodCli    := ::oSatCliT:cCodCli
+            ::oDbf:cNomCli    := ::oSatCliT:cNomCli
+            ::oDbf:cCodAge    := ::oSatCliT:cCodAge
+            ::oDbf:cCodPgo    := ::oSatCliT:cCodPgo
+            ::oDbf:cCodRut    := ::oSatCliT:cCodRut
+            ::oDbf:cCodUsr    := ::oSatCliT:cCodUsr
+
+            ::oDbf:cCodGrp    := cGruCli( ::oSatCliT:cCodCli, ::oDbfCli )
+
+            ::oDbf:cTipDoc    := "SAT clientes"
+            ::oDbf:cClsDoc    := SAT_CLI
+            ::oDbf:cSerDoc    := ::oSatCliT:cSerSat
+            ::oDbf:cNumDoc    := Str( ::oSatCliT:nNumSat )
+            ::oDbf:cSufDoc    := ::oSatCliT:cSufSat
+
+            ::oDbf:cIdeDoc    :=  ::cIdeDocumento()
+
+            ::oDbf:nAnoDoc    := Year( ::oSatCliT:dFecSat )
+            ::oDbf:nMesDoc    := Month( ::oSatCliT:dFecSat )
+            ::oDbf:dFecDoc    := ::oSatCliT:dFecSat
+            ::oDbf:cHorDoc    := SubStr( ::oSatCliT:cTimCre, 1, 2 )
+            ::oDbf:cMinDoc    := SubStr( ::oSatCliT:cTimCre, 3, 2 )
+
+            ::oDbf:nTotNet    := sTot:nTotalNeto
+            ::oDbf:nTotIva    := sTot:nTotalIva
+            ::oDbf:nTotReq    := sTot:nTotalRecargoEquivalencia
+            ::oDbf:nTotDoc    := sTot:nTotalDocumento
+            ::oDbf:nTotPnt    := sTot:nTotalPuntoVerde
+            ::oDbf:nTotTrn    := sTot:nTotalTransporte
+            ::oDbf:nTotAge    := sTot:nTotalAgente
+            ::oDbf:nTotCos    := sTot:nTotalCosto
+            ::oDbf:nTotIvm    := sTot:nTotalImpuestoHidrocarburos
+            ::oDbf:nTotRnt    := sTot:nTotalRentabilidad
+            ::oDbf:nTotRet    := sTot:nTotalRetencion
+            ::oDbf:nTotCob    := sTot:nTotalCobrado
+
+            /*
+            Añadimos un nuevo registro--------------------------------------------
+            */
+
+            if ::lValidRegister()
+               ::oDbf:Insert()
+            else
+               ::oDbf:Cancel()
+            end if
+
+            ::addSATClientes()
+
+         end if
+
+         ::oSatCliT:Skip()
+
+         ::oMtrInf:AutoInc()
+
+      end while
+
+      ::oSatCliT:IdxDelete( cCurUsr(), GetFileNoExt( ::oSatCliT:cFile ) ) 
+
+   RECOVER USING oError
+
+      msgStop( ErrorMessage( oError ), "Imposible añadir SAT de clientes" )
+
+   END SEQUENCE
+
+   ErrorBlock( oBlock )
+   
+RETURN ( Self )
 
 //---------------------------------------------------------------------------//
 

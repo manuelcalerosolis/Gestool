@@ -192,8 +192,10 @@ CLASS TInfGen
    DATA oFacCliT
    DATA oFacCliP
    DATA oAntCliT
-   DATA oPreCliL
+   DATA oSatCliT
+   DATA oSatCliL
    DATA oPreCliT
+   DATA oPreCliL
    DATA oPedCliL
    DATA oPedCliT
    DATA oPedPrvL

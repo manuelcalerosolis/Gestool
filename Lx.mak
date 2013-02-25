@@ -147,6 +147,7 @@ Pdreport.prg            \
 Pedcli.prg              \
 Pedprov.prg             \
 Precli.prg              \
+Satcli.prg 				\
 Pro.prg                 \
 Producc.prg             \
 Promo.prg               \
@@ -1195,6 +1196,7 @@ Pdreport.obj            \
 Pedcli.obj              \
 Pedprov.obj             \
 Precli.obj              \
+Satcli.obj 				\
 Pro.obj                 \
 Producc.obj             \
 Promo.obj               \
@@ -2252,6 +2254,7 @@ $(OBJ)\Pdreport.obj             +
 $(OBJ)\Pedcli.obj               +
 $(OBJ)\Pedprov.obj              +
 $(OBJ)\Precli.obj               +
+$(OBJ)\Satcli.obj               +
 $(OBJ)\Pro.obj                  +
 $(OBJ)\Producc.obj              +
 $(OBJ)\Promo.obj                +

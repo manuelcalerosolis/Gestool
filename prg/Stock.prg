@@ -15,6 +15,9 @@ CLASS TStock
    DATA cAlm
    DATA cArt
 
+   DATA cSatCliT
+   DATA cSatCliL
+
    DATA cPedCliT
    DATA cPedCliL
    DATA cPedCliR
@@ -167,6 +170,8 @@ CLASS TStock
    METHOD nGetUndRes()
 
    METHOD SetEstadoPedCli( cNumPed )
+   METHOD SetEstadoSatCli( cNumPed )
+
    METHOD SetRecibidoPedCli( cNumPed )
    METHOD SetGeneradoPedCli( cNumPed )
 
@@ -905,6 +910,35 @@ METHOD SetEstadoPedCli( cNumPed, lFactura, cNumFac ) CLASS TStock
          ( ::cPedCliT )->nEstado := nEstPed
          ( ::cPedCliT )->( dbUnlock() )
       end if
+
+   end if
+
+Return .t.
+
+//---------------------------------------------------------------------------//
+
+METHOD SetEstadoSatCli( cNumSat ) CLASS TStock
+
+   if Empty( ::cSatCliT ) 
+      return .f.
+   end if
+
+   /*
+   Comprobamos como esta el SAT------------------------------------------
+   */
+
+   if ( ::cSatCliT )->( dbSeek( cNumSat ) )  
+
+      while ( ::cSatCliT )->cSerSat + Str( ( ::cSatCliT )->nNumSat ) + ( ::cSatCliT )->cSufSat == cNumSat .and. !( ::cSatCliT )->( eof() )
+
+         if dbLock( ::cSatCliT )
+            ( ::cSatCliT )->lEstado := .f.
+            ( ::cSatCliT )->( dbUnlock() )
+         end if
+
+         ( ::cSatCliT )->( dbSkip() )
+
+      end do
 
    end if
 

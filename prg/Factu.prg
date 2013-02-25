@@ -2498,10 +2498,10 @@ Function CreateAcceso( oWnd )
    oItem:oGroup         := oGrupo
    oItem:cPrompt        := 'S.A.T.'
    oItem:cMessage       := 'Acceso al S.A.T. de clientes'
-   oItem:bAction        := {|| SatCli( "01099", oWnd ) }
-   oItem:cId            := "01099"
-   oItem:cBmp           := "Notebook_user1_16"
-   oItem:cBmpBig        := "Notebook_user1_32"
+   oItem:bAction        := {|| SatCli( "01098", oWnd ) }
+   oItem:cId            := "01098"
+   oItem:cBmp           := "Power-drill_user1_16"
+   oItem:cBmpBig        := "Power-drill_user1_32"
    oItem:lShow          := .f.
 
    oItem                := oItemVentas:Add()

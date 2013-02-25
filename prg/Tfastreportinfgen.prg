@@ -56,6 +56,11 @@ CLASS TFastReportInfGen FROM TNewInfGen
 
    DATA  nTotalRemesasAgentes          INIT 0
 
+   DATA  nBaseSatClientes              INIT 0
+   DATA  nIVASatClientes               INIT 0
+   DATA  nRecargoSatClientes           INIT 0
+   DATA  nTotalSatClientes             INIT 0
+
    DATA  nBasePresupuestosClientes     INIT 0
    DATA  nIVAPresupuestosClientes      INIT 0
    DATA  nRecargoPresupuestosClientes  INIT 0
@@ -416,12 +421,38 @@ CLASS TFastReportInfGen FROM TNewInfGen
 
    //------------------------------------------------------------------------//
 
+   INLINE METHOD InitSatClientes()
+
+      ::nBaseSatClientes         := 0
+      ::nIVASatClientes          := 0
+      ::nRecargoSatClientes      := 0
+      ::nTotalSatClientes        := 0
+
+      RETURN ( Self )
+
+   ENDMETHOD
+
+   //------------------------------------------------------------------------//
+
+   INLINE METHOD AddSATClientes()
+
+      ::nBaseSATClientes         += ::oSatCliT:nTotNet
+      ::nIVASATClientes          += ::oSatCliT:nTotIva
+      ::nRecargoSATClientes      += ::oSatCliT:nTotReq
+      ::nTotalSATClientes        += ::oSatCliT:nTotSat
+
+      RETURN ( Self )
+
+   ENDMETHOD
+
+   //------------------------------------------------------------------------//
+
    INLINE METHOD InitPresupuestosClientes()
 
-      ::nBasePresupuestosClientes       := 0
-      ::nIVAPresupuestosClientes        := 0
-      ::nRecargoPresupuestosClientes    := 0
-      ::nTotalPresupuestosClientes      := 0
+      ::nBasePresupuestosClientes      := 0
+      ::nIVAPresupuestosClientes       := 0
+      ::nRecargoPresupuestosClientes   := 0
+      ::nTotalPresupuestosClientes     := 0
 
       RETURN ( Self )
 
@@ -431,10 +462,10 @@ CLASS TFastReportInfGen FROM TNewInfGen
 
    INLINE METHOD AddPresupuestosClientes()
 
-      ::nBasePresupuestosClientes       += ::oPreCliT:nTotNet
-      ::nIVAPresupuestosClientes        += ::oPreCliT:nTotIva
-      ::nRecargoPresupuestosClientes    += ::oPreCliT:nTotReq
-      ::nTotalPresupuestosClientes      += ::oPreCliT:nTotPre
+      ::nBasePresupuestosClientes      += ::oPreCliT:nTotNet
+      ::nIVAPresupuestosClientes       += ::oPreCliT:nTotIva
+      ::nRecargoPresupuestosClientes   += ::oPreCliT:nTotReq
+      ::nTotalPresupuestosClientes     += ::oPreCliT:nTotPre
 
       RETURN ( Self )
 
@@ -470,10 +501,10 @@ CLASS TFastReportInfGen FROM TNewInfGen
 
    INLINE METHOD InitAlbaranesClientes()
 
-      ::nBaseAlbaranesClientes      := 0
-      ::nIVAAlbaranesClientes       := 0
-      ::nRecargoAlbaranesClientes   := 0
-      ::nTotalAlbaranesClientes     := 0
+      ::nBaseAlbaranesClientes         := 0
+      ::nIVAAlbaranesClientes          := 0
+      ::nRecargoAlbaranesClientes      := 0
+      ::nTotalAlbaranesClientes        := 0
 
       RETURN ( Self )
 
@@ -483,10 +514,10 @@ CLASS TFastReportInfGen FROM TNewInfGen
 
    INLINE METHOD AddAlbaranesClientes()
 
-      ::nBaseAlbaranesClientes            += ::oAlbCliT:nTotNet
-      ::nIVAAlbaranesClientes             += ::oAlbCliT:nTotIva
-      ::nRecargoAlbaranesClientes         += ::oAlbCliT:nTotReq
-      ::nTotalAlbaranesClientes           += ::oAlbCliT:nTotAlb
+      ::nBaseAlbaranesClientes         += ::oAlbCliT:nTotNet
+      ::nIVAAlbaranesClientes          += ::oAlbCliT:nTotIva
+      ::nRecargoAlbaranesClientes      += ::oAlbCliT:nTotReq
+      ::nTotalAlbaranesClientes        += ::oAlbCliT:nTotAlb
 
       RETURN ( Self )
 
@@ -575,27 +606,32 @@ CLASS TFastReportInfGen FROM TNewInfGen
 
       Super:AddVariable()
 
-      ::oFastReport:AddVariable(    "Presupuestos clientes",      "Total base presupuestos clientes",            "CallHbFunc( 'oTinfGen', ['nBasePresupuestosClientes'])"    )
-      ::oFastReport:AddVariable(    "Presupuestos clientes",      "Total " + cImp() + " presupuestos clientes",  "CallHbFunc( 'oTinfGen', ['nIVAPresupuestosClientes'])"     )
-      ::oFastReport:AddVariable(    "Presupuestos clientes",      "Total recargo presupuestos clientes",         "CallHbFunc( 'oTinfGen', ['nRecargoPresupuestosClientes'])" )
-      ::oFastReport:AddVariable(    "Presupuestos clientes",      "Total presupuestos clientes",                 "CallHbFunc( 'oTinfGen', ['nTotalPresupuestosClientes'])"   )
+      ::oFastReport:AddVariable(    "SAT clientes",            "Total base SAT clientes",            "CallHbFunc( 'oTinfGen', ['nBaseSATClientes'])"    )
+      ::oFastReport:AddVariable(    "SAT clientes",            "Total " + cImp() + " SAT clientes",  "CallHbFunc( 'oTinfGen', ['nIVASATClientes'])"     )
+      ::oFastReport:AddVariable(    "SAT clientes",            "Total recargo SAT clientes",         "CallHbFunc( 'oTinfGen', ['nRecargoSATClientes'])" )
+      ::oFastReport:AddVariable(    "SAT clientes",            "Total SAT clientes",                 "CallHbFunc( 'oTinfGen', ['nTotalSATClientes'])"   )
 
-      ::oFastReport:AddVariable(    "Pedidos clientes",           "Total base pedidos clientes",            "CallHbFunc( 'oTinfGen', ['nBasePedidosClientes'])"    )
-      ::oFastReport:AddVariable(    "Pedidos clientes",           "Total " + cImp() + " pedidos clientes",  "CallHbFunc( 'oTinfGen', ['nIVAPedidosClientes'])"     )
-      ::oFastReport:AddVariable(    "Pedidos clientes",           "Total recargo pedidos clientes",         "CallHbFunc( 'oTinfGen', ['nRecargoPedidosClientes'])" )
-      ::oFastReport:AddVariable(    "Pedidos clientes",           "Total pedidos clientes",                 "CallHbFunc( 'oTinfGen', ['nTotalPedidosClientes'])"   )
+      ::oFastReport:AddVariable(    "Presupuestos clientes",   "Total base presupuestos clientes",            "CallHbFunc( 'oTinfGen', ['nBasePresupuestosClientes'])"    )
+      ::oFastReport:AddVariable(    "Presupuestos clientes",   "Total " + cImp() + " presupuestos clientes",  "CallHbFunc( 'oTinfGen', ['nIVAPresupuestosClientes'])"     )
+      ::oFastReport:AddVariable(    "Presupuestos clientes",   "Total recargo presupuestos clientes",         "CallHbFunc( 'oTinfGen', ['nRecargoPresupuestosClientes'])" )
+      ::oFastReport:AddVariable(    "Presupuestos clientes",   "Total presupuestos clientes",                 "CallHbFunc( 'oTinfGen', ['nTotalPresupuestosClientes'])"   )
 
-      ::oFastReport:AddVariable(    "Albaranes clientes",         "Total base albaranes clientes",          "CallHbFunc( 'oTinfGen', ['nBaseAlbaranesClientes'])"    )
-      ::oFastReport:AddVariable(    "Albaranes clientes",         "Total " + cImp() + " albaranes clientes","CallHbFunc( 'oTinfGen', ['nIVAAlbaranesClientes'])"     )
-      ::oFastReport:AddVariable(    "Albaranes clientes",         "Total recargo albaranes clientes",       "CallHbFunc( 'oTinfGen', ['nRecargoAlbaranesClientes'])" )
-      ::oFastReport:AddVariable(    "Albaranes clientes",         "Total albaranes clientes",               "CallHbFunc( 'oTinfGen', ['nTotalAlbaranesClientes'])"   )
+      ::oFastReport:AddVariable(    "Pedidos clientes",        "Total base pedidos clientes",            "CallHbFunc( 'oTinfGen', ['nBasePedidosClientes'])"    )
+      ::oFastReport:AddVariable(    "Pedidos clientes",        "Total " + cImp() + " pedidos clientes",  "CallHbFunc( 'oTinfGen', ['nIVAPedidosClientes'])"     )
+      ::oFastReport:AddVariable(    "Pedidos clientes",        "Total recargo pedidos clientes",         "CallHbFunc( 'oTinfGen', ['nRecargoPedidosClientes'])" )
+      ::oFastReport:AddVariable(    "Pedidos clientes",        "Total pedidos clientes",                 "CallHbFunc( 'oTinfGen', ['nTotalPedidosClientes'])"   )
 
-      ::oFastReport:AddVariable(    "Facturas clientes",          "Total base facturas clientes",           "CallHbFunc( 'oTinfGen', ['nBaseFacturasClientes'])"     )
-      ::oFastReport:AddVariable(    "Facturas clientes",          "Total " + cImp() + " facturas clientes", "CallHbFunc( 'oTinfGen', ['nIVAFacturasClientes'])"      )
-      ::oFastReport:AddVariable(    "Facturas clientes",          "Total recargo facturas clientes",        "CallHbFunc( 'oTinfGen', ['nRecargoFacturasClientes'])"  )
-      ::oFastReport:AddVariable(    "Facturas clientes",          "Total facturas clientes",                "CallHbFunc( 'oTinfGen', ['nTotalFacturasClientes'])"    )
+      ::oFastReport:AddVariable(    "Albaranes clientes",      "Total base albaranes clientes",          "CallHbFunc( 'oTinfGen', ['nBaseAlbaranesClientes'])"    )
+      ::oFastReport:AddVariable(    "Albaranes clientes",      "Total " + cImp() + " albaranes clientes","CallHbFunc( 'oTinfGen', ['nIVAAlbaranesClientes'])"     )
+      ::oFastReport:AddVariable(    "Albaranes clientes",      "Total recargo albaranes clientes",       "CallHbFunc( 'oTinfGen', ['nRecargoAlbaranesClientes'])" )
+      ::oFastReport:AddVariable(    "Albaranes clientes",      "Total albaranes clientes",               "CallHbFunc( 'oTinfGen', ['nTotalAlbaranesClientes'])"   )
 
-      ::oFastReport:AddVariable(    "Liquidación de agentes",     "Total liquidación de agentes",           "GetHbVar('nTotalRemesasAgentes')"                       )
+      ::oFastReport:AddVariable(    "Facturas clientes",       "Total base facturas clientes",           "CallHbFunc( 'oTinfGen', ['nBaseFacturasClientes'])"     )
+      ::oFastReport:AddVariable(    "Facturas clientes",       "Total " + cImp() + " facturas clientes", "CallHbFunc( 'oTinfGen', ['nIVAFacturasClientes'])"      )
+      ::oFastReport:AddVariable(    "Facturas clientes",       "Total recargo facturas clientes",        "CallHbFunc( 'oTinfGen', ['nRecargoFacturasClientes'])"  )
+      ::oFastReport:AddVariable(    "Facturas clientes",       "Total facturas clientes",                "CallHbFunc( 'oTinfGen', ['nTotalFacturasClientes'])"    )
+
+      ::oFastReport:AddVariable(    "Liquidación de agentes",  "Total liquidación de agentes",           "GetHbVar('nTotalRemesasAgentes')"                       )
 
       RETURN ( Self )
 
@@ -626,6 +662,7 @@ CLASS TFastReportInfGen FROM TNewInfGen
       ::oTreeImageList:AddMasked( TBitmap():Define( "Office-building_address_book_16" ),  Rgb( 255, 0, 255 ) ) // 17
       ::oTreeImageList:AddMasked( TBitmap():Define( "Document_navigate_cross_16" ),       Rgb( 255, 0, 255 ) ) // 18
       ::oTreeImageList:AddMasked( TBitmap():Define( "User1_16" ),                         Rgb( 255, 0, 255 ) ) // 19
+      ::oTreeImageList:AddMasked( TBitmap():Define( "Power-drill_user1_16" ),             Rgb( 255, 0, 255 ) ) // 20
 
       if !Empty( ::oTreeReporting )
          ::oTreeReporting:SetImageList( ::oTreeImageList )
