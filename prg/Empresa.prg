@@ -313,7 +313,7 @@ FUNCTION Empresa( oMenuItem, oWnd )
          :cHeader          := "Código"
          :cSortOrder       := "CodEmp"
          :bEditValue       := {|| if( ( dbfEmp )->lGrupo, "<" + rTrim( ( dbfEmp )->CodEmp ) + ">", ( dbfEmp )->CodEmp ) }
-         :nWidth           := 40
+         :nWidth           := 80
          :bLClickHeader    := {| nMRow, nMCol, nFlags, oCol | oWndBrw:ClickOnHeader( oCol ) }
       end with
 
@@ -426,7 +426,7 @@ STATIC FUNCTION EdtRec( aTmp, aGet, dbfEmp, oBrw, bWhen, bValid, nMode )
 	local cNomEmp
 	local oCodEmp
    local aImportacion   := aImportacion()
-   local cCodEmp        := Space( 2 )
+   local cCodEmp        := Space( 4 )
 	local bmpEmp
    local oBmpEmp
    local oBrwDet
@@ -451,7 +451,6 @@ STATIC FUNCTION EdtRec( aTmp, aGet, dbfEmp, oBrw, bWhen, bValid, nMode )
    StopServices()
 
    if nMode == APPD_MODE
-      aTmp[_CODEMP ]    := "00"
       aTmp[_NCODCLI]    := 7
       aTmp[_NCODPRV]    := 7
       aTmp[_NNUMTUR]    := 1
@@ -953,9 +952,9 @@ STATIC FUNCTION EdtGrp( aTmp, aGet, dbfEmp, oBrw, bWhen, bValid, nMode )
 	local oDlg
    local oBtnOk
 	local oCodEmp
-   local cCodEmp              := Space( 2 )
+   local cCodEmp              := Space( 4 )
    local oCodGrp
-   local cCodGrp              := Space( 2 )
+   local cCodGrp              := Space( 4 )
    local oGrupoImportacion
    local aImportacion         := aImportacion()
 
@@ -3008,8 +3007,10 @@ Function SetEmpresa( cCodEmp, dbfEmp, dbfDlg, dbfUsr, oBrw, oWnd, lSoft )
 
    if Empty( cCodEmp )
       ( dbfEmp )->( dbGoTop() )
-      cCodEmp        := ( dbfEmp )->CodEmp
+      cCodEmp        := ( dbfEmp )->CodEmp 
    end if
+
+   cCodEmp           := Alltrim( cCodEmp )
 
    nOrd              := ( dbfEmp )->( OrdSetFocus( "CodEmp" ) )
    if !( dbfEmp )->( dbSeek( cCodEmp ) )
@@ -3052,7 +3053,7 @@ Function SetEmpresa( cCodEmp, dbfEmp, dbfDlg, dbfUsr, oBrw, oWnd, lSoft )
 
             MsgAlert( "La nueva empresa activa es " + ( dbfEmp )->CodEmp + " - " + Rtrim( ( dbfEmp )->cNombre ) )
 
-            cCodEmp                 := ( dbfEmp )->CodEmp
+            cCodEmp                 := Alltrim( ( dbfEmp )->CodEmp )
 
             exit
 
@@ -3435,7 +3436,7 @@ Static Function StartPathEmp( cPath, cPathOld, cCodEmpNew, cNomEmpNew, cCodEmpOl
 
    local oError
    local oBlock
-   local cCodGrp        := Space( 2 )
+   local cCodGrp        := Space( 4 )
    local cPathGrp       := ""
    local lAIS           := lAIS()
 
@@ -4049,7 +4050,7 @@ FUNCTION mkPathGrp( cCodGrpNew, cNomGrpNew, cCodGrpOld, aImportacion, lDialog, l
    local cMsg           := "Creando nueva empresa"
    local cPath          := cPatGrpOld( cCodGrpNew )
    local cPathOld       := if( !Empty( cCodGrpOld ), if( lGrpOld, cPatGrpOld( cCodGrpOld ), cPatEmpOld( cCodGrpOld ) ), nil )
-   local cCodGrp        := Space( 2 )
+   local cCodGrp        := Space( 4 )
 
    DEFAULT lDialog      := .f.
    DEFAULT lNewGrp      := .f.
@@ -5658,19 +5659,22 @@ Function ChkAllEmp( lForced )
 
    if ( !File( FullCurDir() + "ChkEmp.nil" ) .or. fSize( FullCurDir() + "ChkEmp.nil" ) == 0 .or. lForced )
 
-      USE ( cPatDat() + "EMPRESA.DBF" ) NEW VIA ( cDriver() ) SHARED ALIAS ( cCheckArea( "EMPRESA", @dbfEmp ) )
-      SET ADSINDEX TO ( cPatDat() + "EMPRESA.CDX" ) ADDITIVE
+      USE ( cPatDat() + "Empresa.DBF" ) NEW VIA ( cDriver() ) SHARED ALIAS ( cCheckArea( "Empresa", @dbfEmp ) )
+      SET ADSINDEX TO ( cPatDat() + "Empresa.CDX" ) ADDITIVE
 
       while !( dbfEmp )->( eof() )
+
          aAdd( aEmp, { ( dbfEmp )->CodEmp, ( dbfEmp )->cNombre, ( dbfEmp )->lGrupo } )
+
          ( dbfEmp )->( dbSkip() )
+
       end while
 
       ( dbfEmp )->( dbCloseArea() )
 
       if lForced .or. ;
          ApoloMsgNoYes(    "El sistema ha detectado una nueva versión, es"       + CRLF + ;
-                           "conveniente que inicie el proceso de atcualización"  + CRLF + ;
+                           "conveniente que inicie el proceso de actualización"  + CRLF + ;
                            "de sus datos, para ello deben de salir todos los"    + CRLF + ;
                            "usuarios de la aplicación."                          + CRLF + ;
                                                                                  + CRLF + ;
@@ -6602,9 +6606,11 @@ Actualiza la base de datos
 FUNCTION TstEmpresa( cPatDat )
 
    local dbfEmp
-   local nFldEmp
    local oError
    local oBlock
+   local cCodEmp
+   local lChangeCode
+   local lChangeStruct  
 
    if !lExistTable( cPatDat() + "EMPRESA.DBF" )
       dbCreate( cPatDat() + "EMPRESA.DBF", aSqlStruct( aItmEmp() ), cDriver() )
@@ -6621,9 +6627,9 @@ FUNCTION TstEmpresa( cPatDat )
    if !lExistIndex( cPatDat() + "DELEGA.CDX" )
       rxDlg( cPatDat() )
    end if
-
-   oBlock         := ErrorBlock( {| oError | ApoloBreak( oError ) } )
-   BEGIN SEQUENCE
+/*
+   oBlock               := ErrorBlock( {| oError | ApoloBreak( oError ) } )
+   BEGIN SEQUENCE*/
 
       /*
       Empresa------------------------------------------------------------------
@@ -6633,11 +6639,11 @@ FUNCTION TstEmpresa( cPatDat )
 
       if !( dbfEmp )->( netErr() )
 
-         nFldEmp  := ( dbfEmp )->( fCount() )
+         lChangeStruct  := lChangeStruct( dbfEmp, aItmEmp() )
 
          ( dbfEmp )->( dbCloseArea() )
 
-         if nFldEmp != len( aItmEmp() )
+         if lChangeStruct
 
             dbCreate( cPatEmpTmp() + "Empresa.Dbf", aSqlStruct( aItmEmp() ), cLocalDriver() )
             appDbf( cPatDat(), cPatEmpTmp(), "Empresa", aItmEmp() )
@@ -6659,11 +6665,11 @@ FUNCTION TstEmpresa( cPatDat )
 
       if !( dbfEmp )->( netErr() )
 
-         nFldEmp  := ( dbfEmp )->( fCount() )
+         lChangeStruct  := lChangeStruct( dbfEmp, aItmDlg() )
 
          ( dbfEmp )->( dbCloseArea() )
 
-         if nFldEmp != len( aItmDlg() )
+         if lChangeStruct
 
             dbCreate( cPatEmpTmp() + "Delega.Dbf", aSqlStruct( aItmDlg() ), cLocalDriver() )
             appDbf( cPatDat(), cPatEmpTmp(), "Delega", aItmDlg() )
@@ -6678,38 +6684,56 @@ FUNCTION TstEmpresa( cPatDat )
       end if
 
       /*
-      Bancos-------------------------------------------------------------------
-
-      dbUseArea( .t., cDriver(), ( cPatDat() + "EmpBnc.Dbf" ), cCheckArea( "EmpBnc", @dbfEmp ), .t. )
-
-      if !( dbfEmp )->( netErr() )
-
-         nFldEmp  := ( dbfEmp )->( fCount() )
-
-         ( dbfEmp )->( dbCloseArea() )
-
-         if nFldEmp != len( aItmBnc() )
-
-            dbCreate( cPatEmpTmp() + "EmpBnc.Dbf", aSqlStruct( aItmBnc() ), cLocalDriver() )
-            appDbf( cPatDat(), cPatEmpTmp(), "EmpBnc", aItmBnc() )
-
-            fEraseTable( cPatDat() + "EmpBnc.Dbf" )
-            fRenameTable( cPatEmpTmp() + "EmpBnc.Dbf", cPatDat() + "EmpBnc.Dbf" )
-
-            rxBnc( cPatDat() )
-
-         end if
-
-      end if
+      Situacion especial para cambio de codigo---------------------------------
       */
 
+      dbUseArea( .t.,  cDriver(), ( cPatDat() + "Empresa.Dbf" ), cCheckArea( "EMPRESA", @dbfEmp ), .t. )
+      if !lAIS() ; ordListAdd( ( cPatDat() + "Empresa.Cdx" ) ) ; else ; ordSetFocus( 1 ) ; end
+
+         /*
+         Comprobamos la longitud del codigo------------------------------------
+         */
+
+         ( dbfEmp )->( dbGoTop() )
+         while !( dbfEmp )->( Eof() )
+
+            cCodEmp     := Alltrim( ( dbfEmp )->CodEmp )
+
+            if len( cCodEmp ) == 2
+
+               if IsDirectory( FullCurDir() + "Emp" + cCodEmp )
+                  if fRename( FullCurDir() + "Emp" + cCodEmp, FullCurDir() + "Emp" + RJust( cCodEmp, "0", 4 ) ) == -1
+                     MsgAlert( "No he podido renombrar el directorio " + FullCurDir() + "Emp" + cCodEmp )
+                  end if
+               end if 
+
+               if IsDirectory( FullCurDir() + "Grp" + cCodEmp )
+                  if fRename( FullCurDir() + "Grp" + cCodEmp, FullCurDir() + "Grp" + RJust( cCodEmp, "0", 4 ) ) == -1
+                     MsgAlert( "No he podido renombrar el directorio " + FullCurDir() + "Grp" + cCodEmp )
+                  end if
+               end if 
+
+               if ( dbfEmp )->( dbRLock() )
+                  ( dbfEmp )->CodEmp   := RJust( ( dbfEmp )->CodEmp )
+                  ( dbfEmp )->( dbUnlock() )
+               end if
+
+            end if 
+            
+            ( dbfEmp )->( dbSkip() )
+
+         end while
+
+      ( dbfEmp )->( dbCloseArea() )
+
+/*
    RECOVER USING oError
 
       msgStop( ErrorMessage( oError ), "Error al comprobar bases de datos de empresa." )
 
    END SEQUENCE
 
-   ErrorBlock( oBlock )
+   ErrorBlock( oBlock )*/
 
 RETURN ( .t. )
 
@@ -6719,7 +6743,7 @@ FUNCTION aItmEmp()
 
    local aDbf  := {}
 
-   aAdd( aDbf, {"CodEmp",     "C",  2, 0, "Código de la empresa",            "",                   "", "aEmp()", "" } )
+   aAdd( aDbf, {"CodEmp",     "C",  4, 0, "Código de la empresa",            "",                   "", "aEmp()", "" } )
    aAdd( aDbf, {"cNombre",    "C", 45, 0, "Nombre de la empresa",            "",                   "", "aEmp()", "" } )
    aAdd( aDbf, {"CNIF",       "C", 15, 0, "Nif de la empresa",               "",                   "", "aEmp()", "" } )
    aAdd( aDbf, {"CADMINIS",   "C", 35, 0, "Administrador",                   "",                   "", "aEmp()", "" } )
@@ -6770,32 +6794,32 @@ FUNCTION aItmEmp()
    aAdd( aDbf, {"NDGTUND",    "N",  2, 0, "Número de digitos para las unidades", "",               "", "aEmp()", nil } )
    aAdd( aDbf, {"NDECUND",    "N",  1, 0, "Número de decimales para las unidades", "",             "", "aEmp()", nil } )
    aAdd( aDbf, {"CRUTCNT",    "C",100, 0, "Ruta de contabilidad",            "",                   "", "aEmp()", nil } )
-   aAdd( aDbf, {"cCodEmpA",   "C",  2, 0, "Código de la empresa en contaplus para la serie A", "", "", "aEmp()", nil } )
-   aAdd( aDbf, {"cCodEmpB",   "C",  2, 0, "Código de la empresa en contaplus para la serie B", "", "", "aEmp()", nil } )
-   aAdd( aDbf, {"cCodEmpC",   "C",  2, 0, "Código de la empresa en contaplus para la serie C", "", "", "aEmp()", nil } )
-   aAdd( aDbf, {"cCodEmpD",   "C",  2, 0, "Código de la empresa en contaplus para la serie D", "", "", "aEmp()", nil } )
-   aAdd( aDbf, {"cCodEmpE",   "C",  2, 0, "Código de la empresa en contaplus para la serie E", "", "", "aEmp()", nil } )
-   aAdd( aDbf, {"cCodEmpF",   "C",  2, 0, "Código de la empresa en contaplus para la serie F", "", "", "aEmp()", nil } )
-   aAdd( aDbf, {"cCodEmpG",   "C",  2, 0, "Código de la empresa en contaplus para la serie G", "", "", "aEmp()", nil } )
-   aAdd( aDbf, {"cCodEmpH",   "C",  2, 0, "Código de la empresa en contaplus para la serie H", "", "", "aEmp()", nil } )
-   aAdd( aDbf, {"cCodEmpI",   "C",  2, 0, "Código de la empresa en contaplus para la serie I", "", "", "aEmp()", nil } )
-   aAdd( aDbf, {"cCodEmpJ",   "C",  2, 0, "Código de la empresa en contaplus para la serie J", "", "", "aEmp()", nil } )
-   aAdd( aDbf, {"cCodEmpK",   "C",  2, 0, "Código de la empresa en contaplus para la serie K", "", "", "aEmp()", nil } )
-   aAdd( aDbf, {"cCodEmpL",   "C",  2, 0, "Código de la empresa en contaplus para la serie L", "", "", "aEmp()", nil } )
-   aAdd( aDbf, {"cCodEmpM",   "C",  2, 0, "Código de la empresa en contaplus para la serie M", "", "", "aEmp()", nil } )
-   aAdd( aDbf, {"cCodEmpN",   "C",  2, 0, "Código de la empresa en contaplus para la serie N", "", "", "aEmp()", nil } )
-   aAdd( aDbf, {"cCodEmpO",   "C",  2, 0, "Código de la empresa en contaplus para la serie O", "", "", "aEmp()", nil } )
-   aAdd( aDbf, {"cCodEmpP",   "C",  2, 0, "Código de la empresa en contaplus para la serie P", "", "", "aEmp()", nil } )
-   aAdd( aDbf, {"cCodEmpQ",   "C",  2, 0, "Código de la empresa en contaplus para la serie Q", "", "", "aEmp()", nil } )
-   aAdd( aDbf, {"cCodEmpR",   "C",  2, 0, "Código de la empresa en contaplus para la serie R", "", "", "aEmp()", nil } )
-   aAdd( aDbf, {"cCodEmpS",   "C",  2, 0, "Código de la empresa en contaplus para la serie S", "", "", "aEmp()", nil } )
-   aAdd( aDbf, {"cCodEmpT",   "C",  2, 0, "Código de la empresa en contaplus para la serie T", "", "", "aEmp()", nil } )
-   aAdd( aDbf, {"cCodEmpU",   "C",  2, 0, "Código de la empresa en contaplus para la serie U", "", "", "aEmp()", nil } )
-   aAdd( aDbf, {"cCodEmpV",   "C",  2, 0, "Código de la empresa en contaplus para la serie V", "", "", "aEmp()", nil } )
-   aAdd( aDbf, {"cCodEmpW",   "C",  2, 0, "Código de la empresa en contaplus para la serie W", "", "", "aEmp()", nil } )
-   aAdd( aDbf, {"cCodEmpX",   "C",  2, 0, "Código de la empresa en contaplus para la serie X", "", "", "aEmp()", nil } )
-   aAdd( aDbf, {"cCodEmpY",   "C",  2, 0, "Código de la empresa en contaplus para la serie Y", "", "", "aEmp()", nil } )
-   aAdd( aDbf, {"cCodEmpZ",   "C",  2, 0, "Codigo de la empresa en contaplus para la serie Z", "", "", "aEmp()", nil } )
+   aAdd( aDbf, {"cCodEmpA",   "C",  4, 0, "Código de la empresa en contaplus para la serie A", "", "", "aEmp()", nil } )
+   aAdd( aDbf, {"cCodEmpB",   "C",  4, 0, "Código de la empresa en contaplus para la serie B", "", "", "aEmp()", nil } )
+   aAdd( aDbf, {"cCodEmpC",   "C",  4, 0, "Código de la empresa en contaplus para la serie C", "", "", "aEmp()", nil } )
+   aAdd( aDbf, {"cCodEmpD",   "C",  4, 0, "Código de la empresa en contaplus para la serie D", "", "", "aEmp()", nil } )
+   aAdd( aDbf, {"cCodEmpE",   "C",  4, 0, "Código de la empresa en contaplus para la serie E", "", "", "aEmp()", nil } )
+   aAdd( aDbf, {"cCodEmpF",   "C",  4, 0, "Código de la empresa en contaplus para la serie F", "", "", "aEmp()", nil } )
+   aAdd( aDbf, {"cCodEmpG",   "C",  4, 0, "Código de la empresa en contaplus para la serie G", "", "", "aEmp()", nil } )
+   aAdd( aDbf, {"cCodEmpH",   "C",  4, 0, "Código de la empresa en contaplus para la serie H", "", "", "aEmp()", nil } )
+   aAdd( aDbf, {"cCodEmpI",   "C",  4, 0, "Código de la empresa en contaplus para la serie I", "", "", "aEmp()", nil } )
+   aAdd( aDbf, {"cCodEmpJ",   "C",  4, 0, "Código de la empresa en contaplus para la serie J", "", "", "aEmp()", nil } )
+   aAdd( aDbf, {"cCodEmpK",   "C",  4, 0, "Código de la empresa en contaplus para la serie K", "", "", "aEmp()", nil } )
+   aAdd( aDbf, {"cCodEmpL",   "C",  4, 0, "Código de la empresa en contaplus para la serie L", "", "", "aEmp()", nil } )
+   aAdd( aDbf, {"cCodEmpM",   "C",  4, 0, "Código de la empresa en contaplus para la serie M", "", "", "aEmp()", nil } )
+   aAdd( aDbf, {"cCodEmpN",   "C",  4, 0, "Código de la empresa en contaplus para la serie N", "", "", "aEmp()", nil } )
+   aAdd( aDbf, {"cCodEmpO",   "C",  4, 0, "Código de la empresa en contaplus para la serie O", "", "", "aEmp()", nil } )
+   aAdd( aDbf, {"cCodEmpP",   "C",  4, 0, "Código de la empresa en contaplus para la serie P", "", "", "aEmp()", nil } )
+   aAdd( aDbf, {"cCodEmpQ",   "C",  4, 0, "Código de la empresa en contaplus para la serie Q", "", "", "aEmp()", nil } )
+   aAdd( aDbf, {"cCodEmpR",   "C",  4, 0, "Código de la empresa en contaplus para la serie R", "", "", "aEmp()", nil } )
+   aAdd( aDbf, {"cCodEmpS",   "C",  4, 0, "Código de la empresa en contaplus para la serie S", "", "", "aEmp()", nil } )
+   aAdd( aDbf, {"cCodEmpT",   "C",  4, 0, "Código de la empresa en contaplus para la serie T", "", "", "aEmp()", nil } )
+   aAdd( aDbf, {"cCodEmpU",   "C",  4, 0, "Código de la empresa en contaplus para la serie U", "", "", "aEmp()", nil } )
+   aAdd( aDbf, {"cCodEmpV",   "C",  4, 0, "Código de la empresa en contaplus para la serie V", "", "", "aEmp()", nil } )
+   aAdd( aDbf, {"cCodEmpW",   "C",  4, 0, "Código de la empresa en contaplus para la serie W", "", "", "aEmp()", nil } )
+   aAdd( aDbf, {"cCodEmpX",   "C",  4, 0, "Código de la empresa en contaplus para la serie X", "", "", "aEmp()", nil } )
+   aAdd( aDbf, {"cCodEmpY",   "C",  4, 0, "Código de la empresa en contaplus para la serie Y", "", "", "aEmp()", nil } )
+   aAdd( aDbf, {"cCodEmpZ",   "C",  4, 0, "Codigo de la empresa en contaplus para la serie Z", "", "", "aEmp()", nil } )
    aAdd( aDbf, {"cCodProA",   "C",  9, 0, "Código del proyecto en contaplus para la serie A" , "", "", "aEmp()", nil } )
    aAdd( aDbf, {"cCodProB",   "C",  9, 0, "Código del proyecto en contaplus para la serie B" , "", "", "aEmp()", nil } )
    aAdd( aDbf, {"cCodProC",   "C",  9, 0, "Código del proyecto en contaplus para la serie C" , "", "", "aEmp()", nil } )
@@ -6918,7 +6942,7 @@ FUNCTION aItmEmp()
    aAdd( aDbf, {"lAutMai",    "L",  1, 0, "Lógico de autenticación del servidor de correo",        "", "", "aEmp()", nil } )
    aAdd( aDbf, {"lGetUbi",    "L",  1, 0, "Recoger ubicación de venta",                            "", "", "aEmp()", nil } )
    aAdd( aDbf, {"lGrupo",     "L",  1, 0, "Lógico de grupo",                                       "", "", "aEmp()", nil } )
-   aAdd( aDbf, {"cCodGrp",    "C",  2, 0, "Código del grupo",                                      "", "", "aEmp()", nil } )
+   aAdd( aDbf, {"cCodGrp",    "C",  4, 0, "Código del grupo",                                      "", "", "aEmp()", nil } )
    aAdd( aDbf, {"lStkCero",   "L",  1, 0, "Lógico para mostrar estokaje cero",                     "", "", "aEmp()", .f. } )
    aAdd( aDbf, {"lShowSala",  "L",  1, 0, "Lógico para mostrar las sala de venta siempre",         "", "", "aEmp()", .f. } )
    aAdd( aDbf, {"nPreTPro",   "N",  1, 0, "Precios para productos en táctil",                      "", "", "aEmp()", 1 } )

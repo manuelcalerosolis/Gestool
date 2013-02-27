@@ -287,8 +287,8 @@ METHOD CreateFiles( cPath ) CLASS TStock
    aAdd( ::aMovAlm, { "nStkEnt", "N", 19, 6, "Total de stock comprado"                    } )
    aAdd( ::aMovAlm, { "nStkSal", "N", 19, 6, "Total de stock vendido"                     } )
    aAdd( ::aMovAlm, { "nImpStk", "N", 19, 6, "Importe de stock"                           } )
-   aAdd( ::aMovAlm, { "nLote"  , "N",  9, 0, "N鷐ero de lote"                             } )
-   aAdd( ::aMovAlm, { "cLote"  , "C", 12, 0, "N鷐ero de lote"                             } )
+   aAdd( ::aMovAlm, { "nLote"  , "N",  9, 0, "N煤mero de lote"                             } )
+   aAdd( ::aMovAlm, { "cLote"  , "C", 12, 0, "N煤mero de lote"                             } )
 
    if !lExistTable( cPath + "MovAlm.Dbf" )
       dbCreate( cPath + "MovAlm.Dbf", aSqlStruct( ::aMovAlm ), cDriver() )
@@ -376,7 +376,7 @@ RETURN ( lOpen )
 
 //---------------------------------------------------------------------------//
 //
-// Este metodo a馻de y elimina stock pendiente de recibir por los pedidos a proveedores
+// Este metodo a帽ade y elimina stock pendiente de recibir por los pedidos a proveedores
 //
 
 METHOD PedPrv( cNumPed, cCodAlm, lDelete, lIncremento ) CLASS TStock
@@ -392,7 +392,7 @@ METHOD PedPrv( cNumPed, cCodAlm, lDelete, lIncremento ) CLASS TStock
    */
 
    if ::cPedPrvL == nil .or. cNumPed == nil
-      msgAlert( "Imposible realizar la actualizaci髇 de stocks.", "Atenci髇" )
+      msgAlert( "Imposible realizar la actualizaci贸n de stocks.", "Atenci贸n" )
       return self
    end if
 
@@ -406,7 +406,7 @@ METHOD PedPrv( cNumPed, cCodAlm, lDelete, lIncremento ) CLASS TStock
             nUnits      := nTotNPedPrv( ::cPedPrvL ) - ( ::cPedPrvL )->nUniEnt
 
             /*
-            mult. las unidades por su factor de conversi髇
+            mult. las unidades por su factor de conversi贸n
             */
 
             if ( ::cPedPrvL )->nFacCnv != 0
@@ -449,7 +449,7 @@ METHOD AlbPrv( cNumAlb, cCodAlm, cNumPed, lDelete, lIncremento, lIgnEstado, lAct
    DEFAULT lActPendientes  := .t.
 
    if ::cAlbPrvT == nil .or. ::cAlbPrvL == nil .or. cNumAlb == nil
-      msgAlert( "Imposible realizar la actualizaci髇 de stocks.", "Atenci髇" )
+      msgAlert( "Imposible realizar la actualizaci贸n de stocks.", "Atenci贸n" )
       return self
    end if
 
@@ -580,7 +580,7 @@ METHOD FacPrv( cNumFac, cCodAlm, lDelete, lIncremento ) CLASS TStock
    */
 
    if ::cFacPrvL == nil .or. cNumFac == nil
-      msgAlert( "Imposible realizar la actualizaci髇 de stocks.", "Atenci髇" )
+      msgAlert( "Imposible realizar la actualizaci贸n de stocks.", "Atenci贸n" )
       return self
    end if
 
@@ -594,7 +594,7 @@ METHOD FacPrv( cNumFac, cCodAlm, lDelete, lIncremento ) CLASS TStock
             nUnits      := nTotNFacPrv( ::cFacPrvL )
 
             /*
-            mult. las unidades por su factor de conversi髇
+            mult. las unidades por su factor de conversi贸n
             */
 
             if ( ::cFacPrvL )->nFacCnv != 0
@@ -682,7 +682,7 @@ METHOD RctPrv( cNumFac, cCodAlm, lDelete, lIncremento ) CLASS TStock
    */
 
    if ::cRctPrvL == nil .or. cNumFac == nil
-      msgAlert( "Imposible realizar la actualizaci髇 de stocks.", "Atenci髇" )
+      msgAlert( "Imposible realizar la actualizaci贸n de stocks.", "Atenci贸n" )
       return self
    end if
 
@@ -696,7 +696,7 @@ METHOD RctPrv( cNumFac, cCodAlm, lDelete, lIncremento ) CLASS TStock
             nUnits      := nTotNRctPrv( ::cRctPrvL )
 
             /*
-            mult. las unidades por su factor de conversi髇
+            mult. las unidades por su factor de conversi贸n
             */
 
             if ( ::cRctPrvL )->nFacCnv != 0
@@ -785,7 +785,7 @@ METHOD PedCli( cNumPed, cCodAlm, lDelete, lIncremento ) CLASS TStock
    */
 
    if Empty( cNumPed ) .or. Empty( ::cPedCliL ) .or. Empty( ::cAlbCliT ) .or. Empty( ::cAlbCliL ) .or. Empty( ::cAlbPrvL )
-      msgAlert( "Imposible realizar la actualizaci髇 de stocks.", "Atenci髇" )
+      msgAlert( "Imposible realizar la actualizaci贸n de stocks.", "Atenci贸n" )
       return self
    end if
 
@@ -958,7 +958,7 @@ METHOD SetRecibidoPedCli( cNumPed ) CLASS TStock
    */
 
    if Empty( cNumPed ) .or. Empty( ::cPedCliT ) .or. Empty( ::cPedCliL ) .or. Empty( ::cAlbPrvL )
-      // msgAlert( "Imposible actualizar el estado del pedido.", "Atenci髇" )
+      // msgAlert( "Imposible actualizar el estado del pedido.", "Atenci贸n" )
       return self
    end if
 
@@ -1017,7 +1017,7 @@ METHOD SetGeneradoPedCli( cNumPed ) CLASS TStock
    */
 
    if Empty( cNumPed ) .or. Empty( ::cPedCliT ) .or. Empty( ::cPedCliL ) .or. Empty( ::cPedPrvL )
-      msgAlert( "Imposible actualizar el estado del pedido.", "Atenci髇" )
+      msgAlert( "Imposible actualizar el estado del pedido.", "Atenci贸n" )
       return self
    end if
 
@@ -1140,7 +1140,7 @@ METHOD AlbCli( cNumAlb, cCodAlm, lDelete, lIncremento, lIgnEstado, lChequea, lAc
    DEFAULT lActPendientes  := .t.
 
    if ::cAlbCliT == nil .or. ::cAlbCliL == nil .or. cNumAlb == nil
-      msgAlert( "Imposible realizar la actualizaci髇 de stocks.", "Atenci髇" )
+      msgAlert( "Imposible realizar la actualizaci贸n de stocks.", "Atenci贸n" )
       return self
    end if
 
@@ -1275,7 +1275,7 @@ METHOD FacCli( cNumFac, cCodAlm, lDelete, lIncremento, lActPendientes ) CLASS TS
    DEFAULT lActPendientes  := .f.
 
    if ::cFacCliL == nil .or. cNumFac == nil
-      msgAlert( "Imposible realizar la actualizaci髇 de stocks.", "Atenci髇" )
+      msgAlert( "Imposible realizar la actualizaci贸n de stocks.", "Atenci贸n" )
       return self
    end if
 
@@ -1382,7 +1382,7 @@ METHOD FacRec( cNumFac, cCodAlm, lDelete, lIncremento, lActPendientes ) CLASS TS
    */
 
    if ::cFacRecL == nil .or. cNumFac == nil
-      msgAlert( "Imposible realizar la actualizaci髇 de stocks.", "Atenci髇" )
+      msgAlert( "Imposible realizar la actualizaci贸n de stocks.", "Atenci贸n" )
       return self
    end if
 
@@ -1396,7 +1396,7 @@ METHOD FacRec( cNumFac, cCodAlm, lDelete, lIncremento, lActPendientes ) CLASS TS
             nUnits      := nTotNFacRec( ::cFacRecL )
 
             /*
-            mult. las unidades por su factor de conversi髇
+            mult. las unidades por su factor de conversi贸n
             */
 
             if ( ::cFacRecL )->nFacCnv != 0
@@ -1474,7 +1474,7 @@ METHOD TpvCli( cNumTik, cCodAlm, lIncremento, lDevolucion, lChequea ) CLASS TSto
             nUnits      := ( ::cTikL )->nUntTil
 
             /*
-            mult. las unidades por su Tiktor de conversi髇
+            mult. las unidades por su Tiktor de conversi贸n
             */
 
             if ( ::cTikL )->nFacCnv != 0
@@ -1568,7 +1568,7 @@ METHOD DepAge( nNumDep, cCodAlmEntrada, cCodAlmSalida, lDelete, lIncremento ) CL
 
    if ::cDepAgeL == nil .or. nNumDep == nil
 
-      msgAlert( "Imposible realizar la actualizaci髇 de stocks.", "Atenci髇" )
+      msgAlert( "Imposible realizar la actualizaci贸n de stocks.", "Atenci贸n" )
       return self
 
    end if
@@ -1586,7 +1586,7 @@ METHOD DepAge( nNumDep, cCodAlmEntrada, cCodAlmSalida, lDelete, lIncremento ) CL
             end if
 
             /*
-            mult. las unidades por su factor de conversi髇
+            mult. las unidades por su factor de conversi贸n
             */
 
             if ( ::cDepAgeL )->nFacCnv != 0
@@ -1627,7 +1627,7 @@ METHOD ExtAge( nNumExt, cCodAlm, lDelete, lIncremento ) CLASS TStock
    */
 
    if ::cExtAgeL == nil .or. nNumExt == nil
-      msgAlert( "Imposible realizar la actualizaci髇 de stocks.", "Atenci髇" )
+      msgAlert( "Imposible realizar la actualizaci贸n de stocks.", "Atenci贸n" )
       return self
    end if
 
@@ -1640,7 +1640,7 @@ METHOD ExtAge( nNumExt, cCodAlm, lDelete, lIncremento ) CLASS TStock
             nUnits      := ( NotCaja( ( ::cExtAgeL )->nCanEnt ) * ( ::cExtAgeL )->nUniCaja )
 
             /*
-            mult. las unidades por su factor de conversi髇
+            mult. las unidades por su factor de conversi贸n
             */
 
             if ( ::cExtAgeL )->nFacCnv != 0
@@ -2265,7 +2265,7 @@ METHOD Recalcula( oMeter, cNewEmp, cPatEmp ) CLASS TStock
       end do
 
       if oMeter != NIL
-         oMeter:cText   := "Producci髇"
+         oMeter:cText   := "Producci贸n"
          oMeter:nTotal  := ( ::cProducT )->( LastRec() )
       end if
 
@@ -2365,7 +2365,7 @@ METHOD Duplicados( oMeter, aMsg, cPath ) CLASS TStock
 
    if oMeter != NIL
       oMeter:nTotal := ( dbf )->( LastRec() )
-      oMeter:cText  := "Art韈ulos"
+      oMeter:cText  := "Art铆culos"
    end if
 
    while !( dbf )->( eof() )
@@ -2373,7 +2373,7 @@ METHOD Duplicados( oMeter, aMsg, cPath ) CLASS TStock
       cCodAnt  := ( dbf )->Codigo
       ( dbf )->( dbSkip() )
       if cCodAnt == ( dbf )->Codigo .and. !(dbf)->(eof())
-         aAdd( aMsg, { .t., "Art韈ulo duplicado : " + cCodAnt } )
+         aAdd( aMsg, { .t., "Art铆culo duplicado : " + cCodAnt } )
          lDup  := .t.
       end if
 
@@ -4026,7 +4026,7 @@ METHOD nPrecioMedioCompra( cCodArt, cCodAlm, dFecIni, dFecFin, lSerie, lExcCero,
       oMtr:AutoInc()
    end if
 
-   //Recorremos movimientos de almac閚-----------------------------------------
+   //Recorremos movimientos de almac茅n-----------------------------------------
 
    if ( ::cHisMov )->( dbSeek( cCodArt ) )
 
@@ -4100,13 +4100,13 @@ METHOD nCostoMedio( cCodArt, cCodAlm, cCodPr1, cCodPr2, cValPr1, cValPr2 ) CLASS
    local nOrdMovAlm     := ( ::cHisMov  )->( OrdSetFocus( "cRefMov" ) )
 
    /*
-   Obtengo la fecha de consolidaci髇-------------------------------------------
+   Obtengo la fecha de consolidaci贸n-------------------------------------------
    */
 
    ::lCheckConsolidacion( cCodArt )
 
    /*
-   Recorremos movimientos de almac閚-------------------------------------------
+   Recorremos movimientos de almac茅n-------------------------------------------
    */
 
    if ( ::cHisMov )->( dbSeek( cCodArt + cValPr1 + cValPr2 ) )
@@ -4309,7 +4309,7 @@ METHOD nStockAlmacen( cCodArt, cCodAlm, cValPr1, cValPr2, cLote ) CLASS TStock
       CursorWait()
 
       /*
-      Movimientos de almac閚------------------------------------------------------
+      Movimientos de almac茅n------------------------------------------------------
       */
 
       SysRefresh()
@@ -4716,7 +4716,7 @@ METHOD aStockArticulo( cCodArt, cCodAlm, oBrw, lLote, lNumeroSerie, dFecIni, dFe
    end if
 
    /*
-   Movimientos de almac閚------------------------------------------------------
+   Movimientos de almac茅n------------------------------------------------------
    */
 
    SysRefresh()
@@ -5461,7 +5461,7 @@ METHOD nStockSerie( cCodArt, cCodAlm, cNumeroSerie ) CLASS TStock
       ::lCheckConsolidacion( cCodArt )
 
       /*
-      Movimientos de almac閚------------------------------------------------------
+      Movimientos de almac茅n------------------------------------------------------
       */
 
       if ( ::cHisMovS )->( dbSeek( cCodArt + cCodAlm + cNumeroSerie ) )
@@ -6096,7 +6096,7 @@ METHOD aStockAlmacen( oRemMov ) CLASS TStock
          end if
 
          /*
-         Movimientos de almac閚------------------------------------------------------
+         Movimientos de almac茅n------------------------------------------------------
          */
 
          SysRefresh()
@@ -6252,7 +6252,7 @@ METHOD BrowseNumeroSerie( oCol, cCodArt, cCodAlm, aNumSer, oBrwSer )
 
    ::aSeries               := aNumSer
 
-   DEFINE DIALOG oDlg RESOURCE "BrowseNumeroSerie"  TITLE "Seleccionar n鷐ero de serie"
+   DEFINE DIALOG oDlg RESOURCE "BrowseNumeroSerie"  TITLE "Seleccionar n煤mero de serie"
 
       REDEFINE GET         oGet ;
          VAR               cGet ;
@@ -6275,7 +6275,7 @@ METHOD BrowseNumeroSerie( oCol, cCodArt, cCodAlm, aNumSer, oBrwSer )
       oBrw:CreateFromResource( 105 )
 
       with object ( oBrw:AddCol() )
-         :cHeader          := "N鷐ero de serie"
+         :cHeader          := "N煤mero de serie"
          :bStrData         := {|| if( !Empty( oBrw:aArrayData ), oBrw:aArrayData[ oBrw:nArrayAt ]:cNumeroSerie, "" ) }
          :nWidth           := 200
       end with
@@ -6468,7 +6468,7 @@ Method SetRiesgo( cCodigoCliente, oGetRiesgo, nRiesgoCliente, lAviso )
 
          if lAviso
             msgStop( "El riesgo alacanzado es de " + Alltrim( Trans( nRiesgo, cPorDiv() ) ) + "; sobre el establecido en su ficha " + Alltrim( Trans( nRiesgoCliente, cPorDiv() ) ) + ".",;
-                     "El riesgo del cliente supera el l韒ite establecido" )
+                     "El riesgo del cliente supera el l铆mite establecido" )
 
          end if
 
@@ -6502,7 +6502,7 @@ METHOD lCheckConsolidacion( cCodArt, cCodAlm, cCodPrp1, cCodPrp2, cValPrp1, cVal
 
             if Empty( ::dConsolidacion )
 
-               ::dConsolidacion  := ( ::cHisMov )->dFecMov
+               ::dConsolidacion     := ( ::cHisMov )->dFecMov
 
             else
 

@@ -11617,12 +11617,14 @@ FUNCTION IcgAlbPrv( aFichero, oDlg, oInforme )
 
             SysRefresh()
 
+            /*
             MsgStop( "deslin :" + cvaltochar( cDesLin ) + CRLF + ;
                      "nUntLin :" + cvaltochar( nUntLin) + CRLF + ;
                      "nPvpLin :" + cvaltochar( nPvpLin) + CRLF + ;
                      "nDtoLin :" + cvaltochar( nDtoLin) + CRLF + ;
                      "cRefLin :" + cvaltochar( cRefLin) + CRLF,;
                      cBuffer )
+            */
 
             cBuffer        := Space( _ICG_LINE_LEN_ )
 

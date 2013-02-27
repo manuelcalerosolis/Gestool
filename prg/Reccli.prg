@@ -1636,6 +1636,8 @@ FUNCTION ContabilizaReciboCliente( oBrw, oTree, lSimula, aSimula, dbfFacCliT, db
    local cCtaPgo
    local cCtaCli
    local nDpvDiv
+   local lEfePgo
+   local nEjeCon        := 0 
    local nRecCliT       := ( dbfFacCliT )->( Recno() )
    local nRecCliP       := ( dbfFacCliP )->( Recno() )
    local cCodDiv        := if( ( dbfFacCliP )->lImpEur, "EUR", ( dbfFacCliP )->cDivPgo )
@@ -1716,7 +1718,6 @@ FUNCTION ContabilizaReciboCliente( oBrw, oTree, lSimula, aSimula, dbfFacCliT, db
 	--------------------------------------------------------------------------
 	*/
 
-
    if Empty( cCodEmp )
       oTree:Select( oTree:Add( "Recibo : " + rtrim( cRecibo ) + " no se definieron empresas asociadas.", 0, bGenEdtRecCli( ( dbfFacCliP )->cSerie + Str( ( dbfFacCliP )->nNumFac, 9 ) + ( dbfFacCliP )->cSufFac + Str( ( dbfFacCliP )->nNumRec ), lFromFactura ) ) )
       lErrorFound       := .t.
@@ -1753,28 +1754,43 @@ FUNCTION ContabilizaReciboCliente( oBrw, oTree, lSimula, aSimula, dbfFacCliT, db
       Si el recibo no trae forma especifica de pago entonces lo buscamos
       */
 
-      cCtaPgo        := ( dbfFacCliP )->cCtaRec
+      cCtaPgo           := ( dbfFacCliP )->cCtaRec
 
       if Empty( cCtaPgo )
-         cCtaPgo     := cCtaFPago( cCodPgo, dbfFPago )
+         cCtaPgo        := cCtaFPago( cCodPgo, dbfFPago )
       end if
 
       if Empty( cCtaPgo )
-         cCtaPgo     := cCtaCob()
+         cCtaPgo        := cCtaCob()
       end if
 
       if Empty( cCtaPgo )
          oTree:Select( oTree:Add( "Recibo : " + rtrim( cRecibo ) + " no existe cuenta de pago.", 0, bGenEdtRecCli( ( dbfFacCliP )->cSerie + Str( ( dbfFacCliP )->nNumFac, 9 ) + ( dbfFacCliP )->cSufFac + Str( ( dbfFacCliP )->nNumRec ), lFromFactura ) ) )
-         lErrorFound := .t.
+         lErrorFound    := .t.
       end if
 
       if !ChkSubCta( cRuta, cCodEmp, cCtaPgo, , .f., .f. )
          oTree:Select( oTree:Add( "Recibo : " + rtrim( cRecibo ) + " subcuenta " + rtrim( cCtaPgo ) + " no encontada.", 0, bGenEdtRecCli( ( dbfFacCliP )->cSerie + Str( ( dbfFacCliP )->nNumFac, 9 ) + ( dbfFacCliP )->cSufFac + Str( ( dbfFacCliP )->nNumRec ), lFromFactura ) ) )
-         lErrorFound := .t.
+         lErrorFound    := .t.
       end if
 
       /*
-      Obtenemos las cuentas de gastos
+      Pago es en efectivo------------------------------------------------------
+      */
+
+      if ( nTipoPago( cCodPgo, dbfFPago ) == 1 )
+
+         nEjeCon        := nEjercicioContaplus( cRuta, cCodEmp, .f. )
+
+         if Empty( nEjeCon )
+            oTree:Select( oTree:Add( "Recibo : " + rtrim( cRecibo ) + " ejercicio no encontado.", 0, bGenEdtRecCli( ( dbfFacCliP )->cSerie + Str( ( dbfFacCliP )->nNumFac, 9 ) + ( dbfFacCliP )->cSufFac + Str( ( dbfFacCliP )->nNumRec ), lFromFactura ) ) )
+            lErrorFound := .t.
+         end if
+
+      end if 
+
+      /*
+      Obtenemos las cuentas de gastos------------------------------------------
       */
 
       if nImpGas != 0
@@ -1901,7 +1917,8 @@ FUNCTION ContabilizaReciboCliente( oBrw, oTree, lSimula, aSimula, dbfFacCliT, db
                                     ,;
                                     lSimula,;
                                     cTerNif,;
-                                    cTerNom ) )
+                                    cTerNom,;
+                                    nEjeCon ) )
 
       end if
 
@@ -3847,7 +3864,7 @@ Static Function Skipping( nRad, dFecIni, dFecFin, cDocIni, cDocFin, cCodDoc, cCo
 RETURN NIL
 
 //--------------------------------------------------------------------------//
-*/
+
 
 STATIC FUNCTION ImpPago( cNumRec, nDevice, cCodDoc, cCaption, nCopies )
 

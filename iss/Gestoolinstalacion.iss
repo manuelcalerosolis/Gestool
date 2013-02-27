@@ -175,7 +175,7 @@ Source: "c:\fw195\actualiza\htm\*.*";             DestDir: "{app}\Htm";       Fl
 Source: "c:\fw195\actualiza\tmp\*.*";             DestDir: "{app}\Tmp";       Flags: ignoreversion onlyifdoesntexist
 Source: "c:\fw195\actualiza\emptmp\*.*";          DestDir: "{app}\Emptmp";    Flags: ignoreversion onlyifdoesntexist
 Source: "c:\fw195\actualiza\safe\*.*";            DestDir: "{app}\Safe";      Flags: ignoreversion onlyifdoesntexist
-Source: "c:\fw195\actualiza\empvg\*.*";           DestDir: "{app}\EmpVG";     Flags: ignoreversion onlyifdoesntexist
+Source: "c:\fw195\actualiza\emp00vg\*.*";         DestDir: "{app}\Emp00VG";   Flags: ignoreversion onlyifdoesntexist
 Source: "c:\fw195\actualiza\datos\*.*";           DestDir: "{app}\Datos";     Flags: ignoreversion onlyifdoesntexist
 Source: "c:\fw195\actualiza\psion\*.*";           DestDir: "{app}\Psion";     Flags: ignoreversion onlyifdoesntexist
 
