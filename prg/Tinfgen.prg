@@ -5084,7 +5084,7 @@ Return aFonts
 
 METHOD OpenData( cPath, lExclusive )
 
-   local lOpen    := .t.
+   local lOpen          := .t.
    local oError
    local oBlock
 

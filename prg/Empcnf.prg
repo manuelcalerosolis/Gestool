@@ -279,57 +279,57 @@ FUNCTION cEmpCnt( cSerie )
 
    do case
       case cSerie == "A"
-         RETURN aEmp()[ _CCODEMPA ]
+         RETURN Alltrim( aEmp()[ _CCODEMPA ] )
       case cSerie == "B"
-         RETURN aEmp()[ _CCODEMPB ]
+         RETURN Alltrim( aEmp()[ _CCODEMPB ] )
       case cSerie == "C"
-         RETURN aEmp()[ _CCODEMPC ]
+         RETURN Alltrim( aEmp()[ _CCODEMPC ] )
       case cSerie == "D"
-         RETURN aEmp()[ _CCODEMPD ]
+         RETURN Alltrim( aEmp()[ _CCODEMPD ] )
       case cSerie == "E"
-         RETURN aEmp()[ _CCODEMPE ]
+         RETURN Alltrim( aEmp()[ _CCODEMPE ] )
       case cSerie == "F"
-         RETURN aEmp()[ _CCODEMPF ]
+         RETURN Alltrim( aEmp()[ _CCODEMPF ] )
       case cSerie == "G"
-         RETURN aEmp()[ _CCODEMPG ]
+         RETURN Alltrim( aEmp()[ _CCODEMPG ] )
       case cSerie == "H"
-         RETURN aEmp()[ _CCODEMPH ]
+         RETURN Alltrim( aEmp()[ _CCODEMPH ] )
       case cSerie == "I"
-         RETURN aEmp()[ _CCODEMPI ]
+         RETURN Alltrim( aEmp()[ _CCODEMPI ] )
       case cSerie == "J"
-         RETURN aEmp()[ _CCODEMPJ ]
+         RETURN Alltrim( aEmp()[ _CCODEMPJ ] )
       case cSerie == "K"
-         RETURN aEmp()[ _CCODEMPK ]
+         RETURN Alltrim( aEmp()[ _CCODEMPK ] )
       case cSerie == "L"
-         RETURN aEmp()[ _CCODEMPL ]
+         RETURN Alltrim( aEmp()[ _CCODEMPL ] )
       case cSerie == "M"
-         RETURN aEmp()[ _CCODEMPM ]
+         RETURN Alltrim( aEmp()[ _CCODEMPM ] )
       case cSerie == "N"
-         RETURN aEmp()[ _CCODEMPN ]
-      case cSerie == "0"
-         RETURN aEmp()[ _CCODEMPO ]
+         RETURN Alltrim( aEmp()[ _CCODEMPN ] )
+      case cSerie == "O"
+         RETURN Alltrim( aEmp()[ _CCODEMPO ] )
       case cSerie == "P"
-         RETURN aEmp()[ _CCODEMPP ]
+         RETURN Alltrim( aEmp()[ _CCODEMPP ] )
       case cSerie == "Q"
-         RETURN aEmp()[ _CCODEMPQ ]
+         RETURN Alltrim( aEmp()[ _CCODEMPQ ] )
       case cSerie == "R"
-         RETURN aEmp()[ _CCODEMPR ]
+         RETURN Alltrim( aEmp()[ _CCODEMPR ] )
       case cSerie == "S"
-         RETURN aEmp()[ _CCODEMPS ]
+         RETURN Alltrim( aEmp()[ _CCODEMPS ] )
       case cSerie == "T"
-         RETURN aEmp()[ _CCODEMPT ]
+         RETURN Alltrim( aEmp()[ _CCODEMPT ] )
       case cSerie == "U"
-         RETURN aEmp()[ _CCODEMPU ]
+         RETURN Alltrim( aEmp()[ _CCODEMPU ] )
       case cSerie == "V"
-         RETURN aEmp()[ _CCODEMPV ]
+         RETURN Alltrim( aEmp()[ _CCODEMPV ] )
       case cSerie == "W"
-         RETURN aEmp()[ _CCODEMPW ]
+         RETURN Alltrim( aEmp()[ _CCODEMPW ] )
       case cSerie == "X"
-         RETURN aEmp()[ _CCODEMPX ]
+         RETURN Alltrim( aEmp()[ _CCODEMPX ] )
       case cSerie == "Y"
-         RETURN aEmp()[ _CCODEMPY ]
+         RETURN Alltrim( aEmp()[ _CCODEMPY ] )
       case cSerie == "Z"
-         RETURN aEmp()[ _CCODEMPZ ]
+         RETURN Alltrim( aEmp()[ _CCODEMPZ ] )
    end case
 
 RETURN ""
