@@ -358,11 +358,11 @@ argumento
 
 FUNCTION RJust( cCadena, cChar, nLen )
 
-	DEFAULT cChar := ' '
+	DEFAULT cChar := '0'
 	DEFAULT nLen  := Len( cCadena )
 
 	IF ValType( cCadena ) == "N"
-		cCadena := Str( Int( cCadena ) )
+		cCadena    := Str( Int( cCadena ) )
 	END IF
 
 RETURN PadL( AllTrim( cCadena ), nLen, cChar )

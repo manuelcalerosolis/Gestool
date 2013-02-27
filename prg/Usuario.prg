@@ -2683,7 +2683,7 @@ Function aItmUsr()
                      { "lSndInt",   "L",  1,  0, "" },;
                      { "nLevUse",   "N",  1,  0, "" },;
                      { "lUseUse",   "L",  1,  0, "" },;
-                     { "cEmpUse",   "C",  2,  0, "" },;
+                     { "cEmpUse",   "C",  4,  0, "" },;
                      { "cPcnUse",   "C", 50,  0, "" },;
                      { "cCajUse",   "C",  3,  0, "Código de caja de usuario" },;
                      { "cCjrUse",   "C",  3,  0, "" },;

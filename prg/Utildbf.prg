@@ -1686,7 +1686,7 @@ Function dbBlankRec( cAlias )
 
    for i = 1 to ( cAlias )->( fCount() )
 
-         Do Case
+      do case
          Case aStruct[ i, DBS_TYPE ] == "C"
             AAdd( aBlank, Space( aStruct[ i, DBS_LEN ] ) )
          Case aStruct[ i, DBS_TYPE ] == "M"
@@ -1697,7 +1697,7 @@ Function dbBlankRec( cAlias )
             AAdd( aBlank, .F. )
          Case aStruct[ i, DBS_TYPE ] == "D"
             AAdd( aBlank, GetSysDate() )  // CtoD( "" ) )
-      End Case
+      end case
 
    next
 
@@ -2926,6 +2926,33 @@ Return ( Space( 3 ) + "<" + Alltrim( cString ) + ">" )
 
 //---------------------------------------------------------------------------//
 
+Function lChangeStruct( cAlias, aStruct )
+
+   local i
+   local aAliasStruct   
+
+   if ( cAlias )->( fCount() ) != len( aStruct )
+      Return .t.
+   end if 
+
+   aAliasStruct         := ( cAlias )->( dbStruct() ) 
+
+   for i := 1 to ( cAlias )->( fCount() )
+
+      if aAliasStruct[ i, DBS_NAME ] != aStruct[ i, DBS_NAME ] .or. ;
+         aAliasStruct[ i, DBS_TYPE ] != aStruct[ i, DBS_TYPE ] .or. ;
+         aAliasStruct[ i, DBS_LEN  ] != aStruct[ i, DBS_LEN  ] .or. ;
+         aAliasStruct[ i, DBS_DEC  ] != aStruct[ i, DBS_DEC  ]
+
+         Return .t.
+
+      end if
+
+   next
+
+RETURN .f.
+
+//----------------------------------------------------------------------------//
 
 /*
 function AddResource( nHResource, cType )

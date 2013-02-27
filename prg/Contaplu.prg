@@ -451,6 +451,61 @@ Return ( nReturn )
 
 //----------------------------------------------------------------------------//
 
+FUNCTION nEjercicioContaplus( cRuta, cCodEmp, lMensaje )
+
+   local lClose      := .f.
+   local nReturn     := 0
+   local nPosition   := aScan( aLenSubCuenta, {|a| a[ 1 ] == cCodEmp } )
+
+   if nPosition != 0
+      Return ( aLenSubCuenta[ nPosition, 2 ] )
+   end if
+
+   DEFAULT cRuta     := cRutCnt()
+   DEFAULT cCodEmp   := cEmpCnt()
+   DEFAULT lMensaje  := .f.
+
+   if Empty( cRuta )
+      if lMensaje
+         msgAlert( "Ruta vacia" )
+      end if
+      Return ( nReturn )
+   end if
+
+   if Empty( cEmpresa )
+      cEmpresa       := OpnEmpresa( cRuta, lMensaje )
+      if Empty( cEmpresa )
+         Return ( nReturn )
+      else
+         lClose      := .t.
+      end if
+   end if
+
+   if ( cEmpresa )->( dbSeek( cCodEmp ) )
+      nReturn        := ( cEmpresa )->Ejercicio
+
+      /*
+      Añadimos los valoresa al buffer---------------------------------------
+      */
+
+      aAdd( aLenSubCuenta, { cCodEmp, nReturn } )
+
+   else
+
+      if lMensaje
+         MsgStop( "Empresa " + cCodEmp + " no encontrada." )
+      end if
+
+   end if
+
+   if lClose
+      CloEmpresa()
+   end if
+
+Return ( nReturn )
+
+//----------------------------------------------------------------------------//
+
 /*
 Cheque la existencia de una cuenta en contaplus
 */
@@ -1243,7 +1298,8 @@ FUNCTION MkAsiento( 	Asien,;
 							tCasado,;
                      lSimula,;
                      cTerNif,;
-                     cTerNom )
+                     cTerNom,;
+                     nEjeCon )
 
    local aTemp
    local cSerie            := "A"
@@ -1256,18 +1312,23 @@ FUNCTION MkAsiento( 	Asien,;
    DEFAULT lSimula         := .t.
    DEFAULT nImporteDebe    := 0
    DEFAULT nImporteHaber   := 0
+   DEFAULT nEjeCon         := 0
 
-   if ValType( Factura ) == "C"
+   if IsChar( Factura ) 
       cSerie               := SubStr( Factura, 1, 1 )
       Factura              := SubStr( Factura, 2, 9 )
    end if
 
-   if ValType( Factura ) == "N"
+   if IsNum( Factura )
       Factura              := Alltrim( Str( Factura ) )
    end if
 
    if Factura != nil
       Factura              := Val( SubStr( Factura, -7 ) )
+   end if
+
+   if IsChar( nEjeCon )
+      nEjeCon              := Val( nEjeCon )
    end if
 
    /*
@@ -1311,23 +1372,9 @@ FUNCTION MkAsiento( 	Asien,;
    aTemp[ ( cDiario )->( FieldPos( "SERIE" ) ) ]         := If ( cSerie   != NIL, cSerie,     aTemp[ ( cDiario )->( FieldPos( "SERIE" ) ) ] )
    aTemp[ ( cDiario )->( FieldPos( "FACTURA" ) ) ]       := If ( Factura  != NIL, Factura,    aTemp[ ( cDiario )->( FieldPos( "FACTURA" ) ) ] )
 
-   // if cCodDiv == "EUR"
-      aTemp[ ( cDiario )->( FieldPos( "BASEEURO" ) ) ]   := If ( BaseImpo != NIL, BaseImpo,   aTemp[ ( cDiario )->( FieldPos( "BASEEURO" ) ) ] )
-   //else
-   //   aTemp[ ( cDiario )->( FieldPos( "BASEIMPO" ) ) ]   := If ( BaseImpo != NIL, BaseImpo,   aTemp[ ( cDiario )->( FieldPos( "BASEIMPO" ) ) ] )
-   //end if
-
-   //if cCodDiv == "EUR"
-      aTemp[ ( cDiario )->( FieldPos( "EURODEBE" ) ) ]   := If ( nImporteDebe  != NIL, nImporteDebe,    aTemp[ ( cDiario )->( FieldPos( "EURODEBE" ) ) ] )
-   //else
-   //   aTemp[ ( cDiario )->( FieldPos( "PTADEBE" ) ) ]    := If ( nImporteDebe  != NIL, nImporteDebe,    aTemp[ ( cDiario )->( FieldPos( "PTADEBE" ) ) ] )
-   //end if
-
-   //if cCodDiv == "EUR"
-      aTemp[ ( cDiario )->( FieldPos( "EUROHABER" ) ) ]  := If ( nImporteHaber != NIL, nImporteHaber,   aTemp[ ( cDiario )->( FieldPos( "EUROHABER" ) ) ] )
-   //else
-   //   aTemp[ ( cDiario )->( FieldPos( "PTAHABER" ) ) ]   := If ( nImporteHaber != NIL, nImporteHaber,   aTemp[ ( cDiario )->( FieldPos( "PTAHABER" ) ) ] )
-   //end if
+   aTemp[ ( cDiario )->( FieldPos( "BASEEURO" ) ) ]      := If ( BaseImpo != NIL, BaseImpo,   aTemp[ ( cDiario )->( FieldPos( "BASEEURO" ) ) ] )
+   aTemp[ ( cDiario )->( FieldPos( "EURODEBE" ) ) ]      := If ( nImporteDebe  != NIL, nImporteDebe,    aTemp[ ( cDiario )->( FieldPos( "EURODEBE" ) ) ] )
+   aTemp[ ( cDiario )->( FieldPos( "EUROHABER" ) ) ]     := If ( nImporteHaber != NIL, nImporteHaber,   aTemp[ ( cDiario )->( FieldPos( "EUROHABER" ) ) ] )
 
    aTemp[ ( cDiario )->( FieldPos( "SUBCTA" ) ) ]        := If ( SubCta   != NIL, SubCta,     aTemp[ ( cDiario )->( FieldPos( "SUBCTA" ) ) ] )
    aTemp[ ( cDiario )->( FieldPos( "CONTRA" ) ) ]        := If ( Contra   != NIL, Contra,     aTemp[ ( cDiario )->( FieldPos( "CONTRA" ) ) ] )
@@ -1356,29 +1403,25 @@ FUNCTION MkAsiento( 	Asien,;
    end if
 
    if lRectificativa
-
       aTemp[ ( cDiario )->( FieldPos( "RECTIFICA" ) ) ]  := .t.
-
-      /*
-      aTemp[ ( cDiario )->( FieldPos( "SERIE_RT" ) ) ]   := If ( cSerie   != NIL, cSerie,     aTemp[ ( cDiario )->( FieldPos( "SERIE_RT" ) ) ] )
-      aTemp[ ( cDiario )->( FieldPos( "FACTU_RT" ) ) ]   := If ( Factura  != NIL, Factura,    aTemp[ ( cDiario )->( FieldPos( "FACTU_RT" ) ) ] )
-
-      aTemp[ ( cDiario )->( FieldPos( "FECHA_RT" ) ) ]   := If ( Fecha    != NIL, Fecha,      aTemp[ ( cDiario )->( FieldPos( "FECHA_RT" ) ) ] )
-      aTemp[ ( cDiario )->( FieldPos( "BASEIMP_RT" ) ) ] := If ( BaseImpo != nil, BaseImpo,   aTemp[ ( cDiario )->( FieldPos( "BASEIMP_RT" ) ) ] )
-      aTemp[ ( cDiario )->( FieldPos( "BASEIMP_RF" ) ) ] := If ( BaseImpo != nil, BaseImpo,   aTemp[ ( cDiario )->( FieldPos( "BASEIMP_RT" ) ) ] )
-      */
-
    end if
 
    /*
-	Para contaplus euro 2000
+	Para contaplus euro 2000----------------------------------------------------
 	*/
 
-   if .t. //cCodDiv == "EUR"
-      aTemp[ ( cDiario )->( FieldPos( "MONEDAUSO" ) ) ] := "2"
-   else
-      aTemp[ ( cDiario )->( FieldPos( "MONEDAUSO" ) ) ] := "1"
-   end if
+   aTemp[ ( cDiario )->( FieldPos( "MONEDAUSO" ) ) ]     := "2"
+
+   /*
+   Pagos en metalico-----------------------------------------------------------
+   */
+
+   if !Empty( nEjeCon )
+      aTemp[ ( cDiario )->( FieldPos( "METAL") ) ]       := .t.
+      aTemp[ ( cDiario )->( FieldPos( "METALIMP" ) ) ]   := If ( nImporteDebe != NIL,  nImporteDebe,  aTemp[ ( cDiario )->( FieldPos( "METALIMP" ) ) ] )      
+      aTemp[ ( cDiario )->( FieldPos( "CLIENTE" ) ) ]    := If ( SubCta != NIL,        SubCta,        aTemp[ ( cDiario )->( FieldPos( "SUBCTA" ) ) ] )
+      aTemp[ ( cDiario )->( FieldPos( "METALEJE") ) ]    := nEjeCon 
+   end if 
 
    if !lSimula
       WriteAsiento( aTemp, cCodDiv )

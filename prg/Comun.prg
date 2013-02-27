@@ -726,10 +726,10 @@ Function aEmpresa( cEmp, dbfEmp, dbfDlg, dbfUser, lRptGal )
    DEFAULT lRptGal   := .f.
 
    aDlgEmp           := {}
-/*
+
    oBlock            := ErrorBlock( {| oError | ApoloBreak( oError ) } )
    BEGIN SEQUENCE
-*/
+
    if dbfEmp == nil
       USE ( cPatDat() + "EMPRESA.DBF" ) NEW VIA ( cDriver() ) SHARED ALIAS ( cCheckArea( "EMPRESA", @dbfEmp ) )
       SET ADSINDEX TO ( cPatDat() + "EMPRESA.CDX" ) ADDITIVE
@@ -793,7 +793,7 @@ Function aEmpresa( cEmp, dbfEmp, dbfDlg, dbfUser, lRptGal )
       lEmpFnd        := .f.
 
    end if
-/*
+
    RECOVER USING oError
 
       msgStop( "Imposible abrir todas las bases de datos " + CRLF + ErrorMessage( oError ) )
@@ -801,7 +801,7 @@ Function aEmpresa( cEmp, dbfEmp, dbfDlg, dbfUser, lRptGal )
    END SEQUENCE
 
    ErrorBlock( oBlock )
-*/
+
    if lCloDlg
       CLOSE ( dbfDlg )
    end if

@@ -28,10 +28,7 @@ argumento
 
 FUNCTION RJust( cCadena )
 
-	local cChar := '0'
-	local nLen  := Len( cCadena )
-
-RETURN PadL( AllTrim( cCadena ), nLen, cChar )
+RETURN Padl( Alltrim( cCadena ), Len( cCadena ), '0' )
 
 //--------------------------------------------------------------------------//
 

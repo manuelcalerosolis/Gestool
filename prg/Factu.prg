@@ -89,8 +89,6 @@ function Main( cParams )
 
    SetHandleCount( 240 )
 
-   // GdiPlusStartup()
-
    /*
    Chequeamos la existencia del fichero de configuracion-----------------------
    */
@@ -296,8 +294,6 @@ function Main( cParams )
    if oIconApp != nil
       oIconApp:end()
    end if
-
-   // GdiplusShutdown()
 
 Return Nil
 
@@ -5751,7 +5747,7 @@ function lCheckSaasMode()
 
                      cTypeVersion( "[Demo finalización licencia]" )
 
-                     msgStop( "Periodo de gracia expirado, el programa pasara a modo demo", "¡Atención!")
+                     // msgStop( "Periodo de gracia expirado, el programa pasara a modo demo", "¡Atención!")
 
                   end if 
 
@@ -5774,7 +5770,7 @@ function lCheckSaasMode()
 
                   cTypeVersion( "[Demo finalización licencia]" )
 
-                  msgStop( "Periodo de gracia expirado, el programa pasara a modo demo", "¡Atención!")
+                  // msgStop( "Periodo de gracia expirado, el programa pasara a modo demo", "¡Atención!")
 
                end if 
 

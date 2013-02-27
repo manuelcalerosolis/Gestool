@@ -94,7 +94,7 @@ FUNCTION CntFacCli( lSimula, lPago, lExcCnt, lMessage, oTree, nAsiento, aSimula,
    lIvaCEE           := ( ( dbfFacCliT )->nRegIva == 2 )
 
    if Empty( cCodEmp )
-      oTree:Select( oTree:Add( "Factura cliente : " + rtrim( pFactura ) + " no se definierón empresas asociadas.", 0 ) )
+      oTree:Select( oTree:Add( "Factura cliente : " + rtrim( pFactura ) + " no se definierÃ³n empresas asociadas.", 0 ) )
       lErrorFound    := .t.
    end if
 
@@ -104,7 +104,6 @@ FUNCTION CntFacCli( lSimula, lPago, lExcCnt, lMessage, oTree, nAsiento, aSimula,
    end if
 
    if !ChkFecha( cRuta, cCodEmp, ( dbfFacCliT )->dFecFac, .f., oTree, "Factura cliente : " + Rtrim( pFactura ) )
-      // oTree:Select( oTree:Add( "Factura cliente : " + Rtrim( pFactura ) + " asiento fuera de fechas", 0 ) )
       lErrorFound    := .t.
    end if
 
@@ -241,7 +240,7 @@ FUNCTION CntFacCli( lSimula, lPago, lExcCnt, lMessage, oTree, nAsiento, aSimula,
 
    else
 
-      oTree:Select( oTree:Add( "Factura cliente : " + rtrim( pFactura ) + " factura sin artículos.", 0 ) )
+      oTree:Select( oTree:Add( "Factura cliente : " + rtrim( pFactura ) + " factura sin artÃ­culos.", 0 ) )
 
       lErrorFound := .t.
 
@@ -554,7 +553,7 @@ FUNCTION CntFacCli( lSimula, lPago, lExcCnt, lMessage, oTree, nAsiento, aSimula,
    */
 
    /*
-   Realización de Asientos
+   RealizaciÃ³n de Asientos
    --------------------------------------------------------------------------
    */
 
@@ -1209,7 +1208,7 @@ Static Function ContaSerieTiket( nRad, cNumIni, cNumFin, lFechas, dDesde, dHasta
    local lWhile   := .t.
 
    /*
-   Preparamos la pantalla para mostrar la simulación---------------------------
+   Preparamos la pantalla para mostrar la simulaciÃ³n---------------------------
    */
 
    if lSimula
@@ -1368,12 +1367,12 @@ Function CntTiket( lSimula, lCobro, lDev, lMessage, oTree, nAsiento, aSimula, db
    */
 
    if !ChkRuta( cRuta )
-      oTree:Select( oTree:Add( "Tiket : " + cTxtNumTik + " ruta no valida para acceso a Contaplus®", 0 ) )
+      oTree:Select( oTree:Add( "Tiket : " + cTxtNumTik + " ruta no valida para acceso a ContaplusÂ®", 0 ) )
       lErrorFound    := .t.
    end if
 
    if Empty( cCodEmp )
-      oTree:Select( oTree:Add( "Tiket : " + cTxtNumTik + " empresa de Contaplus® no encontrada", 0 ) )
+      oTree:Select( oTree:Add( "Tiket : " + cTxtNumTik + " empresa de ContaplusÂ® no encontrada", 0 ) )
       lErrorFound    := .t.
    end if
 
@@ -1587,7 +1586,7 @@ Function CntTiket( lSimula, lCobro, lDev, lMessage, oTree, nAsiento, aSimula, db
    */
 
    /*
-   Contabilizaci¢n de Pagos
+   ContabilizaciÂ¢n de Pagos
    --------------------------------------------------------------------------
    */
 
@@ -1677,7 +1676,7 @@ Function CntTiket( lSimula, lCobro, lDev, lMessage, oTree, nAsiento, aSimula, db
    cPago       := "C/Tiket N. " + cTxtNumTik
 
 	/*
-   Realización de Asientos
+   RealizaciÃ³n de Asientos
 	--------------------------------------------------------------------------
    */
 
@@ -1814,7 +1813,7 @@ Function CntTiket( lSimula, lCobro, lDev, lMessage, oTree, nAsiento, aSimula, db
       next
 
       /*
-      Contabilizaci¢n de Pagos
+      ContabilizaciÂ¢n de Pagos
       --------------------------------------------------------------------------
       */
 
@@ -2084,7 +2083,7 @@ FUNCTION CntAlbCli( lSimula, lExcCnt, lMessage, oTree, nAsiento, aSimula, dbfAlb
    cCodEmp           := cCodEmpCnt( ( dbfAlbCliT )->cSerAlb )
 
    if Empty( cCodEmp ) .AND. !lSimula
-      oTree:Select( oTree:Add( "Albaran cliente : " + rtrim( nAlbaran ) + " no se definierón empresas asociadas.", 0 ) )
+      oTree:Select( oTree:Add( "Albaran cliente : " + rtrim( nAlbaran ) + " no se definierÃ³n empresas asociadas.", 0 ) )
       lErrorFound    := .t.
    end if
 
@@ -2223,7 +2222,7 @@ FUNCTION CntAlbCli( lSimula, lExcCnt, lMessage, oTree, nAsiento, aSimula, dbfAlb
 
    else
 
-      oTree:Select( oTree:Add( "Albaran cliente : " + rtrim( nAlbaran ) + " Albaran sin artículos.", 0 ) )
+      oTree:Select( oTree:Add( "Albaran cliente : " + rtrim( nAlbaran ) + " Albaran sin artÃ­culos.", 0 ) )
       lErrorFound := .t.
 
    end if
@@ -2376,7 +2375,7 @@ FUNCTION CntAlbCli( lSimula, lExcCnt, lMessage, oTree, nAsiento, aSimula, dbfAlb
       cPago       := "C/Alb. N." + ( dbfAlbCliT )->cSerAlb + "/" + AllTrim( Str( ( dbfAlbCliT )->nNumAlb ) + "/" + ( dbfAlbCliT )->cSufAlb )
 
       /*
-      Realización de Asientos
+      RealizaciÃ³n de Asientos
       --------------------------------------------------------------------------
       */
 
@@ -2764,7 +2763,7 @@ FUNCTION CntFacRec( lSimula, lPago, lExcCnt, lMessage, oTree, nAsiento, aSimula,
    lIvaCEE           := ( ( dbfFacRecT )->nRegIva == 2 )
 
    if Empty( cCodEmp )
-      oTree:Select( oTree:Add( "Factura rectificativa de cliente : " + rtrim( pFactura ) + " no se definierón empresas asociadas.", 0 ) )
+      oTree:Select( oTree:Add( "Factura rectificativa de cliente : " + rtrim( pFactura ) + " no se definierÃ³n empresas asociadas.", 0 ) )
       lErrorFound    := .t.
    end if
 
@@ -2922,7 +2921,7 @@ FUNCTION CntFacRec( lSimula, lPago, lExcCnt, lMessage, oTree, nAsiento, aSimula,
 
    else
 
-      oTree:Select( oTree:Add( "Factura rectificativa de cliente : " + rtrim( pFactura ) + " factura sin artículos.", 0 ) )
+      oTree:Select( oTree:Add( "Factura rectificativa de cliente : " + rtrim( pFactura ) + " factura sin artÃ­culos.", 0 ) )
       lErrorFound := .t.
 
    end if
@@ -3064,7 +3063,7 @@ FUNCTION CntFacRec( lSimula, lPago, lExcCnt, lMessage, oTree, nAsiento, aSimula,
       cConcepto   := "N/Rect. N." + ( dbfFacRecT )->cSerie + "/" + AllTrim( Str( ( dbfFacRecT )->nNumFac ) + "/" + ( dbfFacRecT )->cSufFac )
 
       /*
-      Realización de Asientos
+      RealizaciÃ³n de Asientos
       --------------------------------------------------------------------------
       */
 
@@ -3632,7 +3631,7 @@ FUNCTION CntFacPrv( lSimula, lPago, lMessage, oTree, nAsiento, aSimula, dbfFacPr
 
       else
 
-         oTree:Select( oTree:Add( "Factura proveedor : " + Rtrim( cFactura ) + " factura sin artículos.", 0 ) )
+         oTree:Select( oTree:Add( "Factura proveedor : " + Rtrim( cFactura ) + " factura sin artÃ­culos.", 0 ) )
 
          lErrorFound    := .t.
 
@@ -3760,7 +3759,7 @@ FUNCTION CntFacPrv( lSimula, lPago, lMessage, oTree, nAsiento, aSimula, dbfFacPr
       cConCompr      += Space( 1 ) + Rtrim( ( dbfFacPrvT )->cNomPrv )
 
       /*
-      Realizaci¢n de Asientos-----------------------------------------------------
+      RealizaciÂ¢n de Asientos-----------------------------------------------------
       */
 
       if OpenDiario( , cCodEmp )
@@ -3965,7 +3964,7 @@ FUNCTION CntFacPrv( lSimula, lPago, lMessage, oTree, nAsiento, aSimula, dbfFacPr
       end if
 
       /*
-      Contabilizaci¢n de Pagos
+      ContabilizaciÂ¢n de Pagos
       --------------------------------------------------------------------------
       */
 
@@ -4165,7 +4164,7 @@ FUNCTION CntRctPrv( lSimula, lPago, lMessage, oTree, nAsiento, aSimula, dbfRctPr
 
    else
 
-      oTree:Add( "Factura rectificativa proveedor : " + rtrim( cFactura ) + " factura sin artículos.", 0 )
+      oTree:Add( "Factura rectificativa proveedor : " + rtrim( cFactura ) + " factura sin artÃ­culos.", 0 )
       lErrorFound    := .t.
 
    end if
@@ -4293,7 +4292,7 @@ FUNCTION CntRctPrv( lSimula, lPago, lMessage, oTree, nAsiento, aSimula, dbfRctPr
       cConCompr      += Space( 1 ) + Rtrim( ( dbfRctPrvT )->cNomPrv )
 
       /*
-      Realizaci¢n de Asientos-----------------------------------------------------
+      RealizaciÂ¢n de Asientos-----------------------------------------------------
       */
 
       if OpenDiario( , cCodEmp )
@@ -4486,7 +4485,7 @@ FUNCTION CntRctPrv( lSimula, lPago, lMessage, oTree, nAsiento, aSimula, dbfRctPr
       end if
 
       /*
-      Contabilizaci¢n de Pagos
+      ContabilizaciÂ¢n de Pagos
       --------------------------------------------------------------------------
       */
 
@@ -4706,7 +4705,7 @@ Function CntRecPrv( lSimula, oTree, nAsiento, aSimula, lFromFactura, dbfFacPrvT,
    //cPagoPrv          := "P/Recibo N." + Str( ( dbfFacPrvP )->nNumRec, 2 ) + Sapce( 1 ) + Rtrim( ( dbfFacPrvT )->cNomPrv ) + " N." + ( dbfFacPrvP )->cSerFac + "/" + Ltrim( Str( ( dbfFacPrvP )->nNumFac ) ) + "/" + ( dbfFacPrvP )->cSufFac + "/" +
 
 	/*
-   Realización de Asientos
+   RealizaciÃ³n de Asientos
 	--------------------------------------------------------------------------
    */
 
@@ -4715,7 +4714,7 @@ Function CntRecPrv( lSimula, oTree, nAsiento, aSimula, lFromFactura, dbfFacPrvT,
    end if
 
 	/*
-	Contabilizaci¢n de Pagos
+	ContabilizaciÂ¢n de Pagos
 	--------------------------------------------------------------------------
 	*/
 
