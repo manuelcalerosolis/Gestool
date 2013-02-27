@@ -64,14 +64,14 @@ Function Main( cCodEmp, cCodUsr, cIp )
    local dbfDlg
    local dbfUsr
    local dbfCaj
-   local cCodGrp     := Space( 2 )
+   local cCodGrp     := Space( 4 )
    local nError
    local cError
    local cAdsIp
    local cAdsType
    local cAdsData
 
-   DEFAULT cCodEmp   := "12"
+   DEFAULT cCodEmp   := Alltrim( Str( Year( Date() ) ) )
    DEFAULT cCodUsr   := "000"
 
    SET DATE FORMAT   "dd/mm/yyyy"
