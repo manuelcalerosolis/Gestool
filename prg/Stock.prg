@@ -4103,7 +4103,7 @@ METHOD nCostoMedio( cCodArt, cCodAlm, cCodPr1, cCodPr2, cValPr1, cValPr2 ) CLASS
    Obtengo la fecha de consolidación-------------------------------------------
    */
 
-   ::lCheckConsolidacion( cCodArt )
+   //::lCheckConsolidacion( cCodArt )
 
    /*
    Recorremos movimientos de almacén-------------------------------------------
@@ -4113,17 +4113,18 @@ METHOD nCostoMedio( cCodArt, cCodAlm, cCodPr1, cCodPr2, cValPr1, cValPr2 ) CLASS
 
       while ( ::cHisMov )->cRefMov == cCodArt .and. ( ::cHisMov )->cValPr1 == cValPr1 .and. ( ::cHisMov )->cValPr2 == cValPr2 .and. !( ::cHisMov )->( Eof() )
 
-         if ::lValoracionCostoMedio( ( ::cHisMov )->nTipMov ) .and.;
-            ( Empty( ::dConsolidacion ) .or. ( ::cHisMov )->dFecMov >= ::dConsolidacion )
+         if ::lValoracionCostoMedio( ( ::cHisMov )->nTipMov )
 
-            if !Empty( ( ::cHisMov )->cAloMov ) .and. ( Empty( cCodAlm ) .or. ( ::cHisMov )->cAliMov == cCodAlm )
+            if !Empty( ( ::cHisMov )->cAloMov ) .and. ( Empty( cCodAlm ) .or. ( ::cHisMov )->cAliMov == cCodAlm ) .and.;
+               ::lCheckConsolidacion( ( ::cHisMov )->cRefMov, ( ::cHisMov )->cAloMov, ( ::cHisMov )->cCodPr1, ( ::cHisMov )->cCodPr2, ( ::cHisMov )->cValPr1, ( ::cHisMov )->cValPr2, ( ::cHisMov )->cLote, ( ::cHisMov )->dFecMov )
 
                nUnidades   += nTotNMovAlm( ::cHisMov )
                nImporte    += nTotLMovAlm( ::cHisMov )
 
             end if
 
-            if !Empty( ( ::cHisMov )->cAliMov ) .and. ( Empty( cCodAlm ) .or. ( ::cHisMov )->cAliMov == cCodAlm )
+            if !Empty( ( ::cHisMov )->cAliMov ) .and. ( Empty( cCodAlm ) .or. ( ::cHisMov )->cAliMov == cCodAlm ) .and.;
+               ::lCheckConsolidacion( ( ::cHisMov )->cRefMov, ( ::cHisMov )->cAliMov, ( ::cHisMov )->cCodPr1, ( ::cHisMov )->cCodPr2, ( ::cHisMov )->cValPr1, ( ::cHisMov )->cValPr2, ( ::cHisMov )->cLote, ( ::cHisMov )->dFecMov )
 
                nUnidades   += nTotNMovAlm( ::cHisMov )
                nImporte    += nTotLMovAlm( ::cHisMov )
@@ -4146,7 +4147,7 @@ METHOD nCostoMedio( cCodArt, cCodAlm, cCodPr1, cCodPr2, cValPr1, cValPr2 ) CLASS
 
       while ( ::cAlbPrvL )->cRef == cCodArt .and. ( ::cAlbPrvL )->cValPr1 == cValPr1 .and. ( ::cAlbPrvL )->cValPr2 == cValPr2 .and. !( ::cAlbPrvL )->( eof() )
 
-         if ( Empty( ::dConsolidacion ) .or. ( ::cAlbPrvL )->dFecAlb >= ::dConsolidacion )   .and.;
+      if ::lCheckConsolidacion( ( ::cAlbPrvL )->cRef, ( ::cAlbPrvL )->cAlmLin, ( ::cAlbPrvL )->cCodPr1, ( ::cAlbPrvL )->cCodPr2, ( ::cAlbPrvL )->cValPr1, ( ::cAlbPrvL )->cValPr2, ( ::cAlbPrvL )->cLote, ( ::cAlbPrvL )->dFecAlb ) .and.;
             Empty( cCodAlm ) .or. ( ( ::cAlbPrvL )->cAlmLin == cCodAlm )
 
             nUnidades   += nTotNAlbPrv( ::cAlbPrvL )
@@ -4168,7 +4169,7 @@ METHOD nCostoMedio( cCodArt, cCodAlm, cCodPr1, cCodPr2, cValPr1, cValPr2 ) CLASS
 
       while ( ::cFacPrvL )->cRef == cCodArt .and. ( ::cFacPrvL )->cValPr1 == cValPr1 .and. ( ::cFacPrvL )->cValPr2 == cValPr2 .and. !( ::cFacPrvL )->( eof() )
 
-         if ( Empty( ::dConsolidacion ) .or. ( ::cFacPrvL )->dFecFac >= ::dConsolidacion )   .and.;
+         if ::lCheckConsolidacion( ( ::cFacPrvL )->cRef, ( ::cFacPrvL )->cAlmLin, ( ::cFacPrvL )->cCodPr1, ( ::cFacPrvL )->cCodPr2, ( ::cFacPrvL )->cValPr1, ( ::cFacPrvL )->cValPr2, ( ::cFacPrvL )->cLote, ( ::cFacPrvL )->dFecFac )   .and.;
             Empty( cCodAlm ) .or. ( ( ::cFacPrvL )->cAlmLin == cCodAlm )
 
             nUnidades   += nTotNFacPrv( ::cFacPrvL )
@@ -4190,7 +4191,7 @@ METHOD nCostoMedio( cCodArt, cCodAlm, cCodPr1, cCodPr2, cValPr1, cValPr2 ) CLASS
 
       while ( ::cRctPrvL )->cRef == cCodArt .and. ( ::cRctPrvL )->cValPr1 == cValPr1 .and. ( ::cRctPrvL )->cValPr2 == cValPr2 .and. !( ::cRctPrvL )->( eof() )
 
-         if ( Empty( ::dConsolidacion ) .or. ( ::cRctPrvL )->dFecFac >= ::dConsolidacion )   .and.;
+         if ::lCheckConsolidacion( ( ::cRctPrvL )->cRef, ( ::cRctPrvL )->cAlmLin, ( ::cRctPrvL )->cCodPr1, ( ::cRctPrvL )->cCodPr2, ( ::cRctPrvL )->cValPr1, ( ::cRctPrvL )->cValPr2, ( ::cRctPrvL )->cLote, ( ::cRctPrvL )->dFecFac )   .and.;
             Empty( cCodAlm ) .or. ( ( ::cRctPrvL )->cAlmLin == cCodAlm )
 
             nUnidades   += nTotNRctPrv( ::cRctPrvL )
@@ -4316,15 +4317,16 @@ METHOD nStockAlmacen( cCodArt, cCodAlm, cValPr1, cValPr2, cLote ) CLASS TStock
 
       if !Empty( ::cHisMov )
 
-         ::lCheckConsolidacion( cCodArt )
+         //::lCheckConsolidacion( cCodArt )
 
          if ( ::cHisMov )->( dbSeek( cCodArt ) )
 
             while ( ::cHisMov )->cRefMov == cCodArt .and. !( ::cHisMov )->( Eof() )
 
-               if ( Empty( ::dConsolidacion ) .or. ( ::cHisMov )->dFecMov >= ::dConsolidacion )
+               //if ( Empty( ::dConsolidacion ) .or. ( ::cHisMov )->dFecMov >= ::dConsolidacion )
 
                   if !Empty( ( ::cHisMov )->cAliMov )                               .and.;
+                     ::lCheckConsolidacion( ( ::cHisMov )->cRefMov, ( ::cHisMov )->cAliMov, ( ::cHisMov )->cCodPr1, ( ::cHisMov )->cCodPr2, ( ::cHisMov )->cValPr1, ( ::cHisMov )->cValPr2, ( ::cHisMov )->cLote, ( ::cHisMov )->dFecMov ) .and.;
                      ( Empty( cCodAlm )   .or. cCodAlm == ( ::cHisMov )->cAliMov )  .and.;
                      ( Empty( cValPr1 )   .or. cValPr1 == ( ::cHisMov )->cValPr1 )  .and.;
                      ( Empty( cValPr2 )   .or. cValPr2 == ( ::cHisMov )->cValPr2 )  .and.;
@@ -4335,6 +4337,7 @@ METHOD nStockAlmacen( cCodArt, cCodAlm, cValPr1, cValPr2, cLote ) CLASS TStock
                   end if
 
                   if !Empty( ( ::cHisMov )->cAloMov )                               .and.;
+                     ::lCheckConsolidacion( ( ::cHisMov )->cRefMov, ( ::cHisMov )->cAloMov, ( ::cHisMov )->cCodPr1, ( ::cHisMov )->cCodPr2, ( ::cHisMov )->cValPr1, ( ::cHisMov )->cValPr2, ( ::cHisMov )->cLote, ( ::cHisMov )->dFecMov ) .and.;
                      ( Empty( cCodAlm )   .or. cCodAlm == ( ::cHisMov )->cAloMov )  .and.;
                      ( Empty( cValPr1 )   .or. cValPr1 == ( ::cHisMov )->cValPr1 )  .and.;
                      ( Empty( cValPr2 )   .or. cValPr2 == ( ::cHisMov )->cValPr2 )  .and.;
@@ -4344,7 +4347,7 @@ METHOD nStockAlmacen( cCodArt, cCodAlm, cValPr1, cValPr2, cLote ) CLASS TStock
 
                   end if
 
-               end if
+               //end if
 
                ( ::cHisMov )->( dbSkip() )
 
@@ -4365,7 +4368,7 @@ METHOD nStockAlmacen( cCodArt, cCodAlm, cValPr1, cValPr2, cLote ) CLASS TStock
          while ( ::cAlbPrvL )->cRef == cCodArt .and. !( ::cAlbPrvL )->( Eof() )
 
             if ( ::cAlbPrvL )->nCtlStk < 2                                                      .and.;
-               ( Empty( ::dConsolidacion ) .or. ( ::cAlbPrvL )->dFecAlb >= ::dConsolidacion )   .and.;
+               ::lCheckConsolidacion( ( ::cAlbPrvL )->cRef, ( ::cAlbPrvL )->cAlmLin, ( ::cAlbPrvL )->cCodPr1, ( ::cAlbPrvL )->cCodPr2, ( ::cAlbPrvL )->cValPr1, ( ::cAlbPrvL )->cValPr2, ( ::cAlbPrvL )->cLote, ( ::cAlbPrvL )->dFecAlb ) .and.;
                ( Empty( cCodAlm )   .or. cCodAlm == ( ::cAlbPrvL )->cAlmLin )                   .and.;
                ( Empty( cValPr1 )   .or. cValPr1 == ( ::cAlbPrvL )->cValPr1 )                   .and.;
                ( Empty( cValPr2 )   .or. cValPr2 == ( ::cAlbPrvL )->cValPr2 )                   .and.;
@@ -4392,7 +4395,7 @@ METHOD nStockAlmacen( cCodArt, cCodAlm, cValPr1, cValPr2, cLote ) CLASS TStock
          while ( ::cFacPrvL )->cRef == cCodArt .and. !( ::cFacPrvL )->( Eof() )
 
             if ( ::cFacPrvL )->nCtlStk < 2                                                      .and.;
-               ( Empty( ::dConsolidacion ) .or. ( ::cFacPrvL )->dFecFac >= ::dConsolidacion )   .and.;
+               ::lCheckConsolidacion( ( ::cFacPrvL )->cRef, ( ::cFacPrvL )->cAlmLin, ( ::cFacPrvL )->cCodPr1, ( ::cFacPrvL )->cCodPr2, ( ::cFacPrvL )->cValPr1, ( ::cFacPrvL )->cValPr2, ( ::cFacPrvL )->cLote, ( ::cFacPrvL )->dFecFac ) .and.;
                ( Empty( cCodAlm )   .or. cCodAlm == ( ::cFacPrvL )->cAlmLin )                   .and.;
                ( Empty( cValPr1 )   .or. cValPr1 == ( ::cFacPrvL )->cValPr1 )                   .and.;
                ( Empty( cValPr2 )   .or. cValPr2 == ( ::cFacPrvL )->cValPr2 )                   .and.;
@@ -4419,7 +4422,7 @@ METHOD nStockAlmacen( cCodArt, cCodAlm, cValPr1, cValPr2, cLote ) CLASS TStock
          while ( ::cRctPrvL )->cRef == cCodArt .and. !( ::cRctPrvL )->( Eof() )
 
             if ( ::cRctPrvL )->nCtlStk < 2                                                      .and.;
-               ( Empty( ::dConsolidacion ) .or. ( ::cRctPrvL )->dFecFac >= ::dConsolidacion )   .and.;
+               ::lCheckConsolidacion( ( ::cRctPrvL )->cRef, ( ::cRctPrvL )->cAlmLin, ( ::cRctPrvL )->cCodPr1, ( ::cRctPrvL )->cCodPr2, ( ::cRctPrvL )->cValPr1, ( ::cRctPrvL )->cValPr2, ( ::cRctPrvL )->cLote, ( ::cRctPrvL )->dFecFac ) .and.;
                ( Empty( cCodAlm )   .or. cCodAlm == ( ::cRctPrvL )->cAlmLin )                   .and.;
                ( Empty( cValPr1 )   .or. cValPr1 == ( ::cRctPrvL )->cValPr1 )                   .and.;
                ( Empty( cValPr2 )   .or. cValPr2 == ( ::cRctPrvL )->cValPr2 )                   .and.;
@@ -4446,7 +4449,7 @@ METHOD nStockAlmacen( cCodArt, cCodAlm, cValPr1, cValPr2, cLote ) CLASS TStock
          while ( ::cAlbCliL )->cRef == cCodArt .and. !( ::cAlbCliL )->( Eof() )
 
             if ( ::cAlbCliL )->nCtlStk < 2                                                      .and.;
-               ( Empty( ::dConsolidacion ) .or. ( ::cAlbCliL )->dFecAlb >= ::dConsolidacion )   .and.;
+            ::lCheckConsolidacion( ( ::cAlbCliL )->cRef, ( ::cAlbCliL )->cAlmLin, ( ::cAlbCliL )->cCodPr1, ( ::cAlbCliL )->cCodPr2, ( ::cAlbCliL )->cValPr1, ( ::cAlbCliL )->cValPr2, ( ::cAlbCliL )->cLote, ( ::cAlbCliL )->dFecAlb ) .and.;
                ( Empty( cCodAlm )   .or. cCodAlm == ( ::cAlbCliL )->cAlmLin )                   .and.;
                ( Empty( cValPr1 )   .or. cValPr1 == ( ::cAlbCliL )->cValPr1 )                   .and.;
                ( Empty( cValPr2 )   .or. cValPr2 == ( ::cAlbCliL )->cValPr2 )                   .and.;
@@ -4473,7 +4476,7 @@ METHOD nStockAlmacen( cCodArt, cCodAlm, cValPr1, cValPr2, cLote ) CLASS TStock
          while ( ::cFacCliL )->cRef == cCodArt .and. !( ::cFacCliL )->( Eof() )
 
             if ( ::cFacCliL )->nCtlStk < 2                                                      .and.;
-               ( Empty( ::dConsolidacion ) .or. ( ::cFacCliL )->dFecFac >= ::dConsolidacion )   .and.;
+               ::lCheckConsolidacion( ( ::cFacCliL )->cRef, ( ::cFacCliL )->cAlmLin, ( ::cFacCliL )->cCodPr1, ( ::cFacCliL )->cCodPr2, ( ::cFacCliL )->cValPr1, ( ::cFacCliL )->cValPr2, ( ::cFacCliL )->cLote, ( ::cFacCliL )->dFecFac ) .and.;
                ( Empty( cCodAlm )   .or. cCodAlm == ( ::cFacCliL )->cAlmLin )                   .and.;
                ( Empty( cValPr1 )   .or. cValPr1 == ( ::cFacCliL )->cValPr1 )                   .and.;
                ( Empty( cValPr2 )   .or. cValPr2 == ( ::cFacCliL )->cValPr2 )                   .and.;
@@ -4500,7 +4503,7 @@ METHOD nStockAlmacen( cCodArt, cCodAlm, cValPr1, cValPr2, cLote ) CLASS TStock
          while ( ::cFacRecL )->cRef == cCodArt .and. !( ::cFacRecL )->( Eof() )
 
             if ( ::cFacRecL )->nCtlStk < 2                                                      .and.;
-               ( Empty( ::dConsolidacion ) .or. ( ::cFacRecL )->dFecFac >= ::dConsolidacion )   .and.;
+               ::lCheckConsolidacion( ( ::cFacRecL )->cRef, ( ::cFacRecL )->cAlmLin, ( ::cFacRecL )->cCodPr1, ( ::cFacRecL )->cCodPr2, ( ::cFacRecL )->cValPr1, ( ::cFacRecL )->cValPr2, ( ::cFacRecL )->cLote, ( ::cFacRecL )->dFecFac ) .and.;
                ( Empty( cCodAlm )   .or. cCodAlm == ( ::cFacRecL )->cAlmLin )                   .and.;
                ( Empty( cValPr1 )   .or. cValPr1 == ( ::cFacRecL )->cValPr1 )                   .and.;
                ( Empty( cValPr2 )   .or. cValPr2 == ( ::cFacRecL )->cValPr2 )                   .and.;
@@ -4529,7 +4532,7 @@ METHOD nStockAlmacen( cCodArt, cCodAlm, cValPr1, cValPr2, cLote ) CLASS TStock
             while ( ::cTikL )->cCbaTil == cCodArt .and. !( ::cTikL )->( Eof() )
 
                if ( ::cTikL )->nCtlStk < 2                                                      .and.;
-                  ( Empty( ::dConsolidacion ) .or. ( ::cTikL )->dFecTik >= ::dConsolidacion )   .and.;
+                  ::lCheckConsolidacion( ( ::cTikL )->cCbaTil, ( ::cTikL )->cAlmLin, ( ::cTikL )->cCodPr1, ( ::cTikL )->cCodPr2, ( ::cTikL )->cValPr1, ( ::cTikL )->cValPr2, ( ::cTikL )->cLote, ( ::cTikL )->dFecTik )  .and.;
                   ( Empty( cCodAlm )   .or. cCodAlm == ( ::cTikL )->cAlmLin )                   .and.;
                   ( Empty( cValPr1 )   .or. cValPr1 == ( ::cTikL )->cValPr1 )                   .and.;
                   ( Empty( cValPr2 )   .or. cValPr2 == ( ::cTikL )->cValPr2 )                   .and.;
@@ -4564,7 +4567,7 @@ METHOD nStockAlmacen( cCodArt, cCodAlm, cValPr1, cValPr2, cLote ) CLASS TStock
                while ( ::cTikL )->cComTil == cCodArt .and. !( ::cTikL )->( Eof() )
 
                   if ( ::cTikL )->nCtlStk < 2                                                      .and.;
-                     ( Empty( ::dConsolidacion ) .or. ( ::cTikL )->dFecTik >= ::dConsolidacion )   .and.;
+                     ::lCheckConsolidacion( ( ::cTikL )->cComTil, ( ::cTikL )->cAlmLin, ( ::cTikL )->cCodPr1, ( ::cTikL )->cCodPr2, ( ::cTikL )->cValPr1, ( ::cTikL )->cValPr2, ( ::cTikL )->cLote, ( ::cTikL )->dFecTik )  .and.;
                      ( Empty( cCodAlm ) .or. cCodAlm == ( ::cTikL )->cAlmLin )
 
                      nStkTotal               -= nTotVTikTpv( ::cTikL, .t. )
@@ -4593,7 +4596,7 @@ METHOD nStockAlmacen( cCodArt, cCodAlm, cValPr1, cValPr2, cLote ) CLASS TStock
 
          while ( ::cProducL )->cCodArt == cCodArt .and. !( ::cProducL )->( Eof() )
 
-            if ( Empty( ::dConsolidacion ) .or. ( ::cProducL )->dFecOrd >= ::dConsolidacion )   .and.;
+            if ::lCheckConsolidacion( ( ::cProducL )->cCodArt, ( ::cProducL )->cAlmOrd, ( ::cProducL )->cCodPr1, ( ::cProducL )->cCodPr2, ( ::cProducL )->cValPr1, ( ::cProducL )->cValPr2, ( ::cProducL )->cLote, ( ::cProducL )->dFecOrd )  .and.;
                ( Empty( cCodAlm )   .or. cCodAlm == ( ::cProducL )->cAlmOrd )                   .and.;
                ( Empty( cValPr1 )   .or. cValPr1 == ( ::cProducL )->cValPr1 )                   .and.;
                ( Empty( cValPr2 )   .or. cValPr2 == ( ::cProducL )->cValPr2 )                   .and.;
@@ -4619,7 +4622,7 @@ METHOD nStockAlmacen( cCodArt, cCodAlm, cValPr1, cValPr2, cLote ) CLASS TStock
 
          while ( ::cProducM )->cCodArt == cCodArt .and. !( ::cProducM )->( Eof() )
 
-            if ( Empty( ::dConsolidacion ) .or. ( ::cProducM )->dFecOrd >= ::dConsolidacion )   .and.;
+            if ::lCheckConsolidacion( ( ::cProducM )->cCodArt, ( ::cProducM )->cAlmOrd, ( ::cProducM )->cCodPr1, ( ::cProducM )->cCodPr2, ( ::cProducM )->cValPr1, ( ::cProducM )->cValPr2, ( ::cProducM )->cLote, ( ::cProducM )->dFecOrd ) .and.;
                ( Empty( cCodAlm )   .or. cCodAlm == ( ::cProducM )->cAlmOrd )                   .and.;
                ( Empty( cValPr1 )   .or. cValPr1 == ( ::cProducM )->cValPr1 )                   .and.;
                ( Empty( cValPr2 )   .or. cValPr2 == ( ::cProducM )->cValPr2 )                   .and.;
