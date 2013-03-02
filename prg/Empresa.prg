@@ -3010,7 +3010,7 @@ Function SetEmpresa( cCodEmp, dbfEmp, dbfDlg, dbfUsr, oBrw, oWnd, lSoft )
       cCodEmp        := ( dbfEmp )->CodEmp 
    end if
 
-   cCodEmp           := Alltrim( cCodEmp )
+   cCodEmp           := RJust( cCodEmp, "0", 4 ) 
 
    nOrd              := ( dbfEmp )->( OrdSetFocus( "CodEmp" ) )
    if !( dbfEmp )->( dbSeek( cCodEmp ) )

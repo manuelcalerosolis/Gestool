@@ -1918,7 +1918,8 @@ FUNCTION ContabilizaReciboCliente( oBrw, oTree, lSimula, aSimula, dbfFacCliT, db
                                     lSimula,;
                                     cTerNif,;
                                     cTerNom,;
-                                    nEjeCon ) )
+                                    nEjeCon,;
+                                    cCtaCli ) )
 
       end if
 

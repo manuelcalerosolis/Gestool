@@ -455,11 +455,6 @@ FUNCTION nEjercicioContaplus( cRuta, cCodEmp, lMensaje )
 
    local lClose      := .f.
    local nReturn     := 0
-   local nPosition   := aScan( aLenSubCuenta, {|a| a[ 1 ] == cCodEmp } )
-
-   if nPosition != 0
-      Return ( aLenSubCuenta[ nPosition, 2 ] )
-   end if
 
    DEFAULT cRuta     := cRutCnt()
    DEFAULT cCodEmp   := cEmpCnt()
@@ -482,14 +477,9 @@ FUNCTION nEjercicioContaplus( cRuta, cCodEmp, lMensaje )
    end if
 
    if ( cEmpresa )->( dbSeek( cCodEmp ) )
+
       nReturn        := ( cEmpresa )->Ejercicio
-
-      /*
-      Añadimos los valoresa al buffer---------------------------------------
-      */
-
-      aAdd( aLenSubCuenta, { cCodEmp, nReturn } )
-
+      
    else
 
       if lMensaje
@@ -1299,7 +1289,8 @@ FUNCTION MkAsiento( 	Asien,;
                      lSimula,;
                      cTerNif,;
                      cTerNom,;
-                     nEjeCon )
+                     nEjeCon,;
+                     cEjeCta )
 
    local aTemp
    local cSerie            := "A"
@@ -1416,10 +1407,10 @@ FUNCTION MkAsiento( 	Asien,;
    Pagos en metalico-----------------------------------------------------------
    */
 
-   if !Empty( nEjeCon )
+   if !Empty( nEjeCon ) .and. !Empty( cEjeCta )
       aTemp[ ( cDiario )->( FieldPos( "METAL") ) ]       := .t.
       aTemp[ ( cDiario )->( FieldPos( "METALIMP" ) ) ]   := If ( nImporteDebe != NIL,  nImporteDebe,  aTemp[ ( cDiario )->( FieldPos( "METALIMP" ) ) ] )      
-      aTemp[ ( cDiario )->( FieldPos( "CLIENTE" ) ) ]    := If ( SubCta != NIL,        SubCta,        aTemp[ ( cDiario )->( FieldPos( "SUBCTA" ) ) ] )
+      aTemp[ ( cDiario )->( FieldPos( "CLIENTE" ) ) ]    := cEjeCta
       aTemp[ ( cDiario )->( FieldPos( "METALEJE") ) ]    := nEjeCon 
    end if 
 
