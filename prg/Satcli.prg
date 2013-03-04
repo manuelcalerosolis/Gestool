@@ -7023,11 +7023,12 @@ return ( if( cPorDiv != nil, Trans( nCalculo, cPorDiv ), nCalculo ) )
 
 //---------------------------------------------------------------------------//
 
-FUNCTION cDesSatCli( cSatCliL )
+FUNCTION cDesSatCli( cSatCliL, cSatCliS )
 
    DEFAULT cSatCliL  := dbfSatCliL
+   DEFAULT cSatCliS  := dbfSatCliS
 
-RETURN ( Descrip( cSatCliL ) )
+RETURN ( Descrip( cSatCliL, cSatCliS ) )
 
 //---------------------------------------------------------------------------//
 
@@ -7811,38 +7812,34 @@ STATIC FUNCTION EndTrans( aTmp, aGet, nMode, oBrwLin, oBrw, oBrwInc, oDlg )
 
    case nMode == EDIT_MODE
 
-      if nNumSat != 0 .AND. ( dbfSatCliL )->( dbSeek( cSerSat + str( nNumSat ) + cSufSat ) )
+      while ( dbfSatCliL )->( dbSeek( cSerSat + str( nNumSat ) + cSufSat ) ) 
+         if dbLock( dbfSatCliL )
+            ( dbfSatCliL )->( dbDelete() )
+            ( dbfSatCliL )->( dbUnLock() )
+         end if
+         ( dbfSatCliL )->( dbSkip() )
+      end while
 
-         do while ( ( dbfSatCliL )->cSerSat + Str( ( dbfSatCliL )->nNumSat ) + ( dbfSatCliL )->cSufSat == cSerSat + str( nNumSat ) + cSufSat )
+      while ( dbfSatCliI )->( dbSeek( cSerSat + str( nNumSat ) + cSufSat ) )
+         if dbLock( dbfSatCliI )
+            ( dbfSatCliI )->( dbDelete() )
+            ( dbfSatCliI )->( dbUnLock() )
+         end if
+      end while
 
-            if dbLock( dbfSatCliL )
-               ( dbfSatCliL )->( dbDelete() )
-               ( dbfSatCliL )->( dbUnLock() )
-            end if
+      while ( dbfSatCliD )->( dbSeek( cSerSat + str( nNumSat ) + cSufSat ) )
+         if dbLock( dbfSatCliD )
+            ( dbfSatCliD )->( dbDelete() )
+            ( dbfSatCliD )->( dbUnLock() )
+         end if
+      end while
 
-            ( dbfSatCliL )->( dbSkip() )
-
-         end while
-
-      end if
-
-      if nNumSat != 0
-
-         while ( dbfSatCliI )->( dbSeek( cSerSat + str( nNumSat ) + cSufSat ) )
-            if dbLock( dbfSatCliI )
-               ( dbfSatCliI )->( dbDelete() )
-               ( dbfSatCliI )->( dbUnLock() )
-            end if
-         end while
-
-         while ( dbfSatCliD )->( dbSeek( cSerSat + str( nNumSat ) + cSufSat ) )
-            if dbLock( dbfSatCliD )
-               ( dbfSatCliD )->( dbDelete() )
-               ( dbfSatCliD )->( dbUnLock() )
-            end if
-         end while
-
-      end if
+      while ( dbfSatCliS )->( dbSeek( cSerSat + str( nNumSat ) + cSufSat ) )
+         if dbLock( dbfSatCliS )
+            ( dbfSatCliS )->( dbDelete() )
+            ( dbfSatCliS )->( dbUnLock() )
+         end if
+      end while
 
    end case
 
@@ -7970,7 +7967,7 @@ STATIC FUNCTION LoaCli( aGet, aTmp, nMode, oRieCli, oTlfCli )
    if Empty( cNewCodCli )
       return .t.
    elseif At( ".", cNewCodCli ) != 0
-      cNewCodCli     := PntReplace( aGet[_CCODCLI], "0", RetNumCodCliEmp() )
+      cNewCodCli     := PntReplace( aGet[ _CCODCLI ], "0", RetNumCodCliEmp() )
    else
       cNewCodCli     := Rjust( cNewCodCli, "0", RetNumCodCliEmp() )
    end if

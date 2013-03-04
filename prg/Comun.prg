@@ -1656,8 +1656,6 @@ FUNCTION Descrip( cFacCliL, cFacCliS )
       cReturn        := Rtrim( ( cFacCliL )->mLngDes )
    end if
 
-   
-
    if !Empty( cFacCliS )
 
       nOrd           := ( cFacCliL )->( OrdSetFocus( 1 ) )
