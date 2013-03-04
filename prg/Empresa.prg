@@ -3010,7 +3010,7 @@ Function SetEmpresa( cCodEmp, dbfEmp, dbfDlg, dbfUsr, oBrw, oWnd, lSoft )
       cCodEmp        := ( dbfEmp )->CodEmp 
    end if
 
-   cCodEmp           := Alltrim( cCodEmp )
+   cCodEmp           := RJust( cCodEmp, "0", 4 ) 
 
    nOrd              := ( dbfEmp )->( OrdSetFocus( "CodEmp" ) )
    if !( dbfEmp )->( dbSeek( cCodEmp ) )
@@ -6627,15 +6627,15 @@ FUNCTION TstEmpresa( cPatDat )
    if !lExistIndex( cPatDat() + "DELEGA.CDX" )
       rxDlg( cPatDat() )
    end if
-/*
+
    oBlock               := ErrorBlock( {| oError | ApoloBreak( oError ) } )
-   BEGIN SEQUENCE*/
+   BEGIN SEQUENCE
 
       /*
       Empresa------------------------------------------------------------------
       */
 
-      dbUseArea( .t.,  cDriver(), ( cPatDat() + "Empresa.Dbf" ), cCheckArea( "EMPRESA", @dbfEmp ), .t. )
+      dbUseArea( .t.,  cDriver(), ( cPatDat() + "Empresa.Dbf" ), cCheckArea( "EMPRESA", @dbfEmp ), .f. )
 
       if !( dbfEmp )->( netErr() )
 
@@ -6661,7 +6661,7 @@ FUNCTION TstEmpresa( cPatDat )
       Delgaciones--------------------------------------------------------------
       */
 
-      dbUseArea( .t.,  cDriver(), ( cPatDat() + "Delega.Dbf" ), cCheckArea( "Delega", @dbfEmp ), .t. )
+      dbUseArea( .t.,  cDriver(), ( cPatDat() + "Delega.Dbf" ), cCheckArea( "Delega", @dbfEmp ), .f. )
 
       if !( dbfEmp )->( netErr() )
 
@@ -6687,53 +6687,57 @@ FUNCTION TstEmpresa( cPatDat )
       Situacion especial para cambio de codigo---------------------------------
       */
 
-      dbUseArea( .t.,  cDriver(), ( cPatDat() + "Empresa.Dbf" ), cCheckArea( "EMPRESA", @dbfEmp ), .t. )
-      if !lAIS() ; ordListAdd( ( cPatDat() + "Empresa.Cdx" ) ) ; else ; ordSetFocus( 1 ) ; end
+      dbUseArea( .t.,  cDriver(), ( cPatDat() + "Empresa.Dbf" ), cCheckArea( "EMPRESA", @dbfEmp ), .f. )
+      
+      if !( dbfEmp )->( netErr() )
 
-         /*
-         Comprobamos la longitud del codigo------------------------------------
-         */
+         if !lAIS() ; ordListAdd( ( cPatDat() + "Empresa.Cdx" ) ) ; else ; ordSetFocus( 1 ) ; end
 
-         ( dbfEmp )->( dbGoTop() )
-         while !( dbfEmp )->( Eof() )
-
-            cCodEmp     := Alltrim( ( dbfEmp )->CodEmp )
-
-            if len( cCodEmp ) == 2
-
-               if IsDirectory( FullCurDir() + "Emp" + cCodEmp )
-                  if fRename( FullCurDir() + "Emp" + cCodEmp, FullCurDir() + "Emp" + RJust( cCodEmp, "0", 4 ) ) == -1
-                     MsgAlert( "No he podido renombrar el directorio " + FullCurDir() + "Emp" + cCodEmp )
+            /*
+            Comprobamos la longitud del codigo------------------------------------
+            */
+   
+            ( dbfEmp )->( dbGoTop() )
+            while !( dbfEmp )->( Eof() )
+   
+               cCodEmp     := Alltrim( ( dbfEmp )->CodEmp )
+   
+               if len( cCodEmp ) == 2
+   
+                  if IsDirectory( FullCurDir() + "Emp" + cCodEmp )
+                     if fRename( FullCurDir() + "Emp" + cCodEmp, FullCurDir() + "Emp" + RJust( cCodEmp, "0", 4 ) ) == -1
+                        MsgAlert( "No he podido renombrar el directorio " + FullCurDir() + "Emp" + cCodEmp )
+                     end if
+                  end if 
+   
+                  if IsDirectory( FullCurDir() + "Grp" + cCodEmp )
+                     if fRename( FullCurDir() + "Grp" + cCodEmp, FullCurDir() + "Grp" + RJust( cCodEmp, "0", 4 ) ) == -1
+                        MsgAlert( "No he podido renombrar el directorio " + FullCurDir() + "Grp" + cCodEmp )
+                     end if
+                  end if 
+   
+                  if ( dbfEmp )->( dbRLock() )
+                     ( dbfEmp )->CodEmp   := RJust( ( dbfEmp )->CodEmp )
+                     ( dbfEmp )->( dbUnlock() )
                   end if
+   
                end if 
+               
+               ( dbfEmp )->( dbSkip() )
+   
+            end while
+   
+            ( dbfEmp )->( dbCloseArea() )
 
-               if IsDirectory( FullCurDir() + "Grp" + cCodEmp )
-                  if fRename( FullCurDir() + "Grp" + cCodEmp, FullCurDir() + "Grp" + RJust( cCodEmp, "0", 4 ) ) == -1
-                     MsgAlert( "No he podido renombrar el directorio " + FullCurDir() + "Grp" + cCodEmp )
-                  end if
-               end if 
+      end if 
 
-               if ( dbfEmp )->( dbRLock() )
-                  ( dbfEmp )->CodEmp   := RJust( ( dbfEmp )->CodEmp )
-                  ( dbfEmp )->( dbUnlock() )
-               end if
-
-            end if 
-            
-            ( dbfEmp )->( dbSkip() )
-
-         end while
-
-      ( dbfEmp )->( dbCloseArea() )
-
-/*
    RECOVER USING oError
 
       msgStop( ErrorMessage( oError ), "Error al comprobar bases de datos de empresa." )
 
    END SEQUENCE
 
-   ErrorBlock( oBlock )*/
+   ErrorBlock( oBlock )
 
 RETURN ( .t. )
 
