@@ -384,6 +384,7 @@ static dbfSatCliT
 static dbfSatCliL
 static dbfSatCliI
 static dbfSatCliD
+static dbfSatCliS
 static dbfFacCliT
 static dbfFacCliL
 static dbfFacCliS
@@ -565,6 +566,9 @@ STATIC FUNCTION OpenFiles()
 
       USE ( cPatEmp() + "SatCliD.DBF" ) NEW VIA ( cDriver() ) SHARED ALIAS ( cCheckArea( "SatCliD", @dbfSatCliD ) )
       SET ADSINDEX TO ( cPatEmp() + "SatCliD.CDX" ) ADDITIVE
+
+      USE ( cPatEmp() + "SatCliS.DBF" ) NEW VIA ( cDriver() ) SHARED ALIAS ( cCheckArea( "SatCliS", @dbfSatCliS ) )
+      SET ADSINDEX TO ( cPatEmp() + "SatCliS.CDX" ) ADDITIVE
 
       USE ( cPatEmp() + "PEDCLIT.DBF" ) NEW VIA ( cDriver() ) SHARED ALIAS ( cCheckArea( "PEDCLIT", @dbfPedCliT ) )
       SET ADSINDEX TO ( cPatEmp() + "PEDCLIT.CDX" ) ADDITIVE
@@ -999,6 +1003,11 @@ STATIC FUNCTION CloseFiles()
    if !Empty( dbfSatCliD )
       ( dbfSatCliD )->( dbCloseArea() )
    end if
+
+   if !Empty( dbfSatCliS )
+      ( dbfSatCliS )->( dbCloseArea() )
+   end if
+
    if !Empty( dbfPedCliT )
       ( dbfPedCliT   )->( dbCloseArea() )
    end if
@@ -18687,8 +18696,19 @@ STATIC FUNCTION cSatCli( aGet, aTmp, oBrw, nMode )
                end while
 
             end if 
+   
+            /*
+            Pasamos todas las series----------------------------------------------
+            */
 
-            ( dbfSatCliD )->( dbGoTop() )
+            if ( dbfSatCliS )->( dbSeek( cPedido ) )
+
+               while ( dbfSatCliS )->cSerSat + Str( ( dbfSatCliS )->nNumSat ) + ( dbfSatCliS )->cSufSat == cPedido .and. !( dbfSatCliS )->( Eof() )
+                  dbPass( dbfSatCliS, dbfTmpSer, .t. )
+                  ( dbfSatCliS )->( dbSkip() )
+               end while
+
+            end if 
 
             oBrw:refresh()
             oBrw:setFocus()

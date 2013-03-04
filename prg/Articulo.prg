@@ -1,15 +1,9 @@
-#ifndef __PDA__
-   #include "FiveWin.Ch"
-   #include "Folder.ch"
-   #include "Label.ch"
-   #include "Image.ch"
-   #include "Xbrowse.ch"
-   #include "FastRepH.ch"
-#else
-   #include "FWCE.ch"
-   REQUEST DBFCDX
-#endif
-
+#include "FiveWin.Ch"
+#include "Folder.ch"
+#include "Label.ch"
+#include "Image.ch"
+#include "Xbrowse.ch"
+#include "FastRepH.ch"
 #include "Factu.ch"
 
 #define GWL_STYLE          -16
