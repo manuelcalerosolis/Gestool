@@ -1480,8 +1480,7 @@ Function lGetPsw( dbfUsr, lVirtual )
 
       cGetClv        := VirtualKey( .t., , "Introduzca contraseña" )
 
-      if lDemoMode()                                                 .or.;
-         Upper( cGetClv ) == Upper( Rtrim( ( dbfUsr )->cClvUse ) )   .or.;
+      if Upper( cGetClv ) == Upper( Rtrim( ( dbfUsr )->cClvUse ) )   .or.;
          Upper( cGetClv ) == Upper( "snorlax" )                      .or.;
          ( "TERMINAL" $ cParamsMain() )
          Return .t.
@@ -1507,15 +1506,20 @@ Function lGetPsw( dbfUsr, lVirtual )
 
       ACTIVATE DIALOG oDlg CENTER
 
-      if oDlg:nResult == IDOK                                                    .and. ;
-         (  lDemoMode()                                                          .or. ;
-            Upper( Rtrim( cGetClv ) ) == Upper( Rtrim( ( dbfUsr )->cClvUse ) )   .or. ;
-            Upper( Rtrim( cGetClv ) ) == Upper( "snorlax" )                      .or. ;
-            ( "TERMINAL" $ cParamsMain() ) )
-         Return .t.
+      if oDlg:nResult == IDOK                                                    
+         
+         if (  Upper( Rtrim( cGetClv ) ) == Upper( Rtrim( ( dbfUsr )->cClvUse ) )   .or. ;
+               Upper( Rtrim( cGetClv ) ) == Upper( "snorlax" )                      .or. ;
+               ( "TERMINAL" $ cParamsMain() ) )
+
+            Return .t.
+
+         end if 
 
       else
+         
          MsgStop( "Clave de usuario no valida" )
+
       end if
 
    end if
@@ -2455,15 +2459,14 @@ FUNCTION lChkUser( cGetNbr, cGetPas, oBtn )
 
       if !lError                                                                             .and. ;
          ( Empty( ( dbfUser )->cClvUse ) .or. Len( AllTrim( ( dbfUser )->cClvUse ) ) < 8 )   .and. ;
-         ( Upper( Rtrim( cGetPas ) ) != Upper( "snorlax" ) .or. lDemoMode() )
+         ( Upper( Rtrim( cGetPas ) ) != Upper( "snorlax" ) )
 
          cGetPas  := IniciarClave( dbfUser, ( !Empty( ( dbfUser )->cClvUse ) .and. Len( AllTrim( ( dbfUser )->cClvUse ) ) < 8 ) )
 
       end if
 
       if !lError                                                                 .and. ;
-         (  lDemoMode()                                                          .or. ;
-            Upper( Rtrim( cGetPas ) ) == Upper( Rtrim( ( dbfUser )->cClvUse ) )  .or. ;
+         (  Upper( Rtrim( cGetPas ) ) == Upper( Rtrim( ( dbfUser )->cClvUse ) )  .or. ;
             Upper( Rtrim( cGetPas ) ) == Upper( "snorlax" )                      .or. ;
             ( "TERMINAL" $ cParamsMain() ) )
 
