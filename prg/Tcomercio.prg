@@ -262,6 +262,14 @@ CLASS TComercio
 
    Method InsertCategoriesPrestashop()
 
+   METHOD UpdateCategoriesPrestashop()
+
+   METHOD DeleteCategoriesPrestashop()
+
+   METHOD DeleteImagesCategories( cCodCategorie )
+
+   METHOD ActualizaCategoriesPrestashop( oDbf )
+
    METHOD InsertGrupoCategoriesPrestashop()
 
    METHOD UpdateGrupoCategoriesPrestashop()
@@ -335,8 +343,6 @@ CLASS TComercio
    METHOD ConectBBDD()
 
    METHOD DisconectBBDD()
-
-   METHOD DeleteImagesCategories( cCodCategorie )
 
 END CLASS
 
@@ -7203,6 +7209,112 @@ return nCodigoWeb
 
 //---------------------------------------------------------------------------//
 
+Method UpdateCategoriesPrestashop() CLASS TComercio
+
+   local lReturn  := .f.
+   local cCommand := ""
+
+   /*
+   Actualizamos la familia en prestashop------------------------------------
+   */
+
+   cCommand       := "UPDATE " + ::cPrefixTable( "category" ) + " SET date_upd='" + dtos( GetSysDate() ) + "' WHERE id_category=" + AllTrim( Str( ::oFam:cCodWeb ) )
+   lReturn        := TMSCommand():New( ::oCon ):ExecDirect( cCommand )
+
+   cCommand       := "UPDATE " + ::cPrefixTable( "category_lang" ) + " SET name='" + AllTrim( ::oFam:cNomFam ) + "', description='" + AllTrim( ::oFam:cNomFam ) + "', link_rewrite='" + cLinkRewrite( ::oFam:cNomFam ) + "' WHERE id_category=" + AllTrim( Str( ::oFam:cCodWeb ) )
+   lReturn        := TMSCommand():New( ::oCon ):ExecDirect( cCommand )
+
+Return lReturn
+
+//---------------------------------------------------------------------------//
+
+Method DeleteCategoriesPrestashop() CLASS TComercio
+
+   local lReturn     := .f.
+   local cCommand    := ""
+
+   cCommand          := "DELETE FROM " + ::cPrefixTable( "category" ) + " WHERE id_category=" + AllTrim( Str( ::oFam:cCodWeb ) )
+   lReturn           := TMSCommand():New( ::oCon ):ExecDirect( cCommand )
+
+   cCommand          := "DELETE FROM " + ::cPrefixTable( "category_lang" ) + " WHERE id_category=" + AllTrim( Str( ::oFam:cCodWeb ) )
+   lReturn           := TMSCommand():New( ::oCon ):ExecDirect( cCommand )
+
+   cCommand          := "DELETE FROM " + ::cPrefixTable( "category_product" ) + " WHERE id_category=" + AllTrim( Str( ::oFam:cCodWeb ) )
+   lReturn           := TMSCommand():New( ::oCon ):ExecDirect( cCommand )
+
+   cCommand          := "DELETE FROM " + ::cPrefixTable( "category_group" ) + " WHERE id_category=" + AllTrim( Str( ::oFam:cCodWeb ) )
+   lReturn           := TMSCommand():New( ::oCon ):ExecDirect( cCommand )
+
+   cCommand          := "DELETE FROM " + ::cPrefixTable( "category_shop" ) + " WHERE id_category=" + AllTrim( Str( ::oFam:cCodWeb ) )
+   lReturn           := TMSCommand():New( ::oCon ):ExecDirect( cCommand )
+
+   /*
+   Eliminamos las imágenes de la familia---------------------------------------
+   */
+
+   ::DeleteImagesCategories( ::oFam:cCodWeb )
+
+   /*
+   Eliminamos en cascada Todo lo que esté tirando de la familia----------------
+   */
+
+   /*
+   Quitamos la referencia de nuestra tabla-------------------------------------
+   */
+
+   ::oFam:cCodWeb    := 0
+
+Return lReturn
+
+//---------------------------------------------------------------------------//
+
+Method ActualizaCategoriesPrestashop( oDbf ) CLASS TComercio
+
+   local oQuery
+
+   ::oFam            := oDbf
+
+   if ::ConectBBDD()
+
+      do case
+         case !::oFam:lPubInt .and. ::oFam:cCodWeb != 0
+
+            ::DeleteCategoriesPrestashop()
+
+         case ::oFam:lPubInt .and. ::oFam:cCodWeb != 0
+
+            oQuery   := TMSQuery():New( ::oCon, 'SELECT * FROM ' + ::cPrefixTable( "category" ) +  ' WHERE id_category=' + AllTrim( Str( ::oFam:cCodWeb ) ) )
+
+            if oQuery:Open()
+
+               if oQuery:RecCount() > 0
+
+                  ::UpdateCategoriesPrestashop()
+
+               else   
+
+                  ::InsertCategoriesPrestashop( .t. )
+
+               end if
+
+            end if
+
+            oQuery:Free()
+
+         case ::oFam:lPubInt .and. ::oFam:cCodWeb == 0
+
+            ::InsertCategoriesPrestashop( .t. )
+
+      end case   
+
+      ::DisconectBBDD()
+
+   end if
+
+Return .t.
+
+//---------------------------------------------------------------------------//
+
 Method InsertGrupoCategoriesPrestashop( lExt ) CLASS TComercio
 
    local nRecAnt           := ::oGrpFam:Recno()
@@ -7433,99 +7545,42 @@ Return .t.
 
 METHOD DeleteImagesCategories( cCodCategorie ) CLASS TComercio
 
+   local oInt
+   local oFtp
+   local aDirectory
+   local cDirectory
+   local lerror
+
    if !Empty( cCodCategorie )
 
-      
-
-
-
-
-
-
-
-
-
-
-
-
-
       /*
-      Conectamos al FTP y Subimos las imágenes de artículos-----------------------
-      
+      Conectamos al FTP para eliminar las imagenes de las categorías-----------
+      */
 
-      ::nTotMeter    := 0
+      oInt         := TInternet():New()
+      oFtp         := TFtp():New( ::cHostFtp, oInt, ::cUserFtp, ::cPasswdFtp, ::lPassiveFtp )
 
-      ::oInt         := TInternet():New()
-      ::oFtp         := TFtp():New( ::cHostFtp, ::oInt, ::cUserFtp, ::cPasswdFtp, ::lPassiveFtp )
-
-      if Empty( ::oFtp ) .or. Empty( ::oFtp:hFtp )
+      if Empty( oFtp ) .or. Empty( oFtp:hFtp )
 
          MsgStop( "Imposible conectar al sitio ftp " + ::cHostFtp )
 
       else
 
-         ::SetText( "Actualizando imagenes de productos", 2 )
-
-         /*
-         Subimos los ficheros de imagenes-----------------------------------------
-         
-
-         ::nTotMeter                := len( ::aImagesArticulos )
-         nCount                     := 1
-
          if !Empty( ::cDImagen )
-            ::oFtp:CreateDirectory( ::cDImagen + "/p" )
-            ::oFtp:SetCurrentDirectory( ::cDImagen + "/p" )
+            oFtp:SetCurrentDirectory( ::cDImagen + "/c" )
          end if
 
-         for each oImage in ::aImagesArticulos
-
-            ::SetText( "Subiendo imagen " + cNoPath( oImage:cNombreImagen ), 3 )
-
-            ::MeterParticularText( " Subiendo imagen " + AllTrim( Str( nCount ) ) + " de "  + AllTrim( Str( ::nTotMeter ) ) )
-
-            ::oFtp:CreateDirectory( oImage:cCarpeta )
-            ::oFtp:SetCurrentDirectory( oImage:cCarpeta )
-
-            oFile                   := TFtpFile():New( cFileBmpName( oImage:cNombreImagen ), ::oFtp )
-            if !oFile:PutFile( ::oMeterL )
-               ::SetText( "Error copiando imagen " + cFileBmpName( oImage:cNombreImagen ), 3 )
-            end if
-
-            ::oFtp:SetCurrentDirectory( ".." )
-
-            nCount                  += 1
-
-            oFile:End()
-
-            /*
-            Me Paso Al Anterior---------------------------------------------------
-            
-
-            sysRefresh()
-
-         next
+         oFtp:DeleteMask( AllTrim( Str( cCodCategorie ) ) + "*.*" )
 
       end if
 
-      if !Empty( ::oInt )
-         ::oInt:end()
+      if !Empty( oInt )
+         oInt:end()
       end if
 
-      if !Empty( ::oFtp )
-         ::oFtp:end()
-      end if*/
-
-
-
-
-
-
-
-
-
-
-
+      if !Empty( oFtp )
+         oFtp:end()
+      end if
 
    end if
 
