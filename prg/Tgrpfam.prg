@@ -84,6 +84,8 @@ METHOD New( cPath, oWndParent, oMenuItem ) CLASS TGrpFam
 
    ::cHtmlHelp          := "Grupos de familias"
 
+   ::bOnPostSave        := {|| ::Actualizaweb() }
+
 RETURN ( Self )
 
 //---------------------------------------------------------------------------//
@@ -230,12 +232,6 @@ METHOD lPreSave( oGet, oGet2, oDlg, nMode )
    end if
 
    ::oDbf:lSndDoc    := .t.
-
-   /*
-   Actualizamos el grupo de familia en la web----------------------------------
-   */
-
-   ::Actualizaweb()
 
 RETURN ( oDlg:end( IDOK ) )
 
