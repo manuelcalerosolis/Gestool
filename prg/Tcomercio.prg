@@ -17,8 +17,6 @@ Static oMsgAlarm
 
 CLASS TComercio
 
-   CLASSDATA oInstance
-
    DATA  hRas
    DATA  lRasValido
    DATA  lFtpValido
@@ -170,11 +168,8 @@ CLASS TComercio
 
    DATA cPrefijoBaseDatos
 
-   Method GetInstance()
-
    Method New()
    Method Create()                  INLINE ( Self )
-   METHOD lReady()                  INLINE ( !Empty( ::cHost) .and. !Empty( ::cUser ) .and. !Empty( ::cPasswd ) .and. !Empty( ::cDbName ) )
 
    Method OpenFiles()
    Method CloseFiles()
@@ -353,17 +348,7 @@ END CLASS
 
 //---------------------------------------------------------------------------//
 
-Method GetInstance()
-
-   if Empty( ::oInstance )
-      ::oInstance          := ::New()
-   end if
-
-RETURN ( ::oInstance )
-
-//---------------------------------------------------------------------------//
-
-METHOD New( oMenuItem ) CLASS TComercio
+METHOD New( oMenuItem, oWnd ) CLASS TComercio
 
    DEFAULT oMenuItem       := "01108"
 
@@ -408,13 +393,11 @@ METHOD New( oMenuItem ) CLASS TComercio
    Tomamos el prefijo de las bases de datos de prestashop-------------------
    */
 
-   ::cPrefijoBaseDatos     := "ps_"
+   ::cPrefijoBaseDatos := "ps_"
 
 RETURN ( Self )
 
 //---------------------------------------------------------------------------//
-
-
 
 METHOD OpenFiles() CLASS TComercio
 
@@ -7529,6 +7512,8 @@ Method ActualizaGrupoCategoriesPrestashop( oDbf ) CLASS TComercio
 
    ::oGrpFam            := oDbf
 
+   MsgInfo( ::oGrpFam:cNomFam, "Familia" )
+
    if ::ConectBBDD()
 
       do case
@@ -10544,10 +10529,6 @@ Method ConectBBDD() Class TComercio
    local oDb
    local lReturn        := .f.
 
-   if !::lReady()
-      Return .f.
-   end if
-
    ::oCon               := TMSConnect():New()
 
    if !::oCon:Connect( ::cHost, ::cUser, ::cPasswd, ::cDbName, ::nPort )
@@ -10557,7 +10538,7 @@ Method ConectBBDD() Class TComercio
 
    else
 
-      oDb               := TMSDataBase():New ( ::oCon, ::cDbName )
+      oDb             := TMSDataBase():New ( ::oCon, ::cDbName )
 
       if Empty( oDb )
 
