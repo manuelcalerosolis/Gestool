@@ -952,17 +952,35 @@ METHOD Append( oBrw ) CLASS TMant
 
    if ::bOnPreAppend != nil
       lTrigger    := Eval( ::bOnPreAppend, Self )
-      if Valtype( lTrigger ) == "L" .and. !lTrigger
+      if IsFalse( lTrigger )
          return .f.
       end if
    end if
 
-   lAppend        := ::Resource( 1 )
+   lAppend           := ::Resource( 1 )
 
    if lAppend
+
+      if ::bOnPreSave != nil
+         lTrigger    := Eval( ::bOnPreSave, Self )
+         if IsFalse( lTrigger )
+            return .f.
+         end if
+      end if
+
       ::oDbf:Insert()
+
+      if ::bOnPostSave != nil
+         lTrigger    := Eval( ::bOnPostSave, Self )
+         if IsFalse( lTrigger )
+            return .f.
+         end if
+      end if
+
    else
+
       ::oDbf:Cancel()
+
    end if
 
    if ::lMinimize
@@ -974,8 +992,8 @@ METHOD Append( oBrw ) CLASS TMant
    end if
 
    if ::bOnPostAppend != nil
-      lTrigger    := Eval( ::bOnPostAppend, Self )
-      if Valtype( lTrigger ) == "L" .and. !lTrigger
+      lTrigger       := Eval( ::bOnPostAppend, Self )
+      if IsFalse( lTrigger )
          return .f.
       end if
    end if
@@ -1006,16 +1024,38 @@ METHOD Dup() CLASS TMant
    lDup        := ::Resource( 1 )
 
    if lDup
+
+      if ::bOnPreSave != nil
+         lTrigger    := Eval( ::bOnPreSave, Self )
+         if IsFalse( lTrigger )
+            return .f.
+         end if
+      end if
+
       ::oDbf:Insert()
+
+      if ::bOnPostSave != nil
+         lTrigger    := Eval( ::bOnPostSave, Self )
+         if IsFalse( lTrigger )
+            return .f.
+         end if
+      end if
+
       if ::oWndBrw != nil
          ::oWndBrw:Refresh()
       end if
+
    else
+
       ::oDbf:Cancel()
+
    end if
 
    if ::bOnPostAppend != nil
-      return Eval( ::bOnPostAppend, Self )
+      lTrigger       := Eval( ::bOnPostAppend, Self )
+      if IsFalse( lTrigger )
+         return .f.
+      end if
    end if
 
 RETURN ( lDup )
@@ -1051,9 +1091,27 @@ METHOD Edit( oBrw ) CLASS TMant
       lEdit          := ::Resource( 2 )
 
       if lEdit
+
+         if ::bOnPreSave != nil
+            lTrigger    := Eval( ::bOnPreSave, Self )
+            if IsFalse( lTrigger )
+               return .f.
+            end if
+         end if
+
          ::oDbf:Save()
+
+         if ::bOnPostSave != nil
+            lTrigger    := Eval( ::bOnPostSave, Self )
+            if IsFalse( lTrigger )
+               return .f.
+            end if
+         end if
+
       else
+
          ::oDbf:Cancel()
+
       end if
 
       ::oDbf:UnLock()
@@ -1068,7 +1126,7 @@ METHOD Edit( oBrw ) CLASS TMant
 
    if ::bOnPostEdit != nil
       lTrigger    := Eval( ::bOnPostEdit, Self )
-      if Valtype( lTrigger ) == "L" .and. !lTrigger
+      if IsFalse( lTrigger )
          return .f.
       end if
    end if
@@ -1104,7 +1162,7 @@ METHOD Del() CLASS TMant
 
       if ::bOnPreDelete != nil
          lTrigger := Eval( ::bOnPreDelete, Self )
-         if Valtype( lTrigger ) == "L" .and. !lTrigger
+         if IsFalse( lTrigger )
             return .f.
          end if
       end if
@@ -1121,12 +1179,15 @@ METHOD Del() CLASS TMant
 
    end if
 
-   if ::oWndBrw != nil
-      ::oWndBrw:Refresh()
+   if ::bOnPostDelete != nil
+      lTrigger := Eval( ::bOnPostDelete, Self )
+      if IsFalse( lTrigger )
+         return .f.
+      end if
    end if
 
-   if ::bOnPostDelete != nil
-      return Eval( ::bOnPostDelete, Self )
+   if ::oWndBrw != nil
+      ::oWndBrw:Refresh()
    end if
 
 RETURN ( lDel )
