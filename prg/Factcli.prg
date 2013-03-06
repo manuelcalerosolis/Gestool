@@ -12578,8 +12578,8 @@ Static Function VariableReport( oFr )
    oFr:AddVariable(     "Lineas de facturas",   "Importe impuestos especiales línea del factura",  "CallHbFunc('nTotIFacCli')" )
    oFr:AddVariable(     "Lineas de facturas",   "Total descuento línea del factura",               "CallHbFunc('nTotDtoLFacCli')" )
    oFr:AddVariable(     "Lineas de facturas",   "Fecha en juliano",                                "CallHbFunc('dJulianoFacCli')" )
-   oFr:AddVariable(     "Lineas de facturas",   "Precio unitario sin " + cImp(),                  "CallHbFunc('nNoIncUFacCli')"  )
-   oFr:AddVariable(     "Lineas de facturas",   "Total linea sin " + cImp(),                      "CallHbFunc('nNoIncLFacCli')"  )
+   oFr:AddVariable(     "Lineas de facturas",   "Precio unitario sin " + cImp(),                   "CallHbFunc('nNoIncUFacCli')"  )
+   oFr:AddVariable(     "Lineas de facturas",   "Total linea sin " + cImp(),                       "CallHbFunc('nNoIncLFacCli')"  )
 
 Return nil
 
@@ -21170,7 +21170,8 @@ Static Function CreateFileFacturae( oTree, lFirmar, lEnviar )
       // :nTotalGrossAmountBeforeTaxes                := nTotBrt - nTotalDto
 
       /*
-      Lineas de detalle--------------------------------------------------------
+      Lineas de detalle----------------------------------------------------
+      ----
       */
 
       if ( dbfFacCliL )->( dbSeek( nNumero ) )

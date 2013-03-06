@@ -99,6 +99,7 @@ Definici¢n de la base de datos de S.A.T. a clientes
 #define _NTOTREQ                  78
 #define _NTOTSAT                  79
 #define _LOPERPV                  80
+#define _CNUMALB                  81
 
 /*
 Definici¢n de la base de datos de lineas de detalle
@@ -3096,18 +3097,23 @@ RETURN RecalculaTotal( aTmp )
 Funcion Auxiliar para borrar las Lineas de Detalle en un Pedido
 */
 
-STATIC FUNCTION DelDeta( oBrwLin, aTmp )
+STATIC FUNCTION DelDeta( oBrwLin, aTmp ) 
 
-   local lKitArt  := ( dbfTmpLin )->lKitArt
-   local nNumLin  := ( dbfTmpLin )->nNumLin
+   CursorWait()
 
-   if lKitArt
-      DbDelKit( oBrwLin, dbfTmpLin, nNumLin )
+   while ( dbfTmpSer )->( dbSeek( Str( ( dbfTmpLin )->nNumLin, 4 ) ) )
+      ( dbfTmpSer )->( dbDelete() )
+   end while
+
+   if ( dbfTmpLin )->lKitArt
+      dbDelKit( oBrwLin, dbfTmpLin, ( dbfTmpLin )->nNumLin )
    end if
 
-   WinDelRec( oBrwLin, dbfTmpLin, , {|| if( lKitArt, DbDelKit( oBrwLin, dbfTmpLin, nNumLin ), ) } )
+   WinDelRec( oBrwLin, dbfTmpLin )
 
    RecalculaTotal( aTmp )
+
+   CursorWE()
 
 RETURN ( .t. )
 
@@ -7023,11 +7029,12 @@ return ( if( cPorDiv != nil, Trans( nCalculo, cPorDiv ), nCalculo ) )
 
 //---------------------------------------------------------------------------//
 
-FUNCTION cDesSatCli( cSatCliL )
+FUNCTION cDesSatCli( cSatCliL, cSatCliS )
 
    DEFAULT cSatCliL  := dbfSatCliL
+   DEFAULT cSatCliS  := dbfSatCliS
 
-RETURN ( Descrip( cSatCliL ) )
+RETURN ( Descrip( cSatCliL, cSatCliS ) )
 
 //---------------------------------------------------------------------------//
 
@@ -7811,38 +7818,34 @@ STATIC FUNCTION EndTrans( aTmp, aGet, nMode, oBrwLin, oBrw, oBrwInc, oDlg )
 
    case nMode == EDIT_MODE
 
-      if nNumSat != 0 .AND. ( dbfSatCliL )->( dbSeek( cSerSat + str( nNumSat ) + cSufSat ) )
+      while ( dbfSatCliL )->( dbSeek( cSerSat + str( nNumSat ) + cSufSat ) ) 
+         if dbLock( dbfSatCliL )
+            ( dbfSatCliL )->( dbDelete() )
+            ( dbfSatCliL )->( dbUnLock() )
+         end if
+         ( dbfSatCliL )->( dbSkip() )
+      end while
 
-         do while ( ( dbfSatCliL )->cSerSat + Str( ( dbfSatCliL )->nNumSat ) + ( dbfSatCliL )->cSufSat == cSerSat + str( nNumSat ) + cSufSat )
+      while ( dbfSatCliI )->( dbSeek( cSerSat + str( nNumSat ) + cSufSat ) )
+         if dbLock( dbfSatCliI )
+            ( dbfSatCliI )->( dbDelete() )
+            ( dbfSatCliI )->( dbUnLock() )
+         end if
+      end while
 
-            if dbLock( dbfSatCliL )
-               ( dbfSatCliL )->( dbDelete() )
-               ( dbfSatCliL )->( dbUnLock() )
-            end if
+      while ( dbfSatCliD )->( dbSeek( cSerSat + str( nNumSat ) + cSufSat ) )
+         if dbLock( dbfSatCliD )
+            ( dbfSatCliD )->( dbDelete() )
+            ( dbfSatCliD )->( dbUnLock() )
+         end if
+      end while
 
-            ( dbfSatCliL )->( dbSkip() )
-
-         end while
-
-      end if
-
-      if nNumSat != 0
-
-         while ( dbfSatCliI )->( dbSeek( cSerSat + str( nNumSat ) + cSufSat ) )
-            if dbLock( dbfSatCliI )
-               ( dbfSatCliI )->( dbDelete() )
-               ( dbfSatCliI )->( dbUnLock() )
-            end if
-         end while
-
-         while ( dbfSatCliD )->( dbSeek( cSerSat + str( nNumSat ) + cSufSat ) )
-            if dbLock( dbfSatCliD )
-               ( dbfSatCliD )->( dbDelete() )
-               ( dbfSatCliD )->( dbUnLock() )
-            end if
-         end while
-
-      end if
+      while ( dbfSatCliS )->( dbSeek( cSerSat + str( nNumSat ) + cSufSat ) )
+         if dbLock( dbfSatCliS )
+            ( dbfSatCliS )->( dbDelete() )
+            ( dbfSatCliS )->( dbUnLock() )
+         end if
+      end while
 
    end case
 
@@ -7970,7 +7973,7 @@ STATIC FUNCTION LoaCli( aGet, aTmp, nMode, oRieCli, oTlfCli )
    if Empty( cNewCodCli )
       return .t.
    elseif At( ".", cNewCodCli ) != 0
-      cNewCodCli     := PntReplace( aGet[_CCODCLI], "0", RetNumCodCliEmp() )
+      cNewCodCli     := PntReplace( aGet[ _CCODCLI ], "0", RetNumCodCliEmp() )
    else
       cNewCodCli     := Rjust( cNewCodCli, "0", RetNumCodCliEmp() )
    end if
@@ -8682,7 +8685,7 @@ function aItmSatCli()
    aAdd( aItmSatCli, { "CCODPGO",   "C",  2,  0, "Código de pago",                  "",                   "", "( cDbf )"} )
    aAdd( aItmSatCli, { "CCODRUT",   "C",  4,  0, "Código de la ruta",               "",                   "", "( cDbf )"} )
    aAdd( aItmSatCli, { "DFECENT",   "D",  8,  0, "Fecha de entrada",                "",                   "", "( cDbf )"} )
-   aAdd( aItmSatCli, { "LESTADO",   "L",  1,  0, "Estado del S.A.T.",               "",                   "", "( cDbf )"} )
+   aAdd( aItmSatCli, { "lEstado",   "L",  1,  0, "Estado del S.A.T.",               "",                   "", "( cDbf )"} )
    aAdd( aItmSatCli, { "CSUSAT",    "C", 10,  0, "",                                "",                   "", "( cDbf )"} )
    aAdd( aItmSatCli, { "CCONDENT",  "C",100,  0, "",                                "",                   "", "( cDbf )"} )
    aAdd( aItmSatCli, { "MCOMENT",   "M", 10,  0, "Comentarios",                     "",                   "", "( cDbf )"} )
@@ -8741,7 +8744,7 @@ function aItmSatCli()
    aAdd( aItmSatCli, { "nTotReq",   "N", 16,  6, "Total recargo" ,                                    "", "", "( cDbf )"} )
    aAdd( aItmSatCli, { "nTotSat",   "N", 16,  6, "Total S.A.T." ,                                     "", "", "( cDbf )"} )
    aAdd( aItmSatCli, { "lOperPV",   "L",  1,  0, "Lógico para operar con punto verde" ,               "", "", "( cDbf )", .t.} )
-   aAdd( aItmSatCli, { "cNumAlb",  "C",  12,  0, "Número del albarán donde se agrupa" , "",               "", "( cDbf )", nil } )
+   aAdd( aItmSatCli, { "cNumAlb",   "C", 12,  0, "Número del albarán donde se agrupa" ,               "", "", "( cDbf )", nil } )
 
 return ( aItmSatCli )
 
@@ -8749,50 +8752,52 @@ return ( aItmSatCli )
 
 function aCalSatCli()
 
-   local aCalSatCli  := {  { "nTotArt",                                                   "N", 16,  6, "Total artículos",             "cPicUndSat",  "" },;
-                           { "nTotCaj",                                                   "N", 16,  6, "Total cajas",                 "cPicUndSat",  "" },;
-                           { "aTotIva[1,1]",                                              "N", 16,  6, "Bruto primer tipo de " + cImp(),    "cPorDivSat",  "aTotIva[1,1] != 0" },;
-                           { "aTotIva[2,1]",                                              "N", 16,  6, "Bruto segundo tipo de " + cImp(),   "cPorDivSat",  "aTotIva[2,1] != 0" },;
-                           { "aTotIva[3,1]",                                              "N", 16,  6, "Bruto tercer tipo de " + cImp(),    "cPorDivSat",  "aTotIva[3,1] != 0" },;
-                           { "aTotIva[1,2]",                                              "N", 16,  6, "Base primer tipo de " + cImp(),     "cPorDivSat",  "aTotIva[1,2] != 0" },;
-                           { "aTotIva[2,2]",                                              "N", 16,  6, "Base segundo tipo de " + cImp(),    "cPorDivSat",  "aTotIva[2,2] != 0" },;
-                           { "aTotIva[3,2]",                                              "N", 16,  6, "Base tercer tipo de " + cImp(),     "cPorDivSat",  "aTotIva[3,2] != 0" },;
-                           { "aTotIva[1,3]",                                              "N",  5,  2, "Porcentaje primer tipo " + cImp(),  "'@R 99.99%'", "aTotIva[1,3] != 0" },;
-                           { "aTotIva[2,3]",                                              "N",  5,  2, "Porcentaje segundo tipo " + cImp(), "'@R 99.99%'", "aTotIva[2,3] != 0" },;
-                           { "aTotIva[3,3]",                                              "N",  5,  2, "Porcentaje tercer tipo " + cImp(),  "'@R 99.99%'", "aTotIva[3,3] != 0" },;
-                           { "aTotIva[1,4]",                                              "N",  5,  2, "Porcentaje primer tipo RE",   "'@R 99.99%'", "aTotIva[1,4] != 0" },;
-                           { "aTotIva[2,4]",                                              "N",  5,  2, "Porcentaje segundo tipo RE",  "'@R 99.99%'", "aTotIva[2,4] != 0" },;
-                           { "aTotIva[3,4]",                                              "N",  5,  2, "Porcentaje tercer tipo RE",   "'@R 99.99%'", "aTotIva[3,4] != 0" },;
-                           { "round( aTotIva[1,2] * aTotIva[1,3] / 100, nDouDivSat )",    "N", 16,  6, "Importe primer tipo " + cImp(),     "cPorDivSat",  "aTotIva[1,2] != 0" },;
-                           { "round( aTotIva[2,2] * aTotIva[2,3] / 100, nDouDivSat )",    "N", 16,  6, "Importe segundo tipo " + cImp(),    "cPorDivSat",  "aTotIva[2,2] != 0" },;
-                           { "round( aTotIva[3,2] * aTotIva[3,3] / 100, nDouDivSat )",    "N", 16,  6, "Importe tercer tipo " + cImp(),     "cPorDivSat",  "aTotIva[3,2] != 0" },;
-                           { "round( aTotIva[1,2] * aTotIva[1,4] / 100, nDouDivSat )",    "N", 16,  6, "Importe primer RE",           "cPorDivSat",  "aTotIva[1,2] != 0" },;
-                           { "round( aTotIva[2,2] * aTotIva[2,4] / 100, nDouDivSat )",    "N", 16,  6, "Importe segundo RE",          "cPorDivSat",  "aTotIva[2,2] != 0" },;
-                           { "round( aTotIva[3,2] * aTotIva[3,4] / 100, nDouDivSat )",    "N", 16,  6, "Importe tercer RE",           "cPorDivSat",  "aTotIva[3,2] != 0" },;
-                           { "aTotIvm[1,1]",                                              "N", 16,  6, "Total unidades primer tipo de impuestos especiales",    "cPorDivSat",  "aTotIvm[1,1] != 0" },;
-                           { "aTotIvm[2,1]",                                              "N", 16,  6, "Total unidades segundo tipo de impuestos especiales",   "cPorDivSat",  "aTotIvm[2,1] != 0" },;
-                           { "aTotIvm[3,1]",                                              "N", 16,  6, "Total unidades tercer tipo de impuestos especiales",    "cPorDivSat",  "aTotIvm[3,1] != 0" },;
-                           { "aTotIva[1,2]",                                              "N", 16,  6, "Importe del primer tipo de impuestos especiales",       "cPorDivSat",  "aTotIvm[1,2] != 0" },;
-                           { "aTotIva[2,2]",                                              "N", 16,  6, "Importe del segundo tipo de impuestos especiales",      "cPorDivSat",  "aTotIvm[2,2] != 0" },;
-                           { "aTotIva[3,2]",                                              "N", 16,  6, "Importe del tercer tipo de impuestos especiales",       "cPorDivSat",  "aTotIvm[3,2] != 0" },;
-                           { "aTotIvm[1,3]",                                              "N", 16,  6, "Total importe primer tipo de impuestos especiales",     "cPorDivSat",  "aTotIvm[1,3] != 0" },;
-                           { "aTotIvm[2,3]",                                              "N", 16,  6, "Total importe segundo tipo de impuestos especiales",    "cPorDivSat",  "aTotIvm[2,3] != 0" },;
-                           { "aTotIvm[3,3]",                                              "N", 16,  6, "Total importe tercer tipo de impuestos especiales",     "cPorDivSat",  "aTotIvm[3,3] != 0" },;
-                           { "nTotBrt",                                                   "N", 16,  6, "Total bruto",                 "cPorDivSat",  "lEnd" },;
-                           { "nTotDto",                                                   "N", 16,  6, "Total descuento",             "cPorDivSat",  "lEnd" },;
-                           { "nTotDpp",                                                   "N", 16,  6, "Total descuento pronto pago", "cPorDivSat",  "lEnd" },;
-                           { "nTotNet",                                                   "N", 16,  6, "Total neto",                  "cPorDivSat",  "lEnd" },;
-                           { "nTotIva",                                                   "N", 16,  6, "Total " + cImp(),             "cPorDivSat",  "lEnd" },;
-                           { "nTotIvm",                                                   "N", 16,  6, "Total IVMH",                  "cPorDivSat",  "lEnd" },;
-                           { "nTotReq",                                                   "N", 16,  6, "Total RE",                    "cPorDivSat",  "lEnd" },;
-                           { "nTotSat",                                                   "N", 16,  6, "Total S.A.T.",           "cPorDivSat",  "lEnd" },;
-                           { "nTotPes",                                                   "N", 16,  6, "Total peso",                  "'@E 99,999.99'","lEnd" },;
-                           { "nTotCos",                                                   "N", 16,  6, "Total costo",                 "cPorDivSat",  "lEnd" },;
-                           { "nTotPage",                                                  "N", 16,  6, "Total página",                "cPorDivSat",  "!lEnd" },;
-                           { "nImpEuros( nTotSat, (cDbf)->cDivSat, cDbfDiv )",            "N", 16,  6, "Total Satsupuesto (Euros)",   "",            "lEnd" },;
-                           { "nImpPesetas( nTotSat, (cDbf)->cDivSat, cDbfDiv )",          "N", 16,  6, "Total Satsupuesto (Pesetas)", "",            "lEnd" },;
-                           { "nPagina",                                                   "N",  2,  0, "Numero de página",            "'99'",        "" },;
-                           { "lEnd",                                                      "L",  1,  0, "Fin del documento",           "",            "" } }
+   local aCalSatCli  := {}
+
+   aAdd( aCalSatCli, { "nTotArt",                                                   "N", 16,  6, "Total artículos",             "cPicUndSat",  "" } )
+   aAdd( aCalSatCli, { "nTotCaj",                                                   "N", 16,  6, "Total cajas",                 "cPicUndSat",  "" } )
+   aAdd( aCalSatCli, { "aTotIva[1,1]",                                              "N", 16,  6, "Bruto primer tipo de " + cImp(),    "cPorDivSat",  "aTotIva[1,1] != 0" } )
+   aAdd( aCalSatCli, { "aTotIva[2,1]",                                              "N", 16,  6, "Bruto segundo tipo de " + cImp(),   "cPorDivSat",  "aTotIva[2,1] != 0" } )
+   aAdd( aCalSatCli, { "aTotIva[3,1]",                                              "N", 16,  6, "Bruto tercer tipo de " + cImp(),    "cPorDivSat",  "aTotIva[3,1] != 0" } )
+   aAdd( aCalSatCli, { "aTotIva[1,2]",                                              "N", 16,  6, "Base primer tipo de " + cImp(),     "cPorDivSat",  "aTotIva[1,2] != 0" } )
+   aAdd( aCalSatCli, { "aTotIva[2,2]",                                              "N", 16,  6, "Base segundo tipo de " + cImp(),    "cPorDivSat",  "aTotIva[2,2] != 0" } )
+   aAdd( aCalSatCli, { "aTotIva[3,2]",                                              "N", 16,  6, "Base tercer tipo de " + cImp(),     "cPorDivSat",  "aTotIva[3,2] != 0" } )
+   aAdd( aCalSatCli, { "aTotIva[1,3]",                                              "N",  5,  2, "Porcentaje primer tipo " + cImp(),  "'@R 99.99%'", "aTotIva[1,3] != 0" } )
+   aAdd( aCalSatCli, { "aTotIva[2,3]",                                              "N",  5,  2, "Porcentaje segundo tipo " + cImp(), "'@R 99.99%'", "aTotIva[2,3] != 0" } )
+   aAdd( aCalSatCli, { "aTotIva[3,3]",                                              "N",  5,  2, "Porcentaje tercer tipo " + cImp(),  "'@R 99.99%'", "aTotIva[3,3] != 0" } )
+   aAdd( aCalSatCli, { "aTotIva[1,4]",                                              "N",  5,  2, "Porcentaje primer tipo RE",   "'@R 99.99%'", "aTotIva[1,4] != 0" } )
+   aAdd( aCalSatCli, { "aTotIva[2,4]",                                              "N",  5,  2, "Porcentaje segundo tipo RE",  "'@R 99.99%'", "aTotIva[2,4] != 0" } )
+   aAdd( aCalSatCli, { "aTotIva[3,4]",                                              "N",  5,  2, "Porcentaje tercer tipo RE",   "'@R 99.99%'", "aTotIva[3,4] != 0" } )
+   aAdd( aCalSatCli, { "round( aTotIva[1,2] * aTotIva[1,3] / 100, nDouDivSat )",    "N", 16,  6, "Importe primer tipo " + cImp(),     "cPorDivSat",  "aTotIva[1,2] != 0" } )
+   aAdd( aCalSatCli, { "round( aTotIva[2,2] * aTotIva[2,3] / 100, nDouDivSat )",    "N", 16,  6, "Importe segundo tipo " + cImp(),    "cPorDivSat",  "aTotIva[2,2] != 0" } )
+   aAdd( aCalSatCli, { "round( aTotIva[3,2] * aTotIva[3,3] / 100, nDouDivSat )",    "N", 16,  6, "Importe tercer tipo " + cImp(),     "cPorDivSat",  "aTotIva[3,2] != 0" } )
+   aAdd( aCalSatCli, { "round( aTotIva[1,2] * aTotIva[1,4] / 100, nDouDivSat )",    "N", 16,  6, "Importe primer RE",           "cPorDivSat",  "aTotIva[1,2] != 0" } )
+   aAdd( aCalSatCli, { "round( aTotIva[2,2] * aTotIva[2,4] / 100, nDouDivSat )",    "N", 16,  6, "Importe segundo RE",          "cPorDivSat",  "aTotIva[2,2] != 0" } )
+   aAdd( aCalSatCli, { "round( aTotIva[3,2] * aTotIva[3,4] / 100, nDouDivSat )",    "N", 16,  6, "Importe tercer RE",           "cPorDivSat",  "aTotIva[3,2] != 0" } )
+   aAdd( aCalSatCli, { "aTotIvm[1,1]",                                              "N", 16,  6, "Total unidades primer tipo de impuestos especiales",    "cPorDivSat",  "aTotIvm[1,1] != 0" } )
+   aAdd( aCalSatCli, { "aTotIvm[2,1]",                                              "N", 16,  6, "Total unidades segundo tipo de impuestos especiales",   "cPorDivSat",  "aTotIvm[2,1] != 0" } )
+   aAdd( aCalSatCli, { "aTotIvm[3,1]",                                              "N", 16,  6, "Total unidades tercer tipo de impuestos especiales",    "cPorDivSat",  "aTotIvm[3,1] != 0" } )
+   aAdd( aCalSatCli, { "aTotIva[1,2]",                                              "N", 16,  6, "Importe del primer tipo de impuestos especiales",       "cPorDivSat",  "aTotIvm[1,2] != 0" } )
+   aAdd( aCalSatCli, { "aTotIva[2,2]",                                              "N", 16,  6, "Importe del segundo tipo de impuestos especiales",      "cPorDivSat",  "aTotIvm[2,2] != 0" } )
+   aAdd( aCalSatCli, { "aTotIva[3,2]",                                              "N", 16,  6, "Importe del tercer tipo de impuestos especiales",       "cPorDivSat",  "aTotIvm[3,2] != 0" } )
+   aAdd( aCalSatCli, { "aTotIvm[1,3]",                                              "N", 16,  6, "Total importe primer tipo de impuestos especiales",     "cPorDivSat",  "aTotIvm[1,3] != 0" } )
+   aAdd( aCalSatCli, { "aTotIvm[2,3]",                                              "N", 16,  6, "Total importe segundo tipo de impuestos especiales",    "cPorDivSat",  "aTotIvm[2,3] != 0" } )
+   aAdd( aCalSatCli, { "aTotIvm[3,3]",                                              "N", 16,  6, "Total importe tercer tipo de impuestos especiales",     "cPorDivSat",  "aTotIvm[3,3] != 0" } )
+   aAdd( aCalSatCli, { "nTotBrt",                                                   "N", 16,  6, "Total bruto",                 "cPorDivSat",  "lEnd" } )
+   aAdd( aCalSatCli, { "nTotDto",                                                   "N", 16,  6, "Total descuento",             "cPorDivSat",  "lEnd" } )
+   aAdd( aCalSatCli, { "nTotDpp",                                                   "N", 16,  6, "Total descuento pronto pago", "cPorDivSat",  "lEnd" } )
+   aAdd( aCalSatCli, { "nTotNet",                                                   "N", 16,  6, "Total neto",                  "cPorDivSat",  "lEnd" } )
+   aAdd( aCalSatCli, { "nTotIva",                                                   "N", 16,  6, "Total " + cImp(),             "cPorDivSat",  "lEnd" } )
+   aAdd( aCalSatCli, { "nTotIvm",                                                   "N", 16,  6, "Total IVMH",                  "cPorDivSat",  "lEnd" } )
+   aAdd( aCalSatCli, { "nTotReq",                                                   "N", 16,  6, "Total RE",                    "cPorDivSat",  "lEnd" } )
+   aAdd( aCalSatCli, { "nTotSat",                                                   "N", 16,  6, "Total S.A.T.",           "cPorDivSat",  "lEnd" } )
+   aAdd( aCalSatCli, { "nTotPes",                                                   "N", 16,  6, "Total peso",                  "'@E 99,999.99'","lEnd" } )
+   aAdd( aCalSatCli, { "nTotCos",                                                   "N", 16,  6, "Total costo",                 "cPorDivSat",  "lEnd" } )
+   aAdd( aCalSatCli, { "nTotPage",                                                  "N", 16,  6, "Total página",                "cPorDivSat",  "!lEnd" } )
+   aAdd( aCalSatCli, { "nImpEuros( nTotSat, (cDbf)->cDivSat, cDbfDiv )",            "N", 16,  6, "Total Satsupuesto (Euros)",   "",            "lEnd" } )
+   aAdd( aCalSatCli, { "nImpPesetas( nTotSat, (cDbf)->cDivSat, cDbfDiv )",          "N", 16,  6, "Total Satsupuesto (Pesetas)", "",            "lEnd" } )
+   aAdd( aCalSatCli, { "nPagina",                                                   "N",  2,  0, "Numero de página",            "'99'",        "" } )
+   aAdd( aCalSatCli, { "lEnd",                                                      "L",  1,  0, "Fin del documento",           "",            "" } )
 
 return ( aCalSatCli )
 
@@ -8880,7 +8885,7 @@ function aColSatCli()
    aAdd( aColSatCli, { "cTxtFra"  ,"C", 250,  0, "",                                 "",                   "", "( cDbfCol )" } )
    aAdd( aColSatCli, { "Descrip"  ,"M",  10,  0, "Descripción larga",                "",                   "", "( cDbfCol )" } )
    aAdd( aColSatCli, { "lLinOfe"  ,"L",   1,  0, "Línea con oferta",                 "",                   "", "( cDbfCol )" } )
-   aAdd( aColSatCli, { "lVolImp"  ,"L",   1,  0, "Lógico aplicar volumen con IpusEsp",  "",                "", "( cDbfCol )" } )
+   aAdd( aColSatCli, { "lVolImp"  ,"L",   1,  0, "Lógico aplicar volumen con impuestos especiales", "",    "", "( cDbfCol )" } )
 
 return ( aColSatCli )
 
@@ -8894,7 +8899,6 @@ function aCocSatCli()
    aAdd( aCocSatCli, { "nTotNSatCli( cDbfCol )",                                     "N", 16, 6, "Total articulos",              "MasUnd()",    "Unidades",    "" } )
    aAdd( aCocSatCli, { "nTotUSatCli( cDbfCol, nDouDivSat, nVdvDivSat )",             "N", 16, 6, "Precio unitario",              "cPouDivSat",  "Precio",      "" } )
    aAdd( aCocSatCli, { "nTotLSatCli( cDbfCol, nDouDivSat, nRouDivSat, nVdvDivSat )", "N", 16, 6, "Total línea de S.A.T.",        "cPorDivSat",  "Total",       "" } )
-   aAdd( aCocSatCli, { "cFrasePublicitaria( cDbfCol )",                              "C", 50, 0, "Texto de frase publicitaria",  "",            "Publicidad",  "" } )
 
 return ( aCocSatCli )
 
@@ -10672,18 +10676,6 @@ Static Function LoadTrans( aTmp, oGetCod, oGetKgs, oSayTrn )
    RecalculaTotal( aTmp )
 
 Return .t.
-
-//---------------------------------------------------------------------------//
-
-Function cFrasePublicitaria( cDbfCol )
-
-   local cTxtFra  := ""
-
-   if ( cDbfCol )->lImpFra
-      cTxtFra     := ( cDbfCol )->cTxtFra
-   end if
-
-Return ( cTxtFra )
 
 //---------------------------------------------------------------------------//
 
