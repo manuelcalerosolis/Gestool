@@ -10539,12 +10539,12 @@ Return ( ::cPrefijoBaseDatos + AllTrim( cName ) )
 
 //---------------------------------------------------------------------------//
 
-Method ConectBBDD() Class TComercio
+METHOD ConectBBDD() Class TComercio
 
    local oDb
    local lReturn        := .f.
 
-   if !::lReady()
+   if !::lReady() 
       Return .f.
    end if
 
