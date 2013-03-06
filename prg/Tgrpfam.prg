@@ -312,7 +312,9 @@ RETURN ( Self )
 METHOD Actualizaweb() Class TGrpFam
 
    if ::lPubGrp()    
-      TComercio():New():ActualizaGrupoCategoriesPrestashop( ::oDbf )
+      with object ( TComercio():GetInstance() )
+         :ActualizaGrupoCategoriesPrestashop( ::oDbf )
+      end with
    end if   
 
 Return .t.
