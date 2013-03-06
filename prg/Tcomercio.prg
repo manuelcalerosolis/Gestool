@@ -7268,48 +7268,58 @@ Return lReturn
 
 //---------------------------------------------------------------------------//
 
-Method ActualizaCategoriesPrestashop( oDbf ) CLASS TComercio
+Method ActualizaCategoriesPrestashop( cCodFam ) CLASS TComercio
 
    local oQuery
 
-   ::oFam            := oDbf
+   //::oFam            := oDbf
 
-   if ::ConectBBDD()
+   if ::OpenFiles()
 
-      do case
-         case !::oFam:lPubInt .and. ::oFam:cCodWeb != 0
+      /*
+      Nos posicionamos en la tabla de familias---------------------------------
+      */
 
-            ::DeleteCategoriesPrestashop()
+      if ::ConectBBDD()
 
-         case ::oFam:lPubInt .and. ::oFam:cCodWeb != 0
+         do case
+            case !::oFam:lPubInt .and. ::oFam:cCodWeb != 0
 
-            oQuery   := TMSQuery():New( ::oCon, 'SELECT * FROM ' + ::cPrefixTable( "category" ) +  ' WHERE id_category=' + AllTrim( Str( ::oFam:cCodWeb ) ) )
+               ::DeleteCategoriesPrestashop()
 
-            if oQuery:Open()
+            case ::oFam:lPubInt .and. ::oFam:cCodWeb != 0
 
-               if oQuery:RecCount() > 0
+               oQuery   := TMSQuery():New( ::oCon, 'SELECT * FROM ' + ::cPrefixTable( "category" ) +  ' WHERE id_category=' + AllTrim( Str( ::oFam:cCodWeb ) ) )
 
-                  ::UpdateCategoriesPrestashop()
+               if oQuery:Open()
 
-               else   
+                  if oQuery:RecCount() > 0
 
-                  ::InsertCategoriesPrestashop( .t. )
+                     ::UpdateCategoriesPrestashop()
+
+                  else   
+
+                     ::InsertCategoriesPrestashop( .t. )
+
+                  end if
 
                end if
 
-            end if
+               oQuery:Free()
 
-            oQuery:Free()
+            case ::oFam:lPubInt .and. ::oFam:cCodWeb == 0
 
-         case ::oFam:lPubInt .and. ::oFam:cCodWeb == 0
+               ::InsertCategoriesPrestashop( .t. )
 
-            ::InsertCategoriesPrestashop( .t. )
+         end case   
 
-      end case   
+         ::DisconectBBDD()
 
-      ::DisconectBBDD()
+      end if
 
-   end if
+      ::CloseFiles()
+
+   end if   
 
 Return .t.
 
