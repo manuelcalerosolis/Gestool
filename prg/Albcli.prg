@@ -4804,9 +4804,9 @@ Static Function EdtDoc( aTmp, aGet, dbfAlbCliD, oBrw, bWhen, bValid, nMode, aTmp
          CANCEL ;
          ACTION   ( oDlg:end() )
 
-   if nMode != ZOOM_MODE
-      oDlg:AddFastKey( VK_F5, {|| WinGather( aTmp, nil, dbfTmpDoc, oBrw, nMode ), oDlg:end( IDOK ) } )
-   end if
+      if nMode != ZOOM_MODE
+         oDlg:AddFastKey( VK_F5, {|| WinGather( aTmp, nil, dbfTmpDoc, oBrw, nMode ), oDlg:end( IDOK ) } )
+      end if
 
    ACTIVATE DIALOG oDlg CENTER
 
@@ -17683,6 +17683,7 @@ STATIC FUNCTION EndTrans( aTmp, aGet, oBrw, oBrwInc, nMode, oDlg )
    ErrorBlock( oBlock )
 
    oMsgText()
+   EndProgress()
 
    oDlg:Enable()
    oDlg:End( IDOK )

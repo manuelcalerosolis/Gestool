@@ -9279,7 +9279,7 @@ STATIC FUNCTION lCobro( aTmp, aGet, nSave, nMode, lGenVale, nDifVale, lBig, oDlg
    local oBrwVal
    local oGetTxt
    local cGetTxt
-   local oFntDlg           := TFont():New( FONT_NAME, 12, 32, .F., .T.,  )
+   local oFntDlg           
    local aBtnCob           := Array( 8 )
    local aSay              := Array( 3 )
    local aGetCob           := Array( 5 )
@@ -9298,6 +9298,10 @@ STATIC FUNCTION lCobro( aTmp, aGet, nSave, nMode, lGenVale, nDifVale, lBig, oDlg
    DEFAULT nMode           := EDIT_MODE
    DEFAULT lBig            := .f.
 
+   if ( nSave == SAVAPT )
+      Return ( .t. )
+   end if 
+
    lWhen                   := ( nSave != SAVDEV .and. nSave != SAVVAL ) .or. ( nMode == APPD_MODE )
 
    /*
@@ -9307,6 +9311,8 @@ STATIC FUNCTION lCobro( aTmp, aGet, nSave, nMode, lGenVale, nDifVale, lBig, oDlg
    if !Empty( oDlgTpv )
       aEval( oDlgTpv:aControls, { | oCtrl | oCtrl:Disable() } )
    end if
+
+   oFntDlg                 := TFont():New( FONT_NAME, 12, 32, .F., .T.,  )
 
    if Empty( oTotDiv )
       oTotDiv              := TotalesTPV():Init()

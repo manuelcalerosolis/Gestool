@@ -13986,14 +13986,6 @@ STATIC FUNCTION EndTrans( aTmp, aGet, oBrwLin, oBrwInc, nMode, oDlg )
 
    WinGather( aTmp, aGet, dbfPedCliT, , nMode )
 
-
-#ifdef __PDA__
-   if ApoloMsgNoYes( "Imprimiendo pedidos.", "¿Desea continuar?" )
-      pdaGenPedCli( nil, dbfPedCliT, dbfPedCliL )
-   end if
-#endif
-
-
    /*
    Actualizamos el estado del pedido-------------------------------------------
    */
@@ -14026,17 +14018,9 @@ STATIC FUNCTION EndTrans( aTmp, aGet, oBrwLin, oBrwInc, nMode, oDlg )
    END SEQUENCE
    ErrorBlock( oBlock )
 
-   #ifndef __PDA__
-      oMsgText()
-   #endif
+   oMsgText()
 
-#ifndef __PDA__
-
-   if !( "PDA" $ cParamsMain() )
-      EndProgress()
-   end if
-
-#endif
+   EndProgress()
 
    /*
    Encendemos el dialogo-------------------------------------------------------

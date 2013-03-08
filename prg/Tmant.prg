@@ -1152,13 +1152,69 @@ RETURN ( .t. )
 METHOD Del() CLASS TMant
 
    local lDel
+   local cTxt
+   local oBrw 
+   local nRec
+   local nMarked
    local lTrigger
 
    if ::oDbf:OrdKeyCount() == 0
       return .f.
    end if
 
-   if ::oDbf:RecLock()
+   if !Empty( ::oWndBrw ) .and. !Empty( ::oWndBrw:oBrw )
+      oBrw           := ::oWndBrw:oBrw
+   end if
+
+<<<<<<< HEAD
+   if ( "XBROWSE" $ oBrw:ClassName() )
+
+      nMarked        := len( oBrw:aSelected )
+      if nMarked > 1
+         cTxt        := "¿ Desea eliminar definitivamente " + AllTrim( Trans( nMarked, "999999" ) ) + " registros ?"
+=======
+      if ::bOnPreDelete != nil
+         lTrigger := Eval( ::bOnPreDelete, Self )
+         if IsFalse( lTrigger )
+            return .f.
+         end if
+>>>>>>> 2fa3198b786b843466d8340c837d9886c4471d96
+      end if
+
+      if oUser():lNotConfirmDelete() .or. ApoloMsgNoYes( cTxt, "Confirme supresión" )
+
+         CursorWait()
+
+         for each nRec in ( oBrw:aSelected )
+
+            ::oDbf:GoTo( nRec )
+
+            if ::bOnPreDelete != nil
+               lTrigger := Eval( ::bOnPreDelete, Self )
+               if IsFalse( lTrigger )
+                  return .f.
+               end if
+            end if
+   
+            if ::oDbf:RecLock()
+               lDel     := ::oDbf:Delete()
+               ::oDbf:UnLock()
+            end if
+   
+            if ::bOnPostDelete != nil
+               lTrigger := Eval( ::bOnPostDelete, Self )
+               if IsFalse( lTrigger )
+                  return .f.
+               end if
+            end if
+
+         next 
+
+         CursorWE()
+
+      end if
+
+   else 
 
       if ::bOnPreDelete != nil
          lTrigger := Eval( ::bOnPreDelete, Self )
@@ -1166,19 +1222,46 @@ METHOD Del() CLASS TMant
             return .f.
          end if
       end if
-
-      if oUser():lNotConfirmDelete() .or. ApoloMsgNoYes("¿Desea eliminar el registro en curso?", "Confirme supresión" )
-         CursorWait()
-         lDel     := ::oDbf:Delete()
-         CursorWE()
-      else
-         lDel     := .f.
+   
+      if ::oDbf:RecLock()
+   
+         if oUser():lNotConfirmDelete() .or. ApoloMsgNoYes("¿Desea eliminar el registro en curso?", "Confirme supresión" )
+            CursorWait()
+            lDel     := ::oDbf:Delete()
+            CursorWE()
+         else
+            lDel     := .f.
+         end if
+   
+         ::oDbf:UnLock()
+   
+      end if
+   
+      if ::bOnPostDelete != nil
+         lTrigger := Eval( ::bOnPostDelete, Self )
+         if IsFalse( lTrigger )
+            return .f.
+         end if
       end if
 
-      ::oDbf:UnLock()
+   end if 
 
+   if ::bOnPostDelete != nil
+      lTrigger := Eval( ::bOnPostDelete, Self )
+      if IsFalse( lTrigger )
+         return .f.
+      end if
    end if
 
+<<<<<<< HEAD
+<<<<<<< HEAD
+=======
+   if ::oWndBrw != nil
+      ::oWndBrw:Refresh()
+   end if
+
+>>>>>>> 2fa3198b786b843466d8340c837d9886c4471d96
+=======
    if ::bOnPostDelete != nil
       lTrigger := Eval( ::bOnPostDelete, Self )
       if IsFalse( lTrigger )
@@ -1190,6 +1273,7 @@ METHOD Del() CLASS TMant
       ::oWndBrw:Refresh()
    end if
 
+>>>>>>> 2fa3198b786b843466d8340c837d9886c4471d96
 RETURN ( lDel )
 
 //---------------------------------------------------------------------------//
