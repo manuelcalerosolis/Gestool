@@ -2327,6 +2327,10 @@ STATIC FUNCTION EdtCnf( aTmp, aGet, dbfEmp, oBrw, nSelFolder, bValid, nMode )
             ID       199 ;
             OF       oFld:aDialogs[7]
 
+      REDEFINE CHECKBOX aGet[ _LREALWEB ] VAR aTmp[ _LREALWEB ] ;
+            ID       400 ;
+            OF       oFld:aDialogs[7]
+
       REDEFINE GET aTmp[ _CHOSTFTPIMG ] ;
             ID       250;
             OF       oFld:aDialogs[7]
@@ -7029,6 +7033,7 @@ FUNCTION aItmEmp()
    aAdd( aDbf, {"nAutSer",    "N", 16, 0, "Número de autserializado",                              "", "", "aEmp()", 1 } )
    aAdd( aDbf, {"lEncargar",  "L",  1, 0, "Lógico realizar para encargos en táctil",               "", "", "aEmp()", .t. } )
    aAdd( aDbf, {"nCopSea",    "N",  1, 0, "Número para comportamiento en caso de conflicto",       "", "", "aEmp()", 1 } )
+   aAdd( aDbf, {"lRealWeb",   "L",  1, 0, "Lógico conectar tiempo real con la web",                "", "", "aEmp()", .f. } )
 
 Return ( aDbf  )
 
