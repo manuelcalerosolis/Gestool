@@ -17,15 +17,7 @@ Static oMsgAlarm
 
 CLASS TComercio
 
-<<<<<<< HEAD
-<<<<<<< HEAD
-   CLASSDATA oInstance
-=======
    CLASSDATA oInstance 
->>>>>>> 2fa3198b786b843466d8340c837d9886c4471d96
-=======
-   CLASSDATA oInstance 
->>>>>>> 2fa3198b786b843466d8340c837d9886c4471d96
 
    DATA  hRas
    DATA  lRasValido
@@ -7776,7 +7768,7 @@ METHOD AppendArticuloPrestashop( oDb )
       end if
 
       if TMSCommand():New( ::oCon ):ExecDirect( "TRUNCATE TABLE " + cPrefixTable( "product_country_tax" ) )
-         ::SetText ( 'Tabla ' + cPrefixTable( "product_country_tax" ) + '' borrada correctamente', 3  )
+         ::SetText ( 'Tabla ' + cPrefixTable( "product_country_tax" ) + ' borrada correctamente', 3  )
       else
          ::SetText ( 'Error al borrar la tabla ' + cPrefixTable( "product_country_tax" ), 3  )
       end if
@@ -9605,7 +9597,7 @@ METHOD AppendPedidoprestashop()
                         ::oPedCliL:cSerPed        := cSerPed
                         ::oPedCliL:nNumPed        := nNumPed
                         ::oPedCliL:cSufPed        := cSufPed
-                        ::oPedCliL:cDetalle       := oQueryL:FieldGet( 8 )
+                        ::oPedCliL:cDetalle       := oQueryL:FieldGet( 8 ) 
                         ::oPedCliL:mLngDes        := oQueryL:FieldGet( 8 )
                         ::oPedCliL:nCanPed        := 1
                         ::oPedCliL:nUniCaja       := oQueryL:FieldGet( 9 )
