@@ -15,6 +15,8 @@ REQUEST DBFCDX
 
 CLASS TGrpFam FROM TMant
 
+   DATA cCodWebPreDel
+
    METHOD Create( cPath ) CONSTRUCTOR
 
    METHOD New( cPath, oWndParent, oMenuItem ) CONSTRUCTOR
@@ -85,6 +87,8 @@ METHOD New( cPath, oWndParent, oMenuItem ) CLASS TGrpFam
    ::cHtmlHelp          := "Grupos de familias"
 
    ::bOnPostSave        := {|| ::Actualizaweb() }
+   ::bOnPreDelete       := {|| ::cCodWebPreDel  := ::oDbf:cCodWeb  }
+   ::bOnPostDelete      := {|| ::Actualizaweb( ::cCodWebPreDel, .t. )  }
 
 RETURN ( Self )
 
@@ -190,7 +194,7 @@ METHOD Resource( nMode ) CLASS TGrpFam
          CANCEL ;
 			ACTION 	( oDlg:end() )
 
-   REDEFINE BUTTON ;
+      REDEFINE BUTTON ;
          ID       9 ;
 			OF 		oDlg ;
          ACTION   ( ChmHelp( "Grupos_de_familias" ) )
@@ -309,14 +313,16 @@ RETURN ( Self )
 
 //----------------------------------------------------------------------------//
 
-METHOD Actualizaweb() Class TGrpFam
+METHOD Actualizaweb( cCodWeb, lDel ) Class TGrpFam
 
-   if ::lPubGrp()    
+   DEFAULT lDel      := .f.
+
+   if ::lPubGrp() .or. lDel
       with object ( TComercio():GetInstance() )
-         :ActualizaGrupoCategoriesPrestashop( ::oDbf )
+         :ActualizaGrupoCategoriesPrestashop( ::oDbf:cCodGrp, lDel, cCodWeb )
       end with
-   end if   
-
+   end if
+   
 Return .t.
 
 //----------------------------------------------------------------------------//

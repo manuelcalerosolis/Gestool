@@ -43,6 +43,9 @@ CLASS TComercio
    DATA  oFld
    DATA  oBmp
 
+   DATA oDlgWait
+   DATA oBmpWait
+
    DATA  oSubItem
    DATA  oSubItem2
 
@@ -264,25 +267,7 @@ CLASS TComercio
    METHOD AddCategoriaRaiz()
 
    Method AppTipoArticuloPrestashop()
-
-   Method InsertCategoriesPrestashop()
-
-   METHOD UpdateCategoriesPrestashop()
-
-   METHOD DeleteCategoriesPrestashop()
-
-   METHOD DeleteImagesCategories( cCodCategorie )
-
-   METHOD ActualizaCategoriesPrestashop( oDbf )
-
-   METHOD InsertGrupoCategoriesPrestashop()
-
-   METHOD UpdateGrupoCategoriesPrestashop()
-
-   METHOD DeleteGrupoCategoriesPrestashop()
-
-   METHOD ActualizaGrupoCategoriesPrestashop( oDbf )
-
+   
    METHOD AppendArticuloPrestashop()
 
    METHOD RecalculaPosicionesCategoriasPrestashop()
@@ -345,9 +330,39 @@ CLASS TComercio
 
    METHOD DelIdIvaPrestashop()
 
+   /*
+   Nuevos metodos para prestashop----------------------------------------------
+   */
+
    METHOD ConectBBDD()
 
    METHOD DisconectBBDD()
+
+   METHOD lShowDialogWait()
+
+   METHOD lHideDialogWait()
+
+   METHOD InsertCategoriesPrestashop()
+
+   METHOD UpdateCategoriesPrestashop()
+
+   METHOD DeleteCategoriesPrestashop()
+
+   METHOD DeleteImagesCategories( cCodCategorie )
+
+   METHOD ActualizaCategoriesPrestashop( oDbf )
+
+   METHOD InsertGrupoCategoriesPrestashop()
+
+   METHOD UpdateGrupoCategoriesPrestashop()
+
+   METHOD UpdateCascadeCategoriesPrestashop()
+
+   METHOD DeleteGrupoCategoriesPrestashop()
+
+   METHOD DelCascadeGrupoCategoriesPrestashop()
+
+   METHOD ActualizaGrupoCategoriesPrestashop( oDbf )
 
 END CLASS
 
@@ -7125,14 +7140,37 @@ Method InsertCategoriesPrestashop() CLASS TComercio
    local cCommand             := ""
 
    if !Empty( ::oFam:cCodGrp )
+      
       nParent                 := oRetFld( ::oFam:cCodGrp, ::oGrpFam, "cCodWeb" )
+      
+      if nParent == 0
+         nParent              := 2
+      end if
+
    end if
 
    /*
    Insertamos una familia nueva en las tablas de prestashop-----------------
    */
 
-   cCommand := "INSERT INTO " + ::cPrefixTable( "category" ) + "( id_parent, level_depth, nleft, nright, active, date_add, date_upd, position ) VALUES ( '" + Str( nParent ) + "', '2', '0', '0', '1', '" + dtos( GetSysDate() ) + "', '" + dtos( GetSysDate() ) + "', '0' ) "
+   cCommand := "INSERT INTO " + ::cPrefixTable( "category" ) + "( " + ;
+                  "id_parent, " + ;
+                  "level_depth, " + ;
+                  "nleft, " + ;
+                  "nright, " + ;
+                  "active, " + ;
+                  "date_add,  " + ;
+                  "date_upd, " + ;
+                  "position " + ;
+               ") VALUES ( '" + ;
+                  Str( nParent ) + "', " + ;
+                  "'2', " + ;
+                  "'0', " + ;
+                  "'0', " + ;
+                  "'1', " + ;
+                  "'" + dtos( GetSysDate() ) + "', " + ;
+                  "'" + dtos( GetSysDate() ) + "', " + ;
+                  "'0' ) "
 
    if TMSCommand():New( ::oCon ):ExecDirect( cCommand )
 
@@ -7163,7 +7201,24 @@ Method InsertCategoriesPrestashop() CLASS TComercio
       ::SetText( "Error al insertar la familia " + AllTrim( ::oFam:cNomFam ) + " en la tabla " + ::cPrefixTable( "category" ), 3 )
    end if
 
-   cCommand := "INSERT INTO " + ::cPrefixTable( "category_lang" ) + "( id_category, id_lang, name, description, link_rewrite, meta_title, meta_keywords, meta_description ) VALUES ( '" + Str( nCodigoWeb ) + "', '" + Str( ::nLanguage ) + "', '" + AllTrim( ::oFam:cNomFam ) + "', '" + AllTrim( ::oFam:cNomFam ) + "', '" + cLinkRewrite( ::oFam:cNomFam ) + "', '', '', '' )"
+   cCommand := "INSERT INTO " + ::cPrefixTable( "category_lang" ) + "( " + ;
+                  "id_category, " + ;
+                  "id_lang, " + ;
+                  "name, " + ;
+                  "description, " + ;
+                  "link_rewrite, " + ;
+                  "meta_title, " + ;
+                  "meta_keywords, " + ;
+                  "meta_description" + ;
+                  " ) VALUES ( '" + ;
+                  Str( nCodigoWeb ) + "', '" +;
+                  Str( ::nLanguage ) + "', '" + ;
+                  AllTrim( ::oFam:cNomFam ) + "', '" + ;
+                  AllTrim( ::oFam:cNomFam ) + "', '" + ;
+                  cLinkRewrite( ::oFam:cNomFam ) + "', " + ;
+                  "'', " + ;
+                  "'', " + ;
+                  "'' )"
 
    if TMSCommand():New( ::oCon ):ExecDirect( cCommand )
       ::SetText( "He insertado la familia " + AllTrim( ::oFam:cNomFam ) + " correctamente en la tabla " + ::cPrefixTable( "category_lang" ), 3 )
@@ -7230,15 +7285,37 @@ Method UpdateCategoriesPrestashop() CLASS TComercio
 
    local lReturn  := .f.
    local cCommand := ""
+   local nParent  := 2
 
    /*
    Actualizamos la familia en prestashop------------------------------------
    */
 
-   cCommand       := "UPDATE " + ::cPrefixTable( "category" ) + " SET date_upd='" + dtos( GetSysDate() ) + "' WHERE id_category=" + AllTrim( Str( ::oFam:cCodWeb ) )
+   if !Empty( ::oFam:cCodGrp )
+      
+      nParent                 := oRetFld( ::oFam:cCodGrp, ::oGrpFam, "cCodWeb" )
+      
+      if nParent == 0
+
+         nParent              := 2 //Por defecto toma 2, porque siempre existen dos categorias por sefecto que son Root e Inicio.
+
+      end if
+
+   end if
+
+   cCommand       := "UPDATE " + ::cPrefixTable( "category" ) + " SET " + ;
+                        "id_parent='" + AllTrim( Str( nParent ) ) + "', " + ;
+                        "date_upd='" + dtos( GetSysDate() ) + "' " + ;
+                     "WHERE id_category=" + AllTrim( Str( ::oFam:cCodWeb ) )
+
    lReturn        := TMSCommand():New( ::oCon ):ExecDirect( cCommand )
 
-   cCommand       := "UPDATE " + ::cPrefixTable( "category_lang" ) + " SET name='" + AllTrim( ::oFam:cNomFam ) + "', description='" + AllTrim( ::oFam:cNomFam ) + "', link_rewrite='" + cLinkRewrite( ::oFam:cNomFam ) + "' WHERE id_category=" + AllTrim( Str( ::oFam:cCodWeb ) )
+   cCommand       := "UPDATE " + ::cPrefixTable( "category_lang" ) + " SET " + ;
+                        "name='" + AllTrim( ::oFam:cNomFam ) + "', " + ;
+                        "description='" + AllTrim( ::oFam:cNomFam ) + "', " + ;
+                        "link_rewrite='" + cLinkRewrite( ::oFam:cNomFam ) + "' " + ;
+                     "WHERE id_category=" + AllTrim( Str( ::oFam:cCodWeb ) )
+
    lReturn        := TMSCommand():New( ::oCon ):ExecDirect( cCommand )
 
 Return lReturn
@@ -7279,77 +7356,83 @@ Method DeleteCategoriesPrestashop() CLASS TComercio
    Quitamos la referencia de nuestra tabla-------------------------------------
    */
 
-   ::oFam:cCodWeb    := 0
+   ::oFam:fieldPutByName( "cCodWeb", 0 )
 
 Return lReturn
 
 //---------------------------------------------------------------------------//
 
-Method ActualizaCategoriesPrestashop( cCodFam ) CLASS TComercio
+Method ActualizaCategoriesPrestashop( cCodigoFamilia ) CLASS TComercio
 
    local oQuery
+   local cCommand
 
-   //::oFam            := oDbf
+   if !::lReady()
+      Return .f.
+   end if
+   
+   ::lShowDialogWait()
 
    if ::OpenFiles()
 
-      /*
-      Nos posicionamos en la tabla de familias---------------------------------
-      */
-
-      if ::ConectBBDD()
-
-         do case
-            case !::oFam:lPubInt .and. ::oFam:cCodWeb != 0
-
-               ::DeleteCategoriesPrestashop()
-
-            case ::oFam:lPubInt .and. ::oFam:cCodWeb != 0
-
-               oQuery   := TMSQuery():New( ::oCon, 'SELECT * FROM ' + ::cPrefixTable( "category" ) +  ' WHERE id_category=' + AllTrim( Str( ::oFam:cCodWeb ) ) )
-
-               if oQuery:Open()
-
-                  if oQuery:RecCount() > 0
-
-                     ::UpdateCategoriesPrestashop()
-
-                  else   
-
-                     ::InsertCategoriesPrestashop( .t. )
-
+      if ::oFam:Seek( cCodigoFamilia )
+   
+         if ::ConectBBDD()
+   
+            do case
+               case !::oFam:lPubInt .and. ::oFam:cCodWeb != 0
+      
+                  ::DeleteCategoriesPrestashop()
+      
+               case ::oFam:lPubInt .and. ::oFam:cCodWeb != 0
+      
+                  cCommand := 'SELECT * FROM ' + ::cPrefixTable( "category" ) +  ' WHERE id_category=' + AllTrim( Str( ::oFam:cCodWeb ) )
+                  oQuery   := TMSQuery():New( ::oCon, cCommand )
+      
+                  if oQuery:Open()
+      
+                     if oQuery:RecCount() > 0
+      
+                        ::UpdateCategoriesPrestashop()
+      
+                     else
+      
+                        ::InsertCategoriesPrestashop()
+      
+                     end if
+      
                   end if
+      
+                  oQuery:Free()
+      
+               case ::oFam:lPubInt .and. ::oFam:cCodWeb == 0
+      
+                  ::InsertCategoriesPrestashop()
+      
+            end case   
 
-               end if
-
-               oQuery:Free()
-
-            case ::oFam:lPubInt .and. ::oFam:cCodWeb == 0
-
-               ::InsertCategoriesPrestashop( .t. )
-
-         end case   
-
-         ::DisconectBBDD()
+            ::DisconectBBDD()
+   
+         endif      
 
       end if
 
       ::CloseFiles()
 
-   end if   
+   end if
+
+   ::lHideDialogWait()
 
 Return .t.
 
 //---------------------------------------------------------------------------//
 
-Method InsertGrupoCategoriesPrestashop( lExt ) CLASS TComercio
+Method InsertGrupoCategoriesPrestashop() CLASS TComercio
 
    local nRecAnt           := ::oGrpFam:Recno()
    local nCodigoWeb        := 2
    local cCommand          := ""
    local oCategoria
-
-   DEFAULT lExt            := .f.
 
    cCommand := "INSERT INTO " + ::cPrefixTable( "category" ) + "( " + ;
                   "id_parent, " + ;
@@ -7391,11 +7474,7 @@ Method InsertGrupoCategoriesPrestashop( lExt ) CLASS TComercio
       Guardamos en nuestra tabla el id que nos han dado en prestashop-------
       */
 
-      if !lExt
-         ::oGrpFam:fieldPutByName( "cCodWeb", nCodigoWeb )
-      else   
-         ::oGrpFam:cCodWeb             := nCodigoWeb
-      end if
+      ::oGrpFam:fieldPutByName( "cCodWeb", nCodigoWeb )
 
       ::SetText( "He insertado el grupo de familia " + AllTrim( ::oGrpFam:cNomGrp ) + " correctamente en la tabla " + ::cPrefixTable( "category" ), 3 )
 
@@ -7417,7 +7496,7 @@ Method InsertGrupoCategoriesPrestashop( lExt ) CLASS TComercio
                   "'" + Str( ::nLanguage ) + "', " + ;
                   "'" + AllTrim( ::oGrpFam:cNomGrp ) + "', " + ;
                   "'" + AllTrim( ::oGrpFam:cNomGrp ) + "', " + ;
-                  "'" + cLinkRewrite( ::oGrpFam:cNomGrp ) + "', "+ ; 
+                  "'" + cLinkRewrite( ::oGrpFam:cNomGrp ) + "', "+ ;
                   "'', " + ;
                   "'', " + ;
                   "'' )"
@@ -7460,6 +7539,12 @@ Method InsertGrupoCategoriesPrestashop( lExt ) CLASS TComercio
       ::SetText( "Error al insertar el grupo de familia " + AllTrim( ::oGrpFam:cNomGrp ) + " en la tabla " + ::cPrefixTable( "category_group" ), 3 )
    end if
 
+   /*
+   Actualizamos en cascada las familias que cuelgan del grupo------------------
+   */
+
+   ::UpdateCascadeCategoriesPrestashop()
+
 return nCodigoWeb   
 
 //---------------------------------------------------------------------------//
@@ -7470,101 +7555,173 @@ Method UpdateGrupoCategoriesPrestashop() CLASS TComercio
    local cCommand := ""
 
    /*
-   Actualizamos la familia en prestashop------------------------------------
+   Actualizamos la familia en prestashop---------------------------------------
    */
 
-   cCommand       := "UPDATE " + ::cPrefixTable( "category" ) + " SET date_upd='" + dtos( GetSysDate() ) + "' WHERE id_category=" + AllTrim( Str( ::oGrpFam:cCodWeb ) )
+   cCommand       := "UPDATE " + ::cPrefixTable( "category" ) + " SET " + ;
+                        "date_upd='" + dtos( GetSysDate() ) + "' " + ; 
+                     "WHERE id_category=" + AllTrim( Str( ::oGrpFam:cCodWeb ) )
+
    lReturn        := TMSCommand():New( ::oCon ):ExecDirect( cCommand )
 
-   cCommand       := "UPDATE " + ::cPrefixTable( "category_lang" ) + " SET name='" + AllTrim( ::oGrpFam:cNomGrp ) + "', description='" + AllTrim( ::oGrpFam:cNomGrp ) + "', link_rewrite='" + cLinkRewrite( ::oGrpFam:cNomGrp ) + "' WHERE id_category=" + AllTrim( Str( ::oGrpFam:cCodWeb ) )
+   cCommand       := "UPDATE " + ::cPrefixTable( "category_lang" ) + " SET " + ;
+                        "name='" + AllTrim( ::oGrpFam:cNomGrp ) + "', " + ;
+                        "description='" + AllTrim( ::oGrpFam:cNomGrp ) + "', " + ;
+                        "link_rewrite='" + cLinkRewrite( ::oGrpFam:cNomGrp ) + "' " + ;
+                     "WHERE id_category=" + AllTrim( Str( ::oGrpFam:cCodWeb ) )
+
    lReturn        := TMSCommand():New( ::oCon ):ExecDirect( cCommand )
 
 Return lReturn
 
 //---------------------------------------------------------------------------//
 
-Method DeleteGrupoCategoriesPrestashop() CLASS TComercio
+Method DeleteGrupoCategoriesPrestashop( cCodWeb, lDel ) CLASS TComercio
 
    local lReturn     := .f.
    local cCommand    := ""
 
-   cCommand          := "DELETE FROM " + ::cPrefixTable( "category" ) + " WHERE id_category=" + AllTrim( Str( ::oGrpFam:cCodWeb ) )
+   DEFAULT cCodWeb   := ::oGrpFam:cCodWeb
+
+   if cCodWeb == 0 .or. cCodWeb == 1
+      return .f.
+   end if
+
+   cCommand          := "DELETE FROM " + ::cPrefixTable( "category" ) + " WHERE id_category=" + AllTrim( Str( cCodWeb ) )
    lReturn           := TMSCommand():New( ::oCon ):ExecDirect( cCommand )
 
-   cCommand          := "DELETE FROM " + ::cPrefixTable( "category_lang" ) + " WHERE id_category=" + AllTrim( Str( ::oGrpFam:cCodWeb ) )
+   cCommand          := "DELETE FROM " + ::cPrefixTable( "category_lang" ) + " WHERE id_category=" + AllTrim( Str( cCodWeb ) )
    lReturn           := TMSCommand():New( ::oCon ):ExecDirect( cCommand )
 
-   cCommand          := "DELETE FROM " + ::cPrefixTable( "category_product" ) + " WHERE id_category=" + AllTrim( Str( ::oGrpFam:cCodWeb ) )
+   cCommand          := "DELETE FROM " + ::cPrefixTable( "category_product" ) + " WHERE id_category=" + AllTrim( Str( cCodWeb ) )
    lReturn           := TMSCommand():New( ::oCon ):ExecDirect( cCommand )
 
-   cCommand          := "DELETE FROM " + ::cPrefixTable( "category_group" ) + " WHERE id_category=" + AllTrim( Str( ::oGrpFam:cCodWeb ) )
+   cCommand          := "DELETE FROM " + ::cPrefixTable( "category_group" ) + " WHERE id_category=" + AllTrim( Str( cCodWeb ) )
    lReturn           := TMSCommand():New( ::oCon ):ExecDirect( cCommand )
 
-   cCommand          := "DELETE FROM " + ::cPrefixTable( "category_shop" ) + " WHERE id_category=" + AllTrim( Str( ::oGrpFam:cCodWeb ) )
+   cCommand          := "DELETE FROM " + ::cPrefixTable( "category_shop" ) + " WHERE id_category=" + AllTrim( Str( cCodWeb ) )
    lReturn           := TMSCommand():New( ::oCon ):ExecDirect( cCommand )
 
    /*
    Eliminamos las imágenes del grupo de familia--------------------------------
    */
 
-   ::DeleteImagesCategories( ::oGrpFam:cCodWeb )
-
-   /*
-   Eliminamos en cascada Todo lo que esté tirando del grupo de familia---------
-   */
+   ::DeleteImagesCategories( cCodWeb )
 
    /*
    Quitamos la referencia de nuestra tabla-------------------------------------
    */
 
-   ::oGrpFam:cCodWeb := 0
+   if !lDel
+      ::oGrpFam:fieldPutByName( "cCodWeb", 0 )
+   end if
+
+   /*
+   Actualizamos en cascada las familias que cuelgan del grupo------------------
+   */
+
+   if !lDel
+      ::UpdateCascadeCategoriesPrestashop()   
+   else   
+      ::DelCascadeGrupoCategoriesPrestashop( cCodWeb )
+   end if   
 
 Return lReturn
 
 //---------------------------------------------------------------------------//
 
-Method ActualizaGrupoCategoriesPrestashop( oDbf ) CLASS TComercio
+Method UpdateCascadeCategoriesPrestashop() CLASS TComercio
+
+   ::oFam:GoTop()
+
+   while !::oFam:Eof()
+
+      if ::oFam:cCodGrp == ::oGrpFam:cCodGrp
+
+         ::UpdateCategoriesPrestashop()
+
+      end if
+
+      ::oFam:Skip()
+
+   end while
+
+Return .t.   
+
+//---------------------------------------------------------------------------//
+
+Method DelCascadeGrupoCategoriesPrestashop( cCodWeb ) CLASS TComercio
+
+   local cCommand := "UPDATE " + ::cPrefixTable( "category" ) + " SET id_parent=2 WHERE id_parent=" + AllTrim( Str( cCodWeb ) )
+
+   TMSCommand():New( ::oCon ):ExecDirect( cCommand )
+
+Return .t.   
+
+//---------------------------------------------------------------------------//
+
+Method ActualizaGrupoCategoriesPrestashop( cCodigoGrupo, lDel, cCodWeb ) CLASS TComercio
 
    local oQuery
+   local cCommand
 
-   ::oGrpFam            := oDbf
+   DEFAULT lDel := .f.
 
-   if ::ConectBBDD()
+   if !::lReady()
+      Return .f.
+   end if
 
-      do case
-         case !::oGrpFam:lPubInt .and. ::oGrpFam:cCodWeb != 0
+   ::lShowDialogWait()
 
-            ::DeleteGrupoCategoriesPrestashop()
+   if ::OpenFiles()
 
-         case ::oGrpFam:lPubInt .and. ::oGrpFam:cCodWeb != 0
+      if ::oGrpFam:Seek( cCodigoGrupo )
+   
+         if ::ConectBBDD()
+   
+            do case
+               case ( !::oGrpFam:lPubInt .and. ::oGrpFam:cCodWeb != 0 ) .or. lDel
+   
+                  ::DeleteGrupoCategoriesPrestashop( cCodWeb, lDel )
+   
+               case ::oGrpFam:lPubInt .and. ::oGrpFam:cCodWeb != 0
+   
+                  cCommand := 'SELECT * FROM ' + ::cPrefixTable( "category" ) +  ' WHERE id_category=' + AllTrim( Str( ::oGrpFam:cCodWeb ) )
+                  oQuery   := TMSQuery():New( ::oCon, cCommand )
+   
+                  if oQuery:Open()
+   
+                     if oQuery:RecCount() > 0
+   
+                        ::UpdateGrupoCategoriesPrestashop()
+   
+                     else   
+   
+                        ::InsertGrupoCategoriesPrestashop()
+   
+                     end if
+   
+                  end if
+   
+                  oQuery:Free()
+   
+               case ::oGrpFam:lPubInt .and. ::oGrpFam:cCodWeb == 0
+   
+                  ::InsertGrupoCategoriesPrestashop()
+   
+            end case   
 
-            oQuery   := TMSQuery():New( ::oCon, 'SELECT * FROM ' + ::cPrefixTable( "category" ) +  ' WHERE id_category=' + AllTrim( Str( ::oGrpFam:cCodWeb ) ) )
+            ::DisconectBBDD()
+   
+         endif      
 
-            if oQuery:Open()
+      end if
 
-               if oQuery:RecCount() > 0
-
-                  ::UpdateGrupoCategoriesPrestashop()
-
-               else   
-
-                  ::InsertGrupoCategoriesPrestashop( .t. )
-
-               end if
-
-            end if
-
-            oQuery:Free()
-
-         case ::oGrpFam:lPubInt .and. ::oGrpFam:cCodWeb == 0
-
-            ::InsertGrupoCategoriesPrestashop( .t. )
-
-      end case   
-
-      ::DisconectBBDD()
+      ::CloseFiles()
 
    end if
+
+   ::lHideDialogWait()
 
 Return .t.
 
@@ -10544,10 +10701,6 @@ METHOD ConectBBDD() Class TComercio
    local oDb
    local lReturn        := .f.
 
-   if !::lReady() 
-      Return .f.
-   end if
-
    ::oCon               := TMSConnect():New()
 
    if !::oCon:Connect( ::cHost, ::cUser, ::cPasswd, ::cDbName, ::nPort )
@@ -10586,10 +10739,37 @@ Method DisconectBBDD() Class TComercio
       ::oCon:Destroy()
    end if
 
+Return .t.  
+
+//---------------------------------------------------------------------------//
+
+METHOD lShowDialogWait() Class TComercio
+
+   CursorWait()
+
+   ::oDlgWait     := TDialog():New( , , , , , "wait_web", , .f.,,,,,,.f. )
+
+   ::oBmpWait     := TBitmap():ReDefine( 500, "logogestool_48", , ::oDlgWait, , , .f., .f., , , .f., , , .t. ) 
+
+   ::oDlgWait:Activate( , , , .t., ,.f. )
+
 Return .t.
 
 //---------------------------------------------------------------------------//
 
+METHOD lHideDialogWait() Class TComercio
+
+   ::oDlgWait:End()
+
+   if !Empty( ::oBmpWait )
+      ::oBmpWait:End()
+   end if
+
+   CursorWe()
+
+Return .t.
+
+//---------------------------------------------------------------------------//
 //---------------------------------------------------------------------------//
 //---------------------------------------------------------------------------//
 //---------------------------------------------------------------------------//
