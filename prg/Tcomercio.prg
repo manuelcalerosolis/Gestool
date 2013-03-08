@@ -7890,7 +7890,7 @@ METHOD AppendArticuloPrestashop( oDb )
       if TMSCommand():New( ::oCon ):ExecDirect( "TRUNCATE TABLE " + cPrefixTable( "scene_products" ) )
          ::SetText ( 'Tabla ' + cPrefixTable( "scene_products" ) + ' borrada correctamente', 3  )
       else
-         ::SetText ( 'Error al borrar la tabla ' + cPrefixTable( "scene_products" ), 3  )
+         ::SetText ( 'Error al borrar la tabla ' + cPrefixTable( "scene_products" ), 3  )     
       end if
 
       ::lLimpiaRefImgWeb()
