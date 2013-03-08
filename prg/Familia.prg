@@ -6,7 +6,7 @@
    #include "MesDbf.ch"
    #include "xbrowse.ch"
 #else
-   #include "FWCE.ch"
+   #include "FWCE.ch"   
    REQUEST DBFCDX
 #endif
 #include "Factu.ch"
@@ -1145,10 +1145,16 @@ STATIC FUNCTION EndTrans( aTmp, aGet, nMode, oBrw, oDlg )
       end while
 
       /*
-      Escribe los datos pendientes------------------------------------------------
+      Escribe los datos pendientes---------------------------------------------
       */
 
       WinGather( aTmp, aGet, dbfFamilia, oBrw, nMode )
+
+      /*
+      Actualizamos los datos de la web para tiempo real------------------------
+      */
+
+      Actualizaweb( cCodFam )
 
       CommitTransaction()
 
@@ -1176,7 +1182,7 @@ STATIC FUNCTION EndTrans( aTmp, aGet, nMode, oBrw, oDlg )
 
 Return NIL
 
-//------------------------------------------------------------------------//
+//---------------------------------------------------------------------------//
 
 STATIC FUNCTION KillTrans()
 
@@ -1193,6 +1199,42 @@ STATIC FUNCTION KillTrans()
 RETURN .T.
 
 //------------------------------------------------------------------------//
+
+Static Function Actualizaweb( cCodFam )
+
+   if lPubFam()
+
+      with object ( TComercio():GetInstance() )
+         :ActualizaCategoriesPrestashop( cCodFam )
+      end with
+
+   end if   
+
+Return .t.
+
+//----------------------------------------------------------------------------//
+
+Static Function lPubFam()
+
+   local lPub  := .f.
+
+   if ( dbfFamilia )->lPubInt
+
+      lPub     := .t.
+
+   else
+
+      if ( dbfFamilia )->cCodWeb != 0
+
+         lPub  := .t.
+
+      end if
+
+   end if
+
+Return lPub
+
+//----------------------------------------------------------------------------//
 
 STATIC FUNCTION EdtDet( aTmp, aGet, dbfTmp, oBrw, bWhen, bValid, nMode )
 
@@ -1425,53 +1467,19 @@ Static Function IncWeb( aTmp )
 
    local nRec
 
-   if Empty( aTmp )
+   for each nRec in ( oWndBrw:oBrw:aSelected )
 
-      for each nRec in ( oWndBrw:oBrw:aSelected )
+      ( dbfFamilia )->( dbGoTo( nRec ) )
 
-         ( dbfFamilia )->( dbGoTo( nRec ) )
+      if dbLock( dbfFamilia )
+         ( dbfFamilia )->lPubInt := !( dbfFamilia )->lPubInt
+         ( dbfFamilia )->lSelDoc := ( dbfFamilia )->lPubInt
+         ( dbfFamilia )->( dbUnLock() )
+      end if
 
-         if dbLock( dbfFamilia )
-            ( dbfFamilia )->lPubInt := !( dbfFamilia )->lPubInt
-            ( dbfFamilia )->lSelDoc := ( dbfFamilia )->lPubInt
-            ( dbfFamilia )->cCodWeb := 0
-            ( dbfFamilia )->( dbUnLock() )
-         end if
+      oWndBrw:Refresh()
 
-         oWndBrw:Refresh()
-
-         /*if ApoloMsgNoYes(   "¿Desea " + if( ( dbfFamilia )->lPubInt, "seleccionar", "deseleccionar" ) +;
-                        " todos los artículos de esta familia," + CRLF +;
-                        "para que sean " + if( !( dbfFamilia )->lPubInt, "incluidos en la", "excluidos de la" ) +;
-                        " web ?",;
-                        ( dbfFamilia )->cCodFam + Space( 1 ) + ( dbfFamilia )->cNomFam )
-
-            if ( dbfArticulo )->( dbSeek( ( dbfFamilia )->cCodFam ) )
-
-               while ( dbfArticulo )->Familia == ( dbfFamilia )->cCodFam .and. !( dbfArticulo )->( eof() )
-
-                  if dbLock( dbfArticulo )
-                     ( dbfArticulo )->lPubInt := ( dbfFamilia )->lPubInt
-                     ( dbfArticulo )->lSndDoc := ( dbfFamilia )->lPubInt
-                     ( dbfArticulo )->cCodWeb := 0
-                     ( dbfArticulo )->( dbUnLock() )
-                  end if
-
-                  ( dbfArticulo )->( dbSkip() )
-
-               end while
-
-            end if
-
-         end if*/
-
-      next
-
-   else
-
-      aTmp[ ( dbfFamilia )->( fieldpos( "cCodWeb" ) ) ]  := 0
-
-   end if
+   next
 
 Return ( nil )
 
@@ -1487,7 +1495,6 @@ Static Function IncEnvio( aTmp )
 
       if dbLock( dbfFamilia )
          ( dbfFamilia )->lSelDoc := !( dbfFamilia )->lSelDoc
-         ( dbfFamilia )->cCodWeb := 0
          ( dbfFamilia )->( dbUnLock() )
       end if
 
