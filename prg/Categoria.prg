@@ -495,14 +495,13 @@ Function cCategoria( oGet, dbfCategoria, oGet2, oBmpCategoria  )
 
       oGet:cText( ( dbfCategoria )->cCodigo )
 
-      if oGet2 != NIL
+      if !Empty( oGet2 )
          oGet2:cText( ( dbfCategoria )->cNombre )
       end if
 
-      if oBmpCategoria != nil
-         oBmpCategoria:ReLoad( aResTipo[ aScan( aStrTipo, AllTrim( ( dbfCategoria )->cTipo ) ) ] )
+      if !Empty( oBmpCategoria ) .and. !Empty( ( dbfCategoria )->cTipo )
+         oBmpCategoria:ReLoad( aResTipo[ Max( aScan( aStrTipo, AllTrim( ( dbfCategoria )->cTipo ) ), 1 ) ] )
       end if
-
 
       lValid            := .t.
 

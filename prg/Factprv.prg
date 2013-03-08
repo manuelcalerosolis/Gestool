@@ -317,11 +317,8 @@ static dbfAlbPrvS
 static dbfDelega
 static dbfEmp
 static dbfAlm
-static dbfPedCliL
-static dbfAlbCliL
-static dbfFacCliL
 static dbfFacRecL
-static dbfTikCliL
+static dbfTikPrvL
 static dbfProLin
 static dbfProMat
 static dbfHisMov
@@ -365,7 +362,7 @@ static nGetNeto         := 0
 static nGetIva          := 0
 static nGetReq          := 0
 static nGetPgd          := 0
-static cOldCodCli       := ""
+static cOldCodPrv       := ""
 static cOldCodArt       := ""
 static cOldPrpArt       := ""
 static cOldUndMed       := ""
@@ -511,11 +508,11 @@ STATIC FUNCTION OpenFiles( lExt )
       USE ( cPatDat() + "EMPRESA.DBF" ) NEW VIA ( cDriver() ) SHARED ALIAS ( cCheckArea( "EMPRESA", @dbfEmp ) )
       SET ADSINDEX TO ( cPatDat() + "EMPRESA.CDX" ) ADDITIVE
 
-      USE ( cPatEmp() + "PedCliL.Dbf" ) NEW VIA ( cDriver() ) SHARED ALIAS ( cCheckArea( "PedCLIL", @dbfPedCliL ) )
-      SET ADSINDEX TO ( cPatEmp() + "PedCliL.Cdx" ) ADDITIVE
+      USE ( cPatEmp() + "PedPrvL.Dbf" ) NEW VIA ( cDriver() ) SHARED ALIAS ( cCheckArea( "PedPrvL", @dbfPedPrvL ) )
+      SET ADSINDEX TO ( cPatEmp() + "PedPrvL.Cdx" ) ADDITIVE
 
-      USE ( cPatEmp() + "ALBCLIL.DBF" ) NEW VIA ( cDriver() ) SHARED ALIAS ( cCheckArea( "ALBCLIL", @dbfAlbCliL ) )
-      SET ADSINDEX TO ( cPatEmp() + "ALBCLIL.CDX" ) ADDITIVE
+      USE ( cPatEmp() + "ALBPrvL.DBF" ) NEW VIA ( cDriver() ) SHARED ALIAS ( cCheckArea( "ALBPrvL", @dbfAlbPrvL ) )
+      SET ADSINDEX TO ( cPatEmp() + "ALBPrvL.CDX" ) ADDITIVE
       SET TAG TO "cStkFast"
 
       USE ( cPatEmp() + "RctPrvT.DBF" ) NEW VIA ( cDriver() ) SHARED ALIAS ( cCheckArea( "RctPrvT", @dbfRctPrvT ) )
@@ -525,15 +522,15 @@ STATIC FUNCTION OpenFiles( lExt )
       SET ADSINDEX TO ( cPatEmp() + "RctPrvL.CDX" ) ADDITIVE
       SET TAG TO "cRef"
 
-      USE ( cPatEmp() + "FACCLIL.DBF" ) NEW VIA ( cDriver() ) SHARED ALIAS ( cCheckArea( "FACCLIL", @dbfFacCliL ) )
-      SET ADSINDEX TO ( cPatEmp() + "FACCLIL.CDX" ) ADDITIVE
+      USE ( cPatEmp() + "FACPrvL.DBF" ) NEW VIA ( cDriver() ) SHARED ALIAS ( cCheckArea( "FACPrvL", @dbfFacPrvL ) )
+      SET ADSINDEX TO ( cPatEmp() + "FACPrvL.CDX" ) ADDITIVE
       SET TAG TO "cRef"
 
       USE ( cPatEmp() + "FacRecL.DBF" ) NEW VIA ( cDriver() ) SHARED ALIAS ( cCheckArea( "FacRecL", @dbfFacRecL ) )
       SET ADSINDEX TO ( cPatEmp() + "FacRecL.CDX" ) ADDITIVE
       SET TAG TO "cRef"
 
-      USE ( cPatEmp() + "TIKEL.DBF" ) NEW VIA ( cDriver() ) SHARED ALIAS ( cCheckArea( "TIKEL", @dbfTikCliL ) )
+      USE ( cPatEmp() + "TIKEL.DBF" ) NEW VIA ( cDriver() ) SHARED ALIAS ( cCheckArea( "TIKEL", @dbfTikPrvL ) )
       SET ADSINDEX TO ( cPatEmp() + "TIKEL.CDX" ) ADDITIVE
       SET TAG TO "CSTKFAST"
 
@@ -579,11 +576,11 @@ STATIC FUNCTION OpenFiles( lExt )
       oStock:cFacPrvS   := dbfFacPrvS
       oStock:cRctPrvL   := dbfRctPrvL
 
-      oStock:cPedCliL   := dbfPedCliL
-      oStock:cAlbCliL   := dbfAlbCliL
-      oStock:cFacCliL   := dbfFacCliL
+      oStock:cPedPrvL   := dbfPedPrvL
+      oStock:cAlbPrvL   := dbfAlbPrvL
+      oStock:cFacPrvL   := dbfFacPrvL
       oStock:cFacRecL   := dbfFacRecL
-      oStock:cTikL      := dbfTikCliL
+      oStock:cTikL      := dbfTikPrvL
 
       oStock:cProducL   := dbfProLin
       oStock:cProducM   := dbfProMat
@@ -806,24 +803,24 @@ Static Function CloseFiles()
       ( dbfEmp )->( dbCloseArea() )
    end if
 
-   if dbfPedCliL != nil
-      ( dbfPedCliL )->( dbCloseArea() )
+   if dbfPedPrvL != nil
+      ( dbfPedPrvL )->( dbCloseArea() )
    end if
 
-   if dbfAlbCliL != nil
-      ( dbfAlbCliL )->( dbCloseArea() )
+   if dbfAlbPrvL != nil
+      ( dbfAlbPrvL )->( dbCloseArea() )
    end if
 
-   if dbfFacCliL != nil
-      ( dbfFacCliL )->( dbCloseArea() )
+   if dbfFacPrvL != nil
+      ( dbfFacPrvL )->( dbCloseArea() )
    end if
 
    if dbfFacRecL != nil
       ( dbfFacRecL )->( dbCloseArea() )
    end if
 
-   if dbfTikCliL != nil
-      ( dbfTikCliL )->( dbCloseArea() )
+   if dbfTikPrvL != nil
+      ( dbfTikPrvL )->( dbCloseArea() )
    end if
 
    if dbfProLin != nil
@@ -890,11 +887,11 @@ Static Function CloseFiles()
    dbfCount    := nil
    oBanco      := nil
    dbfEmp      := nil
-   dbfPedCliL  := nil
-   dbfAlbCliL  := nil
-   dbfFacCliL  := nil
+   dbfPedPrvL  := nil
+   dbfAlbPrvL  := nil
+   dbfFacPrvL  := nil
    dbfFacRecL  := nil
-   dbfTikCliL  := nil
+   dbfTikPrvL  := nil
    dbfProLin   := nil
    dbfProMat   := nil
    dbfHisMov   := nil
@@ -1077,7 +1074,7 @@ FUNCTION FacPrv( oMenuItem, oWnd, cCodPrv, cCodArt, cNumAlb )
          :cSortOrder       := "nNumFac"
          :bEditValue       := {|| ( dbfFacPrvT )->cSerFac + "/" + Alltrim( Str( ( dbfFacPrvT )->nNumFac ) )  }
          :nWidth           := 80
-         :bLClickHeader    := {| nMRow, nMCol, nFlags, oCol | oWndBrw:ClickOnHeader( oCol ) }
+         :bLPrvckHeader    := {| nMRow, nMCol, nFlags, oCol | oWndBrw:PrvckOnHeader( oCol ) }
       end with
 
       with object ( oWndBrw:AddXCol() )
@@ -1093,7 +1090,7 @@ FUNCTION FacPrv( oMenuItem, oWnd, cCodPrv, cCodArt, cNumAlb )
          :bEditValue       := {|| ( dbfFacPrvT )->cSuPed }
          :nWidth           := 80
          :lHide            := .t.
-         :bLClickHeader    := {| nMRow, nMCol, nFlags, oCol | oWndBrw:ClickOnHeader( oCol ) }
+         :bLPrvckHeader    := {| nMRow, nMCol, nFlags, oCol | oWndBrw:PrvckOnHeader( oCol ) }
       end with
 
       with object ( oWndBrw:AddXCol() )
@@ -1102,7 +1099,7 @@ FUNCTION FacPrv( oMenuItem, oWnd, cCodPrv, cCodArt, cNumAlb )
          :bEditValue       := {|| ( dbfFacPrvT )->cNFC }
          :nWidth           := 160
          :lHide            := .t.
-         :bLClickHeader    := {| nMRow, nMCol, nFlags, oCol | oWndBrw:ClickOnHeader( oCol ) }
+         :bLPrvckHeader    := {| nMRow, nMCol, nFlags, oCol | oWndBrw:PrvckOnHeader( oCol ) }
       end with
 
       with object ( oWndBrw:AddXCol() )
@@ -1127,7 +1124,7 @@ FUNCTION FacPrv( oMenuItem, oWnd, cCodPrv, cCodArt, cNumAlb )
          :bEditValue       := {|| ( dbfFacPrvT )->cNumDoc }
          :nWidth           := 80
          :lHide            := .t.
-         :bLClickHeader    := {| nMRow, nMCol, nFlags, oCol | oWndBrw:ClickOnHeader( oCol ) }
+         :bLPrvckHeader    := {| nMRow, nMCol, nFlags, oCol | oWndBrw:PrvckOnHeader( oCol ) }
       end with
 
       with object ( oWndBrw:AddXCol() )
@@ -1135,7 +1132,7 @@ FUNCTION FacPrv( oMenuItem, oWnd, cCodPrv, cCodArt, cNumAlb )
          :cSortOrder       := "dFecFac"
          :bEditValue       := {|| Dtoc( ( dbfFacPrvT )->dFecFac ) }
          :nWidth           := 80
-         :bLClickHeader    := {| nMRow, nMCol, nFlags, oCol | oWndBrw:ClickOnHeader( oCol ) }
+         :bLPrvckHeader    := {| nMRow, nMCol, nFlags, oCol | oWndBrw:PrvckOnHeader( oCol ) }
       end with
 
       with object ( oWndBrw:AddXCol() )
@@ -1157,7 +1154,7 @@ FUNCTION FacPrv( oMenuItem, oWnd, cCodPrv, cCodArt, cNumAlb )
          :cSortOrder       := "cCodPrv"
          :bEditValue       := {|| ( dbfFacPrvT )->cCodPrv }
          :nWidth           := 80
-         :bLClickHeader    := {| nMRow, nMCol, nFlags, oCol | oWndBrw:ClickOnHeader( oCol ) }
+         :bLPrvckHeader    := {| nMRow, nMCol, nFlags, oCol | oWndBrw:PrvckOnHeader( oCol ) }
       end with
 
       with object ( oWndBrw:AddXCol() )
@@ -1165,7 +1162,7 @@ FUNCTION FacPrv( oMenuItem, oWnd, cCodPrv, cCodArt, cNumAlb )
          :cSortOrder       := "cNomPrv"
          :bEditValue       := {|| ( dbfFacPrvT )->cNomPrv }
          :nWidth           := 260
-         :bLClickHeader    := {| nMRow, nMCol, nFlags, oCol | oWndBrw:ClickOnHeader( oCol ) }
+         :bLPrvckHeader    := {| nMRow, nMCol, nFlags, oCol | oWndBrw:PrvckOnHeader( oCol ) }
       end with
 
       with object ( oWndBrw:AddXCol() )
@@ -1174,7 +1171,7 @@ FUNCTION FacPrv( oMenuItem, oWnd, cCodPrv, cCodArt, cNumAlb )
          :bEditValue       := {|| ( dbfFacPrvT )->cCodPago }
          :nWidth           := 40
          :lHide            := .t.
-         :bLClickHeader    := {| nMRow, nMCol, nFlags, oCol | oWndBrw:ClickOnHeader( oCol ) }
+         :bLPrvckHeader    := {| nMRow, nMCol, nFlags, oCol | oWndBrw:PrvckOnHeader( oCol ) }
       end with
 
       with object ( oWndBrw:AddXCol() )
@@ -1383,7 +1380,7 @@ FUNCTION FacPrv( oMenuItem, oWnd, cCodPrv, cCodArt, cNumAlb )
       HOTKEY   "N" ;
       LEVEL    ACC_EDIT
 
-if !oUser():lFiltroVentas()
+   if !oUser():lFiltroVentas()
 
    DEFINE BTNSHELL oFlt RESOURCE "BFILTER" GROUP OF oWndBrw ;
       NOBORDER ;
@@ -1393,7 +1390,7 @@ if !oUser():lFiltroVentas()
 
    lLoadFiltro( FAC_PRV, aItmFacPrv(), oFlt, oWndBrw, dbfFlt, dbfFacPrvT )
 
-end if
+   end if
 
    if oUser():lAdministrador()
 
@@ -1443,13 +1440,6 @@ end if
          TOOLTIP  "Modificar recibo" ;
          FROM     oRotor ;
          LEVEL    ACC_EDIT
-
-      DEFINE BTNSHELL RESOURCE "DOCUMENT_USER1_" OF oWndBrw ;
-         ALLOW    EXIT ;
-         ACTION   ( FactCli( nil, nil, nil, nil, nil, { nil, nil, nil, nil, ( dbfFacPrvT )->cSerFac + Str( ( dbfFacPrvT )->nNumFac ) + ( dbfFacPrvT )->cSufFac } ) );
-         TOOLTIP  "Generar factura" ;
-         FROM     oRotor ;
-         LEVEL    ACC_APPD
 
    DEFINE BTNSHELL RESOURCE "END" GROUP OF oWndBrw ;
       ALLOW    EXIT ;
@@ -1584,7 +1574,7 @@ STATIC FUNCTION EdtRec( aTmp, aGet, dbfFacPrvT, oBrw, cCodPrv, cCodArt, nMode, c
    Este valor los guaradamos para detectar los posibles cambios
    */
 
-   cOldCodCli           := aTmp[ _CCODPRV ]
+   cOldCodPrv           := aTmp[ _CCODPRV ]
 
    cPicUnd              := MasUnd()                               // Picture de las unidades
    cPinDiv              := cPinDiv( aTmp[ _CDIVFAC ], dbfDiv )    // Picture de la divisa
@@ -1615,8 +1605,8 @@ STATIC FUNCTION EdtRec( aTmp, aGet, dbfFacPrvT, oBrw, cCodPrv, cCodArt, nMode, c
                      "D&ocumentos" ;
          DIALOGS     "FACPRV_1",;
                      "FACPRV_2",;
-                     "PEDCLI_3",;
-                     "PEDCLI_4"
+                     "PEDPrv_3",;
+                     "PEDPrv_4"
 
       REDEFINE GET   aGet[ _CNFC ] ;
          VAR         aTmp[ _CNFC ] ;
@@ -2020,7 +2010,7 @@ STATIC FUNCTION EdtRec( aTmp, aGet, dbfFacPrvT, oBrw, cCodPrv, cCodArt, nMode, c
          end with
 
          if nMode != ZOOM_MODE
-            oBrwLin:bLDblClick   := {|| EdtDeta( oBrwLin, bEdtDet, aTmp ) }
+            oBrwLin:bLDblPrvck   := {|| EdtDeta( oBrwLin, bEdtDet, aTmp ) }
          end if
 
       oBrwLin:CreateFromResource( 190 )
@@ -2592,7 +2582,7 @@ STATIC FUNCTION EdtRec( aTmp, aGet, dbfFacPrvT, oBrw, cCodPrv, cCodArt, nMode, c
          end with
 
          if nMode != ZOOM_MODE
-            oBrwPgo:bLDblClick   := {|| ExtEdtRecPrv( dbfTmpPgo, dbfFacPrvT, dbfFacPrvL, dbfFPago, dbfIva, dbfDiv, oBanco, oBandera ), oBrwPgo:Refresh(), RecalculaTotal( aTmp ) }
+            oBrwPgo:bLDblPrvck   := {|| ExtEdtRecPrv( dbfTmpPgo, dbfFacPrvT, dbfFacPrvL, dbfFPago, dbfIva, dbfDiv, oBanco, oBandera ), oBrwPgo:Refresh(), RecalculaTotal( aTmp ) }
          end if
 
       REDEFINE BUTTON ;
@@ -2695,7 +2685,7 @@ STATIC FUNCTION EdtRec( aTmp, aGet, dbfFacPrvT, oBrw, cCodPrv, cCodArt, nMode, c
          end with
 
          if nMode != ZOOM_MODE
-            oBrwInc:bLDblClick   := {|| WinEdtRec( oBrwInc, bEdtInc, dbfTmpInc, nil, nil, aTmp ) }
+            oBrwInc:bLDblPrvck   := {|| WinEdtRec( oBrwInc, bEdtInc, dbfTmpInc, nil, nil, aTmp ) }
          end if
 
          oBrwInc:CreateFromResource( 210 )
@@ -2745,7 +2735,7 @@ STATIC FUNCTION EdtRec( aTmp, aGet, dbfFacPrvT, oBrw, cCodPrv, cCodArt, nMode, c
          end with
 
          if nMode != ZOOM_MODE
-            oBrwDoc:bLDblClick   := {|| ShellExecute( oDlg:hWnd, "open", Rtrim( ( dbfTmpDoc )->cRuta ) ) }
+            oBrwDoc:bLDblPrvck   := {|| ShellExecute( oDlg:hWnd, "open", Rtrim( ( dbfTmpDoc )->cRuta ) ) }
          end if
 
          oBrwDoc:CreateFromResource( 210 )
@@ -3871,8 +3861,8 @@ STATIC FUNCTION EdtDet( aTmp, aGet, dbfFacPrvL, oBrw, aTmpFac, cCodArt, nMode )
          ACTION   ( EditarNumerosSerie( aTmp, nMode ) )
 
    if nMode != ZOOM_MODE
-      oDlg:AddFastKey( VK_F6, {|| oBtnNumerosSerie:Click() } )
-      oDlg:AddFastKey( VK_F5, {|| oBtn:SetFocus(), oBtn:Click() } )
+      oDlg:AddFastKey( VK_F6, {|| oBtnNumerosSerie:Prvck() } )
+      oDlg:AddFastKey( VK_F5, {|| oBtn:SetFocus(), oBtn:Prvck() } )
    end if
 
    oDlg:AddFastKey ( VK_F1, {|| GoHelp() } )
@@ -4717,9 +4707,9 @@ STATIC FUNCTION lCalcDeta( aTmp, aTmpFac, aGet, oTotal )
    if lActCos()
 
       if aTmp[ _NPREUNIT ] != 0
-         aGet[ _LCHGLIN ]:Click( .t. ):Refresh()
+         aGet[ _LCHGLIN ]:Prvck( .t. ):Refresh()
       else
-         aGet[ _LCHGLIN ]:Click( .f. ):Refresh()
+         aGet[ _LCHGLIN ]:Prvck( .f. ):Refresh()
       end if
 
    end if
@@ -5252,7 +5242,7 @@ function nVtaFacPrv( cCodPrv, dDesde, dHasta, dbfFacPrvT, dbfFacPrvL, dbfIva, db
    local nRec     := ( dbfFacPrvT )->( Recno() )
 
    /*
-   Facturas a Clientes -------------------------------------------------------
+   Facturas a Prventes -------------------------------------------------------
    */
 
    if ( dbfFacPrvT )->( dbSeek( cCodPrv ) )
@@ -5279,7 +5269,7 @@ return nCon
 
 //----------------------------------------------------------------------------//
 //
-// Devuelve el total de pagos en Facturas de un clientes determinado
+// Devuelve el total de pagos en Facturas de un Prventes determinado
 //
 
 function nCobFacPrv( cCodPrv, dDesde, dHasta, dbfFacPrvT, dbfFacPrvP, dbfIva, dbfDiv, lOnlyCob, nYear )
@@ -5517,18 +5507,18 @@ RETURN NIL
 STATIC FUNCTION loaPrv( aGet, aTmp, dbfPrv, nMode, oSay, oTlfPrv )
 
    local lValid      := .f.
-   local cNewCodCli  := aGet[ _CCODPRV ]:VarGet()
-   local lChgCodCli  := ( Empty( cOldCodCli ) .or. cOldCodCli != cNewCodCli )
+   local cNewCodPrv  := aGet[ _CCODPRV ]:VarGet()
+   local lChgCodPrv  := ( Empty( cOldCodPrv ) .or. cOldCodPrv != cNewCodPrv )
 
-   if Empty( cNewCodCli )
+   if Empty( cNewCodPrv )
       Return .t.
-   elseif At( ".", cNewCodCli ) != 0
-      cNewCodCli := PntReplace( aGet[_CCODPRV], "0", RetNumCodPrvEmp() )
+   elseif At( ".", cNewCodPrv ) != 0
+      cNewCodPrv := PntReplace( aGet[_CCODPRV], "0", RetNumCodPrvEmp() )
    else
-      cNewCodCli := Rjust( cNewCodCli, "0", RetNumCodPrvEmp() )
+      cNewCodPrv := Rjust( cNewCodPrv, "0", RetNumCodPrvEmp() )
    end if
 
-   if ( dbfPrv )->( dbSeek( cNewCodCli ) )
+   if ( dbfPrv )->( dbSeek( cNewCodPrv ) )
 
       if ( dbfPrv )->lBlqPrv
          msgStop( "Proveedor bloqueado, no se pueden realizar operaciones de compra" )
@@ -5537,7 +5527,7 @@ STATIC FUNCTION loaPrv( aGet, aTmp, dbfPrv, nMode, oSay, oTlfPrv )
 
       aGet[_CCODPRV ]:cText( ( dbfPrv )->Cod )
 
-      if Empty( aGet[_CNOMPRV]:varGet() ) .or. lChgCodCli
+      if Empty( aGet[_CNOMPRV]:varGet() ) .or. lChgCodPrv
          aGet[_CNOMPRV]:cText( ( dbfPrv )->Titulo )
       end if
 
@@ -5545,34 +5535,34 @@ STATIC FUNCTION loaPrv( aGet, aTmp, dbfPrv, nMode, oSay, oTlfPrv )
          oTlfPrv:SetText( ( dbfPrv )->Telefono )
       end if
 
-      if Empty( aGet[_CDIRPRV]:varGet() ) .or. lChgCodCli
+      if Empty( aGet[_CDIRPRV]:varGet() ) .or. lChgCodPrv
          aGet[_CDIRPRV]:cText( ( dbfPrv )->Domicilio )
       endif
 
-      if Empty( aGet[_CPOBPRV]:varGet() ) .or. lChgCodCli
+      if Empty( aGet[_CPOBPRV]:varGet() ) .or. lChgCodPrv
          aGet[_CPOBPRV]:cText( (dbfPrv)->POBLACION )
       endif
 
-      if Empty( aGet[_CPROVPROV]:varGet() ) .or. lChgCodCli
+      if Empty( aGet[_CPROVPROV]:varGet() ) .or. lChgCodPrv
          aGet[_CPROVPROV]:cText( (dbfPrv)->PROVINCIA )
       endif
 
-      if Empty( aGet[_CPOSPRV]:varGet() ) .or. lChgCodCli
+      if Empty( aGet[_CPOSPRV]:varGet() ) .or. lChgCodPrv
          aGet[_CPOSPRV]:cText( (dbfPrv)->CODPOSTAL )
       endif
 
-      if Empty( aGet[_CDNIPRV]:varGet() ) .or. lChgCodCli
+      if Empty( aGet[_CDNIPRV]:varGet() ) .or. lChgCodPrv
          aGet[_CDNIPRV]:cText( (dbfPrv)->NIF )
       endif
 
-      if lChgCodCli
+      if lChgCodPrv
          aGet[ _CDTOESP ]:cText( ( dbfPrv )->cDtoEsp )
          aGet[ _NDTOESP ]:cText( ( dbfPrv )->nDtoEsp )
          aGet[ _CDPP    ]:cText( ( dbfPrv )->cDtoPP )
          aGet[ _NDPP    ]:cText( ( dbfPrv )->DtoPP )
       end if
 
-      if Empty( aGet[ _CCODPAGO ]:VarGet() ) .or. lChgCodCli
+      if Empty( aGet[ _CCODPAGO ]:VarGet() ) .or. lChgCodPrv
          aGet[ _CCODPAGO ]:cText( ( dbfPrv )->fPago )
          aGet[ _CCODPAGO ]:lValid()
 
@@ -5615,12 +5605,12 @@ STATIC FUNCTION loaPrv( aGet, aTmp, dbfPrv, nMode, oSay, oTlfPrv )
 
       end if
 
-      if Empty( aGet[ _NTIPRET ]:VarGet() ) .or. lChgCodCli
+      if Empty( aGet[ _NTIPRET ]:VarGet() ) .or. lChgCodPrv
          aGet[ _NTIPRET ]:oGet:cText(  ( dbfPrv )->nTipRet )
          aGet[ _NTIPRET ]:Select(      ( dbfPrv )->nTipRet )
       end if
 
-      if Empty( aGet[ _NPCTRET ]:VarGet() ) .or. lChgCodCli
+      if Empty( aGet[ _NPCTRET ]:VarGet() ) .or. lChgCodPrv
          aGet[ _NPCTRET ]:cText( ( dbfPrv )->nPctRet )
       end if
 
@@ -5645,16 +5635,16 @@ STATIC FUNCTION loaPrv( aGet, aTmp, dbfPrv, nMode, oSay, oTlfPrv )
 
       end if
 
-      if lChgCodCli
+      if lChgCodPrv
          aTmp[ _LRECARGO ] := ( dbfPrv )->lReq
          aGet[ _LRECARGO ]:Refresh()
       end if
 
-      if ( dbfPrv )->lMosCom .and. !Empty( ( dbfPrv )->mComent ) .and. lChgCodCli
+      if ( dbfPrv )->lMosCom .and. !Empty( ( dbfPrv )->mComent ) .and. lChgCodPrv
          MsgStop( AllTrim( ( dbfPrv )->mComent ) )
       end if
 
-      cOldCodCli  := ( dbfPrv )->Cod
+      cOldCodPrv  := ( dbfPrv )->Cod
       lValid      := .t.
 
 	ELSE
@@ -5851,7 +5841,7 @@ STATIC FUNCTION LoaArt( aGet, aTmp, aTmpFac, oFld, oSayPr1, oSayPr2, oSayVp1, oS
             nIva           := nIva( dbfIva, ( dbfArticulo )->TipoIva )
             aGet[ _NIVA    ]:cText( nIva )
             aGet[ _NIVALIN ]:cText( nIva )
-            aGet[ _LIVALIN ]:Click( ( dbfArticulo )->lIvaInc ):Refresh()
+            aGet[ _LIVALIN ]:Prvck( ( dbfArticulo )->lIvaInc ):Refresh()
 
             aTmp[ _NREQ ]  := nReq( dbfIva, ( dbfArticulo )->TipoIva )
 
@@ -6058,12 +6048,12 @@ STATIC FUNCTION LoaArt( aGet, aTmp, aTmpFac, oFld, oSayPr1, oSayPr2, oSayVp1, oS
             aGet[ _NBNFLIN5 ]:cText( ( dbfArticulo )->Benef5 )
             aGet[ _NBNFLIN6 ]:cText( ( dbfArticulo )->Benef6 )
 
-            aGet[ _LBNFLIN1 ]:Click( ( dbfArticulo )->lBnf1 ):Refresh()
-            aGet[ _LBNFLIN2 ]:Click( ( dbfArticulo )->lBnf2 ):Refresh()
-            aGet[ _LBNFLIN3 ]:Click( ( dbfArticulo )->lBnf3 ):Refresh()
-            aGet[ _LBNFLIN4 ]:Click( ( dbfArticulo )->lBnf4 ):Refresh()
-            aGet[ _LBNFLIN5 ]:Click( ( dbfArticulo )->lBnf5 ):Refresh()
-            aGet[ _LBNFLIN6 ]:Click( ( dbfArticulo )->lBnf6 ):Refresh()
+            aGet[ _LBNFLIN1 ]:Prvck( ( dbfArticulo )->lBnf1 ):Refresh()
+            aGet[ _LBNFLIN2 ]:Prvck( ( dbfArticulo )->lBnf2 ):Refresh()
+            aGet[ _LBNFLIN3 ]:Prvck( ( dbfArticulo )->lBnf3 ):Refresh()
+            aGet[ _LBNFLIN4 ]:Prvck( ( dbfArticulo )->lBnf4 ):Refresh()
+            aGet[ _LBNFLIN5 ]:Prvck( ( dbfArticulo )->lBnf5 ):Refresh()
+            aGet[ _LBNFLIN6 ]:Prvck( ( dbfArticulo )->lBnf6 ):Refresh()
 
             aGet[ _NPVPLIN1 ]:cText( ( dbfarticulo )->pVenta1  )
             aGet[ _NPVPLIN2 ]:cText( ( dbfArticulo )->pVenta2  )
@@ -6205,7 +6195,7 @@ STATIC FUNCTION SearchFact( oBrw )
 	local oDlg
 	local xToSearch
 	local nNumFac	:= 0
-	local cCodCli	:= (dbfFacPrvT)->CCODPRV
+	local cCodPrv	:= (dbfFacPrvT)->CCODPRV
 	local dFactura	:= date()
 	local nIndex	:= (dbfFacPrvT)->(OrdNumber())
 
@@ -6226,10 +6216,10 @@ STATIC FUNCTION SearchFact( oBrw )
 			COLOR 	CLR_GET ;
 			OF 		oDlg
 
-		REDEFINE GET cCodCli ;
+		REDEFINE GET cCodPrv ;
 			ID 		150 ;
 			WHEN 		( nIndex == 3 ) ;
-         VALID    ( xToSearch := cCodCli, .T. ) ;
+         VALID    ( xToSearch := cCodPrv, .T. ) ;
 			COLOR 	CLR_GET ;
 			OF 		oDlg
 
@@ -6410,7 +6400,7 @@ STATIC FUNCTION aGetSelRec( oBrw, bAction, cTitle, lHide1, cTitle1, lHide2, cTit
    */
 
    oTree             := TTreeView():Redefine( 170, oDlg )
-   oTree:bLDblClick  := {|| TreeChanged( oTree ) }
+   oTree:bLDblPrvck  := {|| TreeChanged( oTree ) }
 
    REDEFINE METER oMtrInf ;
       VAR      nMtrInf ;
@@ -6433,7 +6423,7 @@ STATIC FUNCTION aGetSelRec( oBrw, bAction, cTitle, lHide1, cTitle1, lHide2, cTit
 
    oDlg:bStart := {|| StartGetSelRec( oBrw, oRad, oChk1, oChk2, oSerIni, oSerFin, oDocIni, oDocFin, oSufIni, oSufFin, lHide1, lHide2, cTitle1, cTitle2 ) }
 
-   oDlg:AddFastKey( VK_F5, {|| oBtn:Click() } )
+   oDlg:AddFastKey( VK_F5, {|| oBtn:Prvck() } )
 
    ACTIVATE DIALOG oDlg ;
       CENTER ;
@@ -7238,7 +7228,7 @@ STATIC FUNCTION GrpAlb( oGet, aTmp, oBrw )
    oBrwLin:nMarqueeStyle         := 5
    oBrwLin:cName                 := "Factura de proveedor.Agrupar albaranes"
 
-   oBrwLin:bRClicked             := {| nRow, nCol, nFlags | oBrwLin:RButtonDown( nRow, nCol, nFlags ) }
+   oBrwLin:bRPrvcked             := {| nRow, nCol, nFlags | oBrwLin:RButtonDown( nRow, nCol, nFlags ) }
 
    oBrwLin:CreateFromResource( 130 )
 
@@ -8074,7 +8064,7 @@ STATIC FUNCTION EndTrans( aTmp, aGet, oBrw, oBrwLin, nMode, nDec, oDlg )
    end while
 
    /*
-   Si cambia el cliente en la factura, lo cambiamos en los recibos-------------
+   Si cambia el Prvente en la factura, lo cambiamos en los recibos-------------
    */
 
    ( dbfTmpPgo )->( dbGoTop() )
@@ -11311,7 +11301,7 @@ Method Create() CLASS TFacturaProveedorLabelGenerator
 
          ::oBrwLabel:bClrSel         := {|| { CLR_BLACK, Rgb( 229, 229, 229 ) } }
          ::oBrwLabel:bClrSelFocus    := {|| { CLR_BLACK, Rgb( 167, 205, 240 ) } }
-         ::oBrwLabel:bLDblClick      := {|| ::PutLabel() }
+         ::oBrwLabel:bLDblPrvck      := {|| ::PutLabel() }
 
          ::oBrwLabel:CreateFromResource( 180 )
 
@@ -11327,7 +11317,7 @@ Method Create() CLASS TFacturaProveedorLabelGenerator
             :bEditValue       := {|| ( ::cAreaTmpLabel )->cRef }
             :nWidth           := 80
             :cSortOrder       := "cRef"
-            :bLClickHeader    := {| nMRow, nMCol, nFlags, oCol | oCbxOrd:Set( oCol:cHeader ) }
+            :bLPrvckHeader    := {| nMRow, nMCol, nFlags, oCol | oCbxOrd:Set( oCol:cHeader ) }
       end with
 
          with object ( ::oBrwLabel:AddCol() )
@@ -11335,7 +11325,7 @@ Method Create() CLASS TFacturaProveedorLabelGenerator
             :bEditValue       := {|| ( ::cAreaTmpLabel )->cDetalle }
             :nWidth           := 250
             :cSortOrder       := "cDetalle"
-            :bLClickHeader    := {| nMRow, nMCol, nFlags, oCol | oCbxOrd:Set( oCol:cHeader ) }
+            :bLPrvckHeader    := {| nMRow, nMCol, nFlags, oCol | oCbxOrd:Set( oCol:cHeader ) }
       end with
 
          with object ( ::oBrwLabel:AddCol() )
@@ -12035,6 +12025,9 @@ Static Function DataLabel( oFr, lTemporal )
    oFr:SetWorkArea(     "Formas de pago", ( dbfFpago )->( Select() ) )
    oFr:SetFieldAliases( "Formas de pago", cItemsToReport( aItmFPago() ) )
 
+   oFr:SetWorkArea(     "Recibos", ( dbfFacPrvP )->( Select() ) )
+   oFr:SetFieldAliases( "Recibos", cItemsToReport( aItmRecPrv() ) )
+
    oFr:SetWorkArea(     "Artículos", ( dbfArticulo )->( Select() ) )
    oFr:SetFieldAliases( "Artículos", cItemsToReport( aItmArt() ) )
 
@@ -12046,6 +12039,9 @@ Static Function DataLabel( oFr, lTemporal )
 
    oFr:SetWorkArea(     "Bancos", ( dbfPrvBnc )->( Select() ) )
    oFr:SetFieldAliases( "Bancos", cItemsToReport( aPrvBnc() ) )
+
+   oFr:SetWorkArea(     "Usuarios", ( dbfUsr )->( Select() ) )
+   oFr:SetFieldAliases( "Usuarios", cItemsToReport( aItmUsr() ) )
 
    if lTemporal
       oFr:SetMasterDetail( "Lineas de facturas", "Facturas",                  {|| ( tmpFacPrvL )->cSerFac + Str( ( tmpFacPrvL )->nNumFac ) + ( tmpFacPrvL )->cSufFac } )
@@ -12066,6 +12062,8 @@ Static Function DataLabel( oFr, lTemporal )
    oFr:SetMasterDetail(    "Facturas", "Formas de pago",                      {|| ( dbfFacPrvT )->cCodPago} )
    oFr:SetMasterDetail(    "Facturas", "Bancos",                              {|| ( dbfFacPrvT )->cCodPrv } )
    oFr:SetMasterDetail(    "Facturas", "Empresa",                             {|| cCodigoEmpresaEnUso() } )
+   oFr:SetMasterDetail(    "Facturas", "Recibos",                             {|| ( dbfFacPrvT )->cSerFac + Str( ( dbfFacPrvT )->nNumFac ) + ( dbfFacPrvT )->cSufFac } )
+   oFr:SetMasterDetail(    "Facturas", "Usuarios",                            {|| ( dbfFacPrvT )->cCodUsr } )
 
    oFr:SetResyncPair(      "Lineas de facturas", "Facturas" )
    oFr:SetResyncPair(      "Lineas de facturas", "Artículos" )
@@ -12078,6 +12076,8 @@ Static Function DataLabel( oFr, lTemporal )
    oFr:SetResyncPair(      "Facturas", "Formas de pago" )
    oFr:SetResyncPair(      "Facturas", "Bancos" )
    oFr:SetResyncPair(      "Facturas", "Empresa" )
+   oFr:SetResyncPair(      "Facturas", "Recibos" )
+   oFr:SetResyncPair(      "Facturas", "Usuarios" )
 
 Return nil
 
@@ -12203,6 +12203,12 @@ Static Function DataReport( oFr )
    oFr:SetWorkArea(     "Bancos", ( dbfPrvBnc )->( Select() ) )
    oFr:SetFieldAliases( "Bancos", cItemsToReport( aPrvBnc() ) )
 
+   oFr:SetWorkArea(     "Recibos", ( dbfFacPrvP )->( Select() ) )
+   oFr:SetFieldAliases( "Recibos", cItemsToReport( aItmRecPrv() ) )
+
+   oFr:SetWorkArea(     "Usuarios", ( dbfUsr )->( Select() ) )
+   oFr:SetFieldAliases( "Usuarios", cItemsToReport( aItmUsr() ) )
+
    oFr:SetMasterDetail( "Facturas", "Lineas de facturas",      {|| ( dbfFacPrvT )->cSerFac + Str( ( dbfFacPrvT )->nNumFac ) + ( dbfFacPrvT )->cSufFac } )
    oFr:SetMasterDetail( "Facturas", "Incidencias de facturas", {|| ( dbfFacPrvT )->cSerFac + Str( ( dbfFacPrvT )->nNumFac ) + ( dbfFacPrvT )->cSufFac } )
    oFr:SetMasterDetail( "Facturas", "Documentos de facturas",  {|| ( dbfFacPrvT )->cSerFac + Str( ( dbfFacPrvT )->nNumFac ) + ( dbfFacPrvT )->cSufFac } )
@@ -12211,6 +12217,8 @@ Static Function DataReport( oFr )
    oFr:SetMasterDetail( "Facturas", "Formas de pago",          {|| ( dbfFacPrvT )->cCodPago} )
    oFr:SetMasterDetail( "Facturas", "Bancos",                  {|| ( dbfFacPrvT )->cCodPrv } )
    oFr:SetMasterDetail( "Facturas", "Empresa",                 {|| cCodigoEmpresaEnUso() } )
+   oFr:SetMasterDetail( "Facturas", "Recibos",                 {|| ( dbfFacPrvT )->cSerFac + Str( ( dbfFacPrvT )->nNumFac ) + ( dbfFacPrvT )->cSufFac } )
+   oFr:SetMasterDetail( "Facturas", "Usuarios",                {|| ( dbfFacPrvT )->cCodUsr } )
 
    oFr:SetMasterDetail( "Lineas de facturas", "Artículos",               {|| ( dbfFacPrvL )->cRef } )
    oFr:SetMasterDetail( "Lineas de facturas", "Código de proveedores",   {|| ( dbfFacPrvT )->cCodPrv + ( dbfFacPrvL )->cRef } )
@@ -12223,10 +12231,12 @@ Static Function DataReport( oFr )
    oFr:SetResyncPair(   "Facturas", "Almacenes" )
    oFr:SetResyncPair(   "Facturas", "Formas de pago" )
    oFr:SetResyncPair(   "Facturas", "Bancos" )
+   oFr:SetResyncPair(   "Facturas", "Recibos" )
+   oFr:SetResyncPair(   "Facturas", "Usuarios" )
 
    oFr:SetResyncPair(   "Lineas de facturas", "Artículos" )
    oFr:SetResyncPair(   "Lineas de facturas", "Código de proveedores" )
-   oFr:SetResyncPair(   "Lineas de facturas", "Unidades de medición" )
+   oFr:SetResyncPair(   "Lineas de facturas", "Unidades de medición" ) 
 
 Return nil
 
@@ -12721,7 +12731,7 @@ Function BrwFacPrv( oGet, oIva )
    nOrd              := Min( Max( nOrd, 1 ), len( aCbxOrd ) )
    cCbxOrd           := aCbxOrd[ nOrd ]
 
-   DEFINE DIALOG oDlg RESOURCE "HelpEntry" TITLE "Facturas rectificativas de clientes"
+   DEFINE DIALOG oDlg RESOURCE "HelpEntry" TITLE "Facturas rectificativas de Prventes"
 
 		REDEFINE GET oGet1 VAR cGet1;
 			ID 		104 ;
@@ -12746,7 +12756,7 @@ Function BrwFacPrv( oGet, oIva )
       oBrw:nMarqueeStyle   := 5
       oBrw:cName           := "Factura de proveedores.Browse"
 
-      oBrw:bLDblClick      := {|| oDlg:end( IDOK ) }
+      oBrw:bLDblPrvck      := {|| oDlg:end( IDOK ) }
 
       oBrw:CreateFromResource( 105 )
 
@@ -12755,7 +12765,7 @@ Function BrwFacPrv( oGet, oIva )
          :cSortOrder       := "nNumFac"
          :bEditValue       := {|| ( dbfFacPrvT )->cSerFac + "/" + RTrim( Str( ( dbfFacPrvT )->nNumFac ) ) + "/" + ( dbfFacPrvT )->cSufFac }
          :nWidth           := 80
-         :bLClickHeader    := {| nMRow, nMCol, nFlags, oCol | oCbxOrd:Set( oCol:cHeader ) }
+         :bLPrvckHeader    := {| nMRow, nMCol, nFlags, oCol | oCbxOrd:Set( oCol:cHeader ) }
       end with
 
       with object ( oBrw:AddCol() )
@@ -12763,7 +12773,7 @@ Function BrwFacPrv( oGet, oIva )
          :cSortOrder       := "dFecFac"
          :bEditValue       := {|| Dtoc( ( dbfFacPrvT )->dFecFac ) }
          :nWidth           := 80
-         :bLClickHeader    := {| nMRow, nMCol, nFlags, oCol | oCbxOrd:Set( oCol:cHeader ) }
+         :bLPrvckHeader    := {| nMRow, nMCol, nFlags, oCol | oCbxOrd:Set( oCol:cHeader ) }
       end with
 
       with object ( oBrw:AddCol() )
@@ -12771,7 +12781,7 @@ Function BrwFacPrv( oGet, oIva )
          :cSortOrder       := "cCodPrv"
          :bEditValue       := {|| Rtrim( ( dbfFacPrvT )->cCodPrv ) }
          :nWidth           := 80
-         :bLClickHeader    := {| nMRow, nMCol, nFlags, oCol | oCbxOrd:Set( oCol:cHeader ) }
+         :bLPrvckHeader    := {| nMRow, nMCol, nFlags, oCol | oCbxOrd:Set( oCol:cHeader ) }
       end with
 
       with object ( oBrw:AddCol() )
@@ -12779,7 +12789,7 @@ Function BrwFacPrv( oGet, oIva )
          :cSortOrder       := "cNomPrv"
          :bEditValue       := {|| Rtrim( ( dbfFacPrvT )->cNomPrv ) }
          :nWidth           := 180
-         :bLClickHeader    := {| nMRow, nMCol, nFlags, oCol | oCbxOrd:Set( oCol:cHeader ) }
+         :bLPrvckHeader    := {| nMRow, nMCol, nFlags, oCol | oCbxOrd:Set( oCol:cHeader ) }
       end with
 
       with object ( oBrw:AddCol() )
@@ -12913,7 +12923,7 @@ FUNCTION BrowseInformesFacPrv( oGet, oGet2 )
       oBrw:nMarqueeStyle   := 5
       oBrw:cName           := "Factura de proveedor.Browse informes"
 
-      oBrw:bLDblClick      := {|| oDlg:end( IDOK ) }
+      oBrw:bLDblPrvck      := {|| oDlg:end( IDOK ) }
 
       oBrw:CreateFromResource( 105 )
 
@@ -12922,7 +12932,7 @@ FUNCTION BrowseInformesFacPrv( oGet, oGet2 )
          :cSortOrder       := "nNumFac"
          :bEditValue       := {|| ( dbfFacPrvT )->cSerFac + "/" + RTrim( Str( ( dbfFacPrvT )->nNumFac ) ) + "/" + ( dbfFacPrvT )->cSufFac }
          :nWidth           := 80
-         :bLClickHeader    := {| nMRow, nMCol, nFlags, oCol | oCbxOrd:Set( oCol:cHeader ) }
+         :bLPrvckHeader    := {| nMRow, nMCol, nFlags, oCol | oCbxOrd:Set( oCol:cHeader ) }
       end with
 
       with object ( oBrw:AddCol() )
@@ -12930,7 +12940,7 @@ FUNCTION BrowseInformesFacPrv( oGet, oGet2 )
          :cSortOrder       := "dFecFac"
          :bEditValue       := {|| Dtoc( ( dbfFacPrvT )->dFecFac ) }
          :nWidth           := 80
-         :bLClickHeader    := {| nMRow, nMCol, nFlags, oCol | oCbxOrd:Set( oCol:cHeader ) }
+         :bLPrvckHeader    := {| nMRow, nMCol, nFlags, oCol | oCbxOrd:Set( oCol:cHeader ) }
       end with
 
       with object ( oBrw:AddCol() )
@@ -12938,15 +12948,15 @@ FUNCTION BrowseInformesFacPrv( oGet, oGet2 )
          :cSortOrder       := "cCodPrv"
          :bEditValue       := {|| Rtrim( ( dbfFacPrvT )->cCodPrv ) }
          :nWidth           := 80
-         :bLClickHeader    := {| nMRow, nMCol, nFlags, oCol | oCbxOrd:Set( oCol:cHeader ) }
+         :bLPrvckHeader    := {| nMRow, nMCol, nFlags, oCol | oCbxOrd:Set( oCol:cHeader ) }
       end with
 
       with object ( oBrw:AddCol() )
          :cHeader          := "Nombre"
-         :cSortOrder       := "cNomCli"
+         :cSortOrder       := "cNomPrv"
          :bEditValue       := {|| Rtrim( ( dbfFacPrvT )->cNomPrv ) }
          :nWidth           := 180
-         :bLClickHeader    := {| nMRow, nMCol, nFlags, oCol | oCbxOrd:Set( oCol:cHeader ) }
+         :bLPrvckHeader    := {| nMRow, nMCol, nFlags, oCol | oCbxOrd:Set( oCol:cHeader ) }
       end with
 
       with object ( oBrw:AddCol() )

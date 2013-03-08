@@ -581,7 +581,7 @@ METHOD Activate()
          ::oWndBrw:cHtmlHelp  := ::cHtmlHelp
       end if
 
-      ::oWndBrw:Activate(  nil, nil, nil, nil, nil, nil, nil, nil, nil, nil, nil, nil, nil, nil, nil, nil, {|| ::CloseFiles() } )
+      ::oWndBrw:Activate( nil, nil, nil, nil, nil, nil, nil, nil, nil, nil, nil, nil, nil, nil, nil, nil, {|| ::CloseFiles() } )
 
    else
 

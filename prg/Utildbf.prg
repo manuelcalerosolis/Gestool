@@ -1788,7 +1788,7 @@ FUNCTION WinDelRec( oBrw, cAlias, bPreBlock, bPostBlock, lMaster, lTactil )
                   CheckEval( bPostBlock )
                end if
 
-               oBrw:Refresh()
+               // oBrw:Refresh()
 
             end if
 
