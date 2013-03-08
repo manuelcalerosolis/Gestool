@@ -1,14 +1,8 @@
-#ifndef __PDA__
-   #include "FiveWin.Ch"
-   #include "Font.ch"
-   #include "Report.ch"
-   #include "Factu.ch"
-   #include "Xbrowse.ch"
-#else
-   #include "FWCE.ch"
-   REQUEST DBFCDX
-#endif
-
+#include "FiveWin.Ch"
+#include "Font.ch"
+#include "Report.ch"
+#include "Factu.ch"
+#include "Xbrowse.ch"
 #include "MesDbf.ch"
 
 //---------------------------------------------------------------------------//
@@ -1166,51 +1160,45 @@ METHOD Del() CLASS TMant
       oBrw           := ::oWndBrw:oBrw
    end if
 
-<<<<<<< HEAD
    if ( "XBROWSE" $ oBrw:ClassName() )
 
       nMarked        := len( oBrw:aSelected )
       if nMarked > 1
+
          cTxt        := "¿ Desea eliminar definitivamente " + AllTrim( Trans( nMarked, "999999" ) ) + " registros ?"
-=======
-      if ::bOnPreDelete != nil
-         lTrigger := Eval( ::bOnPreDelete, Self )
-         if IsFalse( lTrigger )
-            return .f.
-         end if
->>>>>>> 2fa3198b786b843466d8340c837d9886c4471d96
-      end if
 
-      if oUser():lNotConfirmDelete() .or. ApoloMsgNoYes( cTxt, "Confirme supresión" )
+         if oUser():lNotConfirmDelete() .or. ApoloMsgNoYes( cTxt, "Confirme supresión" )
 
-         CursorWait()
+            CursorWait()
 
-         for each nRec in ( oBrw:aSelected )
+            for each nRec in ( oBrw:aSelected )
 
-            ::oDbf:GoTo( nRec )
+               ::oDbf:GoTo( nRec )
 
-            if ::bOnPreDelete != nil
-               lTrigger := Eval( ::bOnPreDelete, Self )
-               if IsFalse( lTrigger )
-                  return .f.
+               if ::bOnPreDelete != nil
+                  lTrigger := Eval( ::bOnPreDelete, Self )
+                  if IsFalse( lTrigger )
+                     return .f.
+                  end if
                end if
-            end if
-   
-            if ::oDbf:RecLock()
-               lDel     := ::oDbf:Delete()
-               ::oDbf:UnLock()
-            end if
-   
-            if ::bOnPostDelete != nil
-               lTrigger := Eval( ::bOnPostDelete, Self )
-               if IsFalse( lTrigger )
-                  return .f.
+      
+               if ::oDbf:RecLock()
+                  lDel     := ::oDbf:Delete()
+                  ::oDbf:UnLock()
                end if
-            end if
+      
+               if ::bOnPostDelete != nil
+                  lTrigger := Eval( ::bOnPostDelete, Self )
+                  if IsFalse( lTrigger )
+                     return .f.
+                  end if
+               end if
+   
+            next 
+   
+            CursorWE()
 
-         next 
-
-         CursorWE()
+         end if 
 
       end if
 
@@ -1253,27 +1241,10 @@ METHOD Del() CLASS TMant
       end if
    end if
 
-<<<<<<< HEAD
-<<<<<<< HEAD
-=======
    if ::oWndBrw != nil
       ::oWndBrw:Refresh()
    end if
 
->>>>>>> 2fa3198b786b843466d8340c837d9886c4471d96
-=======
-   if ::bOnPostDelete != nil
-      lTrigger := Eval( ::bOnPostDelete, Self )
-      if IsFalse( lTrigger )
-         return .f.
-      end if
-   end if
-
-   if ::oWndBrw != nil
-      ::oWndBrw:Refresh()
-   end if
-
->>>>>>> 2fa3198b786b843466d8340c837d9886c4471d96
 RETURN ( lDel )
 
 //---------------------------------------------------------------------------//
