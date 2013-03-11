@@ -14764,9 +14764,8 @@ Static Function nChkPagTik( cNumTik, dbfTikT, dbfTikL, dbfTikP, dbfIva, dbfDiv )
 
    if !( dbfTikT )->lPgdTik
 
-      nTot        := nTotTik( ( dbfTikT )->cSerTik + ( dbfTikT )->cNumTik + ( dbfTikT )->cSufTik, dbfTikT, dbfTikL, dbfDiv, nil, cDivEmp(), .f. )
-      nCob        := nTotCobTik( ( dbfTikT )->cSerTik + ( dbfTikT )->cNumTik + ( dbfTikT )->cSufTik, dbfTikP, dbfDiv, cDivEmp(), .f. )
-      nCob        += nTotValTik( ( dbfTikT )->cSerTik + ( dbfTikT )->cNumTik + ( dbfTikT )->cSufTik, dbfTikT, dbfTikL, dbfDiv, cDivEmp(), .f. )
+      nTot        := ( dbfTikT )->nTotTik
+      nCob        := ( dbfTikT )->nCobTik 
 
       do case
       case !lMayorIgual( nTot, nCob )
@@ -21988,6 +21987,9 @@ FUNCTION nTotLTpv( uTmpL, nDec, nRouDec, nVdv )
    local nCalculo := nTotLUno( uTmpL, nDec, nRouDec, nVdv )
    nCalculo       += nTotLDos( uTmpL, nDec, nRouDec, nVdv )
 
+   msgAlert( nTotLUno( uTmpL, nDec, nRouDec, nVdv ), "nTotLUno" )
+   msgAlert( nTotLDos( uTmpL, nDec, nRouDec, nVdv ), "nTotLDos" )
+
 RETURN ( nCalculo )
 
 //---------------------------------------------------------------------------//
@@ -24239,8 +24241,6 @@ FUNCTION sTotTikCli( cNumTik, cTikT, cTikL, cDiv, cDivRet )
    local sTotal
 
    nTotTik( cNumTik, cTikT, cTikL, cDiv, nil, cDivRet )   
-
-
 
    sTotal                                 := sTotal()
 
