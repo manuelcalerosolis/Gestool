@@ -317,12 +317,16 @@ METHOD Actualizaweb( cCodWeb, lDel ) Class TGrpFam
 
    DEFAULT lDel      := .f.
 
-   if ::lPubGrp() .or. lDel
-      with object ( TComercio():GetInstance() )
-         :ActualizaGrupoCategoriesPrestashop( ::oDbf:cCodGrp, lDel, cCodWeb )
-      end with
-   end if
-   
+   if uFieldEmpresa( "lRealWeb" )
+
+      if ::lPubGrp() .or. lDel
+         with object ( TComercio():GetInstance() )
+            :ActualizaGrupoCategoriesPrestashop( ::oDbf:cCodGrp, lDel, cCodWeb )
+         end with
+      end if
+      
+   end if   
+      
 Return .t.
 
 //----------------------------------------------------------------------------//

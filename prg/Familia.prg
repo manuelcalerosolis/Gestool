@@ -1202,11 +1202,15 @@ RETURN .T.
 
 Static Function Actualizaweb( cCodFam )
 
-   if lPubFam()
+   if uFieldEmpresa( "lRealWeb" )
 
-      with object ( TComercio():GetInstance() )
-         :ActualizaCategoriesPrestashop( cCodFam )
-      end with
+      if lPubFam()
+
+         with object ( TComercio():GetInstance() )    
+            :ActualizaCategoriesPrestashop( cCodFam )
+         end with  
+
+      end if   
 
    end if   
 
