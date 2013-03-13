@@ -89,11 +89,9 @@ CLASS TComercio
    DATA  lSincAll
    DATA  oArticulos
    DATA  lArticulos
-   DATA  oFamilias
    DATA  lFamilias
    DATA  oPedidos
    DATA  lPedidos
-   DATA  oFabricantes
    DATA  lFabricantes
    DATA  oTipIva
    DATA  lIva
@@ -361,6 +359,8 @@ CLASS TComercio
    METHOD ActualizaGrupoCategoriesPrestashop( oDbf )
 
    METHOD AppendArticuloPrestashop()
+
+   METHOD ActualizaProductsPrestashop( oDbf )
 
    METHOD InsertProductsPrestashop()
 
@@ -804,18 +804,8 @@ METHOD Activate( oWnd ) CLASS TComercio
          WHEN      ( ::nExportar == 1 .and. !::lSincAll );
          OF       ::oFld:aDialogs[ 1 ]
 
-       REDEFINE CHECKBOX ::oFamilias VAR ::lFamilias ;
-         ID       150 ;
-         WHEN      ( ::nExportar == 1 .and. !::lSincAll );
-         OF       ::oFld:aDialogs[ 1 ]
-
        REDEFINE CHECKBOX ::oPedidos VAR ::lPedidos ;
          ID       160 ;
-         WHEN      ( ::nExportar == 1 .and. !::lSincAll );
-         OF       ::oFld:aDialogs[ 1 ]
-
-       REDEFINE CHECKBOX ::oFabricantes VAR ::lFabricantes ;
-         ID       170 ;
          WHEN      ( ::nExportar == 1 .and. !::lSincAll );
          OF       ::oFld:aDialogs[ 1 ]
 
@@ -6265,17 +6255,13 @@ METHOD ChangeSincAll()
       ::lIva            := .t.
 
       ::oArticulos:Disable()
-      ::oFamilias:Disable()
       ::oPedidos:Disable()
-      ::oFabricantes:Disable()
       ::oTipIva:Disable()
 
    else
 
       ::oArticulos:Enable()
-      ::oFamilias:Enable()
       ::oPedidos:Enable()
-      ::oFabricantes:Enable()
       ::oTipIva:Enable()
 
    end if
@@ -6627,38 +6613,30 @@ Method ExportarPrestashop() Class TComercio
                end if
 
                /*
-               Pasamos los tipos de fabricantes a prestashop------------------------
-               */
-
-               if ::lFabricantes .or. ::lSincAll
-                  ::MeterGlobalText( "Actualizando fabricantes" )
-                  ::SetText ( 'Exportando tablas de fabricantes', 2 )
-                  ::AppendFabricantesPrestashop()
-                  sysRefresh()
-               end if
-
-               /*
-               Pasamos las familias a prestashop-------------------------------
-               */
-
-               if ::lFamilias .or. ::lSincAll
-                  ::MeterGlobalText( "Actualizando familias" )
-                  ::SetText ( 'Exportando tablas de familias de artículos', 2 )
-                  ::AppendFamiliaPrestashop( odb )
-                  sysRefresh()
-               end if
-
-               /*
                Pasamos los artículos a prestashop------------------------------
                */
 
                if ::lArticulos .or. ::lSincAll
 
+                  ::MeterGlobalText( "Actualizando fabricantes" )
+                  ::SetText ( 'Exportando tablas de fabricantes', 2 )
+                  ::AppendFabricantesPrestashop()
+                  sysRefresh()
+
+                  ::MeterGlobalText( "Actualizando familias" )
+                  ::SetText ( 'Exportando tablas de familias de artículos', 2 )
+                  ::AppendFamiliaPrestashop( odb )
+                  sysRefresh()
+
                   ::MeterGlobalText( "Actualizando artículos" )
                   ::SetText ( 'Exportando tablas de propiedades de artículos', 2 )
                   ::AppendPropiedadesPrestashop()
+                  sysRefresh()
+
                   ::SetText ( 'Exportando tablas de artículos', 2 )
                   ::AppendArticuloPrestashop( odb )
+                  sysRefresh()
+
                   ::RecalculaPosicionesCategoriasPrestashop()
                   sysRefresh()
 
@@ -8129,6 +8107,79 @@ METHOD AppendArticuloPrestashop( oDb )
    ::oMeterL:SetTotal( ::oArt:LastRec() )
 
 return ( Self )
+
+//---------------------------------------------------------------------------//
+
+Method ActualizaProductsPrestashop( cCodigoArticulo ) CLASS TComercio
+
+   local oQuery
+   local cCommand
+
+   if !::lReady()
+      Return .f.
+   end if
+   
+   ::lShowDialogWait()
+
+   if ::OpenFiles()
+
+      if ::oArt:Seek( cCodigoArticulo )
+   
+         if ::ConectBBDD()
+   
+            do case
+               case !::oArt:lPubInt .and. ::oArt:cCodWeb != 0
+      
+                  ?"Eliminar artículo"
+
+                  ::DeleteProductsPrestashop()
+      
+               case ::oArt:lPubInt .and. ::oArt:cCodWeb != 0
+      
+                  cCommand := 'SELECT * FROM ' + ::cPrefixTable( "product" ) +  ' WHERE id_product=' + AllTrim( Str( ::oArt:cCodWeb ) )
+                  oQuery   := TMSQuery():New( ::oCon, cCommand )
+      
+                  if oQuery:Open()
+      
+                     if oQuery:RecCount() > 0
+      
+                        ?"actualizar artículo"
+
+                        ::UpdateProductsPrestashop()
+      
+                     else
+      
+                        ?"Insertar articulo query"
+
+                        ::InsertProductsPrestashop()
+      
+                     end if
+      
+                  end if
+      
+                  oQuery:Free()
+      
+               case ::oArt:lPubInt .and. ::oArt:cCodWeb == 0
+      
+                  ?"Insertar articulo"
+
+                  ::InsertProductsPrestashop()
+      
+            end case   
+
+            ::DisconectBBDD()
+   
+         endif      
+
+      end if
+
+      ::CloseFiles()
+
+   end if
+
+   ::lHideDialogWait()
+
+Return .t.
 
 //---------------------------------------------------------------------------//
 

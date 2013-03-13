@@ -4150,12 +4150,13 @@ STATIC FUNCTION EdtRec( aTmp, aGet, dbfArticulo, oBrw, bWhen, bValid, nMode )
          ID       121 ;
          PICTURE  "@E 999.99" ;
          SPINNER  MIN 0 MAX 100;
-         WHEN     ( aTmp[ ( dbfArticulo )->( fieldpos( "lPubInt" ) ) ] .and. nMode != ZOOM_MODE ) ;
+         WHEN     ( aTmp[ ( dbfArticulo )->( fieldpos( "lPubInt" ) ) ] .and. aTmp[ ( dbfArticulo )->( fieldpos( "lSbrInt" ) ) ] .and. nMode != ZOOM_MODE ) ;
          ON CHANGE( CalDtoWeb(   aTmp[ ( dbfArticulo )->( fieldpos( "pVtaWeb"  ) ) ],;
                                  aTmp[ ( dbfArticulo )->( fieldpos( "TipoIva"  ) ) ],;
                                  aTmp[ ( dbfArticulo )->( fieldpos( "nDtoInt1" ) ) ],;
                                  aGet[ ( dbfArticulo )->( fieldpos( "nImpInt1" ) ) ],;
-                                 aGet[ ( dbfArticulo )->( fieldpos( "nImpIva1" ) ) ] ) );
+                                 aGet[ ( dbfArticulo )->( fieldpos( "nImpIva1" ) ) ],;
+                                 aTmp[ ( dbfArticulo )->( fieldpos( "lSbrInt" ) ) ] ) );
          OF       fldWeb
 
    REDEFINE GET   aGet[ ( dbfArticulo )->( fieldpos( "nImpInt1" ) ) ] ;
@@ -4191,6 +4192,11 @@ STATIC FUNCTION EdtRec( aTmp, aGet, dbfArticulo, oBrw, bWhen, bValid, nMode )
          OF       fldWeb
 
 
+   REDEFINE CHECKBOX aTmp[ ( dbfArticulo )->( fieldpos( "LSBRINT" ) ) ] ;
+         ID       160 ;
+         WHEN     ( nMode != ZOOM_MODE ) ;
+         OF       fldWeb
+
    REDEFINE GET   aGet[ ( dbfArticulo )->( fieldpos( "nTarWeb" ) ) ] ;
          VAR      aTmp[ ( dbfArticulo )->( fieldpos( "nTarWeb" ) ) ] ;
          ID       150 ;
@@ -4198,7 +4204,7 @@ STATIC FUNCTION EdtRec( aTmp, aGet, dbfArticulo, oBrw, bWhen, bValid, nMode )
          SPINNER ;
          MIN      1 ;
          MAX      6 ;
-         WHEN     ( nMode != ZOOM_MODE );
+         WHEN     ( nMode != ZOOM_MODE .and. aTmp[ ( dbfArticulo )->( fieldpos( "LSBRINT" ) ) ] );
          VALID    ( ( aTmp[ ( dbfArticulo )->( fieldpos( "nTarWeb" ) ) ] >= 1 .and. aTmp[ ( dbfArticulo )->( fieldpos( "nTarWeb" ) ) ] <= 6 ), ChangeTarWeb( aGet, aTmp ) );
          OF       fldWeb
 
@@ -5642,21 +5648,33 @@ Static Function EndTrans( aTmp, aGet, oSay, oDlg, aTipBar, cTipBar, nMode, oImpC
       end if
 
       /*
-      Cambios para publicar en internet-------------------------------------------
+      Cambios para publicar en internet----------------------------------------
       */
 
       ChangePublicar( aTmp )
 
+      ChangeTarWeb( aGet, aTmp )
+
       /*
-      Grabamos el registro a disco------------------------------------------------
+      Grabamos el registro a disco---------------------------------------------
       */
 
       WinGather( aTmp, aGet, dbfArticulo, nil, nMode )
 
+      /*
+      Actualizamos los datos de la web para tiempo real------------------------
+      */
+
+      Actualizaweb( cCod )
+
+      /*
+      Terminamos la transación-------------------------------------------------
+      */
+
       CommitTransaction()
 
       /*
-      Recalculamos la posición----------------------------------------------------
+      Recalculamos la posición-------------------------------------------------
       */
 
    RECOVER USING oError
@@ -7726,12 +7744,18 @@ Return ( nPorcentajeBeneficio )
 
 //----------------------------------------------------------------------------//
 
-Static Function CalDtoWeb( nImpVta, cTipIva, nDtoInt, oImpInt, oImpIva )
+Static Function CalDtoWeb( nImpVta, cTipIva, nDtoInt, oImpInt, oImpIva, lSbrInt )
 
-   local nImpWeb  := nImpVta - ( nImpVta * nDtoInt / 100 )
+   local nImpWeb
 
-   oImpInt:cText( nImpWeb )
-   oImpIva:cText( ( nImpWeb * nIva( dbfIva, cTipIva ) / 100 ) + nImpWeb )
+   if lSbrInt
+
+      nImpWeb     := nImpVta - ( nImpVta * nDtoInt / 100 )
+
+      oImpInt:cText( nImpWeb )
+      oImpIva:cText( ( nImpWeb * nIva( dbfIva, cTipIva ) / 100 ) + nImpWeb )
+
+   end if
 
 return .t.
 
@@ -15321,6 +15345,7 @@ function aItmArt()
    aAdd( aBase, { "cRefPrv",   "C", 18, 0, "Referencia del proveedor al artículo" ,    "",                  "", "( cDbfArt )", nil } )
    aAdd( aBase, { "cCodSec",   "C",  3, 0, "Código de la sección para producción" ,    "",                  "", "( cDbfArt )", nil } )
    aAdd( aBase, { "nFacCnv",   "N", 16, 6, "Factor de conversión" ,                    "",                  "", "( cDbfArt )", nil } )
+   aAdd( aBase, { "lSbrInt",   "L",  1, 0, "Lógico precio libre internet" ,            "",                  "", "( cDbfArt )", nil } )
 
 return ( aBase )
 
@@ -17998,28 +18023,32 @@ Return ( cFirstImage )
 
 Function ChangeTarWeb( aGet, aTmp )
 
-   do case
-      case aTmp[ ( dbfArticulo )->( fieldpos( "nTarWeb" ) ) ] == 1
-           aGet[ ( dbfArticulo )->( fieldpos( "pVtaWeb" ) ) ]:cText( aTmp[ ( dbfArticulo )->( fieldpos( "PVENTA1" ) ) ] )
+   if aTmp[ ( dbfArticulo )->( fieldpos( "LSBRINT" ) ) ]
 
-      case aTmp[ ( dbfArticulo )->( fieldpos( "nTarWeb" ) ) ] == 2
-           aGet[ ( dbfArticulo )->( fieldpos( "pVtaWeb" ) ) ]:cText( aTmp[ ( dbfArticulo )->( fieldpos( "PVENTA2" ) ) ] )
+      do case
+         case aTmp[ ( dbfArticulo )->( fieldpos( "nTarWeb" ) ) ] == 1
+            aGet[ ( dbfArticulo )->( fieldpos( "pVtaWeb" ) ) ]:cText( aTmp[ ( dbfArticulo )->( fieldpos( "PVENTA1" ) ) ] )
 
-      case aTmp[ ( dbfArticulo )->( fieldpos( "nTarWeb" ) ) ] == 3
-           aGet[ ( dbfArticulo )->( fieldpos( "pVtaWeb" ) ) ]:cText( aTmp[ ( dbfArticulo )->( fieldpos( "PVENTA3" ) ) ] )
+         case aTmp[ ( dbfArticulo )->( fieldpos( "nTarWeb" ) ) ] == 2
+            aGet[ ( dbfArticulo )->( fieldpos( "pVtaWeb" ) ) ]:cText( aTmp[ ( dbfArticulo )->( fieldpos( "PVENTA2" ) ) ] )
 
-      case aTmp[ ( dbfArticulo )->( fieldpos( "nTarWeb" ) ) ] == 4
-           aGet[ ( dbfArticulo )->( fieldpos( "pVtaWeb" ) ) ]:cText( aTmp[ ( dbfArticulo )->( fieldpos( "PVENTA4" ) ) ] )
+         case aTmp[ ( dbfArticulo )->( fieldpos( "nTarWeb" ) ) ] == 3
+            aGet[ ( dbfArticulo )->( fieldpos( "pVtaWeb" ) ) ]:cText( aTmp[ ( dbfArticulo )->( fieldpos( "PVENTA3" ) ) ] )
 
-      case aTmp[ ( dbfArticulo )->( fieldpos( "nTarWeb" ) ) ] == 5
-           aGet[ ( dbfArticulo )->( fieldpos( "pVtaWeb" ) ) ]:cText( aTmp[ ( dbfArticulo )->( fieldpos( "PVENTA5" ) ) ] )
+         case aTmp[ ( dbfArticulo )->( fieldpos( "nTarWeb" ) ) ] == 4
+            aGet[ ( dbfArticulo )->( fieldpos( "pVtaWeb" ) ) ]:cText( aTmp[ ( dbfArticulo )->( fieldpos( "PVENTA4" ) ) ] )
 
-      case aTmp[ ( dbfArticulo )->( fieldpos( "nTarWeb" ) ) ] == 6
-           aGet[ ( dbfArticulo )->( fieldpos( "pVtaWeb" ) ) ]:cText( aTmp[ ( dbfArticulo )->( fieldpos( "PVENTA6" ) ) ] )
+         case aTmp[ ( dbfArticulo )->( fieldpos( "nTarWeb" ) ) ] == 5
+            aGet[ ( dbfArticulo )->( fieldpos( "pVtaWeb" ) ) ]:cText( aTmp[ ( dbfArticulo )->( fieldpos( "PVENTA5" ) ) ] )
 
-   end case
+         case aTmp[ ( dbfArticulo )->( fieldpos( "nTarWeb" ) ) ] == 6
+            aGet[ ( dbfArticulo )->( fieldpos( "pVtaWeb" ) ) ]:cText( aTmp[ ( dbfArticulo )->( fieldpos( "PVENTA6" ) ) ] )
 
-   Eval( aGet[ ( dbfArticulo )->( fieldpos( "nDtoInt1" ) ) ]:bChange )
+      end case
+
+      Eval( aGet[ ( dbfArticulo )->( fieldpos( "nDtoInt1" ) ) ]:bChange )
+
+   end if   
 
 Return ( .t. )
 
@@ -18108,5 +18137,45 @@ Static Function ChangeFactorConversion( aTmp, aGet )
    end if
 
 Return ( .t. )
+
+//---------------------------------------------------------------------------//
+
+Static Function Actualizaweb( cCodArt )
+
+   if uFieldEmpresa( "lRealWeb" )
+
+      if lPubArt()
+
+         with object ( TComercio():GetInstance() )    
+            :ActualizaProductsPrestashop( cCodArt )
+         end with  
+
+      end if   
+
+   end if   
+
+Return .t.
+
+//---------------------------------------------------------------------------//
+
+Static Function lPubArt()
+
+   local lPub  := .f.
+
+   if ( dbfArticulo )->lPubInt
+
+      lPub     := .t.
+
+   else
+
+      if ( dbfArticulo )->cCodWeb != 0
+
+         lPub  := .t.
+
+      end if
+
+   end if
+
+Return lPub
 
 //---------------------------------------------------------------------------//
