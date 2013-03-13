@@ -8126,12 +8126,10 @@ Method ActualizaProductsPrestashop( cCodigoArticulo ) CLASS TComercio
       if ::oArt:Seek( cCodigoArticulo )
    
          if ::ConectBBDD()
-   
+
             do case
                case !::oArt:lPubInt .and. ::oArt:cCodWeb != 0
       
-                  ?"Eliminar artículo"
-
                   ::DeleteProductsPrestashop()
       
                case ::oArt:lPubInt .and. ::oArt:cCodWeb != 0
@@ -8143,14 +8141,10 @@ Method ActualizaProductsPrestashop( cCodigoArticulo ) CLASS TComercio
       
                      if oQuery:RecCount() > 0
       
-                        ?"actualizar artículo"
-
                         ::UpdateProductsPrestashop()
       
                      else
       
-                        ?"Insertar articulo query"
-
                         ::InsertProductsPrestashop()
       
                      end if
@@ -8161,8 +8155,6 @@ Method ActualizaProductsPrestashop( cCodigoArticulo ) CLASS TComercio
       
                case ::oArt:lPubInt .and. ::oArt:cCodWeb == 0
       
-                  ?"Insertar articulo"
-
                   ::InsertProductsPrestashop()
       
             end case   
@@ -8307,7 +8299,7 @@ METHOD InsertProductsPrestashop() CLASS TComercio
                   " VALUES " + ;
                      "('" + Str( nCodigoWeb ) + "', " + ;               // id_product
                      "'" + Str( ::nLanguage ) + "', " + ;               // id_lang
-                     "'" + AllTrim( ::oArt:mDesTec ) + "', " + ;        // description
+                     "'" + if( !Empty( ::oArt:mDesTec ), AllTrim( ::oArt:mDesTec ), AllTrim( ::oArt:Nombre ) ) + "', " + ;        // description
                      "'" + AllTrim( ::oArt:Nombre ) + "', " + ;         // description_short
                      "'" + cLinkRewrite( ::oArt:Nombre ) + "', " + ;    // link_rewrite
                      "'" + AllTrim( ::oArt:Nombre ) + "', " + ;         // name
@@ -8858,20 +8850,38 @@ METHOD UpdateProductsPrestashop() CLASS TComercio
 
    local cCommand    := ""
    local lReturn     := .f.
+   local nParent     := ::GetParentCategories()
 
    cCommand          := "UPDATE " + ::cPrefixTable( "product" ) + " SET " + ;
                            "id_manufacturer='" + AllTrim( Str( oRetFld( ::oArt:cCodFab, ::oFab, "CCODWEB", "CCODFAB" ) ) ) + "', " + ;
                            "id_tax_rules_group='" + AllTrim( Str( oRetFld( ::oArt:TipoIva, ::oIva, "CGRPWEB", "TIPO" ) ) ) + "', " + ;
-                           "id_category_default='" + AllTrim( Str( ::GetParentCategories() ) ) + "', " + ;
-                           "price='" + AllTrim( Str( ::oArt:nImpInt1 ) ) + "', " + ;
+                           "id_category_default='" + AllTrim( Str( nParent ) ) + "', " + ;
+                           "price='" + if( !Empty( ::oArt:cCodPrp1 ), "0", AllTrim( Str( ::oArt:nImpInt1 ) ) ) + "', " + ;
                            "date_upd='" + AllTrim( dtoc( GetSysDate() ) ) + "' " + ;
                         "WHERE id_product=" + AllTrim( Str( ::oArt:cCodWeb ) )
+
    lReturn           := TMSCommand():New( ::oCon ):ExecDirect( cCommand )
 
-   cCommand          := "UPDATE " + ::cPrefixTable( "product_lang" ) + "SET " + ;
-                           "description='" + AllTrim( ::oArt:Nombre ) + "', " + ;
-                           "description_short='" + AllTrim( ::oArt:Nombre ) + "' " + ;
+   cCommand          := "UPDATE " + ::cPrefixTable( "product_lang" ) + " SET " + ;
+                           "description='" + if( !Empty( ::oArt:mDesTec ), AllTrim( ::oArt:mDesTec ), AllTrim( ::oArt:Nombre ) ) + "', " + ;
+                           "description_short='" + AllTrim( ::oArt:Nombre ) + "', " + ;
+                           "name='" + AllTrim( ::oArt:Nombre ) + "' " + ;
                         "WHERE id_product=" + AllTrim( Str( ::oArt:cCodWeb ) )
+
+   lReturn           := TMSCommand():New( ::oCon ):ExecDirect( cCommand )
+
+   cCommand          := "UPDATE " + ::cPrefixTable( "product_shop" ) + " SET " + ;
+                           "id_category_default='" + AllTrim( Str( nParent ) ) + "', " + ;
+                           "price='" + if( !Empty( ::oArt:cCodPrp1 ), "0", AllTrim( Str( ::oArt:nImpInt1 ) ) ) + "', " + ;
+                           "date_upd='" + AllTrim( dtoc( GetSysDate() ) ) + "' " + ;
+                        "WHERE id_product=" + AllTrim( Str( ::oArt:cCodWeb ) )
+
+   lReturn           := TMSCommand():New( ::oCon ):ExecDirect( cCommand )
+
+   cCommand          := "UPDATE " + ::cPrefixTable( "category_product" ) + " SET " + ;
+                           "id_category='" + AllTrim( Str( nParent ) ) + "' " + ;
+                        "WHERE id_product=" + AllTrim( Str( ::oArt:cCodWeb ) )
+
    lReturn           := TMSCommand():New( ::oCon ):ExecDirect( cCommand )
 
 Return ( self )
@@ -8919,7 +8929,7 @@ METHOD DeleteProductsPrestashop() CLASS TComercio
    cCommand          := "DELETE FROM " + ::cPrefixTable( "product_carrier" ) + " WHERE id_product=" + AllTrim( Str( ::oArt:cCodWeb ) )
    TMSCommand():New( ::oCon ):ExecDirect( cCommand )
 
-   cCommand          := 'SELECT * FROM ' + ::cPrefixTable( "products_attribute" ) +  ' WHERE id_product=' + AllTrim( Str( ::oArt:cCodWeb ) )
+   cCommand          := 'SELECT * FROM ' + ::cPrefixTable( "product_attribute" ) +  ' WHERE id_product=' + AllTrim( Str( ::oArt:cCodWeb ) )
    oQuery            := TMSQuery():New( ::oCon, cCommand )
    
    if oQuery:Open()

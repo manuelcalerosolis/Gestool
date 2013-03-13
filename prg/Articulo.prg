@@ -17568,7 +17568,6 @@ Function ChangePublicar( aTmp )
          if ( dbfArticulo )->( dbRLock() )
             ( dbfArticulo )->lPubInt   := !( dbfArticulo )->lPubInt
             ( dbfArticulo )->lSndDoc   := ( dbfArticulo )->lPubInt
-            ( dbfArticulo )->cCodWeb   := 0
             ( dbfArticulo )->( dbCommit() )
             ( dbfArticulo )->( dbUnLock() )
          end if
@@ -17591,8 +17590,6 @@ Function ChangePublicar( aTmp )
          ChangePropiedadesInt(   aTmp[ ( dbfArticulo )->( fieldpos( "cCodPrp2" ) ) ] )
          ChangeFabricantesInt(   aTmp[ ( dbfArticulo )->( fieldpos( "cCodFab"  ) ) ] )
          ChangeTipArtInt(        aTmp[ ( dbfArticulo )->( fieldpos( "cCodTip"  ) ) ] )
-      else
-         aTmp[ ( dbfArticulo )->( fieldpos( "cCodWeb"  ) ) ]   := 0
       end if
 
    end if
