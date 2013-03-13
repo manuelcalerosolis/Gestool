@@ -223,6 +223,21 @@ Static Function SendErrorMessage( cMessage, aStack )
 return nil
 
 
+Function ApoloCallStack()
+
+   Local i        := 1
+   Local cMessage := ""
+
+   Do While !Empty( ProcName( i ) )
+      cMessage    += Chr( 13 ) + Chr( 10 ) + "Llamado desde " + Trim( ProcName( i ) ) + "(" + LTrim( Str( ProcLine( i ) ) ) + ")"
+      i++
+   EndDo
+
+   msgStop( cMessage )
+
+Return cMessage
+
+
 
 
 

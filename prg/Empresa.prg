@@ -6632,8 +6632,8 @@ FUNCTION TstEmpresa( cPatDat )
       rxDlg( cPatDat() )
    end if
 
-   oBlock               := ErrorBlock( {| oError | ApoloBreak( oError ) } )
-   BEGIN SEQUENCE
+   /*oBlock               := ErrorBlock( {| oError | ApoloBreak( oError ) } )
+   BEGIN SEQUENCE*/
 
       /*
       Empresa------------------------------------------------------------------
@@ -6735,13 +6735,13 @@ FUNCTION TstEmpresa( cPatDat )
 
       end if 
 
-   RECOVER USING oError
+   /*RECOVER USING oError
 
       msgStop( ErrorMessage( oError ), "Error al comprobar bases de datos de empresa." )
 
    END SEQUENCE
 
-   ErrorBlock( oBlock )
+   ErrorBlock( oBlock )*/
 
 RETURN ( .t. )
 

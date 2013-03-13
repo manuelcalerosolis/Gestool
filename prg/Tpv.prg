@@ -9350,70 +9350,62 @@ STATIC FUNCTION lCobro( aTmp, aGet, nSave, nMode, lGenVale, nDifVale, lBig, oDlg
 
    do case
       case nSave == SAVTIK
-         cImageTitle    := "Cashier_businessman2_48_alpha"
-         cTextTitle     := "El documento actual se cobrará y guardará como un ticket de cliente."
+         cImageTitle := "Cashier_businessman2_48_alpha"
+         cTextTitle  := "El documento actual se cobrará y guardará como un ticket de cliente."
       case nSave == SAVALB
-         cImageTitle    := "Document_plain_businessman2_48_alpha"
-         cTextTitle     := "El documento actual se guardará como un albaran de cliente."
+         cImageTitle := "Document_plain_businessman2_48_alpha"
+         cTextTitle  := "El documento actual se guardará como un albaran de cliente."
       case nSave == SAVFAC
-         cImageTitle    := "Document_businessman2_48_alpha"
-         cTextTitle     := "El documento actual se guardará como una factura de cliente."
+         cImageTitle := "Document_businessman2_48_alpha"
+         cTextTitle  := "El documento actual se guardará como una factura de cliente."
       case nSave == SAVDEV
-         cImageTitle    := "Cashier_delete_48_alpha"
-         cTextTitle     := "El documento actual se guardará como una devolución a cliente."
+         cImageTitle := "Cashier_delete_48_alpha"
+         cTextTitle  := "El documento actual se guardará como una devolución a cliente."
       case nSave == SAVVAL .and. !aTmp[ _LFRETIK ]
-         cImageTitle    := "Cashier_delete_48_alpha"
-         cTextTitle     := "El documento actual se guardará como un vale a cliente."
+         cImageTitle := "Cashier_delete_48_alpha"
+         cTextTitle  := "El documento actual se guardará como un vale a cliente."
       case nSave == SAVVAL .and. aTmp[ _LFRETIK ]
-         cImageTitle    := "Cashier_box_new_48_alpha"
-         cTextTitle     := "El documento actual se guardará como un cheque regalo."
+         cImageTitle := "Cashier_box_new_48_alpha"
+         cTextTitle  := "El documento actual se guardará como un cheque regalo."
       case nSave == SAVAPT
-         cImageTitle    := "Cashier_delete_48_alpha"
-         cTextTitle     := "El documento actual se guardará como un apartado."
+         cImageTitle := "Cashier_delete_48_alpha"
+         cTextTitle  := "El documento actual se guardará como un apartado."
    end case
 
-   if .f. // lBig
-      if oUser():lUsrZur()
-         DEFINE DIALOG oDlg RESOURCE "BIG_COBRO_LEFT"
-      else
-         DEFINE DIALOG oDlg RESOURCE "BIG_COBRO_RIGHT"
-      end if
-   else
-
-      do case
-
-         case nScreenVertRes == 600
-            cResource   := "COBROTPV_800x600"
-
-         case nScreenVertRes == 768
-            cResource   := "COBROTPV_1024x768"
-
-         case nScreenVertRes == 1024
-            cResource   := "COBROTPV_1280x1024"
-
-      end case
-
-      DEFINE DIALOG oDlg RESOURCE cResource
-
-   end if
-
    /*
-   Banner del título-----------------------------------------------------------
+   Dialogo q montaremos en funcion de la resolucion de pantalla----------------
    */
 
-   REDEFINE BITMAP oBmpTitulo RESOURCE ( cImageTitle )   ID 500 OF oDlg
-
-   REDEFINE SAY oSayTitulo PROMPT ( cTextTitle )         ID 510 OF oDlg
-
-   REDEFINE SAY aSay[ 1 ] ID 910 OF oDlg
-   REDEFINE SAY aSay[ 2 ] ID 911 OF oDlg
-   REDEFINE SAY aSay[ 3 ] ID 912 OF oDlg
+   do case
+      case nScreenVertRes == 600
+         cResource   := "COBROTPV_800x600"
+      case nScreenVertRes == 768
+         cResource   := "COBROTPV_1024x768"
+      case nScreenVertRes == 1024
+         cResource   := "COBROTPV_1280x1024"
+   end case
 
    /*
-   Forma de pago---------------------------------------------------------------
+   Definicion del dialogo------------------------------------------------------
    */
 
-   if lBig
+   DEFINE DIALOG oDlg RESOURCE cResource TITLE cTextTitle
+
+      /*
+      Banner del título-----------------------------------------------------------
+      */
+
+      REDEFINE BITMAP oBmpTitulo RESOURCE ( cImageTitle )   ID 500 OF oDlg
+
+      REDEFINE SAY oSayTitulo PROMPT ( cTextTitle )         ID 510 OF oDlg
+
+      REDEFINE SAY aSay[ 1 ] ID 910 OF oDlg
+      REDEFINE SAY aSay[ 2 ] ID 911 OF oDlg
+      REDEFINE SAY aSay[ 3 ] ID 912 OF oDlg
+
+      /*
+      Forma de pago---------------------------------------------------------------
+      */
 
       REDEFINE GET aGet[ _CFPGTIK ] VAR aTmp[ _CFPGTIK ] ;
          ID       120 ;
@@ -9428,25 +9420,6 @@ STATIC FUNCTION lCobro( aTmp, aGet, nSave, nMode, lGenVale, nDifVale, lBig, oDlg
          ID       121 ;
          FONT     oFntDlg ;
          OF       oDlg
-
-      else
-
-      REDEFINE GET aGet[ _CFPGTIK ] VAR aTmp[ _CFPGTIK ] ;
-         ID       120 ;
-         BITMAP   "LUPA" ;
-         WHEN     ( lWhen ) ;
-         VALID    cFpago( aGet[ _CFPGTIK ], dbfFPago, oGetTxt ) ;
-         FONT     oFntDlg ;
-         OF       oDlg
-
-         aGet[ _CFPGTIK ]:bHelp  := {|| BrwFPago( aGet[ _CFPGTIK ], oGetTxt ) }
-
-      REDEFINE GET oGetTxt VAR cGetTxt ;
-         ID       121 ;
-         FONT     oFntDlg ;
-         OF       oDlg
-
-      end if
 
       /*
       Botones de formas de pago------------------------------------------------
@@ -9637,9 +9610,7 @@ STATIC FUNCTION lCobro( aTmp, aGet, nSave, nMode, lGenVale, nDifVale, lBig, oDlg
       Botones__________________________________________________________________
       */
 
-   if !lBig
       oBtnInsertarCobro    := ApoloBtnBmp():Redefine( 554, "Money2_Add2_32", , , , ,            {|| lAddCobro( @aTmp, oTotDiv, oBrwPgo ) }, oDlg, , {|| lWhen }, .f., .f., "Añadir cobro combinado", , , , .t., "TOP", .t., , , .f. )
-   end if
       oBtnAceptarRegalo    := ApoloBtnBmp():Redefine( 553, "Package_New_Disk_Green_32", , , , , {|| if( lValidaCobro( aGet, @aTmp, @lGenVale, @nDifVale, nSave, oDlg ), ( lCopTik := .t., lRegalo := .t., oDlg:end( IDOK ) ), ) }, oDlg, , {|| lWhen }, .f., .f., "Aceptar y ticket regalo", , , , .t., "TOP", .t., , , .f. )
       oBtnAceptarImprimir  := ApoloBtnBmp():Redefine( IDOK, "Printer2_Disk_Green_32", , , , ,   {|| if( lValidaCobro( aGet, @aTmp, @lGenVale, @nDifVale, nSave, oDlg ), ( lCopTik := .t., oDlg:end( IDOK ) ), ) }, oDlg, , {|| lWhen }, .f., .f., "Aceptar e imprimir [F6]", ,,, .t., "TOP", .t., , , .f. )
       oBtnAceptar          := ApoloBtnBmp():Redefine( 552, "Check2_32", , , , ,                 {|| if( lValidaCobro( aGet, @aTmp, @lGenVale, @nDifVale, nSave, oDlg ), ( lCopTik := .f., oDlg:end( IDOK ) ), ) }, oDlg, , {|| lWhen }, .f., .f., "Aceptar sin imprimir [F5]", ,,, .t., "TOP", .t., , , .f. )
@@ -9649,8 +9620,6 @@ STATIC FUNCTION lCobro( aTmp, aGet, nSave, nMode, lGenVale, nDifVale, lBig, oDlg
       Pagos
 		------------------------------------------------------------------------
 		*/
-
-   if !lBig
 
       if nSave == SAVALB
 
@@ -10075,12 +10044,10 @@ STATIC FUNCTION lCobro( aTmp, aGet, nSave, nMode, lGenVale, nDifVale, lBig, oDlg
 
       end case
 
-   end if
+      oDlg:bStart    := {|| StartCobro( aTmp, aGet, aSay, aGetCob, oBrwPgo, oBrwVal, aBtnCob, oBtnTop, oBtnDwn, oBtnInsertarCobro, oBtnAceptarRegalo, oBtnCalculator, nSave, nMode, lBig ) }
 
-   oDlg:bStart    := {|| StartCobro( aTmp, aGet, aGetCob, aBtnCob, aSay, oBtnTop, oBtnDwn, oBrwPgo, oBrwVal, oBtnCalculator, nSave, nMode, lBig ) }
-
-   oDlg:AddFastKey( VK_F5, {|| if( !Empty( oBtnAceptar ), oBtnAceptar:Click(), ) } )
-   oDlg:AddFastKey( VK_F6, {|| if( !Empty( oBtnAceptarImprimir ), oBtnAceptarImprimir:Click(), ) } )
+      oDlg:AddFastKey( VK_F5, {|| if( !Empty( oBtnAceptar ), oBtnAceptar:Click(), ) } )
+      oDlg:AddFastKey( VK_F6, {|| if( !Empty( oBtnAceptarImprimir ), oBtnAceptarImprimir:Click(), ) } )
 
    ACTIVATE DIALOG oDlg CENTER
 
@@ -10102,7 +10069,7 @@ RETURN ( oDlg:nResult == IDOK )
 
 //---------------------------------------------------------------------------//
 
-Static Function StartCobro( aTmp, aGet, aGetCob, aBtnCob, aSay, oBtnTop, oBtnDwn, oBrwPgo, oBrwVal, oBtnCalculator, nSave, nMode, lBig )
+Static Function StartCobro( aTmp, aGet, aSay, aGetCob, oBrwPgo, oBrwVal, aBtnCob, oBtnTop, oBtnDwn, oBtnInsertarCobro, oBtnAceptarRegalo, oBtnCalculator, nSave, nMode, lBig )
 
    CalImpCob( aTmp )
 
@@ -10159,6 +10126,14 @@ Static Function StartCobro( aTmp, aGet, aGetCob, aBtnCob, aSay, oBtnTop, oBtnDwn
 
          aEval( aButtonsPago, {|o| o:oButton:Hide() } )
          aEval( aButtonsMoney, {|o| o:Hide() } )
+
+         if !Empty( oBtnInsertarCobro )
+            oBtnInsertarCobro:Hide()
+         end if 
+
+         if !Empty( oBtnAceptarRegalo )
+            oBtnAceptarRegalo:Hide()
+         endif
 
          oTotDiv:oEntregado:Hide()
          oTotDiv:oCobrado:Hide()
@@ -10272,7 +10247,6 @@ Static Function StartCobro( aTmp, aGet, aGetCob, aBtnCob, aSay, oBtnTop, oBtnDwn
       end if
 
    end if
-
 
    if !lBig
 
