@@ -21659,7 +21659,7 @@ FUNCTION nTotTik( cNumTik, cTikT, cTikL, cDiv, aTmp, cDivRet, lPic, lExcCnt )
       nNumCom           := ( cTikT )->nNumCom
       nDtoEsp           := ( cTikT )->nDtoEsp
       nDpp              := ( cTikT )->nDpp
-      bCond             := {|| ( cTikL )->cSerTil + ( cTikL )->cNumTil + ( cTikL )->cSufTil == cNumTik .AND. !( cTikL )->( eof() ) }
+      bCond             := {|| ( cTikL )->cSerTil + ( cTikL )->cNumTil + ( cTikL )->cSufTil == cNumTik .and. !( cTikL )->( eof() ) }
       nOrdAnt           := ( cTikL )->( OrdSetFocus( "cNumTil" ) )
       ( cTikL )->( dbSeek( cNumTik ) )
    end if
@@ -21987,9 +21987,6 @@ FUNCTION nTotLTpv( uTmpL, nDec, nRouDec, nVdv )
    local nCalculo := nTotLUno( uTmpL, nDec, nRouDec, nVdv )
    nCalculo       += nTotLDos( uTmpL, nDec, nRouDec, nVdv )
 
-   msgAlert( nTotLUno( uTmpL, nDec, nRouDec, nVdv ), "nTotLUno" )
-   msgAlert( nTotLDos( uTmpL, nDec, nRouDec, nVdv ), "nTotLDos" )
-
 RETURN ( nCalculo )
 
 //---------------------------------------------------------------------------//
@@ -22201,8 +22198,6 @@ STATIC FUNCTION lRecTotal( aTmp, lRefreshTotal )
 
    nTotal                  := nTotTik( aTmp[ _CSERTIK ] + aTmp[ _CNUMTIK ] + aTmp[ _CSUFTIK ], dbfTikT, dbfTmpL, dbfDiv, aTmp, nil, .f. )
 
-#ifndef __PDA__
-
    if oTotEsp != nil
       oTotEsp:Refresh()
    end if
@@ -22210,8 +22205,6 @@ STATIC FUNCTION lRecTotal( aTmp, lRefreshTotal )
    if oTotDpp != nil
       oTotDpp:Refresh()
    end if
-
-#endif
 
    if lRefreshTotal
 

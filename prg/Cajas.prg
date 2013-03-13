@@ -1401,7 +1401,7 @@ FUNCTION BrwCajas( oGet, oGet2, lBigStyle )
       oBrw:nMarqueeStyle   := 5
       oBrw:cName           := "Browse.Cajas"
 
-      if !lBigStyle
+      if lBigStyle
          oBrw:nRowHeight   := 36
       end if
 

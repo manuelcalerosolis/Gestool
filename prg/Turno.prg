@@ -514,64 +514,64 @@ CLASS TTurno FROM TMasDet
    Method InitArqueoTurno()
    Method StartArqueoTurno( oFld, oBtnMod, oCajTur )
 
+   Method PrintReport( cTurno, cCaja, nDevice, nCopies, cPrinter, dbfDoc )
    Method DataReport( oFastReport )
    Method VariableReport( oFastReport )
    Method DesignReport( dbfDoc )
-   Method PrintReport( nDevice, nCopies, cPrinter, dbfDoc )
 
-   Method cTxtAlbaranCliente()  Inline ( ::oAlbCliT:cSerAlb + "/" + Alltrim( Str( ::oAlbCliT:nNumAlb ) ) + "/" + Alltrim( ::oAlbCliT:cSufAlb ) + Space( 1 ) + Dtoc( ::oAlbCliT:dFecAlb ) + Space( 1 ) + ( ::oAlbCliT:cTimCre ) + Space( 1 ) + Rtrim( ::oAlbCliT:cCodCli ) + Space( 1 ) + Rtrim( ::oAlbCliT:cNomCli ) )
+   Method cTxtAlbaranCliente()  Inline ( ::oAlbCliT:cSerAlb + "/" + Alltrim( Str( ::oAlbCliT:nNumAlb ) ) + "/" + Alltrim( ::oAlbCliT:cSufAlb ) + Space( 1 ) + Dtoc( ::oAlbCliT:dFecAlb ) + Space( 1 ) + ( ::oAlbCliT:cTimCre ) + Space( 1 ) + ::oAlbCliT:cCodCaj + Space( 1 ) + Rtrim( ::oAlbCliT:cCodCli ) + Space( 1 ) + Rtrim( ::oAlbCliT:cNomCli ) )
    Method nTotAlbaranCliente()  Inline ( nTotAlbCli( ::oAlbCliT:cSerAlb + Str( ::oAlbCliT:nNumAlb ) + ::oAlbCliT:cSufAlb, ::oAlbCliT:cAlias, ::oAlbCliL:cAlias, ::oIvaImp:cAlias, ::oDbfDiv:cAlias(), nil, cDivEmp(), .f., .t. ) )
    Method nCntAlbaranCliente()  Inline ( nTotAlbCli( ::oAlbCliT:cSerAlb + Str( ::oAlbCliT:nNumAlb ) + ::oAlbCliT:cSufAlb, ::oAlbCliT:cAlias, ::oAlbCliL:cAlias, ::oIvaImp:cAlias, ::oDbfDiv:cAlias(), nil, cDivEmp(), .f., .f. ) )
    Method bEdtAlbaranCliente()
 
-   Method cTxtFacturaCliente()  Inline ( ::oFacCliT:cSerie + "/" + Alltrim( Str( ::oFacCliT:nNumFac ) ) + "/" + Alltrim( ::oFacCliT:cSufFac ) + Space( 1 ) + Dtoc( ::oFacCliT:dFecFac ) + Space( 1 ) + ( ::oFacCliT:cTimCre ) + Space( 1 ) + Rtrim( ::oFacCliT:cCodCli ) + Space( 1 ) + Rtrim( ::oFacCliT:cNomCli ) )
+   Method cTxtFacturaCliente()  Inline ( ::oFacCliT:cSerie + "/" + Alltrim( Str( ::oFacCliT:nNumFac ) ) + "/" + Alltrim( ::oFacCliT:cSufFac ) + Space( 1 ) + Dtoc( ::oFacCliT:dFecFac ) + Space( 1 ) + ( ::oFacCliT:cTimCre ) + Space( 1 ) + ::oFacCliT:cCodCaj + Space( 1 ) + Rtrim( ::oFacCliT:cCodCli ) + Space( 1 ) + Rtrim( ::oFacCliT:cNomCli ) )
    Method nTotFacturaCliente()  Inline ( nTotFacCli( ::oFacCliT:cSerie + Str( ::oFacCliT:nNumFac ) + ::oFacCliT:cSufFac, ::oFacCliT:cAlias, ::oFacCliL:cAlias, ::oIvaImp:cAlias, ::oDbfDiv:cAlias, ::oFacCliP:cAlias, ::oAntCliT:cAlias, nil, cDivEmp(), .f., .t. ) )
    Method nCntFacturaCliente()  Inline ( nTotFacCli( ::oFacCliT:cSerie + Str( ::oFacCliT:nNumFac ) + ::oFacCliT:cSufFac, ::oFacCliT:cAlias, ::oFacCliL:cAlias, ::oIvaImp:cAlias, ::oDbfDiv:cAlias, ::oFacCliP:cAlias, ::oAntCliT:cAlias, nil, cDivEmp(), .f., .f. ) )
    Method bEdtFacturaCliente()
 
-   Method cTxtFacturaRectificativaCliente()  Inline ( ::oRctCliT:cSerie + "/" + Alltrim( Str( ::oRctCliT:nNumFac ) ) + "/" + Alltrim( ::oRctCliT:cSufFac ) + Space( 1 ) + Dtoc( ::oRctCliT:dFecFac ) + Space( 1 ) + ( ::oRctCliT:cTimCre ) + Space( 1 ) + Rtrim( ::oRctCliT:cCodCli ) + Space( 1 ) + Rtrim( ::oRctCliT:cNomCli ) )
+   Method cTxtFacturaRectificativaCliente()  Inline ( ::oRctCliT:cSerie + "/" + Alltrim( Str( ::oRctCliT:nNumFac ) ) + "/" + Alltrim( ::oRctCliT:cSufFac ) + Space( 1 ) + Dtoc( ::oRctCliT:dFecFac ) + Space( 1 ) + ( ::oRctCliT:cTimCre ) + Space( 1 ) + ::oRctCliT:cCodCaj + Space( 1 ) + Rtrim( ::oRctCliT:cCodCli ) + Space( 1 ) + Rtrim( ::oRctCliT:cNomCli ) )
    Method nTotFacturaRectificativaCliente()  Inline ( nTotFacRec( ::oRctCliT:cSerie + Str( ::oRctCliT:nNumFac ) + ::oRctCliT:cSufFac, ::oRctCliT:cAlias, ::oRctCliL:cAlias, ::oIvaImp:cAlias, ::oDbfDiv:cAlias, nil, cDivEmp(), .f., .t. ) )
    Method nCntFacturaRectificativaCliente()  Inline ( nTotFacRec( ::oRctCliT:cSerie + Str( ::oRctCliT:nNumFac ) + ::oRctCliT:cSufFac, ::oRctCliT:cAlias, ::oRctCliL:cAlias, ::oIvaImp:cAlias, ::oDbfDiv:cAlias, nil, cDivEmp(), .f., .f. ) )
    Method bEdtFacturaRectificativaCliente()
 
-   Method cTxtTiketCliente()    Inline ( ::oTikT:cSerTik + "/" + Alltrim( ::oTikT:cNumTik ) + "/" + Alltrim( ::oTikT:cSufTik )+ Space( 1 ) + Dtoc( ::oTikT:dFecTik ) + Space( 1 ) + ( ::oTikT:cHorTik ) + Space( 1 ) + Rtrim( ::oTikT:cCliTik ) + Space( 1 ) + Rtrim( ::oTikT:cNomTik ) )
+   Method cTxtTiketCliente()    Inline ( ::oTikT:cSerTik + "/" + Alltrim( ::oTikT:cNumTik ) + "/" + Alltrim( ::oTikT:cSufTik ) + Space( 1 ) + Dtoc( ::oTikT:dFecTik ) + Space( 1 ) + ( ::oTikT:cHorTik ) + Space( 1 ) + ::oTikT:cNcjTik + Space( 1 ) + Rtrim( ::oTikT:cCliTik ) + Space( 1 ) + Rtrim( ::oTikT:cNomTik ) )
    Method nTotTiketCliente()    Inline ( nTotTik( ::oTikT:cSerTik + ::oTikT:cNumTik + ::oTikT:cSufTik, ::oTikT:cAlias, ::oTikL:cAlias, ::oDbfDiv:cAlias, nil, cDivEmp(), .f., .t. ) )
    Method nCntTiketCliente()    Inline ( nTotTik( ::oTikT:cSerTik + ::oTikT:cNumTik + ::oTikT:cSufTik, ::oTikT:cAlias, ::oTikL:cAlias, ::oDbfDiv:cAlias, nil, cDivEmp(), .f., .f. ) )
    Method bEdtTiketCliente()
    Method bZooTiketCliente()
 
-   Method cTxtAnticipoCliente() Inline ( ::oAntCliT:cSerAnt + "/" + Alltrim( Str( ::oAntCliT:nNumAnt ) ) + "/" + Alltrim( ::oAntCliT:cSufAnt ) + Space( 1 ) + Dtoc( ::oAntCliT:dFecAnt ) + Space( 1 ) + ( ::oAntCliT:cTimCre ) + Space( 1 ) +  Rtrim( ::oAntCliT:cCodCli ) + Space( 1 ) + Rtrim( ::oAntCliT:cNomCli ) )
+   Method cTxtAnticipoCliente() Inline ( ::oAntCliT:cSerAnt + "/" + Alltrim( Str( ::oAntCliT:nNumAnt ) ) + "/" + Alltrim( ::oAntCliT:cSufAnt ) + Space( 1 ) + Dtoc( ::oAntCliT:dFecAnt ) + Space( 1 ) + ( ::oAntCliT:cTimCre ) + Space( 1 ) + ::oAntCliT:cCodCaj + Space( 1 ) +  Rtrim( ::oAntCliT:cCodCli ) + Space( 1 ) + Rtrim( ::oAntCliT:cNomCli ) )
    Method nTotAnticipoCliente() Inline ( nTotAntCli( ::oAntCliT:cAlias, ::oIvaImp:cAlias, ::oDbfDiv:cAlias ) )
    Method bEdtAnticipoCliente()
 
-   Method cTxtAlbaranProveedor() Inline ( ::oAlbPrvT:cSerAlb + "/" + Alltrim( Str( ::oAlbPrvT:nNumAlb ) ) + "/" + Alltrim( ::oAlbPrvT:cSufAlb ) + Space( 1 ) + Dtoc( ::oAlbPrvT:dFecAlb ) + Space( 1 ) + ( ::oAlbPrvT:cTimChg ) + Space( 1 ) + Rtrim( ::oAlbPrvT:cCodPrv ) + Space( 1 ) + Rtrim( ::oAlbPrvT:cNomPrv ) )
+   Method cTxtAlbaranProveedor() Inline ( ::oAlbPrvT:cSerAlb + "/" + Alltrim( Str( ::oAlbPrvT:nNumAlb ) ) + "/" + Alltrim( ::oAlbPrvT:cSufAlb ) + Space( 1 ) + Dtoc( ::oAlbPrvT:dFecAlb ) + Space( 1 ) + ( ::oAlbPrvT:cTimChg ) + Space( 1 ) + ::oAlbPrvT:cCodCaj + Space( 1 ) + Rtrim( ::oAlbPrvT:cCodPrv ) + Space( 1 ) + Rtrim( ::oAlbPrvT:cNomPrv ) )
    Method nTotAlbaranProveedor() Inline ( nTotAlbPrv( ::oAlbPrvT:cSerAlb + Str( ::oAlbPrvT:nNumAlb ) + ::oAlbPrvT:cSufAlb, ::oAlbPrvT:cAlias, ::oAlbPrvL:cAlias, ::oIvaImp:cAlias, ::oDbfDiv:cAlias ) )
    Method bEdtAlbaranProveedor()
 
-   Method cTxtFacturaProveedor() Inline ( ::oFacPrvT:cSerFac + "/" + Alltrim( Str( ::oFacPrvT:nNumFac ) ) + "/" + Alltrim( ::oFacPrvT:cSufFac ) + Space( 1 ) + Dtoc( ::oFacPrvT:dFecFac ) + Space( 1 ) + ( ::oFacPrvT:cTimChg ) + Space( 1 ) +Rtrim( ::oFacPrvT:cCodPrv ) + Space( 1 ) + Rtrim( ::oFacPrvT:cNomPrv ) )
+   Method cTxtFacturaProveedor() Inline ( ::oFacPrvT:cSerFac + "/" + Alltrim( Str( ::oFacPrvT:nNumFac ) ) + "/" + Alltrim( ::oFacPrvT:cSufFac ) + Space( 1 ) + Dtoc( ::oFacPrvT:dFecFac ) + Space( 1 ) + ( ::oFacPrvT:cTimChg ) + Space( 1 ) + ::oFacPrvT:cCodCaj + Space( 1 ) + Rtrim( ::oFacPrvT:cCodPrv ) + Space( 1 ) + Rtrim( ::oFacPrvT:cNomPrv ) )
    Method nTotFacturaProveedor() Inline ( nTotFacPrv( ::oFacPrvT:cSerFac + Str( ::oFacPrvT:nNumFac ) + ::oFacPrvT:cSufFac, ::oFacPrvT:cAlias, ::oFacPrvL:cAlias, ::oIvaImp:cAlias, ::oDbfDiv:cAlias, ::oFacPrvP:cAlias ) )
    Method bEdtFacturaProveedor()
 
-   Method cTxtFacturaRectificativaProveedor() Inline ( ::oRctPrvT:cSerFac + "/" + Alltrim( Str( ::oRctPrvT:nNumFac ) ) + "/" + Alltrim( ::oRctPrvT:cSufFac ) + Space( 1 ) + Dtoc( ::oRctPrvT:dFecFac ) + Space( 1 ) + ( ::oRctPrvT:cTimChg ) + Space( 1 ) +Rtrim( ::oRctPrvT:cCodPrv ) + Space( 1 ) + Rtrim( ::oRctPrvT:cNomPrv ) )
+   Method cTxtFacturaRectificativaProveedor() Inline ( ::oRctPrvT:cSerFac + "/" + Alltrim( Str( ::oRctPrvT:nNumFac ) ) + "/" + Alltrim( ::oRctPrvT:cSufFac ) + Space( 1 ) + Dtoc( ::oRctPrvT:dFecFac ) + Space( 1 ) + ( ::oRctPrvT:cTimChg ) + Space( 1 ) + ::oRctPrvT:cCodCaj + Space( 1 ) +Rtrim( ::oRctPrvT:cCodPrv ) + Space( 1 ) + Rtrim( ::oRctPrvT:cNomPrv ) )
    Method nTotFacturaRectificativaProveedor() Inline ( nTotRctPrv( ::oRctPrvT:cSerFac + Str( ::oRctPrvT:nNumFac ) + ::oRctPrvT:cSufFac, ::oRctPrvT:cAlias, ::oRctPrvL:cAlias, ::oIvaImp:cAlias, ::oDbfDiv:cAlias ) )
    Method bEdtFacturaRectificativaProveedor()
 
    Method nTotTiketCobro()       Inline ( nTotLCobTik( ::oTikP, ::oDbfDiv, cDivEmp() ) )
    Method nTotValTikCobro()      Inline ( nTotValTik( ::oTikP:cSerTik + ::oTikP:cNumTik + ::oTikP:cSufTik, ::oTikT:cAlias, ::oTikL:cAlias, ::oDbfDiv, cDivEmp() ) )
-   Method cTxtTiketCobro()       Inline ( ::oTikP:cSerTik + "/" + Alltrim( ::oTikP:cNumTik ) + "/" + Rtrim( ::oTikP:cSufTik ) + Space( 1 ) + Dtoc( ::oTikP:dPgoTik ) + Space( 1 ) + ( ::oTikP:cTimTik ) + Space( 1 ) + ::oTikP:cFpgPgo + Space( 1 ) + Rtrim( oRetfld( ::oTikP:cSerTik + ::oTikP:cNumTik + ::oTikP:cSufTik, ::oTikT, "cCliTik", 1 ) ) + Space( 1 ) + Rtrim( oRetfld( ::oTikP:cSerTik + ::oTikP:cNumTik + ::oTikP:cSufTik, ::oTikT, "cNomTik", 1 ) ) )
+   Method cTxtTiketCobro()       Inline ( ::oTikP:cSerTik + "/" + Alltrim( ::oTikP:cNumTik ) + "/" + Rtrim( ::oTikP:cSufTik ) + Space( 1 ) + Dtoc( ::oTikP:dPgoTik ) + Space( 1 ) + ( ::oTikP:cTimTik ) + Space( 1 ) + ::oTikP:cCodCaj + Space( 1 ) + ::oTikP:cFpgPgo + Space( 1 ) + Rtrim( oRetfld( ::oTikP:cSerTik + ::oTikP:cNumTik + ::oTikP:cSufTik, ::oTikT, "cCliTik", 1 ) ) + Space( 1 ) + Rtrim( oRetfld( ::oTikP:cSerTik + ::oTikP:cNumTik + ::oTikP:cSufTik, ::oTikT, "cNomTik", 1 ) ) )
    Method bEdtTiketCobro()
    Method bZooTiketCobro()
 
    Method nTotFacturaCobro()     Inline ( nTotCobCli( ::oFacCliP, ::oDbfDiv, cDivEmp(), .f. ) )
-   Method cTxtFacturaCobro()     Inline ( ::oFacCliP:cSerie + "/" + Alltrim( Str( ::oFacCliP:nNumFac ) ) + "/" + Rtrim( ::oFacCliP:cSufFac ) + Space( 1 ) + Dtoc( ::oFacCliP:dEntrada ) + Space( 1 ) + ::oFacCliP:cCodPgo + Space( 1 ) + Rtrim( oRetfld( ::oFacCliP:cSerie + Str( ::oFacCliP:nNumFac ) + ::oFacCliP:cSufFac, ::oFacCliT, "cCodCli", 1 ) ) + Space( 1 ) + Rtrim( oRetfld( ::oFacCliP:cSerie + Str( ::oFacCliP:nNumFac ) + ::oFacCliP:cSufFac, ::oFacCliT, "cNomCli", 1 ) ) )
+   Method cTxtFacturaCobro()     Inline ( ::oFacCliP:cSerie + "/" + Alltrim( Str( ::oFacCliP:nNumFac ) ) + "/" + Rtrim( ::oFacCliP:cSufFac ) + Space( 1 ) + Dtoc( ::oFacCliP:dEntrada ) + Space( 1 ) + ::oFacCliP:cCodCaj + Space( 1 ) + ::oFacCliP:cCodPgo + Space( 1 ) + Rtrim( oRetfld( ::oFacCliP:cSerie + Str( ::oFacCliP:nNumFac ) + ::oFacCliP:cSufFac, ::oFacCliT, "cCodCli", 1 ) ) + Space( 1 ) + Rtrim( oRetfld( ::oFacCliP:cSerie + Str( ::oFacCliP:nNumFac ) + ::oFacCliP:cSufFac, ::oFacCliT, "cNomCli", 1 ) ) )
    Method bEdtFacturaCobro()
 
    Method nTotPedidoEntrega()    Inline ( nEntPedCli( ::oPedCliP, ::oDbfDiv, cDivEmp(), .f. ) )
-   Method cTxtPedidoEntrega()    Inline ( ::oPedCliT:cSerPed + "/" + Alltrim( Str( ::oPedCliP:nNumPed ) ) + "/" + Rtrim( ::oPedCliP:cSufPed ) + Space( 1 ) + Dtoc( ::oPedCliP:dEntrega ) + Space( 1 ) + ::oPedCliP:cCodPgo + Space( 1 ) + Rtrim( ::oPedCliP:cCodCli ) + Space( 1 ) + oRetFld( ::oPedCliP:cCodCli, ::oClient, "Titulo" ) )
+   Method cTxtPedidoEntrega()    Inline ( ::oPedCliT:cSerPed + "/" + Alltrim( Str( ::oPedCliP:nNumPed ) ) + "/" + Rtrim( ::oPedCliP:cSufPed ) + Space( 1 ) + Dtoc( ::oPedCliP:dEntrega ) + Space( 1 ) + ::oPedCliP:cCodCaj + Space( 1 ) + ::oPedCliP:cCodPgo + Space( 1 ) + Rtrim( ::oPedCliP:cCodCli ) + Space( 1 ) + oRetFld( ::oPedCliP:cCodCli, ::oClient, "Titulo" ) )
    Method bEdtPedidoEntrega()
 
    Method nTotAlbaranEntrega()   Inline ( nEntAlbCli( ::oAlbCliP, ::oDbfDiv, cDivEmp(), .f. ) )
-   Method cTxtAlbaranEntrega()   Inline ( ::oAlbCliP:cSerAlb + "/" + Alltrim( Str( ::oAlbCliP:nNumAlb ) ) + "/" + Rtrim( ::oAlbCliP:cSufAlb ) + Space( 1 ) + Dtoc( ::oAlbCliP:dEntrega ) + Space( 1 ) + ::oAlbCliP:cCodPgo + Space( 1 ) + Rtrim( ::oAlbCliP:cCodCli ) + Space( 1 ) + oRetFld( ::oAlbCliP:cCodCli, ::oClient, "Titulo" ) )
+   Method cTxtAlbaranEntrega()   Inline ( ::oAlbCliP:cSerAlb + "/" + Alltrim( Str( ::oAlbCliP:nNumAlb ) ) + "/" + Rtrim( ::oAlbCliP:cSufAlb ) + Space( 1 ) + Dtoc( ::oAlbCliP:dEntrega ) + Space( 1 ) + ::oAlbCliP:cCodCaj + Space( 1 ) + ::oAlbCliP:cCodPgo + Space( 1 ) + Rtrim( ::oAlbCliP:cCodCli ) + Space( 1 ) + oRetFld( ::oAlbCliP:cCodCli, ::oClient, "Titulo" ) )
    Method bEdtAlbaranEntrega()
 
    Method nTotEntradasSalidas()  Inline ( if( ::oEntSal:nTipEnt == 1, nTotES( nil, ::oEntSal:cAlias, ::oDbfDiv, cDivEmp(), .f. ), - nTotES( nil, ::oEntSal:cAlias, ::oDbfDiv, cDivEmp(), .f. ) ) )
@@ -579,7 +579,7 @@ CLASS TTurno FROM TMasDet
    Method bEdtEntradasSalidas()
 
    Method nTotFacturaPago()      Inline ( nTotRecPrv( ::oFacPrvP, ::oDbfDiv, cDivEmp(), .f. ) )
-   Method cTxtFacturaPago()      Inline ( ::oFacPrvP:cSerFac + "/" + Alltrim( Str( ::oFacPrvP:nNumFac ) ) + "/" + Rtrim( ::oFacPrvP:cSufFac ) + Space( 1 ) + Dtoc( ::oFacPrvP:dEntrada ) + Space( 1 ) + ::oFacPrvP:cCodPgo + Space( 1 ) + Rtrim( oRetfld( ::oFacPrvP:cSerFac + Str( ::oFacPrvP:nNumFac ) + ::oFacPrvP:cSufFac, ::oFacPrvT, "cCodPrv", 1 ) ) + Space( 1 ) + Rtrim( oRetfld( ::oFacPrvP:cSerFac + Str( ::oFacPrvP:nNumFac ) + ::oFacPrvP:cSufFac, ::oFacPrvT, "cNomPrv", 1 ) ) )
+   Method cTxtFacturaPago()      Inline ( ::oFacPrvP:cSerFac + "/" + Alltrim( Str( ::oFacPrvP:nNumFac ) ) + "/" + Rtrim( ::oFacPrvP:cSufFac ) + Space( 1 ) + Dtoc( ::oFacPrvP:dEntrada ) + Space( 1 ) + ::oFacPrvP:cCodCaj + Space( 1 ) + ::oFacPrvP:cCodPgo + Space( 1 ) + Rtrim( oRetfld( ::oFacPrvP:cSerFac + Str( ::oFacPrvP:nNumFac ) + ::oFacPrvP:cSufFac, ::oFacPrvT, "cCodPrv", 1 ) ) + Space( 1 ) + Rtrim( oRetfld( ::oFacPrvP:cSerFac + Str( ::oFacPrvP:nNumFac ) + ::oFacPrvP:cSufFac, ::oFacPrvT, "cNomPrv", 1 ) ) )
    Method bEdtFacturaPago()
 
    Method Contabiliza()
@@ -612,7 +612,7 @@ CLASS TTurno FROM TMasDet
       ::TotPago(     cTurno, cCaja )
       ::TotTipoIva(  cTurno, cCaja  )
 
-      if ::oDbfCaj:SeekInOrd( cTurno + cCaja, "cCajTur" )
+      if ::oDbfCaj:SeekInOrd( cTurno + cCaja, "cNumTur" )
          ::oTotales:addTotCajaEfectivo(   cCaja, ::oDbfCaj:nCanEfe )
          ::oTotales:addTotCajaNoEfectivo( cCaja, ::oDbfCaj:nCanEfe )
          ::oTotales:addTotCajaTarjeta(    cCaja, ::oDbfCaj:nCanTar )
@@ -667,7 +667,7 @@ CLASS TTurno FROM TMasDet
 
       ::oDbfCaj:GetRecno()
 
-      if ::oDbfCaj:SeekInOrd( ::cCurTurno + cCodCaj, "cCajTur" )
+      if ::oDbfCaj:SeekInOrd( ::cCurTurno + cCodCaj, "cNumTur" )
          ::oDbfCaj:Load()
          ::oDbfCaj:nCanEfe := ::nImporteEfectivo
          ::oDbfCaj:nCanTar := ::nImporteTarjeta
@@ -687,7 +687,7 @@ CLASS TTurno FROM TMasDet
 
       ::oDbfCaj:GetRecno()
 
-      if ::oDbfCaj:SeekInOrd( ::cCurTurno + cCodCaj, "cCajTur" )
+      if ::oDbfCaj:SeekInOrd( ::cCurTurno + cCodCaj, "cNumTur" )
          ::oImporteTarjeta:cText(      ::oDbfCaj:nCanTar )
          ::oImporteEfectivo:cText(     ::oDbfCaj:nCanEfe )
          ::oImporteRetirado:cText(     ::oDbfCaj:nCanRet )
@@ -1190,8 +1190,8 @@ METHOD DefineFiles( cPath )
       FIELD NAME "nCanPre" TYPE "N"  LEN 16  DEC 6 COMMENT "Objetivo de la sesión"                             OF ::oDbfCaj
       FIELD NAME "cDivPre" TYPE "C"  LEN  3  DEC 0 COMMENT "Divisa del objetivo de la sesión"                  OF ::oDbfCaj
 
-      INDEX TO "TURNOC.CDX" TAG "cNumTur" ON "cNumTur + cSufTur"              FOR "!Deleted()"                 OF ::oDbfCaj
-      INDEX TO "TURNOC.CDX" TAG "cCajTur" ON "cNumTur + cSufTur + cCodCaj"    FOR "!Deleted()"                 OF ::oDbfCaj
+      INDEX TO "TURNOC.CDX" TAG "cNumTur" ON "cNumTur + cSufTur + cCodCaj"    FOR "!Deleted()"                 OF ::oDbfCaj
+      INDEX TO "TURNOC.CDX" TAG "cCodCaj" ON "cCodCaj"                        FOR "!Deleted()"                 OF ::oDbfCaj
       INDEX TO "TURNOC.CDX" TAG "lCajClo" ON "lCajClo"                        FOR "!Deleted()"                 OF ::oDbfCaj
       INDEX TO "TURNOC.CDX" TAG "dFecClo" ON "dFecClo"                        FOR "!Deleted()"                 OF ::oDbfCaj
 
@@ -1681,7 +1681,7 @@ METHOD lOpenCaja()
       Return ( ::OpenCaja )
    end if
 
-   ::OpenCaja     := ::oDbfCaj:SeekInOrd( ::oDbf:cNumTur + ::oDbf:cSufTur +  oUser():cCaja(), "cCajTur" )
+   ::OpenCaja     := ::oDbfCaj:SeekInOrd( ::oDbf:cNumTur + ::oDbf:cSufTur +  oUser():cCaja(), "cNumTur" )
 
 RETURN ( ::OpenCaja )
 
@@ -3092,7 +3092,7 @@ METHOD GetLastEfectivo()
    local nEfectivo   := 0
    local cNumeroCaja := ::GetLastClose() + oUser():cCaja()
 
-   if ::oDbfCaj:SeekInOrd( cNumeroCaja, "cCajTur" )
+   if ::oDbfCaj:SeekInOrd( cNumeroCaja, "cNumTur" )
       nEfectivo      := ( ::oDbfCaj:nCanEfe - ::oDbfCaj:nCanRet )
    end if
 
@@ -3179,7 +3179,6 @@ METHOD lArqueoTurno( lZoom, lTactil, lParcial ) CLASS TTurno
       return .f.
    end if
 
-
    /*
    Cominenza el proceso de calculo---------------------------------------------
    */
@@ -3198,7 +3197,9 @@ METHOD lArqueoTurno( lZoom, lTactil, lParcial ) CLASS TTurno
 
    ::oDbfCaj:OrdScope( ::cCurTurno )
 
-   // Valores de la impresión--------------------------------------------------
+   /*
+   Valores de la impresión-----------------------------------------------------
+   */
 
    if !::lArqueoParcial
       ::cWinArq         := cPrinterArqueo( ::oDbfCaj:cCodCaj, ::oCaja:cAlias )
@@ -3401,13 +3402,6 @@ METHOD lArqueoTurno( lZoom, lTactil, lParcial ) CLASS TTurno
 
       oCajTur:nMargin   := 25
 
-      /*
-      REDEFINE SAY oSayGeneral ;
-         PROMPT   if ( lParcial, "Realizando arqueo parcial", "Realizando cierre sesión" );
-         ID       300 ;
-         OF       oDlg
-      */
-
       end if
 
       REDEFINE GET oNomCaj VAR cNomCaj ;
@@ -3467,12 +3461,12 @@ METHOD lArqueoTurno( lZoom, lTactil, lParcial ) CLASS TTurno
       oBrwCaj:nMarqueeStyle   := 6
       oBrwCaj:cName           := "Turno.Cajas"
 
-      oBrwCaj:SetoDbf( ::oDbfCaj )
+      ::oDbfCaj:SetBrowse( oBrwCaj )
 
       with object ( oBrwCaj:AddCol() )
          :cHeader          := "Estado"
-         :bStrData         := {|| if( ::oDbfCaj:lCajClo, "Cerrada", "Abierta" ) }
-         :bEditValue       := {|| ::oDbfCaj:lCajClo }
+         :bStrData         := {|| if( ::oDbfCaj:FieldGetByName( "lCajClo" ), "Cerrada", "Abierta" ) }
+         :bEditValue       := {|| ::oDbfCaj:FieldGetByName( "lCajClo" ) }
          :nWidth           := 100
          :SetCheck( { "Cnt16", "Nil16" } )
       end with
@@ -3481,7 +3475,7 @@ METHOD lArqueoTurno( lZoom, lTactil, lParcial ) CLASS TTurno
          :cHeader          := "Seleccionada"
          :nHeadBmpNo       := 3
          :bStrData         := {|| "" }
-         :bEditValue       := {|| ::oDbfCaj:lCajSel }
+         :bEditValue       := {|| ::oDbfCaj:FieldGetByName( "lCajSel" ) }
          :nWidth           := 25
          :SetCheck( { "Sel16", "Nil16" } )
          :AddResource( "cashier_Selet_16" )
@@ -3489,19 +3483,19 @@ METHOD lArqueoTurno( lZoom, lTactil, lParcial ) CLASS TTurno
 
       with object ( oBrwCaj:AddCol() )
          :cHeader          := "Código"
-         :bEditValue       := {|| ::oDbfCaj:cCodCaj }
+         :bEditValue       := {|| ::oDbfCaj:FieldGetByName( "cCodCaj" ) }
          :nWidth           := 70
       end with
 
       with object ( oBrwCaj:AddCol() )
          :cHeader          := "Nombre"
-         :bEditValue       := {|| oRetFld( ::oDbfCaj:cCodCaj, ::oCaja ) }
+         :bEditValue       := {|| oRetFld( ::oDbfCaj:FieldGetByName( "cCodCaj" ), ::oCaja ) }
          :nWidth           := 330
       end with
 
       with object ( oBrwCaj:AddCol() )
          :cHeader          := "Ojetivo"
-         :bEditValue       := {|| ::oDbfCaj:nCanPre }
+         :bEditValue       := {|| ::oDbfCaj:FieldGetByName( "nCanPre" ) }
          :nWidth           := 100
          :cEditPicture     := cPorDiv( cDivEmp(), ::oDbfDiv )
          :nDataStrAlign    := AL_RIGHT
@@ -3512,14 +3506,14 @@ METHOD lArqueoTurno( lZoom, lTactil, lParcial ) CLASS TTurno
 
       with object ( oBrwCaj:AddCol() )
          :cHeader          := "Nº usuarios"
-         :bEditValue       := {|| nUserCaja( ::oDbfCaj:cCodCaj ) }
+         :bEditValue       := {|| nUserCaja( ::oDbfCaj:FieldGetByName( "cCodCaj" ) ) }
          :cEditPicture     := "9999"
          :nWidth           := 130
          :nDataStrAlign    := AL_RIGHT
          :nHeadStrAlign    := AL_RIGHT
       end with
 
-      if ::lArqueoTactil //lTactilMode()
+      if ::lArqueoTactil 
          oBrwCaj:nRowHeight   := 36
       end if
 
@@ -3546,7 +3540,7 @@ METHOD lArqueoTurno( lZoom, lTactil, lParcial ) CLASS TTurno
       oBrwCnt:lFooter         := .t.
       oBrwCnt:cName           := "Turno.Contadores"
 
-      oBrwCnt:SetoDbf( ::oDbfDet )
+      ::oDbfDet:SetBrowse( oBrwCnt )
 
       with object ( oBrwCnt:AddCol() )
          :cHeader          := "Código"
@@ -3641,7 +3635,7 @@ METHOD lArqueoTurno( lZoom, lTactil, lParcial ) CLASS TTurno
          OF       oFld:aDialogs[ 3 ]
 
          ::oCodCaj:bHelp   := {|| BrwCajaTactil( ::oCodCaj, oCajNbr ) }
-         ::oCodCaj:bChange := {|| ::lChangeCajas( oCajNbr ) }
+         ::oCodCaj:bValid  := {|| ::lChangeCajas( oCajNbr ) }
 
       REDEFINE GET oCajNbr VAR cCajNbr ;
          ID       141 ;
@@ -3657,7 +3651,7 @@ METHOD lArqueoTurno( lZoom, lTactil, lParcial ) CLASS TTurno
          OF       oFld:aDialogs[ 3 ]
 
          ::oCodCaj:bHelp   := {|| BrwCajas( ::oCodCaj, oCajNbr ) }
-         ::oCodCaj:bChange := {|| ::lChangeCajas( oCajNbr ) }
+         ::oCodCaj:bValid  := {|| ::lChangeCajas( oCajNbr ) }
 
       REDEFINE GET oCajNbr VAR cCajNbr ;
          ID       141 ;
@@ -4201,6 +4195,8 @@ return nil
 METHOD GoNext( oFld, oDlg, oCajTur, oBrwCnt )
 
    local oItem
+   local nCodCaj  := 0
+   local cCodCaj  := ""
 
    do case
       case oFld:nOption == 1
@@ -4259,26 +4255,30 @@ METHOD GoNext( oFld, oDlg, oCajTur, oBrwCnt )
          ::oDbfCaj:GetRecno()
 
          ::oDbfCaj:GoTop()
-         while !::oDbfCaj:Eof()
-
-            if ( ::oDbfCaj:lCajSel )
-
-               if ( ::lZoom .or. ::cCodCaj == Space( 3 ) )
-
-                  ::oCodCaj:cText( ::oDbfCaj:cCodCaj )
-                  ::oCodCaj:lValid()
-
-                  ::cOldCaj   := ::oDbfCaj:cCodCaj
-
-               end if
-
+         while !( ::oDbfCaj:Eof() )
+            if ( ::oDbfCaj:FieldGetByName( "lCajSel" ) .and. !::oDbfCaj:FieldGetByName( "lCajClo" ) )
+               cCodCaj  := ::oDbfCaj:FieldGetByName( "cCodCaj" )
+               ++nCodCaj
             end if
-
             ::oDbfCaj:Skip()
-
          end while
 
          ::oDbfCaj:SetRecno()
+
+         /*
+         Si hay mas de una caja seleccionada-----------------------------------
+         */
+
+         if nCodCaj > 1
+            ::oCodCaj:cText( Space( 3 ) )
+         else 
+            ::oCodCaj:cText( cCodCaj )
+         end if 
+         ::oCodCaj:lValid()
+
+         /*
+         Refresco del turno----------------------------------------------------
+         */
 
          ::RefreshTurno()
 
@@ -4328,44 +4328,6 @@ METHOD GoNext( oFld, oDlg, oCajTur, oBrwCnt )
 return nil
 
 //--------------------------------------------------------------------------//
-/*
-METHOD GetDlg()
-
-   local n
-   local oIniApp
-   local cIniApp        := cPatEmp() + "Empresa.Ini"
-
-   ::aOpcionImp         := aFill( Array( 19 ), .t. )
-
-   oIniApp              := TIni():New( cIniApp )
-
-   ::aOpcionImp[ 1 ]    := ::oIniArqueo:Get( "Arqueo", "Opcion 1",  .t., ::aOpcionImp[ 1 ] )
-   ::aOpcionImp[ 2 ]    := ::oIniArqueo:Get( "Arqueo", "Opcion 2",  .t., ::aOpcionImp[ 2 ] )
-   ::aOpcionImp[ 3 ]    := ::oIniArqueo:Get( "Arqueo", "Opcion 3",  .t., ::aOpcionImp[ 3 ] )
-   ::aOpcionImp[ 4 ]    := ::oIniArqueo:Get( "Arqueo", "Opcion 4",  .t., ::aOpcionImp[ 4 ] )
-   ::aOpcionImp[ 5 ]    := ::oIniArqueo:Get( "Arqueo", "Opcion 5",  .t., ::aOpcionImp[ 5 ] )
-   ::aOpcionImp[ 6 ]    := ::oIniArqueo:Get( "Arqueo", "Opcion 6",  .t., ::aOpcionImp[ 6 ] )
-   ::aOpcionImp[ 7 ]    := ::oIniArqueo:Get( "Arqueo", "Opcion 7",  .t., ::aOpcionImp[ 7 ] )
-   ::aOpcionImp[ 8 ]    := ::oIniArqueo:Get( "Arqueo", "Opcion 8",  .t., ::aOpcionImp[ 8 ] )
-   ::aOpcionImp[ 9 ]    := ::oIniArqueo:Get( "Arqueo", "Opcion 9",  .t., ::aOpcionImp[ 9 ] )
-   ::aOpcionImp[ 10]    := ::oIniArqueo:Get( "Arqueo", "Opcion 10", .t., ::aOpcionImp[ 10] )
-   ::aOpcionImp[ 11]    := ::oIniArqueo:Get( "Arqueo", "Opcion 11", .t., ::aOpcionImp[ 11] )
-   ::aOpcionImp[ 12]    := ::oIniArqueo:Get( "Arqueo", "Opcion 12", .t., ::aOpcionImp[ 12] )
-   ::aOpcionImp[ 13]    := ::oIniArqueo:Get( "Arqueo", "Opcion 13", .t., ::aOpcionImp[ 13] )
-   ::aOpcionImp[ 14]    := ::oIniArqueo:Get( "Arqueo", "Opcion 14", .t., ::aOpcionImp[ 14] )
-   ::aOpcionImp[ 15]    := ::oIniArqueo:Get( "Arqueo", "Opcion 15", .t., ::aOpcionImp[ 15] )
-   ::aOpcionImp[ 16]    := ::oIniArqueo:Get( "Arqueo", "Opcion 16", .t., ::aOpcionImp[ 16] )
-   ::aOpcionImp[ 17]    := ::oIniArqueo:Get( "Arqueo", "Opcion 17", .t., ::aOpcionImp[ 17] )
-   ::aOpcionImp[ 18]    := ::oIniArqueo:Get( "Arqueo", "Opcion 20", .t., ::aOpcionImp[ 18] )
-   ::aOpcionImp[ 19]    := ::oIniArqueo:Get( "Arqueo", "Opcion 23", .t., ::aOpcionImp[ 19] )
-
-   ::lEnvioInformacion  := ::oIniArqueo:Get( "Arqueo", "Opcion 18", .t., ::lEnvioInformacion )
-   ::lNoImprimirArqueo  := ::oIniArqueo:Get( "Arqueo", "Opcion 19", .t., ::lNoImprimirArqueo )
-   ::lImprimirEnvio     := ::oIniArqueo:Get( "Arqueo", "Opcion 21", .t., ::lImprimirEnvio )
-
-return nil
-*/
-//---------------------------------------------------------------------------//
 
 Method lIsContadores()
 
@@ -4469,10 +4431,9 @@ Method LoadCaja( cCurTurno )
    BEGIN SEQUENCE
 
    ::oDbfCaj:GetStatus()
-   ::oDbfCaj:OrdSetFocus( "cCajTur" )
+   ::oDbfCaj:OrdSetFocus( "cNumTur" )
 
-   if !::oDbfCaj:Seek( cCurTurno + oUser():cCaja() ) .and.;
-      !oRetFld( oUser():cCaja(), ::oCaja, "lNoArq" )
+   if !::oDbfCaj:Seek( cCurTurno + oUser():cCaja() ) .and. !oRetFld( oUser():cCaja(), ::oCaja, "lNoArq" )
 
       if ::oDbfCaj:Append()
          ::oDbfCaj:Blank()
@@ -4861,7 +4822,7 @@ METHOD lCalTurno( cTurno, cCaja, oDlg )
 
       if !Empty( cCaja )
 
-         if ::oDbfCaj:SeekInOrd( cTurno + cCaja, "cCajTur" )
+         if ::oDbfCaj:SeekInOrd( cTurno + cCaja, "cNumTur" )
 
             /*
             Monedas efectivo------------------------------------------------------
@@ -5536,28 +5497,28 @@ METHOD TotCobro( cTurno, cCaja )
 
             case ( cTiptik == SAVVAL ) .and. oRetFld( ::oTikP:cSerTik + ::oTikP:cNumTik + ::oTikP:cSufTik, ::oTikT, "lFreTik", 1 ) // Como cheque regalo
 
-               ::oTotales:addTotTikCliCobros(      cCaja, ::oTikP:cSerTik, ::nTotTiketCobro(), ::cTxtTiketCobro(), ::bZooTiketCobro(), ::oTotales:hBmpDoc[ "TiketCliente" ] )
+               ::oTotales:addTotTikCliCobros( cCaja, ::oTikP:cSerTik, ::nTotTiketCobro(), ::cTxtTiketCobro(), ::bZooTiketCobro(), ::oTotales:hBmpDoc[ "TiketCliente" ] )
 
                do case
                   case nTipoPgo < 2
-                     ::oTotales:addTotCobroEfectivo(  cCaja, ::oTikP:cSerTik, ::nTotTiketCobro(), ::cTxtTiketCobro(), ::bZooTiketCobro(), ::oTotales:hBmpDoc[ "TiketCliente" ] )
+                     ::oTotales:addTotCobroEfectivo( cCaja, ::oTikP:cSerTik, ::nTotTiketCobro(), ::cTxtTiketCobro(), ::bZooTiketCobro(), ::oTotales:hBmpDoc[ "TiketCliente" ] )
                   case nTipoPgo == 2
-                     ::oTotales:addTotCobroNoEfectivo(  cCaja, ::oTikP:cSerTik, ::nTotTiketCobro(), ::cTxtTiketCobro(), ::bZooTiketCobro(), ::oTotales:hBmpDoc[ "TiketCliente" ] )
+                     ::oTotales:addTotCobroNoEfectivo( cCaja, ::oTikP:cSerTik, ::nTotTiketCobro(), ::cTxtTiketCobro(), ::bZooTiketCobro(), ::oTotales:hBmpDoc[ "TiketCliente" ] )
                   case nTipoPgo == 3
-                     ::oTotales:addTotCobroTarjeta(   cCaja, ::oTikP:cSerTik, ::nTotTiketCobro(), ::cTxtTiketCobro(), ::bZooTiketCobro(), ::oTotales:hBmpDoc[ "TiketCliente" ] )
+                     ::oTotales:addTotCobroTarjeta( cCaja, ::oTikP:cSerTik, ::nTotTiketCobro(), ::cTxtTiketCobro(), ::bZooTiketCobro(), ::oTotales:hBmpDoc[ "TiketCliente" ] )
                end case
 
             case ( cTipTik == SAVDEV ) // Como devolucion
 
-               ::oTotales:addTotTikCliCobros(      cCaja, ::oTikP:cSerTik, - ::nTotTiketCobro(), ::cTxtTiketCobro(), ::bEdtTiketCobro(), ::oTotales:hBmpDoc[ "TiketCliente" ] )
+               ::oTotales:addTotTikCliCobros( cCaja, ::oTikP:cSerTik, - ::nTotTiketCobro(), ::cTxtTiketCobro(), ::bEdtTiketCobro(), ::oTotales:hBmpDoc[ "TiketCliente" ] )
 
                do case
                   case nTipoPgo < 2
-                     ::oTotales:addTotCobroEfectivo(  cCaja, ::oTikP:cSerTik, - ::nTotTiketCobro(), ::cTxtTiketCobro(), ::bEdtTiketCobro(), ::oTotales:hBmpDoc[ "TiketCliente" ] )
+                     ::oTotales:addTotCobroEfectivo( cCaja, ::oTikP:cSerTik, - ::nTotTiketCobro(), ::cTxtTiketCobro(), ::bEdtTiketCobro(), ::oTotales:hBmpDoc[ "TiketCliente" ] )
                   case nTipoPgo == 2
-                     ::oTotales:addTotCobroNoEfectivo(  cCaja, ::oTikP:cSerTik, - ::nTotTiketCobro(), ::cTxtTiketCobro(), ::bEdtTiketCobro(), ::oTotales:hBmpDoc[ "TiketCliente" ] )
+                     ::oTotales:addTotCobroNoEfectivo( cCaja, ::oTikP:cSerTik, - ::nTotTiketCobro(), ::cTxtTiketCobro(), ::bEdtTiketCobro(), ::oTotales:hBmpDoc[ "TiketCliente" ] )
                   case nTipoPgo == 3
-                     ::oTotales:addTotCobroTarjeta(   cCaja, ::oTikP:cSerTik, - ::nTotTiketCobro(), ::cTxtTiketCobro(), ::bEdtTiketCobro(), ::oTotales:hBmpDoc[ "TiketCliente" ] )
+                     ::oTotales:addTotCobroTarjeta( cCaja, ::oTikP:cSerTik, - ::nTotTiketCobro(), ::cTxtTiketCobro(), ::bEdtTiketCobro(), ::oTotales:hBmpDoc[ "TiketCliente" ] )
                end case
 
          end case
@@ -6251,7 +6212,7 @@ Method PrintArqueo( cTurno, cCaja, nDevice, cCaption, cDocumento, cPrinter, nCop
 
       ::FillTemporal( cCaja )
 
-      ::PrintReport( nDevice, nCopies, cPrinter, ::oDbfDoc:cAlias )
+      ::PrintReport( cTurno, cCaja, nDevice, nCopies, cPrinter, ::oDbfDoc:cAlias )
 
       ::DestroyTemporal()
 
@@ -7873,7 +7834,7 @@ Function lCajaOpen( cCodCaj )
 
       if oTurno:OpenService()
 
-         if oTurno:oDbfCaj:SeekInOrd( oTurno:CurTurno() + cCodCaj, "cCajTur" )
+         if oTurno:oDbfCaj:SeekInOrd( oTurno:CurTurno() + cCodCaj, "cNumTur" )
             lCajaOpen   := !oTurno:oDbfCaj:lCajClo
          end if
 
@@ -8009,7 +7970,136 @@ Return ( Self )
 
 //---------------------------------------------------------------------------//
 
-METHOD DataReport( oFastReport )
+METHOD PrintReport( cTurno, cCaja, nDevice, nCopies, cPrinter, dbfDoc )
+
+   DEFAULT nDevice      := IS_SCREEN
+   DEFAULT nCopies      := 1
+   DEFAULT cPrinter     := PrnGetName()
+
+   if !Empty( ::oTxt )
+      ::oTxt:SetText( "Imprimiendo informe" )
+   end if
+
+   SysRefresh()
+
+   /*
+   Guarda las tablas-----------------------------------------------------------
+   */
+
+   ::oDbf:GetRecno()
+   ::oDbfCaj:GetRecno()
+   ::oDbfDet:GetRecno()
+
+   if !Empty( cCaja )
+      ::oDbfCaj:Seek( cCaja )
+   end if 
+
+   /*
+   Creamos el documento--------------------------------------------------------
+   */
+
+   if Empty( ::oFastReport )
+      ::oFastReport              := frReportManager():New()
+      ::oFastReport:LoadLangRes( "Spanish.Xml" )
+      ::lDestroyFastreport       := .t.
+   end if
+
+   ::oFastReport:SetIcon( 1 )
+   ::oFastReport:SetTitle(       "Diseñador de documentos" )
+
+   /*
+   Manejador de eventos--------------------------------------------------------
+   */
+
+   ::oFastReport:SetEventHandler( "Designer", "OnSaveReport", {|| ::oFastReport:SaveToBlob( ( dbfDoc )->( Select() ), "mReport" ) } )
+
+   /*
+   Zona de datos---------------------------------------------------------------
+   */
+
+   ::DataReport( cTurno, cCaja, ::oFastReport )
+
+   /*
+   Cargar el informe-----------------------------------------------------------
+   */
+
+   if !Empty( ( dbfDoc )->mReport )
+
+      ::oFastReport:LoadFromBlob( ( dbfDoc )->( Select() ), "mReport")
+
+      /*
+      Zona de variables--------------------------------------------------------
+      */
+
+      ::VariableReport( ::oFastReport )
+
+      /*
+
+      Preparar el report-------------------------------------------------------
+      */
+
+      ::oFastReport:PrepareReport()
+
+      /*
+      Imprimir el informe------------------------------------------------------
+      */
+
+      do case
+         case ( Valtype( nDevice ) == "N" .and. nDevice == IS_SCREEN ) .or. ( Valtype( nDevice ) == "C" .and. nDevice == "Visualizar" )
+            ::oFastReport:ShowPreparedReport()
+
+         case ( Valtype( nDevice ) == "N" .and. nDevice == IS_PRINTER ) .or. ( Valtype( nDevice ) == "C" .and. nDevice == "Imprimir" )
+            ::oFastReport:PrintOptions:SetPrinter( cPrinter )
+            ::oFastReport:PrintOptions:SetCopies( nCopies )
+            ::oFastReport:PrintOptions:SetShowDialog( .f. )
+            ::oFastReport:Print()
+
+         case ( Valtype( nDevice ) == "N" .and. nDevice == IS_PDF ) .or. ( Valtype( nDevice ) == "C" .and. nDevice == "Adobe PDF" )
+            ::oFastReport:PrintOptions:SetShowDialog( .f. )
+            ::oFastReport:SetProperty( "PDFExport", "ShowDialog",  ::lPdfShowDialog )
+            ::oFastReport:SetProperty( "PDFExport", "DefaultPath", ::cPdfDefaultPath )
+            ::oFastReport:SetProperty( "PDFExport", "FileName",    ::cPdfFileName )
+            ::oFastReport:DoExport( "PDFExport" )
+
+         case ( Valtype( nDevice ) == "N" .and. nDevice == IS_HTML ) .or. ( Valtype( nDevice ) == "C" .and. nDevice == "HTML" )
+            ::oFastReport:SetProperty( "HTMLExport", "ShowDialog", ::lPdfShowDialog )
+            ::oFastReport:SetProperty( "HTMLExport", "DefaultPath",::cPdfDefaultPath )
+            ::oFastReport:SetProperty( "HTMLExport", "FileName",   ::cHtmlFileName )
+            ::oFastReport:DoExport( "HTMLExport" )
+
+         case ( Valtype( nDevice ) == "N" .and. nDevice == IS_EXCEL ) .or. ( Valtype( nDevice ) == "C" .and. nDevice == "Excel" )
+            ::oFastReport:SetProperty( "XLSExport", "FileName", "ArqueoCaja" + Alltrim( ::cCurTurno ) + ".xls" )
+            ::oFastReport:DoExport( "XLSExport" )
+
+      end case
+
+   end if
+
+   /*
+   Destruye el diseñador-------------------------------------------------------
+   */
+
+   if ::lDestroyFastReport
+      ::oFastReport:DestroyFr()
+      ::oFastReport  := nil
+   end if
+
+   /*
+   Reposiciona las tablas------------------------------------------------------
+   */
+
+   ::oDbf:SetRecno()
+   ::oDbfCaj:SetRecno()
+   ::oDbfDet:SetRecno()
+
+Return .t.
+
+//---------------------------------------------------------------------------//
+
+METHOD DataReport( cTurno, cCaja, oFastReport )
+
+   DEFAULT cTurno       := ::oDbf:cNumTur + ::oDbf:cSufTur
+   DEFAULT cCaja        := oUser():cCaja()
 
    /*
    Zona de datos------------------------------------------------------------
@@ -8022,7 +8112,7 @@ METHOD DataReport( oFastReport )
 
    oFastReport:SetWorkArea(     "Cajas", ::oDbfCaj:nArea )
    oFastReport:SetFieldAliases( "Cajas", cObjectsToReport( ::oDbfCaj ) )
-
+ 
    oFastReport:SetWorkArea(     "Contadores", ::oDbfDet:nArea )
    oFastReport:SetFieldAliases( "Contadores", cObjectsToReport( ::oDbfDet ) )
 
@@ -8035,8 +8125,8 @@ METHOD DataReport( oFastReport )
    oFastReport:SetWorkArea(     "Empresa", ::oDbfEmp:nArea )
    oFastReport:SetFieldAliases( "Empresa", cItemsToReport( aItmEmp() ) )
 
-   oFastReport:SetMasterDetail( "Sesión",   "Cajas",                {|| ::cCurTurno } )
-   oFastReport:SetMasterDetail( "Sesión",   "Contadores",           {|| ::cCurTurno } )
+   oFastReport:SetMasterDetail( "Sesión",   "Cajas",                {|| cTurno + cCaja } )
+   oFastReport:SetMasterDetail( "Sesión",   "Contadores",           {|| cTurno + cCaja } )
    oFastReport:SetMasterDetail( "Sesión",   "Usuarios",             {|| ::oDbf:cCajTur } )
    oFastReport:SetMasterDetail( "Sesión",   "Empresa",              {|| cCodigoEmpresaEnUso() } )
 
@@ -8166,6 +8256,7 @@ METHOD VariableReport( oFastReport )
    oFastReport:AddVariable(     "Monedas en caja",  "Retirado en monedas de 0.05 €",                 "GetHbArrayVar('aMonedasRet',13)")
    oFastReport:AddVariable(     "Monedas en caja",  "Retirado en monedas de 0.02 €",                 "GetHbArrayVar('aMonedasRet',14)")
    oFastReport:AddVariable(     "Monedas en caja",  "Retirado en monedas de 0.01 €",                 "GetHbArrayVar('aMonedasRet',15)")
+  
    oFastReport:AddVariable(     "Monedas en caja",  "Efectivo en caja",                              "GetHbVar('nEfectivoEnCaja')")
    oFastReport:AddVariable(     "Monedas en caja",  "Retirado en caja",                              "GetHbVar('nRetiradoEnCaja')")
    oFastReport:AddVariable(     "Monedas en caja",  "Tarjeta en caja",                               "GetHbVar('nTarjetaEnCaja')")
@@ -8229,7 +8320,7 @@ METHOD DesignReport( oFastReport, dbfDoc )
       Zona de datos------------------------------------------------------------
       */
 
-      ::DataReport( oFastReport )
+      ::DataReport( nil, nil, oFastReport )
 
       /*
       Paginas y bandas---------------------------------------------------------
@@ -8293,128 +8384,6 @@ METHOD DesignReport( oFastReport, dbfDoc )
       Return .f.
 
    end if
-
-Return .t.
-
-//---------------------------------------------------------------------------//
-
-METHOD PrintReport( nDevice, nCopies, cPrinter, dbfDoc )
-
-   DEFAULT nDevice      := IS_SCREEN
-   DEFAULT nCopies      := 1
-   DEFAULT cPrinter     := PrnGetName()
-
-   if !Empty( ::oTxt )
-      ::oTxt:SetText( "Imprimiendo informe" )
-   end if
-
-   SysRefresh()
-
-   /*
-   Guarda las tablas-----------------------------------------------------------
-   */
-
-   ::oDbf:GetRecno()
-   ::oDbfCaj:GetRecno()
-   ::oDbfDet:GetRecno()
-
-   /*
-   Creamos el documento--------------------------------------------------------
-   */
-
-   if Empty( ::oFastReport )
-      ::oFastReport              := frReportManager():New()
-      ::oFastReport:LoadLangRes( "Spanish.Xml" )
-      ::lDestroyFastreport       := .t.
-   end if
-
-   ::oFastReport:SetIcon( 1 )
-   ::oFastReport:SetTitle(       "Diseñador de documentos" )
-
-   /*
-   Manejador de eventos--------------------------------------------------------
-   */
-
-   ::oFastReport:SetEventHandler( "Designer", "OnSaveReport", {|| ::oFastReport:SaveToBlob( ( dbfDoc )->( Select() ), "mReport" ) } )
-
-   /*
-   Zona de datos---------------------------------------------------------------
-   */
-
-   ::DataReport( ::oFastReport )
-
-   /*
-   Cargar el informe-----------------------------------------------------------
-   */
-
-   if !Empty( ( dbfDoc )->mReport )
-
-      ::oFastReport:LoadFromBlob( ( dbfDoc )->( Select() ), "mReport")
-
-      /*
-      Zona de variables--------------------------------------------------------
-      */
-
-      ::VariableReport( ::oFastReport )
-
-      /*
-
-      Preparar el report-------------------------------------------------------
-      */
-
-      ::oFastReport:PrepareReport()
-
-      /*
-      Imprimir el informe------------------------------------------------------
-      */
-
-      do case
-         case ( Valtype( nDevice ) == "N" .and. nDevice == IS_SCREEN ) .or. ( Valtype( nDevice ) == "C" .and. nDevice == "Visualizar" )
-            ::oFastReport:ShowPreparedReport()
-
-         case ( Valtype( nDevice ) == "N" .and. nDevice == IS_PRINTER ) .or. ( Valtype( nDevice ) == "C" .and. nDevice == "Imprimir" )
-            ::oFastReport:PrintOptions:SetPrinter( cPrinter )
-            ::oFastReport:PrintOptions:SetCopies( nCopies )
-            ::oFastReport:PrintOptions:SetShowDialog( .f. )
-            ::oFastReport:Print()
-
-         case ( Valtype( nDevice ) == "N" .and. nDevice == IS_PDF ) .or. ( Valtype( nDevice ) == "C" .and. nDevice == "Adobe PDF" )
-            ::oFastReport:PrintOptions:SetShowDialog( .f. )
-            ::oFastReport:SetProperty( "PDFExport", "ShowDialog",  ::lPdfShowDialog )
-            ::oFastReport:SetProperty( "PDFExport", "DefaultPath", ::cPdfDefaultPath )
-            ::oFastReport:SetProperty( "PDFExport", "FileName",    ::cPdfFileName )
-            ::oFastReport:DoExport( "PDFExport" )
-
-         case ( Valtype( nDevice ) == "N" .and. nDevice == IS_HTML ) .or. ( Valtype( nDevice ) == "C" .and. nDevice == "HTML" )
-            ::oFastReport:SetProperty( "HTMLExport", "ShowDialog", ::lPdfShowDialog )
-            ::oFastReport:SetProperty( "HTMLExport", "DefaultPath",::cPdfDefaultPath )
-            ::oFastReport:SetProperty( "HTMLExport", "FileName",   ::cHtmlFileName )
-            ::oFastReport:DoExport( "HTMLExport" )
-
-         case ( Valtype( nDevice ) == "N" .and. nDevice == IS_EXCEL ) .or. ( Valtype( nDevice ) == "C" .and. nDevice == "Excel" )
-            ::oFastReport:SetProperty( "XLSExport", "FileName", "ArqueoCaja" + Alltrim( ::cCurTurno ) + ".xls" )
-            ::oFastReport:DoExport( "XLSExport" )
-
-      end case
-
-   end if
-
-   /*
-   Destruye el diseñador-------------------------------------------------------
-   */
-
-   if ::lDestroyFastReport
-      ::oFastReport:DestroyFr()
-      ::oFastReport  := nil
-   end if
-
-   /*
-   Reposiciona las tablas------------------------------------------------------
-   */
-
-   ::oDbf:SetRecno()
-   ::oDbfCaj:SetRecno()
-   ::oDbfDet:SetRecno()
 
 Return .t.
 
@@ -11297,18 +11266,18 @@ METHOD DefineFiles()
 
    DEFINE DATABASE ::oDbf FILE "TURNO.DBF" CLASS "TurnoT" ALIAS "TurnoT" PATH ( ::cPath ) VIA ( cDriver() ) COMMENT  "Sesiones"
 
-      FIELD NAME "LSNDTUR" TYPE "L"  LEN  1  DEC 0 COMMENT ""                    HIDE                     OF ::oDbf
-      FIELD NAME "LCLOTUR" TYPE "L"  LEN  1  DEC 0 COMMENT ""                    HIDE                     OF ::oDbf
-      FIELD NAME "LCONTUR" TYPE "L"  LEN  1  DEC 0 COMMENT "Cn"                  HIDE                     OF ::oDbf
-      FIELD NAME "CNUMTUR" TYPE "C"  LEN  6  DEC 0 COMMENT "Número"              COLSIZE 60 ALIGN RIGHT   OF ::oDbf
-      FIELD NAME "CSUFTUR" TYPE "C"  LEN  2  DEC 0 COMMENT "Delegación"          COLSIZE 40               OF ::oDbf
-      FIELD NAME "DOPNTUR" TYPE "D"  LEN  8  DEC 0 COMMENT "Fecha inicio"        COLSIZE 80               OF ::oDbf
-      FIELD NAME "CHOROPN" TYPE "C"  LEN  5  DEC 0 COMMENT "Hora inicio"         COLSIZE 60               OF ::oDbf
-      FIELD NAME "DCLOTUR" TYPE "D"  LEN  8  DEC 0 COMMENT "Fecha fin"           COLSIZE 80               OF ::oDbf
-      FIELD NAME "CHORCLO" TYPE "C"  LEN  5  DEC 0 COMMENT "Hora fin"            COLSIZE 60               OF ::oDbf
-      FIELD NAME "CCAJTUR" TYPE "C"  LEN  3  DEC 0 COMMENT "Usuario"             COLSIZE 50               OF ::oDbf
-      FIELD NAME "LBEFCLO" TYPE "L"  LEN  1  DEC 0 COMMENT ""                    HIDE                     OF ::oDbf
-      FIELD NAME "MCOMTUR" TYPE "M"  LEN 10  DEC 0 COMMENT "Comentarios"         COLSIZE 300              OF ::oDbf
+      FIELD NAME "lSndTur" TYPE "L"  LEN  1  DEC 0 COMMENT ""                    HIDE                     OF ::oDbf
+      FIELD NAME "lCloTur" TYPE "L"  LEN  1  DEC 0 COMMENT ""                    HIDE                     OF ::oDbf
+      FIELD NAME "lConTur" TYPE "L"  LEN  1  DEC 0 COMMENT "Cn"                  HIDE                     OF ::oDbf
+      FIELD NAME "cNumTur" TYPE "C"  LEN  6  DEC 0 COMMENT "Número"              COLSIZE 60 ALIGN RIGHT   OF ::oDbf
+      FIELD NAME "cSufTur" TYPE "C"  LEN  2  DEC 0 COMMENT "Delegación"          COLSIZE 40               OF ::oDbf
+      FIELD NAME "dOpnTur" TYPE "D"  LEN  8  DEC 0 COMMENT "Fecha inicio"        COLSIZE 80               OF ::oDbf
+      FIELD NAME "cHorOpn" TYPE "C"  LEN  5  DEC 0 COMMENT "Hora inicio"         COLSIZE 60               OF ::oDbf
+      FIELD NAME "dCloTur" TYPE "D"  LEN  8  DEC 0 COMMENT "Fecha fin"           COLSIZE 80               OF ::oDbf
+      FIELD NAME "cHorClo" TYPE "C"  LEN  5  DEC 0 COMMENT "Hora fin"            COLSIZE 60               OF ::oDbf
+      FIELD NAME "cCajTur" TYPE "C"  LEN  3  DEC 0 COMMENT "Usuario"             COLSIZE 50               OF ::oDbf
+      FIELD NAME "lBefClo" TYPE "L"  LEN  1  DEC 0 COMMENT ""                    HIDE                     OF ::oDbf
+      FIELD NAME "mComTur" TYPE "M"  LEN 10  DEC 0 COMMENT "Comentarios"         COLSIZE 300              OF ::oDbf
 
       INDEX TO "TURNO.CDX" TAG "cNumTur" ON "cNumTur + cSufTur" COMMENT "Número" FOR "!Deleted()"  OF ::oDbf
       INDEX TO "TURNO.CDX" TAG "lCloTur" ON "lCloTur"                            FOR "!Deleted()"  OF ::oDbf
