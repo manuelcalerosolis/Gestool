@@ -58,11 +58,11 @@ CLASS TDataCenter
 
    DATA        lActualizaBaseDatos        INIT .t.
 
-   DATA        aLgcIndices                INIT { .t., .t. }
-   DATA        aChkIndices                INIT Array( 2 )
+   DATA        aLgcIndices                INIT { .t., .t., .t. }
+   DATA        aChkIndices                INIT Array( 3 )
 
-   DATA        aProgress                  INIT Array( 2 )
-   DATA        nProgress                  INIT { 0, 0 }
+   DATA        aProgress                  INIT Array( 3 )
+   DATA        nProgress                  INIT { 0, 0, 0 }
 
    DATA        cMsg                       INIT ""
    DATA        oMsg
@@ -122,6 +122,9 @@ CLASS TDataCenter
    METHOD lCreaArrayPeriodos()
 
    METHOD lRecargaFecha()
+
+   METHOD DisableTriggers()
+   METHOD EnableTriggers()
 
    METHOD Resource( nId )
    METHOD Reindex()
@@ -1442,6 +1445,7 @@ METHOD BuildEmpresa()
    oDataTable:cName        := cPatCli() + "Client"
    oDataTable:cDataFile    := cPatCli( , .t. ) + "Client.Dbf"
    oDataTable:cIndexFile   := cPatCli( , .t. ) + "Client.Cdx"
+   oDataTable:bSyncFile    := {|| SynClient( cPatCli() ) }
    ::AddEmpresaTable( oDataTable )
 
    oDataTable              := TDataTable()
@@ -2029,6 +2033,7 @@ METHOD BuildEmpresa()
    oDataTable:cDataFile    := cPatEmp( , .t. ) + "FacCliP.Dbf"
    oDataTable:cIndexFile   := cPatEmp( , .t. ) + "FacCliP.Cdx"
    oDataTable:lTrigger     := .f.
+   oDataTable:bSyncFile    := {|| SynRecCli( cPatEmp() ) }
    ::AddEmpresaTable( oDataTable )
 
    oDataTable              := TDataTable()
@@ -2856,9 +2861,11 @@ METHOD Resource( nId )
 
       REDEFINE CHECKBOX ::aChkIndices[ 1 ] VAR ::aLgcIndices[ 1 ] ID 100 OF ::oDlg
       REDEFINE CHECKBOX ::aChkIndices[ 2 ] VAR ::aLgcIndices[ 2 ] ID 101 OF ::oDlg
+      REDEFINE CHECKBOX ::aChkIndices[ 3 ] VAR ::aLgcIndices[ 3 ] ID 102 OF ::oDlg
 
       ::aProgress[ 1 ]  := TMeter():ReDefine( 200, { | u | if( pCount() == 0, ::nProgress[ 1 ], ::nProgress[ 1 ] := u ) }, 10, ::oDlg, .f., , , .t., rgb( 255,255,255 ), , rgb( 128,255,0 ) )
       ::aProgress[ 2 ]  := TMeter():ReDefine( 210, { | u | if( pCount() == 0, ::nProgress[ 2 ], ::nProgress[ 2 ] := u ) }, 10, ::oDlg, .f., , , .t., rgb( 255,255,255 ), , rgb( 128,255,0 ) )
+      ::aProgress[ 3 ]  := TMeter():ReDefine( 220, { | u | if( pCount() == 0, ::nProgress[ 3 ], ::nProgress[ 3 ] := u ) }, 10, ::oDlg, .f., , , .t., rgb( 255,255,255 ), , rgb( 128,255,0 ) )
 
       REDEFINE SAY ::oMsg PROMPT ::cMsg ID 110 OF ::oDlg
 
@@ -2898,6 +2905,10 @@ METHOD Reindex()
 
    ::BuildData()
 
+   /*
+   Bases de datos de directorio datos------------------------------------------
+   */
+
    ::aProgress[ 1 ]:SetTotal( len( ::aDataTables ) )
 
    for each oTable in ::aDataTables
@@ -2910,6 +2921,10 @@ METHOD Reindex()
       ::aProgress[ 1 ]:Set( hb_EnumIndex() )
 
    next
+
+   /*
+   Bases de datos de empresa---------------------------------------------------
+   */
 
    ::BuildEmpresa()
 
@@ -2926,6 +2941,26 @@ METHOD Reindex()
 
    next
 
+   /*
+   Sincronizacion de la empresa------------------------------------------------
+   */
+
+   ::aProgress[ 3 ]:SetTotal( len( ::aEmpresaTables ) )
+
+   ::DisableTriggers()
+
+   for each oTable in ::aEmpresaTables
+
+      if !Empty( oTable:bSyncFile )
+         eval( oTable:bSyncFile )
+      end if
+
+      ::aProgress[ 3 ]:Set( hb_EnumIndex() )
+
+   next
+   
+   ::EnableTriggers()
+   
    CursorWE()
 
    msgInfo( "Proceso finalizado con exito.")
@@ -2935,6 +2970,85 @@ METHOD Reindex()
 Return ( Self )
 
 //---------------------------------------------------------------------------//
+
+METHOD disableTriggers()
+
+   local lOk
+   local cStm
+   local nError
+   local cErrorAds
+
+   /*
+   Creamos la instruccion------------------------------------------------------
+   */
+
+   cStm           := "EXECUTE PROCEDURE sp_disableTriggers( NULL, NULL, FALSE, 0 );"
+
+   /*
+   Creamos la snetencia--------------------------------------------------------
+   */
+
+   if ADSCreateSQLStatement( "SqlOperation", 3 )
+
+      lOk         := ADSExecuteSQLDirect( cStm )
+      if !lOk
+         nError   := AdsGetLastError( @cErrorAds )
+         msgStop( cErrorAds, 'ERROR en ADSSqlOperationLog' )
+      endif
+
+   else
+
+      nError      := AdsGetLastError( @cErrorAds )
+      msgStop( cErrorAds, 'ERROR en ADSCreateSQLStatement' )
+
+   end if
+
+   AdsCacheOpenCursors( 0 )
+   AdsClrCallBack()
+
+RETURN ( lOk )
+
+//---------------------------------------------------------------------------//
+
+METHOD EnableTriggers()
+
+   local lOk
+   local cStm
+   local nError
+   local cErrorAds
+
+   /*
+   Creamos la instruccion------------------------------------------------------
+   */
+
+   cStm           := "EXECUTE PROCEDURE sp_enableTriggers( NULL, NULL, FALSE, 0 );"
+
+   /*
+   Creamos la snetencia--------------------------------------------------------
+   */
+
+   if ADSCreateSQLStatement( "SqlOperation", 3 )
+
+      lOk         := ADSExecuteSQLDirect( cStm )
+      if !lOk
+         nError   := AdsGetLastError( @cErrorAds )
+         msgStop( cErrorAds, 'ERROR en ADSSqlOperationLog' )
+      endif
+
+   else
+
+      nError      := AdsGetLastError( @cErrorAds )
+      msgStop( cErrorAds, 'ERROR en ADSCreateSQLStatement' )
+
+   end if
+
+   AdsCacheOpenCursors( 0 )
+   AdsClrCallBack()
+
+RETURN ( lOk )
+
+//---------------------------------------------------------------------------//
+
 //---------------------------------------------------------------------------//
 //---------------------------------------------------------------------------//
 //---------------------------------------------------------------------------//
@@ -2947,6 +3061,7 @@ CLASS TDataTable
    DATA  cDescription   INIT ""
    DATA  aFields        INIT {}
    DATA  lTrigger       INIT .t.
+   DATA  bSyncFile      
 
 END CLASS
 

@@ -953,7 +953,9 @@ FUNCTION lInitCheck( lDir, oMessage, oProgress )
       oProgress:AutoInc()
    end if
 
-   TstEmpresa()
+   if ( nUsrInUse() == 1 )
+      TstEmpresa()
+   end if 
 
    // Cargamos los datos de la divisa------------------------------------------
 
@@ -965,7 +967,9 @@ FUNCTION lInitCheck( lDir, oMessage, oProgress )
       oProgress:AutoInc()
    end if
 
-   TstDivisas()
+   if ( nUsrInUse() == 1 )
+      TstDivisas()
+   end if 
 
    // Cargamos los datos de la cajas-------------------------------------------
 
@@ -977,7 +981,9 @@ FUNCTION lInitCheck( lDir, oMessage, oProgress )
       oProgress:AutoInc()
    end if
 
-   TstCajas()
+   if ( nUsrInUse() == 1 )
+      TstCajas()
+   end if 
 
    // Inicializamos classes----------------------------------------------------
 

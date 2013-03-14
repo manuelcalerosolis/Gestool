@@ -9484,7 +9484,6 @@ FONT 8, "MS Sans Serif"
   CONTROL "&Modificar", 301, "Button", WS_TABSTOP, 47, 173, 50, 14
   CONTROL "&Eliminar", 302, "Button", WS_TABSTOP, 47, 187, 50, 14
   CONTROL "&Previsualizar", 303, "Button", WS_TABSTOP, 47, 201, 50, 14
-  CONTROL "&Imprimir", 304, "Button", WS_TABSTOP, 47, 215, 50, 14
   CONTROL "", 310, "TXBrowse", WS_TABSTOP|0x00300000, 99, 160, 368, 90
   CONTROL "TOTAL", 909, "Static", WS_GROUP, 48, 40, 28, 8
   CONTROL "Total Venta", 150, "Static", SS_RIGHT|WS_GROUP, 99, 40, 114, 16
@@ -9531,7 +9530,7 @@ FONT 8, "MS Sans Serif"
   CONTROL "&Buscar cliente", 323, "Button", WS_TABSTOP, 47, 308, 50, 14
   CONTROL "", 500, "Static", SS_BITMAP|SS_CENTERIMAGE, 4, 3, 34, 30
   CONTROL "", 510, "Static", SS_LEFTNOWORDWRAP|WS_GROUP, 44, 3, 482, 8
-  CONTROL "", 554, "Button", WS_TABSTOP, 111, 375, 90, 36
+  CONTROL "", 554, "Button", WS_TABSTOP, 47, 375, 90, 36
 }
 
 PGOTIKET DIALOG DISCARDABLE 152, 51, 293, 180
@@ -18863,6 +18862,8 @@ FONT 8, "MS Sans Serif"
   CONTROL "", -1, "Static", SS_ETCHEDHORZ, 0, 32, 386, 1
   CONTROL "", 200, "msctls_progress32", 0x00000000, 4, 56, 378, 4
   CONTROL "", 210, "msctls_progress32", 0x00000000, 4, 78, 378, 4
+  CONTROL "Sincroniza información", 102, "Button", BS_AUTOCHECKBOX|WS_TABSTOP, 4, 88, 84, 10
+  CONTROL "", 220, "msctls_progress32", 0x00000000, 4, 100, 378, 4
 }
 
 LANGUAGE LANG_SPANISH,SUBLANG_SPANISH_MODERN
