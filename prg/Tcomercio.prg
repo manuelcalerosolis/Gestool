@@ -298,10 +298,6 @@ CLASS TComercio
 
    METHOD lUpdateFabricantesPrestashop( nId )
 
-   METHOD AppendPropiedadesPrestashop()
-
-   METHOD AppPropiedadesPrestashop()
-
    METHOD GetColorDefault()
 
    METHOD GetValPrp( nIdPrp, nProductAttibuteId )
@@ -367,6 +363,16 @@ CLASS TComercio
    METHOD UpdateProductsPrestashop()
 
    METHOD DeleteProductsPrestashop()
+
+   METHOD AppendPropiedadesPrestashop()
+
+   METHOD InsertPropiedadesPrestashop()
+
+   METHOD UpdatePropiedadesPrestashop()
+
+   METHOD DeletePropiedadesPrestashop()
+
+   METHOD ActualizaPropiedadesPrestashop( oDbf )
 
 END CLASS
 
@@ -6682,7 +6688,9 @@ Method ExportarPrestashop() Class TComercio
 
                ::MeterGlobalText( "Subiendo imagenes" )
 
-               ::AppendImagesPrestashop()
+               msgstop( "Desactivada la subida de imágenes" )
+
+               //::AppendImagesPrestashop()
 
              end if
 
@@ -7334,6 +7342,8 @@ Method DeleteCategoriesPrestashop() CLASS TComercio
    /*
    Eliminamos en cascada Todo lo que esté tirando de la familia----------------
    */
+
+   msginfo("Faltan eliminar todos los artículos que tiren de la categoría")
 
    /*
    Quitamos la referencia de nuestra tabla-------------------------------------
@@ -8195,7 +8205,13 @@ METHOD InsertProductsPrestashop() CLASS TComercio
    ::lDefImgPrp               := .f.
 
    /*
-   Insertamos el artículo en la tabla ps_product-------------------------
+   ----------------------------------------------------------------------------
+   INSERTAMOS EL ARTÍCULO EN TODAS LAS TABLAS DE PRESTASHOP--------------------
+   ----------------------------------------------------------------------------
+   */
+
+   /*
+   Insertamos el artículo en la tabla ps_product-------------------------------
    */
 
    cCommand    := "INSERT INTO " + ::cPrefixTable( "product" ) + ;
@@ -8236,7 +8252,7 @@ METHOD InsertProductsPrestashop() CLASS TComercio
    end if
 
    /*
-   Insertamos un artículo nuevo en la tabla ps_category_product-------------
+   Insertamos un artículo nuevo en la tabla ps_category_product----------------
     */
 
    cCommand    := "INSERT INTO " + ::cPrefixTable( "category_product" ) + ; 
@@ -8253,7 +8269,7 @@ METHOD InsertProductsPrestashop() CLASS TComercio
    end if
 
    /*
-   Insertamos un artículo nuevo en la tabla ps_category_shop-------------
+   Insertamos un artículo nuevo en la tabla ps_category_shop-------------------
    */
 
    cCommand    := "INSERT INTO " + ::cPrefixTable( "product_shop" ) + ;
@@ -8284,7 +8300,7 @@ METHOD InsertProductsPrestashop() CLASS TComercio
    end if
 
    /*
-   Insertamos un artículo nuevo en la tabla ps_product_lang-----------------
+   Insertamos un artículo nuevo en la tabla ps_product_lang--------------------
    */
 
    cCommand    := "INSERT INTO " + ::cPrefixTable( "product_lang" ) +;
@@ -8313,12 +8329,18 @@ METHOD InsertProductsPrestashop() CLASS TComercio
    end if
 
    /*
-   Insertamos un registro en las tablas de imágenes----------------------
+   ----------------------------------------------------------------------------
+   INSERTAMOS IMAGENES DEL ARTÍCULO EN CONCRETO--------------------------------
+   ----------------------------------------------------------------------------
    */
 
    nOrdAnt        := ::oArtImg:OrdSetFocus( "cCodArt" )
 
    if !::oArtImg:Seek( ::oArt:Codigo )
+
+      /*
+      Tiene una sola imagen seleccionada---------------------------------------
+      */
 
       if !Empty( ::oArt:cImagen )
 
@@ -8362,108 +8384,108 @@ METHOD InsertProductsPrestashop() CLASS TComercio
 
          end if
 
-            /*
-            Añadimos la imagen al array para pasarla a prestashop--------------
-            */
-
-            oImagen                       := SImagen()
-            oImagen:cNombreImagen         := ::oArt:cImagen
-            oImagen:nTipoImagen           := tipoProducto
-            oImagen:cCarpeta              := AllTrim( Str( nCodigoImagen ) )
-            oImagen:cPrefijoNombre        := AllTrim( Str( nCodigoImagen ) )
-
-            ::AddImages( oImagen )
-
-            nPosition++
-
-         end if
-
-      else
-
          /*
-         Metemos las imágenes desde la tabla de imágenes del programa-------
+         Añadimos la imagen al array para pasarla a prestashop--------------
          */
 
-         while ::oArtImg:cCodArt == ::oArt:Codigo .and. !::oArtImg:Eof()
+         oImagen                       := SImagen()
+         oImagen:cNombreImagen         := ::oArt:cImagen
+         oImagen:nTipoImagen           := tipoProducto
+         oImagen:cCarpeta              := AllTrim( Str( nCodigoImagen ) )
+         oImagen:cPrefijoNombre        := AllTrim( Str( nCodigoImagen ) )
 
-            cCommand := "INSERT INTO " + ::cPrefixTable( "image" ) + ;
-                           " ( id_product, " + ;
-                           "position, " + ;
-                           "cover )" + ;
-                        " VALUES " + ;
-                           "('" + AllTrim( Str( nCodigoWeb ) ) + "', " + ;
-                           "'" + Str( nPosition ) + "', " + ;
-                           "'" + if( ::oArtImg:lDefImg, "1", "0" ) + "' )"
+         ::AddImages( oImagen )
 
-            if TMSCommand():New( ::oCon ):ExecDirect( cCommand )
-
-               nCodigoImagen           := ::oCon:GetInsertId()
-
-               ::oArtImg:fieldPutByName( "cCodWeb", nCodigoImagen )
-
-               ::SetText( "He insertado el artículo " + AllTrim( ::oArt:Nombre ) + " correctamente en la tabla " + ::cPrefixTable( "image" ), 3 )
-
-            else
-               ::SetText( "Error al insertar el artículo " + AllTrim( ::oArt:Nombre ) + " en la tabla " + ::cPrefixTable( "image" ), 3 )
-            end if
-
-            /*
-            Metemos los ToolTip de las imágenes--------------------------
-            */
-
-            cCommand := "INSERT INTO " + ::cPrefixTable( "image_lang" ) + ;
-                           " ( id_image, " + ;
-                           "id_lang, " + ;
-                           "legend )" + ;
-                        " VALUES " + ;
-                           "('" + AllTrim( Str( nCodigoImagen ) ) + "', " + ;
-                           "'" + AllTrim( Str( ::nLanguage ) ) + "', " + ;
-                           "'" + AllTrim( ::oArtImg:cNbrArt ) + "' )"
-
-            if TMSCommand():New( ::oCon ):ExecDirect( cCommand )
-               ::SetText( "He insertado el artículo " + AllTrim( ::oArt:Nombre ) + " correctamente en la tabla " + ::cPrefixTable( "image_lang" ), 3 )
-            else
-               ::SetText( "Error al insertar el artículo " + AllTrim( ::oArt:Nombre ) + " en la tabla " + ::cPrefixTable( "image_lang" ), 3 )
-            end if
-
-            cCommand := "INSERT INTO " + ::cPrefixTable( "image_shop" ) + ;
-                           "(  id_image, " + ;
-                           "id_shop, " + ;
-                           "cover )" + ;
-                        " VALUES " + ;
-                           "('" + AllTrim( Str( nCodigoImagen ) ) + "', " + ;
-                           "'1', " + ;
-                           "'" + if( ::oArtImg:lDefImg, "1", "0" ) + "' )"
-
-            if TMSCommand():New( ::oCon ):ExecDirect(  )
-               ::SetText( "He insertado el artículo " + AllTrim( ::oArt:Nombre ) + " correctamente en la tabla " + ::cPrefixTable( "image_shop" ), 3 )
-            else
-               ::SetText( "Error al insertar el artículo " + AllTrim( ::oArt:Nombre ) + " en la tabla " + ::cPreFixTable( "image_shop" ), 3 )
-            end if
-
-            /*
-            Añadimos la imagen al array para pasarla a prestashop--------------
-            */
-
-            oImagen                       := SImagen()
-            oImagen:cNombreImagen         := ::oArtImg:cImgArt
-            oImagen:nTipoImagen           := tipoProducto
-            oImagen:cCarpeta              := AllTrim( Str( nCodigoImagen ) )
-            oImagen:cPrefijoNombre        := AllTrim( Str( nCodigoImagen ) )
-
-            ::AddImages( oImagen )
-
-            ::oArtImg:Skip()
-
-            nPosition++
-
-         end while
+         nPosition++
 
       end if
 
-      ::oArtImg:OrdSetFocus( nOrdAnt )
+   else
 
+      /*
+      Metemos las imágenes desde la tabla de imágenes del programa-------
+      */
 
+      while ::oArtImg:cCodArt == ::oArt:Codigo .and. !::oArtImg:Eof()
+
+         cCommand := "INSERT INTO " + ::cPrefixTable( "image" ) + ;
+                        " ( id_product, " + ;
+                        "position, " + ;
+                        "cover )" + ;
+                     " VALUES " + ;
+                        "('" + AllTrim( Str( nCodigoWeb ) ) + "', " + ;
+                        "'" + Str( nPosition ) + "', " + ;
+                        "'" + if( ::oArtImg:lDefImg, "1", "0" ) + "' )"
+
+         if TMSCommand():New( ::oCon ):ExecDirect( cCommand )
+
+            nCodigoImagen           := ::oCon:GetInsertId()
+
+            ::oArtImg:fieldPutByName( "cCodWeb", nCodigoImagen )
+
+            ::SetText( "He insertado el artículo " + AllTrim( ::oArt:Nombre ) + " correctamente en la tabla " + ::cPrefixTable( "image" ), 3 )
+
+         else
+            ::SetText( "Error al insertar el artículo " + AllTrim( ::oArt:Nombre ) + " en la tabla " + ::cPrefixTable( "image" ), 3 )
+         end if
+
+         /*
+         Metemos los ToolTip de las imágenes--------------------------
+         */
+
+         cCommand := "INSERT INTO " + ::cPrefixTable( "image_lang" ) + ;
+                        " ( id_image, " + ;
+                        "id_lang, " + ;
+                        "legend )" + ;
+                     " VALUES " + ;
+                        "('" + AllTrim( Str( nCodigoImagen ) ) + "', " + ;
+                        "'" + AllTrim( Str( ::nLanguage ) ) + "', " + ;
+                        "'" + AllTrim( ::oArtImg:cNbrArt ) + "' )"
+
+         if TMSCommand():New( ::oCon ):ExecDirect( cCommand )
+            ::SetText( "He insertado el artículo " + AllTrim( ::oArt:Nombre ) + " correctamente en la tabla " + ::cPrefixTable( "image_lang" ), 3 )
+         else
+            ::SetText( "Error al insertar el artículo " + AllTrim( ::oArt:Nombre ) + " en la tabla " + ::cPrefixTable( "image_lang" ), 3 )
+         end if
+
+         cCommand := "INSERT INTO " + ::cPrefixTable( "image_shop" ) + ;
+                        "(  id_image, " + ;
+                        "id_shop, " + ;
+                        "cover )" + ;
+                     " VALUES " + ;
+                        "('" + AllTrim( Str( nCodigoImagen ) ) + "', " + ;
+                        "'1', " + ;
+                        "'" + if( ::oArtImg:lDefImg, "1", "0" ) + "' )"
+
+         if TMSCommand():New( ::oCon ):ExecDirect( cCommand )
+            ::SetText( "He insertado el artículo " + AllTrim( ::oArt:Nombre ) + " correctamente en la tabla " + ::cPrefixTable( "image_shop" ), 3 )
+         else
+            ::SetText( "Error al insertar el artículo " + AllTrim( ::oArt:Nombre ) + " en la tabla " + ::cPreFixTable( "image_shop" ), 3 )
+         end if
+
+         /*
+         Añadimos la imagen al array para pasarla a prestashop--------------
+         */
+
+         oImagen                       := SImagen()
+         oImagen:cNombreImagen         := ::oArtImg:cImgArt
+         oImagen:nTipoImagen           := tipoProducto
+         oImagen:cCarpeta              := AllTrim( Str( nCodigoImagen ) )
+         oImagen:cPrefijoNombre        := AllTrim( Str( nCodigoImagen ) )
+
+         ::AddImages( oImagen )
+
+         ::oArtImg:Skip()
+
+         nPosition++
+
+      end while
+
+   end if
+
+   ::oArtImg:OrdSetFocus( nOrdAnt )
+
+   
 
 
 
@@ -8837,8 +8859,6 @@ METHOD InsertProductsPrestashop() CLASS TComercio
             end while
 
          end if*/
-
-//   end if
 
    ::oArtDiv:OrdSetFocus( "nOrdArtDiv" )
 
@@ -10524,58 +10544,65 @@ Return lReturn
 METHOD AppendPropiedadesPrestashop CLASS TComercio
 
    local n
+   local cCommand := ""
 
-   if ::lSincAll
+   /*
+   Vaciamos las tablas para el proceso global-------------------------
+   */
 
-      /*
-      Vaciamos las tablas para el proceso global-------------------------
-      */
+   cCommand       := "TRUNCATE TABLE " + ::cPrefixTable( "attribute" )
 
-      if TMSCommand():New( ::oCon ):ExecDirect( "TRUNCATE TABLE ps_attribute" )
-         ::SetText ( 'Tabla ps_attribute borrada correctamente', 3  )
-      else
-         ::SetText ( 'Error al borrar la tabla ps_attribute', 3  )
-      end if
+   if TMSCommand():New( ::oCon ):ExecDirect( cCommand )
+      ::SetText ( 'Tabla ' + ::cPrefixTable( "attribute" ) + ' borrada correctamente', 3  )
+   else
+      ::SetText ( 'Error al borrar la tabla ' + ::cPrefixTable( "attribute" ), 3  )
+   end if
 
-      if TMSCommand():New( ::oCon ):ExecDirect( "TRUNCATE TABLE ps_attribute_lang" )
-         ::SetText ( 'Tabla ps_attribute_lang borrada correctamente', 3  )
-      else
-         ::SetText ( 'Error al borrar la tabla ps_attribute_lang', 3  )
-      end if
+   cCommand       := "TRUNCATE TABLE " + ::cPrefixTable( "attribute_lang" )
 
-      if TMSCommand():New( ::oCon ):ExecDirect( "TRUNCATE TABLE ps_attribute_impact" )
-         ::SetText ( 'Tabla ps_attribute_impact borrada correctamente', 3  )
-      else
-         ::SetText ( 'Error al borrar la tabla ps_attribute_impact', 3  )
-      end if
+   if TMSCommand():New( ::oCon ):ExecDirect( cCommand )
+      ::SetText ( 'Tabla ' + ::cPrefixTable( "attribute_lang" ) + ' borrada correctamente', 3  )
+   else
+      ::SetText ( 'Error al borrar la tabla ' + ::cPrefixTable( "attribute_lang" ), 3  )
+   end if
 
-      if TMSCommand():New( ::oCon ):ExecDirect( "TRUNCATE TABLE ps_attribute_group" )
-         ::SetText ( 'Tabla ps_attribute_group borrada correctamente', 3  )
-      else
-         ::SetText ( 'Error al borrar la tabla ps_attribute_group', 3  )
-      end if
+   cCommand       := "TRUNCATE TABLE " + ::cPrefixTable( "attribute_impact" )
 
-      if TMSCommand():New( ::oCon ):ExecDirect( "TRUNCATE TABLE ps_attribute_group_lang" )
-         ::SetText ( 'Tabla ps_attribute_group_lang borrada correctamente', 3  )
-      else
-         ::SetText ( 'Error al borrar la tabla ps_attribute_group_lang', 3  )
-      end if
+   if TMSCommand():New( ::oCon ):ExecDirect( cCommand )
+      ::SetText ( 'Tabla ' + ::cPrefixTable( "attribute_impact" ) + ' borrada correctamente', 3  )
+   else
+      ::SetText ( 'Error al borrar la tabla ' + ::cPrefixTable( "attribute_impact" ), 3  )
+   end if
 
+   cCommand       := "TRUNCATE TABLE " + ::cPrefixTable( "attribute_group" )
+
+   if TMSCommand():New( ::oCon ):ExecDirect( cCommand )
+      ::SetText ( 'Tabla ' + ::cPrefixTable( "attribute_group" ) + ' borrada correctamente', 3  )
+   else
+      ::SetText ( 'Error al borrar la tabla ' + ::cPrefixTable( "attribute_group" ), 3  )
+   end if
+
+   cCommand       := "TRUNCATE TABLE " + ::cPrefixTable( "attribute_group_lang" )
+
+   if TMSCommand():New( ::oCon ):ExecDirect( cCommand )
+      ::SetText ( 'Tabla ' + ::cPrefixTable( "attribute_group_lang" ) + ' borrada correctamente', 3  )
+   else
+      ::SetText ( 'Error al borrar la tabla ' + ::cPrefixTable( "attribute_group_lang" ), 3  )
    end if
 
    /*
-   Añadimos familias a prestashop----------------------------------------------
+   Añadimos Propiedades de artículos a prestashop------------------------------
    */
 
    ::oPro:GoTop()
 
    while !::oPro:Eof()
 
-      if ::oPro:lPubInt .and. ( ::oPro:lSndDoc .or. ::lSincAll )
+      if ::oPro:lPubInt
 
          ::MeterParticularText( "Actualizando propiedades de artículos" )
 
-         ::AppPropiedadesPrestashop()
+         ::InsertPropiedadesPrestashop()
 
       end if
 
@@ -10589,7 +10616,7 @@ Return ( self )
 
 //---------------------------------------------------------------------------//
 
-Method AppPropiedadesPrestashop() CLASS TComercio
+Method InsertPropiedadesPrestashop() CLASS TComercio
 
    local oImagen
    local nCodigoGrupo      := 0
@@ -10597,55 +10624,51 @@ Method AppPropiedadesPrestashop() CLASS TComercio
    local nParent           := 1
    local nRec              := ::oTblPro:Recno()
    local nOrdAnt           := ::oTblPro:OrdSetFocus( "CPRO" )
+   local cCommand          := ""
 
-   if ( ::oPro:cCodWeb == 0 .or. ::lSincAll )
+   /*
+   Insertamos una propiedad nueva en las tablas de prestashop-----------------
+   */
 
-      /*
-      Insertamos una propiedad nueva en las tablas de prestashop-----------------
-      */
+   cCommand          := "INSERT INTO " + ::cPrefixTable( "attribute_group" ) + ; 
+                              " ( is_color_group, " + ;
+                                  "group_type )" + ;
+                              " VALUES " + ;
+                                  "('" + if( ::oPro:lColor, "1", "0" ) + "', " + ;        //is_color_group
+                                  "'" + if( ::oPro:lColor, "color", "select" ) + "' )"    //group_type                        
 
-      if TMSCommand():New( ::oCon ):ExecDirect( "INSERT INTO ps_attribute_group ( is_color_group ) VALUES ( '" + if( ::oPro:lColor, "1", "0" ) + "' )" )
+   if TMSCommand():New( ::oCon ):ExecDirect( cCommand )
 
+      nCodigoGrupo   := ::oCon:GetInsertId()
 
-         nCodigoGrupo           := ::oCon:GetInsertId()
+      ::oPro:fieldPutByName( "cCodWeb", nCodigoGrupo )
 
-         ::oPro:fieldPutByName( "cCodWeb", nCodigoGrupo )
-
-         ::SetText( "He insertado la propiedad " + AllTrim( ::oPro:cDesPro ) + " correctamente en la tabla ps_attribute_group", 3 )
-
-      else
-         ::SetText( "Error al insertar la propiedad " + AllTrim( ::oPro:cDesPro ) + " en la tabla ps_attribute_group", 3 )
-      end if
-
-      if TMSCommand():New( ::oCon ):ExecDirect( "INSERT INTO ps_attribute_group_lang ( id_attribute_group, " + ;
-                                                                                       "id_lang, " + ;
-                                                                                       "name, " + ;
-                                                                                       "public_name )" + ;
-                                                                              " VALUES " + ;
-                                                                                       "('" + AllTrim( Str( nCodigoGrupo ) ) + "', " + ;     //id_attribute_group
-                                                                                       "'" + Str( ::nLanguage ) + "', " + ;                  //id_lang
-                                                                                       "'" + AllTrim( ::oPro:cDesPro ) + "', " + ;           //name
-                                                                                       "'" + AllTrim( ::oPro:cDesPro ) + "' )" )             //public_name
-
-         ::SetText( "He insertado la propiedad " + AllTrim( ::oPro:cDesPro ) + " correctamente en la tabla ps_attribute_group_lang", 3 )
-
-      else
-         ::SetText( "Error al insertar la propiedad " + AllTrim( ::oPro:cDesPro ) + " en la tabla ps_attribute_group_lang", 3 )
-      end if
+      ::SetText( "He insertado la propiedad " + AllTrim( ::oPro:cDesPro ) + " correctamente en la tabla " + ::cPrefixTable( "attribute_group" ), 3 )
 
    else
 
-      if TMSCommand():New( ::oCon ):ExecDirect( "UPDATE ps_attribute_group SET is_color_group='" + if( ::oPro:lColor, "1", "0" ) + "' WHERE id_attribute_group=" + AllTrim( Str( ::oPro:cCodWeb ) ) )
-         ::SetText( "Actualizada correctamente la propiedad " + AllTrim( ::oPro:cDesPro ) + " en la tabla ps_attribute_group", 3 )
-      else
-         ::SetText( "Error al actualizar la propiedad " + AllTrim( ::oPro:cDesPro ) + " en la tabla ps_attribute_group", 3 )
-      end if
+      ::SetText( "Error al insertar la propiedad " + AllTrim( ::oPro:cDesPro ) + " en la tabla " + ::cPrefixTable( "attribute_group" ), 3 )
 
-      if TMSCommand():New( ::oCon ):ExecDirect( "UPDATE ps_attribute_group_lang SET name='" + AllTrim( ::oPro:cDesPro ) + "', public_name='" + AllTrim( ::oPro:cDesPro ) + "' WHERE id_attribute_group=" + AllTrim( Str( ::oPro:cCodWeb ) ) )
-         ::SetText( "Actualizada correctamente la propiedad " + AllTrim( ::oPro:cDesPro ) + " en la tabla ps_attribute_group_lang", 3 )
-      else
-         ::SetText( "Error al actualizar la propiedad " + AllTrim( ::oPro:cDesPro ) + " en la tabla ps_attribute_group_lang", 3 )
-      end if
+   end if
+
+   cCommand          := "INSERT INTO " + ::cPrefixTable( "attribute_group_lang" ) + ; 
+                              " ( id_attribute_group, " + ;
+                                  "id_lang, " + ;
+                                  "name, " + ;
+                                  "public_name )" + ;
+                              " VALUES " + ;
+                                  "('" + AllTrim( Str( nCodigoGrupo ) ) + "', " + ;    //id_attribute_group
+                                  "'" + Str( ::nLanguage ) + "', " + ;                 //id_lang
+                                  "'" + AllTrim( ::oPro:cDesPro ) + "', " + ;          //name
+                                  "'" + AllTrim( ::oPro:cDesPro ) + "' )"              //public_name
+
+   if TMSCommand():New( ::oCon ):ExecDirect( cCommand )
+
+      ::SetText( "He insertado la propiedad " + AllTrim( ::oPro:cDesPro ) + " correctamente en la tabla " + ::cPrefixTable( "attribute_group_lang" ), 3 )
+
+   else
+
+      ::SetText( "Error al insertar la propiedad " + AllTrim( ::oPro:cDesPro ) + " en la tabla " + ::cPrefixTable( "attribute_group_lang" ), 3 )
 
    end if
 
@@ -10657,53 +10680,43 @@ Method AppPropiedadesPrestashop() CLASS TComercio
 
       while ::oPro:cCodPro == ::oTblPro:cCodPro .and. !::oTblPro:Eof()
 
-         if ( ::oTblPro:cCodWeb == 0 .or. ::lSincAll )
+         cCommand    := "INSERT INTO " + ::cPrefixTable( "attribute" ) + ; 
+                           " ( id_attribute_group, " + ;
+                               "color )" + ;
+                           " VALUES " + ;
+                               "('" + AllTrim( Str( nCodigoGrupo ) ) + "', " + ;          //name
+                               "'" + AllTrim( RgbToRgbHex( ::oTblPro:nColor) ) + "' )"    //active
 
-            if TMSCommand():New( ::oCon ):ExecDirect( "INSERT INTO ps_attribute ( id_attribute_group, " + ;
-                                                                                 "color )" + ;
-                                                                        " VALUES " + ;
-                                                                                 "('" + AllTrim( Str( nCodigoGrupo ) ) + "', " + ;          //name
-                                                                                 "'" + AllTrim( RgbToRgbHex( ::oTblPro:nColor) ) + "' )" )  //active
+         if TMSCommand():New( ::oCon ):ExecDirect( cCommand )
 
+            nCodigoPropiedad   := ::oCon:GetInsertId()
 
-               nCodigoPropiedad   := ::oCon:GetInsertId()
+            ::oTblPro:fieldPutByName( "cCodWeb", nCodigoPropiedad )
 
-               ::oTblPro:fieldPutByName( "cCodWeb", nCodigoPropiedad )
-
-               ::SetText( "He insertado la propiedad " + AllTrim( ::oTblPro:cDesTbl ) + " correctamente en la tabla ps_attribute", 3 )
-
-            else
-               ::SetText( "Error al insertar la propiedad " + AllTrim( ::oTblPro:cDesTbl ) + " en la tabla ps_attribute", 3 )
-            end if
-
-            if TMSCommand():New( ::oCon ):ExecDirect( "INSERT INTO ps_attribute_lang ( id_attribute, " + ;
-                                                                                      "id_lang, " + ;
-                                                                                      "name )" + ;
-                                                                             " VALUES " + ;
-                                                                                      "('" + AllTrim( Str( nCodigoPropiedad ) ) + "', " + ;   //id_attribute
-                                                                                      "'" + Str( ::nLanguage ) + "', " + ;                    //id_lang
-                                                                                      "'" + AllTrim( ::oTblPro:cDesTbl ) + "' )" )            //name
-
-
-               ::SetText( "He insertado la propiedad " + AllTrim( ::oTblPro:cDesTbl ) + " correctamente en la tabla ps_attribute_lang", 3 )
-
-            else
-               ::SetText( "Error al insertar la propiedad " + AllTrim( ::oTblPro:cDesTbl ) + " en la tabla ps_attribute_lang", 3 )
-            end if
+            ::SetText( "He insertado la propiedad " + AllTrim( ::oTblPro:cDesTbl ) + " correctamente en la tabla " + ::cPrefixTable( "attribute" ), 3 )
 
          else
 
-            if TMSCommand():New( ::oCon ):ExecDirect( "UPDATE ps_attribute SET color='" + AllTrim( RgbToRgbHex( ::oTblPro:nColor ) ) + "' WHERE id_attribute=" + AllTrim( Str( ::oTblPro:cCodWeb ) ) )
-               ::SetText( "Actualizada correctamente la propiedad " + AllTrim( ::oTblPro:cDesTbl ) + " en la tabla ps_attribute", 3 )
-            else
-               ::SetText( "Error al actualizar la propiedad " + AllTrim( ::oTblPro:cDesTbl ) + " en la tabla ps_attribute", 3 )
-            end if
+            ::SetText( "Error al insertar la propiedad " + AllTrim( ::oTblPro:cDesTbl ) + " en la tabla " + ::cPreFixtable( "ps_attribute" ), 3 )
 
-            if TMSCommand():New( ::oCon ):ExecDirect( "UPDATE ps_attribute_lang SET name='" + AllTrim( ::oTblPro:cDesTbl ) + "' WHERE id_attribute=" + AllTrim( Str( ::oTblPro:cCodWeb ) ) )
-               ::SetText( "Actualizada correctamente la propiedad " + AllTrim( ::oTblPro:cDesTbl ) + " en la tabla ps_attribute_lang", 3 )
-            else
-               ::SetText( "Error al actualizar la propiedad " + AllTrim( ::oTblPro:cDesTbl ) + " en la tabla ps_attribute_lang", 3 )
-            end if
+         end if
+
+         cCommand    := "INSERT INTO " + ::cPrefixTable( "attribute_lang" ) + ;
+                           " ( id_attribute, " + ;
+                              "id_lang, " + ;
+                              "name ) " + ;
+                           "VALUES " + ;
+                              "('" + AllTrim( Str( nCodigoPropiedad ) ) + "', " + ;   //id_attribute
+                              "'" + Str( ::nLanguage ) + "', " + ;                    //id_lang
+                              "'" + AllTrim( ::oTblPro:cDesTbl ) + "' )"              //name
+
+         if TMSCommand():New( ::oCon ):ExecDirect( cCommand )
+
+            ::SetText( "He insertado la propiedad " + AllTrim( ::oTblPro:cDesTbl ) + " correctamente en la tabla " + ::cPrefixTable( "attribute_lang" ), 3 )
+
+         else
+
+            ::SetText( "Error al insertar la propiedad " + AllTrim( ::oTblPro:cDesTbl ) + " en la tabla " + ::cPrefixTable( "attribute_lang" ), 3 )
 
          end if
 
@@ -10722,6 +10735,179 @@ Method AppPropiedadesPrestashop() CLASS TComercio
    ::oTblPro:GoTo( nRec )
 
 return nCodigoGrupo
+
+//---------------------------------------------------------------------------//
+
+METHOD UpdatePropiedadesPrestashop() CLASS TComercio
+
+   local cCommand
+
+   /*
+   Modificamos la cabecera de las propiedades----------------------------------
+   */
+
+   cCommand       := "UPDATE " + ::cPrefixTable( "attribute_group" ) + " SET " + ;
+                        "is_color_group='" + if( ::oPro:lColor, "1", "0" ) + "', " + ; 
+                        "group_type='" + if( ::oPro:lColor, "color", "select" ) + "' " + ;
+                     "WHERE id_attribute_group=" + AllTrim( Str( ::oPro:cCodWeb ) )                  
+
+   TMSCommand():New( ::oCon ):ExecDirect( cCommand )
+
+   cCommand       := "UPDATE " + ::cPrefixTable( "attribute_group_lang" ) + " SET " + ;
+                        "name='" + AllTrim( ::oPro:cDesPro ) + "', " + ; 
+                        "public_name='" + AllTrim( ::oPro:cDesPro ) + "' " + ;
+                     "WHERE id_attribute_group=" + AllTrim( Str( ::oPro:cCodWeb ) )
+
+   TMSCommand():New( ::oCon ):ExecDirect( cCommand )
+
+   /*
+   Modificamos las lineas de las propiedades-----------------------------------
+   */
+
+   /* 
+   if TMSCommand():New( ::oCon ):ExecDirect( "UPDATE ps_attribute SET color='" + AllTrim( RgbToRgbHex( ::oTblPro:nColor ) ) + "' WHERE id_attribute=" + AllTrim( Str( ::oTblPro:cCodWeb ) ) )
+      ::SetText( "Actualizada correctamente la propiedad " + AllTrim( ::oTblPro:cDesTbl ) + " en la tabla ps_attribute", 3 )
+   else
+      ::SetText( "Error al actualizar la propiedad " + AllTrim( ::oTblPro:cDesTbl ) + " en la tabla ps_attribute", 3 )
+   end if
+
+   if TMSCommand():New( ::oCon ):ExecDirect( "UPDATE ps_attribute_lang SET name='" + AllTrim( ::oTblPro:cDesTbl ) + "' WHERE id_attribute=" + AllTrim( Str( ::oTblPro:cCodWeb ) ) )
+      ::SetText( "Actualizada correctamente la propiedad " + AllTrim( ::oTblPro:cDesTbl ) + " en la tabla ps_attribute_lang", 3 )
+   else
+      ::SetText( "Error al actualizar la propiedad " + AllTrim( ::oTblPro:cDesTbl ) + " en la tabla ps_attribute_lang", 3 )
+   end if
+   */
+
+return ( self )
+
+//---------------------------------------------------------------------------//
+
+METHOD DeletePropiedadesPrestashop() CLASS TComercio
+
+   local lReturn     := .f.
+   local cCommand    := ""
+   local oQuery
+
+   cCommand          := "DELETE FROM " + ::cPrefixTable( "attribute_group" ) + " WHERE id_attribute_group=" + AllTrim( Str( ::oPro:cCodWeb ) )
+   lReturn           := TMSCommand():New( ::oCon ):ExecDirect( cCommand )
+
+   cCommand          := "DELETE FROM " + ::cPrefixTable( "attribute_group_lang" ) + " WHERE id_attribute_group=" + AllTrim( Str( ::oPro:cCodWeb ) )
+   lReturn           := TMSCommand():New( ::oCon ):ExecDirect( cCommand )
+
+   cCommand          := "DELETE FROM " + ::cPrefixTable( "attribute_group_shop" ) + " WHERE id_attribute_group=" + AllTrim( Str( ::oPro:cCodWeb ) )
+   lReturn           := TMSCommand():New( ::oCon ):ExecDirect( cCommand )
+
+   /*
+   Eliminamos las lineas-------------------------------------------------------
+   */
+
+   if ::oTblPro:Seek( ::oPro:cCodPro )
+
+      while ::oPro:cCodPro == ::oTblPro:cCodPro .and. !::oTblPro:Eof()
+
+         cCommand    := "DELETE FROM " + ::cPrefixTable( "attribute" ) + " WHERE id_attribute=" + AllTrim( Str( ::oTblPro:cCodWeb ) )
+         lReturn     := TMSCommand():New( ::oCon ):ExecDirect( cCommand )
+
+         cCommand    := "DELETE FROM " + ::cPrefixTable( "attribute_impact" ) + " WHERE id_attribute=" + AllTrim( Str( ::oTblPro:cCodWeb ) )
+         lReturn     := TMSCommand():New( ::oCon ):ExecDirect( cCommand )
+
+         cCommand    := "DELETE FROM " + ::cPrefixTable( "attribute_lang" ) + " WHERE id_attribute=" + AllTrim( Str( ::oTblPro:cCodWeb ) )
+         lReturn     := TMSCommand():New( ::oCon ):ExecDirect( cCommand )
+
+         ::oTblPro:fieldPutByName( "cCodWeb", 0 )
+
+         ::oTblPro:Skip()
+
+      end while
+
+   end if   
+
+   /*
+   Quitamos la referencia de nuestra tabla-------------------------------------
+   */
+
+   ::oPro:fieldPutByName( "cCodWeb", 0 )
+
+return ( self )
+
+//---------------------------------------------------------------------------//
+
+METHOD ActualizaPropiedadesPrestashop( cCodigoPropiedad ) CLASS TComercio
+
+   local oQuery
+   local cCommand
+
+   if !::lReady()
+      Return .f.
+   end if
+   
+   ::lShowDialogWait()
+
+   if ::OpenFiles()
+
+      if ::oPro:Seek( cCodigoPropiedad )
+   
+         if ::ConectBBDD()
+   
+            do case
+               case !::oPro:lPubInt .and. ::oPro:cCodWeb != 0
+      
+                  ::DeletePropiedadesPrestashop()
+      
+               case ::oPro:lPubInt .and. ::oPro:cCodWeb != 0
+      
+                  cCommand := 'SELECT * FROM ' + ::cPrefixTable( "attribute_group" ) +  ' WHERE id_attribute_group=' + AllTrim( Str( ::oPro:cCodWeb ) )
+                  oQuery   := TMSQuery():New( ::oCon, cCommand )
+      
+                  if oQuery:Open()
+      
+                     if oQuery:RecCount() > 0
+
+                        ?"Actualizo"
+
+                        ::UpdatePropiedadesPrestashop()
+
+                     else
+
+                        ::InsertPropiedadesPrestashop()
+                        
+                        /*
+                        Aviso para que haga una sincronización total-----------
+                        */
+
+                        msginfo("Faltan Avisar de que necesita una sincronización total")
+
+                     end if
+      
+                  end if
+      
+                  oQuery:Free()
+      
+               case ::oPro:lPubInt .and. ::oPro:cCodWeb == 0
+      
+                  ::InsertPropiedadesPrestashop()
+
+                  /*
+                  Aviso para que haga una sincronización total-----------
+                  */
+
+                  msginfo("Faltan Avisar de que necesita una sincronización total")
+      
+            end case
+
+            ::DisconectBBDD()
+   
+         end if
+
+      end if
+
+      ::CloseFiles()
+
+   end if
+
+   ::lHideDialogWait()
+
+Return .t.
 
 //---------------------------------------------------------------------------//
 

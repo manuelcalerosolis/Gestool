@@ -468,6 +468,7 @@ STATIC FUNCTION EndTrans( aTmp, aGet, nMode, oDlg )
    local oError
    local oBlock
    local nOrdAnt
+   local cCodPrp
 
    //Controla que no metan una propiedad con el código o el nombre en blanco
 
@@ -495,6 +496,7 @@ STATIC FUNCTION EndTrans( aTmp, aGet, nMode, oDlg )
    /*
    Pongo la marca de envio a verdadero
    */
+   cCodPrp     := aTmp[ ( dbfProT )->( FieldPos( "cCodPro" ) ) ]
 
    aTmp[ ( dbfProT )->( FieldPos( "lSndDoc" ) ) ]   := .t.
 
@@ -522,6 +524,16 @@ STATIC FUNCTION EndTrans( aTmp, aGet, nMode, oDlg )
       end while
 
       WinGather( aTmp, aGet, dbfProT, nil, nMode )
+
+      /*
+      Actualizamos los datos de la web para tiempo real------------------------
+      */
+
+      Actualizaweb( cCodPrp )
+
+      /*
+      Termina la transación----------------------------------------------------
+      */
 
       CommitTransaction()
 
@@ -2132,7 +2144,6 @@ Static Function ChangelSndDoc( aTmp )
 
       if ( dbfProT )->( dbRLock() )
          ( dbfProT )->lSndDoc    := !( dbfProT )->lSndDoc
-         ( dbfProT )->cCodWeb    := 0
          ( dbfProT )->( dbCommit() )
          ( dbfProT )->( dbUnLock() )
       end if
@@ -2158,7 +2169,6 @@ Static Function ChangePublicar( aTmp )
          if ( dbfProT )->( dbRLock() )
             ( dbfProT )->lPubInt   := !( dbfProT )->lPubInt
             ( dbfProT )->lSndDoc   := ( dbfProT )->lPubInt
-            ( dbfProT )->cCodWeb   := 0
             ( dbfProT )->( dbCommit() )
             ( dbfProT )->( dbUnLock() )
          end if
@@ -2166,10 +2176,6 @@ Static Function ChangePublicar( aTmp )
       next
 
       oWndBrw:Refresh()
-
-   else
-
-      aTmp[ ( dbfProT )->( fieldpos( "cCodWeb" ) ) ]  := 0
 
    end if
 
@@ -2355,3 +2361,42 @@ Return ( cMemo )
 
 //---------------------------------------------------------------------------//
 
+Static Function Actualizaweb( cCodPrp )
+
+   if uFieldEmpresa( "lRealWeb" )
+
+      if lPubPrp()
+
+         with object ( TComercio():GetInstance() )    
+            :ActualizaPropiedadesPrestashop( cCodPrp )
+         end with  
+
+      end if   
+
+   end if   
+
+Return .t.
+
+//---------------------------------------------------------------------------//
+
+Static Function lPubPrp()
+
+   local lPub  := .f.
+
+   if ( dbfProT )->lPubInt
+
+      lPub     := .t.
+
+   else
+
+      if ( dbfProT )->cCodWeb != 0
+
+         lPub  := .t.
+
+      end if
+
+   end if
+
+Return lPub
+
+//---------------------------------------------------------------------------//
