@@ -6616,6 +6616,10 @@ FUNCTION TstEmpresa( cPatDat )
    local lChangeCode
    local lChangeStruct  
 
+   if lAIS()
+      Return .f.
+   end if 
+
    if !lExistTable( cPatDat() + "EMPRESA.DBF" )
       dbCreate( cPatDat() + "EMPRESA.DBF", aSqlStruct( aItmEmp() ), cDriver() )
    end if

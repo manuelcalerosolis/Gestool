@@ -2217,34 +2217,34 @@ function SynRecCli( cPath )
    BEGIN SEQUENCE
 
    USE ( cPath + "FACCLIT.DBF" ) NEW VIA ( cDriver() ) SHARED ALIAS ( cCheckArea( "FacCliT", @dbfFacCliT ) )
-   ( dbfFacCliT )->( ordListAdd( ( cPath + "FACCLIT.CDX" ) ) )
+   if !lAIS() ; ( dbfFacCliT )->( ordListAdd( ( cPath + "FACCLIT.CDX" ) ) ); else ; ordSetFocus( 1 ) ; end 
 
    USE ( cPath + "FACCLIL.DBF" ) NEW VIA ( cDriver() ) SHARED ALIAS ( cCheckArea( "FacCliL", @dbfFacCliL ) )
-   ( dbfFacCliL )->( ordListAdd( ( cPath + "FACCLIL.CDX" ) ) )
+   if !lAIS() ; ( dbfFacCliL )->( ordListAdd( ( cPath + "FACCLIL.CDX" ) ) ); else ; ordSetFocus( 1 ) ; end
 
    USE ( cPath + "FACCLIP.DBF" ) NEW VIA ( cDriver() ) SHARED ALIAS ( cCheckArea( "FacCliP", @dbfFacCliP ) )
-   ( dbfFacCliP )->( ordListAdd( ( cPath + "FACCLIP.CDX" ) ) )
+   if !lAIS() ; ( dbfFacCliP )->( ordListAdd( ( cPath + "FACCLIP.CDX" ) ) ); else ; ordSetFocus( 1 ) ; end
 
    USE ( cPath + "AntCliT.DBF" ) NEW VIA ( cDriver() ) SHARED ALIAS ( cCheckArea( "AntCliT", @dbfAntCliT ) )
-   ( dbfAntCliT )->( ordListAdd( ( cPath + "AntCliT.CDX" ) ) )
+   if !lAIS() ; ( dbfAntCliT )->( ordListAdd( ( cPath + "AntCliT.CDX" ) ) ); else ; ordSetFocus( 1 ) ; end
 
    USE ( cPath + "FACRECT.DBF" ) NEW VIA ( cDriver() ) SHARED ALIAS ( cCheckArea( "FacRecT", @dbfFacRecT ) )
-   ( dbfFacRecT )->( ordListAdd( ( cPath + "FacRecT.CDX" ) ) )
+   if !lAIS() ; ( dbfFacRecT )->( ordListAdd( ( cPath + "FacRecT.CDX" ) ) ); else ; ordSetFocus( 1 ) ; end
 
    USE ( cPath + "FACRECL.DBF" ) NEW VIA ( cDriver() ) SHARED ALIAS ( cCheckArea( "FacRecL", @dbfFacRecL ) )
-   ( dbfFacRecL )->( ordListAdd( ( cPath + "FacRecL.CDX" ) ) )
+   if !lAIS() ; ( dbfFacRecL )->( ordListAdd( ( cPath + "FacRecL.CDX" ) ) ); else ; ordSetFocus( 1 ) ; end
 
    USE ( cPatCli() + "CLIENT.DBF" ) NEW VIA ( cDriver() ) SHARED ALIAS ( cCheckArea( "Client", @dbfClient ) )
-   ( dbfClient )->( ordListAdd( ( cPatCli() + "CLIENT.CDX" ) ) )
+   if !lAIS() ; ( dbfClient )->( ordListAdd( ( cPatCli() + "CLIENT.CDX" ) ) ); else ; ordSetFocus( 1 ) ; end
 
    USE ( cPatGrp() + "FPAGO.DBF" ) NEW VIA ( cDriver() ) SHARED ALIAS ( cCheckArea( "FPagO", @dbfFPago ) )
-   ( dbfFPago )->( ordListAdd( ( cPatGrp() + "FPAGO.CDX" ) ) )
+   if !lAIS() ; ( dbfFPago )->( ordListAdd( ( cPatGrp() + "FPAGO.CDX" ) ) ); else ; ordSetFocus( 1 ) ; end
 
    USE ( cPatDat() + "DIVISAS.DBF" ) NEW VIA ( cDriver() ) SHARED ALIAS ( cCheckArea( "Divisas", @dbfDiv ) )
-   ( dbfDiv )->( ordListAdd( ( cPatDat() + "DIVISAS.CDX" ) ) )
+   if !lAIS() ; ( dbfDiv )->( ordListAdd( ( cPatDat() + "DIVISAS.CDX" ) ) ); else ; ordSetFocus( 1 ) ; end
 
    USE ( cPatDat() + "TIVA.DBF" ) NEW VIA ( cDriver() ) SHARED ALIAS ( cCheckArea( "TIva", @dbfIva ) )
-   ( dbfIva )->( ordListAdd( ( cPatDat() + "TIVA.CDX" ) ) )
+   if !lAIS() ; ( dbfIva )->( ordListAdd( ( cPatDat() + "TIVA.CDX" ) ) ); else ; ordSetFocus( 1 ) ; end
 
    ( dbfFacCliP )->( dbGoTop() )
    while !( dbfFacCliP )->( eof() )
