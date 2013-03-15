@@ -1864,6 +1864,13 @@ METHOD BuildEmpresa()
    oDataTable:lTrigger     := .f.
    ::AddEmpresaTable( oDataTable )
 
+   oDataTable              := TDataTable()
+   oDataTable:cName        := cPatEmp() + "SatCliS"
+   oDataTable:cDataFile    := cPatEmp( , .t. ) + "SatCliS.Dbf"
+   oDataTable:cIndexFile   := cPatEmp( , .t. ) + "SatCliS.Cdx"
+   oDataTable:lTrigger     := .f.
+   ::AddEmpresaTable( oDataTable )
+
    /*
    Presupuestos Clientes
    */

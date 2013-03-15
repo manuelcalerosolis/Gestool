@@ -909,7 +909,6 @@ STATIC FUNCTION OpenFiles( lExt )
       SET ADSINDEX TO ( cPatEmp() + "SatCliS.CDX" ) ADDITIVE
 
 
-
       USE ( cPatEmp() + "PROSER.DBF" ) NEW VIA ( cDriver() ) SHARED ALIAS ( cCheckArea( "PROSER", @dbfProSer ) )
       SET ADSINDEX TO ( cPatEmp() + "PROSER.CDX" ) ADDITIVE
 
