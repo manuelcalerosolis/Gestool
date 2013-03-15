@@ -525,18 +525,22 @@ static oGetDtoEnt
 static nTotal              := 0
 static nTotalOld           := 0
 static nTotalDif           := 0
+
 static oBtnPre
 static oBtnPed
 static oBtnAlb
 static oBtnGrp
+static oBtnSat
+
 static cOldCodCli          := ""
 static cOldCodArt          := ""
 static cOldPrpArt          := ""
 static cOldUndMed          := ""
 static lOpenFiles          := .f.
 static lExternal           := .f.
-static aTipFac             := { "Venta", "Alquiler" }
+
 static oTipFac
+static aTipFac             := { "Venta", "Alquiler" }
 
 static hCabeceraFactura    := 0
 static hLineaFactura       := 0
@@ -2168,8 +2172,6 @@ FUNCTION FactCli( oMenuItem, oWnd, cCodCli, cCodArt, cCodPed, aNumDoc )
       HOTKEY   "D";
       LEVEL    ACC_APPD
 
-#ifdef __HARBOUR__
-
       DEFINE BTNSHELL RESOURCE "Dup" OF oWndBrw ;
          NOBORDER ;
          ACTION   ( DupSerie( oWndBrw ) );
@@ -2177,8 +2179,6 @@ FUNCTION FactCli( oMenuItem, oWnd, cCodCli, cCodArt, cCodPed, aNumDoc )
          FROM     oDup ;
          CLOSED ;
          LEVEL    ACC_APPD
-
-#endif
 
    DEFINE BTNSHELL RESOURCE "EDIT" OF oWndBrw ;
       NOBORDER ;
@@ -2852,7 +2852,7 @@ STATIC FUNCTION EdtRec( aTmp, aGet, dbfFacCliT, oBrw, cCodCli, cCodArt, nMode, a
       IGIC Incluido-------------------------------------------------------------
       */
 
-      REDEFINE CHECKBOX aGet[_LIVAINC] VAR aTmp[_LIVAINC] ;
+      REDEFINE CHECKBOX aGet[ _LIVAINC ] VAR aTmp[ _LIVAINC ] ;
          ID       200 ;
          WHEN     ( ( dbfTmpLin )->( LastRec() ) == 0 ) ;
          OF       oFld:aDialogs[1]
@@ -3647,6 +3647,14 @@ STATIC FUNCTION EdtRec( aTmp, aGet, dbfFacCliT, oBrw, cCodCli, cCodArt, nMode, a
          TOOLTIP  "Importar albaran" ;
          ACTION   ( BrwAlbCli( aGet[ _CNUMALB ], aGet[ _LIVAINC ] ) )
 
+      REDEFINE BTNBMP oBtnSat ;
+         ID       604 ;
+         OF       oFld:aDialogs[1] ;
+         RESOURCE "Power-drill_user1_16" ;
+         NOBORDER ;
+         TOOLTIP  "Importar albaran" ;
+         ACTION   ( BrwSatCli( aGet[ _CNUMALB ], dbfSatCliT, dbfSatCliL, dbfIva, dbfDiv, dbfFPago, aGet[ _LIVAINC ] ) )
+
       REDEFINE BUTTON oBtnGrp ;
          ID       512 ;
          OF       oFld:aDialogs[1] ;
@@ -3680,7 +3688,6 @@ STATIC FUNCTION EdtRec( aTmp, aGet, dbfFacCliT, oBrw, cCodCli, cCodArt, nMode, a
          VALID    ( cSatCli( aGet, aTmp, oBrwLin, nMode ), SetDialog( aGet, oSayDias, oSayGetRnt, oGetRnt ), RecalculaTotal( aTmp ) ) ;
          PICTURE  "@R #/#########/##" ;
          OF       oFld:aDialogs[1]
-
 
      REDEFINE GET aGet[ _NENTINI ] ;
          VAR      aTmp[ _NENTINI ] ;
@@ -4412,6 +4419,10 @@ STATIC FUNCTION EdtRec( aTmp, aGet, dbfFacCliT, oBrw, cCodCli, cCodArt, nMode, a
 
    if !Empty( oBtnAlb )
       oBtnAlb:end()
+   end if
+
+   if !Empty( oBtnSat )
+      oBtnSat:end()
    end if
 
    if !Empty( oMenu )
@@ -5903,7 +5914,6 @@ STATIC FUNCTION cAlbCli( aGet, aTmp, oBrwLin, oBrwPgo, nMode )
          CursorWait()
 
          aGet[ _CSERIE  ]:cText( ( dbfAlbCliT )->cSerAlb )
-         //aGet[ _CSERIE  ]:bWhen    := {|| .f. }
 
          aGet[ _CCODCLI ]:cText( ( dbfAlbCliT )->cCodCli )
          aGet[ _CCODCLI ]:bWhen    := {|| .f. }
@@ -6109,15 +6119,7 @@ STATIC FUNCTION cAlbCli( aGet, aTmp, oBrwLin, oBrwPgo, nMode )
             No permitimos mas albaranes----------------------------------------
             */
 
-            aGet[ _CNUMALB ]:Show()
-            aGet[ _CNUMPED ]:Hide()
-            aGet[ _CNUMPRE ]:Hide()
-
-            oBtnPre:Disable()
-            oBtnPed:Disable()
-            oBtnAlb:Disable()
-
-            oBtnGrp:bWhen              := {|| .f. }
+            HideImportacion( aGet, aGet[ _CNUMALB ] )
 
             /*
             Guardamos el numero del Albaran pos si no guardamos la factura-----
@@ -6290,6 +6292,8 @@ STATIC FUNCTION cAlbCli( aGet, aTmp, oBrwLin, oBrwPgo, nMode )
          oBrwPgo:Refresh()
 
          oBrwLin:SetFocus()
+
+         HideImportacion( aGet, aGet[ _CNUMALB ] )
 
          CursorWE()
 
@@ -8045,15 +8049,7 @@ STATIC FUNCTION cPedCli( aGet, aTmp, oBrwLin, oBrwPgo, nMode )
 
       end if
 
-      aGet[ _CNUMALB ]:Hide()
-      aGet[ _CNUMPED ]:Show()
-      aGet[ _CNUMPRE ]:Hide()
-
-      oBtnPre:Disable()
-      oBtnPed:Disable()
-      oBtnAlb:Disable()
-
-      oBtnGrp:bWhen  := {|| .f. }
+      HideImportacion( aGet, aGet[ _CNUMPED ] )
 
    else
 
@@ -8296,14 +8292,7 @@ STATIC FUNCTION cPreCli( aGet, aTmp, oBrw, nMode )
 
       end if
 
-      aGet[ _CNUMALB ]:Hide()
-      aGet[ _CNUMPED ]:Hide()
-      aGet[ _CNUMPRE ]:Show()
-
-      oBtnPre:Disable()
-      oBtnPed:Disable()
-      oBtnAlb:Disable()
-      oBtnGrp:bWhen  := {|| .f. }
+      HideImportacion( aGet, aGet[ _CNUMPRE ] )
 
    ELSE
 
@@ -9876,6 +9865,8 @@ STATIC FUNCTION GrpAlb( aGet, aTmp, oBrw )
          aGet[ _NDTODOS ]:cText( nDtoDos / nTotDoc * 100 )
       end if
 
+      HideImportacion( aGet )
+
       /*
       Recalculo del total del factura------------------------------------------
       */
@@ -9928,13 +9919,12 @@ CLASS TFacturasClientesSenderReciver FROM TSenderReciverItem
    Method RestoreData()
 
    Method SendData()
-
    Method ReciveData()
 
    Method Process()
 
-   Method nGetFacturaNumberToSend()    INLINE ( ::nFacturaNumberSend     := GetPvProfInt( "Numero", "Facturas clientes", ::nFacturaNumberSend, ::cIniFile ) )
-   Method nGetAnticipoNumberToSend()   INLINE ( ::nAnticipoNumberSend    := GetPvProfInt( "Numero", "Anticipos clientes", ::nAnticipoNumberSend, ::cIniFile ) )
+   Method nGetFacturaNumberToSend()    INLINE ( ::nFacturaNumberSend    := GetPvProfInt( "Numero", "Facturas clientes", ::nFacturaNumberSend, ::cIniFile ) )
+   Method nGetAnticipoNumberToSend()   INLINE ( ::nAnticipoNumberSend   := GetPvProfInt( "Numero", "Anticipos clientes", ::nAnticipoNumberSend, ::cIniFile ) )
 
    Method IncFacturaNumberToSend()     INLINE ( WritePProString( "Numero", "Facturas clientes",    cValToChar( ++::nFacturaNumberSend ),  ::cIniFile ) )
    Method IncAnticipoNumberToSend()    INLINE ( WritePProString( "Numero", "Anticipos clientes",   cValToChar( ++::nAnticipoNumberSend ), ::cIniFile ) )
@@ -9945,9 +9935,9 @@ END CLASS
 
 Method CreateData()
 
+   local nOrd
    local oBlock
    local oError
-   local nOrd
    local dbfFacCliT
    local dbfFacCliL
    local dbfFacCliI
@@ -22633,8 +22623,6 @@ STATIC FUNCTION cSatCli( aGet, aTmp, oBrw, nMode )
 
          CursorWait()
 
-         HideImportacion()
-
          aGet[ _CCODCLI ]:cText( ( dbfSatCliT )->CCODCLI )
          aGet[ _CCODCLI ]:lValid()
          aGet[ _CCODCLI ]:Disable()
@@ -22830,8 +22818,8 @@ STATIC FUNCTION cSatCli( aGet, aTmp, oBrw, nMode )
 
             ( dbfSatCliS )->( dbGoTop() )
 
-            oBrw:refresh()
-            oBrw:setFocus()
+            oBrw:Refresh()
+            oBrw:Setfocus()
 
          end if
 
@@ -22846,8 +22834,7 @@ STATIC FUNCTION cSatCli( aGet, aTmp, oBrw, nMode )
 
       end if
 
-      aGet[ _CNUMPED ]:Hide()
-      aGet[ _CNUMSAT ]:Show()
+      HideImportacion( aGet, aGet[ _CNUMSAT ] )
 
    else
 
@@ -23324,6 +23311,23 @@ return .t.
 
 //---------------------------------------------------------------------------//
 
-Static Function HideImportacion()
+Static Function HideImportacion( aGet, oShow )
+
+   aGet[ _CNUMALB ]:Hide()
+   aGet[ _CNUMPED ]:Hide()
+   aGet[ _CNUMPRE ]:Hide()
+   aGet[ _CNUMSAT ]:Hide()
+
+   oBtnPre:Hide()
+   oBtnPed:Hide()
+   oBtnAlb:Hide()
+   oBtnGrp:Hide()
+   oBtnSat:Hide()
+
+   if !empty( oShow )
+      oShow:Show()
+   end if
 
 Return ( nil ) 
+
+//---------------------------------------------------------------------------//
