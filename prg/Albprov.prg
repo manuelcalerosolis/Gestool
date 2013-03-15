@@ -8111,37 +8111,37 @@ Function SynAlbPrv( cPath )
    BEGIN SEQUENCE
 
    dbUseArea( .t., cDriver(), cPath + "ALBPROVT.DBF", cCheckArea( "ALBPROVT", @dbfAlbPrvT ), .f. )
-   ordListAdd( cPath + "ALBPROVT.CDX" )
+   if !lAIS(); ordListAdd( cPath + "ALBPROVT.CDX" ); else ; ordSetFocus( 1 ) ; end
 
    dbUseArea( .t., cDriver(), cPath + "ALBPROVL.DBF", cCheckArea( "ALBPROVL", @dbfAlbPrvL ), .f. )
-   ordListAdd( cPath + "ALBPROVL.CDX" )
+   if !lAIS(); ordListAdd( cPath + "ALBPROVL.CDX" ); else ; ordSetFocus( 1 ) ; end
 
    dbUseArea( .t., cDriver(), cPath + "ALBPRVS.DBF", cCheckArea( "ALBPRVS", @dbfAlbPrvS ), .f. )
-   ordListAdd( cPath + "ALBPRVS.CDX" )
+   if !lAIS(); ordListAdd( cPath + "ALBPRVS.CDX" ); else ; ordSetFocus( 1 ) ; end
 
    dbUseArea( .t., cDriver(), cPath + "ALBPRVI.DBF", cCheckArea( "ALBPRVI", @dbfAlbPrvI ), .f. )
-   ordListAdd( cPath + "ALBPRVI.CDX" )
+   if !lAIS(); ordListAdd( cPath + "ALBPRVI.CDX" ); else ; ordSetFocus( 1 ) ; end
 
    dbUseArea( .t., cDriver(), cPatArt() + "FAMILIAS.DBF", cCheckArea( "FAMILIAS", @dbfFamilia ), .f. )
-   ordListAdd( cPatArt() + "FAMILIAS.CDX" )
+   if !lAIS(); ordListAdd( cPatArt() + "FAMILIAS.CDX" ); else ; ordSetFocus( 1 ) ; end
 
    dbUseArea( .t., cDriver(), cPatArt() + "ARTICULO.DBF", cCheckArea( "ARTICULO", @dbfArticulo ), .f. )
-   ordListAdd( cPatArt() + "ARTICULO.CDX" )
+   if !lAIS(); ordListAdd( cPatArt() + "ARTICULO.CDX" ); else ; ordSetFocus( 1 ) ; end
 
    dbUseArea( .t., cDriver(), cPatArt() + "PROVART.DBF", cCheckArea( "PROVART", @dbfArtPrv ), .f. )
-   ordListAdd( cPatArt() + "PROVART.CDX" )
+   if !lAIS(); ordListAdd( cPatArt() + "PROVART.CDX" ); else ; ordSetFocus( 1 ) ; end
 
    dbUseArea( .t., cDriver(), cPatDat() + "TIVA.DBF", cCheckArea( "TIVA", @dbfIva ), .t. )
-   ordListAdd( cPatDat() + "TIVA.CDX" )
+   if !lAIS(); ordListAdd( cPatDat() + "TIVA.CDX" ); else ; ordSetFocus( 1 ) ; end
 
    dbUseArea( .t., cDriver(), cPatDat() + "DIVISAS.DBF", cCheckArea( "DIVISAS", @dbfDiv ), .t. )
-   ordListAdd( cPatDat() + "DIVISAS.CDX" )
+   if !lAIS(); ordListAdd( cPatDat() + "DIVISAS.CDX" ); else ; ordSetFocus( 1 ) ; end
 
    dbUseArea( .t., cDriver(), cPath + "PEDPROVT.DBF", cCheckArea( "PEDPROVT", @dbfPedPrvT ), .f. )
-   ordListAdd( cPath + "PEDPROVT.CDX" )
+   if !lAIS(); ordListAdd( cPath + "PEDPROVT.CDX" ); else ; ordSetFocus( 1 ) ; end
 
    dbUseArea( .t., cDriver(), cPath + "PEDPROVL.DBF", cCheckArea( "PEDPROVL", @dbfPedPrvL ), .f. )
-   ordListAdd( cPath + "PEDPROVL.CDX" )
+   if !lAIS(); ordListAdd( cPath + "PEDPROVL.CDX" ); else ; ordSetFocus( 1 ) ; end
 
    oStock               := TStock():Create( cPatGrp() )
    if !oStock:lOpenFiles()

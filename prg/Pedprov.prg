@@ -6661,34 +6661,35 @@ Return ( mNumSer )
 Function SynPedPrv( cPath )
 
    local oError
-   local oBlock      := ErrorBlock( {| oError | ApoloBreak( oError ) } )
+   local oBlock      
    local aTotPed
 
+   oBlock            := ErrorBlock( {| oError | ApoloBreak( oError ) } )
    BEGIN SEQUENCE
 
    dbUseArea( .t., cDriver(), cPath + "PedPROVT.DBF", cCheckArea( "PedPROVT", @dbfPedPrvT ), .f. )
-   ordListAdd( cPath + "PedPROVT.CDX" )
+   if !lAIS(); ordListAdd( cPath + "PedPROVT.CDX" ); else ; ordSetFocus( 1 ) ; end
 
    dbUseArea( .t., cDriver(), cPath + "PedPROVL.DBF", cCheckArea( "PedPROVL", @dbfPedPrvL ), .f. )
-   ordListAdd( cPath + "PedPROVL.CDX" )
+   if !lAIS(); ordListAdd( cPath + "PedPROVL.CDX" ); else ; ordSetFocus( 1 ) ; end
 
    dbUseArea( .t., cDriver(), cPath + "PedPRVI.DBF", cCheckArea( "PedPRVI", @dbfPedPrvI ), .f. )
-   ordListAdd( cPath + "PedPRVI.CDX" )
+   if !lAIS(); ordListAdd( cPath + "PedPRVI.CDX" ); else ; ordSetFocus( 1 ) ; end
 
    dbUseArea( .t., cDriver(), cPatArt() + "FAMILIAS.DBF", cCheckArea( "FAMILIAS", @dbfFamilia ), .f. )
-   ordListAdd( cPatArt() + "FAMILIAS.CDX" )
+   if !lAIS(); ordListAdd( cPatArt() + "FAMILIAS.CDX" ); else ; ordSetFocus( 1 ) ; end
 
    dbUseArea( .t., cDriver(), cPatArt() + "ARTICULO.DBF", cCheckArea( "ARTICULO", @dbfArticulo ), .f. )
-   ordListAdd( cPatArt() + "ARTICULO.CDX" )
+   if !lAIS(); ordListAdd( cPatArt() + "ARTICULO.CDX" ); else ; ordSetFocus( 1 ) ; end
 
    dbUseArea( .t., cDriver(), cPatArt() + "PROVART.DBF", cCheckArea( "PROVART", @dbfArtPrv ), .f. )
-   ordListAdd( cPatArt() + "PROVART.CDX" )
+   if !lAIS(); ordListAdd( cPatArt() + "PROVART.CDX" ); else ; ordSetFocus( 1 ) ; end
 
    dbUseArea( .t., cDriver(), cPatDat() + "TIVA.DBF", cCheckArea( "TIVA", @dbfIva ), .t. )
-   ordListAdd( cPatDat() + "TIVA.CDX" )
+   if !lAIS(); ordListAdd( cPatDat() + "TIVA.CDX" ); else ; ordSetFocus( 1 ) ; end
 
    dbUseArea( .t., cDriver(), cPatDat() + "DIVISAS.DBF", cCheckArea( "DIVISAS", @dbfDiv ), .t. )
-   ordListAdd( cPatDat() + "DIVISAS.CDX" )
+   if !lAIS(); ordListAdd( cPatDat() + "DIVISAS.CDX" ); else ; ordSetFocus( 1 ) ; end
 
    while !( dbfPedPrvT )->( eof() )
 
