@@ -8,8 +8,9 @@ static dbfProT
 static dbfProL
 static dbfTmpProL
 static cTmpProLin
-static bEdit      := { |aTmp, aGet, dbf, oBrw, bWhen, bValid, nMode | EdtRec( aTmp, aGet, dbf, oBrw, bWhen, bValid, nMode ) }
-static bEdtDet    := { |aTmp, aGet, dbf, oBrw, bWhen, bValid, nMode, cCodArt | EdtDet( aTmp, aGet, dbf, oBrw, bWhen, bValid, nMode, cCodArt ) }
+static nTipoActualizacionLineas  := EDIT_MODE
+static bEdit                     := { |aTmp, aGet, dbf, oBrw, bWhen, bValid, nMode | EdtRec( aTmp, aGet, dbf, oBrw, bWhen, bValid, nMode ) }
+static bEdtDet                   := { |aTmp, aGet, dbf, oBrw, bWhen, bValid, nMode, cCodArt | EdtDet( aTmp, aGet, dbf, oBrw, bWhen, bValid, nMode, cCodArt ) }
 
 //----------------------------------------------------------------------------//
 //Funciones del programa
@@ -294,7 +295,7 @@ STATIC FUNCTION EdtRec( aTmp, aGet, dbfProT, oWndBrw, bWhen, bValid, nMode )
             ID       502 ;
             OF       oDlg ;
             WHEN     ( nMode != ZOOM_MODE ) ;
-            ACTION   ( DelDet( oBrw ) )
+            ACTION   ( DeleteLinea( oBrw ) )
 
          REDEFINE BUTTON;
             ID       503 ;
@@ -393,6 +394,16 @@ Static Function DownDet( oBrw )
  	oBrw:Refresh()
 
 RETURN ( nil )
+
+//---------------------------------------------------------------------------//
+
+STATIC FUNCTION DeleteLinea( oBrw )
+
+   nTipoActualizacionLineas  := DELE_MODE   
+
+   DelDet( oBrw )
+
+Return ( nil )
 
 //---------------------------------------------------------------------------//
 
@@ -496,6 +507,7 @@ STATIC FUNCTION EndTrans( aTmp, aGet, nMode, oDlg )
    /*
    Pongo la marca de envio a verdadero
    */
+   
    cCodPrp     := aTmp[ ( dbfProT )->( FieldPos( "cCodPro" ) ) ]
 
    aTmp[ ( dbfProT )->( FieldPos( "lSndDoc" ) ) ]   := .t.
@@ -566,6 +578,8 @@ RETURN nil
 STATIC FUNCTION EdtDet( aTmp, aGet, dbf, oBrw, aTmpPro, bValid, nMode, cCodArt )
 
 	local oDlg
+
+   nTipoActualizacionLineas  := nMode
 
    if nMode == APPD_MODE
       aTmp[ ( dbfProL )->( FieldPos( "nOrdTbl" ) ) ]  := ( dbfTmpProL )->( LastRec() ) + 1
@@ -2368,7 +2382,7 @@ Static Function Actualizaweb( cCodPrp )
       if lPubPrp()
 
          with object ( TComercio():GetInstance() )    
-            :ActualizaPropiedadesPrestashop( cCodPrp )
+            :ActualizaPropiedadesPrestashop( cCodPrp, nTipoActualizacionLineas )
          end with  
 
       end if   

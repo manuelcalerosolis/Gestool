@@ -17,7 +17,7 @@ Static oMsgAlarm
 
 CLASS TComercio
 
-   CLASSDATA oInstance 
+   CLASSDATA oInstance
 
    DATA  hRas
    DATA  lRasValido
@@ -373,6 +373,16 @@ CLASS TComercio
    METHOD DeletePropiedadesPrestashop()
 
    METHOD ActualizaPropiedadesPrestashop( oDbf )
+
+   METHOD InsertLineasPropiedadesPrestashop()
+
+   METHOD UpdateLineasPropiedadesPrestashop()
+
+   METHOD DeleteLineasPropiedadesPrestashop()
+
+   METHOD AvisoSincronizaciontotal()
+
+   METHOD DelCascadeCategoriesPrestashop()
 
 END CLASS
 
@@ -6559,170 +6569,162 @@ Method ExportarPrestashop() Class TComercio
    local oBlock
    local oError
 
-   if !::lSincAll .or.;
-      ( ::lSincAll .and. ApoloMsgNoYes(   "Ha seleccionado un envio global de información hacia la web,"          + CRLF + ;
-                                          "la operación es muy delicada y conlleva vaciar las tablas de la web."  + CRLF + ;
-                                          "¿Desea continuar?" ,"Seleccione una opción" ) )
+   if !Empty( ::oFld )
+      ::oFld:SetOption( 2 )
+   end if
 
-      if !Empty( ::oFld )
-         ::oFld:SetOption( 2 )
-      end if
+   ::oBtnExportar:Hide()
 
-      ::oBtnExportar:Hide()
+   ::oBtnCancel:Disable()
 
-      ::oBtnCancel:Disable()
+   oBlock            := ErrorBlock( { | oError | Break( oError ) } )
+   BEGIN SEQUENCE
 
-      oBlock            := ErrorBlock( { | oError | Break( oError ) } )
-      BEGIN SEQUENCE
+   if ::OpenFiles()
 
-      if ::OpenFiles()
+      ::SetText ( 'Intentando conectar con el servidor ' + '"' + ::cHost + '"' + ', el usuario ' + '"' + ::cUser + '"' + ' y la base de datos ' + '"' + ::cDbName + '".' , 1 )
 
-         ::SetText ( 'Intentando conectar con el servidor ' + '"' + ::cHost + '"' + ', el usuario ' + '"' + ::cUser + '"' + ' y la base de datos ' + '"' + ::cDbName + '".' , 1 )
+      ::oCon            := TMSConnect():New()
 
-         ::oCon            := TMSConnect():New()
+      if !::oCon:Connect( ::cHost, ::cUser, ::cPasswd, ::cDbName, ::nPort )
 
-         if !::oCon:Connect( ::cHost, ::cUser, ::cPasswd, ::cDbName, ::nPort )
-
-            ::SetText ( 'No se ha podido conectar con la base de datos.' )
-
-         else
-
-            ::SetText ( 'Se ha conectado con éxito a la base de datos.' , 1 )
-
-            oDb            := TMSDataBase():New ( ::oCon, ::cDbName )
-
-            if Empty( oDb )
-
-               ::SetText ( 'La Base de datos: ' + ::cDbName + ' no esta activa.', 1 )
-
-            else
-
-               /*
-               Tomamos el lenguaje---------------------------------------------
-               */
-
-               ::nLanguage    := ::GetLanguagePrestashop( oDb )
-
-               ::oMeter:SetTotal( 10 )
-               ::nActualMeter := 1
-
-
-               /*
-               Pasamos los tipos de IVA a prestashop---------------------------
-               */
-
-               if ::lIva .or. ::lSincAll
-                  ::MeterGlobalText( "Actualizando tipos de " + cImp() )
-                  ::SetText ( 'Exportando tablas de tipos de ' + cImp(), 2 )
-                  ::AppendIvaPrestashop( odb )
-                  sysRefresh()
-               end if
-
-               /*
-               Pasamos los artículos a prestashop------------------------------
-               */
-
-               if ::lArticulos .or. ::lSincAll
-
-                  ::MeterGlobalText( "Actualizando fabricantes" )
-                  ::SetText ( 'Exportando tablas de fabricantes', 2 )
-                  ::AppendFabricantesPrestashop()
-                  sysRefresh()
-
-                  ::MeterGlobalText( "Actualizando familias" )
-                  ::SetText ( 'Exportando tablas de familias de artículos', 2 )
-                  ::AppendFamiliaPrestashop( odb )
-                  sysRefresh()
-
-                  ::MeterGlobalText( "Actualizando artículos" )
-                  ::SetText ( 'Exportando tablas de propiedades de artículos', 2 )
-                  ::AppendPropiedadesPrestashop()
-                  sysRefresh()
-
-                  ::SetText ( 'Exportando tablas de artículos', 2 )
-                  ::AppendArticuloPrestashop( odb )
-                  sysRefresh()
-
-                  ::RecalculaPosicionesCategoriasPrestashop()
-                  sysRefresh()
-
-               end if
-
-               /*
-               Nos traemos los clientes y pedidos hacia nuestras bases de datos y actualizamos el estado de los pedidos de arriba
-               */
-
-               if ::lPedidos .or. ::lSincAll
-
-                  ::MeterGlobalText( "Descargando clientes" )
-                  ::AppendClientPrestashop()
-                  sysRefresh()
-
-                  ::MeterGlobalText( "Descargando pedidos" )
-                  ::AppendPedidoprestashop()
-                  sysRefresh()
-
-                  ::MeterGlobalText( "Actualizando estado de los pedidos" )
-                  ::EstadoPedidosPrestashop()
-                  sysRefresh()
-
-               end if
-               
-
-               /*
-               Pasamos los clientes desde el programa a prestashop-------------
-               
-
-               if ::lCliente .or. ::lSincAll
-
-                  ::MeterGlobalText( "Actualizando estado de los pedidos" )
-                  ::AppendClientesToPrestashop()
-                  sysRefresh()
-
-               end if
-               */
-
-               /*
-               Pasamos las imágenes de los artículos a prestashop--------------
-               */
-
-               ::MeterGlobalText( "Subiendo imagenes" )
-
-               msgstop( "Desactivada la subida de imágenes" )
-
-               //::AppendImagesPrestashop()
-
-             end if
-
-         end if
-
-         ::oCon:Destroy()
-
-         ::SetText( 'Base de datos desconectada.', 1 )
-
-         ::MeterGlobalText( "Proceso finalizado" )
+         ::SetText ( 'No se ha podido conectar con la base de datos.' )
 
       else
 
-         ::SetText( 'Error al abrir los ficheros necesarios.', 1 )
+         ::SetText ( 'Se ha conectado con éxito a la base de datos.' , 1 )
+
+         oDb            := TMSDataBase():New ( ::oCon, ::cDbName )
+
+         if Empty( oDb )
+
+            ::SetText ( 'La Base de datos: ' + ::cDbName + ' no esta activa.', 1 )
+
+         else
+
+            /*
+            Tomamos el lenguaje---------------------------------------------
+            */
+
+            ::nLanguage    := ::GetLanguagePrestashop( oDb )
+
+            ::oMeter:SetTotal( 10 )
+            ::nActualMeter := 1
+
+            /*
+            Pasamos los tipos de IVA a prestashop---------------------------
+            */
+
+            if ::lIva .or. ::lSincAll
+               ::MeterGlobalText( "Actualizando tipos de " + cImp() )
+               ::SetText ( 'Exportando tablas de tipos de ' + cImp(), 2 )
+               ::AppendIvaPrestashop( odb )
+               sysRefresh()
+            end if
+
+            /*
+            Pasamos los artículos a prestashop------------------------------
+            */
+
+            if ::lArticulos .or. ::lSincAll
+
+               ::MeterGlobalText( "Actualizando fabricantes" )
+               ::SetText ( 'Exportando tablas de fabricantes', 2 )
+               ::AppendFabricantesPrestashop()
+               sysRefresh()
+
+               ::MeterGlobalText( "Actualizando familias" )
+               ::SetText ( 'Exportando tablas de familias de artículos', 2 )
+               ::AppendFamiliaPrestashop( odb )
+               sysRefresh()
+
+               ::MeterGlobalText( "Actualizando artículos" )
+               ::SetText ( 'Exportando tablas de propiedades de artículos', 2 )
+               ::AppendPropiedadesPrestashop()
+               sysRefresh()
+
+               ::SetText ( 'Exportando tablas de artículos', 2 )
+               ::AppendArticuloPrestashop( odb )
+               sysRefresh()
+
+               ::RecalculaPosicionesCategoriasPrestashop()
+               sysRefresh()
+
+            end if
+
+            /*
+            Nos traemos los clientes y pedidos hacia nuestras bases de datos y actualizamos el estado de los pedidos de arriba
+            */
+
+            if ::lPedidos .or. ::lSincAll
+
+               ::MeterGlobalText( "Descargando clientes" )
+               ::AppendClientPrestashop()
+               sysRefresh()
+
+               ::MeterGlobalText( "Descargando pedidos" )
+               ::AppendPedidoprestashop()
+               sysRefresh()
+
+               ::MeterGlobalText( "Actualizando estado de los pedidos" )
+               ::EstadoPedidosPrestashop()
+               sysRefresh()
+
+            end if
+               
+
+            /*
+            Pasamos los clientes desde el programa a prestashop-------------
+               
+
+            if ::lCliente .or. ::lSincAll
+
+               ::MeterGlobalText( "Actualizando estado de los pedidos" )
+               ::AppendClientesToPrestashop()
+               sysRefresh()
+
+            end if
+            */
+
+            /*
+            Pasamos las imágenes de los artículos a prestashop--------------
+            */
+
+            ::MeterGlobalText( "Subiendo imagenes" )
+
+            msgstop( "Desactivada la subida de imágenes" )
+
+            //::AppendImagesPrestashop()
+
+         end if
 
       end if
 
-      RECOVER USING oError
+      ::oCon:Destroy()
 
-         msgStop( ErrorMessage( oError ), "Error al conectarnos con la base de datos" )
+      ::SetText( 'Base de datos desconectada.', 1 )
 
-      END SEQUENCE
+      ::MeterGlobalText( "Proceso finalizado" )
 
-      ErrorBlock( oBlock )
+   else
 
-      ::Closefiles()
-
-      ::oBtnExportar:Hide()
-
-      ::oBtnCancel:Enable()
+      ::SetText( 'Error al abrir los ficheros necesarios.', 1 )
 
    end if
+
+   RECOVER USING oError
+
+      msgStop( ErrorMessage( oError ), "Error al conectarnos con la base de datos" )
+
+   END SEQUENCE
+
+   ErrorBlock( oBlock )
+
+   ::Closefiles()
+
+   ::oBtnExportar:Hide()
+
+   ::oBtnCancel:Enable()
 
 Return .t.
 
@@ -7343,7 +7345,7 @@ Method DeleteCategoriesPrestashop() CLASS TComercio
    Eliminamos en cascada Todo lo que esté tirando de la familia----------------
    */
 
-   msginfo("Faltan eliminar todos los artículos que tiren de la categoría")
+   ::DelCascadeCategoriesPrestashop()
 
    /*
    Quitamos la referencia de nuestra tabla-------------------------------------
@@ -7352,6 +7354,38 @@ Method DeleteCategoriesPrestashop() CLASS TComercio
    ::oFam:fieldPutByName( "cCodWeb", 0 )
 
 Return lReturn
+
+//---------------------------------------------------------------------------//
+
+METHOD DelCascadeCategoriesPrestashop() CLASS TComercio
+
+   local nRec     := ::oArt:Recno()
+   local nOrdAnt  := ::oArt:OrdSetFocus( "FAMILIA" )
+
+   if ::oArt:Seek( ::oFam:cCodFam )
+
+      while ::oArt:Familia == ::oFam:cCodfam .and. !::oArt:Eof()
+
+         if ::oArt:lPubInt .and. ::oArt:cCodWeb != 0
+
+            ::DeleteProductsPrestashop()
+
+         end if
+
+         ::oArt:Skip()
+
+      end while
+
+   end if
+
+   /*
+   Antes de irnos dejamos la tabla donde estaba--------------------------------
+   */
+
+   ::oArt:OrdSetFocus( nOrdAnt )
+   ::oArt:GoTo( nRec )
+
+return .t.
 
 //---------------------------------------------------------------------------//
 
@@ -9027,7 +9061,7 @@ METHOD DeleteProductsPrestashop() CLASS TComercio
    cCommand          := 'SELECT * FROM ' + ::cPrefixTable( "image" ) +  ' WHERE id_product=' + AllTrim( Str( ::oArt:cCodWeb ) )
    oQuery            := TMSQuery():New( ::oCon, cCommand )
    
-   if oQuery:Open()
+   /*if oQuery:Open()
    
       if oQuery:RecCount() > 0
 
@@ -9044,7 +9078,7 @@ METHOD DeleteProductsPrestashop() CLASS TComercio
    
       end if
 
-   end if
+   end if*/
 
    /*
    Eliminamos las imágenes del artículo---------------------------------------
@@ -10622,8 +10656,6 @@ Method InsertPropiedadesPrestashop() CLASS TComercio
    local nCodigoGrupo      := 0
    local nCodigoPropiedad  := 0
    local nParent           := 1
-   local nRec              := ::oTblPro:Recno()
-   local nOrdAnt           := ::oTblPro:OrdSetFocus( "CPRO" )
    local cCommand          := ""
 
    /*
@@ -10676,9 +10708,26 @@ Method InsertPropiedadesPrestashop() CLASS TComercio
    Introducimos las líneas-----------------------------------------------------
    */
 
-   if ::oTblPro:Seek( ::oPro:cCodPro )
+   ::InsertLineasPropiedadesPrestashop( ::oPro:cCodPro, nCodigoGrupo )
 
-      while ::oPro:cCodPro == ::oTblPro:cCodPro .and. !::oTblPro:Eof()
+return nCodigoGrupo
+
+//---------------------------------------------------------------------------//
+
+METHOD InsertLineasPropiedadesPrestashop( cCodPro, nCodigoGrupo ) CLASS TComercio
+
+   local nCodigoPropiedad  := 0
+   local nRec              := ::oTblPro:Recno()
+   local nOrdAnt           := ::oTblPro:OrdSetFocus( "CPRO" )
+   local cCommand          := ""
+
+   /*
+   Introducimos las líneas-----------------------------------------------------
+   */
+
+   if ::oTblPro:Seek( cCodPro )
+
+      while cCodPro == ::oTblPro:cCodPro .and. !::oTblPro:Eof()
 
          cCommand    := "INSERT INTO " + ::cPrefixTable( "attribute" ) + ; 
                            " ( id_attribute_group, " + ;
@@ -10734,13 +10783,15 @@ Method InsertPropiedadesPrestashop() CLASS TComercio
 
    ::oTblPro:GoTo( nRec )
 
-return nCodigoGrupo
+Return ( self )
 
 //---------------------------------------------------------------------------//
 
-METHOD UpdatePropiedadesPrestashop() CLASS TComercio
+METHOD UpdatePropiedadesPrestashop( nTipoActualizacionLineas ) CLASS TComercio
 
    local cCommand
+
+   DEFAULT nTipoActualizacionLineas := EDIT_MODE
 
    /*
    Modificamos la cabecera de las propiedades----------------------------------
@@ -10761,24 +10812,62 @@ METHOD UpdatePropiedadesPrestashop() CLASS TComercio
    TMSCommand():New( ::oCon ):ExecDirect( cCommand )
 
    /*
-   Modificamos las lineas de las propiedades-----------------------------------
+   Tratamiento de las lineas de las propiedades--------------------------------
    */
 
-   /* 
-   if TMSCommand():New( ::oCon ):ExecDirect( "UPDATE ps_attribute SET color='" + AllTrim( RgbToRgbHex( ::oTblPro:nColor ) ) + "' WHERE id_attribute=" + AllTrim( Str( ::oTblPro:cCodWeb ) ) )
-      ::SetText( "Actualizada correctamente la propiedad " + AllTrim( ::oTblPro:cDesTbl ) + " en la tabla ps_attribute", 3 )
-   else
-      ::SetText( "Error al actualizar la propiedad " + AllTrim( ::oTblPro:cDesTbl ) + " en la tabla ps_attribute", 3 )
-   end if
+   do case 
+      case nTipoActualizacionLineas == EDIT_MODE //Actualiza las lineas--------
 
-   if TMSCommand():New( ::oCon ):ExecDirect( "UPDATE ps_attribute_lang SET name='" + AllTrim( ::oTblPro:cDesTbl ) + "' WHERE id_attribute=" + AllTrim( Str( ::oTblPro:cCodWeb ) ) )
-      ::SetText( "Actualizada correctamente la propiedad " + AllTrim( ::oTblPro:cDesTbl ) + " en la tabla ps_attribute_lang", 3 )
-   else
-      ::SetText( "Error al actualizar la propiedad " + AllTrim( ::oTblPro:cDesTbl ) + " en la tabla ps_attribute_lang", 3 )
-   end if
-   */
+         ::UpdateLineasPropiedadesPrestashop( ::oPro:cCodPro )
+
+      case nTipoActualizacionLineas != EDIT_MODE //Han eliminado o insertado alguna linea
+
+         ::DeleteLineasPropiedadesPrestashop( ::oPro:cCodWeb )
+         ::InsertLineasPropiedadesPrestashop( ::oPro:cCodPro, ::oPro:cCodWeb )
+
+   end case
 
 return ( self )
+
+//---------------------------------------------------------------------------//
+
+METHOD UpdateLineasPropiedadesPrestashop( nCodigoPropiedad ) CLASS TComercio
+
+   local cCommand
+   local nRec              := ::oTblPro:Recno()
+   local nOrdAnt           := ::oTblPro:OrdSetFocus( "CPRO" )
+
+   if ::oTblPro:Seek( nCodigoPropiedad )
+
+      while nCodigoPropiedad == ::oTblPro:cCodPro .and. !::oTblPro:Eof()
+
+         cCommand       := "UPDATE " + ::cPrefixTable( "attribute" ) + " SET " + ;
+                              "color='" + AllTrim( RgbToRgbHex( ::oTblPro:nColor ) ) + "' " + ;
+                           "WHERE id_attribute=" + AllTrim( Str( ::oTblPro:cCodWeb ) )
+
+         TMSCommand():New( ::oCon ):ExecDirect( cCommand )
+
+         cCommand       := "UPDATE " + ::cPrefixTable( "attribute_lang" ) + " SET " + ;
+                              "name='" + AllTrim( ::oTblPro:cDesTbl ) + "' " + ;
+                           "WHERE id_attribute=" + AllTrim( Str( ::oTblPro:cCodWeb ) )
+
+         TMSCommand():New( ::oCon ):ExecDirect( cCommand )
+
+         ::oTblPro:Skip()
+
+      end while
+
+   end if
+
+   /*
+   Dejamos la tabla como estaba antes de entrar--------------------------------
+   */
+
+   ::oTblPro:OrdSetFocus( nOrdAnt )
+
+   ::oTblPro:GoTo( nRec )
+
+Return ( self )
 
 //---------------------------------------------------------------------------//
 
@@ -10801,26 +10890,7 @@ METHOD DeletePropiedadesPrestashop() CLASS TComercio
    Eliminamos las lineas-------------------------------------------------------
    */
 
-   if ::oTblPro:Seek( ::oPro:cCodPro )
-
-      while ::oPro:cCodPro == ::oTblPro:cCodPro .and. !::oTblPro:Eof()
-
-         cCommand    := "DELETE FROM " + ::cPrefixTable( "attribute" ) + " WHERE id_attribute=" + AllTrim( Str( ::oTblPro:cCodWeb ) )
-         lReturn     := TMSCommand():New( ::oCon ):ExecDirect( cCommand )
-
-         cCommand    := "DELETE FROM " + ::cPrefixTable( "attribute_impact" ) + " WHERE id_attribute=" + AllTrim( Str( ::oTblPro:cCodWeb ) )
-         lReturn     := TMSCommand():New( ::oCon ):ExecDirect( cCommand )
-
-         cCommand    := "DELETE FROM " + ::cPrefixTable( "attribute_lang" ) + " WHERE id_attribute=" + AllTrim( Str( ::oTblPro:cCodWeb ) )
-         lReturn     := TMSCommand():New( ::oCon ):ExecDirect( cCommand )
-
-         ::oTblPro:fieldPutByName( "cCodWeb", 0 )
-
-         ::oTblPro:Skip()
-
-      end while
-
-   end if   
+   ::DeleteLineasPropiedadesPrestashop( ::oPro:cCodWeb )
 
    /*
    Quitamos la referencia de nuestra tabla-------------------------------------
@@ -10832,10 +10902,52 @@ return ( self )
 
 //---------------------------------------------------------------------------//
 
-METHOD ActualizaPropiedadesPrestashop( cCodigoPropiedad ) CLASS TComercio
+METHOD DeleteLineasPropiedadesPrestashop( nCodigoPropiedad ) CLASS TComercio
+
+   local oQuery
+   local cCommand    := ""
+
+   /*
+   Borramos las tablas auxiliares de lineas de propiedades---------------------
+   */
+
+   cCommand          := "SELECT * FROM " + ::cPrefixTable( "attribute" ) + ;
+                        " WHERE id_attribute_group = " + Alltrim( Str( nCodigoPropiedad ) )
+
+   oQuery            := TMSQuery():New( ::oCon, cCommand )
+
+   if oQuery:Open() .and. oQuery:RecCount() > 0
+
+      oQuery:GoTop()
+
+      while !oQuery:Eof()
+
+         cCommand    := "DELETE FROM " + ::cPrefixTable( "attribute_lang" ) + " WHERE id_attribute=" + AllTrim( Str( oQuery:FieldGet( 1 ) ) )
+         TMSCommand():New( ::oCon ):ExecDirect( cCommand )
+
+         oQuery:Skip()
+
+      end while
+
+   end if
+
+   /*
+   Borramos las líneas de propiedades de la tabla attribute--------------------
+   */
+
+   cCommand          := "DELETE FROM " + ::cPrefixTable( "attribute" ) + " WHERE id_attribute_group=" + AllTrim( Str( nCodigoPropiedad ) )
+   TMSCommand():New( ::oCon ):ExecDirect( cCommand )
+
+return ( self )
+
+//---------------------------------------------------------------------------//
+
+METHOD ActualizaPropiedadesPrestashop( cCodigoPropiedad, nTipoActualizacionLineas ) CLASS TComercio
 
    local oQuery
    local cCommand
+
+   DEFAULT nTipoActualizacionLineas  := EDIT_MODE
 
    if !::lReady()
       Return .f.
@@ -10853,6 +10965,8 @@ METHOD ActualizaPropiedadesPrestashop( cCodigoPropiedad ) CLASS TComercio
                case !::oPro:lPubInt .and. ::oPro:cCodWeb != 0
       
                   ::DeletePropiedadesPrestashop()
+
+                  ::AvisoSincronizaciontotal()
       
                case ::oPro:lPubInt .and. ::oPro:cCodWeb != 0
       
@@ -10863,19 +10977,17 @@ METHOD ActualizaPropiedadesPrestashop( cCodigoPropiedad ) CLASS TComercio
       
                      if oQuery:RecCount() > 0
 
-                        ?"Actualizo"
+                        ::UpdatePropiedadesPrestashop( nTipoActualizacionLineas )
 
-                        ::UpdatePropiedadesPrestashop()
+                        if nTipoActualizacionLineas != EDIT_MODE
+                           ::AvisoSincronizaciontotal()
+                        end if
 
                      else
 
                         ::InsertPropiedadesPrestashop()
                         
-                        /*
-                        Aviso para que haga una sincronización total-----------
-                        */
-
-                        msginfo("Faltan Avisar de que necesita una sincronización total")
+                        ::AvisoSincronizaciontotal()
 
                      end if
       
@@ -10887,11 +10999,7 @@ METHOD ActualizaPropiedadesPrestashop( cCodigoPropiedad ) CLASS TComercio
       
                   ::InsertPropiedadesPrestashop()
 
-                  /*
-                  Aviso para que haga una sincronización total-----------
-                  */
-
-                  msginfo("Faltan Avisar de que necesita una sincronización total")
+                  ::AvisoSincronizaciontotal()
       
             end case
 
@@ -11211,6 +11319,15 @@ METHOD lHideDialogWait() Class TComercio
 
 Return .t.
 
+//---------------------------------------------------------------------------//
+
+METHOD AvisoSincronizaciontotal() CLASS TComercio
+
+   msginfo( "Faltan Avisar de que necesita una sincronización total" )
+
+Return .t.
+
+//---------------------------------------------------------------------------//
 //---------------------------------------------------------------------------//
 //---------------------------------------------------------------------------//
 //---------------------------------------------------------------------------//
