@@ -2247,16 +2247,16 @@ Function LogWrite( cText, cFileName )
    if !Empty( cText )
 
       if !File( cFileName )
-         nHand := fCreate( cFileName )
+         nHand       := fCreate( cFileName )
       else
-        nHand  := fOpen( cFileName, 1 )
+        nHand        := fOpen( cFileName, 1 )
       endif
 
-      fSeek( nHand, 0, 2 )
+      fSeek( nHand, 0 , 2 )
 
       fWrite( nHand, Time() + '-' + Trans( Seconds(), "999999.9999" ) + Space( 1 ) )
-
       fWrite( nHand, cValToChar( cText ) + CRLF )
+      
       fClose( nHand )
 
    end if

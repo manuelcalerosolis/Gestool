@@ -2602,6 +2602,8 @@ Method CreateXBrowse() CLASS TShell
          ::oBrw:bKeyCount  := {|| ( ::xAlias )->( OrdKeyCount() ) }
          end if
 
+         // ::oBrw:bPastEof   := {|| msgStop( "bPastEof") }
+
       end case
 
       ::oBrw:bKeyChar      := {|nKey| ::CtrlKey( nKey ) }

@@ -2667,6 +2667,7 @@ METHOD InvCierre( oDlg, oMsg )
    if !Empty( ::oAni )
       ::oAni:Show()
    end if
+
    /*
    Cerramos las cajas una a una------------------------------------------------
    */
@@ -3126,16 +3127,16 @@ METHOD lArqueoTurno( lZoom, lTactil, lParcial ) CLASS TTurno
    local oBmpGeneral
    local oSayGeneral2
 
-   DEFAULT lZoom     := .f.
-   DEFAULT lTactil   := .f.
-   DEFAULT lParcial  := .f.
+   DEFAULT lZoom        := .f.
+   DEFAULT lTactil      := .f.
+   DEFAULT lParcial     := .f.
 
-   ::lZoom           := lZoom
-   ::lArqueoTactil   := lTactil
-   ::lArqueoParcial  := lParcial
-   ::nMeter          := 0
+   ::lZoom              := lZoom
+   ::lArqueoTactil      := lTactil
+   ::lArqueoParcial     := lParcial
+   ::nMeter             := 0
 
-   aPrnCaj           := GetPrinters()
+   aPrnCaj              := GetPrinters()
 
    /*
    Compruebo si hay turnos abiertos--------------------------------------------
@@ -3143,33 +3144,33 @@ METHOD lArqueoTurno( lZoom, lTactil, lParcial ) CLASS TTurno
 
    if ::lZoom
 
-      ::cCurTurno    := ::oDbf:cNumTur + ::oDbf:cSufTur
-      ::dFecTur      := ::oDbf:dOpnTur
-      ::cHorTur      := ::oDbf:cHorOpn
-      ::cCajTur      := ::oDbf:cCajTur
+      ::cCurTurno       := ::oDbf:cNumTur + ::oDbf:cSufTur
+      ::dFecTur         := ::oDbf:dOpnTur
+      ::cHorTur         := ::oDbf:cHorOpn
+      ::cCajTur         := ::oDbf:cCajTur
 
       if Empty( ::cCodCaj )
-         ::cCodCaj   := oUser():cCaja()
+         ::cCodCaj      := oUser():cCaja()
       end if
 
    else
 
-      ::cCurTurno    := ::GetLastOpen()
+      ::cCurTurno       := ::GetLastOpen()
 
       if Empty( ::dFecTur )
-         ::dFecTur   := GetSysDate()
+         ::dFecTur      := GetSysDate()
       end if
 
       if Empty( ::cHorTur )
-         ::cHorTur   := Substr( Time(), 1, 5 )
+         ::cHorTur      := Substr( Time(), 1, 5 )
       end if
 
       if Empty( ::cCajTur )
-         ::cCajTur   := cCurUsr()
+         ::cCajTur      := cCurUsr()
       end if
 
       if Empty( ::cCodCaj ) .and. !oUser():lAdministrador()
-         ::cCodCaj   := oUser():cCaja()
+         ::cCodCaj      := oUser():cCaja()
       end if
 
    end if
@@ -3413,13 +3414,13 @@ METHOD lArqueoTurno( lZoom, lTactil, lParcial ) CLASS TTurno
          ID       501;
          OF       oFld:aDialogs[1] ;
          WHEN     ( oUser():lAdministrador() );
-         ACTION   ( ::SelCajas( .t., oBrwCaj ) )
+         ACTION   ( ::SelCajas( .t., oBrwCaj, .t. ) )
 
       REDEFINE BUTTON ;
          ID       502;
          OF       oFld:aDialogs[1] ;
          WHEN     ( oUser():lAdministrador() );
-         ACTION   ( ::SelCajas( .f., oBrwCaj ) )
+         ACTION   ( ::SelCajas( .f., oBrwCaj, .t. ) )
 
       REDEFINE BUTTON ;
          ID       503;
@@ -3464,21 +3465,26 @@ METHOD lArqueoTurno( lZoom, lTactil, lParcial ) CLASS TTurno
       ::oDbfCaj:SetBrowse( oBrwCaj )
 
       with object ( oBrwCaj:AddCol() )
+         :cHeader          := ""
+         :bEditValue       := {|| ::oDbfCaj:FieldGetByName( "lCajClo" ) }
+         :nWidth           := 25
+         :SetCheck( { "Cnt16", "Nil16" } )
+      end with
+
+      with object ( oBrwCaj:AddCol() )
          :cHeader          := "Estado"
          :bStrData         := {|| if( ::oDbfCaj:FieldGetByName( "lCajClo" ), "Cerrada", "Abierta" ) }
-         :bEditValue       := {|| ::oDbfCaj:FieldGetByName( "lCajClo" ) }
          :nWidth           := 100
-         :SetCheck( { "Cnt16", "Nil16" } )
       end with
 
       with object ( oBrwCaj:AddCol() )
          :cHeader          := "Seleccionada"
          :nHeadBmpNo       := 3
          :bStrData         := {|| "" }
-         :bEditValue       := {|| ::oDbfCaj:FieldGetByName( "lCajSel" ) }
+         :bEditValue       := {|| ::oDbfCaj:FieldGetByName( "lCajSel" ) .and. !::oDbfCaj:FieldGetByName( "lCajClo" ) }
          :nWidth           := 25
          :SetCheck( { "Sel16", "Nil16" } )
-         :AddResource( "cashier_Selet_16" )
+         :AddResource( "Cashier_Selet_16" )
       end with
 
       with object ( oBrwCaj:AddCol() )
@@ -3490,7 +3496,7 @@ METHOD lArqueoTurno( lZoom, lTactil, lParcial ) CLASS TTurno
       with object ( oBrwCaj:AddCol() )
          :cHeader          := "Nombre"
          :bEditValue       := {|| oRetFld( ::oDbfCaj:FieldGetByName( "cCodCaj" ), ::oCaja ) }
-         :nWidth           := 330
+         :nWidth           := 300
       end with
 
       with object ( oBrwCaj:AddCol() )
@@ -4423,9 +4429,12 @@ Method LoadCaja( cCurTurno )
 
    local oError
    local oBlock
+   local cUserCaja
    local lOpenCaja      := .f.
 
    DEFAULT cCurTurno    := ::cCurTurno
+
+   cUserCaja            := oUser():cCaja()
 
    oBlock               := ErrorBlock( { | oError | ApoloBreak( oError ) } )
    BEGIN SEQUENCE
@@ -4433,14 +4442,14 @@ Method LoadCaja( cCurTurno )
    ::oDbfCaj:GetStatus()
    ::oDbfCaj:OrdSetFocus( "cNumTur" )
 
-   if !::oDbfCaj:Seek( cCurTurno + oUser():cCaja() ) .and. !oRetFld( oUser():cCaja(), ::oCaja, "lNoArq" )
+   if !::oDbfCaj:Seek( cCurTurno + cUserCaja ) .and. !oRetFld( cUserCaja, ::oCaja, "lNoArq" )
 
       if ::oDbfCaj:Append()
          ::oDbfCaj:Blank()
          ::oDbfCaj:lCajSel    := .t. // ( ::oCaja:cCodCaj == oUser():cCaja() )
          ::oDbfCaj:cNumTur    := SubStr( cCurTurno, 1, 6 )
          ::oDbfCaj:cSufTur    := SubStr( cCurTurno, -2 )
-         ::oDbfCaj:cCodCaj    := oUser():cCaja()
+         ::oDbfCaj:cCodCaj    := cUserCaja
          ::oDbfCaj:nCanPre    := ::nObjetivoTurno
          ::oDbfCaj:cDivEfe    := cDivEmp()
          ::oDbfCaj:cDivTar    := cDivEmp()
@@ -4464,11 +4473,17 @@ Return Nil
 
 //---------------------------------------------------------------------------//
 
-Method SelCajas( lSelect, oBrw )
+Method SelCajas( lSelect, oBrw, lMessage )
 
-   ::oDbfCaj:Load()
-   ::oDbfCaj:lCajSel    := lSelect
-   ::oDbfCaj:Save()
+   DEFAULT lMessage := .f.
+
+   if ::oDbfCaj:FieldGetByName( "lCajClo" )
+      if lMessage 
+         MsgStop( "La caja " + ::oDbfCaj:FieldGetByName( "cCodCaj" ) + " ya está cerrada." )
+      end if 
+   else 
+      ::oDbfCaj:FieldPutByName( "lCajSel", lSelect )
+   end if 
 
    if oBrw != nil
       oBrw:Refresh()
@@ -4511,7 +4526,11 @@ Method lAnyCajaSelect()
    ::oDbfCaj:GoTop()
    while !::oDbfCaj:Eof()
 
-      if ::oDbfCaj:lCajSel
+      /*
+      Si la caja esta seleccionada y no esta cerrada tenemos cosas q cerrar----
+      */
+
+      if ::oDbfCaj:lCajSel .and. !::oDbfCaj:lCajClo
          lAny  := .t.
       end if
 

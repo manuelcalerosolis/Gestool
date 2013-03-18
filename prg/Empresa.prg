@@ -7047,7 +7047,7 @@ static function aItmDlg()
 
    local aItmDlg  := {}
 
-   aAdd( aItmDlg, { "CCODEMP", "C", 2, 0, "Código de empresa"    } )
+   aAdd( aItmDlg, { "CCODEMP", "C", 4, 0, "Código de empresa"    } )
    aAdd( aItmDlg, { "CCODDLG", "C", 2, 0, "Código de delegación" } )
    aAdd( aItmDlg, { "CNOMDLG", "C",50, 0, "Nombre de delegación" } )
 

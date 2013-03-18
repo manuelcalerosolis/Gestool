@@ -363,7 +363,11 @@ Function lMiniSeek( cPrefij, xCadena, xAlias, nLen )
 
          end if
 
+         // logwrite( "xCadena" + xCadena )
+
       end case
+
+      // logwrite( if ( lRet, "lRet es verdadero", "lRet es falso" ) )
 
       if !lRet
          ( xAlias )->( dbGoTo( nRec ) )
@@ -554,7 +558,7 @@ Function DestroyFastFilter( cAlias, lUser, lFecha )
 
             ( cAlias )->( OrdSetFocus( cOldIndexName, cBagAnterior ) )
             ( cAlias )->( OrdDestroy( cNamAnterior, cBagAnterior ) )
-
+            msgStop( nRecAnterior )
             ( cAlias )->( dbGoTo( nRecAnterior ) )
 
             cOldIndexName  := nil
