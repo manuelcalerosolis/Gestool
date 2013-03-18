@@ -5072,7 +5072,7 @@ METHOD sTotalTiket() CLASS TpvTactil
    ::oTemporalLinea:GoTop()
    while !( ::oTemporalLinea:eof() )
 
-      if ::lLineaValida()
+      if ::lLineaValida( ::oTemporalLinea )
 
          nTotLin           := ::nTotalLinea( ::oTemporalLinea )
 
@@ -5183,19 +5183,23 @@ Return ( ::sTotal )
 
 //---------------------------------------------------------------------------//
 
-Method lLineaValida( lExcluirContadores ) CLASS TpvTactil
+Method lLineaValida( uTmpL, lExcluirContadores ) CLASS TpvTactil
 
    local lLineaValida   := .t.
 
-   if ::oTiketLinea:lControl
+   DEFAULT uTmpL        := ::oTiketLinea
+
+   if uTmpL:lControl
       Return .f.
    end if
 
-   if ::oTiketLinea:lKitArt .or. ::oTiketLinea:lKitChl
-      lLineaValida      := ::oTiketLinea:lKitPrc
+   if uTmpL:lKitArt .or. uTmpL:lKitChl
+      lLineaValida      := uTmpL:lKitPrc
    end if
 
-   lLineaValida         := lLineaValida .and. ( lExcluirContadores == nil .or. ( lExcluirContadores .and. ::oTiketLinea:nCtlStk != 2 ) .or. ( !lExcluirContadores .and. ::oTiketLinea:nCtlStk == 2 ) )
+   if !IsNil( lExcluirContadores )
+      lLineaValida      := lLineaValida .and. ( ( lExcluirContadores .and. uTmpL:nCtlStk != 2 ) .or. ( !lExcluirContadores .and. uTmpL:nCtlStk == 2 ) )
+   end if 
 
 Return ( lLineaValida )
 

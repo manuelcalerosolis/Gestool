@@ -1174,6 +1174,7 @@ METHOD BuildEmpresa()
    oDataTable:cName        := cPatGrp() + "UndMed"
    oDataTable:cDataFile    := cPatGrp( , .t. ) + "UndMed.Dbf"
    oDataTable:cIndexFile   := cPatGrp( , .t. ) + "UndMed.Cdx"
+   oDataTable:bSyncFile    := {|| UniMedicion():Create():Syncronize() }
    ::AddEmpresaTable( oDataTable )
 
    oDataTable              := TDataTable()
@@ -1240,6 +1241,7 @@ METHOD BuildEmpresa()
    oDataTable:cName        := cPatEmp() + "RemMovT"
    oDataTable:cDataFile    := cPatEmp( , .t. ) + "RemMovT.Dbf"
    oDataTable:cIndexFile   := cPatEmp( , .t. ) + "RemMovT.Cdx"
+   oDataTable:bSyncFile    := {|| SynRemMov( cPatEmp() ) }
    ::AddEmpresaTable( oDataTable )
 
    /*
@@ -1250,6 +1252,7 @@ METHOD BuildEmpresa()
    oDataTable:cName        := cPatArt() + "Articulo"
    oDataTable:cDataFile    := cPatArt( , .t. ) + "Articulo.Dbf"
    oDataTable:cIndexFile   := cPatArt( , .t. ) + "Articulo.Cdx"
+   oDataTable:bSyncFile    := {|| SynArt( cPatArt() ) }
    ::AddEmpresaTable( oDataTable )
 
    oDataTable              := TDataTable()
@@ -1438,7 +1441,7 @@ METHOD BuildEmpresa()
    ::AddEmpresaTable( oDataTable )
 
    /*
-   Clientes
+   Clientes--------------------------------------------------------------------
    */
 
    oDataTable              := TDataTable()
@@ -1543,6 +1546,7 @@ METHOD BuildEmpresa()
    oDataTable:cName        := cPatPrv() + "GrpPrv"
    oDataTable:cDataFile    := cPatPrv( , .t. ) + "GrpPrv.Dbf"
    oDataTable:cIndexFile   := cPatPrv( , .t. ) + "GrpPrv.Cdx"
+   oDataTable:bSyncFile    := {|| SynProvee( cPatPrv() ) }
    ::AddEmpresaTable( oDataTable )
 
    oDataTable              := TDataTable()
@@ -1615,6 +1619,7 @@ METHOD BuildEmpresa()
    oDataTable:cName        := cPatEmp() + "DepAgeT"
    oDataTable:cDataFile    := cPatEmp( , .t. ) + "DepAgeT.Dbf"
    oDataTable:cIndexFile   := cPatEmp( , .t. ) + "DepAgeT.Cdx"
+   oDataTable:bSyncFile    := {|| SynRctPrv( cPatEmp() ) }
    ::AddEmpresaTable( oDataTable )
 
    oDataTable              := TDataTable()
@@ -1680,6 +1685,7 @@ METHOD BuildEmpresa()
    oDataTable:cName        := cPatEmp() + "PedProvT"
    oDataTable:cDataFile    := cPatEmp( , .t. ) + "PedProvT.Dbf"
    oDataTable:cIndexFile   := cPatEmp( , .t. ) + "PedProvT.Cdx"
+   oDataTable:bSyncFile    := {|| SynPedPrv( cPatEmp() ) }
    ::AddEmpresaTable( oDataTable )
 
    oDataTable              := TDataTable()
@@ -1711,6 +1717,7 @@ METHOD BuildEmpresa()
    oDataTable:cName        := cPatEmp() + "AlbProvT"
    oDataTable:cDataFile    := cPatEmp( , .t. ) + "AlbProvT.Dbf"
    oDataTable:cIndexFile   := cPatEmp( , .t. ) + "AlbProvT.Cdx"
+   oDataTable:bSyncFile    := {|| SynAlbPrv( cPatEmp() ) }
    ::AddEmpresaTable( oDataTable )
 
    oDataTable              := TDataTable()
@@ -1749,6 +1756,7 @@ METHOD BuildEmpresa()
    oDataTable:cName        := cPatEmp() + "FacPrvT"
    oDataTable:cDataFile    := cPatEmp( , .t. ) + "FacPrvT.Dbf"
    oDataTable:cIndexFile   := cPatEmp( , .t. ) + "FacPrvT.Cdx"
+   oDataTable:bSyncFile    := {|| SynFacPrv( cPatEmp() ) }
    ::AddEmpresaTable( oDataTable )
 
    oDataTable              := TDataTable()
@@ -1776,7 +1784,7 @@ METHOD BuildEmpresa()
    oDataTable:cName        := cPatEmp() + "FacPrvP"
    oDataTable:cDataFile    := cPatEmp( , .t. ) + "FacPrvP.Dbf"
    oDataTable:cIndexFile   := cPatEmp( , .t. ) + "FacPrvP.Cdx"
-   oDataTable:lTrigger     := .f.
+   oDataTable:bSyncFile    := {|| SynRecPrv( cPatEmp() ) }
    ::AddEmpresaTable( oDataTable )
 
    oDataTable              := TDataTable()
@@ -1794,6 +1802,7 @@ METHOD BuildEmpresa()
    oDataTable:cName        := cPatEmp() + "RctPrvT"
    oDataTable:cDataFile    := cPatEmp( , .t. ) + "RctPrvT.Dbf"
    oDataTable:cIndexFile   := cPatEmp( , .t. ) + "RctPrvT.Cdx"
+   oDataTable:bSyncFile    := {|| SynRctPrv( cPatEmp() ) }
    ::AddEmpresaTable( oDataTable )
 
    oDataTable              := TDataTable()
@@ -1855,6 +1864,13 @@ METHOD BuildEmpresa()
    oDataTable:lTrigger     := .f.
    ::AddEmpresaTable( oDataTable )
 
+   oDataTable              := TDataTable()
+   oDataTable:cName        := cPatEmp() + "SatCliS"
+   oDataTable:cDataFile    := cPatEmp( , .t. ) + "SatCliS.Dbf"
+   oDataTable:cIndexFile   := cPatEmp( , .t. ) + "SatCliS.Cdx"
+   oDataTable:lTrigger     := .f.
+   ::AddEmpresaTable( oDataTable )
+
    /*
    Presupuestos Clientes
    */
@@ -1863,6 +1879,7 @@ METHOD BuildEmpresa()
    oDataTable:cName        := cPatEmp() + "PreCliT"
    oDataTable:cDataFile    := cPatEmp( , .t. ) + "PreCliT.Dbf"
    oDataTable:cIndexFile   := cPatEmp( , .t. ) + "PreCliT.Cdx"
+   oDataTable:bSyncFile    := {|| SynPreCli( cPatEmp() ) }
    ::AddEmpresaTable( oDataTable )
 
    oDataTable              := TDataTable()
@@ -1894,6 +1911,7 @@ METHOD BuildEmpresa()
    oDataTable:cName        := cPatEmp() + "PedCliT"
    oDataTable:cDataFile    := cPatEmp( , .t. ) + "PedCliT.Dbf"
    oDataTable:cIndexFile   := cPatEmp( , .t. ) + "PedCliT.Cdx"
+   oDataTable:bSyncFile    := {|| SynPedCli( cPatEmp() ) }
    ::AddEmpresaTable( oDataTable )
 
    oDataTable              := TDataTable()
@@ -1939,6 +1957,7 @@ METHOD BuildEmpresa()
    oDataTable:cName        := cPatEmp() + "AlbCliT"
    oDataTable:cDataFile    := cPatEmp( , .t. ) + "AlbCliT.Dbf"
    oDataTable:cIndexFile   := cPatEmp( , .t. ) + "AlbCliT.Cdx"
+   oDataTable:bSyncFile    := {|| SynAlbCli( cPatEmp() ) }
    ::AddEmpresaTable( oDataTable )
 
    oDataTable              := TDataTable()
@@ -2005,6 +2024,7 @@ METHOD BuildEmpresa()
    oDataTable:cName        := cPatEmp() + "FacCliT"
    oDataTable:cDataFile    := cPatEmp( , .t. ) + "FacCliT.Dbf"
    oDataTable:cIndexFile   := cPatEmp( , .t. ) + "FacCliT.Cdx"
+   oDataTable:bSyncFile    := {|| SynFacCli( cPatEmp() ) }
    ::AddEmpresaTable( oDataTable )
 
    oDataTable              := TDataTable()
@@ -2047,6 +2067,7 @@ METHOD BuildEmpresa()
    oDataTable:cName        := cPatEmp() + "FacRecT"
    oDataTable:cDataFile    := cPatEmp( , .t. ) + "FacRecT.Dbf"
    oDataTable:cIndexFile   := cPatEmp( , .t. ) + "FacRecT.Cdx"
+   oDataTable:bSyncFile    := {|| SynFacRec( cPatEmp() ) }
    ::AddEmpresaTable( oDataTable )
 
    oDataTable              := TDataTable()
@@ -2105,6 +2126,7 @@ METHOD BuildEmpresa()
    oDataTable:cName        := cPatEmp() + "AntCliT"
    oDataTable:cDataFile    := cPatEmp( , .t. ) + "AntCliT.Dbf"
    oDataTable:cIndexFile   := cPatEmp( , .t. ) + "AntCliT.Cdx"
+   oDataTable:bSyncFile    := {|| SynAntCli( cPatEmp() ) }
    ::AddEmpresaTable( oDataTable )
 
    oDataTable              := TDataTable()
@@ -2129,6 +2151,7 @@ METHOD BuildEmpresa()
    oDataTable:cName        := cPatEmp() + "TikeT"
    oDataTable:cDataFile    := cPatEmp( , .t. ) + "TikeT.Dbf"
    oDataTable:cIndexFile   := cPatEmp( , .t. ) + "TikeT.Cdx"
+   oDataTable:bSyncFile    := {|| SynTikCli( cPatEmp() ) }
    ::AddEmpresaTable( oDataTable )
 
    oDataTable              := TDataTable()
@@ -2304,6 +2327,7 @@ METHOD BuildEmpresa()
    oDataTable:cName        := cPatEmp() + "OrdCarP"
    oDataTable:cDataFile    := cPatEmp( , .t. ) + "OrdCarP.Dbf"
    oDataTable:cIndexFile   := cPatEmp( , .t. ) + "OrdCarP.Cdx"
+   oDataTable:bSyncFile    := {|| SynOrdCar( cPatEmp() ) }
    ::AddEmpresaTable( oDataTable )
 
    oDataTable              := TDataTable()

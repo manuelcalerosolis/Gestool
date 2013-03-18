@@ -1441,17 +1441,16 @@ function SynOrdCar( cPath )
    BEGIN SEQUENCE
 
    dbUseArea( .t., cDriver(), cPath + "ORDCARP.DBF", cCheckArea( "ORDCARP", @dbfOrdCarT ), .f. )
-   ordListAdd( cPath + "ORDCARP.CDX" )
+   if !lAIS(); ordListAdd( cPath + "ORDCARP.CDX" ); else ; ordSetFocus( 1 ) ; end
 
    dbUseArea( .t., cDriver(), cPath + "ORDCARL.DBF", cCheckArea( "ORDCARL", @dbfOrdCarL ), .f. )
-   ordListAdd( cPath + "ORDCARL.CDX" )
-   ordSetFocus( 0 )
+   if !lAIS(); ordListAdd( cPath + "ORDCARL.CDX" ); else ; ordSetFocus( 0 ) ; end
 
    dbUseArea( .t., cDriver(), cPath + "ALBCLIT.DBF", cCheckArea( "ALBCLIT", @dbfAlbCliT ), .f. )
-   ordListAdd( cPath + "ALBCLIT.CDX" )
+   if !lAIS(); ordListAdd( cPath + "ALBCLIT.CDX" ); else ; ordSetFocus( 1 ) ; end
 
    dbUseArea( .t., cDriver(), cPath + "ALBCLIL.DBF", cCheckArea( "ALBCLIL", @dbfAlbCliL ), .f. )
-   ordListAdd( cPath + "ALBCLIL.CDX" )
+   if !lAIS(); ordListAdd( cPath + "ALBCLIL.CDX" ); else ; ordSetFocus( 1 ) ; end
 
    /*
    Eliminamos lineas huerfanas-------------------------------------------------
@@ -1459,13 +1458,10 @@ function SynOrdCar( cPath )
 
    ( dbfOrdCarL )->( dbGoTop() )
    while !( dbfOrdCarL )->( eof() )
-
       if !( dbfOrdCarT )->( dbSeek( Str( ( dbfOrdCarL )->nNumOrd ) + ( dbfOrdCarL )->cSufOrd ) )
          ( dbfOrdCarL )->( dbDelete() )
       end if
-
       ( dbfOrdCarL )->( dbSkip() )
-
    end while
 
    /*

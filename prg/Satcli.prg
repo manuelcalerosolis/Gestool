@@ -1630,7 +1630,7 @@ FUNCTION SatCli( oMenuItem, oWnd, cCodCli, cCodArt )
 
       DEFINE BTNSHELL RESOURCE "DOCUMENT_USER1_" OF oWndBrw ;
             ALLOW    EXIT ;
-            ACTION   ( if( !( dbfSatCliT )->lEstado, FactCli( nil, nil, nil, nil, nil, { ( dbfSatCliT )->cSerSat + Str( ( dbfSatCliT )->nNumSat ) + ( dbfSatCliT )->cSufSat, nil, nil, nil } ), MsgStop( "El S.A.T. ya ha sido aceptado" ) ) );
+            ACTION   ( if( !( dbfSatCliT )->lEstado, FactCli( nil, nil, nil, nil, nil, { nil, nil, nil, ( dbfSatCliT )->cSerSat + Str( ( dbfSatCliT )->nNumSat ) + ( dbfSatCliT )->cSufSat } ), MsgStop( "El S.A.T. ya ha sido aceptado" ) ) );
             TOOLTIP  "Generar factura" ;
             FROM     oRotor ;
 
@@ -6631,7 +6631,7 @@ FUNCTION BrwSatCli( oGet, dbfSatCliT, dbfSatCliL, dbfIva, dbfDiv, dbfFPago, oIva
 
       oBrw:cAlias          := dbfSatCliT
       oBrw:nMarqueeStyle   := 5
-      oBrw:cName           := "Satsupuesto a cliente.Browse"
+      oBrw:cName           := "SAT a cliente.Browse"
 
       oBrw:bLDblClick      := {|| oDlg:end( IDOK ) }
 

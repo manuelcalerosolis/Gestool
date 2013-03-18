@@ -7644,43 +7644,43 @@ function SynAlbCli( cPath )
    BEGIN SEQUENCE
 
    dbUseArea( .t., cDriver(), cPath + "ALBCLIT.DBF", cCheckArea( "ALBCLIT", @dbfAlbCliT ), .f. )
-   ordListAdd( cPath + "ALBCLIT.CDX" )
+   if !lAIS(); ordListAdd( cPath + "ALBCLIT.CDX" ); else ; ordSetFocus( 1 ) ; end
 
    dbUseArea( .t., cDriver(), cPath + "ALBCLIL.DBF", cCheckArea( "ALBCLIL", @dbfAlbCliL ), .f. )
-   ordListAdd( cPath + "ALBCLIL.CDX" )
+   if !lAIS(); ordListAdd( cPath + "ALBCLIL.CDX" ); else ; ordSetFocus( 1 ) ; end
 
    dbUseArea( .t., cDriver(), cPath + "ALBCLIS.DBF", cCheckArea( "ALBCLIS", @dbfAlbCliS ), .f. )
-   ordListAdd( cPath + "ALBCLIS.CDX" )
+   if !lAIS(); ordListAdd( cPath + "ALBCLIS.CDX" ); else ; ordSetFocus( 1 ) ; end
 
    dbUseArea( .t., cDriver(), cPath + "ALBCLII.DBF", cCheckArea( "ALBCLII", @dbfAlbCliI ), .f. )
-   ordListAdd( cPath + "ALBCLII.CDX" )
+   if !lAIS(); ordListAdd( cPath + "ALBCLII.CDX" ); else ; ordSetFocus( 1 ) ; end
 
    dbUseArea( .t., cDriver(), cPath + "ALBCLIP.DBF", cCheckArea( "ALBCLIP", @dbfAlbCliP ), .f. )
-   ordListAdd( cPath + "ALBCLIP.CDX" )
+   if !lAIS(); ordListAdd( cPath + "ALBCLIP.CDX" ); else ; ordSetFocus( 1 ) ; end
 
    dbUseArea( .t., cDriver(), cPatArt() + "FAMILIAS.DBF", cCheckArea( "FAMILIAS", @dbfFamilia ), .f. )
-   ordListAdd( cPatArt() + "FAMILIAS.CDX" )
+   if !lAIS(); ordListAdd( cPatArt() + "FAMILIAS.CDX" ); else ; ordSetFocus( 1 ) ; end
 
    dbUseArea( .t., cDriver(), cPatArt() + "ARTICULO.DBF", cCheckArea( "ARTICULO", @dbfArticulo ), .f. )
-   ordListAdd( cPatArt() + "ARTICULO.CDX" )
+   if !lAIS(); ordListAdd( cPatArt() + "ARTICULO.CDX" ); else ; ordSetFocus( 1 ) ; end
 
    dbUseArea( .t., cDriver(), cPatCli() + "CLIENT.DBF", cCheckArea( "CLIENT", @dbfClient ), .f. )
-   ordListAdd( cPatCli() + "CLIENT.CDX" )
+   if !lAIS(); ordListAdd( cPatCli() + "CLIENT.CDX" ); else ; ordSetFocus( 1 ) ; end
 
    dbUseArea( .t., cDriver(), cPatDat() + "TIVA.DBF", cCheckArea( "TIVA", @dbfIva ), .t. )
-   ordListAdd( cPatDat() + "TIVA.CDX" )
+   if !lAIS(); ordListAdd( cPatDat() + "TIVA.CDX" ); else ; ordSetFocus( 1 ) ; end
 
    dbUseArea( .t., cDriver(), cPatDat() + "DIVISAS.DBF", cCheckArea( "DIVISAS", @dbfDiv ), .t. )
-   ordListAdd( cPatDat() + "DIVISAS.CDX" )
+   if !lAIS(); ordListAdd( cPatDat() + "DIVISAS.CDX" ); else ; ordSetFocus( 1 ) ; end
 
    dbUseArea( .t., cDriver(), cPath + "PEDCLIT.DBF", cCheckArea( "PEDCLIT", @dbfPedCliT ), .f. )
-   ordListAdd( cPath + "PEDCLIT.CDX" )
+   if !lAIS(); ordListAdd( cPath + "PEDCLIT.CDX" ); else ; ordSetFocus( 1 ) ; end
 
    dbUseArea( .t., cDriver(), cPath + "PEDCLIL.DBF", cCheckArea( "PEDCLIL", @dbfPedCliL ), .f. )
-   ordListAdd( cPath + "PEDCLIL.CDX" )
+   if !lAIS(); ordListAdd( cPath + "PEDCLIL.CDX" ); else ; ordSetFocus( 1 ) ; end
 
    dbUseArea( .t., cDriver(), cPath + "FACCLIL.DBF", cCheckArea( "FACCLIL", @dbfFacCliL ), .f. )
-   ordListAdd( cPath + "FACCLIL.CDX" )
+   if !lAIS(); ordListAdd( cPath + "FACCLIL.CDX" ); else ; ordSetFocus( 1 ) ; end
 
    oNewImp              := TNewImp():Create( cPatEmp() )
       if !oNewImp:OpenFiles()
