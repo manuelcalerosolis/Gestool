@@ -784,9 +784,9 @@ METHOD End( lForceExit ) CLASS TShell
       // Guardamos la pos actual ----------------------------------------------
 
       do case
-         case ValType( ::xAlias ) == "O"
+         case IsObject( ::xAlias )
             ::nRec            := ::xAlias:RecNo()
-         case  ValType( ::xAlias ) == "C" .and. ( ::xAlias )->( Used() )
+         case  IsChar( ::xAlias ).and. ( ::xAlias )->( Used() )
             ::nRec            := ( ::xAlias )->( RecNo() )
       end case
 
@@ -862,9 +862,9 @@ METHOD Search() CLASS TShell
    end if
 
    do case
-   case ValType( ::xAlias ) == "O"
+   case IsObject( ::xAlias )
       cIndice     := ::aPrompt[ ::xAlias:OrdNumber() ]
-   case ValType( ::xAlias ) == "C" .and. ( ::xAlias )->( Used() )
+   case IsChar( ::xAlias ).and. ( ::xAlias )->( Used() )
       cIndice     := ::aPrompt[ ( ::xAlias )->( OrdNumber() ) ]
    end case
 
@@ -927,16 +927,10 @@ METHOD AddSearch() CLASS TShell
 
       nRec  := ( ::xAlias )->( Recno() )
 
-      // msgAlert( ( ::xAlias )->( Recno() ), "nRec antes" )
-
       ( ::xAlias )->( OrdScope( 0, nil ) )
       ( ::xAlias )->( OrdScope( 1, nil ) )
 
-      // msgAlert( ( ::xAlias )->( Recno() ), "nRec despues" )
-      
       ( ::xAlias )->( dbGoTo( nRec ) )
-
-      // msgAlert( ( ::xAlias )->( Recno() ), "nRec despues del GoTo" )
 
    end case
 
@@ -955,9 +949,9 @@ Cambia el indice actual
 METHOD ChgIndex( oIndice ) CLASS TShell
 
    do case
-   case ValType( ::xAlias ) == "O"
+   case IsObject( ::xAlias )
       ::xAlias:OrdSetFocus( oIndice:nAt )
-   case ValType( ::xAlias ) == "C" .and. ( ::xAlias )->( Used() )
+   case IsChar( ::xAlias ) .and. ( ::xAlias )->( Used() )
       ( ::xAlias )->( OrdSetFocus( oIndice:nAt ) )
    end case
 
@@ -994,10 +988,10 @@ METHOD ChangeSeek( oIndice ) CLASS TShell
    local nOrd     := if( SubStr( oGet:varGet(), 1, 1 ) $ "0123456789", 1, 2 )
 
    do case
-   case ValType( ::xAlias ) == "O"
+   case IsObject( ::xAlias )
       ::xAlias:OrdSetFocus( n )
       cType       := ValType( ::xAlias:OrdKey() )
-   case ValType( ::xAlias ) == "C" .and. ( ::xAlias )->( Used() )
+   case IsChar( ::xAlias ).and. ( ::xAlias )->( Used() )
       ( ::xAlias )->( OrdSetFocus( n ) )
       cType       := ValType( ( ::xAlias )->( OrdKey() ) )
    end case
@@ -1017,9 +1011,9 @@ METHOD ChangeSeek( oIndice ) CLASS TShell
    end if
 
    do case
-   case ValType( ::xAlias ) == "O"
+   case IsObject( ::xAlias )
       ::xAlias:Seek( xCadena )
-   case ValType( ::xAlias ) == "C" .and. ( ::xAlias )->( Used() )
+   case IsChar( ::xAlias ).and. ( ::xAlias )->( Used() )
       ( ::xAlias )->( dbSeek( xCadena ) )
    end case
 
@@ -1374,7 +1368,7 @@ static function SeaSeek( nKey, Self )
 
       nOrd     := if( SubStr( ::aLstSea[ nKey ], 1, 1 ) $ "0123456789", 1, 2 )
 
-      if ValType( ::xAlias ) == "O"
+      if IsObject( ::xAlias )
          nOrd  := ::xAlias:OrdSetFocus( nOrd )
          cType := ValType( ::xAlias:OrdKey() )
       else
@@ -1390,7 +1384,7 @@ static function SeaSeek( nKey, Self )
          xKey  := Val( ::aLstSea[ nKey ] )
       end if
 
-      if ValType( ::xAlias ) == "O"
+      if IsObject( ::xAlias )
          ::xAlias:Seek( xKey )
          ::xAlias:OrdSetFocus( nOrd )
       else
@@ -1429,10 +1423,10 @@ METHOD PutOriginal() CLASS TShell
    */
 
    do case
-      case ValType( ::xAlias ) == "O"
+      case IsObject( ::xAlias )
          ::xAlias:GoTop()
 
-      case ValType( ::xAlias ) == "C" .and. ( ::xAlias )->( Used() )
+      case IsChar( ::xAlias ).and. ( ::xAlias )->( Used() )
          ( ::xAlias )->( dbGoTop() )
    end case
 
