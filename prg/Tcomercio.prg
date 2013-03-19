@@ -384,6 +384,8 @@ CLASS TComercio
 
    METHOD DelCascadeCategoriesPrestashop()
 
+   METHOD DeleteImagesProducts( cCodWeb )
+
 END CLASS
 
 //---------------------------------------------------------------------------//
@@ -6694,7 +6696,7 @@ Method ExportarPrestashop() Class TComercio
 
             msgstop( "Desactivada la subida de imágenes" )
 
-            //::AppendImagesPrestashop()
+            ::AppendImagesPrestashop()
 
          end if
 
@@ -9084,9 +9086,9 @@ METHOD DeleteProductsPrestashop() CLASS TComercio
    Eliminamos las imágenes del artículo---------------------------------------
    */
 
-   //::DeleteImagesCategories( ::oFam:cCodWeb )
-
    Msginfo( "Elimino imagenes artículos" )
+
+   ::DeleteImagesProducts( ::oArt:cCodWeb )
 
    /*
    Eliminamos en cascada Todo lo que esté tirando de la familia----------------
@@ -9099,6 +9101,55 @@ METHOD DeleteProductsPrestashop() CLASS TComercio
    ::oArt:fieldPutByName( "cCodWeb", 0 )
 
 Return ( Self )
+
+//---------------------------------------------------------------------------//
+
+METHOD DeleteImagesProducts( cCodProduct ) CLASS TComercio
+
+   local oInt
+   local oFtp
+   local aDirectory
+   local cDirectory
+   local lerror
+
+   msginfo( "entramos a eliminar las imagenes de los articulos" )
+
+   if !Empty( cCodProduct )
+
+      /*
+      Conectamos al FTP para eliminar las imagenes del articulo----------------
+      */
+
+      oInt         := TInternet():New()
+      oFtp         := TFtp():New( ::cHostFtp, oInt, ::cUserFtp, ::cPasswdFtp, ::lPassiveFtp )
+
+      if Empty( oFtp ) .or. Empty( oFtp:hFtp )
+
+         MsgStop( "Imposible conectar al sitio ftp " + ::cHostFtp )
+
+      else
+
+         ?"antes de eliminar"
+         ?::cDImagen + "/p/" + AllTrim( Str( cCodProduct ) )
+
+         if !Empty( ::cDImagen )
+            oFtp:SetCurrentDirectory( ::cDImagen + "/p/" + AllTrim( Str( cCodProduct ) ) )
+            oFtp:RemoveDirectory( ::cDImagen + "/p/" + AllTrim( Str( cCodProduct ) ) )
+         end if
+
+      end if
+
+      if !Empty( oInt )
+         oInt:end()
+      end if
+
+      if !Empty( oFtp )
+         oFtp:end()
+      end if
+
+   end if
+
+Return .f.
 
 //---------------------------------------------------------------------------//
 
