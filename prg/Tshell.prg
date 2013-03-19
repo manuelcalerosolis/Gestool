@@ -920,19 +920,27 @@ METHOD AddSearch() CLASS TShell
       nRec  := ::xAlias:Recno()
 
       ::xAlias:OrdClearScope()
+
       ::xAlias:GoTo( nRec )
 
    case IsChar( ::xAlias ) .and. ( ::xAlias )->( Used() )
 
       nRec  := ( ::xAlias )->( Recno() )
 
+      // msgAlert( ( ::xAlias )->( Recno() ), "nRec antes" )
+
       ( ::xAlias )->( OrdScope( 0, nil ) )
       ( ::xAlias )->( OrdScope( 1, nil ) )
+
+      // msgAlert( ( ::xAlias )->( Recno() ), "nRec despues" )
+      
       ( ::xAlias )->( dbGoTo( nRec ) )
+
+      // msgAlert( ( ::xAlias )->( Recno() ), "nRec despues del GoTo" )
 
    end case
 
-   ::oBrw:Refresh()
+   // ::oBrw:Refresh()
 
    CursorWE()
 
@@ -2574,7 +2582,7 @@ Method CreateXBrowse() CLASS TShell
       ::oBrw:bClrSel          := {|| { CLR_BLACK, Rgb( 229, 229, 229 ) } }
       ::oBrw:bClrSelFocus     := {|| { CLR_BLACK, Rgb( 167, 205, 240 ) } }
 
-      ::oBrw:bSeek            := { |c,u| ::oBrw:RddIncrSeek( c, @u ) }
+      // ::oBrw:bSeek            := { |c,u| ::oBrw:RddIncrSeek( c, @u ) }
 
       do case
       case IsObject( ::xAlias )
@@ -2585,14 +2593,14 @@ Method CreateXBrowse() CLASS TShell
 
          ::oBrw:nDataType  := 0 // DATATYPE_RDD
          ::oBrw:cAlias     := ::xAlias
-         ::oBrw:bGoTop     := {|| ( ::xAlias )->( DbGoTop() ) }
-         ::oBrw:bGoBottom  := {|| ( ::xAlias )->( DbGoBottom() ) }
+         ::oBrw:bGoTop     := {|| ( ::xAlias )->( dbGoTop() ) }
+         ::oBrw:bGoBottom  := {|| ( ::xAlias )->( dbGoBottom() ) }
          ::oBrw:bSkip      := {| n | iif( n == nil, n := 1, ), ( ::xAlias )->( dbSkipper( n ) ) }
          ::oBrw:bBof       := {|| ( ::xAlias )->( Bof() ) }
          ::oBrw:bEof       := {|| ( ::xAlias )->( Eof() ) }
          ::oBrw:bBookMark  := {| n | iif( n == nil, ( ::xAlias )->( RecNo() ), ( ::xAlias )->( dbGoto( n ) ) ) }
-         ::oBrw:bLock      := {|| ( ::xAlias )->( DbrLock() ) }
-         ::oBrw:bUnlock    := {|| ( ::xAlias )->( DbrUnlock() ) }
+         ::oBrw:bLock      := {|| ( ::xAlias )->( dbrLock() ) }
+         ::oBrw:bUnlock    := {|| ( ::xAlias )->( dbrUnlock() ) }
 
          if lAdsRdd()
          ::oBrw:bKeyNo     := {| n | iif( n == nil, Round( ( ::xAlias )->( ADSGetRelKeyPos() ) * ::oBrw:nLen, 0 ), ( ::xAlias )->( ADSSetRelKeyPos( n / ::oBrw:nLen ) ) ) }

@@ -1279,8 +1279,6 @@ Function oMsgText( cText )
       end if
    end if
 
-   logwrite( cText ) 
-
 Return ( nil )
 
 //--------------------------------------------------------------------------//

@@ -2925,6 +2925,8 @@ METHOD Reindex()
    local oTable
    local cAlias
 
+   ::oDlg:bValid  := {|| .f. }
+
    CursorWait()
 
    ::BuildData()
@@ -2986,6 +2988,8 @@ METHOD Reindex()
    ::EnableTriggers()
    
    CursorWE()
+
+   ::oDlg:bValid  := {|| .t. }
 
    msgInfo( "Proceso finalizado con exito.")
 

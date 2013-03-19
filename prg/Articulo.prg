@@ -5440,9 +5440,9 @@ Static Function EndTrans( aTmp, aGet, oSay, oDlg, aTipBar, cTipBar, nMode, oImpC
 
    local i
    local cCod
-   local cCodArt
    local oError
    local oBlock
+   local cCodArt
    local nTipBar
    local aCodeBar    := {}
    local lChange     := .f.
@@ -5662,20 +5662,16 @@ Static Function EndTrans( aTmp, aGet, oSay, oDlg, aTipBar, cTipBar, nMode, oImpC
       WinGather( aTmp, aGet, dbfArticulo, nil, nMode )
 
       /*
-      Actualizamos los datos de la web para tiempo real------------------------
-      */
-
-      Actualizaweb( cCod )
-
-      /*
       Terminamos la transación-------------------------------------------------
       */
 
       CommitTransaction()
 
       /*
-      Recalculamos la posición-------------------------------------------------
+      Actualizamos los datos de la web para tiempo real------------------------
       */
+
+      Actualizaweb( cCod )
 
    RECOVER USING oError
 
@@ -5684,6 +5680,7 @@ Static Function EndTrans( aTmp, aGet, oSay, oDlg, aTipBar, cTipBar, nMode, oImpC
       msgStop( "Imposible actualizar bases de datos" + CRLF + ErrorMessage( oError ) )
 
    END SEQUENCE
+   
    ErrorBlock( oBlock )
 
    /*

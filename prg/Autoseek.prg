@@ -43,7 +43,7 @@ FUNCTION Searching( cAlias, aIndex, oBrw, cPreFij )
 	local nOrdAnt
 
 	DEFAULT cAlias	:= Alias()
-   DEFAULT aIndex := { "Código", "Descripción" }
+   DEFAULT aIndex := { "CÃ³digo", "DescripciÃ³n" }
 
    nOrdAnt        := ( cAlias )->( OrdNumber() )
    cIndice        := aIndex[ Min( nOrdAnt, Len( aIndex ) ) ]
@@ -363,15 +363,7 @@ Function lMiniSeek( cPrefij, xCadena, xAlias, nLen )
 
          end if
 
-         // logwrite( "xCadena" + xCadena )
-
       end case
-
-      // logwrite( if ( lRet, "lRet es verdadero", "lRet es falso" ) )
-
-      if !lRet
-         ( xAlias )->( dbGoTo( nRec ) )
-      end if
 
    else
 
@@ -381,6 +373,11 @@ Function lMiniSeek( cPrefij, xCadena, xAlias, nLen )
       lRet           := .f.
 
    end if
+
+   logwrite( if ( lRet, "lRet es verdadero", "lRet es falso" ) )
+   logwrite( "xCadena" + xCadena )
+   logwrite( "ordKeyno" + Str( ( xAlias)->( OrdKeyNo() ) ) )
+   logwrite( "Recno" + Str( ( xAlias)->( RecNo() ) ) )
 
    if !lRet
       ( xAlias )->( dbGoTo( nRec ) )
