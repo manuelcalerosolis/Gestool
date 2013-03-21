@@ -479,7 +479,7 @@ METHOD GenIndices( oMsg )
          ::nActualProgress          := 0
 
          if ::lNotGrupo .and. ::lDatos
-            ::nProgress[ 6 ]        := 16
+            ::nProgress[ 6 ]        := 17
          end if
 
          ::aProgress[ 6 ]:SetTotal( ::nProgress[ 6 ] )
@@ -493,6 +493,7 @@ METHOD GenIndices( oMsg )
          ::SetText( "Sincroniza bancos de proveedores", ::aProgress[ 6 ] )                   ; SynProvee( ::cPathEmp )
          ::SetText( "Sincroniza artículos", ::aProgress[ 6 ] )                               ; SynArt(    ::cPathEmp )
          ::SetText( "Sincroniza recibos de proveedores", ::aProgress[ 6 ]  )                 ; SynRecPrv( ::cPathEmp )
+         ::SetText( "Sincroniza líneas de SAT de clientes", ::aProgress[ 6 ]  )              ; SynSatCli( ::cPathEmp )
          ::SetText( "Sincroniza líneas de presupuestos", ::aProgress[ 6 ]  )                 ; SynPreCli( ::cPathEmp )
          ::SetText( "Sincroniza líneas de pedidos de clientes", ::aProgress[ 6 ]  )          ; SynPedCli( ::cPathEmp )
          ::SetText( "Sincroniza líneas de albaranes de clientes", ::aProgress[ 6 ]  )        ; SynAlbCli( ::cPathEmp )

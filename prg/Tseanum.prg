@@ -29,6 +29,10 @@ CLASS TSeaNumSer
    DATA oRctPrvL
    DATA oRctPrvS
 
+   DATA oSatCliT
+   DATA oSatCliL
+   DATA oSatCliS
+
    DATA oAlbCliT
    DATA oAlbCliL
    DATA oAlbCliS
@@ -94,6 +98,7 @@ CLASS TSeaNumSer
    METHOD AddFacPrv()
    METHOD AddRctPrv()
 
+   METHOD AddSatCli()
    METHOD AddAlbCli()
    METHOD AddFacCli()
    METHOD AddFacRec()
@@ -175,6 +180,13 @@ METHOD OpenFiles()
 
       DATABASE NEW ::oAlbCliS PATH ( cPatEmp() ) FILE "AlbCliS.Dbf" VIA ( cDriver() ) SHARED INDEX "AlbCliS.Cdx"
       ::oAlbCliS:OrdSetFocus( "cNumSer" )
+
+      DATABASE NEW ::oSatCliT PATH ( cPatEmp() ) FILE "SatCliT.Dbf" VIA ( cDriver() ) SHARED INDEX "SatCliT.Cdx"
+
+      DATABASE NEW ::oSatCliL PATH ( cPatEmp() ) FILE "SatCliL.Dbf" VIA ( cDriver() ) SHARED INDEX "SatCliL.Cdx"
+
+      DATABASE NEW ::oSatCliS PATH ( cPatEmp() ) FILE "SatCliS.Dbf" VIA ( cDriver() ) SHARED INDEX "SatCliS.Cdx"
+      ::oSatCliS:OrdSetFocus( "cNumSer" )
 
       DATABASE NEW ::oFacCliT PATH ( cPatEmp() ) FILE "FacCliT.Dbf" VIA ( cDriver() ) SHARED INDEX "FacCliT.Cdx"
 
@@ -327,6 +339,18 @@ METHOD CloseFiles()
 
    if !Empty( ::oAlbCliS )
       ::oAlbCliS:End()
+   end if
+
+   if !Empty( ::oSatCliT )
+      ::oSatCliT:End()
+   end if
+
+   if !Empty( ::oSatCliL )
+      ::oSatCliL:End()
+   end if
+
+   if !Empty( ::oSatCliS )
+      ::oSatCliS:End()
    end if
 
    if !Empty( ::oFacCliT )
@@ -548,6 +572,7 @@ METHOD Activate( oMenuItem, oWnd, lStart )
       :AddResource( "Cashier_user1_16"                )  // Tiket cliente
       :AddResource( "Worker2_Form_Red_16"             )  // Parte de produccion
       :AddResource( "Pencil_Package_16"               )  // Mov de almancen
+      :AddResource( "Power-drill_user1_16"            )  // SAT
    end with
 
    with object ( ::oBrw:AddCol() )
@@ -768,6 +793,28 @@ METHOD Search( oNumSer, oBtnCancel, oBtnBuscar )
    end if
 
    ::oMetMsg:Set( ::oRctPrvS:LastRec() )
+
+   // Sataranes de clientes----------------------------------------------------
+
+   ::oMetMsg:cText   := "S.A.T. de cliente"
+
+   ::oMetMsg:SetTotal( ::oSatCliS:LastRec() )
+
+   if ::oSatCliS:Seek( ::cNumSer )
+
+      while ( Rtrim( ::oSatCliS:cNumSer ) == Rtrim( ::cNumSer ) ) .and. !::oSatCliS:Eof()
+
+         ::AddSatCli()
+
+         ::oSatCliS:Skip()
+
+         ::oMetMsg:Set( ::oSatCliS:OrdKeyNo() )
+
+      end while
+
+   end if
+
+   ::oMetMsg:Set( ::oSatCliS:LastRec() )
 
    // Albaranes de clientes----------------------------------------------------
 
@@ -1062,7 +1109,7 @@ METHOD AddAlbCli()
    if ( Empty( ::cCodArt ) .or. ( Rtrim( ::cCodArt ) == Rtrim( ::oAlbCliS:cRef ) ) )      .and.;
       ( Empty( ::cCodAlm ) .or. ( Rtrim( ::cCodAlm ) == Rtrim( ::oAlbCliS:cAlmLin ) ) )   .and.;
       ( Empty( ::dConsolidacion ) .or. ( ::oAlbCliS:dFecAlb >= ::dConsolidacion ) )       .and.;
-      ( Empty( ::cCodPrv ) .or. ( Rtrim( ::cCodPrv ) == Rtrim( oRetFld( ::oAlbCliS:cSerAlb + Str( ::oAlbCliS:nNumAlb ) + ::oAlbCliS:cSufAlb, ::oAlbCliT, "cCodPrv" ) ) ) )
+      ( Empty( ::cCodCli ) .or. ( Rtrim( ::cCodCli ) == Rtrim( oRetFld( ::oAlbCliS:cSerAlb + Str( ::oAlbCliS:nNumAlb ) + ::oAlbCliS:cSufAlb, ::oAlbCliT, "cCodCli" ) ) ) )
 
       ::oDbfTmp:Append()
       ::oDbfTmp:cTipDoc := "Albarán de cliente"
@@ -1077,7 +1124,39 @@ METHOD AddAlbCli()
       ::oDbfTmp:cCodObr := ""
       ::oDbfTmp:Save()
 
-      if ::oAlbPrvS:lUndNeg
+      if ::oAlbCliS:lUndNeg
+         ::nSayVentas--
+      else
+         ::nSayVentas++
+      end if
+
+   end if
+
+RETURN ( Self )
+
+//----------------------------------------------------------------------------//
+
+METHOD AddSatCli()
+
+   if ( Empty( ::cCodArt ) .or. ( Rtrim( ::cCodArt ) == Rtrim( ::oSatCliS:cRef ) ) )      .and.;
+      ( Empty( ::cCodAlm ) .or. ( Rtrim( ::cCodAlm ) == Rtrim( ::oSatCliS:cAlmLin ) ) )   .and.;
+      ( Empty( ::dConsolidacion ) .or. ( ::oSatCliS:dFecSat >= ::dConsolidacion ) )       .and.;
+      ( Empty( ::cCodCli ) .or. ( Rtrim( ::cCodCli ) == Rtrim( oRetFld( ::oSatCliS:cSerSat + Str( ::oSatCliS:nNumSat ) + ::oSatCliS:cSufSat, ::oSatCliT, "cCodCli" ) ) ) )
+
+      ::oDbfTmp:Append()
+      ::oDbfTmp:cTipDoc := "S.A.T. de cliente"
+      ::oDbfTmp:cNumDoc := ::oSatCliS:cSerSat + "/" + Ltrim( Str( ::oSatCliS:nNumSat ) ) + "/" + ::oSatCliS:cSufSat
+      ::oDbfTmp:cDoc    := ::oSatCliS:cSerSat + Str( ::oSatCliS:nNumSat ) + ::oSatCliS:cSufSat
+      ::oDbfTmp:cCodArt := ::oSatCliS:cRef
+      ::oDbfTmp:nNumLin := ::oSatCliS:nNumLin
+      ::oDbfTmp:cCodAlm := ::oSatCliS:cAlmLin
+      ::oDbfTmp:dFecDoc := oRetFld( ::oSatCliS:cSerSat + Str( ::oSatCliS:nNumSat ) + ::oSatCliS:cSufSat, ::oSatCliT, "dFecSat" )
+      ::oDbfTmp:cCodCli := oRetFld( ::oSatCliS:cSerSat + Str( ::oSatCliS:nNumSat ) + ::oSatCliS:cSufSat, ::oSatCliT, "cCodCli" )
+      ::oDbfTmp:cCliPrv := oRetFld( ::oSatCliS:cSerSat + Str( ::oSatCliS:nNumSat ) + ::oSatCliS:cSufSat, ::oSatCliT, "cNomCli" )
+      ::oDbfTmp:cCodObr := ""
+      ::oDbfTmp:Save()
+
+      if ::oSatCliS:lUndNeg
          ::nSayVentas--
       else
          ::nSayVentas++
@@ -1276,6 +1355,10 @@ METHOD Zoom()
 
       case AllTrim( ::oDbfTmp:cTipDoc ) == "Tiket de cliente"
          ZooTikCli( ::oDbfTmp:cDoc )
+
+      case AllTrim( ::oDbfTmp:cTipDoc ) == "S.A.T. de cliente"
+         ZooSatCli( ::oDbfTmp:cDoc )
+
    endcase
 
 return( Self )
@@ -1311,6 +1394,10 @@ METHOD Visualizar()
 
       case AllTrim( ::oDbfTmp:cTipDoc ) == "Factura rectificativa de cliente"
          VisFacRec( ::oDbfTmp:cDoc )
+
+      case AllTrim( ::oDbfTmp:cTipDoc ) == "S.A.T. de cliente"
+         VisSatCli( ::oDbfTmp:cDoc )
+
    endcase
 
 return( nil )
@@ -1346,6 +1433,9 @@ METHOD Imprimir()
 
       case Alltrim( ::oDbfTmp:cTipDoc ) == "Factura rectificativa de cliente"
          PrnFacRec( ::oDbfTmp:cDoc )
+
+      case AllTrim( ::oDbfTmp:cTipDoc ) == "S.A.T. de cliente"
+         PrnSatCli( ::oDbfTmp:cDoc )
 
    endcase
 
@@ -1388,6 +1478,9 @@ Method nTreeImagen()
 
       case aScan( ::aMovimiento, Alltrim( ::oDbfTmp:cTipDoc ) ) != 0
          Return ( 11 )
+
+      case Alltrim( ::oDbfTmp:cTipDoc ) == "S.A.T. de cliente"
+         Return ( 12 )
 
    end case
 

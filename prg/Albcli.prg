@@ -18966,6 +18966,11 @@ STATIC FUNCTION GrpSat( aGet, aTmp, oBrw )
                      oBrwLin:SetFocus() )
 
       REDEFINE BUTTON ;
+         ID       518 ;
+         OF       oDlg ;
+         ACTION   ( ZooSatCli( aSats[ oBrwLin:nArrayAt, 3 ] ) )
+
+      REDEFINE BUTTON ;
          ID       IDOK ;
          OF       oDlg ;
          ACTION   ( oDlg:end( IDOK ) )

@@ -1,15 +1,10 @@
-#ifndef __PDA__
-   #include "FiveWin.Ch"
-   #include "Splitter.ch"
-   #include "Factu.ch"
-   #include "Constant.ch"
-   #include "MesDbf.ch"
-   #include "xbrowse.ch"
-   #include "DbInfo.ch"
-#else
-   #include "FWCE.ch"
-   REQUEST DBFCDX
-#endif
+#include "FiveWin.Ch"
+#include "Splitter.ch"
+#include "Factu.ch"
+#include "Constant.ch"
+#include "MesDbf.ch"
+#include "xbrowse.ch"
+#include "DbInfo.ch"
 
 #define TVS_HASBUTTONS        1
 #define TVS_HASLINES          2
@@ -102,6 +97,8 @@ CLASS TShell FROM TMdiChild
    DATA  bDel
    DATA  bDup
    DATA  bZoo
+
+   DATA  lFastButtons   AS LOGIC    INIT .t.
 
    DATA  lTactil        AS LOGIC    INIT .f.
 
@@ -2655,6 +2652,27 @@ Method CreateXFromCode()
       oCol:bLDClickData    := {|| ::RecEdit() }
    next
 
+   // Insertamos los fastbuttons-----------------------------------------------
+   /*
+   if ::lFastButtons 
+
+      with object ( ::oBrw:AddCol() )
+         :cHeader             := "Restar unidades"
+         :bStrData            := {|| "" }
+         :bOnPreEdit          := {|| msgAlert( "preedit") }
+         :bOnPostEdit         := {|| .t. }
+         :bEditBlock          := {|| ::RecEdit() }
+         :bBmpData            := {|| 1 }
+         :nEditType           := 3
+         :nWidth              := 20
+         :nHeadBmpNo          := 1
+         :nBtnBmp             := 1
+         :nHeadBmpAlign       := 1
+         :AddResource( "Edit_16" )
+      end with
+
+   end if
+   */
    // Creamos el objeto -------------------------------------------------------
 
    ::oBrw:CreateFromCode()

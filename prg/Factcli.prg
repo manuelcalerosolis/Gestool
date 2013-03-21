@@ -4481,9 +4481,6 @@ Static Function InitDialog( aTmp, aGet, oDlg, oBtn, aNumDoc, nMode, oBrwLin, oBr
    end if
 
    if IsArray( aNumDoc ) .and. !Empty( aNumDoc[ 4 ] )
-
-      MSGALERT( aNumDoc[4])
-
       aGet[ _CNUMSAT ]:cText( aNumDoc[ 4 ] )
       aGet[ _CNUMSAT ]:lValid()
    end if
@@ -23051,6 +23048,11 @@ STATIC FUNCTION GrpSat( aGet, aTmp, oBrw )
          ACTION   (  aEval( aNumalb, { |aItem| aItem[1] := .f. } ),;
                      oBrwLin:Refresh(),;
                      oBrwLin:SetFocus() )
+
+      REDEFINE BUTTON ;
+         ID       518 ;
+         OF       oDlg ;
+         ACTION   ( ZooSatCli( aNumalb[ oBrwLin:nArrayAt, 3 ] ) )
 
       REDEFINE BUTTON ;
          ID       IDOK ;
