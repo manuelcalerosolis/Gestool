@@ -120,6 +120,63 @@ CLASS TProduccion FROM TMasDet
 
    DATA  cFileName
 
+   /*
+   Datas para el asistente de etiquetas----------------------------------------
+   */
+
+   DATA oDlgLbl
+   DATA oFldLbl
+
+   DATA oBtnListado
+   DATA oBtnAnterior
+   DATA oBtnSiguiente
+   DATA oBtnCancel
+
+   Data oSerieInicio
+   Data cSerieInicio
+
+   Data oSerieFin
+   Data cSerieFin
+
+   Data nDocumentoInicio
+   Data nDocumentoFin
+
+   Data cSufijoInicio
+   Data cSufijoFin
+
+   Data oFormatoLabel
+   Data cFormatoLabel
+
+   Data nFilaInicio
+   Data nColumnaInicio
+
+   Data nCantidadLabels
+   Data nUnidadesLabels
+
+   Data oMtrLabel
+   Data nMtrLabel
+
+   Data lErrorOnCreate
+
+   Data oBtnListado
+   Data oBtnFilter
+   Data oBtnSiguiente
+   Data oBtnAnterior
+   Data oBtnCancel
+
+   Data aSearch
+   DATA nRecno
+
+   Data cFileTmpLabel
+   Data cAreaTmpLabel
+
+   Data cFileTemporalLabel
+   Data cAreaTemporalLabel
+
+   Data oBrwLabel
+
+   DATA oFilter
+
    METHOD New( cPath, oWndParent, oMenuItem )
    METHOD Create( cPath, oWndParent )
 
@@ -193,6 +250,56 @@ CLASS TProduccion FROM TMasDet
    METHOD DesignReportProducc( oFr, dbfDoc )
 
    METHOD PrintReportProducc( nDevice, nCopies, cPrinter, dbfDoc )
+
+   /*
+   Métodos para la impresión de etiquetas--------------------------------------
+   */
+
+   METHOD CreateAsistenteEtiquetas()
+
+   METHOD EndAsistenteEtiquetas()
+
+   METHOD InitLabel()
+
+   METHOD lCreateAuxiliar()
+
+   METHOD DestroyAuxiliar()
+
+   METHOD BotonAnterior()
+
+   METHOD BotonSiguiente()
+
+   METHOD LoadAuxiliar()
+
+   METHOD DefineAuxiliar()
+
+   METHOD PutLabel()
+   
+   METHOD SelectAllLabels()
+   
+   METHOD AddLabel()
+   
+   METHOD DelLabel()
+   
+   METHOD EditLabel()
+
+   METHOD SelectColumn( oCombo )
+
+   METHOD FilterLabel()
+
+   METHOD DesignLabelProducc()
+   
+   METHOD lPrintLabels()
+   
+   METHOD lCreateTemporalLbl()
+   
+   METHOD DestroyTemporalLbl()
+   
+   METHOD PrepareTemporalLbl()
+   
+   METHOD DataLabel()
+
+   METHOD LoadAuxiliarDesign()
 
 ENDCLASS
 
@@ -464,6 +571,13 @@ METHOD Activate()
       LEVEL    ACC_IMPR
 
       ::lGenParte( ::oWndBrw:oBrw, oPdf, IS_PDF )
+
+   DEFINE BTNSHELL RESOURCE "RemoteControl_" OF ::oWndBrw ;
+      NOBORDER ;
+      ACTION   ( ::CreateAsistenteEtiquetas() ) ;
+      TOOLTIP  "Eti(q)uetas" ;
+      HOTKEY   "Q";
+      LEVEL    ACC_IMPR   
 
    ::LoadFilter()
 
@@ -3580,5 +3694,1129 @@ Function AppProduccion()
    end if
 
 return .t.
+
+//---------------------------------------------------------------------------//
+/*
+Métodos para imprimir etiquetas desde------------------------------------------
+*/
+//---------------------------------------------------------------------------//
+   
+METHOD InitLabel() CLASS TProduccion
+
+   local oError
+   local oBlock
+
+   oBlock                  := ErrorBlock( {| oError | ApoloBreak( oError ) } )
+   BEGIN SEQUENCE
+
+      ::nRecno             := ::oDbf:Recno()
+
+      ::cSerieInicio       := ::oDbf:cSerOrd
+      ::cSerieFin          := ::oDbf:cSerOrd
+
+      if Empty( ::cSerieInicio )
+         ::cSerieInicio    := "A"
+      end if   
+
+      if Empty( ::cSerieFin )
+         ::cSerieFin       := "A"
+      end if
+
+      ::nDocumentoInicio   := ::oDbf:nNumOrd
+      ::nDocumentoFin      := ::oDbf:nNumOrd
+
+      ::cSufijoInicio      := ::oDbf:cSufOrd
+      ::cSufijoFin         := ::oDbf:cSufOrd
+
+      ::cFormatoLabel      := GetPvProfString( "Etiquetas", "Produccion", Space( 3 ), cPatEmp() + "Empresa.Ini" )
+      
+      if len( ::cFormatoLabel ) < 3
+         ::cFormatoLabel   := Space( 3 )
+      end if
+
+      ::nMtrLabel          := 0
+
+      ::nFilaInicio        := 1
+      ::nColumnaInicio     := 1
+
+      ::nCantidadLabels    := 1
+      ::nUnidadesLabels    := 1
+
+      ::aSearch            := { "Código", "Nombre" }
+
+      ::lErrorOnCreate     := .f.
+
+   RECOVER USING oError
+
+      ::lErrorOnCreate     := .t.
+
+      msgStop( "Error en la creación de generador de etiquetas" + CRLF + ErrorMessage( oError ) )
+
+   END SEQUENCE
+   ErrorBlock( oBlock )
+
+Return ( Self )
+
+//--------------------------------------------------------------------------//
+
+Method CreateAsistenteEtiquetas() CLASS TProduccion
+
+   local oBtnPrp
+   local oBtnMod
+   local oBtnZoo
+   local oGetOrd
+   local cGetOrd     := Space( 100 )
+   local oCbxOrd
+   local cCbxOrd     := "Código"
+   local aCbxOrd     := { "Código", "Nombre" }
+
+   /*
+   Cargamos valores por defecto------------------------------------------------
+   */
+
+   ::InitLabel()
+
+   if !::lErrorOnCreate .and. ::lCreateAuxiliar()
+
+      DEFINE DIALOG ::oDlgLbl RESOURCE "SelectLabels_0"
+
+         REDEFINE PAGES ::oFldLbl ;
+            ID       10;
+            OF       ::oDlgLbl ;
+            DIALOGS  "SelectLabels_1",;
+                     "SelectLabels_2"
+         
+         /*
+         Bitmap-------------------------------------------------------------------
+         */
+
+         REDEFINE BITMAP ;
+            RESOURCE "EnvioEtiquetas" ;
+            ID       500 ;
+            OF       ::oDlgLbl ;
+
+         REDEFINE GET ::oSerieInicio VAR ::cSerieInicio ;
+            ID       100 ;
+            PICTURE  "@!" ;
+            SPINNER ;
+            ON UP    ( UpSerie( ::oSerieInicio ) );
+            ON DOWN  ( DwSerie( ::oSerieInicio ) );
+            VALID    ( ::cSerieInicio >= "A" .and. ::cSerieInicio <= "Z" );
+            UPDATE ;
+            OF       ::oFldLbl:aDialogs[ 1 ]
+
+         REDEFINE GET ::oSerieFin VAR ::cSerieFin ;
+            ID       110 ;
+            PICTURE  "@!" ;
+            SPINNER ;
+            ON UP    ( UpSerie( ::oSerieFin ) );
+            ON DOWN  ( DwSerie( ::oSerieFin ) );
+            VALID    ( ::cSerieFin >= "A" .and. ::cSerieFin <= "Z" );
+            UPDATE ;
+            OF       ::oFldLbl:aDialogs[ 1 ]
+
+         REDEFINE GET ::nDocumentoInicio ;
+            ID       120 ;
+            PICTURE  "999999999" ;
+            SPINNER ;
+            OF       ::oFldLbl:aDialogs[ 1 ]
+
+         REDEFINE GET ::nDocumentoFin ;
+            ID       130 ;
+            PICTURE  "999999999" ;
+            SPINNER ;
+            OF       ::oFldLbl:aDialogs[ 1 ]
+
+         REDEFINE GET ::cSufijoInicio ;
+            ID       140 ;
+            PICTURE  "##" ;
+            OF       ::oFldLbl:aDialogs[ 1 ]
+
+         REDEFINE GET ::cSufijoFin ;
+            ID       150 ;
+            PICTURE  "##" ;
+            OF       ::oFldLbl:aDialogs[ 1 ]
+
+         REDEFINE GET ::nFilaInicio ;
+            ID       180 ;
+            PICTURE  "999" ;
+            SPINNER ;
+            OF       ::oFldLbl:aDialogs[ 1 ]
+
+         REDEFINE GET ::nColumnaInicio ;
+            ID       190 ;
+            PICTURE  "999" ;
+            SPINNER ;
+            OF       ::oFldLbl:aDialogs[ 1 ]
+
+         REDEFINE GET ::oFormatoLabel VAR ::cFormatoLabel ;
+            ID       160 ;
+            IDTEXT   161 ;
+            BITMAP   "LUPA" ;
+            OF       ::oFldLbl:aDialogs[ 1 ]
+
+            ::oFormatoLabel:bValid  := {|| cDocumento( ::oFormatoLabel, ::oFormatoLabel:oHelpText, ::oDbfDoc:cAlias, "LP" ) }
+            ::oFormatoLabel:bHelp   := {|| BrwDocumento( ::oFormatoLabel, ::oFormatoLabel:oHelpText, "LP" ) }
+
+         TBtnBmp():ReDefine( 220, "Printer_pencil_16",,,,, {|| EdtDocumento( ::cFormatoLabel ) }, ::oFldLbl:aDialogs[ 1 ], .f., , .f., "Modificar formato de etiquetas" )
+
+         REDEFINE RADIO ::nCantidadLabels ;
+            ID       200, 201 ;
+            OF       ::oFldLbl:aDialogs[ 1 ]
+
+         REDEFINE GET ::nUnidadesLabels ;
+            ID       210 ;
+            PICTURE  "99999" ;
+            SPINNER ;
+            MIN      1 ;
+            MAX      99999 ;
+            WHEN     ( ::nCantidadLabels == 2 ) ;
+            OF       ::oFldLbl:aDialogs[ 1 ]
+
+         /*
+         Segunda caja de dialogo--------------------------------------------------
+         */
+
+         REDEFINE GET oGetOrd ;
+            VAR      cGetOrd ;
+            ID       200 ;
+            BITMAP   "FIND" ;
+            OF       ::oFldLbl:aDialogs[ 2 ]
+
+         oGetOrd:bChange   := {| nKey, nFlags, oGet | AutoSeek( nKey, nFlags, oGet, ::oBrwLabel, ::cAreaTmpLabel ) }
+         oGetOrd:bValid    := {|| ::cAreaTmpLabel:OrdScope( 0, nil ), ::cAreaTmpLabel:OrdScope( 1, nil ), ::oBrwLabel:Refresh(), .t. }
+
+         REDEFINE COMBOBOX oCbxOrd ;
+            VAR      cCbxOrd ;
+            ID       210 ;
+            ITEMS    aCbxOrd ;
+            OF       ::oFldLbl:aDialogs[ 2 ]
+
+         oCbxOrd:bChange   := {|| ::SelectColumn( oCbxOrd ) }
+
+         REDEFINE BUTTON ;
+            ID       100 ;
+            OF       ::oFldLbl:aDialogs[ 2 ] ;
+            ACTION   ( ::PutLabel() )
+
+         REDEFINE BUTTON ;
+            ID       110 ;
+            OF       ::oFldLbl:aDialogs[ 2 ] ;
+            ACTION   ( ::SelectAllLabels( .t. ) )
+
+         REDEFINE BUTTON ;
+            ID       120 ;
+            OF       ::oFldLbl:aDialogs[ 2 ] ;
+            ACTION   ( ::SelectAllLabels( .f. ) )
+
+         REDEFINE BUTTON ;
+            ID       130 ;
+            OF       ::oFldLbl:aDialogs[ 2 ] ;
+            ACTION   ( ::AddLabel() )
+
+         REDEFINE BUTTON ;
+            ID       140 ;
+            OF       ::oFldLbl:aDialogs[ 2 ] ;
+            ACTION   ( ::DelLabel() )
+
+         REDEFINE BUTTON ;
+            ID       150 ;
+            OF       ::oFldLbl:aDialogs[ 2 ] ;
+            ACTION   ( ::EditLabel() )
+
+         REDEFINE BUTTON oBtnPrp ;
+            ID       220 ;
+            OF       ::oFldLbl:aDialogs[ 2 ] ;
+            ACTION   ( nil )
+
+         REDEFINE BUTTON oBtnMod;
+            ID       160 ;
+            OF       ::oFldLbl:aDialogs[ 2 ] ;
+            ACTION   ( nil )
+
+         REDEFINE BUTTON oBtnZoo;
+            ID       165 ;
+            OF       ::oFldLbl:aDialogs[ 2 ] ;
+            ACTION   ( nil )
+
+         REDEFINE BUTTON ::oBtnFilter ;
+            ID       170 ;
+            OF       ::oFldLbl:aDialogs[ 2 ] ;
+            ACTION   ( nil ) //::FilterLabel() )
+
+         ::oBrwLabel                 := TXBrowse():New( ::oFldLbl:aDialogs[ 2 ] )
+
+         ::oBrwLabel:nMarqueeStyle   := 5
+         ::oBrwLabel:nColSel         := 2
+
+         ::oBrwLabel:lHScroll        := .f.
+         ::oBrwLabel:SetoDbf( ::cAreaTmpLabel )
+
+         ::oBrwLabel:bClrSel         := {|| { CLR_BLACK, Rgb( 229, 229, 229 ) } }
+         ::oBrwLabel:bClrSelFocus    := {|| { CLR_BLACK, Rgb( 167, 205, 240 ) } }
+         ::oBrwLabel:bLDblClick      := {|| ::PutLabel() }
+
+         ::oBrwLabel:CreateFromResource( 180 )
+
+         with object ( ::oBrwLabel:AddCol() )
+            :cHeader          := "Sl. Seleccionada"
+            :bEditValue       := {|| ::cAreaTmpLabel:lLabel }
+            :nWidth           := 20
+            :SetCheck( { "Sel16", "Nil16" } )
+         end with
+
+         with object ( ::oBrwLabel:AddCol() )
+            :cHeader          := "Código"
+            :bEditValue       := {|| ::cAreaTmpLabel:cCodigo }
+            :nWidth           := 80
+            :cSortOrder       := "cRef"
+            :bLClickHeader    := {| nMRow, nMCol, nFlags, oCol | oCbxOrd:Set( oCol:cHeader ) }
+         end with
+
+         with object ( ::oBrwLabel:AddCol() )
+            :cHeader          := "Nombre"
+            :bEditValue       := {|| ::cAreaTmpLabel:cNombre }
+            :nWidth           := 250
+            :cSortOrder       := "cDetalle"
+            :bLClickHeader    := {| nMRow, nMCol, nFlags, oCol | oCbxOrd:Set( oCol:cHeader ) }
+         end with
+
+         with object ( ::oBrwLabel:AddCol() )
+            :cHeader          := "Prp. 1"
+            :bEditValue       := {|| ::cAreaTmpLabel:cValPr1 }
+            :nWidth           := 40
+         end with
+
+         with object ( ::oBrwLabel:AddCol() )
+            :cHeader          := "Prp. 2"
+            :bEditValue       := {|| ::cAreaTmpLabel:cValPr2 }
+            :nWidth           := 40
+         end with
+
+         with object ( ::oBrwLabel:AddCol() )
+            :cHeader          := "N. etiquetas"
+            :bEditValue       := {|| ::cAreaTmpLabel:nLabel }
+            :cEditPicture     := "@E 99,999"
+            :nWidth           := 80
+            :nDataStrAlign    := 1
+            :nHeadStrAlign    := 1
+            :nEditType        := 1
+            :bOnPostEdit      := {|o,x| ::cAreaTmpLabel:nLabel := x, ::oBrwLabel:Refresh() }
+         end with
+
+         REDEFINE METER ::oMtrLabel ;
+            VAR      ::nMtrLabel ;
+            PROMPT   "" ;
+            ID       190 ;
+            OF       ::oFldLbl:aDialogs[ 2 ] ;
+            TOTAL    ::cAreaTmpLabel:Lastrec()
+
+         ::oMtrLabel:nClrText   := rgb( 128,255,0 )
+         ::oMtrLabel:nClrBar    := rgb( 128,255,0 )
+         ::oMtrLabel:nClrBText  := rgb( 128,255,0 )
+
+         /*
+         Botones generales--------------------------------------------------------
+         */
+
+         REDEFINE BUTTON ::oBtnListado ;          // Boton anterior
+            ID       40 ;
+            OF       ::oDlgLbl ;
+            ACTION   ( ::BotonAnterior() )
+
+         REDEFINE BUTTON ::oBtnAnterior ;          // Boton anterior
+            ID       20 ;
+            OF       ::oDlgLbl ;
+            ACTION   ( ::BotonAnterior() )
+
+         REDEFINE BUTTON ::oBtnSiguiente ;         // Boton de Siguiente
+            ID       30 ;
+            OF       ::oDlgLbl ;
+            ACTION   ( ::BotonSiguiente() )
+
+         REDEFINE BUTTON ::oBtnCancel ;            // Boton de Siguiente
+            ID       IDCANCEL ;
+            OF       ::oDlgLbl ;
+            ACTION   ( ::oDlgLbl:End() )
+
+      ::oDlgLbl:bStart  := {|| ::oBtnListado:Hide(), ::oBtnAnterior:Hide(), ::oFormatoLabel:lValid(), oBtnMod:Hide(), oBtnZoo:Hide(), oBtnPrp:Hide() }
+
+      ACTIVATE DIALOG ::oDlgLbl CENTER
+
+      ::EndAsistenteEtiquetas()
+
+   end if
+
+Return ( Self )
+
+//--------------------------------------------------------------------------//
+
+Method EndAsistenteEtiquetas() CLASS TProduccion
+
+   ::DestroyAuxiliar()
+
+   WritePProString( "Etiquetas", "Produccion", ::cFormatoLabel, cPatEmp() + "Empresa.Ini" )
+
+Return ( Self )
+
+//---------------------------------------------------------------------------//
+
+Method BotonAnterior() CLASS TProduccion
+
+   ::oFldLbl:GoPrev()
+
+   ::oBtnAnterior:Hide()
+
+   SetWindowText( ::oBtnSiguiente:hWnd, "Siguien&te >" )
+
+Return ( Self )
+
+//--------------------------------------------------------------------------//
+
+Method BotonSiguiente() CLASS TProduccion
+
+   do case
+      case ::oFldLbl:nOption == 1
+
+         if Empty( ::cFormatoLabel )
+
+            MsgStop( "Debe cumplimentar un formato de etiquetas" )
+
+         else
+
+            ::LoadAuxiliar()
+
+            ::oFldLbl:GoNext()
+            ::oBtnAnterior:Show()
+            SetWindowText( ::oBtnSiguiente:hWnd, "&Terminar" )
+
+         end if
+
+      case ::oFldLbl:nOption == 2
+
+         if ::lPrintLabels( ::oDbfDoc:cAlias )
+
+            SetWindowText( ::oBtnCancel:hWnd, "&Cerrar" )
+
+         end if
+
+   end case
+
+Return ( Self )
+
+//--------------------------------------------------------------------------//
+
+Method lCreateAuxiliar() CLASS TProduccion
+
+   local oBlock
+   local oError
+   local lCreateAuxiliar   := .t.
+
+   oBlock                  := ErrorBlock( {| oError | ApoloBreak( oError ) } )
+   BEGIN SEQUENCE
+
+   /*
+   Creo y activo la base de datos temporal-------------------------------------
+   */
+
+   if Empty( ::cAreaTmpLabel )
+      ::DefineAuxiliar()
+   end if
+
+   ::cAreaTmpLabel:Activate( .f., .f. )
+
+   /*
+   Cargo los valores en la base se datos temporal------------------------------
+   */
+
+   ::LoadAuxiliar()
+
+   RECOVER USING oError
+
+      lCreateAuxiliar      := .f.
+
+      MsgStop( 'Imposible crear fichero temporal' + CRLF + ErrorMessage( oError ) )
+
+   END SEQUENCE
+
+   ErrorBlock( oBlock )
+
+Return ( lCreateAuxiliar )
+
+//--------------------------------------------------------------------------//
+
+METHOD DefineAuxiliar()
+
+   ::cFileTmpLabel      := cGetNewFileName( cPatTmp() + "AuxLbl" )
+
+   DEFINE DATABASE ::cAreaTmpLabel FILE ( ::cFileTmpLabel ) CLASS "AuxLbl" ALIAS "AuxLbl" PATH ( cPatTmp() ) VIA ( cLocalDriver() )COMMENT "material producido"
+
+      FIELD NAME "cSerOrd"    TYPE "C" LEN  01  DEC 0 COMMENT "Serie"                                    OF ::cAreaTmpLabel
+      FIELD NAME "nNumOrd"    TYPE "N" LEN  09  DEC 0 COMMENT "Número"                                   OF ::cAreaTmpLabel
+      FIELD NAME "cSufOrd"    TYPE "C" LEN  02  DEC 0 COMMENT "Sufijo"                                   OF ::cAreaTmpLabel
+      FIELD NAME "cCodigo"    TYPE "C" LEN  18  DEC 0 COMMENT "Código"                                   OF ::cAreaTmpLabel
+      FIELD NAME "cNombre"    TYPE "C" LEN 100  DEC 0 COMMENT "Nombre"                                   OF ::cAreaTmpLabel
+      FIELD NAME "cTxtSer"    TYPE "M" LEN  10  DEC 0 COMMENT "Series"                                   OF ::cAreaTmpLabel
+      FIELD NAME "cCodAlm"    TYPE "C" LEN  03  DEC 0 COMMENT "Almacén"                                  OF ::cAreaTmpLabel
+      FIELD NAME "cCodSec"    TYPE "C" LEN  03  DEC 0 COMMENT "Sección"                                  OF ::cAreaTmpLabel
+      FIELD NAME "cCodOpe"    TYPE "C" LEN  03  DEC 0 COMMENT "Operación"                                OF ::cAreaTmpLabel
+      FIELD NAME "dFecIni"    TYPE "D" LEN  08  DEC 0 COMMENT "Fecha inicio"                             OF ::cAreaTmpLabel
+      FIELD NAME "dFecFin"    TYPE "D" LEN  08  DEC 0 COMMENT "Fecha fin"                                OF ::cAreaTmpLabel
+      FIELD NAME "cHorIni"    TYPE "C" LEN  05  DEC 0 COMMENT "Hora de inicio" PICTURE "@R 99:99"        OF ::cAreaTmpLabel
+      FIELD NAME "cHorFin"    TYPE "C" LEN  05  DEC 0 COMMENT "Hora de fin"    PICTURE "@R 99:99"        OF ::cAreaTmpLabel
+      FIELD NAME "nCajas"     TYPE "N" LEN  16  DEC 6 COMMENT "Cajas"                                    OF ::cAreaTmpLabel
+      FIELD NAME "nUnidades"  TYPE "N" LEN  16  DEC 6 COMMENT "Unidades"                                 OF ::cAreaTmpLabel
+      FIELD NAME "nUndHra"    TYPE "N" LEN  16  DEC 6 COMMENT "Tot. und/hra"                             OF ::cAreaTmpLabel
+      FIELD NAME "nImporte"   TYPE "N" LEN  16  DEC 6 COMMENT "Importe"                                  OF ::cAreaTmpLabel
+      FIELD NAME "nTotLin"    TYPE "N" LEN  16  DEC 6 COMMENT "Total línea"                              OF ::cAreaTmpLabel
+      FIELD NAME "nPeso"      TYPE "N" LEN  16  DEC 6 COMMENT "Peso del artículo"                        OF ::cAreaTmpLabel
+      FIELD NAME "cUndPes"    TYPE "C" LEN  02  DEC 0 COMMENT "Unidad del peso"                          OF ::cAreaTmpLabel
+      FIELD NAME "nVolumen"   TYPE "N" LEN  16  DEC 6 COMMENT "Volumen del artículo"                     OF ::cAreaTmpLabel
+      FIELD NAME "cUndVol"    TYPE "C" LEN  02  DEC 0 COMMENT "Unidad del volumen"                       OF ::cAreaTmpLabel
+      FIELD NAME "cCodPr1"    TYPE "C" LEN  10  DEC 0 COMMENT "Código de primera propiedad"              OF ::cAreaTmpLabel
+      FIELD NAME "cCodPr2"    TYPE "C" LEN  10  DEC 0 COMMENT "Código de segunda propiedad"              OF ::cAreaTmpLabel
+      FIELD NAME "cValPr1"    TYPE "C" LEN  10  DEC 0 COMMENT "Valor de primera propiedad"               OF ::cAreaTmpLabel
+      FIELD NAME "cValPr2"    TYPE "C" LEN  10  DEC 0 COMMENT "Valor de segunda propiedad"               OF ::cAreaTmpLabel
+      FIELD NAME "lLote"      TYPE "L" LEN  01  DEC 0 COMMENT "Lógico lote"                              OF ::cAreaTmpLabel
+      FIELD NAME "cLote"      TYPE "C" LEN  12  DEC 0 COMMENT "Lote"                                     OF ::cAreaTmpLabel
+      FIELD NAME "lLabel"     TYPE "L" LEN   1  DEC 0 COMMENT "Lógico para marca de etiquetas"           OF ::cAreaTmpLabel
+      FIELD NAME "nLabel"     TYPE "N" LEN   6  DEC 0 COMMENT "Unidades de etiquetas a imprimir"         OF ::cAreaTmpLabel
+
+      INDEX TO ( ::cFileTmpLabel ) TAG "cNumOrd" ON "cSerOrd + Str( nNumOrd, 9 ) + cSufOrd"   COMMENT "Número"    NODELETED OF ::cAreaTmpLabel
+
+   END DATABASE ::cAreaTmpLabel
+
+RETURN ( ::cAreaTmpLabel )
+
+//---------------------------------------------------------------------------//
+
+Method DestroyAuxiliar() CLASS TProduccion
+
+   if !Empty( ::cAreaTmpLabel ) .and. ::cAreaTmpLabel:Used()
+      ::cAreaTmpLabel:End()
+   end if
+
+   dbfErase( ::cFileTmpLabel )
+
+   ::cAreaTmpLabel := nil
+
+Return ( nil )
+
+//--------------------------------------------------------------------------//
+
+Method LoadAuxiliar() CLASS TProduccion
+
+   local nRecPr         := ::oDetProduccion:oDbf:Recno()
+   local nOrdPR         := ::oDetProduccion:oDbf:OrdSetFocus( "cNumOrd" )
+
+   /*
+   Limpiamos la base de datos temporal-----------------------------------------
+   */
+
+   ::cAreaTmpLabel:Zap()
+
+   /*
+   Metemos las líneas con los materiales producidos----------------------------
+   */
+
+   ::oDetProduccion:oDbf:GoTop()
+
+   if ::oDetProduccion:oDbf:Seek( ::cSerieInicio + Str( ::nDocumentoInicio, 9 ) + ::cSufijoInicio )
+
+      while ::oDetProduccion:oDbf:cSerOrd + Str( ::oDetProduccion:oDbf:nNumOrd ) + ::oDetProduccion:oDbf:cSufOrd >= ::cSerieInicio + Str( ::nDocumentoInicio, 9 ) + ::cSufijoInicio .and.;
+            ::oDetProduccion:oDbf:cSerOrd + Str( ::oDetProduccion:oDbf:nNumOrd ) + ::oDetProduccion:oDbf:cSufOrd >= ::cSerieFin + Str( ::nDocumentoFin, 9 ) + ::cSufijoFin .and.;
+            !::oDetProduccion:oDbf:Eof()
+
+         if !Empty( ::oDetProduccion:oDbf:cCodArt )
+
+            ::cAreaTmpLabel:Append()
+
+            ::cAreaTmpLabel:cSerOrd     := ::oDbf:cSerOrd
+            ::cAreaTmpLabel:nNumOrd     := ::oDbf:nNumOrd
+            ::cAreaTmpLabel:cSufOrd     := ::oDbf:cSufOrd
+            ::cAreaTmpLabel:cCodigo     := ::oDetProduccion:oDbf:cCodArt
+            ::cAreaTmpLabel:cNombre     := ::oDetProduccion:oDbf:cNomArt
+            ::cAreaTmpLabel:cTxtSer     := SerialDescrip( ::oDetProduccion:oDbf:cSerOrd + Str( ::oDetProduccion:oDbf:nNumOrd ) + ::oDetProduccion:oDbf:cSufOrd + Str( ::oDetProduccion:oDbf:nNumLin ), ::oDetSeriesProduccion:oDbf:cAlias )
+            ::cAreaTmpLabel:cCodAlm     := ::oDetProduccion:oDbf:cAlmOrd
+            ::cAreaTmpLabel:cCodSec     := Space(3)
+            ::cAreaTmpLabel:cCodOpe     := Space(3)
+            ::cAreaTmpLabel:dFecIni     := ::oDbf:dFecOrd
+            ::cAreaTmpLabel:dFecFin     := ::oDbf:dFecFin
+            ::cAreaTmpLabel:cHorIni     := ::oDbf:cHorIni
+            ::cAreaTmpLabel:cHorFin     := ::oDbf:cHorFin
+            ::cAreaTmpLabel:nCajas      := ::oDetProduccion:oDbf:nCajOrd
+            ::cAreaTmpLabel:nUnidades   := ::oDetProduccion:oDbf:nUndOrd
+            ::cAreaTmpLabel:nUndHra     := ::oDetProduccion:oDbf:nCajOrd * ::oDetProduccion:oDbf:nUndOrd
+            ::cAreaTmpLabel:nImporte    := ::oDetProduccion:oDbf:nImpOrd
+            ::cAreaTmpLabel:nTotLin     := ::oDbfTemporal:nUndHra * ::oDbfTemporal:nImporte
+            ::cAreaTmpLabel:nPeso       := ::oDetProduccion:oDbf:nPeso
+            ::cAreaTmpLabel:cUndPes     := ::oDetProduccion:oDbf:cUndPes
+            ::cAreaTmpLabel:nVolumen    := ::oDetProduccion:oDbf:nVolumen
+            ::cAreaTmpLabel:cUndVol     := ::oDetProduccion:oDbf:cUndVol
+            ::cAreaTmpLabel:cCodPr1     := ::oDetProduccion:oDbf:cCodPr1
+            ::cAreaTmpLabel:cCodPr2     := ::oDetProduccion:oDbf:cCodPr2
+            ::cAreaTmpLabel:cValPr1     := ::oDetProduccion:oDbf:cValPr1
+            ::cAreaTmpLabel:cValPr2     := ::oDetProduccion:oDbf:cValPr2
+            ::cAreaTmpLabel:lLote       := ::oDetProduccion:oDbf:lLote
+            ::cAreaTmpLabel:cLote       := ::oDetProduccion:oDbf:cLote
+            ::cAreaTmpLabel:lLabel      := .t.
+
+            if ::nCantidadLabels == 1
+               ::cAreaTmpLabel:nLabel   := ::oDetProduccion:oDbf:nCajOrd * ::oDetProduccion:oDbf:nUndOrd
+            else
+               ::cAreaTmpLabel:nLabel   := ::nUnidadesLabels
+            end if
+
+            ::cAreaTmpLabel:Save()
+
+         end if   
+
+         ::oDetProduccion:oDbf:Skip()
+
+      end while
+
+   end if
+
+   ::oDetProduccion:oDbf:OrdSetFocus( nOrdPR )
+   ::oDetProduccion:oDbf:Goto( nRecPr )
+   
+   ::cAreaTmpLabel:GoTop()
+
+Return ( Self )
+
+//---------------------------------------------------------------------------//
+
+METHOD PutLabel() CLASS TProduccion
+
+   ::cAreaTmpLabel:lLabel   := !::cAreaTmpLabel:lLabel
+
+   ::oBrwLabel:Refresh()
+   ::oBrwLabel:Select()
+
+Return ( Self )
+
+//--------------------------------------------------------------------------//
+
+METHOD SelectAllLabels( lSelect ) CLASS TProduccion
+
+   local n        := 0
+   local nRecno   := ::cAreaTmpLabel:Recno()
+
+   CursorWait()
+
+   ::cAreaTmpLabel:GoTop()
+   while !::cAreaTmpLabel:Eof()
+
+      ::cAreaTmpLabel:lLabel := lSelect
+
+      ::cAreaTmpLabel:Skip()
+
+      ::oMtrLabel:Set( ++n )
+
+   end while
+
+   ::cAreaTmpLabel:GoTo( nRecno )
+
+   ::oBrwLabel:Refresh()
+
+   ::oMtrLabel:Set( 0 )
+   ::oMtrLabel:Refresh()
+
+   CursorArrow()
+
+Return ( Self )
+
+//--------------------------------------------------------------------------//
+
+METHOD AddLabel() CLASS TProduccion
+
+   ::cAreaTmpLabel:nLabel++
+
+   ::oBrwLabel:Refresh()
+   ::oBrwLabel:SetFocus()
+
+Return ( Self )
+
+//--------------------------------------------------------------------------//
+
+METHOD DelLabel() CLASS TProduccion
+
+   if ::cAreaTmpLabel:nLabel > 1
+      ::cAreaTmpLabel:nLabel--
+   end if
+
+   ::oBrwLabel:Refresh()
+   ::oBrwLabel:SetFocus()
+
+Return ( Self )
+
+//---------------------------------------------------------------------------//
+
+METHOD EditLabel() CLASS TProduccion
+
+   ::oBrwLabel:aCols[ 6 ]:Edit()
+
+Return ( Self )
+
+//---------------------------------------------------------------------------//
+
+Method FilterLabel() CLASS TProduccion
+
+   if Empty( ::oFilter )
+      ::oFilter      := TDlgFlt():Create( ::cAreaTmpLabel, nil, .t., ::oBrwLabel )
+   end if
+
+   if !Empty( ::oFilter )
+
+      ::oFilter:Resource()
+
+      if ::oFilter:cExpFilter != nil
+         SetWindowText( ::oBtnFilter:hWnd, "Filtro activo" )
+      else
+         SetWindowText( ::oBtnFilter:hWnd, "Filtrar" )
+      end if
+
+   end if
+
+   ::oBrwLabel:Refresh()
+   ::oBrwLabel:SetFocus()
+
+Return ( Self )
+
+//---------------------------------------------------------------------------//
+
+Method SelectColumn( oCombo ) CLASS TProduccion
+
+   local oCol
+   local cOrd                    := oCombo:VarGet()
+
+   if ::oBrwLabel != nil
+
+      with object ::oBrwLabel
+
+         for each oCol in :aCols
+
+            if Eq( cOrd, oCol:cHeader )
+               oCol:cOrder       := "A"
+               oCol:SetOrder()
+            else
+               oCol:cOrder       := " "
+            end if
+
+         next
+
+      end with
+
+      ::oBrwLabel:Refresh()
+
+   end if
+
+Return ( Self )
+
+//---------------------------------------------------------------------------//
+
+METHOD DesignLabelProducc( oFr, dbfDoc ) CLASS TProduccion
+
+   local oLabel   := ::InitLabel()
+
+   if !oLabel:lErrorOnCreate .and.;
+      ::lCreateTemporalLbl( .t. )
+
+      /*
+      Zona de datos---------------------------------------------------------
+      */
+
+      ::DataLabel( oFr, .f. )
+
+      /*
+      Paginas y bandas------------------------------------------------------
+      */
+
+      if !Empty( ( dbfDoc )->mReport )
+
+         oFr:LoadFromBlob( ( dbfDoc )->( Select() ), "mReport")
+
+      else
+
+         oFr:AddPage(         "MainPage" )
+
+         oFr:AddBand(         "CabeceraColumnas",  "MainPage",       frxMasterData )
+         oFr:SetProperty(     "CabeceraColumnas",  "Top",            200 )
+         oFr:SetProperty(     "CabeceraColumnas",  "Height",         100 )
+         oFr:SetObjProperty(  "CabeceraColumnas",  "DataSet",        "Lineas de producción" )
+
+      end if
+
+      /*
+      Diseño de report------------------------------------------------------
+      */
+
+      oFr:DesignReport()
+
+      /*
+      Destruye el diseñador-------------------------------------------------
+      */
+
+      oFr:DestroyFr()
+
+      /*
+      Cierra ficheros-------------------------------------------------------
+      */
+
+      ::DestroyTemporalLbl()
+
+      oLabel:End()
+
+   else
+
+      Return .f.
+
+   end if
+
+Return .t.
+
+//---------------------------------------------------------------------------//
+
+Method lPrintLabels( dbfDoc ) CLASS TProduccion
+
+   local oFr
+
+   local nCopies      := 1
+   local nDevice      := IS_SCREEN
+   local cPrinter     := PrnGetName()
+
+   if ::lCreateTemporalLbl()
+
+      SysRefresh()
+
+      oFr             := frReportManager():New()
+
+      oFr:LoadLangRes(     "Spanish.Xml" )
+
+      oFr:SetIcon( 1 )
+
+      oFr:SetTitle(        "Diseñador de documentos" )
+
+      /*
+      Manejador de eventos--------------------------------------------------------
+      */
+
+      oFr:SetEventHandler( "Designer", "OnSaveReport", {|| oFr:SaveToBlob( ( dbfDoc )->( Select() ), "mReport" ) } )
+
+      /*
+      Zona de datos---------------------------------------------------------------
+      */
+
+      ::DataLabel( oFr, .t. )
+
+      /*
+      Cargar el informe-----------------------------------------------------------
+      */
+
+      if !Empty( ::oDbfDoc:mReport )
+
+         oFr:LoadFromBlob( ( dbfDoc )->( Select() ), "mReport")
+
+         /*
+         Zona de variables--------------------------------------------------------
+         */
+
+         ::PrepareTemporalLbl( oFr )
+
+         /*
+         Preparar el report-------------------------------------------------------
+         */
+
+         oFr:PrepareReport()
+
+         /*
+         Imprimir el informe------------------------------------------------------
+         */
+
+         do case
+            case nDevice == IS_SCREEN
+               oFr:ShowPreparedReport()
+
+            case nDevice == IS_PRINTER
+               oFr:PrintOptions:SetPrinter( cPrinter )
+               oFr:PrintOptions:SetCopies( nCopies )
+               oFr:PrintOptions:SetShowDialog( .f. )
+               oFr:Print()
+
+            case nDevice == IS_PDF
+               oFr:DoExport( "PDFExport" )
+
+         end case
+
+      end if
+
+      /*
+      Destruye el diseñador-------------------------------------------------------
+      */
+
+      oFr:DestroyFr()
+
+      ::DestroyTemporalLbl()
+
+   end if
+
+Return .t.
+
+//---------------------------------------------------------------------------//
+
+Method lCreateTemporalLbl( lDesign ) CLASS TProduccion
+
+   local n
+   local nRec
+   local oBlock
+   local oError
+   local nBlancos
+   local lCreateTemporal   := .t.
+
+   DEFAULT lDesign         := .f.
+
+   oBlock                  := ErrorBlock( {| oError | ApoloBreak( oError ) } )
+   BEGIN SEQUENCE
+
+   if !lDesign
+      nRec                 := ::cAreaTmpLabel:Recno()
+   end if
+
+   ::cFileTemporalLabel    := cGetNewFileName( cPatTmp() + "AuxTmpLbl" )
+
+   DEFINE DATABASE ::cAreaTemporalLabel FILE ( ::cFileTemporalLabel ) CLASS "AuxTmpLbl" ALIAS "AuxTmpLbl" PATH ( cPatTmp() ) VIA ( cLocalDriver() )COMMENT "material producido"
+
+      FIELD NAME "cSerOrd"    TYPE "C" LEN  01  DEC 0 COMMENT "Serie"                                    OF ::cAreaTemporalLabel
+      FIELD NAME "nNumOrd"    TYPE "N" LEN  09  DEC 0 COMMENT "Número"                                   OF ::cAreaTemporalLabel
+      FIELD NAME "cSufOrd"    TYPE "C" LEN  02  DEC 0 COMMENT "Sufijo"                                   OF ::cAreaTemporalLabel
+      FIELD NAME "cCodigo"    TYPE "C" LEN  18  DEC 0 COMMENT "Código"                                   OF ::cAreaTemporalLabel
+      FIELD NAME "cNombre"    TYPE "C" LEN 100  DEC 0 COMMENT "Nombre"                                   OF ::cAreaTemporalLabel
+      FIELD NAME "cTxtSer"    TYPE "M" LEN  10  DEC 0 COMMENT "Series"                                   OF ::cAreaTemporalLabel
+      FIELD NAME "cCodAlm"    TYPE "C" LEN  03  DEC 0 COMMENT "Almacén"                                  OF ::cAreaTemporalLabel
+      FIELD NAME "cCodSec"    TYPE "C" LEN  03  DEC 0 COMMENT "Sección"                                  OF ::cAreaTemporalLabel
+      FIELD NAME "cCodOpe"    TYPE "C" LEN  03  DEC 0 COMMENT "Operación"                                OF ::cAreaTemporalLabel
+      FIELD NAME "dFecIni"    TYPE "D" LEN  08  DEC 0 COMMENT "Fecha inicio"                             OF ::cAreaTemporalLabel
+      FIELD NAME "dFecFin"    TYPE "D" LEN  08  DEC 0 COMMENT "Fecha fin"                                OF ::cAreaTemporalLabel
+      FIELD NAME "cHorIni"    TYPE "C" LEN  05  DEC 0 COMMENT "Hora de inicio" PICTURE "@R 99:99"        OF ::cAreaTemporalLabel
+      FIELD NAME "cHorFin"    TYPE "C" LEN  05  DEC 0 COMMENT "Hora de fin"    PICTURE "@R 99:99"        OF ::cAreaTemporalLabel
+      FIELD NAME "nCajas"     TYPE "N" LEN  16  DEC 6 COMMENT "Cajas"                                    OF ::cAreaTemporalLabel
+      FIELD NAME "nUnidades"  TYPE "N" LEN  16  DEC 6 COMMENT "Unidades"                                 OF ::cAreaTemporalLabel
+      FIELD NAME "nUndHra"    TYPE "N" LEN  16  DEC 6 COMMENT "Tot. und/hra"                             OF ::cAreaTemporalLabel
+      FIELD NAME "nImporte"   TYPE "N" LEN  16  DEC 6 COMMENT "Importe"                                  OF ::cAreaTemporalLabel
+      FIELD NAME "nTotLin"    TYPE "N" LEN  16  DEC 6 COMMENT "Total línea"                              OF ::cAreaTemporalLabel
+      FIELD NAME "nPeso"      TYPE "N" LEN  16  DEC 6 COMMENT "Peso del artículo"                        OF ::cAreaTemporalLabel
+      FIELD NAME "cUndPes"    TYPE "C" LEN  02  DEC 0 COMMENT "Unidad del peso"                          OF ::cAreaTemporalLabel
+      FIELD NAME "nVolumen"   TYPE "N" LEN  16  DEC 6 COMMENT "Volumen del artículo"                     OF ::cAreaTemporalLabel
+      FIELD NAME "cUndVol"    TYPE "C" LEN  02  DEC 0 COMMENT "Unidad del volumen"                       OF ::cAreaTemporalLabel
+      FIELD NAME "cCodPr1"    TYPE "C" LEN  10  DEC 0 COMMENT "Código de primera propiedad"              OF ::cAreaTemporalLabel
+      FIELD NAME "cCodPr2"    TYPE "C" LEN  10  DEC 0 COMMENT "Código de segunda propiedad"              OF ::cAreaTemporalLabel
+      FIELD NAME "cValPr1"    TYPE "C" LEN  10  DEC 0 COMMENT "Valor de primera propiedad"               OF ::cAreaTemporalLabel
+      FIELD NAME "cValPr2"    TYPE "C" LEN  10  DEC 0 COMMENT "Valor de segunda propiedad"               OF ::cAreaTemporalLabel
+      FIELD NAME "lLote"      TYPE "L" LEN  01  DEC 0 COMMENT "Lógico lote"                              OF ::cAreaTemporalLabel
+      FIELD NAME "cLote"      TYPE "C" LEN  12  DEC 0 COMMENT "Lote"                                     OF ::cAreaTemporalLabel
+      FIELD NAME "lLabel"     TYPE "L" LEN   1  DEC 0 COMMENT "Lógico para marca de etiquetas"           OF ::cAreaTemporalLabel
+      FIELD NAME "nLabel"     TYPE "N" LEN   6  DEC 0 COMMENT "Unidades de etiquetas a imprimir"         OF ::cAreaTemporalLabel
+
+      INDEX TO ( ::cFileTemporalLabel ) TAG "cNumOrd" ON "cSerOrd + Str( nNumOrd, 9 ) + cSufOrd"   COMMENT "Número"    NODELETED OF ::cAreaTemporalLabel
+
+   END DATABASE ::cAreaTemporalLabel
+
+   ::cAreaTemporalLabel:Activate( .f., .f. )
+
+   /*
+   Pasamos los datos de una temporal a otra------------------------------------
+   */
+
+   if !lDesign
+
+      ::cAreaTmpLabel:GoTop()
+      while !::cAreaTmpLabel:Eof()
+
+         if ::cAreaTmpLabel:lLabel
+            for n := 1 to ::cAreaTmpLabel:nLabel
+               dbPass( ::cAreaTmpLabel:cAlias, ::cAreaTemporalLabel:cAlias, .t. )
+            next
+         end if
+
+         ::cAreaTmpLabel:Skip()
+
+      end while
+
+      ::cAreaTemporalLabel:GoTop()
+
+      ::cAreaTmpLabel:GoTo( nRec )
+
+   else
+
+      ::LoadAuxiliarDesign()
+
+   end if   
+
+   RECOVER USING oError
+
+      lCreateTemporal      := .f.
+
+      MsgStop( 'Imposible crear un fichero temporal de materiales producidos' + CRLF + ErrorMessage( oError ) )
+
+   END SEQUENCE
+
+   ErrorBlock( oBlock )
+
+Return ( lCreateTemporal )
+
+//---------------------------------------------------------------------------//
+
+Method DestroyTemporalLbl() CLASS TProduccion
+
+   if !Empty( ::cAreaTemporalLabel ) .and. ::cAreaTemporalLabel:Used()
+      ::cAreaTemporalLabel:End()
+   end if
+
+   dbfErase( ::cFileTemporalLabel )
+
+   ::cAreaTemporalLabel := nil
+
+   SysRefresh()
+
+Return ( .t. )
+
+//---------------------------------------------------------------------------//
+
+Method PrepareTemporalLbl( oFr ) CLASS TProduccion
+
+   local n
+   local nBlancos       := 0
+   local nPaperHeight   := oFr:GetProperty( "MainPage", "PaperHeight" ) * fr01cm
+   local nHeight        := oFr:GetProperty( "CabeceraColumnas", "Height" )
+   local nColumns       := oFr:GetProperty( "MainPage", "Columns" )
+   local nItemsInColumn := int( nPaperHeight / nHeight )
+
+   nBlancos             := ( ::nColumnaInicio - 1 ) * nItemsInColumn
+   nBlancos             += ( ::nFilaInicio - 1 )
+
+   for n := 1 to nBlancos
+      dbPass( dbBlankRec( ::cAreaTemporalLabel:cAlias ), ::cAreaTemporalLabel:cAlias, .t. )
+   next
+
+   ::cAreaTemporalLabel:GoTop()
+
+Return ( .t. )
+
+//---------------------------------------------------------------------------//
+
+METHOD DataLabel( oFr, lTemporal ) CLASS TProduccion
+
+   /*
+   Zona de datos------------------------------------------------------------
+   */
+
+   oFr:ClearDataSets()
+
+   oFr:SetWorkArea(     "Lineas de producción", ::cAreaTemporalLabel:nArea )
+   oFr:SetFieldAliases( "Lineas de producción", cObjectsToReport( ::cAreaTemporalLabel ) )
+
+   oFr:SetWorkArea(     "Producción", ::oDbf:nArea, .f., { FR_RB_CURRENT, FR_RB_CURRENT, 0 } )
+   oFr:SetFieldAliases( "Producción", cObjectsToReport( ::oDbf ) )
+
+   oFr:SetWorkArea(     "Empresa", ::oDbfEmp:nArea )
+   oFr:SetFieldAliases( "Empresa", cItemsToReport( aItmEmp() ) )
+
+   oFr:SetWorkArea(     "Almacenes", ::oAlm:nArea )
+   oFr:SetFieldAliases( "Almacenes", cItemsToReport( aItmAlm() ) )
+
+   oFr:SetWorkArea(     "Sección", ::oSeccion:oDbf:nArea )
+   oFr:SetFieldAliases( "Sección", cObjectsToReport( ::oSeccion:oDbf ) )
+
+   oFr:SetWorkArea(     "Operación", ::oOperacion:oDbf:nArea )
+   oFr:SetFieldAliases( "Operación", cObjectsToReport( ::oOperacion:oDbf ) )
+   
+   oFr:SetMasterDetail( "Lineas de producción", "Producción", {|| ::cAreaTemporalLabel:cSerOrd + Str( ::cAreaTemporalLabel:nNumOrd ) + ::cAreaTemporalLabel:cSufOrd } )
+   oFr:SetMasterDetail( "Lineas de producción", "Empresa",    {|| cCodigoEmpresaEnUso() } )
+   oFr:SetMasterDetail( "Lineas de producción", "Almacenes",  {|| ::cAreaTemporalLabel:cCodAlm } )
+   oFr:SetMasterDetail( "Lineas de producción", "Sección",    {|| ::cAreaTemporalLabel:cCodSec } )
+   oFr:SetMasterDetail( "Lineas de producción", "Operación",  {|| ::cAreaTemporalLabel:cCodOpe } )
+
+   oFr:SetResyncPair(   "Lineas de producción", "Producción" )
+   oFr:SetResyncPair(   "Lineas de producción", "Empresa" )
+   oFr:SetResyncPair(   "Lineas de producción", "Almacenes" )
+   oFr:SetResyncPair(   "Lineas de producción", "Sección" )
+   oFr:SetResyncPair(   "Lineas de producción", "Operación" )
+
+Return nil
+
+//---------------------------------------------------------------------------//
+
+Method LoadAuxiliarDesign() CLASS TProduccion
+
+   local nRecPr         := ::oDetProduccion:oDbf:Recno()
+   local nOrdPR         := ::oDetProduccion:oDbf:OrdSetFocus( "cNumOrd" )
+
+   /*
+   Limpiamos la base de datos temporal-----------------------------------------
+   */
+
+   ::cAreaTemporalLabel:Zap()
+
+   /*
+   Metemos las líneas con los materiales producidos----------------------------
+   */
+
+   ::oDetProduccion:oDbf:GoTop()
+
+   if ::oDetProduccion:oDbf:Seek( ::oDbf:cSerOrd + Str( ::oDbf:nNumOrd, 9 ) + ::oDbf:cSufOrd )
+
+      while ::oDetProduccion:oDbf:cSerOrd + Str( ::oDetProduccion:oDbf:nNumOrd ) + ::oDetProduccion:oDbf:cSufOrd >= ::oDbf:cSerOrd + Str( ::oDbf:nNumOrd, 9 ) + ::oDbf:cSufOrd .and. !::oDetProduccion:oDbf:Eof()
+
+         if !Empty( ::oDetProduccion:oDbf:cCodArt )
+
+            ::cAreaTemporalLabel:Append()
+
+            ::cAreaTemporalLabel:cSerOrd     := ::oDbf:cSerOrd
+            ::cAreaTemporalLabel:nNumOrd     := ::oDbf:nNumOrd
+            ::cAreaTemporalLabel:cSufOrd     := ::oDbf:cSufOrd
+            ::cAreaTemporalLabel:cCodigo     := ::oDetProduccion:oDbf:cCodArt
+            ::cAreaTemporalLabel:cNombre     := ::oDetProduccion:oDbf:cNomArt
+            ::cAreaTemporalLabel:cTxtSer     := SerialDescrip( ::oDetProduccion:oDbf:cSerOrd + Str( ::oDetProduccion:oDbf:nNumOrd ) + ::oDetProduccion:oDbf:cSufOrd + Str( ::oDetProduccion:oDbf:nNumLin ), ::oDetSeriesProduccion:oDbf:cAlias )
+            ::cAreaTemporalLabel:cCodAlm     := ::oDetProduccion:oDbf:cAlmOrd
+            ::cAreaTemporalLabel:cCodSec     := Space(3)
+            ::cAreaTemporalLabel:cCodOpe     := Space(3)
+            ::cAreaTemporalLabel:dFecIni     := ::oDbf:dFecOrd
+            ::cAreaTemporalLabel:dFecFin     := ::oDbf:dFecFin
+            ::cAreaTemporalLabel:cHorIni     := ::oDbf:cHorIni
+            ::cAreaTemporalLabel:cHorFin     := ::oDbf:cHorFin
+            ::cAreaTemporalLabel:nCajas      := ::oDetProduccion:oDbf:nCajOrd
+            ::cAreaTemporalLabel:nUnidades   := ::oDetProduccion:oDbf:nUndOrd
+            ::cAreaTemporalLabel:nUndHra     := ::oDetProduccion:oDbf:nCajOrd * ::oDetProduccion:oDbf:nUndOrd
+            ::cAreaTemporalLabel:nImporte    := ::oDetProduccion:oDbf:nImpOrd
+            ::cAreaTemporalLabel:nTotLin     := ::oDbfTemporal:nUndHra * ::oDbfTemporal:nImporte
+            ::cAreaTemporalLabel:nPeso       := ::oDetProduccion:oDbf:nPeso
+            ::cAreaTemporalLabel:cUndPes     := ::oDetProduccion:oDbf:cUndPes
+            ::cAreaTemporalLabel:nVolumen    := ::oDetProduccion:oDbf:nVolumen
+            ::cAreaTemporalLabel:cUndVol     := ::oDetProduccion:oDbf:cUndVol
+            ::cAreaTemporalLabel:cCodPr1     := ::oDetProduccion:oDbf:cCodPr1
+            ::cAreaTemporalLabel:cCodPr2     := ::oDetProduccion:oDbf:cCodPr2
+            ::cAreaTemporalLabel:cValPr1     := ::oDetProduccion:oDbf:cValPr1
+            ::cAreaTemporalLabel:cValPr2     := ::oDetProduccion:oDbf:cValPr2
+            ::cAreaTemporalLabel:lLote       := ::oDetProduccion:oDbf:lLote
+            ::cAreaTemporalLabel:cLote       := ::oDetProduccion:oDbf:cLote
+            ::cAreaTemporalLabel:lLabel      := .t.
+            ::cAreaTemporalLabel:nLabel      := ::oDetProduccion:oDbf:nCajOrd * ::oDetProduccion:oDbf:nUndOrd
+
+            ::cAreaTemporalLabel:Save()
+
+         end if   
+
+         ::oDetProduccion:oDbf:Skip()
+
+      end while
+
+   end if
+
+   ::oDetProduccion:oDbf:OrdSetFocus( nOrdPR )
+   ::oDetProduccion:oDbf:Goto( nRecPr )
+   
+   ::cAreaTemporalLabel:GoTop()
+
+Return ( Self )
 
 //---------------------------------------------------------------------------//

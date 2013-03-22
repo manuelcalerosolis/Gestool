@@ -224,6 +224,7 @@ static aTipDoc     := {  "Artículos [Etiquetas]",;
                          "Factura proveedores [Etiquetas]",;
                          "Factura rectificativas de proveedores [Etiquetas]",;
                          "Ofertas de artículos [Etiquetas]",;
+                         "Producción [Etiquetas]",;
                          "Pedido proveedores",;
                          "Albarán proveedores",;
                          "Factura proveedores",;
@@ -247,7 +248,7 @@ static aTipDoc     := {  "Artículos [Etiquetas]",;
                          "Expedientes",;
                          "Arqueo de sesiones",;
                          "Pagos de clientes",;
-                         "Liquidación de agentes" }
+                         "Liquidación de agentes"}
 
 static aCodDoc     := {  "AR",;
                          "CL",;
@@ -256,6 +257,7 @@ static aCodDoc     := {  "AR",;
                          "FL",;
                          "RL",;
                          "OF",;
+                         "LP",;
                          "PP",;
                          "AP",;
                          "FP",;
@@ -673,6 +675,13 @@ FUNCTION CfgDocs( oMenuItem, oWnd )
             CLOSED ;
             LEVEL    ACC_EDIT
 
+            DEFINE BTNSHELL RESOURCE "Worker2_Form_Red_" OF oWndBrw ;
+            ACTION   ( ( dbfDoc )->( dbSetFilter( {|| Field->cTipo == 'EP' }, "Field->cTipo == 'EP'" ) ), ( dbfDoc )->( dbGoTop() ), oWndBrw:Refresh() ) ;
+            TOOLTIP  "Etiquetas producción" ;
+            FROM     oFlt ;
+            CLOSED ;
+            LEVEL    ACC_EDIT
+
 #ifndef __SQLLIB__
 
       DEFINE BTNSHELL RESOURCE "EXPORT" OF oWndBrw ;
@@ -892,21 +901,21 @@ Return ( lOpenFiles )
 
 FUNCTION PrintItems( cTipo, oInf, lPreview, nOffSet )
 
-	local cText
-	local cLine
+   local cText
+   local cLine
    local nFor
-	local nRow
-	local nCol
+   local nRow
+   local nCol
    local nSizTxt
    local aCoors
    local nLines
-	local nHeight
-	local nSize
+   local nHeight
+   local nSize
    local oFont
    local dbfBox
-	local dbfBmp
-	local dbfItems
-	local bCondition
+   local dbfBmp
+   local dbfItems
+   local bCondition
    local aStart
    local aEnd
    local oPen
@@ -3837,8 +3846,8 @@ Return nil*/
 
  FUNCTION BrwDocumento( oGet, oGet2, cTipDoc )
 
-	local oDlg
-	local oBrw
+   local oDlg
+   local oBrw
    local oGet1
    local cGet1
    local nOrd     := GetBrwOpt( "BrwDocumentos" )
@@ -4232,6 +4241,14 @@ Static Function VisualEdtDocs( dbfDoc )
             :DesignReport( oFr, dbfDoc )
             :end()
          end object
+
+      case cTipo == "LP"
+         with object ( TProduccion():Create( cPatEmp() ) )
+            :OpenFiles()
+            :DesignLabelProducc( oFr, dbfDoc )
+            :CloseFiles()
+            :end()
+         end object   
 
       otherwise
          msgStop( "Diseñador visual aún no habilitado" )

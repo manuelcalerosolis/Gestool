@@ -9133,8 +9133,15 @@ METHOD DeleteImagesProducts( cCodProduct ) CLASS TComercio
          ?::cDImagen + "/p/" + AllTrim( Str( cCodProduct ) )
 
          if !Empty( ::cDImagen )
+            
             oFtp:SetCurrentDirectory( ::cDImagen + "/p/" + AllTrim( Str( cCodProduct ) ) )
+            
+            oFtp:DeleteMask()
+
+            oFtp:SetCurrentDirectory( ::cDImagen + "/p" )
+
             oFtp:RemoveDirectory( ::cDImagen + "/p/" + AllTrim( Str( cCodProduct ) ) )
+
          end if
 
       end if

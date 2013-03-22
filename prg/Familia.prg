@@ -1118,8 +1118,8 @@ STATIC FUNCTION EndTrans( aTmp, aGet, nMode, oBrw, oDlg )
 
    CursorWait()
 
-   /*oBlock         := ErrorBlock( {| oError | ApoloBreak( oError ) } )
-   BEGIN SEQUENCE*/
+   oBlock         := ErrorBlock( {| oError | ApoloBreak( oError ) } )
+   BEGIN SEQUENCE
 
       BeginTransaction()
 
@@ -1158,7 +1158,7 @@ STATIC FUNCTION EndTrans( aTmp, aGet, nMode, oBrw, oDlg )
 
       CommitTransaction()
 
-   /*RECOVER USING oError
+   RECOVER USING oError
 
       RollBackTransaction()
 
@@ -1166,7 +1166,7 @@ STATIC FUNCTION EndTrans( aTmp, aGet, nMode, oBrw, oDlg )
 
    END SEQUENCE
 
-   ErrorBlock( oBlock )*/
+   ErrorBlock( oBlock )
 
    /*
    Reordenación de posiciones--------------------------------------------------
