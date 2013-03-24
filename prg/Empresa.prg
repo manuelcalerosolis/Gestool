@@ -284,18 +284,21 @@ FUNCTION Empresa( oMenuItem, oWnd )
 						"Nombre";
          MRU      "Office_Building_16";
          BITMAP   clrTopArchivos ;
-         APPEND   WinAppRec( nil, bEdit, dbfEmp );
-         EDIT     if( ( dbfEmp )->lGrupo, WinEdtRec( oWndBrw:oBrw, bEdtGrp, dbfEmp ), WinEdtRec( oWndBrw:oBrw, bEdit, dbfEmp ) ) ;
-         DELETE   if( ( dbfEmp )->lGrupo, WinDelGrp( oWndBrw:oBrw, dbfEmp ), WinDelEmp( oWndBrw:oBrw, dbfEmp ) ) ;
-         DUPLICAT WinDupRec( oWndBrw:oBrw, bEdit, dbfEmp );
+         APPEND   ( if( oUser():lCambiarEmpresa(), WinAppRec( nil, bEdit, dbfEmp ), ) );
+         EDIT     ( if( oUser():lCambiarEmpresa(), WinEdtRec( oWndBrw:oBrw, bEdit, dbfEmp ), ) ) ;
+         DELETE   ( if( oUser():lCambiarEmpresa(), WinDelEmp( oWndBrw:oBrw, dbfEmp ), ) ) ;
+         DUPLICAT ( if( oUser():lCambiarEmpresa(), WinDupRec( oWndBrw:oBrw, bEdit, dbfEmp ), ) );
          LEVEL    nLevel ;
          XBROWSE ;
          OF       oWnd
 
       oWndBrw:lAutoPos           := .f.
-      oWndBrw:oBrw:bLDblClick    := {|| if ( lGrupo( ( dbfEmp )->CodEmp, dbfEmp ),;
-                                             MsgStop( "No se pueden seleccionar grupos de empresas." ),;
-                                             ( SetEmpresa( ( dbfEmp )->CodEmp, dbfEmp, dbfDlg, dbfUser, nil, oWnd ), if( !Empty( oWndBrw ), oWndBrw:End( .t. ), ), ) ) }
+
+   if oUser():lCambiarEmpresa()
+      oWndBrw:oBrw:bLDblClick    := {|| SetEmpresa( ( dbfEmp )->CodEmp, dbfEmp, dbfDlg, dbfUser, nil, oWnd ), if( !Empty( oWndBrw ), oWndBrw:End( .t. ), ) }
+   else
+      oWndBrw:oBrw:bLDblClick    := {|| nil }
+   end if 
 
       // Columnas ---------------------------------------------------------------
 
@@ -337,6 +340,8 @@ FUNCTION Empresa( oMenuItem, oWnd )
 
       oWndBrw:AddSeaBar()
 
+   if oUser():lCambiarEmpresa()
+
       DEFINE BTNSHELL RESOURCE "SEL" OF oWndBrw ;
 			NOBORDER ;
          ACTION   ( Eval( oWndBrw:oBrw:bLDblClick ) ) ;
@@ -353,6 +358,7 @@ FUNCTION Empresa( oMenuItem, oWnd )
          BEGIN GROUP ;
          LEVEL    ACC_APPD
 
+      /*
       DEFINE BTNSHELL RESOURCE "FACTORY_ADD2_" GROUP OF oWndBrw ;
 			NOBORDER ;
          ACTION   ( WinAppRec( oWndBrw:oBrw, bEdtGrp, dbfEmp ) );
@@ -360,6 +366,7 @@ FUNCTION Empresa( oMenuItem, oWnd )
          HOTKEY   "G" ;
          BEGIN GROUP ;
          LEVEL    ACC_APPD
+      */
 
       DEFINE BTNSHELL RESOURCE "EDIT" OF oWndBrw ;
 			NOBORDER ;
@@ -369,6 +376,8 @@ FUNCTION Empresa( oMenuItem, oWnd )
          HOTKEY   "M" ;
          LEVEL    ACC_EDIT
 
+   end if
+
       DEFINE BTNSHELL RESOURCE "ZOOM" OF oWndBrw ;
 			NOBORDER ;
          ACTION   ( if( ( dbfEmp )->lGrupo, WinZooRec( oWndBrw:oBrw, bEdtGrp, dbfEmp ), WinZooRec( oWndBrw:oBrw, bEdit, dbfEmp ) ) );
@@ -376,6 +385,8 @@ FUNCTION Empresa( oMenuItem, oWnd )
          MRU ;
          HOTKEY   "Z";
          LEVEL    ACC_ZOOM
+
+   if oUser():lCambiarEmpresa()
 
       DEFINE BTNSHELL RESOURCE "DEL" OF oWndBrw ;
 			NOBORDER ;
@@ -397,6 +408,8 @@ FUNCTION Empresa( oMenuItem, oWnd )
          TOOLTIP  "Ac(t)ualizar ficheros";
          HOTKEY   "T" ;
          LEVEL    ACC_EDIT
+
+   end if
 
       DEFINE BTNSHELL RESOURCE "END1" GROUP OF oWndBrw ;
 			NOBORDER ;
@@ -594,9 +607,9 @@ STATIC FUNCTION EdtRec( aTmp, aGet, dbfEmp, oBrw, bWhen, bValid, nMode )
          ID       400 ;
          PICTURE  "@!" ;
          WHEN     ( nMode != ZOOM_MODE ) ;
-         VALID    ( cEmpresa( aGet[ _CCODGRP ], dbfEmp, oSayGrp ) ) ;
+         VALID    ( if( cEmpresa( aGet[ _CCODGRP ], dbfEmp, oSayGrp ) .and. aTmp[ _CCODGRP ] != aTmp[ _CODEMP ], .t., ( MsgStop( "Empresa martiz no valida" ), .f. ) ) );
          BITMAP   "LUPA";
-         ON HELP  ( BrwEmpresa( aGet[ _CCODGRP ], dbfEmp, oSayGrp, .t. ) ) ;
+         ON HELP  ( BrwEmpresa( aGet[ _CCODGRP ], dbfEmp, oSayGrp ) ) ;
          OF       oFld:aDialogs[1]
 
    REDEFINE GET oSayGrp VAR cSayGrp ;
@@ -1023,9 +1036,9 @@ STATIC FUNCTION EdtGrp( aTmp, aGet, dbfEmp, oBrw, bWhen, bValid, nMode )
          IDSAY    152 ;
          PICTURE  "@!" ;
          WHEN     ( nMode == APPD_MODE .and. Empty( cCodEmp ) ) ;
-         VALID    ( cEmpresa( oCodGrp, dbfEmp, oCodGrp:oHelpText ) ) ;
+         VALID    ( if( cEmpresa( oCodGrp, dbfEmp, oCodGrp:oHelpText ) .and. cCodGrp != aTmp[ _CODEMP ], ( MsgStop( "Empresa martiz no valida"), .f. ), .t. ) );
          BITMAP   "LUPA";
-         ON HELP  ( BrwEmpresa( oCodGrp, dbfEmp, oCodGrp:oHelpText, .t. ) ) ;
+         ON HELP  ( BrwEmpresa( oCodGrp, dbfEmp, oCodGrp:oHelpText ) ) ;
          OF       oDlg
 
       REDEFINE GET oCodEmp VAR cCodEmp ;
@@ -2991,6 +3004,10 @@ Function SetEmpresa( cCodEmp, dbfEmp, dbfDlg, dbfUsr, oBrw, oWnd, lSoft )
       lCloDlg        := .t.
    end if
 
+   /*
+   Si la empresa esta vacia----------------------------------------------------
+   */
+
    if Empty( cCodEmp )
 
       if ( dbfEmp )->( LastRec() ) == 0
@@ -3057,7 +3074,7 @@ Function SetEmpresa( cCodEmp, dbfEmp, dbfDlg, dbfUsr, oBrw, oWnd, lSoft )
 
             MsgAlert( "La nueva empresa activa es " + ( dbfEmp )->CodEmp + " - " + Rtrim( ( dbfEmp )->cNombre ) )
 
-            cCodEmp                 := Alltrim( ( dbfEmp )->CodEmp )
+            cCodEmp  := Alltrim( ( dbfEmp )->CodEmp )
 
             exit
 
@@ -3137,6 +3154,12 @@ Function SetEmpresa( cCodEmp, dbfEmp, dbfDlg, dbfUsr, oBrw, oWnd, lSoft )
    if !aEmpresa( cCodEmp, dbfEmp, dbfDlg, dbfUsr )
       Empresa()
    end if
+
+   /*
+   Comprobamos q el codigo de la delegacion no este vacio----------------------
+
+   cCodigoDelegacionEnUso( "00" )
+   */
 
    /*
    Ponemos el titulo de la empresa---------------------------------------------
@@ -6072,43 +6095,44 @@ RETURN ( aEmp()[ _NSNDINF ] )
 
 //---------------------------------------------------------------------------//
 
-function BrwDelegacion( oGet, dbfDelega, oGet2 )
+function BrwDelegacion( oGet, dbfDelega, oGetNombre, cCodigoEmpresa )
 
 	local oDlg
 	local oBrw
-	local oGet1
-	local cGet1
    local nRec
-   local nOrd     := GetBrwOpt( "BrwDelegacion" )
+   local nOrd              := GetBrwOpt( "BrwDelegacion" )
+   local oGet1
+   local cGet1
 	local oCbxOrd
-   local aCbxOrd  := { "Código" }
    local cCbxOrd
-   local cCodEmp  := cCodEmp()
+   local aCbxOrd           := { "Código" }
 
-   nOrd           := Min( Max( nOrd, 1 ), len( aCbxOrd ) )
-   cCbxOrd        := aCbxOrd[ nOrd ]
+   DEFAULT cCodigoEmpresa  := cCodEmp()
 
-   nRec           := ( dbfDelega )->( Recno() )
-   nOrd           := ( dbfDelega )->( OrdSetFocus( nOrd ) )
+   nOrd                    := Min( Max( nOrd, 1 ), len( aCbxOrd ) )
+   cCbxOrd                 := aCbxOrd[ nOrd ]
 
-   ( dbfDelega )->( dbSetFilter( {|| Field->cCodEmp == cCodEmp }, "cCodEmp == " + cCodEmp ) )
-   ( dbfDelega )->( DbGoTop() )
+   nRec                    := ( dbfDelega )->( Recno() )
+   nOrd                    := ( dbfDelega )->( OrdSetFocus( nOrd ) )
+
+   ( dbfDelega )->( dbSetFilter( {|| Field->cCodEmp == cCodigoEmpresa }, "cCodEmp == " + cCodigoEmpresa ) )
+   ( dbfDelega )->( dbGoTop() )
 
    DEFINE DIALOG oDlg RESOURCE "HELPENTRY" TITLE "Delegación"
 
 		REDEFINE GET oGet1 VAR cGet1;
-         ID       104 ;
-         ON CHANGE( AutoSeek( nKey, nFlags, Self, oBrw, dbfDelega ) );
-         VALID    ( OrdClearScope( oBrw, dbfDelega ) );
-         BITMAP   "FIND" ;
-         OF       oDlg
+         ID          104 ;
+         ON CHANGE   ( AutoSeek( nKey, nFlags, Self, oBrw, dbfDelega ) );
+         VALID       ( OrdClearScope( oBrw, dbfDelega ) );
+         BITMAP      "FIND" ;
+         OF          oDlg
 
 		REDEFINE COMBOBOX oCbxOrd ;
-			VAR 		cCbxOrd ;
-			ID 		102 ;
-         ITEMS    aCbxOrd ;
-         ON CHANGE( ( dbfDelega )->( OrdSetFocus( oCbxOrd:nAt ) ), oBrw:refresh(), oGet1:SetFocus() ) ;
-         OF       oDlg
+			VAR 		   cCbxOrd ;
+			ID 		   102 ;
+         ITEMS       aCbxOrd ;
+         ON CHANGE   ( ( dbfDelega )->( OrdSetFocus( oCbxOrd:nAt ) ), oBrw:refresh(), oGet1:SetFocus() ) ;
+         OF          oDlg
 
       oBrw                 := IXBrowse():New( oDlg )
 
@@ -6141,31 +6165,31 @@ function BrwDelegacion( oGet, dbfDelega, oGet2 )
       oBrw:CreateFromResource( 105 )
 
 		REDEFINE BUTTON ;
-         ID       IDOK ;
-         OF       oDlg ;
-         ACTION   ( oDlg:end( IDOK ) )
+         ID          IDOK ;
+         OF          oDlg ;
+         ACTION      ( oDlg:end( IDOK ) )
 
 		REDEFINE BUTTON ;
-         ID       IDCANCEL ;
-         OF       oDlg ;
-         ACTION   ( oDlg:end() )
+         ID          IDCANCEL ;
+         OF          oDlg ;
+         ACTION      ( oDlg:end() )
 
 		REDEFINE BUTTON ;
-         ID       500 ;
-         OF       oDlg ;
-         WHEN     .f. ;
-         ACTION   ( nil )
+         ID          500 ;
+         OF          oDlg ;
+         WHEN        .f. ;
+         ACTION      ( nil )
 
 		REDEFINE BUTTON ;
-         ID       501 ;
-         OF       oDlg ;
-         WHEN     .f. ;
-         ACTION   ( nil )
+         ID          501 ;
+         OF          oDlg ;
+         WHEN        .f. ;
+         ACTION      ( nil )
 
       oDlg:AddFastKey( VK_F5,       {|| oDlg:end( IDOK ) } )
       oDlg:AddFastKey( VK_RETURN,   {|| oDlg:end( IDOK ) } )
 
-      oDlg:bStart := {|| oBrw:Load() }
+      oDlg:bStart    := {|| oBrw:Load() }
 
    ACTIVATE DIALOG oDlg CENTER
 
@@ -6175,8 +6199,8 @@ function BrwDelegacion( oGet, dbfDelega, oGet2 )
 
       oGet:cText( ( dbfDelega )->cCodDlg )
 
-      if ValType( oGet2 ) == "O"
-         oGet2:cText( ( dbfDelega )->cNomDlg )
+      if isObject( oGetNombre )
+         oGetNombre:cText( ( dbfDelega )->cNomDlg )
       end if
 
    end if
@@ -6184,33 +6208,43 @@ function BrwDelegacion( oGet, dbfDelega, oGet2 )
    ( dbfDelega )->( dbGoTo( nRec ) )
    ( dbfDelega )->( OrdSetFocus( nOrd ) )
 
-	oGet:setFocus()
+	oGet:SetFocus()
 
 Return ( oDlg:nResult == IDOK )
 
 //---------------------------------------------------------------------------//
 
-function cDelegacion( oGet, dbfDelega, oGet2 )
+function cDelegacion( oGet, dbfDelega, oGetNombre, cCodigoEmpresa )
 
-   local lValid   := .f.
-   local cCodDlg  := oGet:varGet()
-   local cCodEmp  := cCodEmp()
+   local lValid            := .f.
+   local cCodDlg           := oGet:varGet()
+
+   DEFAULT cCodigoEmpresa  := cCodEmp()
 
    if Empty( cCodDlg )
-      if oGet2 != NIL
-			oGet2:cText( "" )
+
+      if !Empty( oGetNombre )
+			oGetNombre:cText( "" )
       end if
+
       return .t.
+
    end if
 
-   if ( dbfDelega )->( DbSeek( cCodEmp + cCodDlg ) )
+   if ( dbfDelega )->( dbSeek( cCodigoEmpresa + cCodDlg ) )
+
       oGet:cText( ( dbfDelega )->cCodDlg )
-      if oGet2 != NIL
-         oGet2:cText( ( dbfDelega )->cNomDlg )
+
+      if !Empty( oGetNombre )
+         oGetNombre:cText( ( dbfDelega )->cNomDlg )
       end if
+      
       lValid      := .t.
+
    else
+      
       msgStop( "Delegación no encontrada" )
+
    end if
 
 return lValid
@@ -6610,6 +6644,7 @@ Actualiza la base de datos
 FUNCTION TstEmpresa( cPatDat )
 
    local dbfEmp
+   local dbfDlg
    local oError
    local oBlock
    local cCodEmp
@@ -6635,9 +6670,6 @@ FUNCTION TstEmpresa( cPatDat )
    if !lExistIndex( cPatDat() + "DELEGA.CDX" )
       rxDlg( cPatDat() )
    end if
-
-   /*oBlock               := ErrorBlock( {| oError | ApoloBreak( oError ) } )
-   BEGIN SEQUENCE*/
 
       /*
       Empresa------------------------------------------------------------------
@@ -6669,13 +6701,13 @@ FUNCTION TstEmpresa( cPatDat )
       Delgaciones--------------------------------------------------------------
       */
 
-      dbUseArea( .t.,  cDriver(), ( cPatDat() + "Delega.Dbf" ), cCheckArea( "Delega", @dbfEmp ), .f. )
+      dbUseArea( .t.,  cDriver(), ( cPatDat() + "Delega.Dbf" ), cCheckArea( "Delega", @dbfDlg ), .f. )
 
-      if !( dbfEmp )->( netErr() )
+      if !( dbfDlg )->( netErr() )
 
-         lChangeStruct  := lChangeStruct( dbfEmp, aItmDlg() )
+         lChangeStruct  := lChangeStruct( dbfDlg, aItmDlg() )
 
-         ( dbfEmp )->( dbCloseArea() )
+         ( dbfDlg )->( dbCloseArea() )
 
          if lChangeStruct
 
@@ -6697,47 +6729,69 @@ FUNCTION TstEmpresa( cPatDat )
 
       dbUseArea( .t.,  cDriver(), ( cPatDat() + "Empresa.Dbf" ), cCheckArea( "EMPRESA", @dbfEmp ), .f. )
       
-      if !( dbfEmp )->( netErr() )
-
-         if !lAIS() ; ordListAdd( ( cPatDat() + "Empresa.Cdx" ) ) ; else ; ordSetFocus( 1 ) ; end
-
-            /*
-            Comprobamos la longitud del codigo------------------------------------
-            */
-   
-            ( dbfEmp )->( dbGoTop() )
-            while !( dbfEmp )->( Eof() )
-   
-               cCodEmp     := Alltrim( ( dbfEmp )->CodEmp )
-   
-               if len( cCodEmp ) == 2
-   
-                  if IsDirectory( FullCurDir() + "Emp" + cCodEmp )
-                     if fRename( FullCurDir() + "Emp" + cCodEmp, FullCurDir() + "Emp" + RJust( cCodEmp, "0", 4 ) ) == -1
-                        MsgAlert( "No he podido renombrar el directorio " + FullCurDir() + "Emp" + cCodEmp )
-                     end if
-                  end if 
-   
-                  if IsDirectory( FullCurDir() + "Grp" + cCodEmp )
-                     if fRename( FullCurDir() + "Grp" + cCodEmp, FullCurDir() + "Grp" + RJust( cCodEmp, "0", 4 ) ) == -1
-                        MsgAlert( "No he podido renombrar el directorio " + FullCurDir() + "Grp" + cCodEmp )
-                     end if
-                  end if 
-   
-                  if ( dbfEmp )->( dbRLock() )
-                     ( dbfEmp )->CodEmp   := RJust( ( dbfEmp )->CodEmp )
-                     ( dbfEmp )->( dbUnlock() )
-                  end if
-   
-               end if 
-               
-               ( dbfEmp )->( dbSkip() )
-   
-            end while
-   
-            ( dbfEmp )->( dbCloseArea() )
-
+      if ( dbfEmp )->( netErr() )
+         if( ( dbfEmp )->( Used() ), ( dbfEmp )->( dbCloseArea() ), )
+         return .f.
       end if 
+
+      if( !lAIS(), ordListAdd( ( cPatDat() + "Empresa.Cdx" ) ), ordSetFocus( 1 ) )
+      
+      dbUseArea( .t.,  cDriver(), ( cPatDat() + "Delega.Dbf" ), cCheckArea( "Delega", @dbfDlg ), .f. )
+            
+      if ( dbfDlg )->( netErr() )
+         if( ( dbfDlg )->( Used() ), ( dbfDlg )->( dbCloseArea() ), )
+         return .f.
+      end if    
+         
+      if( !lAIS(), ordListAdd( ( cPatDat() + "Delega.Cdx" ) ), ordSetFocus( 1 ) )
+
+      /*
+      Comprobamos la longitud del codigo------------------------------------
+      */
+
+      ( dbfEmp )->( dbGoTop() )
+      while !( dbfEmp )->( Eof() )
+      
+         cCodEmp     := Alltrim( ( dbfEmp )->CodEmp )
+      
+         if len( cCodEmp ) == 2
+      
+            if IsDirectory( FullCurDir() + "Emp" + cCodEmp )
+               if fRename( FullCurDir() + "Emp" + cCodEmp, FullCurDir() + "Emp" + RJust( cCodEmp, "0", 4 ) ) == -1
+                  MsgAlert( "No he podido renombrar el directorio " + FullCurDir() + "Emp" + cCodEmp )
+               end if
+            end if 
+      
+            if ( dbfEmp )->( dbRLock() )
+               ( dbfEmp )->CodEmp   := RJust( ( dbfEmp )->CodEmp )
+               ( dbfEmp )->( dbUnlock() )
+            end if
+      
+         end if 
+               
+         /*
+         Comprobamos q el codigo de la delegacion no este vacio----------------------
+         */
+
+         if !( dbfDlg )->( dbSeek( ( dbfEmp )->CodEmp ) )
+            if dbAppe( dbfDlg )
+               ( dbfDlg )->cCodEmp  := ( dbfEmp )->CodEmp
+               ( dbfDlg )->cCodDlg  := "00"
+               ( dbfDlg )->cNomDlg  := "Central"
+               ( dbfDlg )->( dbUnlock() )
+            end if 
+         end if
+
+         /*
+         Sigiente empresa------------------------------------------------
+         */
+                  
+         ( dbfEmp )->( dbSkip() )
+                  
+      end while
+             
+      ( dbfDlg )->( dbCloseArea() )
+      ( dbfEmp )->( dbCloseArea() )
 
    /*RECOVER USING oError
 

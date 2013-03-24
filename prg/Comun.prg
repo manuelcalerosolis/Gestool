@@ -1,24 +1,16 @@
-#ifndef __PDA__
-   #include "FiveWin.Ch"
-   #include "Factu.ch"
-   #include "Empresa.ch"
-   #include "hbxml.ch"
-   #include "Xbrowse.ch"
-#else
-   #include "FWCE.ch"
-   REQUEST DBFCDX
-#endif
+#include "FiveWin.Ch"
+#include "Factu.ch"
+#include "Empresa.ch"
+#include "hbxml.ch"
+#include "Xbrowse.ch"
 
-#ifdef __SQLLIB__
-   #include "sqlrdd.ch"        // Needed if you plan to use native connection to MySQL
-   #include "mysql.ch"         // Needed if you plan to use native connection to MySQL
-#endif
+static cCodigoEmpresaEnUso
+static cCodigoDelegacionEnUso
 
 static aEmpresa
+static aDelegacion
 
 static cCodEmp          := ""
-
-#ifndef __PDA__
 
 static aMnuNext         := {}
 static aMnuPrev         := {}
@@ -32,10 +24,6 @@ static aEmpresasGrupo   := {}
 
 static cDefPicIn
 static cDefPicOut
-
-static cCodigoEmpresaEnUso
-
-#endif
 
 static lAds             := .f.
 static lAIS             := .f.
@@ -716,6 +704,7 @@ RETURN ( aItmCom )
 
 Function aEmpresa( cEmp, dbfEmp, dbfDlg, dbfUser, lRptGal )
 
+   local cDlg
    local oBlock
    local oError
    local lEmpFnd     := .t.
@@ -725,6 +714,7 @@ Function aEmpresa( cEmp, dbfEmp, dbfDlg, dbfUser, lRptGal )
 
    DEFAULT lRptGal   := .f.
 
+   cDlg              := oUser():cDelegacion()
    aDlgEmp           := {}
 
    oBlock            := ErrorBlock( {| oError | ApoloBreak( oError ) } )
@@ -748,7 +738,6 @@ Function aEmpresa( cEmp, dbfEmp, dbfDlg, dbfUser, lRptGal )
       lCloDlg        := .t.
    end if
 
-   //if ( dbfEmp )->( dbSeek( cEmp ) )
    if dbSeekInOrd( cEmp, "CodEmp", dbfEmp )
 
       aEmpresa       := dbScatter( dbfEmp )
@@ -770,22 +759,24 @@ Function aEmpresa( cEmp, dbfEmp, dbfDlg, dbfUser, lRptGal )
       end if
 
       /*
+      Verificamos la existencia de la delegacion-------------------------------
+      */
+
+      if !( dbfDlg )->( dbSeek( cEmp + cDlg ) )
+         oUser():cDelegacion( "00" )
+      end if 
+
+      /*
       Cargamos las delegaciones------------------------------------------------
       */
 
       if ( dbfDlg )->( dbSeek( cEmp ) )
-
-         do while ( dbfDlg )->cCodEmp == cEmp .and. ( dbfDlg )->( !eof() )
-
+         while ( dbfDlg )->cCodEmp == cEmp .and. ( dbfDlg )->( !eof() )
             aAdd( aDlgEmp, ( dbfDlg )->cCodDlg )
             ( dbfDlg )->( dbSkip() )
-
          end while
-
       else
-
          aDlgEmp     := { "" }
-
       end if
 
    else
@@ -835,10 +826,20 @@ Function aRetDlgEmp() ; Return ( aDlgEmp )
 Function cCodigoEmpresaEnUso( cCodEmp )
 
    if cCodEmp != nil
-      cCodigoEmpresaEnUso  := cCodEmp
+      cCodigoEmpresaEnUso     := cCodEmp
    end if
 
 Return ( cCodigoEmpresaEnUso )
+
+//---------------------------------------------------------------------------//
+
+Function cCodigoDelegacionEnUso( cCodDlg )
+
+   if cCodDlg != nil
+      cCodigoDelegacionEnUso  := cCodDlg
+   end if
+
+Return ( cCodigoDelegacionEnUso )
 
 //---------------------------------------------------------------------------//
 

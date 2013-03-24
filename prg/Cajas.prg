@@ -1,31 +1,22 @@
-#ifndef __PDA__
-   #include "FiveWin.Ch"
-   #include "Font.ch"
-   #include "Report.ch"
-   #include "Factu.ch"
-#else
-   #include "FWCE.ch"
-   REQUEST DBFCDX
-#endif
+#include "FiveWin.Ch"
+#include "Font.ch"
+#include "Report.ch"
+#include "Factu.ch"
 
-#ifndef __PDA__
-   static lOpen         := .f.
+static lOpen         := .f.
 
-   static oWndBrw
-   static dbfCajT
-   static dbfCajL
-   static dbfImpTik
-   static dbfVisor
-   static dbfCajPorta
-   static dbfDoc
-   static dbfTmpLin
-   static cTmpLin
-   static oCaptura
-   static bEdit         := { |aTmp, aGet, dbfCajT, oBrw, bWhen, bValid, nMode | EdtRec( aTmp, aGet, dbfCajT, oBrw, bWhen, bValid, nMode ) }
-   static bEdtDet       := { |aTmp, aGet, dbfCajL, oBrw, bWhen, bValid, nMode, aTmpCaj | EdtDet( aTmp, aGet, dbfCajL, oBrw, bWhen, bValid, nMode, aTmpCaj ) }
-#else
-   static dbfCaj
-#endif
+static oWndBrw
+static dbfCajT
+static dbfCajL
+static dbfImpTik
+static dbfVisor
+static dbfCajPorta
+static dbfDoc
+static dbfTmpLin
+static cTmpLin
+static oCaptura
+static bEdit         := { |aTmp, aGet, dbfCajT, oBrw, bWhen, bValid, nMode | EdtRec( aTmp, aGet, dbfCajT, oBrw, bWhen, bValid, nMode ) }
+static bEdtDet       := { |aTmp, aGet, dbfCajL, oBrw, bWhen, bValid, nMode, aTmpCaj | EdtDet( aTmp, aGet, dbfCajL, oBrw, bWhen, bValid, nMode, aTmpCaj ) }
 
 //----------------------------------------------------------------------------//
 
@@ -1932,6 +1923,9 @@ FUNCTION rxCajas( cPath, oMeter )
       ( dbfCajT )->( ordCondSet("!Deleted()", {||!Deleted()}  ) )
       ( dbfCajT )->( ordCreate( cPath + "CAJAS.CDX", "CNOMCAJ", "Upper( CNOMCAJ )", {|| Upper( Field->CNOMCAJ ) } ) )
 
+      ( dbfCajT )->( ordCondSet("!Deleted() .and. !Field->lNoArq", {|| !Deleted() .and. !Field->lNoArq }  ) )
+      ( dbfCajT )->( ordCreate( cPath + "CAJAS.CDX", "lNoArq", "Upper( CCODCAJ )", {|| Upper( Field->CCODCAJ ) }, ) )
+
       ( dbfCajT )->( dbCloseArea() )
 
    else
@@ -3329,6 +3323,8 @@ Function SelectCajas()
          oUser():oCajon      := TCajon():Create( cCajonEnCaja( ( dbfCajT )->cCodCaj, dbfCajT ) )
       end if
 
+      ChkTurno()
+
       SetKey( VK_F12, {|| oUser():OpenCajon() } )
 
    else
@@ -3372,73 +3368,6 @@ RETURN ( .t. )
 //---------------------------------------------------------------------------//
 
 #else
-
-//---------------------------------------------------------------------------//
-
-function lSelCaja()
-
-   local oDlg
-   local oBrw
-   local oBlock      := ErrorBlock( {| oError | ApoloBreak( oError ) } )
-
-   BEGIN SEQUENCE
-
-   USE ( cPatDat() + "CAJAS.DBF" ) NEW VIA ( cLocalDriver() ) SHARED ALIAS ( cCheckArea( "CAJAS", @dbfCaj ) )
-   SET ADSINDEX TO ( cPatDat() + "CAJAS.CDX" ) ADDITIVE
-
-   DEFINE DIALOG oDlg RESOURCE "lSelCaja"
-
-      REDEFINE LISTBOX oBrw ;
-         FIELDS ;
-                  ( dbfCaj )->cCodCaj,;
-                  ( dbfCaj )->cNomCaj ;
-         SIZES ;
-               30,;
-               80;
-         HEADER ;
-               "Cod",;
-					"Nombre" ;
-         ALIAS ( dbfCaj );
-         ID    100 ;
-         OF    oDlg
-
-   ACTIVATE DIALOG oDlg ;
-      ON INIT ( oDlg:SetMenu( BuildMenu( oDlg ) ) )
-
-   RECOVER
-
-      msgStop( "Imposible abrir cajas" )
-
-   END SEQUENCE
-
-   ErrorBlock( oBlock )
-
-   if dbfCaj != nil
-      ( dbfCaj )->( dbCloseArea() )
-   end if
-
-   dbfCaj := nil
-
-Return ( ::oDlg:nResult == IDOK )
-
-//---------------------------------------------------------------------------//
-
-static function BuildMenu( oDlg )
-
-   local oMenu
-
-   DEFINE MENU oMenu RESOURCE 100 ;
-      BITMAPS 10 ; // bitmap resources ID
-      IMAGES 2     // number of images in the bitmap
-
-      REDEFINE MENUITEM ID 110 OF oMenu ACTION ( oDlg:End( IDOK ) )
-
-      REDEFINE MENUITEM ID 120 OF oMenu ACTION ( oDlg:End() )
-
-
-Return oMenu
-
-//---------------------------------------------------------------------------//
 
 #endif
 
@@ -3524,5 +3453,20 @@ FUNCTION TstCajas( cPatDat )
    ErrorBlock( oBlock )
 
 RETURN ( .t. )
+
+//---------------------------------------------------------------------------//
+
+Function nCajasArqueo( oCajas )
+
+   local nCajas   := 0
+
+   oCajas:GetStatus()
+   oCajas:OrdSetFocus( "lNoArq" )
+
+   nCajas         := oCajas:OrdKeyCount()
+
+   oCajas:SetStatus()
+
+Return ( nCajas )
 
 //---------------------------------------------------------------------------//

@@ -744,8 +744,6 @@ Return ( uField )
 
 //---------------------------------------------------------------------------//
 
-#ifndef __PDA__
-
 FUNCTION SetFieldEmpresa( nVal, cField )
 
    local nField
@@ -790,9 +788,6 @@ FUNCTION SetFieldEmpresa( nVal, cField )
 RETURN ( nVal )
 
 //---------------------------------------------------------------------------//
-
-#endif
-
 /*
 Devuelve el numero de digitos de clientes de la empresa activa
 */
@@ -812,7 +807,7 @@ Function RetNumCodCliEmp()
 
          if !aEmp()[ _LGRPCLI ]
 
-            nNumCod     := aEmp()[ _NCODCLI ]
+            nNumCod  := aEmp()[ _NCODCLI ]
 
          else
 
@@ -844,10 +839,6 @@ FUNCTION RetSufEmp()
    if !Empty( aEmp() )
       cSufEmp     := aEmp()[ _CSUFDOC ]
    end if
-
-#ifdef __PDA__
-   cSufEmp        := cSufPda()
-#endif
 
 return ( cSufEmp )
 

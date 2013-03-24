@@ -33,8 +33,6 @@ CLASS TUser
    Data     _Codigo                    INIT ""
    Method   cCodigo( cNewVal )         INLINE if( cNewVal != nil, ::_Codigo := cNewVal, ::_Codigo )
 
-   #ifndef __PDA__
-
    Data     _Nombre                    INIT ""
    Method   cNombre( cNewVal )         INLINE if( cNewVal != nil, ( ::_Nombre := cNewVal, cNbrUsr( cNewVal ) ), ::_Nombre )
 
@@ -43,41 +41,6 @@ CLASS TUser
 
    Data     _Almacen                   INIT "000"
    Method   cAlmacen( cNewVal )        INLINE if( !Empty( cNewVal ), ( ::_Almacen := cNewVal, cAlmUsr( cNewVal ) ), ::_Almacen )
-
-   #else
-
-   Data     _Nombre                    INIT ""
-   Method   cNombre( cNewVal )         INLINE if( cNewVal != nil, ( ::_Nombre := cNewVal ), ::_Nombre )
-
-   Data     _Caja                      INIT "000"
-   Method   cCaja( cNewVal )           INLINE if( !Empty( cNewVal ), ( ::_Caja := cNewVal ), ::_Caja )
-
-   Data     _Almacen                   INIT "000"
-   Method   cAlmacen( cNewVal )        INLINE if( !Empty( cNewVal ), ( ::_Almacen := cNewVal ), ::_Almacen )
-
-   #endif
-
-   /*
-   Empresa del usuario solo se selecciona si no lo pasan como parametro de inicio--------
-   */
-
-   Data     _Empresa                   INIT ""
-
-   Inline Method cEmpresa( cNewVal )
-
-      if cNewVal != nil
-
-         ::_Empresa := cNewVal
-
-         if !( "EMPRESA" $ cParamsMain() )
-            cEmpUsr( cNewVal )
-         end if
-
-      end if
-
-      Return ( ::_Empresa )
-
-   EndMethod
 
    Data     _Imagen                    INIT ""
    Method   cImagen( cNewVal )         INLINE if( cNewVal != nil, ::_Imagen := cNewVal, ::_Imagen )
@@ -138,7 +101,7 @@ CLASS TUser
    Data     _EnUso                     INIT .f.
    Method   lEnUso( lNewVal )          INLINE if( lNewVal != nil, ::_EnUso := lNewVal, ::_EnUso )
 
-   Data     _Delegacion                INIT ""
+   Data     _Delegacion                INIT "00"
    Method   cDelegacion( cNewVal )     INLINE if( cNewVal != nil, ::_Delegacion := cNewVal, ::_Delegacion )
 
    Data     _NotCostos                 INIT .f.
@@ -163,6 +126,14 @@ CLASS TUser
    Data     _Operario                  INIT Space( 3 )
    Method   cOperario( cNewVal )       INLINE if( !Empty( cNewVal ), ( ::_Operario := cNewVal ), ::_Operario )
 
+   /*
+   Puede cambiar empresa si el codigo de empresa esta vacio--------------------
+   */
+
+   Data     _EmpresaFija               INIT ""
+   Method   cEmpresaFija( cNewVal )    INLINE if( !Empty( cNewVal ), ( ::_EmpresaFija := cNewVal ), ::_EmpresaFija )
+   Method   lCambiarEmpresa()          INLINE ( Empty( ::_EmpresaFija ) )
+
    Method   MixPermisosGrupo()
 
    Method   OpenCajon()
@@ -170,6 +141,30 @@ CLASS TUser
    Method   lMasterLike()
 
    Method   lValidMasterLike( cClave )
+
+   /*
+   Empresa del usuario solo se selecciona si no lo pasan como parametro de inicio--------
+   */
+
+   Data     _Empresa                   INIT ""
+
+   Inline Method cEmpresa( cNewVal )
+
+      if cNewVal != nil
+
+         ::_Empresa := cNewVal
+
+         if !( "EMPRESA" $ cParamsMain() )
+            cEmpUsr( cNewVal )
+         end if
+
+      end if
+
+      Return ( ::_Empresa )
+
+   EndMethod
+
+   //------------------------------------------------------------------------//
 
 END CLASS
 
@@ -261,7 +256,6 @@ Method Create( cCodUsr, dbfUser, dbfCajas, cOldUsr, lCreateHandle )
          ::cNombre(           ( ::oDbf )->cNbrUse )
          ::cImagen(           ( ::oDbf )->cImagen )
          ::lNotCambiarPrecio( ( ::oDbf )->lChgPrc )
-         ::cEmpresa(          ( ::oDbf )->cEmpUse )
          ::lSelectorFamilia(  ( ::oDbf )->lSelFam )
          ::lNotBitmap(        ( ::oDbf )->lNotBmp )
          ::lNotInicio(        ( ::oDbf )->lNotIni )
@@ -269,7 +263,6 @@ Method Create( cCodUsr, dbfUser, dbfCajas, cOldUsr, lCreateHandle )
          ::lNotCostos(        ( ::oDbf )->lNotCos )
          ::lUsrZur(           ( ::oDbf )->lUsrZur )
          ::nGrupoUsuario(     ( ::oDbf )->nGrpUse )
-         ::cDelegacion(       ( ::oDbf )->cCodDlg )
          ::lMaster(           ( ::oDbf )->cCodUse == "000" )
          ::lAdministrador(    ( ::oDbf )->cCodUse == "000" .or. ( ::oDbf )->nGrpUse == 1 )
          ::lAlerta(           ( ::oDbf )->lAlerta )
@@ -282,6 +275,29 @@ Method Create( cCodUsr, dbfUser, dbfCajas, cOldUsr, lCreateHandle )
          ::cOperario(         ( ::oDbf )->cCodTra )
          ::lDocAuto(          ( ::oDbf )->lDocAut )
          ::dUltAuto(          ( ::oDbf )->dUltAut )
+         ::cEmpresaFija(      ( ::oDbf )->cCodEmp )
+
+         /*
+         Si el usuario tiene una empresa fija la colocamos caso contrario la ultima en usarse
+         */
+
+         if !Empty( ( ::oDbf )->cCodEmp )
+            ::cEmpresa(       ( ::oDbf )->cCodEmp )
+         else
+            ::cEmpresa(       ( ::oDbf )->cEmpUse )
+         end if
+
+         /*
+         Si el usuario tiene una delegacion fija la asignamos------------------
+         */
+
+         if !Empty( ( ::oDbf )->cCodDlg )
+            ::cDelegacion(    ( ::oDbf )->cCodDlg )
+         end if
+
+         /*
+         Cajon portamonedas----------------------------------------------------
+         */
 
          if Empty( ::oCajon ) .and. !Empty( cCajonEnCaja( ( ::oDbf )->cCajUse, ::oDbfCajas ) )
             ::oCajon          := TCajon():Create( cCajonEnCaja( ( ::oDbf )->cCajUse, ::oDbfCajas ) )
@@ -551,7 +567,7 @@ Method dUltAuto( lNewVal )
 
 Return ( ::_UltAuto )
 
-//--------------------------------------------------------------------------//
+//---------------------------------------------------------------------------//
 
 Method lMasterLike()
 
