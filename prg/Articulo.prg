@@ -94,6 +94,9 @@ static nLabels             := 1
 
 static lEuro               := .f.
 
+static lChangeImage        := .f.
+static cImageOld           := ""
+
 static bEdit               := { |aTmp, aGet, dbf, oBrw, bWhen, bValid, nMode          | EdtRec( aTmp, aGet, dbf, oBrw, bWhen, bValid, nMode ) }
 static bEdit2              := { |aTmp, aGet, dbf, oBrw, bWhen, bValid, nMode          | EdtRec2( aTmp, aGet, dbf, oBrw, bWhen, bValid, nMode ) }
 static bEdtDet             := { |aTmp, aGet, dbf, oBrw, bWhen, bValid, nMode, cCodArt | EdtDet( aTmp, aGet, dbf, oBrw, bWhen, bValid, nMode, cCodArt ) }
@@ -1493,6 +1496,7 @@ STATIC FUNCTION EdtRec( aTmp, aGet, dbfArticulo, oBrw, bWhen, bValid, nMode )
 
    cCatOld              := aTmp[ ( dbfArticulo )->( fieldpos( "cCodCat" ) ) ]
    cPrvOld              := aTmp[ ( dbfArticulo )->( fieldpos( "cPrvHab" ) ) ]
+   cImageOld            := aTmp[ ( dbfArticulo )->( fieldpos( "cImagen" ) ) ]
 
    CursorWait()
 
@@ -5510,6 +5514,13 @@ Static Function EndTrans( aTmp, aGet, oSay, oDlg, aTipBar, cTipBar, nMode, oImpC
             end if
          end while
 
+         /*
+         Antes de borrar la tabla de imágenes, comprobamos que haya habido cambios
+         para volver a subir todas las imágenes de la imagen.
+         */
+
+         lChangeImage    := lChangeImage( cCod, aTmp )
+
          while ( dbfImg )->( dbSeek( cCod ) ) .and. !( dbfImg )->( eof() )
             if dbLock( dbfImg )
                ( dbfImg )->( dbDelete() )
@@ -5665,7 +5676,7 @@ Static Function EndTrans( aTmp, aGet, oSay, oDlg, aTipBar, cTipBar, nMode, oImpC
       Actualizamos los datos de la web para tiempo real------------------------
       */
 
-      Actualizaweb( cCod )
+      Actualizaweb( cCod, lChangeImage )
 
       /*
       Terminamos la transación-------------------------------------------------
@@ -15076,6 +15087,9 @@ FUNCTION rxArticulo( cPath, oMeter, lRecPrc )
       ( dbfArticulo )->( ordCondSet( "!Deleted() .and. lDefImg", {|| !Deleted() .and. Field->lDefImg } ) )
       ( dbfArticulo )->( ordCreate( cPath + "ArtImg.Cdx", "lDefImg", "cCodArt", {|| Field->cCodArt } ) )
 
+      ( dbfArticulo )->( ordCondSet( "!Deleted()", {|| !Deleted() .and. Field->lDefImg } ) )
+      ( dbfArticulo )->( ordCreate( cPath + "ArtImg.Cdx", "cImgArt", "cImgArt", {|| Field->cImgArt } ) )
+
       ( dbfArticulo )->( dbCloseArea() )
    else
       msgStop( "Imposible abrir en modo exclusivo la tabla de artículos" )
@@ -18174,5 +18188,47 @@ Static Function lPubArt()
    end if
 
 Return lPub
+
+//---------------------------------------------------------------------------//
+
+Static Function lChangeImage( cCodArt, aTmp )
+
+   local nRec        := ( dbfImg )->( Recno() )
+   local nOrdAnt     := ( dbfImg )->( OrdSetFocus( "cImgArt" ) )
+   local lReturn     := .f.
+
+   if !( dbfImg )->( dbSeek( cCodArt ) )
+
+      lReturn        := ( cImageOld == aTmp[ ( dbfArticulo )->( fieldpos( "cImagen" ) ) ] )
+
+   else
+
+      ( dbfTmpImg )->( dbGoTop() )
+
+      while !( dbfTmpImg )->( eof() )
+
+
+         if !( dbfImg )->( dbSeek( ( dbfTmpImg )->cImgArt ) )
+
+            lReturn := .t.
+
+         else
+
+            lReturn := ( dbfImg )->cImgArt == ( dbfTmpImg )->cImgArt
+
+         end if   
+
+
+         ( dbfTmpImg )->( dbSkip() )
+
+      end while
+
+   end if   
+         
+   ( dbfImg )->( OrdSetFocus( "nOrdAnt" ) )
+   ( dbfImg )->( dbGoto( nRec ) )
+   ( dbfTmpImg )->( dbGoTop() )
+
+Return lReturn
 
 //---------------------------------------------------------------------------//

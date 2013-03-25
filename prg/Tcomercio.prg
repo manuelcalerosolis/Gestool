@@ -6694,8 +6694,6 @@ Method ExportarPrestashop() Class TComercio
 
             ::MeterGlobalText( "Subiendo imagenes" )
 
-            msgstop( "Desactivada la subida de imágenes" )
-
             ::AppendImagesPrestashop()
 
          end if
@@ -8156,7 +8154,7 @@ return ( Self )
 
 //---------------------------------------------------------------------------//
 
-Method ActualizaProductsPrestashop( cCodigoArticulo ) CLASS TComercio
+Method ActualizaProductsPrestashop( cCodigoArticulo, lChangeImage ) CLASS TComercio
 
    local oQuery
    local cCommand
@@ -8187,7 +8185,7 @@ Method ActualizaProductsPrestashop( cCodigoArticulo ) CLASS TComercio
       
                      if oQuery:RecCount() > 0
       
-                        ::UpdateProductsPrestashop()
+                        ::UpdateProductsPrestashop( lChangeImage )
       
                      else
       
@@ -8902,11 +8900,17 @@ return nCodigoweb
 
 //---------------------------------------------------------------------------//
 
-METHOD UpdateProductsPrestashop() CLASS TComercio
+METHOD UpdateProductsPrestashop( lChangeImage ) CLASS TComercio
 
    local cCommand    := ""
    local lReturn     := .f.
    local nParent     := ::GetParentCategories()
+
+   /*
+   ----------------------------------------------------------------------------
+   ACTUALIZAMOS LAS TABLAS DE ARTÍCULO-----------------------------------------
+   ----------------------------------------------------------------------------
+   */
 
    cCommand          := "UPDATE " + ::cPrefixTable( "product" ) + " SET " + ;
                            "id_manufacturer='" + AllTrim( Str( oRetFld( ::oArt:cCodFab, ::oFab, "CCODWEB", "CCODFAB" ) ) ) + "', " + ;
@@ -8939,6 +8943,23 @@ METHOD UpdateProductsPrestashop() CLASS TComercio
                         "WHERE id_product=" + AllTrim( Str( ::oArt:cCodWeb ) )
 
    lReturn           := TMSCommand():New( ::oCon ):ExecDirect( cCommand )
+
+   /*
+   ----------------------------------------------------------------------------
+   ACTUALIZAMOS IMAGENES DEL ARTÍCULO------------------------------------------
+   ----------------------------------------------------------------------------
+   */
+
+   ?lChangeImage
+
+
+
+
+
+
+
+
+
 
 Return ( self )
 
@@ -9060,39 +9081,11 @@ METHOD DeleteProductsPrestashop() CLASS TComercio
 
    end if
 
-   cCommand          := 'SELECT * FROM ' + ::cPrefixTable( "image" ) +  ' WHERE id_product=' + AllTrim( Str( ::oArt:cCodWeb ) )
-   oQuery            := TMSQuery():New( ::oCon, cCommand )
-   
-   /*if oQuery:Open()
-   
-      if oQuery:RecCount() > 0
-
-         idDelete    := oQuery:FieldGetByName( "id_image" )
-
-         cCommand          := "DELETE FROM " + ::cPrefixTable( "image" ) + " WHERE id_product=" + AllTrim( Str( ::oArt:cCodWeb ) )
-         TMSCommand():New( ::oCon ):ExecDirect( cCommand )
-
-         cCommand          := "DELETE FROM " + ::cPrefixTable( "image_shop" ) + " WHERE id_image=" + AllTrim( Str( idDelete ) )
-         TMSCommand():New( ::oCon ):ExecDirect( cCommand )
-
-         cCommand          := "DELETE FROM " + ::cPrefixTable( "image_lang" ) + " WHERE id_image=" + AllTrim( Str( idDelete ) )
-         TMSCommand():New( ::oCon ):ExecDirect( cCommand )
-   
-      end if
-
-   end if*/
-
    /*
    Eliminamos las imágenes del artículo---------------------------------------
    */
 
-   Msginfo( "Elimino imagenes artículos" )
-
    ::DeleteImagesProducts( ::oArt:cCodWeb )
-
-   /*
-   Eliminamos en cascada Todo lo que esté tirando de la familia----------------
-   */
 
    /*
    Quitamos la referencia de nuestra tabla-------------------------------------
@@ -9110,11 +9103,34 @@ METHOD DeleteImagesProducts( cCodProduct ) CLASS TComercio
    local oFtp
    local aDirectory
    local cDirectory
-   local lerror
-
-   msginfo( "entramos a eliminar las imagenes de los articulos" )
+   local lError
+   local idDelete
+   local oQuery
+   local cCommand := ""
 
    if !Empty( cCodProduct )
+      
+      /*
+      Limpiamos la refecencia en la base de datos------------------------------
+      */
+
+      cCommand          := 'SELECT * FROM ' + ::cPrefixTable( "image" ) +  ' WHERE id_product=' + AllTrim( Str( cCodProduct ) )
+      oQuery            := TMSQuery():New( ::oCon, cCommand )
+   
+      if oQuery:Open() .and. oQuery:RecCount() > 0
+
+         idDelete    := oQuery:FieldGet( 1 )
+
+         cCommand          := "DELETE FROM " + ::cPrefixTable( "image" ) + " WHERE id_product=" + AllTrim( Str( cCodProduct ) )
+         TMSCommand():New( ::oCon ):ExecDirect( cCommand )
+
+         cCommand          := "DELETE FROM " + ::cPrefixTable( "image_shop" ) + " WHERE id_image=" + AllTrim( Str( idDelete ) )
+         TMSCommand():New( ::oCon ):ExecDirect( cCommand )
+
+         cCommand          := "DELETE FROM " + ::cPrefixTable( "image_lang" ) + " WHERE id_image=" + AllTrim( Str( idDelete ) )
+         TMSCommand():New( ::oCon ):ExecDirect( cCommand )
+
+      end if
 
       /*
       Conectamos al FTP para eliminar las imagenes del articulo----------------
@@ -9129,18 +9145,17 @@ METHOD DeleteImagesProducts( cCodProduct ) CLASS TComercio
 
       else
 
-         ?"antes de eliminar"
-         ?::cDImagen + "/p/" + AllTrim( Str( cCodProduct ) )
-
          if !Empty( ::cDImagen )
             
             oFtp:SetCurrentDirectory( ::cDImagen + "/p/" + AllTrim( Str( cCodProduct ) ) )
             
-            oFtp:DeleteMask()
+            oFtp:DeleteMask( "*.*" )
 
-            oFtp:SetCurrentDirectory( ::cDImagen + "/p" )
+            msgStop( "Falta el borrado del directorio que no funciona" )
 
-            oFtp:RemoveDirectory( ::cDImagen + "/p/" + AllTrim( Str( cCodProduct ) ) )
+            /*oFtp:SetCurrentDirectory( ::cDImagen + "/p" )
+
+            oFtp:RemoveDirectory( ::cDImagen + "/p/" + AllTrim( Str( cCodProduct ) ) )*/
 
          end if
 
