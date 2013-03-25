@@ -1545,7 +1545,7 @@ FONT 8, "MS Sans Serif"
   CONTROL "Col.", -1, "Static", WS_GROUP, 319, 9, 13, 8
 }
 
-EMPRESA_1 DIALOG DISCARDABLE 31, 12, 397, 299
+EMPRESA_1 DIALOG DISCARDABLE 31, 12, 397, 377
 STYLE WS_CHILD|DS_3DLOOK
 FONT 8, "MS Sans Serif"
 {
@@ -1564,12 +1564,12 @@ FONT 8, "MS Sans Serif"
   CONTROL "", 194, "Edit", WS_BORDER|WS_TABSTOP, 104, 154, 282, 11
   CONTROL "", 400, "Edit", WS_BORDER|WS_TABSTOP, 104, 180, 35, 11
   CONTROL "", 410, "Edit", WS_BORDER|WS_TABSTOP, 140, 180, 119, 11
-  CONTROL "Compartir clientes con el grupo", 420, "Button", BS_AUTOCHECKBOX|WS_TABSTOP, 48, 197, 110, 10
-  CONTROL "", 201, "Edit", WS_VSCROLL|WS_BORDER|WS_TABSTOP, 140, 209, 34, 11
-  CONTROL "Compartir proveedores con el grupo", 430, "Button", BS_AUTOCHECKBOX|WS_TABSTOP, 48, 224, 125, 10
-  CONTROL "", 205, "Edit", WS_VSCROLL|WS_BORDER|WS_TABSTOP, 140, 236, 34, 11
-  CONTROL "Compartir artículos con el grupo", 440, "Button", BS_AUTOCHECKBOX|WS_TABSTOP, 48, 251, 113, 10
-  CONTROL "Compartir almacenes con el grupo", 450, "Button", BS_AUTOCHECKBOX|WS_TABSTOP, 48, 265, 120, 10
+  CONTROL "Compartir clientes con la matriz", 420, "Button", BS_AUTOCHECKBOX|WS_TABSTOP, 48, 194, 110, 10
+  CONTROL "", 201, "Edit", NOT WS_VISIBLE|WS_VSCROLL|WS_BORDER|WS_TABSTOP, 140, 340, 34, 11
+  CONTROL "Compartir proveedores con la matriz", 430, "Button", BS_AUTOCHECKBOX|WS_TABSTOP, 48, 206, 125, 10
+  CONTROL "", 205, "Edit", NOT WS_VISIBLE|WS_VSCROLL|WS_BORDER|WS_TABSTOP, 140, 355, 34, 11
+  CONTROL "Compartir artículos con el grupo", 440, "Button", BS_AUTOCHECKBOX|WS_TABSTOP, 48, 218, 113, 10
+  CONTROL "Compartir almacenes con el grupo", 450, "Button", BS_AUTOCHECKBOX|WS_TABSTOP, 48, 230, 120, 10
   CONTROL "", 360, "Edit", WS_BORDER|WS_TABSTOP, 324, 180, 42, 11
   CONTROL "TBitMap", 361, "TBitMap", 0x00800020, 368, 180, 18, 11
   CONTROL "", 370, "Edit", WS_BORDER|WS_TABSTOP, 324, 192, 41, 11
@@ -1589,17 +1589,17 @@ FONT 8, "MS Sans Serif"
   CONTROL "Divisa empresa", -1, "Static", WS_GROUP, 270, 183, 50, 8
   CONTROL "Divisa cambio", -1, "Static", WS_GROUP, 270, 195, 47, 8
   CONTROL "", -1, "Button", BS_GROUPBOX, 44, 29, 348, 139
-  CONTROL "Propiedades del grupo", -1, "Button", BS_GROUPBOX, 44, 170, 217, 108
+  CONTROL "Empresa matriz", -1, "Button", BS_GROUPBOX, 44, 170, 217, 74
   CONTROL "E-mail", -1, "Static", WS_GROUP, 48, 145, 50, 8
-  CONTROL "Dígitos cliente", 202, "Static", WS_GROUP, 59, 212, 48, 8
+  CONTROL "Dígitos cliente", 202, "Static", WS_GROUP, 59, 343, 48, 8
   CONTROL "", -1, "Static", SS_ETCHEDHORZ, 48, 85, 342, 1
   CONTROL "", -1, "Static", SS_ETCHEDHORZ, 48, 138, 342, 1
   CONTROL "Web", -1, "Static", WS_GROUP, 48, 157, 50, 8
-  CONTROL "Dígitos proveedor", 206, "Static", WS_GROUP, 59, 239, 58, 8
+  CONTROL "Dígitos proveedor", 206, "Static", WS_GROUP, 59, 358, 58, 8
   CONTROL "Operaciones", -1, "Button", BS_GROUPBOX, 264, 208, 128, 37
   CONTROL "Inicio", -1, "Static", WS_GROUP, 270, 221, 21, 8
   CONTROL "Fin", -1, "Static", WS_GROUP, 270, 233, 22, 8
-  CONTROL "Grupo empresa", -1, "Static", WS_GROUP, 48, 183, 51, 8
+  CONTROL "Código empresa", -1, "Static", WS_GROUP, 48, 183, 51, 8
   CONTROL "Nº reg. mercantil", -1, "Static", WS_GROUP, 48, 75, 56, 8
   CONTROL "Divisas", -1, "Button", BS_GROUPBOX, 264, 170, 128, 37
   CONTROL "", 500, "Static", SS_BITMAP|SS_CENTERIMAGE, 4, 3, 34, 30
@@ -7030,7 +7030,7 @@ FONT 8, "MS Sans Serif"
   CONTROL "Matrícula", -1, "Static", WS_GROUP, 8, 202, 35, 8
 }
 
-USUARIOS DIALOG DISCARDABLE 193, 47, 620, 374
+USUARIOS DIALOG DISCARDABLE 193, 47, 620, 386
 STYLE WS_POPUP|DS_MODALFRAME|DS_3DLOOK|WS_CAPTION|WS_SYSMENU|WS_VISIBLE
 CAPTION "Usuarios"
 FONT 8, "MS Sans Serif"
@@ -7044,10 +7044,12 @@ FONT 8, "MS Sans Serif"
   CONTROL "", 131, "Edit", WS_BORDER|WS_TABSTOP, 188, 118, 185, 11
   CONTROL "", 150, "Edit", WS_BORDER|WS_TABSTOP, 101, 130, 85, 11
   CONTROL "", 151, "Edit", WS_BORDER, 188, 130, 185, 11
-  CONTROL "", 160, "Edit", WS_BORDER|WS_TABSTOP, 101, 142, 85, 11
-  CONTROL "", 340, "Edit", WS_BORDER|WS_TABSTOP, 101, 154, 85, 11
-  CONTROL "", 161, "Edit", WS_BORDER, 188, 142, 185, 11
-  CONTROL "", 140, "Edit", ES_AUTOHSCROLL|WS_BORDER|WS_TABSTOP, 101, 166, 272, 11
+  CONTROL "", 155, "Edit", WS_BORDER|WS_TABSTOP, 101, 142, 85, 11
+  CONTROL "", 156, "Edit", WS_BORDER, 188, 142, 185, 11
+  CONTROL "", 160, "Edit", WS_BORDER|WS_TABSTOP, 101, 154, 85, 11
+  CONTROL "", 161, "Edit", WS_BORDER, 188, 154, 185, 11
+  CONTROL "", 340, "Edit", WS_BORDER|WS_TABSTOP, 101, 166, 85, 11
+  CONTROL "", 140, "Edit", ES_AUTOHSCROLL|WS_BORDER|WS_TABSTOP, 101, 178, 272, 11
   CONTROL "No autorizado para cambio de precios", 240, "Button", BS_AUTOCHECKBOX|WS_TABSTOP, 397, 42, 133, 10
   CONTROL "No mostrar rentabilidad ", 260, "Button", BS_AUTOCHECKBOX|WS_TABSTOP, 397, 55, 133, 10
   CONTROL "No mostrar precios de costo", 270, "Button", BS_AUTOCHECKBOX|WS_TABSTOP, 397, 68, 133, 10
@@ -7059,37 +7061,38 @@ FONT 8, "MS Sans Serif"
   CONTROL "No pedir confirmación al eliminar", 330, "Button", BS_AUTOCHECKBOX|WS_TABSTOP, 397, 146, 133, 10
   CONTROL "Filtrar operaciones por usuario", 350, "Button", BS_AUTOCHECKBOX|WS_TABSTOP, 397, 159, 133, 10
   CONTROL "Realizar documentos automáticos", 360, "Button", BS_AUTOCHECKBOX|WS_TABSTOP, 397, 171, 133, 10
-  CONTROL "", 320, "Edit", WS_BORDER|WS_TABSTOP, 101, 196, 85, 11
-  CONTROL "", 321, "Edit", WS_BORDER|WS_TABSTOP, 188, 196, 185, 11
-  CONTROL "", 170, "SysTreeView32", TVS_HASBUTTONS|TVS_HASLINES|TVS_LINESATROOT|TVS_SHOWSELALWAYS|TVS_TRACKSELECT|TVS_FULLROWSELECT|WS_BORDER, 51, 211, 322, 138
-  CONTROL "Sin acceso", 180, "Button", BS_AUTOCHECKBOX|WS_TABSTOP, 397, 197, 70, 10
-  CONTROL "Añadir, duplicar", 190, "Button", BS_AUTOCHECKBOX|WS_TABSTOP, 397, 210, 70, 10
-  CONTROL "Modificar", 200, "Button", BS_AUTOCHECKBOX|WS_TABSTOP, 397, 223, 70, 10
-  CONTROL "Zoom", 210, "Button", BS_AUTOCHECKBOX|WS_TABSTOP, 397, 236, 70, 10
-  CONTROL "Eliminar", 220, "Button", BS_AUTOCHECKBOX|WS_TABSTOP, 397, 249, 70, 10
-  CONTROL "Imprimir", 230, "Button", BS_AUTOCHECKBOX|WS_TABSTOP, 397, 262, 70, 10
-  CONTROL "&Aceptar [F5]", 560, "Button", BS_DEFPUSHBUTTON|WS_TABSTOP, 396, 357, 50, 14
-  CONTROL "&Cancelar", 561, "Button", WS_TABSTOP, 451, 357, 50, 14
-  CONTROL "&Ayuda", 569, "Button", WS_TABSTOP, 506, 357, 50, 14
-  CONTROL "", 500, "TBitmap", 0x00800000, 558, 34, 59, 52
+  CONTROL "", 320, "Edit", WS_BORDER|WS_TABSTOP, 101, 208, 85, 11
+  CONTROL "", 321, "Edit", WS_BORDER|WS_TABSTOP, 188, 208, 185, 11
+  CONTROL "", 170, "SysTreeView32", TVS_HASBUTTONS|TVS_HASLINES|TVS_LINESATROOT|TVS_SHOWSELALWAYS|TVS_TRACKSELECT|TVS_FULLROWSELECT|WS_BORDER, 51, 223, 322, 138
+  CONTROL "Sin acceso", 180, "Button", BS_AUTOCHECKBOX|WS_TABSTOP, 397, 209, 70, 10
+  CONTROL "Añadir, duplicar", 190, "Button", BS_AUTOCHECKBOX|WS_TABSTOP, 397, 222, 70, 10
+  CONTROL "Modificar", 200, "Button", BS_AUTOCHECKBOX|WS_TABSTOP, 397, 235, 70, 10
+  CONTROL "Zoom", 210, "Button", BS_AUTOCHECKBOX|WS_TABSTOP, 397, 248, 70, 10
+  CONTROL "Eliminar", 220, "Button", BS_AUTOCHECKBOX|WS_TABSTOP, 397, 261, 70, 10
+  CONTROL "Imprimir", 230, "Button", BS_AUTOCHECKBOX|WS_TABSTOP, 397, 274, 70, 10
+  CONTROL "&Aceptar [F5]", 560, "Button", BS_DEFPUSHBUTTON|WS_TABSTOP, 396, 369, 50, 14
+  CONTROL "&Cancelar", 561, "Button", WS_TABSTOP, 451, 369, 50, 14
+  CONTROL "&Ayuda", 569, "Button", WS_TABSTOP, 506, 369, 50, 14
+  CONTROL "", 500, "TBitMap", 0x00800000, 558, 34, 59, 52
   CONTROL "Código", -1, "Static", WS_GROUP, 51, 43, 46, 8
   CONTROL "Nombre", -1, "Static", WS_GROUP, 51, 55, 46, 8
   CONTROL "Clave acceso", 121, "Static", WS_GROUP, 51, 81, 46, 8
   CONTROL "Tipo", -1, "Static", WS_GROUP, 51, 68, 46, 8
-  CONTROL "Mapa de accesos", -1, "Button", BS_GROUPBOX|WS_TABSTOP, 44, 185, 511, 168
+  CONTROL "Mapa de accesos", -1, "Button", BS_GROUPBOX|WS_TABSTOP, 44, 197, 511, 168
   CONTROL "Almacén", -1, "Static", WS_GROUP, 51, 121, 41, 8
   CONTROL "Caja", -1, "Static", WS_GROUP, 51, 133, 41, 8
-  CONTROL "Imágen", -1, "Static", WS_GROUP, 51, 169, 41, 8
+  CONTROL "Imágen", -1, "Static", WS_GROUP, 51, 181, 41, 8
   CONTROL "Usuario", -1, "Button", BS_GROUPBOX|WS_TABSTOP|0x00000020, 44, 30, 338, 75
-  CONTROL "Delegación", -1, "Static", WS_GROUP, 51, 145, 41, 8
+  CONTROL "Delegación", -1, "Static", WS_GROUP, 51, 157, 41, 8
   CONTROL "Repetir clave", 123, "Static", WS_GROUP, 51, 93, 46, 8
-  CONTROL "Propiedades", -1, "Button", BS_GROUPBOX|WS_TABSTOP|0x00000020, 390, 30, 165, 153
-  CONTROL "Valores por defecto", -1, "Button", BS_GROUPBOX|WS_TABSTOP|0x00000020, 44, 107, 338, 76
-  CONTROL "Grupo", 322, "Static", WS_GROUP, 51, 199, 33, 8
-  CONTROL "", 341, "Edit", WS_BORDER, 188, 154, 185, 11
-  CONTROL "Operario", -1, "Static", WS_GROUP, 51, 157, 41, 8
+  CONTROL "Propiedades", -1, "Button", BS_GROUPBOX|WS_TABSTOP|0x00000020, 390, 30, 165, 162
+  CONTROL "Valores por defecto", -1, "Button", BS_GROUPBOX|WS_TABSTOP|0x00000020, 44, 107, 338, 86
+  CONTROL "Grupo", 322, "Static", WS_GROUP, 51, 211, 33, 8
+  CONTROL "", 341, "Edit", WS_BORDER, 188, 166, 185, 11
+  CONTROL "Operario", -1, "Static", WS_GROUP, 51, 169, 41, 8
   CONTROL "", 990, "Static", SS_BITMAP|SS_CENTERIMAGE, 4, 3, 34, 30
   CONTROL "Usuarios", -1, "Static", WS_GROUP, 44, 3, 120, 8
+  CONTROL "Empresa", -1, "Static", WS_GROUP, 51, 145, 41, 8
 }
 
 SEANUMSER DIALOG DISCARDABLE -157, -139, 671, 337

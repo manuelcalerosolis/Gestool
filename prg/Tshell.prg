@@ -1,15 +1,10 @@
-#ifndef __PDA__
-   #include "FiveWin.Ch"
-   #include "Splitter.ch"
-   #include "Factu.ch"
-   #include "Constant.ch"
-   #include "MesDbf.ch"
-   #include "xbrowse.ch"
-   #include "DbInfo.ch"
-#else
-   #include "FWCE.ch"
-   REQUEST DBFCDX
-#endif
+#include "FiveWin.Ch"
+#include "Splitter.ch"
+#include "Factu.ch"
+#include "Constant.ch"
+#include "MesDbf.ch"
+#include "xbrowse.ch"
+#include "DbInfo.ch"
 
 #define TVS_HASBUTTONS        1
 #define TVS_HASLINES          2
@@ -102,6 +97,8 @@ CLASS TShell FROM TMdiChild
    DATA  bDel
    DATA  bDup
    DATA  bZoo
+
+   DATA  lFastButtons   AS LOGIC    INIT .t.
 
    DATA  lTactil        AS LOGIC    INIT .f.
 
@@ -784,9 +781,9 @@ METHOD End( lForceExit ) CLASS TShell
       // Guardamos la pos actual ----------------------------------------------
 
       do case
-         case ValType( ::xAlias ) == "O"
+         case IsObject( ::xAlias )
             ::nRec            := ::xAlias:RecNo()
-         case  ValType( ::xAlias ) == "C" .and. ( ::xAlias )->( Used() )
+         case  IsChar( ::xAlias ).and. ( ::xAlias )->( Used() )
             ::nRec            := ( ::xAlias )->( RecNo() )
       end case
 
@@ -862,9 +859,9 @@ METHOD Search() CLASS TShell
    end if
 
    do case
-   case ValType( ::xAlias ) == "O"
+   case IsObject( ::xAlias )
       cIndice     := ::aPrompt[ ::xAlias:OrdNumber() ]
-   case ValType( ::xAlias ) == "C" .and. ( ::xAlias )->( Used() )
+   case IsChar( ::xAlias ).and. ( ::xAlias )->( Used() )
       cIndice     := ::aPrompt[ ( ::xAlias )->( OrdNumber() ) ]
    end case
 
@@ -920,6 +917,7 @@ METHOD AddSearch() CLASS TShell
       nRec  := ::xAlias:Recno()
 
       ::xAlias:OrdClearScope()
+
       ::xAlias:GoTo( nRec )
 
    case IsChar( ::xAlias ) .and. ( ::xAlias )->( Used() )
@@ -928,11 +926,12 @@ METHOD AddSearch() CLASS TShell
 
       ( ::xAlias )->( OrdScope( 0, nil ) )
       ( ::xAlias )->( OrdScope( 1, nil ) )
+
       ( ::xAlias )->( dbGoTo( nRec ) )
 
    end case
 
-   ::oBrw:Refresh()
+   // ::oBrw:Refresh()
 
    CursorWE()
 
@@ -947,9 +946,9 @@ Cambia el indice actual
 METHOD ChgIndex( oIndice ) CLASS TShell
 
    do case
-   case ValType( ::xAlias ) == "O"
+   case IsObject( ::xAlias )
       ::xAlias:OrdSetFocus( oIndice:nAt )
-   case ValType( ::xAlias ) == "C" .and. ( ::xAlias )->( Used() )
+   case IsChar( ::xAlias ) .and. ( ::xAlias )->( Used() )
       ( ::xAlias )->( OrdSetFocus( oIndice:nAt ) )
    end case
 
@@ -986,10 +985,10 @@ METHOD ChangeSeek( oIndice ) CLASS TShell
    local nOrd     := if( SubStr( oGet:varGet(), 1, 1 ) $ "0123456789", 1, 2 )
 
    do case
-   case ValType( ::xAlias ) == "O"
+   case IsObject( ::xAlias )
       ::xAlias:OrdSetFocus( n )
       cType       := ValType( ::xAlias:OrdKey() )
-   case ValType( ::xAlias ) == "C" .and. ( ::xAlias )->( Used() )
+   case IsChar( ::xAlias ).and. ( ::xAlias )->( Used() )
       ( ::xAlias )->( OrdSetFocus( n ) )
       cType       := ValType( ( ::xAlias )->( OrdKey() ) )
    end case
@@ -1009,9 +1008,9 @@ METHOD ChangeSeek( oIndice ) CLASS TShell
    end if
 
    do case
-   case ValType( ::xAlias ) == "O"
+   case IsObject( ::xAlias )
       ::xAlias:Seek( xCadena )
-   case ValType( ::xAlias ) == "C" .and. ( ::xAlias )->( Used() )
+   case IsChar( ::xAlias ).and. ( ::xAlias )->( Used() )
       ( ::xAlias )->( dbSeek( xCadena ) )
    end case
 
@@ -1366,7 +1365,7 @@ static function SeaSeek( nKey, Self )
 
       nOrd     := if( SubStr( ::aLstSea[ nKey ], 1, 1 ) $ "0123456789", 1, 2 )
 
-      if ValType( ::xAlias ) == "O"
+      if IsObject( ::xAlias )
          nOrd  := ::xAlias:OrdSetFocus( nOrd )
          cType := ValType( ::xAlias:OrdKey() )
       else
@@ -1382,7 +1381,7 @@ static function SeaSeek( nKey, Self )
          xKey  := Val( ::aLstSea[ nKey ] )
       end if
 
-      if ValType( ::xAlias ) == "O"
+      if IsObject( ::xAlias )
          ::xAlias:Seek( xKey )
          ::xAlias:OrdSetFocus( nOrd )
       else
@@ -1421,10 +1420,10 @@ METHOD PutOriginal() CLASS TShell
    */
 
    do case
-      case ValType( ::xAlias ) == "O"
+      case IsObject( ::xAlias )
          ::xAlias:GoTop()
 
-      case ValType( ::xAlias ) == "C" .and. ( ::xAlias )->( Used() )
+      case IsChar( ::xAlias ).and. ( ::xAlias )->( Used() )
          ( ::xAlias )->( dbGoTop() )
    end case
 
@@ -2574,7 +2573,7 @@ Method CreateXBrowse() CLASS TShell
       ::oBrw:bClrSel          := {|| { CLR_BLACK, Rgb( 229, 229, 229 ) } }
       ::oBrw:bClrSelFocus     := {|| { CLR_BLACK, Rgb( 167, 205, 240 ) } }
 
-      ::oBrw:bSeek            := { |c,u| ::oBrw:RddIncrSeek( c, @u ) }
+      // ::oBrw:bSeek            := { |c,u| ::oBrw:RddIncrSeek( c, @u ) }
 
       do case
       case IsObject( ::xAlias )
@@ -2585,14 +2584,14 @@ Method CreateXBrowse() CLASS TShell
 
          ::oBrw:nDataType  := 0 // DATATYPE_RDD
          ::oBrw:cAlias     := ::xAlias
-         ::oBrw:bGoTop     := {|| ( ::xAlias )->( DbGoTop() ) }
-         ::oBrw:bGoBottom  := {|| ( ::xAlias )->( DbGoBottom() ) }
+         ::oBrw:bGoTop     := {|| ( ::xAlias )->( dbGoTop() ) }
+         ::oBrw:bGoBottom  := {|| ( ::xAlias )->( dbGoBottom() ) }
          ::oBrw:bSkip      := {| n | iif( n == nil, n := 1, ), ( ::xAlias )->( dbSkipper( n ) ) }
          ::oBrw:bBof       := {|| ( ::xAlias )->( Bof() ) }
          ::oBrw:bEof       := {|| ( ::xAlias )->( Eof() ) }
          ::oBrw:bBookMark  := {| n | iif( n == nil, ( ::xAlias )->( RecNo() ), ( ::xAlias )->( dbGoto( n ) ) ) }
-         ::oBrw:bLock      := {|| ( ::xAlias )->( DbrLock() ) }
-         ::oBrw:bUnlock    := {|| ( ::xAlias )->( DbrUnlock() ) }
+         ::oBrw:bLock      := {|| ( ::xAlias )->( dbrLock() ) }
+         ::oBrw:bUnlock    := {|| ( ::xAlias )->( dbrUnlock() ) }
 
          if lAdsRdd()
          ::oBrw:bKeyNo     := {| n | iif( n == nil, Round( ( ::xAlias )->( ADSGetRelKeyPos() ) * ::oBrw:nLen, 0 ), ( ::xAlias )->( ADSSetRelKeyPos( n / ::oBrw:nLen ) ) ) }
@@ -2601,6 +2600,8 @@ Method CreateXBrowse() CLASS TShell
          ::oBrw:bKeyNo     := {| n | iif( n == nil, ( ::xAlias )->( OrdKeyNo() ), ( ::xAlias )->( OrdKeyGoto( n ) ) ) }
          ::oBrw:bKeyCount  := {|| ( ::xAlias )->( OrdKeyCount() ) }
          end if
+
+         // ::oBrw:bPastEof   := {|| msgStop( "bPastEof") }
 
       end case
 
@@ -2651,6 +2652,27 @@ Method CreateXFromCode()
       oCol:bLDClickData    := {|| ::RecEdit() }
    next
 
+   // Insertamos los fastbuttons-----------------------------------------------
+   /*
+   if ::lFastButtons 
+
+      with object ( ::oBrw:AddCol() )
+         :cHeader             := "Restar unidades"
+         :bStrData            := {|| "" }
+         :bOnPreEdit          := {|| msgAlert( "preedit") }
+         :bOnPostEdit         := {|| .t. }
+         :bEditBlock          := {|| ::RecEdit() }
+         :bBmpData            := {|| 1 }
+         :nEditType           := 3
+         :nWidth              := 20
+         :nHeadBmpNo          := 1
+         :nBtnBmp             := 1
+         :nHeadBmpAlign       := 1
+         :AddResource( "Edit_16" )
+      end with
+
+   end if
+   */
    // Creamos el objeto -------------------------------------------------------
 
    ::oBrw:CreateFromCode()

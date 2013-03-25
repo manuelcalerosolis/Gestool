@@ -17732,7 +17732,7 @@ Function SynTikCli( cPath )
    while !( dbfTikP )->( eof() )
 
       if Empty( ( dbfTikP )->cCodCaj )
-         ( dbfTikP )->cCodCaj := "000"
+         ( dbfTikP )->cCodCaj := oUser():cCaja()
       end if
 
       ( dbfTikP )->( dbSkip() )

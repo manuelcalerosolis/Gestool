@@ -9132,6 +9132,9 @@ Function SynSatCli( cPath )
    USE ( cPatEmp() + "SATCLII.DBF" )   NEW VIA ( cDriver() ) ALIAS ( cCheckArea( "SATCLII", @dbfSatCliI ) ) EXCLUSIVE
    SET ADSINDEX TO ( cPatEmp() + "SATCLII.CDX" ) ADDITIVE
 
+   USE ( cPatEmp() + "SATCLIS.DBF" )   NEW VIA ( cDriver() ) ALIAS ( cCheckArea( "SATCLIS", @dbfSatCliS ) ) EXCLUSIVE
+   SET ADSINDEX TO ( cPatEmp() + "SATCLIS.CDX" ) ADDITIVE
+
    USE ( cPatArt() + "ARTICULO.DBF" )  NEW VIA ( cDriver() ) ALIAS ( cCheckArea( "ARTICULO", @dbfArticulo ) ) EXCLUSIVE
    SET ADSINDEX TO ( cPatArt() + "ARTICULO.CDX" ) ADDITIVE
 
@@ -9230,6 +9233,28 @@ Function SynSatCli( cPath )
 
       end while
 
+      // Series ---------------------------------------------------------------
+   
+      while !( dbfSatCliS )->( eof() )
+   
+         if !( dbfSatCliT )->( dbSeek( ( dbfSatCliS )->cSerSat + Str( ( dbfSatCliS )->nNumSat ) + ( dbfSatCliS )->cSufSat ) )
+   
+            ( dbfSatCliS )->( dbDelete() )
+   
+         else
+   
+            if ( dbfSatCliS )->dFecSat != ( dbfSatCliT )->dFecSat
+               ( dbfSatCliS )->dFecSat    := ( dbfSatCliT )->dFecSat
+            end if
+   
+         end if
+   
+         ( dbfSatCliS )->( dbSkip() )
+   
+         SysRefresh()
+   
+      end while
+
    RECOVER USING oError
 
       msgStop( "Imposible abrir todas las bases de datos" + CRLF + ErrorMessage( oError ) )
@@ -9241,6 +9266,7 @@ Function SynSatCli( cPath )
    CLOSE ( dbfSatCliT )
    CLOSE ( dbfSatCliL )
    CLOSE ( dbfSatCliI )
+   CLOSE ( dbfSatCliS )
    CLOSE ( dbfArticulo)
    CLOSE ( dbfFamilia )
    CLOSE ( dbfIva     )

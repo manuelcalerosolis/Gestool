@@ -28,37 +28,37 @@ REQUEST DBFCDX
 #define _LNOTBMP                 17      //   L      1      0
 #define _LNOTINI                 18      //   L      1      0
 #define _NSIZICO                 19      //   L      1      0
-#define _CCODDLG                 20      //   C      2      0
-#define _LNOTRNT                 21      //   L      1      0
-#define _LNOTCOS                 22      //   L      1      0
-#define _LUSRZUR                 23      //   L      1      0
-#define _LALERTA                 24      //   L      1      0
-#define _LGRUPO                  25      //   L      1      0     Lógico de grupo
-#define _CCODGRP                 26      //   C      3      0     Código de grupo
-#define _LNOTDEL                 27      //   L      1      0     Lógico de pedir autorización al borrar registros
-#define _CCODTRA                 28      //   C      3      0     Código de grupo
-#define _LFILVTA                 29      //   L      1      0     Filtrar ventas por usuario
-#define _LDOCAUT                 30      //   L      1      0     Documentos automáticos
-#define _DULTAUT                 31      //   D      8      0     Último documento aautomático
+#define _CCODEMP                 20      //   C      2      0
+#define _CCODDLG                 21      //   C      2      0
+#define _LNOTRNT                 22      //   L      1      0
+#define _LNOTCOS                 23      //   L      1      0
+#define _LUSRZUR                 24      //   L      1      0
+#define _LALERTA                 25      //   L      1      0
+#define _LGRUPO                  26      //   L      1      0     Lógico de grupo
+#define _CCODGRP                 27      //   C      3      0     Código de grupo
+#define _LNOTDEL                 28      //   L      1      0     Lógico de pedir autorización al borrar registros
+#define _CCODTRA                 29      //   C      3      0     Código de grupo
+#define _LFILVTA                 30      //   L      1      0     Filtrar ventas por usuario
+#define _LDOCAUT                 31      //   L      1      0     Documentos automáticos
+#define _DULTAUT                 32      //   D      8      0     Último documento aautomático
 
 //----------------------------------------------------------------------------//
 //Comenzamos la parte de código que se compila para el ejecutable normal
 
-#ifndef __PDA__
-
 static oWndBrw
+
+static dbfEmp
+static dbfFlt
+static dbfUser
+static dbfMapa
 static dbfCajT
 static dbfDelega
-static dbfFlt
+
 static oOperario
 static oClaveRepetida
 static cClaveRepetida
+
 static bEdit            := { |aTmp, aGet, dbfUser, oBrw, bWhen, bValid, nMode | EdtRec( aTmp, aGet, dbfUser, oBrw, bWhen, bValid, nMode ) }
-
-#endif
-
-static dbfUser
-static dbfMapa
 
 //----------------------------------------------------------------------------//
 
@@ -89,6 +89,9 @@ Function OpenFiles()
 
    USE ( cPatDat() + "Cajas.Dbf" ) NEW VIA ( cDriver() ) SHARED ALIAS ( cCheckArea( "CAJAS", @dbfCajT ) )
    SET ADSINDEX TO ( cPatDat() + "Cajas.Cdx" ) ADDITIVE
+
+   USE ( cPatDat() + "EMPRESA.DBF" ) NEW VIA ( cDriver() ) SHARED ALIAS ( cCheckArea( "EMPRESA", @dbfEmp ) )
+   SET ADSINDEX TO ( cPatDat() + "EMPRESA.CDX" ) ADDITIVE
 
    USE ( cPatDat() + "DELEGA.DBF" ) NEW VIA ( cDriver() ) SHARED ALIAS ( cCheckArea( "DELEGA", @dbfDelega ) )
    SET ADSINDEX TO ( cPatDat() + "DELEGA.CDX" ) ADDITIVE
@@ -128,6 +131,10 @@ Static Function CloseFiles()
       ( dbfCajT )->( dbCloseArea() )
    end if
 
+   if !Empty( dbfEmp )
+      ( dbfEmp )->( dbCloseArea() )
+   end if
+
    if !Empty( dbfDelega )
       ( dbfDelega )->( dbCloseArea() )
    end if
@@ -140,6 +147,7 @@ Static Function CloseFiles()
    dbfUser        := nil
    dbfMapa        := nil
    dbfCajT        := nil
+   dbfEmp         := nil 
    dbfDelega      := nil
 
    if oWndBrw != nil
@@ -406,26 +414,13 @@ STATIC FUNCTION EdtRec( aTmp, aGet, dbfUser, oBrw, lGrupo, bValid, nMode )
    cSayDlg              := RetFld( aTmp[_CCODDLG], dbfDelega, "cNomDlg" )
    cGrupoUsuarios       := aGrupoUsuarios[ aTmp[ _NGRPUSE ] ]
 
-
    if aTmp[ _LGRUPO ]
 
    DEFINE DIALOG oDlg RESOURCE "GRUPOS" TITLE LblTitle( nMode ) + "grupos de usuarios"
 
-      REDEFINE BITMAP oBmpGeneral ;
-         ID       990 ;
-         RESOURCE "users_48_alpha" ;
-         TRANSPARENT ;
-         OF       oDlg
-
    else
 
    DEFINE DIALOG oDlg RESOURCE "USUARIOS" TITLE LblTitle( nMode ) + "usuarios"
-
-      REDEFINE BITMAP oBmpGeneral ;
-         ID       990 ;
-         RESOURCE "user_48_alpha" ;
-         TRANSPARENT ;
-         OF       oDlg
 
       REDEFINE GET aGet[ _CCLVUSE ] VAR aTmp[ _CCLVUSE ];
 			ID 		120 ;
@@ -492,7 +487,6 @@ STATIC FUNCTION EdtRec( aTmp, aGet, dbfUser, oBrw, lGrupo, bValid, nMode )
 			WHEN 		( nMode != ZOOM_MODE ) ;
          VALID    cCajas( aGet[ _CCAJUSE ], dbfCajT, oSay[ 2 ] ) ;
          ID       150 ;
-			COLOR 	CLR_GET ;
          BITMAP   "LUPA" ;
          ON HELP  ( BrwCajas( aGet[ _CCAJUSE ], oSay[ 2 ] ) ) ;
          OF       oDlg
@@ -500,22 +494,28 @@ STATIC FUNCTION EdtRec( aTmp, aGet, dbfUser, oBrw, lGrupo, bValid, nMode )
       REDEFINE GET oSay[ 2 ] VAR cSay[ 2 ] ;
          ID       151 ;
          WHEN     .f. ;
-			COLOR 	CLR_GET ;
+         OF       oDlg
+
+      REDEFINE GET aGet[ _CCODEMP ] VAR aTmp[ _CCODEMP ];
+         WHEN     ( aTmp[ _CCODUSE ] != "000" .and. nMode != ZOOM_MODE ) ;
+         ID       155 ;
+         IDTEXT   156 ;
+         BITMAP   "LUPA" ;
+         VALID    ( cEmpresa( aGet[ _CCODEMP ], dbfEmp, aGet[ _CCODEMP ]:oHelpText ) ) ;
+         ON HELP  ( BrwEmpresa( aGet[ _CCODEMP ], dbfEmp, aGet[ _CCODEMP ]:oHelpText ) ) ;
          OF       oDlg
 
       REDEFINE GET aGet[ _CCODDLG ] VAR aTmp[ _CCODDLG ];
-			WHEN 		( nMode != ZOOM_MODE ) ;
+         WHEN     ( aTmp[ _CCODUSE ] != "000" .and. !Empty( aTmp[ _CCODEMP ] ) .and. nMode != ZOOM_MODE ) ;
          ID       160 ;
-			COLOR 	CLR_GET ;
          BITMAP   "LUPA" ;
-         VALID    ( cDelegacion( aGet[ _CCODDLG ], dbfDelega, oSayDlg ) ) ;
-         ON HELP  ( BrwDelegacion( aGet[ _CCODDLG ], dbfDelega, oSayDlg ) ) ;
+         VALID    ( cDelegacion( aGet[ _CCODDLG ], dbfDelega, oSayDlg, aTmp[ _CCODEMP ] ) ) ;
+         ON HELP  ( BrwDelegacion( aGet[ _CCODDLG ], dbfDelega, oSayDlg, aTmp[ _CCODEMP ] ) ) ; 
          OF       oDlg
 
       REDEFINE GET oSayDlg VAR cSayDlg ;
          ID       161 ;
          WHEN     .f. ;
-			COLOR 	CLR_GET ;
          OF       oDlg
 
       REDEFINE GET aGet[ _CCODTRA ] VAR aTmp[ _CCODTRA ];
@@ -556,6 +556,12 @@ STATIC FUNCTION EdtRec( aTmp, aGet, dbfUser, oBrw, lGrupo, bValid, nMode )
          OF       oDlg
 
    end if
+
+      REDEFINE BITMAP oBmpGeneral ;
+         ID       990 ;
+         RESOURCE "user_48_alpha" ;
+         TRANSPARENT ;
+         OF       oDlg
 
       REDEFINE GET oGet VAR aTmp[ _CCODUSE ];
 			ID 		100 ;
@@ -2699,6 +2705,7 @@ Function aItmUsr()
                      { "lNotBmp",   "L",  1,  0, "Lógico no mostrar imagen de fondo" },;
                      { "lNotIni",   "L",  1,  0, "Lógico no mostrar página de inicio" },;
                      { "nSizIco",   "N",  1,  0, "" },;
+                     { "cCodEmp",   "C",  4,  0, "Código de empresa de usuario" },;
                      { "cCodDlg",   "C",  2,  0, "Código de delegación de usuario" },;
                      { "lNotRnt",   "L",  1,  0, "Lógico no ver la rentabilidad por operación" },;
                      { "lNotCos",   "L",  1,  0, "Lógico no ver los precios de costo" },;
@@ -2718,9 +2725,9 @@ Return ( aBase )
 
 Static Function aItmMap()
 
-   local aMapa := {  { "CCODUSE",   "C",  3,  0, "Código del usuario" },;
-                     { "CNOMOPC",   "C", 20,  0, "Opción de programa" },;
-                     { "NLEVOPC",   "N",  8,  0, "Nivel de acceso" } }
+   local aMapa := {  { "cCodUse",   "C",  3,  0, "Código del usuario" },;
+                     { "cNomOpc",   "C", 20,  0, "Opción de programa" },;
+                     { "nLevOpc",   "N",  8,  0, "Nivel de acceso" } }
 
 Return ( aMapa )
 

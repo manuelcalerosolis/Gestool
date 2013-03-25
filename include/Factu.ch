@@ -686,3 +686,5 @@ Browse inteligente
 #define ZipExtractFiles         MyZipExtractFiles
 
 #endif
+
+#xtranslate MinMax( <xValue>, <nMin>, <nMax> ) => Min( Max( <xValue>, <nMin> ), <nMax> )

@@ -2411,13 +2411,9 @@ RETURN cTemp
 
 Function CommitTransaction()
 
-   #ifndef __PDA__
-
-      if lAds() .or. lAIS()
-         Return ( AdsCommitTransaction() )
-      end if
-
-   #endif
+   if lAds() .or. lAIS()
+      Return ( AdsCommitTransaction() )
+   end if
 
 Return ( .t. )
 
@@ -2425,13 +2421,9 @@ Return ( .t. )
 
 Function BeginTransaction()
 
-   #ifndef __PDA__
-
-      if lAds() .or. lAIS()
-         Return ( AdsBeginTransaction() )
-      end if
-
-   #endif
+   if lAds() .or. lAIS()
+      Return ( AdsBeginTransaction() )
+   end if
 
 Return ( .t. )
 
@@ -2439,13 +2431,9 @@ Return ( .t. )
 
 Function RollBackTransaction()
 
-   #ifndef __PDA__
-
-      if lAds() .or. lAIS()
-         Return ( AdsRollback() )
-      end if
-
-   #endif
+   if lAds() .or. lAIS()
+      Return ( AdsRollback() )
+   end if
 
 Return ( .t. )
 

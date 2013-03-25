@@ -1,11 +1,6 @@
-#ifndef __PDA__
-   #include "FiveWin.Ch"
-   #include "Factu.ch"
-   #include "XBrowse.ch"
-#else
-   #include "FWCE.ch"
-   REQUEST DBFCDX
-#endif
+#include "FiveWin.Ch"
+#include "Factu.ch"
+#include "XBrowse.ch"
 #include "MesDbf.ch"
 #include "FastRepH.ch"
 
@@ -44,13 +39,15 @@
 #define _NOCONV                  31     //   L      1     0
 #define _NUMEROINV               32     //   C     10     0
 
-#define ubiGeneral                0
-#define ubiLlevar                 1
-#define ubiSala                   2
-#define ubiRecoger                3
-#define ubiEncargar               4
+#define ubiGeneral               0
+#define ubiLlevar                1
+#define ubiSala                  2
+#define ubiRecoger               3
+#define ubiEncargar              4
 
-#ifndef __PDA__
+#define cajCerrrada              0
+#define cajParcialmente          1
+#define cajAbierta               2
 
 memvar nTotAlbCliContadores
 memvar nTotAlbCliVentas
@@ -137,7 +134,6 @@ memvar nTotSaldoEfectivo
 memvar nTotSaldoNoEfectivo
 memvar nTotSaldoTarjeta
 
-#endif
 
 //----------------------------------------------------------------------------//
 //----------------------------------------------------------------------------//
@@ -145,8 +141,6 @@ memvar nTotSaldoTarjeta
 //----------------------------------------------------------------------------//
 //----------------------------------------------------------------------------//
 //----------------------------------------------------------------------------//
-
-#ifndef __PDA__
 
 CLASS TTurno FROM TMasDet
 
@@ -377,6 +371,8 @@ CLASS TTurno FROM TMasDet
 
    DATA lDestroyFastReport                         INIT .f.
 
+   DATA aEstadoSesion                              INIT { "Cerrado", "Parcial", "Abierto" }
+
    Method New( cPath, oWndParent, oMenuItem )
    Method Initiate( cText, oSender )               CONSTRUCTOR
    Method Build( cPath, oWndParent, oMenuItem )    CONSTRUCTOR
@@ -395,10 +391,14 @@ CLASS TTurno FROM TMasDet
 
    Method lOpenTurno()
    Method lOpenCaja()
+   Method lAnyOpenCaja()
 
    Method lCloseCaja()
-   Method lCloseTurno()
-   Method lCloseSesion( oDlg )
+   
+   Method lAllCloseTurno()
+   Method lOneCloseTurno()
+
+   Method lCloseCajasSeleccionadas( oDlg )
 
    Method lCreateTurno()
    Method CreateTurno( oDlg )
@@ -596,10 +596,6 @@ CLASS TTurno FROM TMasDet
    Method SetFastReport( oFastReport ) Inline ( ::oFastReport := oFastReport )
 
    Method End()
-
-#endif
-
-#ifndef __PDA__
 
    //------------------------------------------------------------------------//
 
@@ -819,6 +815,12 @@ CLASS TTurno FROM TMasDet
    EndMethod
 
    //------------------------------------------------------------------------//
+
+   Inline Method cEstadoSesion()
+
+      Return( ::aEstadoSesion[ MinMax( ::oDbf:nStaTur + 1, 1, 3 ) ] )
+
+   EndMethod
 
 END CLASS
 
@@ -1149,8 +1151,9 @@ METHOD DefineFiles( cPath )
       FIELD CALCULATE NAME "BSNDTUR" LEN 14  DEC 0 COMMENT { "Envio", "Lbl16" , 3 }   VAL {|| ::oDbf:lSndTur } BITMAPS "Sel16", "Nil16"       COLSIZE 20  OF ::oDbf
       FIELD NAME "LCLOTUR" TYPE "L"  LEN  1  DEC 0 COMMENT ""                                                                    HIDE                     OF ::oDbf
       FIELD NAME "LCONTUR" TYPE "L"  LEN  1  DEC 0 COMMENT "Cn"                                                                  HIDE                     OF ::oDbf
-      FIELD CALCULATE NAME "BCLOTUR" LEN 14  DEC 0 COMMENT { "Contabilizado", "BmpConta16" , 3 } VAL {|| ::oDbf:lConTur } BITMAPS "Sel16", "Nil16" COLSIZE 20 OF ::oDbf
-      FIELD CALCULATE NAME "CCLOTUR" LEN 20  DEC 0 COMMENT "Estado"      VAL {|| if( ::oDbf:lCloTur, "Cerrado", "Abierto" ) }    COLSIZE 60               OF ::oDbf
+      FIELD CALCULATE NAME "BCLOTUR" LEN 14  DEC 0 COMMENT { "Contabilizado", "BmpConta16" , 3 } ;
+                                                   VAL {|| ::oDbf:lConTur } BITMAPS "Sel16", "Nil16"                             COLSIZE 20               OF ::oDbf
+      FIELD CALCULATE NAME "cStaTur" LEN 20  DEC 0 COMMENT "Estado" VAL {|| ::cEstadoSesion() }                                  COLSIZE 60               OF ::oDbf
       FIELD NAME "CNUMTUR" TYPE "C"  LEN  6  DEC 0 COMMENT "Número"                                                              COLSIZE 60 ALIGN RIGHT   OF ::oDbf
       FIELD NAME "CSUFTUR" TYPE "C"  LEN  2  DEC 0 COMMENT "Delegación"                                                          COLSIZE 40               OF ::oDbf
       FIELD NAME "DOPNTUR" TYPE "D"  LEN  8  DEC 0 COMMENT "Fecha inicio"                                                        COLSIZE 80               OF ::oDbf
@@ -1158,14 +1161,15 @@ METHOD DefineFiles( cPath )
       FIELD NAME "DCLOTUR" TYPE "D"  LEN  8  DEC 0 COMMENT "Fecha fin"                                                           COLSIZE 80               OF ::oDbf
       FIELD NAME "CHORCLO" TYPE "C"  LEN  5  DEC 0 COMMENT "Hora fin"                                                            COLSIZE 60               OF ::oDbf
       FIELD NAME "CCAJTUR" TYPE "C"  LEN  3  DEC 0 COMMENT "Usuario"                                                             COLSIZE 50               OF ::oDbf
-      FIELD CALCULATE NAME "CNCJTUR" LEN 150 DEC 0 COMMENT "Nombre"      VAL {|| ::cNombreUser() }                               COLSIZE 180              OF ::oDbf
+      FIELD CALCULATE NAME "CNCJTUR" LEN 150 DEC 0 COMMENT "Nombre" VAL {|| ::cNombreUser() }                                    COLSIZE 180              OF ::oDbf
       FIELD NAME "LBEFCLO" TYPE "L"  LEN  1  DEC 0 COMMENT ""                                                                    HIDE                     OF ::oDbf
       FIELD NAME "MCOMTUR" TYPE "M"  LEN 10  DEC 0 COMMENT "Comentarios"                                                         COLSIZE 300              OF ::oDbf
+      FIELD NAME "nStaTur" TYPE "N"  LEN  1  DEC 0 COMMENT ""                                                                    HIDE                     OF ::oDbf
 
-      INDEX TO "TURNO.CDX" TAG "cNumTur" ON "cNumTur + cSufTur" COMMENT "Número" FOR "!Deleted()"  OF ::oDbf
-      INDEX TO "TURNO.CDX" TAG "lCloTur" ON "lCloTur"                            FOR "!Deleted()"  OF ::oDbf
-      INDEX TO "TURNO.CDX" TAG "dOpnTur" ON "dOpnTur"                            FOR "!Deleted()"  OF ::oDbf
-      INDEX TO "TURNO.CDX" TAG "lSndTur" ON "lSndTur"                            FOR "!Deleted()"  OF ::oDbf
+      INDEX TO "TURNO.CDX" TAG "cNumTur" ON "cNumTur + cSufTur" COMMENT "Número" FOR "!Deleted()"                       OF ::oDbf
+      INDEX TO "TURNO.CDX" TAG "dOpnTur" ON "dOpnTur"                            FOR "!Deleted()"                       OF ::oDbf
+      INDEX TO "TURNO.CDX" TAG "lSndTur" ON "lSndTur"                            FOR "!Deleted()"                       OF ::oDbf
+      INDEX TO "TURNO.CDX" TAG "nStaTur" ON "nStaTur"                            FOR "!Deleted() .and. nStaTur != 0"    OF ::oDbf
 
    END DATABASE ::oDbf
 
@@ -1194,6 +1198,7 @@ METHOD DefineFiles( cPath )
       INDEX TO "TURNOC.CDX" TAG "cCodCaj" ON "cCodCaj"                        FOR "!Deleted()"                 OF ::oDbfCaj
       INDEX TO "TURNOC.CDX" TAG "lCajClo" ON "lCajClo"                        FOR "!Deleted()"                 OF ::oDbfCaj
       INDEX TO "TURNOC.CDX" TAG "dFecClo" ON "dFecClo"                        FOR "!Deleted()"                 OF ::oDbfCaj
+      INDEX TO "TURNOC.CDX" TAG "cCajClo" ON "cCodCaj"                        FOR "!Deleted() .and. !lCajClo"  OF ::oDbfCaj
 
    END DATABASE ::oDbfCaj
 
@@ -1259,7 +1264,7 @@ METHOD Activate()
 
    DEFINE BTNSHELL RESOURCE "EDIT" OF ::oWndBrw ;
       NOBORDER ;
-      ACTION   ( ::oWndBrw:SetOnProcess(), if( ::oDbf:lCloTur, ::lArqueoTurno( .t. ), MsgStop( "Sesión no cerrada." ) ), ::oWndBrw:QuitOnProcess(), ::oWndBrw:SetFocus() );
+      ACTION   ( ::oWndBrw:SetOnProcess(), if( ::oDbf:nStaTur == cajCerrrada, ::lArqueoTurno( .t. ), MsgStop( "Sesión " + Alltrim( ::oDbf:cNumTur ) + " no cerrada." ) ), ::oWndBrw:QuitOnProcess(), ::oWndBrw:SetFocus() );
       TOOLTIP  "(Z)oom";
       HOTKEY   "Z";
       LEVEL    ACC_EDIT
@@ -1334,9 +1339,9 @@ METHOD Activate()
       HOTKEY   "S"
 
    ::oWndBrw:cHtmlHelp  := "Sesión"
-   ::oWndBrw:bEdit      := {|| ( if( ::oDbf:lCloTur, ::lArqueoTurno( .t. ), MsgStop( "Sesión no cerrada." ) ), .t. ) }
+   ::oWndBrw:bEdit      := {|| ::oWndBrw:SetOnProcess(), if( ::oDbf:nStaTur == cajCerrrada, ::lArqueoTurno( .t. ), MsgStop( "Sesión " + Alltrim( ::oDbf:cNumTur ) + " no cerrada." ) ), ::oWndBrw:QuitOnProcess(), ::oWndBrw:SetFocus() }
 
-   ::oWndBrw:Activate(  , , , , , , , , , , , , , , , , {|| ::CloseFiles() } )
+   ::oWndBrw:Activate( , , , , , , , , , , , , , , , , {|| ::CloseFiles() } )
 
 Return ( .t. )
 
@@ -1651,7 +1656,7 @@ METHOD lOpenTurno()
    Caso de q el fichero este vacio---------------------------------------------
    */
 
-   if Empty( ::oDbf ) .and. ::oDbf:Used()
+   if Empty( ::oDbf ) 
       Return( ::OpenTurno )
    end if
 
@@ -1663,38 +1668,96 @@ METHOD lOpenTurno()
       Return( ::OpenTurno )
    end if
 
-   ::OpenTurno    := ::oDbf:SeekInOrd( .f., "lCloTur" )
+   ::oDbf:GetStatus()
+   ::oDbf:OrdSetFocus( "nStaTur" )
+   
+   ::OpenTurno    := ::oDbf:OrdKeyCount() > 0
+   
+   ::oDbf:SetStatus()
 
 RETURN ( ::OpenTurno )
 
 //--------------------------------------------------------------------------//
-
 /*
-Devuelve si el turno esta abierto
+Devuelve si quedan cajas abiertas
 */
 
-METHOD lOpenCaja()
+METHOD lAnyOpenCaja()
 
-   ::OpenCaja     := .f.
+   ::OpenCaja           := .f.
 
-   if ::oDbfCaj:RecCount() == 0
-      Return ( ::OpenCaja )
-   end if
+   if ::oDbfCaj:SeekInOrd( ::oDbf:cNumTur + ::oDbf:cSufTur, "cNumTur" )
+      
+      while ::oDbfCaj:cNumTur + ::oDbfCaj:cSufTur == ::oDbf:cNumTur + ::oDbf:cSufTur .and. !::oDbfCaj:Eof()
 
-   ::OpenCaja     := ::oDbfCaj:SeekInOrd( ::oDbf:cNumTur + ::oDbf:cSufTur +  oUser():cCaja(), "cNumTur" )
+         ::OpenCaja     := !::oDbfCaj:lCajClo
+
+         if ::OpenCaja
+            exit 
+         end if 
+
+         ::oDbfCaj:Skip()
+
+      end while 
+
+   end if 
 
 RETURN ( ::OpenCaja )
+
+//---------------------------------------------------------------------------//
+/*
+Devuelve si la caja pasada esta abiertas
+*/
+
+METHOD lOpenCaja( cCodCaj )
+
+   local lOpenCaja      := .f.
+
+   DEFAULT cCodCaj      := oUser():cCaja()
+
+   /*
+   Vamos a ver q cajas estan abiertas------------------------------------------
+   */
+
+   ::oDbfCaj:GetStatus()
+
+   ::oDbfCaj:OrdSetFocus( "cCajClo" )
+   
+   if ::oDbfCaj:SeekInOrd( cCodCaj, "cCajClo" )
+
+      while ::oDbfCaj:cCodCaj == cCodCaj .and. !::oDbfCaj:Eof()
+
+         lOpenCaja      := oRetFld( ::oDbfCaj:cNumTur + ::oDbfCaj:cSufTur, ::oDbf, "nStaTur", "cNumTur" ) != 0
+
+         if lOpenCaja 
+
+            ::cCurTurno := ::oDbfCaj:cNumTur + ::oDbfCaj:cSufTur
+
+            exit
+
+         end if   
+
+         ::oDbfCaj:Skip()
+
+      end while         
+
+   end if 
+
+   ::oDbfCaj:SetStatus()
+
+RETURN ( lOpenCaja )
 
 //---------------------------------------------------------------------------//
 /*
 Cierra el turno
 */
 
-METHOD lCloseSesion(  oDlg )
+METHOD lCloseCajasSeleccionadas( oDlg )
 
    local oInternet
-   local nCajasCerradas := 0
    local nTotalCajas    := 0
+   local aCajasCerradas := {}
+   local nCajasCerradas := 0
    local cCurrentTruno  := ::cCurTurno
 
    /*
@@ -1715,7 +1778,7 @@ METHOD lCloseSesion(  oDlg )
    Guardamos los comentarios---------------------------------------------------
    */
 
-   if !::lArqueoParcial
+   if !::lArqueoParcial 
       if ::oDbf:Seek( cCurrentTruno )
          ::oDbf:FieldPutByName( "mComTur", ::cComentario )
       end if
@@ -1738,7 +1801,11 @@ METHOD lCloseSesion(  oDlg )
 
             nTotalCajas++
 
-            if ::oDbfCaj:lCajSel
+            if ::oDbfCaj:lCajClo
+
+               nCajasCerradas++
+
+            elseif ::oDbfCaj:lCajSel
 
                /*
                Cerramos las cajas----------------------------------------------------
@@ -1747,18 +1814,10 @@ METHOD lCloseSesion(  oDlg )
                ::lCloseCaja( .t., ::oDbfCaj:cCodCaj )
 
                /*
-               Entradas y salidas de cajas por turnos--------------------------------
-               */
-
-               ::lCloEntSal( .t., ::oDbfCaj:cCodCaj )
-
-               /*
                Una nueva caja cerrada----------------------------------------------
                */
 
-               nCajasCerradas++
-
-            elseif ::oDbfCaj:lCajClo
+               aAdd( aCajasCerradas, ::oDbfCaj:cCodCaj )
 
                nCajasCerradas++
 
@@ -1780,8 +1839,13 @@ METHOD lCloseSesion(  oDlg )
       Si hemos cerrado todas las cajas, cerramos el turno-------------------------
       */
 
+      msgAlert( nCajasCerradas, "nCajasCerradas" )
+      msgAlert( nTotalCajas, "nTotalCajas" )
+
       if nCajasCerradas >= nTotalCajas
-         ::lCloseTurno()
+         ::lAllCloseTurno()
+      else
+         ::lOneCloseTurno()      
       end if
 
    end if
@@ -1794,7 +1858,7 @@ METHOD lCloseSesion(  oDlg )
 
       while ::oDbfCaj:cNumTur + ::oDbfCaj:cSufTur == cCurrentTruno .and. !::oDbfCaj:Eof()
 
-         if ::oDbfCaj:lCajSel
+         if aScan( aCajasCerradas, ::oDbfCaj:cCodCaj ) != 0
 
             /*
             Mensajes para mandar por email----------------------------------------
@@ -2009,6 +2073,21 @@ METHOD lCloseCaja( lClose, cCodCaja )
    ::lCloPgoTik( lClose, cCodCaja )
 
    /*
+   Entradas y salidas----------------------------------------------------------
+   */
+
+   if ::oMeter != nil
+      ::oMeter:Set( ++nProcc )
+      ::oMeter:Refresh()
+   end if
+
+   if !Empty( ::oTxt )
+      ::oTxt:SetText( "Cerrando entradas y salidas" )
+   end if
+
+   ::lCloEntSal( lClose, cCodCaja )
+
+   /*
    Ponemos el estado de la caja------------------------------------------------
    */
 
@@ -2031,7 +2110,22 @@ RETURN ( .t. )
 
 //--------------------------------------------------------------------------//
 
-Method lCloseTurno()
+Method lOneCloseTurno()
+
+   ::oDbf:GetStatus()
+   ::oDbf:OrdSetFocus( "cNumTur" )
+
+   if ::oDbf:Seek( ::cCurTurno )
+      ::oDbf:FieldPutByName( "nStaTur", cajParcialmente )
+   end if 
+
+   ::oDbf:SetStatus()
+
+RETURN ( .t. )
+
+//--------------------------------------------------------------------------//
+
+Method lAllCloseTurno()
 
    ::oDbf:GetStatus()
    ::oDbf:OrdSetFocus( "cNumTur" )
@@ -2044,12 +2138,9 @@ Method lCloseTurno()
       ::oDbf:cHorClo       := ::cHorTur
       ::oDbf:cCajTur       := ::cCajTur
 
-      ::oDbf:lCloTur       := .t.
       ::oDbf:lSndTur       := .t.
 
-      /*
-      Nuevo turno en contadores preguntamos si el turno no ha sido cerrado antes xq puede ser uno q se haya invertido el cierre
-      */
+      ::oDbf:nStaTur       := cajCerrrada
 
       if !::oDbf:lBefClo
          ::oDbf:lBefClo    := .t.
@@ -2059,7 +2150,6 @@ Method lCloseTurno()
 
       /*
       Metemos los nuevos valores en el articulo---------------------------------
-      */
 
       ::oMeter:Show()
       ::oMeter:Refresh()
@@ -2073,25 +2163,25 @@ Method lCloseTurno()
          while ::oDbfDet:cNumTur + ::oDbfDet:cSufTur == ::cCurTurno .and. !::oDbfDet:eof()
 
             if ::oArticulo:Seek( ::oDbfDet:cCodArt )
-
-               ::oArticulo:Load()
-               ::oArticulo:nCntAct  := ::oDbfDet:nCanAct
-               ::oArticulo:Save()
-
+               ::oArticulo:FieldPutByName( "nCntAct", ::oDbfDet:nCanAct )
             end if
 
             ::oDbfDet:Skip()
+            
             SysRefresh()
 
          end while
 
       end if
 
-      /*
-      Turnos cerrados
+      ::oMeter:Set( 0 )
+
       */
 
-      ::oMeter:Set( 0 )
+      /*
+      Turnos cerrados----------------------------------------------------------
+      */
+
 
       if !Empty( ::oTxt )
          ::oTxt:SetText( "Cerrando la sesión" )
@@ -2380,17 +2470,17 @@ Method CreateTurno( oDlg )
    Creamos el registros para el turno------------------------------------------
    */
 
-   if !::OpenTurno
+   msgAlert( "tenemos Q VER SI HAY TURNO ABIERTOS")
+   msgAlert( ::GetLastOpen(), "GetLastOpen" )
+
+   if Empty( ::GetLastOpen() )
       ::oDbf:Append()
       ::oDbf:cNumTur    := ::cValidTurno()
       ::oDbf:cSufTur    := RetSufEmp()
       ::oDbf:dOpnTur    := ::dOpenTurno
       ::oDbf:cHorOpn    := ::cHoraTurno
       ::oDbf:cCajTur    := ::cCajeroTurno
-      ::oDbf:lCloTur    := .f.
-      ::oDbf:lConTur    := .f.
-      ::oDbf:lSndTur    := .f.
-      ::oDbf:mComTur    := ""
+      ::oDbf:nStaTur    := cajAbierta
       ::oDbf:Save()
    end if
 
@@ -2446,7 +2536,7 @@ METHOD cValidTurno()
    Tomamos el turno de los contadores
    */
 
-   local nCurTur  := nNewDoc( nil, ::oDbf:nArea, "nSesion", 6, ::oDbfCnt:nArea )
+   local nCurTur  := nNewDoc( nil, ::oDbf:nArea, "nSesion", 6, ::oDbfCnt:nArea ) 
 
    /*
    while ::oDbf:Seek( Rjust( Str( nCurTur, 6 ) ) ) // .and. ::oDbf:lCloTur
@@ -2457,6 +2547,8 @@ METHOD cValidTurno()
       SetFieldEmpresa( nCurTur, "nNumTur" )
    end if
    */
+
+   msgAlert( nCurTur, "desde cValidTurno" )
 
 RETURN ( Str( nCurTur, 6 ) )
 
@@ -2667,6 +2759,7 @@ METHOD InvCierre( oDlg, oMsg )
    if !Empty( ::oAni )
       ::oAni:Show()
    end if
+
    /*
    Cerramos las cajas una a una------------------------------------------------
    */
@@ -2678,8 +2771,6 @@ METHOD InvCierre( oDlg, oMsg )
       while ::oDbfCaj:cNumTur + ::oDbfCaj:cSufTur == ::cCurTurno .and. !::oDbfCaj:Eof()
 
          ::lCloseCaja( .f., ::oDbfCaj:cCodCaj )
-
-         ::lCloEntSal( .f., ::oDbfCaj:cCodCaj )
 
          ::oDbfCaj:Skip()
 
@@ -2700,14 +2791,11 @@ METHOD InvCierre( oDlg, oMsg )
       while ::oDbfDet:cNumTur + ::oDbfDet:cSufTur == ::cCurTurno .and. !::oDbfDet:eof()
 
          if ::oArticulo:Seek( ::oDbfDet:cCodArt )
-
-            ::oArticulo:Load()
-            ::oArticulo:nCntAct  := ::oDbfDet:nCanAnt
-            ::oArticulo:Save()
-
+            ::oArticulo:FieldPutByName( "nCntAct", ::oDbfDet:nCanAnt )
          end if
 
          ::oDbfDet:Skip()
+
          SysRefresh()
 
       end while
@@ -2717,10 +2805,8 @@ METHOD InvCierre( oDlg, oMsg )
    oMsg:SetText( 'Reestableciendo turnos' )
 
    if ::oDbf:Seek( ::cCurTurno )
-      ::oDbf:Load()
-      ::oDbf:lSndTur := .f.
-      ::oDbf:lCloTur := .f.
-      ::oDbf:Save()
+      ::oDbf:FieldPutByName( "lSndTur", .f. )
+      ::oDbf:FieldPutByName( "nStaTur", cajAbierta )
    end if
 
    /*
@@ -2728,9 +2814,11 @@ METHOD InvCierre( oDlg, oMsg )
    */
 
    oMsg:SetText( 'Estableciendo la nueva sesión' )
+   
    cCurSesion( SubStr( ::cCurTurno, 1, 6 ) )
 
    oMsg:SetText( 'Escribiendo contadores' )
+   
    SetFieldEmpresa( Val( SubStr( ::cCurTurno, 1, 6 ) ), "nNumTur" )
 
    oMsg:SetText( 'Chequeando el estado de las sesiones' )
@@ -2757,6 +2845,7 @@ RETURN ( nil )
 
 //--------------------------------------------------------------------------//
 
+
 METHOD lCloEntSal( lClose, cCodCaj )
 
    DEFAULT lClose := .t.
@@ -2769,9 +2858,7 @@ METHOD lCloEntSal( lClose, cCodCaj )
 
       while ::oEntSal:cTurEnt + ::oEntSal:cSufEnt + ::oEntSal:cCodCaj == ::cCurTurno + cCodCaj .and. !::oEntSal:eof()
 
-         ::oEntSal:Load()
-         ::oEntSal:lCloEnt := lClose
-         ::oEntSal:Save()
+         ::oEntSal:FieldPutByName( "lCloEnt", lClose )
 
          ::oEntSal:Skip()
 
@@ -3072,7 +3159,7 @@ METHOD GetLastClose()
    ::oDbf:GoBottom()
    while !::oDbf:bof()
 
-      if ::oDbf:lCloTur
+      if ::oDbf:nStaTur == cajCerrrada
          cLasTur  := ::oDbf:cNumTur + ::oDbf:cSufTur
          exit
       else
@@ -3105,11 +3192,11 @@ METHOD lArqueoTurno( lZoom, lTactil, lParcial ) CLASS TTurno
    local oDlg
    local oFld
    local oFnt
-   local oFntSay
-   local oFntBrw
    local oCol
    local oError
    local oBlock
+   local oFntSay
+   local oFntBrw
    local oBrwCnt
    local oBrwCaj
    local oBtnMod
@@ -3126,16 +3213,16 @@ METHOD lArqueoTurno( lZoom, lTactil, lParcial ) CLASS TTurno
    local oBmpGeneral
    local oSayGeneral2
 
-   DEFAULT lZoom     := .f.
-   DEFAULT lTactil   := .f.
-   DEFAULT lParcial  := .f.
+   DEFAULT lZoom        := .f.
+   DEFAULT lTactil      := .f.
+   DEFAULT lParcial     := .f.
 
-   ::lZoom           := lZoom
-   ::lArqueoTactil   := lTactil
-   ::lArqueoParcial  := lParcial
-   ::nMeter          := 0
+   ::lZoom              := lZoom
+   ::lArqueoTactil      := lTactil
+   ::lArqueoParcial     := lParcial
+   ::nMeter             := 0
 
-   aPrnCaj           := GetPrinters()
+   aPrnCaj              := GetPrinters()
 
    /*
    Compruebo si hay turnos abiertos--------------------------------------------
@@ -3143,35 +3230,31 @@ METHOD lArqueoTurno( lZoom, lTactil, lParcial ) CLASS TTurno
 
    if ::lZoom
 
-      ::cCurTurno    := ::oDbf:cNumTur + ::oDbf:cSufTur
-      ::dFecTur      := ::oDbf:dOpnTur
-      ::cHorTur      := ::oDbf:cHorOpn
-      ::cCajTur      := ::oDbf:cCajTur
-
-      if Empty( ::cCodCaj )
-         ::cCodCaj   := oUser():cCaja()
-      end if
+      ::cCurTurno       := ::oDbf:cNumTur + ::oDbf:cSufTur
+      ::dFecTur         := ::oDbf:dOpnTur
+      ::cHorTur         := ::oDbf:cHorOpn
+      ::cCajTur         := ::oDbf:cCajTur
 
    else
 
-      ::cCurTurno    := ::GetLastOpen()
+      ::cCurTurno       := ::GetLastOpen()
 
       if Empty( ::dFecTur )
-         ::dFecTur   := GetSysDate()
+         ::dFecTur      := GetSysDate()
       end if
 
       if Empty( ::cHorTur )
-         ::cHorTur   := Substr( Time(), 1, 5 )
+         ::cHorTur      := Substr( Time(), 1, 5 )
       end if
 
       if Empty( ::cCajTur )
-         ::cCajTur   := cCurUsr()
+         ::cCajTur      := cCurUsr()
       end if
 
-      if Empty( ::cCodCaj ) .and. !oUser():lAdministrador()
-         ::cCodCaj   := oUser():cCaja()
-      end if
+   end if
 
+   if Empty( ::cCodCaj ) 
+      ::cCodCaj         := oUser():cCaja()
    end if
 
    if !::lZoom .and. Empty( ::cCurTurno )
@@ -3187,7 +3270,7 @@ METHOD lArqueoTurno( lZoom, lTactil, lParcial ) CLASS TTurno
    BEGIN SEQUENCE
 
    ::cComentario     := ::oDbf:mComTur
-   ::lCerrado        := ::oDbf:lCloTur
+   ::lCerrado        := ::oDbf:nStaTur == cajCerrrada
 
    ::LoadCaja( ::cCurTurno )
 
@@ -3195,7 +3278,15 @@ METHOD lArqueoTurno( lZoom, lTactil, lParcial ) CLASS TTurno
 
    ::oDbfDet:OrdScope( ::cCurTurno )
 
-   ::oDbfCaj:OrdScope( ::cCurTurno )
+   /*
+   Tratamos q vean solo las cajas q se van a cerrar---------------------------
+   */
+
+   if oUser():lMaster()
+      ::oDbfCaj:OrdScope( ::cCurTurno )
+   else 
+      ::oDbfCaj:OrdScope( ::cCurTurno ) // + ::cCodCaj )
+   end if 
 
    /*
    Valores de la impresión-----------------------------------------------------
@@ -3413,24 +3504,24 @@ METHOD lArqueoTurno( lZoom, lTactil, lParcial ) CLASS TTurno
          ID       501;
          OF       oFld:aDialogs[1] ;
          WHEN     ( oUser():lAdministrador() );
-         ACTION   ( ::SelCajas( .t., oBrwCaj ) )
+         ACTION   ( ::SelCajas( .t., oBrwCaj, .t. ) )
 
       REDEFINE BUTTON ;
          ID       502;
          OF       oFld:aDialogs[1] ;
          WHEN     ( oUser():lAdministrador() );
-         ACTION   ( ::SelCajas( .f., oBrwCaj ) )
+         ACTION   ( ::SelCajas( .f., oBrwCaj, .t. ) )
 
       REDEFINE BUTTON ;
          ID       503;
          OF       oFld:aDialogs[1] ;
-         WHEN     ( oUser():lAdministrador() );
+         WHEN     ( oUser():lMaster() );
          ACTION   ( ::SelAllCajas( .t., oBrwCaj ) )
 
       REDEFINE BUTTON ;
          ID       504;
          OF       oFld:aDialogs[1] ;
-         WHEN     ( oUser():lAdministrador() );
+         WHEN     ( oUser():lMaster() );
          ACTION   ( ::SelAllCajas( .f., oBrwCaj ) )
 
       if !::lArqueoTactil
@@ -3438,7 +3529,7 @@ METHOD lArqueoTurno( lZoom, lTactil, lParcial ) CLASS TTurno
       REDEFINE BUTTON ;
          ID       505;
          OF       oFld:aDialogs[ 1 ] ;
-         WHEN     ( oUser():lAdministrador() );
+         WHEN     ( oUser():lMaster() );
          ACTION   ( oBrwCaj:GoUp() )
 
       REDEFINE BUTTON ;
@@ -3464,11 +3555,16 @@ METHOD lArqueoTurno( lZoom, lTactil, lParcial ) CLASS TTurno
       ::oDbfCaj:SetBrowse( oBrwCaj )
 
       with object ( oBrwCaj:AddCol() )
+         :cHeader          := ""
+         :bEditValue       := {|| ::oDbfCaj:FieldGetByName( "lCajClo" ) }
+         :nWidth           := 25
+         :SetCheck( { "Cnt16", "Nil16" } )
+      end with
+
+      with object ( oBrwCaj:AddCol() )
          :cHeader          := "Estado"
          :bStrData         := {|| if( ::oDbfCaj:FieldGetByName( "lCajClo" ), "Cerrada", "Abierta" ) }
-         :bEditValue       := {|| ::oDbfCaj:FieldGetByName( "lCajClo" ) }
          :nWidth           := 100
-         :SetCheck( { "Cnt16", "Nil16" } )
       end with
 
       with object ( oBrwCaj:AddCol() )
@@ -3478,7 +3574,7 @@ METHOD lArqueoTurno( lZoom, lTactil, lParcial ) CLASS TTurno
          :bEditValue       := {|| ::oDbfCaj:FieldGetByName( "lCajSel" ) }
          :nWidth           := 25
          :SetCheck( { "Sel16", "Nil16" } )
-         :AddResource( "cashier_Selet_16" )
+         :AddResource( "Cashier_Selet_16" )
       end with
 
       with object ( oBrwCaj:AddCol() )
@@ -3490,7 +3586,7 @@ METHOD lArqueoTurno( lZoom, lTactil, lParcial ) CLASS TTurno
       with object ( oBrwCaj:AddCol() )
          :cHeader          := "Nombre"
          :bEditValue       := {|| oRetFld( ::oDbfCaj:FieldGetByName( "cCodCaj" ), ::oCaja ) }
-         :nWidth           := 330
+         :nWidth           := 300
       end with
 
       with object ( oBrwCaj:AddCol() )
@@ -3964,12 +4060,6 @@ METHOD lArqueoTurno( lZoom, lTactil, lParcial ) CLASS TTurno
 
    if oDlg:nResult == IDOK
 
-      ::lNowOpen()
-
-      if oMsgSesion() != nil
-         oMsgSesion():SetText( "Sesión : " + Transform( ::cCurTurno, "######" ) )
-      end if
-
       /*
       Guardamos las opciones---------------------------------------------------
       */
@@ -3982,12 +4072,14 @@ METHOD lArqueoTurno( lZoom, lTactil, lParcial ) CLASS TTurno
       ::oIniArqueo:Set( "Arqueo", "Mail",             ::cEnviarMail        )
 
       /*
-      Opciones de impresion-------------------------------------------------------
-
-      if !Empty( ::oTreeImpresion )
-         ::SetTreeState( ::oTreeImpresion:aItems )
-      end if
+      Comprueba si hay sesiones para trabajar----------------------------------
       */
+
+      ::lNowOpen()
+
+      if oMsgSesion() != nil
+         oMsgSesion():SetText( "Sesión : " + Transform( ::cCurTurno, "######" ) )
+      end if
 
    end if
 
@@ -4313,7 +4405,7 @@ METHOD GoNext( oFld, oDlg, oCajTur, oBrwCnt )
 
          if !::lZoom
 
-            if ::lCloseSesion( oDlg )
+            if ::lCloseCajasSeleccionadas( oDlg )
                oDlg:end( IDOK )
             end if
 
@@ -4423,9 +4515,12 @@ Method LoadCaja( cCurTurno )
 
    local oError
    local oBlock
+   local cUserCaja
    local lOpenCaja      := .f.
 
    DEFAULT cCurTurno    := ::cCurTurno
+
+   cUserCaja            := oUser():cCaja()
 
    oBlock               := ErrorBlock( { | oError | ApoloBreak( oError ) } )
    BEGIN SEQUENCE
@@ -4433,14 +4528,14 @@ Method LoadCaja( cCurTurno )
    ::oDbfCaj:GetStatus()
    ::oDbfCaj:OrdSetFocus( "cNumTur" )
 
-   if !::oDbfCaj:Seek( cCurTurno + oUser():cCaja() ) .and. !oRetFld( oUser():cCaja(), ::oCaja, "lNoArq" )
+   if !::oDbfCaj:Seek( cCurTurno + cUserCaja ) .and. !oRetFld( cUserCaja, ::oCaja, "lNoArq" )
 
       if ::oDbfCaj:Append()
          ::oDbfCaj:Blank()
          ::oDbfCaj:lCajSel    := .t. // ( ::oCaja:cCodCaj == oUser():cCaja() )
          ::oDbfCaj:cNumTur    := SubStr( cCurTurno, 1, 6 )
          ::oDbfCaj:cSufTur    := SubStr( cCurTurno, -2 )
-         ::oDbfCaj:cCodCaj    := oUser():cCaja()
+         ::oDbfCaj:cCodCaj    := cUserCaja
          ::oDbfCaj:nCanPre    := ::nObjetivoTurno
          ::oDbfCaj:cDivEfe    := cDivEmp()
          ::oDbfCaj:cDivTar    := cDivEmp()
@@ -4451,6 +4546,31 @@ Method LoadCaja( cCurTurno )
    end if
 
    ::oDbfCaj:SetStatus()
+
+   /*
+   Recorremos todas las cajas para q seleccionemos solo la del usuario
+
+   if !::oDbfCaj:Seek( cCurTurno )
+      while ::oDbfCaj:cNumTur + ::oDbfCaj:cSufTur == cCurTurno .and. !::oDbfCaj:Eof()
+
+         if ( ::oDbfCaj:lCajSel ) .and. ( ::oCaja:cCodCaj != oUser():cCaja() )
+            ::oDbf
+            ::oDbfCaj:cNumTur    := SubStr( cCurTurno, 1, 6 )
+         ::oDbfCaj:cSufTur    := SubStr( cCurTurno, -2 )
+         ::oDbfCaj:cCodCaj    := cUserCaja
+         ::oDbfCaj:nCanPre    := ::nObjetivoTurno
+         ::oDbfCaj:cDivEfe    := cDivEmp()
+         ::oDbfCaj:cDivTar    := cDivEmp()
+         ::oDbfCaj:cDivPre    := cDivEmp()
+         ::oDbfCaj:Save()
+      end if
+
+   end if
+   */
+
+   ::oDbfCaj:SetStatus()
+
+
 
    RECOVER USING oError
 
@@ -4464,11 +4584,24 @@ Return Nil
 
 //---------------------------------------------------------------------------//
 
-Method SelCajas( lSelect, oBrw )
+Method SelCajas( lSelect, oBrw, lMessage )
 
-   ::oDbfCaj:Load()
-   ::oDbfCaj:lCajSel    := lSelect
-   ::oDbfCaj:Save()
+   DEFAULT lMessage := .t.
+
+   msgAlert( "dentro de SelCajas")
+   msgAlert( ::oDbfCaj:FieldGetByName( "lCajClo" ), "lCajClo" )
+   msgAlert( oUser():lMaster(), "oUser():lMaster()")
+
+   if ::oDbfCaj:FieldGetByName( "lCajClo" ) .and. !oUser():lMaster()
+      if .t. // lMessage 
+         MsgStop( "La caja " + ::oDbfCaj:FieldGetByName( "cCodCaj" ) + " ya está cerrada." )
+      end if 
+   else 
+
+      msgAlert( lSelect, "lCajSel")
+
+      ::oDbfCaj:FieldPutByName( "lCajSel", lSelect )
+   end if 
 
    if oBrw != nil
       oBrw:Refresh()
@@ -4484,9 +4617,13 @@ Method SelAllCajas( lSelect, oBrw )
 
    ::oDbfCaj:GoTop()
    while !::oDbfCaj:Eof()
+
       ::SelCajas( lSelect )
+
       ::oDbfCaj:Skip()
+
       SysRefresh()
+
    end while
 
    ::oDbfCaj:SetRecno()
@@ -4511,7 +4648,11 @@ Method lAnyCajaSelect()
    ::oDbfCaj:GoTop()
    while !::oDbfCaj:Eof()
 
-      if ::oDbfCaj:lCajSel
+      /*
+      Si la caja esta seleccionada y no esta cerrada tenemos cosas q cerrar----
+      */
+
+      if ::oDbfCaj:lCajSel // .and. !::oDbfCaj:lCajClo
          lAny  := .t.
       end if
 
@@ -5320,7 +5461,7 @@ RETURN ( Self )
 
 METHOD TotEntrada( cTurno, cCaja )
 
-   DEFAULT cTurno       := ::cCurTruno
+   DEFAULT cTurno       := ::cCurTurno
 
    if ::oMeter != nil
       ::oMeter:SetTotal( ::oEntSal:LastRec() )
@@ -5358,7 +5499,7 @@ RETURN ( Self )
 
 METHOD TotCompra( cTurno, cCaja )
 
-   DEFAULT cTurno       := ::cCurTruno
+   DEFAULT cTurno       := ::cCurTurno
 
    /*
    Albaranes de proveedores_________________________________________________________
@@ -5457,7 +5598,7 @@ METHOD TotCobro( cTurno, cCaja )
    local cTxtPgo
    local lFreTik
 
-   DEFAULT cTurno       := ::cCurTruno
+   DEFAULT cTurno       := ::cCurTurno
 
    /*
    Total cobrado __________________________________________________________________
@@ -5702,7 +5843,7 @@ METHOD TotPago( cTurno, cCaja )
 
    local nTipoPgo
 
-   DEFAULT cTurno       := ::cCurTruno
+   DEFAULT cTurno       := ::cCurTurno
 
    /*
    Total cobrado con facturas-----------------------------------------------------
@@ -5769,7 +5910,7 @@ METHOD TotTipoIva( cTurno, cCaja )
    local nIvaLin        := 0
    local nTotLin        := 0
 
-   DEFAULT cTurno       := ::cCurTruno
+   DEFAULT cTurno       := ::cCurTurno
 
    ::aTipIva            := {}
 
@@ -6388,7 +6529,7 @@ METHOD Contabiliza()
    Cerrar por turnos___________________________________________________________
    */
 
-   if !::oDbf:lCloTur .and. !::lAllSesions
+   if ::oDbf:nStaTur != cajCerrrada .and. !::lAllSesions
       ::oTreeSelect:Add( "Sesión : " + Alltrim( ::oDbf:cNumTur ) + "/" + Rtrim( ::oDbf:cSufTur ) + " no cerrada", 0 )
       Return ( Self )
    end if
@@ -7312,7 +7453,7 @@ METHOD lSelectTurno( lSel )
 
    DEFAULT lSel         := ::lChkSimula
 
-   if ::oDbf:lCloTur
+   if ( ::oDbf:nStaTur == cajCerrrada )
 
       ::oDbf:FieldPutByName( "lSndTur", lSel )
 
@@ -7370,25 +7511,19 @@ METHOD EdtLine( oLbx )
 
          if uVar1 >= 0
 
-            ::oDbfDet:Load()
-            ::oDbfDet:nCanAnt := uVar1
-            ::oDbfDet:Save()
+            ::oDbfDet:FieldPutByName( "nCanAnt", uVar1 )
 
             if oLbx:lEditCol( 4, @uVar2, ::cPicUnd, bValid )
 
                if uVar2 >= 0
 
-                  ::oDbfDet:Load()
-                  ::oDbfDet:nCanAct := uVar2
-                  ::oDbfDet:Save()
+                  ::oDbfDet:FieldPutByName( "nCanAct", uVar2 )
 
                   if oLbx:lEditCol( 6, @uVar3, ::cPouDiv, bValid )
 
                      if uVar3 > 0
 
-                        ::oDbfDet:Load()
-                        ::oDbfDet:nPvpArt := uVar3
-                        ::oDbfDet:Save()
+                        ::oDbfDet:FieldPutByName( "nPvpArt", uVar3 )
 
                      end if
 
@@ -7430,21 +7565,19 @@ RETURN ( Self )
 
 METHOD lNowOpen( oWnd )
 
-   if ( oWnd == nil, oWnd := oWnd(), )
+   /*
+   Si hay turnos abiertos y no hay cajas cerradas------------------------------
+   */
 
-   if ( !::lOpenTurno() .or. !::lOpenCaja() ) .and. !( oRetFld( oUser():cCaja(), ::oCaja, "lNoArq" ) )
+   msgAlert( ::lOpenTurno(), "lOpenTurno" )
+   msgAlert( ::lAnyOpenCaja(), "lAnyOpenCaja" )
+   msgAlert( ::lOpenCaja(), "lOpenCaja" )
+
+   if !::lOpenCaja() 
 
       if !::lCreateTurno()
 
          MsgStop( "Es necesario iniciar una sesión para trabajar." ) 
-
-/*       if  !Empty( oWnd )
-
-            SysRefresh(); oWnd:CloseAll(); SysRefresh()
-
-            oWnd:End()
-
-         end if*/
 
       end if
 
@@ -7489,6 +7622,7 @@ METHOD ActTactil()
                AddImpTactil( nTotNTpv( ::oTikL:cAlias ), ::oTikL:cComTil, ::oArticulo )
 
                ::oTikL:Skip()
+
                SysRefresh()
 
             end while
@@ -7501,6 +7635,7 @@ METHOD ActTactil()
                AddImpTactil( - nTotNTpv( ::oTikL:cAlias ), ::oTikL:cComTil, ::oArticulo )
 
                ::oTikL:Skip()
+
                SysRefresh()
 
             end while
@@ -7609,10 +7744,8 @@ Method RestoreData()
 
       while !::oDbf:eof()
 
-         if ::oDbf:lCloTur
-            ::oDbf:Load()
-            ::oDbf:lSndTur    := .f.
-            ::oDbf:Save()
+         if ::oDbf:nStaTur == cajCerrrada
+            ::oDbf:FieldPutByName( "nStaTur", cajAbierta )
          end if
 
          ::oDbf:Skip()
@@ -7863,6 +7996,8 @@ Function ChkTurno( oMenuItem, oWnd )
 
          oTurno:lNowOpen( oWnd )
 
+         oTurno:lOpenCaja( oUser():cCaja() )
+
          if oMsgSesion() != nil
             oMsgSesion():SetText( "Sesión : " + Transform( oTurno:cCurTurno, "######" ) )
          end if
@@ -7947,9 +8082,7 @@ function AddImpTactil( nImpVta, cCodArt, uArt )
          uArt:GetStatus()
 
          if uArt:Seek( cCodArt )
-            uArt:Load()
-            uArt:nPosTcl  += nImpVta
-            uArt:Save()
+            uArt:FieldPutByName( "nPosTcl", uArt:nPosTcl + nImpVta )
          end if
 
          uArt:SetStatus()
@@ -11243,103 +11376,9 @@ METHOD EvalContabilizaSesiones()
 RETURN NIL
 
 //---------------------------------------------------------------------------//
-#else
-//---------------------------------------------------------------------------//
-
-CLASS TTurno FROM TMasDet
-
-   CLASSDATA  cCurTurno       INIT ""
-
-   Method DefineFiles()
-   Method OpenService( lExclusive )
-   Method CloseService()
-   Method GetLastOpen()
-   Method CurTurno()
-
-END CLASS
-
-//---------------------------------------------------------------------------//
-
-METHOD DefineFiles()
-
-   ::cPath     := AllTrim( cNombrePC() ) + "Emp" + Alltrim( cCodigoEmpresa() ) + "\"
-
-   DEFINE DATABASE ::oDbf FILE "TURNO.DBF" CLASS "TurnoT" ALIAS "TurnoT" PATH ( ::cPath ) VIA ( cDriver() ) COMMENT  "Sesiones"
-
-      FIELD NAME "lSndTur" TYPE "L"  LEN  1  DEC 0 COMMENT ""                    HIDE                     OF ::oDbf
-      FIELD NAME "lCloTur" TYPE "L"  LEN  1  DEC 0 COMMENT ""                    HIDE                     OF ::oDbf
-      FIELD NAME "lConTur" TYPE "L"  LEN  1  DEC 0 COMMENT "Cn"                  HIDE                     OF ::oDbf
-      FIELD NAME "cNumTur" TYPE "C"  LEN  6  DEC 0 COMMENT "Número"              COLSIZE 60 ALIGN RIGHT   OF ::oDbf
-      FIELD NAME "cSufTur" TYPE "C"  LEN  2  DEC 0 COMMENT "Delegación"          COLSIZE 40               OF ::oDbf
-      FIELD NAME "dOpnTur" TYPE "D"  LEN  8  DEC 0 COMMENT "Fecha inicio"        COLSIZE 80               OF ::oDbf
-      FIELD NAME "cHorOpn" TYPE "C"  LEN  5  DEC 0 COMMENT "Hora inicio"         COLSIZE 60               OF ::oDbf
-      FIELD NAME "dCloTur" TYPE "D"  LEN  8  DEC 0 COMMENT "Fecha fin"           COLSIZE 80               OF ::oDbf
-      FIELD NAME "cHorClo" TYPE "C"  LEN  5  DEC 0 COMMENT "Hora fin"            COLSIZE 60               OF ::oDbf
-      FIELD NAME "cCajTur" TYPE "C"  LEN  3  DEC 0 COMMENT "Usuario"             COLSIZE 50               OF ::oDbf
-      FIELD NAME "lBefClo" TYPE "L"  LEN  1  DEC 0 COMMENT ""                    HIDE                     OF ::oDbf
-      FIELD NAME "mComTur" TYPE "M"  LEN 10  DEC 0 COMMENT "Comentarios"         COLSIZE 300              OF ::oDbf
-
-      INDEX TO "TURNO.CDX" TAG "cNumTur" ON "cNumTur + cSufTur" COMMENT "Número" FOR "!Deleted()"  OF ::oDbf
-      INDEX TO "TURNO.CDX" TAG "lCloTur" ON "lCloTur"                            FOR "!Deleted()"  OF ::oDbf
-      INDEX TO "TURNO.CDX" TAG "dOpnTur" ON "dOpnTur"                            FOR "!Deleted()"  OF ::oDbf
-      INDEX TO "TURNO.CDX" TAG "lSndTur" ON "lSndTur"                            FOR "!Deleted()"  OF ::oDbf
-
-   END DATABASE ::oDbf
-
-RETURN ( ::oDbf )
-
-//---------------------------------------------------------------------------//
-
-METHOD OpenService( lExclusive )
-
-   local lOpen          := .t.
-   local oError
-   local oBlock
-
-   DEFAULT lExclusive   := .f.
-
-   oBlock               := ErrorBlock( { | oError | ApoloBreak( oError ) } )
-   BEGIN SEQUENCE
-
-      ::DefineFiles()
-
-      ::oDbf:Activate(    .f., !( lExclusive ) )
-
-   RECOVER USING oError
-
-      msgStop( "Imposible abrir todas las bases de datos de turnos" + CRLF + CRLF + ErrorMessage( oError ) )
-
-      ::CloseService()
-
-      lOpen             := .f.
-
-   END SEQUENCE
-
-   ErrorBlock( oBlock )
-
-RETURN ( lOpen )
-
-//----------------------------------------------------------------------------//
-
-METHOD CloseService()
-
-   if ::oDbf:Used()
-      ::oDbf:end()
-   end if
-
-   ::oDbf      := nil
-
-RETURN ( Self )
-
-//----------------------------------------------------------------------------//
-
-#endif
-
-//--------------------------------------------------------------------------//
 
 METHOD GetLastOpen()
 
-   local a        := {}
    local cLasTur  := ""
 
    if Empty( ::oDbf )
@@ -11350,11 +11389,10 @@ METHOD GetLastOpen()
       Return ( cLasTur )
    end if
 
-   ::oDbf:OrdSetFocus( "lCloTur" )
+   ::oDbf:OrdSetFocus( "nStaTur" )
+   ::oDbf:GoTop()
 
-   if ::oDbf:Seek( .f. ) .and. !( ::oDbf:lCloTur )
-      cLasTur     := ::oDbf:cNumTur + ::oDbf:cSufTur
-   end if
+   cLasTur        := ::oDbf:cNumTur + ::oDbf:cSufTur
 
    ::oDbf:OrdSetFocus( "cNumTur" )
 

@@ -1868,6 +1868,7 @@ METHOD BuildEmpresa()
    oDataTable:cName        := cPatEmp() + "SatCliS"
    oDataTable:cDataFile    := cPatEmp( , .t. ) + "SatCliS.Dbf"
    oDataTable:cIndexFile   := cPatEmp( , .t. ) + "SatCliS.Cdx"
+   oDataTable:bSyncFile    := {|| SynSatCli( cPatEmp() ) }
    oDataTable:lTrigger     := .f.
    ::AddEmpresaTable( oDataTable )
 
@@ -2925,6 +2926,8 @@ METHOD Reindex()
    local oTable
    local cAlias
 
+   ::oDlg:bValid  := {|| .f. }
+
    CursorWait()
 
    ::BuildData()
@@ -2986,6 +2989,8 @@ METHOD Reindex()
    ::EnableTriggers()
    
    CursorWE()
+
+   ::oDlg:bValid  := {|| .t. }
 
    msgInfo( "Proceso finalizado con exito.")
 
