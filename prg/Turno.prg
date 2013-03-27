@@ -2222,7 +2222,7 @@ METHOD lCreateTurno()
    local oBmpObjetivo
    local oCaja
    local cCaja          := oUser():cCaja()
-   local cNombreCaja    := oRetFld( cCaja, ::oCaja )
+   local cNombreCaja    := Alltrim( oRetFld( cCaja, ::oCaja ) )
    local cResource      := "ApTurnoTCT"
 
    /*
@@ -2249,7 +2249,7 @@ METHOD lCreateTurno()
 
    ::nObjetivoTurno     := 0
    ::nImporteTurno      := ::GetLastEfectivo()
-   ::cDescripcionTurno  := "APERTURA DE SESIÓN"
+   ::cDescripcionTurno  := "Apertura de sesión " + cNombreCaja
 
    /*
    Comienza el dialogo---------------------------------------------------------
@@ -3000,11 +3000,10 @@ METHOD lCloPedCli( lClose, cCodCaj )
 
       while ::oPedCliP:cTurRec + ::oPedCliP:cSufPed + ::oPedCliP:cCodCaj == ::cCurTurno + cCodCaj .and. !::oPedCliP:eof()
 
-         ::oPedCliP:Load()
-         ::oPedCliP:lCloPgo   := lClose
-         ::oPedCliP:Save()
+         ::oPedCliP:FieldPutByName( "lCloPgo", lClose )
 
          ::oPedCliP:Skip()
+
          SysRefresh()
 
       end do
@@ -3223,15 +3222,18 @@ METHOD lArqueoTurno( lZoom, lTactil, lParcial ) CLASS TTurno
 
    ::oDbfDet:OrdScope( ::cCurTurno )
 
+   ::oDbfCaj:OrdScope( ::cCurTurno )
+
    /*
-   Tratamos q vean solo las cajas q se van a cerrar---------------------------
+   Seleccionamos las cajas q se van a cerrar-----------------------------------
    */
 
-   if oUser():lMaster()
-      ::oDbfCaj:OrdScope( ::cCurTurno )
-   else 
-      ::oDbfCaj:OrdScope( ::cCurTurno ) // + ::cCodCaj )
-   end if 
+   ::oDbfCaj:GoTop()
+   while !::oDbfCaj:Eof()
+      ::oDbfCaj:FieldPutByName( "lCajSel", ::oDbfCaj:cCodCaj == oUser():cCaja() )
+      ::oDbfCaj:Skip()
+   end while       
+   ::oDbfCaj:GoTop()
 
    /*
    Valores de la impresión-----------------------------------------------------
@@ -4024,16 +4026,6 @@ METHOD lArqueoTurno( lZoom, lTactil, lParcial ) CLASS TTurno
 
    end if
 
-   /*
-   Volvemos la data a su estado original---------------------------------------
-   */
-
-   ::lArqueoParcial        := .f.
-
-   if ::oWndBrw != nil
-      ::oWndBrw:Refresh()
-   end if
-
    RECOVER USING oError
 
       if !Empty( oDlg )
@@ -4050,6 +4042,7 @@ METHOD lArqueoTurno( lZoom, lTactil, lParcial ) CLASS TTurno
    Limpiamos las estáticas-----------------------------------------------------
    */
 
+   ::lArqueoParcial     := .f.
    ::nImporteEfectivo   := 0
    ::nImporteTarjeta    := 0
    ::nImporteRetirado   := 0
@@ -4081,6 +4074,10 @@ METHOD lArqueoTurno( lZoom, lTactil, lParcial ) CLASS TTurno
 
    if !Empty( oFntBrw )
       oFntBrw:End()
+   end if
+
+   if ::oWndBrw != nil
+      ::oWndBrw:Refresh()
    end if
 
 Return ( oDlg:nResult == IDOK )
@@ -4473,7 +4470,7 @@ Method LoadCaja( cCurTurno )
 
       if ::oDbfCaj:Append()
          ::oDbfCaj:Blank()
-         ::oDbfCaj:lCajSel    := .t. // ( ::oCaja:cCodCaj == oUser():cCaja() )
+         ::oDbfCaj:lCajSel    := .f.
          ::oDbfCaj:cNumTur    := SubStr( cCurTurno, 1, 6 )
          ::oDbfCaj:cSufTur    := SubStr( cCurTurno, -2 )
          ::oDbfCaj:cCodCaj    := cUserCaja
@@ -11307,7 +11304,7 @@ RETURN NIL
 
 METHOD GetLastOpen()
 
-   local cLasTur  := ""
+   local cLasTur        := ""
 
    if Empty( ::oDbf )
       Return ( cLasTur )
@@ -11318,23 +11315,33 @@ METHOD GetLastOpen()
    end if
 
    ::oDbf:OrdSetFocus( "nStaTur" )
-   ::oDbf:GoTop()
 
-   cLasTur        := ::oDbf:cNumTur + ::oDbf:cSufTur
+   ::oDbf:GoTop()
+   while !::oDbf:Eof()
+
+      cLasTur           := ::oDbf:cNumTur + ::oDbf:cSufTur
+
+      /*
+      Vamos a buscar si la caja esta abierta para este turno-------------------
+      */
+      
+      if !Empty( cLasTur )
+         if ::oDbfCaj:Seek( cLasTur + oUser():cCaja() )
+            if ::oDbfCaj:lCajClo
+               cLasTur  := ""
+            end if 
+         end if
+      end if 
+
+      if Empty( cLasTur )
+         ::oDbf:Skip()
+      else
+         exit 
+      end if 
+
+   end while      
 
    ::oDbf:OrdSetFocus( "cNumTur" )
-
-   /*
-   Vamos a buscar si la caja esta abierta para este turno----------------------
-   */
-
-   if !Empty( cLasTur )
-      if ::oDbfCaj:Seek( cLasTur + oUser():cCaja() )
-         if ::oDbfCaj:lCajClo
-            cLasTur  := ""
-         end if 
-      end if
-   end if 
 
 RETURN ( cLasTur )
 

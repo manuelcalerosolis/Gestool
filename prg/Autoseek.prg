@@ -555,7 +555,6 @@ Function DestroyFastFilter( cAlias, lUser, lFecha )
 
             ( cAlias )->( OrdSetFocus( cOldIndexName, cBagAnterior ) )
             ( cAlias )->( OrdDestroy( cNamAnterior, cBagAnterior ) )
-            msgStop( nRecAnterior )
             ( cAlias )->( dbGoTo( nRecAnterior ) )
 
             cOldIndexName  := nil
