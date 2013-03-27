@@ -40,7 +40,7 @@ CLASS TDlgFlt
 
    DATA lAllUser              INIT .f.
 
-   DATA lMultyExpresion
+   DATA lMultyExpresion       INIT .f.
 
    DATA aTblMask
    DATA aTblField
@@ -226,7 +226,6 @@ Method Default()
    ::oValFilter         := Array( 5 )
    ::oNexFilter         := Array( 4 )
 
-   ::lMultyExpresion    := .f.
    ::lAllRecno          := .f.
 
    ::aTblMask           := {}          // Muestra las mascaras

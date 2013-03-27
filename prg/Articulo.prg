@@ -4380,7 +4380,7 @@ STATIC FUNCTION EdtRec( aTmp, aGet, dbfArticulo, oBrw, bWhen, bValid, nMode )
 			ID 		502 ;
          OF       fldImagenes;
          WHEN     ( nMode != ZOOM_MODE ) ;
-         ACTION   ( WinDelRec( oBrwImg, dbfTmpImg ) )
+         ACTION   ( WinDelRec( oBrwImg, dbfTmpImg ), lChangeImage := .t. )
 
       REDEFINE BUTTON ;
          ID       503 ;
@@ -5519,8 +5519,6 @@ Static Function EndTrans( aTmp, aGet, oSay, oDlg, aTipBar, cTipBar, nMode, oImpC
          para volver a subir todas las imágenes de la imagen.
          */
 
-         lChangeImage    := lChangeImage( cCod, aTmp )
-
          while ( dbfImg )->( dbSeek( cCod ) ) .and. !( dbfImg )->( eof() )
             if dbLock( dbfImg )
                ( dbfImg )->( dbDelete() )
@@ -5673,25 +5671,20 @@ Static Function EndTrans( aTmp, aGet, oSay, oDlg, aTipBar, cTipBar, nMode, oImpC
       WinGather( aTmp, aGet, dbfArticulo, nil, nMode )
 
       /*
-<<<<<<< HEAD
       Actualizamos los datos de la web para tiempo real------------------------
       */
+
+      if ( dbfTmpImg )->( Lastrec() ) == 0
+         lChangeImage  := ( cImageOld == aTmp[ ( dbfArticulo )->( fieldpos( "cImagen" ) ) ] )
+      end if   
 
       Actualizaweb( cCod, lChangeImage )
 
       /*
-=======
->>>>>>> c96fe5afea9bab89669becf9543998420eb97100
       Terminamos la transación-------------------------------------------------
       */
 
       CommitTransaction()
-
-      /*
-      Actualizamos los datos de la web para tiempo real------------------------
-      */
-
-      Actualizaweb( cCod )
 
    RECOVER USING oError
 
@@ -15093,7 +15086,7 @@ FUNCTION rxArticulo( cPath, oMeter, lRecPrc )
       ( dbfArticulo )->( ordCondSet( "!Deleted() .and. lDefImg", {|| !Deleted() .and. Field->lDefImg } ) )
       ( dbfArticulo )->( ordCreate( cPath + "ArtImg.Cdx", "lDefImg", "cCodArt", {|| Field->cCodArt } ) )
 
-      ( dbfArticulo )->( ordCondSet( "!Deleted()", {|| !Deleted() .and. Field->lDefImg } ) )
+      ( dbfArticulo )->( ordCondSet( "!Deleted()", {|| !Deleted() } ) )
       ( dbfArticulo )->( ordCreate( cPath + "ArtImg.Cdx", "cImgArt", "cImgArt", {|| Field->cImgArt } ) )
 
       ( dbfArticulo )->( dbCloseArea() )
@@ -18022,6 +18015,8 @@ static function EndEdtImg( aTmp, dbfTmpImg, oBrw, nMode, oDlg )
 
    oDlg:end( IDOK )
 
+   lChangeImage   := .t.
+
 Return ( .t. )
 
 //---------------------------------------------------------------------------//
@@ -18157,15 +18152,15 @@ Return ( .t. )
 
 //---------------------------------------------------------------------------//
 
-Static Function Actualizaweb( cCodArt )
+Static Function Actualizaweb( cCodArt, lChangeImage )
 
    if uFieldEmpresa( "lRealWeb" )
 
       if lPubArt()
 
          with object ( TComercio():GetInstance() )    
-            :ActualizaProductsPrestashop( cCodArt )
-         end with  
+            :ActualizaProductsPrestashop( cCodArt, lChangeImage )
+         end with
 
       end if   
 
@@ -18194,47 +18189,5 @@ Static Function lPubArt()
    end if
 
 Return lPub
-
-//---------------------------------------------------------------------------//
-
-Static Function lChangeImage( cCodArt, aTmp )
-
-   local nRec        := ( dbfImg )->( Recno() )
-   local nOrdAnt     := ( dbfImg )->( OrdSetFocus( "cImgArt" ) )
-   local lReturn     := .f.
-
-   if !( dbfImg )->( dbSeek( cCodArt ) )
-
-      lReturn        := ( cImageOld == aTmp[ ( dbfArticulo )->( fieldpos( "cImagen" ) ) ] )
-
-   else
-
-      ( dbfTmpImg )->( dbGoTop() )
-
-      while !( dbfTmpImg )->( eof() )
-
-
-         if !( dbfImg )->( dbSeek( ( dbfTmpImg )->cImgArt ) )
-
-            lReturn := .t.
-
-         else
-
-            lReturn := ( dbfImg )->cImgArt == ( dbfTmpImg )->cImgArt
-
-         end if   
-
-
-         ( dbfTmpImg )->( dbSkip() )
-
-      end while
-
-   end if   
-         
-   ( dbfImg )->( OrdSetFocus( "nOrdAnt" ) )
-   ( dbfImg )->( dbGoto( nRec ) )
-   ( dbfTmpImg )->( dbGoTop() )
-
-Return lReturn
 
 //---------------------------------------------------------------------------//

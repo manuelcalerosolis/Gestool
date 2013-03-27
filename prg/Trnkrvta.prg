@@ -81,7 +81,7 @@ METHOD OpenFiles() CLASS TRnkRVta
 
    DATABASE NEW ::oDbfIva   PATH ( cPatDat() ) FILE "TIVA.DBF"    VIA ( cDriver() ) SHARED INDEX "TIVA.CDX"
 
-   ::bForReport   := {|| ::lAllPrc .or. ::oDbf:nTotNet >= ::nLimit }
+   ::bForReport      := {|| ::lAllPrc .or. ::oDbf:nTotNet >= ::nLimit }
 
    RECOVER
 
