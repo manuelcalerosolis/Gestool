@@ -2262,24 +2262,9 @@ METHOD lCreateTurno()
    Valores iniciales para la edicion-------------------------------------------
    */
 
-   if Empty( ::oDbf:dOpnTur )
-      ::dOpenTurno      := GetSysDate()
-   else
-      ::dOpenTurno      := ::oDbf:dOpnTur
-   end if
-
-   if Empty( ::oDbf:cHorOpn )
-      ::cHoraTurno      := SubStr( Time(), 1, 5 )
-   else
-      ::cHoraTurno      := ::oDbf:cHorOpn
-   end if
-
-   if Empty( ::oDbf:cCajTur )
-      ::cCajeroTurno    := cCurUsr()
-   else
-      ::cCajeroTurno    := ::oDbf:cCajTur
-   end if
-
+   ::dOpenTurno         := GetSysDate()
+   ::cHoraTurno         := SubStr( Time(), 1, 5 )
+   ::cCajeroTurno       := cCurUsr()
    ::nObjetivoTurno     := 0
    ::nImporteTurno      := ::GetLastEfectivo()
    ::cDescripcionTurno  := "Apertura de sesión " + cNombreCaja
