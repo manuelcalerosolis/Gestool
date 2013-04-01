@@ -105,7 +105,7 @@ Function rxCategoria( cPath )
       ( dbfCategoria )->( ordCreate( cPath + "CATEGORIAS.CDX", "CODIGO", "CCODIGO", {|| Field->CCODIGO }, ) )
 
       ( dbfCategoria )->( ordCondSet("!Deleted()", {||!Deleted()}  ) )
-      ( dbfCategoria )->( ordCreate( cPath + "CATEGORIAS.CDX", "NOMBRE", "UPPER( CNOMBRE )", {|| UPPER( Field->CNOMBRE ) } ) )
+      ( dbfCategoria )->( ordCreate( cPath + "CATEGORIAS.CDX", "Nombre", "Upper( cNombre )", {|| Upper( Field->cNombre ) } ) )
 
       ( dbfCategoria )->( dbCloseArea() )
    else
@@ -720,7 +720,7 @@ Function BrwInternalCategoria( oGet, dbfArticulo, oGet2 )
 
       oBrw:nMarqueeStyle   := 5
 
-      oBrw:bLDblClick  := {|| oDlg:end( IDOK ) }
+      oBrw:bLDblClick      := {|| oDlg:end( IDOK ) }
 
       oBrw:CreateFromResource( 105 )
 

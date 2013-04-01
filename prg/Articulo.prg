@@ -935,6 +935,7 @@ Function Articulo( oMenuItem, oWnd, bOnInit )
          :nWidth           := 120
          :bLClickHeader    := {| nMRow, nMCol, nFlags, oCol | oWndBrw:ClickOnHeader( oCol ) }
          AddResourceTipoCategoria( hb_QWith() )
+         :lHide            := .t.
       end with
 
       with object ( oWndBrw:AddXCol() )
@@ -944,7 +945,8 @@ Function Articulo( oMenuItem, oWnd, bOnInit )
          :bBmpData         := {|| nBitmapTipoTemporada( RetFld( ( dbfArticulo )->cCodTemp, dbfTemporada, "cTipo" ) ) }
          :nWidth           := 120
          :bLClickHeader    := {| nMRow, nMCol, nFlags, oCol | oWndBrw:ClickOnHeader( oCol ) }
-         AddResourceTipoTemporada( hb_QWith() )
+         AddResourceTipoTemporada( hb_QWith() ) 
+         :lHide            := .t. 
       end with
 
       with object ( oWndBrw:AddXCol() )
