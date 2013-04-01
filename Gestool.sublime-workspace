@@ -4,6 +4,18 @@
 		"selected_items":
 		[
 			[
+				"ctext",
+				"cTextoWait"
+			],
+			[
+				"cText",
+				"cTextoWait"
+			],
+			[
+				"Cursor",
+				"CursorWait"
+			],
+			[
 				"lChange",
 				"lChangeImage"
 			],
@@ -300,10 +312,6 @@
 				"CursorWait"
 			],
 			[
-				"Cursor",
-				"CursorWE"
-			],
-			[
 				"alquiler",
 				"cSayAlquiler"
 			],
@@ -506,14 +514,6 @@
 			[
 				"nTotal",
 				"nTotalLinea"
-			],
-			[
-				"nUnida",
-				"nUnidadesLinea"
-			],
-			[
-				"oTem",
-				"oTemporalDivisionNuevoTicket"
 			]
 		]
 	},
@@ -523,15 +523,15 @@
 			"file": "prg/Tcomercio.prg",
 			"settings":
 			{
-				"buffer_size": 364814,
+				"buffer_size": 368712,
 				"line_ending": "Windows"
 			}
 		},
 		{
-			"file": "/C/Users/Villa/Desktop/123/123.prg",
+			"file": "prg/Tftpc3.prg",
 			"settings":
 			{
-				"buffer_size": 13460,
+				"buffer_size": 3310,
 				"line_ending": "Windows"
 			}
 		}
@@ -568,12 +568,33 @@
 	},
 	"file_history":
 	[
+		"/C/fw195/Gestool/prg/Empresa.prg",
+		"/C/fw195/Gestool/prg/Say.prg",
+		"/C/fw195/Gestool/ppo/Articulo.ppo",
+		"/C/fw195/Gestool/prg/Tftpc3.prg",
+		"/C/fw195/Gestool/prg/Tuser.prg",
+		"/C/fw195/Gestool/prg/Backup.prg",
+		"/C/fw195/Gestool/prg/Tftpfile.prg",
+		"/C/fw195/Gestool/prg/Tftpserv.prg",
+		"/C/fw195/Gestool/prg/Tftp.prg",
+		"/C/FWH803/samples/tutor06.prg",
+		"/C/FWH803/samples/ftpserv.prg",
+		"/C/FWH803/samples/ftpdir.prg",
+		"/C/FWH803/source/classes/tftp.prg",
+		"/C/fwh1204/source/classes/tftpserv.prg",
+		"/C/fw195/Gestool/prg/Rptgal.prg",
+		"/C/fw195/Gestool/prg/Trnkrvta.prg",
+		"/C/fw195/Gestool/prg/Tacuatvta.prg",
+		"/C/fw195/Gestool/prg/Tinfgen.prg",
+		"/C/fw195/Gestool/prg/Tdlgflt.prg",
+		"/C/fw195/Gestool/prg/Tshell.prg",
+		"/C/fw195/Gestool/prg/Tfilter.prg",
+		"/C/fw195/Gestool/prg/Tinfavta.prg",
+		"/C/Users/Villa/Desktop/123/123.prg",
 		"/C/fw195/Gestool/prg/Articulo.prg",
 		"/C/fw195/Gestool/prg/Tscripts.prg",
 		"/C/BCC55/Include/wininet.h",
-		"/C/fw195/Gestool/prg/Tftpc3.prg",
 		"/C/fw195/Gestool/prg/Albcli.prg",
-		"/C/fw195/Gestool/prg/Tshell.prg",
 		"/C/fw195/Gestool/prg/Client.prg",
 		"/C/fw195/Gestool/prg/Producc.prg",
 		"/C/fw195/Gestool/prg/Tdbf.prg",
@@ -583,16 +604,13 @@
 		"/C/fw195/Gestool/prg/Tcomercio.prg",
 		"/C/fw195/Gestool/prg/Familia.prg",
 		"/C/fwh1204/source/classes/tftp.prg",
-		"/C/fwh1204/source/classes/tftpserv.prg",
 		"/C/fwh1204/source/classes/tftpsess.prg",
 		"/C/fwh1204/source/classes/tftpcli.prg",
 		"/C/fwh1204/source/classes/tftpfile.prg",
-		"/C/fw195/Gestool/prg/Tftp.prg",
 		"/C/fw195/Gestool/prg/Tpv.prg",
 		"/C/fw195/Gestool/prg/Tgrpfam.prg",
 		"/C/fw195/Gestool/prg/Tpvtactil.prg",
 		"/C/fw195/Gestool/prg/Pro.prg",
-		"/C/fw195/Gestool/prg/Empresa.prg",
 		"/C/fw195/Gestool/prg/Impestudioes.prg",
 		"/C/Users/Villa/Desktop/prg/Factcli.prg",
 		"/C/fw195/Gestool/prg/Pacudiamaquinaria.prg",
@@ -665,9 +683,7 @@
 		"/C/fw195/Gestool/prg/empresa",
 		"/C/fw195/Gestool/prg/Tdiacfac.prg",
 		"/C/fw195/Gestool/prg/Reccli.prg",
-		"/C/fw195/Gestool/prg/Rptgal.prg",
 		"/C/fw195/Gestool/prg/Tinflot.prg",
-		"/C/fw195/Gestool/prg/Tinfgen.prg",
 		"/C/fw195/Gestool/prg/Count.prg",
 		"/C/fw195/Gestool/prg/ncount.prg",
 		"/C/fw195/Gestool/prg/ncount",
@@ -679,23 +695,7 @@
 		"/C/Users/Villa/Desktop/XLM/XLM.prg",
 		"/C/fw195/Gestool/prg/Brwcli.prg",
 		"/C/fw195/Gestool/resource/Gstimage8.rc",
-		"/C/fw195/Gestool/resource/GstImage8.RES",
-		"/C/fw195/Gestool/prg/Tinfcfac.prg",
-		"/C/fw195/Gestool/prg/Tinfcli.prg",
-		"/C/fw195/Gestool/prg/tinfcli",
-		"/C/fw195/Gestool/prg/albcli",
-		"/C/fw195/Gestool/prg/Tpvpda.prg",
-		"/C/fw195/Gestool/prg/Tpvsalaventa.prg",
-		"/C/fw195/Gestool/prg/Backup.prg",
-		"/C/fw195/Gestool/prg/Divisas.prg",
-		"/C/fw195/Gestool/prg/Brwvta.prg",
-		"/C/fw195/Gestool/prg/Tacuuvta.prg",
-		"/C/fw195/Gestool/prg/Categoria.prg",
-		"/C/fw195/Gestool/prg/tcomercio",
-		"/C/fw195/Gestool/prg/Xbrowse.prg",
-		"/C/fw195/Gestool/prg/stock",
-		"/C/fw195/Gestool/prg/Ixbrowse.prg",
-		"/C/fw195/Gestool/prg/Txml.prg"
+		"/C/fw195/Gestool/resource/GstImage8.RES"
 	],
 	"find":
 	{
@@ -703,9 +703,11 @@
 	},
 	"find_in_files":
 	{
-		"height": 0.0,
+		"height": 90.0,
 		"where_history":
 		[
+			"C:\\fw195\\Gestool\\prg",
+			"",
 			"C:\\",
 			"C:\\FWH102\\samples",
 			"",
@@ -721,6 +723,64 @@
 		"case_sensitive": false,
 		"find_history":
 		[
+			"removedirectory",
+			"insertgrupoca",
+			"AppendImagesPrestashop",
+			"updateproduct",
+			"deleteimagesp",
+			"insertcategoriesP",
+			"cTextoWait",
+			"ctextowait",
+			"ltextowait",
+			"deleteimagesP",
+			"delete",
+			"deleteimages",
+			"delete",
+			")\n",
+			"say",
+			"redefine say",
+			"odcreate",
+			"oFtp:SetCurrentDirectory( \"..\" )",
+			"SetCurrentDirectory",
+			"od deleteimagesp",
+			"msginfo",
+			"?",
+			"doFtp",
+			"doBackup",
+			"fwrite",
+			"ftp",
+			"SetCurrentDirectory",
+			"AppendImagesPrestashop",
+			"insertproducts",
+			"?",
+			":resource",
+			"lmultyexpresion",
+			"od new",
+			"lMultyExpresion",
+			"::oFilter:lMultyExpresion",
+			"CreateFilter",
+			"od resource",
+			"resource",
+			"Expresión",
+			"aExpMaker",
+			"ExpMaker",
+			"in",
+			"inv",
+			"in",
+			"expresión inválida",
+			"invalida",
+			"ofilter",
+			"#",
+			"aItmVentas()",
+			"lMultyExpresion",
+			"ofilter",
+			"DlgFilter",
+			"oFilter",
+			"f ",
+			"invalida",
+			"ss TRnkRVta",
+			"TRnkRVta",
+			"rankin",
 			"#",
 			"for each",
 			"SELECT * FROM",
@@ -790,65 +850,7 @@
 			"oDbfTemporal",
 			"CreateTemporal",
 			"temporal",
-			"nGenParte",
-			"definefiles",
-			"oproduccion",
-			"openfiles",
-			"oProduc",
-			"openfiles",
-			"init()",
-			":init",
-			"init",
-			"albaran",
-			"TAlbaranProveedoresLabelGenerator",
-			"FtpRemoveDirectory",
-			"CreateDirectory",
-			"RemoveDirectory",
-			"DeleteImagespro",
-			"DeleteImagescate",
-			"DeleteImagesProducts",
-			"deleteimagesp",
-			"on aitm",
-			"DeleteImages",
-			"deleteimages",
-			"DeleteImages",
-			"DeleteImagesProducts",
-			"deleteimagesP",
-			"delete",
-			"DeleteImagesCategories",
-			"DeleteImagesCategoriesDeleteImagesCategories",
-			"DeleteProductsPrestashop()",
-			"deleteprod",
-			"Noyes",
-			"yesno",
-			"DeleteProductsPrestashop",
-			"on rx",
-			"deletecategori",
-			"deletegategori",
-			"deletecategori",
-			"aviso",
-			"FieldGetByName",
-			"od deleteline",
-			"select",
-			"od deletelineas",
-			"select",
-			"on aitm",
-			"on Div",
-			"Div",
-			"ImportaHoja",
-			"sat",
-			"on aitm",
-			"on enon aitm",
-			"actualiza",
-			"on endtrans",
-			"lLineaValida",
-			"valida",
-			"oBrw",
-			"on edtrec",
-			"nTipoActualizacionLineas  := EDIT_MODE",
-			"o",
-			"on edtrec",
-			"DeletePropiedadesPrestashop"
+			"nGenParte"
 		],
 		"highlight": true,
 		"in_selection": false,
@@ -856,6 +858,8 @@
 		"regex": false,
 		"replace_history":
 		[
+			"cTextoWait",
+			"ctextowait",
 			"TProduccionLabelGenerator",
 			"lCheckConsolidacion",
 			"InsertCategoriesPrestashop",
@@ -872,7 +876,7 @@
 	"groups":
 	[
 		{
-			"selected": 1,
+			"selected": 0,
 			"sheets":
 			[
 				{
@@ -880,15 +884,15 @@
 					"file": "prg/Tcomercio.prg",
 					"settings":
 					{
-						"buffer_size": 364814,
+						"buffer_size": 368712,
 						"regions":
 						{
 						},
 						"selection":
 						[
 							[
-								282724,
-								282724
+								263826,
+								263826
 							]
 						],
 						"settings":
@@ -898,25 +902,25 @@
 							"translate_tabs_to_spaces": true
 						},
 						"translation.x": 0.0,
-						"translation.y": 174575.0,
+						"translation.y": 161676.0,
 						"zoom_level": 1.0
 					},
 					"type": "text"
 				},
 				{
 					"buffer": 1,
-					"file": "/C/Users/Villa/Desktop/123/123.prg",
+					"file": "prg/Tftpc3.prg",
 					"settings":
 					{
-						"buffer_size": 13460,
+						"buffer_size": 3310,
 						"regions":
 						{
 						},
 						"selection":
 						[
 							[
-								6808,
-								6831
+								68,
+								79
 							]
 						],
 						"settings":
@@ -926,7 +930,7 @@
 							"translate_tabs_to_spaces": true
 						},
 						"translation.x": 0.0,
-						"translation.y": 4244.0,
+						"translation.y": 0.0,
 						"zoom_level": 1.0
 					},
 					"type": "text"
