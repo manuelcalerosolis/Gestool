@@ -2505,7 +2505,7 @@ RETURN ( cRet )
 METHOD cValidTurno()
 
    /*
-   Tomamos el turno de los contadores
+   Tomamos el turno de los contadores------------------------------------------
    */
 
    local nCurTur  := nNewDoc( nil, ::oDbf:nArea, "nSesion", 6, ::oDbfCnt:nArea ) 

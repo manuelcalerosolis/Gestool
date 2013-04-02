@@ -4,6 +4,10 @@
 		"selected_items":
 		[
 			[
+				"fo",
+				"form"
+			],
+			[
 				"s",
 				"self"
 			],
@@ -510,10 +514,6 @@
 			[
 				"ma",
 				"max-width"
-			],
-			[
-				"cSufT",
-				"cSufTil"
 			]
 		]
 	},
@@ -523,8 +523,64 @@
 			"file": "/C/fw195/Gestool/prg/Articulo.prg",
 			"settings":
 			{
-				"buffer_size": 652838,
+				"buffer_size": 652817,
 				"line_ending": "Windows"
+			}
+		},
+		{
+			"file": "/C/fw195/Gestool/bin/gstapolo.ini",
+			"settings":
+			{
+				"buffer_size": 533,
+				"line_ending": "Windows"
+			}
+		},
+		{
+			"file": "/C/fw195/Gestool/prg/Turno.prg",
+			"settings":
+			{
+				"buffer_size": 354766,
+				"line_ending": "Windows"
+			}
+		},
+		{
+			"file": "/C/Python33/mysite/contactos/forms.py",
+			"settings":
+			{
+				"buffer_size": 805,
+				"line_ending": "Windows"
+			}
+		},
+		{
+			"file": "/C/Python33/mysite/contactos/views.py",
+			"settings":
+			{
+				"buffer_size": 971,
+				"line_ending": "Windows"
+			}
+		},
+		{
+			"file": "/C/Python33/mysite/templates/base.html",
+			"settings":
+			{
+				"buffer_size": 1413,
+				"line_ending": "Windows"
+			}
+		},
+		{
+			"file": "/C/Python33/mysite/static/css/bootstrap.css",
+			"settings":
+			{
+				"buffer_size": 127247,
+				"line_ending": "Unix"
+			}
+		},
+		{
+			"file": "/C/Python33/mysite/templates/contactos/index.html",
+			"settings":
+			{
+				"buffer_size": 1075,
+				"line_ending": "Unix"
 			}
 		}
 	],
@@ -716,6 +772,7 @@
 	},
 	"file_history":
 	[
+		"/C/Python33/mysite/static/css/bootstrap.css",
 		"/C/fw195/Gestool/prg/Articulo.prg",
 		"/C/Python33/mysite/templates/base.html",
 		"/C/Python33/mysite/mysite/settings.py",
@@ -842,8 +899,7 @@
 		"/C/django/INSTALL",
 		"/C/twython-master/README.rst",
 		"/C/twython-2.5.5/README.rst",
-		"/C/fw195/gestool/bin/script/000.prg",
-		"/C/fw195/gestool/prg/Tactil.prg"
+		"/C/fw195/gestool/bin/script/000.prg"
 	],
 	"find":
 	{
@@ -851,7 +907,7 @@
 	},
 	"find_in_files":
 	{
-		"height": 0.0,
+		"height": 90.0,
 		"where_history":
 		[
 			"C:\\fw195\\gestool\\prg",
@@ -905,6 +961,13 @@
 		"case_sensitive": false,
 		"find_history":
 		[
+			"alert",
+			"sender",
+			"message",
+			"lCreateTurno",
+			"lnowopen",
+			"openca",
+			"removedir",
 			"categoria",
 			"<<<<",
 			"resync",
@@ -1025,14 +1088,7 @@
 			"lopencaja(",
 			"lAllCloseTurno",
 			"od lopencaja",
-			"od lnow",
-			"\n	",
-			"SatCliS",
-			"satclis",
-			"on syn",
-			"on sync",
-			"on syn",
-			"on synpedprv"
+			"od lnow"
 		],
 		"highlight": true,
 		"in_selection": false,
@@ -1040,6 +1096,8 @@
 		"regex": false,
 		"replace_history":
 		[
+			"mail",
+			"texto",
 			"lCloseCajaSeleccionada",
 			"EXCLUSIVE",
 			"aNumAlb",
@@ -1167,7 +1225,7 @@
 	"groups":
 	[
 		{
-			"selected": 0,
+			"selected": 1,
 			"sheets":
 			[
 				{
@@ -1175,15 +1233,15 @@
 					"file": "/C/fw195/Gestool/prg/Articulo.prg",
 					"settings":
 					{
-						"buffer_size": 652838,
+						"buffer_size": 652817,
 						"regions":
 						{
 						},
 						"selection":
 						[
 							[
-								29179,
-								29179
+								36070,
+								36070
 							]
 						],
 						"settings":
@@ -1196,7 +1254,218 @@
 							"translate_tabs_to_spaces": true
 						},
 						"translation.x": 0.0,
-						"translation.y": 16866.0,
+						"translation.y": 19173.0,
+						"zoom_level": 1.0
+					},
+					"type": "text"
+				},
+				{
+					"buffer": 1,
+					"file": "/C/fw195/Gestool/bin/gstapolo.ini",
+					"settings":
+					{
+						"buffer_size": 533,
+						"regions":
+						{
+						},
+						"selection":
+						[
+							[
+								533,
+								533
+							]
+						],
+						"settings":
+						{
+							"encoding_helper_confidence": 1.0,
+							"encoding_helper_encoding": "UTF-8",
+							"encoding_helper_encoding_sublime": "UTF-8",
+							"syntax": "Packages/Text/Plain text.tmLanguage"
+						},
+						"translation.x": 0.0,
+						"translation.y": 0.0,
+						"zoom_level": 1.0
+					},
+					"type": "text"
+				},
+				{
+					"buffer": 2,
+					"file": "/C/fw195/Gestool/prg/Turno.prg",
+					"settings":
+					{
+						"buffer_size": 354766,
+						"regions":
+						{
+						},
+						"selection":
+						[
+							[
+								77408,
+								77408
+							]
+						],
+						"settings":
+						{
+							"encoding_helper_encoding_sublime": "Western (Windows 1252)",
+							"encoding_helper_loading": true,
+							"syntax": "Packages/fivewin/Fivewin.tmlanguage",
+							"tab_size": 3,
+							"translate_tabs_to_spaces": true
+						},
+						"translation.x": 0.0,
+						"translation.y": 43714.0,
+						"zoom_level": 1.0
+					},
+					"type": "text"
+				},
+				{
+					"buffer": 3,
+					"file": "/C/Python33/mysite/contactos/forms.py",
+					"settings":
+					{
+						"buffer_size": 805,
+						"regions":
+						{
+						},
+						"selection":
+						[
+							[
+								805,
+								805
+							]
+						],
+						"settings":
+						{
+							"encoding_helper_confidence": 1.0,
+							"encoding_helper_encoding": "UTF-8",
+							"encoding_helper_encoding_sublime": "UTF-8",
+							"syntax": "Packages/Djaneiro/Syntaxes/Python Django.tmLanguage",
+							"translate_tabs_to_spaces": false
+						},
+						"translation.x": 0.0,
+						"translation.y": 0.0,
+						"zoom_level": 1.0
+					},
+					"type": "text"
+				},
+				{
+					"buffer": 4,
+					"file": "/C/Python33/mysite/contactos/views.py",
+					"settings":
+					{
+						"buffer_size": 971,
+						"regions":
+						{
+						},
+						"selection":
+						[
+							[
+								857,
+								857
+							]
+						],
+						"settings":
+						{
+							"encoding_helper_confidence": 1.0,
+							"encoding_helper_encoding": "UTF-8",
+							"encoding_helper_encoding_sublime": "UTF-8",
+							"syntax": "Packages/Djaneiro/Syntaxes/Python Django.tmLanguage",
+							"translate_tabs_to_spaces": false
+						},
+						"translation.x": 0.0,
+						"translation.y": 108.0,
+						"zoom_level": 1.0
+					},
+					"type": "text"
+				},
+				{
+					"buffer": 5,
+					"file": "/C/Python33/mysite/templates/base.html",
+					"settings":
+					{
+						"buffer_size": 1413,
+						"regions":
+						{
+						},
+						"selection":
+						[
+							[
+								409,
+								409
+							]
+						],
+						"settings":
+						{
+							"encoding_helper_confidence": 1.0,
+							"encoding_helper_encoding": "UTF-8",
+							"encoding_helper_encoding_sublime": "UTF-8",
+							"syntax": "Packages/Djaneiro/Syntaxes/HTML (Django).tmLanguage",
+							"tab_size": 2,
+							"translate_tabs_to_spaces": true
+						},
+						"translation.x": 0.0,
+						"translation.y": 0.0,
+						"zoom_level": 1.0
+					},
+					"type": "text"
+				},
+				{
+					"buffer": 6,
+					"file": "/C/Python33/mysite/static/css/bootstrap.css",
+					"settings":
+					{
+						"buffer_size": 127247,
+						"regions":
+						{
+						},
+						"selection":
+						[
+							[
+								4352,
+								4352
+							]
+						],
+						"settings":
+						{
+							"encoding_helper_confidence": 1.0,
+							"encoding_helper_encoding": "UTF-8",
+							"encoding_helper_encoding_sublime": "UTF-8",
+							"syntax": "Packages/CSS/CSS.tmLanguage",
+							"tab_size": 2,
+							"translate_tabs_to_spaces": true
+						},
+						"translation.x": 0.0,
+						"translation.y": 10348.0,
+						"zoom_level": 1.0
+					},
+					"type": "text"
+				},
+				{
+					"buffer": 7,
+					"file": "/C/Python33/mysite/templates/contactos/index.html",
+					"settings":
+					{
+						"buffer_size": 1075,
+						"regions":
+						{
+						},
+						"selection":
+						[
+							[
+								239,
+								239
+							]
+						],
+						"settings":
+						{
+							"encoding_helper_confidence": 1.0,
+							"encoding_helper_encoding": "UTF-8",
+							"encoding_helper_encoding_sublime": "UTF-8",
+							"syntax": "Packages/Djaneiro/Syntaxes/HTML (Django).tmLanguage",
+							"translate_tabs_to_spaces": false
+						},
+						"translation.x": 0.0,
+						"translation.y": 108.0,
 						"zoom_level": 1.0
 					},
 					"type": "text"
