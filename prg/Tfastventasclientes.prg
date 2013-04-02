@@ -1456,8 +1456,6 @@ METHOD preCliInfo()
 
    local cKey  := ::oDbf:cClsDoc + ::oDbf:cSerDoc + ::oDbf:cNumDoc + ::oDbf:cSufDoc
 
-   msgAlert( cKey, str( len( cKey ) ) )
-
    if ::oPreCliT:Seek( cKey )
       msgInfo( cKey, "found" )
    else

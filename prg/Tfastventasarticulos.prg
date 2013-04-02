@@ -49,6 +49,8 @@ CLASS TFastVentasArticulos FROM TFastReportInfGen
 
    METHOD TreeReportingChanged()
 
+   METHOD cIdeDocumento()  INLINE ( ::oDbf:cClsDoc + ::oDbf:cSerDoc + ::oDbf:cNumDoc + ::oDbf:cSufDoc ) 
+
 END CLASS
 
 //----------------------------------------------------------------------------//
@@ -660,7 +662,8 @@ METHOD AddPresupuestoClientes() CLASS TFastVentasArticulos
                   ::oDbf:cSerDoc    := ::oPreCliT:cSerPre
                   ::oDbf:cNumDoc    := Str( ::oPreCliT:nNumPre )
                   ::oDbf:cSufDoc    := ::oPreCliT:cSufPre
-                  ::oDbf:cIdeDoc    := Upper( ::oDbf:cTipDoc ) + ::oDbf:cSerDoc + ::oDbf:cNumDoc + ::oDbf:cSufDoc
+
+                  ::oDbf:cIdeDoc    :=  ::cIdeDocumento()
 
                   ::oDbf:nAnoDoc    := Year( ::oPreCliT:dFecPre )
                   ::oDbf:nMesDoc    := Month( ::oPreCliT:dFecPre )
@@ -795,7 +798,8 @@ METHOD AddPedidoClientes() CLASS TFastVentasArticulos
                   ::oDbf:cSerDoc    := ::oPedCliT:cSerPed
                   ::oDbf:cNumDoc    := Str( ::oPedCliT:nNumPed )
                   ::oDbf:cSufDoc    := ::oPedCliT:cSufPed
-                  ::oDbf:cIdeDoc    := Upper( ::oDbf:cTipDoc ) + ::oDbf:cSerDoc + ::oDbf:cNumDoc + ::oDbf:cSufDoc
+
+                  ::oDbf:cIdeDoc    :=  ::cIdeDocumento()
 
                   ::oDbf:nAnoDoc    := Year( ::oPedCliT:dFecPed )
                   ::oDbf:nMesDoc    := Month( ::oPedCliT:dFecPed )
@@ -940,7 +944,8 @@ METHOD AddAlbaranCliente( lFacturados ) CLASS TFastVentasArticulos
                   ::oDbf:cSerDoc    := ::oAlbCliT:cSerAlb
                   ::oDbf:cNumDoc    := Str( ::oAlbCliT:nNumAlb )
                   ::oDbf:cSufDoc    := ::oAlbCliT:cSufAlb
-                  ::oDbf:cIdeDoc    := Upper( ::oDbf:cTipDoc ) + ::oDbf:cSerDoc + ::oDbf:cNumDoc + ::oDbf:cSufDoc
+
+                  ::oDbf:cIdeDoc    :=  ::cIdeDocumento()
 
                   ::oDbf:nAnoDoc    := Year( ::oAlbCliT:dFecAlb )
                   ::oDbf:nMesDoc    := Month( ::oAlbCliT:dFecAlb )
@@ -1072,7 +1077,8 @@ METHOD AddFacturaCliente() CLASS TFastVentasArticulos
                   ::oDbf:cSerDoc    := ::oFacCliT:cSerie
                   ::oDbf:cNumDoc    := Str( ::oFacCliT:nNumFac )
                   ::oDbf:cSufDoc    := ::oFacCliT:cSufFac
-                  ::oDbf:cIdeDoc    := Upper( ::oDbf:cTipDoc ) + ::oDbf:cSerDoc + ::oDbf:cNumDoc + ::oDbf:cSufDoc
+
+                  ::oDbf:cIdeDoc    :=  ::cIdeDocumento()
 
                   ::oDbf:nAnoDoc    := Year( ::oFacCliT:dFecFac )
                   ::oDbf:nMesDoc    := Month( ::oFacCliT:dFecFac )
@@ -1208,7 +1214,8 @@ METHOD AddFacturaRectificativa( cCodigoArticulo ) CLASS TFastVentasArticulos
                   ::oDbf:cSerDoc    := ::oFacRecT:cSerie
                   ::oDbf:cNumDoc    := Str( ::oFacRecT:nNumFac )
                   ::oDbf:cSufDoc    := ::oFacRecT:cSufFac
-                  ::oDbf:cIdeDoc    := Upper( ::oDbf:cTipDoc ) + ::oDbf:cSerDoc + ::oDbf:cNumDoc + ::oDbf:cSufDoc
+
+                  ::oDbf:cIdeDoc    :=  ::cIdeDocumento()
 
                   ::oDbf:nAnoDoc    := Year( ::oFacRecT:dFecFac )
                   ::oDbf:nMesDoc    := Month( ::oFacRecT:dFecFac )
@@ -1340,7 +1347,8 @@ METHOD AddTicket() CLASS TFastVentasArticulos
                   ::oDbf:cSerDoc    := ::oTikCliT:cSerTik
                   ::oDbf:cNumDoc    := ::oTikCliT:cNumTik
                   ::oDbf:cSufDoc    := ::oTikCliT:cSufTik
-                  ::oDbf:cIdeDoc    := Upper( ::oDbf:cTipDoc ) + ::oDbf:cSerDoc + ::oDbf:cNumDoc + ::oDbf:cSufDoc
+
+                  ::oDbf:cIdeDoc    :=  ::cIdeDocumento()
 
                   ::oDbf:nAnoDoc    := Year( ::oTikCliT:dFecTik )
                   ::oDbf:nMesDoc    := Month( ::oTikCliT:dFecTik )
@@ -1408,7 +1416,8 @@ METHOD AddTicket() CLASS TFastVentasArticulos
                   ::oDbf:cSerDoc    := ::oTikCliT:cSerTik
                   ::oDbf:cNumDoc    := ::oTikCliT:cNumTik
                   ::oDbf:cSufDoc    := ::oTikCliT:cSufTik
-                  ::oDbf:cIdeDoc    := Upper( ::oDbf:cTipDoc ) + ::oDbf:cSerDoc + ::oDbf:cNumDoc + ::oDbf:cSufDoc
+
+                  ::oDbf:cIdeDoc    :=  ::cIdeDocumento()
 
                   ::oDbf:nAnoDoc    := Year( ::oTikCliT:dFecTik )
                   ::oDbf:nMesDoc    := Month( ::oTikCliT:dFecTik )
@@ -1599,7 +1608,8 @@ METHOD AddPedidoProveedor() CLASS TFastVentasArticulos
                      ::oDbf:cSerDoc    := ::oPedPrvT:cSerPed
                      ::oDbf:cNumDoc    := Str( ::oPedPrvT:nNumPed )
                      ::oDbf:cSufDoc    := ::oPedPrvT:cSufPed
-                     ::oDbf:cIdeDoc    := Upper( ::oDbf:cTipDoc ) + ::oDbf:cSerDoc + ::oDbf:cNumDoc + ::oDbf:cSufDoc
+
+                     ::oDbf:cIdeDoc    :=  ::cIdeDocumento()
 
                      ::oDbf:nAnoDoc    := Year( ::oPedPrvT:dFecPed )
                      ::oDbf:nMesDoc    := Month( ::oPedPrvT:dFecPed )
@@ -1740,7 +1750,8 @@ METHOD AddAlbaranProveedor( lFacturados ) CLASS TFastVentasArticulos
                   ::oDbf:cSerDoc    := ::oAlbPrvT:cSerAlb
                   ::oDbf:cNumDoc    := Str( ::oAlbPrvT:nNumAlb )
                   ::oDbf:cSufDoc    := ::oAlbPrvT:cSufAlb
-                  ::oDbf:cIdeDoc    := Upper( ::oDbf:cTipDoc ) + ::oDbf:cSerDoc + ::oDbf:cNumDoc + ::oDbf:cSufDoc
+
+                  ::oDbf:cIdeDoc    :=  ::cIdeDocumento()
 
                   ::oDbf:nAnoDoc    := Year( ::oAlbPrvT:dFecAlb )
                   ::oDbf:nMesDoc    := Month( ::oAlbPrvT:dFecAlb )
@@ -1874,7 +1885,8 @@ METHOD AddFacturaProveedor( cCodigoArticulo ) CLASS TFastVentasArticulos
                   ::oDbf:cSerDoc    := ::oFacPrvT:cSerFac
                   ::oDbf:cNumDoc    := Str( ::oFacPrvT:nNumFac )
                   ::oDbf:cSufDoc    := ::oFacPrvT:cSufFac
-                  ::oDbf:cIdeDoc    := Upper( ::oDbf:cTipDoc ) + ::oDbf:cSerDoc + ::oDbf:cNumDoc + ::oDbf:cSufDoc
+
+                  ::oDbf:cIdeDoc    :=  ::cIdeDocumento()
 
                   ::oDbf:nAnoDoc    := Year( ::oFacPrvT:dFecFac )
                   ::oDbf:nMesDoc    := Month( ::oFacPrvT:dFecFac )
@@ -2000,7 +2012,8 @@ METHOD AddRectificativaProveedor( cCodigoArticulo ) CLASS TFastVentasArticulos
                   ::oDbf:cSerDoc    := ::oRctPrvT:cSerFac
                   ::oDbf:cNumDoc    := Str( ::oRctPrvT:nNumFac )
                   ::oDbf:cSufDoc    := ::oRctPrvT:cSufFac
-                  ::oDbf:cIdeDoc    := Upper( ::oDbf:cTipDoc ) + ::oDbf:cSerDoc + ::oDbf:cNumDoc + ::oDbf:cSufDoc
+
+                  ::oDbf:cIdeDoc    :=  ::cIdeDocumento()
 
                   ::oDbf:nAnoDoc    := Year( ::oRctPrvT:dFecFac )
                   ::oDbf:nMesDoc    := Month( ::oRctPrvT:dFecFac )
@@ -2234,20 +2247,20 @@ METHOD DataReport( oFr ) CLASS TFastVentasArticulos
    ::oFastReport:SetMasterDetail(   "Informe", "Clientes",                          {|| ::oDbf:cCodCli } )
    ::oFastReport:SetMasterDetail(   "Informe", "Empresa",                           {|| cCodEmp() } )
 
-   ::oFastReport:SetMasterDetail(   "Informe", "Presupuestos de clientes",          {|| msgAlert( ::oDbf:cClsDoc + ::oDbf:cSerDoc + ::oDbf:cNumDoc + ::oDbf:cSufDoc ), ::oDbf:cClsDoc + ::oDbf:cSerDoc + ::oDbf:cNumDoc + ::oDbf:cSufDoc } )
-   ::oFastReport:SetMasterDetail(   "Informe", "Lineas presupuestos de clientes",   {|| ::oDbf:cClsDoc + ::oDbf:cSerDoc + ::oDbf:cNumDoc + ::oDbf:cSufDoc } )
+   ::oFastReport:SetMasterDetail(   "Informe", "Presupuestos de clientes",          {|| ::cIdeDocumento() } )
+   ::oFastReport:SetMasterDetail(   "Informe", "Lineas presupuestos de clientes",   {|| ::cIdeDocumento() } )
 
-   ::oFastReport:SetMasterDetail(   "Informe", "Pedidos de clientes",               {|| Padr( Upper( ::oDbf:cTipDoc ), 30 ) + ::oDbf:cSerDoc + ::oDbf:cNumDoc + ::oDbf:cSufDoc } )
-   ::oFastReport:SetMasterDetail(   "Informe", "Lineas pedidos de clientes",        {|| Padr( Upper( ::oDbf:cTipDoc ), 30 ) + ::oDbf:cSerDoc + ::oDbf:cNumDoc + ::oDbf:cSufDoc } )
+   ::oFastReport:SetMasterDetail(   "Informe", "Pedidos de clientes",               {|| ::cIdeDocumento() } )
+   ::oFastReport:SetMasterDetail(   "Informe", "Lineas pedidos de clientes",        {|| ::cIdeDocumento() } )
 
-   ::oFastReport:SetMasterDetail(   "Informe", "Albaranes de clientes",             {|| Padr( Upper( ::oDbf:cTipDoc ), 30 ) + ::oDbf:cSerDoc + ::oDbf:cNumDoc + ::oDbf:cSufDoc } )
-   ::oFastReport:SetMasterDetail(   "Informe", "Lineas albaranes de clientes",      {|| Padr( Upper( ::oDbf:cTipDoc ), 30 ) + ::oDbf:cSerDoc + ::oDbf:cNumDoc + ::oDbf:cSufDoc } )
+   ::oFastReport:SetMasterDetail(   "Informe", "Albaranes de clientes",             {|| ::cIdeDocumento() } )
+   ::oFastReport:SetMasterDetail(   "Informe", "Lineas albaranes de clientes",      {|| ::cIdeDocumento() } )
 
-   ::oFastReport:SetMasterDetail(   "Informe", "Facturas de clientes",              {|| Padr( Upper( ::oDbf:cTipDoc ), 30 ) + ::oDbf:cSerDoc + ::oDbf:cNumDoc + ::oDbf:cSufDoc } )
-   ::oFastReport:SetMasterDetail(   "Informe", "Lineas facturas de clientes",       {|| Padr( Upper( ::oDbf:cTipDoc ), 30 ) + ::oDbf:cSerDoc + ::oDbf:cNumDoc + ::oDbf:cSufDoc } )
+   ::oFastReport:SetMasterDetail(   "Informe", "Facturas de clientes",              {|| ::cIdeDocumento() } )
+   ::oFastReport:SetMasterDetail(   "Informe", "Lineas facturas de clientes",       {|| ::cIdeDocumento() } )
 
-   ::oFastReport:SetMasterDetail(   "Informe", "Facturas rectificativas de clientes",        {|| Padr( Upper( ::oDbf:cTipDoc ), 30 ) + ::oDbf:cSerDoc + ::oDbf:cNumDoc + ::oDbf:cSufDoc } )
-   ::oFastReport:SetMasterDetail(   "Informe", "Lineas facturas rectificativas de clientes", {|| Padr( Upper( ::oDbf:cTipDoc ), 30 ) + ::oDbf:cSerDoc + ::oDbf:cNumDoc + ::oDbf:cSufDoc } )
+   ::oFastReport:SetMasterDetail(   "Informe", "Facturas rectificativas de clientes",        {|| ::cIdeDocumento() } )
+   ::oFastReport:SetMasterDetail(   "Informe", "Lineas facturas rectificativas de clientes", {|| ::cIdeDocumento() } )
 
    /*
    Resincronizar con los movimientos-------------------------------------------
