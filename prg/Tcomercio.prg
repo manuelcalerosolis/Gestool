@@ -392,7 +392,7 @@ CLASS TComercio
 
    METHOD InsertImageProductsPrestashop( cCodArt )
 
-   METHOD InsertPropiedadesProductPrestashop( cCodArt )
+   METHOD InsertPropiedadesProductPrestashop()
 
 END CLASS
 
@@ -8453,7 +8453,7 @@ METHOD InsertProductsPrestashop( lExt ) CLASS TComercio
 
    ::cTextoWait( "Añadiendo propiedades del artículo: " + AllTrim( ::oArt:Nombre ) )
 
-   ::InsertPropiedadesProductPrestashop( ::oArt:Codigo )
+   ::InsertPropiedadesProductPrestashop()
 
    /*
    ----------------------------------------------------------------------------
@@ -8983,381 +8983,397 @@ Return nil
 
 //---------------------------------------------------------------------------//
 
-METHOD InsertPropiedadesProductPrestashop( cCodArt ) CLASS TComercio
+METHOD InsertPropiedadesProductPrestashop() CLASS TComercio
 
+   local nCodigoWeb           := 0
+   local nCodigoImagen        := 0
+   local oImagen
+   local nPosition            := 1
+   local nCodigoPropiedad     := 0
+   local aPropiedades1        := {}
+   local aPropiedades2        := {}
+   local aPropiedad1
+   local aPropiedad2
+   local nOrdAnt
+   local nPrecio              := 0
+   local nParent              := ::GetParentCategories()
+   local cCommand             := ""
    local nOrdArtDiv           := ::oArtDiv:OrdSetFocus( "cCodArt" )
 
-/*
-         Comprobamos si el artículo tiene propiedades y metemos las propiedades
-         */
+   /*
+   Comprobamos si el artículo tiene propiedades y metemos las propiedades
+   */
 
-         /*if ::oArtDiv:Seek( ::oArt:Codigo )
+   if ::oArtDiv:Seek( ::oArt:Codigo )
 
-            while ::oArtDiv:cCodArt == ::oArt:Codigo .and. !::oArtDiv:Eof()
+      while ::oArtDiv:cCodArt == ::oArt:Codigo .and. !::oArtDiv:Eof()
 
-               do case
+         do case
+
+            /*
+            -------------------------------------------------------------------
+            Caso de tener una sola propiedad-----------------------------------
+            -------------------------------------------------------------------
+            */
+
+            case !Empty( ::oArtDiv:cValPr1 ) .and. Empty( ::oArtDiv:cValPr2 )
+
+               nOrdAnt  :=   ::oTblPro:OrdSetFocus( "cCodPro" )
+
+               if ::oTblPro:Seek( ::oArtDiv:cCodPr1 + ::oArtDiv:cValPr1 )
+
+                  nPrecio     := nPrePro( ::oArt:Codigo, ::oArtDiv:cCodPr1, ::oArtDiv:cValPr1, Space( 10 ), Space( 10 ), 1, .f., ::oArtDiv:cAlias )
 
                   /*
-                  Caso de tener una sola propiedad-----------------------------
+                  Metemos la propiedad de éste artículo------------------------
                   */
 
-         /*         case !Empty( ::oArtDiv:cValPr1 ) .and. Empty( ::oArtDiv:cValPr2 )
+                  if TMSCommand():New( ::oCon ):ExecDirect( "INSERT INTO ps_product_attribute ( id_product, " + ;
+                                                                                               "price, " + ;
+                                                                                               "wholesale_price, " + ;
+                                                                                               "quantity, " + ;
+                                                                                               "minimal_quantity )" + ;
+                                                                                      " VALUES " + ;
+                                                                                               "('" + AllTrim( Str( nCodigoWeb ) ) + "', " + ;      //id_product
+                                                                                               "'" + AllTrim( Str( if( nPrecio != 0, nPrecio, ::oArt:nImpInt1 ) ) ) + "', " + ;  //price
+                                                                                               "'" + AllTrim( Str( if( nPrecio != 0, nPrecio, ::oArt:nImpInt1 ) ) ) + "', " + ;  //wholesale_price
+                                                                                               "'10000', " + ;                                      //quantity
+                                                                                               "'1' )" )                                            //minimal_quantity
 
-                     nOrdAnt  :=   ::oTblPro:OrdSetFocus( "cCodPro" )
+                     nCodigoPropiedad           := ::oCon:GetInsertId()
 
-                     if ::oTblPro:Seek( ::oArtDiv:cCodPr1 + ::oArtDiv:cValPr1 )
+                     ::SetText( "He insertado la propiedad  " + AllTrim( ::oTblPro:cDesTbl ) + " correctamente en la tabla ps_product_attribute", 3 )
 
-                        nPrecio     := nPrePro( ::oArt:Codigo, ::oArtDiv:cCodPr1, ::oArtDiv:cValPr1, Space( 10 ), Space( 10 ), 1, .f., ::oArtDiv:cAlias )
+                  else
+                     ::SetText( "Error al insertar la propiedad " + AllTrim( ::oTblPro:cDesTbl ) + " en la tabla ps_product_attribute", 3 )
+                  end if
+
+                  /*
+                  Metemos la relación de la propiedad con el artículo----------
+                  */
+
+                  if TMSCommand():New( ::oCon ):ExecDirect( "INSERT INTO ps_product_attribute_combination ( id_attribute, " + ;
+                                                                                                           "id_product_attribute )" + ;
+                                                                                                  " VALUES " + ;
+                                                                                                           "('" + AllTrim( Str( ::oTblPro:cCodWeb ) ) + "', " + ;   //id_attribute
+                                                                                                           "'" + AllTrim( Str( nCodigoPropiedad ) ) + "' )" )       //id_product_attribute
+
+                     ::SetText( "He insertado la propiedad  " + AllTrim( ::oTblPro:cDesTbl ) + " correctamente en la tabla ps_product_attribute_combination", 3 )
+
+                  else
+                     ::SetText( "Error al insertar la propiedad " + AllTrim( ::oTblPro:cDesTbl ) + " en la tabla ps_product_attribute_combination", 3 )
+                  end if
+
+                  /*
+                  Imágenes para una sola propiedad-----------------------------
+                  */
+
+                  if !Empty( ::oArtDiv:cImgWeb )
+
+                     /*
+                     Metemos la imagen en la tabla de imágenes de prestashop---
+                     */
+
+                     if TMSCommand():New( ::oCon ):ExecDirect( "INSERT INTO ps_image ( id_product, " + ;
+                                                                                       "position, " + ;
+                                                                                       "cover )" + ;
+                                                                              " VALUES " + ;
+                                                                                       "('" + AllTrim( Str( nCodigoWeb ) ) + "', " + ;   //id_product
+                                                                                       "'" + Str( nPosition ) + "', " + ;                //position
+                                                                                       "'" + Str( ::nDefImagen( ::oArt:Codigo, ::oArtDiv:cImgWeb ) ) + "' )" ) //cover
+
+                        nCodigoImagen           := ::oCon:GetInsertId()
 
                         /*
-                        Metemos la propiedad de éste artículo---------------------
+                        Guardamos el código asignado por la web en la tabla de propiedades
                         */
 
-         /*               if TMSCommand():New( ::oCon ):ExecDirect( "INSERT INTO ps_product_attribute ( id_product, " + ;
-                                                                                                     "price, " + ;
-                                                                                                     "wholesale_price, " + ;
-                                                                                                     "quantity, " + ;
-                                                                                                     "minimal_quantity )" + ;
-                                                                                            " VALUES " + ;
-                                                                                                     "('" + AllTrim( Str( nCodigoWeb ) ) + "', " + ;      //id_product
-                                                                                                     "'" + AllTrim( Str( if( nPrecio != 0, nPrecio, ::oArt:nImpInt1 ) ) ) + "', " + ;  //price
-                                                                                                     "'" + AllTrim( Str( if( nPrecio != 0, nPrecio, ::oArt:nImpInt1 ) ) ) + "', " + ;  //wholesale_price
-                                                                                                     "'10000', " + ;                                      //quantity
-                                                                                                     "'1' )" )                                            //minimal_quantity
-
-                           nCodigoPropiedad           := ::oCon:GetInsertId()
-
-                           ::SetText( "He insertado la propiedad  " + AllTrim( ::oTblPro:cDesTbl ) + " correctamente en la tabla ps_product_attribute", 3 )
-
-                        else
-                           ::SetText( "Error al insertar la propiedad " + AllTrim( ::oTblPro:cDesTbl ) + " en la tabla ps_product_attribute", 3 )
-                        end if
+                        ::oArtDiv:fieldPutByName( "cCodImgWeb", nCodigoImagen )
 
                         /*
-                        Metemos la relación de la propiedad con el artículo-------
+                        Guardamos el código asignado por la web en la tabla de imágenes
                         */
 
-           /*             if TMSCommand():New( ::oCon ):ExecDirect( "INSERT INTO ps_product_attribute_combination ( id_attribute, " + ;
-                                                                                                                 "id_product_attribute )" + ;
-                                                                                                        " VALUES " + ;
-                                                                                                                 "('" + AllTrim( Str( ::oTblPro:cCodWeb ) ) + "', " + ;   //id_attribute
-                                                                                                                 "'" + AllTrim( Str( nCodigoPropiedad ) ) + "' )" )       //id_product_attribute
+                        if ::oArtImg:SeekInOrd( ::oArt:Codigo, "cCodArt" )
 
-                           ::SetText( "He insertado la propiedad  " + AllTrim( ::oTblPro:cDesTbl ) + " correctamente en la tabla ps_product_attribute_combination", 3 )
+                           while ::oArtImg:cCodArt == ::oArt:Codigo .and. !::oArtImg:Eof()
 
-                        else
-                           ::SetText( "Error al insertar la propiedad " + AllTrim( ::oTblPro:cDesTbl ) + " en la tabla ps_product_attribute_combination", 3 )
-                        end if
+                              if ::oArtImg:cImgArt == ::oArtDiv:cImgWeb
 
-                        /*
-                        Imágenes para una sola propiedad--------------------------
-                        */
-
-           //             if !Empty( ::oArtDiv:cImgWeb )
-
-                           /*
-                           Metemos la imagen en la tabla de imágenes de prestashop
-                           */
-
-           /*                if TMSCommand():New( ::oCon ):ExecDirect( "INSERT INTO ps_image ( id_product, " + ;
-                                                                                             "position, " + ;
-                                                                                             "cover )" + ;
-                                                                                    " VALUES " + ;
-                                                                                             "('" + AllTrim( Str( nCodigoWeb ) ) + "', " + ;   //id_product
-                                                                                             "'" + Str( nPosition ) + "', " + ;                //position
-                                                                                             "'" + Str( ::nDefImagen( ::oArt:Codigo, ::oArtDiv:cImgWeb ) ) + "' )" ) //cover
-
-                              nCodigoImagen           := ::oCon:GetInsertId()
-
-                              /*
-                              Guardamos el código asignado por la web en la tabla de propiedades
-                              */
-
-             //                 ::oArtDiv:fieldPutByName( "cCodImgWeb", nCodigoImagen )
-
-                              /*
-                              Guardamos el código asignado por la web en la tabla de imágenes
-                              */
-
-             /*                 if ::oArtImg:SeekInOrd( ::oArt:Codigo, "cCodArt" )
-
-                                 while ::oArtImg:cCodArt == ::oArt:Codigo .and. !::oArtImg:Eof()
-
-                                    if ::oArtImg:cImgArt == ::oArtDiv:cImgWeb
-
-                                       ::oArtImg:fieldPutByName( "cCodWeb", nCodigoImagen )
-
-                                    end if
-
-                                    ::oArtImg:Skip()
-
-                                 end while
+                                 ::oArtImg:fieldPutByName( "cCodWeb", nCodigoImagen )
 
                               end if
 
-                              ::SetText( "He insertado el artículo " + AllTrim( ::oArt:Nombre ) + " correctamente en la tabla ps_image", 3 )
+                              ::oArtImg:Skip()
 
-                           else
-                              ::SetText( "Error al insertar el artículo " + AllTrim( ::oArt:Nombre ) + " en la tabla ps_image", 3 )
-                           end if
-
-                           /*
-                           Metemos los ToolTip de las imágenes--------------------------
-                           */
-
-             /*              if TMSCommand():New( ::oCon ):ExecDirect( "INSERT INTO ps_image_lang ( id_image, " + ;
-                                                                                                  "id_lang, " + ;
-                                                                                                  "legend )" + ;
-                                                                                         " VALUES " + ;
-                                                                                                  "('" + AllTrim( Str( nCodigoImagen ) ) + "', " + ;   //id_image
-                                                                                                  "'" + AllTrim( Str( ::nLanguage ) ) + "', " + ;      //id_lang
-                                                                                                  "'" + AllTrim( ::oArtDiv:cToolTip ) + "' )" )        //legend
-
-                              ::SetText( "He insertado el artículo " + AllTrim( ::oArt:Nombre ) + " correctamente en la tabla ps_image_lang", 3 )
-
-                           else
-                              ::SetText( "Error al insertar el artículo " + AllTrim( ::oArt:Nombre ) + " en la tabla ps_image_lang", 3 )
-                           end if
-
-                           /*
-                           Añadimos la imagen al array para pasarla a prestashop--------------
-                           */
-
-             /*              oImagen                       := SImagen()
-                           oImagen:cNombreImagen         := ::oArtDiv:cImgWeb
-                           oImagen:nTipoImagen           := tipoProducto
-                           oImagen:cPrefijoNombre        := AllTrim( Str( nCodigoWeb ) ) + "-" + AllTrim( Str( nCodigoImagen ) )
-
-                           ::AddImages( oImagen )
-
-                           nPosition++
-
-                           /*
-                           Añadimos en la tabla ps_product_attribute_image
-                           */
-
-             /*              if TMSCommand():New( ::oCon ):ExecDirect( "INSERT INTO ps_product_attribute_image ( id_product_attribute, " + ;
-                                                                                                               "id_image )" + ;
-                                                                                                      " VALUES " + ;
-                                                                                                               "('" + AllTrim( Str( nCodigoPropiedad ) ) + "', " + ;   //id_product
-                                                                                                               "'" + AllTrim( Str( nCodigoImagen ) ) + "' )" ) //cover
-
-                              ::SetText( "He insertado el artículo " + AllTrim( ::oArt:Nombre ) + " correctamente en la tabla ps_product_attribute_image", 3 )
-
-                           else
-                              ::SetText( "Error al insertar el artículo " + AllTrim( ::oArt:Nombre ) + " en la tabla ps_product_attribute_image", 3 )
-                           end if
+                           end while
 
                         end if
 
-                     end if
-
-                  /*
-                  Caso de tener dos propiedades--------------------------------
-                  */
-
-            /*      case !Empty( ::oArtDiv:cValPr1 ) .and. !Empty( ::oArtDiv:cValPr2 )
-
-                     nPrecio     := nPrePro( ::oArt:Codigo, ::oArtDiv:cCodPr1, ::oArtDiv:cValPr1, ::oArtDiv:cCodPr2, ::oArtDiv:cValPr2, 1, .f., ::oArtDiv:cAlias )
-
-                     /*
-                     Metemos la propiedad de éste artículo---------------------
-                     */
-
-            /*         if TMSCommand():New( ::oCon ):ExecDirect( "INSERT INTO ps_product_attribute ( id_product, " + ;
-                                                                                                  "price, " + ;
-                                                                                                  "wholesale_price, " + ;
-                                                                                                  "quantity, " + ;
-                                                                                                  "minimal_quantity )" + ;
-                                                                                         " VALUES " + ;
-                                                                                                  "('" + AllTrim( Str( nCodigoWeb ) ) + "', " + ;      //id_product
-                                                                                                  "'" + AllTrim( Str( if( nPrecio != 0, nPrecio, ::oArt:nImpInt1 ) ) ) + "', " + ;  //price
-                                                                                                  "'" + AllTrim( Str( if( nPrecio != 0, nPrecio, ::oArt:nImpInt1 ) ) ) + "', " + ;  //wholesale_price
-                                                                                                  "'10000', " + ;                                      //quantity
-                                                                                                  "'1' )" )                                            //minimal_quantity
-
-                        nCodigoPropiedad           := ::oCon:GetInsertId()
-
-                        ::SetText( "He insertado la propiedad  " + AllTrim( ::oArtDiv:cValPr1 ) + " - " + AllTrim( ::oArtDiv:cValPr2 ) + " correctamente en la tabla ps_product_attribute", 3 )
+                        ::SetText( "He insertado el artículo " + AllTrim( ::oArt:Nombre ) + " correctamente en la tabla ps_image", 3 )
 
                      else
-                        ::SetText( "Error al insertar la propiedad " + AllTrim( ::oArtDiv:cValPr1 ) + " - " + AllTrim( ::oArtDiv:cValPr2 ) + " en la tabla ps_product_attribute", 3 )
+                        ::SetText( "Error al insertar el artículo " + AllTrim( ::oArt:Nombre ) + " en la tabla ps_image", 3 )
                      end if
 
                      /*
-                     Metemos la relación de la propiedad1 con el artículo---
+                     Metemos los ToolTip de las imágenes-----------------------
                      */
 
-            /*         nOrdAnt  :=   ::oTblPro:OrdSetFocus( "cCodPro" )
+                     if TMSCommand():New( ::oCon ):ExecDirect( "INSERT INTO ps_image_lang ( id_image, " + ;
+                                                                                            "id_lang, " + ;
+                                                                                            "legend )" + ;
+                                                                                   " VALUES " + ;
+                                                                                            "('" + AllTrim( Str( nCodigoImagen ) ) + "', " + ;   //id_image
+                                                                                            "'" + AllTrim( Str( ::nLanguage ) ) + "', " + ;      //id_lang
+                                                                                            "'" + AllTrim( ::oArtDiv:cToolTip ) + "' )" )        //legend
 
-                     if ::oTblPro:Seek( ::oArtDiv:cCodPr1 + ::oArtDiv:cValPr1 )
+                        ::SetText( "He insertado el artículo " + AllTrim( ::oArt:Nombre ) + " correctamente en la tabla ps_image_lang", 3 )
 
-                        if TMSCommand():New( ::oCon ):ExecDirect( "INSERT INTO ps_product_attribute_combination ( id_attribute, " + ;
-                                                                                                                 "id_product_attribute )" + ;
-                                                                                                        " VALUES " + ;
-                                                                                                                 "('" + AllTrim( Str( ::oTblPro:cCodWeb ) ) + "', " + ;   //id_attribute
-                                                                                                                 "'" + AllTrim( Str( nCodigoPropiedad ) ) + "' )" )       //id_product_attribute
-
-                           ::SetText( "He insertado la propiedad  " + AllTrim( ::oTblPro:cDesTbl ) + " correctamente en la tabla ps_product_attribute_combination", 3 )
-
-                        else
-                           ::SetText( "Error al insertar la propiedad " + AllTrim( ::oTblPro:cDesTbl ) + " en la tabla ps_product_attribute_combination", 3 )
-                        end if
-
+                     else
+                        ::SetText( "Error al insertar el artículo " + AllTrim( ::oArt:Nombre ) + " en la tabla ps_image_lang", 3 )
                      end if
 
                      /*
-                     Metemos la relación de la propiedad 2 con el artículo--
+                     Añadimos la imagen al array para pasarla a prestashop-----
                      */
 
-            /*         if ::oTblPro:Seek( ::oArtDiv:cCodPr2 + ::oArtDiv:cValPr2 )
+                     oImagen                       := SImagen()
+                     oImagen:cNombreImagen         := ::oArtDiv:cImgWeb
+                     oImagen:nTipoImagen           := tipoProducto
+                     oImagen:cPrefijoNombre        := AllTrim( Str( nCodigoWeb ) ) + "-" + AllTrim( Str( nCodigoImagen ) )
 
-                        if TMSCommand():New( ::oCon ):ExecDirect( "INSERT INTO ps_product_attribute_combination ( id_attribute, " + ;
-                                                                                                                 "id_product_attribute )" + ;
-                                                                                                        " VALUES " + ;
-                                                                                                                 "('" + AllTrim( Str( ::oTblPro:cCodWeb ) ) + "', " + ;   //id_attribute
-                                                                                                                 "'" + AllTrim( Str( nCodigoPropiedad ) ) + "' )" )       //id_product_attribute
+                     ::AddImages( oImagen )
 
-                           ::SetText( "He insertado la propiedad  " + AllTrim( ::oTblPro:cDesTbl ) + " correctamente en la tabla ps_product_attribute_combination", 3 )
-
-                        else
-                           ::SetText( "Error al insertar la propiedad " + AllTrim( ::oTblPro:cDesTbl ) + " en la tabla ps_product_attribute_combination", 3 )
-                        end if
-
-                     end if
-
-                     ::oTblPro:OrdSetFocus( nOrdAnt )
+                     nPosition++
 
                      /*
-                     Imágenes para dos propiedades-----------------------------
+                     Añadimos en la tabla ps_product_attribute_image
                      */
 
-            /*         if !Empty( ::oArtDiv:cImgWeb )
+                     if TMSCommand():New( ::oCon ):ExecDirect( "INSERT INTO ps_product_attribute_image ( id_product_attribute, " + ;
+                                                                                                         "id_image )" + ;
+                                                                                                " VALUES " + ;
+                                                                                                         "('" + AllTrim( Str( nCodigoPropiedad ) ) + "', " + ;   //id_product
+                                                                                                         "'" + AllTrim( Str( nCodigoImagen ) ) + "' )" ) //cover
 
-                        if aScan( ::aImages, {|aVal| AllTrim( aVal:cNombreImagen ) == AllTrim( ::oArtDiv:cImgWeb ) } ) == 0
+                        ::SetText( "He insertado el artículo " + AllTrim( ::oArt:Nombre ) + " correctamente en la tabla ps_product_attribute_image", 3 )
 
-                           /*
-                           Metemos la imagen en la tabla de imágenes de prestashop
-                           */
+                     else
+                        ::SetText( "Error al insertar el artículo " + AllTrim( ::oArt:Nombre ) + " en la tabla ps_product_attribute_image", 3 )
+                     end if
 
-            /*               if TMSCommand():New( ::oCon ):ExecDirect( "INSERT INTO ps_image ( id_product, " + ;
-                                                                                             "position, " + ;
-                                                                                             "cover )" + ;
-                                                                                    " VALUES " + ;
-                                                                                             "('" + AllTrim( Str( nCodigoWeb ) ) + "', " + ;   //id_product
-                                                                                             "'" + Str( nPosition ) + "', " + ;                //position
-                                                                                             "'" + Str( ::nDefImagen( ::oArt:Codigo, ::oArtDiv:cImgWeb ) ) + "' )" ) //cover
+                  end if
 
-                              nCodigoImagen           := ::oCon:GetInsertId()
+               end if
 
-                              /*
-                              Guardamos el código asignado por la web en la tabla de propiedades
-                              */
+            /*
+            -------------------------------------------------------------------
+            Caso de tener dos propiedades--------------------------------------
+            -------------------------------------------------------------------
+            */
 
-              //                ::oArtDiv:fieldPutByName( "cCodImgWeb", nCodigoImagen )
+            case !Empty( ::oArtDiv:cValPr1 ) .and. !Empty( ::oArtDiv:cValPr2 )
 
-                              /*
-                              Guardamos el código asignado por la web en la tabla de imágenes
-                              */
+               nPrecio     := nPrePro( ::oArt:Codigo, ::oArtDiv:cCodPr1, ::oArtDiv:cValPr1, ::oArtDiv:cCodPr2, ::oArtDiv:cValPr2, 1, .f., ::oArtDiv:cAlias )
 
-              /*                if ::oArtImg:SeekInOrd( ::oArt:Codigo, "cCodArt" )
+               /*
+               Metemos la propiedad de éste artículo---------------------------
+               */
 
-                                 while ::oArtImg:cCodArt == ::oArt:Codigo .and. !::oArtImg:Eof()
+               if TMSCommand():New( ::oCon ):ExecDirect( "INSERT INTO ps_product_attribute ( id_product, " + ;
+                                                                                            "price, " + ;
+                                                                                            "wholesale_price, " + ;
+                                                                                            "quantity, " + ;
+                                                                                            "minimal_quantity )" + ;
+                                                                                   " VALUES " + ;
+                                                                                            "('" + AllTrim( Str( nCodigoWeb ) ) + "', " + ;      //id_product
+                                                                                            "'" + AllTrim( Str( if( nPrecio != 0, nPrecio, ::oArt:nImpInt1 ) ) ) + "', " + ;  //price
+                                                                                            "'" + AllTrim( Str( if( nPrecio != 0, nPrecio, ::oArt:nImpInt1 ) ) ) + "', " + ;  //wholesale_price
+                                                                                            "'10000', " + ;                                      //quantity
+                                                                                            "'1' )" )                                            //minimal_quantity
 
-                                    if ::oArtImg:cImgArt == ::oArtDiv:cImgWeb
+                  nCodigoPropiedad           := ::oCon:GetInsertId()
 
-                                       ::oArtImg:fieldPutByName( "cCodWeb", nCodigoImagen )
+                  ::SetText( "He insertado la propiedad  " + AllTrim( ::oArtDiv:cValPr1 ) + " - " + AllTrim( ::oArtDiv:cValPr2 ) + " correctamente en la tabla ps_product_attribute", 3 )
 
-                                       end if
+               else
+                  ::SetText( "Error al insertar la propiedad " + AllTrim( ::oArtDiv:cValPr1 ) + " - " + AllTrim( ::oArtDiv:cValPr2 ) + " en la tabla ps_product_attribute", 3 )
+               end if
 
-                                    ::oArtImg:Skip()
+               /*
+               Metemos la relación de la propiedad1 con el artículo------------
+               */
 
-                                 end while
+               nOrdAnt  :=   ::oTblPro:OrdSetFocus( "cCodPro" )
 
-                              end if
+               if ::oTblPro:Seek( ::oArtDiv:cCodPr1 + ::oArtDiv:cValPr1 )
 
-                              ::SetText( "He insertado el artículo " + AllTrim( ::oArt:Nombre ) + " correctamente en la tabla ps_image", 3 )
+                  if TMSCommand():New( ::oCon ):ExecDirect( "INSERT INTO ps_product_attribute_combination ( id_attribute, " + ;
+                                                                                                           "id_product_attribute )" + ;
+                                                                                                  " VALUES " + ;
+                                                                                                           "('" + AllTrim( Str( ::oTblPro:cCodWeb ) ) + "', " + ;   //id_attribute
+                                                                                                           "'" + AllTrim( Str( nCodigoPropiedad ) ) + "' )" )       //id_product_attribute
 
-                           else
-                              ::SetText( "Error al insertar el artículo " + AllTrim( ::oArt:Nombre ) + " en la tabla ps_image", 3 )
-                           end if
+                     ::SetText( "He insertado la propiedad  " + AllTrim( ::oTblPro:cDesTbl ) + " correctamente en la tabla ps_product_attribute_combination", 3 )
 
-                           /*
-                           Metemos los ToolTip de las imágenes--------------------------
-                           */
+                  else
+                     ::SetText( "Error al insertar la propiedad " + AllTrim( ::oTblPro:cDesTbl ) + " en la tabla ps_product_attribute_combination", 3 )
+                  end if
 
-              /*             if TMSCommand():New( ::oCon ):ExecDirect( "INSERT INTO ps_image_lang ( id_image, " + ;
-                                                                                                  "id_lang, " + ;
-                                                                                                  "legend )" + ;
-                                                                                            " VALUES " + ;
-                                                                                                  "('" + AllTrim( Str( nCodigoImagen ) ) + "', " + ;   //id_image
-                                                                                                  "'" + AllTrim( Str( ::nLanguage ) ) + "', " + ;      //id_lang
-                                                                                                  "'" + AllTrim( ::oArtDiv:cToolTip ) + "' )" )        //legend
+               end if
 
-                              ::SetText( "He insertado el artículo " + AllTrim( ::oArt:Nombre ) + " correctamente en la tabla ps_image_lang", 3 )
+               /*
+               Metemos la relación de la propiedad 2 con el artículo-----------
+               */
 
-                           else
-                              ::SetText( "Error al insertar el artículo " + AllTrim( ::oArt:Nombre ) + " en la tabla ps_image_lang", 3 )
-                           end if
+               if ::oTblPro:Seek( ::oArtDiv:cCodPr2 + ::oArtDiv:cValPr2 )
 
-                           /*
-                           Añadimos la imagen al array para pasarla a prestashop--------------
-                           */
+                  if TMSCommand():New( ::oCon ):ExecDirect( "INSERT INTO ps_product_attribute_combination ( id_attribute, " + ;
+                                                                                                           "id_product_attribute )" + ;
+                                                                                                  " VALUES " + ;
+                                                                                                           "('" + AllTrim( Str( ::oTblPro:cCodWeb ) ) + "', " + ;   //id_attribute
+                                                                                                           "'" + AllTrim( Str( nCodigoPropiedad ) ) + "' )" )       //id_product_attribute
 
-              /*             oImagen                       := SImagen()
-                           oImagen:cNombreImagen         := ::oArtDiv:cImgWeb
-                           oImagen:nTipoImagen           := tipoProducto
-                           oImagen:cPrefijoNombre        := AllTrim( Str( nCodigoWeb ) ) + "-" + AllTrim( Str( nCodigoImagen ) )
+                     ::SetText( "He insertado la propiedad  " + AllTrim( ::oTblPro:cDesTbl ) + " correctamente en la tabla ps_product_attribute_combination", 3 )
 
-                           ::AddImages( oImagen )
+                  else
+                     ::SetText( "Error al insertar la propiedad " + AllTrim( ::oTblPro:cDesTbl ) + " en la tabla ps_product_attribute_combination", 3 )
+                  end if
 
-                           nPosition++
+               end if
 
-                           /*
-                           Añadimos en la tabla ps_product_attribute_image
-                           */
+               ::oTblPro:OrdSetFocus( nOrdAnt )
 
-              /*             if TMSCommand():New( ::oCon ):ExecDirect( "INSERT INTO ps_product_attribute_image ( id_product_attribute, " + ;
-                                                                                                               "id_image )" + ;
-                                                                                                      " VALUES " + ;
-                                                                                                               "('" + AllTrim( Str( nCodigoPropiedad ) ) + "', " + ;   //id_product
-                                                                                                               "'" + AllTrim( Str( nCodigoImagen ) ) + "' )" ) //cover
+               /*
+               Imágenes para dos propiedades-----------------------------------
+               */
 
-                              ::SetText( "He insertado el artículo " + AllTrim( ::oArt:Nombre ) + " correctamente en la tabla ps_product_attribute_image", 3 )
+               if !Empty( ::oArtDiv:cImgWeb )
 
-                           else
-                              ::SetText( "Error al insertar el artículo " + AllTrim( ::oArt:Nombre ) + " en la tabla ps_product_attribute_image", 3 )
-                           end if
+                  if aScan( ::aImages, {|aVal| AllTrim( aVal:cNombreImagen ) == AllTrim( ::oArtDiv:cImgWeb ) } ) == 0
 
-                        else
+                     /*
+                     Metemos la imagen en la tabla de imágenes de prestashop
+                     */
 
-                           nCodigoImagen  := ::nCodigoWebImagen( ::oArt:Codigo, ::oArtDiv:cImgWeb )
+                     if TMSCommand():New( ::oCon ):ExecDirect( "INSERT INTO ps_image ( id_product, " + ;
+                                                                                       "position, " + ;
+                                                                                       "cover )" + ;
+                                                                              " VALUES " + ;
+                                                                                       "('" + AllTrim( Str( nCodigoWeb ) ) + "', " + ;   //id_product
+                                                                                       "'" + Str( nPosition ) + "', " + ;                //position
+                                                                                       "'" + Str( ::nDefImagen( ::oArt:Codigo, ::oArtDiv:cImgWeb ) ) + "' )" ) //cover
 
-                           if TMSCommand():New( ::oCon ):ExecDirect( "INSERT INTO ps_product_attribute_image ( id_product_attribute, " + ;
-                                                                                                              "id_image )" + ;
-                                                                                                     " VALUES " + ;
-                                                                                                              "('" + AllTrim( Str( nCodigoPropiedad ) ) + "', " + ;   //id_product
-                                                                                                              "'" + AllTrim( Str( nCodigoImagen ) ) + "' )" ) //cover
+                        nCodigoImagen           := ::oCon:GetInsertId()
 
-                              ::SetText( "He insertado el artículo " + AllTrim( ::oArt:Nombre ) + " correctamente en la tabla ps_product_attribute_image", 3 )
+                        /*
+                        Guardamos el código asignado por la web en la tabla de propiedades
+                        */
 
-                           else
-                              ::SetText( "Error al insertar el artículo " + AllTrim( ::oArt:Nombre ) + " en la tabla ps_product_attribute_image", 3 )
-                           end if
+                        ::oArtDiv:fieldPutByName( "cCodImgWeb", nCodigoImagen )
+
+                        /*
+                        Guardamos el código asignado por la web en la tabla de imágenes
+                        */
+
+                        if ::oArtImg:SeekInOrd( ::oArt:Codigo, "cCodArt" )
+
+                           while ::oArtImg:cCodArt == ::oArt:Codigo .and. !::oArtImg:Eof()
+
+                              if ::oArtImg:cImgArt == ::oArtDiv:cImgWeb
+
+                                 ::oArtImg:fieldPutByName( "cCodWeb", nCodigoImagen )
+
+                               end if
+
+                              ::oArtImg:Skip()
+
+                           end while
 
                         end if
 
+                        ::SetText( "He insertado el artículo " + AllTrim( ::oArt:Nombre ) + " correctamente en la tabla ps_image", 3 )
+
+                     else
+                        ::SetText( "Error al insertar el artículo " + AllTrim( ::oArt:Nombre ) + " en la tabla ps_image", 3 )
                      end if
 
-               end case
+                     /*
+                     Metemos los ToolTip de las imágenes-----------------------
+                     */
 
-               ::oArtDiv:Skip()
+                     if TMSCommand():New( ::oCon ):ExecDirect( "INSERT INTO ps_image_lang ( id_image, " + ;
+                                                                                           "id_lang, " + ;
+                                                                                           "legend )" + ;
+                                                                                  " VALUES " + ;
+                                                                                           "('" + AllTrim( Str( nCodigoImagen ) ) + "', " + ;   //id_image
+                                                                                           "'" + AllTrim( Str( ::nLanguage ) ) + "', " + ;      //id_lang
+                                                                                           "'" + AllTrim( ::oArtDiv:cToolTip ) + "' )" )        //legend
 
-            end while
+                        ::SetText( "He insertado el artículo " + AllTrim( ::oArt:Nombre ) + " correctamente en la tabla ps_image_lang", 3 )
 
-         end if*/
+                     else
+                        ::SetText( "Error al insertar el artículo " + AllTrim( ::oArt:Nombre ) + " en la tabla ps_image_lang", 3 )
+                     end if
 
-::oArtDiv:OrdSetFocus( "nOrdArtDiv" )
+                     /*
+                     Añadimos la imagen al array para pasarla a prestashop-----
+                     */
+
+                     oImagen                       := SImagen()
+                     oImagen:cNombreImagen         := ::oArtDiv:cImgWeb
+                     oImagen:nTipoImagen           := tipoProducto
+                     oImagen:cPrefijoNombre        := AllTrim( Str( nCodigoWeb ) ) + "-" + AllTrim( Str( nCodigoImagen ) )
+
+                     ::AddImages( oImagen )
+
+                     nPosition++
+
+                     /*
+                     Añadimos en la tabla ps_product_attribute_image-----------
+                     */
+
+                     if TMSCommand():New( ::oCon ):ExecDirect( "INSERT INTO ps_product_attribute_image ( id_product_attribute, " + ;
+                                                                                                         "id_image )" + ;
+                                                                                                " VALUES " + ;
+                                                                                                         "('" + AllTrim( Str( nCodigoPropiedad ) ) + "', " + ;   //id_product
+                                                                                                         "'" + AllTrim( Str( nCodigoImagen ) ) + "' )" ) //cover
+
+                        ::SetText( "He insertado el artículo " + AllTrim( ::oArt:Nombre ) + " correctamente en la tabla ps_product_attribute_image", 3 )
+
+                     else
+                        ::SetText( "Error al insertar el artículo " + AllTrim( ::oArt:Nombre ) + " en la tabla ps_product_attribute_image", 3 )
+                     end if
+
+                  else
+
+                     nCodigoImagen  := ::nCodigoWebImagen( ::oArt:Codigo, ::oArtDiv:cImgWeb )
+
+                     if TMSCommand():New( ::oCon ):ExecDirect( "INSERT INTO ps_product_attribute_image ( id_product_attribute, " + ;
+                                                                                                        "id_image )" + ;
+                                                                                               " VALUES " + ;
+                                                                                                        "('" + AllTrim( Str( nCodigoPropiedad ) ) + "', " + ;   //id_product
+                                                                                                        "'" + AllTrim( Str( nCodigoImagen ) ) + "' )" ) //cover
+                         ::SetText( "He insertado el artículo " + AllTrim( ::oArt:Nombre ) + " correctamente en la tabla ps_product_attribute_image", 3 )
+
+                     else
+                        ::SetText( "Error al insertar el artículo " + AllTrim( ::oArt:Nombre ) + " en la tabla ps_product_attribute_image", 3 )
+                     end if
+
+                  end if
+
+               end if
+
+         end case
+
+         ::oArtDiv:Skip()
+
+      end while
+
+   end if
+
+   ::oArtDiv:OrdSetFocus( nOrdArtDiv )
 
 Return ( self )
 

@@ -908,7 +908,7 @@ Function Articulo( oMenuItem, oWnd, bOnInit )
          :cHeader          := "Nombre"
          :cSortOrder       := "Nombre"
          :bEditValue       := {|| ( dbfArticulo )->Nombre }
-         :nWidth           := 260
+         :nWidth           := 300
          :bLClickHeader    := {| nMRow, nMCol, nFlags, oCol | oWndBrw:ClickOnHeader( oCol ) }
       end with
 
@@ -916,7 +916,7 @@ Function Articulo( oMenuItem, oWnd, bOnInit )
          :cHeader          := "Código familia"
          :cSortOrder       := "cFamCod"
          :bEditValue       := {|| ( dbfArticulo )->Familia }
-         :nWidth           := 60
+         :nWidth           := 80
          :bLClickHeader    := {| nMRow, nMCol, nFlags, oCol | oWndBrw:ClickOnHeader( oCol ) }
       end with
 
@@ -932,7 +932,7 @@ Function Articulo( oMenuItem, oWnd, bOnInit )
          :cSortOrder       := "cCodCate"
          :bStrData         := {|| RetFld( ( dbfArticulo )->cCodCate, dbfCategoria, "cTipo" ) }
          :bBmpData         := {|| nBitmapTipoCategoria( RetFld( ( dbfArticulo )->cCodCate, dbfCategoria, "cTipo" ) ) }
-         :nWidth           := 120
+         :nWidth           := 140
          :bLClickHeader    := {| nMRow, nMCol, nFlags, oCol | oWndBrw:ClickOnHeader( oCol ) }
          AddResourceTipoCategoria( hb_QWith() )
       end with
@@ -942,9 +942,10 @@ Function Articulo( oMenuItem, oWnd, bOnInit )
          :cSortOrder       := "cCodTemp"
          :bStrData         := {|| RetFld( ( dbfArticulo )->cCodTemp, dbfTemporada, "cNombre" ) }
          :bBmpData         := {|| nBitmapTipoTemporada( RetFld( ( dbfArticulo )->cCodTemp, dbfTemporada, "cTipo" ) ) }
-         :nWidth           := 120
+         :nWidth           := 140
          :bLClickHeader    := {| nMRow, nMCol, nFlags, oCol | oWndBrw:ClickOnHeader( oCol ) }
-         AddResourceTipoTemporada( hb_QWith() )
+         AddResourceTipoTemporada( hb_QWith() ) 
+         :lHide            := .t. 
       end with
 
       with object ( oWndBrw:AddXCol() )
@@ -959,7 +960,7 @@ Function Articulo( oMenuItem, oWnd, bOnInit )
       with object ( oWndBrw:AddXCol() )
          :cHeader          := uFieldEmpresa( "cTxtTar1", "Precio 1" )
          :bStrData         := {|| TransPrecio( nRetPreArt( 1, nil, .f., dbfArticulo, dbfDiv, dbfArtKit, dbfIva ), lEuro ) }
-         :nWidth           := 80
+         :nWidth           := 100
          :nDataStrAlign    := AL_RIGHT
          :nHeadStrAlign    := AL_RIGHT
       end with
@@ -967,7 +968,7 @@ Function Articulo( oMenuItem, oWnd, bOnInit )
       with object ( oWndBrw:AddXCol() )
          :cHeader          := uFieldEmpresa( "cTxtTar1", "Precio 1" ) + Space( 1 ) +  cImp() + " inc."
          :bStrData         := {|| TransPrecio( nRetPreArt( 1, nil, .t., dbfArticulo, dbfDiv, dbfArtKit, dbfIva ), lEuro ) }
-         :nWidth           := 80
+         :nWidth           := 100
          :nDataStrAlign    := AL_RIGHT
          :nHeadStrAlign    := AL_RIGHT
       end with
@@ -975,7 +976,7 @@ Function Articulo( oMenuItem, oWnd, bOnInit )
       with object ( oWndBrw:AddXCol() )
          :cHeader          := uFieldEmpresa( "cTxtTar2", "Precio 2" )
          :bStrData         := {|| TransPrecio( nRetPreArt( 2, nil, .f., dbfArticulo, dbfDiv, dbfArtKit, dbfIva ), lEuro ) }
-         :nWidth           := 80
+         :nWidth           := 100
          :nDataStrAlign    := AL_RIGHT
          :nHeadStrAlign    := AL_RIGHT
          :lHide            := .t.
@@ -984,7 +985,7 @@ Function Articulo( oMenuItem, oWnd, bOnInit )
       with object ( oWndBrw:AddXCol() )
          :cHeader          := uFieldEmpresa( "cTxtTar2", "Precio 2" ) + Space( 1 ) + cImp() + " inc."
          :bStrData         := {|| TransPrecio( nRetPreArt( 2, nil, .t., dbfArticulo, dbfDiv, dbfArtKit, dbfIva ), lEuro ) }
-         :nWidth           := 80
+         :nWidth           := 100
          :nDataStrAlign    := AL_RIGHT
          :nHeadStrAlign    := AL_RIGHT
          :lHide            := .t.
@@ -993,7 +994,7 @@ Function Articulo( oMenuItem, oWnd, bOnInit )
       with object ( oWndBrw:AddXCol() )
          :cHeader          := uFieldEmpresa( "cTxtTar3", "Precio 3" )
          :bStrData         := {|| TransPrecio( nRetPreArt( 3, nil, .f., dbfArticulo, dbfDiv, dbfArtKit, dbfIva ), lEuro ) }
-         :nWidth           := 80
+         :nWidth           := 100
          :nDataStrAlign    := AL_RIGHT
          :nHeadStrAlign    := AL_RIGHT
          :lHide            := .t.
@@ -1002,7 +1003,7 @@ Function Articulo( oMenuItem, oWnd, bOnInit )
       with object ( oWndBrw:AddXCol() )
          :cHeader          := uFieldEmpresa( "cTxtTar3", "Precio 3" ) + Space( 1 ) + cImp() + " inc."
          :bStrData         := {|| TransPrecio( nRetPreArt( 3, nil, .t., dbfArticulo, dbfDiv, dbfArtKit, dbfIva ), lEuro ) }
-         :nWidth           := 80
+         :nWidth           := 100
          :nDataStrAlign    := AL_RIGHT
          :nHeadStrAlign    := AL_RIGHT
          :lHide            := .t.
@@ -1011,7 +1012,7 @@ Function Articulo( oMenuItem, oWnd, bOnInit )
       with object ( oWndBrw:AddXCol() )
          :cHeader          := uFieldEmpresa( "cTxtTar4", "Precio 4" )
          :bStrData         := {|| TransPrecio( nRetPreArt( 4, nil, .f., dbfArticulo, dbfDiv, dbfArtKit, dbfIva ), lEuro ) }
-         :nWidth           := 80
+         :nWidth           := 100
          :nDataStrAlign    := AL_RIGHT
          :nHeadStrAlign    := AL_RIGHT
          :lHide            := .t.
@@ -1020,7 +1021,7 @@ Function Articulo( oMenuItem, oWnd, bOnInit )
       with object ( oWndBrw:AddXCol() )
          :cHeader          := uFieldEmpresa( "cTxtTar4", "Precio 4" ) + Space( 1 ) + cImp() + " inc."
          :bStrData         := {|| TransPrecio( nRetPreArt( 4, nil, .t., dbfArticulo, dbfDiv, dbfArtKit, dbfIva ), lEuro ) }
-         :nWidth           := 80
+         :nWidth           := 100
          :nDataStrAlign    := AL_RIGHT
          :nHeadStrAlign    := AL_RIGHT
          :lHide            := .t.
@@ -1029,7 +1030,7 @@ Function Articulo( oMenuItem, oWnd, bOnInit )
       with object ( oWndBrw:AddXCol() )
          :cHeader          := uFieldEmpresa( "cTxtTar5", "Precio 5" )
          :bStrData         := {|| TransPrecio( nRetPreArt( 5, nil, .f., dbfArticulo, dbfDiv, dbfArtKit, dbfIva ), lEuro ) }
-         :nWidth           := 80
+         :nWidth           := 100
          :nDataStrAlign    := AL_RIGHT
          :nHeadStrAlign    := AL_RIGHT
          :lHide            := .t.
@@ -1038,7 +1039,7 @@ Function Articulo( oMenuItem, oWnd, bOnInit )
       with object ( oWndBrw:AddXCol() )
          :cHeader          := uFieldEmpresa( "cTxtTar5", "Precio 5" ) + Space( 1 ) + cImp() + " inc."
          :bStrData         := {|| TransPrecio( nRetPreArt( 5, nil, .t., dbfArticulo, dbfDiv, dbfArtKit, dbfIva ), lEuro ) }
-         :nWidth           := 80
+         :nWidth           := 100
          :nDataStrAlign    := AL_RIGHT
          :nHeadStrAlign    := AL_RIGHT
          :lHide            := .t.
@@ -1047,7 +1048,7 @@ Function Articulo( oMenuItem, oWnd, bOnInit )
       with object ( oWndBrw:AddXCol() )
          :cHeader          := uFieldEmpresa( "cTxtTar6", "Precio 6" )
          :bStrData         := {|| TransPrecio( nRetPreArt( 6, nil, .f., dbfArticulo, dbfDiv, dbfArtKit, dbfIva ), lEuro ) }
-         :nWidth           := 80
+         :nWidth           := 100
          :nDataStrAlign    := AL_RIGHT
          :nHeadStrAlign    := AL_RIGHT
          :lHide            := .t.
@@ -1056,7 +1057,7 @@ Function Articulo( oMenuItem, oWnd, bOnInit )
       with object ( oWndBrw:AddXCol() )
          :cHeader          := uFieldEmpresa( "cTxtTar6", "Precio 6" ) + Space( 1 ) + cImp() + " inc."
          :bStrData         := {|| TransPrecio( nRetPreArt( 6, nil, .t., dbfArticulo, dbfDiv, dbfArtKit, dbfIva ), lEuro ) }
-         :nWidth           := 80
+         :nWidth           := 100
          :nDataStrAlign    := AL_RIGHT
          :nHeadStrAlign    := AL_RIGHT
          :lHide            := .t.
@@ -1090,7 +1091,7 @@ Function Articulo( oMenuItem, oWnd, bOnInit )
       with object ( oWndBrw:AddXCol() )
          :cHeader          := "Costo"
          :bStrData         := {|| if( oUser():lNotCostos(), "", nCosto( nil, dbfArticulo, dbfArtKit, .t., if( lEuro, cDivChg(), cDivEmp() ), dbfDiv ) ) }
-         :nWidth           := 80
+         :nWidth           := 100
          :nDataStrAlign    := AL_RIGHT
          :nHeadStrAlign    := AL_RIGHT
          :lHide            := .t.
