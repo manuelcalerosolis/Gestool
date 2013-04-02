@@ -1715,45 +1715,6 @@ STATIC FUNCTION EdtRec( aTmp, aGet, dbfArticulo, oBrw, bWhen, bValid, nMode )
 			WHEN 		( nMode != ZOOM_MODE ) ;
          ACTION   ( WinDelRec( oBrwCodebar, dbfTmpCodebar ) )
 
-   REDEFINE CHECKBOX aTmp[ ( dbfArticulo )->( fieldpos( "LIVAINC" ) ) ] ;
-			ID 		150 ;
-			WHEN 		( nMode != ZOOM_MODE ) ;
-         OF       fldGeneral
-
-   REDEFINE GET aGet[( dbfArticulo )->( fieldpos( "TIPOIVA" ) ) ] VAR aTmp[ ( dbfArticulo )->( fieldpos( "TIPOIVA" ) ) ] ;
-			ID 		140;
-         PICTURE  "@!" ;
-			WHEN 		( nMode != ZOOM_MODE ) ;
-         VALID    (  cTiva(   aGet[ ( dbfArticulo )->( fieldpos( "TIPOIVA" ) ) ], dbfIva, oSay[2] ),;
-                              aGet[ ( dbfArticulo )->( fieldpos( "PVENTA1" ) ) ]:lValid(),;
-                              aGet[ ( dbfArticulo )->( fieldpos( "PVENTA2" ) ) ]:lValid(),;
-                              aGet[ ( dbfArticulo )->( fieldpos( "PVENTA3" ) ) ]:lValid(),;
-                              aGet[ ( dbfArticulo )->( fieldpos( "PVENTA4" ) ) ]:lValid(),;
-                              aGet[ ( dbfArticulo )->( fieldpos( "PVENTA5" ) ) ]:lValid(),;
-                              aGet[ ( dbfArticulo )->( fieldpos( "PVENTA6" ) ) ]:lValid(), .t. ) ;
-         BITMAP   "LUPA" ;
-         ON HELP  ( BrwIva( aGet[( dbfArticulo )->( fieldpos( "TIPOIVA" ) ) ], nil , oSay[2] ) ) ;
-         OF       fldGeneral
-
-   REDEFINE GET oSay[2] VAR cSay[2] ;
-			WHEN 		( .F. );
-			ID 		141 ;
-         OF       fldGeneral
-
-   REDEFINE GET aGet[ ( dbfArticulo )->( fieldpos( "CCODIMP" ) ) ] VAR aTmp[ ( dbfArticulo )->( fieldpos( "CCODIMP" ) ) ] ;
-         ID       272;
-         PICTURE  "@!" ;
-			WHEN 		( nMode != ZOOM_MODE ) ;
-         VALID    ( oNewImp:Existe( aGet[ ( dbfArticulo )->( fieldpos( "CCODIMP" ) ) ], oSay[ 10 ], "cNomImp", .t., .t., "0" ) );
-         ON HELP  ( oNewImp:Buscar( aGet[ ( dbfArticulo )->( fieldpos( "CCODIMP" ) ) ], "cCodImp" ) ) ;
-         BITMAP   "LUPA" ;
-         OF       fldGeneral
-
-   REDEFINE GET oSay[10] VAR cSay[10] ;
-			WHEN 		( .F. );
-         ID       273 ;
-         OF       fldGeneral
-
    REDEFINE GET   aGet[ ( dbfArticulo )->( fieldpos( "FAMILIA" ) ) ] ;
          VAR      aTmp[ ( dbfArticulo )->( fieldpos( "FAMILIA" ) ) ] ;
 			ID 		160 ;
@@ -1768,38 +1729,6 @@ STATIC FUNCTION EdtRec( aTmp, aGet, dbfArticulo, oBrw, bWhen, bValid, nMode )
 			WHEN 		( .F. );
 			ID 		161 ;
          OF       fldGeneral
-
-   /*
-   Propiedades del articulo----------------------------------------------------
-   */
-
-   REDEFINE GET   aGet[ ( dbfArticulo )->( fieldpos( "cCodPrp1" ) ) ] ;
-         VAR      aTmp[ ( dbfArticulo )->( fieldpos( "cCodPrp1" ) ) ] ;
-         ID       360 ;
-         IDTEXT   361 ;
-         PICTURE  "@!" ;
-         WHEN     ( nMode != ZOOM_MODE ) ;
-         BITMAP   "Lupa" ;
-         OF       fldGeneral
-
-   aGet[ ( dbfArticulo )->( fieldpos( "cCodPrp1" ) ) ]:bValid  := {|| cProp( aGet[ ( dbfArticulo )->( fieldpos( "cCodPrp1" ) ) ], aGet[ ( dbfArticulo )->( fieldpos( "cCodPrp1" ) ) ]:oHelpText ) }
-   aGet[ ( dbfArticulo )->( fieldpos( "cCodPrp1" ) ) ]:bHelp   := {|| brwProp( aGet[ ( dbfArticulo )->( fieldpos( "cCodPrp1" ) ) ], aGet[ ( dbfArticulo )->( fieldpos( "cCodPrp1" ) ) ]:oHelpText ) }
-
-   TBtnBmp():ReDefine( 362, "Printer_pencil_16",,,,,{|| brwSelectPropiedad( aTmp[ ( dbfArticulo )->( fieldpos( "cCodPrp1" ) ) ], @aTmp[ ( dbfArticulo )->( fieldpos( "mValPrp1" ) ) ] ) }, fldGeneral, .f., , .f., "Seleccionar propiedades" )
-
-   REDEFINE GET   aGet[ ( dbfArticulo )->( fieldpos( "cCodPrp2" ) ) ] ;
-         VAR      aTmp[ ( dbfArticulo )->( fieldpos( "cCodPrp2" ) ) ] ;
-         ID       370 ;
-         IDTEXT   371 ;
-         PICTURE  "@!" ;
-         WHEN     ( nMode != ZOOM_MODE ) ;
-         BITMAP   "Lupa" ;
-         OF       fldGeneral
-
-   aGet[ ( dbfArticulo )->( fieldpos( "cCodPrp2" ) ) ]:bValid  := {|| cProp( aGet[ ( dbfArticulo )->( fieldpos( "cCodPrp2" ) ) ], aGet[ ( dbfArticulo )->( fieldpos( "cCodPrp2" ) ) ]:oHelpText ) }
-   aGet[ ( dbfArticulo )->( fieldpos( "cCodPrp2" ) ) ]:bHelp   := {|| brwProp( aGet[ ( dbfArticulo )->( fieldpos( "cCodPrp2" ) ) ], aGet[ ( dbfArticulo )->( fieldpos( "cCodPrp2" ) ) ]:oHelpText ) }
-
-   TBtnBmp():ReDefine( 372, "Printer_pencil_16",,,,,{|| brwSelectPropiedad( aTmp[ ( dbfArticulo )->( fieldpos( "cCodPrp2" ) ) ], @aTmp[ ( dbfArticulo )->( fieldpos( "mValPrp2" ) ) ] ) }, fldGeneral, .f., , .f., "Seleccionar propiedades" )
 
    REDEFINE SAY oNombre VAR "Tipo artículo";
          ID       888 ;
@@ -1958,6 +1887,45 @@ STATIC FUNCTION EdtRec( aTmp, aGet, dbfArticulo, oBrw, bWhen, bValid, nMode )
          TRANSPARENT ;
          OF       fldPrecios
 
+      REDEFINE CHECKBOX aTmp[ ( dbfArticulo )->( fieldpos( "LIVAINC" ) ) ] ;
+         ID       820 ;
+         WHEN     ( nMode != ZOOM_MODE ) ;
+         OF       fldPrecios
+
+      REDEFINE GET aGet[( dbfArticulo )->( fieldpos( "TIPOIVA" ) ) ] VAR aTmp[ ( dbfArticulo )->( fieldpos( "TIPOIVA" ) ) ] ;
+         ID       800;
+         PICTURE  "@!" ;
+         WHEN     ( nMode != ZOOM_MODE ) ;
+         VALID    (  cTiva(   aGet[ ( dbfArticulo )->( fieldpos( "TIPOIVA" ) ) ], dbfIva, oSay[2] ),;
+                              aGet[ ( dbfArticulo )->( fieldpos( "PVENTA1" ) ) ]:lValid(),;
+                              aGet[ ( dbfArticulo )->( fieldpos( "PVENTA2" ) ) ]:lValid(),;
+                              aGet[ ( dbfArticulo )->( fieldpos( "PVENTA3" ) ) ]:lValid(),;
+                              aGet[ ( dbfArticulo )->( fieldpos( "PVENTA4" ) ) ]:lValid(),;
+                              aGet[ ( dbfArticulo )->( fieldpos( "PVENTA5" ) ) ]:lValid(),;
+                              aGet[ ( dbfArticulo )->( fieldpos( "PVENTA6" ) ) ]:lValid(), .t. ) ;
+         BITMAP   "LUPA" ;
+         ON HELP  ( BrwIva( aGet[( dbfArticulo )->( fieldpos( "TIPOIVA" ) ) ], nil , oSay[2] ) ) ;
+         OF       fldPrecios
+
+      REDEFINE GET oSay[2] VAR cSay[2] ;
+         WHEN     ( .F. );
+         ID       801 ;
+         OF       fldPrecios
+
+      REDEFINE GET aGet[ ( dbfArticulo )->( fieldpos( "CCODIMP" ) ) ] VAR aTmp[ ( dbfArticulo )->( fieldpos( "CCODIMP" ) ) ] ;
+         ID       810;
+         PICTURE  "@!" ;
+         WHEN     ( nMode != ZOOM_MODE ) ;
+         VALID    ( oNewImp:Existe( aGet[ ( dbfArticulo )->( fieldpos( "CCODIMP" ) ) ], oSay[ 10 ], "cNomImp", .t., .t., "0" ) );
+         ON HELP  ( oNewImp:Buscar( aGet[ ( dbfArticulo )->( fieldpos( "CCODIMP" ) ) ], "cCodImp" ) ) ;
+         BITMAP   "LUPA" ;
+         OF       fldPrecios
+
+      REDEFINE GET oSay[10] VAR cSay[10] ;
+         WHEN     ( .F. );
+         ID       811 ;
+         OF       fldPrecios
+
       REDEFINE GET   aGet[ ( dbfArticulo )->( fieldpos( "pCosto" ) ) ] ;
          VAR         aTmp[ ( dbfArticulo )->( fieldpos( "pCosto" ) ) ] ;
          ID          110 ;
@@ -1984,7 +1952,7 @@ STATIC FUNCTION EdtRec( aTmp, aGet, dbfArticulo, oBrw, bWhen, bValid, nMode )
       Codificacion de proveedores----------------------------------------------
       */
 
-      REDEFINE BUTTON aBtnDiv[ 5 ];
+      REDEFINE BUTTON aBtnDiv[ 5 ]; 
          ID       510 ;
          OF       fldPrecios;
          ACTION   ( CodificacionProveedor( aTmp, nMode ) )
@@ -2895,6 +2863,39 @@ STATIC FUNCTION EdtRec( aTmp, aGet, dbfArticulo, oBrw, bWhen, bValid, nMode )
          RESOURCE "Bookmark_Silver_Alpha_48" ;
          TRANSPARENT ;
          OF       fldPropiedades
+
+      /*
+      Propiedades del articulo----------------------------------------------------
+      */
+
+      REDEFINE GET   aGet[ ( dbfArticulo )->( fieldpos( "cCodPrp1" ) ) ] ;
+         VAR         aTmp[ ( dbfArticulo )->( fieldpos( "cCodPrp1" ) ) ] ;
+         ID          360 ;
+         IDTEXT      361 ;
+         PICTURE     "@!" ;
+         WHEN        ( nMode != ZOOM_MODE ) ;
+         BITMAP      "Lupa" ;
+         OF          fldPropiedades
+
+      aGet[ ( dbfArticulo )->( fieldpos( "cCodPrp1" ) ) ]:bValid  := {|| cProp( aGet[ ( dbfArticulo )->( fieldpos( "cCodPrp1" ) ) ], aGet[ ( dbfArticulo )->( fieldpos( "cCodPrp1" ) ) ]:oHelpText ) }
+      aGet[ ( dbfArticulo )->( fieldpos( "cCodPrp1" ) ) ]:bHelp   := {|| brwProp( aGet[ ( dbfArticulo )->( fieldpos( "cCodPrp1" ) ) ], aGet[ ( dbfArticulo )->( fieldpos( "cCodPrp1" ) ) ]:oHelpText ) }
+
+      TBtnBmp():ReDefine( 362, "Printer_pencil_16",,,,,{|| brwSelectPropiedad( aTmp[ ( dbfArticulo )->( fieldpos( "cCodPrp1" ) ) ], @aTmp[ ( dbfArticulo )->( fieldpos( "mValPrp1" ) ) ] ) }, fldPropiedades, .f., , .f., "Seleccionar propiedades" )
+
+      REDEFINE GET   aGet[ ( dbfArticulo )->( fieldpos( "cCodPrp2" ) ) ] ;
+         VAR         aTmp[ ( dbfArticulo )->( fieldpos( "cCodPrp2" ) ) ] ;
+         ID          370 ;
+         IDTEXT      371 ;
+         PICTURE     "@!" ;
+         WHEN        ( nMode != ZOOM_MODE ) ;
+         BITMAP      "Lupa" ;
+         OF          fldPropiedades
+
+      aGet[ ( dbfArticulo )->( fieldpos( "cCodPrp2" ) ) ]:bValid  := {|| cProp( aGet[ ( dbfArticulo )->( fieldpos( "cCodPrp2" ) ) ], aGet[ ( dbfArticulo )->( fieldpos( "cCodPrp2" ) ) ]:oHelpText ) }
+      aGet[ ( dbfArticulo )->( fieldpos( "cCodPrp2" ) ) ]:bHelp   := {|| brwProp( aGet[ ( dbfArticulo )->( fieldpos( "cCodPrp2" ) ) ], aGet[ ( dbfArticulo )->( fieldpos( "cCodPrp2" ) ) ]:oHelpText ) }
+
+      TBtnBmp():ReDefine( 372, "Printer_pencil_16",,,,,{|| brwSelectPropiedad( aTmp[ ( dbfArticulo )->( fieldpos( "cCodPrp2" ) ) ], @aTmp[ ( dbfArticulo )->( fieldpos( "mValPrp2" ) ) ] ) }, fldPropiedades, .f., , .f., "Seleccionar propiedades" )
+
 
       oBrwDiv                 := IXBrowse():New( fldPropiedades )
 

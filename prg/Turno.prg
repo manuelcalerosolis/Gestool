@@ -2510,16 +2510,6 @@ METHOD cValidTurno()
 
    local nCurTur  := nNewDoc( nil, ::oDbf:nArea, "nSesion", 6, ::oDbfCnt:nArea ) 
 
-   /*
-   while ::oDbf:Seek( Rjust( Str( nCurTur, 6 ) ) ) // .and. ::oDbf:lCloTur
-      ++nCurTur
-   end while
-
-   if nCurTur != nCurTur()
-      SetFieldEmpresa( nCurTur, "nNumTur" )
-   end if
-   */
-
 RETURN ( Str( nCurTur, 6 ) )
 
 //--------------------------------------------------------------------------//
