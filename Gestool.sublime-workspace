@@ -4,558 +4,526 @@
 		"selected_items":
 		[
 			[
-<<<<<<< HEAD
-				"ctext",
-				"cTextoWait"
-=======
+				"ma",
+				"mail"
+			],
+			[
+				"Ema",
+				"EmailMultiAlternatives"
+			],
+			[
+				"mod",
+				"models"
+			],
+			[
+				"con",
+				"ContactoFormModel"
+			],
+			[
 				"fo",
-				"form"
+				"forms"
+			],
+			[
+				"form",
+				"form_valid"
+			],
+			[
+				"Cont",
+				"ContactoForm2"
 			],
 			[
 				"s",
 				"self"
->>>>>>> 1c7fe091ec6ac1b2a8f8a209197e8a1f56b3fae4
 			],
 			[
-				"cText",
-				"cTextoWait"
+				"cIn",
+				"cInfoAperturaCierreCaja"
 			],
 			[
-				"Cursor",
-				"CursorWait"
+				"cI",
+				"cInfoAperturaCierreCaja"
 			],
 			[
-				"lChange",
-				"lChangeImage"
-			],
-			[
-				"lchange",
-				"lChangeImage"
-			],
-			[
-				"Prepare",
-				"PrepareTemporal"
-			],
-			[
-				"Destroy",
-				"DestroyTemporalLbl"
-			],
-			[
-				"lCreate",
-				"lCreateTemporalLbl"
-			],
-			[
-				"desi",
-				"DesignLabelProducc"
-			],
-			[
-				"Producción",
-				"Producción"
-			],
-			[
-				"Pro",
-				"Produccion"
-			],
-			[
-				"oBrw",
-				"oBrwLabel"
-			],
-			[
-				"Nombre",
-				"cNombre"
-			],
-			[
-				"cFile",
-				"cFileTmpLabel"
-			],
-			[
-				"TPro",
-				"TProduccion"
-			],
-			[
-				"tPro",
-				"TProduccion"
-			],
-			[
-				"TCo",
-				"TProduccion"
-			],
-			[
-				"Create",
-				"CreateEtiqueta"
-			],
-			[
-				"Init",
-				"InitLabel"
-			],
-			[
-				"p",
-				"p"
-			],
-			[
-				"cCodPro",
-				"cCodProduct"
-			],
-			[
-				"delete",
-				"DeleteProductsPrestashop"
-			],
-			[
-				"familia",
-				"familia"
-			],
-			[
-				"if",
-				"if	if..endif"
-			],
-			[
-				"cCom",
-				"cCommand"
-			],
-			[
-				"nCodigo",
-				"nCodigoGrupo"
-			],
-			[
-				"EDIT",
-				"EDIT_MODE"
-			],
-			[
-				"ncodigo",
-				"nCodigoPropiedad"
-			],
-			[
-				"nCodig",
-				"nCodigoPropiedad"
-			],
-			[
-				"nCodi",
-				"nCodigoPropiedad"
-			],
-			[
-				"id_A",
-				"id_attribute_group"
-			],
-			[
-				"Attr",
-				"attribute_group"
-			],
-			[
-				"oPro",
-				"oPro"
-			],
-			[
-				"cCodi",
-				"cCodigoPropiedad"
-			],
-			[
-				"id_at",
-				"id_attribute"
-			],
-			[
-				"id_atr",
-				"id_attribute_group"
-			],
-			[
-				"attr",
-				"attribute"
-			],
-			[
-				"id_attr",
-				"id_attribute_group"
-			],
-			[
-				"attribute_g",
-				"attribute_group_lang"
-			],
-			[
-				"lSbrInt",
-				"LSBRINT"
-			],
-			[
-				"id_pro",
-				"id_product_attribute"
-			],
-			[
-				"product",
-				"products_attributes_id"
-			],
-			[
-				"feature_",
-				"feature_product"
-			],
-			[
-				"image_",
-				"image_shop"
-			],
-			[
-				"feature",
-				"feature_value_lang"
-			],
-			[
-				"product_gr",
-				"product_group_reduction_cache"
-			],
-			[
-				"product_att",
-				"product_attribute_image"
-			],
-			[
-				"cPre",
-				"cPrefixTable"
-			],
-			[
-				"METHOD",
-				"METHOD"
-			],
-			[
-				"cCodigo",
-				"cCodigoGrupo"
-			],
-			[
-				"tc",
-				"TComercio"
-			],
-			[
-				"Clas",
-				"CLASS"
-			],
-			[
-				"cCodFam",
-				"cCodFam"
-			],
-			[
-				"oBmp",
-				"oBmpWait"
-			],
-			[
-				"oDlg",
-				"oDlgWait"
-			],
-			[
-				"lRe",
-				"lReady"
-			],
-			[
-				"cCodGr",
-				"cCodGrp"
-			],
-			[
-				"cCodig",
-				"cCodigoGrupo"
-			],
-			[
-				"See",
-				"SeekInOrd"
-			],
-			[
-				"lOpen",
-				"lOpenFiles"
-			],
-			[
-				"lRE",
-				"lReady"
-			],
-			[
-				"new",
-				"NEW"
-			],
-			[
-				"Di",
-				"Directory"
-			],
-			[
-				"cSerie",
-				"cNumeroSerie"
-			],
-			[
-				"cVal",
-				"cValPr2"
-			],
-			[
-				"cCodP",
-				"cCodPr2"
-			],
-			[
-				"Update",
-				"Update"
-			],
-			[
-				"elimino",
-				"Elimino"
-			],
-			[
-				"else",
-				"else"
-			],
-			[
-				"oCon",
-				"oCon"
-			],
-			[
-				"T",
-				"TGrpFam"
-			],
-			[
-				"f",
-				"f"
-			],
-			[
-				"cPrefi",
-				"cPreFixtable"
-			],
-			[
-				"tax_ru",
-				"tax_rules_group"
-			],
-			[
-				"cPrefijo",
-				"cPrefijoBaseDatos"
-			],
-			[
-				"lUp",
-				"lUpdateFabricantesPrestashop"
-			],
-			[
-				"Cur",
-				"CursorWait"
-			],
-			[
-				"alquiler",
-				"cSayAlquiler"
-			],
-			[
-				"oSa",
-				"oSayAlquiler"
-			],
-			[
-				"oSay",
-				"oSaySerial"
-			],
-			[
-				"Control",
-				"ControlAcceso"
-			],
-			[
-				"dFecPed",
-				"dFecPed"
-			],
-			[
-				"nDto",
-				"nDto"
-			],
-			[
-				"oDbf",
-				"oDbfPreLGst"
-			],
-			[
-				"nLin",
-				"nNumLin"
-			],
-			[
-				"nServicio",
-				"nServicioAnterior"
-			],
-			[
-				"nSer",
-				"nServicioAnterior"
-			],
-			[
-				"nDpp",
-				"nDpp"
-			],
-			[
-				"oGrupo",
-				"oGrupoImprimir"
-			],
-			[
-				"nU",
-				"nUbiTik"
-			],
-			[
-				"t",
-				"t"
-			],
-			[
-				"lIni",
-				"lInitCheckDividirMesas"
-			],
-			[
-				"oPunto",
-				"oPunto"
-			],
-			[
-				"cNumero",
-				"cNumeroDevuelto"
-			],
-			[
-				"Class",
-				"ClassName"
-			],
-			[
-				"tt",
-				"TTpvSalon"
-			],
-			[
-				"cCod",
-				"cCodigoSala"
-			],
-			[
-				"wh",
-				"with"
-			],
-			[
-				"lbu",
-				"LButtonUp"
-			],
-			[
-				"Guar",
-				"GuardaDocumentoPendiente"
-			],
-			[
-				"nOp",
-				"nOption"
-			],
-			[
-				"cNume",
-				"cNumeroTicket"
+				"bEd",
+				"bEditValue"
 			],
 			[
 				"Field",
 				"FieldGetByName"
 			],
 			[
-				"oTik",
-				"oTiketCabecera"
+				"aCa",
+				"aCajaSelect"
 			],
 			[
-				"cUbi",
-				"cUbicacion"
+				"AcA",
+				"aCajaSelect"
 			],
 			[
-				"oTi",
-				"oTiketCabecera"
+				"ex",
+				"EXCLUSIVE"
 			],
 			[
-				"aNumeros",
-				"aNumerosTickets"
+				"cRef",
+				"cRefProveedor"
 			],
 			[
-				"get",
-				"GetStatus"
+				"dbfArt",
+				"dbfArtPrv"
 			],
 			[
-				"oti",
-				"oTiketCabecera"
+				"cuser",
+				"cUserCaja"
 			],
 			[
-				"Get",
-				"GetSysDate"
+				"cCodigo",
+				"cCodigoFabricante"
 			],
 			[
-				"oTemporalDi",
-				"oTemporalDivisionNuevoTicket"
+				"cCodig",
+				"cCodigoTipo"
 			],
 			[
-				"oTemp",
-				"oTemporalDivisionNuevoTicket"
+				"ccodi",
+				"cCodigoFamilia"
 			],
 			[
-				"oTemporal",
-				"oTemporalDivisionNuevoTicket"
+				"cC",
+				"cCategoria"
 			],
 			[
-				"oTic",
-				"oTiketCobro"
+				"oDbcA",
+				"oDbfCaj"
 			],
 			[
-				"Bl",
-				"Blank"
+				"cNombre",
+				"cNombreCaja"
 			],
 			[
-				"cPnt",
-				"cPntVenta"
+				"oDbc",
+				"oDbfCaj"
 			],
 			[
-				"nUbi",
-				"nUbiTik"
+				"oDb",
+				"oDbfCaj"
 			],
 			[
-				"cCodSala",
-				"cCodSala"
+				"eMPTY",
+				"Empty"
 			],
 			[
-				"oTemporalDivi",
-				"oTemporalDivisionOriginal"
+				"gETlAS",
+				"GetLastOpen"
 			],
 			[
-				"oTmp",
-				"oTemporalLinea"
+				"Fie",
+				"FieldPutByName"
 			],
 			[
-				"nUn",
-				"nUntTil"
+				"Fieldp",
+				"FieldPutByName"
 			],
 			[
-				"Wh",
-				"while"
+				"Fiel",
+				"FieldPutByName"
 			],
 			[
-				"oTemporada",
-				"oTemporalDivisionOriginal"
+				"Mas",
+				"lMaster"
 			],
 			[
-				"lKi",
-				"lKitChl"
+				"cCur",
+				"cCurTurno"
 			],
 			[
-				"lKit",
-				"lKitArt"
+				"de",
+				"def	Function"
 			],
 			[
-				"oTempora",
-				"oTemporalDivisionOriginal"
+				"ur",
+				"url"
 			],
 			[
-<<<<<<< HEAD
-				"Seek",
-				"SeekinOrd"
+				"cPa",
+				"cPatEmp"
 			],
 			[
-				"nTotal",
-				"nTotalLinea"
-=======
-				"ma",
-				"max-width"
->>>>>>> 1c7fe091ec6ac1b2a8f8a209197e8a1f56b3fae4
+				"hi",
+				"HideImportacion"
+			],
+			[
+				"uTmp",
+				"uTmpL"
+			],
+			[
+				"nTota",
+				"nTotalDocumento"
+			],
+			[
+				"no",
+				"nombre"
+			],
+			[
+				"cre",
+				"cReferenciaArticulo"
+			],
+			[
+				"ms",
+				"Msginfo"
+			],
+			[
+				"cFa",
+				"cFabricante"
+			],
+			[
+				"cCod",
+				"cCodigoProveedor"
+			],
+			[
+				"np",
+				"nPrecio1SinIva"
+			],
+			[
+				"cRe",
+				"cReferenciaArticulo"
+			],
+			[
+				"cNom",
+				"cNombreArticulo"
+			],
+			[
+				"EdtRe",
+				"EdtRecStart"
+			],
+			[
+				"F",
+				"Function"
+			],
+			[
+				"empty",
+				"Empty"
+			],
+			[
+				"cTex",
+				"cTextTitle"
+			],
+			[
+				"Ordse",
+				"OrdSetFocus"
+			],
+			[
+				"oBr",
+				"oBrwCnt"
+			],
+			[
+				"log",
+				"logwrite"
+			],
+			[
+				"msg",
+				"msgAlert"
+			],
+			[
+				"dbr",
+				"dbrlock"
+			],
+			[
+				"dbfC",
+				"dbfClient"
+			],
+			[
+				"sava",
+				"SAVAPT"
+			],
+			[
+				"des",
+				"descuento"
+			],
+			[
+				"hIDE",
+				"HideImportacion"
+			],
+			[
+				"sta",
+				"static"
+			],
+			[
+				"PRO",
+				"PROMPT"
+			],
+			[
+				"Cur",
+				"CursorWE"
+			],
+			[
+				"oWnd",
+				"oWndBrw"
+			],
+			[
+				"oWd",
+				"oWndBrw"
+			],
+			[
+				"lRe",
+				"lReady"
+			],
+			[
+				"Me",
+				"Method"
+			],
+			[
+				"class",
+				"CLASS"
+			],
+			[
+				"Hide",
+				"HideImportacion"
+			],
+			[
+				"oBtnA",
+				"oBtnAgruparSat"
+			],
+			[
+				"oBo",
+				"oBtnAgruparPedido"
+			],
+			[
+				"oBtn",
+				"oBtnPed"
+			],
+			[
+				"oBt",
+				"oBtnPre"
+			],
+			[
+				"H",
+				"Hide"
+			],
+			[
+				"oBtnP",
+				"oBtnPed"
+			],
+			[
+				"dbfSa",
+				"dbfSatCliT"
+			],
+			[
+				"aC",
+				"aCalSatCli"
+			],
+			[
+				"dbfTmp",
+				"dbfTmpSer"
+			],
+			[
+				"nN",
+				"nNumLin"
+			],
+			[
+				"cURS",
+				"CursorWait"
+			],
+			[
+				"cSatCl",
+				"cSatCliS"
+			],
+			[
+				"dbfSat",
+				"dbfSatCliS"
+			],
+			[
+				"dbf",
+				"dbfArtPrv"
+			],
+			[
+				"sa",
+				"sandalias"
+			],
+			[
+				"fu",
+				"function"
+			],
+			[
+				"pu",
+				"public"
+			],
+			[
+				"cCodi",
+				"cCodigoTipo"
+			],
+			[
+				"Emp",
+				"Empty"
+			],
+			[
+				"dbGo",
+				"dbGoTop"
+			],
+			[
+				"Cod",
+				"CodEmp"
+			],
+			[
+				"lCha",
+				"lChangeCode"
+			],
+			[
+				"META",
+				"METALIMP"
+			],
+			[
+				"val",
+				"valType"
+			],
+			[
+				"ejer",
+				"nEjercicoContaplus"
+			],
+			[
+				"nE",
+				"nEjercicoContaplus"
+			],
+			[
+				"Eje",
+				"nEjercicoContaplus"
+			],
+			[
+				"Cursor",
+				"CursorWait"
+			],
+			[
+				"ord",
+				"OrdKeyCount"
+			],
+			[
+				"Ped",
+				"Pedidos"
+			],
+			[
+				"dbfPrecLi",
+				"dbfPreCliT"
+			],
+			[
+				"SatC",
+				"SatCliS"
+			],
+			[
+				"fEra",
+				"fEraseIndex"
+			],
+			[
+				"cPat",
+				"cPatTmp"
+			],
+			[
+				"crl",
+				"CRLF"
+			],
+			[
+				"cvalo",
+				"cvaltochar"
+			],
+			[
+				"NuN",
+				"nUntLin"
+			],
+			[
+				"cDes",
+				"cDesLin"
+			],
+			[
+				"cur",
+				"CursorWE"
+			],
+			[
+				"_CNUMPED",
+				"_CNUMPED"
+			],
+			[
+				"oBrw",
+				"oBrwInc"
+			],
+			[
+				"oSayT",
+				"oSayTxtDias"
+			],
+			[
+				"oSay",
+				"oSayDias"
+			],
+			[
+				"lC",
+				"lCheck"
+			],
+			[
+				"cType",
+				"cTypeVersion"
+			],
+			[
+				"cTy",
+				"cTypeVersion"
+			],
+			[
+				"day",
+				"nDaySaas"
+			],
+			[
+				"dATE",
+				"Date"
+			],
+			[
+				"msgA",
+				"msgAlert"
+			],
+			[
+				"alet",
+				"alert-error"
+			],
+			[
+				"su",
+				"submit"
+			],
+			[
+				"lChec",
+				"lCheckSaasMode"
+			],
+			[
+				"nSer",
+				"nSerialUSR"
+			],
+			[
+				"stot",
+				"sTotFacRec"
+			],
+			[
+				"ntotFac",
+				"nTotFacRec"
+			],
+			[
+				"nTot",
+				"nTotalNeto"
+			],
+			[
+				"dbfFacRE",
+				"dbfFacRecL"
+			],
+			[
+				"nC",
+				"nCobro"
+			],
+			[
+				"ntotC",
+				"nTotCob"
 			]
 		]
 	},
 	"buffers":
 	[
 		{
-			"file": "prg/Tcomercio.prg",
+			"file": "/C/fw195/Gestool/prg/Articulo.prg",
 			"settings":
 			{
-<<<<<<< HEAD
-				"buffer_size": 368712,
-=======
-				"buffer_size": 652817,
->>>>>>> 1c7fe091ec6ac1b2a8f8a209197e8a1f56b3fae4
-				"line_ending": "Windows"
-			}
-		},
-		{
-<<<<<<< HEAD
-			"file": "prg/Tftpc3.prg",
-			"settings":
-			{
-				"buffer_size": 3310,
-=======
-			"file": "/C/fw195/Gestool/bin/gstapolo.ini",
-			"settings":
-			{
-				"buffer_size": 533,
+				"buffer_size": 652995,
 				"line_ending": "Windows"
 			}
 		},
@@ -563,72 +531,219 @@
 			"file": "/C/fw195/Gestool/prg/Turno.prg",
 			"settings":
 			{
-				"buffer_size": 354766,
+				"buffer_size": 354609,
 				"line_ending": "Windows"
 			}
 		},
 		{
-			"file": "/C/Python33/mysite/contactos/forms.py",
+			"file": "/C/fw195/Gestool/prg/Tpv.prg",
 			"settings":
 			{
-				"buffer_size": 805,
+				"buffer_size": 752862,
 				"line_ending": "Windows"
 			}
 		},
 		{
-			"file": "/C/Python33/mysite/contactos/views.py",
+			"file": "/C/fw195/Gestool/prg/Tfastventasarticulos.prg",
 			"settings":
 			{
-				"buffer_size": 971,
->>>>>>> 1c7fe091ec6ac1b2a8f8a209197e8a1f56b3fae4
+				"buffer_size": 96469,
 				"line_ending": "Windows"
 			}
 		},
 		{
-			"file": "/C/Python33/mysite/templates/base.html",
+			"file": "/C/fw195/Gestool/prg/Tfastventasclientes.prg",
 			"settings":
 			{
-				"buffer_size": 1413,
+				"buffer_size": 54238,
 				"line_ending": "Windows"
 			}
 		},
 		{
-			"file": "/C/Python33/mysite/static/css/bootstrap.css",
+			"file": "/C/fw195/Gestool/bin/gstapolo.ini",
 			"settings":
 			{
-				"buffer_size": 127247,
-				"line_ending": "Unix"
-			}
-		},
-		{
-			"file": "/C/Python33/mysite/templates/contactos/index.html",
-			"settings":
-			{
-				"buffer_size": 1075,
-				"line_ending": "Unix"
+				"buffer_size": 533,
+				"line_ending": "Windows"
 			}
 		}
 	],
-	"build_system": "Packages/User/gestool.sublime-build",
+	"build_system": "Packages/User/Gestool.sublime-build",
 	"command_palette":
 	{
-		"height": 311.0,
+		"height": 392.0,
 		"selected_items":
 		[
 			[
-				"Package Control: ",
+				"ins",
 				"Package Control: Install Package"
 			],
 			[
 				"install",
 				"Package Control: Install Package"
+			],
+			[
+				"boo",
+				"Snippet: Bootstrap starter"
+			],
+			[
+				"install ",
+				"Package Control: Install Package"
+			],
+			[
+				"bootstrap prog",
+				"Snippet: Bootstrap stripped progress bar"
+			],
+			[
+				"bootstrap i",
+				"Snippet: Bootstrap inverse button"
+			],
+			[
+				"boot",
+				"Snippet: Bootstrap default blockquote"
+			],
+			[
+				"bootstrap label",
+				"Snippet: Bootstrap important inline label"
+			],
+			[
+				"boots",
+				"Snippet: Bootstrap warning button"
+			],
+			[
+				"boost",
+				"Snippet: Bootstrap starter"
+			],
+			[
+				"boostrap st",
+				"Snippet: Bootstrap starter"
+			],
+			[
+				"boostrap danger",
+				"Snippet: Bootstrap danger button"
+			],
+			[
+				"boostrap dang",
+				"Snippet: Bootstrap danger button"
+			],
+			[
+				"inslla",
+				"Package Control: Install Package"
+			],
+			[
+				"INSTALL",
+				"Package Control: Install Package"
+			],
+			[
+				"install pa",
+				"Package Control: Install Package"
+			],
+			[
+				"set",
+				"Set Syntax: PHP"
+			],
+			[
+				"set p",
+				"Set Syntax: PHP"
+			],
+			[
+				"insta",
+				"Package Control: Install Package"
+			],
+			[
+				"",
+				"Convert Case: Swap Case"
+			],
+			[
+				"brows",
+				"Preferences: Browse Packages"
+			],
+			[
+				"packe",
+				"Package Control: List Packages"
+			],
+			[
+				"installe",
+				"Package Control: Install Package"
+			],
+			[
+				"list pa",
+				"Package Control: List Packages"
+			],
+			[
+				"cont",
+				"Package Control: Install Package"
+			],
+			[
+				"Package Control: add",
+				"Package Control: Add Repository"
+			],
+			[
+				"install pac",
+				"Package Control: Install Package"
+			],
+			[
+				"she",
+				"Set Syntax: Batch File"
+			],
+			[
+				"zen",
+				"Zen Coding: Select matching tag name"
+			],
+			[
+				"SHELL",
+				"Set Syntax: Shell Script (Bash)"
+			],
+			[
+				"INSTALL ",
+				"Package Control: Install Package"
+			],
+			[
+				"PACKAGE INS",
+				"Package Control: Install Package"
+			],
+			[
+				"ZE",
+				"Zen Coding: Wrap zen as you type"
+			],
+			[
+				"control ",
+				"Package Control: Install Package"
+			],
+			[
+				"package control i",
+				"Package Control: Install Package"
+			],
+			[
+				"package control ins",
+				"Package Control: Install Package"
+			],
+			[
+				"pac",
+				"Package Control: Upgrade Package"
+			],
+			[
+				"PAC",
+				"Package Control: Install Package"
+			],
+			[
+				"pA",
+				"Package Control: Install Package"
+			],
+			[
+				"pa",
+				"Package Control: Install Package"
+			],
+			[
+				"pack",
+				"Package Control: Add Channel"
 			]
 		],
-		"width": 400.0
+		"width": 528.0
 	},
 	"console":
 	{
-		"height": 146.0
+		"height": 125.0
 	},
 	"distraction_free":
 	{
@@ -641,140 +756,70 @@
 	},
 	"file_history":
 	[
-<<<<<<< HEAD
-		"/C/fw195/Gestool/prg/Empresa.prg",
-		"/C/fw195/Gestool/prg/Say.prg",
-		"/C/fw195/Gestool/ppo/Articulo.ppo",
+		"/C/fw195/Gestool/c/Creatwnd.c",
+		"/C/fw195/Gestool/c/Wininet.c",
 		"/C/fw195/Gestool/prg/Tftpc3.prg",
-		"/C/fw195/Gestool/prg/Tuser.prg",
-		"/C/fw195/Gestool/prg/Backup.prg",
-		"/C/fw195/Gestool/prg/Tftpfile.prg",
-		"/C/fw195/Gestool/prg/Tftpserv.prg",
-		"/C/fw195/Gestool/prg/Tftp.prg",
-		"/C/FWH803/samples/tutor06.prg",
-		"/C/FWH803/samples/ftpserv.prg",
-		"/C/FWH803/samples/ftpdir.prg",
-		"/C/FWH803/source/classes/tftp.prg",
-		"/C/fwh1204/source/classes/tftpserv.prg",
-		"/C/fw195/Gestool/prg/Rptgal.prg",
-		"/C/fw195/Gestool/prg/Trnkrvta.prg",
-		"/C/fw195/Gestool/prg/Tacuatvta.prg",
-		"/C/fw195/Gestool/prg/Tinfgen.prg",
-		"/C/fw195/Gestool/prg/Tdlgflt.prg",
-		"/C/fw195/Gestool/prg/Tshell.prg",
-		"/C/fw195/Gestool/prg/Tfilter.prg",
-		"/C/fw195/Gestool/prg/Tinfavta.prg",
-		"/C/Users/Villa/Desktop/123/123.prg",
-=======
+		"/C/Python33/mysite/contactos/forms.py",
+		"/C/Python33/mysite/templates/contactos/index.html",
 		"/C/Python33/mysite/static/css/bootstrap.css",
->>>>>>> 1c7fe091ec6ac1b2a8f8a209197e8a1f56b3fae4
+		"/C/Python33/mysite/templates/base.html",
+		"/C/Python33/mysite/contactos/views.py",
+		"/C/Mejorando.la/cursos/views.py",
+		"/C/Mejorando.la/website/views.py",
+		"/C/Mejorando.la/website/forms.py",
+		"/C/Python33/mysite/mysite/settings.py",
+		"/C/Mejorando.la/cursos/utils.py",
+		"/C/Mejorando.la/cursos/image.py",
 		"/C/fw195/Gestool/prg/Articulo.prg",
-		"/C/fw195/Gestool/prg/Tscripts.prg",
-		"/C/BCC55/Include/wininet.h",
-		"/C/fw195/Gestool/prg/Albcli.prg",
-		"/C/fw195/Gestool/prg/Client.prg",
-		"/C/fw195/Gestool/prg/Producc.prg",
-		"/C/fw195/Gestool/prg/Tdbf.prg",
-		"/C/fw195/Gestool/prg/Albprov.prg",
-		"/C/fw195/Gestool/prg/Ritems.prg",
-		"/C/fw195/Gestool/prg/ritems",
-		"/C/fw195/Gestool/prg/Tcomercio.prg",
-		"/C/fw195/Gestool/prg/Familia.prg",
+		"/C/Python33/mysite/contactos/models.py",
+		"/C/erpnext/website/templates/pages/attributions.html",
+		"/C/erpnext/website/templates/pages/index.html",
+		"/C/erpnext/website/templates/html/web_page.html",
+		"/C/erpnext/website/templates/html/slideshow.html",
+		"/C/erpnext/website/templates/html/product_search_box.html",
+		"/C/erpnext/website/templates/html/navbar.html",
+		"/C/erpnext/website/templates/html/outer.html",
+		"/C/erpnext/home/page/desktop/desktop.html",
+		"/C/Python33/mysite/contactos/urls.py",
+		"/C/Python33/mysite/templates/barranavegacion.html",
+		"/C/erpnext/controllers/buying_controller.py",
+		"/C/erpnext/manufacturing/doctype/bom_item/locale/es-doc.json",
+		"/C/erpnext/manufacturing/doctype/bom_explosion_item/locale/es-doc.json",
+		"/C/erpnext/manufacturing/doctype/bom_explosion_item/bom_explosion_item.py",
+		"/C/fw195/Gestool/bin/script/000.prg",
+		"/C/fw195/Gestool/bin/script/123.prg",
+		"/C/fw195/Gestool/prg/Turno.prg",
+		"/C/fw195/Gestool/bin/Trace.Log",
 		"/C/fwh1204/source/classes/tftp.prg",
-		"/C/fwh1204/source/classes/tftpsess.prg",
-		"/C/fwh1204/source/classes/tftpcli.prg",
-		"/C/fwh1204/source/classes/tftpfile.prg",
-		"/C/fw195/Gestool/prg/Tpv.prg",
-		"/C/fw195/Gestool/prg/Tgrpfam.prg",
+		"/C/fw195/Gestool/prg/Categoria.prg",
+		"/C/fw195/Gestool/prg/Fabricantes.prg",
+		"/C/fw195/gestool/C/Wininet.c",
+		"/C/fw195/Gestool/prg/Xbrowse.prg",
+		"/C/Articulo.prg",
+		"/C/fw195/gestool/prg/Autoseek.prg",
+		"/C/Python33/mysite/mysite/urls.py",
+		"/C/Python33/mysite/ingredientes/admin.py",
+		"/C/Python33/mysite/contactos/admin.py",
+		"/C/Python33/mysite/tipificaciones/models.py",
+		"/C/Python33/mysite/polls/views.py",
+		"/C/Python33/mysite/polls/urls.py",
+		"/C/Python33/mysite/ingredientes/models.py",
+		"/C/Python33/mysite/polls/models.py",
+		"/C/Python33/mysite/polls/admin.py",
+		"/C/Python33/mysite/tipificaciones/admin.py",
+		"/C/Python33/mysite/ingredientes/views.py",
 		"/C/fw195/Gestool/prg/Tpvtactil.prg",
-		"/C/fw195/Gestool/prg/Pro.prg",
-		"/C/fw195/Gestool/prg/Impestudioes.prg",
-		"/C/Users/Villa/Desktop/prg/Factcli.prg",
-		"/C/fw195/Gestool/prg/Pacudiamaquinaria.prg",
-		"/C/fw195/Gestool/include/Factu.ch",
-		"/C/fw195/Gestool/prg/Factu.prg",
-		"/C/fw195/Gestool/resource/Gstimage12.rc",
-		"/C/fw195/Gestool/resource/Gstdialog.rc",
-		"/C/Users/Villa/Desktop/resource/Gstdialog.rc",
-		"/C/fw195/Gestool/prg/Tmant.prg",
-		"/C/fw195/Gestool/include/Empresa.ch",
-		"/C/fw195/Gestool/prg/Avifile.prg",
-		"/C/fw195/Gestool/prg/Bitmap.prg",
-		"/C/fw195/Gestool/prg/Precli.prg",
-		"/C/fw195/Gestool/prg/Tgrufam.prg",
-		"/C/fw195/Gestool/prg/Internet.prg",
-		"/C/fw195/Gestool/prg/Stock.prg",
-		"/C/fw195/Gestool/Hx.mak",
-		"/C/AppServ/www/prestashop/classes/Product.php",
-		"/C/fw195/Gestool/prg/Usuario.prg",
-		"/C/fw195/Gestool/prg/Empcnf.prg",
-		"/C/fw195/Gestool/prg/Remmov.prg",
-		"/C/AppServ/www/prestashop/themes/default/product.tpl",
-		"/C/Users/Villa/Desktop/Tcomercio.prg",
-		"/C/fw195/Gestool/prg/Depage.prg",
-		"/C/fw195/Gestool/prg/tpv",
-		"/C/fw195/Gestool/prg/articulo",
-		"/C/fw195/Gestool/prg/Tgenmail.prg",
 		"/C/fw195/Gestool/prg/Factcli.prg",
-		"/C/fw195/Gestool/prg/Utildbf.prg",
-		"/C/fw195/Gestool/Hs.bat",
-		"//SERVER/Programacion/fw195/camero/HX2007.bat",
-		"//SERVER/Programacion/fw195/camero/HX803.bat",
-		"/C/fw195/camero/HA.Bat",
-		"/C/fw195/camero/H908.Bat",
-		"/C/fw195/camero/H9.Bat",
-		"/C/fw195/camero/H8.bat",
-		"/C/fw195/camero/HX2007.bat",
-		"/C/fw195/camero/HV.Bat",
-		"/C/fw195/camero/HT.Bat",
-		"/C/fw195/camero/HP.Bat",
-		"/C/fw195/camero/HQ.bat",
-		"/C/fw195/camero/HK.Bat",
-		"/C/fw195/camero/HB.Bat",
-		"/C/fw195/Gestool/prg/Msstatement.prg",
-		"/C/fw195/Gestool/prg/Mscommand.prg",
-		"/C/fw195/Gestool/prg/Eagle1.prg",
-		"/C/fw195/Gestool/prg/Pedcli.prg",
-		"/C/fw195/Gestool/prg/Tinfrped.prg",
-		"/C/fw195/Gestool/prg/Tinfcped.prg",
-		"/C/fw195/Gestool/prg/Impfactu.prg",
-		"/C/fw195/Gestool/prg/Faccliant.prg",
-		"/C/fw195/Gestool/prg/precli",
+		"/C/fw195/Gestool/prg/Tdatacenter.prg",
+		"/C/fw195/Gestool/ppo/Articulo.ppo",
+		"/C/fw195/gestool/prg/Pedprov.prg",
+		"/C/fw195/Gestool/prg/Albprov.prg",
+		"/C/fw195/gestool/prg/Ordcar.prg",
+		"/C/fw195/Gestool/prg/Albcli.prg",
+		"/C/fw195/Gestool/prg/Satcli.prg",
+		"/C/fw195/Gestool/prg/Reindexa.prg",
+		"/C/fw195/Gestool/bin/gstapolo.ini",
 		"/C/fw195/Gestool/prg/Factprv.prg",
-<<<<<<< HEAD
-		"/C/fw195/Gestool/prg/Tpvcobros.prg",
-		"/C/fw195/Gestool/prg/Dotnetgr.prg",
-		"/C/fw195/Gestool/prg/Tpvlistaticket.prg",
-		"/C/fw195/Gestool/prg/Tpvmesa.prg",
-		"/C/fw195/Gestool/prg/Tpvpunto.prg",
-		"/C/fw195/Gestool/prg/Tpvsalon.prg",
-		"/C/fw195/Gestool/prg/Tinftrazarlote.prg",
-		"/C/fw195/Gestool/prg/Trazalote.prg",
-		"/C/fw195/Gestool/prg/Tpvrestaurante.prg",
-		"/C/fw195/Gestool/prg/Font.prg",
-		"/C/fw195/Gestool/prg/Folder.prg",
-		"/C/fwh1204/source/classes/tfoldex.prg",
-		"/C/AppServ/www/prestademo/index.php",
-		"/C/AppServ/www/prestademo/.htaccess",
-		"/C/AppServ/www/oscommerce/includes/configure.php",
-		"/C/AppServ/www/oscommerce/index.php",
-		"/C/fw195/Gestool/prg/empresa",
-		"/C/fw195/Gestool/prg/Tdiacfac.prg",
-		"/C/fw195/Gestool/prg/Reccli.prg",
-		"/C/fw195/Gestool/prg/Tinflot.prg",
-		"/C/fw195/Gestool/prg/Count.prg",
-		"/C/fw195/Gestool/prg/ncount.prg",
-		"/C/fw195/Gestool/prg/ncount",
-		"/C/fw195/Gestool/prg/Tdiacvta.prg",
-		"/C/fw195/Gestool/prg/Tivavta.prg",
-		"/C/fw195/Gestool/prg/rptgal",
-		"/C/fw195/Gestool/prg/tinfgen",
-		"/C/fw195/Gestool/prg/openfiles",
-		"/C/Users/Villa/Desktop/XLM/XLM.prg",
-		"/C/fw195/Gestool/prg/Brwcli.prg",
-		"/C/fw195/Gestool/resource/Gstimage8.rc",
-		"/C/fw195/Gestool/resource/GstImage8.RES"
-=======
 		"/C/Calero/gestool/prg/Factcli.prg",
 		"/C/Calero/gestool/prg/Satcli.prg",
 		"/C/Calero/gestool/prg/Albcli.prg",
@@ -838,35 +883,65 @@
 		"/C/Python33/twython-master/core_examples/current_trends.py",
 		"/C/fw195/gestool/prg/Divisas.prg",
 		"/C/fw195/gestool/prg/Factcli.prg",
-		"/C/fw195/gestool/prg/Tpvtactil.prg",
-		"/C/fw195/gestool/prg/Syncdb.prg",
-		"/C/fw195/gestool/prg/Albcli.prg",
-		"/C/twython-2.5.5/setup.py",
-		"/C/django/INSTALL",
-		"/C/twython-master/README.rst",
-		"/C/twython-2.5.5/README.rst",
-		"/C/fw195/gestool/bin/script/000.prg"
->>>>>>> 1c7fe091ec6ac1b2a8f8a209197e8a1f56b3fae4
+		"/C/fw195/gestool/prg/Tpvtactil.prg"
 	],
 	"find":
 	{
-		"height": 34.0
+		"height": 36.0
 	},
 	"find_in_files":
 	{
-		"height": 90.0,
+		"height": 0.0,
 		"where_history":
 		[
+			"C:\\fw195\\Gestool\\c",
 			"C:\\fw195\\Gestool\\prg",
+			"C:\\Mejorando.la",
+			"C:\\mejorlando.la",
+			"C:\\fw195\\gestool\\prg",
+			"C:\\fw195\\gestool\\C",
+			"C:\\fw195\\gestool\\prg",
+			"C:\\xharbour",
+			"C:\\fw195\\gestool\\prg",
+			"C:\\prestashop",
+			"C:\\fw195\\gestool\\prg\\",
+			"C:\\fw195\\gestool\\resource\\",
+			"C:\\fw195\\gestool\\resource\\*.rc",
+			"C:\\fw195\\gestool\\resource\\*.RC",
+			"C:\\fw195\\gestool\\resource",
+			"c:\\fw195\\gestool\\prg",
+			"c:\\Program Files (x86)\\Apache Software Foundation\\Apache2.2\\htdocs\\prestashop\\",
+			"c:\\Program Files (x86)\\Apache Software Foundation\\Apache2.2\\htdocs\\prestashop\\classes\\",
+			"c:\\Program Files (x86)\\Apache Software Foundation\\Apache2.2\\htdocs\\prestashop\\classes\\db\\",
+			"C:\\fw195\\gestool\\prg",
+			"C:\\xharbour",
+			"c:\\fw195\\gestool\\prg",
+			"C:\\Program Files (x86)\\Apache Software Foundation\\Apache2.2\\htdocs\\indogosa\\",
+			"c:\\fw195\\gestool\\prg",
+			"c:\\fw195\\gestool",
+			"c:\\prestashop",
+			"c:\\fw195\\gestool\\prg",
+			"c:\\fw195\\gestool",
+			"c:\\fw195\\gestool\\prg",
+			"C:\\Program Files (x86)\\Apache Software Foundation\\Apache2.2\\htdocs\\indogosa\\Utilidades",
+			"C:\\fw195\\gestool\\prg\\",
+			"C:\\fw195\\gestool\\prg\\*.prg",
+			"C:\\fw195\\source\\*.prg",
+			"C:\\fw195\\gestool\\prg",
+			"C:\\Users\\Calero\\Desktop\\Pricat",
+			"C:\\fw195\\gestool\\prg",
+			"C:\\xharbour",
+			"C:\\fw195\\gestool\\prg",
+			"C:\\fw195\\camero\\prg",
 			"",
-			"C:\\",
-			"C:\\FWH102\\samples",
+			"t",
 			"",
-			"<open files>",
-			"<open files>,C:\\fw195\\Gestool",
-			"",
-			"C:\\fw195\\Gestool\\resource",
-			""
+			"C:\\FWH1012\\include",
+			"c:\\fw195\\camero\\include",
+			"c:\\",
+			"c:\\*.ch",
+			"c:\\fw195\\camero\\include",
+			"C:\\gestool"
 		]
 	},
 	"find_state":
@@ -874,136 +949,26 @@
 		"case_sensitive": false,
 		"find_history":
 		[
-<<<<<<< HEAD
-			"removedirectory",
-			"insertgrupoca",
-			"AppendImagesPrestashop",
-			"updateproduct",
-			"deleteimagesp",
-			"insertcategoriesP",
-			"cTextoWait",
-			"ctextowait",
-			"ltextowait",
-			"deleteimagesP",
-			"delete",
-			"deleteimages",
-			"delete",
-			")\n",
-			"say",
-			"redefine say",
-			"odcreate",
-			"oFtp:SetCurrentDirectory( \"..\" )",
-			"SetCurrentDirectory",
-			"od deleteimagesp",
-			"msginfo",
-			"?",
-			"doFtp",
-			"doBackup",
-			"fwrite",
-			"ftp",
-			"SetCurrentDirectory",
-			"AppendImagesPrestashop",
-			"insertproducts",
-			"?",
-			":resource",
-			"lmultyexpresion",
-			"od new",
-			"lMultyExpresion",
-			"::oFilter:lMultyExpresion",
-			"CreateFilter",
-			"od resource",
-			"resource",
-			"Expresión",
-			"aExpMaker",
-			"ExpMaker",
-			"in",
-			"inv",
-			"in",
-			"expresión inválida",
-			"invalida",
-			"ofilter",
-			"#",
-			"aItmVentas()",
-			"lMultyExpresion",
-			"ofilter",
-			"DlgFilter",
-			"oFilter",
-			"f ",
-			"invalida",
-			"ss TRnkRVta",
-			"TRnkRVta",
-			"rankin",
-			"#",
-			"for each",
-			"SELECT * FROM",
-			"InsertImageProductsPrestashop",
-			"AddImages",
-			"od AddImages",
-			"AddImages",
-			"on aitm",
-			"Actualizaweb",
-			"lchangeimage",
-			"on edt",
-			"lChangeImage",
-			"EdtImg",
-			"dbfTmpImg",
-			"v",
-			"0",
-			"lineas",
-			"lastrec",
-			"eof",
-			"cImgArt",
-			"msgstop",
-			"on bre",
-			"msgstop",
-			"cImageOld",
-			"lChangeImage",
-			"//",
-			"lChangeImage",
-			"on rx",
-			"on aitm",
-			"web",
-			"deletepro",
-			"RemoveDirectory",
-			"DeleteMask",
-			"\"*.*\"",
-			"DeleteMask",
-			"DeleteImagesProducts",
-			"on aitm",
-			"lPrintLabels",
-			"lPrintreport",
-			"PrintReportProducc",
-			":SaveToBlob",
-			"\"al",
-			"al",
-			"oDbfTemporal",
-			"cAreaTemporalLabel",
-			"narea",
-			"initlabel",
-			"EdtDocs",
-			"SaveEdtDocs",
-			"VisualEdtDocs",
-			"class ",
-			"variablereport",
-			"datalabel",
-			"dbfdoc",
-			"select",
-			"datareport",
-			"InitLabel",
-			"dbpass",
-			"lcreatetemporal",
-			"TDlgFlt",
-			"SelectColumn",
-			"putlabel",
-			"label",
-			"nlabel",
-			"definet",
-			"temporal",
-			"oDbfTemporal",
-			"CreateTemporal",
-			"temporal",
-			"nGenParte"
-=======
+			"getlasterr",
+			"140",
+			"cFiltroCajero",
+			"setfilter",
+			"getlast",
+			"FtpRemoveDirectory",
+			" getlasterror",
+			"getlasterror",
+			"send_mail",
+			".save",
+			"ContactoFormModel",
+			".sa",
+			"cidedoc",
+			"cIdeDocumento",
+			"cidedocumento",
+			"cIdeDoc",
+			"cIdeDocument",
+			"cidedoc",
+			"cclsdo",
+			"cidedocumento",
 			"alert",
 			"sender",
 			"message",
@@ -1111,45 +1076,15 @@
 			"CreateTurno",
 			"openturno",
 			"zoom",
-			"od lclosecaja",
-			"fieldputb",
-			"od linv",
-			"nsta",
-			"lAnyCajaSelect",
-			"selca",
-			"selcajas",
-			"SelCajas",
-			"selall",
-			"selallca",
-			"gonext",
-			"getLastOpen",
-			"OpenTurno",
-			"createturno",
-			"cValidturno",
-			"CreateTurno",
-			"lCreateTurno",
-			"lopencaja(",
-			"lAllCloseTurno",
-			"od lopencaja",
-			"od lnow"
->>>>>>> 1c7fe091ec6ac1b2a8f8a209197e8a1f56b3fae4
+			"od lclosecaja"
 		],
 		"highlight": true,
 		"in_selection": false,
-		"preserve_case": false,
+		"preserve_case": true,
 		"regex": false,
 		"replace_history":
 		[
-<<<<<<< HEAD
-			"cTextoWait",
-			"ctextowait",
-			"TProduccionLabelGenerator",
-			"lCheckConsolidacion",
-			"InsertCategoriesPrestashop",
-			"InsertGrupoCategoriesPrestashop",
-			"cPreFixtable",
-			"cImp()"
-=======
+			"ContactoForm2",
 			"mail",
 			"texto",
 			"lCloseCajaSeleccionada",
@@ -1269,90 +1204,174 @@
 			"Ped",
 			"Pedidos",
 			"PedCli"
->>>>>>> 1c7fe091ec6ac1b2a8f8a209197e8a1f56b3fae4
 		],
 		"reverse": false,
 		"show_context": true,
-		"use_buffer2": true,
+		"use_buffer2": false,
 		"whole_word": false,
 		"wrap": true
 	},
 	"groups":
 	[
 		{
-			"selected": 1,
+			"selected": 0,
 			"sheets":
 			[
 				{
 					"buffer": 0,
-					"file": "prg/Tcomercio.prg",
+					"file": "/C/fw195/Gestool/prg/Articulo.prg",
 					"settings":
 					{
-						"buffer_size": 368712,
+						"buffer_size": 652995,
 						"regions":
 						{
 						},
 						"selection":
 						[
 							[
-								263826,
-								263826
+								114603,
+								114603
 							]
 						],
 						"settings":
 						{
-							"syntax": "Packages/harbour/harbour/Harbour.tmLanguage",
+							"encoding_helper_confidence": 0.5,
+							"encoding_helper_encoding": "ISO-8859-1",
+							"encoding_helper_encoding_sublime": "Western (Windows 1252)",
+							"syntax": "Packages/fivewin/Fivewin.tmlanguage",
 							"tab_size": 3,
 							"translate_tabs_to_spaces": true
 						},
 						"translation.x": 0.0,
-						"translation.y": 161676.0,
+						"translation.y": 53856.0,
 						"zoom_level": 1.0
 					},
 					"type": "text"
 				},
 				{
 					"buffer": 1,
-					"file": "prg/Tftpc3.prg",
+					"file": "/C/fw195/Gestool/prg/Turno.prg",
 					"settings":
 					{
-<<<<<<< HEAD
-						"buffer_size": 3310,
-=======
-						"buffer_size": 652817,
->>>>>>> 1c7fe091ec6ac1b2a8f8a209197e8a1f56b3fae4
+						"buffer_size": 354609,
 						"regions":
 						{
 						},
 						"selection":
 						[
 							[
-<<<<<<< HEAD
-								68,
-								79
-=======
-								36070,
-								36070
->>>>>>> 1c7fe091ec6ac1b2a8f8a209197e8a1f56b3fae4
+								79696,
+								79696
 							]
 						],
 						"settings":
 						{
-							"syntax": "Packages/harbour/harbour/Harbour.tmLanguage",
+							"encoding_helper_encoding_sublime": "Western (Windows 1252)",
+							"encoding_helper_loading": true,
+							"syntax": "Packages/fivewin/Fivewin.tmlanguage",
 							"tab_size": 3,
 							"translate_tabs_to_spaces": true
 						},
 						"translation.x": 0.0,
-<<<<<<< HEAD
-						"translation.y": 0.0,
-=======
-						"translation.y": 19173.0,
+						"translation.y": 45447.0,
 						"zoom_level": 1.0
 					},
 					"type": "text"
 				},
 				{
-					"buffer": 1,
+					"buffer": 2,
+					"file": "/C/fw195/Gestool/prg/Tpv.prg",
+					"settings":
+					{
+						"buffer_size": 752862,
+						"regions":
+						{
+						},
+						"selection":
+						[
+							[
+								11182,
+								11182
+							]
+						],
+						"settings":
+						{
+							"encoding_helper_confidence": 0.5,
+							"encoding_helper_encoding": "ISO-8859-1",
+							"encoding_helper_encoding_sublime": "Western (Windows 1252)",
+							"syntax": "Packages/fivewin/Fivewin.tmlanguage",
+							"tab_size": 3,
+							"translate_tabs_to_spaces": true
+						},
+						"translation.x": 0.0,
+						"translation.y": 6670.0,
+						"zoom_level": 1.0
+					},
+					"type": "text"
+				},
+				{
+					"buffer": 3,
+					"file": "/C/fw195/Gestool/prg/Tfastventasarticulos.prg",
+					"settings":
+					{
+						"buffer_size": 96469,
+						"regions":
+						{
+						},
+						"selection":
+						[
+							[
+								91182,
+								91182
+							]
+						],
+						"settings":
+						{
+							"encoding_helper_confidence": 0.5,
+							"encoding_helper_encoding": "ISO-8859-1",
+							"encoding_helper_encoding_sublime": "Western (Windows 1252)",
+							"syntax": "Packages/fivewin/Fivewin.tmlanguage",
+							"tab_size": 3,
+							"translate_tabs_to_spaces": true
+						},
+						"translation.x": 0.0,
+						"translation.y": 39813.0,
+						"zoom_level": 1.0
+					},
+					"type": "text"
+				},
+				{
+					"buffer": 4,
+					"file": "/C/fw195/Gestool/prg/Tfastventasclientes.prg",
+					"settings":
+					{
+						"buffer_size": 54238,
+						"regions":
+						{
+						},
+						"selection":
+						[
+							[
+								17960,
+								17960
+							]
+						],
+						"settings":
+						{
+							"encoding_helper_encoding_sublime": "Western (Windows 1252)",
+							"encoding_helper_loading": true,
+							"syntax": "Packages/fivewin/Fivewin.tmlanguage",
+							"tab_size": 3,
+							"translate_tabs_to_spaces": true
+						},
+						"translation.x": 0.0,
+						"translation.y": 8539.0,
+						"zoom_level": 1.0
+					},
+					"type": "text"
+				},
+				{
+					"buffer": 5,
 					"file": "/C/fw195/Gestool/bin/gstapolo.ini",
 					"settings":
 					{
@@ -1379,189 +1398,6 @@
 						"zoom_level": 1.0
 					},
 					"type": "text"
-				},
-				{
-					"buffer": 2,
-					"file": "/C/fw195/Gestool/prg/Turno.prg",
-					"settings":
-					{
-						"buffer_size": 354766,
-						"regions":
-						{
-						},
-						"selection":
-						[
-							[
-								77408,
-								77408
-							]
-						],
-						"settings":
-						{
-							"encoding_helper_encoding_sublime": "Western (Windows 1252)",
-							"encoding_helper_loading": true,
-							"syntax": "Packages/fivewin/Fivewin.tmlanguage",
-							"tab_size": 3,
-							"translate_tabs_to_spaces": true
-						},
-						"translation.x": 0.0,
-						"translation.y": 43714.0,
-						"zoom_level": 1.0
-					},
-					"type": "text"
-				},
-				{
-					"buffer": 3,
-					"file": "/C/Python33/mysite/contactos/forms.py",
-					"settings":
-					{
-						"buffer_size": 805,
-						"regions":
-						{
-						},
-						"selection":
-						[
-							[
-								805,
-								805
-							]
-						],
-						"settings":
-						{
-							"encoding_helper_confidence": 1.0,
-							"encoding_helper_encoding": "UTF-8",
-							"encoding_helper_encoding_sublime": "UTF-8",
-							"syntax": "Packages/Djaneiro/Syntaxes/Python Django.tmLanguage",
-							"translate_tabs_to_spaces": false
-						},
-						"translation.x": 0.0,
-						"translation.y": 0.0,
-						"zoom_level": 1.0
-					},
-					"type": "text"
-				},
-				{
-					"buffer": 4,
-					"file": "/C/Python33/mysite/contactos/views.py",
-					"settings":
-					{
-						"buffer_size": 971,
-						"regions":
-						{
-						},
-						"selection":
-						[
-							[
-								857,
-								857
-							]
-						],
-						"settings":
-						{
-							"encoding_helper_confidence": 1.0,
-							"encoding_helper_encoding": "UTF-8",
-							"encoding_helper_encoding_sublime": "UTF-8",
-							"syntax": "Packages/Djaneiro/Syntaxes/Python Django.tmLanguage",
-							"translate_tabs_to_spaces": false
-						},
-						"translation.x": 0.0,
-						"translation.y": 108.0,
-						"zoom_level": 1.0
-					},
-					"type": "text"
-				},
-				{
-					"buffer": 5,
-					"file": "/C/Python33/mysite/templates/base.html",
-					"settings":
-					{
-						"buffer_size": 1413,
-						"regions":
-						{
-						},
-						"selection":
-						[
-							[
-								409,
-								409
-							]
-						],
-						"settings":
-						{
-							"encoding_helper_confidence": 1.0,
-							"encoding_helper_encoding": "UTF-8",
-							"encoding_helper_encoding_sublime": "UTF-8",
-							"syntax": "Packages/Djaneiro/Syntaxes/HTML (Django).tmLanguage",
-							"tab_size": 2,
-							"translate_tabs_to_spaces": true
-						},
-						"translation.x": 0.0,
-						"translation.y": 0.0,
-						"zoom_level": 1.0
-					},
-					"type": "text"
-				},
-				{
-					"buffer": 6,
-					"file": "/C/Python33/mysite/static/css/bootstrap.css",
-					"settings":
-					{
-						"buffer_size": 127247,
-						"regions":
-						{
-						},
-						"selection":
-						[
-							[
-								4352,
-								4352
-							]
-						],
-						"settings":
-						{
-							"encoding_helper_confidence": 1.0,
-							"encoding_helper_encoding": "UTF-8",
-							"encoding_helper_encoding_sublime": "UTF-8",
-							"syntax": "Packages/CSS/CSS.tmLanguage",
-							"tab_size": 2,
-							"translate_tabs_to_spaces": true
-						},
-						"translation.x": 0.0,
-						"translation.y": 10348.0,
-						"zoom_level": 1.0
-					},
-					"type": "text"
-				},
-				{
-					"buffer": 7,
-					"file": "/C/Python33/mysite/templates/contactos/index.html",
-					"settings":
-					{
-						"buffer_size": 1075,
-						"regions":
-						{
-						},
-						"selection":
-						[
-							[
-								239,
-								239
-							]
-						],
-						"settings":
-						{
-							"encoding_helper_confidence": 1.0,
-							"encoding_helper_encoding": "UTF-8",
-							"encoding_helper_encoding_sublime": "UTF-8",
-							"syntax": "Packages/Djaneiro/Syntaxes/HTML (Django).tmLanguage",
-							"translate_tabs_to_spaces": false
-						},
-						"translation.x": 0.0,
-						"translation.y": 108.0,
->>>>>>> 1c7fe091ec6ac1b2a8f8a209197e8a1f56b3fae4
-						"zoom_level": 1.0
-					},
-					"type": "text"
 				}
 			]
 		}
@@ -1572,7 +1408,7 @@
 	},
 	"input":
 	{
-		"height": 0.0
+		"height": 31.0
 	},
 	"layout":
 	{
@@ -1597,13 +1433,21 @@
 		]
 	},
 	"menu_visible": true,
+	"output.aaa_package_dev":
+	{
+		"height": 53.0
+	},
 	"output.exec":
 	{
-		"height": 0.0
+		"height": 32.0
+	},
+	"output.find_results":
+	{
+		"height": 399.0
 	},
 	"replace":
 	{
-		"height": 62.0
+		"height": 70.0
 	},
 	"save_all_on_build": true,
 	"select_file":
@@ -1616,16 +1460,16 @@
 	},
 	"select_project":
 	{
-		"height": 0.0,
+		"height": 500.0,
 		"selected_items":
 		[
 		],
-		"width": 0.0
+		"width": 380.0
 	},
-	"show_minimap": false,
-	"show_open_files": false,
+	"show_minimap": true,
+	"show_open_files": true,
 	"show_tabs": true,
-	"side_bar_visible": false,
-	"side_bar_width": 150.0,
+	"side_bar_visible": true,
+	"side_bar_width": 188.0,
 	"status_bar_visible": true
 }
