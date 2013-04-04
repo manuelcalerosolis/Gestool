@@ -140,6 +140,8 @@ CLASS TpvListaTicket
 
    METHOD nEstadoTickets()
 
+   METHOD Imprimir( lPrevisualizar )
+
 END CLASS
 
 //--------------------------------------------------------------------------//
@@ -391,6 +393,10 @@ METHOD StartResource() CLASS TpvListaTicket
          ::oBtnAbiertos       := TDotNetButton():New( 60, oGrupo,    "Tickets_abiertos_32",     "Abiertos",           1, {|| ::OnClickAbiertos() }, , , .f., .f., .f. )
          ::oBtnTodos          := TDotNetButton():New( 60, oGrupo,    "Index_32",                "Todos",              2, {|| ::OnClickTodos() }, , , .f., .f., .f. )
          ::oBtnFiltro         := TDotNetButton():New( 60, oGrupo,    "Calendar_32",             "Filtrar",            3, {|| ::OnClickFiltro() }, , , .f., .f., .f. )
+
+      oGrupo                  := TDotNetGroup():New( oCarpeta, 126,  "Impresión", .f. )
+         oBoton               := TDotNetButton():New( 60, oGrupo,    "PREV1_32",                   "Previsualizar",      1, {|| ::Imprimir( .t. ) }, , , .f., .f., .f. )
+         oBoton               := TDotNetButton():New( 60, oGrupo,    "IMP32",                   "Imprimir",           2, {|| ::Imprimir( .f. ) }, , , .f., .f., .f. )
 
       oGrupo                  := TDotNetGroup():New( oCarpeta, 366,  "Seleción de tickets", .f. )
          ::oPrimeraLinea      := TDotNetButton():New( 60, oGrupo,    "navigate_top_32",         "Primera línea",      1, {|| ::LineaPrimera() } )
@@ -1245,5 +1251,19 @@ METHOD OnClickAceptarVales() CLASS TpvListaTicket
    ::End()
 
 Return ( Self )
+
+//-------------------------------------------------------------------------//
+
+METHOD Imprimir( lPrevisualizar )
+
+   DEFAULT lPrevisualizar  := .f.
+
+   if lPrevisualizar
+      ::oSender:PrevisualizaTicket()
+   else
+      ::oSender:ImprimeTicket()
+   end if
+
+Return ( self )   
 
 //-------------------------------------------------------------------------//

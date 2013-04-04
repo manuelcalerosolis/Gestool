@@ -5085,6 +5085,7 @@ Static Function QuiAlbCli()
    local nOrdDoc
    local cNumPed
    local cNumSat
+   local aNumPed
 
    if ( dbfAlbCliT )->lCloAlb .and. !oUser():lAdministrador()
       msgStop( "Solo pueden eliminar albarares cerrados los administradores." )
@@ -5093,6 +5094,7 @@ Static Function QuiAlbCli()
 
    CursorWait()
 
+   aNumPed        := {}
    cNumPed        := ( dbfAlbCliT )->cNumPed
    cNumSat        := ( dbfAlbCliT )->cNumSat
    nOrdLin        := ( dbfAlbCliL )->( OrdSetFocus( "nNumAlb" ) )
@@ -5127,10 +5129,16 @@ Static Function QuiAlbCli()
    */
 
    while ( dbfAlbCliL )->( dbSeek( ( dbfAlbCliT )->cSerAlb + Str( ( dbfAlbCliT )->nNumAlb ) + ( dbfAlbCliT  )->cSufAlb ) ) .and. !( dbfAlbCliL )->( eof() )
+      
+      if aScan( aNumPed, ( dbfAlbCliL )->cNumPed ) == 0
+         aAdd( aNumPed, ( dbfAlbCliL )->cNumPed )
+      end if      
+
       if dbLock( dbfAlbCliL )
          ( dbfAlbCliL )->( dbDelete() )
          ( dbfAlbCliL )->( dbUnLock() )
       end if
+
    end while
 
    /*
@@ -5178,21 +5186,9 @@ Static Function QuiAlbCli()
    Estado de los pedidos cuando es agrupando-----------------------------------
    */
 
-   if dbSeekInOrd( ( dbfAlbCliT )->cSerAlb + Str( ( dbfAlbCliT )->nNumAlb ) + ( dbfAlbCliT  )->cSufAlb, "cNumAlb", dbfPedCliT )
-
-      while ( dbfPedCliT )->cNumAlb == ( dbfAlbCliT )->cSerAlb + Str( ( dbfAlbCliT )->nNumAlb ) + ( dbfAlbCliT  )->cSufAlb .and. !( dbfPedCliT )->( Eof() )
-
-         if dbLock( dbfPedCliT )
-            ( dbfPedCliT )->cNumAlb    := ""
-            ( dbfPedCliT )->nEstado    := 1
-            ( dbfPedCliT )->( dbUnLock() )
-         end if
-
-         ( dbfPedCliT )->( dbSkip() )
-
-      end while
-
-   end if
+   for each cNumPed in aNumPed
+      oStock:SetEstadoPedCli( cNumPed )
+   next   
 
    /*
    Estado del Sat si tiramos de uno-----------------------------------------

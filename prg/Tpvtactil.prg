@@ -781,6 +781,22 @@ CLASS TpvTactil
 
    //-----------------------------------------------------------------------//
 
+   INLINE METHOD PrevisualizaTicket()
+
+      ::cFormato        := ::oFormatosImpresion:cFormatoTiket
+      ::cImpresora      := ::oFormatosImpresion:cPrinterTik
+      ::nDispositivo    := IS_SCREEN
+      ::nCopias         := 1
+      ::lComanda        := .f.
+
+      ::ImprimeDocumento()
+
+      RETURN ( Self )
+
+   ENDMETHOD
+
+   //-----------------------------------------------------------------------//
+
    INLINE METHOD ImprimeEntrega()
 
       ::cFormato        := ::oFormatosImpresion:cFormatoEntrega
@@ -4879,6 +4895,8 @@ METHOD OnClickDescuento() CLASS TpvTactil
 
    end if
 
+   ::TotalTemporal()   
+
    if !Empty( ::oBrwLineas )
       ::oBrwLineas:Refresh()
    end if
@@ -7041,6 +7059,7 @@ METHOD BuildReport() CLASS TpvTactil
       do case
          case ::nDispositivo == IS_SCREEN
 
+            ::oFastReport:SetModal( .t. )
             ::oFastReport:ShowPreparedReport()
 
          case ::nDispositivo == IS_PRINTER

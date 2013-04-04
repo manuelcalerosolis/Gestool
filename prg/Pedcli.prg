@@ -6103,6 +6103,7 @@ STATIC FUNCTION ChgSta( oBrw )
    local nRecAlb
    local cNumPed
    local lQuit
+   local nOrdAnt
 
    if ApoloMsgNoYes( "Al cambiar el estado perderá la referencia a cualquier documento que esté asociado.", "¿Desea cambiarlo?" )
 
@@ -6112,7 +6113,7 @@ STATIC FUNCTION ChgSta( oBrw )
 
          lQuit                         := .f.
 
-         cNumPed                       := ( dbfPedCliT )->cSerPed + Str( ( dbfPedCliT )->nNumPed ) + ( dbfPedCliT  )->cSufPed
+         cNumPed                       := ( dbfPedCliT )->cSerPed + Str( ( dbfPedCliT )->nNumPed ) + ( dbfPedCliT )->cSufPed
 
          /*
          Cambiamos el estado---------------------------------------------------
@@ -6138,22 +6139,18 @@ STATIC FUNCTION ChgSta( oBrw )
             */
 
             nRecAlb  := ( dbfAlbCliT )->( RecNo() )
+            nOrdAnt  := ( dbfAlbCliT )->( OrdSetFocus( "cNumPed" ) )
+          
+            while ( dbfAlbCliT )->( dbSeek( cNumPed ) )  .and. !( dbfAlbCliT )->( Eof() )
 
-            if dbSeekInOrd( cNumPed, "cNumPed", dbfAlbCliT )
+               	if dbLock( dbfAlbCliT )
+                  	( dbfAlbCliT )->cNumPed    := ""
+                  	( dbfAlbCliT )->( dbUnLock() )
+               	end if
 
-               while ( dbfAlbCliT )->cNumPed == cNumPed  .and. !( dbfAlbCliT )->( Eof() )
+            end while
 
-                  if dbLock( dbfAlbCliT )
-                     ( dbfAlbCliT )->cNumPed    := ""
-                     ( dbfAlbCliT )->( dbUnLock() )
-                  end if
-
-                  ( dbfAlbCliT )->( dbSkip() )
-
-               end if
-
-            end if
-
+            ( dbfAlbCliT )->( OrdSetFocus( nOrdAnt ) )
             ( dbfAlbCliT )->( dbGoTo( nRecAlb ) )
 
             /*
@@ -6161,22 +6158,18 @@ STATIC FUNCTION ChgSta( oBrw )
             */
 
             nRecAlb  := ( dbfAlbCliL )->( RecNo() )
+            nOrdAnt  := ( dbfAlbCliL )->( OrdSetFocus( "cNumPed" ) )
 
-            if dbSeekInOrd( cNumPed, "cNumPed", dbfAlbCliL )
+            while ( dbfAlbCliL )->( dbSeek( cNumPed ) ) .and. !( dbfAlbCliL )->( Eof() )
 
-               while ( dbfAlbCliL )->cNumPed == cNumPed  .and. !( dbfAlbCliL )->( Eof() )
-
-                  if dbLock( dbfAlbCliL )
-                     ( dbfAlbCliL )->cNumPed    := ""
-                     ( dbfAlbCliL )->( dbUnLock() )
-                  end if
-
-                  ( dbfAlbCliL )->( dbSkip() )
-
+               if dbLock( dbfAlbCliL )
+                  ( dbfAlbCliL )->cNumPed    := ""
+                  ( dbfAlbCliL )->( dbUnLock() )
                end if
 
-            end if
-
+            end while
+            
+            ( dbfAlbCliL )->( OrdSetFocus( nOrdAnt ) )
             ( dbfAlbCliL )->( dbGoTo( nRecAlb ) )
 
             /*
@@ -6184,22 +6177,18 @@ STATIC FUNCTION ChgSta( oBrw )
             */
 
             nRecAlb  := ( dbfFacCliT )->( RecNo() )
+            nOrdAnt  := ( dbfFacCliT )->( OrdSetFocus( "cNumPed" ) )
 
-            if dbSeekInOrd( cNumPed, "cNumPed", dbfFacCliT )
+            while ( dbfFacCliT )->( dbSeek( cNumPed ) )  .and. !( dbfFacCliT )->( Eof() )
 
-               while ( dbfFacCliT )->cNumPed == cNumPed  .and. !( dbfFacCliT )->( Eof() )
+                if dbLock( dbfFacCliT )
+                    ( dbfFacCliT )->cNumPed    := ""
+                    ( dbfFacCliT )->( dbUnLock() )
+                end if
 
-                  if dbLock( dbfFacCliT )
-                     ( dbfFacCliT )->cNumPed    := ""
-                     ( dbfFacCliT )->( dbUnLock() )
-                  end if
+            end while
 
-                  ( dbfFacCliT )->( dbSkip() )
-
-               end if
-
-            end if
-
+            ( dbfFacCliT )->( OrdSetFocus( nOrdAnt ) )
             ( dbfFacCliT )->( dbGoTo( nRecAlb ) )
 
             /*
@@ -6207,22 +6196,18 @@ STATIC FUNCTION ChgSta( oBrw )
             */
 
             nRecAlb  := ( dbfFacCliL )->( RecNo() )
+            nOrdAnt  := ( dbfFacCliL )->( OrdSetFocus( "cNumPed" ) )
 
-            if dbSeekInOrd( cNumPed, "cNumPed", dbfFacCliL )
+            while ( dbfFacCliL )->( dbSeek( cNumPed ) )  .and. !( dbfFacCliL )->( Eof() )
 
-               while ( dbfFacCliL )->cNumPed == cNumPed  .and. !( dbfFacCliL )->( Eof() )
+                if dbLock( dbfFacCliL )
+                    ( dbfFacCliL )->cNumPed    := ""
+                    ( dbfFacCliL )->( dbUnLock() )
+                end if
 
-                  if dbLock( dbfFacCliL )
-                     ( dbfFacCliL )->cNumPed    := ""
-                     ( dbfFacCliL )->( dbUnLock() )
-                  end if
+            end while
 
-                  ( dbfFacCliL )->( dbSkip() )
-
-               end if
-
-            end if
-
+            ( dbfFacCliL )->( OrdSetFocus( nOrdAnt ) )
             ( dbfFacCliL )->( dbGoTo( nRecAlb ) )
 
          end if

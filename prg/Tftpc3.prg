@@ -39,7 +39,7 @@ CLASS TFTP
 
    Method CreateDirectory( cDirectory )      INLINE ( FtpCreateDirectory( ::hFTP, cDirectory ) )
 
-   Method RemoveDirectory( cDirectory )      INLINE ( if( !FtpRemoveDirectory( ::hFTP, cDirectory ), msgStop( GetLastError() ), .t. ) )
+   Method RemoveDirectory( cDirectory )      INLINE ( if( !FtpRemoveDirectory( ::hFTP, cDirectory ), msgStop( GetErrMsg() ), .t. ) )
 
 ENDCLASS
 
