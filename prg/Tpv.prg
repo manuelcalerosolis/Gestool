@@ -523,6 +523,7 @@ STATIC FUNCTION OpenFiles( cPatEmp, lExt, lTactil )
    local oBlock
    local cVisor
    local cCajon
+   local cFiltro
    local cBalanza
    local cImpresora
 
@@ -924,8 +925,17 @@ STATIC FUNCTION OpenFiles( cPatEmp, lExt, lTactil )
       Limitaciones de cajero y cajas--------------------------------------------------------
       */
 
-      if oUser():lFiltroVentas()
-         cFiltroCajero     := "Field->cCcjTik == '" + oUser():cCodigo() + "' .and. Field->cNcjTik == '" + oUser():cCaja() + "'"
+      msgAlert( ( dbfTikT )->( OrdKeyCount() ) )
+
+      if lAIS() .and. !oUser():lAdministrador()
+         cFiltro           := "Field->cSufTik == '" + oUser():cDelegacion() + "' .and. Field->cNcjTik == '" + oUser():cCaja() + "'"
+         if oUser():lFiltroVentas()         
+            cFiltro        += " .and. Field->cCcjTik == '" + oUser():cCodigo() + "'"
+         end if 
+
+msgAlert( cFiltro )
+
+         ( dbfTikT )->( AdsSetAOF( cFiltro ) )
       end if
 
       EnableAcceso()
@@ -1281,11 +1291,13 @@ else
 
 end if
 
-     oWndBrw:lAutoSeek     := .f.
+      oWndBrw:lAutoSeek     := .f.
 
-     oWndBrw:lFechado      := .t.
+      oWndBrw:lFechado      := .t.
 
-     oWndBrw:bChgIndex     := {|| if( oUser():lFiltroVentas(), CreateFastFilter( cFiltroCajero, dbfTikT, .f., , cFiltroCajero ), CreateFastFilter( "", dbfTikT, .f. ) ) }
+      /*
+      oWndBrw:bChgIndex     := {|| if( oUser():lFiltroVentas(), CreateFastFilter( cFiltroCajero, dbfTikT, .f., , cFiltroCajero ), CreateFastFilter( "", dbfTikT, .f. ) ) }
+      */
 
 	  oWndBrw:SetYearComboBoxChange( {|| YearComboBoxChange() } )
 
@@ -1340,16 +1352,15 @@ end if
       with object ( oWndBrw:AddXCol() )
          :cHeader          := "Número"
          :cSortOrder       := "cNumTik"
-         :bEditValue       := {|| ( dbfTikT )->cSerTik + "/" + lTrim( ( dbfTikT )->cNumTik ) + "/" + ( dbfTikT )->cSufTik }
+         :bEditValue       := {|| ( dbfTikT )->cSerTik + "/" + lTrim( ( dbfTikT )->cNumTik ) }
          :nWidth           := 80
          :bLClickHeader    := {| nMRow, nMCol, nFlags, oCol | oWndBrw:ClickOnHeader( oCol ) }
       end with
 
       with object ( oWndBrw:AddXCol() )
          :cHeader          := "Delegación"
-         :bEditValue       := {|| ( dbfTikT )->cCodDlg }
+         :bEditValue       := {|| ( dbfTikT )->cSufTik } // ( dbfTikT )->cCodDlg }
          :nWidth           := 40
-         :lHide            := .t.
       end with
 
       with object ( oWndBrw:AddXCol() )
@@ -16636,7 +16647,6 @@ Static Function DataReport( oFr, lComanda, lAnulacion )
    oFr:SetMasterDetail( "Tickets", "Almacen",            {|| ( dbfTikT )->cAlmTik } )
    oFr:SetMasterDetail( "Tickets", "Rutas",              {|| ( dbfTikT )->cCodRut } )
    oFr:SetMasterDetail( "Tickets", "Agentes",            {|| ( dbfTikT )->cCodAge } )
-   oFr:SetMasterDetail( "Tickets", "Formas de pago",     {|| ( dbfTikT )->cFpgTik } )
    oFr:SetMasterDetail( "Tickets", "Usuarios",           {|| ( dbfTikT )->cCcjTik } )
    oFr:SetMasterDetail( "Tickets", "SalaVenta",          {|| ( dbfTikT )->cCodSala } )
 
@@ -16649,12 +16659,13 @@ Static Function DataReport( oFr, lComanda, lAnulacion )
    oFr:SetMasterDetail( "Lineas de tickets", "Fabricantes",          {|| RetFld( ( dbfTikL )->cCbaTil, dbfArticulo, "cCodFab" ) } )
    oFr:SetMasterDetail( "Lineas de tickets", "Temporadas",           {|| RetFld( ( dbfTikL )->cCbaTil, dbfArticulo, "cCodTemp" ) } )
 
+   oFr:SetMasterDetail( "Pagos de tickets",  "Formas de pago",       {|| ( dbfTikP )->cFpgPgo } )
+
    //------------------------------------------------------------------------//
 
    oFr:SetResyncPair(   "Tickets", "Lineas de tickets" )
    oFr:SetResyncPair(   "Tickets", "Lineas de albaranes" )
    oFr:SetResyncPair(   "Tickets", "Lineas de facturas" )
-   oFr:SetResyncPair(   "Tickets", "Pagos de tickets" )
    oFr:SetResyncPair(   "Tickets", "Empresa" )
    oFr:SetResyncPair(   "Tickets", "Clientes" )
    oFr:SetResyncPair(   "Tickets", "Obras" )
@@ -16674,6 +16685,7 @@ Static Function DataReport( oFr, lComanda, lAnulacion )
    oFr:SetResyncPair(   "Lineas de tickets", "Fabricantes" )
    oFr:SetResyncPair(   "Lineas de tickets", "Temporadas" )
 
+   oFr:SetResyncPair(   "Pagos de tickets", "Formas de pago" )
 
 Return nil
 
@@ -23393,7 +23405,6 @@ Static Function BrwTikCli( oGet )
    */
 
    ( dbfTikT )->( dbSetFilter( {|| Field->cTipTik == "1" }, "Field->cTipTik == '1'" ) )
-
    ( dbfTikT )->( dbGoTop() )
 
    DEFINE DIALOG oDlg RESOURCE "HelpEntry" TITLE 'Seleccionar tickets'

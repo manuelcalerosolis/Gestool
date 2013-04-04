@@ -580,7 +580,7 @@ DEFINE BRUSH oBrush STYLE "NULL"
      oBar:nOption := 1
 
   oBar:bKeyDown      := {|nKey| if( nKey == VK_ESCAPE, (othis:oParent:oWndPopup:bValid := {||.t.},othis:oParent:oWPEnd()),.f.)}
-  oWndPopup:bLostFocus := {|| msgAlert( "endpopup" ) , oWndPopup:End() }
+  oWndPopup:bLostFocus := {|| oWndPopup:End() }
 
   oWndPopup:Show()
 

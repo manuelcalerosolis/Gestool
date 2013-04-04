@@ -1121,7 +1121,7 @@ Function Articulo( oMenuItem, oWnd, bOnInit )
 
       DEFINE BTNSHELL RESOURCE "BUS" OF oWndBrw ;
 			NOBORDER ;
-         ACTION   ( SearchProveedor( oWndBrw ) ) ;
+         ACTION   ( SearchProveedor() ) ;
          TOOLTIP  "Buscar e(x)tendido" ;
          HOTKEY   "X"
 
@@ -1715,45 +1715,6 @@ STATIC FUNCTION EdtRec( aTmp, aGet, dbfArticulo, oBrw, bWhen, bValid, nMode )
 			WHEN 		( nMode != ZOOM_MODE ) ;
          ACTION   ( WinDelRec( oBrwCodebar, dbfTmpCodebar ) )
 
-   REDEFINE CHECKBOX aTmp[ ( dbfArticulo )->( fieldpos( "LIVAINC" ) ) ] ;
-			ID 		150 ;
-			WHEN 		( nMode != ZOOM_MODE ) ;
-         OF       fldGeneral
-
-   REDEFINE GET aGet[( dbfArticulo )->( fieldpos( "TIPOIVA" ) ) ] VAR aTmp[ ( dbfArticulo )->( fieldpos( "TIPOIVA" ) ) ] ;
-			ID 		140;
-         PICTURE  "@!" ;
-			WHEN 		( nMode != ZOOM_MODE ) ;
-         VALID    (  cTiva(   aGet[ ( dbfArticulo )->( fieldpos( "TIPOIVA" ) ) ], dbfIva, oSay[2] ),;
-                              aGet[ ( dbfArticulo )->( fieldpos( "PVENTA1" ) ) ]:lValid(),;
-                              aGet[ ( dbfArticulo )->( fieldpos( "PVENTA2" ) ) ]:lValid(),;
-                              aGet[ ( dbfArticulo )->( fieldpos( "PVENTA3" ) ) ]:lValid(),;
-                              aGet[ ( dbfArticulo )->( fieldpos( "PVENTA4" ) ) ]:lValid(),;
-                              aGet[ ( dbfArticulo )->( fieldpos( "PVENTA5" ) ) ]:lValid(),;
-                              aGet[ ( dbfArticulo )->( fieldpos( "PVENTA6" ) ) ]:lValid(), .t. ) ;
-         BITMAP   "LUPA" ;
-         ON HELP  ( BrwIva( aGet[( dbfArticulo )->( fieldpos( "TIPOIVA" ) ) ], nil , oSay[2] ) ) ;
-         OF       fldGeneral
-
-   REDEFINE GET oSay[2] VAR cSay[2] ;
-			WHEN 		( .F. );
-			ID 		141 ;
-         OF       fldGeneral
-
-   REDEFINE GET aGet[ ( dbfArticulo )->( fieldpos( "CCODIMP" ) ) ] VAR aTmp[ ( dbfArticulo )->( fieldpos( "CCODIMP" ) ) ] ;
-         ID       272;
-         PICTURE  "@!" ;
-			WHEN 		( nMode != ZOOM_MODE ) ;
-         VALID    ( oNewImp:Existe( aGet[ ( dbfArticulo )->( fieldpos( "CCODIMP" ) ) ], oSay[ 10 ], "cNomImp", .t., .t., "0" ) );
-         ON HELP  ( oNewImp:Buscar( aGet[ ( dbfArticulo )->( fieldpos( "CCODIMP" ) ) ], "cCodImp" ) ) ;
-         BITMAP   "LUPA" ;
-         OF       fldGeneral
-
-   REDEFINE GET oSay[10] VAR cSay[10] ;
-			WHEN 		( .F. );
-         ID       273 ;
-         OF       fldGeneral
-
    REDEFINE GET   aGet[ ( dbfArticulo )->( fieldpos( "FAMILIA" ) ) ] ;
          VAR      aTmp[ ( dbfArticulo )->( fieldpos( "FAMILIA" ) ) ] ;
 			ID 		160 ;
@@ -1768,38 +1729,6 @@ STATIC FUNCTION EdtRec( aTmp, aGet, dbfArticulo, oBrw, bWhen, bValid, nMode )
 			WHEN 		( .F. );
 			ID 		161 ;
          OF       fldGeneral
-
-   /*
-   Propiedades del articulo----------------------------------------------------
-   */
-
-   REDEFINE GET   aGet[ ( dbfArticulo )->( fieldpos( "cCodPrp1" ) ) ] ;
-         VAR      aTmp[ ( dbfArticulo )->( fieldpos( "cCodPrp1" ) ) ] ;
-         ID       360 ;
-         IDTEXT   361 ;
-         PICTURE  "@!" ;
-         WHEN     ( nMode != ZOOM_MODE ) ;
-         BITMAP   "Lupa" ;
-         OF       fldGeneral
-
-   aGet[ ( dbfArticulo )->( fieldpos( "cCodPrp1" ) ) ]:bValid  := {|| cProp( aGet[ ( dbfArticulo )->( fieldpos( "cCodPrp1" ) ) ], aGet[ ( dbfArticulo )->( fieldpos( "cCodPrp1" ) ) ]:oHelpText ) }
-   aGet[ ( dbfArticulo )->( fieldpos( "cCodPrp1" ) ) ]:bHelp   := {|| brwProp( aGet[ ( dbfArticulo )->( fieldpos( "cCodPrp1" ) ) ], aGet[ ( dbfArticulo )->( fieldpos( "cCodPrp1" ) ) ]:oHelpText ) }
-
-   TBtnBmp():ReDefine( 362, "Printer_pencil_16",,,,,{|| brwSelectPropiedad( aTmp[ ( dbfArticulo )->( fieldpos( "cCodPrp1" ) ) ], @aTmp[ ( dbfArticulo )->( fieldpos( "mValPrp1" ) ) ] ) }, fldGeneral, .f., , .f., "Seleccionar propiedades" )
-
-   REDEFINE GET   aGet[ ( dbfArticulo )->( fieldpos( "cCodPrp2" ) ) ] ;
-         VAR      aTmp[ ( dbfArticulo )->( fieldpos( "cCodPrp2" ) ) ] ;
-         ID       370 ;
-         IDTEXT   371 ;
-         PICTURE  "@!" ;
-         WHEN     ( nMode != ZOOM_MODE ) ;
-         BITMAP   "Lupa" ;
-         OF       fldGeneral
-
-   aGet[ ( dbfArticulo )->( fieldpos( "cCodPrp2" ) ) ]:bValid  := {|| cProp( aGet[ ( dbfArticulo )->( fieldpos( "cCodPrp2" ) ) ], aGet[ ( dbfArticulo )->( fieldpos( "cCodPrp2" ) ) ]:oHelpText ) }
-   aGet[ ( dbfArticulo )->( fieldpos( "cCodPrp2" ) ) ]:bHelp   := {|| brwProp( aGet[ ( dbfArticulo )->( fieldpos( "cCodPrp2" ) ) ], aGet[ ( dbfArticulo )->( fieldpos( "cCodPrp2" ) ) ]:oHelpText ) }
-
-   TBtnBmp():ReDefine( 372, "Printer_pencil_16",,,,,{|| brwSelectPropiedad( aTmp[ ( dbfArticulo )->( fieldpos( "cCodPrp2" ) ) ], @aTmp[ ( dbfArticulo )->( fieldpos( "mValPrp2" ) ) ] ) }, fldGeneral, .f., , .f., "Seleccionar propiedades" )
 
    REDEFINE SAY oNombre VAR "Tipo artículo";
          ID       888 ;
@@ -1958,6 +1887,45 @@ STATIC FUNCTION EdtRec( aTmp, aGet, dbfArticulo, oBrw, bWhen, bValid, nMode )
          TRANSPARENT ;
          OF       fldPrecios
 
+      REDEFINE CHECKBOX aTmp[ ( dbfArticulo )->( fieldpos( "LIVAINC" ) ) ] ;
+         ID       820 ;
+         WHEN     ( nMode != ZOOM_MODE ) ;
+         OF       fldPrecios
+
+      REDEFINE GET aGet[( dbfArticulo )->( fieldpos( "TIPOIVA" ) ) ] VAR aTmp[ ( dbfArticulo )->( fieldpos( "TIPOIVA" ) ) ] ;
+         ID       800;
+         PICTURE  "@!" ;
+         WHEN     ( nMode != ZOOM_MODE ) ;
+         VALID    (  cTiva(   aGet[ ( dbfArticulo )->( fieldpos( "TIPOIVA" ) ) ], dbfIva, oSay[2] ),;
+                              aGet[ ( dbfArticulo )->( fieldpos( "PVENTA1" ) ) ]:lValid(),;
+                              aGet[ ( dbfArticulo )->( fieldpos( "PVENTA2" ) ) ]:lValid(),;
+                              aGet[ ( dbfArticulo )->( fieldpos( "PVENTA3" ) ) ]:lValid(),;
+                              aGet[ ( dbfArticulo )->( fieldpos( "PVENTA4" ) ) ]:lValid(),;
+                              aGet[ ( dbfArticulo )->( fieldpos( "PVENTA5" ) ) ]:lValid(),;
+                              aGet[ ( dbfArticulo )->( fieldpos( "PVENTA6" ) ) ]:lValid(), .t. ) ;
+         BITMAP   "LUPA" ;
+         ON HELP  ( BrwIva( aGet[( dbfArticulo )->( fieldpos( "TIPOIVA" ) ) ], nil , oSay[2] ) ) ;
+         OF       fldPrecios
+
+      REDEFINE GET oSay[2] VAR cSay[2] ;
+         WHEN     ( .F. );
+         ID       801 ;
+         OF       fldPrecios
+
+      REDEFINE GET aGet[ ( dbfArticulo )->( fieldpos( "CCODIMP" ) ) ] VAR aTmp[ ( dbfArticulo )->( fieldpos( "CCODIMP" ) ) ] ;
+         ID       810;
+         PICTURE  "@!" ;
+         WHEN     ( nMode != ZOOM_MODE ) ;
+         VALID    ( oNewImp:Existe( aGet[ ( dbfArticulo )->( fieldpos( "CCODIMP" ) ) ], oSay[ 10 ], "cNomImp", .t., .t., "0" ) );
+         ON HELP  ( oNewImp:Buscar( aGet[ ( dbfArticulo )->( fieldpos( "CCODIMP" ) ) ], "cCodImp" ) ) ;
+         BITMAP   "LUPA" ;
+         OF       fldPrecios
+
+      REDEFINE GET oSay[10] VAR cSay[10] ;
+         WHEN     ( .F. );
+         ID       811 ;
+         OF       fldPrecios
+
       REDEFINE GET   aGet[ ( dbfArticulo )->( fieldpos( "pCosto" ) ) ] ;
          VAR         aTmp[ ( dbfArticulo )->( fieldpos( "pCosto" ) ) ] ;
          ID          110 ;
@@ -1984,7 +1952,7 @@ STATIC FUNCTION EdtRec( aTmp, aGet, dbfArticulo, oBrw, bWhen, bValid, nMode )
       Codificacion de proveedores----------------------------------------------
       */
 
-      REDEFINE BUTTON aBtnDiv[ 5 ];
+      REDEFINE BUTTON aBtnDiv[ 5 ]; 
          ID       510 ;
          OF       fldPrecios;
          ACTION   ( CodificacionProveedor( aTmp, nMode ) )
@@ -2089,17 +2057,19 @@ STATIC FUNCTION EdtRec( aTmp, aGet, dbfArticulo, oBrw, bWhen, bValid, nMode )
          VAR      aTmp[ ( dbfArticulo )->( fieldpos( "PVTAIVA1" ) ) ] ;
          ID       180 ;
          ON CHANGE( ::lValid() ) ;
-         WHEN     ( stdCol( aTmp[ ( dbfArticulo )->( fieldpos( "LIVAINC" ) ) ], nMode ) ) ;
+         WHEN     ( stdCol( aTmp[ ( dbfArticulo )->( fieldpos( "lIvaInc" ) ) ], nMode ) ) ;
          VALID    ( CalBnfIva(   oSay[ 11 ]:nAt <= 1,;
-                                 aTmp[ ( dbfArticulo )->( fieldpos( "LIVAINC" ) ) ],;
+                                 aTmp[ ( dbfArticulo )->( fieldpos( "lIvaInc" ) ) ],;
                                  if( !lEscandallo( aTmp ), aTmp[ ( dbfArticulo )->( fieldpos( "pCosto"  ) ) ], nCostoTmp( aTmp, dbfTmpKit, dbfArticulo, dbfArtKit ) ) ,;
-                                 aTmp[ ( dbfArticulo )->( fieldpos( "PVTAIVA1") ) ],;
+                                 aGet[ ( dbfArticulo )->( fieldpos( "PVTAIVA1") ) ],;
                                  aGet[ ( dbfArticulo )->( fieldpos( "BENEF1"  ) ) ],;
                                  aTmp[ ( dbfArticulo )->( fieldpos( "TIPOIVA" ) ) ],;
                                  aGet[ ( dbfArticulo )->( fieldpos( "PVENTA1" ) ) ],;
                                  nDecDiv,;
                                  aTmp[ ( dbfArticulo )->( fieldpos( "CCODIMP" ) ) ],;
-                                 oSayWeb[ 1 ] ) );
+                                 oSayWeb[ 1 ],;
+                                 aTmp[ ( dbfArticulo )->( fieldpos( "lMarAju" ) ) ],;
+                                 aTmp[ ( dbfArticulo )->( fieldpos( "cMarAju" ) ) ] ) );
          PICTURE  cPouDiv ;
          OF       fldPrecios
 
@@ -2170,13 +2140,15 @@ STATIC FUNCTION EdtRec( aTmp, aGet, dbfArticulo, oBrw, bWhen, bValid, nMode )
          VALID    ( CalBnfIva(   oSay[ 12 ]:nAt <= 1,;
                                  aTmp[ ( dbfArticulo )->( fieldpos( "LIVAINC"  ) ) ],;
                                  if( !lEscandallo( aTmp ), aTmp[ ( dbfArticulo )->( fieldpos( "pCosto"  ) ) ], nCostoTmp( aTmp, dbfTmpKit, dbfArticulo, dbfArtKit ) ) ,;
-                                 aTmp[ ( dbfArticulo )->( fieldpos( "PVTAIVA2" ) ) ],;
+                                 aGet[ ( dbfArticulo )->( fieldpos( "PVTAIVA2" ) ) ],;
                                  aGet[ ( dbfArticulo )->( fieldpos( "BENEF2"   ) ) ],;
                                  aTmp[ ( dbfArticulo )->( fieldpos( "TIPOIVA"  ) ) ],;
                                  aGet[ ( dbfArticulo )->( fieldpos( "PVENTA2"  ) ) ],;
                                  nDecDiv,;
                                  aTmp[ ( dbfArticulo )->( fieldpos( "CCODIMP"  ) ) ],;
-                                 oSayWeb[ 2 ] ) );
+                                 oSayWeb[ 2 ],;
+                                 aTmp[ ( dbfArticulo )->( fieldpos( "lMarAju" ) ) ],;
+                                 aTmp[ ( dbfArticulo )->( fieldpos( "cMarAju" ) ) ] ) );
 			PICTURE 	cPouDiv ;
          OF       fldPrecios
 
@@ -2247,13 +2219,15 @@ STATIC FUNCTION EdtRec( aTmp, aGet, dbfArticulo, oBrw, bWhen, bValid, nMode )
          VALID    ( CalBnfIva(   oSay[ 13 ]:nAt <= 1,;
                                  aTmp[ ( dbfArticulo )->( fieldpos( "LIVAINC"  ) ) ],;
                                  if( !lEscandallo( aTmp ), aTmp[ ( dbfArticulo )->( fieldpos( "pCosto"  ) ) ], nCostoTmp( aTmp, dbfTmpKit, dbfArticulo, dbfArtKit ) ) ,;
-                                 aTmp[ ( dbfArticulo )->( fieldpos( "PVTAIVA3" ) ) ],;
+                                 aGet[ ( dbfArticulo )->( fieldpos( "PVTAIVA3" ) ) ],;
                                  aGet[ ( dbfArticulo )->( fieldpos( "BENEF3"   ) ) ],;
                                  aTmp[ ( dbfArticulo )->( fieldpos( "TIPOIVA"  ) ) ],;
                                  aGet[ ( dbfArticulo )->( fieldpos( "PVENTA3"  ) ) ],;
                                  nDecDiv,;
                                  aTmp[ ( dbfArticulo )->( fieldpos( "CCODIMP"  ) ) ],;
-                                 oSayWeb[ 3 ] ) );
+                                 oSayWeb[ 3 ],;
+                                 aTmp[ ( dbfArticulo )->( fieldpos( "lMarAju" ) ) ],;
+                                 aTmp[ ( dbfArticulo )->( fieldpos( "cMarAju" ) ) ] ) );
          PICTURE  cPouDiv ;
          OF       fldPrecios
 
@@ -2324,13 +2298,15 @@ STATIC FUNCTION EdtRec( aTmp, aGet, dbfArticulo, oBrw, bWhen, bValid, nMode )
          VALID    ( CalBnfIva(   oSay[ 14 ]:nAt <= 1,;
                                  aTmp[ ( dbfArticulo )->( fieldpos( "LIVAINC"  ) ) ],;
                                  if( !lEscandallo( aTmp ), aTmp[ ( dbfArticulo )->( fieldpos( "pCosto"  ) ) ], nCostoTmp( aTmp, dbfTmpKit, dbfArticulo, dbfArtKit ) ) ,;
-                                 aTmp[ ( dbfArticulo )->( fieldpos( "PVTAIVA4" ) ) ],;
+                                 aGet[ ( dbfArticulo )->( fieldpos( "PVTAIVA4" ) ) ],;
                                  aGet[ ( dbfArticulo )->( fieldpos( "BENEF4"   ) ) ],;
                                  aTmp[ ( dbfArticulo )->( fieldpos( "TIPOIVA"  ) ) ],;
                                  aGet[ ( dbfArticulo )->( fieldpos( "PVENTA4"  ) ) ],;
                                  nDecDiv,;
                                  aTmp[ ( dbfArticulo )->( fieldpos( "CCODIMP"  ) ) ],;
-                                 oSayWeb[ 4 ] ) );
+                                 oSayWeb[ 4 ],;
+                                 aTmp[ ( dbfArticulo )->( fieldpos( "lMarAju" ) ) ],;
+                                 aTmp[ ( dbfArticulo )->( fieldpos( "cMarAju" ) ) ] ) );
 			PICTURE 	cPouDiv ;
          OF       fldPrecios
 
@@ -2401,13 +2377,15 @@ STATIC FUNCTION EdtRec( aTmp, aGet, dbfArticulo, oBrw, bWhen, bValid, nMode )
          VALID    ( CalBnfIva(   oSay[ 15 ]:nAt <= 1,;
                                  aTmp[ ( dbfArticulo )->( fieldpos( "LIVAINC"  ) ) ],;
                                  if( !lEscandallo( aTmp ), aTmp[ ( dbfArticulo )->( fieldpos( "pCosto"  ) ) ], nCostoTmp( aTmp, dbfTmpKit, dbfArticulo, dbfArtKit ) ) ,;
-                                 aTmp[ ( dbfArticulo )->( fieldpos( "PVTAIVA5" ) ) ],;
-                                 aGet[ ( dbfArticulo )->( fieldpos( "BENEF5"   ) ) ],;
-                                 aTmp[ ( dbfArticulo )->( fieldpos( "TIPOIVA"  ) ) ],;
-                                 aGet[ ( dbfArticulo )->( fieldpos( "PVENTA5"  ) ) ],;
+                                 aGet[ ( dbfArticulo )->( fieldpos( "PVTAIVA5" ) ) ],;
+                                 aGet[ ( dbfArticulo )->( fieldpos( "BENEF5" ) ) ],;
+                                 aTmp[ ( dbfArticulo )->( fieldpos( "TIPOIVA" ) ) ],;
+                                 aGet[ ( dbfArticulo )->( fieldpos( "PVENTA5" ) ) ],;
                                  nDecDiv,;
-                                 aTmp[ ( dbfArticulo )->( fieldpos( "CCODIMP"  ) ) ],;
-                                 oSayWeb[ 5 ] ) );
+                                 aTmp[ ( dbfArticulo )->( fieldpos( "CCODIMP" ) ) ],;
+                                 oSayWeb[ 5 ],;
+                                 aTmp[ ( dbfArticulo )->( fieldpos( "lMarAju" ) ) ],;
+                                 aTmp[ ( dbfArticulo )->( fieldpos( "cMarAju" ) ) ] ) );
          PICTURE  cPouDiv ;
          OF       fldPrecios
 
@@ -2479,13 +2457,15 @@ STATIC FUNCTION EdtRec( aTmp, aGet, dbfArticulo, oBrw, bWhen, bValid, nMode )
          VALID    ( CalBnfIva(   oSay[ 16 ]:nAt <= 1,;
                                  aTmp[ ( dbfArticulo )->( fieldpos( "LIVAINC"  ) ) ],;
                                  if( !lEscandallo( aTmp ), aTmp[ ( dbfArticulo )->( fieldpos( "pCosto"  ) ) ], nCostoTmp( aTmp, dbfTmpKit, dbfArticulo, dbfArtKit ) ) ,;
-                                 aTmp[ ( dbfArticulo )->( fieldpos( "PVTAIVA6" ) ) ],;
+                                 aGet[ ( dbfArticulo )->( fieldpos( "PVTAIVA6" ) ) ],;
                                  aGet[ ( dbfArticulo )->( fieldpos( "BENEF6"   ) ) ],;
                                  aTmp[ ( dbfArticulo )->( fieldpos( "TIPOIVA"  ) ) ],;
                                  aGet[ ( dbfArticulo )->( fieldpos( "PVENTA6"  ) ) ],;
                                  nDecDiv,;
                                  aTmp[ ( dbfArticulo )->( fieldpos( "CCODIMP"  ) ) ],;
-                                 oSayWeb[ 6 ] ) );
+                                 oSayWeb[ 6 ],;
+                                 aTmp[ ( dbfArticulo )->( fieldpos( "lMarAju" ) ) ],;
+                                 aTmp[ ( dbfArticulo )->( fieldpos( "cMarAju" ) ) ] ) );
          PICTURE  cPouDiv ;
          OF       fldPrecios
 
@@ -2819,12 +2799,12 @@ STATIC FUNCTION EdtRec( aTmp, aGet, dbfArticulo, oBrw, bWhen, bValid, nMode )
       REDEFINE CHECKBOX aGet[ ( dbfArticulo )->( fieldpos( "lMarAju" ) ) ] ;
          VAR      aTmp[ ( dbfArticulo )->( fieldpos( "lMarAju" ) ) ] ;
          ID       470 ;
-         WHEN     ( nMode != ZOOM_MODE ) ;
+         WHEN     ( nMode != ZOOM_MODE .and. aTmp[ ( dbfArticulo)->( FieldPos( "lIvaInc" ) ) ] );
          OF       fldPrecios
 
       REDEFINE COMBOBOX aGet[ ( dbfArticulo )->( fieldpos( "cMarAju" ) ) ] ;
          VAR      aTmp[ ( dbfArticulo )->( fieldpos( "cMarAju" ) ) ] ;
-         WHEN     ( nMode != ZOOM_MODE .and. aTmp[ ( dbfArticulo )->( fieldpos( "lMarAju" ) ) ] );
+         WHEN     ( nMode != ZOOM_MODE .and. aTmp[ ( dbfArticulo)->( FieldPos( "lIvaInc" ) ) ] .and. aTmp[ ( dbfArticulo )->( fieldpos( "lMarAju" ) ) ] );
          ID       480 ;
          ITEMS    {  "#,#0",;
                      "#,#5",;
@@ -2843,6 +2823,8 @@ STATIC FUNCTION EdtRec( aTmp, aGet, dbfArticulo, oBrw, bWhen, bValid, nMode )
                      "50,00",;
                      "100,00" } ;
          OF       fldPrecios
+
+         aGet[ ( dbfArticulo )->( fieldpos( "cMarAju" ) ) ]:bChange  := {|| aGet[ ( dbfArticulo )->( fieldpos( "pVtaIva1" ) ) ]:lValid() }
 
       /*
       Tercera ventana----------------------------------------------------------
@@ -2895,6 +2877,39 @@ STATIC FUNCTION EdtRec( aTmp, aGet, dbfArticulo, oBrw, bWhen, bValid, nMode )
          RESOURCE "Bookmark_Silver_Alpha_48" ;
          TRANSPARENT ;
          OF       fldPropiedades
+
+      /*
+      Propiedades del articulo----------------------------------------------------
+      */
+
+      REDEFINE GET   aGet[ ( dbfArticulo )->( fieldpos( "cCodPrp1" ) ) ] ;
+         VAR         aTmp[ ( dbfArticulo )->( fieldpos( "cCodPrp1" ) ) ] ;
+         ID          360 ;
+         IDTEXT      361 ;
+         PICTURE     "@!" ;
+         WHEN        ( nMode != ZOOM_MODE ) ;
+         BITMAP      "Lupa" ;
+         OF          fldPropiedades
+
+      aGet[ ( dbfArticulo )->( fieldpos( "cCodPrp1" ) ) ]:bValid  := {|| cProp( aGet[ ( dbfArticulo )->( fieldpos( "cCodPrp1" ) ) ], aGet[ ( dbfArticulo )->( fieldpos( "cCodPrp1" ) ) ]:oHelpText ) }
+      aGet[ ( dbfArticulo )->( fieldpos( "cCodPrp1" ) ) ]:bHelp   := {|| brwProp( aGet[ ( dbfArticulo )->( fieldpos( "cCodPrp1" ) ) ], aGet[ ( dbfArticulo )->( fieldpos( "cCodPrp1" ) ) ]:oHelpText ) }
+
+      TBtnBmp():ReDefine( 362, "Printer_pencil_16",,,,,{|| brwSelectPropiedad( aTmp[ ( dbfArticulo )->( fieldpos( "cCodPrp1" ) ) ], @aTmp[ ( dbfArticulo )->( fieldpos( "mValPrp1" ) ) ] ) }, fldPropiedades, .f., , .f., "Seleccionar propiedades" )
+
+      REDEFINE GET   aGet[ ( dbfArticulo )->( fieldpos( "cCodPrp2" ) ) ] ;
+         VAR         aTmp[ ( dbfArticulo )->( fieldpos( "cCodPrp2" ) ) ] ;
+         ID          370 ;
+         IDTEXT      371 ;
+         PICTURE     "@!" ;
+         WHEN        ( nMode != ZOOM_MODE ) ;
+         BITMAP      "Lupa" ;
+         OF          fldPropiedades
+
+      aGet[ ( dbfArticulo )->( fieldpos( "cCodPrp2" ) ) ]:bValid  := {|| cProp( aGet[ ( dbfArticulo )->( fieldpos( "cCodPrp2" ) ) ], aGet[ ( dbfArticulo )->( fieldpos( "cCodPrp2" ) ) ]:oHelpText ) }
+      aGet[ ( dbfArticulo )->( fieldpos( "cCodPrp2" ) ) ]:bHelp   := {|| brwProp( aGet[ ( dbfArticulo )->( fieldpos( "cCodPrp2" ) ) ], aGet[ ( dbfArticulo )->( fieldpos( "cCodPrp2" ) ) ]:oHelpText ) }
+
+      TBtnBmp():ReDefine( 372, "Printer_pencil_16",,,,,{|| brwSelectPropiedad( aTmp[ ( dbfArticulo )->( fieldpos( "cCodPrp2" ) ) ], @aTmp[ ( dbfArticulo )->( fieldpos( "mValPrp2" ) ) ] ) }, fldPropiedades, .f., , .f., "Seleccionar propiedades" )
+
 
       oBrwDiv                 := IXBrowse():New( fldPropiedades )
 
@@ -7671,29 +7686,48 @@ Return .t.
 Esta funci¢n calcula el beneficio que se esta aplicando a un articulo con IGIC
 */
 
-Function CalBnfIva( lSobreCoste, lIvaInc, nCosto, nPrePtsIva, oBnf, uTipIva, oGetBas, nDecDiv, cCodImp, oSay )
+Function CalBnfIva( lSobreCoste, lIvaInc, nCosto, uPrecioIva, oBnf, uTipIva, oGetBas, nDecDiv, cCodImp, oSay, lMargenAjuste, cMargenAjuste )
 
 	local nNewBnf
 	local nNewPre
 	local nIvaPct
+   local nPreIva
 
    if !lIvaInc
       Return .t.
    end if
 
-   if ValType( uTipIva ) == "C"
+   if IsChar( uTipIva )
       nIvaPct     := nIva( dbfIva, uTipIva )
    else
       nIvaPct     := uTipIva
    end if
 
-   nPrePtsIva     := Round( nPrePtsIva, nDecDiv )
+   if IsObject( uPrecioIva )
+      nPreIva     := Round( uPrecioIva:VarGet(), nDecDiv )
+   else
+      nPreIva     := Round( uPrecioIva, nDecDiv )
+   end if
+
+   /*
+   Margen de ajuste
+   */
+
+   if IsLogic( lMargenAjuste )
+      
+      nPreIva     := nAjuste( nPreIva, cMargenAjuste )
+
+      if IsObject( uPrecioIva )
+         uPrecioIva:cText( Round( nPreIva, nDecDiv ) )
+      end if 
+
+   end if
 
 	/*
    Primero es quitar el IGIC
 	*/
 
-   nNewPre        := Round( nPrePtsIva / ( 1 + nIvaPct / 100 ), nDecDiv )
+   nNewPre        := Round( nPreIva / ( 1 + nIvaPct / 100 ), nDecDiv )
 
    /*
    Despues si tiene impuesto especial qitarlo
@@ -10543,7 +10577,7 @@ return nil
 
 //---------------------------------------------------------------------------//
 
-Function SearchProveedor( oWndBrw )
+Function SearchProveedor()
 
    local nSea     := 1
 	local oDlg
@@ -10557,7 +10591,7 @@ Function SearchProveedor( oWndBrw )
    local oGetBar
    local cGetBar  := Space( 18 )
 
-   DEFINE DIALOG oDlg RESOURCE "SEARCH"
+   DEFINE DIALOG oDlg RESOURCE "Search"
 
       REDEFINE RADIO nSea ;
          ID       120, 121 ;
@@ -10589,7 +10623,7 @@ Function SearchProveedor( oWndBrw )
       REDEFINE BUTTON ;
          ID       500 ;
          OF       oDlg ;
-         ACTION   ( PosProveedor( nSea, cGetPrv, cGetArt, cGetBar, dbfArtPrv, dbfCodeBar, oWndBrw ) )
+         ACTION   ( PosProveedor( nSea, cGetPrv, cGetArt, cGetBar ) )
 
       REDEFINE BUTTON ;
          ID       510 ;
@@ -10598,6 +10632,8 @@ Function SearchProveedor( oWndBrw )
          ACTION   ( oDlg:end() )
 
    oDlg:bStart    := {|| oGetBar:SetFocus() }
+   
+   oDlg:AddFastKey( VK_F5, {|| PosProveedor( nSea, cGetPrv, cGetArt, cGetBar ) } )   
 
    ACTIVATE DIALOG oDlg CENTER
 
@@ -10607,7 +10643,7 @@ RETURN NIL
 
 //---------------------------------------------------------------------------//
 
-Static Function PosProveedor( nSea, cGetPrv, cGetArt, cGetBar, dbfArtPrv, dbfCodeBar, oWndBrw )
+Static Function PosProveedor( nSea, cGetPrv, cGetArt, cGetBar )
 
    local nCod
    local nOrd
@@ -10616,7 +10652,7 @@ Static Function PosProveedor( nSea, cGetPrv, cGetArt, cGetBar, dbfArtPrv, dbfCod
 
       if dbSeekInOrd( cGetBar, "cCodBar", dbfCodeBar )
          if dbSeekInOrd( ( dbfCodeBar )->cCodArt, "Codigo", dbfArticulo )
-            oWndBrw:Refresh()
+            oWndBrw:SetFocus()
          else
             msgStop( "Artículo " + Rtrim( ( dbfCodeBar )->cCodArt ) + " no encontrado." )
          end if
@@ -10631,13 +10667,11 @@ Static Function PosProveedor( nSea, cGetPrv, cGetArt, cGetBar, dbfArtPrv, dbfCod
    else
 
       if ( dbfArtPrv )->( dbSeek( cGetPrv + cGetArt ) )
-         nOrd  := ( dbfArticulo )->( OrdSetFocus( "Codigo" ) )
-         if !( dbfArticulo )->( dbSeek( ( dbfArtPrv )->cCodArt ) )
-            msgStop( "Artículo " + Rtrim( ( dbfArtPrv )->cCodArt ) + " no encontrado." )
+         if dbSeekInOrd( ( dbfArtPrv )->cCodArt, "Codigo", dbfArticulo ) 
+            oWndBrw:SetFocus()
          else
-            oWndBrw:Refresh()
+            msgStop( "Artículo " + Rtrim( ( dbfArtPrv )->cCodArt ) + " no encontrado." )
          end if
-         ( dbfArticulo )->( OrdSetFocus( nOrd ) )
       end if
 
    end if

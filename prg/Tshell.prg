@@ -183,7 +183,8 @@ CLASS TShell FROM TMdiChild
    METHOD GoUp()     INLINE ( ::oBrw:GoUp() )
    METHOD GoDown()   INLINE ( ::oBrw:GoDown() )
 
-   METHOD Select()   INLINE ( if( !Empty( ::oBrw ) .and. ( ::oBrw:lActive ), ( ::oBrw:Refresh(), ::oBrw:Select() ), ) )
+   METHOD Select()      INLINE ( if( !Empty( ::oBrw ) .and. ( ::oBrw:lActive ), ( ::oBrw:Refresh(), ::oBrw:Select() ), ) )
+   METHOD SelectOne()   INLINE ( if( !Empty( ::oBrw ) .and. ( ::oBrw:lActive ), ( ::oBrw:SelectOne() ), ) )
 
    METHOD SetFocus() INLINE ( if( !Empty( ::oBtnMain ), ::oBtnBar:Select( ::oBtnMain ), ), if( !Empty( ::oBrw ), ( ::oBrw:SetFocus(), ::oBrw:Select( 0 ), ::oBrw:Select( 1 ) ), ) )
 

@@ -2381,6 +2381,11 @@ FUNCTION nAjuste( nNumber, cAdjust )
    local cNumber
    local cResult
 
+   /*
+   Posible ajuste doble
+   */
+
+
    cResult           := ""
    cNumber           := Trans( nNumber, cPorDiv() )
 
@@ -2390,17 +2395,19 @@ FUNCTION nAjuste( nNumber, cAdjust )
       cAdjust        := Alltrim( cAdjust )
    end if
 
-   cAdjust           := Padl( cAdjust, len( cNumber ), Space( 1 ) )
+   cAdjust           := Padl( cAdjust, len( cNumber ), "#" )
+
+   n                 := At( "[",  cAdjust) != 0
 
    for n := 1 to len( cNumber )
-      if ( cAdjust[ n ] == Space( 1 ) .or. cAdjust[ n ] == "#" )
+      if ( cAdjust[ n ] == "#" )
          cResult     += cNumber[ n ]
       else
          cResult     += cAdjust[ n ]
       end if
    next
 
-   nNumber           := Val( StrTran( cResult, ",", "." ) )
+   nNumber           := Val( StrTran( cResult, ",", "." ) ) 
 
 RETURN ( nNumber )
 

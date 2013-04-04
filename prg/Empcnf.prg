@@ -834,13 +834,7 @@ return ( nNumCod )
 
 FUNCTION RetSufEmp()
 
-   local cSufEmp  := Space( 2 )
-
-   if !Empty( aEmp() )
-      cSufEmp     := aEmp()[ _CSUFDOC ]
-   end if
-
-return ( cSufEmp )
+return ( oUser():cDelegacion() )
 
 //--------------------------------------------------------------------------//
 
