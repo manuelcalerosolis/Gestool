@@ -1434,6 +1434,16 @@ Return ( cAlm )
 
 //---------------------------------------------------------------------------//
 
+Function cDlgUsr( cDlg )
+
+   if cDlg != nil .and. oMsgDelegacion != nil
+      oMsgDelegacion:SetText( "Delegación : " + RTrim( cDlg ) )
+   end if
+
+Return ( cDlg )
+
+//---------------------------------------------------------------------------//
+
 Function RunReportGalery()
 
    local nLevel   := nLevelUsr( "01066" )

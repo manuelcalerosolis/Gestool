@@ -7904,7 +7904,7 @@ return ( .t. )
 
 //---------------------------------------------------------------------------//
 
-Function SelectDelegacion( oMenuItem )
+Function SelectDelegacion()
 
    local oDlg
    local oBrw
@@ -7939,8 +7939,9 @@ Function SelectDelegacion( oMenuItem )
       TITLE       "Seleccionar delegación" ;
 
       REDEFINE BITMAP oBmp ;
-         RESOURCE "CASHIER_48" ;
-         ID       300;
+         ID       300 ;
+         RESOURCE "Flag_Eu_48_Alpha" ; 
+         TRANSPARENT ;
          OF       oDlg
 
       REDEFINE GET oGetBuscar ;
@@ -8012,10 +8013,6 @@ Function SelectDelegacion( oMenuItem )
    if !Empty( oBmp )
       oBmp:End()
    end if
-
-   if !Empty( oMenuItem )
-      oMenuItem:Refresh()
-   end if 
 
 RETURN ( oDlg:nResult == IDOK )
 

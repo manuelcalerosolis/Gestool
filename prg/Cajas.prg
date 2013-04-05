@@ -3246,7 +3246,7 @@ Function SelectCajas()
    DEFINE BRUSH oBrush COLOR Rgb( 255, 255, 255 )
 
    DEFINE DIALOG oDlg ;
-      RESOURCE    "SELECTITEM" ;
+      RESOURCE    "SelectItem" ;
       TITLE       "Seleccionar caja" ;
       BRUSH       oBrush
 
@@ -3285,7 +3285,6 @@ Function SelectCajas()
          :cSortOrder       := "cCodCaj"
          :bEditValue       := {|| ( dbfCajT )->cCodCaj }
          :nWidth           := 40
-         :bLClickHeader    := {| nMRow, nMCol, nFlags, oCol | oWndBrw:ClickOnHeader( oCol ) }
       end with
 
       with object ( oBrw:AddCol() )
@@ -3293,7 +3292,6 @@ Function SelectCajas()
          :cSortOrder       := "cNomCaj"
          :bEditValue       := {|| ( dbfCajT )->cNomCaj }
          :nWidth           := 200
-         :bLClickHeader    := {| nMRow, nMCol, nFlags, oCol | oWndBrw:ClickOnHeader( oCol ) }
       end with
 
       oBrw:bLDblClick      := {|| oDlg:end( IDOK ) }
