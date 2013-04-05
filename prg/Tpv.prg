@@ -1910,13 +1910,9 @@ Static Function ImpTiket( lPrev, lEntrega, lImpMenu, dbfImp, oDatos )
             nGenTikCli( if( lPrev, IS_SCREEN, IS_PRINTER ), "Imprimiendo tickets", oDatos:cFormatoTiket, oDatos:cPrinterTik )
          end if
 
-      /*
-      No tiene muxo sentido imprimir los apartados-----------------------------
-
       case ( dbfTikT )->cTipTik == SAVAPT
 
          nGenTikCli( if( lPrev, IS_SCREEN, IS_PRINTER ), "Imprimiendo apartados", oDatos:cFmtApt, oDatos:cPrinterApt )
-      */
 
    end case
 
@@ -4273,7 +4269,7 @@ Static Function NewTiket( aGet, aTmp, nMode, nSave, lBig, oBrw, oBrwDet )
          Imprimir el registro--------------------------------------------------
          */
 
-         if lCopTik // .and. nCopTik != 0  //Comprobamos que hayamos pulsado el botón de aceptar e imprimir
+         if lCopTik .and. nSave != SAVAPT // .and. nCopTik != 0  //Comprobamos que hayamos pulsado el botón de aceptar e imprimir
             ImpTiket( .f. )
          end if
 
