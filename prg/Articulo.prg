@@ -2824,7 +2824,12 @@ STATIC FUNCTION EdtRec( aTmp, aGet, dbfArticulo, oBrw, bWhen, bValid, nMode )
                      "100,00" } ;
          OF       fldPrecios
 
-         aGet[ ( dbfArticulo )->( fieldpos( "cMarAju" ) ) ]:bChange  := {|| aGet[ ( dbfArticulo )->( fieldpos( "pVtaIva1" ) ) ]:lValid() }
+         aGet[ ( dbfArticulo )->( fieldpos( "cMarAju" ) ) ]:bChange  := {||   aGet[ ( dbfArticulo )->( fieldpos( "pVtaIva1" ) ) ]:lValid(),;
+                                                                              aGet[ ( dbfArticulo )->( fieldpos( "pVtaIva2" ) ) ]:lValid(),;
+                                                                              aGet[ ( dbfArticulo )->( fieldpos( "pVtaIva3" ) ) ]:lValid(),;
+                                                                              aGet[ ( dbfArticulo )->( fieldpos( "pVtaIva4" ) ) ]:lValid(),;
+                                                                              aGet[ ( dbfArticulo )->( fieldpos( "pVtaIva5" ) ) ]:lValid(),;
+                                                                              aGet[ ( dbfArticulo )->( fieldpos( "pVtaIva6" ) ) ]:lValid() }
 
       /*
       Tercera ventana----------------------------------------------------------

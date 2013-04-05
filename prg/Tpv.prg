@@ -925,15 +925,12 @@ STATIC FUNCTION OpenFiles( cPatEmp, lExt, lTactil )
       Limitaciones de cajero y cajas--------------------------------------------------------
       */
 
-      msgAlert( ( dbfTikT )->( OrdKeyCount() ) )
-
       if lAIS() .and. !oUser():lAdministrador()
+      
          cFiltro           := "Field->cSufTik == '" + oUser():cDelegacion() + "' .and. Field->cNcjTik == '" + oUser():cCaja() + "'"
          if oUser():lFiltroVentas()         
             cFiltro        += " .and. Field->cCcjTik == '" + oUser():cCodigo() + "'"
          end if 
-
-msgAlert( cFiltro )
 
          ( dbfTikT )->( AdsSetAOF( cFiltro ) )
       end if

@@ -7903,3 +7903,121 @@ static function CargaNombreSerie( aTmp, oSerie )
 return ( .t. )
 
 //---------------------------------------------------------------------------//
+
+Function SelectDelegacion( oMenuItem )
+
+   local oDlg
+   local oBrw
+   local oBmp
+   local dbfDlg
+   local oGetBuscar
+   local cGetBuscar     := Space( 100 )
+   local oCbxOrden
+   local cCbxOrden      := "Código"
+
+   /*
+   Apertura de ficharos--------------------------------------------------------
+   */
+
+   USE ( cPatDat() + "DELEGA.DBF" ) NEW VIA ( cDriver() ) SHARED ALIAS ( cCheckArea( "DELEGA", @dbfDlg ) )
+   SET ADSINDEX TO ( cPatDat() + "DELEGA.CDX" ) ADDITIVE
+
+   if lAIS()
+      ( dbfDlg )->( AdsSetAOF( "Field->cCodEmp == '" + cCodEmp() + "'" ) )
+   else
+      ( dbfDlg )->( dbSetFilter( {|| Field->cCodEmp == cCodEmp() }, "Field->cCodEmp == cCodEmp()" ) )
+   end if 
+
+   ( dbfDlg )->( dbGoTop() )
+
+   /*
+   Dialogo---------------------------------------------------------------------
+   */
+
+   DEFINE DIALOG  oDlg ;
+      RESOURCE    "SelectItem" ;
+      TITLE       "Seleccionar delegación" ;
+
+      REDEFINE BITMAP oBmp ;
+         RESOURCE "CASHIER_48" ;
+         ID       300;
+         OF       oDlg
+
+      REDEFINE GET oGetBuscar ;
+         VAR      cGetBuscar;
+         ID       100 ;
+         ON CHANGE( AutoSeek( nKey, nFlags, Self, oBrw, dbfDlg, nil, nil, .f. ) );
+         BITMAP   "FIND" ;
+         OF       oDlg
+
+      REDEFINE COMBOBOX oCbxOrden ;
+         VAR      cCbxOrden ;
+         ID       110 ;
+         ITEMS    { "Código", "Nombre" } ;
+         ON CHANGE( ( dbfDlg )->( OrdSetFocus( oCbxOrden:nAt ) ), oBrw:Refresh(), oGetBuscar:SetFocus() ) ;
+         OF       oDlg
+
+      oBrw                 := TXBrowse():New( oDlg )
+
+      oBrw:bClrSel         := {|| { CLR_BLACK, Rgb( 229, 229, 229 ) } }
+      oBrw:bClrSelFocus    := {|| { CLR_BLACK, Rgb( 167, 205, 240 ) } }
+
+      oBrw:cAlias          := dbfDlg
+
+      oBrw:nMarqueeStyle   := 5
+
+      oBrw:CreateFromResource( 200 )
+
+      with object ( oBrw:AddCol() )
+         :cHeader          := "Código"
+         :cSortOrder       := "cCodDlg"
+         :bEditValue       := {|| ( dbfDlg )->cCodDlg }
+         :nWidth           := 40
+      end with
+
+      with object ( oBrw:AddCol() )
+         :cHeader          := "Nombre"
+         :cSortOrder       := "cNomDlg"
+         :bEditValue       := {|| ( dbfDlg )->cNomDlg }
+         :nWidth           := 260
+      end with
+
+      oBrw:bLDblClick      := {|| oDlg:end( IDOK ) }
+      oBrw:bRClicked       := {| nRow, nCol, nFlags | oBrw:RButtonDown( nRow, nCol, nFlags ) }
+
+      REDEFINE BUTTON ;
+         ID       IDOK ;
+         OF       oDlg ;
+         ACTION   ( oDlg:end( IDOK ) )
+
+      REDEFINE BUTTON ;
+         ID       IDCANCEL ;
+         OF       oDlg ;
+         CANCEL ;
+         ACTION   ( oDlg:end() )
+
+   oDlg:AddFastKey( VK_F5,       {|| oDlg:end( IDOK ) } )
+   oDlg:AddFastKey( VK_RETURN,   {|| oDlg:end( IDOK ) } )
+
+   ACTIVATE DIALOG oDlg CENTER
+
+   if oDlg:nResult == IDOK
+      oUser():cDelegacion( ( dbfDlg )->cCodDlg )
+   end if
+
+   if !Empty( dbfDlg )
+      ( dbfDlg )->( dbCloseArea() )
+   end if 
+
+   if !Empty( oBmp )
+      oBmp:End()
+   end if
+
+   if !Empty( oMenuItem )
+      oMenuItem:Refresh()
+   end if 
+
+RETURN ( oDlg:nResult == IDOK )
+
+//---------------------------------------------------------------------------//
+
