@@ -9008,6 +9008,7 @@ METHOD InsertPropiedadesProductPrestashop( nCodigoWeb ) CLASS TComercio
    local nParent              := ::GetParentCategories()
    local cCommand             := ""
    local nOrdArtDiv           := ::oArtDiv:OrdSetFocus( "cCodArt" )
+   local lDefault             := .t.
 
    ?"Entro a meter las propiedades"
 
@@ -9105,7 +9106,7 @@ METHOD InsertPropiedadesProductPrestashop( nCodigoWeb ) CLASS TComercio
                                        "'0', " + ;
                                        "'0', " + ;
                                        "'0', " + ;
-                                       "'1', " + ;
+                                       "'" + if( lDefault, "1", "0" ) + "', " + ;
                                        "'1' )"
 
                   if TMSCommand():New( ::oCon ):ExecDirect( cCommand )
@@ -9422,6 +9423,8 @@ METHOD InsertPropiedadesProductPrestashop( nCodigoWeb ) CLASS TComercio
          end case
 
          ::oArtDiv:Skip()
+
+         lDefault    := .f.
 
       end while
 
