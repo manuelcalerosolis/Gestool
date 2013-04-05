@@ -4,6 +4,10 @@
 		"selected_items":
 		[
 			[
+				"nSave",
+				"nSave"
+			],
+			[
 				"nTotIva",
 				"nTotIva"
 			],
@@ -510,10 +514,6 @@
 			[
 				"nUn",
 				"nUntTil"
-			],
-			[
-				"Wh",
-				"while"
 			]
 		]
 	},
@@ -523,15 +523,15 @@
 			"file": "prg/Tcomercio.prg",
 			"settings":
 			{
-				"buffer_size": 369908,
+				"buffer_size": 372335,
 				"line_ending": "Windows"
 			}
 		},
 		{
-			"file": "prg/Tpv.prg",
+			"file": "prg/Articulo.prg",
 			"settings":
 			{
-				"buffer_size": 752862,
+				"buffer_size": 655266,
 				"line_ending": "Windows"
 			}
 		},
@@ -539,7 +539,7 @@
 			"file": "prg/Tpvlistaticket.prg",
 			"settings":
 			{
-				"buffer_size": 40425,
+				"buffer_size": 40422,
 				"line_ending": "Windows"
 			}
 		},
@@ -548,22 +548,6 @@
 			"settings":
 			{
 				"buffer_size": 251130,
-				"line_ending": "Windows"
-			}
-		},
-		{
-			"file": "prg/Factcli.prg",
-			"settings":
-			{
-				"buffer_size": 811637,
-				"line_ending": "Windows"
-			}
-		},
-		{
-			"file": "prg/Tpvcobros.prg",
-			"settings":
-			{
-				"buffer_size": 31388,
 				"line_ending": "Windows"
 			}
 		}
@@ -601,6 +585,9 @@
 	"file_history":
 	[
 		"/C/fw195/Gestool/prg/Fastreph.prg",
+		"/C/fw195/Gestool/prg/Tpvcobros.prg",
+		"/C/fw195/Gestool/prg/Factcli.prg",
+		"/C/fw195/Gestool/prg/Tpv.prg",
 		"/C/fw195/Gestool/prg/Stock.prg",
 		"/C/fw195/Gestool/prg/Albcli.prg",
 		"/C/fw195/Gestool/prg/Pedcli.prg",
@@ -644,7 +631,6 @@
 		"/C/fwh1204/source/classes/tftpsess.prg",
 		"/C/fwh1204/source/classes/tftpcli.prg",
 		"/C/fwh1204/source/classes/tftpfile.prg",
-		"/C/fw195/Gestool/prg/Tpv.prg",
 		"/C/fw195/Gestool/prg/Tgrpfam.prg",
 		"/C/fw195/Gestool/prg/Tpvtactil.prg",
 		"/C/fw195/Gestool/prg/Pro.prg",
@@ -674,7 +660,6 @@
 		"/C/fw195/Gestool/prg/tpv",
 		"/C/fw195/Gestool/prg/articulo",
 		"/C/fw195/Gestool/prg/Tgenmail.prg",
-		"/C/fw195/Gestool/prg/Factcli.prg",
 		"/C/fw195/Gestool/prg/Utildbf.prg",
 		"/C/fw195/Gestool/Hs.bat",
 		"//SERVER/Programacion/fw195/camero/HX2007.bat",
@@ -698,7 +683,6 @@
 		"/C/fw195/Gestool/prg/Impfactu.prg",
 		"/C/fw195/Gestool/prg/Faccliant.prg",
 		"/C/fw195/Gestool/prg/precli",
-		"/C/fw195/Gestool/prg/Tpvcobros.prg",
 		"/C/fw195/Gestool/prg/Dotnetgr.prg",
 		"/C/fw195/Gestool/prg/Tpvlistaticket.prg",
 		"/C/fw195/Gestool/prg/Tpvmesa.prg",
@@ -757,6 +741,26 @@
 		"case_sensitive": false,
 		"find_history":
 		[
+			"on aitm",
+			"image_shop",
+			"propiedades",
+			"InsertImageProductsPrestashop",
+			"InsertPropiedadesProductPrestashop",
+			"Imprimir",
+			"ImprimeTicket",
+			"imprime",
+			"imprimi",
+			"od PrepareReport",
+			"on NewTiket",
+			"NewTiket",
+			"NewTiket.",
+			"NewTiket",
+			"ImpTiket",
+			"impti",
+			"on imp",
+			"savapt",
+			"SAVAPT",
+			"apt",
 			"DataReport",
 			"SetModal",
 			"setmodal",
@@ -864,27 +868,7 @@
 			"Expresión",
 			"aExpMaker",
 			"ExpMaker",
-			"in",
-			"inv",
-			"in",
-			"expresión inválida",
-			"invalida",
-			"ofilter",
-			"#",
-			"aItmVentas()",
-			"lMultyExpresion",
-			"ofilter",
-			"DlgFilter",
-			"oFilter",
-			"f ",
-			"invalida",
-			"ss TRnkRVta",
-			"TRnkRVta",
-			"rankin",
-			"#",
-			"for each",
-			"SELECT * FROM",
-			"InsertImageProductsPrestashop"
+			"in"
 		],
 		"highlight": true,
 		"in_selection": false,
@@ -910,7 +894,7 @@
 	"groups":
 	[
 		{
-			"selected": 3,
+			"selected": 0,
 			"sheets":
 			[
 				{
@@ -918,15 +902,15 @@
 					"file": "prg/Tcomercio.prg",
 					"settings":
 					{
-						"buffer_size": 369908,
+						"buffer_size": 372335,
 						"regions":
 						{
 						},
 						"selection":
 						[
 							[
-								267043,
-								267043
+								275726,
+								275726
 							]
 						],
 						"settings":
@@ -936,25 +920,25 @@
 							"translate_tabs_to_spaces": true
 						},
 						"translation.x": 0.0,
-						"translation.y": 163278.0,
+						"translation.y": 165791.0,
 						"zoom_level": 1.0
 					},
 					"type": "text"
 				},
 				{
 					"buffer": 1,
-					"file": "prg/Tpv.prg",
+					"file": "prg/Articulo.prg",
 					"settings":
 					{
-						"buffer_size": 752862,
+						"buffer_size": 655266,
 						"regions":
 						{
 						},
 						"selection":
 						[
 							[
-								45759,
-								45764
+								570751,
+								570758
 							]
 						],
 						"settings":
@@ -963,8 +947,8 @@
 							"tab_size": 3,
 							"translate_tabs_to_spaces": true
 						},
-						"translation.x": 24.0,
-						"translation.y": 25474.0,
+						"translation.x": 0.0,
+						"translation.y": 277816.0,
 						"zoom_level": 1.0
 					},
 					"type": "text"
@@ -974,15 +958,15 @@
 					"file": "prg/Tpvlistaticket.prg",
 					"settings":
 					{
-						"buffer_size": 40425,
+						"buffer_size": 40422,
 						"regions":
 						{
 						},
 						"selection":
 						[
 							[
-								40327,
-								40327
+								40146,
+								40146
 							]
 						],
 						"settings":
@@ -992,7 +976,7 @@
 							"translate_tabs_to_spaces": true
 						},
 						"translation.x": 0.0,
-						"translation.y": 22349.0,
+						"translation.y": 22005.0,
 						"zoom_level": 1.0
 					},
 					"type": "text"
@@ -1009,8 +993,8 @@
 						"selection":
 						[
 							[
-								204950,
-								205030
+								18763,
+								18763
 							]
 						],
 						"settings":
@@ -1020,63 +1004,7 @@
 							"translate_tabs_to_spaces": true
 						},
 						"translation.x": 0.0,
-						"translation.y": 126724.0,
-						"zoom_level": 1.0
-					},
-					"type": "text"
-				},
-				{
-					"buffer": 4,
-					"file": "prg/Factcli.prg",
-					"settings":
-					{
-						"buffer_size": 811637,
-						"regions":
-						{
-						},
-						"selection":
-						[
-							[
-								436428,
-								436441
-							]
-						],
-						"settings":
-						{
-							"syntax": "Packages/harbour/harbour/Harbour.tmLanguage",
-							"tab_size": 3,
-							"translate_tabs_to_spaces": true
-						},
-						"translation.x": 0.0,
-						"translation.y": 222250.0,
-						"zoom_level": 1.0
-					},
-					"type": "text"
-				},
-				{
-					"buffer": 5,
-					"file": "prg/Tpvcobros.prg",
-					"settings":
-					{
-						"buffer_size": 31388,
-						"regions":
-						{
-						},
-						"selection":
-						[
-							[
-								3608,
-								3608
-							]
-						],
-						"settings":
-						{
-							"syntax": "Packages/harbour/harbour/Harbour.tmLanguage",
-							"tab_size": 3,
-							"translate_tabs_to_spaces": true
-						},
-						"translation.x": 0.0,
-						"translation.y": 2074.0,
+						"translation.y": 13504.0,
 						"zoom_level": 1.0
 					},
 					"type": "text"

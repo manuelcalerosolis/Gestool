@@ -395,7 +395,7 @@ METHOD StartResource() CLASS TpvListaTicket
          ::oBtnFiltro         := TDotNetButton():New( 60, oGrupo,    "Calendar_32",             "Filtrar",            3, {|| ::OnClickFiltro() }, , , .f., .f., .f. )
 
       oGrupo                  := TDotNetGroup():New( oCarpeta, 126,  "Impresión", .f. )
-         oBoton               := TDotNetButton():New( 60, oGrupo,    "PREV1_32",                   "Previsualizar",      1, {|| ::Imprimir( .t. ) }, , , .f., .f., .f. )
+         oBoton               := TDotNetButton():New( 60, oGrupo,    "PREV1_32",                "Previsualizar",      1, {|| ::Imprimir( .t. ) }, , , .f., .f., .f. )
          oBoton               := TDotNetButton():New( 60, oGrupo,    "IMP32",                   "Imprimir",           2, {|| ::Imprimir( .f. ) }, , , .f., .f., .f. )
 
       oGrupo                  := TDotNetGroup():New( oCarpeta, 366,  "Seleción de tickets", .f. )

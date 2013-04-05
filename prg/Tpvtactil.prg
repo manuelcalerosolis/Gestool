@@ -7050,11 +7050,7 @@ METHOD BuildReport() CLASS TpvTactil
       Preparar el report-------------------------------------------------------
       */
 
-      msginfo( "Antes de preparar el reporte" )
-
       ::oFastReport:PrepareReport()
-
-      msginfo( "Despues de preparar el reporte" )
 
       /*
       Imprimir el informe------------------------------------------------------
