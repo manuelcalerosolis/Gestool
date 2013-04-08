@@ -1634,7 +1634,7 @@ STATIC FUNCTION EdtRec( aTmp, aGet, dbfArticulo, oBrw, bWhen, bValid, nMode )
                   "ART_4",;
                   "ART_6",;
                   "ART_13",;
-                  "ART_10"
+                  "ART_10" 
 
 	/*
 	Primera Caja de Dialog del Folder
@@ -6021,7 +6021,7 @@ STATIC FUNCTION EdtVta( aTmp, aGet, dbfTmpVta, oBrw, bWhen, bValid, nMode, aArt 
       Primer Browse de propiedades--------------------------------------------
       */
 
-      oBrwPrp1                        := TXBrowse():New( oDlg )
+      oBrwPrp1                        := TXBrowse():New( oDlg ) 
 
       oBrwPrp1:bClrSel                := {|| { CLR_BLACK, Rgb( 229, 229, 229 ) } }
       oBrwPrp1:bClrSelFocus           := {|| { CLR_BLACK, Rgb( 167, 205, 240 ) } }
@@ -6034,14 +6034,14 @@ STATIC FUNCTION EdtVta( aTmp, aGet, dbfTmpVta, oBrw, bWhen, bValid, nMode, aArt 
 
       oBrwPrp1:CreateFromResource( 100 )
 
-      oBrwPrp1:bRClicked   := {|| SeleccionPropiedad( aValPrp1, oBrwPrp1, oBrwPrp1:nArrayAt ) }
+      oBrwPrp1:bLDblClick  := {|| SeleccionPropiedad( aValPrp1, oBrwPrp1, oBrwPrp1:nArrayAt ) }
 
       with object ( oBrwPrp1:AddCol() )
          :cHeader          := "S"
          :bStrData         := {|| "" }
          :bEditValue       := {|| if( Len( aValPrp1 ) != 0, aValPrp1[ oBrwPrp1:nArrayAt ]:lSel, .f. ) }
          :nWidth           := 16
-         :SetCheck( { "Sel16", "Nil16" } )
+         :SetCheck( { "BSEL", "Nil16" } )
       end with
 
       with object ( oBrwPrp1:AddCol() )
@@ -6090,14 +6090,14 @@ STATIC FUNCTION EdtVta( aTmp, aGet, dbfTmpVta, oBrw, bWhen, bValid, nMode, aArt 
 
       oBrwPrp2:CreateFromResource( 110 )
 
-      oBrwPrp2:bRClicked   := {|| SeleccionPropiedad( aValPrp2, oBrwPrp2, oBrwPrp2:nArrayAt ) }
+      oBrwPrp2:bLDblClick  := {|| SeleccionPropiedad( aValPrp2, oBrwPrp2, oBrwPrp2:nArrayAt ) }
 
       with object ( oBrwPrp2:AddCol() )
          :cHeader          := "S"
          :bStrData         := {|| "" }
          :bEditValue       := {|| if( Len( aValPrp2 ) != 0, aValPrp2[ oBrwPrp2:nArrayAt ]:lSel, .f. ) }
          :nWidth           := 16
-         :SetCheck( { "Sel16", "Nil16" } )
+         :SetCheck( { "BSEL", "Nil16" } )
       end with
 
       with object ( oBrwPrp2:AddCol() )
@@ -6133,16 +6133,10 @@ STATIC FUNCTION EdtVta( aTmp, aGet, dbfTmpVta, oBrw, bWhen, bValid, nMode, aArt 
       Montamos los controles para precios por propiedades----------------------
       */
 
-      REDEFINE CHECKBOX aGet[ ( dbfTmpVta )->( fieldpos( "lProProp" ) ) ] ;
-        VAR      aTmp[ ( dbfTmpVta )->( fieldpos( "lProProp" ) ) ] ;
-        ID       200 ;
-        WHEN     ( nMode != ZOOM_MODE ) ;
-        OF       oDlg
-
       REDEFINE GET aGet[ ( dbfTmpVta )->( fieldpos( "nPreCom" ) ) ] ;
          VAR      aTmp[ ( dbfTmpVta )->( fieldpos( "nPreCom" ) ) ] ;
          ID       600 ;
-         WHEN     ( !aArt[ ( dbfArticulo )->( fieldPos( "lKitArt") ) ] .and. nMode != ZOOM_MODE .and. aTmp[ ( dbfTmpVta )->( fieldpos( "lProProp" ) ) ] ) ;
+         WHEN     ( !aArt[ ( dbfArticulo )->( fieldPos( "lKitArt") ) ] .and. nMode != ZOOM_MODE ) ;
          ON CHANGE( ::lValid() ) ;
          VALID    (  aGet[ ( dbfTmpVta )->( fieldpos( "Benef1" ) ) ]:lValid(),;
                      aGet[ ( dbfTmpVta )->( fieldpos( "Benef2" ) ) ]:lValid(),;
@@ -6163,7 +6157,7 @@ STATIC FUNCTION EdtVta( aTmp, aGet, dbfTmpVta, oBrw, bWhen, bValid, nMode, aArt 
       REDEFINE CHECKBOX aGet[ ( dbfTmpVta )->( fieldpos( "lBnf1" ) ) ] ;
          VAR      aTmp[ ( dbfTmpVta )->( fieldpos( "lBnf1" ) ) ] ;
          ID       300 ;
-         WHEN     ( nMode != ZOOM_MODE .and. aTmp[ ( dbfTmpVta )->( fieldpos( "lProProp" ) ) ] ) ;
+         WHEN     ( nMode != ZOOM_MODE ) ;
          OF       oDlg
 
       REDEFINE GET aGet[ ( dbfTmpVta )->( fieldpos( "Benef1" ) ) ] ;
@@ -6171,7 +6165,7 @@ STATIC FUNCTION EdtVta( aTmp, aGet, dbfTmpVta, oBrw, bWhen, bValid, nMode, aArt 
          ID       310 ;
 			SPINNER ;
          ON CHANGE( ::lValid() ) ;
-         WHEN     ( aTmp[ ( dbfTmpVta )->( fieldpos( "lBnf1" ) ) ] .AND. nMode != ZOOM_MODE .and. aTmp[ ( dbfTmpVta )->( fieldpos( "lProProp" ) ) ] ) ;
+         WHEN     ( aTmp[ ( dbfTmpVta )->( fieldpos( "lBnf1" ) ) ] .AND. nMode != ZOOM_MODE ) ;
          VALID    (  lCalPre( oSay[ 1 ]:nAt <= 1,;
                               aTmp[ ( dbfTmpVta )->( fieldpos( "nPreCom" ) ) ],;
                               aTmp[ ( dbfTmpVta )->( fieldpos( "lBnf1"   ) ) ],;
@@ -6187,7 +6181,7 @@ STATIC FUNCTION EdtVta( aTmp, aGet, dbfTmpVta, oBrw, bWhen, bValid, nMode, aArt 
       REDEFINE COMBOBOX oSay[ 1 ] VAR cSay[ 1 ] ;
          ITEMS    aBnfSobre ;
          ID       320 ;
-         WHEN     ( nMode != ZOOM_MODE .and. aTmp[ ( dbfTmpVta )->( fieldpos( "lProProp" ) ) ] ) ;
+         WHEN     ( nMode != ZOOM_MODE ) ;
          ON CHANGE( if( aTmp[ ( dbfTmpVta )->( fieldpos( "lBnf1"  ) ) ],;
                         aGet[ ( dbfTmpVta )->( fieldpos( "Benef1" ) ) ]:lValid(),;
                         aGet[ ( dbfTmpVta )->( fieldpos( "nPreVta1") )]:lValid() ) );
@@ -6198,7 +6192,7 @@ STATIC FUNCTION EdtVta( aTmp, aGet, dbfTmpVta, oBrw, bWhen, bValid, nMode, aArt 
          ID       330 ;
          SPINNER ;
          ON CHANGE( ::lValid() ) ;
-         WHEN     ( stdCol( !aArt[ ( dbfArticulo )->( fieldpos( "lIvaInc" ) ) ], nMode ) .and. aTmp[ ( dbfTmpVta )->( fieldpos( "lProProp" ) ) ] ) ;
+         WHEN     ( stdCol( !aArt[ ( dbfArticulo )->( fieldpos( "lIvaInc" ) ) ], nMode ) ) ;
          VALID    ( CalBnfPts(   oSay[ 1 ]:nAt <= 1,;
                                  aArt[ (dbfArticulo)->( fieldpos( "lIvaInc" ) ) ],;
                                  aTmp[ ( dbfTmpVta )->( fieldpos( "nPreCom" ) ) ],;
@@ -6216,7 +6210,7 @@ STATIC FUNCTION EdtVta( aTmp, aGet, dbfTmpVta, oBrw, bWhen, bValid, nMode, aArt 
          ID       340 ;
          SPINNER ;
          ON CHANGE( ::lValid() ) ;
-         WHEN     ( stdCol( aArt[ ( dbfArticulo )->( fieldpos( "lIvaInc" ) ) ], nMode ) .and. aTmp[ ( dbfTmpVta )->( fieldpos( "lProProp" ) ) ] ) ;
+         WHEN     ( stdCol( aArt[ ( dbfArticulo )->( fieldpos( "lIvaInc" ) ) ], nMode ) ) ;
          VALID    ( CalBnfIva(   oSay[ 1 ]:nAt <= 1,;
                                  aArt[ (dbfArticulo)->( fieldpos( "lIvaInc" ) ) ],;
                                  aTmp[ ( dbfTmpVta )->( fieldpos( "nPreCom" ) ) ],;
@@ -6236,7 +6230,7 @@ STATIC FUNCTION EdtVta( aTmp, aGet, dbfTmpVta, oBrw, bWhen, bValid, nMode, aArt 
       REDEFINE CHECKBOX aGet[ ( dbfTmpVta )->( fieldpos( "lBnf2" ) ) ] ;
          VAR      aTmp[ ( dbfTmpVta )->( fieldpos( "lBnf2" ) ) ] ;
          ID       350 ;
-         WHEN     ( nMode != ZOOM_MODE .and. aTmp[ ( dbfTmpVta )->( fieldpos( "lProProp" ) ) ] ) ;
+         WHEN     ( nMode != ZOOM_MODE ) ;
          OF       oDlg
 
       REDEFINE GET aGet[ ( dbfTmpVta )->( fieldpos( "Benef2" ) ) ] ;
@@ -6244,7 +6238,7 @@ STATIC FUNCTION EdtVta( aTmp, aGet, dbfTmpVta, oBrw, bWhen, bValid, nMode, aArt 
          ID       360 ;
 			SPINNER ;
          ON CHANGE( ::lValid() ) ;
-         WHEN     ( aTmp[ ( dbfTmpVta )->( fieldpos( "lBnf2" ) ) ] .AND. nMode != ZOOM_MODE .and. aTmp[ ( dbfTmpVta )->( fieldpos( "lProProp" ) ) ] ) ;
+         WHEN     ( aTmp[ ( dbfTmpVta )->( fieldpos( "lBnf2" ) ) ] .AND. nMode != ZOOM_MODE ) ;
          VALID    ( lCalPre(   oSay[ 2 ]:nAt <= 2,;
                               aTmp[ ( dbfTmpVta )->( fieldpos( "nPreCom" ) ) ],;
                               aTmp[ ( dbfTmpVta )->( fieldpos( "lBnf2"   ) ) ],;
@@ -6260,7 +6254,7 @@ STATIC FUNCTION EdtVta( aTmp, aGet, dbfTmpVta, oBrw, bWhen, bValid, nMode, aArt 
       REDEFINE COMBOBOX oSay[ 2 ] VAR cSay[ 2 ] ;
          ITEMS    aBnfSobre ;
          ID       370 ;
-         WHEN     ( nMode != ZOOM_MODE .and. aTmp[ ( dbfTmpVta )->( fieldpos( "lProProp" ) ) ] ) ;
+         WHEN     ( nMode != ZOOM_MODE ) ;
          ON CHANGE( if( aTmp[ ( dbfTmpVta )->( fieldpos( "lBnf2"  ) ) ],;
                         aGet[ ( dbfTmpVta )->( fieldpos( "Benef2" ) ) ]:lValid(),;
                         aGet[ ( dbfTmpVta )->( fieldpos( "nPreVta2")) ]:lValid() ) );
@@ -6271,7 +6265,7 @@ STATIC FUNCTION EdtVta( aTmp, aGet, dbfTmpVta, oBrw, bWhen, bValid, nMode, aArt 
          ID       380 ;
          SPINNER ;
          ON CHANGE( ::lValid() ) ;
-         WHEN     ( stdCol( !aArt[ ( dbfArticulo )->( fieldpos( "lIvaInc" ) ) ], nMode ) .and. aTmp[ ( dbfTmpVta )->( fieldpos( "lProProp" ) ) ] ) ;
+         WHEN     ( stdCol( !aArt[ ( dbfArticulo )->( fieldpos( "lIvaInc" ) ) ], nMode ) ) ;
          VALID    ( CalBnfPts(   oSay[ 2 ]:nAt <= 2,;
                                  aArt[ (dbfArticulo)->( fieldpos( "lIvaInc" ) ) ],;
                                  aTmp[ ( dbfTmpVta )->( fieldpos( "nPreCom" ) ) ],;
@@ -6289,7 +6283,7 @@ STATIC FUNCTION EdtVta( aTmp, aGet, dbfTmpVta, oBrw, bWhen, bValid, nMode, aArt 
          ID       390 ;
          SPINNER ;
          ON CHANGE( ::lValid() ) ;
-         WHEN     ( stdCol( aArt[ ( dbfArticulo )->( fieldpos( "lIvaInc" ) ) ], nMode ) .and. aTmp[ ( dbfTmpVta )->( fieldpos( "lProProp" ) ) ] ) ;
+         WHEN     ( stdCol( aArt[ ( dbfArticulo )->( fieldpos( "lIvaInc" ) ) ], nMode ) ) ;
          VALID    ( CalBnfIva(   oSay[ 2 ]:nAt <= 2,;
                                  aArt[ (dbfArticulo)->( fieldpos( "lIvaInc" ) ) ],;
                                  aTmp[ ( dbfTmpVta )->( fieldpos( "nPreCom" ) ) ],;
@@ -6309,7 +6303,7 @@ STATIC FUNCTION EdtVta( aTmp, aGet, dbfTmpVta, oBrw, bWhen, bValid, nMode, aArt 
       REDEFINE CHECKBOX aGet[ ( dbfTmpVta )->( fieldpos( "lBnf3" ) ) ] ;
          VAR      aTmp[ ( dbfTmpVta )->( fieldpos( "lBnf3" ) ) ] ;
          ID       400 ;
-         WHEN     ( nMode != ZOOM_MODE .and. aTmp[ ( dbfTmpVta )->( fieldpos( "lProProp" ) ) ] ) ;
+         WHEN     ( nMode != ZOOM_MODE ) ;
          OF       oDlg
 
       REDEFINE GET aGet[ ( dbfTmpVta )->( fieldpos( "Benef3" ) ) ] ;
@@ -6317,7 +6311,7 @@ STATIC FUNCTION EdtVta( aTmp, aGet, dbfTmpVta, oBrw, bWhen, bValid, nMode, aArt 
          ID       410 ;
 			SPINNER ;
          ON CHANGE( ::lValid() ) ;
-         WHEN     ( aTmp[ ( dbfTmpVta )->( fieldpos( "lBnf3" ) ) ] .AND. nMode != ZOOM_MODE .and. aTmp[ ( dbfTmpVta )->( fieldpos( "lProProp" ) ) ] ) ;
+         WHEN     ( aTmp[ ( dbfTmpVta )->( fieldpos( "lBnf3" ) ) ] .AND. nMode != ZOOM_MODE ) ;
          VALID    ( lCalPre(  oSay[ 3 ]:nAt <= 3,;
                               aTmp[ ( dbfTmpVta )->( fieldpos( "nPreCom" ) ) ],;
                               aTmp[ ( dbfTmpVta )->( fieldpos( "lBnf3"   ) ) ],;
@@ -6333,7 +6327,7 @@ STATIC FUNCTION EdtVta( aTmp, aGet, dbfTmpVta, oBrw, bWhen, bValid, nMode, aArt 
       REDEFINE COMBOBOX oSay[ 3 ] VAR cSay[ 3 ] ;
          ITEMS    aBnfSobre ;
          ID       420 ;
-         WHEN     ( nMode != ZOOM_MODE .and. aTmp[ ( dbfTmpVta )->( fieldpos( "lProProp" ) ) ] ) ;
+         WHEN     ( nMode != ZOOM_MODE ) ;
          ON CHANGE( if( aTmp[ ( dbfTmpVta )->( fieldpos( "lBnf3"  ) ) ],;
                         aGet[ ( dbfTmpVta )->( fieldpos( "Benef3" ) ) ]:lValid(),;
                         aGet[ ( dbfTmpVta )->( fieldpos( "nPreVta3")) ]:lValid() ) );
@@ -6344,7 +6338,7 @@ STATIC FUNCTION EdtVta( aTmp, aGet, dbfTmpVta, oBrw, bWhen, bValid, nMode, aArt 
          ID       430 ;
          SPINNER ;
          ON CHANGE( ::lValid() ) ;
-         WHEN     ( stdCol( !aArt[ ( dbfArticulo )->( fieldpos( "lIvaInc" ) ) ], nMode ) .and. aTmp[ ( dbfTmpVta )->( fieldpos( "lProProp" ) ) ] ) ;
+         WHEN     ( stdCol( !aArt[ ( dbfArticulo )->( fieldpos( "lIvaInc" ) ) ], nMode ) ) ;
          VALID    ( CalBnfPts(   oSay[ 3 ]:nAt <= 3,;
                                  aArt[ (dbfArticulo)->( fieldpos( "lIvaInc" ) ) ],;
                                  aTmp[ ( dbfTmpVta )->( fieldpos( "nPreCom" ) ) ],;
@@ -6362,7 +6356,7 @@ STATIC FUNCTION EdtVta( aTmp, aGet, dbfTmpVta, oBrw, bWhen, bValid, nMode, aArt 
          ID       440 ;
          SPINNER ;
          ON CHANGE( ::lValid() ) ;
-         WHEN     ( stdCol( aArt[ ( dbfArticulo )->( fieldpos( "lIvaInc" ) ) ], nMode ) .and. aTmp[ ( dbfTmpVta )->( fieldpos( "lProProp" ) ) ] ) ;
+         WHEN     ( stdCol( aArt[ ( dbfArticulo )->( fieldpos( "lIvaInc" ) ) ], nMode ) ) ;
          VALID    ( CalBnfIva(   oSay[ 3 ]:nAt <= 3,;
                                  aArt[ (dbfArticulo)->( fieldpos( "lIvaInc" ) ) ],;
                                  aTmp[ ( dbfTmpVta )->( fieldpos( "nPreCom" ) ) ],;
@@ -6382,7 +6376,7 @@ STATIC FUNCTION EdtVta( aTmp, aGet, dbfTmpVta, oBrw, bWhen, bValid, nMode, aArt 
       REDEFINE CHECKBOX aGet[ ( dbfTmpVta )->( fieldpos( "lBnf4" ) ) ] ;
          VAR      aTmp[ ( dbfTmpVta )->( fieldpos( "lBnf4" ) ) ] ;
          ID       450 ;
-         WHEN     ( nMode != ZOOM_MODE .and. aTmp[ ( dbfTmpVta )->( fieldpos( "lProProp" ) ) ] ) ;
+         WHEN     ( nMode != ZOOM_MODE ) ;
          OF       oDlg
 
       REDEFINE GET aGet[ ( dbfTmpVta )->( fieldpos( "Benef4" ) ) ] ;
@@ -6390,7 +6384,7 @@ STATIC FUNCTION EdtVta( aTmp, aGet, dbfTmpVta, oBrw, bWhen, bValid, nMode, aArt 
          ID       460 ;
 			SPINNER ;
          ON CHANGE( ::lValid() ) ;
-         WHEN     ( aTmp[ ( dbfTmpVta )->( fieldpos( "lBnf4" ) ) ] .AND. nMode != ZOOM_MODE .and. aTmp[ ( dbfTmpVta )->( fieldpos( "lProProp" ) ) ] ) ;
+         WHEN     ( aTmp[ ( dbfTmpVta )->( fieldpos( "lBnf4" ) ) ] .AND. nMode != ZOOM_MODE ) ;
          VALID    ( lCalPre(   oSay[ 4 ]:nAt <= 4,;
                               aTmp[ ( dbfTmpVta )->( fieldpos( "nPreCom" ) ) ],;
                               aTmp[ ( dbfTmpVta )->( fieldpos( "lBnf4"   ) ) ],;
@@ -6406,7 +6400,7 @@ STATIC FUNCTION EdtVta( aTmp, aGet, dbfTmpVta, oBrw, bWhen, bValid, nMode, aArt 
       REDEFINE COMBOBOX oSay[ 4 ] VAR cSay[ 4 ] ;
          ITEMS    aBnfSobre ;
          ID       470 ;
-         WHEN     ( nMode != ZOOM_MODE .and. aTmp[ ( dbfTmpVta )->( fieldpos( "lProProp" ) ) ] ) ;
+         WHEN     ( nMode != ZOOM_MODE ) ;
          ON CHANGE( if( aTmp[ ( dbfTmpVta )->( fieldpos( "lBnf4"  ) ) ],;
                         aGet[ ( dbfTmpVta )->( fieldpos( "Benef4" ) ) ]:lValid(),;
                         aGet[ ( dbfTmpVta )->( fieldpos( "nPreVta4")) ]:lValid() ) );
@@ -6417,7 +6411,7 @@ STATIC FUNCTION EdtVta( aTmp, aGet, dbfTmpVta, oBrw, bWhen, bValid, nMode, aArt 
          ID       480 ;
          SPINNER ;
          ON CHANGE( ::lValid() ) ;
-         WHEN     ( stdCol( !aArt[ ( dbfArticulo )->( fieldpos( "lIvaInc" ) ) ], nMode ) .and. aTmp[ ( dbfTmpVta )->( fieldpos( "lProProp" ) ) ] ) ;
+         WHEN     ( stdCol( !aArt[ ( dbfArticulo )->( fieldpos( "lIvaInc" ) ) ], nMode ) ) ;
          VALID    ( CalBnfPts(   oSay[ 4 ]:nAt <= 4,;
                                  aArt[ (dbfArticulo)->( fieldpos( "lIvaInc" ) ) ],;
                                  aTmp[ ( dbfTmpVta )->( fieldpos( "nPreCom" ) ) ],;
@@ -6435,7 +6429,7 @@ STATIC FUNCTION EdtVta( aTmp, aGet, dbfTmpVta, oBrw, bWhen, bValid, nMode, aArt 
          ID       490 ;
          SPINNER ;
          ON CHANGE( ::lValid() ) ;
-         WHEN     ( stdCol( aArt[ ( dbfArticulo )->( fieldpos( "lIvaInc" ) ) ], nMode ) .and. aTmp[ ( dbfTmpVta )->( fieldpos( "lProProp" ) ) ] ) ;
+         WHEN     ( stdCol( aArt[ ( dbfArticulo )->( fieldpos( "lIvaInc" ) ) ], nMode ) ) ;
          VALID    ( CalBnfIva(   oSay[ 4 ]:nAt <= 4,;
                                  aArt[ (dbfArticulo)->( fieldpos( "lIvaInc" ) ) ],;
                                  aTmp[ ( dbfTmpVta )->( fieldpos( "nPreCom" ) ) ],;
@@ -6455,7 +6449,7 @@ STATIC FUNCTION EdtVta( aTmp, aGet, dbfTmpVta, oBrw, bWhen, bValid, nMode, aArt 
       REDEFINE CHECKBOX aGet[ ( dbfTmpVta )->( fieldpos( "lBnf5" ) ) ] ;
          VAR      aTmp[ ( dbfTmpVta )->( fieldpos( "lBnf5" ) ) ] ;
          ID       500 ;
-         WHEN     ( nMode != ZOOM_MODE .and. aTmp[ ( dbfTmpVta )->( fieldpos( "lProProp" ) ) ] ) ;
+         WHEN     ( nMode != ZOOM_MODE ) ;
          OF       oDlg
 
       REDEFINE GET aGet[ ( dbfTmpVta )->( fieldpos( "Benef5" ) ) ] ;
@@ -6463,7 +6457,7 @@ STATIC FUNCTION EdtVta( aTmp, aGet, dbfTmpVta, oBrw, bWhen, bValid, nMode, aArt 
          ID       510 ;
 			SPINNER ;
          ON CHANGE( ::lValid() ) ;
-         WHEN     ( aTmp[ ( dbfTmpVta )->( fieldpos( "lBnf5" ) ) ] .AND. nMode != ZOOM_MODE .and. aTmp[ ( dbfTmpVta )->( fieldpos( "lProProp" ) ) ] ) ;
+         WHEN     ( aTmp[ ( dbfTmpVta )->( fieldpos( "lBnf5" ) ) ] .AND. nMode != ZOOM_MODE ) ;
          VALID    ( lCalPre(   oSay[ 5 ]:nAt <= 5,;
                               aTmp[ ( dbfTmpVta )->( fieldpos( "nPreCom" ) ) ],;
                               aTmp[ ( dbfTmpVta )->( fieldpos( "lBnf5"   ) ) ],;
@@ -6479,7 +6473,7 @@ STATIC FUNCTION EdtVta( aTmp, aGet, dbfTmpVta, oBrw, bWhen, bValid, nMode, aArt 
       REDEFINE COMBOBOX oSay[ 5 ] VAR cSay[ 5 ] ;
          ITEMS    aBnfSobre ;
          ID       520 ;
-         WHEN     ( nMode != ZOOM_MODE .and. aTmp[ ( dbfTmpVta )->( fieldpos( "lProProp" ) ) ] ) ;
+         WHEN     ( nMode != ZOOM_MODE ) ;
          ON CHANGE( if( aTmp[ ( dbfTmpVta )->( fieldpos( "lBnf5"  ) ) ],;
                         aGet[ ( dbfTmpVta )->( fieldpos( "Benef5" ) ) ]:lValid(),;
                         aGet[ ( dbfTmpVta )->( fieldpos( "nPreVta5") )]:lValid() ) );
@@ -6490,7 +6484,7 @@ STATIC FUNCTION EdtVta( aTmp, aGet, dbfTmpVta, oBrw, bWhen, bValid, nMode, aArt 
          ID       530 ;
          SPINNER ;
          ON CHANGE( ::lValid() ) ;
-         WHEN     ( stdCol( !aArt[ ( dbfArticulo )->( fieldpos( "lIvaInc" ) ) ], nMode ) .and. aTmp[ ( dbfTmpVta )->( fieldpos( "lProProp" ) ) ] ) ;
+         WHEN     ( stdCol( !aArt[ ( dbfArticulo )->( fieldpos( "lIvaInc" ) ) ], nMode ) ) ;
          VALID    ( CalBnfPts(   oSay[ 5 ]:nAt <= 5,;
                                  aArt[ (dbfArticulo)->( fieldpos( "lIvaInc" ) ) ],;
                                  aTmp[ ( dbfTmpVta )->( fieldpos( "nPreCom" ) ) ],;
@@ -6508,7 +6502,7 @@ STATIC FUNCTION EdtVta( aTmp, aGet, dbfTmpVta, oBrw, bWhen, bValid, nMode, aArt 
          ID       540 ;
          SPINNER ;
          ON CHANGE( ::lValid() ) ;
-         WHEN     ( stdCol( aArt[ ( dbfArticulo )->( fieldpos( "lIvaInc" ) ) ], nMode ) .and. aTmp[ ( dbfTmpVta )->( fieldpos( "lProProp" ) ) ] ) ;
+         WHEN     ( stdCol( aArt[ ( dbfArticulo )->( fieldpos( "lIvaInc" ) ) ], nMode ) ) ;
          VALID    ( CalBnfIva(   oSay[ 5 ]:nAt <= 5,;
                                  aArt[ (dbfArticulo)->( fieldpos( "lIvaInc" ) ) ],;
                                  aTmp[ ( dbfTmpVta )->( fieldpos( "nPreCom" ) ) ],;
@@ -6528,7 +6522,7 @@ STATIC FUNCTION EdtVta( aTmp, aGet, dbfTmpVta, oBrw, bWhen, bValid, nMode, aArt 
       REDEFINE CHECKBOX aGet[ ( dbfTmpVta )->( fieldpos( "lBnf6" ) ) ] ;
          VAR      aTmp[ ( dbfTmpVta )->( fieldpos( "lBnf6" ) ) ] ;
          ID       550 ;
-         WHEN     ( nMode != ZOOM_MODE .and. aTmp[ ( dbfTmpVta )->( fieldpos( "lProProp" ) ) ] ) ;
+         WHEN     ( nMode != ZOOM_MODE ) ;
          OF       oDlg
 
       REDEFINE GET aGet[ ( dbfTmpVta )->( fieldpos( "Benef6" ) ) ] ;
@@ -6536,7 +6530,7 @@ STATIC FUNCTION EdtVta( aTmp, aGet, dbfTmpVta, oBrw, bWhen, bValid, nMode, aArt 
          ID       560 ;
          SPINNER ;
          ON CHANGE( ::lValid() ) ;
-         WHEN     ( aTmp[ ( dbfTmpVta )->( fieldpos( "lBnf6" ) ) ] .AND. nMode != ZOOM_MODE .and. aTmp[ ( dbfTmpVta )->( fieldpos( "lProProp" ) ) ] ) ;
+         WHEN     ( aTmp[ ( dbfTmpVta )->( fieldpos( "lBnf6" ) ) ] .AND. nMode != ZOOM_MODE ) ;
          VALID    ( lCalPre(   oSay[ 6 ]:nAt <= 6,;
                               aTmp[ ( dbfTmpVta )->( fieldpos( "nPreCom" ) ) ],;
                               aTmp[ ( dbfTmpVta )->( fieldpos( "lBnf6"   ) ) ],;
@@ -6552,7 +6546,7 @@ STATIC FUNCTION EdtVta( aTmp, aGet, dbfTmpVta, oBrw, bWhen, bValid, nMode, aArt 
       REDEFINE COMBOBOX oSay[ 6 ] VAR cSay[ 6 ] ;
          ITEMS    aBnfSobre ;
          ID       570 ;
-         WHEN     ( nMode != ZOOM_MODE .and. aTmp[ ( dbfTmpVta )->( fieldpos( "lProProp" ) ) ] ) ;
+         WHEN     ( nMode != ZOOM_MODE ) ;
          ON CHANGE( if( aTmp[ ( dbfTmpVta )->( fieldpos( "lBnf6"  ) ) ],;
                         aGet[ ( dbfTmpVta )->( fieldpos( "Benef6" ) ) ]:lValid(),;
                         aGet[ ( dbfTmpVta )->( fieldpos( "nPreVta6") )]:lValid() ) );
@@ -6563,7 +6557,7 @@ STATIC FUNCTION EdtVta( aTmp, aGet, dbfTmpVta, oBrw, bWhen, bValid, nMode, aArt 
          ID       580 ;
          SPINNER ;
          ON CHANGE( ::lValid() ) ;
-         WHEN     ( stdCol( !aArt[ ( dbfArticulo )->( fieldpos( "lIvaInc" ) ) ], nMode ) .and. aTmp[ ( dbfTmpVta )->( fieldpos( "lProProp" ) ) ] ) ;
+         WHEN     ( stdCol( !aArt[ ( dbfArticulo )->( fieldpos( "lIvaInc" ) ) ], nMode ) ) ;
          VALID    ( CalBnfPts(   oSay[ 6 ]:nAt <= 6,;
                                  aArt[ (dbfArticulo)->( fieldpos( "lIvaInc" ) ) ],;
                                  aTmp[ ( dbfTmpVta )->( fieldpos( "nPreCom" ) ) ],;
@@ -6581,7 +6575,7 @@ STATIC FUNCTION EdtVta( aTmp, aGet, dbfTmpVta, oBrw, bWhen, bValid, nMode, aArt 
          ID       590 ;
          SPINNER ;
          ON CHANGE( ::lValid() ) ;
-         WHEN     ( stdCol( aArt[ ( dbfArticulo )->( fieldpos( "lIvaInc" ) ) ], nMode ) .and. aTmp[ ( dbfTmpVta )->( fieldpos( "lProProp" ) ) ] ) ;
+         WHEN     ( stdCol( aArt[ ( dbfArticulo )->( fieldpos( "lIvaInc" ) ) ], nMode ) ) ;
          VALID    ( CalBnfIva(   oSay[ 6 ]:nAt <= 6,;
                                  aArt[ (dbfArticulo)->( fieldpos( "lIvaInc" ) ) ],;
                                  aTmp[ ( dbfTmpVta )->( fieldpos( "nPreCom" ) ) ],;
@@ -6707,58 +6701,34 @@ Static Function EndEdtVta( aValPrp1, aValPrp2, aTmp, aGet, oSay, cSay, oBrw, oDl
    local aVal2
    local nContAdd    := 0
    local nContEdt    := 0
+   local lSelPr1     := .f.
+   local lSelPr2     := .f.
 
    if nMode == APPD_MODE
 
       do case
          case Len( aValPrp1 ) != 0 .and. Len( aValPrp2 ) == 0
 
+            /*
+            Compruebo si tengo alguna seleccionada-----------------------------
+            */
+
             for each aVal1 in aValPrp1
-
                if aVal1:lsel
-
-                  if ( dbfTmpVta )->( dbSeek( aTmp[ ( dbfTmpVta )->( FieldPos( "CCODART" ) ) ] + aVal1:cCodPrp + Space( 10 ) + aVal1:cValPrp + Space( 10 ) ) )
-
-                     aTmp[ ( dbfTmpVta )->( FieldPos( "CCODPR1" ) ) ] := aVal1:cCodPrp
-                     aTmp[ ( dbfTmpVta )->( FieldPos( "CVALPR1" ) ) ] := aVal1:cValPrp
-
-                     WinGather( aTmp, , dbfTmpVta, oBrw, EDIT_MODE, , .f. )
-
-                     nContEdt++
-
-                  else
-
-                     aTmp[ ( dbfTmpVta )->( FieldPos( "CCODPR1" ) ) ] := aVal1:cCodPrp
-                     aTmp[ ( dbfTmpVta )->( FieldPos( "CVALPR1" ) ) ] := aVal1:cValPrp
-
-                     WinGather( aTmp, , dbfTmpVta, oBrw, APPD_MODE, , .f. )
-
-                     nContAdd++
-
-                  end if
-
-               end if
-
+                  lSelPr1     := .t.
+               end if   
             next
 
-            msgWait( "He añadido " + AllTrim( Str( nContAdd ) ) + " registros y he modificado " + AllTrim( Str( nContEdt ) ) + " registros", "Proceso terminado con éxito", 2 )
+            if lSelPr1
 
-            lLimpiarPantalla( aValPrp1, aValPrp2, aTmp, aGet, oBrwPrp1, oBrwPrp2, oSay, cSay, dbfTmpVta )
+               for each aVal1 in aValPrp1
 
-         case Len( aValPrp1 ) != 0 .and. Len( aValPrp2 ) != 0
+                  if aVal1:lsel
 
-            for each aVal1 in aValPrp1
-
-               for each aVal2 in aValPrp2
-
-                  if aVal1:lSel .and. aVal2:lSel
-
-                     if ( dbfTmpVta )->( dbSeek( aTmp[ ( dbfTmpVta )->( FieldPos( "CCODART" ) ) ] + aVal1:cCodPrp + aVal2:cCodPrp + aVal1:cValPrp + aVal2:cValPrp ) )
+                     if ( dbfTmpVta )->( dbSeek( aTmp[ ( dbfTmpVta )->( FieldPos( "CCODART" ) ) ] + aVal1:cCodPrp + Space( 10 ) + aVal1:cValPrp + Space( 10 ) ) )
 
                         aTmp[ ( dbfTmpVta )->( FieldPos( "CCODPR1" ) ) ] := aVal1:cCodPrp
                         aTmp[ ( dbfTmpVta )->( FieldPos( "CVALPR1" ) ) ] := aVal1:cValPrp
-                        aTmp[ ( dbfTmpVta )->( FieldPos( "CCODPR2" ) ) ] := aVal2:cCodPrp
-                        aTmp[ ( dbfTmpVta )->( FieldPos( "CVALPR2" ) ) ] := aVal2:cValPrp
 
                         WinGather( aTmp, , dbfTmpVta, oBrw, EDIT_MODE, , .f. )
 
@@ -6768,8 +6738,6 @@ Static Function EndEdtVta( aValPrp1, aValPrp2, aTmp, aGet, oSay, cSay, oBrw, oDl
 
                         aTmp[ ( dbfTmpVta )->( FieldPos( "CCODPR1" ) ) ] := aVal1:cCodPrp
                         aTmp[ ( dbfTmpVta )->( FieldPos( "CVALPR1" ) ) ] := aVal1:cValPrp
-                        aTmp[ ( dbfTmpVta )->( FieldPos( "CCODPR2" ) ) ] := aVal2:cCodPrp
-                        aTmp[ ( dbfTmpVta )->( FieldPos( "CVALPR2" ) ) ] := aVal2:cValPrp
 
                         WinGather( aTmp, , dbfTmpVta, oBrw, APPD_MODE, , .f. )
 
@@ -6781,11 +6749,202 @@ Static Function EndEdtVta( aValPrp1, aValPrp2, aTmp, aGet, oSay, cSay, oBrw, oDl
 
                next
 
-            next
+            else
+
+               if ( dbfTmpVta )->( dbSeek( aTmp[ ( dbfTmpVta )->( FieldPos( "CCODART" ) ) ] + aValPrp1[ oBrwPrp1:nArrayAt ]:cCodPrp + Space( 10 ) + aValPrp1[oBrwPrp1:nArrayAt]:cValPrp + Space( 10 ) ) )
+
+                  aTmp[ ( dbfTmpVta )->( FieldPos( "CCODPR1" ) ) ] := aValPrp1[oBrwPrp1:nArrayAt]:cCodPrp
+                  aTmp[ ( dbfTmpVta )->( FieldPos( "CVALPR1" ) ) ] := aValPrp1[oBrwPrp1:nArrayAt]:cValPrp
+
+                  WinGather( aTmp, , dbfTmpVta, oBrw, EDIT_MODE, , .f. )
+
+                  nContEdt++
+
+               else
+
+                  aTmp[ ( dbfTmpVta )->( FieldPos( "CCODPR1" ) ) ] := aValPrp1[oBrwPrp1:nArrayAt]:cCodPrp
+                  aTmp[ ( dbfTmpVta )->( FieldPos( "CVALPR1" ) ) ] := aValPrp1[oBrwPrp1:nArrayAt]:cValPrp
+
+                  WinGather( aTmp, , dbfTmpVta, oBrw, APPD_MODE, , .f. )
+
+                  nContAdd++
+
+               end if
+            
+            end if   
 
             msgWait( "He añadido " + AllTrim( Str( nContAdd ) ) + " registros y he modificado " + AllTrim( Str( nContEdt ) ) + " registros", "Proceso terminado con éxito", 2 )
 
             lLimpiarPantalla( aValPrp1, aValPrp2, aTmp, aGet, oBrwPrp1, oBrwPrp2, oSay, cSay, dbfTmpVta )
+
+         case Len( aValPrp1 ) != 0 .and. Len( aValPrp2 ) != 0
+
+            /*
+            Compruebo si tengo alguna seleccionada-----------------------------
+            */
+
+            for each aVal1 in aValPrp1
+               if aVal1:lsel
+                  lSelPr1     := .t.
+               end if   
+            next
+
+            for each aVal2 in aValPrp2
+               if aVal2:lsel
+                  lSelPr2     := .t.
+               end if   
+            next
+
+            do case
+               case lSelPr1 .and. lSelPr2
+
+                  for each aVal1 in aValPrp1
+
+                     for each aVal2 in aValPrp2
+
+                        if aVal1:lSel .and. aVal2:lSel
+
+                           if ( dbfTmpVta )->( dbSeek( aTmp[ ( dbfTmpVta )->( FieldPos( "CCODART" ) ) ] + aVal1:cCodPrp + aVal2:cCodPrp + aVal1:cValPrp + aVal2:cValPrp ) )
+
+                              aTmp[ ( dbfTmpVta )->( FieldPos( "CCODPR1" ) ) ] := aVal1:cCodPrp
+                              aTmp[ ( dbfTmpVta )->( FieldPos( "CVALPR1" ) ) ] := aVal1:cValPrp
+                              aTmp[ ( dbfTmpVta )->( FieldPos( "CCODPR2" ) ) ] := aVal2:cCodPrp
+                              aTmp[ ( dbfTmpVta )->( FieldPos( "CVALPR2" ) ) ] := aVal2:cValPrp
+
+                              WinGather( aTmp, , dbfTmpVta, oBrw, EDIT_MODE, , .f. )
+
+                              nContEdt++
+
+                           else
+
+                              aTmp[ ( dbfTmpVta )->( FieldPos( "CCODPR1" ) ) ] := aVal1:cCodPrp
+                              aTmp[ ( dbfTmpVta )->( FieldPos( "CVALPR1" ) ) ] := aVal1:cValPrp
+                              aTmp[ ( dbfTmpVta )->( FieldPos( "CCODPR2" ) ) ] := aVal2:cCodPrp
+                              aTmp[ ( dbfTmpVta )->( FieldPos( "CVALPR2" ) ) ] := aVal2:cValPrp
+
+                              WinGather( aTmp, , dbfTmpVta, oBrw, APPD_MODE, , .f. )
+
+                              nContAdd++
+
+                           end if
+
+                        end if
+
+                     next
+
+                  next
+
+                  msgWait( "He añadido " + AllTrim( Str( nContAdd ) ) + " registros y he modificado " + AllTrim( Str( nContEdt ) ) + " registros", "Proceso terminado con éxito", 2 )
+
+                  lLimpiarPantalla( aValPrp1, aValPrp2, aTmp, aGet, oBrwPrp1, oBrwPrp2, oSay, cSay, dbfTmpVta )
+
+               case !lSelPr1 .and. lSelPr2
+
+                  for each aVal2 in aValPrp2
+
+                     if aVal2:lSel
+
+                        if ( dbfTmpVta )->( dbSeek( aTmp[ ( dbfTmpVta )->( FieldPos( "CCODART" ) ) ] + aValPrp1[oBrwPrp1:nArrayAt]:cCodPrp + aVal2:cCodPrp + aValPrp1[oBrwPrp1:nArrayAt]:cValPrp + aVal2:cValPrp ) )
+
+                           aTmp[ ( dbfTmpVta )->( FieldPos( "CCODPR1" ) ) ] := aValPrp1[oBrwPrp1:nArrayAt]:cCodPrp
+                           aTmp[ ( dbfTmpVta )->( FieldPos( "CVALPR1" ) ) ] := aValPrp1[oBrwPrp1:nArrayAt]:cValPrp
+                           aTmp[ ( dbfTmpVta )->( FieldPos( "CCODPR2" ) ) ] := aVal2:cCodPrp
+                           aTmp[ ( dbfTmpVta )->( FieldPos( "CVALPR2" ) ) ] := aVal2:cValPrp
+
+                           WinGather( aTmp, , dbfTmpVta, oBrw, EDIT_MODE, , .f. )
+
+                           nContEdt++
+
+                        else
+
+                           aTmp[ ( dbfTmpVta )->( FieldPos( "CCODPR1" ) ) ] := aValPrp1[oBrwPrp1:nArrayAt]:cCodPrp
+                           aTmp[ ( dbfTmpVta )->( FieldPos( "CVALPR1" ) ) ] := aValPrp1[oBrwPrp1:nArrayAt]:cValPrp
+                           aTmp[ ( dbfTmpVta )->( FieldPos( "CCODPR2" ) ) ] := aVal2:cCodPrp
+                           aTmp[ ( dbfTmpVta )->( FieldPos( "CVALPR2" ) ) ] := aVal2:cValPrp
+
+                           WinGather( aTmp, , dbfTmpVta, oBrw, APPD_MODE, , .f. )
+
+                           nContAdd++
+
+                        end if
+
+                     end if
+
+                  next
+
+                  msgWait( "He añadido " + AllTrim( Str( nContAdd ) ) + " registros y he modificado " + AllTrim( Str( nContEdt ) ) + " registros", "Proceso terminado con éxito", 2 )
+
+                  lLimpiarPantalla( aValPrp1, aValPrp2, aTmp, aGet, oBrwPrp1, oBrwPrp2, oSay, cSay, dbfTmpVta )
+
+               case lSelPr1 .and. !lSelPr2
+
+                  for each aVal1 in aValPrp1
+
+                     if aVal1:lSel
+
+                        if ( dbfTmpVta )->( dbSeek( aTmp[ ( dbfTmpVta )->( FieldPos( "CCODART" ) ) ] + aVal1:cCodPrp + aValPrp2[oBrwPrp2:nArrayAt]:cCodPrp + aVal1:cValPrp + aValPrp2[oBrwPrp2:nArrayAt]:cValPrp ) )
+
+                           aTmp[ ( dbfTmpVta )->( FieldPos( "CCODPR1" ) ) ] := aVal1:cCodPrp
+                           aTmp[ ( dbfTmpVta )->( FieldPos( "CVALPR1" ) ) ] := aVal1:cValPrp
+                           aTmp[ ( dbfTmpVta )->( FieldPos( "CCODPR2" ) ) ] := aValPrp2[oBrwPrp2:nArrayAt]:cCodPrp
+                           aTmp[ ( dbfTmpVta )->( FieldPos( "CVALPR2" ) ) ] := aValPrp2[oBrwPrp2:nArrayAt]:cValPrp
+
+                           WinGather( aTmp, , dbfTmpVta, oBrw, EDIT_MODE, , .f. )
+
+                           nContEdt++
+
+                        else
+
+                           aTmp[ ( dbfTmpVta )->( FieldPos( "CCODPR1" ) ) ] := aVal1:cCodPrp
+                           aTmp[ ( dbfTmpVta )->( FieldPos( "CVALPR1" ) ) ] := aVal1:cValPrp
+                           aTmp[ ( dbfTmpVta )->( FieldPos( "CCODPR2" ) ) ] := aValPrp2[oBrwPrp2:nArrayAt]:cCodPrp
+                           aTmp[ ( dbfTmpVta )->( FieldPos( "CVALPR2" ) ) ] := aValPrp2[oBrwPrp2:nArrayAt]:cValPrp
+
+                           WinGather( aTmp, , dbfTmpVta, oBrw, APPD_MODE, , .f. )
+
+                           nContAdd++
+
+                        end if
+
+                     end if
+
+                  next
+
+                  msgWait( "He añadido " + AllTrim( Str( nContAdd ) ) + " registros y he modificado " + AllTrim( Str( nContEdt ) ) + " registros", "Proceso terminado con éxito", 2 )
+
+                  lLimpiarPantalla( aValPrp1, aValPrp2, aTmp, aGet, oBrwPrp1, oBrwPrp2, oSay, cSay, dbfTmpVta )
+
+               case !lSelPr1 .and. !lSelPr2
+
+                  if ( dbfTmpVta )->( dbSeek( aTmp[ ( dbfTmpVta )->( FieldPos( "CCODART" ) ) ] + aValPrp1[oBrwPrp1:nArrayAt]:cCodPrp + aValPrp2[oBrwPrp2:nArrayAt]:cCodPrp + aValPrp1[oBrwPrp1:nArrayAt]:cValPrp + aValPrp2[oBrwPrp2:nArrayAt]:cValPrp ) )
+
+                     aTmp[ ( dbfTmpVta )->( FieldPos( "CCODPR1" ) ) ] := aValPrp1[oBrwPrp1:nArrayAt]:cCodPrp
+                     aTmp[ ( dbfTmpVta )->( FieldPos( "CVALPR1" ) ) ] := aValPrp1[oBrwPrp1:nArrayAt]:cValPrp
+                     aTmp[ ( dbfTmpVta )->( FieldPos( "CCODPR2" ) ) ] := aValPrp2[oBrwPrp2:nArrayAt]:cCodPrp
+                     aTmp[ ( dbfTmpVta )->( FieldPos( "CVALPR2" ) ) ] := aValPrp2[oBrwPrp2:nArrayAt]:cValPrp
+
+                     WinGather( aTmp, , dbfTmpVta, oBrw, EDIT_MODE, , .f. )
+
+                     nContEdt++
+
+                  else
+
+                     aTmp[ ( dbfTmpVta )->( FieldPos( "CCODPR1" ) ) ] := aValPrp1[oBrwPrp1:nArrayAt]:cCodPrp
+                     aTmp[ ( dbfTmpVta )->( FieldPos( "CVALPR1" ) ) ] := aValPrp1[oBrwPrp1:nArrayAt]:cValPrp
+                     aTmp[ ( dbfTmpVta )->( FieldPos( "CCODPR2" ) ) ] := aValPrp2[oBrwPrp2:nArrayAt]:cCodPrp
+                     aTmp[ ( dbfTmpVta )->( FieldPos( "CVALPR2" ) ) ] := aValPrp2[oBrwPrp2:nArrayAt]:cValPrp
+
+                     WinGather( aTmp, , dbfTmpVta, oBrw, APPD_MODE, , .f. )
+
+                     nContAdd++
+
+                  end if
+
+                  msgWait( "He añadido " + AllTrim( Str( nContAdd ) ) + " registros y he modificado " + AllTrim( Str( nContEdt ) ) + " registros", "Proceso terminado con éxito", 2 )
+
+                  lLimpiarPantalla( aValPrp1, aValPrp2, aTmp, aGet, oBrwPrp1, oBrwPrp2, oSay, cSay, dbfTmpVta )   
+
+            end case   
 
       end case
 
@@ -15466,7 +15625,6 @@ Function aItmVta()
    aAdd( aBase, { "nPreIva4",  "N", 16, 6, "Precio de venta " + cImp() + " incl. 4"  , "",                  "", "( cDbfArt )", nil } )
    aAdd( aBase, { "nPreIva5",  "N", 16, 6, "Precio de venta " + cImp() + " incl. 5"  , "",                  "", "( cDbfArt )", nil } )
    aAdd( aBase, { "nPreIva6",  "N", 16, 6, "Precio de venta " + cImp() + " incl. 6"  , "",                  "", "( cDbfArt )", nil } )
-   aAdd( aBase, { "lProProp",  "L",  1, 0, "Lógico precio por propiedades"           , "",                  "", "( cDbfArt )", nil } )
    aAdd( aBase, { "cImgWeb",   "C",250, 0, "Imagen para la web de estas propiedades" , "",                  "", "( cDbfArt )", nil } )
    aAdd( aBase, { "cToolTip",  "C",250, 0, "Tooltip para las imagenes de la web"     , "",                  "", "( cDbfArt )", nil } )
    aAdd( aBase, { "cCodImgWeb","N", 11, 0, "Código de la imagen para la web"         , "",                  "", "( cDbfArt )", 0 } )
