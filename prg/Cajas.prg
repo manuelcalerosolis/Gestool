@@ -3231,9 +3231,6 @@ Function SelectCajas()
    local oDlg
    local oBrw
    local oBmp
-   local oBrush
-   local oGetPassword
-   local cGetPassword   := Space( 10 )
    local oGetBuscar
    local cGetBuscar     := Space( 100 )
    local oCbxOrden
@@ -3243,23 +3240,20 @@ Function SelectCajas()
       return .f.
    end if
 
-   DEFINE BRUSH oBrush COLOR Rgb( 255, 255, 255 )
-
    DEFINE DIALOG oDlg ;
       RESOURCE    "SelectItem" ;
-      TITLE       "Seleccionar caja" ;
-      BRUSH       oBrush
+      TITLE       "Seleccionar caja"
 
       REDEFINE BITMAP oBmp ;
-         RESOURCE "CASHIER_48" ;
+         RESOURCE "Cashier_48_alpha" ;
          ID       300;
          OF       oDlg
 
       REDEFINE GET oGetBuscar ;
          VAR      cGetBuscar;
          ID       100 ;
-         ON CHANGE( AutoSeek( nKey, nFlags, Self, oBrw, dbfCajT, nil, nil, .f. ) );
-         BITMAP   "FIND" ;
+         ON CHANGE( AutoSeek( nKey, nFlags, Self, oBrw, dbfCajT, nil, nil, .f. ) ); //, msgAlert( ( dbfCajT )->( OrdSetFocus() ) ) );
+         BITMAP   "Find" ;
          OF       oDlg
 
       REDEFINE COMBOBOX oCbxOrden ;
@@ -3318,7 +3312,7 @@ Function SelectCajas()
       oUser():cCaja( ( dbfCajT )->cCodCaj )
 
       if !Empty( cCajonEnCaja( ( dbfCajT )->cCodCaj, dbfCajT ) )
-         oUser():oCajon      := TCajon():Create( cCajonEnCaja( ( dbfCajT )->cCodCaj, dbfCajT ) )
+         oUser():oCajon    := TCajon():Create( cCajonEnCaja( ( dbfCajT )->cCodCaj, dbfCajT ) )
       end if
 
       ChkTurno()
@@ -3335,10 +3329,6 @@ Function SelectCajas()
 
    if !Empty( oBmp )
       oBmp:End()
-   end if
-
-   if oBrush != nil
-      oBrush:End()
    end if
 
 RETURN ( oDlg:nResult == IDOK )

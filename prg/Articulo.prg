@@ -949,6 +949,15 @@ Function Articulo( oMenuItem, oWnd, bOnInit )
       end with
 
       with object ( oWndBrw:AddXCol() )
+         :cHeader          := "Fabricante"
+         :cSortOrder       := "cCodFab"
+         :bStrData         := {|| RetFld( ( dbfArticulo )->cCodFab, oFabricante:GetAlias() ) }
+         :nWidth           := 140
+         AddResourceTipoTemporada( hb_QWith() ) 
+         :lHide            := .t. 
+      end with
+
+      with object ( oWndBrw:AddXCol() )
          :cHeader          := "Stocks"
          :bStrData         := {|| Trans( oStock:nTotStockAct( ( dbfArticulo )->Codigo, , , , , lEscandallo( dbfArticulo ), ( dbfArticulo )->nKitStk, ( dbfArticulo )->nCtlStock ), cPicUnd ) }
          :nWidth           := 80
@@ -2053,10 +2062,11 @@ STATIC FUNCTION EdtRec( aTmp, aGet, dbfArticulo, oBrw, bWhen, bValid, nMode )
          PICTURE  cPouDiv ;
          OF       fldPrecios
 
+//         ON CHANGE( ::lValid() ) ;
+
       REDEFINE GET aGet[ ( dbfArticulo )->( fieldpos( "PVTAIVA1" ) ) ] ;
          VAR      aTmp[ ( dbfArticulo )->( fieldpos( "PVTAIVA1" ) ) ] ;
          ID       180 ;
-         ON CHANGE( ::lValid() ) ;
          WHEN     ( stdCol( aTmp[ ( dbfArticulo )->( fieldpos( "lIvaInc" ) ) ], nMode ) ) ;
          VALID    ( CalBnfIva(   oSay[ 11 ]:nAt <= 1,;
                                  aTmp[ ( dbfArticulo )->( fieldpos( "lIvaInc" ) ) ],;
@@ -2135,7 +2145,6 @@ STATIC FUNCTION EdtRec( aTmp, aGet, dbfArticulo, oBrw, bWhen, bValid, nMode )
    REDEFINE GET   aGet[ ( dbfArticulo )->( fieldpos( "PVTAIVA2" ) ) ] ;
          VAR      aTmp[ ( dbfArticulo )->( fieldpos( "PVTAIVA2" ) ) ] ;
 			ID 		220 ;
-         ON CHANGE( ::lValid() ) ;
          WHEN     ( stdCol( aTmp[ ( dbfArticulo )->( fieldpos( "LIVAINC" ) ) ], nMode ) ) ;
          VALID    ( CalBnfIva(   oSay[ 12 ]:nAt <= 1,;
                                  aTmp[ ( dbfArticulo )->( fieldpos( "LIVAINC"  ) ) ],;
@@ -2196,7 +2205,6 @@ STATIC FUNCTION EdtRec( aTmp, aGet, dbfArticulo, oBrw, bWhen, bValid, nMode )
    REDEFINE GET   aGet[ ( dbfArticulo )->( fieldpos( "PVENTA3" ) ) ] ;
          VAR      aTmp[ ( dbfArticulo )->( fieldpos( "PVENTA3" ) ) ] ;
          ID       250 ;
-         ON CHANGE( ::lValid() ) ;
          WHEN     ( stdCol( !aTmp[ ( dbfArticulo )->( fieldpos( "LIVAINC" ) ) ], nMode ) ) ;
          VALID    ( CalBnfPts(   oSay[ 13 ]:nAt <= 1,;
                                  aTmp[ ( dbfArticulo )->( fieldpos( "LIVAINC"  ) ) ],;
@@ -2214,7 +2222,6 @@ STATIC FUNCTION EdtRec( aTmp, aGet, dbfArticulo, oBrw, bWhen, bValid, nMode )
    REDEFINE GET   aGet[ ( dbfArticulo )->( fieldpos( "PVTAIVA3" ) ) ] ;
          VAR      aTmp[ ( dbfArticulo )->( fieldpos( "PVTAIVA3" ) ) ] ;
          ID       260 ;
-         ON CHANGE( ::lValid() ) ;
          WHEN     ( stdCol( aTmp[ ( dbfArticulo )->( fieldpos( "LIVAINC" ) ) ], nMode ) ) ;
          VALID    ( CalBnfIva(   oSay[ 13 ]:nAt <= 1,;
                                  aTmp[ ( dbfArticulo )->( fieldpos( "LIVAINC"  ) ) ],;
@@ -2293,7 +2300,6 @@ STATIC FUNCTION EdtRec( aTmp, aGet, dbfArticulo, oBrw, bWhen, bValid, nMode )
    REDEFINE GET   aGet[ ( dbfArticulo )->( fieldpos( "PVTAIVA4" ) ) ];
          VAR      aTmp[ ( dbfArticulo )->( fieldpos( "PVTAIVA4" ) ) ] ;
          ID       300 ;
-         ON CHANGE( ::lValid() ) ;
          WHEN     ( stdCol( aTmp[ ( dbfArticulo )->( fieldpos( "LIVAINC" ) ) ], nMode ) ) ;
          VALID    ( CalBnfIva(   oSay[ 14 ]:nAt <= 1,;
                                  aTmp[ ( dbfArticulo )->( fieldpos( "LIVAINC"  ) ) ],;
@@ -2372,7 +2378,6 @@ STATIC FUNCTION EdtRec( aTmp, aGet, dbfArticulo, oBrw, bWhen, bValid, nMode )
    REDEFINE GET   aGet[ ( dbfArticulo )->( fieldpos( "PVTAIVA5" ) ) ] ;
          VAR      aTmp[ ( dbfArticulo )->( fieldpos( "PVTAIVA5" ) ) ] ;
          ID       340 ;
-         ON CHANGE( ::lValid() ) ;
          WHEN     ( stdCol( aTmp[ ( dbfArticulo )->( fieldpos( "LIVAINC" ) ) ], nMode ) ) ;
          VALID    ( CalBnfIva(   oSay[ 15 ]:nAt <= 1,;
                                  aTmp[ ( dbfArticulo )->( fieldpos( "LIVAINC"  ) ) ],;
@@ -2452,7 +2457,6 @@ STATIC FUNCTION EdtRec( aTmp, aGet, dbfArticulo, oBrw, bWhen, bValid, nMode )
    REDEFINE GET   aGet[ ( dbfArticulo )->( fieldpos( "PVTAIVA6" ) ) ] ;
          VAR      aTmp[ ( dbfArticulo )->( fieldpos( "PVTAIVA6" ) ) ] ;
          ID       380 ;
-         ON CHANGE( ::lValid() ) ;
          WHEN     ( stdCol( aTmp[ ( dbfArticulo )->( fieldpos( "LIVAINC" ) ) ], nMode ) ) ;
          VALID    ( CalBnfIva(   oSay[ 16 ]:nAt <= 1,;
                                  aTmp[ ( dbfArticulo )->( fieldpos( "LIVAINC"  ) ) ],;

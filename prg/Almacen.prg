@@ -876,7 +876,6 @@ Function SelectAlmacen()
    local oDlg
    local oBrw
    local oBmp
-   local oBrush
    local oGetBuscar
    local cGetBuscar     := Space( 100 )
    local oCbxOrden
@@ -886,15 +885,12 @@ Function SelectAlmacen()
       return .f.
    end if
 
-   DEFINE BRUSH oBrush COLOR Rgb( 255, 255, 255 )
-
    DEFINE DIALOG oDlg ;
-      RESOURCE    "SELECTITEM" ;
+      RESOURCE    "SelectItem" ;
       TITLE       "Seleccionar almacén" ;
-      BRUSH       oBrush
 
       REDEFINE BITMAP oBmp ;
-         RESOURCE "PACKAGE_48" ;
+         RESOURCE "package_48_alpha" ;
          ID       300;
          OF       oDlg
 
@@ -924,7 +920,6 @@ Function SelectAlmacen()
          :cHeader          := "Código"
          :bEditValue       := {|| ( dbfAlmT )->cCodAlm }
          :cSortOrder       := "cCodAlm"
-         :bLClickHeader    := {| nMRow, nMCol, nFlags, oCol | oCbxOrden:Set( oCol:cHeader ) }
          :nWidth           := 40
       end with
 
@@ -932,7 +927,6 @@ Function SelectAlmacen()
          :cHeader          := "Nombre"
          :bEditValue       := {|| ( dbfAlmT )->cNomAlm }
          :cSortOrder       := "cNomAlm"
-         :bLClickHeader    := {| nMRow, nMCol, nFlags, oCol | oCbxOrden:Set( oCol:cHeader ) }
          :nWidth           := 200
       end with
 
@@ -967,10 +961,6 @@ Function SelectAlmacen()
 
    if oBmp != nil
       oBmp:End()
-   end if
-
-   if oBrush != nil
-      oBrush:End()
    end if
 
 RETURN ( oDlg:nResult == IDOK )

@@ -7980,7 +7980,7 @@ Function SelectDelegacion()
          :cHeader          := "Nombre"
          :cSortOrder       := "cNomDlg"
          :bEditValue       := {|| ( dbfDlg )->cNomDlg }
-         :nWidth           := 260
+         :nWidth           := 160
       end with
 
       oBrw:bLDblClick      := {|| oDlg:end( IDOK ) }
