@@ -6352,6 +6352,10 @@ Method nRiesgo( cCodigoCliente )
       Return ( nRiesgo )
    end if
 
+   if AllTrim( cCodigoCliente ) == AllTrim( cDefCli() )
+      Return ( nRiesgo )
+   end if
+
    oBlock            := ErrorBlock( {| oError | ApoloBreak( oError ) } )
    BEGIN SEQUENCE
 
