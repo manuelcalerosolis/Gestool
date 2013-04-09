@@ -1818,11 +1818,18 @@ STATIC FUNCTION EdtRec( aTmp, aGet, dbfArticulo, oBrw, bWhen, bValid, nMode )
          OF       fldGeneral
 
    /*
-   REDEFINE GET   aTmp[ ( dbfArticulo )->( fieldpos( "CDESCMD" ) ) ] ;
-         ID       265 ;
+   Lote------------------------------------------------------------------------
+   */
+
+   REDEFINE CHECKBOX aTmp[ ( dbfArticulo )->( fieldpos( "lLote" ) ) ] ;
+         ID       600 ;
          WHEN     ( nMode != ZOOM_MODE ) ;
          OF       fldGeneral
-   */
+
+   REDEFINE GET aTmp[ ( dbfArticulo )->( fieldpos( "cLote" ) ) ] ;
+         ID       610 ;
+         WHEN     ( nMode != ZOOM_MODE .AND. aTmp[ ( dbfArticulo )->( fieldpos( "lLote" ) ) ] );
+         OF       fldGeneral
 
    REDEFINE GET   aGet[ ( dbfArticulo )->( fieldpos( "cImagen" ) ) ] ;
          VAR      aTmp[ ( dbfArticulo )->( fieldpos( "cImagen" ) ) ] ;
@@ -3117,16 +3124,6 @@ STATIC FUNCTION EdtRec( aTmp, aGet, dbfArticulo, oBrw, bWhen, bValid, nMode )
 
       aGet[ ( dbfArticulo )->( fieldpos( "cCodSec" ) ) ]:bValid   := {|| oSeccion:Existe( aGet[ ( dbfArticulo )->( fieldpos( "cCodSec" ) ) ], aGet[ ( dbfArticulo )->( fieldpos( "cCodSec" ) ) ]:oHelpText, "cDesSec", .t., .t., "0" ) }
       aGet[ ( dbfArticulo )->( fieldpos( "cCodSec" ) ) ]:bHelp    := {|| oSeccion:Buscar( aGet[ ( dbfArticulo )->( fieldpos( "cCodSec" ) ) ] ) }
-
-   REDEFINE CHECKBOX aTmp[ ( dbfArticulo )->( fieldpos( "LLOTE" ) ) ] ;
-      ID       220 ;
-      WHEN     ( nMode != ZOOM_MODE ) ;
-      OF       fldLogistica
-
-   REDEFINE GET aTmp[ ( dbfArticulo )->( fieldpos( "cLote" ) ) ] ;
-      ID       230 ;
-      WHEN     ( nMode != ZOOM_MODE .AND. aTmp[ ( dbfArticulo )->( fieldpos( "lLote" ) ) ] );
-      OF       fldLogistica
 
    REDEFINE GET aGet[ ( dbfArticulo )->( fieldpos( "NDURACION" ) ) ] ;
       VAR      aTmp[ ( dbfArticulo )->( fieldpos( "NDURACION" ) ) ] ;

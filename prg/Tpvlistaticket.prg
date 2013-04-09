@@ -689,6 +689,8 @@ Return .t.
 
 METHOD OnClickTodos() CLASS TpvListaTicket
 
+   msgAlert( "OnClickTodos")
+
    CursorWait()
 
    ::oBtnAbiertos:UnSelected()
@@ -700,7 +702,11 @@ METHOD OnClickTodos() CLASS TpvListaTicket
    ::oBtnLstLlevar:UnSelected()
    ::oBtnLstEncargar:UnSelected()
 
-   ::oSender:oTiketCabecera:IdxDelete( cCurUsr(), GetFileNoExt( ::oSender:oTiketCabecera:cFile ) )
+   msgAlert( ::oSender:oTiketCabecera:cFile, "::oSender:oTiketCabecera:cFile" )
+
+   if file( ::oSender:oTiketCabecera:cFile )
+      ::oSender:oTiketCabecera:IdxDelete( cCurUsr(), GetFileNoExt( ::oSender:oTiketCabecera:cFile ) )
+   end if 
 
    ::oSender:oTiketCabecera:OrdSetFocus( "dFecTik" )
    ::oSender:oTiketCabecera:GoTop()
