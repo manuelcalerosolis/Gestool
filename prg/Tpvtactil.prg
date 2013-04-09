@@ -208,6 +208,9 @@ CLASS TpvTactil
    DATA oBtnLineasComentarios
    DATA oBtnLineasEscandallos
 
+   DATA oBtnPreviewDocumento
+   DATA oBtnPrintDocumento  
+
    DATA oOfficeBar
    DATA oOfficeBarDividirMesas
 
@@ -2548,10 +2551,11 @@ METHOD Resource() CLASS TpvTactil
    Botones para acciones de las familias------------------------------------
    */
 
-   // ::oBtnFamiliasTop    := TButtonBmp():ReDefine( 301, {|| ::oBrwFamilias:GoTop(),    ::oBrwFamilias:SelectOne() }, ::oDlg, , , .f., , , , .f., "Navigate_top_32" )
-   ::oBtnFamiliasUp     := TButtonBmp():ReDefine( 302, {|| ::oBrwFamilias:PageUp() },     ::oDlg, , , .f., , , , .f., "Navigate_up2" )
-   ::oBtnFamiliasDown   := TButtonBmp():ReDefine( 303, {|| ::oBrwFamilias:PageDown() },   ::oDlg, , , .f., , , , .f., "Navigate_down2" )
-   //::oBtnFamiliasEnd    := TButtonBmp():ReDefine( 304, {|| ::oBrwFamilias:GoBottom(), ::oBrwFamilias:SelectOne() }, ::oDlg, , , .f., , , , .f., "Navigate_end_32" )
+   ::oBtnFamiliasUp              := TButtonBmp():ReDefine( 302, {|| ::oBrwFamilias:PageUp() },     ::oDlg, , , .f., , , , .f., "Navigate_up2" )
+   ::oBtnFamiliasDown            := TButtonBmp():ReDefine( 303, {|| ::oBrwFamilias:PageDown() },   ::oDlg, , , .f., , , , .f., "Navigate_down2" )
+   
+   ::oBtnPreviewDocumento        := TButtonBmp():ReDefine( 304, {|| ::PrevisualizaTicket() }, ::oDlg, , , .f., , , , .f., "Prev1_32" )
+   ::oBtnPrintDocumento          := TButtonBmp():ReDefine( 305, {|| ::ImprimeTicket() }, ::oDlg, , , .f., , , , .f., "Imp32" )
 
    /*
    TViewImage de Articulos-----------------------------------------------------
@@ -3219,6 +3223,9 @@ METHOD ResizedResource() CLASS TpvTactil
 
    ::oBtnFamiliasUp:Move( ::oBtnFamiliasUp:nTop + nDialogHeight, ::oBtnFamiliasUp:nLeft + nDialogWidth, , , .f. )
    ::oBtnFamiliasDown:Move( ::oBtnFamiliasDown:nTop + nDialogHeight, ::oBtnFamiliasDown:nLeft + nDialogWidth, , , .f. )
+
+   ::oBtnPreviewDocumento:Move( ::oBtnPreviewDocumento:nTop + nDialogHeight, ::oBtnPreviewDocumento:nLeft + nDialogWidth, , , .f. )
+   ::oBtnPrintDocumento:Move( ::oBtnPrintDocumento:nTop + nDialogHeight, ::oBtnPrintDocumento:nLeft + nDialogWidth, , , .f. )
 
    ::oGetUnidades:Move( ::oGetUnidades:nTop + nDialogHeight, ::oGetUnidades:nLeft + nDialogWidth, , , .f. )
 
@@ -6772,8 +6779,11 @@ METHOD SetCalculadora() CLASS TpvTactil
 
       ::oGetUnidades:Move(       nGetUnidadesTop + calcDistance, , , , .t. )
 
-      ::oBtnFamiliasUp:Move(     nBtnFamiliasTop + calcDistance, , , , .t. )
-      ::oBtnFamiliasDown:Move(   nBtnFamiliasTop + calcDistance, , , , .t. )
+      ::oBtnFamiliasUp:Move(        nBtnFamiliasTop + calcDistance, , , , .t. )
+      ::oBtnFamiliasDown:Move(      nBtnFamiliasTop + calcDistance, , , , .t. )
+
+      ::oBtnPreviewDocumento:Move(  nBtnFamiliasTop + calcDistance, , , , .t. )
+      ::oBtnPrintDocumento:Move(    nBtnFamiliasTop + calcDistance, , , , .t. )
 
    else
 
@@ -6783,8 +6793,11 @@ METHOD SetCalculadora() CLASS TpvTactil
 
       ::oGetUnidades:Move(       nGetUnidadesTop - calcDistance, , , , .t. )
 
-      ::oBtnFamiliasUp:Move(     nBtnFamiliasTop - calcDistance, , , , .t. )
-      ::oBtnFamiliasDown:Move(   nBtnFamiliasTop - calcDistance, , , , .t. )
+      ::oBtnFamiliasUp:Move(        nBtnFamiliasTop - calcDistance, , , , .t. )
+      ::oBtnFamiliasDown:Move(      nBtnFamiliasTop - calcDistance, , , , .t. )
+
+      ::oBtnPreviewDocumento:Move(  nBtnFamiliasTop - calcDistance, , , , .t. )
+      ::oBtnPrintDocumento:Move(    nBtnFamiliasTop - calcDistance, , , , .t. )
 
    end if
 
@@ -7059,7 +7072,6 @@ METHOD BuildReport() CLASS TpvTactil
       do case
          case ::nDispositivo == IS_SCREEN
 
-            ::oFastReport:SetModal( .t. )
             ::oFastReport:ShowPreparedReport()
 
          case ::nDispositivo == IS_PRINTER
@@ -7086,10 +7098,7 @@ Return .t.
 
 //---------------------------------------------------------------------------//
 
-METHOD DataReport( lComanda, lAnulacion ) CLASS TpvTactil
-
-   DEFAULT lComanda     := .f.
-   DEFAULT lAnulacion   := .f.
+METHOD DataReport() CLASS TpvTactil
 
    /*
    Zona de datos------------------------------------------------------------

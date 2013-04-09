@@ -358,7 +358,7 @@ FONT 8, "MS Sans Serif"
   CONTROL "Código de barras", -1, "Button", BS_GROUPBOX, 382, 29, 108, 234
   CONTROL "", -1, "Button", BS_GROUPBOX, 44, 67, 336, 69
   CONTROL "", -1, "Button", BS_GROUPBOX, 44, 176, 336, 87
-  CONTROL "Propiedades", -1, "Button", BS_GROUPBOX, 44, 138, 336, 37
+  CONTROL "Propiedades", -1, "Button", BS_GROUPBOX, 44, 138, 208, 37
   CONTROL "", 110, "Edit", WS_BORDER|WS_TABSTOP, 98, 39, 76, 11
   CONTROL "", 130, "Edit", ES_AUTOHSCROLL|WS_BORDER|WS_TABSTOP, 98, 51, 279, 11
   CONTROL "Añ&d [F2]", 300, "Button", WS_TABSTOP, 387, 39, 33, 14
@@ -377,10 +377,12 @@ FONT 8, "MS Sans Serif"
   CONTROL "", 357, "TBitmap", 0x00800000, 363, 110, 14, 11
   CONTROL "", 390, "Edit", ES_AUTOHSCROLL|WS_BORDER|WS_TABSTOP, 98, 122, 56, 11
   CONTROL "", 391, "Edit", WS_BORDER, 156, 122, 221, 11
-  CONTROL "Convertir unidades", 280, "Button", BS_AUTOCHECKBOX|WS_TABSTOP, 49, 149, 73, 10
+  CONTROL "Convertir unidades", 280, "Button", BS_AUTOCHECKBOX|WS_TABSTOP, 49, 148, 73, 10
   CONTROL "Obsoleto", 139, "Button", BS_AUTOCHECKBOX|WS_TABSTOP, 49, 161, 44, 10
-  CONTROL "Solicitar número de serie", 136, "Button", BS_AUTOCHECKBOX|WS_TABSTOP, 157, 149, 90, 10
+  CONTROL "Solicitar número de serie", 136, "Button", BS_AUTOCHECKBOX|WS_TABSTOP, 157, 148, 90, 10
   CONTROL "Autoserializar", 138, "Button", BS_AUTOCHECKBOX|WS_TABSTOP, 169, 161, 55, 10
+  CONTROL "Solicitar número de lote", 600, "Button", BS_AUTOCHECKBOX|WS_TABSTOP, 262, 148, 88, 10
+  CONTROL "", 610, "Edit", WS_BORDER|WS_TABSTOP, 297, 160, 80, 11
   CONTROL "Incluir en táctil", 230, "Button", BS_AUTOCHECKBOX|WS_TABSTOP, 49, 182, 59, 10
   CONTROL "", 225, "Edit", ES_RIGHT|WS_VSCROLL|WS_BORDER|WS_TABSTOP, 98, 193, 40, 11
   CONTROL "", 260, "Edit", WS_BORDER|WS_TABSTOP, 98, 206, 279, 11
@@ -401,6 +403,8 @@ FONT 8, "MS Sans Serif"
   CONTROL "Temporada", -1, "Static", WS_GROUP, 49, 113, 41, 8
   CONTROL "", 500, "TBitmap", 0x0000020e, 4, 3, 34, 30, 0x00000020
   CONTROL "Datos generales del artículo", -1, "Static", SS_LEFTNOWORDWRAP|WS_GROUP, 44, 3, 446, 8
+  CONTROL "Actual", -1, "Static", WS_GROUP, 262, 163, 25, 8
+  CONTROL "Lote", -1, "Button", BS_GROUPBOX, 255, 138, 125, 37
 }
 
 ARTKITCAT DIALOG DISCARDABLE 30, 106, 311, 105
@@ -1546,55 +1550,56 @@ FONT 8, "MS Sans Serif"
   CONTROL "", 130, "Edit", WS_BORDER|WS_TABSTOP, 104, 60, 175, 11
   CONTROL "", 230, "Edit", WS_BORDER|WS_TABSTOP, 104, 72, 175, 11
   CONTROL "", 140, "Edit", WS_BORDER|WS_TABSTOP, 104, 88, 175, 11
-  CONTROL "", 170, "Edit", WS_BORDER|WS_TABSTOP, 104, 100, 35, 11
+  CONTROL "", 170, "Edit", WS_BORDER|WS_TABSTOP, 104, 100, 40, 11
   CONTROL "", 150, "Edit", WS_BORDER|WS_TABSTOP, 104, 112, 175, 11
   CONTROL "", 160, "Edit", WS_BORDER|WS_TABSTOP, 104, 124, 105, 11
   CONTROL "", 180, "Edit", WS_BORDER|WS_TABSTOP, 324, 88, 62, 11
   CONTROL "", 190, "Edit", WS_BORDER|WS_TABSTOP, 324, 100, 62, 11
   CONTROL "", 200, "Edit", WS_BORDER|WS_TABSTOP, 104, 142, 282, 11
   CONTROL "", 194, "Edit", WS_BORDER|WS_TABSTOP, 104, 154, 282, 11
-  CONTROL "", 400, "Edit", WS_BORDER|WS_TABSTOP, 104, 180, 35, 11
-  CONTROL "", 410, "Edit", WS_BORDER|WS_TABSTOP, 140, 180, 119, 11
-  CONTROL "Compartir clientes con la matriz", 420, "Button", BS_AUTOCHECKBOX|WS_TABSTOP, 48, 194, 110, 10
-  CONTROL "", 201, "Edit", NOT WS_VISIBLE|WS_VSCROLL|WS_BORDER|WS_TABSTOP, 140, 340, 34, 11
-  CONTROL "Compartir proveedores con la matriz", 430, "Button", BS_AUTOCHECKBOX|WS_TABSTOP, 48, 206, 125, 10
-  CONTROL "", 205, "Edit", NOT WS_VISIBLE|WS_VSCROLL|WS_BORDER|WS_TABSTOP, 140, 355, 34, 11
-  CONTROL "Compartir artículos con el grupo", 440, "Button", BS_AUTOCHECKBOX|WS_TABSTOP, 48, 218, 113, 10
-  CONTROL "Compartir almacenes con el grupo", 450, "Button", BS_AUTOCHECKBOX|WS_TABSTOP, 48, 230, 120, 10
-  CONTROL "", 360, "Edit", WS_BORDER|WS_TABSTOP, 324, 180, 42, 11
-  CONTROL "TBitMap", 361, "TBitMap", 0x00800020, 368, 180, 18, 11
-  CONTROL "", 370, "Edit", WS_BORDER|WS_TABSTOP, 324, 192, 41, 11
-  CONTROL "TBitMap", 371, "TBitMap", 0x00800000, 368, 192, 18, 11
-  CONTROL "", 210, "Edit", WS_VSCROLL|WS_BORDER|WS_TABSTOP, 324, 218, 62, 11
-  CONTROL "", 220, "Edit", WS_VSCROLL|WS_BORDER|WS_TABSTOP, 324, 230, 62, 11
-  CONTROL "Nombre", -1, "Static", WS_GROUP, 48, 51, 42, 8
-  CONTROL "Domicilio", -1, "Static", WS_GROUP, 48, 91, 49, 8
-  CONTROL "Población", -1, "Static", WS_GROUP, 48, 115, 46, 8
-  CONTROL "Cod. postal", -1, "Static", WS_GROUP, 48, 103, 36, 8
-  CONTROL "Provincia", -1, "Static", WS_GROUP, 48, 127, 32, 8
+  CONTROL "", 400, "Edit", WS_BORDER|WS_TABSTOP, 105, 219, 40, 11
+  CONTROL "", 410, "Edit", WS_BORDER|WS_TABSTOP, 147, 219, 239, 11
+  CONTROL "Compartir clientes con la matriz", 420, "Button", BS_AUTOCHECKBOX|WS_TABSTOP, 106, 233, 110, 10
+  CONTROL "Compartir proveedores con la matriz", 430, "Button", BS_AUTOCHECKBOX|WS_TABSTOP, 106, 245, 125, 10
+  CONTROL "Compartir artículos con la empresa matriz", 440, "Button", BS_AUTOCHECKBOX|WS_TABSTOP, 106, 257, 142, 10
+  CONTROL "Compartir almacenes con la empresa matriz", 450, "Button", BS_AUTOCHECKBOX|WS_TABSTOP, 106, 269, 149, 10
+  CONTROL "", 360, "Edit", WS_BORDER|WS_TABSTOP, 105, 180, 40, 11
+  CONTROL "TBitMap", 361, "TBitMap", 0x00800020, 149, 180, 18, 11
+  CONTROL "", 370, "Edit", WS_BORDER|WS_TABSTOP, 105, 192, 40, 11
+  CONTROL "", 201, "Edit", ES_RIGHT|WS_VSCROLL|WS_BORDER|WS_TABSTOP, 245, 180, 34, 11
+  CONTROL "TBitMap", 371, "TBitMap", 0x00800000, 149, 192, 18, 11
+  CONTROL "", 205, "Edit", ES_RIGHT|WS_VSCROLL|WS_BORDER|WS_TABSTOP, 245, 192, 34, 11
+  CONTROL "", 210, "Edit", WS_VSCROLL|WS_BORDER|WS_TABSTOP, 324, 180, 62, 11
+  CONTROL "", 220, "Edit", WS_VSCROLL|WS_BORDER|WS_TABSTOP, 324, 192, 62, 11
+  CONTROL "Nombre", -1, "Static", WS_GROUP, 50, 51, 42, 8
+  CONTROL "Domicilio", -1, "Static", WS_GROUP, 50, 91, 49, 8
+  CONTROL "Población", -1, "Static", WS_GROUP, 50, 115, 46, 8
+  CONTROL "Cod. postal", -1, "Static", WS_GROUP, 50, 103, 36, 8
+  CONTROL "Provincia", -1, "Static", WS_GROUP, 50, 127, 32, 8
   CONTROL "N. I. F.", -1, "Static", WS_GROUP, 288, 51, 33, 8
   CONTROL "Teléfono", -1, "Static", WS_GROUP, 288, 91, 32, 8
   CONTROL "Fax", -1, "Static", WS_GROUP, 288, 103, 20, 8
-  CONTROL "Administrador", -1, "Static", WS_GROUP, 48, 63, 49, 8
-  CONTROL "Código", -1, "Static", WS_GROUP, 48, 40, 42, 8
-  CONTROL "Divisa empresa", -1, "Static", WS_GROUP, 270, 183, 50, 8
-  CONTROL "Divisa cambio", -1, "Static", WS_GROUP, 270, 195, 47, 8
+  CONTROL "Administrador", -1, "Static", WS_GROUP, 50, 63, 49, 8
+  CONTROL "Código", -1, "Static", WS_GROUP, 50, 40, 42, 8
+  CONTROL "Divisa empresa", -1, "Static", WS_GROUP, 50, 183, 50, 8
+  CONTROL "Divisa cambio", -1, "Static", WS_GROUP, 50, 195, 47, 8
   CONTROL "", -1, "Button", BS_GROUPBOX, 44, 29, 348, 139
-  CONTROL "Empresa matriz", -1, "Button", BS_GROUPBOX, 44, 170, 217, 74
+  CONTROL "Empresa matriz", -1, "Button", BS_GROUPBOX, 44, 209, 349, 74
   CONTROL "E-mail", -1, "Static", WS_GROUP, 48, 145, 50, 8
-  CONTROL "Dígitos cliente", 202, "Static", WS_GROUP, 59, 343, 48, 8
+  CONTROL "Dígitos cliente", 202, "Static", WS_GROUP, 181, 183, 48, 8
   CONTROL "", -1, "Static", SS_ETCHEDHORZ, 48, 85, 342, 1
   CONTROL "", -1, "Static", SS_ETCHEDHORZ, 48, 138, 342, 1
-  CONTROL "Web", -1, "Static", WS_GROUP, 48, 157, 50, 8
-  CONTROL "Dígitos proveedor", 206, "Static", WS_GROUP, 59, 358, 58, 8
-  CONTROL "Operaciones", -1, "Button", BS_GROUPBOX, 264, 208, 128, 37
-  CONTROL "Inicio", -1, "Static", WS_GROUP, 270, 221, 21, 8
-  CONTROL "Fin", -1, "Static", WS_GROUP, 270, 233, 22, 8
-  CONTROL "Código empresa", -1, "Static", WS_GROUP, 48, 183, 51, 8
-  CONTROL "Nº reg. mercantil", -1, "Static", WS_GROUP, 48, 75, 56, 8
-  CONTROL "Divisas", -1, "Button", BS_GROUPBOX, 264, 170, 128, 37
+  CONTROL "Web", -1, "Static", WS_GROUP, 50, 157, 50, 8
+  CONTROL "Dígitos proveedor", 206, "Static", WS_GROUP, 181, 195, 58, 8
+  CONTROL "Operaciones", -1, "Button", BS_GROUPBOX, 289, 170, 103, 37
+  CONTROL "Inicio", -1, "Static", WS_GROUP, 296, 183, 22, 8
+  CONTROL "Fin", -1, "Static", WS_GROUP, 296, 195, 15, 8
+  CONTROL "Código empresa", -1, "Static", WS_GROUP, 50, 222, 51, 8
+  CONTROL "Nº reg. mercantil", -1, "Static", WS_GROUP, 50, 75, 56, 8
+  CONTROL "Divisas", -1, "Button", BS_GROUPBOX, 44, 170, 128, 37
   CONTROL "", 500, "Static", SS_BITMAP|SS_CENTERIMAGE, 4, 3, 34, 30
   CONTROL "Datos generales de la empresa", -1, "Static", SS_LEFTNOWORDWRAP|WS_GROUP, 44, 3, 347, 8
+  CONTROL "Dígitos", -1, "Button", BS_GROUPBOX, 175, 170, 111, 37
 }
 
 ENTSAL DIALOG DISCARDABLE 240, 79, 390, 174
@@ -15092,14 +15097,12 @@ FONT 8, "MS Sans Serif"
   CONTROL "", 196, "Edit", WS_BORDER|WS_TABSTOP, 101, 51, 60, 11
   CONTROL "", 180, "Edit", ES_RIGHT|WS_VSCROLL|WS_BORDER|WS_TABSTOP, 101, 78, 62, 11
   CONTROL "", 190, "Edit", ES_RIGHT|WS_VSCROLL|WS_BORDER|WS_TABSTOP, 101, 91, 62, 11
-  CONTROL "Solicitar número de lote", 220, "Button", BS_AUTOCHECKBOX|WS_TABSTOP, 276, 79, 88, 10
-  CONTROL "", 230, "Edit", WS_BORDER|WS_TABSTOP, 342, 91, 90, 11
   CONTROL "", 110, "Edit", WS_BORDER|WS_TABSTOP, 101, 120, 62, 11
   CONTROL "", 254, "Edit", WS_BORDER|WS_TABSTOP, 166, 120, 185, 11
   CONTROL "", 100, "Edit", ES_RIGHT|WS_VSCROLL|WS_BORDER|WS_TABSTOP, 101, 133, 62, 11
-  CONTROL "KG", 170, "Edit", WS_BORDER|WS_TABSTOP, 165, 133, 20, 11
+  CONTROL "Kg", 170, "Edit", WS_BORDER|WS_TABSTOP, 165, 133, 20, 11
   CONTROL "", 120, "Edit", ES_RIGHT|WS_VSCROLL|WS_BORDER|WS_TABSTOP, 101, 146, 62, 11
-  CONTROL "LT", 130, "Edit", WS_BORDER|WS_TABSTOP, 165, 146, 20, 11
+  CONTROL "Lt", 130, "Edit", WS_BORDER|WS_TABSTOP, 165, 146, 20, 11
   CONTROL "Aplicar factor de conversión", 200, "Button", BS_AUTOCHECKBOX|WS_TABSTOP, 50, 160, 101, 10
   CONTROL "", 210, "Edit", ES_RIGHT|WS_BORDER|WS_TABSTOP, 101, 173, 62, 11
   CONTROL "", 140, "Edit", ES_RIGHT|WS_VSCROLL|WS_BORDER|WS_TABSTOP, 401, 120, 62, 11
@@ -15123,7 +15126,7 @@ FONT 8, "MS Sans Serif"
   CONTROL "", 390, "Edit", ES_RIGHT|WS_VSCROLL|WS_BORDER, 401, 324, 62, 11
   CONTROL "", 400, "Edit", ES_RIGHT|WS_VSCROLL|WS_BORDER, 401, 337, 63, 11
   CONTROL "", 410, "Edit", WS_BORDER, 465, 311, 20, 11
-  CONTROL "Unidades de venta", -1, "Button", BS_GROUPBOX, 44, 66, 222, 40
+  CONTROL "Unidades de venta", -1, "Button", BS_GROUPBOX, 44, 66, 446, 40
   CONTROL "Presentación artículo", -1, "Button", BS_GROUPBOX, 44, 108, 447, 81
   CONTROL "Dimensiones caja", -1, "Button", BS_GROUPBOX, 44, 300, 304, 52
   CONTROL "Palets", -1, "Button", BS_GROUPBOX, 350, 300, 141, 52
@@ -15145,20 +15148,15 @@ FONT 8, "MS Sans Serif"
   CONTROL "Volumen", -1, "Static", WS_GROUP, 189, 326, 35, 8
   CONTROL "Creación", -1, "Static", WS_GROUP, 50, 41, 33, 8
   CONTROL "Último cambio", -1, "Static", WS_GROUP, 50, 54, 49, 8
-  CONTROL "Frase", -1, "Static", WS_GROUP, 51, 204, 39, 8
+  CONTROL "Frase", -1, "Static", WS_GROUP, 50, 204, 39, 8
   CONTROL "Caducidad", -1, "Static", WS_GROUP, 356, 176, 40, 8
   CONTROL "", -1, "Button", BS_GROUPBOX, 43, 29, 446, 37
   CONTROL "", 500, "Static", SS_BITMAP|SS_CENTERIMAGE, 4, 3, 34, 30
   CONTROL "Logística del artículo ( número de lote, peso, volumen, fecha de caducidad, ... )", -1, "Static", SS_LEFTNOWORDWRAP|WS_GROUP, 44, 3, 446, 8
-  CONTROL "Lote actual", -1, "Static", WS_GROUP, 276, 94, 37, 8
-  CONTROL "Factor", -1, "Static", WS_GROUP, 49, 176, 25, 8
+  CONTROL "Factor", -1, "Static", WS_GROUP, 50, 176, 25, 8
   CONTROL "Frase publicitaria", -1, "Button", BS_GROUPBOX, 43, 191, 446, 25
   CONTROL "Producción", -1, "Button", BS_GROUPBOX, 44, 218, 446, 25
   CONTROL "Sección", -1, "Static", WS_GROUP, 50, 231, 39, 8
-  CONTROL "Lote", -1, "Button", BS_GROUPBOX, 269, 66, 220, 40
-  CONTROL "cm", -1, "Static", WS_GROUP, 465, 123, 15, 8
-  CONTROL "cm", -1, "Static", WS_GROUP, 465, 135, 15, 8
-  CONTROL "cm", -1, "Static", WS_GROUP, 465, 147, 15, 8
 }
 
 LANGUAGE LANG_SPANISH,SUBLANG_SPANISH_MODERN

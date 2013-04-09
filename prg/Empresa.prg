@@ -667,7 +667,7 @@ STATIC FUNCTION EdtRec( aTmp, aGet, dbfEmp, oBrw, bWhen, bValid, nMode )
          SPINNER ;
          MIN      4 MAX 12 ;
          VALID    ( aTmp[ _NCODCLI ] >= 4 .AND. aTmp[ _NCODCLI ] <= 12 ) ;
-         WHEN     ( !aTmp[ _LGRPCLI ] .and. nMode != ZOOM_MODE ) ;
+         WHEN     ( nMode != ZOOM_MODE ) ;
          OF       oFld:aDialogs[1]
 
    REDEFINE GET aTmp[ _NCODPRV ];
@@ -676,7 +676,7 @@ STATIC FUNCTION EdtRec( aTmp, aGet, dbfEmp, oBrw, bWhen, bValid, nMode )
 			SPINNER ;
          MIN      4 MAX 12 ;
          VALID    ( aTmp[ _NCODPRV ] >= 4 .AND. aTmp[ _NCODPRV ] <= 12 ) ;
-         WHEN     ( !aTmp[ _LGRPPRV ] .and. nMode != ZOOM_MODE ) ;
+         WHEN     ( nMode != ZOOM_MODE ) ;  
          OF       oFld:aDialogs[1]
 
    REDEFINE GET aTmp[ _DINIOPE ];
@@ -7980,7 +7980,7 @@ Function SelectDelegacion()
          :cHeader          := "Nombre"
          :cSortOrder       := "cNomDlg"
          :bEditValue       := {|| ( dbfDlg )->cNomDlg }
-         :nWidth           := 260
+         :nWidth           := 160
       end with
 
       oBrw:bLDblClick      := {|| oDlg:end( IDOK ) }

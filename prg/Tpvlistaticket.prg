@@ -141,6 +141,46 @@ CLASS TpvListaTicket
    METHOD nEstadoTickets()
 
    METHOD Imprimir( lPrevisualizar )
+   
+   //-----------------------------------------------------------------------//
+
+   INLINE METHOD UnSelectButtons()
+
+      if !Empty( ::oBtnAbiertos )
+         ::oBtnAbiertos:UnSelected()
+      end if
+
+      if !Empty( ::oBtnTodos )
+         ::oBtnTodos:UnSelected()
+      end if 
+
+      if !Empt( ::oBtnFiltro )
+         ::oBtnFiltro:UnSelected()
+      end if 
+      
+      if !Empty( ::oBtnLstGeneral )
+         ::oBtnLstGeneral:UnSelected()
+      end if 
+
+      if !Empty( ::oBtnLstMesas )
+         ::oBtnLstMesas:UnSelected()
+      end if 
+
+      if !Empty( ::oBtnLstRecoger )
+         ::oBtnLstRecoger:UnSelected()
+      end if 
+
+      if !Empty( ::oBtnLstLlevar )
+         ::oBtnLstLlevar:UnSelected()
+      end if 
+
+      if !Empty( ::oBtnLstEncargar )
+         ::oBtnLstEncargar:UnSelected()
+      end if 
+
+   ENDMETHOD
+
+   //-----------------------------------------------------------------------//
 
 END CLASS
 
@@ -394,10 +434,12 @@ METHOD StartResource() CLASS TpvListaTicket
          ::oBtnTodos          := TDotNetButton():New( 60, oGrupo,    "Index_32",                "Todos",              2, {|| ::OnClickTodos() }, , , .f., .f., .f. )
          ::oBtnFiltro         := TDotNetButton():New( 60, oGrupo,    "Calendar_32",             "Filtrar",            3, {|| ::OnClickFiltro() }, , , .f., .f., .f. )
 
+      /*
       oGrupo                  := TDotNetGroup():New( oCarpeta, 126,  "Impresión", .f. )
          oBoton               := TDotNetButton():New( 60, oGrupo,    "PREV1_32",                "Previsualizar",      1, {|| ::Imprimir( .t. ) }, , , .f., .f., .f. )
          oBoton               := TDotNetButton():New( 60, oGrupo,    "IMP32",                   "Imprimir",           2, {|| ::Imprimir( .f. ) }, , , .f., .f., .f. )
-
+      */
+      
       oGrupo                  := TDotNetGroup():New( oCarpeta, 366,  "Seleción de tickets", .f. )
          ::oPrimeraLinea      := TDotNetButton():New( 60, oGrupo,    "navigate_top_32",         "Primera línea",      1, {|| ::LineaPrimera() } )
          ::oUltimaLinea       := TDotNetButton():New( 60, oGrupo,    "Navigate_end_32",         "Última línea",       2, {|| ::LineaUltima() } )
@@ -691,16 +733,13 @@ METHOD OnClickTodos() CLASS TpvListaTicket
 
    CursorWait()
 
-   ::oBtnAbiertos:UnSelected()
-   ::oBtnTodos:Selected()
-   ::oBtnFiltro:UnSelected()
-   ::oBtnLstMesas:UnSelected()
-   ::oBtnLstGeneral:UnSelected()
-   ::oBtnLstRecoger:UnSelected()
-   ::oBtnLstLlevar:UnSelected()
-   ::oBtnLstEncargar:UnSelected()
+   ::UnSelectButtons()
 
-   ::oSender:oTiketCabecera:IdxDelete( cCurUsr(), GetFileNoExt( ::oSender:oTiketCabecera:cFile ) )
+   ::oBtnTodos:Selected()
+
+   if file( ::oSender:oTiketCabecera:cFile )
+      ::oSender:oTiketCabecera:IdxDelete( cCurUsr(), GetFileNoExt( ::oSender:oTiketCabecera:cFile ) )
+   end if 
 
    ::oSender:oTiketCabecera:OrdSetFocus( "dFecTik" )
    ::oSender:oTiketCabecera:GoTop()
@@ -718,14 +757,9 @@ Return .t.
 
 METHOD OnClickAbiertos() CLASS TpvListaTicket
 
+   ::UnSelectButtons()
+
    ::oBtnAbiertos:Selected()
-   ::oBtnTodos:UnSelected()
-   ::oBtnFiltro:UnSelected()
-   ::oBtnLstMesas:UnSelected()
-   ::oBtnLstGeneral:UnSelected()
-   ::oBtnLstRecoger:UnSelected()
-   ::oBtnLstLlevar:UnSelected()
-   ::oBtnLstEncargar:UnSelected()
 
    ::oSender:oTiketCabecera:OrdSetFocus( "lCloTik" )
    ::oSender:oTiketCabecera:GoTop()
@@ -743,14 +777,9 @@ METHOD OnClickMesas()
 
    CursorWait()
 
-   ::oBtnAbiertos:UnSelected()
-   ::oBtnTodos:UnSelected()
-   ::oBtnFiltro:UnSelected()
+   ::UnSelectButtons()
+
    ::oBtnLstMesas:Selected()
-   ::oBtnLstGeneral:UnSelected()
-   ::oBtnLstRecoger:UnSelected()
-   ::oBtnLstLlevar:UnSelected()
-   ::oBtnLstEncargar:UnSelected()
 
    ::oSender:oTiketCabecera:OrdSetFocus( "lCloUbiTik" )
    ::oSender:oTiketCabecera:OrdScope( "2" )
@@ -771,14 +800,9 @@ METHOD OnClickGeneral()
 
    CursorWait()
 
-   ::oBtnAbiertos:UnSelected()
-   ::oBtnTodos:UnSelected()
-   ::oBtnFiltro:UnSelected()
-   ::oBtnLstMesas:UnSelected()
+   ::UnSelectButtons()
+
    ::oBtnLstGeneral:Selected()
-   ::oBtnLstRecoger:UnSelected()
-   ::oBtnLstLlevar:UnSelected()
-   ::oBtnLstEncargar:UnSelected()
 
    ::oSender:oTiketCabecera:OrdSetFocus( "lCloUbiTik" )
    ::oSender:oTiketCabecera:OrdScope( "0" )
@@ -799,14 +823,9 @@ METHOD OnClickRecoger()
 
    CursorWait()
 
-   ::oBtnAbiertos:UnSelected()
-   ::oBtnTodos:UnSelected()
-   ::oBtnFiltro:UnSelected()
-   ::oBtnLstMesas:UnSelected()
-   ::oBtnLstGeneral:UnSelected()
+   ::UnSelectButtons()
+
    ::oBtnLstRecoger:Selected()
-   ::oBtnLstLlevar:UnSelected()
-   ::oBtnLstEncargar:UnSelected()
 
    ::oSender:oTiketCabecera:OrdSetFocus( "lCloUbiTik" )
    ::oSender:oTiketCabecera:OrdScope( "3" )
@@ -827,14 +846,9 @@ METHOD OnClickLlevar()
 
    CursorWait()
 
-   ::oBtnAbiertos:UnSelected()
-   ::oBtnTodos:UnSelected()
-   ::oBtnFiltro:UnSelected()
-   ::oBtnLstMesas:UnSelected()
-   ::oBtnLstGeneral:UnSelected()
-   ::oBtnLstRecoger:UnSelected()
+   ::UnSelectButtons()
+   
    ::oBtnLstLlevar:Selected()
-   ::oBtnLstEncargar:UnSelected()
 
    ::oSender:oTiketCabecera:OrdSetFocus( "lCloUbiTik" )
    ::oSender:oTiketCabecera:OrdScope( "1" )
@@ -855,13 +869,8 @@ METHOD OnClickEncargar()
 
    CursorWait()
 
-   ::oBtnAbiertos:UnSelected()
-   ::oBtnTodos:UnSelected()
-   ::oBtnFiltro:UnSelected()
-   ::oBtnLstMesas:UnSelected()
-   ::oBtnLstGeneral:UnSelected()
-   ::oBtnLstRecoger:UnSelected()
-   ::oBtnLstLlevar:UnSelected()
+   ::UnSelectButtons()
+
    ::oBtnLstEncargar:Selected()
 
    ::oSender:oTiketCabecera:OrdSetFocus( "lCloUbiTik" )

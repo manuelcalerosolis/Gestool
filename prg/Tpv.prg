@@ -4018,7 +4018,7 @@ Static Function NewTiket( aGet, aTmp, nMode, nSave, lBig, oBrw, oBrwDet )
 
          if ( oTotDiv:lValeMayorTotal() )
 
-            if ( aTmp[ _NCOBTIK ] != 0 ) // .and. nSave != SAVVAL )
+            if ( aTmp[ _NCOBTIK ] != 0 .and. nSave != SAVAPT )
 
                if dbAppe( dbfTmpP )
                   ( dbfTmpP )->cTurPgo    := cCurSesion()
@@ -5168,6 +5168,11 @@ Static Function EdtCobTik( oWndBrw, lBig )
    local lGenVale    := .f.
 
    DEFAULT lBig      := .f.
+
+   if ( ( dbfTikT )->cTipTik == SAVAPT )
+      msgStop( "No se pueden realizar cobros sobre tickets apartados.")
+      return nil      
+   end if 
 
    oBlock            := ErrorBlock( {| oError | ApoloBreak( oError ) } )
    BEGIN SEQUENCE
