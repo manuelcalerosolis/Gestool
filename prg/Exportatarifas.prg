@@ -4,6 +4,8 @@
 #include "MesDbf.ch"
 #include "XBrowse.ch"
 
+memvar oAlbCliT
+memvar oAlbCliL
 memvar oFacCliT
 memvar oFacCliL
 memvar oDbfArt
@@ -30,6 +32,11 @@ CLASS TExportaTarifas FROM TNewInfGen
    DATA oGetExpresion
    DATA oSayExpresion
 
+   DATA oAlbaran
+   DATA lAlbaranes      INIT .t.
+   DATA oFactura
+   DATA lFacturas       INIT .t.
+
    DATA oTreeCampos
 
    DATA aTipoExpresion  INIT  { "Campo", "Expresión", "Constante" }
@@ -38,6 +45,8 @@ CLASS TExportaTarifas FROM TNewInfGen
    DATA aAlign          INIT  { "Izquierda", "Derecha" }
    DATA oAlign
 
+   DATA aFieldAlbT      INIT aItmAlbCli()
+   DATA aFieldAlbL      INIT aColAlbCli()
    DATA aFieldFacT      INIT aItmFacCli()
    DATA aFieldFacL      INIT aColFacCli()
    DATA aFieldArt       INIT aItmArt()
@@ -45,6 +54,10 @@ CLASS TExportaTarifas FROM TNewInfGen
 
    DATA lChangeDbf      INIT .f.
 
+   DATA oAlbCliT
+   DATA oAlbCliL
+
+   DATA oFacCliT
    DATA oFacCliL
 
    DATA cTextoFinal     INIT ""
@@ -159,6 +172,12 @@ METHOD OpenFiles() CLASS TExportaTarifas
 
    ::oDbf:Activate( .f., .f. )
 
+   DATABASE NEW ::oAlbCliT  PATH ( cPatEmp() ) FILE "ALBCLIT.DBF" VIA ( cDriver() ) SHARED INDEX "ALBCLIT.CDX"
+
+   DATABASE NEW ::oAlbCliL  PATH ( cPatEmp() ) FILE "ALBCLIL.DBF" VIA ( cDriver() ) SHARED INDEX "ALBCLIL.CDX"
+
+   DATABASE NEW ::oFacCliT  PATH ( cPatEmp() ) FILE "FACCLIT.DBF" VIA ( cDriver() ) SHARED INDEX "FACCLIT.CDX"
+
    DATABASE NEW ::oFacCliL  PATH ( cPatEmp() ) FILE "FACCLIL.DBF" VIA ( cDriver() ) SHARED INDEX "FACCLIL.CDX"
 
 RETURN ( .t. )
@@ -177,6 +196,14 @@ METHOD CloseFiles() CLASS TExportaTarifas
 
    if ::oDbfArt != nil .and. ::oDbfArt:Used()
       ::oDbfArt:End()
+   end if
+
+   if ::oAlbCliT != nil .and. ::oAlbCliT:Used()
+      ::oAlbCliT:End()
+   end if
+
+   if ::oAlbCliL != nil .and. ::oAlbCliL:Used()
+      ::oAlbCliL:End()
    end if
 
    if ::oFacCliT != nil .and. ::oFacCliT:Used()
@@ -199,6 +226,8 @@ METHOD CloseFiles() CLASS TExportaTarifas
    ::oDbfRut      := nil
    ::oDbfCli      := nil
    ::oDbfArt      := nil
+   ::oAlbCliT     := nil
+   ::oAlbCliL     := nil
    ::oFacCliT     := nil
    ::oFacCliL     := nil
    ::oDbf         := nil
@@ -248,6 +277,14 @@ METHOD lResource( cFld ) CLASS TExportaTarifas
    ::oDefDesde( 110, 111, ::oDlg )
    ::oDefHasta( 120, 121, ::oDlg )
 
+   REDEFINE CHECKBOX ::oAlbaran VAR ::lAlbaranes;
+      ID       150 ;
+      OF       ::oDlg
+
+   REDEFINE CHECKBOX ::oFactura VAR ::lFacturas;
+      ID       160 ;
+      OF       ::oDlg
+
    /*
    Montamos los desde - hasta--------------------------------------------------
    */
@@ -259,8 +296,6 @@ METHOD lResource( cFld ) CLASS TExportaTarifas
    ::lGrupoCliente()
 
    ::lGrupoArticulo()
-
-   ::lGrupoFacturas()
 
    /*
    Series----------------------------------------------------------------------
@@ -568,10 +603,12 @@ METHOD EndDetalle( nMode, oDlg ) CLASS TExportaTarifas
 
       cFieldSelect   := ::oTreeCampos:GetSelText()
 
-      if Empty( cFieldSelect )                           .or.;
-         AllTrim( cFieldSelect ) == "Facturas"           .or.;
-         AllTrim( cFieldSelect ) == "Lineas de facturas" .or.;
-         AllTrim( cFieldSelect ) == "Artículos"          .or.;
+      if Empty( cFieldSelect )                              .or.;
+         AllTrim( cFieldSelect ) == "Albaranes"             .or.;
+         AllTrim( cFieldSelect ) == "Lineas de albaranes"   .or.;
+         AllTrim( cFieldSelect ) == "Facturas"              .or.;
+         AllTrim( cFieldSelect ) == "Lineas de facturas"    .or.;
+         AllTrim( cFieldSelect ) == "Artículos"             .or.;
          AllTrim( cFieldSelect ) == "Clientes"
          msgStop( "Tiene que seleccionar un campo." )
          ::oTreeCampos:SetFocus()
@@ -583,17 +620,29 @@ METHOD EndDetalle( nMode, oDlg ) CLASS TExportaTarifas
       */
 
       do case
+         case ( nPos := aScan( ::aFieldAlbT, {|a| a[5] == cFieldSelect } ) ) != 0
+
+            ::oDbf:cCampo   := ::aFieldAlbT[ nPos, 1 ]
+            ::oDbf:cDescrip := cFieldSelect
+            ::oDbf:cTabla   := "Cabecera albaran"
+
+         case ( nPos := aScan( ::aFieldAlbL, {|a| a[5] == cFieldSelect } ) ) != 0
+
+            ::oDbf:cCampo   := ::aFieldAlbL[ nPos, 1 ]
+            ::oDbf:cDescrip := cFieldSelect
+            ::oDbf:cTabla   := "Lineas albaran"
+
          case ( nPos := aScan( ::aFieldFacT, {|a| a[5] == cFieldSelect } ) ) != 0
 
-            ::oDbf:cCampo      := ::aFieldFacT[ nPos, 1 ]
-            ::oDbf:cDescrip    := cFieldSelect
-            ::oDbf:cTabla      := "Cabecera"
+            ::oDbf:cCampo   := ::aFieldFacT[ nPos, 1 ]
+            ::oDbf:cDescrip := cFieldSelect
+            ::oDbf:cTabla   := "Cabecera factura"
 
          case ( nPos := aScan( ::aFieldFacL, {|a| a[5] == cFieldSelect } ) ) != 0
 
             ::oDbf:cCampo   := ::aFieldFacL[ nPos, 1 ]
             ::oDbf:cDescrip := cFieldSelect
-            ::oDbf:cTabla   := "Lineas"
+            ::oDbf:cTabla   := "Lineas factura"   
 
          case ( nPos := aScan( ::aFieldArt, {|a| a[5] == cFieldSelect } ) ) != 0
 
@@ -721,6 +770,30 @@ METHOD lCargaTreeCampos() CLASS TExportaTarifas
       oTree    := ::oTreeCampos:Add( "Lineas de facturas" , 0 )
 
       for each aField in ::aFieldFacL
+         if !Empty( aField[ 5 ] )
+            oTree:Add( aField[ 5 ], 1 )
+         end if
+      next
+
+      /*
+      Cargamos cabeceras de albaranes en el tree-------------------------------
+      */
+
+      oTree    := ::oTreeCampos:Add( "Albaranes" , 0 )
+
+      for each aField in ::aFieldAlbT
+         if !Empty( aField[ 5 ] )
+            oTree:Add( aField[ 5 ], 1 )
+         end if
+      next
+
+      /*
+      Cargamos lineas de albaranes en el tree----------------------------------
+      */
+
+      oTree    := ::oTreeCampos:Add( "Lineas de albaranes" , 0 )
+
+      for each aField in ::aFieldAlbL
          if !Empty( aField[ 5 ] )
             oTree:Add( aField[ 5 ], 1 )
          end if
@@ -872,6 +945,8 @@ METHOD Exportacion() CLASS TExportaTarifas
    local lFirstLine  := .t.
    local lErrorBlock := .f.
 
+   public oAlbCliT   := ::oAlbCliT
+   public oAlbCliL   := ::oAlbCliL
    public oFacCliT   := ::oFacCliT
    public oFacCliL   := ::oFacCliL
    public oDbfArt    := ::oDbfArt
@@ -894,197 +969,389 @@ METHOD Exportacion() CLASS TExportaTarifas
 
    ::cTextoFinal     := ""
 
-   /*
-   Filtramos las tablas por los desde - hasta ---------------------------------
-   */
+   if ::lAlbaranes
 
-   ::oFacCliT:OrdSetFocus( "dFecFac" )
-   ::oFacCliL:OrdSetFocus( "nNumFac" )
-   ::oDbfArt:OrdSetFocus( "Codigo" )
+      /*
+      Filtramos las tablas por los desde - hasta ---------------------------------
+      */
 
-   cExpHead          := 'dFecFac >= Ctod( "' + Dtoc( ::dIniInf ) + '" ) .and. dFecFac <= Ctod( "' + Dtoc( ::dFinInf ) + '" )'
+      ::oAlbCliT:OrdSetFocus( "dFecAlb" )
+      ::oAlbCliL:OrdSetFocus( "nNumAlb" )
+      ::oDbfArt:OrdSetFocus( "Codigo" )
 
-   if !::oGrupoFacturas:Cargo:Todos
-      cExpHead       += ' .and. cSerie + Str( nNumFac ) + cSufFac >= "' + ::oGrupoFacturas:Cargo:Desde + '" .and. cSerie + Str( nNumFac ) + cSufFac <= "' + ::oGrupoFacturas:Cargo:Hasta + '"'
-   end if
+      cExpHead          := 'dFecAlb >= Ctod( "' + Dtoc( ::dIniInf ) + '" ) .and. dFecAlb <= Ctod( "' + Dtoc( ::dFinInf ) + '" )'
 
-   if !::oGrupoRuta:Cargo:Todos
-      cExpHead       += ' .and. cCodRut >= "' + Rtrim( ::oGrupoRuta:Cargo:Desde ) + '" .and. cCodRut <= "' + Rtrim( ::oGrupoRuta:Cargo:Hasta ) + '"'
-   end if
+      if !::oGrupoRuta:Cargo:Todos
+         cExpHead       += ' .and. cCodRut >= "' + Rtrim( ::oGrupoRuta:Cargo:Desde ) + '" .and. cCodRut <= "' + Rtrim( ::oGrupoRuta:Cargo:Hasta ) + '"'
+      end if
 
-   if !::oGrupoCliente:Cargo:Todos
-      cExpHead       += ' .and. cCodCli >= "' + Rtrim( ::oGrupoCliente:Cargo:Desde ) + '" .and. cCodCli <= "' + Rtrim( ::oGrupoCliente:Cargo:Hasta ) + '"'
-   end if
+      if !::oGrupoCliente:Cargo:Todos
+         cExpHead       += ' .and. cCodCli >= "' + Rtrim( ::oGrupoCliente:Cargo:Desde ) + '" .and. cCodCli <= "' + Rtrim( ::oGrupoCliente:Cargo:Hasta ) + '"'
+      end if
 
-   ::oFacCliT:AddTmpIndex( cCurUsr(), GetFileNoExt( ::oFacCliT:cFile ), ::oFacCliT:OrdKey(), ( cExpHead ), , , , , , , , .t. )
+      ::oAlbCliT:AddTmpIndex( cCurUsr(), GetFileNoExt( ::oAlbCliT:cFile ), ::oAlbCliT:OrdKey(), ( cExpHead ), , , , , , , , .t. )
 
-   ::oMtrInf:SetTotal( ::oFacCliT:OrdKeyCount() )
+      ::oMtrInf:SetTotal( ::oAlbCliT:OrdKeyCount() )
 
-   cExpLine          := '!lTotLin .and. !lControl'
+      cExpLine          := '!lTotLin .and. !lControl'
 
-   if !::oGrupoArticulo:Cargo:Todos
-      cExpLine       += ' .and. cRef >= "' + ::oGrupoArticulo:Cargo:Desde + '" .and. cRef <= "' + ::oGrupoArticulo:Cargo:Hasta + '"'
-   end if
+      if !::oGrupoArticulo:Cargo:Todos
+         cExpLine       += ' .and. cRef >= "' + ::oGrupoArticulo:Cargo:Desde + '" .and. cRef <= "' + ::oGrupoArticulo:Cargo:Hasta + '"'
+      end if
 
-   ::oFacCliL:AddTmpIndex( cCurUsr(), GetFileNoExt( ::oFacCliL:cFile ), ::oFacCliL:OrdKey(), cAllTrimer( cExpLine ), , , , , , , , .t. )
+      ::oAlbCliL:AddTmpIndex( cCurUsr(), GetFileNoExt( ::oAlbCliL:cFile ), ::oAlbCliL:OrdKey(), cAllTrimer( cExpLine ), , , , , , , , .t. )
 
-   ::oFacCliT:GoTop()
+      ::oAlbCliT:GoTop()
 
-    while !::oFacCliT:Eof()
+      while !::oAlbCliT:Eof()
 
-      if lChkSer( ::oFacCliT:cSerie, ::aSer )                                          .and.;
-         ( ::oGrupoGCliente:Cargo:Todos                                                .or.;
-         ( cGruCli( ::oFacCliT:cCodCli, ::oDbfCli ) >= ::oGrupoGCliente:Cargo:Desde    .and.;
-           cGruCli( ::oFacCliT:cCodCli, ::oDbfCli ) <= ::oGrupoGCliente:Cargo:Hasta ) )
+         if lChkSer( ::oAlbCliT:cSerAlb, ::aSer )                                         .and.;
+            ( ::oGrupoGCliente:Cargo:Todos                                                .or.;
+            ( cGruCli( ::oAlbCliT:cCodCli, ::oDbfCli ) >= ::oGrupoGCliente:Cargo:Desde    .and.;
+            cGruCli( ::oAlbCliT:cCodCli, ::oDbfCli ) <= ::oGrupoGCliente:Cargo:Hasta ) )
 
-         if ::oFacCliL:Seek( ::oFacCliT:cSerie + Str( ::oFacCliT:nNumFac ) + ::oFacCliT:cSufFac )
+            if ::oAlbCliL:Seek( ::oAlbCliT:cSerAlb + Str( ::oAlbCliT:nNumAlb ) + ::oAlbCliT:cSufAlb )
 
-            while ::oFacCliT:cSerie + Str( ::oFacCliT:nNumFac ) + ::oFacCliT:cSufFac == ::oFacCliL:cSerie + Str( ::oFacCliL:nNumFac ) + ::oFacCliL:cSufFac .and. !::oFacCliL:eof()
+               while ::oAlbCliT:cSerAlb + Str( ::oAlbCliT:nNumAlb ) + ::oAlbCliT:cSufAlb == ::oAlbCliL:cSerAlb + Str( ::oAlbCliL:nNumAlb ) + ::oAlbCliL:cSufAlb .and. !::oAlbCliL:eof()
 
-               if ::oDbfArt:Seek( ::oFacCliL:cRef )
+                  if ::oDbfArt:Seek( ::oAlbCliL:cRef )
 
-                  ::oDbf:GoTop()
+                     ::oDbf:GoTop()
 
-                  while !::oDbf:Eof()
-
-                     /*
-                     Montando el texto para el fichero----------------------------
-                     */
-
-                     do case
+                     while !::oDbf:Eof()
 
                         /*
-                        Campo de la tabla-----------------------------------------
+                        Montando el texto para el fichero----------------------------
                         */
 
-                        case ::oDbf:nTipo <= 1
+                        do case
 
-                           do case
-                              case AllTrim( ::oDbf:cTabla )  == "Cabecera"
+                           /*
+                           Campo de la tabla-----------------------------------------
+                           */
 
-                                 if ::oDbf:nAlign <= 1
+                           case ::oDbf:nTipo <= 1
 
-                                    ::cTextoFinal     += Padr( AllTrim( cValToText( ::oFacCliT:FieldGetByName( AllTrim( ::oDbf:cCampo ) ) ) ), ::oDbf:nAncho )
+                              do case
+                                 case AllTrim( ::oDbf:cTabla )  == "Cabecera albaran"
 
-                                 elseif ::oDbf:nAlign == 2
+                                    if ::oDbf:nAlign <= 1
 
-                                    ::cTextoFinal     += Padl( AllTrim( cValToText( ::oFacCliT:FieldGetByName( AllTrim( ::oDbf:cCampo ) ) ) ), ::oDbf:nAncho )
+                                       ::cTextoFinal     += Padr( AllTrim( cValToText( ::oAlbCliT:FieldGetByName( AllTrim( ::oDbf:cCampo ) ) ) ), ::oDbf:nAncho )
 
-                                 end if
+                                    elseif ::oDbf:nAlign == 2
 
-                              case AllTrim( ::oDbf:cTabla ) == "Lineas"
+                                       ::cTextoFinal     += Padl( AllTrim( cValToText( ::oAlbCliT:FieldGetByName( AllTrim( ::oDbf:cCampo ) ) ) ), ::oDbf:nAncho )
 
-                                 if ::oDbf:nAlign <= 1
+                                    end if
 
-                                    ::cTextoFinal     += Padr( AllTrim( cValToText( ::oFacCliL:FieldGetByName( AllTrim( ::oDbf:cCampo ) ) ) ), ::oDbf:nAncho )
+                                 case AllTrim( ::oDbf:cTabla ) == "Lineas albaran"
 
-                                 elseif ::oDbf:nAlign == 2
+                                    if ::oDbf:nAlign <= 1
 
-                                    ::cTextoFinal     += Padl( AllTrim( cValToText( ::oFacCliL:FieldGetByName( AllTrim( ::oDbf:cCampo ) ) ) ), ::oDbf:nAncho )
+                                       ::cTextoFinal     += Padr( AllTrim( cValToText( ::oAlbCliL:FieldGetByName( AllTrim( ::oDbf:cCampo ) ) ) ), ::oDbf:nAncho )
 
-                                 end if
+                                    elseif ::oDbf:nAlign == 2
 
-                              case AllTrim( ::oDbf:cTabla ) == "Artículos"
+                                       ::cTextoFinal     += Padl( AllTrim( cValToText( ::oAlbCliL:FieldGetByName( AllTrim( ::oDbf:cCampo ) ) ) ), ::oDbf:nAncho )
 
-                                 if ::oDbf:nAlign <= 1
+                                    end if
 
-                                    ::cTextoFinal     += Padr( AllTrim( cValToText( ::oDbfArt:FieldGetByName( AllTrim( ::oDbf:cCampo ) ) ) ), ::oDbf:nAncho )
+                                 case AllTrim( ::oDbf:cTabla ) == "Artículos"
 
-                                 elseif ::oDbf:nAlign == 2
+                                    if ::oDbf:nAlign <= 1
 
-                                    ::cTextoFinal     += Padl( AllTrim( cValToText( ::oDbfArt:FieldGetByName( AllTrim( ::oDbf:cCampo ) ) ) ), ::oDbf:nAncho )
+                                       ::cTextoFinal     += Padr( AllTrim( cValToText( ::oDbfArt:FieldGetByName( AllTrim( ::oDbf:cCampo ) ) ) ), ::oDbf:nAncho )
 
-                                 end if
+                                    elseif ::oDbf:nAlign == 2
 
-                              case AllTrim( ::oDbf:cTabla ) == "Clientes"
+                                       ::cTextoFinal     += Padl( AllTrim( cValToText( ::oDbfArt:FieldGetByName( AllTrim( ::oDbf:cCampo ) ) ) ), ::oDbf:nAncho )
 
-                                 if ::oDbf:nAlign <= 1
+                                    end if
 
-                                    ::cTextoFinal     += Padr( AllTrim( cValToText( ::oDbfCli:FieldGetByName( AllTrim( ::oDbf:cCampo ) ) ) ), ::oDbf:nAncho )
+                                 case AllTrim( ::oDbf:cTabla ) == "Clientes"
 
-                                 elseif ::oDbf:nAlign == 2
+                                    if ::oDbf:nAlign <= 1
 
-                                    ::cTextoFinal     += Padl( AllTrim( cValToText( ::oDbfCli:FieldGetByName( AllTrim( ::oDbf:cCampo ) ) ) ), ::oDbf:nAncho )
+                                       ::cTextoFinal     += Padr( AllTrim( cValToText( ::oDbfCli:FieldGetByName( AllTrim( ::oDbf:cCampo ) ) ) ), ::oDbf:nAncho )
 
-                                 end if
+                                    elseif ::oDbf:nAlign == 2
 
-                           end case
+                                       ::cTextoFinal     += Padl( AllTrim( cValToText( ::oDbfCli:FieldGetByName( AllTrim( ::oDbf:cCampo ) ) ) ), ::oDbf:nAncho )
 
-                        /*
-                        Expresion-------------------------------------------------
-                        */
+                                    end if
 
-                        case ::oDbf:nTipo == 2
+                              end case
 
-                           uField               := bCheck2Block( AllTrim( ::oDbf:mExpre ), lFirstLine )
+                           /*
+                           Expresion-------------------------------------------------
+                           */
 
-                           if uField != nil
-                              uField            := Eval( uField )
-                           else
-                              lErrorBlock       := .t.
-                           end if
+                           case ::oDbf:nTipo == 2
 
-                           if ::oDbf:nAlign <= 1
+                              uField               := bCheck2Block( AllTrim( ::oDbf:mExpre ), lFirstLine )
 
-                              ::cTextoFinal        += Padr( AllTrim( cValToText( uField ) ), ::oDbf:nAncho )
+                              if uField != nil
+                                 uField            := Eval( uField )
+                              else
+                                 lErrorBlock       := .t.
+                              end if
 
-                           elseif ::oDbf:nAlign == 2
+                              if ::oDbf:nAlign <= 1
 
-                              ::cTextoFinal        += Padl( AllTrim( cValToText( uField ) ), ::oDbf:nAncho )
+                                 ::cTextoFinal        += Padr( AllTrim( cValToText( uField ) ), ::oDbf:nAncho )
 
-                           end if
+                              elseif ::oDbf:nAlign == 2
 
-                        /*
-                        Constante-------------------------------------------------
-                        */
+                                 ::cTextoFinal        += Padl( AllTrim( cValToText( uField ) ), ::oDbf:nAncho )
 
-                        case ::oDbf:nTipo >= 3
+                              end if
 
-                           if ::oDbf:nAlign <= 1
+                           /*
+                           Constante-------------------------------------------------
+                           */
 
-                              ::cTextoFinal        += Padr( AllTrim( ::oDbf:mExpre ), ::oDbf:nAncho )
+                           case ::oDbf:nTipo >= 3
 
-                           elseif ::oDbf:nAlign == 2
+                              if ::oDbf:nAlign <= 1
 
-                              ::cTextoFinal        += Padl( AllTrim( ::oDbf:mExpre ), ::oDbf:nAncho )
+                                 ::cTextoFinal        += Padr( AllTrim( ::oDbf:mExpre ), ::oDbf:nAncho )
 
-                           end if
+                              elseif ::oDbf:nAlign == 2
 
-                     end if
+                                 ::cTextoFinal        += Padl( AllTrim( ::oDbf:mExpre ), ::oDbf:nAncho )
 
-                     ::oDbf:Skip()
+                              end if
 
-                  end while
+                        end case
 
-                  ::cTextoFinal                 += CRLF
+                        ::oDbf:Skip()
 
-                  lFirstLine                    := .f.
+                     end while
 
-               end if
+                     ::cTextoFinal                 += CRLF
 
-               ::oFacCliL:Skip()
+                     lFirstLine                    := .f.
 
-            end while
+                  end if
+
+                  ::oAlbCliL:Skip()
+
+               end while
+
+            end if
 
          end if
 
+         ::oAlbCliT:Skip()
+
+         ::oMtrInf:AutoInc()
+
+      end while
+
+      ::oMtrInf:AutoInc( ::oAlbCliT:Lastrec() )
+
+      /*
+      Destruimos los filtros creados----------------------------------------------
+      */
+
+      ::oAlbCliT:IdxDelete( cCurUsr(), GetFileNoExt( ::oAlbCliT:cFile ) )
+
+      ::oAlbCliL:IdxDelete( cCurUsr(), GetFileNoExt( ::oAlbCliL:cFile ) )
+
+   end if   
+
+   if ::lFacturas
+
+      /*
+      Filtramos las tablas por los desde - hasta ---------------------------------
+      */
+
+      ::oFacCliT:OrdSetFocus( "dFecFac" )
+      ::oFacCliL:OrdSetFocus( "nNumFac" )
+      ::oDbfArt:OrdSetFocus( "Codigo" )
+
+      cExpHead          := 'dFecFac >= Ctod( "' + Dtoc( ::dIniInf ) + '" ) .and. dFecFac <= Ctod( "' + Dtoc( ::dFinInf ) + '" )'
+
+      if !::oGrupoRuta:Cargo:Todos
+         cExpHead       += ' .and. cCodRut >= "' + Rtrim( ::oGrupoRuta:Cargo:Desde ) + '" .and. cCodRut <= "' + Rtrim( ::oGrupoRuta:Cargo:Hasta ) + '"'
       end if
 
-      ::oFacCliT:Skip()
+      if !::oGrupoCliente:Cargo:Todos
+         cExpHead       += ' .and. cCodCli >= "' + Rtrim( ::oGrupoCliente:Cargo:Desde ) + '" .and. cCodCli <= "' + Rtrim( ::oGrupoCliente:Cargo:Hasta ) + '"'
+      end if
 
-      ::oMtrInf:AutoInc()
+      ::oFacCliT:AddTmpIndex( cCurUsr(), GetFileNoExt( ::oFacCliT:cFile ), ::oFacCliT:OrdKey(), ( cExpHead ), , , , , , , , .t. )
 
-   end while
+      ::oMtrInf:SetTotal( ::oFacCliT:OrdKeyCount() )
 
-   ::oMtrInf:AutoInc( ::oFacCliT:Lastrec() )
+      cExpLine          := '!lTotLin .and. !lControl'
 
-   /*
-   Destruimos los filtros creados----------------------------------------------
-   */
+      if !::oGrupoArticulo:Cargo:Todos
+         cExpLine       += ' .and. cRef >= "' + ::oGrupoArticulo:Cargo:Desde + '" .and. cRef <= "' + ::oGrupoArticulo:Cargo:Hasta + '"'
+      end if
 
-   ::oFacCliT:IdxDelete( cCurUsr(), GetFileNoExt( ::oFacCliT:cFile ) )
+      ::oFacCliL:AddTmpIndex( cCurUsr(), GetFileNoExt( ::oFacCliL:cFile ), ::oFacCliL:OrdKey(), cAllTrimer( cExpLine ), , , , , , , , .t. )
 
-   ::oFacCliL:IdxDelete( cCurUsr(), GetFileNoExt( ::oFacCliL:cFile ) )
+      ::oFacCliT:GoTop()
+
+      while !::oFacCliT:Eof()
+
+         if lChkSer( ::oFacCliT:cSerie, ::aSer )                                          .and.;
+            ( ::oGrupoGCliente:Cargo:Todos                                                .or.;
+            ( cGruCli( ::oFacCliT:cCodCli, ::oDbfCli ) >= ::oGrupoGCliente:Cargo:Desde    .and.;
+            cGruCli( ::oFacCliT:cCodCli, ::oDbfCli ) <= ::oGrupoGCliente:Cargo:Hasta ) )
+
+            if ::oFacCliL:Seek( ::oFacCliT:cSerie + Str( ::oFacCliT:nNumFac ) + ::oFacCliT:cSufFac )
+
+               while ::oFacCliT:cSerie + Str( ::oFacCliT:nNumFac ) + ::oFacCliT:cSufFac == ::oFacCliL:cSerie + Str( ::oFacCliL:nNumFac ) + ::oFacCliL:cSufFac .and. !::oFacCliL:eof()
+
+                  if ::oDbfArt:Seek( ::oFacCliL:cRef )
+
+                     ::oDbf:GoTop()
+
+                     while !::oDbf:Eof()
+
+                        /*
+                        Montando el texto para el fichero----------------------------
+                        */
+
+                        do case
+
+                           /*
+                           Campo de la tabla-----------------------------------------
+                           */
+
+                           case ::oDbf:nTipo <= 1
+
+                              do case
+                                 case AllTrim( ::oDbf:cTabla )  == "Cabecera factura"
+
+                                    if ::oDbf:nAlign <= 1
+
+                                       ::cTextoFinal     += Padr( AllTrim( cValToText( ::oFacCliT:FieldGetByName( AllTrim( ::oDbf:cCampo ) ) ) ), ::oDbf:nAncho )
+
+                                    elseif ::oDbf:nAlign == 2
+
+                                       ::cTextoFinal     += Padl( AllTrim( cValToText( ::oFacCliT:FieldGetByName( AllTrim( ::oDbf:cCampo ) ) ) ), ::oDbf:nAncho )
+
+                                    end if
+
+                                 case AllTrim( ::oDbf:cTabla ) == "Lineas factura"
+
+                                    if ::oDbf:nAlign <= 1
+
+                                       ::cTextoFinal     += Padr( AllTrim( cValToText( ::oFacCliL:FieldGetByName( AllTrim( ::oDbf:cCampo ) ) ) ), ::oDbf:nAncho )
+
+                                    elseif ::oDbf:nAlign == 2
+
+                                       ::cTextoFinal     += Padl( AllTrim( cValToText( ::oFacCliL:FieldGetByName( AllTrim( ::oDbf:cCampo ) ) ) ), ::oDbf:nAncho )
+
+                                    end if
+
+                                 case AllTrim( ::oDbf:cTabla ) == "Artículos"
+
+                                    if ::oDbf:nAlign <= 1
+
+                                       ::cTextoFinal     += Padr( AllTrim( cValToText( ::oDbfArt:FieldGetByName( AllTrim( ::oDbf:cCampo ) ) ) ), ::oDbf:nAncho )
+
+                                    elseif ::oDbf:nAlign == 2
+
+                                       ::cTextoFinal     += Padl( AllTrim( cValToText( ::oDbfArt:FieldGetByName( AllTrim( ::oDbf:cCampo ) ) ) ), ::oDbf:nAncho )
+
+                                    end if
+
+                                 case AllTrim( ::oDbf:cTabla ) == "Clientes"
+
+                                    if ::oDbf:nAlign <= 1
+
+                                       ::cTextoFinal     += Padr( AllTrim( cValToText( ::oDbfCli:FieldGetByName( AllTrim( ::oDbf:cCampo ) ) ) ), ::oDbf:nAncho )
+
+                                    elseif ::oDbf:nAlign == 2
+
+                                       ::cTextoFinal     += Padl( AllTrim( cValToText( ::oDbfCli:FieldGetByName( AllTrim( ::oDbf:cCampo ) ) ) ), ::oDbf:nAncho )
+
+                                    end if
+
+                              end case
+
+                           /*
+                           Expresion-------------------------------------------------
+                           */
+
+                           case ::oDbf:nTipo == 2
+
+                              uField               := bCheck2Block( AllTrim( ::oDbf:mExpre ), lFirstLine )
+
+                              if uField != nil
+                                 uField            := Eval( uField )
+                              else
+                                 lErrorBlock       := .t.
+                              end if
+
+                              if ::oDbf:nAlign <= 1
+
+                                 ::cTextoFinal        += Padr( AllTrim( cValToText( uField ) ), ::oDbf:nAncho )
+
+                              elseif ::oDbf:nAlign == 2
+
+                                 ::cTextoFinal        += Padl( AllTrim( cValToText( uField ) ), ::oDbf:nAncho )
+
+                              end if
+
+                           /*
+                           Constante-------------------------------------------------
+                           */
+
+                           case ::oDbf:nTipo >= 3
+
+                              if ::oDbf:nAlign <= 1
+
+                                 ::cTextoFinal        += Padr( AllTrim( ::oDbf:mExpre ), ::oDbf:nAncho )
+
+                              elseif ::oDbf:nAlign == 2
+
+                                 ::cTextoFinal        += Padl( AllTrim( ::oDbf:mExpre ), ::oDbf:nAncho )
+
+                              end if
+
+                        end if
+
+                        ::oDbf:Skip()
+
+                     end while
+
+                     ::cTextoFinal                 += CRLF
+
+                     lFirstLine                    := .f.
+
+                  end if
+
+                  ::oFacCliL:Skip()
+
+               end while
+
+            end if
+
+         end if
+
+         ::oFacCliT:Skip()
+
+         ::oMtrInf:AutoInc()
+
+      end while
+
+      ::oMtrInf:AutoInc( ::oFacCliT:Lastrec() )
+
+      /*
+      Destruimos los filtros creados----------------------------------------------
+      */
+
+      ::oFacCliT:IdxDelete( cCurUsr(), GetFileNoExt( ::oFacCliT:cFile ) )
+
+      ::oFacCliL:IdxDelete( cCurUsr(), GetFileNoExt( ::oFacCliL:cFile ) )
+
+   end if   
 
    if !lErrorBlock
 
