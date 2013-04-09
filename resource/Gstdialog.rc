@@ -1550,55 +1550,56 @@ FONT 8, "MS Sans Serif"
   CONTROL "", 130, "Edit", WS_BORDER|WS_TABSTOP, 104, 60, 175, 11
   CONTROL "", 230, "Edit", WS_BORDER|WS_TABSTOP, 104, 72, 175, 11
   CONTROL "", 140, "Edit", WS_BORDER|WS_TABSTOP, 104, 88, 175, 11
-  CONTROL "", 170, "Edit", WS_BORDER|WS_TABSTOP, 104, 100, 35, 11
+  CONTROL "", 170, "Edit", WS_BORDER|WS_TABSTOP, 104, 100, 40, 11
   CONTROL "", 150, "Edit", WS_BORDER|WS_TABSTOP, 104, 112, 175, 11
   CONTROL "", 160, "Edit", WS_BORDER|WS_TABSTOP, 104, 124, 105, 11
   CONTROL "", 180, "Edit", WS_BORDER|WS_TABSTOP, 324, 88, 62, 11
   CONTROL "", 190, "Edit", WS_BORDER|WS_TABSTOP, 324, 100, 62, 11
   CONTROL "", 200, "Edit", WS_BORDER|WS_TABSTOP, 104, 142, 282, 11
   CONTROL "", 194, "Edit", WS_BORDER|WS_TABSTOP, 104, 154, 282, 11
-  CONTROL "", 400, "Edit", WS_BORDER|WS_TABSTOP, 104, 180, 35, 11
-  CONTROL "", 410, "Edit", WS_BORDER|WS_TABSTOP, 140, 180, 119, 11
-  CONTROL "Compartir clientes con la matriz", 420, "Button", BS_AUTOCHECKBOX|WS_TABSTOP, 48, 194, 110, 10
-  CONTROL "", 201, "Edit", NOT WS_VISIBLE|WS_VSCROLL|WS_BORDER|WS_TABSTOP, 140, 340, 34, 11
-  CONTROL "Compartir proveedores con la matriz", 430, "Button", BS_AUTOCHECKBOX|WS_TABSTOP, 48, 206, 125, 10
-  CONTROL "", 205, "Edit", NOT WS_VISIBLE|WS_VSCROLL|WS_BORDER|WS_TABSTOP, 140, 355, 34, 11
-  CONTROL "Compartir artículos con el grupo", 440, "Button", BS_AUTOCHECKBOX|WS_TABSTOP, 48, 218, 113, 10
-  CONTROL "Compartir almacenes con el grupo", 450, "Button", BS_AUTOCHECKBOX|WS_TABSTOP, 48, 230, 120, 10
-  CONTROL "", 360, "Edit", WS_BORDER|WS_TABSTOP, 324, 180, 42, 11
-  CONTROL "TBitMap", 361, "TBitMap", 0x00800020, 368, 180, 18, 11
-  CONTROL "", 370, "Edit", WS_BORDER|WS_TABSTOP, 324, 192, 41, 11
-  CONTROL "TBitMap", 371, "TBitMap", 0x00800000, 368, 192, 18, 11
-  CONTROL "", 210, "Edit", WS_VSCROLL|WS_BORDER|WS_TABSTOP, 324, 218, 62, 11
-  CONTROL "", 220, "Edit", WS_VSCROLL|WS_BORDER|WS_TABSTOP, 324, 230, 62, 11
-  CONTROL "Nombre", -1, "Static", WS_GROUP, 48, 51, 42, 8
-  CONTROL "Domicilio", -1, "Static", WS_GROUP, 48, 91, 49, 8
-  CONTROL "Población", -1, "Static", WS_GROUP, 48, 115, 46, 8
-  CONTROL "Cod. postal", -1, "Static", WS_GROUP, 48, 103, 36, 8
-  CONTROL "Provincia", -1, "Static", WS_GROUP, 48, 127, 32, 8
+  CONTROL "", 400, "Edit", WS_BORDER|WS_TABSTOP, 105, 219, 40, 11
+  CONTROL "", 410, "Edit", WS_BORDER|WS_TABSTOP, 147, 219, 239, 11
+  CONTROL "Compartir clientes con la matriz", 420, "Button", BS_AUTOCHECKBOX|WS_TABSTOP, 106, 233, 110, 10
+  CONTROL "Compartir proveedores con la matriz", 430, "Button", BS_AUTOCHECKBOX|WS_TABSTOP, 106, 245, 125, 10
+  CONTROL "Compartir artículos con la empresa matriz", 440, "Button", BS_AUTOCHECKBOX|WS_TABSTOP, 106, 257, 142, 10
+  CONTROL "Compartir almacenes con la empresa matriz", 450, "Button", BS_AUTOCHECKBOX|WS_TABSTOP, 106, 269, 149, 10
+  CONTROL "", 360, "Edit", WS_BORDER|WS_TABSTOP, 105, 180, 40, 11
+  CONTROL "TBitMap", 361, "TBitMap", 0x00800020, 149, 180, 18, 11
+  CONTROL "", 370, "Edit", WS_BORDER|WS_TABSTOP, 105, 192, 40, 11
+  CONTROL "", 201, "Edit", ES_RIGHT|WS_VSCROLL|WS_BORDER|WS_TABSTOP, 245, 180, 34, 11
+  CONTROL "TBitMap", 371, "TBitMap", 0x00800000, 149, 192, 18, 11
+  CONTROL "", 205, "Edit", ES_RIGHT|WS_VSCROLL|WS_BORDER|WS_TABSTOP, 245, 192, 34, 11
+  CONTROL "", 210, "Edit", WS_VSCROLL|WS_BORDER|WS_TABSTOP, 324, 180, 62, 11
+  CONTROL "", 220, "Edit", WS_VSCROLL|WS_BORDER|WS_TABSTOP, 324, 192, 62, 11
+  CONTROL "Nombre", -1, "Static", WS_GROUP, 50, 51, 42, 8
+  CONTROL "Domicilio", -1, "Static", WS_GROUP, 50, 91, 49, 8
+  CONTROL "Población", -1, "Static", WS_GROUP, 50, 115, 46, 8
+  CONTROL "Cod. postal", -1, "Static", WS_GROUP, 50, 103, 36, 8
+  CONTROL "Provincia", -1, "Static", WS_GROUP, 50, 127, 32, 8
   CONTROL "N. I. F.", -1, "Static", WS_GROUP, 288, 51, 33, 8
   CONTROL "Teléfono", -1, "Static", WS_GROUP, 288, 91, 32, 8
   CONTROL "Fax", -1, "Static", WS_GROUP, 288, 103, 20, 8
-  CONTROL "Administrador", -1, "Static", WS_GROUP, 48, 63, 49, 8
-  CONTROL "Código", -1, "Static", WS_GROUP, 48, 40, 42, 8
-  CONTROL "Divisa empresa", -1, "Static", WS_GROUP, 270, 183, 50, 8
-  CONTROL "Divisa cambio", -1, "Static", WS_GROUP, 270, 195, 47, 8
+  CONTROL "Administrador", -1, "Static", WS_GROUP, 50, 63, 49, 8
+  CONTROL "Código", -1, "Static", WS_GROUP, 50, 40, 42, 8
+  CONTROL "Divisa empresa", -1, "Static", WS_GROUP, 50, 183, 50, 8
+  CONTROL "Divisa cambio", -1, "Static", WS_GROUP, 50, 195, 47, 8
   CONTROL "", -1, "Button", BS_GROUPBOX, 44, 29, 348, 139
-  CONTROL "Empresa matriz", -1, "Button", BS_GROUPBOX, 44, 170, 217, 74
+  CONTROL "Empresa matriz", -1, "Button", BS_GROUPBOX, 44, 209, 349, 74
   CONTROL "E-mail", -1, "Static", WS_GROUP, 48, 145, 50, 8
-  CONTROL "Dígitos cliente", 202, "Static", WS_GROUP, 59, 343, 48, 8
+  CONTROL "Dígitos cliente", 202, "Static", WS_GROUP, 181, 183, 48, 8
   CONTROL "", -1, "Static", SS_ETCHEDHORZ, 48, 85, 342, 1
   CONTROL "", -1, "Static", SS_ETCHEDHORZ, 48, 138, 342, 1
-  CONTROL "Web", -1, "Static", WS_GROUP, 48, 157, 50, 8
-  CONTROL "Dígitos proveedor", 206, "Static", WS_GROUP, 59, 358, 58, 8
-  CONTROL "Operaciones", -1, "Button", BS_GROUPBOX, 264, 208, 128, 37
-  CONTROL "Inicio", -1, "Static", WS_GROUP, 270, 221, 21, 8
-  CONTROL "Fin", -1, "Static", WS_GROUP, 270, 233, 22, 8
-  CONTROL "Código empresa", -1, "Static", WS_GROUP, 48, 183, 51, 8
-  CONTROL "Nº reg. mercantil", -1, "Static", WS_GROUP, 48, 75, 56, 8
-  CONTROL "Divisas", -1, "Button", BS_GROUPBOX, 264, 170, 128, 37
+  CONTROL "Web", -1, "Static", WS_GROUP, 50, 157, 50, 8
+  CONTROL "Dígitos proveedor", 206, "Static", WS_GROUP, 181, 195, 58, 8
+  CONTROL "Operaciones", -1, "Button", BS_GROUPBOX, 289, 170, 103, 37
+  CONTROL "Inicio", -1, "Static", WS_GROUP, 296, 183, 22, 8
+  CONTROL "Fin", -1, "Static", WS_GROUP, 296, 195, 15, 8
+  CONTROL "Código empresa", -1, "Static", WS_GROUP, 50, 222, 51, 8
+  CONTROL "Nº reg. mercantil", -1, "Static", WS_GROUP, 50, 75, 56, 8
+  CONTROL "Divisas", -1, "Button", BS_GROUPBOX, 44, 170, 128, 37
   CONTROL "", 500, "Static", SS_BITMAP|SS_CENTERIMAGE, 4, 3, 34, 30
   CONTROL "Datos generales de la empresa", -1, "Static", SS_LEFTNOWORDWRAP|WS_GROUP, 44, 3, 347, 8
+  CONTROL "Dígitos", -1, "Button", BS_GROUPBOX, 175, 170, 111, 37
 }
 
 ENTSAL DIALOG DISCARDABLE 240, 79, 390, 174
