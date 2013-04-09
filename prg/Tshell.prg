@@ -1190,7 +1190,7 @@ METHOD RButtonDown( nRow, nCol, nFlags ) CLASS TShell
 
    MenuAddItem()
 
-   MenuAddItem( "Exportar a E&xcel", "Exportar rejilla de datos a Excel", .f., .t., {|| ::oBrw:ToExcel() }, , "Text_Sum_16", oMenu )
+   MenuAddItem( "Exportar a E&xcel", "Exportar rejilla de datos a Excel", .f., .t., {|| CursorWait(), ::oBrw:ToExcel(), CursorWE() }, , "Text_Sum_16", oMenu )
 
    MenuEnd()
 
@@ -1198,7 +1198,7 @@ METHOD RButtonDown( nRow, nCol, nFlags ) CLASS TShell
 
    ::bMenuSelect := bMenuSelect
 
-   oMenu:end()
+   oMenu:end() 
 
    if !Empty( ::oBrw )
       ::oBrw:SetFocus()

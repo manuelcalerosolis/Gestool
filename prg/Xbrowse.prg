@@ -287,7 +287,7 @@ CLASS TXBrowse FROM TControl
    DATA lAutoSort       AS LOGICAL INIT .f.  // used internally. do not use in applications
    DATA lAllowCopy      AS LOGICAL INIT .t.
    DATA lCanPaste       AS LOGICAL INIT .f.
-   DATA lExcelCellWise  AS LOGICAL INIT .f.
+   DATA lExcelCellWise  AS LOGICAL INIT .t.
    DATA lMergeVert      AS LOGICAL INIT .f.  // used internally
    DATA lExitGetOnTypeOut AS LOGICAL INIT .f.
    DATA lOemAnsi        AS LOGICAL INIT .f.  // When .t. SetRDD() method creates codeblock to convert oem/ansi for bEditValue.

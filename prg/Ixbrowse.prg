@@ -304,7 +304,7 @@ METHOD RButtonDown( nRow, nCol, nFlags )
 
    MenuAddItem()
 
-   MenuAddItem( "Exportar a E&xcel", "Exportar rejilla de datos a Excel", .f., .t., {|| ::ToExcel() }, , "Text_Sum_16", oMenu )
+   MenuAddItem( "Exportar a E&xcel", "Exportar rejilla de datos a Excel", .f., .t., {|| CursorWait(), ::ToExcel(), CursorWe() }, , "Text_Sum_16", oMenu )
 
    MenuEnd()
 
