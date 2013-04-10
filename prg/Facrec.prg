@@ -1073,10 +1073,16 @@ STATIC FUNCTION OpenFiles( lExt )
       Limitaciones de cajero y cajas--------------------------------------------------------
       */
 
-      if oUser():lFiltroVentas()
-         cFiltroUsuario    := "Field->cCodUsr == '" + oUser():cCodigo() + "' .and. Field->cCodCaj == '" + oUser():cCaja() + "'"
-      end if
+      if lAIS() .and. !oUser():lAdministrador()
+      
+         cFiltroUsuario    := "Field->cSufFac == '" + oUser():cDelegacion() + "' .and. Field->cCodCaj == '" + oUser():cCaja() + "'"
+         if oUser():lFiltroVentas()         
+            cFiltroUsuario += " .and. Field->cCodUsr == '" + oUser():cCodigo() + "'"
+         end if 
 
+         ( dbfFacRecT )->( AdsSetAOF( cFiltroUsuario ) )
+
+      end if
 
    RECOVER USING oError
 
@@ -1560,8 +1566,6 @@ FUNCTION FacRec( oMenuItem, oWnd, cCodCli, cCodArt, cCodPed, aNumDoc )
 
 	  oWndBrw:lFechado     := .t.
 
-	  oWndBrw:bChgIndex    := {|| if( oUser():lFiltroVentas(), CreateFastFilter( cFiltroUsuario, dbfFacRecT, .f., , cFiltroUsuario ), CreateFastFilter( "", dbfFacRecT, .f. ) ) }
-
 	  oWndBrw:SetYearComboBoxChange( {|| YearComboBoxChange() } )
 
       with object ( oWndBrw:AddXCol() )
@@ -1643,15 +1647,15 @@ FUNCTION FacRec( oMenuItem, oWnd, cCodCli, cCodArt, cCodPed, aNumDoc )
       with object ( oWndBrw:AddXCol() )
          :cHeader          := "Número"
          :cSortOrder       := "nNumFac"
-         :bEditValue       := {|| ( dbfFacRecT )->cSerie + "/" + Alltrim( Str( ( dbfFacRecT )->nNumFac ) ) + "/" + ( dbfFacRecT )->cSufFac }
+         :bEditValue       := {|| ( dbfFacRecT )->cSerie + "/" + Alltrim( Str( ( dbfFacRecT )->nNumFac ) )  }
          :nWidth           := 80
          :bLClickHeader    := {| nMRow, nMCol, nFlags, oCol | oWndBrw:ClickOnHeader( oCol ) }
       end with
 
       with object ( oWndBrw:AddXCol() )
          :cHeader          := "Delegación"
-         :bEditValue       := {|| ( dbfFacRecT )->cCodDlg }
-         :nWidth           := 20
+         :bEditValue       := {|| ( dbfFacRecT )->cSufFac }
+         :nWidth           := 40
          :lHide            := .t.
       end with
 

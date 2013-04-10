@@ -984,7 +984,7 @@ FONT 8, "MS Sans Serif"
   CONTROL "", 100, "TXBrowse", WS_TABSTOP|0x00300000, 48, 55, 442, 192
   CONTROL "Datos bancarios", -1, "Button", BS_GROUPBOX, 44, 29, 449, 222
   CONTROL "", 500, "Static", SS_BITMAP|SS_CENTERIMAGE, 4, 3, 34, 30
-  CONTROL "Relación de bancos con los que trabaja nuestro cliente.", -1, "Static", SS_LEFTNOWORDWRAP|WS_GROUP, 44, 3, 446, 8
+  CONTROL "Relación de bancos", -1, "Static", SS_LEFTNOWORDWRAP|WS_GROUP, 44, 3, 446, 8
 }
 
 CLIENT_4 DIALOG DISCARDABLE 32, 32, 496, 254
@@ -4780,7 +4780,7 @@ FONT 8, "MS Sans Serif"
   CONTROL "Nombre", -1, "Static", WS_GROUP, 47, 52, 29, 8
   CONTROL "Domicilio", -1, "Static", WS_GROUP, 47, 65, 29, 8
   CONTROL "Población", -1, "Static", WS_GROUP, 47, 78, 39, 8
-  CONTROL "Provincia", -1, "Static", WS_GROUP, 47, 91, 31, 8
+  CONTROL "CP y Provincia", -1, "Static", WS_GROUP, 47, 91, 51, 8
   CONTROL "País", -1, "Static", WS_GROUP, 47, 104, 37, 8
   CONTROL "Contacto", -1, "Static", WS_GROUP, 47, 116, 37, 8
   CONTROL "Teléfono", -1, "Static", WS_GROUP, 366, 65, 29, 8
@@ -9660,15 +9660,14 @@ FONT 8, "MS Sans Serif"
   CONTROL "Informe", -1, "Static", WS_GROUP, 6, 27, 32, 8
 }
 
-WAIT_METER DIALOG DISCARDABLE 37, 77, 270, 67
+WAIT_METER DIALOG DISCARDABLE 37, 77, 376, 43
 STYLE WS_POPUP|DS_MODALFRAME|DS_3DLOOK|WS_CAPTION
 CAPTION "Espere por favor..."
 FONT 8, "MS Sans Serif"
 {
-  CONTROL "", 110, "Static", WS_GROUP, 11, 40, 252, 10
-  CONTROL "TMeter", 120, "TMeter", 0x00000000, 11, 53, 252, 10
-  CONTROL "", -1, "Static", SS_ETCHEDHORZ, 0, 30, 398, 1
-  CONTROL "", 600, "Static", SS_BITMAP|SS_CENTERIMAGE|SS_REALSIZEIMAGE, 0, 0, 398, 30
+  CONTROL "", 110, "Static", WS_GROUP, 44, 3, 332, 10
+  CONTROL "TMeter", 120, "TMeter", 0x00000000, 0, 39, 376, 3
+  CONTROL "", 600, "Static", SS_BITMAP|SS_CENTERIMAGE|SS_REALSIZEIMAGE, 4, 3, 34, 30
 }
 
 INF_INCI DIALOG DISCARDABLE -2, -14, 406, 244
@@ -11496,8 +11495,8 @@ FONT 8, "MS Sans Serif"
   CONTROL "", 320, "Edit", WS_BORDER|WS_TABSTOP, 104, 97, 34, 11
   CONTROL "", 330, "Edit", WS_BORDER|WS_TABSTOP, 140, 97, 20, 11
   CONTROL "", 340, "Edit", WS_BORDER|WS_TABSTOP, 162, 97, 80, 11
-  CONTROL "", 350, "Edit", ES_RIGHT|WS_BORDER|WS_TABSTOP, 67, 111, 71, 11
-  CONTROL "Banco por defecto", 290, "Button", BS_AUTOCHECKBOX|WS_TABSTOP, 10, 124, 73, 12
+  CONTROL "", 350, "Edit", NOT WS_VISIBLE|ES_RIGHT|WS_BORDER|WS_TABSTOP, 67, 127, 71, 11
+  CONTROL "Banco por defecto", 290, "Button", BS_AUTOCHECKBOX|WS_TABSTOP, 10, 111, 73, 12
   CONTROL "&Aceptar [F5]", 500, "Button", BS_DEFPUSHBUTTON|WS_TABSTOP, 182, 147, 50, 14
   CONTROL "&Cancelar", 550, "Button", WS_TABSTOP, 233, 147, 50, 14
   CONTROL "Banco", -1, "Button", BS_GROUPBOX, 4, 4, 280, 138
@@ -11511,7 +11510,7 @@ FONT 8, "MS Sans Serif"
   CONTROL "Fax", -1, "Static", WS_GROUP, 157, 76, 15, 8
   CONTROL "Contacto", -1, "Static", WS_GROUP, 10, 88, 34, 8
   CONTROL "País", -1, "Static", WS_GROUP, 10, 64, 18, 8
-  CONTROL "Saldo inicial", -1, "Static", WS_GROUP, 11, 114, 43, 8
+  CONTROL "Saldo inicial", -1, "Static", NOT WS_VISIBLE|WS_GROUP, 10, 128, 43, 8
 }
 
 HELPENTRYDUPSTK DIALOG DISCARDABLE 141, -5, 492, 319
@@ -11739,7 +11738,7 @@ FONT 8, "MS Sans Serif"
   CONTROL "&Eliminar [F4]", 502, "Button", WS_TABSTOP, 158, 39, 50, 14
   CONTROL "&Zoom", 503, "Button", WS_TABSTOP, 213, 39, 50, 14
   CONTROL "", 600, "Static", SS_BITMAP|SS_CENTERIMAGE, 4, 3, 34, 30
-  CONTROL "Incidencias registradas con nuestro cliente", -1, "Static", SS_LEFTNOWORDWRAP|WS_GROUP, 44, 3, 446, 8
+  CONTROL "Incidencias registradas ", -1, "Static", SS_LEFTNOWORDWRAP|WS_GROUP, 44, 3, 446, 8
 }
 
 NOMBRE_FILTRO DIALOG DISCARDABLE 30, 84, 252, 62
@@ -13903,7 +13902,7 @@ FONT 8, "MS Sans Serif"
   CONTROL "", 290, "TBtnBmp", 0x00000000, 447, 39, 12, 12
   CONTROL "Ventas", -1, "Button", BS_GROUPBOX, 44, 29, 450, 222
   CONTROL "", 600, "Static", SS_BITMAP|SS_CENTERIMAGE, 4, 3, 34, 30
-  CONTROL "Observaciones de nuestro cliente, podemos editar este texto con distinto tipos de fuentes, colores, guiones, etc.", -1, "Static", SS_LEFTNOWORDWRAP|WS_GROUP, 44, 3, 446, 8
+  CONTROL "Observaciones, podemos editar este texto con distinto tipos de fuentes, colores, guiones, etc.", -1, "Static", SS_LEFTNOWORDWRAP|WS_GROUP, 44, 3, 446, 8
 }
 
 DATERICH DIALOG DISCARDABLE 34, 96, 208, 118
@@ -15574,7 +15573,7 @@ FONT 8, "MS Sans Serif"
   CONTROL "", 400, "TXBrowse", WS_TABSTOP|0x00300000, 48, 56, 440, 188
   CONTROL "Direcciones", -1, "Button", BS_GROUPBOX, 44, 29, 448, 220
   CONTROL "", 600, "Static", SS_BITMAP|SS_CENTERIMAGE, 4, 3, 34, 30
-  CONTROL "Relación de las direcciones del cliente, delgaciones, obras, etc.", -1, "Static", SS_LEFTNOWORDWRAP|WS_GROUP, 44, 3, 446, 8
+  CONTROL "Relación de las direcciones, delgaciones, obras, etc.", -1, "Static", SS_LEFTNOWORDWRAP|WS_GROUP, 44, 3, 446, 8
 }
 
 CLIENT_16 DIALOG DISCARDABLE 26, 26, 496, 254
@@ -15588,7 +15587,7 @@ FONT 8, "MS Sans Serif"
   CONTROL "", 400, "TXBrowse", WS_TABSTOP|0x00300000, 48, 56, 440, 188
   CONTROL "Contactos", -1, "Button", BS_GROUPBOX, 44, 29, 448, 220
   CONTROL "", 600, "Static", SS_BITMAP|SS_CENTERIMAGE, 4, 3, 34, 30
-  CONTROL "Personas de contacto de nuestro cliente, responsable de compras, contabilidad, comerciales, etc.", -1, "Static", SS_LEFTNOWORDWRAP|WS_GROUP, 44, 3, 446, 8
+  CONTROL "Personas de contacto, responsable de compras, contabilidad, comerciales, etc.", -1, "Static", SS_LEFTNOWORDWRAP|WS_GROUP, 44, 3, 446, 8
 }
 
 LANGUAGE LANG_SPANISH,SUBLANG_SPANISH_MODERN
@@ -16891,7 +16890,7 @@ FONT 8, "MS Sans Serif"
   CONTROL "", 250, "Edit", WS_BORDER|WS_TABSTOP, 469, 158, 60, 12
   CONTROL "", 251, "Edit", WS_BORDER|WS_TABSTOP, 531, 158, 146, 12
   CONTROL "", 210, "TXBrowse", WS_TABSTOP|0x00300000, 3, 173, 674, 206
-  CONTROL "TBitmap", 600, "TBitMap", 0x00800000, 2, 386, 63, 50
+  CONTROL "TBitmap", 600, "TBitmap", 0x00800000, 2, 386, 63, 50
   CONTROL "", 408, "Edit", ES_RIGHT|WS_BORDER|WS_TABSTOP, 214, 383, 130, 12
   CONTROL "", 710, "Edit", WS_BORDER|WS_TABSTOP, 348, 383, 130, 12
   CONTROL "", 711, "Edit", ES_RIGHT|WS_VSCROLL|WS_BORDER|WS_TABSTOP, 481, 383, 70, 12
@@ -16902,13 +16901,13 @@ FONT 8, "MS Sans Serif"
   CONTROL "TOTAL", 410, "Static", WS_BORDER|WS_GROUP, 348, 411, 152, 35
   CONTROL "NTOTAL", 420, "Static", SS_RIGHT|WS_BORDER|WS_GROUP, 480, 411, 197, 35
   CONTROL "", 100, "Edit", WS_VSCROLL|WS_BORDER|WS_TABSTOP, 45, 74, 28, 12
-  CONTROL "", 110, "Edit", ES_RIGHT|WS_BORDER|WS_TABSTOP, 75, 74, 44, 12
-  CONTROL "", 111, "Edit", ES_RIGHT|WS_BORDER|WS_TABSTOP, 121, 74, 37, 12
-  CONTROL "", 125, "Edit", WS_BORDER|WS_TABSTOP, 45, 88, 32, 12
-  CONTROL "", 130, "Edit", WS_BORDER, 79, 88, 79, 12
+  CONTROL "", 110, "Edit", ES_RIGHT|WS_BORDER|WS_TABSTOP, 75, 74, 59, 12
+  CONTROL "", 111, "Edit", ES_RIGHT|WS_BORDER|WS_TABSTOP, 135, 74, 23, 12
+  CONTROL "", 125, "Edit", WS_BORDER|WS_TABSTOP, 45, 88, 28, 12
+  CONTROL "", 130, "Edit", WS_BORDER, 75, 88, 83, 12
   CONTROL "", 120, "Edit", WS_VSCROLL|WS_BORDER|WS_TABSTOP, 45, 102, 113, 12
   CONTROL "", 200, "Edit", WS_BORDER|WS_TABSTOP, 45, 116, 93, 12
-  CONTROL "", 201, "TBitMap", 0x00800000, 141, 116, 17, 12
+  CONTROL "", 201, "TBitmap", 0x00800000, 141, 116, 17, 12
   CONTROL "", 140, "Edit", ES_RIGHT|WS_BORDER, 45, 130, 113, 12
   CONTROL "", 150, "Edit", ES_RIGHT|WS_BORDER, 45, 144, 113, 12
   CONTROL "Copias", 260, "Button", BS_AUTOCHECKBOX|WS_TABSTOP, 3, 161, 41, 9

@@ -3166,7 +3166,7 @@ Static Function EdtBnc( aTmp, aGet, dbfTmpBnc, oBrw, bWhen, bValid, nMode, cCodP
       end if
    end if
 
-   DEFINE DIALOG oDlg RESOURCE "Banco" TITLE LblTitle( nMode ) + "banco de cliente"
+   DEFINE DIALOG oDlg RESOURCE "Banco" TITLE LblTitle( nMode ) + "banco de proveedor"
 
       REDEFINE GET aGet[ ( dbfTmpBnc )->( FieldPos( "cCodBnc" ) ) ] ;
          VAR      aTmp[ ( dbfTmpBnc )->( FieldPos( "cCodBnc" ) ) ] ;
@@ -3267,13 +3267,6 @@ Static Function EdtBnc( aTmp, aGet, dbfTmpBnc, oBrw, bWhen, bValid, nMode, cCodP
          ID       340 ;
          WHEN     ( nMode != ZOOM_MODE ) ;
          VALID    ( lCalcDC( aTmp[ ( dbfTmpBnc )->( FieldPos( "cEntBnc" ) ) ], aTmp[ ( dbfTmpBnc )->( FieldPos( "cSucBnc" ) ) ], aTmp[ ( dbfTmpBnc )->( FieldPos( "cDigBnc" ) ) ], aTmp[ ( dbfTmpBnc )->( FieldPos( "cCtaBnc" ) ) ], aGet[ ( dbfTmpBnc )->( FieldPos( "cDigBnc" ) ) ] ) ) ;
-         OF       oDlg
-
-      REDEFINE GET aGet[ ( dbfTmpBnc )->( FieldPos( "nSalIni" ) ) ];
-         VAR      aTmp[ ( dbfTmpBnc )->( FieldPos( "nSalIni" ) ) ];
-         ID       350 ;
-         PICTURE  cPorDiv( cDivEmp(), dbfDiv ) ;
-         WHEN     ( nMode != ZOOM_MODE ) ;
          OF       oDlg
 
       REDEFINE CHECKBOX aGet[ ( dbfTmpBnc )->( FieldPos( "lBncDef" ) ) ] ;

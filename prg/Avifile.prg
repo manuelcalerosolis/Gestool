@@ -252,7 +252,7 @@ Method New( cTitle, cMsg, nTotal ) CLASS TWaitMeter
 
    ::oDlgWait           := TDialog():New( , , , , ::cTitle, "Wait_Meter", , .f.,,,,,,.f. )
 
-   ::oBitmap            := TBitmap():ReDefine( 600, "PleaseWait", , ::oDlgWait, , , .f., .f., , , .f., , , .f. )
+   ::oBitmap            := TBitmap():ReDefine( 600, "Gears_48_alpha", , ::oDlgWait, , , .f., .f., , , .f., , , .f. )
 
    ::oMessage           := TSay():ReDefine( 110, {|| ::cMessage }, ::oDlgWait, , , , .f. )
 
