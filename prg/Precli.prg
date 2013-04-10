@@ -906,8 +906,15 @@ STATIC FUNCTION OpenFiles( lExt )
       Limitaciones de cajero y cajas--------------------------------------------------------
       */
 
-      if oUser():lFiltroVentas()
-         cFiltroUsuario    := "Field->cCodUsr == '" + oUser():cCodigo() + "' .and. Field->cCodCaj == '" + oUser():cCaja() + "'"
+      if lAIS() .and. !oUser():lAdministrador()
+      
+         cFiltroUsuario    := "Field->cSufPre == '" + oUser():cDelegacion() + "' .and. Field->cCodCaj == '" + oUser():cCaja() + "'"
+         if oUser():lFiltroVentas()         
+            cFiltroUsuario += " .and. Field->cCodUsr == '" + oUser():cCodigo() + "'"
+         end if 
+
+         ( dbfPreCliT )->( AdsSetAOF( cFiltroUsuario ) )
+
       end if
 
       EnableAcceso()
@@ -1329,8 +1336,6 @@ FUNCTION PreCli( oMenuItem, oWnd, cCodCli, cCodArt )
       OF       oWnd
 
 	  oWndBrw:lFechado     := .t.
-
-	  oWndBrw:bChgIndex    := {|| if( oUser():lFiltroVentas(), CreateFastFilter( cFiltroUsuario, dbfPreCliT, .f., , cFiltroUsuario ), CreateFastFilter( "", dbfPreCliT, .f. ) ) }
 
 	  oWndBrw:SetYearComboBoxChange( {|| YearComboBoxChange() } )
 

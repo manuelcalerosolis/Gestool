@@ -1223,6 +1223,8 @@ STATIC FUNCTION OpenFiles( lExt )
 
          ( dbfFacCliT )->( AdsSetAOF( cFiltroUsuario ) )
 
+         msgAlert( cFiltroUsuario )
+
       end if
 
       /*
@@ -1246,7 +1248,6 @@ STATIC FUNCTION OpenFiles( lExt )
       public nTotTrn    := 0
       public nTotAnt    := 0
       public nTotEnt    := 0
-      public nTotDtoEnt := 0
       public nTotCos    := 0
       public nTotCob    := 0
       public nTotPes    := 0
@@ -1255,6 +1256,7 @@ STATIC FUNCTION OpenFiles( lExt )
       public nTotArt    := 0
       public nTotCaj    := 0
       public nTotPctRnt := 0
+      public nTotDtoEnt := 0
 
       public aTotIva    := { { 0,0,nil,0,0,0,0,0,0 }, { 0,0,nil,0,0,0,0,0,0 }, { 0,0,nil,0,0,0,0,0,0 } }
       public aIvaUno    := aTotIva[ 1 ]

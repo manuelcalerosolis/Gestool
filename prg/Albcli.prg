@@ -917,17 +917,20 @@ STATIC FUNCTION OpenFiles()
       Limitaciones de cajero y cajas--------------------------------------------------------
       */
 
-      if oUser():lFiltroVentas()
-         cFiltroUsuario    := "Field->cCodUsr == '" + oUser():cCodigo() + "' .and. Field->cCodCaj == '" + oUser():cCaja() + "'"
-      end if
+      if lAIS() .and. !oUser():lAdministrador()
+      
+         cFiltroUsuario    := "Field->cSufAlb == '" + oUser():cDelegacion() + "' .and. Field->cCodCaj == '" + oUser():cCaja() + "'"
+         if oUser():lFiltroVentas()         
+            cFiltroUsuario += " .and. Field->cCodUsr == '" + oUser():cCodigo() + "'"
+         end if 
 
-      // EnableAcceso()
+         ( dbfAlbCliT )->( AdsSetAOF( cFiltroUsuario ) )
+
+      end if
 
    RECOVER USING oError
 
       lOpenFiles        := .f.
-
-      // EnableAcceso()
 
       msgStop( "Imposible abrir todas las bases de datos" + CRLF + ErrorMessage( oError ) )
 
@@ -1581,8 +1584,6 @@ FUNCTION AlbCli( oMenuItem, oWnd, cCodCli, cCodArt, aNumDoc )
 
       oWndBrw:lFechado     := .t.
 
-      oWndBrw:bChgIndex    := {|| if( oUser():lFiltroVentas(), CreateFastFilter( cFiltroUsuario, dbfAlbCliT, .f., , cFiltroUsuario ), CreateFastFilter( "", dbfAlbCliT, .f. ) ) }
-
 	  oWndBrw:SetYearComboBoxChange( {|| YearComboBoxChange() } )
 
       with object ( oWndBrw:AddXCol() )
@@ -1660,15 +1661,15 @@ FUNCTION AlbCli( oMenuItem, oWnd, cCodCli, cCodArt, aNumDoc )
       with object ( oWndBrw:AddXCol() )
          :cHeader          := "Número"
          :cSortOrder       := "nNumAlb"
-         :bEditValue       := {|| ( dbfAlbCliT )->cSerAlb + "/" + Alltrim( Str( ( dbfAlbCliT )->nNumAlb ) ) + "/" + ( dbfAlbCliT )->cSufAlb }
+         :bEditValue       := {|| ( dbfAlbCliT )->cSerAlb + "/" + Alltrim( Str( ( dbfAlbCliT )->nNumAlb ) ) }
          :nWidth           := 80
          :bLClickHeader    := {| nMRow, nMCol, nFlags, oCol | oWndBrw:ClickOnHeader( oCol ) }
       end with
 
       with object ( oWndBrw:AddXCol() )
          :cHeader          := "Delegación"
-         :bEditValue       := {|| ( dbfAlbCliT )->cCodDlg }
-         :nWidth           := 20
+         :bEditValue       := {|| ( dbfAlbCliT )->cSufAlb }
+         :nWidth           := 40
          :lHide            := .t.
       end with
 

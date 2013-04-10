@@ -2554,7 +2554,9 @@ Method CreateXFromCode()
    // Insertamos el action por columnas----------------------------------------
 
    for each oCol in ::oBrw:aCols
-      oCol:bLDClickData    := {|| ::RecEdit() }
+      if Empty( oCol:bLDClickData )
+         oCol:bLDClickData    := {|| ::RecEdit() }
+      end if 
    next
 
    // Insertamos los fastbuttons-----------------------------------------------
