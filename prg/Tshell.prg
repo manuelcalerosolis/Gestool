@@ -300,6 +300,8 @@ CLASS TShell FROM TMdiChild
    METHOD SetDefaultComboFilter( aFilter )   INLINE ( ::oWndBar:SetDefaultComboFilter( ::oActiveFilter:aFilter ) )
    METHOD SetComboFilter( cItem )            INLINE ( ::oWndBar:SetComboFilter( cItem ) )
 
+   METHOD ToExcel()
+
 ENDCLASS
 
 //----------------------------------------------------------------------------//
@@ -1002,11 +1004,12 @@ METHOD ChangeSeek( oIndice ) CLASS TShell
 
    ::oComboBox:Select( nOrd )
 
-   if cType == "C"
+   do case
+   case IsChar( cType )
       xCadena     := Rtrim( oGet:GetText() )
-   elseif cType == "N"
+   case IsNum( cType )
       xCadena     := Val( Rtrim( oGet:GetText() ) )
-   end if
+   end case 
 
    do case
    case IsObject( ::xAlias )
@@ -1190,7 +1193,7 @@ METHOD RButtonDown( nRow, nCol, nFlags ) CLASS TShell
 
    MenuAddItem()
 
-   MenuAddItem( "Exportar a E&xcel", "Exportar rejilla de datos a Excel", .f., .t., {|| ::oBrw:ToExcel() }, , "Text_Sum_16", oMenu )
+   MenuAddItem( "Exportar a E&xcel", "Exportar rejilla de datos a Excel", .f., .t., {|| ::ToExcel() }, , "Text_Sum_16", oMenu )
 
    MenuEnd()
 
@@ -1198,7 +1201,7 @@ METHOD RButtonDown( nRow, nCol, nFlags ) CLASS TShell
 
    ::bMenuSelect := bMenuSelect
 
-   oMenu:end()
+   oMenu:end() 
 
    if !Empty( ::oBrw )
       ::oBrw:SetFocus()
@@ -1455,95 +1458,6 @@ METHOD SetColumn( lChanged ) CLASS TShell
 return nil
 
 //----------------------------------------------------------------------------//
-
-/*METHOD DlgColumn() CLASS TShell
-
-   local oDlg
-   local oGet
-   local oBrwCol
-   local aFlds       := aClone( ::aFlds      )
-   local aHeaders    := aClone( ::aHeaders   )
-   local aColSizes   := aClone( ::aColSizes  )
-   local aColSelect  := aClone( ::aColSelect )
-   local aColPos     := aClone( ::aColPos    )
-   local aJustify    := aClone( ::aJustify   )
-
-   local hBmp        := LoadBitmap( 0, 32760 )
-
-   DEFINE DIALOG oDlg RESOURCE "DLGCOLUM"
-
-   REDEFINE LISTBOX oBrwCol;
-      FIELDS   if( aColSelect[ oBrwCol:nAt ], hBmp, "" ) ,;
-               aHeaders[ oBrwCol:nAt ] ;
-      FIELDSIZES ;
-               14,;
-               40 ;
-      HEAD     "S",;
-               "Columna" ;
-      ID       100 ;
-      ON CHANGE( oGet:Refresh() ) ;
-      OF       oDlg
-
-      oBrwCol:nLineStyle := 10
-      oBrwCol:SetArray( aHeaders )
-
-   REDEFINE GET oGet VAR aColSizes[ oBrwCol:nAt ] ;
-      ID       101 ;
-      SPINNER ;
-      MIN      1 ;
-      MAX      999 ;
-      PICTURE  "999" ;
-      VALID    ::aColSizes[ oBrwCol:nAt ] > 0 ;
-      OF       oDlg
-
-   REDEFINE BUTTON ;
-      ID       400 ;
-      OF       oDlg ;
-      ACTION   ( if( CheckOne( aColSelect ), oDlg:end( IDOK ), ) )
-
-   REDEFINE BUTTON ;
-      ID       401 ;
-      OF       oDlg ;
-      ACTION   ( oDlg:end() )
-
-   REDEFINE BUTTON ;
-      ID       402 ;
-      OF       oDlg ;
-      ACTION   ( aColSelect[ oBrwCol:nAt ] := .t., oBrwCol:SetFocus(), oBrwCol:Refresh() )
-
-   REDEFINE BUTTON ;
-      ID       403 ;
-      OF       oDlg ;
-      ACTION   ( aColSelect[ oBrwCol:nAt ] := .f., oBrwCol:SetFocus(), oBrwCol:Refresh() )
-
-   REDEFINE BUTTON ;
-      ID       404 ;
-      OF       oDlg ;
-      ACTION   ( ::UpColumn( oBrwCol, aFlds, aHeaders, aColSizes, aColSelect, aColPos, aJustify ) )
-
-   REDEFINE BUTTON ;
-      ID       405 ;
-      OF       oDlg ;
-      ACTION   ( ::DwColumn( oBrwCol, aFlds, aHeaders, aColSizes, aColSelect, aColPos, aJustify ) )
-
-   ACTIVATE DIALOG oDlg CENTER
-
-   if oDlg:nResult == IDOK
-      ::aFlds        := aFlds
-      ::aHeaders     := aHeaders
-      ::aColSizes    := aColSizes
-      ::aColSelect   := aColSelect
-      ::aColPos      := aColPos
-      ::aJustify     := aJustify
-      ::SetColumn( .t. )
-   end if
-
-   DeleteObject( hBmp )
-   hBmp              := 0
-
-return nil*/
-
-//----------------------------------------------------------------------------//
 //
 // Actualiza los anchos de columnas
 //
@@ -1613,16 +1527,6 @@ METHOD DwColumn( oBrw, aFlds, aHeaders, aColSizes, aColSelect, aColPos, aJustify
 
 return ( Self )
 
-//----------------------------------------------------------------------------//
-
-//
-// Color para las lineas
-//
-/*
-METHOD ClrPan( nAt ) CLASS TShell
-   DEFAULT nAt := 1
-return ( if( Mod( nAt, 2 ) == 0, ::nColUno, ::nColDos ) )
-*/
 //----------------------------------------------------------------------------//
 
 METHOD AutoButtons( oParent ) CLASS TShell
@@ -2830,6 +2734,18 @@ return ( Self )
 
 //----------------------------------------------------------------------------//
 
+METHOD ToExcel()
+
+   CreateWaitMeter( "Exportando a excel", "Espere por favor...", Eval( ::oBrw:bKeyCount ) ) 
+
+   ::oBrw:ToExcel( {|n| RefreshWaitMeter( n ) } )
+
+   EndWaitMeter()
+
+Return ( Self )
+
+//----------------------------------------------------------------------------//
+ 
 Function aItmHea()
 
    local aBase := {}

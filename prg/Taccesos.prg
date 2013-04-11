@@ -599,7 +599,7 @@ Return ( Self )
 
 Method CreateSearchBar( oWnd )
 
-   @ 124, 4 GET     ::oGet ;
+   @ 124, 4 GET      ::oGet ;
             VAR      ::cGet ;
             OF       ::oRebar ;
             FONT     ::oFont ;
@@ -1152,3 +1152,5 @@ HB_FUNC( GETRCDATA )   // ( cnResName, cType ) --> cResourceBytes
 
 
 #pragma ENDDUMP
+
+//----------------------------------------------------------------------------//

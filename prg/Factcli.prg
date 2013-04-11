@@ -551,7 +551,7 @@ static hImpuestosFactura   := 0
 static aImportacion        := {}
 static lCancelImportacion  := .f.
 
-static cFiltroCajero       := ""
+static cFiltroUsuario      := ""
 
 static oMeter
 static nMeter              := 1
@@ -1214,8 +1214,15 @@ STATIC FUNCTION OpenFiles( lExt )
       Limitaciones de cajero y cajas--------------------------------------------------------
       */
 
-      if oUser():lFiltroVentas()
-         cFiltroCajero    := "Field->cCodUsr == '" + oUser():cCodigo() + "' .and. Field->cCodCaj == '" + oUser():cCaja() + "'"
+      if lAIS() .and. !oUser():lAdministrador()
+      
+         cFiltroUsuario    := "Field->cSufFac == '" + oUser():cDelegacion() + "' .and. Field->cCodCaj == '" + oUser():cCaja() + "'"
+         if oUser():lFiltroVentas()         
+            cFiltroUsuario += " .and. Field->cCodUsr == '" + oUser():cCodigo() + "'"
+         end if 
+
+         ( dbfFacCliT )->( AdsSetAOF( cFiltroUsuario ) )
+
       end if
 
       /*
@@ -1835,8 +1842,6 @@ FUNCTION FactCli( oMenuItem, oWnd, cCodCli, cCodArt, cCodPed, aNumDoc )
 
       oWndBrw:lFechado     := .t.
 
-      oWndBrw:bChgIndex    := {|| if( oUser():lFiltroVentas(), CreateFastFilter( cFiltroCajero, dbfFacCliT, .f., , cFiltroCajero ), CreateFastFilter( "", dbfFacCliT, .f. ) ) }
-
       oWndBrw:SetYearComboBoxChange( {|| YearComboBoxChange() } )
 
       with object ( oWndBrw:AddXCol() )
@@ -1968,7 +1973,7 @@ FUNCTION FactCli( oMenuItem, oWnd, cCodCli, cCodArt, cCodPed, aNumDoc )
       with object ( oWndBrw:AddXCol() )
          :cHeader          := "Número"
          :cSortOrder       := "nNumFac"
-         :bEditValue       := {|| ( dbfFacCliT )->cSerie + "/" + Alltrim( Str( ( dbfFacCliT )->nNumFac ) ) + "/" + ( dbfFacCliT )->cSufFac }
+         :bEditValue       := {|| ( dbfFacCliT )->cSerie + "/" + Alltrim( Str( ( dbfFacCliT )->nNumFac ) ) }
          :nWidth           := 80
          :bLClickHeader    := {| nMRow, nMCol, nFlags, oCol | oWndBrw:ClickOnHeader( oCol ) }
          :bLDClickData     := {|| oWndBrw:RecEdit() }
@@ -1985,8 +1990,8 @@ FUNCTION FactCli( oMenuItem, oWnd, cCodCli, cCodArt, cCodPed, aNumDoc )
 
       with object ( oWndBrw:AddXCol() )
          :cHeader          := "Delegación"
-         :bEditValue       := {|| ( dbfFacCliT )->cCodDlg }
-         :nWidth           := 20
+         :bEditValue       := {|| ( dbfFacCliT )->cSufFac }
+         :nWidth           := 40
          :lHide            := .t.
          :bLDClickData     := {|| oWndBrw:RecEdit() }
       end with

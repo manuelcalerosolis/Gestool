@@ -306,8 +306,8 @@ METHOD lResource() CLASS TpvListaTicket
       end with
 
       with object ( ::oBrwListaTicket:AddCol() )
-         :cHeader          := "Número"
-         :bEditValue       := {|| ::oSender:oTiketCabecera:cSerTik + "/" + lTrim( ::oSender:oTiketCabecera:cNumTik ) + "/" + ::oSender:oTiketCabecera:cSufTik }
+         :cHeader          := "Número" + CRLF + "Delegación"
+         :bEditValue       := {|| ::oSender:oTiketCabecera:cSerTik + "/" + lTrim( ::oSender:oTiketCabecera:cNumTik ) + CRLF + ::oSender:oTiketCabecera:cSufTik }
          :nWidth           := 90
       end with
 
