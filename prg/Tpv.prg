@@ -23891,20 +23891,24 @@ static function lBuscaOferta( cCodArt, aGet, aTmp, aTmpTik, dbfOferta, dbfArticu
 
       nTotalLinea := lCalcDeta( aTmp, nil, .t. )
 
-      sOfeArt     := sOfertaArticulo( cCodArt, aTmpTik[ _CCLITIK ], aTmpTik[ _CCODGRP ], aTmp[ _NUNTTIL ], aTmpTik[ _DFECTIK ], dbfOferta, aTmpTik[ _NTARIFA ], .t., aTmp[_CCODPR1], aTmp[_CCODPR2], aTmp[_CVALPR1], aTmp[_CVALPR2], aTmp[ _CDIVTIK ], dbfArticulo, dbfDiv, dbfKit, dbfIva, 1, nTotalLinea )
+      sOfeArt     := sOfertaArticulo( Padr( cCodArt, 18 ), aTmpTik[ _CCLITIK ], aTmpTik[ _CCODGRP ], aTmp[ _NUNTTIL ], aTmpTik[ _DFECTIK ], dbfOferta, aTmpTik[ _NTARIFA ], .t., aTmp[_CCODPR1], aTmp[_CCODPR2], aTmp[_CVALPR1], aTmp[_CVALPR2], aTmp[ _CDIVTIK ], dbfArticulo, dbfDiv, dbfKit, dbfIva, 1, nTotalLinea )
 
       if !Empty( sOfeArt ) 
 
          if ( sOfeArt:nPrecio != 0 )
             aGet[ _NPVPTIL ]:cText( sOfeArt:nPrecio )
-         end if 
+         end if
+
          if ( sOfeArt:nDtoPorcentual != 0 )
             aGet[ _NDTOLIN ]:cText( sOfeArt:nDtoPorcentual )
-         end if 
+         end if
+
          if ( sOfeArt:nDtoLineal != 0)
             aGet[ _NDTODIV ]:cText( sOfeArt:nDtoLineal )
-         end if 
+         end if
+
          aTmp[ _LLINOFE  ] := .t.
+
          if !Empty( aGet[ _LLINOFE ] )
             aGet[ _LLINOFE ]:Show()
          end if

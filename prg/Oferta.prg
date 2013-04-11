@@ -2233,6 +2233,8 @@ FUNCTION sOfertaArticulo( cCodArt, cCodCli, cGrpCli, nUndVen, dFecOfe, dbfOferta
    local nPreOfe     := 0
    local nPreAnt     := 0
    local sPrecio
+   local nRec        := ( dbfOferta )->( Recno() )
+   local nOrdAnt     := ( dbfOferta )->( OrdSetFocus( "cArtOfe" ) )
 
    DEFAULT nPrecio   := 1
    DEFAULT lIvaInc   := .f.
@@ -2293,6 +2295,9 @@ FUNCTION sOfertaArticulo( cCodArt, cCodCli, cGrpCli, nUndVen, dFecOfe, dbfOferta
       end do
 
    end if
+
+   ( dbfOferta )->( OrdSetFocus( nOrdAnt ) )
+   ( dbfOferta )->( dbGoTo( nRec ) )
 
 RETURN ( sPrecio )
 
