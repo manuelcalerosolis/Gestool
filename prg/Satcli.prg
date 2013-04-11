@@ -674,30 +674,6 @@ STATIC FUNCTION OpenFiles( lExt )
       oStock            := TStock():Create( cPatGrp() )
       if !oStock:lOpenFiles()
          lOpenFiles     := .f.
-      else
-         oStock:cKit       := dbfKit
-
-         oStock:cPedPrvL   := dbfPedPrvL
-         oStock:cAlbPrvL   := dbfAlbPrvL
-         oStock:cFacPrvL   := dbfFacPrvL
-         oStock:cRctPrvL   := dbfRctPrvL
-
-         oStock:cPedCliL   := dbfPedCliL
-
-         oStock:cFacCliL   := dbfFacCliL
-         oStock:cFacCliP   := dbfFacCliP
-
-         oStock:cFacRecL   := dbfFacRecL
-
-         oStock:cAntCliT   := dbfAntCliT
-
-         oStock:cTikT      := dbfTikCliT
-         oStock:cTikL      := dbfTikCliL
-
-         oStock:cProducL   := dbfProLin
-         oStock:cProducM   := dbfProMat
-
-         oStock:cHisMov    := dbfHisMov
       end if
 
       oNewImp           := TNewImp():New( cPatEmp() )

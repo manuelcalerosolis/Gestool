@@ -908,13 +908,6 @@ STATIC FUNCTION OpenFiles( lExt )
       USE ( cPatEmp() + "SatCliS.DBF" ) NEW VIA ( cDriver() ) SHARED ALIAS ( cCheckArea( "SatCliS", @dbfSatCliS ) )
       SET ADSINDEX TO ( cPatEmp() + "SatCliS.CDX" ) ADDITIVE
 
-
-      USE ( cPatEmp() + "PROSER.DBF" ) NEW VIA ( cDriver() ) SHARED ALIAS ( cCheckArea( "PROSER", @dbfProSer ) )
-      SET ADSINDEX TO ( cPatEmp() + "PROSER.CDX" ) ADDITIVE
-
-      USE ( cPatEmp() + "MatSer.Dbf" ) NEW VIA ( cDriver() ) SHARED ALIAS ( cCheckArea( "MatSer", @dbfMatSer ) )
-      SET ADSINDEX TO ( cPatEmp() + "MatSer.Cdx" ) ADDITIVE
-
       USE ( cPatEmp() + "PEDCLIT.DBF" ) NEW VIA ( cDriver() ) SHARED ALIAS ( cCheckArea( "PEDCLIT", @dbfPedCliT ) )
       SET ADSINDEX TO ( cPatEmp() + "PEDCLIT.CDX" ) ADDITIVE
 
@@ -929,6 +922,9 @@ STATIC FUNCTION OpenFiles( lExt )
 
       USE ( cPatEmp() + "PEDCLID.DBF" ) NEW VIA ( cDriver() ) SHARED ALIAS ( cCheckArea( "PEDCLID", @dbfPedCliD ) )
       SET ADSINDEX TO ( cPatEmp() + "PEDCLID.CDX" ) ADDITIVE
+
+      USE ( cPatEmp() + "PEDCLIR.DBF" ) NEW VIA ( cDriver() ) SHARED ALIAS ( cCheckArea( "PEDCLIR", @dbfPedCliR ) )
+      SET ADSINDEX TO ( cPatEmp() + "PEDCLIR.CDX" ) ADDITIVE
 
       USE ( cPatEmp() + "PRECLIT.DBF" ) NEW VIA ( cDriver() ) SHARED ALIAS ( cCheckArea( "PRECLIT", @dbfPreCliT ) )
       SET ADSINDEX TO ( cPatEmp() + "PRECLIT.CDX" ) ADDITIVE
@@ -1066,9 +1062,6 @@ STATIC FUNCTION OpenFiles( lExt )
       USE ( cPatEmp() + "ALBPRVS.DBF" ) NEW VIA ( cDriver() ) SHARED ALIAS ( cCheckArea( "ALBPRVS", @dbfAlbPrvS ) )
       SET ADSINDEX TO ( cPatEmp() + "ALBPRVS.CDX" ) ADDITIVE
 
-      USE ( cPatEmp() + "PEDCLIR.DBF" ) NEW VIA ( cDriver() ) SHARED ALIAS ( cCheckArea( "PEDCLIR", @dbfPedCliR ) )
-      SET ADSINDEX TO ( cPatEmp() + "PEDCLIR.CDX" ) ADDITIVE
-
       USE ( cPatDat() + "EMPRESA.DBF" ) NEW VIA ( cDriver() ) SHARED ALIAS ( cCheckArea( "EMPRESA", @dbfEmp ) )
       SET ADSINDEX TO ( cPatDat() + "EMPRESA.CDX" ) ADDITIVE
 
@@ -1100,6 +1093,12 @@ STATIC FUNCTION OpenFiles( lExt )
       SET ADSINDEX TO ( cPatEmp() + "PROMAT.CDX" ) ADDITIVE
       SET TAG TO "cCodArt"
 
+      USE ( cPatEmp() + "PROSER.DBF" ) NEW VIA ( cDriver() ) SHARED ALIAS ( cCheckArea( "PROSER", @dbfProSer ) )
+      SET ADSINDEX TO ( cPatEmp() + "PROSER.CDX" ) ADDITIVE
+
+      USE ( cPatEmp() + "MatSer.Dbf" ) NEW VIA ( cDriver() ) SHARED ALIAS ( cCheckArea( "MatSer", @dbfMatSer ) )
+      SET ADSINDEX TO ( cPatEmp() + "MatSer.Cdx" ) ADDITIVE
+
       USE ( cPatEmp() + "HISMOV.DBF" ) NEW VIA ( cDriver() ) SHARED ALIAS ( cCheckArea( "HISMOV", @dbfHisMov ) )
       SET ADSINDEX TO ( cPatEmp() + "HISMOV.CDX" ) ADDITIVE
       SET TAG TO "cRefMov"
@@ -1116,51 +1115,6 @@ STATIC FUNCTION OpenFiles( lExt )
       oStock            := TStock():Create( cPatGrp() )
       if !oStock:lOpenFiles()
          lOpenFiles     := .f.
-      else
-
-      oStock:cPedCliT   := dbfPedCliT
-      oStock:cPedCliL   := dbfPedCliL
-      oStock:cPedCliR   := dbfPedCliR
-
-      oStock:cAlbCliT   := dbfAlbCliT
-      oStock:cAlbCliL   := dbfAlbCliL
-      oStock:cAlbCliS   := dbfAlbCliS
-
-      oStock:cFacCliT   := dbfFacCliT
-      oStock:cFacCliL   := dbfFacCliL
-      oStock:cFacCliP   := dbfFacCliP
-      oStock:cFacCliS   := dbfFacCliS
-
-      oStock:cAntCliT   := dbfAntCliT
-
-      oStock:cFacRecT   := dbfFacRecT
-      oStock:cFacRecL   := dbfFacRecL
-      oStock:cFacRecS   := dbfFacRecS
-
-      oStock:cTikT      := dbfTikT
-      oStock:cTikL      := dbfTikL
-      oStock:cTikS      := dbfTikS
-
-      oStock:cKit       := dbfKit
-
-      oStock:cPedPrvL   := dbfPedPrvL
-      oStock:cAlbPrvL   := dbfAlbPrvL
-      oStock:cAlbPrvS   := dbfAlbPrvS
-
-      oStock:cFacPrvL   := dbfFacPrvL
-      oStock:cFacPrvS   := dbfFacPrvS
-
-      oStock:cRctPrvL   := dbfRctPrvL
-      oStock:cRctPrvS   := dbfRctPrvS
-
-      oStock:cProducL   := dbfProLin
-      oStock:cProducM   := dbfProMat
-      oStock:cProducS   := dbfProSer
-      oStock:cProducP   := dbfMatSer
-
-      oStock:cHisMov    := dbfHisMov
-      oStock:cHisMovS   := dbfHisMovS
-
       end if
 
       oCtaRem           := TCtaRem():Create( cPatCli() )

@@ -947,49 +947,6 @@ STATIC FUNCTION OpenFiles( lExt )
       oStock            := TStock():Create( cPatGrp() )
       if !oStock:lOpenFiles()
          lOpenFiles     := .f.
-      else
-      oStock:cKit       := dbfKit
-
-      oStock:cPedCliT   := dbfPedCliT
-      oStock:cPedCliL   := dbfPedCliL
-
-      oStock:cAlbCliT   := dbfAlbCliT
-      oStock:cAlbCliL   := dbfAlbCliL
-      oStock:cAlbCliS   := dbfAlbCliS
-
-      oStock:cFacCliT   := dbfFacCliT
-      oStock:cFacCliL   := dbfFacCliL
-      oStock:cFacCliS   := dbfFacCliS
-      oStock:cFacCliP   := dbfFacCliP
-
-      oStock:cFacRecT   := dbfFacRecT
-      oStock:cFacRecL   := dbfFacRecL
-      oStock:cFacRecS   := dbfFacRecS
-
-      oStock:cTikT      := dbfTikCliT
-      oStock:cTikL      := dbfTikCliL
-      oStock:cTikS      := dbfTikCliS
-
-      oStock:cAntCliT   := dbfAntCliT
-
-      oStock:cPedPrvL   := dbfPedPrvL
-      oStock:cAlbPrvL   := dbfAlbPrvL
-      oStock:cAlbPrvS   := dbfAlbPrvS
-
-      oStock:cFacPrvL   := dbfFacPrvL
-      oStock:cFacPrvS   := dbfFacPrvS
-
-      oStock:cRctPrvL   := dbfRctPrvL
-      oStock:cRctPrvS   := dbfRctPrvS
-
-      oStock:cProducL   := dbfProLin
-      oStock:cProducM   := dbfProMat
-      oStock:cProducS   := dbfProSer
-      oStock:cProducP   := dbfMatSer
-
-      oStock:cHisMov    := dbfHisMov
-      oStock:cHisMovS   := dbfHisMovS
-
       end if
 
       oCtaRem           := TCtaRem():Create( cPatCli() )

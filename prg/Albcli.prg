@@ -563,7 +563,7 @@ STATIC FUNCTION OpenFiles()
       USE ( cPatEmp() + "SatCliT.DBF" ) NEW VIA ( cDriver() ) SHARED ALIAS ( cCheckArea( "SatCliT", @dbfSatCliT ) )
       SET ADSINDEX TO ( cPatEmp() + "SatCliT.CDX" ) ADDITIVE
 
-      USE ( cPatEmp() + "SatCliL.DBF" ) NEW VIA ( cDriver() ) SHARED ALIAS ( cCheckArea( "SatCliT", @dbfSatCliL ) )
+      USE ( cPatEmp() + "SatCliL.DBF" ) NEW VIA ( cDriver() ) SHARED ALIAS ( cCheckArea( "SatCliL", @dbfSatCliL ) )
       SET ADSINDEX TO ( cPatEmp() + "SatCliL.CDX" ) ADDITIVE
 
       USE ( cPatEmp() + "SatCliI.DBF" ) NEW VIA ( cDriver() ) SHARED ALIAS ( cCheckArea( "SatCliI", @dbfSatCliI ) )
@@ -790,53 +790,6 @@ STATIC FUNCTION OpenFiles()
       oStock               := TStock():Create( cPatGrp() )
       if !oStock:lOpenFiles()
          lOpenFiles        := .f.
-      else
-         oStock:cKit       := dbfKit
-
-         oStock:cSatCliT   := dbfSatCliT
-         oStock:cSatCliL   := dbfSatCliL
-
-         oStock:cPedCliT   := dbfPedCliT
-         oStock:cPedCliL   := dbfPedCliL
-         oStock:cPedCliR   := dbfPedCliR
-
-         oStock:cAlbCliT   := dbfAlbCliT
-         oStock:cAlbCliL   := dbfAlbCliL
-         oStock:cAlbCliS   := dbfAlbCliS
-
-         oStock:cFacCliT   := dbfFacCliT
-         oStock:cFacCliL   := dbfFacCliL
-         oStock:cFacCliS   := dbfFacCliS
-         oStock:cFacCliP   := dbfFacCliP
-
-         oStock:cAntCliT   := dbfAntCliT
-         oStock:cFacRecT   := dbfFacRecT
-         oStock:cFacRecL   := dbfFacRecL
-         oStock:cFacRecS   := dbfFacRecS
-
-         oStock:cTikT      := dbfTikT
-         oStock:cTikL      := dbfTikL
-         oStock:cTikS      := dbfTikS
-
-         oStock:cProducL   := dbfProLin
-         oStock:cProducM   := dbfProMat
-         oStock:cProducS   := dbfProSer
-         oStock:cProducP   := dbfMatSer
-
-         oStock:cHisMov    := dbfHisMov
-         oStock:cHisMovS   := dbfHisMovS
-
-         oStock:cPedPrvL   := dbfPedPrvL
-
-         oStock:cAlbPrvL   := dbfAlbPrvL
-         oStock:cAlbPrvS   := dbfAlbPrvS
-
-         oStock:cFacPrvL   := dbfFacPrvL
-         oStock:cFacPrvS   := dbfFacPrvS
-
-         oStock:cRctPrvL   := dbfRctPrvL
-         oStock:cRctPrvS   := dbfRctPrvS
-
       end if
 
       oGrpCli           := TGrpCli():Create( cPatCli() )
