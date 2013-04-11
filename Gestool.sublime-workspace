@@ -4,6 +4,10 @@
 		"selected_items":
 		[
 			[
+				"case",
+				"case"
+			],
+			[
 				"lSel",
 				"lSelPr2"
 			],
@@ -510,15 +514,27 @@
 			[
 				"nUbi",
 				"nUbiTik"
-			],
-			[
-				"cCodSala",
-				"cCodSala"
 			]
 		]
 	},
 	"buffers":
 	[
+		{
+			"file": "prg/Exportatarifas.prg",
+			"settings":
+			{
+				"buffer_size": 38450,
+				"line_ending": "Windows"
+			}
+		},
+		{
+			"file": "prg/Rptgal.prg",
+			"settings":
+			{
+				"buffer_size": 163166,
+				"line_ending": "Windows"
+			}
+		}
 	],
 	"build_system": "Packages/User/gestool.sublime-build",
 	"command_palette":
@@ -552,6 +568,10 @@
 	},
 	"file_history":
 	[
+		"/C/fw195/Gestool/prg/Client.prg",
+		"/C/fw195/Gestool/prg/Exportatarifas.prg",
+		"/C/fw195/Gestool/prg/Factu.prg",
+		"/C/fw195/Gestool/prg/Tinfgen.prg",
 		"/C/fw195/Gestool/prg/Articulo.prg",
 		"/C/fw195/Gestool/prg/Tpv.prg",
 		"/C/fw195/Gestool/prg/Stock.prg",
@@ -568,7 +588,6 @@
 		"/C/fw195/Gestool/prg/Tftpc3.prg",
 		"/C/fw195/Gestool/prg/Empresa.prg",
 		"/C/fw195/Gestool/prg/Albprov.prg",
-		"/C/fw195/Gestool/prg/Client.prg",
 		"/C/fw195/Gestool/prg/Say.prg",
 		"/C/fw195/Gestool/ppo/Articulo.ppo",
 		"/C/fw195/Gestool/prg/Tuser.prg",
@@ -584,7 +603,6 @@
 		"/C/fw195/Gestool/prg/Rptgal.prg",
 		"/C/fw195/Gestool/prg/Trnkrvta.prg",
 		"/C/fw195/Gestool/prg/Tacuatvta.prg",
-		"/C/fw195/Gestool/prg/Tinfgen.prg",
 		"/C/fw195/Gestool/prg/Tdlgflt.prg",
 		"/C/fw195/Gestool/prg/Tshell.prg",
 		"/C/fw195/Gestool/prg/Tfilter.prg",
@@ -607,7 +625,6 @@
 		"/C/Users/Villa/Desktop/prg/Factcli.prg",
 		"/C/fw195/Gestool/prg/Pacudiamaquinaria.prg",
 		"/C/fw195/Gestool/include/Factu.ch",
-		"/C/fw195/Gestool/prg/Factu.prg",
 		"/C/fw195/Gestool/resource/Gstimage12.rc",
 		"/C/fw195/Gestool/resource/Gstdialog.rc",
 		"/C/Users/Villa/Desktop/resource/Gstdialog.rc",
@@ -678,8 +695,7 @@
 		"/C/fw195/Gestool/prg/rptgal",
 		"/C/fw195/Gestool/prg/tinfgen",
 		"/C/fw195/Gestool/prg/openfiles",
-		"/C/Users/Villa/Desktop/XLM/XLM.prg",
-		"/C/fw195/Gestool/prg/Brwcli.prg"
+		"/C/Users/Villa/Desktop/XLM/XLM.prg"
 	],
 	"find":
 	{
@@ -687,7 +703,7 @@
 	},
 	"find_in_files":
 	{
-		"height": 90.0,
+		"height": 0.0,
 		"where_history":
 		[
 			"C:\\fw195\\Gestool\\prg",
@@ -713,6 +729,13 @@
 		"case_sensitive": false,
 		"find_history":
 		[
+			"cabecera",
+			"on aitm",
+			"::odbfArt",
+			"Lineas de ",
+			"factura",
+			"TExportaTarifas",
+			"ventas",
 			":SetRiesgo",
 			"on edtrec",
 			"cDefCli",
@@ -833,14 +856,7 @@
 			"odcreate",
 			"oFtp:SetCurrentDirectory( \"..\" )",
 			"SetCurrentDirectory",
-			"od deleteimagesp",
-			"msginfo",
-			"?",
-			"doFtp",
-			"doBackup",
-			"fwrite",
-			"ftp",
-			"SetCurrentDirectory"
+			"od deleteimagesp"
 		],
 		"highlight": true,
 		"in_selection": false,
@@ -866,8 +882,65 @@
 	"groups":
 	[
 		{
+			"selected": 1,
 			"sheets":
 			[
+				{
+					"buffer": 0,
+					"file": "prg/Exportatarifas.prg",
+					"settings":
+					{
+						"buffer_size": 38450,
+						"regions":
+						{
+						},
+						"selection":
+						[
+							[
+								0,
+								0
+							]
+						],
+						"settings":
+						{
+							"syntax": "Packages/harbour/harbour/Harbour.tmLanguage",
+							"tab_size": 3,
+							"translate_tabs_to_spaces": true
+						},
+						"translation.x": 0.0,
+						"translation.y": 0.0,
+						"zoom_level": 1.0
+					},
+					"type": "text"
+				},
+				{
+					"buffer": 1,
+					"file": "prg/Rptgal.prg",
+					"settings":
+					{
+						"buffer_size": 163166,
+						"regions":
+						{
+						},
+						"selection":
+						[
+							[
+								0,
+								0
+							]
+						],
+						"settings":
+						{
+							"syntax": "Packages/harbour/harbour/Harbour.tmLanguage",
+							"tab_size": 3,
+							"translate_tabs_to_spaces": true
+						},
+						"translation.x": 0.0,
+						"translation.y": 0.0,
+						"zoom_level": 1.0
+					},
+					"type": "text"
+				}
 			]
 		}
 	],
