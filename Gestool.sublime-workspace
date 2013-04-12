@@ -520,21 +520,35 @@
 	"buffers":
 	[
 		{
-			"file": "/C/Users/Villa/Desktop/Exportatarifas.prg",
+			"file": "bin/script/000.prg",
 			"settings":
 			{
-				"buffer_size": 38450,
+				"buffer_size": 5113,
 				"line_ending": "Windows"
 			}
 		},
 		{
-			"contents": "Searching 31 files for \"CRLF\"\n\nC:\\fw195\\Gestool\\include\\Cmbtll12.ch:\n  390  #define LL_OPTION_ADDVARSTOFIELDS      (19)                 /* default: FALSE */\n  391  #define LL_OPTION_MULTIPLETABLELINES   (20)                 /* default: TRUE */\n  392: #define LL_OPTION_CONVERTCRLF          (21)                 /* default: FALSE */\n  393  #define LL_OPTION_WIZ_FILENEW          (22)                 /* default: FALSE */\n  394  #define LL_OPTION_RETREPRESENTATIONCODE (23)                 /* default: LL_CHAR_NEWLINE (182) */\n\nC:\\fw195\\Gestool\\include\\Tdbfmsg.ch:\n   11  #define _TDBFMSG_CH\n   12  \n   13: #ifndef CRLF\n   14:     #define CRLF chr( 13 ) + chr( 10 )\n   15  #endif\n   16  \n\nC:\\fw195\\Gestool\\include\\Util.ch:\n   53  // Otras definiciones:\n   54  \n   55: #ifndef CRLF\n   56:     #define CRLF chr( 13 ) + chr( 10 )\n   57  #endif\n   58  \n\n5 matches across 3 files\n",
+			"file": "bin/script/001.prg",
 			"settings":
 			{
-				"buffer_size": 873,
-				"line_ending": "Windows",
-				"name": "Find Results",
-				"scratch": true
+				"buffer_size": 6181,
+				"line_ending": "Windows"
+			}
+		},
+		{
+			"file": "prg/Tpvtactil.prg",
+			"settings":
+			{
+				"buffer_size": 251613,
+				"line_ending": "Windows"
+			}
+		},
+		{
+			"file": "prg/Articulo.prg",
+			"settings":
+			{
+				"buffer_size": 660583,
+				"line_ending": "Windows"
 			}
 		},
 		{
@@ -546,26 +560,10 @@
 			}
 		},
 		{
-			"file": "bin/script/000.prg",
+			"file": "prg/Tscripts.prg",
 			"settings":
 			{
-				"buffer_size": 5451,
-				"line_ending": "Windows"
-			}
-		},
-		{
-			"file": "prg/Tinfgen.prg",
-			"settings":
-			{
-				"buffer_size": 209137,
-				"line_ending": "Windows"
-			}
-		},
-		{
-			"file": "prg/Tconfaccli.prg",
-			"settings":
-			{
-				"buffer_size": 30201,
+				"buffer_size": 12314,
 				"line_ending": "Windows"
 			}
 		}
@@ -602,6 +600,12 @@
 	},
 	"file_history":
 	[
+		"/C/Users/Villa/Desktop/Exportatarifas.prg",
+		"/C/fw195/Gestool/prg/Albcli.prg",
+		"/C/fw195/Gestool/prg/Tconfaccli.prg",
+		"/C/fw195/Gestool/prg/Dlgs32.prg",
+		"/C/fw195/Gestool/prg/Avifile.prg",
+		"/C/fw195/Gestool/prg/Tinfgen.prg",
 		"/C/Users/Villa/Desktop/test.prg",
 		"/C/fw195/Gestool/include/Util.ch",
 		"/C/Users/Villa/Desktop/oscar.prg",
@@ -614,7 +618,6 @@
 		"/C/fw195/Gestool/prg/TConFacCli",
 		"/C/fw195/Gestool/prg/Client.prg",
 		"/C/fw195/Gestool/prg/Factu.prg",
-		"/C/fw195/Gestool/prg/Tinfgen.prg",
 		"/C/fw195/Gestool/prg/Articulo.prg",
 		"/C/fw195/Gestool/prg/Stock.prg",
 		"/C/fw195/Gestool/prg/Tcomercio.prg",
@@ -623,7 +626,6 @@
 		"/C/fw195/Gestool/prg/Tpvlistaticket.prg",
 		"/C/fw195/Gestool/prg/Fastreph.prg",
 		"/C/fw195/Gestool/prg/Tpvcobros.prg",
-		"/C/fw195/Gestool/prg/Albcli.prg",
 		"/C/fw195/Gestool/prg/Pedcli.prg",
 		"/C/fw195/Gestool/prg/Oacuaalb.prg",
 		"/C/fw195/Gestool/prg/Factprv.prg",
@@ -670,7 +672,6 @@
 		"/C/Users/Villa/Desktop/resource/Gstdialog.rc",
 		"/C/fw195/Gestool/prg/Tmant.prg",
 		"/C/fw195/Gestool/include/Empresa.ch",
-		"/C/fw195/Gestool/prg/Avifile.prg",
 		"/C/fw195/Gestool/prg/Bitmap.prg",
 		"/C/fw195/Gestool/prg/Precli.prg",
 		"/C/fw195/Gestool/prg/Tgrufam.prg",
@@ -726,10 +727,7 @@
 		"/C/fw195/Gestool/prg/Tdiacfac.prg",
 		"/C/fw195/Gestool/prg/Reccli.prg",
 		"/C/fw195/Gestool/prg/Tinflot.prg",
-		"/C/fw195/Gestool/prg/Count.prg",
-		"/C/fw195/Gestool/prg/ncount.prg",
-		"/C/fw195/Gestool/prg/ncount",
-		"/C/fw195/Gestool/prg/Tdiacvta.prg"
+		"/C/fw195/Gestool/prg/Count.prg"
 	],
 	"find":
 	{
@@ -740,6 +738,7 @@
 		"height": 90.0,
 		"where_history":
 		[
+			"C:\\fw195\\Gestool\\prg",
 			"C:\\fw195\\Gestool\\include",
 			"C:\\fw195\\Gestool\\prg",
 			"C:\\fw195\\Gestool\\resource",
@@ -764,6 +763,21 @@
 		"case_sensitive": false,
 		"find_history":
 		[
+			"nPvpTil",
+			"nTotalLinea",
+			"on rx",
+			"EjecutarScript",
+			"cGetDir",
+			"cGetFile",
+			"guarda",
+			"guardar",
+			"get",
+			"cgetfile",
+			"autoinc",
+			"autinc",
+			"oMtrInf",
+			"meter",
+			"Wait_meter",
 			"CRLF",
 			"on aitm",
 			"IniInf",
@@ -876,22 +890,7 @@
 			"InsertPropiedadesProductPrestashop",
 			"nCostoMedio",
 			"on CambioPrecio",
-			"LCHGLIN",
-			"LCHGLIN.",
-			"LCHGLIN",
-			"aTmp[ _LCHGLIN  ]",
-			"lactCos",
-			"ufieldempresa",
-			"InsertPropiedadesProductPrestashop",
-			"on GetLastError",
-			"InsertPropiedadesProductPrestashop",
-			"lPassiveFtp",
-			"dlgTooltip",
-			"stock:a",
-			"stock",
-			"ChgSta",
-			"InsertPropiedadesProductPrestashop",
-			"on aitm"
+			"LCHGLIN"
 		],
 		"highlight": true,
 		"in_selection": false,
@@ -922,18 +921,18 @@
 			[
 				{
 					"buffer": 0,
-					"file": "/C/Users/Villa/Desktop/Exportatarifas.prg",
+					"file": "bin/script/000.prg",
 					"settings":
 					{
-						"buffer_size": 38450,
+						"buffer_size": 5113,
 						"regions":
 						{
 						},
 						"selection":
 						[
 							[
-								36989,
-								36989
+								455,
+								455
 							]
 						],
 						"settings":
@@ -943,72 +942,97 @@
 							"translate_tabs_to_spaces": true
 						},
 						"translation.x": 0.0,
-						"translation.y": 23175.0,
-						"zoom_level": 1.0
-					},
-					"type": "text"
-				},
-				{
-					"buffer": 1,
-					"settings":
-					{
-						"buffer_size": 873,
-						"regions":
-						{
-							"match":
-							{
-								"flags": 112,
-								"regions":
-								[
-									[
-										276,
-										280
-									],
-									[
-										613,
-										617
-									],
-									[
-										637,
-										641
-									],
-									[
-										774,
-										778
-									],
-									[
-										798,
-										802
-									]
-								],
-								"scope": ""
-							}
-						},
-						"selection":
-						[
-							[
-								629,
-								663
-							]
-						],
-						"settings":
-						{
-							"detect_indentation": false,
-							"output_tag": 1,
-							"result_base_dir": "",
-							"result_file_regex": "^([A-Za-z\\\\/<].*):$",
-							"result_line_regex": "^ +([0-9]+):",
-							"scroll_past_end": true,
-							"syntax": "Packages/Default/Find Results.hidden-tmLanguage"
-						},
-						"translation.x": 0.0,
 						"translation.y": 0.0,
 						"zoom_level": 1.0
 					},
 					"type": "text"
 				},
 				{
+					"buffer": 1,
+					"file": "bin/script/001.prg",
+					"settings":
+					{
+						"buffer_size": 6181,
+						"regions":
+						{
+						},
+						"selection":
+						[
+							[
+								6181,
+								6181
+							]
+						],
+						"settings":
+						{
+							"syntax": "Packages/harbour/harbour/Harbour.tmLanguage",
+							"tab_size": 3,
+							"translate_tabs_to_spaces": true
+						},
+						"translation.x": 0.0,
+						"translation.y": 2655.0,
+						"zoom_level": 1.0
+					},
+					"type": "text"
+				},
+				{
 					"buffer": 2,
+					"file": "prg/Tpvtactil.prg",
+					"settings":
+					{
+						"buffer_size": 251613,
+						"regions":
+						{
+						},
+						"selection":
+						[
+							[
+								123938,
+								123938
+							]
+						],
+						"settings":
+						{
+							"syntax": "Packages/harbour/harbour/Harbour.tmLanguage",
+							"tab_size": 3,
+							"translate_tabs_to_spaces": true
+						},
+						"translation.x": 0.0,
+						"translation.y": 72166.0,
+						"zoom_level": 1.0
+					},
+					"type": "text"
+				},
+				{
+					"buffer": 3,
+					"file": "prg/Articulo.prg",
+					"settings":
+					{
+						"buffer_size": 660583,
+						"regions":
+						{
+						},
+						"selection":
+						[
+							[
+								383712,
+								383712
+							]
+						],
+						"settings":
+						{
+							"syntax": "Packages/harbour/harbour/Harbour.tmLanguage",
+							"tab_size": 3,
+							"translate_tabs_to_spaces": true
+						},
+						"translation.x": 0.0,
+						"translation.y": 187726.0,
+						"zoom_level": 1.0
+					},
+					"type": "text"
+				},
+				{
+					"buffer": 4,
 					"file": "prg/Albcli.prg",
 					"settings":
 					{
@@ -1019,8 +1043,8 @@
 						"selection":
 						[
 							[
-								488286,
-								488286
+								454477,
+								454482
 							]
 						],
 						"settings":
@@ -1030,81 +1054,25 @@
 							"translate_tabs_to_spaces": true
 						},
 						"translation.x": 0.0,
-						"translation.y": 246928.0,
-						"zoom_level": 1.0
-					},
-					"type": "text"
-				},
-				{
-					"buffer": 3,
-					"file": "bin/script/000.prg",
-					"settings":
-					{
-						"buffer_size": 5451,
-						"regions":
-						{
-						},
-						"selection":
-						[
-							[
-								152,
-								152
-							]
-						],
-						"settings":
-						{
-							"syntax": "Packages/harbour/harbour/Harbour.tmLanguage",
-							"tab_size": 3,
-							"translate_tabs_to_spaces": true
-						},
-						"translation.x": 0.0,
-						"translation.y": 0.0,
-						"zoom_level": 1.0
-					},
-					"type": "text"
-				},
-				{
-					"buffer": 4,
-					"file": "prg/Tinfgen.prg",
-					"settings":
-					{
-						"buffer_size": 209137,
-						"regions":
-						{
-						},
-						"selection":
-						[
-							[
-								737,
-								737
-							]
-						],
-						"settings":
-						{
-							"syntax": "Packages/harbour/harbour/Harbour.tmLanguage",
-							"tab_size": 3,
-							"translate_tabs_to_spaces": true
-						},
-						"translation.x": 0.0,
-						"translation.y": 544.0,
+						"translation.y": 240430.0,
 						"zoom_level": 1.0
 					},
 					"type": "text"
 				},
 				{
 					"buffer": 5,
-					"file": "prg/Tconfaccli.prg",
+					"file": "prg/Tscripts.prg",
 					"settings":
 					{
-						"buffer_size": 30201,
+						"buffer_size": 12314,
 						"regions":
 						{
 						},
 						"selection":
 						[
 							[
-								8149,
-								8149
+								10532,
+								10532
 							]
 						],
 						"settings":
@@ -1114,7 +1082,7 @@
 							"translate_tabs_to_spaces": true
 						},
 						"translation.x": 0.0,
-						"translation.y": 3834.0,
+						"translation.y": 6646.0,
 						"zoom_level": 1.0
 					},
 					"type": "text"
