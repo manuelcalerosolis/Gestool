@@ -663,11 +663,12 @@ STATIC FUNCTION OpenFiles( lExt )
       USE ( cPatEmp() + "SatCLIT.DBF" ) NEW VIA ( cDriver() ) SHARED ALIAS ( cCheckArea( "SatCLIT", @dbfSatCliT ) )
       SET ADSINDEX TO ( cPatEmp() + "SatCLIT.CDX" ) ADDITIVE
 
-      USE ( cPatEmp() + "FacCliP.Dbf" ) NEW VIA ( cDriver() ) SHARED ALIAS ( cCheckArea( "FacCliP", @dbfFacCliP ) )
-      SET ADSINDEX TO ( cPatEmp() + "FacCliP.Cdx" ) ADDITIVE
-
       USE ( cPatEmp() + "AntCliT.Dbf" ) NEW VIA ( cDriver() ) SHARED ALIAS ( cCheckArea( "AntCliT", @dbfAntCliT ) )
       SET ADSINDEX TO ( cPatEmp() + "AntCliT.Cdx" ) ADDITIVE
+
+      if !TDataCenter():OpenFacCliP( @dbfFacCliP )
+         lOpenFiles     := .f.
+      end if
 
       oBandera          := TBandera():New()
 

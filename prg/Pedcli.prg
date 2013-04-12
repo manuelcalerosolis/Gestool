@@ -847,15 +847,9 @@ STATIC FUNCTION OpenFiles( lExt )
       SET ADSINDEX TO ( cPatEmp() + "RctPrvL.CDX" ) ADDITIVE
       SET TAG TO "cRef"
 
-      USE ( cPatEmp() + "FACCLIT.DBF" ) NEW VIA ( cDriver() ) SHARED ALIAS ( cCheckArea( "FACCLIT", @dbfFacCliT ) )
-      SET ADSINDEX TO ( cPatEmp() + "FACCLIT.CDX" ) ADDITIVE
-
       USE ( cPatEmp() + "FACCLIL.DBF" ) NEW VIA ( cDriver() ) SHARED ALIAS ( cCheckArea( "FACCLIL", @dbfFacCliL ) )
       SET ADSINDEX TO ( cPatEmp() + "FACCLIL.CDX" ) ADDITIVE
       SET TAG TO "cRef"
-
-      USE ( cPatEmp() + "FacCliP.Dbf" ) NEW VIA ( cDriver() ) SHARED ALIAS ( cCheckArea( "FacCliP", @dbfFacCliP ) )
-      SET ADSINDEX TO ( cPatEmp() + "FacCliP.Cdx" ) ADDITIVE
 
       USE ( cPatEmp() + "AntCliT.Dbf" ) NEW VIA ( cDriver() ) SHARED ALIAS ( cCheckArea( "AntCliT", @dbfAntCliT ) )
       SET ADSINDEX TO ( cPatEmp() + "AntCliT.Cdx" ) ADDITIVE
@@ -888,6 +882,14 @@ STATIC FUNCTION OpenFiles( lExt )
 
       USE ( cPatCli() + "CliBnc.Dbf" ) NEW VIA ( cDriver() ) SHARED ALIAS ( cCheckArea( "CLIBNC", @dbfCliBnc ) )
       SET ADSINDEX TO ( cPatCli() + "CliBnc.Cdx" ) ADDITIVE
+
+      if !TDataCenter():OpenFacCliT( @dbfFacCliT )
+         lOpenFiles     := .f.
+      end if
+
+	if !TDataCenter():OpenFacCliP( @dbfFacCliP )
+	   lOpenFiles     := .f.
+	end if
 
       // Unidades de medicion
 
@@ -1639,7 +1641,7 @@ FUNCTION PedCli( oMenuItem, oWnd, cCodCli, cCodArt, cCodPre, lPedWeb )
             FROM     oRotor ;
 
       DEFINE BTNSHELL RESOURCE "DOCUMENT_USER1_" OF oWndBrw ;
-            ACTION   ( Ped2FacCli( ( dbfPedCliT )->cSerPed + Str( ( dbfPedCliT )->nNumPed ) + ( dbfPedCliT )->cSufPed ) );
+            ACTION   ( Ped2FacCli( ( dbfPedCliT )->cSerPed + Str( ( dbfPedCliT )->nNumPed ) + ( dbfPedCliT )->cSufPed, dbfFacCliT ) );
             TOOLTIP  "Modificar factura" ;
             FROM     oRotor ;
 
@@ -7749,17 +7751,15 @@ return .t.
 
 //---------------------------------------------------------------------------//
 
-Function Ped2FacCli( cNumPed )
+Static Function Ped2FacCli( cNumPed, dbfFacCliT )
 
+   local nOrd
    local cNumFac
-   local dbfFacCliT
 
-   USE ( cPatEmp() + "FACCLIT.DBF" ) NEW VIA ( cDriver() ) SHARED ALIAS ( cCheckArea( "FACCLIT", @dbfFacCliT ) )
-   SET ADSINDEX TO ( cPatEmp() + "FACCLIT.CDX" ) ADDITIVE
-   ( dbfFacCliT )->( OrdSetFocus( "cNumPed" ) )
+   nOrd 		:= ( dbfFacCliT )->( OrdSetFocus( "cNumPed" ) )
 
    if ( dbfFacCliT )->( dbSeek( cNumPed ) )
-      cNumFac     := ( dbfFacCliT )->cSerie + Str( ( dbfFacCliT )->nNumFac ) + ( dbfFacCliT )->cSufFac
+      cNumFac  	:= ( dbfFacCliT )->cSerie + Str( ( dbfFacCliT )->nNumFac ) + ( dbfFacCliT )->cSufFac
    end if
 
    if !Empty( cNumFac )
@@ -7768,7 +7768,7 @@ Function Ped2FacCli( cNumPed )
       msgStop( "No hay factura asociada" )
    end if
 
-   CLOSE( dbfFacCliT )
+   ( dbfFacCliT )->( OrdSetFocus( nOrd ) )
 
 Return nil
 

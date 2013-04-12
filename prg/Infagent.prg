@@ -48,8 +48,7 @@ FUNCTION InfLqdAgn()
    oBlock            := ErrorBlock( {| oError | ApoloBreak( oError ) } )
    BEGIN SEQUENCE
 
-   USE ( cPatEmp() + "FACCLIT.DBF" ) NEW VIA ( cDriver() ) SHARED ALIAS ( cCheckArea( "FACCLIT", @dbfFacCliT ) )
-   SET ADSINDEX TO ( cPatEmp() + "FACCLIT.CDX" ) ADDITIVE
+   TDataCenter():OpenFacCliT( @dbfFacCliT )
 
    USE ( cPatEmp() + "FACCLIP.DBF" ) NEW VIA ( cDriver() ) SHARED ALIAS ( cCheckArea( "FACCLIP", @dbfFacPago ) )
    SET ADSINDEX TO ( cPatEmp() + "FACCLIP.CDX" ) ADDITIVE

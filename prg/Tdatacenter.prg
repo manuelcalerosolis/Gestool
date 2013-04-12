@@ -8,6 +8,8 @@
 
 CLASS TDataCenter
 
+   CLASSDATA   oInstance
+
    CLASSDATA   cDataDictionaryFile        INIT cAdsUNC() + "GstApolo.Add"
    CLASSDATA   cDataDictionaryComment     INIT "GstApolo ADS data dictionary"
 
@@ -128,6 +130,76 @@ CLASS TDataCenter
 
    METHOD Resource( nId )
    METHOD Reindex()
+
+   //------------------------------------------------------------------------//
+
+   INLINE METHOD OpenFacCliT( dbf )
+
+      local lOpen
+      local cFilter
+
+      USE ( cPatEmp() + "FacCliT.Dbf" ) NEW VIA ( cDriver() ) SHARED ALIAS ( cCheckArea( "FACCLIT", @dbf ) )
+      SET ADSINDEX TO ( cPatEmp() + "FacCliT.Cdx" ) ADDITIVE
+
+      lOpen             := !neterr()
+      if lOpen
+
+         /*
+         Limitaciones de cajero y cajas----------------------------------------
+         */
+
+         if lAIS() .and. !oUser():lAdministrador()
+      
+            cFilter     := "Field->cSufFac == '" + oUser():cDelegacion() + "' .and. Field->cCodCaj == '" + oUser():cCaja() + "'"
+            if oUser():lFiltroVentas()         
+               cFilter  += " .and. Field->cCodUsr == '" + oUser():cCodigo() + "'"
+            end if 
+
+            ( dbf )->( AdsSetAOF( cFilter ) )
+
+         end if
+
+      end if 
+
+      Return ( lOpen )   
+
+   ENDMETHOD
+
+   //---------------------------------------------------------------------------//
+
+   INLINE METHOD OpenFacCliP( dbf )
+
+      local lOpen
+      local cFilter
+
+      USE ( cPatEmp() + "FacCliP.Dbf" ) NEW VIA ( cDriver() ) SHARED ALIAS ( cCheckArea( "FACCLIP", @dbf ) )
+      SET ADSINDEX TO ( cPatEmp() + "FacCliP.Cdx" ) ADDITIVE
+
+      lOpen             := !neterr()
+      if lOpen
+
+         /*
+         Limitaciones de cajero y cajas----------------------------------------
+         */
+
+         if lAIS() .and. !oUser():lAdministrador()
+      
+            cFilter     := "Field->cSufFac == '" + oUser():cDelegacion() + "' .and. Field->cCodCaj == '" + oUser():cCaja() + "'"
+            if oUser():lFiltroVentas()         
+               cFilter  += " .and. Field->cCodUsr == '" + oUser():cCodigo() + "'"
+            end if 
+
+            ( dbf )->( AdsSetAOF( cFilter ) )
+
+         end if
+
+      end if 
+
+      Return ( lOpen )   
+
+   ENDMETHOD
+
+   //---------------------------------------------------------------------------//
 
 END CLASS
 
@@ -3075,8 +3147,6 @@ METHOD EnableTriggers()
    AdsClrCallBack()
 
 RETURN ( lOk )
-
-//---------------------------------------------------------------------------//
 
 //---------------------------------------------------------------------------//
 //---------------------------------------------------------------------------//

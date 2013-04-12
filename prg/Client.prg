@@ -8459,12 +8459,6 @@ STATIC FUNCTION OpenFiles( lExt )
       USE ( cPatEmp() + "AntCliT.DBF" ) NEW VIA ( cDriver() ) SHARED ALIAS ( cCheckArea( "AntCliT", @dbfAntCliT ) )
       SET ADSINDEX TO ( cPatEmp() + "AntCliT.CDX" ) ADDITIVE
 
-      USE ( cPatEmp() + "FACCLIT.DBF" ) NEW VIA ( cDriver() ) SHARED ALIAS ( cCheckArea( "FACCLIT", @dbfFacCliT ) )
-      SET ADSINDEX TO ( cPatEmp() + "FACCLIT.CDX" ) ADDITIVE
-
-      USE ( cPatEmp() + "FACCLIP.DBF" ) NEW VIA ( cDriver() ) SHARED ALIAS ( cCheckArea( "FACCLIP", @dbfFacCliP ) )
-      SET ADSINDEX TO ( cPatEmp() + "FACCLIP.CDX" ) ADDITIVE
-
       USE ( cPatEmp() + "ALBCLIT.DBF" ) NEW VIA ( cDriver() ) SHARED ALIAS ( cCheckArea( "ALBCLIT", @dbfAlbCliT ) )
       SET ADSINDEX TO ( cPatEmp() + "ALBCLIT.CDX" ) ADDITIVE
 
@@ -8473,6 +8467,14 @@ STATIC FUNCTION OpenFiles( lExt )
 
       USE ( cPatEmp() + "TIKEL.DBF" ) NEW VIA ( cDriver() ) SHARED ALIAS ( cCheckArea( "TIKEL", @dbfTikL ) )
       SET ADSINDEX TO ( cPatEmp() + "TIKEL.CDX" ) ADDITIVE
+
+      if !TDataCenter():OpenFacCliT( @dbfFacCliT )
+         lOpenFiles        := .f.
+      end if
+
+      if !TDataCenter():OpenFacCliP( @dbfFacCliP )
+         lOpenFiles        := .f.
+      end if
 
       oBandera             := TBandera():New()
 

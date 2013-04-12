@@ -757,40 +757,6 @@ Return ( Self )
 
 METHOD ChkFacPrv( cNumFac ) CLASS TStock
 
-   local nTotStock
-   local nTotStockCalculado
-   local aFacPrvL       := aGetStatus( ::cFacPrvL, .t. )
-
-   /*
-   si el albaran esta facturado no hacemos nada con respecto al stock----------
-   */
-
-      if ( ::cFacPrvL )->( dbSeek( cNumFac ) )
-
-         while ( ::cFacPrvL )->cSerFac + Str( ( ::cFacPrvL )->nNumFac ) + ( ::cFacPrvL )->cSufFac == cNumFac .and. ;
-               !( ::cFacCliL )->( eof() )
-
-            if !Empty( Rtrim( ( ::cFacPrvL )->cRef ) )
-
-            nTotStock            := ::nTotStockAct( ( ::cFacPrvL )->cRef )
-            nTotStockCalculado   := nStockCalculado( ( ::cFacPrvL )->cRef )
-
-               if nTotStock != nTotStockCalculado
-                  MsgStop( "DECUADRE EN STOCK FACTURAS DE PROVEEDOR " + ( ::cFacPrvL )->cRef + CRLF + ;
-                           "Actual" + Trans( nTotStock, "@E 9999999.999999" )                + CRLF + ;
-                           "Calculado" + Trans( nTotStockCalculado, "@E 9999999.999999" ) )
-               end if
-
-            end if
-
-            ( ::cFacPrvL )->( dbSkip() )
-
-         end do
-
-      end if
-
-   SetStatus( ::cFacPrvL, aFacPrvL )
-
 return self
 
 //---------------------------------------------------------------------------//
@@ -858,40 +824,6 @@ Return ( Self )
 //---------------------------------------------------------------------------//
 
 METHOD ChkRctPrv( cNumFac ) CLASS TStock
-
-   local nTotStock
-   local nTotStockCalculado
-   local aRctPrvL       := aGetStatus( ::cRctPrvL, .t. )
-
-   /*
-   si el albaran esta facturado no hacemos nada con respecto al stock----------
-   */
-
-      if ( ::cRctPrvL )->( dbSeek( cNumFac ) )
-
-         while ( ::cRctPrvL )->cSerFac + Str( ( ::cRctPrvL )->nNumFac ) + ( ::cRctPrvL )->cSufFac == cNumFac .and. ;
-               !( ::cFacCliL )->( eof() )
-
-            if !Empty( Rtrim( ( ::cRctPrvL )->cRef ) )
-
-            nTotStock            := ::nTotStockAct( ( ::cRctPrvL )->cRef )
-            nTotStockCalculado   := nStockCalculado( ( ::cRctPrvL )->cRef )
-
-               if nTotStock != nTotStockCalculado
-                  MsgStop( "DECUADRE EN STOCK FACTURAS DE PROVEEDOR " + ( ::cRctPrvL )->cRef + CRLF + ;
-                           "Actual" + Trans( nTotStock, "@E 9999999.999999" )                + CRLF + ;
-                           "Calculado" + Trans( nTotStockCalculado, "@E 9999999.999999" ) )
-               end if
-
-            end if
-
-            ( ::cRctPrvL )->( dbSkip() )
-
-         end do
-
-      end if
-
-   SetStatus( ::cRctPrvL, aRctPrvL )
 
 return self
 
@@ -1339,46 +1271,6 @@ return self
 
 METHOD ChkAlbCli( cNumAlb ) CLASS TStock
 
-   local nTotStock
-   local nTotStockCalculado
-   local aAlbCliT       := aGetStatus( ::cAlbCliT, .t. )
-   local aAlbCliL       := aGetStatus( ::cAlbCliL, .t. )
-
-   /*
-   si el albaran esta facturado no hacemos nada con respecto al stock----------
-   */
-
-   if ( ::cAlbCliT )->( dbSeek( cNumAlb ) )
-
-      if ( ::cAlbCliL )->( dbSeek( cNumAlb ) )
-
-         while ( ::cAlbCliL )->cSerAlb + Str( ( ::cAlbCliL )->nNumAlb ) + ( ::cAlbCliL )->cSufAlb == cNumAlb .and. ;
-               !( ::cAlbCliL )->( eof() );
-
-            if !Empty( Rtrim( ( ::cAlbCliL )->cRef ) )
-
-            nTotStock            := ::nTotStockAct( ( ::cAlbCliL )->cRef )
-            nTotStockCalculado   := nStockCalculado( ( ::cAlbCliL )->cRef )
-
-               if nTotStock != nTotStockCalculado
-                  MsgStop( "DECUADRE EN STOCK ALBARANES DE CLIENTES " + ( ::cAlbCliL )->cRef + CRLF + ;
-                           "Actual" + Trans( nTotStock, "@E 9999999.999999" )                + CRLF + ;
-                           "Calculado" + Trans( nTotStockCalculado, "@E 9999999.999999" ) )
-               end if
-
-            end if
-
-            ( ::cAlbCliL )->( dbSkip() )
-
-         end do
-
-      end if
-
-   end if
-
-   SetStatus( ::cAlbCliT, aAlbCliT )
-   SetStatus( ::cAlbCliL, aAlbCliL )
-
 return self
 
 //---------------------------------------------------------------------------//
@@ -1454,40 +1346,6 @@ return self
 //---------------------------------------------------------------------------//
 
 METHOD ChkFacCli( cNumFac ) CLASS TStock
-
-   local nTotStock
-   local nTotStockCalculado
-   local aFacCliL       := aGetStatus( ::cFacCliL, .t. )
-
-   /*
-   si el albaran esta facturado no hacemos nada con respecto al stock----------
-   */
-
-   if ( ::cFacCliL )->( dbSeek( cNumFac ) )
-
-      while ( ::cFacCliL )->cSerie + Str( ( ::cFacCliL )->nNumFac ) + ( ::cFacCliL )->cSufFac == cNumFac .and. ;
-            !( ::cFacCliL )->( eof() )
-
-         if !Empty( Rtrim( ( ::cFacCliL )->cRef ) )
-
-         nTotStock            := ::nTotStockAct( ( ::cFacCliL )->cRef )
-         nTotStockCalculado   := nStockCalculado( ( ::cFacCliL )->cRef )
-
-            if nTotStock != nTotStockCalculado
-               MsgStop( "DECUADRE EN STOCK FACTURAS DE CLIENTES " + ( ::cFacCliL )->cRef + CRLF + ;
-                        "Actual" + Trans( nTotStock, "@E 9999999.999999" )                + CRLF + ;
-                        "Calculado" + Trans( nTotStockCalculado, "@E 9999999.999999" ) )
-            end if
-
-         end if
-
-         ( ::cFacCliL )->( dbSkip() )
-
-      end do
-
-   end if
-
-   SetStatus( ::cFacCliL, aFacCliL )
 
 return self
 
@@ -1643,39 +1501,6 @@ return self
 //---------------------------------------------------------------------------//
 
 METHOD ChkTikCli( cNumTik ) CLASS TStock
-
-   local nTotStock
-   local nTotStockCalculado
-   local aTikCliL       := aGetStatus( ::cTikL, .t. )
-
-   /*
-   si el albaran esta facturado no hacemos nada con respecto al stock----------
-   */
-
-   if ( ::cTikL )->( dbSeek( cNumTik ) )
-
-      while ( ::cTikL )->cSerTil + ( ::cTikL )->cNumTil + ( ::cTikL )->cSufTil == cNumTik .and. !( ::cTikL )->( eof() )
-
-         if !Empty( rtrim( ( ::cTikL )->cCbaTil ) )
-
-         nTotStock            := ::nTotStockAct( ( ::cTikL )->cCbaTil )
-         nTotStockCalculado   := nStockCalculado( ( ::cTikL )->cCbaTil )
-
-            if nTotStock != nTotStockCalculado
-               MsgStop( "DECUADRE EN STOCK TIKET DE CLIENTES " + ( ::cTikL )->cCbaTil     + CRLF + ;
-                        "Actual" + Trans( nTotStock, "@E 9999999.999999" )                + CRLF + ;
-                        "Calculado" + Trans( nTotStockCalculado, "@E 9999999.999999" ) )
-            end if
-
-         end if
-
-         ( ::cTikL )->( dbSkip() )
-
-      end do
-
-   end if
-
-   SetStatus( ::cTikL, aTikCliL )
 
 return self
 

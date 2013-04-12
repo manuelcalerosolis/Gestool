@@ -425,26 +425,22 @@ STATIC FUNCTION OpenFiles( lExt )
    USE ( cPatEmp() + "TIKET.DBF" ) NEW VIA ( cDriver() ) SHARED ALIAS ( cCheckArea( "TIKET", @dbfTikCliT ) )
    SET ADSINDEX TO ( cPatEmp() + "TIKET.CDX" ) ADDITIVE
 
-   USE ( cPatEmp() + "FacCliP.DBF" ) NEW VIA ( cDriver() ) SHARED ALIAS ( cCheckArea( "FacCliP", @dbfFacCliP ) )
-   SET ADSINDEX TO ( cPatEmp() + "FacCliP.CDX" ) ADDITIVE
-
    USE ( cPatEmp() + "ALBCLIT.DBF" ) NEW VIA ( cDriver() ) SHARED ALIAS ( cCheckArea( "ALBCLIT", @dbfAlbCliT ) )
    SET ADSINDEX TO ( cPatEmp() + "ALBCLIT.CDX" ) ADDITIVE
 
-   USE ( cPatEmp() + "FacCliT.DBF" ) NEW VIA ( cDriver() ) SHARED ALIAS ( cCheckArea( "FacCliT", @dbfFacCliT ) )
-   SET ADSINDEX TO ( cPatEmp() + "FacCliT.CDX" ) ADDITIVE
+   if !TDataCenter():OpenFacCliT( @dbfFacCliT )
+      lOpenFiles        := .f.
+   end if
+
+   if !TDataCenter():OpenFacCliP( @dbfFacCliP )
+      lOpenFiles        := .f.
+   end if
 
    oBandera             := TBandera():New()
 
    oStock               := TStock():Create( cPatGrp() )
    if !oStock:lOpenFiles()
       lOpenFiles        := .f.
-   else
-      oStock:cTikT      := dbfTikCliT
-      oStock:cFacCliP   := dbfFacCliP
-      oStock:cFacCliT   := dbfFacCliT
-      oStock:cAlbCliT   := dbfAlbCliT
-      oStock:cAntCliT   := dbfAntCliT
    end if
 
    lOpenFiles           := .t.

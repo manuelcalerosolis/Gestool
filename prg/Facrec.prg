@@ -737,8 +737,9 @@ STATIC FUNCTION OpenFiles( lExt )
       USE ( cPatEmp() + "FacRecS.DBF" ) NEW VIA ( cDriver() ) SHARED ALIAS ( cCheckArea( "FacRecS", @dbfFacRecS ) )
       SET ADSINDEX TO ( cPatEmp() + "FacRecS.CDX" ) ADDITIVE
 
-      USE ( cPatEmp() + "FacCliT.DBF" ) NEW VIA ( cDriver() ) SHARED ALIAS ( cCheckArea( "FacCliT", @dbfFacCliT ) )
-      SET ADSINDEX TO ( cPatEmp() + "FacCliT.CDX" ) ADDITIVE
+      if !TDataCenter():OpenFacCliT( @dbfFacCliT )
+         lOpenFiles     := .f.
+      end if
 
       USE ( cPatEmp() + "FacCliL.DBF" ) NEW VIA ( cDriver() ) SHARED ALIAS ( cCheckArea( "FacCliL", @dbfFacCliL ) )
       SET ADSINDEX TO ( cPatEmp() + "FacCliL.CDX" ) ADDITIVE
@@ -746,9 +747,11 @@ STATIC FUNCTION OpenFiles( lExt )
       USE ( cPatEmp() + "FacCliS.DBF" ) NEW VIA ( cDriver() ) SHARED ALIAS ( cCheckArea( "FacCliS", @dbfFacCliS ) )
       SET ADSINDEX TO ( cPatEmp() + "FacCliS.CDX" ) ADDITIVE
 
-      USE ( cPatEmp() + "FacCliP.DBF" ) NEW VIA ( cDriver() ) SHARED ALIAS ( cCheckArea( "FacCliP", @dbfFacCliP ) )
-      SET ADSINDEX TO ( cPatEmp() + "FacCliP.CDX" ) ADDITIVE
-      ( dbfFacCliP )->( OrdSetFocus( "rNumFac" ) )
+	  	if !TDataCenter():OpenFacCliP( @dbfFacCliP )
+   			lOpenFiles     := .f.
+   		else
+			( dbfFacCliP )->( OrdSetFocus( "rNumFac" ) )
+		end if
 
       USE ( cPatEmp() + "ALBCLIT.DBF" ) NEW VIA ( cDriver() ) SHARED ALIAS ( cCheckArea( "ALBCLIT", @dbfAlbCliT ) )
       SET ADSINDEX TO ( cPatEmp() + "ALBCLIT.CDX" ) ADDITIVE
