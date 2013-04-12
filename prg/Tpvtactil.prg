@@ -1929,54 +1929,8 @@ METHOD OpenFiles() CLASS TpvTactil
    ::oBandera             := TBandera():New()
 
    ::oStock               := TStock():Create( cPatGrp() )
-
    if !::oStock:lOpenFiles()
-
       ::lOpenFiles        := .f.
-
-   else
-
-      ::oStock:cKit       := ::oArticulosEscandallos:cAlias
-
-      ::oStock:cAlbCliT   := ::oAlbaranClienteCabecera:cAlias
-      ::oStock:cAlbCliL   := ::oAlbaranClienteLinea:cAlias
-      ::oStock:cAlbCliS   := ::oAlbaranClienteSerie:cAlias
-
-      ::oStock:cFacCliT   := ::oFacturaClienteCabecera:cAlias
-      ::oStock:cFacCliL   := ::oFacturaClienteLinea:cAlias
-      ::oStock:cFacCliS   := ::oFacturaClienteSerie:cAlias
-      ::oStock:cFacCliP   := ::oFacturaClientePago:cAlias
-
-      ::oStock:cFacRecT   := ::oFacturaRectificativaCabecera:cAlias
-      ::oStock:cFacRecL   := ::oFacturaRectificativaLinea:cAlias
-      ::oStock:cFacRecS   := ::oFacturaRectificativaNumeroSerie:cAlias
-
-      ::oStock:cAntCliT   := ::oAnticipoCliente:cAlias
-
-      ::oStock:cTikT      := ::oTiketCabecera:cAlias
-      ::oStock:cTikL      := ::oTiketLinea:cAlias
-      ::oStock:cTikS      := ::oTiketMesa:cAlias
-
-      ::oStock:cHisMov    := ::oMovimientosAlmacen:cAlias
-      ::oStock:cHisMovS   := ::oMovimientosAlmacenNumeroSerie:cAlias
-
-      ::oStock:cAlbPrvT   := ::oAlbaranProveedorCabecera:cAlias
-      ::oStock:cAlbPrvL   := ::oAlbaranProveedorLinea:cAlias
-      ::oStock:cAlbPrvS   := ::oAlbaranProveedorNumeroSerie:cAlias
-
-      ::oStock:cFacPrvT   := ::oFacturaProveedorCabecera:cAlias
-      ::oStock:cFacPrvL   := ::oFacturaProveedorLinea:cAlias
-      ::oStock:cFacPrvS   := ::oFacturaProveedorNumeroSerie:cAlias
-
-      ::oStock:cRctPrvT   := ::oRectificativaProveedorCabecera:cAlias
-      ::oStock:cRctPrvL   := ::oRectificativaProveedorLinea:cAlias
-      ::oStock:cRctPrvS   := ::oRectificativaProveedorNumeroSerie:cAlias
-
-      ::oStock:cProducL   := ::oParteProducionLinea:cAlias
-      ::oStock:cProducM   := ::oMaterialesProducion:cAlias
-      ::oStock:cProducS   := ::oMaterialesProducionSeries:cAlias
-      ::oStock:cProducP   := ::oMaterialesNumeroSeries:cAlias
-
    end if
 
    ::oNewImp                  := TNewImp():New( cPatEmp() )
@@ -3566,7 +3520,13 @@ METHOD CargaArticulosFamilia( cCodFam, nColBtn ) CLASS TpvTactil
 
             with object ( C5ImageViewItem() )
 
-               :cText            := AllTrim( Capitalize( ::oArticulo:Nombre ) )
+               if !Empty( ::oArticulo:cDesTcl )
+                  :cText         := ::oArticulo:cDesTcl
+               else
+                  :cText         := ::oArticulo:Nombre
+               end if
+
+               :cText            := AllTrim( Capitalize( :cText ) )
 
                if ( ::lImagenArticulos ) .and. ( ::lFileBmpName( ::oArticulo:cImagen ) )
 

@@ -140,30 +140,10 @@ METHOD OpenFiles()
 
    DATABASE NEW ::oDbfFam  PATH ( cPatArt() ) FILE "FAMILIAS.DBF" VIA ( cDriver() ) SHARED INDEX "FAMILIAS.CDX"
 
-   ::oStock             := TStock():Create( cPatGrp() )
+   ::oStock          := TStock():Create( cPatGrp() )
 
-   if ::oStock:lOpenFiles()
-      ::oStock:cAlbPrvT := ::oAlbPrvT:cAlias
-      ::oStock:cAlbPrvL := ::oAlbPrvL:cAlias
-      ::oStock:cFacPrvT := ::oFacPrvT:cAlias
-      ::oStock:cFacPrvL := ::oFacPrvL:cAlias
-      ::oStock:cRctPrvT := ::oRctPrvT:cAlias
-      ::oStock:cRctPrvL := ::oRctPrvL:cAlias
-      ::oStock:cAlbCliT := ::oAlbCliT:cAlias
-      ::oStock:cAlbCliL := ::oAlbCliL:cAlias
-      ::oStock:cFacCliT := ::oFacCliT:cAlias
-      ::oStock:cFacCliL := ::oFacCliL:cAlias
-      ::oStock:cFacRecT := ::oFacRecT:cAlias
-      ::oStock:cFacRecL := ::oFacRecL:cAlias
-      ::oStock:cTikT    := ::oTikCliT:cAlias
-      ::oStock:cTikL    := ::oTikCliL:cAlias
-      ::oStock:cProducL := ::oProLin:cAlias
-      ::oStock:cProducM := ::oProMat:cAlias
-      ::oStock:cProducT := ::oProCab:cAlias
-      ::oStock:cHisMov  := ::oHisMov:cAlias
-      ::oStock:cPedPrvL := ::oPedCliL:cAlias
-      ::oStock:cPedCliL := ::oPedPrvL:cAlias
-      ::oStock:cKit     := ::oDbfKit:cAlias
+   if !::oStock:lOpenFiles()
+      lOpen          := .f.
    end if
 
    RECOVER

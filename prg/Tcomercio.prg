@@ -539,29 +539,8 @@ METHOD OpenFiles() CLASS TComercio
    DATABASE NEW ::oArtImg  PATH ( cPatArt() ) FILE "ARTIMG.DBF"      VIA ( cDriver() ) SHARED INDEX "ARTIMG.CDX"
 
    ::oStock                := TStock():Create( cPatGrp() )
-
    if !::oStock:lOpenFiles()
-
       lOpen                := .f.
-
-   else
-
-      ::oStock:cKit        := ::oKit:cAlias
-      ::oStock:cPedCliL    := ::oPedCliL:cAlias
-      ::oStock:cAlbCliT    := ::oAlbCliT:cAlias
-      ::oStock:cAlbCliL    := ::oAlbCliL:cAlias
-      ::oStock:cFacCliL    := ::oFacCliL:cAlias
-      ::oStock:cFacRecL    := ::oFacRecL:cAlias
-      ::oStock:cTikL       := ::oTikCliL:cAlias
-      ::oStock:cProducL    := ::oProLin:cAlias
-      ::oStock:cProducM    := ::oProMat:cAlias
-      ::oStock:cHisMov     := ::oHisMov:cAlias
-      ::oStock:cPedPrvL    := ::oPedPrvL:cAlias
-      ::oStock:cAlbPrvT    := ::oAlbPrvT:cAlias
-      ::oStock:cAlbPrvL    := ::oAlbPrvL:cAlias
-      ::oStock:cFacPrvL    := ::oFacPrvL:cAlias
-      ::oStock:cRctPrvL    := ::oRctPrvL:cAlias
-
    end if
 
    RECOVER USING oError

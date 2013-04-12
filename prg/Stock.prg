@@ -53,12 +53,6 @@ CLASS TStock
    DATA cRctPrvL
    DATA cRctPrvS
 
-   DATA cDepAgeT
-   DATA cDepAgeL
-
-   DATA cExtAgeT
-   DATA cExtAgeL
-
    DATA cProducT
    DATA cProducL
    DATA cProducM
@@ -139,10 +133,6 @@ CLASS TStock
    METHOD ChkFacCli( cNumFac )
 
    METHOD FacRec( cNumFac, cCodAlm, lDelete, lIncremento )
-
-   METHOD DepAge( cNumDep, cCodAlmEntrda, cCodAlmSalida, lDelete, lIncremento )
-
-   METHOD ExtAge( cNumDep, cCodAlm, lDelete, lIncremento )
 
    METHOD TpvCli( cNumFac, cCodAlm, lIncremento )
    METHOD ChkTikCli( cNumTik )
@@ -1686,129 +1676,6 @@ METHOD ChkTikCli( cNumTik ) CLASS TStock
    end if
 
    SetStatus( ::cTikL, aTikCliL )
-
-return self
-
-//---------------------------------------------------------------------------//
-
-METHOD DepAge( nNumDep, cCodAlmEntrada, cCodAlmSalida, lDelete, lIncremento ) CLASS TStock
-
-   local nUnits
-
-   DEFAULT lDelete      := .t.
-   DEFAULT lIncremento  := .t.
-
-   /*
-   datos necesarios------------------------------------------------------------
-   */
-
-   if ::cDepAgeL == nil .or. nNumDep == nil
-
-      msgAlert( "Imposible realizar la actualización de stocks.", "Atención" )
-      return self
-
-   end if
-
-   if ( ::cDepAgeL )->( dbSeek( nNumDep ) )
-
-      while ( ::cDepAgeL )->CSERDEP + Str( ( ::cDepAgeL )->NNUMDEP ) + ( ::cDepAgeL )->CSUFDEP  == nNumDep .and. !( ::cDepAgeL )->( eof() );
-
-         if !empty( rtrim( ( ::cDepAgeL )->cRef ) ) // .and. !( ::cDepAgeT )->lImpAlb
-
-            nUnits      := ( NotCaja( ( ::cDepAgeL )->nCanEnt ) * ( ::cDepAgeL )->nUniCaja )
-
-            if lIncremento
-               nUnits   := - nUnits
-            end if
-
-            /*
-            mult. las unidades por su factor de conversión
-            */
-
-            if ( ::cDepAgeL )->nFacCnv != 0
-               nUnits   *= ( ::cDepAgeL )->nFacCnv
-            end if
-
-         end if
-
-         /*
-         Borramos los registros esto es para hacer rollback
-         */
-
-         if lDelete .and. dbLock( ::cDepAgeL )
-            ( ::cDepAgeL )->( dbDelete() )
-            ( ::cDepAgeL )->( dbUnLock() )
-         end if
-
-         ( ::cDepAgeL )->( dbSkip() )
-
-      end do
-
-   end if
-
-return self
-
-//---------------------------------------------------------------------------//
-
-METHOD ExtAge( nNumExt, cCodAlm, lDelete, lIncremento ) CLASS TStock
-
-   local nUnits
-
-   DEFAULT cCodAlm      := oUser():cAlmacen()
-   DEFAULT lDelete      := .t.
-   DEFAULT lIncremento  := .t.
-
-   /*
-   datos necesarios------------------------------------------------------------
-   */
-
-   if ::cExtAgeL == nil .or. nNumExt == nil
-      msgAlert( "Imposible realizar la actualización de stocks.", "Atención" )
-      return self
-   end if
-
-   if ( ::cExtAgeL )->( dbSeek( nNumExt ) )
-
-      while ( ::cExtAgeL )->CSEREXT + Str( ( ::cExtAgeL )->NNUMEXT ) + ( ::cExtAgeL )->CSUFEXT  == nNumExt .and. !( ::cExtAgeL )->( eof() );
-
-         if !empty( rtrim( ( ::cExtAgeL )->cRef ) )
-
-            nUnits      := ( NotCaja( ( ::cExtAgeL )->nCanEnt ) * ( ::cExtAgeL )->nUniCaja )
-
-            /*
-            mult. las unidades por su factor de conversión
-            */
-
-            if ( ::cExtAgeL )->nFacCnv != 0
-               nUnits   *= ( ::cExtAgeL )->nFacCnv
-            end if
-
-            /*
-            Si no tenemos almacen en linea se lo ponemos
-
-            if Empty( ( ::cExtAgeL )->cAlmLin )
-               ( ::cExtAgeL )->( dbRLock() )
-               ( ::cExtAgeL )->cAlmLin    := cCodAlm
-               ( ::cExtAgeL )->( dbUnLock() )
-            end if
-            */
-
-         end if
-
-         /*
-         Borramos los registros esto es para hacer rollback
-         */
-
-         if lDelete .and. dbLock( ::cExtAgeL )
-            ( ::cExtAgeL )->( dbDelete() )
-            ( ::cExtAgeL )->( dbUnLock() )
-         end if
-
-         ( ::cExtAgeL )->( dbSkip() )
-
-      end do
-
-   end if
 
 return self
 

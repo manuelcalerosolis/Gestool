@@ -362,27 +362,6 @@ STATIC FUNCTION OpenFiles( lExt, cPath )
 
       if !oStock:lOpenFiles()
          lOpenFiles        := .f.
-      else
-
-         oStock:cKit       := dbfArtKit
-
-         oStock:cPedCliL   := dbfPedCliL
-         oStock:cAlbCliT   := dbfAlbCliT
-         oStock:cAlbCliL   := dbfAlbCliL
-         oStock:cFacCliL   := dbfFacCliL
-         oStock:cFacRecL   := dbfFacRecL
-         oStock:cTikL      := dbfTikCliL
-
-         oStock:cProducL   := dbfProLin
-         oStock:cProducM   := dbfProMat
-         oStock:cHisMov    := dbfHisMov
-
-         oStock:cPedPrvL   := dbfPedPrvL
-         oStock:cAlbPrvT   := dbfAlbPrvT
-         oStock:cAlbPrvL   := dbfAlbPrvL
-         oStock:cFacPrvL   := dbfFacPrvL
-         oStock:cRctPrvL   := dbfRctPrvL
-
       end if
 
       oTankes              := TTankes():Create( cPatArt() )

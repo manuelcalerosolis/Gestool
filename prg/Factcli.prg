@@ -10330,10 +10330,6 @@ Method Process()
             USE ( cPatEmp() + "AntCliT.DBF" ) NEW VIA ( cDriver() ) SHARED ALIAS ( cCheckArea( "AntCliT", @dbfAntCliT ) )
             SET ADSINDEX TO ( cPatEmp() + "AntCliT.CDX" ) ADDITIVE
 
-            oStock            := TStock():New()
-            oStock:cFacCliT   := dbfFacCliT
-            oStock:cFacCliL   := dbfFacCliL
-
             while ( tmpFacCliT )->( !eof() )
 
                /*
@@ -10398,8 +10394,6 @@ Method Process()
             CLOSE ( tmpFacCliT )
             CLOSE ( tmpFacCliL )
             CLOSE ( tmpFacCliP )
-
-            oStock:end()
 
             ::oSender:AppendFileRecive( aFiles[ m, 1 ] )
 
@@ -12080,11 +12074,6 @@ function SynFacCli( cPath )
       oStock               := TStock():Create( cPath )
       if !oStock:lOpenFiles()
          lOpenFiles        := .f.
-      else
-         oStock:cPedCliT   := dbfPedCliT
-         oStock:cPedCliL   := dbfPedCliL
-         oStock:cAlbCliL   := dbfAlbCliL
-         oStock:cFacCliL   := dbfFacCliL
       end if
 
       while !( dbfFacCliT )->( eof() )
@@ -17490,9 +17479,7 @@ STATIC FUNCTION loaCli( aGet, aTmp, nMode, oRieCli, oTlfCli )
          oStock:SetRiesgo( cNewCodCli, oRieCli, ( dbfClient )->Riesgo )
       end if
 
-#ifndef __PDA__
       ShowInciCliente( ( dbfClient )->Cod, dbfCliInc )
-#endif
 
       cOldCodCli  := ( dbfClient )->Cod
 

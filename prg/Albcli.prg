@@ -7640,12 +7640,6 @@ function SynAlbCli( cPath )
    oStock               := TStock():Create( cPatGrp() )
    if !oStock:lOpenFiles()
       lOpenFiles        := .f.
-   else
-      oStock:cPedCliT   := dbfPedCliT
-      oStock:cPedCliL   := dbfPedCliL
-      oStock:cAlbCliL   := dbfAlbCliL
-      oStock:cFacCliL   := dbfFacCliL
-
    end if
 
    while !( dbfAlbCliT )->( eof() )

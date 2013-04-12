@@ -8479,12 +8479,6 @@ STATIC FUNCTION OpenFiles( lExt )
       oStock               := TStock():Create( cPatGrp() )
       if !oStock:lOpenFiles()
          lOpenFiles        := .f.
-      else
-         oStock:cTikT      := dbfTikT
-         oStock:cFacCliP   := dbfFacCliP
-         oStock:cFacCliT   := dbfFacCliT
-         oStock:cAlbCliT   := dbfAlbCliT
-         oStock:cAntCliT   := dbfAntCliT
       end if
 
       oGrpCli              := TGrpCli():Create( cPatCli() )

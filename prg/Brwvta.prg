@@ -127,7 +127,7 @@ static oGraph
 
 Static Function OpenFiles()
 
-   local lOpen       := .f.
+   local lOpen       := .t.
    local oError
    local oBlock
 
@@ -271,38 +271,9 @@ Static Function OpenFiles()
    oDbfTmp:Activate( .f., .f. )
 
    oStock               := TStock():Create( cPatGrp() )
-   if oStock:lOpenFiles()
-
-      oStock:cPedCliT   := dbfPedCliT
-      oStock:cPedCliL   := dbfPedCliL
-      oStock:cPedCliR   := dbfPedCliR
-      oStock:cAlbCliT   := dbfAlbCliT
-      oStock:cAlbCliL   := dbfAlbCliL
-      oStock:cFacCliT   := dbfFacCliT
-      oStock:cFacCliL   := dbfFacCliL
-      oStock:cFacRecT   := dbfFacRecT
-      oStock:cFacRecL   := dbfFacRecL
-      oStock:cTikT      := dbfTikCliT
-      oStock:cTikL      := dbfTikCliL
-
-      oStock:cKit       := dbfArtKit
-
-      oStock:cPedPrvL   := dbfPedPrvL
-      oStock:cAlbPrvT   := dbfAlbPrvT
-      oStock:cAlbPrvL   := dbfAlbPrvL
-      oStock:cFacPrvT   := dbfFacPrvT
-      oStock:cFacPrvL   := dbfFacPrvL
-      oStock:cRctPrvT   := dbfRctPrvT
-      oStock:cRctPrvL   := dbfRctPrvL
-
-      oStock:cProducT   := dbfProducT
-      oStock:cProducL   := dbfProducL
-      oStock:cProducM   := dbfProducM
-      oStock:cHisMov    := dbfMovAlm
-
+   if !oStock:lOpenFiles()
+      lOpen             := .f.
    end if
-
-   lOpen             := .t.
 
    RECOVER USING oError
 

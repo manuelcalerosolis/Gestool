@@ -623,57 +623,8 @@ METHOD OpenFiles( lExclusive )
       ::oTipArt:OpenFiles()
 
       ::oStock             := TStock():Create( cPatGrp() )
-      if ::oStock:lOpenFiles()
-
-         ::oStock:cAlm     := ::oAlm:cAlias
-         ::oStock:cArt     := ::oArt:cAlias
-         ::oStock:cHisMov  := ::oHisMov:cAlias
-         ::oStock:cHisMovS := ::oHisMovS:cAlias
-
-         ::oStock:cPedPrvT := ::oPedPrvT:cAlias
-         ::oStock:cPedPrvL := ::oPedPrvL:cAlias
-
-         ::oStock:cAlbPrvT := ::oAlbPrvT:cAlias
-         ::oStock:cAlbPrvL := ::oAlbPrvL:cAlias
-         ::oStock:cAlbPrvS := ::oAlbPrvS:cAlias
-
-         ::oStock:cFacPrvT := ::oFacPrvT:cAlias
-         ::oStock:cFacPrvL := ::oFacPrvL:cAlias
-         ::oStock:cFacPrvS := ::oFacPrvS:cAlias
-
-         ::oStock:cRctPrvT := ::oRctPrvT:cAlias
-         ::oStock:cRctPrvL := ::oRctPrvL:cAlias
-         ::oStock:cRctPrvS := ::oRctPrvS:cAlias
-
-         ::oStock:cPedCliT := ::oPedCliT:cAlias
-         ::oStock:cPedCliL := ::oPedCliL:cAlias
-         ::oStock:cPedCliR := ::oPedCliR:cAlias
-
-         ::oStock:cAlbCliT := ::oAlbCliT:cAlias
-         ::oStock:cAlbCliL := ::oAlbCliL:cAlias
-         ::oStock:cAlbCliS := ::oAlbCliS:cAlias
-
-         ::oStock:cFacCliT := ::oFacCliT:cAlias
-         ::oStock:cFacCliL := ::oFacCliL:cAlias
-         ::oStock:cFacCliS := ::oFacCliS:cAlias
-
-         ::oStock:cFacRecT := ::oFacRecT:cAlias
-         ::oStock:cFacRecL := ::oFacRecL:cAlias
-         ::oStock:cFacRecS := ::oFacRecS:cAlias
-
-         ::oStock:cTikT    := ::oTikCliT:cAlias
-         ::oStock:cTikL    := ::oTikCliL:cAlias
-         ::oStock:cTikS    := ::oTikCliS:cAlias
-
-         ::oStock:cProducL := ::oDbfProLin:cAlias
-         ::oStock:cProducM := ::oDbfProMat:cAlias
-         ::oStock:cProducS := ::oDbfProSer:cAlias
-         ::oStock:cProducP := ::oDbfMatSer:cAlias
-
-      else
-
+      if !::oStock:lOpenFiles()
          ::lOpenFiles      := .f.
-
       end if
 
       ::lLoadDivisa()

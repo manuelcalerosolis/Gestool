@@ -137,25 +137,6 @@ METHOD OpenFiles()
    ::oStock          := TStock():Create()
    if !::oStock:lOpenFiles()
       lOpen          := .f.
-   else
-      ::oStock:cPedPrvL   := ::oPedPrvL:cAlias
-      ::oStock:cPedCliT   := ::oPedCliT:cAlias
-      ::oStock:cPedCliL   := ::oPedCliL:cAlias
-      ::oStock:cPedCliR   := ::oPedCliR:cAlias
-      ::oStock:cAlbCliT   := ::oAlbCliT:cAlias
-      ::oStock:cAlbCliL   := ::oAlbCliL:cAlias
-      ::oStock:cFacCliT   := ::oFacCliT:cAlias
-      ::oStock:cFacCliL   := ::oFacCliL:cAlias
-      ::oStock:cFacRecL   := ::oFacRecL:cAlias
-      ::oStock:cTikT      := ::oTikCliT:cAlias
-      ::oStock:cTikL      := ::oTikCliL:cAlias
-
-      ::oStock:cHisMov    := ::oHisMov:cAlias
-      ::oStock:cAlbPrvL   := ::oAlbPrvL:cAlias
-      ::oStock:cFacPrvL   := ::oFacPrvL:cAlias
-      ::oStock:cRctPrvL   := ::oRctPrvL:cAlias
-      ::oStock:cProducL   := ::oProducL:cAlias
-      ::oStock:cProducM   := ::oProducM:cAlias
    end if
 
    RECOVER

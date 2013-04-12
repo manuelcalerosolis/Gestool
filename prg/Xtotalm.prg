@@ -140,36 +140,9 @@ METHOD OpenFiles()
    DATABASE NEW ::oArtDiv  PATH ( cPatArt() ) FILE "ARTDIV.DBF"   VIA ( cDriver() ) SHARED INDEX "ARTDIV.CDX"
    ::oArtDiv:OrdSetFocus( "cValPrp" )
 
-   ::oStock            := TStock():Create( cPatGrp() )
-   if ::oStock:lOpenFiles()
-
-      ::oStock:cPedCliT   := ::oPedCliT:cAlias
-      ::oStock:cPedCliL   := ::oPedCliL:cAlias
-      ::oStock:cPedCliR   := ::oPedCliR:cAlias
-      ::oStock:cAlbCliT   := ::oAlbCliT:cAlias
-      ::oStock:cAlbCliL   := ::oAlbCliL:cAlias
-      ::oStock:cFacCliT   := ::oFacCliT:cAlias
-      ::oStock:cFacCliL   := ::oFacCliL:cAlias
-      ::oStock:cFacRecT   := ::oFacRecT:cAlias
-      ::oStock:cFacRecL   := ::oFacRecL:cAlias
-      ::oStock:cTikT      := ::oTikCliT:cAlias
-      ::oStock:cTikL      := ::oTikCliL:cAlias
-
-      ::oStock:cKit       := ::oDbfKit:cAlias
-
-      ::oStock:cPedPrvL   := ::oPedPrvL:cAlias
-      ::oStock:cAlbPrvT   := ::oAlbPrvT:cAlias
-      ::oStock:cAlbPrvL   := ::oAlbPrvL:cAlias
-      ::oStock:cFacPrvT   := ::oFacPrvT:cAlias
-      ::oStock:cFacPrvL   := ::oFacPrvL:cAlias
-      ::oStock:cRctPrvT   := ::oRctPrvT:cAlias
-      ::oStock:cRctPrvL   := ::oRctPrvL:cAlias
-
-      ::oStock:cProducT   := ::oProCab:cAlias
-      ::oStock:cProducL   := ::oProLin:cAlias
-      ::oStock:cProducM   := ::oProMat:cAlias
-      ::oStock:cHisMov    := ::oHisMov:cAlias
-
+   ::oStock          := TStock():Create( cPatGrp() )
+   if !::oStock:lOpenFiles()
+      lOpen          := .f.
    end if
 
    RECOVER

@@ -345,10 +345,6 @@ STATIC FUNCTION OpenFiles( cPath )
    oStock               := TStock():Create( cPatGrp() )
    if !oStock:lOpenFiles()
       lOpen             := .f.
-   else
-      oStock:cDepAgeT   := dbfDepAgeT
-      oStock:cDepAgeL   := dbfDepAgeL
-      oStock:cKit       := dbfKit
    end if
 
    RECOVER USING oError
@@ -1193,11 +1189,16 @@ RETURN ( .t. )
 Borra todas las lineas de detalle de un Albaran
 */
 
-STATIC FUNCTION DelDetalle( nNumDep )
+STATIC FUNCTION delDetalle( nNumDep )
 
    CursorWait()
 
-   oStock:DepAge( nNumDep, ( dbfDepAgeT )->cCodAlm, ( dbfDepAgeT )->cCodAli, .t., .t. )
+   while ( dbfDepAgeL )->( dbSeek( nNumDep ) )
+      if dbLock( dbfDepAgeL )
+         ( dbfDepAgeL )->( dbDelete() )
+         ( dbfDepAgeL )->( dbUnLock() )
+      end if 
+   end while      
 
    CursorWe()
 
@@ -1531,13 +1532,9 @@ Static Function EndTrans( aTmp, oBrw, oDlg, nMode )
    oMsgProgress():SetRange( 0, ( dbfTmp )->( LastRec() ) )
 
    do case
-   case nMode == EDIT_MODE .AND. ( dbfDepAgeL )->( dbSeek( aTmp[ _CSERDEP ] + Str( aTmp[ _NNUMDEP ] ) + aTmp[ _CSUFDEP ] ) )
+   case nMode == EDIT_MODE
 
-      /*
-      Rollback de stocks y pedidos---------------------------------------------
-      */
-
-      oStock:DepAge( aTmp[ _CSERDEP ] + Str( aTmp[ _NNUMDEP ] ) + aTmp[ _CSUFDEP ], ( dbfDepAgeT )->cCodAlm, ( dbfDepAgeT )->cCodAli, .t., .t. )
+      delDetalle( aTmp[ _CSERDEP ] + Str( aTmp[ _NNUMDEP ] ) + aTmp[ _CSUFDEP ] )
 
    case nMode == APPD_MODE .or. nMode == DUPL_MODE
 
@@ -1561,12 +1558,6 @@ Static Function EndTrans( aTmp, oBrw, oDlg, nMode )
       oMsgProgress():Deltapos(1)
 
    end while
-
-   /*
-   Actualizamos los Stocks----------------------------------------------------
-	*/
-
-   oStock:DepAge( aTmp[ _CSERDEP ] + Str( aTmp[ _NNUMDEP ] ) + aTmp[ _CSUFDEP ], ( dbfDepAgeT )->cCodAlm, ( dbfDepAgeT )->cCodAli, .f., .f. )
 
 	/*
    Cerramos y borramos los ficheros-------------------------------------------------------
