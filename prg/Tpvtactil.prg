@@ -5287,6 +5287,7 @@ METHOD nTotalLineaUno( uTmpL, nVdv ) CLASS TpvTactil
    DEFAULT nVdv      := 0
 
    if !uTmpL:lFreTil
+      
       nCalculo       := Round( uTmpL:nPvpTil, ::nDecimalesImporte )   // Precio
 
       if uTmpL:nDtoLin != 0

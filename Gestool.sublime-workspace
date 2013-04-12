@@ -4,6 +4,18 @@
 		"selected_items":
 		[
 			[
+				"Cursor",
+				"CursorWE"
+			],
+			[
+				"Da",
+				"day"
+			],
+			[
+				"Mo",
+				"month"
+			],
+			[
 				"case",
 				"case"
 			],
@@ -54,10 +66,6 @@
 			[
 				"cText",
 				"cTextoWait"
-			],
-			[
-				"Cursor",
-				"CursorWait"
 			],
 			[
 				"lChange",
@@ -506,21 +514,13 @@
 			[
 				"Bl",
 				"Blank"
-			],
-			[
-				"cPnt",
-				"cPntVenta"
-			],
-			[
-				"nUbi",
-				"nUbiTik"
 			]
 		]
 	},
 	"buffers":
 	[
 		{
-			"file": "prg/Exportatarifas.prg",
+			"file": "/C/Users/Villa/Desktop/Exportatarifas.prg",
 			"settings":
 			{
 				"buffer_size": 38450,
@@ -528,10 +528,44 @@
 			}
 		},
 		{
-			"file": "prg/Rptgal.prg",
+			"contents": "Searching 31 files for \"CRLF\"\n\nC:\\fw195\\Gestool\\include\\Cmbtll12.ch:\n  390  #define LL_OPTION_ADDVARSTOFIELDS      (19)                 /* default: FALSE */\n  391  #define LL_OPTION_MULTIPLETABLELINES   (20)                 /* default: TRUE */\n  392: #define LL_OPTION_CONVERTCRLF          (21)                 /* default: FALSE */\n  393  #define LL_OPTION_WIZ_FILENEW          (22)                 /* default: FALSE */\n  394  #define LL_OPTION_RETREPRESENTATIONCODE (23)                 /* default: LL_CHAR_NEWLINE (182) */\n\nC:\\fw195\\Gestool\\include\\Tdbfmsg.ch:\n   11  #define _TDBFMSG_CH\n   12  \n   13: #ifndef CRLF\n   14:     #define CRLF chr( 13 ) + chr( 10 )\n   15  #endif\n   16  \n\nC:\\fw195\\Gestool\\include\\Util.ch:\n   53  // Otras definiciones:\n   54  \n   55: #ifndef CRLF\n   56:     #define CRLF chr( 13 ) + chr( 10 )\n   57  #endif\n   58  \n\n5 matches across 3 files\n",
 			"settings":
 			{
-				"buffer_size": 163166,
+				"buffer_size": 873,
+				"line_ending": "Windows",
+				"name": "Find Results",
+				"scratch": true
+			}
+		},
+		{
+			"file": "prg/Albcli.prg",
+			"settings":
+			{
+				"buffer_size": 668225,
+				"line_ending": "Windows"
+			}
+		},
+		{
+			"file": "bin/script/000.prg",
+			"settings":
+			{
+				"buffer_size": 5451,
+				"line_ending": "Windows"
+			}
+		},
+		{
+			"file": "prg/Tinfgen.prg",
+			"settings":
+			{
+				"buffer_size": 209137,
+				"line_ending": "Windows"
+			}
+		},
+		{
+			"file": "prg/Tconfaccli.prg",
+			"settings":
+			{
+				"buffer_size": 30201,
 				"line_ending": "Windows"
 			}
 		}
@@ -568,12 +602,20 @@
 	},
 	"file_history":
 	[
-		"/C/fw195/Gestool/prg/Client.prg",
+		"/C/Users/Villa/Desktop/test.prg",
+		"/C/fw195/Gestool/include/Util.ch",
+		"/C/Users/Villa/Desktop/oscar.prg",
+		"/C/fw195/Gestool/prg/Utildbf.prg",
+		"/C/fw195/Gestool/prg/Rptgal.prg",
+		"/C/fw195/Gestool/prg/Tscripts.prg",
 		"/C/fw195/Gestool/prg/Exportatarifas.prg",
+		"/C/fw195/Gestool/prg/Oferta.prg",
+		"/C/fw195/Gestool/prg/Tpv.prg",
+		"/C/fw195/Gestool/prg/TConFacCli",
+		"/C/fw195/Gestool/prg/Client.prg",
 		"/C/fw195/Gestool/prg/Factu.prg",
 		"/C/fw195/Gestool/prg/Tinfgen.prg",
 		"/C/fw195/Gestool/prg/Articulo.prg",
-		"/C/fw195/Gestool/prg/Tpv.prg",
 		"/C/fw195/Gestool/prg/Stock.prg",
 		"/C/fw195/Gestool/prg/Tcomercio.prg",
 		"/C/fw195/Gestool/prg/Factcli.prg",
@@ -600,7 +642,6 @@
 		"/C/FWH803/samples/ftpdir.prg",
 		"/C/FWH803/source/classes/tftp.prg",
 		"/C/fwh1204/source/classes/tftpserv.prg",
-		"/C/fw195/Gestool/prg/Rptgal.prg",
 		"/C/fw195/Gestool/prg/Trnkrvta.prg",
 		"/C/fw195/Gestool/prg/Tacuatvta.prg",
 		"/C/fw195/Gestool/prg/Tdlgflt.prg",
@@ -608,7 +649,6 @@
 		"/C/fw195/Gestool/prg/Tfilter.prg",
 		"/C/fw195/Gestool/prg/Tinfavta.prg",
 		"/C/Users/Villa/Desktop/123/123.prg",
-		"/C/fw195/Gestool/prg/Tscripts.prg",
 		"/C/BCC55/Include/wininet.h",
 		"/C/fw195/Gestool/prg/Producc.prg",
 		"/C/fw195/Gestool/prg/Tdbf.prg",
@@ -646,7 +686,6 @@
 		"/C/fw195/Gestool/prg/tpv",
 		"/C/fw195/Gestool/prg/articulo",
 		"/C/fw195/Gestool/prg/Tgenmail.prg",
-		"/C/fw195/Gestool/prg/Utildbf.prg",
 		"/C/fw195/Gestool/Hs.bat",
 		"//SERVER/Programacion/fw195/camero/HX2007.bat",
 		"//SERVER/Programacion/fw195/camero/HX803.bat",
@@ -690,12 +729,7 @@
 		"/C/fw195/Gestool/prg/Count.prg",
 		"/C/fw195/Gestool/prg/ncount.prg",
 		"/C/fw195/Gestool/prg/ncount",
-		"/C/fw195/Gestool/prg/Tdiacvta.prg",
-		"/C/fw195/Gestool/prg/Tivavta.prg",
-		"/C/fw195/Gestool/prg/rptgal",
-		"/C/fw195/Gestool/prg/tinfgen",
-		"/C/fw195/Gestool/prg/openfiles",
-		"/C/Users/Villa/Desktop/XLM/XLM.prg"
+		"/C/fw195/Gestool/prg/Tdiacvta.prg"
 	],
 	"find":
 	{
@@ -703,9 +737,10 @@
 	},
 	"find_in_files":
 	{
-		"height": 0.0,
+		"height": 90.0,
 		"where_history":
 		[
+			"C:\\fw195\\Gestool\\include",
 			"C:\\fw195\\Gestool\\prg",
 			"C:\\fw195\\Gestool\\resource",
 			"C:\\fw195\\Gestool\\prg",
@@ -729,6 +764,26 @@
 		"case_sensitive": false,
 		"find_history":
 		[
+			"CRLF",
+			"on aitm",
+			"IniInf",
+			"iniinf",
+			"fec",
+			"on dbFirst",
+			"ccliorg",
+			"msgget",
+			"CompilarScript",
+			"#",
+			"rx",
+			"lBuscaOferta",
+			"on sOfertaArticulo",
+			"on lBuscaOferta",
+			"NDTOLIN",
+			"ofe",
+			"ofer",
+			"TConFacCli",
+			"consumo",
+			"consumos",
 			"cabecera",
 			"on aitm",
 			"::odbfArt",
@@ -836,27 +891,7 @@
 			"stock",
 			"ChgSta",
 			"InsertPropiedadesProductPrestashop",
-			"on aitm",
-			"removedirectory",
-			"insertgrupoca",
-			"AppendImagesPrestashop",
-			"updateproduct",
-			"deleteimagesp",
-			"insertcategoriesP",
-			"cTextoWait",
-			"ctextowait",
-			"ltextowait",
-			"deleteimagesP",
-			"delete",
-			"deleteimages",
-			"delete",
-			")\n",
-			"say",
-			"redefine say",
-			"odcreate",
-			"oFtp:SetCurrentDirectory( \"..\" )",
-			"SetCurrentDirectory",
-			"od deleteimagesp"
+			"on aitm"
 		],
 		"highlight": true,
 		"in_selection": false,
@@ -882,12 +917,12 @@
 	"groups":
 	[
 		{
-			"selected": 1,
+			"selected": 3,
 			"sheets":
 			[
 				{
 					"buffer": 0,
-					"file": "prg/Exportatarifas.prg",
+					"file": "/C/Users/Villa/Desktop/Exportatarifas.prg",
 					"settings":
 					{
 						"buffer_size": 38450,
@@ -897,8 +932,123 @@
 						"selection":
 						[
 							[
-								0,
-								0
+								36989,
+								36989
+							]
+						],
+						"settings":
+						{
+							"syntax": "Packages/harbour/harbour/Harbour.tmLanguage",
+							"tab_size": 3,
+							"translate_tabs_to_spaces": true
+						},
+						"translation.x": 0.0,
+						"translation.y": 23175.0,
+						"zoom_level": 1.0
+					},
+					"type": "text"
+				},
+				{
+					"buffer": 1,
+					"settings":
+					{
+						"buffer_size": 873,
+						"regions":
+						{
+							"match":
+							{
+								"flags": 112,
+								"regions":
+								[
+									[
+										276,
+										280
+									],
+									[
+										613,
+										617
+									],
+									[
+										637,
+										641
+									],
+									[
+										774,
+										778
+									],
+									[
+										798,
+										802
+									]
+								],
+								"scope": ""
+							}
+						},
+						"selection":
+						[
+							[
+								629,
+								663
+							]
+						],
+						"settings":
+						{
+							"detect_indentation": false,
+							"output_tag": 1,
+							"result_base_dir": "",
+							"result_file_regex": "^([A-Za-z\\\\/<].*):$",
+							"result_line_regex": "^ +([0-9]+):",
+							"scroll_past_end": true,
+							"syntax": "Packages/Default/Find Results.hidden-tmLanguage"
+						},
+						"translation.x": 0.0,
+						"translation.y": 0.0,
+						"zoom_level": 1.0
+					},
+					"type": "text"
+				},
+				{
+					"buffer": 2,
+					"file": "prg/Albcli.prg",
+					"settings":
+					{
+						"buffer_size": 668225,
+						"regions":
+						{
+						},
+						"selection":
+						[
+							[
+								488286,
+								488286
+							]
+						],
+						"settings":
+						{
+							"syntax": "Packages/harbour/harbour/Harbour.tmLanguage",
+							"tab_size": 3,
+							"translate_tabs_to_spaces": true
+						},
+						"translation.x": 0.0,
+						"translation.y": 246928.0,
+						"zoom_level": 1.0
+					},
+					"type": "text"
+				},
+				{
+					"buffer": 3,
+					"file": "bin/script/000.prg",
+					"settings":
+					{
+						"buffer_size": 5451,
+						"regions":
+						{
+						},
+						"selection":
+						[
+							[
+								152,
+								152
 							]
 						],
 						"settings":
@@ -914,19 +1064,19 @@
 					"type": "text"
 				},
 				{
-					"buffer": 1,
-					"file": "prg/Rptgal.prg",
+					"buffer": 4,
+					"file": "prg/Tinfgen.prg",
 					"settings":
 					{
-						"buffer_size": 163166,
+						"buffer_size": 209137,
 						"regions":
 						{
 						},
 						"selection":
 						[
 							[
-								0,
-								0
+								737,
+								737
 							]
 						],
 						"settings":
@@ -936,7 +1086,35 @@
 							"translate_tabs_to_spaces": true
 						},
 						"translation.x": 0.0,
-						"translation.y": 0.0,
+						"translation.y": 544.0,
+						"zoom_level": 1.0
+					},
+					"type": "text"
+				},
+				{
+					"buffer": 5,
+					"file": "prg/Tconfaccli.prg",
+					"settings":
+					{
+						"buffer_size": 30201,
+						"regions":
+						{
+						},
+						"selection":
+						[
+							[
+								8149,
+								8149
+							]
+						],
+						"settings":
+						{
+							"syntax": "Packages/harbour/harbour/Harbour.tmLanguage",
+							"tab_size": 3,
+							"translate_tabs_to_spaces": true
+						},
+						"translation.x": 0.0,
+						"translation.y": 3834.0,
 						"zoom_level": 1.0
 					},
 					"type": "text"

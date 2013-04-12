@@ -426,7 +426,7 @@ METHOD EjecutarScript( cCodigoScript ) CLASS TScripts
 
    END SEQUENCE
 
-   ErrorBlock( oBlock ) 
+   ErrorBlock( oBlock )
 
    /*
    Activamos todos los scripts-------------------------------------------------
