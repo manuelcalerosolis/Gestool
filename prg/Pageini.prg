@@ -80,9 +80,6 @@ STATIC FUNCTION OpenFiles()
    USE ( cPatEmp() + "FACPRVL.DBF" )   NEW VIA ( cDriver() ) SHARED ALIAS ( cCheckArea( "FACPRVL", @dbfFacPrvL ) )
    SET ADSINDEX TO ( cPatEmp() + "FACPRVL.CDX" ) ADDITIVE
 
-   USE ( cPatEmp() + "FACCLIT.DBF" )   NEW VIA ( cDriver() ) SHARED ALIAS ( cCheckArea( "FACCLIT", @dbfFacCliT ) )
-   SET ADSINDEX TO ( cPatEmp() + "FACCLIT.CDX" ) ADDITIVE
-
    USE ( cPatEmp() + "FACCLIL.DBF" )   NEW VIA ( cDriver() ) SHARED ALIAS ( cCheckArea( "FACCLIL", @dbfFacCliL ) )
    SET ADSINDEX TO ( cPatEmp() + "FACCLIL.CDX" ) ADDITIVE
 
@@ -106,6 +103,10 @@ STATIC FUNCTION OpenFiles()
 
    USE ( cPatEmp() + "RctPrvL.DBF" ) NEW VIA ( cDriver() ) SHARED ALIAS ( cCheckArea( "FACPRVL", @dbfRctPrvL ) )
    SET ADSINDEX TO ( cPatEmp() + "RctPrvL.CDX" ) ADDITIVE
+
+   if !TDataCenter():OpenFacCliT( @dbfFacCliT )
+      lOpen          := .f.
+   end if
 
    /*
    Fichero temporal de recibos de clientes-------------------------------------
@@ -140,7 +141,6 @@ STATIC FUNCTION OpenFiles()
       ( dbfNewRecPrv )->( ordListAdd( cNewPrv ) )
 
    end if
-
 
    RECOVER
 

@@ -563,7 +563,7 @@ STATIC FUNCTION OpenFiles()
       USE ( cPatEmp() + "SatCliT.DBF" ) NEW VIA ( cDriver() ) SHARED ALIAS ( cCheckArea( "SatCliT", @dbfSatCliT ) )
       SET ADSINDEX TO ( cPatEmp() + "SatCliT.CDX" ) ADDITIVE
 
-      USE ( cPatEmp() + "SatCliL.DBF" ) NEW VIA ( cDriver() ) SHARED ALIAS ( cCheckArea( "SatCliT", @dbfSatCliL ) )
+      USE ( cPatEmp() + "SatCliL.DBF" ) NEW VIA ( cDriver() ) SHARED ALIAS ( cCheckArea( "SatCliL", @dbfSatCliL ) )
       SET ADSINDEX TO ( cPatEmp() + "SatCliL.CDX" ) ADDITIVE
 
       USE ( cPatEmp() + "SatCliI.DBF" ) NEW VIA ( cDriver() ) SHARED ALIAS ( cCheckArea( "SatCliI", @dbfSatCliI ) )
@@ -715,9 +715,6 @@ STATIC FUNCTION OpenFiles()
       USE ( cPatGrp() + "AGECOM.DBF" ) NEW VIA ( cDriver() ) SHARED ALIAS ( cCheckArea( "AGECOM", @dbfAgeCom ) )
       SET ADSINDEX TO ( cPatGrp() + "AGECOM.CDX" ) ADDITIVE
 
-      USE ( cPatEmp() + "FACCLIT.DBF" ) NEW VIA ( cDriver() ) SHARED ALIAS ( cCheckArea( "FACCLIT", @dbfFacCliT ) )
-      SET ADSINDEX TO ( cPatEmp() + "FACCLIT.CDX" ) ADDITIVE
-
       USE ( cPatEmp() + "FACCLIL.DBF" ) NEW VIA ( cDriver() ) SHARED ALIAS ( cCheckArea( "FACCLIL", @dbfFacCliL ) )
       SET ADSINDEX TO ( cPatEmp() + "FACCLIL.CDX" ) ADDITIVE
 
@@ -776,67 +773,25 @@ STATIC FUNCTION OpenFiles()
       SET ADSINDEX TO ( cPatEmp() + "PEDPROVL.CDX" ) ADDITIVE
       SET TAG TO "cRef"
 
-      USE ( cPatEmp() + "FacCliP.Dbf" ) NEW VIA ( cDriver() ) SHARED ALIAS ( cCheckArea( "FacCliP", @dbfFacCliP ) )
-      SET ADSINDEX TO ( cPatEmp() + "FacCliP.Cdx" ) ADDITIVE
-
       USE ( cPatEmp() + "PROSER.DBF" ) NEW VIA ( cDriver() ) SHARED ALIAS ( cCheckArea( "PROSER", @dbfProSer ) )
       SET ADSINDEX TO ( cPatEmp() + "PROSER.CDX" ) ADDITIVE
 
       USE ( cPatEmp() + "MATSER.DBF" ) NEW VIA ( cDriver() ) SHARED ALIAS ( cCheckArea( "MATSER", @dbfMatSer ) )
       SET ADSINDEX TO ( cPatEmp() + "MATSER.CDX" ) ADDITIVE
 
+      if !TDataCenter():OpenFacCliT( @dbfFacCliT )
+         lOpenFiles     := .f.
+      end if
+
+      if !TDataCenter():OpenFacCliP( @dbfFacCliP )
+         lOpenFiles     := .f.
+      end if
+
       oBandera             := TBandera():New()
 
       oStock               := TStock():Create( cPatGrp() )
       if !oStock:lOpenFiles()
          lOpenFiles        := .f.
-      else
-         oStock:cKit       := dbfKit
-
-         oStock:cSatCliT   := dbfSatCliT
-         oStock:cSatCliL   := dbfSatCliL
-
-         oStock:cPedCliT   := dbfPedCliT
-         oStock:cPedCliL   := dbfPedCliL
-         oStock:cPedCliR   := dbfPedCliR
-
-         oStock:cAlbCliT   := dbfAlbCliT
-         oStock:cAlbCliL   := dbfAlbCliL
-         oStock:cAlbCliS   := dbfAlbCliS
-
-         oStock:cFacCliT   := dbfFacCliT
-         oStock:cFacCliL   := dbfFacCliL
-         oStock:cFacCliS   := dbfFacCliS
-         oStock:cFacCliP   := dbfFacCliP
-
-         oStock:cAntCliT   := dbfAntCliT
-         oStock:cFacRecT   := dbfFacRecT
-         oStock:cFacRecL   := dbfFacRecL
-         oStock:cFacRecS   := dbfFacRecS
-
-         oStock:cTikT      := dbfTikT
-         oStock:cTikL      := dbfTikL
-         oStock:cTikS      := dbfTikS
-
-         oStock:cProducL   := dbfProLin
-         oStock:cProducM   := dbfProMat
-         oStock:cProducS   := dbfProSer
-         oStock:cProducP   := dbfMatSer
-
-         oStock:cHisMov    := dbfHisMov
-         oStock:cHisMovS   := dbfHisMovS
-
-         oStock:cPedPrvL   := dbfPedPrvL
-
-         oStock:cAlbPrvL   := dbfAlbPrvL
-         oStock:cAlbPrvS   := dbfAlbPrvS
-
-         oStock:cFacPrvL   := dbfFacPrvL
-         oStock:cFacPrvS   := dbfFacPrvS
-
-         oStock:cRctPrvL   := dbfRctPrvL
-         oStock:cRctPrvS   := dbfRctPrvS
-
       end if
 
       oGrpCli           := TGrpCli():Create( cPatCli() )
@@ -917,17 +872,20 @@ STATIC FUNCTION OpenFiles()
       Limitaciones de cajero y cajas--------------------------------------------------------
       */
 
-      if oUser():lFiltroVentas()
-         cFiltroUsuario    := "Field->cCodUsr == '" + oUser():cCodigo() + "' .and. Field->cCodCaj == '" + oUser():cCaja() + "'"
-      end if
+      if lAIS() .and. !oUser():lAdministrador()
+      
+         cFiltroUsuario    := "Field->cSufAlb == '" + oUser():cDelegacion() + "' .and. Field->cCodCaj == '" + oUser():cCaja() + "'"
+         if oUser():lFiltroVentas()         
+            cFiltroUsuario += " .and. Field->cCodUsr == '" + oUser():cCodigo() + "'"
+         end if 
 
-      // EnableAcceso()
+         ( dbfAlbCliT )->( AdsSetAOF( cFiltroUsuario ) )
+
+      end if
 
    RECOVER USING oError
 
       lOpenFiles        := .f.
-
-      // EnableAcceso()
 
       msgStop( "Imposible abrir todas las bases de datos" + CRLF + ErrorMessage( oError ) )
 
@@ -1581,8 +1539,6 @@ FUNCTION AlbCli( oMenuItem, oWnd, cCodCli, cCodArt, aNumDoc )
 
       oWndBrw:lFechado     := .t.
 
-      oWndBrw:bChgIndex    := {|| if( oUser():lFiltroVentas(), CreateFastFilter( cFiltroUsuario, dbfAlbCliT, .f., , cFiltroUsuario ), CreateFastFilter( "", dbfAlbCliT, .f. ) ) }
-
 	  oWndBrw:SetYearComboBoxChange( {|| YearComboBoxChange() } )
 
       with object ( oWndBrw:AddXCol() )
@@ -1660,15 +1616,15 @@ FUNCTION AlbCli( oMenuItem, oWnd, cCodCli, cCodArt, aNumDoc )
       with object ( oWndBrw:AddXCol() )
          :cHeader          := "Número"
          :cSortOrder       := "nNumAlb"
-         :bEditValue       := {|| ( dbfAlbCliT )->cSerAlb + "/" + Alltrim( Str( ( dbfAlbCliT )->nNumAlb ) ) + "/" + ( dbfAlbCliT )->cSufAlb }
+         :bEditValue       := {|| ( dbfAlbCliT )->cSerAlb + "/" + Alltrim( Str( ( dbfAlbCliT )->nNumAlb ) ) }
          :nWidth           := 80
          :bLClickHeader    := {| nMRow, nMCol, nFlags, oCol | oWndBrw:ClickOnHeader( oCol ) }
       end with
 
       with object ( oWndBrw:AddXCol() )
          :cHeader          := "Delegación"
-         :bEditValue       := {|| ( dbfAlbCliT )->cCodDlg }
-         :nWidth           := 20
+         :bEditValue       := {|| ( dbfAlbCliT )->cSufAlb }
+         :nWidth           := 40
          :lHide            := .t.
       end with
 
@@ -7686,12 +7642,6 @@ function SynAlbCli( cPath )
    oStock               := TStock():Create( cPatGrp() )
    if !oStock:lOpenFiles()
       lOpenFiles        := .f.
-   else
-      oStock:cPedCliT   := dbfPedCliT
-      oStock:cPedCliL   := dbfPedCliL
-      oStock:cAlbCliL   := dbfAlbCliL
-      oStock:cFacCliL   := dbfFacCliL
-
    end if
 
    while !( dbfAlbCliT )->( eof() )

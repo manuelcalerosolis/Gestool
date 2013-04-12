@@ -93,33 +93,18 @@ METHOD OpenFiles()
 
    DATABASE NEW ::oHisMov  PATH ( cPatEmp() )   FILE "HISMOV.DBF"    VIA ( cDriver() ) SHARED INDEX "HISMOV.CDX"
 
-   ::oStock            := TStock():Create( cPatGrp() )
+   ::oStock          := TStock():Create( cPatGrp() )
 
-   if ::oStock:lOpenFiles()
-
-      ::oStock:cAlbPrvT   := ::oAlbPrvT:cAlias
-      ::oStock:cAlbPrvL   := ::oAlbPrvL:cAlias
-      ::oStock:cFacPrvT   := ::oFacPrvT:cAlias
-      ::oStock:cFacPrvL   := ::oFacPrvL:cAlias
-      ::oStock:cRctPrvL   := ::oRctPrvL:cAlias
-
-      ::oStock:cAlbCliT   := ::oAlbCliT:cAlias
-      ::oStock:cAlbCliL   := ::oAlbCliL:cAlias
-      ::oStock:cFacCliT   := ::oFacCliT:cAlias
-      ::oStock:cFacCliL   := ::oFacCliL:cAlias
-      ::oStock:cFacRecT   := ::oFacRecT:cAlias
-      ::oStock:cFacRecL   := ::oFacRecL:cAlias
-      ::oStock:cTikT      := ::oTikCliT:cAlias
-      ::oStock:cTikL      := ::oTikCliL:cAlias
-
-      ::oStock:cHisMov    := ::oHisMov:cAlias
-
+   if !::oStock:lOpenFiles()
+      lOpen          := .f.
    end if
 
    RECOVER
 
       msgStop( 'Imposible abrir todas las bases de datos' )
+      
       ::CloseFiles()
+      
       lOpen          := .f.
 
    END SEQUENCE

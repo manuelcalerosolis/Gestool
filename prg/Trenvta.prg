@@ -236,11 +236,6 @@ METHOD OpenFiles()
    ::oStock             := TStock():Create( cPatGrp() )
    if !::oStock:lOpenFiles()
       lOpen             := .f.
-   else
-      ::oStock:cAlbPrvL := ::oAlbPrvL:cAlias
-      ::oStock:cFacPrvL := ::oFacPrvL:cAlias
-      ::oStock:cRctPrvL := ::oRctPrvL:cAlias
-      ::oStock:cHisMov  := ::oHisMov:cAlias
    end if
 
    RECOVER

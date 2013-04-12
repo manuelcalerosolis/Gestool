@@ -162,14 +162,16 @@ STATIC FUNCTION OpenFiles( lExt )
 
       lOpenFiles        := .t.
 
-      USE ( cPatEmp() + "FACCLIP.DBF" ) NEW VIA ( cDriver() ) SHARED ALIAS ( cCheckArea( "FACCLIP", @dbfFacCliP ) )
-      SET ADSINDEX TO ( cPatEmp() + "FACCLIP.CDX" ) ADDITIVE
+      if !TDataCenter():OpenFacCliP( @dbfFacCliP )
+         lOpenFiles     := .f.
+      end if
+
+      if !TDataCenter():OpenFacCliT( @dbfFacCliT )
+         lOpenFiles     := .f.
+      end if
 
       USE ( cPatDat() + "DIVISAS.DBF" ) NEW VIA ( cDriver() ) SHARED ALIAS ( cCheckArea( "DIVISAS", @dbfDiv ) )
       SET ADSINDEX TO ( cPatDat() + "DIVISAS.CDX" ) ADDITIVE
-
-      USE ( cPatEmp() + "FACCLIT.DBF" ) NEW VIA ( cDriver() ) SHARED ALIAS ( cCheckArea( "FACCLIT", @dbfFacCliT ) )
-      SET ADSINDEX TO ( cPatEmp() + "FACCLIT.CDX" ) ADDITIVE
 
       USE ( cPatEmp() + "FACCLIL.DBF" ) NEW VIA ( cDriver() ) SHARED ALIAS ( cCheckArea( "FACCLIL", @dbfFacCliL ) )
       SET ADSINDEX TO ( cPatEmp() + "FACCLIL.CDX" ) ADDITIVE
@@ -225,15 +227,6 @@ STATIC FUNCTION OpenFiles( lExt )
 
       oCtaRem              := TCtaRem():Create( cPatCli() )
       oCtaRem:OpenFiles()
-
-      /*
-      Limitaciones de cajero y cajas--------------------------------------------------------
-      */
-
-      if oUser():lFiltroVentas()
-         cFiltroUsuario    := "Field->cCodUsr == '" + oUser():cCodigo() + "' .and. Field->cCodCaj == '" + oUser():cCaja() + "'"
-      end if
-
 
    RECOVER
 
@@ -407,8 +400,6 @@ FUNCTION RecCli( oMenuItem, oWnd, aNumRec )
 
 	  oWndBrw:lFechado     := .t.
 
-	  oWndBrw:bChgIndex    := {|| if( oUser():lFiltroVentas(), CreateFastFilter( cFiltroUsuario, dbfFacCliP, .f., , cFiltroUsuario ), CreateFastFilter( "", dbfFacCliP, .f. ) ) }
-
 	  oWndBrw:SetYearComboBoxChange( {|| YearComboBoxChange() } )
 
       with object ( oWndBrw:AddXCol() )
@@ -478,7 +469,7 @@ FUNCTION RecCli( oMenuItem, oWnd, aNumRec )
       with object ( oWndBrw:AddXCol() )
          :cHeader          := "Delegación"
          :bEditValue       := {|| ( dbfFacCliP )->cSufFac  }
-         :nWidth           := 20
+         :nWidth           := 40
          :lHide            := .t.
       end with
 
@@ -2447,11 +2438,11 @@ FUNCTION EdmRecCli( cCodRut, cPathTo, oStru )
    oBlock            := ErrorBlock( { | oError | ApoloBreak( oError ) } )
    BEGIN SEQUENCE
 
-   USE ( cPatEmp() + "FACCLIP.DBF" ) NEW VIA ( cDriver() ) SHARED ALIAS ( cCheckArea( "FACCLIP", @dbfFacCliP ) )
-   SET ADSINDEX TO ( cPatEmp() + "FACCLIP.CDX" ) ADDITIVE
+   USE ( cPatEmp() + "FacCliP.DBF" ) NEW VIA ( cDriver() ) SHARED ALIAS ( cCheckArea( "FacCliP", @dbfFacCliP ) )
+   SET ADSINDEX TO ( cPatEmp() + "FacCliP.CDX" ) ADDITIVE
 
-   USE ( cPatEmp() + "FACCLIT.DBF" ) NEW VIA ( cDriver() ) SHARED ALIAS ( cCheckArea( "FACCLIT", @dbfFacCliT ) )
-   SET ADSINDEX TO ( cPatEmp() + "FACCLIT.CDX" ) ADDITIVE
+   USE ( cPatEmp() + "FacCliT.DBF" ) NEW VIA ( cDriver() ) SHARED ALIAS ( cCheckArea( "FacCliT", @dbfFacCliT ) )
+   SET ADSINDEX TO ( cPatEmp() + "FacCliT.CDX" ) ADDITIVE
 
    oStru:oMetUno:cText   := "Pendientes de cobro"
    oStru:oMetUno:SetTotal( ( dbfFacCliP )->( LastRec() ) )
@@ -2496,6 +2487,7 @@ FUNCTION EdmRecCli( cCodRut, cPathTo, oStru )
 
    CLOSE ( dbfFacCliP )
    CLOSE ( dbfFacCliT )
+   
    fClose( fTar )
 
    if file( FullCurDir() + "CONVER.EXE" )
@@ -4348,15 +4340,18 @@ STATIC FUNCTION pdaOpenFiles( lExt )
 
    BEGIN SEQUENCE
 
-      USE ( cPatEmp() + "FACCLIP.DBF" ) NEW VIA ( cDriver() ) SHARED ALIAS ( cCheckArea( "FACCLIP", @dbfFacCliP ) )
+            if !TDataCenter():OpenFacCliT( @dbfFacCliT )
+if !TDataCenter():OpenFacCliP( @dbfFacCliP )
+   lOpenFiles     := .f.
+end if
       SET ADSINDEX TO ( cPatEmp() + "FACCLIP.CDX" ) ADDITIVE
       ( dbfFacCliP )->( OrdSetFocus( "fNumFac" ) )
 
       USE ( cPatDat() + "DIVISAS.DBF" ) NEW VIA ( cDriver() ) SHARED ALIAS ( cCheckArea( "DIVISAS", @dbfDiv ) )
       SET ADSINDEX TO ( cPatDat() + "DIVISAS.CDX" ) ADDITIVE
 
-      USE ( cPatEmp() + "FACCLIT.DBF" ) NEW VIA ( cDriver() ) SHARED ALIAS ( cCheckArea( "FACCLIT", @dbfFacCliT ) )
-      SET ADSINDEX TO ( cPatEmp() + "FACCLIT.CDX" ) ADDITIVE
+      USE ( cPatEmp() + "FacCliT.DBF" ) NEW VIA ( cDriver() ) SHARED ALIAS ( cCheckArea( "FacCliT", @dbfFacCliT ) )
+      SET ADSINDEX TO ( cPatEmp() + "FacCliT.CDX" ) ADDITIVE
 
       USE ( cPatEmp() + "FACCLIL.DBF" ) NEW VIA ( cDriver() ) SHARED ALIAS ( cCheckArea( "FACCLIL", @dbfFacCliL ) )
       SET ADSINDEX TO ( cPatEmp() + "FACCLIL.CDX" ) ADDITIVE

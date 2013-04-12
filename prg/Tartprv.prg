@@ -97,21 +97,6 @@ METHOD OpenFiles()
 
    if !::oStock:lOpenFiles()
       return .f.
-   else
-      ::oStock:cPedPrvL   := ::oPedPrvL:cAlias
-      ::oStock:cPedCliL   := ::oPedCliL:cAlias
-      ::oStock:cAlbPrvL   := ::oAlbPrvL:cAlias
-      ::oStock:cFacPrvL   := ::oFacPrvL:cAlias
-      ::oStock:cRctPrvL   := ::oRctPrvL:cAlias
-
-      ::oStock:cAlbCliL   := ::oAlbCliL:cAlias
-      ::oStock:cFacCliL   := ::oFacCliL:cAlias
-      ::oStock:cFacRecL   := ::oFacRecL:cAlias
-      ::oStock:cTikL      := ::oTikCliL:cAlias
-
-      ::oStock:cProducL   := ::oProLin:cAlias
-      ::oStock:cProducM   := ::oProMat:cAlias
-      ::oStock:cHisMov    := ::oHisMov:cAlias
    end if
 
 RETURN ( .t. )

@@ -560,9 +560,11 @@ static function pdaOpenFiles()
       SET ADSINDEX TO ( cPatEmp() + "ALBCLIL.CDX" ) ADDITIVE
       ( dbfAlbCliL )->( OrdSetFocus( "nNumAlb" ) )
 
-      USE ( cPatEmp() + "FACCLIT.DBF" ) NEW VIA ( cDriver() ) SHARED ALIAS ( cCheckArea( "FACCLIT", @dbfFacCliT ) )
-      SET ADSINDEX TO ( cPatEmp() + "FACCLIT.CDX" ) ADDITIVE
-      ( dbfFacCliT )->( OrdSetFocus( "dFecFac" ) )
+      if !TDataCenter():OpenFacCliT( @dbfFacCliT )
+         lOpen     := .f.
+      else
+         ( dbfFacCliT )->( OrdSetFocus( "dFecFac" ) )
+      end if
 
       USE ( cPatEmp() + "FACCLIL.DBF" ) NEW VIA ( cDriver() ) SHARED ALIAS ( cCheckArea( "FACCLIL", @dbfFacCliL ) )
       SET ADSINDEX TO ( cPatEmp() + "FACCLIL.CDX" ) ADDITIVE
@@ -574,9 +576,11 @@ static function pdaOpenFiles()
       USE ( cPatDat() + "TIVA.DBF" ) NEW VIA ( cDriver() ) SHARED ALIAS ( cCheckArea( "TIVA", @dbfIva ) )
       SET ADSINDEX TO ( cPatDat() + "TIVA.CDX" ) ADDITIVE
 
-      USE ( cPatEmp() + "FACCLIP.DBF" ) NEW VIA ( cDriver() ) SHARED ALIAS ( cCheckArea( "FACCLIP", @dbfFacCliP ) )
-      SET ADSINDEX TO ( cPatEmp() + "FACCLIP.CDX" ) ADDITIVE
-      ( dbfFacCliP )->( OrdSetFocus( "cCodAge" ) )
+      if !TDataCenter():OpenFacCliP( @dbfFacCliP )
+         lOpen     := .f.
+      else 
+         ( dbfFacCliP )->( OrdSetFocus( "cCodAge" ) )      
+      end if
 
       USE ( cPatEmp() + "AntCliT.DBF" ) NEW VIA ( cDriver() ) SHARED ALIAS ( cCheckArea( "AntCliT", @dbfAntCliT ) )
       SET ADSINDEX TO ( cPatEmp() + "AntCliT.CDX" ) ADDITIVE

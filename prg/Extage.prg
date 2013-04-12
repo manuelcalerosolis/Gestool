@@ -134,7 +134,6 @@ static dbfDelega
 static dbfDoc
 static dbfCount
 static dbfEmp
-static oStock
 static oGetTotal
 static oGetTotEur
 static cPinDiv
@@ -293,15 +292,6 @@ STATIC FUNCTION OpenFiles()
 
    oBandera             := TBandera():New()
 
-   oStock               := TStock():Create()
-   if !oStock:lOpenFiles()
-      lOpen             := .f.
-   else
-      oStock:cExtAgeT   := dbfExtAgeT
-      oStock:cExtAgeL   := dbfExtAgeL
-      oStock:cKit       := dbfKit
-   end if
-
    RECOVER USING oError
 
       lOpen             := .f.
@@ -371,10 +361,6 @@ STATIC FUNCTION CloseFiles()
       ( dbfEmp )->( dbCloseArea() )
    end if
 
-   if !Empty( oStock )
-      oStock:end()
-   end if
-
    dbfExtAgeT  := nil
    dbfExtAgeL  := nil
    dbfIva      := nil
@@ -386,7 +372,6 @@ STATIC FUNCTION CloseFiles()
    dbfDivisa   := nil
    dbfTVta     := nil
    oBandera    := nil
-   oStock      := nil
    dbfUsr      := nil
    dbfDelega   := nil
    dbfDoc      := nil
@@ -1627,7 +1612,12 @@ STATIC FUNCTION DelDetalle( cNumExt )
 
    CursorWait()
 
-   oStock:ExtAge( cNumExt, ( dbfExtAgeT )->cCodAlm, .t., .f. )
+   while ( dbfExtAgeL )->( dbSeek( cNumExt ) )
+      if dbLock( dbfExtAgeL )
+         ( dbfExtAgeL )->( dbDelete() )
+         ( dbfExtAgeL )->( dbUnLock() )
+      end if 
+   end while      
 
    CursorWe()
 
@@ -1942,13 +1932,9 @@ STATIC FUNCTION EndTrans( aTmp, oBrw, nMode )
       oMsgProgress():SetRange( 0, ( dbfTmp )->( LastRec() ) )
 
       do case
-      case nMode == EDIT_MODE .AND. (dbfExtAgeL)->( DbSeek( cExt ) )
+      case nMode == EDIT_MODE 
 
-         /*
-         Rollback de stocks y pedidos
-         */
-
-         oStock:ExtAge( cExt, ( dbfExtAgeT )->cCodAlm, .t., .f. )
+         delDetalle( cExt )
 
       case nMode == APPD_MODE .or. nMode == DUPL_MODE
 
@@ -1961,10 +1947,10 @@ STATIC FUNCTION EndTrans( aTmp, oBrw, nMode )
       ( dbfTmp )->( DbGoTop() )
       while ( dbfTmp )->( !Eof() )
 
-         aTabla            := DBScatter( dbfTmp )
-         aTabla[_CSEREXT]  := aTmp[_CSEREXT]
-         aTabla[_NNUMEXT]  := aTmp[_NNUMEXT]
-         aTabla[_CSUFEXT]  := aTmp[_CSUFEXT]
+         aTabla               := DBScatter( dbfTmp )
+         aTabla[ _CSEREXT ]   := aTmp[_CSEREXT]
+         aTabla[ _NNUMEXT ]   := aTmp[_NNUMEXT]
+         aTabla[ _CSUFEXT ]   := aTmp[_CSUFEXT]
 
          dbGather( aTabla, dbfExtAgeL, .t. )
 
@@ -1973,12 +1959,6 @@ STATIC FUNCTION EndTrans( aTmp, oBrw, nMode )
          oMsgProgress():Deltapos(1)
 
       end while
-
-      /*
-      Actualizamos los Stocks-----------------------------------------------------
-      */
-
-      oStock:ExtAge( cExt, ( dbfExtAgeT )->cCodAlm, .f., .t. )
 
       /*
       Escribe los datos pendientes------------------------------------------------

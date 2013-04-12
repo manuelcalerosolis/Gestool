@@ -1732,9 +1732,11 @@ static function pdaOpenFiles()
       SET ADSINDEX TO ( cPatEmp() + "ALBCLIL.CDX" ) ADDITIVE
       ( dbfAlbCliL )->( OrdSetFocus( "nNumAlb" ) )
 
-      USE ( cPatEmp() + "FACCLIT.DBF" ) NEW VIA ( cDriver() ) SHARED ALIAS ( cCheckArea( "FACCLIT", @dbfFacCliT ) )
-      SET ADSINDEX TO ( cPatEmp() + "FACCLIT.CDX" ) ADDITIVE
-      ( dbfFacCliT )->( OrdSetFocus( "nNumFac" ) )
+      if !TDataCenter():OpenFacCliT( @dbfFacCliT )
+         lOpen       := .f.
+      else 
+         ( dbfFacCliT )->( OrdSetFocus( "nNumFac" ) )
+      end if
 
       USE ( cPatEmp() + "FACCLIL.DBF" ) NEW VIA ( cDriver() ) SHARED ALIAS ( cCheckArea( "FACCLIL", @dbfFacCliL ) )
       SET ADSINDEX TO ( cPatEmp() + "FACCLIL.CDX" ) ADDITIVE

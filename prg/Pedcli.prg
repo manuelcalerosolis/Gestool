@@ -847,15 +847,9 @@ STATIC FUNCTION OpenFiles( lExt )
       SET ADSINDEX TO ( cPatEmp() + "RctPrvL.CDX" ) ADDITIVE
       SET TAG TO "cRef"
 
-      USE ( cPatEmp() + "FACCLIT.DBF" ) NEW VIA ( cDriver() ) SHARED ALIAS ( cCheckArea( "FACCLIT", @dbfFacCliT ) )
-      SET ADSINDEX TO ( cPatEmp() + "FACCLIT.CDX" ) ADDITIVE
-
       USE ( cPatEmp() + "FACCLIL.DBF" ) NEW VIA ( cDriver() ) SHARED ALIAS ( cCheckArea( "FACCLIL", @dbfFacCliL ) )
       SET ADSINDEX TO ( cPatEmp() + "FACCLIL.CDX" ) ADDITIVE
       SET TAG TO "cRef"
-
-      USE ( cPatEmp() + "FacCliP.Dbf" ) NEW VIA ( cDriver() ) SHARED ALIAS ( cCheckArea( "FacCliP", @dbfFacCliP ) )
-      SET ADSINDEX TO ( cPatEmp() + "FacCliP.Cdx" ) ADDITIVE
 
       USE ( cPatEmp() + "AntCliT.Dbf" ) NEW VIA ( cDriver() ) SHARED ALIAS ( cCheckArea( "AntCliT", @dbfAntCliT ) )
       SET ADSINDEX TO ( cPatEmp() + "AntCliT.Cdx" ) ADDITIVE
@@ -889,6 +883,14 @@ STATIC FUNCTION OpenFiles( lExt )
       USE ( cPatCli() + "CliBnc.Dbf" ) NEW VIA ( cDriver() ) SHARED ALIAS ( cCheckArea( "CLIBNC", @dbfCliBnc ) )
       SET ADSINDEX TO ( cPatCli() + "CliBnc.Cdx" ) ADDITIVE
 
+      if !TDataCenter():OpenFacCliT( @dbfFacCliT )
+         lOpenFiles     := .f.
+      end if
+
+	if !TDataCenter():OpenFacCliP( @dbfFacCliP )
+	   lOpenFiles     := .f.
+	end if
+
       // Unidades de medicion
 
       oUndMedicion      := UniMedicion():Create( cPatGrp() )
@@ -901,38 +903,6 @@ STATIC FUNCTION OpenFiles( lExt )
       oStock            := TStock():Create( cPatGrp() )
       if !oStock:lOpenFiles()
          lOpenFiles     := .f.
-      else
-      oStock:cPedCliT   := dbfPedCliT
-      oStock:cPedCliL   := dbfPedCliL
-      oStock:cPedCliR   := dbfPedCliR
-
-      oStock:cAlbCliT   := dbfAlbCliT
-      oStock:cAlbCliL   := dbfAlbCliL
-
-      oStock:cAlbPrvT   := dbfAlbPrvT
-      oStock:cAlbPrvL   := dbfAlbPrvL
-
-      oStock:cPedPrvL   := dbfPedPrvL
-      oStock:cFacPrvL   := dbfFacPrvL
-      oStock:cRctPrvL   := dbfRctPrvL
-
-      oStock:cKit       := dbfKit
-
-      oStock:cAntCliT   := dbfAntCliT
-
-      oStock:cFacCliL   := dbfFacCliL
-      oStock:cFacCliP   := dbfFacCliP
-
-      oStock:cFacRecL   := dbfFacRecL
-
-      oStock:cTikT      := dbfTikCliT
-      oStock:cTikL      := dbfTikCliL
-
-      oStock:cProducL   := dbfProLin
-      oStock:cProducM   := dbfProMat
-
-      oStock:cHisMov    := dbfHisMov
-
       end if
 
       oNewImp           := TNewImp():Create( cPatEmp() )
@@ -1007,8 +977,15 @@ STATIC FUNCTION OpenFiles( lExt )
       Limitaciones de cajero y cajas--------------------------------------------------------
       */
 
-      if oUser():lFiltroVentas()
-         cFiltroUsuario    := "Field->cCodUsr == '" + oUser():cCodigo() + "' .and. Field->cCodCaj == '" + oUser():cCaja() + "'"
+      if lAIS() .and. !oUser():lAdministrador()
+      
+         cFiltroUsuario    := "Field->cSufPed == '" + oUser():cDelegacion() + "' .and. Field->cCodCaj == '" + oUser():cCaja() + "'"
+         if oUser():lFiltroVentas()         
+            cFiltroUsuario += " .and. Field->cCodUsr == '" + oUser():cCodigo() + "'"
+         end if 
+
+         ( dbfPedCliT )->( AdsSetAOF( cFiltroUsuario ) )
+
       end if
 
       EnableAcceso()
@@ -1099,8 +1076,6 @@ FUNCTION PedCli( oMenuItem, oWnd, cCodCli, cCodArt, cCodPre, lPedWeb )
       OF       oWnd
 
 	  oWndBrw:lFechado     := .t.
-
-	  oWndBrw:bChgIndex    := {|| if( oUser():lFiltroVentas(), CreateFastFilter( cFiltroUsuario, dbfPedCliT, .f., , cFiltroUsuario ), CreateFastFilter( "", dbfPedCliT, .f. ) ) }
 
 	  oWndBrw:SetYearComboBoxChange( {|| YearComboBoxChange() } )
 
@@ -1666,7 +1641,7 @@ FUNCTION PedCli( oMenuItem, oWnd, cCodCli, cCodArt, cCodPre, lPedWeb )
             FROM     oRotor ;
 
       DEFINE BTNSHELL RESOURCE "DOCUMENT_USER1_" OF oWndBrw ;
-            ACTION   ( Ped2FacCli( ( dbfPedCliT )->cSerPed + Str( ( dbfPedCliT )->nNumPed ) + ( dbfPedCliT )->cSufPed ) );
+            ACTION   ( Ped2FacCli( ( dbfPedCliT )->cSerPed + Str( ( dbfPedCliT )->nNumPed ) + ( dbfPedCliT )->cSufPed, dbfFacCliT ) );
             TOOLTIP  "Modificar factura" ;
             FROM     oRotor ;
 
@@ -7776,17 +7751,15 @@ return .t.
 
 //---------------------------------------------------------------------------//
 
-Function Ped2FacCli( cNumPed )
+Static Function Ped2FacCli( cNumPed, dbfFacCliT )
 
+   local nOrd
    local cNumFac
-   local dbfFacCliT
 
-   USE ( cPatEmp() + "FACCLIT.DBF" ) NEW VIA ( cDriver() ) SHARED ALIAS ( cCheckArea( "FACCLIT", @dbfFacCliT ) )
-   SET ADSINDEX TO ( cPatEmp() + "FACCLIT.CDX" ) ADDITIVE
-   ( dbfFacCliT )->( OrdSetFocus( "cNumPed" ) )
+   nOrd 		:= ( dbfFacCliT )->( OrdSetFocus( "cNumPed" ) )
 
    if ( dbfFacCliT )->( dbSeek( cNumPed ) )
-      cNumFac     := ( dbfFacCliT )->cSerie + Str( ( dbfFacCliT )->nNumFac ) + ( dbfFacCliT )->cSufFac
+      cNumFac  	:= ( dbfFacCliT )->cSerie + Str( ( dbfFacCliT )->nNumFac ) + ( dbfFacCliT )->cSufFac
    end if
 
    if !Empty( cNumFac )
@@ -7795,7 +7768,7 @@ Function Ped2FacCli( cNumPed )
       msgStop( "No hay factura asociada" )
    end if
 
-   CLOSE( dbfFacCliT )
+   ( dbfFacCliT )->( OrdSetFocus( nOrd ) )
 
 Return nil
 

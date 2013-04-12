@@ -6,8 +6,6 @@
 
 CLASS TStock
 
-   DATA dbfDiv
-
    DATA cPath
 
    DATA lExclusive
@@ -55,12 +53,6 @@ CLASS TStock
    DATA cRctPrvL
    DATA cRctPrvS
 
-   DATA cDepAgeT
-   DATA cDepAgeL
-
-   DATA cExtAgeT
-   DATA cExtAgeL
-
    DATA cProducT
    DATA cProducL
    DATA cProducM
@@ -83,7 +75,7 @@ CLASS TStock
    DATA cTikP
    DATA cTikS
 
-   DATA cHisMov
+   DATA cHisMovT
    DATA cHisMovS
 
    DATA tmpAlbCliL
@@ -141,10 +133,6 @@ CLASS TStock
    METHOD ChkFacCli( cNumFac )
 
    METHOD FacRec( cNumFac, cCodAlm, lDelete, lIncremento )
-
-   METHOD DepAge( cNumDep, cCodAlmEntrda, cCodAlmSalida, lDelete, lIncremento )
-
-   METHOD ExtAge( cNumDep, cCodAlm, lDelete, lIncremento )
 
    METHOD TpvCli( cNumFac, cCodAlm, lIncremento )
    METHOD ChkTikCli( cNumTik )
@@ -347,16 +335,164 @@ METHOD lOpenFiles( cPath, lExclusive ) CLASS TStock
    oBlock               := ErrorBlock( {| oError | ApoloBreak( oError ) } )
    BEGIN SEQUENCE
 
-      dbUseArea( .t., ( cDriver() ), ( cPatDat() + "Divisas.Dbf" ), ( ::dbfDiv := cCheckArea( "Divisas" ) ), .t. )
-      if( !lAIS(), ( ::dbfDiv )->( OrdListAdd( cPatDat() + "Divisas.Cdx" ) ), ( ::dbfDiv )->( OrdSetFocus( 1 ) ) )
+      /*
+      Pedidos de clientes------------------------------------------------------
+      */
 
-      ::nDouDiv         := nDouDiv( cDivEmp(), ::dbfDiv )
-      ::nDorDiv         := nRouDiv( cDivEmp(), ::dbfDiv )
-      ::nDinDiv         := nDinDiv( cDivEmp(), ::dbfDiv ) // Decimales sin redondeo
-      ::nDirDiv         := nRinDiv( cDivEmp(), ::dbfDiv ) // Decimales con redondeo
-      ::nVdvDiv         := nChgDiv( cDivEmp(), ::dbfDiv )
-      ::nDecIn          := nDinDiv( cDivEmp(), ::dbfDiv )
-      ::nDerIn          := nRinDiv( cDivEmp(), ::dbfDiv )
+      ::cSatCliT        := cCheckArea( "SatCliT" )
+      ::cSatCliL        := cCheckArea( "SatCliL" )
+
+      ::cPedCliT        := cCheckArea( "PedCliT" )
+      ::cPedCliL        := cCheckArea( "PedCliL" )
+      ::cPedCliR        := cCheckArea( "PedCliR" )
+
+      ::cAlbCliT        := cCheckArea( "AlbCliT" )
+      ::cAlbCliL        := cCheckArea( "AlbCliL" )
+      ::cAlbCliS        := cCheckArea( "AlbCliS" )
+
+      ::cFacCliT        := cCheckArea( "FacCliT" ) 
+      ::cFacCliL        := cCheckArea( "FacCliL" ) 
+      ::cFacCliS        := cCheckArea( "FacCliS" ) 
+
+      ::cFacCliP        := cCheckArea( "FacCliP" ) 
+
+      ::cFacRecT        := cCheckArea( "FacRecT" ) 
+      ::cFacRecL        := cCheckArea( "FacRecL" ) 
+      ::cFacRecS        := cCheckArea( "FacRecS" ) 
+
+      ::cAntCliT        := cCheckArea( "AntCliT" )
+      
+      ::cTikT           := cCheckArea( "TikT"    ) 
+      ::cTikL           := cCheckArea( "TikL"    ) 
+      ::cTikS           := cCheckArea( "TikS"    ) 
+
+      ::cPedPrvL        := cCheckArea( "PedPrvL" ) 
+
+      ::cAlbPrvL        := cCheckArea( "AlbPrvL" ) 
+      ::cAlbPrvS        := cCheckArea( "AlbPrvS" ) 
+
+      ::cFacPrvL        := cCheckArea( "FacPrvL" ) 
+      ::cFacPrvS        := cCheckArea( "FacPrvS" ) 
+
+      ::cRctPrvL        := cCheckArea( "RctPrvL" ) 
+      ::cRctPrvS        := cCheckArea( "RctPrvS" ) 
+
+      ::cProducL        := cCheckArea( "ProducL" ) 
+      ::cProducM        := cCheckArea( "ProducM" ) 
+      ::cProducS        := cCheckArea( "ProducS" ) 
+      ::cProducP        := cCheckArea( "ProducP" ) 
+
+      ::cHisMovT        := cCheckArea( "HisMovT" ) 
+      ::cHisMovS        := cCheckArea( "HisMovS" ) 
+
+      ::cKit            := cCheckArea( "Kit"     ) 
+
+      ::nDouDiv         := nDouDiv()
+      ::nDorDiv         := nRouDiv()
+      ::nDinDiv         := nDinDiv() // Decimales sin redondeo
+      ::nDirDiv         := nRinDiv() // Decimales con redondeo
+      ::nVdvDiv         := nChgDiv()
+      ::nDecIn          := nDinDiv()
+      ::nDerIn          := nRinDiv()
+
+      USE ( cPatEmp() + "SatCliT.DBF" ) NEW VIA ( cDriver() ) SHARED ALIAS ( ::cSatCliT )
+      SET ADSINDEX TO ( cPatEmp() + "SatCliT.CDX" ) ADDITIVE
+
+      USE ( cPatEmp() + "SatCliL.DBF" ) NEW VIA ( cDriver() ) SHARED ALIAS ( ::cSatCliL )
+      SET ADSINDEX TO ( cPatEmp() + "SatCliL.CDX" ) ADDITIVE
+
+      USE ( cPatEmp() + "PedCliT.Dbf" ) NEW VIA ( cDriver() ) SHARED ALIAS ( ::cPedCliT )
+      SET ADSINDEX TO ( cPatEmp() + "PedCliT.Cdx" ) ADDITIVE
+
+      USE ( cPatEmp() + "PedCliL.Dbf" ) NEW VIA ( cDriver() ) SHARED ALIAS ( ::cPedCliL )
+      SET ADSINDEX TO ( cPatEmp() + "PedCliL.Cdx" ) ADDITIVE
+
+      USE ( cPatEmp() + "PedCliR.Dbf" ) NEW VIA ( cDriver() ) SHARED ALIAS ( ::cPedCliR )
+      SET ADSINDEX TO ( cPatEmp() + "PedCliR.Cdx" ) ADDITIVE
+
+      USE ( cPatEmp() + "AlbCliT.Dbf" ) NEW VIA ( cDriver() ) SHARED ALIAS ( ::cAlbCliT )
+      SET ADSINDEX TO ( cPatEmp() + "AlbCliT.Cdx" ) ADDITIVE
+
+      USE ( cPatEmp() + "AlbCliL.Dbf" ) NEW VIA ( cDriver() ) SHARED ALIAS ( ::cAlbCliL )
+      SET ADSINDEX TO ( cPatEmp() + "AlbCliL.Cdx" ) ADDITIVE
+
+      USE ( cPatEmp() + "AlbCliS.Dbf" ) NEW VIA ( cDriver() ) SHARED ALIAS ( ::cAlbCliS )
+      SET ADSINDEX TO ( cPatEmp() + "AlbCliS.Cdx" ) ADDITIVE
+
+      USE ( cPatEmp() + "FacCliT.Dbf" ) NEW VIA ( cDriver() ) SHARED ALIAS ( ::cFacCliT )
+      SET ADSINDEX TO ( cPatEmp() + "FacCliT.Cdx" ) ADDITIVE
+
+      USE ( cPatEmp() + "FacCliL.Dbf" ) NEW VIA ( cDriver() ) SHARED ALIAS ( ::cFacCliL )
+      SET ADSINDEX TO ( cPatEmp() + "FacCliL.Cdx" ) ADDITIVE
+
+      USE ( cPatEmp() + "FacCliS.Dbf" ) NEW VIA ( cDriver() ) SHARED ALIAS ( ::cFacCliS )
+      SET ADSINDEX TO ( cPatEmp() + "FacCliS.Cdx" ) ADDITIVE
+
+      USE ( cPatEmp() + "FacCliP.Dbf" ) NEW VIA ( cDriver() ) SHARED ALIAS ( ::cFacCliP )
+      SET ADSINDEX TO ( cPatEmp() + "FacCliP.Cdx" ) ADDITIVE
+
+      USE ( cPatEmp() + "AntCliT.DBF" ) NEW VIA ( cDriver() ) SHARED ALIAS ( ::cAntCliT ) 
+      SET ADSINDEX TO ( cPatEmp() + "AntCliT.CDX" ) ADDITIVE
+
+      USE ( cPatEmp() + "FacRecT.Dbf" ) NEW VIA ( cDriver() ) SHARED ALIAS ( ::cFacRecT )
+      SET ADSINDEX TO ( cPatEmp() + "FacRecT.Cdx" ) ADDITIVE
+
+      USE ( cPatEmp() + "FacRecL.Dbf" ) NEW VIA ( cDriver() ) SHARED ALIAS ( ::cFacRecL )
+      SET ADSINDEX TO ( cPatEmp() + "FacRecL.Cdx" ) ADDITIVE
+
+      USE ( cPatEmp() + "FacRecS.Dbf" ) NEW VIA ( cDriver() ) SHARED ALIAS ( ::cFacRecS )
+      SET ADSINDEX TO ( cPatEmp() + "FacRecS.Cdx" ) ADDITIVE
+
+      USE ( cPatEmp() + "TikeT.DBF" ) NEW VIA ( cDriver() ) SHARED ALIAS ( ::cTikT ) 
+      SET ADSINDEX TO ( cPatEmp() + "TikeT.CDX" ) ADDITIVE
+
+      USE ( cPatEmp() + "TikeL.DBF" ) NEW VIA ( cDriver() ) SHARED ALIAS ( ::cTikL ) 
+      SET ADSINDEX TO ( cPatEmp() + "TikeL.CDX" ) ADDITIVE
+
+      USE ( cPatEmp() + "TikeS.DBF" ) NEW VIA ( cDriver() ) SHARED ALIAS ( ::cTikS ) 
+      SET ADSINDEX TO ( cPatEmp() + "TikeS.CDX" ) ADDITIVE
+
+      USE ( cPatEmp() + "PedProvL.DBF" ) NEW VIA ( cDriver() ) SHARED ALIAS ( ::cPedPrvL ) 
+      SET ADSINDEX TO ( cPatEmp() + "PedProvL.CDX" ) ADDITIVE
+
+      USE ( cPatEmp() + "AlbProvL.DBF" ) NEW VIA ( cDriver() ) SHARED ALIAS ( ::cAlbPrvL )
+      SET ADSINDEX TO ( cPatEmp() + "AlbProvL.CDX" ) ADDITIVE
+
+      USE ( cPatEmp() + "AlbPrvS.DBF" ) NEW VIA ( cDriver() ) SHARED ALIAS ( ::cAlbPrvS ) 
+      SET ADSINDEX TO ( cPatEmp() + "AlbPrvS.CDX" ) ADDITIVE
+
+      USE ( cPatEmp() + "FacPrvL.DBF" ) NEW VIA ( cDriver() ) SHARED ALIAS ( ::cFacPrvL )
+      SET ADSINDEX TO ( cPatEmp() + "FacPrvL.CDX" ) ADDITIVE
+
+      USE ( cPatEmp() + "FacPrvS.DBF" ) NEW VIA ( cDriver() ) SHARED ALIAS ( ::cFacPrvS ) 
+      SET ADSINDEX TO ( cPatEmp() + "FacPrvS.CDX" ) ADDITIVE
+
+      USE ( cPatEmp() + "RctPrvL.DBF" ) NEW VIA ( cDriver() ) SHARED ALIAS ( ::cRctPrvL )
+      SET ADSINDEX TO ( cPatEmp() + "RctPrvL.CDX" ) ADDITIVE
+
+      USE ( cPatEmp() + "RctPrvS.DBF" ) NEW VIA ( cDriver() ) SHARED ALIAS ( ::cRctPrvS ) 
+      SET ADSINDEX TO ( cPatEmp() + "RctPrvS.CDX" ) ADDITIVE
+
+      USE ( cPatEmp() + "ProLin.Dbf" ) NEW VIA ( cDriver() ) SHARED ALIAS ( ::cProducL ) 
+      SET ADSINDEX TO ( cPatEmp() + "ProLin.Cdx" ) ADDITIVE
+
+      USE ( cPatEmp() + "ProMat.Dbf" ) NEW VIA ( cDriver() ) SHARED ALIAS ( ::cProducM )
+      SET ADSINDEX TO ( cPatEmp() + "ProMat.Cdx" ) ADDITIVE
+
+      USE ( cPatEmp() + "ProSer.Dbf" ) NEW VIA ( cDriver() ) SHARED ALIAS ( ::cProducS )
+      SET ADSINDEX TO ( cPatEmp() + "ProSer.Cdx" ) ADDITIVE
+
+      USE ( cPatEmp() + "MatSer.Dbf" ) NEW VIA ( cDriver() ) SHARED ALIAS ( ::cProducP )
+      SET ADSINDEX TO ( cPatEmp() + "MatSer.Cdx" ) ADDITIVE
+
+      USE ( cPatEmp() + "HisMov.Dbf" ) NEW VIA ( cDriver() ) SHARED ALIAS ( ::cHisMovT)
+      SET ADSINDEX TO ( cPatEmp() + "HisMov.Cdx" ) ADDITIVE
+
+      USE ( cPatEmp() + "MovSer.Dbf" ) NEW VIA ( cDriver() ) SHARED ALIAS ( ::cHisMovS )
+      SET ADSINDEX TO ( cPatEmp() + "MovSer.Cdx" ) ADDITIVE
+
+      USE ( cPatArt() + "ArtKit.Dbf" ) NEW VIA ( cDriver() ) SHARED ALIAS ( ::cKit ) 
+      SET ADSINDEX TO ( cPatArt() + "ArtKit.Cdx" ) ADDITIVE
 
    RECOVER USING oError
 
@@ -373,6 +509,60 @@ METHOD lOpenFiles( cPath, lExclusive ) CLASS TStock
    end if
 
 RETURN ( lOpen )
+
+//---------------------------------------------------------------------------//
+
+METHOD CloseFiles() CLASS TStock
+
+   if ( !Empty( ::cSatCliT ), ( ::cSatCliT )->( dbCloseArea() ), )
+   if ( !Empty( ::cSatCliL ), ( ::cSatCliL )->( dbCloseArea() ), )
+
+   if ( !Empty( ::cPedCliT ), ( ::cPedCliT )->( dbCloseArea() ), )
+   if ( !Empty( ::cPedCliL ), ( ::cPedCliL )->( dbCloseArea() ), )
+   if ( !Empty( ::cPedCliR ), ( ::cPedCliR )->( dbCloseArea() ), )
+
+   if ( !Empty( ::cAlbCliT ), ( ::cAlbCliT )->( dbCloseArea() ), )
+   if ( !Empty( ::cAlbCliL ), ( ::cAlbCliL )->( dbCloseArea() ), )
+   if ( !Empty( ::cAlbCliS ), ( ::cAlbCliS )->( dbCloseArea() ), )
+
+   if ( !Empty( ::cFacCliT ), ( ::cFacCliT )->( dbCloseArea() ), )
+   if ( !Empty( ::cFacCliL ), ( ::cFacCliL )->( dbCloseArea() ), )
+   if ( !Empty( ::cFacCliS ), ( ::cFacCliS )->( dbCloseArea() ), )
+   if ( !Empty( ::cFacCliP ), ( ::cFacCliP )->( dbCloseArea() ), )
+
+   if ( !Empty( ::cFacRecT ), ( ::cFacRecT )->( dbCloseArea() ), )
+   if ( !Empty( ::cFacRecL ), ( ::cFacRecL )->( dbCloseArea() ), )
+   if ( !Empty( ::cFacRecS ), ( ::cFacRecS )->( dbCloseArea() ), )
+
+   if ( !Empty( ::cTikT ),    ( ::cTikT )->( dbCloseArea() ), )
+   if ( !Empty( ::cTikL ),    ( ::cTikL )->( dbCloseArea() ), )
+   if ( !Empty( ::cTikS ),    ( ::cTikS )->( dbCloseArea() ), )
+
+   if ( !Empty( ::cAntCliT ), ( ::cAntCliT )->( dbCloseArea() ), )
+
+   if ( !Empty( ::cKit ),     ( ::cKit )->( dbCloseArea() ), )
+
+   if ( !Empty( ::cPedPrvL ), ( ::cPedPrvL )->( dbCloseArea() ), )
+
+   if ( !Empty( ::cAlbPrvL ), ( ::cAlbPrvL )->( dbCloseArea() ), )
+   if ( !Empty( ::cAlbPrvS ), ( ::cAlbPrvS )->( dbCloseArea() ), )
+
+   if ( !Empty( ::cFacPrvL ), ( ::cFacPrvL )->( dbCloseArea() ), )
+   if ( !Empty( ::cFacPrvS ), ( ::cFacPrvS )->( dbCloseArea() ), )
+
+   if ( !Empty( ::cRctPrvL ), ( ::cRctPrvL )->( dbCloseArea() ), )
+   if ( !Empty( ::cRctPrvS ), ( ::cRctPrvS )->( dbCloseArea() ), )
+
+   if ( !Empty( ::cProducL ), ( ::cProducL )->( dbCloseArea() ), )   
+   if ( !Empty( ::cProducM ), ( ::cProducM )->( dbCloseArea() ), )   
+   if ( !Empty( ::cProducS ), ( ::cProducS )->( dbCloseArea() ), )   
+   if ( !Empty( ::cProducP ), ( ::cProducP )->( dbCloseArea() ), )   
+
+   if ( !Empty( ::cHisMovT ), ( ::cHisMovT)->( dbCloseArea() ), )   
+   if ( !Empty( ::cHisMovS ), ( ::cHisMovS )->( dbCloseArea() ), )   
+
+
+Return ( Self )
 
 //---------------------------------------------------------------------------//
 //
@@ -435,70 +625,6 @@ return self
 //---------------------------------------------------------------------------//
 
 METHOD AlbPrv( cNumAlb, cCodAlm, cNumPed, lDelete, lIncremento, lIgnEstado, lActPendientes ) CLASS TStock
-
-/*
-   local n
-   local nStkPdr           := 0
-   local nUnits
-   local aNumPed           := {}
-
-   DEFAULT cCodAlm         := oUser():cAlmacen()
-   DEFAULT lDelete         := .t.
-   DEFAULT lIncremento     := .t.
-   DEFAULT lIgnEstado      := .f.
-   DEFAULT lActPendientes  := .t.
-
-   if ::cAlbPrvT == nil .or. ::cAlbPrvL == nil .or. cNumAlb == nil
-      msgAlert( "Imposible realizar la actualización de stocks.", "Atención" )
-      return self
-   end if
-
-   if ( ::cAlbPrvL )->( dbSeek( cNumAlb ) )
-
-      while ( ::cAlbPrvL )->cSerAlb + Str( ( ::cAlbPrvL )->nNumAlb ) + ( ::cAlbPrvL )->cSufAlb == cNumAlb .and. ;
-            !( ::cAlbPrvL )->( eof() )
-
-         if !Empty( Rtrim( ( ::cAlbPrvL )->cRef ) )
-
-            nUnits      := nTotNAlbPrv( ::cAlbPrvL )
-
-            if Empty( ( ::cAlbPrvL )->cAlmLin )
-               if dbLock( ::cAlbPrvL )
-                  ( ::cAlbPrvL )->cAlmLin := ( ::cAlbPrvT )->cCodAlm
-                  ( ::cAlbPrvL )->( dbUnLock() )
-               end if
-            end if
-
-            if lActPendientes .and. ( ::cAlbPrvL )->nCtlStk <= 1 .and. nUnits != 0
-               if !Empty( cNumPed )
-                  nStkPdr  := if( lIncremento, - nUnits, nUnits )
-               else
-                  nStkPdr  := 0
-               end if
-
-            end if
-
-         end if
-
-         if aScan( aNumPed, ( ::cAlbPrvL )->cCodPed ) == 0
-            aAdd( aNumPed, ( ::cAlbPrvL )->cCodPed )
-         end if
-
-         if lDelete .and. dbLock( ::cAlbPrvL )
-            ( ::cAlbPrvL )->( dbDelete() )
-            ( ::cAlbPrvL )->( dbUnLock() )
-         end if
-
-         ( ::cAlbPrvL )->( dbSkip() )
-
-      end do
-
-   end if
-
-   for n := 1 to len( aNumPed )
-      ::SetPedPrv( aNumPed[ n ] )
-   next
-*/
 
 Return Self
 
@@ -631,40 +757,6 @@ Return ( Self )
 
 METHOD ChkFacPrv( cNumFac ) CLASS TStock
 
-   local nTotStock
-   local nTotStockCalculado
-   local aFacPrvL       := aGetStatus( ::cFacPrvL, .t. )
-
-   /*
-   si el albaran esta facturado no hacemos nada con respecto al stock----------
-   */
-
-      if ( ::cFacPrvL )->( dbSeek( cNumFac ) )
-
-         while ( ::cFacPrvL )->cSerFac + Str( ( ::cFacPrvL )->nNumFac ) + ( ::cFacPrvL )->cSufFac == cNumFac .and. ;
-               !( ::cFacCliL )->( eof() )
-
-            if !Empty( Rtrim( ( ::cFacPrvL )->cRef ) )
-
-            nTotStock            := ::nTotStockAct( ( ::cFacPrvL )->cRef )
-            nTotStockCalculado   := nStockCalculado( ( ::cFacPrvL )->cRef )
-
-               if nTotStock != nTotStockCalculado
-                  MsgStop( "DECUADRE EN STOCK FACTURAS DE PROVEEDOR " + ( ::cFacPrvL )->cRef + CRLF + ;
-                           "Actual" + Trans( nTotStock, "@E 9999999.999999" )                + CRLF + ;
-                           "Calculado" + Trans( nTotStockCalculado, "@E 9999999.999999" ) )
-               end if
-
-            end if
-
-            ( ::cFacPrvL )->( dbSkip() )
-
-         end do
-
-      end if
-
-   SetStatus( ::cFacPrvL, aFacPrvL )
-
 return self
 
 //---------------------------------------------------------------------------//
@@ -732,40 +824,6 @@ Return ( Self )
 //---------------------------------------------------------------------------//
 
 METHOD ChkRctPrv( cNumFac ) CLASS TStock
-
-   local nTotStock
-   local nTotStockCalculado
-   local aRctPrvL       := aGetStatus( ::cRctPrvL, .t. )
-
-   /*
-   si el albaran esta facturado no hacemos nada con respecto al stock----------
-   */
-
-      if ( ::cRctPrvL )->( dbSeek( cNumFac ) )
-
-         while ( ::cRctPrvL )->cSerFac + Str( ( ::cRctPrvL )->nNumFac ) + ( ::cRctPrvL )->cSufFac == cNumFac .and. ;
-               !( ::cFacCliL )->( eof() )
-
-            if !Empty( Rtrim( ( ::cRctPrvL )->cRef ) )
-
-            nTotStock            := ::nTotStockAct( ( ::cRctPrvL )->cRef )
-            nTotStockCalculado   := nStockCalculado( ( ::cRctPrvL )->cRef )
-
-               if nTotStock != nTotStockCalculado
-                  MsgStop( "DECUADRE EN STOCK FACTURAS DE PROVEEDOR " + ( ::cRctPrvL )->cRef + CRLF + ;
-                           "Actual" + Trans( nTotStock, "@E 9999999.999999" )                + CRLF + ;
-                           "Calculado" + Trans( nTotStockCalculado, "@E 9999999.999999" ) )
-               end if
-
-            end if
-
-            ( ::cRctPrvL )->( dbSkip() )
-
-         end do
-
-      end if
-
-   SetStatus( ::cRctPrvL, aRctPrvL )
 
 return self
 
@@ -1213,46 +1271,6 @@ return self
 
 METHOD ChkAlbCli( cNumAlb ) CLASS TStock
 
-   local nTotStock
-   local nTotStockCalculado
-   local aAlbCliT       := aGetStatus( ::cAlbCliT, .t. )
-   local aAlbCliL       := aGetStatus( ::cAlbCliL, .t. )
-
-   /*
-   si el albaran esta facturado no hacemos nada con respecto al stock----------
-   */
-
-   if ( ::cAlbCliT )->( dbSeek( cNumAlb ) )
-
-      if ( ::cAlbCliL )->( dbSeek( cNumAlb ) )
-
-         while ( ::cAlbCliL )->cSerAlb + Str( ( ::cAlbCliL )->nNumAlb ) + ( ::cAlbCliL )->cSufAlb == cNumAlb .and. ;
-               !( ::cAlbCliL )->( eof() );
-
-            if !Empty( Rtrim( ( ::cAlbCliL )->cRef ) )
-
-            nTotStock            := ::nTotStockAct( ( ::cAlbCliL )->cRef )
-            nTotStockCalculado   := nStockCalculado( ( ::cAlbCliL )->cRef )
-
-               if nTotStock != nTotStockCalculado
-                  MsgStop( "DECUADRE EN STOCK ALBARANES DE CLIENTES " + ( ::cAlbCliL )->cRef + CRLF + ;
-                           "Actual" + Trans( nTotStock, "@E 9999999.999999" )                + CRLF + ;
-                           "Calculado" + Trans( nTotStockCalculado, "@E 9999999.999999" ) )
-               end if
-
-            end if
-
-            ( ::cAlbCliL )->( dbSkip() )
-
-         end do
-
-      end if
-
-   end if
-
-   SetStatus( ::cAlbCliT, aAlbCliT )
-   SetStatus( ::cAlbCliL, aAlbCliL )
-
 return self
 
 //---------------------------------------------------------------------------//
@@ -1328,40 +1346,6 @@ return self
 //---------------------------------------------------------------------------//
 
 METHOD ChkFacCli( cNumFac ) CLASS TStock
-
-   local nTotStock
-   local nTotStockCalculado
-   local aFacCliL       := aGetStatus( ::cFacCliL, .t. )
-
-   /*
-   si el albaran esta facturado no hacemos nada con respecto al stock----------
-   */
-
-   if ( ::cFacCliL )->( dbSeek( cNumFac ) )
-
-      while ( ::cFacCliL )->cSerie + Str( ( ::cFacCliL )->nNumFac ) + ( ::cFacCliL )->cSufFac == cNumFac .and. ;
-            !( ::cFacCliL )->( eof() )
-
-         if !Empty( Rtrim( ( ::cFacCliL )->cRef ) )
-
-         nTotStock            := ::nTotStockAct( ( ::cFacCliL )->cRef )
-         nTotStockCalculado   := nStockCalculado( ( ::cFacCliL )->cRef )
-
-            if nTotStock != nTotStockCalculado
-               MsgStop( "DECUADRE EN STOCK FACTURAS DE CLIENTES " + ( ::cFacCliL )->cRef + CRLF + ;
-                        "Actual" + Trans( nTotStock, "@E 9999999.999999" )                + CRLF + ;
-                        "Calculado" + Trans( nTotStockCalculado, "@E 9999999.999999" ) )
-            end if
-
-         end if
-
-         ( ::cFacCliL )->( dbSkip() )
-
-      end do
-
-   end if
-
-   SetStatus( ::cFacCliL, aFacCliL )
 
 return self
 
@@ -1518,214 +1502,7 @@ return self
 
 METHOD ChkTikCli( cNumTik ) CLASS TStock
 
-   local nTotStock
-   local nTotStockCalculado
-   local aTikCliL       := aGetStatus( ::cTikL, .t. )
-
-   /*
-   si el albaran esta facturado no hacemos nada con respecto al stock----------
-   */
-
-   if ( ::cTikL )->( dbSeek( cNumTik ) )
-
-      while ( ::cTikL )->cSerTil + ( ::cTikL )->cNumTil + ( ::cTikL )->cSufTil == cNumTik .and. !( ::cTikL )->( eof() )
-
-         if !Empty( rtrim( ( ::cTikL )->cCbaTil ) )
-
-         nTotStock            := ::nTotStockAct( ( ::cTikL )->cCbaTil )
-         nTotStockCalculado   := nStockCalculado( ( ::cTikL )->cCbaTil )
-
-            if nTotStock != nTotStockCalculado
-               MsgStop( "DECUADRE EN STOCK TIKET DE CLIENTES " + ( ::cTikL )->cCbaTil     + CRLF + ;
-                        "Actual" + Trans( nTotStock, "@E 9999999.999999" )                + CRLF + ;
-                        "Calculado" + Trans( nTotStockCalculado, "@E 9999999.999999" ) )
-            end if
-
-         end if
-
-         ( ::cTikL )->( dbSkip() )
-
-      end do
-
-   end if
-
-   SetStatus( ::cTikL, aTikCliL )
-
 return self
-
-//---------------------------------------------------------------------------//
-
-METHOD DepAge( nNumDep, cCodAlmEntrada, cCodAlmSalida, lDelete, lIncremento ) CLASS TStock
-
-   local nUnits
-
-   DEFAULT lDelete      := .t.
-   DEFAULT lIncremento  := .t.
-
-   /*
-   datos necesarios------------------------------------------------------------
-   */
-
-   if ::cDepAgeL == nil .or. nNumDep == nil
-
-      msgAlert( "Imposible realizar la actualización de stocks.", "Atención" )
-      return self
-
-   end if
-
-   if ( ::cDepAgeL )->( dbSeek( nNumDep ) )
-
-      while ( ::cDepAgeL )->CSERDEP + Str( ( ::cDepAgeL )->NNUMDEP ) + ( ::cDepAgeL )->CSUFDEP  == nNumDep .and. !( ::cDepAgeL )->( eof() );
-
-         if !empty( rtrim( ( ::cDepAgeL )->cRef ) ) // .and. !( ::cDepAgeT )->lImpAlb
-
-            nUnits      := ( NotCaja( ( ::cDepAgeL )->nCanEnt ) * ( ::cDepAgeL )->nUniCaja )
-
-            if lIncremento
-               nUnits   := - nUnits
-            end if
-
-            /*
-            mult. las unidades por su factor de conversión
-            */
-
-            if ( ::cDepAgeL )->nFacCnv != 0
-               nUnits   *= ( ::cDepAgeL )->nFacCnv
-            end if
-
-         end if
-
-         /*
-         Borramos los registros esto es para hacer rollback
-         */
-
-         if lDelete .and. dbLock( ::cDepAgeL )
-            ( ::cDepAgeL )->( dbDelete() )
-            ( ::cDepAgeL )->( dbUnLock() )
-         end if
-
-         ( ::cDepAgeL )->( dbSkip() )
-
-      end do
-
-   end if
-
-return self
-
-//---------------------------------------------------------------------------//
-
-METHOD ExtAge( nNumExt, cCodAlm, lDelete, lIncremento ) CLASS TStock
-
-   local nUnits
-
-   DEFAULT cCodAlm      := oUser():cAlmacen()
-   DEFAULT lDelete      := .t.
-   DEFAULT lIncremento  := .t.
-
-   /*
-   datos necesarios------------------------------------------------------------
-   */
-
-   if ::cExtAgeL == nil .or. nNumExt == nil
-      msgAlert( "Imposible realizar la actualización de stocks.", "Atención" )
-      return self
-   end if
-
-   if ( ::cExtAgeL )->( dbSeek( nNumExt ) )
-
-      while ( ::cExtAgeL )->CSEREXT + Str( ( ::cExtAgeL )->NNUMEXT ) + ( ::cExtAgeL )->CSUFEXT  == nNumExt .and. !( ::cExtAgeL )->( eof() );
-
-         if !empty( rtrim( ( ::cExtAgeL )->cRef ) )
-
-            nUnits      := ( NotCaja( ( ::cExtAgeL )->nCanEnt ) * ( ::cExtAgeL )->nUniCaja )
-
-            /*
-            mult. las unidades por su factor de conversión
-            */
-
-            if ( ::cExtAgeL )->nFacCnv != 0
-               nUnits   *= ( ::cExtAgeL )->nFacCnv
-            end if
-
-            /*
-            Si no tenemos almacen en linea se lo ponemos
-
-            if Empty( ( ::cExtAgeL )->cAlmLin )
-               ( ::cExtAgeL )->( dbRLock() )
-               ( ::cExtAgeL )->cAlmLin    := cCodAlm
-               ( ::cExtAgeL )->( dbUnLock() )
-            end if
-            */
-
-         end if
-
-         /*
-         Borramos los registros esto es para hacer rollback
-         */
-
-         if lDelete .and. dbLock( ::cExtAgeL )
-            ( ::cExtAgeL )->( dbDelete() )
-            ( ::cExtAgeL )->( dbUnLock() )
-         end if
-
-         ( ::cExtAgeL )->( dbSkip() )
-
-      end do
-
-   end if
-
-return self
-
-//---------------------------------------------------------------------------//
-
-/*METHOD lAppStock( cCodArt, cCodAlm, cValPr1, cValPr2, cLote, nStkAct, nImpStk, nStkPdr, nStkPde, nStkPdc, cNumDoc ) CLASS TStock
-
-   DEFAULT cValPr1   := Space( 10 )
-   DEFAULT cValPr2   := Space( 10 )
-   DEFAULT cLote     := Space( 12 )
-   DEFAULT nStkAct   := 0
-   DEFAULT nStkPdr   := 0
-   DEFAULT nStkPde   := 0
-   DEFAULT nStkPdc   := 0
-   DEFAULT nImpStk   := 0
-   DEFAULT cNumDoc   := ""
-
-   // El almacen debe de existir ----------------------------------------------
-
-       if dbAppe( ::oDbf )
-         ( ::oDbf )->cCodArt    := cCodArt
-         ( ::oDbf )->cCodAlm    := cCodAlm
-         ( ::oDbf )->cValPr1    := cValPr1
-         ( ::oDbf )->cValPr2    := cValPr2
-         ( ::oDbf )->cLote      := cLote
-         ( ::oDbf )->nStkAct    := nStkAct
-         ( ::oDbf )->nStkPdr    := nStkPdr
-         ( ::oDbf )->nStkPde    := nStkPde
-         ( ::oDbf )->nStkPdc    := nStkPdc
-         if nImpStk != 0
-            ( ::oDbf )->nStkIn  := nStkAct
-            ( ::oDbf )->nImpStk := nImpStk
-         end if
-         ( ::oDbf )->( dbUnLock() )
-      end if
-
-   else
-
-      if dbLock( ::oDbf )
-         ( ::oDbf )->nStkAct    += nStkAct
-         ( ::oDbf )->nStkPdr    += nStkPdr
-         ( ::oDbf )->nStkPde    += nStkPde
-         ( ::oDbf )->nStkPdc    += nStkPdc
-         if nImpStk != 0
-            ( ::oDbf )->nStkIn  += nStkAct
-            ( ::oDbf )->nImpStk += nImpStk
-         end if
-         ( ::oDbf )->( dbUnLock() )
-      end if
-
-   end if
-
-return ( Self )*/
 
 //---------------------------------------------------------------------------//
 //
@@ -1838,516 +1615,7 @@ return ( .t. )
 
 METHOD Recalcula( oMeter, cNewEmp, cPatEmp ) CLASS TStock
 
-   /*
-   local oBlock
-   local oError
-   local dbfArt
-   local dbfMaster
-   local dbfPedPrvT
-   local dbfPedPrvL
-   local dbfAlbPrvT
-   local dbfAlbPrvL
-   local dbfFacPrvT
-   local dbfFacPrvL
-   local dbfPedCliT
-   local dbfPedCliL
-   local dbfPedCliR
-   local dbfAlbCliT
-   local dbfAlbCliL
-   local dbfFacCliT
-   local dbfFacCliL
-   local dbfFacRecT
-   local dbfFacRecL
-   local dbfDepAgeT
-   local dbfDepAgeL
-   local dbfExtAgeT
-   local dbfExtAgeL
-   local dbfKit
-   local dbfTikT
-   local dbfTikL
-   local dbfTblCnv
-   local dbfProducT
-   local dbfProducL
-   local dbfProducM
-   local cCodGrp              := Space( 2 )
-   local cCodEmp
-
-   DEFAULT cPatEmp            := cPatEmp()
-
-   cCodGrp                    := cCodigoGrupo( cNewEmp )
-
-   if Empty( cCodGrp )
-      aEmpGrp( cNewEmp, , .t. )
-   else
-      aEmpGrp( cCodGrp, , .f. )
-   end if
-
-   if Len( aEmpGrp() ) != 0
-
-      for each cCodEmp in aEmpGrp()
-
-      oBlock            := ErrorBlock( {| oError | ApoloBreak( oError ) } )
-      BEGIN SEQUENCE
-
-      USE ( cPatStk( cCodEmp ) + "PEDPROVT.DBF" ) NEW VIA ( cDriver() ) SHARED ALIAS( cCheckArea( "PEDPRVT", @dbfPedPrvT ) )
-      SET ADSINDEX TO ( cPatStk( cCodEmp ) + "PEDPROVT.CDX" ) ADDITIVE
-
-      USE ( cPatStk( cCodEmp ) + "PEDPROVL.DBF" ) NEW VIA ( cDriver() ) SHARED ALIAS( cCheckArea( "PEDPRVL", @dbfPedPrvL ) )
-      SET ADSINDEX TO ( cPatStk( cCodEmp ) + "PEDPROVL.CDX" ) ADDITIVE
-
-      USE ( cPatStk( cCodEmp ) + "ALBPROVT.DBF" ) NEW VIA ( cDriver() ) SHARED ALIAS( cCheckArea( "ALBPRVT", @dbfAlbPrvT ) )
-      SET ADSINDEX TO ( cPatStk( cCodEmp ) + "ALBPROVT.CDX" ) ADDITIVE
-
-      USE ( cPatStk( cCodEmp ) + "ALBPROVL.DBF" ) NEW VIA ( cDriver() ) SHARED ALIAS( cCheckArea( "ALBPRVL", @dbfAlbPrvL ) )
-      SET ADSINDEX TO ( cPatStk( cCodEmp ) + "ALBPROVL.CDX" ) ADDITIVE
-
-      ::cPedPrvT        := dbfPedPrvT
-      ::cPedPrvL        := dbfPedPrvL
-      ::cAlbPrvT        := dbfAlbPrvT
-      ::cAlbPrvL        := dbfAlbPrvL
-
-      USE ( cPatStk( cCodEmp ) + "FACPRVT.DBF" ) NEW VIA ( cDriver() ) SHARED ALIAS( cCheckArea( "FACPROVT", @dbfFacPrvT ) )
-      SET ADSINDEX TO ( cPatStk( cCodEmp ) + "FACPRVT.CDX" ) ADDITIVE
-
-      USE ( cPatStk( cCodEmp ) + "FACPRVL.DBF" ) NEW VIA ( cDriver() ) SHARED ALIAS( cCheckArea( "FACPROVL", @dbfFacPrvL ) )
-      SET ADSINDEX TO ( cPatStk( cCodEmp ) + "FACPRVL.CDX" ) ADDITIVE
-
-      ::cFacPrvT        := dbfFacPrvT
-      ::cFacPrvL        := dbfFacPrvL
-
-      USE ( cPatStk( cCodEmp ) + "PEDCLIT.DBF" ) NEW VIA ( cDriver() ) SHARED ALIAS( cCheckArea( "PEDCLIT", @dbfPedCliT ) )
-      SET ADSINDEX TO ( cPatStk( cCodEmp ) + "PEDCLIT.CDX" ) ADDITIVE
-
-      USE ( cPatStk( cCodEmp ) + "PEDCLIL.DBF" ) NEW VIA ( cDriver() ) SHARED ALIAS( cCheckArea( "PEDCLIL", @dbfPedCliL ) )
-      SET ADSINDEX TO ( cPatStk( cCodEmp ) + "PEDCLIL.CDX" ) ADDITIVE
-
-      USE ( cPatStk( cCodEmp ) + "PEDCLIR.DBF" ) NEW VIA ( cDriver() ) SHARED ALIAS( cCheckArea( "PEDCLIR", @dbfPedCliR ) )
-      SET ADSINDEX TO ( cPatStk( cCodEmp ) + "PEDCLIR.CDX" ) ADDITIVE
-
-      USE ( cPatStk( cCodEmp ) + "ALBCLIT.DBF" ) NEW VIA ( cDriver() ) SHARED ALIAS( cCheckArea( "ALBCLIT", @dbfAlbCliT ) )
-      SET ADSINDEX TO ( cPatStk( cCodEmp ) + "ALBCLIT.CDX" ) ADDITIVE
-
-      USE ( cPatStk( cCodEmp ) + "ALBCLIL.DBF" ) NEW VIA ( cDriver() ) SHARED ALIAS( cCheckArea( "ALBCLIL", @dbfAlbCliL ) )
-      SET ADSINDEX TO ( cPatStk( cCodEmp ) + "ALBCLIL.CDX" ) ADDITIVE
-
-      ::cPedCliT        := dbfPedCliT
-      ::cPedCliL        := dbfPedCliL
-      ::cPedCliR        := dbfPedCliR
-      ::cAlbCliT        := dbfAlbCliT
-      ::cAlbCliL        := dbfAlbCliL
-
-      USE ( cPatStk( cCodEmp ) + "FACCLIT.DBF" ) NEW VIA ( cDriver() ) SHARED ALIAS( cCheckArea( "FACCLIT", @dbfFacCliT ) )
-      SET ADSINDEX TO ( cPatStk( cCodEmp ) + "FACCLIT.CDX" ) ADDITIVE
-
-      USE ( cPatStk( cCodEmp ) + "FACCLIL.DBF" ) NEW VIA ( cDriver() ) SHARED ALIAS( cCheckArea( "FACCLIL", @dbfFacCliL ) )
-      SET ADSINDEX TO ( cPatStk( cCodEmp ) + "FACCLIL.CDX" ) ADDITIVE
-
-      ::cFacCliT        := dbfFacCliT
-      ::cFacCliL        := dbfFacCliL
-
-      USE ( cPatStk( cCodEmp ) + "FACRecT.DBF" ) NEW VIA ( cDriver() ) SHARED ALIAS( cCheckArea( "FACRecT", @dbfFacRecT ) )
-      SET ADSINDEX TO ( cPatStk( cCodEmp ) + "FACRecT.CDX" ) ADDITIVE
-
-      USE ( cPatStk( cCodEmp ) + "FACRecL.DBF" ) NEW VIA ( cDriver() ) SHARED ALIAS( cCheckArea( "FACRecL", @dbfFacRecL ) )
-      SET ADSINDEX TO ( cPatStk( cCodEmp ) + "FACRecL.CDX" ) ADDITIVE
-
-      ::cFacRecT        := dbfFacRecT
-      ::cFacRecL        := dbfFacRecL
-
-      USE ( cPatStk( cCodEmp ) + "DEPAGET.DBF" ) NEW VIA ( cDriver() ) SHARED ALIAS( cCheckArea( "DEPAGET", @dbfDepAgeT ) )
-      SET ADSINDEX TO ( cPatStk( cCodEmp ) + "DEPAGET.CDX" ) ADDITIVE
-
-      USE ( cPatStk( cCodEmp ) + "DEPAGEL.DBF" ) NEW VIA ( cDriver() ) SHARED ALIAS( cCheckArea( "DEPAGEL", @dbfDepAgeL ) )
-      SET ADSINDEX TO ( cPatStk( cCodEmp ) + "DEPAGEL.CDX" ) ADDITIVE
-
-      ::cDepAgeT        := dbfDepAgeT
-      ::cDepAgeL        := dbfDepAgeL
-
-      USE ( cPatStk( cCodEmp ) + "EXTAGET.DBF" ) NEW VIA ( cDriver() ) SHARED ALIAS( cCheckArea( "EXTAGET", @dbfExtAgeT ) )
-      SET ADSINDEX TO ( cPatStk( cCodEmp ) + "EXTAGET.CDX" ) ADDITIVE
-
-      USE ( cPatStk( cCodEmp ) + "EXTAGEL.DBF" ) NEW VIA ( cDriver() ) SHARED ALIAS( cCheckArea( "EXTAGEL", @dbfExtAgeL ) )
-      SET ADSINDEX TO ( cPatStk( cCodEmp ) + "EXTAGEL.CDX" ) ADDITIVE
-
-      ::cExtAgeT        := dbfExtAgeT
-      ::cExtAgeL        := dbfExtAgeL
-
-      USE ( cPatStk( cCodEmp ) + "TIKET.DBF" ) NEW VIA ( cDriver() ) SHARED ALIAS( cCheckArea( "TIKET", @dbfTikT ) )
-      SET ADSINDEX TO ( cPatStk( cCodEmp ) + "TIKET.CDX" ) ADDITIVE
-
-      USE ( cPatStk( cCodEmp ) + "TIKEL.DBF" ) NEW VIA ( cDriver() ) SHARED ALIAS( cCheckArea( "TIKEL", @dbfTikL ) )
-      SET ADSINDEX TO ( cPatStk( cCodEmp ) + "TIKEL.CDX" ) ADDITIVE
-
-      ::cTikT           := dbfTikT
-      ::cTikL           := dbfTikL
-
-      USE ( cPatGrp() + "HISMOV.DBF" ) NEW VIA ( cDriver() ) SHARED ALIAS( cCheckArea( "HISMOV", @dbfMaster ) )
-      SET ADSINDEX TO ( cPatGrp() + "HISMOV.CDX" ) ADDITIVE
-
-      ::cHisMov         := dbfMaster
-
-      USE ( cPatStk( cCodEmp ) + "PROCAB.DBF" ) NEW VIA ( cDriver() ) SHARED ALIAS( cCheckArea( "PROCAB", @dbfProducT ) )
-      SET ADSINDEX TO ( cPatStk( cCodEmp ) + "PROCAB.CDX" ) ADDITIVE
-
-      USE ( cPatStk( cCodEmp ) + "PROLIN.DBF" ) NEW VIA ( cDriver() ) SHARED ALIAS( cCheckArea( "PROLIN", @dbfProducL ) )
-      SET ADSINDEX TO ( cPatStk( cCodEmp ) + "PROLIN.CDX" ) ADDITIVE
-
-      USE ( cPatStk( cCodEmp ) + "PROMAT.DBF" ) NEW VIA ( cDriver() ) SHARED ALIAS( cCheckArea( "PROMAT", @dbfProducM ) )
-      SET ADSINDEX TO ( cPatStk( cCodEmp ) + "PROMAT.CDX" ) ADDITIVE
-
-      ::cProducT        := dbfProducT
-      ::cProducL        := dbfProducL
-      ::cProducM        := dbfProducM
-
-      RECOVER USING oError
-
-         msgStop( "Imposible abrir todas las bases de datos de stocks" + CRLF + ErrorMessage( oError ) )
-
-      END SEQUENCE
-
-      ErrorBlock( oBlock )
-
-      if !Empty( ::cPedPrvT )
-
-      if oMeter != NIL
-         oMeter:nTotal  := ( ::cPedPrvT )->( LastRec() ) + 1
-         oMeter:cText   := "Ped. Prv."
-      end if
-
-      ( ::cPedPrvT )->( dbGoTop() )
-      while !( ::cPedPrvT )->( eof() )
-
-         ::PedPrv( ( ::cPedPrvT )->cSerPed + Str( ( ::cPedPrvT )->nNumPed ) + ( ::cPedPrvT )->cSufPed, ( ::cPedPrvT )->cCodAlm, .f., .t. )
-
-         if oMeter != nil .and. Mod( ( ::cPedPrvT )->( OrdKeyNo() ), int( oMeter:nTotal / 10 ) ) == 0
-            oMeter:Set( ( ::cPedPrvT )->( OrdKeyNo() ) )
-         end if
-
-         ( ::cPedPrvT )->( dbSkip() )
-
-         SysRefresh()
-
-      end do
-
-      end if
-
-      if oMeter != nil
-         oMeter:nTotal := ( ::cAlbPrvT )->( LastRec() ) + 1
-         oMeter:cText  := "Alb. Prv."
-      end if
-
-      ( ::cAlbPrvT )->( dbGoTop() )
-      while !( ::cAlbPrvT )->( eof() )
-
-         ::AlbPrv( ( ::cAlbPrvT )->cSerAlb + Str( ( ::cAlbPrvT )->nNumAlb ) + ( ::cAlbPrvT )->cSufAlb, ( ::cAlbPrvT )->cCodAlm, ( ::cAlbPrvT )->cNumPed, .f., .t., .f., .t. )
-
-         if oMeter != NIL .and. Mod( ( ::cAlbPrvT )->( OrdKeyNo() ), int( oMeter:nTotal / 10 ) ) == 0
-            oMeter:Set( ( ::cAlbPrvT )->( OrdKeyNo() ) )
-         end if
-
-         ( ::cAlbPrvT )->( dbSkip() )
-
-         SysRefresh()
-
-      end do
-
-      if oMeter != NIL
-         oMeter:nTotal  := ( ::cFacPrvT )->( LastRec() ) + 1
-         oMeter:cText   := "Fac. Prv."
-      end if
-
-      ( ::cFacPrvT )->( dbGoTop() )
-      while !( ::cFacPrvT )->( eof() )
-
-         ::FacPrv( (::cFacPrvT)->CSERFAC + Str( (::cFacPrvT)->NNUMFAC ) + (::cFacPrvT)->CSUFFAC, (::cFacPrvT)->cCodAlm, .f., .t. )
-
-         if oMeter != NIL .and. Mod( ( ::cFacPrvT )->( Recno() ), int( oMeter:nTotal / 10 ) ) == 0
-            oMeter:Set( ( ::cFacPrvT )->( Recno() ) )
-         end if
-
-         ( ::cFacPrvT )->( dbSkip() )
-
-         SysRefresh()
-
-      end do
-
-      if !Empty( ::cPedCliT )
-
-      if oMeter != NIL
-         oMeter:nTotal  := ( ::cPedCliT )->( LastRec() ) + 1
-         oMeter:cText   := "Ped. Cli."
-      end if
-
-      ( ::cPedCliT )->( dbGoTop() )
-      while !( ::cPedCliT )->( eof() )
-
-         if ( ::cPedCliL )->( dbSeek( ( ::cPedCliT )->cSerPed + Str( ( ::cPedCliT )->nNumPed ) + ( ::cPedCliT )->cSufPed ) )
-            while ( ::cPedCliT )->cSerPed + Str( ( ::cPedCliT )->nNumPed ) + ( ::cPedCliT )->cSufPed == ( ::cPedCliL )->cSerPed + Str( ( ::cPedCliL )->nNumPed ) + ( ::cPedCliL )->cSufPed .and. ;
-                  ( ::cPedCliL )->( !eof() )
-
-               if dbLock( ::cPedCliL )
-                  ( ::cPedCliL )->nUniEnt := 0
-                  ( ::cPedCliL )->( dbRUnLock() )
-               end if
-
-               ( ::cPedCliL )->( dbSkip() )
-            end do
-         end if
-
-         ::PedCli( ( ::cPedCliT )->cSerPed + Str( ( ::cPedCliT )->nNumPed ) + ( ::cPedCliT )->cSufPed, ( ::cPedCliT )->cCodAlm, .f., .t. )
-
-         if dbLock( ::cPedCliT )
-            ( ::cPedCliT )->nEstado := 1
-            ( ::cPedCliT )->( dbRUnLock() )
-         end if
-
-         if oMeter != NIL .and. Mod( ( ::cPedCliT )->( Recno() ), int( oMeter:nTotal / 10 ) ) == 0
-            oMeter:Set( ( ::cPedCliT )->( Recno() ) )
-         end if
-
-         ( ::cPedCliT )->( dbSkip() )
-
-         SysRefresh()
-
-      end do
-
-      end if
-
-      if oMeter != NIL
-         oMeter:nTotal  := ( ::cAlbCliT )->( LastRec() ) + 1
-         oMeter:cText   := "Alb. Cli."
-      end if
-
-      ( ::cAlbCliT )->( dbGoTop() )
-      while !( ::cAlbCliT )->( eof() )
-
-         ::AlbCli( ( ::cAlbCliT )->cSerAlb + Str( ( ::cAlbCliT )->nNumAlb ) + ( ::cAlbCliT )->cSufAlb, ( ::cAlbCliT )->cCodAlm, .f., .f., .f., .f. )
-
-         if oMeter != NIL .and. Mod( ( ::cAlbCliT )->( Recno() ), int( oMeter:nTotal / 10 ) ) == 0
-            oMeter:Set( ( ::cAlbCliT )->( Recno() ) )
-         end if
-
-         ( ::cAlbCliT )->( dbSkip() )
-
-      end do
-
-      if oMeter != NIL
-         oMeter:cText   := "Fac. Cli."
-         oMeter:nTotal  := ( ::cFacCliT )->( LastRec() )
-      end if
-
-      ( ::cFacCliT )->( dbGoTop() )
-      while !( ::cFacCliT )->( eof() )
-
-         ::FacCli( ( ::cFacCliT )->cSerie + Str( ( ::cFacCliT )->nNumFac ) + ( ::cFacCliT )->cSufFac, ( ::cFacCliT )->cCodAlm, .f., .f. )
-
-         if oMeter != NIL .and. Mod( ( ::cFacCliT  )->( OrdKeyNo() ), int( oMeter:nTotal / 10 ) ) == 0
-            oMeter:Set( ( ::cFacCliT  )->( OrdKeyNo() ) )
-         end if
-
-         ( ::cFacCliT )->( dbSkip() )
-
-         SysRefresh()
-
-      end do
-
-      if oMeter != NIL
-         oMeter:cText   := "Fac. Rec."
-         oMeter:nTotal  := ( ::cFacRecT )->( LastRec() )
-      end if
-
-      ( ::cFacRecT )->( dbGoTop() )
-      while !( ::cFacRecT )->( eof() )
-
-         ::FacRec( ( ::cFacRecT )->cSerie + Str( ( ::cFacRecT )->nNumFac ) + ( ::cFacRecT )->cSufFac, ( ::cFacRecT )->cCodAlm, .f., .f. )
-
-         if oMeter != NIL .and. Mod( ( ::cFacRecT  )->( OrdKeyNo() ), int( oMeter:nTotal / 10 ) ) == 0
-            oMeter:Set( ( ::cFacRecT  )->( OrdKeyNo() ) )
-         end if
-
-         ( ::cFacRecT )->( dbSkip() )
-
-         SysRefresh()
-
-      end do
-
-      if oMeter != NIL
-         oMeter:cText   := "Tickets"
-         oMeter:nTotal  := ( ::cTikT )->( LastRec() )
-      end if
-
-      ( ::cTikT )->( dbGoTop() )
-      while !( ::cTikT )->( eof() )
-
-         ::TpvCli( ( ::cTikT )->cSerTik + ( ::cTikT )->cNumTik + ( ::cTikT )->cSufTik, ( ::cTikT )->cAlmTik, .f. )
-
-         if oMeter != NIL .and. Mod( ( ::oFacCliT:cAlias  )->( Recno() ), int( oMeter:nTotal / 10 ) ) == 0
-            oMeter:Set( ( ::oFacCliT:cAlias  )->( Recno() ) )
-         end if
-
-         ( ::cTikT )->( dbSkip() )
-
-         SysRefresh()
-
-      end do
-
-      if !Empty( ::cDepAgeT )
-
-      if oMeter != NIL
-         oMeter:cText   := "Dep. Age."
-         oMeter:nTotal  := ( ::cDepAgeT )->( LastRec() )
-      end if
-
-      while !( ::cDepAgeT )->( eof() )
-
-         ::DepAge( ( ::cDepAgeT )->cSerDep + Str( ( ::cDepAgeT )->nNumDep ) + ( ::cDepAgeT )->cSufDep, ( ::cDepAgeT )->cCodAlm, ( ::cDepAgeT )->cCodAli, .f., .f. )
-
-         if oMeter != NIL .and. Mod( ( ::cDepAgeT )->( Recno() ), int( oMeter:nTotal / 10 ) ) == 0
-            oMeter:Set( ( ::cDepAgeT )->( Recno() ) )
-         end if
-
-         ( ::cDepAgeT )->( dbSkip() )
-
-         SysRefresh()
-
-      end do
-
-      end if
-
-      if !Empty( ::cExtAgeT )
-
-      if oMeter != NIL
-         oMeter:cText   := "Ext. Age."
-         oMeter:nTotal  := ( ::cExtAgeT )->( LastRec() )
-      end if
-
-      while !( ::cExtAgeT )->( eof() )
-
-         ::ExtAge( ( ::cExtAgeT )->nNumExt, ( ::cExtAgeT )->cCodAlm, .f., .t. )
-
-         if oMeter != NIL .and. Mod( ( ::cExtAgeT )->( Recno() ), int( oMeter:nTotal / 10 ) ) == 0
-            oMeter:Set( ( ::cExtAgeT )->( Recno() ) )
-         end if
-
-         ( ::cExtAgeT )->( dbSkip() )
-
-         SysRefresh()
-
-      end do
-
-      end if
-
-      if oMeter != NIL
-         oMeter:nTotal     := ( ::cHisMov )->( LastRec() ) + 1
-      end if
-
-      while !( ::cHisMov )->( eof() )
-
-         if ( ::cHisMov )->nTipMov == 2 .and. !Empty( ( ::cHisMov )->cAloMov )
-            if dbLock( ::cHisMov )
-               ( ::cHisMov )->cAliMov  := ( ::cHisMov )->cAloMov
-               ( ::cHisMov )->cAloMov  := Space( 3 )
-               ( ::cHisMov )->( dbUnLock() )
-            end if
-         end if
-
-         if !( ::cHisMov )->lNoStk
-            ::dblChgStock( ( ::cHisMov )->cRefMov, ( ::cHisMov )->cAliMov, ( ::cHisMov )->cAloMov, ( ::cHisMov )->cValPr1, ( ::cHisMov )->cValPr2, ( ::cHisMov )->cLote, nTotNMovAlm( ::cHisMov ), nTotLMovAlm( ::cHisMov ), ( ::cHisMov )->nTipMov )
-         end if
-
-         if oMeter != NIL .and. Mod( ( ::cHisMov )->( Recno() ), int( oMeter:nTotal / 10 ) ) == 0
-            oMeter:cText   := "Historico"
-            oMeter:Set( ( ::cHisMov )->( Recno() ) )
-         end if
-
-         ( ::cHisMov )->( dbSkip() )
-
-      end do
-
-      if oMeter != NIL
-         oMeter:cText   := "Producción"
-         oMeter:nTotal  := ( ::cProducT )->( LastRec() )
-      end if
-
-      ( ::cProducT )->( dbGoTop() )
-
-      while !( ::cProducT )->( eof() )
-
-         if oMeter != NIL .and. Mod( ( ::cProducT  )->( OrdKeyNo() ), int( oMeter:nTotal / 10 ) ) == 0
-            oMeter:Set( ( ::cProducT  )->( OrdKeyNo() ) )
-         end if
-
-         ( ::cProducT )->( dbSkip() )
-
-         SysRefresh()
-
-      end do
-
-      CLOSE ( dbfAlbPrvT )
-      CLOSE ( dbfAlbPrvL )
-      CLOSE ( dbfPedPrvT )
-      CLOSE ( dbfPedPrvL )
-
-      CLOSE ( dbfFacPrvT )
-      CLOSE ( dbfFacPrvL )
-
-      CLOSE ( dbfAlbCliT )
-      CLOSE ( dbfAlbCliL )
-      CLOSE ( dbfPedCliR )
-
-      CLOSE ( dbfFacCliT )
-      CLOSE ( dbfFacCliL )
-      CLOSE ( dbfPedCliT )
-      CLOSE ( dbfPedCliL )
-
-      CLOSE ( dbfFacRecT )
-      CLOSE ( dbfFacRecL )
-
-      CLOSE ( dbfTikT )
-      CLOSE ( dbfTikL )
-
-      CLOSE ( dbfExtAgeT )
-      CLOSE ( dbfExtAgeL )
-
-      CLOSE ( dbfDepAgeT )
-      CLOSE ( dbfDepAgeL )
-
-      CLOSE ( dbfMaster )
-
-      CLOSE ( dbfProducT )
-      CLOSE ( dbfProducL )
-      CLOSE ( dbfProducM )
-
-      next
-
-   end if
-   */
-
 RETURN ( Self )
-
-//---------------------------------------------------------------------------//
-
-/*METHOD dblChgStock( cCodArt, cCodAlmIn, cCodAlmOut, cValPr1, cValPr2, cLote, nUnits, nPreDiv, nTipMov ) CLASS TStock
-
-   if nTipMov == 1
-
-      if !Empty( cCodAlmIn )
-         ::lAppStock( cCodArt, cCodAlmIn, cValPr1, cValPr2, cLote, nUnits, nPreDiv )
-      end if
-
-      if !Empty( cCodAlmOut )
-         ::lAppStock( cCodArt, cCodAlmOut, cValPr1, cValPr2, cLote, - nUnits, nPreDiv )
-      end if
-
-   else
-
-      if !Empty( cCodAlmIn )
-         ::lAppStock( cCodArt, cCodAlmIn, cValPr1, cValPr2, cLote, nUnits, nPreDiv )
-      end if
-
-   end if
-
-RETURN Self*/
 
 //---------------------------------------------------------------------------//
 
@@ -2731,7 +1999,7 @@ METHOD StockInit( cPath, cPathOld, oMsg, lAlbPrv, lAlbCli, nCalcCosto ) CLASS TS
       ::cFacCliL                             := oldFacCliL
       ::cFacRecL                             := oldFacRecL
       ::cTikL                                := oldTikL
-      ::cHisMov                              := oldHisMov
+      ::cHisMovT                             := oldHisMov
       ::cProducL                             := oldProLin
       ::cProducM                             := oldProMat
 
@@ -2772,7 +2040,7 @@ METHOD StockInit( cPath, cPathOld, oMsg, lAlbPrv, lAlbCli, nCalcCosto ) CLASS TS
                ( dbfRemMov )->cAlmOrg           := ( dbfAlm )->cCodAlm
                ( dbfRemMov )->cAlmDes           := ( dbfAlm )->cCodAlm
                ( dbfRemMov )->cCodDiv           := cDivEmp()
-               ( dbfRemMov )->nVdvDiv           := nChgDiv( cDivEmp(), ::dbfDiv )
+               ( dbfRemMov )->nVdvDiv           := nChgDiv()
                ( dbfRemMov )->nTotRem           := 0
                ( dbfRemMov )->( dbUnLock() )
 
@@ -3601,37 +2869,37 @@ METHOD nTotMovAlm( cCodArt, cCodAlm, cValPr1, cValPr2, cLote, dFecha ) CLASS TSt
    DEFAULT cValPr2   := Space( 10 )
    DEFAULT cLote     := Space( 12 )
 
-   nOrd              := ( ::cHisMov )->( OrdSetFocus( "cRefMov" ) )
-   if ( ::cHisMov )->( dbSeek( cCodArt ) )
+   nOrd              := ( ::cHisMovT)->( OrdSetFocus( "cRefMov" ) )
+   if ( ::cHisMovT)->( dbSeek( cCodArt ) )
 
-      while ( ::cHisMov )->cRefMov == cCodArt .and. !( ::cHisMov )->( Eof() )
+      while ( ::cHisMovT)->cRefMov == cCodArt .and. !( ::cHisMovT)->( Eof() )
 
-         if ( Empty( dFecha ) .or. ( ::cHisMov )->dFecMov <= dFecha )   .and.;
-            ( cValPr1 == ( ::cHisMov )->cValPr1 )                       .and.;
-            ( cValPr2 == ( ::cHisMov )->cValPr2 )                       .and.;
-            ( cLote   == ( ::cHisMov )->cLote   )
+         if ( Empty( dFecha ) .or. ( ::cHisMovT)->dFecMov <= dFecha )   .and.;
+            ( cValPr1 == ( ::cHisMovT)->cValPr1 )                       .and.;
+            ( cValPr2 == ( ::cHisMovT)->cValPr2 )                       .and.;
+            ( cLote   == ( ::cHisMovT)->cLote   )
 
-            if !( ::cHisMov )->lNoStk
+            if !( ::cHisMovT)->lNoStk
 
-               if ( ::cHisMov )->cAliMov == cCodAlm
-                  nTotal   += nTotNMovAlm( ::cHisMov )
+               if ( ::cHisMovT)->cAliMov == cCodAlm
+                  nTotal   += nTotNMovAlm( ::cHisMovT)
                end if
 
-               if ( ::cHisMov )->cAloMov == cCodAlm
-                  nTotal   -= nTotNMovAlm( ::cHisMov )
+               if ( ::cHisMovT)->cAloMov == cCodAlm
+                  nTotal   -= nTotNMovAlm( ::cHisMovT)
                end if
 
             end if
 
          end if
 
-         ( ::cHisMov )->( dbSkip() )
+         ( ::cHisMovT)->( dbSkip() )
 
       end while
 
    end if
 
-   ( ::cHisMov )->( OrdSetFocus( nOrd ) )
+   ( ::cHisMovT)->( OrdSetFocus( nOrd ) )
 
 RETURN ( nTotal )
 
@@ -3654,16 +2922,6 @@ METHOD nStockActualCalculado( cCodArt, cCodAlm, cValPr1, cValPr2, cLote, dFecha 
    nStkTotal         += ::nTotMovAlm( cCodArt, cCodAlm, cValPr1, cValPr2, cLote, dFecha )
 
 RETURN ( nStkTotal )
-
-//---------------------------------------------------------------------------//
-
-METHOD CloseFiles() CLASS TStock
-
-   if !Empty( ::dbfDiv )
-      CLOSE( ::dbfDiv )
-   end if
-
-Return ( Self )
 
 //---------------------------------------------------------------------------//
 
@@ -3935,7 +3193,7 @@ METHOD nPrecioMedioCompra( cCodArt, cCodAlm, dFecIni, dFecFin, lSerie, lExcCero,
    local nOrdAlbPrvL    := ( ::cAlbPrvL )->( OrdSetFocus( "cStkFast") )
    local nOrdFacPrvL    := ( ::cFacPrvL )->( OrdSetFocus( "cRef"    ) )
    local nOrdRctPrvL    := ( ::cRctPrvL )->( OrdSetFocus( "cRef"    ) )
-   local cHisMov        := ( ::cHisMov  )->( OrdSetFocus( "cRefMov" ) )
+   local cHisMovT       := ( ::cHisMovT )->( OrdSetFocus( "cRefMov" ) )
 
    DEFAULT lExcCero     := .f.
    DEFAULT lExcImp      := .f.
@@ -4028,27 +3286,27 @@ METHOD nPrecioMedioCompra( cCodArt, cCodAlm, dFecIni, dFecFin, lSerie, lExcCero,
 
    //Recorremos movimientos de almacén-----------------------------------------
 
-   if ( ::cHisMov )->( dbSeek( cCodArt ) )
+   if ( ::cHisMovT)->( dbSeek( cCodArt ) )
 
-      while ( ::cHisMov )->cRefMov == cCodArt .and. !( ::cHisMov )->( Eof() )
+      while ( ::cHisMovT)->cRefMov == cCodArt .and. !( ::cHisMovT)->( Eof() )
 
-         if ( Empty( dFecIni ) .or. ( ::cHisMov )->dFecMov >= dFecIni )                   .and.;
-            ( Empty( dFecFin ) .or. ( ::cHisMov )->dFecMov <= dFecFin )                   .and.;
-            !( lExcCero .and. nTotNMovAlm( ::cHisMov ) == 0 )                             .and.;
-            !( lExcImp  .and. nTotLMovAlm( ::cHisMov ) == 0 )
+         if ( Empty( dFecIni ) .or. ( ::cHisMovT)->dFecMov >= dFecIni )                   .and.;
+            ( Empty( dFecFin ) .or. ( ::cHisMovT)->dFecMov <= dFecFin )                   .and.;
+            !( lExcCero .and. nTotNMovAlm( ::cHisMovT) == 0 )                             .and.;
+            !( lExcImp  .and. nTotLMovAlm( ::cHisMovT) == 0 )
 
             // Movimiento de entrada-------------------------------------------
 
-            if !Empty( ( ::cHisMov )->cAliMov )                                           .and.;
-               ( Empty( cCodAlm ) .or. ( ::cHisMov )->cAliMov == cCodAlm )
+            if !Empty( ( ::cHisMovT)->cAliMov )                                           .and.;
+               ( Empty( cCodAlm ) .or. ( ::cHisMovT)->cAliMov == cCodAlm )
 
-               aAdd( aMovimientos, STemporal():New( ( ::cHisMov )->dFecMov, nil, nTotNMovAlm( ::cHisMov ), 0, nTotLMovAlm( ::cHisMov ), "mov alm", dtos( ( ::cHisMov )->dFecMov ) ) )
+               aAdd( aMovimientos, STemporal():New( ( ::cHisMovT)->dFecMov, nil, nTotNMovAlm( ::cHisMovT), 0, nTotLMovAlm( ::cHisMovT), "mov alm", dtos( ( ::cHisMovT)->dFecMov ) ) )
 
             end if
 
          end if
 
-         ( ::cHisMov )->( dbSkip() )
+         ( ::cHisMovT)->( dbSkip() )
 
       end while
 
@@ -4083,7 +3341,7 @@ METHOD nPrecioMedioCompra( cCodArt, cCodAlm, dFecIni, dFecFin, lSerie, lExcCero,
    ( ::cAlbPrvL )->( OrdSetFocus( nOrdAlbPrvL ) )
    ( ::cFacPrvL )->( OrdSetFocus( nOrdFacPrvL ) )
    ( ::cRctPrvL )->( OrdSetFocus( nOrdRctPrvL ) )
-   ( ::cHisMov  )->( OrdSetFocus( cHisMov     ) )
+   ( ::cHisMovT )->( OrdSetFocus( cHisMovT    ) )
 
 RETURN ( nPreMed )
 
@@ -4097,7 +3355,7 @@ METHOD nCostoMedio( cCodArt, cCodAlm, cCodPr1, cCodPr2, cValPr1, cValPr2 ) CLASS
    local nOrdAlbPrvL    := ( ::cAlbPrvL )->( OrdSetFocus( "cStkRef" ) )
    local nOrdFacPrvL    := ( ::cFacPrvL )->( OrdSetFocus( "cRef" ) )
    local nOrdRctPrvL    := ( ::cRctPrvL )->( OrdSetFocus( "cRef" ) )
-   local nOrdMovAlm     := ( ::cHisMov  )->( OrdSetFocus( "cRefMov" ) )
+   local nOrdMovAlm     := ( ::cHisMovT )->( OrdSetFocus( "cRefMov" ) )
 
    /*
    Obtengo la fecha de consolidación-------------------------------------------
@@ -4109,31 +3367,31 @@ METHOD nCostoMedio( cCodArt, cCodAlm, cCodPr1, cCodPr2, cValPr1, cValPr2 ) CLASS
    Recorremos movimientos de almacén-------------------------------------------
    */
 
-   if ( ::cHisMov )->( dbSeek( cCodArt + cValPr1 + cValPr2 ) )
+   if ( ::cHisMovT)->( dbSeek( cCodArt + cValPr1 + cValPr2 ) )
 
-      while ( ::cHisMov )->cRefMov == cCodArt .and. ( ::cHisMov )->cValPr1 == cValPr1 .and. ( ::cHisMov )->cValPr2 == cValPr2 .and. !( ::cHisMov )->( Eof() )
+      while ( ::cHisMovT)->cRefMov == cCodArt .and. ( ::cHisMovT)->cValPr1 == cValPr1 .and. ( ::cHisMovT)->cValPr2 == cValPr2 .and. !( ::cHisMovT)->( Eof() )
 
-         if ::lValoracionCostoMedio( ( ::cHisMov )->nTipMov )
+         if ::lValoracionCostoMedio( ( ::cHisMovT)->nTipMov )
 
-            if !Empty( ( ::cHisMov )->cAloMov ) .and. ( Empty( cCodAlm ) .or. ( ::cHisMov )->cAliMov == cCodAlm ) .and.;
-               ::lCheckConsolidacion( ( ::cHisMov )->cRefMov, ( ::cHisMov )->cAloMov, ( ::cHisMov )->cCodPr1, ( ::cHisMov )->cCodPr2, ( ::cHisMov )->cValPr1, ( ::cHisMov )->cValPr2, ( ::cHisMov )->cLote, ( ::cHisMov )->dFecMov )
+            if !Empty( ( ::cHisMovT)->cAloMov ) .and. ( Empty( cCodAlm ) .or. ( ::cHisMovT)->cAliMov == cCodAlm ) .and.;
+               ::lCheckConsolidacion( ( ::cHisMovT)->cRefMov, ( ::cHisMovT)->cAloMov, ( ::cHisMovT)->cCodPr1, ( ::cHisMovT)->cCodPr2, ( ::cHisMovT)->cValPr1, ( ::cHisMovT)->cValPr2, ( ::cHisMovT)->cLote, ( ::cHisMovT)->dFecMov )
 
-               nUnidades   += nTotNMovAlm( ::cHisMov )
-               nImporte    += nTotLMovAlm( ::cHisMov )
+               nUnidades   += nTotNMovAlm( ::cHisMovT)
+               nImporte    += nTotLMovAlm( ::cHisMovT)
 
             end if
 
-            if !Empty( ( ::cHisMov )->cAliMov ) .and. ( Empty( cCodAlm ) .or. ( ::cHisMov )->cAliMov == cCodAlm ) .and.;
-               ::lCheckConsolidacion( ( ::cHisMov )->cRefMov, ( ::cHisMov )->cAliMov, ( ::cHisMov )->cCodPr1, ( ::cHisMov )->cCodPr2, ( ::cHisMov )->cValPr1, ( ::cHisMov )->cValPr2, ( ::cHisMov )->cLote, ( ::cHisMov )->dFecMov )
+            if !Empty( ( ::cHisMovT)->cAliMov ) .and. ( Empty( cCodAlm ) .or. ( ::cHisMovT)->cAliMov == cCodAlm ) .and.;
+               ::lCheckConsolidacion( ( ::cHisMovT)->cRefMov, ( ::cHisMovT)->cAliMov, ( ::cHisMovT)->cCodPr1, ( ::cHisMovT)->cCodPr2, ( ::cHisMovT)->cValPr1, ( ::cHisMovT)->cValPr2, ( ::cHisMovT)->cLote, ( ::cHisMovT)->dFecMov )
 
-               nUnidades   += nTotNMovAlm( ::cHisMov )
-               nImporte    += nTotLMovAlm( ::cHisMov )
+               nUnidades   += nTotNMovAlm( ::cHisMovT)
+               nImporte    += nTotLMovAlm( ::cHisMovT)
 
             end if
 
          end if
 
-         ( ::cHisMov )->( dbSkip() )
+         ( ::cHisMovT)->( dbSkip() )
 
       end while
 
@@ -4228,7 +3486,7 @@ METHOD nCostoMedio( cCodArt, cCodAlm, cCodPr1, cCodPr2, cValPr1, cValPr2 ) CLASS
    ( ::cAlbPrvL )->( OrdSetFocus( nOrdAlbPrvL ) )
    ( ::cFacPrvL )->( OrdSetFocus( nOrdFacPrvL ) )
    ( ::cRctPrvL )->( OrdSetFocus( nOrdRctPrvL ) )
-   ( ::cHisMov  )->( OrdSetFocus( nOrdMovAlm  ) )
+   ( ::cHisMovT )->( OrdSetFocus( nOrdMovAlm  ) )
 
 RETURN ( nCostoMedio )
 
@@ -4303,7 +3561,7 @@ METHOD nStockAlmacen( cCodArt, cCodAlm, cValPr1, cValPr2, cLote ) CLASS TStock
    nOrdTikCliL          := if( !Empty( ::cTikL    ), ( ::cTikL    )->( OrdSetFocus( "cStkFast" ) ) , "" )
    nOrdProducL          := if( !Empty( ::cProducL ), ( ::cProducL )->( OrdSetFocus( "cCodArt" ) )  , "" )
    nOrdProducM          := if( !Empty( ::cProducM ), ( ::cProducM )->( OrdSetFocus( "cCodArt" ) )  , "" )
-   nOrdHisMov           := if( !Empty( ::cHisMov  ), ( ::cHisMov  )->( OrdSetFocus( "cRefMov" ) )  , "" )
+   nOrdHisMov           := if( !Empty( ::cHisMovT ), ( ::cHisMovT )->( OrdSetFocus( "cRefMov" ) )  , "" )
 
    if !Empty( cCodArt )
 
@@ -4315,41 +3573,41 @@ METHOD nStockAlmacen( cCodArt, cCodAlm, cValPr1, cValPr2, cLote ) CLASS TStock
 
       SysRefresh()
 
-      if !Empty( ::cHisMov )
+      if !Empty( ::cHisMovT)
 
          //::lCheckConsolidacion( cCodArt )
 
-         if ( ::cHisMov )->( dbSeek( cCodArt ) )
+         if ( ::cHisMovT)->( dbSeek( cCodArt ) )
 
-            while ( ::cHisMov )->cRefMov == cCodArt .and. !( ::cHisMov )->( Eof() )
+            while ( ::cHisMovT)->cRefMov == cCodArt .and. !( ::cHisMovT)->( Eof() )
 
-               //if ( Empty( ::dConsolidacion ) .or. ( ::cHisMov )->dFecMov >= ::dConsolidacion )
+               //if ( Empty( ::dConsolidacion ) .or. ( ::cHisMovT)->dFecMov >= ::dConsolidacion )
 
-                  if !Empty( ( ::cHisMov )->cAliMov )                               .and.;
-                     ::lCheckConsolidacion( ( ::cHisMov )->cRefMov, ( ::cHisMov )->cAliMov, ( ::cHisMov )->cCodPr1, ( ::cHisMov )->cCodPr2, ( ::cHisMov )->cValPr1, ( ::cHisMov )->cValPr2, ( ::cHisMov )->cLote, ( ::cHisMov )->dFecMov ) .and.;
-                     ( Empty( cCodAlm )   .or. cCodAlm == ( ::cHisMov )->cAliMov )  .and.;
-                     ( Empty( cValPr1 )   .or. cValPr1 == ( ::cHisMov )->cValPr1 )  .and.;
-                     ( Empty( cValPr2 )   .or. cValPr2 == ( ::cHisMov )->cValPr2 )  .and.;
-                     ( Empty( cLote )     .or. cLote   == ( ::cHisMov )->cLote   )
+                  if !Empty( ( ::cHisMovT)->cAliMov )                               .and.;
+                     ::lCheckConsolidacion( ( ::cHisMovT)->cRefMov, ( ::cHisMovT)->cAliMov, ( ::cHisMovT)->cCodPr1, ( ::cHisMovT)->cCodPr2, ( ::cHisMovT)->cValPr1, ( ::cHisMovT)->cValPr2, ( ::cHisMovT)->cLote, ( ::cHisMovT)->dFecMov ) .and.;
+                     ( Empty( cCodAlm )   .or. cCodAlm == ( ::cHisMovT)->cAliMov )  .and.;
+                     ( Empty( cValPr1 )   .or. cValPr1 == ( ::cHisMovT)->cValPr1 )  .and.;
+                     ( Empty( cValPr2 )   .or. cValPr2 == ( ::cHisMovT)->cValPr2 )  .and.;
+                     ( Empty( cLote )     .or. cLote   == ( ::cHisMovT)->cLote   )
 
-                     nStkTotal               += nTotNMovAlm( ::cHisMov )
+                     nStkTotal               += nTotNMovAlm( ::cHisMovT)
 
                   end if
 
-                  if !Empty( ( ::cHisMov )->cAloMov )                               .and.;
-                     ::lCheckConsolidacion( ( ::cHisMov )->cRefMov, ( ::cHisMov )->cAloMov, ( ::cHisMov )->cCodPr1, ( ::cHisMov )->cCodPr2, ( ::cHisMov )->cValPr1, ( ::cHisMov )->cValPr2, ( ::cHisMov )->cLote, ( ::cHisMov )->dFecMov ) .and.;
-                     ( Empty( cCodAlm )   .or. cCodAlm == ( ::cHisMov )->cAloMov )  .and.;
-                     ( Empty( cValPr1 )   .or. cValPr1 == ( ::cHisMov )->cValPr1 )  .and.;
-                     ( Empty( cValPr2 )   .or. cValPr2 == ( ::cHisMov )->cValPr2 )  .and.;
-                     ( Empty( cLote )     .or. cLote   == ( ::cHisMov )->cLote   )
+                  if !Empty( ( ::cHisMovT)->cAloMov )                               .and.;
+                     ::lCheckConsolidacion( ( ::cHisMovT)->cRefMov, ( ::cHisMovT)->cAloMov, ( ::cHisMovT)->cCodPr1, ( ::cHisMovT)->cCodPr2, ( ::cHisMovT)->cValPr1, ( ::cHisMovT)->cValPr2, ( ::cHisMovT)->cLote, ( ::cHisMovT)->dFecMov ) .and.;
+                     ( Empty( cCodAlm )   .or. cCodAlm == ( ::cHisMovT)->cAloMov )  .and.;
+                     ( Empty( cValPr1 )   .or. cValPr1 == ( ::cHisMovT)->cValPr1 )  .and.;
+                     ( Empty( cValPr2 )   .or. cValPr2 == ( ::cHisMovT)->cValPr2 )  .and.;
+                     ( Empty( cLote )     .or. cLote   == ( ::cHisMovT)->cLote   )
 
-                     nStkTotal               -= nTotNMovAlm( ::cHisMov )
+                     nStkTotal               -= nTotNMovAlm( ::cHisMovT)
 
                   end if
 
                //end if
 
-               ( ::cHisMov )->( dbSkip() )
+               ( ::cHisMovT)->( dbSkip() )
 
             end while
 
@@ -4653,7 +3911,7 @@ METHOD nStockAlmacen( cCodArt, cCodAlm, cValPr1, cValPr2, cLote ) CLASS TStock
    if( !Empty( ::cTikL    ), ( ::cTikL    )->( OrdSetFocus( nOrdTikCliL ) ), )
    if( !Empty( ::cProducL ), ( ::cProducL )->( OrdSetFocus( nOrdProducL ) ), )
    if( !Empty( ::cProducM ), ( ::cProducM )->( OrdSetFocus( nOrdProducM ) ), )
-   if( !Empty( ::cHisMov  ), ( ::cHisMov  )->( OrdSetFocus( nOrdHisMov  ) ), )
+   if( !Empty( ::cHisMovT ), ( ::cHisMovT )->( OrdSetFocus( nOrdHisMov  ) ), )
 
    RECOVER USING oError
 
@@ -4706,7 +3964,7 @@ METHOD aStockArticulo( cCodArt, cCodAlm, oBrw, lLote, lNumeroSerie, dFecIni, dFe
    nOrdTikCliL          := ( ::cTikL    )->( OrdSetFocus( "cStkFast" ) )
    nOrdProducL          := ( ::cProducL )->( OrdSetFocus( "cCodArt"  ) )
    nOrdProducM          := ( ::cProducM )->( OrdSetFocus( "cCodArt"  ) )
-   nOrdHisMov           := ( ::cHisMov  )->( OrdSetFocus( "cRefMov"  ) )
+   nOrdHisMov           := ( ::cHisMovT )->( OrdSetFocus( "cRefMov"  ) )
 
    lNumeroSerie         := !uFieldEmpresa( "lCalSer" )
 
@@ -4724,25 +3982,25 @@ METHOD aStockArticulo( cCodArt, cCodAlm, oBrw, lLote, lNumeroSerie, dFecIni, dFe
 
    SysRefresh()
 
-   if ( ::cHisMov )->( dbSeek( cCodArt ) )
+   if ( ::cHisMovT)->( dbSeek( cCodArt ) )
 
-      while ( ::cHisMov )->cRefMov == cCodArt .and. !( ::cHisMov )->( Eof() )
+      while ( ::cHisMovT)->cRefMov == cCodArt .and. !( ::cHisMovT)->( Eof() )
 
-         if ( Empty( dFecIni ) .or. ( ( ::cHisMov )->dFecMov >= dFecIni .and. ( ::cHisMov )->dFecMov <= dFecFin ) )
+         if ( Empty( dFecIni ) .or. ( ( ::cHisMovT)->dFecMov >= dFecIni .and. ( ::cHisMovT)->dFecMov <= dFecFin ) )
 
-            if ::lCheckConsolidacion( ( ::cHisMov )->cRefMov, ( ::cHisMov )->cAliMov, ( ::cHisMov )->cCodPr1, ( ::cHisMov )->cCodPr2, ( ::cHisMov )->cValPr1, ( ::cHisMov )->cValPr2, ( ::cHisMov )->cLote, ( ::cHisMov )->dFecMov ) .and.;
-               ( !Empty( ( ::cHisMov )->cAliMov ) .and. ( Empty( cCodAlm ) .or. ( ::cHisMov )->cAliMov == cCodAlm ) )
+            if ::lCheckConsolidacion( ( ::cHisMovT)->cRefMov, ( ::cHisMovT)->cAliMov, ( ::cHisMovT)->cCodPr1, ( ::cHisMovT)->cCodPr2, ( ::cHisMovT)->cValPr1, ( ::cHisMovT)->cValPr2, ( ::cHisMovT)->cLote, ( ::cHisMovT)->dFecMov ) .and.;
+               ( !Empty( ( ::cHisMovT)->cAliMov ) .and. ( Empty( cCodAlm ) .or. ( ::cHisMovT)->cAliMov == cCodAlm ) )
 
                with object ( SStock():New() )
-                  :cAlias              := ( ::cHisMov )
-                  :cCodigo             := ( ::cHisMov )->cRefMov
-                  :cCodigoAlmacen      := ( ::cHisMov )->cAliMov
-                  :cCodigoPropiedad1   := ( ::cHisMov )->cCodPr1
-                  :cCodigoPropiedad2   := ( ::cHisMov )->cCodPr2
-                  :cValorPropiedad1    := ( ::cHisMov )->cValPr1
-                  :cValorPropiedad2    := ( ::cHisMov )->cValPr2
-                  :cLote               := ( ::cHisMov )->cLote
-                  :nUnidades           := nTotNMovAlm( ::cHisMov )
+                  :cAlias              := ( ::cHisMovT)
+                  :cCodigo             := ( ::cHisMovT)->cRefMov
+                  :cCodigoAlmacen      := ( ::cHisMovT)->cAliMov
+                  :cCodigoPropiedad1   := ( ::cHisMovT)->cCodPr1
+                  :cCodigoPropiedad2   := ( ::cHisMovT)->cCodPr2
+                  :cValorPropiedad1    := ( ::cHisMovT)->cValPr1
+                  :cValorPropiedad2    := ( ::cHisMovT)->cValPr2
+                  :cLote               := ( ::cHisMovT)->cLote
+                  :nUnidades           := nTotNMovAlm( ::cHisMovT)
                   if !Empty( ::dConsolidacion )
                      :dConsolidacion   := ::dConsolidacion
                   end if
@@ -4751,19 +4009,19 @@ METHOD aStockArticulo( cCodArt, cCodAlm, oBrw, lLote, lNumeroSerie, dFecIni, dFe
 
             end if
 
-            if ::lCheckConsolidacion( ( ::cHisMov )->cRefMov, ( ::cHisMov )->cAloMov, ( ::cHisMov )->cCodPr1, ( ::cHisMov )->cCodPr2, ( ::cHisMov )->cValPr1, ( ::cHisMov )->cValPr2, ( ::cHisMov )->cLote, ( ::cHisMov )->dFecMov ) .and.;
-               ( !Empty( ( ::cHisMov )->cAloMov ) .and. ( Empty( cCodAlm ) .or. ( ::cHisMov )->cAloMov == cCodAlm ) )
+            if ::lCheckConsolidacion( ( ::cHisMovT)->cRefMov, ( ::cHisMovT)->cAloMov, ( ::cHisMovT)->cCodPr1, ( ::cHisMovT)->cCodPr2, ( ::cHisMovT)->cValPr1, ( ::cHisMovT)->cValPr2, ( ::cHisMovT)->cLote, ( ::cHisMovT)->dFecMov ) .and.;
+               ( !Empty( ( ::cHisMovT)->cAloMov ) .and. ( Empty( cCodAlm ) .or. ( ::cHisMovT)->cAloMov == cCodAlm ) )
 
                with object ( SStock():New() )
-                  :cAlias              := ( ::cHisMov )
-                  :cCodigo             := ( ::cHisMov )->cRefMov
-                  :cCodigoAlmacen      := ( ::cHisMov )->cAloMov
-                  :cCodigoPropiedad1   := ( ::cHisMov )->cCodPr1
-                  :cCodigoPropiedad2   := ( ::cHisMov )->cCodPr2
-                  :cValorPropiedad1    := ( ::cHisMov )->cValPr1
-                  :cValorPropiedad2    := ( ::cHisMov )->cValPr2
-                  :cLote               := ( ::cHisMov )->cLote
-                  :nUnidades           := - nTotNMovAlm( ::cHisMov )
+                  :cAlias              := ( ::cHisMovT)
+                  :cCodigo             := ( ::cHisMovT)->cRefMov
+                  :cCodigoAlmacen      := ( ::cHisMovT)->cAloMov
+                  :cCodigoPropiedad1   := ( ::cHisMovT)->cCodPr1
+                  :cCodigoPropiedad2   := ( ::cHisMovT)->cCodPr2
+                  :cValorPropiedad1    := ( ::cHisMovT)->cValPr1
+                  :cValorPropiedad2    := ( ::cHisMovT)->cValPr2
+                  :cLote               := ( ::cHisMovT)->cLote
+                  :nUnidades           := - nTotNMovAlm( ::cHisMovT)
                   if !Empty( ::dConsolidacion )
                      :dConsolidacion   := ::dConsolidacion
                   end if
@@ -4774,7 +4032,7 @@ METHOD aStockArticulo( cCodArt, cCodAlm, oBrw, lLote, lNumeroSerie, dFecIni, dFe
 
          end if
 
-         ( ::cHisMov )->( dbSkip() )
+         ( ::cHisMovT)->( dbSkip() )
 
       end while
 
@@ -5310,7 +4568,7 @@ METHOD aStockArticulo( cCodArt, cCodAlm, oBrw, lLote, lNumeroSerie, dFecIni, dFe
    ( ::cTikL    )->( OrdSetFocus( nOrdTikCliL ) )
    ( ::cProducL )->( OrdSetFocus( nOrdProducL ) )
    ( ::cProducM )->( OrdSetFocus( nOrdProducM ) )
-   ( ::cHisMov  )->( OrdSetFocus( nOrdHisMov  ) )
+   ( ::cHisMovT )->( OrdSetFocus( nOrdHisMov  ) )
 
    /*
    Repasamos el valor de lo obtenido-------------------------------------------
@@ -5447,7 +4705,7 @@ METHOD nStockSerie( cCodArt, cCodAlm, cNumeroSerie ) CLASS TStock
 
    local nRec
    local nUnidades      := 0
-   local nOrdHisMov     := ( ::cHisMov  )->( OrdSetFocus( "cRefMov" ) )
+   local nOrdHisMov     := ( ::cHisMovT )->( OrdSetFocus( "cRefMov" ) )
    local nOrdAlbPrvS    := ( ::cAlbPrvS )->( OrdSetFocus( "cRefSer" ) )
    local nOrdFacPrvS    := ( ::cFacPrvS )->( OrdSetFocus( "cRefSer" ) )
    local nOrdRctPrvS    := ( ::cRctPrvS )->( OrdSetFocus( "cRefSer" ) )
@@ -5709,7 +4967,7 @@ METHOD nStockSerie( cCodArt, cCodAlm, cNumeroSerie ) CLASS TStock
    Comprobamos la marca de la empresa para no mostrar los valores cero --------
    */
 
-   ( ::cHisMov  )->( OrdSetFocus( nOrdHisMov  ) )
+   ( ::cHisMovT )->( OrdSetFocus( nOrdHisMov  ) )
    ( ::cAlbPrvS )->( OrdSetFocus( nOrdAlbPrvS ) )
    ( ::cFacPrvS )->( OrdSetFocus( nOrdFacPrvS ) )
    ( ::cRctPrvS )->( OrdSetFocus( nOrdRctPrvS ) )
@@ -5744,7 +5002,7 @@ METHOD aStockAlmacen( oRemMov ) CLASS TStock
    local nOrdTikCliL    := ( ::cTikL    )->( OrdSetFocus( "cStkFast" ) )
    local nOrdProducL    := ( ::cProducL )->( OrdSetFocus( "cCodArt"  ) )
    local nOrdProducM    := ( ::cProducM )->( OrdSetFocus( "cCodArt"  ) )
-   local nOrdHisMov     := ( ::cHisMov  )->( OrdSetFocus( "cRefMov"  ) )
+   local nOrdHisMov     := ( ::cHisMovT )->( OrdSetFocus( "cRefMov"  ) )
 
    cCodAlm              := oRemMov:oDbf:cAlmDes
 
@@ -6104,41 +5362,41 @@ METHOD aStockAlmacen( oRemMov ) CLASS TStock
 
          SysRefresh()
 
-         if ( ::cHisMov )->( dbSeek( ( ::cArt )->Codigo ) )
+         if ( ::cHisMovT)->( dbSeek( ( ::cArt )->Codigo ) )
 
-            while ( ::cHisMov )->cRefMov == ( ::cArt )->Codigo .and. !( ::cHisMov )->( Eof() )
+            while ( ::cHisMovT)->cRefMov == ( ::cArt )->Codigo .and. !( ::cHisMovT)->( Eof() )
 
-               if !Empty( ( ::cHisMov )->cAliMov ) .and. ( ::cHisMov )->cAliMov == cCodAlm
+               if !Empty( ( ::cHisMovT)->cAliMov ) .and. ( ::cHisMovT)->cAliMov == cCodAlm
 
                   with object ( SStock():New() )
-                     :cCodigo             := ( ::cHisMov )->cRefMov
-                     :cCodigoPropiedad1   := ( ::cHisMov )->cCodPr1
-                     :cCodigoPropiedad2   := ( ::cHisMov )->cCodPr2
-                     :cValorPropiedad1    := ( ::cHisMov )->cValPr1
-                     :cValorPropiedad2    := ( ::cHisMov )->cValPr2
-                     :cLote               := ( ::cHisMov )->cLote
-                     :nUnidades           := nTotNMovAlm( ::cHisMov )
+                     :cCodigo             := ( ::cHisMovT)->cRefMov
+                     :cCodigoPropiedad1   := ( ::cHisMovT)->cCodPr1
+                     :cCodigoPropiedad2   := ( ::cHisMovT)->cCodPr2
+                     :cValorPropiedad1    := ( ::cHisMovT)->cValPr1
+                     :cValorPropiedad2    := ( ::cHisMovT)->cValPr2
+                     :cLote               := ( ::cHisMovT)->cLote
+                     :nUnidades           := nTotNMovAlm( ::cHisMovT)
                      ::Integra( hb_QWith() )
                   end with
 
                end if
 
-               if !Empty( ( ::cHisMov )->cAloMov ) .and. ( ::cHisMov )->cAloMov == cCodAlm
+               if !Empty( ( ::cHisMovT)->cAloMov ) .and. ( ::cHisMovT)->cAloMov == cCodAlm
 
                   with object ( SStock():New() )
-                     :cCodigo             := ( ::cHisMov )->cRefMov
-                     :cCodigoPropiedad1   := ( ::cHisMov )->cCodPr1
-                     :cCodigoPropiedad2   := ( ::cHisMov )->cCodPr2
-                     :cValorPropiedad1    := ( ::cHisMov )->cValPr1
-                     :cValorPropiedad2    := ( ::cHisMov )->cValPr2
-                     :cLote               := ( ::cHisMov )->cLote
-                     :nUnidades           := - nTotNMovAlm( ::cHisMov )
+                     :cCodigo             := ( ::cHisMovT)->cRefMov
+                     :cCodigoPropiedad1   := ( ::cHisMovT)->cCodPr1
+                     :cCodigoPropiedad2   := ( ::cHisMovT)->cCodPr2
+                     :cValorPropiedad1    := ( ::cHisMovT)->cValPr1
+                     :cValorPropiedad2    := ( ::cHisMovT)->cValPr2
+                     :cLote               := ( ::cHisMovT)->cLote
+                     :nUnidades           := - nTotNMovAlm( ::cHisMovT)
                      ::Integra( hb_QWith() )
                   end with
 
                end if
 
-               ( ::cHisMov )->( dbSkip() )
+               ( ::cHisMovT)->( dbSkip() )
 
             end while
 
@@ -6166,7 +5424,7 @@ METHOD aStockAlmacen( oRemMov ) CLASS TStock
    ( ::cTikL    )->( OrdSetFocus( nOrdTikCliL ) )
    ( ::cProducL )->( OrdSetFocus( nOrdProducL ) )
    ( ::cProducM )->( OrdSetFocus( nOrdProducM ) )
-   ( ::cHisMov  )->( OrdSetFocus( nOrdHisMov  ) )
+   ( ::cHisMovT )->( OrdSetFocus( nOrdHisMov  ) )
 
 return ( ::aStocks )
 
@@ -6490,7 +5748,7 @@ Return ( nRiesgo )
 METHOD lCheckConsolidacion( cCodArt, cCodAlm, cCodPrp1, cCodPrp2, cValPrp1, cValPrp2, cLote, dFecha )
 
    local lCheck         := .f.
-   local nRec           := ( ::cHisMov )->( Recno() )
+   local nRec           := ( ::cHisMovT)->( Recno() )
 
    DEFAULT cCodAlm      := Space( 3 )  
    DEFAULT cCodPrp1     := Space( 10 )
@@ -6501,33 +5759,33 @@ METHOD lCheckConsolidacion( cCodArt, cCodAlm, cCodPrp1, cCodPrp2, cValPrp1, cVal
 
    ::dConsolidacion     := nil
 
-   if dbSeekInOrd( cCodArt + cCodAlm + cCodPrp1 + cCodPrp2 + cValPrp1 + cValPrp2 + cLote, "cStock", ::cHisMov )
+   if dbSeekInOrd( cCodArt + cCodAlm + cCodPrp1 + cCodPrp2 + cValPrp1 + cValPrp2 + cLote, "cStock", ::cHisMovT)
 
-      while ( ::cHisMov )->cRefMov == cCodArt .and. !( ::cHisMov )->( Eof() )
+      while ( ::cHisMovT)->cRefMov == cCodArt .and. !( ::cHisMovT)->( Eof() )
 
-         if ( ::cHisMov )->nTipMov == 4
+         if ( ::cHisMovT)->nTipMov == 4
 
             if Empty( ::dConsolidacion )
 
-               ::dConsolidacion     := ( ::cHisMov )->dFecMov
+               ::dConsolidacion     := ( ::cHisMovT)->dFecMov
 
             else
 
-               if ( ::cHisMov )->dFecMov > ::dConsolidacion
-                  ::dConsolidacion  := ( ::cHisMov )->dFecMov
+               if ( ::cHisMovT)->dFecMov > ::dConsolidacion
+                  ::dConsolidacion  := ( ::cHisMovT)->dFecMov
                end if
 
             end if
 
          end if
 
-         ( ::cHisMov )->( dbSkip() )
+         ( ::cHisMovT)->( dbSkip() )
 
       end while
 
    end if
 
-   ( ::cHisMov )->( dbGoTo( nRec ) )
+   ( ::cHisMovT)->( dbGoTo( nRec ) )
 
    lCheck    := ( Empty( ::dConsolidacion ) .or. dFecha >= ::dConsolidacion )
 

@@ -280,11 +280,6 @@ static dbfPedCliP
 static dbfPreCliT
 static dbfPreCliL
 
-static dbfProLin
-static dbfProMat
-static dbfProSer
-static dbfMatSer
-
 static dbfTImp
 
 static oVisor
@@ -751,20 +746,6 @@ STATIC FUNCTION OpenFiles( cPatEmp, lExt, lTactil )
       USE ( cPatArt() + "Temporadas.Dbf" ) NEW VIA ( cDriver() ) SHARED ALIAS ( cCheckArea( "Temporada", @dbfTemporada ) )
       SET ADSINDEX TO ( cPatArt() + "Temporadas.Cdx" ) ADDITIVE
 
-      USE ( cPatEmp() + "PROLIN.DBF" ) NEW VIA ( cDriver() ) SHARED ALIAS ( cCheckArea( "PROLIN", @dbfProLin ) )
-      SET ADSINDEX TO ( cPatEmp() + "PROLIN.CDX" ) ADDITIVE
-      SET TAG TO "cCodArt"
-
-      USE ( cPatEmp() + "PROMAT.DBF" ) NEW VIA ( cDriver() ) SHARED ALIAS ( cCheckArea( "PROMAT", @dbfProMat ) )
-      SET ADSINDEX TO ( cPatEmp() + "PROMAT.CDX" ) ADDITIVE
-      SET TAG TO "cCodArt"
-
-      USE ( cPatEmp() + "PROSER.DBF" ) NEW VIA ( cDriver() ) SHARED ALIAS ( cCheckArea( "PROSER", @dbfProSer ) )
-      SET ADSINDEX TO ( cPatEmp() + "PROSER.CDX" ) ADDITIVE
-
-      USE ( cPatEmp() + "MatSer.Dbf" ) NEW VIA ( cDriver() ) SHARED ALIAS ( cCheckArea( "MatSer", @dbfMatSer ) )
-      SET ADSINDEX TO ( cPatEmp() + "MatSer.Cdx" ) ADDITIVE
-
       oCaptura             := TCaptura():New( cPatDat() )
       oCaptura:OpenFiles()
 
@@ -774,54 +755,8 @@ STATIC FUNCTION OpenFiles( cPatEmp, lExt, lTactil )
       oBandera             := TBandera():New()
 
       oStock               := TStock():Create( cPatGrp() )
-
       if !oStock:lOpenFiles()
-
          lOpenFiles        := .f.
-
-      else
-
-         oStock:cKit       := dbfKit
-
-         oStock:cAlbCliT   := dbfAlbCliT
-         oStock:cAlbCliL   := dbfAlbCliL
-         oStock:cAlbCliS   := dbfAlbCliS
-
-         oStock:cFacCliT   := dbfFacCliT
-         oStock:cFacCliL   := dbfFacCliL
-         oStock:cFacCliS   := dbfFacCliS
-         oStock:cFacCliP   := dbfFacCliP
-
-         oStock:cFacRecT   := dbfFacRecT
-         oStock:cFacRecL   := dbfFacRecL
-         oStock:cFacRecS   := dbfFacRecS
-
-         oStock:cAntCliT   := dbfAntCliT
-
-         oStock:cTikT      := dbfTikT
-         oStock:cTikL      := dbfTikL
-         oStock:cTikS      := dbfTikS
-
-         oStock:cHisMov    := dbfHisMov
-         oStock:cHisMovS   := dbfHisMovS
-
-         oStock:cAlbPrvT   := dbfAlbPrvT
-         oStock:cAlbPrvL   := dbfAlbPrvL
-         oStock:cAlbPrvS   := dbfAlbPrvS
-
-         oStock:cFacPrvT   := dbfFacPrvT
-         oStock:cFacPrvL   := dbfFacPrvL
-         oStock:cFacPrvS   := dbfFacPrvS
-
-         oStock:cRctPrvT   := dbfRctPrvT
-         oStock:cRctPrvL   := dbfRctPrvL
-         oStock:cRctPrvS   := dbfRctPrvS
-
-         oStock:cProducL   := dbfProLin
-         oStock:cProducM   := dbfProMat
-         oStock:cProducS   := dbfProSer
-         oStock:cProducP   := dbfMatSer
-
       end if
 
       oNewImp              := TNewImp():New( cPatEmp )
@@ -1040,11 +975,6 @@ STATIC FUNCTION CloseFiles()
    CLOSE ( dbfComentariosL )
 
    CLOSE ( dbfTImp     )
-
-   CLOSE ( dbfProLin   )
-   CLOSE ( dbfProMat   )
-   CLOSE ( dbfProSer   )
-   CLOSE ( dbfMatSer   )
 
    if !Empty( oCaptura )
       oCaptura:End()

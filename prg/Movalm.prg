@@ -179,9 +179,6 @@ STATIC FUNCTION OpenFiles()
       SET ADSINDEX TO ( cPatEmp() + "ALBCLIL.CDX" ) ADDITIVE
       ( dbfAlbCliL )->( ordSetFocus( "cRef" ) )
 
-      USE ( cPatEmp() + "FACCLIT.DBF" ) NEW VIA ( cDriver() ) SHARED ALIAS ( cCheckArea( "FACCLIT", @dbfFacCliT ) )
-      SET ADSINDEX TO ( cPatEmp() + "FACCLIT.CDX" ) ADDITIVE
-
       USE ( cPatEmp() + "FACCLIL.DBF" ) NEW VIA ( cDriver() ) SHARED ALIAS ( cCheckArea( "FACCLIL", @dbfFacCliL ) )
       SET ADSINDEX TO ( cPatEmp() + "FACCLIL.CDX" ) ADDITIVE
       ( dbfFacCliL )->( ordSetFocus( "cRef" ) )
@@ -226,29 +223,13 @@ STATIC FUNCTION OpenFiles()
       USE ( cPatEmp() + "PEDCLIL.DBF" ) NEW VIA ( cDriver() ) SHARED ALIAS ( cCheckArea( "PEDCLI", @dbfPedCliL ) )
       SET ADSINDEX TO ( cPatEmp() + "PEDCLIL.CDX" ) ADDITIVE
 
+      if !TDataCenter():OpenFacCliT( @dbfFacCliT )
+         lOpenFiles     := .f.
+      end if
+
       oStock            := TStock():Create( cPatGrp() )
       if !oStock:lOpenFiles()
          lOpenFiles     := .f.
-      else
-      oStock:cPedPrvL   := dbfPedPrvL
-      oStock:cPedCliL   := dbfPedCliL
-      oStock:cAlbPrvT   := dbfAlbPrvT
-      oStock:cAlbPrvL   := dbfAlbPrvL
-      oStock:cFacPrvT   := dbfFacPrvT
-      oStock:cFacPrvL   := dbfFacPrvL
-      oStock:cRctPrvT   := dbfRctPrvT
-      oStock:cRctPrvL   := dbfRctPrvL
-      oStock:cAlbCliT   := dbfAlbCliT
-      oStock:cAlbCliL   := dbfAlbCliL
-      oStock:cFacCliT   := dbfFacCliT
-      oStock:cFacCliL   := dbfFacCliL
-      oStock:cFacRecT   := dbfFacRecT
-      oStock:cFacRecL   := dbfFacRecL
-      oStock:cTikT      := dbfTikCliT
-      oStock:cTikL      := dbfTikCliL
-      oStock:cHisMov    := dbfHisMov
-      oStock:cProducL   := dbfProLin
-      oStock:cProducM   := dbfProMat
       end if
 
       if ( dbfDiv )->( dbSeek( cDivEmp() ) )

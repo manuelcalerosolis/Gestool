@@ -1046,8 +1046,8 @@ Method LoadDocuments() CLASS TInitShell
 
    BEGIN SEQUENCE
 
-      USE ( cPatEmp() + "FacCliT.Dbf" ) NEW VIA ( cDriver() ) SHARED ALIAS ( cCheckArea( "FacCli", @dbf ) )
-      SET ADSINDEX TO ( cPatEmp() + "FacCliT.Cdx" ) ADDITIVE
+      TDataCenter():OpenFacCliT( @dbf )
+      
       ( dbf )->( OrdSetFocus( "cCodUsr" ) )
 
       oMsgText( "Facturas a clientes" )

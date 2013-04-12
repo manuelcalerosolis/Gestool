@@ -703,38 +703,6 @@ METHOD OpenFiles( lExclusive )
       lOpen          := .f.
    end if
 
-   ::oStock:cAlbPrvL   := ::oAlbPrvL:cAlias
-   ::oStock:cAlbPrvS   := ::oAlbPrvS:cAlias
-
-   ::oStock:cFacPrvL   := ::oFacPrvL:cAlias
-   ::oStock:cFacPrvS   := ::oFacPrvS:cAlias
-
-   ::oStock:cRctPrvL   := ::oRctPrvL:cAlias
-   ::oStock:cRctPrvS   := ::oRctPrvS:cAlias
-
-   ::oStock:cAlbCliT   := ::oAlbCliT:cAlias
-   ::oStock:cAlbCliL   := ::oAlbCliL:cAlias
-   ::oStock:cAlbCliS   := ::oAlbCliS:cAlias
-
-   ::oStock:cFacCliT   := ::oFacCliT:cAlias
-   ::oStock:cFacCliL   := ::oFacCliL:cAlias
-   ::oStock:cFacCliS   := ::oFacCliS:cAlias
-
-   ::oStock:cFacRecT   := ::oFacRecT:cAlias
-   ::oStock:cFacRecL   := ::oFacRecL:cAlias
-   ::oStock:cFacRecS   := ::oFacRecS:cAlias
-
-   ::oStock:cTikT      := ::oTikCliT:cAlias
-   ::oStock:cTikL      := ::oTikCliL:cAlias
-   ::oStock:cTikS      := ::oTikCliS:cAlias
-
-   ::oStock:cHisMov    := ::oHisMov:cAlias
-
-   ::oStock:cProducL   := ::oDetProduccion:oDbf:cAlias
-   ::oStock:cProducM   := ::oDetMaterial:oDbf:cAlias
-   ::oStock:cProducS   := ::oDetSeriesProduccion:oDbf:cAlias
-   ::oStock:cProducP   := ::oDetSeriesMaterial:oDbf:cAlias
-
    RECOVER USING oError
 
       lOpen          := .f.

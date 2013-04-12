@@ -737,8 +737,9 @@ STATIC FUNCTION OpenFiles( lExt )
       USE ( cPatEmp() + "FacRecS.DBF" ) NEW VIA ( cDriver() ) SHARED ALIAS ( cCheckArea( "FacRecS", @dbfFacRecS ) )
       SET ADSINDEX TO ( cPatEmp() + "FacRecS.CDX" ) ADDITIVE
 
-      USE ( cPatEmp() + "FacCliT.DBF" ) NEW VIA ( cDriver() ) SHARED ALIAS ( cCheckArea( "FacCliT", @dbfFacCliT ) )
-      SET ADSINDEX TO ( cPatEmp() + "FacCliT.CDX" ) ADDITIVE
+      if !TDataCenter():OpenFacCliT( @dbfFacCliT )
+         lOpenFiles     := .f.
+      end if
 
       USE ( cPatEmp() + "FacCliL.DBF" ) NEW VIA ( cDriver() ) SHARED ALIAS ( cCheckArea( "FacCliL", @dbfFacCliL ) )
       SET ADSINDEX TO ( cPatEmp() + "FacCliL.CDX" ) ADDITIVE
@@ -746,9 +747,11 @@ STATIC FUNCTION OpenFiles( lExt )
       USE ( cPatEmp() + "FacCliS.DBF" ) NEW VIA ( cDriver() ) SHARED ALIAS ( cCheckArea( "FacCliS", @dbfFacCliS ) )
       SET ADSINDEX TO ( cPatEmp() + "FacCliS.CDX" ) ADDITIVE
 
-      USE ( cPatEmp() + "FacCliP.DBF" ) NEW VIA ( cDriver() ) SHARED ALIAS ( cCheckArea( "FacCliP", @dbfFacCliP ) )
-      SET ADSINDEX TO ( cPatEmp() + "FacCliP.CDX" ) ADDITIVE
-      ( dbfFacCliP )->( OrdSetFocus( "rNumFac" ) )
+	  	if !TDataCenter():OpenFacCliP( @dbfFacCliP )
+   			lOpenFiles     := .f.
+   		else
+			( dbfFacCliP )->( OrdSetFocus( "rNumFac" ) )
+		end if
 
       USE ( cPatEmp() + "ALBCLIT.DBF" ) NEW VIA ( cDriver() ) SHARED ALIAS ( cCheckArea( "ALBCLIT", @dbfAlbCliT ) )
       SET ADSINDEX TO ( cPatEmp() + "ALBCLIT.CDX" ) ADDITIVE
@@ -947,49 +950,6 @@ STATIC FUNCTION OpenFiles( lExt )
       oStock            := TStock():Create( cPatGrp() )
       if !oStock:lOpenFiles()
          lOpenFiles     := .f.
-      else
-      oStock:cKit       := dbfKit
-
-      oStock:cPedCliT   := dbfPedCliT
-      oStock:cPedCliL   := dbfPedCliL
-
-      oStock:cAlbCliT   := dbfAlbCliT
-      oStock:cAlbCliL   := dbfAlbCliL
-      oStock:cAlbCliS   := dbfAlbCliS
-
-      oStock:cFacCliT   := dbfFacCliT
-      oStock:cFacCliL   := dbfFacCliL
-      oStock:cFacCliS   := dbfFacCliS
-      oStock:cFacCliP   := dbfFacCliP
-
-      oStock:cFacRecT   := dbfFacRecT
-      oStock:cFacRecL   := dbfFacRecL
-      oStock:cFacRecS   := dbfFacRecS
-
-      oStock:cTikT      := dbfTikCliT
-      oStock:cTikL      := dbfTikCliL
-      oStock:cTikS      := dbfTikCliS
-
-      oStock:cAntCliT   := dbfAntCliT
-
-      oStock:cPedPrvL   := dbfPedPrvL
-      oStock:cAlbPrvL   := dbfAlbPrvL
-      oStock:cAlbPrvS   := dbfAlbPrvS
-
-      oStock:cFacPrvL   := dbfFacPrvL
-      oStock:cFacPrvS   := dbfFacPrvS
-
-      oStock:cRctPrvL   := dbfRctPrvL
-      oStock:cRctPrvS   := dbfRctPrvS
-
-      oStock:cProducL   := dbfProLin
-      oStock:cProducM   := dbfProMat
-      oStock:cProducS   := dbfProSer
-      oStock:cProducP   := dbfMatSer
-
-      oStock:cHisMov    := dbfHisMov
-      oStock:cHisMovS   := dbfHisMovS
-
       end if
 
       oCtaRem           := TCtaRem():Create( cPatCli() )

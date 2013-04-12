@@ -2344,9 +2344,8 @@ STATIC FUNCTION GenDiario( dInfDesde, dInfHasta, lPreCli, lPedCli, lAlbCli, lFac
 
    if lFacCli
 
-      USE ( cPatEmp() + "FACCLIT.DBF" ) NEW VIA ( cDriver() ) SHARED ALIAS ( cCheckArea( "FACCLIT", @dbfFacCliT ) )
-      SET ADSINDEX TO ( cPatEmp() + "FACCLIT.CDX" ) ADDITIVE
-      ( dbfPedCliT )->( OrdSetFocus( "DFECFAC" ) )
+      TDataCenter():OpenFacCliT( @dbfFacCliT )
+      ( dbfFacCliT )->( OrdSetFocus( "DFECFAC" ) )
 
       USE ( cPatEmp() + "FACCLIL.DBF" ) NEW VIA ( cDriver() ) SHARED ALIAS ( CCHECKAREA( "FACCLIL", @dbfFacCliL ) )
       SET ADSINDEX TO ( cPatEmp() + "FACCLIL.CDX" ) ADDITIVE

@@ -784,44 +784,18 @@ STATIC FUNCTION OpenFiles( lExt )
       USE ( cPatEmp() + "ALBCLIT.DBF" ) NEW VIA ( cDriver() ) SHARED ALIAS ( cCheckArea( "ALBCLIT", @dbfAlbCliT ) )
       SET ADSINDEX TO ( cPatEmp() + "ALBCLIT.CDX" ) ADDITIVE
 
-      USE ( cPatEmp() + "FacCliP.Dbf" ) NEW VIA ( cDriver() ) SHARED ALIAS ( cCheckArea( "FacCliP", @dbfFacCliP ) )
-      SET ADSINDEX TO ( cPatEmp() + "FacCliP.Cdx" ) ADDITIVE
-
       USE ( cPatEmp() + "AntCliT.Dbf" ) NEW VIA ( cDriver() ) SHARED ALIAS ( cCheckArea( "AntCliT", @dbfAntCliT ) )
       SET ADSINDEX TO ( cPatEmp() + "AntCliT.Cdx" ) ADDITIVE
+
+      if !TDataCenter():OpenFacCliP( @dbfFacCliP )
+         lOpenFiles     := .f.
+      end if
 
       oBandera          := TBandera():New()
 
       oStock            := TStock():Create( cPatGrp() )
       if !oStock:lOpenFiles()
          lOpenFiles     := .f.
-      else
-         oStock:cKit       := dbfKit
-
-         oStock:cPedPrvL   := dbfPedPrvL
-         oStock:cAlbPrvL   := dbfAlbPrvL
-         oStock:cFacPrvL   := dbfFacPrvL
-         oStock:cRctPrvL   := dbfRctPrvL
-
-         oStock:cPedCliL   := dbfPedCliL
-
-         oStock:cAlbCliT   := dbfAlbCliT
-         oStock:cAlbCliL   := dbfAlbCliL
-
-         oStock:cFacCliL   := dbfFacCliL
-         oStock:cFacCliP   := dbfFacCliP
-
-         oStock:cFacRecL   := dbfFacRecL
-
-         oStock:cAntCliT   := dbfAntCliT
-
-         oStock:cTikT      := dbfTikCliT
-         oStock:cTikL      := dbfTikCliL
-
-         oStock:cProducL   := dbfProLin
-         oStock:cProducM   := dbfProMat
-
-         oStock:cHisMov    := dbfHisMov
       end if
 
       oNewImp           := TNewImp():New( cPatEmp() )
@@ -906,8 +880,15 @@ STATIC FUNCTION OpenFiles( lExt )
       Limitaciones de cajero y cajas--------------------------------------------------------
       */
 
-      if oUser():lFiltroVentas()
-         cFiltroUsuario    := "Field->cCodUsr == '" + oUser():cCodigo() + "' .and. Field->cCodCaj == '" + oUser():cCaja() + "'"
+      if lAIS() .and. !oUser():lAdministrador()
+      
+         cFiltroUsuario    := "Field->cSufPre == '" + oUser():cDelegacion() + "' .and. Field->cCodCaj == '" + oUser():cCaja() + "'"
+         if oUser():lFiltroVentas()         
+            cFiltroUsuario += " .and. Field->cCodUsr == '" + oUser():cCodigo() + "'"
+         end if 
+
+         ( dbfPreCliT )->( AdsSetAOF( cFiltroUsuario ) )
+
       end if
 
       EnableAcceso()
@@ -1329,8 +1310,6 @@ FUNCTION PreCli( oMenuItem, oWnd, cCodCli, cCodArt )
       OF       oWnd
 
 	  oWndBrw:lFechado     := .t.
-
-	  oWndBrw:bChgIndex    := {|| if( oUser():lFiltroVentas(), CreateFastFilter( cFiltroUsuario, dbfPreCliT, .f., , cFiltroUsuario ), CreateFastFilter( "", dbfPreCliT, .f. ) ) }
 
 	  oWndBrw:SetYearComboBoxChange( {|| YearComboBoxChange() } )
 

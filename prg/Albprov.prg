@@ -538,47 +538,7 @@ STATIC FUNCTION OpenFiles( lExt )
 
       oStock               := TStock():Create( cPatGrp() )
       if !oStock:lOpenFiles()
-
          lOpenFiles        := .f.
-
-      else
-
-         oStock:cPedPrvT   := dbfPedPrvT
-         oStock:cPedPrvL   := dbfPedPrvL
-
-         oStock:cAlbPrvT   := dbfAlbPrvT
-         oStock:cAlbPrvL   := dbfAlbPrvL
-         oStock:cAlbPrvS   := dbfAlbPrvS
-
-         oStock:cFacPrvL   := dbfFacPrvL
-         oStock:cFacPrvS   := dbfFacPrvS
-
-         oStock:cRctPrvL   := dbfRctPrvL
-         oStock:cRctPrvS   := dbfRctPrvS
-
-         oStock:cPedCliT   := dbfPedCliT
-         oStock:cPedCliL   := dbfPedCliL
-
-         oStock:cKit       := dbfKit
-
-         oStock:cAlbCliL   := dbfAlbCliL
-         oStock:cAlbCliS   := dbfAlbCliS
-
-         oStock:cFacCliL   := dbfFacCliL
-         oStock:cFacCliS   := dbfFacCliS
-
-         oStock:cFacRecL   := dbfFacRecL
-         oStock:cFacRecS   := dbfFacRecS
-
-         oStock:cTikL      := dbfTikCliL
-         oStock:cTikS      := dbfTikCliS
-
-         oStock:cProducL   := dbfProLin
-         oStock:cProducS   := dbfProSer
-
-         oStock:cProducM   := dbfProMat
-         oStock:cHisMov    := dbfHisMov
-
       end if
 
       cPicUnd              := MasUnd()                               // Picture de las unidades

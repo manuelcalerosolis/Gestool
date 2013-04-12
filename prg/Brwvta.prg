@@ -127,7 +127,7 @@ static oGraph
 
 Static Function OpenFiles()
 
-   local lOpen       := .f.
+   local lOpen       := .t.
    local oError
    local oBlock
 
@@ -222,15 +222,9 @@ Static Function OpenFiles()
    SET ADSINDEX TO ( cPatEmp() + "ALBCLIL.CDX" ) ADDITIVE
    SET TAG TO "CREF"
 
-   USE ( cPatEmp() + "FACCLIT.DBF" ) NEW VIA ( cDriver() ) SHARED ALIAS ( cCheckArea( "FACCLIT", @dbfFacCliT ) )
-   SET ADSINDEX TO ( cPatEmp() + "FACCLIT.CDX" ) ADDITIVE
-
    USE ( cPatEmp() + "FACCLIL.DBF" ) NEW VIA ( cDriver() ) SHARED ALIAS ( cCheckArea( "FACCLIL", @dbfFacCliL ) )
    SET ADSINDEX TO ( cPatEmp() + "FACCLIL.CDX" ) ADDITIVE
    SET TAG TO "CREF"
-
-   USE ( cPatEmp() + "FACCLIP.DBF" ) NEW VIA ( cDriver() ) SHARED ALIAS ( cCheckArea( "FACCLIP", @dbfFacCliP ) )
-   SET ADSINDEX TO ( cPatEmp() + "FACCLIP.CDX" ) ADDITIVE
 
    USE ( cPatEmp() + "FACRECT.DBF" ) NEW VIA ( cDriver() ) SHARED ALIAS ( cCheckArea( "FACRECT", @dbfFacRecT ) )
    SET ADSINDEX TO ( cPatEmp() + "FACRECT.CDX" ) ADDITIVE
@@ -267,42 +261,21 @@ Static Function OpenFiles()
    SET ADSINDEX TO ( cPatEmp() + "PROMAT.CDX" ) ADDITIVE
    SET TAG TO "CCODART"
 
+   if !TDataCenter():OpenFacCliT( @dbfFacCliT )
+      lOpen             := .f.
+   end if
+
+   if !TDataCenter():OpenFacCliP( @dbfFacCliP )
+      lOpen             := .f.
+   end if
+
    oDbfTmp              := DefineTemporal()
    oDbfTmp:Activate( .f., .f. )
 
    oStock               := TStock():Create( cPatGrp() )
-   if oStock:lOpenFiles()
-
-      oStock:cPedCliT   := dbfPedCliT
-      oStock:cPedCliL   := dbfPedCliL
-      oStock:cPedCliR   := dbfPedCliR
-      oStock:cAlbCliT   := dbfAlbCliT
-      oStock:cAlbCliL   := dbfAlbCliL
-      oStock:cFacCliT   := dbfFacCliT
-      oStock:cFacCliL   := dbfFacCliL
-      oStock:cFacRecT   := dbfFacRecT
-      oStock:cFacRecL   := dbfFacRecL
-      oStock:cTikT      := dbfTikCliT
-      oStock:cTikL      := dbfTikCliL
-
-      oStock:cKit       := dbfArtKit
-
-      oStock:cPedPrvL   := dbfPedPrvL
-      oStock:cAlbPrvT   := dbfAlbPrvT
-      oStock:cAlbPrvL   := dbfAlbPrvL
-      oStock:cFacPrvT   := dbfFacPrvT
-      oStock:cFacPrvL   := dbfFacPrvL
-      oStock:cRctPrvT   := dbfRctPrvT
-      oStock:cRctPrvL   := dbfRctPrvL
-
-      oStock:cProducT   := dbfProducT
-      oStock:cProducL   := dbfProducL
-      oStock:cProducM   := dbfProducM
-      oStock:cHisMov    := dbfMovAlm
-
+   if !oStock:lOpenFiles()
+      lOpen             := .f.
    end if
-
-   lOpen             := .t.
 
    RECOVER USING oError
 
@@ -3468,266 +3441,6 @@ return oMenu:End()
 /*
 Calculo de stock se usa en stock.prg
 */
-
-function nStockCalculado( cCodArt )
-
-   local oBlock
-   local oError
-   local nUndVta     := 0
-   local nUndAlm     := 0
-   local nUndCom     := 0
-   local nTotActStk  := 0
-
-   CursorWait()
-
-   /*
-   Documentos relacionados de compras
-   */
-
-   oBlock            := ErrorBlock( {| oError | ApoloBreak( oError ) } )
-   BEGIN SEQUENCE
-
-   USE ( cPatEmp() + "PEDPROVT.DBF" ) NEW VIA ( cDriver() ) SHARED ALIAS ( cCheckArea( "PEDPROVT", @dbfPedPrvT ) )
-   SET ADSINDEX TO ( cPatEmp() + "PEDPROVT.CDX" ) ADDITIVE
-
-   USE ( cPatEmp() + "PEDPROVL.DBF" ) NEW VIA ( cDriver() ) SHARED ALIAS ( cCheckArea( "PEDPROVL", @dbfPedPrvL ) )
-   SET ADSINDEX TO ( cPatEmp() + "PEDPROVL.CDX" ) ADDITIVE
-   SET TAG TO "CREF"
-
-   USE ( cPatEmp() + "ALBPROVT.DBF" ) NEW VIA ( cDriver() ) SHARED ALIAS ( cCheckArea( "ALBPROVT", @dbfAlbPrvT ) )
-   SET ADSINDEX TO ( cPatEmp() + "ALBPROVT.CDX" ) ADDITIVE
-
-   USE ( cPatEmp() + "ALBPROVL.DBF" ) NEW VIA ( cDriver() ) SHARED ALIAS ( cCheckArea( "ALBPROVL", @dbfAlbPrvL ) )
-   SET ADSINDEX TO ( cPatEmp() + "ALBPROVL.CDX" ) ADDITIVE
-   SET TAG TO "CREF"
-
-   USE ( cPatEmp() + "FACPRVT.DBF" ) NEW VIA ( cDriver() ) SHARED ALIAS ( cCheckArea( "FACPRVT", @dbfFacPrvT ) )
-   SET ADSINDEX TO ( cPatEmp() + "FACPRVT.CDX" ) ADDITIVE
-
-   USE ( cPatEmp() + "FACPRVL.DBF" ) NEW VIA ( cDriver() ) SHARED ALIAS ( cCheckArea( "FACPRVL", @dbfFacPrvL ) )
-   SET ADSINDEX TO ( cPatEmp() + "FACPRVL.CDX" ) ADDITIVE
-   SET TAG TO "CREF"
-
-   /*
-   Documentos relacionados de ventas
-   */
-
-   USE ( cPatEmp() + "PRECLIT.DBF" ) NEW VIA ( cDriver() ) SHARED ALIAS ( cCheckArea( "PRECLIT", @dbfPreCliT ) )
-   SET ADSINDEX TO ( cPatEmp() + "PRECLIT.CDX" ) ADDITIVE
-
-   USE ( cPatEmp() + "PRECLIL.DBF" ) NEW VIA ( cDriver() ) SHARED ALIAS ( cCheckArea( "PRECLIL", @dbfPreCliL ) )
-   SET ADSINDEX TO ( cPatEmp() + "PRECLIL.CDX" ) ADDITIVE
-   SET TAG TO "CREF"
-
-   /*
-   Documentos relacionados de ventas
-   */
-
-   USE ( cPatEmp() + "PEDCLIT.DBF" ) NEW VIA ( cDriver() ) SHARED ALIAS ( cCheckArea( "PEDCLIT", @dbfPedCliT ) )
-   SET ADSINDEX TO ( cPatEmp() + "PEDCLIT.CDX" ) ADDITIVE
-
-   USE ( cPatEmp() + "PEDCLIL.DBF" ) NEW VIA ( cDriver() ) SHARED ALIAS ( cCheckArea( "PEDCLIL", @dbfPedCliL ) )
-   SET ADSINDEX TO ( cPatEmp() + "PEDCLIL.CDX" ) ADDITIVE
-   SET TAG TO "CREF"
-
-   USE ( cPatEmp() + "PEDCLIR.DBF" ) NEW VIA ( cDriver() ) SHARED ALIAS ( cCheckArea( "PEDCLIR", @dbfPedCliR ) )
-   SET ADSINDEX TO ( cPatEmp() + "PEDCLIR.CDX" ) ADDITIVE
-   SET TAG TO "CREF"
-
-   USE ( cPatEmp() + "ALBCLIT.DBF" ) NEW VIA ( cDriver() ) SHARED ALIAS ( cCheckArea( "ALBCLIT", @dbfAlbCliT ) )
-   SET ADSINDEX TO ( cPatEmp() + "ALBCLIT.CDX" ) ADDITIVE
-
-   USE ( cPatEmp() + "ALBCLIL.DBF" ) NEW VIA ( cDriver() ) SHARED ALIAS ( cCheckArea( "ALBCLIL", @dbfAlbCliL ) )
-   SET ADSINDEX TO ( cPatEmp() + "ALBCLIL.CDX" ) ADDITIVE
-   SET TAG TO "CREF"
-
-   USE ( cPatEmp() + "FACCLIT.DBF" ) NEW VIA ( cDriver() ) SHARED ALIAS ( cCheckArea( "FACCLIT", @dbfFacCliT ) )
-   SET ADSINDEX TO ( cPatEmp() + "FACCLIT.CDX" ) ADDITIVE
-
-   USE ( cPatEmp() + "FACCLIL.DBF" ) NEW VIA ( cDriver() ) SHARED ALIAS ( cCheckArea( "FACCLIL", @dbfFacCliL ) )
-   SET ADSINDEX TO ( cPatEmp() + "FACCLIL.CDX" ) ADDITIVE
-   SET TAG TO "CREF"
-
-   USE ( cPatEmp() + "FACRECT.DBF" ) NEW VIA ( cDriver() ) SHARED ALIAS ( cCheckArea( "FACRECT", @dbfFacRecT ) )
-   SET ADSINDEX TO ( cPatEmp() + "FACRECT.CDX" ) ADDITIVE
-
-   USE ( cPatEmp() + "FACRECL.DBF" ) NEW VIA ( cDriver() ) SHARED ALIAS ( cCheckArea( "FACRECL", @dbfFacRecL ) )
-   SET ADSINDEX TO ( cPatEmp() + "FACRECL.CDX" ) ADDITIVE
-   SET TAG TO "CREF"
-
-   USE ( cPatEmp() + "FACCLIP.DBF" ) NEW VIA ( cDriver() ) SHARED ALIAS ( cCheckArea( "FACCLIP", @dbfFacCliP ) )
-   SET ADSINDEX TO ( cPatEmp() + "FACCLIP.CDX" ) ADDITIVE
-
-   USE ( cPatEmp() + "TIKET.DBF" ) NEW VIA ( cDriver() ) SHARED ALIAS ( cCheckArea( "TIKET", @dbfTikCliT ) )
-   SET ADSINDEX TO ( cPatEmp() + "TIKET.CDX" ) ADDITIVE
-
-   USE ( cPatEmp() + "TIKEL.DBF" ) NEW VIA ( cDriver() ) SHARED ALIAS ( cCheckArea( "TIKEL", @dbfTikCliL ) )
-   SET ADSINDEX TO ( cPatEmp() + "TIKEL.CDX" ) ADDITIVE
-   SET TAG TO "CCBATIL"
-
-   USE ( cPatEmp() + "TIKEP.DBF" ) NEW VIA ( cDriver() ) SHARED ALIAS ( cCheckArea( "TIKEP", @dbfTikCliP ) )
-   SET ADSINDEX TO ( cPatEmp() + "TIKEP.CDX" ) ADDITIVE
-
-   USE ( cPatEmp() + "HISMOV.DBF" ) NEW VIA ( cDriver() ) SHARED ALIAS ( cCheckArea( "HISMOV", @dbfMovAlm ) )
-   SET ADSINDEX TO ( cPatEmp() + "HISMOV.CDX" ) ADDITIVE
-   SET TAG TO "CREFMOV"
-
-   /*
-   Calculo de compras----------------------------------------------------------
-   */
-
-   if ( dbfAlbPrvL )->( dbSeek( cCodArt ) )
-      while ( dbfAlbPrvL )->cRef == cCodArt .and. !( dbfAlbPrvL )->( Eof() )
-         if ( dbfAlbPrvT )->( dbSeek( ( dbfAlbPrvL )->CSERALB + Str( ( dbfAlbPrvL )->NNUMALB ) + (dbfAlbPrvL)->CSUFALB ) )
-            if !( dbfAlbPrvT )->lFacturado
-               nUndCom  += nTotNAlbPrv( dbfAlbPrvL )
-            end if
-         end if
-         SysRefresh()
-         ( dbfAlbPrvL )->( dbSkip() )
-      end do
-   end if
-
-   if ( dbfFacPrvL )->( dbSeek( cCodArt ) )
-      while ( dbfFacPrvL )->cRef == cCodArt .and. !( dbfFacPrvL )->( Eof() )
-         if ( dbfFacPrvT )->( dbSeek( ( dbfFacPrvL )->CSERFAC + Str( ( dbfFacPrvL )->NNUMFAC ) + (dbfFacPrvL)->CSUFFAC ) )
-            nUndCom     += nTotNFacPrv( dbfFacPrvL )
-         end if
-         SysRefresh()
-         ( dbfFacPrvL )->( dbSkip() )
-      end while
-   end if
-
-   /*
-   Calculo de ventas-----------------------------------------------------------
-   */
-
-   if ( dbfAlbCliL )->( dbSeek( cCodArt ) )
-      while ( dbfAlbCliL )->cRef == cCodArt .and. !( dbfAlbCliL )->( Eof() )
-         if ( dbfAlbCliT )->( dbSeek( ( dbfAlbCliL )->CSERALB + Str( ( dbfAlbCliL )->NNUMALB ) + (dbfAlbCliL)->CSUFALB ) )
-            if !( dbfAlbCliT )->lFacturado
-            nUndVta  += nTotNAlbCli( dbfAlbCliL )
-            end if
-         end if
-         SysRefresh()
-         ( dbfAlbCliL )->( dbSkip() )
-      end do
-   end if
-
-   if ( dbfFacCliL )->( dbSeek( cCodArt ) )
-      while ( dbfFacCliL )->CREF == cCodArt .and. !( dbfFacCliL )->( Eof() )
-         if ( dbfFacCliT )->( dbSeek( ( dbfFacCliL )->CSERIE + Str( ( dbfFacCliL )->NNUMFAC ) + (dbfFacCliL)->CSUFFAC ) )
-            nUndVta  += nTotNFacCli( dbfFacCliL )
-         end if
-         SysRefresh()
-         ( dbfFacCliL )->( dbSkip() )
-      end do
-   end if
-
-   if ( dbfFacRecL )->( dbSeek( cCodArt ) )
-      while ( dbfFacRecL )->cRef == cCodArt .and. !( dbfFacRecL )->( Eof() )
-         if ( dbfFacRecT )->( dbSeek( ( dbfFacRecL )->cSerie + Str( ( dbfFacRecL )->nNumFac ) + (dbfFacRecL)->cSufFac ) )
-            nUndVta  += nTotNFacRec( dbfFacRecL )
-         end if
-         SysRefresh()
-         ( dbfFacRecL )->( dbSkip() )
-      end do
-   end if
-
-   /*
-   Tikets----------------------------------------------------------------------
-   */
-
-   if ( dbfTikCliL )->( dbSeek( cCodArt ) )
-   while ( dbfTikCliL )->cCbaTil == cCodArt .and. !( dbfTikCliL )->( Eof() )
-      if ( dbfTikCliT )->( dbSeek( ( dbfTikCliL )->cSerTil + ( dbfTikCliL )->cNumTil + (dbfTikCliL)->cSufTil ) )
-         if ( dbfTikCliT )->cTipTik == "1" .or. ( dbfTikCliT )->cTipTik == "5"
-            nUndVta  += ( dbfTikCliL )->nUntTil
-         elseif ( dbfTikCliT )->cTipTik == "4"
-            nUndVta  -= ( dbfTikCliL )->nUntTil
-         end if
-         SysRefresh()
-      end if
-      ( dbfTikCliL )->( dbSkip() )
-   end do
-   end if
-
-   /*
-   Combinados------------------------------------------------------------------
-   */
-
-   ( dbfTikCliL )->( ordSetFocus( "cComTil" ) )
-   if ( dbfTikCliL )->( dbSeek( cCodArt ) )
-   while ( dbfTikCliL )->cComTil == cCodArt .and. !( dbfTikCliL )->( Eof() )
-      if ( dbfTikCliT )->( dbSeek( ( dbfTikCliL )->cSerTil + ( dbfTikCliL )->cNumTil + (dbfTikCliL)->cSufTil ) )
-         if ( dbfTikCliT )->cTipTik == "1" .or. ( dbfTikCliT )->cTipTik == "5"
-            nUndVta  += ( dbfTikCliL )->nUntTil
-         elseif ( dbfTikCliT )->cTipTik == "4"
-            nUndVta  -= ( dbfTikCliL )->nUntTil
-         end if
-      end if
-      SysRefresh()
-      ( dbfTikCliL )->( dbSkip() )
-   end do
-   end if
-
-   ( dbfTikCliL )->( ordSetFocus( "cCbaTil" ) )
-
-   /*
-   Calculo de almacen----------------------------------------------------------
-   */
-
-   if ( dbfMovAlm )->( dbSeek( cCodArt ) )
-      while ( dbfMovAlm )->cRefMov == cCodArt .and. !( dbfMovAlm )->( eof() )
-         if !Empty( ( dbfMovAlm )->cAliMov ) .and.;
-            !( dbfMovAlm )->lNoStk
-            nUndAlm  += nTotNMovAlm( dbfMovAlm )
-         end if
-         if !Empty( ( dbfMovAlm )->cAloMov ) .and.;
-            !( dbfMovAlm )->lNoStk
-            nUndAlm  -= nTotNMovAlm( dbfMovAlm )
-         end if
-         SysRefresh()
-         ( dbfMovAlm )->( dbSkip() )
-      end while
-   end if
-
-   nTotActStk  := nUndCom + nUndAlm - nUndVta
-
-   (dbfPedPrvT)->( dbCloseArea() )
-   (dbfPedPrvL)->( dbCloseArea() )
-   (dbfAlbPrvT)->( dbCloseArea() )
-   (dbfAlbPrvL)->( dbCloseArea() )
-   (dbfFacPrvT)->( dbCloseArea() )
-   (dbfFacPrvL)->( dbCloseArea() )
-   (dbfPreCliT)->( dbCloseArea() )
-   (dbfPreCliL)->( dbCloseArea() )
-   (dbfPedCliT)->( dbCloseArea() )
-   (dbfPedCliL)->( dbCloseArea() )
-   (dbfPedCliR)->( dbCloseArea() )
-   (dbfAlbCliT)->( dbCloseArea() )
-   (dbfAlbCliL)->( dbCloseArea() )
-   (dbfFacCliT)->( dbCloseArea() )
-   (dbfFacCliL)->( dbCloseArea() )
-   (dbfFacCliP)->( dbCloseArea() )
-   (dbfFacRecT)->( dbCloseArea() )
-   (dbfFacRecL)->( dbCloseArea() )
-   (dbfTikCliT)->( dbCloseArea() )
-   (dbfTikCliL)->( dbCloseArea() )
-   (dbfTikCliP)->( dbCloseArea() )
-   (dbfMovAlm )->( dbCloseArea() )
-
-   RECOVER USING oError
-
-      msgStop( "Imposible abrir todas las bases de datos" + CRLF + ErrorMessage( oError ) )
-
-   END SEQUENCE
-
-   ErrorBlock( oBlock )
-
-return ( nTotActStk )
-
-//---------------------------------------------------------------------------//
 
 Static Function nTotUnd( oDbfTmp )
 

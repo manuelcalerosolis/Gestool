@@ -118,14 +118,8 @@ STATIC FUNCTION OpenFiles( lZoom )
    USE ( cPatEmp() + "ALBCLIL.DBF" ) NEW VIA ( cDriver() ) SHARED ALIAS ( cCheckArea( "ALBCLIL", @dbfAlbCliL ) )
    SET ADSINDEX TO ( cPatEmp() + "ALBCLIL.CDX" ) ADDITIVE
 
-   USE ( cPatEmp() + "FACCLIT.DBF" ) NEW VIA ( cDriver() ) SHARED ALIAS ( cCheckArea( "FACCLIT", @dbfFacCliT ) )
-   SET ADSINDEX TO ( cPatEmp() + "FACCLIT.CDX" ) ADDITIVE
-
    USE ( cPatEmp() + "FACCLIL.DBF" ) NEW VIA ( cDriver() ) SHARED ALIAS ( cCheckArea( "FACCLIL", @dbfFacCliL ) )
    SET ADSINDEX TO ( cPatEmp() + "FACCLIL.CDX" ) ADDITIVE
-
-   USE ( cPatEmp() + "FACCLIP.DBF" ) NEW VIA ( cDriver() ) SHARED ALIAS ( cCheckArea( "FACCLIP", @dbfFacCliP ) )
-   SET ADSINDEX TO ( cPatEmp() + "FACCLIP.CDX" ) ADDITIVE
 
    USE ( cPatEmp() + "AntCliT.DBF" ) NEW VIA ( cDriver() ) SHARED ALIAS ( cCheckArea( "AntCliT", @dbfAntCliT ) )
    SET ADSINDEX TO ( cPatEmp() + "AntCliT.CDX" ) ADDITIVE
@@ -139,9 +133,17 @@ STATIC FUNCTION OpenFiles( lZoom )
    USE ( cPatDat() + "TIVA.DBF" ) NEW VIA ( cDriver() ) SHARED ALIAS ( cCheckArea( "TIVA", @dbfIva ) )
    SET ADSINDEX TO ( cPatDat() + "TIVA.CDX" ) ADDITIVE
 
-   oBandera := TBandera():New
+   if !TDataCenter():OpenFacCliT( @dbfFacCliT )
+      lOpen       := .f.
+   end if
 
-   oTurno   := TTurno():New( cPatEmp() )
+   if !TDataCenter():OpenFacCliP( @dbfFacCliP )
+      lOpen       := .f.
+   end if
+
+   oBandera       := TBandera():New
+
+   oTurno         := TTurno():New( cPatEmp() )
    oTurno:OpenFiles()
 
    if lExistTable( cPatTmp() + "ARQCON.DBF" )

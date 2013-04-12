@@ -149,15 +149,12 @@ Static Function OpenFiles( lMessage )
       SET ADSINDEX TO ( cPatEmp() + "ALBCLIP.CDX" ) ADDITIVE
       SET TAG TO "CCODCLI"
 
-      USE ( cPatEmp() + "FACCLIT.DBF" ) NEW VIA ( cDriver() ) SHARED ALIAS ( cCheckArea( "FACCLIT", @dbfFacCliT ) )
-      SET ADSINDEX TO ( cPatEmp() + "FACCLIT.CDX" ) ADDITIVE
-      SET TAG TO "CCODCLI"
-
       USE ( cPatEmp() + "FACCLIL.DBF" ) NEW VIA ( cDriver() ) SHARED ALIAS ( cCheckArea( "FACCLIL", @dbfFacCliL ) )
       SET ADSINDEX TO ( cPatEmp() + "FACCLIL.CDX" ) ADDITIVE
 
-      USE ( cPatEmp() + "FACCLIP.DBF" ) NEW VIA ( cDriver() ) SHARED ALIAS ( cCheckArea( "FACCLIP", @dbfFacCliP ) )
-      SET ADSINDEX TO ( cPatEmp() + "FACCLIP.CDX" ) ADDITIVE
+      if !TDataCenter():OpenFacCliP( @dbfFacCliP )
+         lOpenFiles     := .f.
+      end if
 
       USE ( cPatEmp() + "FACRECT.DBF" ) NEW VIA ( cDriver() ) SHARED ALIAS ( cCheckArea( "FACRECT", @dbfFacRecT ) )
       SET ADSINDEX TO ( cPatEmp() + "FACRECT.CDX" ) ADDITIVE
@@ -183,6 +180,12 @@ Static Function OpenFiles( lMessage )
 
       USE ( cPatGrp() + "FPAGO.DBF" ) NEW VIA ( cDriver() ) SHARED ALIAS ( cCheckArea( "FPAGO", @dbfFPago ) )
       SET ADSINDEX TO ( cPatGrp() + "FPAGO.CDX" ) ADDITIVE
+
+      if !TDataCenter():OpenFacCliT( @dbfFacCliT )
+         lOpenFiles     := .f.
+      else 
+         ( dbfFacCliT )->( OrdSetFocus( "cCodCli" ) )
+      end if
 
       oDbfTmp        := DefineTemporal()
       oDbfTmp:Activate( .f., .f. )
