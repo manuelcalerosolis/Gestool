@@ -8459,9 +8459,6 @@ STATIC FUNCTION OpenFiles( lExt )
       USE ( cPatEmp() + "AntCliT.DBF" ) NEW VIA ( cDriver() ) SHARED ALIAS ( cCheckArea( "AntCliT", @dbfAntCliT ) )
       SET ADSINDEX TO ( cPatEmp() + "AntCliT.CDX" ) ADDITIVE
 
-      USE ( cPatEmp() + "ALBCLIT.DBF" ) NEW VIA ( cDriver() ) SHARED ALIAS ( cCheckArea( "ALBCLIT", @dbfAlbCliT ) )
-      SET ADSINDEX TO ( cPatEmp() + "ALBCLIT.CDX" ) ADDITIVE
-
       USE ( cPatEmp() + "TIKET.DBF" ) NEW VIA ( cDriver() ) SHARED ALIAS ( cCheckArea( "TIKET", @dbfTikT ) )
       SET ADSINDEX TO ( cPatEmp() + "TIKET.CDX" ) ADDITIVE
 
@@ -8474,6 +8471,10 @@ STATIC FUNCTION OpenFiles( lExt )
 
       if !TDataCenter():OpenFacCliP( @dbfFacCliP )
          lOpenFiles        := .f.
+      end if
+
+      if !TDataCenter():OpenAlbCliT( @dbfAlbCliT )
+         lOpenFiles     := .f.
       end if
 
       oBandera             := TBandera():New()

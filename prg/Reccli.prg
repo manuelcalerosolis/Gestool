@@ -2566,8 +2566,9 @@ FUNCTION EdmCobCli( cCodRut, cPathTo, oStru, aSucces )
    oBlock            := ErrorBlock( { | oError | ApoloBreak( oError ) } )
    BEGIN SEQUENCE
 
-   USE ( cPatEmp() + "ALBCLIT.DBF" ) NEW VIA ( cDriver() ) SHARED ALIAS ( cCheckArea( "ALBCLIT", @dbfAlbCliT ) )
-   SET ADSINDEX TO ( cPatEmp() + "ALBCLIT.CDX" ) ADDITIVE
+   if !TDataCenter():OpenAlbCliT( @dbfAlbCliT )
+      lOpenFiles     := .f.
+   end if
 
    oStru:oMetDos:cText   := "Gestión de cobros"
    oStru:oMetDos:SetTotal( oFilEdm:nTLines )
@@ -4331,85 +4332,11 @@ Return ( nTotFacRec( cNumRec, cFacRecT, cFacRecL, cDbfIva, cDbfDiv, nil, nil, .f
 
 STATIC FUNCTION pdaOpenFiles( lExt )
 
-   local lOpen    := .t.
-   local oBlock   := ErrorBlock( { | oError | ApoloBreak( oError ) } )
-
-   DEFAULT lExt   := .f.
-
-   lExternal      := lExt
-
-   BEGIN SEQUENCE
-
-            if !TDataCenter():OpenFacCliT( @dbfFacCliT )
-if !TDataCenter():OpenFacCliP( @dbfFacCliP )
-   lOpenFiles     := .f.
-end if
-      SET ADSINDEX TO ( cPatEmp() + "FACCLIP.CDX" ) ADDITIVE
-      ( dbfFacCliP )->( OrdSetFocus( "fNumFac" ) )
-
-      USE ( cPatDat() + "DIVISAS.DBF" ) NEW VIA ( cDriver() ) SHARED ALIAS ( cCheckArea( "DIVISAS", @dbfDiv ) )
-      SET ADSINDEX TO ( cPatDat() + "DIVISAS.CDX" ) ADDITIVE
-
-      USE ( cPatEmp() + "FacCliT.DBF" ) NEW VIA ( cDriver() ) SHARED ALIAS ( cCheckArea( "FacCliT", @dbfFacCliT ) )
-      SET ADSINDEX TO ( cPatEmp() + "FacCliT.CDX" ) ADDITIVE
-
-      USE ( cPatEmp() + "FACCLIL.DBF" ) NEW VIA ( cDriver() ) SHARED ALIAS ( cCheckArea( "FACCLIL", @dbfFacCliL ) )
-      SET ADSINDEX TO ( cPatEmp() + "FACCLIL.CDX" ) ADDITIVE
-
-      USE ( cPatCli() + "CLIENT.DBF" ) NEW VIA ( cDriver() ) SHARED ALIAS ( cCheckArea( "CLIENT", @dbfClient ) )
-      SET ADSINDEX TO ( cPatCli() + "CLIENT.CDX" ) ADDITIVE
-
-      USE ( cPatDat() + "TIVA.DBF" ) NEW VIA ( cDriver() ) SHARED ALIAS ( cCheckArea( "TIVA", @dbfIva ) )
-      SET ADSINDEX TO ( cPatDat() + "TIVA.CDX" ) ADDITIVE
-
-      USE ( cPatEmp() + "AntCliT.DBF" ) NEW VIA ( cDriver() ) SHARED ALIAS ( cCheckArea( "AntCliT", @dbfAntCliT ) )
-      SET ADSINDEX TO ( cPatEmp() + "AntCliT.CDX" ) ADDITIVE
-
-   RECOVER
-
-      msgStop( "Imposible abrir todas las bases de datos" )
-      pdaCloseFiles()
-      lOpen          := .f.
-
-   END SEQUENCE
-
-   ErrorBlock( oBlock )
-
 RETURN ( lOpen )
 
 //----------------------------------------------------------------------------//
 
 STATIC FUNCTION pdaCloseFiles()
-
-   if dbfFacCliP != nil
-      ( dbfFacCliP )->( dbCloseArea() )
-   end if
-   if dbfDiv != nil
-      ( dbfDiv )->( dbCloseArea() )
-   end if
-   if dbfFacCliT != nil
-      ( dbfFacCliT )->( dbCloseArea() )
-   end if
-   if dbfFacCliL != nil
-      ( dbfFacCliL )->( dbCloseArea() )
-   end if
-   if dbfClient != nil
-      ( dbfClient )->( dbCloseArea() )
-   end if
-   if dbfIva != nil
-      ( dbfIva )->( dbCloseArea() )
-   end if
-   if dbfAntCliT != nil
-      ( dbfAntCliT )->( dbCloseArea() )
-   end if
-
-   dbfFacCliP  := nil
-   dbfDiv      := nil
-   dbfFacCliT  := nil
-   dbfFacCliL  := nil
-   dbfClient   := nil
-   dbfIva      := nil
-   dbfAntCliT  := nil
 
 RETURN .T.
 

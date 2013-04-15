@@ -112,9 +112,6 @@ STATIC FUNCTION OpenFiles( lZoom )
    USE ( cPatArt() + "ARTICULO.DBF" ) NEW VIA ( cDriver() ) SHARED ALIAS ( cCheckArea( "ARTICULO", @dbfArt ) )
    SET ADSINDEX TO ( cPatArt() + "ARTICULO.CDX" ) ADDITIVE
 
-   USE ( cPatEmp() + "ALBCLIT.DBF" ) NEW VIA ( cDriver() ) SHARED ALIAS ( cCheckArea( "ALBCLIT", @dbfAlbCliT ) )
-   SET ADSINDEX TO ( cPatEmp() + "ALBCLIT.CDX" ) ADDITIVE
-
    USE ( cPatEmp() + "ALBCLIL.DBF" ) NEW VIA ( cDriver() ) SHARED ALIAS ( cCheckArea( "ALBCLIL", @dbfAlbCliL ) )
    SET ADSINDEX TO ( cPatEmp() + "ALBCLIL.CDX" ) ADDITIVE
 
@@ -132,6 +129,10 @@ STATIC FUNCTION OpenFiles( lZoom )
 
    USE ( cPatDat() + "TIVA.DBF" ) NEW VIA ( cDriver() ) SHARED ALIAS ( cCheckArea( "TIVA", @dbfIva ) )
    SET ADSINDEX TO ( cPatDat() + "TIVA.CDX" ) ADDITIVE
+
+   if !TDataCenter():OpenAlbCliT( @dbfAlbCliT )
+      lOpenFiles     := .f.
+   end if
 
    if !TDataCenter():OpenFacCliT( @dbfFacCliT )
       lOpen       := .f.

@@ -753,8 +753,9 @@ STATIC FUNCTION OpenFiles( lExt )
 			( dbfFacCliP )->( OrdSetFocus( "rNumFac" ) )
 		end if
 
-      USE ( cPatEmp() + "ALBCLIT.DBF" ) NEW VIA ( cDriver() ) SHARED ALIAS ( cCheckArea( "ALBCLIT", @dbfAlbCliT ) )
-      SET ADSINDEX TO ( cPatEmp() + "ALBCLIT.CDX" ) ADDITIVE
+		if !TDataCenter():OpenAlbCliT( @dbfAlbCliT )
+   			lOpenFiles     := .f.
+		end if
 
       USE ( cPatEmp() + "ALBCLIL.DBF" ) NEW VIA ( cDriver() ) SHARED ALIAS ( cCheckArea( "ALBCLIL", @dbfAlbCliL ) )
       SET ADSINDEX TO ( cPatEmp() + "ALBCLIL.CDX" ) ADDITIVE

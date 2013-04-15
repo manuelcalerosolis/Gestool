@@ -873,8 +873,9 @@ STATIC FUNCTION OpenFiles( lExt )
       USE ( cPatEmp() + "FACRECS.DBF" ) NEW VIA ( cDriver() ) SHARED ALIAS ( cCheckArea( "FACRECS", @dbfFacRecS ) )
       SET ADSINDEX TO ( cPatEmp() + "FACRECS.CDX" ) ADDITIVE
 
-      USE ( cPatEmp() + "ALBCLIT.DBF" ) NEW VIA ( cDriver() ) SHARED ALIAS ( cCheckArea( "ALBCLIT", @dbfAlbCliT ) )
-      SET ADSINDEX TO ( cPatEmp() + "ALBCLIT.CDX" ) ADDITIVE
+      if !TDataCenter():OpenAlbCliT( @dbfAlbCliT )
+         lOpenFiles     := .f.
+      end if
 
       USE ( cPatEmp() + "ALBCLIL.DBF" ) NEW VIA ( cDriver() ) SHARED ALIAS ( cCheckArea( "ALBCLIL", @dbfAlbCliL ) )
       SET ADSINDEX TO ( cPatEmp() + "ALBCLIL.CDX" ) ADDITIVE
@@ -895,8 +896,9 @@ STATIC FUNCTION OpenFiles( lExt )
       Tabla de SAT-------------------------------------------------------------
       */
 
-      USE ( cPatEmp() + "SatCliT.DBF" ) NEW VIA ( cDriver() ) SHARED ALIAS ( cCheckArea( "SatCliT", @dbfSatCliT ) )
-      SET ADSINDEX TO ( cPatEmp() + "SatCliT.CDX" ) ADDITIVE
+      if !TDataCenter():OpenSatCliT( @dbfSatCliT )
+         lOpenFiles        := .f.
+      end if
 
       USE ( cPatEmp() + "SatCliL.DBF" ) NEW VIA ( cDriver() ) SHARED ALIAS ( cCheckArea( "SatCliL", @dbfSatCliL ) )
       SET ADSINDEX TO ( cPatEmp() + "SatCliL.CDX" ) ADDITIVE
@@ -12021,6 +12023,8 @@ function SynFacCli( cPath )
    local cCodImp
    local cNumSer
    local aNumSer
+   local cNumPed 
+   local aNumPed     := {}
 
    DEFAULT cPath     := cPatEmp()
 
@@ -12074,11 +12078,6 @@ function SynFacCli( cPath )
          lOpenFiles        := .f.
       end if
 
-      oStock               := TStock():Create( cPath )
-      if !oStock:lOpenFiles()
-         lOpenFiles        := .f.
-      end if
-
       while !( dbfFacCliT )->( eof() )
 
          if Empty( ( dbfFacCliT )->cCodCaj )
@@ -12108,7 +12107,7 @@ function SynFacCli( cPath )
          end if
 
          if !Empty( ( dbfFacCliT )->cNumPed )
-            oStock:SetEstadoPedCli( ( dbfFacCliT )->cNumPed )
+            aAdd( aNumPed, ( dbfFacCliT )->cNumPed )
          end if
 
          ( dbfFacCliT )->( dbSkip() )
@@ -12205,6 +12204,7 @@ function SynFacCli( cPath )
                next
 
                ( dbfFacCliL )->mNumSer    := ""
+            
             end if
 
          end if
@@ -12274,11 +12274,25 @@ function SynFacCli( cPath )
       oNewImp:end()
    end if
 
+   oNewImp     := nil
+
+   /*
+   Estado de los pedidos en stocks---------------------------------------------
+   */
+
+   oStock               := TStock():Create( cPath )
+   if oStock:lOpenFiles()
+      
+      for each cNumPed in aNumPed
+         oStock:SetEstadoPedCli( cNumPed )
+      next 
+
+   end if 
+
    if !Empty( oStock )
       oStock:end()
    end if
 
-   oNewImp     := nil
    oStock      := nil
 
 Return nil
@@ -12812,478 +12826,11 @@ Return nil
 
 STATIC FUNCTION pdaOpenFiles( lExt )
 
-   local oBlock
-   local oError
-
-   if lOpenFiles
-      MsgStop( 'Imposible abrir ficheros de facturas de clientes' )
-      Return ( .f. )
-   end if
-
-   DEFAULT lExt         := .f.
-
-   lExternal            := lExt
-
-   oBlock               := ErrorBlock( { | oError | ApoloBreak( oError ) } )
-   BEGIN SEQUENCE
-
-      lOpenFiles        := .t.
-
-      USE ( cPatEmp() + "FacCliT.DBF" ) NEW VIA ( cDriver() ) SHARED ALIAS ( cCheckArea( "FacCliT", @dbfFacCliT ) )
-      SET ADSINDEX TO ( cPatEmp() + "FacCliT.CDX" ) ADDITIVE
-
-      USE ( cPatEmp() + "FACCLIL.DBF" ) NEW VIA ( cDriver() ) SHARED ALIAS ( cCheckArea( "FACCLIL", @dbfFacCliL ) )
-      SET ADSINDEX TO ( cPatEmp() + "FACCLIL.CDX" ) ADDITIVE
-
-            if !TDataCenter():OpenFacCliT( @dbfFacCliT )
-if !TDataCenter():OpenFacCliP( @dbfFacCliP )
-   lOpenFiles     := .f.
-end if
-      SET ADSINDEX TO ( cPatEmp() + "FACCLIP.CDX" ) ADDITIVE
-
-      USE ( cPatEmp() + "FACCLII.DBF" ) NEW VIA ( cDriver() ) SHARED ALIAS ( cCheckArea( "FACCLII", @dbfFacCliI ) )
-      SET ADSINDEX TO ( cPatEmp() + "FACCLII.CDX" ) ADDITIVE
-
-      USE ( cPatEmp() + "FACCLID.DBF" ) NEW VIA ( cDriver() ) SHARED ALIAS ( cCheckArea( "FACCLID", @dbfFacCliD ) )
-      SET ADSINDEX TO ( cPatEmp() + "FACCLID.CDX" ) ADDITIVE
-
-      USE ( cPatEmp() + "ALBCLIT.DBF" ) NEW VIA ( cDriver() ) SHARED ALIAS ( cCheckArea( "ALBCLIT", @dbfAlbCliT ) )
-      SET ADSINDEX TO ( cPatEmp() + "ALBCLIT.CDX" ) ADDITIVE
-
-      USE ( cPatEmp() + "ALBCLIL.DBF" ) NEW VIA ( cDriver() ) SHARED ALIAS ( cCheckArea( "ALBCLIL", @dbfAlbCliL ) )
-      SET ADSINDEX TO ( cPatEmp() + "ALBCLIL.CDX" ) ADDITIVE
-
-      USE ( cPatEmp() + "ALBCLII.DBF" ) NEW VIA ( cDriver() ) SHARED ALIAS ( cCheckArea( "ALBCLII", @dbfAlbCliI ) )
-      SET ADSINDEX TO ( cPatEmp() + "ALBCLII.CDX" ) ADDITIVE
-
-      USE ( cPatEmp() + "ALBCLID.DBF" ) NEW VIA ( cDriver() ) SHARED ALIAS ( cCheckArea( "ALBCLID", @dbfAlbCliD ) )
-      SET ADSINDEX TO ( cPatEmp() + "ALBCLID.CDX" ) ADDITIVE
-
-      USE ( cPatEmp() + "ALBCLIP.DBF" ) NEW VIA ( cDriver() ) SHARED ALIAS ( cCheckArea( "ALBCLIP", @dbfAlbCliP ) )
-      SET ADSINDEX TO ( cPatEmp() + "ALBCLIP.CDX" ) ADDITIVE
-
-      USE ( cPatCli() + "CLIENT.DBF" ) NEW VIA ( cDriver() ) SHARED ALIAS ( cCheckArea( "CLIENT", @dbfClient ) )
-      SET ADSINDEX TO ( cPatCli() + "CLIENT.CDX" ) ADDITIVE
-
-      USE ( cPatDat() + "TIVA.DBF" ) NEW VIA ( cDriver() ) SHARED ALIAS ( cCheckArea( "TIVA", @dbfIva ) )
-      SET ADSINDEX TO ( cPatDat() + "TIVA.CDX" ) ADDITIVE
-
-      USE ( cPatGrp() + "FPAGO.DBF" ) NEW VIA ( cDriver() ) SHARED ALIAS ( cCheckArea( "FPAGO", @dbfFPago ) )
-      SET ADSINDEX TO ( cPatGrp() + "FPAGO.CDX" ) ADDITIVE
-
-      USE ( cPatEmp() + "TIPINCI.DBF" ) NEW VIA ( cDriver() ) SHARED ALIAS ( cCheckArea( "TIPINCI", @dbfInci ) )
-      SET ADSINDEX TO ( cPatEmp() + "TIPINCI.CDX" ) ADDITIVE
-
-      USE ( cPatCli() + "CliAtp.Dbf" ) NEW VIA ( cDriver() ) SHARED ALIAS ( cCheckArea( "CLIATP", @dbfClientAtp ) )
-      SET ADSINDEX TO ( cPatCli() + "CliAtp.Cdx" ) ADDITIVE
-
-      USE ( cPatCli() + "AGENTES.DBF" ) NEW VIA ( cDriver() ) SHARED ALIAS ( cCheckArea( "AGENTES", @dbfAgent ) )
-      SET ADSINDEX TO ( cPatCli() + "AGENTES.CDX" ) ADDITIVE
-
-      USE ( cPatCli() + "ObrasT.Dbf" ) NEW VIA ( cDriver() ) SHARED ALIAS ( cCheckArea( "OBRAST", @dbfObrasT ) )
-      SET ADSINDEX TO ( cPatCli() + "ObrasT.Cdx" ) ADDITIVE
-
-      USE ( cPatArt() + "ARTICULO.DBF" ) NEW VIA ( cDriver() ) SHARED ALIAS ( cCheckArea( "ARTICULO", @dbfArticulo ) )
-      SET ADSINDEX TO ( cPatArt() + "ARTICULO.CDX" ) ADDITIVE
-
-      USE ( cPatArt() + "ArtCodebar.Dbf" ) NEW VIA ( cDriver() ) SHARED ALIAS ( cCheckArea( "CODEBAR", @dbfCodebar ) )
-      SET ADSINDEX TO ( cPatArt() + "ArtCodebar.Cdx" ) ADDITIVE
-
-      USE ( cPatArt() + "FAMILIAS.DBF" ) NEW VIA ( cDriver() ) SHARED ALIAS ( cCheckArea( "FAMILIAS", @dbfFamilia ) )
-      SET ADSINDEX TO ( cPatArt() + "FAMILIAS.CDX" ) ADDITIVE
-
-      USE ( cPatArt() + "ARTKIT.DBF" ) NEW VIA ( cDriver() ) SHARED ALIAS ( cCheckArea( "ARTTIK", @dbfKit ) )
-      SET ADSINDEX TO ( cPatArt() + "ARTKIT.CDX" ) ADDITIVE
-
-      USE ( cPatArt() + "ArtDiv.Dbf" ) NEW VIA ( cDriver() ) SHARED ALIAS ( cCheckArea( "ARTDIV", @dbfArtDiv ) )
-      SET ADSINDEX TO ( cPatArt() + "ArtDiv.Cdx" ) ADDITIVE
-
-      USE ( cPatDat() + "DIVISAS.DBF" ) NEW VIA ( cDriver() ) SHARED ALIAS ( cCheckArea( "DIVISAS", @dbfDiv ) )
-      SET ADSINDEX TO ( cPatDat() + "DIVISAS.CDX" ) ADDITIVE
-
-      USE ( cPatArt() + "OFERTA.DBF" ) NEW VIA ( cDriver() ) SHARED ALIAS ( cCheckArea( "OFERTA", @dbfOferta ) )
-      SET ADSINDEX TO ( cPatArt() + "OFERTA.CDX" ) ADDITIVE
-
-      USE ( cPatCli() + "RUTA.DBF" ) NEW VIA ( cDriver() ) SHARED ALIAS ( cCheckArea( "RUTA", @dbfRuta ) )
-      SET ADSINDEX TO ( cPatCli() + "RUTA.CDX" ) ADDITIVE
-
-      USE ( cPatAlm() + "Almacen.Dbf" ) NEW VIA ( cDriver() ) SHARED ALIAS ( cCheckArea( "ALMACEN", @dbfAlm ) )
-      SET ADSINDEX TO ( cPatAlm() + "Almacen.Cdx" ) ADDITIVE
-
-      USE ( cPatDat() + "USERS.DBF" ) NEW VIA ( cDriver() ) SHARED ALIAS ( cCheckArea( "USERS", @dbfUsr ) )
-      SET ADSINDEX TO ( cPatDat() + "USERS.CDX" ) ADDITIVE
-
-      USE ( cPatEmp() + "NCOUNT.DBF" ) NEW VIA ( cDriver() ) SHARED ALIAS ( cCheckArea( "NCOUNT", @dbfCount ) )
-      SET ADSINDEX TO ( cPatEmp() + "NCOUNT.CDX" ) ADDITIVE
-
-      USE ( cPatArt() + "PROVART.DBF" ) NEW VIA ( cDriver() ) SHARED ALIAS ( cCheckArea( "PROVART", @dbfArtPrv ) )
-      SET ADSINDEX TO ( cPatArt() + "PROVART.CDX" ) ADDITIVE
-
-      USE ( cPatEmp() + "AntCliT.DBF" ) NEW VIA ( cDriver() ) SHARED ALIAS ( cCheckArea( "AntCliT", @dbfAntCliT ) )
-      SET ADSINDEX TO ( cPatEmp() + "AntCliT.CDX" ) ADDITIVE
-
-      oTrans            := TTrans():Create( cPatCli() )
-      if !oTrans:OpenFiles()
-         lOpenFiles     := .f.
-      end if
-
-      oUndMedicion      := UniMedicion():Create( cPatGrp() )
-      if !oUndMedicion:OpenFiles()
-         lOpenFiles     := .f.
-      end if
-
-      aDbfBmp           := {  LoadBitmap( GetResources(), "Sel16" ),;
-                              LoadBitmap( GetResources(), "Cnt16"   ) }
-
-   RECOVER USING oError
-
-      lOpenFiles        := .f.
-
-      msgStop( "Imposible abrir todas las bases de datos" + CRLF + ErrorMessage( oError ) )
-
-   END SEQUENCE
-
-   ErrorBlock( oBlock )
-
-   if !lOpenFiles
-      pdaCloseFiles()
-   end if
-
 RETURN ( lOpenFiles )
 
 //---------------------------------------------------------------------------//
 
 STATIC FUNCTION pdaCloseFiles()
-
-   if aDbfBmp != nil
-      aEval( aDbfBmp, { | hBmp | DeleteObject( hBmp ) } )
-   end if
-
-   if !Empty( oFont )
-      oFont:end()
-   end if
-
-   if oWndBrw != nil
-      oWndBrw:oBrw:lCloseArea()
-   else
-      ( dbfFacCliT )->( dbCloseArea() )
-   end if
-
-   if !Empty( dbfIva )
-      ( dbfIva     )->( dbCloseArea() )
-   end if
-
-   if !Empty( dbfFPago )
-      ( dbfFPago   )->( dbCloseArea() )
-   end if
-
-   if !Empty( dbfAgent )
-      ( dbfAgent   )->( dbCloseArea() )
-   end if
-
-   if !Empty( dbfClient )
-      ( dbfClient     )->( dbCloseArea() )
-   end if
-
-   if !Empty( dbfFacCliP )
-      ( dbfFacCliP )->( dbCloseArea() )
-   end if
-
-   if !Empty( dbfFacCliL )
-      ( dbfFacCliL )->( dbCloseArea() )
-   end if
-
-   if !Empty( dbfFacCliI )
-      ( dbfFacCliI )->( dbCloseArea() )
-   end if
-
-   if !Empty( dbfFacCliD )
-      ( dbfFacCliD )->( dbCloseArea() )
-   end if
-
-   if !Empty( dbfFacRecT )
-      ( dbfFacRecT )->( dbCloseArea() )
-   end if
-
-   if !Empty( dbfFacRecL )
-      ( dbfFacRecL )->( dbCloseArea() )
-   end if
-
-   if !Empty( dbfFacRecS )
-      ( dbfFacRecS )->( dbCloseArea() )
-   end if
-
-   if !Empty( dbfAlbCliT )
-      ( dbfAlbCliT )->( dbCloseArea() )
-   end if
-
-   if !Empty( dbfAlbCliL )
-      ( dbfAlbCliL )->( dbCloseArea() )
-   end if
-
-   if !Empty( dbfAlbCliP )
-      ( dbfAlbCliP )->( dbCloseArea() )
-   end if
-
-   if !Empty( dbfAlbCliI )
-      ( dbfAlbCliI )->( dbCloseArea() )
-   end if
-
-   if !Empty( dbfAlbCliD )
-      ( dbfAlbCliD )->( dbCloseArea() )
-   end if
-
-   if !Empty( dbfPedCliT )
-      ( dbfPedCliT )->( dbCloseArea() )
-   end if
-
-   if !Empty( dbfPedCliL )
-      ( dbfPedCliL )->( dbCloseArea() )
-   end if
-
-   if !Empty( dbfPedCliP )
-      ( dbfPedCliP )->( dbCloseArea() )
-   end if
-
-   if !Empty( dbfPedCliI )
-      ( dbfPedCliI )->( dbCloseArea() )
-   end if
-
-   if !Empty( dbfPedCliD )
-      ( dbfPedCliD )->( dbCloseArea() )
-   end if
-
-   if !Empty( dbfPreCliT )
-      ( dbfPreCliT )->( dbCloseArea() )
-   end if
-
-   if !Empty( dbfPreCliL )
-      ( dbfPreCliL )->( dbCloseArea() )
-   end if
-
-   if !Empty( dbfPreCliI )
-      ( dbfPreCliI )->( dbCloseArea() )
-   end if
-
-   if !Empty( dbfPreCliD )
-      ( dbfPreCliD )->( dbCloseArea() )
-   end if
-
-   if !Empty( dbfTikT )
-      ( dbfTikT )->( dbCloseArea() )
-   end if
-
-   if !Empty( dbfTikL )
-      ( dbfTikL )->( dbCloseArea() )
-   end if
-
-   if !Empty( dbfArticulo )
-      ( dbfArticulo )->( dbCloseArea() )
-   end if
-
-   if dbfCodebar != nil
-      ( dbfCodebar )->( dbCloseArea() )
-   end if
-
-   if !Empty( dbfFamilia )
-      ( dbfFamilia )->( dbCloseArea() )
-   end if
-
-   if !Empty( dbfKit )
-      ( dbfKit     )->( dbCloseArea() )
-   end if
-
-   if !Empty( dbfTarPreT )
-      ( dbfTarPreT )->( dbCloseArea() )
-   end if
-
-   if !Empty( dbfTarPreL )
-      ( dbfTarPreL )->( dbCloseArea() )
-   end if
-
-   if !Empty( dbfTarPreS )
-      ( dbfTarPreS )->( dbCloseArea() )
-   end if
-
-   if !Empty( dbfPromoT )
-      ( dbfPromoT  )->( dbCloseArea() )
-   end if
-
-   if !Empty( dbfPromoL )
-      ( dbfPromoL  )->( dbCloseArea() )
-   end if
-
-   if !Empty( dbfPromoC )
-      ( dbfPromoC  )->( dbCloseArea() )
-   end if
-
-   if !Empty( dbfClientAtp )
-      ( dbfClientAtp  )->( dbCloseArea() )
-   end if
-
-   if !Empty( dbfTVta )
-      ( dbfTVta    )->( dbCloseArea() )
-   end if
-
-   if !Empty( dbfAlm )
-      ( dbfAlm    )->( dbCloseArea() )
-   end if
-
-   if !Empty( dbfDiv )
-      ( dbfDiv     )->( dbCloseArea() )
-   end if
-
-   if !Empty( dbfObrasT )
-      ( dbfObrasT  )->( dbCloseArea() )
-   end if
-
-   if !Empty( dbfOferta )
-      ( dbfOferta  )->( dbCloseArea() )
-   end if
-
-   if !Empty( dbfDoc )
-      ( dbfDoc     )->( dbCloseArea() )
-   end if
-
-   if !Empty( dbfFlt )
-      ( dbfFlt     )->( dbCloseArea() )
-   end if
-
-   if !Empty( dbfPro )
-      ( dbfPro     )->( dbCloseArea() )
-   end if
-
-   if !Empty( dbfTblPro )
-      ( dbfTblPro  )->( dbCloseArea() )
-   end if
-
-   if !Empty( dbfRuta )
-      ( dbfRuta    )->( dbCloseArea() )
-   end if
-
-   if !Empty( dbfArtDiv )
-      ( dbfArtDiv  )->( dbCloseArea() )
-   end if
-
-   if !Empty( dbfCajT )
-      ( dbfCajT    )->( dbCloseArea() )
-   end if
-
-   if !Empty( dbfAntCliT )
-      ( dbfAntCliT )->( dbCloseArea() )
-   end if
-
-   if !Empty( dbfUsr )
-      ( dbfUsr     )->( dbCloseArea() )
-   end if
-
-   if !Empty( dbfCount )
-      ( dbfCount   )->( dbCloseArea() )
-   end if
-
-   if dbfInci != nil
-      ( dbfInci )->( dbCloseArea() )
-   end if
-
-   if dbfArtPrv != nil
-      ( dbfArtPrv )->( dbCloseArea() )
-   end if
-
-   if !Empty( dbfDelega )
-      ( dbfDelega )->( dbCloseArea() )
-   end if
-
-   if !Empty( dbfAgeCom )
-      ( dbfAgeCom )->( dbCloseArea() )
-   end if
-
-   if !Empty( dbfAlbPrvL )
-      ( dbfAlbPrvL )->( dbCloseArea() )
-   end if
-
-   if !Empty( dbfPedCliR )
-      ( dbfPedCliR )->( dbCloseArea() )
-   end if
-
-   if !Empty( dbfEmp )
-      ( dbfEmp )->( dbCloseArea() )
-   end if
-
-   if !Empty( oTrans )
-      oTrans:End()
-   end if
-
-   if !Empty( oUndMedicion )
-      oUndMedicion:End()
-   end if
-
-   dbfIva      := nil
-   dbfFPago    := nil
-   dbfAgent    := nil
-   dbfClient   := nil
-   dbfFacCliP  := nil
-   dbfFacCliL  := nil
-   dbfFacCliT  := nil
-   dbfFacCliD  := nil
-   dbfAlbCliT  := nil
-   dbfAlbCliL  := nil
-   dbfAlbCliI  := nil
-   dbfAlbCliD  := nil
-   dbfPedCliT  := nil
-   dbfPedCliL  := nil
-   dbfPedCliP  := nil
-   dbfPedCliI  := nil
-   dbfPedCliD  := nil
-   dbfPreCliT  := nil
-   dbfPreCliL  := nil
-   dbfPreCliI  := nil
-   dbfPreCliD  := nil
-   dbfTikT     := nil
-   dbfArticulo := nil
-   dbfCodebar  := nil
-   dbfFamilia  := nil
-   dbfKit      := nil
-   dbfTarPreT  := nil
-   dbfTarPreL  := nil
-   dbfTarPreS  := nil
-   dbfPromoT   := nil
-   dbfPromoL   := nil
-   dbfPromoC   := nil
-   dbfAlm      := nil
-   dbfClientAtp:= nil
-   dbfTVta     := nil
-   dbfDiv      := nil
-   oBandera    := nil
-   dbfObrasT   := nil
-   dbfDoc      := nil
-   dbfFlt      := nil
-   dbfOferta   := nil
-   dbfPro      := nil
-   dbfTblPro   := nil
-   dbfRuta     := nil
-   dbfArtDiv   := nil
-   dbfCajT     := nil
-   dbfAntCliT  := nil
-   dbfUsr      := nil
-   dbfInci     := nil
-   dbfArtPrv   := nil
-   dbfDelega   := nil
-   dbfAgeCom   := nil
-   dbfAlbPrvL  := nil
-   dbfPedCliR  := nil
-   dbfEmp      := nil
-
-   oStock      := nil
-   oNewImp     := nil
-   oTrans      := nil
-   oTipArt     := nil
-   oGrpFam     := nil
-   oUndMedicion:= nil
-   oBanco      := nil
-
-   lOpenFiles  := .f.
-
-   oWndBrw     := nil
 
 Return .t.
 

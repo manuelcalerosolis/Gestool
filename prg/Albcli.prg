@@ -530,9 +530,6 @@ STATIC FUNCTION OpenFiles()
 
       lOpenFiles        := .t.
 
-      USE ( cPatEmp() + "ALBCLIT.DBF" ) NEW VIA ( cDriver() ) SHARED ALIAS ( cCheckArea( "ALBCLIT", @dbfAlbCliT ) )
-      SET ADSINDEX TO ( cPatEmp() + "ALBCLIT.CDX" ) ADDITIVE
-
       USE ( cPatEmp() + "ALBCLIL.DBF" ) NEW VIA ( cDriver() ) SHARED ALIAS ( cCheckArea( "ALBCLIL", @dbfAlbCliL ) )
       SET ADSINDEX TO ( cPatEmp() + "ALBCLIL.CDX" ) ADDITIVE
 
@@ -560,7 +557,9 @@ STATIC FUNCTION OpenFiles()
       USE ( cPatEmp() + "PreCliD.DBF" ) NEW VIA ( cDriver() ) SHARED ALIAS ( cCheckArea( "PreCliD", @dbfPreCliD ) )
       SET ADSINDEX TO ( cPatEmp() + "PreCliD.CDX" ) ADDITIVE
 
-      USE ( cPatEmp() + "SatCliT.DBF" ) NEW VIA ( cDriver() ) SHARED ALIAS ( cCheckArea( "SatCliT", @dbfSatCliT ) )
+      if !TDataCenter():OpenSatCliT( @dbfSatCliT )
+   lOpenFiles        := .f.
+end if
       SET ADSINDEX TO ( cPatEmp() + "SatCliT.CDX" ) ADDITIVE
 
       USE ( cPatEmp() + "SatCliL.DBF" ) NEW VIA ( cDriver() ) SHARED ALIAS ( cCheckArea( "SatCliL", @dbfSatCliL ) )
@@ -778,6 +777,10 @@ STATIC FUNCTION OpenFiles()
 
       USE ( cPatEmp() + "MATSER.DBF" ) NEW VIA ( cDriver() ) SHARED ALIAS ( cCheckArea( "MATSER", @dbfMatSer ) )
       SET ADSINDEX TO ( cPatEmp() + "MATSER.CDX" ) ADDITIVE
+
+      if !TDataCenter():OpenAlbCliT( @dbfAlbCliT )
+         lOpenFiles     := .f.
+      end if
 
       if !TDataCenter():OpenFacCliT( @dbfFacCliT )
          lOpenFiles     := .f.
@@ -5982,21 +5985,20 @@ RETURN ( nDtoAtp )
 Funciones auxiliares para comunicarnos desde fuera del PRG
 */
 
-FUNCTION Ped2AlbCli( cNumPed )
+FUNCTION Ped2AlbCli( cNumPed, dbfAlbCliT )
 
    local oBlock
    local oError
+   local nOrdAnt
    local cNumAlb
 
    oBlock         := ErrorBlock( { | oError | ApoloBreak( oError ) } )
    BEGIN SEQUENCE
 
-      USE ( cPatEmp() + "ALBCLIT.DBF" ) NEW VIA ( cDriver() ) SHARED ALIAS ( cCheckArea( "ALBCLIT", @dbfAlbCliT ) )
-      SET ADSINDEX TO ( cPatEmp() + "ALBCLIT.CDX" ) ADDITIVE
-      ( dbfAlbCliT )->( OrdSetFocus( "cNumPed" ) )
+      nOrdAnt     := ( dbfAlbCliT )->( OrdSetFocus( "cNumPed" ) )
 
       if ( dbfAlbCliT )->( dbSeek( cNumPed ) )
-         cNumAlb := ( dbfAlbCliT )->cSerAlb + Str( ( dbfAlbCliT )->nNumAlb ) + ( dbfAlbCliT )->cSufAlb
+         cNumAlb  := ( dbfAlbCliT )->cSerAlb + Str( ( dbfAlbCliT )->nNumAlb ) + ( dbfAlbCliT )->cSufAlb
       end if
 
       if !Empty( cNumAlb )
@@ -6005,14 +6007,16 @@ FUNCTION Ped2AlbCli( cNumPed )
          msgStop( "No hay albarán asociado" )
       end if
 
+      ( dbfAlbCliT )->( OrdSetFocus( nOrdAnt ) )
+
    RECOVER USING oError
 
       msgStop( "Imposible abrir todas las bases de datos de albaranes" + CRLF + ErrorMessage( oError ) )
 
    END SEQUENCE
+   
    ErrorBlock( oBlock )
 
-   CLOSE ( dbfAlbCliT )
 
 RETURN NIL
 
@@ -6105,7 +6109,10 @@ Function CleanAlbCli()
    //Retorna el valor anterior
 
 
-   USE ( cPatEmp() + "ALBCLIT.DBF" ) NEW VIA ( cDriver() ) SHARED ALIAS ( cCheckArea( "ALBCLIT", @dbfAlbCliT ) )
+   if !TDataCenter():OpenAlbCliT( @dbfAlbCliT )
+   lOpenFiles     := .f.
+end if
+
    SET ADSINDEX TO ( cPatEmp() + "ALBCLIT.CDX" ) ADDITIVE
 
    ( dbfAlbCliT )->( dbGoTop() )
@@ -7589,6 +7596,8 @@ function SynAlbCli( cPath )
    local cCodImp
    local cNumSer
    local aNumSer
+   local cNumPed
+   local aNumPed     := {}
 
    DEFAULT cPath     := cPatEmp()
 
@@ -7635,13 +7644,8 @@ function SynAlbCli( cPath )
    if !lAIS(); ordListAdd( cPath + "FACCLIL.CDX" ); else ; ordSetFocus( 1 ) ; end
 
    oNewImp              := TNewImp():Create( cPatEmp() )
-      if !oNewImp:OpenFiles()
-         lOpenFiles     := .f.
-      end if
-
-   oStock               := TStock():Create( cPatGrp() )
-   if !oStock:lOpenFiles()
-      lOpenFiles        := .f.
+   if !oNewImp:OpenFiles()
+      lOpenFiles     := .f.
    end if
 
    while !( dbfAlbCliT )->( eof() )
@@ -7695,9 +7699,7 @@ function SynAlbCli( cPath )
       Si el albarán está creado desde un pedido le revisamos el estado---------
       */
 
-      if !Empty( ( dbfAlbCliT )->cNumPed )
-         oStock:SetEstadoPedCli( ( dbfAlbCliT )->cNumPed )
-      end if
+      aAdd( aNumPed, ( dbfAlbCliT )->cNumPed )
 
       ( dbfAlbCliT )->( dbSkip() )
 
@@ -7727,7 +7729,7 @@ function SynAlbCli( cPath )
 
          if Empty( ( dbfAlbCliL )->nVolumen )
             if dbLock( dbfAlbCliL )
-               ( dbfAlbCliL )->nVolumen :=  RetFld( ( dbfAlbCliL )->CREF, dbfArticulo, "nVolumen" )
+               ( dbfAlbCliL )->nVolumen := RetFld( ( dbfAlbCliL )->CREF, dbfArticulo, "nVolumen" )
                ( dbfAlbCliL )->( dbUnLock() )
             end if
          end if
@@ -7881,11 +7883,25 @@ function SynAlbCli( cPath )
       oNewImp:end()
    end if
 
+   oNewImp     := nil
+
+   /*
+   Estado de los pedidos-------------------------------------------------------
+   */
+
+   oStock               := TStock():Create()
+   if oStock:lOpenFiles()
+
+      for each cNumPed in aNumPed
+         oStock:SetEstadoPedCli( cNumPed )
+      end if
+
+   end if
+       
    if !Empty( oStock )
       oStock:end()
    end if
 
-   oNewImp     := nil
    oStock      := nil
 
 return nil
@@ -8494,8 +8510,9 @@ Method RestoreData()
       oBlock         := ErrorBlock( { | oError | ApoloBreak( oError ) } )
       BEGIN SEQUENCE
 
-         USE ( cPatEmp() + "AlbCliT.Dbf" ) NEW VIA ( cDriver() ) SHARED ALIAS ( cCheckArea( "AlbCliT", @dbfAlbCliT ) )
+         USE ( cPatEmp() + "AlbCLIT.DBF" ) NEW VIA ( cDriver() ) SHARED ALIAS ( cCheckArea( "AlbCLIT", @dbfAlbCliT ) )
          SET ADSINDEX TO ( cPatEmp() + "AlbCliT.Cdx" ) ADDITIVE
+
          ( dbfAlbCliT )->( OrdSetFocus( "lSndDoc" ) )
 
          while ( dbfAlbCliT )->( dbSeek( .t. ) ) .and. !( dbfAlbCliT )->( eof() )
@@ -8617,7 +8634,7 @@ Method Process()
                USE ( cPatSnd() + "AlbCliI.DBF" ) NEW VIA ( cDriver() )READONLY ALIAS ( cCheckArea( "AlbCliI", @tmpAlbCliI ) )
                SET ADSINDEX TO ( cPatSnd() + "AlbCliI.CDX" ) ADDITIVE
 
-               USE ( cPatEmp() + "AlbCliT.DBF" ) NEW VIA ( cDriver() ) SHARED ALIAS ( cCheckArea( "AlbCliT", @dbfAlbCliT ) )
+               USE ( cPatEmp() + "AlbCliT.DBF" ) NEW VIA ( cDriver() )READONLY ALIAS ( cCheckArea( "AlbCliT", @dbfAlbCliT ) )
                SET ADSINDEX TO ( cPatEmp() + "AlbCliT.CDX" ) ADDITIVE
 
                USE ( cPatEmp() + "AlbCliL.DBF" ) NEW VIA ( cDriver() ) SHARED ALIAS ( cCheckArea( "AlbCliL", @dbfAlbCliL ) )

@@ -8061,13 +8061,16 @@ return ( nTot )
 Function SynAlbPrv( cPath )
 
    local oError
-   local oBlock      := ErrorBlock( {| oError | ApoloBreak( oError ) } )
+   local oBlock      
    local aTotAlb
    local cNumSer
    local aNumSer
    local nRecPed
    local nOrdPed
+   local cPedPrv
+   local aPedPrv     := {}
 
+   oBlock            := ErrorBlock( {| oError | ApoloBreak( oError ) } )
    BEGIN SEQUENCE
 
    dbUseArea( .t., cDriver(), cPath + "ALBPROVT.DBF", cCheckArea( "ALBPROVT", @dbfAlbPrvT ), .f. )
@@ -8102,15 +8105,6 @@ Function SynAlbPrv( cPath )
 
    dbUseArea( .t., cDriver(), cPath + "PEDPROVL.DBF", cCheckArea( "PEDPROVL", @dbfPedPrvL ), .f. )
    if !lAIS(); ordListAdd( cPath + "PEDPROVL.CDX" ); else ; ordSetFocus( 1 ) ; end
-
-   oStock               := TStock():Create( cPatGrp() )
-   if !oStock:lOpenFiles()
-      lOpenFiles        := .f.
-   else
-      oStock:cPedPrvT   := dbfPedPrvT
-      oStock:cPedPrvL   := dbfPedPrvL
-      oStock:cAlbPrvL   := dbfAlbPrvL
-   end if
 
    while !( dbfAlbPrvT )->( eof() )
 
@@ -8157,10 +8151,10 @@ Function SynAlbPrv( cPath )
       if ( dbfPedPrvT )->( dbSeek( ( dbfAlbPrvT )->cSerAlb + Str( ( dbfAlbPrvT )->nNumAlb ) + ( dbfAlbPrvT )->cSufAlb ) )
 
          while ( dbfPedPrvT )->cNumAlb == ( dbfAlbPrvT )->cSerAlb + Str( ( dbfAlbPrvT )->nNumAlb ) + ( dbfAlbPrvT  )->cSufAlb .and. !( dbfPedPrvT )->( Eof() )
+            
+            aAdd( aPedPrv, ( dbfPedPrvT )->cSerPed + Str( ( dbfPedPrvT )->nNumPed ) + ( dbfPedPrvT )->cSufPed )
 
-         oStock:SetPedPrv( ( dbfPedPrvT )->cSerPed + Str( ( dbfPedPrvT )->nNumPed ) + ( dbfPedPrvT )->cSufPed )
-
-         ( dbfPedPrvT )->( dbSkip() )
+            ( dbfPedPrvT )->( dbSkip() )
 
          end while
 
@@ -8321,10 +8315,23 @@ Function SynAlbPrv( cPath )
       ( dbfPedPrvL )->( dbCloseArea() )
    end if
 
+   /*
+   Calculo d stocks------------------------------------------------------------
+   */
+
+   oStock               := TStock():Create()
+   if oStock:lOpenFiles()
+
+      for each cPedPrv in aPedPrv      
+         oStock:SetPedPrv( cPedPrv )
+      next
+
+   end if 
+
    if !Empty( oStock )
       oStock:end()
    end if
-
+ 
    oStock      := nil
 
 return nil

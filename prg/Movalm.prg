@@ -172,9 +172,6 @@ STATIC FUNCTION OpenFiles()
       SET ADSINDEX TO ( cPatEmp() + "RctPrvL.Cdx" ) ADDITIVE
       ( dbfRctPrvL )->( ordSetFocus( "cRef" ) )
 
-      USE ( cPatEmp() + "ALBCLIT.DBF" ) NEW VIA ( cDriver() ) SHARED ALIAS ( cCheckArea( "ALBCLIT", @dbfAlbCliT ) )
-      SET ADSINDEX TO ( cPatEmp() + "ALBCLIT.CDX" ) ADDITIVE
-
       USE ( cPatEmp() + "ALBCLIL.DBF" ) NEW VIA ( cDriver() ) SHARED ALIAS ( cCheckArea( "ALBCLIL", @dbfAlbCliL ) )
       SET ADSINDEX TO ( cPatEmp() + "ALBCLIL.CDX" ) ADDITIVE
       ( dbfAlbCliL )->( ordSetFocus( "cRef" ) )
@@ -222,6 +219,10 @@ STATIC FUNCTION OpenFiles()
 
       USE ( cPatEmp() + "PEDCLIL.DBF" ) NEW VIA ( cDriver() ) SHARED ALIAS ( cCheckArea( "PEDCLI", @dbfPedCliL ) )
       SET ADSINDEX TO ( cPatEmp() + "PEDCLIL.CDX" ) ADDITIVE
+
+      if !TDataCenter():OpenAlbCliT( @dbfAlbCliT )
+         lOpenFiles     := .f.
+      end if
 
       if !TDataCenter():OpenFacCliT( @dbfFacCliT )
          lOpenFiles     := .f.
