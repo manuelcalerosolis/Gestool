@@ -9225,6 +9225,10 @@ Function SynPreCli( cPath )
 
       while !( dbfPreCliT )->( eof() )
 
+         if Empty( ( dbfPreCliT )->cSufPre )
+            ( dbfPreCliT )->cSufPre := "00"
+         end if
+
          if Empty( ( dbfPreCliT )->cCodCaj )
             ( dbfPreCliT )->cCodCaj := "000"
          end if
@@ -9260,32 +9264,28 @@ Function SynPreCli( cPath )
 
       while !( dbfPreCliL )->( eof() )
 
-         if !( dbfPreCliT )->( dbSeek( ( dbfPreCliL )->cSerPre + Str( ( dbfPreCliL )->nNumPre ) + ( dbfPreCliL )->cSufPre ) )
+         if Empty( ( dbfPreCliL )->cSufPre )
+            ( dbfPreCliL )->cSufPre := "00"
+         end if
 
-            ( dbfPreCliL )->( dbDelete() )
+         if Empty( ( dbfPreCliL )->cLote ) .and. !Empty( ( dbfPreCliL )->nLote )
+            ( dbfPreCliL )->cLote   := AllTrim( Str( ( dbfPreCliL )->nLote ) )
+         end if
 
-         else
+         if ( dbfPreCliL )->lIvaLin != RetFld( ( dbfPreCliL )->cSerPre + Str( ( dbfPreCliL )->nNumPre ) + ( dbfPreCliL )->cSufPre, dbfPreCliT, "lIvaInc" )
+            ( dbfPreCliL )->lIvaLin := RetFld( ( dbfPreCliL )->cSerPre + Str( ( dbfPreCliL )->nNumPre ) + ( dbfPreCliL )->cSufPre, dbfPreCliT, "lIvaInc" )
+         end if
 
-            if Empty( ( dbfPreCliL )->cLote ) .and. !Empty( ( dbfPreCliL )->nLote )
-               ( dbfPreCliL )->cLote   := AllTrim( Str( ( dbfPreCliL )->nLote ) )
-            end if
+         if !Empty( ( dbfPreCliL )->cRef ) .and. Empty( ( dbfPreCliL )->cCodFam )
+            ( dbfPreCliL )->cCodFam := RetFamArt( ( dbfPreCliL )->cRef, dbfArticulo )
+         end if
 
-            if ( dbfPreCliL )->lIvaLin == ( dbfPreCliT )->lIvaInc
-               ( dbfPreCliL )->lIvaLin := ( dbfPreCliT )->lIvaInc
-            end if
+         if !Empty( ( dbfPreCliL )->cRef ) .and. !Empty( ( dbfPreCliL )->cCodFam )
+            ( dbfPreCliL )->cGrpFam := cGruFam( ( dbfPreCliL )->cCodFam, dbfFamilia )
+         end if
 
-            if !Empty( ( dbfPreCliL )->cRef ) .and. Empty( ( dbfPreCliL )->cCodFam )
-               ( dbfPreCliL )->cCodFam := RetFamArt( ( dbfPreCliL )->cRef, dbfArticulo )
-            end if
-
-            if !Empty( ( dbfPreCliL )->cRef ) .and. !Empty( ( dbfPreCliL )->cCodFam )
-               ( dbfPreCliL )->cGrpFam := cGruFam( ( dbfPreCliL )->cCodFam, dbfFamilia )
-            end if
-
-            if Empty( ( dbfPreCliL )->nReq )
-               ( dbfPreCliL )->nReq    := nPReq( dbfIva, ( dbfPreCliL )->nIva )
-            end if
-
+         if Empty( ( dbfPreCliL )->nReq )
+            ( dbfPreCliL )->nReq    := nPReq( dbfIva, ( dbfPreCliL )->nIva )
          end if
 
          ( dbfPreCliL )->( dbSkip() )
@@ -9296,8 +9296,8 @@ Function SynPreCli( cPath )
 
       while !( dbfPreCliI )->( eof() )
 
-         if !( dbfPreCliT )->( dbSeek( ( dbfPreCliI )->cSerPre + Str( ( dbfPreCliI )->nNumPre ) + ( dbfPreCliI )->cSufPre ) )
-            ( dbfPreCliI )->( dbDelete() )
+         if Empty( ( dbfPreCliI )->cSufPre )
+            ( dbfPreCliI )->cSufPre := "00"
          end if
 
          ( dbfPreCliI )->( dbSkip() )

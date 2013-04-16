@@ -379,6 +379,8 @@ CLASS TpvTactil
 
    METHOD AgregarPLU()
 
+   METHOD cNombreArticulo()   INLINE ( Capitalize( Alltrim( if( !Empty( ::oArticulo:cDesTcl ), ::oArticulo:cDesTcl, ::oArticulo:Nombre ) ) ) )
+
    //------------------------------------------------------------------------//
 
    INLINE METHOD CambiarPrecio()
@@ -1425,10 +1427,6 @@ CLASS TpvTactil
       RETURN ( Self )
 
    ENDMETHOD
-
-   //-----------------------------------------------------------------------//
-
-   METHOD cNombreArticulo()   INLINE ( Capitalize( Alltrim( if( !Empty( ::oArticulo:cDesTcl ), ::oArticulo:cDesTcl, ::oArticulo:Nombre ) ) ) )
 
 //--------------------------------------------------------------------------//
 

@@ -7702,6 +7702,10 @@ function SynAlbCli( cPath )
 
    end while
 
+   /*
+   Lineas----------------------------------------------------------------------
+   */
+
    while !( dbfAlbCliL )->( eof() )
 
       if Empty( ( dbfAlbCliL )->cSufAlb )
@@ -7768,6 +7772,8 @@ function SynAlbCli( cPath )
       SysRefresh()
 
    end while
+
+   // Incidencias--------------------------------------------------------------
 
    while !( dbfAlbCliI )->( eof() )
 

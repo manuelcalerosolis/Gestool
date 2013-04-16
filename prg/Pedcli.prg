@@ -7117,16 +7117,16 @@ Function SynPedCli( cPath )
 
       while !( dbfPedCliT )->( eof() )
 
-         if Empty( ( dbfPedCliT )->cCodCaj )
+         if Empty( ( dbfPedCliT )->cSufPed )
             if dbLock( dbfPedCliT )
-               ( dbfPedCliT )->cCodCaj := "000"
+               ( dbfPedCliT )->cSufPed := "00"
                ( dbfPedCliT )->( dbUnLock() )
             end if
          end if
 
-         if !( ( dbfPedCliT )->cSerPed >= "A" .and. ( dbfPedCliT )->cSerPed <= "Z" )
+         if Empty( ( dbfPedCliT )->cCodCaj )
             if dbLock( dbfPedCliT )
-               ( dbfPedCliT )->( dbDelete() )
+               ( dbfPedCliT )->cCodCaj := "000"
                ( dbfPedCliT )->( dbUnLock() )
             end if
          end if
@@ -7152,69 +7152,71 @@ Function SynPedCli( cPath )
 
       end while
 
+      // Lineas ---------------------------------------------------------------
+
       while !( dbfPedCliL )->( eof() )
 
-         if !( dbfPedCliT )->( dbSeek( ( dbfPedCliL )->cSerPed + Str( ( dbfPedCliL )->nNumPed ) + ( dbfPedCliL )->cSufPed ) )
+        if Empty( ( dbfPedCliL )->cSufPed )
+           if dbLock( dbfPedCliL )
+              ( dbfPedCliL )->cSufPed := "00"
+              ( dbfPedCliL )->( dbUnLock() )
+           end if
+        end if
 
-            if dbLock( dbfPedCliL )
-               ( dbfPedCliL )->( dbDelete() )
-               ( dbfPedCliL )->( dbUnLock() )
-            end if
+        if Empty( ( dbfPedCliL )->cLote ) .and. !Empty( ( dbfPedCliL )->nLote )
+           if dbLock( dbfPedCliL )
+              ( dbfPedCliL )->cLote   := AllTrim( Str( ( dbfPedCliL )->nLote ) )
+              ( dbfPedCliL )->( dbUnLock() )
+           end if
+        end if
 
-         else
+        if ( dbfPedCliL )->lIvaLin != RetFld( ( dbfPedCliI )->cSerPed + Str( ( dbfPedCliI )->nNumPed ) + ( dbfPedCliI )->cSufPed, dbfPedCliT, "lIvaInc" )
+           if dbLock( dbfPedCliL )
+              ( dbfPedCliL )->lIvaLin := RetFld( ( dbfPedCliI )->cSerPed + Str( ( dbfPedCliI )->nNumPed ) + ( dbfPedCliI )->cSufPed, dbfPedCliT, "lIvaInc" )
+              ( dbfPedCliL )->( dbUnLock() )
+           end if
+        end if
 
-            if Empty( ( dbfPedCliL )->cLote ) .and. !Empty( ( dbfPedCliL )->nLote )
-               if dbLock( dbfPedCliL )
-                  ( dbfPedCliL )->cLote   := AllTrim( Str( ( dbfPedCliL )->nLote ) )
-                  ( dbfPedCliL )->( dbUnLock() )
-               end if
-            end if
+        if !Empty( ( dbfPedCliL )->cRef ) .and. Empty( ( dbfPedCliL )->cCodFam )
+           if dbLock( dbfPedCliL )
+              ( dbfPedCliL )->cCodFam := RetFamArt( ( dbfPedCliL )->cRef, dbfArticulo )
+              ( dbfPedCliL )->( dbUnLock() )
+           end if
+        end if
 
-            if ( dbfPedCliL )->lIvaLin == ( dbfPedCliT )->lIvaInc
-               if dbLock( dbfPedCliL )
-                  ( dbfPedCliL )->lIvaLin := ( dbfPedCliT )->lIvaInc
-                  ( dbfPedCliL )->( dbUnLock() )
-               end if
-            end if
+        if !Empty( ( dbfPedCliL )->cRef ) .and. !Empty( ( dbfPedCliL )->cCodFam )
+           if dbLock( dbfPedCliL )
+              ( dbfPedCliL )->cGrpFam := cGruFam( ( dbfPedCliL )->cCodFam, dbfFamilia )
+              ( dbfPedCliL )->( dbUnLock() )
+           end if
+        end if
 
-            if !Empty( ( dbfPedCliL )->cRef ) .and. Empty( ( dbfPedCliL )->cCodFam )
-               if dbLock( dbfPedCliL )
-                  ( dbfPedCliL )->cCodFam := RetFamArt( ( dbfPedCliL )->cRef, dbfArticulo )
-                  ( dbfPedCliL )->( dbUnLock() )
-               end if
-            end if
+        if Empty( ( dbfPedCliL )->nReq )
+           if dbLock( dbfPedCliL )
+              ( dbfPedCliL )->nReq    := nPReq( dbfIva, ( dbfPedCliL )->nIva )
+              ( dbfPedCliL )->( dbUnLock() )
+           end if
+        end if
 
-            if !Empty( ( dbfPedCliL )->cRef ) .and. !Empty( ( dbfPedCliL )->cCodFam )
-               if dbLock( dbfPedCliL )
-                  ( dbfPedCliL )->cGrpFam := cGruFam( ( dbfPedCliL )->cCodFam, dbfFamilia )
-                  ( dbfPedCliL )->( dbUnLock() )
-               end if
-            end if
+        ( dbfPedCliL )->( dbSkip() )
 
-            if Empty( ( dbfPedCliL )->nReq )
-               if dbLock( dbfPedCliL )
-                  ( dbfPedCliL )->nReq    := nPReq( dbfIva, ( dbfPedCliL )->nIva )
-                  ( dbfPedCliL )->( dbUnLock() )
-               end if
-            end if
-
-         end if
-
-         ( dbfPedCliL )->( dbSkip() )
-
-         SysRefresh()
+        SysRefresh()
 
       end while
 
+      // Incidencias ----------------------------------------------------------
+
       while !( dbfPedCliI )->( eof() )
 
-         if !( dbfPedCliT )->( dbSeek( ( dbfPedCliI )->cSerPed + Str( ( dbfPedCliI )->nNumPed ) + ( dbfPedCliI )->cSufPed ) )
-            if dbLock( dbfPedCliI )
-               ( dbfPedCliI )->( dbDelete() )
-               ( dbfPedCliI )->( dbUnLock() )
-            end if
-         end if
+        if Empty( ( dbfPedCliI )->cSufPed )
+           if dbLock( dbfPedCliI )
+              ( dbfPedCliI )->cSufPed := "00"
+              ( dbfPedCliI )->( dbUnLock() )
+           end if
+        end if
+
          ( dbfPedCliI )->( dbSkip() )
+
          SysRefresh()
 
       end while

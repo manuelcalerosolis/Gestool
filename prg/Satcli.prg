@@ -9134,6 +9134,10 @@ Function SynSatCli( cPath )
 
       while !( dbfSatCliT )->( eof() )
 
+         if Empty( ( dbfSatCliT )->cSufSat )
+            ( dbfSatCliT )->cSufSat := "00"
+         end if
+
          if Empty( ( dbfSatCliT )->cCodCaj )
             ( dbfSatCliT )->cCodCaj := "000"
          end if
@@ -9169,32 +9173,28 @@ Function SynSatCli( cPath )
 
       while !( dbfSatCliL )->( eof() )
 
-         if !( dbfSatCliT )->( dbSeek( ( dbfSatCliL )->cSerSat + Str( ( dbfSatCliL )->nNumSat ) + ( dbfSatCliL )->cSufSat ) )
+         if Empty( ( dbfSatCliL )->cSufSat )
+            ( dbfSatCliL )->cSufSat := "00"
+         end if
 
-            ( dbfSatCliL )->( dbDelete() )
+         if Empty( ( dbfSatCliL )->cLote ) .and. !Empty( ( dbfSatCliL )->nLote )
+            ( dbfSatCliL )->cLote   := AllTrim( Str( ( dbfSatCliL )->nLote ) )
+         end if
 
-         else
+         if ( dbfSatCliL )->lIvaLin != RetFld( ( dbfSatCliL )->cSerSat + Str( ( dbfSatCliL )->nNumSat ) + ( dbfSatCliL )->cSufSat, dbfSatCliT, "lIvaInc" )
+            ( dbfSatCliL )->lIvaLin := RetFld( ( dbfSatCliL )->cSerSat + Str( ( dbfSatCliL )->nNumSat ) + ( dbfSatCliL )->cSufSat, dbfSatCliT, "lIvaInc" )
+         end if
 
-            if Empty( ( dbfSatCliL )->cLote ) .and. !Empty( ( dbfSatCliL )->nLote )
-               ( dbfSatCliL )->cLote   := AllTrim( Str( ( dbfSatCliL )->nLote ) )
-            end if
+         if !Empty( ( dbfSatCliL )->cRef ) .and. Empty( ( dbfSatCliL )->cCodFam )
+            ( dbfSatCliL )->cCodFam := RetFamArt( ( dbfSatCliL )->cRef, dbfArticulo )
+         end if
 
-            if ( dbfSatCliL )->lIvaLin == ( dbfSatCliT )->lIvaInc
-               ( dbfSatCliL )->lIvaLin := ( dbfSatCliT )->lIvaInc
-            end if
+         if !Empty( ( dbfSatCliL )->cRef ) .and. !Empty( ( dbfSatCliL )->cCodFam )
+            ( dbfSatCliL )->cGrpFam := cGruFam( ( dbfSatCliL )->cCodFam, dbfFamilia )
+         end if
 
-            if !Empty( ( dbfSatCliL )->cRef ) .and. Empty( ( dbfSatCliL )->cCodFam )
-               ( dbfSatCliL )->cCodFam := RetFamArt( ( dbfSatCliL )->cRef, dbfArticulo )
-            end if
-
-            if !Empty( ( dbfSatCliL )->cRef ) .and. !Empty( ( dbfSatCliL )->cCodFam )
-               ( dbfSatCliL )->cGrpFam := cGruFam( ( dbfSatCliL )->cCodFam, dbfFamilia )
-            end if
-
-            if Empty( ( dbfSatCliL )->nReq )
-               ( dbfSatCliL )->nReq    := nPReq( dbfIva, ( dbfSatCliL )->nIva )
-            end if
-
+         if Empty( ( dbfSatCliL )->nReq )
+            ( dbfSatCliL )->nReq    := nPReq( dbfIva, ( dbfSatCliL )->nIva )
          end if
 
          ( dbfSatCliL )->( dbSkip() )
@@ -9205,8 +9205,8 @@ Function SynSatCli( cPath )
 
       while !( dbfSatCliI )->( eof() )
 
-         if !( dbfSatCliT )->( dbSeek( ( dbfSatCliI )->cSerSat + Str( ( dbfSatCliI )->nNumSat ) + ( dbfSatCliI )->cSufSat ) )
-            ( dbfSatCliI )->( dbDelete() )
+         if Empty( ( dbfSatCliI )->cSufSat )
+            ( dbfSatCliI )->cSufSat := "00"
          end if
 
          ( dbfSatCliI )->( dbSkip() )
@@ -9218,17 +9218,13 @@ Function SynSatCli( cPath )
       // Series ---------------------------------------------------------------
    
       while !( dbfSatCliS )->( eof() )
+
+         if Empty( ( dbfSatCliS )->cSufSat )
+            ( dbfSatCliS )->cSufSat := "00"
+         end if
    
-         if !( dbfSatCliT )->( dbSeek( ( dbfSatCliS )->cSerSat + Str( ( dbfSatCliS )->nNumSat ) + ( dbfSatCliS )->cSufSat ) )
-   
-            ( dbfSatCliS )->( dbDelete() )
-   
-         else
-   
-            if ( dbfSatCliS )->dFecSat != ( dbfSatCliT )->dFecSat
-               ( dbfSatCliS )->dFecSat    := ( dbfSatCliT )->dFecSat
-            end if
-   
+         if ( dbfSatCliS )->dFecSat != RetFld( ( dbfSatCliS )->cSerSat + Str( ( dbfSatCliS )->nNumSat ) + ( dbfSatCliS )->cSufSat, dbfSatCliT, "dFecSat" )
+            ( dbfSatCliS )->dFecSat := RetFld( ( dbfSatCliS )->cSerSat + Str( ( dbfSatCliS )->nNumSat ) + ( dbfSatCliS )->cSufSat, dbfSatCliT, "dFecSat" )
          end if
    
          ( dbfSatCliS )->( dbSkip() )
