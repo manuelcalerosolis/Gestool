@@ -201,6 +201,75 @@ CLASS TDataCenter
 
    //---------------------------------------------------------------------------//
 
+   INLINE METHOD OpenAlbCliT( dbf )
+
+      local lOpen
+      local cFilter
+
+      USE ( cPatEmp() + "AlbCliT.Dbf" ) NEW VIA ( cDriver() ) SHARED ALIAS ( cCheckArea( "AlbCliT", @dbf ) )
+      SET ADSINDEX TO ( cPatEmp() + "AlbCliT.Cdx" ) ADDITIVE
+
+      lOpen             := !neterr()
+      if lOpen
+
+         /*
+         Limitaciones de cajero y cajas----------------------------------------
+         */
+
+         if lAIS() .and. !oUser():lAdministrador()
+      
+            cFilter     := "Field->cSufAlb == '" + oUser():cDelegacion() + "' .and. Field->cCodCaj == '" + oUser():cCaja() + "'"
+            if oUser():lFiltroVentas()         
+               cFilter  += " .and. Field->cCodUsr == '" + oUser():cCodigo() + "'"
+            end if 
+
+            ( dbf )->( AdsSetAOF( cFilter ) )
+
+         end if
+
+      end if 
+
+      Return ( lOpen )   
+
+   ENDMETHOD
+
+   //---------------------------------------------------------------------------//
+
+   INLINE METHOD OpenSatCliT( dbf )
+
+      local lOpen
+      local cFilter
+
+      USE ( cPatEmp() + "SatCliT.Dbf" ) NEW VIA ( cDriver() ) SHARED ALIAS ( cCheckArea( "SatCliT", @dbf ) )
+      SET ADSINDEX TO ( cPatEmp() + "SatCliT.Cdx" ) ADDITIVE
+
+      lOpen             := !neterr()
+      if lOpen
+
+         /*
+         Limitaciones de cajero y cajas----------------------------------------
+         */
+
+         if lAIS() .and. !oUser():lAdministrador()
+      
+            cFilter     := "Field->cSufSat == '" + oUser():cDelegacion() + "' .and. Field->cCodCaj == '" + oUser():cCaja() + "'"
+            if oUser():lFiltroVentas()         
+               cFilter  += " .and. Field->cCodUsr == '" + oUser():cCodigo() + "'"
+            end if 
+
+            ( dbf )->( AdsSetAOF( cFilter ) )
+
+         end if
+
+      end if 
+
+      Return ( lOpen )   
+
+   ENDMETHOD
+
+   //---------------------------------------------------------------------------//
+
+
 END CLASS
 
 //---------------------------------------------------------------------------//

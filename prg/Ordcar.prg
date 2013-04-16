@@ -1724,9 +1724,11 @@ static function pdaOpenFiles()
    Bases de datos necesarias para imprimir liquidaciones-----------------------
    */
 
-      USE ( cPatEmp() + "ALBCLIT.DBF" ) NEW VIA ( cDriver() ) SHARED ALIAS ( cCheckArea( "ALBCLIT", @dbfAlbCliT ) )
-      SET ADSINDEX TO ( cPatEmp() + "ALBCLIT.CDX" ) ADDITIVE
-      ( dbfAlbCliT )->( OrdSetFocus( "nNumAlb" ) )
+      if !TDataCenter():OpenAlbCliT( @dbfAlbCliT )
+         lOpen       := .f.
+      else 
+         ( dbfAlbCliT )->( OrdSetFocus( "nNumAlb" ) )      
+      end if
 
       USE ( cPatEmp() + "ALBCLIL.DBF" ) NEW VIA ( cDriver() ) SHARED ALIAS ( cCheckArea( "ALBCLIL", @dbfAlbCliL ) )
       SET ADSINDEX TO ( cPatEmp() + "ALBCLIL.CDX" ) ADDITIVE

@@ -781,11 +781,12 @@ STATIC FUNCTION OpenFiles( lExt )
       USE ( cPatDat() + "SITUA.DBF" ) NEW VIA ( cDriver() ) SHARED ALIAS ( cCheckArea( "SITUA", @dbfSitua ) )
       SET ADSINDEX TO ( cPatDat() + "SITUA.CDX" ) ADDITIVE
 
-      USE ( cPatEmp() + "ALBCLIT.DBF" ) NEW VIA ( cDriver() ) SHARED ALIAS ( cCheckArea( "ALBCLIT", @dbfAlbCliT ) )
-      SET ADSINDEX TO ( cPatEmp() + "ALBCLIT.CDX" ) ADDITIVE
-
       USE ( cPatEmp() + "AntCliT.Dbf" ) NEW VIA ( cDriver() ) SHARED ALIAS ( cCheckArea( "AntCliT", @dbfAntCliT ) )
       SET ADSINDEX TO ( cPatEmp() + "AntCliT.Cdx" ) ADDITIVE
+
+      if !TDataCenter():OpenAlbCliT( @dbfAlbCliT )
+         lOpenFiles     := .f.
+      end if
 
       if !TDataCenter():OpenFacCliP( @dbfFacCliP )
          lOpenFiles     := .f.

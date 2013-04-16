@@ -487,9 +487,6 @@ STATIC FUNCTION OpenFiles( lExt )
 
       lOpenFiles        := .t.
 
-      USE ( cPatEmp() + "SATCLIT.DBF" ) NEW VIA ( cDriver() ) SHARED ALIAS ( cCheckArea( "SATCLIT", @dbfSatCliT ) )
-      SET ADSINDEX TO ( cPatEmp() + "SATCLIT.CDX" ) ADDITIVE
-
       USE ( cPatEmp() + "SATCLIL.DBF" ) NEW VIA ( cDriver() ) SHARED ALIAS ( cCheckArea( "SATCLIL", @dbfSatCliL ) )
       SET ADSINDEX TO ( cPatEmp() + "SATCLIL.CDX" ) ADDITIVE
 
@@ -660,11 +657,12 @@ STATIC FUNCTION OpenFiles( lExt )
       USE ( cPatDat() + "SITUA.DBF" ) NEW VIA ( cDriver() ) SHARED ALIAS ( cCheckArea( "SITUA", @dbfSitua ) )
       SET ADSINDEX TO ( cPatDat() + "SITUA.CDX" ) ADDITIVE
 
-      USE ( cPatEmp() + "SatCLIT.DBF" ) NEW VIA ( cDriver() ) SHARED ALIAS ( cCheckArea( "SatCLIT", @dbfSatCliT ) )
-      SET ADSINDEX TO ( cPatEmp() + "SatCLIT.CDX" ) ADDITIVE
-
       USE ( cPatEmp() + "AntCliT.Dbf" ) NEW VIA ( cDriver() ) SHARED ALIAS ( cCheckArea( "AntCliT", @dbfAntCliT ) )
       SET ADSINDEX TO ( cPatEmp() + "AntCliT.Cdx" ) ADDITIVE
+
+      if !TDataCenter():OpenSatCliT( @dbfSatCliT )
+         lOpenFiles     := .f.
+      end if
 
       if !TDataCenter():OpenFacCliP( @dbfFacCliP )
          lOpenFiles     := .f.
@@ -1216,7 +1214,7 @@ FUNCTION SatCli( oMenuItem, oWnd, cCodCli, cCodArt )
          :bEditValue       := {|| ( dbfSatCliT )->lEstado }
          :nWidth           := 20
          :SetCheck( { "Bullet_Square_Green_16", "Bullet_Square_Red_16" } )
-         :AddResource( "trafficlight_on_16" )
+         :AddResource( "Trafficlight_on_16" )
       end with
 
       with object ( oWndBrw:AddXCol() )
@@ -9410,8 +9408,9 @@ Method RestoreData()
       oBlock            := ErrorBlock( {| oError | ApoloBreak( oError ) } )
       BEGIN SEQUENCE
 
-      USE ( cPatEmp() + "SatCliT.Dbf" ) NEW VIA ( cDriver() ) SHARED ALIAS ( cCheckArea( "SatCliT", @dbfSatCliT ) )
+      USE ( cPatEmp() + "SatCliT.DBF" ) NEW VIA ( cDriver() ) SHARED ALIAS ( cCheckArea( "SatCliT", @dbfSatCliT ) )
       SET ADSINDEX TO ( cPatEmp() + "SatCliT.Cdx" ) ADDITIVE
+      
       ( dbfSatCliT )->( OrdSetFocus( "lSndDoc" ) )
 
       while ( dbfSatCliT )->( dbSeek( .t. ) ) .and. !( dbfSatCliT )->( eof() )
@@ -9515,16 +9514,16 @@ Method Process()
                lExistTable( cPatSnd() + "SatCliL.DBF" )   .and.;
                lExistTable( cPatSnd() + "SatCliI.DBF" )
 
-               USE ( cPatSnd() + "SatCliT.DBF" ) NEW VIA ( cDriver() )READONLY ALIAS ( cCheckArea( "SatCliT", @tmpSatCliT ) )
+               USE ( cPatSnd() + "SatCliT.DBF" ) NEW VIA ( cDriver() ) READONLY ALIAS ( cCheckArea( "SatCliT", @tmpSatCliT ) )
                SET ADSINDEX TO ( cPatSnd() + "SatCliT.CDX" ) ADDITIVE
 
-               USE ( cPatSnd() + "SatCliL.DBF" ) NEW VIA ( cDriver() )READONLY ALIAS ( cCheckArea( "SatCliL", @tmpSatCliL ) )
+               USE ( cPatSnd() + "SatCliL.DBF" ) NEW VIA ( cDriver() ) READONLY ALIAS ( cCheckArea( "SatCliL", @tmpSatCliL ) )
                SET ADSINDEX TO ( cPatSnd() + "SatCliL.CDX" ) ADDITIVE
 
-               USE ( cPatSnd() + "SatCliI.DBF" ) NEW VIA ( cDriver() )READONLY ALIAS ( cCheckArea( "SatCliI", @tmpSatCliI ) )
+               USE ( cPatSnd() + "SatCliI.DBF" ) NEW VIA ( cDriver() ) READONLY ALIAS ( cCheckArea( "SatCliI", @tmpSatCliI ) )
                SET ADSINDEX TO ( cPatSnd() + "SatCliI.CDX" ) ADDITIVE
 
-               USE ( cPatSnd() + "SatCliD.DBF" ) NEW VIA ( cDriver() )READONLY ALIAS ( cCheckArea( "SatCliD", @tmpSatCliD ) )
+               USE ( cPatSnd() + "SatCliD.DBF" ) NEW VIA ( cDriver() ) READONLY ALIAS ( cCheckArea( "SatCliD", @tmpSatCliD ) )
                SET ADSINDEX TO ( cPatSnd() + "SatCliD.CDX" ) ADDITIVE
 
                USE ( cPatEmp() + "SatCliT.DBF" ) NEW VIA ( cDriver() ) SHARED ALIAS ( cCheckArea( "SatCliT", @dbfSatCliT ) )

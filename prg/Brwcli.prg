@@ -138,9 +138,11 @@ Static Function OpenFiles( lMessage )
       SET ADSINDEX TO ( cPatEmp() + "PEDCLIP.CDX" ) ADDITIVE
       SET TAG TO "CCODCLI"
 
-      USE ( cPatEmp() + "ALBCLIT.DBF" ) NEW VIA ( cDriver() ) SHARED ALIAS ( cCheckArea( "ALBCLIT", @dbfAlbCliT ) )
-      SET ADSINDEX TO ( cPatEmp() + "ALBCLIT.CDX" ) ADDITIVE
-      SET TAG TO "CCODCLI"
+      if !TDataCenter():OpenAlbCliT( @dbfAlbCliT )
+         lOpenFiles     := .f.
+      else 
+         ( dbfAlbCliT )->( OrdSetFocus( "cCodCli" ) )
+      end if
 
       USE ( cPatEmp() + "ALBCLIL.DBF" ) NEW VIA ( cDriver() ) SHARED ALIAS ( cCheckArea( "ALBCLIL", @dbfAlbCliL ) )
       SET ADSINDEX TO ( cPatEmp() + "ALBCLIL.CDX" ) ADDITIVE

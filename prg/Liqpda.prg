@@ -552,9 +552,11 @@ static function pdaOpenFiles()
       USE ( cPatGrp() + "AGENTES.DBF" ) NEW VIA ( cDriver() ) SHARED ALIAS ( cCheckArea( "AGENTES", @dbfAgentes ) )
       SET ADSINDEX TO ( cPatGrp() + "AGENTES.CDX" ) ADDITIVE
 
-      USE ( cPatEmp() + "ALBCLIT.DBF" ) NEW VIA ( cDriver() ) SHARED ALIAS ( cCheckArea( "ALBCLIT", @dbfAlbCliT ) )
-      SET ADSINDEX TO ( cPatEmp() + "ALBCLIT.CDX" ) ADDITIVE
-      ( dbfAlbCliT )->( OrdSetFocus( "dFecAlb" ) )
+      if !TDataCenter():OpenAlbCliT( @dbfAlbCliT )
+         lOpen     := .f.
+      else 
+         ( dbfAlbCliT )->( OrdSetFocus( "dFecAlb" ) )
+      end if
 
       USE ( cPatEmp() + "ALBCLIL.DBF" ) NEW VIA ( cDriver() ) SHARED ALIAS ( cCheckArea( "ALBCLIL", @dbfAlbCliL ) )
       SET ADSINDEX TO ( cPatEmp() + "ALBCLIL.CDX" ) ADDITIVE

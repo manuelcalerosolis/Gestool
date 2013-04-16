@@ -336,8 +336,9 @@ STATIC FUNCTION OpenFiles( lExt, cPath )
       USE ( cPatEmp() + "ALBPROVT.DBF" ) NEW VIA ( cDriver() ) SHARED ALIAS ( cCheckArea( "AlbPrvT", @dbfAlbPrvT ) )
       SET ADSINDEX TO ( cPatEmp() + "ALBPROVT.CDX" ) ADDITIVE
 
-      USE ( cPatEmp() + "ALBCLIT.DBF" ) NEW VIA ( cDriver() ) SHARED ALIAS ( cCheckArea( "AlbCliT", @dbfAlbCliT ) )
-      SET ADSINDEX TO ( cPatEmp() + "ALBCLIT.CDX" ) ADDITIVE
+      if !TDataCenter():OpenAlbCliT( @dbfAlbCliT )
+         lOpenFiles     := .f.
+      end if
 
       USE ( cPatEmp() + "PEDPROVL.DBF" ) NEW VIA ( cDriver() ) SHARED ALIAS ( cCheckArea( "PedPrvL", @dbfPedPrvL ) )
       SET ADSINDEX TO ( cPatEmp() + "PEDPROVL.CDX" ) ADDITIVE

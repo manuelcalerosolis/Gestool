@@ -2302,9 +2302,8 @@ STATIC FUNCTION GenDiario( dInfDesde, dInfHasta, lPreCli, lPedCli, lAlbCli, lFac
 
    if lAlbCli
 
-      USE ( cPatEmp() + "ALBCLIT.DBF" ) NEW VIA ( cDriver() ) SHARED ALIAS ( cCheckArea( "ALBCLIT", @dbfAlbCliT ) )
-      SET ADSINDEX TO ( cPatEmp() + "ALBCLIT.CDX" ) ADDITIVE
-      ( dbfPedCliT )->( OrdSetFocus( "DFECALB" ) )
+      TDataCenter():OpenAlbCliT( @dbfAlbCliT )
+      ( dbfAlbCliT )->( OrdSetFocus( "dFecAlb" ) )
 
       USE ( cPatEmp() + "ALBCLIL.DBF" ) NEW VIA ( cDriver() ) SHARED ALIAS ( cCheckArea( "ALBCLIL", @dbfAlbCliL ) )
       SET ADSINDEX TO ( cPatEmp() + "ALBCLIL.CDX" ) ADDITIVE

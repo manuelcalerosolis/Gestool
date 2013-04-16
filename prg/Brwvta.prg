@@ -1,4 +1,3 @@
-#ifndef __PDA__
 #include "FiveWin.Ch"
 #include "Folder.ch"
 #include "Report.ch"
@@ -6,12 +5,7 @@
 #include "Factu.ch"
 #include "MesDbf.ch"
 #include "TGraph.ch"
-#else
-#include "FWCE.ch"
-REQUEST DBFCDX
-#endif
 
-#ifndef __PDA__
 #define IDC_CHART1               111
 
 static dbfDiv
@@ -31,6 +25,8 @@ static dbfFacPrvL
 static dbfFacPrvP
 static dbfAlbCliT
 static dbfAlbCliL
+static dbfSatCliT
+static dbfSatCliL
 static dbfFacCliT
 static dbfFacCliL
 static dbfFacCliP
@@ -68,6 +64,12 @@ static nVdvDiv
 
 static oMenu
 
+static oMeter
+static nMeter
+
+static oText
+static cText         := ""
+
 static oTreeImageList
 static oTreeDocument
 static oTreeCompras
@@ -76,14 +78,14 @@ static oTreeStock
 static oTreeProduccion
 
 static oStock
-static nTotResStk  := 0
-static nTotEntStk  := 0
-static nTotActStk  := 0
-static nStkCom     := 0
-static nStkAlm     := 0
-static nStkVta     := 0
-static nStkPro     := 0
-static nStkCon     := 0
+static nTotResStk    := 0
+static nTotEntStk    := 0
+static nTotActStk    := 0
+static nStkCom       := 0
+static nStkAlm       := 0
+static nStkVta       := 0
+static nStkPro       := 0
+static nStkCon       := 0
 static oStkCom
 static oStkAlm
 static oStkVta
@@ -93,15 +95,15 @@ static oTotActStk
 static oTotResStk
 static oTotEntStk
 static oStkLibre
-static nStkLibre   := 0
+static nStkLibre     := 0
 static oPesStk
 static oVolStk
 static oPesUnd
 static oVolUnd
-static nPesStk     := 0
-static nVolStk     := 0
-static nPesUnd     := 0
-static nVolUnd     := 0
+static nPesStk       := 0
+static nVolStk       := 0
+static nPesUnd       := 0
+static nVolUnd       := 0
 
 static oCom
 static aCom
@@ -115,8 +117,6 @@ static aProducido
 static aConsumido
 
 static oGraph
-
-#endif
 
 #ifndef __PDA__
 
@@ -215,8 +215,9 @@ Static Function OpenFiles()
    SET ADSINDEX TO ( cPatEmp() + "PEDCLIR.CDX" ) ADDITIVE
    SET TAG TO "CREF"
 
-   USE ( cPatEmp() + "ALBCLIT.DBF" ) NEW VIA ( cDriver() ) SHARED ALIAS ( cCheckArea( "ALBCLIT", @dbfAlbCliT ) )
-   SET ADSINDEX TO ( cPatEmp() + "ALBCLIT.CDX" ) ADDITIVE
+   USE ( cPatEmp() + "SatCliL.DBF" ) NEW VIA ( cDriver() ) SHARED ALIAS ( cCheckArea( "SatCliL", @dbfSatCliL ) )
+   SET ADSINDEX TO ( cPatEmp() + "SatCliL.CDX" ) ADDITIVE
+   SET TAG TO "cRef"
 
    USE ( cPatEmp() + "ALBCLIL.DBF" ) NEW VIA ( cDriver() ) SHARED ALIAS ( cCheckArea( "ALBCLIL", @dbfAlbCliL ) )
    SET ADSINDEX TO ( cPatEmp() + "ALBCLIL.CDX" ) ADDITIVE
@@ -261,11 +262,19 @@ Static Function OpenFiles()
    SET ADSINDEX TO ( cPatEmp() + "PROMAT.CDX" ) ADDITIVE
    SET TAG TO "CCODART"
 
+   if !TDataCenter():OpenSatCliT( @dbfSatCliT )
+     lOpen              := .f.
+   end if
+
    if !TDataCenter():OpenFacCliT( @dbfFacCliT )
       lOpen             := .f.
    end if
 
    if !TDataCenter():OpenFacCliP( @dbfFacCliP )
+      lOpen             := .f.
+   end if
+
+   if !TDataCenter():OpenAlbCliT( @dbfAlbCliT )
       lOpen             := .f.
    end if
 
@@ -280,7 +289,7 @@ Static Function OpenFiles()
    RECOVER USING oError
 
       msgStop( ErrorMessage( oError ), "Imposible abrir las bases de datos" )
-      lOpen          := .f.
+      lOpen             := .f.
 
    END SEQUENCE
 
@@ -331,6 +340,8 @@ Static Function CloseFiles()
    (dbfProducM)->( dbCloseArea() )
    (dbfRctPrvT)->( dbCloseArea() )
    (dbfRctPrvL)->( dbCloseArea() )
+   (dbfSatCliT)->( dbCloseArea() )
+   (dbfSatCliL)->( dbCloseArea() )
 
    if !Empty( oStock )
       oStock:End()
@@ -407,14 +418,14 @@ function BrwVtaComArt( cCodArt, cNomArt, cDiv, cIva, cAlm, cArticulo )
    Montamos el dialogo
    */
 
-   DEFINE DIALOG oDlg RESOURCE "ARTINFO" TITLE "Información del artículo : " + Rtrim( cCodArt ) + " - " + Rtrim( cNomArt )
+   DEFINE DIALOG oDlg RESOURCE "ArtInfo" TITLE "Información del artículo : " + Rtrim( cCodArt ) + " - " + Rtrim( cNomArt )
 
    REDEFINE FOLDER oFld ;
 			ID 		300 ;
 			OF 		oDlg ;
          PROMPT   "&Estadisticas"      ,;
                   "&Documentos"        ,;
-                  "Gráfico"            ;
+                  "Gráfico"            ; 
          DIALOGS  "ART_8"              ,;
                   "INFO_1"             ,;
                   "INFO_2"
@@ -442,14 +453,14 @@ function BrwVtaComArt( cCodArt, cNomArt, cDiv, cIva, cAlm, cArticulo )
 
    oBrwCom:SetArray( aCom, , , .f. )
 
-   oBrwCom:lFooter            := .t.
-   oBrwCom:lVScroll           := .f.
-   oBrwCom:lHScroll           := .f.
-   oBrwCom:nMarqueeStyle      := 5
-   oBrwCom:nFooterHeight      := 35
+   oBrwCom:lFooter               := .t.
+   oBrwCom:lVScroll              := .f.
+   oBrwCom:lHScroll              := .f.
+   oBrwCom:nMarqueeStyle         := 5
+   oBrwCom:nFooterHeight         := 35
 
-   oBrwCom:nFooterLines       := 2
-   oBrwCom:cName              := "Compras en informe de articulos"
+   oBrwCom:nFooterLines          := 2
+   oBrwCom:cName                 := "Compras en informe de articulos"
    oBrwCom:CreateFromResource( 400 )
 
    with object ( oBrwCom:AddCol() )
@@ -754,6 +765,7 @@ function BrwVtaComArt( cCodArt, cNomArt, cDiv, cIva, cAlm, cArticulo )
       :AddResource( "Document_Delete_16" )
       :AddResource( "Worker2_Form_Red_16" )
       :AddResource( "Document_navigate_cross_16" )
+      :AddResource( "Power-drill_user1_16" )
    end with
 
    with object ( oBrwTmp:addCol() )
@@ -767,6 +779,13 @@ function BrwVtaComArt( cCodArt, cNomArt, cDiv, cIva, cAlm, cArticulo )
       :bEditValue    := {|| cMaskNumDoc( oDbfTmp ) }
       :cSortOrder    := "cNumDoc"
       :nWidth        := 80
+   end with
+
+   with object ( oBrwTmp:addCol() )
+      :cHeader       := "Delegación"
+      :bEditValue    := {|| oDbfTmp:cSufDoc }
+      :cSortOrder    := "cSufDoc"
+      :nWidth        := 40
    end with
 
    with object ( oBrwTmp:addCol() )
@@ -788,6 +807,28 @@ function BrwVtaComArt( cCodArt, cNomArt, cDiv, cIva, cAlm, cArticulo )
       :bEditValue    := {|| oDbfTmp:cNomDoc }
       :cSortOrder    := "cNomDoc"
       :nWidth        := 175
+   end with
+
+   with object ( oBrwTmp:addCol() )
+      :cHeader       := "Prop. 1"
+      :bEditValue    := {|| oDbfTmp:cValPr1 }
+      :nWidth        := 40
+      :lHide         := .t.
+   end with
+
+   with object ( oBrwTmp:addCol() )
+      :cHeader       := "Prop. 2"
+      :bEditValue    := {|| oDbfTmp:cValPr2 }
+      :nWidth        := 40
+      :lHide         := .t.
+   end with
+
+   with object ( oBrwTmp:addCol() )
+      :cHeader       := "Lote"
+      :bEditValue    := {|| oDbfTmp:cLote }
+      :cSortOrder    := "cLote"
+      :nWidth        := 80
+      :lHide         := .t.
    end with
 
    with object ( oBrwTmp:addCol() )
@@ -852,28 +893,6 @@ function BrwVtaComArt( cCodArt, cNomArt, cDiv, cIva, cAlm, cArticulo )
       :cSortOrder    := "cAlmDoc"
       :bEditValue    := {|| oDbfTmp:cAlmDoc }
       :nWidth        := 40
-      :lHide         := .t.
-   end with
-
-   with object ( oBrwTmp:addCol() )
-      :cHeader       := "Prop. 1"
-      :bEditValue    := {|| oDbfTmp:cValPr1 }
-      :nWidth        := 40
-      :lHide         := .t.
-   end with
-
-   with object ( oBrwTmp:addCol() )
-      :cHeader       := "Prop. 2"
-      :bEditValue    := {|| oDbfTmp:cValPr2 }
-      :nWidth        := 40
-      :lHide         := .t.
-   end with
-
-   with object ( oBrwTmp:addCol() )
-      :cHeader       := "Lote"
-      :bEditValue    := {|| oDbfTmp:cLote }
-      :cSortOrder    := "cLote"
-      :nWidth        := 80
       :lHide         := .t.
    end with
 
@@ -973,6 +992,12 @@ function BrwVtaComArt( cCodArt, cNomArt, cDiv, cIva, cAlm, cArticulo )
    Botones comunes a la caja de dialogo----------------------------------------
    */
 
+   REDEFINE SAY oText VAR cText ;
+      ID       400 ;
+      OF       oDlg
+
+   oMeter      := TMeter():ReDefine( 200, { | u | if( pCount() == 0, nMeter, nMeter := u ) }, 10, oDlg, .f., , , .t., Rgb( 255,255,255 ), , Rgb( 128,255,0 ) )
+
    REDEFINE BUTTON ;
       ID       306 ;
       OF       oDlg ;
@@ -1031,9 +1056,11 @@ Static Function InitBrwVtaCli( cCodArt, oTree, dbfDiv, dbfArticulo, oBrwStk, oBr
    oTreeImageList := TImageList():New( 16, 16 )
 
    oTreeImageList:AddMasked( TBitmap():Define( "Cube_yellow_16" ),                  Rgb( 255, 0, 255 ) )
+
    oTreeImageList:AddMasked( TBitmap():Define( "Clipboard_empty_businessman_16" ),  Rgb( 255, 0, 255 ) )
    oTreeImageList:AddMasked( TBitmap():Define( "Document_plain_businessman_16" ),   Rgb( 255, 0, 255 ) )
    oTreeImageList:AddMasked( TBitmap():Define( "Document_businessman_16" ),         Rgb( 255, 0, 255 ) )
+
    oTreeImageList:AddMasked( TBitmap():Define( "Notebook_user1_16" ),               Rgb( 255, 0, 255 ) )
    oTreeImageList:AddMasked( TBitmap():Define( "Clipboard_empty_user1_16" ),        Rgb( 255, 0, 255 ) )
    oTreeImageList:AddMasked( TBitmap():Define( "Document_plain_user1_16" ),         Rgb( 255, 0, 255 ) )
@@ -1045,6 +1072,8 @@ Static Function InitBrwVtaCli( cCodArt, oTree, dbfDiv, dbfArticulo, oBrwStk, oBr
    oTreeImageList:AddMasked( TBitmap():Define( "Package_16" ),                      Rgb( 255, 0, 255 ) )
    oTreeImageList:AddMasked( TBitmap():Define( "Worker2_Form_Red_16" ),             Rgb( 255, 0, 255 ) )
    oTreeImageList:AddMasked( TBitmap():Define( "Document_navigate_cross_16" ),      Rgb( 255, 0, 255 ) )
+
+   oTreeImageList:AddMasked( TBitmap():Define( "Power-drill_user1_16" ),            Rgb( 255, 0, 255 ) )
 
    oTree:SetImageList( oTreeImageList )
 
@@ -1068,6 +1097,7 @@ Static Function InitBrwVtaCli( cCodArt, oTree, dbfDiv, dbfArticulo, oBrwStk, oBr
       oTreeProduccion:Add( cTextDocument( PRO_LIN ), 13 )
       oTreeProduccion:Add( cTextDocument( PRO_MAT ), 13 )
 
+      oTreeVentas:Add( cTextDocument( SAT_CLI ), 15 )
       oTreeVentas:Add( cTextDocument( PRE_CLI ), 4 )
       oTreeVentas:Add( cTextDocument( PED_CLI ), 5 )
       oTreeVentas:Add( cTextDocument( ALB_CLI ), 6 )
@@ -1187,24 +1217,23 @@ Static Function LoadDatos( cCodArt, nYear, oDlg, oBrwStk, oBrwTmp, oGraph, oBrwC
    oDlg:Disable()
 
    CursorWait()
-   /*
+
    oBlock            := ErrorBlock( {| oError | ApoloBreak( oError ) } )
    BEGIN SEQUENCE
-   */
+   
    /*
    Calculamos el stock---------------------------------------------------------
    */
 
    oStock:aStockArticulo( cCodArt, , oBrwStk )
 
-   oMsgProgress()
-   oMsgProgress():SetRange( 0, 17 )
+   oMeter:SetTotal( 18 )
 
    /*
    Calculos de compras---------------------------------------------------------
    */
 
-   oMsgText( "Calculando compras mensuales" )
+   oText:SetText( "Calculando compras mensuales" )
 
    aTotCom[1]        := 0
    aTotCom[2]        := 0
@@ -1214,7 +1243,7 @@ Static Function LoadDatos( cCodArt, nYear, oDlg, oBrwStk, oBrwTmp, oGraph, oBrwC
 
    nCompras( cCodArt, dbfAlbPrvT, dbfAlbPrvL, dbfFacPrvT, dbfFacPrvL, if( nYear == "Todos", nil, Val( nYear ) ) )
 
-   oMsgProgress():Deltapos(1)
+   oMeter:AutoInc()
 
    for n := 1 to 12
 
@@ -1228,11 +1257,11 @@ Static Function LoadDatos( cCodArt, nYear, oDlg, oBrwStk, oBrwTmp, oGraph, oBrwC
    Calculos producción---------------------------------------------------------
    */
 
-   oMsgText( "Calculando produccion mensual" )
+   oText:SetText( "Calculando produccion mensual" )
 
    nProduccion( cCodArt, dbfProducT, dbfProducL, dbfProducM, if( nYear == "Todos", nil, Val( nYear ) ) )
 
-   oMsgProgress():Deltapos(1)
+   oMeter:AutoInc()
 
    for n := 1 to 12
       nTotStkPro     += aProducido[ n, 2 ]
@@ -1243,7 +1272,7 @@ Static Function LoadDatos( cCodArt, nYear, oDlg, oBrwStk, oBrwTmp, oGraph, oBrwC
    Calculos de ventas----------------------------------------------------------
    */
 
-   oMsgText( "Calculando ventas mensuales" )
+   oText:SetText( "Calculando ventas mensuales" )
 
    aTotVta[1]        := 0
    aTotVta[2]        := 0
@@ -1253,7 +1282,7 @@ Static Function LoadDatos( cCodArt, nYear, oDlg, oBrwStk, oBrwTmp, oGraph, oBrwC
 
    nVentas( cCodArt, dbfAlbCliT, dbfAlbCliL, dbfFacCliT, dbfFacCliL, dbfFacRecT, dbfFacRecL, dbfTikCliT, dbfTikCliL, if( nYear == "Todos", nil, Val( nYear ) ) )
 
-   oMsgProgress():Deltapos(1)
+   oMeter:AutoInc()
 
    for n := 1 to 12
 
@@ -1264,26 +1293,26 @@ Static Function LoadDatos( cCodArt, nYear, oDlg, oBrwStk, oBrwTmp, oGraph, oBrwC
 
    next
 
-   oMsgText( "Calculando media de compras" )
+   oText:SetText( "Calculando media de compras" )
 
    if aTotCom[2] != 0
       aTotCom[4]     := aTotCom[3] / aTotCom[2]
    end if
 
-   oMsgProgress():Deltapos(1)
+   oMeter:AutoInc()
 
-   oMsgText( "Calculando media de ventas" )
+   oText:SetText( "Calculando media de ventas" )
 
    if aTotVta[2] != 0
       aTotVta[4]     := aTotVta[3] / aTotVta[2]
    end if
 
-   oMsgProgress():Deltapos(1)
+   oMeter:AutoInc()
 
-   oMsgText( "Calculando rentabilidad" )
+   oText:SetText( "Calculando rentabilidad" )
    aTotCom[ 5 ]      := ( aTotVta[ 3 ] ) - ( aTotVta[ 2 ] * aTotCom[ 4 ] )
 
-   oMsgProgress():Deltapos( 1 )
+   oMeter:AutoInc()
 
    /*
    Cargamos los datos en la temporal-------------------------------------------
@@ -1291,43 +1320,70 @@ Static Function LoadDatos( cCodArt, nYear, oDlg, oBrwStk, oBrwTmp, oGraph, oBrwC
 
    oDbfTmp:Zap()
 
-   oMsgText( "Cargando los documentos" )
+   oText:SetText( "Cargando pedidos a proveedor" )
 
    LoadPedidoProveedor( cCodArt, if( nYear == "Todos", nil, Val( nYear ) ) )
-   oMsgProgress():Deltapos(1)
+   oMeter:AutoInc()
+
+   oText:SetText( "Cargando albaranes a proveedor" )
 
    LoadAlbaranProveedor( cCodArt, if( nYear == "Todos", nil, Val( nYear ) ) )
-   oMsgProgress():Deltapos(1)
+   oMeter:AutoInc()
+
+   oText:SetText( "Cargando facturas a proveedor" )
 
    LoadFacturaProveedor( cCodArt, if( nYear == "Todos", nil, Val( nYear ) ) )
-   oMsgProgress():Deltapos(1)
+   oMeter:AutoInc()
+
+   oText:SetText( "Cargando facturas rectificativas a proveedor" )
 
    LoadRectificativaProveedor( cCodArt, if( nYear == "Todos", nil, Val( nYear ) ) )
-   oMsgProgress():Deltapos(1)
+   oMeter:AutoInc()
+
+   oText:SetText( "Cargando SAT a clientes" )
+
+   LoadSATCliente( cCodArt, if( nYear == "Todos", nil, Val( nYear ) ) )
+   oMeter:AutoInc()
+
+   oText:SetText( "Cargando presupuestos a clientes" )
 
    LoadPresupuestoCliente( cCodArt, if( nYear == "Todos", nil, Val( nYear ) ) )
-   oMsgProgress():Deltapos(1)
+   oMeter:AutoInc()
+
+   oText:SetText( "Cargando pedidos a clientes" )
 
    LoadPedidosCliente( cCodArt, if( nYear == "Todos", nil, Val( nYear ) ) )
-   oMsgProgress():Deltapos(1)
+   oMeter:AutoInc()
+
+   oText:SetText( "Cargando albaranes a clientes" )
 
    LoadAlbaranesCliente( cCodArt, if( nYear == "Todos", nil, Val( nYear ) ) )
-   oMsgProgress():Deltapos(1)
+   oMeter:AutoInc()
+
+   oText:SetText( "Cargando facturas a clientes" )
 
    LoadFacturasCliente( cCodArt, if( nYear == "Todos", nil, Val( nYear ) ) )
-   oMsgProgress():Deltapos(1)
+   oMeter:AutoInc()
+
+   oText:SetText( "Cargando facturas rectificativas a clientes" )
 
    LoadFacturasRectificativas( cCodArt, if( nYear == "Todos", nil, Val( nYear ) ) )
-   oMsgProgress():Deltapos(1)
+   oMeter:AutoInc()
+
+   oText:SetText( "Cargando tickets a clientes" )
 
    LoadTiketsCliente( cCodArt, if( nYear == "Todos", nil, Val( nYear ) ) )
-   oMsgProgress():Deltapos(1)
+   oMeter:AutoInc()
+
+   oText:SetText( "Cargando movimientos de almacen" )
 
    LoadMovimientosAlmacen( cCodArt, if( nYear == "Todos", nil, Val( nYear ) ) )
-   oMsgProgress():Deltapos(1)
+   oMeter:AutoInc()
+
+   oText:SetText( "Cargando producción" )
 
    LoadProduccion( cCodArt, if( nYear == "Todos", nil, Val( nYear ) ) )
-   oMsgProgress():Deltapos(1)
+   oMeter:AutoInc()
 
    oDbfTmp:GoTop()
 
@@ -1364,17 +1420,17 @@ Static Function LoadDatos( cCodArt, nYear, oDlg, oBrwStk, oBrwTmp, oGraph, oBrwC
 
    oGraph:Refresh()
 
-   oMsgText()
+   oText:SetText()
 
-   EndProgress()
-   /*
+   oMeter:Set( 0 )
+
    RECOVER USING oError
 
       msgStop( "Imposible cargar datos" + CRLF + ErrorMessage( oError ) )
 
    END SEQUENCE
    ErrorBlock( oBlock )
-   */
+   
    CursorWE()
 
    oDlg:Enable()
@@ -2034,6 +2090,7 @@ Static Function LoadPedidoProveedor( cCodArt, nYear )
             oDbfTmp:Append()
             oDbfTmp:nTypDoc   := PED_PRV
             oDbfTmp:cNumDoc   := ( dbfPedPrvL )->cSerPed + Str( ( dbfPedPrvL )->nNumPed ) + ( dbfPedPrvL )->cSufPed
+            oDbfTmp:cSufDoc   := ( dbfPedPrvL )->cSufPed
             oDbfTmp:cEstDoc   := aEstadoPedido[ Max( RetFld( ( dbfPedPrvL )->cSerPed + Str( ( dbfPedPrvL )->nNumPed ) + ( dbfPedPrvL )->cSufPed, dbfPedPrvT, "nEstado" ), 1 ) ]
             oDbfTmp:dFecDoc   := dFecPedPrv( ( dbfPedPrvL )->cSerPed + Str( ( dbfPedPrvL )->nNumPed ) + ( dbfPedPrvL )->cSufPed, dbfPedPrvT )
             oDbfTmp:cCodDoc   := RetFld( ( dbfPedPrvL )->cSerPed + Str( ( dbfPedPrvL )->nNumPed ) + ( dbfPedPrvL )->cSufPed, dbfPedPrvT, "cCodPrv" )
@@ -2073,6 +2130,7 @@ Static Function LoadAlbaranProveedor( cCodArt, nYear )
             oDbfTmp:Append()
             oDbfTmp:nTypDoc   := ALB_PRV
             oDbfTmp:cNumDoc   := ( dbfAlbPrvL )->cSerAlb + Str( ( dbfAlbPrvL )->nNumAlb ) + ( dbfAlbPrvL )->cSufAlb
+            oDbfTmp:cSufDoc   := ( dbfAlbPrvL )->cSufAlb
             oDbfTmp:cEstDoc   := if( RetFld( ( dbfAlbPrvL )->cSerAlb + Str( ( dbfAlbPrvL )->nNumAlb ) + ( dbfAlbPrvL )->cSufAlb, dbfAlbPrvT, "lFacturado" ), "Facturado", "No facturado" )
             oDbfTmp:dFecDoc   := dFecAlbPrv( ( dbfAlbPrvL )->cSerAlb + Str( ( dbfAlbPrvL )->nNumAlb ) + ( dbfAlbPrvL )->cSufAlb, dbfAlbPrvT )
             oDbfTmp:cCodDoc   := RetFld( ( dbfAlbPrvL )->cSerAlb + Str( ( dbfAlbPrvL )->nNumAlb ) + ( dbfAlbPrvL )->cSufAlb, dbfAlbPrvT, "cCodPrv" )
@@ -2115,6 +2173,7 @@ Static Function LoadFacturaProveedor( cCodArt, nYear )
             oDbfTmp:Append()
             oDbfTmp:nTypDoc   := FAC_PRV
             oDbfTmp:cNumDoc   := ( dbfFacPrvL )->cSerFac + Str( ( dbfFacPrvL )->nNumFac ) + ( dbfFacPrvL )->cSufFac
+            oDbfTmp:cSufDoc   := ( dbfFacPrvL )->cSufFac
             oDbfTmp:cEstDoc   := aEstadoFactura[ nEstFacPrv( ( dbfFacPrvL )->cSerFac + Str( ( dbfFacPrvL )->nNumFac ) + ( dbfFacPrvL )->cSufFac, dbfFacPrvT, dbfFacPrvP ) ]
             oDbfTmp:dFecDoc   := dFecFacPrv( ( dbfFacPrvL )->cSerFac + Str( ( dbfFacPrvL )->nNumFac ) + ( dbfFacPrvL )->cSufFac, dbfFacPrvT )
             oDbfTmp:cCodDoc   := RetFld( ( dbfFacPrvL )->cSerFac + Str( ( dbfFacPrvL )->nNumFac ) + ( dbfFacPrvL )->cSufFac, dbfFacPrvT, "cCodPrv" )
@@ -2144,7 +2203,7 @@ Return nil
 
 //---------------------------------------------------------------------------//
 
-Static Function LoadrectificativaProveedor( cCodArt, nYear )
+Static Function LoadRectificativaProveedor( cCodArt, nYear )
 
    local aEstadoFactura    := { "Pagada", "Parcialmente", "Pendiente" }
 
@@ -2156,6 +2215,7 @@ Static Function LoadrectificativaProveedor( cCodArt, nYear )
             oDbfTmp:Append()
             oDbfTmp:nTypDoc   := RCT_PRV
             oDbfTmp:cNumDoc   := ( dbfRctPrvL )->cSerFac + Str( ( dbfRctPrvL )->nNumFac ) + ( dbfRctPrvL )->cSufFac
+            oDbfTmp:cSufDoc   := ( dbfRctPrvL )->cSufFac
             oDbfTmp:cEstDoc   := aEstadoFactura[ nEstRctPrv( ( dbfRctPrvL )->cSerFac + Str( ( dbfRctPrvL )->nNumFac ) + ( dbfRctPrvL )->cSufFac, dbfRctPrvT, dbfFacPrvP ) ]
             oDbfTmp:dFecDoc   := dFecRctPrv( ( dbfRctPrvL )->cSerFac + Str( ( dbfRctPrvL )->nNumFac ) + ( dbfRctPrvL )->cSufFac, dbfRctPrvT )
             oDbfTmp:cCodDoc   := RetFld( ( dbfRctPrvL )->cSerFac + Str( ( dbfRctPrvL )->nNumFac ) + ( dbfRctPrvL )->cSufFac, dbfRctPrvT, "cCodPrv" )
@@ -2185,7 +2245,50 @@ Return nil
 
 //---------------------------------------------------------------------------//
 /*
-Carga los presupuestos de clientes a la temporal
+Carga los SAT de clientes a la temporal
+*/
+
+Static Function LoadSATCliente( cCodArt, nYear )
+
+   if ( dbfSatCliL )->( dbSeek( cCodArt ) )
+      while ( dbfSatCliL )->cRef == cCodArt .and. !( dbfSatCliL )->( eof() )
+
+         if nYear == nil .or. Year( dFecSatCli( ( dbfSatCliL )->cSerSat + Str( ( dbfSatCliL )->nNumSat ) + ( dbfSatCliL )->cSufSat, dbfSatCliT ) ) == nYear
+
+            oDbfTmp:Append() 
+            oDbfTmp:nTypDoc   := SAT_CLI
+            oDbfTmp:cNumDoc   := ( dbfSatCliL )->cSerSat + Str( ( dbfSatCliL )->nNumSat ) + ( dbfSatCliL )->cSufSat
+            oDbfTmp:cSufDoc   := ( dbfSatCliL )->cSufSat
+            oDbfTmp:cEstDoc   := if( RetFld( ( dbfSatCliL )->cSerSat + Str( ( dbfSatCliL )->nNumSat ) + ( dbfSatCliL )->cSufSat, dbfSatCliT, "lEstado" ), "Aprobado", "Pendiente" )
+            oDbfTmp:dFecDoc   := dFecSatCli( ( dbfSatCliL )->cSerSat + Str( ( dbfSatCliL )->nNumSat ) + ( dbfSatCliL )->cSufSat, dbfSatCliT )
+            oDbfTmp:cCodDoc   := RetFld( ( dbfSatCliL )->cSerSat + Str( ( dbfSatCliL )->nNumSat ) + ( dbfSatCliL )->cSufSat, dbfSatCliT, "cCodCli" )
+            oDbfTmp:cNomDoc   := RetFld( ( dbfSatCliL )->cSerSat + Str( ( dbfSatCliL )->nNumSat ) + ( dbfSatCliL )->cSufSat, dbfSatCliT, "cNomCli" )
+            oDbfTmp:cRef      := ( dbfSatCliL )->cRef
+            oDbfTmp:cValPr1   := ( dbfSatCliL )->cValPr1
+            oDbfTmp:cValPr2   := ( dbfSatCliL )->cValPr2
+            oDbfTmp:cLote     := ( dbfSatCliL )->cLote
+            oDbfTmp:cAlmDoc   := ( dbfSatCliL )->cAlmLin
+            oDbfTmp:nUndDoc   := - nTotNSatCli( dbfSatCliL )
+            oDbfTmp:nFacCnv   := ( dbfSatCliL )->nFacCnv
+            oDbfTmp:nImpDoc   := nTotUSatCli( dbfSatCliL, nDouDiv )
+            oDbfTmp:nDtoDoc   := ( dbfSatCliL )->nDto
+            oDbfTmp:nTotDoc   := nTotLSatCli( dbfSatCliT, dbfSatCliL, nDouDiv, nDorDiv )
+            oDbfTmp:Save()
+
+         end if
+
+         SysRefresh()
+
+         ( dbfSatCliL )->( dbSkip() )
+
+      end while
+   end if
+
+Return nil
+
+//---------------------------------------------------------------------------//
+/*
+Carga los SAT de clientes a la temporal
 */
 
 Static Function LoadPresupuestoCliente( cCodArt, nYear )
@@ -2195,13 +2298,14 @@ Static Function LoadPresupuestoCliente( cCodArt, nYear )
 
          if nYear == nil .or. Year( dFecPreCli( ( dbfPreCliL )->cSerPre + Str( ( dbfPreCliL )->nNumPre ) + ( dbfPreCliL )->cSufPre, dbfPreCliT ) ) == nYear
 
-            oDbfTmp:Append()
+            oDbfTmp:Append() 
             oDbfTmp:nTypDoc   := PRE_CLI
             oDbfTmp:cNumDoc   := ( dbfPreCliL )->cSerPre + Str( ( dbfPreCliL )->nNumPre ) + ( dbfPreCliL )->cSufPre
+            oDbfTmp:cSufDoc   := ( dbfPreCliL )->cSufPre
             oDbfTmp:cEstDoc   := if( RetFld( ( dbfPreCliL )->cSerPre + Str( ( dbfPreCliL )->nNumPre ) + ( dbfPreCliL )->cSufPre, dbfPreCliT, "lEstado" ), "Aprobado", "Pendiente" )
             oDbfTmp:dFecDoc   := dFecPreCli( ( dbfPreCliL )->cSerPre + Str( ( dbfPreCliL )->nNumPre ) + ( dbfPreCliL )->cSufPre, dbfPreCliT )
             oDbfTmp:cCodDoc   := RetFld( ( dbfPreCliL )->cSerPre + Str( ( dbfPreCliL )->nNumPre ) + ( dbfPreCliL )->cSufPre, dbfPreCliT, "cCodCli" )
-            oDbfTmp:cNomDoc   := cNbrPreCli( ( dbfPreCliL )->cSerPre + Str( ( dbfPreCliL )->nNumPre ) + ( dbfPreCliL )->cSufPre, dbfPreCliT )
+            oDbfTmp:cNomDoc   := RetFld( ( dbfPreCliL )->cSerPre + Str( ( dbfPreCliL )->nNumPre ) + ( dbfPreCliL )->cSufPre, dbfPreCliT, "cNomCli" )
             oDbfTmp:cRef      := ( dbfPreCliL )->cRef
             oDbfTmp:cValPr1   := ( dbfPreCliL )->cValPr1
             oDbfTmp:cValPr2   := ( dbfPreCliL )->cValPr2
@@ -2242,6 +2346,7 @@ Static Function LoadPedidosCliente( cCodArt, nYear )
             oDbfTmp:Append()
             oDbfTmp:nTypDoc   := PED_CLI
             oDbfTmp:cNumDoc   := ( dbfPedCliL )->cSerPed + Str( ( dbfPedCliL )->nNumPed ) + ( dbfPedCliL )->cSufPed
+            oDbfTmp:cSufDoc   := ( dbfPedCliL )->cSufPed
             oDbfTmp:cEstDoc   := aEstadoPedido[ Max( RetFld( ( dbfPedCliL )->cSerPed + Str( ( dbfPedCliL )->nNumPed ) + ( dbfPedCliL )->cSufPed, dbfPedCliT, "nEstado" ), 1 ) ]
             oDbfTmp:dFecDoc   := dFecPedCli( ( dbfPedCliL )->cSerPed + Str( ( dbfPedCliL )->nNumPed ) + ( dbfPedCliL )->cSufPed, dbfPedCliT )
             oDbfTmp:cCodDoc   := RetFld( ( dbfPedCliL )->cSerPed + Str( ( dbfPedCliL )->nNumPed ) + ( dbfPedCliL )->cSufPed, dbfPedCliT, "cCodCli" )
@@ -2282,6 +2387,7 @@ Static Function LoadAlbaranesCliente( cCodArt, nYear )
             oDbfTmp:Append()
             oDbfTmp:nTypDoc   := ALB_CLI
             oDbfTmp:cNumDoc   := ( dbfAlbCliL )->cSerAlb + Str( ( dbfAlbCliL )->nNumAlb ) + ( dbfAlbCliL )->cSufAlb
+            oDbfTmp:cSufDoc   := ( dbfAlbCliL )->cSufAlb
             oDbfTmp:cEstDoc   := if( RetFld( ( dbfAlbCliL )->cSerAlb + Str( ( dbfAlbCliL )->nNumAlb ) + ( dbfAlbCliL )->cSufAlb, dbfAlbCliT, "lFacturado" ), "Facturado", "No facturado" )
             oDbfTmp:dFecDoc   := dFecAlbCli( ( dbfAlbCliL )->cSerAlb + Str( ( dbfAlbCliL )->nNumAlb ) + ( dbfAlbCliL )->cSufAlb, dbfAlbCliT )
             oDbfTmp:cCodDoc   := RetFld( ( dbfAlbCliL )->cSerAlb + Str( ( dbfAlbCliL )->nNumAlb ) + ( dbfAlbCliL )->cSufAlb, dbfAlbCliT, "cCodCli" )
@@ -2325,6 +2431,7 @@ Static Function LoadFacturasCliente( cCodArt, nYear )
             oDbfTmp:Append()
             oDbfTmp:nTypDoc   := FAC_CLI
             oDbfTmp:cNumDoc   := ( dbfFacCliL )->cSerie + Str( ( dbfFacCliL )->nNumFac ) + ( dbfFacCliL )->cSufFac
+            oDbfTmp:cSufDoc   := ( dbfFacCliL )->cSufFac
             oDbfTmp:cEstDoc   := aEstadoFactura[ nChkPagFacCli( ( dbfFacCliL )->cSerie + Str( ( dbfFacCliL )->nNumFac ) + ( dbfFacCliL )->cSufFac, dbfFacCliT, dbfFacCliP ) ]
             oDbfTmp:dFecDoc   := dFecFacCli( ( dbfFacCliL )->cSerie + Str( ( dbfFacCliL )->nNumFac ) + ( dbfFacCliL )->cSufFac, dbfFacCliT )
             oDbfTmp:cCodDoc   := RetFld( ( dbfFacCliL )->cSerie + Str( ( dbfFacCliL )->nNumFac ) + ( dbfFacCliL )->cSufFac, dbfFacCliT, "cCodCli" )
@@ -2366,6 +2473,7 @@ Static Function LoadFacturasRectificativas( cCodArt, nYear )
             oDbfTmp:Append()
             oDbfTmp:nTypDoc   := FAC_REC
             oDbfTmp:cNumDoc   := ( dbfFacRecL )->cSerie + Str( ( dbfFacRecL )->nNumFac ) + ( dbfFacRecL )->cSufFac
+            oDbfTmp:cSufDoc   := ( dbfFacRecL )->cSufFac
             oDbfTmp:cEstDoc   := ""
             oDbfTmp:dFecDoc   := dFecFacRec( ( dbfFacRecL )->cSerie + Str( ( dbfFacRecL )->nNumFac ) + ( dbfFacRecL )->cSufFac, dbfFacRecT )
             oDbfTmp:cCodDoc   := RetFld( ( dbfFacRecL )->cSerie + Str( ( dbfFacRecL )->nNumFac ) + ( dbfFacRecL )->cSufFac, dbfFacRecT, "cCodCli" )
@@ -2445,6 +2553,8 @@ Static Function LoadTiketsCliente( cCodArt, nYear )
                end case
 
                oDbfTmp:cNumDoc         := ( dbfTikCliL )->cSerTil + ( dbfTikCliL )->cNumTil + ( dbfTikCliL )->cSufTil
+               oDbfTmp:cSufDoc         := ( dbfTikCliL )->cSufTil
+
                oDbfTmp:dFecDoc         := dFecTik( (dbfTikCliL)->cSerTil + (dbfTikCliL)->cNumTil + (dbfTikCliL)->cSufTil, dbfTikCliT )
                oDbfTmp:cCodDoc         := RetFld( ( dbfTikCliL )->cSerTil + ( dbfTikCliL )->cNumTil + ( dbfTikCliL )->cSufTil, dbfTikCliT, "cCliTik" )
                oDbfTmp:cNomDoc         := RetFld( ( dbfTikCliL )->cSerTil + ( dbfTikCliL )->cNumTil + ( dbfTikCliL )->cSufTil, dbfTikCliT, "cNomTik" )
@@ -2490,6 +2600,7 @@ Static Function LoadTiketsCliente( cCodArt, nYear )
                end if
 
                oDbfTmp:cNumDoc      := ( dbfTikCliL )->cSerTil + ( dbfTikCliL )->cNumTil + ( dbfTikCliL )->cSufTil
+               oDbfTmp:cSufDoc      := ( dbfTikCliL )->cSufTil
                oDbfTmp:cEstDoc      := ""
                oDbfTmp:dFecDoc      := dFecTik( (dbfTikCliL)->cSerTil + (dbfTikCliL)->cNumTil + (dbfTikCliL)->cSufTil, dbfTikCliT )
                oDbfTmp:cCodDoc      := RetFld( ( dbfTikCliL )->cSerTil + ( dbfTikCliL )->cNumTil + ( dbfTikCliL )->cSufTil, dbfTikCliT, "cCliTik" )
@@ -2538,6 +2649,7 @@ Static Function LoadMovimientosAlmacen( cCodArt, nYear )
                oDbfTmp:Append()
                oDbfTmp:nTypDoc   := MOV_ALM
                oDbfTmp:cNumDoc   := Str( ( dbfMovAlm )->nNumRem ) + ( dbfMovAlm )->cSufRem
+               oDbfTmp:cSufDoc   := ( dbfMovAlm )->cSufRem
                oDbfTmp:cEstDoc   := "Movimiento"
                oDbfTmp:dFecDoc   := ( dbfMovAlm )->dFecMov
                oDbfTmp:cNomDoc   := if( ( dbfMovAlm )->nTipMov == 1, "Entre almacenes", "Regularización" )
@@ -2558,6 +2670,7 @@ Static Function LoadMovimientosAlmacen( cCodArt, nYear )
                oDbfTmp:nTypDoc   := MOV_ALM
                oDbfTmp:cEstDoc   := "Movimiento"
                oDbfTmp:cNumDoc   := Str( ( dbfMovAlm )->nNumRem ) + ( dbfMovAlm )->cSufRem
+               oDbfTmp:cSufDoc   := ( dbfMovAlm )->cSufRem
                oDbfTmp:dFecDoc   := ( dbfMovAlm )->dFecMov
                oDbfTmp:cNomDoc   := if( ( dbfMovAlm )->nTipMov == 1, "Entre almacenes", "Regularización" )
                oDbfTmp:cRef      := ( dbfMovAlm )->cRefMov
@@ -2605,6 +2718,7 @@ Static Function LoadProduccion( cCodArt, nYear )
                oDbfTmp:Append()
                oDbfTmp:nTypDoc   := PRO_LIN
                oDbfTmp:cNumDoc   := ( dbfProducL )->cSerOrd + Str( ( dbfProducL )->nNumOrd ) + ( dbfProducL )->cSufOrd
+               oDbfTmp:cSufDoc   := ( dbfProducL )->cSufOrd
                oDbfTmp:cEstDoc   := Space(1)
                oDbfTmp:dFecDoc   := ( dbfProducT )->dFecFin
                oDbfTmp:cNomDoc   := "Material"
@@ -2647,6 +2761,7 @@ Static Function LoadProduccion( cCodArt, nYear )
                oDbfTmp:Append()
                oDbfTmp:nTypDoc   := PRO_MAT
                oDbfTmp:cNumDoc   := ( dbfProducM )->cSerOrd + Str( ( dbfProducM )->nNumOrd ) + ( dbfProducM )->cSufOrd
+               oDbfTmp:cSufDoc   := ( dbfProducM )->cSufOrd
                oDbfTmp:cEstDoc   := Space(1)
                oDbfTmp:dFecDoc   := ( dbfProducT )->dFecFin
                oDbfTmp:cNomDoc   := "Materias primas"
@@ -2847,21 +2962,27 @@ Function cMaskNumDoc( oDbfTmp )
 
    do case
    case oDbfTmp:nTypDoc == TIK_CLI .or. oDbfTmp:nTypDoc == DEV_CLI .or. oDbfTmp:nTypDoc == VAL_CLI
-      return ( Left( oDbfTmp:cNumDoc, 1 ) + "/" + Alltrim( SubStr( oDbfTmp:cNumDoc, 2, 10 ) ) + "/" + Right( oDbfTmp:cNumDoc, 2 ) )
+      return ( Left( oDbfTmp:cNumDoc, 1 ) + "/" + Alltrim( SubStr( oDbfTmp:cNumDoc, 2, 10 ) ) )
+   
    case oDbfTmp:nTypDoc == MOV_ALM
       if Val( oDbfTmp:cNumDoc ) == 0
          return ""
       else
-         return ( Alltrim( Left( oDbfTmp:cNumDoc, 9 ) ) + "/" + Alltrim( SubStr( oDbfTmp:cNumDoc, 10, 2 ) ) )
+         return ( Alltrim( Left( oDbfTmp:cNumDoc, 9 ) ) )
       end if
+   
    case oDbfTmp:nTypDoc == ENT_PED .or. oDbfTmp:nTypDoc == ENT_ALB .or. oDbfTmp:nTypDoc == REC_CLI .or. oDbfTmp:nTypDoc == REC_PRV
-      return ( Left( oDbfTmp:cNumDoc, 1 ) + "/" + Alltrim( SubStr( oDbfTmp:cNumDoc, 2, 9 ) ) + "/" + Right( oDbfTmp:cNumDoc, 3 ) + "-" + Alltrim( Str( oDbfTmp:nNumRec ) ) )
+      return ( Left( oDbfTmp:cNumDoc, 1 ) + "/" + Alltrim( SubStr( oDbfTmp:cNumDoc, 2, 9 ) ) + "-" + Alltrim( Str( oDbfTmp:nNumRec ) ) )
+   
    end case
 
-return ( Left( oDbfTmp:cNumDoc, 1 ) + "/" + Alltrim( SubStr( oDbfTmp:cNumDoc, 2, 9 ) ) + "/" + Right( oDbfTmp:cNumDoc, 3 ) )
+return ( Left( oDbfTmp:cNumDoc, 1 ) + "/" + Alltrim( SubStr( oDbfTmp:cNumDoc, 2, 9 ) ) )
 
 //---------------------------------------------------------------------------//
-/*Al movernos por el arbol cambiamos el orden de la temporal y le hacemos un scope*/
+
+/*
+Al movernos por el arbol cambiamos el orden de la temporal y le hacemos un scope
+*/
 
 Static Function TreeChanged( oTree, oBrwTmp )
 
@@ -2876,7 +2997,7 @@ Static Function TreeChanged( oTree, oBrwTmp )
          cFilter  := "nTypDoc == '" + MOV_ALM + "'"
 
       case cText == "Ventas"
-         cFilter  := "( nTypDoc >= '" + PRE_CLI + "' .and. nTypDoc <= '" + REC_CLI + "' )"
+         cFilter  := "( nTypDoc == '" + SAT_CLI + "' ) .or. ( nTypDoc >= '" + PRE_CLI + "' .and. nTypDoc <= '" + REC_CLI + "' )"
 
       case cText == "Producción"
          cFilter  := "( nTypDoc == '" + PRO_LIN + "' .or. nTypDoc == '" + PRO_MAT + "' )"
@@ -2895,6 +3016,9 @@ Static Function TreeChanged( oTree, oBrwTmp )
 
       case cText == cTextDocument( RCT_PRV )
          cFilter  := "( nTypDoc == '" + RCT_PRV + "' )"
+
+      case cText == cTextDocument( SAT_CLI )
+         cFilter  := "( nTypDoc == '" + SAT_CLI + "' )"
 
       case cText == cTextDocument( PRE_CLI )
          cFilter  := "( nTypDoc == '" + PRE_CLI + "' )"
@@ -2997,6 +3121,9 @@ Static Function TreeImagen()
 
       case oDbfTmp:nTypDoc == PRO_MAT
          Return ( 11 )
+
+      case oDbfTmp:nTypDoc == SAT_CLI
+         Return ( 13 )
 
    end case
 
@@ -3177,6 +3304,9 @@ Static Function VisualizaDocument( oBrwTmp )
       case oDbfTmp:nTypDoc == RCT_PRV
          VisRctPrv( oDbfTmp:cNumDoc )
 
+      case oDbfTmp:nTypDoc == SAT_CLI
+         VisSatCli( oDbfTmp:cNumDoc )
+
       case oDbfTmp:nTypDoc == PRE_CLI
          VisPreCli( oDbfTmp:cNumDoc )
 
@@ -3217,6 +3347,9 @@ Return nil
 Static Function PrintDocument( oBrwTmp )
 
    do case
+      case oDbfTmp:nTypDoc == SAT_CLI
+         PrnSatCli( oDbfTmp:cNumDoc )
+
       case oDbfTmp:nTypDoc == PED_PRV
          PrnPedPrv( oDbfTmp:cNumDoc )
 
@@ -3286,6 +3419,7 @@ Static Function DefineTemporal( cPath, lUniqueName, cFileName )
       FIELD NAME "cEstDoc"    TYPE "C" LEN 20 DEC 0 COMMENT "Estado del documento"           OF oDbf
       FIELD NAME "dFecDoc"    TYPE "D" LEN  8 DEC 0 COMMENT "Fecha del documento"            OF oDbf
       FIELD NAME "cNumDoc"    TYPE "C" LEN 13 DEC 0 COMMENT "Número del documento"           OF oDbf
+      FIELD NAME "cSufDoc"    TYPE "C" LEN  2 DEC 0 COMMENT ""                               OF oDbf
       FIELD NAME "lFacturado" TYPE "L" LEN  1 DEC 0 COMMENT "Documento facturado"            OF oDbf
       FIELD NAME "cCodDoc"    TYPE "C" LEN 12 DEC 0 COMMENT "Código cliente/proveedor"       OF oDbf
       FIELD NAME "cNomDoc"    TYPE "C" LEN 50 DEC 0 COMMENT "Nombre cliente/proveedor"       OF oDbf
@@ -3304,6 +3438,7 @@ Static Function DefineTemporal( cPath, lUniqueName, cFileName )
       INDEX TO ( cFileName ) TAG "cEstDoc" ON "cEstDoc + Dtos( dFecDoc )"                    OF oDbf
       INDEX TO ( cFileName ) TAG "dFecDoc" ON "Dtos( dFecDoc )"                              OF oDbf
       INDEX TO ( cFileName ) TAG "cNumDoc" ON "cNumDoc + Dtos( dFecDoc )"                    OF oDbf
+      INDEX TO ( cFileName ) TAG "cSufDoc" ON "cSufDoc"                                      OF oDbf
       INDEX TO ( cFileName ) TAG "cNomDoc" ON "cNomDoc + Dtos( dFecDoc )"                    OF oDbf
       INDEX TO ( cFileName ) TAG "cCodDoc" ON "cCodDoc + Dtos( dFecDoc )"                    OF oDbf
       INDEX TO ( cFileName ) TAG "cLote"   ON "cLote + Dtos( dFecDoc )"                      OF oDbf
@@ -3363,6 +3498,8 @@ Function cTextDocument( nTypDoc )
          cTextDocument  := "Material"
       case nTypDoc == PRO_MAT
          cTextDocument  := "Materia prima"
+      case nTypDoc == SAT_CLI
+         cTextDocument  := "S.A.T."
    end case
 
 Return ( cTextDocument )

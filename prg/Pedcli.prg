@@ -30,7 +30,7 @@ Definici¢n de la base de datos de pedidos a clientes
 #define _CPOSCLI                  11      //"CPOSCLI"
 #define _CDNICLI                  12      //"CDNICLI"
 #define _LMODCLI                  13      //
-#define _CCODAGE                  14      //"CCODAGE"
+#define _CCODAGE                  14      //"CCODAGE"dbfAlbCliT
 #define _CCODOBR                  15      //"CCODOBR"
 #define _CCODTAR                  16      //"CCODTAR"
 #define _CCODALM                  17      //"CCODALM"
@@ -715,9 +715,6 @@ STATIC FUNCTION OpenFiles( lExt )
       USE ( cPatEmp() + "PRECLID.DBF" ) NEW VIA ( cDriver() ) SHARED ALIAS ( cCheckArea( "PRECLID", @dbfPreCliD ) )
       SET ADSINDEX TO ( cPatEmp() + "PRECLID.CDX" ) ADDITIVE
 
-      USE ( cPatEmp() + "ALBCLIT.DBF" ) NEW VIA ( cDriver() ) SHARED ALIAS ( cCheckArea( "ALBCLIT", @dbfAlbCliT ) )
-      SET ADSINDEX TO ( cPatEmp() + "ALBCLIT.CDX" ) ADDITIVE
-
       USE ( cPatEmp() + "ALBCLIL.DBF" ) NEW VIA ( cDriver() ) SHARED ALIAS ( cCheckArea( "ALBCLIL", @dbfAlbCliL ) )
       SET ADSINDEX TO ( cPatEmp() + "ALBCLIL.CDX" ) ADDITIVE
 
@@ -883,9 +880,13 @@ STATIC FUNCTION OpenFiles( lExt )
       USE ( cPatCli() + "CliBnc.Dbf" ) NEW VIA ( cDriver() ) SHARED ALIAS ( cCheckArea( "CLIBNC", @dbfCliBnc ) )
       SET ADSINDEX TO ( cPatCli() + "CliBnc.Cdx" ) ADDITIVE
 
-      if !TDataCenter():OpenFacCliT( @dbfFacCliT )
-         lOpenFiles     := .f.
-      end if
+    if !TDataCenter():OpenAlbCliT( @dbfAlbCliT )
+   		lOpenFiles     := .f.
+	end if
+
+    if !TDataCenter():OpenFacCliT( @dbfFacCliT )
+       lOpenFiles     := .f.
+    end if
 
 	if !TDataCenter():OpenFacCliP( @dbfFacCliP )
 	   lOpenFiles     := .f.
@@ -1629,7 +1630,7 @@ FUNCTION PedCli( oMenuItem, oWnd, cCodCli, cCodArt, cCodPre, lPedWeb )
 
       DEFINE BTNSHELL RESOURCE "DOCUMENT_PLAIN_USER1_" OF oWndBrw ;
             NOBORDER ;
-            ACTION   ( Ped2AlbCli( ( dbfPedCliT )->cSerPed + Str( ( dbfPedCliT )->nNumPed ) + ( dbfPedCliT )->cSufPed ) );
+            ACTION   ( Ped2AlbCli( ( dbfPedCliT )->cSerPed + Str( ( dbfPedCliT )->nNumPed ) + ( dbfPedCliT )->cSufPed, dbfAlbCliT ) );
             TOOLTIP  "Modificar albarán" ;
             FROM     oRotor ;
             CLOSED ;
@@ -2578,7 +2579,6 @@ STATIC FUNCTION EdtRec( aTmp, aGet, dbfPedCliT, oBrw, cCodCli, cCodArt, nMode, c
 
       REDEFINE GET aGet[ _NMANOBR ] VAR aTmp[ _NMANOBR ] ;
          ID       400 ;
-			COLOR 	CLR_GET ;
          PICTURE  cPorDiv ;
          WHEN     ( lWhen ) ;
          VALID    ( nTotPedCli( nil, dbfPedCliT, dbfTmpLin, dbfIva, dbfDiv, dbfFPago, aTmp ), .t. ) ;
@@ -2586,8 +2586,8 @@ STATIC FUNCTION EdtRec( aTmp, aGet, dbfPedCliT, oBrw, cCodCli, cCodArt, nMode, c
          OF       oFld:aDialogs[1]
 
       REDEFINE SAY oGetNet VAR nTotNet ;
-         ID       401 ;
-			OF 		oFld:aDialogs[1]
+        ID       401 ;
+		OF 		oFld:aDialogs[1]
 
       REDEFINE SAY oGetTrn VAR nTotTrn ;
          ID       402 ;

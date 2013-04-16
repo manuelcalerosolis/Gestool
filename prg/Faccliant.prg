@@ -856,8 +856,9 @@ STATIC FUNCTION OpenFiles( lExt )
       USE ( cPatEmp() + "FACRECS.DBF" ) NEW VIA ( cDriver() ) SHARED ALIAS ( cCheckArea( "FACRECS", @dbfFacRecS ) )
       SET ADSINDEX TO ( cPatEmp() + "FACRECS.CDX" ) ADDITIVE
 
-      USE ( cPatEmp() + "ALBCLIT.DBF" ) NEW VIA ( cDriver() ) SHARED ALIAS ( cCheckArea( "ALBCLIT", @dbfAlbCliT ) )
-      SET ADSINDEX TO ( cPatEmp() + "ALBCLIT.CDX" ) ADDITIVE
+      if !TDataCenter():OpenAlbCliT( @dbfAlbCliT )
+         lOpenFiles     := .f.
+      end if
 
       USE ( cPatEmp() + "ALBCLIL.DBF" ) NEW VIA ( cDriver() ) SHARED ALIAS ( cCheckArea( "ALBCLIL", @dbfAlbCliL ) )
       SET ADSINDEX TO ( cPatEmp() + "ALBCLIL.CDX" ) ADDITIVE
@@ -9884,20 +9885,16 @@ Method CreateData()
    oBlock            := ErrorBlock( {| oError | ApoloBreak( oError ) } )
    BEGIN SEQUENCE
 
-         if !TDataCenter():OpenFacCliT( @dbfFacCliT )
+   if !TDataCenter():OpenFacCliT( @dbfFacCliT )
          lOpenFiles     := .f.
-      end if
-if !TDataCenter():OpenFacCliT( @dbfFacCliT )
-   SET ADSINDEX TO ( cPatEmp() + "FacCliT.CDX" ) ADDITIVE
+   end if
 
    USE ( cPatEmp() + "FacCliL.DBF" ) NEW VIA ( cDriver() ) SHARED ALIAS ( cCheckArea( "FacCliL", @dbfFacCliL ) )
    SET ADSINDEX TO ( cPatEmp() + "FacCliL.CDX" ) ADDITIVE
 
-         if !TDataCenter():OpenFacCliT( @dbfFacCliT )
-if !TDataCenter():OpenFacCliP( @dbfFacCliP )
-   lOpenFiles     := .f.
-end if
-   SET ADSINDEX TO ( cPatEmp() + "FacCliP.CDX" ) ADDITIVE
+   if !TDataCenter():OpenFacCliP( @dbfFacCliP )
+      lOpenFiles     := .f.
+   end if
 
    USE ( cPatEmp() + "FacCliI.DBF" ) NEW VIA ( cDriver() ) SHARED ALIAS ( cCheckArea( "FacCliI", @dbfFacCliI ) )
    SET ADSINDEX TO ( cPatEmp() + "FacCliI.CDX" ) ADDITIVE
@@ -12006,7 +12003,7 @@ function SynFacCli( cPath )
    local cCodTip
    local cCodImp
    local cNumSer
-   local aNumSer
+   local aNumSer 
 
    DEFAULT cPath     := cPatEmp()
 
@@ -12844,7 +12841,10 @@ end if
       USE ( cPatEmp() + "FACCLID.DBF" ) NEW VIA ( cDriver() ) SHARED ALIAS ( cCheckArea( "FACCLID", @dbfFacCliD ) )
       SET ADSINDEX TO ( cPatEmp() + "FACCLID.CDX" ) ADDITIVE
 
-      USE ( cPatEmp() + "ALBCLIT.DBF" ) NEW VIA ( cDriver() ) SHARED ALIAS ( cCheckArea( "ALBCLIT", @dbfAlbCliT ) )
+      if !TDataCenter():OpenAlbCliT( @dbfAlbCliT )
+   lOpenFiles     := .f.
+end if
+
       SET ADSINDEX TO ( cPatEmp() + "ALBCLIT.CDX" ) ADDITIVE
 
       USE ( cPatEmp() + "ALBCLIL.DBF" ) NEW VIA ( cDriver() ) SHARED ALIAS ( cCheckArea( "ALBCLIL", @dbfAlbCliL ) )
