@@ -4,6 +4,14 @@
 		"selected_items":
 		[
 			[
+				"Msg",
+				"ApoloMsgNoYes"
+			],
+			[
+				"dbfA",
+				"dbfFacCliL"
+			],
+			[
 				"Cursor",
 				"CursorWE"
 			],
@@ -506,40 +514,24 @@
 			[
 				"oTemporal",
 				"oTemporalDivisionNuevoTicket"
-			],
-			[
-				"oTic",
-				"oTiketCobro"
-			],
-			[
-				"Bl",
-				"Blank"
 			]
 		]
 	},
 	"buffers":
 	[
 		{
-			"file": "bin/script/000.prg",
+			"file": "prg/Tcomercio.prg",
 			"settings":
 			{
-				"buffer_size": 5113,
+				"buffer_size": 370658,
 				"line_ending": "Windows"
 			}
 		},
 		{
-			"file": "bin/script/001.prg",
+			"file": "prg/Comun.prg",
 			"settings":
 			{
-				"buffer_size": 6242,
-				"line_ending": "Windows"
-			}
-		},
-		{
-			"file": "prg/Tscripts.prg",
-			"settings":
-			{
-				"buffer_size": 12314,
+				"buffer_size": 75845,
 				"line_ending": "Windows"
 			}
 		}
@@ -576,6 +568,14 @@
 	},
 	"file_history":
 	[
+		"/C/fw195/Gestool/prg/Factcli.prg",
+		"/C/fw195/Gestool/prg/Divisas.prg",
+		"/C/fw195/Gestool/prg/Familia.prg",
+		"/C/fw195/Gestool/prg/Tscripts.prg",
+		"/C/fw195/Gestool/bin/script/001.prg",
+		"//server/Scripts creados/Inma Pepsi/001.prg",
+		"/C/fw195/Gestool/prg/Brwcli.prg",
+		"/C/fw195/Gestool/bin/script/000.prg",
 		"/C/fw195/Gestool/prg/Tpvtactil.prg",
 		"/C/fw195/Gestool/prg/Albcli.prg",
 		"/C/fw195/Gestool/prg/Articulo.prg",
@@ -589,7 +589,6 @@
 		"/C/Users/Villa/Desktop/oscar.prg",
 		"/C/fw195/Gestool/prg/Utildbf.prg",
 		"/C/fw195/Gestool/prg/Rptgal.prg",
-		"/C/fw195/Gestool/prg/Tscripts.prg",
 		"/C/fw195/Gestool/prg/Exportatarifas.prg",
 		"/C/fw195/Gestool/prg/Oferta.prg",
 		"/C/fw195/Gestool/prg/Tpv.prg",
@@ -598,7 +597,6 @@
 		"/C/fw195/Gestool/prg/Factu.prg",
 		"/C/fw195/Gestool/prg/Stock.prg",
 		"/C/fw195/Gestool/prg/Tcomercio.prg",
-		"/C/fw195/Gestool/prg/Factcli.prg",
 		"/C/fw195/Gestool/prg/Tpvlistaticket.prg",
 		"/C/fw195/Gestool/prg/Fastreph.prg",
 		"/C/fw195/Gestool/prg/Tpvcobros.prg",
@@ -632,7 +630,6 @@
 		"/C/fw195/Gestool/prg/Tdbf.prg",
 		"/C/fw195/Gestool/prg/Ritems.prg",
 		"/C/fw195/Gestool/prg/ritems",
-		"/C/fw195/Gestool/prg/Familia.prg",
 		"/C/fwh1204/source/classes/tftp.prg",
 		"/C/fwh1204/source/classes/tftpsess.prg",
 		"/C/fwh1204/source/classes/tftpcli.prg",
@@ -698,12 +695,7 @@
 		"/C/AppServ/www/prestademo/index.php",
 		"/C/AppServ/www/prestademo/.htaccess",
 		"/C/AppServ/www/oscommerce/includes/configure.php",
-		"/C/AppServ/www/oscommerce/index.php",
-		"/C/fw195/Gestool/prg/empresa",
-		"/C/fw195/Gestool/prg/Tdiacfac.prg",
-		"/C/fw195/Gestool/prg/Reccli.prg",
-		"/C/fw195/Gestool/prg/Tinflot.prg",
-		"/C/fw195/Gestool/prg/Count.prg"
+		"/C/AppServ/www/oscommerce/index.php"
 	],
 	"find":
 	{
@@ -711,7 +703,7 @@
 	},
 	"find_in_files":
 	{
-		"height": 0.0,
+		"height": 90.0,
 		"where_history":
 		[
 			"C:\\fw195\\Gestool\\prg",
@@ -739,6 +731,21 @@
 		"case_sensitive": false,
 		"find_history":
 		[
+			"lDefault",
+			"lDefImgPrp",
+			"nDefImagen",
+			"on ApoloMsgNoYes",
+			"on ntotl",
+			"nTotFac",
+			"facturado",
+			"on ntot",
+			"cPorDiv",
+			"trans(",
+			"trans",
+			"on loaart",
+			"on acol",
+			"cserfac",
+			"on aitm",
 			"on nRetPreArt",
 			"?",
 			"on nretpreart",
@@ -851,22 +858,7 @@
 			"ntottik",
 			"f5",
 			"GuardaDocumento",
-			"ntottik",
-			"total",
-			"totaln",
-			"total",
-			"ChgSta",
-			"ascan",
-			"asca",
-			"ascan",
-			"on aitm",
-			"quialbcli",
-			"on rx",
-			"on aitm",
-			"on rx",
-			"QuiAlbCli",
-			"ChgSta",
-			"ecotax"
+			"ntottik"
 		],
 		"highlight": true,
 		"in_selection": false,
@@ -897,18 +889,18 @@
 			[
 				{
 					"buffer": 0,
-					"file": "bin/script/000.prg",
+					"file": "prg/Tcomercio.prg",
 					"settings":
 					{
-						"buffer_size": 5113,
+						"buffer_size": 370658,
 						"regions":
 						{
 						},
 						"selection":
 						[
 							[
-								477,
-								477
+								285908,
+								285908
 							]
 						],
 						"settings":
@@ -918,25 +910,25 @@
 							"translate_tabs_to_spaces": true
 						},
 						"translation.x": 0.0,
-						"translation.y": 0.0,
+						"translation.y": 169740.0,
 						"zoom_level": 1.0
 					},
 					"type": "text"
 				},
 				{
 					"buffer": 1,
-					"file": "bin/script/001.prg",
+					"file": "prg/Comun.prg",
 					"settings":
 					{
-						"buffer_size": 6242,
+						"buffer_size": 75845,
 						"regions":
 						{
 						},
 						"selection":
 						[
 							[
-								0,
-								0
+								68503,
+								68525
 							]
 						],
 						"settings":
@@ -946,35 +938,7 @@
 							"translate_tabs_to_spaces": true
 						},
 						"translation.x": 0.0,
-						"translation.y": 0.0,
-						"zoom_level": 1.0
-					},
-					"type": "text"
-				},
-				{
-					"buffer": 2,
-					"file": "prg/Tscripts.prg",
-					"settings":
-					{
-						"buffer_size": 12314,
-						"regions":
-						{
-						},
-						"selection":
-						[
-							[
-								10532,
-								10532
-							]
-						],
-						"settings":
-						{
-							"syntax": "Packages/harbour/harbour/Harbour.tmLanguage",
-							"tab_size": 3,
-							"translate_tabs_to_spaces": true
-						},
-						"translation.x": 0.0,
-						"translation.y": 6646.0,
+						"translation.y": 48003.0,
 						"zoom_level": 1.0
 					},
 					"type": "text"
