@@ -140,7 +140,7 @@ METHOD OpenFiles() CLASS TDiaCFac
    oBlock   := ErrorBlock( {| oError | ApoloBreak( oError ) } )
    BEGIN SEQUENCE
 
-   DATABASE NEW ::oFacCliT  PATH ( cPatEmp() ) FILE "FACCLIT.DBF" VIA ( cDriver() ) SHARED INDEX "FACCLIT.CDX"
+   ::oFacCliT := TDataCenter():oFacCliT()
    ::oFacCliT:SetOrder( "DFECFAC" )
 
    DATABASE NEW ::oFacCliL  PATH ( cPatEmp() ) FILE "FACCLIL.DBF" VIA ( cDriver() ) SHARED INDEX "FACCLIL.CDX"

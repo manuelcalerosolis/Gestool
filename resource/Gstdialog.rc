@@ -586,7 +586,7 @@ FONT 8, "MS Sans Serif"
   CONTROL "Precios", -1, "Static", WS_GROUP, 116, 69, 29, 8
   CONTROL "Asociados", 135, "Button", BS_AUTOCHECKBOX|WS_TABSTOP, 50, 55, 55, 10
   CONTROL "", 510, "Static", SS_BITMAP|SS_CENTERIMAGE, 4, 3, 34, 30
-  CONTROL "Componentes del artículo kit", -1, "Static", SS_LEFTNOWORDWRAP|WS_GROUP, 44, 3, 446, 8
+  CONTROL "Componentes del artículo", -1, "Static", SS_LEFTNOWORDWRAP|WS_GROUP, 44, 3, 446, 8
   CONTROL "&Subir", 504, "Button", WS_TABSTOP, 382, 83, 50, 14
   CONTROL "&Bajar", 505, "Button", WS_TABSTOP, 437, 83, 50, 14
 }

@@ -11258,14 +11258,16 @@ function SynFacRec( cPath )
       oNewImp        := TNewImp():Create( cPatEmp() )
       oNewImp:OpenFiles()
 
+      // Cabeceras-------------------------------------------------------------
+
       while !( dbfFacRecT )->( eof() )
+
+         if Empty( ( dbfFacRecT )->cSufFac )
+            ( dbfFacRecT )->cSufFac := "00"
+         end if
 
          if Empty( ( dbfFacRecT )->cCodCaj )
             ( dbfFacRecT )->cCodCaj    := "000"
-         end if
-
-         if !( ( dbfFacRecT )->cSerie >= "A" .and. ( dbfFacRecT )->cSerie <= "Z" )
-            ( dbfFacRecT )->( dbDelete() )
          end if
 
          /*
@@ -11284,16 +11286,20 @@ function SynFacRec( cPath )
 
       end while
 
+      // Lineas----------------------------------------------------------------
+
       while !( dbfFacRecL )->( eof() )
 
-         if ( dbfFacRecT )->( dbSeek( ( dbfFacRecL )->cSerie + Str( ( dbfFacRecL )->nNumFac ) + ( dbfFacRecL )->cSufFac ) )
+         	if Empty( ( dbfFacRecL )->cSufFac )
+            	( dbfFacRecL )->cSufFac 	:= "00"
+         	end if
 
             if Empty( ( dbfFacRecL )->cLote ) .and. !Empty( ( dbfFacRecL )->nLote )
                ( dbfFacRecL )->cLote         := AllTrim( Str( ( dbfFacRecL )->nLote ) )
             end if
 
             if Empty( ( dbfFacRecL )->nValImp )
-               cCodImp                       :=  RetFld( ( dbfFacRecL )->cRef, dbfArticulo, "cCodImp" )
+               cCodImp                       := RetFld( ( dbfFacRecL )->cRef, dbfArticulo, "cCodImp" )
                if !Empty( cCodImp )
                   ( dbfFacRecL )->nValImp    := oNewImp:nValImp( cCodImp )
                end if
@@ -11319,12 +11325,6 @@ function SynFacRec( cPath )
                ( dbfFacRecL )->mNumSer       := ""
             end if
 
-         else
-
-            ( dbfFacRecL )->( dbDelete() )
-
-         end if
-
          ( dbfFacRecL )->( dbSkip() )
 
          SysRefresh()
@@ -11335,21 +11335,17 @@ function SynFacRec( cPath )
 
       while !( dbfFacRecS )->( eof() )
 
-         if !( dbfFacRecT )->( dbSeek( ( dbfFacRecS )->cSerFac + Str( ( dbfFacRecS )->nNumFac ) + ( dbfFacRecS )->cSufFac ) )
+      	if Empty( ( dbfFacRecS )->cSufFac )
+          	( dbfFacRecS )->cSufFac := "00"
+       	end if
 
-            ( dbfFacRecS )->( dbDelete() )
+        if Empty( ( dbfFacRecS )->dFecFac )
+           ( dbfFacRecS )->dFecFac 	:= RetFld( ( dbfFacRecS )->cSerie + Str( ( dbfFacRecS )->nNumFac ) + ( dbfFacRecS )->cSufFac, dbfFacRecT, "dFecFac" )
+        end if
 
-         else
+        ( dbfFacRecS )->( dbSkip() )
 
-            if ( dbfFacRecS )->dFecFac != ( dbfFacRecT )->dFecFac
-               ( dbfFacRecS )->dFecFac    := ( dbfFacRecT )->dFecFac
-            end if
-
-         end if
-
-         ( dbfFacRecS )->( dbSkip() )
-
-         SysRefresh()
+        SysRefresh()
 
       end while
 

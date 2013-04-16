@@ -168,7 +168,7 @@ METHOD OpenFiles( cPath )
    oBlock         := ErrorBlock( { | oError | Break( oError ) } )
    BEGIN SEQUENCE
 
-   DATABASE NEW ::oFacCliT FILE "FACCLIT.DBF" PATH ( cPath ) VIA cDriver() SHARED INDEX  "FACCLIT.CDX"
+   ::oFacCliT := TDataCenter():oFacCliT()
    ::oFacCliT:OrdSetFocus( "CCODAGE" )
 
    DATABASE NEW ::oFacCliL FILE "FACCLIL.DBF" PATH ( cPath ) VIA cDriver() SHARED INDEX  "FACCLIL.CDX"

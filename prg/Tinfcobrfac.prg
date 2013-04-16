@@ -80,7 +80,7 @@ METHOD OpenFiles()
 
    BEGIN SEQUENCE
 
-   DATABASE NEW ::oFacCliT PATH ( cPatEmp() ) FILE "FacCliT.DBF" VIA ( cDriver() ) SHARED INDEX "FacCliT.CDX"
+   ::oFacCliT := TDataCenter():oFacCliT()
 
    DATABASE NEW ::oFacCliL PATH ( cPatEmp() ) FILE "FacCliL.DBF" VIA ( cDriver() ) SHARED INDEX "FacCliL.CDX"
 

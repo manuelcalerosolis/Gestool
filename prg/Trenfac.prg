@@ -74,7 +74,7 @@ METHOD OpenFiles()
 
    DATABASE NEW ::oDbfTvta PATH ( cPatDat() ) FILE "TVTA.DBF" VIA ( cDriver() ) SHARED INDEX "TVTA.CDX"
 
-   DATABASE NEW ::oFacCliT PATH ( cPatEmp() ) FILE "FACCLIT.DBF" VIA ( cDriver() ) SHARED INDEX "FACCLIT.CDX"
+   ::oFacCliT := TDataCenter():oFacCliT()
 
    DATABASE NEW ::oFacCliL PATH ( cPatEmp() ) FILE "FACCLIL.DBF" VIA ( cDriver() ) SHARED INDEX "FACCLIL.CDX"
 

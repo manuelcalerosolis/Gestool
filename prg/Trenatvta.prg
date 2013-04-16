@@ -78,7 +78,7 @@ METHOD OpenFiles() CLASS TRenATVta
 
    DATABASE NEW ::oAlbCliL PATH ( cPatEmp() ) FILE "ALBCLIL.DBF"  VIA ( cDriver() ) SHARED INDEX "ALBCLIL.CDX"
 
-   DATABASE NEW ::oFacCliT PATH ( cPatEmp() ) FILE "FACCLIT.DBF"  VIA ( cDriver() ) SHARED INDEX "FACCLIT.CDX"
+   ::oFacCliT     := TDataCenter():oFacCliT()
 
    DATABASE NEW ::oFacCliL PATH ( cPatEmp() ) FILE "FACCLIL.DBF"  VIA ( cDriver() ) SHARED INDEX "FACCLIL.CDX"
 

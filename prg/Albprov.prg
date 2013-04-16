@@ -8108,12 +8108,12 @@ Function SynAlbPrv( cPath )
 
    while !( dbfAlbPrvT )->( eof() )
 
-      if Empty( ( dbfAlbPrvT )->cCodCaj )
-         ( dbfAlbPrvT )->cCodCaj := "000"
+      if Empty( ( dbfAlbPrvT )->cSufAlb )
+         ( dbfAlbPrvT )->cSufAlb := "00"
       end if
 
-      if !( ( dbfAlbPrvT )->cSerAlb >= "A" .and. ( dbfAlbPrvT )->cSerAlb <= "Z" )
-         ( dbfAlbPrvT )->( dbDelete() )
+      if Empty( ( dbfAlbPrvT )->cCodCaj )
+         ( dbfAlbPrvT )->cCodCaj := "000"
       end if
 
       /*
@@ -8128,8 +8128,6 @@ Function SynAlbPrv( cPath )
          ( dbfAlbPrvT )->nTotIva := aTotAlb[ 2 ]
          ( dbfAlbPrvT )->nTotReq := aTotAlb[ 3 ]
          ( dbfAlbPrvT )->nTotAlb := aTotAlb[ 4 ]
-
-         ( dbfAlbPrvT )->( dbUnLock() )
 
       end if
 
@@ -8161,59 +8159,51 @@ Function SynAlbPrv( cPath )
 
    while !( dbfAlbPrvL )->( eof() )
 
-      if !( dbfAlbPrvT )->( dbSeek( ( dbfAlbPrvL )->cSerAlb + Str( ( dbfAlbPrvL )->nNumAlb ) + ( dbfAlbPrvL )->cSufAlb ) )
+      if Empty( ( dbfAlbPrvL )->cSufAlb )
+         ( dbfAlbPrvL )->cSufAlb    := "00"
+      end if 
 
-         ( dbfAlbPrvL )->( dbDelete() )
-
-      else
-
-         if Empty( ( dbfAlbPrvL )->cLote ) .and. !Empty( ( dbfAlbPrvL )->nLote )
-            ( dbfAlbPrvL )->cLote      := AllTrim( Str( ( dbfAlbPrvL )->nLote ) )
-         end if
-
-         if !Empty( ( dbfAlbPrvL )->cRef ) .and. Empty( ( dbfAlbPrvL )->cCodFam )
-            ( dbfAlbPrvL )->cCodFam    := RetFamArt( ( dbfAlbPrvL )->cRef, dbfArticulo )
-         end if
-
-         if !Empty( ( dbfAlbPrvL )->cRef ) .and. !Empty( ( dbfAlbPrvL )->cCodFam )
-            ( dbfAlbPrvL )->cGrpFam    := cGruFam( ( dbfAlbPrvL )->cCodFam, dbfFamilia )
-         end if
-
-         if Empty( ( dbfAlbPrvL )->nReq )
-            ( dbfAlbPrvL )->nReq       := nPReq( dbfIva, ( dbfAlbPrvL )->nIva )
-         end if
-
-         if ( dbfAlbPrvL )->lFacturado != ( dbfAlbPrvT )->lFacturado
-            ( dbfAlbPrvL )->lFacturado := ( dbfAlbPrvT )->lFacturado
-         end if
-
-         if ( dbfAlbPrvL )->dFecAlb != ( dbfAlbPrvT )->dFecAlb
-            ( dbfAlbPrvL )->dFecAlb    := ( dbfAlbPrvT )->dFecAlb
-         end if
-
-         if !Empty( ( dbfAlbPrvL )->mNumSer )
-
-            aNumSer                       := hb_aTokens( ( dbfAlbPrvL )->mNumSer, "," )
-            for each cNumSer in aNumSer
-               ( dbfAlbPrvS )->( dbAppend() )
-               ( dbfAlbPrvS )->cSerAlb    := ( dbfAlbPrvL )->cSerAlb
-               ( dbfAlbPrvS )->nNumAlb    := ( dbfAlbPrvL )->nNumAlb
-               ( dbfAlbPrvS )->cSufAlb    := ( dbfAlbPrvL )->cSufAlb
-               ( dbfAlbPrvS )->cRef       := ( dbfAlbPrvL )->cRef
-               ( dbfAlbPrvS )->cAlmLin    := ( dbfAlbPrvL )->cAlmLin
-               ( dbfAlbPrvS )->nNumLin    := ( dbfAlbPrvL )->nNumLin
-               ( dbfAlbPrvS )->lFacturado := ( dbfAlbPrvL )->lFacturado
-               ( dbfAlbPrvS )->cNumSer    := cNumSer
-            next
-
-
-            ( dbfAlbPrvL )->mNumSer       := ""
-
-         end if
-
-         AppRefPrv( ( dbfAlbPrvL )->cRefPrv, ( dbfAlbPrvT )->cCodPrv, ( dbfAlbPrvL )->cRef, ( dbfAlbPrvL )->nDtoLin, ( dbfAlbPrvL )->nDtoPrm, ( dbfAlbPrvT )->cDivAlb, ( dbfAlbPrvL )->nPreDiv, dbfArtPrv )
-
+      if Empty( ( dbfAlbPrvL )->cLote ) .and. !Empty( ( dbfAlbPrvL )->nLote )
+         ( dbfAlbPrvL )->cLote      := AllTrim( Str( ( dbfAlbPrvL )->nLote ) )
       end if
+
+      if !Empty( ( dbfAlbPrvL )->cRef ) .and. Empty( ( dbfAlbPrvL )->cCodFam )
+         ( dbfAlbPrvL )->cCodFam    := RetFamArt( ( dbfAlbPrvL )->cRef, dbfArticulo )
+      end if
+
+      if !Empty( ( dbfAlbPrvL )->cRef ) .and. !Empty( ( dbfAlbPrvL )->cCodFam )
+         ( dbfAlbPrvL )->cGrpFam    := cGruFam( ( dbfAlbPrvL )->cCodFam, dbfFamilia )
+      end if
+
+      if Empty( ( dbfAlbPrvL )->nReq )
+         ( dbfAlbPrvL )->nReq       := nPReq( dbfIva, ( dbfAlbPrvL )->nIva )
+      end if
+
+      if ( dbfAlbPrvL )->lFacturado != RetFld( ( dbfAlbPrvL )->cSerAlb + Str( ( dbfAlbPrvL )->nNumAlb ) + ( dbfAlbPrvL )->cSufAlb, dbfAlbPrvT, "lFacturado" )
+         ( dbfAlbPrvL )->lFacturado := RetFld( ( dbfAlbPrvL )->cSerAlb + Str( ( dbfAlbPrvL )->nNumAlb ) + ( dbfAlbPrvL )->cSufAlb, dbfAlbPrvT, "lFacturado" )
+      end if
+
+      if ( dbfAlbPrvL )->dFecAlb != RetFld( ( dbfAlbPrvL )->cSerAlb + Str( ( dbfAlbPrvL )->nNumAlb ) + ( dbfAlbPrvL )->cSufAlb, dbfAlbPrvT, "dFecAlb" )
+         ( dbfAlbPrvL )->dFecAlb    := RetFld( ( dbfAlbPrvL )->cSerAlb + Str( ( dbfAlbPrvL )->nNumAlb ) + ( dbfAlbPrvL )->cSufAlb, dbfAlbPrvT, "dFecAlb" )
+      end if
+
+      if !Empty( ( dbfAlbPrvL )->mNumSer )
+         aNumSer                       := hb_aTokens( ( dbfAlbPrvL )->mNumSer, "," )
+         for each cNumSer in aNumSer
+            ( dbfAlbPrvS )->( dbAppend() )
+            ( dbfAlbPrvS )->cSerAlb    := ( dbfAlbPrvL )->cSerAlb
+            ( dbfAlbPrvS )->nNumAlb    := ( dbfAlbPrvL )->nNumAlb
+            ( dbfAlbPrvS )->cSufAlb    := ( dbfAlbPrvL )->cSufAlb
+            ( dbfAlbPrvS )->cRef       := ( dbfAlbPrvL )->cRef
+            ( dbfAlbPrvS )->cAlmLin    := ( dbfAlbPrvL )->cAlmLin
+            ( dbfAlbPrvS )->nNumLin    := ( dbfAlbPrvL )->nNumLin
+            ( dbfAlbPrvS )->lFacturado := ( dbfAlbPrvL )->lFacturado
+            ( dbfAlbPrvS )->cNumSer    := cNumSer
+         next
+         ( dbfAlbPrvL )->mNumSer       := ""
+      end if
+
+      AppRefPrv( ( dbfAlbPrvL )->cRefPrv, ( dbfAlbPrvT )->cCodPrv, ( dbfAlbPrvL )->cRef, ( dbfAlbPrvL )->nDtoLin, ( dbfAlbPrvL )->nDtoPrm, ( dbfAlbPrvT )->cDivAlb, ( dbfAlbPrvL )->nPreDiv, dbfArtPrv )
 
       ( dbfAlbPrvL )->( dbSkip() )
 
@@ -8223,9 +8213,9 @@ Function SynAlbPrv( cPath )
 
    while !( dbfAlbPrvI )->( eof() )
 
-      if !( dbfAlbPrvT )->( dbSeek( ( dbfAlbPrvI )->cSerAlb + Str( ( dbfAlbPrvI )->nNumAlb ) + ( dbfAlbPrvI )->cSufAlb ) )
-         ( dbfAlbPrvI )->( dbDelete() )
-      end if
+      if Empty( ( dbfAlbPrvI )->cSufAlb )
+         ( dbfAlbPrvI )->cSufAlb       := "00"
+      end if 
 
       ( dbfAlbPrvI )->( dbSkip() )
 
@@ -8237,16 +8227,12 @@ Function SynAlbPrv( cPath )
 
    while !( dbfAlbPrvS )->( eof() )
 
-      if !( dbfAlbPrvT )->( dbSeek( ( dbfAlbPrvS )->cSerAlb + Str( ( dbfAlbPrvS )->nNumAlb ) + ( dbfAlbPrvS )->cSufAlb ) )
-
-         ( dbfAlbPrvS )->( dbDelete() )
-
-      else
-
-         if ( dbfAlbPrvS )->dFecAlb != ( dbfAlbPrvT )->dFecAlb
-            ( dbfAlbPrvS )->dFecAlb    := ( dbfAlbPrvT )->dFecAlb
-         end if
-
+      if Empty( ( dbfAlbPrvS )->cSufAlb )
+         ( dbfAlbPrvS )->cSufAlb       := "00"
+      end if 
+      
+      if ( dbfAlbPrvS )->dFecAlb != RetFld( ( dbfAlbPrvS )->cSerAlb + Str( ( dbfAlbPrvS )->nNumAlb ) + ( dbfAlbPrvS )->cSufAlb, dbfAlbPrvT, "dFecAlb" )
+         ( dbfAlbPrvS )->dFecAlb       := RetFld( ( dbfAlbPrvS )->cSerAlb + Str( ( dbfAlbPrvS )->nNumAlb ) + ( dbfAlbPrvS )->cSufAlb, dbfAlbPrvT, "dFecAlb" )
       end if
 
       ( dbfAlbPrvS )->( dbSkip() )

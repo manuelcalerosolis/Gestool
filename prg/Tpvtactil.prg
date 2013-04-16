@@ -1426,6 +1426,10 @@ CLASS TpvTactil
 
    ENDMETHOD
 
+   //-----------------------------------------------------------------------//
+
+   METHOD cNombreArticulo()   INLINE ( Capitalize( Alltrim( if( !Empty( ::oArticulo:cDesTcl ), ::oArticulo:cDesTcl, ::oArticulo:Nombre ) ) ) )
+
 //--------------------------------------------------------------------------//
 
 END CLASS
@@ -3269,7 +3273,7 @@ METHOD CargaArticulos() CLASS TpvTactil
 
             nImg++
 
-            ::oLstArticulos:aAddItemGroup( nImg, AllTrim( Capitalize( ::oArticulo:Nombre ) ), ::aFamilias[ nItemFamilia, 3 ] )
+            ::oLstArticulos:aAddItemGroup( nImg, ::cNombreArticulo(), ::aFamilias[ nItemFamilia, 3 ] )
 
          end if
 
@@ -3520,13 +3524,7 @@ METHOD CargaArticulosFamilia( cCodFam, nColBtn ) CLASS TpvTactil
 
             with object ( C5ImageViewItem() )
 
-               if !Empty( ::oArticulo:cDesTcl )
-                  :cText         := ::oArticulo:cDesTcl
-               else
-                  :cText         := ::oArticulo:Nombre
-               end if
-
-               :cText            := AllTrim( Capitalize( :cText ) )
+               :cText            := ::cNombreArticulo()
 
                if ( ::lImagenArticulos ) .and. ( ::lFileBmpName( ::oArticulo:cImagen ) )
 
@@ -3587,7 +3585,7 @@ METHOD CargaFavoritos() CLASS TpvTactil
 
          with object ( C5ImageViewItem() )
 
-            :cText         := AllTrim( Capitalize( ::oArticulo:Nombre ) )
+           :cText          := ::cNombreArticulo()
 
             if ( ::lImagenArticulos ) .and. ( ::lFileBmpName( ::oArticulo:cImagen ) )
                :cImage     := ::cFileBmpName( ::oArticulo:cImagen )
@@ -3978,7 +3976,7 @@ METHOD AgregarLineas( cCodigoArticulo ) CLASS TpvTactil
 
             ::oTemporalLinea:nNumLin      := ::nNumeroLinea
             ::oTemporalLinea:cCbaTil      := ::oArticulo:Codigo
-            ::oTemporalLinea:cNomTil      := if( !Empty( ::oArticulo:cDesTik ), ::oArticulo:cDesTik, ::oArticulo:Nombre )
+            ::oTemporalLinea:cNomTil      := ::cNombreArticulo()
             ::oTemporalLinea:nCosDiv      := nCosto( ::oArticulo:Codigo, ::oArticulo:cAlias, ::oArticulosEscandallos:cAlias )
             ::oTemporalLinea:cLote        := ::oArticulo:cLote
             ::oTemporalLinea:cCodFam      := ::oArticulo:Familia
@@ -4024,7 +4022,7 @@ METHOD AgregarLineas( cCodigoArticulo ) CLASS TpvTactil
          ::oTemporalLinea:Load()
 
          ::oTemporalLinea:cComTil      := ::oArticulo:Codigo
-         ::oTemporalLinea:cNcmTil      := if( !Empty( ::oArticulo:cDesTik ), ::oArticulo:cDesTik, ::oArticulo:Nombre )
+         ::oTemporalLinea:cNcmTil      := ::cNombreArticulo()
          ::oTemporalLinea:cFcmTil      := ::oArticulo:Familia
          if ( ::oArticulo:lFacCnv )
             ::oTemporalLinea:nFcmCnv   := NotCero( ::oArticulo:nFacCnv )
@@ -4102,7 +4100,7 @@ METHOD lAcumulaArticulo() CLASS TpvTactil
             ::oTemporalLinea:nPvpTil == nPrecioLinea                       .and. ;
             ::oTemporalLinea:nDtoLin == 0                                  .and. ;
             Empty( ::oTemporalLinea:cComent )                              .and. ;
-            Rtrim( ::oTemporalLinea:cNomTil ) == Rtrim( ::oArticulo:Nombre )
+            Rtrim( ::oTemporalLinea:cNomTil ) == ::cNombreArticulo()
 
             /*
             Sumamos------------------------------------------------------------
@@ -4150,7 +4148,7 @@ METHOD AgregarKit( cCodigoArticulo ) CLASS TpvTactil
             ::oTemporalLinea:Blank()
 
             ::oTemporalLinea:cCbaTil      := ::oArticulo:Codigo
-            ::oTemporalLinea:cNomTil      := if( !Empty( ::oArticulo:cDesTik ), ::oArticulo:cDesTik, ::oArticulo:Nombre )
+            ::oTemporalLinea:cNomTil      := ::cNombreArticulo()
             ::oTemporalLinea:nCosDiv      := ::oArticulo:pCosto
             ::oTemporalLinea:cLote        := ::oArticulo:cLote
             ::oTemporalLinea:cCodFam      := ::oArticulo:Familia
@@ -4317,7 +4315,7 @@ METHOD AgregarFavoritos( cNombreArticulo ) CLASS TpvTactil
 
       ::oTemporalLinea:Append()
       ::oTemporalLinea:cCbaTil   := ::oArticulo:Codigo
-      ::oTemporalLinea:cNomTil   := ::oArticulo:Nombre
+      ::oTemporalLinea:cNomTil   := ::cNombreArticulo()
       ::oTemporalLinea:nCosDiv   := ::oArticulo:pCosto
       ::oTemporalLinea:cLote     := ::oArticulo:cLote
       ::oTemporalLinea:cCodFam   := ::oArticulo:Familia

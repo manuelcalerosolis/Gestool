@@ -17597,6 +17597,10 @@ Function SynTikCli( cPath )
 
    while !( dbfTikT )->( eof() )
 
+      if Empty( ( dbfTikT )->cSufTik )
+         ( dbfTikT )->cSufTik := "00"
+      end if
+
       if Empty( ( dbfTikT )->cNcjTik )
          ( dbfTikT )->cNcjTik := "000"
       end if
@@ -17671,6 +17675,10 @@ Function SynTikCli( cPath )
 
    while !( dbfTikP )->( eof() )
 
+      if Empty( ( dbfTikP )->cSufTik )
+         ( dbfTikP )->cSufTik := "00"
+      end if
+
       if Empty( ( dbfTikP )->cCodCaj )
          ( dbfTikP )->cCodCaj := oUser():cCaja()
       end if
@@ -17687,36 +17695,32 @@ Function SynTikCli( cPath )
 
    while !( dbfTikL )->( eof() )
 
-      if !( dbfTikT )->( dbSeek( ( dbfTikL )->cSerTil + ( dbfTikL )->cNumTil + ( dbfTikL )->cSufTil ) )
+      if Empty( ( dbfTikL )->cSufTil )
+         ( dbfTikL )->cSufTil := "00"
+      end if
 
-         ( dbfTikL )->( dbDelete() )
+      if !Empty( ( dbfTikL )->cCbaTil ) .and. Empty( ( dbfTikL )->cCodFam )
+         ( dbfTikL )->cCodFam := RetFamArt( ( dbfTikL )->cCbaTil, dbfArticulo )
+      end if
 
-      else
+      if !Empty( ( dbfTikL )->cCbaTil ) .and. !Empty( ( dbfTikL )->cCodFam )
+         ( dbfTikL )->cGrpFam := cGruFam( ( dbfTikL )->cCodFam, dbfFamilia )
+      end if
 
-         if !Empty( ( dbfTikL )->cCbaTil ) .and. Empty( ( dbfTikL )->cCodFam )
-            ( dbfTikL )->cCodFam := RetFamArt( ( dbfTikL )->cCbaTil, dbfArticulo )
-         end if
+      if Empty( ( dbfTikL )->cLote ) .and. !Empty( ( dbfTikL )->nLote )
+         ( dbfTikL )->cLote   := AllTrim( Str( ( dbfTikL )->nLote ) )
+      end if
 
-         if !Empty( ( dbfTikL )->cCbaTil ) .and. !Empty( ( dbfTikL )->cCodFam )
-            ( dbfTikL )->cGrpFam := cGruFam( ( dbfTikL )->cCodFam, dbfFamilia )
-         end if
+      if Empty( ( dbfTikL )->cAlmLin ) .or. ( dbfTikL )->cAlmLin != ( dbfTikT )->cAlmTik
+         ( dbfTikL )->cAlmLin := ( dbfTikT )->cAlmTik
+      end if
 
-         if Empty( ( dbfTikL )->cLote ) .and. !Empty( ( dbfTikL )->nLote )
-            ( dbfTikL )->cLote   := AllTrim( Str( ( dbfTikL )->nLote ) )
-         end if
+      if ( dbfTikL )->cTipTil != RetFld( ( dbfTikL )->cSerTil + ( dbfTikL )->cNumTil + ( dbfTikL )->cSufTil, dbfTikT, "cTipTik" )
+         ( dbfTikL )->cTipTil := RetFld( ( dbfTikL )->cSerTil + ( dbfTikL )->cNumTil + ( dbfTikL )->cSufTil, dbfTikT, "cTipTik" )
+      end if
 
-         if Empty( ( dbfTikL )->cAlmLin ) .or. ( dbfTikL )->cAlmLin != ( dbfTikT )->cAlmTik
-            ( dbfTikL )->cAlmLin := ( dbfTikT )->cAlmTik
-         end if
-
-         if ( dbfTikL )->cTipTil != ( dbfTikT )->cTipTik
-            ( dbfTikL )->cTipTil := ( dbfTikT )->cTipTik
-         end if
-
-         if ( dbfTikL )->dFecTik != ( dbfTikT )->dFecTik
-            ( dbfTikL )->dFecTik := ( dbfTikT )->dFecTik
-         end if
-
+      if ( dbfTikL )->dFecTik != RetFld( ( dbfTikL )->cSerTil + ( dbfTikL )->cNumTil + ( dbfTikL )->cSufTil, dbfTikT, "dFecTik" )
+         ( dbfTikL )->dFecTik := RetFld( ( dbfTikL )->cSerTil + ( dbfTikL )->cNumTil + ( dbfTikL )->cSufTil, dbfTikT, "dFecTik" )
       end if
 
       ( dbfTikL )->( dbSkip() )
@@ -17729,16 +17733,12 @@ Function SynTikCli( cPath )
 
    while !( dbfTikS )->( eof() )
 
-      if !( dbfTikT )->( dbSeek( ( dbfTikS )->cSerTik + ( dbfTikS )->cNumTik + ( dbfTikS )->cSufTik ) )
+      if Empty( ( dbfTikS )->cSufTik )
+         ( dbfTikS )->cSufTik := "00"
+      end if
 
-         ( dbfTikS )->( dbDelete() )
-
-      else
-
-         if ( dbfTikS )->dFecTik != ( dbfTikT )->dFecTik
-            ( dbfTikS )->dFecTik := ( dbfTikT )->dFecTik
-         end if
-
+      if ( dbfTikS )->dFecTik != RetFld( ( dbfTikS )->cSerTik + ( dbfTikS )->cNumTik + ( dbfTikS )->cSufTik, dbfTikT, "dFecTik" )
+         ( dbfTikS )->dFecTik := RetFld( ( dbfTikS )->cSerTik + ( dbfTikS )->cNumTik + ( dbfTikS )->cSufTik, dbfTikT, "dFecTik" )
       end if
 
       ( dbfTikS )->( dbSkip() )

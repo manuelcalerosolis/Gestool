@@ -91,7 +91,7 @@ METHOD OpenFiles() CLASS TDiaCFac
 
    BEGIN SEQUENCE
 
-   DATABASE NEW ::oFacCliT  PATH ( cPatEmp() ) FILE "FACCLIT.DBF" VIA ( cDriver() ) SHARED INDEX "FACCLIT.CDX"
+   ::oFacCliT := TDataCenter():oFacCliT()
    ::oFacCliT:SetOrder( "dFecFac" )
 
    DATABASE NEW ::oFacCliL  PATH ( cPatEmp() ) FILE "FACCLIL.DBF" VIA ( cDriver() ) SHARED INDEX "FACCLIL.CDX"

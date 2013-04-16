@@ -51,15 +51,15 @@ METHOD OpenFiles() CLASS TInfTFac
 
    BEGIN SEQUENCE
 
-   DATABASE NEW ::oFacCliT    PATH ( cPatEmp() ) FILE "FACCLIT.DBF"  VIA ( cDriver() ) SHARED INDEX "FACCLIT.CDX"
+   ::oFacCliT     := TDataCenter():oFacCliT()
 
-   DATABASE NEW ::oFacCliL    PATH ( cPatEmp() ) FILE "FACCLIL.DBF"  VIA ( cDriver() ) SHARED INDEX "FACCLIL.CDX"
+   DATABASE NEW ::oFacCliL PATH ( cPatEmp() ) FILE "FACCLIL.DBF" VIA ( cDriver() ) SHARED INDEX "FACCLIL.CDX"
 
    DATABASE NEW ::oFacRecT PATH ( cPatEmp() ) FILE "FACRECT.DBF" VIA ( cDriver() ) SHARED INDEX "FACRECT.CDX"
 
    DATABASE NEW ::oFacRecL PATH ( cPatEmp() ) FILE "FACRECL.DBF" VIA ( cDriver() ) SHARED INDEX "FACRECL.CDX"
 
-   DATABASE NEW ::oDbfTvta    PATH ( cPatDat() ) FILE "TVTA.DBF"     VIA ( cDriver() ) SHARED INDEX "TVTA.CDX"
+   DATABASE NEW ::oDbfTvta PATH ( cPatDat() ) FILE "TVTA.DBF"    VIA ( cDriver() ) SHARED INDEX "TVTA.CDX"
 
    RECOVER
 

@@ -3,6 +3,7 @@
 #include "DBStruct.ch"
 #include "Ads.ch"
 #include "Xbrowse.ch"
+#include "MesDbf.ch"
 
 //---------------------------------------------------------------------------//
 
@@ -162,6 +163,30 @@ CLASS TDataCenter
       end if 
 
       Return ( lOpen )   
+
+   ENDMETHOD
+
+   //---------------------------------------------------------------------------//
+
+   INLINE METHOD oFacCliT()
+
+      local cFilter
+      local oFacCliT
+
+      DATABASE NEW oFacCliT PATH ( cPatEmp() ) FILE "FacCliT.Dbf" VIA ( cDriver() ) SHARED INDEX "FacCliT.Cdx"
+
+         if lAIS() .and. !oUser():lAdministrador()
+      
+            cFilter     := "Field->cSufFac == '" + oUser():cDelegacion() + "' .and. Field->cCodCaj == '" + oUser():cCaja() + "'"
+            if oUser():lFiltroVentas()         
+               cFilter  += " .and. Field->cCodUsr == '" + oUser():cCodigo() + "'"
+            end if 
+
+            ( oFacCliT:cAlias )->( AdsSetAOF( cFilter ) )
+
+         end if
+
+      Return ( oFacCliT )   
 
    ENDMETHOD
 

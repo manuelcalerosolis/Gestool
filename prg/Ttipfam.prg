@@ -81,8 +81,8 @@ METHOD OpenFiles()
 
    BEGIN SEQUENCE
 
-   DATABASE NEW ::oFacCliT    PATH ( cPatEmp() ) FILE "FACCLIT.DBF"  VIA ( cDriver() ) SHARED INDEX "FACCLIT.CDX"
-   ::oFacCliT:OrdSetFocus( "CCODCLI" )
+   ::oFacCliT     := TDataCenter():oFacCliT()   
+   ::oFacCliT:OrdSetFocus( "cCodCli" )
 
    DATABASE NEW ::oFacCliL    PATH ( cPatEmp() ) FILE "FACCLIL.DBF"  VIA ( cDriver() ) SHARED INDEX "FACCLIL.CDX"
 

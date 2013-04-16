@@ -7650,6 +7650,10 @@ function SynAlbCli( cPath )
 
    while !( dbfAlbCliT )->( eof() )
 
+      if Empty( ( dbfAlbCliT )->cSufAlb )
+         ( dbfAlbCliT )->cSufAlb := "00"
+      end if
+
       if Empty( ( dbfAlbCliT )->cCodCaj )
          ( dbfAlbCliT )->cCodCaj := "000"
       end if
@@ -7658,15 +7662,8 @@ function SynAlbCli( cPath )
          ( dbfAlbCliT )->cCodGrp := RetGrpCli( ( dbfAlbCliT )->cCodCli, dbfClient )
       end if
 
-      if !( ( dbfAlbCliT )->cSerAlb >= "A" .and. ( dbfAlbCliT )->cSerAlb <= "Z" )
-         ( dbfAlbCliT )->( dbDelete() )
-      end if
-
       if Empty( ( dbfAlbCliT )->cNomCli ) .and. !Empty ( ( dbfAlbCliT )->cCodCli )
-         if dbLock( dbfAlbCliT )
          ( dbfAlbCliT )->cNomCli    := RetFld( ( dbfAlbCliT )->cCodCli, dbfClient, "Titulo" )
-         ( dbfAlbCliT )->( dbUnLock() )
-         end if
       end if
 
       /*
@@ -7707,76 +7704,63 @@ function SynAlbCli( cPath )
 
    while !( dbfAlbCliL )->( eof() )
 
-      if !( dbfAlbCliT )->( dbSeek( ( dbfAlbCliL )->cSerAlb + Str( ( dbfAlbCliL )->nNumAlb ) + ( dbfAlbCliL )->cSufAlb ) )
+      if Empty( ( dbfAlbCliL )->cSufAlb )
+         ( dbfAlbCliL )->cSufAlb    := "00"
+      end if
 
-         ( dbfAlbCliL )->( dbDelete() )
+      if Empty( ( dbfAlbCliL )->cLote ) .and. !Empty( ( dbfAlbCliL )->nLote )
+         ( dbfAlbCliL )->cLote      := AllTrim( Str( ( dbfAlbCliL )->nLote ) )
+      end if
 
-      else
-
-         if Empty( ( dbfAlbCliL )->cLote ) .and. !Empty( ( dbfAlbCliL )->nLote )
-            ( dbfAlbCliL )->cLote   := AllTrim( Str( ( dbfAlbCliL )->nLote ) )
+      if Empty( ( dbfAlbCliL )->nValImp )
+         cCodImp                    := RetFld( ( dbfAlbCliL )->CREF, dbfArticulo, "cCodImp" )
+         if !Empty( cCodImp )
+            ( dbfAlbCliL )->nValImp := oNewImp:nValImp( cCodImp )
          end if
+      end if
 
-         if Empty( ( dbfAlbCliL )->nValImp )
-            cCodImp                     :=  RetFld( ( dbfAlbCliL )->CREF, dbfArticulo, "cCodImp" )
-            if !Empty( cCodImp )
-               if dbLock( dbfAlbCliL )
-               ( dbfAlbCliL )->nValImp  := oNewImp:nValImp( cCodImp )
-               ( dbfAlbCliL )->( dbUnLock() )
-               end if
-            end if
-         end if
+      if Empty( ( dbfAlbCliL )->nVolumen )
+         ( dbfAlbCliL )->nVolumen   := RetFld( ( dbfAlbCliL )->CREF, dbfArticulo, "nVolumen" )
+      end if
 
-         if Empty( ( dbfAlbCliL )->nVolumen )
-            if dbLock( dbfAlbCliL )
-               ( dbfAlbCliL )->nVolumen := RetFld( ( dbfAlbCliL )->CREF, dbfArticulo, "nVolumen" )
-               ( dbfAlbCliL )->( dbUnLock() )
-            end if
-         end if
+      if ( dbfAlbCliL )->lIvaLin != RetFld( ( dbfAlbCliL )->cSerAlb + Str( ( dbfAlbCliL )->nNumAlb ) + ( dbfAlbCliL )->cSufAlb, dbfAlbCliT, "lIvaInc" )
+         ( dbfAlbCliL )->lIvaLin    := RetFld( ( dbfAlbCliL )->cSerAlb + Str( ( dbfAlbCliL )->nNumAlb ) + ( dbfAlbCliL )->cSufAlb, dbfAlbCliT, "lIvaInc" )
+      end if
 
-         if ( dbfAlbCliL )->lIvaLin != ( dbfAlbCliT )->lIvaInc
-            ( dbfAlbCliL )->lIvaLin    := ( dbfAlbCliT )->lIvaInc
-         end if
+      if !Empty( ( dbfAlbCliL )->cRef ) .and. Empty( ( dbfAlbCliL )->cCodFam )
+         ( dbfAlbCliL )->cCodFam    := RetFamArt( ( dbfAlbCliL )->cRef, dbfArticulo )
+      end if
 
-         if !Empty( ( dbfAlbCliL )->cRef ) .and. Empty( ( dbfAlbCliL )->cCodFam )
-            ( dbfAlbCliL )->cCodFam    := RetFamArt( ( dbfAlbCliL )->cRef, dbfArticulo )
-         end if
+      if !Empty( ( dbfAlbCliL )->cRef ) .and. !Empty( ( dbfAlbCliL )->cCodFam )
+         ( dbfAlbCliL )->cGrpFam    := cGruFam( ( dbfAlbCliL )->cCodFam, dbfFamilia )
+      end if
 
-         if !Empty( ( dbfAlbCliL )->cRef ) .and. !Empty( ( dbfAlbCliL )->cCodFam )
-            ( dbfAlbCliL )->cGrpFam    := cGruFam( ( dbfAlbCliL )->cCodFam, dbfFamilia )
-         end if
+      if Empty( ( dbfAlbCliL )->nReq )
+         ( dbfAlbCliL )->nReq       := nPReq( dbfIva, ( dbfAlbCliL )->nIva )
+      end if
 
-         if Empty( ( dbfAlbCliL )->nReq )
-            ( dbfAlbCliL )->nReq       := nPReq( dbfIva, ( dbfAlbCliL )->nIva )
-         end if
+      if ( dbfAlbCliL )->lFacturado != RetFld( ( dbfAlbCliL )->cSerAlb + Str( ( dbfAlbCliL )->nNumAlb ) + ( dbfAlbCliL )->cSufAlb, dbfAlbCliT, "lFacturado" )
+         ( dbfAlbCliL )->lFacturado := RetFld( ( dbfAlbCliL )->cSerAlb + Str( ( dbfAlbCliL )->nNumAlb ) + ( dbfAlbCliL )->cSufAlb, dbfAlbCliT, "lFacturado" )
+      end if
 
-         if ( dbfAlbCliL )->lFacturado != ( dbfAlbCliT )->lFacturado
-            ( dbfAlbCliL )->lFacturado := ( dbfAlbCliT )->lFacturado
-         end if
+      if ( dbfAlbCliL )->dFecAlb != RetFld( ( dbfAlbCliL )->cSerAlb + Str( ( dbfAlbCliL )->nNumAlb ) + ( dbfAlbCliL )->cSufAlb, dbfAlbCliT, "dFecAlb" )
+         ( dbfAlbCliL )->dFecAlb    := RetFld( ( dbfAlbCliL )->cSerAlb + Str( ( dbfAlbCliL )->nNumAlb ) + ( dbfAlbCliL )->cSufAlb, dbfAlbCliT, "dFecAlb" )
+      end if
 
-         if ( dbfAlbCliL )->dFecAlb != ( dbfAlbCliT )->dFecAlb
-            ( dbfAlbCliL )->dFecAlb    := ( dbfAlbCliT )->dFecAlb
-         end if
-
-         if !Empty( ( dbfAlbCliL )->mNumSer )
-
-            aNumSer                       := hb_aTokens( ( dbfAlbCliL )->mNumSer, "," )
-            for each cNumSer in aNumSer
-               ( dbfAlbCliS )->( dbAppend() )
-               ( dbfAlbCliS )->cSerAlb    := ( dbfAlbCliL )->cSerAlb
-               ( dbfAlbCliS )->nNumAlb    := ( dbfAlbCliL )->nNumAlb
-               ( dbfAlbCliS )->cSufAlb    := ( dbfAlbCliL )->cSufAlb
-               ( dbfAlbCliS )->cRef       := ( dbfAlbCliL )->cRef
-               ( dbfAlbCliS )->cAlmLin    := ( dbfAlbCliL )->cAlmLin
-               ( dbfAlbCliS )->nNumLin    := ( dbfAlbCliL )->nNumLin
-               ( dbfAlbCliS )->lFacturado := ( dbfAlbCliL )->lFacturado
-               ( dbfAlbCliS )->cNumSer    := cNumSer
-            next
-
-            ( dbfAlbCliL )->mNumSer       := ""
-
-         end if
-
+      if !Empty( ( dbfAlbCliL )->mNumSer )
+         aNumSer                       := hb_aTokens( ( dbfAlbCliL )->mNumSer, "," )
+         for each cNumSer in aNumSer
+            ( dbfAlbCliS )->( dbAppend() )
+            ( dbfAlbCliS )->cSerAlb    := ( dbfAlbCliL )->cSerAlb
+            ( dbfAlbCliS )->nNumAlb    := ( dbfAlbCliL )->nNumAlb
+            ( dbfAlbCliS )->cSufAlb    := ( dbfAlbCliL )->cSufAlb
+            ( dbfAlbCliS )->cRef       := ( dbfAlbCliL )->cRef
+            ( dbfAlbCliS )->cAlmLin    := ( dbfAlbCliL )->cAlmLin
+            ( dbfAlbCliS )->nNumLin    := ( dbfAlbCliL )->nNumLin
+            ( dbfAlbCliS )->lFacturado := ( dbfAlbCliL )->lFacturado
+            ( dbfAlbCliS )->cNumSer    := cNumSer
+         next
+         ( dbfAlbCliL )->mNumSer       := ""
       end if
 
       ( dbfAlbCliL )->( dbSkip() )
@@ -7787,8 +7771,8 @@ function SynAlbCli( cPath )
 
    while !( dbfAlbCliI )->( eof() )
 
-      if !( dbfAlbCliT )->( dbSeek( ( dbfAlbCliI )->cSerAlb + Str( ( dbfAlbCliI )->nNumAlb ) + ( dbfAlbCliI )->cSufAlb ) )
-         ( dbfAlbCliI )->( dbDelete() )
+      if Empty( ( dbfAlbCliI )->cSufAlb )
+         ( dbfAlbCliI )->cSufAlb    := "00"
       end if
 
       ( dbfAlbCliI )->( dbSkip() )
@@ -7801,16 +7785,12 @@ function SynAlbCli( cPath )
 
    while !( dbfAlbCliS )->( eof() )
 
-      if !( dbfAlbCliT )->( dbSeek( ( dbfAlbCliS )->cSerAlb + Str( ( dbfAlbCliS )->nNumAlb ) + ( dbfAlbCliS )->cSufAlb ) )
+      if Empty( ( dbfAlbCliS )->cSufAlb )
+         ( dbfAlbCliS )->cSufAlb    := "00"
+      end if
 
-         ( dbfAlbCliS )->( dbDelete() )
-
-      else
-
-         if ( dbfAlbCliS )->dFecAlb != ( dbfAlbCliT )->dFecAlb
-            ( dbfAlbCliS )->dFecAlb    := ( dbfAlbCliT )->dFecAlb
-         end if
-
+      if ( dbfAlbCliS )->dFecAlb != RetFld( ( dbfAlbCliL )->cSerAlb + Str( ( dbfAlbCliL )->nNumAlb ) + ( dbfAlbCliL )->cSufAlb, dbfAlbCliT, "dFecAlb" )
+         ( dbfAlbCliS )->dFecAlb    := RetFld( ( dbfAlbCliL )->cSerAlb + Str( ( dbfAlbCliL )->nNumAlb ) + ( dbfAlbCliL )->cSufAlb, dbfAlbCliT, "dFecAlb" )
       end if
 
       ( dbfAlbCliS )->( dbSkip() )

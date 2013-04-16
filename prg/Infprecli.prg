@@ -62,7 +62,7 @@ METHOD OpenFiles()
 
    DATABASE NEW ::oFacCliP PATH ( cPatEmp() )   FILE "FACCLIP.DBF"   VIA ( cDriver() ) SHARED INDEX "FACCLIP.CDX"
 
-   DATABASE NEW ::oFacCliT PATH ( cPatEmp() )   FILE "FACCLIT.DBF"   VIA ( cDriver() ) SHARED INDEX "FACCLIT.CDX"
+   ::oFacCliT := TDataCenter():oFacCliT()
 
    RECOVER
 

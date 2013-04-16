@@ -2443,7 +2443,7 @@ METHOD nFacturaClientes()
    local cExpHead
 
    if Empty( ::oFacCliT )
-      DATABASE NEW ::oFacCliT PATH ( cPatEmp() ) CLASS "FACCLIT" FILE "FACCLIT.DBF" VIA ( cDriver() ) SHARED INDEX "FACCLIT.CDX"
+      ::oFacCliT  := TDataCenter():oFacCliT()  
    end if
 
    ::nTotalFacturasClientes   := 0
@@ -2496,11 +2496,11 @@ METHOD nPagosClientes()
    local cExpHead
 
    if Empty( ::oFacCliP )
-      DATABASE NEW ::oFacCliP PATH ( cPatEmp() ) CLASS "FACCLIT" FILE "FACCLIT.DBF" VIA ( cDriver() ) SHARED INDEX "FACCLIT.CDX"
+      DATABASE NEW ::oFacCliP  
    end if
 
    if Empty( ::oFacCliT )
-      DATABASE NEW ::oFacCliT PATH ( cPatEmp() ) CLASS "FACCLIT" FILE "FACCLIT.DBF" VIA ( cDriver() ) SHARED INDEX "FACCLIT.CDX"
+      ::oFacCliT := TDataCenter():oFacCliT()  
    end if
 
    ::nTotalPagosClientes      := 0

@@ -168,7 +168,7 @@ METHOD OpenFiles() CLASS TFastVentasArticulos
 
       DATABASE NEW ::oAlbCliL PATH ( cPatEmp() ) CLASS "ALBCLIL" FILE "ALBCLIL.Dbf" VIA ( cDriver() ) SHARED INDEX "ALBCLIL.Cdx"
 
-      DATABASE NEW ::oFacCliT PATH ( cPatEmp() ) CLASS "FACCLIT" FILE "FACCLIT.Dbf" VIA ( cDriver() ) SHARED INDEX "FACCLIT.Cdx"
+      ::oFacCliT  := TDataCenter():oFacCliT()  
 
       DATABASE NEW ::oFacCliL PATH ( cPatEmp() ) CLASS "FACCLIL" FILE "FACCLIL.Dbf" VIA ( cDriver() ) SHARED INDEX "FACCLIL.Cdx"
 

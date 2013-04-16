@@ -1026,7 +1026,7 @@ METHOD OpenFiles( lExclusive )
       DATABASE NEW ::oPedCliP    PATH ( cPatEmp() ) FILE "PEDCLIP.DBF"        VIA ( cDriver() ) SHARED INDEX "PEDCLIP.CDX"
       ::oPedCliP:OrdSetFocus( "cTurRec" )
 
-      DATABASE NEW ::oFacCliT    PATH ( cPatEmp() ) FILE "FACCLIT.DBF"     VIA ( cDriver() ) SHARED INDEX "FACCLIT.CDX"
+      ::oFacCliT := TDataCenter():oFacCliT()
       ::oFacCliT:OrdSetFocus( "CTURFAC" )
 
       DATABASE NEW ::oFacCliL    PATH ( cPatEmp() ) FILE "FACCLIL.DBF"     VIA ( cDriver() ) SHARED INDEX "FACCLIL.CDX"

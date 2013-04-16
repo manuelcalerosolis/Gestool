@@ -89,7 +89,7 @@ METHOD OpenFiles()
    Ficheros necesarios
    */
 
-   oBlock   := ErrorBlock( {| oError | ApoloBreak( oError ) } )
+   oBlock      := ErrorBlock( {| oError | ApoloBreak( oError ) } )
    BEGIN SEQUENCE
 
    DATABASE NEW ::oAlbProvT PATH ( cPatEmp() ) FILE "ALBPROVT.DBF" VIA ( cDriver() ) SHARED INDEX "ALBPROVT.CDX"
@@ -104,7 +104,7 @@ METHOD OpenFiles()
 
    DATABASE NEW ::oAlbCliL PATH  ( cPatEmp() ) FILE "ALBCLIL.DBF" VIA ( cDriver() ) SHARED INDEX "ALBCLIL.CDX"
 
-   DATABASE NEW ::oFacCliT PATH  ( cPatEmp() ) FILE "FACCLIT.DBF" VIA ( cDriver() ) SHARED INDEX "FACCLIT.CDX"
+   ::oFacCliT := TDataCenter():oFacCliT()  
 
    DATABASE NEW ::oFacCliL PATH  ( cPatEmp() ) FILE "FACCLIL.DBF" VIA ( cDriver() ) SHARED INDEX "FACCLIL.CDX"
 

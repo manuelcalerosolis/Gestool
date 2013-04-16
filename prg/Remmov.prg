@@ -576,7 +576,7 @@ METHOD OpenFiles( lExclusive )
 
       DATABASE NEW ::oAlbCliS    PATH ( cPatEmp() ) FILE "ALBCLIS.DBF" VIA ( cDriver() ) SHARED INDEX "ALBCLIS.CDX"
 
-      DATABASE NEW ::oFacCliT    PATH ( cPatEmp() ) FILE "FacCliT.DBF" VIA ( cDriver() ) SHARED INDEX "FacCLIT.CDX"
+      ::oFacCliT := TDataCenter():oFacCliT()
 
       DATABASE NEW ::oFacCliL    PATH ( cPatEmp() ) FILE "FacCliL.DBF" VIA ( cDriver() ) SHARED INDEX "FacCliL.CDX"
       ::oFacCliL:OrdSetFocus( "cRef" )

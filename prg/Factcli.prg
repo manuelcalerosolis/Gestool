@@ -1169,23 +1169,6 @@ STATIC FUNCTION OpenFiles( lExt )
       oFont             := TFont():New( "Arial", 8, 26, .F., .T. )
 
       /*
-      Limitaciones de cajero y cajas--------------------------------------------------------
-
-      if lAIS() .and. !oUser():lAdministrador()
-      
-         cFiltroUsuario    := "Field->cSufFac == '" + oUser():cDelegacion() + "' .and. Field->cCodCaj == '" + oUser():cCaja() + "'"
-         if oUser():lFiltroVentas()         
-            cFiltroUsuario += " .and. Field->cCodUsr == '" + oUser():cCodigo() + "'"
-         end if 
-
-         ( dbfFacCliT )->( AdsSetAOF( cFiltroUsuario ) )
-
-         msgAlert( cFiltroUsuario )
-
-      end if
-      */
-
-      /*
       Declaramos variables públicas--------------------------------------------
       */
 
@@ -1940,20 +1923,20 @@ FUNCTION FactCli( oMenuItem, oWnd, cCodCli, cCodArt, cCodPed, aNumDoc )
       end with
 
       with object ( oWndBrw:AddXCol() )
+         :cHeader          := "Delegación"
+         :bEditValue       := {|| ( dbfFacCliT )->cSufFac }
+         :nWidth           := 40
+         :lHide            := .t.
+         :bLDClickData     := {|| oWndBrw:RecEdit() }
+      end with
+
+      with object ( oWndBrw:AddXCol() )
          :cHeader          := "NFC"
          :cSortOrder       := "cNfc"
          :bEditValue       := {|| ( dbfFacCliT )->cNFC }
          :nWidth           := 160
          :lHide            := .t.
          :bLClickHeader    := {| nMRow, nMCol, nFlags, oCol | oWndBrw:ClickOnHeader( oCol ) }
-      end with
-
-      with object ( oWndBrw:AddXCol() )
-         :cHeader          := "Delegación"
-         :bEditValue       := {|| ( dbfFacCliT )->cSufFac }
-         :nWidth           := 40
-         :lHide            := .t.
-         :bLDClickData     := {|| oWndBrw:RecEdit() }
       end with
 
       with object ( oWndBrw:AddXCol() )
@@ -12080,6 +12063,10 @@ function SynFacCli( cPath )
 
       while !( dbfFacCliT )->( eof() )
 
+         if Empty( ( dbfFacCliT )->cSufFac )
+            ( dbfFacCliT )->cSufFac := "00"
+         end if
+
          if Empty( ( dbfFacCliT )->cCodCaj )
             ( dbfFacCliT )->cCodCaj := "000"
          end if
@@ -12116,7 +12103,12 @@ function SynFacCli( cPath )
 
       // Pagos ----------------------------------------------------------------
 
+      ( dbfFacCliP )->( dbGoTop() )
       while !( dbfFacCliP )->( eof() )
+
+         if Empty( ( dbfFacCliP )->cSufFac )
+            ( dbfFacCliP )->cSufFac := "00"
+         end if
 
          if Empty( ( dbfFacCliP )->cCodCaj )
             ( dbfFacCliP )->cCodCaj := "000"
@@ -12128,85 +12120,78 @@ function SynFacCli( cPath )
 
       // Lineas ---------------------------------------------------------------
 
+      ( dbfFacCliL )->( dbGoTop() )
       while !( dbfFacCliL )->( eof() )
 
-         if !( dbfFacCliT )->( dbSeek( ( dbfFacCliL )->cSerie + Str( ( dbfFacCliL )->nNumFac ) + ( dbfFacCliL )->cSufFac ) )
+         if Empty( ( dbfFacCliL )->cSufFac )
+            ( dbfFacCliL )->cSufFac    := "00"
+         end if
 
-            ( dbfFacCliL )->( dbDelete() )
-
-         else
-
-            if Empty( ( dbfFacCliL )->nValImp )
-               cCodImp                    := RetFld( ( dbfFacCliL )->cRef, dbfArticulo, "cCodImp" )
-               if !Empty( cCodImp )
-                  ( dbfFacCliL )->nValImp := oNewImp:nValImp( cCodImp )
-               end if
+         if Empty( ( dbfFacCliL )->nValImp )
+            cCodImp                    := RetFld( ( dbfFacCliL )->cRef, dbfArticulo, "cCodImp" )
+            if !Empty( cCodImp )
+               ( dbfFacCliL )->nValImp := oNewImp:nValImp( cCodImp )
             end if
+         end if
 
-            if Empty( ( dbfFacCliL )->nVolumen )
-               ( dbfFacCliL )->nVolumen   :=  RetFld( ( dbfFacCliL )->cRef, dbfArticulo, "nVolumen" )
+         if Empty( ( dbfFacCliL )->nVolumen )
+            ( dbfFacCliL )->nVolumen   := RetFld( ( dbfFacCliL )->cRef, dbfArticulo, "nVolumen" )
+         end if
+
+         if Empty( ( dbfFacCliL )->cLote ) .and. !Empty( ( dbfFacCliL )->nLote )
+            ( dbfFacCliL )->cLote      := AllTrim( Str( ( dbfFacCliL )->nLote ) )
+         end if
+
+         if ( dbfFacCliL )->lIvaLin != ( dbfFacCliT )->lIvaInc
+            ( dbfFacCliL )->lIvaLin    := RetFld( ( dbfFacCliL )->cSerie + Str( ( dbfFacCliL )->nNumFac ) + ( dbfFacCliL )->cSufFac, dbfFacCliT, "lIvaInc" )
+         end if
+
+         if !Empty( ( dbfFacCliL )->cRef ) .and. Empty( ( dbfFacCliL )->cCodFam )
+            cCodFam                    := RetFamArt( ( dbfFacCliL )->cRef, dbfArticulo )
+            if !Empty( cCodFam )
+               ( dbfFacCliL )->cCodFam := cCodFam
             end if
+         end if
 
-            if Empty( ( dbfFacCliL )->cLote ) .and. !Empty( ( dbfFacCliL )->nLote )
-               ( dbfFacCliL )->cLote      := AllTrim( Str( ( dbfFacCliL )->nLote ) )
+         if !Empty( ( dbfFacCliL )->cRef ) .and. Empty( ( dbfFacCliL )->cCodTip )
+            cCodTip                    := RetFld( ( dbfFacCliL )->cRef, dbfArticulo, "cCodTip" )
+            if !Empty( cCodTip )
+               ( dbfFacCliL )->cCodTip := cCodTip
             end if
+         end if
 
-            if ( dbfFacCliL )->lIvaLin != ( dbfFacCliT )->lIvaInc
-               ( dbfFacCliL )->lIvaLin    := ( dbfFacCliT )->lIvaInc
+         if !Empty( ( dbfFacCliL )->cRef ) .and. !Empty( ( dbfFacCliL )->cCodFam )
+            cCodFam                    := cGruFam( ( dbfFacCliL )->cCodFam, dbfFamilia )
+            if !Empty( cCodFam )
+               ( dbfFacCliL )->cGrpFam := cCodFam
             end if
+         end if
 
-            if !Empty( ( dbfFacCliL )->cRef ) .and. Empty( ( dbfFacCliL )->cCodFam )
-               cCodFam                    := RetFamArt( ( dbfFacCliL )->cRef, dbfArticulo )
-               if !Empty( cCodFam )
-                  ( dbfFacCliL )->cCodFam := cCodFam
-               end if
-            end if
+         if Empty( ( dbfFacCliL )->nReq )
+            ( dbfFacCliL )->nReq       := nPReq( dbfIva, ( dbfFacCliL )->nIva )
+         end if
 
-            if !Empty( ( dbfFacCliL )->cRef ) .and. Empty( ( dbfFacCliL )->cCodTip )
-               cCodTip                    := RetFld( ( dbfFacCliL )->cRef, dbfArticulo, "cCodTip" )
-               if !Empty( cCodTip )
-                  ( dbfFacCliL )->cCodTip := cCodTip
-               end if
-            end if
+         if Empty( ( dbfFacCliL )->cCodAge )
+            ( dbfFacCliL )->cCodAge    := RetFld( ( dbfFacCliL )->cSerie + Str( ( dbfFacCliL )->nNumFac ) + ( dbfFacCliL )->cSufFac, dbfFacCliT, "cCodAge" )
+         end if
 
-            if !Empty( ( dbfFacCliL )->cRef ) .and. !Empty( ( dbfFacCliL )->cCodFam )
-               cCodFam                    := cGruFam( ( dbfFacCliL )->cCodFam, dbfFamilia )
-               if !Empty( cCodFam )
-                  ( dbfFacCliL )->cGrpFam := cCodFam
-               end if
-            end if
+         if Empty( ( dbfFacCliL )->dFecFac )
+            ( dbfFacCliL )->dFecFac    := RetFld( ( dbfFacCliL )->cSerie + Str( ( dbfFacCliL )->nNumFac ) + ( dbfFacCliL )->cSufFac, dbfFacCliT, "dFecFac" )
+         end if
 
-            if Empty( ( dbfFacCliL )->nReq )
-               ( dbfFacCliL )->nReq       := nPReq( dbfIva, ( dbfFacCliL )->nIva )
-            end if
-
-            if Empty( ( dbfFacCliL )->cCodAge )
-               ( dbfFacCliL )->cCodAge    := ( dbfFacCliT )->cCodAge
-            end if
-
-            if ( dbfFacCliL )->dFecFac != ( dbfFacCliT )->dFecFac
-               ( dbfFacCliL )->dFecFac    := ( dbfFacCliT )->dFecFac
-            end if
-
-            if !Empty( ( dbfFacCliL )->mNumSer )
-
-               aNumSer                    := hb_aTokens( ( dbfFacCliL )->mNumSer, "," )
-
-               for each cNumSer in aNumSer
-                  ( dbfFacCliS )->( dbAppend() )
-                  ( dbfFacCliS )->cSerFac := ( dbfFacCliL )->cSerie
-                  ( dbfFacCliS )->nNumFac := ( dbfFacCliL )->nNumFac
-                  ( dbfFacCliS )->cSufFac := ( dbfFacCliL )->cSufFac
-                  ( dbfFacCliS )->cRef    := ( dbfFacCliL )->cRef
-                  ( dbfFacCliS )->cAlmLin := ( dbfFacCliL )->cAlmLin
-                  ( dbfFacCliS )->nNumLin := ( dbfFacCliL )->nNumLin
-                  ( dbfFacCliS )->cNumSer := cNumSer
-               next
-
-               ( dbfFacCliL )->mNumSer    := ""
-            
-            end if
-
+         if !Empty( ( dbfFacCliL )->mNumSer )
+            aNumSer                    := hb_aTokens( ( dbfFacCliL )->mNumSer, "," )
+            for each cNumSer in aNumSer
+               ( dbfFacCliS )->( dbAppend() )
+               ( dbfFacCliS )->cSerFac := ( dbfFacCliL )->cSerie
+               ( dbfFacCliS )->nNumFac := ( dbfFacCliL )->nNumFac
+               ( dbfFacCliS )->cSufFac := ( dbfFacCliL )->cSufFac
+               ( dbfFacCliS )->cRef    := ( dbfFacCliL )->cRef
+               ( dbfFacCliS )->cAlmLin := ( dbfFacCliL )->cAlmLin
+               ( dbfFacCliS )->nNumLin := ( dbfFacCliL )->nNumLin
+               ( dbfFacCliS )->cNumSer := cNumSer
+            next
+            ( dbfFacCliL )->mNumSer    := ""
          end if
 
          ( dbfFacCliL )->( dbSkip() )
@@ -12217,10 +12202,11 @@ function SynFacCli( cPath )
 
       // Incidencias ----------------------------------------------------------
 
+      ( dbfFacCliI )->( dbGoTop() )
       while !( dbfFacCliI )->( eof() )
 
-         if !( dbfFacCliT )->( dbSeek( ( dbfFacCliI )->cSerie + Str( ( dbfFacCliI )->nNumFac ) + ( dbfFacCliI )->cSufFac ) )
-            ( dbfFacCliI )->( dbDelete() )
+         if Empty( ( dbfFacCliI )->cSufFac )
+            ( dbfFacCliI )->cSufFac := "00"
          end if
 
          ( dbfFacCliI )->( dbSkip() )
@@ -12231,17 +12217,57 @@ function SynFacCli( cPath )
 
       // Series ---------------------------------------------------------------
 
+      ( dbfFacCliS )->( dbGoTop() )
+      while !( dbfFacCliS )->( eof() )
+
+         if Empty( ( dbfFacCliS )->cSufFac )
+            ( dbfFacCliS )->cSufFac := "00"
+         end if
+
+         if Empty( ( dbfFacCliS )->dFecFac )
+            ( dbfFacCliS )->dFecFac    := RetFld( ( dbfFacCliS )->cSerie + Str( ( dbfFacCliS )->nNumFac ) + ( dbfFacCliS )->cSufFac, dbfFacCliT, "dFecFac" )
+         end if
+
+         ( dbfFacCliS )->( dbSkip() )
+
+         SysRefresh()
+
+      end while
+
+      // Purgamos los datos----------------------------------------------------
+
+      ( dbfFacCliL )->( dbGoTop() )
+      while !( dbfFacCliL )->( eof() )
+
+         if !( dbfFacCliT )->( dbSeek( ( dbfFacCliL )->cSerie + Str( ( dbfFacCliL )->nNumFac ) + ( dbfFacCliL )->cSufFac ) )
+            ( dbfFacCliL )->( dbDelete() )
+         end if
+
+         ( dbfFacCliL )->( dbSkip() )
+
+      end while 
+
+      ( dbfFacCliS )->( dbGoTop() )
       while !( dbfFacCliS )->( eof() )
 
          if !( dbfFacCliT )->( dbSeek( ( dbfFacCliS )->cSerFac + Str( ( dbfFacCliS )->nNumFac ) + ( dbfFacCliS )->cSufFac ) )
             ( dbfFacCliS )->( dbDelete() )
-         else
-            if ( dbfFacCliS )->dFecFac != ( dbfFacCliT )->dFecFac
-               ( dbfFacCliS )->dFecFac    := ( dbfFacCliT )->dFecFac
-            end if
          end if
 
          ( dbfFacCliS )->( dbSkip() )
+
+         SysRefresh()
+
+      end while
+
+      ( dbfFacCliI )->( dbGoTop() )
+      while !( dbfFacCliI )->( eof() )
+
+         if !( dbfFacCliT )->( dbSeek( ( dbfFacCliI )->cSerie + Str( ( dbfFacCliI )->nNumFac ) + ( dbfFacCliI )->cSufFac ) )
+            ( dbfFacCliI )->( dbDelete() )
+         end if
+
+         ( dbfFacCliI )->( dbSkip() )
 
          SysRefresh()
 
@@ -12280,20 +12306,24 @@ function SynFacCli( cPath )
    Estado de los pedidos en stocks---------------------------------------------
    */
 
-   oStock               := TStock():Create( cPath )
-   if oStock:lOpenFiles()
+   if !Empty( aNumPed )
+
+      oStock   := TStock():Create( cPath )
+      if oStock:lOpenFiles()
       
-      for each cNumPed in aNumPed
-         oStock:SetEstadoPedCli( cNumPed )
-      next 
+         for each cNumPed in aNumPed
+            oStock:SetEstadoPedCli( cNumPed )
+         next 
+
+      end if 
+
+      if !Empty( oStock )
+         oStock:end()
+      end if
+
+      oStock   := nil
 
    end if 
-
-   if !Empty( oStock )
-      oStock:end()
-   end if
-
-   oStock      := nil
 
 Return nil
 

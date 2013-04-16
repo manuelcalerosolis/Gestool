@@ -2207,99 +2207,82 @@ function SynRecCli( cPath )
    oBlock            := ErrorBlock( { | oError | ApoloBreak( oError ) } )
    BEGIN SEQUENCE
 
-   USE ( cPath + "FACCLIT.DBF" ) NEW VIA ( cDriver() ) SHARED ALIAS ( cCheckArea( "FacCliT", @dbfFacCliT ) )
+   USE ( cPath + "FACCLIT.DBF" ) NEW VIA ( cDriver() ) ALIAS ( cCheckArea( "FacCliT", @dbfFacCliT ) ) EXCLUSIVE
    if !lAIS() ; ( dbfFacCliT )->( ordListAdd( ( cPath + "FACCLIT.CDX" ) ) ); else ; ordSetFocus( 1 ) ; end 
 
-   USE ( cPath + "FACCLIL.DBF" ) NEW VIA ( cDriver() ) SHARED ALIAS ( cCheckArea( "FacCliL", @dbfFacCliL ) )
+   USE ( cPath + "FACCLIL.DBF" ) NEW VIA ( cDriver() ) ALIAS ( cCheckArea( "FacCliL", @dbfFacCliL ) ) EXCLUSIVE
    if !lAIS() ; ( dbfFacCliL )->( ordListAdd( ( cPath + "FACCLIL.CDX" ) ) ); else ; ordSetFocus( 1 ) ; end
 
-   USE ( cPath + "FACCLIP.DBF" ) NEW VIA ( cDriver() ) SHARED ALIAS ( cCheckArea( "FacCliP", @dbfFacCliP ) )
+   USE ( cPath + "FACCLIP.DBF" ) NEW VIA ( cDriver() ) ALIAS ( cCheckArea( "FacCliP", @dbfFacCliP ) ) EXCLUSIVE
    if !lAIS() ; ( dbfFacCliP )->( ordListAdd( ( cPath + "FACCLIP.CDX" ) ) ); else ; ordSetFocus( 1 ) ; end
 
-   USE ( cPath + "AntCliT.DBF" ) NEW VIA ( cDriver() ) SHARED ALIAS ( cCheckArea( "AntCliT", @dbfAntCliT ) )
+   USE ( cPath + "AntCliT.DBF" ) NEW VIA ( cDriver() ) ALIAS ( cCheckArea( "AntCliT", @dbfAntCliT ) ) EXCLUSIVE
    if !lAIS() ; ( dbfAntCliT )->( ordListAdd( ( cPath + "AntCliT.CDX" ) ) ); else ; ordSetFocus( 1 ) ; end
 
-   USE ( cPath + "FACRECT.DBF" ) NEW VIA ( cDriver() ) SHARED ALIAS ( cCheckArea( "FacRecT", @dbfFacRecT ) )
+   USE ( cPath + "FACRECT.DBF" ) NEW VIA ( cDriver() ) ALIAS ( cCheckArea( "FacRecT", @dbfFacRecT ) ) EXCLUSIVE
    if !lAIS() ; ( dbfFacRecT )->( ordListAdd( ( cPath + "FacRecT.CDX" ) ) ); else ; ordSetFocus( 1 ) ; end
 
-   USE ( cPath + "FACRECL.DBF" ) NEW VIA ( cDriver() ) SHARED ALIAS ( cCheckArea( "FacRecL", @dbfFacRecL ) )
+   USE ( cPath + "FACRECL.DBF" ) NEW VIA ( cDriver() ) ALIAS ( cCheckArea( "FacRecL", @dbfFacRecL ) ) EXCLUSIVE
    if !lAIS() ; ( dbfFacRecL )->( ordListAdd( ( cPath + "FacRecL.CDX" ) ) ); else ; ordSetFocus( 1 ) ; end
 
-   USE ( cPatCli() + "CLIENT.DBF" ) NEW VIA ( cDriver() ) SHARED ALIAS ( cCheckArea( "Client", @dbfClient ) )
+   USE ( cPatCli() + "CLIENT.DBF" ) NEW VIA ( cDriver() ) ALIAS ( cCheckArea( "Client", @dbfClient ) ) EXCLUSIVE
    if !lAIS() ; ( dbfClient )->( ordListAdd( ( cPatCli() + "CLIENT.CDX" ) ) ); else ; ordSetFocus( 1 ) ; end
 
-   USE ( cPatGrp() + "FPAGO.DBF" ) NEW VIA ( cDriver() ) SHARED ALIAS ( cCheckArea( "FPagO", @dbfFPago ) )
+   USE ( cPatGrp() + "FPAGO.DBF" ) NEW VIA ( cDriver() ) ALIAS ( cCheckArea( "FPago", @dbfFPago ) ) EXCLUSIVE
    if !lAIS() ; ( dbfFPago )->( ordListAdd( ( cPatGrp() + "FPAGO.CDX" ) ) ); else ; ordSetFocus( 1 ) ; end
 
-   USE ( cPatDat() + "DIVISAS.DBF" ) NEW VIA ( cDriver() ) SHARED ALIAS ( cCheckArea( "Divisas", @dbfDiv ) )
+   USE ( cPatDat() + "DIVISAS.DBF" ) NEW VIA ( cDriver() ) ALIAS ( cCheckArea( "Divisas", @dbfDiv ) ) EXCLUSIVE
    if !lAIS() ; ( dbfDiv )->( ordListAdd( ( cPatDat() + "DIVISAS.CDX" ) ) ); else ; ordSetFocus( 1 ) ; end
 
-   USE ( cPatDat() + "TIVA.DBF" ) NEW VIA ( cDriver() ) SHARED ALIAS ( cCheckArea( "TIva", @dbfIva ) )
+   USE ( cPatDat() + "TIVA.DBF" ) NEW VIA ( cDriver() ) ALIAS ( cCheckArea( "TIva", @dbfIva ) ) EXCLUSIVE
    if !lAIS() ; ( dbfIva )->( ordListAdd( ( cPatDat() + "TIVA.CDX" ) ) ); else ; ordSetFocus( 1 ) ; end
 
    ( dbfFacCliP )->( dbGoTop() )
    while !( dbfFacCliP )->( eof() )
 
+      if !( ( dbfFacCliP )->cSerie >= "A" .and. ( dbfFacCliP )->cSerie <= "Z" )
+         ( dbfFacCliP )->( dbDelete() )
+      end if
+
+      ( dbfFacCliP )->( dbSkip() )
+
+   end while 
+
+   ( dbfFacCliP )->( dbGoTop() )
+   while !( dbfFacCliP )->( eof() )
+
+      if Empty( ( dbfFacCliP )->cSufFac )
+         ( dbfFacCliP )->cSufFac := "00"
+      end if
+
       // Casos raros ----------------------------------------------------------
 
       if ( dbfFacCliP )->nImpCob == 0 .and. ( dbfFacCliP )->lCobrado
-         if dbLock( dbfFacCliP )
-            ( dbfFacCliP )->nImpCob := ( dbfFacCliP )->nImporte
-            ( dbfFacCliP )->( dbUnLock() )
-         end if
+         ( dbfFacCliP )->nImpCob := ( dbfFacCliP )->nImporte
       end if
 
       if Empty( ( dbfFacCliP )->cTurRec )
-         if dbLock( dbfFacCliP )
-            ( dbfFacCliP )->cTurRec := RetFld( ( dbfFacCliP )->cSerie + Str( ( dbfFacCliP )->nNumFac ) + ( dbfFacCliP )->cSufFac, dbfFacCliT, "cTurFac" )
-            ( dbfFacCliP )->( dbUnLock() )
-         end if
-      end if
-
-      if !( ( dbfFacCliP )->cSerie >= "A" .and. ( dbfFacCliP )->cSerie <= "Z" )
-         if dbLock( dbfFacCliP )
-            ( dbfFacCliP )->( dbDelete() )
-            ( dbfFacCliP )->( dbUnLock() )
-         end if
+         ( dbfFacCliP )->cTurRec := RetFld( ( dbfFacCliP )->cSerie + Str( ( dbfFacCliP )->nNumFac ) + ( dbfFacCliP )->cSufFac, dbfFacCliT, "cTurFac" )
       end if
 
       if Empty( ( dbfFacCliP )->cNomCli )
-         if dbLock( dbfFacCliP )
-            ( dbfFacCliP )->cNomCli := retClient( ( dbfFacCliP )->cCodCli, dbfClient )
-            ( dbfFacCliP )->( dbUnLock() )
-         end if
+         ( dbfFacCliP )->cNomCli := retClient( ( dbfFacCliP )->cCodCli, dbfClient )
       end if
 
       if Empty( ( dbfFacCliP )->cCodCaj )
-
-         if dbLock( dbfFacCliP )
-
-            if ( dbfFacCliP )->cTipRec == "R"
-               ( dbfFacCliP )->cCodCaj := RetFld( ( dbfFacCliP )->cSerie + Str( ( dbfFacCliP )->nNumFac ) + ( dbfFacCliP )->cSufFac, dbfFacRecT, "CCODCAJ" )
-            else
-               ( dbfFacCliP )->cCodCaj := RetFld( ( dbfFacCliP )->cSerie + Str( ( dbfFacCliP )->nNumFac ) + ( dbfFacCliP )->cSufFac, dbfFacCliT, "CCODCAJ" )
-            end if
-
-            ( dbfFacCliP )->( dbUnLock() )
-
+         if ( dbfFacCliP )->cTipRec == "R"
+            ( dbfFacCliP )->cCodCaj := RetFld( ( dbfFacCliP )->cSerie + Str( ( dbfFacCliP )->nNumFac ) + ( dbfFacCliP )->cSufFac, dbfFacRecT, "CCODCAJ" )
+         else
+            ( dbfFacCliP )->cCodCaj := RetFld( ( dbfFacCliP )->cSerie + Str( ( dbfFacCliP )->nNumFac ) + ( dbfFacCliP )->cSufFac, dbfFacCliT, "CCODCAJ" )
          end if
-
       end if
 
       if Empty( ( dbfFacCliP )->cCodUsr )
-
-         if dbLock( dbfFacCliP )
-
-            if ( dbfFacCliP )->cTipRec == "R"
-               ( dbfFacCliP )->cCodUsr := RetFld( ( dbfFacCliP )->cSerie + Str( ( dbfFacCliP )->nNumFac ) + ( dbfFacCliP )->cSufFac, dbfFacRecT, "CCODUSR" )
-            else
-               ( dbfFacCliP )->cCodUsr := RetFld( ( dbfFacCliP )->cSerie + Str( ( dbfFacCliP )->nNumFac ) + ( dbfFacCliP )->cSufFac, dbfFacCliT, "CCODUSR" )
-            end if
-
-            ( dbfFacCliP )->( dbUnLock() )
-
+         if ( dbfFacCliP )->cTipRec == "R"
+            ( dbfFacCliP )->cCodUsr := RetFld( ( dbfFacCliP )->cSerie + Str( ( dbfFacCliP )->nNumFac ) + ( dbfFacCliP )->cSufFac, dbfFacRecT, "CCODUSR" )
+         else
+            ( dbfFacCliP )->cCodUsr := RetFld( ( dbfFacCliP )->cSerie + Str( ( dbfFacCliP )->nNumFac ) + ( dbfFacCliP )->cSufFac, dbfFacCliT, "CCODUSR" )
          end if
-
       end if
 
       ( dbfFacCliP )->( dbSkip() )
@@ -2333,7 +2316,6 @@ function SynRecCli( cPath )
    */
 
    ( dbfFacRecT )->( dbGoTop() )
-
    while !( dbfFacRecT )->( eof() )
 
       // Calculo de totales----------------------------------------------------

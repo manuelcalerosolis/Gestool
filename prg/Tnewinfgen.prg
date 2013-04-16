@@ -2775,7 +2775,7 @@ METHOD lGrupoFacturas( lInitGroup, lImp ) CLASS TNewInfGen
    BEGIN SEQUENCE
 
    if ::oFacCliT == nil .or. !::oFacCliT:Used()
-      DATABASE NEW ::oFacCliT PATH ( cPatEmp() ) FILE "FACCLIT.DBF" VIA ( cDriver() ) SHARED INDEX "FACCLIT.CDX"
+      ::oFacCliT := TDataCenter():oFacCliT()
       ::oFacCliT:OrdSetFocus( "nNumFac" )
    end if
 

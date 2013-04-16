@@ -45,7 +45,7 @@ METHOD OpenFiles() CLASS TAcuRFac
 
    BEGIN SEQUENCE
 
-   DATABASE NEW ::oFacCliT PATH ( cPatEmp() ) FILE "FACCLIT.DBF" VIA ( cDriver() ) SHARED INDEX "FACCLIT.CDX"
+   ::oFacCliT := TDataCenter():oFacCliT()
 
    DATABASE NEW ::oFacCliL PATH ( cPatEmp() ) FILE "FACCLIL.DBF" VIA ( cDriver() ) SHARED INDEX "FACCLIL.CDX"
 

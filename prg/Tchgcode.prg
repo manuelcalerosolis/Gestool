@@ -264,7 +264,7 @@ METHOD OpenFiles()
 
    DATABASE NEW ::oDbfAlbCliT PATH ( cPatEmp() ) FILE "ALBCLIT.DBF"  VIA ( cDriver() ) SHARED INDEX "ALBCLIT.CDX"
 
-   DATABASE NEW ::oDbfFacCliT PATH ( cPatEmp() ) FILE "FACCLIT.DBF"  VIA ( cDriver() ) SHARED INDEX "FACCLIT.CDX"
+   DATABASE NEW ::oDbfFacCliT PATH ( cPatEmp() ) FILE "FacCLIT.DBF"  VIA ( cDriver() ) SHARED INDEX "FacCLIT.CDX"
 
    DATABASE NEW ::oDbfFacCliP PATH ( cPatEmp() ) FILE "FACCLIP.DBF"  VIA ( cDriver() ) SHARED INDEX "FACCLIP.CDX"
 

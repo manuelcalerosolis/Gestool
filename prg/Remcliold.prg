@@ -382,7 +382,7 @@ METHOD OpenFiles( lExclusive )
    DATABASE NEW ::oDbfDet  FILE "FACCLIP.DBF" PATH ( ::cPath ) VIA ( cDriver() )SHARED INDEX "FACCLIP.CDX"
    ::oDbfDet:OrdSetFocus( "nNumRem" )
 
-   DATABASE NEW ::oFacCliT FILE "FACCLIT.DBF" PATH ( ::cPath )    VIA ( cDriver() ) SHARED INDEX "FACCLIT.CDX"
+   ::oFacCliT := TDataCenter():oFacCliT()
 
    DATABASE NEW ::oFacCliL FILE "FACCLIL.DBF" PATH ( ::cPath )    VIA ( cDriver() ) SHARED INDEX "FACCLIL.CDX"
 

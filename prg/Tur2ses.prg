@@ -50,11 +50,12 @@ Abrimos los ficheros
 
 METHOD OpenFiles( cSufDes ) CLASS TTur2Ses
 
+   ::oFacCliT := TDataCenter():oFacCliT() 
+
    DATABASE NEW ::oDbfTikT PATH ( cPatEmp() ) FILE "TIKET.DBF"    VIA ( cDriver() )INDEX "TIKET.CDX"
    DATABASE NEW ::oDbfTikL PATH ( cPatEmp() ) FILE "TIKEL.DBF"    VIA ( cDriver() )INDEX "TIKEL.CDX"
    DATABASE NEW ::oAlbCliT PATH ( cPatEmp() ) FILE "ALBCLIT.DBF"  VIA ( cDriver() )INDEX "ALBCLIT.CDX"
    DATABASE NEW ::oAlbCliL PATH ( cPatEmp() ) FILE "ALBCLIL.DBF"  VIA ( cDriver() )INDEX "ALBCLIL.CDX"
-   DATABASE NEW ::oFacCliT PATH ( cPatEmp() ) FILE "FACCLIT.DBF"  VIA ( cDriver() )INDEX "FACCLIT.CDX"
    DATABASE NEW ::oFacCliL PATH ( cPatEmp() ) FILE "FACCLIL.DBF"  VIA ( cDriver() )INDEX "FACCLIL.CDX"
    DATABASE NEW ::oFacCliP PATH ( cPatEmp() ) FILE "FACCLIP.DBF"  VIA ( cDriver() )INDEX "FACCLIP.CDX"
    DATABASE NEW ::oAlbPrvT PATH ( cPatEmp() ) FILE "AlbProvT.DBF" VIA ( cDriver() )INDEX "AlbProvT.CDX"

@@ -64,7 +64,7 @@ METHOD OpenFiles()
 
    DATABASE NEW ::oDbfDiv  PATH ( cPatDat() ) FILE "DIVISAS.DBF"  VIA ( cDriver() ) SHARED INDEX "DIVISAS.CDX"
 
-   DATABASE NEW ::oFacCliT PATH ( cPatEmp() ) FILE "FACCLIT.DBF"  VIA ( cDriver() ) SHARED INDEX "FACCLIT.CDX"
+   ::oFacCliT     := TDataCenter():oFacCliT()
 
    RECOVER
 

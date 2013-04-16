@@ -56,7 +56,7 @@ METHOD OpenFiles()
    oBlock   := ErrorBlock( {| oError | ApoloBreak( oError ) } )
    BEGIN SEQUENCE
 
-   DATABASE NEW ::oFacCliT PATH ( cPatEmp() ) FILE "FacCLIT.DBF" VIA ( cDriver() ) SHARED INDEX "FacCLIT.CDX"
+   ::oFacCliT := TDataCenter():oFacCliT()
 
    DATABASE NEW ::oFacCliL PATH ( cPatEmp() ) FILE "FacCLIL.DBF" VIA ( cDriver() ) SHARED INDEX "FacCLIL.CDX"
    ::oFacCliL:SetOrder( "CREF" )

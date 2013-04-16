@@ -188,7 +188,7 @@ METHOD OpenFiles()
       DATABASE NEW ::oSatCliS PATH ( cPatEmp() ) FILE "SatCliS.Dbf" VIA ( cDriver() ) SHARED INDEX "SatCliS.Cdx"
       ::oSatCliS:OrdSetFocus( "cNumSer" )
 
-      DATABASE NEW ::oFacCliT PATH ( cPatEmp() ) FILE "FacCliT.Dbf" VIA ( cDriver() ) SHARED INDEX "FacCliT.Cdx"
+      ::oFacCliT := TDataCenter():oFacCliT()
 
       DATABASE NEW ::oFacCliL PATH ( cPatEmp() ) FILE "FacCliL.Dbf" VIA ( cDriver() ) SHARED INDEX "FacCliL.Cdx"
       ::oFacCliL:OrdSetFocus( "cRef" )
