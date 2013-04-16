@@ -8134,14 +8134,6 @@ Function SynAlbPrv( cPath )
       end if
 
       /*
-      Refrescamos el estado del pedido-----------------------------------------
-      */
-
-      if !Empty( ( dbfAlbPrvT )->cNumPed )
-         oStock:SetPedPrv( ( dbfAlbPrvT )->cNumPed )
-      end if
-
-      /*
       Estado de los pedidos cuando es agrupando-----------------------------------
       */
 
@@ -8319,20 +8311,24 @@ Function SynAlbPrv( cPath )
    Calculo d stocks------------------------------------------------------------
    */
 
-   oStock               := TStock():Create()
-   if oStock:lOpenFiles()
+   if !Empty( aPedPrv )
 
-      for each cPedPrv in aPedPrv      
-         oStock:SetPedPrv( cPedPrv )
-      next
+      oStock      := TStock():Create()
+      if oStock:lOpenFiles()
 
-   end if 
+         for each cPedPrv in aPedPrv      
+            oStock:SetPedPrv( cPedPrv )
+         next
 
-   if !Empty( oStock )
-      oStock:end()
-   end if
+      end if 
+
+      if !Empty( oStock )
+         oStock:end()
+      end if
  
-   oStock      := nil
+      oStock      := nil
+
+   end if       
 
 return nil
 
