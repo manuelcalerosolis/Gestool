@@ -9098,13 +9098,13 @@ METHOD InsertPropiedadesProductPrestashop( nCodigoWeb ) CLASS TComercio
                   -------------------------------------------------------------
                   */
 
-                  if !Empty( ::oArtDiv:cImgWeb )
+                  //if !Empty( ::oArtDiv:cImgWeb )
 
                      /*
                      Metemos la imagen en la tabla de imágenes de prestashop---
                      */
 
-                     cCommand    := "INSERT INTO " + ::cPrefixTable( "image" ) + " ( " + ;
+                     /*cCommand    := "INSERT INTO " + ::cPrefixTable( "image" ) + " ( " + ;
                                        "id_product, " + ;
                                        "position, " + ;
                                        "cover )" + ;
@@ -9121,13 +9121,13 @@ METHOD InsertPropiedadesProductPrestashop( nCodigoWeb ) CLASS TComercio
                         Guardamos el código asignado por la web en la tabla de propiedades
                         */
 
-                        ::oArtDiv:fieldPutByName( "cCodImgWeb", nCodigoImagen )
+                        /*::oArtDiv:fieldPutByName( "cCodImgWeb", nCodigoImagen )
 
                         /*
                         Guardamos el código asignado por la web en la tabla de imágenes
                         */
 
-                        if ::oArtImg:SeekInOrd( ::oArt:Codigo, "cCodArt" )
+                        /*if ::oArtImg:SeekInOrd( ::oArt:Codigo, "cCodArt" )
 
                            while ::oArtImg:cCodArt == ::oArt:Codigo .and. !::oArtImg:Eof()
 
@@ -9153,7 +9153,7 @@ METHOD InsertPropiedadesProductPrestashop( nCodigoWeb ) CLASS TComercio
                      Metemos los ToolTip de las imágenes-----------------------
                      */
 
-                     cCommand    := "INSERT INTO " + ::cPrefixTable( "image_lang" ) + " ( " + ;
+                     /*cCommand    := "INSERT INTO " + ::cPrefixTable( "image_lang" ) + " ( " + ;
                                        "id_image, " + ;
                                        "id_lang, " + ;
                                        "legend )" + ;
@@ -9174,7 +9174,7 @@ METHOD InsertPropiedadesProductPrestashop( nCodigoWeb ) CLASS TComercio
                      Añadimos en la tabla ps_product_attribute_image-----------
                      */
 
-                     cCommand    := "INSERT INTO " + ::cPrefixTable( "product_attribute_image" ) + " ( " + ;
+                     /*cCommand    := "INSERT INTO " + ::cPrefixTable( "product_attribute_image" ) + " ( " + ;
                                        "id_product_attribute, " + ;
                                        "id_image )" + ;
                                     " VALUES " + ;
@@ -9193,7 +9193,7 @@ METHOD InsertPropiedadesProductPrestashop( nCodigoWeb ) CLASS TComercio
                      Añadimos en la tabla ps_image_shop------------------------
                      */
 
-                     cCommand := "INSERT INTO " + ::cPrefixTable( "image_shop" ) + ;
+                     /*cCommand := "INSERT INTO " + ::cPrefixTable( "image_shop" ) + ;
                                     " (  id_image, " + ;
                                     "id_shop, " + ;
                                     "cover )" + ;
@@ -9212,7 +9212,7 @@ METHOD InsertPropiedadesProductPrestashop( nCodigoWeb ) CLASS TComercio
                      Añadimos la imagen al array para pasarla a prestashop-----
                      */
 
-                     oImagen                       := SImagen()
+                     /*oImagen                       := SImagen()
                      oImagen:cNombreImagen         := ::oArtDiv:cImgWeb
                      oImagen:nTipoImagen           := tipoProducto
                      oImagen:cCarpeta              := AllTrim( Str( nCodigoImagen ) )
@@ -9220,7 +9220,7 @@ METHOD InsertPropiedadesProductPrestashop( nCodigoWeb ) CLASS TComercio
 
                      ::AddImages( oImagen )
                      
-                  end if
+                  end if*/
 
                end if
 
@@ -9351,13 +9351,13 @@ METHOD InsertPropiedadesProductPrestashop( nCodigoWeb ) CLASS TComercio
                ----------------------------------------------------------------
                */
 
-               if !Empty( ::oArtDiv:cImgWeb )
+               //if !Empty( ::oArtDiv:cImgWeb )
 
                   /*
                   Metemos la imagen en la tabla de imágenes de prestashop---
                   */
 
-                  cCommand    := "INSERT INTO " + ::cPrefixTable( "image" ) + " ( " + ;
+                  /*cCommand    := "INSERT INTO " + ::cPrefixTable( "image" ) + " ( " + ;
                                     "id_product, " + ;
                                     "position, " + ;
                                     "cover )" + ;
@@ -9374,13 +9374,13 @@ METHOD InsertPropiedadesProductPrestashop( nCodigoWeb ) CLASS TComercio
                      Guardamos el código asignado por la web en la tabla de propiedades
                      */
 
-                     ::oArtDiv:fieldPutByName( "cCodImgWeb", nCodigoImagen )
+                     /*::oArtDiv:fieldPutByName( "cCodImgWeb", nCodigoImagen )
 
                      /*
                      Guardamos el código asignado por la web en la tabla de imágenes
                      */
 
-                     if ::oArtImg:SeekInOrd( ::oArt:Codigo, "cCodArt" )
+                     /*if ::oArtImg:SeekInOrd( ::oArt:Codigo, "cCodArt" )
 
                         while ::oArtImg:cCodArt == ::oArt:Codigo .and. !::oArtImg:Eof()
 
@@ -9406,7 +9406,7 @@ METHOD InsertPropiedadesProductPrestashop( nCodigoWeb ) CLASS TComercio
                   Metemos los ToolTip de las imágenes-----------------------
                   */
 
-                  cCommand    := "INSERT INTO " + ::cPrefixTable( "image_lang" ) + " ( " + ;
+                  /*cCommand    := "INSERT INTO " + ::cPrefixTable( "image_lang" ) + " ( " + ;
                                     "id_image, " + ;
                                     "id_lang, " + ;
                                     "legend )" + ;
@@ -9427,7 +9427,7 @@ METHOD InsertPropiedadesProductPrestashop( nCodigoWeb ) CLASS TComercio
                   Añadimos en la tabla ps_product_attribute_image-----------
                   */
 
-                  cCommand    := "INSERT INTO " + ::cPrefixTable( "product_attribute_image" ) + " ( " + ;
+                  /*cCommand    := "INSERT INTO " + ::cPrefixTable( "product_attribute_image" ) + " ( " + ;
                                     "id_product_attribute, " + ;
                                     "id_image )" + ;
                                  " VALUES " + ;
@@ -9446,7 +9446,7 @@ METHOD InsertPropiedadesProductPrestashop( nCodigoWeb ) CLASS TComercio
                   Añadimos en la tabla ps_image_shop------------------------
                   */
 
-                  cCommand := "INSERT INTO " + ::cPrefixTable( "image_shop" ) + ;
+                  /*cCommand := "INSERT INTO " + ::cPrefixTable( "image_shop" ) + ;
                                  " (  id_image, " + ;
                                  "id_shop, " + ;
                                  "cover )" + ;
@@ -9466,7 +9466,7 @@ METHOD InsertPropiedadesProductPrestashop( nCodigoWeb ) CLASS TComercio
                   Añadimos la imagen al array para pasarla a prestashop--------
                   */
 
-                  oImagen                       := SImagen()
+                  /*oImagen                       := SImagen()
                   oImagen:cNombreImagen         := ::oArtDiv:cImgWeb
                   oImagen:nTipoImagen           := tipoProducto
                   oImagen:cCarpeta              := AllTrim( Str( nCodigoImagen ) )
@@ -9474,7 +9474,7 @@ METHOD InsertPropiedadesProductPrestashop( nCodigoWeb ) CLASS TComercio
 
                   ::AddImages( oImagen )
                      
-               end if
+               end if*/
 
          end case
 

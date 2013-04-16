@@ -4,6 +4,14 @@
 		"selected_items":
 		[
 			[
+				"cImgWeb",
+				"cImgWeb"
+			],
+			[
+				"cNbrArt",
+				"cNbrArt"
+			],
+			[
 				"Msg",
 				"ApoloMsgNoYes"
 			],
@@ -506,14 +514,6 @@
 			[
 				"oTemporalDi",
 				"oTemporalDivisionNuevoTicket"
-			],
-			[
-				"oTemp",
-				"oTemporalDivisionNuevoTicket"
-			],
-			[
-				"oTemporal",
-				"oTemporalDivisionNuevoTicket"
 			]
 		]
 	},
@@ -523,15 +523,23 @@
 			"file": "prg/Tcomercio.prg",
 			"settings":
 			{
-				"buffer_size": 370658,
+				"buffer_size": 370694,
 				"line_ending": "Windows"
 			}
 		},
 		{
-			"file": "prg/Comun.prg",
+			"file": "prg/Articulo.prg",
 			"settings":
 			{
-				"buffer_size": 75845,
+				"buffer_size": 662516,
+				"line_ending": "Windows"
+			}
+		},
+		{
+			"file": "prg/Utildbf.prg",
+			"settings":
+			{
+				"buffer_size": 70897,
 				"line_ending": "Windows"
 			}
 		}
@@ -568,6 +576,9 @@
 	},
 	"file_history":
 	[
+		"/C/fw195/Gestool/prg/Stock.prg",
+		"/C/fw195/Gestool/prg/Albprov.prg",
+		"/C/fw195/Gestool/prg/Comun.prg",
 		"/C/fw195/Gestool/prg/Factcli.prg",
 		"/C/fw195/Gestool/prg/Divisas.prg",
 		"/C/fw195/Gestool/prg/Familia.prg",
@@ -595,7 +606,6 @@
 		"/C/fw195/Gestool/prg/TConFacCli",
 		"/C/fw195/Gestool/prg/Client.prg",
 		"/C/fw195/Gestool/prg/Factu.prg",
-		"/C/fw195/Gestool/prg/Stock.prg",
 		"/C/fw195/Gestool/prg/Tcomercio.prg",
 		"/C/fw195/Gestool/prg/Tpvlistaticket.prg",
 		"/C/fw195/Gestool/prg/Fastreph.prg",
@@ -605,7 +615,6 @@
 		"/C/fw195/Gestool/prg/Factprv.prg",
 		"/C/fw195/Gestool/prg/Tftpc3.prg",
 		"/C/fw195/Gestool/prg/Empresa.prg",
-		"/C/fw195/Gestool/prg/Albprov.prg",
 		"/C/fw195/Gestool/prg/Say.prg",
 		"/C/fw195/Gestool/ppo/Articulo.ppo",
 		"/C/fw195/Gestool/prg/Tuser.prg",
@@ -694,8 +703,7 @@
 		"/C/fwh1204/source/classes/tfoldex.prg",
 		"/C/AppServ/www/prestademo/index.php",
 		"/C/AppServ/www/prestademo/.htaccess",
-		"/C/AppServ/www/oscommerce/includes/configure.php",
-		"/C/AppServ/www/oscommerce/index.php"
+		"/C/AppServ/www/oscommerce/includes/configure.php"
 	],
 	"find":
 	{
@@ -731,6 +739,27 @@
 		"case_sensitive": false,
 		"find_history":
 		[
+			"on endtrans",
+			"dbfTmpVta",
+			"on endtrans",
+			"on edtrec",
+			"aItmVta",
+			"on aitm",
+			"dbfTmpVta",
+			"on aitm",
+			"append",
+			"dbfTmpImg",
+			"on dbseekinord",
+			"on begintrans",
+			"on rx",
+			"on begintrans",
+			"on begintranas",
+			"on rx",
+			"on endtras",
+			"on endtrans",
+			"on aitm",
+			"endtrans",
+			"setped",
 			"lDefault",
 			"lDefImgPrp",
 			"nDefImagen",
@@ -837,28 +866,7 @@
 			"preparer",
 			"ndispositivo",
 			"BuildReport",
-			"od bui",
-			"BuildReport",
-			"imprimedocumento",
-			"ImprimeDocumento()",
-			"imp",
-			"printer2",
-			"monitor",
-			"printer2",
-			"imprimir",
-			"TotalTemporal",
-			"oTotalTicket",
-			"nTotalTicket",
-			"oTotalTicket",
-			"OnClickDescuento",
-			"mask",
-			"TotalTemporal",
-			"oTotalTicket",
-			"OnClickDescuento",
-			"ntottik",
-			"f5",
-			"GuardaDocumento",
-			"ntottik"
+			"od bui"
 		],
 		"highlight": true,
 		"in_selection": false,
@@ -892,15 +900,15 @@
 					"file": "prg/Tcomercio.prg",
 					"settings":
 					{
-						"buffer_size": 370658,
+						"buffer_size": 370694,
 						"regions":
 						{
 						},
 						"selection":
 						[
 							[
-								285908,
-								285908
+								288324,
+								288324
 							]
 						],
 						"settings":
@@ -910,25 +918,25 @@
 							"translate_tabs_to_spaces": true
 						},
 						"translation.x": 0.0,
-						"translation.y": 169740.0,
+						"translation.y": 165573.0,
 						"zoom_level": 1.0
 					},
 					"type": "text"
 				},
 				{
 					"buffer": 1,
-					"file": "prg/Comun.prg",
+					"file": "prg/Articulo.prg",
 					"settings":
 					{
-						"buffer_size": 75845,
+						"buffer_size": 662516,
 						"regions":
 						{
 						},
 						"selection":
 						[
 							[
-								68503,
-								68525
+								217037,
+								217037
 							]
 						],
 						"settings":
@@ -938,7 +946,35 @@
 							"translate_tabs_to_spaces": true
 						},
 						"translation.x": 0.0,
-						"translation.y": 48003.0,
+						"translation.y": 99684.0,
+						"zoom_level": 1.0
+					},
+					"type": "text"
+				},
+				{
+					"buffer": 2,
+					"file": "prg/Utildbf.prg",
+					"settings":
+					{
+						"buffer_size": 70897,
+						"regions":
+						{
+						},
+						"selection":
+						[
+							[
+								30318,
+								30365
+							]
+						],
+						"settings":
+						{
+							"syntax": "Packages/harbour/harbour/Harbour.tmLanguage",
+							"tab_size": 3,
+							"translate_tabs_to_spaces": true
+						},
+						"translation.x": 0.0,
+						"translation.y": 20643.0,
 						"zoom_level": 1.0
 					},
 					"type": "text"

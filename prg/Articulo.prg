@@ -5373,6 +5373,9 @@ Static Function BeginTrans( aTmp, nMode )
    ( dbfTmpImg )->( OrdCondSet( "!Deleted()", {||!Deleted()} ) )
    ( dbfTmpImg )->( OrdCreate( filTmpImg, "cCodArt", "cCodArt", {|| Field->cCodArt } ) )
 
+   ( dbfTmpImg )->( OrdCondSet( "!Deleted()", {||!Deleted()} ) )
+   ( dbfTmpImg )->( OrdCreate( filTmpImg, "cImgArt", "cImgArt", {|| Field->cImgArt } ) )
+
    if nMode != APPD_MODE .and. ( dbfImg )->( dbSeek( cCodArt ) )
       while ( dbfImg )->cCodArt == cCodArt .and. !( dbfImg )->( eof() )
          dbPass( dbfImg, dbfTmpImg, .t. )
@@ -5452,6 +5455,8 @@ Static Function EndTrans( aTmp, aGet, oSay, oDlg, aTipBar, cTipBar, nMode, oImpC
    local nTipBar
    local aCodeBar    := {}
    local lChange     := .f.
+   local nRec
+   local lDefault    := .f.
 
    /*
    Tomamos los valores de los códigos de barra---------------------------------
@@ -5483,7 +5488,93 @@ Static Function EndTrans( aTmp, aGet, oSay, oDlg, aTipBar, cTipBar, nMode, oImpC
       aTmp[ ( dbfArticulo )->( fieldpos( "LastChg" ) ) ] := GetSysDate()
 
       /*
-      Eliminar datos--------------------------------------------------------------
+      -------------------------------------------------------------------------
+      Añadimos la imágen del táctil a la tabla de imágenes---------------------
+      -------------------------------------------------------------------------
+      */
+
+      if !Empty( aTmp[ ( dbfArticulo )->( fieldpos( "cImagen" ) ) ] )
+
+         if !dbSeekInOrd( aTmp[ ( dbfArticulo )->( fieldpos( "cImagen" ) ) ], "cImgArt", dbfTmpImg )
+
+            lDefault                 := ( dbfTmpImg )->( LastRec() ) == 0
+
+            ( dbfTmpImg )->( dbAppend() )
+            ( dbfTmpImg )->cCodArt  := aTmp[ ( dbfArticulo )->( fieldpos( "Codigo" ) ) ]
+            ( dbfTmpImg )->cImgArt  := aTmp[ ( dbfArticulo )->( fieldpos( "cImagen" ) ) ]
+            ( dbfTmpImg )->lDefImg  := lDefault
+
+            ( dbfTmpImg )->( dbUnLock() )            
+
+         end if
+             
+      end if
+
+      /*
+      -------------------------------------------------------------------------
+      Añadimos las imágenes de las propiedades---------------------------------
+      -------------------------------------------------------------------------
+      */
+
+      nRec  := ( dbfTmpVta )->( Recno() )
+
+      ( dbfTmpVta )->( dbGoTop() )
+
+      while !( dbfTmpVta )->( Eof() )
+
+         if !Empty( ( dbfTmpVta )->cImgWeb )                      .and.;
+            !dbSeekInOrd( ( dbfTmpVta )->cImgWeb, "cImgArt", dbfTmpImg )
+
+            lDefault                 := ( dbfTmpImg )->( LastRec() ) == 0
+
+            ( dbfTmpImg )->( dbAppend() )
+            ( dbfTmpImg )->cCodArt   := aTmp[ ( dbfArticulo )->( fieldpos( "Codigo" ) ) ]
+            ( dbfTmpImg )->cImgArt   := ( dbfTmpVta )->cImgWeb
+            ( dbfTmpImg )->lDefImg   := lDefault
+
+            ( dbfTmpImg )->( dbUnLock() )            
+
+         end if   
+
+         ( dbfTmpVta )->( dbSkip() )
+             
+      end while
+
+      ( dbfTmpVta )->( dbGoTo( nRec ) )
+
+      /*
+      -------------------------------------------------------------------------
+      Dejamos almenos una imágen por defecto-----------------------------------
+      -------------------------------------------------------------------------
+      */
+
+      lDefault       := .f.
+
+      ( dbfTmpImg )->( dbGoTop() )
+
+      while !( dbfTmpImg )->( Eof() )
+
+         if ( dbfTmpImg )->lDefImg
+            lDefault := .t.
+         end if
+
+         ( dbfTmpImg )->( dbSkip() )
+
+      end while
+
+      if !lDefault
+
+         ( dbfTmpImg )->( dbGoTop() )         
+
+         if dbLock( dbfTmpImg )
+            ( dbfTmpImg )->lDefImg  := .t.
+            ( dbfTmpImg )->( dbUnLock() )
+         end if
+
+      end if
+
+      /*
+      Eliminar datos-----------------------------------------------------------
       */
 
       if nMode == EDIT_MODE
@@ -5515,11 +5606,6 @@ Static Function EndTrans( aTmp, aGet, oSay, oDlg, aTipBar, cTipBar, nMode, oImpC
                ( dbfOfe )->( dbUnLock() )
             end if
          end while
-
-         /*
-         Antes de borrar la tabla de imágenes, comprobamos que haya habido cambios
-         para volver a subir todas las imágenes de la imagen.
-         */
 
          while ( dbfImg )->( dbSeek( cCod ) ) .and. !( dbfImg )->( eof() )
             if dbLock( dbfImg )
