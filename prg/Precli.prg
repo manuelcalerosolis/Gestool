@@ -1735,7 +1735,7 @@ FUNCTION PreCli( oMenuItem, oWnd, cCodCli, cCodArt )
 
       DEFINE BTNSHELL RESOURCE "DOCUMENT_PLAIN_USER1_" OF oWndBrw ;
             ALLOW    EXIT ;
-            ACTION   ( if( ( dbfPreCliT )->lEstado, AlbCli( nil, nil, nil, nil, { nil, ( dbfPreCliT )->cSerPre + Str( ( dbfPreCliT )->nNumPre ) + ( dbfPreCliT )->cSufPre } ), MsgStop( "El presupuesto ya ha sido aceptado" ) ) );
+            ACTION   ( if( !( dbfPreCliT )->lEstado, AlbCli( nil, nil, nil, nil, { "Presupuesto" => ( dbfPreCliT )->cSerPre + Str( ( dbfPreCliT )->nNumPre ) + ( dbfPreCliT )->cSufPre } ), MsgStop( "El presupuesto ya ha sido aceptado" ) ) );
             TOOLTIP  "Generar albarán" ;
             FROM     oRotor ;
 
@@ -6766,14 +6766,14 @@ FUNCTION BrwPreCli( oGet, dbfPreCliT, dbfPreCliL, dbfIva, dbfDiv, dbfFPago, oIva
          :cHeader          := "Nombre"
          :cSortOrder       := "cNomCli"
          :bEditValue       := {|| AllTrim( ( dbfPreCliT )->cNomCli ) }
-         :nWidth           := 200
+         :nWidth           := 300
          :bLClickHeader    := {| nMRow, nMCol, nFlags, oCol | oCbxOrd:Set( oCol:cHeader ) }
       end with
 
       with object ( oBrw:AddCol() )
          :cHeader          := "Importe"
          :bEditValue       := {|| nTotPreCli( ( dbfPreCliT )->cSerPre + Str( ( dbfPreCliT )->nNumPre ) + ( dbfPreCliT )->cSufPre, dbfPreCliT, dbfPreCliL, dbfIva, dbfDiv, dbfFPago, nil, cDivEmp(), .t. ) }
-         :nWidth           := 80
+         :nWidth           := 100
          :nDataStrAlign    := 1
          :nHeadStrAlign    := 1
       end with

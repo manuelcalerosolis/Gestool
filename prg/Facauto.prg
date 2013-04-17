@@ -2727,7 +2727,6 @@ METHOD CreaFactura() CLASS TCreaFacAutomaticas
          ::oFacCliL:lKitPrc      := ::oFacAutL:oDbf:lKitPrc
          ::oFacCliL:nIva         := ::oFacAutL:oDbf:nIva
          ::oFacCliL:nReq         := nPorcentajeRE( ::oDbfIva:cAlias, ::oFacAutL:oDbf:nIva )      
-         ::oFacCliL:nReq         := ::oFacAutL:oDbf:nReq
          ::oFacCliL:nNumLin      := ::oFacAutL:oDbf:nNumLin
 
          ::oFacCliL:dFecha       := ::dFecDocumento

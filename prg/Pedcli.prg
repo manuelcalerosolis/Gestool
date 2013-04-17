@@ -1624,7 +1624,7 @@ FUNCTION PedCli( oMenuItem, oWnd, cCodCli, cCodArt, cCodPre, lPedWeb )
 
       DEFINE BTNSHELL RESOURCE "DOCUMENT_PLAIN_USER1_" OF oWndBrw ;
             ALLOW    EXIT ;
-            ACTION   ( if( ( dbfPedCliT )->nEstado != 3, AlbCli( nil, nil, nil, nil, ( dbfPedCliT )->cSerPed + Str( ( dbfPedCliT )->nNumPed ) + ( dbfPedCliT )->cSufPed ), MsgInfo( "Pedido entregado o cancelado" ) ) );
+            ACTION   ( if( ( dbfPedCliT )->nEstado != 3, AlbCli( nil, nil, nil, nil, { "Pedido" => ( dbfPedCliT )->cSerPed + Str( ( dbfPedCliT )->nNumPed ) + ( dbfPedCliT )->cSufPed } ), MsgInfo( "Pedido entregado o cancelado" ) ) );
             TOOLTIP  "Generar albarán" ;
             FROM     oRotor ;
 
