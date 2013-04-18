@@ -493,7 +493,7 @@ static aSats            := {}
 
 #ifndef __PDA__
 
-static bEdtRec          := { | aTmp, aGet, dbfAlbCliT, oBrw, bWhen, bValid, nMode, aNumDoc | EdtRec( aTmp, aGet, dbfAlbCliT, oBrw, bWhen, bValid, nMode, aNumDoc ) }
+static bEdtRec          := { | aTmp, aGet, dbfAlbCliT, oBrw, bWhen, bValid, nMode, hHash | EdtRec( aTmp, aGet, dbfAlbCliT, oBrw, bWhen, bValid, nMode, hHash ) }
 static bEdtDet          := { | aTmp, aGet, dbfAlbCliL, oBrw, bWhen, bValid, nMode, aTmpAlb | EdtDet( aTmp, aGet, dbfAlbCliL, oBrw, bWhen, bValid, nMode, aTmpAlb ) }
 static bEdtInc          := { | aTmp, aGet, dbfAlbCliI, oBrw, bWhen, bValid, nMode, aTmpLin | EdtInc( aTmp, aGet, dbfAlbCliI, oBrw, bWhen, bValid, nMode, aTmpLin ) }
 static bEdtDoc          := { | aTmp, aGet, dbfAlbCliD, oBrw, bWhen, bValid, nMode, aTmpLin | EdtDoc( aTmp, aGet, dbfAlbCliD, oBrw, bWhen, bValid, nMode, aTmpLin ) }
@@ -1473,7 +1473,7 @@ RETURN NIL
 
 //--------------------------------------------------------------------------//
 
-FUNCTION AlbCli( oMenuItem, oWnd, cCodCli, cCodArt, aNumDoc )
+FUNCTION AlbCli( oMenuItem, oWnd, cCodCli, cCodArt, hHash )
 
    local oRpl
    local oSnd
@@ -1492,7 +1492,7 @@ FUNCTION AlbCli( oMenuItem, oWnd, cCodCli, cCodArt, aNumDoc )
    DEFAULT  oWnd        := oWnd()
    DEFAULT  cCodCli     := ""
    DEFAULT  cCodArt     := ""
-   DEFAULT  aNumDoc     := Array( 2 )
+   DEFAULT  hHash     := Array( 2 )
 
    nLevel               := nLevelUsr( oMenuItem )
    if nAnd( nLevel, 1 ) != 0
@@ -1500,8 +1500,8 @@ FUNCTION AlbCli( oMenuItem, oWnd, cCodCli, cCodArt, aNumDoc )
       return .f.
    end if
 
-   if IsChar( aNumDoc )
-      aNumDoc           := { aNumDoc, nil }
+   if IsChar( hHash )
+      hHash           := { hHash, nil }
    end if 
 
    /*
@@ -1532,9 +1532,9 @@ FUNCTION AlbCli( oMenuItem, oWnd, cCodCli, cCodArt, aNumDoc )
       MRU      "Document_plain_user1_16";
       BITMAP   clrTopArchivos ;
       ALIAS    ( dbfAlbCliT );
-      APPEND   ( WinAppRec( oWndBrw:oBrw, bEdtRec, dbfAlbCliT, cCodCli, cCodArt, aNumDoc ) );
-      DUPLICAT ( WinDupRec( oWndBrw:oBrw, bEdtRec, dbfAlbCliT, cCodCli, cCodArt, aNumDoc ) );
-      EDIT     ( WinEdtRec( oWndBrw:oBrw, bEdtRec, dbfAlbCliT, cCodCli, cCodArt, aNumDoc ) );
+      APPEND   ( WinAppRec( oWndBrw:oBrw, bEdtRec, dbfAlbCliT, cCodCli, cCodArt, hHash ) );
+      DUPLICAT ( WinDupRec( oWndBrw:oBrw, bEdtRec, dbfAlbCliT, cCodCli, cCodArt, hHash ) );
+      EDIT     ( WinEdtRec( oWndBrw:oBrw, bEdtRec, dbfAlbCliT, cCodCli, cCodArt, hHash ) );
       ZOOM     ( WinZooRec( oWndBrw:oBrw, bEdtRec, dbfAlbCliT ) );
       DELETE   ( WinDelRec( oWndBrw:oBrw, dbfAlbCliT, {|| QuiAlbCli() } ) ) ;
       LEVEL    nLevel ;
@@ -2096,7 +2096,7 @@ FUNCTION AlbCli( oMenuItem, oWnd, cCodCli, cCodArt, aNumDoc )
 
    EnableAcceso()
 
-   if !Empty( cCodCli ) .or. !Empty( cCodArt ) .or. !Empty( aNumDoc[ 1 ] ) .or. !Empty( aNumDoc[ 2 ] )
+   if !Empty( cCodCli ) .or. !Empty( cCodArt ) .or. !Empty( hHash ) 
 
       if !Empty( oWndBrw )
          oWndBrw:RecAdd()
@@ -2104,7 +2104,7 @@ FUNCTION AlbCli( oMenuItem, oWnd, cCodCli, cCodArt, aNumDoc )
 
       cCodCli  := nil
       cCodArt  := nil
-      aNumDoc  := Array( 2 )
+      hHash    := nil
 
    end if
 
@@ -2112,7 +2112,7 @@ Return .t.
 
 //---------------------------------------------------------------------------//
 
-STATIC FUNCTION EdtRec( aTmp, aGet, dbfAlbCliT, oBrw, cCodCli, cCodArt, nMode, aNumDoc )
+STATIC FUNCTION EdtRec( aTmp, aGet, dbfAlbCliT, oBrw, cCodCli, cCodArt, nMode, hHash )
 
 	local oDlg
    local oBrwLin
@@ -2141,13 +2141,6 @@ STATIC FUNCTION EdtRec( aTmp, aGet, dbfAlbCliT, oBrw, cCodCli, cCodArt, nMode, a
 
    DEFAULT cCodCli   := ""
    DEFAULT cCodArt   := ""
-
-   do case
-      case IsNil( aNumDoc )
-         aNumDoc     := Array( 5 )
-      case IsArray( aNumDoc )
-         ASize( aNumDoc, 5 )
-   end if
 
    /*
    Este valor los guaradamos para detectar los posibles cambios----------------
@@ -3740,7 +3733,7 @@ STATIC FUNCTION EdtRec( aTmp, aGet, dbfAlbCliT, oBrw, cCodCli, cCodArt, nMode, a
    end case
 
    ACTIVATE DIALOG   oDlg ;
-      ON INIT        (  InitEdtRec( aTmp, aGet, oDlg, oSayDias, oSayTxtDias, oSayGetRnt, oGetRnt, oBrwLin, oBrwInc, oBrwPgo, aNumDoc ) );
+      ON INIT        (  InitEdtRec( aTmp, aGet, oDlg, oSayDias, oSayTxtDias, oSayGetRnt, oGetRnt, oBrwLin, oBrwInc, oBrwPgo, hHash ) );
       ON PAINT       (  RecalculaTotal( aTmp ) );
       CENTER
 
@@ -3764,7 +3757,7 @@ RETURN ( oDlg:nResult == IDOK )
 
 //---------------------------------------------------------------------------//
 
-Static Function InitEdtRec( aTmp, aGet, oDlg, oSayDias, oSayTxtDias, oSayGetRnt, oGetRnt, oBrwLin, oBrwInc, oBrwPgo, aNumDoc )
+Static Function InitEdtRec( aTmp, aGet, oDlg, oSayDias, oSayTxtDias, oSayGetRnt, oGetRnt, oBrwLin, oBrwInc, oBrwPgo, hHash )
 
    EdtRecMenu( aGet, aTmp, oBrwLin, oDlg )
                         
@@ -3774,14 +3767,26 @@ Static Function InitEdtRec( aTmp, aGet, oDlg, oSayDias, oSayTxtDias, oSayGetRnt,
    oBrwInc:Load()
    oBrwPgo:Load()
 
-   if IsArray( aNumDoc ) .and. !Empty( aNumDoc[ 1 ] )
-      aGet[ _CNUMPED ]:cText( aNumDoc[ 1 ] )
-      aGet[ _CNUMPED ]:lValid()
-   end if
 
-   if IsArray( aNumDoc ) .and. !Empty( aNumDoc[ 2 ] )
-      aGet[ _CNUMSAT ]:cText( aNumDoc[ 2 ] )
-      aGet[ _CNUMSAT ]:lValid()
+
+   if IsHash( hHash )
+
+      msgAlert( HGetKeyAt( hHash, 1 ) )
+      msgAlert( HGetValueAt( hHash, 1 ) )
+
+      do case
+         case HGetKeyAt( hHash, 1 ) == "Presupuesto"
+            aGet[ _CNUMPRE ]:cText( HGetValueAt( hHash, 1 ) )
+            aGet[ _CNUMPRE ]:lValid()
+
+         case HGetKeyAt( hHash, 1 ) == "Pedido"
+            aGet[ _CNUMPED ]:cText( HGetValueAt( hHash, 1 ) )
+            aGet[ _CNUMPED ]:lValid()
+
+         case HGetKeyAt( hHash, 1 ) == "SAT"
+            aGet[ _CNUMSAT ]:cText( HGetValueAt( hHash, 1 ) )
+            aGet[ _CNUMSAT ]:lValid()
+      end case
    end if
 
 RETURN ( nil )
@@ -5347,7 +5352,7 @@ STATIC FUNCTION cPedCli( aGet, aTmp, oBrwLin, oBrwPgo, nMode )
       Return .t.
    end if
 
-   if ( dbfPedCliT )->( dbSeek( cPedido ) )
+   if dbSeekInOrd( cPedido, "nNumPed", dbfPedCliT )
 
       CursorWait()
 
@@ -6415,7 +6420,7 @@ STATIC FUNCTION GrpPed( aGet, aTmp, oBrw )
 
       CursorWait()
 
-      HideImportacion()
+      HideImportacion( aGet )
 
       /*
       A¤adimos los albaranes seleccionado para despues-------------------------
@@ -18222,7 +18227,7 @@ Return ( nil )
 STATIC FUNCTION cPreCli( aGet, aTmp, oBrw, nMode )
 
    local cDesAlb
-   local cPedido  := aGet[ _CNUMSAT ]:VarGet()
+   local cPedido  := aGet[ _CNUMPRE ]:VarGet()
    local lValid   := .f.
 
    if nMode != APPD_MODE .OR. Empty( cPedido )
@@ -18240,7 +18245,7 @@ STATIC FUNCTION cPreCli( aGet, aTmp, oBrw, nMode )
 
          CursorWait()
 
-         HideImportacion()
+         HideImportacion( aGet )
 
          aGet[ _CCODCLI ]:cText( ( dbfPreCliT )->CCODCLI )
          aGet[ _CCODCLI ]:lValid()
@@ -18445,8 +18450,7 @@ STATIC FUNCTION cPreCli( aGet, aTmp, oBrw, nMode )
 
       end if
 
-      aGet[ _CNUMSAT ]:Hide()
-      aGet[ _CNUMPED ]:Show()
+      HideImportacion( aGet, aGet[ _CNUMPRE ] )
 
    else
 
@@ -18479,7 +18483,7 @@ STATIC FUNCTION cSatCli( aGet, aTmp, oBrw, nMode )
 
          CursorWait()
 
-         HideImportacion()
+         HideImportacion(aGet, aGet[ _CNUMSAT ])
 
          aGet[ _CCODCLI ]:cText( ( dbfSatCliT )->CCODCLI )
          aGet[ _CCODCLI ]:lValid()
@@ -18943,7 +18947,7 @@ STATIC FUNCTION GrpSat( aGet, aTmp, oBrw )
 
       CursorWait()
 
-      HideImportacion()      
+      HideImportacion( aGet )      
 
       /*
       A¤adimos los albaranes seleccionado para despues-------------------------
@@ -19178,7 +19182,7 @@ return .t.
 
 //---------------------------------------------------------------------------//
 
-Static Function HideImportacion()
+Static Function HideImportacion( aGet, oShow )
 
    oBtnPre:Hide()
    oBtnPed:Hide()
@@ -19186,6 +19190,14 @@ Static Function HideImportacion()
 
    oBtnAgruparPedido:Hide()
    oBtnAgruparSat:Hide()
+
+   aGet[ _CNUMSAT ]:Hide()
+   aGet[ _CNUMPRE ]:Hide()
+   aGet[ _CNUMPED ]:Hide()
+
+   if !Empty( oShow )
+      oShow:Show()
+   end if
 
 Return nil 
 

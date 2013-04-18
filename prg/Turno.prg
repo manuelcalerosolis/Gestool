@@ -2989,21 +2989,6 @@ METHOD lCloPedCli( lClose, cCodCaj )
 
    DEFAULT lClose := .t.
 
-   /*if ::oPedCliT:Seek( ::cCurTurno + cCodCaj )
-
-      while ::oPedCliT:cTurPed + ::oPedCliT:cSufPed + ::oPedCliT:cCodCaj == ::cCurTurno + cCodCaj .and. !::oPedCliT:eof()
-
-         ::oPedCliT:Load()
-         ::oPedCliT:lCloPed   := lClose
-         ::oPedCliT:Save()
-
-         ::oPedCliT:Skip()
-         SysRefresh()
-
-      end do
-
-   end if*/
-
    if ::oPedCliP:Seek( ::cCurTurno + cCodCaj )
 
       while ::oPedCliP:cTurRec + ::oPedCliP:cSufPed + ::oPedCliP:cCodCaj == ::cCurTurno + cCodCaj .and. !::oPedCliP:eof()
@@ -7553,8 +7538,37 @@ METHOD SyncAllDbf()
    end if
 
    lCheckDbf( ::oDbf    )
+
+   ::oDbf:Activate( .f., .f. )
+   while !::oDbf:Eof()
+      if Empty( ::oDbf:cSufTur )
+         ::oDbf:FieldPutByName( "cSufTur", "00" )
+      end if 
+      ::oDbf:Skip()
+   end while
+   ::oDbf:End()
+
    lCheckDbf( ::oDbfCaj )
+
+   ::oDbfCaj:Activate( .f., .f. )
+   while !::oDbfCaj:Eof()
+      if Empty( ::oDbfCaj:cSufTur )
+         ::oDbfCaj:FieldPutByName( "cSufTur", "00" )
+      end if 
+      ::oDbfCaj:Skip()
+   end while
+   ::oDbfCaj:End()
+
    lCheckDbf( ::oDbfDet )
+
+   ::oDbfDet:Activate( .f., .f. )
+   while !::oDbfDet:Eof()
+      if Empty( ::oDbfDet:cSufTur )
+         ::oDbfDet:FieldPutByName( "cSufTur", "00" )
+      end if 
+      ::oDbfDet:Skip()
+   end while
+   ::oDbfDet:End()
 
 RETURN ( Self )
 

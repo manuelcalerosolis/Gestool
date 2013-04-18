@@ -1606,7 +1606,7 @@ FUNCTION SatCli( oMenuItem, oWnd, cCodCli, cCodArt )
 
       DEFINE BTNSHELL RESOURCE "DOCUMENT_PLAIN_USER1_" OF oWndBrw ;
             ALLOW    EXIT ;
-            ACTION   ( if( !( dbfSatCliT )->lEstado, AlbCli( nil, nil, nil, nil, { nil, ( dbfSatCliT )->cSerSat + Str( ( dbfSatCliT )->nNumSat ) + ( dbfSatCliT )->cSufSat } ), MsgStop( "El S.A.T. ya ha sido aceptado" ) ) );
+            ACTION   ( if( !( dbfSatCliT )->lEstado, AlbCli( nil, nil, nil, nil, { "SAT" => ( dbfSatCliT )->cSerSat + Str( ( dbfSatCliT )->nNumSat ) + ( dbfSatCliT )->cSufSat } ), MsgStop( "El S.A.T. ya ha sido aceptado" ) ) );
             TOOLTIP  "Generar albarán" ;
             FROM     oRotor ;
 
@@ -6654,14 +6654,14 @@ FUNCTION BrwSatCli( oGet, dbfSatCliT, dbfSatCliL, dbfIva, dbfDiv, dbfFPago, oIva
          :cHeader          := "Nombre"
          :cSortOrder       := "cNomCli"
          :bEditValue       := {|| AllTrim( ( dbfSatCliT )->cNomCli ) }
-         :nWidth           := 200
+         :nWidth           := 300
          :bLClickHeader    := {| nMRow, nMCol, nFlags, oCol | oCbxOrd:Set( oCol:cHeader ) }
       end with
 
       with object ( oBrw:AddCol() )
          :cHeader          := "Importe"
          :bEditValue       := {|| nTotSatCli( ( dbfSatCliT )->cSerSat + Str( ( dbfSatCliT )->nNumSat ) + ( dbfSatCliT )->cSufSat, dbfSatCliT, dbfSatCliL, dbfIva, dbfDiv, dbfFPago, nil, cDivEmp(), .t. ) }
-         :nWidth           := 80
+         :nWidth           := 100
          :nDataStrAlign    := 1
          :nHeadStrAlign    := 1
       end with
@@ -9904,6 +9904,11 @@ FUNCTION QuiSatCli()
    local nOrdInc
    local nOrdDoc
 
+   if ( dbfSatCliT )->lEstado
+      msgStop( "No se pueden eliminar S.A.T. ya procesados." )
+      Return .f.
+   end if
+
    if ( dbfSatCliT )->lCloSat .and. !oUser():lAdministrador()
       msgStop( "Solo puede eliminar S.A.T. cerrados los administradores." )
       Return .f.
@@ -9912,7 +9917,6 @@ FUNCTION QuiSatCli()
    nOrdDet        := ( dbfSatCliL )->( OrdSetFocus( "nNumSat" ) )
    nOrdInc        := ( dbfSatCliI )->( OrdSetFocus( "nNumSat" ) )
    nOrdDoc        := ( dbfSatCliD )->( OrdSetFocus( "nNumSat" ) )
-
 
    /*
    Detalle---------------------------------------------------------------------

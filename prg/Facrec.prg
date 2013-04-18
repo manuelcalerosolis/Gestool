@@ -7066,7 +7066,7 @@ STATIC FUNCTION LoaArt( aGet, bmpImage, aTmp, aTmpFac, oStkAct, oSayPr1, oSayPr2
          //--Atipicas de clientes por artículos--//
 
          case lSeekAtpFam( aTmpFac[ _CCODCLI ] + aTmp[ _CCODFAM ], aTmpFac[ _DFECFAC ], dbfClientAtp ) .and. ;
-            ( dbfClientAtp )->lAplFac
+            ( dbfClientAtp )->lAplFac 
 
             if ( dbfClientAtp )->nDtoArt != 0
                aGet[_NDTO    ]:cText( ( dbfClientAtp )->NDTOART )
@@ -9707,10 +9707,8 @@ static function RecFacRec( aTmpFac )
                ( dbfTmpLin )->nDtoDiv  := ( dbfClientAtp )->nDtoDiv
             end if
 
-         case lSeekAtpFam( aTmpFac[_CCODCLI] + cCodFam, dbfClientAtp )                                      .and. ;
-               ( dbfClientAtp )->lAplFac                                                                    .and. ;
-               ( ( dbfClientAtp )->DFECINI <= aTmpFac[ _DFECFAC ] .OR. Empty( ( dbfClientAtp )->DFECINI ) ) .and. ;
-               ( ( dbfClientAtp )->DFECFIN >= aTmpFac[ _DFECFAC ] .OR. Empty( ( dbfClientAtp )->DFECFIN ) )
+         case lSeekAtpFam( aTmpFac[ _CCODCLI ] + cCodFam, aTmpFac[ _DFECFAC ], dbfClientAtp )               .and. ;
+               ( dbfClientAtp )->lAplFac                                                                    
 
             if ( dbfClientAtp )->nDtoArt != 0
                ( dbfTmpLin )->nDto     := ( dbfClientAtp )->nDtoArt
