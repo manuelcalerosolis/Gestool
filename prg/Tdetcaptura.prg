@@ -108,34 +108,6 @@ Method CheckDefault( cCod, lNew )
 
       ::oDbf:Append()
       ::oDbf:cCodigo    := cCod
-      ::oDbf:nNumero    := 16
-      ::oDbf:cNombre    := "Promoción"
-      ::oDbf:lEditable  := .t.
-      ::oDbf:lVisible   := .f.
-      ::oDbf:nCaptura   := 2
-      ::oDbf:cTitulo    := "Prm."
-      ::oDbf:lAlign     := .f.
-      ::oDbf:cPicture   := Space( 50 )
-      ::oDbf:nAncho     := 20
-      ::oDbf:lBitmap    := .t.
-      ::oDbf:Save()
-
-      ::oDbf:Append()
-      ::oDbf:cCodigo    := cCod
-      ::oDbf:nNumero    := 17
-      ::oDbf:cNombre    := "Oferta"
-      ::oDbf:lEditable  := .t.
-      ::oDbf:lVisible   := .f.
-      ::oDbf:nCaptura   := 2
-      ::oDbf:cTitulo    := "Ofe."
-      ::oDbf:lAlign     := .f.
-      ::oDbf:cPicture   := Space( 50 )
-      ::oDbf:nAncho     := 20
-      ::oDbf:lBitmap    := .t.
-      ::oDbf:Save()
-
-      ::oDbf:Append()
-      ::oDbf:cCodigo    := cCod
       ::oDbf:nNumero    := 2
       ::oDbf:cNombre    := "Unidades"
       ::oDbf:lEditable  := .f.
@@ -144,20 +116,6 @@ Method CheckDefault( cCod, lNew )
       ::oDbf:cTitulo    := "Und."
       ::oDbf:lAlign     := .t.
       ::oDbf:cPicture   := "cPicUnd"
-      ::oDbf:nAncho     := 60
-      ::oDbf:lBitmap    := .f.
-      ::oDbf:Save()
-
-      ::oDbf:Append()
-      ::oDbf:cCodigo    := cCod
-      ::oDbf:nNumero    := 18
-      ::oDbf:cNombre    := "Factor"
-      ::oDbf:lEditable  := .f.
-      ::oDbf:lVisible   := .t.
-      ::oDbf:nCaptura   := 3
-      ::oDbf:cTitulo    := "Factor"
-      ::oDbf:lAlign     := .t.
-      ::oDbf:cPicture   := "@E 999,999.999999"
       ::oDbf:nAncho     := 60
       ::oDbf:lBitmap    := .f.
       ::oDbf:Save()
@@ -355,6 +313,48 @@ Method CheckDefault( cCod, lNew )
       ::oDbf:lAlign     := .f.
       ::oDbf:cPicture   := Space( 50 )
       ::oDbf:nAncho     := 100
+      ::oDbf:lBitmap    := .f.
+      ::oDbf:Save()
+
+      ::oDbf:Append()
+      ::oDbf:cCodigo    := cCod
+      ::oDbf:nNumero    := 16
+      ::oDbf:cNombre    := "Promoción"
+      ::oDbf:lEditable  := .t.
+      ::oDbf:lVisible   := .f.
+      ::oDbf:nCaptura   := 2
+      ::oDbf:cTitulo    := "Prm."
+      ::oDbf:lAlign     := .f.
+      ::oDbf:cPicture   := Space( 50 )
+      ::oDbf:nAncho     := 20
+      ::oDbf:lBitmap    := .t.
+      ::oDbf:Save()
+
+      ::oDbf:Append()
+      ::oDbf:cCodigo    := cCod
+      ::oDbf:nNumero    := 17
+      ::oDbf:cNombre    := "Oferta"
+      ::oDbf:lEditable  := .t.
+      ::oDbf:lVisible   := .f.
+      ::oDbf:nCaptura   := 2
+      ::oDbf:cTitulo    := "Ofe."
+      ::oDbf:lAlign     := .f.
+      ::oDbf:cPicture   := Space( 50 )
+      ::oDbf:nAncho     := 20
+      ::oDbf:lBitmap    := .t.
+      ::oDbf:Save()
+
+      ::oDbf:Append()
+      ::oDbf:cCodigo    := cCod
+      ::oDbf:nNumero    := 18
+      ::oDbf:cNombre    := "Factor"
+      ::oDbf:lEditable  := .t.
+      ::oDbf:lVisible   := .f.
+      ::oDbf:nCaptura   := 3
+      ::oDbf:cTitulo    := "Factor"
+      ::oDbf:lAlign     := .t.
+      ::oDbf:cPicture   := "@E 999,999.999999"
+      ::oDbf:nAncho     := 60
       ::oDbf:lBitmap    := .f.
       ::oDbf:Save()
 

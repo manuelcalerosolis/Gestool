@@ -7833,7 +7833,9 @@ METHOD AddLineOrgToNew() Class TpvTactil
    if !::oTemporalDivisionOriginal:lKitChl   .and.;
       !Empty( ::oTemporalDivisionOriginal:RecCount() )
 
-      if ::oTemporalDivisionOriginal:nUntTil > 1
+      do case
+
+      case ::oTemporalDivisionOriginal:nUntTil > 1
 
          ::oTemporalDivisionOriginal:nUntTil := ::oTemporalDivisionOriginal:nUntTil - 1
 
@@ -7890,7 +7892,7 @@ METHOD AddLineOrgToNew() Class TpvTactil
 
          end if
 
-      else
+      case ::oTemporalDivisionOriginal:nUntTil == 0
 
          if !::oTemporalDivisionNuevoTicket:SeekinOrd( Str( ::oTemporalDivisionOriginal:nNumLin ) + ::oTemporalDivisionOriginal:cCbaTil, "cLinCba" )
 
@@ -7951,7 +7953,70 @@ METHOD AddLineOrgToNew() Class TpvTactil
 
          end if
 
-      end if
+         ::oTemporalDivisionOriginal:Delete()
+
+      otherwise
+      
+         if !::oTemporalDivisionNuevoTicket:SeekinOrd( Str( ::oTemporalDivisionOriginal:nNumLin ) + ::oTemporalDivisionOriginal:cCbaTil, "cLinCba" )
+
+            dbPass( ::oTemporalDivisionOriginal:cAlias, ::oTemporalDivisionNuevoTicket:cAlias, .t. )
+
+         else
+
+            ::oTemporalDivisionNuevoTicket:nUntTil += ::oTemporalDivisionOriginal:nUntTil
+
+         end if
+
+         /*
+         Si es un producto kit pasamos tambien los productos kit---------------
+         */
+
+         if ::oTemporalDivisionOriginal:lKitArt
+
+            ::oTemporalDivisionOriginal:GetStatus()
+
+            ::oTemporalDivisionOriginal:OrdSetFocus( "lRecNum" )
+
+            ::oTemporalDivisionOriginal:GoTop()
+
+            while !::oTemporalDivisionOriginal:Eof()
+
+               if ::oTemporalDivisionOriginal:nNumLin == nLinea .and.;
+                  ::oTemporalDivisionOriginal:cCbaTil != cCodArt
+
+                  if !::oTemporalDivisionNuevoTicket:SeekinOrd( Str( ::oTemporalDivisionOriginal:nNumLin ) + ::oTemporalDivisionOriginal:cCbaTil, "cLinCba" )
+
+                     dbPass( ::oTemporalDivisionOriginal:cAlias, ::oTemporalDivisionNuevoTicket:cAlias, .t. )
+
+                  else
+
+                     ::oTemporalDivisionNuevoTicket:nUntTil += ::oTemporalDivisionOriginal:nUntTil
+
+                  end if
+
+                  ::oTemporalDivisionOriginal:nUntTil -= ::oTemporalDivisionOriginal:nUntTil
+
+               end if
+
+               ::oTemporalDivisionOriginal:Skip()
+
+            end while
+
+            ::oTemporalDivisionOriginal:GoTop()
+
+            while ::oTemporalDivisionOriginal:nNumLin == nLinea
+               ::oTemporalDivisionOriginal:Delete()
+            end while
+
+            ::oTemporalDivisionOriginal:OrdSetFocus( "nRecNum" )
+
+            ::oTemporalDivisionOriginal:SetStatus()
+
+         end if
+
+         ::oTemporalDivisionOriginal:Delete()   
+
+      end case
 
    end if
 
@@ -8094,6 +8159,8 @@ METHOD AddLineNewToOrg() Class TpvTactil
             ::oTemporalDivisionNuevoTicket:SetStatus()
 
          end if   
+
+         ::oTemporalDivisionNuevoTicket:Delete()
 
       end if
 
