@@ -16545,12 +16545,12 @@ Function BrwSelArticulo( oGetCodigo, oGetNombre, lCodeBar, lAppend, lEdit, oBtnS
                :bLClickHeader       := {| nMRow, nMCol, nFlags, oCol | cOrdenColumnaBrw( oCol, oBrwStock ) }
             end with
 
-            with object ( oBrwStock:AddCol() )
+            /*with object ( oBrwStock:AddCol() )
                :cHeader             := "Num. serie"
                :nWidth              := 60
                :bStrData            := {|| if( !Empty( oBrwStock:aArrayData ), oBrwStock:aArrayData[ oBrwStock:nArrayAt ]:cNumeroSerie, "" ) }
                :bLClickHeader       := {| nMRow, nMCol, nFlags, oCol | cOrdenColumnaBrw( oCol, oBrwStock ) }
-            end with
+            end with*/
 
             with object ( oBrwStock:AddCol() )
                :cHeader             := "Unidades"

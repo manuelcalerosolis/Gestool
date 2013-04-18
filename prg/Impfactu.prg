@@ -1119,7 +1119,7 @@ METHOD Importar()
       end if
 
       /*
-      Trasbase de tipos de IGIC-------------------------------------------------
+      Trasbase de tipos de IVA-------------------------------------------------
       */
 
       if ::aLgcIndices[ 4 ]
@@ -1596,16 +1596,11 @@ METHOD Importar()
 
             ::oDbfAlmGst:Append()
 
-            ::oDbfAlmGst:cCodAlm   := ::oDbfAlmFac:cCodAlm
+            ::oDbfAlmGst:cCodAlm   := RJust( ::oDbfAlmFac:cCodAlm, "0", 3 )
             ::oDbfAlmGst:cNomAlm   := Left( ::oDbfAlmFac:cNomBre, 20 )
             ::oDbfAlmGst:cDirAlm   := Left( ::oDbfAlmFac:cDirEcc, 50 )
-            //::oDbfAlmGst:cPosAlm   :=
             ::oDbfAlmGst:cPobAlm   := Left( ::oDbfAlmFac:cPobLac, 30 )
-            //::oDbfAlmGst:cProAlm   := ::oDbfAlmFac:cProVin
             ::oDbfAlmGst:cTfnAlm   := ::oDbfAlmFac:cTfno
-            //::oDbfAlmGst:cFaxAlm   :=
-            //::oDbfAlmGst:cPerAlm   :=
-            //::oDbfAlmGst:cCodCli   :=
 
             ::oDbfAlmGst:Save()
 
@@ -3262,6 +3257,14 @@ METHOD Importar()
             ::oDbfAlpLGst:nDtoLin      := ::oDbfAlpLFac:nDto
             ::oDbfAlpLGst:nNumLin      := ::oDbfAlpLFac:nLinea
             ::oDbfAlpLGst:lControl     := ::oDbfAlpLFac:lControl
+
+            
+            /*
+            Solo importación ayamonte------------------------------------------
+            */
+            ::oDbfAlpLGst:lLote        := .t.
+            ::oDbfAlpLGst:cLote        := ::oDbfAlpLFac:cProp2
+            ::oDbfAlpLGst:dFecCad      := CtoD( ::oDbfAlpLFac:cProp1 )
 
             ::oDbfAlpLGst:Save()
 

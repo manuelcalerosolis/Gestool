@@ -4,6 +4,14 @@
 		"selected_items":
 		[
 			[
+				"cPro",
+				"cProp2"
+			],
+			[
+				"t",
+				"t"
+			],
+			[
 				"cImgWeb",
 				"cImgWeb"
 			],
@@ -432,10 +440,6 @@
 				"nUbiTik"
 			],
 			[
-				"t",
-				"t"
-			],
-			[
 				"lIni",
 				"lInitCheckDividirMesas"
 			],
@@ -510,10 +514,6 @@
 			[
 				"Get",
 				"GetSysDate"
-			],
-			[
-				"oTemporalDi",
-				"oTemporalDivisionNuevoTicket"
 			]
 		]
 	},
@@ -523,31 +523,23 @@
 			"file": "prg/Tcomercio.prg",
 			"settings":
 			{
-				"buffer_size": 370695,
+				"buffer_size": 370623,
 				"line_ending": "Windows"
 			}
 		},
 		{
-			"file": "prg/Tpvtactil.prg",
+			"file": "prg/Impfactu.prg",
 			"settings":
 			{
-				"buffer_size": 250223,
+				"buffer_size": 129894,
 				"line_ending": "Windows"
 			}
 		},
 		{
-			"file": "prg/Articulo.prg",
+			"file": "prg/Albprov.prg",
 			"settings":
 			{
-				"buffer_size": 662517,
-				"line_ending": "Windows"
-			}
-		},
-		{
-			"file": "prg/Factcli.prg",
-			"settings":
-			{
-				"buffer_size": 798186,
+				"buffer_size": 402359,
 				"line_ending": "Windows"
 			}
 		}
@@ -584,13 +576,22 @@
 	},
 	"file_history":
 	[
+		"/C/fw195/Gestool/prg/Medicon.prg",
+		"/C/fw195/Gestool/prg/Cambio.prg",
+		"/C/fw195/Gestool/prg/Tpvtactil.prg",
+		"/C/fw195/Gestool/prg/Tcaptura.prg",
+		"/C/fw195/Gestool/prg/Tdetcaptura.prg",
+		"/C/fw195/Gestool/prg/Factcli.prg",
+		"/C/fw195/Gestool/prg/Articulo.prg",
+		"/C/fw195/Gestool/prg/Tipoimpresora.prg",
+		"/C/fw195/Gestool/prg/Tiva.prg",
+		"/C/fw195/Gestool/prg/Ixbrowse.prg",
+		"/C/fw195/Gestool/prg/Xbrowse.prg",
 		"/C/fw195/Gestool/prg/Utildbf.prg",
 		"/C/fw195/Gestool/prg/Digit.prg",
-		"/C/fw195/Gestool/prg/Tiva.prg",
 		"/C/fw195/Gestool/prg/Stock.prg",
 		"/C/fw195/Gestool/prg/Albprov.prg",
 		"/C/fw195/Gestool/prg/Comun.prg",
-		"/C/fw195/Gestool/prg/Factcli.prg",
 		"/C/fw195/Gestool/prg/Divisas.prg",
 		"/C/fw195/Gestool/prg/Familia.prg",
 		"/C/fw195/Gestool/prg/Tscripts.prg",
@@ -598,9 +599,7 @@
 		"//server/Scripts creados/Inma Pepsi/001.prg",
 		"/C/fw195/Gestool/prg/Brwcli.prg",
 		"/C/fw195/Gestool/bin/script/000.prg",
-		"/C/fw195/Gestool/prg/Tpvtactil.prg",
 		"/C/fw195/Gestool/prg/Albcli.prg",
-		"/C/fw195/Gestool/prg/Articulo.prg",
 		"/C/Users/Villa/Desktop/Exportatarifas.prg",
 		"/C/fw195/Gestool/prg/Tconfaccli.prg",
 		"/C/fw195/Gestool/prg/Dlgs32.prg",
@@ -704,14 +703,7 @@
 		"/C/fw195/Gestool/prg/Dotnetgr.prg",
 		"/C/fw195/Gestool/prg/Tpvmesa.prg",
 		"/C/fw195/Gestool/prg/Tpvpunto.prg",
-		"/C/fw195/Gestool/prg/Tpvsalon.prg",
-		"/C/fw195/Gestool/prg/Tinftrazarlote.prg",
-		"/C/fw195/Gestool/prg/Trazalote.prg",
-		"/C/fw195/Gestool/prg/Tpvrestaurante.prg",
-		"/C/fw195/Gestool/prg/Font.prg",
-		"/C/fw195/Gestool/prg/Folder.prg",
-		"/C/fwh1204/source/classes/tfoldex.prg",
-		"/C/AppServ/www/prestademo/index.php"
+		"/C/fw195/Gestool/prg/Tpvsalon.prg"
 	],
 	"find":
 	{
@@ -747,6 +739,15 @@
 		"case_sensitive": false,
 		"find_history":
 		[
+			"on RJust",
+			"\"0\"",
+			"AddLineOrgToNew",
+			"ofnt",
+			"fnt",
+			"ofont",
+			"font",
+			"HELPENTRYTACTILIMP",
+			"on br",
 			"ivalibr",
 			"// l",
 			"//l",
@@ -865,16 +866,7 @@
 			"InsertPropiedadesProductPrestashop",
 			"Imprimir",
 			"ImprimeTicket",
-			"imprime",
-			"imprimi",
-			"od PrepareReport",
-			"on NewTiket",
-			"NewTiket",
-			"NewTiket.",
-			"NewTiket",
-			"ImpTiket",
-			"impti",
-			"on imp"
+			"imprime"
 		],
 		"highlight": true,
 		"in_selection": false,
@@ -908,7 +900,7 @@
 					"file": "prg/Tcomercio.prg",
 					"settings":
 					{
-						"buffer_size": 370695,
+						"buffer_size": 370623,
 						"regions":
 						{
 						},
@@ -933,18 +925,18 @@
 				},
 				{
 					"buffer": 1,
-					"file": "prg/Tpvtactil.prg",
+					"file": "prg/Impfactu.prg",
 					"settings":
 					{
-						"buffer_size": 250223,
+						"buffer_size": 129894,
 						"regions":
 						{
 						},
 						"selection":
 						[
 							[
-								103997,
-								103997
+								120659,
+								120659
 							]
 						],
 						"settings":
@@ -954,25 +946,25 @@
 							"translate_tabs_to_spaces": true
 						},
 						"translation.x": 0.0,
-						"translation.y": 60718.0,
+						"translation.y": 58234.0,
 						"zoom_level": 1.0
 					},
 					"type": "text"
 				},
 				{
 					"buffer": 2,
-					"file": "prg/Articulo.prg",
+					"file": "prg/Albprov.prg",
 					"settings":
 					{
-						"buffer_size": 662517,
+						"buffer_size": 402359,
 						"regions":
 						{
 						},
 						"selection":
 						[
 							[
-								217014,
-								217014
+								258567,
+								258567
 							]
 						],
 						"settings":
@@ -982,35 +974,7 @@
 							"translate_tabs_to_spaces": true
 						},
 						"translation.x": 0.0,
-						"translation.y": 99684.0,
-						"zoom_level": 1.0
-					},
-					"type": "text"
-				},
-				{
-					"buffer": 3,
-					"file": "prg/Factcli.prg",
-					"settings":
-					{
-						"buffer_size": 798186,
-						"regions":
-						{
-						},
-						"selection":
-						[
-							[
-								159175,
-								159213
-							]
-						],
-						"settings":
-						{
-							"syntax": "Packages/harbour/harbour/Harbour.tmLanguage",
-							"tab_size": 3,
-							"translate_tabs_to_spaces": true
-						},
-						"translation.x": 0.0,
-						"translation.y": 85180.0,
+						"translation.y": 141304.0,
 						"zoom_level": 1.0
 					},
 					"type": "text"
