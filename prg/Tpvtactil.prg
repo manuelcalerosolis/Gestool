@@ -8002,7 +8002,7 @@ METHOD AddLineOrgToNew() Class TpvTactil
 
             end while
 
-            ::oTemporalDivisionOriginal:GoTop()
+            ::oTemporalDivisionOriginal:GoTop()  
 
             while ::oTemporalDivisionOriginal:nNumLin == nLinea
                ::oTemporalDivisionOriginal:Delete()
