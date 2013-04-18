@@ -639,12 +639,12 @@ function BrwVtaComArt( cCodArt, cNomArt, cDiv, cIva, cAlm, cArticulo )
       :lHide                     := .t.
    end with
 
-   with object ( oBrwStk:AddCol() )
+   /*with object ( oBrwStk:AddCol() )
       :cHeader                   := "Num. serie"
       :nWidth                    := 70
       :bStrData                  := {|| if( !Empty( oBrwStk:aArrayData ), oBrwStk:aArrayData[ oBrwStk:nArrayAt ]:cNumeroSerie, "" ) }
       :lHide                     := .t.
-   end with
+   end with*/
 
    with object ( oBrwStk:AddCol() )
       :cHeader                   := "Unidades"
