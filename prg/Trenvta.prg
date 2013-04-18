@@ -201,7 +201,7 @@ METHOD OpenFiles()
 
    DATABASE NEW ::oDbfTvta PATH ( cPatDat() ) FILE "TVTA.DBF"     VIA ( cDriver() ) SHARED INDEX "TVTA.CDX"
 
-   TDataCenter():oAlbCliT()
+   ::oAlbCliT := TDataCenter():oAlbCliT()
 
    DATABASE NEW ::oAlbCliL PATH ( cPatEmp() ) FILE "ALBCLIL.DBF"  VIA ( cDriver() ) SHARED INDEX "ALBCLIL.CDX"
 
@@ -209,7 +209,7 @@ METHOD OpenFiles()
 
    DATABASE NEW ::oFacCliL PATH ( cPatEmp() ) FILE "FACCLIL.DBF"  VIA ( cDriver() ) SHARED INDEX "FACCLIL.CDX"
 
-   DATABASE NEW ::oFacCliP PATH ( cPatEmp() ) FILE "FACCLIP.DBF"  VIA ( cDriver() ) SHARED INDEX "FACCLIP.CDX"
+   ::oFacCliP := TDataCenter():oFacCliP()
 
    DATABASE NEW ::oFacRecT PATH ( cPatEmp() ) FILE "FACRECT.DBF"  VIA ( cDriver() ) SHARED INDEX "FACRECT.CDX"
 

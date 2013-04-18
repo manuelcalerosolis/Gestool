@@ -56,9 +56,9 @@ METHOD OpenFiles() CLASS TInfRenFam
    DATABASE NEW ::oFacCliL PATH ( cPatEmp() ) FILE "FACCLIL.DBF" VIA ( cDriver() ) SHARED INDEX "FACCLIL.CDX"
    ::oFacCliL:OrdSetFocus( "CREF" )
 
-   DATABASE NEW ::oFacCliP PATH ( cPatEmp() ) FILE "FACCLIP.DBF" VIA ( cDriver() ) SHARED INDEX "FACCLIP.CDX"
+   ::oFacCliP := TDataCenter():oFacCliP()
 
-   TDataCenter():oAlbCliT()
+   ::oAlbCliT := TDataCenter():oAlbCliT()
 
    DATABASE NEW ::oAlbCliL PATH ( cPatEmp() ) FILE "ALBCLIL.DBF" VIA ( cDriver() ) SHARED INDEX "ALBCLIL.CDX"
    ::oAlbCliL:OrdSetFocus( "CREF" )

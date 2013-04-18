@@ -73,7 +73,7 @@ METHOD OpenFiles()
 
    BEGIN SEQUENCE
 
-   TDataCenter():oAlbCliT()
+   ::oAlbCliT := TDataCenter():oAlbCliT()
 
    DATABASE NEW ::oAlbCliL PATH ( cPatEmp() ) FILE "ALBCLIL.DBF"  VIA ( cDriver() ) SHARED INDEX "ALBCLIL.CDX"
 
@@ -85,7 +85,7 @@ METHOD OpenFiles()
 
    DATABASE NEW ::oFacRecL PATH ( cPatEmp() ) FILE "FACRECL.DBF"  VIA ( cDriver() ) SHARED INDEX "FACRECL.CDX"
 
-   DATABASE NEW ::oFacCliP PATH ( cPatEmp() ) FILE "FACCLIP.DBF"  VIA ( cDriver() ) SHARED INDEX "FACCLIP.CDX"
+   ::oFacCliP := TDataCenter():oFacCliP()
 
    DATABASE NEW ::oTikCliT PATH ( cPatEmp() ) FILE "TIKET.DBF"    VIA ( cDriver() ) SHARED INDEX "TIKET.CDX"
 

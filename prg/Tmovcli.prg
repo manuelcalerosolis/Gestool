@@ -80,7 +80,7 @@ METHOD OpenFiles() CLASS TMovClFInf
    Ficheros necesarios
    */
 
-   TDataCenter():oAlbCliT()
+   ::oAlbCliT := TDataCenter():oAlbCliT()
    ::oAlbCliT:SetOrder( "CCODCLI" )
 
    DATABASE NEW ::oAlbCliL PATH ( cPatEmp() ) FILE "ALBCLIL.DBF" VIA ( cDriver() ) SHARED INDEX "ALBCLIL.CDX"

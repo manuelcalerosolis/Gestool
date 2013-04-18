@@ -5461,10 +5461,6 @@ STATIC FUNCTION EndTrans( aGet, aTmp, oBrw, nMode, oDlg )
 
       end if
 
-      // Hacer el RollBack
-
-      //oStock:PedPrv( cSerie + str( nPedido ) + cSufPed, ( dbfPedPrvT )->cCodAlm, .t., .f. )
-
    end case
 
    /*
@@ -5475,10 +5471,10 @@ STATIC FUNCTION EndTrans( aGet, aTmp, oBrw, nMode, oDlg )
    aTmp[ _NTOTIVA ]     := nTotIva
    aTmp[ _NTOTREQ ]     := nTotReq
    aTmp[ _NTOTPED ]     := nTotPed
-
+/*
    oBlock               := ErrorBlock( {| oError | ApoloBreak( oError ) } )
    BEGIN SEQUENCE
-
+*/
    BeginTransaction()
 
    /*
@@ -5522,12 +5518,6 @@ STATIC FUNCTION EndTrans( aGet, aTmp, oBrw, nMode, oDlg )
    end while
 
    /*
-   Acualizamos las cantidades pendientes de recibir
-   */
-
-   //oStock:PedPrv( cSerie + str( nPedido ) + cSufPed, aTmp[ _CCODALM ], .f., .t. )
-
-   /*
    Salvamos el registro del pedido
    */
 
@@ -5539,14 +5529,10 @@ STATIC FUNCTION EndTrans( aGet, aTmp, oBrw, nMode, oDlg )
 
    oStock:SetPedPrv( cSerie + str( nPedido ) + cSufPed )
 
-   /*
-	Borramos los ficheros
-	*/
-
    dbCommitAll()
 
    CommitTransaction()
-
+/*
    RECOVER USING oError
 
       RollBackTransaction()
@@ -5554,7 +5540,7 @@ STATIC FUNCTION EndTrans( aGet, aTmp, oBrw, nMode, oDlg )
 
    END SEQUENCE
    ErrorBlock( oBlock )
-
+*/
    oMsgText()
    EndProgress()
 

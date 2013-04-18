@@ -119,7 +119,7 @@ METHOD OpenFiles()
    DATABASE NEW ::oPedCliL PATH ( cPatEmp() ) FILE "PEDCLIL.DBF"     VIA ( cDriver() )  SHARED INDEX "PEDCLIL.CDX"
    ::oPedCliL:OrdSetFocus( "cRef" )
 
-   TDataCenter():oAlbCliT()
+   ::oAlbCliT := TDataCenter():oAlbCliT()
    DATABASE NEW ::oAlbCliL PATH ( cPatEmp() ) FILE "ALBCLIL.DBF"     VIA ( cDriver() )  SHARED INDEX "ALBCLIL.CDX"
    ::oAlbCliL:OrdSetFocus( "cRef" )
 

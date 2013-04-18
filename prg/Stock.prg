@@ -366,6 +366,7 @@ METHOD lOpenFiles( cPath, lExclusive ) CLASS TStock
       ::cTikL           := cCheckArea( "TikL"    ) 
       ::cTikS           := cCheckArea( "TikS"    ) 
 
+      ::cPedPrvT        := cCheckArea( "PedPrvT" ) 
       ::cPedPrvL        := cCheckArea( "PedPrvL" ) 
 
       ::cAlbPrvL        := cCheckArea( "AlbPrvL" ) 
@@ -451,6 +452,9 @@ METHOD lOpenFiles( cPath, lExclusive ) CLASS TStock
 
       USE ( cPatEmp() + "TikeS.DBF" ) NEW VIA ( cDriver() ) SHARED ALIAS ( ::cTikS ) 
       SET ADSINDEX TO ( cPatEmp() + "TikeS.CDX" ) ADDITIVE
+
+      USE ( cPatEmp() + "PedProvT.DBF" ) NEW VIA ( cDriver() ) SHARED ALIAS ( ::cPedPrvT ) 
+      SET ADSINDEX TO ( cPatEmp() + "PedProvT.CDX" ) ADDITIVE
 
       USE ( cPatEmp() + "PedProvL.DBF" ) NEW VIA ( cDriver() ) SHARED ALIAS ( ::cPedPrvL ) 
       SET ADSINDEX TO ( cPatEmp() + "PedProvL.CDX" ) ADDITIVE
@@ -542,6 +546,7 @@ METHOD CloseFiles() CLASS TStock
 
    if ( !Empty( ::cKit ),     ( ::cKit )->( dbCloseArea() ), )
 
+   if ( !Empty( ::cPedPrvT ), ( ::cPedPrvT )->( dbCloseArea() ), )
    if ( !Empty( ::cPedPrvL ), ( ::cPedPrvL )->( dbCloseArea() ), )
 
    if ( !Empty( ::cAlbPrvL ), ( ::cAlbPrvL )->( dbCloseArea() ), )
@@ -633,16 +638,19 @@ Return Self
 
 METHOD SetPedPrv( cNumPed ) CLASS TStock
 
+   local nEstPed
+   local nRegAnt        
+   local nOrdAnt        
    local nTotPedPrv     := 0
    local nRecPedPrv     := 0
    local nTotLineaAct   := 0
-   local nEstPed
-   local nRegAnt        := ( ::cPedPrvT )->( RecNo() )
-   local nOrdAnt        := ( ::cPedPrvT )->( OrdSetFocus( "nNumPed" ) )
 
    if Empty( ::cPedPrvT ) .or. Empty( ::cPedPrvL )
       return .f.
    end if
+
+   nRegAnt              := ( ::cPedPrvT )->( RecNo() )
+   nOrdAnt              := ( ::cPedPrvT )->( OrdSetFocus( "nNumPed" ) )
 
    // Comprobamos como esta el pedido------------------------------------------
 

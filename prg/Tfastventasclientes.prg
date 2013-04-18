@@ -125,7 +125,7 @@ METHOD OpenFiles() CLASS TFastVentasClientes
 
       DATABASE NEW ::oPedCliL PATH ( cPatEmp() ) CLASS "PedCliL" FILE "PedCliL.DBF" VIA ( cDriver() ) SHARED INDEX "PedCliL.CDX"
 
-      TDataCenter():oAlbCliT()
+      ::oAlbCliT := TDataCenter():oAlbCliT()
       ::oAlbCliT:OrdSetFocus( "cCodCli" )
 
       DATABASE NEW ::oAlbCliL PATH ( cPatEmp() ) CLASS "ALBCLIL" FILE "ALBCLIL.DBF" VIA ( cDriver() ) SHARED INDEX "ALBCLIL.CDX"
@@ -135,7 +135,7 @@ METHOD OpenFiles() CLASS TFastVentasClientes
 
       DATABASE NEW ::oFacCliL PATH ( cPatEmp() ) CLASS "FACCLIL" FILE "FACCLIL.DBF" VIA ( cDriver() ) SHARED INDEX "FACCLIL.CDX"
 
-      DATABASE NEW ::oFacCliP PATH ( cPatEmp() ) CLASS "FACCLIP" FILE "FACCLIP.DBF" VIA ( cDriver() ) SHARED INDEX "FACCLIP.CDX"
+      ::oFacCliP := TDataCenter():oFacCliP()
 
       DATABASE NEW ::oAntCliT PATH ( cPatEmp() ) CLASS "AntCliT" FILE "AntCliT.Dbf" VIA ( cDriver() ) SHARED INDEX "AntcliT.Cdx"
 

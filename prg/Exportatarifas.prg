@@ -172,7 +172,7 @@ METHOD OpenFiles() CLASS TExportaTarifas
 
    ::oDbf:Activate( .f., .f. )
 
-   TDataCenter():oAlbCliT()
+   ::oAlbCliT := TDataCenter():oAlbCliT()
 
    DATABASE NEW ::oAlbCliL  PATH ( cPatEmp() ) FILE "ALBCLIL.DBF" VIA ( cDriver() ) SHARED INDEX "ALBCLIL.CDX"
 

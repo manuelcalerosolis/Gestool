@@ -423,7 +423,7 @@ METHOD OpenFiles( lExclusive )
 
    BEGIN SEQUENCE
 
-      TDataCenter():oAlbCliT()
+      ::oAlbCliT := TDataCenter():oAlbCliT()
 
       DATABASE NEW ::oAlbCliL    FILE "ALBCLIL.DBF"   PATH ( ::cPath )     VIA ( cDriver() ) SHARED INDEX "ALBCLIL.CDX"
 

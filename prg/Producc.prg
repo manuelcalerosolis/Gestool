@@ -636,7 +636,7 @@ METHOD OpenFiles( lExclusive )
    ::oRctPrvL:OrdSetFocus( "cRef" )
    DATABASE NEW ::oRctPrvS    PATH ( cPatEmp() )   FILE "RctPrvS.DBF"   VIA ( cDriver() ) SHARED INDEX "RctPrvS.CDX"
 
-   TDataCenter():oAlbCliT()
+   ::oAlbCliT := TDataCenter():oAlbCliT()
    DATABASE NEW ::oAlbCliL    PATH ( cPatEmp() )   FILE "AlbCliL.DBF"   VIA ( cDriver() ) SHARED INDEX "AlbCliL.CDX"
    DATABASE NEW ::oAlbCliS    PATH ( cPatEmp() )   FILE "AlbCliS.DBF"   VIA ( cDriver() ) SHARED INDEX "AlbCliS.CDX"
 

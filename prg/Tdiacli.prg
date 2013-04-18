@@ -110,7 +110,7 @@ METHOD OpenFiles() CLASS  TInfDiaCli
 
    DATABASE NEW ::oPedCliL PATH ( cPatEmp() ) FILE "PEDCLIL.DBF" VIA ( cDriver() ) SHARED INDEX "PEDCLIL.CDX"
 
-   TDataCenter():oAlbCliT()
+   ::oAlbCliT := TDataCenter():oAlbCliT()
 
    DATABASE NEW ::oAlbCliL PATH ( cPatEmp() ) FILE "ALBCLIL.DBF" VIA ( cDriver() ) SHARED INDEX "ALBCLIL.CDX"
 
@@ -130,7 +130,7 @@ METHOD OpenFiles() CLASS  TInfDiaCli
 
    DATABASE NEW ::oDbfFPago PATH ( cPatGrp() ) FILE "FPAGO.DBF" VIA ( cDriver() ) SHARED INDEX "FPAGO.CDX"
 
-   DATABASE NEW ::oFacCliP PATH ( cPatEmp() ) FILE "FACCLIP.DBF" VIA ( cDriver() ) SHARED INDEX "FACCLIP.CDX"
+   ::oFacCliP := TDataCenter():oFacCliP()
 
    RECOVER USING oError
 

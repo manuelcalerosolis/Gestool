@@ -104,9 +104,9 @@ METHOD OpenFiles()
 
    DATABASE NEW ::oFacCliL PATH ( cPatEmp() ) FILE  "FacCliL.DBF" VIA ( cDriver() ) SHARED INDEX "FacCliL.CDX"
 
-   DATABASE NEW ::oFacCliP PATH ( cPatEmp() ) FILE  "FacCliP.DBF" VIA ( cDriver() ) SHARED INDEX "FacCliP.CDX"
+   ::oFacCliP := TDataCenter():oFacCliP()
 
-   TDataCenter():oAlbCliT()
+   ::oAlbCliT := TDataCenter():oAlbCliT()
 
    DATABASE NEW ::oAlbCliL PATH ( cPatEmp() ) FILE  "AlbCliL.DBF" VIA ( cDriver() ) SHARED INDEX "AlbCliL.CDX"
 

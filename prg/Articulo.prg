@@ -3308,8 +3308,9 @@ STATIC FUNCTION EdtRec( aTmp, aGet, dbfArticulo, oBrw, bWhen, bValid, nMode )
          TRANSPARENT ;
          OF       fldStocks
 
-   REDEFINE RADIO aTmp[( dbfArticulo )->( fieldpos( "NCTLSTOCK" ) ) ] ;
+   REDEFINE RADIO aTmp[ ( dbfArticulo )->( fieldpos( "NCTLSTOCK" ) ) ] ;
          ID       101, 102, 103 ;
+         ON CHANGE( if( aTmp[ ( dbfArticulo )->( fieldpos( "NCTLSTOCK" ) ) ] != 1, oBrwStk:Hide(), oBrwStk:Show() ) ) ;
          WHEN     ( nMode != ZOOM_MODE ) ;
          OF       fldStocks
 
@@ -5236,6 +5237,12 @@ Static Function StartDlg( aGet, aTmp, nMode, oSay, oDlg, oCosto, aBtnDiv, oFnt, 
    if oUser():lNotCostos()
       aGet[ ( dbfArticulo )->( fieldpos( "pCosto" ) ) ]:Hide()
       oCosto:Hide()
+   end if
+
+   if aTmp[ ( dbfArticulo )->( fieldpos( "nCtlStock" ) ) ] != 1
+      oBrwStk:Hide()
+   else
+      oBrwStk:Show()
    end if
 
    oDlg:Enable()

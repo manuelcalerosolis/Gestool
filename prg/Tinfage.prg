@@ -97,7 +97,7 @@ METHOD OpenFiles()
    oBlock   := ErrorBlock( {| oError | ApoloBreak( oError ) } )
    BEGIN SEQUENCE
 
-    TDataCenter():oAlbCliT()
+    ::oAlbCliT := TDataCenter():oAlbCliT()
    ::oAlbCliT:OrdSetFocus( "CCODAGE" )
 
    DATABASE NEW ::oAlbCliL PATH ( cPatEmp() ) FILE "ALBCLIL.DBF" VIA ( cDriver() ) SHARED INDEX "ALBCLIL.CDX"

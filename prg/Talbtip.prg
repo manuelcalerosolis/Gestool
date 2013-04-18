@@ -55,7 +55,7 @@ METHOD OpenFiles() CLASS TInfAlbTip
 
    BEGIN SEQUENCE
 
-   TDataCenter():oAlbCliT()
+   ::oAlbCliT := TDataCenter():oAlbCliT()
 
    DATABASE NEW ::oAlbCliL PATH ( cPatEmp() ) FILE "AlbCliL.DBF" VIA ( cDriver() ) SHARED INDEX "AlbCliL.CDX"
 
