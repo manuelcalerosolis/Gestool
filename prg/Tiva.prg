@@ -775,6 +775,122 @@ FUNCTION BrwIva( oGet, dbfTIva, oGetNombre, lTipo )
 RETURN ( cReturn )
 
 //---------------------------------------------------------------------------//
+
+FUNCTION BigBrwIva( oGet, dbfTIva )
+
+   local oBlock
+   local oError
+   local oDlg
+   local oBrw
+   local nOrd
+   local cReturn  := Space( 1 )
+   local nRec
+   local oFont
+
+   oBlock         := ErrorBlock( {| oError | ApoloBreak( oError ) } )
+   BEGIN SEQUENCE
+
+   nRec           := ( dbfTIva )->( Recno() )
+   nOrd           := ( dbfTIva )->( OrdSetFocus( "Tipo" ) )
+
+   ( dbfTIva )->( dbGoTop() )
+
+   DEFINE FONT oFont NAME "Verdana" SIZE 0, -14
+
+   DEFINE DIALOG oDlg RESOURCE "HELPENTRYTACTILIVA" TITLE "Tipos de " + cImp()
+
+      oBrw                 := IXBrowse():New( oDlg )
+
+      oBrw:bClrSel         := {|| { CLR_BLACK, Rgb( 229, 229, 229 ) } }
+      oBrw:bClrSelFocus    := {|| { CLR_BLACK, Rgb( 167, 205, 240 ) } }
+
+      oBrw:cAlias          := dbfTIva
+      oBrw:nMarqueeStyle   := 5
+      oBrw:cName           := "Browse.Bigtipo " + cImp()
+      oBrw:nRowHeight      := 36
+      oBrw:oFont           := oFont
+
+      with object ( oBrw:AddCol() )
+         :cHeader          := "Código"
+         :bEditValue       := {|| ( dbfTIva )->Tipo }
+         :nWidth           := 80
+      end with
+
+      with object ( oBrw:AddCol() )
+         :cHeader          := "Nombre"
+         :bEditValue       := {|| ( dbfTIva )->DescIva }
+         :nWidth           := 200
+      end with
+
+      with object ( oBrw:AddCol() )
+         :cHeader          := "% " + cImp()
+         :bEditValue       := {|| Trans( ( dbfTIva )->TpIva, "@E 999.99") }
+         :nWidth           := 80
+         :nDataStrAlign    := 1
+         :nHeadStrAlign    := 1
+      end with
+
+      oBrw:bLDblClick      := {|| oDlg:end( IDOK ) }
+
+      oBrw:CreateFromResource( 105 )
+
+      REDEFINE BUTTONBMP ;
+         ID       140 ;
+         OF       oDlg ;
+         BITMAP   "UP32" ;
+         ACTION   ( oBrw:GoUp() )
+
+      REDEFINE BUTTONBMP ;
+         ID       150 ;
+         OF       oDlg ;
+         BITMAP   "DOWN32" ;
+         ACTION   ( oBrw:GoDown() )
+
+      REDEFINE BUTTONBMP ;
+         BITMAP   "Check_32" ;
+         ID       IDOK ;
+         OF       oDlg ;
+         ACTION   ( oDlg:end(IDOK) )
+
+      REDEFINE BUTTONBMP ;
+         BITMAP   "Delete_32" ;
+         ID       IDCANCEL ;
+         OF       oDlg ;
+         ACTION   ( oDlg:End() )
+
+   oDlg:bStart    := {|| oBrw:Load() }
+
+   ACTIVATE DIALOG oDlg CENTER
+
+   if oDlg:nResult == IDOK
+
+      cReturn  := ( dbfTIva )->TpIva
+
+      if IsObject( oGet )
+         oGet:cText( cReturn )
+      end if
+
+   end if
+
+   RECOVER USING oError
+
+      msgStop( "Imposible abrir todas las bases de datos " + CRLF + ErrorMessage( oError ) )
+
+   END SEQUENCE
+
+   ErrorBlock( oBlock )
+
+   if !Empty( oFont )
+      oFont:End()
+   end if
+
+   ( dbfTIva )->( OrdSetFocus( nOrd  ) )
+
+   ( dbfTIva )->( dbGoTo( nRec ) ) 
+
+RETURN ( cReturn )
+
+//---------------------------------------------------------------------------//
 /*
 Devuelve el Codigo del " + cImp() + " pasando el procentaje
 */

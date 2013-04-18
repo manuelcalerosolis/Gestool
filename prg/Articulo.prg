@@ -5569,7 +5569,7 @@ Static Function EndTrans( aTmp, aGet, oSay, oDlg, aTipBar, cTipBar, nMode, oImpC
          if dbLock( dbfTmpImg )
             ( dbfTmpImg )->lDefImg  := .t.
             ( dbfTmpImg )->( dbUnLock() )
-         end if
+         end if 
 
       end if
 

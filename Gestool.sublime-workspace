@@ -523,7 +523,15 @@
 			"file": "prg/Tcomercio.prg",
 			"settings":
 			{
-				"buffer_size": 370694,
+				"buffer_size": 370695,
+				"line_ending": "Windows"
+			}
+		},
+		{
+			"file": "prg/Tpvtactil.prg",
+			"settings":
+			{
+				"buffer_size": 250223,
 				"line_ending": "Windows"
 			}
 		},
@@ -531,15 +539,15 @@
 			"file": "prg/Articulo.prg",
 			"settings":
 			{
-				"buffer_size": 662516,
+				"buffer_size": 662517,
 				"line_ending": "Windows"
 			}
 		},
 		{
-			"file": "prg/Utildbf.prg",
+			"file": "prg/Factcli.prg",
 			"settings":
 			{
-				"buffer_size": 70897,
+				"buffer_size": 798186,
 				"line_ending": "Windows"
 			}
 		}
@@ -576,6 +584,9 @@
 	},
 	"file_history":
 	[
+		"/C/fw195/Gestool/prg/Utildbf.prg",
+		"/C/fw195/Gestool/prg/Digit.prg",
+		"/C/fw195/Gestool/prg/Tiva.prg",
 		"/C/fw195/Gestool/prg/Stock.prg",
 		"/C/fw195/Gestool/prg/Albprov.prg",
 		"/C/fw195/Gestool/prg/Comun.prg",
@@ -598,7 +609,6 @@
 		"/C/Users/Villa/Desktop/test.prg",
 		"/C/fw195/Gestool/include/Util.ch",
 		"/C/Users/Villa/Desktop/oscar.prg",
-		"/C/fw195/Gestool/prg/Utildbf.prg",
 		"/C/fw195/Gestool/prg/Rptgal.prg",
 		"/C/fw195/Gestool/prg/Exportatarifas.prg",
 		"/C/fw195/Gestool/prg/Oferta.prg",
@@ -701,9 +711,7 @@
 		"/C/fw195/Gestool/prg/Font.prg",
 		"/C/fw195/Gestool/prg/Folder.prg",
 		"/C/fwh1204/source/classes/tfoldex.prg",
-		"/C/AppServ/www/prestademo/index.php",
-		"/C/AppServ/www/prestademo/.htaccess",
-		"/C/AppServ/www/oscommerce/includes/configure.php"
+		"/C/AppServ/www/prestademo/index.php"
 	],
 	"find":
 	{
@@ -739,6 +747,20 @@
 		"case_sensitive": false,
 		"find_history":
 		[
+			"ivalibr",
+			"// l",
+			"//l",
+			"//",
+			"on Calculadora",
+			"on brw",
+			"AgregarLineasLibres",
+			"oTipoIVA",
+			"AgregarLineasLibres",
+			"niva",
+			"AgregarLineasLibres",
+			"AgregarLibre",
+			"libre",
+			"msgstop",
 			"on endtrans",
 			"dbfTmpVta",
 			"on endtrans",
@@ -852,21 +874,7 @@
 			"NewTiket",
 			"ImpTiket",
 			"impti",
-			"on imp",
-			"savapt",
-			"SAVAPT",
-			"apt",
-			"DataReport",
-			"SetModal",
-			"setmodal",
-			"od buil",
-			"modal",
-			"PrintReportFacCli",
-			"od build",
-			"preparer",
-			"ndispositivo",
-			"BuildReport",
-			"od bui"
+			"on imp"
 		],
 		"highlight": true,
 		"in_selection": false,
@@ -892,7 +900,7 @@
 	"groups":
 	[
 		{
-			"selected": 0,
+			"selected": 1,
 			"sheets":
 			[
 				{
@@ -900,15 +908,15 @@
 					"file": "prg/Tcomercio.prg",
 					"settings":
 					{
-						"buffer_size": 370694,
+						"buffer_size": 370695,
 						"regions":
 						{
 						},
 						"selection":
 						[
 							[
-								288324,
-								288324
+								269402,
+								269402
 							]
 						],
 						"settings":
@@ -918,25 +926,53 @@
 							"translate_tabs_to_spaces": true
 						},
 						"translation.x": 0.0,
-						"translation.y": 165573.0,
+						"translation.y": 162940.0,
 						"zoom_level": 1.0
 					},
 					"type": "text"
 				},
 				{
 					"buffer": 1,
-					"file": "prg/Articulo.prg",
+					"file": "prg/Tpvtactil.prg",
 					"settings":
 					{
-						"buffer_size": 662516,
+						"buffer_size": 250223,
 						"regions":
 						{
 						},
 						"selection":
 						[
 							[
-								217037,
-								217037
+								103997,
+								103997
+							]
+						],
+						"settings":
+						{
+							"syntax": "Packages/harbour/harbour/Harbour.tmLanguage",
+							"tab_size": 3,
+							"translate_tabs_to_spaces": true
+						},
+						"translation.x": 0.0,
+						"translation.y": 60718.0,
+						"zoom_level": 1.0
+					},
+					"type": "text"
+				},
+				{
+					"buffer": 2,
+					"file": "prg/Articulo.prg",
+					"settings":
+					{
+						"buffer_size": 662517,
+						"regions":
+						{
+						},
+						"selection":
+						[
+							[
+								217014,
+								217014
 							]
 						],
 						"settings":
@@ -952,19 +988,19 @@
 					"type": "text"
 				},
 				{
-					"buffer": 2,
-					"file": "prg/Utildbf.prg",
+					"buffer": 3,
+					"file": "prg/Factcli.prg",
 					"settings":
 					{
-						"buffer_size": 70897,
+						"buffer_size": 798186,
 						"regions":
 						{
 						},
 						"selection":
 						[
 							[
-								30318,
-								30365
+								159175,
+								159213
 							]
 						],
 						"settings":
@@ -974,7 +1010,7 @@
 							"translate_tabs_to_spaces": true
 						},
 						"translation.x": 0.0,
-						"translation.y": 20643.0,
+						"translation.y": 85180.0,
 						"zoom_level": 1.0
 					},
 					"type": "text"

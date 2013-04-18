@@ -252,6 +252,7 @@ CLASS TpvTactil
    DATA nGetUnidades
    DATA nGetImporte
    DATA cGetImpresora
+   DATA nGetIvaLibre
 
    DATA oBtnUnaLinea
    DATA oBtnTodasLineas
@@ -3360,11 +3361,13 @@ METHOD AgregarLibre() CLASS TpvTactil
    local oGetUnidades
    local oGetImporte
    local oGetImpresora
+   local oGetIvaLibre
 
    ::cGetDescripcion          := Space( 100 )
    ::nGetUnidades             := 1
    ::nGetImporte              := 0
    ::cGetImpresora            := Space( 254 )
+   ::nGetIvaLibre             := nIva( ::oTipoIVA, cDefIva() )
 
    if !::lEditableDocumento()
       MsgStop( "El documento ya está cerrado" )
@@ -3384,13 +3387,26 @@ METHOD AgregarLibre() CLASS TpvTactil
          BITMAP   "Keyboard2_32" ;
          ACTION   ( VirtualKey( .f., oGetDescripcion ) )
 
+      REDEFINE GET oGetIvaLibre ;
+         VAR      ::nGetIvaLibre ;
+         PICTURE  "@E 999.99" ;
+         WHEN     ( .f. );
+         ID       200 ;
+         OF       oDlg
+
+      REDEFINE BUTTONBMP ;
+         ID       210 ;
+         OF       oDlg ;
+         BITMAP   "Lupa_32" ;
+         ACTION   ( BigBrwIva( oGetIvaLibre, ::oTipoIVA:cAlias ) )
+
       REDEFINE GET oGetUnidades ;
          VAR      ::nGetUnidades ;
          PICTURE  ::cPictureUnidades ;
          ID       120 ;
          OF       oDlg
 
-      REDEFINE BUTTONBMP ;
+      REDEFINE BUTTONBMP ; 
          ID       130 ;
          OF       oDlg ;
          BITMAP   "Calculator_32" ;
@@ -3404,7 +3420,7 @@ METHOD AgregarLibre() CLASS TpvTactil
 
       REDEFINE BUTTONBMP ;
          ID       150 ;
-         OF       oDlg ;
+         OF       oDlg ; 
          BITMAP   "Calculator_32" ;
          ACTION   ( Calculadora( 0, oGetImporte ) )
 
@@ -4280,7 +4296,7 @@ METHOD AgregarLineasLibres() CLASS TpvTactil
       ::oTemporalLinea:cNomTil     := ::cGetDescripcion
       ::oTemporalLinea:nUntTil     := ::nGetUnidades
       ::oTemporalLinea:nPvpTil     := ::nGetImporte
-      ::oTemporalLinea:nIvaTil     := nIva( ::oTipoIVA, cDefIva() )
+      ::oTemporalLinea:nIvaTil     := ::nGetIvaLibre
       ::oTemporalLinea:cAlmLin     := oUser():cAlmacen()
       ::oTemporalLinea:cImpCom1    := ::cGetImpresora
       ::oTemporalLinea:nNumLin     := nLastNum( ::oTemporalLinea )
