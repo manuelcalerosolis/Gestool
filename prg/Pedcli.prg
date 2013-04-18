@@ -679,9 +679,6 @@ STATIC FUNCTION OpenFiles( lExt )
 
       lOpenFiles        := .t.
 
-      USE ( cPatEmp() + "PEDCLIT.DBF" ) NEW VIA ( cDriver() ) SHARED ALIAS ( cCheckArea( "PEDCLIT", @dbfPedCliT ) )
-      SET ADSINDEX TO ( cPatEmp() + "PEDCLIT.CDX" ) ADDITIVE
-
       USE ( cPatEmp() + "PEDCLIL.DBF" ) NEW VIA ( cDriver() ) SHARED ALIAS ( cCheckArea( "PEDCLIL", @dbfPedCliL ) )
       SET ADSINDEX TO ( cPatEmp() + "PEDCLIL.CDX" ) ADDITIVE
 
@@ -880,16 +877,20 @@ STATIC FUNCTION OpenFiles( lExt )
       USE ( cPatCli() + "CliBnc.Dbf" ) NEW VIA ( cDriver() ) SHARED ALIAS ( cCheckArea( "CLIBNC", @dbfCliBnc ) )
       SET ADSINDEX TO ( cPatCli() + "CliBnc.Cdx" ) ADDITIVE
 
+    if !TDataCenter():OpenPedCliT( @dbfPedCliT )
+        lOpenFiles     := .f.
+    end if 
+
     if !TDataCenter():OpenAlbCliT( @dbfAlbCliT )
    		lOpenFiles     := .f.
 	end if
 
     if !TDataCenter():OpenFacCliT( @dbfFacCliT )
-       lOpenFiles     := .f.
+       lOpenFiles     	:= .f.
     end if
 
 	if !TDataCenter():OpenFacCliP( @dbfFacCliP )
-	   lOpenFiles     := .f.
+	   lOpenFiles     	:= .f.
 	end if
 
       // Unidades de medicion
@@ -5706,12 +5707,13 @@ FUNCTION Pre2Ped( cNumPre )
 
    local cNumPed
 
-   USE ( cPatEmp() + "PEDCLIT.DBF" ) NEW VIA ( cDriver() ) SHARED ALIAS ( cCheckArea( "PEDCLIT", @dbfPedCliT ) )
+   USE ( cPatEmp() + "PedCliT.Dbf" ) NEW VIA ( cDriver() ) SHARED ALIAS ( cCheckArea( "PedCliT", @dbfPedCliT ) )
    SET ADSINDEX TO ( cPatEmp() + "PEDCLIT.CDX" ) ADDITIVE
+
    ( dbfPedCliT )->( OrdSetFocus( 6 ) )
 
    if ( dbfPedCliT )->( dbSeek( cNumPre ) )
-      cNumPed := ( dbfPedCliT )->cSerPed + Str( ( dbfPedCliT )->nNumPed ) + ( dbfPedCliT )->cSufPed
+      cNumPed 	:= ( dbfPedCliT )->cSerPed + Str( ( dbfPedCliT )->nNumPed ) + ( dbfPedCliT )->cSufPed
    end if
 
    if !Empty( cNumPed )
@@ -7258,7 +7260,7 @@ Method CreateData() CLASS TPedidosClientesSenderReciver
 
    ::oSender:SetText( "Enviando pedidos de clientes" )
 
-   USE ( cPatEmp() + "PedCliT.DBF" ) NEW VIA ( cDriver() ) SHARED ALIAS ( cCheckArea( "PedCliT", @dbfPedCliT ) )
+   USE ( cPatEmp() + "PedCliT.Dbf" ) NEW VIA ( cDriver() ) SHARED ALIAS ( cCheckArea( "PedCliT", @dbfPedCliT ) )
    SET ADSINDEX TO ( cPatEmp() + "PedCliT.CDX" ) ADDITIVE
 
    USE ( cPatEmp() + "PedCliL.DBF" ) NEW VIA ( cDriver() ) SHARED ALIAS ( cCheckArea( "PedCliL", @dbfPedCliL ) )
@@ -7360,7 +7362,6 @@ Method RestoreData() CLASS TPedidosClientesSenderReciver
       Retorna el valor anterior
       */
 
-      USE ( cPatEmp() + "PedCliT.Dbf" ) NEW VIA ( cDriver() ) SHARED ALIAS ( cCheckArea( "PedCliT", @dbfPedCliT ) )
       SET ADSINDEX TO ( cPatEmp() + "PedCliT.Cdx" ) ADDITIVE
       ( dbfPedCliT )->( OrdSetFocus( "lSndDoc" ) )
 
@@ -7455,13 +7456,13 @@ Method Process() CLASS TPedidosClientesSenderReciver
                file( cPatSnd() + "PedCliL.DBF" )   .and.;
                file( cPatSnd() + "PedCliI.DBF" )
 
-               USE ( cPatSnd() + "PedCliT.DBF" ) NEW VIA ( cDriver() )READONLY ALIAS ( cCheckArea( "PedCliT", @tmpPedCliT ) )
+               USE ( cPatSnd() + "PedCliT.DBF" ) NEW VIA ( cDriver() ) READONLY ALIAS ( cCheckArea( "PedCliT", @tmpPedCliT ) )
                SET ADSINDEX TO ( cPatSnd() + "PedCliT.CDX" ) ADDITIVE
 
-               USE ( cPatSnd() + "PedCliL.DBF" ) NEW VIA ( cDriver() )READONLY ALIAS ( cCheckArea( "PedCliL", @tmpPedCliL ) )
+               USE ( cPatSnd() + "PedCliL.DBF" ) NEW VIA ( cDriver() ) READONLY ALIAS ( cCheckArea( "PedCliL", @tmpPedCliL ) )
                SET ADSINDEX TO ( cPatSnd() + "PedCliL.CDX" ) ADDITIVE
 
-               USE ( cPatSnd() + "PedCliI.DBF" ) NEW VIA ( cDriver() )READONLY ALIAS ( cCheckArea( "PedCliI", @tmpPedCliI ) )
+               USE ( cPatSnd() + "PedCliI.DBF" ) NEW VIA ( cDriver() ) READONLY ALIAS ( cCheckArea( "PedCliI", @tmpPedCliI ) )
                SET ADSINDEX TO ( cPatSnd() + "PedCliI.CDX" ) ADDITIVE
 
                USE ( cPatEmp() + "PedCliT.DBF" ) NEW VIA ( cDriver() ) SHARED ALIAS ( cCheckArea( "PedCliT", @dbfPedCliT ) )
@@ -17738,10 +17739,10 @@ Return nil
 
 Function MuestraPedidosWeb( oBtnPedidos, lGoPedCli )
 
-   local oError
-   local oBlock
+   	local oError
+   	local oBlock
 	local oCbxOrd
-   local cNumPed
+	local cNumPed
 
    DEFAULT lGoPedCli    := .f.
 
@@ -17753,9 +17754,8 @@ Function MuestraPedidosWeb( oBtnPedidos, lGoPedCli )
    oBlock               := ErrorBlock( {| oError | ApoloBreak( oError ) } )
    BEGIN SEQUENCE
 
-      USE ( cPatEmp() + "PEDCLIT.DBF" ) NEW VIA ( cDriver() ) SHARED ALIAS ( cCheckArea( "PEDCLIT", @dbfPedCliT ) )
-      SET ADSINDEX TO ( cPatEmp() + "PEDCLIT.CDX" ) ADDITIVE
-      ( dbfPedCliT )->( OrdSetFocus( "lInternet" ) )
+        TDataCenter():OpenPedCliT( @dbfPedCliT )
+      	( dbfPedCliT )->( OrdSetFocus( "lInternet" ) )
 
       USE ( cPatEmp() + "PEDCLIL.DBF" ) NEW VIA ( cDriver() ) SHARED ALIAS ( cCheckArea( "PEDCLIL", @dbfPedCliL ) )
       SET ADSINDEX TO ( cPatEmp() + "PEDCLIL.CDX" ) ADDITIVE
@@ -18210,11 +18210,11 @@ Function lPedidosWeb( dbfPedCliT )
    BEGIN SEQUENCE
 
       if Empty( dbfPedCliT )
-         USE ( cPatEmp() + "PEDCLIT.DBF" ) NEW VIA ( cDriver() ) SHARED ALIAS ( cCheckArea( "PEDCLIT", @dbfPedCliT ) )
-         SET ADSINDEX TO ( cPatEmp() + "PEDCLIT.CDX" ) ADDITIVE
-         lClose               := .t.
+	    USE ( cPatEmp() + "PedCliT.Dbf" ) NEW VIA ( cDriver() ) SHARED ALIAS ( cCheckArea( "PedCliT", @dbfPedCliT ) )
+    	SET ADSINDEX TO ( cPatEmp() + "PEDCLIT.CDX" ) ADDITIVE
+        lClose               := .t.
       else
-         nRec                 := ( dbfPedCliT )->( Recno() )
+         nRec                := ( dbfPedCliT )->( Recno() )
       end if
 
       if dbSeekInOrd( .t., "lIntPedCli", dbfPedCliT )

@@ -124,9 +124,11 @@ Static Function OpenFiles( lMessage )
       USE ( cPatEmp() + "PRECLIL.DBF" ) NEW VIA ( cDriver() ) SHARED ALIAS ( cCheckArea( "PRECLIL", @dbfPreCliL ) )
       SET ADSINDEX TO ( cPatEmp() + "PRECLIL.CDX" ) ADDITIVE
 
-      USE ( cPatEmp() + "PEDCLIT.DBF" ) NEW VIA ( cDriver() ) SHARED ALIAS ( cCheckArea( "PEDCLIT", @dbfPedCliT ) )
-      SET ADSINDEX TO ( cPatEmp() + "PEDCLIT.CDX" ) ADDITIVE
-      SET TAG TO "CCODCLI"
+      if !TDataCenter():OpenPedCliT( @dbfPedCliT )
+         lOpenFiles     := .f.
+      else 
+         ( dbfPedCliT )->( OrdSetFocus( "cCodCli" ) )
+      end if 
 
       USE ( cPatEmp() + "PEDCLIL.DBF" ) NEW VIA ( cDriver() ) SHARED ALIAS ( cCheckArea( "PEDCLIL", @dbfPedCliL ) )
       SET ADSINDEX TO ( cPatEmp() + "PEDCLIL.CDX" ) ADDITIVE
@@ -189,10 +191,10 @@ Static Function OpenFiles( lMessage )
          ( dbfFacCliT )->( OrdSetFocus( "cCodCli" ) )
       end if
 
-      oDbfTmp        := DefineTemporal()
+      oDbfTmp           := DefineTemporal()
       oDbfTmp:Activate( .f., .f. )
 
-      lOpenFiles     := .t.
+      lOpenFiles        := .t.
 
    RECOVER USING oError
 

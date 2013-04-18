@@ -429,8 +429,9 @@ STATIC FUNCTION OpenFiles( lExt )
       USE ( cPatEmp() + "PEDPROVL.DBF" ) NEW VIA ( cDriver() ) SHARED ALIAS ( cCheckArea( "PEDPROVL", @dbfPedPrvL ) )
       SET ADSINDEX TO ( cPatEmp() + "PEDPROVL.CDX" ) ADDITIVE
 
-      USE ( cPatEmp() + "PEDCLIT.DBF" ) NEW VIA ( cDriver() ) SHARED ALIAS ( cCheckArea( "PEDCLIT", @dbfPedCliT ) )
-      SET ADSINDEX TO ( cPatEmp() + "PEDCLIT.CDX" ) ADDITIVE
+      if !TDataCenter():OpenPedCliT( @dbfPedCliT )
+         lOpenFiles     := .f.
+      end if 
 
       USE ( cPatEmp() + "PEDCLIL.DBF" ) NEW VIA ( cDriver() ) SHARED ALIAS ( cCheckArea( "PEDCLIL", @dbfPedCliL ) )
       SET ADSINDEX TO ( cPatEmp() + "PEDCLIL.CDX" ) ADDITIVE
@@ -9359,14 +9360,15 @@ Static Function GetCliente( cNumPed )
 
    oBlock         := ErrorBlock( {| oError | ApoloBreak( oError ) } )
    BEGIN SEQUENCE
-
-   USE ( cPatEmp() + "PEDCLIT.DBF" ) NEW VIA ( cDriver() ) SHARED ALIAS ( cCheckArea( "PEDCLIT", @dbfPedCliT ) )
+   
+   USE ( cPatEmp() + "PedCliT.Dbf" ) NEW VIA ( cDriver() ) SHARED ALIAS ( cCheckArea( "PedCliT", @dbfPedCliT ) )
    SET ADSINDEX TO ( cPatEmp() + "PEDCLIT.CDX" ) ADDITIVE
+
    ( dbfPedCliT )->( OrdSetFocus( "NNUMPED" ) )
 
    if ( dbfPedCliT )->( dbSeek( cNumPed ) )
 
-      cCliente := AllTrim( ( dbfPedCliT )->cCodCli ) + " - " + AllTrim( ( dbfPedCliT )->cNomCli )
+      cCliente    := AllTrim( ( dbfPedCliT )->cCodCli ) + " - " + AllTrim( ( dbfPedCliT )->cNomCli )
 
    end if
 

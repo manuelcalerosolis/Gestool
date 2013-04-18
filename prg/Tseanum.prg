@@ -181,7 +181,7 @@ METHOD OpenFiles()
       DATABASE NEW ::oAlbCliS PATH ( cPatEmp() ) FILE "AlbCliS.Dbf" VIA ( cDriver() ) SHARED INDEX "AlbCliS.Cdx"
       ::oAlbCliS:OrdSetFocus( "cNumSer" )
 
-      TDataCenter():oSatCliT() 
+      ::oSatCliT := TDataCenter():oSatCliT() 
 
       DATABASE NEW ::oSatCliL PATH ( cPatEmp() ) FILE "SatCliL.Dbf" VIA ( cDriver() ) SHARED INDEX "SatCliL.Cdx"
 

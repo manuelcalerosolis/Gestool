@@ -512,8 +512,9 @@ STATIC FUNCTION OpenFiles( cPatEmp, lExt, lTactil )
    USE ( cPatDat() + "TBLCNV.DBF" ) NEW VIA ( cDriver() ) SHARED ALIAS ( cCheckArea( "TBLCNV", @dbfTblCnv ) )
    SET ADSINDEX TO ( cPatDat() + "TBLCNV.CDX" ) ADDITIVE
 
-   USE ( cPatEmp() + "PEDCLIT.DBF" ) NEW VIA ( cDriver() ) SHARED ALIAS ( cCheckArea( "PEDCLIT", @dbfPedCliT ) )
-   SET ADSINDEX TO ( cPatEmp() + "PEDCLIT.CDX" ) ADDITIVE
+   if !TDataCenter():OpenPedCliT( @dbfPedCliT )
+      lOpenFiles        := .f.
+   end if 
 
    USE ( cPatEmp() + "PEDCLIL.DBF" ) NEW VIA ( cDriver() ) SHARED ALIAS ( cCheckArea( "PEDCLIL", @dbfPedCliL ) )
    SET ADSINDEX TO ( cPatEmp() + "PEDCLIL.CDX" ) ADDITIVE

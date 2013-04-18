@@ -343,8 +343,9 @@ STATIC FUNCTION OpenFiles( lExt )
       USE ( cPatEmp() + "TIPINCI.DBF" ) NEW VIA ( cDriver() ) SHARED ALIAS ( cCheckArea( "TIPINCI", @dbfInci ) )
       SET ADSINDEX TO ( cPatEmp() + "TIPINCI.CDX" ) ADDITIVE
 
-      USE ( cPatEmp() + "PEDCLIT.DBF" ) NEW VIA ( cDriver() ) SHARED ALIAS ( cCheckArea( "PEDCLIT", @dbfPedCliT ) )
-      SET ADSINDEX TO ( cPatEmp() + "PEDCLIT.CDX" ) ADDITIVE
+      if TDataCenter():OpenPedCli( @dbfPedCliT )
+         lOpenFiles     := .f.
+      end if 
 
       USE ( cPatEmp() + "PEDCLIL.DBF" ) NEW VIA ( cDriver() ) SHARED ALIAS ( cCheckArea( "PEDCLIL", @dbfPedCliL ) )
       SET ADSINDEX TO ( cPatEmp() + "PEDCLIL.CDX" ) ADDITIVE
@@ -7243,17 +7244,19 @@ Function GetCodCli( cNumPed )
    local oBlock
    local oError
    local dbfPedCliT
-   local cCodCli
+   local cCodCli  := ""
 
    oBlock         := ErrorBlock( {| oError | ApoloBreak( oError ) } )
    BEGIN SEQUENCE
 
-   USE ( cPatEmp() + "PEDCLIT.DBF" ) NEW VIA ( cDriver() ) SHARED ALIAS ( cCheckArea( "PEDCLIT", @dbfPedCliT ) )
+   USE ( cPatEmp() + "PedCliT.Dbf" ) NEW VIA ( cDriver() ) SHARED ALIAS ( cCheckArea( "PedCliT", @dbfPedCliT ) )
    SET ADSINDEX TO ( cPatEmp() + "PEDCLIT.CDX" ) ADDITIVE
+
    ( dbfPedCliT )->( OrdSetFocus( "NNUMPED" ) )
 
-   ( dbfPedCliT )->( dbSeek( cNumPed ) )
-   cCodCli := ( dbfPedCliT )->cCodCli
+   if ( dbfPedCliT )->( dbSeek( cNumPed ) )
+      cCodCli     := ( dbfPedCliT )->cCodCli
+   end if 
 
    RECOVER USING oError
 
@@ -7274,17 +7277,19 @@ Function GetNomCli( cNumPed )
    local oBlock
    local oError
    local dbfPedCliT
-   local cNomCli
+   local cNomCli  := ""
 
    oBlock         := ErrorBlock( {| oError | ApoloBreak( oError ) } )
    BEGIN SEQUENCE
 
-   USE ( cPatEmp() + "PEDCLIT.DBF" ) NEW VIA ( cDriver() ) SHARED ALIAS ( cCheckArea( "PEDCLIT", @dbfPedCliT ) )
+   USE ( cPatEmp() + "PedCliT.Dbf" ) NEW VIA ( cDriver() ) SHARED ALIAS ( cCheckArea( "PedCliT", @dbfPedCliT ) )
    SET ADSINDEX TO ( cPatEmp() + "PEDCLIT.CDX" ) ADDITIVE
+
    ( dbfPedCliT )->( OrdSetFocus( "NNUMPED" ) )
 
-   ( dbfPedCliT )->( dbSeek( cNumPed ) )
-   cNomCli := ( dbfPedCliT )->cNomCli
+   if ( dbfPedCliT )->( dbSeek( cNumPed ) )
+      cNomCli     := ( dbfPedCliT )->cNomCli
+   end if
 
    RECOVER USING oError
 

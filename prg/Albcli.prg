@@ -558,9 +558,8 @@ STATIC FUNCTION OpenFiles()
       SET ADSINDEX TO ( cPatEmp() + "PreCliD.CDX" ) ADDITIVE
 
       if !TDataCenter():OpenSatCliT( @dbfSatCliT )
-   lOpenFiles        := .f.
-end if
-      SET ADSINDEX TO ( cPatEmp() + "SatCliT.CDX" ) ADDITIVE
+         lOpenFiles        := .f.
+      end if
 
       USE ( cPatEmp() + "SatCliL.DBF" ) NEW VIA ( cDriver() ) SHARED ALIAS ( cCheckArea( "SatCliL", @dbfSatCliL ) )
       SET ADSINDEX TO ( cPatEmp() + "SatCliL.CDX" ) ADDITIVE
@@ -574,8 +573,9 @@ end if
       USE ( cPatEmp() + "SatCliS.DBF" ) NEW VIA ( cDriver() ) SHARED ALIAS ( cCheckArea( "SatCliS", @dbfSatCliS ) )
       SET ADSINDEX TO ( cPatEmp() + "SatCliS.CDX" ) ADDITIVE
 
-      USE ( cPatEmp() + "PEDCLIT.DBF" ) NEW VIA ( cDriver() ) SHARED ALIAS ( cCheckArea( "PEDCLIT", @dbfPedCliT ) )
-      SET ADSINDEX TO ( cPatEmp() + "PEDCLIT.CDX" ) ADDITIVE
+      if !TDataCenter():OpenPedCliT( @dbfPedCliT )
+         lOpenFiles     := .f.
+      end if 
 
       USE ( cPatEmp() + "PEDCLIL.DBF" ) NEW VIA ( cDriver() ) SHARED ALIAS ( cCheckArea( "PEDCLIL", @dbfPedCliL ) )
       SET ADSINDEX TO ( cPatEmp() + "PEDCLIL.CDX" ) ADDITIVE
@@ -6105,41 +6105,6 @@ STATIC FUNCTION SelSend( oBrw )
 RETURN NIL
 
 //-------------------------------------------------------------------------//
-/*
-Function CleanAlbCli()
-
-   local dbfAlbCliT
-
-
-   //Retorna el valor anterior
-
-
-   if !TDataCenter():OpenAlbCliT( @dbfAlbCliT )
-   lOpenFiles     := .f.
-end if
-
-   SET ADSINDEX TO ( cPatEmp() + "ALBCLIT.CDX" ) ADDITIVE
-
-   ( dbfAlbCliT )->( dbGoTop() )
-
-   while ( dbfAlbCliT )->( !eof() )
-
-      if ( dbfAlbCliT )->lSndDoc
-         if dbLock( dbfAlbCliT )
-            ( dbfAlbCliT )->lSndDoc := .f.
-            ( dbfAlbCliT )->( dbRUnlock() )
-         end if
-      end if
-
-      ( dbfAlbCliT )->( dbSkip() )
-
-   end do
-
-   CLOSE ( dbfAlbCliT )
-
-Return nil
-  */
-//---------------------------------------------------------------------------//
 /*
 Devuelve la fecha de un albaran de cliente
 */
