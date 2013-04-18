@@ -496,7 +496,7 @@ METHOD OpenFiles() CLASS TComercio
 
    DATABASE NEW ::oDivisas PATH ( cPatDat() ) FILE "DIVISAS.DBF"     VIA ( cDriver() ) SHARED INDEX "DIVISAS.CDX"
 
-   DATABASE NEW ::oPedCliT PATH ( cPatEmp() ) FILE "PEDCLIT.DBF"     VIA ( cDriver() ) SHARED INDEX "PEDCLIT.CDX"
+   ::oPedCliT := TDataCenter():oPedCliT()
 
    DATABASE NEW ::oPedCliI PATH ( cPatEmp() ) FILE "PEDCLII.DBF"     VIA ( cDriver() ) SHARED INDEX "PEDCLII.CDX"
 

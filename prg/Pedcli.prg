@@ -1206,15 +1206,15 @@ FUNCTION PedCli( oMenuItem, oWnd, cCodCli, cCodArt, cCodPre, lPedWeb )
       with object ( oWndBrw:AddXCol() )
          :cHeader          := "Número"
          :cSortOrder       := "nNumPed"
-         :bEditValue       := {|| ( dbfPedCliT )->cSerPed + "/" + AllTrim( Str( ( dbfPedCliT )->nNumPed ) ) + "/" + ( dbfPedCliT )->cSufPed }
+         :bEditValue       := {|| ( dbfPedCliT )->cSerPed + "/" + AllTrim( Str( ( dbfPedCliT )->nNumPed ) ) }
          :nWidth           := 80
          :bLClickHeader    := {| nMRow, nMCol, nFlags, oCol | oWndBrw:ClickOnHeader( oCol ) }
       end with
 
       with object ( oWndBrw:AddXCol() )
          :cHeader          := "Delegación"
-         :bEditValue       := {|| ( dbfPedCliT )->cCodDlg }
-         :nWidth           := 20
+         :bEditValue       := {|| ( dbfPedCliT )->cSufPed }
+         :nWidth           := 40
          :lHide            := .t.
       end with
 
@@ -1288,7 +1288,7 @@ FUNCTION PedCli( oMenuItem, oWnd, cCodCli, cCodArt, cCodPre, lPedWeb )
 
       with object ( oWndBrw:AddXCol() )
          :cHeader          := "Forma pago"
-         :bEditValue       := {|| if( !Empty( (dbfPedCliT)->cCodPgo ), (dbfPedCliT)->cCodPgo + " - " + AllTrim( RetFld( (dbfPedCliT)->cCodPgo, dbfFPago, "cDesPago" ) ), "" ) }
+         :bEditValue       := {|| if( !Empty( ( dbfPedCliT )->cCodPgo ), ( dbfPedCliT )->cCodPgo + " - " + AllTrim( RetFld( ( dbfPedCliT )->cCodPgo, dbfFPago, "cDesPago" ) ), "" ) }
          :nWidth           := 200
          :lHide            := .t.
       end with

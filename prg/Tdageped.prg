@@ -74,7 +74,7 @@ METHOD OpenFiles() CLASS TdAgePed
 
    BEGIN SEQUENCE
 
-   DATABASE NEW ::oPedCliT  PATH ( cPatEmp() ) FILE "PEDCLIT.DBF" VIA ( cDriver() ) SHARED INDEX "PEDCLIT.CDX"
+   ::oPedCliT := TDataCenter():oPedCliT()
 
    DATABASE NEW ::oPedCliL  PATH ( cPatEmp() ) FILE "PEDCLIL.DBF" VIA ( cDriver() ) SHARED INDEX "PEDCLIL.CDX"
 

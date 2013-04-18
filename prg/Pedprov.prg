@@ -6662,19 +6662,19 @@ Function SynPedPrv( cPath )
 
    while !( dbfPedPrvT )->( eof() )
 
-      if Empty( ( dbfPedPrvT )->cCodCaj )
-         ( dbfPedPrvT )->cCodCaj := "000"
+      if Empty( ( dbfPedPrvT )->cSufPed )
+         ( dbfPedPrvT )->cSufPed := "00"
       end if
 
-      if !( ( dbfPedPrvT )->cSerPed >= "A" .and. ( dbfPedPrvT )->cSerPed <= "Z" )
-         ( dbfPedPrvT )->( dbDelete() )
+      if Empty( ( dbfPedPrvT )->cCodCaj )
+         ( dbfPedPrvT )->cCodCaj := "000"
       end if
 
       /*
       Rellenamos los campos de totales-----------------------------------------
       */
 
-      if ( dbfPedPrvT )->nTotPed == 0 .and. dbLock( dbfPedPrvT )
+      if ( dbfPedPrvT )->nTotPed == 0
 
          aTotPed                 := aTotPedPrv( ( dbfPedPrvT )->cSerPed + Str( ( dbfPedPrvT )->nNumPed ) + ( dbfPedPrvT )->cSufPed, dbfPedPrvT, dbfPedPrvL, dbfIva, dbfDiv, ( dbfPedPrvT )->cDivPed )
 
@@ -6682,8 +6682,6 @@ Function SynPedPrv( cPath )
          ( dbfPedPrvT )->nTotIva := aTotPed[2]
          ( dbfPedPrvT )->nTotReq := aTotPed[3]
          ( dbfPedPrvT )->nTotPed := aTotPed[4]
-
-         ( dbfPedPrvT )->( dbUnLock() )
 
       end if
 
@@ -6693,28 +6691,24 @@ Function SynPedPrv( cPath )
 
    while !( dbfPedPrvL )->( eof() )
 
-      if !( dbfPedPrvT )->( dbSeek( ( dbfPedPrvL )->cSerPed + Str( ( dbfPedPrvL )->nNumPed ) + ( dbfPedPrvL )->cSufPed ) )
+      if Empty( ( dbfPedPrvL )->cSufPed )
+         ( dbfPedPrvL )->cSufPed := "00"
+      end if
 
-         ( dbfPedPrvL )->( dbDelete() )
+      if Empty( ( dbfPedPrvL )->cLote ) .and. !Empty( ( dbfPedPrvL )->nLote )
+         ( dbfPedPrvL )->cLote   := AllTrim( Str( ( dbfPedPrvL )->nLote ) )
+      end if
 
-      else
+      if !Empty( ( dbfPedPrvL )->cRef ) .and. Empty( ( dbfPedPrvL )->cCodFam )
+         ( dbfPedPrvL )->cCodFam := RetFamArt( ( dbfPedPrvL )->cRef, dbfArticulo )
+      end if
 
-         if Empty( ( dbfPedPrvL )->cLote ) .and. !Empty( ( dbfPedPrvL )->nLote )
-            ( dbfPedPrvL )->cLote   := AllTrim( Str( ( dbfPedPrvL )->nLote ) )
-         end if
+      if !Empty( ( dbfPedPrvL )->cRef ) .and. !Empty( ( dbfPedPrvL )->cCodFam )
+         ( dbfPedPrvL )->cGrpFam := cGruFam( ( dbfPedPrvL )->cCodFam, dbfFamilia )
+      end if
 
-         if !Empty( ( dbfPedPrvL )->cRef ) .and. Empty( ( dbfPedPrvL )->cCodFam )
-            ( dbfPedPrvL )->cCodFam := RetFamArt( ( dbfPedPrvL )->cRef, dbfArticulo )
-         end if
-
-         if !Empty( ( dbfPedPrvL )->cRef ) .and. !Empty( ( dbfPedPrvL )->cCodFam )
-            ( dbfPedPrvL )->cGrpFam := cGruFam( ( dbfPedPrvL )->cCodFam, dbfFamilia )
-         end if
-
-         if Empty( ( dbfPedPrvL )->nReq )
-            ( dbfPedPrvL )->nReq    := nPReq( dbfIva, ( dbfPedPrvL )->nIva )
-         end if
-
+      if Empty( ( dbfPedPrvL )->nReq )
+         ( dbfPedPrvL )->nReq    := nPReq( dbfIva, ( dbfPedPrvL )->nIva )
       end if
 
       ( dbfPedPrvL )->( dbSkip() )
@@ -6725,8 +6719,8 @@ Function SynPedPrv( cPath )
 
    while !( dbfPedPrvI )->( eof() )
 
-      if !( dbfPedPrvT )->( dbSeek( ( dbfPedPrvI )->cSerPed + Str( ( dbfPedPrvI )->nNumPed ) + ( dbfPedPrvI )->cSufPed ) )
-         ( dbfPedPrvI )->( dbDelete() )
+      if Empty( ( dbfPedPrvI )->cSufPed )
+         ( dbfPedPrvI )->cSufPed := "00"
       end if
 
       ( dbfPedPrvI )->( dbSkip() )

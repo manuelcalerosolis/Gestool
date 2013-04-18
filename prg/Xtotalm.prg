@@ -117,7 +117,7 @@ METHOD OpenFiles()
 
    DATABASE NEW ::oTMov    PATH ( cPatDat() ) FILE "TMOV.DBF"     VIA ( cDriver() ) SHARED INDEX "TMOV.CDX"
 
-   DATABASE NEW ::oPedCliT PATH ( cPatEmp() ) FILE "PEDCLIT.DBF"  VIA ( cDriver() ) SHARED INDEX "PEDCLIT.CDX"
+   ::oPedCliT := TDataCenter():oPedCliT()
 
    DATABASE NEW ::oPedCliL PATH ( cPatEmp() ) FILE "PEDCLIL.DBF"  VIA ( cDriver() ) SHARED INDEX "PEDCLIL.CDX"
 

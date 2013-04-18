@@ -562,7 +562,7 @@ METHOD OpenFiles( lExclusive )
 
       DATABASE NEW ::oRctPrvS    FILE "RctPrvS.DBF"  PATH ( cPatEmp() ) VIA ( cDriver() ) SHARED INDEX "RctPrvS.CDX"
 
-      DATABASE NEW ::oPedCliT    PATH ( cPatEmp() ) FILE "PedCliT.DBF" VIA ( cDriver() ) SHARED INDEX "PedCliT.CDX"
+      ::oPedCliT := TDataCenter():oPedCliT()
 
       DATABASE NEW ::oPedCliL    PATH ( cPatEmp() ) FILE "PedCliL.DBF" VIA ( cDriver() ) SHARED INDEX "PedCliL.CDX"
       ::oPedCliL:OrdSetFocus( "cRef" )
