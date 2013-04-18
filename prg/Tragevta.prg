@@ -76,7 +76,7 @@ METHOD OpenFiles() CLASS TDAgeVta
    Ficheros necesarios
    */
 
-   DATABASE NEW ::oAlbCliT  PATH ( cPatEmp() ) FILE "ALBCLIT.DBF" VIA ( cDriver() ) SHARED INDEX "ALBCLIT.CDX"
+   TDataCenter():oAlbCliT()
 
    DATABASE NEW ::oAlbCliL  PATH ( cPatEmp() ) FILE "ALBCLIL.DBF" VIA ( cDriver() ) SHARED INDEX "ALBCLIL.CDX"
 

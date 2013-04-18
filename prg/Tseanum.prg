@@ -174,7 +174,7 @@ METHOD OpenFiles()
       DATABASE NEW ::oRctPrvS PATH ( cPatEmp() ) FILE "RctPrvS.Dbf" VIA ( cDriver() ) SHARED INDEX "RctPrvS.Cdx"
       ::oRctPrvS:OrdSetFocus( "cNumSer" )
 
-      DATABASE NEW ::oAlbCliT PATH ( cPatEmp() ) FILE "AlbCliT.Dbf" VIA ( cDriver() ) SHARED INDEX "AlbCliT.Cdx"
+      TDataCenter():oAlbCliT()
 
       DATABASE NEW ::oAlbCliL PATH ( cPatEmp() ) FILE "AlbCliL.Dbf" VIA ( cDriver() ) SHARED INDEX "AlbCliL.Cdx"
 

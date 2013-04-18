@@ -1038,7 +1038,7 @@ METHOD OpenFiles( lExclusive )
 
       DATABASE NEW ::oRctCliL    PATH ( cPatEmp() ) FILE "FacRecL.DBF"     VIA ( cDriver() ) SHARED INDEX "FacRecL.CDX"
 
-      DATABASE NEW ::oAlbCliT    PATH ( cPatEmp() ) FILE "ALBCLIT.DBF"     VIA ( cDriver() ) SHARED INDEX "ALBCLIT.CDX"
+      TDataCenter():oAlbCliT()
       ::oAlbCliT:OrdSetFocus( "cTurAlb" )
 
       DATABASE NEW ::oAlbCliL    PATH ( cPatEmp() ) FILE "ALBCLIL.DBF"     VIA ( cDriver() ) SHARED INDEX "ALBCLIL.CDX"
