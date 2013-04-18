@@ -62,7 +62,7 @@ RETURN ( Self )
 
 METHOD OpenFiles( lExclusive ) CLASS THoy
 
-   DATABASE NEW ::oFacCliP  PATH ( cPatEmp() ) FILE "FACCLIP.DBF" VIA ( cDriver() ) SHARED INDEX "FACCLIP.CDX"
+   ::oFacCliP := TDataCenter():oFacCliP()
 
 RETURN ( Self )
 

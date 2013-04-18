@@ -68,11 +68,11 @@ METHOD OpenFiles() CLASS TAcuCFac
 
    DATABASE NEW ::oDbfArt  PATH ( cPatArt() ) FILE "ARTICULO.DBF" VIA ( cDriver() ) SHARED INDEX "ARTICULO.CDX"
 
-   DATABASE NEW ::oAlbCliT PATH ( cPatEmp() ) FILE "ALBCLIT.DBF"  VIA ( cDriver() ) SHARED INDEX "ALBCLIT.CDX"
+   ::oAlbCliT := TDataCenter():oAlbCliT()
 
    DATABASE NEW ::oTikCliT PATH ( cPatEmp() ) FILE "TIKET.DBF"    VIA ( cDriver() ) SHARED INDEX "TIKET.CDX"
 
-   DATABASE NEW ::oFacCliP PATH ( cPatEmp() ) FILE "FACCLIP.DBF"  VIA ( cDriver() ) SHARED INDEX "FACCLIP.CDX"
+   ::oFacCliP := TDataCenter():oFacCliP()
 
    DATABASE NEW ::oAntCliT PATH ( cPatEmp() ) FILE "ANTCLIT.DBF"  VIA ( cDriver() ) SHARED INDEX "ANTCLIT.CDX"
 

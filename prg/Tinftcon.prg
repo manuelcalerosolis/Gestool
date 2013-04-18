@@ -78,7 +78,7 @@ METHOD OpenFiles() CLASS TInfTCon
 
    BEGIN SEQUENCE
 
-   DATABASE NEW ::oAlbCliT PATH ( cPatEmp() ) FILE "AlbCliT.DBF" VIA ( cDriver() ) SHARED INDEX "AlbCliT.CDX"
+   ::oAlbCliT := TDataCenter():oAlbCliT()
 
    DATABASE NEW ::oAlbCliL PATH ( cPatEmp() ) FILE "AlbCliL.DBF" VIA ( cDriver() ) SHARED INDEX "AlbCliL.CDX"
 

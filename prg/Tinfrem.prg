@@ -69,7 +69,7 @@ METHOD OpenFiles()
 
    DATABASE NEW ::oRemCliT PATH ( cPatEmp() ) FILE "REMCLIT.DBF" VIA ( cDriver() ) SHARED INDEX "REMCLIT.CDX"
 
-   DATABASE NEW ::oFacCliP PATH ( cPatEmp() ) FILE "FACCLIP.DBF" VIA ( cDriver() ) SHARED INDEX "FAMCLIP.CDX"
+   ::oFacCliP := TDataCenter():oFacCliP()
 
    RECOVER
 

@@ -57,7 +57,7 @@ METHOD OpenFiles()
 
   BEGIN SEQUENCE
 
-   DATABASE NEW ::oAlbCliT PATH ( cPatEmp() ) FILE "AlbCLIT.DBF" VIA ( cDriver() ) SHARED INDEX "AlbCLIT.CDX"
+   ::oAlbCliT := TDataCenter():oAlbCliT()
 
    DATABASE NEW ::oAlbCliL PATH ( cPatEmp() ) FILE "AlbCLIL.DBF" VIA ( cDriver() ) SHARED INDEX "AlbCLIL.CDX"
    ::oAlbCliL:SetOrder( "CREF" )

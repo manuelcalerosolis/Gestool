@@ -12225,7 +12225,7 @@ function SynFacCli( cPath )
          end if
 
          if Empty( ( dbfFacCliS )->dFecFac )
-            ( dbfFacCliS )->dFecFac    := RetFld( ( dbfFacCliS )->cSerie + Str( ( dbfFacCliS )->nNumFac ) + ( dbfFacCliS )->cSufFac, dbfFacCliT, "dFecFac" )
+            ( dbfFacCliS )->dFecFac := RetFld( ( dbfFacCliS )->cSerFac + Str( ( dbfFacCliS )->nNumFac ) + ( dbfFacCliS )->cSufFac, dbfFacCliT, "dFecFac" )
          end if
 
          ( dbfFacCliS )->( dbSkip() )
@@ -15177,7 +15177,7 @@ function aColFacCli()
 
    local aColFacCli  := {}
 
-   aAdd( aColFacCli, {"CSERIE"      ,"C",  1, 0, ""                                      , "" ,             "", "( cDbfCol )"} )
+   aAdd( aColFacCli, {"cSerie"      ,"C",  1, 0, ""                                      , "" ,             "", "( cDbfCol )"} )
    aAdd( aColFacCli, {"NNUMFAC"     ,"N",  9, 0, ""                                      , "" ,             "", "( cDbfCol )"} )
    aAdd( aColFacCli, {"CSUFFAC"     ,"C",  2, 0, ""                                      , "" ,             "", "( cDbfCol )"} )
    aAdd( aColFacCli, {"CREF"        ,"C", 18, 0, "Referencia del artículo"               , "" ,             "", "( cDbfCol )"} )

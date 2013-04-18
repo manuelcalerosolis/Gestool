@@ -75,7 +75,7 @@ METHOD OpenFiles()
 
    DATABASE NEW ::oRctPrvL PATH ( cPatEmp() )   FILE "RctPrvL.DBF"   VIA ( cDriver() ) SHARED INDEX "RctPrvL.CDX"
 
-   DATABASE NEW ::oAlbCliT PATH ( cPatEmp() )   FILE "ALBCLIT.DBF"   VIA ( cDriver() ) SHARED INDEX "ALBCLIT.CDX"
+   ::oAlbCliT := TDataCenter():oAlbCliT()
 
    DATABASE NEW ::oAlbCliL PATH ( cPatEmp() )   FILE "ALBCLIL.DBF"   VIA ( cDriver() ) SHARED INDEX "ALBCLIL.CDX"
 

@@ -2496,11 +2496,11 @@ METHOD nPagosClientes()
    local cExpHead
 
    if Empty( ::oFacCliP )
-      DATABASE NEW ::oFacCliP  
+      ::oFacCliP  := ::oFacCliP := TDataCenter():oFacCliP()
    end if
 
    if Empty( ::oFacCliT )
-      ::oFacCliT := TDataCenter():oFacCliT()  
+      ::oFacCliT  := TDataCenter():oFacCliT()  
    end if
 
    ::nTotalPagosClientes      := 0

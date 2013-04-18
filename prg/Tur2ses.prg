@@ -54,10 +54,10 @@ METHOD OpenFiles( cSufDes ) CLASS TTur2Ses
 
    DATABASE NEW ::oDbfTikT PATH ( cPatEmp() ) FILE "TIKET.DBF"    VIA ( cDriver() )INDEX "TIKET.CDX"
    DATABASE NEW ::oDbfTikL PATH ( cPatEmp() ) FILE "TIKEL.DBF"    VIA ( cDriver() )INDEX "TIKEL.CDX"
-   DATABASE NEW ::oAlbCliT PATH ( cPatEmp() ) FILE "ALBCLIT.DBF"  VIA ( cDriver() )INDEX "ALBCLIT.CDX"
+   ::oAlbCliT := TDataCenter():oAlbCliT()
    DATABASE NEW ::oAlbCliL PATH ( cPatEmp() ) FILE "ALBCLIL.DBF"  VIA ( cDriver() )INDEX "ALBCLIL.CDX"
    DATABASE NEW ::oFacCliL PATH ( cPatEmp() ) FILE "FACCLIL.DBF"  VIA ( cDriver() )INDEX "FACCLIL.CDX"
-   DATABASE NEW ::oFacCliP PATH ( cPatEmp() ) FILE "FACCLIP.DBF"  VIA ( cDriver() )INDEX "FACCLIP.CDX"
+   ::oFacCliP := TDataCenter():oFacCliP()
    DATABASE NEW ::oAlbPrvT PATH ( cPatEmp() ) FILE "AlbProvT.DBF" VIA ( cDriver() )INDEX "AlbProvT.CDX"
    DATABASE NEW ::oAlbPrvL PATH ( cPatEmp() ) FILE "AlbProvL.DBF" VIA ( cDriver() )INDEX "AlbProvL.CDX"
    DATABASE NEW ::oFacPrvT PATH ( cPatEmp() ) FILE "FacPrvT.DBF"  VIA ( cDriver() )INDEX "FacPrvT.CDX"

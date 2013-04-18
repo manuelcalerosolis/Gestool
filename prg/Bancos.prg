@@ -388,7 +388,7 @@ METHOD OpenFiles( lExclusive ) CLASS TCuentasBancarias
 
       DATABASE NEW ::oAlbCliP PATH ( cPatEmp() ) CLASS "AlbCliP" FILE "AlbCliP.Dbf" VIA ( cDriver() ) SHARED INDEX "AlbCliP.Cdx"
 
-      DATABASE NEW ::oFacCliP PATH ( cPatEmp() ) CLASS "FacCliP" FILE "FacCliP.Dbf" VIA ( cDriver() ) SHARED INDEX "FacCliP.Cdx"
+      ::oFacCliP := TDataCenter():oFacCliP()
 
       DATABASE NEW ::oFacPrvP PATH ( cPatEmp() ) CLASS "FacPrvP" FILE "FacPrvP.Dbf" VIA ( cDriver() ) SHARED INDEX "FacPrvP.Cdx"
 
@@ -1100,7 +1100,7 @@ METHOD OpenFiles() CLASS TFastCuentasBancarias
 
       DATABASE NEW ::oAlbCliP PATH ( cPatEmp() ) CLASS "AlbCliP" FILE "AlbCliP.Dbf" VIA ( cDriver() ) SHARED INDEX "AlbCliP.Cdx"
 
-      DATABASE NEW ::oFacCliP PATH ( cPatEmp() ) CLASS "FacCliP" FILE "FacCliP.Dbf" VIA ( cDriver() ) SHARED INDEX "FacCliP.Cdx"
+      ::oFacCliP := TDataCenter():oFacCliP()
 
       DATABASE NEW ::oFacPrvP PATH ( cPatEmp() ) CLASS "FacPrvP" FILE "FacPrvP.Dbf" VIA ( cDriver() ) SHARED INDEX "FacPrvP.Cdx"
 

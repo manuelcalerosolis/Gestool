@@ -8,7 +8,7 @@ AppPublisher=Gestool
 AppPublisherURL=http://www.gestool.es
 AppSupportURL=http://www.gestool.es
 AppUpdatesURL=http://www.gestool.es
-DefaultDirName={pf}\Gestool; Permissions: full
+DefaultDirName={pf}\Gestool
 DefaultGroupName=Gestool 2K13
 AllowNoIcons=yes
 OutputDir=c:\fw195\gestool\iss\exe\
@@ -79,6 +79,21 @@ OutputDir=c:\fw195\gestool\iss\exe\
 
 WizardImageFile=c:\fw195\gestool\bmp\WizardImage.bmp
 WizardSmallImageFile=c:\fw195\gestool\bmp\WizardSmallImage.bmp
+
+[Dirs]
+Name: "{app}\Bmp";      Permissions: users-modify
+Name: "{app}\In";       Permissions: users-modify
+Name: "{app}\Out";      Permissions: users-modify
+Name: "{app}\Log";      Permissions: users-modify
+Name: "{app}\Htm";      Permissions: users-modify
+Name: "{app}\Tmp";      Permissions: users-modify
+Name: "{app}\Emptmp";   Permissions: users-modify
+Name: "{app}\Safe";     Permissions: users-modify
+Name: "{app}\Emp00VG";  Permissions: users-modify
+Name: "{app}\Datos";    Permissions: users-modify
+Name: "{app}\Psion";    Permissions: users-modify
+Name: "{app}\Include";  Permissions: users-modify
+Name: "{app}\Client";   Permissions: users-modify
 
 [Tasks]
 ; Name: "desktopicon"; Description: "&Crear acceso directo en escritorio"; GroupDescription: "Iconos adicionales:"; MinVersion: 4,4

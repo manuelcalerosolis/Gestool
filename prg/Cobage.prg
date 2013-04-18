@@ -427,7 +427,7 @@ METHOD OpenFiles( cPath ) CLASS TCobAge
 
       DATABASE NEW ::oFacRecL FILE "FacRecL.DBF"   PATH ( cPath ) VIA ( cDriver() ) SHARED INDEX  "FacRecL.CDX"
 
-      DATABASE NEW ::oFacCliP FILE "FACCLIP.DBF"   PATH ( cPath ) VIA ( cDriver() ) SHARED INDEX  "FACCLIP.CDX"
+      ::oFacCliP := TDataCenter():oFacCliP()
 
       DATABASE NEW ::oAntCliT FILE "AntCliT.DBF"   PATH ( cPath ) VIA ( cDriver() ) SHARED INDEX  "AntCliT.CDX"
 

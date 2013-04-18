@@ -132,6 +132,30 @@ CLASS TDataCenter
    METHOD Resource( nId )
    METHOD Reindex()
 
+   //---------------------------------------------------------------------------//
+
+   INLINE METHOD oFacCliT()
+
+      local cFilter
+      local oFacCliT
+
+      DATABASE NEW oFacCliT PATH ( cPatEmp() ) FILE "FacCliT.Dbf" VIA ( cDriver() ) SHARED INDEX "FacCliT.Cdx"
+
+         if lAIS() .and. !oUser():lAdministrador()
+      
+            cFilter     := "Field->cSufFac == '" + oUser():cDelegacion() + "' .and. Field->cCodCaj == '" + oUser():cCaja() + "'"
+            if oUser():lFiltroVentas()         
+               cFilter  += " .and. Field->cCodUsr == '" + oUser():cCodigo() + "'"
+            end if 
+
+            ( oFacCliT:cAlias )->( AdsSetAOF( cFilter ) )
+
+         end if
+
+      Return ( oFacCliT )   
+
+   ENDMETHOD
+
    //------------------------------------------------------------------------//
 
    INLINE METHOD OpenFacCliT( dbf )
@@ -168,12 +192,12 @@ CLASS TDataCenter
 
    //---------------------------------------------------------------------------//
 
-   INLINE METHOD oFacCliT()
+   INLINE METHOD oFacCliP()
 
       local cFilter
-      local oFacCliT
+      local oFacCliP
 
-      DATABASE NEW oFacCliT PATH ( cPatEmp() ) FILE "FacCliT.Dbf" VIA ( cDriver() ) SHARED INDEX "FacCliT.Cdx"
+      DATABASE NEW oFacCliP PATH ( cPatEmp() ) FILE "FacCliP.Dbf" VIA ( cDriver() ) SHARED INDEX "FacCliP.Cdx"
 
          if lAIS() .and. !oUser():lAdministrador()
       
@@ -182,11 +206,11 @@ CLASS TDataCenter
                cFilter  += " .and. Field->cCodUsr == '" + oUser():cCodigo() + "'"
             end if 
 
-            ( oFacCliT:cAlias )->( AdsSetAOF( cFilter ) )
+            ( oFacCliP:cAlias )->( AdsSetAOF( cFilter ) )
 
          end if
 
-      Return ( oFacCliT )   
+      Return ( oFacCliP )   
 
    ENDMETHOD
 
@@ -226,6 +250,30 @@ CLASS TDataCenter
 
    //---------------------------------------------------------------------------//
 
+   INLINE METHOD oAlbCliT()
+
+      local cFilter
+      local oAlbCliT
+
+      DATABASE NEW oAlbCliT PATH ( cPatEmp() ) FILE "AlbCliT.Dbf" VIA ( cDriver() ) SHARED INDEX "AlbCliT.Cdx"
+
+         if lAIS() .and. !oUser():lAdministrador()
+      
+            cFilter     := "Field->cSufAlb == '" + oUser():cDelegacion() + "' .and. Field->cCodCaj == '" + oUser():cCaja() + "'"
+            if oUser():lFiltroVentas()         
+               cFilter  += " .and. Field->cCodUsr == '" + oUser():cCodigo() + "'"
+            end if 
+
+            ( oAlbCliT:cAlias )->( AdsSetAOF( cFilter ) )
+
+         end if
+
+      Return ( oAlbCliT )   
+
+   ENDMETHOD
+
+   //---------------------------------------------------------------------------//
+
    INLINE METHOD OpenAlbCliT( dbf )
 
       local lOpen
@@ -255,6 +303,30 @@ CLASS TDataCenter
       end if 
 
       Return ( lOpen )   
+
+   ENDMETHOD
+
+   //---------------------------------------------------------------------------//
+
+   INLINE METHOD oSatCliT()
+
+      local cFilter
+      local oSatCliT
+
+      DATABASE NEW oSatCliT PATH ( cPatEmp() ) FILE "SatCliT.Dbf" VIA ( cDriver() ) SHARED INDEX "SatCliT.Cdx"
+
+         if lAIS() .and. !oUser():lAdministrador()
+      
+            cFilter     := "Field->cSufSat == '" + oUser():cDelegacion() + "' .and. Field->cCodCaj == '" + oUser():cCaja() + "'"
+            if oUser():lFiltroVentas()         
+               cFilter  += " .and. Field->cCodUsr == '" + oUser():cCodigo() + "'"
+            end if 
+
+            ( oSatCliT:cAlias )->( AdsSetAOF( cFilter ) )
+
+         end if
+
+      Return ( oSatCliT )   
 
    ENDMETHOD
 

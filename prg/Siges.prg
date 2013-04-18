@@ -108,7 +108,7 @@ METHOD OpenFiles()
 
    BEGIN SEQUENCE
 
-   DATABASE NEW ::oAlbCliT    FILE "ALBCLIT.DBF"   PATH ( cPatEmp() )  VIA ( cDriver() ) SHARED INDEX  "ALBCLIT.CDX"
+   ::oAlbCliT := TDataCenter():oAlbCliT()
 
    DATABASE NEW ::oAlbCliL    FILE "ALBCLIL.DBF"   PATH ( cPatEmp() )  VIA ( cDriver() ) SHARED INDEX  "ALBCLIL.CDX"
 
