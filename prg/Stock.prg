@@ -11,7 +11,7 @@ CLASS TStock
    DATA lExclusive
 
    DATA cAlm
-   DATA cArt
+   DATA cArticulo
 
    DATA cSatCliT
    DATA cSatCliL
@@ -223,6 +223,8 @@ CLASS TStock
 
    METHOD lValoracionCostoMedio( nTipMov )
 
+   METHOD lAvisarSerieSinStock( cCodigo )    INLINE   ( RetFld( cCodigo, ::cArticulo, "lMsgSer" ) )
+
 END CLASS
 
 //---------------------------------------------------------------------------//
@@ -386,6 +388,7 @@ METHOD lOpenFiles( cPath, lExclusive ) CLASS TStock
       ::cHisMovT        := cCheckArea( "HisMovT" ) 
       ::cHisMovS        := cCheckArea( "HisMovS" ) 
 
+      ::cArticulo       := cCheckArea( "Articulo") 
       ::cKit            := cCheckArea( "Kit"     ) 
 
       ::nDouDiv         := nDouDiv()
@@ -495,6 +498,9 @@ METHOD lOpenFiles( cPath, lExclusive ) CLASS TStock
       USE ( cPatEmp() + "MovSer.Dbf" ) NEW VIA ( cDriver() ) SHARED ALIAS ( ::cHisMovS )
       SET ADSINDEX TO ( cPatEmp() + "MovSer.Cdx" ) ADDITIVE
 
+      USE ( cPatArt() + "Articulo.Dbf" ) NEW VIA ( cDriver() ) SHARED ALIAS ( ::cArticulo ) 
+      SET ADSINDEX TO ( cPatArt() + "Articulo.Cdx" ) ADDITIVE
+
       USE ( cPatArt() + "ArtKit.Dbf" ) NEW VIA ( cDriver() ) SHARED ALIAS ( ::cKit ) 
       SET ADSINDEX TO ( cPatArt() + "ArtKit.Cdx" ) ADDITIVE
 
@@ -544,6 +550,7 @@ METHOD CloseFiles() CLASS TStock
 
    if ( !Empty( ::cAntCliT ), ( ::cAntCliT )->( dbCloseArea() ), )
 
+   if ( !Empty( ::cArticulo), ( ::cArticulo )->( dbCloseArea() ), )
    if ( !Empty( ::cKit ),     ( ::cKit )->( dbCloseArea() ), )
 
    if ( !Empty( ::cPedPrvT ), ( ::cPedPrvT )->( dbCloseArea() ), )
@@ -563,9 +570,8 @@ METHOD CloseFiles() CLASS TStock
    if ( !Empty( ::cProducS ), ( ::cProducS )->( dbCloseArea() ), )   
    if ( !Empty( ::cProducP ), ( ::cProducP )->( dbCloseArea() ), )   
 
-   if ( !Empty( ::cHisMovT ), ( ::cHisMovT)->( dbCloseArea() ), )   
+   if ( !Empty( ::cHisMovT ), ( ::cHisMovT )->( dbCloseArea() ), )   
    if ( !Empty( ::cHisMovS ), ( ::cHisMovS )->( dbCloseArea() ), )   
-
 
 Return ( Self )
 
@@ -3483,8 +3489,8 @@ METHOD nCostoMedio( cCodArt, cCodAlm, cCodPr1, cCodPr2, cValPr1, cValPr2 ) CLASS
    Si el costo medio es 0, devolvemos el costo de la ficha---------------------
    */
 
-   if nCostoMedio == 0 .and. !Empty( ::cArt ) .and. !Empty( ::cKit )
-      nCostoMedio       := nCosto( cCodArt, ::cArt, ::cKit )
+   if nCostoMedio == 0 .and. !Empty( ::cArticulo ) .and. !Empty( ::cKit )
+      nCostoMedio       := nCosto( cCodArt, ::cArticulo, ::cKit )
    end if
 
    /*
@@ -5000,7 +5006,7 @@ METHOD aStockAlmacen( oRemMov ) CLASS TStock
 
    local cCodAlm
    local nOrdAnt
-   local nOrdArt        := ( ::cArt     )->( OrdSetFocus( "Codigo"   ) )
+   local nOrdArt        := ( ::cArticulo     )->( OrdSetFocus( "Codigo"   ) )
    local nOrdAlbPrvL    := ( ::cAlbPrvL )->( OrdSetFocus( "cStkFast" ) )
    local nOrdFacPrvL    := ( ::cFacPrvL )->( OrdSetFocus( "cRef"     ) )
    local nOrdRctPrvL    := ( ::cRctPrvL )->( OrdSetFocus( "cRef"     ) )
@@ -5014,20 +5020,20 @@ METHOD aStockAlmacen( oRemMov ) CLASS TStock
 
    cCodAlm              := oRemMov:oDbf:cAlmDes
 
-   ( ::cArt )->( dbGoTop() )
-   while !( ::cArt )->( eof() )
+   ( ::cArticulo )->( dbGoTop() )
+   while !( ::cArticulo )->( eof() )
 
-   if ( oRemMov:lFamilia      .or. ( ( ::cArt )->Familia >= oRemMov:cFamiliaInicio        .and. ( ::cArt )->Familia <= oRemMov:cFamiliaFin ) )      .and.;
-      ( oRemMov:lTipoArticulo .or. ( ( ::cArt )->cCodTip >= oRemMov:cTipoArticuloInicio   .and. ( ::cArt )->cCodTip <= oRemMov:cTipoArticuloFin ) ) .and.;
-      ( oRemMov:lArticulo     .or. ( ( ::cArt )->Codigo >= oRemMov:cArticuloInicio        .and. ( ::cArt )->Codigo <= oRemMov:cArticuloFin ) )
+   if ( oRemMov:lFamilia      .or. ( ( ::cArticulo )->Familia >= oRemMov:cFamiliaInicio        .and. ( ::cArticulo )->Familia <= oRemMov:cFamiliaFin ) )      .and.;
+      ( oRemMov:lTipoArticulo .or. ( ( ::cArticulo )->cCodTip >= oRemMov:cTipoArticuloInicio   .and. ( ::cArticulo )->cCodTip <= oRemMov:cTipoArticuloFin ) ) .and.;
+      ( oRemMov:lArticulo     .or. ( ( ::cArticulo )->Codigo >= oRemMov:cArticuloInicio        .and. ( ::cArticulo )->Codigo <= oRemMov:cArticuloFin ) )
 
       /*
       Albaranes de proveedor------------------------------------------------------
       */
 
-         if ( ::cAlbPrvL )->( dbSeek( ( ::cArt )->Codigo ) )
+         if ( ::cAlbPrvL )->( dbSeek( ( ::cArticulo )->Codigo ) )
 
-            while ( ::cAlbPrvL )->cRef == ( ::cArt )->Codigo .and. !( ::cAlbPrvL )->( Eof() )
+            while ( ::cAlbPrvL )->cRef == ( ::cArticulo )->Codigo .and. !( ::cAlbPrvL )->( Eof() )
 
                if ( ::cAlbPrvL )->nCtlStk < 2            .and.;
                   ( ::cAlbPrvL )->cAlmLin == cCodAlm
@@ -5057,9 +5063,9 @@ METHOD aStockAlmacen( oRemMov ) CLASS TStock
 
          SysRefresh()
 
-         if ( ::cFacPrvL )->( dbSeek( ( ::cArt )->Codigo ) )
+         if ( ::cFacPrvL )->( dbSeek( ( ::cArticulo )->Codigo ) )
 
-            while ( ::cFacPrvL )->cRef == ( ::cArt )->Codigo .and. !( ::cFacPrvL )->( Eof() )
+            while ( ::cFacPrvL )->cRef == ( ::cArticulo )->Codigo .and. !( ::cFacPrvL )->( Eof() )
 
                if ( ::cFacPrvL )->nCtlStk < 2            .and.;
                   ( ::cFacPrvL )->cAlmLin == cCodAlm
@@ -5089,9 +5095,9 @@ METHOD aStockAlmacen( oRemMov ) CLASS TStock
 
          SysRefresh()
 
-         if ( ::cRctPrvL )->( dbSeek( ( ::cArt )->Codigo ) )
+         if ( ::cRctPrvL )->( dbSeek( ( ::cArticulo )->Codigo ) )
 
-            while ( ::cRctPrvL )->cRef == ( ::cArt )->Codigo .and. !( ::cRctPrvL )->( Eof() )
+            while ( ::cRctPrvL )->cRef == ( ::cArticulo )->Codigo .and. !( ::cRctPrvL )->( Eof() )
 
                if ( ::cRctPrvL )->nCtlStk < 2            .and.;
                   ( ::cRctPrvL )->cAlmLin == cCodAlm
@@ -5121,9 +5127,9 @@ METHOD aStockAlmacen( oRemMov ) CLASS TStock
 
          SysRefresh()
 
-         if ( ::cAlbCliL )->( dbSeek( ( ::cArt )->Codigo ) )
+         if ( ::cAlbCliL )->( dbSeek( ( ::cArticulo )->Codigo ) )
 
-            while ( ::cAlbCliL )->cRef == ( ::cArt )->Codigo .and. !( ::cAlbCliL )->( Eof() )
+            while ( ::cAlbCliL )->cRef == ( ::cArticulo )->Codigo .and. !( ::cAlbCliL )->( Eof() )
 
                if ( ::cAlbCliL )->nCtlStk < 2            .and.;
                   ( ::cAlbCliL )->cAlmLin == cCodAlm
@@ -5153,9 +5159,9 @@ METHOD aStockAlmacen( oRemMov ) CLASS TStock
 
          SysRefresh()
 
-         if ( ::cFacCliL )->( dbSeek( ( ::cArt )->Codigo ) )
+         if ( ::cFacCliL )->( dbSeek( ( ::cArticulo )->Codigo ) )
 
-            while ( ::cFacCliL )->cRef == ( ::cArt )->Codigo .and. !( ::cFacCliL )->( Eof() )
+            while ( ::cFacCliL )->cRef == ( ::cArticulo )->Codigo .and. !( ::cFacCliL )->( Eof() )
 
                if ( ::cFacCliL )->nCtlStk < 2            .and.;
                   ( ::cFacCliL )->cAlmLin == cCodAlm
@@ -5185,9 +5191,9 @@ METHOD aStockAlmacen( oRemMov ) CLASS TStock
 
          SysRefresh()
 
-         if ( ::cFacRecL )->( dbSeek( ( ::cArt )->Codigo ) )
+         if ( ::cFacRecL )->( dbSeek( ( ::cArticulo )->Codigo ) )
 
-            while ( ::cFacRecL )->cRef == ( ::cArt )->Codigo .and. !( ::cFacRecL )->( Eof() )
+            while ( ::cFacRecL )->cRef == ( ::cArticulo )->Codigo .and. !( ::cFacRecL )->( Eof() )
 
                if ( ::cFacRecL )->nCtlStk < 2            .and.;
                   ( ::cFacRecL )->cAlmLin == cCodAlm
@@ -5217,9 +5223,9 @@ METHOD aStockAlmacen( oRemMov ) CLASS TStock
 
          SysRefresh()
 
-         if ( ::cTikL )->( dbSeek( ( ::cArt )->Codigo ) )
+         if ( ::cTikL )->( dbSeek( ( ::cArticulo )->Codigo ) )
 
-            while ( ::cTikL )->cCbaTil == ( ::cArt )->Codigo .and. !( ::cTikL )->( Eof() )
+            while ( ::cTikL )->cCbaTil == ( ::cArticulo )->Codigo .and. !( ::cTikL )->( Eof() )
 
                if ( ::cTikL )->nCtlStk < 2            .and.;
                   ( ::cTikL )->cAlmLin == cCodAlm
@@ -5270,11 +5276,11 @@ METHOD aStockAlmacen( oRemMov ) CLASS TStock
 
          nOrdAnt              := ( ::cTikL )->( OrdSetFocus( "CSTKCOM" ) )
 
-         if ( ::cTikL )->( dbSeek( ( ::cArt )->Codigo ) )
+         if ( ::cTikL )->( dbSeek( ( ::cArticulo )->Codigo ) )
 
             if !Empty( ( ::cTikL )->cComTil )
 
-               while ( ::cTikL )->cComTil == ( ::cArt )->Codigo .and. !( ::cTikL )->( Eof() )
+               while ( ::cTikL )->cComTil == ( ::cArticulo )->Codigo .and. !( ::cTikL )->( Eof() )
 
                   if ( ::cTikL )->nCtlStk < 2            .and.;
                      ( ::cTikL )->cAlmLim == cCodAlm
@@ -5308,9 +5314,9 @@ METHOD aStockAlmacen( oRemMov ) CLASS TStock
 
          SysRefresh()
 
-         if ( ::cProducL )->( dbSeek( ( ::cArt )->Codigo ) )
+         if ( ::cProducL )->( dbSeek( ( ::cArticulo )->Codigo ) )
 
-            while ( ::cProducL )->cCodArt == ( ::cArt )->Codigo .and. !( ::cProducL )->( Eof() )
+            while ( ::cProducL )->cCodArt == ( ::cArticulo )->Codigo .and. !( ::cProducL )->( Eof() )
 
                if ( ::cProducL )->cAlmOrd == cCodAlm
 
@@ -5339,9 +5345,9 @@ METHOD aStockAlmacen( oRemMov ) CLASS TStock
 
          SysRefresh()
 
-         if ( ::cProducM )->( dbSeek( ( ::cArt )->Codigo ) )
+         if ( ::cProducM )->( dbSeek( ( ::cArticulo )->Codigo ) )
 
-            while ( ::cProducM )->cCodArt == ( ::cArt )->Codigo .and. !( ::cProducM )->( Eof() )
+            while ( ::cProducM )->cCodArt == ( ::cArticulo )->Codigo .and. !( ::cProducM )->( Eof() )
 
                if ( ::cProducM )->cAlmOrd == cCodAlm
 
@@ -5370,9 +5376,9 @@ METHOD aStockAlmacen( oRemMov ) CLASS TStock
 
          SysRefresh()
 
-         if ( ::cHisMovT)->( dbSeek( ( ::cArt )->Codigo ) )
+         if ( ::cHisMovT)->( dbSeek( ( ::cArticulo )->Codigo ) )
 
-            while ( ::cHisMovT)->cRefMov == ( ::cArt )->Codigo .and. !( ::cHisMovT)->( Eof() )
+            while ( ::cHisMovT)->cRefMov == ( ::cArticulo )->Codigo .and. !( ::cHisMovT)->( Eof() )
 
                if !Empty( ( ::cHisMovT)->cAliMov ) .and. ( ::cHisMovT)->cAliMov == cCodAlm
 
@@ -5412,7 +5418,7 @@ METHOD aStockAlmacen( oRemMov ) CLASS TStock
 
       end if
 
-      ( ::cArt )->( dbSkip() )
+      ( ::cArticulo )->( dbSkip() )
 
       oRemMov:oMtrStock:AutoInc()
 
@@ -5422,7 +5428,7 @@ METHOD aStockAlmacen( oRemMov ) CLASS TStock
    Comprobamos la marca de la empresa para no mostrar los valores cero --------
    */
 
-   ( ::cArt     )->( OrdSetFocus( nOrdArt     ) )
+   ( ::cArticulo     )->( OrdSetFocus( nOrdArt     ) )
    ( ::cAlbPrvL )->( OrdSetFocus( nOrdAlbPrvL ) )
    ( ::cFacPrvL )->( OrdSetFocus( nOrdFacPrvL ) )
    ( ::cRctPrvL )->( OrdSetFocus( nOrdRctPrvL ) )

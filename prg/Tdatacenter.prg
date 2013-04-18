@@ -308,6 +308,64 @@ CLASS TDataCenter
 
    //---------------------------------------------------------------------------//
 
+   INLINE METHOD oPedCliT()
+
+      local cFilter
+      local oPedCliT
+
+      DATABASE NEW oPedCliT PATH ( cPatEmp() ) FILE "PedCliT.Dbf" VIA ( cDriver() ) SHARED INDEX "PedCliT.Cdx"
+
+         if lAIS() .and. !oUser():lAdministrador()
+      
+            cFilter     := "Field->cSufPed == '" + oUser():cDelegacion() + "' .and. Field->cCodCaj == '" + oUser():cCaja() + "'"
+            if oUser():lFiltroVentas()         
+               cFilter  += " .and. Field->cCodUsr == '" + oUser():cCodigo() + "'"
+            end if 
+
+            ( oPedCliT:cAlias )->( AdsSetAOF( cFilter ) )
+
+         end if
+
+      Return ( oPedCliT )   
+
+   ENDMETHOD
+
+   //---------------------------------------------------------------------------//
+
+   INLINE METHOD OpenPedCliT( dbf )
+
+      local lOpen
+      local cFilter
+
+      USE ( cPatEmp() + "PedCliT.Dbf" ) NEW VIA ( cDriver() ) SHARED ALIAS ( cCheckArea( "PedCliT", @dbf ) )
+      SET ADSINDEX TO ( cPatEmp() + "PedCliT.Cdx" ) ADDITIVE
+
+      lOpen             := !neterr()
+      if lOpen
+
+         /*
+         Limitaciones de cajero y cajas----------------------------------------
+         */
+
+         if lAIS() .and. !oUser():lAdministrador()
+      
+            cFilter     := "Field->cSufPed == '" + oUser():cDelegacion() + "' .and. Field->cCodCaj == '" + oUser():cCaja() + "'"
+            if oUser():lFiltroVentas()         
+               cFilter  += " .and. Field->cCodUsr == '" + oUser():cCodigo() + "'"
+            end if 
+
+            ( dbf )->( AdsSetAOF( cFilter ) )
+
+         end if
+
+      end if 
+
+      Return ( lOpen )   
+
+   ENDMETHOD
+
+   //---------------------------------------------------------------------------//
+
    INLINE METHOD oSatCliT()
 
       local cFilter
