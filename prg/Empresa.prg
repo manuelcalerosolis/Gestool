@@ -5733,7 +5733,7 @@ Function ChkAllEmp( lForced )
       if !File( FullCurDir() + "ChkEmp.nil" )
 
          if ( nHandle := fCreate( FullCurDir() + "ChkEmp.nil", 0 ) ) == -1
-            MsgAlert( "No puedo crear el fichero, error " + fError() )
+            MsgStop( "No puedo crear el fichero, " + FullCurDir() + "ChkEmp.nil", "Error " + cValToChar( fError() ) )
          else
             fClose( nHandle )
          end if
@@ -5743,7 +5743,7 @@ Function ChkAllEmp( lForced )
       nHandle        := fOpen( FullCurDir() + "ChkEmp.nil", 2 )
 
       if fError() != 0
-         MsgAlert( "No puedo abrir el fichero, error " + fError() )
+         MsgAlert( "No puedo abrir el fichero, " + FullCurDir() + "ChkEmp.nil", "Error " + cValToChar( fError() ) )
       else
          fWrite( nHandle, Dtos( Date() ) )
       end if
