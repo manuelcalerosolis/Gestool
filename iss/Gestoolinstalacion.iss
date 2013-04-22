@@ -94,6 +94,8 @@ Name: "{app}\Datos";    Permissions: users-modify
 Name: "{app}\Psion";    Permissions: users-modify
 Name: "{app}\Include";  Permissions: users-modify
 Name: "{app}\Client";   Permissions: users-modify
+Name: "{app}\Backup";   Permissions: users-modify
+
 
 [Tasks]
 ; Name: "desktopicon"; Description: "&Crear acceso directo en escritorio"; GroupDescription: "Iconos adicionales:"; MinVersion: 4,4
@@ -240,4 +242,3 @@ begin
     PostMessage(WizardForm.Handle, WM_KEYUP, VK_RETURN, 0);
   
 end;
-

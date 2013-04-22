@@ -193,9 +193,6 @@ Static Function OpenFiles()
    Documentos relacionados de ventas
    */
 
-   USE ( cPatEmp() + "PRECLIT.DBF" ) NEW VIA ( cDriver() ) SHARED ALIAS ( cCheckArea( "PRECLIT", @dbfPreCliT ) )
-   SET ADSINDEX TO ( cPatEmp() + "PRECLIT.CDX" ) ADDITIVE
-
    USE ( cPatEmp() + "PRECLIL.DBF" ) NEW VIA ( cDriver() ) SHARED ALIAS ( cCheckArea( "PRECLIL", @dbfPreCliL ) )
    SET ADSINDEX TO ( cPatEmp() + "PRECLIL.CDX" ) ADDITIVE
    SET TAG TO "CREF"
@@ -263,7 +260,11 @@ Static Function OpenFiles()
      lOpenFiles      := .f.
    end if
 
-   if !TDataCenter():OpenPedCli( @dbfPedCliT )
+   if !TDataCenter():OpenPreCliT( @dbfPreCliT )
+      lOpenFiles     := .f.
+   end if 
+
+   if !TDataCenter():OpenPedCliT( @dbfPedCliT )
       lOpenFiles     := .f.
    end if 
 
@@ -1157,7 +1158,7 @@ Static Function InitBrwVtaCli( cCodArt, oTree, dbfDiv, dbfArticulo, oBrwStk, oBr
             MENUITEM "&6. Añadir albarán de cliente";
             MESSAGE  "Añade un albarán de cliente" ;
             RESOURCE "Document_plain_user1_16";
-            ACTION   ( AppAlbCli( "", cCodArt, .f. ), LoadDatos( cCodArt, nYear, oDlg, oBrwStk, oBrwTmp, oGraph, oBrwCom, oBrwVta ) )
+            ACTION   ( AppAlbCli( { "Artículo" => cCodArt }, .f. ), LoadDatos( cCodArt, nYear, oDlg, oBrwStk, oBrwTmp, oGraph, oBrwCom, oBrwVta ) )
 
             MENUITEM "&7. Añadir factura de cliente";
             MESSAGE  "Añade una factura de cliente" ;

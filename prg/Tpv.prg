@@ -1,5 +1,5 @@
 #ifndef __PDA__
-   #include "FiveWin.Ch"
+   #include "FiveWin.Ch" 
    #include "WebCtl.ch"
    #include "Report.ch"
    #include "Xbrowse.ch"
@@ -679,8 +679,9 @@ STATIC FUNCTION OpenFiles( cPatEmp, lExt, lTactil )
       USE ( cPatEmp() + "PEDCLIP.DBF" ) NEW VIA ( cDriver() ) SHARED ALIAS ( cCheckArea( "PEDCLIP", @dbfPedCliP ) )
       SET ADSINDEX TO ( cPatEmp() + "PEDCLIP.CDX" ) ADDITIVE
 
-      USE ( cPatEmp() + "PRECLIT.DBF" ) NEW VIA ( cDriver() ) SHARED ALIAS ( cCheckArea( "PRECLIT", @dbfPreCliT ) )
-      SET ADSINDEX TO ( cPatEmp() + "PRECLIT.CDX" ) ADDITIVE
+      if !TDataCenter():OpenPreCliT( @dbfPreCliT ) 
+         lOpenFiles     := .f.
+      end if 
 
       USE ( cPatEmp() + "PRECLIL.DBF" ) NEW VIA ( cDriver() ) SHARED ALIAS ( cCheckArea( "PRECLIL", @dbfPreCliL ) )
       SET ADSINDEX TO ( cPatEmp() + "PRECLIL.CDX" ) ADDITIVE
@@ -743,7 +744,7 @@ STATIC FUNCTION OpenFiles( cPatEmp, lExt, lTactil )
       USE ( cPatArt() + "Temporadas.Dbf" ) NEW VIA ( cDriver() ) SHARED ALIAS ( cCheckArea( "Temporada", @dbfTemporada ) )
       SET ADSINDEX TO ( cPatArt() + "Temporadas.Cdx" ) ADDITIVE
 
-      if TDataCenter():OpenPedCli( @dbfPedCliT )
+      if !TDataCenter():OpenPedCliT( @dbfPedCliT )
          lOpenFiles        := .f.
       end if 
 
@@ -17596,6 +17597,9 @@ Function SynTikCli( cPath )
    Cabeceras-------------------------------------------------------------------
    */
 
+   ( dbfTikT )->( OrdSetFocus( 0 ) )
+   ( dbfTikT )->( dbGoTop() )
+
    while !( dbfTikT )->( eof() )
 
       if Empty( ( dbfTikT )->cSufTik )
@@ -17608,7 +17612,6 @@ Function SynTikCli( cPath )
 
       /*
       Rellenamos los campos de totales-----------------------------------------
-      */
 
       do case
          case ( dbfTikT )->cTipTik == SAVALB
@@ -17663,6 +17666,7 @@ Function SynTikCli( cPath )
             end if
 
       end case
+      */
 
       ( dbfTikT )->( dbSkip() )
 
@@ -17670,9 +17674,14 @@ Function SynTikCli( cPath )
 
    end while
 
+   ( dbfTikT )->( OrdSetFocus( 1 ) )
+
    /*
    Pagos-------------------------------------------------------------------
    */
+
+   ( dbfTikP )->( OrdSetFocus( 0 ) )
+   ( dbfTikP )->( dbGoTop() )
 
    while !( dbfTikP )->( eof() )
 
@@ -17690,9 +17699,14 @@ Function SynTikCli( cPath )
 
    end while
 
+   ( dbfTikT )->( OrdSetFocus( 1 ) )
+
    /*
    Lineas-------------------------------------------------------------------
    */
+
+   ( dbfTikL )->( OrdSetFocus( 1 ) )
+   ( dbfTikL )->( dbGoTop() )
 
    while !( dbfTikL )->( eof() )
 
@@ -17730,7 +17744,12 @@ Function SynTikCli( cPath )
 
    end while
 
+   ( dbfTikL )->( OrdSetFocus( 1 ) )
+
    // Series ------------------------------------------------------------------
+
+   ( dbfTikS )->( OrdSetFocus( 0 ) )
+   ( dbfTikS )->( dbGoTop() )
 
    while !( dbfTikS )->( eof() )
 
@@ -17747,6 +17766,8 @@ Function SynTikCli( cPath )
       SysRefresh()
 
    end while
+
+   ( dbfTikS )->( OrdSetFocus( 1 ) )
 
    RECOVER USING oError
 

@@ -117,18 +117,8 @@ Static Function OpenFiles( lMessage )
       Documentos relacionados de ventas
       */
 
-      USE ( cPatEmp() + "PRECLIT.DBF" ) NEW VIA ( cDriver() ) SHARED ALIAS ( cCheckArea( "PRECLIT", @dbfPreCliT ) )
-      SET ADSINDEX TO ( cPatEmp() + "PRECLIT.CDX" ) ADDITIVE
-      SET TAG TO "CCODCLI"
-
       USE ( cPatEmp() + "PRECLIL.DBF" ) NEW VIA ( cDriver() ) SHARED ALIAS ( cCheckArea( "PRECLIL", @dbfPreCliL ) )
       SET ADSINDEX TO ( cPatEmp() + "PRECLIL.CDX" ) ADDITIVE
-
-      if !TDataCenter():OpenPedCliT( @dbfPedCliT )
-         lOpenFiles     := .f.
-      else 
-         ( dbfPedCliT )->( OrdSetFocus( "cCodCli" ) )
-      end if 
 
       USE ( cPatEmp() + "PEDCLIL.DBF" ) NEW VIA ( cDriver() ) SHARED ALIAS ( cCheckArea( "PEDCLIL", @dbfPedCliL ) )
       SET ADSINDEX TO ( cPatEmp() + "PEDCLIL.CDX" ) ADDITIVE
@@ -140,12 +130,6 @@ Static Function OpenFiles( lMessage )
       SET ADSINDEX TO ( cPatEmp() + "PEDCLIP.CDX" ) ADDITIVE
       SET TAG TO "CCODCLI"
 
-      if !TDataCenter():OpenAlbCliT( @dbfAlbCliT )
-         lOpenFiles     := .f.
-      else 
-         ( dbfAlbCliT )->( OrdSetFocus( "cCodCli" ) )
-      end if
-
       USE ( cPatEmp() + "ALBCLIL.DBF" ) NEW VIA ( cDriver() ) SHARED ALIAS ( cCheckArea( "ALBCLIL", @dbfAlbCliL ) )
       SET ADSINDEX TO ( cPatEmp() + "ALBCLIL.CDX" ) ADDITIVE
 
@@ -155,10 +139,6 @@ Static Function OpenFiles( lMessage )
 
       USE ( cPatEmp() + "FACCLIL.DBF" ) NEW VIA ( cDriver() ) SHARED ALIAS ( cCheckArea( "FACCLIL", @dbfFacCliL ) )
       SET ADSINDEX TO ( cPatEmp() + "FACCLIL.CDX" ) ADDITIVE
-
-      if !TDataCenter():OpenFacCliP( @dbfFacCliP )
-         lOpenFiles     := .f.
-      end if
 
       USE ( cPatEmp() + "FACRECT.DBF" ) NEW VIA ( cDriver() ) SHARED ALIAS ( cCheckArea( "FACRECT", @dbfFacRecT ) )
       SET ADSINDEX TO ( cPatEmp() + "FACRECT.CDX" ) ADDITIVE
@@ -185,10 +165,32 @@ Static Function OpenFiles( lMessage )
       USE ( cPatGrp() + "FPAGO.DBF" ) NEW VIA ( cDriver() ) SHARED ALIAS ( cCheckArea( "FPAGO", @dbfFPago ) )
       SET ADSINDEX TO ( cPatGrp() + "FPAGO.CDX" ) ADDITIVE
 
+      if !TDataCenter():OpenPreCliT( @dbfPreCliT )
+         lOpenFiles     := .f.
+      else
+         ( dbfPreCliT )->( ordSetFocus( "cCodCli" ) )
+      end if 
+
+      if !TDataCenter():OpenPedCliT( @dbfPedCliT )
+         lOpenFiles     := .f.
+      else 
+         ( dbfPedCliT )->( OrdSetFocus( "cCodCli" ) )
+      end if 
+
+      if !TDataCenter():OpenAlbCliT( @dbfAlbCliT )
+         lOpenFiles     := .f.
+      else 
+         ( dbfAlbCliT )->( OrdSetFocus( "cCodCli" ) )
+      end if
+
       if !TDataCenter():OpenFacCliT( @dbfFacCliT )
          lOpenFiles     := .f.
       else 
          ( dbfFacCliT )->( OrdSetFocus( "cCodCli" ) )
+      end if
+
+      if !TDataCenter():OpenFacCliP( @dbfFacCliP )
+         lOpenFiles     := .f.
       end if
 
       oDbfTmp           := DefineTemporal()
@@ -750,7 +752,7 @@ Static Function InitBrwVtaCli( cCodCli, oBrwTmp, oTree, oDlg )
          MENUITEM "&3. Añadir albarán de cliente";
             MESSAGE  "Añade un albarán de cliente" ;
             RESOURCE "Document_plain_user1_16";
-            ACTION   ( AppAlbCli( cCodCli ) )
+            ACTION   ( AppAlbCli( { "Cliente" => cCodCli } ) )
 
          MENUITEM "&4. Añadir factura de cliente";
             MESSAGE  "Añade una factura de cliente" ;

@@ -931,8 +931,9 @@ STATIC FUNCTION OpenFiles( lExt )
       USE ( cPatEmp() + "PEDCLIR.DBF" ) NEW VIA ( cDriver() ) SHARED ALIAS ( cCheckArea( "PEDCLIR", @dbfPedCliR ) )
       SET ADSINDEX TO ( cPatEmp() + "PEDCLIR.CDX" ) ADDITIVE
 
-      USE ( cPatEmp() + "PRECLIT.DBF" ) NEW VIA ( cDriver() ) SHARED ALIAS ( cCheckArea( "PRECLIT", @dbfPreCliT ) )
-      SET ADSINDEX TO ( cPatEmp() + "PRECLIT.CDX" ) ADDITIVE
+      if !TDataCenter():OpenPreCliT( @dbfPreCliT )
+         lOpenFiles     := .f.
+      end if 
 
       USE ( cPatEmp() + "PRECLIL.DBF" ) NEW VIA ( cDriver() ) SHARED ALIAS ( cCheckArea( "PRECLIL", @dbfPreCliL ) )
       SET ADSINDEX TO ( cPatEmp() + "PRECLIL.CDX" ) ADDITIVE
@@ -12001,6 +12002,7 @@ function SynFacCli( cPath )
 
    local oBlock
    local oError
+   local nOrdAnt
    local cCodFam
    local aTotFac
    local cCodTip
@@ -12062,6 +12064,11 @@ function SynFacCli( cPath )
          lOpenFiles        := .f.
       end if
 
+      // Cabeceras ------------------------------------------------------------
+
+      ( dbfFacCliT )->( OrdSetFocus( 0 ) )
+      ( dbfFacCliT )->( dbGoTop() )
+
       while !( dbfFacCliT )->( eof() )
 
          if Empty( ( dbfFacCliT )->cSufFac )
@@ -12076,24 +12083,6 @@ function SynFacCli( cPath )
             ( dbfFacCliT )->cNomCli := RetFld( ( dbfFacCliT )->cCodCli, dbfClient, "Titulo" )
          end if
 
-         /*
-         Rellenamos los campos de totales-----------------------------------------
-         */
-
-         aTotFac           := aTotFacCli( ( dbfFacCliT )->cSerie + Str( ( dbfFacCliT )->nNumFac ) + ( dbfFacCliT )->cSufFac, dbfFacCliT, dbfFacCliL, dbfIva, dbfDiv, dbfFacCliP, dbfAntCliT, ( dbfFacCliT )->cDivFac )
-
-         if ( dbfFacCliT )->nTotFac == 0
-            ( dbfFacCliT )->nTotNet := aTotFac[1]
-            ( dbfFacCliT )->nTotIva := aTotFac[2]
-            ( dbfFacCliT )->nTotReq := aTotFac[3]
-            ( dbfFacCliT )->nTotFac := aTotFac[4]
-         end if
-
-         if ( dbfFacCliT )->nTotLiq == 0
-            ( dbfFacCliT )->nTotLiq := aTotFac[13]
-            ( dbfFacCliT )->nTotPdt := aTotFac[4] - aTotFac[13]
-         end if
-
          if !Empty( ( dbfFacCliT )->cNumPed )
             aAdd( aNumPed, ( dbfFacCliT )->cNumPed )
          end if
@@ -12102,9 +12091,13 @@ function SynFacCli( cPath )
 
       end while
 
+      ( dbfFacCliT )->( OrdSetFocus( 1 ) )
+
       // Pagos ----------------------------------------------------------------
 
+      ( dbfFacCliP )->( OrdSetFocus( 0 ) )
       ( dbfFacCliP )->( dbGoTop() )
+
       while !( dbfFacCliP )->( eof() )
 
          if Empty( ( dbfFacCliP )->cSufFac )
@@ -12119,23 +12112,27 @@ function SynFacCli( cPath )
 
       end while
 
+      ( dbfFacCliP )->( OrdSetFocus( 1 ) )
+
       // Lineas ---------------------------------------------------------------
 
+      ( dbfFacCliL )->( OrdSetFocus( 0 ) )
       ( dbfFacCliL )->( dbGoTop() )
+
       while !( dbfFacCliL )->( eof() )
 
          if Empty( ( dbfFacCliL )->cSufFac )
             ( dbfFacCliL )->cSufFac    := "00"
          end if
 
-         if Empty( ( dbfFacCliL )->nValImp )
+         if !Empty( ( dbfFacCliL )->cRef ) .and. Empty( ( dbfFacCliL )->nValImp )
             cCodImp                    := RetFld( ( dbfFacCliL )->cRef, dbfArticulo, "cCodImp" )
             if !Empty( cCodImp )
                ( dbfFacCliL )->nValImp := oNewImp:nValImp( cCodImp )
             end if
          end if
 
-         if Empty( ( dbfFacCliL )->nVolumen )
+         if !Empty( ( dbfFacCliL )->cRef ) .and. Empty( ( dbfFacCliL )->nVolumen )
             ( dbfFacCliL )->nVolumen   := RetFld( ( dbfFacCliL )->cRef, dbfArticulo, "nVolumen" )
          end if
 
@@ -12201,9 +12198,13 @@ function SynFacCli( cPath )
 
       end while
 
+      ( dbfFacCliL )->( OrdSetFocus( 1 ) )
+
       // Incidencias ----------------------------------------------------------
 
+      ( dbfFacCliI )->( OrdSetFocus( 0 ) )
       ( dbfFacCliI )->( dbGoTop() )
+
       while !( dbfFacCliI )->( eof() )
 
          if Empty( ( dbfFacCliI )->cSufFac )
@@ -12216,9 +12217,13 @@ function SynFacCli( cPath )
 
       end while
 
+      ( dbfFacCliI )->( OrdSetFocus( 1 ) )
+
       // Series ---------------------------------------------------------------
 
+      ( dbfFacCliS )->( OrdSetFocus( 0 ) )
       ( dbfFacCliS )->( dbGoTop() )
+
       while !( dbfFacCliS )->( eof() )
 
          if Empty( ( dbfFacCliS )->cSufFac )
@@ -12235,8 +12240,36 @@ function SynFacCli( cPath )
 
       end while
 
-      // Purgamos los datos----------------------------------------------------
+      ( dbfFacCliS )->( OrdSetFocus( 1 ) )
 
+      /*
+      Rellenamos los campos de totales-----------------------------------------
+
+      ( dbfFacCliT )->( dbGoTop() )
+      while !( dbfFacCliT )->( eof() )
+
+
+         aTotFac           := aTotFacCli( ( dbfFacCliT )->cSerie + Str( ( dbfFacCliT )->nNumFac ) + ( dbfFacCliT )->cSufFac, dbfFacCliT, dbfFacCliL, dbfIva, dbfDiv, dbfFacCliP, dbfAntCliT, ( dbfFacCliT )->cDivFac )
+
+         if ( dbfFacCliT )->nTotFac == 0
+            ( dbfFacCliT )->nTotNet := aTotFac[1]
+            ( dbfFacCliT )->nTotIva := aTotFac[2]
+            ( dbfFacCliT )->nTotReq := aTotFac[3]
+            ( dbfFacCliT )->nTotFac := aTotFac[4]
+         end if
+
+         if ( dbfFacCliT )->nTotLiq == 0
+            ( dbfFacCliT )->nTotLiq := aTotFac[13]
+            ( dbfFacCliT )->nTotPdt := aTotFac[4] - aTotFac[13]
+         end if
+
+         ( dbfFacCliT )->( dbSkip() )
+
+      end while
+      */
+
+      // Purgamos los datos----------------------------------------------------
+      
       ( dbfFacCliL )->( dbGoTop() )
       while !( dbfFacCliL )->( eof() )
 
@@ -12273,7 +12306,7 @@ function SynFacCli( cPath )
          SysRefresh()
 
       end while
-
+      
    RECOVER USING oError
 
       msgStop( "Imposible abrir todas las bases de datos de facturas de clientes." + CRLF + ErrorMessage( oError ) )

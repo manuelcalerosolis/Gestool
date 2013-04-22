@@ -613,7 +613,7 @@ FUNCTION GenPedCli( nDevice, cCaption, cCodDoc, cPrinter, nCopies )
 
          if nDevice == IS_PRINTER
             oInf:oDevice:end()
-         end if
+         end if 
 
       end if
 
@@ -699,9 +699,6 @@ STATIC FUNCTION OpenFiles( lExt )
 
       USE ( cPatEmp() + "PEDPROVL.DBF" ) NEW VIA ( cDriver() ) SHARED ALIAS ( cCheckArea( "PEDPROVL", @dbfPedPrvL ) )
       SET ADSINDEX TO ( cPatEmp() + "PEDPROVL.CDX" ) ADDITIVE
-
-      USE ( cPatEmp() + "PRECLIT.DBF" ) NEW VIA ( cDriver() ) SHARED ALIAS ( cCheckArea( "PRECLIT", @dbfPreCliT ) )
-      SET ADSINDEX TO ( cPatEmp() + "PRECLIT.CDX" ) ADDITIVE
 
       USE ( cPatEmp() + "PRECLIL.DBF" ) NEW VIA ( cDriver() ) SHARED ALIAS ( cCheckArea( "PRECLIL", @dbfPreCliL ) )
       SET ADSINDEX TO ( cPatEmp() + "PRECLIL.CDX" ) ADDITIVE
@@ -876,6 +873,10 @@ STATIC FUNCTION OpenFiles( lExt )
 
       USE ( cPatCli() + "CliBnc.Dbf" ) NEW VIA ( cDriver() ) SHARED ALIAS ( cCheckArea( "CLIBNC", @dbfCliBnc ) )
       SET ADSINDEX TO ( cPatCli() + "CliBnc.Cdx" ) ADDITIVE
+
+   	if !TDataCenter():OpenPreCliT( @dbfPreCliT )
+		lOpenFiles     := .f.
+	end if 
 
     if !TDataCenter():OpenPedCliT( @dbfPedCliT )
         lOpenFiles     := .f.
@@ -7111,31 +7112,62 @@ Return ( .t. )
 
 Function SynPedCli( cPath )
 
+   local oError
+   local oBlock
+   local nOrdAnt
    local aTotPed
 
-   DEFAULT cPath  := cPatEmp()
+   oBlock               := ErrorBlock( {| oError | ApoloBreak( oError ) } )
+   BEGIN SEQUENCE
 
-   if OpenFiles()
+    USE ( cPatEmp() + "PedCliT.DBF" ) NEW VIA ( cDriver() ) EXCLUSIVE ALIAS ( cCheckArea( "PedCliT", @dbfPedCliT ) )
+    SET ADSINDEX TO ( cPatEmp() + "PedCliT.CDX" ) ADDITIVE
 
-      while !( dbfPedCliT )->( eof() )
+    USE ( cPatEmp() + "PEDCLIL.DBF" ) NEW VIA ( cDriver() ) EXCLUSIVE ALIAS ( cCheckArea( "PEDCLIL", @dbfPedCliL ) )
+    SET ADSINDEX TO ( cPatEmp() + "PEDCLIL.CDX" ) ADDITIVE
+
+    USE ( cPatEmp() + "PEDCLIR.DBF" ) NEW VIA ( cDriver() ) EXCLUSIVE ALIAS ( cCheckArea( "PEDCLIR", @dbfPedCliR ) )
+    SET ADSINDEX TO ( cPatEmp() + "PEDCLIR.CDX" ) ADDITIVE
+
+    USE ( cPatEmp() + "PEDCLII.DBF" ) NEW VIA ( cDriver() ) EXCLUSIVE ALIAS ( cCheckArea( "PEDCLII", @dbfPedCliI ) )
+    SET ADSINDEX TO ( cPatEmp() + "PEDCLII.CDX" ) ADDITIVE
+
+    USE ( cPatEmp() + "PEDCLID.DBF" ) NEW VIA ( cDriver() ) EXCLUSIVE ALIAS ( cCheckArea( "PEDCLID", @dbfPedCliD ) )
+    SET ADSINDEX TO ( cPatEmp() + "PEDCLID.CDX" ) ADDITIVE
+
+    USE ( cPatEmp() + "PEDCLIP.DBF" ) NEW VIA ( cDriver() ) EXCLUSIVE ALIAS ( cCheckArea( "PEDCLIP", @dbfPedCliP ) )
+    SET ADSINDEX TO ( cPatEmp() + "PEDCLIP.CDX" ) ADDITIVE
+
+   USE ( cPatArt() + "ARTICULO.DBF" )  NEW VIA ( cDriver() ) ALIAS ( cCheckArea( "ARTICULO", @dbfArticulo ) ) EXCLUSIVE
+   SET ADSINDEX TO ( cPatArt() + "ARTICULO.CDX" ) ADDITIVE
+
+   USE ( cPatArt() + "FAMILIAS.DBF" )  NEW VIA ( cDriver() ) ALIAS ( cCheckArea( "FAMILIAS", @dbfFamilia ) ) EXCLUSIVE
+   SET ADSINDEX TO ( cPatArt() + "FAMILIAS.CDX" ) ADDITIVE
+
+   USE ( cPatGrp() + "FPAGO.DBF" )     NEW VIA ( cDriver() ) ALIAS ( cCheckArea( "FPAGO", @dbfFPago ) ) EXCLUSIVE
+   SET ADSINDEX TO ( cPatGrp() + "FPAGO.CDX" ) ADDITIVE
+
+   USE ( cPatDat() + "TIVA.DBF" )      NEW VIA ( cDriver() ) ALIAS ( cCheckArea( "TIVA", @dbfIva ) ) SHARED
+   SET ADSINDEX TO ( cPatDat() + "TIVA.CDX" ) ADDITIVE
+
+   USE ( cPatDat() + "DIVISAS.DBF" )   NEW VIA ( cDriver() ) ALIAS ( cCheckArea( "DIVISAS", @dbfDiv ) ) SHARED
+   SET ADSINDEX TO ( cPatDat() + "DIVISAS.CDX" ) ADDITIVE
+
+   	( dbfPedCliT )->( ordSetFocus( 0 ) )
+   	( dbfPedCliT )->( dbGoTop() )
+    
+    while !( dbfPedCliT )->( eof() )
 
          if Empty( ( dbfPedCliT )->cSufPed )
-            if dbLock( dbfPedCliT )
                ( dbfPedCliT )->cSufPed := "00"
-               ( dbfPedCliT )->( dbUnLock() )
-            end if
          end if
 
          if Empty( ( dbfPedCliT )->cCodCaj )
-            if dbLock( dbfPedCliT )
                ( dbfPedCliT )->cCodCaj := "000"
-               ( dbfPedCliT )->( dbUnLock() )
-            end if
          end if
 
          /*
          Rellenamos los campos de totales--------------------------------------
-         */
 
          if ( dbfPedCliT )->nTotPed == 0 .and. dbLock( dbfPedCliT )
 
@@ -7149,85 +7181,93 @@ Function SynPedCli( cPath )
             ( dbfPedCliT )->( dbUnLock() )
 
          end if
+         */
 
          ( dbfPedCliT )->( dbSkip() )
 
       end while
 
-      // Lineas ---------------------------------------------------------------
+   	( dbfPedCliT )->( ordSetFocus( 1 ) )
 
-      while !( dbfPedCliL )->( eof() )
+    // Lineas -----------------------------------------------------------------
+
+   	( dbfPedCliL )->( ordSetFocus( 0 ) )
+   	( dbfPedCliL )->( dbGoTop() )
+
+    while !( dbfPedCliL )->( eof() )
 
         if Empty( ( dbfPedCliL )->cSufPed )
-           if dbLock( dbfPedCliL )
               ( dbfPedCliL )->cSufPed := "00"
-              ( dbfPedCliL )->( dbUnLock() )
-           end if
         end if
 
         if Empty( ( dbfPedCliL )->cLote ) .and. !Empty( ( dbfPedCliL )->nLote )
-           if dbLock( dbfPedCliL )
               ( dbfPedCliL )->cLote   := AllTrim( Str( ( dbfPedCliL )->nLote ) )
-              ( dbfPedCliL )->( dbUnLock() )
-           end if
         end if
 
         if ( dbfPedCliL )->lIvaLin != RetFld( ( dbfPedCliI )->cSerPed + Str( ( dbfPedCliI )->nNumPed ) + ( dbfPedCliI )->cSufPed, dbfPedCliT, "lIvaInc" )
-           if dbLock( dbfPedCliL )
               ( dbfPedCliL )->lIvaLin := RetFld( ( dbfPedCliI )->cSerPed + Str( ( dbfPedCliI )->nNumPed ) + ( dbfPedCliI )->cSufPed, dbfPedCliT, "lIvaInc" )
-              ( dbfPedCliL )->( dbUnLock() )
-           end if
         end if
 
         if !Empty( ( dbfPedCliL )->cRef ) .and. Empty( ( dbfPedCliL )->cCodFam )
-           if dbLock( dbfPedCliL )
               ( dbfPedCliL )->cCodFam := RetFamArt( ( dbfPedCliL )->cRef, dbfArticulo )
-              ( dbfPedCliL )->( dbUnLock() )
-           end if
         end if
 
         if !Empty( ( dbfPedCliL )->cRef ) .and. !Empty( ( dbfPedCliL )->cCodFam )
-           if dbLock( dbfPedCliL )
               ( dbfPedCliL )->cGrpFam := cGruFam( ( dbfPedCliL )->cCodFam, dbfFamilia )
-              ( dbfPedCliL )->( dbUnLock() )
-           end if
         end if
 
         if Empty( ( dbfPedCliL )->nReq )
-           if dbLock( dbfPedCliL )
               ( dbfPedCliL )->nReq    := nPReq( dbfIva, ( dbfPedCliL )->nIva )
-              ( dbfPedCliL )->( dbUnLock() )
-           end if
         end if
 
         ( dbfPedCliL )->( dbSkip() )
 
         SysRefresh()
 
-      end while
+    end while
 
-      // Incidencias ----------------------------------------------------------
+   	( dbfPedCliL )->( ordSetFocus( 1 ) )
 
-      while !( dbfPedCliI )->( eof() )
+    // Incidencias ----------------------------------------------------------
+
+   	( dbfPedCliI )->( ordSetFocus( 0 ) )
+	( dbfPedCliI )->( dbGoTop() )
+
+    while !( dbfPedCliI )->( eof() )
 
         if Empty( ( dbfPedCliI )->cSufPed )
-           if dbLock( dbfPedCliI )
               ( dbfPedCliI )->cSufPed := "00"
-              ( dbfPedCliI )->( dbUnLock() )
-           end if
         end if
 
          ( dbfPedCliI )->( dbSkip() )
 
          SysRefresh()
 
-      end while
+    end while
 
-      CloseFiles()
+   	( dbfPedCliI )->( ordSetFocus( 1 ) )
 
-   end if
+   RECOVER USING oError
 
-return nil
+      msgStop( "Imposible abrir todas las bases de datos" + CRLF + ErrorMessage( oError ) )
+
+   END SEQUENCE
+
+   ErrorBlock( oBlock )
+
+   CLOSE ( dbfPedCliT )
+   CLOSE ( dbfPedCliL )
+   CLOSE ( dbfPedCliI )
+   CLOSE ( dbfPedCliR )
+   CLOSE ( dbfPedCliD )
+   CLOSE ( dbfPedCliP )
+   CLOSE ( dbfArticulo)
+   CLOSE ( dbfFamilia )
+   CLOSE ( dbfIva     )
+   CLOSE ( dbfDiv     )
+   CLOSE ( dbfFPago   )
+
+Return nil
 
 //------------------------------------------------------------------------//
 

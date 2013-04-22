@@ -488,7 +488,6 @@ METHOD GenIndices( oMsg )
 
       if ::lNotGrupo .and. ::lDatos
 
-         ::SetText( "Sincroniza recibos de clientes", ::aProgress[ 6 ] )                     ; SynRecCli( ::cPathEmp )
          ::SetText( "Sincroniza bancos de clientes", ::aProgress[ 6 ] )                      ; SynClient( ::cPathEmp )
          ::SetText( "Sincroniza bancos de proveedores", ::aProgress[ 6 ] )                   ; SynProvee( ::cPathEmp )
          ::SetText( "Sincroniza artículos", ::aProgress[ 6 ] )                               ; SynArt(    ::cPathEmp )
@@ -499,6 +498,7 @@ METHOD GenIndices( oMsg )
          ::SetText( "Sincroniza líneas de albaranes de clientes", ::aProgress[ 6 ]  )        ; SynAlbCli( ::cPathEmp )
          ::SetText( "Sincroniza líneas de facturas de clientes", ::aProgress[ 6 ]  )         ; SynFacCli( ::cPathEmp )
          ::SetText( "Sincroniza líneas de facturas de rectificativas", ::aProgress[ 6 ]  )   ; SynFacRec( ::cPathEmp )
+         ::SetText( "Sincroniza recibos de clientes", ::aProgress[ 6 ] )                     ; SynRecCli( ::cPathEmp )
          ::SetText( "Sincroniza líneas de anticipos de clientes", ::aProgress[ 6 ]  )        ; SynAntCli( ::cPathEmp )
          ::SetText( "Sincroniza líneas de tikets de clientes", ::aProgress[ 6 ]  )           ; SynTikCli( ::cPathEmp )
          ::SetText( "Sincroniza líneas de pedidos a proveedor", ::aProgress[ 6 ]  )          ; SynPedPrv( ::cPathEmp )

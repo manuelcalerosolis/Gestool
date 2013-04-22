@@ -2186,7 +2186,7 @@ Method OpenData( cPath )
    BEGIN SEQUENCE
 
       dbUseArea( .t., cDriver(), ( cPath + "CfgUse.Dbf" ), ( ::dbfUsr := cCheckArea( "CfgUse" ) ), .t. )
-      if ( !lAIS(), ( ::dbfUsr )->( OrdListAdd( cPath + "CfgUse.Cdx" ) ), ( ::dbfUsr )->( OrdSetFocus( 1 ) ) )
+      if ( !lAIS(), ( ::dbfUsr )->( OrdListAdd( cPath + "CfgUse.Cdx" ) ), ( ::dbfUsr )->( OrdSetFocus( 1 ) ) ) 
 
       dbUseArea( .t., cDriver(), ( cPath + "CfgCol.Dbf" ), ( ::dbfCol := cCheckArea( "CfgCol" ) ), .t. )
       if ( !lAIS(), ( ::dbfCol )->( OrdListAdd( cPath + "CfgCol.Cdx" ) ), ( ::dbfCol )->( OrdSetFocus( 1 ) ) )

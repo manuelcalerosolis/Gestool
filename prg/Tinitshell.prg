@@ -675,7 +675,7 @@ Method LoadAccesos() CLASS TInitShell
    oTree:Add( "Añadir factura de proveedor",   5, {|| AppFacPrv( nil, nil, .t. ) })
    oTree:Add( "Añadir presupuesto a cliente",  7, {|| AppPreCli( nil, nil, .t. ) })
    oTree:Add( "Añadir pedido a cliente",       8, {|| AppPedCli( nil, nil, .t. ) })
-   oTree:Add( "Añadir albaran a cliente",      9, {|| AppAlbCli( nil, nil, .t. ) })
+   oTree:Add( "Añadir albaran a cliente",      9, {|| AppAlbCli( nil, .t. ) } )
    oTree:Add( "Añadir factura a cliente",      10,{|| AppFacCli( nil, nil, .t. ) })
    oTree:Add( "Añadir anticipos a cliente",    11,{|| AppAntCli( nil, .t. ) })
    oTree:Add( "Añadir factura rectificativa",  12,{|| AppFacCli( nil, nil, .t. ) })
@@ -809,7 +809,7 @@ Method LoadDocuments() CLASS TInitShell
    local oTree
    local oError
    local oBlock
-   local nDocumentos := 1
+   local nDocumentos 
 
    ::aDocuments      := {}
 
@@ -824,8 +824,8 @@ Method LoadDocuments() CLASS TInitShell
    */
 
    nDocumentos       := 1
+   
    oBlock            := ErrorBlock( {| oError | ApoloBreak( oError ) } )
-
    BEGIN SEQUENCE
 
       USE ( cPatEmp() + "PedProvT.Dbf" ) NEW VIA ( cDriver() ) SHARED ALIAS ( cCheckArea( "PedPrv", @dbf ) )

@@ -343,7 +343,7 @@ STATIC FUNCTION OpenFiles( lExt )
       USE ( cPatEmp() + "TIPINCI.DBF" ) NEW VIA ( cDriver() ) SHARED ALIAS ( cCheckArea( "TIPINCI", @dbfInci ) )
       SET ADSINDEX TO ( cPatEmp() + "TIPINCI.CDX" ) ADDITIVE
 
-      if TDataCenter():OpenPedCli( @dbfPedCliT )
+      if TDataCenter():OpenPedCliT( @dbfPedCliT )
          lOpenFiles     := .f.
       end if 
 
