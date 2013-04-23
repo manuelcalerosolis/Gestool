@@ -3601,4 +3601,45 @@ Function ADSExecuteSQLScript( cScript )
 Return ( lGood )
 
 //---------------------------------------------------------------------------//
+/*
+Function ADSRunSQL( cSqlAlias, cSqlStatement, hParameters )
 
+   LOCAL cOldAlias  := Alias()
+   LOCAL lCreate    := FALSE
+   LOCAL nItem      := 0
+   LOCAL xParameter
+
+   if !Empty( cSqlAlias ) .and. !Empty( cSql )
+
+      cSql := StrTran( cSql, ";", "" )
+
+      dbSelectArea( 0 )
+
+      if !AdsCreateSqlStatement( cAlias, ADS_CDX, hConnection )
+         MsgAlert( "Error AdsCreateSqlStatement()" + FINL + "Error: " + cValtoChar( AdsGetLastError() ) )
+      ELSE
+         IF !HB_IsNil( aParameters ) .and. HB_IsArray( aParameters )
+            FOR EACH xParameter IN aParameters
+               nItem := HB_EnumIndex()
+               cSql  := StrTran( cSql, "%" + AllTrim( Str( nItem ) ) , Var2Str( xParameter ) )
+            NEXT
+         ENDIF
+         IF lShow
+            MsgInfo( cSql, "SQLDebug")
+         ENDIF
+         IF !AdsExecuteSqlDirect( cSql )
+            ( cAlias )->( DBCloseArea() )
+            MsgAlert( "Error AdsExecuteSqlDirect( cSql )" + FINL + "Error:" + cValtoChar( AdsGetLastError() ) + FINL + cSql )
+         ELSE
+            lCreate := TRUE
+         ENDIF
+      ENDIF
+
+      IF !Empty( cOldAlias )
+         DBSelectArea( cOldAlias )
+      ENDIF
+
+   ENDIF
+
+RETURN lCreate
+*/
