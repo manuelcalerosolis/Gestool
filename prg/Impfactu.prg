@@ -17,6 +17,7 @@ CLASS TImpFactu
 
    DATA oDbfArtGst
    DATA oDbfArtFac
+   DATA oDbfArCFac
    DATA oDbfCliGst
    DATA oDbfCliFac
    DATA oDbfGrpCliGst
@@ -98,6 +99,7 @@ CLASS TImpFactu
    DATA oDbfFapPFac
    DATA oDbfCliCom
    DATA oDbfCnt
+   DATA oDbfDiv
    DATA cPathFac
    DATA cPathMov      INIT "C:\ARCHIV~1\AZUDSO~1\UTILID~1\Datos\TBLS04\"
 
@@ -140,12 +142,13 @@ METHOD OpenFiles()
 
    DATABASE NEW ::oDbfCnt PATH ( cPatEmp() ) FILE "nCount.Dbf"    VIA ( cDriver() )CLASS "Count"    SHARED INDEX "nCount.Cdx"
 
-   if !File( ::cPathFac + "Articulo.DBF" )
+   if !File( ::cPathFac + "Articulo.dbf" ) .or. !File( ::cPathFac + "Artcom.dbf" )
       ::aChkIndices[ 1 ]:Click( .f. ):Refresh()
       MsgAlert( "No existe fichero de articulos", ::cPathFac + "ARTICULO.DBF" )
    else
       DATABASE NEW ::oDbfArtGst PATH ( cPatArt() )  FILE "ARTICULO.DBF" VIA ( cDriver() )CLASS "ARTGST" SHARED INDEX "ARTICULO.CDX"
       DATABASE NEW ::oDbfArtFac PATH ( ::cPathFac ) FILE "ARTICULO.DBF" VIA ( cDriver() )CLASS "ARTFAC"
+      DATABASE NEW ::oDbfArcFac PATH ( ::cPathFac ) FILE "ARTCOM.DBF"   VIA ( cDriver() )CLASS "ARTCOM"
    end if
 
    if !File( ::cPathFac + "FAMILIAS.DBF" )
@@ -355,6 +358,8 @@ METHOD OpenFiles()
 
    end if
 
+   DATABASE NEW ::oDbfDiv PATH ( cPatDat() )  FILE "DIVISAS.DBF"  VIA ( cDriver() )CLASS "DIVISAS"  SHARED INDEX "DIVISAS.CDX"
+
    if !File( ::cPathFac + "FACCLIT.DBF" ) .or.  !File( ::cPathFac + "FACCLIL.DBF" ) .or. !File( ::cPathFac + "RECIBOS.DBF" ) .or. !File( ::cPathFac + "FACCLID.DBF" )
       ::aChkIndices[ 17 ]:Click( .f. ):Refresh()
       MsgAlert( "No existen ficheros de facturas de clientes", ::cPathFac + "FACCLIT.DBF, ni " + ::cPathFac + "FACCLIL.DBF" )
@@ -397,6 +402,12 @@ METHOD CloseFiles()
       ::oDbfArtFac:End()
    else
       ::oDbfArtFac := nil
+   end if
+
+   if !Empty( ::oDbfArCFac )
+      ::oDbfArCFac:End()
+   else
+      ::oDbfArCFac := nil
    end if
 
    if !Empty( ::oDbfCliGst )
@@ -879,6 +890,12 @@ METHOD CloseFiles()
       ::oDbfPepLFac := nil
    end if
 
+   if !Empty( ::oDbfDiv )
+      ::oDbfDiv:End()
+   end if
+
+   ::oDbfDiv         := nil
+
 RETURN .T.
 
 // ----------------------------------------------------------------------------- //
@@ -982,24 +999,26 @@ RETURN ( Self )
 
 METHOD Importar()
 
-   local n                 := 0
-   local cCodCli           := ""
-   local cNotas            := ""
-   local nCounter          := 1
-   local cControl          := ""
-   local aTemporalLineas   := {}
+   local n                    := 0
+   local cCodCli              := ""
+   local cNotas               := ""
+   local nCounter             := 1
+   local cControl             := ""
+   local aTemporalLineas      := {}
    local oTemporal
    local aLinea
+   local aTotFac              := {}
+   local aTotAlb              := {}
+   local cComentarioArticulo  := ""
+   local nRegIva              := 1
 
-   ::cPathFac              := AllTrim( ::cPathFac )
+   ::cPathFac                 := AllTrim( ::cPathFac )
 
    if ::OpenFiles()
 
       ::oDlg:Disable()
 
       if ::aLgcIndices[ 1 ]
-
-         //::oDbfArtGst:Zap()
 
          /*
          Empezamos el trasbase de artculos
@@ -1013,6 +1032,8 @@ METHOD Importar()
             while ::oDbfArtGst:Seek( ::oDbfArtFac:cRef )
                ::oDbfArtGst:Delete( .f. )
             end if
+
+            cComentarioArticulo     := ""
 
             ::oDbfArtGst:Append()
 
@@ -1042,6 +1063,28 @@ METHOD Importar()
             ::oDbfArtGst:lKitArt    := ::oDbfArtFac:lKit
             ::oDbfArtGst:cPrvHab    := ::oDbfArtFac:cCodPro
 
+            /*
+            ----------------------------------------------------------------------
+            Metemos los comentarios de los artículos------------------------------
+            ----------------------------------------------------------------------
+            */
+
+            ::oDbfArCFac:GoTop()
+
+            while !::oDbfArCFac:Eof()
+
+               if ::oDbfArtFac:cRef == ::oDbfArCFac:cRef
+
+                  cComentarioArticulo  += AllTrim( ::oDbfArCFac:cComent )
+
+               end if   
+
+               ::oDbfArCFac:Skip()
+
+            end while
+
+            ::oDbfArtGst:mComEnt    := cComentarioArticulo
+
             ::oDbfArtGst:Save()
 
             ::aMtrIndices[ 1 ]:Set( ::oDbfArtFac:Recno() )
@@ -1057,8 +1100,6 @@ METHOD Importar()
       */
 
       if ::aLgcIndices[ 2 ]
-
-         //::oDbfFamGst:Zap()
 
          ::aMtrIndices[ 2 ]:SetTotal( ::oDbfFamFac:LastRec() )
 
@@ -1092,8 +1133,6 @@ METHOD Importar()
 
       if ::aLgcIndices[ 3 ]
 
-         //::oDbfGrpGst:Zap()
-
          ::aMtrIndices[ 3 ]:SetTotal( ::oDbfGrpFac:LastRec() )
 
          ::oDbfGrpFac:GoTop()
@@ -1123,8 +1162,6 @@ METHOD Importar()
       */
 
       if ::aLgcIndices[ 4 ]
-
-         //::oDbfIvaGst:Zap()
 
          ::aMtrIndices[ 4 ]:SetTotal( ::oDbfIvaFac:LastRec() )
 
@@ -1188,8 +1225,6 @@ METHOD Importar()
 
       if ::aLgcIndices[ 5 ]
 
-         //::oDbfCliGst:Zap()
-
          ::aMtrIndices[ 5 ]:SetTotal( ::oDbfCliFac:LastRec() )
 
          ::oDbfCliFac:GoTop()
@@ -1225,7 +1260,6 @@ METHOD Importar()
             ::oDbfCliGst:cProBanco := ::oDbfCliFac:cProvBco
             ::oDbfCliGst:Cuenta    := ::oDbfCliFac:cEntidad + ::oDbfCliFac:cAgencia + cControl + ::oDbfCliFac:cCuenta
             ::oDbfCliGst:CodPago   := ::oDbfCliFac:cCodPAgo
-            //::oDbfCliGst:nDtoEsp   := ::oDbfCliFac:nDto
             ::oDbfCliGst:nDpp       := ::oDbfCliFac:nDpp
             ::oDbfCliGst:Riesgo     := ::oDbfCliFac:nRiesgo
             ::oDbfCliGst:CopiasF    := ::oDbfCliFac:nCopFac
@@ -1355,9 +1389,6 @@ METHOD Importar()
             ::oDbfAtpGst:nPrcArt5   := ::oDbfAtpFac:nPrecio
             ::oDbfAtpGst:nPrcArt6   := ::oDbfAtpFac:nPrecio
             ::oDbfAtpGst:nDtoArt    := ::oDbfAtpFac:nDto
-            //::oDbfAtpGst:nDprArt    :=
-            //::oDbfAtpGst:nComAge    :=
-            //::oDbfAtpGst:nDtoDiv    :=
             ::oDbfAtpGst:lAplPre    := .t.
             ::oDbfAtpGst:lAplPed    := .t.
             ::oDbfAtpGst:lAplAlb    := .t.
@@ -1378,8 +1409,6 @@ METHOD Importar()
       */
 
       if ::aLgcIndices[ 6 ]
-
-         //::oDbfFpgGst:Zap()
 
          ::aMtrIndices[ 6 ]:SetTotal( ::oDbfFpgFac:LastRec() )
 
@@ -1485,8 +1514,6 @@ METHOD Importar()
 
       if ::aLgcIndices[ 7 ]
 
-         //::oDbfPrvGst:Zap()
-
          ::aMtrIndices[ 7 ]:SetTotal( ::oDbfPrvFac:LastRec() )
 
          ::oDbfPrvFac:GoTop()
@@ -1509,11 +1536,6 @@ METHOD Importar()
             ::oDbfPrvGst:DtoPP     := ::oDbfPrvFac:nDto
             ::oDbfPrvGst:FPago     := ::oDbfPrvFac:cCodPago
             ::oDbfPrvGst:DiaPago   := ::oDbfPrvFac:nDiaPago
-            //::oDbfPrvGst:Banco     := ::oDbfPrvFac:cNbrBco
-            //::oDbfPrvGst:DirBanco  := ::oDbfPrvFac:cDirBco
-            //::oDbfPrvGst:PobBanco  := ::oDbfPrvFac:cPobBco
-            //::oDbfPrvGst:cProBanco := ::oDbfPrvFac:cProvBco
-            //::oDbfPrvGst:Cuenta    := ::oDbfPrvFac:cEntidad + ::oDbfPrvFac:cAgencia + ::oDbfPrvFac:cCuenta
             ::oDbfPrvGst:SubCta    := ::oDbfPrvFac:cSubCta
             ::oDbfPrvGst:lLabel    := ::oDbfPrvFac:lSelect
             ::oDbfPrvGst:nLabel    := ::oDbfPrvFac:nEtiquetas
@@ -1534,8 +1556,6 @@ METHOD Importar()
 
       if ::aLgcIndices[ 11 ]
 
-         //::oDbfAgeGst:Zap()
-
          ::aMtrIndices[ 11 ]:SetTotal( ::oDbfAgeFac:LastRec() )
 
          ::oDbfAgeFac:GoTop()
@@ -1553,19 +1573,11 @@ METHOD Importar()
             ::oDbfAgeGst:cDniNif   := ::oDbfAgeFac:cDniNif
             ::oDbfAgeGst:cDirAge   := Left( ::oDbfAgeFac:cDirAge, 35 )
             ::oDbfAgeGst:cPobAge   := Left( ::oDbfAgeFac:cPobAge, 25 )
-            //::oDbfAgeGst:cProv     :=
             ::oDbfAgeGst:cPtlAge   := Left( ::oDbfAgeFac:cPtlAge, 5 )
             ::oDbfAgeGst:cTfoAge   := Left( ::oDbfAgeFac:cTfoAge, 12 )
             ::oDbfAgeGst:cFaxAge   := Left( ::oDbfAgeFac:cFaxAge, 12 )
-            //::oDbfAgeGst:cMovAge   :=
             ::oDbfAgeGst:nIrpFage   := ::oDbfAgeFac:nIrpFage
-            //::oDbfAgeGst:mComEnt   :=
             ::oDbfAgeGst:nCom1     := ::oDbfAgeFac:nCom1
-            /*::oDbfAgeGst:nCom2     := ::oDbfAgeFac:nCom2
-            ::oDbfAgeGst:nCom3     := ::oDbfAgeFac:nCom3
-            ::oDbfAgeGst:nCom4     := ::oDbfAgeFac:nCom4
-            ::oDbfAgeGst:nCom5     := ::oDbfAgeFac:nCom5
-            ::oDbfAgeGst:nCom6     := ::oDbfAgeFac:nCom6*/
 
             ::oDbfAgeGst:Save()
 
@@ -1582,8 +1594,6 @@ METHOD Importar()
       */
 
       if ::aLgcIndices[ 12 ]
-
-         //::oDbfAlmGst:Zap()
 
          ::aMtrIndices[ 12 ]:SetTotal( ::oDbfAlmFac:LastRec() )
 
@@ -1920,8 +1930,6 @@ METHOD Importar()
 
       if ::aLgcIndices[ 8 ]
 
-         //::oDbfAlbTGst:Zap()
-
          ::aMtrIndices[ 8 ]:SetTotal( ::oDbfAlbTFac:LastRec() )
 
          ::oDbfAlbTFac:GoTop()
@@ -1957,54 +1965,20 @@ METHOD Importar()
 
             ::oDbfAlbTGst:lFacturado   := ::oDbfAlbTFac:lFacturado
             ::oDbfAlbTGst:dFecEnt      := ::oDbfAlbTFac:dFecEnt
-            //::oDbfAlbTGst:cCodSuAlb    :=
             ::oDbfAlbTGst:cCondEnt     := ::oDbfAlbTFac:cCondEnt
-            //::oDbfAlbTGst:mComEnt      :=
             ::oDbfAlbTGst:mObsErv      := ::oDbfAlbTFac:cObsErv
             ::oDbfAlbTGst:cCodPago     := ::oDbfAlbTFac:cCodPago
             ::oDbfAlbTGst:nBulTos      := ::oDbfAlbTFac:nBulTos
             ::oDbfAlbTGst:nPorTes      := ::oDbfAlbTFac:nPorTes
             ::oDbfAlbTGst:cCodAge      := SpecialPadr( ::oDbfAlbTFac:cCodAge, '0' )
-            //::oDbfAlbTGst:cCodObr      :=
-            //::oDbfAlbTGst:cCodTar      :=
-            //::oDbfAlbTGst:cCodRut      :=
-            //::oDbfAlbTGst:cNumPed      := "A"+ Str( ::oDbfAlbTFac:nNumPed, 9 )
             ::oDbfAlbTGst:nTipoAlb     := ::oDbfAlbTFac:nTipoAlb
-            //::oDbfAlbTGst:cNumFac      :=
-            //::oDbfAlbTGst:lMayor       :=
-            //::oDbfAlbTGst:nTarifa      :=
             ::oDbfAlbTGst:nDtoEsp      := ::oDbfAlbTFac:nDtoEsp
             ::oDbfAlbTGst:nDpp         := ::oDbfAlbTFac:nDpp
-            //::oDbfAlbTGst:cDtoUno      :=
-            //::oDbfAlbTGst:nDtoUno      :=
-            //::oDbfAlbTGst:cDtoDos      :=
-            //::oDbfAlbTGst:nDtoDos      :=
-            //::oDbfAlbTGst:nDtoCnt      :=
-            //::oDbfAlbTGst:nDtoRap      :=
-            //::oDbfAlbTGst:nDtoPub      :=
-            //::oDbfAlbTGst:nDtoPgo      :=
-            //::oDbfAlbTGst:nDtoPtf      :=
-            //::oDbfAlbTGst:lRecargo     :=
             ::oDbfAlbTGst:nPctComAge   := ::oDbfAlbTFac:nComision
-            //::oDbfAlbTGst:lSndDoc      :=
             ::oDbfAlbTGst:cDivAlb      := ::oDbfAlbTFac:cCodDiv
-            ::oDbfAlbTGst:nVdvAlb      := 1 //::oDbfAlbTFac:nValDiv
-            //::oDbfAlbTGst:cRetPor      :=
-            //::oDbfAlbTGst:cRetMat      :=
-            //::oDbfAlbTGst:cNumDoc      :=
+            ::oDbfAlbTGst:nVdvAlb      := 1
             ::oDbfAlbTGst:cSuPed       := Left( ::oDbfAlbTFac:cSuPed, 35 )
-            //::oDbfAlbTGst:lIvaInc      :=
-            //::oDbfAlbTGst:nRegIva      :=
-            //::oDbfAlbTGst:lGenLqd      :=
-            //::oDbfAlbTGst:nNumOrd      :=
-            //::oDbfAlbTGst:cSufOrd      :=
-            //::oDbfAlbTGst:dFecOrd      :=
-            //::oDbfAlbTGst:nManObr      :=
             ::oDbfAlbTGst:cCodTrn      := ::oDbfAlbTFac:cCodTran
-            //::oDbfAlbTGst:lCloAlb      :=
-            //::oDbfAlbTGst:cCodUsr      :=
-            //::oDbfAlbTGst:dFecCre      :=
-            //::oDbfAlbTGst:cTimCre      :=
 
             ::oDbfAlbTGst:Save()
 
@@ -2046,47 +2020,23 @@ METHOD Importar()
                ::oDbfAlbLGst:cDetalle  := ::oDbfAlbLFac:cDetalle
             end if
             ::oDbfAlbLGst:nPreUnit     := ::oDbfAlbLFac:nPreUnit
-            //::oDbfAlbLGst:nPntVer      :=
-            //::oDbfAlbLGst:nImpTrn      :=
             ::oDbfAlbLGst:nDto         := ::oDbfAlbLFac:nDto
             ::oDbfAlbLGst:nDtoPrm      := ::oDbfAlbLFac:nDtoProm
             ::oDbfAlbLGst:nIva         := ::oDbfAlbLFac:nIva
-            //::oDbfAlbLGst:nCanEnt      :=
-            //::oDbfAlbLGst:nCanFac      :=
             ::oDbfAlbLGst:lConTrol     := ::oDbfAlbLFac:lConTrol
-            //::oDbfAlbLGst:nPesOkg      :=
-            //::oDbfAlbLGst:cUniDad      :=
             ::oDbfAlbLGst:nComAge      := ::oDbfAlbLFac:nComision
             ::oDbfAlbLGst:nUniCaja     := ::oDbfAlbLFac:nCanEnt
-            //::oDbfAlbLGst:nUndKit      :=
             ::oDbfAlbLGst:dFecha       := ::oDbfAlbLFac:dFecPed
-            //::oDbfAlbLGst:cTipMov      :=
-            //::oDbfAlbLGst:lTotLin      :=
-            //::oDbfAlbLGst:lImpLin      :=
-            //::oDbfAlbLGst:lNewLin      :=
-            //::oDbfAlbLGst:cNumPed      := "A"+ Str( ::oDbfAlbLFac:nNumPed, 9 )
             ::oDbfAlbLGst:cCodPr1      := ::oDbfAlbLFac:cProp1
             ::oDbfAlbLGst:cCodPr2      := ::oDbfAlbLFac:cProp2
-            //::oDbfAlbLGst:cValPr1      :=
-            //::oDbfAlbLGst:cValPr2      :=
-            //::oDbfAlbLGst:nFacCnv      :=
-            //::oDbfAlbLGst:nDtoDiv      :=
-            //::oDbfAlbLGst:nNumLin      :=
-            //::oDbfAlbLGst:nCtlStk      :=
-            //::oDbfAlbLGst:nCosDiv      :=
-            //::oDbfAlbLGst:nPvpRec      :=
-            //::oDbfAlbLGst:cAlmLin      :=
-            //::oDbfAlbLGst:lIvaLin      :=
-            //::oDbfAlbLGst:nValImp      :=
-            //::oDbfAlbLGst:cCodImp      :=
-            //::oDbfAlbLGst:lLote        :=
-            //::oDbfAlbLGst:nLote        :=
-            //::oDbfAlbLGst:lKitArt      :=
-            //::oDbfAlbLGst:lKitChl      :=
-            //::oDbfAlbLGst:lKitPrc      :=
-            //::oDbfAlbLGst:nMesGrt      :=
-            //::oDbfAlbLGst:lNotVta      :=
-            //::oDbfAlbLGst:mNumSer      :=
+
+            /*
+            Solo importación ayamonte------------------------------------------
+            */
+
+            ::oDbfAlbLGst:lLote        := !Empty( ::oDbfAlbLFac:cProp2 )
+            ::oDbfAlbLGst:cLote        := ::oDbfAlbLFac:cProp2
+            ::oDbfAlbLGst:dFecCad      := cTod( SubStr( ::oDbfAlbLFac:cProp1, 8, 2 ) + "/" + SubStr( ::oDbfAlbLFac:cProp1, 6, 2 ) + "/" + SubStr( ::oDbfAlbLFac:cProp1, 1, 4 ) )
 
             ::oDbfAlbLGst:Save()
 
@@ -2103,8 +2053,6 @@ METHOD Importar()
       */
 
       if ::aLgcIndices[ 9 ]
-
-         //::oDbfFacTGst:Zap()
 
          ::aMtrIndices[ 9 ]:SetTotal( ::oDbfFacTFac:LastRec() )
 
@@ -2143,6 +2091,8 @@ METHOD Importar()
                      ::oDbfFacTGst:cPrvCli   := ::oDbfCliGst:Provincia
                      ::oDbfFacTGst:cPosCli   := ::oDbfCliGst:CodPostal
                      ::oDbfFacTGst:cDniCli   := ::oDbfCliGst:Nif
+                     ::oDbfFacTGst:nRegIva   := ::oDbfCliGst:nRegIva
+                     nRegIva                 := ::oDbfCliGst:nRegIva
                   end if
                else
                   ::oDbfFacTGst:cCodCli      := Space( 12 )
@@ -2156,70 +2106,31 @@ METHOD Importar()
                      ::oDbfFacTGst:cPosCli   := Left( ::oDbfFacDFac:cPtlCli, 7 )
                      ::oDbfFacTGst:cDniCli   := ::oDbfFacDFac:cDniCif
                   end if
+                  nRegIva                    := 1
                end if
 
                ::oDbfFacTGst:cCodAlm         := ::oDbfFacTFac:cCodAlm
                ::oDbfFacTGst:cCodCaj         := "000"
-               //::oDbfFacTGst:nCodProv     :=
-               //::oDbfFacTGst:lMayor       :=
-               //::oDbfFacTGst:nTarifa      :=
                ::oDbfFacTGst:cCodAge         := SpecialPadr( ::oDbfFacTFac:cCodAge, '0' )
-               //::oDbfFacTGst:cCodRut      :=
-               //::oDbfFacTGst:cCodTar      :=
-              //::oDbfFacTGst:cCodObr      :=
                ::oDbfFacTGst:nPctComAge      := ::oDbfFacTFac:nComision
                ::oDbfFacTGst:lLiquidada      := .f.
                ::oDbfFacTGst:lConTab         := ::oDbfFacTFac:lConTab
                ::oDbfFacTGst:dFecEnt         := ::oDbfFacTFac:dFecEnt
                ::oDbfFacTGst:cSuFac          := ::oDbfFacTFac:cSuPed
-               //::oDbfFacTGst:lImpAlb      :=
                ::oDbfFacTGst:cCondEnt        := Left( ::oDbfFacTFac:cCondEnt, 2 )
-               //::oDbfFacTGst:mComEnt      :=
                ::oDbfFacTGst:mObserv         := Left( ::oDbfFacTFac:cObsErv, 10 )
                ::oDbfFacTGst:cCodPago        := ::oDbfFacTFac:cCodPago
                ::oDbfFacTGst:nBulTos         := ::oDbfFacTFac:nBulTos
                ::oDbfFacTGst:nPorTes         := ::oDbfFacTFac:nPorTes
-               //::oDbfFacTGst:nManObr      :=
                ::oDbfFacTGst:cNumAlb         := ::oDbfFacTFac:cSerie + Str( ::oDbfFacTFac:nNumAlb, 9 )
-               //::oDbfFacTGst:cNumPed      :=
-               //::oDbfFacTGst:cNumPre      :=
                ::oDbfFacTGst:nTipoFac        := ::oDbfFacTFac:nTipoFac
                ::oDbfFacTGst:nDtoEsp         := ::oDbfFacTFac:nDtoEsp
                ::oDbfFacTGst:nDpp            := ::oDbfFacTFac:nDpp
-               //::oDbfFacTGst:cDtoUno      :=
-               //::oDbfFacTGst:nDtoUno      :=
-               //::oDbfFacTGst:cDtoDos      :=
-               //::oDbfFacTGst:nDtoDos      :=
-               //::oDbfFacTGst:nDtoCnt      :=
-               //::oDbfFacTGst:nDtoRap      :=
-               //::oDbfFacTGst:nDtoPub      :=
-               //::oDbfFacTGst:nDtoPgo      :=
-               //::oDbfFacTGst:nDtoPtf      :=
-               ::oDbfFacTGst:nTipoIva        := ::oDbfFacTFac:nTipoIva
-               ::oDbfFacTGst:nPorcIva        := ::oDbfFacTFac:nPorcIva
                ::oDbfFacTGst:lRecargo        := ::oDbfFacTFac:lRecargo
-               //::oDbfFacTGst:cRemitido    :=
                ::oDbfFacTGst:lIvaInc         := ::oDbfFacTFac:lIvaIncl
-               //::oDbfFacTGst:lSndDoc      :=
                ::oDbfFacTGst:cDivFac         := ::oDbfFacTFac:cCodDiv
-               ::oDbfFacTGst:nVdvFac         := 1 //::oDbfFacTFac:nValDiv
-               //::oDbfFacTGst:cRetPor      :=
-               //::oDbfFacTGst:cRetMat      :=
-               //::oDbfFacTGst:cNumDoc      :=
-               //::oDbfFacTGst:nRegIva      :=
-               //::oDbfFacTGst:cCodPro      :=
-               //::oDbfFacTGst:cDocOrg      :=
-               //::oDbfFacTGst:nNumLiq      :=
-               //::oDbfFacTGst:cSufLiq      :=
-               //::oDbfFacTGst:nImpLiq      :=
-               //::oDbfFacTGst:dFecLiq      :=
+               ::oDbfFacTGst:nVdvFac         := 1
                ::oDbfFacTGst:cCodTrn         := ::oDbfFacTFac:cCodTran
-               //::oDbfFacTGst:lCloFac      :=
-               //::oDbfFacTGst:cAbnFac      :=
-               //::oDbfFacTGst:nPctRet      :=
-               //::oDbfFacTGst:cCodUsr      :=
-               //::oDbfFacTGst:dFecCre      :=
-               //::oDbfFacTGst:cTimCre      :=
 
                ::oDbfFacTGst:Save()
 
@@ -2230,8 +2141,6 @@ METHOD Importar()
          ::oDbfFacTFac:Skip()
 
          end while
-
-         //::oDbfFacPGst:Zap()
 
          ::aMtrIndices[ 9 ]:SetTotal( ::oDbfRecFac:LastRec() )
 
@@ -2255,29 +2164,17 @@ METHOD Importar()
                end if
                ::oDbfFacPGst:dEntrada       := ::oDbfRecFac:dFecEmis
                ::oDbfFacPGst:nImporte       := ::oDbfRecFac:nImporte
-               //::oDbfFacPGst:cDesCriP       :=
                ::oDbfFacPGst:dPreCob        := ::oDbfRecFac:dFecExped
-               //::oDbfFacPGst:cPgdoPor       :=
                ::oDbfFacPGst:cDocPgo        := ::oDbfRecFac:cTipoDoc
                ::oDbfFacPGst:lCobrado       := ( ::oDbfRecFac:nEstado == 2 )
                ::oDbfFacPGst:cDivPgo        := ::oDbfRecFac:cCodDiv
-               ::oDbfFacPGst:nVdvPgo        := 1 //::oDbfRecFac:nValDiv
+               ::oDbfFacPGst:nVdvPgo        := 1
                ::oDbfFacPGst:lConPgo        := ::oDbfRecFac:lDocContab
-               //::oDbfFacPGst:cCtaRec        :=
                ::oDbfFacPGst:nImpEur        := ::oDbfRecFac:nImporte
                ::oDbfFacPGst:lImpEur        := .t.
                ::oDbfFacPGst:nNumRem        := ::oDbfRecFac:nNumRem
-               //::oDbfFacPGst:cSufRem        :=
                ::oDbfFacPGst:cCtaRem        := ::oDbfRecFac:cCtaRem
-               //::oDbfFacPGst:lRecImp        :=
-               //::oDbfFacPGst:lRecDto        :=
-               //::oDbfFacPGst:dFecDto        :=
                ::oDbfFacPGst:dFecVto        := ::oDbfRecFac:dFecVcto
-               //::oDbfFacPGst:cCodAge        :=
-               //::oDbfFacPGst:nNumCob        :=
-               //::oDbfFacPGst:cSufCob        :=
-               //::oDbfFacPGst:nImpCob        :=
-               //::oDbfFacPGst:nImpGas        :=
                ::oDbfFacPGst:cTipRec        := Space(1)
 
                ::oDbfFacPGst:Save()
@@ -2289,8 +2186,6 @@ METHOD Importar()
             ::oDbfRecFac:Skip()
 
          end while
-
-         //::oDbfFacLGst:Zap()
 
          ::aMtrIndices[ 9 ]:SetTotal( ::oDbfFacLFac:LastRec() )
 
@@ -2313,50 +2208,24 @@ METHOD Importar()
                   ::oDbfFacLGst:cDetalle  := ::oDbfFacLFac:cDetalle
                end if
                ::oDbfFacLGst:nPreUnit     := ::oDbfFacLFac:nPreUnit
-               //::oDbfFacLGst:nPntVer      :=
-               //::oDbfFacLGst:nImpTrn      :=
                ::oDbfFacLGst:nDto         := ::oDbfFacLFac:nDto
-               //::oDbfFacLGst:nDtoPrm      :=
-
-               ::oDbfFacLGst:nIva         := ::oDbfFacLFac:nIva
-
-               //::oDbfFacLGst:nCanEnt      := ::oDbfFacLFac:nCanEnt
+               if nRegIva <= 1
+                  ::oDbfFacLGst:nIva      := ::oDbfFacLFac:nIva
+               else
+                  ::oDbfFacLGst:nIva      := 0
+               end if
                ::oDbfFacLGst:lConTrol     := ::oDbfFacLFac:lConTrol
-               //::oDbfFacLGst:nPesOkg      :=
-               //::oDbfFacLGst:cUniDad      :=
                ::oDbfFacLGst:nComAge      := ::oDbfFacLFac:nComision
                ::oDbfFacLGst:nUniCaja     := ::oDbfFacLFac:nCanEnt
-               //::oDbfFacLGst:nUndKit      :=
-               //::oDbfFacLGst:dFecHa       :=
-               //::oDbfFacLGst:cTipMov      :=
-               //::oDbfFacLGst:cCodAlb      :=
                ::oDbfFacLGst:dFecAlb      := ::oDbfFacLFac:dFecAlb
-               //::oDbfFacLGst:lTotLin      :=
-               //::oDbfFacLGst:lImpLin      :=
-               //::oDbfFacLGst:cCodPr1      := Left( ::oDbfFacLFac:cProp1, 5 )
-               //::oDbfFacLGst:cCodPr2      := Left( ::oDbfFacLFac:cProp2, 5 )
-               //::oDbfFacLGst:cValPr1      := ::oDbfFacLFac:cProp1
-               //::oDbfFacLGst:cValPr2      := ::oDbfFacLFac:cProp2
-               //::oDbfFacLGst:nFacCnv      :=
-               //::oDbfFacLGst:nDtoDiv      :=
-               //::oDbfFacLGst:lSel         :=
-               //::oDbfFacLGst:nNumLin      :=
-               //::oDbfFacLGst:nCtlStk      :=
-               //::oDbfFacLGst:nCosDiv      :=
-               //::oDbfFacLGst:nPvpRec      :=
-               //::oDbfFacLGst:cAlmLin      :=
-               //::oDbfFacLGst:lIvaLin      :=
-               //::oDbfFacLGst:cCodImp      :=
-               //::oDbfFacLGst:nValImp      :=
-               //::oDbfFacLGst:lLote        :=
-               //::oDbfFacLGst:nLote        :=
-               //::oDbfFacLGst:lKitArt      :=
-               //::oDbfFacLGst:lKitChl      :=
-               //::oDbfFacLGst:lKitPrc      :=
-               //::oDbfFacLGst:nMesGrt      :=
-               //::oDbfFacLGst:lNotVta      :=
-               //::oDbfFacLGst:cCodTip      :=
-               //::oDbfFacLGst:mNumSer      := Rtrim( ::oDbfFacLFac:cProp1 ) + if( !Empty( ::oDbfFacLFac:cProp2 ), "-" + Rtrim( ::oDbfFacLFac:cProp2 ), "" ) + ","
+
+               /*
+               Solo importación ayamonte------------------------------------------
+               */
+
+               ::oDbfFacLGst:lLote        := !Empty( ::oDbfFacLFac:cProp2 )
+               ::oDbfFacLGst:cLote        := ::oDbfFacLFac:cProp2
+               ::oDbfFacLGst:dFecCad      := cTod( SubStr( ::oDbfFacLFac:cProp1, 8, 2 ) + "/" + SubStr( ::oDbfFacLFac:cProp1, 6, 2 ) + "/" + SubStr( ::oDbfFacLFac:cProp1, 1, 4 ) )
 
                ::oDbfFacLGst:Save()
 
@@ -2630,7 +2499,6 @@ METHOD Importar()
             ::oDbfTikTGst:cTurTik      := cCurSesion()
             ::oDbfTikTGst:dFecTik      := ::oDbfTikTFac:dFecha
             ::oDbfTikTGst:cHorTik      := ::oDbfTikTFac:cTime
-            //::oDbfTikTGst:cCcjTik      :=
             ::oDbfTikTGst:cNcjTik      := "000"
             ::oDbfTikTGst:cAlmTik      := ::oDbfTikTFac:cCodAlm
             ::oDbfTikTGst:cCliTik      := SpecialPadr( ::oDbfTikTFac:cCodCli, "0", RetNumCodCliEmp() )
@@ -2644,26 +2512,8 @@ METHOD Importar()
                ::oDbfTikTGst:cDniCli   := ::oDbfCliGst:Nif
             end if
             ::oDbfTikTGst:cFpgTik      := ::oDbfTikTFac:cCodPago
-            //::oDbfTikTGst:nCobTik      :=
-            //::oDbfTikTGst:nCamTik      :=
             ::oDbfTikTGst:cDivTik      := ::oDbfTikTFac:cCodDiv
             ::oDbfTikTGst:nVdvTik      := 1
-            //::oDbfTikTGst:lCloTik      :=
-            //::oDbfTikTGst:lSndDoc      :=
-            //::oDbfTikTGst:lPgdTik      :=
-            //::oDbfTikTGst:cRetPor      :=
-            //::oDbfTikTGst:cRetMat      :=
-            //::oDbfTikTGst:cNumDoc      :=
-            //::oDbfTikTGst:cCodAge      :=
-            //::oDbfTikTGst:cCodRut      :=
-            //::oDbfTikTGst:cCodTar      :=
-            //::oDbfTikTGst:cCodObr      :=
-            //::oDbfTikTGst:nComAge      :=
-            //::oDbfTikTGst:lLiqTik      :=
-            //::oDbfTikTGst:cCodPro      :=
-            //::oDbfTikTGst:lConTik      :=
-            //::oDbfTikTGst:dFecCre      :=
-            //::oDbfTikTGst:cTimCre      :=
 
             ::oDbfTikTGst:Save()
 
@@ -2677,35 +2527,6 @@ METHOD Importar()
             ::oDbfTikLGst:nPvpTil      := ::oDbfTikTFac:nTotal
             ::oDbfTikLGst:nUntTil      := 1
             ::oDbfTikLGst:nIvaTil      := 0
-            //::oDbfTikLGst:nUndKit      :=
-            //::oDbfTikLGst:cFamTil      :=
-            //::oDbfTikLGst:lOfeTil      :=
-            //::oDbfTikLGst:cComTil      :=
-            //::oDbfTikLGst:cNcmTil      :=
-            //::oDbfTikLGst:nPcmTil      :=
-            //::oDbfTikLGst:cFcmTil      :=
-            //::oDbfTikLGst:lFreTil      :=
-            //::oDbfTikLGst:nDtoLin      := ::oDbfTikLFac:nDto
-            //::oDbfTikLGst:cCodPr1      := ::oDbfTikLFac:cProp1
-            //::oDbfTikLGst:cCodPr2      := ::oDbfTikLFac:cProp2
-            //::oDbfTikLGst:cValPr1      :=
-            //::oDbfTikLGst:cValPr2      :=
-            //::oDbfTikLGst:nFacCnv      :=
-            //::oDbfTikLGst:nDtoDiv      :=
-            //::oDbfTikLGst:lTipAcc      :=
-            //::oDbfTikLGst:nCtlStk      :=
-            //::oDbfTikLGst:cAlmLin      :=
-            //::oDbfTikLGst:nValImp      :=
-            //::oDbfTikLGst:cCodImp      :=
-            //::oDbfTikLGst:nCosDiv      :=
-            //::oDbfTikLGst:nNumLin      :=
-            //::oDbfTikLGst:lKitArt      :=
-            //::oDbfTikLGst:lKitChl      :=
-            //::oDbfTikLGst:lKitPrc      :=
-            //::oDbfTikLGst:lImpLin      :=
-            //::oDbfTikLGst:nMesGrt      :=
-            //::oDbfTikLGst:lContro      :=
-            //::oDbfTikLGst:mNumSer      :=
 
             ::oDbfTikLGst:Save()
 
@@ -2763,7 +2584,6 @@ METHOD Importar()
             ::oDbfTikTGst:cTurTik      := cCurSesion()
             ::oDbfTikTGst:dFecTik      := ::oDbfHisTFac:dFecha
             ::oDbfTikTGst:cHorTik      := ::oDbfHisTFac:cTime
-            //::oDbfTikTGst:cCcjTik      :=
             ::oDbfTikTGst:cNcjTik      := "000"
             ::oDbfTikTGst:cAlmTik      := ::oDbfHisTFac:cCodAlm
             ::oDbfTikTGst:cCliTik      := SpecialPadr( ::oDbfHisTFac:cCodCli, "0", RetNumCodCliEmp() )
@@ -2784,25 +2604,6 @@ METHOD Importar()
                ::oDbfTikTGst:cDivTik   := cDivEmp()
                ::oDbfTikTGst:nVdvTik   := 1
             end if
-
-            //::oDbfTikTGst:nCobTik      :=
-            //::oDbfTikTGst:nCamTik      :=
-            //::oDbfTikTGst:lCloTik      :=
-            //::oDbfTikTGst:lSndDoc      :=
-            //::oDbfTikTGst:lPgdTik      :=
-            //::oDbfTikTGst:cRetPor      :=
-            //::oDbfTikTGst:cRetMat      :=
-            //::oDbfTikTGst:cNumDoc      :=
-            //::oDbfTikTGst:cCodAge      :=
-            //::oDbfTikTGst:cCodRut      :=
-            //::oDbfTikTGst:cCodTar      :=
-            //::oDbfTikTGst:cCodObr      :=
-            //::oDbfTikTGst:nComAge      :=
-            //::oDbfTikTGst:lLiqTik      :=
-            //::oDbfTikTGst:cCodPro      :=
-            //::oDbfTikTGst:lConTik      :=
-            //::oDbfTikTGst:dFecCre      :=
-            //::oDbfTikTGst:cTimCre      :=
 
             ::oDbfTikTGst:Save()
 
@@ -2868,33 +2669,6 @@ METHOD Importar()
             ::oDbfTikLGst:nIvaTil      := ::oDbfHisLFac:nIva
             ::oDbfTikLGst:nDtoLin      := ::oDbfHisLFac:nDto
             ::oDbfTikLGst:nDtoDiv      := ::oDbfHisLFac:nDtoLin
-            //::oDbfTikLGst:nUndKit      :=
-            //::oDbfTikLGst:cFamTil      :=
-            //::oDbfTikLGst:lOfeTil      :=
-            //::oDbfTikLGst:cComTil      :=
-            //::oDbfTikLGst:cNcmTil      :=
-            //::oDbfTikLGst:nPcmTil      :=
-            //::oDbfTikLGst:cFcmTil      :=
-            //::oDbfTikLGst:lFreTil      :=
-            //::oDbfTikLGst:cCodPr1      := ::oDbfHisLFac:cProp1
-            //::oDbfTikLGst:cCodPr2      := ::oDbfHisLFac:cProp2
-            //::oDbfTikLGst:cValPr1      :=
-            //::oDbfTikLGst:cValPr2      :=
-            //::oDbfTikLGst:nFacCnv      :=
-            //::oDbfTikLGst:lTipAcc      :=
-            //::oDbfTikLGst:nCtlStk      :=
-            //::oDbfTikLGst:cAlmLin      :=
-            //::oDbfTikLGst:nValImp      :=
-            //::oDbfTikLGst:cCodImp      :=
-            //::oDbfTikLGst:nCosDiv      :=
-            //::oDbfTikLGst:nNumLin      :=
-            //::oDbfTikLGst:lKitArt      :=
-            //::oDbfTikLGst:lKitChl      :=
-            //::oDbfTikLGst:lKitPrc      :=
-            //::oDbfTikLGst:lImpLin      :=
-            //::oDbfTikLGst:nMesGrt      :=
-            //::oDbfTikLGst:lContro      :=
-            //::oDbfTikLGst:mNumSer      :=
 
             ::oDbfTikLGst:Save()
 
@@ -2977,21 +2751,10 @@ METHOD Importar()
                      ::oDbfMovLGst:cAliMov   := ::oDbfMovTFac:cAlmOri
                      ::oDbfMovLGst:cAloMov   := ::oDbfMovTFac:cAlmDes
                      ::oDbfMovLGst:cRefMov   := ::oDbfMovLFac:cRef
-                     //::oDbfMovLGst:cCodMov   :=
-                     //::oDbfMovLGst:cCodPr1   :=
-                     //::oDbfMovLGst:cCodPr2   :=
-                     //::oDbfMovLGst:cValPr1   :=
-                     //::oDbfMovLGst:cValPr2   :=
-                     //::oDbfMovLGst:nCajMov   :=
                      ::oDbfMovLGst:nUndMov   := ::oDbfMovLFac:nCanEnt
-                     //::oDbfMovLGst:nCajAnt   :=
-                     //::oDbfMovLGst:nUndAnt   :=
                      ::oDbfMovLGst:nPreDiv   := ::oDbfMovLFac:nPreUnit
                      ::oDbfMovLGst:cUsrMov   := cCurUsr()
-                     //::oDbfMovLGst:lSndDoc   :=
                      ::oDbfMovLGst:nNumRem   := nCounter
-                     //::oDbfMovLGst:cSufRem   :=
-                     //::oDbfMovLGst:lSelDoc   :=
 
                      ::oDbfMovLGst:Save()
 
@@ -3038,30 +2801,25 @@ METHOD Importar()
             ::oDbfPepTGst:cTurPed      := cCurSesion()
             ::oDbfPepTGst:dFecPed      := ::oDbfPepTFac:dFecPed
             ::oDbfPepTGst:cCodAlm      := ::oDbfPepTFac:cCodAlm
-            ::oDbfPepTGst:cCodCli      := SpecialPadr( ::oDbfPepTFac:cCodCli, "0", RetNumCodCliEmp() )
+            ::oDbfPepTGst:cCodPrv      := SpecialPadr( ::oDbfPepTFac:cCodPro, "0", RetNumCodPrvEmp() )
             ::oDbfPepTGst:cCodCaj      := "000"
             ::oDbfPepTGst:cCodPgo      := ::oDbfPepTFac:cCodPago
-            ::oDbfPepTGst:mObsErv      := ::oDbfPepTFac:cObserv
-            ::oDbfPepTGst:nTarifa      := 1
+            ::oDbfPepTGst:cObsErv      := ::oDbfPepTFac:cObserv
             ::oDbfPepTGst:nEstado      := if( ::oDbfPepTFac:cEstado == "T", 3, 1 )
             
-            if ::oDbfCliGst:Seek( SpecialPadr( ::oDbfPepTFac:cCodCli, "0", RetNumCodCliEmp() ) )
-               ::oDbfPepTGst:cNomCli   := ::oDbfCliGst:Titulo
-               ::oDbfPepTGst:cDirCli   := ::oDbfCliGst:Domicilio
-               ::oDbfPepTGst:cPobCli   := ::oDbfCliGst:Poblacion
-               ::oDbfPepTGst:cPrvCli   := ::oDbfCliGst:Provincia  
-               ::oDbfPepTGst:cPosCli   := ::oDbfCliGst:CodPostal
-               ::oDbfPepTGst:cDniCli   := ::oDbfCliGst:Nif
-               ::oDbfPepTGst:cTlfCli   := ::oDbfCliGst:Telefono
+            if ::oDbfPrvGst:Seek( SpecialPadr( ::oDbfPepTFac:cCodPro, "0", RetNumCodPrvEmp() ) )
+               ::oDbfPepTGst:cNomPrv   := ::oDbfPrvGst:Titulo
+               ::oDbfPepTGst:cDirPrv   := ::oDbfPrvGst:Domicilio
+               ::oDbfPepTGst:cPobPrv   := ::oDbfPrvGst:Poblacion
+               ::oDbfPepTGst:cProPrv   := ::oDbfPrvGst:Provincia  
+               ::oDbfPepTGst:cPosPrv   := ::oDbfPrvGst:CodPostal
+               ::oDbfPepTGst:cDniPrv   := ::oDbfPrvGst:Nif
             end if
 
             ::oDbfPepTGst:cDpp         := "Descuento"
             ::oDbfPepTGst:cDtoEsp      := "Descuento"
-            ::oDbfPepTGst:nDpp         := ::oDbfPepTFac:nDpp
-            ::oDbfPepTGst:nDtoEsp      := ::oDbfPepTFac:nDtoEsp
             ::oDbfPepTGst:cDivPed      := ::oDbfPepTFac:cCodDiv
             ::oDbfPepTGst:nVdvPed      := 1
-            ::oDbfPepTGst:nTotPed      := ::oDbfPepTFac:nTotPed 
 
             ::oDbfPepTGst:Save()
 
@@ -3094,10 +2852,8 @@ METHOD Importar()
                else
                   oTemporal:cDetalle   := ::oDbfPepLFac:cDetalle
                end if
-               oTemporal:nIva          := ::oDbfPepLFac:nIva
                oTemporal:nUniCaja      := ::oDbfPepLFac:nCanPed
-               oTemporal:nPreDiv       := ::oDbfPepLFac:nPreUnit
-               oTemporal:nDto          := ::oDbfPepLFac:nDto
+               oTemporal:nPreDiv       := ::oDbfPepLFac:nPreDiv
                oTemporal:cLote         := ::oDbfPepLFac:cLote
                oTemporal:nNumLin       := ::oDbfPepLFac:nServicio
 
@@ -3116,15 +2872,7 @@ METHOD Importar()
                end if
 
                if aTemporalLineas[n]:nPreDiv == 0
-                  aTemporalLineas[n]:nPreDiv := ::oDbfPepLFac:nPreUnit
-               end if
-
-               if aTemporalLineas[n]:nDto == 0
-                  aTemporalLineas[n]:nDto := ::oDbfPepLFac:nDto
-               end if
-
-               if aTemporalLineas[n]:nIva == 0
-                  aTemporalLineas[n]:nIva := ::oDbfPepLFac:nIva
+                  aTemporalLineas[n]:nPreDiv := ::oDbfPepLFac:nPreDiv
                end if
 
             end if   
@@ -3149,10 +2897,8 @@ METHOD Importar()
             ::oDbfPepLGst:cRef         := aLinea:cRef
             ::oDbfPepLGst:mLngDes      := aLinea:mLngDes 
             ::oDbfPepLGst:cDetalle     := aLinea:cDetalle
-            ::oDbfPepLGst:nIva         := aLinea:nIva
             ::oDbfPepLGst:nUniCaja     := aLinea:nUniCaja 
             ::oDbfPepLGst:nPreDiv      := aLinea:nPreDiv
-            ::oDbfPepLGst:nDto         := aLinea:nDto
             ::oDbfPepLGst:cLote        := aLinea:cLote
             ::oDbfPepLGst:nNumLin      := aLinea:nNumLin
 
@@ -3257,20 +3003,43 @@ METHOD Importar()
             ::oDbfAlpLGst:nDtoLin      := ::oDbfAlpLFac:nDto
             ::oDbfAlpLGst:nNumLin      := ::oDbfAlpLFac:nLinea
             ::oDbfAlpLGst:lControl     := ::oDbfAlpLFac:lControl
-
             
             /*
             Solo importación ayamonte------------------------------------------
             */
-            ::oDbfAlpLGst:lLote        := .t.
+
+            ::oDbfAlpLGst:lLote        := !Empty( ::oDbfAlpLFac:cProp2 )
             ::oDbfAlpLGst:cLote        := ::oDbfAlpLFac:cProp2
-            ::oDbfAlpLGst:dFecCad      := CtoD( ::oDbfAlpLFac:cProp1 )
+            ::oDbfAlpLGst:dFecCad      := cTod( SubStr( ::oDbfAlpLFac:cProp1, 8, 2 ) + "/" + SubStr( ::oDbfAlpLFac:cProp1, 6, 2 ) + "/" + SubStr( ::oDbfAlpLFac:cProp1, 1, 4 ) )
 
             ::oDbfAlpLGst:Save()
 
             ::aMtrIndices[ 15 ]:Set( ::oDbfAlpLFac:Recno() )
 
             ::oDbfAlpLFac:Skip()
+
+         end while
+
+         /*
+         Hacemos para que pasen los totales------------------------------------
+         */
+         
+         ::oDbfAlpTGst:GoTop()
+
+         while !::oDbfAlpTGst:Eof()
+
+            aTotAlb                 := aTotAlbPrv( ::oDbfAlpTGst:cSerAlb + Str( ::oDbfAlpTGst:nNumAlb ) + ::oDbfAlpTGst:cSufAlb, ::oDbfAlpTGst:cAlias, ::oDbfAlpLGst:cAlias, ::oDbfIvaGst:cAlias, ::oDbfDiv:cAlias, ::oDbfAlpTGst:cDivAlb )
+
+            ::oDbfAlpTGst:Load()
+
+            ::oDbfAlpTGst:nTotNet := aTotAlb[1]
+            ::oDbfAlpTGst:nTotIva := aTotAlb[2]
+            ::oDbfAlpTGst:nTotReq := aTotAlb[3]
+            ::oDbfAlpTGst:nTotAlb := aTotAlb[4]
+
+            ::oDbfAlpTGst:Save()            
+
+            ::oDbfAlpTGst:Skip()
 
          end while
 
@@ -3412,11 +3181,42 @@ METHOD Importar()
             ::oDbfFapLGst:nUniCaja   := ::oDbfFapLFac:nCanEnt
             ::oDbfFapLGst:nDtoLin    := ::oDbfFapLFac:nDto
 
+            /*
+            Solo importación ayamonte------------------------------------------
+            */
+
+            ::oDbfFapLGst:lLote        := !Empty( ::oDbfFapLFac:cProp2 )
+            ::oDbfFapLGst:cLote        := ::oDbfFapLFac:cProp2
+            ::oDbfFapLGst:dFecCad      := cTod( SubStr( ::oDbfFapLFac:cProp1, 8, 2 ) + "/" + SubStr( ::oDbfFapLFac:cProp1, 6, 2 ) + "/" + SubStr( ::oDbfFapLFac:cProp1, 1, 4 ) )
+
             ::oDbfFapLGst:Save()
 
             ::aMtrIndices[ 16 ]:Set( ::oDbfFapLFac:Recno() )
 
             ::oDbfFapLFac:Skip()
+
+         end while
+
+         /*
+         Hacemos para que pasen los totales------------------------------------
+         */
+         
+         ::oDbfFapTGst:GoTop()
+
+         while !::oDbfFapTGst:Eof()
+
+            aTotFac                 := aTotFacPrv( ::oDbfFapTGst:cSerFac + Str( ::oDbfFapTGst:nNumFac ) + ::oDbfFapTGst:cSufFac, ::oDbfFapTGst:cAlias, ::oDbfFapLGst:cAlias, ::oDbfIvaGst:cAlias, ::oDbfDiv:cAlias, ::oDbfFapPGst:cAlias, ::oDbfFapTGst:cDivFac )
+
+            ::oDbfFapTGst:Load()
+
+            ::oDbfFapTGst:nTotNet := aTotFac[1]
+            ::oDbfFapTGst:nTotIva := aTotFac[2]
+            ::oDbfFapTGst:nTotReq := aTotFac[3]
+            ::oDbfFapTGst:nTotFac := aTotFac[4]
+
+            ::oDbfFapTGst:Save()            
+
+            ::oDbfFapTGst:Skip()
 
          end while
 
