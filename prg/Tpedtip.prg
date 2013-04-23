@@ -44,7 +44,7 @@ RETURN ( Self )
 
 METHOD OpenFiles() CLASS TInfPedTip
 
-   DATABASE NEW ::oPedCliT PATH ( cPatEmp() ) FILE "PedCliT.DBF" VIA ( cDriver() ) SHARED INDEX "PedCliT.CDX"
+   ::oPedCliT := TDataCenter():oPedCliT()
 
    DATABASE NEW ::oPedCliL PATH ( cPatEmp() ) FILE "PedCliL.DBF" VIA ( cDriver() ) SHARED INDEX "PedCliL.CDX"
 

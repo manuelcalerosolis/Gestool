@@ -308,6 +308,64 @@ CLASS TDataCenter
 
    //---------------------------------------------------------------------------//
 
+   INLINE METHOD oPedCliT()
+
+      local cFilter
+      local oPedCliT
+
+      DATABASE NEW oPedCliT PATH ( cPatEmp() ) FILE "PedCliT.Dbf" VIA ( cDriver() ) SHARED INDEX "PedCliT.Cdx"
+
+         if lAIS() .and. !oUser():lAdministrador()
+      
+            cFilter     := "Field->cSufPed == '" + oUser():cDelegacion() + "' .and. Field->cCodCaj == '" + oUser():cCaja() + "'"
+            if oUser():lFiltroVentas()         
+               cFilter  += " .and. Field->cCodUsr == '" + oUser():cCodigo() + "'"
+            end if 
+
+            ( oPedCliT:cAlias )->( AdsSetAOF( cFilter ) )
+
+         end if
+
+      Return ( oPedCliT )   
+
+   ENDMETHOD
+
+   //---------------------------------------------------------------------------//
+
+   INLINE METHOD OpenPedCliT( dbf )
+
+      local lOpen
+      local cFilter
+
+      USE ( cPatEmp() + "PedCliT.Dbf" ) NEW VIA ( cDriver() ) SHARED ALIAS ( cCheckArea( "PedCliT", @dbf ) )
+      SET ADSINDEX TO ( cPatEmp() + "PedCliT.Cdx" ) ADDITIVE
+
+      lOpen             := !neterr()
+      if lOpen
+
+         /*
+         Limitaciones de cajero y cajas----------------------------------------
+         */
+
+         if lAIS() .and. !oUser():lAdministrador()
+      
+            cFilter     := "Field->cSufPed == '" + oUser():cDelegacion() + "' .and. Field->cCodCaj == '" + oUser():cCaja() + "'"
+            if oUser():lFiltroVentas()         
+               cFilter  += " .and. Field->cCodUsr == '" + oUser():cCodigo() + "'"
+            end if 
+
+            ( dbf )->( AdsSetAOF( cFilter ) )
+
+         end if
+
+      end if 
+
+      Return ( lOpen )   
+
+   ENDMETHOD
+
+   //---------------------------------------------------------------------------//
+
    INLINE METHOD oSatCliT()
 
       local cFilter
@@ -366,6 +424,63 @@ CLASS TDataCenter
 
    //---------------------------------------------------------------------------//
 
+   INLINE METHOD oPreCliT()
+
+      local cFilter
+      local oPreCliT
+
+      DATABASE NEW oPreCliT PATH ( cPatEmp() ) FILE "PreCliT.Dbf" VIA ( cDriver() ) SHARED INDEX "PreCliT.Cdx"
+
+         if lAIS() .and. !oUser():lAdministrador()
+      
+            cFilter     := "Field->cSufPre == '" + oUser():cDelegacion() + "' .and. Field->cCodCaj == '" + oUser():cCaja() + "'"
+            if oUser():lFiltroVentas()         
+               cFilter  += " .and. Field->cCodUsr == '" + oUser():cCodigo() + "'"
+            end if 
+
+            ( oPreCliT:cAlias )->( AdsSetAOF( cFilter ) )
+
+         end if
+
+      Return ( oPreCliT )   
+
+   ENDMETHOD
+
+   //---------------------------------------------------------------------------//
+
+   INLINE METHOD OpenPreCliT( dbf )
+
+      local lOpen
+      local cFilter
+
+      USE ( cPatEmp() + "PreCliT.Dbf" ) NEW VIA ( cDriver() ) SHARED ALIAS ( cCheckArea( "PreCliT", @dbf ) )
+      SET ADSINDEX TO ( cPatEmp() + "PreCliT.Cdx" ) ADDITIVE
+
+      lOpen             := !neterr()
+      if lOpen
+
+         /*
+         Limitaciones de cajero y cajas----------------------------------------
+         */
+
+         if lAIS() .and. !oUser():lAdministrador()
+      
+            cFilter     := "Field->cSufPre == '" + oUser():cDelegacion() + "' .and. Field->cCodCaj == '" + oUser():cCaja() + "'"
+            if oUser():lFiltroVentas()         
+               cFilter  += " .and. Field->cCodUsr == '" + oUser():cCodigo() + "'"
+            end if 
+
+            ( dbf )->( AdsSetAOF( cFilter ) )
+
+         end if
+
+      end if 
+
+      Return ( lOpen )   
+
+   ENDMETHOD
+
+   //---------------------------------------------------------------------------//
 
 END CLASS
 
@@ -402,7 +517,7 @@ METHOD lAdministratorTask()
 
    if !Empty( ::aEmpresas )
 
-      DEFINE DIALOG ::oDlg RESOURCE "AdsAdmin" TITLE "Creaci髇 de diccionario de datos para " + ::cDataDictionaryFile
+      DEFINE DIALOG ::oDlg RESOURCE "AdsAdmin" TITLE "Creaci贸n de diccionario de datos para " + ::cDataDictionaryFile
 
       ::oBrwEmpresas                         := TXBrowse():New( ::oDlg )
 
@@ -436,7 +551,7 @@ METHOD lAdministratorTask()
       end with
 
       with object ( ::oBrwEmpresas:AddCol() )
-         :cHeader          := "C骴igo"
+         :cHeader          := "C贸digo"
          :nWidth           := 40
          :bEditValue       := {|| if( ::aEmpresas[ ::oBrwEmpresas:nArrayAt, 3 ], "<" + Rtrim( ::aEmpresas[ ::oBrwEmpresas:nArrayAt, 1 ] ) + ">", ::aEmpresas[ ::oBrwEmpresas:nArrayAt, 1 ] ) }
       end with
@@ -549,7 +664,7 @@ METHOD StartAdministratorTask()
       Construimos la base de datos de estructura----------------------------
       */
 
-      ::oSayProceso:SetText( "Creando arbol de tablas datos generales aplicaci髇" )
+      ::oSayProceso:SetText( "Creando arbol de tablas datos generales aplicaci贸n" )
 
       ::BuildData()
       ::CreateDataTable()
@@ -1139,7 +1254,7 @@ METHOD AddTable( oTable )
             msgStop(    "Name  : " + Alltrim( oTable:cName )      + CRLF + ;
                         "Table : " + Alltrim( oTable:cDataFile )  + CRLF + ;
                         "Index : " + Alltrim( oTable:cIndexFile ) + CRLF + ;
-                        "Descripci髇 de error " + cValToChar( adsGetLastError( @cError ) ),;
+                        "Descripci贸n de error " + cValToChar( adsGetLastError( @cError ) ),;
                         "Error adding table" )
 
          end if
@@ -1147,11 +1262,11 @@ METHOD AddTable( oTable )
       else
 
          if !file( oTable:cDataFile )
-            msgWait( "No existe " + ( oTable:cDataFile ), "Atenci髇", 1 )
+            msgWait( "No existe " + ( oTable:cDataFile ), "Atenci贸n", 1 )
          end if
 
          if !file( oTable:cIndexFile )
-            msgWait( "No existe " + ( oTable:cIndexFile ), "Atenci髇", 1 )
+            msgWait( "No existe " + ( oTable:cIndexFile ), "Atenci贸n", 1 )
          end if
 
       end if
@@ -2856,7 +2971,7 @@ METHOD Auditor()
       end with
 
       with object ( ::oBrwOperation:AddCol() )
-         :cHeader          := "Aplicaci髇"
+         :cHeader          := "Aplicaci贸n"
          :nWidth           := 100
          :bEditValue       := {|| SqlOperation->AppName }
       end with
@@ -2868,7 +2983,7 @@ METHOD Auditor()
       end with
 
       with object ( ::oBrwOperation:AddCol() )
-         :cHeader          := "Operaci髇"
+         :cHeader          := "Operaci贸n"
          :nWidth           := 100
          :bEditValue       := {|| SqlOperation->Operation }
       end with
@@ -2990,11 +3105,11 @@ METHOD lCreaArrayPeriodos()
 
    end case
 
-   aAdd( ::aPeriodo, "Doce 鷏timos meses" )
+   aAdd( ::aPeriodo, "Doce 煤ltimos meses" )
 
-   aAdd( ::aPeriodo, "A駉 en curso" )
+   aAdd( ::aPeriodo, "A帽o en curso" )
 
-   aAdd( ::aPeriodo, "A駉 anterior" )
+   aAdd( ::aPeriodo, "A帽o anterior" )
 
 RETURN ( Self )
 
@@ -3043,17 +3158,17 @@ METHOD lRecargaFecha()
          ::oIniInf:cText( CtoD( "01/10/" + Str( Year( GetSysDate() ) ) ) )
          ::oFinInf:cText( CtoD( "31/12/" + Str( Year( GetSysDate() ) ) ) )
 
-      case ::cPeriodo == "Doce 鷏timos meses"
+      case ::cPeriodo == "Doce 煤ltimos meses"
 
          ::oIniInf:cText( CtoD( Str( Day( GetSysDate() ) ) + "/" + Str( Month( GetSysDate() ) ) + "/" + Str( Year( GetSysDate() ) -1 ) ) )
          ::oFinInf:cText( GetSysDate() )
 
-      case ::cPeriodo == "A駉 en curso"
+      case ::cPeriodo == "A帽o en curso"
 
          ::oIniInf:cText( CtoD( "01/01/" + Str( Year( GetSysDate() ) ) ) )
          ::oFinInf:cText( CtoD( "31/12/" + Str( Year( GetSysDate() ) ) ) )
 
-      case ::cPeriodo == "A駉 anterior"
+      case ::cPeriodo == "A帽o anterior"
 
          ::oIniInf:cText( CtoD( "01/01/" + Str( Year( GetSysDate() ) - 1 ) ) )
          ::oFinInf:cText( CtoD( "31/12/" + Str( Year( GetSysDate() ) - 1 ) ) )
@@ -3105,12 +3220,12 @@ METHOD Resource( nId )
    end if
 
    if nUsrInUse() > 1
-      msgStop( "Hay m醩 de un usuario conectado a la aplicaci髇", "Atenci髇" )
+      msgStop( "Hay m谩s de un usuario conectado a la aplicaci贸n", "Atenci贸n" )
       return nil
    end if
 
    if !TReindex():lCreateHandle()
-      msgStop( "Esta opci髇 ya ha sido inicada por otro usuario", "Atenci髇" )
+      msgStop( "Esta opci贸n ya ha sido inicada por otro usuario", "Atenci贸n" )
       return nil
    end if
 

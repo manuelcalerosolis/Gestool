@@ -603,7 +603,7 @@ STATIC FUNCTION OpenFiles( lExt )
 
    lExternal            := lExt
 
-   oBlock               := ErrorBlock( {| oError | ApoloBreak( oError ) } )
+   oBlock               := ErrorBlock( {| oError | ApoloBreak( oError ) } ) 
 
    BEGIN SEQUENCE
 
@@ -611,8 +611,9 @@ STATIC FUNCTION OpenFiles( lExt )
 
       lOpenFiles        := .t.
 
-      USE ( cPatEmp() + "PRECLIT.DBF" ) NEW VIA ( cDriver() ) SHARED ALIAS ( cCheckArea( "PRECLIT", @dbfPreCliT ) )
-      SET ADSINDEX TO ( cPatEmp() + "PRECLIT.CDX" ) ADDITIVE
+      if !TDataCenter():OpenPreCliT( @dbfPreCliT )
+         lOpenFiles     := .f.
+      end if 
 
       USE ( cPatEmp() + "PRECLIL.DBF" ) NEW VIA ( cDriver() ) SHARED ALIAS ( cCheckArea( "PRECLIL", @dbfPreCliL ) )
       SET ADSINDEX TO ( cPatEmp() + "PRECLIL.CDX" ) ADDITIVE
@@ -1735,7 +1736,7 @@ FUNCTION PreCli( oMenuItem, oWnd, cCodCli, cCodArt )
 
       DEFINE BTNSHELL RESOURCE "DOCUMENT_PLAIN_USER1_" OF oWndBrw ;
             ALLOW    EXIT ;
-            ACTION   ( if( !( dbfPreCliT )->lEstado, AlbCli( nil, nil, nil, nil, { "Presupuesto" => ( dbfPreCliT )->cSerPre + Str( ( dbfPreCliT )->nNumPre ) + ( dbfPreCliT )->cSufPre } ), MsgStop( "El presupuesto ya ha sido aceptado" ) ) );
+            ACTION   ( if( !( dbfPreCliT )->lEstado, AlbCli( nil, nil, { "Presupuesto" => ( dbfPreCliT )->cSerPre + Str( ( dbfPreCliT )->nNumPre ) + ( dbfPreCliT )->cSufPre } ), MsgStop( "El presupuesto ya ha sido aceptado" ) ) );
             TOOLTIP  "Generar albarán" ;
             FROM     oRotor ;
 
@@ -9194,6 +9195,7 @@ Function SynPreCli( cPath )
 
    local oError
    local oBlock
+   local nOrdAnt
    local aTotPre
 
    oBlock               := ErrorBlock( {| oError | ApoloBreak( oError ) } )
@@ -9223,6 +9225,9 @@ Function SynPreCli( cPath )
    USE ( cPatDat() + "DIVISAS.DBF" )   NEW VIA ( cDriver() ) ALIAS ( cCheckArea( "DIVISAS", @dbfDiv ) ) SHARED
    SET ADSINDEX TO ( cPatDat() + "DIVISAS.CDX" ) ADDITIVE
 
+   ( dbfPreCliT )->( ordSetFocus( 0 ) )
+   ( dbfPreCliT )->( dbGoTop() )
+
       while !( dbfPreCliT )->( eof() )
 
          if Empty( ( dbfPreCliT )->cSufPre )
@@ -9237,13 +9242,8 @@ Function SynPreCli( cPath )
             ( dbfPreCliT )->cCodGrp := RetGrpCli( ( dbfPreCliT )->cCodCli, dbfClient )
          end if
 
-         if !( ( dbfPreCliT )->cSerPre >= "A" .and. ( dbfPreCliT )->cSerPre <= "Z" )
-            ( dbfPreCliT )->( dbDelete() )
-         end if
-
          /*
          Rellenamos los campos de totales
-         */
 
          if ( dbfPreCliT )->nTotPre == 0 .and. dbLock( dbfPreCliT )
 
@@ -9257,10 +9257,18 @@ Function SynPreCli( cPath )
             ( dbfPreCliT )->( dbUnLock() )
 
          end if
+         */
 
          ( dbfPreCliT )->( dbSkip() )
 
       end while
+
+   ( dbfPreCliT )->( ordSetFocus( 1 ) )
+
+   // Lineas ------------------------------------------------------------------
+
+   ( dbfPreCliL )->( ordSetFocus( 0 ) )
+   ( dbfPreCliL )->( dbGoTop() )
 
       while !( dbfPreCliL )->( eof() )
 
@@ -9294,6 +9302,13 @@ Function SynPreCli( cPath )
 
       end while
 
+   ( dbfPreCliL )->( ordSetFocus( 1 ) )
+
+   // Lineas ------------------------------------------------------------------
+
+   ( dbfPreCliI )->( ordSetFocus( 0 ) )
+   ( dbfPreCliI )->( dbGoTop() )
+
       while !( dbfPreCliI )->( eof() )
 
          if Empty( ( dbfPreCliI )->cSufPre )
@@ -9305,6 +9320,8 @@ Function SynPreCli( cPath )
          SysRefresh()
 
       end while
+
+   ( dbfPreCliI )->( ordSetFocus( 1 ) )
 
    RECOVER USING oError
 
@@ -9529,8 +9546,9 @@ Method RestoreData()
       oBlock            := ErrorBlock( {| oError | ApoloBreak( oError ) } )
       BEGIN SEQUENCE
 
-      USE ( cPatEmp() + "PreCliT.Dbf" ) NEW VIA ( cDriver() ) SHARED ALIAS ( cCheckArea( "PreCliT", @dbfPreCliT ) )
+      USE ( cPatEmp() + "PreCliT.DBF" ) NEW VIA ( cDriver() ) SHARED ALIAS ( cCheckArea( "PreCliT", @dbfPreCliT ) )
       SET ADSINDEX TO ( cPatEmp() + "PreCliT.Cdx" ) ADDITIVE
+      
       ( dbfPreCliT )->( OrdSetFocus( "lSndDoc" ) )
 
       while ( dbfPreCliT )->( dbSeek( .t. ) ) .and. !( dbfPreCliT )->( eof() )

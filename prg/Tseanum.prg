@@ -181,7 +181,7 @@ METHOD OpenFiles()
       DATABASE NEW ::oAlbCliS PATH ( cPatEmp() ) FILE "AlbCliS.Dbf" VIA ( cDriver() ) SHARED INDEX "AlbCliS.Cdx"
       ::oAlbCliS:OrdSetFocus( "cNumSer" )
 
-      TDataCenter():oSatCliT() 
+      ::oSatCliT := TDataCenter():oSatCliT() 
 
       DATABASE NEW ::oSatCliL PATH ( cPatEmp() ) FILE "SatCliL.Dbf" VIA ( cDriver() ) SHARED INDEX "SatCliL.Cdx"
 
@@ -1531,6 +1531,8 @@ CLASS TNumerosSerie
    DATA  lCompras             INIT .f.
    DATA  lTicket              INIT .f.
 
+   DATA  lAvisar              INIT .f.
+
    METHOD Resource()
 
    METHOD GenerarSeries()
@@ -1572,6 +1574,10 @@ METHOD Resource() CLASS TNumerosSerie
    ::aNumSer               := Afill( Array( ::nAbsUnidades() ), Space( 30 ) )
    ::aValSer               := Afill( Array( ::nAbsUnidades() ), .f. )
 
+   if !Empty( ::oStock )
+      ::lAvisar            := ::oStock:lAvisarSerieSinStock( ::cCodArt )
+   end if 
+   
    do case
    case IsChar( ::uTmpSer )
 
@@ -1820,7 +1826,11 @@ METHOD lChequearSeries() CLASS TNumerosSerie
       if uFieldEmpresa( "lSerNoCom" )
          msgStop( "Hay números de serie sin stock para su venta." )
       else
-         lValid            := ApoloMsgNoYes( "Hay números de serie sin stock para su venta.", "¿Desea continuar con la venta?" )
+         if ::lAvisar
+            lValid         := ApoloMsgNoYes( "Hay números de serie sin stock para su venta.", "¿Desea continuar con la venta?" )
+         else
+            lValid         := .t.
+         end if 
       end if
 
       if !Empty( ::oBrwSer ) .and. IsNum( n )

@@ -110,7 +110,7 @@ METHOD OpenFiles() CLASS TFastVentasClientes
    oBlock         := ErrorBlock( {| oError | ApoloBreak( oError ) } )
    BEGIN SEQUENCE
 
-      TDataCenter():oSatCliT() 
+      ::oSatCliT  := TDataCenter():oSatCliT()
       ::oSatCliT:OrdSetFocus( "cCodCli" )
 
       DATABASE NEW ::oSatCliL PATH ( cPatEmp() ) CLASS "SatCliL" FILE "SatCliL.DBF" VIA ( cDriver() ) SHARED INDEX "SatCliL.CDX"
@@ -120,7 +120,7 @@ METHOD OpenFiles() CLASS TFastVentasClientes
 
       DATABASE NEW ::oPreCliL PATH ( cPatEmp() ) CLASS "PreCliL" FILE "PreCliL.DBF" VIA ( cDriver() ) SHARED INDEX "PreCliL.CDX"
 
-      DATABASE NEW ::oPedCliT PATH ( cPatEmp() ) CLASS "PedCliT" FILE "PedCliT.DBF" VIA ( cDriver() ) SHARED INDEX "PedCliT.CDX"
+      ::oPedCliT := TDataCenter():oPedCliT()
       ::oPedCliT:OrdSetFocus( "cCodCli" )
 
       DATABASE NEW ::oPedCliL PATH ( cPatEmp() ) CLASS "PedCliL" FILE "PedCliL.DBF" VIA ( cDriver() ) SHARED INDEX "PedCliL.CDX"

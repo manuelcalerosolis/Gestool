@@ -2218,9 +2218,9 @@ STATIC FUNCTION GenDiario( dInfDesde, dInfHasta, lPreCli, lPedCli, lAlbCli, lFac
 
    if lPreCli
 
-      USE ( cPatEmp() + "PRECLIT.DBF" ) NEW VIA ( cDriver() ) SHARED ALIAS ( cCheckArea( "PRECLIT", @dbfPreCliT ) )
-      SET ADSINDEX TO ( cPatEmp() + "PRECLIT.CDX" ) ADDITIVE
-      ( dbfPreCliT )->( OrdSetFocus( "DFECPRE" ) )
+      if TDataCenter():OpenPreCliT( @dbfPreCliT )
+         ( dbfPreCliT )->( OrdSetFocus( "dFecPre" ) )
+      end if 
 
       USE ( cPatEmp() + "PRECLIL.DBF" ) NEW VIA ( cDriver() ) SHARED ALIAS ( cCheckArea( "PRECLIL", @dbfPreCliL ) )
       SET ADSINDEX TO ( cPatEmp() + "PRECLIL.CDX" ) ADDITIVE
@@ -2260,9 +2260,11 @@ STATIC FUNCTION GenDiario( dInfDesde, dInfHasta, lPreCli, lPedCli, lAlbCli, lFac
 
    if lPedCli
 
-      USE ( cPatEmp() + "PEDCLIT.DBF" ) NEW VIA ( cDriver() ) SHARED ALIAS ( cCheckArea( "PedCliT", @dbfPedCliT ) )
-      SET ADSINDEX TO ( cPatEmp() + "PEDCLIT.CDX" ) ADDITIVE
-      ( dbfPedCliT )->( OrdSetFocus( "DFECPRE" ) )
+      if !TDataCenter():OpenPedCliT( @dbfPedCliT )
+         lOpenFiles     := .f.
+      else 
+         ( dbfPedCliT )->( OrdSetFocus( "DFECPRE" ) ) 
+      end if 
 
       USE ( cPatEmp() + "PEDCLIL.DBF" ) NEW VIA ( cDriver() ) SHARED ALIAS ( cCheckArea( "PedCliL", @dbfPedCliL ) )
       SET ADSINDEX TO ( cPatEmp() + "PEDCLIL.CDX" ) ADDITIVE

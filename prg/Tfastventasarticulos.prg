@@ -160,7 +160,7 @@ METHOD OpenFiles() CLASS TFastVentasArticulos
 
       DATABASE NEW ::oPreCliL PATH ( cPatEmp() ) CLASS "PreCliL" FILE "PreCliL.Dbf" VIA ( cDriver() ) SHARED INDEX "PreCliL.Cdx"
 
-      DATABASE NEW ::oPedCliT PATH ( cPatEmp() ) CLASS "PedCliT" FILE "PedCliT.Dbf" VIA ( cDriver() ) SHARED INDEX "PedCliT.Cdx"
+      ::oPedCliT := TDataCenter():oPedCliT()
 
       DATABASE NEW ::oPedCliL PATH ( cPatEmp() ) CLASS "PedCliL" FILE "PedCliL.Dbf" VIA ( cDriver() ) SHARED INDEX "PedCliL.Cdx"
 

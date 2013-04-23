@@ -70,7 +70,7 @@ METHOD OpenFiles() CLASS TResFamPed
    Ficheros necesarios
    */
 
-   DATABASE NEW ::oPedCliT PATH ( cPatEmp() ) FILE "PedCLIT.DBF" VIA ( cDriver() ) SHARED INDEX "PedCLIT.CDX"
+   ::oPedCliT := TDataCenter():oPedCliT()
 
    DATABASE NEW ::oPedCliL PATH ( cPatEmp() ) FILE "PedCLIL.DBF" VIA ( cDriver() ) SHARED INDEX "PedCLIL.CDX"
    ::oPedCliL:SetOrder( "CREF" )

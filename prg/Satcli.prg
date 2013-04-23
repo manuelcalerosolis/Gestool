@@ -333,7 +333,6 @@ static dbfPedPrvL
 static dbfAlbPrvL
 static dbfFacPrvL
 static dbfRctPrvL
-static dbfPreCliT
 static dbfPreCliL
 static dbfPedCliL
 static dbfFacCliL
@@ -976,10 +975,6 @@ STATIC FUNCTION CloseFiles()
       ( dbfPedCliL )->( dbCloseArea() )
    end if
 
-   if !Empty( dbfPreCliT )
-      ( dbfPreCliT )->( dbCloseArea() )
-   end if
-
    if dbfPreCliL != nil
       ( dbfPreCliL )->( dbCloseArea() )
    end if
@@ -1595,7 +1590,7 @@ FUNCTION SatCli( oMenuItem, oWnd, cCodCli, cCodArt )
             FROM     oRotor ;
 
       DEFINE BTNSHELL RESOURCE "INFO" OF oWndBrw ;
-            ACTION   ( InfCliente( ( dbfSatCliT )->cCodCli ) );
+            ACTION   ( InfCliente( ( dbfSatCliT )->cCodCli ) ); 
             TOOLTIP  "Informe de cliente" ;
             FROM     oRotor ;
 
@@ -1606,7 +1601,7 @@ FUNCTION SatCli( oMenuItem, oWnd, cCodCli, cCodArt )
 
       DEFINE BTNSHELL RESOURCE "DOCUMENT_PLAIN_USER1_" OF oWndBrw ;
             ALLOW    EXIT ;
-            ACTION   ( if( !( dbfSatCliT )->lEstado, AlbCli( nil, nil, nil, nil, { "SAT" => ( dbfSatCliT )->cSerSat + Str( ( dbfSatCliT )->nNumSat ) + ( dbfSatCliT )->cSufSat } ), MsgStop( "El S.A.T. ya ha sido aceptado" ) ) );
+            ACTION   ( if( !( dbfSatCliT )->lEstado, AlbCli( nil, nil, { "SAT" => ( dbfSatCliT )->cSerSat + Str( ( dbfSatCliT )->nNumSat ) + ( dbfSatCliT )->cSufSat } ), MsgStop( "El S.A.T. ya ha sido aceptado" ) ) );
             TOOLTIP  "Generar albarán" ;
             FROM     oRotor ;
 
@@ -9100,6 +9095,7 @@ Function SynSatCli( cPath )
 
    local oError
    local oBlock
+   local nOrdAnt
    local aTotSat
 
    oBlock               := ErrorBlock( {| oError | ApoloBreak( oError ) } )
@@ -9132,6 +9128,9 @@ Function SynSatCli( cPath )
    USE ( cPatDat() + "DIVISAS.DBF" )   NEW VIA ( cDriver() ) ALIAS ( cCheckArea( "DIVISAS", @dbfDiv ) ) SHARED
    SET ADSINDEX TO ( cPatDat() + "DIVISAS.CDX" ) ADDITIVE
 
+   ( dbfSatCliT )->( ordSetFocus( 0 ) )
+   ( dbfSatCliT )->( dbGoTop() )
+
       while !( dbfSatCliT )->( eof() )
 
          if Empty( ( dbfSatCliT )->cSufSat )
@@ -9146,13 +9145,8 @@ Function SynSatCli( cPath )
             ( dbfSatCliT )->cCodGrp := RetGrpCli( ( dbfSatCliT )->cCodCli, dbfClient )
          end if
 
-         if !( ( dbfSatCliT )->cSerSat >= "A" .and. ( dbfSatCliT )->cSerSat <= "Z" )
-            ( dbfSatCliT )->( dbDelete() )
-         end if
-
          /*
          Rellenamos los campos de totales
-         */
 
          if ( dbfSatCliT )->nTotSat == 0 .and. dbLock( dbfSatCliT )
 
@@ -9166,10 +9160,18 @@ Function SynSatCli( cPath )
             ( dbfSatCliT )->( dbUnLock() )
 
          end if
+         */
 
          ( dbfSatCliT )->( dbSkip() )
 
       end while
+
+   ( dbfSatCliT )->( ordSetFocus( 1 ) )
+
+   // lineas ------------------------------------------------------------------
+
+   ( dbfSatCliL )->( ordSetFocus( 0 ) )
+   ( dbfSatCliL )->( dbGoTop() )
 
       while !( dbfSatCliL )->( eof() )
 
@@ -9203,6 +9205,13 @@ Function SynSatCli( cPath )
 
       end while
 
+   ( dbfSatCliL )->( ordSetFocus( 1 ) )
+
+   // Incidencias ------------------------------------------------------------------
+
+   ( dbfSatCliI )->( ordSetFocus( 0 ) )
+   ( dbfSatCliI )->( dbGoTop() )
+
       while !( dbfSatCliI )->( eof() )
 
          if Empty( ( dbfSatCliI )->cSufSat )
@@ -9215,8 +9224,13 @@ Function SynSatCli( cPath )
 
       end while
 
-      // Series ---------------------------------------------------------------
-   
+   ( dbfSatCliI )->( ordSetFocus( 1 ) )
+
+   // series ------------------------------------------------------------------
+
+   ( dbfSatCliS )->( ordSetFocus( 0 ) )
+   ( dbfSatCliS )->( dbGoTop() )
+
       while !( dbfSatCliS )->( eof() )
 
          if Empty( ( dbfSatCliS )->cSufSat )
@@ -9232,6 +9246,8 @@ Function SynSatCli( cPath )
          SysRefresh()
    
       end while
+
+   ( dbfSatCliS )->( ordSetFocus( 1 ) )
 
    RECOVER USING oError
 

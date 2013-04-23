@@ -2237,18 +2237,9 @@ function SynRecCli( cPath )
    USE ( cPatDat() + "TIVA.DBF" ) NEW VIA ( cDriver() ) ALIAS ( cCheckArea( "TIva", @dbfIva ) ) EXCLUSIVE
    if !lAIS() ; ( dbfIva )->( ordListAdd( ( cPatDat() + "TIVA.CDX" ) ) ); else ; ordSetFocus( 1 ) ; end
 
+   ( dbfFacCliP )->( OrdSetFocus( 0 ) )
    ( dbfFacCliP )->( dbGoTop() )
-   while !( dbfFacCliP )->( eof() )
 
-      if !( ( dbfFacCliP )->cSerie >= "A" .and. ( dbfFacCliP )->cSerie <= "Z" )
-         ( dbfFacCliP )->( dbDelete() )
-      end if
-
-      ( dbfFacCliP )->( dbSkip() )
-
-   end while 
-
-   ( dbfFacCliP )->( dbGoTop() )
    while !( dbfFacCliP )->( eof() )
 
       if Empty( ( dbfFacCliP )->cSufFac )
@@ -2289,10 +2280,15 @@ function SynRecCli( cPath )
 
    end while
 
+   ( dbfFacCliP )->( OrdSetFocus( 1 ) )
+
+   // Calculo de totales----------------------------------------------------
+
+   ( dbfFacCliT )->( OrdSetFocus( 0 ) )
    ( dbfFacCliT )->( dbGoTop() )
+
    while !( dbfFacCliT )->( eof() )
 
-      // Calculo de totales----------------------------------------------------
 
       nTotFac  := nTotFacCli( ( dbfFacCliT )->cSerie + Str( ( dbfFacCliT )->nNumFac ) + ( dbfFacCliT )->cSufFac, dbfFacCliT, dbfFacCliL, dbfIva, dbfDiv, dbfFacCliP, dbfAntCliT, nil, nil, .f. )
       nTotRec  := nPagFacCli( ( dbfFacCliT )->cSerie + Str( ( dbfFacCliT )->nNumFac ) + ( dbfFacCliT )->cSufFac, dbfFacCliT, dbfFacCliP, dbfIva, dbfDiv, nil, .f. )
@@ -2311,11 +2307,15 @@ function SynRecCli( cPath )
 
    end while
 
+   ( dbfFacCliT )->( OrdSetFocus( 1 ) )
+
    /*
    Facturas Rectificativas-----------------------------------------------------
    */
 
+   ( dbfFacRecT )->( OrdSetFocus( 0 ) )
    ( dbfFacRecT )->( dbGoTop() )
+
    while !( dbfFacRecT )->( eof() )
 
       // Calculo de totales----------------------------------------------------
@@ -2336,6 +2336,27 @@ function SynRecCli( cPath )
       SysRefresh()
 
    end while
+
+   ( dbfFacRecT )->( OrdSetFocus( 1 ) )
+
+   /*
+   Pagos-----------------------------------------------------------------------
+   */
+
+   ( dbfFacCliP )->( ordSetFocus( 0 ) )
+   ( dbfFacCliP )->( dbGoTop() )
+
+   while !( dbfFacCliP )->( eof() )
+
+      if !( ( dbfFacCliP )->cSerie >= "A" .and. ( dbfFacCliP )->cSerie <= "Z" )
+         ( dbfFacCliP )->( dbDelete() )
+      end if
+
+      ( dbfFacCliP )->( dbSkip() )
+
+   end while 
+
+   ( dbfFacCliP )->( ordSetFocus( 1 ) )
 
    RECOVER USING oError
 

@@ -737,25 +737,11 @@ STATIC FUNCTION OpenFiles( lExt )
       USE ( cPatEmp() + "FacRecS.DBF" ) NEW VIA ( cDriver() ) SHARED ALIAS ( cCheckArea( "FacRecS", @dbfFacRecS ) )
       SET ADSINDEX TO ( cPatEmp() + "FacRecS.CDX" ) ADDITIVE
 
-      if !TDataCenter():OpenFacCliT( @dbfFacCliT )
-         lOpenFiles     := .f.
-      end if
-
       USE ( cPatEmp() + "FacCliL.DBF" ) NEW VIA ( cDriver() ) SHARED ALIAS ( cCheckArea( "FacCliL", @dbfFacCliL ) )
       SET ADSINDEX TO ( cPatEmp() + "FacCliL.CDX" ) ADDITIVE
 
       USE ( cPatEmp() + "FacCliS.DBF" ) NEW VIA ( cDriver() ) SHARED ALIAS ( cCheckArea( "FacCliS", @dbfFacCliS ) )
       SET ADSINDEX TO ( cPatEmp() + "FacCliS.CDX" ) ADDITIVE
-
-	  	if !TDataCenter():OpenFacCliP( @dbfFacCliP )
-   			lOpenFiles     := .f.
-   		else
-			( dbfFacCliP )->( OrdSetFocus( "rNumFac" ) )
-		end if
-
-		if !TDataCenter():OpenAlbCliT( @dbfAlbCliT )
-   			lOpenFiles     := .f.
-		end if
 
       USE ( cPatEmp() + "ALBCLIL.DBF" ) NEW VIA ( cDriver() ) SHARED ALIAS ( cCheckArea( "ALBCLIL", @dbfAlbCliL ) )
       SET ADSINDEX TO ( cPatEmp() + "ALBCLIL.CDX" ) ADDITIVE
@@ -766,16 +752,10 @@ STATIC FUNCTION OpenFiles( lExt )
       USE ( cPatEmp() + "ALBCLIP.DBF" ) NEW VIA ( cDriver() ) SHARED ALIAS ( cCheckArea( "ALBCLIP", @dbfAlbCliP ) )
       SET ADSINDEX TO ( cPatEmp() + "ALBCLIP.CDX" ) ADDITIVE
 
-      USE ( cPatEmp() + "PEDCLIT.DBF" ) NEW VIA ( cDriver() ) SHARED ALIAS ( cCheckArea( "PEDCLIT", @dbfPedCliT ) )
-      SET ADSINDEX TO ( cPatEmp() + "PEDCLIT.CDX" ) ADDITIVE
-
       USE ( cPatEmp() + "PEDCLIL.DBF" ) NEW VIA ( cDriver() ) SHARED ALIAS ( cCheckArea( "PEDCLIT", @dbfPedCliL ) )
       SET ADSINDEX TO ( cPatEmp() + "PEDCLIL.CDX" ) ADDITIVE
 
-      USE ( cPatEmp() + "PRECLIT.DBF" ) NEW VIA ( cDriver() ) SHARED ALIAS ( cCheckArea( "PRECLIT", @dbfPreCliT ) )
-      SET ADSINDEX TO ( cPatEmp() + "PRECLIT.CDX" ) ADDITIVE
-
-      USE ( cPatEmp() + "PRECLIL.DBF" ) NEW VIA ( cDriver() ) SHARED ALIAS ( cCheckArea( "PRECLIT", @dbfPreCliL ) )
+       USE ( cPatEmp() + "PRECLIL.DBF" ) NEW VIA ( cDriver() ) SHARED ALIAS ( cCheckArea( "PRECLIT", @dbfPreCliL ) )
       SET ADSINDEX TO ( cPatEmp() + "PRECLIL.CDX" ) ADDITIVE
 
       USE ( cPatEmp() + "TIKET.DBF" ) NEW VIA ( cDriver() ) SHARED ALIAS ( cCheckArea( "TIKET", @dbfTikCliT ) )
@@ -945,6 +925,28 @@ STATIC FUNCTION OpenFiles( lExt )
 
       USE ( cPatCli() + "CliBnc.Dbf" ) NEW VIA ( cDriver() ) SHARED ALIAS ( cCheckArea( "CLIBNC", @dbfCliBnc ) )
       SET ADSINDEX TO ( cPatCli() + "CliBnc.Cdx" ) ADDITIVE
+      
+	    if !TDataCenter():OpenPreCliT( @dbfPreCliT )
+			lOpenFiles     := .f.
+		end if 
+
+		if !TDataCenter():OpenPedCliT( @dbfPedCliT )
+        	lOpenFiles     := .f.
+      	end if 
+
+		if !TDataCenter():OpenAlbCliT( @dbfAlbCliT )
+   			lOpenFiles     := .f.
+		end if
+
+		if !TDataCenter():OpenFacCliT( @dbfFacCliT )
+         	lOpenFiles     := .f.
+      	end if
+
+	  	if !TDataCenter():OpenFacCliP( @dbfFacCliP )
+   			lOpenFiles     := .f.
+   		else
+			( dbfFacCliP )->( OrdSetFocus( "rNumFac" ) )
+		end if
 
       oBandera          := TBandera():New()
 

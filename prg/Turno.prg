@@ -1018,7 +1018,7 @@ METHOD OpenFiles( lExclusive )
 
       DATABASE NEW ::oPreCliL    PATH ( cPatEmp() ) FILE "PRECLIL.DBF"        VIA ( cDriver() ) SHARED INDEX "PRECLIL.CDX"
 
-      DATABASE NEW ::oPedCliT    PATH ( cPatEmp() ) FILE "PEDCLIT.DBF"        VIA ( cDriver() ) SHARED INDEX "PEDCLIT.CDX"
+      ::oPedCliT := TDataCenter():oPedCliT()
       ::oPedCliT:OrdSetFocus( "CTURPED" )
 
       DATABASE NEW ::oPedCliL    PATH ( cPatEmp() ) FILE "PEDCLIL.DBF"        VIA ( cDriver() ) SHARED INDEX "PEDCLIL.CDX"

@@ -8,3 +8,4 @@ c:\"Program Files (x86)"\"Inno Setup 5"\Iscc.exe /dActualizacionStandard        
 c:\"Program Files (x86)"\"Inno Setup 5"\Iscc.exe /dActualizacionProfesional     .\iss\GestoolInstalacion.iss
 c:\"Program Files (x86)"\"Inno Setup 5"\Iscc.exe /dActualizacionPrestashop      .\iss\GestoolInstalacion.iss
 
+

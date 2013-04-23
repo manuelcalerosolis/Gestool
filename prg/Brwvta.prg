@@ -127,9 +127,9 @@ static oGraph
 
 Static Function OpenFiles()
 
-   local lOpen       := .t.
    local oError
    local oBlock
+   local lOpenFiles  := .t.
 
    CursorWait()
 
@@ -193,9 +193,6 @@ Static Function OpenFiles()
    Documentos relacionados de ventas
    */
 
-   USE ( cPatEmp() + "PRECLIT.DBF" ) NEW VIA ( cDriver() ) SHARED ALIAS ( cCheckArea( "PRECLIT", @dbfPreCliT ) )
-   SET ADSINDEX TO ( cPatEmp() + "PRECLIT.CDX" ) ADDITIVE
-
    USE ( cPatEmp() + "PRECLIL.DBF" ) NEW VIA ( cDriver() ) SHARED ALIAS ( cCheckArea( "PRECLIL", @dbfPreCliL ) )
    SET ADSINDEX TO ( cPatEmp() + "PRECLIL.CDX" ) ADDITIVE
    SET TAG TO "CREF"
@@ -203,9 +200,6 @@ Static Function OpenFiles()
    /*
    Documentos relacionados de ventas
    */
-
-   USE ( cPatEmp() + "PEDCLIT.DBF" ) NEW VIA ( cDriver() ) SHARED ALIAS ( cCheckArea( "PEDCLIT", @dbfPedCliT ) )
-   SET ADSINDEX TO ( cPatEmp() + "PEDCLIT.CDX" ) ADDITIVE
 
    USE ( cPatEmp() + "PEDCLIL.DBF" ) NEW VIA ( cDriver() ) SHARED ALIAS ( cCheckArea( "PEDCLIL", @dbfPedCliL ) )
    SET ADSINDEX TO ( cPatEmp() + "PEDCLIL.CDX" ) ADDITIVE
@@ -263,33 +257,42 @@ Static Function OpenFiles()
    SET TAG TO "CCODART"
 
    if !TDataCenter():OpenSatCliT( @dbfSatCliT )
-     lOpen              := .f.
+     lOpenFiles      := .f.
    end if
 
+   if !TDataCenter():OpenPreCliT( @dbfPreCliT )
+      lOpenFiles     := .f.
+   end if 
+
+   if !TDataCenter():OpenPedCliT( @dbfPedCliT )
+      lOpenFiles     := .f.
+   end if 
+
    if !TDataCenter():OpenFacCliT( @dbfFacCliT )
-      lOpen             := .f.
+      lOpenFiles     := .f.
    end if
 
    if !TDataCenter():OpenFacCliP( @dbfFacCliP )
-      lOpen             := .f.
+      lOpenFiles     := .f.
    end if
 
    if !TDataCenter():OpenAlbCliT( @dbfAlbCliT )
-      lOpen             := .f.
+      lOpenFiles     := .f.
    end if
 
-   oDbfTmp              := DefineTemporal()
+   oDbfTmp           := DefineTemporal()
    oDbfTmp:Activate( .f., .f. )
 
-   oStock               := TStock():Create( cPatGrp() )
+   oStock            := TStock():Create( cPatGrp() )
    if !oStock:lOpenFiles()
-      lOpen             := .f.
+      lOpenFiles     := .f.
    end if
 
    RECOVER USING oError
 
       msgStop( ErrorMessage( oError ), "Imposible abrir las bases de datos" )
-      lOpen             := .f.
+      
+      lOpenFiles     := .f.
 
    END SEQUENCE
 
@@ -297,7 +300,7 @@ Static Function OpenFiles()
 
    CursorWE()
 
-Return ( lOpen )
+Return ( lOpenFiles )
 
 //---------------------------------------------------------------------------//
 
@@ -1155,7 +1158,7 @@ Static Function InitBrwVtaCli( cCodArt, oTree, dbfDiv, dbfArticulo, oBrwStk, oBr
             MENUITEM "&6. Añadir albarán de cliente";
             MESSAGE  "Añade un albarán de cliente" ;
             RESOURCE "Document_plain_user1_16";
-            ACTION   ( AppAlbCli( "", cCodArt, .f. ), LoadDatos( cCodArt, nYear, oDlg, oBrwStk, oBrwTmp, oGraph, oBrwCom, oBrwVta ) )
+            ACTION   ( AppAlbCli( { "Artículo" => cCodArt }, .f. ), LoadDatos( cCodArt, nYear, oDlg, oBrwStk, oBrwTmp, oGraph, oBrwCom, oBrwVta ) )
 
             MENUITEM "&7. Añadir factura de cliente";
             MESSAGE  "Añade una factura de cliente" ;

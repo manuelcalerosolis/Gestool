@@ -1338,7 +1338,7 @@ Function Articulo( oMenuItem, oWnd, bOnInit )
             LEVEL    ACC_EDIT
 
          DEFINE BTNSHELL RESOURCE "Document_plain_user1_" OF oWndBrw ;
-            ACTION   ( AlbCli( nil, oWnd, nil, ( dbfArticulo )->Codigo ) );
+            ACTION   ( AlbCli( nil, oWnd, { "Artículo" => ( dbfArticulo )->Codigo } ) );
             TOOLTIP  "Añadir albarán de cliente" ;
             FROM     oRotor ;
             ALLOW    EXIT ;
