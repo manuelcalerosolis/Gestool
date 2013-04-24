@@ -11641,15 +11641,9 @@ FUNCTION aItmCli()
    aAdd( aBase, { "PobBanco",  "C", 25, 0, "Población del banco",                           "",                   "", "( cDbfCli )" } )
    aAdd( aBase, { "cProBanco", "C", 20, 0, "Provincia del banco",                           "",                   "", "( cDbfCli )" } )
    aAdd( aBase, { "Cuenta",    "C", 20, 0, "",                                              "",                   "", "( cDbfCli )" } )
-<<<<<<< HEAD
-   aAdd( aBase, { "nTipCli",   "N",  1, 0, "Tipo",                                          "",                   "", "( cDbfCli )" } ) 
-   aAdd( aBase, { "CodPago",   "C",  2, 0, "CÃ³digo del tipo de pago",                       "",                   "", "( cDbfCli )" } )
-   aAdd( aBase, { "cDtoEsp",   "C", 50, 0, "DescripciÃ³n del descuento por factura" ,        "",                   "", "( cDbfCli )" } )
-=======
    aAdd( aBase, { "nTipCli",   "N",  1, 0, "Tipo",                                          "",                   "", "( cDbfCli )" } )
    aAdd( aBase, { "CodPago",   "C",  2, 0, "Código del tipo de pago",                       "",                   "", "( cDbfCli )" } )
    aAdd( aBase, { "cDtoEsp",   "C", 50, 0, "Descripción del descuento por factura" ,        "",                   "", "( cDbfCli )" } )
->>>>>>> 793d15a9a833d2269002124376240bb620116238
    aAdd( aBase, { "nDtoEsp",   "N",  6, 2, "Porcentaje de descuento por factura" ,          "",                   "", "( cDbfCli )" } )
    aAdd( aBase, { "cDpp",      "C", 50, 0, "Descripción del descuento por pronto pago" ,    "",                   "", "( cDbfCli )" } )
    aAdd( aBase, { "nDpp",      "N",  6, 2, "Porcentaje de descuento por pronto pago" ,      "",                   "", "( cDbfCli )" } )

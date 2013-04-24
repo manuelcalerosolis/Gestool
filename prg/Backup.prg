@@ -174,7 +174,7 @@ Method New( oMenuItem, oWnd )
    end if
 
    if nUsrInUse() > 1
-      msgStop( "Hay más de un usuario conectado a la aplicación", "Atención" )
+      msgStop( "Hay mÃ¡s de un usuario conectado a la aplicaciÃ³n", "AtenciÃ³n" )
       return ( nil )
    end if
 
@@ -228,7 +228,7 @@ Method CloseFiles()
 
    RECOVER
 
-      msgStop( "Imposible cerrar todas las bases de datos.","Atención" )
+      msgStop( "Imposible cerrar todas las bases de datos.","AtenciÃ³n" )
       lOpen       := .F.
 
    END SEQUENCE
@@ -316,7 +316,7 @@ Method MuestraDialogo()
    end with
 
    with object ( ::oBrwSave:aCols[ 2 ] )
-      :cHeader       := "Código"
+      :cHeader       := "CÃ³digo"
       :bEditValue    := {|| ::aEmp[ ::oBrwSave:nArrayAt, 2 ] }
       :nWidth        := 40
    end with
@@ -459,7 +459,7 @@ Method MuestraDialogo()
    end with
 
    with object ( ::oBrwRestore:aCols[ 2 ] )
-      :cHeader       := "Código"
+      :cHeader       := "CÃ³digo"
       :bEditValue    := {|| ::aEmp[ ::oBrwRestore:nArrayAt, 2 ] }
       :nWidth        := 40
    end with
@@ -638,18 +638,18 @@ Method BotonSiguiente()
             SetWindowText( ::oBotonSiguiente:hWnd, "&Terminar" )
             ::oFld:GoNext()
          else
-            msgAlert( "No ha seleccionado ninguna empresa", "Atención" )
+            msgAlert( "No ha seleccionado ninguna empresa", "AtenciÃ³n" )
          end if
 
       case ::oFld:nOption == 3  //hacer una copia de seguridad
 
          if ::lPassword .and. ::cPassword1 != ::cPassword2
-            msgAlert( "Las contraseñas para las copias de seguridad, no coinciden", "Atención" )
+            msgAlert( "Las contraseÃ±as para las copias de seguridad, no coinciden", "AtenciÃ³n" )
             Return ( Self )
          end if
 
          if !::lDir .and. !::lInternet
-            msgAlert( "Debe especificar al menos un destino para la copia", "Atención" )
+            msgAlert( "Debe especificar al menos un destino para la copia", "AtenciÃ³n" )
             Return ( Self )
          end if
 
@@ -672,7 +672,7 @@ Method BotonSiguiente()
 
          else
 
-            msgAlert( "Debe especificar el lugar de destino", "Atención" )
+            msgAlert( "Debe especificar el lugar de destino", "AtenciÃ³n" )
 
          endif
 
@@ -689,7 +689,7 @@ Method BotonSiguiente()
             ::GetZipFiles()
             ::oFld:SetOption( 6 )
          else
-            msgAlert( "Debe especificar el lugar de origen", "Atención" )
+            msgAlert( "Debe especificar el lugar de origen", "AtenciÃ³n" )
          endif
 
       // Restaurar una copia de seguridad
@@ -807,13 +807,12 @@ Method ZipFiles()
 
          /*
          Si la empresa tiene grupo y no le hemos hecho copia de seguridad, se lo hacemos
-         */
 
          cCodGrp              := cCodigoGrupo( ::aEmp[ n, 2 ] )
 
          if !Empty( cCodGrp )
 
-            cGrp              := cPatSafe() + "Grp"
+            cGrp              := cPatSafe() + "Emp"
             if ::lDate
                cGrp           += Dtos( Date() )
             end if
@@ -824,18 +823,19 @@ Method ZipFiles()
             end if
 
             ::nActualFile     := 0
-            aDir              := Directory( FullCurDir() + "Grp" + cCodGrp + "\*.*" )
+            aDir              := Directory( FullCurDir() + "Emp" + cCodGrp + "\*.*" )
 
             ::oProgreso:SetTotal( Len( aDir ) )
             ::oProgreso:cText := "Comprimiendo grupo " + cCodGrp
 
             hb_SetDiskZip( {|| nil } )
-            aEval( aDir, { | cName, nIndex | hb_ZipFile( cGrp, FullCurDir() + "Grp" + cCodGrp + "\" + cName[ 1 ], 9, , , Rtrim( ::cPassword1 ) ), ::oProgreso:Set( nIndex ) } )
+            aEval( aDir, { | cName, nIndex | hb_ZipFile( cGrp, FullCurDir() + "Emp" + cCodGrp + "\" + cName[ 1 ], 9, , , Rtrim( ::cPassword1 ) ), ::oProgreso:Set( nIndex ) } )
             hb_gcAll()
 
             aAdd( aFil, cGrp )
 
          end if
+         */
 
       end if
 
@@ -973,7 +973,7 @@ Method RestoreZipFiles()
 
             // Comfirme antes de sobreescribir
 
-            if ApoloMsgNoYes( "Se dispone a sobreescribir la empresa " + ::aEmp[ n, 2 ], "¿ Desea continuar ?" )
+            if ApoloMsgNoYes( "Se dispone a sobreescribir la empresa " + ::aEmp[ n, 2 ], "Â¿ Desea continuar ?" )
 
                // De aqui no se mueve nadie
 
@@ -1015,7 +1015,7 @@ Method RestoreZipFiles()
    next n
 
    if lErrors
-      msgStop( "Errores durante la restauración de la copia" )
+      msgStop( "Errores durante la restauraciÃ³n de la copia" )
    else
       msgInfo( "Copia satisfactoriamente restaurada" )
       ::oDlg:end()
@@ -1113,7 +1113,7 @@ Method doBackup( aFiles, cDriveTo )
             do while .t.
 
                if ( "A:" $ cDriveTo .or. "B:" $ cDriveTo ) .and. ;
-                  !ApoloMsgNoYes( "Inserte el disco # " + lTrim( Str( nDiskNum ) ) + " en unidad " + cDriveTo, "¿ Continuar ?" )
+                  !ApoloMsgNoYes( "Inserte el disco # " + lTrim( Str( nDiskNum ) ) + " en unidad " + cDriveTo, "Â¿ Continuar ?" )
                   return ( .f. )
                endif
 
@@ -1125,7 +1125,7 @@ Method doBackup( aFiles, cDriveTo )
 					*/
 
                if !fClose( fCreate( cDriveTo + "x" ) )
-                  if !ApoloMsgNoYes(  "No hay discos en unidad o esta protegido contra escritura.", "¿ Continuar ?" )
+                  if !ApoloMsgNoYes(  "No hay discos en unidad o esta protegido contra escritura.", "Â¿ Continuar ?" )
                      return ( .f. )
                   else
                      loop
@@ -1145,7 +1145,7 @@ Method doBackup( aFiles, cDriveTo )
                      MsgRun(  "Limpiando el disco en " + cDriveTo, "Espere por favor...", {|| ::CleanDisk( cDriveTo ) } )
                   end if
 
-                  //Guardando la información q acompaña al backup----------------
+                  //Guardando la informaciÃ³n q acompaÃ±a al backup----------------
 
                   ::bk_DiskNum  := nDiskNum
                   ::bk_Serial   := cSerial
@@ -1274,13 +1274,13 @@ Method DoRestore( cFileFrom )
       while .t.
 
          if ( "A:" $ cFileFrom .or. "B:" $ cFileFrom )                                                                  .and. ;
-            !ApoloMsgNoYes(  "Inserte el disco # " + lTrim( Str( nDiskNum ) ) + " en unidad " + cDriveFrom, "¿ Continuar ?" )
+            !ApoloMsgNoYes(  "Inserte el disco # " + lTrim( Str( nDiskNum ) ) + " en unidad " + cDriveFrom, "Â¿ Continuar ?" )
             Return ( .f. )
          endif
 
          if !file( cFileFrom )
 
-            if ApoloMsgNoYes( "No hay discos de copia o no esta preparado.", "¿ Continuar ?" )
+            if ApoloMsgNoYes( "No hay discos de copia o no esta preparado.", "Â¿ Continuar ?" )
                return ( .f. )
             else
                loop
@@ -1296,7 +1296,7 @@ Method DoRestore( cFileFrom )
             end if
 
             if ::bk_DiskNum != nDiskNum .OR. ::bk_Serial != cSerial
-               if !ApoloMsgNoYes( "Los discos no estan en el orden correcto en la unidad " + cDriveFrom, "¿ Continuar ?" )
+               if !ApoloMsgNoYes( "Los discos no estan en el orden correcto en la unidad " + cDriveFrom, "Â¿ Continuar ?" )
                   Return .f.
                end if
 
@@ -1376,7 +1376,7 @@ Function CompressEmpresa( cCodEmp, cFile, aBtn, oAct, oAni, oMsg, oDlg, lAuto )
    if lAuto .or. lLastBackup
 
       if lLastBackup
-         MsgInfo( "Ultima copia de seguridad " + Dtoc( dLastBackup ) + " el programa realizará ahora una copia, de manera automática." )
+         MsgInfo( "Ultima copia de seguridad " + Dtoc( dLastBackup ) + " el programa realizarÃ¡ ahora una copia, de manera automÃ¡tica." )
       end if
 
       if !Empty( oAni )
@@ -1450,7 +1450,7 @@ Function CompressGrupo( cCodGrp, cFile, aBtn, oAct, oAni, oMsg, oDlg, lAuto )
    if lEnableBackup .and. ( lAuto .or. lLastBackup )
 
       if lLastBackup
-         MsgInfo( "Ultima copia de seguridad " + Dtoc( dLastBackup ) + " el programa realizará ahora una copia, de manera automática." )
+         MsgInfo( "Ultima copia de seguridad " + Dtoc( dLastBackup ) + " el programa realizarÃ¡ ahora una copia, de manera automÃ¡tica." )
       end if
 
       if !Empty( oAni )
@@ -1470,8 +1470,8 @@ Function CompressGrupo( cCodGrp, cFile, aBtn, oAct, oAni, oMsg, oDlg, lAuto )
       // Comprimiendo los archivos --------------------------------------------
 
       hb_SetDiskZip( {|| nil } )
-      aDir           := Directory( FullCurDir() + "GRP" + cCodGrp + "\*.*" )
-      aEval( aDir, { | cName, nIndex | hb_ZipFile( cFile, FullCurDir() + "GRP" + cCodGrp + "\" + cName[ 1 ], 9, {|| SysRefresh() } ) } )
+      aDir           := Directory( FullCurDir() + "Emp" + cCodGrp + "\*.*" )
+      aEval( aDir, { | cName, nIndex | hb_ZipFile( cFile, FullCurDir() + "Emp" + cCodGrp + "\" + cName[ 1 ], 9, {|| SysRefresh() } ) } )
       hb_gcAll()
 
       if !Empty( oAni )
@@ -1524,12 +1524,12 @@ Method SaveToDisk( Resultado )
 
    //preparar el memo de resultado
 
-   ::mResultado   := "Este informe quedará guardado en el fichero " + Alltrim( ::cFile ) + " de acuerdo con la Ley Orgánica 15/1999, de 13 de Diciembre, de protección de datos de carácter personal." + CRLF + CRLF
+   ::mResultado   := "Este informe quedarÃ¡ guardado en el fichero " + Alltrim( ::cFile ) + " de acuerdo con la Ley OrgÃ¡nica 15/1999, de 13 de Diciembre, de protecciÃ³n de datos de carÃ¡cter personal." + CRLF + CRLF
    ::mResultado   += "El proceso de copia de seguridad ha finalizado." + CRLF
-   ::mResultado   += "A continuación se muestra un resumen de las operaciones realizadas." + CRLF + CRLF
-   ::mResultado   += "Usuario que realizó la copia: " + oUser():cCodigo() + Space( 1 ) + oUser():cNombre() + CRLF
-   ::mResultado   += "Número de discos: " + AllTrim( str( ::bk_DiskNum ) ) + CRLF
-   ::mResultado   += "Número de ficheros: " + AllTrim( str( ::bk_NumFiles ) ) + CRLF
+   ::mResultado   += "A continuaciÃ³n se muestra un resumen de las operaciones realizadas." + CRLF + CRLF
+   ::mResultado   += "Usuario que realizÃ³ la copia: " + oUser():cCodigo() + Space( 1 ) + oUser():cNombre() + CRLF
+   ::mResultado   += "NÃºmero de discos: " + AllTrim( str( ::bk_DiskNum ) ) + CRLF
+   ::mResultado   += "NÃºmero de ficheros: " + AllTrim( str( ::bk_NumFiles ) ) + CRLF
    ::mResultado   += "Fecha: " + dtoc( Date() ) + " - " + hora + CRLF
    ::mResultado   += "Contenido: " + Accion + CRLF
    ::mResultado   += CRLF
@@ -1605,7 +1605,7 @@ Method doFtp( aFiles )
    oFtp           := TFtp():New( ftpSit, oInt, nbrUsr, accUsr, .f. )
 
    if Empty( oFtp )
-      msgStop( "Imposible crear la conexión" )
+      msgStop( "Imposible crear la conexiÃ³n" )
       return .f.
    end if
 

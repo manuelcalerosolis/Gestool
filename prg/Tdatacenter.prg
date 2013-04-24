@@ -160,6 +160,7 @@ CLASS TDataCenter
 
    INLINE METHOD OpenFacCliT( dbf )
 
+      /*
       local lOpen
       local cFilter
 
@@ -169,9 +170,7 @@ CLASS TDataCenter
       lOpen             := !neterr()
       if lOpen
 
-         /*
-         Limitaciones de cajero y cajas----------------------------------------
-         */
+         // Limitaciones de cajero y cajas----------------------------------------
 
          if lAIS() .and. !oUser():lAdministrador()
       
@@ -187,6 +186,38 @@ CLASS TDataCenter
       end if 
 
       Return ( lOpen )   
+      */
+      
+      local lOpen
+      local cSqlStatement
+
+      dbf                     := cCheckArea( "FACCLIT" )
+
+      if lAIS() 
+
+         cSqlStatement        := "SELECT * FROM " + ( cPatEmp() + "FacCliT" ) 
+
+         if !oUser():lAdministrador()
+            
+            cSqlStatement     += " WHERE cSufFac = '" + oUser():cDelegacion() + "' AND cCodCaj = '" + oUser():cCaja() + "'"
+            if oUser():lFiltroVentas()         
+               cSqlStatement  += " AND cCodUsr = '" + oUser():cCodigo() + "'"
+            end if 
+
+         end if 
+
+         lOpen                := ADSRunSQL( @dbf, cSqlStatement, .t. )
+
+      else
+
+         USE ( cPatEmp() + "FacCliT.Dbf" ) NEW VIA ( cDriver() ) SHARED ALIAS ( @dbf ) 
+         SET ADSINDEX TO ( cPatEmp() + "FacCliT.Cdx" ) ADDITIVE
+
+         lOpen                := !neterr()
+
+      end if 
+
+      Return ( lOpen )
 
    ENDMETHOD
 
@@ -3601,45 +3632,50 @@ Function ADSExecuteSQLScript( cScript )
 Return ( lGood )
 
 //---------------------------------------------------------------------------//
-/*
-Function ADSRunSQL( cSqlAlias, cSqlStatement, hParameters )
 
-   LOCAL cOldAlias  := Alias()
-   LOCAL lCreate    := FALSE
-   LOCAL nItem      := 0
-   LOCAL xParameter
+Function ADSRunSQL( cSqlAlias, cSqlStatement, lShow )
 
-   if !Empty( cSqlAlias ) .and. !Empty( cSql )
+   local lGood       := .f.
+   local cOldAlias   := Alias()
 
-      cSql := StrTran( cSql, ";", "" )
+   DEFAULT lShow     := .f.
+
+   if !Empty( cSqlAlias ) .and. !Empty( cSqlStatement )
+
+      cSqlStatement  := StrTran( cSqlStatement, ";", "" )
 
       dbSelectArea( 0 )
 
-      if !AdsCreateSqlStatement( cAlias, ADS_CDX, hConnection )
-         MsgAlert( "Error AdsCreateSqlStatement()" + FINL + "Error: " + cValtoChar( AdsGetLastError() ) )
-      ELSE
-         IF !HB_IsNil( aParameters ) .and. HB_IsArray( aParameters )
-            FOR EACH xParameter IN aParameters
-               nItem := HB_EnumIndex()
-               cSql  := StrTran( cSql, "%" + AllTrim( Str( nItem ) ) , Var2Str( xParameter ) )
-            NEXT
-         ENDIF
-         IF lShow
-            MsgInfo( cSql, "SQLDebug")
-         ENDIF
-         IF !AdsExecuteSqlDirect( cSql )
-            ( cAlias )->( DBCloseArea() )
-            MsgAlert( "Error AdsExecuteSqlDirect( cSql )" + FINL + "Error:" + cValtoChar( AdsGetLastError() ) + FINL + cSql )
-         ELSE
-            lCreate := TRUE
-         ENDIF
-      ENDIF
+      if !AdsCreateSqlStatement( cSqlAlias, 3 )
 
-      IF !Empty( cOldAlias )
-         DBSelectArea( cOldAlias )
-      ENDIF
+         MsgStop( "Error AdsCreateSqlStatement()" + CRLF + "Error: " + cValtoChar( AdsGetLastError() ) )
 
-   ENDIF
+      else
+         
+         if lShow
+            MsgInfo( cSqlStatement, "SQLDebug")
+         endif
+         
+         if !AdsExecuteSqlDirect( cSqlStatement )
+            
+            ( cSqlAlias )->( dbCloseArea() )
+            
+            MsgAlert( "Error AdsExecuteSqlDirect( " + cSqlStatement + " )" + CRLF + "Error:" + cValtoChar( AdsGetLastError() ) )
 
-RETURN lCreate
-*/
+         else
+            
+            lGood    := .t.
+         
+         endif
+      
+      endif
+
+      if !Empty( cOldAlias )
+         dbSelectArea( cOldAlias )
+      endif
+
+   endif
+
+RETURN lGood
+
+//---------------------------------------------------------------------------//
