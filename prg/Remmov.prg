@@ -4461,6 +4461,14 @@ METHOD SetDlgMode( nMode ) CLASS TDetMovimientos
    end if
 
    /*
+   Ocultamos el costo si el usuario no tiene permisos para verlo---------------
+   */
+
+   if !Empty( ::oPreDiv ) .and. oUser():lNotCostos()
+      ::oPreDiv:Hide()
+   end if
+
+   /*
    Cargamos la configuracion de columnas---------------------------------------
    */
 
