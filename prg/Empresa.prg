@@ -3356,7 +3356,7 @@ RETURN lRet
 STATIC FUNCTION WinDelGrp( oBrw, dbfEmp )
 
    local lRet     := .f.
-   local cPath    := FullCurDir() + "GRP" + ( dbfEmp )->CodEmp + "\"
+   local cPath    := FullCurDir() + "Emp" + ( dbfEmp )->CodEmp + "\"
    local cCodEmp  := ( dbfEmp )->CodEmp
    local nRec     := ( dbfEmp )->( Recno() )
 
@@ -6502,7 +6502,7 @@ Static Function ActDbfGrp( cCodGrp, aMsg, oAni, oMsg, oMet, lActGrp )
    local oError
 #ifdef __SQLLIB__
    local cEmpTmp  := "GrpTmp"          + "\"
-   local cEmpOld  := "Grp" + cCodGrp   + "\"
+   local cEmpOld  := "Emp" + cCodGrp   + "\"
 #else
    local cEmpTmp  := cPatGrpOld( "Tmp" )
    local cEmpOld  := cPatGrpOld( cCodGrp )

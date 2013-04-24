@@ -257,10 +257,10 @@ Return ( FullCurDir() + "Emp" + cCodEmp + "\" )
 Function cPatGrpOld( cCodGrp )
 
    if lAds()
-      Return ( cAdsUNC() + "Grp" + cCodGrp + "\" )
+      Return ( cAdsUNC() + "Emp" + cCodGrp + "\" )
    end if
 
-Return ( FullCurDir() + "Grp" + cCodGrp + "\" )
+Return ( FullCurDir() + "Emp" + cCodGrp + "\" )
 
 //----------------------------------------------------------------------------//
 
@@ -613,46 +613,46 @@ FUNCTION aItmVentas()
    local aItmVta := {}
 
    aAdd( aItmVta, { { "CSERALB",    "CSERIE",      "CSERIE",      "CSERTIK" }, { "C", "C", "C", "C" },   1, 0, "Serie del documento" } )
-   aAdd( aItmVta, { { "NNUMALB",    "NNUMFAC",     "NNUMFAC",     "CNUMTIK" }, { "N", "N", "N", "C" },   9, 0, "N鷐ero del documento" } )
+   aAdd( aItmVta, { { "NNUMALB",    "NNUMFAC",     "NNUMFAC",     "CNUMTIK" }, { "N", "N", "N", "C" },   9, 0, "N煤mero del documento" } )
    aAdd( aItmVta, { { "CSUFALB",    "CSUFFAC",     "CSUFFAC",     "CSUFTIK" }, { "C", "C", "C", "C" },   2, 0, "Sufijo del documento" } )
-   aAdd( aItmVta, { { "CTURALB",    "CTURFAC",     "CTURFAC",     "CTURTIK" }, { "C", "C", "C", "C" },   6, 0, "Sesi髇 del documento" } )
+   aAdd( aItmVta, { { "CTURALB",    "CTURFAC",     "CTURFAC",     "CTURTIK" }, { "C", "C", "C", "C" },   6, 0, "Sesi贸n del documento" } )
    aAdd( aItmVta, { { "DFECALB",    "DFECFAC",     "DFECFAC",     "DFECTIK" }, { "D", "D", "D", "D" },   8, 0, "Fecha del documento" } )
-   aAdd( aItmVta, { { "CCODCLI",    "CCODCLI",     "CCODCLI",     "CCLITIK" }, { "C", "C", "C", "C" },  12, 0, "C骴igo del cliente" } )
+   aAdd( aItmVta, { { "CCODCLI",    "CCODCLI",     "CCODCLI",     "CCLITIK" }, { "C", "C", "C", "C" },  12, 0, "C贸digo del cliente" } )
    aAdd( aItmVta, { { "CNOMCLI",    "CNOMCLI",     "CNOMCLI",     "CNOMTIK" }, { "C", "C", "C", "C" },  80, 0, "Nombre del cliente" } )
    aAdd( aItmVta, { { "CDIRCLI",    "CDIRCLI",     "CDIRCLI",     "CDIRCLI" }, { "C", "C", "C", "C" }, 100, 0, "Domicilio del cliente" } )
-   aAdd( aItmVta, { { "CPOBCLI",    "CPOBCLI",     "CPOBCLI",     "CPOBCLI" }, { "C", "C", "C", "C" },  35, 0, "Poblaci髇 del cliente" } )
+   aAdd( aItmVta, { { "CPOBCLI",    "CPOBCLI",     "CPOBCLI",     "CPOBCLI" }, { "C", "C", "C", "C" },  35, 0, "Poblaci贸n del cliente" } )
    aAdd( aItmVta, { { "CPRVCLI",    "CPRVCLI",     "CPRVCLI",     "CPRVCLI" }, { "C", "C", "C", "C" },  20, 0, "Provincia del cliente" } )
-   aAdd( aItmVta, { { "CPOSCLI",    "CPOSCLI",     "CPOSCLI",     "CPOSCLI" }, { "C", "C", "C", "C" },  15, 0, "C骴igo postal del cliente" } )
+   aAdd( aItmVta, { { "CPOSCLI",    "CPOSCLI",     "CPOSCLI",     "CPOSCLI" }, { "C", "C", "C", "C" },  15, 0, "C贸digo postal del cliente" } )
    aAdd( aItmVta, { { "CDNICLI",    "CDNICLI",     "CDNICLI",     "CDNICLI" }, { "C", "C", "C", "C" },  15, 0, "DNI/CIF del cliente" } )
-   aAdd( aItmVta, { { "CCODALM",    "CCODALM",     "CCODALM",     "CALMTIK" }, { "C", "C", "C", "C" },   3, 0, "C骴igo del almac閚" } )
-   aAdd( aItmVta, { { "CCODCAJ",    "CCODCAJ",     "CCODCAJ",     "CNCJTIK" }, { "C", "C", "C", "C" },   3, 0, "C骴igo de la caja" } )
+   aAdd( aItmVta, { { "CCODALM",    "CCODALM",     "CCODALM",     "CALMTIK" }, { "C", "C", "C", "C" },   3, 0, "C贸digo del almac茅n" } )
+   aAdd( aItmVta, { { "CCODCAJ",    "CCODCAJ",     "CCODCAJ",     "CNCJTIK" }, { "C", "C", "C", "C" },   3, 0, "C贸digo de la caja" } )
    aAdd( aItmVta, { { "CCODPAGO",   "CCODPAGO",    "CCODPAGO",    "CFPGTIK" }, { "C", "C", "C", "C" },   2, 0, "Forma de pago del documento" } )
    aAdd( aItmVta, { { "CCODOBR",    "CCODOBR",     "CCODOBR",     "CCODOBR" }, { "C", "C", "C", "C" },  10, 0, "Obra del documento" } )
-   aAdd( aItmVta, { { "CCODTAR",    "CCODTAR",     "CCODTAR",     "CCODTAR" }, { "C", "C", "C", "C" },   5, 0, "C骴igo de la tarifa" } )
-   aAdd( aItmVta, { { "CCODRUT",    "CCODRUT",     "CCODRUT",     "CCODRUT" }, { "C", "C", "C", "C" },   4, 0, "C骴igo de la ruta" } )
-   aAdd( aItmVta, { { "CCODAGE",    "CCODAGE",     "CCODAGE",     "CCODAGE" }, { "C", "C", "C", "C" },   3, 0, "C骴igo del agente" } )
-   aAdd( aItmVta, { { "NPCTCOMAGE", "NPCTCOMAGE",  "NPCTCOMAGE",  "NCOMAGE" }, { "N", "N", "N", "" },    6, 2, "Comisi髇 agente" } )
+   aAdd( aItmVta, { { "CCODTAR",    "CCODTAR",     "CCODTAR",     "CCODTAR" }, { "C", "C", "C", "C" },   5, 0, "C贸digo de la tarifa" } )
+   aAdd( aItmVta, { { "CCODRUT",    "CCODRUT",     "CCODRUT",     "CCODRUT" }, { "C", "C", "C", "C" },   4, 0, "C贸digo de la ruta" } )
+   aAdd( aItmVta, { { "CCODAGE",    "CCODAGE",     "CCODAGE",     "CCODAGE" }, { "C", "C", "C", "C" },   3, 0, "C贸digo del agente" } )
+   aAdd( aItmVta, { { "NPCTCOMAGE", "NPCTCOMAGE",  "NPCTCOMAGE",  "NCOMAGE" }, { "N", "N", "N", "" },    6, 2, "Comisi贸n agente" } )
    aAdd( aItmVta, { { "NTARIFA",    "NTARIFA",     "NTARIFA",     "NTARIFA" }, { "N", "N", "N", "N" },   1, 0, "Tarifa del documento" } )
    aAdd( aItmVta, { { "NDTOESP",    "NDTOESP",     "NDTOESP",     "" },        { "N", "N", "N", "" },    6, 2, "Descuento general" } )
    aAdd( aItmVta, { { "NDPP",       "NDPP",        "NDPP",        "" },        { "N", "N", "N", "" },    6, 2, "Descuento por pronto pago" } )
    aAdd( aItmVta, { { "NDTOUNO",    "NDTOUNO",     "NDTOUNO",     "" },        { "N", "N", "N", "" },    6, 2, "Descuento definido 1" } )
    aAdd( aItmVta, { { "NDTODOS",    "NDTODOS",     "NDTODOS",     "" },        { "N", "N", "N", "" },    4, 1, "Descuento definido 2" } )
-   aAdd( aItmVta, { { "LRECARGO",   "LRECARGO",    "LRECARGO",    "" },        { "L", "L", "L", "" },    1, 0, "L骻ico de recargo" } )
-   aAdd( aItmVta, { { "CDIVALB",    "CDIVFAC",     "CDIVFAC",     "CDIVTIK" }, { "C", "C", "C", "C" },   3, 0, "C骴igo divisa" } )
+   aAdd( aItmVta, { { "LRECARGO",   "LRECARGO",    "LRECARGO",    "" },        { "L", "L", "L", "" },    1, 0, "L贸gico de recargo" } )
+   aAdd( aItmVta, { { "CDIVALB",    "CDIVFAC",     "CDIVFAC",     "CDIVTIK" }, { "C", "C", "C", "C" },   3, 0, "C贸digo divisa" } )
    aAdd( aItmVta, { { "NVDVALB",    "NVDVFAC",     "NVDVFAC",     "NVDVTIK" }, { "N", "N", "N", "N" },  10, 4, "Valor divisa" } )
    aAdd( aItmVta, { { "CRETPOR",    "CRETPOR",     "CRETPOR",     "CRETPOR" }, { "C", "C", "C", "C" }, 100, 0, "Retirado por" } )
    aAdd( aItmVta, { { "CRETMAT",    "CRETMAT",     "CRETMAT",     "CRETMAT" }, { "C", "C", "C", "C" },  20, 0, "Matricula" } )
-   aAdd( aItmVta, { { "LIVAINC",    "LIVAINC",     "LIVAINC",     "" },        { "L", "L", "L", "" },    1, 0, "L骻ico IGIC incluido" } )
-   aAdd( aItmVta, { { "NREGIVA",    "NREGIVA",     "NREGIVA",     "" },        { "N", "N", "N", "" },   20, 0, "R間imen de " + cImp() } )
-   aAdd( aItmVta, { { "CCODTRN",    "CCODTRN",     "CCODTRN",     "" },        { "C", "C", "C", "" },    9, 0, "C骴igo del transportista" } )
-   aAdd( aItmVta, { { "CCODUSR",    "CCODUSR",     "CCODUSR",     "CCCJTIK" }, { "C", "C", "C", "C" },   3, 0, "C骴igo de usuario" } )
-   aAdd( aItmVta, { { "DFECCRE",    "DFECCRE",     "DFECCRE",     "DFECCRE" }, { "D", "D", "D", "D" },   8, 0, "Fecha de creaci髇/modificaci髇" } )
-   aAdd( aItmVta, { { "CTIMCRE",    "CTIMCRE",     "CTIMCRE",     "CTIMCRE" }, { "C", "C", "C", "C" },  20, 0, "Hora de creaci髇/modificaci髇" } )
+   aAdd( aItmVta, { { "LIVAINC",    "LIVAINC",     "LIVAINC",     "" },        { "L", "L", "L", "" },    1, 0, "L贸gico IGIC incluido" } )
+   aAdd( aItmVta, { { "NREGIVA",    "NREGIVA",     "NREGIVA",     "" },        { "N", "N", "N", "" },   20, 0, "R茅gimen de " + cImp() } )
+   aAdd( aItmVta, { { "CCODTRN",    "CCODTRN",     "CCODTRN",     "" },        { "C", "C", "C", "" },    9, 0, "C贸digo del transportista" } )
+   aAdd( aItmVta, { { "CCODUSR",    "CCODUSR",     "CCODUSR",     "CCCJTIK" }, { "C", "C", "C", "C" },   3, 0, "C贸digo de usuario" } )
+   aAdd( aItmVta, { { "DFECCRE",    "DFECCRE",     "DFECCRE",     "DFECCRE" }, { "D", "D", "D", "D" },   8, 0, "Fecha de creaci贸n/modificaci贸n" } )
+   aAdd( aItmVta, { { "CTIMCRE",    "CTIMCRE",     "CTIMCRE",     "CTIMCRE" }, { "C", "C", "C", "C" },  20, 0, "Hora de creaci贸n/modificaci贸n" } )
    aAdd( aItmVta, { { "CCODGRP",    "CCODGRP",     "CCODGRP",     ""        }, { "C", "C", "C", "" },    4, 0, "Grupo de cliente" } )
-   aAdd( aItmVta, { { "lImprimido", "lImprimido",  "lImprimido",  ""        }, { "L", "L", "L", "" },    1, 0, "L骻ico de imprimido" } )
-   aAdd( aItmVta, { { "dFecImp",    "dFecImp",     "dFecImp",     ""        }, { "D", "D", "D", "" },    8, 0, "Fecha 鷏tima impresi髇" } )
-   aAdd( aItmVta, { { "cHorImp",    "cHorImp",     "cHorImp",     ""        }, { "C", "C", "C", "" },    5, 0, "Hora 鷏tima impresi髇" } )
-   aAdd( aItmVta, { { "cCodDlg",    "cCodDlg",     "cCodDlg",     "cCodDlg" }, { "C", "C", "C", "C" },   2, 0, "C骴igo delegaci髇" } )
+   aAdd( aItmVta, { { "lImprimido", "lImprimido",  "lImprimido",  ""        }, { "L", "L", "L", "" },    1, 0, "L贸gico de imprimido" } )
+   aAdd( aItmVta, { { "dFecImp",    "dFecImp",     "dFecImp",     ""        }, { "D", "D", "D", "" },    8, 0, "Fecha 煤ltima impresi贸n" } )
+   aAdd( aItmVta, { { "cHorImp",    "cHorImp",     "cHorImp",     ""        }, { "C", "C", "C", "" },    5, 0, "Hora 煤ltima impresi贸n" } )
+   aAdd( aItmVta, { { "cCodDlg",    "cCodDlg",     "cCodDlg",     "cCodDlg" }, { "C", "C", "C", "C" },   2, 0, "C贸digo delegaci贸n" } )
 
 RETURN ( aItmVta )
 
@@ -663,40 +663,40 @@ FUNCTION aItmCompras()
    local aItmCom := {}
 
    aAdd( aItmCom, { { "CSERALB",    "CSERFAC"   }, { "C", "C" },  1, 0, "Serie del documento" } )
-   aAdd( aItmCom, { { "NNUMALB",    "NNUMFAC"   }, { "N", "N" },  9, 0, "N鷐ero del documento" } )
+   aAdd( aItmCom, { { "NNUMALB",    "NNUMFAC"   }, { "N", "N" },  9, 0, "N煤mero del documento" } )
    aAdd( aItmCom, { { "CSUFALB",    "CSUFFAC"   }, { "C", "C" },  2, 0, "Sufijo del documento" } )
-   aAdd( aItmCom, { { "CTURALB",    "CTURFAC"   }, { "C", "C" },  6, 0, "Sesi髇 del documento" } )
+   aAdd( aItmCom, { { "CTURALB",    "CTURFAC"   }, { "C", "C" },  6, 0, "Sesi贸n del documento" } )
    aAdd( aItmCom, { { "DFECALB",    "DFECFAC"   }, { "D", "D" },  8, 0, "Fecha del documento" } )
-   aAdd( aItmCom, { { "CCODALM",    "CCODALM"   }, { "C", "C" },  3, 0, "C骴igo del almac閚" } )
-   aAdd( aItmCom, { { "CCODCAJ",    "CCODCAJ"   }, { "C", "C" },  3, 0, "C骴igo de la caja" } )
-   aAdd( aItmCom, { { "CCODPRV",    "CCODPRV"   }, { "C", "C" }, 12, 0, "C骴igo del proveedor" } )
+   aAdd( aItmCom, { { "CCODALM",    "CCODALM"   }, { "C", "C" },  3, 0, "C贸digo del almac茅n" } )
+   aAdd( aItmCom, { { "CCODCAJ",    "CCODCAJ"   }, { "C", "C" },  3, 0, "C贸digo de la caja" } )
+   aAdd( aItmCom, { { "CCODPRV",    "CCODPRV"   }, { "C", "C" }, 12, 0, "C贸digo del proveedor" } )
    aAdd( aItmCom, { { "CNOMPRV",    "CNOMPRV"   }, { "C", "C" }, 35, 0, "Nombre del proveedor" } )
    aAdd( aItmCom, { { "CDIRPRV",    "CDIRPRV"   }, { "C", "C" }, 35, 0, "Domicilio del proveedor" } )
-   aAdd( aItmCom, { { "CPOBPRV",    "CPOBPRV"   }, { "C", "C" }, 25, 0, "Poblaci髇 del proveedor" } )
+   aAdd( aItmCom, { { "CPOBPRV",    "CPOBPRV"   }, { "C", "C" }, 25, 0, "Poblaci贸n del proveedor" } )
    aAdd( aItmCom, { { "CPROPRV",    "CPROVPROV" }, { "C", "C" }, 20, 0, "Provincia del proveedor" } )
-   aAdd( aItmCom, { { "CPOSPRV",    "CPOSPRV"   }, { "C", "C" },  5, 0, "C骴igo postal del provedor" } )
+   aAdd( aItmCom, { { "CPOSPRV",    "CPOSPRV"   }, { "C", "C" },  5, 0, "C贸digo postal del provedor" } )
    aAdd( aItmCom, { { "CDNIPRV",    "CDNIPRV"   }, { "C", "C" }, 30, 0, "DNI/CIF del proveedor" } )
    aAdd( aItmCom, { { "DFECENT",    "DFECENT"   }, { "D", "D" },  8, 0, "Fecha de entrada" } )
    aAdd( aItmCom, { { "CCODPGO",    "CCODPAGO"  }, { "C", "C" },  2, 0, "Forma de pago" } )
-   aAdd( aItmCom, { { "NBULTOS",    "NBULTOS"   }, { "N", "N" },  3, 0, "N鷐ero de bultos" } )
+   aAdd( aItmCom, { { "NBULTOS",    "NBULTOS"   }, { "N", "N" },  3, 0, "N煤mero de bultos" } )
    aAdd( aItmCom, { { "NPORTES",    "NPORTES"   }, { "N", "N" },  6, 0, "Valor de los portes" } )
    aAdd( aItmCom, { { "NDTOESP",    "NDTOESP"   }, { "N", "N" },  6, 2, "Descuento general" } )
    aAdd( aItmCom, { { "NDPP",       "NDPP"      }, { "N", "N" },  6, 2, "Descuento por pronto pago" } )
-   aAdd( aItmCom, { { "LRECARGO",   "LRECARGO"  }, { "L", "L" },  1, 0, "L骻ico de recargo" } )
-   aAdd( aItmCom, { { "CCONDENT",   "CCONDENT"  }, { "C", "C" }, 20, 0, "Condici髇 de entrada" } )
-   aAdd( aItmCom, { { "CEXPED",     "CEXPED"    }, { "C", "C" }, 20, 0, "Expedici髇" } )
+   aAdd( aItmCom, { { "LRECARGO",   "LRECARGO"  }, { "L", "L" },  1, 0, "L贸gico de recargo" } )
+   aAdd( aItmCom, { { "CCONDENT",   "CCONDENT"  }, { "C", "C" }, 20, 0, "Condici贸n de entrada" } )
+   aAdd( aItmCom, { { "CEXPED",     "CEXPED"    }, { "C", "C" }, 20, 0, "Expedici贸n" } )
    aAdd( aItmCom, { { "COBSERV",    "COBSERV"   }, { "M", "M" }, 10, 0, "Observaciones" } )
-   aAdd( aItmCom, { { "CDIVALB",    "CDIVFAC"   }, { "C", "C" },  3, 0, "C骴igo de la divisa" } )
+   aAdd( aItmCom, { { "CDIVALB",    "CDIVFAC"   }, { "C", "C" },  3, 0, "C贸digo de la divisa" } )
    aAdd( aItmCom, { { "NVDVALB",    "NVDVFAC"   }, { "N", "N" }, 10, 4, "Valor de la divisa" } )
    aAdd( aItmCom, { { "NDTOUNO",    "NDTOUNO"   }, { "N", "N" },  5, 2, "Descuento definido 1" } )
    aAdd( aItmCom, { { "NDTODOS",    "NDTODOS"   }, { "N", "N" },  5, 2, "Descuento definido 2" } )
-   aAdd( aItmCom, { { "CCODUSR",    "CCODUSR"   }, { "C", "C" },  3, 0, "C骴igo de usuario" } )
-   aAdd( aItmCom, { { "LIMPRIMIDO", "LIMPRIMIDO"}, { "L", "L" },  1, 0, "L骻ico de imprimido" } )
-   aAdd( aItmCom, { { "DFECIMP",    "DFECIMP"   }, { "D", "D" },  8, 0, "Fecha de 鷏tima impresi髇" } )
-   aAdd( aItmCom, { { "CHORIMP",    "CHORIMP"   }, { "C", "C" },  5, 0, "Hora 鷏tima impresi髇" } )
-   aAdd( aItmCom, { { "DFECCHG",    "DFECCHG"   }, { "D", "D" },  8, 0, "Fecha creaci髇/modificaci髇" } )
-   aAdd( aItmCom, { { "CTIMCHG",    "CTIMCHG"   }, { "C", "C" },  5, 0, "Hora creaci髇/modificaci髇" } )
-   aAdd( aItmCom, { { "CCODDLG",    "CCODDLG"   }, { "C", "C" },  2, 0, "C骴igo de la delegaci髇" } )
+   aAdd( aItmCom, { { "CCODUSR",    "CCODUSR"   }, { "C", "C" },  3, 0, "C贸digo de usuario" } )
+   aAdd( aItmCom, { { "LIMPRIMIDO", "LIMPRIMIDO"}, { "L", "L" },  1, 0, "L贸gico de imprimido" } )
+   aAdd( aItmCom, { { "DFECIMP",    "DFECIMP"   }, { "D", "D" },  8, 0, "Fecha de 煤ltima impresi贸n" } )
+   aAdd( aItmCom, { { "CHORIMP",    "CHORIMP"   }, { "C", "C" },  5, 0, "Hora 煤ltima impresi贸n" } )
+   aAdd( aItmCom, { { "DFECCHG",    "DFECCHG"   }, { "D", "D" },  8, 0, "Fecha creaci贸n/modificaci贸n" } )
+   aAdd( aItmCom, { { "CTIMCHG",    "CTIMCHG"   }, { "C", "C" },  5, 0, "Hora creaci贸n/modificaci贸n" } )
+   aAdd( aItmCom, { { "CCODDLG",    "CCODDLG"   }, { "C", "C" },  2, 0, "C贸digo de la delegaci贸n" } )
 
 RETURN ( aItmCom )
 
@@ -1007,7 +1007,7 @@ Function aItmDbfReport()
 
    local aBase := {}
 
-   aAdd( aBase, { "cCodUsr",  "C",   3, 0, "C骴igo de usuario" } )
+   aAdd( aBase, { "cCodUsr",  "C",   3, 0, "C贸digo de usuario" } )
    aAdd( aBase, { "cNombre",  "C", 100, 0, "Nombre de la carpeta" } )
 
 Return ( aBase )
@@ -1018,10 +1018,10 @@ Function aItmDbfFavoritos()
 
    local aBase := {}
 
-   aAdd( aBase, { "cCodUsr",  "C",   3, 0, "C骴igo de usuario" } )
+   aAdd( aBase, { "cCodUsr",  "C",   3, 0, "C贸digo de usuario" } )
    aAdd( aBase, { "cCarpeta", "C", 100, 0, "Nombre de la carpeta" } )
-   aAdd( aBase, { "cNomFav",  "C", 100, 0, "Descripci髇 para favoritos" } )
-   aAdd( aBase, { "cNomRpt",  "C", 100, 0, "Descripci髇 original" } )
+   aAdd( aBase, { "cNomFav",  "C", 100, 0, "Descripci贸n para favoritos" } )
+   aAdd( aBase, { "cNomRpt",  "C", 100, 0, "Descripci贸n original" } )
 
 Return ( aBase )
 
@@ -1630,19 +1630,19 @@ FUNCTION cPatStk( cPath, lPath, lShort, lGrp )
    DEFAULT lGrp   := .f.
 
    if lAds()
-      Return ( cAdsUNC() + if( lGrp, "Grp", "Emp" ) + cPath + if( lPath, "\", "" ) )
+      Return ( cAdsUNC() + if( lGrp, "Emp", "Emp" ) + cPath + if( lPath, "\", "" ) )
    end if
 
 
    #ifdef __SQLLIB__
-Return ( if( lGrp, "Grp", "Emp" ) + cPath + if( lPath, "\", "" ) )
+Return ( if( lGrp, "Emp", "Emp" ) + cPath + if( lPath, "\", "" ) )
    #else
-Return ( if( !lShort, FullCurDir(), "" ) + if( lGrp, "Grp", "Emp" ) + cPath + if( lPath, "\", "" ) )
+Return ( if( !lShort, FullCurDir(), "" ) + if( lGrp, "Emp", "Emp" ) + cPath + if( lPath, "\", "" ) )
    #endif
 
 //---------------------------------------------------------------------------//
 /*
-Devuelve la descripci髇 de una line de factura
+Devuelve la descripci贸n de una line de factura
 */
 
 FUNCTION Descrip( cFacCliL, cFacCliS )
@@ -1822,7 +1822,7 @@ FUNCTION cPatGrp( cPath, lFull, lEmpresa )
       if lEmpresa
          cPatGrp     := "Emp" + cPath
       else
-         cPatGrp     := "Grp" + cPath
+         cPatGrp     := "Emp" + cPath
       end if
 
    end if
@@ -1860,7 +1860,7 @@ FUNCTION cPatCli( cPath, lFull, lEmpresa )
       if lEmpresa
          cPatCli     := "Emp" + cPath
       else
-         cPatCli     := "Grp" + cPath
+         cPatCli     := "Emp" + cPath
       end if
    end if
 
@@ -1894,7 +1894,7 @@ FUNCTION cPatArt( cPath, lFull, lEmpresa )
       if lEmpresa
          cPatArt     := "Emp" + cPath
       else
-         cPatArt     := "Grp" + cPath
+         cPatArt     := "Emp" + cPath
       end if
 
    end if
@@ -1931,7 +1931,7 @@ FUNCTION cPatPrv( cPath, lFull, lEmpresa )
       if lEmpresa
          cPatPrv     := "Emp" + cPath
       else
-         cPatPrv     := "Grp" + cPath
+         cPatPrv     := "Emp" + cPath
       end if
 
    end if
@@ -1980,7 +1980,7 @@ FUNCTION cPatAlm( cPath, lFull, lEmpresa )
       if lEmpresa
          cPatAlm     := "Emp" + cPath
       else
-         cPatAlm     := "Grp" + cPath
+         cPatAlm     := "Emp" + cPath
       end if
 
    end if
@@ -2690,8 +2690,8 @@ Function ApoloMsgNoYes( cText, cTitle, lTactil )
    local oBtnOk
    local oBtnCancel
 
-   DEFAULT cText              := "緿esea eliminar el registro en curso?"
-   DEFAULT cTitle             := "Confirme supresi髇."
+   DEFAULT cText              := "驴Desea eliminar el registro en curso?"
+   DEFAULT cTitle             := "Confirme supresi贸n."
    DEFAULT lTactil            := .f.
 
    if lTactil

@@ -1230,6 +1230,7 @@ Static Function LoadDatos( cCodArt, nYear, oDlg, oBrwStk, oBrwTmp, oGraph, oBrwC
 
    oStock:aStockArticulo( cCodArt, , oBrwStk )
 
+   oMeter:Show()
    oMeter:SetTotal( 18 )
 
    /*
@@ -1425,7 +1426,7 @@ Static Function LoadDatos( cCodArt, nYear, oDlg, oBrwStk, oBrwTmp, oGraph, oBrwC
 
    oText:SetText()
 
-   oMeter:Set( 0 )
+   oMeter:Hide()
 
    RECOVER USING oError
 

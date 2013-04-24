@@ -963,6 +963,19 @@ Function Articulo( oMenuItem, oWnd, bOnInit )
       end with
 
       with object ( oWndBrw:AddXCol() )
+         :cHeader          := "Editable"
+         :bStrData         := {|| TransPrecio( nRetPreArt( 1, nil, .t., dbfArticulo, dbfDiv, dbfArtKit, dbfIva ), lEuro ) }
+         :bEditValue       := {|| ( dbfArticulo )->pVtaIva1 }
+         :cEditPicture     := "@E 999,999.9999"
+         :nWidth           := 80
+         :nDataStrAlign    := 1
+         :nHeadStrAlign    := 1
+         :nEditType        := 1
+         :bEditWhen        := {|| .t. }
+         :bOnPostEdit      := {|o,x| if( dbDialogLock( dbfArticulo ), ( ( dbfArticulo )->pVtaIva1 := x, ( dbfArticulo )->( dbUnlock() ) ), ) }
+      end with
+
+      with object ( oWndBrw:AddXCol() )
          :cHeader          := uFieldEmpresa( "cTxtTar2", "Precio 2" )
          :bStrData         := {|| TransPrecio( nRetPreArt( 2, nil, .f., dbfArticulo, dbfDiv, dbfArtKit, dbfIva ), lEuro ) }
          :nWidth           := 100

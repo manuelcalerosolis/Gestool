@@ -160,6 +160,7 @@ CLASS TDataCenter
 
    INLINE METHOD OpenFacCliT( dbf )
 
+      /*
       local lOpen
       local cFilter
 
@@ -169,9 +170,7 @@ CLASS TDataCenter
       lOpen             := !neterr()
       if lOpen
 
-         /*
-         Limitaciones de cajero y cajas----------------------------------------
-         */
+         // Limitaciones de cajero y cajas----------------------------------------
 
          if lAIS() .and. !oUser():lAdministrador()
       
@@ -187,6 +186,38 @@ CLASS TDataCenter
       end if 
 
       Return ( lOpen )   
+      */
+      
+      local lOpen
+      local cSqlStatement
+
+      dbf                     := cCheckArea( "FACCLIT" )
+
+      if lAIS() 
+
+         cSqlStatement        := "SELECT * FROM " + ( cPatEmp() + "FacCliT" ) 
+
+         if !oUser():lAdministrador()
+            
+            cSqlStatement     += " WHERE cSufFac = '" + oUser():cDelegacion() + "' AND cCodCaj = '" + oUser():cCaja() + "'"
+            if oUser():lFiltroVentas()         
+               cSqlStatement  += " AND cCodUsr = '" + oUser():cCodigo() + "'"
+            end if 
+
+         end if 
+
+         lOpen                := ADSRunSQL( @dbf, cSqlStatement, .t. )
+
+      else
+
+         USE ( cPatEmp() + "FacCliT.Dbf" ) NEW VIA ( cDriver() ) SHARED ALIAS ( @dbf ) 
+         SET ADSINDEX TO ( cPatEmp() + "FacCliT.Cdx" ) ADDITIVE
+
+         lOpen                := !neterr()
+
+      end if 
+
+      Return ( lOpen )
 
    ENDMETHOD
 
@@ -3602,3 +3633,49 @@ Return ( lGood )
 
 //---------------------------------------------------------------------------//
 
+Function ADSRunSQL( cSqlAlias, cSqlStatement, lShow )
+
+   local lGood       := .f.
+   local cOldAlias   := Alias()
+
+   DEFAULT lShow     := .f.
+
+   if !Empty( cSqlAlias ) .and. !Empty( cSqlStatement )
+
+      cSqlStatement  := StrTran( cSqlStatement, ";", "" )
+
+      dbSelectArea( 0 )
+
+      if !AdsCreateSqlStatement( cSqlAlias, 3 )
+
+         MsgStop( "Error AdsCreateSqlStatement()" + CRLF + "Error: " + cValtoChar( AdsGetLastError() ) )
+
+      else
+         
+         if lShow
+            MsgInfo( cSqlStatement, "SQLDebug")
+         endif
+         
+         if !AdsExecuteSqlDirect( cSqlStatement )
+            
+            ( cSqlAlias )->( dbCloseArea() )
+            
+            MsgAlert( "Error AdsExecuteSqlDirect( " + cSqlStatement + " )" + CRLF + "Error:" + cValtoChar( AdsGetLastError() ) )
+
+         else
+            
+            lGood    := .t.
+         
+         endif
+      
+      endif
+
+      if !Empty( cOldAlias )
+         dbSelectArea( cOldAlias )
+      endif
+
+   endif
+
+RETURN lGood
+
+//---------------------------------------------------------------------------//

@@ -2554,7 +2554,7 @@ Method CreateXFromCode()
    // Insertamos el action por columnas----------------------------------------
 
    for each oCol in ::oBrw:aCols
-      if Empty( oCol:bLDClickData )
+      if Empty( oCol:bLDClickData ) .and. !( oCol:lEditable )
          oCol:bLDClickData    := {|| ::RecEdit() }
       end if 
    next
