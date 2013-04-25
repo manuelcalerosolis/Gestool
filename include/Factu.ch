@@ -49,7 +49,7 @@ Fichero de Cabecera para la Aplcaci¢n de Facturaci¢n 3.0 para Windows
         #define __GSTHELP__             "http://www.gstrotor.com/ayuda/Index.html"
         #define __GSTBROWSER__          "http://www.gstrotor.com/gst/indexoidococina.html"
         #define __GSTICON__             "Oidococina.Ico"
-        #define __GSTTELEFONO__         "Tlf 955776888"
+        #define __GSTTELEFONO__         "Tlf 670638384"
         #define __GSTLOGO__             "Bmp\OidoCocina.Bmp"
         #define __GSTDIRECCION__        "Avda. Espartinas, 21-25 C.C. PIBO Local 32 "
         #define __GSTPOBLACION__        "41110 Bollullos de la  Mitación. Sevilla"
