@@ -3029,8 +3029,8 @@ FONT 8, "MS Sans Serif"
   CONTROL "Artículo", -1, "Static", WS_GROUP, 10, 16, 36, 8
   CONTROL "Propiedad 2", 132, "Static", WS_GROUP, 10, 54, 44, 8
   CONTROL "Propiedad 1", 122, "Static", WS_GROUP, 10, 41, 44, 8
-  CONTROL "Precio costo", -1, "Static", WS_GROUP, 10, 146, 61, 8
-  CONTROL "Total precio", -1, "Static", WS_GROUP, 10, 164, 61, 8
+  CONTROL "Precio costo", 181, "Static", WS_GROUP, 10, 146, 61, 8
+  CONTROL "Total precio", 191, "Static", WS_GROUP, 10, 164, 61, 8
   CONTROL "Movimiento", -1, "Button", BS_GROUPBOX, 4, 3, 374, 175
   CONTROL "Lote", 154, "Static", WS_GROUP, 10, 29, 44, 8
   CONTROL "Peso", -1, "Static", WS_GROUP, 149, 133, 21, 8

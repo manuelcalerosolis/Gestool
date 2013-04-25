@@ -520,42 +520,74 @@
 	"buffers":
 	[
 		{
-			"file": "prg/Tcomercio.prg",
+			"file": "prg/Tpvcobros.prg",
 			"settings":
 			{
-				"buffer_size": 370623,
+				"buffer_size": 31388,
 				"line_ending": "Windows"
 			}
 		},
 		{
-			"file": "prg/Impfactu.prg",
+			"file": "prg/Tpvlistaticket.prg",
 			"settings":
 			{
-				"buffer_size": 120035,
+				"buffer_size": 40075,
 				"line_ending": "Windows"
 			}
 		},
 		{
-			"file": "prg/Client.prg",
+			"file": "prg/Tpvmesa.prg",
 			"settings":
 			{
-				"buffer_size": 464784,
+				"buffer_size": 25149,
 				"line_ending": "Windows"
 			}
 		},
 		{
-			"file": "prg/Pedprov.prg",
+			"file": "prg/Tpvpda.prg",
 			"settings":
 			{
-				"buffer_size": 284263,
+				"buffer_size": 485331,
 				"line_ending": "Windows"
 			}
 		},
 		{
-			"file": "prg/Articulo.prg",
+			"file": "prg/Tpvpunto.prg",
 			"settings":
 			{
-				"buffer_size": 662767,
+				"buffer_size": 15345,
+				"line_ending": "Windows"
+			}
+		},
+		{
+			"file": "prg/Tpvrestaurante.prg",
+			"settings":
+			{
+				"buffer_size": 50636,
+				"line_ending": "Windows"
+			}
+		},
+		{
+			"file": "prg/Tpvsalon.prg",
+			"settings":
+			{
+				"buffer_size": 52390,
+				"line_ending": "Windows"
+			}
+		},
+		{
+			"file": "prg/Tpvtactil.prg",
+			"settings":
+			{
+				"buffer_size": 251954,
+				"line_ending": "Windows"
+			}
+		},
+		{
+			"file": "prg/Tpv.prg",
+			"settings":
+			{
+				"buffer_size": 751710,
 				"line_ending": "Windows"
 			}
 		}
@@ -592,24 +624,31 @@
 	},
 	"file_history":
 	[
-		"/C/fw195/Gestool/prg/Client.prg",
+		"/C/fw195/Gestool/prg/Tpvtactil.prg",
+		"/C/fw195/Gestool/prg/Tpvsalaventa.prg",
+		"/C/fw195/Gestool/prg/Tcomercio.prg",
+		"/C/fw195/Gestool/prg/Impfactu.prg",
 		"/C/fw195/Gestool/prg/Factcli.prg",
+		"/C/fw195/Gestool/prg/Utildbf.prg",
+		"/C/fw195/Gestool/prg/utildbf",
+		"/C/fw195/Gestool/prg/Remmov.prg",
+		"/C/Windows/ads.ini",
+		"/C/fw195/Gestool/prg/Client.prg",
+		"/C/fw195/Gestool/prg/Articulo.prg",
+		"/C/fw195/Gestool/prg/Pedprov.prg",
 		"/C/fw195/Gestool/prg/Albprov.prg",
 		"/C/fw195/Gestool/prg/Factprv.prg",
 		"/C/fw195/Gestool/prg/Stock.prg",
 		"/C/fw195/Gestool/prg/Comun.prg",
 		"/C/fw195/Gestool/prg/Brwvta.prg",
-		"/C/fw195/Gestool/prg/Articulo.prg",
 		"/C/fw195/Gestool/prg/Medicon.prg",
 		"/C/fw195/Gestool/prg/Cambio.prg",
-		"/C/fw195/Gestool/prg/Tpvtactil.prg",
 		"/C/fw195/Gestool/prg/Tcaptura.prg",
 		"/C/fw195/Gestool/prg/Tdetcaptura.prg",
 		"/C/fw195/Gestool/prg/Tipoimpresora.prg",
 		"/C/fw195/Gestool/prg/Tiva.prg",
 		"/C/fw195/Gestool/prg/Ixbrowse.prg",
 		"/C/fw195/Gestool/prg/Xbrowse.prg",
-		"/C/fw195/Gestool/prg/Utildbf.prg",
 		"/C/fw195/Gestool/prg/Digit.prg",
 		"/C/fw195/Gestool/prg/Divisas.prg",
 		"/C/fw195/Gestool/prg/Familia.prg",
@@ -633,7 +672,6 @@
 		"/C/fw195/Gestool/prg/Tpv.prg",
 		"/C/fw195/Gestool/prg/TConFacCli",
 		"/C/fw195/Gestool/prg/Factu.prg",
-		"/C/fw195/Gestool/prg/Tcomercio.prg",
 		"/C/fw195/Gestool/prg/Tpvlistaticket.prg",
 		"/C/fw195/Gestool/prg/Fastreph.prg",
 		"/C/fw195/Gestool/prg/Tpvcobros.prg",
@@ -688,7 +726,6 @@
 		"/C/AppServ/www/prestashop/classes/Product.php",
 		"/C/fw195/Gestool/prg/Usuario.prg",
 		"/C/fw195/Gestool/prg/Empcnf.prg",
-		"/C/fw195/Gestool/prg/Remmov.prg",
 		"/C/AppServ/www/prestashop/themes/default/product.tpl",
 		"/C/Users/Villa/Desktop/Tcomercio.prg",
 		"/C/fw195/Gestool/prg/Depage.prg",
@@ -714,12 +751,7 @@
 		"/C/fw195/Gestool/prg/Eagle1.prg",
 		"/C/fw195/Gestool/prg/Tinfrped.prg",
 		"/C/fw195/Gestool/prg/Tinfcped.prg",
-		"/C/fw195/Gestool/prg/Impfactu.prg",
-		"/C/fw195/Gestool/prg/Faccliant.prg",
-		"/C/fw195/Gestool/prg/precli",
-		"/C/fw195/Gestool/prg/Dotnetgr.prg",
-		"/C/fw195/Gestool/prg/Tpvmesa.prg",
-		"/C/fw195/Gestool/prg/Tpvpunto.prg"
+		"/C/fw195/Gestool/prg/Faccliant.prg"
 	],
 	"find":
 	{
@@ -755,6 +787,33 @@
 		"case_sensitive": false,
 		"find_history":
 		[
+			"officebar",
+			"OnClickPendientes",
+			"ubiSala",
+			"osender",
+			"LButtonUp",
+			"SelectPunto",
+			"SelectPunto.",
+			"SelectPunto",
+			"438",
+			"ubisala",
+			"cCodigoSala",
+			":cCodigoSala",
+			"aNumerosTickets",
+			"selected",
+			"lBrowseMultiplesTickets",
+			"on rx",
+			"QuiFacCli",
+			"del",
+			"redefine",
+			"SetDlgMode",
+			"od resource",
+			"ouser()",
+			"ufieldempresa",
+			"od resource",
+			"ss TDetMovimientos",
+			"oDetMovimientos",
+			"AppendDet",
 			"on aitm",
 			"<<<<",
 			"on aitm",
@@ -855,34 +914,7 @@
 			"on dbFirst",
 			"ccliorg",
 			"msgget",
-			"CompilarScript",
-			"#",
-			"rx",
-			"lBuscaOferta",
-			"on sOfertaArticulo",
-			"on lBuscaOferta",
-			"NDTOLIN",
-			"ofe",
-			"ofer",
-			"TConFacCli",
-			"consumo",
-			"consumos",
-			"cabecera",
-			"on aitm",
-			"::odbfArt",
-			"Lineas de ",
-			"factura",
-			"TExportaTarifas",
-			"ventas",
-			":SetRiesgo",
-			"on edtrec",
-			"cDefCli",
-			"cclitik",
-			"ufieldempresa",
-			"nriesgo",
-			"do case",
-			"truncate",
-			"bsel"
+			"CompilarScript"
 		],
 		"highlight": true,
 		"in_selection": false,
@@ -908,23 +940,23 @@
 	"groups":
 	[
 		{
-			"selected": 2,
+			"selected": 7,
 			"sheets":
 			[
 				{
 					"buffer": 0,
-					"file": "prg/Tcomercio.prg",
+					"file": "prg/Tpvcobros.prg",
 					"settings":
 					{
-						"buffer_size": 370623,
+						"buffer_size": 31388,
 						"regions":
 						{
 						},
 						"selection":
 						[
 							[
-								269402,
-								269402
+								487,
+								487
 							]
 						],
 						"settings":
@@ -934,25 +966,25 @@
 							"translate_tabs_to_spaces": true
 						},
 						"translation.x": 0.0,
-						"translation.y": 162940.0,
+						"translation.y": 0.0,
 						"zoom_level": 1.0
 					},
 					"type": "text"
 				},
 				{
 					"buffer": 1,
-					"file": "prg/Impfactu.prg",
+					"file": "prg/Tpvlistaticket.prg",
 					"settings":
 					{
-						"buffer_size": 120035,
+						"buffer_size": 40075,
 						"regions":
 						{
 						},
 						"selection":
 						[
 							[
-								78620,
-								78620
+								0,
+								0
 							]
 						],
 						"settings":
@@ -962,25 +994,25 @@
 							"translate_tabs_to_spaces": true
 						},
 						"translation.x": 0.0,
-						"translation.y": 39465.0,
+						"translation.y": 0.0,
 						"zoom_level": 1.0
 					},
 					"type": "text"
 				},
 				{
 					"buffer": 2,
-					"file": "prg/Client.prg",
+					"file": "prg/Tpvmesa.prg",
 					"settings":
 					{
-						"buffer_size": 464784,
+						"buffer_size": 25149,
 						"regions":
 						{
 						},
 						"selection":
 						[
 							[
-								365695,
-								365695
+								7877,
+								7884
 							]
 						],
 						"settings":
@@ -990,53 +1022,25 @@
 							"translate_tabs_to_spaces": true
 						},
 						"translation.x": 0.0,
-						"translation.y": 208696.0,
+						"translation.y": 4846.0,
 						"zoom_level": 1.0
 					},
 					"type": "text"
 				},
 				{
 					"buffer": 3,
-					"file": "prg/Pedprov.prg",
+					"file": "prg/Tpvpda.prg",
 					"settings":
 					{
-						"buffer_size": 284263,
+						"buffer_size": 485331,
 						"regions":
 						{
 						},
 						"selection":
 						[
 							[
-								192919,
-								192919
-							]
-						],
-						"settings":
-						{
-							"syntax": "Packages/harbour/harbour/Harbour.tmLanguage",
-							"tab_size": 6,
-							"translate_tabs_to_spaces": true
-						},
-						"translation.x": 0.0,
-						"translation.y": 112900.0,
-						"zoom_level": 1.0
-					},
-					"type": "text"
-				},
-				{
-					"buffer": 4,
-					"file": "prg/Articulo.prg",
-					"settings":
-					{
-						"buffer_size": 662767,
-						"regions":
-						{
-						},
-						"selection":
-						[
-							[
-								562355,
-								562355
+								0,
+								0
 							]
 						],
 						"settings":
@@ -1046,7 +1050,147 @@
 							"translate_tabs_to_spaces": true
 						},
 						"translation.x": 0.0,
-						"translation.y": 279387.0,
+						"translation.y": 0.0,
+						"zoom_level": 1.0
+					},
+					"type": "text"
+				},
+				{
+					"buffer": 4,
+					"file": "prg/Tpvpunto.prg",
+					"settings":
+					{
+						"buffer_size": 15345,
+						"regions":
+						{
+						},
+						"selection":
+						[
+							[
+								0,
+								0
+							]
+						],
+						"settings":
+						{
+							"syntax": "Packages/harbour/harbour/Harbour.tmLanguage",
+							"tab_size": 3,
+							"translate_tabs_to_spaces": true
+						},
+						"translation.x": 0.0,
+						"translation.y": 0.0,
+						"zoom_level": 1.0
+					},
+					"type": "text"
+				},
+				{
+					"buffer": 5,
+					"file": "prg/Tpvrestaurante.prg",
+					"settings":
+					{
+						"buffer_size": 50636,
+						"regions":
+						{
+						},
+						"selection":
+						[
+							[
+								0,
+								0
+							]
+						],
+						"settings":
+						{
+							"syntax": "Packages/harbour/harbour/Harbour.tmLanguage",
+							"tab_size": 3,
+							"translate_tabs_to_spaces": true
+						},
+						"translation.x": 0.0,
+						"translation.y": 0.0,
+						"zoom_level": 1.0
+					},
+					"type": "text"
+				},
+				{
+					"buffer": 6,
+					"file": "prg/Tpvsalon.prg",
+					"settings":
+					{
+						"buffer_size": 52390,
+						"regions":
+						{
+						},
+						"selection":
+						[
+							[
+								21972,
+								21972
+							]
+						],
+						"settings":
+						{
+							"syntax": "Packages/harbour/harbour/Harbour.tmLanguage",
+							"tab_size": 3,
+							"translate_tabs_to_spaces": true
+						},
+						"translation.x": 0.0,
+						"translation.y": 7510.0,
+						"zoom_level": 1.0
+					},
+					"type": "text"
+				},
+				{
+					"buffer": 7,
+					"file": "prg/Tpvtactil.prg",
+					"settings":
+					{
+						"buffer_size": 251954,
+						"regions":
+						{
+						},
+						"selection":
+						[
+							[
+								90036,
+								90036
+							]
+						],
+						"settings":
+						{
+							"syntax": "Packages/harbour/harbour/Harbour.tmLanguage",
+							"tab_size": 3,
+							"translate_tabs_to_spaces": true
+						},
+						"translation.x": 0.0,
+						"translation.y": 52888.0,
+						"zoom_level": 1.0
+					},
+					"type": "text"
+				},
+				{
+					"buffer": 8,
+					"file": "prg/Tpv.prg",
+					"settings":
+					{
+						"buffer_size": 751710,
+						"regions":
+						{
+						},
+						"selection":
+						[
+							[
+								636987,
+								636992
+							]
+						],
+						"settings":
+						{
+							"syntax": "Packages/harbour/harbour/Harbour.tmLanguage",
+							"tab_size": 3,
+							"translate_tabs_to_spaces": true
+						},
+						"translation.x": 0.0,
+						"translation.y": 379444.0,
 						"zoom_level": 1.0
 					},
 					"type": "text"

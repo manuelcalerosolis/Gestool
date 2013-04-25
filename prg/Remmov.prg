@@ -3507,6 +3507,7 @@ METHOD Resource( nMode ) CLASS TDetMovimientos
    local oTotUnd
    local cSayLote          := 'Lote'
    local oBtnSer
+   local oSayTotal
 
    if nMode == APPD_MODE
       ::oDbfVir:nUndMov    := 1
@@ -3627,12 +3628,17 @@ METHOD Resource( nMode ) CLASS TDetMovimientos
 
       REDEFINE GET ::oPreDiv VAR ::oDbfVir:nPreDiv ;
          ID       180 ;
+         IDSAY    181 ;
 			SPINNER ;
          ON CHANGE( oSayPre:Refresh() ) ;
          VALID    ( oSayPre:Refresh(), .t. ) ;
          WHEN     ( nMode != ZOOM_MODE ) ;
          PICTURE  ::oParent:cPorDiv ;
 			OF 		oDlg
+
+      REDEFINE SAY oSayTotal ;
+         ID       191 ;
+         OF       oDlg
 
       REDEFINE SAY oSayPre PROMPT nTotLMovAlm( ::oDbfVir ) ;
          ID       190 ;
@@ -3825,7 +3831,7 @@ METHOD Resource( nMode ) CLASS TDetMovimientos
          oDlg:AddFastKey( VK_F5, {|| ::ValidResource( nMode, oDlg, oBtn ) } )
       end if
 
-      oDlg:bStart             := {|| ::SetDlgMode( nMode  ) }
+      oDlg:bStart             := {|| ::SetDlgMode( nMode, oSayTotal, oSayPre ) }
 
    oDlg:Activate( , , , .t., , , {|| EdtDetMenu( Self, oDlg ) } )
 
@@ -4392,7 +4398,7 @@ RETURN nTotStock
 
 //---------------------------------------------------------------------------//
 
-METHOD SetDlgMode( nMode ) CLASS TDetMovimientos
+METHOD SetDlgMode( nMode, oSayTotal, oSayPre ) CLASS TDetMovimientos
 
    ::oBrwPrp:Hide()
 
@@ -4466,6 +4472,14 @@ METHOD SetDlgMode( nMode ) CLASS TDetMovimientos
 
    if !Empty( ::oPreDiv ) .and. oUser():lNotCostos()
       ::oPreDiv:Hide()
+   end if
+
+   if !Empty( oSayTotal ) .and. oUser():lNotCostos()
+      oSayTotal:Hide()
+   end if
+
+   if !Empty( oSayPre ) .and. oUser():lNotCostos()
+      oSayPre:Hide()
    end if
 
    /*

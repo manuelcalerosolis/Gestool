@@ -437,7 +437,7 @@ Return ( Self )
 
 METHOD SelectPunto( oPunto ) CLASS TTpvSalon
 
-   if Len( ::aNumerosTickets( oPunto ) ) > 1
+   if oPunto:nUbicacion == ubiSala .and. Len( ::aNumerosTickets( oPunto ) ) > 1
 
       if ::lBrowseMultiplesTickets( oPunto )
 

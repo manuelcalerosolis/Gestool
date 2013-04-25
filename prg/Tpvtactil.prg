@@ -2969,9 +2969,8 @@ METHOD StartResource() CLASS TpvTactil
       oGrupo                     := TDotNetGroup():New( oCarpeta, 66, "Comensales", .f., , "Users1_32" )
          oBoton                  := TDotNetButton():New( 60, oGrupo, "Users1_32",                     "Comensales",      1, {|| ::OnClickComensales() }, , , .f., .f., .f. )
 
-      oGrupo                     := TDotNetGroup():New( oCarpeta, 126, "Tickets", .f., , "Index_32" )
-         oBoton                  := TDotNetButton():New( 60, oGrupo, "Tickets_pendientes_32",         "Pendientes",      1, {|| ::OnClickSalaVenta() }, , , .f., .f., .f. )
-         oBoton                  := TDotNetButton():New( 60, oGrupo, "Index_32",                      "Lista",           2, {|| ::OnClickLista() }, , , .f., .f., .f. )
+      oGrupo                     := TDotNetGroup():New( oCarpeta, 66, "Tickets", .f., , "Index_32" )
+         oBoton                  := TDotNetButton():New( 60, oGrupo, "Index_32",                      "Lista",           1, {|| ::OnClickLista() }, , , .f., .f., .f. )
 
       oGrupo                     := TDotNetGroup():New( oCarpeta, 126, "Invitaciones", .f., , "Masks_32" )
          oBoton                  := TDotNetButton():New( 60, oGrupo, "Percent_32",                    "Descuentos",      1, {|| ::OnClickDescuento() }, , , .f., .f., .f. )
