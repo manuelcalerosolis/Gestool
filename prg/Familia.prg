@@ -817,7 +817,7 @@ Static Function EdtRec( aTmp, aGet, dbfFamilia, oBrw, bWhen, bValid, nMode )
             ID       290 ;
             COLOR    aTmp[ _NCOLBTN ], aTmp[ _NCOLBTN ] ;
             BITMAP   "LUPA" ;
-            ON HELP  (  ColorFam( aGet[ _NCOLBTN ] ) ) ;
+            ON HELP  ( ColorFam( aGet[ _NCOLBTN ] ) ) ;
             OF       oFld:aDialogs[1]
 
          REDEFINE GET aGet[ _CIMGBTN ] VAR aTmp[ _CIMGBTN ] ;
@@ -3148,7 +3148,7 @@ Return .t.
 
 Static Function StartColorFamilia( oImgColores, oGetColor, oDlg )
 
-   oImgColores:bAction := {|| SeleccionaColor( oImgColores, oGetColor, oDlg ) }
+   //oImgColores:bAction := {|| SeleccionaColor( oImgColores, oGetColor, oDlg ) }
 
 Return .t.
 
