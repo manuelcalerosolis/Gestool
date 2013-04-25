@@ -9,6 +9,23 @@
 #define GWL_STYLE          -16
 #define TVS_TRACKSELECT    512 //   0x0200
 
+#define DT_TOP                      0x00000000
+#define DT_LEFT                     0x00000000
+#define DT_CENTER                   0x00000001
+#define DT_RIGHT                    0x00000002
+#define DT_VCENTER                  0x00000004
+#define DT_BOTTOM                   0x00000008
+#define DT_WORDBREAK                0x00000010
+#define DT_SINGLELINE               0x00000020
+#define DT_EXPANDTABS               0x00000040
+#define DT_TABSTOP                  0x00000080
+#define DT_NOCLIP                   0x00000100
+#define DT_EXTERNALLEADING          0x00000200
+#define DT_CALCRECT                 0x00000400
+#define DT_NOPREFIX                 0x00000800
+#define DT_INTERNAL                 0x00001000
+
+
 #define fldGeneral         oFld:aDialogs[1]
 #define fldPrecios         oFld:aDialogs[2]
 #define fldDescripciones   oFld:aDialogs[3]
@@ -36,7 +53,7 @@ static dbfCategoria
 static dbfTemporada
 static dbfFamPrv
 static dbfTMov
-static dbfTarPreT
+static dbfTarPreT 
 static dbfTarPreL
 static dbfTarPreS
 static dbfOfe
@@ -1501,6 +1518,10 @@ STATIC FUNCTION EdtRec( aTmp, aGet, dbfArticulo, oBrw, bWhen, bValid, nMode )
    cPrvOld              := aTmp[ ( dbfArticulo )->( fieldpos( "cPrvHab" ) ) ]
    cImageOld            := aTmp[ ( dbfArticulo )->( fieldpos( "cImagen" ) ) ]
 
+   if Empty( aTmp[ ( dbfArticulo )->( fieldpos( "nColBtn" ) ) ] )
+      aTmp[ ( dbfArticulo )->( fieldpos( "nColBtn" ) ) ]    := GetSysColor( COLOR_BTNFACE )
+   end if
+
    CursorWait()
 
    if BeginTrans( aTmp, nMode )
@@ -1822,6 +1843,14 @@ STATIC FUNCTION EdtRec( aTmp, aGet, dbfArticulo, oBrw, bWhen, bValid, nMode )
    REDEFINE GET aTmp[ ( dbfArticulo )->( fieldpos( "cLote" ) ) ] ;
          ID       610 ;
          WHEN     ( nMode != ZOOM_MODE .AND. aTmp[ ( dbfArticulo )->( fieldpos( "lLote" ) ) ] );
+         OF       fldGeneral
+
+   REDEFINE GET aGet[ ( dbfArticulo )->( fieldpos( "nColBtn" ) ) ] ;
+         VAR      aTmp[ ( dbfArticulo )->( fieldpos( "nColBtn" ) ) ] ;
+         ID       290 ;
+         COLOR    aTmp[ ( dbfArticulo )->( fieldpos( "nColBtn" ) ) ], aTmp[ ( dbfArticulo )->( fieldpos( "nColBtn" ) ) ] ;
+         BITMAP   "COLORS_16" ;
+         ON HELP  ( ColorArt( aGet[ ( dbfArticulo )->( fieldpos( "nColBtn" ) ) ] ) ) ;
          OF       fldGeneral
 
    REDEFINE GET   aGet[ ( dbfArticulo )->( fieldpos( "cImagen" ) ) ] ;
@@ -15645,6 +15674,7 @@ function aItmArt()
    aAdd( aBase, { "cCodSec",   "C",  3, 0, "Código de la sección para producción" ,    "",                  "", "( cDbfArt )", nil } )
    aAdd( aBase, { "nFacCnv",   "N", 16, 6, "Factor de conversión" ,                    "",                  "", "( cDbfArt )", nil } )
    aAdd( aBase, { "lSbrInt",   "L",  1, 0, "Lógico precio libre internet" ,            "",                  "", "( cDbfArt )", nil } )
+   aAdd( aBase, { "nColBtn",   "N", 10, 0, "Color para táctil" ,                       "",                  "", "( cDbfArt )", nil } )
 
 return ( aBase )
 
@@ -18474,5 +18504,87 @@ Static Function lPubArt()
    end if
 
 Return lPub
+
+//---------------------------------------------------------------------------//
+
+Function ColorArt( oGetColor )
+
+   local oDlg
+   local oBmpGeneral
+   local oImgColores
+
+   DEFINE DIALOG oDlg RESOURCE "COLORFAM"
+
+      oImgColores             := C5ImageView():Redefine( 200, oDlg )
+      oImgColores:nWItem      := 131
+      oImgColores:nHItem      := 75
+      oImgColores:lVScroll    := .f.
+      oImgColores:nAlignText  := nOr( DT_TOP, DT_CENTER )
+      oImgColores:lTitle      := .t.
+      oImgColores:nHTitle     := 12
+      oImgColores:lShowOption := .t.
+      oImgColores:aTextMargin := { 0, 0, 0, 0 }
+      oImgColores:nClrTextSel := Rgb( 0, 0, 0 )
+      oImgColores:bAction     := {|| SeleccionaColor( oImgColores, oGetColor, oDlg ) }
+
+      oImgColores:nOption     := 0
+
+      aAdd( oImgColores:aItems, C5ImageViewItem():New( , "Amarillo pastel",   Rgb( 255, 255, 149 ) ) )
+      aAdd( oImgColores:aItems, C5ImageViewItem():New( , "Amarillo señales",  Rgb( 255, 204,   0 ) ) )
+      aAdd( oImgColores:aItems, C5ImageViewItem():New( , "Amarillo miel",     Rgb( 201, 135,  33 ) ) )
+      aAdd( oImgColores:aItems, C5ImageViewItem():New( , "Amarillo ocre",     Rgb( 196, 181, 134 ) ) )
+      aAdd( oImgColores:aItems, C5ImageViewItem():New( , "Pardo verdoso",     Rgb( 143, 141,  97 ) ) )
+      aAdd( oImgColores:aItems, C5ImageViewItem():New( , "Rosa lavanda",      Rgb( 235, 205, 245 ) ) )
+      aAdd( oImgColores:aItems, C5ImageViewItem():New( , "Rosa claro",        Rgb( 232, 156, 181 ) ) )
+      aAdd( oImgColores:aItems, C5ImageViewItem():New( , "Violeta pastel",    Rgb( 172, 134, 164 ) ) )
+      aAdd( oImgColores:aItems, C5ImageViewItem():New( , "Biscuit",           Rgb( 249, 228, 202 ) ) )
+      aAdd( oImgColores:aItems, C5ImageViewItem():New( , "Rojo beige",        Rgb( 204, 130, 115 ) ) )
+      aAdd( oImgColores:aItems, C5ImageViewItem():New( , "Rojo anaranjado",   Rgb( 224,  94,  31 ) ) )
+      aAdd( oImgColores:aItems, C5ImageViewItem():New( , "Verde amarillento", Rgb( 165, 226, 135 ) ) )
+      aAdd( oImgColores:aItems, C5ImageViewItem():New( , "Verde mayo",        Rgb(  88, 186,  78 ) ) )
+      aAdd( oImgColores:aItems, C5ImageViewItem():New( , "Verde oliva",       Rgb(  69, 182, 159 ) ) )
+      aAdd( oImgColores:aItems, C5ImageViewItem():New( , "Cian",              Rgb( 180, 243, 243 ) ) )
+      aAdd( oImgColores:aItems, C5ImageViewItem():New( , "Azul pastel",       Rgb( 196, 215, 225 ) ) )
+      aAdd( oImgColores:aItems, C5ImageViewItem():New( , "Azul luminoso",     Rgb(  50, 134, 209 ) ) )
+      aAdd( oImgColores:aItems, C5ImageViewItem():New( , "Gris ceniza",       Rgb( 226, 224, 228 ) ) )
+      aAdd( oImgColores:aItems, C5ImageViewItem():New( , "Aluminio blanco",   Rgb( 172, 172, 181 ) ) )
+      aAdd( oImgColores:aItems, C5ImageViewItem():New( , "Gris piedra",       Rgb( 145, 145, 135 ) ) )
+
+      REDEFINE BITMAP oBmpGeneral ;
+        ID       500 ;
+        RESOURCE "color_wheel_48_alpha" ;
+        TRANSPARENT ;
+        OF       oDlg
+
+     REDEFINE BUTTON ;
+         ID       IDCANCEL ;
+         OF       oDlg ;
+         ACTION   ( oDlg:End() )
+
+   ACTIVATE DIALOG oDlg CENTER
+
+Return .t.
+
+//---------------------------------------------------------------------------//
+
+Function SeleccionaColor( oImgColores, oGetColor, oDlg )
+
+   local nOpt  := oImgColores:nOption
+
+   if Empty( nOpt )
+      MsgStop( "Seleccione un color" )
+      Return .f.
+   end if
+
+   nOpt        := Max( Min( nOpt, len( oImgColores:aItems ) ), 1 )
+
+   if nOpt > 0 .and. nOpt <= len( oImgColores:aItems )
+      oGetColor:cText( oImgColores:aItems[ nOpt ]:nClrPane )
+      oGetColor:SetColor( oImgColores:aItems[ nOpt ]:nClrPane, oImgColores:aItems[ nOpt ]:nClrPane )
+    end if
+
+   oDlg:End()
+
+Return .t.
 
 //---------------------------------------------------------------------------//

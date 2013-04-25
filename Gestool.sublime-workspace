@@ -584,10 +584,10 @@
 			}
 		},
 		{
-			"file": "prg/Tpv.prg",
+			"file": "prg/Articulo.prg",
 			"settings":
 			{
-				"buffer_size": 751710,
+				"buffer_size": 668602,
 				"line_ending": "Windows"
 			}
 		}
@@ -624,6 +624,13 @@
 	},
 	"file_history":
 	[
+		"/C/fw195/Gestool/prg/Familia.prg",
+		"/C/fw195/Gestool/prg/Tviewimg.prg",
+		"/C/fw195/Gestool/prg/Bitmap.prg",
+		"/C/fw195/Gestool/ppo/Familia.ppo",
+		"/C/fw195/Gestool/prg/Tgethlp.prg",
+		"/C/fw195/Gestool/prg/Tpv.prg",
+		"/C/fw195/Gestool/prg/Tgetc3.prg",
 		"/C/fw195/Gestool/prg/Tpvtactil.prg",
 		"/C/fw195/Gestool/prg/Tpvsalaventa.prg",
 		"/C/fw195/Gestool/prg/Tcomercio.prg",
@@ -651,7 +658,6 @@
 		"/C/fw195/Gestool/prg/Xbrowse.prg",
 		"/C/fw195/Gestool/prg/Digit.prg",
 		"/C/fw195/Gestool/prg/Divisas.prg",
-		"/C/fw195/Gestool/prg/Familia.prg",
 		"/C/fw195/Gestool/prg/Tscripts.prg",
 		"/C/fw195/Gestool/bin/script/001.prg",
 		"//server/Scripts creados/Inma Pepsi/001.prg",
@@ -669,7 +675,6 @@
 		"/C/fw195/Gestool/prg/Rptgal.prg",
 		"/C/fw195/Gestool/prg/Exportatarifas.prg",
 		"/C/fw195/Gestool/prg/Oferta.prg",
-		"/C/fw195/Gestool/prg/Tpv.prg",
 		"/C/fw195/Gestool/prg/TConFacCli",
 		"/C/fw195/Gestool/prg/Factu.prg",
 		"/C/fw195/Gestool/prg/Tpvlistaticket.prg",
@@ -718,7 +723,6 @@
 		"/C/Users/Villa/Desktop/resource/Gstdialog.rc",
 		"/C/fw195/Gestool/prg/Tmant.prg",
 		"/C/fw195/Gestool/include/Empresa.ch",
-		"/C/fw195/Gestool/prg/Bitmap.prg",
 		"/C/fw195/Gestool/prg/Precli.prg",
 		"/C/fw195/Gestool/prg/Tgrufam.prg",
 		"/C/fw195/Gestool/prg/Internet.prg",
@@ -747,11 +751,7 @@
 		"/C/fw195/camero/HK.Bat",
 		"/C/fw195/camero/HB.Bat",
 		"/C/fw195/Gestool/prg/Msstatement.prg",
-		"/C/fw195/Gestool/prg/Mscommand.prg",
-		"/C/fw195/Gestool/prg/Eagle1.prg",
-		"/C/fw195/Gestool/prg/Tinfrped.prg",
-		"/C/fw195/Gestool/prg/Tinfcped.prg",
-		"/C/fw195/Gestool/prg/Faccliant.prg"
+		"/C/fw195/Gestool/prg/Mscommand.prg"
 	],
 	"find":
 	{
@@ -759,9 +759,10 @@
 	},
 	"find_in_files":
 	{
-		"height": 0.0,
+		"height": 90.0,
 		"where_history":
 		[
+			"C:\\fw195\\Gestool\\resource",
 			"C:\\fw195\\Gestool\\prg",
 			"C:\\fw195\\Gestool\\include",
 			"C:\\fw195\\Gestool\\prg",
@@ -787,6 +788,28 @@
 		"case_sensitive": false,
 		"find_history":
 		[
+			"art",
+			"nColBtn",
+			"nColBtnnColBtn",
+			"nColBtn",
+			"edtrec",
+			"colors_16",
+			"ColorFam",
+			"NCOLBTN",
+			"on edtrec",
+			"ncolbtn",
+			"on aitm",
+			"on edtrec",
+			"bdown",
+			"bLClicked",
+			"EvalHelp",
+			"bHelp",
+			"ColorFam",
+			"down",
+			"baction",
+			"C5ImageView",
+			"on ColorFam",
+			"on edtre",
 			"officebar",
 			"OnClickPendientes",
 			"ubiSala",
@@ -892,32 +915,10 @@
 			"on nretpreart",
 			"nretpreart",
 			"nPvpTil",
-			"nTotalLinea",
-			"on rx",
-			"EjecutarScript",
-			"cGetDir",
-			"cGetFile",
-			"guarda",
-			"guardar",
-			"get",
-			"cgetfile",
-			"autoinc",
-			"autinc",
-			"oMtrInf",
-			"meter",
-			"Wait_meter",
-			"CRLF",
-			"on aitm",
-			"IniInf",
-			"iniinf",
-			"fec",
-			"on dbFirst",
-			"ccliorg",
-			"msgget",
-			"CompilarScript"
+			"nTotalLinea"
 		],
 		"highlight": true,
-		"in_selection": false,
+		"in_selection": true,
 		"preserve_case": false,
 		"regex": false,
 		"replace_history":
@@ -994,7 +995,7 @@
 							"translate_tabs_to_spaces": true
 						},
 						"translation.x": 0.0,
-						"translation.y": 0.0,
+						"translation.y": 162.0,
 						"zoom_level": 1.0
 					},
 					"type": "text"
@@ -1151,8 +1152,8 @@
 						"selection":
 						[
 							[
-								90036,
-								90036
+								599,
+								599
 							]
 						],
 						"settings":
@@ -1162,25 +1163,25 @@
 							"translate_tabs_to_spaces": true
 						},
 						"translation.x": 0.0,
-						"translation.y": 52888.0,
+						"translation.y": 0.0,
 						"zoom_level": 1.0
 					},
 					"type": "text"
 				},
 				{
 					"buffer": 8,
-					"file": "prg/Tpv.prg",
+					"file": "prg/Articulo.prg",
 					"settings":
 					{
-						"buffer_size": 751710,
+						"buffer_size": 668602,
 						"regions":
 						{
 						},
 						"selection":
 						[
 							[
-								636987,
-								636992
+								62913,
+								62920
 							]
 						],
 						"settings":
@@ -1190,7 +1191,7 @@
 							"translate_tabs_to_spaces": true
 						},
 						"translation.x": 0.0,
-						"translation.y": 379444.0,
+						"translation.y": 33016.0,
 						"zoom_level": 1.0
 					},
 					"type": "text"

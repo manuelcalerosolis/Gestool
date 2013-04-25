@@ -355,16 +355,16 @@ STYLE WS_CHILD|DS_3DLOOK|WS_VISIBLE
 FONT 8, "MS Sans Serif"
 {
   CONTROL "General", -1, "Button", BS_GROUPBOX, 44, 29, 336, 36
-  CONTROL "Código de barras", -1, "Button", BS_GROUPBOX, 382, 29, 108, 234
+  CONTROL "Código de barras", -1, "Button", BS_GROUPBOX, 382, 29, 108, 251
   CONTROL "", -1, "Button", BS_GROUPBOX, 44, 67, 336, 69
-  CONTROL "", -1, "Button", BS_GROUPBOX, 44, 176, 336, 87
+  CONTROL "", -1, "Button", BS_GROUPBOX, 44, 176, 336, 104
   CONTROL "Propiedades", -1, "Button", BS_GROUPBOX, 44, 138, 208, 37
   CONTROL "", 110, "Edit", WS_BORDER|WS_TABSTOP, 98, 39, 76, 11
   CONTROL "", 130, "Edit", ES_AUTOHSCROLL|WS_BORDER|WS_TABSTOP, 98, 51, 279, 11
   CONTROL "Añ&d [F2]", 300, "Button", WS_TABSTOP, 387, 39, 33, 14
   CONTROL "&Mod [F3]", 310, "Button", WS_TABSTOP, 420, 39, 33, 14
   CONTROL "&Elim [F4]", 320, "Button", WS_TABSTOP, 453, 39, 33, 14
-  CONTROL "", 330, "TXBrowse", 0x00200000, 388, 53, 98, 204
+  CONTROL "", 330, "TXBrowse", 0x00200000, 388, 53, 98, 222
   CONTROL "", 160, "Edit", ES_AUTOHSCROLL|WS_BORDER|WS_TABSTOP, 98, 74, 56, 11
   CONTROL "", 161, "Edit", WS_BORDER|WS_TABSTOP, 156, 74, 221, 11
   CONTROL "", 270, "Edit", ES_AUTOHSCROLL|WS_BORDER|WS_TABSTOP, 98, 86, 56, 11
@@ -386,25 +386,27 @@ FONT 8, "MS Sans Serif"
   CONTROL "Incluir en táctil", 230, "Button", BS_AUTOCHECKBOX|WS_TABSTOP, 49, 182, 59, 10
   CONTROL "", 225, "Edit", ES_RIGHT|WS_VSCROLL|WS_BORDER|WS_TABSTOP, 98, 193, 40, 11
   CONTROL "", 260, "Edit", WS_BORDER|WS_TABSTOP, 98, 206, 279, 11
-  CONTROL "", 220, "Edit", WS_BORDER|WS_TABSTOP, 98, 219, 279, 11
+  CONTROL "", 290, "Edit", WS_BORDER|WS_TABSTOP, 98, 219, 279, 11
+  CONTROL "", 220, "Edit", WS_BORDER|WS_TABSTOP, 98, 232, 279, 11
   CONTROL "Código", -1, "Static", WS_GROUP, 49, 42, 33, 8
   CONTROL "Descripción", -1, "Static", WS_GROUP, 49, 54, 39, 8
   CONTROL "Familia", -1, "Static", WS_GROUP, 49, 77, 33, 8
   CONTROL "Tipo artículo", 888, "Static", WS_GROUP, 49, 89, 47, 8
   CONTROL "Texto táctil", -1, "Static", WS_GROUP, 49, 208, 47, 8
-  CONTROL "Imagen táctil", -1, "Static", WS_GROUP, 49, 221, 45, 8
+  CONTROL "Imagen táctil", -1, "Static", WS_GROUP, 49, 235, 45, 8
   CONTROL "Categoría", -1, "Static", WS_GROUP, 49, 101, 35, 8
   CONTROL "Fabricante", -1, "Static", WS_GROUP, 49, 125, 47, 8
   CONTROL "Posición", -1, "Static", WS_GROUP, 49, 196, 32, 8
-  CONTROL "", 450, "ComboBox", WS_BORDER|CBS_DROPDOWNLIST|WS_TABSTOP, 157, 232, 96, 84
-  CONTROL "", 460, "ComboBox", WS_BORDER|CBS_DROPDOWNLIST|WS_TABSTOP, 157, 246, 96, 84
-  CONTROL "Impresora comanda", -1, "Static", WS_GROUP, 49, 234, 67, 8
-  CONTROL "Impresora copia comanda", -1, "Static", WS_GROUP, 49, 248, 87, 8
+  CONTROL "", 450, "ComboBox", WS_BORDER|CBS_DROPDOWNLIST|WS_TABSTOP, 157, 245, 96, 84
+  CONTROL "", 460, "ComboBox", WS_BORDER|CBS_DROPDOWNLIST|WS_TABSTOP, 157, 259, 96, 84
+  CONTROL "Impresora comanda", -1, "Static", WS_GROUP, 49, 247, 67, 8
+  CONTROL "Impresora copia comanda", -1, "Static", WS_GROUP, 49, 261, 87, 8
   CONTROL "Temporada", -1, "Static", WS_GROUP, 49, 113, 41, 8
   CONTROL "", 500, "TBitmap", 0x0000020e, 4, 3, 34, 30, 0x00000020
   CONTROL "Datos generales del artículo", -1, "Static", SS_LEFTNOWORDWRAP|WS_GROUP, 44, 3, 446, 8
   CONTROL "Actual", -1, "Static", WS_GROUP, 262, 163, 25, 8
   CONTROL "Lote", -1, "Button", BS_GROUPBOX, 255, 138, 125, 37
+  CONTROL "Color botón", -1, "Static", WS_GROUP, 49, 222, 41, 8
 }
 
 ARTKITCAT DIALOG DISCARDABLE 30, 106, 311, 105

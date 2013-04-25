@@ -3545,11 +3545,19 @@ METHOD CargaArticulosFamilia( cCodFam, nColBtn ) CLASS TpvTactil
 
                else
 
-                  if ::oFamilias:nColBtn == Rgb( 255, 255, 255 )
-                     :nClrPane   := GetSysColor( COLOR_BTNFACE )
+                  if ::oArticulo:nColBtn == 0
+
+                     if ::oFamilias:nColBtn == Rgb( 255, 255, 255 )
+                        :nClrPane   := GetSysColor( COLOR_BTNFACE )
+                     else
+                        :nClrPane   := ::oFamilias:nColBtn
+                     end if
+
                   else
-                     :nClrPane   := ::oFamilias:nColBtn
-                  end if
+                  
+                     :nClrPane   := ::oArticulo:nColBtn
+
+                  end if   
 
                end if
 
@@ -3603,7 +3611,13 @@ METHOD CargaFavoritos() CLASS TpvTactil
             if ( ::lImagenArticulos ) .and. ( ::lFileBmpName( ::oArticulo:cImagen ) )
                :cImage     := ::cFileBmpName( ::oArticulo:cImagen )
             else
-               :nClrPane   := oRetFld( ::oArticulo:Familia, ::oFamilias, "nColBtn", "cCodFam" )
+               
+               if ::oArticulo:nColBtn == 0 
+                  :nClrPane   := oRetFld( ::oArticulo:Familia, ::oFamilias, "nColBtn", "cCodFam" )
+               else
+                  :nClrPane   := ::oArticulo:nColBtn
+               end if
+                  
             end if
 
             :Cargo         := ::oArticulo:Codigo

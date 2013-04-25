@@ -816,7 +816,7 @@ Static Function EdtRec( aTmp, aGet, dbfFamilia, oBrw, bWhen, bValid, nMode )
          REDEFINE GET aGet[ _NCOLBTN ] VAR aTmp[ _NCOLBTN ] ;
             ID       290 ;
             COLOR    aTmp[ _NCOLBTN ], aTmp[ _NCOLBTN ] ;
-            BITMAP   "LUPA" ;
+            BITMAP   "COLORS_16" ;
             ON HELP  ( ColorFam( aGet[ _NCOLBTN ] ) ) ;
             OF       oFld:aDialogs[1]
 
@@ -3103,6 +3103,7 @@ Function ColorFam( oGetColor )
       oImgColores:lShowOption := .t.
       oImgColores:aTextMargin := { 0, 0, 0, 0 }
       oImgColores:nClrTextSel := Rgb( 0, 0, 0 )
+      oImgColores:bAction     := {|| SeleccionaColor( oImgColores, oGetColor, oDlg ) }
 
       oImgColores:nOption     := 0
 
@@ -3138,17 +3139,7 @@ Function ColorFam( oGetColor )
          OF       oDlg ;
          ACTION   ( oDlg:End() )
 
-      oDlg:bStart := {|| StartColorFamilia( oImgColores, oGetColor, oDlg ) }
-
    ACTIVATE DIALOG oDlg CENTER
-
-Return .t.
-
-//---------------------------------------------------------------------------//
-
-Static Function StartColorFamilia( oImgColores, oGetColor, oDlg )
-
-   //oImgColores:bAction := {|| SeleccionaColor( oImgColores, oGetColor, oDlg ) }
 
 Return .t.
 
