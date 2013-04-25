@@ -160,7 +160,6 @@ CLASS TDataCenter
 
    INLINE METHOD OpenFacCliT( dbf )
 
-      /*
       local lOpen
       local cFilter
 
@@ -186,8 +185,8 @@ CLASS TDataCenter
       end if 
 
       Return ( lOpen )   
-      */
-      
+
+/*      
       local lOpen
       local cSqlStatement
 
@@ -218,7 +217,8 @@ CLASS TDataCenter
       end if 
 
       Return ( lOpen )
-
+*/
+   
    ENDMETHOD
 
    //---------------------------------------------------------------------------//
