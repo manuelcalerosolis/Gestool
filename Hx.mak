@@ -802,7 +802,7 @@ TScripts.obj            \
 OutLook2010.obj         \
 
 .PRG.OBJ:
-  	$(HB)\Bin\Harbour $< /n /po$(PPO)\$&.ppo /w /es2 /d__OC__ /i$(FWINCLUDE) /i$(HBINCLUDE) /i$(GTINCLUDE) /o$(OBJ)\$&.c
+  	$(HB)\Bin\Harbour $< /n /po$(PPO)\$&.ppo /w /es2 /d__GST__ /i$(FWINCLUDE) /i$(HBINCLUDE) /i$(GTINCLUDE) /o$(OBJ)\$&.c
   	$(BORLAND)\Bin\Bcc32 -c -tWM -I$(HBINCLUDE) -o$(OBJ)\$& $(OBJ)\$&.c
 
 $(EXE)                  : $( PRG:.PRG=.OBJ )

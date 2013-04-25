@@ -978,20 +978,19 @@ Function Articulo( oMenuItem, oWnd, bOnInit )
          :nDataStrAlign    := AL_RIGHT
          :nHeadStrAlign    := AL_RIGHT
       end with
-
+/*
       with object ( oWndBrw:AddXCol() )
          :cHeader          := "Editable"
-         :bStrData         := {|| TransPrecio( nRetPreArt( 1, nil, .t., dbfArticulo, dbfDiv, dbfArtKit, dbfIva ), lEuro ) }
          :bEditValue       := {|| ( dbfArticulo )->pVtaIva1 }
-         :cEditPicture     := "@E 999,999.9999"
+         :cEditPicture     := cPorDiv
          :nWidth           := 80
          :nDataStrAlign    := 1
          :nHeadStrAlign    := 1
          :nEditType        := 1
          :bEditWhen        := {|| .t. }
-         :bOnPostEdit      := {|o,x| if( dbDialogLock( dbfArticulo ), ( ( dbfArticulo )->pVtaIva1 := x, ( dbfArticulo )->( dbUnlock() ) ), ) }
+         :bOnPostEdit      := {|o,x,n| lValidImporteBase( o, x, n ) }
       end with
-
+*/
       with object ( oWndBrw:AddXCol() )
          :cHeader          := uFieldEmpresa( "cTxtTar2", "Precio 2" )
          :bStrData         := {|| TransPrecio( nRetPreArt( 2, nil, .f., dbfArticulo, dbfDiv, dbfArtKit, dbfIva ), lEuro ) }
@@ -18584,6 +18583,44 @@ Function SeleccionaColor( oImgColores, oGetColor, oDlg )
     end if
 
    oDlg:End()
+
+Return .t.
+
+//---------------------------------------------------------------------------//
+
+Static Function lValidImporteBase( oGet, uValue, nKey )
+
+   local nPrecioBase
+   local nPrecioIVA
+   local nPorcentajeIVA    
+
+   if nKey == VK_ESCAPE
+      Return .f.
+   end if 
+
+   nPorcentajeIva          := nIva( dbfIva, ( dbfArticulo )->TipoIva )
+
+   /*
+   Margen de ajuste------------------------------------------------------------ 
+   */
+
+   if IsTrue( ( dbfArticulo )->lMarAju )
+      nPrecioIva           := nAjuste( uValue, ( dbfArticulo )->cMarAju )
+   else 
+      nPrecioIva           := uValue
+   end if
+
+   /*
+   Primero es quitar el IVA----------------------------------------------------
+   */
+
+   nPrecioBase             := Round( nPrecioIva / ( 1 + nPorcentajeIva / 100 ), nDecDiv )
+
+   if dbDialogLock( dbfArticulo )
+      ( dbfArticulo )->pVtaIva1  := nPrecioIva
+      ( dbfArticulo )->pVenta1   := nPrecioBase
+      ( dbfArticulo )->( dbUnlock() )
+   end if 
 
 Return .t.
 
