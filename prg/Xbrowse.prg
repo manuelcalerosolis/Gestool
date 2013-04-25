@@ -5871,6 +5871,8 @@ METHOD CancelEdit() CLASS TXBrowse
       ::lEditMode := .f.
    endif
 
+   MsgAlert( "on cancel Edit")
+
    if ::lEdited
       if ::bOnRowLeave != nil
          Eval( ::bOnRowLeave, Self )

@@ -5525,6 +5525,10 @@ Function cNameVersion()
    if IsNil( cNameVersion )
 
       do case
+         case File( FullCurDir() + "dccn" )
+
+            cNameVersion      := "Oido cocina Profesional"
+
          case File( FullCurDir() + "scmmrc" )
 
             cNameVersion      := "PrestaShop 1.5"
@@ -5554,6 +5558,10 @@ Function cBmpVersion()
    if IsNil( cBmpVersion )
 
       do case
+         case File( FullCurDir() + "dccn" )
+
+            cBmpVersion      := FullCurDir() + "Bmp\Oidococina.bmp"
+
          case File( FullCurDir() + "scmmrc" )
 
             cBmpVersion      := FullCurDir() + "Bmp\GestoolPrestashop.bmp"

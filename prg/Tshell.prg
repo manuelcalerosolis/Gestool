@@ -578,9 +578,11 @@ return 0
 
 METHOD KeyChar( nKey, nFlags ) CLASS TShell
 
+   msgAlert( ::oBrw:lEditMode, "en key char" )
+
    do case
    case nKey == VK_ESCAPE .and. ::oWnd != nil
-      if ::oTxtSea != nil .and. GetFocus() == ::oTxtSea:hWnd
+      if ( ::oTxtSea != nil .and. GetFocus() == ::oTxtSea:hWnd ) 
          ::oBrw:SetFocus()
       else
          ::End()
@@ -677,7 +679,7 @@ METHOD CtrlKey( nKey ) CLASS TShell
    local nLen
    local nCont
 
-   if !::lOnProcess
+   if !::lOnProcess .and. !::oBrw:lEditMode
 
       nLen        := len( ::aFastKey )
 
@@ -734,28 +736,28 @@ METHOD KeyDown( nKey, nFlags ) CLASS TShell
       Return 0
    end if
 
-   do case
-      case nKey == VK_ESCAPE
-         ::End()
-      case nKey == VK_RETURN .and. ::oWnd != nil
-         ::RecEdit()
-      case nKey == VK_INSERT .and. ::oWnd != nil
-         ::RecAdd()
-      case nKey == VK_DELETE .and. ::oWnd != nil
-         ::RecDel()
-      case nKey == VK_F5
-         ::Refresh()
-      case nKey == VK_F9
-         ::PutOriginal()
-      case nKey == VK_F2
-         ::NextTabOption()
-      case nKey == VK_F3
-         ::PrevTabOption()
-      /*
-      case nKey == VK_F12
-         OpnCaj()
-      */
-   end case
+   if !( ::oBrw:lEditMode )
+   
+      do case
+         case nKey == VK_ESCAPE
+            ::End()
+         case nKey == VK_RETURN .and. ::oWnd != nil
+            ::RecEdit() 
+         case nKey == VK_INSERT .and. ::oWnd != nil
+            ::RecAdd()
+         case nKey == VK_DELETE .and. ::oWnd != nil
+            ::RecDel()
+         case nKey == VK_F5
+            ::Refresh()
+         case nKey == VK_F9
+            ::PutOriginal()
+         case nKey == VK_F2
+            ::NextTabOption()
+         case nKey == VK_F3
+            ::PrevTabOption()
+      end case
+
+   end if 
 
 return Super:KeyDown( nKey, nFlags )
 
@@ -2505,6 +2507,8 @@ Method CreateXBrowse() CLASS TShell
          ::oBrw:bKeyNo     := {| n | iif( n == nil, ( ::xAlias )->( OrdKeyNo() ), ( ::xAlias )->( OrdKeyGoto( n ) ) ) }
          ::oBrw:bKeyCount  := {|| ( ::xAlias )->( OrdKeyCount() ) }
          end if
+
+         ::oBrw:lFastEdit  := .t.
 
          // ::oBrw:bPastEof   := {|| msgStop( "bPastEof") }
 

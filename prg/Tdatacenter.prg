@@ -206,7 +206,7 @@ CLASS TDataCenter
 
          end if 
 
-         lOpen                := ADSRunSQL( @dbf, cSqlStatement, .t. )
+         lOpen                := ADSRunSQL( @dbf, cSqlStatement )
 
       else
 
