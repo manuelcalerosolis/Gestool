@@ -2614,7 +2614,7 @@ Method CheckExtendInfo()
       ::oTimer    := nil
    endif
 
-   if !::lOnProcess
+   if !::lOnProcess .and. !::oBrw:lEditMode
       ::oTimer             := TTimer():New( ::nToolTip, {|| ::ShowExtendInfo(), if( ::oTimer != nil, ::oTimer:End(), nil ), ::oTimer := nil }, )
       ::oTimer:hWndOwner   := GetActiveWindow()
       ::oTimer:Activate()

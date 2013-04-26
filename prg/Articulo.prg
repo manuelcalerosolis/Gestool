@@ -962,7 +962,7 @@ Function Articulo( oMenuItem, oWnd, bOnInit )
          :nHeadStrAlign    := AL_RIGHT
          :lHide            := .t.
       end with
-
+/*
       with object ( oWndBrw:AddXCol() )
          :cHeader          := uFieldEmpresa( "cTxtTar1", "Precio 1" )
          :bStrData         := {|| TransPrecio( nRetPreArt( 1, nil, .f., dbfArticulo, dbfDiv, dbfArtKit, dbfIva ), lEuro ) }
@@ -978,12 +978,35 @@ Function Articulo( oMenuItem, oWnd, bOnInit )
          :nDataStrAlign    := AL_RIGHT
          :nHeadStrAlign    := AL_RIGHT
       end with
+*/
+      with object ( oWndBrw:AddXCol() )
+         :cHeader          := uFieldEmpresa( "cTxtTar1", "Precio 1" ) 
+         :bEditValue       := {|| ( dbfArticulo )->pVenta1 }
+         :cEditPicture     := cPouDiv
+         :nWidth           := 80
+         :nDataStrAlign    := 1
+         :nHeadStrAlign    := 1
+         :nEditType        := 1
+         :bEditWhen        := {|| .t. }
+         :bOnPostEdit      := {|o,x,n| lValidImporteBase( o, x, n, { "Base" => "pVenta1", "Iva" => "pVtaIva1", "Beneficio" => "Benef1", "BeneficioSobre" => "nBnfSbr1" } ) }
+      end with
 
-      // lValidImporteBase( oGet, uValue, nKey )
 
       with object ( oWndBrw:AddXCol() )
-         :cHeader          := "Editable"
+         :cHeader          := uFieldEmpresa( "cTxtTar1", "Precio 1" ) + Space( 1 ) +  cImp()
          :bEditValue       := {|| ( dbfArticulo )->pVtaIva1 }
+         :cEditPicture     := cPouDiv
+         :nWidth           := 80
+         :nDataStrAlign    := 1
+         :nHeadStrAlign    := 1
+         :nEditType        := 1
+         :bEditWhen        := {|| .t. }
+         :bOnPostEdit      := {|o,x,n| lValidImporteIva( o, x, n, { "Base" => "pVenta1", "Iva" => "pVtaIva1", "Beneficio" => "Benef1", "BeneficioSobre" => "nBnfSbr1" } ) }
+      end with
+
+      with object ( oWndBrw:AddXCol() )
+         :cHeader          := uFieldEmpresa( "cTxtTar2", "Precio 2" ) 
+         :bEditValue       := {|| ( dbfArticulo )->pVenta2 }
          :cEditPicture     := cPouDiv
          :nWidth           := 80
          :nDataStrAlign    := 1
@@ -991,97 +1014,129 @@ Function Articulo( oMenuItem, oWnd, bOnInit )
          :nEditType        := 1
          :lHide            := .t.
          :bEditWhen        := {|| .t. }
-         :bOnPostEdit      := {|o,x,n| lValidImporteBase( o, x, n ) }
+         :bOnPostEdit      := {|o,x,n| lValidImporteBase( o, x, n, { "Base" => "pVenta2", "Iva" => "pVtaIva2", "Beneficio" => "Benef2", "BeneficioSobre" => "nBnfSbr2" } ) }
+      end with
+
+
+      with object ( oWndBrw:AddXCol() )
+         :cHeader          := uFieldEmpresa( "cTxtTar2", "Precio 2" ) + Space( 1 ) +  cImp()
+         :bEditValue       := {|| ( dbfArticulo )->pVtaIva2 }
+         :cEditPicture     := cPouDiv
+         :nWidth           := 80
+         :nDataStrAlign    := 1
+         :nHeadStrAlign    := 1
+         :nEditType        := 1
+         :lHide            := .t.
+         :bEditWhen        := {|| .t. }
+         :bOnPostEdit      := {|o,x,n| lValidImporteIva( o, x, n, { "Base" => "pVenta2", "Iva" => "pVtaIva2", "Beneficio" => "Benef2", "BeneficioSobre" => "nBnfSbr2" } ) }
       end with
 
       with object ( oWndBrw:AddXCol() )
-         :cHeader          := uFieldEmpresa( "cTxtTar2", "Precio 2" )
-         :bStrData         := {|| TransPrecio( nRetPreArt( 2, nil, .f., dbfArticulo, dbfDiv, dbfArtKit, dbfIva ), lEuro ) }
-         :nWidth           := 100
-         :nDataStrAlign    := AL_RIGHT
-         :nHeadStrAlign    := AL_RIGHT
+         :cHeader          := uFieldEmpresa( "cTxtTar3", "Precio 3" ) 
+         :bEditValue       := {|| ( dbfArticulo )->pVenta3 }
+         :cEditPicture     := cPouDiv
+         :nWidth           := 80
+         :nDataStrAlign    := 1
+         :nHeadStrAlign    := 1
+         :nEditType        := 1
          :lHide            := .t.
+         :bEditWhen        := {|| .t. }
+         :bOnPostEdit      := {|o,x,n| lValidImporteBase( o, x, n, { "Base" => "pVenta3", "Iva" => "pVtaIva3", "Beneficio" => "Benef3", "BeneficioSobre" => "nBnfSbr3" } ) }
+      end with
+
+
+      with object ( oWndBrw:AddXCol() )
+         :cHeader          := uFieldEmpresa( "cTxtTar3", "Precio 3" ) + Space( 1 ) +  cImp()
+         :bEditValue       := {|| ( dbfArticulo )->pVtaIva3 }
+         :cEditPicture     := cPouDiv
+         :nWidth           := 80
+         :nDataStrAlign    := 1
+         :nHeadStrAlign    := 1
+         :nEditType        := 1
+         :lHide            := .t.
+         :bEditWhen        := {|| .t. }
+         :bOnPostEdit      := {|o,x,n| lValidImporteIva( o, x, n, { "Base" => "pVenta3", "Iva" => "pVtaIva3", "Beneficio" => "Benef3", "BeneficioSobre" => "nBnfSbr3" } ) }
       end with
 
       with object ( oWndBrw:AddXCol() )
-         :cHeader          := uFieldEmpresa( "cTxtTar2", "Precio 2" ) + Space( 1 ) + cImp() + " inc."
-         :bStrData         := {|| TransPrecio( nRetPreArt( 2, nil, .t., dbfArticulo, dbfDiv, dbfArtKit, dbfIva ), lEuro ) }
-         :nWidth           := 100
-         :nDataStrAlign    := AL_RIGHT
-         :nHeadStrAlign    := AL_RIGHT
+         :cHeader          := uFieldEmpresa( "cTxtTar4", "Precio 4" ) 
+         :bEditValue       := {|| ( dbfArticulo )->pVenta4 }
+         :cEditPicture     := cPouDiv
+         :nWidth           := 80
+         :nDataStrAlign    := 1
+         :nHeadStrAlign    := 1
+         :nEditType        := 1
          :lHide            := .t.
+         :bEditWhen        := {|| .t. }
+         :bOnPostEdit      := {|o,x,n| lValidImporteBase( o, x, n, { "Base" => "pVenta4", "Iva" => "pVtaIva4", "Beneficio" => "Benef4", "BeneficioSobre" => "nBnfSbr4" } ) }
+      end with
+
+
+      with object ( oWndBrw:AddXCol() )
+         :cHeader          := uFieldEmpresa( "cTxtTar4", "Precio 4" ) + Space( 1 ) +  cImp()
+         :bEditValue       := {|| ( dbfArticulo )->pVtaIva4 }
+         :cEditPicture     := cPouDiv
+         :nWidth           := 80
+         :nDataStrAlign    := 1
+         :nHeadStrAlign    := 1
+         :nEditType        := 1
+         :lHide            := .t.
+         :bEditWhen        := {|| .t. }
+         :bOnPostEdit      := {|o,x,n| lValidImporteIva( o, x, n, { "Base" => "pVenta4", "Iva" => "pVtaIva4", "Beneficio" => "Benef4", "BeneficioSobre" => "nBnfSbr4" } ) }
       end with
 
       with object ( oWndBrw:AddXCol() )
-         :cHeader          := uFieldEmpresa( "cTxtTar3", "Precio 3" )
-         :bStrData         := {|| TransPrecio( nRetPreArt( 3, nil, .f., dbfArticulo, dbfDiv, dbfArtKit, dbfIva ), lEuro ) }
-         :nWidth           := 100
-         :nDataStrAlign    := AL_RIGHT
-         :nHeadStrAlign    := AL_RIGHT
+         :cHeader          := uFieldEmpresa( "cTxtTar5", "Precio 5" ) 
+         :bEditValue       := {|| ( dbfArticulo )->pVenta5 }
+         :cEditPicture     := cPouDiv
+         :nWidth           := 80
+         :nDataStrAlign    := 1
+         :nHeadStrAlign    := 1
+         :nEditType        := 1
          :lHide            := .t.
+         :bEditWhen        := {|| .t. }
+         :bOnPostEdit      := {|o,x,n| lValidImporteBase( o, x, n, { "Base" => "pVenta5", "Iva" => "pVtaIva5", "Beneficio" => "Benef5", "BeneficioSobre" => "nBnfSbr5" } ) }
+      end with
+
+
+      with object ( oWndBrw:AddXCol() )
+         :cHeader          := uFieldEmpresa( "cTxtTar5", "Precio 5" ) + Space( 1 ) +  cImp()
+         :bEditValue       := {|| ( dbfArticulo )->pVtaIva5 }
+         :cEditPicture     := cPouDiv
+         :nWidth           := 80
+         :nDataStrAlign    := 1
+         :nHeadStrAlign    := 1
+         :nEditType        := 1
+         :lHide            := .t.
+         :bEditWhen        := {|| .t. }
+         :bOnPostEdit      := {|o,x,n| lValidImporteIva( o, x, n, { "Base" => "pVenta5", "Iva" => "pVtaIva5", "Beneficio" => "Benef5", "BeneficioSobre" => "nBnfSbr5" } ) }
       end with
 
       with object ( oWndBrw:AddXCol() )
-         :cHeader          := uFieldEmpresa( "cTxtTar3", "Precio 3" ) + Space( 1 ) + cImp() + " inc."
-         :bStrData         := {|| TransPrecio( nRetPreArt( 3, nil, .t., dbfArticulo, dbfDiv, dbfArtKit, dbfIva ), lEuro ) }
-         :nWidth           := 100
-         :nDataStrAlign    := AL_RIGHT
-         :nHeadStrAlign    := AL_RIGHT
+         :cHeader          := uFieldEmpresa( "cTxtTar6", "Precio 6" ) 
+         :bEditValue       := {|| ( dbfArticulo )->pVenta6 }
+         :cEditPicture     := cPouDiv
+         :nWidth           := 80
+         :nDataStrAlign    := 1
+         :nHeadStrAlign    := 1
+         :nEditType        := 1
          :lHide            := .t.
+         :bEditWhen        := {|| .t. }
+         :bOnPostEdit      := {|o,x,n| lValidImporteBase( o, x, n, { "Base" => "pVenta6", "Iva" => "pVtaIva6", "Beneficio" => "Benef6", "BeneficioSobre" => "nBnfSbr6" } ) }
       end with
 
-      with object ( oWndBrw:AddXCol() )
-         :cHeader          := uFieldEmpresa( "cTxtTar4", "Precio 4" )
-         :bStrData         := {|| TransPrecio( nRetPreArt( 4, nil, .f., dbfArticulo, dbfDiv, dbfArtKit, dbfIva ), lEuro ) }
-         :nWidth           := 100
-         :nDataStrAlign    := AL_RIGHT
-         :nHeadStrAlign    := AL_RIGHT
-         :lHide            := .t.
-      end with
 
       with object ( oWndBrw:AddXCol() )
-         :cHeader          := uFieldEmpresa( "cTxtTar4", "Precio 4" ) + Space( 1 ) + cImp() + " inc."
-         :bStrData         := {|| TransPrecio( nRetPreArt( 4, nil, .t., dbfArticulo, dbfDiv, dbfArtKit, dbfIva ), lEuro ) }
-         :nWidth           := 100
-         :nDataStrAlign    := AL_RIGHT
-         :nHeadStrAlign    := AL_RIGHT
+         :cHeader          := uFieldEmpresa( "cTxtTar6", "Precio 6" ) + Space( 1 ) +  cImp()
+         :bEditValue       := {|| ( dbfArticulo )->pVtaIva6 }
+         :cEditPicture     := cPouDiv
+         :nWidth           := 80
+         :nDataStrAlign    := 1
+         :nHeadStrAlign    := 1
+         :nEditType        := 1
          :lHide            := .t.
-      end with
-
-      with object ( oWndBrw:AddXCol() )
-         :cHeader          := uFieldEmpresa( "cTxtTar5", "Precio 5" )
-         :bStrData         := {|| TransPrecio( nRetPreArt( 5, nil, .f., dbfArticulo, dbfDiv, dbfArtKit, dbfIva ), lEuro ) }
-         :nWidth           := 100
-         :nDataStrAlign    := AL_RIGHT
-         :nHeadStrAlign    := AL_RIGHT
-         :lHide            := .t.
-      end with
-
-      with object ( oWndBrw:AddXCol() )
-         :cHeader          := uFieldEmpresa( "cTxtTar5", "Precio 5" ) + Space( 1 ) + cImp() + " inc."
-         :bStrData         := {|| TransPrecio( nRetPreArt( 5, nil, .t., dbfArticulo, dbfDiv, dbfArtKit, dbfIva ), lEuro ) }
-         :nWidth           := 100
-         :nDataStrAlign    := AL_RIGHT
-         :nHeadStrAlign    := AL_RIGHT
-         :lHide            := .t.
-      end with
-
-      with object ( oWndBrw:AddXCol() )
-         :cHeader          := uFieldEmpresa( "cTxtTar6", "Precio 6" )
-         :bStrData         := {|| TransPrecio( nRetPreArt( 6, nil, .f., dbfArticulo, dbfDiv, dbfArtKit, dbfIva ), lEuro ) }
-         :nWidth           := 100
-         :nDataStrAlign    := AL_RIGHT
-         :nHeadStrAlign    := AL_RIGHT
-         :lHide            := .t.
-      end with
-
-      with object ( oWndBrw:AddXCol() )
-         :cHeader          := uFieldEmpresa( "cTxtTar6", "Precio 6" ) + Space( 1 ) + cImp() + " inc."
-         :bStrData         := {|| TransPrecio( nRetPreArt( 6, nil, .t., dbfArticulo, dbfDiv, dbfArtKit, dbfIva ), lEuro ) }
-         :nWidth           := 100
-         :nDataStrAlign    := AL_RIGHT
-         :nHeadStrAlign    := AL_RIGHT
-         :lHide            := .t.
+         :bEditWhen        := {|| .t. }
+         :bOnPostEdit      := {|o,x,n| lValidImporteIva( o, x, n, { "Base" => "pVenta6", "Iva" => "pVtaIva6", "Beneficio" => "Benef6", "BeneficioSobre" => "nBnfSbr6" } ) }
       end with
 
       with object ( oWndBrw:AddXCol() )
@@ -18599,26 +18654,27 @@ Return .t.
 
 //---------------------------------------------------------------------------//
 
-Static Function lValidImporteBase( oGet, uValue, nKey )
+Static Function lValidImporteBase( oGet, uValue, nKey, hFields )
 
-   local nPrecioBase          := 0
-   local nPrecioIva           := 0
-   local nPorcentajeIva       := 0
-   local nPorcentajeBeneficio := 0
+   local nPrecioBase             := 0
+   local nPrecioIva              := 0
+   local nPorcentajeIva          := 0
+   local nPorcentajeBeneficio    := 0
+   local lBeneficioSobreCosto    := .t.
 
    if nKey == VK_ESCAPE
       Return .f.
    end if 
 
-   nPorcentajeIva             := nIva( dbfIva, ( dbfArticulo )->TipoIva )
+   nPorcentajeIva                := nIva( dbfIva, ( dbfArticulo )->TipoIva )
 
-   nPrecioBase                := uValue
+   nPrecioBase                   := uValue
 
    /*
    Primero es quitar el IVA----------------------------------------------------
    */
 
-   nPrecioIva                 := nPrecioBase + Round( ( nPrecioBase * nPorcentajeIva / 100 ), nDecDiv )
+   nPrecioIva                    := nPrecioBase + Round( ( nPrecioBase * nPorcentajeIva / 100 ), nDecDiv )
 
    /*
    Calculo de porcentajes de beneficio-----------------------------------------
@@ -18626,10 +18682,12 @@ Static Function lValidImporteBase( oGet, uValue, nKey )
 
    if ( dbfArticulo )->pCosto != 0
 
-      nPorcentajeBeneficio    := nPorcentajeBeneficio( ( dbfArticulo )->lBnf1, nPrecioBase, ( dbfArticulo )->pCosto )
+      lBeneficioSobreCosto       := ( dbfArticulo )->( fieldget( fieldpos( hFields[ "BeneficioSobre" ] ) ) ) <= 1
+
+      nPorcentajeBeneficio       := nPorcentajeBeneficio( lBeneficioSobreCosto, nPrecioBase, ( dbfArticulo )->pCosto )
 
       if !( nPorcentajeBeneficio > 0 .and. nPorcentajeBeneficio < 999 )
-         nPorcentajeBeneficio := 0
+         nPorcentajeBeneficio    := 0
       end if
 
    end if
@@ -18639,9 +18697,9 @@ Static Function lValidImporteBase( oGet, uValue, nKey )
    */
 
    if dbDialogLock( dbfArticulo )
-      ( dbfArticulo )->pVtaIva1  := nPrecioIva
-      ( dbfArticulo )->pVenta1   := nPrecioBase
-      ( dbfArticulo )->nPctBnf1  := nPorcentajeBeneficio
+      ( dbfArticulo )->( fieldput( fieldpos( hFields[ "Iva"       ] ), nPrecioIva ) )
+      ( dbfArticulo )->( fieldput( fieldpos( hFields[ "Base"      ] ), nPrecioBase ) )
+      ( dbfArticulo )->( fieldput( fieldpos( hFields[ "Beneficio" ] ), nPorcentajeBeneficio ) )
       ( dbfArticulo )->( dbUnlock() )
    end if 
 
@@ -18649,34 +18707,35 @@ Return .t.
 
 //---------------------------------------------------------------------------//
 
-Static Function lValidImporteIva( oGet, uValue, nKey  )
+Static Function lValidImporteIva( oGet, uValue, nKey, hFields ) // { "Base" => "pVenta1", "Iva" => "pVtaIva1", "Beneficio" => "Benef1", "BeneficioSobre" => "nBnfSbr1" }
 
-   local nPrecioBase          := 0
-   local nPrecioIva           := 0
-   local nPorcentajeIva       := 0
-   local nPorcentajeBeneficio := 0
+   local nPrecioBase             := 0
+   local nPrecioIva              := 0
+   local nPorcentajeIva          := 0
+   local nPorcentajeBeneficio    := 0
+   local lBeneficioSobreCosto    := .t.
 
    if nKey == VK_ESCAPE
       Return .f.
    end if 
 
-   nPorcentajeIva             := nIva( dbfIva, ( dbfArticulo )->TipoIva )
+   nPorcentajeIva                := nIva( dbfIva, ( dbfArticulo )->TipoIva )
 
    /*
    Margen de ajuste------------------------------------------------------------ 
    */
 
    if IsTrue( ( dbfArticulo )->lMarAju )
-      nPrecioIva              := nAjuste( uValue, ( dbfArticulo )->cMarAju )
+      nPrecioIva                 := nAjuste( uValue, ( dbfArticulo )->cMarAju )
    else 
-      nPrecioIva              := uValue
+      nPrecioIva                 := uValue
    end if
 
    /*
    Primero es quitar el IVA----------------------------------------------------
    */
 
-   nPrecioBase                := Round( nPrecioIva / ( 1 + nPorcentajeIva / 100 ), nDecDiv )
+   nPrecioBase                   := Round( nPrecioIva / ( 1 + nPorcentajeIva / 100 ), nDecDiv )
 
    /*
    Calculo de porcentajes de beneficio-----------------------------------------
@@ -18684,10 +18743,12 @@ Static Function lValidImporteIva( oGet, uValue, nKey  )
 
    if ( dbfArticulo )->pCosto != 0
 
-      nPorcentajeBeneficio    := nPorcentajeBeneficio( ( dbfArticulo )->lBnf1, nPrecioBase, ( dbfArticulo )->pCosto )
+      lBeneficioSobreCosto       := ( dbfArticulo )->( fieldget( fieldpos( hFields[ "BeneficioSobre" ] ) ) ) <= 1
+
+      nPorcentajeBeneficio       := nPorcentajeBeneficio( lBeneficioSobreCosto, nPrecioBase, ( dbfArticulo )->pCosto )
 
       if !( nPorcentajeBeneficio > 0 .and. nPorcentajeBeneficio < 999 )
-         nPorcentajeBeneficio := 0
+         nPorcentajeBeneficio    := 0
       end if
 
    end if
@@ -18697,9 +18758,9 @@ Static Function lValidImporteIva( oGet, uValue, nKey  )
    */
 
    if dbDialogLock( dbfArticulo )
-      ( dbfArticulo )->pVtaIva1  := nPrecioIva
-      ( dbfArticulo )->pVenta1   := nPrecioBase
-      ( dbfArticulo )->nPctBnf1  := nPorcentajeBeneficio
+      ( dbfArticulo )->( fieldput( fieldpos( hFields[ "Iva"       ] ), nPrecioIva ) )
+      ( dbfArticulo )->( fieldput( fieldpos( hFields[ "Base"      ] ), nPrecioBase ) )
+      ( dbfArticulo )->( fieldput( fieldpos( hFields[ "Beneficio" ] ), nPorcentajeBeneficio ) )
       ( dbfArticulo )->( dbUnlock() )
    end if 
 
