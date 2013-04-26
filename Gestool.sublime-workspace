@@ -520,74 +520,18 @@
 	"buffers":
 	[
 		{
-			"file": "prg/Tpvcobros.prg",
+			"file": "prg/Factcli.prg",
 			"settings":
 			{
-				"buffer_size": 31388,
+				"buffer_size": 0,
 				"line_ending": "Windows"
 			}
 		},
 		{
-			"file": "prg/Tpvlistaticket.prg",
+			"file": "prg/Remmov.prg",
 			"settings":
 			{
-				"buffer_size": 40075,
-				"line_ending": "Windows"
-			}
-		},
-		{
-			"file": "prg/Tpvmesa.prg",
-			"settings":
-			{
-				"buffer_size": 25149,
-				"line_ending": "Windows"
-			}
-		},
-		{
-			"file": "prg/Tpvpda.prg",
-			"settings":
-			{
-				"buffer_size": 485331,
-				"line_ending": "Windows"
-			}
-		},
-		{
-			"file": "prg/Tpvpunto.prg",
-			"settings":
-			{
-				"buffer_size": 15345,
-				"line_ending": "Windows"
-			}
-		},
-		{
-			"file": "prg/Tpvrestaurante.prg",
-			"settings":
-			{
-				"buffer_size": 50636,
-				"line_ending": "Windows"
-			}
-		},
-		{
-			"file": "prg/Tpvsalon.prg",
-			"settings":
-			{
-				"buffer_size": 52390,
-				"line_ending": "Windows"
-			}
-		},
-		{
-			"file": "prg/Tpvtactil.prg",
-			"settings":
-			{
-				"buffer_size": 251954,
-				"line_ending": "Windows"
-			}
-		},
-		{
-			"file": "prg/Articulo.prg",
-			"settings":
-			{
-				"buffer_size": 668602,
+				"buffer_size": 0,
 				"line_ending": "Windows"
 			}
 		}
@@ -624,6 +568,16 @@
 	},
 	"file_history":
 	[
+		"/C/fw195/Gestool/prg/Tpvcobros.prg",
+		"/C/fw195/Gestool/prg/Tpvlistaticket.prg",
+		"/C/fw195/Gestool/prg/Tpvmesa.prg",
+		"/C/fw195/Gestool/prg/Tpvpda.prg",
+		"/C/fw195/Gestool/prg/Tpvpunto.prg",
+		"/C/fw195/Gestool/prg/Tpvrestaurante.prg",
+		"/C/fw195/Gestool/prg/Tpvsalon.prg",
+		"/C/fw195/Gestool/prg/Tpvtactil.prg",
+		"/C/fw195/Gestool/prg/Articulo.prg",
+		"//192.168.1.19/c/bootstrap/index.html",
 		"/C/fw195/Gestool/prg/Familia.prg",
 		"/C/fw195/Gestool/prg/Tviewimg.prg",
 		"/C/fw195/Gestool/prg/Bitmap.prg",
@@ -631,7 +585,6 @@
 		"/C/fw195/Gestool/prg/Tgethlp.prg",
 		"/C/fw195/Gestool/prg/Tpv.prg",
 		"/C/fw195/Gestool/prg/Tgetc3.prg",
-		"/C/fw195/Gestool/prg/Tpvtactil.prg",
 		"/C/fw195/Gestool/prg/Tpvsalaventa.prg",
 		"/C/fw195/Gestool/prg/Tcomercio.prg",
 		"/C/fw195/Gestool/prg/Impfactu.prg",
@@ -641,7 +594,6 @@
 		"/C/fw195/Gestool/prg/Remmov.prg",
 		"/C/Windows/ads.ini",
 		"/C/fw195/Gestool/prg/Client.prg",
-		"/C/fw195/Gestool/prg/Articulo.prg",
 		"/C/fw195/Gestool/prg/Pedprov.prg",
 		"/C/fw195/Gestool/prg/Albprov.prg",
 		"/C/fw195/Gestool/prg/Factprv.prg",
@@ -677,9 +629,7 @@
 		"/C/fw195/Gestool/prg/Oferta.prg",
 		"/C/fw195/Gestool/prg/TConFacCli",
 		"/C/fw195/Gestool/prg/Factu.prg",
-		"/C/fw195/Gestool/prg/Tpvlistaticket.prg",
 		"/C/fw195/Gestool/prg/Fastreph.prg",
-		"/C/fw195/Gestool/prg/Tpvcobros.prg",
 		"/C/fw195/Gestool/prg/Pedcli.prg",
 		"/C/fw195/Gestool/prg/Oacuaalb.prg",
 		"/C/fw195/Gestool/prg/Tftpc3.prg",
@@ -745,13 +695,7 @@
 		"/C/fw195/camero/H8.bat",
 		"/C/fw195/camero/HX2007.bat",
 		"/C/fw195/camero/HV.Bat",
-		"/C/fw195/camero/HT.Bat",
-		"/C/fw195/camero/HP.Bat",
-		"/C/fw195/camero/HQ.bat",
-		"/C/fw195/camero/HK.Bat",
-		"/C/fw195/camero/HB.Bat",
-		"/C/fw195/Gestool/prg/Msstatement.prg",
-		"/C/fw195/Gestool/prg/Mscommand.prg"
+		"/C/fw195/camero/HT.Bat"
 	],
 	"find":
 	{
@@ -759,7 +703,7 @@
 	},
 	"find_in_files":
 	{
-		"height": 90.0,
+		"height": 0.0,
 		"where_history":
 		[
 			"C:\\fw195\\Gestool\\resource",
@@ -788,6 +732,11 @@
 		"case_sensitive": false,
 		"find_history":
 		[
+			"od Resource",
+			"Resource",
+			"AppendDet",
+			"nColBtn",
+			"CargaArticulosFamilia",
 			"art",
 			"nColBtn",
 			"nColBtnnColBtn",
@@ -910,15 +859,10 @@
 			"on acol",
 			"cserfac",
 			"on aitm",
-			"on nRetPreArt",
-			"?",
-			"on nretpreart",
-			"nretpreart",
-			"nPvpTil",
-			"nTotalLinea"
+			"on nRetPreArt"
 		],
 		"highlight": true,
-		"in_selection": true,
+		"in_selection": false,
 		"preserve_case": false,
 		"regex": false,
 		"replace_history":
@@ -941,23 +885,23 @@
 	"groups":
 	[
 		{
-			"selected": 7,
+			"selected": 1,
 			"sheets":
 			[
 				{
 					"buffer": 0,
-					"file": "prg/Tpvcobros.prg",
+					"file": "prg/Factcli.prg",
 					"settings":
 					{
-						"buffer_size": 31388,
+						"buffer_size": 0,
 						"regions":
 						{
 						},
 						"selection":
 						[
 							[
-								487,
-								487
+								0,
+								0
 							]
 						],
 						"settings":
@@ -974,66 +918,10 @@
 				},
 				{
 					"buffer": 1,
-					"file": "prg/Tpvlistaticket.prg",
+					"file": "prg/Remmov.prg",
 					"settings":
 					{
-						"buffer_size": 40075,
-						"regions":
-						{
-						},
-						"selection":
-						[
-							[
-								0,
-								0
-							]
-						],
-						"settings":
-						{
-							"syntax": "Packages/harbour/harbour/Harbour.tmLanguage",
-							"tab_size": 3,
-							"translate_tabs_to_spaces": true
-						},
-						"translation.x": 0.0,
-						"translation.y": 162.0,
-						"zoom_level": 1.0
-					},
-					"type": "text"
-				},
-				{
-					"buffer": 2,
-					"file": "prg/Tpvmesa.prg",
-					"settings":
-					{
-						"buffer_size": 25149,
-						"regions":
-						{
-						},
-						"selection":
-						[
-							[
-								7877,
-								7884
-							]
-						],
-						"settings":
-						{
-							"syntax": "Packages/harbour/harbour/Harbour.tmLanguage",
-							"tab_size": 3,
-							"translate_tabs_to_spaces": true
-						},
-						"translation.x": 0.0,
-						"translation.y": 4846.0,
-						"zoom_level": 1.0
-					},
-					"type": "text"
-				},
-				{
-					"buffer": 3,
-					"file": "prg/Tpvpda.prg",
-					"settings":
-					{
-						"buffer_size": 485331,
+						"buffer_size": 0,
 						"regions":
 						{
 						},
@@ -1052,146 +940,6 @@
 						},
 						"translation.x": 0.0,
 						"translation.y": 0.0,
-						"zoom_level": 1.0
-					},
-					"type": "text"
-				},
-				{
-					"buffer": 4,
-					"file": "prg/Tpvpunto.prg",
-					"settings":
-					{
-						"buffer_size": 15345,
-						"regions":
-						{
-						},
-						"selection":
-						[
-							[
-								0,
-								0
-							]
-						],
-						"settings":
-						{
-							"syntax": "Packages/harbour/harbour/Harbour.tmLanguage",
-							"tab_size": 3,
-							"translate_tabs_to_spaces": true
-						},
-						"translation.x": 0.0,
-						"translation.y": 0.0,
-						"zoom_level": 1.0
-					},
-					"type": "text"
-				},
-				{
-					"buffer": 5,
-					"file": "prg/Tpvrestaurante.prg",
-					"settings":
-					{
-						"buffer_size": 50636,
-						"regions":
-						{
-						},
-						"selection":
-						[
-							[
-								0,
-								0
-							]
-						],
-						"settings":
-						{
-							"syntax": "Packages/harbour/harbour/Harbour.tmLanguage",
-							"tab_size": 3,
-							"translate_tabs_to_spaces": true
-						},
-						"translation.x": 0.0,
-						"translation.y": 0.0,
-						"zoom_level": 1.0
-					},
-					"type": "text"
-				},
-				{
-					"buffer": 6,
-					"file": "prg/Tpvsalon.prg",
-					"settings":
-					{
-						"buffer_size": 52390,
-						"regions":
-						{
-						},
-						"selection":
-						[
-							[
-								21972,
-								21972
-							]
-						],
-						"settings":
-						{
-							"syntax": "Packages/harbour/harbour/Harbour.tmLanguage",
-							"tab_size": 3,
-							"translate_tabs_to_spaces": true
-						},
-						"translation.x": 0.0,
-						"translation.y": 7510.0,
-						"zoom_level": 1.0
-					},
-					"type": "text"
-				},
-				{
-					"buffer": 7,
-					"file": "prg/Tpvtactil.prg",
-					"settings":
-					{
-						"buffer_size": 251954,
-						"regions":
-						{
-						},
-						"selection":
-						[
-							[
-								599,
-								599
-							]
-						],
-						"settings":
-						{
-							"syntax": "Packages/harbour/harbour/Harbour.tmLanguage",
-							"tab_size": 3,
-							"translate_tabs_to_spaces": true
-						},
-						"translation.x": 0.0,
-						"translation.y": 0.0,
-						"zoom_level": 1.0
-					},
-					"type": "text"
-				},
-				{
-					"buffer": 8,
-					"file": "prg/Articulo.prg",
-					"settings":
-					{
-						"buffer_size": 668602,
-						"regions":
-						{
-						},
-						"selection":
-						[
-							[
-								62913,
-								62920
-							]
-						],
-						"settings":
-						{
-							"syntax": "Packages/harbour/harbour/Harbour.tmLanguage",
-							"tab_size": 3,
-							"translate_tabs_to_spaces": true
-						},
-						"translation.x": 0.0,
-						"translation.y": 33016.0,
 						"zoom_level": 1.0
 					},
 					"type": "text"
