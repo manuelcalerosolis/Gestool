@@ -979,17 +979,19 @@ Function Articulo( oMenuItem, oWnd, bOnInit )
          :nHeadStrAlign    := AL_RIGHT
       end with
 
+      // lValidImporteBase( oGet, uValue, nKey )
+
       with object ( oWndBrw:AddXCol() )
          :cHeader          := "Editable"
-         :bStrData         := {|| TransPrecio( nRetPreArt( 1, nil, .t., dbfArticulo, dbfDiv, dbfArtKit, dbfIva ), lEuro ) }
          :bEditValue       := {|| ( dbfArticulo )->pVtaIva1 }
-         :cEditPicture     := "@E 999,999.9999"
+         :cEditPicture     := cPouDiv
          :nWidth           := 80
          :nDataStrAlign    := 1
          :nHeadStrAlign    := 1
          :nEditType        := 1
+         :lHide            := .t.
          :bEditWhen        := {|| .t. }
-         :bOnPostEdit      := {|o,x| if( dbDialogLock( dbfArticulo ), ( ( dbfArticulo )->pVtaIva1 := x, ( dbfArticulo )->( dbUnlock() ) ), ) }
+         :bOnPostEdit      := {|o,x,n| lValidImporteBase( o, x, n ) }
       end with
 
       with object ( oWndBrw:AddXCol() )
@@ -7993,7 +7995,7 @@ Function CalBnfIva( lSobreCoste, lIvaInc, nCosto, uPrecioIva, oBnf, uTipIva, oGe
    Margen de ajuste
    */
 
-   if IsLogic( lMargenAjuste )
+   if IsTrue( lMargenAjuste )
       
       nPreIva     := nAjuste( nPreIva, cMargenAjuste )
 
@@ -15461,6 +15463,9 @@ FUNCTION rxArticulo( cPath, oMeter, lRecPrc )
 RETURN NIL
 
 //--------------------------------------------------------------------------//
+/*
+Estructura de articulos
+*/
 
 function aItmArt()
 
@@ -15679,7 +15684,9 @@ function aItmArt()
 return ( aBase )
 
 //----------------------------------------------------------------------------//
-
+/*
+Estructura de escandallos
+*/
 Function aItmKit()
 
    local aBase := {}
@@ -15698,6 +15705,9 @@ Function aItmKit()
 return ( aBase )
 
 //----------------------------------------------------------------------------//
+/*
+Estructura de ventas por propiedades
+*/
 
 Function aItmVta()
 
@@ -18584,6 +18594,114 @@ Function SeleccionaColor( oImgColores, oGetColor, oDlg )
     end if
 
    oDlg:End()
+
+Return .t.
+
+//---------------------------------------------------------------------------//
+
+Static Function lValidImporteBase( oGet, uValue, nKey )
+
+   local nPrecioBase          := 0
+   local nPrecioIva           := 0
+   local nPorcentajeIva       := 0
+   local nPorcentajeBeneficio := 0
+
+   if nKey == VK_ESCAPE
+      Return .f.
+   end if 
+
+   nPorcentajeIva             := nIva( dbfIva, ( dbfArticulo )->TipoIva )
+
+   nPrecioBase                := uValue
+
+   /*
+   Primero es quitar el IVA----------------------------------------------------
+   */
+
+   nPrecioIva                 := nPrecioBase + Round( ( nPrecioBase * nPorcentajeIva / 100 ), nDecDiv )
+
+   /*
+   Calculo de porcentajes de beneficio-----------------------------------------
+   */
+
+   if ( dbfArticulo )->pCosto != 0
+
+      nPorcentajeBeneficio    := nPorcentajeBeneficio( ( dbfArticulo )->lBnf1, nPrecioBase, ( dbfArticulo )->pCosto )
+
+      if !( nPorcentajeBeneficio > 0 .and. nPorcentajeBeneficio < 999 )
+         nPorcentajeBeneficio := 0
+      end if
+
+   end if
+
+   /*
+   Escribimos el registro------------------------------------------------------
+   */
+
+   if dbDialogLock( dbfArticulo )
+      ( dbfArticulo )->pVtaIva1  := nPrecioIva
+      ( dbfArticulo )->pVenta1   := nPrecioBase
+      ( dbfArticulo )->nPctBnf1  := nPorcentajeBeneficio
+      ( dbfArticulo )->( dbUnlock() )
+   end if 
+
+Return .t.
+
+//---------------------------------------------------------------------------//
+
+Static Function lValidImporteIva( oGet, uValue, nKey  )
+
+   local nPrecioBase          := 0
+   local nPrecioIva           := 0
+   local nPorcentajeIva       := 0
+   local nPorcentajeBeneficio := 0
+
+   if nKey == VK_ESCAPE
+      Return .f.
+   end if 
+
+   nPorcentajeIva             := nIva( dbfIva, ( dbfArticulo )->TipoIva )
+
+   /*
+   Margen de ajuste------------------------------------------------------------ 
+   */
+
+   if IsTrue( ( dbfArticulo )->lMarAju )
+      nPrecioIva              := nAjuste( uValue, ( dbfArticulo )->cMarAju )
+   else 
+      nPrecioIva              := uValue
+   end if
+
+   /*
+   Primero es quitar el IVA----------------------------------------------------
+   */
+
+   nPrecioBase                := Round( nPrecioIva / ( 1 + nPorcentajeIva / 100 ), nDecDiv )
+
+   /*
+   Calculo de porcentajes de beneficio-----------------------------------------
+   */
+
+   if ( dbfArticulo )->pCosto != 0
+
+      nPorcentajeBeneficio    := nPorcentajeBeneficio( ( dbfArticulo )->lBnf1, nPrecioBase, ( dbfArticulo )->pCosto )
+
+      if !( nPorcentajeBeneficio > 0 .and. nPorcentajeBeneficio < 999 )
+         nPorcentajeBeneficio := 0
+      end if
+
+   end if
+
+   /*
+   Escibimos el registro-------------------------------------------------------
+   */
+
+   if dbDialogLock( dbfArticulo )
+      ( dbfArticulo )->pVtaIva1  := nPrecioIva
+      ( dbfArticulo )->pVenta1   := nPrecioBase
+      ( dbfArticulo )->nPctBnf1  := nPorcentajeBeneficio
+      ( dbfArticulo )->( dbUnlock() )
+   end if 
 
 Return .t.
 

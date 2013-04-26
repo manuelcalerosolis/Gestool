@@ -1459,13 +1459,13 @@ METHOD New( oMenuItem, oWnd ) CLASS TpvTactil
    ::nScreenVertRes           := GetSysMetrics( 1 )
    ::nScreenVertRes           := 752
 
-   ::lOpenFiles               := .f.
+   ::lOpenFiles               := .f. 
    ::lKillResource            := .f.
    ::lHideCalculadora         := .t.
 
    ::cResource                := "TpvTactil"
 
-   ::lImagenArticulos         := !uFieldEmpresa( "lImgArt" )
+   ::lImagenArticulos         := !uFieldEmpresa( "lImgArt" ) 
 
    if ::lImagenArticulos
 
@@ -1479,11 +1479,6 @@ METHOD New( oMenuItem, oWnd ) CLASS TpvTactil
 
             ::nImageViewWItem := 95 + 4
             ::nImageViewHItem := 81 + 38
-
-         case ::nScreenVertRes == 768
-
-            ::nImageViewWItem := 86 + 4
-            ::nImageViewHItem := 97 + 38
 
          otherwise
 
@@ -1507,13 +1502,8 @@ METHOD New( oMenuItem, oWnd ) CLASS TpvTactil
 
          case ::nScreenVertRes == 752
 
-            ::nImageViewWItem := 145 + 6
-            ::nImageViewHItem := 65 + 28
-
-         case ::nScreenVertRes == 768
-
-            ::nImageViewWItem := 122 + 6
-            ::nImageViewHItem := 60 + 28
+            ::nImageViewWItem := 140 + 6
+            ::nImageViewHItem := 56 + 28
 
          otherwise
 
@@ -1781,7 +1771,7 @@ METHOD OpenFiles() CLASS TpvTactil
 
    DATABASE NEW ::oTiketCobro                               PATH ( cPatEmp() )   FILE "TIKEP.DBF"           VIA ( cDriver() ) SHARED INDEX "TIKEP.CDX"
 
-   DATABASE NEW ::oTiketMesa                               PATH ( cPatEmp() )   FILE "TIKEM.DBF"           VIA ( cDriver() ) SHARED INDEX "TIKEM.CDX"
+   DATABASE NEW ::oTiketMesa                                PATH ( cPatEmp() )   FILE "TIKEM.DBF"           VIA ( cDriver() ) SHARED INDEX "TIKEM.CDX"
 
    DATABASE NEW ::oTiketNumeroSerie                         PATH ( cPatEmp() )   FILE "TIKES.DBF"           VIA ( cDriver() ) SHARED INDEX "TIKES.CDX"
 

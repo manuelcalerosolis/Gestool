@@ -294,7 +294,7 @@ CLASS TShell FROM TMdiChild
    METHOD SetAutoFilter()
 
    METHOD AplyFilter()                       INLINE ( if( !Empty( ::oActiveFilter ), ::oActiveFilter:AplyFilter(), ) )
-   METHOD ChangeFilter( cFilter )            INLINE ( msgAlert( cFilter ) )
+   METHOD ChangeFilter( cFilter )            INLINE ( msgStop( cFilter ) )
 
    METHOD EnableComboFilter( aFilter )       INLINE ( ::oWndBar:EnableComboFilter( ::oActiveFilter:aFilter ) )
    METHOD SetDefaultComboFilter( aFilter )   INLINE ( ::oWndBar:SetDefaultComboFilter( ::oActiveFilter:aFilter ) )
@@ -578,8 +578,6 @@ return 0
 
 METHOD KeyChar( nKey, nFlags ) CLASS TShell
 
-   msgAlert( ::oBrw:lEditMode, "en key char" )
-
    do case
    case nKey == VK_ESCAPE .and. ::oWnd != nil
       if ( ::oTxtSea != nil .and. GetFocus() == ::oTxtSea:hWnd ) 
@@ -679,7 +677,7 @@ METHOD CtrlKey( nKey ) CLASS TShell
    local nLen
    local nCont
 
-   if !::lOnProcess .and. !::oBrw:lEditMode
+   if !::lOnProcess
 
       nLen        := len( ::aFastKey )
 
@@ -698,12 +696,6 @@ METHOD CtrlKey( nKey ) CLASS TShell
 
             ::QuitOnProcess()
 
-            /*
-            if nKey != Asc( "B" ) .and. nKey != Asc( "b" ) .and. !Empty( ::oBrw )
-               ::oBrw:SetFocus()
-            end if
-            */
-
          end if
 
       next
@@ -719,11 +711,11 @@ METHOD CtrlKey( nKey ) CLASS TShell
       if nKey == 45
          ::PrevTabOption()
       end if
-
+/*
       if nKey == VK_ESCAPE
          ::End()
       end if
-
+*/
    end if
 
 return ( 0 )
@@ -859,7 +851,7 @@ METHOD Search() CLASS TShell
    local xCadena  := Space( 100 )
 
    if len( ::aPrompt ) == 0
-      msgAlert( "No hay indices definidos" )
+      msgStop( "No hay indices definidos" )
       return nil
    end if
 
@@ -1715,7 +1707,7 @@ STATIC FUNCTION mkExpSea( aTblFld, oFld, oCon, aVal, oNex )
 	END DO
 
 	IF At( Type( cExp ), "UEUI" ) != 0
-      msgAlert( "Expresión " + rtrim( cExp ) + " no valida" )
+      msgStop( "Expresión " + rtrim( cExp ) + " no valida" )
 		cExp	:= NIL
    ELSE
       cExp  := &( "{|| " + cExp + " }" )
@@ -2798,7 +2790,7 @@ function CheckOne( aColSelect )
    aEval( aColSelect, {|x| if( x, lOne := .t., ) } )
 
    if !lOne
-      msgAlert( "La ventana debe de contener al menos una columna seleccionada" )
+      msgStop( "La ventana debe de contener al menos una columna seleccionada" )
    end if
 
 return ( lOne )
