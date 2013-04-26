@@ -2472,13 +2472,14 @@ FONT 8, "MS Sans Serif"
   CONTROL "", 201, "Edit", ES_UPPERCASE|WS_BORDER|WS_TABSTOP, 188, 143, 237, 11
   CONTROL "", 155, "Edit", WS_BORDER|WS_TABSTOP, 125, 156, 300, 11
   CONTROL "", 290, "Edit", WS_VSCROLL|WS_BORDER|WS_TABSTOP, 125, 169, 61, 11
-  CONTROL "", 295, "Edit", ES_RIGHT|WS_VSCROLL|WS_BORDER|WS_TABSTOP, 125, 183, 61, 11
   CONTROL "", 291, "Edit", ES_UPPERCASE|WS_BORDER|WS_TABSTOP, 188, 169, 237, 11
-  CONTROL "", 280, "Edit", ES_RIGHT|WS_VSCROLL|WS_BORDER|WS_TABSTOP, 188, 196, 57, 11
-  CONTROL "", 156, "Edit", ES_RIGHT|WS_VSCROLL|WS_BORDER|WS_TABSTOP, 188, 209, 57, 11
-  CONTROL "", 220, "Edit", ES_RIGHT|WS_VSCROLL|WS_BORDER|WS_TABSTOP, 188, 223, 57, 11
-  CONTROL "", 160, "ComboBox", WS_BORDER|CBS_DROPDOWN|CBS_SORT|WS_VSCROLL|WS_TABSTOP, 188, 236, 96, 40
-  CONTROL "Valores por defecto", -1, "Button", BS_GROUPBOX, 44, 29, 384, 276
+  CONTROL "Recuperar número de factura", 300, "Button", BS_AUTOCHECKBOX|WS_TABSTOP, 49, 184, 123, 10
+  CONTROL "", 295, "Edit", ES_RIGHT|WS_VSCROLL|WS_BORDER|WS_TABSTOP, 125, 196, 61, 11
+  CONTROL "", 280, "Edit", ES_RIGHT|WS_VSCROLL|WS_BORDER|WS_TABSTOP, 188, 209, 57, 11
+  CONTROL "", 156, "Edit", ES_RIGHT|WS_VSCROLL|WS_BORDER|WS_TABSTOP, 188, 222, 57, 11
+  CONTROL "", 220, "Edit", ES_RIGHT|WS_VSCROLL|WS_BORDER|WS_TABSTOP, 188, 236, 57, 11
+  CONTROL "", 160, "ComboBox", WS_BORDER|CBS_DROPDOWN|CBS_SORT|WS_VSCROLL|WS_TABSTOP, 188, 249, 96, 40
+  CONTROL "Valores por defecto", -1, "Button", BS_GROUPBOX, 41, 29, 384, 316
   CONTROL "Almacén", -1, "Static", WS_GROUP, 49, 81, 30, 8
   CONTROL "Forma de pago", -1, "Static", WS_GROUP, 49, 94, 49, 8
   CONTROL "Cliente", -1, "Static", WS_GROUP, 49, 42, 24, 8
@@ -2487,16 +2488,16 @@ FONT 8, "MS Sans Serif"
   CONTROL "Usuario", -1, "Static", WS_GROUP, 49, 120, 26, 8
   CONTROL "Directorio imagenes", -1, "Static", WS_GROUP, 49, 159, 64, 8
   CONTROL "Tipo de impuestos", -1, "Static", WS_GROUP, 49, 107, 69, 8
-  CONTROL "Días de validez para los presupuestos", -1, "Static", WS_GROUP, 49, 212, 135, 8
+  CONTROL "Días de validez para los presupuestos", -1, "Static", WS_GROUP, 49, 225, 135, 8
   CONTROL "Tipo de venta", -1, "Static", WS_GROUP, 49, 133, 46, 8
-  CONTROL "Inicio jornada", -1, "Static", WS_GROUP, 49, 199, 45, 8
+  CONTROL "Inicio jornada", -1, "Static", WS_GROUP, 49, 212, 45, 8
   CONTROL "Temporada", -1, "Static", WS_GROUP, 49, 146, 46, 8
-  CONTROL "Número de días para validar los vales", -1, "Static", WS_GROUP, 49, 226, 135, 8
+  CONTROL "Número de días para validar los vales", -1, "Static", WS_GROUP, 49, 239, 135, 8
   CONTROL "", 500, "Static", SS_BITMAP|SS_CENTERIMAGE, 4, 3, 34, 30
   CONTROL "Valores por defecto necesarios para la aplicación", -1, "Static", SS_LEFTNOWORDWRAP|WS_GROUP, 44, 3, 384, 8
-  CONTROL "Cálculo de dígito de identificación", -1, "Static", WS_GROUP, 49, 241, 113, 8
+  CONTROL "Cálculo de dígito de identificación", -1, "Static", WS_GROUP, 49, 254, 113, 8
   CONTROL "Nombre de la serie", -1, "Static", WS_GROUP, 49, 172, 68, 8
-  CONTROL "Semilla autoserializado", -1, "Static", WS_GROUP, 49, 186, 76, 8
+  CONTROL "Semilla autoserializado", -1, "Static", WS_GROUP, 49, 199, 76, 8
 }
 
 EMPRESA_5 DIALOG DISCARDABLE 68, -86, 432, 353

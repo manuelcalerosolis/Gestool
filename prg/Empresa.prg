@@ -1665,6 +1665,10 @@ STATIC FUNCTION EdtCnf( aTmp, aGet, dbfEmp, oBrw, nSelFolder, bValid, nMode )
          VALID    ( GuardaNombreSerie( aTmp, cSerie ) );
          OF       oFld:aDialogs[2]
 
+      REDEFINE CHECKBOX aGet[ _LRECNUMFAC ] VAR aTmp[ _LRECNUMFAC ] ; 
+         ID       300 ;
+         OF       oFld:aDialogs[2]   
+
       REDEFINE GET aGet[ _NAUTSER ] VAR aTmp[ _NAUTSER ] ;
          PICTURE  "999999999" ;
          SPINNER ;
@@ -7092,6 +7096,7 @@ FUNCTION aItmEmp()
    aAdd( aDbf, {"lEncargar",  "L",  1, 0, "Lógico realizar para encargos en táctil",               "", "", "aEmp()", .t. } )
    aAdd( aDbf, {"nCopSea",    "N",  1, 0, "Número para comportamiento en caso de conflicto",       "", "", "aEmp()", 1 } )
    aAdd( aDbf, {"lRealWeb",   "L",  1, 0, "Lógico conectar tiempo real con la web",                "", "", "aEmp()", .f. } )
+   aAdd( aDbf, {"lRecNumFac", "L",  1, 0, "Lógico para recuperar el número de las facturas",       "", "", "aEmp()", .t. } )
 
 Return ( aDbf  )
 

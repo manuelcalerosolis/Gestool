@@ -8963,8 +8963,10 @@ static function QuiFacRec()
    /*
    Recuperamos contadores------------------------------------------------------
    */
-
-   nPutDoc( cSerDoc, nNumDoc, cSufDoc, dbfFacRecT, "nFacRec", , dbfCount )
+   
+   	if uFieldEmpresa( "LRECNUMFAC" )
+		nPutDoc( cSerDoc, nNumDoc, cSufDoc, dbfFacRecT, "nFacRec", , dbfCount )
+   	end if
 
    /*
    Refresh---------------------------------------------------------------------

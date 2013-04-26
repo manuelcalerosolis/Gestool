@@ -8585,7 +8585,7 @@ static function QuiRctPrv( lDetail, lSetCnt )
 
    ( dbfAlbPrvT )->( OrdSetFocus( nOrdAnt ) )
 
-   if lSetCnt
+   if uFieldEmpresa( "LRECNUMFAC" )
       nPutDoc( ( dbfRctPrvT )->cSerFac, ( dbfRctPrvT )->nNumFac, ( dbfRctPrvT )->cSufFac, dbfRctPrvT, "nRctPrv" )
    end if
 

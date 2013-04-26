@@ -7223,7 +7223,7 @@ static function QuiFacCli()
 
    end if
 
-   ( dbfAntCliT )->( OrdSetFocus( nOrdAnt ) )
+   ( dbfAntCliT )->( OrdSetFocus( nOrdAnt ) ) 
 
    /*
    Elimina el documento asociado-----------------------------------------------
@@ -7241,7 +7241,9 @@ static function QuiFacCli()
    Marcamos el contador--------------------------------------------------------
    */
 
-   nPutDoc( cSerDoc, nNumDoc, cSufDoc, dbfFacCliT, "nFacCli", , dbfCount )
+   if uFieldEmpresa( "LRECNUMFAC" )
+      nPutDoc( cSerDoc, nNumDoc, cSufDoc, dbfFacCliT, "nFacCli", , dbfCount )
+   end if
 
 return .t.
 

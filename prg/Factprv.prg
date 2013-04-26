@@ -9157,13 +9157,12 @@ RETURN ( { nTotNet, nTotIva, nTotReq, nTotFac, aTotIva, nTotRet } )
 
 //---------------------------------------------------------------------------//
 
-static function QuiFacPrv( lDetail, lSetCnt )
+static function QuiFacPrv( lDetail )
 
    local nOrdAnt
    local cFactura
 
    DEFAULT lDetail   := .t.
-   DEFAULT lSetCnt   := .t.
 
    if ( dbfFacPrvT )->lCloFac .and. !oUser():lAdministrador()
       msgStop( "Solo puede eliminar facturas cerradas los administradores." )
@@ -9198,7 +9197,7 @@ static function QuiFacPrv( lDetail, lSetCnt )
 
    ( dbfAlbPrvT )->( OrdSetFocus( nOrdAnt ) )
 
-   if lSetCnt
+   if uFieldEmpresa( "LRECNUMFAC" )
       nPutDoc( ( dbfFacPrvT )->cSerFac, ( dbfFacPrvT )->nNumFac, ( dbfFacPrvT )->cSufFac, dbfFacPrvT, "nFacPrv" )
    end if
 
