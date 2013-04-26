@@ -382,6 +382,11 @@ Return ( Self )
 
 Method Sala( lPuntosPendientes, lLlevar, nSelectOption ) CLASS TTpvRestaurante
 
+   if Len( ::aSalas ) < 1
+      MsgStop( "No existen salas de ventas para seleccionar" )
+      Return .f.
+   end if
+
    do case
       case IsTrue( ::lPuntosVenta )
 
