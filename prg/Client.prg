@@ -1035,6 +1035,14 @@ STATIC FUNCTION EdtRec( aTmp, aGet, dbfClient, oBrw, bWhen, bValid, nMode )
       cColor            := aStrColor[ nSeaColor ]
    end if
 
+   /*
+   Abrimos las bases de datos temporales si no estan abiertas------------------
+   */
+
+   if BeginTrans( aTmp, nMode )
+      Return .f.
+   end if
+
    do case
       case nMode == APPD_MODE
          aTmp[ _LSNDINT ]  := .t.
@@ -1068,14 +1076,6 @@ STATIC FUNCTION EdtRec( aTmp, aGet, dbfClient, oBrw, bWhen, bValid, nMode )
 
    if Empty( aTmp[ _CDTOATP ] )
       aTmp[ _CDTOATP ]     := Padr( "Atipico", 50 )
-   end if
-
-   /*
-   Abrimos las bases de datos si no estan abiertas-----------------------------
-   */
-
-   if BeginTrans( aTmp, nMode )
-      Return .f.
    end if
 
    /*
@@ -12845,27 +12845,21 @@ static function SavClient( aTmp, aGet, oDlg, dbfClient, oBrw, nMode )
 
 if !Empty( dbfTmpAtp )
 
-#ifndef __PDA__
    oMsgText( "Eliminando tarifas anteriores cliente" )
    oMsgProgress():SetRange( 0, ( dbfTmpAtp )->( LastRec() ) )
-#endif
 
    while ( dbfCliAtp )->( dbSeek( aTmp[ _COD ] ) ) .and. !( dbfCliAtp )->( eof() )
       dbDel( dbfCliAtp )
    end while
 
-#ifndef __PDA__
    oMsgText( "Archivando tarifas cliente" )
    oMsgProgress():SetRange( 0, ( dbfTmpAtp )->( LastRec() ) )
-#endif
 
    ( dbfTmpAtp )->( dbGoTop() )
    while ( dbfTmpAtp )->( !eof() )
       dbPass( dbfTmpAtp, dbfCliAtp, .t., aTmp[ _COD ] )
       ( dbfTmpAtp )->( dbSkip() )
-#ifndef __PDA__
       oMsgProgress():DeltaPos( 1 )
-#endif
    end while
 
 end if
