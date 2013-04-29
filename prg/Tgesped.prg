@@ -32,7 +32,7 @@ CLASS TInfGesPed FROM TInfGen
    DATA  oObras      AS OBJECT
    DATA  oStock      AS OBJECT
    DATA  aEstado     AS ARRAY    INIT { "Pendiente", "Parcialmente", "Pendiente y parc.", "Entregado", "Todos" }
-   DATA  dIniEnt                 INIT CtoD( "01/01/" + Str( Year( Date() ) ) )
+   DATA  dIniEnt                 INIT CtoD( "01/01/" + Str( Year( Date() ) ) )   
    DATA  dFinEnt                 INIT Date()
 
    METHOD OpenFiles()
