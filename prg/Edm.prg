@@ -489,6 +489,7 @@ Method MkRecEdm()
       */
 
       EdmAlbCli( ( dbfRuta )->cCodRut, ::cPathOrg, Self, aSucces )
+      SynAlbCli()
 
       ::oMetDos:Set( 0 )
 
@@ -497,6 +498,7 @@ Method MkRecEdm()
       */
 
       EdmFacCli( ( dbfRuta )->cCodRut, ::cPathOrg, Self, aSucces )
+      SynFacCli()
 
       ::oMetDos:Set( 0 )
 

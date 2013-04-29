@@ -7688,6 +7688,7 @@ function SynAlbCli( cPath )
 
       /*
       Rellenamos los campos de totales-----------------------------------------
+      */
 
       if ( dbfAlbCliT )->nTotAlb == 0 .and. dbLock( dbfAlbCliT )
 

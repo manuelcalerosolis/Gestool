@@ -12246,6 +12246,7 @@ function SynFacCli( cPath )
 
       /*
       Rellenamos los campos de totales-----------------------------------------
+      */
 
       ( dbfFacCliT )->( dbGoTop() )
       while !( dbfFacCliT )->( eof() )
@@ -12268,7 +12269,6 @@ function SynFacCli( cPath )
          ( dbfFacCliT )->( dbSkip() )
 
       end while
-      */
 
       // Purgamos los datos----------------------------------------------------
       
