@@ -815,7 +815,10 @@ Function Articulo( oMenuItem, oWnd, bOnInit )
                   "Proveedor" ,;
                   "No obsoletos + Código",;
                   "No obsoletos + Nombre",;
+                  "Tipo" ,;
                   "Categoría" ,;
+                  "Temporada" ,;
+                  "Fabricante" ,;
                   "Posición táctil" ,;
                   "Públicar" ,;
                   "Código web" ;
@@ -925,22 +928,33 @@ Function Articulo( oMenuItem, oWnd, bOnInit )
       end with
 
       with object ( oWndBrw:AddXCol() )
+         :cHeader          := "Tipo"
+         :cSortOrder       := "cCodTip"
+         :bStrData         := {|| AllTrim( ( dbfArticulo )->cCodTip ) + if( !Empty( ( dbfArticulo )->cCodTip ), " - ", "" ) + oRetFld( ( dbfArticulo )->cCodTip, oTipArt:oDbf, "cNomTip" ) }
+         :nWidth           := 140
+         :bLClickHeader    := {| nMRow, nMCol, nFlags, oCol | oWndBrw:ClickOnHeader( oCol ) }
+         :lHide            := .t. 
+      end with
+
+      with object ( oWndBrw:AddXCol() )
          :cHeader          := "Categoría"
          :cSortOrder       := "cCodCate"
-         :bStrData         := {|| RetFld( ( dbfArticulo )->cCodCate, dbfCategoria, "cTipo" ) }
+         :bStrData         := {|| AllTrim( ( dbfArticulo )->cCodCate ) + if( !Empty( ( dbfArticulo )->cCodCate ), " - ", "" ) + RetFld( ( dbfArticulo )->cCodCate, dbfCategoria, "cNombre" ) }
          :bBmpData         := {|| nBitmapTipoCategoria( RetFld( ( dbfArticulo )->cCodCate, dbfCategoria, "cTipo" ) ) }
          :nWidth           := 140
          :bLClickHeader    := {| nMRow, nMCol, nFlags, oCol | oWndBrw:ClickOnHeader( oCol ) }
+         :lHide            := .t. 
          AddResourceTipoCategoria( hb_QWith() )
       end with
 
       with object ( oWndBrw:AddXCol() )
          :cHeader          := "Temporada"
          :cSortOrder       := "cCodTemp"
-         :bStrData         := {|| RetFld( ( dbfArticulo )->cCodTemp, dbfTemporada, "cNombre" ) }
+         :bStrData         := {|| AllTrim( ( dbfArticulo )->cCodTemp ) + if( !Empty( ( dbfArticulo )->cCodTemp ), " - ", "" ) + RetFld( ( dbfArticulo )->cCodTemp, dbfTemporada, "cNombre" ) }
          :bBmpData         := {|| nBitmapTipoTemporada( RetFld( ( dbfArticulo )->cCodTemp, dbfTemporada, "cTipo" ) ) }
          :nWidth           := 140
          :bLClickHeader    := {| nMRow, nMCol, nFlags, oCol | oWndBrw:ClickOnHeader( oCol ) }
+         :lHide            := .t. 
          AddResourceTipoTemporada( hb_QWith() ) 
          :lHide            := .t. 
       end with
@@ -948,9 +962,9 @@ Function Articulo( oMenuItem, oWnd, bOnInit )
       with object ( oWndBrw:AddXCol() )
          :cHeader          := "Fabricante"
          :cSortOrder       := "cCodFab"
-         :bStrData         := {|| RetFld( ( dbfArticulo )->cCodFab, oFabricante:GetAlias() ) }
+         :bStrData         := {|| AllTrim( ( dbfArticulo )->cCodFab ) + if( !Empty( ( dbfArticulo )->cCodFab ), " - ", "" ) + RetFld( ( dbfArticulo )->cCodFab, oFabricante:GetAlias() ) }
          :nWidth           := 140
-         AddResourceTipoTemporada( hb_QWith() ) 
+         :bLClickHeader    := {| nMRow, nMCol, nFlags, oCol | oWndBrw:ClickOnHeader( oCol ) }
          :lHide            := .t. 
       end with
 
@@ -15272,10 +15286,16 @@ FUNCTION rxArticulo( cPath, oMeter, lRecPrc )
       ( dbfArticulo )->( ordCreate( cPath + "ARTICULO.CDX", "NOMOBS", "UPPER( NOMBRE )", {|| UPPER( Field->NOMBRE ) } ) )
 
       ( dbfArticulo )->( ordCondSet("!Deleted()", {|| !Deleted() }  ) )
+      ( dbfArticulo )->( ordCreate( cPath + "ARTICULO.CDX", "CCODTIP", "CCODTIP", {|| Field->CCODTIP }, ) )
+
+      ( dbfArticulo )->( ordCondSet("!Deleted()", {|| !Deleted() }  ) )
       ( dbfArticulo )->( ordCreate( cPath + "ARTICULO.CDX", "CCODCATE", "CCODCATE", {|| Field->CCODCATE }, ) )
 
       ( dbfArticulo )->( ordCondSet("!Deleted()", {|| !Deleted() }  ) )
       ( dbfArticulo )->( ordCreate( cPath + "ARTICULO.CDX", "CCODTEMP", "CCODTEMP", {|| Field->CCODTEMP }, ) )
+
+      ( dbfArticulo )->( ordCondSet("!Deleted()", {|| !Deleted() }  ) )
+      ( dbfArticulo )->( ordCreate( cPath + "ARTICULO.CDX", "CCODFAB", "CCODFAB", {|| Field->CCODFAB }, ) )
 
       ( dbfArticulo )->( ordCondSet("!Deleted()", {|| !Deleted() }  ) )
       ( dbfArticulo )->( ordCreate( cPath + "ARTICULO.CDX", "CFAMNOM", "FAMILIA + NOMBRE", {|| Field->FAMILIA + Field->NOMBRE }, ) )
