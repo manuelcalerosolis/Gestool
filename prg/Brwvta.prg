@@ -13,7 +13,7 @@ static dbfIva
 static dbfAlm
 static dbfArticulo
 
-static dbfMovAlm
+static dbfMovAlm 
 static dbfArtKit
 
 static dbfPedPrvT
@@ -74,7 +74,6 @@ static oTreeImageList
 static oTreeDocument
 static oTreeCompras
 static oTreeVentas
-static oTreeStock
 static oTreeProduccion
 
 static oStock
@@ -371,7 +370,7 @@ function BrwVtaComArt( cCodArt, cNomArt, cDiv, cIva, cAlm, cArticulo )
    local oBrwVta
    local oTree
    local oCmbAnio
-   local cCmbAnio          := "Todos" //Str( Year( GetSysDate() ) )
+   local cCmbAnio          := Str( Year( GetSysDate() ) ) // "Todos" //
    local oBmpGeneral
    local oBmpDocumentos
    local oBmpGraficos
@@ -733,9 +732,14 @@ function BrwVtaComArt( cCodArt, cNomArt, cDiv, cIva, cAlm, cArticulo )
       ACTION   ( PrintDocument( oBrwTmp ) )
 
    REDEFINE BUTTON oBtnFiltro ;
-      ID       600 ;
+      ID       306 ;
       OF       oFld:aDialogs[2] ;
       ACTION   ( Filtro(), oBrwTmp:Refresh() )
+
+   REDEFINE BUTTON ;
+      ID       307 ;
+      OF       oFld:aDialogs[2] ;
+      ACTION   ( TInfLArt():New( "Informe detallado de documentos", , , , , , { oDbfTmp, cCmbAnio } ):Play() )
 
    oBrwTmp                       := IXBrowse():New( oFld:aDialogs[ 2 ] )
 
@@ -1006,15 +1010,6 @@ function BrwVtaComArt( cCodArt, cNomArt, cDiv, cIva, cAlm, cArticulo )
       OF       oDlg ;
       ACTION   ( LoadDatos( cCodArt, cCmbAnio, oDlg, oBrwStk, oBrwTmp, oGraph, oBrwCom, oBrwVta ) )
 
-#ifndef __TACTIL__
-
-   REDEFINE BUTTON ;
-      ID       500 ;
-      OF       oDlg ;
-      ACTION   ( TInfLArt():New( "Informe detallado de documentos", , , , , , { oDbfTmp, cCmbAnio } ):Play() )
-
-#endif
-
    REDEFINE BUTTON ;
       ID       501 ;
       OF       oDlg ;
@@ -1090,8 +1085,6 @@ Static Function InitBrwVtaCli( cCodArt, oTree, dbfDiv, dbfArticulo, oBrwStk, oBr
 
    oTreeVentas       := oTreeDocument:Add( "Ventas", 10 )
 
-   oTreeStock        := oTreeDocument:Add( "Stock", 12 )
-
       oTreeCompras:Add( cTextDocument( PED_PRV ), 1 )
       oTreeCompras:Add( cTextDocument( ALB_PRV ), 2 )
       oTreeCompras:Add( cTextDocument( FAC_PRV ), 3 )
@@ -1111,15 +1104,9 @@ Static Function InitBrwVtaCli( cCodArt, oTree, dbfDiv, dbfArticulo, oBrwStk, oBr
       oTreeVentas:Add( cTextDocument( VAL_CLI ), 9 )
       oTreeVentas:Add( cTextDocument( APT_CLI ), 9 )
 
-      oTreeStock:Add( "Compras ", 11 )
-      oTreeStock:Add( "Movimientos ", 12 )
-      oTreeStock:Add( "Ventas ", 10 )
-      oTreeStock:Add( "Producción ", 13 )
-
    oTreeDocument:Expand()
    oTreeCompras:Expand()
    oTreeVentas:Expand()
-   oTreeStock:Expand()
    oTreeProduccion:Expand()
 
    MENU oMenu
@@ -1415,12 +1402,12 @@ Static Function LoadDatos( cCodArt, nYear, oDlg, oBrwStk, oBrwTmp, oGraph, oBrwC
    oGraph:AddSerie( { aConsumido[1,3], aConsumido[2,3], aConsumido[3,3], aConsumido[4,3], aConsumido[5,3], aConsumido[6,3], aConsumido[7,3], aConsumido[8,3], aConsumido[9,3], aConsumido[10,3], aConsumido[11,3], aConsumido[12,3] }, "Consumido", Rgb( 0, 255, 0 ) )
    oGraph:SetYVals( { "Ene", "Feb", "Mar", "Abr", "May", "Jun", "Jul", "Ago", "Sep", "Oct", "Nov", "Dic" } )
 
-   oGraph:cTitle     := "Evolución anual de ventas"
+   oGraph:cTitle     := "Evolución anual"
    oGraph:lcTitle    := .f.
    oGraph:nClrT      := Rgb( 55, 55, 55)
    oGraph:nClrX      := CLR_BLUE
    oGraph:nClrY      := CLR_RED
-   oGraph:cPicture   := cPorDiv
+   oGraph:cPicture   := cPorDiv + Space( 1 ) + cSimDiv()
 
    oGraph:Refresh()
 
@@ -2272,7 +2259,7 @@ Static Function LoadSATCliente( cCodArt, nYear )
             oDbfTmp:cValPr2   := ( dbfSatCliL )->cValPr2
             oDbfTmp:cLote     := ( dbfSatCliL )->cLote
             oDbfTmp:cAlmDoc   := ( dbfSatCliL )->cAlmLin
-            oDbfTmp:nUndDoc   := - nTotNSatCli( dbfSatCliL )
+            oDbfTmp:nUndDoc   := nTotNSatCli( dbfSatCliL )
             oDbfTmp:nFacCnv   := ( dbfSatCliL )->nFacCnv
             oDbfTmp:nImpDoc   := nTotUSatCli( dbfSatCliL, nDouDiv )
             oDbfTmp:nDtoDoc   := ( dbfSatCliL )->nDto
@@ -2315,7 +2302,7 @@ Static Function LoadPresupuestoCliente( cCodArt, nYear )
             oDbfTmp:cValPr2   := ( dbfPreCliL )->cValPr2
             oDbfTmp:cLote     := ( dbfPreCliL )->cLote
             oDbfTmp:cAlmDoc   := ( dbfPreCliL )->cAlmLin
-            oDbfTmp:nUndDoc   := - nTotNPreCli( dbfPreCliL )
+            oDbfTmp:nUndDoc   := nTotNPreCli( dbfPreCliL )
             oDbfTmp:nFacCnv   := ( dbfPreCliL )->nFacCnv
             oDbfTmp:nImpDoc   := nTotUPreCli( dbfPreCliL, nDouDiv )
             oDbfTmp:nDtoDoc   := ( dbfPreCliL )->nDto
@@ -2360,7 +2347,7 @@ Static Function LoadPedidosCliente( cCodArt, nYear )
             oDbfTmp:cValPr2   := ( dbfPedCliL )->cValPr2
             oDbfTmp:cLote     := ( dbfPedCliL )->cLote
             oDbfTmp:cAlmDoc   := ( dbfPedCliL )->cAlmLin
-            oDbfTmp:nUndDoc   := - nTotNPedCli( dbfPedCliL )
+            oDbfTmp:nUndDoc   := nTotNPedCli( dbfPedCliL )
             oDbfTmp:nFacCnv   := ( dbfPedCliL )->nFacCnv
             oDbfTmp:nImpDoc   := nTotUPedCli( dbfPedCliL, nDouDiv )
             oDbfTmp:nDtoDoc   := ( dbfPedCliL )->nDto
@@ -2402,7 +2389,7 @@ Static Function LoadAlbaranesCliente( cCodArt, nYear )
             oDbfTmp:cValPr2   := ( dbfAlbCliL )->cValPr2
             oDbfTmp:cLote     := ( dbfAlbCliL )->cLote
             oDbfTmp:cAlmDoc   := ( dbfAlbCliL )->cAlmLin
-            oDbfTmp:nUndDoc   := - nTotNAlbCli( dbfAlbCliL )
+            oDbfTmp:nUndDoc   := nTotNAlbCli( dbfAlbCliL )
             oDbfTmp:nFacCnv   := ( dbfAlbCliL )->nFacCnv
             oDbfTmp:nImpDoc   := nTotUAlbCli( dbfAlbCliL, nDouDiv )
             oDbfTmp:nDtoDoc   := ( dbfAlbCliL )->nDto
@@ -2446,7 +2433,7 @@ Static Function LoadFacturasCliente( cCodArt, nYear )
             oDbfTmp:cValPr2   := ( dbfFacCliL )->cValPr2
             oDbfTmp:cLote     := ( dbfFacCliL )->cLote
             oDbfTmp:cAlmDoc   := ( dbfFacCliL )->cAlmLin
-            oDbfTmp:nUndDoc   := - nTotNFacCli( dbfFacCliL )
+            oDbfTmp:nUndDoc   := nTotNFacCli( dbfFacCliL )
             oDbfTmp:nFacCnv   := ( dbfFacCliL )->nFacCnv
             oDbfTmp:nImpDoc   := nImpUFacCli( dbfFacCliT, dbfFacCliL, nDouDiv )
             oDbfTmp:nDtoDoc   := ( dbfFacCliL )->nDto
@@ -2487,7 +2474,7 @@ Static Function LoadFacturasRectificativas( cCodArt, nYear )
             oDbfTmp:cValPr2   := ( dbfFacRecL )->cValPr2
             oDbfTmp:cLote     := ( dbfFacRecL )->cLote
             oDbfTmp:cAlmDoc   := ( dbfFacRecL )->cAlmLin
-            oDbfTmp:nUndDoc   := - nTotNFacRec( dbfFacRecL )
+            oDbfTmp:nUndDoc   := nTotNFacRec( dbfFacRecL )
             oDbfTmp:nFacCnv   := ( dbfFacRecL )->nFacCnv
             oDbfTmp:nImpDoc   := nImpUFacRec( dbfFacRecT, dbfFacRecL, nDouDiv )
             oDbfTmp:nDtoDoc   := ( dbfFacRecL )->nDto
@@ -2530,7 +2517,7 @@ Static Function LoadTiketsCliente( cCodArt, nYear )
 
                   oDbfTmp:nTypDoc      := TIK_CLI
                   oDbfTmp:cEstDoc      := if( ( dbfTikCliT )->lPgdTik, "Cobrado", "No cobrado" )
-                  oDbfTmp:nUndDoc      := - nTotNTikTpv( dbfTikCliL )
+                  oDbfTmp:nUndDoc      := nTotNTikTpv( dbfTikCliL )
                   oDbfTmp:nFacCnv      := ( dbfTikCliL )->nFacCnv
 
                case ( dbfTikCliT )->cTipTik == SAVDEV
@@ -2551,7 +2538,7 @@ Static Function LoadTiketsCliente( cCodArt, nYear )
 
                   oDbfTmp:nTypDoc      := APT_CLI
                   oDbfTmp:cEstDoc      := "Apartado"
-                  oDbfTmp:nUndDoc      := - nTotNTikTpv( dbfTikCliL )
+                  oDbfTmp:nUndDoc      := nTotNTikTpv( dbfTikCliL )
                   oDbfTmp:nFacCnv      := ( dbfTikCliL )->nFacCnv
 
                end case
@@ -2614,7 +2601,7 @@ Static Function LoadTiketsCliente( cCodArt, nYear )
                oDbfTmp:cValPr2      := ( dbfTikCliL )->cValPr2
                oDbfTmp:cLote        := ( dbfTikCliL )->cLote
                oDbfTmp:cAlmDoc      := ( dbfTikCliL )->cAlmLin
-               oDbfTmp:nUndDoc      := - nTotNTikTpv( dbfTikCliL )
+               oDbfTmp:nUndDoc      := nTotNTikTpv( dbfTikCliL )
                oDbfTmp:nFacCnv      := ( dbfTikCliL )->nFacCnv
                oDbfTmp:nImpDoc      := ( dbfTikCliL )->nPcmTil
                oDbfTmp:nDtoDoc      := ( dbfTikCliL )->nDtoLin
@@ -2682,9 +2669,9 @@ Static Function LoadMovimientosAlmacen( cCodArt, nYear )
                oDbfTmp:cValPr2   := ( dbfMovAlm )->cValPr2
                oDbfTmp:cLote     := ( dbfMovAlm )->cLote
                oDbfTmp:cAlmDoc   := ( dbfMovAlm )->cAloMov
-               oDbfTmp:nUndDoc   := - nTotNMovAlm( dbfMovAlm )
+               oDbfTmp:nUndDoc   := nTotNMovAlm( dbfMovAlm )
                oDbfTmp:nImpDoc   := ( dbfMovAlm )->nPreDiv
-               oDbfTmp:nTotDoc   := - nTotLMovAlm( dbfMovAlm )
+               oDbfTmp:nTotDoc   := nTotLMovAlm( dbfMovAlm )
                oDbfTmp:nDtoDoc   := 0 //( dbfMovAlm )->( Recno() )       // Lo usamos como referencia al registro
                oDbfTmp:Save()
             end if
@@ -2990,75 +2977,93 @@ Al movernos por el arbol cambiamos el orden de la temporal y le hacemos un scope
 
 Static Function TreeChanged( oTree, oBrwTmp )
 
-   local cText    := oTree:GetSelText()
+   local cText             := oTree:GetSelText()
    local cFilter
 
    do case
       case cText == "Compras"
-         cFilter  := "( nTypDoc >= '" + PED_PRV + "' .and. nTypDoc <= '" + FAC_PRV + "' ) .or. nTypDoc == '" + RCT_PRV + "'"
+         cFilter           := "( nTypDoc >= '" + PED_PRV + "' .and. nTypDoc <= '" + FAC_PRV + "' ) .or. nTypDoc == '" + RCT_PRV + "'"
+         oBrwTmp:lFooter   := .f.
 
       case cText == "Movimientos"
-         cFilter  := "nTypDoc == '" + MOV_ALM + "'"
+         cFilter           := "nTypDoc == '" + MOV_ALM + "'"
+         oBrwTmp:lFooter   := .f.
 
       case cText == "Ventas"
-         cFilter  := "( nTypDoc == '" + SAT_CLI + "' ) .or. ( nTypDoc >= '" + PRE_CLI + "' .and. nTypDoc <= '" + REC_CLI + "' )"
+         cFilter           := "( nTypDoc == '" + SAT_CLI + "' ) .or. ( nTypDoc >= '" + PRE_CLI + "' .and. nTypDoc <= '" + REC_CLI + "' )"
+         oBrwTmp:lFooter   := .f.
 
       case cText == "Producción"
-         cFilter  := "( nTypDoc == '" + PRO_LIN + "' .or. nTypDoc == '" + PRO_MAT + "' )"
-
-      case cText == "Stock"
-         cFilter  := "!lFacturado .and. ( nTypDoc =='" + ALB_PRV + "' .or. nTypDoc == '" + FAC_PRV + "' .or. nTypDoc == '" + MOV_ALM + "' .or. nTypDoc == '" + ALB_CLI + "' .or. nTypDoc == '" + FAC_CLI + "' .or. nTypDoc == '" + TIK_CLI + "'.or. nTypDoc == '" + FAC_REC + "' .or. nTypDoc == '" + DEV_CLI + "' .or. nTypDoc == '" + VAL_CLI + "' .or. nTypDoc == '" + PRO_LIN + "' .or. nTypDoc == '" + PRO_MAT + "' .or. nTypDoc == '" + RCT_PRV + "' )"
+         cFilter           := "( nTypDoc == '" + PRO_LIN + "' .or. nTypDoc == '" + PRO_MAT + "' )"
+         oBrwTmp:lFooter   := .f.
 
       case cText == cTextDocument( PED_PRV )
-         cFilter  := "( nTypDoc == '" + PED_PRV + "' )"
+         cFilter           := "( nTypDoc == '" + PED_PRV + "' )"
+         oBrwTmp:lFooter   := .t.
 
       case cText == cTextDocument( ALB_PRV )
-         cFilter  := "( nTypDoc == '" + ALB_PRV + "' )"
+         cFilter           := "( nTypDoc == '" + ALB_PRV + "' )"
+         oBrwTmp:lFooter   := .t.
 
       case cText == cTextDocument( FAC_PRV )
-         cFilter  := "( nTypDoc == '" + FAC_PRV + "' )"
+         cFilter           := "( nTypDoc == '" + FAC_PRV + "' )"
+         oBrwTmp:lFooter   := .t.
 
       case cText == cTextDocument( RCT_PRV )
-         cFilter  := "( nTypDoc == '" + RCT_PRV + "' )"
+         cFilter           := "( nTypDoc == '" + RCT_PRV + "' )"
+         oBrwTmp:lFooter   := .t.
 
       case cText == cTextDocument( SAT_CLI )
-         cFilter  := "( nTypDoc == '" + SAT_CLI + "' )"
+         cFilter           := "( nTypDoc == '" + SAT_CLI + "' )"
+         oBrwTmp:lFooter   := .t.
 
       case cText == cTextDocument( PRE_CLI )
-         cFilter  := "( nTypDoc == '" + PRE_CLI + "' )"
+         cFilter           := "( nTypDoc == '" + PRE_CLI + "' )"
+         oBrwTmp:lFooter   := .t.
 
       case cText == cTextDocument( PED_CLI )
-         cFilter  := "( nTypDoc == '" + PED_CLI + "' )"
+         cFilter           := "( nTypDoc == '" + PED_CLI + "' )"
+         oBrwTmp:lFooter   := .t.
 
       case cText == cTextDocument( ALB_CLI )
-         cFilter  := "( nTypDoc == '" + ALB_CLI + "' )"
+         cFilter           := "( nTypDoc == '" + ALB_CLI + "' )"
+         oBrwTmp:lFooter   := .t.
 
       case cText == cTextDocument( FAC_CLI )
-         cFilter  := "( nTypDoc == '" + FAC_CLI + "' )"
+         cFilter           := "( nTypDoc == '" + FAC_CLI + "' )"
+         oBrwTmp:lFooter   := .t.
 
       case cText == cTextDocument( FAC_REC )
-         cFilter  := "( nTypDoc == '" + FAC_REC + "' )"
+         cFilter           := "( nTypDoc == '" + FAC_REC + "' )"
+         oBrwTmp:lFooter   := .t.
 
       case cText == cTextDocument( TIK_CLI )
-         cFilter  := "( nTypDoc == '" + TIK_CLI + "' )"
+         cFilter           := "( nTypDoc == '" + TIK_CLI + "' )"
+         oBrwTmp:lFooter   := .t.
 
       case cText == cTextDocument( DEV_CLI )
-         cFilter  := "( nTypDoc == '" + DEV_CLI + "' )"
+         cFilter           := "( nTypDoc == '" + DEV_CLI + "' )"
+         oBrwTmp:lFooter   := .t.
 
       case cText == cTextDocument( MOV_ALM )
-         cFilter  := "( nTypDoc == '" + MOV_ALM + "' )"
+         cFilter           := "( nTypDoc == '" + MOV_ALM + "' )"
+         oBrwTmp:lFooter   := .t.
 
       case cText == cTextDocument( VAL_CLI )
-         cFilter  := "( nTypDoc == '" + VAL_CLI + "' )"
+         cFilter           := "( nTypDoc == '" + VAL_CLI + "' )"
+         oBrwTmp:lFooter   := .t.
 
       case cText == cTextDocument( APT_CLI )
-         cFilter  := "( nTypDoc == '" + APT_CLI + "' )"
+         cFilter           := "( nTypDoc == '" + APT_CLI + "' )"
+         oBrwTmp:lFooter   := .t.
 
       case cText == cTextDocument( PRO_LIN )
-         cFilter  := "( nTypDoc == '" + PRO_LIN + "' )"
+         cFilter           := "( nTypDoc == '" + PRO_LIN + "' )"
+         oBrwTmp:lFooter   := .t.
 
       case cText == cTextDocument( PRO_MAT )
-         cFilter  := "( nTypDoc == '" + PRO_MAT + "' )"
+         cFilter           := "( nTypDoc == '" + PRO_MAT + "' )"
+         oBrwTmp:lFooter   := .t.
 
       otherwise
          cFilter  := nil
@@ -3073,7 +3078,9 @@ Static Function TreeChanged( oTree, oBrwTmp )
 Return nil
 
 //---------------------------------------------------------------------------//
-/*Funcion que elige la imagen de cada documento*/
+/*
+Funcion que elige la imagen de cada documento
+*/
 
 Static Function TreeImagen()
 
@@ -3471,39 +3478,39 @@ Function cTextDocument( nTypDoc )
 
    do case
       case nTypDoc == PED_PRV
-         cTextDocument  := "Pedidos"
+         cTextDocument  := "Pedidos proveedor"
       case nTypDoc == ALB_PRV
-         cTextDocument  := "Albaranes"
+         cTextDocument  := "Albaranes proveedor"
       case nTypDoc == FAC_PRV
-         cTextDocument  := "Facturas"
+         cTextDocument  := "Facturas proveedor"
       case nTypDoc == RCT_PRV
-         cTextDocument  := "Rectificativas"
+         cTextDocument  := "Rectificativas proveedor"
       case nTypDoc == PRE_CLI
-         cTextDocument  := "Presupuestos "
+         cTextDocument  := "Presupuestos cliente"
       case nTypDoc == PED_CLI
-         cTextDocument  := "Pedidos "
+         cTextDocument  := "Pedidos cliente"
       case nTypDoc == ALB_CLI
-         cTextDocument  := "Albaranes "
+         cTextDocument  := "Albaranes cliente"
       case nTypDoc == FAC_CLI
-         cTextDocument  := "Facturas "
+         cTextDocument  := "Facturas cliente"
       case nTypDoc == FAC_REC
-         cTextDocument  := "Rectificativas"
+         cTextDocument  := "Rectificativas cliente"
       case nTypDoc == TIK_CLI
-         cTextDocument  := "Tickets"
+         cTextDocument  := "Tickets cliente"
       case nTypDoc == DEV_CLI
-         cTextDocument  := "Devoluciones"
+         cTextDocument  := "Devoluciones cliente"
       case nTypDoc == VAL_CLI
-         cTextDocument  := "Vale"
+         cTextDocument  := "Vale cliente"
       case nTypDoc == APT_CLI
-         cTextDocument  := "Apartado"
+         cTextDocument  := "Apartado cliente"
       case nTypDoc == MOV_ALM
-         cTextDocument  := "Movimientos"
+         cTextDocument  := "Movimientos almacen"
       case nTypDoc == PRO_LIN
-         cTextDocument  := "Material"
+         cTextDocument  := "Material producido"
       case nTypDoc == PRO_MAT
          cTextDocument  := "Materia prima"
       case nTypDoc == SAT_CLI
-         cTextDocument  := "S.A.T."
+         cTextDocument  := "S.A.T. cliente"
    end case
 
 Return ( cTextDocument )

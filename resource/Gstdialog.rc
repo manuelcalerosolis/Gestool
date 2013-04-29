@@ -3548,11 +3548,10 @@ CAPTION "Artículos"
 FONT 8, "MS Sans Serif"
 {
   CONTROL "", 300, "SysTabControl32", WS_TABSTOP, 1, 1, 670, 340
-  CONTROL "", 310, "ComboBox", WS_BORDER|CBS_DROPDOWNLIST|WS_TABSTOP, 448, 348, 43, 43
-  CONTROL "&Informe", 500, "Button", WS_TABSTOP, 561, 348, 50, 14
+  CONTROL "", 310, "ComboBox", WS_BORDER|CBS_DROPDOWNLIST|WS_TABSTOP, 507, 348, 43, 43
   CONTROL "&Cerrar", 501, "Button", BS_DEFPUSHBUTTON|WS_TABSTOP, 620, 348, 50, 14
-  CONTROL "Ejercicio", -1, "Static", WS_GROUP, 414, 352, 32, 8
-  CONTROL "&Actualizar", 306, "Button", WS_TABSTOP, 501, 348, 50, 14
+  CONTROL "Ejercicio", -1, "Static", WS_GROUP, 473, 352, 32, 8
+  CONTROL "&Actualizar", 306, "Button", WS_TABSTOP, 560, 348, 50, 14
   CONTROL "", 200, "msctls_progress32", 0x00000000, 1, 342, 670, 4
   CONTROL "Proceso...", 400, "Static", WS_GROUP, 1, 352, 300, 8
 }
@@ -3871,7 +3870,8 @@ FONT 8, "MS Sans Serif"
   CONTROL "&Eliminar [F4]", 303, "Button", WS_TABSTOP, 266, 28, 50, 14
   CONTROL "&Visualizar", 304, "Button", WS_TABSTOP, 321, 28, 50, 14
   CONTROL "&Imprimir", 305, "Button", WS_TABSTOP, 376, 28, 50, 14
-  CONTROL "&Filtrar", 600, "Button", WS_TABSTOP, 431, 28, 50, 14
+  CONTROL "&Filtrar", 306, "Button", WS_TABSTOP, 431, 28, 50, 14
+  CONTROL "&Informe", 307, "Button", WS_TABSTOP, 615, 28, 50, 14
   CONTROL "", 500, "Static", SS_BITMAP|SS_CENTERIMAGE, 4, 3, 34, 30
   CONTROL "Documentos donde aparece el artículo", -1, "Static", SS_LEFTNOWORDWRAP|WS_GROUP, 44, 3, 446, 8
 }
