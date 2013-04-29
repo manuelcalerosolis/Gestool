@@ -330,9 +330,14 @@ function BrwComPrv( cCodPrv, cNomPrv, dbfDiv, dbfIva )
       ACTION   ( PrintDocument( oBrwTmp ) )
 
   REDEFINE BUTTON oBtnFiltro ;
-      ID       600 ;
+      ID       306 ;
       OF       oFld:aDialogs[2] ;
       ACTION   ( Filtro(), oBrwTmp:Refresh() )
+
+   REDEFINE BUTTON ;
+      ID       307 ;
+      OF       oFld:aDialogs[2] ;
+      ACTION   ( TInfLPrv():New( "Informe detallado de documentos de proveedores", , , , , , { oDbfTmp, cCmbAnio } ):Play() )
 
    /*
    Browse temporarl------------------------------------------------------------
@@ -527,12 +532,6 @@ function BrwComPrv( cCodPrv, cNomPrv, dbfDiv, dbfIva )
       ID       501 ;
       OF       oDlg ;
       ACTION   ( oDlg:end( IDOK ) )
-
-   REDEFINE BUTTON ;
-      ID       500 ;
-      OF       oDlg ;
-      ACTION   ( TInfLPrv():New( "Informe detallado de documentos de proveedores", , , , , , { oDbfTmp, cCmbAnio } ):Play() )
-
 
    oFld:aDialogs[2]:AddFastKey( VK_F3, {|| EditDocument(), LoadDatos( cCodPrv, dbfDiv, dbfIva, oDlg, cCmbAnio, oBrwCom ), oBrwTmp:Refresh(), oGraph:Refresh() } )
    oFld:aDialogs[2]:AddFastKey( VK_F4, {|| DeleteDocument(), LoadDatos( cCodPrv, dbfDiv, dbfIva, oDlg, cCmbAnio, oBrwCom ), oBrwTmp:Refresh(), oGraph:Refresh() } )

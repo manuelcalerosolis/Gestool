@@ -455,9 +455,14 @@ end if
       ACTION   ( PrintDocument( oBrwTmp ) )
 
    REDEFINE BUTTON oBtnFiltro ;
-      ID       600 ;
+      ID       306 ;
       OF       oFld:aDialogs[2] ;
       ACTION   ( Filtro(), oBrwTmp:Refresh() )
+
+   REDEFINE BUTTON ;
+      ID       307 ;
+      OF       oFld:aDialogs[2] ;
+      ACTION   ( TInfLCli():New( "Informe detallado de documentos de clientes", , , , , , { oDbfTmp, cCmbAnio } ):Play() )
 
    /*
    Browse temporarl------------------------------------------------------------
@@ -644,11 +649,6 @@ end if
       ID       306 ;
       OF       oDlg ;
       ACTION   ( LoadDatos( cCodCli, oDlg, cCmbAnio, oBrwVta ), oBrwTmp:Refresh(), oGraph:Refresh() )
-
-   REDEFINE BUTTON ;
-      ID       500 ;
-      OF       oDlg ;
-      ACTION   ( TInfLCli():New( "Informe detallado de documentos de clientes", , , , , , { oDbfTmp, cCmbAnio } ):Play() )
 
    REDEFINE BUTTON ;
       ID       501 ;

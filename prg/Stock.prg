@@ -221,6 +221,8 @@ CLASS TStock
 
    METHOD lCheckConsolidacion()
 
+   METHOD GetConsolidacion( cCodArt, cCodAlm, cCodPrp1, cCodPrp2, cValPrp1, cValPrp2, cLote )
+
    METHOD lValoracionCostoMedio( nTipMov )
 
    METHOD lAvisarSerieSinStock( cCodigo )    INLINE   ( RetFld( cCodigo, ::cArticulo, "lMsgSer" ) )
@@ -5759,9 +5761,8 @@ Return ( nRiesgo )
 
 //---------------------------------------------------------------------------//
 
-METHOD lCheckConsolidacion( cCodArt, cCodAlm, cCodPrp1, cCodPrp2, cValPrp1, cValPrp2, cLote, dFecha )
+METHOD GetConsolidacion( cCodArt, cCodAlm, cCodPrp1, cCodPrp2, cValPrp1, cValPrp2, cLote )
 
-   local lCheck         := .f.
    local nRec           := ( ::cHisMovT)->( Recno() )
 
    DEFAULT cCodAlm      := Space( 3 )  
@@ -5799,9 +5800,19 @@ METHOD lCheckConsolidacion( cCodArt, cCodAlm, cCodPrp1, cCodPrp2, cValPrp1, cVal
 
    end if
 
-   ( ::cHisMovT)->( dbGoTo( nRec ) )
+   ( ::cHisMovT )->( dbGoTo( nRec ) )
 
-   lCheck    := ( Empty( ::dConsolidacion ) .or. dFecha >= ::dConsolidacion )
+Return ( ::dConsolidacion )
+
+//---------------------------------------------------------------------------//
+
+METHOD lCheckConsolidacion( cCodArt, cCodAlm, cCodPrp1, cCodPrp2, cValPrp1, cValPrp2, cLote, dFecha )
+
+   local lCheck   := .f.
+
+   ::GetConsolidacion( cCodArt, cCodAlm, cCodPrp1, cCodPrp2, cValPrp1, cValPrp2, cLote )
+
+   lCheck         := ( Empty( ::dConsolidacion ) .or. dFecha >= ::dConsolidacion )
 
 Return ( lCheck )
 

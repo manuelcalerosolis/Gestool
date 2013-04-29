@@ -81,6 +81,7 @@ WizardImageFile=c:\fw195\gestool\bmp\WizardImage.bmp
 WizardSmallImageFile=c:\fw195\gestool\bmp\WizardSmallImage.bmp
 
 [Dirs]
+Name: "{app}";          Permissions: everyone-full
 Name: "{app}\Bmp";      Permissions: everyone-full
 Name: "{app}\In";       Permissions: everyone-full
 Name: "{app}\Out";      Permissions: everyone-full
