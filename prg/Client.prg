@@ -11617,6 +11617,9 @@ FUNCTION aItmAtp()
 RETURN ( aBase )
 
 //---------------------------------------------------------------------------//
+/*
+Estructura de clientes
+*/
 
 FUNCTION aItmCli()
 

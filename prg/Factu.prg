@@ -5525,9 +5525,11 @@ Function cNameVersion()
    if IsNil( cNameVersion )
 
       do case
+         /*
          case File( FullCurDir() + "dccn" )
 
             cNameVersion      := "Oido cocina Profesional"
+         */
 
          case File( FullCurDir() + "scmmrc" )
 
@@ -5558,9 +5560,9 @@ Function cBmpVersion()
    if IsNil( cBmpVersion )
 
       do case
-         case File( FullCurDir() + "dccn" )
+         /*case File( FullCurDir() + "dccn" )
 
-            cBmpVersion      := FullCurDir() + "Bmp\Oidococina.bmp"
+            cBmpVersion      := FullCurDir() + "Bmp\Oidococina.bmp"*/
 
          case File( FullCurDir() + "scmmrc" )
 

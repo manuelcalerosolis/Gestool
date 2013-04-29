@@ -81,20 +81,20 @@ WizardImageFile=c:\fw195\gestool\bmp\WizardImage.bmp
 WizardSmallImageFile=c:\fw195\gestool\bmp\WizardSmallImage.bmp
 
 [Dirs]
-Name: "{app}\Bmp";      Permissions: users-modify
-Name: "{app}\In";       Permissions: users-modify
-Name: "{app}\Out";      Permissions: users-modify
-Name: "{app}\Log";      Permissions: users-modify
-Name: "{app}\Htm";      Permissions: users-modify
-Name: "{app}\Tmp";      Permissions: users-modify
-Name: "{app}\Emptmp";   Permissions: users-modify
-Name: "{app}\Safe";     Permissions: users-modify
-Name: "{app}\Emp00VG";  Permissions: users-modify
-Name: "{app}\Datos";    Permissions: users-modify
-Name: "{app}\Psion";    Permissions: users-modify
-Name: "{app}\Include";  Permissions: users-modify
-Name: "{app}\Client";   Permissions: users-modify
-Name: "{app}\Backup";   Permissions: users-modify
+Name: "{app}\Bmp";      Permissions: everyone-full
+Name: "{app}\In";       Permissions: everyone-full
+Name: "{app}\Out";      Permissions: everyone-full
+Name: "{app}\Log";      Permissions: everyone-full
+Name: "{app}\Htm";      Permissions: everyone-full
+Name: "{app}\Tmp";      Permissions: everyone-full
+Name: "{app}\Safe";     Permissions: everyone-full
+Name: "{app}\Emptmp";   Permissions: everyone-full
+Name: "{app}\Emp00VG";  Permissions: everyone-full
+Name: "{app}\Datos";    Permissions: everyone-full
+Name: "{app}\Psion";    Permissions: everyone-full
+Name: "{app}\Include";  Permissions: everyone-full
+Name: "{app}\Client";   Permissions: everyone-full
+Name: "{app}\Backup";   Permissions: everyone-full
 
 
 [Tasks]
