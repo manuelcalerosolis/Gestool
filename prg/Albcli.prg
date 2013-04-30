@@ -7726,6 +7726,31 @@ function SynAlbCli( cPath )
    ( dbfAlbCliT )->( ordSetFocus( 1 ) )
 
    /*
+   Repasamos para que siempre esten rellenos los campos de totales-------------
+   */
+
+   ( dbfAlbCliT )->( dbGoTop() )
+
+   while !( dbfAlbCliT )->( eof() )
+
+      if ( dbfAlbCliT )->nTotAlb == 0 .and. dbLock( dbfAlbCliT )
+
+         aTotAlb                 := aTotAlbCli( ( dbfAlbCliT )->cSerAlb + Str( ( dbfAlbCliT )->nNumAlb ) + ( dbfAlbCliT )->cSufAlb, dbfAlbCliT, dbfAlbCliL, dbfIva, dbfDiv, ( dbfAlbCliT )->cDivAlb )
+
+         ( dbfAlbCliT )->nTotNet := aTotAlb[1]
+         ( dbfAlbCliT )->nTotIva := aTotAlb[2]
+         ( dbfAlbCliT )->nTotReq := aTotAlb[3]
+         ( dbfAlbCliT )->nTotAlb := aTotAlb[4]
+
+         ( dbfAlbCliT )->( dbUnLock() )
+
+      end if
+      
+      ( dbfAlbCliT )->( dbSkip() )
+
+   end while
+
+   /*
    Lineas----------------------------------------------------------------------
    */
 

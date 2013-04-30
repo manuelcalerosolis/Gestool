@@ -2700,7 +2700,7 @@ STATIC FUNCTION EdtRec( aTmp, aGet, dbfTikT, oBrw, cCodCli, cCodArt, nMode, aNum
       oDlgTpv:AddFastKey( VK_F5, {|| if( ( ( nMode == APPD_MODE ) .or. ( ( aTmp[ _CTIPTIK ] == SAVTIK .or. aTmp[ _CTIPTIK ] == SAVAPT ) .and. ( nMode == EDIT_MODE ) ) ), NewTiket( aGet, aTmp, nMode, SAVTIK, .f., oBrw, oBrwDet ), ) } )
       oDlgTpv:AddFastKey( VK_F7, {|| if( ( ( nMode == APPD_MODE ) .or. ( ( aTmp[ _CTIPTIK ] == SAVALB .or. aTmp[ _CTIPTIK ] == SAVAPT ) .and. ( nMode == EDIT_MODE ) ) ), NewTiket( aGet, aTmp, nMode, SAVALB, .f., oBrw, oBrwDet ), ) } )
       oDlgTpv:AddFastKey( VK_F8, {|| if( ( ( nMode == APPD_MODE ) .or. ( ( aTmp[ _CTIPTIK ] == SAVFAC .or. aTmp[ _CTIPTIK ] == SAVAPT ) .and. ( nMode == EDIT_MODE ) ) ), NewTiket( aGet, aTmp, nMode, SAVFAC, .f., oBrw, oBrwDet ), ) } )
-      oDlgTpv:AddFastKey( VK_F9, {|| if( ( ( nMode == APPD_MODE ) .or. ( ( aTmp[ _CTIPTIK ] == SAVVAL .or. aTmp[ _CTIPTIK ] == SAVAPT ) .and. ( nMode == EDIT_MODE ) ) ), NewTiket( aGet, aTmp, nMode, SAVAPT, .f., oBrw, oBrwDet ), ) } )
+      oDlgTpv:AddFastKey( VK_F9, {|| if( ( ( nMode == APPD_MODE ) .or. ( ( aTmp[ _CTIPTIK ] == SAVVAL .or. aTmp[ _CTIPTIK ] == SAVAPT ) .and. ( nMode == EDIT_MODE ) ) ), GuardaApartado( aGet, aTmp, nMode, SAVAPT, .f., oBrw, oBrwDet ), ) } )
       oDlgTpv:AddFastKey( 65,    {|| if( GetKeyState( VK_CONTROL ), CreateInfoArticulo(), ) } )
    end if
 
@@ -2759,7 +2759,7 @@ Static Function StartEdtRec( aTmp, aGet, nMode, oDlgTpv, oBrw, oBrwDet, aNumDoc,
          oBtnTik        := TDotNetButton():New( 60, oGrupo, "Money2_32",                "Cobrar [F5]",         1, {|| NewTiket( aGet, aTmp, nMode, SAVTIK, .f., oBrw, oBrwDet ) }, , {|| nMode != ZOOM_MODE }, .f., .f., .f. )
          oBtnAlb        := TDotNetButton():New( 60, oGrupo, "Document_plain_user1_32",  "Albarán [F7]",        2, {|| NewTiket( aGet, aTmp, nMode, SAVALB, .f., oBrw, oBrwDet ) }, , {|| nMode != ZOOM_MODE }, .f., .f., .f. )
          oBtnFac        := TDotNetButton():New( 70, oGrupo, "Document_user1_32",        "Factura [F8]",        3, {|| NewTiket( aGet, aTmp, nMode, SAVFAC, .f., oBrw, oBrwDet ) }, , {|| nMode != ZOOM_MODE }, .f., .f., .f. )
-         oBtnApt        := TDotNetButton():New( 60, oGrupo, "Cashier_Stop_32",          "Apartar [F9]",        4, {|| NewTiket( aGet, aTmp, nMode, SAVAPT, .f., oBrw, oBrwDet ) }, , {|| nMode != ZOOM_MODE }, .f., .f., .f. )
+         oBtnApt        := TDotNetButton():New( 60, oGrupo, "Cashier_Stop_32",          "Apartar [F9]",        4, {|| GuardaApartado( aGet, aTmp, nMode, SAVAPT, .f., oBrw, oBrwDet ) }, , {|| nMode != ZOOM_MODE }, .f., .f., .f. )
          oBtnVal        := TDotNetButton():New( 60, oGrupo, "Cashier_Money2_32",        "Cheque regalo",       5, {|| NewTiket( aGet, aTmp, nMode, SAVRGL, .f., oBrw, oBrwDet ) }, , {|| nMode != ZOOM_MODE }, .f., .f., .f. )
          oBtnDev        := TDotNetButton():New( 60, oGrupo, "Cashier_Delete_32",        "Devolución",          6, {|| if( uFieldEmpresa( "lNumTik" ), AsistenteDevolucionTiket( aTmp, aGet, nMode, .t. ), NewTiket( aGet, aTmp, nMode, SAVDEV, .f., oBrw, oBrwDet ) ) }, , {|| nMode == APPD_MODE }, .f., .f., .f. )
          oBtnOld        := TDotNetButton():New( 60, oGrupo, "Cashier_Scroll_32",        "Vale",                7, {|| if( uFieldEmpresa( "lNumTik" ), AsistenteDevolucionTiket( aTmp, aGet, nMode, .f. ), NewTiket( aGet, aTmp, nMode, SAVVAL, .f., oBrw, oBrwDet ) ) }, , {|| nMode != ZOOM_MODE }, .f., .f., .f. )
@@ -3475,6 +3475,24 @@ static function cPreCli( aTmp, aGet, cNumPre, oBrwLin )
    lStopEntContLine   := .t.
 
 return .t.
+
+//---------------------------------------------------------------------------//
+
+Static function GuardaApartado( aGet, aTmp, nMode, nSave, lBig, oBrw, oBrwDet )
+
+   if ( dbfTmpL )->( OrdKeyCount() ) == 0
+      
+      MsgStop( "No puede almacenar un documento sin lineas." )
+      lSaveNewTik     := .f.
+      //MsgStop( "Levantamos la ventana con todo2 para seguir" )
+      
+   else
+
+      NewTiket( aGet, aTmp, nMode, nSave, lBig, oBrw, oBrwDet )
+
+   end if
+
+Return .t.
 
 //---------------------------------------------------------------------------//
 
@@ -17610,8 +17628,25 @@ Function SynTikCli( cPath )
          ( dbfTikT )->cNcjTik := "000"
       end if
 
+      ( dbfTikT )->( dbSkip() )
+
+      SysRefresh()
+
+   end while
+
+   ( dbfTikT )->( OrdSetFocus( 1 ) )
+
+   /*
+   Repasamos los totales para que tengas valores---------------------------
+   */
+
+   ( dbfTikT )->( dbGoTop() )
+
+   while !( dbfTikT )->( eof() )
+
       /*
       Rellenamos los campos de totales-----------------------------------------
+      */
 
       do case
          case ( dbfTikT )->cTipTik == SAVALB
@@ -17666,15 +17701,12 @@ Function SynTikCli( cPath )
             end if
 
       end case
-      */
 
       ( dbfTikT )->( dbSkip() )
 
       SysRefresh()
 
    end while
-
-   ( dbfTikT )->( OrdSetFocus( 1 ) )
 
    /*
    Pagos-------------------------------------------------------------------

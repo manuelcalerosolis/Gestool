@@ -4,6 +4,14 @@
 		"selected_items":
 		[
 			[
+				"CCODFAB",
+				"CCODFAB"
+			],
+			[
+				"Tipo",
+				"Tipo"
+			],
+			[
 				"nReg",
 				"nRegIva"
 			],
@@ -506,24 +514,16 @@
 			[
 				"Field",
 				"FieldGetByName"
-			],
-			[
-				"oTik",
-				"oTiketCabecera"
-			],
-			[
-				"cUbi",
-				"cUbicacion"
 			]
 		]
 	},
 	"buffers":
 	[
 		{
-			"file": "prg/Rptgal.prg",
+			"file": "prg/Tpv.prg",
 			"settings":
 			{
-				"buffer_size": 163166,
+				"buffer_size": 752110,
 				"line_ending": "Windows"
 			}
 		}
@@ -560,6 +560,13 @@
 	},
 	"file_history":
 	[
+		"/C/fw195/Gestool/prg/Tutil.prg",
+		"/C/fw195/Gestool/prg/Articulo.prg",
+		"/C/fw195/Gestool/prg/Categoria.prg",
+		"/C/fw195/Gestool/prg/Tipart.prg",
+		"/C/fw195/Gestool/prg/Tcomercio.prg",
+		"/C/fw195/Gestool/prg/tcomercio",
+		"/C/fw195/Gestool/prg/Rptgal.prg",
 		"/C/fw195/Gestool/prg/Tgesped.prg",
 		"/C/fw195/Gestool/prg/Client.prg",
 		"/C/fw195/Gestool/prg/Edm.prg",
@@ -585,7 +592,6 @@
 		"/C/fw195/Gestool/prg/Tpvpda.prg",
 		"/C/fw195/Gestool/prg/Tpvpunto.prg",
 		"/C/fw195/Gestool/prg/Tpvsalon.prg",
-		"/C/fw195/Gestool/prg/Articulo.prg",
 		"//192.168.1.19/c/bootstrap/index.html",
 		"/C/fw195/Gestool/prg/Familia.prg",
 		"/C/fw195/Gestool/prg/Tviewimg.prg",
@@ -595,7 +601,6 @@
 		"/C/fw195/Gestool/prg/Tpv.prg",
 		"/C/fw195/Gestool/prg/Tgetc3.prg",
 		"/C/fw195/Gestool/prg/Tpvsalaventa.prg",
-		"/C/fw195/Gestool/prg/Tcomercio.prg",
 		"/C/fw195/Gestool/prg/Impfactu.prg",
 		"/C/fw195/Gestool/prg/utildbf",
 		"/C/Windows/ads.ini",
@@ -627,7 +632,6 @@
 		"/C/Users/Villa/Desktop/test.prg",
 		"/C/fw195/Gestool/include/Util.ch",
 		"/C/Users/Villa/Desktop/oscar.prg",
-		"/C/fw195/Gestool/prg/Rptgal.prg",
 		"/C/fw195/Gestool/prg/Exportatarifas.prg",
 		"/C/fw195/Gestool/prg/Oferta.prg",
 		"/C/fw195/Gestool/prg/TConFacCli",
@@ -683,11 +687,7 @@
 		"/C/fw195/Gestool/prg/Empcnf.prg",
 		"/C/AppServ/www/prestashop/themes/default/product.tpl",
 		"/C/Users/Villa/Desktop/Tcomercio.prg",
-		"/C/fw195/Gestool/prg/Depage.prg",
-		"/C/fw195/Gestool/prg/tpv",
-		"/C/fw195/Gestool/prg/articulo",
-		"/C/fw195/Gestool/prg/Tgenmail.prg",
-		"/C/fw195/Gestool/Hs.bat"
+		"/C/fw195/Gestool/prg/Depage.prg"
 	],
 	"find":
 	{
@@ -725,6 +725,20 @@
 		"case_sensitive": false,
 		"find_history":
 		[
+			"GuardaApartado",
+			"oofficebar",
+			"on newticket",
+			"officebar",
+			"on rx",
+			"ccodfab",
+			"on rx",
+			"926",
+			"on rx",
+			"on aitm",
+			"on oretfld",
+			"oretfld",
+			"927",
+			"on rx",
 			"TInfGesPed",
 			"BeginTrans",
 			"on end",
@@ -838,21 +852,7 @@
 			"AgregarLineasLibres",
 			"AgregarLibre",
 			"libre",
-			"msgstop",
-			"on endtrans",
-			"dbfTmpVta",
-			"on endtrans",
-			"on edtrec",
-			"aItmVta",
-			"on aitm",
-			"dbfTmpVta",
-			"on aitm",
-			"append",
-			"dbfTmpImg",
-			"on dbseekinord",
-			"on begintrans",
-			"on rx",
-			"on begintrans"
+			"msgstop"
 		],
 		"highlight": true,
 		"in_selection": false,
@@ -883,18 +883,18 @@
 			[
 				{
 					"buffer": 0,
-					"file": "prg/Rptgal.prg",
+					"file": "prg/Tpv.prg",
 					"settings":
 					{
-						"buffer_size": 163166,
+						"buffer_size": 752110,
 						"regions":
 						{
 						},
 						"selection":
 						[
 							[
-								41535,
-								41545
+								112642,
+								112642
 							]
 						],
 						"settings":
@@ -904,7 +904,7 @@
 							"translate_tabs_to_spaces": true
 						},
 						"translation.x": 0.0,
-						"translation.y": 12856.0,
+						"translation.y": 62284.0,
 						"zoom_level": 1.0
 					},
 					"type": "text"
