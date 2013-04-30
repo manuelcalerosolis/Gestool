@@ -2700,7 +2700,7 @@ STATIC FUNCTION EdtRec( aTmp, aGet, dbfTikT, oBrw, cCodCli, cCodArt, nMode, aNum
       oDlgTpv:AddFastKey( VK_F5, {|| if( ( ( nMode == APPD_MODE ) .or. ( ( aTmp[ _CTIPTIK ] == SAVTIK .or. aTmp[ _CTIPTIK ] == SAVAPT ) .and. ( nMode == EDIT_MODE ) ) ), NewTiket( aGet, aTmp, nMode, SAVTIK, .f., oBrw, oBrwDet ), ) } )
       oDlgTpv:AddFastKey( VK_F7, {|| if( ( ( nMode == APPD_MODE ) .or. ( ( aTmp[ _CTIPTIK ] == SAVALB .or. aTmp[ _CTIPTIK ] == SAVAPT ) .and. ( nMode == EDIT_MODE ) ) ), NewTiket( aGet, aTmp, nMode, SAVALB, .f., oBrw, oBrwDet ), ) } )
       oDlgTpv:AddFastKey( VK_F8, {|| if( ( ( nMode == APPD_MODE ) .or. ( ( aTmp[ _CTIPTIK ] == SAVFAC .or. aTmp[ _CTIPTIK ] == SAVAPT ) .and. ( nMode == EDIT_MODE ) ) ), NewTiket( aGet, aTmp, nMode, SAVFAC, .f., oBrw, oBrwDet ), ) } )
-      oDlgTpv:AddFastKey( VK_F9, {|| if( ( ( nMode == APPD_MODE ) .or. ( ( aTmp[ _CTIPTIK ] == SAVVAL .or. aTmp[ _CTIPTIK ] == SAVAPT ) .and. ( nMode == EDIT_MODE ) ) ), GuardaApartado( aGet, aTmp, nMode, SAVAPT, .f., oBrw, oBrwDet ), ) } )
+      oDlgTpv:AddFastKey( VK_F9, {|| if( ( ( nMode == APPD_MODE ) .or. ( ( aTmp[ _CTIPTIK ] == SAVVAL .or. aTmp[ _CTIPTIK ] == SAVAPT ) .and. ( nMode == EDIT_MODE ) ) ), GuardaApartado( aGet, aTmp, @nMode, SAVAPT, .f., oBrw, oBrwDet, oDlgTpv ), ) } )
       oDlgTpv:AddFastKey( 65,    {|| if( GetKeyState( VK_CONTROL ), CreateInfoArticulo(), ) } )
    end if
 
@@ -2759,7 +2759,7 @@ Static Function StartEdtRec( aTmp, aGet, nMode, oDlgTpv, oBrw, oBrwDet, aNumDoc,
          oBtnTik        := TDotNetButton():New( 60, oGrupo, "Money2_32",                "Cobrar [F5]",         1, {|| NewTiket( aGet, aTmp, nMode, SAVTIK, .f., oBrw, oBrwDet ) }, , {|| nMode != ZOOM_MODE }, .f., .f., .f. )
          oBtnAlb        := TDotNetButton():New( 60, oGrupo, "Document_plain_user1_32",  "Albarán [F7]",        2, {|| NewTiket( aGet, aTmp, nMode, SAVALB, .f., oBrw, oBrwDet ) }, , {|| nMode != ZOOM_MODE }, .f., .f., .f. )
          oBtnFac        := TDotNetButton():New( 70, oGrupo, "Document_user1_32",        "Factura [F8]",        3, {|| NewTiket( aGet, aTmp, nMode, SAVFAC, .f., oBrw, oBrwDet ) }, , {|| nMode != ZOOM_MODE }, .f., .f., .f. )
-         oBtnApt        := TDotNetButton():New( 60, oGrupo, "Cashier_Stop_32",          "Apartar [F9]",        4, {|| GuardaApartado( aGet, aTmp, nMode, SAVAPT, .f., oBrw, oBrwDet ) }, , {|| nMode != ZOOM_MODE }, .f., .f., .f. )
+         oBtnApt        := TDotNetButton():New( 60, oGrupo, "Cashier_Stop_32",          "Apartar [F9]",        4, {|| GuardaApartado( aGet, aTmp, @nMode, SAVAPT, .f., oBrw, oBrwDet, oDlgTpv ) }, , {|| nMode != ZOOM_MODE }, .f., .f., .f. )
          oBtnVal        := TDotNetButton():New( 60, oGrupo, "Cashier_Money2_32",        "Cheque regalo",       5, {|| NewTiket( aGet, aTmp, nMode, SAVRGL, .f., oBrw, oBrwDet ) }, , {|| nMode != ZOOM_MODE }, .f., .f., .f. )
          oBtnDev        := TDotNetButton():New( 60, oGrupo, "Cashier_Delete_32",        "Devolución",          6, {|| if( uFieldEmpresa( "lNumTik" ), AsistenteDevolucionTiket( aTmp, aGet, nMode, .t. ), NewTiket( aGet, aTmp, nMode, SAVDEV, .f., oBrw, oBrwDet ) ) }, , {|| nMode == APPD_MODE }, .f., .f., .f. )
          oBtnOld        := TDotNetButton():New( 60, oGrupo, "Cashier_Scroll_32",        "Vale",                7, {|| if( uFieldEmpresa( "lNumTik" ), AsistenteDevolucionTiket( aTmp, aGet, nMode, .f. ), NewTiket( aGet, aTmp, nMode, SAVVAL, .f., oBrw, oBrwDet ) ) }, , {|| nMode != ZOOM_MODE }, .f., .f., .f. )
@@ -3478,14 +3478,85 @@ return .t.
 
 //---------------------------------------------------------------------------//
 
-Static function GuardaApartado( aGet, aTmp, nMode, nSave, lBig, oBrw, oBrwDet )
+Static function GuardaApartado( aGet, aTmp, nMode, nSave, lBig, oBrw, oBrwDet, oDlgTpv )
+
+   local oError
+   local oBlock
+   local cSelApartado   := ""
+   local nRec
+   local nOrdAnt
 
    if ( dbfTmpL )->( OrdKeyCount() ) == 0
-      
-      MsgStop( "No puede almacenar un documento sin lineas." )
-      lSaveNewTik     := .f.
-      //MsgStop( "Levantamos la ventana con todo2 para seguir" )
-      
+
+      lSaveNewTik       := .f.
+
+      cSelApartado      := BrwApartados()
+
+      nRec              := ( dbfTikT )->( Recno() )
+      nOrdAnt           := ( dbfTikT )->( OrdSetFocus( "CNUMTIK" ) )
+
+      if !Empty( cSelApartado )                 .and.;
+         ( dbfTikT )->( dbSeek( cSelApartado ) )
+
+         /*oBlock               := ErrorBlock( {| oError | ApoloBreak( oError ) } )
+         BEGIN SEQUENCE*/
+
+         /*
+         Abrimos el ticket seleccionado-------------------------------------------
+         */
+
+         aScatter( dbfTikT, aTmp )
+
+         BeginTrans( aTmp, aGet, EDIT_MODE, .f. )
+
+         aEval( oDlgTpv:aControls, { | oCtrl | oCtrl:Refresh() } )
+
+         nSaveMode            := EDIT_MODE
+         nMode                := EDIT_MODE
+         lSaveNewTik          := .f.
+
+         /*
+         Titulo de la ventana-----------------------------------------------------
+         */
+
+         cTitleDialog( aTmp )
+         
+         /*
+         Botones de la ventana de tpv---------------------------------------------
+         */
+
+         SetButtonEdtRec( nSaveMode, aTmp )
+
+         /*
+         Recalculamos el total----------------------------------------------------
+         */
+
+         lRecTotal( aTmp )
+
+         /*
+         Cargamos y refrescamos datos del cliente------------------------------
+         */
+
+         cOldCodCli           := ""
+
+         if !Empty( aGet[ _CCLITIK ] )
+            aGet[ _CCLITIK ]:SetFocus()
+            aGet[ _CCLITIK ]:lValid()
+         end if
+
+         /*RECOVER USING oError
+   
+         msgStop( ErrorMessage( oError ), "Error al cambiar de ticket" )
+   
+         END SEQUENCE
+   
+         ErrorBlock( oBlock )*/
+
+      end if 
+
+      ( dbfTikT )->( OrdSetFocus( nOrdAnt ) )
+      ( dbfTikT )->( dbGoTo( nRec ) )
+
    else
 
       NewTiket( aGet, aTmp, nMode, nSave, lBig, oBrw, oBrwDet )
@@ -3493,6 +3564,169 @@ Static function GuardaApartado( aGet, aTmp, nMode, nSave, lBig, oBrw, oBrwDet )
    end if
 
 Return .t.
+
+//---------------------------------------------------------------------------//
+
+static function BrwApartados()
+
+   local oDlg
+   local oBrw
+   local oGet1
+   local cGet1
+   local nOrd                    := GetBrwOpt( "BrwTikCli" )
+   local oCbxOrd
+   local cCbxOrd
+   local aCbxOrd                 := { "Número", "Fecha", "Código cliente", "Nombre cliente" }
+   local nRecAnt                 := ( dbfTikT )->( RecNo() )
+   local cApartadoSeleccionado   := ""
+
+   nOrd                          := Min( Max( nOrd, 1 ), len( aCbxOrd ) )
+   cCbxOrd                       := aCbxOrd[ nOrd ]
+
+   nOrd                          := ( dbfTikT )->( OrdSetFocus( nOrd ) )
+
+   /*
+   Posicinamiento--------------------------------------------------------------
+   */
+
+   ( dbfTikT )->( dbSetFilter( {|| Field->cTipTik == "5" .and. Field->cCcjTik == oUser():cCodigo() .and. Field->cNcjTik == oUser():cCaja() }, "Field->cTipTik == '5' .and. Field->cCcjTik == oUser():cCodigo() .and. Field->cNcjTik == oUser():cCaja()" ) )
+
+   ( dbfTikT )->( dbGoTop() )
+
+   if ( dbfTikT )->( Eof() )
+
+      MsgStop( "No existen apartados para seleccionar." )
+
+   else
+
+      DEFINE DIALOG oDlg RESOURCE "HelpEntry" TITLE 'Seleccionar apartado'
+
+         REDEFINE GET oGet1 VAR cGet1;
+            ID       104 ;
+            ON CHANGE AutoSeek( nKey, nFlags, Self, oBrw, dbfTikT );
+            BITMAP   "FIND" ;
+            OF       oDlg
+
+         REDEFINE COMBOBOX oCbxOrd ;
+            VAR      cCbxOrd ;
+            ID       102 ;
+            ITEMS    aCbxOrd ;
+            ON CHANGE( ( dbfTikT )->( OrdSetFocus( oCbxOrd:nAt ) ), oBrw:Refresh(), oGet1:SetFocus() );
+            OF       oDlg
+
+         oBrw                    := IXBrowse():New( oDlg )
+
+         oBrw:bClrSel            := {|| { CLR_BLACK, Rgb( 229, 229, 229 ) } }
+         oBrw:bClrSelFocus       := {|| { CLR_BLACK, Rgb( 167, 205, 240 ) } }
+
+         oBrw:cAlias             := dbfTikT
+         oBrw:cName              := "Ticket cliente"
+         oBrw:bLDblClick         := {|| oDlg:End( IDOK ) }
+
+         oBrw:nMarqueeStyle      := 5
+
+         with object ( oBrw:AddCol() )
+            :cHeader             := "Número"
+            :cSortOrder          := "cNumTik"
+            :bEditValue          := {|| ( dbfTikT )->cSerTik + "/" + AllTrim( ( dbfTikT )->cNumTik ) + "/" + ( dbfTikT )->cSufTik }
+            :nWidth              := 70
+            :bLClickHeader       := {| nMRow, nMCol, nFlags, oCol | oCbxOrd:Set( oCol:cHeader ) }
+         end with
+
+         with object ( oBrw:AddCol() )
+            :cHeader             := "Fecha"
+            :cSortOrder          := "dFecTik"
+            :bEditValue          := {|| dtoc( ( dbfTikT )->dFecTik ) }
+            :nWidth              := 80
+            :bLClickHeader       := {| nMRow, nMCol, nFlags, oCol | oCbxOrd:Set( oCol:cHeader ) }
+         end with
+
+         with object ( oBrw:AddCol() )
+            :cHeader             := "Hora"
+            :bEditValue          := {|| ( dbfTikT )->cHorTik }
+            :nWidth              := 80
+         end with
+
+         with object ( oBrw:AddCol() )
+            :cHeader             := "Sesión"
+            :bEditValue          := {|| ( dbfTikT )->cTurTik + "/" + ( dbfTikT )->cSufTik }
+            :nWidth              := 80
+            :lHide               := .t.
+         end with
+
+         with object ( oBrw:AddCol() )
+            :cHeader             := "Código cliente"
+            :bEditValue          := {|| Rtrim( ( dbfTikT )->cCliTik ) }
+            :cSortOrder          := "cCliTik"
+            :nWidth              := 100
+            :bLClickHeader       := {| nMRow, nMCol, nFlags, oCol | oCbxOrd:Set( oCol:cHeader ) }
+         end with
+
+         with object ( oBrw:AddCol() )
+            :cHeader             := "Nombre cliente"
+            :bEditValue          := {|| AllTrim( ( dbfTikT )->cNomTik ) }
+            :cSortOrder          := "cNomTik"
+            :nWidth              := 350
+            :bLClickHeader       := {| nMRow, nMCol, nFlags, oCol | oCbxOrd:Set( oCol:cHeader ) }
+         end with
+
+         with object ( oBrw:AddCol() )
+            :cHeader             := "Importe "
+            :bEditValue          := {|| nTotalizer( ( dbfTikT)->cSerTik + ( dbfTikT )->cNumTik + ( dbfTikT )->cSufTik, dbfTikT, dbfTikL, dbfTikP, dbfAlbCliT, dbfAlbCliL, dbfFacCliT, dbfFacCliL, dbfFacCliP, dbfIva, dbfDiv, cDivEmp(), .t. ) }
+            :nWidth              := 85
+            :nDataStrAlign       := 1
+            :nHeadStrAlign       := 1
+         end with
+
+         oBrw:CreateFromResource( 105 )
+
+         REDEFINE BUTTON ;
+            ID       500 ;
+            OF       oDlg ;
+            WHEN     ( .f. );
+            ACTION   ( nil )
+
+         REDEFINE BUTTON ;
+            ID       501 ;
+            OF       oDlg ;
+            WHEN     ( .f. );
+            ACTION   ( nil )
+
+         REDEFINE BUTTON ;
+            ID       IDOK ;
+            OF       oDlg ;
+            ACTION   ( oDlg:end( IDOK ) )
+
+         REDEFINE BUTTON ;
+            ID       IDCANCEL ;
+            OF       oDlg ;
+            CANCEL ;
+            ACTION   ( oDlg:end() )
+
+      oDlg:bStart                := {|| oBrw:Load() }
+
+      oDlg:AddFastKey( VK_F5,    {|| oDlg:end( IDOK ) } )
+      oDlg:AddFastKey( VK_RETURN,{|| oDlg:end( IDOK ) } )
+
+      ACTIVATE DIALOG oDlg CENTER
+
+      /*
+      Guardamos los vales en el array---------------------------------------------
+      */
+
+      if oDlg:nResult == IDOK
+         cApartadoSeleccionado   := ( dbfTikT )->cSerTik + ( dbfTikT )->cNumTik + ( dbfTikT )->cSufTik
+      end if
+
+      SetBrwOpt( "BrwTikCli", ( dbfTikT )->( OrdNumber() ) )
+
+   end if   
+
+   ( dbfTikT )->( OrdSetFocus( nOrd ) )
+   ( dbfTikT )->( dbClearFilter() )
+   ( dbfTikT )->( dbGoTo( nRecAnt ) )
+
+RETURN ( cApartadoSeleccionado )
 
 //---------------------------------------------------------------------------//
 
@@ -18267,7 +18501,7 @@ Static Function lCambiaTicket( lSubir, aTmp, aGet, nMode )
 
       aScatter( dbfTikT, aTmp )
 
-      BeginTrans( aTmp, aGet, nMode )
+      BeginTrans( aTmp, aGet, nMode, .f. )
 
       /*
       Botones de la officebar--------------------------------------------------
