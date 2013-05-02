@@ -2257,6 +2257,7 @@ METHOD lCreateTurno()
    local cCaja          := oUser():cCaja()
    local cNombreCaja    := Alltrim( oRetFld( cCaja, ::oCaja ) )
    local cResource      := "ApTurnoTCT"
+   local lEspecial      := .f.
 
    /*
    Valores iniciales para la edicion-------------------------------------------
@@ -2276,6 +2277,7 @@ METHOD lCreateTurno()
    if ::lArqueoTactil
       if GetSysMetrics( 1 ) == 560
          cResource      := "ApTurnoTCT_1024x560"
+         lEspecial      := .t.
       end if
    else
       cResource         := "ApTurno"
@@ -2343,6 +2345,16 @@ METHOD lCreateTurno()
          WHEN     ( .f. ) ;
          OF       oDlg
 
+   if ::lArqueoTactil .and. !lEspecial
+
+      REDEFINE BUTTONBMP ;
+         ID       210 ;
+         OF       oDlg ;
+         BITMAP   "Calculator_32" ;
+         ACTION   ( Calculadora( 0, oImporte ) )
+
+   end if      
+
       REDEFINE GET oImporte VAR ::nImporteTurno ;
          ID       140 ;
          PICTURE  ( cPicImp ) ;
@@ -2359,6 +2371,16 @@ METHOD lCreateTurno()
          ID       150 ;
          PICTURE  "@!" ;
          OF       oDlg
+
+   if ::lArqueoTactil .and. !lEspecial
+
+      REDEFINE BUTTONBMP ;
+         ID       220 ;
+         OF       oDlg ;
+         BITMAP   "Calculator_32" ;
+         ACTION   ( Calculadora( 0, oObjetivo ) )
+
+   end if
 
       REDEFINE GET oObjetivo VAR ::nObjetivoTurno ;
          ID       160 ;
