@@ -5052,15 +5052,15 @@ METHOD SetTree( oTree, aResource, bOnSkip ) CLASS TXBrowse
 
    oCol:bStrData     := ;
    oCol:bEditValue   := { |x| If( x == nil, ::oTreeItem:cPrompt, ::oTreeItem:cPrompt := x ) }
-   oCol:cHeader      := "Item"
-   oCol:nWidth       := 200
+   oCol:cHeader      := ""
+   oCol:nWidth       := 300
    oCol:bLDClickData := { || If( ::oTreeItem:oTree != nil,( ::oTreeItem:Toggle(), ::Refresh() ),) }
    oCol:bIndent      := { || ::oTreeItem:nLevel * 20 - 20 }
 
    if ValType( aResource ) == 'A'
       oCol:AddBitmap( aResource )
    endif
-   oCol:bBmpData   := { || If( ::oTreeItem:oTree == nil, 3, If( ::oTreeItem:lOpened, 1, 2 ) ) }
+   oCol:bBmpData     := { || If( ::oTreeItem:oTree == nil, 3, If( ::oTreeItem:lOpened, 1, 2 ) ) }
 
    ::nFreeze         := 1
 

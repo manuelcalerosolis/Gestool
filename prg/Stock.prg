@@ -87,6 +87,8 @@ CLASS TStock
 
    DATA aSeries            AS ARRAY INIT {}
 
+   DATA oTree  
+
    DATA aMovAlm            AS ARRAY INIT {}
    DATA aStocks            AS ARRAY INIT {}
 
@@ -94,6 +96,8 @@ CLASS TStock
 
    DATA lAlbPrv            AS LOGIC INIT .t.
    DATA lAlbCli            AS LOGIC INIT .t.
+
+   DATA lIntegra           AS LOGIC INIT .t.
 
    METHOD New( cPath, lExclusive )
 
@@ -226,6 +230,8 @@ CLASS TStock
    METHOD lValoracionCostoMedio( nTipMov )
 
    METHOD lAvisarSerieSinStock( cCodigo )    INLINE   ( RetFld( cCodigo, ::cArticulo, "lMsgSer" ) )
+
+   METHOD oTreeStocks()
 
 END CLASS
 
@@ -393,6 +399,8 @@ METHOD lOpenFiles( cPath, lExclusive ) CLASS TStock
       ::cArticulo       := cCheckArea( "Articulo") 
       ::cKit            := cCheckArea( "Kit"     ) 
 
+      ::cAlm            := cCheckArea( "Almacen" )
+
       ::nDouDiv         := nDouDiv()
       ::nDorDiv         := nRouDiv()
       ::nDinDiv         := nDinDiv() // Decimales sin redondeo
@@ -506,6 +514,9 @@ METHOD lOpenFiles( cPath, lExclusive ) CLASS TStock
       USE ( cPatArt() + "ArtKit.Dbf" ) NEW VIA ( cDriver() ) SHARED ALIAS ( ::cKit ) 
       SET ADSINDEX TO ( cPatArt() + "ArtKit.Cdx" ) ADDITIVE
 
+      USE ( cPatAlm() + "ALMACEN.DBF" ) NEW VIA ( cDriver() ) SHARED ALIAS ( ::cAlm ) 
+      SET ADSINDEX TO ( cPatAlm() + "ALMACEN.CDX" ) ADDITIVE
+
    RECOVER USING oError
 
       lOpen             := .f.
@@ -574,6 +585,8 @@ METHOD CloseFiles() CLASS TStock
 
    if ( !Empty( ::cHisMovT ), ( ::cHisMovT )->( dbCloseArea() ), )   
    if ( !Empty( ::cHisMovS ), ( ::cHisMovS )->( dbCloseArea() ), )   
+
+   if ( !Empty( ::cAlm ),     ( ::cAlm )->( dbCloseArea() ), )
 
 Return ( Self )
 
@@ -3965,10 +3978,10 @@ METHOD aStockArticulo( cCodArt, cCodAlm, oBrw, lLote, lNumeroSerie, dFecIni, dFe
 
    DEFAULT lLote        := !uFieldEmpresa( "lCalLot" )
    DEFAULT lNotPendiente:= .f.
-
+/*
    oBlock               := ErrorBlock( {| oError | ApoloBreak( oError ) } )
    BEGIN SEQUENCE
-
+*/
    nOrdPedPrvL          := ( ::cPedPrvL )->( OrdSetFocus( "cRef"     ) )
    nOrdAlbPrvL          := ( ::cAlbPrvL )->( OrdSetFocus( "cStkFast" ) )
    nOrdFacPrvL          := ( ::cFacPrvL )->( OrdSetFocus( "cRef"     ) )
@@ -4008,19 +4021,24 @@ METHOD aStockArticulo( cCodArt, cCodAlm, oBrw, lLote, lNumeroSerie, dFecIni, dFe
                ( !Empty( ( ::cHisMovT)->cAliMov ) .and. ( Empty( cCodAlm ) .or. ( ::cHisMovT)->cAliMov == cCodAlm ) )
 
                with object ( SStock():New() )
-                  :cAlias              := ( ::cHisMovT)
-                  :cCodigo             := ( ::cHisMovT)->cRefMov
-                  :cCodigoAlmacen      := ( ::cHisMovT)->cAliMov
-                  :cCodigoPropiedad1   := ( ::cHisMovT)->cCodPr1
-                  :cCodigoPropiedad2   := ( ::cHisMovT)->cCodPr2
-                  :cValorPropiedad1    := ( ::cHisMovT)->cValPr1
-                  :cValorPropiedad2    := ( ::cHisMovT)->cValPr2
-                  :cLote               := ( ::cHisMovT)->cLote
-                  :nUnidades           := nTotNMovAlm( ::cHisMovT)
-                  if !Empty( ::dConsolidacion )
-                     :dConsolidacion   := ::dConsolidacion
-                  end if
+
+                  :cTipoDocumento      := MOV_ALM
+                  :cAlias              := ( ::cHisMovT )
+                  :cNumeroDocumento    := Str( ( ::cHisMovT )->nNumRem )
+                  :cDelegacion         := ( ::cHisMovT )->cSufRem
+                  :dFechaDocumento     := ( ::cHisMovT )->dFecMov
+                  :cCodigo             := ( ::cHisMovT )->cRefMov
+                  :cCodigoAlmacen      := ( ::cHisMovT )->cAliMov
+                  :cCodigoPropiedad1   := ( ::cHisMovT )->cCodPr1
+                  :cCodigoPropiedad2   := ( ::cHisMovT )->cCodPr2
+                  :cValorPropiedad1    := ( ::cHisMovT )->cValPr1
+                  :cValorPropiedad2    := ( ::cHisMovT )->cValPr2
+                  :cLote               := ( ::cHisMovT )->cLote
+                  :nUnidades           := nTotNMovAlm( ::cHisMovT )
+                  :dConsolidacion      := if( !Empty( ::dConsolidacion ), ::dConsolidacion, Ctod( "" ) )
+
                   ::Integra( hb_QWith(), lLote, lNumeroSerie )
+               
                end with
 
             end if
@@ -4029,19 +4047,24 @@ METHOD aStockArticulo( cCodArt, cCodAlm, oBrw, lLote, lNumeroSerie, dFecIni, dFe
                ( !Empty( ( ::cHisMovT)->cAloMov ) .and. ( Empty( cCodAlm ) .or. ( ::cHisMovT)->cAloMov == cCodAlm ) )
 
                with object ( SStock():New() )
-                  :cAlias              := ( ::cHisMovT)
-                  :cCodigo             := ( ::cHisMovT)->cRefMov
-                  :cCodigoAlmacen      := ( ::cHisMovT)->cAloMov
-                  :cCodigoPropiedad1   := ( ::cHisMovT)->cCodPr1
-                  :cCodigoPropiedad2   := ( ::cHisMovT)->cCodPr2
-                  :cValorPropiedad1    := ( ::cHisMovT)->cValPr1
-                  :cValorPropiedad2    := ( ::cHisMovT)->cValPr2
-                  :cLote               := ( ::cHisMovT)->cLote
-                  :nUnidades           := - nTotNMovAlm( ::cHisMovT)
-                  if !Empty( ::dConsolidacion )
-                     :dConsolidacion   := ::dConsolidacion
-                  end if
+
+                  :cTipoDocumento      := MOV_ALM
+                  :cAlias              := ( ::cHisMovT )
+                  :cNumeroDocumento    := Str( ( ::cHisMovT )->nNumRem )
+                  :cDelegacion         := ( ::cHisMovT  )->cSufRem
+                  :dFechaDocumento     := ( ::cHisMovT )->dFecMov
+                  :cCodigo             := ( ::cHisMovT )->cRefMov
+                  :cCodigoAlmacen      := ( ::cHisMovT )->cAloMov
+                  :cCodigoPropiedad1   := ( ::cHisMovT )->cCodPr1
+                  :cCodigoPropiedad2   := ( ::cHisMovT )->cCodPr2
+                  :cValorPropiedad1    := ( ::cHisMovT )->cValPr1
+                  :cValorPropiedad2    := ( ::cHisMovT )->cValPr2
+                  :cLote               := ( ::cHisMovT )->cLote
+                  :nUnidades           := - nTotNMovAlm( ::cHisMovT )
+                  :dConsolidacion   := if( !Empty( ::dConsolidacion ), ::dConsolidacion, Ctod( "" ) )
+
                   ::Integra( hb_QWith(), lLote, lNumeroSerie )
+
                end with
 
             end if
@@ -4068,7 +4091,12 @@ METHOD aStockArticulo( cCodArt, cCodAlm, oBrw, lLote, lNumeroSerie, dFecIni, dFe
             ( Empty( cCodAlm ) .or. ( ::cAlbPrvL )->cAlmLin == cCodAlm ) )
 
             with object ( SStock():New() )
+               
+               :cTipoDocumento      := ALB_PRV
                :cAlias              := ( ::cAlbPrvL )
+               :cNumeroDocumento    := ( ::cAlbPrvL )->cSerAlb + "/" + Alltrim( Str( ( ::cAlbPrvL )->nNumAlb ) )
+               :cDelegacion         := ( ::cAlbPrvL )->cSufAlb
+               :dFechaDocumento     := ( ::cAlbPrvL )->dFecAlb
                :cCodigo             := ( ::cAlbPrvL )->cRef
                :cCodigoAlmacen      := ( ::cAlbPrvL )->cAlmLin
                :cCodigoPropiedad1   := ( ::cAlbPrvL )->cCodPr1
@@ -4078,7 +4106,9 @@ METHOD aStockArticulo( cCodArt, cCodAlm, oBrw, lLote, lNumeroSerie, dFecIni, dFe
                :cLote               := ( ::cAlbPrvL )->cLote
                :dFechaCaducidad     := ( ::cAlbPrvL )->dFecCad
                :nUnidades           := nTotNAlbPrv( ::cAlbPrvL )
+               
                ::Integra( hb_QWith(), lLote, lNumeroSerie )
+
             end with
 
          end if
@@ -4105,7 +4135,13 @@ METHOD aStockArticulo( cCodArt, cCodAlm, oBrw, lLote, lNumeroSerie, dFecIni, dFe
             ( Empty( cCodAlm ) .or. ( ::cFacPrvL )->cAlmLin == cCodAlm )
 
             with object ( SStock():New() )
+
+               :cTipoDocumento      := FAC_PRV
                :cAlias              := ( ::cFacPrvL )
+               :cNumeroDocumento    := ( ::cFacPrvL )->cSerFac + "/" + Alltrim( Str( ( ::cFacPrvL )->nNumFac ) )
+               :cDelegacion         := ( ::cFacPrvL )->cSufFac
+               :dFechaDocumento     := ( ::cFacPrvL )->dFecFac
+               :cDelegacion         := ( ::cFacPrvL )->cSufFac
                :cCodigo             := ( ::cFacPrvL )->cRef
                :cCodigoAlmacen      := ( ::cFacPrvL )->cAlmLin
                :cCodigoPropiedad1   := ( ::cFacPrvL )->cCodPr1
@@ -4115,7 +4151,9 @@ METHOD aStockArticulo( cCodArt, cCodAlm, oBrw, lLote, lNumeroSerie, dFecIni, dFe
                :cLote               := ( ::cFacPrvL )->cLote
                :dFechaCaducidad     := ( ::cFacPrvL )->dFecCad
                :nUnidades           := nTotNFacPrv( ::cFacPrvL )
+
                ::Integra( hb_QWith(), lLote, lNumeroSerie )
+
             end with
 
          end if
@@ -4142,7 +4180,12 @@ METHOD aStockArticulo( cCodArt, cCodAlm, oBrw, lLote, lNumeroSerie, dFecIni, dFe
             ( Empty( cCodAlm ) .or. ( ::cRctPrvL )->cAlmLin == cCodAlm )
 
             with object ( SStock():New() )
+
+               :cTipoDocumento      := RCT_PRV
                :cAlias              := ( ::cRctPrvL )
+               :cNumeroDocumento    := ( ::cRctPrvL )->cSerFac + "/" + Alltrim( Str( ( ::cRctPrvL )->nNumFac ) )
+               :cDelegacion         := ( ::cRctPrvL )->cSufFac
+               :dFechaDocumento     := ( ::cRctPrvL )->dFecFac
                :cCodigo             := ( ::cRctPrvL )->cRef
                :cCodigoAlmacen      := ( ::cRctPrvL )->cAlmLin
                :cCodigoPropiedad1   := ( ::cRctPrvL )->cCodPr1
@@ -4152,7 +4195,9 @@ METHOD aStockArticulo( cCodArt, cCodAlm, oBrw, lLote, lNumeroSerie, dFecIni, dFe
                :cLote               := ( ::cRctPrvL )->cLote
                :dFechaCaducidad     := ( ::cRctPrvL )->dFecCad
                :nUnidades           := nTotNRctPrv( ::cRctPrvL )
+               
                ::Integra( hb_QWith(), lLote, lNumeroSerie )
+
             end with
 
          end if
@@ -4179,7 +4224,12 @@ METHOD aStockArticulo( cCodArt, cCodAlm, oBrw, lLote, lNumeroSerie, dFecIni, dFe
             ( Empty( cCodAlm ) .or. ( ::cAlbCliL )->cAlmLin == cCodAlm ) )
 
             with object ( SStock():New() )
+
+               :cTipoDocumento      := ALB_CLI
                :cAlias              := ( ::cAlbCliL )
+               :cNumeroDocumento    := ( ::cAlbCliL )->cSerAlb + "/" + Alltrim( Str( ( ::cAlbCliL )->nNumAlb ) )
+               :cDelegacion         := ( ::cAlbCliL )->cSufAlb
+               :dFechaDocumento     := ( ::cAlbCliL )->dFecAlb
                :cCodigo             := ( ::cAlbCliL )->cRef
                :cCodigoAlmacen      := ( ::cAlbCliL )->cAlmLin
                :cCodigoPropiedad1   := ( ::cAlbCliL )->cCodPr1
@@ -4189,7 +4239,9 @@ METHOD aStockArticulo( cCodArt, cCodAlm, oBrw, lLote, lNumeroSerie, dFecIni, dFe
                :cLote               := ( ::cAlbCliL )->cLote
                :dFechaCaducidad     := ( ::cAlbCliL )->dFecCad
                :nUnidades           := - nTotNAlbCli( ::cAlbCliL )
+
                ::Integra( hb_QWith(), lLote, lNumeroSerie )
+
             end with
 
          end if
@@ -4222,7 +4274,12 @@ METHOD aStockArticulo( cCodArt, cCodAlm, oBrw, lLote, lNumeroSerie, dFecIni, dFe
             ( Empty( cCodAlm ) .or. ( ::cFacCliL )->cAlmLin == cCodAlm ) )
 
             with object ( SStock():New() )
+
+               :cTipoDocumento      := FAC_CLI
                :cAlias              := ( ::cFacCliL )
+               :cNumeroDocumento    := ( ::cFacCliL )->cSerie + "/" + Alltrim( Str( ( ::cFacCliL )->nNumFac ) )
+               :cDelegacion         := ( ::cFacCliL )->cSufFac
+               :dFechaDocumento     := ( ::cFacCliL )->dFecFac
                :cCodigo             := ( ::cFacCliL )->cRef
                :cCodigoAlmacen      := ( ::cFacCliL )->cAlmLin
                :cCodigoPropiedad1   := ( ::cFacCliL )->cCodPr1
@@ -4232,7 +4289,9 @@ METHOD aStockArticulo( cCodArt, cCodAlm, oBrw, lLote, lNumeroSerie, dFecIni, dFe
                :cLote               := ( ::cFacCliL )->cLote
                :dFechaCaducidad     := ( ::cFacCliL )->dFecCad
                :nUnidades           := - nTotNFacCli( ::cFacCliL )
+
                ::Integra( hb_QWith(), lLote, lNumeroSerie )
+
             end with
 
          end if
@@ -4259,7 +4318,12 @@ METHOD aStockArticulo( cCodArt, cCodAlm, oBrw, lLote, lNumeroSerie, dFecIni, dFe
             ( Empty( cCodAlm ) .or. ( ::cFacRecL )->cAlmLin == cCodAlm ) )
 
             with object ( SStock():New() )
+
+               :cTipoDocumento      := FAC_REC
                :cAlias              := ( ::cFacRecL )
+               :cNumeroDocumento    := ( ::cFacRecL )->cSerie + "/" + Alltrim( Str( ( ::cFacRecL )->nNumFac ) )
+               :cDelegacion         := ( ::cFacRecL )->cSufFac
+               :dFechaDocumento     := ( ::cFacRecL )->dFecFac
                :cCodigo             := ( ::cFacRecL )->cRef
                :cCodigoAlmacen      := ( ::cFacRecL )->cAlmLin
                :cCodigoPropiedad1   := ( ::cFacRecL )->cCodPr1
@@ -4268,7 +4332,9 @@ METHOD aStockArticulo( cCodArt, cCodAlm, oBrw, lLote, lNumeroSerie, dFecIni, dFe
                :cValorPropiedad2    := ( ::cFacRecL )->cValPr2
                :cLote               := ( ::cFacRecL )->cLote
                :nUnidades           := - nTotNFacRec( ::cFacRecL )
+
                ::Integra( hb_QWith(), lLote, lNumeroSerie )
+
             end with
 
          end if
@@ -4295,22 +4361,43 @@ METHOD aStockArticulo( cCodArt, cCodAlm, oBrw, lLote, lNumeroSerie, dFecIni, dFe
             ( Empty( cCodAlm ) .or. ( ::cTikL )->cAlmLin == cCodAlm ) )
 
             with object ( SStock():New() )
-               :cAlias              := ( ::cTikL )
-               :cCodigo             := ( ::cTikL )->cCbaTil
-               :cCodigoAlmacen      := ( ::cTikL )->cAlmLin
-               :cCodigoPropiedad1   := ( ::cTikL )->cCodPr1
-               :cCodigoPropiedad2   := ( ::cTikL )->cCodPr2
-               :cValorPropiedad1    := ( ::cTikL )->cValPr1
-               :cValorPropiedad2    := ( ::cTikL )->cValPr2
-               :cLote               := ( ::cTikL )->cLote
-               if ( ( ::cTikL )->cTipTil == SAVTIK .or. ( ::cTikL )->cTipTil == SAVAPT )
-                  :nUnidades        := - nTotVTikTpv( ::cTikL )
-               else
-                  :nUnidades        := nTotVTikTpv( ::cTikL )
-               end if
-               ::Integra( hb_QWith(), lLote, lNumeroSerie )
-            end with
 
+               do case
+               case ( ::cTikL )->cTipTil == SAVTIK
+                  :cTipoDocumento      := TIK_CLI
+
+               case ( ::cTikL )->cTipTil == SAVDEV
+                  :cTipoDocumento      := DEV_CLI
+
+               case ( ::cTikL )->cTipTil == SAVVAL
+                  :cTipoDocumento      := VAL_CLI
+
+               case ( ::cTikL )->cTipTil == SAVAPT
+                  :cTipoDocumento      := APT_CLI
+
+               end case
+
+               :cAlias                 := ( ::cTikL )
+               :cNumeroDocumento       := ( ::cTikL )->cSerTil + "/" + Alltrim( ( ::cTikL )->cNumTil )
+               :cDelegacion            := ( ::cTikL )->cSufTil
+               :dFechaDocumento        := ( ::cTikL )->dFecTik
+               :cCodigo                := ( ::cTikL )->cCbaTil
+               :cCodigoAlmacen         := ( ::cTikL )->cAlmLin
+               :cCodigoPropiedad1      := ( ::cTikL )->cCodPr1
+               :cCodigoPropiedad2      := ( ::cTikL )->cCodPr2
+               :cValorPropiedad1       := ( ::cTikL )->cValPr1
+               :cValorPropiedad2       := ( ::cTikL )->cValPr2
+               :cLote                  := ( ::cTikL )->cLote
+
+               if ( ( ::cTikL )->cTipTil == SAVTIK .or. ( ::cTikL )->cTipTil == SAVAPT )
+                  :nUnidades           := - nTotVTikTpv( ::cTikL )
+               else
+                  :nUnidades           := nTotVTikTpv( ::cTikL )
+               end if
+               
+               ::Integra( hb_QWith(), lLote, lNumeroSerie )
+
+            end with
 
          end if
 
@@ -4342,7 +4429,26 @@ METHOD aStockArticulo( cCodArt, cCodAlm, oBrw, lLote, lNumeroSerie, dFecIni, dFe
                ( Empty( cCodAlm ) .or. ( ::cTikL )->cAlmLin == cCodAlm ) )
 
                with object ( SStock():New() )
+
+                  do case
+                  case ( ::cTikL )->cTipTil == SAVTIK
+                     :cTipoDocumento   := TIK_CLI
+
+                  case ( ::cTikL )->cTipTil == SAVDEV
+                     :cTipoDocumento   := DEV_CLI
+
+                  case ( ::cTikL )->cTipTil == SAVVAL
+                     :cTipoDocumento   := VAL_CLI
+
+                  case ( ::cTikL )->cTipTil == SAVAPT
+                     :cTipoDocumento   := APT_CLI
+
+                  end case
+
                   :cAlias              := ( ::cTikL )
+                  :cNumeroDocumento    := ( ::cTikL )->cSerTil + "/" + Alltrim( ( ::cTikL )->cNumTil )
+                  :cDelegacion         := ( ::cTikL )->cSufTil
+                  :dFechaDocumento     := ( ::cTikL )->dFecTik
                   :cCodigo             := ( ::cTikL )->cCbaTil
                   :cCodigoAlmacen      := ( ::cTikL )->cAlmLin
                   :cCodigoPropiedad1   := ( ::cTikL )->cCodPr1
@@ -4350,12 +4456,15 @@ METHOD aStockArticulo( cCodArt, cCodAlm, oBrw, lLote, lNumeroSerie, dFecIni, dFe
                   :cValorPropiedad1    := ( ::cTikL )->cValPr1
                   :cValorPropiedad2    := ( ::cTikL )->cValPr2
                   :cLote               := ( ::cTikL )->cLote
+                  
                   if ( ( ::cTikL )->cTipTil == SAVTIK .or. ( ::cTikL )->cTipTil == SAVAPT )
                      :nUnidades        := - nTotVTikTpv( ::cTikL )
                   else
                      :nUnidades        := nTotVTikTpv( ::cTikL )
                   end if
+                  
                   ::Integra( hb_QWith(), lLote, lNumeroSerie )
+
                end with
 
             end if
@@ -4385,7 +4494,12 @@ METHOD aStockArticulo( cCodArt, cCodAlm, oBrw, lLote, lNumeroSerie, dFecIni, dFe
             ( Empty( cCodAlm ) .or. ( ::cProducL )->cAlmOrd == cCodAlm )
 
             with object ( SStock():New() )
+
+               :cTipoDocumento      := PRO_LIN
                :cAlias              := ( ::cProducL )
+               :cNumeroDocumento    := ( ::cProducL )->cSerOrd + "/" + Alltrim( Str( ( ::cProducL )->nNumOrd ) )
+               :cDelegacion         := ( ::cProducL )->cSufOrd
+               :dFechaDocumento     := ( ::cProducL )->dFecOrd
                :cCodigo             := ( ::cProducL )->cCodArt
                :cCodigoAlmacen      := ( ::cProducL )->cAlmOrd
                :cCodigoPropiedad1   := ( ::cProducL )->cCodPr1
@@ -4394,7 +4508,9 @@ METHOD aStockArticulo( cCodArt, cCodAlm, oBrw, lLote, lNumeroSerie, dFecIni, dFe
                :cValorPropiedad2    := ( ::cProducL )->cValPr2
                :cLote               := ( ::cProducL )->cLote
                :nUnidades           := nTotNProduccion( ::cProducL )
+
                ::Integra( hb_QWith(), lLote, lNumeroSerie )
+
             end with
 
          end if
@@ -4425,7 +4541,12 @@ METHOD aStockArticulo( cCodArt, cCodAlm, oBrw, lLote, lNumeroSerie, dFecIni, dFe
             ( Empty( cCodAlm ) .or. ( ::cProducM )->cAlmOrd == cCodAlm )
 
             with object ( SStock():New() )
+
+               :cTipoDocumento      := PRO_MAT
                :cAlias              := ( ::cProducM )
+               :cNumeroDocumento    := ( ::cProducM )->cSerOrd + "/" + Alltrim( Str( ( ::cProducM )->nNumOrd ) )
+               :cDelegacion         := ( ::cProducM )->cSufOrd
+               :dFechaDocumento     := ( ::cProducM )->dFecOrd
                :cCodigo             := ( ::cProducM )->cCodArt
                :cCodigoAlmacen      := ( ::cProducM )->cAlmOrd
                :cCodigoPropiedad1   := ( ::cProducM )->cCodPr1
@@ -4434,7 +4555,9 @@ METHOD aStockArticulo( cCodArt, cCodAlm, oBrw, lLote, lNumeroSerie, dFecIni, dFe
                :cValorPropiedad2    := ( ::cProducM )->cValPr2
                :cLote               := ( ::cProducM )->cLote
                :nUnidades           := - nTotNMaterial( ::cProducM )
+
                ::Integra( hb_QWith(), lLote, lNumeroSerie )
+
             end with
 
          end if
@@ -4481,7 +4604,12 @@ METHOD aStockArticulo( cCodArt, cCodAlm, oBrw, lLote, lNumeroSerie, dFecIni, dFe
                end if
 
                with object ( SStock():New() )
+
+                  :cTipoDocumento      := ALB_PRV
                   :cCodigo             := ( ::cPedPrvL )->cRef
+                  :cNumeroDocumento    := ( ::cPedPrvL )->cSerPed + "/" + Alltrim( Str( ( ::cPedPrvL )->nNumPed ) )
+                  :cDelegacion         := ( ::cPedPrvL )->cSufPed
+                  :dFechaDocumento     := ( ::cPedPrvL )->dFecPed
                   :cCodigoAlmacen      := ( ::cPedPrvL )->cAlmLin
                   :cCodigoPropiedad1   := ( ::cPedPrvL )->cCodPr1
                   :cCodigoPropiedad2   := ( ::cPedPrvL )->cCodPr2
@@ -4489,7 +4617,9 @@ METHOD aStockArticulo( cCodArt, cCodAlm, oBrw, lLote, lNumeroSerie, dFecIni, dFe
                   :cValorPropiedad2    := ( ::cPedPrvL )->cValPr2
                   :cLote               := ( ::cPedPrvL )->cLote
                   :nPendientesRecibir  := if( nTotal > 0, nTotal, 0 )
+
                   ::Integra( hb_QWith(), lLote, lNumeroSerie )
+
                end with
 
             end if
@@ -4548,7 +4678,12 @@ METHOD aStockArticulo( cCodArt, cCodAlm, oBrw, lLote, lNumeroSerie, dFecIni, dFe
                end if
 
                with object ( SStock():New() )
+
+                  :cTipoDocumento      := PED_CLI
                   :cCodigo             := ( ::cPedCliL )->cRef
+                  :cNumeroDocumento    := ( ::cPedCliL )->cSerPed + "/" + Alltrim( Str( ( ::cPedCliL )->nNumPed ) )
+                  :cDelegacion         := ( ::cPedCliL )->cSufPed
+                  :dFechaDocumento     := ( ::cPedCliL )->dFecPed
                   :cCodigoAlmacen      := ( ::cPedCliL )->cAlmLin
                   :cCodigoPropiedad1   := ( ::cPedCliL )->cCodPr1
                   :cCodigoPropiedad2   := ( ::cPedCliL )->cCodPr2
@@ -4556,7 +4691,9 @@ METHOD aStockArticulo( cCodArt, cCodAlm, oBrw, lLote, lNumeroSerie, dFecIni, dFe
                   :cValorPropiedad2    := ( ::cPedCliL )->cValPr2
                   :cLote               := ( ::cPedCliL )->cLote
                   :nPendientesEntregar := if( nTotal > 0, nTotal, 0 )
+
                   ::Integra( hb_QWith(), lLote, lNumeroSerie )
+
                end with
 
                ( ::cPedCliL )->( dbSkip() )
@@ -4608,7 +4745,12 @@ METHOD aStockArticulo( cCodArt, cCodAlm, oBrw, lLote, lNumeroSerie, dFecIni, dFe
          if ( ( ::tmpAlbCliL )->cRef == cCodArt ) .and. ( Empty( cCodAlm ) .or. ( ::tmpAlbCliL )->cAlmLin == cCodAlm )
 
             with object ( SStock():New() )
+
+               :cTipoDocumento      := ALB_CLI
                :cCodigo             := ( ::tmpAlbCliL )->cRef
+               :cNumeroDocumento    := ( ::tmpAlbCliL )->cSerAlb + "/" + Alltrim( Str( ( ::tmpAlbCiL )->nNumAlb ) )
+               :cDelegacion         := ( ::tmpAlbCliL )->cSufAlb
+               :dFechaDocumento     := ( ::tmpAlbCliL )->dFecAlb
                :cCodigoAlmacen      := ( ::tmpAlbCliL )->cAlmLin
                :cCodigoPropiedad1   := ( ::tmpAlbCliL )->cCodPr1
                :cCodigoPropiedad2   := ( ::tmpAlbCliL )->cCodPr2
@@ -4616,7 +4758,9 @@ METHOD aStockArticulo( cCodArt, cCodAlm, oBrw, lLote, lNumeroSerie, dFecIni, dFe
                :cValorPropiedad2    := ( ::tmpAlbCliL )->cValPr2
                :cLote               := ( ::tmpAlbCliL )->cLote
                :nUnidades           := - nTotNAlbCli( ::tmpAlbCliL )
+               
                ::Integra( hb_QWith(), lLote, lNumeroSerie )
+
             end with
 
          end if
@@ -4643,7 +4787,12 @@ METHOD aStockArticulo( cCodArt, cCodAlm, oBrw, lLote, lNumeroSerie, dFecIni, dFe
          if ( ( ::tmpFacCliL )->cRef == cCodArt ) .and. ( Empty( cCodAlm ) .or. ( ::tmpFacCliL )->cAlmLin == cCodAlm )
 
             with object ( SStock():New() )
+
+               :cTipoDocumento      := FAC_CLI
                :cCodigo             := ( ::tmpFacCliL )->cRef
+               :cNumeroDocumento    := ( ::tmpFacCliL )->cSerFac + "/" + Alltrim( Str( ( ::tmpFacCiL )->nNumFac ) )
+               :cDelegacion         := ( ::tmpFacCliL )->cSufFac
+               :dFechaDocumento     := ( ::tmpFacCliL )->dFecFac
                :cCodigoAlmacen      := ( ::tmpFacCliL )->cAlmLin
                :cCodigoPropiedad1   := ( ::tmpFacCliL )->cCodPr1
                :cCodigoPropiedad2   := ( ::tmpFacCliL )->cCodPr2
@@ -4651,7 +4800,9 @@ METHOD aStockArticulo( cCodArt, cCodAlm, oBrw, lLote, lNumeroSerie, dFecIni, dFe
                :cValorPropiedad2    := ( ::tmpFacCliL )->cValPr2
                :cLote               := ( ::tmpFacCliL )->cLote
                :nUnidades           := - nTotNFacCli( ::tmpFacCliL )
+
                ::Integra( hb_QWith(), lLote, lNumeroSerie )
+
             end with
 
          end if
@@ -4692,7 +4843,7 @@ METHOD aStockArticulo( cCodArt, cCodAlm, oBrw, lLote, lNumeroSerie, dFecIni, dFe
       oBrw:Refresh()
 
    end if
-
+/*
    RECOVER USING oError
 
       msgStop( ErrorMessage( oError ), "Calculo de stock" )
@@ -4700,7 +4851,7 @@ METHOD aStockArticulo( cCodArt, cCodAlm, oBrw, lLote, lNumeroSerie, dFecIni, dFe
    END SEQUENCE
 
    ErrorBlock( oBlock )
-
+*/
 return ( ::aStocks )
 
 //---------------------------------------------------------------------------//
@@ -5008,7 +5159,7 @@ METHOD aStockAlmacen( oRemMov ) CLASS TStock
 
    local cCodAlm
    local nOrdAnt
-   local nOrdArt        := ( ::cArticulo     )->( OrdSetFocus( "Codigo"   ) )
+   local nOrdArt        := ( ::cArticulo)->( OrdSetFocus( "Codigo"   ) )
    local nOrdAlbPrvL    := ( ::cAlbPrvL )->( OrdSetFocus( "cStkFast" ) )
    local nOrdFacPrvL    := ( ::cFacPrvL )->( OrdSetFocus( "cRef"     ) )
    local nOrdRctPrvL    := ( ::cRctPrvL )->( OrdSetFocus( "cRef"     ) )
@@ -5430,7 +5581,7 @@ METHOD aStockAlmacen( oRemMov ) CLASS TStock
    Comprobamos la marca de la empresa para no mostrar los valores cero --------
    */
 
-   ( ::cArticulo     )->( OrdSetFocus( nOrdArt     ) )
+   ( ::cArticulo)->( OrdSetFocus( nOrdArt     ) )
    ( ::cAlbPrvL )->( OrdSetFocus( nOrdAlbPrvL ) )
    ( ::cFacPrvL )->( OrdSetFocus( nOrdFacPrvL ) )
    ( ::cRctPrvL )->( OrdSetFocus( nOrdRctPrvL ) )
@@ -5455,34 +5606,7 @@ Method Integra( sStocks, lLote, lNumeroSerie ) CLASS TStock
    DEFAULT lLote        := .t.
    DEFAULT lNumeroSerie := .t.
 
-   /*
-   if lNumeroSerie .and. !Empty( sStocks:cNumeroSerie )
-
-      aNumeroSerie      := hb_aTokens( sStocks:cNumeroSerie, "," )
-
-      for each cNumeroSerie in aNumeroSerie
-
-         if sStocks:nUnidades > 0
-            sStocks:nUnidades := 1
-         else
-            sStocks:nUnidades := -1
-         end if
-
-         sStocks:cNumeroSerie := cNumeroSerie
-
-         nPos           := aScan( ::aStocks, {|o| o:cCodigo == sStocks:cCodigo .and. o:cCodigoAlmacen == sStocks:cCodigoAlmacen .and. o:cValorPropiedad1 == sStocks:cValorPropiedad1 .and. o:cValorPropiedad2 == sStocks:cValorPropiedad2 .and. if( lLote, o:cLote == sStocks:cLote, .t. ) .and. if( lNumeroSerie, o:cNumeroSerie == sStocks:cNumeroSerie, .t. ) } )
-         if nPos != 0
-            ::aStocks[ nPos ]:nUnidades            += sStocks:nUnidades
-            ::aStocks[ nPos ]:nPendientesRecibir   += sStocks:nPendientesRecibir
-            ::aStocks[ nPos ]:nPendientesEntregar  += sStocks:nPendientesEntregar
-         else
-            aAdd( ::aStocks, oClone( sStocks ) )
-         end if
-
-      next
-
-   else
-   */
+   if ::lIntegra
 
       nPos              := aScan( ::aStocks, {|o| o:cCodigo == sStocks:cCodigo .and. o:cCodigoAlmacen == sStocks:cCodigoAlmacen .and. o:cValorPropiedad1 == sStocks:cValorPropiedad1 .and. o:cValorPropiedad2 == sStocks:cValorPropiedad2 .and. if( lLote, o:cLote == sStocks:cLote, .t. ) .and. if( lNumeroSerie, o:cNumeroSerie == sStocks:cNumeroSerie, .t. ) } )
       if nPos != 0
@@ -5493,11 +5617,78 @@ Method Integra( sStocks, lLote, lNumeroSerie ) CLASS TStock
          aAdd( ::aStocks, oClone( sStocks ) )
       end if
 
-   /*
-   end if
-   */
+   else
+
+      aAdd( ::aStocks, oClone( sStocks ) )
+
+   end if 
 
 Return ( nil )
+
+//---------------------------------------------------------------------------//
+
+METHOD oTreeStocks( cCodArt, cCodAlm )
+
+   local x
+   local cValue
+
+   ::aStockArticulo( cCodArt, cCodAlm )
+
+/*
+   ::oTree     := TreeBegin( "Navigate_Minus_16", "Navigate_Plus_16" )
+
+   TreeAddItem( "Tronco mundo" )
+
+      TreeBegin()
+      TreeAddItem( "Adios mundo" )
+      TreeEnd()      
+
+   TreeAddItem( "Adios mundo" )
+   TreeAddItem( "Adios mundo" )
+   TreeAddItem( "Adios mundo" )
+
+   TreeAddItem( "Hola mundo" )
+   TreeAddItem( "Hola mundo" )
+
+   TreeAddItem( "Hola mundo" )
+   TreeAddItem( "Hola mundo" )
+   TreeAddItem( "Hola mundo" )
+   TreeAddItem( "Hola mundo" )
+
+   TreeEnd()
+*/
+
+   aSort( ::aStocks, , , {|x,y| x:cCodigo + x:cCodigoAlmacen + x:cValorPropiedad1 + x:cValorPropiedad2 + x:cLote > y:cCodigo + y:cCodigoAlmacen + y:cValorPropiedad1 + y:cValorPropiedad2 + y:cLote } )
+
+   ::oTree     := TreeBegin()
+   
+   for each x in ::aStocks
+
+      if cValue != x:cCodigo + x:cCodigoAlmacen + x:cValorPropiedad1 + x:cValorPropiedad2 + x:cLote
+
+         if cValue != nil
+            TreeEnd()
+         end if 
+
+         TreeAddItem( x:cCodigoAlmacen + Space(1) + retAlmacen( x:cCodigoAlmacen, ::cAlm ) )
+
+         TreeBegin()
+
+      end if 
+
+      TreeAddItem( x:Documento() ):Cargo := oClone( x )
+         
+      cValue   := x:cCodigo + x:cCodigoAlmacen + x:cValorPropiedad1 + x:cValorPropiedad2 + x:cLote
+      
+   next 
+
+   if cValue != nil 
+      TreeEnd()
+   end if
+
+   TreeEnd()
+
+RETURN ( ::oTree )
 
 //---------------------------------------------------------------------------//
 
@@ -5916,9 +6107,10 @@ CLASS SStock
 
    DATA cAlias                INIT ""
    DATA cCodigo               INIT ""
+   DATA cDelegacion           INIT ""
+   DATA dFechaDocumento       INIT Ctod( "" )
    DATA dConsolidacion        INIT Ctod( "" )
    DATA cCodigoAlmacen        INIT ""
-   DATA cNombreAlmacen        INIT ""
    DATA cCodigoPropiedad1     INIT ""
    DATA cCodigoPropiedad2     INIT ""
    DATA cValorPropiedad1      INIT ""
@@ -5935,8 +6127,9 @@ CLASS SStock
    INLINE METHOD New()
 
       ::cCodigo               := ""
+      ::cDelegacion           := ""
+      ::dFechaDocumento       := Ctod("")
       ::cCodigoAlmacen        := ""
-      ::cNombreAlmacen        := ""
       ::cCodigoPropiedad1     := ""
       ::cCodigoPropiedad2     := ""
       ::cValorPropiedad1      := ""
@@ -5947,17 +6140,20 @@ CLASS SStock
       ::nUnidades             := 0
       ::nPendientesRecibir    := 0
       ::nPendientesEntregar   := 0
+      ::cNumeroDocumento      := ""
+      ::cTipoDocumento        := ""
 
       RETURN ( Self )
 
    ENDMETHOD
+
+   METHOD Documento()         INLINE ( cTextDocument( ::cTipoDocumento ) + Space(1) + AllTrim( ::cNumeroDocumento ) + Space(1) + "de fecha" + Space(1) + Dtoc( ::dFechaDocumento ) )
 
    INLINE METHOD Say()
 
       RETURN ( "Alias"                    + ::cAlias                                + "," + ;
                "Codigo"                   + ::cCodigo                               + "," + ;
                "CodigoAlmacen"            + ::cCodigoAlmacen                        + "," + ;
-               "NombreAlmacen"            + ::cNombreAlmacen                        + "," + ;
                "CodigoPropiedad1"         + ::cCodigoPropiedad1                     + "," + ;
                "CodigoPropiedad2"         + ::cCodigoPropiedad2                     + "," + ;
                "ValorPropiedad1"          + ::cValorPropiedad1                      + "," + ;

@@ -1481,7 +1481,7 @@ function TreeAddItem( cPrompt, cResName1, cResName2, cBmpOpen, cBmpClose, lOpene
       hBmpClose   := ReadBitmap( 0, cBmpClose )
    endif
 
-return ATail( aTrees ):Add( cPrompt, nLevel, hBmpOpen, hBmpClose, lOpened )
+return ( ATail( aTrees ):Add( cPrompt, nLevel, hBmpOpen, hBmpClose, lOpened ) )
 
 //----------------------------------------------------------------------------//
 
@@ -1509,7 +1509,7 @@ function TreeEnd()
 
    else
 
-      aTrees   := {}
+      aTrees      := {}
 
    endif
 
@@ -1518,3 +1518,4 @@ function TreeEnd()
 return nil
 
 //----------------------------------------------------------------------------//
+

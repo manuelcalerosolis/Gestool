@@ -1176,29 +1176,29 @@ METHOD DefineFiles( cPath )
 
    DEFINE DATABASE ::oDbf FILE "TURNO.DBF" CLASS "TurnoT" ALIAS "TurnoT" PATH ( ::cPath ) VIA ( cDriver() ) COMMENT  "Sesiones"
 
-      FIELD NAME "LSNDTUR" TYPE "L"  LEN  1  DEC 0 COMMENT ""                                                                    HIDE                     OF ::oDbf
-      FIELD CALCULATE NAME "BSNDTUR" LEN 14  DEC 0 COMMENT { "Envio", "Lbl16" , 3 }   VAL {|| ::oDbf:lSndTur } BITMAPS "Sel16", "Nil16"       COLSIZE 20  OF ::oDbf
-      FIELD NAME "LCLOTUR" TYPE "L"  LEN  1  DEC 0 COMMENT ""                                                                    HIDE                     OF ::oDbf
-      FIELD NAME "LCONTUR" TYPE "L"  LEN  1  DEC 0 COMMENT "Cn"                                                                  HIDE                     OF ::oDbf
-      FIELD CALCULATE NAME "BCLOTUR" LEN 14  DEC 0 COMMENT { "Contabilizado", "BmpConta16" , 3 } ;
+      FIELD NAME "lSndTur" TYPE "L"  LEN  1  DEC 0 COMMENT ""                                                                    HIDE                     OF ::oDbf
+      FIELD CALCULATE NAME "bSndTur" LEN 14  DEC 0 COMMENT { "Envio", "Lbl16" , 3 }   VAL {|| ::oDbf:lSndTur } BITMAPS "Sel16", "Nil16"       COLSIZE 20  OF ::oDbf
+      FIELD NAME "lCloTur" TYPE "L"  LEN  1  DEC 0 COMMENT ""                                                                    HIDE                     OF ::oDbf
+      FIELD NAME "lConTur" TYPE "L"  LEN  1  DEC 0 COMMENT "Cn"                                                                  HIDE                     OF ::oDbf
+      FIELD CALCULATE NAME "bCloTur" LEN 14  DEC 0 COMMENT { "Contabilizado", "BmpConta16" , 3 } ;
                                                    VAL {|| ::oDbf:lConTur } BITMAPS "Sel16", "Nil16"                             COLSIZE 20               OF ::oDbf
       FIELD CALCULATE NAME "cStaTur" LEN 20  DEC 0 COMMENT "Estado" VAL {|| ::cEstadoSesion() }                                  COLSIZE 60               OF ::oDbf
-      FIELD NAME "CNUMTUR" TYPE "C"  LEN  6  DEC 0 COMMENT "Número"                                                              COLSIZE 60 ALIGN RIGHT   OF ::oDbf
-      FIELD NAME "CSUFTUR" TYPE "C"  LEN  2  DEC 0 COMMENT "Delegación"                                                          COLSIZE 40               OF ::oDbf
-      FIELD NAME "DOPNTUR" TYPE "D"  LEN  8  DEC 0 COMMENT "Fecha inicio"                                                        COLSIZE 80               OF ::oDbf
-      FIELD NAME "CHOROPN" TYPE "C"  LEN  5  DEC 0 COMMENT "Hora inicio"                                                         COLSIZE 60               OF ::oDbf
-      FIELD NAME "DCLOTUR" TYPE "D"  LEN  8  DEC 0 COMMENT "Fecha fin"                                                           COLSIZE 80               OF ::oDbf
-      FIELD NAME "CHORCLO" TYPE "C"  LEN  5  DEC 0 COMMENT "Hora fin"                                                            COLSIZE 60               OF ::oDbf
-      FIELD NAME "CCAJTUR" TYPE "C"  LEN  3  DEC 0 COMMENT "Usuario"                                                             COLSIZE 50               OF ::oDbf
-      FIELD CALCULATE NAME "CNCJTUR" LEN 150 DEC 0 COMMENT "Nombre" VAL {|| ::cNombreUser() }                                    COLSIZE 180              OF ::oDbf
-      FIELD NAME "LBEFCLO" TYPE "L"  LEN  1  DEC 0 COMMENT ""                                                                    HIDE                     OF ::oDbf
-      FIELD NAME "MCOMTUR" TYPE "M"  LEN 10  DEC 0 COMMENT "Comentarios"                                                         COLSIZE 300              OF ::oDbf
+      FIELD NAME "cNumTur" TYPE "C"  LEN  6  DEC 0 COMMENT "Número"                                                              COLSIZE 60 ALIGN RIGHT   OF ::oDbf
+      FIELD NAME "cSufTur" TYPE "C"  LEN  2  DEC 0 COMMENT "Delegación"                                                          COLSIZE 40               OF ::oDbf
+      FIELD NAME "dOpnTur" TYPE "D"  LEN  8  DEC 0 COMMENT "Fecha inicio"                                                        COLSIZE 80               OF ::oDbf
+      FIELD NAME "cHorOpn" TYPE "C"  LEN  5  DEC 0 COMMENT "Hora inicio"                                                         COLSIZE 60               OF ::oDbf
+      FIELD NAME "dCloTur" TYPE "D"  LEN  8  DEC 0 COMMENT "Fecha fin"                                                           COLSIZE 80               OF ::oDbf
+      FIELD NAME "cHorClo" TYPE "C"  LEN  5  DEC 0 COMMENT "Hora fin"                                                            COLSIZE 60               OF ::oDbf
+      FIELD NAME "cCajTur" TYPE "C"  LEN  3  DEC 0 COMMENT "Usuario"                                                             COLSIZE 50               OF ::oDbf
+      FIELD CALCULATE NAME "cNcjTur" LEN 150 DEC 0 COMMENT "Nombre" VAL {|| ::cNombreUser() }                                    COLSIZE 180              OF ::oDbf
+      FIELD NAME "lBefClo" TYPE "L"  LEN  1  DEC 0 COMMENT ""                                                                    HIDE                     OF ::oDbf
+      FIELD NAME "mComTur" TYPE "M"  LEN 10  DEC 0 COMMENT "Comentarios"                                                         COLSIZE 300              OF ::oDbf
       FIELD NAME "nStaTur" TYPE "N"  LEN  1  DEC 0 COMMENT ""                                                                    HIDE                     OF ::oDbf
 
-      INDEX TO "TURNO.CDX" TAG "cNumTur" ON "cNumTur + cSufTur" COMMENT "Número" FOR "!Deleted()"                       OF ::oDbf
-      INDEX TO "TURNO.CDX" TAG "dOpnTur" ON "dOpnTur"                            FOR "!Deleted()"                       OF ::oDbf
-      INDEX TO "TURNO.CDX" TAG "lSndTur" ON "lSndTur"                            FOR "!Deleted()"                       OF ::oDbf
-      INDEX TO "TURNO.CDX" TAG "nStaTur" ON "nStaTur"                            FOR "!Deleted() .and. nStaTur != 0"    OF ::oDbf
+      INDEX TO "Turno.Cdx" TAG "cNumTur" ON "cNumTur + cSufTur" COMMENT "Número" FOR "!Deleted()"                       OF ::oDbf
+      INDEX TO "Turno.Cdx" TAG "dOpnTur" ON "dOpnTur"                            FOR "!Deleted()"                       OF ::oDbf
+      INDEX TO "Turno.Cdx" TAG "lSndTur" ON "lSndTur"                            FOR "!Deleted()"                       OF ::oDbf
+      INDEX TO "Turno.Cdx" TAG "nStaTur" ON "nStaTur"                            FOR "!Deleted() .and. nStaTur != 0"    OF ::oDbf
 
    END DATABASE ::oDbf
 
@@ -1240,17 +1240,17 @@ METHOD DefineFiles( cPath )
 
    DEFINE DATABASE ::oDbfDet FILE "TURNOL.DBF" CLASS "TurnoL" ALIAS "TurnoL" PATH ( ::cPath ) VIA ( cDriver() ) COMMENT  "Lineas de contadores en turnos de venta"
 
-      FIELD NAME "CNUMTUR" TYPE "C" LEN  6   DEC 0 COMMENT "Número"                          PICTURE "######"  OF ::oDbfDet
-      FIELD NAME "CSUFTUR" TYPE "C" LEN  2   DEC 0 COMMENT "Sufijo"                                            OF ::oDbfDet
-      FIELD NAME "CCODART" TYPE "C" LEN 18   DEC 0 COMMENT "Código del artículo"                               OF ::oDbfDet
-      FIELD NAME "CNOMART" TYPE "C" LEN 50   DEC 0 COMMENT "Nombre del artículo"                               OF ::oDbfDet
-      FIELD NAME "NCANANT" TYPE "N" LEN 16   DEC 6 COMMENT "Cantidad anterior del artículo"                    OF ::oDbfDet
-      FIELD NAME "NCANACT" TYPE "N" LEN 16   DEC 6 COMMENT "Cantidad posterior del artículo"                   OF ::oDbfDet
-      FIELD NAME "NPVPART" TYPE "N" LEN 16   DEC 6 COMMENT "Importe de venta del artículo"                     OF ::oDbfDet
-      FIELD NAME "NIVAART" TYPE "N" LEN  5   DEC 2 COMMENT "Porcentaje de " + cImp() + " del artículo"                    OF ::oDbfDet
+      FIELD NAME "cNumTur" TYPE "C" LEN  6   DEC 0 COMMENT "Número"                          PICTURE "######"  OF ::oDbfDet
+      FIELD NAME "cSufTur" TYPE "C" LEN  2   DEC 0 COMMENT "Sufijo"                                            OF ::oDbfDet
+      FIELD NAME "cCodArt" TYPE "C" LEN 18   DEC 0 COMMENT "Código del artículo"                               OF ::oDbfDet
+      FIELD NAME "cNomArt" TYPE "C" LEN 50   DEC 0 COMMENT "Nombre del artículo"                               OF ::oDbfDet
+      FIELD NAME "nCanAnt" TYPE "N" LEN 16   DEC 6 COMMENT "Cantidad anterior del artículo"                    OF ::oDbfDet
+      FIELD NAME "nCanAct" TYPE "N" LEN 16   DEC 6 COMMENT "Cantidad posterior del artículo"                   OF ::oDbfDet
+      FIELD NAME "nPvpArt" TYPE "N" LEN 16   DEC 6 COMMENT "Importe de venta del artículo"                     OF ::oDbfDet
+      FIELD NAME "nIvaArt" TYPE "N" LEN  5   DEC 2 COMMENT "Porcentaje de " + cImp() + " del artículo"         OF ::oDbfDet
       FIELD NAME "nValImp" TYPE "N" LEN 16   DEC 6 COMMENT "Importe de impuesto especial"    PICTURE ::cPouDiv OF ::oDbfDet
 
-      INDEX TO "TURNOL.CDX" TAG "CNUMTUR" ON "cNumTur + cSufTur + cCodArt" FOR "!Deleted()"  OF ::oDbfDet
+      INDEX TO "Turnol.Cdx" TAG "cNumTur" ON "cNumTur + cSufTur + cCodArt" FOR "!Deleted()"  OF ::oDbfDet
 
    END DATABASE ::oDbfDet
 
@@ -1308,7 +1308,7 @@ METHOD Activate()
       HOTKEY   "A";
       LEVEL    ACC_ZOOM
 
-   DEFINE BTNSHELL RESOURCE "STOPWATCH_STOP_" OF ::oWndBrw ;
+   DEFINE BTNSHELL RESOURCE "STOPWATCH_STOP_" OF ::oWndBrw ; 
       NOBORDER ;
       ACTION   ( ::oWndBrw:SetOnProcess(), ::lArqueoTurno( .f. ), ::oWndBrw:QuitOnProcess(), ::oWndBrw:SetFocus() );
       TOOLTIP  "(C)errar sesión";

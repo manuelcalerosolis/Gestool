@@ -8009,6 +8009,7 @@ Function SelectDelegacion()
 
    if oDlg:nResult == IDOK
       oUser():cDelegacion( ( dbfDlg )->cCodDlg )
+      ChkTurno()
    end if
 
    if !Empty( dbfDlg )
