@@ -4,6 +4,10 @@
 		"selected_items":
 		[
 			[
+				"else",
+				"else"
+			],
+			[
 				"CCODFAB",
 				"CCODFAB"
 			],
@@ -384,10 +388,6 @@
 				"Elimino"
 			],
 			[
-				"else",
-				"else"
-			],
-			[
 				"oCon",
 				"oCon"
 			],
@@ -523,7 +523,33 @@
 			"file": "prg/Tpv.prg",
 			"settings":
 			{
-				"buffer_size": 752110,
+				"buffer_size": 759958,
+				"line_ending": "Windows"
+			}
+		},
+		{
+			"contents": "Searching 1334 files for \"dbSetFilter\"\n\nC:\\fw195\\Gestool\\prg\\Accesscode.prg:\n  438     ( ::dbfUser )->( ordListAdd( cPatDat() + \"USERS.CDX\" ) )\n  439  \n  440:    ( ::dbfUser )->( dbSetFilter( {|| !Field->lGrupo }, \"!lGrupo\" ) )\n  441  \n  442     USE ( cPatDat() + \"Cajas.Dbf\" ) NEW VIA ( cDriver() ) SHARED ALIAS ( ::dbfCajas := cCheckArea( \"CAJAS\" ) )\n\nC:\\fw195\\Gestool\\prg\\Agentes.prg:\n  888  \n  889           aStatus        := aGetStatus( dbfAge )\n  890:          ( dbfAge )->( dbSetFilter( {|| Field->cCodAge != cCodigoAgente }, \"cCodAge\" ) )\n  891           ( dbfAge )->( dbGoTop() )\n  892  \n\nC:\\fw195\\Gestool\\prg\\Albcli.prg:\n 3887        SetWindowText( oBtnKit:hWnd, \"Mostrar Esc&ll.\" )\n 3888        if ( dbfTmpLin )->( Used() )\n 3889:          ( dbfTmpLin )->( dbSetFilter( {|| ! Field->lKitChl }, \"!lKitChl\" ) )\n 3890        end if\n 3891     end if\n ....\n 5260     cCbxOrd        := aCbxOrd[ nOrd ]\n 5261  \n 5262:    ( dbfAlbCliT )->( dbSetFilter( {|| !Field->lFacturado .and. Field->lIvaInc == lIva }, \"!lFacturado .and. lIvaInc == lIva\" ) )\n 5263     ( dbfAlbCliT )->( dbGoTop() )\n 5264  \n ....\n 11027  \n 11028        if ( dbfTmpEnt )->( Used() )\n 11029:          ( dbfTmpEnt )->( dbSetFilter( {|| Field->cSerAlb + Str( Field->nNumAlb ) + Field->cSufAlb + Str( Field->nNumRec ) == cNumDoc }, \"cSerAlb + Str( nNumAlb ) + cSufAlb + Str( nNumRec ) == cNumDoc\" ) )\n 11030           ( dbfTmpEnt )->( dbGoTop() )\n 11031        end if\n\nC:\\fw195\\Gestool\\prg\\Albprov.prg:\n 5967     nOrd           := ( dbfAlbPrvT )->( OrdSetFocus( nOrd ) )\n 5968  \n 5969:    ( dbfAlbPrvT )->( dbSetFilter( {|| !Field->lFacturado }, \"!lFacturado\" ) )\n 5970     ( dbfAlbPrvT )->( dbGoTop() )\n 5971  \n ....\n 6083     SetBrwOpt( \"BrwAlbPrv\", ( dbfAlbPrvT )->( OrdNumber() ) )\n 6084  \n 6085:    ( dbfAlbPrvT )->( dbSetFilter() )\n 6086     ( dbfAlbPrvT )->( OrdSetFocus( nOrd ) )\n 6087  \n\nC:\\fw195\\Gestool\\prg\\Autoseek.prg:\n  455           bExpFilter        := bCheck2Block( cExpFilter )\n  456  \n  457:          ( cAlias )->( dbSetFilter( bExpFilter, cExpFilter ) )\n  458           ( cAlias )->( dbGoTop() )\n  459  \n  460        else\n  461  \n  462:          ( cAlias )->( dbSetFilter() )\n  463  \n  464        end if\n\nC:\\fw195\\Gestool\\prg\\Client.prg:\n 13069           ( dbfTmpAtp )->( dbClearFilter() )\n 13070        else\n 13071:          ( dbfTmpAtp )->( dbSetFilter( {|| ( Empty( Field->dFecIni ) .and. Empty( Field->dFecFin ) ) .or. ( Field->dFecIni <= GetSysDate() .and. Field->dFecFin >= GetSysDate() ) }, \"( Empty( dFecIni ) .and. Empty( dFecFin ) ) .or. ( dFecIni <= GetSysDate() .and. dFecFin >= GetSysDate() )\" ) )\n 13072  \n 13073        end if\n\nC:\\fw195\\Gestool\\prg\\Contactos.prg:\n  263  \n  264     ( dbfContactos )->( ordSetFocus( nOrd ) )\n  265:    ( dbfContactos )->( dbSetFilter( {|| Field->cCodCli == cCodCli }, \"Field->cCodCli == cCodCli\" ) )\n  266     ( dbfContactos )->( dbGoTop() )\n  267  \n\nC:\\fw195\\Gestool\\prg\\Contaplu.prg:\n  630     if OpnCta( cRuta, cCodEmp, @cArea )\n  631  \n  632:       ( cArea )->( dbSetFilter( {|| !Empty( Field->Cta ) }, \"!Empty( Field->Cta )\" ) )\n  633        ( cArea )->( dbGoTop() )\n  634  \n\nC:\\fw195\\Gestool\\prg\\Dlgtools.prg:\n    9  #ifndef __PDA__\n   10  \n   11: #command SET FILTER TO <xpr> INTO <cAlias>   => (cAlias)->( dbSetFilter( <{xpr}>, <\"xpr\"> ) )\n   12  \n   13  #define ID_EXPR      110\n   ..\n  296  \n  297  	IF At( Type( cExpression ), \"UEUI\" ) == 0\n  298: 		(cAlias)->(dbSetFilter( &( \"{|| \" + cExpression + \" }\" ) ) )\n  299  	ELSE\n  300  		(cAlias)->(dbClearFilter(NIL))\n\nC:\\fw195\\Gestool\\prg\\Empresa.prg:\n 2862  \n 2863     if lGrupo\n 2864:       ( dbfEmp )->( dbSetFilter( {|| Field->lGrupo }, \"lGrupo\" ) )\n 2865     else\n 2866:       ( dbfEmp )->( dbSetFilter( {|| !Field->lGrupo }, \"!lGrupo\" ) )\n 2867     end if\n 2868  \n ....\n 6120     nOrd                    := ( dbfDelega )->( OrdSetFocus( nOrd ) )\n 6121  \n 6122:    ( dbfDelega )->( dbSetFilter( {|| Field->cCodEmp == cCodigoEmpresa }, \"cCodEmp == \" + cCodigoEmpresa ) )\n 6123     ( dbfDelega )->( dbGoTop() )\n 6124  \n ....\n 7931        ( dbfDlg )->( AdsSetAOF( \"Field->cCodEmp == '\" + cCodEmp() + \"'\" ) )\n 7932     else\n 7933:       ( dbfDlg )->( dbSetFilter( {|| Field->cCodEmp == cCodEmp() }, \"Field->cCodEmp == cCodEmp()\" ) )\n 7934     end if \n 7935  \n\nC:\\fw195\\Gestool\\prg\\Entsal.prg:\n  820     if !Empty( oImgUsr ) .and. !Empty( oLstUsr )\n  821  \n  822:    ( dbfUsr )->( dbSetFilter( {|| !Field->lGrupo }, \"!lGrupo\" ) )\n  823  \n  824     ( dbfUsr )->( dbGoTop() )\n\nC:\\fw195\\Gestool\\prg\\Factcli.prg:\n 9099        SetWindowText( oBtnKit:hWnd, \"Mostrar Esc&ll.\" )\n 9100        if ( dbfTmpLin )->( Used() )\n 9101:          ( dbfTmpLin )->( dbSetFilter( {|| ! Field->lKitChl }, \"!lKitChl\" ) )\n 9102        end if\n 9103     end if\n\nC:\\fw195\\Gestool\\prg\\Fastreph.prg:\n  312  EXTERNAL DBSETRELATION  \n  313  EXTERNAL DBCLEARRELATION\n  314: EXTERNAL DBSETFILTER    \n  315  EXTERNAL DBCLEARFILTER  \n  316  EXTERNAL __DBLOCATE     \n\nC:\\fw195\\Gestool\\prg\\Pedcli.prg:\n 5461     nRecAnt        := ( dbfPedCliT )->( Recno() )\n 5462  \n 5463:    ( dbfPedCliT )->( dbSetFilter( {|| Field->nEstado <= 2 }, \"nEstado <= 2\" ) )\n 5464     ( dbfPedCliT )->( dbGoTop() )\n 5465  \n\nC:\\fw195\\Gestool\\prg\\Pedprov.prg:\n 4534     cCbxOrd           := aCbxOrd[ nOrd ]\n 4535  \n 4536:    ( dbfPedPrvT )->( dbSetFilter( {|| Field->NESTADO != 3 }, \"NESTADO != 3\" ) )\n 4537  \n 4538     nOrd              := ( dbfPedPrvT )->( OrdSetFocus( nOrd ) )\n ....\n 4653     SetBrwOpt( \"BrwPedPrv\", ( dbfPedPrvT )->( OrdNumber() ) )\n 4654  \n 4655:    ( dbfPedPrvT )->( dbSetFilter() )\n 4656     ( dbfPedPrvT )->( OrdSetFocus( nOrd ) )\n 4657  \n\nC:\\fw195\\Gestool\\prg\\Precli.prg:\n 6701     nRecAnt        := ( dbfPreCliT )->( Recno() )\n 6702  \n 6703:    ( dbfPreCliT )->( dbSetFilter( {|| !Field->lEstado .and. Field->lIvaInc == lIva }, \"!lEstado .and. lIvaInc == lIva\" ) )\n 6704     ( dbfPreCliT )->( dbGoTop() )\n 6705  \n ....\n 9383  \n 9384           if !lShwKit()\n 9385:             ( dbfTmpLin )->( dbSetFilter( {|| ! Field->lKitChl }, \"!lKitChl\" ) )\n 9386           end if\n 9387  \n\nC:\\fw195\\Gestool\\prg\\Reccli.prg:\n 2757     nOrdAnt           := ( dbfFacCliP )->( OrdSetFocus( nOrd ) )\n 2758  \n 2759:    ( dbfFacCliP )->( dbSetFilter( {|| !Field->lCobrado }, \"!lCobrado\" ) )\n 2760     ( dbfFacCliP )->( dbGoTop() )\n 2761  \n ....\n 4381     end if\n 4382  \n 4383:    ( dbfFacCliP )->( dbSetFilter( {|| Field->cCodCli == CodCli .and. !Field->lCobrado }, \"Field->cCodCli == CodCli .and. !Field->lCobrado\" ) )\n 4384  \n 4385     DEFINE FONT oFont NAME \"Verdana\" SIZE 0, -14\n\nC:\\fw195\\Gestool\\prg\\Ritems.prg:\n  495  \n  496           DEFINE BTNSHELL RESOURCE \"Cube_Yellow_\" OF oWndBrw ;\n  497:             ACTION   ( ( dbfDoc )->( dbSetFilter( {|| Field->cTipo == 'AR' }, \"Field->cTipo == 'AR'\" ) ), ( dbfDoc )->( dbGoTop() ), oWndBrw:Refresh() ) ;\n  498              TOOLTIP  \"Atículos[etiquetas]\" ;\n  499              FROM     oFlt ;\n  ...\n  502  \n  503           DEFINE BTNSHELL RESOURCE \"User1_\" OF oWndBrw ;\n  504:             ACTION   ( ( dbfDoc )->( dbSetFilter( {|| Field->cTipo == 'CL' }, \"Field->cTipo == 'CL'\" ) ), ( dbfDoc )->( dbGoTop() ), oWndBrw:Refresh() ) ;\n  505              TOOLTIP  \"Clientes[etiquetas]\" ;\n  506              FROM     oFlt ;\n  ...\n  509  \n  510           DEFINE BTNSHELL RESOURCE \"Businessman_\" OF oWndBrw ;\n  511:             ACTION   ( ( dbfDoc )->( dbSetFilter( {|| Field->cTipo == 'PL' }, \"Field->cTipo == 'PL'\" ) ), ( dbfDoc )->( dbGoTop() ), oWndBrw:Refresh() ) ;\n  512              TOOLTIP  \"Proveedores[etiquetas]\" ;\n  513              FROM     oFlt ;\n  ...\n  516  \n  517           DEFINE BTNSHELL RESOURCE \"Document_plain_businessman_\" OF oWndBrw ;\n  518:             ACTION   ( ( dbfDoc )->( dbSetFilter( {|| Field->cTipo == 'FL' }, \"Field->cTipo == 'FL'\" ) ), ( dbfDoc )->( dbGoTop() ), oWndBrw:Refresh() ) ;\n  519              TOOLTIP  \"Albarán proveedor[etiquetas]\" ;\n  520              FROM     oFlt ;\n  ...\n  523  \n  524           DEFINE BTNSHELL RESOURCE \"Document_businessman_\" OF oWndBrw ;\n  525:             ACTION   ( ( dbfDoc )->( dbSetFilter( {|| Field->cTipo == 'FL' }, \"Field->cTipo == 'FL'\" ) ), ( dbfDoc )->( dbGoTop() ), oWndBrw:Refresh() ) ;\n  526              TOOLTIP  \"Factura proveedor[etiquetas]\" ;\n  527              FROM     oFlt ;\n  ...\n  530  \n  531           DEFINE BTNSHELL RESOURCE \"Clipboard_empty_businessman_\" OF oWndBrw ;\n  532:             ACTION   ( ( dbfDoc )->( dbSetFilter( {|| Field->cTipo == 'PP' }, \"Field->cTipo == 'PP'\" ) ), ( dbfDoc )->( dbGoTop() ), oWndBrw:Refresh() ) ;\n  533              TOOLTIP  \"Pedidos a proveedores\" ;\n  534              FROM     oFlt ;\n  ...\n  537  \n  538           DEFINE BTNSHELL RESOURCE \"Document_plain_businessman_\" OF oWndBrw ;\n  539:             ACTION   ( ( dbfDoc )->( dbSetFilter( {|| Field->cTipo == 'AP' }, \"Field->cTipo == 'AP'\" ) ), ( dbfDoc )->( dbGoTop() ), oWndBrw:Refresh() ) ;\n  540              TOOLTIP  \"Albaran de proveedores\" ;\n  541              FROM     oFlt ;\n  ...\n  544  \n  545           DEFINE BTNSHELL RESOURCE \"Document_businessman_\" OF oWndBrw ;\n  546:             ACTION   ( ( dbfDoc )->( dbSetFilter( {|| Field->cTipo == 'FP' }, \"Field->cTipo == 'FP'\" ) ), ( dbfDoc )->( dbGoTop() ), oWndBrw:Refresh() ) ;\n  547              TOOLTIP  \"Factura de proveedores\" ;\n  548              FROM     oFlt ;\n  ...\n  551  \n  552           DEFINE BTNSHELL RESOURCE \"Document_navigate_cross_\" OF oWndBrw ;\n  553:             ACTION   ( ( dbfDoc )->( dbSetFilter( {|| Field->cTipo == 'TP' }, \"Field->cTipo == 'TP'\" ) ), ( dbfDoc )->( dbGoTop() ), oWndBrw:Refresh() ) ;\n  554              TOOLTIP  \"Factura rectificativa de proveedores\" ;\n  555              FROM     oFlt ;\n  ...\n  558  \n  559           DEFINE BTNSHELL RESOURCE \"Document_businessman_\" OF oWndBrw ;\n  560:             ACTION   ( ( dbfDoc )->( dbSetFilter( {|| Field->cTipo == 'RP' }, \"Field->cTipo == 'RP'\" ) ), ( dbfDoc )->( dbGoTop() ), oWndBrw:Refresh() ) ;\n  561              TOOLTIP  \"Recibos facturas proveedor\" ;\n  562              FROM     oFlt ;\n  ...\n  565  \n  566           DEFINE BTNSHELL RESOURCE \"Money2_businessman_\" OF oWndBrw ;\n  567:             ACTION   ( ( dbfDoc )->( dbSetFilter( {|| Field->cTipo == 'RC' }, \"Field->cTipo == 'RC'\" ) ), ( dbfDoc )->( dbGoTop() ), oWndBrw:Refresh() ) ;\n  568              TOOLTIP  \"Presupuesto clientes\" ;\n  569              FROM     oFlt ;\n  ...\n  572  \n  573           DEFINE BTNSHELL RESOURCE \"Clipboard_empty_user1_\" OF oWndBrw ;\n  574:             ACTION   ( ( dbfDoc )->( dbSetFilter( {|| Field->cTipo == 'PC' }, \"Field->cTipo == 'PC'\" ) ), ( dbfDoc )->( dbGoTop() ), oWndBrw:Refresh() ) ;\n  575              TOOLTIP  \"Pedido clientes\" ;\n  576              FROM     oFlt ;\n  ...\n  579  \n  580           DEFINE BTNSHELL RESOURCE \"Document_plain_user1_\" OF oWndBrw ;\n  581:             ACTION   ( ( dbfDoc )->( dbSetFilter( {|| Field->cTipo == 'AC' }, \"Field->cTipo == 'AC'\" ) ), ( dbfDoc )->( dbGoTop() ), oWndBrw:Refresh() ) ;\n  582              TOOLTIP  \"Albarán clientes\" ;\n  583              FROM     oFlt ;\n  ...\n  586  \n  587           DEFINE BTNSHELL RESOURCE \"Document_user1_\" OF oWndBrw ;\n  588:             ACTION   ( ( dbfDoc )->( dbSetFilter( {|| Field->cTipo == 'FC' }, \"Field->cTipo == 'FC'\" ) ), ( dbfDoc )->( dbGoTop() ), oWndBrw:Refresh() ) ;\n  589              TOOLTIP  \"Factura clientes\" ;\n  590              FROM     oFlt ;\n  ...\n  593  \n  594           DEFINE BTNSHELL RESOURCE \"Document_money2_\" OF oWndBrw ;\n  595:             ACTION   ( ( dbfDoc )->( dbSetFilter( {|| Field->cTipo == 'TC' }, \"Field->cTipo == 'TC'\" ) ), ( dbfDoc )->( dbGoTop() ), oWndBrw:Refresh() ) ;\n  596              TOOLTIP  \"Factura de anticipos\" ;\n  597              FROM     oFlt ;\n  ...\n  600  \n  601           DEFINE BTNSHELL RESOURCE \"Document_user1_\" OF oWndBrw ;\n  602:             ACTION   ( ( dbfDoc )->( dbSetFilter( {|| Field->cTipo == 'FR' }, \"Field->cTipo == 'FR'\" ) ), ( dbfDoc )->( dbGoTop() ), oWndBrw:Refresh() ) ;\n  603              TOOLTIP  \"Factura rectificativa\" ;\n  604              FROM     oFlt ;\n  ...\n  607  \n  608           DEFINE BTNSHELL RESOURCE \"Cashier_user1_\" OF oWndBrw ;\n  609:             ACTION   ( ( dbfDoc )->( dbSetFilter( {|| Field->cTipo == 'TK' }, \"Field->cTipo == 'TK'\" ) ), ( dbfDoc )->( dbGoTop() ), oWndBrw:Refresh() ) ;\n  610              TOOLTIP  \"Tikets de clientes\" ;\n  611              FROM     oFlt ;\n  ...\n  614  \n  615           DEFINE BTNSHELL RESOURCE \"Briefcase_user1_\" OF oWndBrw ;\n  616:             ACTION   ( ( dbfDoc )->( dbSetFilter( {|| Field->cTipo == 'RF' }, \"Field->cTipo == 'RF'\" ) ), ( dbfDoc )->( dbGoTop() ), oWndBrw:Refresh() ) ;\n  617              TOOLTIP  \"Recibos facturas clientes\" ;\n  618              FROM     oFlt ;\n  ...\n  621  \n  622           DEFINE BTNSHELL RESOURCE \"Pencil_Package_\" OF oWndBrw ;\n  623:             ACTION   ( ( dbfDoc )->( dbSetFilter( {|| Field->cTipo == 'RM' }, \"Field->cTipo == 'RM'\" ) ), ( dbfDoc )->( dbGoTop() ), oWndBrw:Refresh() ) ;\n  624              TOOLTIP  \"Movimientos de almacén\" ;\n  625              FROM     oFlt ;\n  ...\n  628  \n  629           DEFINE BTNSHELL RESOURCE \"Package_add_\" OF oWndBrw ;\n  630:             ACTION   ( ( dbfDoc )->( dbSetFilter( {|| Field->cTipo == 'DA' }, \"Field->cTipo == 'DA'\" ) ), ( dbfDoc )->( dbGoTop() ), oWndBrw:Refresh() ) ;\n  631              TOOLTIP  \"Depositos almacén\" ;\n  632              FROM     oFlt ;\n  ...\n  635  \n  636           DEFINE BTNSHELL RESOURCE \"Package_ok_\" OF oWndBrw ;\n  637:             ACTION   ( ( dbfDoc )->( dbSetFilter( {|| Field->cTipo == 'EX' }, \"Field->cTipo == 'EX'\" ) ), ( dbfDoc )->( dbGoTop() ), oWndBrw:Refresh() ) ;\n  638              TOOLTIP  \"Existencias almacén\" ;\n  639              FROM     oFlt ;\n  ...\n  642  \n  643           DEFINE BTNSHELL RESOURCE \"Briefcase_document_\" OF oWndBrw ;\n  644:             ACTION   ( ( dbfDoc )->( dbSetFilter( {|| Field->cTipo == 'RM' }, \"Field->cTipo == 'RM'\" ) ), ( dbfDoc )->( dbGoTop() ), oWndBrw:Refresh() ) ;\n  645              TOOLTIP  \"Remesas de movimientos de almacén\" ;\n  646              FROM     oFlt ;\n  ...\n  649  \n  650           DEFINE BTNSHELL RESOURCE \"Clipboard_empty_user1_\" OF oWndBrw ;\n  651:             ACTION   ( ( dbfDoc )->( dbSetFilter( {|| Field->cTipo == 'EP' }, \"Field->cTipo == 'EP'\" ) ), ( dbfDoc )->( dbGoTop() ), oWndBrw:Refresh() ) ;\n  652              TOOLTIP  \"Entregas a cuenta en pedidos de clientes\" ;\n  653              FROM     oFlt ;\n  ...\n  656  \n  657           DEFINE BTNSHELL RESOURCE \"Document_plain_user1_\" OF oWndBrw ;\n  658:             ACTION   ( ( dbfDoc )->( dbSetFilter( {|| Field->cTipo == 'EA' }, \"Field->cTipo == 'EA'\" ) ), ( dbfDoc )->( dbGoTop() ), oWndBrw:Refresh() ) ;\n  659              TOOLTIP  \"Entregas a cuenta en albaranes de clientes\" ;\n  660              FROM     oFlt ;\n  ...\n  663  \n  664           DEFINE BTNSHELL RESOURCE \"Worker2_Form_Red_\" OF oWndBrw ;\n  665:             ACTION   ( ( dbfDoc )->( dbSetFilter( {|| Field->cTipo == 'PO' }, \"Field->cTipo == 'PO'\" ) ), ( dbfDoc )->( dbGoTop() ), oWndBrw:Refresh() ) ;\n  666              TOOLTIP  \"Parte de producción\" ;\n  667              FROM     oFlt ;\n  ...\n  670  \n  671           DEFINE BTNSHELL RESOURCE \"Folder_document_\" OF oWndBrw ;\n  672:             ACTION   ( ( dbfDoc )->( dbSetFilter( {|| Field->cTipo == 'ED' }, \"Field->cTipo == 'ED'\" ) ), ( dbfDoc )->( dbGoTop() ), oWndBrw:Refresh() ) ;\n  673              TOOLTIP  \"Expedientes\" ;\n  674              FROM     oFlt ;\n  ...\n  677  \n  678              DEFINE BTNSHELL RESOURCE \"Worker2_Form_Red_\" OF oWndBrw ;\n  679:             ACTION   ( ( dbfDoc )->( dbSetFilter( {|| Field->cTipo == 'EP' }, \"Field->cTipo == 'EP'\" ) ), ( dbfDoc )->( dbGoTop() ), oWndBrw:Refresh() ) ;\n  680              TOOLTIP  \"Etiquetas producción\" ;\n  681              FROM     oFlt ;\n  ...\n 3864  \n 3865     if !Empty( cTipDoc )\n 3866:       ( dbfDoc )->( dbSetFilter( {|| Field->cTipo == cTipDoc }, \"cTipo == '\" + cTipDoc + \"'\" ) )\n 3867        ( dbfDoc )->( dbGoTop() )\n 3868     end if\n ....\n 3990  \n 3991     if !Empty( cTipDoc )\n 3992:       ( dbfDoc )->( dbSetFilter( {|| Field->cTipo == cTipDoc }, \"Field->cTipo == '\" + cTipDoc + \"'\" ) )\n 3993     end if\n 3994  \n ....\n 4020  \n 4021     if !Empty( cTipDoc )\n 4022:       ( dbfDoc )->( dbSetFilter() )\n 4023     end if\n 4024  \n\nC:\\fw195\\Gestool\\prg\\Rlabel.prg:\n 1429     cCbxOrd        := aCbxOrd[ nOrd ]\n 1430  \n 1431:    ( cDbfLblT )->( dbSetFilter( {|| ( cDbfLblT )->cTipLbl == cTipo }, \"( cDbfLblT )->cTipLbl == cTipo\" ) )\n 1432     ( cDbfLblT )->( dbGoTop() )\n 1433  \n\nC:\\fw195\\Gestool\\prg\\Ruta.prg:\n  504        case oCbxOrd:nAt == 1 // Lunes\n  505           ( dbfClient )->( OrdSetFocus( \"nVisLun\" ) )\n  506:          ( dbfClient )->( dbSetFilter( {|| cAgeLun == cCodAge() }, \"cAgeLun == cCodAge()\" ) )\n  507  \n  508        case oCbxOrd:nAt == 2 // Martes\n  509           ( dbfClient )->( OrdSetFocus( \"nVisMar\" ) )\n  510:          ( dbfClient )->( dbSetFilter( {|| cAgeMar == cCodAge() }, \"cAgeMar == cCodAge()\" ) )\n  511  \n  512        case oCbxOrd:nAt == 3 // Miercoles\n  513           ( dbfClient )->( OrdSetFocus( \"nVisMie\" ) )\n  514:          ( dbfClient )->( dbSetFilter( {|| cAgeMie == cCodAge() }, \"cAgeMie == cCodAge()\" ) )\n  515  \n  516        case oCbxOrd:nAt == 4 // Jueves\n  517           ( dbfClient )->( OrdSetFocus( \"nVisJue\" ) )\n  518:          ( dbfClient )->( dbSetFilter( {|| cAgeJue == cCodAge() }, \"cAgeJue == cCodAge()\" ) )\n  519  \n  520        case oCbxOrd:nAt == 5 // Viernes\n  521           ( dbfClient )->( OrdSetFocus( \"nVisVie\" ) )\n  522:          ( dbfClient )->( dbSetFilter( {|| cAgeVie == cCodAge() }, \"cAgeVie == cCodAge()\" ) )\n  523  \n  524        case oCbxOrd:nAt == 6 // Sábado\n  525           ( dbfClient )->( OrdSetFocus( \"nVisSab\" ) )\n  526:          ( dbfClient )->( dbSetFilter( {|| cAgeSab == cCodAge() }, \"cAgeSab == cCodAge()\" ) )\n  527  \n  528        case oCbxOrd:nAt == 7 // Domingo\n  529           ( dbfClient )->( OrdSetFocus( \"nVisDom\" ) )\n  530:          ( dbfClient )->( dbSetFilter( {|| cAgeDom == cCodAge() }, \"cAgeDom == cCodAge()\" ) )\n  531  \n  532        case oCbxOrd:nAt == 8 // Todos los clientes\n\nC:\\fw195\\Gestool\\prg\\Satcli.prg:\n 6583     nRecAnt        := ( dbfSatCliT )->( Recno() )\n 6584  \n 6585:    ( dbfSatCliT )->( dbSetFilter( {|| !Field->lEstado .and. Field->lIvaInc == lIva }, \"!lEstado .and. lIvaInc == lIva\" ) )\n 6586     ( dbfSatCliT )->( dbGoTop() )\n 6587  \n\nC:\\fw195\\Gestool\\prg\\Tdbf.prg:\n 1275      if ::cRDD == \"ADSCDX\"\n 1276  \n 1277:         ( ::nArea )->( dbSetFilter( c2Block( cFor ), ( cFor ) ) )\n 1278  \n 1279      else\n ....\n 1551  \n 1552      if !Empty( cFlt )\n 1553:         ( ::nArea )->( DbSetFilter( c2Block( cFlt ), cFlt ) )\n 1554      else\n 1555          ( ::nArea )->( DbClearFilter( nil ) )\n\nC:\\fw195\\Gestool\\prg\\Tdlgflt.prg:\n 1085              if lAdsRdd()\n 1086  \n 1087:                ( ::oDbf:cAlias )->( dbSetFilter( c2Block( ::cExpFilter + \" .and. !Deleted()\" ), ::cExpFilter + \" .and. !Deleted()\" ) )\n 1088  \n 1089                 if !Empty( ::oWndBrw )\n ....\n 1156              if lAdsRdd()\n 1157  \n 1158:                ( ::oDbf )->( dbSetFilter( c2Block( ::cExpFilter + \" .and. !Deleted()\" ), ::cExpFilter + \" .and. !Deleted()\" ) )\n 1159  \n 1160                 if !Empty( ::oWndBrw )\n\nC:\\fw195\\Gestool\\prg\\Tfilter.prg:\n   52      local oFlt := Self\n   53  \n   54:     ( ::oDbf:nArea )->( DbSetFilter( ::bFor, ::cFor ) )\n   55  \n   56      ::oDbf:lCount  := .t.\n\nC:\\fw195\\Gestool\\prg\\Tpv.prg:\n 3590     */\n 3591  \n 3592:    ( dbfTikT )->( dbSetFilter( {|| Field->cTipTik == \"5\" }, \"Field->cTipTik == '5'\" ) )\n 3593     ( dbfTikT )->( dbGoTop() )\n 3594  \n ....\n 4839        */\n 4840  \n 4841:       ( dbfTmpC )->( dbSetFilter( {|| Field->cImpCom1 == aImp[ nPos ] .or. Field->cImpCom2 == aImp[ nPos ] }, \"Field->cImpCom1 == aImp[ nPos ] .or. Field->cImpCom2 == aImp[ nPos ]\" ) )\n 4842  \n 4843        /*\n ....\n 23620     */\n 23621  \n 23622:    ( dbfTikT )->( dbSetFilter( {|| Field->cTipTik == \"1\" }, \"Field->cTipTik == '1'\" ) )\n 23623     ( dbfTikT )->( dbGoTop() )\n 23624  \n .....\n 24036        */\n 24037  \n 24038:       ( dbfTmpN )->( dbSetFilter( {|| ( Field->cImpCom1 == aImp[ nPos ] .or. Field->cImpCom2 == aImp[ nPos ] ) }, \"( Field->cImpCom1 == aImp[ nPos ] .or. Field->cImpCom2 == aImp[ nPos ] )\" ) )\n 24039  \n 24040        /*\n\nC:\\fw195\\Gestool\\prg\\Tpvpda.prg:\n  839  \n  840     if !oUser():lAdministrador()\n  841:       ( dbfTikT )->( dbSetFilter( {|| Field->cCcjTik == oUser():cCodigo() .and. Field->cNcjTik == oUser():cCaja() }, \"Field->cCcjTik == oUser():cCodigo() .and. Field->cNcjTik == oUser():cCaja()\" ) )\n  842     end if\n  843     */\n  ...\n 14136        */\n 14137  \n 14138:       ( dbfTikL )->( dbSetFilter( {|| !Field->lImpCom .and. ( Field->nImpCom1 == aImp[ nPos ] .or. Field->nImpCom2 == aImp[ nPos ] ) }, \"!lImpCom .and. ( nImpCom1 == aImp[ nPos ] .or. nImpCom2 == aImp[ nPos ] )\" ) )\n 14139  \n 14140        /*\n\nC:\\fw195\\Gestool\\prg\\Usuario.prg:\n 1127  \n 1128     if lGroup\n 1129:       ( dbfUsr )->( dbSetFilter( {|| Field->lGrupo }, \"lGrupo\" ) )\n 1130     else\n 1131:       ( dbfUsr )->( dbSetFilter( {|| !Field->lGrupo }, \"!lGrupo\" ) )\n 1132     end if\n 1133  \n ....\n 2143        oLstUsr:InsertGroup( 1, \"Administradores\" )\n 2144  \n 2145:       ( dbfUsr )->( dbSetFilter( {|| !Field->lGrupo }, \"!lGrupo\" ) )\n 2146  \n 2147        ( dbfUsr )->( dbGoTop() )\n ....\n 2353     SET ADSINDEX TO ( cPatDat() + \"USERS.CDX\" ) ADDITIVE\n 2354  \n 2355:    ( dbfUser )->( dbSetFilter( {|| !Field->lGrupo }, \"!lGrupo\" ) )\n 2356  \n 2357     DEFINE DIALOG oDlg RESOURCE \"lSelUser\"\n ....\n 2439  \n 2440     /*\n 2441:    ( dbfUser )->( dbSetFilter( {|| !Field->lGrupo }, \"!lGrupo\" ) )\n 2442     */\n 2443  \n\n83 matches across 27 files\n",
+			"settings":
+			{
+				"buffer_size": 21703,
+				"line_ending": "Windows",
+				"name": "Find Results",
+				"scratch": true
+			}
+		},
+		{
+			"file": "prg/Tpvpda.prg",
+			"settings":
+			{
+				"buffer_size": 485331,
+				"line_ending": "Windows"
+			}
+		},
+		{
+			"file": "prg/Infagent.prg",
+			"settings":
+			{
+				"buffer_size": 20656,
 				"line_ending": "Windows"
 			}
 		}
@@ -560,6 +586,11 @@
 	},
 	"file_history":
 	[
+		"/C/fw195/Gestool/prg/Client.prg",
+		"/C/fw195/Gestool/prg/Utildbf.prg",
+		"/C/fw195/Gestool/prg/Tpvlistaticket.prg",
+		"/C/fw195/Gestool/prg/Factcli.prg",
+		"/C/fw195/Gestool/prg/Albcli.prg",
 		"/C/fw195/Gestool/prg/Tutil.prg",
 		"/C/fw195/Gestool/prg/Articulo.prg",
 		"/C/fw195/Gestool/prg/Categoria.prg",
@@ -568,10 +599,7 @@
 		"/C/fw195/Gestool/prg/tcomercio",
 		"/C/fw195/Gestool/prg/Rptgal.prg",
 		"/C/fw195/Gestool/prg/Tgesped.prg",
-		"/C/fw195/Gestool/prg/Client.prg",
 		"/C/fw195/Gestool/prg/Edm.prg",
-		"/C/fw195/Gestool/prg/Factcli.prg",
-		"/C/fw195/Gestool/prg/Albcli.prg",
 		"/C/fw195/Gestool/prg/Factprv.prg",
 		"/C/fw195/Gestool/prg/Rectprv.prg",
 		"/C/fw195/Gestool/prg/Facrec.prg",
@@ -582,12 +610,10 @@
 		"/C/Scripts creados/Oscar Tenis/oscar.prg",
 		"/C/Scripts creados/Inma Pepsi/001.prg",
 		"/C/fw195/Gestool/prg/Remmov.prg",
-		"/C/fw195/Gestool/prg/Utildbf.prg",
 		"/C/fw195/Gestool/prg/Tpvtactil.prg",
 		"/C/fw195/Gestool/prg/Tpvrestaurante.prg",
 		"/C/fw195/Gestool/prg/tpvtactil",
 		"/C/fw195/Gestool/prg/Tpvcobros.prg",
-		"/C/fw195/Gestool/prg/Tpvlistaticket.prg",
 		"/C/fw195/Gestool/prg/Tpvmesa.prg",
 		"/C/fw195/Gestool/prg/Tpvpda.prg",
 		"/C/fw195/Gestool/prg/Tpvpunto.prg",
@@ -725,6 +751,44 @@
 		"case_sensitive": false,
 		"find_history":
 		[
+			"dbSetFilter",
+			"on brw",
+			"registros",
+			"LastRec",
+			"apt",
+			"SavTik2Tik",
+			"on lcambia",
+			"lcambia",
+			"GuardaApartado",
+			"on WinEdtRec",
+			"newtik",
+			"lSave",
+			"begintran",
+			"beguintran",
+			"beguintrans",
+			"SAVAPT",
+			"apt",
+			"on sav",
+			"BeginTrans",
+			"GuardaApartado",
+			"aeval",
+			"oget",
+			"GuardaApartado",
+			"on rx",
+			"lcambiati",
+			"oofficebar",
+			"up",
+			"on lista",
+			"on brw",
+			"oBrwDet",
+			"oBrw",
+			"resource",
+			"brw",
+			"on guarda",
+			"on syn",
+			"syn",
+			"GuardaApartado",
+			"oofficebar",
 			"GuardaApartado",
 			"oofficebar",
 			"on newticket",
@@ -814,45 +878,7 @@
 			"ufieldempresa",
 			"od resource",
 			"ss TDetMovimientos",
-			"oDetMovimientos",
-			"AppendDet",
-			"on aitm",
-			"<<<<",
-			"on aitm",
-			"nregi",
-			"on aitm",
-			"ctlf",
-			"on aitm",
-			"lliquidada",
-			"nestado",
-			"ChkFacPrv",
-			"method",
-			"ostock",
-			"on syn",
-			"on brw",
-			"on RJust",
-			"\"0\"",
-			"AddLineOrgToNew",
-			"ofnt",
-			"fnt",
-			"ofont",
-			"font",
-			"HELPENTRYTACTILIMP",
-			"on br",
-			"ivalibr",
-			"// l",
-			"//l",
-			"//",
-			"on Calculadora",
-			"on brw",
-			"AgregarLineasLibres",
-			"oTipoIVA",
-			"AgregarLineasLibres",
-			"niva",
-			"AgregarLineasLibres",
-			"AgregarLibre",
-			"libre",
-			"msgstop"
+			"oDetMovimientos"
 		],
 		"highlight": true,
 		"in_selection": false,
@@ -886,15 +912,15 @@
 					"file": "prg/Tpv.prg",
 					"settings":
 					{
-						"buffer_size": 752110,
+						"buffer_size": 759958,
 						"regions":
 						{
 						},
 						"selection":
 						[
 							[
-								112642,
-								112642
+								115254,
+								115254
 							]
 						],
 						"settings":
@@ -904,7 +930,432 @@
 							"translate_tabs_to_spaces": true
 						},
 						"translation.x": 0.0,
-						"translation.y": 62284.0,
+						"translation.y": 64102.0,
+						"zoom_level": 1.0
+					},
+					"type": "text"
+				},
+				{
+					"buffer": 1,
+					"settings":
+					{
+						"buffer_size": 21703,
+						"regions":
+						{
+							"match":
+							{
+								"flags": 112,
+								"regions":
+								[
+									[
+										179,
+										190
+									],
+									[
+										481,
+										492
+									],
+									[
+										768,
+										779
+									],
+									[
+										943,
+										954
+									],
+									[
+										1191,
+										1202
+									],
+									[
+										1577,
+										1588
+									],
+									[
+										1792,
+										1803
+									],
+									[
+										2004,
+										2015
+									],
+									[
+										2150,
+										2161
+									],
+									[
+										2333,
+										2344
+									],
+									[
+										2758,
+										2769
+									],
+									[
+										3002,
+										3013
+									],
+									[
+										3250,
+										3261
+									],
+									[
+										3408,
+										3419
+									],
+									[
+										3601,
+										3612
+									],
+									[
+										3690,
+										3701
+									],
+									[
+										3881,
+										3892
+									],
+									[
+										4146,
+										4157
+									],
+									[
+										4375,
+										4386
+									],
+									[
+										4640,
+										4651
+									],
+									[
+										4845,
+										4856
+									],
+									[
+										5051,
+										5062
+									],
+									[
+										5276,
+										5287
+									],
+									[
+										5524,
+										5535
+									],
+									[
+										5724,
+										5735
+									],
+									[
+										5954,
+										5965
+									],
+									[
+										6178,
+										6189
+									],
+									[
+										6338,
+										6349
+									],
+									[
+										6678,
+										6689
+									],
+									[
+										7004,
+										7015
+									],
+									[
+										7336,
+										7347
+									],
+									[
+										7686,
+										7697
+									],
+									[
+										8036,
+										8047
+									],
+									[
+										8393,
+										8404
+									],
+									[
+										8742,
+										8753
+									],
+									[
+										9086,
+										9097
+									],
+									[
+										9433,
+										9444
+									],
+									[
+										9791,
+										9802
+									],
+									[
+										10137,
+										10148
+									],
+									[
+										10480,
+										10491
+									],
+									[
+										10817,
+										10828
+									],
+									[
+										11149,
+										11160
+									],
+									[
+										11482,
+										11493
+									],
+									[
+										11818,
+										11829
+									],
+									[
+										12154,
+										12165
+									],
+									[
+										12489,
+										12500
+									],
+									[
+										12830,
+										12841
+									],
+									[
+										13165,
+										13176
+									],
+									[
+										13494,
+										13505
+									],
+									[
+										13833,
+										13844
+									],
+									[
+										14189,
+										14200
+									],
+									[
+										14551,
+										14562
+									],
+									[
+										14911,
+										14922
+									],
+									[
+										15247,
+										15258
+									],
+									[
+										15579,
+										15590
+									],
+									[
+										15857,
+										15868
+									],
+									[
+										16062,
+										16073
+									],
+									[
+										16243,
+										16254
+									],
+									[
+										16396,
+										16407
+									],
+									[
+										16699,
+										16710
+									],
+									[
+										16913,
+										16924
+									],
+									[
+										17130,
+										17141
+									],
+									[
+										17344,
+										17355
+									],
+									[
+										17559,
+										17570
+									],
+									[
+										17773,
+										17784
+									],
+									[
+										17988,
+										17999
+									],
+									[
+										18247,
+										18258
+									],
+									[
+										18500,
+										18511
+									],
+									[
+										18640,
+										18651
+									],
+									[
+										18866,
+										18877
+									],
+									[
+										19100,
+										19111
+									],
+									[
+										19356,
+										19367
+									],
+									[
+										19506,
+										19517
+									],
+									[
+										19679,
+										19690
+									],
+									[
+										19922,
+										19933
+									],
+									[
+										20101,
+										20112
+									],
+									[
+										20408,
+										20419
+									],
+									[
+										20677,
+										20688
+									],
+									[
+										20988,
+										20999
+									],
+									[
+										21077,
+										21088
+									],
+									[
+										21249,
+										21260
+									],
+									[
+										21447,
+										21458
+									],
+									[
+										21605,
+										21616
+									]
+								],
+								"scope": ""
+							}
+						},
+						"selection":
+						[
+							[
+								20416,
+								20416
+							]
+						],
+						"settings":
+						{
+							"detect_indentation": false,
+							"output_tag": 1,
+							"result_base_dir": "",
+							"result_file_regex": "^([A-Za-z\\\\/<].*):$",
+							"result_line_regex": "^ +([0-9]+):",
+							"scroll_past_end": true,
+							"syntax": "Packages/Default/Find Results.hidden-tmLanguage"
+						},
+						"translation.x": 0.0,
+						"translation.y": 8532.0,
+						"zoom_level": 1.0
+					},
+					"type": "text"
+				},
+				{
+					"buffer": 2,
+					"file": "prg/Tpvpda.prg",
+					"settings":
+					{
+						"buffer_size": 485331,
+						"regions":
+						{
+						},
+						"selection":
+						[
+							[
+								26390,
+								26465
+							]
+						],
+						"settings":
+						{
+							"syntax": "Packages/harbour/harbour/Harbour.tmLanguage",
+							"tab_size": 3,
+							"translate_tabs_to_spaces": true
+						},
+						"translation.x": 418.0,
+						"translation.y": 14685.0,
+						"zoom_level": 1.0
+					},
+					"type": "text"
+				},
+				{
+					"buffer": 3,
+					"file": "prg/Infagent.prg",
+					"settings":
+					{
+						"buffer_size": 20656,
+						"regions":
+						{
+						},
+						"selection":
+						[
+							[
+								17071,
+								17101
+							]
+						],
+						"settings":
+						{
+							"syntax": "Packages/harbour/harbour/Harbour.tmLanguage"
+						},
+						"translation.x": 0.0,
+						"translation.y": 10131.0,
 						"zoom_level": 1.0
 					},
 					"type": "text"

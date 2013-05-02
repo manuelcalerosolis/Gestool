@@ -4013,6 +4013,7 @@ METHOD AgregarLineas( cCodigoArticulo ) CLASS TpvTactil
             ::oTemporalLinea:cComent      := ""
 
             ::oTemporalLinea:lKitArt      := ::oArticulo:lKitArt
+            ::oTemporalLinea:lKitPrc      := lPreciosCompuestos( ::oArticulo:Codigo, ::oArticulo:cAlias )
 
             ::oTemporalLinea:lInPromo     := ::oFideliza:InPrograma( ::oArticulo:Codigo, ::oTiketCabecera:dFecTik, ::oArticulo )
 
@@ -4190,8 +4191,8 @@ METHOD AgregarKit( cCodigoArticulo ) CLASS TpvTactil
             */
 
             ::oTemporalLinea:lKitChl      := !lKitAsociado( ::oArticulo:Codigo, ::oArticulo )
-            ::oTemporalLinea:lImpLin      := lImprimirComponente( ::oArticulo:Codigo, ::oArticulo )   // 1 Todos, 2 Compuesto, 3 Componentes
-            ::oTemporalLinea:lKitPrc      := lPreciosComponentes( ::oArticulo:Codigo, ::oArticulo )   // 1 Todos, 2 Compuesto, 3 Componentes
+            ::oTemporalLinea:lImpLin      := lImprimirComponente( ::oArticulo:Codigo, ::oArticulo:cAlias )   // 1 Todos, 2 Compuesto, 3 Componentes
+            ::oTemporalLinea:lKitPrc      := lPreciosComponentes( ::oArticulo:Codigo, ::oArticulo:cAlias )   // 1 Todos, 2 Compuesto, 3 Componentes
 
             /*
             Podemos sacar productos asociados----------------------------------
