@@ -1830,8 +1830,6 @@ FONT 8, "MS Sans Serif"
 {
   CONTROL "", 400, "TXBrowse", 0x00200000, 48, 41, 281, 162
   CONTROL "", 410, "TXBrowse", 0x00200000, 338, 40, 304, 162
-  CONTROL "", 300, "TXBrowse", 0x00200000, 48, 219, 594, 101
-  CONTROL "Stocks por almacenes", -1, "Button", BS_GROUPBOX, 44, 208, 604, 116
   CONTROL "", 500, "Static", SS_BITMAP|SS_CENTERIMAGE, 4, 3, 34, 30
   CONTROL "Resumen de movimientos del artículo", -1, "Static", SS_LEFTNOWORDWRAP|WS_GROUP, 44, 3, 446, 8
   CONTROL "Compras", -1, "Button", BS_GROUPBOX, 44, 29, 288, 178
@@ -19056,5 +19054,14 @@ FONT 12, "Segoe UI"
   CONTROL "", 500, "Static", SS_BITMAP|SS_CENTERIMAGE, 4, 3, 34, 25
   CONTROL "Actualizando web espere por favor...", 510, "Static", SS_CENTER|WS_GROUP, 0, 20, 265, 8
   CONTROL "", 520, "TAnimat", 0x00800000, 0, 30, 265, 5
+}
+
+INFO_3 DIALOG DISCARDABLE 32, 0, 670, 330
+STYLE WS_CHILD|DS_3DLOOK
+FONT 8, "MS Sans Serif"
+{
+  CONTROL "", 300, "TXBrowse", WS_TABSTOP|0x00300000, 44, 29, 621, 291
+  CONTROL "", 500, "Static", SS_BITMAP|SS_CENTERIMAGE, 4, 3, 34, 30
+  CONTROL "Información del stock de articulo", -1, "Static", SS_LEFTNOWORDWRAP|WS_GROUP, 44, 3, 446, 8
 }
 

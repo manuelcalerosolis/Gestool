@@ -8,6 +8,11 @@
 
 #define IDC_CHART1               111
 
+#define fldEstadisticas          oFld:aDialogs[ 1 ]
+#define fldStocks                oFld:aDialogs[ 2 ]
+#define fldDocumentos            oFld:aDialogs[ 3 ] 
+#define fldGraficos              oFld:aDialogs[ 4 ]
+
 static dbfDiv
 static dbfIva
 static dbfAlm
@@ -116,6 +121,7 @@ static aProducido
 static aConsumido
 
 static oGraph
+
 
 #ifndef __PDA__
 
@@ -256,42 +262,44 @@ Static Function OpenFiles()
    SET TAG TO "CCODART"
 
    if !TDataCenter():OpenSatCliT( @dbfSatCliT )
-     lOpenFiles      := .f.
+     lOpenFiles         := .f.
    end if
 
    if !TDataCenter():OpenPreCliT( @dbfPreCliT )
-      lOpenFiles     := .f.
+      lOpenFiles        := .f.
    end if 
 
    if !TDataCenter():OpenPedCliT( @dbfPedCliT )
-      lOpenFiles     := .f.
+      lOpenFiles        := .f.
    end if 
 
    if !TDataCenter():OpenFacCliT( @dbfFacCliT )
-      lOpenFiles     := .f.
+      lOpenFiles        := .f.
    end if
 
    if !TDataCenter():OpenFacCliP( @dbfFacCliP )
-      lOpenFiles     := .f.
+      lOpenFiles        := .f.
    end if
 
    if !TDataCenter():OpenAlbCliT( @dbfAlbCliT )
-      lOpenFiles     := .f.
+      lOpenFiles        := .f.
    end if
 
-   oDbfTmp           := DefineTemporal()
+   oDbfTmp              := DefineTemporal()
    oDbfTmp:Activate( .f., .f. )
 
    oStock            := TStock():Create( cPatGrp() )
-   if !oStock:lOpenFiles()
-      lOpenFiles     := .f.
+   if oStock:lOpenFiles()
+      oStock:lIntegra   := .f.
+   else 
+      lOpenFiles        := .f.
    end if
 
    RECOVER USING oError
 
       msgStop( ErrorMessage( oError ), "Imposible abrir las bases de datos" )
       
-      lOpenFiles     := .f.
+      lOpenFiles        := .f.
 
    END SEQUENCE
 
@@ -374,6 +382,7 @@ function BrwVtaComArt( cCodArt, cNomArt, cDiv, cIva, cAlm, cArticulo )
    local oBmpGeneral
    local oBmpDocumentos
    local oBmpGraficos
+   local oBmpStock
 
    if Empty( cCodArt )
       Return nil
@@ -426,9 +435,11 @@ function BrwVtaComArt( cCodArt, cNomArt, cDiv, cIva, cAlm, cArticulo )
 			ID 		300 ;
 			OF 		oDlg ;
          PROMPT   "&Estadisticas"      ,;
+                  "Stock"              ,;
                   "&Documentos"        ,;
                   "Gráfico"            ; 
          DIALOGS  "ART_8"              ,;
+                  "INFO_3"             ,;
                   "INFO_1"             ,;
                   "INFO_2"
 
@@ -436,19 +447,17 @@ function BrwVtaComArt( cCodArt, cNomArt, cDiv, cIva, cAlm, cArticulo )
    Compras---------------------------------------------------------------------
    */
 
-   // Cajas
-
    REDEFINE BITMAP oBmpGeneral;
          ID       500 ;
          RESOURCE "Cube_Yellow_Alpha_48" ;
          TRANSPARENT ;
-         OF       oFld:aDialogs[ 1 ]
+         OF       fldEstadisticas          
 
    /*
    Browse de Compras-----------------------------------------------------------
    */
 
-   oBrwCom                       := IXBrowse():New( oFld:aDialogs[ 1 ] )
+   oBrwCom                       := IXBrowse():New( fldEstadisticas )
 
    oBrwCom:bClrSel               := {|| { CLR_BLACK, Rgb( 229, 229, 229 ) } }
    oBrwCom:bClrSelFocus          := {|| { CLR_BLACK, Rgb( 167, 205, 240 ) } }
@@ -521,7 +530,7 @@ function BrwVtaComArt( cCodArt, cNomArt, cDiv, cIva, cAlm, cArticulo )
    Browse de ventas------------------------------------------------------------
    */
 
-   oBrwVta                       := IXBrowse():New( oFld:aDialogs[ 1 ] )
+   oBrwVta                       := IXBrowse():New( fldEstadisticas )
 
    oBrwVta:bClrSel               := {|| { CLR_BLACK, Rgb( 229, 229, 229 ) } }
    oBrwVta:bClrSelFocus          := {|| { CLR_BLACK, Rgb( 167, 205, 240 ) } }
@@ -593,113 +602,108 @@ function BrwVtaComArt( cCodArt, cNomArt, cDiv, cIva, cAlm, cArticulo )
       :nFootStrAlign             := 1
    end with
 
+
+   // Cajas
+
    /*
    Desglose de almacen---------------------------------------------------------
    */
 
-   REDEFINE BITMAP oBmpDocumentos ID 500 RESOURCE "Document_Text_Alpha_48" TRANSPARENT OF oFld:aDialogs[ 2 ]
+   REDEFINE BITMAP   oBmpStock;
+         ID          500 ;
+         RESOURCE    "Package_48_alpha" ;
+         TRANSPARENT ;
+         OF          fldStocks
 
-   oBrwStk                       := IXBrowse():New( oFld:aDialogs[ 1 ] )
+   oBrwStk                       := IXBrowse():New( fldStocks )
 
    oBrwStk:bClrSel               := {|| { CLR_BLACK, Rgb( 229, 229, 229 ) } }
    oBrwStk:bClrSelFocus          := {|| { CLR_BLACK, Rgb( 167, 205, 240 ) } }
-
-   oBrwStk:SetArray( oStock:aStocks, , , .f. )
 
    oBrwStk:lFooter               := .t.
    oBrwStk:lVScroll              := .t.
    oBrwStk:lHScroll              := .t.
    oBrwStk:nMarqueeStyle         := 5
    oBrwStk:cName                 := "Stocks en informe de articulos"
-   oBrwStk:CreateFromResource( 300 )
-
-   with object ( oBrwStk:AddCol() )
-      :cHeader                   := "Almacén"
-      :nWidth                    := 280
-      :bStrData                  := {|| if( !Empty( oBrwStk:aArrayData ), oBrwStk:aArrayData[ oBrwStk:nArrayAt ]:cCodigoAlmacen + Space( 1 ) + RetAlmacen( oBrwStk:aArrayData[ oBrwStk:nArrayAt ]:cCodigoAlmacen, dbfAlm ), "" ) }
-      :bFooter                   := {|| "Total almacenes" }
-   end with
 
    with object ( oBrwStk:AddCol() )
       :cHeader                   := "Prop. 1"
       :nWidth                    := 50
-      :bStrData                  := {|| if( !Empty( oBrwStk:aArrayData ), oBrwStk:aArrayData[ oBrwStk:nArrayAt ]:cValorPropiedad1, "" ) }
+      :bStrData                  := {|| if( !Empty( oBrwStk:oTreeItem ) .and. !Empty( oBrwStk:oTreeItem:Cargo ), oBrwStk:oTreeItem:Cargo:cValorPropiedad1, "" ) }
       :lHide                     := .t.
    end with
 
    with object ( oBrwStk:AddCol() )
       :cHeader                   := "Prop. 2"
       :nWidth                    := 50
-      :bStrData                  := {|| if( !Empty( oBrwStk:aArrayData ), oBrwStk:aArrayData[ oBrwStk:nArrayAt ]:cValorPropiedad2, "" ) }
+      :bStrData                  := {|| if( !Empty( oBrwStk:oTreeItem ) .and. !Empty( oBrwStk:oTreeItem:Cargo ), oBrwStk:oTreeItem:Cargo:cValorPropiedad2, "" ) }
       :lHide                     := .t.
    end with
 
    with object ( oBrwStk:AddCol() )
       :cHeader                   := "Lote"
       :nWidth                    := 70
-      :bStrData                  := {|| if( !Empty( oBrwStk:aArrayData ), oBrwStk:aArrayData[ oBrwStk:nArrayAt ]:cLote, "" ) }
+      :bStrData                  := {|| if( !Empty( oBrwStk:oTreeItem ) .and. !Empty( oBrwStk:oTreeItem:Cargo ), oBrwStk:oTreeItem:Cargo:cLote, "" ) }
       :lHide                     := .t.
    end with
-
-   /*with object ( oBrwStk:AddCol() )
-      :cHeader                   := "Num. serie"
-      :nWidth                    := 70
-      :bStrData                  := {|| if( !Empty( oBrwStk:aArrayData ), oBrwStk:aArrayData[ oBrwStk:nArrayAt ]:cNumeroSerie, "" ) }
-      :lHide                     := .t.
-   end with*/
 
    with object ( oBrwStk:AddCol() )
       :cHeader                   := "Unidades"
       :nWidth                    := 110
-      :bEditValue                := {|| if( !Empty( oBrwStk:aArrayData ), oBrwStk:aArrayData[ oBrwStk:nArrayAt ]:nUnidades, 0 ) }
-      :bFooter                   := {|| nStockUnidades( oBrwStk ) }
+      :bEditValue                := {|| nTotalTree( oBrwStk, "nUnidades" ) }
+      :bFooter                   := {|| nFooterTree( oBrwStk, "nUnidades" ) }
       :cEditPicture              := MasUnd()
    end with
 
    with object ( oBrwStk:AddCol() )
       :cHeader                   := "Pdt. recibir"
       :nWidth                    := 110
-      :bEditValue                := {|| if( !Empty( oBrwStk:aArrayData ), oBrwStk:aArrayData[ oBrwStk:nArrayAt ]:nPendientesRecibir, 0 ) }
-      :bFooter                   := {|| nStockPendiente( oBrwStk ) }
+      :bEditValue                := {|| nTotalTree( oBrwStk, "nPendientesRecibir" ) }
+      :bFooter                   := {|| nFooterTree( oBrwStk, "nPendientesRecibir" ) }
       :cEditPicture              := MasUnd()
    end with
 
    with object ( oBrwStk:AddCol() )
       :cHeader                   := "Pdt. entregar"
       :nWidth                    := 110
-      :bEditValue                := {|| if( !Empty( oBrwStk:aArrayData ), oBrwStk:aArrayData[ oBrwStk:nArrayAt ]:nPendientesEntregar, 0 ) }
-      :bFooter                   := {|| nStockEntregar( oBrwStk ) }
+      :bEditValue                := {|| nTotalTree( oBrwStk, "nPendientesEntregar" ) }
+      :bFooter                   := {|| nFooterTree( oBrwStk, "nPendientesEntregar" ) }
       :cEditPicture              := MasUnd()
    end with
 
    with object ( oBrwStk:AddCol() )
       :cHeader                   := "Peso stock"
       :nWidth                    := 110
-      :bEditValue                := {|| if( !Empty( oBrwStk:aArrayData ), oBrwStk:aArrayData[ oBrwStk:nArrayAt ]:nUnidades * nPesUnd, 0 ) }
-      :bFooter                   := {|| nStockUnidades( oBrwStk ) * nPesUnd }
+      :bEditValue                := {|| nTotalTree( oBrwStk, "nUnidades" ) * nPesUnd }
+      :bFooter                   := {|| nFooterTree( oBrwStk, "nUnidades" ) * nPesUnd }
       :cEditPicture              := MasUnd()
    end with
 
    with object ( oBrwStk:AddCol() )
       :cHeader                   := "Volumen stock"
       :nWidth                    := 110
-      :bEditValue                := {|| if( !Empty( oBrwStk:aArrayData ), oBrwStk:aArrayData[ oBrwStk:nArrayAt ]:nUnidades * nVolUnd, 0 ) }
-      :bFooter                   := {|| nStockUnidades( oBrwStk ) * nVolUnd }
+      :bEditValue                := {|| nTotalTree( oBrwStk, "nUnidades" ) * nVolUnd }
+      :bFooter                   := {|| nFooterTree( oBrwStk, "nUnidades" ) * nVolUnd }
       :cEditPicture              := MasUnd()
    end with
 
    with object ( oBrwStk:AddCol() )
       :cHeader                   := "Consolidación"
       :nWidth                    := 110
-      :bStrData                  := {|| if( !Empty( oBrwStk:aArrayData ), Dtoc( oBrwStk:aArrayData[ oBrwStk:nArrayAt ]:dConsolidacion ), "" ) }
+      :bStrData                  := {|| nTotalTree( oBrwStk, "dConsolidacion" ) }
+      // :bStrData                  := {|| if( !Empty( oBrwStk:oTreeItem ) .and. !Empty( oBrwStk:oTreeItem:Cargo ), oBrwStk:oTreeItem:Cargo:dConsolidacion, "" ) }
       :lHide                     := .t.
    end with
 
+   oBrwStk:CreateFromResource( 300 )
+   
    /*
    Documentos------------------------------------------------------------------
    */
 
-   oTree             := TTreeView():Redefine( 310, oFld:aDialogs[2]  )
+   REDEFINE BITMAP oBmpDocumentos ID 500 RESOURCE "Document_Text_Alpha_48" TRANSPARENT OF fldDocumentos
+
+   oTree             := TTreeView():Redefine( 310, fldDocumentos  )
    oTree:bChanged    := {|| TreeChanged( oTree, oBrwTmp ) }
 
    /*
@@ -708,40 +712,40 @@ function BrwVtaComArt( cCodArt, cNomArt, cDiv, cIva, cAlm, cArticulo )
 
    REDEFINE BUTTON ;
       ID       301 ;
-      OF       oFld:aDialogs[2] ;
+      OF       fldDocumentos ;
       ACTION   ( EditDocument( oBrwTmp ), LoadDatos( cCodArt, cCmbAnio, oDlg, oBrwStk, oBrwTmp, oGraph, oBrwCom, oBrwVta ) )
 
    REDEFINE BUTTON ;
       ID       302 ;
-      OF       oFld:aDialogs[2] ;
+      OF       fldDocumentos ;
       ACTION   ( ZoomDocument( oBrwTmp ) )
 
    REDEFINE BUTTON ;
       ID       303 ;
-      OF       oFld:aDialogs[2] ;
+      OF       fldDocumentos ;
       ACTION   ( DeleteDocument( oBrwTmp ), LoadDatos( cCodArt, cCmbAnio, oDlg, oBrwStk, oBrwTmp, oGraph, oBrwCom, oBrwVta ) )
 
    REDEFINE BUTTON ;
       ID       304 ;
-      OF       oFld:aDialogs[2] ;
+      OF       fldDocumentos ;
       ACTION   ( VisualizaDocument( oBrwTmp ) )
 
    REDEFINE BUTTON ;
       ID       305 ;
-      OF       oFld:aDialogs[2] ;
+      OF       fldDocumentos ;
       ACTION   ( PrintDocument( oBrwTmp ) )
 
    REDEFINE BUTTON oBtnFiltro ;
       ID       306 ;
-      OF       oFld:aDialogs[2] ;
+      OF       fldDocumentos ;
       ACTION   ( Filtro(), oBrwTmp:Refresh() )
 
    REDEFINE BUTTON ;
       ID       307 ;
-      OF       oFld:aDialogs[2] ;
+      OF       fldDocumentos ;
       ACTION   ( TInfLArt():New( "Informe detallado de documentos", , , , , , { oDbfTmp, cCmbAnio } ):Play() )
 
-   oBrwTmp                       := IXBrowse():New( oFld:aDialogs[ 2 ] )
+   oBrwTmp                       := IXBrowse():New( fldDocumentos )
 
    oBrwTmp:bClrSel               := {|| { CLR_BLACK, Rgb( 229, 229, 229 ) } }
    oBrwTmp:bClrSelFocus          := {|| { CLR_BLACK, Rgb( 167, 205, 240 ) } }
@@ -909,11 +913,11 @@ function BrwVtaComArt( cCodArt, cNomArt, cDiv, cIva, cAlm, cArticulo )
    Graph start setting---------------------------------------------------------
    */
 
-   REDEFINE BITMAP oBmpGraficos ID 500 RESOURCE "Chart_area_48_alpha" TRANSPARENT OF oFld:aDialogs[ 3 ]
+   REDEFINE BITMAP oBmpGraficos ID 500 RESOURCE "Chart_area_48_alpha" TRANSPARENT OF fldGraficos
 
    REDEFINE BTNBMP ;
       ID       101 ;
-      OF       oFld:aDialogs[ 3 ] ;
+      OF       fldGraficos ;
       RESOURCE "ColumnChart16" ;
       NOBORDER ;
       TOOLTIP  "Gráfico de barras" ;
@@ -921,7 +925,7 @@ function BrwVtaComArt( cCodArt, cNomArt, cDiv, cIva, cAlm, cArticulo )
 
    REDEFINE BTNBMP ;
       ID       102 ;
-      OF       oFld:aDialogs[ 3 ] ;
+      OF       fldGraficos ;
       RESOURCE "LineChart16" ;
       NOBORDER ;
       TOOLTIP  "Gráfico de lineas" ;
@@ -929,7 +933,7 @@ function BrwVtaComArt( cCodArt, cNomArt, cDiv, cIva, cAlm, cArticulo )
 
    REDEFINE BTNBMP ;
       ID       103 ;
-      OF       oFld:aDialogs[ 3 ] ;
+      OF       fldGraficos ;
       RESOURCE "DotChart16" ;
       NOBORDER ;
       TOOLTIP  "Gráfico de puntos" ;
@@ -937,7 +941,7 @@ function BrwVtaComArt( cCodArt, cNomArt, cDiv, cIva, cAlm, cArticulo )
 
    REDEFINE BTNBMP ;
       ID       104 ;
-      OF       oFld:aDialogs[ 3 ] ;
+      OF       fldGraficos ;
       RESOURCE "PieChart16" ;
       NOBORDER ;
       TOOLTIP  "Gráfico combinado" ;
@@ -945,7 +949,7 @@ function BrwVtaComArt( cCodArt, cNomArt, cDiv, cIva, cAlm, cArticulo )
 
    REDEFINE BTNBMP ;
       ID       105 ;
-      OF       oFld:aDialogs[ 3 ] ;
+      OF       fldGraficos ;
       RESOURCE "Chart16" ;
       NOBORDER ;
       TOOLTIP  "Gráfico combinado" ;
@@ -953,7 +957,7 @@ function BrwVtaComArt( cCodArt, cNomArt, cDiv, cIva, cAlm, cArticulo )
 
    REDEFINE BTNBMP ;
       ID       106 ;
-      OF       oFld:aDialogs[ 3 ] ;
+      OF       fldGraficos ;
       RESOURCE "Text3d16" ;
       NOBORDER ;
       TOOLTIP  "Gráficos en tres dimensiones" ;
@@ -961,7 +965,7 @@ function BrwVtaComArt( cCodArt, cNomArt, cDiv, cIva, cAlm, cArticulo )
 
    REDEFINE BTNBMP ;
       ID       107 ;
-      OF       oFld:aDialogs[ 3 ] ;
+      OF       fldGraficos ;
       RESOURCE "Copy16" ;
       NOBORDER ;
       TOOLTIP  "Copiar el gráfico en el portapapeles" ;
@@ -969,7 +973,7 @@ function BrwVtaComArt( cCodArt, cNomArt, cDiv, cIva, cAlm, cArticulo )
 
    REDEFINE BTNBMP ;
       ID       108 ;
-      OF       oFld:aDialogs[ 3 ] ;
+      OF       fldGraficos ;
       RESOURCE "Imp16" ;
       NOBORDER ;
       TOOLTIP  "Imprimir el gráfico" ;
@@ -977,13 +981,13 @@ function BrwVtaComArt( cCodArt, cNomArt, cDiv, cIva, cAlm, cArticulo )
 
    REDEFINE BTNBMP ;
       ID       109 ;
-      OF       oFld:aDialogs[ 3 ] ;
+      OF       fldGraficos ;
       RESOURCE "Preferences16" ;
       NOBORDER ;
       TOOLTIP  "Propiedades del gráfico" ;
       ACTION   ( GraphPropierties( oGraph ) )
 
-   oGraph      := TGraph():ReDefine( 300, oFld:aDialogs[3] )
+   oGraph      := TGraph():ReDefine( 300, fldGraficos )
 
    /*
    Anno del ejecicio, por defecto lleva el anno actual-------------------------
@@ -992,7 +996,7 @@ function BrwVtaComArt( cCodArt, cNomArt, cDiv, cIva, cAlm, cArticulo )
    REDEFINE COMBOBOX oCmbAnio VAR cCmbAnio ;
       ITEMS    { "Todos", "2000", "2001", "2002", "2003", "2004", "2005", "2006", "2007", "2008", "2009", "2010", "2011", "2012", "2013", "2014", "2015", "2016", "2017", "2018", "2019", "2020" } ;
       ID       310 ;
-      ON CHANGE( LoadDatos( cCodArt, cCmbAnio, oDlg, oBrwStk, oBrwTmp, oGraph, oBrwCom, oBrwVta ) );
+      ON CHANGE( LoadDatos( cCodArt, cCmbAnio, oDlg, oBrwStk, oBrwTmp, oGraph, oBrwCom, oBrwVta ) ); 
       OF       oDlg
 
    /*
@@ -1015,8 +1019,8 @@ function BrwVtaComArt( cCodArt, cNomArt, cDiv, cIva, cAlm, cArticulo )
       OF       oDlg ;
       ACTION   ( oDlg:End() )
 
-   oFld:aDialogs[2]:AddFastKey( VK_F3, {|| EditDocument( oBrwTmp ),     LoadDatos( cCodArt, cCmbAnio, oDlg, oBrwStk, oBrwTmp, oGraph, oBrwCom, oBrwVta ) } )
-   oFld:aDialogs[2]:AddFastKey( VK_F4, {|| DeleteDocument( oBrwTmp ),   LoadDatos( cCodArt, cCmbAnio, oDlg, oBrwStk, oBrwTmp, oGraph, oBrwCom, oBrwVta ) } )
+   oFld:aDialogs[ 3 ]:AddFastKey( VK_F3, {|| EditDocument( oBrwTmp ),     LoadDatos( cCodArt, cCmbAnio, oDlg, oBrwStk, oBrwTmp, oGraph, oBrwCom, oBrwVta ) } )
+   oFld:aDialogs[ 3 ]:AddFastKey( VK_F4, {|| DeleteDocument( oBrwTmp ),   LoadDatos( cCodArt, cCmbAnio, oDlg, oBrwStk, oBrwTmp, oGraph, oBrwCom, oBrwVta ) } )
 
    oDlg:bStart := {|| LoadDatos( cCodArt, cCmbAnio, oDlg, oBrwStk, oBrwTmp, oGraph, oBrwCom, oBrwVta ), oBrwStk:Load(), oBrwCom:Load(), oBrwVta:Load(), oBrwTmp:Load() }
 
@@ -1038,6 +1042,10 @@ function BrwVtaComArt( cCodArt, cNomArt, cDiv, cIva, cAlm, cArticulo )
 
    if !Empty( oBmpGraficos )
       oBmpGraficos:End()
+   end if
+
+   if !Empty( oBmpStock )
+      oBmpStock:End()
    end if
 
    oMenu:End()
@@ -1207,18 +1215,22 @@ Static Function LoadDatos( cCodArt, nYear, oDlg, oBrwStk, oBrwTmp, oGraph, oBrwC
    oDlg:Disable()
 
    CursorWait()
+   
 
    oBlock            := ErrorBlock( {| oError | ApoloBreak( oError ) } )
    BEGIN SEQUENCE
-   
+
+   oMeter:Show()
+   oMeter:SetTotal( 18 )
+
+
    /*
    Calculamos el stock---------------------------------------------------------
    */
 
-   oStock:aStockArticulo( cCodArt, , oBrwStk )
+   oStock:oTreeStocks( cCodArt )
 
-   oMeter:Show()
-   oMeter:SetTotal( 18 )
+   oBrwStk:SetTree( oStock:oTree, { "Navigate_Minus_16", "Navigate_Plus_16", "Nil16" } ) 
 
    /*
    Calculos de compras---------------------------------------------------------
@@ -1377,6 +1389,8 @@ Static Function LoadDatos( cCodArt, nYear, oDlg, oBrwStk, oBrwTmp, oGraph, oBrwC
    oMeter:AutoInc()
 
    oDbfTmp:GoTop()
+
+   oBrwTmp:lFooter   := .f.
 
    oBrwTmp:Refresh()
    oBrwTmp:RefreshFooters()
@@ -3066,7 +3080,8 @@ Static Function TreeChanged( oTree, oBrwTmp )
          oBrwTmp:lFooter   := .t.
 
       otherwise
-         cFilter  := nil
+         cFilter           := nil
+         oBrwTmp:lFooter   := .f.
 
    end case
 
@@ -3464,7 +3479,9 @@ Static Function DefineTemporal( cPath, lUniqueName, cFileName )
 Return ( oDbf )
 
 //---------------------------------------------------------------------------//
-/*Texto del tipo de documento*/
+/*
+Texto del tipo de documento
+*/
 
 Function cTextDocument( nTypDoc )
 
@@ -3690,5 +3707,108 @@ function cNombreMes( nMes )
    end case
 
 Return ""
+
+//---------------------------------------------------------------------------//
+
+Function nTotalTree( oBrwStk, cData )
+
+   local oItem
+   local nUnidades         := 0
+   local oError
+   local oBlock
+
+   DEFAULT cData           := "nUnidades"
+
+   oBlock                  := ErrorBlock( { | oError | ApoloBreak( oError ) } )
+   BEGIN SEQUENCE
+
+   if !Empty( oBrwStk:oTreeItem ) 
+      
+      if !IsNil( oBrwStk:oTreeItem:oTree )
+
+         oItem             := oBrwStk:oTreeItem:oTree:oFirst 
+
+         while !IsNil( oItem )
+
+            if !Empty( oItem:Cargo )
+               nUnidades   += oSend( oItem:Cargo, cData ) 
+            end if 
+
+            oItem          := oItem:GetNext()
+
+         end while
+
+      else 
+
+         if !Empty( oBrwStk:oTreeItem:Cargo )
+            nUnidades      := oSend( oBrwStk:oTreeItem:Cargo, cData ) 
+         end if 
+
+      end if
+
+   end if 
+
+   RECOVER USING oError
+
+      msgStop( ErrorMessage( oError ), 'de artículos' )
+
+   END SEQUENCE
+
+   ErrorBlock( oBlock )
+
+Return ( nUnidades )
+
+//---------------------------------------------------------------------------//
+
+Function nFooterTree( oBrwStk, cData )
+
+   local oItem
+   local oNode
+   local nUnidades            := 0
+   local oError
+   local oBlock
+
+   DEFAULT cData              := "nUnidades"
+
+   oBlock                     := ErrorBlock( { | oError | ApoloBreak( oError ) } )
+   BEGIN SEQUENCE
+
+   if !Empty( oBrwStk:oTree ) 
+
+      oItem                   := oBrwStk:oTree:oFirst 
+      
+      while !IsNil( oItem )
+
+         if !IsNil( oItem:oTree )   
+
+            oNode             := oItem:oTree:oFirst 
+
+            while !IsNil( oNode )
+
+               if !Empty( oNode:Cargo )
+                  nUnidades   += oSend( oNode:Cargo, cData ) 
+               end if 
+
+               oNode          := oNode:GetNext()
+
+            end while
+
+         end if
+
+         oItem                := oItem:GetNext()
+
+      end while 
+
+   end if 
+
+   RECOVER USING oError
+
+      msgStop( ErrorMessage( oError ), 'de artículos' )
+
+   END SEQUENCE
+
+   ErrorBlock( oBlock )
+
+Return ( nUnidades )
 
 //---------------------------------------------------------------------------//

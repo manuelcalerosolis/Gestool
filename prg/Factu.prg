@@ -361,7 +361,7 @@ Static Function CreateMainWindow( oIconApp )
 
    ACTIVATE WINDOW oWnd ;
       MAXIMIZED ;
-      ON PAINT    ( WndPaint( hDC, oWnd, oBmp ) );
+      ON PAINT    ( WndPaint( hDC, oWnd, oBmp ) ); 
       ON RESIZE   ( WndResize( oWnd ) );
       ON INIT     ( lStartCheck() );
       VALID       ( EndApp() )
