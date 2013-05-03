@@ -2001,19 +2001,20 @@ STATIC FUNCTION EdtRec( aTmp, aGet, dbfArticulo, oBrw, bWhen, bValid, nMode )
          WHEN     ( nMode != ZOOM_MODE ) ;
          OF       fldPrecios
 
-      REDEFINE GET aGet[( dbfArticulo )->( fieldpos( "TIPOIVA" ) ) ] VAR aTmp[ ( dbfArticulo )->( fieldpos( "TIPOIVA" ) ) ] ;
+      REDEFINE GET aGet[( dbfArticulo )->( fieldpos( "TipoIva" ) ) ] ;
+         VAR      aTmp[ ( dbfArticulo )->( fieldpos( "TipoIva" ) ) ] ;
          ID       800;
          PICTURE  "@!" ;
          WHEN     ( nMode != ZOOM_MODE ) ;
-         VALID    (  cTiva(   aGet[ ( dbfArticulo )->( fieldpos( "TIPOIVA" ) ) ], dbfIva, oSay[2] ),;
-                              aGet[ ( dbfArticulo )->( fieldpos( "PVENTA1" ) ) ]:lValid(),;
-                              aGet[ ( dbfArticulo )->( fieldpos( "PVENTA2" ) ) ]:lValid(),;
-                              aGet[ ( dbfArticulo )->( fieldpos( "PVENTA3" ) ) ]:lValid(),;
-                              aGet[ ( dbfArticulo )->( fieldpos( "PVENTA4" ) ) ]:lValid(),;
-                              aGet[ ( dbfArticulo )->( fieldpos( "PVENTA5" ) ) ]:lValid(),;
-                              aGet[ ( dbfArticulo )->( fieldpos( "PVENTA6" ) ) ]:lValid(), .t. ) ;
+         VALID    (  cTiva(   aGet[ ( dbfArticulo )->( fieldpos( "TipoIva" ) ) ], dbfIva, oSay[2] ),;
+                              aGet[ ( dbfArticulo )->( fieldpos( "pVenta1" ) ) ]:lValid(),;
+                              aGet[ ( dbfArticulo )->( fieldpos( "pVenta2" ) ) ]:lValid(),;
+                              aGet[ ( dbfArticulo )->( fieldpos( "pVenta3" ) ) ]:lValid(),;
+                              aGet[ ( dbfArticulo )->( fieldpos( "pVenta4" ) ) ]:lValid(),;
+                              aGet[ ( dbfArticulo )->( fieldpos( "pVenta5" ) ) ]:lValid(),;
+                              aGet[ ( dbfArticulo )->( fieldpos( "pVenta6" ) ) ]:lValid(), .t. ) ;
          BITMAP   "LUPA" ;
-         ON HELP  ( BrwIva( aGet[( dbfArticulo )->( fieldpos( "TIPOIVA" ) ) ], nil , oSay[2] ) ) ;
+         ON HELP  ( BrwIva( aGet[( dbfArticulo )->( fieldpos( "TipoIva" ) ) ], nil , oSay[2] ) ) ;
          OF       fldPrecios
 
       REDEFINE GET oSay[2] VAR cSay[2] ;

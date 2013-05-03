@@ -6845,7 +6845,7 @@ return ( aCocPedCli )
 
 STATIC FUNCTION RecPedCli( aTmpPed )
 
-	local nDtoAge
+   local nDtoAge
    local nImpAtp  := 0
    local nImpOfe  := 0
    local nRecno
@@ -7239,9 +7239,9 @@ Function SynPedCli( cPath )
               ( dbfPedCliI )->cSufPed := "00"
         end if
 
-         ( dbfPedCliI )->( dbSkip() )
+        ( dbfPedCliI )->( dbSkip() )
 
-         SysRefresh()
+        SysRefresh()
 
     end while
 
