@@ -57,6 +57,10 @@ CLASS TpvCobros
 
    METHOD End()
 
+   METHOD lCobro()
+
+   METHOD lCobroExacto()
+
    METHOD lResource()
    METHOD StartResource()
 
@@ -249,6 +253,43 @@ METHOD End() CLASS TpvCobros
 Return Self
 
 //--------------------------------------------------------------------------//
+
+METHOD lCobro() CLASS TpvCobros
+
+   if lImporteExacto()
+
+      Return ::lCobroExacto()
+
+   else
+
+      Return ::lResource()
+
+   end if
+
+
+Return .t.
+
+//---------------------------------------------------------------------------//
+
+METHOD lCobroExacto() CLASS TpvCobros
+
+   ::nUbiTik                  := ::oSender:oTiketCabecera:nUbiTik
+
+   ::cCodigoFormaPago         := ::oSender:oTiketCabecera:cFpgTik
+
+   ::sTotalesCobros:GetTotal( ::oSender:sTotal )
+
+   ::sTotalesCobros:nCobrado  := ::sTotalesCobros:nTotal
+
+   ::CreaCobro()
+
+   ::nEstado                  := nPagado
+
+   ::nExit                    := exitAceptar
+
+Return .t.      
+
+//---------------------------------------------------------------------------//
 
 METHOD lResource() CLASS TpvCobros
 

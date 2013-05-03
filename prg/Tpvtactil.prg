@@ -5398,7 +5398,7 @@ METHOD OnClickCobro() CLASS TpvTactil
 
    else
 
-      if ::oTpvCobros:lResource()
+      if ::oTpvCobros:lCobro()
 
          /*
          Guarda documento------------------------------------------------------
@@ -7309,7 +7309,7 @@ Function oTpvTactil( cMsg, u1, u2, u3, u4, u5, u6, u7, u8, u9, u10 )
       uReturn     := oSend( oThis, cMsg, u1, u2, u3, u4, u5, u6, u7, u8, u9, u10 )
    end if
 
-Return ( uReturn )
+Return ( uReturn )   
 
 //---------------------------------------------------------------------------//
 
@@ -7322,6 +7322,10 @@ METHOD GeneraVale() CLASS TpvTactil
    local lValePromocion
    local nValePromocion             := 0
    local nPorcentajePromocion       := 0
+
+   if lImporteExacto()
+      Return ( .f. ) 
+   end if   
 
    if Empty( ::oTiketCabecera:cCliTik )
       Return ( .f. )

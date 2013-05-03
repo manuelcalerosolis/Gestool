@@ -310,7 +310,7 @@ CLASS TTurno FROM TMasDet
    DATA  cMensajeMail         INIT ""
 
    DATA  lDefaultPrinter      AS LOGIC    INIT .t.
-   DATA  cPrinter             INIT PrnGetName()
+   DATA  cPrinter
 
    DATA  lPdfShowDialog       AS LOGIC    INIT .t.
    DATA  cPdfDefaultPath      INIT ""
@@ -906,6 +906,9 @@ METHOD New( cPath, oWndParent, oMenuItem )
    ::lCreated           := .t.
 
    ::cBitmap            := clrTopArchivos
+
+   ::lDefaultPrinter    := .t.
+   ::cPrinter           := PrnGetName()
 
 RETURN ( Self )
 
@@ -7977,7 +7980,9 @@ Return ( lCajaOpen )
 
 Function ChkTurno( oMenuItem, oWnd )
 
-   local oTurno         := TTurno():New( cPatEmp(), oWnd, oMenuItem )
+   local oTurno
+
+   oTurno         := TTurno():New( cPatEmp(), oWnd, oMenuItem )   
 
    if !Empty( oTurno )
 
