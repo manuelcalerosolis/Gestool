@@ -353,7 +353,7 @@ CLASS TFastReportInfGen FROM TNewInfGen
       local oColumn  := o:SelectedCol()
 
       if ( nKey == 107 .or. nKey == 187 )
-
+ 
          if !Empty( oColumn ) .and. !Empty( oColumn:bEditBlock )
 
             oColumn:RunBtnAction()
