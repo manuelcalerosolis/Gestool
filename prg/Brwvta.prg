@@ -8,7 +8,7 @@
 
 #define IDC_CHART1               111
 
-#define fldDocumentos            oFld:aDialogs[ 1 ] 
+#define fldDocumentos            oFld:aDialogs[ 1 ]  
 #define fldStocks                oFld:aDialogs[ 2 ]
 #define fldEstadisticas          oFld:aDialogs[ 3 ]
 #define fldGraficos              oFld:aDialogs[ 4 ]
@@ -1204,25 +1204,24 @@ Static Function LoadDatos( cCodArt, nYear, oDlg, oBrwStk, oBrwTmp, oGraph, oBrwC
    local aStk
    local oError
    local oBlock
-   local nActStk     := 0
-   local nResStk     := 0
-   local nEntStk     := 0
-   local nStkLib     := 0
-   local nTotStkPro  := 0
-   local nTotStkCon  := 0
+   local nActStk        := 0
+   local nResStk        := 0
+   local nEntStk        := 0
+   local nStkLib        := 0
+   local nTotStkPro     := 0
+   local nTotStkCon     := 0
 
-   nStkAlm           := 0
+   nStkAlm              := 0
 
    oDlg:Disable()
 
    CursorWait()
    
-   oBlock            := ErrorBlock( {| oError | ApoloBreak( oError ) } )
+   oBlock               := ErrorBlock( {| oError | ApoloBreak( oError ) } )
    BEGIN SEQUENCE
 
    oMeter:Show()
    oMeter:SetTotal( 18 )
-
 
    /*
    Calculamos el stock---------------------------------------------------------
@@ -1230,7 +1229,12 @@ Static Function LoadDatos( cCodArt, nYear, oDlg, oBrwStk, oBrwTmp, oGraph, oBrwC
 
    oStock:oTreeStocks( cCodArt )
 
-   oBrwStk:SetTree( oStock:oTree, { "Navigate_Minus_16", "Navigate_Plus_16", "Nil16" } ) 
+   if Empty( oBrwStk:oTree )
+      oBrwStk:SetTree( oStock:oTree, { "Navigate_Minus_16", "Navigate_Plus_16", "Nil16" } ) 
+   else 
+      oBrwStk:oTree     := oStock:oTree
+      oBrwStk:oTreeItem := oStock:oTree:oFirst
+   end if 
 
    /*
    Calculos de compras---------------------------------------------------------
@@ -1238,11 +1242,11 @@ Static Function LoadDatos( cCodArt, nYear, oDlg, oBrwStk, oBrwTmp, oGraph, oBrwC
 
    oText:SetText( "Calculando compras mensuales" )
 
-   aTotCom[1]        := 0
-   aTotCom[2]        := 0
-   aTotCom[3]        := 0
-   aTotCom[4]        := 0
-   aTotCom[5]        := 0
+   aTotCom[1]           := 0
+   aTotCom[2]           := 0
+   aTotCom[3]           := 0
+   aTotCom[4]           := 0
+   aTotCom[5]           := 0
 
    nCompras( cCodArt, dbfAlbPrvT, dbfAlbPrvL, dbfFacPrvT, dbfFacPrvL, if( nYear == "Todos", nil, Val( nYear ) ) )
 
@@ -1250,9 +1254,9 @@ Static Function LoadDatos( cCodArt, nYear, oDlg, oBrwStk, oBrwTmp, oGraph, oBrwC
 
    for n := 1 to 12
 
-      aTotCom[1]     += aCom[n,1]
-      aTotCom[2]     += aCom[n,2]
-      aTotCom[3]     += aCom[n,3]
+      aTotCom[1]        += aCom[n,1]
+      aTotCom[2]        += aCom[n,2]
+      aTotCom[3]        += aCom[n,3]
 
    next
 
@@ -1267,8 +1271,8 @@ Static Function LoadDatos( cCodArt, nYear, oDlg, oBrwStk, oBrwTmp, oGraph, oBrwC
    oMeter:AutoInc()
 
    for n := 1 to 12
-      nTotStkPro     += aProducido[ n, 2 ]
-      nTotStkCon     += aConsumido[ n, 2 ]
+      nTotStkPro        += aProducido[ n, 2 ]
+      nTotStkCon        += aConsumido[ n, 2 ]
    next
 
    /*

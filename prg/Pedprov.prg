@@ -258,6 +258,7 @@ static oUndMedicion
 STATIC FUNCTION OpenFiles( lExt )
 
    local oBlock
+   local oError
 
    if lOpenFiles
       MsgStop( 'Ficheros de pedidos a proveedores abiertos previamente' )
@@ -343,10 +344,6 @@ STATIC FUNCTION OpenFiles( lExt )
       USE ( cPatEmp() + "TIPINCI.DBF" ) NEW VIA ( cDriver() ) SHARED ALIAS ( cCheckArea( "TIPINCI", @dbfInci ) )
       SET ADSINDEX TO ( cPatEmp() + "TIPINCI.CDX" ) ADDITIVE
 
-      if TDataCenter():OpenPedCliT( @dbfPedCliT )
-         lOpenFiles     := .f.
-      end if 
-
       USE ( cPatEmp() + "PEDCLIL.DBF" ) NEW VIA ( cDriver() ) SHARED ALIAS ( cCheckArea( "PEDCLIL", @dbfPedCliL ) )
       SET ADSINDEX TO ( cPatEmp() + "PEDCLIL.CDX" ) ADDITIVE
 
@@ -410,6 +407,10 @@ STATIC FUNCTION OpenFiles( lExt )
       USE ( cPatDat() + "SITUA.DBF" ) NEW VIA ( cDriver() ) SHARED ALIAS ( cCheckArea( "SITUA", @dbfSitua ) )
       SET ADSINDEX TO ( cPatDat() + "SITUA.CDX" ) ADDITIVE
 
+      if !TDataCenter():OpenPedCliT( @dbfPedCliT )
+         lOpenFiles     := .f.
+      end if 
+
       // Unidades de medicion
 
       oUndMedicion      := UniMedicion():Create( cPatGrp() )
@@ -448,23 +449,11 @@ STATIC FUNCTION OpenFiles( lExt )
       public aIvaDos    := aTotIva[ 2 ]
       public aIvaTre    := aTotIva[ 3 ]
 
-      /*
-      Cargamos las divisas-----------------------------------------------------
-      */
-
-      if oUser():lFiltroVentas()
-         cFiltroUsuario    := "Field->cCodUsr == '" + oUser():cCodigo() + "' .and. Field->cCodCaj == '" + oUser():cCaja() + "'"
-      end if
-
-      EnableAcceso()
-
-   RECOVER
+   RECOVER USING oError
 
       lOpenFiles        := .f.
 
-      EnableAcceso()
-
-      MsgStop( 'Imposible abrir ficheros de pedidos a proveedores' )
+      MsgStop( ErrorMessage( oError ), "Imposible abrir ficheros de pedidos a proveedores" )
 
    END SEQUENCE
 
@@ -473,6 +462,8 @@ STATIC FUNCTION OpenFiles( lExt )
    if !lOpenFiles
       CloseFiles()
    end if
+
+   EnableAcceso()
 
 RETURN ( lOpenFiles )
 
@@ -5769,7 +5760,7 @@ Return nil
 Static Function lNotOpen()
 
    if NetErr()
-      msgAlert( "Imposible abrir ficheros." )
+      msgStop( "Imposible abrir ficheros." )
       CloseFiles()
       return .t.
    end if

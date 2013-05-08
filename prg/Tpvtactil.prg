@@ -273,6 +273,7 @@ CLASS TpvTactil
    DATA oBtnLlevar
    DATA oBtnRecoger
    DATA oBtnEncargar
+   DATA oBtnImportesExactos
 
    DATA oBtnUsuario
    DATA lGetUsuario
@@ -569,9 +570,7 @@ CLASS TpvTactil
    INLINE METHOD GetUbicacion()
 
       if ( uFieldEmpresa( "lShowSala" ) )
-
          ::OnClickSalaVenta()
-
       end if
 
       RETURN ( Self )
@@ -1424,6 +1423,22 @@ CLASS TpvTactil
 
       ::oBrwNuevoTicket:GoTop()
       ::oBrwNuevoTicket:Refresh()
+
+      RETURN ( Self )
+
+   ENDMETHOD
+
+//---------------------------------------------------------------------------//
+
+   INLINE METHOD OnClickImportesExactos()   
+
+      SetFieldEmpresa( !uFieldEmpresa( "lImpExa" ), "lImpExa" )
+
+      if uFieldEmpresa( "lImpExa" )
+         ::oBtnImportesExactos:Selected()
+      else 
+         ::oBtnImportesExactos:UnSelected()
+      end if 
 
       RETURN ( Self )
 
@@ -2913,7 +2928,7 @@ METHOD StartResource() CLASS TpvTactil
       ::oOfficeBar:lPaintAll  := .f.
       ::oOfficeBar:lDisenio   := .f.
 
-      ::oOfficeBar:SetStyle( 1 )
+      ::oOfficeBar:SetStyle( 1 ) 
 
       ::oDlg:oTop             := ::oOfficeBar
 
@@ -2956,8 +2971,10 @@ METHOD StartResource() CLASS TpvTactil
       oGrupo                     := TDotNetGroup():New( oCarpeta, 66, "Comanda", .f., , "Printer_comanda_32" )
          oBoton                  := TDotNetButton():New( 60, oGrupo, "Printer_comanda_32",            "Copia comanda",   1, {|| ::OnClickCopiaComanda( .t. ) }, , , .f., .f., .f. )
 
-      oGrupo                     := TDotNetGroup():New( oCarpeta, 66, "Comensales", .f., , "Users1_32" )
-         oBoton                  := TDotNetButton():New( 60, oGrupo, "Users1_32",                     "Comensales",      1, {|| ::OnClickComensales() }, , , .f., .f., .f. )
+      oGrupo                     := TDotNetGroup():New( oCarpeta, 186, "Mesas", .f., , "Users1_32" )
+         oBoton                  := TDotNetButton():New( 60, oGrupo, "Users1_32",                     "Comensales",        1, {|| ::OnClickComensales() }, , , .f., .f., .f. )
+         oBoton                  := TDotNetButton():New( 60, oGrupo, "Media_stop_replace2_32",        "Cambiar ubicación", 2, {|| ::OnClickCambiaUbicacion() }, , , .f., .f., .f. )
+         oBoton                  := TDotNetButton():New( 60, oGrupo, "Note_cut_32",                   "Dividir mesa",      3, {|| ::OnclickDividirMesa() }, , , .f., .f., .f. )
 
       oGrupo                     := TDotNetGroup():New( oCarpeta, 66, "Tickets", .f., , "Index_32" )
          oBoton                  := TDotNetButton():New( 60, oGrupo, "Index_32",                      "Lista",           1, {|| ::OnClickLista() }, , , .f., .f., .f. )
@@ -2971,15 +2988,13 @@ METHOD StartResource() CLASS TpvTactil
 
       /*
       oGrupo                     := TDotNetGroup():New( oCarpeta, 66, "", .f., , "" )
-         oBoton                  := TDotNetButton():New( 60, oGrupo, "Navigate_right_32",             "Siguiente",         1, {|| ::oOfficeBar:SetOption( 2 ) }, , , .f., .f., .f. )
       */
 
 
-      oGrupo                     := TDotNetGroup():New( oCarpeta, 246, "Otros", .f., , "Cashier_32" )
-         oBoton                  := TDotNetButton():New( 60, oGrupo, "Media_stop_replace2_32",        "Cambiar ubicación", 1, {|| ::OnClickCambiaUbicacion() }, , , .f., .f., .f. )
-         oBoton                  := TDotNetButton():New( 60, oGrupo, "note_cut_32",                   "Dividir mesa",      2, {|| ::OnclickDividirMesa() }, , , .f., .f., .f. )
-         oBoton                  := TDotNetButton():New( 60, oGrupo, "Cashier_32",                    "Seleccionar cajas", 3, {|| ::OnClickSeleccionarCajas() }, , , .f., .f., .f. )
-         oBoton                  := TDotNetButton():New( 60, oGrupo, "Cashier_replace_32",            "Entrada y salida",  4, {|| ::OnclickEntrdaSalida() }, , , .f., .f., .f. )
+      oGrupo                     := TDotNetGroup():New( oCarpeta, 186, "Otros", .f., , "Cashier_32" )
+         oBoton                  := TDotNetButton():New( 60, oGrupo, "Cashier_32",                    "Seleccionar cajas", 1, {|| ::OnClickSeleccionarCajas() }, , , .f., .f., .f. )
+         oBoton                  := TDotNetButton():New( 60, oGrupo, "Cashier_replace_32",            "Entrada y salida",  2, {|| ::OnclickEntrdaSalida() }, , , .f., .f., .f. )
+         ::oBtnImportesExactos   := TDotNetButton():New( 60, oGrupo, "Gauge_32",                      "Cobros rapidos",    3, {|| ::OnClickImportesExactos() }, , , .f., .f., .f. )
 
       oGrupo                     := TDotNetGroup():New( oCarpeta, 186, "Arqueos/Sesiones", .f., , "Stopwatch_stop_32" )
          oBoton                  := TDotNetButton():New( 60, oGrupo, "Stopwatch_refresh_32",          "Arqueo parcial [X]",   1, {|| ::OnClickCloseTurno( .t. ) }, , , .f., .f., .f. )
@@ -3040,6 +3055,14 @@ METHOD StartResource() CLASS TpvTactil
 
    if !Empty( ::oBtnEncargar )
       ::oBtnEncargar:bRAction := {|| ::OnClickSalaVenta( ubiEncargar ) }
+   end if
+
+   /*
+   Estado del boton de cobro rapido
+   */
+
+   if uFieldEmpresa( "lImpExa")
+      ::oBtnImportesExactos:Selected()
    end if
 
    /*

@@ -564,14 +564,6 @@ STATIC FUNCTION OpenFiles( lExt )
       public aDatVto       := {}
 
       /*
-      Limitaciones de cajero y cajas--------------------------------------------------------
-      */
-
-      if oUser():lFiltroVentas()
-         cFiltroUsuario    := "Field->cCodUsr == '" + oUser():cCodigo() + "' .and. Field->cCodCaj == '" + oUser():cCaja() + "'"
-      end if
-
-      /*
       Numeros de serie---------------------------------------------------------
       */
 

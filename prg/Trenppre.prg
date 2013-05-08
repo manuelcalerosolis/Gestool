@@ -40,7 +40,7 @@ METHOD OpenFiles()
 
    DATABASE NEW ::oDbfTvta PATH ( cPatDat() ) FILE "TVTA.DBF" VIA ( cDriver() ) SHARED INDEX "TVTA.CDX"
 
-   DATABASE NEW ::oPreCliT PATH ( cPatEmp() ) FILE "PRECLIT.DBF" VIA ( cDriver() ) SHARED INDEX "PRECLIT.CDX"
+   ::oPreCliT  := TDataCenter():oPreCliT()
 
    DATABASE NEW ::oPreCliL PATH ( cPatEmp() ) FILE "PRECLIL.DBF" VIA ( cDriver() ) SHARED INDEX "PRECLIL.CDX"
 

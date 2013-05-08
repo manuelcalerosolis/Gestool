@@ -611,10 +611,17 @@ CLASS TFastReportInfGen FROM TNewInfGen
       ::oFastReport:AddVariable(    "SAT clientes",            "Total recargo SAT clientes",         "CallHbFunc( 'oTinfGen', ['nRecargoSATClientes'])" )
       ::oFastReport:AddVariable(    "SAT clientes",            "Total SAT clientes",                 "CallHbFunc( 'oTinfGen', ['nTotalSATClientes'])"   )
 
-      ::oFastReport:AddVariable(    "Presupuestos clientes",   "Total base presupuestos clientes",            "CallHbFunc( 'oTinfGen', ['nBasePresupuestosClientes'])"    )
-      ::oFastReport:AddVariable(    "Presupuestos clientes",   "Total " + cImp() + " presupuestos clientes",  "CallHbFunc( 'oTinfGen', ['nIVAPresupuestosClientes'])"     )
-      ::oFastReport:AddVariable(    "Presupuestos clientes",   "Total recargo presupuestos clientes",         "CallHbFunc( 'oTinfGen', ['nRecargoPresupuestosClientes'])" )
-      ::oFastReport:AddVariable(    "Presupuestos clientes",   "Total presupuestos clientes",                 "CallHbFunc( 'oTinfGen', ['nTotalPresupuestosClientes'])"   )
+      ::oFastReport:AddVariable(    "Presupuestos clientes",   "Total base presupuestos clientes",             "CallHbFunc( 'oTinfGen', ['nBasePresupuestosClientes'])"    )
+      ::oFastReport:AddVariable(    "Presupuestos clientes",   "Total " + cImp() + " presupuestos clientes",   "CallHbFunc( 'oTinfGen', ['nIVAPresupuestosClientes'])"     )
+      ::oFastReport:AddVariable(    "Presupuestos clientes",   "Total recargo presupuestos clientes",          "CallHbFunc( 'oTinfGen', ['nRecargoPresupuestosClientes'])" )
+      ::oFastReport:AddVariable(    "Presupuestos clientes",   "Total presupuestos clientes",                  "CallHbFunc( 'oTinfGen', ['nTotalPresupuestosClientes'])"   )
+
+      ::oFastReport:AddVariable(    "Lineas presupuestos de clientes",  "Detalle del artículo",                "CallHbFunc('cDesPreCli')"  )
+      ::oFastReport:AddVariable(    "Lineas presupuestos de clientes",  "Total unidades artículo",             "CallHbFunc('nTotNPreCli')" )
+      ::oFastReport:AddVariable(    "Lineas presupuestos de clientes",  "Precio unitario del artículo",        "CallHbFunc('nTotUPreCli')" )
+      ::oFastReport:AddVariable(    "Lineas presupuestos de clientes",  "Total línea de presupuesto",          "CallHbFunc('nTotLPreCli')" )
+      ::oFastReport:AddVariable(    "Lineas presupuestos de clientes",  "Total peso por línea",                "CallHbFunc('nPesLPreCli')" )
+      ::oFastReport:AddVariable(    "Lineas presupuestos de clientes",  "Total final línea del presupuesto",   "CallHbFunc('nTotFPreCli')" )
 
       ::oFastReport:AddVariable(    "Pedidos clientes",        "Total base pedidos clientes",            "CallHbFunc( 'oTinfGen', ['nBasePedidosClientes'])"    )
       ::oFastReport:AddVariable(    "Pedidos clientes",        "Total " + cImp() + " pedidos clientes",  "CallHbFunc( 'oTinfGen', ['nIVAPedidosClientes'])"     )

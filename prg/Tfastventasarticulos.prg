@@ -156,7 +156,7 @@ METHOD OpenFiles() CLASS TFastVentasArticulos
 
       DATABASE NEW ::oArtCod  PATH ( cPatArt() ) CLASS "ArtCodebar"  FILE "ArtCodebar.Dbf"  VIA ( cDriver() ) SHARED INDEX "ArtCodebar.Cdx"
 
-      DATABASE NEW ::oPreCliT PATH ( cPatEmp() ) CLASS "PreCliT" FILE "PreCliT.Dbf" VIA ( cDriver() ) SHARED INDEX "PreCliT.Cdx"
+      ::oPreCliT  := TDataCenter():oPreCliT()
 
       DATABASE NEW ::oPreCliL PATH ( cPatEmp() ) CLASS "PreCliL" FILE "PreCliL.Dbf" VIA ( cDriver() ) SHARED INDEX "PreCliL.Cdx"
 
@@ -376,13 +376,16 @@ METHOD Create( uParam ) CLASS TFastVentasArticulos
    ::AddField( "cPosCli",     "C", 15, 0, {|| "@!" }, "Código postal cliente/proveedor"         )
 
    ::AddField( "nUniArt",     "N", 16, 6, {|| "" },   "Unidades artículo"                       )
-   ::AddField( "nTrnArt",     "N", 16, 6, {|| "" },   "Transporte artículo"                     )
-   ::AddField( "nPntArt",     "N", 16, 6, {|| "" },   "Punto verde artículo"                    )
-   ::AddField( "nBrtArt",     "N", 16, 6, {|| "" },   "Importe bruto artículo"                  )
-   ::AddField( "nImpArt",     "N", 16, 6, {|| "" },   "Importe artículo"                        )
-   ::AddField( "nIvaArt",     "N", 16, 6, {|| "" },   cImp() + " artículo"                      )
-   ::AddField( "nTotArt",     "N", 16, 6, {|| "" },   "Total artículo"                          )
-   ::AddField( "nCosArt",     "N", 16, 6, {|| "" },   "Costo artículo"                          )
+   ::AddField( "nPreArt",     "N", 16, 6, {|| "" },   "Precio unitario artículo"                ) 
+   
+   ::AddField( "nTrnArt",     "N", 16, 6, {|| "" },   "Total transporte artículo"               ) 
+   ::AddField( "nPntArt",     "N", 16, 6, {|| "" },   "Total punto verde artículo"              ) 
+   
+   ::AddField( "nBrtArt",     "N", 16, 6, {|| "" },   "Total importe bruto artículo"            )
+   ::AddField( "nImpArt",     "N", 16, 6, {|| "" },   "Total importe artículo"                  )
+   ::AddField( "nIvaArt",     "N", 16, 6, {|| "" },   "Total " + cImp() + " artículo"           )
+   ::AddField( "nTotArt",     "N", 16, 6, {|| "" },   "Total importe artículo " + cImp() + " incluido" )
+   ::AddField( "nCosArt",     "N", 16, 6, {|| "" },   "Total costo artículo"                    )
 
    ::AddField( "cCodPr1",     "C", 10, 0, {|| "" },   "Código de la primera propiedad"          )
    ::AddField( "cCodPr2",     "C", 10, 0, {|| "" },   "Código de la segunda propiedad"          )
@@ -626,11 +629,17 @@ METHOD AddPresupuestoClientes() CLASS TFastVentasArticulos
                   ::oDbf:cPosCli    := ::oPreCliT:cPosCli
 
                   ::oDbf:nUniArt    := nTotNPreCli( ::oPreCliL:cAlias )
+                  ::oDbf:nPreArt    := nImpUPreCli( ::oPreCliL:cAlias, ::nDecOut, ::nValDiv )
+
+                  ::oDbf:nTrnArt    := nTrnUPreCli( ::oPreCliL:cAlias, ::nDecOut, ::nValDiv )
+                  ::oDbf:nPntArt    := nPntLPreCli( ::oPreCliL:cAlias, ::nDecOut, ::nValDiv )
+
                   ::oDbf:nBrtArt    := nBrtLPreCli( ::oPreCliL:cAlias, ::nDecOut, ::nDerOut, ::nValDiv )
                   ::oDbf:nImpArt    := nImpLPreCli( ::oPreCliT:cAlias, ::oPreCliL:cAlias, ::nDecOut, ::nDerOut, ::nValDiv, , , .t., .t. )
                   ::oDbf:nIvaArt    := nIvaLPreCli( ::oPreCliT:cAlias, ::oPreCliL:cAlias, ::nDecOut, ::nDerOut, ::nValDiv )
                   ::oDbf:nTotArt    := nImpLPreCli( ::oPreCliT:cAlias, ::oPreCliL:cAlias, ::nDecOut, ::nDerOut, ::nValDiv, , , .t., .t.  )
                   ::oDbf:nTotArt    += nIvaLPreCli( ::oPreCliT:cAlias, ::oPreCliL:cAlias, ::nDecOut, ::nDerOut, ::nValDiv )
+
                   ::oDbf:nCosArt    := nTotCPreCli( ::oPreCliL:cAlias, ::nDecOut, ::nDerOut, ::nValDiv )
 
                   ::oDbf:cClsDoc    := PRE_CLI
@@ -2203,6 +2212,20 @@ METHOD DataReport( oFr ) CLASS TFastVentasArticulos
    ::oFastReport:SetFieldAliases(   "Lineas facturas rectificativas de clientes", cItemsToReport( aColFacRec() ) )
 
    /*
+   Tiketc--------------------------------------------------------------------
+   */
+
+   ::oTikCliT:OrdSetFocus( "iNumTik" )
+
+   ::oFastReport:SetWorkArea(       "Tickets de clientes", ::oTikCliT:nArea )
+   ::oFastReport:SetFieldAliases(   "Tickets de clientes", cItemsToReport( aItmTik() ) )
+
+   ::oTikCliL:OrdSetFocus( "iNumTik" )
+
+   ::oFastReport:SetWorkArea(       "Lineas tickets de clientes", ::oTikCliL:nArea )
+   ::oFastReport:SetFieldAliases(   "Lineas tickets de clientes", cItemsToReport( aColTik() ) )
+
+   /*
    Relaciones entre tablas-----------------------------------------------------
    */
 
@@ -2237,6 +2260,9 @@ METHOD DataReport( oFr ) CLASS TFastVentasArticulos
 
    ::oFastReport:SetMasterDetail(   "Informe", "Facturas rectificativas de clientes",        {|| ::cIdeDocumento() } )
    ::oFastReport:SetMasterDetail(   "Informe", "Lineas facturas rectificativas de clientes", {|| ::cIdeDocumento() } )
+
+   ::oFastReport:SetMasterDetail(   "Informe", "Tickets de clientes",              {|| ::cIdeDocumento() } )
+   ::oFastReport:SetMasterDetail(   "Informe", "Lineas tickets de clientes",       {|| ::cIdeDocumento() } )
 
    /*
    Resincronizar con los movimientos-------------------------------------------
@@ -2273,6 +2299,9 @@ METHOD DataReport( oFr ) CLASS TFastVentasArticulos
 
    ::oFastReport:SetResyncPair(     "Informe", "Facturas rectificativas de clientes" )
    ::oFastReport:SetResyncPair(     "Informe", "Lineas facturas rectificativas de clientes" )
+
+   ::oFastReport:SetResyncPair(     "Informe", "Tickets de clientes" )
+   ::oFastReport:SetResyncPair(     "Informe", "Lineas tickets de clientes" )
 
 Return ( Self )
 
