@@ -138,6 +138,7 @@ METHOD DefineFiles( cPath, cDriver ) CLASS TGrpFam
       FIELD NAME "lPubInt"       TYPE "L" LEN  1  DEC 0  HIDE                                                     OF ::oDbf
       FIELD NAME "cCodWeb"       TYPE "N" LEN 11  DEC 0  HIDE                                                     OF ::oDbf
       FIELD NAME "lSndDoc"       TYPE "L" LEN  1  DEC 0  HIDE                                                     OF ::oDbf
+      FIELD NAME "CIMGGRP"       TYPE "C" LEN 250 DEC 0  HIDE                                                     OF ::oDbf
 
       INDEX TO "GRPFAM.CDX" TAG "CCODGRP" ON "CCODGRP"            COMMENT "Código" NODELETED OF ::oDbf
       INDEX TO "GRPFAM.CDX" TAG "CNOMGRP" ON "UPPER( CNOMGRP )"   COMMENT "Nombre" NODELETED OF ::oDbf
@@ -153,6 +154,8 @@ METHOD Resource( nMode ) CLASS TGrpFam
 
 	local oDlg
    local oGet, oGet2
+   local oGetImage
+   local bmpImage
 
    if nMode == DUPL_MODE
       ::oDbf:cCodGrp := NextKey( ::oDbf:cCodGrp, ::oDbf )
@@ -175,12 +178,29 @@ METHOD Resource( nMode ) CLASS TGrpFam
          PICTURE  ::oDbf:FieldByName( "cNomGrp" ):cPict ;
          WHEN     ( nMode != ZOOM_MODE ) ;
 			OF 		oDlg
+      
+      REDEFINE GET oGetImage VAR ::oDbf:cImgGrp ;
+         BITMAP   "FOLDER" ;
+         ON HELP  ( GetBmp( oGetImage, bmpImage ) ) ;
+         ON CHANGE( ChgBmp( oGetImage, bmpImage ) ) ;
+         WHEN     ( nMode != ZOOM_MODE ) ;
+         ID       130 ;
+         OF       oDlg
 
       REDEFINE CHECKBOX ::oDbf:lPubInt ;
          ID       120 ;
          WHEN     ( nMode != ZOOM_MODE ) ;
          ON CHANGE( ::Publicar() ) ;
 			OF 		oDlg
+
+      REDEFINE IMAGE bmpImage ;
+         ID       600 ;
+         OF       oDlg ;
+         FILE     cFileBmpName( ::oDbf:cImgGrp )
+
+      bmpImage:SetColor( , GetSysColor( 15 ) )
+      bmpImage:bLClicked   := {|| ShowImage( bmpImage ) }
+      bmpImage:bRClicked   := {|| ShowImage( bmpImage ) }   
 
       REDEFINE BUTTON;
          ID       IDOK ;
@@ -207,7 +227,13 @@ METHOD Resource( nMode ) CLASS TGrpFam
 
    oDlg:bStart := { || oGet:SetFocus() }
 
-   ACTIVATE DIALOG oDlg CENTER
+   ACTIVATE DIALOG oDlg ;
+   ON INIT     ( ChgBmp( oGetImage, bmpImage ) ) ;
+   CENTER
+
+   if !Empty( bmpImage )
+      bmpImage:End()
+   end if
 
 RETURN ( oDlg:nResult == IDOK )
 

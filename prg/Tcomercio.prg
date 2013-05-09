@@ -7479,6 +7479,7 @@ Method InsertGrupoCategoriesPrestashop() CLASS TComercio
    local nCodigoWeb        := 2
    local cCommand          := ""
    local oCategoria
+   local oImagen
 
    ::cTextoWait( "Añadiendo grupo: " + AllTrim( ::oGrpFam:cNomGrp ) )
 
@@ -7588,6 +7589,25 @@ Method InsertGrupoCategoriesPrestashop() CLASS TComercio
    end if
 
    SysRefresh()
+
+   /*
+   Insertamos un registro en las tablas de imágenes----------------------
+   */
+
+   if !Empty( ::oGrpFam:cImgGrp )
+
+      /*
+      Añadimos la imagen al array para pasarla a prestashop--------------
+      */
+
+      oImagen                       := SImagen()
+      oImagen:cNombreImagen         := ::oGrpFam:cImgGrp
+      oImagen:nTipoImagen           := tipoCategoria
+      oImagen:cPrefijoNombre        := AllTrim( Str( nCodigoWeb ) )
+
+      ::AddImages( oImagen )
+
+   end if
 
    /*
    Actualizamos en cascada las familias que cuelgan del grupo------------------

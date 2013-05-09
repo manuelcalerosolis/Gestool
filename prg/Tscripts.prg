@@ -443,7 +443,7 @@ METHOD StartTimer()
    local cCodScr
    local oTimer
 
-   ::aTimer          := {}   
+   ::aTimer          := {} 
 
    if ::OpenFiles()
 
