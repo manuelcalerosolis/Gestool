@@ -8992,7 +8992,6 @@ function aCocPreCli()
    aAdd( aCocPreCli, { "nTotNPreCli( cDbfCol )",                                     "N", 16, 6, "Total articulos",            "MasUnd()",    "Unidades",    "" } )
    aAdd( aCocPreCli, { "nTotUPreCli( cDbfCol, nDouDivPre, nVdvDivPre )",             "N", 16, 6, "Precio unitario",            "cPouDivPre",  "Precio",      "" } )
    aAdd( aCocPreCli, { "nTotLPreCli( cDbfCol, nDouDivPre, nRouDivPre, nVdvDivPre )", "N", 16, 6, "Total línea de presupuesto", "cPorDivPre",  "Total",       "" } )
-   aAdd( aCocPreCli, { "cFrasePublicitaria( cDbfCol )",                              "C", 50, 0, "Texto de frase publicitaria","",            "Publicidad",  "" } )
 
 return ( aCocPreCli )
 

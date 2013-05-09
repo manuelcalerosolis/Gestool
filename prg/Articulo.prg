@@ -976,6 +976,7 @@ Function Articulo( oMenuItem, oWnd, bOnInit )
          :nHeadStrAlign    := AL_RIGHT
          :lHide            := .t.
       end with
+
 /*
       with object ( oWndBrw:AddXCol() )
          :cHeader          := uFieldEmpresa( "cTxtTar1", "Precio 1" )
@@ -993,6 +994,7 @@ Function Articulo( oMenuItem, oWnd, bOnInit )
          :nHeadStrAlign    := AL_RIGHT
       end with
 */
+
       with object ( oWndBrw:AddXCol() )
          :cHeader          := uFieldEmpresa( "cTxtTar1", "Precio 1" ) 
          :bEditValue       := {|| ( dbfArticulo )->pVenta1 }
@@ -1001,7 +1003,7 @@ Function Articulo( oMenuItem, oWnd, bOnInit )
          :nDataStrAlign    := 1
          :nHeadStrAlign    := 1
          :nEditType        := 1
-         :bEditWhen        := {|| .t. }
+         :bEditWhen        := {|| nAnd( nLevel, ACC_EDIT ) != 0 }
          :bOnPostEdit      := {|o,x,n| lValidImporteBase( o, x, n, { "Base" => "pVenta1", "Iva" => "pVtaIva1", "Beneficio" => "Benef1", "BeneficioSobre" => "nBnfSbr1" } ) }
       end with
 
@@ -1014,7 +1016,7 @@ Function Articulo( oMenuItem, oWnd, bOnInit )
          :nDataStrAlign    := 1
          :nHeadStrAlign    := 1
          :nEditType        := 1
-         :bEditWhen        := {|| .t. }
+         :bEditWhen        := {|| nAnd( nLevel, ACC_EDIT ) != 0 }
          :bOnPostEdit      := {|o,x,n| lValidImporteIva( o, x, n, { "Base" => "pVenta1", "Iva" => "pVtaIva1", "Beneficio" => "Benef1", "BeneficioSobre" => "nBnfSbr1" } ) }
       end with
 
@@ -1027,7 +1029,7 @@ Function Articulo( oMenuItem, oWnd, bOnInit )
          :nHeadStrAlign    := 1
          :nEditType        := 1
          :lHide            := .t.
-         :bEditWhen        := {|| .t. }
+         :bEditWhen        := {|| nAnd( nLevel, ACC_EDIT ) != 0 }
          :bOnPostEdit      := {|o,x,n| lValidImporteBase( o, x, n, { "Base" => "pVenta2", "Iva" => "pVtaIva2", "Beneficio" => "Benef2", "BeneficioSobre" => "nBnfSbr2" } ) }
       end with
 
@@ -1041,7 +1043,7 @@ Function Articulo( oMenuItem, oWnd, bOnInit )
          :nHeadStrAlign    := 1
          :nEditType        := 1
          :lHide            := .t.
-         :bEditWhen        := {|| .t. }
+         :bEditWhen        := {|| nAnd( nLevel, ACC_EDIT ) != 0 }
          :bOnPostEdit      := {|o,x,n| lValidImporteIva( o, x, n, { "Base" => "pVenta2", "Iva" => "pVtaIva2", "Beneficio" => "Benef2", "BeneficioSobre" => "nBnfSbr2" } ) }
       end with
 
@@ -1054,7 +1056,7 @@ Function Articulo( oMenuItem, oWnd, bOnInit )
          :nHeadStrAlign    := 1
          :nEditType        := 1
          :lHide            := .t.
-         :bEditWhen        := {|| .t. }
+         :bEditWhen        := {|| nAnd( nLevel, ACC_EDIT ) != 0 }
          :bOnPostEdit      := {|o,x,n| lValidImporteBase( o, x, n, { "Base" => "pVenta3", "Iva" => "pVtaIva3", "Beneficio" => "Benef3", "BeneficioSobre" => "nBnfSbr3" } ) }
       end with
 
@@ -1068,7 +1070,7 @@ Function Articulo( oMenuItem, oWnd, bOnInit )
          :nHeadStrAlign    := 1
          :nEditType        := 1
          :lHide            := .t.
-         :bEditWhen        := {|| .t. }
+         :bEditWhen        := {|| nAnd( nLevel, ACC_EDIT ) != 0 }
          :bOnPostEdit      := {|o,x,n| lValidImporteIva( o, x, n, { "Base" => "pVenta3", "Iva" => "pVtaIva3", "Beneficio" => "Benef3", "BeneficioSobre" => "nBnfSbr3" } ) }
       end with
 
@@ -1081,10 +1083,9 @@ Function Articulo( oMenuItem, oWnd, bOnInit )
          :nHeadStrAlign    := 1
          :nEditType        := 1
          :lHide            := .t.
-         :bEditWhen        := {|| .t. }
+         :bEditWhen        := {|| nAnd( nLevel, ACC_EDIT ) != 0 }
          :bOnPostEdit      := {|o,x,n| lValidImporteBase( o, x, n, { "Base" => "pVenta4", "Iva" => "pVtaIva4", "Beneficio" => "Benef4", "BeneficioSobre" => "nBnfSbr4" } ) }
       end with
-
 
       with object ( oWndBrw:AddXCol() )
          :cHeader          := uFieldEmpresa( "cTxtTar4", "Precio 4" ) + Space( 1 ) +  cImp()
@@ -1095,7 +1096,7 @@ Function Articulo( oMenuItem, oWnd, bOnInit )
          :nHeadStrAlign    := 1
          :nEditType        := 1
          :lHide            := .t.
-         :bEditWhen        := {|| .t. }
+         :bEditWhen        := {|| nAnd( nLevel, ACC_EDIT ) != 0 }
          :bOnPostEdit      := {|o,x,n| lValidImporteIva( o, x, n, { "Base" => "pVenta4", "Iva" => "pVtaIva4", "Beneficio" => "Benef4", "BeneficioSobre" => "nBnfSbr4" } ) }
       end with
 
@@ -1108,7 +1109,7 @@ Function Articulo( oMenuItem, oWnd, bOnInit )
          :nHeadStrAlign    := 1
          :nEditType        := 1
          :lHide            := .t.
-         :bEditWhen        := {|| .t. }
+         :bEditWhen        := {|| nAnd( nLevel, ACC_EDIT ) != 0 }
          :bOnPostEdit      := {|o,x,n| lValidImporteBase( o, x, n, { "Base" => "pVenta5", "Iva" => "pVtaIva5", "Beneficio" => "Benef5", "BeneficioSobre" => "nBnfSbr5" } ) }
       end with
 
@@ -1122,7 +1123,7 @@ Function Articulo( oMenuItem, oWnd, bOnInit )
          :nHeadStrAlign    := 1
          :nEditType        := 1
          :lHide            := .t.
-         :bEditWhen        := {|| .t. }
+         :bEditWhen        := {|| nAnd( nLevel, ACC_EDIT ) != 0 }
          :bOnPostEdit      := {|o,x,n| lValidImporteIva( o, x, n, { "Base" => "pVenta5", "Iva" => "pVtaIva5", "Beneficio" => "Benef5", "BeneficioSobre" => "nBnfSbr5" } ) }
       end with
 
@@ -1135,10 +1136,9 @@ Function Articulo( oMenuItem, oWnd, bOnInit )
          :nHeadStrAlign    := 1
          :nEditType        := 1
          :lHide            := .t.
-         :bEditWhen        := {|| .t. }
+         :bEditWhen        := {|| nAnd( nLevel, ACC_EDIT ) != 0 }
          :bOnPostEdit      := {|o,x,n| lValidImporteBase( o, x, n, { "Base" => "pVenta6", "Iva" => "pVtaIva6", "Beneficio" => "Benef6", "BeneficioSobre" => "nBnfSbr6" } ) }
       end with
-
 
       with object ( oWndBrw:AddXCol() )
          :cHeader          := uFieldEmpresa( "cTxtTar6", "Precio 6" ) + Space( 1 ) +  cImp()
@@ -1149,7 +1149,7 @@ Function Articulo( oMenuItem, oWnd, bOnInit )
          :nHeadStrAlign    := 1
          :nEditType        := 1
          :lHide            := .t.
-         :bEditWhen        := {|| .t. }
+         :bEditWhen        := {|| nAnd( nLevel, ACC_EDIT ) != 0 }
          :bOnPostEdit      := {|o,x,n| lValidImporteIva( o, x, n, { "Base" => "pVenta6", "Iva" => "pVtaIva6", "Beneficio" => "Benef6", "BeneficioSobre" => "nBnfSbr6" } ) }
       end with
 
@@ -2001,19 +2001,20 @@ STATIC FUNCTION EdtRec( aTmp, aGet, dbfArticulo, oBrw, bWhen, bValid, nMode )
          WHEN     ( nMode != ZOOM_MODE ) ;
          OF       fldPrecios
 
-      REDEFINE GET aGet[( dbfArticulo )->( fieldpos( "TIPOIVA" ) ) ] VAR aTmp[ ( dbfArticulo )->( fieldpos( "TIPOIVA" ) ) ] ;
+      REDEFINE GET aGet[( dbfArticulo )->( fieldpos( "TipoIva" ) ) ] ;
+         VAR      aTmp[ ( dbfArticulo )->( fieldpos( "TipoIva" ) ) ] ;
          ID       800;
          PICTURE  "@!" ;
          WHEN     ( nMode != ZOOM_MODE ) ;
-         VALID    (  cTiva(   aGet[ ( dbfArticulo )->( fieldpos( "TIPOIVA" ) ) ], dbfIva, oSay[2] ),;
-                              aGet[ ( dbfArticulo )->( fieldpos( "PVENTA1" ) ) ]:lValid(),;
-                              aGet[ ( dbfArticulo )->( fieldpos( "PVENTA2" ) ) ]:lValid(),;
-                              aGet[ ( dbfArticulo )->( fieldpos( "PVENTA3" ) ) ]:lValid(),;
-                              aGet[ ( dbfArticulo )->( fieldpos( "PVENTA4" ) ) ]:lValid(),;
-                              aGet[ ( dbfArticulo )->( fieldpos( "PVENTA5" ) ) ]:lValid(),;
-                              aGet[ ( dbfArticulo )->( fieldpos( "PVENTA6" ) ) ]:lValid(), .t. ) ;
+         VALID    (  cTiva(   aGet[ ( dbfArticulo )->( fieldpos( "TipoIva" ) ) ], dbfIva, oSay[2] ),;
+                              aGet[ ( dbfArticulo )->( fieldpos( "pVenta1" ) ) ]:lValid(),;
+                              aGet[ ( dbfArticulo )->( fieldpos( "pVenta2" ) ) ]:lValid(),;
+                              aGet[ ( dbfArticulo )->( fieldpos( "pVenta3" ) ) ]:lValid(),;
+                              aGet[ ( dbfArticulo )->( fieldpos( "pVenta4" ) ) ]:lValid(),;
+                              aGet[ ( dbfArticulo )->( fieldpos( "pVenta5" ) ) ]:lValid(),;
+                              aGet[ ( dbfArticulo )->( fieldpos( "pVenta6" ) ) ]:lValid(), .t. ) ;
          BITMAP   "LUPA" ;
-         ON HELP  ( BrwIva( aGet[( dbfArticulo )->( fieldpos( "TIPOIVA" ) ) ], nil , oSay[2] ) ) ;
+         ON HELP  ( BrwIva( aGet[( dbfArticulo )->( fieldpos( "TipoIva" ) ) ], nil , oSay[2] ) ) ;
          OF       fldPrecios
 
       REDEFINE GET oSay[2] VAR cSay[2] ;

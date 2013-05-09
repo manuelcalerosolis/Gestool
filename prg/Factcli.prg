@@ -8455,22 +8455,21 @@ RETURN ( oDlg:End() )
 
 static function RecFacCli( aTmpFac, lMessage )
 
+   local nRecno
+   local cCodFam
    local nDtoAge     := 0
    local nImpAtp     := 0
    local nImpOfe     := 0
-   local cCodFam
-   local nRecno
 
    DEFAULT lMessage  := .t.
 
    if lMessage
 
-      if !ApoloMsgNoYes(  "¡Atención!,"                                      + CRLF + ;
-                     "todos los precios se recalcularán en función de"  + CRLF + ;
-                     "los valores en las bases de datos.",;
-                     "¿ Desea proceder ?" )
+      if !ApoloMsgNoYes(  "¡Atención!,"                                       + CRLF + ;
+                           "todos los precios se recalcularán en función de"  + CRLF + ;
+                           "los valores en las bases de datos.",;
+                           "¿ Desea proceder ?" )
          return nil
-
       end if
 
    end if
@@ -8478,6 +8477,7 @@ static function RecFacCli( aTmpFac, lMessage )
    nRecno         := ( dbfTmpLin )->( RecNo() )
 
    ( dbfTmpLin )->( dbGotop() )
+   
    ( dbfArticulo )->( ordSetFocus( "Codigo" ) )
 
    while !( dbfTmpLin )->( eof() )

@@ -325,7 +325,7 @@ Function lMiniSeek( cPrefij, xCadena, xAlias, nLen )
 
          else
 
-            nLen     := 14
+            nLen     := 10
 
             if Empty( cPrefij )
 
@@ -340,6 +340,7 @@ Function lMiniSeek( cPrefij, xCadena, xAlias, nLen )
                      ( xAlias )->( OrdScope( 1, cPre + cPos ) )
 
                      lRet  := .t.
+                     
                      exit
 
                   end if

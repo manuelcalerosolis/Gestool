@@ -198,7 +198,7 @@ METHOD OpenFiles()
 
    DATABASE NEW ::oFacPrvL PATH ( cPatEmp() ) FILE "FacPrvL.Dbf" VIA ( cDriver() ) SHARED INDEX "FacPrvL.Cdx"
 
-   DATABASE NEW ::oPreCliT PATH ( cPatEmp() ) FILE "PreCliT.Dbf" VIA ( cDriver() ) SHARED INDEX "PreCliT.Cdx"
+   ::oPreCliT  := TDataCenter():oPreCliT()
 
    DATABASE NEW ::oPreCliL PATH ( cPatEmp() ) FILE "PreCliL.Dbf" VIA ( cDriver() ) SHARED INDEX "PreCliL.Cdx"
 

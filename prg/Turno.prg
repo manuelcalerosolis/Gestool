@@ -1016,7 +1016,7 @@ METHOD OpenFiles( lExclusive )
       DATABASE NEW ::oTikP       PATH ( cPatEmp() ) FILE "TIKEP.DBF"          VIA ( cDriver() ) SHARED INDEX "TIKEP.CDX"
       ::oTikP:OrdSetFocus( "cTurPgo" )
 
-      DATABASE NEW ::oPreCliT    PATH ( cPatEmp() ) FILE "PRECLIT.DBF"        VIA ( cDriver() ) SHARED INDEX "PRECLIT.CDX"
+      ::oPreCliT  := TDataCenter():oPreCliT()
       ::oPreCliT:OrdSetFocus( "CTURPRE" )
 
       DATABASE NEW ::oPreCliL    PATH ( cPatEmp() ) FILE "PRECLIL.DBF"        VIA ( cDriver() ) SHARED INDEX "PRECLIL.CDX"
@@ -1813,72 +1813,69 @@ METHOD lCloseCajasEleccionada( oDlg )
    Guardamos los comentarios---------------------------------------------------
    */
 
-   if !::lArqueoParcial 
-      if ::oDbf:Seek( cCurrentTruno )
-         ::oDbf:FieldPutByName( "mComTur", ::cComentario )
-      end if
+   if !::lArqueoParcial .and. ::oDbf:Seek( cCurrentTruno )
+      ::oDbf:FieldPutByName( "mComTur", ::cComentario )
    end if
 
    /*
-   Capturamos que no cierre la caja en los arqueos parciales-------------------
+   Cerramos las cajas una a una------------------------------------------------
    */
 
-   if !::lArqueoParcial
-
-      /*
-      Cerramos las cajas una a una------------------------------------------------
-      */
-
-      ::oDbfCaj:GetStatus( .t. )
-      if ::oDbfCaj:Seek( cCurrentTruno )
-
-         while ::oDbfCaj:cNumTur + ::oDbfCaj:cSufTur == cCurrentTruno .and. !::oDbfCaj:Eof()
-
-            nTotalCajas++
-
-            if ( ::oDbfCaj:lCajClo )
-
-               nCajasCerradas++
-
-            elseif ( ::lInCajaSelect( ::oDbfCaj:cCodCaj ) )
-
-               /*
-               Cerramos las cajas----------------------------------------------------
-               */
-
-               ::lCloseCaja( .t., ::oDbfCaj:cCodCaj )
-
-               /*
-               Una nueva caja cerrada----------------------------------------------
-               */
-
-               aAdd( aCajasCerradas, ::oDbfCaj:cCodCaj )
-
-               nCajasCerradas++
-
-            end if
+   ::oDbfCaj:GetStatus( .t. )
+   
+   if ::oDbfCaj:Seek( cCurrentTruno )
+   
+      while ::oDbfCaj:cNumTur + ::oDbfCaj:cSufTur == cCurrentTruno .and. !::oDbfCaj:Eof()
+   
+         nTotalCajas++
+   
+         if ( ::oDbfCaj:lCajClo )
+   
+            nCajasCerradas++
+   
+         elseif ( ::lInCajaSelect( ::oDbfCaj:cCodCaj ) )
 
             /*
-            Siguiente caja--------------------------------------------------------
+            Cerramos las cajas----------------------------------------------------
             */
-
-            ::oDbfCaj:Skip()
-
-            SysRefresh()
-
-         end while
-
-      end if
-
-      /*
-      Si hemos cerrado todas las cajas, cerramos el turno-------------------------
-      */
+         
+            if !::lArqueoParcial
+               ::lCloseCaja( .t., ::oDbfCaj:cCodCaj )
+            end if
+         
+            /*
+            Una nueva caja cerrada----------------------------------------------
+            */
+         
+            aAdd( aCajasCerradas, ::oDbfCaj:cCodCaj )
+         
+            nCajasCerradas++
+         
+         end if
+         
+         /*
+         Siguiente caja--------------------------------------------------------
+         */
+         
+         ::oDbfCaj:Skip()
+         
+         SysRefresh()
+      
+      end while
+   
+   end if
+   
+   /*
+   Si hemos cerrado todas las cajas, cerramos el turno-------------------------
+   */
+   
+   if !::lArqueoParcial
 
       if nCajasCerradas >= nTotalCajas
          ::lAllCloseTurno()
       else
          ::lOneCloseTurno()      
-      end if
+      end if 
 
    end if
 

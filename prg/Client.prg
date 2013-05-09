@@ -12154,7 +12154,7 @@ function AddRiesgo( nImpRie, cCodCli, dbfClient )
 
    local aCliStatus  := aGetStatus( dbfClient, .t. )
 
-   if ( dbfClient )->( DbSeek( cCodCli ) ) .and. dbDialogLock( dbfClient )
+   if ( dbfClient )->( dbSeek( cCodCli ) ) .and. dbDialogLock( dbfClient )
       ( dbfClient )->nImpRie  += nImpRie
       ( dbfClient )->nTipCli  := 1
       ( dbfClient )->( dbUnlock() )

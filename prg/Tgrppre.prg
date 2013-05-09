@@ -70,7 +70,7 @@ METHOD OpenFiles() CLASS TInfMovPre
    oBlock   := ErrorBlock( {| oError | ApoloBreak( oError ) } )
    BEGIN SEQUENCE
 
-   DATABASE NEW ::oPreCliT PATH ( cPatEmp() ) FILE "PRECLIT.DBF" VIA ( cDriver() ) SHARED INDEX "PRECLIT.CDX"
+   ::oPreCliT  := TDataCenter():oPreCliT()
    ::oPreCliT:SetOrder( "CCODCLI" )
 
    DATABASE NEW ::oPreCliL PATH ( cPatEmp() ) FILE "PRECLIL.DBF" VIA ( cDriver() ) SHARED INDEX "PRECLIL.CDX"

@@ -1,4 +1,4 @@
-#include "FiveWin.Ch"
+#include "FiveWin.Ch" 
 #include "Folder.ch"
 #include "Report.ch"
 #include "Label.ch"
@@ -8,9 +8,9 @@
 
 #define IDC_CHART1               111
 
-#define fldEstadisticas          oFld:aDialogs[ 1 ]
+#define fldDocumentos            oFld:aDialogs[ 1 ]  
 #define fldStocks                oFld:aDialogs[ 2 ]
-#define fldDocumentos            oFld:aDialogs[ 3 ] 
+#define fldEstadisticas          oFld:aDialogs[ 3 ]
 #define fldGraficos              oFld:aDialogs[ 4 ]
 
 static dbfDiv
@@ -54,7 +54,7 @@ static dbfRctPrvL
 static oDbfTmp
 
 static oBtnFiltro
-static oFilter     := nil
+static oFilter     
 
 static cPouDiv
 static cPinDiv
@@ -431,27 +431,27 @@ function BrwVtaComArt( cCodArt, cNomArt, cDiv, cIva, cAlm, cArticulo )
 
    DEFINE DIALOG oDlg RESOURCE "ArtInfo" TITLE "Información del artículo : " + Rtrim( cCodArt ) + " - " + Rtrim( cNomArt )
 
-   REDEFINE FOLDER oFld ;
-			ID 		300 ;
-			OF 		oDlg ;
-         PROMPT   "&Estadisticas"      ,;
-                  "Stock"              ,;
-                  "&Documentos"        ,;
-                  "Gráfico"            ; 
-         DIALOGS  "ART_8"              ,;
-                  "INFO_3"             ,;
-                  "INFO_1"             ,;
-                  "INFO_2"
+   REDEFINE FOLDER   oFld ;
+			ID 		   300 ;
+			OF 		   oDlg ;
+         PROMPT      "&Documentos"        ,;
+                     "Stock"              ,;
+                     "&Estadisticas"      ,;
+                     "Gráfico"            ; 
+         DIALOGS     "INFO_1"             ,;
+                     "INFO_3"             ,;
+                     "ART_8"              ,;
+                     "INFO_2"
 
    /*
    Compras---------------------------------------------------------------------
    */
 
-   REDEFINE BITMAP oBmpGeneral;
-         ID       500 ;
-         RESOURCE "Cube_Yellow_Alpha_48" ;
+   REDEFINE BITMAP   oBmpGeneral;
+         ID          500 ;
+         RESOURCE    "Cube_Yellow_Alpha_48" ;
          TRANSPARENT ;
-         OF       fldEstadisticas          
+         OF          fldEstadisticas          
 
    /*
    Browse de Compras-----------------------------------------------------------
@@ -643,7 +643,8 @@ function BrwVtaComArt( cCodArt, cNomArt, cDiv, cIva, cAlm, cArticulo )
    with object ( oBrwStk:AddCol() )
       :cHeader                   := "Lote"
       :nWidth                    := 70
-      :bStrData                  := {|| if( !Empty( oBrwStk:oTreeItem ) .and. !Empty( oBrwStk:oTreeItem:Cargo ), oBrwStk:oTreeItem:Cargo:cLote, "" ) }
+      :bEditValue                := {|| nTotalTree( oBrwStk, "cLote" ) }
+      // :bStrData                  := {|| if( !Empty( oBrwStk:oTreeItem ) .and. !Empty( oBrwStk:oTreeItem:Cargo ), oBrwStk:oTreeItem:Cargo:cLote, "" ) }
       :lHide                     := .t.
    end with
 
@@ -1203,26 +1204,24 @@ Static Function LoadDatos( cCodArt, nYear, oDlg, oBrwStk, oBrwTmp, oGraph, oBrwC
    local aStk
    local oError
    local oBlock
-   local nActStk     := 0
-   local nResStk     := 0
-   local nEntStk     := 0
-   local nStkLib     := 0
-   local nTotStkPro  := 0
-   local nTotStkCon  := 0
+   local nActStk        := 0
+   local nResStk        := 0
+   local nEntStk        := 0
+   local nStkLib        := 0
+   local nTotStkPro     := 0
+   local nTotStkCon     := 0
 
-   nStkAlm           := 0
+   nStkAlm              := 0
 
    oDlg:Disable()
 
    CursorWait()
    
-
-   oBlock            := ErrorBlock( {| oError | ApoloBreak( oError ) } )
+   oBlock               := ErrorBlock( {| oError | ApoloBreak( oError ) } )
    BEGIN SEQUENCE
 
    oMeter:Show()
    oMeter:SetTotal( 18 )
-
 
    /*
    Calculamos el stock---------------------------------------------------------
@@ -1230,7 +1229,12 @@ Static Function LoadDatos( cCodArt, nYear, oDlg, oBrwStk, oBrwTmp, oGraph, oBrwC
 
    oStock:oTreeStocks( cCodArt )
 
-   oBrwStk:SetTree( oStock:oTree, { "Navigate_Minus_16", "Navigate_Plus_16", "Nil16" } ) 
+   if Empty( oBrwStk:oTree )
+      oBrwStk:SetTree( oStock:oTree, { "Navigate_Minus_16", "Navigate_Plus_16", "Nil16" } ) 
+   else 
+      oBrwStk:oTree     := oStock:oTree
+      oBrwStk:oTreeItem := oStock:oTree:oFirst
+   end if 
 
    /*
    Calculos de compras---------------------------------------------------------
@@ -1238,11 +1242,11 @@ Static Function LoadDatos( cCodArt, nYear, oDlg, oBrwStk, oBrwTmp, oGraph, oBrwC
 
    oText:SetText( "Calculando compras mensuales" )
 
-   aTotCom[1]        := 0
-   aTotCom[2]        := 0
-   aTotCom[3]        := 0
-   aTotCom[4]        := 0
-   aTotCom[5]        := 0
+   aTotCom[1]           := 0
+   aTotCom[2]           := 0
+   aTotCom[3]           := 0
+   aTotCom[4]           := 0
+   aTotCom[5]           := 0
 
    nCompras( cCodArt, dbfAlbPrvT, dbfAlbPrvL, dbfFacPrvT, dbfFacPrvL, if( nYear == "Todos", nil, Val( nYear ) ) )
 
@@ -1250,9 +1254,9 @@ Static Function LoadDatos( cCodArt, nYear, oDlg, oBrwStk, oBrwTmp, oGraph, oBrwC
 
    for n := 1 to 12
 
-      aTotCom[1]     += aCom[n,1]
-      aTotCom[2]     += aCom[n,2]
-      aTotCom[3]     += aCom[n,3]
+      aTotCom[1]        += aCom[n,1]
+      aTotCom[2]        += aCom[n,2]
+      aTotCom[3]        += aCom[n,3]
 
    next
 
@@ -1267,8 +1271,8 @@ Static Function LoadDatos( cCodArt, nYear, oDlg, oBrwStk, oBrwTmp, oGraph, oBrwC
    oMeter:AutoInc()
 
    for n := 1 to 12
-      nTotStkPro     += aProducido[ n, 2 ]
-      nTotStkCon     += aConsumido[ n, 2 ]
+      nTotStkPro        += aProducido[ n, 2 ]
+      nTotStkCon        += aConsumido[ n, 2 ]
    next
 
    /*
@@ -1435,7 +1439,7 @@ Static Function LoadDatos( cCodArt, nYear, oDlg, oBrwStk, oBrwTmp, oGraph, oBrwC
 
    END SEQUENCE
    ErrorBlock( oBlock )
-   
+
    CursorWE()
 
    oDlg:Enable()
@@ -3713,28 +3717,37 @@ Return ""
 Function nTotalTree( oBrwStk, cData )
 
    local oItem
+   local uValue
    local nUnidades         := 0
-   local oError
-   local oBlock
 
    DEFAULT cData           := "nUnidades"
 
-   oBlock                  := ErrorBlock( { | oError | ApoloBreak( oError ) } )
-   BEGIN SEQUENCE
-
    if !Empty( oBrwStk:oTreeItem ) 
-      
+
       if !IsNil( oBrwStk:oTreeItem:oTree )
 
          oItem             := oBrwStk:oTreeItem:oTree:oFirst 
 
          while !IsNil( oItem )
 
+
             if !Empty( oItem:Cargo )
-               nUnidades   += oSend( oItem:Cargo, cData ) 
+
+               uValue      := oSend( oItem:Cargo, cData ) 
+               
+               if isNum( uValue )
+                  nUnidades   += oSend( oItem:Cargo, cData ) 
+               else
+                  nUnidades   := oSend( oItem:Cargo, cData ) 
+               end if 
+
             end if 
 
-            oItem          := oItem:GetNext()
+            if ( oItem:oNext != nil .and. oItem:oNext:nLevel == oItem:nLevel )
+               oItem          := oItem:oNext
+            else
+               oItem          := nil 
+            end if 
 
          end while
 
@@ -3748,14 +3761,6 @@ Function nTotalTree( oBrwStk, cData )
 
    end if 
 
-   RECOVER USING oError
-
-      msgStop( ErrorMessage( oError ), 'de artículos' )
-
-   END SEQUENCE
-
-   ErrorBlock( oBlock )
-
 Return ( nUnidades )
 
 //---------------------------------------------------------------------------//
@@ -3765,13 +3770,8 @@ Function nFooterTree( oBrwStk, cData )
    local oItem
    local oNode
    local nUnidades            := 0
-   local oError
-   local oBlock
 
    DEFAULT cData              := "nUnidades"
-
-   oBlock                     := ErrorBlock( { | oError | ApoloBreak( oError ) } )
-   BEGIN SEQUENCE
 
    if !Empty( oBrwStk:oTree ) 
 
@@ -3789,7 +3789,11 @@ Function nFooterTree( oBrwStk, cData )
                   nUnidades   += oSend( oNode:Cargo, cData ) 
                end if 
 
-               oNode          := oNode:GetNext()
+               if ( oNode:oNext != nil .and. oNode:oNext:nLevel == oNode:nLevel )
+                  oNode       := oNode:oNext
+               else
+                  oNode       := nil 
+               end if 
 
             end while
 
@@ -3800,14 +3804,6 @@ Function nFooterTree( oBrwStk, cData )
       end while 
 
    end if 
-
-   RECOVER USING oError
-
-      msgStop( ErrorMessage( oError ), 'de artículos' )
-
-   END SEQUENCE
-
-   ErrorBlock( oBlock )
 
 Return ( nUnidades )
 

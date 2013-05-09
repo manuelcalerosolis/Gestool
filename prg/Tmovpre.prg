@@ -79,7 +79,7 @@ METHOD OpenFiles() CLASS TMovPreInf
    Ficheros necesarios
    */
 
-   DATABASE NEW ::oPreCliT PATH ( cPatEmp() ) FILE "PRECLIT.DBF" VIA ( cDriver() ) SHARED INDEX "PRECLIT.CDX"
+   ::oPreCliT  := TDataCenter():oPreCliT()
    ::oPreCliT:SetOrder( "CCODCLI" )
 
    DATABASE NEW ::oPreCliL PATH ( cPatEmp() ) FILE "PRECLIL.DBF" VIA ( cDriver() ) SHARED INDEX "PRECLIL.CDX"

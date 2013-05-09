@@ -4609,7 +4609,7 @@ METHOD aStockArticulo( cCodArt, cCodAlm, oBrw, lLote, lNumeroSerie, dFecIni, dFe
                   :cCodigo             := ( ::cPedPrvL )->cRef
                   :cNumeroDocumento    := ( ::cPedPrvL )->cSerPed + "/" + Alltrim( Str( ( ::cPedPrvL )->nNumPed ) )
                   :cDelegacion         := ( ::cPedPrvL )->cSufPed
-                  :dFechaDocumento     := ( ::cPedPrvL )->dFecPed
+                  :dFechaDocumento     := dFecPedPrv( ( ::cPedPrvL )->cSerPed + Str( ( ::cPedPrvL )->nNumPed ) + ( ::cPedPrvL )->cSufPed, ::cPedPrvT )
                   :cCodigoAlmacen      := ( ::cPedPrvL )->cAlmLin
                   :cCodigoPropiedad1   := ( ::cPedPrvL )->cCodPr1
                   :cCodigoPropiedad2   := ( ::cPedPrvL )->cCodPr2
@@ -4683,7 +4683,7 @@ METHOD aStockArticulo( cCodArt, cCodAlm, oBrw, lLote, lNumeroSerie, dFecIni, dFe
                   :cCodigo             := ( ::cPedCliL )->cRef
                   :cNumeroDocumento    := ( ::cPedCliL )->cSerPed + "/" + Alltrim( Str( ( ::cPedCliL )->nNumPed ) )
                   :cDelegacion         := ( ::cPedCliL )->cSufPed
-                  :dFechaDocumento     := ( ::cPedCliL )->dFecPed
+                  :dFechaDocumento     := dFecPedCli( ( ::cPedCliL )->cSerPed + Str( ( ::cPedCliL )->nNumPed ) + ( ::cPedCliL )->cSufPed, ::cPedCliT )
                   :cCodigoAlmacen      := ( ::cPedCliL )->cAlmLin
                   :cCodigoPropiedad1   := ( ::cPedCliL )->cCodPr1
                   :cCodigoPropiedad2   := ( ::cPedCliL )->cCodPr2
@@ -5658,7 +5658,7 @@ METHOD oTreeStocks( cCodArt, cCodAlm )
    TreeEnd()
 */
 
-   aSort( ::aStocks, , , {|x,y| x:cCodigo + x:cCodigoAlmacen + x:cValorPropiedad1 + x:cValorPropiedad2 + x:cLote > y:cCodigo + y:cCodigoAlmacen + y:cValorPropiedad1 + y:cValorPropiedad2 + y:cLote } )
+   aSort( ::aStocks, , , {|x,y| x:cCodigo + x:cCodigoAlmacen + x:cValorPropiedad1 + x:cValorPropiedad2 + x:cLote + dtos( x:dFechaDocumento ) < y:cCodigo + y:cCodigoAlmacen + y:cValorPropiedad1 + y:cValorPropiedad2 + y:cLote + dtos( y:dFechaDocumento ) } )
 
    ::oTree     := TreeBegin()
    
