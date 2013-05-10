@@ -10437,7 +10437,7 @@ METHOD AppendPedidoprestashop()
                cSufPed                 := RetSufEmp()
 
                SET DATE FORMAT "yyyy/mm/dd"
-               dFecha                  := Ctod( Left( oQuery:FieldGet( 42 ), 10 ) ) /*date_add*/
+               dFecha                  := Ctod( Left( oQuery:FieldGet( 43 ), 10 ) )
                SET DATE FORMAT "dd/mm/yyyy"
 
                ::oPedCliT:Append()
@@ -10446,6 +10446,7 @@ METHOD AppendPedidoprestashop()
                ::oPedCliT:cSerPed      := cSerPed
                ::oPedCliT:nNumPed      := nNumPed
                ::oPedCliT:cSufPed      := cSufPed
+               ::oPedCliT:cSuPed       := oQuery:FieldGet( 2 )
                ::oPedCliT:cTurPed      := cCurSesion()
                ::oPedCliT:dFecPed      := dFecha
                ::oPedCliT:cCodAlm      := oUser():cAlmacen()
@@ -10458,7 +10459,7 @@ METHOD AppendPedidoprestashop()
                ::oPedCliT:lSndDoc      := .t.
                ::oPedCliT:lIvaInc      := uFieldEmpresa( "lIvaInc" )
                ::oPedCliT:cManObr      := Padr( "Gastos envio", 250 )
-               ::oPedCliT:nManObr      := oQuery:FieldGet( 30 )
+               ::oPedCliT:nManObr      := oQuery:FieldGet( 32 )
                ::oPedCliT:lCloPed      := .f.
                ::oPedCliT:cCodUsr      := cCurUsr()
                ::oPedCliT:dFecCre      := GetSysDate()
@@ -10469,10 +10470,10 @@ METHOD AppendPedidoprestashop()
                ::oPedCliT:cCodWeb      := oQuery:FieldGet( 1 )
                cCodWeb                 := oQuery:FieldGet( 1 )
                ::oPedCliT:nTotNet      := oQuery:FieldGet( 29 )
-               ::oPedCliT:nTotIva      := oQuery:FieldGet( 25 ) - ( oQuery:FieldGet( 29 ) + oQuery:FieldGet( 32 ) )
-               ::oPedCliT:nTotPed      := oQuery:FieldGet( 25 )
+               ::oPedCliT:nTotIva      := oQuery:FieldGet( 26 ) - ( oQuery:FieldGet( 29 ) + oQuery:FieldGet( 32 ) )
+               ::oPedCliT:nTotPed      := oQuery:FieldGet( 26 )
 
-               if ::oCli:SeekInOrd( Str( oQuery:FieldGet( 4 ), 11 ) , "cCodWeb" )
+               if ::oCli:SeekInOrd( Str( oQuery:FieldGet( 7 ), 11 ) , "cCodWeb" )
 
                   ::oPedCliT:cCodCli   := ::oCli:Cod
                   ::oPedCliT:cNomCli   := ::oCli:Titulo
