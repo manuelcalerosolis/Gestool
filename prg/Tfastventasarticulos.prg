@@ -55,6 +55,147 @@ END CLASS
 
 //----------------------------------------------------------------------------//
 
+METHOD DataReport( oFr ) CLASS TFastVentasArticulos
+
+   /*
+   Zona de detalle-------------------------------------------------------------
+   */
+
+   ::oFastReport:SetWorkArea(       "Informe", ::oDbf:nArea )
+   ::oFastReport:SetFieldAliases(   "Informe", cObjectsToReport( ::oDbf ) )
+
+   /*
+   Zona de datos---------------------------------------------------------------
+   */
+
+   ::oFastReport:SetWorkArea(       "Empresa", ::oDbfEmp:nArea )
+   ::oFastReport:SetFieldAliases(   "Empresa", cItemsToReport( aItmEmp() ) )
+
+   ::oFastReport:SetWorkArea(       "Artículos.Informe", ::oDbfArt:nArea )
+   ::oFastReport:SetFieldAliases(   "Artículos.Informe", cItemsToReport( aItmArt() ) )
+
+   ::oFastReport:SetWorkArea(       "Imagenes", ::oArtImg:nArea )
+   ::oFastReport:SetFieldAliases(   "Imagenes", cItemsToReport( aItmImg() ) )
+
+   ::oFastReport:SetWorkArea(       "Códigos de barras", ::oArtCod:nArea )
+   ::oFastReport:SetFieldAliases(   "Códigos de barras", cItemsToReport( aItmBar() ) )
+
+   ::oFastReport:SetWorkArea(       "Escandallos", ::oArtKit:nArea )
+   ::oFastReport:SetFieldAliases(   "Escandallos", cItemsToReport( aItmKit() ) )
+
+   ::oFastReport:SetWorkArea(       "Artículos.Escandallos", ::oDbfArt:nArea )
+   ::oFastReport:SetFieldAliases(   "Artículos.Escandallos", cItemsToReport( aItmArt() ) )
+
+   ::oFastReport:SetWorkArea(       "Familias", ::oDbfFam:nArea )
+   ::oFastReport:SetFieldAliases(   "Familias", cItemsToReport( aItmFam() ) )
+
+   ::oFastReport:SetWorkArea(       "Tipo artículos", ::oTipArt:Select() )
+   ::oFastReport:SetFieldAliases(   "Tipo artículos", cObjectsToReport( ::oTipArt:oDbf ) )
+
+   ::oFastReport:SetWorkArea(       "Categorias", ::oDbfCat:nArea )
+   ::oFastReport:SetFieldAliases(   "Categorias", cItemsToReport( aItmCategoria() ) )
+
+   ::oFastReport:SetWorkArea(       "Temporadas", ::oDbfTmp:nArea )
+   ::oFastReport:SetFieldAliases(   "Temporadas", cItemsToReport( aItmTemporada() ) )
+
+   ::oFastReport:SetWorkArea(       "Fabricantes", ::oDbfFab:Select() )
+   ::oFastReport:SetFieldAliases(   "Fabricantes", cObjectsToReport( ::oDbfFab:oDbf ) )
+
+   ::oFastReport:SetWorkArea(       "Tipos de " + cImp(), ::oDbfIva:nArea )
+   ::oFastReport:SetFieldAliases(   "Tipos de " + cImp(), cItemsToReport( aItmTIva() ) )
+
+   ::oFastReport:SetWorkArea(       "Clientes", ::oDbfCli:nArea )
+   ::oFastReport:SetFieldAliases(   "Clientes", cItemsToReport( aItmCli() ) )
+
+   /*
+   Relaciones entre tablas-----------------------------------------------------
+   */
+
+   ::oFastReport:SetMasterDetail(   "Informe", "Artículos.Informe",                 {|| ::oDbf:cCodArt } )
+   ::oFastReport:SetMasterDetail(   "Informe", "Imagenes",                          {|| ::oDbf:cCodArt } )
+   ::oFastReport:SetMasterDetail(   "Informe", "Escandallos",                       {|| ::oDbf:cCodArt } )
+   ::oFastReport:SetMasterDetail(   "Informe", "Códigos de barras",                 {|| ::oDbf:cCodArt } )
+
+   ::oFastReport:SetMasterDetail(   "Artículos.Informe", "Familias",                {|| ::oDbfArt:Familia } )
+   ::oFastReport:SetMasterDetail(   "Artículos.Informe", "Tipo artículos",          {|| ::oDbfArt:cCodTip } )
+   ::oFastReport:SetMasterDetail(   "Artículos.Informe", "Categorias",              {|| ::oDbfArt:cCodCate } )
+   ::oFastReport:SetMasterDetail(   "Artículos.Informe", "Temporadas",              {|| ::oDbfArt:cCodTemp } )
+   ::oFastReport:SetMasterDetail(   "Artículos.Informe", "Fabricantes",             {|| ::oDbfArt:cCodFab } )
+   ::oFastReport:SetMasterDetail(   "Artículos.Informe", "Tipos de " + cImp(),      {|| ::oDbfArt:TipoIva } )
+
+   ::oFastReport:SetMasterDetail(   "Escandallos", "Artículos.Escandallos",         {|| ::oArtKit:cRefKit } )
+
+   ::oFastReport:SetMasterDetail(   "Informe", "Clientes",                          {|| ::oDbf:cCodCli } )
+   ::oFastReport:SetMasterDetail(   "Informe", "Empresa",                           {|| cCodEmp() } )
+
+   /*
+   Resincronizar con los movimientos-------------------------------------------
+   */
+
+   ::oFastReport:SetResyncPair(     "Artículos.Informe", "Familias" )
+   ::oFastReport:SetResyncPair(     "Artículos.Informe", "Tipo artículos" )
+   ::oFastReport:SetResyncPair(     "Artículos.Informe", "Categorias" )
+   ::oFastReport:SetResyncPair(     "Artículos.Informe", "Temporadas" )
+   ::oFastReport:SetResyncPair(     "Artículos.Informe", "Fabricantes" )
+   ::oFastReport:SetResyncPair(     "Artículos.Informe", "Tipos de " + cImp() )
+
+   ::oFastReport:SetResyncPair(     "Informe", "Artículos.Informe" )
+   ::oFastReport:SetResyncPair(     "Informe", "Imagenes" )
+   ::oFastReport:SetResyncPair(     "Informe", "Escandallos" )
+   ::oFastReport:SetresyncPair(     "Informe", "Códigos de barras" )
+
+   ::oFastReport:SetResyncPair(     "Escandallos", "Artículos.Escandallos" )
+
+   ::oFastReport:SetResyncPair(     "Informe", "Clientes" )
+   ::oFastReport:SetResyncPair(     "Informe", "Empresa" )
+
+   /*
+   Tablas en funcion del tipo de informe---------------------------------------
+   */
+
+   do case
+      case ::cTypeName == "Informe de presupuestos"
+
+         ::FastReportPresupuestoCliente()
+
+      case ::cTypeName == "Informe de pedidos"
+      
+         ::FastReportPedidoCliente()
+
+      case ::cTypeName == "Informe de albaranes"
+      
+         ::FastReportAlbaranCliente()
+
+      case ::cTypeName == "Informe de facturas"
+      
+         ::FastReportFacturaCliente()
+         
+         ::FastReportFacturaRectificativa()
+
+      case ::cTypeName == "Informe de facturas rectificativas"
+
+         ::FastReportFacturaRectificativa()
+
+      case ::cTypeName == "Informe de tickets"
+
+         ::FastReportTicket( .t. )
+
+      case ::cTypeName == "Informe de ventas"
+
+         ::FastReportAlbaranCliente()
+
+         ::FastReportFacturaCliente()
+
+         ::FastReportFacturaRectificativa()
+
+         ::FastReportTicket()
+
+   end case
+
+Return ( Self )
+
+//---------------------------------------------------------------------------//
+
 METHOD lResource( cFld ) CLASS TFastVentasArticulos
 
    ::lNewInforme     := .t.
@@ -1545,7 +1686,7 @@ METHOD AddPedidoProveedor() CLASS TFastVentasArticulos
 
    ::oPedPrvT:AddTmpIndex( cCurUsr(), GetFileNoExt( ::oPedPrvT:cFile ), ::oPedPrvT:OrdKey(), ( cExpHead ), , , , , , , , .t. )
 
-   ::oMtrInf:cText   := "Procesando Pedaranes"
+   ::oMtrInf:cText   := "Procesando pedidos a proveedor"
    ::oMtrInf:SetTotal( ::oPedPrvT:OrdKeyCount() )
 
    /*
@@ -1684,7 +1825,7 @@ METHOD AddAlbaranProveedor( lFacturados ) CLASS TFastVentasArticulos
 
    ::oAlbPrvT:AddTmpIndex( cCurUsr(), GetFileNoExt( ::oAlbPrvT:cFile ), ::oAlbPrvT:OrdKey(), ( cExpHead ), , , , , , , , .t. )
 
-   ::oMtrInf:cText   := "Procesando albaranes"
+   ::oMtrInf:cText   := "Procesando albaranes a proveedor"
    ::oMtrInf:SetTotal( ::oAlbPrvT:OrdKeyCount() )
 
    /*
@@ -1819,7 +1960,7 @@ METHOD AddFacturaProveedor( cCodigoArticulo ) CLASS TFastVentasArticulos
 
    ::oFacPrvT:AddTmpIndex( cCurUsr(), GetFileNoExt( ::oFacPrvT:cFile ), ::oFacPrvT:OrdKey(), ( cExpHead ), , , , , , , , .t. )
 
-   ::oMtrInf:cText   := "Procesando facturas"
+   ::oMtrInf:cText   := "Procesando facturas proveedor"
    ::oMtrInf:SetTotal( ::oFacPrvT:OrdKeyCount() )
 
    /*
@@ -2111,225 +2252,50 @@ RETURN ( Self )
 
 //---------------------------------------------------------------------------//
 
-METHOD DataReport( oFr ) CLASS TFastVentasArticulos
-
-   /*
-   Zona de detalle-------------------------------------------------------------
-   */
-
-   ::oFastReport:SetWorkArea(       "Informe", ::oDbf:nArea )
-   ::oFastReport:SetFieldAliases(   "Informe", cObjectsToReport( ::oDbf ) )
-
-   /*
-   Zona de datos---------------------------------------------------------------
-   */
-
-   ::oFastReport:SetWorkArea(       "Empresa", ::oDbfEmp:nArea )
-   ::oFastReport:SetFieldAliases(   "Empresa", cItemsToReport( aItmEmp() ) )
-
-   ::oFastReport:SetWorkArea(       "Artículos.Informe", ::oDbfArt:nArea )
-   ::oFastReport:SetFieldAliases(   "Artículos.Informe", cItemsToReport( aItmArt() ) )
-
-   ::oFastReport:SetWorkArea(       "Imagenes", ::oArtImg:nArea )
-   ::oFastReport:SetFieldAliases(   "Imagenes", cItemsToReport( aItmImg() ) )
-
-   ::oFastReport:SetWorkArea(       "Códigos de barras", ::oArtCod:nArea )
-   ::oFastReport:SetFieldAliases(   "Códigos de barras", cItemsToReport( aItmBar() ) )
-
-   ::oFastReport:SetWorkArea(       "Escandallos", ::oArtKit:nArea )
-   ::oFastReport:SetFieldAliases(   "Escandallos", cItemsToReport( aItmKit() ) )
-
-   ::oFastReport:SetWorkArea(       "Artículos.Escandallos", ::oDbfArt:nArea )
-   ::oFastReport:SetFieldAliases(   "Artículos.Escandallos", cItemsToReport( aItmArt() ) )
-
-   ::oFastReport:SetWorkArea(       "Familias", ::oDbfFam:nArea )
-   ::oFastReport:SetFieldAliases(   "Familias", cItemsToReport( aItmFam() ) )
-
-   ::oFastReport:SetWorkArea(       "Tipo artículos", ::oTipArt:Select() )
-   ::oFastReport:SetFieldAliases(   "Tipo artículos", cObjectsToReport( ::oTipArt:oDbf ) )
-
-   ::oFastReport:SetWorkArea(       "Categorias", ::oDbfCat:nArea )
-   ::oFastReport:SetFieldAliases(   "Categorias", cItemsToReport( aItmCategoria() ) )
-
-   ::oFastReport:SetWorkArea(       "Temporadas", ::oDbfTmp:nArea )
-   ::oFastReport:SetFieldAliases(   "Temporadas", cItemsToReport( aItmTemporada() ) )
-
-   ::oFastReport:SetWorkArea(       "Fabricantes", ::oDbfFab:Select() )
-   ::oFastReport:SetFieldAliases(   "Fabricantes", cObjectsToReport( ::oDbfFab:oDbf ) )
-
-   ::oFastReport:SetWorkArea(       "Tipos de " + cImp(), ::oDbfIva:nArea )
-   ::oFastReport:SetFieldAliases(   "Tipos de " + cImp(), cItemsToReport( aItmTIva() ) )
-
-   ::oFastReport:SetWorkArea(       "Clientes", ::oDbfCli:nArea )
-   ::oFastReport:SetFieldAliases(   "Clientes", cItemsToReport( aItmCli() ) )
-
-   /*
-   Presupuestos----------------------------------------------------------------
-   */
-
-   ::oPreCliT:OrdSetFocus( "iNumPre" )
-
-   ::oFastReport:SetWorkArea(       "Presupuestos de clientes", ::oPreCliT:nArea )
-   ::oFastReport:SetFieldAliases(   "Presupuestos de clientes", cItemsToReport( aItmPreCli() ) )
-
-   ::oPreCliL:OrdSetFocus( "iNumPre" )
-
-   ::oFastReport:SetWorkArea(       "Lineas presupuestos de clientes", ::oPreCliL:nArea )
-   ::oFastReport:SetFieldAliases(   "Lineas presupuestos de clientes", cItemsToReport( aColPreCli() ) )
-
-   /*
-   Pedidos---------------------------------------------------------------------
-   */
-
-   ::oPedCliT:OrdSetFocus( "iNumPed" )
-
-   ::oFastReport:SetWorkArea(       "Pedidos de clientes", ::oPedCliT:nArea )
-   ::oFastReport:SetFieldAliases(   "Pedidos de clientes", cItemsToReport( aItmPedCli() ) )
-
-   ::oPedCliL:OrdSetFocus( "iNumPed" )
-
-   ::oFastReport:SetWorkArea(       "Lineas pedidos de clientes", ::oPedCliL:nArea )
-   ::oFastReport:SetFieldAliases(   "Lineas pedidos de clientes", cItemsToReport( aColPedCli() ) )
-
-   /*
-   Albaranes-------------------------------------------------------------------
-   */
-
-   ::oAlbCliT:OrdSetFocus( "iNumAlb" )
-
-   ::oFastReport:SetWorkArea(       "Albaranes de clientes", ::oAlbCliT:nArea )
-   ::oFastReport:SetFieldAliases(   "Albaranes de clientes", cItemsToReport( aItmAlbCli() ) )
-
-   ::oAlbCliL:OrdSetFocus( "iNumAlb" )
-
-   ::oFastReport:SetWorkArea(       "Lineas albaranes de clientes", ::oAlbCliL:nArea )
-   ::oFastReport:SetFieldAliases(   "Lineas albaranes de clientes", cItemsToReport( aColAlbCli() ) )
-
-   /*
-   Facturas--------------------------------------------------------------------
-   */
-
-   ::oFacCliT:OrdSetFocus( "iNumFac" )
-
-   ::oFastReport:SetWorkArea(       "Facturas de clientes", ::oFacCliT:nArea )
-   ::oFastReport:SetFieldAliases(   "Facturas de clientes", cItemsToReport( aItmFacCli() ) )
-
-   ::oFacCliL:OrdSetFocus( "iNumFac" )
-
-   ::oFastReport:SetWorkArea(       "Lineas facturas de clientes", ::oFacCliL:nArea )
-   ::oFastReport:SetFieldAliases(   "Lineas facturas de clientes", cItemsToReport( aColFacCli() ) )
-
-   /*
-   Rectificativas--------------------------------------------------------------
-   */
-
-   ::oFacRecT:OrdSetFocus( "iNumFac" )
-
-   ::oFastReport:SetWorkArea(       "Facturas rectificativas de clientes", ::oFacRecT:nArea )
-   ::oFastReport:SetFieldAliases(   "Facturas rectificativas de clientes", cItemsToReport( aItmFacRec() ) )
-
-   ::oFacRecL:OrdSetFocus( "iNumFac" )
-
-   ::oFastReport:SetWorkArea(       "Lineas facturas rectificativas de clientes", ::oFacRecL:nArea )
-   ::oFastReport:SetFieldAliases(   "Lineas facturas rectificativas de clientes", cItemsToReport( aColFacRec() ) )
-
-   /*
-   Tiketc--------------------------------------------------------------------
-   */
-
-   ::oTikCliT:OrdSetFocus( "iNumTik" )
-
-   ::oFastReport:SetWorkArea(       "Tickets de clientes", ::oTikCliT:nArea )
-   ::oFastReport:SetFieldAliases(   "Tickets de clientes", cItemsToReport( aItmTik() ) )
-
-   ::oTikCliL:OrdSetFocus( "iNumTik" )
-
-   ::oFastReport:SetWorkArea(       "Lineas tickets de clientes", ::oTikCliL:nArea )
-   ::oFastReport:SetFieldAliases(   "Lineas tickets de clientes", cItemsToReport( aColTik() ) )
-
-   /*
-   Relaciones entre tablas-----------------------------------------------------
-   */
-
-   ::oFastReport:SetMasterDetail(   "Informe", "Artículos.Informe",                 {|| ::oDbf:cCodArt } )
-   ::oFastReport:SetMasterDetail(   "Informe", "Imagenes",                          {|| ::oDbf:cCodArt } )
-   ::oFastReport:SetMasterDetail(   "Informe", "Escandallos",                       {|| ::oDbf:cCodArt } )
-   ::oFastReport:SetMasterDetail(   "Informe", "Códigos de barras",                 {|| ::oDbf:cCodArt } )
-
-   ::oFastReport:SetMasterDetail(   "Artículos.Informe", "Familias",                {|| ::oDbfArt:Familia } )
-   ::oFastReport:SetMasterDetail(   "Artículos.Informe", "Tipo artículos",          {|| ::oDbfArt:cCodTip } )
-   ::oFastReport:SetMasterDetail(   "Artículos.Informe", "Categorias",              {|| ::oDbfArt:cCodCate } )
-   ::oFastReport:SetMasterDetail(   "Artículos.Informe", "Temporadas",              {|| ::oDbfArt:cCodTemp } )
-   ::oFastReport:SetMasterDetail(   "Artículos.Informe", "Fabricantes",             {|| ::oDbfArt:cCodFab } )
-   ::oFastReport:SetMasterDetail(   "Artículos.Informe", "Tipos de " + cImp(),      {|| ::oDbfArt:TipoIva } )
-
-   ::oFastReport:SetMasterDetail(   "Escandallos", "Artículos.Escandallos",         {|| ::oArtKit:cRefKit } )
-
-   ::oFastReport:SetMasterDetail(   "Informe", "Clientes",                          {|| ::oDbf:cCodCli } )
-   ::oFastReport:SetMasterDetail(   "Informe", "Empresa",                           {|| cCodEmp() } )
-
-   ::oFastReport:SetMasterDetail(   "Informe", "Presupuestos de clientes",          {|| ::cIdeDocumento() } )
-   ::oFastReport:SetMasterDetail(   "Informe", "Lineas presupuestos de clientes",   {|| ::cIdeDocumento() } )
-
-   ::oFastReport:SetMasterDetail(   "Informe", "Pedidos de clientes",               {|| ::cIdeDocumento() } )
-   ::oFastReport:SetMasterDetail(   "Informe", "Lineas pedidos de clientes",        {|| ::cIdeDocumento() } )
-
-   ::oFastReport:SetMasterDetail(   "Informe", "Albaranes de clientes",             {|| ::cIdeDocumento() } )
-   ::oFastReport:SetMasterDetail(   "Informe", "Lineas albaranes de clientes",      {|| ::cIdeDocumento() } )
-
-   ::oFastReport:SetMasterDetail(   "Informe", "Facturas de clientes",              {|| ::cIdeDocumento() } )
-   ::oFastReport:SetMasterDetail(   "Informe", "Lineas facturas de clientes",       {|| ::cIdeDocumento() } )
-
-   ::oFastReport:SetMasterDetail(   "Informe", "Facturas rectificativas de clientes",        {|| ::cIdeDocumento() } )
-   ::oFastReport:SetMasterDetail(   "Informe", "Lineas facturas rectificativas de clientes", {|| ::cIdeDocumento() } )
-
-   ::oFastReport:SetMasterDetail(   "Informe", "Tickets de clientes",              {|| ::cIdeDocumento() } )
-   ::oFastReport:SetMasterDetail(   "Informe", "Lineas tickets de clientes",       {|| ::cIdeDocumento() } )
-
-   /*
-   Resincronizar con los movimientos-------------------------------------------
-   */
-
-   ::oFastReport:SetResyncPair(     "Artículos.Informe", "Familias" )
-   ::oFastReport:SetResyncPair(     "Artículos.Informe", "Tipo artículos" )
-   ::oFastReport:SetResyncPair(     "Artículos.Informe", "Categorias" )
-   ::oFastReport:SetResyncPair(     "Artículos.Informe", "Temporadas" )
-   ::oFastReport:SetResyncPair(     "Artículos.Informe", "Fabricantes" )
-   ::oFastReport:SetResyncPair(     "Artículos.Informe", "Tipos de " + cImp() )
-
-   ::oFastReport:SetResyncPair(     "Informe", "Artículos.Informe" )
-   ::oFastReport:SetResyncPair(     "Informe", "Imagenes" )
-   ::oFastReport:SetResyncPair(     "Informe", "Escandallos" )
-   ::oFastReport:SetresyncPair(     "Informe", "Códigos de barras" )
-
-   ::oFastReport:SetResyncPair(     "Escandallos", "Artículos.Escandallos" )
-
-   ::oFastReport:SetResyncPair(     "Informe", "Clientes" )
-   ::oFastReport:SetResyncPair(     "Informe", "Empresa" )
-
-   ::oFastReport:SetResyncPair(     "Informe", "Presupuestos de clientes" )
-   ::oFastReport:SetResyncPair(     "Informe", "Lineas presupuestos de clientes" )
-
-   ::oFastReport:SetResyncPair(     "Informe", "Pedidos de clientes" )
-   ::oFastReport:SetResyncPair(     "Informe", "Lineas pedidos de clientes" )
-
-   ::oFastReport:SetResyncPair(     "Informe", "Albaranes de clientes" )
-   ::oFastReport:SetResyncPair(     "Informe", "Lineas albaranes de clientes" )
-
-   ::oFastReport:SetResyncPair(     "Informe", "Facturas de clientes" )
-   ::oFastReport:SetResyncPair(     "Informe", "Lineas facturas de clientes" )
-
-   ::oFastReport:SetResyncPair(     "Informe", "Facturas rectificativas de clientes" )
-   ::oFastReport:SetResyncPair(     "Informe", "Lineas facturas rectificativas de clientes" )
-
-   ::oFastReport:SetResyncPair(     "Informe", "Tickets de clientes" )
-   ::oFastReport:SetResyncPair(     "Informe", "Lineas tickets de clientes" )
-
-Return ( Self )
-
-//---------------------------------------------------------------------------//
-
 METHOD AddVariable() CLASS TFastVentasArticulos
+
+   /*
+   Tablas en funcion del tipo de informe---------------------------------------
+   */
+
+   do case
+      case ::cTypeName == "Informe de presupuestos"
+
+         ::AddVariablePresupuestoCliente()
+
+      case ::cTypeName == "Informe de pedidos"
+      
+         ::AddVariablePedidoCliente()
+
+      case ::cTypeName == "Informe de albaranes"
+      
+         ::AddVariableAlbaranCliente()
+
+      case ::cTypeName == "Informe de facturas"
+      
+         ::AddVariableFacturaCliente()
+         
+         ::AddVariableRectificativaCliente()
+
+      case ::cTypeName == "Informe de facturas rectificativas"
+
+         ::AddVariableRectificativaCliente()
+
+      case ::cTypeName == "Informe de tickets"
+
+         ::AddVariableTicketCliente()
+
+      case ::cTypeName == "Informe de ventas"
+
+         ::AddVariableAlbaranCliente()
+
+         ::AddVariableFacturaCliente()
+         
+         ::AddVariableRectificativaCliente()
+
+         ::AddVariableTicketCliente()         
+
+   end case
 
 Return ( Super:AddVariable() )
 
