@@ -542,6 +542,14 @@
 				"buffer_size": 3216,
 				"line_ending": "Windows"
 			}
+		},
+		{
+			"file": "prg/Tcomercio.prg",
+			"settings":
+			{
+				"buffer_size": 369666,
+				"line_ending": "Windows"
+			}
 		}
 	],
 	"build_system": "Packages/User/gestool.sublime-build",
@@ -576,10 +584,11 @@
 	},
 	"file_history":
 	[
+		"/C/fw195/Gestool/prg/Tcomercio.prg",
+		"/C/fw195/Gestool/prg/Pedcli.prg",
 		"/C/AppServ/www/zemtrum/config/settings.inc.php",
 		"/C/fw195/Gestool/prg/Familia.prg",
 		"/C/fw195/Gestool/prg/Tgrpfam.prg",
-		"/C/fw195/Gestool/prg/Tcomercio.prg",
 		"/C/fw195/Gestool/prg/Tpvtactil.prg",
 		"/C/AppServ/www/zemtrum/themes/zemtrum/css/global.css",
 		"/C/AppServ/www/zemtrum/themes/zemtrum/css/category.css",
@@ -702,8 +711,7 @@
 		"/C/Users/Villa/Desktop/test.prg",
 		"/C/fw195/Gestool/include/Util.ch",
 		"/C/Users/Villa/Desktop/oscar.prg",
-		"/C/fw195/Gestool/prg/Exportatarifas.prg",
-		"/C/fw195/Gestool/prg/Oferta.prg"
+		"/C/fw195/Gestool/prg/Exportatarifas.prg"
 	],
 	"find":
 	{
@@ -711,7 +719,7 @@
 	},
 	"find_in_files":
 	{
-		"height": 90.0,
+		"height": 0.0,
 		"where_history":
 		[
 			"C:\\AppServ\\www\\zemtrum\\*.css",
@@ -743,6 +751,14 @@
 		"case_sensitive": false,
 		"find_history":
 		[
+			"ChangeSincAll",
+			"sincronizar",
+			"exportarpre",
+			"nexportar",
+			"oBtnImportar",
+			"ESTADOPEDIDOS",
+			"AppendPedidoprestashop",
+			"pedido",
 			"InsertCategoriesPrestashop",
 			"prestashop",
 			"bmpImage",
@@ -862,15 +878,7 @@
 			"syn",
 			"GuardaApartado",
 			"oofficebar",
-			"GuardaApartado",
-			"oofficebar",
-			"on newticket",
-			"officebar",
-			"on rx",
-			"ccodfab",
-			"on rx",
-			"926",
-			"on rx"
+			"GuardaApartado"
 		],
 		"highlight": true,
 		"in_selection": false,
@@ -896,7 +904,7 @@
 	"groups":
 	[
 		{
-			"selected": 2,
+			"selected": 3,
 			"sheets":
 			[
 				{
@@ -921,7 +929,7 @@
 							"translate_tabs_to_spaces": false
 						},
 						"translation.x": 0.0,
-						"translation.y": 324.0,
+						"translation.y": 306.0,
 						"zoom_level": 1.0
 					},
 					"type": "text"
@@ -965,8 +973,8 @@
 						"selection":
 						[
 							[
-								734,
-								734
+								617,
+								617
 							]
 						],
 						"settings":
@@ -976,6 +984,34 @@
 						},
 						"translation.x": 0.0,
 						"translation.y": 0.0,
+						"zoom_level": 1.0
+					},
+					"type": "text"
+				},
+				{
+					"buffer": 3,
+					"file": "prg/Tcomercio.prg",
+					"settings":
+					{
+						"buffer_size": 369666,
+						"regions":
+						{
+						},
+						"selection":
+						[
+							[
+								19743,
+								19743
+							]
+						],
+						"settings":
+						{
+							"syntax": "Packages/harbour/harbour/Harbour.tmLanguage",
+							"tab_size": 3,
+							"translate_tabs_to_spaces": true
+						},
+						"translation.x": 0.0,
+						"translation.y": 13504.0,
 						"zoom_level": 1.0
 					},
 					"type": "text"

@@ -11361,53 +11361,50 @@ FONT 8, "MS Sans Serif"
   CONTROL "", 176, "Edit", ES_AUTOHSCROLL|ES_PASSWORD|WS_BORDER|WS_TABSTOP, 127, 67, 96, 11
   CONTROL "Mi servidor de salida (SMTP) requiere autenticación", 175, "Button", BS_AUTOCHECKBOX|WS_TABSTOP, 249, 68, 175, 10
   CONTROL "", 180, "Edit", ES_AUTOHSCROLL|WS_BORDER|WS_TABSTOP, 128, 80, 297, 11
-  CONTROL "", 100, "Edit", ES_AUTOHSCROLL|WS_BORDER|WS_TABSTOP, 127, 132, 222, 11
-  CONTROL "", 110, "Edit", ES_RIGHT|ES_NUMBER|ES_AUTOHSCROLL|WS_VSCROLL|WS_BORDER|WS_TABSTOP, 380, 132, 44, 11
-  CONTROL "", 120, "Edit", ES_AUTOHSCROLL|WS_BORDER|WS_TABSTOP, 127, 146, 297, 11
-  CONTROL "", 130, "Edit", ES_AUTOHSCROLL|ES_PASSWORD|WS_BORDER|WS_TABSTOP, 127, 160, 297, 11
-  CONTROL "", 140, "Edit", ES_AUTOHSCROLL|WS_BORDER|WS_TABSTOP, 127, 173, 297, 11
-  CONTROL "", 141, "Edit", ES_AUTOHSCROLL|WS_BORDER|WS_TABSTOP, 127, 185, 297, 11
-  CONTROL "", 210, "Edit", ES_NUMBER|ES_AUTOHSCROLL|WS_VSCROLL|WS_BORDER|WS_TABSTOP, 127, 199, 52, 11
-  CONTROL "TBtnBmp", 150, "TBtnBmp", 0x00000000, 309, 197, 12, 13
-  CONTROL "", 220, "ComboBox", WS_BORDER|CBS_DROPDOWN|WS_VSCROLL|WS_TABSTOP, 127, 213, 52, 15
-  CONTROL "Recibir Apellidos/Nombres de la web", 199, "Button", BS_AUTOCHECKBOX|WS_TABSTOP, 249, 215, 129, 10
-  CONTROL "Conexion en tiempo real con la web", 400, "Button", BS_AUTOCHECKBOX|WS_TABSTOP, 48, 230, 129, 10
-  CONTROL "", 250, "Edit", ES_AUTOHSCROLL|WS_BORDER|WS_TABSTOP, 127, 257, 222, 11
-  CONTROL "", 260, "Edit", ES_RIGHT|ES_NUMBER|ES_AUTOHSCROLL|WS_VSCROLL|WS_BORDER|WS_TABSTOP, 380, 257, 44, 11
-  CONTROL "", 230, "Edit", ES_AUTOHSCROLL|WS_BORDER|WS_TABSTOP, 127, 271, 222, 11
-  CONTROL "Envío pasivo", 270, "Button", BS_AUTOCHECKBOX|WS_TABSTOP, 351, 272, 72, 10
-  CONTROL "", 240, "Edit", ES_AUTOHSCROLL|ES_PASSWORD|WS_BORDER|WS_TABSTOP, 127, 286, 222, 11
-  CONTROL "", 200, "Edit", ES_AUTOHSCROLL|WS_BORDER|WS_TABSTOP, 127, 300, 297, 11
-  CONTROL "", 300, "Edit", ES_AUTOHSCROLL|WS_BORDER|WS_TABSTOP, 127, 327, 297, 11
-  CONTROL "", 310, "Edit", ES_AUTOHSCROLL|WS_BORDER|WS_TABSTOP, 127, 340, 96, 11
-  CONTROL "Servidor base de datos de comercio electrónico", -1, "Button", BS_GROUPBOX, 43, 97, 385, 148
-  CONTROL "Servidor", -1, "Static", WS_GROUP, 48, 135, 31, 8
-  CONTROL "Usuario", -1, "Static", WS_GROUP, 48, 148, 29, 8
-  CONTROL "Contraseña", -1, "Static", WS_GROUP, 48, 162, 41, 8
-  CONTROL "Base de datos", -1, "Static", WS_GROUP, 48, 175, 51, 8
-  CONTROL "Puerto", -1, "Static", WS_GROUP, 351, 135, 26, 8
-  CONTROL "Probar conexión", -1, "Static", WS_GROUP, 249, 202, 57, 8
+  CONTROL "", 100, "Edit", ES_AUTOHSCROLL|WS_BORDER|WS_TABSTOP, 127, 111, 222, 11
+  CONTROL "", 110, "Edit", ES_RIGHT|ES_NUMBER|ES_AUTOHSCROLL|WS_VSCROLL|WS_BORDER|WS_TABSTOP, 380, 111, 44, 11
+  CONTROL "", 120, "Edit", ES_AUTOHSCROLL|WS_BORDER|WS_TABSTOP, 127, 125, 297, 11
+  CONTROL "", 130, "Edit", ES_AUTOHSCROLL|ES_PASSWORD|WS_BORDER|WS_TABSTOP, 127, 139, 297, 11
+  CONTROL "", 140, "Edit", ES_AUTOHSCROLL|WS_BORDER|WS_TABSTOP, 127, 152, 297, 11
+  CONTROL "", 141, "Edit", ES_AUTOHSCROLL|WS_BORDER|WS_TABSTOP, 127, 164, 297, 11
+  CONTROL "", 210, "Edit", ES_NUMBER|ES_AUTOHSCROLL|WS_VSCROLL|WS_BORDER|WS_TABSTOP, 127, 178, 52, 11
+  CONTROL "TBtnBmp", 150, "TBtnBmp", 0x00000000, 412, 176, 12, 13
+  CONTROL "", 220, "ComboBox", WS_BORDER|CBS_DROPDOWN|WS_VSCROLL|WS_TABSTOP, 127, 192, 52, 15
+  CONTROL "Conexion en tiempo real con la web", 400, "Button", BS_AUTOCHECKBOX|WS_TABSTOP, 48, 209, 129, 10
+  CONTROL "", 250, "Edit", ES_AUTOHSCROLL|WS_BORDER|WS_TABSTOP, 127, 236, 222, 11
+  CONTROL "", 260, "Edit", ES_RIGHT|ES_NUMBER|ES_AUTOHSCROLL|WS_VSCROLL|WS_BORDER|WS_TABSTOP, 380, 236, 44, 11
+  CONTROL "", 230, "Edit", ES_AUTOHSCROLL|WS_BORDER|WS_TABSTOP, 127, 250, 222, 11
+  CONTROL "Envío pasivo", 270, "Button", BS_AUTOCHECKBOX|WS_TABSTOP, 351, 251, 72, 10
+  CONTROL "", 240, "Edit", ES_AUTOHSCROLL|ES_PASSWORD|WS_BORDER|WS_TABSTOP, 127, 265, 222, 11
+  CONTROL "", 200, "Edit", ES_AUTOHSCROLL|WS_BORDER|WS_TABSTOP, 127, 279, 297, 11
+  CONTROL "", 300, "Edit", ES_AUTOHSCROLL|WS_BORDER|WS_TABSTOP, 127, 306, 297, 11
+  CONTROL "", 310, "Edit", ES_AUTOHSCROLL|WS_BORDER|WS_TABSTOP, 127, 319, 96, 11
+  CONTROL "Servidor base de datos de comercio electrónico", -1, "Button", BS_GROUPBOX, 43, 98, 385, 126
+  CONTROL "Servidor", -1, "Static", WS_GROUP, 48, 114, 31, 8
+  CONTROL "Usuario", -1, "Static", WS_GROUP, 48, 127, 29, 8
+  CONTROL "Contraseña", -1, "Static", WS_GROUP, 48, 141, 41, 8
+  CONTROL "Base de datos", -1, "Static", WS_GROUP, 48, 154, 51, 8
+  CONTROL "Puerto", -1, "Static", WS_GROUP, 351, 114, 26, 8
+  CONTROL "Probar conexión", -1, "Static", WS_GROUP, 352, 181, 57, 8
   CONTROL "Servidor de correo electrónico", -1, "Button", BS_GROUPBOX, 44, 29, 385, 67
   CONTROL "Servidor", -1, "Static", WS_GROUP, 48, 44, 31, 8
   CONTROL "Cuenta", -1, "Static", WS_GROUP, 48, 57, 28, 8
   CONTROL "Puerto", -1, "Static", WS_GROUP, 351, 43, 26, 8
   CONTROL "Contraseña", -1, "Static", WS_GROUP, 48, 70, 41, 8
-  CONTROL "Serie pedidos", -1, "Static", WS_GROUP, 48, 202, 65, 8
-  CONTROL "Latencia pedidos", -1, "Static", WS_GROUP, 48, 217, 65, 8
-  CONTROL "Intercambio electrónico de datos EDI", -1, "Button", BS_GROUPBOX, 43, 315, 384, 40
-  CONTROL "Directorio exportación", -1, "Static", WS_GROUP, 48, 330, 74, 8
-  CONTROL "Código EDI [EAN]", -1, "Static", WS_GROUP, 48, 343, 62, 8
-  CONTROL "Servidor para imagenes de comercio eletrónico", -1, "Button", BS_GROUPBOX, 43, 246, 385, 68
-  CONTROL "Usuario", -1, "Static", WS_GROUP, 48, 274, 51, 8
-  CONTROL "Contraseña FTP", -1, "Static", WS_GROUP, 48, 288, 51, 8
-  CONTROL "Directorio imágenes", -1, "Static", WS_GROUP, 48, 303, 70, 8
-  CONTROL "Servidor", -1, "Static", WS_GROUP, 48, 260, 31, 8
-  CONTROL "Puerto", -1, "Static", WS_GROUP, 351, 260, 26, 8
+  CONTROL "Serie pedidos", -1, "Static", WS_GROUP, 48, 181, 65, 8
+  CONTROL "Latencia pedidos", -1, "Static", WS_GROUP, 48, 196, 65, 8
+  CONTROL "Intercambio electrónico de datos EDI", -1, "Button", BS_GROUPBOX, 43, 294, 384, 40
+  CONTROL "Directorio exportación", -1, "Static", WS_GROUP, 48, 309, 74, 8
+  CONTROL "Código EDI [EAN]", -1, "Static", WS_GROUP, 48, 322, 62, 8
+  CONTROL "Servidor para imagenes de comercio eletrónico", -1, "Button", BS_GROUPBOX, 43, 225, 385, 68
+  CONTROL "Usuario", -1, "Static", WS_GROUP, 48, 253, 51, 8
+  CONTROL "Contraseña FTP", -1, "Static", WS_GROUP, 48, 267, 51, 8
+  CONTROL "Directorio imágenes", -1, "Static", WS_GROUP, 48, 282, 70, 8
+  CONTROL "Servidor", -1, "Static", WS_GROUP, 48, 239, 31, 8
+  CONTROL "Puerto", -1, "Static", WS_GROUP, 351, 239, 26, 8
   CONTROL "", 500, "Static", SS_BITMAP|SS_CENTERIMAGE, 4, 3, 34, 30, WS_EX_TRANSPARENT
   CONTROL "Configuraciones para el envio de email y para el enlace de la aplicación con una página web", -1, "Static", SS_LEFTNOWORDWRAP|WS_GROUP, 44, 3, 384, 8
-  CONTROL "Oscommerce", 121, "Button", BS_AUTORADIOBUTTON, 48, 107, 60, 12
-  CONTROL "Prestashop", 122, "Button", BS_AUTORADIOBUTTON, 48, 119, 60, 12
-  CONTROL "Cookie key", -1, "Static", WS_GROUP, 48, 188, 51, 8
+  CONTROL "Cookie key", -1, "Static", WS_GROUP, 48, 167, 51, 8
   CONTROL "Enviar con copia a", -1, "Static", WS_GROUP, 49, 83, 65, 8
 }
 
@@ -12142,16 +12139,40 @@ FONT 8, "Helv"
 
 LANGUAGE LANG_ENGLISH,SUBLANG_ENGLISH_US
 
-COMERCIO_0 DIALOG DISCARDABLE 184, 113, 472, 261
+COMERCIO_0 DIALOG DISCARDABLE 184, 113, 472, 373
 STYLE WS_POPUP|DS_MODALFRAME|DS_3DLOOK|WS_CAPTION|WS_SYSMENU
 CAPTION "Asistente para sincronizar la información de su web."
 FONT 8, "MS Sans Serif"
 {
-  CONTROL "&Sincronizar", 220, "Button", WS_TABSTOP, 367, 244, 50, 14
-  CONTROL "&Salir", IDCANCEL, "Button", WS_TABSTOP, 419, 244, 50, 14
-  CONTROL "", 10, "TPages", WS_TABSTOP, 44, 29, 425, 211
+  CONTROL "Sincronización total", 100, "Button", BS_AUTOCHECKBOX|WS_TABSTOP, 54, 40, 75, 10
+  CONTROL "IVA", 110, "Button", BS_AUTOCHECKBOX|WS_TABSTOP, 66, 52, 25, 10
+  CONTROL "Artículos", 120, "Button", BS_AUTOCHECKBOX|WS_TABSTOP, 66, 64, 40, 10
+  CONTROL "Clientes", 130, "Button", BS_AUTOCHECKBOX|WS_TABSTOP, 66, 76, 40, 10
+  CONTROL "Imágenes", 240, "Button", BS_AUTOCHECKBOX|WS_TABSTOP, 66, 88, 45, 10
+  CONTROL "", 140, "Static", WS_BORDER|WS_GROUP, 234, 38, 230, 10
+  CONTROL "", 150, "Static", WS_BORDER|WS_GROUP, 234, 50, 230, 10
+  CONTROL "", 160, "Static", WS_BORDER|WS_GROUP, 234, 62, 230, 10
+  CONTROL "", 170, "Static", WS_BORDER|WS_GROUP, 234, 74, 230, 10
+  CONTROL "", 180, "Static", WS_BORDER|WS_GROUP, 234, 86, 230, 10
+  CONTROL "", 190, "Static", WS_BORDER|WS_GROUP, 234, 98, 230, 10
+  CONTROL "Exportar datos", 510, "Button", WS_TABSTOP, 44, 117, 59, 14
+  CONTROL "Importar pedidos", 520, "Button", WS_TABSTOP, 404, 117, 60, 14
+  CONTROL "", 200, "SysTreeView32", TVS_HASBUTTONS|TVS_HASLINES|TVS_LINESATROOT|TVS_SHOWSELALWAYS|WS_BORDER|WS_TABSTOP|0x00200000, 54, 144, 410, 172
+  CONTROL "Procesando...", 210, "Static", WS_GROUP, 54, 318, 342, 8
+  CONTROL "", 220, "msctls_progress32", 0x00000000, 54, 330, 410, 4
+  CONTROL "", 230, "msctls_progress32", 0x00000000, 54, 338, 410, 4
+  CONTROL "&Salir", IDCANCEL, "Button", WS_TABSTOP, 403, 354, 61, 14
   CONTROL "", 500, "Static", SS_BITMAP|SS_CENTERIMAGE, 4, 3, 34, 30
   CONTROL "Comercio electrónico. Este asistente le guiará para enviar y recibir información de su web.", -1, "Static", SS_LEFTNOWORDWRAP|WS_GROUP, 44, 3, 425, 8
+  CONTROL "Opciones exportación", -1, "Button", BS_GROUPBOX|WS_TABSTOP, 44, 28, 97, 86
+  CONTROL "Datos de conexión", -1, "Button", BS_GROUPBOX|WS_TABSTOP, 146, 28, 324, 85
+  CONTROL "Servidor:", -1, "Static", WS_GROUP, 154, 40, 80, 8
+  CONTROL "Puerto:", -1, "Static", WS_GROUP, 154, 52, 80, 8
+  CONTROL "Nombre de usuario:", -1, "Static", WS_GROUP, 154, 64, 80, 8
+  CONTROL "Base de datos:", -1, "Static", WS_GROUP, 154, 76, 80, 8
+  CONTROL "Usuario FTP ", -1, "Static", WS_GROUP, 154, 88, 80, 8
+  CONTROL "Direcctorio imágenes", -1, "Static", WS_GROUP, 154, 100, 80, 8
+  CONTROL "Procesos en curso", -1, "Button", BS_GROUPBOX|WS_TABSTOP, 44, 132, 426, 218
 }
 
 LANGUAGE LANG_SPANISH,SUBLANG_SPANISH_MODERN
@@ -12160,29 +12181,26 @@ COMERCIO_1 DIALOG DISCARDABLE 113, 78, 425, 211
 STYLE WS_CHILD|DS_3DLOOK|WS_VISIBLE
 FONT 8, "MS Sans Serif"
 {
-  CONTROL "Comercio electrónico", -1, "Button", BS_GROUPBOX|WS_TABSTOP, 4, 1, 413, 96
-  CONTROL "Opciones de sincronización", -1, "Button", BS_GROUPBOX|WS_TABSTOP, 4, 97, 413, 111
-  CONTROL "Sincronización total", 210, "Button", BS_AUTOCHECKBOX|WS_TABSTOP, 21, 121, 75, 10
-  CONTROL "IVA", 180, "Button", BS_AUTOCHECKBOX|WS_TABSTOP, 21, 133, 25, 10
-  CONTROL "Artículos", 140, "Button", BS_AUTOCHECKBOX|WS_TABSTOP, 21, 144, 40, 10
-  CONTROL "Recepción de pedidos", 160, "Button", BS_AUTOCHECKBOX|WS_TABSTOP, 21, 166, 85, 10
-  CONTROL "Clientes", 230, "Button", BS_AUTOCHECKBOX|WS_TABSTOP, 21, 155, 40, 10
-  CONTROL "Servidor:", -1, "Static", WS_GROUP, 9, 24, 80, 8
-  CONTROL "Puerto:", -1, "Static", WS_GROUP, 9, 36, 80, 8
-  CONTROL "Nombre de usuario:", -1, "Static", WS_GROUP, 9, 48, 80, 8
-  CONTROL "Base de datos:", -1, "Static", WS_GROUP, 9, 60, 80, 8
-  CONTROL "", 100, "Static", WS_BORDER|WS_GROUP, 91, 22, 322, 10
-  CONTROL "", 110, "Static", WS_BORDER|WS_GROUP, 91, 34, 322, 10
-  CONTROL "", 120, "Static", WS_BORDER|WS_GROUP, 91, 46, 322, 10
-  CONTROL "", 130, "Static", WS_BORDER|WS_GROUP, 91, 58, 322, 10
-  CONTROL "Usuario FTP ", -1, "Static", WS_GROUP, 9, 72, 80, 8
-  CONTROL "", 190, "Static", WS_BORDER|WS_GROUP, 91, 70, 322, 10
-  CONTROL "Direcctorio imágenes", -1, "Static", WS_GROUP, 9, 84, 80, 8
-  CONTROL "", 200, "Static", WS_BORDER|WS_GROUP, 91, 82, 322, 10
-  CONTROL "Plataforma", -1, "Static", WS_GROUP, 9, 12, 80, 8
-  CONTROL "", 220, "Static", WS_BORDER|WS_GROUP, 91, 10, 322, 10
-  CONTROL "Exportar datos", 121, "Button", BS_AUTORADIOBUTTON, 9, 108, 60, 12
-  CONTROL "Importar datos", 122, "Button", BS_AUTORADIOBUTTON, 9, 177, 60, 12
+  CONTROL "Comercio electrónico", -1, "Button", BS_GROUPBOX|WS_TABSTOP, 4, 111, 413, 96
+  CONTROL "Opciones exportación", -1, "Button", BS_GROUPBOX|WS_TABSTOP, 3, 4, 413, 105
+  CONTROL "Sincronización total", 210, "Button", BS_AUTOCHECKBOX|WS_TABSTOP, 12, 21, 75, 10
+  CONTROL "IVA", 180, "Button", BS_AUTOCHECKBOX|WS_TABSTOP, 24, 33, 25, 10
+  CONTROL "Artículos", 140, "Button", BS_AUTOCHECKBOX|WS_TABSTOP, 24, 45, 40, 10
+  CONTROL "Clientes", 230, "Button", BS_AUTOCHECKBOX|WS_TABSTOP, 24, 57, 40, 10
+  CONTROL "Servidor:", -1, "Static", WS_GROUP, 12, 134, 80, 8
+  CONTROL "Puerto:", -1, "Static", WS_GROUP, 12, 146, 80, 8
+  CONTROL "Nombre de usuario:", -1, "Static", WS_GROUP, 12, 158, 80, 8
+  CONTROL "Base de datos:", -1, "Static", WS_GROUP, 12, 170, 80, 8
+  CONTROL "", 100, "Static", WS_BORDER|WS_GROUP, 91, 132, 322, 10
+  CONTROL "", 110, "Static", WS_BORDER|WS_GROUP, 91, 144, 322, 10
+  CONTROL "", 120, "Static", WS_BORDER|WS_GROUP, 91, 156, 322, 10
+  CONTROL "", 130, "Static", WS_BORDER|WS_GROUP, 91, 168, 322, 10
+  CONTROL "Usuario FTP ", -1, "Static", WS_GROUP, 12, 182, 80, 8
+  CONTROL "", 190, "Static", WS_BORDER|WS_GROUP, 91, 180, 322, 10
+  CONTROL "Direcctorio imágenes", -1, "Static", WS_GROUP, 12, 194, 80, 8
+  CONTROL "", 200, "Static", WS_BORDER|WS_GROUP, 91, 192, 322, 10
+  CONTROL "Plataforma", -1, "Static", WS_GROUP, 12, 122, 80, 8
+  CONTROL "", 220, "Static", WS_BORDER|WS_GROUP, 91, 120, 322, 10
 }
 
 COMERCIO_2 DIALOG DISCARDABLE 113, 78, 425, 211

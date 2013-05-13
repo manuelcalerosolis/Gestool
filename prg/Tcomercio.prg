@@ -43,10 +43,10 @@ CLASS TComercio
    DATA  oFld
    DATA  oBmp
 
-   DATA oDlgWait
-   DATA oBmpWait
-   DATA oSayWait
-   DATA cSayWait
+   DATA  oDlgWait
+   DATA  oBmpWait
+   DATA  oSayWait
+   DATA  cSayWait
 
    DATA  oSubItem
    DATA  oSubItem2
@@ -82,6 +82,7 @@ CLASS TComercio
 
    DATA  oBtnCancel
    DATA  oBtnExportar
+   DATA  oBtnImportar
 
    DATA  oTree
    DATA  oImageList
@@ -99,6 +100,8 @@ CLASS TComercio
    DATA  lIva
    DATA  oCliente
    DATA  lCliente
+   DATA  oImagenes
+   DATA  lImagenes
 
    DATA  oArt
    DATA  oPro
@@ -150,7 +153,6 @@ CLASS TComercio
    DATA  cPasswdFtp
    DATA  lPassiveFtp
    DATA  cPlataforma
-   DATA  nExportar
    DATA  Cookiekey
 
    DATA  oInt
@@ -171,7 +173,7 @@ CLASS TComercio
    DATA  nNumeroCategorias    INIT 0
    DATA  aCategorias          INIT {}
 
-   DATA cPrefijoBaseDatos
+   DATA  cPrefijoBaseDatos
 
    Method GetInstance()
 
@@ -184,8 +186,6 @@ CLASS TComercio
 
    Method Activate( oWnd )
    Method AutoRecive()
-
-   Method Sincronizar()
 
    Method Exportar()
    Method Importar()
@@ -421,6 +421,7 @@ METHOD New( oMenuItem ) CLASS TComercio
    ::lFabricantes          := .t.
    ::lIva                  := .t.
    ::lCliente              := .t.
+   ::lImagenes             := .t.
    ::aImages               := {}
    ::aImagesArticulos      := {}
    ::aImagesCategories     := {}
@@ -440,7 +441,6 @@ METHOD New( oMenuItem ) CLASS TComercio
    ::cHostFtp              := uFieldEmpresa( "cHostFtpImg" )
    ::nPortFtp              := uFieldEmpresa( "nPrtFtp", 21 )
    ::lPassiveFtp           := uFieldEmpresa( "lPasFtp" )
-   ::nExportar             := 1
    ::Cookiekey             := uFieldEmpresa( "cCooKey" )
 
    if uFieldEmpresa( "nTipWeb" ) == 1
@@ -751,107 +751,94 @@ METHOD Activate( oWnd ) CLASS TComercio
          TRANSPARENT ;
          OF       ::oDlg
 
-      REDEFINE PAGES ::oFld ;
-         ID       10;
-         OF       ::oDlg ;
-         DIALOGS  "Comercio_1", "Comercio_2"
+      // Opciones de sincronización--------------------------------------------
 
-      /*
-      Primera caja de diálogo--------------------------------------------------
-		*/
+      REDEFINE CHECKBOX ::lSincAll;
+         ID       100 ;
+         ON CHANGE( ::ChangeSincAll() );
+         OF       ::oDlg
 
-      // Plataforma------------------------------------------------------------
+      REDEFINE CHECKBOX ::oTipIva VAR ::lIva ;
+         ID       110 ;
+         WHEN     ( !::lSincAll );
+         OF       ::oDlg
 
-      REDEFINE SAY PROMPT ::cPlataforma;
-         ID       220 ;
-         OF       ::oFld:aDialogs[ 1 ]
+      REDEFINE CHECKBOX ::oArticulos VAR ::lArticulos ;
+         ID       120 ;
+         WHEN     ( !::lSincAll );
+         OF       ::oDlg
+
+      REDEFINE CHECKBOX ::oCliente VAR ::lCliente ;
+         ID       130 ;
+         WHEN     ( !::lSincAll );
+         OF       ::oDlg 
+
+      REDEFINE CHECKBOX ::oImagenes VAR ::lImagenes ;
+         ID       240 ;
+         WHEN     ( !::lSincAll );
+         OF       ::oDlg 
 
       // Servidor--------------------------------------------------------------
 
       REDEFINE SAY PROMPT ::cHost;
-         ID       100 ;
-         OF       ::oFld:aDialogs[ 1 ]
+         ID       140 ;
+         OF       ::oDlg
 
       // Puerto----------------------------------------------------------------
 
-      REDEFINE SAY PROMPT ::nPort;
-         ID       110 ;
-         OF       ::oFld:aDialogs[ 1 ]
+      REDEFINE SAY PROMPT ::nPort; 
+         ID       150 ;
+         OF       ::oDlg
 
       // Usuario---------------------------------------------------------------
 
       REDEFINE SAY PROMPT ::cUser;
-         ID       120 ;
-         OF       ::oFld:aDialogs[ 1 ]
+         ID       160 ;
+         OF       ::oDlg
 
       // Base de datos---------------------------------------------------------
 
       REDEFINE SAY PROMPT ::cDbName;
-         ID       130 ;
-         OF       ::oFld:aDialogs[ 1 ]
+         ID       170 ;
+         OF       ::oDlg
 
-      // Exportar o importar---------------------------------------------------
-
-      REDEFINE RADIO ::nExportar ;
-         ID       121, 122 ;
-         OF       ::oFld:aDialogs[ 1 ]
-
-      // Opciones de sincronización--------------------------------------------
-
-      REDEFINE CHECKBOX ::lSincAll;
-         ID        210 ;
-         ON CHANGE ( ::ChangeSincAll() );
-         WHEN      ( ::nExportar == 1 );
-         OF        ::oFld:aDialogs[ 1 ]
-
-      REDEFINE CHECKBOX ::oArticulos VAR ::lArticulos ;
-         ID       140 ;
-         WHEN      ( ::nExportar == 1 .and. !::lSincAll );
-         OF       ::oFld:aDialogs[ 1 ]
-
-       REDEFINE CHECKBOX ::oPedidos VAR ::lPedidos ;
-         ID       160 ;
-         WHEN      ( ::nExportar == 1 .and. !::lSincAll );
-         OF       ::oFld:aDialogs[ 1 ]
-
-       REDEFINE CHECKBOX ::oTipIva VAR ::lIva ;
+      REDEFINE SAY PROMPT ::cUserFtp ;
          ID       180 ;
-         WHEN      ( ::nExportar == 1 .and. !::lSincAll );
-         OF       ::oFld:aDialogs[ 1 ]
+         OF       ::oDlg
 
-       REDEFINE CHECKBOX ::oCliente VAR ::lCliente ;
-         ID       230 ;
-         WHEN      ( ::nExportar == 1 .and. !::lSincAll );
-         OF       ::oFld:aDialogs[ 1 ]
-
-       REDEFINE SAY PROMPT ::cUserFtp ;
+      REDEFINE SAY PROMPT ::cDImagen ;
          ID       190 ;
-         OF       ::oFld:aDialogs[ 1 ]
-
-       REDEFINE SAY PROMPT ::cDImagen ;
-         ID       200 ;
-         OF       ::oFld:aDialogs[ 1 ]
-
-      /*
-      Comercio2--------------------------------------------------------------//
-      */
-
-      ::oTree        := TTreeView():Redefine( 100, ::oFld:aDialogs[ 2 ] )
-
-      REDEFINE SAY ::oText PROMPT ::cText ID 110 OF ::oFld:aDialogs[ 2 ]
-
-      ::oMeter       := TMeter():ReDefine( 120, { | u | if( pCount() == 0, ::nActualMeter, ::nActualMeter := u ) }, 10, ::oFld:aDialogs[ 2 ], .f., , , .t., rgb( 255,255,255 ), , rgb( 128,255,0 ) )
-
-      ::oMeterL      := TMeter():ReDefine( 130, { | u | if( pCount() == 0, ::nActualMeterL, ::nActualMeterL := u ) }, 10, ::oFld:aDialogs[ 2 ], .f., , , .t., rgb( 255,255,255 ), , rgb( 128,255,0 ) )
+         OF       ::oDlg
 
       /*
       Botones------------------------------------------------------------------
       */
 
       REDEFINE BUTTONBMP ::oBtnExportar ;
-         ID       220 ;
+         ID       510 ;
          OF       ::oDlg;
-         ACTION   ( ::Sincronizar() );
+         ACTION   ( ::ExportarPrestashop() );
+
+      REDEFINE BUTTONBMP ::oBtnImportar ;
+         ID       520 ;
+         OF       ::oDlg;
+         ACTION   ( ::ImportarPrestashop() );
+
+      /*
+      Comercio2--------------------------------------------------------------//
+      */
+
+      ::oTree        := TTreeView():Redefine( 200, ::oDlg )
+
+      REDEFINE SAY ::oText PROMPT ::cText ID 210 OF ::oDlg
+
+      ::oMeter       := TMeter():ReDefine( 220, { | u | if( pCount() == 0, ::nActualMeter, ::nActualMeter := u ) }, 10, ::oDlg, .f., , , .t., rgb( 255,255,255 ), , rgb( 128,255,0 ) )
+
+      ::oMeterL      := TMeter():ReDefine( 230, { | u | if( pCount() == 0, ::nActualMeterL, ::nActualMeterL := u ) }, 10, ::oDlg, .f., , , .t., rgb( 255,255,255 ), , rgb( 128,255,0 ) )
+
+      /*
+      Botones------------------------------------------------------------------
+      */      
 
       REDEFINE BUTTON ::oBtnCancel ;
          ID       IDCANCEL ;
@@ -869,32 +856,6 @@ METHOD Activate( oWnd ) CLASS TComercio
    ::oBmp:End()
 
 Return Nil
-
-//---------------------------------------------------------------------------//
-
-METHOD Sincronizar() CLASS TComercio
-
-   if uFieldEmpresa( "nTipWeb" ) == 1  //OsCommerce
-
-      if ::nExportar == 1
-         ::Exportar()
-      else
-         ::Importar()
-      end if
-
-   else                                //Prestashop
-
-      ::aCategorias     := {}
-
-      if ::nExportar == 1
-         ::ExportarPrestashop()
-      else
-         ::ImportarPrestashop()
-      end if
-
-   end if
-
-Return .t.
 
 //---------------------------------------------------------------------------//
 
@@ -987,12 +948,13 @@ METHOD Exportar() CLASS TComercio
       end if
 
       ::oBtnExportar:Hide()
+      ::oBtnImportar:Hide()
 
       ::oBtnCancel:Disable()
-      /*
+      
       oBlock            := ErrorBlock( { | oError | Break( oError ) } )
       BEGIN SEQUENCE
-      */
+      
       if ::OpenFiles()
 
          ::SetText ( 'Intentando conectar con el servidor ' + '"' + ::cHost + '"' + ', el usuario ' + '"' + ::cUser + '"' + ' y la base de datos ' + '"' + ::cDbName + '".' , 1 )
@@ -1014,8 +976,6 @@ METHOD Exportar() CLASS TComercio
                ::SetText ( 'La Base de datos: ' + ::cDbName + ' no esta activa.', 1 )
 
             else
-
-               // Tomamos el lenguaje
 
                ::nLanguage    := ::GetLanguage( oDb )
 
@@ -1092,7 +1052,7 @@ METHOD Exportar() CLASS TComercio
          ::SetText( 'Error al abrir los ficheros necesarios.', 1 )
 
       end if
-      /*
+      
       RECOVER USING oError
 
          msgStop( ErrorMessage( oError ), "Error al conectarnos con la base de datos" )
@@ -1100,7 +1060,7 @@ METHOD Exportar() CLASS TComercio
       END SEQUENCE
 
       ErrorBlock( oBlock )
-      */
+      
       ::Closefiles()
 
       ::oBtnExportar:Hide()
@@ -6253,21 +6213,15 @@ METHOD ChangeSincAll()
 
    if ::lSincAll
 
-      ::lArticulos      := .t.
-      ::lFamilias       := .t.
-      ::lPedidos        := .t.
-      ::lFabricantes    := .t.
-      ::lIva            := .t.
-
       ::oArticulos:Disable()
-      ::oPedidos:Disable()
       ::oTipIva:Disable()
+      ::oCliente:Disable()
 
    else
 
       ::oArticulos:Enable()
-      ::oPedidos:Enable()
       ::oTipIva:Enable()
+      ::oCliente:Enable()
 
    end if
 
@@ -6558,11 +6512,10 @@ Method ExportarPrestashop() Class TComercio
    local oBlock
    local oError
 
-   if !Empty( ::oFld )
-      ::oFld:SetOption( 2 )
-   end if
+   ::aCategorias     := {}
 
    ::oBtnExportar:Hide()
+   ::oBtnImportar:Hide()
 
    ::oBtnCancel:Disable()
 
@@ -6642,27 +6595,6 @@ Method ExportarPrestashop() Class TComercio
             end if
 
             /*
-            Nos traemos los clientes y pedidos hacia nuestras bases de datos y actualizamos el estado de los pedidos de arriba
-            */
-
-            if ::lPedidos .or. ::lSincAll
-
-               ::MeterGlobalText( "Descargando clientes" )
-               ::AppendClientPrestashop()
-               sysRefresh()
-
-               ::MeterGlobalText( "Descargando pedidos" )
-               ::AppendPedidoprestashop()
-               sysRefresh()
-
-               ::MeterGlobalText( "Actualizando estado de los pedidos" )
-               ::EstadoPedidosPrestashop()
-               sysRefresh()
-
-            end if
-               
-
-            /*
             Pasamos los clientes desde el programa a prestashop-------------
                
 
@@ -6681,8 +6613,10 @@ Method ExportarPrestashop() Class TComercio
 
             ::MeterGlobalText( "Subiendo imagenes" )
 
-            if ApoloMsgNoYes( "¿Subir imagenes?", "Confirme" )
-               ::AppendImagesPrestashop()
+            if ::lImagenes .or. ::lSincAll
+               if ApoloMsgNoYes( "¿Subir imagenes?", "Confirme" )
+                  ::AppendImagesPrestashop()
+               end if   
             end if
 
          end if
@@ -6694,6 +6628,13 @@ Method ExportarPrestashop() Class TComercio
       ::SetText( 'Base de datos desconectada.', 1 )
 
       ::MeterGlobalText( "Proceso finalizado" )
+
+      /*
+      Para que al final del proceso quede totalmente llena la barra del meter--
+      */
+
+      ::oMeter:Set( 100 )
+      ::oMeterL:Set( 100 )
 
    else
 
@@ -6712,6 +6653,7 @@ Method ExportarPrestashop() Class TComercio
    ::Closefiles()
 
    ::oBtnExportar:Hide()
+   ::oBtnImportar:Hide()
 
    ::oBtnCancel:Enable()
 
@@ -6722,17 +6664,16 @@ Return .t.
 Method ImportarPrestashop()
 
    local oDb
+   local oBlock
+   local oError
 
-   if !ApoloMsgNoYes( "Se va a iniciar el proceso de importación desde OsCommerce, los datos de su equipo van a ser modificados." + CRLF + CRLF + "¿Desea continuar?", "Elija una opción" )
-      Return ( Self )
-   end if
+   ::oBtnExportar:Hide()
+   ::oBtnImportar:Hide()
 
-   if !Empty( ::oFld )
-      ::oFld:SetOption( 2 )
-   end if
-
-   ::oBtnExportar:Disable()
    ::oBtnCancel:Disable()
+
+   oBlock            := ErrorBlock( { | oError | Break( oError ) } )
+   BEGIN SEQUENCE
 
    if ::OpenFiles()
 
@@ -6756,55 +6697,21 @@ Method ImportarPrestashop()
 
           else
 
-            Msginfo( "Importamos en Prestashop" )
+            /*
+            Nos traemos los clientes y pedidos hacia nuestras bases de datos y actualizamos el estado de los pedidos de arriba
+            */
 
-            /*::oMeter:SetTotal( 9 )
-            ::nActualMeter := 1
-
-            ::MeterGlobalText( "Descargando propiedades" )
-            ::AppendPropiedades_bd( odb )
+            ::MeterGlobalText( "Descargando clientes" )
+            ::AppendClientPrestashop()
             sysRefresh()
 
-            if ::lIva .or. ::lSincAll
-               ::MeterGlobalText( "Descargando tipos de " + cImp() )
-               ::AppendIva_bd( odb )
-               sysRefresh()
-            end if
+            ::MeterGlobalText( "Descargando pedidos" )
+            ::AppendPedidoprestashop()
+            sysRefresh()
 
-            if ::lFamilias .or. ::lSincAll
-               ::MeterGlobalText( "Descargando familias" )
-               ::AppendFamilia_bd( odb )
-               sysRefresh()
-            end if
-
-            if ::lFabricantes .or. ::lSincAll
-               ::MeterGlobalText( "Descargando fabricantes" )
-               ::AppendFabricantes_bd( odb )
-               sysRefresh()
-            end if
-
-            if ::lArticulos .or. ::lSincAll
-               ::MeterGlobalText( "Descargando artículos" )
-               ::AppendArticulo_bd( odb )
-               sysRefresh()
-            end if
-
-            if ::lPedidos .or. ::lSincAll
-               ::MeterGlobalText( "Descargando clientes" )
-               ::AppendClient( oDb )
-               sysRefresh()
-
-               ::MeterGlobalText( "Descargando pedidos" )
-               ::AppendPedido( oDb )
-               sysRefresh()
-
-               ::MeterGlobalText( "Actualizando estados de pedidos" )
-               ::EstadoPedidos( oDb )
-               sysRefresh()
-            end if
-
-            ::MeterGlobalText( "Descargando imagenes" )
-            ::AppendImages_bd()*/
+            ::MeterGlobalText( "Actualizando estado de los pedidos" )
+            ::EstadoPedidosPrestashop()
+            sysRefresh()
 
           end if
 
@@ -6814,15 +6721,34 @@ Method ImportarPrestashop()
 
       ::SetText( 'Base de datos desconectada.', 1 )
 
+      ::MeterGlobalText( "Proceso finalizado" )
+
+      /*
+      Para que al final del proceso quede totalmente llena la barra del meter--
+      */
+
+      ::oMeter:Set( 100 )
+      ::oMeterL:Set( 100 )
+
    else
 
       ::SetText( 'Error al abrir los ficheros necesarios.', 1 )
 
    end if
 
+   RECOVER USING oError
+
+      msgStop( ErrorMessage( oError ), "Error al conectarnos con la base de datos" )
+
+   END SEQUENCE
+
+   ErrorBlock( oBlock )
+
    ::Closefiles()
 
-   ::oBtnExportar:Enable()
+   ::oBtnExportar:Hide()
+   ::oBtnExportar:Hide()
+
    ::oBtnCancel:Enable()
 
 Return .t.
@@ -10012,66 +9938,98 @@ Method AppendImagesPrestashop() CLASS TComercio
 
       ::nTotMeter    := 0
 
-      ::oInt         := TInternet():New()
-      ::oFtp         := TFtp():New( ::cHostFtp, ::oInt, ::cUserFtp, ::cPasswdFtp, ::lPassiveFtp )
+      if !Empty( ::cHostFtp )
 
-      if Empty( ::oFtp ) .or. Empty( ::oFtp:hFtp )
+         ::oInt         := TInternet():New()
+         ::oFtp         := TFtp():New( ::cHostFtp, ::oInt, ::cUserFtp, ::cPasswdFtp, ::lPassiveFtp )
 
-         MsgStop( "Imposible conectar al sitio ftp " + ::cHostFtp )
+         if Empty( ::oFtp ) .or. Empty( ::oFtp:hFtp )
 
-      else
+            MsgStop( "Imposible conectar al sitio ftp " + ::cHostFtp )
 
-         ::SetText( "Actualizando imagenes de productos", 2 )
+         else
 
-         /*
-         Subimos los ficheros de imagenes-----------------------------------------
-         */
-
-         ::nTotMeter                := len( ::aImagesArticulos )
-         nCount                     := 1
-
-         if !Empty( ::cDImagen )
-            ::oFtp:CreateDirectory( ::cDImagen + "/p" )
-            ::oFtp:SetCurrentDirectory( ::cDImagen + "/p" )
-         end if
-
-         for each oImage in ::aImagesArticulos
-
-            ::SetText( "Subiendo imagen " + cNoPath( oImage:cNombreImagen ), 3 )
-
-            ::MeterParticularText( " Subiendo imagen " + AllTrim( Str( nCount ) ) + " de "  + AllTrim( Str( ::nTotMeter ) ) )
-
-            ::oFtp:CreateDirectory( oImage:cCarpeta )
-            ::oFtp:SetCurrentDirectory( oImage:cCarpeta )
-
-            oFile                   := TFtpFile():New( cFileBmpName( oImage:cNombreImagen ), ::oFtp )
-            if !oFile:PutFile( ::oMeterL )
-               ::SetText( "Error copiando imagen " + cFileBmpName( oImage:cNombreImagen ), 3 )
-            end if
-
-            ::oFtp:SetCurrentDirectory( ".." )
-
-            nCount                  += 1
-
-            oFile:End()
+            ::SetText( "Actualizando imagenes de productos", 2 )
 
             /*
-            Me Paso Al Anterior---------------------------------------------------
+            Subimos los ficheros de imagenes-----------------------------------------
             */
 
-            SysRefresh()
+            ::nTotMeter                := len( ::aImagesArticulos )
+            nCount                     := 1
 
-         next
+               if !Empty( ::cDImagen )
+               ::oFtp:CreateDirectory( ::cDImagen + "/p" )
+               ::oFtp:SetCurrentDirectory( ::cDImagen + "/p" )
+            end if
 
-      end if
+            for each oImage in ::aImagesArticulos
 
-      if !Empty( ::oInt )
-         ::oInt:end()
-      end if
+               ::SetText( "Subiendo imagen " + cNoPath( oImage:cNombreImagen ), 3 )
 
-      if !Empty( ::oFtp )
-         ::oFtp:end()
-      end if
+               ::MeterParticularText( " Subiendo imagen " + AllTrim( Str( nCount ) ) + " de "  + AllTrim( Str( ::nTotMeter ) ) )
+
+               ::oFtp:CreateDirectory( oImage:cCarpeta )
+               ::oFtp:SetCurrentDirectory( oImage:cCarpeta )
+
+               oFile                   := TFtpFile():New( cFileBmpName( oImage:cNombreImagen ), ::oFtp )
+               if !oFile:PutFile( ::oMeterL )
+                  ::SetText( "Error copiando imagen " + cFileBmpName( oImage:cNombreImagen ), 3 )
+               end if
+
+               ::oFtp:SetCurrentDirectory( ".." )
+
+               nCount                  += 1
+
+               oFile:End()
+
+               /*
+               Me Paso Al Anterior---------------------------------------------------
+               */
+
+               SysRefresh()
+
+            next
+
+         end if
+
+         if !Empty( ::oInt )
+            ::oInt:end()
+         end if
+
+         if !Empty( ::oFtp )
+            ::oFtp:end()
+         end if
+
+      else   
+
+         if isDirectory( ::cDImagen )
+            
+            if !isDirectory( ::cDImagen + "/p" )
+               
+               Makedir( ::cDImagen + "/p" )
+
+            end if
+
+            for each oImage in ::aImagesArticulos
+
+               ::SetText( "Subiendo imagen " + cNoPath( oImage:cNombreImagen ), 3 )
+
+               ::MeterParticularText( " Subiendo imagen " + AllTrim( Str( nCount ) ) + " de "  + AllTrim( Str( ::nTotMeter ) ) )
+
+               if !isDirectory( ::cDImagen + "/p/" + oImage:cCarpeta )
+                  Makedir( ::cDImagen + "/p/" + oImage:cCarpeta )
+               end if
+
+               CopyFile( oImage:cNombreImagen, ::cDImagen + "/p/" + oImage:cCarpeta + "/" + cNoPath( oImage:cNombreImagen ) )
+
+               nCount                  += 1
+
+            next
+
+         end if
+
+      end if   
 
    end if
 
@@ -10081,67 +10039,95 @@ Method AppendImagesPrestashop() CLASS TComercio
 
    if Len( ::aImagesCategories ) > 0
 
-      /*
-      Conectamos al FTP y Subimos las imágenes de artículos--------------------
-      */
-
-      ::nTotMeter    := 0
-
-      ::oInt         := TInternet():New()
-      ::oFtp         := TFtp():New( ::cHostFtp, ::oInt, ::cUserFtp, ::cPasswdFtp, ::lPassiveFtp )
-
-      if Empty( ::oFtp ) .or. Empty( ::oFtp:hFtp )
-
-         MsgStop( "Imposible conectar al sitio ftp " + ::cHostFtp )
-
-      else
-
-         ::SetText( "Actualizando imagenes de categorías", 2 )
+      if !Empty( ::cHostFtp )
 
          /*
-         Subimos los ficheros de imagenes--------------------------------------
+         Conectamos al FTP y Subimos las imágenes de artículos--------------------
          */
 
-         ::nTotMeter                := len( ::aImagesCategories )
-         nCount                     := 1
+         ::nTotMeter    := 0
 
-         if !Empty( ::cDImagen )
-            ::oFtp:CreateDirectory( ::cDImagen + "/c" )
-            ::oFtp:SetCurrentDirectory( ::cDImagen + "/c" )
-         end if
+         ::oInt         := TInternet():New()
+         ::oFtp         := TFtp():New( ::cHostFtp, ::oInt, ::cUserFtp, ::cPasswdFtp, ::lPassiveFtp )
 
-         for each oImage in ::aImagesCategories
+         if Empty( ::oFtp ) .or. Empty( ::oFtp:hFtp )
 
-            ::SetText( "Subiendo imagen " + cNoPath( oImage:cNombreImagen ), 3 )
+            MsgStop( "Imposible conectar al sitio ftp " + ::cHostFtp )
 
-            ::MeterParticularText( " Subiendo imagen " + AllTrim( Str( nCount ) ) + " de "  + AllTrim( Str( ::nTotMeter ) ) )
+         else
 
-            oFile                   := TFtpFile():New( cFileBmpName( oImage:cNombreImagen ), ::oFtp )
-            if !oFile:PutFile( ::oMeterL )
-               ::SetText( "Error copiando imagen " + cFileBmpName( oImage:cNombreImagen ), 3 )
-            end if
-
-            nCount                  += 1
-
-            oFile:End()
+            ::SetText( "Actualizando imagenes de categorías", 2 )
 
             /*
-            Me Paso Al Anterior------------------------------------------------
+            Subimos los ficheros de imagenes--------------------------------------
             */
 
-            SysRefresh()
+            ::nTotMeter                := len( ::aImagesCategories )
+            nCount                     := 1
 
-         next
+            if !Empty( ::cDImagen )
+               ::oFtp:CreateDirectory( ::cDImagen + "/c" )
+               ::oFtp:SetCurrentDirectory( ::cDImagen + "/c" )
+            end if
 
-      end if
+            for each oImage in ::aImagesCategories
 
-      if !Empty( ::oInt )
-         ::oInt:end()
-      end if
+               ::SetText( "Subiendo imagen " + cNoPath( oImage:cNombreImagen ), 3 )
 
-      if !Empty( ::oFtp )
-         ::oFtp:end()
-      end if
+               ::MeterParticularText( " Subiendo imagen " + AllTrim( Str( nCount ) ) + " de "  + AllTrim( Str( ::nTotMeter ) ) )
+
+               oFile                   := TFtpFile():New( cFileBmpName( oImage:cNombreImagen ), ::oFtp )
+               if !oFile:PutFile( ::oMeterL )
+                  ::SetText( "Error copiando imagen " + cFileBmpName( oImage:cNombreImagen ), 3 )
+               end if
+
+               nCount                  += 1
+
+               oFile:End()
+
+               /*
+               Me Paso Al Anterior------------------------------------------------
+               */
+
+               SysRefresh()
+
+            next
+
+         end if
+
+         if !Empty( ::oInt )
+            ::oInt:end()
+         end if
+
+         if !Empty( ::oFtp )
+            ::oFtp:end()
+         end if
+
+      else 
+      
+         if isDirectory( ::cDImagen )
+
+            if !isDirectory( ::cDImagen + "/c" )
+               
+               Makedir( ::cDImagen + "/c" )
+
+            end if
+
+            for each oImage in ::aImagesCategories
+
+               ::SetText( "Subiendo imagen " + cNoPath( oImage:cNombreImagen ), 3 )
+
+               ::MeterParticularText( " Subiendo imagen " + AllTrim( Str( nCount ) ) + " de "  + AllTrim( Str( ::nTotMeter ) ) )
+
+               CopyFile( oImage:cNombreImagen, ::cDImagen + "/c/" + cNoPath( oImage:cNombreImagen ) )
+
+               nCount                  += 1
+
+            next      
+
+         end if
+
+      end if   
 
    end if
 
