@@ -3176,7 +3176,8 @@ METHOD ResizedResource() CLASS TpvTactil
 
    ::oBtnAgregarLibre:Move( ::oBtnAgregarLibre:nTop + nDialogHeight, ::oBtnAgregarLibre:nLeft + nDialogWidth, , , .f. )
    ::oBtnCombinado:Move( ::oBtnCombinado:nTop + nDialogHeight, ::oBtnCombinado:nLeft + nDialogWidth, , , .f. )
-   ::oBtnCalculadora:Move( ::oBtnCalculadora:nTop + nDialogHeight, ::oBtnCalculadora:nLeft + nDialogWidth, , , .f. )
+   
+   // ::oBtnCalculadora:Move( ::oBtnCalculadora:nTop + nDialogHeight, ::oBtnCalculadora:nLeft + nDialogWidth, , , .f. )
 
    /*
    Ocupa todo el area cliente--------------------------------------------------
@@ -3195,6 +3196,8 @@ METHOD ResizedResource() CLASS TpvTactil
 
    ::oBtnPreviewDocumento:Move( ::oBtnPreviewDocumento:nTop + nDialogHeight, ::oBtnPreviewDocumento:nLeft + nDialogWidth, , , .f. )
    ::oBtnPrintDocumento:Move( ::oBtnPrintDocumento:nTop + nDialogHeight, ::oBtnPrintDocumento:nLeft + nDialogWidth, , , .f. )
+
+   ::oBtnCalculadora:Move( ::oBtnCalculadora:nTop + nDialogHeight, ::oBtnCalculadora:nLeft + nDialogWidth, , , .f.)
 
    ::oGetUnidades:Move( ::oGetUnidades:nTop + nDialogHeight, ::oGetUnidades:nLeft + nDialogWidth, , , .f. )
 
@@ -6777,13 +6780,12 @@ METHOD SetCalculadora() CLASS TpvTactil
 
       ::oBrwFamilias:Move( , , , nBrwFamiliasHeight + calcDistance, .t. )
 
-      ::oGetUnidades:Move(       nGetUnidadesTop + calcDistance, , , , .t. )
+      ::oGetUnidades:Move(          nGetUnidadesTop + calcDistance, , , , .t. )
 
       ::oBtnFamiliasUp:Move(        nBtnFamiliasTop + calcDistance, , , , .t. )
       ::oBtnFamiliasDown:Move(      nBtnFamiliasTop + calcDistance, , , , .t. )
 
-      ::oBtnPreviewDocumento:Move(  nBtnFamiliasTop + calcDistance, , , , .t. )
-      ::oBtnPrintDocumento:Move(    nBtnFamiliasTop + calcDistance, , , , .t. )
+      ::oBtnCalculadora:Move(       nBtnFamiliasTop + calcDistance, , , , .t. )
 
    else
 
@@ -6791,13 +6793,12 @@ METHOD SetCalculadora() CLASS TpvTactil
 
       ::oBrwFamilias:Move( , , , nBrwFamiliasHeight - calcDistance, .t. )
 
-      ::oGetUnidades:Move(       nGetUnidadesTop - calcDistance, , , , .t. )
+      ::oGetUnidades:Move(          nGetUnidadesTop - calcDistance, , , , .t. )
 
       ::oBtnFamiliasUp:Move(        nBtnFamiliasTop - calcDistance, , , , .t. )
       ::oBtnFamiliasDown:Move(      nBtnFamiliasTop - calcDistance, , , , .t. )
 
-      ::oBtnPreviewDocumento:Move(  nBtnFamiliasTop - calcDistance, , , , .t. )
-      ::oBtnPrintDocumento:Move(    nBtnFamiliasTop - calcDistance, , , , .t. )
+      ::oBtnCalculadora:Move(       nBtnFamiliasTop - calcDistance, , , , .t. )
 
    end if
 

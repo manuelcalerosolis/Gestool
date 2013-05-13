@@ -61,13 +61,11 @@ METHOD New( oDbf, cName, cFile, cKey, cFor, bWhile, ;
     BYNAME lNoDel DEFAULT .t.
     BYNAME lTmp   DEFAULT .f.
 
-#ifndef __SQLLIB__
     if ValType( cFor ) != "C" .or. Empty( cFor )
         ::cFor       := if( ::lNoDel, "!Deleted()", ".t." )
     else
         ::cFor       := if( ::lNoDel, "!Deleted() .and.", "" ) + Upper( cFor )
     end if
-#endif
 
     ::cKey           := Upper( if( ValType( cKey ) != "C", ".T.", cKey ) )
 
@@ -99,14 +97,15 @@ return( Self )
 //----------------------------------------------------------------------------//
 
 METHOD SetCond() CLASS TIndex
-return( ( ::oDbf:nArea )->( OrdCondSet( ::cFor, ::bFor,, ::bWhile, ;
-                     ::bOption, ::nStep, RecNo(), .f.,,, ::lDes ) ) )
+
+return( ( ::oDbf:nArea )->( OrdCondSet( ::cFor, ::bFor,, ::bWhile, ::bOption, ::nStep, RecNo(), .f., , , ::lDes ) ) )
 
 //----------------------------------------------------------------------------//
 
 METHOD Create() CLASS TIndex
 
     ::SetCond()
+
     ( ::oDbf:nArea )->( OrdCreate( ::cFile, ::cName, ::cKey, ::bKey, ::lUniq ) )
 
 return( Self )
@@ -116,8 +115,7 @@ return( Self )
 // Se hace aqui y no en NEW para que este la DBF abierta
 
 METHOD IdxExt() CLASS TIndex
-return( ::cFile := if( AT( ".", GetFileName( ::cFile ) ) > 0, ::cFile, ;
-                            ::cFile + ( ::oDbf:nArea )->( OrdBagExt() ) ) )
+return( ::cFile := if( AT( ".", GetFileName( ::cFile ) ) > 0, ::cFile, ::cFile + ( ::oDbf:nArea )->( OrdBagExt() ) ) )
 
 //----------------------------------------------------------------------------//
 

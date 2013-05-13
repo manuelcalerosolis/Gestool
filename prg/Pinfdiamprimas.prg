@@ -212,6 +212,7 @@ METHOD lGenerate() CLASS PInfDiaMPrimas
 
       cCodTipoOperacion := oRetFld( ::oProduccT:oDbf:cCodOpe, ::oProduccT:oOperacion:oDbf, "cTipOpe" )
 
+
       if lChkSer( ::oProduccT:oDbf:cSerOrd, ::aSer ) .and.;
          ( ::oGrupoTOperacion:Cargo:Todos .or. ( cCodTipoOperacion >= ::oGrupoTOperacion:Cargo:Desde .and. cCodTipoOperacion <= ::oGrupoTOperacion:Cargo:Hasta ) )
 
