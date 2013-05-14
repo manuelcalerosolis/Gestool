@@ -520,34 +520,18 @@
 	"buffers":
 	[
 		{
-			"file": "/C/AppServ/www/zemtrum/themes/zemtrum/category.tpl",
+			"file": "prg/Tcomercio.prg",
 			"settings":
 			{
-				"buffer_size": 1818,
-				"line_ending": "Unix"
-			}
-		},
-		{
-			"file": "/C/AppServ/www/zemtrum/themes/zemtrum/css/category.css",
-			"settings":
-			{
-				"buffer_size": 1302,
-				"line_ending": "Unix"
-			}
-		},
-		{
-			"file": "/C/AppServ/www/zemtrum/themes/zemtrum/css/product_list.css",
-			"settings":
-			{
-				"buffer_size": 3216,
+				"buffer_size": 370392,
 				"line_ending": "Windows"
 			}
 		},
 		{
-			"file": "prg/Tcomercio.prg",
+			"file": "prg/Tdbf.prg",
 			"settings":
 			{
-				"buffer_size": 369666,
+				"buffer_size": 65439,
 				"line_ending": "Windows"
 			}
 		}
@@ -584,6 +568,14 @@
 	},
 	"file_history":
 	[
+		"/C/fw195/Gestool/prg/Empresa.prg",
+		"/C/fw195/Gestool/include/Empresa.ch",
+		"/C/AppServ/www/zemtrum/themes/zemtrum/category.tpl",
+		"/C/AppServ/www/zemtrum/themes/zemtrum/css/category.css",
+		"/C/AppServ/www/zemtrum/themes/zemtrum/css/product_list.css",
+		"/C/fw195/Gestool/prg/Factu.prg",
+		"/C/fw195/Gestool/prg/Backup.prg",
+		"/C/fw195/Gestool/prg/Tdbf.prg",
 		"/C/fw195/Gestool/prg/Tcomercio.prg",
 		"/C/fw195/Gestool/prg/Pedcli.prg",
 		"/C/AppServ/www/zemtrum/config/settings.inc.php",
@@ -591,15 +583,12 @@
 		"/C/fw195/Gestool/prg/Tgrpfam.prg",
 		"/C/fw195/Gestool/prg/Tpvtactil.prg",
 		"/C/AppServ/www/zemtrum/themes/zemtrum/css/global.css",
-		"/C/AppServ/www/zemtrum/themes/zemtrum/css/category.css",
 		"/C/AppServ/www/zemtrum/themes/zemtrum/modules/blockcategories/category-tree-branch.tpl",
 		"/C/AppServ/www/zemtrum/themes/zemtrum/product-list.tpl",
-		"/C/AppServ/www/zemtrum/themes/zemtrum/css/product_list.css",
 		"/C/AppServ/www/zemtrum/themes/zemtrum/category-tree-branch.tpl",
 		"/C/AppServ/www/zemtrum/themes/zemtrum/modules/blockcategories/blockcategories.tpl",
 		"/C/AppServ/www/zemtrum/css/admin.css",
 		"/C/AppServ/www/zemtrum/js/jquery/plugins/treeview-categories/jquery.treeview-categories.css",
-		"/C/AppServ/www/zemtrum/themes/zemtrum/category.tpl",
 		"/C/AppServ/www/zemtrum/themes/zemtrum/css/grid_prestashop.css",
 		"/C/AppServ/www/zemtrum/themes/zemtrum/css/identity.css",
 		"/C/Users/Villa/Desktop/Modulos bajados de prestashop/product_list_grid_projectfiles/product-list.tpl",
@@ -636,12 +625,10 @@
 		"/C/AppServ/www/zemtrum/themes/zemtrum/index.tpl",
 		"/C/AppServ/www/zemtrum/themes/zemtrum/footer.tpl",
 		"/C/AppServ/www/zemtrum/footer.php",
-		"/C/fw195/Gestool/prg/Factu.prg",
 		"/C/fw195/Gestool/prg/Tscripts.prg",
 		"/C/fw195/Gestool/prg/Scrllbar.prg",
 		"/C/Scripts creados/Inma Pepsi/001.prg",
 		"/C/fw195/Gestool/prg/Turno.prg",
-		"/C/fw195/Gestool/prg/Empresa.prg",
 		"/C/fw195/Gestool/prg/Tpv.prg",
 		"/C/fw195/Gestool/prg/Empcnf.prg",
 		"/C/fw195/Gestool/prg/Factcli.prg",
@@ -664,7 +651,6 @@
 		"/C/fw195/Gestool/prg/Factprv.prg",
 		"/C/fw195/Gestool/prg/Rectprv.prg",
 		"/C/fw195/Gestool/prg/Facrec.prg",
-		"/C/fw195/Gestool/include/Empresa.ch",
 		"/C/Scripts creados/SCRIPT JOAQUIN INFANTE/test.prg",
 		"/C/Scripts creados/ANTONIO INFORTISA/impinfor.prg",
 		"/C/Scripts creados/Oscar Tenis/oscar.prg",
@@ -709,9 +695,7 @@
 		"/C/fw195/Gestool/prg/Avifile.prg",
 		"/C/fw195/Gestool/prg/Tinfgen.prg",
 		"/C/Users/Villa/Desktop/test.prg",
-		"/C/fw195/Gestool/include/Util.ch",
-		"/C/Users/Villa/Desktop/oscar.prg",
-		"/C/fw195/Gestool/prg/Exportatarifas.prg"
+		"/C/fw195/Gestool/include/Util.ch"
 	],
 	"find":
 	{
@@ -719,9 +703,11 @@
 	},
 	"find_in_files":
 	{
-		"height": 0.0,
+		"height": 90.0,
 		"where_history":
 		[
+			"C:\\fw195\\Gestool\\prg",
+			"",
 			"C:\\AppServ\\www\\zemtrum\\*.css",
 			"C:\\AppServ\\www\\zemtrum",
 			"C:\\fw195\\Gestool\\prg",
@@ -751,6 +737,48 @@
 		"case_sensitive": false,
 		"find_history":
 		[
+			"lapelnomb",
+			"deletefile",
+			"DeleteImagesCategories",
+			"CopyFile",
+			"copy",
+			"xcopy",
+			"dirchange",
+			"WinExec",
+			"DirChange",
+			"addtmp",
+			"copy(",
+			"copy",
+			"oimage",
+			"SaveToDisk",
+			"addtmpindex",
+			"makedir",
+			"mkdir",
+			"AppendImagesPrestashop",
+			"exportarp",
+			"ntipweb",
+			"121",
+			"lart",
+			"od exportarp",
+			"exportar",
+			"ometerl",
+			"meterglobaltext",
+			"od meterglobaltext",
+			"odmeterglobaltext",
+			"meterglobaltext",
+			"meter",
+			"importarprestashop",
+			"nTotMeter",
+			"meter",
+			"ntotalmeter",
+			"::oMeterL",
+			"od MeterGlobalText",
+			"MeterGlobalText",
+			"::oBtnExportar",
+			"ImportarPrestashop",
+			"od exporta",
+			"exporta",
+			"exportar",
 			"ChangeSincAll",
 			"sincronizar",
 			"exportarpre",
@@ -836,49 +864,7 @@
 			"AgregarKit",
 			"lkitprc",
 			"lLineaValida",
-			"sTotalTiket",
-			"AgregarLineas",
-			"SeleccionaArticulos",
-			"oLstArticulos",
-			"dbSetFilter",
-			"on brw",
-			"registros",
-			"LastRec",
-			"apt",
-			"SavTik2Tik",
-			"on lcambia",
-			"lcambia",
-			"GuardaApartado",
-			"on WinEdtRec",
-			"newtik",
-			"lSave",
-			"begintran",
-			"beguintran",
-			"beguintrans",
-			"SAVAPT",
-			"apt",
-			"on sav",
-			"BeginTrans",
-			"GuardaApartado",
-			"aeval",
-			"oget",
-			"GuardaApartado",
-			"on rx",
-			"lcambiati",
-			"oofficebar",
-			"up",
-			"on lista",
-			"on brw",
-			"oBrwDet",
-			"oBrw",
-			"resource",
-			"brw",
-			"on guarda",
-			"on syn",
-			"syn",
-			"GuardaApartado",
-			"oofficebar",
-			"GuardaApartado"
+			"sTotalTiket"
 		],
 		"highlight": true,
 		"in_selection": false,
@@ -904,104 +890,23 @@
 	"groups":
 	[
 		{
-			"selected": 3,
+			"selected": 0,
 			"sheets":
 			[
 				{
 					"buffer": 0,
-					"file": "/C/AppServ/www/zemtrum/themes/zemtrum/category.tpl",
-					"settings":
-					{
-						"buffer_size": 1818,
-						"regions":
-						{
-						},
-						"selection":
-						[
-							[
-								1566,
-								1566
-							]
-						],
-						"settings":
-						{
-							"syntax": "Packages/HTML/HTML.tmLanguage",
-							"translate_tabs_to_spaces": false
-						},
-						"translation.x": 0.0,
-						"translation.y": 306.0,
-						"zoom_level": 1.0
-					},
-					"type": "text"
-				},
-				{
-					"buffer": 1,
-					"file": "/C/AppServ/www/zemtrum/themes/zemtrum/css/category.css",
-					"settings":
-					{
-						"buffer_size": 1302,
-						"regions":
-						{
-						},
-						"selection":
-						[
-							[
-								152,
-								152
-							]
-						],
-						"settings":
-						{
-							"syntax": "Packages/CSS/CSS.tmLanguage",
-							"translate_tabs_to_spaces": false
-						},
-						"translation.x": 0.0,
-						"translation.y": 162.0,
-						"zoom_level": 1.0
-					},
-					"type": "text"
-				},
-				{
-					"buffer": 2,
-					"file": "/C/AppServ/www/zemtrum/themes/zemtrum/css/product_list.css",
-					"settings":
-					{
-						"buffer_size": 3216,
-						"regions":
-						{
-						},
-						"selection":
-						[
-							[
-								617,
-								617
-							]
-						],
-						"settings":
-						{
-							"syntax": "Packages/CSS/CSS.tmLanguage",
-							"translate_tabs_to_spaces": false
-						},
-						"translation.x": 0.0,
-						"translation.y": 0.0,
-						"zoom_level": 1.0
-					},
-					"type": "text"
-				},
-				{
-					"buffer": 3,
 					"file": "prg/Tcomercio.prg",
 					"settings":
 					{
-						"buffer_size": 369666,
+						"buffer_size": 370392,
 						"regions":
 						{
 						},
 						"selection":
 						[
 							[
-								19743,
-								19743
+								300771,
+								300771
 							]
 						],
 						"settings":
@@ -1011,7 +916,35 @@
 							"translate_tabs_to_spaces": true
 						},
 						"translation.x": 0.0,
-						"translation.y": 13504.0,
+						"translation.y": 177016.0,
+						"zoom_level": 1.0
+					},
+					"type": "text"
+				},
+				{
+					"buffer": 1,
+					"file": "prg/Tdbf.prg",
+					"settings":
+					{
+						"buffer_size": 65439,
+						"regions":
+						{
+						},
+						"selection":
+						[
+							[
+								39403,
+								39403
+							]
+						],
+						"settings":
+						{
+							"syntax": "Packages/harbour/harbour/Harbour.tmLanguage",
+							"tab_size": 2,
+							"translate_tabs_to_spaces": true
+						},
+						"translation.x": 0.0,
+						"translation.y": 22756.0,
 						"zoom_level": 1.0
 					},
 					"type": "text"
