@@ -1217,10 +1217,6 @@ STATIC FUNCTION EdtCnf( aTmp, aGet, dbfEmp, oBrw, nSelFolder, bValid, nMode )
       aTmp[ _CINIJORNADA ] := "0800"
    end if
 
-   if aTmp[ _NTIPWEB ] < 1 .or. aTmp[ _NTIPWEB ] > 2
-      aTmp[ _NTIPWEB ]     := 1
-   end if
-
    if Empty( aTmp[ _CNOMIMP ] )
       aTmp[ _CNOMIMP ]     := "IVA"
    end if
@@ -2287,10 +2283,6 @@ STATIC FUNCTION EdtCnf( aTmp, aGet, dbfEmp, oBrw, nSelFolder, bValid, nMode )
             ID       180;
             OF       oFld:aDialogs[7]
 
-      REDEFINE RADIO aTmp[ _NTIPWEB ] ;
-            ID       121, 122 ;
-            OF       oFld:aDialogs[7]
-
       REDEFINE GET aTmp[ _CSITSQL ] ;
             ID       100;
             OF       oFld:aDialogs[7]
@@ -2339,10 +2331,6 @@ STATIC FUNCTION EdtCnf( aTmp, aGet, dbfEmp, oBrw, nSelFolder, bValid, nMode )
             ITEMS    aTiempo ;
             ID       220 ;
             OF       oFld:aDialogs[ 7 ]
-
-      REDEFINE CHECKBOX aGet[ _LAPELNOMB ] VAR aTmp[ _LAPELNOMB ] ;
-            ID       199 ;
-            OF       oFld:aDialogs[7]
 
       REDEFINE CHECKBOX aGet[ _LREALWEB ] VAR aTmp[ _LREALWEB ] ;
             ID       400 ;
@@ -7047,7 +7035,6 @@ FUNCTION aItmEmp()
    aAdd( aDbf, {"nPreVta",    "N",  1, 0, "Precios para ventas generales",                         "", "", "aEmp()", 0 } )
    aAdd( aDbf, {"nPreWebVta", "N",  1, 0, "Precios para ventas web",                               "", "", "aEmp()", 0 } )
    aAdd( aDbf, {"lSerNoCom",  "L",  1, 0, "Avisar en ventas de números de serie no comprados",     "", "", "aEmp()", .f. } )
-   aAdd( aDbf, {"lApelNomb",  "L",  1, 0, "Lógico para recibir el apellido - nombre WEB",          "", "", "aEmp()", .f. } )
    aAdd( aDbf, {"lConIva",    "L",  1, 0, "Lógico para contabilizar apuntes de impuestos siempre", "", "", "aEmp()", .t. } )
    aAdd( aDbf, {"lIvaImpEsp", "L",  1, 0, "Aplicar impuestos a impuestos especiales",              "", "", "aEmp()", .f. } )
    aAdd( aDbf, {"lBtnFam",    "L",  1, 0, "Seleccion de familias por botones en PDA",              "", "", "aEmp()", .f. } )
@@ -7083,7 +7070,6 @@ FUNCTION aItmEmp()
    aAdd( aDbf, {"cNomSerX",   "C", 60, 0, "Nombre para la serie X",                                "", "", "aEmp()", nil } )
    aAdd( aDbf, {"cNomSerY",   "C", 60, 0, "Nombre para la serie Y",                                "", "", "aEmp()", nil } )
    aAdd( aDbf, {"cNomSerZ",   "C", 60, 0, "Nombre para la serie Z",                                "", "", "aEmp()", nil } )
-   aAdd( aDbf, {"nTipWeb",    "N",  2, 0, "OsCommerce o Prestashop",                               "", "", "aEmp()", 1 } )
    aAdd( aDbf, {"lCntNeg",    "L",  1, 0, "Contabilizar negativo",                                 "", "", "aEmp()", .f. } )
    aAdd( aDbf, {"lImgArt",    "L",  1, 0, "Lógico si un artículo lleva imagen",                    "", "", "aEmp()", nil } )
    aAdd( aDbf, {"cCooKey",    "C",250, 0, "Valor de __COOKIE_KEY__ para prestashop",               "", "", "aEmp()", nil } )
