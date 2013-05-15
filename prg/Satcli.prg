@@ -388,8 +388,6 @@ static cOldUndMed       := ""
 static cOldSituacion    := ""
 static lOpenFiles       := .f.
 static lExternal        := .f.
-static aTipSat          := { "Venta", "Alquiler" }
-static oTipSat
 static oUndMedicion
 static cFiltroUsuario   := ""
 
@@ -1248,13 +1246,6 @@ FUNCTION SatCli( oMenuItem, oWnd, cCodCli, cCodArt )
       end with
 
       with object ( oWndBrw:AddXCol() )
-         :cHeader          := "Tipo"
-         :bEditValue       := {|| aTipSat[ if( ( dbfSatCliT )->lAlquiler, 2, 1 ) ] }
-         :nWidth           := 50
-         :lHide            := .t.
-      end with
-
-      with object ( oWndBrw:AddXCol() )
          :cHeader          := "Número"
          :cSortOrder       := "nNumSat"
          :bEditValue       := {|| ( dbfSatCliT )->cSerSat + "/" + AllTrim( Str( ( dbfSatCliT )->nNumSat ) ) + "/" + ( dbfSatCliT )->cSufSat }
@@ -1747,12 +1738,6 @@ STATIC FUNCTION EdtRec( aTmp, aGet, dbfSatCliT, oBrw, cCodCli, cCodArt, nMode )
    if Empty( aTmp[ _CDPP ] )
       aTmp[ _CDPP ]     := Padr( "Pronto pago", 50 )
    end if
-
-   /*
-   Tipo de S.A.T.---------------------------------------------------------
-   */
-
-   cTipSat              := aTipSat[ if( aTmp[ _LALQUILER ], 2, 1  ) ]
 
    /*
    Comineza la transaccion-----------------------------------------------------
@@ -2507,7 +2492,7 @@ STATIC FUNCTION EdtRec( aTmp, aGet, dbfSatCliT, oBrw, cCodCli, cCodArt, nMode )
          ID       502 ;
          OF       oFld:aDialogs[1] ;
          WHEN     ( nMode != ZOOM_MODE ) ;
-         ACTION   ( DelDeta( oBrwLin, aTmp ), oTipSat:Refresh() )
+         ACTION   ( DelDeta( oBrwLin, aTmp ) )
 
       REDEFINE BUTTON ;
          ID       503 ;
@@ -2553,11 +2538,10 @@ STATIC FUNCTION EdtRec( aTmp, aGet, dbfSatCliT, oBrw, cCodCli, cCodArt, nMode )
          WHEN     .F. ;
          OF       oFld:aDialogs[1]
 
-      REDEFINE GET aGet[_DFECSAT] VAR aTmp[_DFECSAT];
+      REDEFINE GET aGet[ _DFECSAT ] VAR aTmp[ _DFECSAT ];
          ID       110 ;
          SPINNER;
          WHEN     ( nMode != ZOOM_MODE ) ;
-         COLOR    CLR_GET ;
          OF       oFld:aDialogs[1]
 
       REDEFINE GET aGet[ _DFECSAL ] VAR aTmp[ _DFECSAL ];
@@ -2565,21 +2549,11 @@ STATIC FUNCTION EdtRec( aTmp, aGet, dbfSatCliT, oBrw, cCodCli, cCodArt, nMode )
          IDSAY    114 ;
          SPINNER;
          WHEN     ( nMode != ZOOM_MODE ) ;
-         COLOR    CLR_GET ;
-         ON CHANGE( oSayDias:Refresh() );
-         OF       oFld:aDialogs[1]
-
-      REDEFINE GET aGet[ _DFECENTR ] VAR aTmp[ _DFECENTR ];
-         ID       112 ;
-         IDSAY    115 ;
-         SPINNER;
-         WHEN     ( nMode != ZOOM_MODE ) ;
-         COLOR    CLR_GET ;
          ON CHANGE( oSayDias:Refresh() );
          OF       oFld:aDialogs[1]
 
       REDEFINE SAY oSayDias ;
-         VAR      ( aTmp[ _DFECENTR ] - aTmp[ _DFECSAL ] );
+         VAR      ( aTmp[ _DFECSAT ] - aTmp[ _DFECSAL ] );
          ID       113 ;
          PICTURE  "9999" ;
          OF       oFld:aDialogs[1]
@@ -2598,13 +2572,6 @@ STATIC FUNCTION EdtRec( aTmp, aGet, dbfSatCliT, oBrw, cCodCli, cCodArt, nMode )
          ID       218 ;
          WHEN     ( nMode != ZOOM_MODE ) ;
          ITEMS    ( aSituacion( dbfSitua ) ) ;
-         OF       oFld:aDialogs[1]
-
-      REDEFINE COMBOBOX oTipSat VAR cTipSat ;
-         ID       217 ;
-         WHEN     ( ( dbfTmpLin )->( LastRec() ) == 0 ) ;
-         ITEMS    aTipSat ;
-         ON CHANGE(SetDialog( aGet, oSayDias, oSayTxtDias, oSayGetRnt, oGetRnt ) );
          OF       oFld:aDialogs[1]
 
       REDEFINE GET aGet[_CSUSAT] VAR aTmp[_CSUSAT] ;
@@ -2931,7 +2898,7 @@ STATIC FUNCTION EdtRec( aTmp, aGet, dbfSatCliT, oBrw, cCodCli, cCodArt, nMode )
 
       oFld:aDialogs[1]:AddFastKey( VK_F2, {|| AppDeta( oBrwLin, bEdtDet, aTmp, .f. ) } )
       oFld:aDialogs[1]:AddFastKey( VK_F3, {|| EdtDeta( oBrwLin, bEdtDet, aTmp ) } )
-      oFld:aDialogs[1]:AddFastKey( VK_F4, {|| DelDeta( oBrwLin, aTmp ), oTipSat:Refresh() } )
+      oFld:aDialogs[1]:AddFastKey( VK_F4, {|| DelDeta( oBrwLin, aTmp ) } )
 
       oFld:aDialogs[3]:AddFastKey( VK_F2, {|| WinAppRec( oBrwInc, bEdtInc, dbfTmpInc, nil, nil, aTmp ) } )
       oFld:aDialogs[3]:AddFastKey( VK_F3, {|| WinEdtRec( oBrwInc, bEdtInc, dbfTmpInc, nil, nil, aTmp ) } )
@@ -3170,15 +3137,6 @@ STATIC FUNCTION EdtDet( aTmp, aGet, dbfSatCliL, oBrw, lTotLin, cCodArtEnt, nMode
       end if
 
       aTmp[ __DFECSAL ]    := aTmpSat[ _DFECSAL ]
-      aTmp[ __DFECENT ]    := aTmpSat[ _DFECENTR ]
-
-      if !Empty( oTipSat )
-         if oTipSat:nAt == 2
-            aTmp[ __LALQUILER ]  := .t.
-         else
-            aTmp[ __LALQUILER ]  := .f.
-         end if
-      end if
 
    case nMode == EDIT_MODE
       lTotLin           := aTmp[ _LTOTLIN ]
@@ -6615,13 +6573,6 @@ FUNCTION BrwSatCli( oGet, dbfSatCliT, dbfSatCliL, dbfIva, dbfDiv, dbfFPago, oIva
       oBrw:CreateFromResource( 105 )
 
       with object ( oBrw:AddCol() )
-         :cHeader          := "Tipo"
-         :bEditValue       := {|| aTipSat[ if( ( dbfSatCliT )->lAlquiler, 2, 1  ) ] }
-         :nWidth           := 50
-         :lHide            := .t.
-      end with
-
-      with object ( oBrw:AddCol() )
          :cHeader          := "Número"
          :cSortOrder       := "nNumSat"
          :bEditValue       := {|| ( dbfSatCliT )->cSerSat + "/" + AllTrim( Str( ( dbfSatCliT )->nNumSat ) ) + "/" + ( dbfSatCliT )->cSufSat }
@@ -7777,16 +7728,6 @@ STATIC FUNCTION EndTrans( aTmp, aGet, nMode, oBrwLin, oBrw, oBrwInc, oDlg )
    aTmp[ _DFECCRE ]        := Date()
    aTmp[ _CTIMCRE ]        := Time()
 
-   /*
-   Guardamos el tipo para alquileres-------------------------------------------
-   */
-
-   if !Empty( oTipSat ) .and. oTipSat:nAt == 2
-      aTmp[ _LALQUILER ]   := .t.
-   else
-      aTmp[ _LALQUILER ]   := .f.
-   end if
-
    do case
    case nMode == APPD_MODE .or. nMode == DUPL_MODE
 
@@ -8305,19 +8246,7 @@ FUNCTION nTotNSatCli( uDbf )
    DEFAULT uDbf   := dbfSatCliL
 
    do case
-   case ValType( uDbf ) == "A"
-
-      if uDbf[ __LALQUILER ]
-
-         nTotUnd  := NotCaja( uDbf[ _NCANSAT ] )
-         nTotUnd  *= uDbf[ _NUNICAJA ]
-         nTotUnd  *= NotCero( uDbf[ _NUNDKIT ] )
-         nTotUnd  *= NotCero( uDbf[ __DFECENT ] - uDbf[ __DFECSAL ] )
-         nTotUnd  *= NotCero( uDbf[ _NMEDUNO ] )
-         nTotUnd  *= NotCero( uDbf[ _NMEDDOS ] )
-         nTotUnd  *= NotCero( uDbf[ _NMEDTRE ] )
-
-      else
+      case ValType( uDbf ) == "A"
 
          nTotUnd  := NotCaja( uDbf[ _NCANSAT ] )
          nTotUnd  *= uDbf[ _NUNICAJA ]
@@ -8326,21 +8255,7 @@ FUNCTION nTotNSatCli( uDbf )
          nTotUnd  *= NotCero( uDbf[ _NMEDDOS ] )
          nTotUnd  *= NotCero( uDbf[ _NMEDTRE ] )
 
-      end if
-
-   case ValType( uDbf ) == "O"
-
-      if uDbf:lAlquiler
-
-         nTotUnd  := NotCaja( uDbf:nCanSat )
-         nTotUnd  *= uDbf:nUniCaja
-         nTotUnd  *= NotCero( uDbf:nUndKit )
-         nTotUnd  *= NotCero( uDbf:dFecEnt - uDbf:dFecSal )
-         nTotUnd  *= NotCero( uDbf:nMedUno )
-         nTotUnd  *= NotCero( uDbf:nMedDos )
-         nTotUnd  *= NotCero( uDbf:nMedTre )
-
-      else
+      case ValType( uDbf ) == "O"
 
          nTotUnd  := NotCaja( uDbf:nCanSat )
          nTotUnd  *= uDbf:nUniCaja
@@ -8349,21 +8264,7 @@ FUNCTION nTotNSatCli( uDbf )
          nTotUnd  *= NotCero( uDbf:nMedDos )
          nTotUnd  *= NotCero( uDbf:nMedTre )
 
-      end if
-
-   otherwise
-
-      if ( uDbf )->lAlquiler
-
-         nTotUnd  := NotCaja( ( uDbf )->nCanSat )
-         nTotUnd  *= ( uDbf )->nUniCaja
-         nTotUnd  *= NotCero( ( uDbf )->nUndKit )
-         nTotUnd  *= NotCero( ( uDbf )->dFecEnt - ( uDbf )->dFecSal )
-         nTotUnd  *= NotCero( ( uDbf )->nMedUno )
-         nTotUnd  *= NotCero( ( uDbf )->nMedDos )
-         nTotUnd  *= NotCero( ( uDbf )->nMedTre )
-
-      else
+      otherwise
 
          nTotUnd  := NotCaja( ( uDbf )->nCanSat )
          nTotUnd  *= ( uDbf )->nUniCaja
@@ -8371,8 +8272,6 @@ FUNCTION nTotNSatCli( uDbf )
          nTotUnd  *= NotCero( ( uDbf )->nMedUno )
          nTotUnd  *= NotCero( ( uDbf )->nMedDos )
          nTotUnd  *= NotCero( ( uDbf )->nMedTre )
-
-      end if
 
    end case
 
@@ -10509,27 +10408,6 @@ RETURN ( .t. )
 
 STATIC FUNCTION SetDialog( aGet, oSayDias, oSayTxtDias, oSayGetRnt, oGetRnt )
 
-   if oTipSat:nAt == 2
-
-      aGet[ _DFECENTR ]:Show()
-      aGet[ _DFECSAL  ]:Show()
-      aGet[ _CSUSAT   ]:Hide()
-
-      oSayDias:Show()
-      oSayTxtDias:Show()
-
-   else
-
-      aGet[ _DFECENTR ]:Hide()
-      aGet[ _DFECSAL  ]:Hide()
-      aGet[ _CSUSAT   ]:Show()
-
-      oSayDias:Hide()
-      oSayTxtDias:Hide()
-
-   end if
-
-   aGet[ _DFECENTR ]:Refresh()
    aGet[ _DFECSAL  ]:Refresh()
    aGet[ _CSUSAT   ]:Refresh()
 

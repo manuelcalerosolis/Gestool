@@ -61,20 +61,8 @@ OutputDir=c:\fw195\gestool\iss\exe\
   OutputBaseFilename=GestoolInstalacionPrestashop
 #endif
 
-#ifdef ActualizacionLite
-  OutputBaseFilename=GestoolActualizacionLite
-#endif
-
-#ifdef ActualizacionStandard
-  OutputBaseFilename=GestoolActualizacionStandard
-#endif
-
-#ifdef ActualizacionProfesional
-  OutputBaseFilename=GestoolActualizacionProfesional
-#endif
-
-#ifdef ActualizacionPrestashop
-  OutputBaseFilename=GestoolActualizacionPrestashop
+#ifdef Actualizacion
+  OutputBaseFilename=GestoolActualizacion
 #endif
 
 WizardImageFile=c:\fw195\gestool\bmp\WizardImage.bmp
@@ -112,18 +100,6 @@ Source: "c:\fw195\gestool\bin\prfsnl.";           DestDir: "{app}"; Flags: ignor
 #endif
 
 #ifdef InstalacionPrestashop
-Source: "c:\fw195\gestool\bin\scmmrc.";           DestDir: "{app}"; Flags: ignoreversion
-#endif
-
-#ifdef ActualizacionStandard
-Source: "c:\fw195\gestool\bin\stndrd.";           DestDir: "{app}"; Flags: ignoreversion
-#endif
-
-#ifdef ActualizacionProfesional
-Source: "c:\fw195\gestool\bin\prfsnl.";           DestDir: "{app}"; Flags: ignoreversion
-#endif
-
-#ifdef ActualizacionPrestashop
 Source: "c:\fw195\gestool\bin\scmmrc.";           DestDir: "{app}"; Flags: ignoreversion
 #endif
 
