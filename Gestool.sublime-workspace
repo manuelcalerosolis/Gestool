@@ -4,6 +4,30 @@
 		"selected_items":
 		[
 			[
+				"pad",
+				"padding-left"
+			],
+			[
+				"padi",
+				"padding-right"
+			],
+			[
+				"pa",
+				"padding-left"
+			],
+			[
+				"text",
+				"text-transform"
+			],
+			[
+				"he",
+				"max-height"
+			],
+			[
+				"b",
+				"bottom"
+			],
+			[
 				"font",
 				"font-weight"
 			],
@@ -14,10 +38,6 @@
 			[
 				"marg",
 				"margin-bottom"
-			],
-			[
-				"pad",
-				"padding-bottom"
 			],
 			[
 				"center",
@@ -494,26 +514,6 @@
 			[
 				"nU",
 				"nUbiTik"
-			],
-			[
-				"lIni",
-				"lInitCheckDividirMesas"
-			],
-			[
-				"oPunto",
-				"oPunto"
-			],
-			[
-				"cNumero",
-				"cNumeroDevuelto"
-			],
-			[
-				"Class",
-				"ClassName"
-			],
-			[
-				"tt",
-				"TTpvSalon"
 			]
 		]
 	},
@@ -528,10 +528,53 @@
 			}
 		},
 		{
-			"file": "prg/Tdbf.prg",
+			"file": "/C/AppServ/www/zemtrum/tienda/themes/zemtrum/header.tpl",
 			"settings":
 			{
-				"buffer_size": 65439,
+				"buffer_size": 5649,
+				"line_ending": "Unix"
+			}
+		},
+		{
+			"file": "/C/AppServ/www/zemtrum/tienda/modules/blockuserinfo/blockuserinfo.css",
+			"settings":
+			{
+				"buffer_size": 1385,
+				"line_ending": "Unix"
+			}
+		},
+		{
+			"file": "/C/AppServ/www/zemtrum/tienda/modules/blockuserinfo/blockuserinfo.tpl",
+			"settings":
+			{
+				"buffer_size": 2358,
+				"line_ending": "Unix"
+			}
+		},
+		{
+			"file": "/C/Users/Villa/Desktop/reveal/demo.html",
+			"settings":
+			{
+				"buffer_size": 1417,
+				"line_ending": "Unix"
+			}
+		},
+		{
+			"contents": "/* ##################################################################################################\n	PRESTASHOP CSS\n################################################################################################## */\n\n/* ****************************************************************************\n		reset\n**************************************************************************** */\nhtml{color:#000;background:#FFF;}\nbody,div,dl,dt,dd,ul,ol,li,h1,h2,h3,h4,h5,h6,pre,code,form,fieldset,legend,input,button,textarea,p,blockquote,th,td{margin:0;padding:0}\ntable{border-collapse:collapse;border-spacing:0}\nfieldset,img{border:0}\naddress,caption,cite,code,dfn,em,th,var,optgroup{font-style:inherit;font-weight:inherit}\ndel,ins{text-decoration:none}\ncaption,th{text-align:left}\nh1,h2,h3,h4,h5,h6{font-size:100%}\nq:before,q:after{content:''}\nabbr,acronym{border:0;font-variant:normal}\nsup{vertical-align:baseline}\nsub{vertical-align:baseline}\nlegend{color:#000}\ninput,button,textarea,select,optgroup,option{font-family:inherit;font-size:inherit;font-style:inherit;font-weight:inherit}\ninput,button,textarea,select{font-size:100%}\n\n.ie7 input, .ie7 select{line-height:18px}\na {cursor:pointer}\n\n.clearfix:before,\n.clearfix:after {\n	content: \".\";\n	display: block;\n	height: 0;\n	overflow: hidden\n}\n.clearfix:after {clear: both}\n.clearfix {zoom: 1}\n\n\n/* ************************************************************************************************\n		struture\n************************************************************************************************ */\n#page {\n	background-color:white;\n	width: 100%; //este atributo marca el ancho de la página que contiene los bloques puedes ponerlo en pixels o en porcentaje\n	text-align:left;\n}\n	#header {\n		z-index:10;\n		width: 100%;\n	}\n	#columns {\n		z-index:1;\n		width: 100%;\n		padding-right: 20px;\n		padding-left: 20px;\n	}\n		#left_column {\n			clear:left;\n			width:15%; //este atributo marca el ancho de la columna izquierda\n			padding-right: 15px;\n		}\n		#center_column {\n			clear:right;\n			width:80%; //este atributo marca el ancho de la columna izquierda\n			padding-right: 15px;\n		}\n		#right_column {\n			display: none;\n		}\n	#footer {\n		width: 100%;\n	}\n\n\n/* ************************************************************************************************\n		generic style\n************************************************************************************************ */\nbody{\n	font:normal 11px/14px Arial, Verdana, sans-serif;\n	color:#222;\n	background:#fff\n}\nbody.content_only {\n	background: #FFF;\n}\n\n/* positionnement ****************************************************************************** */\n.hidden {display:none}\n.f_left {float:left}\n.f_right {float:right}\np.center {text-align:center}\n.clearBoth {clear:both}\n\n/* title *************************************************************************************** */\nh1 {\n	margin-bottom:20px;\n	font-size:24px;\n	line-height: 22px\n}\nh2 {\n	padding-bottom:20px;\n	font-size:18px\n}\nh3 {\n	padding-bottom:20px;\n	font-size:16px\n}\n.title_block {\n	padding-bottom:20px;\n	font-size:14px\n}\n\n/*\nEstilos para el menu principal-------------------------------------------------\n*/\n\n*{\n	border: 0;\n	margin: 0;\n	padding: 0;\n	font-family: Verdana, Geneva, sans-serif;\n}\n\nimg, video {\n	max-width: 100%;\n}\n\nheader {\n	display: block;\n	max-width: 100%;\n	text-align: left;\n	background: #000000;\n	vertical-align: center;\n	color: #212121;\n	width: 100%;\n}\n\n.zmh1{\n	font-family: Verdana, Geneva, sans-serif;\n	color: #000;\n	max-width: 100%;\n	display: inline-block;\n	text-align: left;\n	vertical-align: center;\n	padding-top: 0.1em;\n	padding-left: 0.4em;\n}\n\n.zmh2{\n	max-width: 100%;\n	display: inline-block;\n	text-align: left;\n	vertical-align: bottom;\n	padding-top: 0.1em;\n}\n\n.zmh3{\n	font-family: Verdana, Geneva, sans-serif;\n	color: #005f33;\n	font-size: 1em;\n	display: inline-block;\n	max-width: 100%;\n	text-align: right;\n	float: right;\n	padding-right: 0.9em;\n	height:30%;\n	vertical-align: center;\n	padding-top: 0.5em;\n}\n\n#zmheader_user_info {\n	color:#FFFFFF;\n	clear:both;\n	float:right;\n	padding:0;\n	font-weight: bold;\n	font-size: 13px;\n	font: Arial, Verdana, sans-serif;\n	text-decoration: none;\n}\n#zmheader_user_info a {\n	color:#AAAAAA;\n	display:inline-block;\n	vertical-align: bottom;\n	padding-top:17px;\n}\n\n#zmheader_user_info a.account {\n	border: none;\n	display: inline;\n	margin: 0;\n	padding: 0;\n}\n\n.selected{\n	color:#FFFFFF\n}\n\nnav ul {\n	list-style: none;\n}\n\nnav li{\n	display:inline-block;\n	padding-left: 0.6em;\n	vertical-align: bottom;\n	padding-bottom: 0.3em;\n}\n\nnav a{\n	color:#AAAAAA;\n	display: block;\n	font-weight: bold;\n	font-size: 13px;\n	font: Arial, Verdana, sans-serif;\n	text-decoration: none;\n}\n\nnav a:hover{\n	color:#FFFFFF;\n	display: block;\n	font-weight: bold;\n	font-size: 13px;\n	font: Arial, Verdana, sans-serif;\n	text-decoration: none;\n}\n\nnav select {\n    display:none;\n    background: #000000;\n    border: 0.1em solid #000;\n	border-radius: 0.2em 0.2em 0 0;\n	color:#FFFFFF;\n	font-size: 13px;\n	font: Arial, Verdana, sans-serif;\n	padding: 0.2em;\n	margin-bottom: 0.6em;\n	margin-left: 0.9em;\n	font-weight: bold;\n	vertical-align: center;\n}\n\nselect.option{\n	border:0;\n	padding: 1em;\n}\nsection#contenido{\n	background: none;\n	width: 100%;\n}\n\nsection#principal {\n	background: none;\n	display: inline-block;\n	margin: 0 auto;\n	max-width: 100%;\n	padding: 1em;\n	text-align: center;\n	vertical-align: top;\n	width: 55%;\n}\n\narticle1 {\n	background: none;\n	margin: 0.2em;\n	padding: 0.2em;\n	display: inline-block;\n	max-width: 100%;\n	text-align: center;\n	vertical-align: top;\n	width: 80%;\n}\n\n.fade{\n	opacity:1;\n	filter:alpha(opacity=10);\n	-ms-transition: all 0.5s ease-in;\n	-moz-transition: all 0.5s ease-in;\n	-o-transition: all 0.5s ease-in;\n	-webkit-transition: all 0.5s ease-in;\n	transition: all 0.5s ease-in;\n}\n\n.fade:hover{\n	opacity:0.7;\n	filter:alpha(opacity=8);\n	-ms-transition: all 0.5s ease-out;\n	-moz-transition: all 0.5s ease-out;\n	-o-transition: all 0.5s ease-out;\n	-webkit-transition: all 0.5s ease-out;\n	transition: all 0.5s ease-out;\n}\n\n@media (max-width: 960px) {\n  nav ul     { display: none; }\n  nav select { display: inline-block; }\n}\n\n/*\nFin de estilos del menu--------------------------------------------------------\n*/\n\n/*\nEstilos para el menu Popup de contactos----------------------------------------\n*/\n\n\n\n\n\n\n/*\nFin de estilos del popup-------------------------------------------------------\n*/\n\n.hide-left-column #left_column {display:none}\n.hide-left-column #center_column {width:757px}\n\n/* text **************************************************************************************** */\np {padding-bottom:20px}\n\np em {font-style:italic}\n\n.warning {\n	margin:0 0 10px 0;\n	padding:10px;\n	border:1px solid #e6db55;\n	font-size:13px;\n	background:#ffffe0\n}\n.success {\n	margin:0 0 10px 0;\n	padding:10px;\n	border:1px solid #5cff74;\n	font-size:13px;\n	background: #d3ffab;\n}\n.error {\n	margin:0 0 10px 0;\n	padding:10px;\n	border:1px solid #990000;\n	font-size:13px;\n	background:#ffcccc\n}\n.error ol {margin-left:20px}\n.error p.lnk {\n	margin-top:20px;\n	padding:0;\n	font-size:11px\n}\n.required {color:#990000}\n\n/* link **************************************************************************************** */\na, a:active, a:visited {\n	color:#AAAAAA;\n	text-decoration:none;\n	outline: medium none\n}\n	a:hover {text-decoration:underline}\n\n	\n/* HACK IOS ipad, iphone */\ninput[type=\"text\"], input[type=\"email\"], input[type=\"search\"], input[type=\"password\"], input[type=\"submit\"], input[type=\"image\"] {\n	-webkit-appearance:none;\n	-moz-appearance:none;\n	appearance:none;\n	-webkit-border-radius:0px !important;\n	-moz-border-radius:0px !important;\n	border-radius:0px !important;\n}\n	\n/*buttons ************************************************************************************** */\ninput.button_mini, input.button_small, input.button, input.button_large,\ninput.button_mini_disabled, input.button_small_disabled, input.button_disabled, input.button_large_disabled,\ninput.exclusive_mini, input.exclusive_small, input.exclusive, input.exclusive_large,\ninput.exclusive_mini_disabled, input.exclusive_small_disabled, input.exclusive_disabled, input.exclusive_large_disabled,\na.button_mini, a.button_small, a.button, a.button_large,\na.exclusive_mini, a.exclusive_small, a.exclusive, a.exclusive_large,\nspan.button_mini, span.button_small, span.button, span.button_large,\nspan.exclusive_mini, span.exclusive_small, span.exclusive, span.exclusive_large, span.exclusive_large_disabled {\n	position:relative;\n	display:inline-block;\n	padding:5px 7px;\n	border:1px solid #cc9900;\n	-moz-border-radius: 3px !important;\n	-webkit-border-radius: 3px !important;\n	border-radius: 3px !important;\n	font-weight:bold;\n	color:#000;\n	background:url(../img/bg_bt.gif) repeat-x 0 0 #f4b61b;\n	cursor: pointer;\n}\n*:first-child+html input.button_mini, *:first-child+html input.button_small, *:first-child+html input.button, *:first-child+html input.button_large,\n*:first-child+html input.button_mini_disabled, *:first-child+html input.button_small_disabled, *:first-child+html input.button_disabled, *:first-child+html input.button_large_disabled,\n*:first-child+html input.exclusive_mini, *:first-child+html input.exclusive_small, *:first-child+html input.exclusive, *:first-child+html input.exclusive_large,\n*:first-child+html input.exclusive_mini_disabled, *:first-child+html input.exclusive_small_disabled, *:first-child+html input.exclusive_disabled, *:first-child+html input.exclusive_large_disabled {\n	border:none\n}\n\n\n/* input button */\ninput.button_mini, input.button_small, input.button, input.button_large,\ninput.button_mini_disabled, input.button_small_disabled, input.button_disabled, input.button_large_disabled,\ninput.exclusive_mini, input.exclusive_small, input.exclusive, input.exclusive_large,\ninput.exclusive_mini_disabled, input.exclusive_small_disabled, input.exclusive_disabled, input.exclusive_large_disabled {\n	/*padding-bottom: 2px*/\n}\n\n/* disabled button */\ninput.button_mini_disabled, input.button_small_disabled, input.button_disabled, input.button_large_disabled,\ninput.exclusive_mini_disabled, input.exclusive_small_disabled, input.exclusive_disabled, input.exclusive_large_disabled,\nspan.button_mini, span.button_small, span.button, span.button_large,\nspan.exclusive_mini, span.exclusive_small, span.exclusive, span.exclusive_large, span.exclusive_large_disabled {\n	/*background-position: left -36px;\n	cursor: default;\n	color: #888!important*/\n}\n\n/* exclusive button */\ninput.exclusive_mini, input.exclusive_small, input.exclusive, input.exclusive_large,\ninput.exclusive_mini_disabled, input.exclusive_small_disabled, input.exclusive_disabled, input.exclusive_large_disabled,\na.exclusive_mini, a.exclusive_small, a.exclusive, a.exclusive_large,\nspan.exclusive_mini, span.exclusive_small, span.exclusive, span.exclusive_large, span.exclusive_large_disabled {\n	/*color: white!important*/\n}\n\n/* exclusive disabled button */\ninput.exclusive_mini_disabled, input.exclusive_small_disabled, input.exclusive_disabled, input.exclusive_large_disabled, span.exclusive_mini, span.exclusive_small, span.exclusive, span.exclusive_large {\n	/*color: #488c40!important*/\n}\n\n/* hover button */\ninput.button_mini:hover, input.button_small:hover, input.button:hover, input.button_large:hover,\ninput.exclusive_mini:hover, input.exclusive_small:hover, input.exclusive:hover, input.exclusive_large:hover,\na.button_mini:hover, a.button_small:hover, a.button:hover, a.button_large:hover,\na.exclusive_mini:hover, a.exclusive_small:hover, a.exclusive:hover, a.exclusive_large:hover {\n	text-decoration:none;\n	background-position: left -50px\n}\n\n/* exclusive hover button */\ninput.exclusive_mini:hover, input.exclusive_small:hover, input.exclusive:hover, input.exclusive_large:hover, a.exclusive_mini:hover, a.exclusive_small:hover, a.exclusive:hover, a.exclusive_large:hover {\n	/*color: white!important*/\n}\n\n/* active button */\ninput.button_mini:active, input.button_small:active, input.button:active, input.button_large:active,\ninput.exclusive_mini:active, input.exclusive_small:active, input.exclusive:active, input.exclusive_large:active,\na.button_mini:active, a.button_small:active, a.button:active, a.button_large:active,\na.exclusive_mini:active, a.exclusive_small:active, a.exclusive:active, a.exclusive_large:active {\n	background-position: left -100px\n}\n\n/* classic buttons */\ninput.button_mini, input.button_mini_disabled, input.exclusive_mini, input.exclusive_mini_disabled, a.button_mini, a.exclusive_mini, span.button_mini, span.exclusive_mini {\n	/*width: 30px;\n	background-image: url('../img/button-mini.png')*/\n}\ninput.button_small, input.button_small_disabled, input.exclusive_small, input.exclusive_small_disabled, a.button_small, a.exclusive_small, span.button_small, span.exclusive_small {\n	/*width: 60px;\n	background-image: url('../img/button-small.png')*/\n}\ninput.button_disabled, input.exclusive_disabled, span.exclusive {\n	border:1px solid #ccc;\n	color:#999;\n	background:url(../img/bg_bt_2.gif) repeat-x 0 0 #CCCCCC;\n	cursor:default;\n}\ninput.button_large, input.button_large_disabled, input.exclusive_large, input.exclusive_large_disabled, a.button_large, a.exclusive_large, span.button_large, span.exclusive_large, span.exclusive_large_disabled {\n	/*width: 180px;\n	background-image: url('../img/button-large.png')*/\n}\n\n/* exclusive button */\n/*input.exclusive, input.exclusive_disabled, a.exclusive, span.exclusive { background-image: url('../img/button-medium_exclusive.png') }\ninput.exclusive_mini, input.exclusive_mini_disabled, a.exclusive_mini, span.exclusive_mini { background-image: url('../img/button-mini_exclusive.gif') }\ninput.exclusive_small, input.exclusive_small_disabled, a.exclusive_small, span.exclusive_small { background-image: url('../img/button-small_exclusive.gif') }\ninput.exclusive_large, input.exclusive_large_disabled, a.exclusive_large, span.exclusive_large, span.exclusive_large_disabled { background-image: url('../img/button-large_exclusive.gif') }*/\n\n/* form **************************************************************************************** */\nform.std fieldset {\n	margin:20px 0;\n	border:1px solid #ccc\n}\n\n/* table *************************************************************************************** */\ntable.std,\ntable.table_block {\n	margin-bottom:20px;\n	width:100%;\n	border:1px solid #999;\n	border-bottom:none;\n	background:white;\n	border-collapse:inherit\n}\ntable.std th,\ntable.table_block th {\n	padding:14px 12px;\n	font-size:12px;\n	color:#fff;\n	 font-weight:bold;\n	text-transform:uppercase;\n	text-shadow:0 1px 0 #000;\n	background:url(../img/bg_table_th.png) repeat-x 0 0 #999\n}\ntable.std tr.alternate_item,\ntable.table_block tr.alternate_item {background-color: #f3f3f3}\ntable.std  td,\ntable.table_block  td {\n	padding:12px;\n	border-right:1px solid #e9e9e9;\n	border-bottom:1px solid #e9e9e9;\n	font-size:12px;\n	vertical-align:top\n}\n\n/* BLOCK .block ******************************************************************************** */\n.block {margin-bottom:20px}\n#footer .block {margin-bottom:0}\n	.block .title_block, .block h4 {\n		padding:6px 11px;\n		font-size:12px;\n		color:#fff;\n		text-shadow:0 1px 0 #000;\n		text-transform:uppercase;\n		background:#383838;\n		text-align:left;\n		font-weight: bold;\n	}\n		.block .title_block a, .block h4 a {color:#fff}\n	.block ul {list-style-type:none}\n		.block li.last {	border:none}\n			.block li a {\n				display:block;\n				color:#333\n			}\n\n/* BLOCK .products_block *********************************************************************** */\n.products_block {}\n	.products_block li {float:left\n}\n	.products_block li img {border:1px solid #d1d1d1}\n\n/* BLOCK customer privacy ******************************************************************* */\n.account_creation label{\n	float:left;\n	padding-top:5px;\n	width:80%;\n	text-align:left;\n	cursor:pointer\n}\n\n/* BLOCK .footer_links (cms pages) ************************************************************* */\nul.footer_links {\n	list-style-type:none;\n	margin-bottom:20px\n}\nul.footer_links li {float:left}\nul.footer_links li.f_right {float:right}\nul.footer_links li .icon {\n	position:relative;\n	top:6px;\n	left:0\n}\n\n/* barre comparaison / tri ********************************************************************* */\n.content_sortPagiBar {margin:20px 0;}\n#center_column .sortPagiBar {\n	padding:10px;\n	font:normal 11px Arial, Verdana, sans-serif;\n	color:#666;\n	background:#eee;\n}\n	#center_column .sortPagiBar strong {color:#000;}\n#center_column .sortPagiBar p {padding:0;}\n#center_column .sortPagiBar form {display:inline-block;}\n\n.ie7 #center_column .sortPagiBar form {display:inline;}\n\n.sortPagiBar #productsSortForm {float:right;}\n	.sortPagiBar select#selectPrductSort {\n		margin:0 0 0 10px;\n		color:#000;\n		border:1px solid #ccc\n	}\n\n.sortPagiBar #bt_compare {\n	padding:3px 7px;\n	border:none;\n	color:#fff;\n	text-shadow:0 1px 0 #000;\n	background:url(../img/bg_bt_compare.gif) repeat-x 0 0 #111;\n}\n\n.sortPagiBar .nbrItemPage {margin-left:40px;}\n\n.sortPagiBar .PrductSort {float:left;}\n\n.sortPagiBar .nbrProduct {\n	display:inline-block;\n	padding:0 10px;\n}\n\n.sortPagiBar #nb_item {border:1px solid #ccc}\n\n/* pagination ********************************************************************************** */\nform.pagination {display:none;}\n\ndiv.pagination {\n	margin:10px 0;\n	text-align: center\n}\nul.pagination {list-style-type:none}\nul.pagination li {display: inline;}\nul.pagination a, ul.pagination span {\n	display:inline-block;\n	height:24px;\n	width:24px;\n	border:1px solid #eee;\n	-moz-border-radius:2px;\n	-webkit-border-radius:2px;\n	border-radius:2px;\n	font:11px/24px Arial,Verdana,sans-serif;\n	color:#999\n}\nul.pagination a {\n	text-align:center;\n}\nul.pagination a:hover {\n	color:#333;\n	border:1px solid #333\n}\nul.pagination .current span {\n	color:#000;\n	border:1px solid #fff\n}\nul.pagination li.disabled span {color:#ccc}\n\n#pagination_previous {float:left}\n#pagination_next {float:right}\n\n.ie7 #pagination_previous,\n.ie7 #pagination_next {float:none}\n\n#pagination_previous a, #pagination_previous span,\n#pagination_next a, #pagination_next span {\n	padding:0 8px;\n	width:auto;\n}\n#pagination_previous span,\n#pagination_next span {\n	color:#ccc;\n	border:1px solid #eee\n}\n\n/* CART steps *********************************************************************** */\nul#order_step { background-color: white;}\nul.step {\n	list-style-type:none;\n	margin-bottom:30px;\n	height:52px;\n	width:757px\n}\nul.step li {\n	float:left;\n	height:52px;\n	width:151px;\n	text-align:center;\n	text-transform:uppercase;\n	background:url(../img/step_standard.gif) no-repeat center bottom transparent\n}\nul.step li a, ul.step li.step_current span, ul.step li.step_current_end span {\n	display:inline-block;\n	padding:8px 10px 12px;\n	color:#000;\n	background:url(../img/step_current_span.gif) no-repeat center bottom transparent\n}\nul.step li.step_current {\n	font-weight:bold;\n	background:url(../img/step_current.gif) no-repeat center bottom transparent\n}\n\nul.step li.step_current_end {\n	font-weight:bold;\n	background:url(../img/step_end_current.gif) no-repeat center bottom transparent\n}\nul.step li.step_todo span {\n	display:inline-block;\n	padding:8px 10px 6px;\n	color:#999;\n	text-shadow:0 1px 0 #fff;\n	background:#eee\n}\nul.step li.step_done {\n	font-weight:bold;\n	background:url(../img/step_done.gif) no-repeat center bottom transparent\n}\n/*ul.step li#step_end {background:url(../img/step_end.gif) no-repeat center bottom transparent}*/\n\n/* module productcomments ********************************************************************** */\n.rating {\n	clear: both;\n	display: block;\n	margin: 2em;\n	cursor: pointer;\n}\n.rating:after {\n	content: '.';\n	display: block;\n	height: 0;\n	width: 0;\n	clear: both;\n	visibility: hidden\n}\n.cancel, .star {\n	overflow: hidden;\n	float: left;\n	margin:0 1px 0 0;\n	width: 16px;\n	height: 16px;\n	text-indent: -999em;\n	cursor: pointer\n}\n.cancel, .cancel a { background: url(../../../modules/productcomments/img/delete.gif) no-repeat 0 -16px !important }\n.star, .star a { background: url(../../../modules/productcomments/img/star.gif) no-repeat 0 0 }\n.cancel a, .star a {\n	display: block;\n	width: 100%;\n	height: 100%;\n	background-position: 0 0\n}\ndiv.star_on a { background-position: 0 -16px }\ndiv.star_hover a, div.star a:hover { background-position: 0 -32px }\n.pack_content { margin: 10px 0 10px 0 }\n.pack_price {\n	float: right;\n	margin-right: 3px;\n	font-size: 12px\n}\n.confirmation {\n	margin: 0 0 10px;\n	padding: 10px;\n	border: 1px solid #e6db55;\n	font-size: 13px;\n	background: none repeat scroll 0 0 #ffffe0;\n}\n#page .rte { background: transparent none repeat scroll 0 0 }\n\n.listcomment {\n	list-style-type:none;\n	margin:0 0 20px 0 !important;\n}\n.listcomment li {\n	padding:10px 0;\n	border-bottom:1px dotted #ccc;\n	color:#666\n}\n.listcomment .titlecomment {\n	display:block;\n	font-weight:bold;\n	font-size:12px;\n	color:#333\n}\n.listcomment .txtcomment {\n	display:block;\n	padding:5px 0;\n	color:#333\n}\n.listcomment .authorcomment {}\n\n\n/* ************************************************************************************************\n		HEADER\n************************************************************************************************ */\n#header {\n	background-color:#FFFFFF;\n	position:relative;\n	font-size: 1px;\n	font: Arial, Verdana, sans-serif;\n	text-decoration: none;\n}\n\n/* ************************************************************************************************\n		BREADCRUMB\n************************************************************************************************ */\n.breadcrumb {\n	margin-bottom:10px;\n	font-size:12px\n}\n.breadcrumb .navigation-pipe {margin:0 3px 0 5px}\n.breadcrumb img {\n	position:relative;\n	top:5px\n}\n\n\n/* ************************************************************************************************\n		FOOTER\n************************************************************************************************ */\n#footer {\n	color:#fff;\n	background:#333\n}\n	.blockcategories_footer,\n	#footer .myaccount ,\n	#block_various_links_footer,\n	#social_block,\n	#block_contact_infos {\n		float:left;\n		width:175px\n	}\n	.blockcategories_footer {margin-left:0}\n#footer .title_block {\n	padding-bottom: 10px;\n	text-transform:uppercase\n}\n#footer .title_block ,\n#footer .title_block  a {\n	font-weight:normal;\n	font-size:14px;\n	color:#fff\n}\n#footer a {color:#fff}\n#footer a:hover {text-decoration:underline}\n#footer ul {list-style-type:none}\n#footer li {padding:7px 0}\n#footer li a {color:#fff}\n\n#footer .myaccount {padding: 15px 10px}\n#footer .myaccount .title_block, #footer .myaccount h4 {\n	padding:0 0 10px 0;\n	background:none;\n	text-shadow:none\n}\n#footer .myaccount .favoriteproducts img,\n#footer .myaccount .lnk_wishlist img {display:none}\n\n/* ************************************************************************************************\n		PRODUCT PAGE\n************************************************************************************************ */\n\n/* BLOCK idTabs ******************************************************************************** */\n.idTabs {\n	list-style-type: none;\n	margin-top: 20px;\n	border-bottom: 8px solid #f7b900\n}\nul.idTabs li {\n	float: left;\n	margin-right: 1px\n}\n.idTabs a {\n	display:block;\n	padding:10px 10px 7px 10px;\n	font-weight:bold;\n	text-decoration:none;\n	color:#fff;\n	background:#000\n}\n.idTabs .selected {\n	color:#000;\n	background: url(../img/bg_li_idTabs.png) repeat-x 0 0\n}\n\n#more_info_sheets {padding-top:10px}\n#more_info_sheets ul,\n#more_info_sheets ol,\n#more_info_sheets dl {margin-left:20px}\n#more_info_sheets em {font-style:italic}\n\n#more_info_sheets .product_desc{\n	margin-top:5px\n}\n\n#more_info_sheets .product_desc .product_image{\n	float:left\n}\n\n#more_info_sheets .product_desc .block_description{\n	float:left;\n	margin-left:10px;\n	width:420px\n}\n#more_info_sheets .product_desc .clear_product_desc{\n	clear:both;\n	height:0px;\n	line-height:0px\n}\n\n/* Make sure lists are correctly displayed in tinyMCE BO edition mode too */\n#short_description_content ul,\n#short_description_content ol,\n#short_description_content dl,\n#tinymce ul,\n#tinymce ol,\n#tinymce dl {margin-left:20px}\n\n.block_hidden_only_for_screen {display:none}\n\n\n/* ************************************************************************************************\n		PAGE AUTHENTIFICATION\n************************************************************************************************ */\n#authentication #left_column {display:none}\n#authentication #center_column{width:757px}\n\n\n/* ************************************************************************************************\n		PAIMENT - PAGE ORDER\n************************************************************************************************ */\n\n/* nav bottom ********************************************************************************** */\n#order #left_column , #order-confirmation #left_column {display:none}\n#order #center_column, #order-confirmation #center_column{width:757px}\n\n.cart_navigation {margin:20px 0}\n.cart_navigation .exclusive,\n.cart_navigation .exclusive_large {\n	float:right\n}\n.cart_navigation .button,\n.cart_navigation .button_large {\n	border-color:#ccc;\n	background-image:url(../img/bg_bt_2.gif)\n}\n\n\n/* step 1 - cart ******************************************************************************* */\n.cart_last_product {display:none}\n\n/*p.cart_navigation .multishipping-button { margin-right: 10px }*/\n\n#order-detail-content {margin-bottom:20px}\n\ntable#cart_summary th {\n	padding:14px 12px;\n	color:#fff;\n	 font-weight:bold;\n	text-transform:uppercase;\n	 text-shadow:0 1px 0 #666;\n	background:url(../img/bg_table_th.png) repeat-x 0 -15px #999\n}\ntable#cart_summary  th.cart_product {text-align:center}\ntable#cart_summary  td {\n	padding:12px;\n	border-right:1px solid #e9e9e9;\n	border-bottom:1px solid #e9e9e9;\n	font-weight:bold;\n	font-size:12px;\n	vertical-align:top\n}\ntable#cart_summary  td.cart_delete,\ntable#cart_summary  td.price_discount_del {border-right:none;text-align: center}\ntable#cart_summary  .last_item  td {border-bottom:1px solid #999}\n\n\ntable#cart_summary tr.cart_item.odd,\ntable#cart_summary tr.cart_total_delivery,\ntable#cart_summary tr.cart_total_price,\ntable#cart_summary tr.cart_total_voucher{\n	background-color: #fff\n}\ntable#cart_summary tr.cart_item.even {\n	background-color: #f3f3f3\n}\n\ntable#cart_summary tr.customization.odd {\n	background-color: #fff\n}\ntable#cart_summary tr.customization.even {\n	background-color: #f3f3f3\n}\n\ntable#cart_summary tr ul {\n	list-style: none;\n}\ntable#cart_summary .cart_product {\n	width:80px;\n	text-align:center\n}\ntable#cart_summary tbody tr:last-child td {\n	border-bottom: 1px solid #999;\n}\ntable#cart_summary tbody tr td.cart_discount_delete {\n	padding-left: 34px;\n}\ntable#cart_summary  .cart_product  img {border:1px solid #ccc}\ntable#cart_summary .cart_description {\n	width:230px;\n}\ntable#cart_summary .cart_unit {width:130px;text-align: center}\ntable#cart_summary td.cart_unit {text-align: right}\ntable#cart_summary  .cart_quantity {width:130px}\ntable#cart_summary .customization .cart_quantity {padding: 8px 12px 0;}\n.cart_quantity .cart_quantity_input {\n	float:left;\n	margin-left: 5px;\n	width: 20px;\n	border:1px solid #fff\n}\n.cart_quantity .cart_quantity_button {\n	float:left;\n	position: relative;\n	top: -5px\n}\ntable#cart_summary .cart_total {width:120px;text-align: center}\ntable#cart_summary td.cart_total {text-align: right}\ntable#cart_summary .cart_delete {\n	width:64px;\n	text-align:center\n}\ntable#cart_summary .cart_discount_price {text-align: right}\n.cart_delete a.cart_quantity_delete,\na.price_discount_delete {\n	display:inline-block;\n	padding:1px 2px;\n	font-size:8px;\n	color:#666;\n	text-transform:uppercase;\n	text-shadow:0 1px 0 #fff;\n	background:#ccc;\n	-moz-border-radius: 3px;\n	-webkit-border-radius: 3px;\n	border-radius: 3px\n}\n\n.cart_total_price .total_price_container {\n	border-right:none;\n}\n\ntable#cart_summary .cart_total_price td.cart_voucher {\n	border-bottom:1px solid #999;\n	vertical-align:middle\n}\n\ntable#cart_summary #total_price_container {\n	border-bottom:1px solid #999;\n	border-right: none;\n}\n\n.cart_voucher .title_block, .cart_voucher h4\n.cart_voucher p {float:left;}\n.cart_voucher .title_block, .cart_voucher h4 {\n	margin-right:12px;\n	padding:5px 0;\n	font-size:13px\n}\n.cart_voucher p {padding-bottom:0;}\n\n.cart_voucher p.discount_name_block {float:left;}\n.cart_voucher #display_cart_vouchers {\n	clear:both;\n	line-height: 20px;\n	color:#666;\n	padding-top:2px;\n	font-weight:normal;\n	border-top:1px dotted #ccc\n}\n.cart_voucher .title_offers {\n	margin-top:15px;\n	margin-bottom:5px\n}\n.cart_voucher #display_cart_vouchers span {\n	font-weight:bold;\n	cursor:pointer;\n}\n.cart_voucher input.discount_name {\n	padding:0 5px;\n	height:22px;\n	width:170px;/* 180 */\n	border:1px solid #ccc;\n	font-weight:normal;\n	background:url(../img/bg_discount_name.png) repeat-x 0 0 #fff\n}\n.cart_voucher .submit input.button {\n	margin-left:2px;\n	padding:2px;\n	height:24px;\n	border:1px solid #000;\n	-moz-border-radius:0;\n	-webkit-border-radius:0;\n	border-radius:0;\n	color:#fff;\n	text-transform:uppercase;\n	text-shadow:0 -1px 0 #333;\n	background:url(../img/bg_cart_voucher_submit.png) repeat-x 0 0 #000\n}\n\n#cart_summary .price {\n	border-right:none;\n	text-align: right;\n	white-space: nowrap;\n}\n.total_price_container p {text-align: left}\n\ntable#cart_summary .cart_total_price .total_price_container {\n	padding:0;\n	border-bottom:1px solid #999;\n	border-right:1px solid #999;\n}\n.cart_total_price .total_price_container p {\n	display:block;\n	padding:8px;\n	font-weight:bold;\n	color:#fff;\n	text-transform:uppercase;\n	background:#333\n}\n.cart_total_price .total_price_container span {\n	display:block;\n	padding:15px;\n	font-weight:bold;\n	font-size:18px;\n	text-align:center\n}\n\n#order_carrier {\n	clear:both;\n	margin-top:20px;\n	border:1px solid #999;\n	background:#fff\n}\n#order_carrier .title_block  {\n	padding:0 15px;\n	height: 29px;\n	font-weight: bold;\n	line-height:29px;\n	color:#fff;\n	font-weight:bold;\n	text-transform:uppercase;\n	background:url(../img/bg_table_th.png) repeat-x 0 -10px #999\n}\n#order_carrier span {\n	display:block;\n	padding:15px;\n	font-weight:bold\n}\n\n.order_delivery .first_item {margin-right:35px;}\n\n.multishipping_close_container {\n	text-align: center;\n}\n\ntable#cart_summary .gift-icon {\n	color: white;\n	background: #0088CC;\n	line-height: 20px;\n	padding: 2px 5px;\n	border-radius: 5px;\n}\n\n/* step 2 - authentification ******************************************************************* */\n#create-account_form, #authentication #login_form {\n	clear: none;\n	float: left;\n	height: 20em;\n	width: 49%;\n}\n#create-account_form {margin-right: 11px;}\n\n#authentication #create-account_form fieldset,\n#authentication #login_form fieldset {\n	min-height: 200px\n}\n\n#authentication #create-account_form .form_content,\n#authentication #login_form .form_content {\n	padding:15px 10px\n}\n\n#create-account_form h3,\n#authentication #login_form h3 {\n	padding:8px;\n	border-bottom:1px solid #ccc;\n	font-weight:bold;\n	font-size:12px;\n	color:#fff;\n	text-transform:uppercase;\n	background:url(../img/bg_form_h3.png) repeat-x 0 0 #989898\n}\n#create-account_form .title_block  {\n	padding-bottom:22px;\n	font-size:11px;\n	color:#333\n}\n\n#create-account_form label,\n#login_form label {\n	display:inline-block;\n	width:110px;\n	color:#666\n}\n\n#order-opc #login_form_content label {\n	display:block;\n	margin:0 0 10px 0\n}\n\n#create-account_form #email_create,\n#login_form #email,\n#login_form #passwd,\n#login_form #login_email,\n#login_form #login_passwd {\n	padding:0 5px;\n	height:20px;\n	width:220px;/* 230 */\n	border:1px solid #ccc;\n	color:#666;\n	background:url(../img/bg_discount_name.png) repeat-x 0 0 #fff;\n	line-height:20px;\n}\n\n#create-account_form #SubmitCreate,\n#login_form #SubmitLogin {\n	float:right\n}\n\n.lost_password {\n	float:left;\n	width:200px\n}\n.lost_password a {color:#666}\n\n#order-opc .lost_password {\n	display:block;\n	float:none;\n	margin:5px 0 10px;\n	width:auto;\n	font-size:11px;\n	color:#666\n}\n\n#ordermsg p {padding-bottom:0}\n#ordermsg p.txt {\n	float:left;\n	margin-right:25px;\n	width:220px\n}\n/*#ordermsg .textarea {float:right}*/\n#ordermsg .textarea textarea {\n	height:90px;\n	width:475px;\n	border:1px solid #ccc\n}\n\n/* step 3 - address ************************************************************************** */\n\n.address-form-multishipping { padding: 10px 0px; }\n#multishipping_mode_box {\n	border: 1px solid #D0D3D8;\n	background: url(\"../img/form_bg.jpg\") repeat-x scroll left top #D0D1D5;\n	margin-bottom: 10px;\n	padding: 5px;\n}\n#multishipping_mode_checkbox {\n	vertical-align: middle;\n	margin-right: 5px;\n}\n#multishipping_mode_box.on {\n	border: 1px solid #ddd;\n}\n#multishipping_mode_box .title {\n	padding: 5px;\n	font-weight: bold;\n}\n#multishipping_mode_box .description, #multishipping_mode_box .description_off {\n	padding: 5px;\n}\n#multishipping_mode_box .description_off {\n	display: none;\n	padding: 5px;\n}\n#multishipping_mode_box .description_off div {\n	margin-bottom: 10px;\n}\n#multishipping_mode_box .description_off a, #multishipping_mode_box .description a {\n	display: block;\n	text-align: center;\n	text-decoration: none;\n	padding: 5px 10px;\n	margin: 0 160px;\n	border: 1px solid #ccc;\n	background: #ddd;\n}\n#multishipping_mode_box .description_off a:hover, #multishipping_mode_box .description a:hover {\n	background: #f3f3f3;\n	border: 1px solid #ccc;\n}\n#multishipping_mode_box.on .description_off {\n	display: block;\n}\n\n\n/* step 4 - paiement ************************************************************************** */\n\n.delivery_options {\n	border: 1px solid #BDC2C9;\n	border-top: 0;\n}\n\n#order .delivery_options_address h3, #order-opc .delivery_options_address h3 {\n/*background: url(\"../img/table_header.gif\") no-repeat;\ncolor: #374853;\nfont-weight: bold;\nheight: 14px;\npadding: 5px 10px;\nmargin: 10px 0 0 0;*/\n	padding: 6px 11px;\n	font-size: 12px;\n	color: #fff;\n	text-shadow: 0 1px 0 #000;\n	text-transform: uppercase;\n	background: none repeat scroll 0 0 #383838;\n}\n#order .delivery_option_radio, #order-opc .delivery_option_radio {\n	float: left;\n	margin: 21px 12px;\n}\n#order .delivery_option label, #order-opc .delivery_option label {\n	display: block;\n	padding-bottom: 5px;\n	padding-top: 5px;\n}\n#order .delivery_option label > table.resume, #order-opc .delivery_option label > table.resume {\n	height: 46px;\n	width: 685px;\n}\n#order .delivery_option.item, #order-opc .delivery_option.item {\n	background: #fafafa;\n}\n#order .delivery_option.alternate_item, #order-opc .delivery_option.alternate_item {\n	border-top: 1px solid #bdc2c9;\n	background: #f1f2f4;\n	border-bottom: 1px solid #bdc2c9;\n}\n#order .delivery_option label > table.resume td, #order-opc .delivery_option label > table.resume td {\n	padding: 0 8px;\n}\n#order .delivery_option label > table.resume td + td, #order-opc .delivery_option label > table.resume td + td {\n	width: 300px;\n}\n#order .delivery_option label > table.resume td + td + td, #order-opc .delivery_option label > table.resume td + td + td {\n	width: 100px;\n	text-align: right;\n}\n#order .delivery_option_carrier td {width:200px}\n#order .delivery_option_carrier td + td {width:280px;}\n#order .delivery_option_carrier td + td + td {width:200px}\n#order .delivery_options_address .delivery_option_logo, #order .delivery_option_carrier .delivery_option_logo, #order-opc .delivery_options_address .delivery_option_logo {\n	padding-left:10px;\n	width: 160px;\n}\n#order .delivery_options_address .delivery_option_logo img, #order-opc .delivery_options_address .delivery_option_logo img { /*height: 40px;*/ }\n#order .delivery_option_carrier .first_item, #order-opc .delivery_option_carrier .first_item {\n	padding: 3px 5px 3px 12px;\n	background:url(../img/arrow_right_2.png) no-repeat 3px 7px\n}\n\n.order_carrier_content {\n	padding:15px;\n	border:1px solid #ccc;\n	font-size:12px;\n	color:#000;\n	background:#f8f8f8\n}\n.order_carrier_content h3 {\n	padding:15px 0 10px 0;\n	font-size:13px;\n	color:#000\n}\n.order_carrier_content h3.carrier_title {padding-top:0}\n.order_carrier_content input {\n	position:relative;\n	top:1px\n}\n\n#carrierTable {\n	border:1px solid #999;\n	border-bottom:none;\n	background:#fff\n}\n\n#carrierTable tbody{\n	border-bottom:1px solid #999;\n}\n#carrierTable  th {\n	padding:0 15px;\n	height: 29px;\n	font-weight: bold;\n	line-height:29px;\n	color:#fff;\n	text-transform:uppercase;\n	background:url(../img/bg_table_th.png) repeat-x 0 -10px #999\n}\n#carrierTable  td {\n	padding:15px;\n	font-weight:bold;\n	border-right:1px solid #e9e9e9\n}\n#carrierTable  td.carrier_price {border:none}\n\n#gift_div {\n	display:none;\n	padding-bottom:10px\n}\n#gift_div label {\n	display:block;\n	margin-bottom:5px\n}\n#gift_div #gift_message {\n	height:50px;\n	width:720px;\n	border:1px solid #999\n}\n\na.iframe {font-weight:bold}\n\n.hook_extracarrier {\n	margin-top: 5px;\n	padding: 5px;\n}\n\n/* step 5 - paiement ************************************************************************** */\n.paiement_block {\n	padding:15px;\n	border:1px solid #ccc;\n	font-size:12px;\n	color:#000;\n	background:#f8f8f8\n}\n\n.payment_module {\n	position:relative;\n	padding-top:20px;\n	border-top:1px dotted #ccc;\n	text-transform:uppercase;\n}\n.payment_module a {display:block;}\n.payment_module img {\n	float:left;\n	margin-right:10px\n}\n/*.payment_module span {\n	position:absolute;\n	top:50px;\n	left:145px\n}*/\n\n.payment_module:before,\n.payment_module:after {\n	content: \".\";\n	display: block;\n	height: 0;\n	overflow: hidden\n}\n.payment_module:after {clear: both}\n.payment_module {zoom: 1}\n\n\n/* ************************************************************************************************\n		PAGE ORDER-OPC\n************************************************************************************************ */\n#order-opc #left_column {display:none}\n#order-opc #center_column{width:757px}\n\n\n#order-opc h2 {}\n#order-opc h2 span {\n	display:inline-block;\n	padding:5px 7px;\n	color:#fff;\n	background:#333;\n}\n\n#order-opc #login_form fieldset {\n	background: none repeat scroll 0 0 #FFFFE0;\n	border: 1px solid #E6DB55;\n	font-size: 13px;\n	margin: 0 0 10px;\n	padding: 10px;\n}\n#order-opc #login_form fieldset p {padding:0}\n#order-opc #login_form fieldset p a {padding:0}\n\n#order-opc #new_account_form p.submit {\n	margin-right: 120px;\n	text-align:right\n}\n#order-opc #new_account_form p.opc-required {margin-left:20px}\n\n#order-opc .addresses {margin-bottom:20px}\n\n#order-opc #opc_delivery_methods h3 {margin-top:20px;}\n#order-opc #opc_delivery_methods textarea {\n	height:60px;\n	width:723px;\n	border:1px solid #ccc\n}\n#order-opc #opc_delivery_methods #message {\n	width: 757px;\n}\n#order-opc #opc_payment_methods {margin-bottom:20px}\n#order-opc #opc_payment_methods #opc_payment_methods-content p{margin:0}\n.delivery_option_carrier td {width:200px}\n.delivery_option_carrier td + td {width:280px;}\n.delivery_option_carrier td + td + td {width:200px}\n.delivery_option_carrier {\n	margin: 5px 0 0 45px;\n	width: 670px;\n	display: none;\n}\n .delivery_option_carrier tr td {\n	padding: 5px;\n}\n.delivery_option_carrier.selected {\n	display: table;\n}\n.delivery_option_carrier.not-displayable {\n	display: none;\n}\n.delivery_option_title {\n	font-weight: bold;\n}\n\n\n/* ************************************************************************************************\n	express checkout\n************************************************************************************************ */\n#new_account_form {clear:both;margin-bottom: 20px}\n#new_account_form h3 {\n	margin-bottom:20px;\n	padding:8px;\n	border-bottom:1px solid #ccc;\n	font-weight:bold;\n	font-size:12px;\n	color:#fff;\n	text-transform:uppercase;\n	background:url(../img/bg_form_h3.png) repeat-x 0 0 #989898\n}\n#center_column #new_account_form p {\n	margin:0;\n	padding:0 0 10px 0\n}\n#new_account_form p.required {color:#222}\n#new_account_form p.required sup {color:#990000}\n#new_account_form p.radio span,\n#new_account_form p.text label,\n#new_account_form p.password label,\n#new_account_form p.select label,\n#new_account_form p.select span,\n#new_account_form p.textarea label {\n	display: inline-block;\n	padding: 6px 15px;\n	width: 230px;\n	font-size: 14px;\n	text-align: right\n}\n#new_account_form p.radio label {\n	float:none;\n	padding-right:10px;\n	width:auto;\n	font-size:14px;\n}\n#new_account_form p.checkbox label {\n	float: none;\n	width: auto;\n	font-size: 12px;\n}\n#new_account_form p.text input,\n#new_account_form p.password input,\n#new_account_form p.select input {\n	height:22px;\n	padding:0 5px;\n	width:360px;\n	border:1px solid #ccc;\n	font-size:12px;\n	color:#666\n}\n#new_account_form p.checkbox input {margin-left: 260px;}\n\n#new_account_form #submitGuestAccount {float: right}\n\n/* ************************************************************************************************ */\n\n/* ************************************************************************************************\n		paiment - CONFIRMATION\n************************************************************************************************ */\n#orderconfirmation #left_column {display:none}\n#orderconfirmation #center_column{width:757px}\n\n\n/* ************************************************************************************************\n		PAGE PASSWORD\n************************************************************************************************ */\n#form_forgotpassword fieldset {\n	padding: 10px;\n	-moz-border-radius: 3px;\n	-webkit-border-radius: 3px;\n	border-radius: 3px;\n	background: #eee\n}\n#form_forgotpassword  p.text label {\n	display: inline-block;\n	padding-right: 10px;\n	width: 174px;\n	font-weight: bold;\n	font-size: 12px;\n	text-align: right\n}\n#form_forgotpassword  p.text input {\n	padding: 0 5px;\n	height: 20px;\n	width: 288px;\n	border: 1px solid #ccc;\n	background: url(../img/bg_input.png) repeat-x 0 0 #fff\n}\n#form_forgotpassword p.submit {\n	margin-right:25px;\n	padding-bottom:5px;\n	text-align:right\n}\n\n#password .icon {\n	position:relative;\n	top:6px;\n}\n\n\n/* ************************************************************************************************\n		PAGE ADRESSES\n************************************************************************************************ */\n#addresses #left_column {display:none}\n#addresses #center_column{width:757px}\n\n#address p.inline-infos {\n	margin:0 0 0 265px !important;\n	font-size:12px;\n	color:#666;\n}\n\n\n/* ************************************************************************************************\n		PAGE ADD ADRESS\n************************************************************************************************ */\n#address #left_column {display:none}\n#address #center_column{width:757px}\n\nform#add_address {}\n#add_address fieldset {\n	margin:0;\n	border:1px solid #ccc;\n	background:#F8F8F8\n}\n#add_address h3 {\n	margin:0 0 15px 0;\n	padding:8px;\n	font-size:14px;\n	color:#fff;\n	text-transform:uppercase;\n	background:url(../img/bg_form_h3.png) repeat-x 0 0 #989898\n}\n#center_column #add_address p {margin:0; padding:0 0 10px 0}\n#add_address p.required {color:#222}\n#add_address p.required  sup {color:#990000}\n\n#add_address p.text label,\n#add_address p.password label,\n#add_address p.select label,\n#add_address p.select span,\n#add_address p.textarea label {\n	display:inline-block;\n	padding:6px 15px;\n	width:230px;/* 260 */\n	font-size:14px;\n	text-align:right\n}\n#add_address p.text input,\n#add_address p.password input,\n#add_address p.select input {\n	padding:0 5px;\n	height:22px;\n	width:360px;/* 370 */\n	border:1px solid #ccc;\n	font-size: 12px;\n	color:#666;\n	line-height:22px\n}\n#add_address p.checkbox input {\n	margin-left:260px;\n}\n#add_address p.select select {\n	margin-right:10px;\n	border:1px solid #ccc;\n	font-size: 12px;\n	color:#666\n}\n#add_address p.textarea label {vertical-align:top}\n#add_address p.textarea textarea {\n	height:80px;\n	width:370px;\n	border:1px solid #ccc;\n	font-size: 12px;\n	color:#666\n}\n#center_column  #add_address p.submit2 {\n	margin-top:20px;\n	text-align:right\n}\n\n#add_address span.form_info,\n#add_address span.inline-infos {\n	display:block;\n	margin:5px 0 0 265px;\n	color:#666\n}\n\n\n/* ************************************************************************************************\n		PAGE ORDER-SPLIP\n************************************************************************************************ */\n#order-slip #left_column {display:none}\n#order-slip #center_column{width:757px}\n\n#order-slip #order-list {border-bottom:1px solid #999}\n#order-slip #order-list td {\n	border-top: 1px solid #ccc;\n	border-bottom:none\n}\n#order-slip #order-list td.history_invoice {border-right:none}\n\n\n/* ************************************************************************************************\n		PAGE DISCOUNT\n************************************************************************************************ */\n#discount #left_column {display:none}\n#discount #center_column{width:757px}\n\n#discount .table_block tr.last_item td {border-bottom:1px solid #999}\n#discount .table_block td.discount_expiration_date {border-right:1px solid #999}\n#discount .table_block td.discount_value {white-space:nowrap}\n\n\n/* ************************************************************************************************\n		PAGE ORDER FOLLOW\n************************************************************************************************ */\n#order-follow #left_column {display:none}\n#order-follow #center_column{width:757px}\n\n\n/* ************************************************************************************************\n		PAGE NEW-PRODUCTS\n************************************************************************************************ */\n#newproducts .sortPagiBar {margin-bottom:20px}\n\n\n/* ************************************************************************************************\n		PAGE BEST SALES\n************************************************************************************************ */\n#bestsales .sortPagiBar {margin-bottom:20px}\n\n/* ************************************************************************************************\n		PAGE PRICES DROP SALES\n************************************************************************************************ */\n#pricesdrop .sortPagiBar {margin-bottom:20px}\n\n\n/* ************************************************************************************************\n		PAGE MANUFACTURER\n************************************************************************************************ */\n#manufacturer .nbrmanufacturer {\n	margin: 15px 0 10px;\n	padding: 8px 7px;\n	font-size:12px;\n	color: #000;\n	background: none repeat scroll 0 0 #f0f0f0\n}\n\n#manufacturer #product_list {margin-top:15px}\n\nul#manufacturers_list {list-style-type:none}\nul#manufacturers_list li {\n	margin-bottom: 14px;\n	padding: 12px 8px;\n	border: 1px solid #eee;\n	-moz-border-radius: 3px;\n	-webkit-border-radius: 3px;\n	border-radius:3px;\n}\nul#manufacturers_list li a.lnk_img {\n	display: block;\n	float: left;\n}\nul#manufacturers_list li img {\n	display: block;\n	float: left;\n	margin-right: 14px;\n	border: 1px solid #ccc;\n	vertical-align: bottom\n}\nul#manufacturers_list li h3 {\n	padding: 0 0 10px;\n	font-size: 13px;\n	color: #000\n}\nul#manufacturers_list li .description {\n	overflow: hidden;\n	padding: 0;\n	font-size:12px;\n	color:#666\n}\nul#manufacturers_list li .right_side {float:right;}\n\n.description_box {\n	border: 1px solid #CCCCCC;\n	border-radius: 3px 3px 3px 3px;\n	box-shadow: 0 1px 1px #E2E2E2;\n	padding: 5px;\n	margin-bottom: 20px;\n	font-size: 12px;\n	line-height: 18px;\n}\n.description_box p {\n	margin: 0;\n	padding: 0 10px 5px;\n}\n.description_box .hide_desc {\n	display: none;\n}\n.description_box .lnk_more {\n	background: url(\"../img/arrow_right_1.png\") no-repeat scroll 100% 4px transparent;\n	color: #0088CC;\n	padding: 0 10px;\n}\n.description_box ul {\n	padding-left: 30px;\n	padding-bottom: 10px;\n}\n\n/* ************************************************************************************************\n		PAGE SUPPLIER\n************************************************************************************************ */\n#supplier .nbrmanufacturer {\n	margin: 15px 0 10px;\n	padding: 8px 7px;\n	font-size:12px;\n	color: #000;\n	background: none repeat scroll 0 0 #f0f0f0\n}\nul#suppliers_list {list-style-type:none}\nul#suppliers_list li {\n	margin-bottom: 14px;\n	padding: 12px 8px;\n	border: 1px solid #eee;\n	-moz-border-radius: 3px;\n	-webkit-border-radius: 3px;\n	border-radius:3px;\n}\nul#suppliers_list li a.lnk_img {\n	display: block;\n	float: left;\n}\nul#suppliers_list li img {\n	display: block;\n	float: left;\n	margin-right: 14px;\n	border: 1px solid #ccc;\n	vertical-align: bottom\n}\nul#suppliers_list li h3 {\n	padding: 0 0 10px;\n	font-size: 13px;\n	color: #000\n}\nul#suppliers_list li .description {\n	overflow: hidden;\n	padding: 0;\n	font-size:12px;\n	color:#666\n}\nul#suppliers_list li .right_side {float:right;}\n\n\n/* ************************************************************************************************\n		PAGE SEARCH\n************************************************************************************************ */\n#search h3.nbresult {\n	margin:0 0 10px 0;\n	padding:10px;\n	border:1px solid #e6db55;\n	font-size:13px;\n	background:#ffffe0\n}\n#search .sortPagiBar {margin-bottom:20px}\n\n\n/* ************************************************************************************************\n		PAGE 404\n************************************************************************************************ */\n#pagenotfound #left_column,\n#pagenotfound #right_column,\n#pagenotfound #footer {display:none}\n\n#pagenotfound #left_column,\n#pagenotfound #right_column,\n#pagenotfound #footer {display:none}\n\n#pagenotfound #center_column {width:940px;}\n\n#pagenotfound .pagenotfound {\n	padding:30px 300px 0 0;\n	height:330px;\n	font-size:14px;\n	background:url(../img/bg_404.png) no-repeat 100% 0\n}\n#pagenotfound h3 {\n	font-weight:normal;\n	font-size:14px\n}\n#pagenotfound fieldset {border:none}\n#pagenotfound fieldset label {color:#333}\n#pagenotfound  #search_query {\n	-moz-border-bottom-colors: none;\n	-moz-border-image: none;\n	-moz-border-left-colors: none;\n	-moz-border-right-colors: none;\n	-moz-border-top-colors: none;\n	border-bottom: 1px solid #666;\n	border-left: 1px solid #666;\n	border-right: 1px solid #fff !important;\n	border-top: 1px solid #666;\n	padding: 0 5px;\n	height: 24px;\n	width: 200px;\n	color: #ccc;\n	background: url(../../../modules/blocksearch/img/bg_search_input.png) repeat-x scroll 0 0 #fff\n}\n#pagenotfound .button_small {\n	padding: 4px 7px;\n	border: medium none;\n	-moz-border-radius:0;\n	-webkit-border-radius:0;\n	border-radius:0;\n	color: #fff;\n	text-transform: uppercase;\n	background: url(\"../../../modules/blocksearch/img/bg_search_submit.png\") repeat-x scroll 0 0 #101010\n}\n#pagenotfound .pagenotfound a {\n	font-weight:bold;\n	color:#333\n}\n#pagenotfound .pagenotfound .icon {\n	position:relative;\n	top:3px\n}\n\n\n/* ************************************************************************************************\n		addons payment cheque\n************************************************************************************************ */\n#module-cheque-payment #left_column {display:none}\n#module-cheque-payment #center_column{width:757px}\n\n\n/* ************************************************************************************************\n		addons payment bankwire\n************************************************************************************************ */\n#module-bankwire-payment #left_column {display:none}\n#module-bankwire-payment #center_column{width:757px}\n\n\n/* ************************************************************************************************\n		addons google checkout\n************************************************************************************************ */\n#module-gcheckout-payment #left_column {display:none}\n#module-gcheckout-payment #center_column{width:757px}\n\n/* ************************************************************************************************\n		addons paypal\n************************************************************************************************ */\n#module-payment-submit #left_column {display:none}\n#module-payment-submit #center_column{width:757px}\n\n\n/* ************************************************************************************************\n		addons cashondelivery validation\n************************************************************************************************ */\n#module-cashondelivery-validation #left_column {display:none}\n#module-cashondelivery-validation #center_column{width:757px}\n\n\n/* ************************************************************************************************\n		addon RerversoForm\n************************************************************************************************ */\n#account-creation_form fieldset.reversoform {padding:10px !important}\n#account-creation_form fieldset.reversoform  .text label{\n	display:block;\n	padding:0 0 10px 0;\n	width:100%;\n	text-align:left;\n}\n#account-creation_form fieldset.reversoform .infos-sup {\n	padding:0 !important;\n	font-size:10px;\n	font-style:italic;\n	text-align:right\n}\n/* ************************************************************************************************\n		addon customer privacy\n************************************************************************************************ */\n#account-creation_form fieldset.customerprivacy label, fieldset.customerprivacy label{\n	padding-bottom:0;\n	font-size:14px;\n	text-align:left;\n	cursor:pointer\n}\n\n/* ************************************************************************************************\n		addon referralprogram\n************************************************************************************************ */\n#module-referralprogram-referralprogram-program #left_column {display:none}\n#module-referralprogram-referralprogram-program #center_column{width:757px}\n\n#footer .myaccount li.referralprogram img {display:none}\n\n#module-referralprogram-referralprogram-program .sheets {padding-top:10px}\n\n#module-referralprogram-referralprogram-program form p.checkbox {font-weight:bold}\n#module-referralprogram-referralprogram-program form p.checkbox a {text-decoration:underline}\n#module-referralprogram-referralprogram-program form p.submit {text-align:right}\n#module-referralprogram-referralprogram-program form p.see_email {\n	padding-left:10px;\n	color: #0088cc;\n	background:url(../img/arrow_right_1.png) no-repeat 0 4px;\n}\n#module-referralprogram-referralprogram-program form p.see_email a {\n	color: #0088cc;\n	text-decoration:underline\n}\n\n/* ************************************************************************************************\n		addon loyalty\n************************************************************************************************ */\n#module-loyalty-default #left_column {display:none}\n#module-loyalty-default #center_column{width:757px}\n\n#product p#loyalty {\n	padding:10px 0 0 20px;\n	border-top:1px solid #ccc;\n	background:url(../img/icon/info.png) no-repeat 0 8px;\n	margin-top: 10px;\n}\n\n#footer .myaccount li.loyalty img {display:none}\n\n\n/* ************************************************************************************************\n		addon Livezilla\n************************************************************************************************ */\n#livezilla_lnk  {\n	margin:10px 0;\n	text-align: right\n}\n#livezilla_lnk a {\n	display:inline-block;\n	padding:6px 8px 8px 8px;\n	-moz-border-radius:3px;\n	-webkit-border-radius:3px;\n	border-radius:3px;\n	font:bold 10px Arial,Verdana,sans-serif;\n	color:#fff;\n	text-shadow: 0 -1px 0 #000;\n	background: url(../img/bg_bt_compare.gif) repeat-x scroll 0 0 #000\n}\n#livezilla_lnk a:hover {text-decoration:none}\n\n/* ************************************************************************************************\n		addons comments products\n************************************************************************************************ */\nform#sendComment  fieldset{\n	padding:10px;\n	border:1px solid #ccc;\n	background:#eee\n}\nform#sendComment h3 {font-size:14px;}\n#new_comment_form p.text {\n	 margin-bottom: 0;\n	 padding-bottom: 0;\n}\n#sendComment p.text label,\n#sendComment p.textarea label {\n	display: block;\n	margin: 12px 0 4px;\n	font-weight: bold;\n	font-size: 12px;\n}\n#sendComment p.text input {\n	padding: 0 5px;\n	height: 28px;\n	width: 498px;\n	border: 1px solid #ccc;\n	background: url(../img/bg_input.png) repeat-x 0 0 #fff;\n}\n#sendComment p.textarea textarea {\n	height:80px;\n	width:508px;\n	border:1px solid #ccc;\n}\n#sendComment p.submit {\n	padding:0;\n	text-align:right\n}\n\n#sendComment p.closeform {\n	float:right;\n	padding:0;\n	height:12px;\n	width:12px;\n	text-indent:-5000px;\n	background:url(../img/icon/delete.gif) no-repeat 0 0\n}\n\n.star {\n	position: relative;\n	top:2px;\n	float: left;\n	height: 12px;\n	width: 12px;\n	overflow: hidden;\n	text-indent: -999em;\n	cursor: pointer\n}\n.star, .star a { background: url(../../../modules/productcomments/img/star.gif) no-repeat 0 0 }\ndiv.star_on a { background-position: 0 -12px }\ndiv.star_hover a, div.star a:hover { background-position: 0 -12px }\n\n\n/* ************************************************************************************************\n		xxxxx\n************************************************************************************************ */\n\n\n/* ************************************************************************************************\n		guest tracking\n************************************************************************************************ */\n\n#guest-tracking fieldset p:first-child {\n	padding-top: 10px;\n}\n#guest-tracking fieldset p:last-child {\n	padding-bottom: 10px;\n}\n\n\n\n/* ************************************************************************************************\n		CSS Modules\n************************************************************************************************ */\n\n/******* IMPORTANT - Internet Explorer can read 31 CSS files max. Some CSS have been put here and erased from their own module folder.************/\n\n/*************** Block ADVERTISING ***************/\n.advertising_block { width: 191px; margin-bottom: 1em; text-align: center }\n\n\n\n/*************** Block CATEGORIES ***************/\n#categories_block_left  li {border:none}\n	#categories_block_left  li.last {	border:none;}\n		#categories_block_left  li a {\n			display:block;\n			padding:7px 11px 5px 22px;\n			color:#333;\n			background:url(../../../modules/blockcategories/img/arrow_right_2.png) no-repeat 10px 10px transparent\n		}\n		\n	#categories_block_left  li ul {margin-left:40px}\n		#categories_block_left  li ul li {border:none}\n			#categories_block_left  li ul li a {\n				padding-left:0;\n				background:none\n			}\n		\n#categories_block_left li .OPEN,\n#categories_block_left li .CLOSE {\n	display:block;\n	float:right;\n	margin:10px 10px 0;\n	height:9px;\n	width:9px;\n	cursor:pointer\n}\n#categories_block_left li .CLOSE {background-position:0 0}\n\n\n/* footer */\n.blockcategories_footer {\n	padding:15px 10px;\n}\n.blockcategories_footer .category_footer {float:left;clear:none;}\n.blockcategories_footer .category_footer .list{float:left;}\n.blockcategories_footer ul ul {display:none !important}\n\n\n\n/*************** Block CMS ***************/\n/* footer */\n#footer .block_various_links {padding:15px 10px;}\n\n/* Block CMS links */\n.informations_block_left li {border-bottom:1px dotted #eee}\n.informations_block_left li.last {border:none;}\n.informations_block_left li a {\n    display:block;\n    padding:7px 11px 5px 22px;\n    color:#333;\n    background:url(../../../modules/blockcms/img/arrow_right_2.png) no-repeat 10px 10px transparent;\n}\n    \ntr.subitem > td:first-child + td {\n    padding-left: 10px;\n}\n\n\n\n/*************** Block CONTACTINFOS ***************/\n\n#block_contact_infos {padding:15px 10px;}\n#block_contact_infos li {\n	padding:0 !important;\n	line-height: 20px;\n}\n#block_contact_infos li  strong {\n	font-weight:normal;\n	font-size:13px;\n}\n#block_contact_infos li  pre {font: 11px/20px Arial,Verdana,sans-serif;}\n\n\n\n/*************** Block LINK ***************/\n#links_block_left .block_content li {border-bottom:1px dotted #eee}\n#links_block_left .block_contentt li.last {border:none;}\n#links_block_left .block_content li a {\n    display:block;\n    padding:7px 11px 5px 22px;\n    color:#333;\n    background:url(../../../modules/blocklink/img/arrow_right_2.png) no-repeat 10px 10px transparent;\n}\n\n\n\n/*************** Block MANUFACTURER ***************/\n.blockmanufacturer li {border-bottom:1px dotted #ccc}\n.blockmanufacturer li.last {	border:none;}\n	.blockmanufacturer li a {\n		display:block;\n		padding:7px 11px 5px 22px;\n		color:#333;\n		background:url(../../../modules/blockmanufacturer/img/arrow_right_2.png) no-repeat 10px 10px transparent\n	}\n\n\n.blockmanufacturer form {margin-top:10px;}\n.blockmanufacturer p {\n	padding:0;\n	text-align:center\n}\n\n/*************** Block LOGO PAYMENT ***************/\n\n.paiement_logo_block { width: 191px; text-align: center; margin-bottom: 1.5em }\n.paiement_logo_block a { text-decoration: none }\n.paiement_logo_block img { margin: 0 0.5em }\n\n\n\n/*************** Block RSS ***************/\n#rss_block_left p {\n	margin:0;\n	padding:10px;\n}\n\n#rss_block_left li {border-bottom:1px dotted #ccc}\n#rss_block_left li.last {	border:none;}\n	#rss_block_left li a {\n		display:block;\n		padding:7px 11px 5px 22px;\n		color:#333;\n		background:url(../../../modules/blockrss/img/arrow_right_2.png) no-repeat 10px 10px transparent\n	}\n\n	\n/*************** Block SOCIAL ***************/\n#social_block {padding:15px 10px;}\n#social_block li {padding-left:22px !important;}\n#social_block li.facebook {background:url(../../../modules/blocksocial/img/sprite_pict_social_block.png) no-repeat 0 6px;}\n#social_block li.twitter {background:url(../../../modules/blocksocial/img/sprite_pict_social_block.png) no-repeat 0 -26px;}\n#social_block li.rss {background:url(../../../modules/blocksocial/img/sprite_pict_social_block.png) no-repeat 0 -56px;}\n\n\n/*************** Block STORE ***************/\n.blockstore img { margin: 10px 0 0 0}\n.blockstore p { \n	padding-bottom:0;\n	font-weight:bold;\n	text-align: right\n}\n.blockstore p.store_image { \n	padding-bottom:10px;\n	text-align:center\n}\n\n\n/*************** Block SUPPLIER ***************/\n.blocksupplier li {border-bottom:1px dotted #ccc}\n.blocksupplier li.last {	border:none;}\n	.blocksupplier li a {\n		display:block;\n		padding:7px 11px 5px 22px;\n		color:#333;\n		background:url(../../../modules/blocksupplier/img/arrow_right_2.png) no-repeat 10px 10px transparent\n	}\n\n.blocksupplier form {margin-top:10px;}\n.blocksupplier p {\n	padding:0;\n	text-align:center\n}\n\n.ie7 #featured-products_block_center .product_image span.new {top:110px;right:0;width:94%}\n.ie8 #featured-products_block_center .product_image span.new{top:110px;right:0;width:94%}\n.lt-ie6 #featured-products_block_center .product_image span.new {top:110px;right:0;width:94%}\n",
+			"file": "/C/AppServ/www/zemtrum/tienda/themes/zemtrum/css/global.css",
+			"file_size": 64410,
+			"file_write_time": 130131681093230559,
+			"settings":
+			{
+				"buffer_size": 62264,
+				"line_ending": "Windows"
+			}
+		},
+		{
+			"file": "/C/AppServ/www/zemtrum/brooklyn/index.html",
+			"settings":
+			{
+				"buffer_size": 2327,
 				"line_ending": "Windows"
 			}
 		}
@@ -568,6 +611,27 @@
 	},
 	"file_history":
 	[
+		"/C/Users/Villa/Desktop/reveal/reveal.css",
+		"/C/Users/Villa/Desktop/reveal/jquery.reveal.js",
+		"/C/AppServ/www/zemtrum/tienda/themes/zemtrum/modules/blockmyaccount/blockmyaccount.tpl",
+		"/C/AppServ/www/zemtrum/tienda/modules/blockuserinfo/blockuserinfo.css",
+		"/C/AppServ/www/zemtrum/tienda/modules/blockuserinfo/blockuserinfo.tpl",
+		"/C/AppServ/www/zemtrum/tienda/themes/zemtrum/css/global.css",
+		"/C/AppServ/www/zemtrum/css/estilo.css",
+		"/C/AppServ/www/zemtrum/index.html",
+		"/C/AppServ/www/zemtrum/brooklyn/index.html",
+		"/C/AppServ/www/zemtrum/tienda/modules/blockmyaccount/blockmyaccount.tpl",
+		"/C/AppServ/www/zemtrum/conocenos/index.html",
+		"/C/AppServ/www/zemtrum/gamma/index.html",
+		"/C/AppServ/www/zemtrum/marypaz/index.html",
+		"/C/AppServ/www/zemtrum/pitlane/index.html",
+		"/C/AppServ/www/zemtrum/tarjeta/index.html",
+		"/C/AppServ/www/zemtrum/wear/index.html",
+		"/C/AppServ/www/zemtrum/brooklyn/css/estilo.css",
+		"/C/AppServ/www/zemtrum/inicio/css/estilo.css",
+		"/C/AppServ/www/zemtrum/inicio/inicio.html",
+		"/C/Users/Villa/Desktop/inicio/inicio.html",
+		"/C/fw195/Gestool/prg/Tdbf.prg",
 		"/C/fw195/Gestool/prg/Empresa.prg",
 		"/C/fw195/Gestool/include/Empresa.ch",
 		"/C/AppServ/www/zemtrum/themes/zemtrum/category.tpl",
@@ -575,7 +639,6 @@
 		"/C/AppServ/www/zemtrum/themes/zemtrum/css/product_list.css",
 		"/C/fw195/Gestool/prg/Factu.prg",
 		"/C/fw195/Gestool/prg/Backup.prg",
-		"/C/fw195/Gestool/prg/Tdbf.prg",
 		"/C/fw195/Gestool/prg/Tcomercio.prg",
 		"/C/fw195/Gestool/prg/Pedcli.prg",
 		"/C/AppServ/www/zemtrum/config/settings.inc.php",
@@ -675,27 +738,7 @@
 		"/C/fw195/Gestool/prg/Stock.prg",
 		"/C/fw195/Gestool/prg/Comun.prg",
 		"/C/fw195/Gestool/prg/Brwvta.prg",
-		"/C/fw195/Gestool/prg/Medicon.prg",
-		"/C/fw195/Gestool/prg/Cambio.prg",
-		"/C/fw195/Gestool/prg/Tcaptura.prg",
-		"/C/fw195/Gestool/prg/Tdetcaptura.prg",
-		"/C/fw195/Gestool/prg/Tipoimpresora.prg",
-		"/C/fw195/Gestool/prg/Tiva.prg",
-		"/C/fw195/Gestool/prg/Ixbrowse.prg",
-		"/C/fw195/Gestool/prg/Xbrowse.prg",
-		"/C/fw195/Gestool/prg/Digit.prg",
-		"/C/fw195/Gestool/prg/Divisas.prg",
-		"/C/fw195/Gestool/bin/script/001.prg",
-		"//server/Scripts creados/Inma Pepsi/001.prg",
-		"/C/fw195/Gestool/prg/Brwcli.prg",
-		"/C/fw195/Gestool/bin/script/000.prg",
-		"/C/Users/Villa/Desktop/Exportatarifas.prg",
-		"/C/fw195/Gestool/prg/Tconfaccli.prg",
-		"/C/fw195/Gestool/prg/Dlgs32.prg",
-		"/C/fw195/Gestool/prg/Avifile.prg",
-		"/C/fw195/Gestool/prg/Tinfgen.prg",
-		"/C/Users/Villa/Desktop/test.prg",
-		"/C/fw195/Gestool/include/Util.ch"
+		"/C/fw195/Gestool/prg/Medicon.prg"
 	],
 	"find":
 	{
@@ -703,7 +746,7 @@
 	},
 	"find_in_files":
 	{
-		"height": 90.0,
+		"height": 0.0,
 		"where_history":
 		[
 			"C:\\fw195\\Gestool\\prg",
@@ -737,6 +780,13 @@
 		"case_sensitive": false,
 		"find_history":
 		[
+			"header",
+			"/*",
+			"bottom",
+			"li ",
+			"a",
+			"nav",
+			";\n",
 			"lapelnomb",
 			"deletefile",
 			"DeleteImagesCategories",
@@ -857,14 +907,7 @@
 			"OnClickCloseTurno",
 			"oofficebar",
 			"on lImporteExacto",
-			"on lexacto",
-			"onclickcobro",
-			"cobro",
-			"lexacto",
-			"AgregarKit",
-			"lkitprc",
-			"lLineaValida",
-			"sTotalTiket"
+			"on lexacto"
 		],
 		"highlight": true,
 		"in_selection": false,
@@ -890,7 +933,7 @@
 	"groups":
 	[
 		{
-			"selected": 0,
+			"selected": 4,
 			"sheets":
 			[
 				{
@@ -905,8 +948,8 @@
 						"selection":
 						[
 							[
-								300771,
-								300771
+								303157,
+								303157
 							]
 						],
 						"settings":
@@ -916,35 +959,168 @@
 							"translate_tabs_to_spaces": true
 						},
 						"translation.x": 0.0,
-						"translation.y": 177016.0,
+						"translation.y": 188917.0,
 						"zoom_level": 1.0
 					},
 					"type": "text"
 				},
 				{
 					"buffer": 1,
-					"file": "prg/Tdbf.prg",
+					"file": "/C/AppServ/www/zemtrum/tienda/themes/zemtrum/header.tpl",
 					"settings":
 					{
-						"buffer_size": 65439,
+						"buffer_size": 5649,
 						"regions":
 						{
 						},
 						"selection":
 						[
 							[
-								39403,
-								39403
+								5485,
+								5485
 							]
 						],
 						"settings":
 						{
-							"syntax": "Packages/harbour/harbour/Harbour.tmLanguage",
-							"tab_size": 2,
-							"translate_tabs_to_spaces": true
+							"syntax": "Packages/HTML/HTML.tmLanguage",
+							"translate_tabs_to_spaces": false
 						},
 						"translation.x": 0.0,
-						"translation.y": 22756.0,
+						"translation.y": 2039.0,
+						"zoom_level": 1.0
+					},
+					"type": "text"
+				},
+				{
+					"buffer": 2,
+					"file": "/C/AppServ/www/zemtrum/tienda/modules/blockuserinfo/blockuserinfo.css",
+					"settings":
+					{
+						"buffer_size": 1385,
+						"regions":
+						{
+						},
+						"selection":
+						[
+							[
+								1029,
+								1029
+							]
+						],
+						"settings":
+						{
+							"syntax": "Packages/CSS/CSS.tmLanguage",
+							"translate_tabs_to_spaces": false
+						},
+						"translation.x": 0.0,
+						"translation.y": 342.0,
+						"zoom_level": 1.0
+					},
+					"type": "text"
+				},
+				{
+					"buffer": 3,
+					"file": "/C/AppServ/www/zemtrum/tienda/modules/blockuserinfo/blockuserinfo.tpl",
+					"settings":
+					{
+						"buffer_size": 2358,
+						"regions":
+						{
+						},
+						"selection":
+						[
+							[
+								2234,
+								2234
+							]
+						],
+						"settings":
+						{
+							"syntax": "Packages/HTML/HTML.tmLanguage",
+							"translate_tabs_to_spaces": false
+						},
+						"translation.x": 0.0,
+						"translation.y": 437.0,
+						"zoom_level": 1.0
+					},
+					"type": "text"
+				},
+				{
+					"buffer": 4,
+					"file": "/C/Users/Villa/Desktop/reveal/demo.html",
+					"settings":
+					{
+						"buffer_size": 1417,
+						"regions":
+						{
+						},
+						"selection":
+						[
+							[
+								898,
+								898
+							]
+						],
+						"settings":
+						{
+							"syntax": "Packages/HTML/HTML.tmLanguage",
+							"translate_tabs_to_spaces": false
+						},
+						"translation.x": 0.0,
+						"translation.y": 171.0,
+						"zoom_level": 1.0
+					},
+					"type": "text"
+				},
+				{
+					"buffer": 5,
+					"file": "/C/AppServ/www/zemtrum/tienda/themes/zemtrum/css/global.css",
+					"settings":
+					{
+						"buffer_size": 62264,
+						"regions":
+						{
+						},
+						"selection":
+						[
+							[
+								6284,
+								6284
+							]
+						],
+						"settings":
+						{
+							"syntax": "Packages/CSS/CSS.tmLanguage",
+							"translate_tabs_to_spaces": false
+						},
+						"translation.x": 0.0,
+						"translation.y": 5244.0,
+						"zoom_level": 1.0
+					},
+					"type": "text"
+				},
+				{
+					"buffer": 6,
+					"file": "/C/AppServ/www/zemtrum/brooklyn/index.html",
+					"settings":
+					{
+						"buffer_size": 2327,
+						"regions":
+						{
+						},
+						"selection":
+						[
+							[
+								1975,
+								2296
+							]
+						],
+						"settings":
+						{
+							"syntax": "Packages/HTML/HTML.tmLanguage"
+						},
+						"translation.x": 0.0,
+						"translation.y": 456.0,
 						"zoom_level": 1.0
 					},
 					"type": "text"
