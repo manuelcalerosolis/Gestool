@@ -1626,7 +1626,7 @@ FUNCTION PedCli( oMenuItem, oWnd, cCodCli, cCodArt, cCodPre, lPedWeb )
 
       DEFINE BTNSHELL RESOURCE "DOCUMENT_PLAIN_USER1_" OF oWndBrw ;
             ALLOW    EXIT ;
-            ACTION   ( if( ( dbfPedCliT )->nEstado != 3, AlbCli( nil, nil, nil, nil, { "Pedido" => ( dbfPedCliT )->cSerPed + Str( ( dbfPedCliT )->nNumPed ) + ( dbfPedCliT )->cSufPed } ), MsgInfo( "Pedido entregado o cancelado" ) ) );
+            ACTION   ( if( ( dbfPedCliT )->nEstado != 3, AlbCli( nil, nil, { "Pedido" => ( dbfPedCliT )->cSerPed + Str( ( dbfPedCliT )->nNumPed ) + ( dbfPedCliT )->cSufPed } ), MsgInfo( "Pedido entregado o cancelado" ) ) );
             TOOLTIP  "Generar albarán" ;
             FROM     oRotor ;
 
@@ -2342,7 +2342,7 @@ STATIC FUNCTION EdtRec( aTmp, aGet, dbfPedCliT, oBrw, cCodCli, cCodArt, nMode, c
 
       with object ( oBrwLin:AddCol() )
          :cHeader             := "Precio"
-         :bEditValue          := {|| nImpUPedCli( dbfTmpLin, nDouDiv ) }
+         :bEditValue          := {|| nImpUPedCli( aTmp, dbfTmpLin, nDouDiv ) }
          :cEditPicture        := cPouDiv
          :nWidth              := 70
          :nDataStrAlign       := 1
