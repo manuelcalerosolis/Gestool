@@ -1,10 +1,10 @@
 //----------------------------------------------------------------------------//
-//  AUTOR.....: Manuel Exp¢sito Su rez    Soft 4U '1994-2001                  //
+//  AUTOR.....: Manuel ExpÂ¢sito SuÂ rez    Soft 4U '1994-2001                  //
 //  e-Mail....: maex14@dipusevilla.es                                         //
 //  CLASE.....: TDbf                                                          //
 //  FECHA MOD.: 24/01/2002                                                    //
 //  VERSION...: 11.00                                                         //
-//  PROPOSITO.: Gesti¢n y control de DBFs                                     //
+//  PROPOSITO.: GestiÂ¢n y control de DBFs                                     //
 //----------------------------------------------------------------------------//
 
 #include "Obj2Hb.ch"
@@ -252,9 +252,7 @@ CLASS TDbf
     Method SwapUp()
     Method SwapDown()
 
-#ifdef __SQLLIB__
-    Method SqlSetFilter( cSqlFilter )     INLINE ( ( ::nArea )->( SR_SetFilter( cSqlFilter  ) ), .t. )
-#endif
+    Method lRddAdsCdx()                   INLINE ( ::cRDD == "ADSCDX" )
 
     Method aCommentIndex()
 
@@ -421,7 +419,7 @@ METHOD Activate( lRecycle, lShared, lReadOnly, lProtec, lAutoField, lAutoIndex, 
 
       /*
       if !ApoloMsgNoYes( ::aMsg( dbCONT ), ::aMsg( dbSELEC ) )
-         QUIT        // <----------------------  ­­ Ojo se sale del programa !!
+         QUIT        // <----------------------  Â­Â­ Ojo se sale del programa !!
       endif
       */
 
@@ -1083,8 +1081,8 @@ METHOD _Eval( bBlock, bFor, bWhile, nNext, nRecord, lRest ) CLASS TDbf
 return( nEval )
 
 //----------------------------------------------------------------------------//
-// El m‚todo LOCATE establece los CodeBlock ::bLFor y ::bLWhile
-// para que funcione el m‚todo CONTINUE
+// El mâ€štodo LOCATE establece los CodeBlock ::bLFor y ::bLWhile
+// para que funcione el mâ€štodo CONTINUE
 // Devuelve .f. si no encuentra mas ocurrencias
 //@
 
@@ -1246,7 +1244,7 @@ METHOD IdxByOrder( nOrder, cFile ) CLASS TDbf
 return( oIdx )
 
 //----------------------------------------------------------------------------//
-// A¤ade un array de definicion de orden a ::aTIndex
+// AÂ¤ade un array de definicion de orden a ::aTIndex
 //
 METHOD AddIndex( cName, cFile, cKey, cFor, bWhile, lUniq, lDes, cComment, bOption, nStep, lNoDel, lTmp ) CLASS TDbf
 
@@ -1263,7 +1261,7 @@ METHOD AddIndex( cName, cFile, cKey, cFor, bWhile, lUniq, lDes, cComment, bOptio
 return( oIdx )
 
 //----------------------------------------------------------------------------//
-// A¤ade un array de definicion de orden a ::aTIndex durante la ejecucion.
+// AÂ¤ade un array de definicion de orden a ::aTIndex durante la ejecucion.
 // Para indices posteriores o temporales o subindices
 //
 
@@ -1272,9 +1270,13 @@ METHOD AddTmpIndex( cName, cFile, cKey, cFor, bWhile, lUniq, lDes, cComment, bOp
     local nRec
     local oIdx
 
-    if ::cRDD == "ADSCDX"
+    if ::lRddAdsCdx()
 
-        ( ::nArea )->( dbSetFilter( c2Block( cFor ), ( cFor ) ) )
+        if Empty( cFor ) 
+          ( ::nArea )->( AdsClearAOF( cFor ) )
+        else 
+          ( ::nArea )->( AdsSetAOF( cFor ) )
+        end if 
 
     else
 
@@ -1288,7 +1290,9 @@ METHOD AddTmpIndex( cName, cFile, cKey, cFor, bWhile, lUniq, lDes, cComment, bOp
 
         if ::nArea != 0
             ( ::nArea )->( OrdListClear() )
-            aEval( ::aTIndex, { | o | if( ( ::cRDD != "ADSCDX" .or. !lAIS() ), ( ::nArea )->( OrdListAdd( o:cFile, o:cName ) ), ) } )
+            if ( !::lRddAdsCdx() .or. !lAIS() )
+              aEval( ::aTIndex, { | o | ( ::nArea )->( OrdListAdd( o:cFile, o:cName ) ) } )
+            end if 
             ( ::nArea )->( OrdSetFocus( 1 ) )
         end if
 
@@ -1322,14 +1326,14 @@ METHOD AddBag( cFile ) CLASS TDbf
 
 
         if ::lExistFile( cFile )
-            if ( ::cRDD != "ADSCDX" .or. !lAIS() )
+            if ( !::lRddAdsCdx() .or. !lAIS() )
                ( ::nArea )->( OrdListAdd( cFile ) )
             end if
             ( ::nArea )->( OrdSetFocus( 1 ) )
         else
             if !ApoloMsgNoYes( "No existe INDEX BAG FILE: " + cFile  )
                 ::End()
-                QUIT   // <----------------  ­­ Ojo se sale del programa !!
+                QUIT   // <----------------  Â­Â­ Ojo se sale del programa !!
             endif
         endif
 
@@ -1338,7 +1342,7 @@ METHOD AddBag( cFile ) CLASS TDbf
 return( Self )
 
 //----------------------------------------------------------------------------//
-// Activa los ¡ndices como un SET ADSINDEX TO y pone el foco en el primero:
+// Activa los Â¡ndices como un SET ADSINDEX TO y pone el foco en el primero:
 //
 //@
 METHOD IdxActivate() CLASS TDbf
@@ -1353,7 +1357,7 @@ METHOD IdxActivate() CLASS TDbf
       ( ::nArea )->( ::IdxFCheck() )
       ( ::nArea )->( OrdListClear() )
 
-      // Añadimos todos los indices a la lista de ordenes
+      // AÃ±adimos todos los indices a la lista de ordenes
 
       while ++nNum <= nLen
          ::aTIndex[ nNum ]:Add()
@@ -1786,7 +1790,7 @@ return( nOldCount )
 
 //----------------------------------------------------------------------------//
 // Establece los CodeBlock de movimiento en Browses, muy util para los Scopes
-// Atencion a¤adir el ClassName del Browse si no est  contemplado aqu¡.
+// Atencion aÂ¤adir el ClassName del Browse si no estÂ  contemplado aquÂ¡.
 
 METHOD SetBrowse( oBrw ) CLASS TDbf
 
@@ -2157,7 +2161,7 @@ Return ( ( ::nArea )->( OrdSetFocus( cnTag, cFile ) ) )
 
 //---------------------------------------------------------------------------//
 /*
-Relación de ordenes
+RelaciÃ³n de ordenes
 */
 
 Method aCommentIndex() CLASS TDbf

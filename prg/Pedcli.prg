@@ -5593,58 +5593,41 @@ RETURN ( oDlg:nResult == IDOK )
 
 //---------------------------------------------------------------------------//
 
-FUNCTION nImpUPedCli( uTmpLin, nDec, nVdv, cPorDiv )
+FUNCTION nImpUPedCli( uPedCliT, dbfPedCliL, nDec, nVdv, cPouDiv )
 
-   local nCalculo    := 0
+   local nCalculo
+   local lIvaInc
 
-   DEFAULT nDec      := 2
+   DEFAULT nDec      := 0
    DEFAULT nVdv      := 1
 
-   if ValType( uTmpLin ) == "C"
+   nCalculo          := nTotUPedCli( dbfPedCliL, nDec, nVdv )
 
-      if ( uTmpLin )->lAlquiler
-         nCalculo       := ( uTmpLin )->nPreAlq
-      else
-         nCalculo       := ( uTmpLin )->nPreDiv
-      end if
+   if IsArray( uPedCliT )
 
-      if ( uTmpLin )->lIvaLin
+      nCalculo       -= Round( nCalculo * uPedCliT[ _NDTOESP ]  / 100, nDec )
+      nCalculo       -= Round( nCalculo * uPedCliT[ _NDPP    ]  / 100, nDec )
+      nCalculo       -= Round( nCalculo * uPedCliT[ _NDTOUNO ]  / 100, nDec )
+      nCalculo       -= Round( nCalculo * uPedCliT[ _NDTODOS ]  / 100, nDec )
 
-         if ( uTmpLin )->nIva != 0
-            nCalculo -= nCalculo / ( 100 / ( uTmpLin )->nIva + 1 )
-         end if
-
-         if ( uTmpLin )->nValImp != 0
-            nCalculo -= ( uTmpLin )->nValImp
-         end if
-
-      end if
+      lIvaInc        := uPedCliT[ _LIVAINC ]
 
    else
-
-      if uTmpLin:lAlquiler
-         nCalculo       := uTmpLin:nPreAlq
-      else
-         nCalculo       := uTmpLin:nPreDiv
-      end if
-
-      if uTmpLin:lIvaLin
-
-         if uTmpLin:nIva != 0
-            nCalculo -= nCalculo / ( 100 / uTmpLin:nIva + 1 )
-         end if
-
-         if uTmpLin:nValImp != 0
-            nCalculo -= uTmpLin:nValImp
-         end if
-
-      end if
-
+      
+      nCalculo       -= Round( nCalculo * ( uPedCliT )->nDtoEsp / 100, nDec )
+      nCalculo       -= Round( nCalculo * ( uPedCliT )->nDpp    / 100, nDec )
+      nCalculo       -= Round( nCalculo * ( uPedCliT )->nDtoUno / 100, nDec )
+      nCalculo       -= Round( nCalculo * ( uPedCliT )->nDtoDos / 100, nDec )
+      
+      lIvaInc        := ( uPedCliT )->lIvaInc
+      
    end if
 
-   nCalculo          := Round( nCalculo / nVdv, nDec )
+   if ( dbfPedCliL )->nIva != 0 .and. !lIvaInc
+      nCalculo    	 += Round( nCalculo * ( dbfPedCliL )->nIva / 100, nDec )
+   end if
 
-Return ( if( cPorDiv != nil, Trans( nCalculo, cPorDiv ), nCalculo ) )
+RETURN ( if( cPouDiv != NIL, Trans( nCalculo, cPouDiv ), nCalculo ) )
 
 //---------------------------------------------------------------------------//
 
@@ -5724,7 +5707,6 @@ FUNCTION Pre2Ped( cNumPre )
    end if
 
    CLOSE( dbfPedCliT )
-
 
 RETURN NIL
 
@@ -14882,15 +14864,7 @@ FUNCTION nTotUPedCli( uTmpLin, nDec, nVdv )
          else
             nCalculo    := ( uTmpLin )->nPreDiv
          end if
-         /*
-         if !( uTmpLin )->lIvaLin
-            if ( uTmpLin )->lVolImp
-               nCalculo    += ( uTmpLin )->nValImp * NotCero( ( uTmpLin )->nVolumen )
-            else
-               nCalculo    += ( uTmpLin )->nValImp
-            end if
-         end if
-        */
+
       case Valtype( uTmpLin ) == "O"
 
          if uTmpLin:lAlquiler
@@ -14898,15 +14872,7 @@ FUNCTION nTotUPedCli( uTmpLin, nDec, nVdv )
          else
             nCalculo    := uTmpLin:nPreDiv
          end if
-        /*
-         if !uTmpLin:lIvaLin
-            if uTmpLin:lVolImp
-               nCalculo    += uTmpLin:nValImp * NotCero( uTmpLin:nVolumen )
-            else
-               nCalculo    += uTmpLin:nValImp
-            end if
-         end if
-        */
+
    end case
 
    if nVdv != 0
@@ -15046,18 +15012,24 @@ FUNCTION nImpLPedCli( uPedCliT, dbfPedCliL, nDec, nRou, nVdv, lIva, lDto, lPntVe
 
    nCalculo          := nTotLPedCli( dbfPedCliL, nDec, nRou, nVdv, .t., lImpTrn, lPntVer )
 
-   if ValType( uPedCliT ) == "A"
+   if IsArray( uPedCliT )
+
       nCalculo       -= Round( nCalculo * uPedCliT[ _NDTOESP ]  / 100, nRou )
       nCalculo       -= Round( nCalculo * uPedCliT[ _NDPP    ]  / 100, nRou )
       nCalculo       -= Round( nCalculo * uPedCliT[ _NDTOUNO ]  / 100, nRou )
       nCalculo       -= Round( nCalculo * uPedCliT[ _NDTODOS ]  / 100, nRou )
+
       lIvaInc        := uPedCliT[ _LIVAINC ]
+
    else
+      
       nCalculo       -= Round( nCalculo * ( uPedCliT )->nDtoEsp / 100, nRou )
       nCalculo       -= Round( nCalculo * ( uPedCliT )->nDpp    / 100, nRou )
       nCalculo       -= Round( nCalculo * ( uPedCliT )->nDtoUno / 100, nRou )
       nCalculo       -= Round( nCalculo * ( uPedCliT )->nDtoDos / 100, nRou )
+      
       lIvaInc        := ( uPedCliT )->lIvaInc
+
    end if
 
    if ( dbfPedCliL )->nIva != 0
