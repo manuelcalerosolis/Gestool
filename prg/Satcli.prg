@@ -100,6 +100,7 @@ Definici¢n de la base de datos de S.A.T. a clientes
 #define _NTOTSAT                  79
 #define _LOPERPV                  80
 #define _CNUMALB                  81
+#define _LGARANTIA                82
 
 /*
 Definici¢n de la base de datos de lineas de detalle
@@ -1248,7 +1249,7 @@ FUNCTION SatCli( oMenuItem, oWnd, cCodCli, cCodArt )
       with object ( oWndBrw:AddXCol() )
          :cHeader          := "Número"
          :cSortOrder       := "nNumSat"
-         :bEditValue       := {|| ( dbfSatCliT )->cSerSat + "/" + AllTrim( Str( ( dbfSatCliT )->nNumSat ) ) + "/" + ( dbfSatCliT )->cSufSat }
+         :bEditValue       := {|| ( dbfSatCliT )->cSerSat + "/" + AllTrim( Str( ( dbfSatCliT )->nNumSat ) ) }
          :nWidth           := 80
          :bLClickHeader    := {| nMRow, nMCol, nFlags, oCol | oWndBrw:ClickOnHeader( oCol ) }
       end with
@@ -1256,7 +1257,7 @@ FUNCTION SatCli( oMenuItem, oWnd, cCodCli, cCodArt )
       with object ( oWndBrw:AddXCol() )
          :cHeader          := "Delegación"
          :bEditValue       := {|| ( dbfSatCliT )->cCodDlg }
-         :nWidth           := 20
+         :nWidth           := 40
          :lHide            := .t.
       end with
 
@@ -1654,7 +1655,6 @@ STATIC FUNCTION EdtRec( aTmp, aGet, dbfSatCliT, oBrw, cCodCli, cCodArt, nMode )
    local oSayGetRnt
    local cTipSat
    local oSayDias
-   local oSayTxtDias
    local oBmpGeneral
 
    /*
@@ -1716,7 +1716,7 @@ STATIC FUNCTION EdtRec( aTmp, aGet, dbfSatCliT, oBrw, cCodCli, cCodArt, nMode )
          Return .f.
       end if
 
-      aTmp[ _DFECSAT ]   := GetSysDate()
+      aTmp[ _DFECSAT ]  := GetSysDate()
       aTmp[ _CTURSAT ]  := cCurSesion()
       aTmp[ _LESTADO ]  := .f.
       aTmp[ _LCLOSAT ]  := .f.
@@ -1754,7 +1754,7 @@ STATIC FUNCTION EdtRec( aTmp, aGet, dbfSatCliT, oBrw, cCodCli, cCodArt, nMode )
    */
 
    if Empty( aTmp[ _CTLFCLI ] )
-      aTmp[ _CTLFCLI ] := RetFld( aTmp[ _CCODCLI ], dbfClient, "Telefono" )
+      aTmp[ _CTLFCLI ]  := RetFld( aTmp[ _CCODCLI ], dbfClient, "Telefono" )
    end if
 
    /*
@@ -1875,7 +1875,7 @@ STATIC FUNCTION EdtRec( aTmp, aGet, dbfSatCliT, oBrw, cCodCli, cCodArt, nMode )
          WHEN     ( nMode != ZOOM_MODE .and. ( !aTmp[ _LMODCLI ] .or. oUser():lAdministrador() ) ) ;
          OF       oFld:aDialogs[1]
 
-      REDEFINE GET aGet[_CPOSCLI] VAR aTmp[_CPOSCLI] ;
+      REDEFINE GET aGet[ _CPOSCLI ] VAR aTmp[ _CPOSCLI ] ;
          ID       107 ;
          WHEN     ( nMode != ZOOM_MODE .and. ( !aTmp[ _LMODCLI ] .or. oUser():lAdministrador() ) ) ;
          OF       oFld:aDialogs[1]
@@ -2546,25 +2546,18 @@ STATIC FUNCTION EdtRec( aTmp, aGet, dbfSatCliT, oBrw, cCodCli, cCodArt, nMode )
 
       REDEFINE GET aGet[ _DFECSAL ] VAR aTmp[ _DFECSAL ];
          ID       111 ;
-         IDSAY    114 ;
+         IDSAY    112 ;
          SPINNER;
          WHEN     ( nMode != ZOOM_MODE ) ;
-         ON CHANGE( oSayDias:Refresh() );
+         ON CHANGE( SetDiasSAT( aTmp, aGet ) );
          OF       oFld:aDialogs[1]
 
-      REDEFINE SAY oSayDias ;
-         VAR      ( aTmp[ _DFECSAT ] - aTmp[ _DFECSAL ] );
-         ID       113 ;
-         PICTURE  "9999" ;
-         OF       oFld:aDialogs[1]
-
-      REDEFINE SAY oSayTxtDias ;
-         ID       116 ;
+      REDEFINE CHECKBOX aGet[ _LGARANTIA ] VAR aTmp[ _LGARANTIA ] ;
+         ID       115 ;
          OF       oFld:aDialogs[1]
 
       REDEFINE GET oAprovado VAR cAprovado ;
          ID       120 ;
-         IDSAY    121 ;
          WHEN     ( .F. ) ;
          OF       oFld:aDialogs[1]
 
@@ -2574,14 +2567,14 @@ STATIC FUNCTION EdtRec( aTmp, aGet, dbfSatCliT, oBrw, cCodCli, cCodArt, nMode )
          ITEMS    ( aSituacion( dbfSitua ) ) ;
          OF       oFld:aDialogs[1]
 
-      REDEFINE GET aGet[_CSUSAT] VAR aTmp[_CSUSAT] ;
+      REDEFINE GET aGet[ _CSUSAT ] VAR aTmp[ _CSUSAT ] ;
          ID       122 ;
          IDSAY    123 ;
          WHEN     ( nMode != ZOOM_MODE ) ;
          COLOR    CLR_GET ;
          OF       oFld:aDialogs[1]
 
-      REDEFINE CHECKBOX aGet[_LIVAINC] VAR aTmp[_LIVAINC] ;
+      REDEFINE CHECKBOX aGet[ _LIVAINC ] VAR aTmp[ _LIVAINC ] ;
          ID       129 ;
          WHEN     ( ( dbfTmpLin )->( LastRec() ) == 0 ) ;
          OF       oFld:aDialogs[1]
@@ -2803,7 +2796,7 @@ STATIC FUNCTION EdtRec( aTmp, aGet, dbfSatCliT, oBrw, cCodCli, cCodArt, nMode )
          ACTION   ( WinZooRec( oBrwInc, bEdtInc, dbfTmpInc ) )
 
       /*
-      Caja de diálogo de documentos
+      Caja de diálogo de documentos--------------------------------------------
       */
 
       oBrwDoc                 := TXBrowse():New( oFld:aDialogs[ 4 ] )
@@ -2934,7 +2927,7 @@ STATIC FUNCTION EdtRec( aTmp, aGet, dbfSatCliT, oBrw, cCodCli, cCodArt, nMode )
 
    ACTIVATE DIALOG oDlg;
          ON INIT  (  EdtRecMenu( aTmp, oDlg ) ,;
-                     SetDialog( aGet, oSayDias, oSayTxtDias, oSayGetRnt, oGetRnt ) ,;
+                     SetDialog( aGet, oSayGetRnt, oGetRnt ) ,;
                      oBrwLin:Load() ,;
                      oBrwInc:Load() );
          ON PAINT (  RecalculaTotal( aTmp ) );
@@ -3120,6 +3113,7 @@ STATIC FUNCTION EdtDet( aTmp, aGet, dbfSatCliL, oBrw, lTotLin, cCodArtEnt, nMode
 
    do case
    case nMode == APPD_MODE
+
       aTmp[ _CSERSAT  ]    := aTmpSat[ _CSERSAT ]
       aTmp[ _NNUMSAT  ]    := aTmpSat[ _NNUMSAT ]
       aTmp[ _CSUFSAT  ]    := aTmpSat[ _CSUFSAT ]
@@ -3139,7 +3133,8 @@ STATIC FUNCTION EdtDet( aTmp, aGet, dbfSatCliL, oBrw, lTotLin, cCodArtEnt, nMode
       aTmp[ __DFECSAL ]    := aTmpSat[ _DFECSAL ]
 
    case nMode == EDIT_MODE
-      lTotLin           := aTmp[ _LTOTLIN ]
+
+      lTotLin              := aTmp[ _LTOTLIN ]
 
    end case
 
@@ -3324,16 +3319,6 @@ STATIC FUNCTION EdtDet( aTmp, aGet, dbfSatCliL, oBrw, lTotLin, cCodArtEnt, nMode
 
          aGet[ ( dbfSatCliL )->( fieldpos( "nMedTre" ) ) ]:oSay:SetColor( CLR_BLUE )
 
-      if IsMuebles()
-
-         REDEFINE GET aGet[ _CREFPRV ] VAR aTmp[ _CREFPRV ] ;
-            ID       500 ;
-            IDSAY    501 ;
-            WHEN     ( nMode != ZOOM_MODE ) ;
-            OF       oFld:aDialogs[1]
-
-      end if
-
       REDEFINE GET aGet[ _NIVA ] VAR aTmp[ _NIVA ] ;
          ID       120 ;
          WHEN     ( lModIva() .AND. nMode != ZOOM_MODE .AND. !lTotLin ) ;
@@ -3343,32 +3328,6 @@ STATIC FUNCTION EdtDet( aTmp, aGet, dbfSatCliL, oBrw, lTotLin, cCodArtEnt, nMode
          BITMAP   "LUPA" ;
          ON HELP  ( BrwIva( aGet[ _NIVA ], dbfIva, , .t. ) ) ;
          OF       oFld:aDialogs[1]
-
-      if aTmp[ __LALQUILER ]
-
-      REDEFINE GET aGet[ __DFECSAL ] VAR aTmp[ __DFECSAL ];
-         ID       420 ;
-         SPINNER ;
-         WHEN     ( nMode != ZOOM_MODE ) ;
-         VALID    ( RecalculaLinea( aTmp, aTmpSat, nDouDiv, oTotal, oRentLin, cCodDiv ) );
-         ON CHANGE( RecalculaLinea( aTmp, aTmpSat, nDouDiv, oTotal, oRentLin, cCodDiv ), oSayDias:Refresh() );
-         OF       oFld:aDialogs[1]
-
-      REDEFINE GET aGet[ __DFECENT ] VAR aTmp[ __DFECENT ];
-         ID       430 ;
-         SPINNER ;
-         WHEN     ( nMode != ZOOM_MODE ) ;
-         VALID    ( RecalculaLinea( aTmp, aTmpSat, nDouDiv, oTotal, oRentLin, cCodDiv ) );
-         ON CHANGE( RecalculaLinea( aTmp, aTmpSat, nDouDiv, oTotal, oRentLin, cCodDiv ), oSayDias:Refresh() );
-         OF       oFld:aDialogs[1]
-
-      REDEFINE SAY oSayDias ;
-         VAR      ( aTmp[ __DFECENT ] - aTmp[ __DFECSAL ] );
-         PICTURE  "9999";
-         ID       440;
-         OF       oFld:aDialogs[1]
-
-      else
 
       REDEFINE GET aGet[ _NVALIMP ] ;
          VAR      aTmp[ _NVALIMP ] ;
@@ -3380,8 +3339,6 @@ STATIC FUNCTION EdtDet( aTmp, aGet, dbfSatCliL, oBrw, lTotLin, cCodArtEnt, nMode
          ON CHANGE( RecalculaLinea( aTmp, aTmpSat, nDouDiv, oTotal, oRentLin, cCodDiv ) );
          ON HELP  ( oNewImp:nBrwImp( aGet[ _NVALIMP ] ) );
          OF       oFld:aDialogs[ 1 ]
-
-      end if
 
       REDEFINE GET aGet[ _NCANSAT ] ;
          VAR      aTmp[ _NCANSAT ];
@@ -3428,20 +3385,6 @@ STATIC FUNCTION EdtDet( aTmp, aGet, dbfSatCliL, oBrw, lTotLin, cCodArtEnt, nMode
       /*
       Para el caso de alquieres vamos a utilizar su precio---------------------
       */
-
-      if aTmp[ __LALQUILER ]
-
-         REDEFINE GET aGet[ _NPREALQ ] VAR aTmp[ _NPREALQ ] ;
-            ID       250 ;
-            SPINNER ;
-            WHEN     ( nMode != ZOOM_MODE .and. !lTotLin ) ;
-            ON CHANGE( RecalculaLinea( aTmp, aTmpSat, nDouDiv, oTotal, oRentLin, cCodDiv ) );
-            VALID    ( RecalculaLinea( aTmp, aTmpSat, nDouDiv, oTotal, oRentLin, cCodDiv ) );
-            COLOR    CLR_GET ;
-            PICTURE  cPouDiv ;
-            OF       oFld:aDialogs[1]
-
-      end if
 
       REDEFINE GET aGet[ _NIMPTRN ] VAR aTmp[ _NIMPTRN ] ;
          ID       350 ;
@@ -8621,6 +8564,7 @@ function aItmSatCli()
    aAdd( aItmSatCli, { "nTotSat",   "N", 16,  6, "Total S.A.T." ,                                     "", "", "( cDbf )"} )
    aAdd( aItmSatCli, { "lOperPV",   "L",  1,  0, "Lógico para operar con punto verde" ,               "", "", "( cDbf )", .t.} )
    aAdd( aItmSatCli, { "cNumAlb",   "C", 12,  0, "Número del albarán donde se agrupa" ,               "", "", "( cDbf )", nil } )
+   aAdd( aItmSatCli, { "lGarantia", "L",  1,  0, "Lógico de reparación en garantía" ,                 "", "", "( cDbf )"} )
 
 return ( aItmSatCli )
 
@@ -10406,13 +10350,9 @@ RETURN ( .t. )
 
 //---------------------------------------------------------------------------//
 
-STATIC FUNCTION SetDialog( aGet, oSayDias, oSayTxtDias, oSayGetRnt, oGetRnt )
+STATIC FUNCTION SetDialog( aGet, oSayGetRnt, oGetRnt )
 
-   aGet[ _DFECSAL  ]:Refresh()
    aGet[ _CSUSAT   ]:Refresh()
-
-   oSayDias:Refresh()
-   oSayTxtDias:Refresh()
 
    if !lAccArticulo() .or. oUser():lNotRentabilidad()
 
@@ -10425,6 +10365,8 @@ STATIC FUNCTION SetDialog( aGet, oSayDias, oSayTxtDias, oSayGetRnt, oGetRnt )
       end if
 
    end if
+
+   Eval( aGet[ _DFECSAL  ]:bChange )
 
 Return nil
 
@@ -11118,3 +11060,12 @@ Function sTotSatCli( cSat, dbfMaster, dbfLine, dbfIva, dbfDiv, cDivRet, lExcCnt 
 Return ( sTotal )
 
 //---------------------------------------------------------------------------//
+
+Static Function SetDiasSAT( aTmp, aGet )
+
+   aGet[ _DFECSAL ]:oSay:SetText( "Entrega " + Alltrim( Str( aTmp[ _DFECSAL ] - aTmp[ _DFECSAT ] ) ) + " dias" )
+
+Return nil 
+
+//---------------------------------------------------------------------------//
+
