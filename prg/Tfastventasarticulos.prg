@@ -789,7 +789,7 @@ METHOD AddPresupuestoClientes() CLASS TFastVentasArticulos
                   ::oDbf:nCosArt    := nTotCPreCli( ::oPreCliL:cAlias, ::nDecOut, ::nDerOut, ::nValDiv )
 
                   ::oDbf:cClsDoc    := PRE_CLI
-                  ::oDbf:cTipDoc    := "Presupuesto clientes"
+                  ::oDbf:cTipDoc    := "Presupuesto cliente"
                   ::oDbf:cSerDoc    := ::oPreCliT:cSerPre
                   ::oDbf:cNumDoc    := Str( ::oPreCliT:nNumPre )
                   ::oDbf:cSufDoc    := ::oPreCliT:cSufPre
@@ -917,7 +917,7 @@ METHOD AddPedidoClientes() CLASS TFastVentasArticulos
                   ::oDbf:nTrnArt    := nTrnUPedCli( ::oPedCliL:cAlias, ::nDecOut, ::nValDiv )
                   ::oDbf:nPntArt    := nPntLPedCli( ::oPedCliL:cAlias, ::nDecOut, ::nValDiv )
 
-                  ::oDbf:nBrtArt    := nBrtLPedCli( ::oPedCliL:cAlias, ::nDecOut, ::nDerOut, ::nValDiv )
+                  ::oDbf:nBrtArt    := nBrtLPedCli( ::oPedCliT:cAlias, ::oPedCliL:cAlias, ::nDecOut, ::nDerOut, ::nValDiv )
                   ::oDbf:nImpArt    := nImpLPedCli( ::oPedCliT:cAlias, ::oPedCliL:cAlias, ::nDecOut, ::nDerOut, ::nValDiv, , , .t., .t. )
                   ::oDbf:nIvaArt    := nIvaLPedCli( ::oPedCliL:cAlias, ::nDecOut, ::nDerOut, ::nValDiv )
                   ::oDbf:nTotArt    := nImpLPedCli( ::oPedCliT:cAlias, ::oPedCliL:cAlias, ::nDecOut, ::nDerOut, ::nValDiv, , , .t., .t.  )
@@ -930,7 +930,7 @@ METHOD AddPedidoClientes() CLASS TFastVentasArticulos
                   ::oDbf:cValPr2    := ::oPedCliL:cValPr2
 
                   ::oDbf:cClsDoc    := PED_CLI
-                  ::oDbf:cTipDoc    := "Pedido clientes"
+                  ::oDbf:cTipDoc    := "Pedido cliente"
                   ::oDbf:cSerDoc    := ::oPedCliT:cSerPed
                   ::oDbf:cNumDoc    := Str( ::oPedCliT:nNumPed )
                   ::oDbf:cSufDoc    := ::oPedCliT:cSufPed
@@ -1080,7 +1080,7 @@ METHOD AddAlbaranCliente( lFacturados ) CLASS TFastVentasArticulos
                   ::oDbf:dFecCad    := ::oAlbCliL:dFecCad
 
                   ::oDbf:cClsDoc    := ALB_CLI
-                  ::oDbf:cTipDoc    := "Albaran clientes"
+                  ::oDbf:cTipDoc    := "Albarán cliente"
                   ::oDbf:cSerDoc    := ::oAlbCliT:cSerAlb
                   ::oDbf:cNumDoc    := Str( ::oAlbCliT:nNumAlb )
                   ::oDbf:cSufDoc    := ::oAlbCliT:cSufAlb
@@ -1218,7 +1218,7 @@ METHOD AddFacturaCliente() CLASS TFastVentasArticulos
                   ::oDbf:dFecCad    := ::oFacCliL:dFecCad
 
                   ::oDbf:cClsDoc    := FAC_CLI
-                  ::oDbf:cTipDoc    := "Factura clientes"
+                  ::oDbf:cTipDoc    := "Factura cliente"
                   ::oDbf:cSerDoc    := ::oFacCliT:cSerie
                   ::oDbf:cNumDoc    := Str( ::oFacCliT:nNumFac )
                   ::oDbf:cSufDoc    := ::oFacCliT:cSufFac
@@ -1359,7 +1359,7 @@ METHOD AddFacturaRectificativa( cCodigoArticulo ) CLASS TFastVentasArticulos
                   ::oDbf:dFecCad    := ::oFacRecL:dFecCad
 
                   ::oDbf:cClsDoc    := FAC_REC
-                  ::oDbf:cTipDoc    := "Rectificativa clientes"
+                  ::oDbf:cTipDoc    := "Rectificativa cliente"
                   ::oDbf:cSerDoc    := ::oFacRecT:cSerie
                   ::oDbf:cNumDoc    := Str( ::oFacRecT:nNumFac )
                   ::oDbf:cSufDoc    := ::oFacRecT:cSufFac
@@ -1566,7 +1566,7 @@ METHOD AddTicket() CLASS TFastVentasArticulos
                   ::oDbf:cValPr2    := ::oTikCliL:cValPr2
 
                   ::oDbf:cClsDoc    := TIK_CLI
-                  ::oDbf:cTipDoc    := "Ticket clientes"
+                  ::oDbf:cTipDoc    := "Ticket"
                   ::oDbf:cSerDoc    := ::oTikCliT:cSerTik
                   ::oDbf:cNumDoc    := ::oTikCliT:cNumTik
                   ::oDbf:cSufDoc    := ::oTikCliT:cSufTik
@@ -1745,7 +1745,7 @@ METHOD AddPedidoProveedor() CLASS TFastVentasArticulos
                      ::oDbf:cCodUsr    := ::oPedPrvT:cCodUsr
 
                      ::oDbf:nUniArt    := nTotNPedPrv( ::oPedPrvL:cAlias )
-                     ::oDbf:nPreArt    := nImpUPedPrv( ::oPedPrvT:cAlias, ::oPrePrvL:cAlias, ::nDerOut, ::nValDiv )
+                     ::oDbf:nPreArt    := nImpUPedPrv( ::oPedPrvT:cAlias, ::oPedPrvL:cAlias, ::nDerOut, ::nValDiv )
 
                      ::oDbf:nBrtArt    := nBrtLPedPrv( ::oPedPrvL:cAlias, ::nDecOut, ::nDerOut, ::nValDiv )
                      ::oDbf:nImpArt    := nImpLPedPrv( ::oPedPrvT:cAlias, ::oPedPrvL:cAlias, ::nDecOut, ::nDerOut, ::nValDiv, , , .t., .t. )
@@ -1885,6 +1885,8 @@ METHOD AddAlbaranProveedor( lFacturados ) CLASS TFastVentasArticulos
                   ::oDbf:cCodTrn    := ""
                   ::oDbf:cCodUsr    := ::oAlbPrvT:cCodUsr
 
+                  
+                  ::oDbf:nPreArt    := nImpUAlbPrv( ::oAlbPrvT:cAlias, ::oAlbPrvL:cAlias, ::nDerOut, ::nValDiv )
                   ::oDbf:nUniArt    := nTotNAlbPrv( ::oAlbPrvL:cAlias )
                   ::oDbf:nBrtArt    := nBrtLAlbPrv( ::oAlbPrvL:cAlias, ::nDecOut, ::nDerOut, ::nValDiv )
                   ::oDbf:nImpArt    := nImpLAlbPrv( ::oAlbPrvT:cAlias, ::oAlbPrvL:cAlias, ::nDecOut, ::nDerOut, ::nValDiv, , , .t., .t. )
@@ -1902,7 +1904,7 @@ METHOD AddAlbaranProveedor( lFacturados ) CLASS TFastVentasArticulos
                   ::oDbf:dFecCad    := ::oAlbPrvL:dFecCad
 
                   ::oDbf:cClsDoc    := ALB_PRV
-                  ::oDbf:cTipDoc    := "Albaran proveedores"
+                  ::oDbf:cTipDoc    := "Albarán proveedor"
                   ::oDbf:cSerDoc    := ::oAlbPrvT:cSerAlb
                   ::oDbf:cNumDoc    := Str( ::oAlbPrvT:nNumAlb )
                   ::oDbf:cSufDoc    := ::oAlbPrvT:cSufAlb 
@@ -2020,6 +2022,7 @@ METHOD AddFacturaProveedor( cCodigoArticulo ) CLASS TFastVentasArticulos
                   ::oDbf:cCodTrn    := ""
                   ::oDbf:cCodUsr    := ::oFacPrvT:cCodUsr
 
+                  ::oDbf:nPreArt    := nImpUFacPrv( ::oFacPrvT:cAlias, ::oFacPrvL:cAlias, ::nDerOut, ::nValDiv )
                   ::oDbf:nUniArt    := nTotNFacPrv( ::oFacPrvL:cAlias )
                   ::oDbf:nBrtArt    := nBrtLFacPrv( ::oFacPrvL:cAlias, ::nDecOut, ::nDerOut, ::nValDiv )
                   ::oDbf:nImpArt    := nImpLFacPrv( ::oFacPrvT:cAlias, ::oFacPrvL:cAlias, ::nDecOut, ::nDerOut, ::nValDiv, , , .t., .t. )
@@ -2037,7 +2040,7 @@ METHOD AddFacturaProveedor( cCodigoArticulo ) CLASS TFastVentasArticulos
                   ::oDbf:dFecCad    := ::oFacPrvL:dFecCad
 
                   ::oDbf:cClsDoc    := FAC_PRV
-                  ::oDbf:cTipDoc    := "Factura proveedores"
+                  ::oDbf:cTipDoc    := "Factura proveedor"
                   ::oDbf:cSerDoc    := ::oFacPrvT:cSerFac
                   ::oDbf:cNumDoc    := Str( ::oFacPrvT:nNumFac )
                   ::oDbf:cSufDoc    := ::oFacPrvT:cSufFac
@@ -2147,6 +2150,7 @@ METHOD AddRectificativaProveedor( cCodigoArticulo ) CLASS TFastVentasArticulos
                   ::oDbf:cCodTrn    := ""
                   ::oDbf:cCodUsr    := ::oRctPrvT:cCodUsr
 
+                  ::oDbf:nPreArt    := nImpURctPrv( ::oRctPrvT:cAlias, ::oRctPrvL:cAlias, ::nDerOut, ::nValDiv )
                   ::oDbf:nUniArt    := nTotNRctPrv( ::oRctPrvL:cAlias )
                   ::oDbf:nBrtArt    := nBrtLRctPrv( ::oRctPrvL:cAlias, ::nDecOut, ::nDerOut, ::nValDiv )
                   ::oDbf:nImpArt    := nImpLRctPrv( ::oRctPrvT:cAlias, ::oRctPrvL:cAlias, ::nDecOut, ::nDerOut, ::nValDiv, , , .t., .t. )
@@ -2164,7 +2168,7 @@ METHOD AddRectificativaProveedor( cCodigoArticulo ) CLASS TFastVentasArticulos
                   ::oDbf:dFecCad    := ::oRctPrvL:dFecCad
 
                   ::oDbf:cClsDoc    := RCT_PRV
-                  ::oDbf:cTipDoc    := "Rectificativa proveedores"
+                  ::oDbf:cTipDoc    := "Rectificativa proveedor"
                   ::oDbf:cSerDoc    := ::oRctPrvT:cSerFac
                   ::oDbf:cNumDoc    := Str( ::oRctPrvT:nNumFac )
                   ::oDbf:cSufDoc    := ::oRctPrvT:cSufFac
