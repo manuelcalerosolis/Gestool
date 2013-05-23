@@ -3601,8 +3601,8 @@ STATIC FUNCTION EdtRec( aTmp, aGet, dbfFacCliT, oBrw, cCodCli, cCodArt, nMode, a
          OF       oFld:aDialogs[1] ;
          RESOURCE "Power-drill_user1_16" ;
          NOBORDER ;
-         TOOLTIP  "Importar albaran" ;
-         ACTION   ( BrwSatCli( aGet[ _CNUMALB ], dbfSatCliT, dbfSatCliL, dbfIva, dbfDiv, dbfFPago, aGet[ _LIVAINC ] ) )
+         TOOLTIP  "Importar S.A.T." ;
+         ACTION   ( BrwSatCli( aGet[ _CNUMSAT ], dbfSatCliT, dbfSatCliL, dbfIva, dbfDiv, dbfFPago, aGet[ _LIVAINC ] ) )
 
       REDEFINE BUTTON oBtnGrp ;
          ID       512 ;

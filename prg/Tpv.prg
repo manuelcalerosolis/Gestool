@@ -17993,7 +17993,7 @@ Function SynTikCli( cPath )
       end if
 
       if Empty( ( dbfTikL )->cAlmLin ) .or. ( dbfTikL )->cAlmLin != ( dbfTikT )->cAlmTik
-         ( dbfTikL )->cAlmLin := ( dbfTikT )->cAlmTik
+         ( dbfTikL )->cAlmLin := RetFld( ( dbfTikL )->cSerTil + ( dbfTikL )->cNumTil + ( dbfTikL )->cSufTil, dbfTikT, "cAlmTik" )
       end if
 
       if ( dbfTikL )->cTipTil != RetFld( ( dbfTikL )->cSerTil + ( dbfTikL )->cNumTil + ( dbfTikL )->cSufTil, dbfTikT, "cTipTik" )

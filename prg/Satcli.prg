@@ -6580,8 +6580,8 @@ FUNCTION BrwSatCli( oGet, dbfSatCliT, dbfSatCliL, dbfIva, dbfDiv, dbfFPago, oIva
    oDlg:AddFastKey( VK_RETURN,   {|| oDlg:end( IDOK ) } )
 
    ACTIVATE DIALOG oDlg ;
-   ON INIT ( oBrw:Load() ) ;
-   CENTER
+      ON INIT ( oBrw:Load() ) ;
+      CENTER
 
    DestroyFastFilter( dbfSatCliT )
 

@@ -548,7 +548,7 @@ METHOD lAdministratorTask()
 
    if !Empty( ::aEmpresas )
 
-      DEFINE DIALOG ::oDlg RESOURCE "AdsAdmin" TITLE "Creaci贸n de diccionario de datos para " + ::cDataDictionaryFile
+      DEFINE DIALOG ::oDlg RESOURCE "AdsAdmin" TITLE "Creaci髇 de diccionario de datos para " + ::cDataDictionaryFile
 
       ::oBrwEmpresas                         := TXBrowse():New( ::oDlg )
 
@@ -571,7 +571,7 @@ METHOD lAdministratorTask()
          :nWidth           := 20
          :bEditValue       := {|| ::aEmpresas[ ::oBrwEmpresas:nArrayAt, 4 ] }
          :SetCheck( { "Bullet_Square_Green_16", "Bullet_Square_Red_16" } )
-      end with
+      end with 
 
       with object ( ::oBrwEmpresas:AddCol() )
          :cHeader          := "Pr. Procesada"
@@ -582,11 +582,11 @@ METHOD lAdministratorTask()
       end with
 
       with object ( ::oBrwEmpresas:AddCol() )
-         :cHeader          := "C贸digo"
+         :cHeader          := "C骴igo" 
          :nWidth           := 40
          :bEditValue       := {|| if( ::aEmpresas[ ::oBrwEmpresas:nArrayAt, 3 ], "<" + Rtrim( ::aEmpresas[ ::oBrwEmpresas:nArrayAt, 1 ] ) + ">", ::aEmpresas[ ::oBrwEmpresas:nArrayAt, 1 ] ) }
       end with
-
+ 
       with object ( ::oBrwEmpresas:AddCol() )
          :cHeader          := "Empresa"
          :nWidth           := 340
@@ -695,7 +695,7 @@ METHOD StartAdministratorTask()
       Construimos la base de datos de estructura----------------------------
       */
 
-      ::oSayProceso:SetText( "Creando arbol de tablas datos generales aplicaci贸n" )
+      ::oSayProceso:SetText( "Creando arbol de tablas datos generales aplicaci髇" )
 
       ::BuildData()
       ::CreateDataTable()
@@ -1024,12 +1024,6 @@ METHOD CreateColumnTriggerUpdate( oTable, cTrigger )
 
       if Table->( FieldType( n ) ) != "M" // nField < 150 .and.
 
-         /*
-         cTrigger += 'IF (( @co."' + Table->( FieldName( n ) ) + '" IS NOT NULL AND @cn."' + Table->( FieldName( n ) ) + '" IS NULL) OR' + CRLF
-         cTrigger +=     '( @cn."' + Table->( FieldName( n ) ) + '" IS NOT NULL AND @co."' + Table->( FieldName( n ) ) + '" IS NULL) OR' + CRLF
-         cTrigger +=     '( @co."' + Table->( FieldName( n ) ) + '" <> @cn."' + Table->( FieldName( n ) ) + '") )' + CRLF
-         */
-
          cTrigger += 'IF ( @co."' + Table->( FieldName( n ) ) + '" <> @cn."' + Table->( FieldName( n ) ) + '" )' + CRLF
          cTrigger +=     'THEN' + CRLF
          cTrigger += 'INSERT INTO SqlColumnLog ( OPERATIONID, COLUMNNAME, USERNAME, APPNAME, TABLENAME, OLDVALUE, NEWVALUE )' + CRLF
@@ -1285,7 +1279,7 @@ METHOD AddTable( oTable )
             msgStop(    "Name  : " + Alltrim( oTable:cName )      + CRLF + ;
                         "Table : " + Alltrim( oTable:cDataFile )  + CRLF + ;
                         "Index : " + Alltrim( oTable:cIndexFile ) + CRLF + ;
-                        "Descripci贸n de error " + cValToChar( adsGetLastError( @cError ) ),;
+                        "Descripci髇 de error " + cValToChar( adsGetLastError( @cError ) ),;
                         "Error adding table" )
 
          end if
@@ -1293,11 +1287,11 @@ METHOD AddTable( oTable )
       else
 
          if !file( oTable:cDataFile )
-            msgWait( "No existe " + ( oTable:cDataFile ), "Atenci贸n", 1 )
+            msgWait( "No existe " + ( oTable:cDataFile ), "Atenci髇", 1 )
          end if
 
          if !file( oTable:cIndexFile )
-            msgWait( "No existe " + ( oTable:cIndexFile ), "Atenci贸n", 1 )
+            msgWait( "No existe " + ( oTable:cIndexFile ), "Atenci髇", 1 )
          end if
 
       end if
@@ -3002,7 +2996,7 @@ METHOD Auditor()
       end with
 
       with object ( ::oBrwOperation:AddCol() )
-         :cHeader          := "Aplicaci贸n"
+         :cHeader          := "Aplicaci髇"
          :nWidth           := 100
          :bEditValue       := {|| SqlOperation->AppName }
       end with
@@ -3014,7 +3008,7 @@ METHOD Auditor()
       end with
 
       with object ( ::oBrwOperation:AddCol() )
-         :cHeader          := "Operaci贸n"
+         :cHeader          := "Operaci髇"
          :nWidth           := 100
          :bEditValue       := {|| SqlOperation->Operation }
       end with
@@ -3136,11 +3130,11 @@ METHOD lCreaArrayPeriodos()
 
    end case
 
-   aAdd( ::aPeriodo, "Doce 煤ltimos meses" )
+   aAdd( ::aPeriodo, "Doce 鷏timos meses" )
 
-   aAdd( ::aPeriodo, "A帽o en curso" )
+   aAdd( ::aPeriodo, "A駉 en curso" )
 
-   aAdd( ::aPeriodo, "A帽o anterior" )
+   aAdd( ::aPeriodo, "A駉 anterior" )
 
 RETURN ( Self )
 
@@ -3189,17 +3183,17 @@ METHOD lRecargaFecha()
          ::oIniInf:cText( CtoD( "01/10/" + Str( Year( GetSysDate() ) ) ) )
          ::oFinInf:cText( CtoD( "31/12/" + Str( Year( GetSysDate() ) ) ) )
 
-      case ::cPeriodo == "Doce 煤ltimos meses"
+      case ::cPeriodo == "Doce 鷏timos meses"
 
          ::oIniInf:cText( CtoD( Str( Day( GetSysDate() ) ) + "/" + Str( Month( GetSysDate() ) ) + "/" + Str( Year( GetSysDate() ) -1 ) ) )
          ::oFinInf:cText( GetSysDate() )
 
-      case ::cPeriodo == "A帽o en curso"
+      case ::cPeriodo == "A駉 en curso"
 
          ::oIniInf:cText( CtoD( "01/01/" + Str( Year( GetSysDate() ) ) ) )
          ::oFinInf:cText( CtoD( "31/12/" + Str( Year( GetSysDate() ) ) ) )
 
-      case ::cPeriodo == "A帽o anterior"
+      case ::cPeriodo == "A駉 anterior"
 
          ::oIniInf:cText( CtoD( "01/01/" + Str( Year( GetSysDate() ) - 1 ) ) )
          ::oFinInf:cText( CtoD( "31/12/" + Str( Year( GetSysDate() ) - 1 ) ) )
@@ -3251,12 +3245,12 @@ METHOD Resource( nId )
    end if
 
    if nUsrInUse() > 1
-      msgStop( "Hay m谩s de un usuario conectado a la aplicaci贸n", "Atenci贸n" )
+      msgStop( "Hay m醩 de un usuario conectado a la aplicaci髇", "Atenci髇" )
       return nil
    end if
 
    if !TReindex():lCreateHandle()
-      msgStop( "Esta opci贸n ya ha sido inicada por otro usuario", "Atenci贸n" )
+      msgStop( "Esta opci髇 ya ha sido inicada por otro usuario", "Atenci髇" )
       return nil
    end if
 

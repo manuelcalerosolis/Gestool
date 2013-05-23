@@ -4,7 +4,7 @@
 #include "Image.ch"
 #include "Xbrowse.ch"
 
-#define _MENUITEM_   "01003"
+#define _MENUITEM_   "01003" 
 
 static oWndBrw
 static dbfEmp

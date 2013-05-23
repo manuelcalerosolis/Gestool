@@ -8125,7 +8125,7 @@ Function SynAlbPrv( cPath )
       end if
 
       /*
-      Estado de los pedidos cuando es agrupando-----------------------------------
+      Estado de los pedidos cuando es agrupando--------------------------------
       */
 
       nRecPed  := ( dbfPedPrvT )->( RecNo() )
@@ -8150,6 +8150,14 @@ Function SynAlbPrv( cPath )
 
    end while
 
+   /*
+   ( dbfAlbPrvL )->( dbGoTop() )
+   while !( dbfAlbPrvT )->( dbSeek( ( dbfAlbPrvL )->cSerAlb + Str( ( dbfAlbPrvL )->nNumAlb ) + ( dbfAlbPrvL )->cSufAlb ) ) .and. !( dbfAlbPrvL )->( eof() )
+      ( dbfAlbPrvL )->( dbDelete() )
+   end while
+   */
+   
+   ( dbfAlbPrvL )->( dbGoTop() )
    while !( dbfAlbPrvL )->( eof() )
 
       if Empty( ( dbfAlbPrvL )->cSufAlb )
@@ -8204,6 +8212,8 @@ Function SynAlbPrv( cPath )
 
    end while
 
+   // Incidencias -------------------------------------------------------------
+
    while !( dbfAlbPrvI )->( eof() )
 
       if Empty( ( dbfAlbPrvI )->cSufAlb )
@@ -8221,11 +8231,11 @@ Function SynAlbPrv( cPath )
    while !( dbfAlbPrvS )->( eof() )
 
       if Empty( ( dbfAlbPrvS )->cSufAlb )
-         ( dbfAlbPrvS )->cSufAlb       := "00"
+         ( dbfAlbPrvS )->cSufAlb := "00"
       end if 
       
       if ( dbfAlbPrvS )->dFecAlb != RetFld( ( dbfAlbPrvS )->cSerAlb + Str( ( dbfAlbPrvS )->nNumAlb ) + ( dbfAlbPrvS )->cSufAlb, dbfAlbPrvT, "dFecAlb" )
-         ( dbfAlbPrvS )->dFecAlb       := RetFld( ( dbfAlbPrvS )->cSerAlb + Str( ( dbfAlbPrvS )->nNumAlb ) + ( dbfAlbPrvS )->cSufAlb, dbfAlbPrvT, "dFecAlb" )
+         ( dbfAlbPrvS )->dFecAlb := RetFld( ( dbfAlbPrvS )->cSerAlb + Str( ( dbfAlbPrvS )->nNumAlb ) + ( dbfAlbPrvS )->cSufAlb, dbfAlbPrvT, "dFecAlb" )
       end if
 
       ( dbfAlbPrvS )->( dbSkip() )
