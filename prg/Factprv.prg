@@ -9675,6 +9675,10 @@ Function SynFacPrv( cPath )
 
    end while
 
+   /*
+   lineas de facturas de proveedores-------------------------------------------
+   */
+
    while !( dbfFacPrvL )->( eof() )
 
       if !( dbfFacPrvT )->( dbSeek( ( dbfFacPrvL )->cSerFac + Str( ( dbfFacPrvL )->nNumFac ) + ( dbfFacPrvL )->cSufFac ) )

@@ -3246,10 +3246,15 @@ Function SynRemMov( cPath )
 
    end while
 
-   ( dbfHisMov )->( ordSetFocus( "nNumRem" ) )
+   ( dbfHisMov )->( ordSetFocus( 0 ) )
 
    ( dbfHisMov )->( dbGoTop() )
    while !( dbfHisMov )->( eof() )
+
+      if Empty( ( dbfHisMov )->cSufRem ) .and. dbLock( dbfHisMov )
+         ( dbfHisMov )->cSufRem           := "00"
+         ( dbfHisMov )->( dbUnLock() )
+      end if
 
       if Empty( ( dbfHisMov )->dFecMov )
 
@@ -3269,6 +3274,8 @@ Function SynRemMov( cPath )
       ( dbfHisMov )->( dbSkip() )
 
    end while
+
+   ( dbfHisMov )->( ordSetFocus( 1 ) )
 
    RECOVER USING oError
 
