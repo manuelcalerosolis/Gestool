@@ -195,6 +195,50 @@ METHOD DataReport( oFr ) CLASS TFastVentasArticulos
 
          ::FastReportTicket()
 
+      case ::cTypeName == "Informe de pedidos de proveedor"
+         
+         ::FastReportPedidoProveedor()
+
+      case ::cTypeName == "Informe de albaranes de proveedor"
+
+         ::FastReportAlbaranProveedor()
+
+      case ::cTypeName == "Informe de facturas de proveedor"
+
+         ::FastReportFacturaProveedor()
+
+      case ::cTypeName == "Informe de facturas rectificativas de proveedor"
+
+         ::FastReportRectificativaProveedor()
+
+      case ::cTypeName == "Informe de compras"
+
+         ::FastReportPedidoProveedor()
+
+         ::FastReportAlbaranProveedor()
+
+         ::FastReportFacturaProveedor()
+
+         ::FastReportRectificativaProveedor()
+
+      case ::cTypeName == "Informe de compras y ventas"
+
+         ::FastReportAlbaranCliente()
+
+         ::FastReportFacturaCliente()
+
+         ::FastReportFacturaRectificativa()
+
+         ::FastReportTicket()
+
+         ::FastReportPedidoProveedor()
+
+         ::FastReportAlbaranProveedor()
+
+         ::FastReportFacturaProveedor()
+         
+         ::FastReportRectificativaProveedor()
+
    end case
 
 Return ( Self )
