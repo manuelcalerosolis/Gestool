@@ -5631,14 +5631,14 @@ RETURN ( if( cPouDiv != NIL, Trans( nCalculo, cPouDiv ), nCalculo ) )
 
 //---------------------------------------------------------------------------//
 
-FUNCTION nBrtLPedCli( uTmpLin, nDec, nRec, nVdv, cPorDiv )
+FUNCTION nBrtLPedCli( uPedCliT, uTmpLin, nDec, nRec, nVdv, cPorDiv )
 
    local nCalculo    := 0
 
    DEFAULT nDec      := 2
    DEFAULT nVdv      := 1
 
-   nCalculo          := nImpUPedCli( uTmpLin, nDec, nVdv, cPorDiv )
+   nCalculo          := nImpUPedCli( uPedCliT, uTmpLin, nDec, nVdv, cPorDiv )
    nCalculo          *= nTotNPedCli( uTmpLin )
 
    nCalculo          := Round( nCalculo / nVdv, nRec )
