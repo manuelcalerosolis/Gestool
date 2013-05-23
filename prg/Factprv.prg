@@ -9592,15 +9592,16 @@ return .t.
 Function SynFacPrv( cPath )
 
    local oError
-   local oBlock      := ErrorBlock( { | oError | ApoloBreak( oError ) } )
+   local oBlock      
    local aTotFac
    local aNumSer
    local cNumSer
-
+/*
    BEGIN SEQUENCE
-
-   dbUseArea( .t., cDriver(), cPath + "FacPRVT.DBF", cCheckArea( "FacPRVT", @dbfFacPrvT ), .f. )
-   if !lAIS(); ordListAdd( cPath + "FacPRVT.CDX" ); else ; ordSetFocus( 1 ) ; end
+   oBlock            := ErrorBlock( { | oError | ApoloBreak( oError ) } )
+*/
+   dbUseArea( .t., cDriver(), cPath + "FacPrvT.DBF", cCheckArea( "FacPrvT", @dbfFacPrvT ), .f. )
+   if !lAIS(); ordListAdd( cPath + "FacPrvT.CDX" ); else ; ordSetFocus( 1 ) ; end
 
    dbUseArea( .t., cDriver(), cPath + "FacPrvL.DBF", cCheckArea( "FacPrvL", @dbfFacPrvL ), .f. )
    if !lAIS(); ordListAdd( cPath + "FacPrvL.CDX" ); else ; ordSetFocus( 1 ) ; end
@@ -9610,6 +9611,9 @@ Function SynFacPrv( cPath )
 
    dbUseArea( .t., cDriver(), cPath + "FacPRVI.DBF", cCheckArea( "FacPRVI", @dbfFacPrvI ), .f. )
    if !lAIS(); ordListAdd( cPath + "FacPRVI.CDX" ); else ; ordSetFocus( 1 ) ; end
+
+   dbUseArea( .t., cDriver(), cPath + "FacPrvP.DBF", cCheckArea( "FacPrvP", @dbfFacPrvP ), .f. )
+   if !lAIS(); ordListAdd( cPath + "FacPrvP.CDX" ); else ; ordSetFocus( 1 ) ; end
 
    dbUseArea( .t., cDriver(), cPatArt() + "FAMILIAS.DBF", cCheckArea( "FAMILIAS", @dbfFamilia ), .f. )
    if !lAIS(); ordListAdd( cPatArt() + "FAMILIAS.CDX" ); else ; ordSetFocus( 1 ) ; end
@@ -9626,35 +9630,133 @@ Function SynFacPrv( cPath )
    dbUseArea( .t., cDriver(), cPatDat() + "DIVISAS.DBF", cCheckArea( "DIVISAS", @dbfDiv ), .t. )
    if !lAIS(); ordListAdd( cPatDat() + "DIVISAS.CDX" ); else ; ordSetFocus( 1 ) ; end
 
-   while !( dbfFacPrvP )->( eof() )
+   // Cabeceras -------------------------------------------------------------------
 
-      if Empty( ( dbfFacPrvP )->cCodCaj )
-         ( dbfFacPrvP )->cCodCaj := "000"
-      end if
-
-      if !( ( dbfFacPrvP )->cSerFac >= "A" .and. ( dbfFacPrvP )->cSerFac <= "Z" )
-         ( dbfFacPrvP )->( dbDelete() )
-      end if
-
-      ( dbfFacPrvP )->( dbSkip() )
-
-      SysRefresh()
-
-   end while
-
+   ( dbfFacPrvT )->( OrdSetFocus( 0 ) )
+   ( dbfFacPrvT )->( dbGoTop() )
+   
    while !( dbfFacPrvT )->( eof() )
+
+      if Empty( ( dbfFacPrvT )->cSufFac )
+         ( dbfFacPrvT )->cSufFac := "00"
+      end if
 
       if Empty( ( dbfFacPrvT )->cCodCaj )
          ( dbfFacPrvT )->cCodCaj := "000"
       end if
 
-      if !( ( dbfFacPrvT )->cSerFac >= "A" .and. ( dbfFacPrvT )->cSerFac <= "Z" )
-         ( dbfFacPrvT )->( dbDelete() )
+      ( dbfFacPrvT )->( dbSkip() )
+
+      SysRefresh()
+
+   end while
+
+   ( dbfFacPrvT )->( OrdSetFocus( 1 ) )
+
+   /*
+   lineas de facturas de proveedores-------------------------------------------
+   */
+
+   ( dbfFacPrvL )->( OrdSetFocus( 0 ) )
+   ( dbfFacPrvL )->( dbGoTop() )
+
+   while !( dbfFacPrvL )->( eof() )
+
+      if Empty( ( dbfFacPrvL )->cSufFac )
+         ( dbfFacPrvL )->cSufFac := "00"
       end if
 
-      /*
-      Rellenamos los campos de totales-----------------------------------------
-      */
+      if Empty( ( dbfFacPrvL )->cLote ) .and. !Empty( ( dbfFacPrvL )->nLote )
+         ( dbfFacPrvL )->cLote   := AllTrim( Str( ( dbfFacPrvL )->nLote ) )
+      end if
+
+      if !Empty( ( dbfFacPrvL )->cRef ) .and. Empty( ( dbfFacPrvL )->cCodFam )
+         ( dbfFacPrvL )->cCodFam := RetFamArt( ( dbfFacPrvL )->cRef, dbfArticulo )
+      end if
+
+      if !Empty( ( dbfFacPrvL )->cRef ) .and. !Empty( ( dbfFacPrvL )->cCodFam )
+         ( dbfFacPrvL )->cGrpFam := cGruFam( ( dbfFacPrvL )->cCodFam, dbfFamilia )
+      end if
+
+      if Empty( ( dbfFacPrvL )->nReq )
+         ( dbfFacPrvL )->nReq    := nPReq( dbfIva, ( dbfFacPrvL )->nIva )
+      end if
+
+      if ( dbfFacPrvL )->dFecFac != ( dbfFacPrvT )->dFecFac
+         ( dbfFacPrvL )->dFecFac := ( dbfFacPrvT )->dFecFac
+      end if
+
+      if !Empty( ( dbfFacPrvL )->mNumSer )
+         aNumSer                       := hb_aTokens( ( dbfFacPrvL )->mNumSer, "," )
+         for each cNumSer in aNumSer
+            ( dbfFacPrvS )->( dbAppend() )
+            ( dbfFacPrvS )->cSerFac    := ( dbfFacPrvL )->cSerFac
+            ( dbfFacPrvS )->nNumFac    := ( dbfFacPrvL )->nNumFac
+            ( dbfFacPrvS )->cSufFac    := ( dbfFacPrvL )->cSufFac
+            ( dbfFacPrvS )->cRef       := ( dbfFacPrvL )->cRef
+            ( dbfFacPrvS )->cAlmLin    := ( dbfFacPrvL )->cAlmLin
+            ( dbfFacPrvS )->nNumLin    := ( dbfFacPrvL )->nNumLin
+            ( dbfFacPrvS )->cNumSer    := cNumSer
+         next
+         ( dbfFacPrvL )->mNumSer       := ""
+      end if
+
+      ( dbfFacPrvL )->( dbSkip() )
+
+      SysRefresh()
+
+   end while
+
+   ( dbfFacPrvL )->( OrdSetFocus( 1 ) )
+
+   // Lineas ------------------------------------------------------------------
+
+   ( dbfFacPrvI )->( OrdSetFocus( 0 ) )
+   ( dbfFacPrvI )->( dbGoTop() )
+   
+   while !( dbfFacPrvI )->( eof() )
+
+      if Empty( ( dbfFacPrvI )->cSufFac )
+         ( dbfFacPrvI )->cSufFac := "00"
+      end if
+
+      ( dbfFacPrvI )->( dbSkip() )
+
+      SysRefresh()
+
+   end while
+   
+   ( dbfFacPrvI )->( OrdSetFocus( 1 ) )
+
+   // Series ---------------------------------------------------------------
+
+   ( dbfFacPrvS )->( OrdSetFocus( 0 ) )
+   ( dbfFacPrvS )->( dbGoTop() )
+   
+   while !( dbfFacPrvS )->( eof() )
+
+      if Empty( ( dbfFacPrvS )->cSufFac )
+         ( dbfFacPrvS )->cSufFac := "00"
+      end if
+
+      if ( dbfFacPrvS )->dFecFac != ( dbfFacPrvT )->dFecFac
+         ( dbfFacPrvS )->dFecFac := ( dbfFacPrvT )->dFecFac
+      end if
+
+      ( dbfFacPrvS )->( dbSkip() )
+
+      SysRefresh()
+
+   end while
+
+   ( dbfFacPrvS )->( OrdSetFocus( 1 ) )
+
+   // Totales -------------------------------------------------------------------
+
+   ( dbfFacPrvT )->( OrdSetFocus( 0 ) )
+   ( dbfFacPrvT )->( dbGoTop() )
+
+   while !( dbfFacPrvT )->( eof() )
 
       if ( dbfFacPrvT )->nTotFac == 0 .and. dbLock( dbfFacPrvT )
 
@@ -9674,106 +9776,16 @@ Function SynFacPrv( cPath )
       SysRefresh()
 
    end while
-
-   /*
-   lineas de facturas de proveedores-------------------------------------------
-   */
-
-   while !( dbfFacPrvL )->( eof() )
-
-      if !( dbfFacPrvT )->( dbSeek( ( dbfFacPrvL )->cSerFac + Str( ( dbfFacPrvL )->nNumFac ) + ( dbfFacPrvL )->cSufFac ) )
-
-         ( dbfFacPrvL )->( dbDelete() )
-
-      else
-
-         if Empty( ( dbfFacPrvL )->cLote ) .and. !Empty( ( dbfFacPrvL )->nLote )
-            ( dbfFacPrvL )->cLote   := AllTrim( Str( ( dbfFacPrvL )->nLote ) )
-         end if
-
-         if !Empty( ( dbfFacPrvL )->cRef ) .and. Empty( ( dbfFacPrvL )->cCodFam )
-            ( dbfFacPrvL )->cCodFam := RetFamArt( ( dbfFacPrvL )->cRef, dbfArticulo )
-         end if
-
-         if !Empty( ( dbfFacPrvL )->cRef ) .and. !Empty( ( dbfFacPrvL )->cCodFam )
-            ( dbfFacPrvL )->cGrpFam := cGruFam( ( dbfFacPrvL )->cCodFam, dbfFamilia )
-         end if
-
-         if Empty( ( dbfFacPrvL )->nReq )
-            ( dbfFacPrvL )->nReq    := nPReq( dbfIva, ( dbfFacPrvL )->nIva )
-         end if
-
-         if ( dbfFacPrvL )->dFecFac != ( dbfFacPrvT )->dFecFac
-            ( dbfFacPrvL )->dFecFac := ( dbfFacPrvT )->dFecFac
-         end if
-
-         if !Empty( ( dbfFacPrvL )->mNumSer )
-
-            aNumSer                       := hb_aTokens( ( dbfFacPrvL )->mNumSer, "," )
-            for each cNumSer in aNumSer
-               ( dbfFacPrvS )->( dbAppend() )
-               ( dbfFacPrvS )->cSerFac    := ( dbfFacPrvL )->cSerFac
-               ( dbfFacPrvS )->nNumFac    := ( dbfFacPrvL )->nNumFac
-               ( dbfFacPrvS )->cSufFac    := ( dbfFacPrvL )->cSufFac
-               ( dbfFacPrvS )->cRef       := ( dbfFacPrvL )->cRef
-               ( dbfFacPrvS )->cAlmLin    := ( dbfFacPrvL )->cAlmLin
-               ( dbfFacPrvS )->nNumLin    := ( dbfFacPrvL )->nNumLin
-               ( dbfFacPrvS )->cNumSer    := cNumSer
-            next
-
-            ( dbfFacPrvL )->mNumSer       := ""
-
-         end if
-
-      end if
-
-      ( dbfFacPrvL )->( dbSkip() )
-
-      SysRefresh()
-
-   end while
-
-   while !( dbfFacPrvI )->( eof() )
-
-      if !( dbfFacPrvT )->( dbSeek( ( dbfFacPrvI )->cSerie + Str( ( dbfFacPrvI )->nNumFac ) + ( dbfFacPrvI )->cSufFac ) )
-         ( dbfFacPrvI )->( dbDelete() )
-      end if
-
-      ( dbfFacPrvI )->( dbSkip() )
-
-      SysRefresh()
-
-   end while
-
-   // Series ---------------------------------------------------------------
-
-   while !( dbfFacPrvS )->( eof() )
-
-      if !( dbfFacPrvT )->( dbSeek( ( dbfFacPrvS )->cSerFac + Str( ( dbfFacPrvS )->nNumFac ) + ( dbfFacPrvS )->cSufFac ) )
-
-         ( dbfFacPrvS )->( dbDelete() )
-
-      else
-
-         if ( dbfFacPrvS )->dFecFac != ( dbfFacPrvT )->dFecFac
-            ( dbfFacPrvS )->dFecFac    := ( dbfFacPrvT )->dFecFac
-         end if
-
-      end if
-
-      ( dbfFacPrvS )->( dbSkip() )
-
-      SysRefresh()
-
-   end while
-
+/*
    RECOVER USING oError
 
       msgStop( "Imposible sincronizar factura de proveedores" + CRLF + ErrorMessage( oError ) )
 
    END SEQUENCE
-
+*/
    ErrorBlock( oBlock )
+
+   CloseFiles()
 
    if !Empty( dbfFacPrvT ) .and. ( dbfFacPrvT )->( Used() )
       ( dbfFacPrvT )->( dbCloseArea() )
@@ -9789,6 +9801,10 @@ Function SynFacPrv( cPath )
 
    if !Empty( dbfFacPrvI ) .and. ( dbfFacPrvI )->( Used() )
       ( dbfFacPrvI )->( dbCloseArea() )
+   end if
+
+   if !Empty( dbfFacPrvP ) .and. ( dbfFacPrvP )->( Used() )
+      ( dbfFacPrvP )->( dbCloseArea() )
    end if
 
    if !Empty( dbfArticulo ) .and. ( dbfArticulo )->( Used() )
