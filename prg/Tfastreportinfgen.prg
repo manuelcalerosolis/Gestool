@@ -2786,7 +2786,7 @@ METHOD FastReportRectificativaProveedor()
       ::oRctPrvT:OrdSetFocus( "iNumRct" )
       
       ::oFastReport:SetWorkArea(       "Rectificativas de proveedor", ::oRctPrvT:nArea )
-      ::oFastReport:SetFieldAliases(   "Rectificativa de proveedor", cItemsToReport( aItmRctPrv() ) )
+      ::oFastReport:SetFieldAliases(   "Rectificativas de proveedor", cItemsToReport( aItmRctPrv() ) )
       
       ::oRctPrvL:OrdSetFocus( "iNumRct" )
       

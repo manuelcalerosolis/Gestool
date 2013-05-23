@@ -7533,6 +7533,9 @@ FUNCTION rxFacPrv( cPath, oMeter )
       ( dbfFacPrvT )->( ordCondSet("!Deleted()", {||!Deleted()}  ) )
       ( dbfFacPrvT )->( ordCreate( cPath + "FACPRVT.CDX", "cCodPago", "cCodPago", {|| Field->cCodPago } ) )
 
+      ( dbfFacPrvT )->( ordCondSet("!Deleted()", {||!Deleted()}  ) )
+      ( dbfFacPrvT )->( ordCreate( cPath + "FACPRVT.CDX", "iNumFac", "'03' + CSERFAC + STR( NNUMFAC ) + CSUFFAC", {|| '03' + Field->CSERFAC + STR( Field->NNUMFAC ) + Field->CSUFFAC } ) )
+
       ( dbfFacPrvT )->( dbCloseArea() )
    else
       msgStop( "Imposible abrir en modo exclusivo la tabla de facturas de proveedores" )

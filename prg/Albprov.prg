@@ -6282,6 +6282,9 @@ FUNCTION rxAlbPrv( cPath, oMeter )
       ( dbfAlbPrvT)->( ordCondSet("!Deleted()", {||!Deleted()}  ) )
       ( dbfAlbPrvT)->( ordCreate( cPath + "AlbProvT.Cdx", "cCodUsr", "Field->cCodUsr + Dtos( Field->dFecChg ) + Field->cTimChg", {|| Field->cCodUsr + Dtos( Field->dFecChg ) + Field->cTimChg } ) )
 
+      ( dbfAlbPrvT)->( ordCondSet("!Deleted()", {||!Deleted()}  ) )
+      ( dbfAlbPrvT)->( ordCreate( cPath + "ALBPROVT.CDX", "iNumAlb", "'02' + CSERALB + STR( NNUMALB ) + CSUFALB", {|| '02' + Field->cSerAlb + STR( Field->nNumAlb ) + Field->CSUFALB } ) )
+
       ( dbfAlbPrvT )->( dbCloseArea() )
 
    else

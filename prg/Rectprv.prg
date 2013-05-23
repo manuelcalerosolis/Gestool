@@ -7017,6 +7017,9 @@ FUNCTION rxRctPrv( cPath, oMeter )
       ( dbfRctPrvT )->( ordCondSet("!Deleted()", {||!Deleted()}  ) )
       ( dbfRctPrvT )->( ordCreate( cPath + "RctPrvT.Cdx", "cNumFac", "cNumFac", {|| Field->cNumFac } ) )
 
+      ( dbfRctPrvT )->( ordCondSet("!Deleted()", {||!Deleted()}  ) )
+      ( dbfRctPrvT )->( ordCreate( cPath + "RctPrvT.CDX", "iNumRct", "'04' + CSERFAC + STR( NNUMFAC ) + CSUFFAC", {|| '04' + Field->CSERFAC + STR( Field->NNUMFAC ) + Field->CSUFFAC } ) )
+
       ( dbfRctPrvT )->( dbCloseArea() )
    else
       msgStop( "Imposible abrir en modo exclusivo la tabla de facturas rectificativas de proveedores" )

@@ -5171,6 +5171,9 @@ FUNCTION rxPedPrv( cPath, oMeter )
       ( dbfPedPrvT)->( ordCondSet("!Deleted()", {||!Deleted()}  ) )
       ( dbfPedPrvT)->( ordCreate( cPath + "PedProvT.Cdx", "cNumAlb", "cNumAlb", {|| Field->cNumAlb } ) )
 
+      ( dbfPedPrvT)->( ordCondSet("!Deleted()", {||!Deleted()}  ) )
+      ( dbfPedPrvT)->( ordCreate( cPath + "PEDPROVT.CDX", "iNumPed", "'01' + CSERPED + STR( NNUMPED ) + CSUFPED", {|| '01' + Field->CSERPED + STR( Field->nNumPed ) + Field->cSufPed } ) )
+
       ( dbfPedPrvT )->( dbCloseArea() )
    else
       msgStop( "Imposible abrir en modo exclusivo la tabla de pedidos de proveedores" )
