@@ -913,7 +913,7 @@ METHOD AddPedidoClientes() CLASS TFastVentasArticulos
 
                   ::oDbf:nUniArt    := nTotNPedCli( ::oPedCliL:cAlias )
 
-                  ::oDbf:nPreArt    := nImpUPedCli( ::oPedCliL:cAlias, ::nDecOut, ::nValDiv )
+                  ::oDbf:nPreArt    := nImpUPedCli( ::oPedCliT:cAlias, ::oPedCliL:cAlias, ::nDecOut, ::nValDiv )
                   ::oDbf:nTrnArt    := nTrnUPedCli( ::oPedCliL:cAlias, ::nDecOut, ::nValDiv )
                   ::oDbf:nPntArt    := nPntLPedCli( ::oPedCliL:cAlias, ::nDecOut, ::nValDiv )
 
