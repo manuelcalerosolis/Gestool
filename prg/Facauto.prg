@@ -2458,12 +2458,14 @@ METHOD CreaAlbaran() CLASS TCreaFacAutomaticas
                if nImpAtp  != 0
                   ::oAlbCliL:nPreUnit  := nImpAtp
                else
-                  ::oAlbCliL:nPreUnit  := ::oFacAutL:oDbf:nPreUnit
+                  ::oAlbCliL:nPreUnit  := nRetPreArt( Max( uFieldEmpresa( "nPreVta" ), ::oDbfCli:nTarifa ), cDivEmp(), uFieldEmpresa( "lIvaInc" ), ::oDbfArt:cAlias, ::oDbfDiv:cAlias, ::oDbfKit:cAlias, ::oDbfIva:cAlias )
+                  //::oFacAutL:oDbf:nPreUnit
                end if
 
             else
 
-               ::oAlbCliL:nPreUnit  := ::oFacAutL:oDbf:nPreUnit
+               ::oAlbCliL:nPreUnit  := nRetPreArt( Max( uFieldEmpresa( "nPreVta" ), ::oDbfCli:nTarifa ), cDivEmp(), uFieldEmpresa( "lIvaInc" ), ::oDbfArt:cAlias, ::oDbfDiv:cAlias, ::oDbfKit:cAlias, ::oDbfIva:cAlias )
+               //::oFacAutL:oDbf:nPreUnit
 
             end if
 
