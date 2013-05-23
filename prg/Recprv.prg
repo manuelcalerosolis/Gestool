@@ -132,14 +132,14 @@ STATIC FUNCTION OpenFiles( cPatEmp )
       USE ( cPatDat() + "TIVA.DBF" ) NEW VIA ( cDriver() ) SHARED ALIAS ( cCheckArea( "TIVA", @dbfIva ) )
       SET ADSINDEX TO ( cPatDat() + "TIVA.CDX" ) ADDITIVE
 
-      USE ( cPatEmp + "RDOCUMEN.DBF" ) NEW SHARED VIA ( cDriver() )ALIAS ( cCheckArea( "RDOCUMEN", @dbfDoc ) )
+      USE ( cPatEmp + "RDOCUMEN.DBF" ) NEW SHARED VIA ( cDriver() ) ALIAS ( cCheckArea( "RDOCUMEN", @dbfDoc ) )
       SET ADSINDEX TO ( cPatEmp + "RDOCUMEN.CDX" ) ADDITIVE
       SET TAG TO "CTIPO"
 
       USE ( cPatPrv() + "PROVEE.DBF" ) NEW VIA ( cDriver() ) SHARED ALIAS ( cCheckArea( "PROVEE", @dbfProvee ) )
       SET ADSINDEX TO ( cPatPrv() + "PROVEE.CDX" ) ADDITIVE
 
-      USE ( cPatDat() + "CNFFLT.DBF" ) NEW SHARED VIA ( cDriver() )ALIAS ( cCheckArea( "CNFFLT", @dbfFlt ) )
+      USE ( cPatDat() + "CNFFLT.DBF" ) NEW SHARED VIA ( cDriver() ) ALIAS ( cCheckArea( "CNFFLT", @dbfFlt ) )
       SET ADSINDEX TO ( cPatDat() + "CNFFLT.CDX" ) ADDITIVE
 
       USE ( cPatDat() + "EMPRESA.DBF" ) NEW VIA ( cDriver() ) SHARED ALIAS ( cCheckArea( "EMPRESA", @dbfEmp ) )
@@ -2112,7 +2112,7 @@ static function PrnPrePago( dDesde, dHasta, cPrvDesde, cPrvHasta, cTitulo, cSubT
             ( dbfFacPrvP )->DPRECOB <= dHasta                .AND. ;
             cCodFacPrv( (dbfFacPrvP)->cSerFac + Str( (dbfFacPrvP)->nNumFac ) + (dbfFacPrvP)->cSufFac, dbfFacPrvT ) >= cPrvDesde  .AND. ;
             cCodFacPrv( (dbfFacPrvP)->cSerFac + Str( (dbfFacPrvP)->nNumFac ) + (dbfFacPrvP)->cSufFac, dbfFacPrvT ) <= cPrvHasta  .AND. ;
-            Empty( (dbfFacPrvP)->DENTRADA )                        ;
+            Empty( ( dbfFacPrvP )->dEntrada )                        ;
       WHILE !( dbfFacPrvP )->( eof() )
 
 	oFont1:end()
@@ -2124,99 +2124,151 @@ RETURN NIL
 
 //---------------------------------------------------------------------------//
 
-function SynRecPrv( cPath )
+function SynRecPrv( cPatEmp )
 
    local nCon
    local nTotFac
    local nTotRec
 
-   if OpenFiles( cPath )
+   USE ( cPatEmp + "FACPRVP.DBF" ) NEW VIA ( cDriver() ) EXCLUSIVE ALIAS ( cCheckArea( "FACPRVP", @dbfFacPrvP ) )
+   SET ADSINDEX TO ( cPatEmp + "FACPRVP.CDX" ) ADDITIVE
+   
+   USE ( cPatEmp + "FACPRVT.DBF" ) NEW VIA ( cDriver() ) EXCLUSIVE ALIAS ( cCheckArea( "FACPRVT", @dbfFacPrvT ) )
+   SET ADSINDEX TO ( cPatEmp + "FACPRVT.CDX" ) ADDITIVE
+   
+   USE ( cPatEmp + "FACPRVL.DBF" ) NEW VIA ( cDriver() ) EXCLUSIVE ALIAS ( cCheckArea( "FACPRVL", @dbfFacPrvL ) )
+   SET ADSINDEX TO ( cPatEmp + "FACPRVL.CDX" ) ADDITIVE
 
-      while !( dbfFacPrvT )->( eof() )
+   USE ( cPatEmp + "RctPrvT.DBF" ) NEW VIA ( cDriver() ) EXCLUSIVE ALIAS ( cCheckArea( "RctPrvT", @dbfRctPrvT ) )
+   SET ADSINDEX TO ( cPatEmp + "RctPrvT.CDX" ) ADDITIVE
 
-         nTotFac  := nTotFacPrv( ( dbfFacPrvT )->cSerFac + Str( ( dbfFacPrvT )->nNumFac ) + ( dbfFacPrvT )->cSufFac, dbfFacPrvT, dbfFacPrvL, dbfIva, dbfDiv, dbfFacPrvP, nil, nil, .f. )
-         nTotRec  := nPagFacPrv( ( dbfFacPrvT )->cSerFac + Str( ( dbfFacPrvT )->nNumFac ) + ( dbfFacPrvT )->cSufFac, dbfFacPrvP, nil, dbfDiv, .f. )
+   USE ( cPatEmp + "RctPrvL.DBF" ) NEW VIA ( cDriver() ) EXCLUSIVE ALIAS ( cCheckArea( "RctPrvL", @dbfRctPrvL ) )
+   SET ADSINDEX TO ( cPatEmp + "RctPrvL.CDX" ) ADDITIVE
 
-         if nTotFac > nTotRec
+   USE ( cPatDat() + "DIVISAS.DBF" ) NEW VIA ( cDriver() ) EXCLUSIVE ALIAS ( cCheckArea( "DIVISAS", @dbfDiv ) )
+   SET ADSINDEX TO ( cPatDat() + "DIVISAS.CDX" ) ADDITIVE
 
-            nCon  := nNewReciboProveedor( ( dbfFacPrvT )->cSerFac + Str( ( dbfFacPrvT )->nNumFac ) + ( dbfFacPrvT )->cSufFac, Space( 1 ), dbfFacPrvP )
+   USE ( cPatPrv() + "PROVEE.DBF" ) NEW VIA ( cDriver() ) EXCLUSIVE ALIAS ( cCheckArea( "PROVEE", @dbfPrv ) )
+   SET ADSINDEX TO ( cPatPrv() + "PROVEE.CDX" ) ADDITIVE
 
-            /*
-            Añadimos el nuevo recibo
-            */
+   USE ( cPatGrp() + "FPAGO.DBF" ) NEW VIA ( cDriver() ) EXCLUSIVE ALIAS ( cCheckArea( "FPAGO", @dbfFPago ) )
+   SET ADSINDEX TO ( cPatGrp() + "FPAGO.CDX" ) ADDITIVE
 
-            ( dbfFacPrvP )->( dbAppend() )
-            ( dbfFacPrvP )->cSerFac     := ( dbfFacPrvT )->cSerFac
-            ( dbfFacPrvP )->nNumFac     := ( dbfFacPrvT )->nNumFac
-            ( dbfFacPrvP )->cSufFac     := ( dbfFacPrvT )->cSufFac
-            ( dbfFacPrvP )->cCodPrv     := ( dbfFacPrvT )->cCodPrv
-            ( dbfFacPrvP )->cNomPrv     := ( dbfFacPrvT )->cNomPrv
-            ( dbfFacPrvP )->nNumRec     := nCon
-            ( dbfFacPrvP )->dEntrada    := Ctod( "" )
-            ( dbfFacPrvP )->nImporte    := nTotFac - nTotRec
-            ( dbfFacPrvP )->cDescrip    := "Recibo nº" + AllTrim( Str( nCon ) ) + " de factura " + ( dbfFacPrvT )->cSerFac + "/" + AllTrim( Str( ( dbfFacPrvT )->nNumFac ) ) + "/" + ( dbfFacPrvT )->cSufFac
-            ( dbfFacPrvP )->dPreCob     := GetSysDate()
-            ( dbfFacPrvP )->cPgdoPor    := ""
-            ( dbfFacPrvP )->lCobrado    := .f.
-            ( dbfFacPrvP )->cDivPgo     := ( dbfFacPrvT )->cDivFac
-            ( dbfFacPrvP )->nVdvPgo     := ( dbfFacPrvT )->nVdvFac
-            ( dbfFacPrvP )->lConPgo     := .f.
-            ( dbfFacPrvP )->cTurRec     := cCurSesion()
-            ( dbfFacPrvP )->lCloPgo     := .f.
-            ( dbfFacPrvP )->( dbUnLock() )
+   USE ( cPatDat() + "TIVA.DBF" ) NEW VIA ( cDriver() ) EXCLUSIVE ALIAS ( cCheckArea( "TIVA", @dbfIva ) )
+   SET ADSINDEX TO ( cPatDat() + "TIVA.CDX" ) ADDITIVE
 
-         end if
+   // Rellenamos los campos----------------------------------------------------
+   
+   ( dbfFacPrvP )->( OrdSetFocus( 0 ) )
+   ( dbfFacPrvP )->( dbGoTop() )
 
+   while !( dbfFacPrvP )->( eof() )
+
+      if Empty( ( dbfFacPrvP )->cSufFac )
+         ( dbfFacPrvP )->cSufFac := "00"
+      end if
+
+      if Empty( ( dbfFacPrvP )->cCodPrv )
+         ( dbfFacPrvP )->cCodPrv := RetFld( ( dbfFacPrvP )->cSerie + Str( ( dbfFacPrvP )->nNumFac ) + ( dbfFacPrvP )->cSufFac, dbfFacPrvT, "cCodPrv" )
+      end if
+
+      if Empty( ( dbfFacPrvP )->cNomPrv )
+         ( dbfFacPrvP )->cNomPrv := RetFld( ( dbfFacPrvP )->cSerie + Str( ( dbfFacPrvP )->nNumFac ) + ( dbfFacPrvP )->cSufFac, dbfFacPrvT, "cNomPrv" )
+      end if
+
+      if Empty( ( dbfFacPrvP )->cCodCaj )
+         ( dbfFacPrvP )->cCodCaj := RetFld( ( dbfFacPrvP )->cSerie + Str( ( dbfFacPrvP )->nNumFac ) + ( dbfFacPrvP )->cSufFac, dbfFacPrvT, "cCodCaj" )
+      end if
+
+      if Empty( ( dbfFacPrvP )->cCodUsr )
+         ( dbfFacPrvP )->cCodUsr := RetFld( ( dbfFacPrvP )->cSerie + Str( ( dbfFacPrvP )->nNumFac ) + ( dbfFacPrvP )->cSufFac, dbfFacPrvT, "cCodUsr" )
+      end if
+
+      ( dbfFacPrvP )->( dbSkip() )
+
+   end while
+   ( dbfFacPrvP )->( OrdSetFocus( 1 ) )
+
+   // Repasamos los totales ---------------------------------------------------
+
+   ( dbfFacPrvT )->( OrdSetFocus( 1 ) )
+   ( dbfFacPrvT )->( dbGoTop() )
+
+   while !( dbfFacPrvT )->( eof() )
+
+      nTotFac := nTotFacPrv( ( dbfFacPrvT )->cSerFac + Str( ( dbfFacPrvT )->nNumFac ) + ( dbfFacPrvT )->cSufFac, dbfFacPrvT, dbfFacPrvL, dbfIva, dbfDiv, dbfFacPrvP, nil, nil, .f. )
+      nTotRec := nPagFacPrv( ( dbfFacPrvT )->cSerFac + Str( ( dbfFacPrvT )->nNumFac ) + ( dbfFacPrvT )->cSufFac, dbfFacPrvP, nil, dbfDiv, .f. )
+
+      if nTotFac > nTotRec
+
+         nCon := nNewReciboProveedor( ( dbfFacPrvT )->cSerFac + Str( ( dbfFacPrvT )->nNumFac ) + ( dbfFacPrvT )->cSufFac, Space( 1 ), dbfFacPrvP )
+         
          /*
-         Rellenamos los datos de proveedores--------------------------------------
+         Añadimos el nuevo recibo----------------------------------------------
          */
+         
+         ( dbfFacPrvP )->( dbAppend() )
+         ( dbfFacPrvP )->cSerFac     := ( dbfFacPrvT )->cSerFac
+         ( dbfFacPrvP )->nNumFac     := ( dbfFacPrvT )->nNumFac
+         ( dbfFacPrvP )->cSufFac     := ( dbfFacPrvT )->cSufFac
+         ( dbfFacPrvP )->cCodPrv     := ( dbfFacPrvT )->cCodPrv
+         ( dbfFacPrvP )->cNomPrv     := ( dbfFacPrvT )->cNomPrv
+         ( dbfFacPrvP )->nNumRec     := nCon
+         ( dbfFacPrvP )->dEntrada    := Ctod( "" )
+         ( dbfFacPrvP )->nImporte    := nTotFac - nTotRec
+         ( dbfFacPrvP )->cDescrip    := "Recibo nº" + AllTrim( Str( nCon ) ) + " de factura " + ( dbfFacPrvT )->cSerFac + "/" + AllTrim( Str( ( dbfFacPrvT )->nNumFac ) ) + "/" + ( dbfFacPrvT )->cSufFac
+         ( dbfFacPrvP )->dPreCob     := GetSysDate()
+         ( dbfFacPrvP )->cPgdoPor    := ""
+         ( dbfFacPrvP )->lCobrado    := .f.
+         ( dbfFacPrvP )->cDivPgo     := ( dbfFacPrvT )->cDivFac
+         ( dbfFacPrvP )->nVdvPgo     := ( dbfFacPrvT )->nVdvFac
+         ( dbfFacPrvP )->lConPgo     := .f.
+         ( dbfFacPrvP )->cTurRec     := cCurSesion()
+         ( dbfFacPrvP )->lCloPgo     := .f.
+         ( dbfFacPrvP )->( dbUnLock() )
+      
+      end if
 
-         if ( dbfFacPrvP )->( dbSeek( ( dbfFacPrvT )->cSerFac + Str( ( dbfFacPrvT )->nNumFac ) + ( dbfFacPrvT )->cSufFac ) )
+      ( dbfFacPrvT )->( dbSkip() )
 
-            while ( dbfFacPrvP )->cSerFac + Str( (dbfFacPrvP)->nNumFac ) + (dbfFacPrvP)->cSufFac == ( dbfFacPrvT )->cSerFac + Str( ( dbfFacPrvT )->nNumFac ) + ( dbfFacPrvT )->cSufFac .and. !( dbfFacPrvP )->( eof() )
+      SysRefresh()
 
-               if Empty( ( dbfFacPrvP )->cCodPrv )
-                  if dbLock( dbfFacPrvP )
-                     ( dbfFacPrvP )->cCodPrv := ( dbfFacPrvT )->cCodPrv
-                     ( dbfFacPrvP )->( dbUnlock() )
-                  end if
-               end if
+   end while
 
-               if Empty( ( dbfFacPrvP )->cNomPrv )
-                  if dbLock( dbfFacPrvP )
-                     ( dbfFacPrvP )->cNomPrv := ( dbfFacPrvT )->cNomPrv
-                     ( dbfFacPrvP )->( dbUnlock() )
-                  end if
-               end if
+   if !Empty( dbfFacPrvP )
+      ( dbfFacPrvP )->( dbCloseArea() )
+   end if
+   
+   if !Empty( dbfFacPrvT )
+      ( dbfFacPrvT )->( dbCloseArea() )
+   end if
+   
+   if !Empty( dbfFacPrvL )
+      ( dbfFacPrvL )->( dbCloseArea() )
+   end if
 
-               if Empty( ( dbfFacPrvP )->cCodCaj )
-                  if dbLock( dbfFacPrvP )
-                     ( dbfFacPrvP )->cCodCaj := ( dbfFacPrvT )->cCodCaj
-                     ( dbfFacPrvP )->( dbUnlock() )
-                  end if
-               end if
+   if !Empty( dbfRctPrvT )
+      ( dbfRctPrvT )->( dbCloseArea() )
+   end if
 
-               if Empty( ( dbfFacPrvP )->cCodUsr )
-                  if dbLock( dbfFacPrvP )
-                     ( dbfFacPrvP )->cCodUsr := ( dbfFacPrvT )->cCodUsr
-                     ( dbfFacPrvP )->( dbUnlock() )
-                  end if
-               end if
+   if !Empty( dbfRctPrvL )
+      ( dbfRctPrvL )->( dbCloseArea() )
+   end if
 
-               ( dbfFacPrvP )->( dbSkip() )
+   if !Empty( dbfDiv )    
+      ( dbfDiv )->( dbCloseArea() )
+   end if
 
-            end while
+   if !Empty( dbfPrv )    
+      ( dbfPrv )->( dbCloseArea() )
+   end if
 
-         end if
+   if !Empty( dbfFPago )
+      ( dbfFPago )->( dbCloseArea() )
+   end if
 
-         ( dbfFacPrvT )->( dbSkip() )
-
-         SysRefresh()
-
-      end while
-
-      CloseFiles()
-
+   if !Empty( dbfIva ) 
+      ( dbfIva )->( dbCloseArea() )
    end if
 
 return nil

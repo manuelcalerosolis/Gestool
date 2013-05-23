@@ -7733,8 +7733,8 @@ Method RestoreData()
 
       while !::oDbf:eof()
 
-         if ::oDbf:nStaTur == cajCerrrada
-            ::oDbf:FieldPutByName( "nStaTur", cajAbierta )
+         if ::oDbf:lSndTur
+            ::oDbf:FieldPutByName( "lSndTur", .f. )
          end if
 
          ::oDbf:Skip()

@@ -8099,6 +8099,9 @@ Function SynAlbPrv( cPath )
    dbUseArea( .t., cDriver(), cPath + "PEDPROVL.DBF", cCheckArea( "PEDPROVL", @dbfPedPrvL ), .f. )
    if !lAIS(); ordListAdd( cPath + "PEDPROVL.CDX" ); else ; ordSetFocus( 1 ) ; end
 
+   ( dbfAlbPrvT )->( ordSetFocus( 0 ) )
+   ( dbfAlbPrvT )->( dbGoTop() )
+
    while !( dbfAlbPrvT )->( eof() )
 
       if Empty( ( dbfAlbPrvT )->cSufAlb )
@@ -8149,15 +8152,16 @@ Function SynAlbPrv( cPath )
       ( dbfAlbPrvT )->( dbSkip() )
 
    end while
+   
+   ( dbfAlbPrvT )->( ordSetFocus( 1 ) )
 
    /*
-   ( dbfAlbPrvL )->( dbGoTop() )
-   while !( dbfAlbPrvT )->( dbSeek( ( dbfAlbPrvL )->cSerAlb + Str( ( dbfAlbPrvL )->nNumAlb ) + ( dbfAlbPrvL )->cSufAlb ) ) .and. !( dbfAlbPrvL )->( eof() )
-      ( dbfAlbPrvL )->( dbDelete() )
-   end while
+   Lineas----------------------------------------------------------------------
    */
    
+   ( dbfAlbPrvL )->( ordSetFocus( 0 ) )
    ( dbfAlbPrvL )->( dbGoTop() )
+
    while !( dbfAlbPrvL )->( eof() )
 
       if Empty( ( dbfAlbPrvL )->cSufAlb )
@@ -8212,7 +8216,12 @@ Function SynAlbPrv( cPath )
 
    end while
 
+   ( dbfAlbPrvL )->( ordSetFocus( 1 ) )
+
    // Incidencias -------------------------------------------------------------
+   
+   ( dbfAlbPrvI )->( ordSetFocus( 0 ) )
+   ( dbfAlbPrvI )->( dbGoTop() )
 
    while !( dbfAlbPrvI )->( eof() )
 
@@ -8226,7 +8235,12 @@ Function SynAlbPrv( cPath )
 
    end while
 
+   ( dbfAlbPrvI )->( ordSetFocus( 1 ) )
+
    // Series ---------------------------------------------------------------
+
+   ( dbfAlbPrvS )->( ordSetFocus( 0 ) )
+   ( dbfAlbPrvS )->( dbGoTop() )
 
    while !( dbfAlbPrvS )->( eof() )
 
@@ -8243,6 +8257,8 @@ Function SynAlbPrv( cPath )
       SysRefresh()
 
    end while
+
+   ( dbfAlbPrvS )->( ordSetFocus( 1 ) )
 
    RECOVER USING oError
 

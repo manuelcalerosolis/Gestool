@@ -6682,6 +6682,9 @@ Function SynPedPrv( cPath )
    dbUseArea( .t., cDriver(), cPatDat() + "DIVISAS.DBF", cCheckArea( "DIVISAS", @dbfDiv ), .t. )
    if !lAIS(); ordListAdd( cPatDat() + "DIVISAS.CDX" ); else ; ordSetFocus( 1 ) ; end
 
+   ( dbfPedPrvT )->( OrdSetFocus( 0 ) )
+   ( dbfPedPrvT )->( dbGoTop() )
+
    while !( dbfPedPrvT )->( eof() )
 
       if Empty( ( dbfPedPrvT )->cSufPed )
@@ -6711,6 +6714,13 @@ Function SynPedPrv( cPath )
 
    end while
 
+   ( dbfPedPrvT )->( OrdSetFocus( 1 ) )
+
+   // Lineas ------------------------------------------------------------------
+
+   ( dbfPedPrvL )->( OrdSetFocus( 0 ) )
+   ( dbfPedPrvL )->( dbGoTop() )
+
    while !( dbfPedPrvL )->( eof() )
 
       if Empty( ( dbfPedPrvL )->cSufPed )
@@ -6739,6 +6749,13 @@ Function SynPedPrv( cPath )
 
    end while
 
+   ( dbfPedPrvL )->( OrdSetFocus( 1 ) )
+
+   // Incidencias -------------------------------------------------------------
+
+   ( dbfPedPrvI )->( OrdSetFocus( 0 ) )
+   ( dbfPedPrvI )->( dbGoTop() )
+
    while !( dbfPedPrvI )->( eof() )
 
       if Empty( ( dbfPedPrvI )->cSufPed )
@@ -6750,6 +6767,8 @@ Function SynPedPrv( cPath )
       SysRefresh()
 
    end while
+
+   ( dbfPedPrvI )->( OrdSetFocus( 1 ) )
 
    RECOVER USING oError
 
