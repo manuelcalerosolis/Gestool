@@ -1001,7 +1001,7 @@ FUNCTION AlbPrv( oMenuItem, oWnd, cCodPrv, cCodArt, cCodPed )
       with object ( oWndBrw:AddXCol() )
          :cHeader          := "Número"
          :cSortOrder       := "nNumAlb"
-         :bEditValue       := {|| ( dbfAlbPrvT )->cSerAlb + "/" + Alltrim( Str( ( dbfAlbPrvT )->nNumAlb ) ) + "/" + ( dbfAlbPrvT )->cSufAlb }
+         :bEditValue       := {|| ( dbfAlbPrvT )->cSerAlb + "/" + Alltrim( Str( ( dbfAlbPrvT )->nNumAlb ) ) }
          :nWidth           := 80
          :bLClickHeader    := {| nMRow, nMCol, nFlags, oCol | oWndBrw:ClickOnHeader( oCol ) }
       end with
@@ -1017,7 +1017,7 @@ FUNCTION AlbPrv( oMenuItem, oWnd, cCodPrv, cCodArt, cCodPed )
 
       with object ( oWndBrw:AddXCol() )
          :cHeader          := "Delegación"
-         :bEditValue       := {|| ( dbfAlbPrvT )->cCodDlg }
+         :bEditValue       := {|| ( dbfAlbPrvT )->cSufAlb }
          :nWidth           := 60
          :lHide            := .t.
       end with
