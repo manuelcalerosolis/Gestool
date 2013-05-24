@@ -9302,13 +9302,14 @@ STATIC FUNCTION LoaArt( aGet, aTmp, oBrw, oGetTotal, aTik, lTwo, nMode, oDlg, lN
             */
 
             nImpOfe     := nDtoAtp( aTik[ _NTARIFA ], dbfCliAtp )
-            if nImpOfe  != 0
+            /*COMENTADO PARA QUE LA ATIPICA SEA LA QUE MANDE*/ 
+            //if nImpOfe  != 0
                if !Empty( aGet[ _NDTOLIN ] )
                   aGet[ _NDTOLIN ]:cText( nImpOfe )
                else
                   aTmp[ _NDTOLIN ]     := nImpOfe
                end if
-            end if
+            //end if
 
             if ( dbfCliAtp )->nDtoDiv != 0
                if !Empty( aGet[ _NDTODIV ] )
@@ -9324,13 +9325,14 @@ STATIC FUNCTION LoaArt( aGet, aTmp, oBrw, oGetTotal, aTik, lTwo, nMode, oDlg, lN
 
          case  lSeekAtpFam( aTik[ _CCLITIK ] + cCodFam, aTik[ _DFECTIK ], dbfCliAtp ) .and. ( dbfCliAtp )->lAplFac
 
-            if ( dbfCliAtp )->nDtoArt != 0
+            /*COMENTADO PARA QUE LA ATIPICA SEA LA QUE MANDE*/ 
+            //if ( dbfCliAtp )->nDtoArt != 0
                if !Empty( aGet[ _NDTOLIN ] )
                   aGet[ _NDTOLIN ]:cText( ( dbfCliAtp )->nDtoArt )
                else
                   aTmp[ _NDTOLIN ]     := ( dbfCliAtp )->nDtoArt
                end if
-            end if
+            //end if
 
             if ( dbfCliAtp )->nDtoDiv != 0
                if !Empty( aGet[ _NDTODIV ] )
