@@ -2169,19 +2169,19 @@ function SynRecPrv( cPatEmp )
       end if
 
       if Empty( ( dbfFacPrvP )->cCodPrv )
-         ( dbfFacPrvP )->cCodPrv := RetFld( ( dbfFacPrvP )->cSerie + Str( ( dbfFacPrvP )->nNumFac ) + ( dbfFacPrvP )->cSufFac, dbfFacPrvT, "cCodPrv" )
+         ( dbfFacPrvP )->cCodPrv := RetFld( ( dbfFacPrvP )->cSerFac + Str( ( dbfFacPrvP )->nNumFac ) + ( dbfFacPrvP )->cSufFac, dbfFacPrvT, "cCodPrv" )
       end if
 
       if Empty( ( dbfFacPrvP )->cNomPrv )
-         ( dbfFacPrvP )->cNomPrv := RetFld( ( dbfFacPrvP )->cSerie + Str( ( dbfFacPrvP )->nNumFac ) + ( dbfFacPrvP )->cSufFac, dbfFacPrvT, "cNomPrv" )
+         ( dbfFacPrvP )->cNomPrv := RetFld( ( dbfFacPrvP )->cSerFac + Str( ( dbfFacPrvP )->nNumFac ) + ( dbfFacPrvP )->cSufFac, dbfFacPrvT, "cNomPrv" )
       end if
 
       if Empty( ( dbfFacPrvP )->cCodCaj )
-         ( dbfFacPrvP )->cCodCaj := RetFld( ( dbfFacPrvP )->cSerie + Str( ( dbfFacPrvP )->nNumFac ) + ( dbfFacPrvP )->cSufFac, dbfFacPrvT, "cCodCaj" )
+         ( dbfFacPrvP )->cCodCaj := RetFld( ( dbfFacPrvP )->cSerFac + Str( ( dbfFacPrvP )->nNumFac ) + ( dbfFacPrvP )->cSufFac, dbfFacPrvT, "cCodCaj" )
       end if
 
       if Empty( ( dbfFacPrvP )->cCodUsr )
-         ( dbfFacPrvP )->cCodUsr := RetFld( ( dbfFacPrvP )->cSerie + Str( ( dbfFacPrvP )->nNumFac ) + ( dbfFacPrvP )->cSufFac, dbfFacPrvT, "cCodUsr" )
+         ( dbfFacPrvP )->cCodUsr := RetFld( ( dbfFacPrvP )->cSerFac + Str( ( dbfFacPrvP )->nNumFac ) + ( dbfFacPrvP )->cSufFac, dbfFacPrvT, "cCodUsr" )
       end if
 
       ( dbfFacPrvP )->( dbSkip() )

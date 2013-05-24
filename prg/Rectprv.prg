@@ -8909,24 +8909,122 @@ Return .t.
 
 Function SynRctPrv( cPath )
 
+   local oBlock
+   local oError
    local aTotFac
 
-   if OpenFiles()
+   DEFAULT cPath     := cPatEmp()
 
+   oBlock            := ErrorBlock( {| oError | ApoloBreak( oError ) } )
+   BEGIN SEQUENCE
+
+   USE ( cPatEmp() + "RctPrvT.DBF" ) NEW VIA ( cDriver() ) EXCLUSIVE ALIAS ( cCheckArea( "FACPRVT", @dbfRctPrvT ) )
+   SET ADSINDEX TO ( cPatEmp() + "RctPrvT.CDX" ) ADDITIVE
+
+   USE ( cPatEmp() + "RctPrvL.DBF" ) NEW VIA ( cDriver() ) EXCLUSIVE ALIAS ( cCheckArea( "FACPRVL", @dbfRctPrvL ) )
+   SET ADSINDEX TO ( cPatEmp() + "RctPrvL.CDX" ) ADDITIVE
+
+   USE ( cPatEmp() + "RctPrvI.DBF" ) NEW VIA ( cDriver() ) EXCLUSIVE ALIAS ( cCheckArea( "FACPRVI", @dbfRctPrvI ) )
+   SET ADSINDEX TO ( cPatEmp() + "RctPrvI.CDX" ) ADDITIVE
+
+   USE ( cPatEmp() + "RctPrvD.DBF" ) NEW VIA ( cDriver() ) EXCLUSIVE ALIAS ( cCheckArea( "FACPRVD", @dbfRctPrvD ) )
+   SET ADSINDEX TO ( cPatEmp() + "RctPrvD.CDX" ) ADDITIVE
+
+   USE ( cPatEmp() + "RctPrvS.DBF" ) NEW VIA ( cDriver() ) EXCLUSIVE ALIAS ( cCheckArea( "FACPRVS", @dbfRctPrvS ) )
+   SET ADSINDEX TO ( cPatEmp() + "RctPrvS.CDX" ) ADDITIVE
+
+   USE ( cPatEmp() + "FACPRVP.DBF" ) NEW VIA ( cDriver() ) EXCLUSIVE ALIAS ( cCheckArea( "FACPRVP", @dbfRctPrvP ) )
+   SET ADSINDEX TO ( cPatEmp() + "FACPRVP.CDX" ) ADDITIVE
+      ( dbfRctPrvP )->( OrdSetFocus( "rNumFac" ) )
+
+   USE ( cPatPrv() + "PROVEE.DBF" ) NEW VIA ( cDriver() ) EXCLUSIVE ALIAS ( cCheckArea( "PROVEE", @dbfPrv ) )
+   SET ADSINDEX TO ( cPatPrv() + "PROVEE.CDX" ) ADDITIVE
+
+   USE ( cPatDat() + "TIVA.DBF" ) NEW VIA ( cDriver() ) EXCLUSIVE ALIAS ( cCheckArea( "TIVA", @dbfIva ) )
+   SET ADSINDEX TO ( cPatDat() + "TIVA.CDX" ) ADDITIVE
+
+   USE ( cPatGrp() + "FPAGO.DBF" ) NEW VIA ( cDriver() ) EXCLUSIVE ALIAS ( cCheckArea( "FPAGO", @dbfFPago ) )
+   SET ADSINDEX TO ( cPatGrp() + "FPAGO.CDX" ) ADDITIVE
+
+   USE ( cPatDat() + "DIVISAS.DBF" ) NEW VIA ( cDriver() ) EXCLUSIVE ALIAS ( cCheckArea( "DIVISAS", @dbfDiv ) )
+   SET ADSINDEX TO ( cPatDat() + "DIVISAS.CDX" ) ADDITIVE
+
+   USE ( cPatDat() + "Cajas.Dbf" ) NEW VIA ( cDriver() ) EXCLUSIVE ALIAS ( cCheckArea( "CAJAS", @dbfCajT ) )
+   SET ADSINDEX TO ( cPatDat() + "Cajas.Cdx" ) ADDITIVE
+
+   // Cabeceras ------------------------------------------------------------
+
+   ( dbfRctPrvT )->( OrdSetFocus( 0 ) )
+   ( dbfRctPrvT )->( dbGoTop() )
+
+   while !( dbfRctPrvT )->( eof() )
+
+      if Empty( ( dbfRctPrvT )->cSufFac )
+         ( dbfRctPrvT )->cSufFac := "00"
+      end if
+
+      if Empty( ( dbfRctPrvT )->cCodCaj )
+         ( dbfRctPrvT )->cCodCaj := "000"
+      end if
+
+      ( dbfRctPrvT )->( dbSkip() )
+
+   end while
+
+   ( dbfRctPrvT )->( OrdSetFocus( 1 ) )
+
+   // Lineas ----------------------------------------------------------------
+
+   ( dbfRctPrvL )->( OrdSetFocus( 0 ) )
+   ( dbfRctPrvL )->( dbGoTop() )
+
+   while !( dbfRctPrvL )->( eof() )
+
+      if Empty( ( dbfRctPrvL )->cSufFac )
+         ( dbfRctPrvL )->cSufFac := "00"
+      end if
+
+      if Empty( ( dbfRctPrvL )->cLote ) .and. !Empty( ( dbfRctPrvL )->nLote )
+         ( dbfRctPrvL )->cLote   := AllTrim( Str( ( dbfRctPrvL )->nLote ) )
+      end if
+
+      if !Empty( ( dbfRctPrvL )->cRef ) .and. Empty( ( dbfRctPrvL )->cCodFam )
+         ( dbfRctPrvL )->cCodFam := RetFamArt( ( dbfRctPrvL )->cRef, dbfArticulo )
+      end if
+
+      if !Empty( ( dbfRctPrvL )->cRef ) .and. !Empty( ( dbfRctPrvL )->cCodFam )
+         ( dbfRctPrvL )->cGrpFam := cGruFam( ( dbfRctPrvL )->cCodFam, dbfFamilia )
+      end if
+
+      if Empty( ( dbfRctPrvL )->nReq )
+         ( dbfRctPrvL )->nReq    := nPReq( dbfIva, ( dbfRctPrvL )->nIva )
+      end if
+
+      if ( dbfRctPrvL )->dFecFac != ( dbfRctPrvT )->dFecFac
+         ( dbfRctPrvL )->dFecFac := ( dbfRctPrvT )->dFecFac
+      end if
+
+      ( dbfRctPrvL )->( dbSkip() )
+
+      SysRefresh()
+
+   end while
+
+   ( dbfRctPrvL )->( OrdSetFocus( 1 ) )
+
+   // Pagos ----------------------------------------------------------------
+
+   ( dbfRctPrvP )->( OrdSetFocus( 0 ) )
+   ( dbfRctPrvP )->( dbGoTop() )
+      
       while !( dbfRctPrvP )->( eof() )
 
-         if Empty( ( dbfRctPrvP )->cCodCaj )
-            if dbLock( dbfRctPrvP )
-               ( dbfRctPrvP )->cCodCaj := "000"
-               ( dbfRctPrvP )->( dbUnLock() )
-            end if
+         if Empty( ( dbfRctPrvP )->cSufFac )
+            ( dbfRctPrvP )->cSufFac := "00"
          end if
 
-         if !( ( dbfRctPrvP )->cSerFac >= "A" .and. ( dbfRctPrvP )->cSerFac <= "Z" )
-            if dbLock( dbfRctPrvP )
-               ( dbfRctPrvP )->( dbDelete() )
-               ( dbfRctPrvP )->( dbUnLock() )
-            end if
+         if Empty( ( dbfRctPrvP )->cCodCaj )
+            ( dbfRctPrvP )->cCodCaj := "000"
          end if
 
          ( dbfRctPrvP )->( dbSkip() )
@@ -8935,27 +9033,37 @@ Function SynRctPrv( cPath )
 
       end while
 
+   ( dbfRctPrvP )->( OrdSetFocus( 1 ) )
+
+   // Incidencias ----------------------------------------------------------------
+
+   ( dbfRctPrvI )->( OrdSetFocus( 0 ) )
+   ( dbfRctPrvI )->( dbGoTop() )
+
+   while !( dbfRctPrvI )->( eof() )
+
+      if Empty( ( dbfRctPrvI )->cSufFac )
+         ( dbfRctPrvI )->cSufFac := "00"
+      end if
+
+      ( dbfRctPrvI )->( dbSkip() )
+
+      SysRefresh()
+
+   end while
+
+   ( dbfRctPrvI )->( OrdSetFocus( 1 ) )
+
+      /*
+      Rellenamos los campos de totales-----------------------------------------
+      */
+
+      ( dbfRctPrvT )->( ordSetFocus( 1 ) )
+      ( dbfRctPrvT )->( dbGoTop() )
+
       while !( dbfRctPrvT )->( eof() )
 
-         if Empty( ( dbfRctPrvT )->cCodCaj )
-            if dbLock( dbfRctPrvT )
-               ( dbfRctPrvT )->cCodCaj := "000"
-               ( dbfRctPrvT )->( dbUnLock() )
-            end if
-         end if
-
-         if !( ( dbfRctPrvT )->cSerFac >= "A" .and. ( dbfRctPrvT )->cSerFac <= "Z" )
-            if dbLock( dbfRctPrvT )
-               ( dbfRctPrvT )->( dbDelete() )
-               ( dbfRctPrvT )->( dbUnLock() )
-            end if
-         end if
-
-         /*
-         Rellenamos los campos de totales--------------------------------------
-         */
-
-         if ( dbfRctPrvT )->nTotFac == 0 .and. dbLock( dbfRctPrvT )
+         if ( dbfRctPrvT )->nTotFac == 0
 
             aTotFac                 := aTotRctPrv( ( dbfRctPrvT )->cSerFac + Str( ( dbfRctPrvT )->nNumFac ) + ( dbfRctPrvT )->cSufFac, dbfRctPrvT, dbfRctPrvL, dbfIva, dbfDiv, dbfRctPrvP, ( dbfRctPrvT )->cDivFac )
 
@@ -8974,78 +9082,25 @@ Function SynRctPrv( cPath )
 
       end while
 
-      while !( dbfRctPrvL )->( eof() )
+   RECOVER USING oError
 
-         if !( dbfRctPrvT )->( dbSeek( ( dbfRctPrvL )->cSerFac + Str( ( dbfRctPrvL )->nNumFac ) + ( dbfRctPrvL )->cSufFac ) )
+      msgStop( "Imposible abrir todas las bases de datos " + CRLF + ErrorMessage( oError ) )
 
-            if dbLock( dbfRctPrvL )
-               ( dbfRctPrvL )->( dbDelete() )
-               ( dbfRctPrvL )->( dbUnLock() )
-            end if
+   END SEQUENCE
 
-         else
+   ErrorBlock( oBlock )
 
-            if Empty( ( dbfRctPrvL )->cLote ) .and. !Empty( ( dbfRctPrvL )->nLote )
-               if dbLock( dbfRctPrvL )
-                  ( dbfRctPrvL )->cLote   := AllTrim( Str( ( dbfRctPrvL )->nLote ) )
-                  ( dbfRctPrvL )->( dbUnLock() )
-               end if
-            end if
-
-            if !Empty( ( dbfRctPrvL )->cRef ) .and. Empty( ( dbfRctPrvL )->cCodFam )
-               if dbLock( dbfRctPrvL )
-                  ( dbfRctPrvL )->cCodFam := RetFamArt( ( dbfRctPrvL )->cRef, dbfArticulo )
-                  ( dbfRctPrvL )->( dbUnLock() )
-               end if
-            end if
-
-            if !Empty( ( dbfRctPrvL )->cRef ) .and. !Empty( ( dbfRctPrvL )->cCodFam )
-               if dbLock( dbfRctPrvL )
-                  ( dbfRctPrvL )->cGrpFam := cGruFam( ( dbfRctPrvL )->cCodFam, dbfFamilia )
-                  ( dbfRctPrvL )->( dbUnLock() )
-               end if
-            end if
-
-            if Empty( ( dbfRctPrvL )->nReq )
-               if dbLock( dbfRctPrvL )
-                  ( dbfRctPrvL )->nReq    := nPReq( dbfIva, ( dbfRctPrvL )->nIva )
-                  ( dbfRctPrvL )->( dbUnLock() )
-               end if
-            end if
-
-            if ( dbfRctPrvL )->dFecFac != ( dbfRctPrvT )->dFecFac
-               if dbLock( dbfRctPrvL )
-                  ( dbfRctPrvL )->dFecFac := ( dbfRctPrvT )->dFecFac
-                  ( dbfRctPrvL )->( dbUnLock() )
-               end if
-            end if
-
-         end if
-
-         ( dbfRctPrvL )->( dbSkip() )
-
-         SysRefresh()
-
-      end while
-
-      while !( dbfRctPrvI )->( eof() )
-
-         if !( dbfRctPrvT )->( dbSeek( ( dbfRctPrvI )->cSerFac + Str( ( dbfRctPrvI )->nNumFac ) + ( dbfRctPrvI )->cSufFac ) )
-            if dbLock( dbfRctPrvI )
-               ( dbfRctPrvI )->( dbDelete() )
-               ( dbfRctPrvI )->( dbUnLock() )
-            end if
-         end if
-
-         ( dbfRctPrvI )->( dbSkip() )
-
-         SysRefresh()
-
-      end while
-
-      CloseFiles()
-
-   end if
+   CLOSE ( dbfRctPrvT )
+   CLOSE ( dbfRctPrvL )
+   CLOSE ( dbfRctPrvI )
+   CLOSE ( dbfRctPrvD )
+   CLOSE ( dbfRctPrvS )
+   CLOSE ( dbfRctPrvP )
+   CLOSE ( dbfPrv     )
+   CLOSE ( dbfIva     )
+   CLOSE ( dbfFPago   )
+   CLOSE ( dbfDiv     )
+   CLOSE ( dbfCajT    )
 
 return nil
 
