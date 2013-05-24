@@ -11264,6 +11264,9 @@ function SynFacRec( cPath )
 
       // Cabeceras-------------------------------------------------------------
 
+		( dbfFacRecT )->( ordSetFocus( 0 ) )
+		( dbfFacRecT )->( dbGoTop() )
+
       while !( dbfFacRecT )->( eof() )
 
          if Empty( ( dbfFacRecT )->cSufFac )
@@ -11271,12 +11274,96 @@ function SynFacRec( cPath )
          end if
 
          if Empty( ( dbfFacRecT )->cCodCaj )
-            ( dbfFacRecT )->cCodCaj    := "000"
+            ( dbfFacRecT )->cCodCaj := "000"
          end if
 
-         /*
-         Rellenamos los campos con los totales---------------------------------
-         */
+         ( dbfFacRecT )->( dbSkip() )
+
+      end while
+
+		( dbfFacRecT )->( ordSetFocus( 1 ) )
+
+      // Lineas----------------------------------------------------------------
+
+		( dbfFacRecL )->( ordSetFocus( 0 ) )
+		( dbfFacRecL )->( dbGoTop() )
+
+      while !( dbfFacRecL )->( eof() )
+
+	     	if Empty( ( dbfFacRecL )->cSufFac )
+	        	( dbfFacRecL )->cSufFac 	:= "00"
+	     	end if
+	        
+	      if Empty( ( dbfFacRecL )->cLote ) .and. !Empty( ( dbfFacRecL )->nLote )
+	         ( dbfFacRecL )->cLote         := AllTrim( Str( ( dbfFacRecL )->nLote ) )
+	      end if
+	      
+	      if Empty( ( dbfFacRecL )->nValImp )
+	         cCodImp                       := RetFld( ( dbfFacRecL )->cRef, dbfArticulo, "cCodImp" )
+	        	if !Empty( cCodImp )
+	            ( dbfFacRecL )->nValImp    := oNewImp:nValImp( cCodImp )
+	         end if
+	      end if
+	      
+	      if Empty( ( dbfFacRecL )->nVolumen )
+	         ( dbfFacRecL )->nVolumen      :=  RetFld( ( dbfFacRecL )->cRef, dbfArticulo, "nVolumen" )
+	      end if
+	      
+	      if !Empty( ( dbfFacRecL )->mNumSer )
+
+	         aNumSer                       := hb_aTokens( ( dbfFacRecL )->mNumSer, "," )
+	         for each cNumSer in aNumSer
+	            ( dbfFacRecS )->( dbAppend() )
+	            ( dbfFacRecS )->cSerFac    := ( dbfFacRecL )->cSerie
+	            ( dbfFacRecS )->nNumFac    := ( dbfFacRecL )->nNumFac
+	            ( dbfFacRecS )->cSufFac    := ( dbfFacRecL )->cSufFac
+	            ( dbfFacRecS )->cRef       := ( dbfFacRecL )->cRef
+	            ( dbfFacRecS )->cAlmLin    := ( dbfFacRecL )->cAlmLin
+	            ( dbfFacRecS )->nNumLin    := ( dbfFacRecL )->nNumLin
+	            ( dbfFacRecS )->cNumSer    := cNumSer
+	         next
+
+            ( dbfFacRecL )->mNumSer       := ""
+
+         end if
+
+         ( dbfFacRecL )->( dbSkip() )
+
+         SysRefresh()
+
+      end while
+		
+		( dbfFacRecL )->( ordSetFocus( 1 ) )
+
+      // Series ---------------------------------------------------------------
+
+		( dbfFacRecS )->( ordSetFocus( 0 ) ) 
+		( dbfFacRecS )->( dbGoTop() ) 
+
+      while !( dbfFacRecS )->( eof() )
+
+      	if Empty( ( dbfFacRecS )->cSufFac )
+          	( dbfFacRecS )->cSufFac := "00"
+       	end if
+
+        	if Empty( ( dbfFacRecS )->dFecFac )
+           	( dbfFacRecS )->dFecFac 	:= RetFld( ( dbfFacRecS )->cSerie + Str( ( dbfFacRecS )->nNumFac ) + ( dbfFacRecS )->cSufFac, dbfFacRecT, "dFecFac" )
+        	end if
+
+        	( dbfFacRecS )->( dbSkip() )
+
+        	SysRefresh()
+
+      end while
+
+      ( dbfFacRecS )->( ordSetFocus( 1 ) )
+
+      /*
+      Rellenamos los campos con los totales---------------------------------
+      */
+
+		( dbfFacRecT )->( dbGoTop() )
+      while !( dbfFacRecT )->( eof() )
 
          if ( dbfFacRecT )->nTotFac == 0
             aTotFac                 := aTotFacRec( ( dbfFacRecT )->cSerie + Str( ( dbfFacRecT )->nNumFac ) + ( dbfFacRecT )->cSufFac, dbfFacRecT, dbfFacRecL, dbfIva, dbfDiv, ( dbfFacRecT )->cDivFac )
@@ -11287,69 +11374,6 @@ function SynFacRec( cPath )
          end if
 
          ( dbfFacRecT )->( dbSkip() )
-
-      end while
-
-      // Lineas----------------------------------------------------------------
-
-      while !( dbfFacRecL )->( eof() )
-
-         	if Empty( ( dbfFacRecL )->cSufFac )
-            	( dbfFacRecL )->cSufFac 	:= "00"
-         	end if
-
-            if Empty( ( dbfFacRecL )->cLote ) .and. !Empty( ( dbfFacRecL )->nLote )
-               ( dbfFacRecL )->cLote         := AllTrim( Str( ( dbfFacRecL )->nLote ) )
-            end if
-
-            if Empty( ( dbfFacRecL )->nValImp )
-               cCodImp                       := RetFld( ( dbfFacRecL )->cRef, dbfArticulo, "cCodImp" )
-               if !Empty( cCodImp )
-                  ( dbfFacRecL )->nValImp    := oNewImp:nValImp( cCodImp )
-               end if
-            end if
-
-            if Empty( ( dbfFacRecL )->nVolumen )
-               ( dbfFacRecL )->nVolumen      :=  RetFld( ( dbfFacRecL )->cRef, dbfArticulo, "nVolumen" )
-            end if
-
-            if !Empty( ( dbfFacRecL )->mNumSer )
-               aNumSer                       := hb_aTokens( ( dbfFacRecL )->mNumSer, "," )
-               for each cNumSer in aNumSer
-                  ( dbfFacRecS )->( dbAppend() )
-                  ( dbfFacRecS )->cSerFac    := ( dbfFacRecL )->cSerie
-                  ( dbfFacRecS )->nNumFac    := ( dbfFacRecL )->nNumFac
-                  ( dbfFacRecS )->cSufFac    := ( dbfFacRecL )->cSufFac
-                  ( dbfFacRecS )->cRef       := ( dbfFacRecL )->cRef
-                  ( dbfFacRecS )->cAlmLin    := ( dbfFacRecL )->cAlmLin
-                  ( dbfFacRecS )->nNumLin    := ( dbfFacRecL )->nNumLin
-                  ( dbfFacRecS )->cNumSer    := cNumSer
-               next
-
-               ( dbfFacRecL )->mNumSer       := ""
-            end if
-
-         ( dbfFacRecL )->( dbSkip() )
-
-         SysRefresh()
-
-      end while
-
-      // Series ---------------------------------------------------------------
-
-      while !( dbfFacRecS )->( eof() )
-
-      	if Empty( ( dbfFacRecS )->cSufFac )
-          	( dbfFacRecS )->cSufFac := "00"
-       	end if
-
-        if Empty( ( dbfFacRecS )->dFecFac )
-           ( dbfFacRecS )->dFecFac 	:= RetFld( ( dbfFacRecS )->cSerie + Str( ( dbfFacRecS )->nNumFac ) + ( dbfFacRecS )->cSufFac, dbfFacRecT, "dFecFac" )
-        end if
-
-        ( dbfFacRecS )->( dbSkip() )
-
-        SysRefresh()
 
       end while
 
