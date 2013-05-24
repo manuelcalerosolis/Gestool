@@ -6174,9 +6174,10 @@ end if
                */
 
                nImpAtp     := nDtoAtp( nTarOld, dbfCliAtp )
-               if nImpAtp  != 0
+               /*COMENTADO PARA QUE LA ATIPICA SEA LA QUE MANDE*/ 
+               //if nImpAtp  != 0
                   aGet[ _NDTO ]:cText( nImpAtp )
-               end if
+               //end if
 
                /*
                Descuento por promocion--------------------------------------
@@ -6205,9 +6206,10 @@ end if
             case lSeekAtpFam( aTmpSat[ _CCODCLI ] + aTmp[ _CCODFAM ], aTmpSat[ _DFECSAT ], dbfCliAtp ) .and. ;
                   ( dbfCliAtp )->lAplSat
 
-               if ( dbfCliAtp )->nDtoArt != 0
+               /*COMENTADO PARA QUE LA ATIPICA SEA LA QUE MANDE*/ 
+               //if ( dbfCliAtp )->nDtoArt != 0
                   aGet[_NDTO   ]:cText( ( dbfCliAtp )->nDtoArt )
-               end if
+               //end if
 
                if ( dbfCliAtp )->nDprArt != 0
                   aGet[_NDTOPRM]:cText( ( dbfCliAtp )->nDprArt )

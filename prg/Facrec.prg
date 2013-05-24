@@ -7045,9 +7045,10 @@ STATIC FUNCTION LoaArt( aGet, bmpImage, aTmp, aTmpFac, oStkAct, oSayPr1, oSayPr2
             */
 
             nImpAtp     := nDtoAtp( nTarOld, dbfClientAtp )
-            if nImpAtp  != 0
+            /*COMENTADO PARA QUE LA ATIPICA SEA LA QUE MANDE*/ 
+            //if nImpAtp  != 0
                aGet[ _NDTO ]:cText( nImpAtp )
-            end if
+            //end if
 
             /*
             Descuento por promocion--------------------------------------
@@ -7070,9 +7071,10 @@ STATIC FUNCTION LoaArt( aGet, bmpImage, aTmp, aTmpFac, oStkAct, oSayPr1, oSayPr2
          case lSeekAtpFam( aTmpFac[ _CCODCLI ] + aTmp[ _CCODFAM ], aTmpFac[ _DFECFAC ], dbfClientAtp ) .and. ;
             ( dbfClientAtp )->lAplFac 
 
-            if ( dbfClientAtp )->nDtoArt != 0
+            /*COMENTADO PARA QUE LA ATIPICA SEA LA QUE MANDE*/ 
+            //if ( dbfClientAtp )->nDtoArt != 0
                aGet[_NDTO    ]:cText( ( dbfClientAtp )->NDTOART )
-            end if
+            //end if
 
             if ( dbfClientAtp )->NDPRART != 0
                aGet[_NDTOPRM ]:cText( ( dbfClientAtp )->NDPRART )

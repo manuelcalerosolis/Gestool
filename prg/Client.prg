@@ -165,15 +165,16 @@
 #define _aLAPLPED                 31      //   L      1     0
 #define _aLAPLALB                 32      //   L      1     0
 #define _aLAPLFAC                 33      //   L      1     0
-#define _aNUNVOFE                 34      //   N      3     0
-#define _aNUNCOFE                 35      //   N      3     0
-#define _aNTIPXBY                 36      //   N      1     0
-#define _aNDTO1                   37      //   N     16     6
-#define _aNDTO2                   38      //   N     16     6
-#define _aNDTO3                   39      //   N     16     6
-#define _aNDTO4                   40      //   N     16     6
-#define _aNDTO5                   41      //   N     16     6
-#define _aNDTO6                   42      //   N     16     6
+#define _aLAPLSAT                 34      //   L      1     0
+#define _aNUNVOFE                 35      //   N      3     0
+#define _aNUNCOFE                 36      //   N      3     0
+#define _aNTIPXBY                 37      //   N      1     0
+#define _aNDTO1                   38      //   N     16     6
+#define _aNDTO2                   39      //   N     16     6
+#define _aNDTO3                   40      //   N     16     6
+#define _aNDTO4                   41      //   N     16     6
+#define _aNDTO5                   42      //   N     16     6
+#define _aNDTO6                   43      //   N     16     6
 
 #define fldGeneral                oFld:aDialogs[1]
 #define fldComercial              oFld:aDialogs[2]
@@ -3344,6 +3345,7 @@ STATIC FUNCTION EdtAtp( aTmp, aGet, dbfTmpAtp, oBrw, aTmpCli, aGetCli, nMode )
       aTmp[ _aLAPLPED ] := .t.
       aTmp[ _aLAPLALB ] := .t.
       aTmp[ _aLAPLFAC ] := .t.
+      aTmp[ _aLAPLSAT ] := .t.
       aTmp[ _aNTIPXBY ] := 2
       aTmp[ _aNUNVOFE ] := 1
       aTmp[ _aNUNCOFE ] := 1
@@ -3735,6 +3737,11 @@ STATIC FUNCTION EdtAtp( aTmp, aGet, dbfTmpAtp, oBrw, aTmpCli, aGetCli, nMode )
          ID       210 ;
          WHEN     ( nMode != ZOOM_MODE ) ;
          OF       oFld:aDialogs[2]
+
+      REDEFINE CHECKBOX aTmp[ _aLAPLSAT ] ;
+         ID       250 ;
+         WHEN     ( nMode != ZOOM_MODE ) ;
+         OF       oFld:aDialogs[2]   
 
       /*
       Ofertas de X*Y
@@ -5286,6 +5293,7 @@ static function AddFamilia( oBrwAtp, dbfTmpAtp, cCodCli )
    local lAplPed     := .t.
    local lAplAlb     := .t.
    local lAplFac     := .t.
+   local lAplSat     := .t.
    local oFamIni
    local cFamIni     := dbFirst( dbfFamilia, 1 )
    local oFamIniTxt
@@ -5487,6 +5495,10 @@ static function AddFamilia( oBrwAtp, dbfTmpAtp, cCodCli )
       ID       240 ;
       OF       oDlg
 
+   REDEFINE CHECKBOX lAplSat ;
+      ID       260 ;
+      OF       oDlg   
+
    /*
    Botones de la Caja de Dialogo__________________________________________
    */
@@ -5494,7 +5506,7 @@ static function AddFamilia( oBrwAtp, dbfTmpAtp, cCodCli )
    REDEFINE BUTTON oBtnOk ;
       ID       IDOK ;
       OF       oDlg ;
-      ACTION   (  AddArtFam( cCodCli, cFamIni, cFamFin, aPre, nPre, nDto, nDtoArt, nDtoDiv, nDprArt, nComAge, dFecIni, dFecFin, lAplPre, lAplPed, lAplAlb, lAplFac, oDlg ),;
+      ACTION   (  AddArtFam( cCodCli, cFamIni, cFamFin, aPre, nPre, nDto, nDtoArt, nDtoDiv, nDprArt, nComAge, dFecIni, dFecFin, lAplPre, lAplPed, lAplAlb, lAplFac, lAplSat, oDlg ),;
                   oBrwAtp:Refresh() )
 
    REDEFINE BUTTON ;
@@ -5511,7 +5523,7 @@ return nil
 
 //---------------------------------------------------------------------------//
 
-static function AddArtFam( cCodCli, cFamIni, cFamFin, aPre, nPre, nDto, nDtoArt, nDtoDiv, nDprArt, nComAge, dFecIni, dFecFin, lAplPre, lAplPed, lAplAlb, lAplFac, oDlg )
+static function AddArtFam( cCodCli, cFamIni, cFamFin, aPre, nPre, nDto, nDtoArt, nDtoDiv, nDprArt, nComAge, dFecIni, dFecFin, lAplPre, lAplPed, lAplAlb, lAplFac, lAplSat, oDlg )
 
    local nIvaPct  := 0
    local nOrdArt  := ( dbfArticulo )->( OrdSetFocus( "cFamCod" ) )
@@ -5593,6 +5605,7 @@ static function AddArtFam( cCodCli, cFamIni, cFamFin, aPre, nPre, nDto, nDtoArt,
                   ( dbfTmpAtp )->lAplPed     := lAplPed
                   ( dbfTmpAtp )->lAplAlb     := lAplAlb
                   ( dbfTmpAtp )->lAplFac     := lAplFac
+                  ( dbfTmpAtp )->lAplSat     := lAplSat
 
                   ( dbfTmpAtp )->nDto1       := nDto[ 1 ]
                   ( dbfTmpAtp )->nDto2       := nDto[ 2 ]
@@ -10775,6 +10788,7 @@ STATIC FUNCTION AtpPda( aTmp, aGet, dbfTmpAtp, oBrw, aTmpCli, aGetCli, nMode )
       aTmp[ _aLAPLPED ] := .t.
       aTmp[ _aLAPLALB ] := .t.
       aTmp[ _aLAPLFAC ] := .t.
+      aTmp[ _aLAPLSAT ] := .t.
       aTmp[ _aNTIPXBY ] := 2
       aTmp[ _aNUNVOFE ] := 1
       aTmp[ _aNUNCOFE ] := 1
@@ -11604,6 +11618,7 @@ FUNCTION aItmAtp()
    aAdd( aBase,  { "lAplPed",   "L",  1, 0, "Aplicar en pedidos" }                     )
    aAdd( aBase,  { "lAplAlb",   "L",  1, 0, "Aplicar en albaranes" }                   )
    aAdd( aBase,  { "lAplFac",   "L",  1, 0, "Aplicar en facturas" }                    )
+   aAdd( aBase,  { "lAplSat",   "L",  1, 0, "Aplicar en S.A.T." }                      )
    aAdd( aBase,  { "nUnvOfe",   "N",  3, 0, "Unidades a vender en la oferta" }         )
    aAdd( aBase,  { "nUncOfe",   "N",  3, 0, "Unidades a cobrar en la oferta" }         )
    aAdd( aBase,  { "nTipXby",   "N",  1, 0, "Tipo de oferta" }                         )
