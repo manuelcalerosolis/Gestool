@@ -4,15 +4,51 @@
 		"selected_items":
 		[
 			[
-				"pad",
-				"padding-left"
+				"Rectificativas",
+				"Rectificativas"
 			],
 			[
-				"padi",
-				"padding-right"
+				"Facturas",
+				"Facturas"
+			],
+			[
+				"proveedor",
+				"proveedor"
 			],
 			[
 				"pa",
+				"padding-top"
+			],
+			[
+				"padi",
+				"padding-bottom"
+			],
+			[
+				"al",
+				"vertical-align"
+			],
+			[
+				"te",
+				"text-decoration"
+			],
+			[
+				"mar",
+				"margin-right"
+			],
+			[
+				"mat",
+				"margin-bottom"
+			],
+			[
+				"list",
+				"list-style-type"
+			],
+			[
+				"ba",
+				"background"
+			],
+			[
+				"pad",
 				"padding-left"
 			],
 			[
@@ -42,10 +78,6 @@
 			[
 				"center",
 				"center_column"
-			],
-			[
-				"ba",
-				"background-color"
 			],
 			[
 				"lCobro",
@@ -482,38 +514,6 @@
 			[
 				"Control",
 				"ControlAcceso"
-			],
-			[
-				"dFecPed",
-				"dFecPed"
-			],
-			[
-				"nDto",
-				"nDto"
-			],
-			[
-				"nLin",
-				"nNumLin"
-			],
-			[
-				"nServicio",
-				"nServicioAnterior"
-			],
-			[
-				"nSer",
-				"nServicioAnterior"
-			],
-			[
-				"nDpp",
-				"nDpp"
-			],
-			[
-				"oGrupo",
-				"oGrupoImprimir"
-			],
-			[
-				"nU",
-				"nUbiTik"
 			]
 		]
 	},
@@ -536,10 +536,18 @@
 			}
 		},
 		{
+			"file": "/C/AppServ/www/zemtrum/tienda/themes/zemtrum/css/global.css",
+			"settings":
+			{
+				"buffer_size": 62265,
+				"line_ending": "Windows"
+			}
+		},
+		{
 			"file": "/C/AppServ/www/zemtrum/tienda/modules/blockuserinfo/blockuserinfo.css",
 			"settings":
 			{
-				"buffer_size": 2629,
+				"buffer_size": 3215,
 				"line_ending": "Unix"
 			}
 		},
@@ -547,55 +555,15 @@
 			"file": "/C/AppServ/www/zemtrum/tienda/modules/blockuserinfo/blockuserinfo.tpl",
 			"settings":
 			{
-				"buffer_size": 4486,
+				"buffer_size": 5497,
 				"line_ending": "Unix"
-			}
-		},
-		{
-			"file": "prg/Facauto.prg",
-			"settings":
-			{
-				"buffer_size": 89280,
-				"line_ending": "Windows"
-			}
-		},
-		{
-			"file": "prg/Articulo.prg",
-			"settings":
-			{
-				"buffer_size": 676581,
-				"line_ending": "Windows"
-			}
-		},
-		{
-			"file": "prg/Factcli.prg",
-			"settings":
-			{
-				"buffer_size": 798881,
-				"line_ending": "Windows"
-			}
-		},
-		{
-			"file": "prg/Tdetfacautomatica.prg",
-			"settings":
-			{
-				"buffer_size": 24646,
-				"line_ending": "Windows"
 			}
 		},
 		{
 			"file": "/C/AppServ/www/zemtrum/tienda/js/jquery.reveal.js",
 			"settings":
 			{
-				"buffer_size": 6509,
-				"line_ending": "Unix"
-			}
-		},
-		{
-			"file": "/C/Users/Villa/Desktop/reveal/reveal.css",
-			"settings":
-			{
-				"buffer_size": 1701,
+				"buffer_size": 7522,
 				"line_ending": "Unix"
 			}
 		}
@@ -632,20 +600,32 @@
 	},
 	"file_history":
 	[
+		"/C/fw195/Gestool/prg/Albcli.prg",
+		"/C/fw195/Gestool/prg/Pedcli.prg",
+		"/C/fw195/Gestool/prg/Rectprv.prg",
+		"/C/fw195/Gestool/prg/Factprv.prg",
+		"/C/fw195/Gestool/prg/Albprov.prg",
+		"/C/fw195/Gestool/prg/Pedprov.prg",
+		"/C/fw195/Gestool/prg/Tfastventasarticulos.prg",
+		"/C/fw195/Gestool/prg/Tfastreportinfgen.prg",
+		"/C/fw195/Gestool/include/Factu.ch",
+		"/C/fw195/Gestool/prg/pedcli",
+		"/C/Users/Villa/Desktop/reveal/reveal.css",
+		"/C/fw195/Gestool/prg/Articulo.prg",
+		"/C/fw195/Gestool/prg/Facauto.prg",
+		"/C/fw195/Gestool/prg/Tdetfacautomatica.prg",
+		"/C/fw195/Gestool/prg/Factcli.prg",
 		"/C/Users/Villa/Desktop/enviar_email_ajax/enviar_email_ajax/enviar.php",
 		"/C/Users/Villa/Desktop/enviar_email_ajax/enviar_email_ajax/jquery.js",
 		"/C/Users/Villa/Desktop/enviar_email_ajax/enviar_email_ajax/jquery.form.js",
 		"/C/fw195/Gestool/prg/Utildbf.prg",
-		"/C/fw195/Gestool/prg/Albcli.prg",
 		"/C/Users/Villa/Desktop/enviar_email_ajax/enviar_email_ajax/index.php",
 		"/C/fw195/Gestool/prg/Divisas.prg",
-		"/C/fw195/Gestool/prg/Pedcli.prg",
 		"/C/fw195/Gestool/prg/Precli.prg",
 		"/C/Users/Villa/Desktop/reveal/demo.html",
 		"/C/AppServ/www/zemtrum/tienda/modules/blockuserinfo/jquery.reveal.js",
 		"/C/AppServ/www/zemtrum/brooklyn/index.html",
 		"/C/AppServ/www/zemtrum/tienda/themes/zemtrum/css/global.css",
-		"/C/Users/Villa/Desktop/reveal/reveal.css",
 		"/C/Users/Villa/Desktop/reveal/jquery.reveal.js",
 		"/C/AppServ/www/zemtrum/tienda/themes/zemtrum/modules/blockmyaccount/blockmyaccount.tpl",
 		"/C/AppServ/www/zemtrum/tienda/modules/blockuserinfo/blockuserinfo.css",
@@ -725,7 +705,6 @@
 		"/C/fw195/Gestool/prg/Turno.prg",
 		"/C/fw195/Gestool/prg/Tpv.prg",
 		"/C/fw195/Gestool/prg/Empcnf.prg",
-		"/C/fw195/Gestool/prg/Factcli.prg",
 		"/C/fw195/Gestool/prg/factcli",
 		"/C/fw195/Gestool/prg/Pacudiamaquinaria.prg",
 		"/C/fw195/Gestool/prg/Infagent.prg",
@@ -733,15 +712,12 @@
 		"/C/fw195/Gestool/prg/Client.prg",
 		"/C/fw195/Gestool/prg/Tpvlistaticket.prg",
 		"/C/fw195/Gestool/prg/Tutil.prg",
-		"/C/fw195/Gestool/prg/Articulo.prg",
 		"/C/fw195/Gestool/prg/Categoria.prg",
 		"/C/fw195/Gestool/prg/Tipart.prg",
 		"/C/fw195/Gestool/prg/tcomercio",
 		"/C/fw195/Gestool/prg/Rptgal.prg",
 		"/C/fw195/Gestool/prg/Tgesped.prg",
 		"/C/fw195/Gestool/prg/Edm.prg",
-		"/C/fw195/Gestool/prg/Factprv.prg",
-		"/C/fw195/Gestool/prg/Rectprv.prg",
 		"/C/fw195/Gestool/prg/Facrec.prg",
 		"/C/Scripts creados/SCRIPT JOAQUIN INFANTE/test.prg",
 		"/C/Scripts creados/ANTONIO INFORTISA/impinfor.prg",
@@ -751,15 +727,7 @@
 		"/C/fw195/Gestool/prg/tpvtactil",
 		"/C/fw195/Gestool/prg/Tpvmesa.prg",
 		"/C/fw195/Gestool/prg/Tpvpunto.prg",
-		"/C/fw195/Gestool/prg/Tpvsalon.prg",
-		"//192.168.1.19/c/bootstrap/index.html",
-		"/C/fw195/Gestool/prg/Tviewimg.prg",
-		"/C/fw195/Gestool/prg/Bitmap.prg",
-		"/C/fw195/Gestool/ppo/Familia.ppo",
-		"/C/fw195/Gestool/prg/Tgethlp.prg",
-		"/C/fw195/Gestool/prg/Tgetc3.prg",
-		"/C/fw195/Gestool/prg/Tpvsalaventa.prg",
-		"/C/fw195/Gestool/prg/Impfactu.prg"
+		"/C/fw195/Gestool/prg/Tpvsalon.prg"
 	],
 	"find":
 	{
@@ -801,6 +769,33 @@
 		"case_sensitive": false,
 		"find_history":
 		[
+			"on rx",
+			"on aitm",
+			"on rx",
+			"cClsDoc",
+			"09",
+			"on rx",
+			"FastReportPedidoProveedor",
+			"on aitm",
+			"on rx",
+			"FastReportAlbaranCliente",
+			"cTypeName",
+			"lineas",
+			"cTipDoc",
+			"cIdeDoc",
+			"on nimpu",
+			"on nTotUPedPrv",
+			"nBrtLPedPrv",
+			"nBrtLPedCli(",
+			"on nbrt",
+			"nImpUPedCli",
+			"on nBrtLPedCli",
+			"AddRectificativaProveedor",
+			"tfastventasarticulos",
+			"on nTotuRctPrv",
+			"nTotuRctPrv",
+			"nTotLRctPrv",
+			"npreunit",
 			"class tcre",
 			"class cre",
 			"loaart",
@@ -901,34 +896,7 @@
 			"s",
 			"se",
 			"sel",
-			"sele",
-			"selected",
-			"sele",
-			"selec",
-			"selected",
-			"content",
-			"clear",
-			"categorie",
-			"fade",
-			"se",
-			"sec",
-			"seco",
-			"speed",
-			"lImporteExacto",
-			"importe",
-			"ufieldempresa",
-			"header",
-			"categori",
-			"tree",
-			"block_content",
-			"container",
-			"right",
-			"openfiles",
-			"StartTimer",
-			"chktu",
-			"TTurno",
-			"on setempresa",
-			"InitClasses"
+			"sele"
 		],
 		"highlight": true,
 		"in_selection": false,
@@ -954,7 +922,7 @@
 	"groups":
 	[
 		{
-			"selected": 4,
+			"selected": 2,
 			"sheets":
 			[
 				{
@@ -969,8 +937,8 @@
 						"selection":
 						[
 							[
-								303157,
-								303157
+								304838,
+								304838
 							]
 						],
 						"settings":
@@ -997,13 +965,67 @@
 						"selection":
 						[
 							[
-								2344,
-								2344
+								5111,
+								5111
 							]
 						],
 						"settings":
 						{
 							"syntax": "Packages/HTML/HTML.tmLanguage",
+							"translate_tabs_to_spaces": false
+						},
+						"translation.x": 0.0,
+						"translation.y": 1425.0,
+						"zoom_level": 1.0
+					},
+					"type": "text"
+				},
+				{
+					"buffer": 2,
+					"file": "/C/AppServ/www/zemtrum/tienda/themes/zemtrum/css/global.css",
+					"settings":
+					{
+						"buffer_size": 62265,
+						"regions":
+						{
+						},
+						"selection":
+						[
+							[
+								4420,
+								4420
+							]
+						],
+						"settings":
+						{
+							"syntax": "Packages/CSS/CSS.tmLanguage",
+							"translate_tabs_to_spaces": false
+						},
+						"translation.x": 0.0,
+						"translation.y": 3119.0,
+						"zoom_level": 1.0
+					},
+					"type": "text"
+				},
+				{
+					"buffer": 3,
+					"file": "/C/AppServ/www/zemtrum/tienda/modules/blockuserinfo/blockuserinfo.css",
+					"settings":
+					{
+						"buffer_size": 3215,
+						"regions":
+						{
+						},
+						"selection":
+						[
+							[
+								826,
+								826
+							]
+						],
+						"settings":
+						{
+							"syntax": "Packages/CSS/CSS.tmLanguage",
 							"translate_tabs_to_spaces": false
 						},
 						"translation.x": 0.0,
@@ -1013,46 +1035,19 @@
 					"type": "text"
 				},
 				{
-					"buffer": 2,
-					"file": "/C/AppServ/www/zemtrum/tienda/modules/blockuserinfo/blockuserinfo.css",
-					"settings":
-					{
-						"buffer_size": 2629,
-						"regions":
-						{
-						},
-						"selection":
-						[
-							[
-								2581,
-								2581
-							]
-						],
-						"settings":
-						{
-							"syntax": "Packages/CSS/CSS.tmLanguage",
-							"translate_tabs_to_spaces": false
-						},
-						"translation.x": 0.0,
-						"translation.y": 1541.0,
-						"zoom_level": 1.0
-					},
-					"type": "text"
-				},
-				{
-					"buffer": 3,
+					"buffer": 4,
 					"file": "/C/AppServ/www/zemtrum/tienda/modules/blockuserinfo/blockuserinfo.tpl",
 					"settings":
 					{
-						"buffer_size": 4486,
+						"buffer_size": 5497,
 						"regions":
 						{
 						},
 						"selection":
 						[
 							[
-								4320,
-								4320
+								3002,
+								3002
 							]
 						],
 						"settings":
@@ -1061,137 +1056,25 @@
 							"translate_tabs_to_spaces": false
 						},
 						"translation.x": 0.0,
-						"translation.y": 1393.0,
-						"zoom_level": 1.0
-					},
-					"type": "text"
-				},
-				{
-					"buffer": 4,
-					"file": "prg/Facauto.prg",
-					"settings":
-					{
-						"buffer_size": 89280,
-						"regions":
-						{
-						},
-						"selection":
-						[
-							[
-								73602,
-								73602
-							]
-						],
-						"settings":
-						{
-							"syntax": "Packages/harbour/harbour/Harbour.tmLanguage",
-							"tab_size": 3,
-							"translate_tabs_to_spaces": true
-						},
-						"translation.x": 0.0,
-						"translation.y": 46388.0,
+						"translation.y": 896.0,
 						"zoom_level": 1.0
 					},
 					"type": "text"
 				},
 				{
 					"buffer": 5,
-					"file": "prg/Articulo.prg",
-					"settings":
-					{
-						"buffer_size": 676581,
-						"regions":
-						{
-						},
-						"selection":
-						[
-							[
-								591083,
-								591083
-							]
-						],
-						"settings":
-						{
-							"syntax": "Packages/harbour/harbour/Harbour.tmLanguage",
-							"tab_size": 3,
-							"translate_tabs_to_spaces": true
-						},
-						"translation.x": 0.0,
-						"translation.y": 303401.0,
-						"zoom_level": 1.0
-					},
-					"type": "text"
-				},
-				{
-					"buffer": 6,
-					"file": "prg/Factcli.prg",
-					"settings":
-					{
-						"buffer_size": 798881,
-						"regions":
-						{
-						},
-						"selection":
-						[
-							[
-								636272,
-								636401
-							]
-						],
-						"settings":
-						{
-							"syntax": "Packages/harbour/harbour/Harbour.tmLanguage",
-							"tab_size": 3,
-							"translate_tabs_to_spaces": true
-						},
-						"translation.x": 336.0,
-						"translation.y": 351395.0,
-						"zoom_level": 1.0
-					},
-					"type": "text"
-				},
-				{
-					"buffer": 7,
-					"file": "prg/Tdetfacautomatica.prg",
-					"settings":
-					{
-						"buffer_size": 24646,
-						"regions":
-						{
-						},
-						"selection":
-						[
-							[
-								12050,
-								12057
-							]
-						],
-						"settings":
-						{
-							"syntax": "Packages/harbour/harbour/Harbour.tmLanguage",
-							"tab_size": 3,
-							"translate_tabs_to_spaces": true
-						},
-						"translation.x": 0.0,
-						"translation.y": 7058.0,
-						"zoom_level": 1.0
-					},
-					"type": "text"
-				},
-				{
-					"buffer": 8,
 					"file": "/C/AppServ/www/zemtrum/tienda/js/jquery.reveal.js",
 					"settings":
 					{
-						"buffer_size": 6509,
+						"buffer_size": 7522,
 						"regions":
 						{
 						},
 						"selection":
 						[
 							[
-								6154,
-								6154
+								1197,
+								1197
 							]
 						],
 						"settings":
@@ -1200,34 +1083,7 @@
 							"translate_tabs_to_spaces": false
 						},
 						"translation.x": 0.0,
-						"translation.y": 3103.0,
-						"zoom_level": 1.0
-					},
-					"type": "text"
-				},
-				{
-					"buffer": 9,
-					"file": "/C/Users/Villa/Desktop/reveal/reveal.css",
-					"settings":
-					{
-						"buffer_size": 1701,
-						"regions":
-						{
-						},
-						"selection":
-						[
-							[
-								264,
-								264
-							]
-						],
-						"settings":
-						{
-							"syntax": "Packages/CSS/CSS.tmLanguage",
-							"translate_tabs_to_spaces": false
-						},
-						"translation.x": 0.0,
-						"translation.y": 0.0,
+						"translation.y": 285.0,
 						"zoom_level": 1.0
 					},
 					"type": "text"
