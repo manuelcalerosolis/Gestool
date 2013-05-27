@@ -17873,78 +17873,6 @@ Function SynTikCli( cPath )
    ( dbfTikT )->( OrdSetFocus( 1 ) )
 
    /*
-   Repasamos los totales para que tengas valores---------------------------
-   */
-
-   ( dbfTikT )->( dbGoTop() )
-
-   while !( dbfTikT )->( eof() )
-
-      /*
-      Rellenamos los campos de totales-----------------------------------------
-      */
-
-      do case
-         case ( dbfTikT )->cTipTik == SAVALB
-
-            if dbSeekInOrd( ( dbfTikT )->cNumDoc, "nNumAlb", dbfAlbCliT )
-
-               aTotAlb  := aTotAlbCli( ( dbfAlbCliT )->cSerAlb + Str( ( dbfAlbCliT )->nNumAlb ) + ( dbfAlbCliT )->cSufAlb, dbfAlbCliT, dbfAlbCliL, dbfIva, dbfDiv, ( dbfAlbCliT )->cDivAlb )
-
-               if ( ( dbfTikT )->nTotNet != aTotAlb[1] .or. ( dbfTikT )->nTotIva != aTotAlb[2] .or. ( dbfTikT )->nTotTik != aTotAlb[4] )
-
-                  ( dbfTikT )->nTotNet := aTotAlb[1]
-                  ( dbfTikT )->nTotIva := aTotAlb[2]
-                  ( dbfTikT )->nTotTik := aTotAlb[4]
-
-               end if
-
-            end if
-
-         case ( dbfTikT )->cTipTik == SAVFAC
-
-            if dbSeekInOrd( ( dbfTikT )->cNumDoc, "NNUMFAC", dbfFacCliT )
-
-               aTotFac  := aTotFacCli( ( dbfFacCliT )->cSerie + Str( ( dbfFacCliT )->nNumFac ) + ( dbfFacCliT )->cSufFac, dbfFacCliT, dbfFacCliL, dbfIva, dbfDiv, dbfFacCliP, dbfAntCliT, ( dbfFacCliT )->cDivFac )
-
-               if ( dbfTikT )->nTotNet != aTotFac[1] .or. ( dbfTikT )->nTotIva != aTotFac[2] .or. ( dbfTikT )->nTotTik != aTotFac[4]
-
-                  ( dbfTikT )->nTotNet := aTotFac[1]
-                  ( dbfTikT )->nTotIva := aTotFac[2]
-                  ( dbfTikT )->nTotTik := aTotFac[4]
-
-               end if
-
-            end if
-
-         otherwise
-
-            aTotTik     := aTotTik( ( dbfTikT )->cSerTik + ( dbfTikT )->cNumTik + ( dbfTikT )->cSufTik, dbfTikT, dbfTikL, dbfDiv, , ( dbfTikT )->cDivTik )
-
-            if ( dbfTikT )->nTotNet != aTotTik[1] .or. ( dbfTikT )->nTotIva != aTotTik[2] .or. ( dbfTikT )->nTotTik != aTotTik[3]
-
-               ( dbfTikT )->nTotNet    := aTotTik[1]
-               ( dbfTikT )->nTotIva    := aTotTik[2]
-               ( dbfTikT )->nTotTik    := aTotTik[3]
-
-            end if
-
-            aTotTik     := nTotCobTik( ( dbfTikT )->cSerTik + ( dbfTikT )->cNumTik + ( dbfTikT )->cSufTik, dbfTikP, dbfDiv )
-            aTotTik     += nTotValTik( ( dbfTikT )->cSerTik + ( dbfTikT )->cNumTik + ( dbfTikT )->cSufTik, dbfTikT, dbfTikL, dbfDiv )
-
-            if ( dbfTikT )->nCobTik != aTotTik
-               ( dbfTikT )->nCobTik    := aTotTik
-            end if
-
-      end case
-
-      ( dbfTikT )->( dbSkip() )
-
-      SysRefresh()
-
-   end while
-
-   /*
    Pagos-------------------------------------------------------------------
    */
 
@@ -17973,7 +17901,7 @@ Function SynTikCli( cPath )
    Lineas-------------------------------------------------------------------
    */
 
-   ( dbfTikL )->( OrdSetFocus( 1 ) )
+   ( dbfTikL )->( OrdSetFocus( 0 ) )
    ( dbfTikL )->( dbGoTop() )
 
    while !( dbfTikL )->( eof() )
@@ -18036,6 +17964,74 @@ Function SynTikCli( cPath )
    end while
 
    ( dbfTikS )->( OrdSetFocus( 1 ) )
+
+   /*
+   Repasamos los totales para que tengas valores---------------------------
+   */
+
+   ( dbfTikT )->( dbGoTop() )
+
+   while !( dbfTikT )->( eof() )
+
+      do case
+         case ( dbfTikT )->cTipTik == SAVALB
+
+            if dbSeekInOrd( ( dbfTikT )->cNumDoc, "nNumAlb", dbfAlbCliT )
+
+               aTotAlb  := aTotAlbCli( ( dbfAlbCliT )->cSerAlb + Str( ( dbfAlbCliT )->nNumAlb ) + ( dbfAlbCliT )->cSufAlb, dbfAlbCliT, dbfAlbCliL, dbfIva, dbfDiv, ( dbfAlbCliT )->cDivAlb )
+
+               if ( ( dbfTikT )->nTotNet != aTotAlb[1] .or. ( dbfTikT )->nTotIva != aTotAlb[2] .or. ( dbfTikT )->nTotTik != aTotAlb[4] )
+
+                  ( dbfTikT )->nTotNet := aTotAlb[1]
+                  ( dbfTikT )->nTotIva := aTotAlb[2]
+                  ( dbfTikT )->nTotTik := aTotAlb[4]
+
+               end if
+
+            end if
+
+         case ( dbfTikT )->cTipTik == SAVFAC
+
+            if dbSeekInOrd( ( dbfTikT )->cNumDoc, "nNumFac", dbfFacCliT )
+
+               aTotFac  := aTotFacCli( ( dbfFacCliT )->cSerie + Str( ( dbfFacCliT )->nNumFac ) + ( dbfFacCliT )->cSufFac, dbfFacCliT, dbfFacCliL, dbfIva, dbfDiv, dbfFacCliP, dbfAntCliT, ( dbfFacCliT )->cDivFac )
+
+               if ( dbfTikT )->nTotNet != aTotFac[1] .or. ( dbfTikT )->nTotIva != aTotFac[2] .or. ( dbfTikT )->nTotTik != aTotFac[4]
+
+                  ( dbfTikT )->nTotNet := aTotFac[1]
+                  ( dbfTikT )->nTotIva := aTotFac[2]
+                  ( dbfTikT )->nTotTik := aTotFac[4]
+
+               end if
+
+            end if
+
+         otherwise
+
+            aTotTik     := aTotTik( ( dbfTikT )->cSerTik + ( dbfTikT )->cNumTik + ( dbfTikT )->cSufTik, dbfTikT, dbfTikL, dbfDiv, , ( dbfTikT )->cDivTik )
+
+            if ( dbfTikT )->nTotNet != aTotTik[1] .or. ( dbfTikT )->nTotIva != aTotTik[2] .or. ( dbfTikT )->nTotTik != aTotTik[3]
+
+               ( dbfTikT )->nTotNet    := aTotTik[1]
+               ( dbfTikT )->nTotIva    := aTotTik[2]
+               ( dbfTikT )->nTotTik    := aTotTik[3]
+
+            end if
+
+            aTotTik     := nTotCobTik( ( dbfTikT )->cSerTik + ( dbfTikT )->cNumTik + ( dbfTikT )->cSufTik, dbfTikP, dbfDiv )
+            aTotTik     += nTotValTik( ( dbfTikT )->cSerTik + ( dbfTikT )->cNumTik + ( dbfTikT )->cSufTik, dbfTikT, dbfTikL, dbfDiv )
+
+            if ( dbfTikT )->nCobTik != aTotTik
+               ( dbfTikT )->nCobTik    := aTotTik
+            end if
+
+      end case
+
+      ( dbfTikT )->( dbSkip() )
+
+      SysRefresh()
+
+   end while
 
    RECOVER USING oError
 

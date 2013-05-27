@@ -1,4 +1,4 @@
-#include "FiveWin.Ch"
+#include "FiveWin.Ch" 
 #include "Folder.ch"
 #include "Factu.ch"
 #include "Report.ch"
@@ -7,7 +7,9 @@
 
 #define _MENUITEM_                "01046"
 
-/* Definici¢n de la base de datos de pedidos a proveedores */  
+/*
+Definici¢n de la base de datos de pedidos a proveedores
+*/  
 
 #define _CSERPED                   1      //   C      1     0
 #define _NNUMPED                   2      //   C      9     0

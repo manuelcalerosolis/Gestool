@@ -8952,6 +8952,12 @@ Function SynRctPrv( cPath )
    USE ( cPatDat() + "Cajas.Dbf" ) NEW VIA ( cDriver() ) EXCLUSIVE ALIAS ( cCheckArea( "CAJAS", @dbfCajT ) )
    SET ADSINDEX TO ( cPatDat() + "Cajas.Cdx" ) ADDITIVE
 
+   USE ( cPatArt() + "FAMILIAS.DBF" ) NEW VIA ( cDriver() ) EXCLUSIVE ALIAS ( cCheckArea( "FAMILIAS", @dbfFamilia ) ) 
+   SET ADSINDEX TO ( cPatArt() + "FAMILIAS.CDX" ) ADDITIVE
+
+   USE ( cPatArt() + "ARTICULO.DBF" ) NEW VIA ( cDriver() ) EXCLUSIVE ALIAS ( cCheckArea( "ARTICULO", @dbfArticulo ) )
+   SET ADSINDEX TO ( cPatArt() + "ARTICULO.CDX" ) ADDITIVE
+
    // Cabeceras ------------------------------------------------------------
 
    ( dbfRctPrvT )->( OrdSetFocus( 0 ) )
@@ -9101,6 +9107,8 @@ Function SynRctPrv( cPath )
    CLOSE ( dbfFPago   )
    CLOSE ( dbfDiv     )
    CLOSE ( dbfCajT    )
+   CLOSE ( dbfFamilia )
+   CLOSE ( dbfArticulo)
 
 return nil
 
