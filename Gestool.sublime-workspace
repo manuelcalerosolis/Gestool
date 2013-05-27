@@ -600,8 +600,15 @@
 	},
 	"file_history":
 	[
+		"/C/fw195/Gestool/prg/Factcli.prg",
 		"/C/fw195/Gestool/prg/Albcli.prg",
 		"/C/fw195/Gestool/prg/Pedcli.prg",
+		"/C/fw195/Gestool/prg/Precli.prg",
+		"/C/fw195/Gestool/prg/Facrec.prg",
+		"/C/fw195/Gestool/prg/Tpv.prg",
+		"/C/fw195/Gestool/prg/Satcli.prg",
+		"/C/fw195/Gestool/prg/Client.prg",
+		"/C/fw195/Gestool/prg/Recprv.prg",
 		"/C/fw195/Gestool/prg/Rectprv.prg",
 		"/C/fw195/Gestool/prg/Factprv.prg",
 		"/C/fw195/Gestool/prg/Albprov.prg",
@@ -614,14 +621,12 @@
 		"/C/fw195/Gestool/prg/Articulo.prg",
 		"/C/fw195/Gestool/prg/Facauto.prg",
 		"/C/fw195/Gestool/prg/Tdetfacautomatica.prg",
-		"/C/fw195/Gestool/prg/Factcli.prg",
 		"/C/Users/Villa/Desktop/enviar_email_ajax/enviar_email_ajax/enviar.php",
 		"/C/Users/Villa/Desktop/enviar_email_ajax/enviar_email_ajax/jquery.js",
 		"/C/Users/Villa/Desktop/enviar_email_ajax/enviar_email_ajax/jquery.form.js",
 		"/C/fw195/Gestool/prg/Utildbf.prg",
 		"/C/Users/Villa/Desktop/enviar_email_ajax/enviar_email_ajax/index.php",
 		"/C/fw195/Gestool/prg/Divisas.prg",
-		"/C/fw195/Gestool/prg/Precli.prg",
 		"/C/Users/Villa/Desktop/reveal/demo.html",
 		"/C/AppServ/www/zemtrum/tienda/modules/blockuserinfo/jquery.reveal.js",
 		"/C/AppServ/www/zemtrum/brooklyn/index.html",
@@ -703,13 +708,11 @@
 		"/C/fw195/Gestool/prg/Scrllbar.prg",
 		"/C/Scripts creados/Inma Pepsi/001.prg",
 		"/C/fw195/Gestool/prg/Turno.prg",
-		"/C/fw195/Gestool/prg/Tpv.prg",
 		"/C/fw195/Gestool/prg/Empcnf.prg",
 		"/C/fw195/Gestool/prg/factcli",
 		"/C/fw195/Gestool/prg/Pacudiamaquinaria.prg",
 		"/C/fw195/Gestool/prg/Infagent.prg",
 		"/C/fw195/Gestool/prg/Tpvpda.prg",
-		"/C/fw195/Gestool/prg/Client.prg",
 		"/C/fw195/Gestool/prg/Tpvlistaticket.prg",
 		"/C/fw195/Gestool/prg/Tutil.prg",
 		"/C/fw195/Gestool/prg/Categoria.prg",
@@ -718,16 +721,13 @@
 		"/C/fw195/Gestool/prg/Rptgal.prg",
 		"/C/fw195/Gestool/prg/Tgesped.prg",
 		"/C/fw195/Gestool/prg/Edm.prg",
-		"/C/fw195/Gestool/prg/Facrec.prg",
 		"/C/Scripts creados/SCRIPT JOAQUIN INFANTE/test.prg",
 		"/C/Scripts creados/ANTONIO INFORTISA/impinfor.prg",
 		"/C/Scripts creados/Oscar Tenis/oscar.prg",
 		"/C/fw195/Gestool/prg/Remmov.prg",
 		"/C/fw195/Gestool/prg/Tpvrestaurante.prg",
 		"/C/fw195/Gestool/prg/tpvtactil",
-		"/C/fw195/Gestool/prg/Tpvmesa.prg",
-		"/C/fw195/Gestool/prg/Tpvpunto.prg",
-		"/C/fw195/Gestool/prg/Tpvsalon.prg"
+		"/C/fw195/Gestool/prg/Tpvmesa.prg"
 	],
 	"find":
 	{
@@ -735,7 +735,7 @@
 	},
 	"find_in_files":
 	{
-		"height": 93.0,
+		"height": 0.0,
 		"where_history":
 		[
 			"C:\\fw195\\Gestool\\prg",
@@ -769,6 +769,12 @@
 		"case_sensitive": false,
 		"find_history":
 		[
+			"on synrecprv",
+			"lAplFac",
+			"on aitm",
+			"on loaart",
+			"on loaa",
+			"on loaart",
 			"on rx",
 			"on aitm",
 			"on rx",
@@ -890,13 +896,7 @@
 			"categorie",
 			"id",
 			"branch",
-			"brancch",
-			"branc",
-			"sel",
-			"s",
-			"se",
-			"sel",
-			"sele"
+			"brancch"
 		],
 		"highlight": true,
 		"in_selection": false,
@@ -922,7 +922,7 @@
 	"groups":
 	[
 		{
-			"selected": 2,
+			"selected": 5,
 			"sheets":
 			[
 				{
@@ -1056,7 +1056,7 @@
 							"translate_tabs_to_spaces": false
 						},
 						"translation.x": 0.0,
-						"translation.y": 896.0,
+						"translation.y": 136.0,
 						"zoom_level": 1.0
 					},
 					"type": "text"
@@ -1073,8 +1073,8 @@
 						"selection":
 						[
 							[
-								1197,
-								1197
+								1347,
+								1347
 							]
 						],
 						"settings":
