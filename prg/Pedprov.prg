@@ -822,14 +822,14 @@ FUNCTION PedPrv( oMenuItem, oWnd, cCodPrv, cCodArt )
       with object ( oWndBrw:AddXCol() )
          :cHeader          := "Número"
          :cSortOrder       := "nNumPed"
-         :bEditValue       := {|| ( dbfPedPrvT )->cSerPed + "/" + Alltrim( Str( ( dbfPedPrvT )->nNumPed ) ) + "/" + ( dbfPedPrvT )->cSufPed }
+         :bEditValue       := {|| ( dbfPedPrvT )->cSerPed + "/" + Alltrim( Str( ( dbfPedPrvT )->nNumPed ) ) }
          :nWidth           := 80
          :bLClickHeader    := {| nMRow, nMCol, nFlags, oCol | oWndBrw:ClickOnHeader( oCol ) }
       end with
 
       with object ( oWndBrw:AddXCol() )
          :cHeader          := "Delegación"
-         :bEditValue       := {|| ( dbfPedPrvT )->cCodDlg }
+         :bEditValue       := {|| ( dbfPedPrvT )->cSufPed }
          :nWidth           := 60
          :lHide            := .t.
       end with

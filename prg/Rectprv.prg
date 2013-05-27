@@ -1011,14 +1011,14 @@ FUNCTION RctPrv( oMenuItem, oWnd, cCodPrv, cCodArt, cNumFac )
       with object ( oWndBrw:AddXCol() )
          :cHeader          := "Número"
          :cSortOrder       := "nNumFac"
-         :bEditValue       := {|| ( dbfRctPrvT )->cSerFac + "/" + Alltrim( Str( ( dbfRctPrvT )->nNumFac ) ) + "/" + ( dbfRctPrvT )->cSufFac }
+         :bEditValue       := {|| ( dbfRctPrvT )->cSerFac + "/" + Alltrim( Str( ( dbfRctPrvT )->nNumFac ) ) }
          :nWidth           := 80
          :bLClickHeader    := {| nMRow, nMCol, nFlags, oCol | oWndBrw:ClickOnHeader( oCol ) }
       end with
 
       with object ( oWndBrw:AddXCol() )
          :cHeader          := "Delegación"
-         :bEditValue       := {|| ( dbfRctPrvT )->cCodDlg }
+         :bEditValue       := {|| ( dbfRctPrvT )->cSufFac }
          :nWidth           := 60
          :lHide            := .t.
       end with
