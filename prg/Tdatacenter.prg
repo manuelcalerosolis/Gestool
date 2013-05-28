@@ -3654,7 +3654,7 @@ Function ADSRunSQL( cSqlAlias, cSqlStatement, lShow )
             
             ( cSqlAlias )->( dbCloseArea() )
             
-            MsgAlert( "Error AdsExecuteSqlDirect( " + cSqlStatement + " )" + CRLF + "Error:" + cValtoChar( AdsGetLastError() ) )
+            msgStop( "Error AdsExecuteSqlDirect( " + cSqlStatement + " )" + CRLF + "Error:" + cValtoChar( AdsGetLastError() ) )
 
          else
             

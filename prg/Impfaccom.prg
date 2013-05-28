@@ -76,7 +76,7 @@ METHOD OpenFiles()
 
    if !File( ::cPathFac + "PROVEEDO.DBF" )
       ::aChkIndices[ 1 ]:Click( .f. ):Refresh()
-      MsgAlert( "No existe fichero de proveedores", ::cPathFac + "PROVEEDO.DBF" )
+      msgStop( "No existe fichero de proveedores", ::cPathFac + "PROVEEDO.DBF" )
    else
       DATABASE NEW ::oDbfPrvGst PATH ( cPatPrv() )  FILE "PROVEE.DBF" VIA ( cDriver() )CLASS "PRVGST" INDEX "PROVEE.CDX"
       DATABASE NEW ::oDbfPrvFac PATH ( ::cPathFac ) FILE "PROVEEDO.DBF" VIA ( cDriver() )CLASS "PRVFAC"
@@ -84,7 +84,7 @@ METHOD OpenFiles()
 
    if !File( ::cPathFac + "CLIENTE.DBF" )
       ::aChkIndices[ 2 ]:Click( .f. ):Refresh()
-      MsgAlert( "No existen ficheros de clientes", ::cPathFac + "CLIENTES.DBF" )
+      msgStop( "No existen ficheros de clientes", ::cPathFac + "CLIENTES.DBF" )
    else
       DATABASE NEW ::oDbfCliBnc PATH ( cPatCli() )  FILE "CLIBNC.DBF"   VIA ( cDriver() )CLASS "CLIBNCGST"  INDEX "CLIBNC.CDX"
       DATABASE NEW ::oDbfCliGst PATH ( cPatCli() )  FILE "CLIENT.DBF"   VIA ( cDriver() )CLASS "CLIGST"  INDEX "CLIENT.CDX"
@@ -93,7 +93,7 @@ METHOD OpenFiles()
 
    if !File( ::cPathFac + "Articulo.DBF" )
       ::aChkIndices[ 3 ]:Click( .f. ):Refresh()
-      MsgAlert( "No existe fichero de artículos", ::cPathFac + "ARTICULO.DBF" )
+      msgStop( "No existe fichero de artículos", ::cPathFac + "ARTICULO.DBF" )
    else
       DATABASE NEW ::oDbfArtPrv PATH ( cPatArt() )  FILE "PROVART.DBF" VIA ( cDriver() )CLASS "ARTPRVGST" INDEX "PROVART.CDX"
       DATABASE NEW ::oDbfFamGst PATH ( cPatArt() )  FILE "FAMILIAS.DBF" VIA ( cDriver() )CLASS "FAMGST" INDEX "FAMILIAS.CDX"
@@ -105,7 +105,7 @@ METHOD OpenFiles()
    if !File( ::cPathFac + "ALBARAN1.DBF" ) .or. !File( ::cPathFac + "INGRESO1.DBF" ) .or. !File( ::cPathFac + "CONTENI1.DBF" )
       ::aChkIndices[ 4 ]:Click( .f. ):Refresh()
       ::aChkIndices[ 5 ]:Click( .f. ):Refresh()
-      MsgAlert( "No existe fichero de albaranes", ::cPathFac + "ALBARAN1.DBF, ni" + ::cPathFac + "CONTENI1.DBF" )
+      msgStop( "No existe fichero de albaranes", ::cPathFac + "ALBARAN1.DBF, ni" + ::cPathFac + "CONTENI1.DBF" )
    else
       DATABASE NEW ::oDbfAlbTGst PATH ( cPatEmp() )  FILE "ALBCLIT.DBF"    VIA ( cDriver() )CLASS "ALBTGST"  INDEX "ALBCLIT.CDX"
       DATABASE NEW ::oDbfAlbTFac PATH ( ::cPathFac ) FILE "ALBARAN1.DBF"   VIA ( cDriver() )CLASS "ALBTFAC"

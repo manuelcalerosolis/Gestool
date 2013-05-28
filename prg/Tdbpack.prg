@@ -40,7 +40,7 @@ Function DbPack( xAlias )
         FErase( ::cFile )
         FRename( cFPack, ::cFile )
     else
-        MsgAlert( "El fichero " + oDb:cFile + " no esta abierto en modo exclusivo" )
+        msgStop( "El fichero " + oDb:cFile + " no esta abierto en modo exclusivo" )
     endif
 
 return( lRet )

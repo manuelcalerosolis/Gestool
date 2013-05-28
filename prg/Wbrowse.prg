@@ -2599,7 +2599,7 @@ METHOD SetFilter( cField, uVal1, uVal2 ) CLASS TWBrowse
       if ( ::cAlias )->( ValType( &cField ) ) != cIndexType .or. ;
          ValType( uVal1 ) != cIndexType .or. ;
          ValType( uVal2 ) != cIndexType
-         MsgAlert( "TWBrowse SetFilter() types don't match with current Index Key type!" )
+         msgStop( "TWBrowse SetFilter() types don't match with current Index Key type!" )
       endif
    endif
 

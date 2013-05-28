@@ -70,7 +70,7 @@ METHOD Invoke( cMethod, uParam1, uParam2, uParam3 ) CLASS TOleAuto
    IF OleIsObject()
       RETURN TOleAuto():New( uObj )
    ELSEIF OleError() != 0
-      MsgAlert( "No existe el miembro: "+cMethod, "OLE Error" )
+      msgStop( "No existe el miembro: "+cMethod, "OLE Error" )
    ENDIF
 
 RETURN uObj
@@ -114,7 +114,7 @@ METHOD Get( cProperty, uParam1, uParam2, uParam3 ) CLASS TOleAuto
    IF OleIsObject()
       RETURN TOleAuto():New( uObj )
    ELSEIF OleError() != 0
-      MsgAlert( "No existe el miembro: "+cProperty+CRLF+CRLF+ ;
+      msgStop( "No existe el miembro: "+cProperty+CRLF+CRLF+ ;
                 "o el valor de retorno no está soportado.", "OLE Error" )
    ENDIF
 

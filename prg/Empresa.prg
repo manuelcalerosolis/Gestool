@@ -3064,7 +3064,7 @@ Function SetEmpresa( cCodEmp, dbfEmp, dbfDlg, dbfUsr, oBrw, oWnd, lSoft )
                ( dbfEmp )->( dbUnLock() )
             end if
 
-            MsgAlert( "La nueva empresa activa es " + ( dbfEmp )->CodEmp + " - " + Rtrim( ( dbfEmp )->cNombre ) )
+            msgStop( "La nueva empresa activa es " + ( dbfEmp )->CodEmp + " - " + Rtrim( ( dbfEmp )->cNombre ) )
 
             cCodEmp  := Alltrim( ( dbfEmp )->CodEmp )
 
@@ -5735,7 +5735,7 @@ Function ChkAllEmp( lForced )
       nHandle        := fOpen( FullCurDir() + "ChkEmp.nil", 2 )
 
       if fError() != 0
-         MsgAlert( "No puedo abrir el fichero, " + FullCurDir() + "ChkEmp.nil", "Error " + cValToChar( fError() ) )
+         msgStop( "No puedo abrir el fichero, " + FullCurDir() + "ChkEmp.nil", "Error " + cValToChar( fError() ) )
       else
          fWrite( nHandle, Dtos( Date() ) )
       end if
@@ -6750,7 +6750,7 @@ FUNCTION TstEmpresa( cPatDat )
       
             if IsDirectory( FullCurDir() + "Emp" + cCodEmp )
                if fRename( FullCurDir() + "Emp" + cCodEmp, FullCurDir() + "Emp" + RJust( cCodEmp, "0", 4 ) ) == -1
-                  MsgAlert( "No he podido renombrar el directorio " + FullCurDir() + "Emp" + cCodEmp )
+                  msgStop( "No he podido renombrar el directorio " + FullCurDir() + "Emp" + cCodEmp )
                end if
             end if 
       

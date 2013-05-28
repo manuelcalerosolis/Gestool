@@ -12329,7 +12329,7 @@ Static Function lValidNombre( oGet )
    local nOrd     := ( dbfClient )->( OrdSetFocus( "Titulo" ) )
 
    if !Empty( cNombre ) .and. ( dbfClient )->( dbSeek( cNombre ) )
-      msgAlert( 'El nombre introducido ya existe en la base de datos' )
+      msgStop( 'El nombre introducido ya existe en la base de datos' )
    end if
 
    ( dbfClient )->( dbGoTo( nRec ) )
@@ -12346,7 +12346,7 @@ Static Function lValidCif( oGet )
    local nOrd     := ( dbfClient )->( OrdSetFocus( "Nif" ) )
 
    if !Empty( cCif ) .and. ( dbfClient )->( dbSeek( cCif ) )
-      msgAlert( 'C.I.F / N.I.F. ya existe' )
+      msgStop( 'C.I.F / N.I.F. ya existe' )
    end if
 
    ( dbfClient )->( dbGoTo( nRec ) )
@@ -12363,7 +12363,7 @@ Static Function lValidTlf( oGet )
    local nOrd     := ( dbfClient )->( OrdSetFocus( "Telefono" ) )
 
    if !Empty( cTlf ) .and. ( dbfClient )->( dbSeek( cTlf ) )
-      msgAlert( 'El télefono introducido ya existe en la base de datos' )
+      msgStop( 'El télefono introducido ya existe en la base de datos' )
    end if
 
    ( dbfClient )->( dbGoTo( nRec ) )

@@ -629,14 +629,14 @@ function BrwVtaComArt( cCodArt, cNomArt, cDiv, cIva, cAlm, cArticulo )
    with object ( oBrwStk:AddCol() )
       :cHeader                   := "Prop. 1"
       :nWidth                    := 50
-      :bStrData                  := {|| if( !Empty( oBrwStk:oTreeItem ) .and. !Empty( oBrwStk:oTreeItem:Cargo ), oBrwStk:oTreeItem:Cargo:cValorPropiedad1, "" ) }
+      :bStrData                  := {|| nTotalTree( oBrwStk, "cValorPropiedad1" ) }
       :lHide                     := .t.
    end with
 
    with object ( oBrwStk:AddCol() )
       :cHeader                   := "Prop. 2"
       :nWidth                    := 50
-      :bStrData                  := {|| if( !Empty( oBrwStk:oTreeItem ) .and. !Empty( oBrwStk:oTreeItem:Cargo ), oBrwStk:oTreeItem:Cargo:cValorPropiedad2, "" ) }
+      :bStrData                  := {|| nTotalTree( oBrwStk, "cValorPropiedad2" ) }
       :lHide                     := .t.
    end with
 
@@ -3714,26 +3714,26 @@ Return ""
 
 //---------------------------------------------------------------------------//
 
-Function nTotalTree( oBrwStk, cData )
+Function cValueTree( oBrwStk, cData )
 
    local oItem
    local uValue
-   local nUnidades         := 0
+   local nUnidades            := 0
 
-   DEFAULT cData           := "nUnidades"
+   DEFAULT cData              := "nUnidades"
 
    if !Empty( oBrwStk:oTreeItem ) 
 
       if !IsNil( oBrwStk:oTreeItem:oTree )
 
-         oItem             := oBrwStk:oTreeItem:oTree:oFirst 
+         oItem                := oBrwStk:oTreeItem:oTree:oFirst 
 
          while !IsNil( oItem )
 
 
             if !Empty( oItem:Cargo )
 
-               uValue      := oSend( oItem:Cargo, cData ) 
+               uValue         := oSend( oItem:Cargo, cData ) 
                
                if isNum( uValue )
                   nUnidades   += oSend( oItem:Cargo, cData ) 
@@ -3754,7 +3754,58 @@ Function nTotalTree( oBrwStk, cData )
       else 
 
          if !Empty( oBrwStk:oTreeItem:Cargo )
-            nUnidades      := oSend( oBrwStk:oTreeItem:Cargo, cData ) 
+            nUnidades         := oSend( oBrwStk:oTreeItem:Cargo, cData ) 
+         end if 
+
+      end if
+
+   end if 
+
+Return ( nUnidades )
+
+//---------------------------------------------------------------------------//
+
+Function nTotalTree( oBrwStk, cData )
+
+   local oItem
+   local uValue
+   local nUnidades            := 0
+
+   DEFAULT cData              := "nUnidades"
+
+   if !Empty( oBrwStk:oTreeItem ) 
+
+      if !IsNil( oBrwStk:oTreeItem:oTree )
+
+         oItem                := oBrwStk:oTreeItem:oTree:oFirst 
+
+         while !IsNil( oItem )
+
+
+            if !Empty( oItem:Cargo )
+
+               uValue         := oSend( oItem:Cargo, cData ) 
+               
+               if isNum( uValue )
+                  nUnidades   += oSend( oItem:Cargo, cData ) 
+               else
+                  nUnidades   := oSend( oItem:Cargo, cData ) 
+               end if 
+
+            end if 
+
+            if ( oItem:oNext != nil .and. oItem:oNext:nLevel == oItem:nLevel )
+               oItem          := oItem:oNext
+            else
+               oItem          := nil 
+            end if 
+
+         end while
+
+      else 
+
+         if !Empty( oBrwStk:oTreeItem:Cargo )
+            nUnidades         := oSend( oBrwStk:oTreeItem:Cargo, cData ) 
          end if 
 
       end if

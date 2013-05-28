@@ -538,7 +538,7 @@ STATIC FUNCTION ChkValid( oGet, dbfGrpVenta, lRjust, cChar, nLen )
    DEFAULT dbfGrpVenta  := Alias()
 
    if Empty( ( dbfGrpVenta )->( OrdSetFocus() ) )
-      MsgAlert( "Indice no disponible" + CRLF + "Comprobación imposible", "Aviso del sistema")
+      msgStop( "Indice no disponible" + CRLF + "Comprobación imposible", "Aviso del sistema")
       Return .t.
    end if
 

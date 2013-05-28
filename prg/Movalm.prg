@@ -1012,17 +1012,17 @@ STATIC FUNCTION ChkCodAlm( aTmp, aOld, aGet, oBrw, nMode, oDlg, oBtnSer )
    if aTmp[ _NTIPMOV ] == 1
 
       if empty( aTmp[ _CALIMOV ] ) .OR. empty( aTmp[ _CALOMOV ] )
-         msgAlert( "Ningun almacén debe estar vacío" )
+         msgStop( "Ningun almacén debe estar vacío" )
          return .f.
       end if
 
       if aTmp[ _CALIMOV ] == aTmp[ _CALOMOV ]
-         msgAlert( "Almacén de origen y destino deben de ser distintos" )
+         msgStop( "Almacén de origen y destino deben de ser distintos" )
          return .f.
       end if
 
       if aTmp[ _NUNDMOV ] <= 0
-         msgAlert( "Cantidad no valida" )
+         msgStop( "Cantidad no valida" )
          return .f.
       end if
 
@@ -1035,19 +1035,19 @@ STATIC FUNCTION ChkCodAlm( aTmp, aOld, aGet, oBrw, nMode, oDlg, oBtnSer )
    else
 
       if empty( aTmp[ _CALIMOV ] )
-         msgAlert( "Almacén destino no puede estar vacío" )
+         msgStop( "Almacén destino no puede estar vacío" )
          return .f.
       end if
 
    end if
 
    if empty( aTmp[ _CREFMOV ] )
-      msgAlert( "Artículo no encontrado" )
+      msgStop( "Artículo no encontrado" )
       return .f.
    end if
 
    if empty( aTmp[ _CCODMOV ] )
-      msgAlert( "No existe tipo de movimiento" )
+      msgStop( "No existe tipo de movimiento" )
       return .f.
    end if
 
@@ -1183,7 +1183,7 @@ RETURN NIL
 static function lNotOpen()
 
    if NetErr()
-      msgAlert( "Imposible abrir ficheros" )
+      msgStop( "Imposible abrir ficheros" )
       CloseFiles()
       return .t.
    end if

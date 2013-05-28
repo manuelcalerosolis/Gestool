@@ -6821,7 +6821,7 @@ METHOD ToExcel( bProgress, nGroupBy, aCols ) CLASS TXBrowse
    if ( oExcel := ExcelObj() ) == nil
       lExcelInstl := .f.
       if lCalcInstl == .f.
-         MsgAlert( "Excel not installed" )
+         msgStop( "Excel not installed" )
          return Self
       else
          return ::ToCalc( bProgress, nGroupBy, , , aCols )
@@ -7130,7 +7130,7 @@ METHOD ToCalc( bProgress, nGroupBy, nPasteMode, aSaveAs, aCols ) CLASS TXBrowse
    if ( oCalc := SunCalcObj() ) == nil
       lCalcInstl  := .f.
       if lExcelInstl == .f.
-         MsgAlert( "No spreadsheet software installed" )
+         msgStop( "No spreadsheet software installed" )
          return Self
       else
          return ::ToExcel( bProgress, nGroupBy, aCols )

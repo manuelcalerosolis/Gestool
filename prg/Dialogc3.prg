@@ -196,7 +196,7 @@ METHOD New( nTop, nLeft, nBottom, nRight, cCaption, cResName, hResources,;
 
    if lVbx
      if ! VbxInit( GetInstance(), "" )
-         MsgAlert( "VBX support not available" )
+         msgStop( "VBX support not available" )
       endif
    endif
 
@@ -302,12 +302,12 @@ METHOD Activate( bLClicked, bMoved, bPainted, lCentered, ;
 
          if Len( ::aControls ) > 0 .and. ! RegDialog( ::hWnd )
             ::SendMsg( WM_CLOSE )
-            MsgAlert( "Not possible to create more non-modal Dialogs" )
+            msgStop( "Not possible to create more non-modal Dialogs" )
          endif
 
          ShowWindow( ::hWnd )
       else
-         MsgAlert( "Not possible to create more non-modal Dialogs" )
+         msgStop( "Not possible to create more non-modal Dialogs" )
       endif
    endif
 
@@ -575,7 +575,7 @@ METHOD Initiate( hWndFocus, hWnd ) CLASS TDialog
 
    if ::lVbx
       if ! VbxInitDialog( ::hWnd, GetResources(), ::cResName )
-         MsgAlert( "Error on VBX's initialization" )
+         msgStop( "Error on VBX's initialization" )
       endif
    endif
 

@@ -1333,7 +1333,7 @@ FUNCTION PrnLbl( cCodLabel, nDevice, cAlias, bFor, bWhile, bSkip, cCaption )
 
    else
 
-      MsgAlert( "No existe formato de etiquetas : " + cCodLabel )
+      msgStop( "No existe formato de etiquetas : " + cCodLabel )
 
    end if
 

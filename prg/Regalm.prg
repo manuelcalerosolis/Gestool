@@ -379,17 +379,17 @@ RETURN ( oDlg:nResult == IDOK )
 STATIC FUNCTION ChkCodAlm( aTmp, aOld, aGet, nGetStk, dbfHisMov, oBrw, nMode, oDlg )
 
    IF empty( aTmp[ _CALIMOV ] )
-      msgAlert( "El almacen no puede estar vacio." )
+      msgStop( "El almacen no puede estar vacio." )
 		RETURN .F.
 	END IF
 
 	IF empty( aTmp[ _CREFMOV ] )
-		msgAlert( "Articulo no encontrado" )
+		msgStop( "Articulo no encontrado" )
 		RETURN .F.
 	END IF
 
    IF aTmp[ _NUNDMOV ] == 0
-		msgAlert( "Cantidad no valida" )
+		msgStop( "Cantidad no valida" )
 		RETURN .F.
 	END IF
 
@@ -618,7 +618,7 @@ RETURN NIL
 static function lNotOpen()
 
    if NetErr()
-      msgAlert( "Imposible abrir ficheros." )
+      msgStop( "Imposible abrir ficheros." )
       CloseFiles()
       return .t.
    end if

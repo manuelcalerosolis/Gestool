@@ -96,12 +96,12 @@ METHOD New( nPort ) CLASS TSocket
 
    if Len( ::aSockets ) == 0
       if WSAStartup() != 0
-         MsgAlert( "WSAStartup error" )
+         msgStop( "WSAStartup error" )
       endif
    endif
 
    if ( ::nSocket := Socket( AF_INET, SOCK_STREAM, IPPROTO_IP ) ) == 0
-      MsgAlert( "Socket creation error: " + Str( WsaGetLastError() ) )
+      msgStop( "Socket creation error: " + Str( WsaGetLastError() ) )
    endif
 
    ::cIPAddr  := GetHostByName( GetHostName() )
@@ -123,7 +123,7 @@ METHOD New( nPort ) CLASS TSocket
       WSAAsyncSelect( ::nSocket, oWndMain:hWnd, WM_ASYNCSELECT,;
             nOr( FD_ACCEPT, FD_OOB, FD_READ, FD_CLOSE, FD_CONNECT, FD_WRITE ) )
    else
-      MsgAlert( "You must create a main window in order to use a TSocket object" )
+      msgStop( "You must create a main window in order to use a TSocket object" )
    endif
 
 return Self

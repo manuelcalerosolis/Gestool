@@ -177,7 +177,7 @@ If lSuccess
 Else
    wfGlobal( "cAISPath", "" )
    AdsGetLastError( @cErr )
-   MsgAlert( "Unable to initialize the Advantage Data Dictionary:" + CRLF + CRLF + cErr, ;
+   msgStop( "Unable to initialize the Advantage Data Dictionary:" + CRLF + CRLF + cErr, ;
       wfGlobal( "cSysName" ) )
 Endif
 

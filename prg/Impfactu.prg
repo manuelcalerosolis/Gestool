@@ -144,7 +144,7 @@ METHOD OpenFiles()
 
    if !File( ::cPathFac + "Articulo.dbf" ) .or. !File( ::cPathFac + "Artcom.dbf" )
       ::aChkIndices[ 1 ]:Click( .f. ):Refresh()
-      MsgAlert( "No existe fichero de articulos", ::cPathFac + "ARTICULO.DBF" )
+      msgStop( "No existe fichero de articulos", ::cPathFac + "ARTICULO.DBF" )
    else
       DATABASE NEW ::oDbfArtGst PATH ( cPatArt() )  FILE "ARTICULO.DBF" VIA ( cDriver() )CLASS "ARTGST" SHARED INDEX "ARTICULO.CDX"
       DATABASE NEW ::oDbfArtFac PATH ( ::cPathFac ) FILE "ARTICULO.DBF" VIA ( cDriver() )CLASS "ARTFAC"
@@ -153,7 +153,7 @@ METHOD OpenFiles()
 
    if !File( ::cPathFac + "FAMILIAS.DBF" )
       ::aChkIndices[ 2 ]:Click( .f. ):Refresh()
-      MsgAlert( "No existe fichero de familias", ::cPathFac + "FAMILIAS.DBF" )
+      msgStop( "No existe fichero de familias", ::cPathFac + "FAMILIAS.DBF" )
    else
       DATABASE NEW ::oDbfFamGst PATH ( cPatArt() )  FILE "FAMILIAS.DBF" VIA ( cDriver() )CLASS "FAMGST" SHARED INDEX "FAMILIAS.CDX"
       DATABASE NEW ::oDbfFamFac PATH ( ::cPathFac ) FILE "FAMILIAS.DBF" VIA ( cDriver() )CLASS "FAMFAC"
@@ -161,7 +161,7 @@ METHOD OpenFiles()
 
    if !File( ::cPathFac + "GRP_VENT.DBF" )
       ::aChkIndices[ 3 ]:Click( .f. ):Refresh()
-      MsgAlert( "No existe fichero de grupos de ventas", ::cPathFac + "GRP_VENT.DBF" )
+      msgStop( "No existe fichero de grupos de ventas", ::cPathFac + "GRP_VENT.DBF" )
    else
       DATABASE NEW ::oDbfGrpGst PATH ( cPatEmp() )  FILE "GRPVENT.DBF"  VIA ( cDriver() )CLASS "GRPGST" SHARED INDEX "GRPVENT.CDX"
       DATABASE NEW ::oDbfGrpFac PATH ( ::cPathFac ) FILE "GRP_VENT.DBF" VIA ( cDriver() )CLASS "GRPFAC"
@@ -169,7 +169,7 @@ METHOD OpenFiles()
 
    if !File( ::cPathFac + "IVAS.DBF" )
       ::aChkIndices[ 4 ]:Click( .f. ):Refresh()
-      MsgAlert( "No existe fichero de tipos de " + cImp(), ::cPathFac + "IVAS.DBF" )
+      msgStop( "No existe fichero de tipos de " + cImp(), ::cPathFac + "IVAS.DBF" )
    else
       DATABASE NEW ::oDbfIvaGst PATH ( cPatDat() )  FILE "TIVA.DBF"     VIA ( cDriver() )CLASS "IVAGST" SHARED INDEX "TIVA.CDX"
       DATABASE NEW ::oDbfIvaFac PATH ( ::cPathFac ) FILE "IVAS.DBF"     VIA ( cDriver() )CLASS "IVAFAC"
@@ -177,7 +177,7 @@ METHOD OpenFiles()
 
    if !File( ::cPathFac + "GRUPCLI.DBF" )
       ::aChkIndices[ 18 ]:Click( .f. ):Refresh()
-      MsgAlert( "No existen ficheros de grupos de clientes", ::cPathFac + "GRUPCLI.DBF" )
+      msgStop( "No existen ficheros de grupos de clientes", ::cPathFac + "GRUPCLI.DBF" )
    else
       DATABASE NEW ::oDbfGrpCliGst PATH ( cPatCli() )  FILE "GRPCLI.DBF"   VIA ( cDriver() )CLASS "GRPCLIGST"  SHARED INDEX "GRPCLI.CDX"
       DATABASE NEW ::oDbfGrpCliFac PATH ( ::cPathFac ) FILE "GRUPCLI.DBF"  VIA ( cDriver() )CLASS "GRPCLIFAC"
@@ -185,7 +185,7 @@ METHOD OpenFiles()
 
    if !File( ::cPathFac + "CLIENTES.DBF" ) .or. !File( ::cPathFac + "DIRCLI.DBF" ) .or. !File( ::cPathFac + "PROVINC.DBF" ) .or. !File( ::cPathFac + "ATIPICAS.DBF" )
       ::aChkIndices[ 5 ]:Click( .f. ):Refresh()
-      MsgAlert( "No existen ficheros de clientes ni direcciones", ::cPathFac + "CLIENTES.DBF" + ::cPathFac + "DIRCLI.DBF" )
+      msgStop( "No existen ficheros de clientes ni direcciones", ::cPathFac + "CLIENTES.DBF" + ::cPathFac + "DIRCLI.DBF" )
    else
       DATABASE NEW ::oDbfCliGst PATH ( cPatCli() )  FILE "CLIENT.DBF"   VIA ( cDriver() )CLASS "CLIGST"  SHARED INDEX "CLIENT.CDX"
       DATABASE NEW ::oDbfObrGst PATH ( cPatCli() )  FILE "OBRAST.DBF"   VIA ( cDriver() )CLASS "OBRGST"  SHARED INDEX "OBRAST.CDX"
@@ -199,7 +199,7 @@ METHOD OpenFiles()
 
    if !File( ::cPathFac + "FPAGO.DBF" )
       ::aChkIndices[ 6 ]:Click( .f. ):Refresh()
-      MsgAlert( "No existe fichero de formas de pago", ::cPathFac + "FPAGO.DBF" )
+      msgStop( "No existe fichero de formas de pago", ::cPathFac + "FPAGO.DBF" )
    else
       DATABASE NEW ::oDbfFpgGst PATH ( cPatGrp() )  FILE "FPAGO.DBF"    VIA ( cDriver() )CLASS "FPGGST" SHARED INDEX "FPAGO.CDX"
       DATABASE NEW ::oDbfFpgFac PATH ( ::cPathFac ) FILE "FPAGO.DBF"    VIA ( cDriver() )CLASS "FPGFAC"
@@ -207,7 +207,7 @@ METHOD OpenFiles()
 
    if !File( ::cPathFac + "REMESAS.DBF" ) .or. !File( ::cPathFac + "CTA_REM.DBF" )
       ::aChkIndices[ 19 ]:Click( .f. ):Refresh()
-      MsgAlert( "No existen ficheros de remesas" )
+      msgStop( "No existen ficheros de remesas" )
    else
       DATABASE NEW ::oDbfRemGst     PATH ( cPatEmp() )  FILE "REMCLIT.DBF"    VIA ( cDriver() )CLASS "REMGST"     SHARED INDEX "REMCLIT.CDX"
       DATABASE NEW ::oDbfRemFac     PATH ( ::cPathFac ) FILE "REMESAS.DBF"    VIA ( cDriver() )CLASS "REMFAC"
@@ -217,7 +217,7 @@ METHOD OpenFiles()
 
    if !File( ::cPathFac + "PROVEEDO.DBF" )
       ::aChkIndices[ 7 ]:Click( .f. ):Refresh()
-      MsgAlert( "No existe fichero de proveedores", ::cPathFac + "PROVEEDO.DBF" )
+      msgStop( "No existe fichero de proveedores", ::cPathFac + "PROVEEDO.DBF" )
    else
       DATABASE NEW ::oDbfPrvGst PATH ( cPatPrv() )  FILE "PROVEE.DBF"   VIA ( cDriver() )CLASS "PRVGST" SHARED INDEX "PROVEE.CDX"
       DATABASE NEW ::oDbfPrvFac PATH ( ::cPathFac ) FILE "PROVEEDO.DBF" VIA ( cDriver() )CLASS "PRVFAC"
@@ -225,7 +225,7 @@ METHOD OpenFiles()
 
    if !File( ::cPathFac + "AGENTES.DBF" )
       ::aChkIndices[ 11 ]:Click( .f. ):Refresh()
-      MsgAlert( "No existe fichero de agentes", ::cPathFac + "AGENTES.DBF" )
+      msgStop( "No existe fichero de agentes", ::cPathFac + "AGENTES.DBF" )
    else
       DATABASE NEW ::oDbfAgeGst PATH ( cPatCli() )    FILE "AGENTES.DBF"   VIA ( cDriver() )CLASS "AGEGST" SHARED INDEX "AGENTES.CDX"
       DATABASE NEW ::oDbfAgeFac PATH ( ::cPathFac ) FILE "AGENTES.DBF"   VIA ( cDriver() )CLASS "AGEFAC"
@@ -233,7 +233,7 @@ METHOD OpenFiles()
 
    if !File( ::cPathFac + "ALMACEN.DBF" )
       ::aChkIndices[ 12 ]:Click( .f. ):Refresh()
-      MsgAlert( "No existe fichero de almacenes", ::cPathFac + "ALMACEN.DBF" )
+      msgStop( "No existe fichero de almacenes", ::cPathFac + "ALMACEN.DBF" )
    else
       DATABASE NEW ::oDbfAlmGst PATH ( cPatAlm() )    FILE "ALMACEN.DBF"   VIA ( cDriver() )CLASS "ALMGST" SHARED INDEX "ALMACEN.CDX"
       DATABASE NEW ::oDbfAlmFac PATH ( ::cPathFac ) FILE "ALMACEN.DBF"   VIA ( cDriver() )CLASS "ALMFAC"
@@ -241,7 +241,7 @@ METHOD OpenFiles()
 
    if !File( ::cPathFac + "PRECLIT.DBF" ) .or.  !File( ::cPathFac + "PRECLIL.DBF" )
       ::aChkIndices[ 20 ]:Click( .f. ):Refresh()
-      MsgAlert( "No existen ficheros de presupuestos", ::cPathFac + "PRECLIT.DBF, ni " + ::cPathFac + "PRECLIL.DBF" )
+      msgStop( "No existen ficheros de presupuestos", ::cPathFac + "PRECLIT.DBF, ni " + ::cPathFac + "PRECLIL.DBF" )
    else
       DATABASE NEW ::oDbfPreTGst PATH ( cPatEmp() )  FILE "PRECLIT.DBF"   VIA ( cDriver() )CLASS "PRETGST"  SHARED INDEX "PRECLIT.CDX"
       DATABASE NEW ::oDbfPreTFac PATH ( ::cPathFac ) FILE "PRECLIT.DBF"   VIA ( cDriver() )CLASS "PRETFAC"
@@ -251,7 +251,7 @@ METHOD OpenFiles()
 
    if !File( ::cPathFac + "PEDCLIT.DBF" ) .or.  !File( ::cPathFac + "PEDCLIL.DBF" )
       ::aChkIndices[ 21 ]:Click( .f. ):Refresh()
-      MsgAlert( "No existen ficheros de pedidos", ::cPathFac + "PEDCLIT.DBF, ni " + ::cPathFac + "PEDCLIL.DBF" )
+      msgStop( "No existen ficheros de pedidos", ::cPathFac + "PEDCLIT.DBF, ni " + ::cPathFac + "PEDCLIL.DBF" )
    else
       DATABASE NEW ::oDbfPedTGst PATH ( cPatEmp() )  FILE "PEDCLIT.DBF"   VIA ( cDriver() )CLASS "PEDTGST"  SHARED INDEX "PEDCLIT.CDX"
       DATABASE NEW ::oDbfPedTFac PATH ( ::cPathFac ) FILE "PEDCLIT.DBF"   VIA ( cDriver() )CLASS "PEDTFAC"
@@ -261,7 +261,7 @@ METHOD OpenFiles()
 
    if !File( ::cPathFac + "ALBCLIT.DBF" ) .or.  !File( ::cPathFac + "ALBCLIL.DBF" )
       ::aChkIndices[ 8 ]:Click( .f. ):Refresh()
-      MsgAlert( "No existen ficheros de Albaranes", ::cPathFac + "ALBCLIT.DBF, ni " + ::cPathFac + "ALBCLIL.DBF" )
+      msgStop( "No existen ficheros de Albaranes", ::cPathFac + "ALBCLIT.DBF, ni " + ::cPathFac + "ALBCLIL.DBF" )
    else
       DATABASE NEW ::oDbfAlbTGst PATH ( cPatEmp() )  FILE "ALBCLIT.DBF"   VIA ( cDriver() )CLASS "ALBTGST"  SHARED INDEX "ALBCLIT.CDX"
       DATABASE NEW ::oDbfAlbTFac PATH ( ::cPathFac ) FILE "ALBCLIT.DBF"   VIA ( cDriver() )CLASS "ALBTFAC"
@@ -271,7 +271,7 @@ METHOD OpenFiles()
 
    if !File( ::cPathFac + "FACCLIT.DBF" ) .or.  !File( ::cPathFac + "FACCLIL.DBF" ) .or. !File( ::cPathFac + "RECIBOS.DBF" ) .or. !File( ::cPathFac + "FACCLID.DBF" )
       ::aChkIndices[ 9 ]:Click( .f. ):Refresh()
-      MsgAlert( "No existen ficheros de Facturas", ::cPathFac + "FACCLIT.DBF, ni " + ::cPathFac + "FACCLIL.DBF" )
+      msgStop( "No existen ficheros de Facturas", ::cPathFac + "FACCLIT.DBF, ni " + ::cPathFac + "FACCLIL.DBF" )
    else
       DATABASE NEW ::oDbfFacTGst    PATH ( cPatEmp() )   FILE "FACCLIT.DBF"   VIA ( cDriver() )CLASS "FACTGST" SHARED INDEX "FACCLIT.CDX"
       DATABASE NEW ::oDbfFacTFac    PATH ( ::cPathFac )  FILE "FACCLIT.DBF"   VIA ( cDriver() )CLASS "FACTFAC"
@@ -288,7 +288,7 @@ METHOD OpenFiles()
 
    if !File( ::cPathFac + "TICKETT.DBF" ) .or.  !File( ::cPathFac + "TICKETL.DBF" )
       ::aChkIndices[ 10 ]:Click( .f. ):Refresh()
-      MsgAlert( "No existen ficheros de Tikets", ::cPathFac + "TICKETT.DBF, ni " + ::cPathFac + "TICKETL.DBF" )
+      msgStop( "No existen ficheros de Tikets", ::cPathFac + "TICKETT.DBF, ni " + ::cPathFac + "TICKETL.DBF" )
    else
       DATABASE NEW ::oDbfTikTGst PATH ( cPatEmp() )  FILE "TIKET.DBF"     VIA ( cDriver() )CLASS "TIKTGST"  SHARED INDEX "TIKET.CDX"
       DATABASE NEW ::oDbfTikTFac PATH ( ::cPathFac ) FILE "TICKETT.DBF"   VIA ( cDriver() )CLASS "TIKTFAC"
@@ -315,7 +315,7 @@ METHOD OpenFiles()
 
    if !File( ::cPathFac + "Transpor.Dbf" )
       ::aChkIndices[ 14 ]:Click( .f. ):Refresh()
-      MsgAlert( "No existe fichero de transportistas", ::cPathFac + "Transpor.Dbf" )
+      msgStop( "No existe fichero de transportistas", ::cPathFac + "Transpor.Dbf" )
    else
       DATABASE NEW ::oDbfTrnGst PATH ( cPatGrp() )  FILE "Transpor.Dbf"    VIA ( cDriver() )CLASS "TRNGST"  SHARED INDEX "Transpor.Cdx"
       DATABASE NEW ::oDbfTrnFac PATH ( ::cPathFac ) FILE "Transpor.Dbf"    VIA ( cDriver() )CLASS "TRNFAC"
@@ -325,7 +325,7 @@ METHOD OpenFiles()
 
    if !File( ::cPathFac + "PEDPROT.DBF" ) .or.  !File( ::cPathFac + "PEDPROL.DBF" )
       ::aChkIndices[ 22 ]:Click( .f. ):Refresh()
-      MsgAlert( "No existen ficheros de pedidos de proveedor", ::cPathFac + "PEDPROT.DBF, ni " + ::cPathFac + "PEDPROL.DBF" )
+      msgStop( "No existen ficheros de pedidos de proveedor", ::cPathFac + "PEDPROT.DBF, ni " + ::cPathFac + "PEDPROL.DBF" )
    else
       DATABASE NEW ::oDbfPepTGst PATH ( cPatEmp() )  FILE "PEDPROVT.DBF"  VIA ( cDriver() )CLASS "PEPTGST"  SHARED INDEX "PEDPROVT.CDX"
       DATABASE NEW ::oDbfPepTFac PATH ( ::cPathFac ) FILE "PEDPROT.DBF"   VIA ( cDriver() )CLASS "PEPTFAC"
@@ -335,7 +335,7 @@ METHOD OpenFiles()
 
    if !File( ::cPathFac + "ALBPROT.DBF" ) .or.  !File( ::cPathFac + "ALBPROL.DBF" )
       ::aChkIndices[ 15 ]:Click( .f. ):Refresh()
-      MsgAlert( "No existen ficheros de Albaranes de proveedor", ::cPathFac + "ALBPROT.DBF, ni " + ::cPathFac + "ALBPROL.DBF" )
+      msgStop( "No existen ficheros de Albaranes de proveedor", ::cPathFac + "ALBPROT.DBF, ni " + ::cPathFac + "ALBPROL.DBF" )
    else
       DATABASE NEW ::oDbfAlpTGst PATH ( cPatEmp() )  FILE "ALBPROVT.DBF"  VIA ( cDriver() )CLASS "ALPTGST"  SHARED INDEX "ALBPROVT.CDX"
       DATABASE NEW ::oDbfAlpTFac PATH ( ::cPathFac ) FILE "ALBPROT.DBF"   VIA ( cDriver() )CLASS "ALPTFAC"
@@ -345,7 +345,7 @@ METHOD OpenFiles()
 
    if !File( ::cPathFac + "FACPROT.DBF" ) .or.  !File( ::cPathFac + "FACPROL.DBF" ) .or.  !File( ::cPathFac + "RECIBOSP.DBF" )
       ::aChkIndices[ 16 ]:Click( .f. ):Refresh()
-      MsgAlert( "No existen ficheros de Facturas de proveedor", ::cPathFac + "FACPROT.DBF, ni " + ::cPathFac + "FACPROL.DBF" )
+      msgStop( "No existen ficheros de Facturas de proveedor", ::cPathFac + "FACPROT.DBF, ni " + ::cPathFac + "FACPROL.DBF" )
    else
       DATABASE NEW ::oDbfFapTGst PATH ( cPatEmp() )  FILE "FACPRVT.DBF"  VIA ( cDriver() )CLASS "FAPTGST"  SHARED INDEX "FACPRVT.CDX"
       DATABASE NEW ::oDbfFapTFac PATH ( ::cPathFac ) FILE "FACPROT.DBF"  VIA ( cDriver() )CLASS "FAPTFAC"
@@ -362,7 +362,7 @@ METHOD OpenFiles()
 
    if !File( ::cPathFac + "FACCLIT.DBF" ) .or.  !File( ::cPathFac + "FACCLIL.DBF" ) .or. !File( ::cPathFac + "RECIBOS.DBF" ) .or. !File( ::cPathFac + "FACCLID.DBF" )
       ::aChkIndices[ 17 ]:Click( .f. ):Refresh()
-      MsgAlert( "No existen ficheros de facturas de clientes", ::cPathFac + "FACCLIT.DBF, ni " + ::cPathFac + "FACCLIL.DBF" )
+      msgStop( "No existen ficheros de facturas de clientes", ::cPathFac + "FACCLIT.DBF, ni " + ::cPathFac + "FACCLIL.DBF" )
    end if
 
    RECOVER USING oError

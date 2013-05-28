@@ -1620,7 +1620,7 @@ Esta funcion valida el tipo de documento si es valido para la importaci¢n
 
 		ELSE
 
-         msgAlert( "Tipo de documentos no coinciden", "Debe retocar el documento" )
+         msgStop( "Tipo de documentos no coinciden", "Debe retocar el documento" )
 			lRet	:= .t.
 
 		END IF

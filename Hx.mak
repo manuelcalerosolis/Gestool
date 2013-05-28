@@ -9,28 +9,28 @@ FWLIB 			= 		\Fwh102\Lib
 
 RESOURCE 		= 		.\Resource
 
-BORLAND 		= 		\Bcc55
+BORLAND 			= 		\Bcc55
 BORLANDLIB 		= 		\Bcc55\Lib\Psdk
 
 IMG2PDFLIB 		= 		\Img2Pdf
 
-OBJ 			= 		Obj
+OBJ 				= 		Obj
 SOURCEPRG 		= 		Prg
-SOURCEC 		=		C
-PPO 			= 		Ppo
+SOURCEC 			=		C
+PPO 				= 		Ppo
 
-EXE 			= 		Bin\Gestool.exe
+EXE 				= 		Bin\Gestool.exe
 
-.path.prg       = 		.\$(SOURCEPRG)
+.path.prg      = 		.\$(SOURCEPRG)
 .path.c       	= 		.\$(SOURCEC)
-.path.obj       = 		.\$(OBJ)
+.path.obj      = 		.\$(OBJ)
 
-PRG            	=       \
+PRG            =       	\
 Factu.prg               \
 Font.prg                \
 DialogHb.prg            \
 Window.prg              \
-Mdiframe.prg 			\
+Mdiframe.prg 				\
 Brush.prg               \
 Bitmap.prg              \
 Rect.prg                \
@@ -84,7 +84,7 @@ Extage.prg              \
 Lqdalm.prg              \
 Pedcli.prg              \
 Precli.prg              \
-Satcli.prg 				\
+Satcli.prg 					\
 Factcli.prg             \
 Facant.prg              \
 Facrec.prg              \
@@ -422,7 +422,7 @@ TXml.obj                \
 Font.obj                \
 DialogHb.obj            \
 Window.obj              \
-Mdiframe.obj 			\
+Mdiframe.obj 				\
 Rect.obj                \
 Buttonb.obj             \
 Brush.obj               \
@@ -461,7 +461,7 @@ Extage.obj              \
 Lqdalm.obj              \
 Pedcli.obj              \
 Precli.obj              \
-Satcli.obj 				\
+Satcli.obj 					\
 Factcli.obj             \
 Facant.obj              \
 Facrec.obj              \
@@ -828,7 +828,7 @@ $(OBJ)\AccessCode.obj           +
 $(OBJ)\TXml.obj                 +
 $(OBJ)\DialogHb.obj             +
 $(OBJ)\Window.obj               +
-$(OBJ)\Mdiframe.obj 			+
+$(OBJ)\Mdiframe.obj 				  +
 $(OBJ)\Rect.obj                 +
 $(OBJ)\Buttonb.obj              +
 $(OBJ)\Brush.obj                +

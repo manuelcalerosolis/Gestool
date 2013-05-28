@@ -485,7 +485,7 @@ METHOD Copy() CLASS TGet
       oClp:SetText( ::GetSel() )
       oClp:End()
    else
-      MsgAlert( "The clipboard is not available now!" )
+      msgStop( "The clipboard is not available now!" )
    endif
 
 return nil
@@ -853,7 +853,7 @@ METHOD Paste( cText ) CLASS TGet
          cText = oClp:GetText()
          oClp:Close()
       else
-         MsgAlert( "The clipboard is not available!" )
+         msgStop( "The clipboard is not available!" )
       endif
    endif
 
@@ -1110,7 +1110,7 @@ METHOD Cut() CLASS TGet
    local nLo, nHi, cTemp
 
    if ::lReadOnly
-      MsgAlert( "The get is read only!", "Can't cut" )
+      msgStop( "The get is read only!", "Can't cut" )
       return nil
    endif
 

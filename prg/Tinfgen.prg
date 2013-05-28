@@ -5073,7 +5073,7 @@ Function aGetFont()
 #endif
 
    if Empty( aFonts )
-      MsgAlert( "Error getting font names" )
+      msgStop( "Error getting font names" )
    else
       aSort( aFonts,,, { |x, y| upper( x ) < upper( y ) } )
    endif

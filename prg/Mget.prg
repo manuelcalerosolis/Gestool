@@ -353,7 +353,7 @@ METHOD Copy() CLASS TMultiGet
       oClp:SetText( ::GetSel() )
       oClp:End()
    else
-      MsgAlert( "The clipboard is not available now!" )
+      msgStop( "The clipboard is not available now!" )
    endif
 
 return nil
@@ -403,7 +403,7 @@ return nil
 METHOD Cut() CLASS TMultiGet
 
    if ::lReadOnly
-      MsgAlert( "The get is read only!", "Can't cut" )
+      msgStop( "The get is read only!", "Can't cut" )
       return nil
    endif
 
@@ -423,7 +423,7 @@ return nil
 METHOD Del() CLASS TMultiGet
 
    if ::lReadOnly
-      MsgAlert( "The get is read only!", "Can't delete" )
+      msgStop( "The get is read only!", "Can't delete" )
       return nil
    endif
 

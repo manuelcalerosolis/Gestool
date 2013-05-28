@@ -337,7 +337,7 @@ function LoadFreeImage( cResFile )
       #endif
 
       if hLib <= 32
-         MsgAlert( "Cannot load FreeImage.dll" )
+         msgStop( "Cannot load FreeImage.dll" )
          hLib  = 0
       endif
 

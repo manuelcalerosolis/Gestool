@@ -498,7 +498,7 @@ Static Function SetNumDay( aBlank, oText )
       Return .t.
    end if
 
-	MsgAlert( "La fecha final debe ser mayor que la inicial." )
+	msgStop( "La fecha final debe ser mayor que la inicial." )
 
 Return .f.
 

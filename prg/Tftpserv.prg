@@ -101,7 +101,7 @@ METHOD OnRead( oSocket ) CLASS TFtpServer
       cCommand := Upper( cData )
    endif
 
-      //MsgAlert(">"+cCommand+"<",">"+cDataCmm+"<")
+      //msgStop(">"+cCommand+"<",">"+cDataCmm+"<")
 
    do case
       case cCommand == "NOOP"

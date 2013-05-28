@@ -5147,7 +5147,7 @@ Function ValCobro( aGet, aTmp )
 
    else
 
-      msgAlert( "El importe del cobro excede al importe del recibo" )
+      msgStop( "El importe del cobro excede al importe del recibo" )
 
    end if
 

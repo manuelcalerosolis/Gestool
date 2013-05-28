@@ -608,7 +608,7 @@ METHOD PedPrv( cNumPed, cCodAlm, lDelete, lIncremento ) CLASS TStock
    */
 
    if ::cPedPrvL == nil .or. cNumPed == nil
-      msgAlert( "Imposible realizar la actualización de stocks.", "Atención" )
+      msgStop( "Imposible realizar la actualización de stocks.", "Atención" )
       return self
    end if
 
@@ -735,7 +735,7 @@ METHOD FacPrv( cNumFac, cCodAlm, lDelete, lIncremento ) CLASS TStock
    */
 
    if ::cFacPrvL == nil .or. cNumFac == nil
-      msgAlert( "Imposible realizar la actualización de stocks.", "Atención" )
+      msgStop( "Imposible realizar la actualización de stocks.", "Atención" )
       return self
    end if
 
@@ -803,7 +803,7 @@ METHOD RctPrv( cNumFac, cCodAlm, lDelete, lIncremento ) CLASS TStock
    */
 
    if ::cRctPrvL == nil .or. cNumFac == nil
-      msgAlert( "Imposible realizar la actualización de stocks.", "Atención" )
+      msgStop( "Imposible realizar la actualización de stocks.", "Atención" )
       return self
    end if
 
@@ -872,7 +872,7 @@ METHOD PedCli( cNumPed, cCodAlm, lDelete, lIncremento ) CLASS TStock
    */
 
    if Empty( cNumPed ) .or. Empty( ::cPedCliL ) .or. Empty( ::cAlbCliT ) .or. Empty( ::cAlbCliL ) .or. Empty( ::cAlbPrvL )
-      msgAlert( "Imposible realizar la actualización de stocks.", "Atención" )
+      msgStop( "Imposible realizar la actualización de stocks.", "Atención" )
       return self
    end if
 
@@ -1045,7 +1045,6 @@ METHOD SetRecibidoPedCli( cNumPed ) CLASS TStock
    */
 
    if Empty( cNumPed ) .or. Empty( ::cPedCliT ) .or. Empty( ::cPedCliL ) .or. Empty( ::cAlbPrvL )
-      // msgAlert( "Imposible actualizar el estado del pedido.", "Atención" )
       return self
    end if
 
@@ -1104,7 +1103,7 @@ METHOD SetGeneradoPedCli( cNumPed ) CLASS TStock
    */
 
    if Empty( cNumPed ) .or. Empty( ::cPedCliT ) .or. Empty( ::cPedCliL ) .or. Empty( ::cPedPrvL )
-      msgAlert( "Imposible actualizar el estado del pedido.", "Atención" )
+      msgStop( "Imposible actualizar el estado del pedido.", "Atención" )
       return self
    end if
 
@@ -1227,7 +1226,7 @@ METHOD AlbCli( cNumAlb, cCodAlm, lDelete, lIncremento, lIgnEstado, lChequea, lAc
    DEFAULT lActPendientes  := .t.
 
    if ::cAlbCliT == nil .or. ::cAlbCliL == nil .or. cNumAlb == nil
-      msgAlert( "Imposible realizar la actualización de stocks.", "Atención" )
+      msgStop( "Imposible realizar la actualización de stocks.", "Atención" )
       return self
    end if
 
@@ -1322,7 +1321,7 @@ METHOD FacCli( cNumFac, cCodAlm, lDelete, lIncremento, lActPendientes ) CLASS TS
    DEFAULT lActPendientes  := .f.
 
    if ::cFacCliL == nil .or. cNumFac == nil
-      msgAlert( "Imposible realizar la actualización de stocks.", "Atención" )
+      msgStop( "Imposible realizar la actualización de stocks.", "Atención" )
       return self
    end if
 
@@ -1395,7 +1394,7 @@ METHOD FacRec( cNumFac, cCodAlm, lDelete, lIncremento, lActPendientes ) CLASS TS
    */
 
    if ::cFacRecL == nil .or. cNumFac == nil
-      msgAlert( "Imposible realizar la actualización de stocks.", "Atención" )
+      msgStop( "Imposible realizar la actualización de stocks.", "Atención" )
       return self
    end if
 

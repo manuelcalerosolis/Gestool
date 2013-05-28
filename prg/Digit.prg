@@ -390,7 +390,7 @@ RETURN nil
 
 Function MsgDebug( cText, cTitle )
 
-Return ( MsgAlert( cText, cTitle ) )
+Return ( msgStop( cText, cTitle ) )
 
 //--------------------------------------------------------------------------//
 

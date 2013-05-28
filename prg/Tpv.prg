@@ -8517,6 +8517,7 @@ STATIC FUNCTION SavLine( aTmp, aGet, dbfTmpL, oBrw, aTik, oGetTotal, lTwo, nMode
    if lNotVta .or. lMsgVta
 
       nStockActual   := oStock:nStockAlmacen( aTmp[ _CCBATIL ], aTik[ _CALMTIK ], aTmp[ _CVALPR1 ], aTmp[ _CVALPR2 ], aTmp[ _CLOTE ] )
+
       nStockActual   -= nVentasPrevias( aTmp[ _CCBATIL ], dbfTmpL, nMode )
 
       if ( nStockActual - aTmp[ _NUNTTIL ] ) < 0
@@ -8775,11 +8776,7 @@ STATIC FUNCTION lCodigoArticulo( aGet, aTmp, lMessage, oDlg )
    DEFAULT lMessage     := .t.
 
    if Empty( cCodArt )
-      if lRetCodArt()
-         return .f.
-      else
-         return .t.
-      end if
+      return ( !lRetCodArt() )
    end if
 
    /*

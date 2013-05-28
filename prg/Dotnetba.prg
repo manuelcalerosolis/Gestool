@@ -606,7 +606,7 @@ if ::nOption != 0
                        ::oBtnCaptured := oGrupo:aItems[n2]
                     endif
 
-                    // msgAlert( Valtype( ::oBtnCaptured ), "Valtype( ::oBtnCaptured )" )
+                    // msgStop( Valtype( ::oBtnCaptured ), "Valtype( ::oBtnCaptured )" )
 
                     //if ::oLast != nil .and. ::oLast:nID != oGrupo:aItems[n2]:nID
                     //   ::Refresh()
@@ -1353,7 +1353,7 @@ local cLine
       cInfo := oClp:GetText()
       oClp:End()
    else
-      MsgAlert( "The clipboard is not available now!" )
+      msgStop( "The clipboard is not available now!" )
    endif
 
 
