@@ -1061,9 +1061,9 @@ METHOD AddConsumido()
    ::oDbfTmp:cTipDoc    := "Material consumido"
    ::oDbfTmp:cNumDoc    := ::oProducM:cSerOrd + "/" + Ltrim( Str( ::oProducM:nNumOrd ) ) + "/" + ::oProducM:cSufOrd
    ::oDbfTmp:cDoc       := ::oProducM:cSerOrd + Str( ::oProducM:nNumOrd ) + ::oProducM:cSufOrd
-   ::oDbfTmp:cCodigo    := ::oProducM:cCodigo
+   ::oDbfTmp:cCodigo    := ::oProducM:cCodArt
    ::oDbfTmp:cNomArt    := ::oProducM:cNomArt
-   ::oDbfTmp:cLote      := ::oProducL:cLote
+   ::oDbfTmp:cLote      := ::oProducM:cLote
    ::oDbfTmp:nUnidades  := NotCaja( ::oProducM:nCajOrd ) * ::oProducM:nUndOrd
    ::oDbfTmp:dFecDoc    := oRetFld( ::oProducM:cSerOrd + Str( ::oProducM:nNumOrd ) + ::oProducM:cSufOrd, ::oProducT, "dFecFin" )
    ::oDbfTmp:cCodCli    := Space( 12 )
