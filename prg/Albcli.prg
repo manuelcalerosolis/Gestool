@@ -8661,8 +8661,8 @@ Method Process()
 
       ::oSender:SetText( "Procesando fichero : " + aFiles[ m, 1 ] )
 
-      oBlock         := ErrorBlock( { | oError | ApoloBreak( oError ) } )
-      BEGIN SEQUENCE
+      /*oBlock         := ErrorBlock( { | oError | ApoloBreak( oError ) } )
+      BEGIN SEQUENCE*/
 
          if ::oSender:lUnZipData( cPatIn() + aFiles[ m, 1 ] )
 
@@ -8769,7 +8769,7 @@ Method Process()
 
          end if
 
-      RECOVER USING oError
+      /*RECOVER USING oError
 
          CLOSE ( dbfAlbCliT )
          CLOSE ( dbfAlbCliL )
@@ -8782,7 +8782,7 @@ Method Process()
          ::oSender:SetText( ErrorMessage( oError ) )
 
       END SEQUENCE
-      ErrorBlock( oBlock )
+      ErrorBlock( oBlock )*/
 
    next
 
