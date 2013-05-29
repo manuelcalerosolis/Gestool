@@ -151,7 +151,7 @@ FUNCTION cGetExpression( cExpr, aBase, cAlias )
    REDEFINE BUTTON ID ID_CHECK OF oDlg ;
       ACTION If( At( Type( cTemp ), "UIUE" ) == 0,;
 					  MsgInfo( "Expresion Correcta" ),;
-					  MsgAlert( "Expresion Invalida" ) )
+					  msgStop( "Expresion Invalida" ) )
 
 	ACTIVATE DIALOG oDlg CENTERED ;
 		ON INIT ( ShowFields( aBase, oFields ),;

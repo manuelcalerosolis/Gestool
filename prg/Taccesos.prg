@@ -631,21 +631,21 @@ Method CreateSearchBar( oWnd )
             SIZE     18, 18 ;
             OF       ::oRebar ;
             NOBORDER ;
-            ACTION   ( msgAlert( "Quitar filtro activo" ) )
+            ACTION   ( msgStop( "Quitar filtro activo" ) )
 
    @ 125, 658 BTNBMP ::oButtonEditFilter ;
             RESOURCE "bFilter16" ;
             SIZE     18, 18 ;
             OF       ::oRebar ;
             NOBORDER ;
-            ACTION   ( msgAlert( "Quitar filtro activo" ) )
+            ACTION   ( msgStop( "Quitar filtro activo" ) )
 
    @ 125, 684 BTNBMP ::oButtonFilter ;
             RESOURCE "bNoFilter16" ;
             SIZE     18, 18 ;
             OF       ::oRebar ;
             NOBORDER ;
-            ACTION   ( msgAlert( "Quitar filtro activo" ) )
+            ACTION   ( msgStop( "Quitar filtro activo" ) )
 
    @ 124, 710 COMBOBOX ::oYearComboBox ;
             VAR      ::cYearComboBox ;

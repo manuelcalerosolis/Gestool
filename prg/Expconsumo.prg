@@ -359,7 +359,7 @@ METHOD Undo() CLASS TSalon
    local aUndo := aTail( ::aUndo )
 
    if empty( aUndo )
-      MsgAlert( "No hay acciones para deshacer" )
+      msgStop( "No hay acciones para deshacer" )
       return nil
    endif
 

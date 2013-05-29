@@ -2881,9 +2881,9 @@ METHOD Resource() CLASS TpvTactil
 
    ::oDlg:bResized            := {|| ::ResizedResource() } // lTop, lBottom, lLeft, lRight )() }
 
-   // ::oDlg:bKeyChar            := {|| msgAlert( "::oGetUnidades:SetFocus()" ) }
-   ::oDlg:OnKeyDown           := {| o, nKey, nFlag | ::oDlgKeyDown( o, nKey, nFlag ) } // {|| msgAlert( "OnKeyDown" ), ::oGetUnidades:SetFocus(), 1 }
-   // ::oDlg:bKeyDown            := {|| msgAlert( "bKeyDown" ) }
+   // ::oDlg:bKeyChar            := {|| msgStop( "::oGetUnidades:SetFocus()" ) }
+   ::oDlg:OnKeyDown           := {| o, nKey, nFlag | ::oDlgKeyDown( o, nKey, nFlag ) } // {|| msgStop( "OnKeyDown" ), ::oGetUnidades:SetFocus(), 1 }
+   // ::oDlg:bKeyDown            := {|| msgStop( "bKeyDown" ) }
 
    /*
    Activamos el diálogo------------------------------------------------------

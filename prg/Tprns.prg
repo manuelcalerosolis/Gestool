@@ -44,27 +44,27 @@ function Test()
 
   if nLen > 0
     AEval( oPrn:aPrinters, {|cName| cStr += cName + CRLF } )
-    MsgAlert( cStr, "TPrinters" )
+    msgStop( cStr, "TPrinters" )
 
     for i := 1 to nLen
       cName := oPrn:aPrinters[i]
       aData := oPrn:GetInfo( cName )
       cStr  := ""
       AEval( aData, {|cValue| cStr += if( !Empty( cValue ), cValue, "<empty>" ) + CRLF } )
-      MsgAlert( cName + CRLF + CRLF + cStr, cName )
+      msgStop( cName + CRLF + CRLF + cStr, cName )
     next
 
     for i := 1 to nLen
       cName := oPrn:aPrinters[i]
       oPrn:SetDefault( cName )
-      MsgAlert( "Check if " + cName + " is the default printer." )
+      msgStop( "Check if " + cName + " is the default printer." )
     next
 
     cStr := ""
     for i := 1 to nLen
       cStr += oPrn:GetDriver( oPrn:aPrinters[i] ) + CRLF
     next
-    MsgAlert( cStr, "Drivers List" )
+    msgStop( cStr, "Drivers List" )
 
   endif
 

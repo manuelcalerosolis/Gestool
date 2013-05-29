@@ -1059,7 +1059,7 @@ METHOD SelectRec( bAction, cDlgTitle, cChkTitle, lClose ) CLASS TMasDet
    local cPicture    := "999999999"
    local oImageList
 
-   DEFAULT bAction   := {|| MsgAlert( "bAction no pasado" ) }
+   DEFAULT bAction   := {|| msgStop( "bAction no pasado" ) }
    DEFAULT cDlgTitle := ""
    DEFAULT cChkTitle := ""
    DEFAULT lClose    := .f.

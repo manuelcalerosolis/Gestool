@@ -59,7 +59,7 @@ METHOD Invoke( cMethodName, uParam1, uParam2, uParam3 ) CLASS TComObject
            OleInvoke( ::nIDispatch, cMethodName, uParam1, uParam2, uParam3 )
 
       otherwise
-           MsgAlert( "Please modify Class TComObject METHOD Invoke " + ;
+           msgStop( "Please modify Class TComObject METHOD Invoke " + ;
                      "to accept more parameters" )
    endcase
 

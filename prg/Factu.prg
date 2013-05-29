@@ -302,7 +302,7 @@ Return Nil
 
 Function HelpTopic()
 
-   msgAlert( "Help wanted!" )
+   msgStop( "Help wanted!" )
 
 Return Nil
 

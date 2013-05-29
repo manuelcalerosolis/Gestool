@@ -19222,10 +19222,10 @@ STATIC FUNCTION AppKit( aClo, aTmpFac, dbfTmpLin, dbfArticulo, dbfKit )
                   case nStkActual - nUnidades < ( dbfArticulo)->nMinimo
 
                      MsgStop( "El stock del componente " + AllTrim( ( dbfKit )->cRefKit ) + " - " + AllTrim( ( dbfArticulo )->Nombre ) + CRLF + ;
-                              "está bajo minimo." + CRLF + ;
-                              "Unidades a vender : " + AllTrim( Trans( nUnidades, MasUnd() ) ) + CRLF + ;
-                              "Stock mínimo : " + AllTrim( Trans( ( dbfArticulo)->nMinimo, MasUnd() ) ) + CRLF + ;
-                              "Stock actual : " + AllTrim( Trans( nStkActual, MasUnd() ) ),;
+                              "está bajo minimo."        + CRLF + ;
+                              "Unidades a vender : "     + AllTrim( Trans( nUnidades, MasUnd() ) ) + CRLF + ;
+                              "Stock mínimo : "          + AllTrim( Trans( ( dbfArticulo)->nMinimo, MasUnd() ) ) + CRLF + ;
+                              "Stock actual : "          + AllTrim( Trans( nStkActual, MasUnd() ) ),;
                               "¡Atención!" )
                end case
 

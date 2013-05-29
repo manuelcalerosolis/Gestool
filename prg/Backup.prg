@@ -638,18 +638,18 @@ Method BotonSiguiente()
             SetWindowText( ::oBotonSiguiente:hWnd, "&Terminar" )
             ::oFld:GoNext()
          else
-            msgAlert( "No ha seleccionado ninguna empresa", "Atención" )
+            msgStop( "No ha seleccionado ninguna empresa", "Atención" )
          end if
 
       case ::oFld:nOption == 3  //hacer una copia de seguridad
 
          if ::lPassword .and. ::cPassword1 != ::cPassword2
-            msgAlert( "Las contraseñas para las copias de seguridad, no coinciden", "Atención" )
+            msgStop( "Las contraseñas para las copias de seguridad, no coinciden", "Atención" )
             Return ( Self )
          end if
 
          if !::lDir .and. !::lInternet
-            msgAlert( "Debe especificar al menos un destino para la copia", "Atención" )
+            msgStop( "Debe especificar al menos un destino para la copia", "Atención" )
             Return ( Self )
          end if
 
@@ -672,7 +672,7 @@ Method BotonSiguiente()
 
          else
 
-            msgAlert( "Debe especificar el lugar de destino", "Atención" )
+            msgStop( "Debe especificar el lugar de destino", "Atención" )
 
          endif
 
@@ -689,7 +689,7 @@ Method BotonSiguiente()
             ::GetZipFiles()
             ::oFld:SetOption( 6 )
          else
-            msgAlert( "Debe especificar el lugar de origen", "Atención" )
+            msgStop( "Debe especificar el lugar de origen", "Atención" )
          endif
 
       // Restaurar una copia de seguridad
@@ -895,7 +895,7 @@ Method ZipFiles()
 
    else
 
-      msgAlert( "No se selecciono ninguna empresa" )
+      msgStop( "No se selecciono ninguna empresa" )
 
       ::oDlg:Enable()
 
@@ -959,7 +959,7 @@ Method RestoreZipFiles()
    next
 
    if !lSel
-      msgAlert( "No se selecciono ninguna empresa" )
+      msgStop( "No se selecciono ninguna empresa" )
       Return ( Self )
    end if
 

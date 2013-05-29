@@ -487,7 +487,7 @@ METHOD Tree( oGet )
    */
 
    if oDlg:nResult == IDOK
-      msgAlert( "valor" )
+      msgStop( "valor" )
    end if
 
 RETURN ( uVal )

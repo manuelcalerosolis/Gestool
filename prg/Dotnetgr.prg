@@ -1093,7 +1093,7 @@ local oClp
       oClp:SetText( cInfo )
       oClp:End()
    else
-      MsgAlert( "The clipboard is not available now!" )
+      msgStop( "The clipboard is not available now!" )
    endif
 
 return nil
@@ -1127,7 +1127,7 @@ local lResize := nEnColumna > len( ::aColumns )
       cInfo := oClp:GetText()
       oClp:End()
    else
-      MsgAlert( "The clipboard is not available now!" )
+      msgStop( "The clipboard is not available now!" )
    endif
 
 

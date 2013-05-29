@@ -407,7 +407,7 @@ FUNCTION nLenSubcuentaContaplus( cRuta, cCodEmp, lMensaje )
 
    if Empty( cRuta )
       if lMensaje
-         msgAlert( "Ruta vacia" )
+         msgStop( "Ruta vacia" )
       end if
       Return ( nReturn )
    end if
@@ -462,7 +462,7 @@ FUNCTION nEjercicioContaplus( cRuta, cCodEmp, lMensaje )
 
    if Empty( cRuta )
       if lMensaje
-         msgAlert( "Ruta vacia" )
+         msgStop( "Ruta vacia" )
       end if
       Return ( nReturn )
    end if

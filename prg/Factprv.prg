@@ -8454,7 +8454,7 @@ STATIC FUNCTION loadFac( cGetDes, oBrwFac, aLinFac )
 
    ELSE
 
-      msgAlert( "Fichero no encontrado" )
+      msgStop( "Fichero no encontrado" )
 
    END IF
 
@@ -8804,7 +8804,7 @@ return ( nTotVta )
 static function lNotOpen()
 
    if NetErr()
-      msgAlert( "Imposible abrir ficheros." )
+      msgStop( "Imposible abrir ficheros." )
       CloseFiles()
       return .t.
    end if

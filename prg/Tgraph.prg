@@ -1496,7 +1496,7 @@ METHOD Copy2ClipBoard() CLASS TGraph
       oClip:SetData ( WndBitmap ( ::hWnd ) )
       oClip:End()
    ELSE
-      MsgAlert( "The clipboard is not available now!" )
+      msgStop( "The clipboard is not available now!" )
    ENDIF
 */
    WndCopy( Self:hWnd, .F., .T. )

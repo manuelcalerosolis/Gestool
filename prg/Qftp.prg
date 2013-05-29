@@ -230,7 +230,7 @@ Method Connect() CLASS qFTPClient
     ::lResolved := .f.
     ::cServerIP := GetHostByName(Alltrim(::cServer))  // PK Note this hogs the pc for up to 35 seconds if it cannot be resolved
     if Val(::cServerIP) == 0
-      //MsgAlert("Could not resolve server name '" + ::cServer + "'", ::cTitle)
+      //msgStop("Could not resolve server name '" + ::cServer + "'", ::cTitle)
     else
       if ValType(::bResolved) == "B"
         Eval(::bResolved, Self)

@@ -402,7 +402,7 @@ Method CreateHandle( cCodUsr )
       if ( nHandle   := fCreate( cPatUsr() + cCodUsr + ".usr", 0 ) ) != -1
          fClose( nHandle )
       else
-         MsgAlert( "Error " + Str( fError() ) + " al crear el fichero de usuario " + cCodUsr )
+         msgStop( "Error " + Str( fError() ) + " al crear el fichero de usuario " + cCodUsr )
       end if
    end if
 

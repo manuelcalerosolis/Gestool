@@ -65,31 +65,31 @@ METHOD OpenFiles( cPath )
    BEGIN SEQUENCE
 
    if !File( cPatArt() + "Articulo.Dbf" )
-      MsgAlert( "No existe fichero de articulos", cPatArt() + "Articulo.Dbf" )
+      msgStop( "No existe fichero de articulos", cPatArt() + "Articulo.Dbf" )
    else
       DATABASE NEW ::oDbfArticulo PATH ( cPatArt() )  FILE "Articulo.Dbf" VIA ( cDriver() ) SHARED CLASS "ARTICULO" INDEX "Articulo.Cdx"
    end if
 
    if !File( cPatArt() + "ArtCodebar.Dbf" )
-      MsgAlert( "No existe fichero de codigos de barras", cPatArt() + "ArtCodebar.Dbf" )
+      msgStop( "No existe fichero de codigos de barras", cPatArt() + "ArtCodebar.Dbf" )
    else
       DATABASE NEW ::oDbfArtCode PATH ( cPatArt() ) FILE "ArtCodebar.Dbf" VIA ( cDriver() ) SHARED CLASS "ARTCODEBAR" INDEX "ArtCodebar.Cdx"
    end if
 
    if !File( cPatDat() + "Tiva.Dbf" )
-      MsgAlert( "No existe fichero de tipos de " + cImp(), cPath + "Tiva.Dbf" )
+      msgStop( "No existe fichero de tipos de " + cImp(), cPath + "Tiva.Dbf" )
    else
       DATABASE NEW ::oDbfIva PATH ( cPatDat() )  FILE "Tiva.Dbf" VIA ( cDriver() ) SHARED CLASS "TIVA" INDEX "Tiva.Cdx"
    end if
 
    if !File( cPatDat() + "Divisas.Dbf" )
-      MsgAlert( "No existe fichero de divisas", cPath + "Divisas.Dbf" )
+      msgStop( "No existe fichero de divisas", cPath + "Divisas.Dbf" )
    else
       DATABASE NEW ::oDbfDivisa PATH ( cPatDat() )  FILE "Divisas.Dbf" VIA ( cDriver() ) SHARED CLASS "DIVISAS" INDEX "Divisas.Cdx"
    end if
 
    if !File( cPatArt() + "ArtKit.Dbf" )
-      MsgAlert( "No existe fichero de articulos", cPatArt() + "ArtKit.Dbf" )
+      msgStop( "No existe fichero de articulos", cPatArt() + "ArtKit.Dbf" )
    else
       DATABASE NEW ::oDbfKit PATH ( cPatArt() )  FILE "ArtKit.Dbf" VIA ( cDriver() ) SHARED CLASS "ARTKIT" INDEX "ArtKit.Cdx"
    end if

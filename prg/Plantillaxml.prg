@@ -2927,7 +2927,7 @@ METHOD EvalCondition( cCond, nRow ) CLASS TPlantillaXML
          cValue         := StrTran( cCond, cData, cValue )
 
          if Empty( cValue ) .or. At( Type( cValue ), "UEUI" ) != 0
-            msgAlert( "Expresión " + Rtrim( cValue ) + " no valida" )
+            msgStop( "Expresión " + Rtrim( cValue ) + " no valida" )
             lCondition  := .f.
          else
             cValue      := Compile( cValue )
@@ -3140,7 +3140,7 @@ METHOD DeleteConfig() CLASS TPlantillaXML
 
    else
 
-      msgAlert( "La configuración " + Rtrim( ::cNameConfig ) + " no se encuentra." )
+      msgStop( "La configuración " + Rtrim( ::cNameConfig ) + " no se encuentra." )
 
    end if
 

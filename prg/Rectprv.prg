@@ -4230,7 +4230,7 @@ FUNCTION ChkLqdRctPrv( aTmp, dbfRctPrvT, dbfRctPrvL, dbfRctPrvP, dbfIva, dbfDiv 
       if nPagFacPrv == nTotal
          aTmp[ _LLIQUIDADA ] := .t.
       elseif nPagFacPrv > nTotal
-         // MsgAlert( "Importe cobrado supera al total de la factura", "Revise cobros" )
+         // msgStop( "Importe cobrado supera al total de la factura", "Revise cobros" )
          aTmp[ _LLIQUIDADA ] := .t.
       else
          aTmp[ _LLIQUIDADA ] := .f.
@@ -4242,7 +4242,7 @@ FUNCTION ChkLqdRctPrv( aTmp, dbfRctPrvT, dbfRctPrvL, dbfRctPrvP, dbfIva, dbfDiv 
          if nPagFacPrv == nTotal
             ( dbfRctPrvT )->lLiquidada := .t.
          elseif  nPagFacPrv > nTotal
-            // MsgAlert( "Importe cobrado supera al total de la factura", "Revise cobros" )
+            // msgStop( "Importe cobrado supera al total de la factura", "Revise cobros" )
             ( dbfRctPrvT )->lLiquidada := .t.
          else
             ( dbfRctPrvt )->lliquidada := .f.
@@ -7917,7 +7917,7 @@ STATIC FUNCTION loadFac( cGetDes, oBrwFac, aLinFac )
 
 	ELSE
 
-		msgAlert( "Fichero no encontrado" )
+		msgStop( "Fichero no encontrado" )
 
 	END IF
 
@@ -8204,7 +8204,7 @@ return ( nTotVta )
 static function lNotOpen()
 
    if NetErr()
-      msgAlert( "Imposible abrir ficheros." )
+      msgStop( "Imposible abrir ficheros." )
       CloseFiles()
       return .t.
    end if
@@ -8952,6 +8952,12 @@ Function SynRctPrv( cPath )
    USE ( cPatDat() + "Cajas.Dbf" ) NEW VIA ( cDriver() ) EXCLUSIVE ALIAS ( cCheckArea( "CAJAS", @dbfCajT ) )
    SET ADSINDEX TO ( cPatDat() + "Cajas.Cdx" ) ADDITIVE
 
+   USE ( cPatArt() + "FAMILIAS.DBF" ) NEW VIA ( cDriver() ) EXCLUSIVE ALIAS ( cCheckArea( "FAMILIAS", @dbfFamilia ) ) 
+   SET ADSINDEX TO ( cPatArt() + "FAMILIAS.CDX" ) ADDITIVE
+
+   USE ( cPatArt() + "ARTICULO.DBF" ) NEW VIA ( cDriver() ) EXCLUSIVE ALIAS ( cCheckArea( "ARTICULO", @dbfArticulo ) )
+   SET ADSINDEX TO ( cPatArt() + "ARTICULO.CDX" ) ADDITIVE
+
    // Cabeceras ------------------------------------------------------------
 
    ( dbfRctPrvT )->( OrdSetFocus( 0 ) )
@@ -9101,6 +9107,8 @@ Function SynRctPrv( cPath )
    CLOSE ( dbfFPago   )
    CLOSE ( dbfDiv     )
    CLOSE ( dbfCajT    )
+   CLOSE ( dbfFamilia )
+   CLOSE ( dbfArticulo)
 
 return nil
 

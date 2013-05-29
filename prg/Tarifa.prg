@@ -1259,7 +1259,7 @@ STATIC FUNCTION SetNumDay( aTmp, oTxt )
 		RETURN .T.
 	END IF
 
-	MsgAlert( "La fecha final debe ser mayor que la inicial." )
+	msgStop( "La fecha final debe ser mayor que la inicial." )
 
 RETURN .F.
 

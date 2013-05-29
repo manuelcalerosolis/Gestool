@@ -954,9 +954,7 @@ Function aSeekProp( cCodBar, cCodPr1, cCodPr2, dbfArticulo, dbfTblPro )
    local n
    local cCodArt     := cCodBar
 
-   cCodBar           := Alltrim( cCodBar )
-
-   if dbSeekInOrd( cCodBar, "Codigo", dbfArticulo ) .or. dbSeekInOrd( Upper( cCodBar ), "Codigo", dbfArticulo )
+   if dbSeekInOrd( Alltrim( cCodBar ), "Codigo", dbfArticulo ) .or. dbSeekInOrd( Upper( Alltrim( cCodBar ) ), "Codigo", dbfArticulo )
 
       Return ( .t. )
 

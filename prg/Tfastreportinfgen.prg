@@ -2104,6 +2104,8 @@ RETURN ( Self )
 
 METHOD LoadReport() CLASS TFastReportInfGen
 
+   msgStop( ( cPatReporting() + Upper( ::cReportName ) + ".fr3" ), "nombre del fichero" )
+
    ::cInformeFastReport             := ""
 
    /*

@@ -1149,7 +1149,6 @@ METHOD Del() CLASS TMant
    local cTxt
    local oBrw 
    local nRec
-   local nMarked
    local lTrigger
 
    if ::oDbf:OrdKeyCount() == 0
@@ -1157,55 +1156,50 @@ METHOD Del() CLASS TMant
    end if
 
    if !Empty( ::oWndBrw ) .and. !Empty( ::oWndBrw:oBrw )
-      oBrw           := ::oWndBrw:oBrw
+      oBrw        := ::oWndBrw:oBrw
    end if
 
-   if ( "XBROWSE" $ oBrw:ClassName() )
+   if ( "XBROWSE" $ oBrw:ClassName() ) .and. ( len( oBrw:aSelected ) > 1 )
 
-      nMarked        := len( oBrw:aSelected )
-      if nMarked > 1
+      cTxt        := "¿ Desea eliminar definitivamente " + AllTrim( Trans( len( oBrw:aSelected ), "999999" ) ) + " registros ?"
 
-         cTxt        := "¿ Desea eliminar definitivamente " + AllTrim( Trans( nMarked, "999999" ) ) + " registros ?"
+      if oUser():lNotConfirmDelete() .or. ApoloMsgNoYes( cTxt, "Confirme supresión" )
 
-         if oUser():lNotConfirmDelete() .or. ApoloMsgNoYes( cTxt, "Confirme supresión" )
+         CursorWait()
 
-            CursorWait()
+         for each nRec in ( oBrw:aSelected )
 
-            for each nRec in ( oBrw:aSelected )
+            ::oDbf:GoTo( nRec )
 
-               ::oDbf:GoTo( nRec )
-
-               if ::bOnPreDelete != nil
-                  lTrigger := Eval( ::bOnPreDelete, Self )
-                  if IsFalse( lTrigger )
-                     return .f.
-                  end if
+            if ::bOnPreDelete != nil
+               lTrigger := Eval( ::bOnPreDelete, Self )
+               if IsFalse( lTrigger )
+                  return .f.
                end if
+            end if
       
-               if ::oDbf:RecLock()
-                  lDel     := ::oDbf:Delete()
-                  ::oDbf:UnLock()
-               end if
+            if ::oDbf:RecLock()
+               lDel     := ::oDbf:Delete()
+               ::oDbf:UnLock()
+            end if
       
-               if ::bOnPostDelete != nil
-                  lTrigger := Eval( ::bOnPostDelete, Self )
-                  if IsFalse( lTrigger )
-                     return .f.
-                  end if
+            if ::bOnPostDelete != nil
+               lTrigger := Eval( ::bOnPostDelete, Self )
+               if IsFalse( lTrigger )
+                  return .f.
                end if
+            end if
    
-            next 
+         next 
    
-            CursorWE()
-
-         end if 
+         CursorWE()
 
       end if
 
    else 
 
       if ::bOnPreDelete != nil
-         lTrigger := Eval( ::bOnPreDelete, Self )
+         lTrigger    := Eval( ::bOnPreDelete, Self )
          if IsFalse( lTrigger )
             return .f.
          end if

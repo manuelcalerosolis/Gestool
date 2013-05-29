@@ -2271,7 +2271,7 @@ STATIC FUNCTION TransAbono( oBrw )
    dbDialogLock(dbfAbnPrvT)
 	(dbfAbnPrvT)->LCONTAB	:= .T.
 
-   MsgAlert(   "Asiento Satisfactiriamente Generado" + CRLF + CRLF +;
+   msgStop(   "Asiento Satisfactiriamente Generado" + CRLF + CRLF +;
                "Número de Asiento : " + Str( nAsiento ),;
 					"Contaplus" )
 	oBrw:refresh()

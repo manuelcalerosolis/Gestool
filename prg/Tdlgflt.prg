@@ -789,7 +789,7 @@ METHOD ExpMaker()
       end case
 
       if Empty( ::cExpFilter ) .or. At( Type( ::cExpFilter ), "UEUI" ) != 0
-         msgAlert( "Expresión " + Rtrim( ::cExpFilter ) + " no valida" )
+         msgStop( "Expresión " + Rtrim( ::cExpFilter ) + " no valida" )
          ::cExpFilter   := ""
          ::bExpFilter   := nil
          ::cTxtFilter   := ""
@@ -802,7 +802,7 @@ METHOD ExpMaker()
 
    RECOVER
 
-      msgAlert( "Expresión " + Rtrim( ::cExpFilter ) + " no valida" )
+      msgStop( "Expresión " + Rtrim( ::cExpFilter ) + " no valida" )
 
    END SEQUENCE
 
@@ -864,7 +864,7 @@ METHOD aExpMaker()
          ::oDbf[ i ]:SetFocus()
 
          if Empty( ::cExpFilter ) .or. At( Type( ::cExpFilter ), "UEUI" ) != 0
-            msgAlert( "Expresión " + Rtrim( ::cExpFilter ) + " no valida" )
+            msgStop( "Expresión " + Rtrim( ::cExpFilter ) + " no valida" )
             ::cExpFilter         := ""
             ::cTxtFilter         := ""
          else
@@ -877,7 +877,7 @@ METHOD aExpMaker()
 
    RECOVER
 
-      msgAlert( "Expresión " + Rtrim( ::cExpFilter ) + " no valida" )
+      msgStop( "Expresión " + Rtrim( ::cExpFilter ) + " no valida" )
       Return ( .f. )
 
    END SEQUENCE
@@ -1554,7 +1554,7 @@ Method lBuildFilter()
    end case
 
    if At( Type( ::cExpFilter ), "UEUI" ) != 0
-      msgAlert( "Expresión " + Rtrim( ::cExpFilter ) + " no valida" )
+      msgStop( "Expresión " + Rtrim( ::cExpFilter ) + " no valida" )
       ::cExpFilter   := ""
       ::bExpFilter   := nil
       ::cTxtFilter   := ""

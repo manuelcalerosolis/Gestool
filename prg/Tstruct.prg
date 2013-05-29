@@ -188,7 +188,7 @@ METHOD SetMember( nMember, uData ) CLASS TStruct
                    uData + SubStr( ::cBuffer, nOffset + nLen + 1 )
 
       otherwise
-         MsgAlert( "Member type conversion not implemented yet!" )
+         msgStop( "Member type conversion not implemented yet!" )
 
    endcase
 
@@ -219,7 +219,7 @@ METHOD GetMember( nMember ) CLASS TStruct
          return AllTrim( SubStr( ::cBuffer, nOffset + 1, nLen ) )
 
       otherwise
-         MsgAlert( "Member type conversion not implemented yet!" )
+         msgStop( "Member type conversion not implemented yet!" )
 
    endcase
 

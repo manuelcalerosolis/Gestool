@@ -303,27 +303,26 @@ METHOD DefineFiles( cPath, cDriver )
 
    DEFINE DATABASE ::oDbf FILE "REMMOVT.DBF" CLASS "TRemMovT" ALIAS "RemMovT" PATH ( cPath ) VIA ( cDriver ) COMMENT "Movimientos de almacén"
 
-      FIELD NAME "lSelDoc"             TYPE "L" LEN  1  DEC 0                                                                                COMMENT ""                                HIDE       OF ::oDbf
-      FIELD CALCULATE NAME "Send16"             LEN  1  DEC 0                             VAL {|| ::oDbf:lSelDoc } BITMAPS "Sel16", "Nil16"  COMMENT { "Enviar", "Lbl16" , 3 } COLSIZE 20         OF ::oDbf
-      FIELD NAME "nNumRem"             TYPE "N" LEN  9  DEC 0 PICTURE "999999999"         DEFAULT  0                                         COMMENT "Número"                          HIDE       OF ::oDbf
-      FIELD NAME "cSufRem"             TYPE "C" LEN  2  DEC 0 PICTURE "@!"                DEFAULT  RetSufEmp()                               COMMENT "Sufijo"                          HIDE       OF ::oDbf
-      FIELD CALCULATE NAME "cNumRem"            LEN 12  DEC 0                             VAL ( Str( ( ::oDbf:nArea )->nNumRem, 9 ) + "/" + ( ::oDbf:nArea )->cSufRem ) COMMENT "Número" COLSIZE 80  OF ::oDbf
-      FIELD NAME "nTipMov"             TYPE "N" LEN  1  DEC 0                                                                                COMMENT "Tipo del movimiento"             HIDE       OF ::oDbf
-      FIELD CALCULATE NAME "cTipMov"            LEN 12  DEC 0                             VAL ( ::cTextoMovimiento() )                       COMMENT "Tipo"             COLSIZE 90                OF ::oDbf
-      FIELD NAME "cCodUsr"             TYPE "C" LEN  3  DEC 0                             DEFAULT  cCurUsr()                                 COMMENT "Código usuario"                  HIDE       OF ::oDbf
-      FIELD NAME "cCodDlg"             TYPE "C" LEN  2  DEC 0                                                                                COMMENT "Delegación"       COLSIZE 20                OF ::oDbf
-      FIELD NAME "cCodAge"             TYPE "C" LEN  3  DEC 0                                                                                COMMENT "Código agente"                   HIDE       OF ::oDbf
-      FIELD NAME "cCodMov"             TYPE "C" LEN  2  DEC 0                                                                                COMMENT "Tipo de movimiento"              HIDE       OF ::oDbf
-      FIELD NAME "dFecRem"             TYPE "D" LEN  8  DEC 0                             DEFAULT  Date()                                    COMMENT "Fecha"            COLSIZE 80                OF ::oDbf
-      FIELD NAME "cTimRem"             TYPE "C" LEN  5  DEC 0                             DEFAULT  Time()                                    COMMENT "Hora"                            HIDE       OF ::oDbf
-      FIELD NAME "cAlmOrg"             TYPE "C" LEN  3  DEC 0 PICTURE "@!"                                                                   COMMENT "Alm. org."        COLSIZE 60                OF ::oDbf
-      FIELD CALCULATE NAME "cNomAlmOrg"         LEN 20  DEC 0 PICTURE "@!"                VAL ( oRetFld( ( ::oDbf:nArea )->cAlmOrg, ::oAlm, "cNomAlm" ) )                              HIDE       OF ::oDbf
-      FIELD NAME "cAlmDes"             TYPE "C" LEN  3  DEC 0 PICTURE "@!"                                                                   COMMENT "Alm. des."        COLSIZE 60                OF ::oDbf
-      FIELD CALCULATE NAME "cNomAlmDes"         LEN 20  DEC 0 PICTURE "@!"                VAL ( oRetFld( ( ::oDbf:nArea )->cAlmDes, ::oAlm, "cNomAlm" ) )                              HIDE       OF ::oDbf
-      FIELD NAME "cCodDiv"             TYPE "C" LEN  3  DEC 0 PICTURE "@!"                HIDE                                               COMMENT "Div."                                       OF ::oDbf
-      FIELD NAME "nVdvDiv"             TYPE "N" LEN 13  DEC 6 PICTURE "@E 999,999.999999" HIDE                                               COMMENT "Cambio de la divisa"                        OF ::oDbf
-      FIELD NAME "cComMov"             TYPE "C" LEN 100 DEC 0 PICTURE "@!"                                                                   COMMENT "Comentario"       COLSIZE 240               OF ::oDbf
-      FIELD NAME "nTotRem"             TYPE "N" LEN 16  DEC 6 PICTURE "@E 999,999,999,999.99"   ALIGN RIGHT                                  COMMENT "Importe"          COLSIZE 100               OF ::oDbf
+      FIELD NAME "lSelDoc"             TYPE "L" LEN  1  DEC 0                                                                                COMMENT ""                                HIDE  OF ::oDbf
+      FIELD CALCULATE NAME "Send16"             LEN  1  DEC 0                             VAL {|| ::oDbf:lSelDoc } BITMAPS "Sel16", "Nil16"  COMMENT { "Enviar", "Lbl16" , 3 } COLSIZE 20    OF ::oDbf
+      FIELD NAME "nNumRem"             TYPE "N" LEN  9  DEC 0 PICTURE "999999999"         DEFAULT  0                                         COMMENT "Número"           COLSIZE 80           OF ::oDbf
+      FIELD NAME "cSufRem"             TYPE "C" LEN  2  DEC 0 PICTURE "@!"                DEFAULT  RetSufEmp()                               COMMENT "Delegación"       COLSIZE 40           OF ::oDbf
+      FIELD NAME "nTipMov"             TYPE "N" LEN  1  DEC 0                                                                                COMMENT "Tipo del movimiento"             HIDE  OF ::oDbf
+      FIELD CALCULATE NAME "cTipMov"            LEN 12  DEC 0                             VAL ( ::cTextoMovimiento() )                       COMMENT "Tipo"             COLSIZE 90           OF ::oDbf
+      FIELD NAME "cCodUsr"             TYPE "C" LEN  3  DEC 0                             DEFAULT  cCurUsr()                                 COMMENT "Código usuario"                  HIDE  OF ::oDbf
+      FIELD NAME "cCodDlg"             TYPE "C" LEN  2  DEC 0                                                                                COMMENT "Delegación"       COLSIZE 20           OF ::oDbf
+      FIELD NAME "cCodAge"             TYPE "C" LEN  3  DEC 0                                                                                COMMENT "Código agente"                   HIDE  OF ::oDbf
+      FIELD NAME "cCodMov"             TYPE "C" LEN  2  DEC 0                                                                                COMMENT "Tipo de movimiento"              HIDE  OF ::oDbf
+      FIELD NAME "dFecRem"             TYPE "D" LEN  8  DEC 0                             DEFAULT  Date()                                    COMMENT "Fecha"            COLSIZE 80           OF ::oDbf
+      FIELD NAME "cTimRem"             TYPE "C" LEN  5  DEC 0                             DEFAULT  Time()                                    COMMENT "Hora"                            HIDE  OF ::oDbf
+      FIELD NAME "cAlmOrg"             TYPE "C" LEN  3  DEC 0 PICTURE "@!"                                                                   COMMENT "Alm. org."        COLSIZE 60           OF ::oDbf
+      FIELD CALCULATE NAME "cNomAlmOrg"         LEN 20  DEC 0 PICTURE "@!"                VAL ( oRetFld( ( ::oDbf:nArea )->cAlmOrg, ::oAlm, "cNomAlm" ) )                              HIDE  OF ::oDbf
+      FIELD NAME "cAlmDes"             TYPE "C" LEN  3  DEC 0 PICTURE "@!"                                                                   COMMENT "Alm. des."        COLSIZE 60           OF ::oDbf
+      FIELD CALCULATE NAME "cNomAlmDes"         LEN 20  DEC 0 PICTURE "@!"                VAL ( oRetFld( ( ::oDbf:nArea )->cAlmDes, ::oAlm, "cNomAlm" ) )                              HIDE  OF ::oDbf
+      FIELD NAME "cCodDiv"             TYPE "C" LEN  3  DEC 0 PICTURE "@!"                HIDE                                               COMMENT "Div."                                  OF ::oDbf
+      FIELD NAME "nVdvDiv"             TYPE "N" LEN 13  DEC 6 PICTURE "@E 999,999.999999" HIDE                                               COMMENT "Cambio de la divisa"                   OF ::oDbf
+      FIELD NAME "cComMov"             TYPE "C" LEN 100 DEC 0 PICTURE "@!"                                                                   COMMENT "Comentario"       COLSIZE 240          OF ::oDbf
+      FIELD NAME "nTotRem"             TYPE "N" LEN 16  DEC 6 PICTURE "@E 999,999,999,999.99"   ALIGN RIGHT                                  COMMENT "Importe"          COLSIZE 100          OF ::oDbf
 
       INDEX TO "RemMovT.Cdx" TAG "cNumRem" ON "Str( nNumRem ) + cSufRem"   COMMENT "Número"  NODELETED OF ::oDbf
       INDEX TO "RemMovT.Cdx" TAG "dFecRem" ON "Dtos( dFecRem ) + cTimRem"  COMMENT "Fecha"   NODELETED OF ::oDbf
@@ -3207,67 +3206,52 @@ Function SynRemMov( cPath )
    oBlock         := ErrorBlock( {| oError | ApoloBreak( oError ) } )
    BEGIN SEQUENCE
 
-   USE ( cPath + "REMMOVT.DBF" ) NEW VIA ( cDriver() ) SHARED ALIAS ( cCheckArea( "REMMOV", @dbfRemMov ) )
+   USE ( cPath + "REMMOVT.DBF" ) NEW VIA ( cDriver() ) EXCLUSIVE ALIAS ( cCheckArea( "REMMOV", @dbfRemMov ) )
    SET ADSINDEX TO ( cPath + "REMMOVT.CDX" ) ADDITIVE
 
-   USE ( cPath + "HISMOV.DBF" ) NEW VIA ( cDriver() ) SHARED ALIAS ( cCheckArea( "HISMOV", @dbfHisMov ) )
+   USE ( cPath + "HISMOV.DBF" ) NEW VIA ( cDriver() ) EXCLUSIVE ALIAS ( cCheckArea( "HISMOV", @dbfHisMov ) )
    SET ADSINDEX TO ( cPath + "HISMOV.CDX" ) ADDITIVE
 
+   /*
+   Cabeceras-------------------------------------------------------------------
+   */
+
+   ( dbfRemMov )->( ordSetFocus( 0 ) )
+
+   ( dbfRemMov )->( dbGoTop() )
    while !( dbfRemMov )->( eof() )
 
-      /*
-      Rellenamos los campos de totales-----------------------------------------
-      */
-
-      if ( dbfRemMov )->nTotRem == 0
-
-         if dbSeekInOrd( Str( ( dbfRemMov )->nNumRem ) + ( dbfRemMov )->cSufRem, "NNUMREM", dbfHisMov )
-
-            while Str( ( dbfRemMov )->nNumRem ) + ( dbfRemMov )->cSufRem == Str( ( dbfHisMov )->nNumRem ) + ( dbfHisMov )->cSufRem .and. !( dbfHisMov )->( Eof() )
-
-               nTotRem  += nTotLMovAlm( dbfHisMov )
-
-               ( dbfHisMov )->( dbSkip() )
-
-            end while
-
-         end if
-
-         if dbLock( dbfRemMov )
-            ( dbfRemMov )->nTotRem        := nTotRem
-            ( dbfRemMov )->( dbUnLock() )
-         end if
-
+      if Empty( ( dbfRemMov )->cSufRem )
+         ( dbfRemMov )->cSufRem        := "00"
       end if
-
-      nTotRem  := 0
 
       ( dbfRemMov )->( dbSkip() )
 
    end while
+   ( dbfRemMov )->( ordSetFocus( 1 ) )
+
+   /*
+   Lineas----------------------------------------------------------------------
+   */
 
    ( dbfHisMov )->( ordSetFocus( 0 ) )
 
    ( dbfHisMov )->( dbGoTop() )
    while !( dbfHisMov )->( eof() )
 
-      if Empty( ( dbfHisMov )->cSufRem ) .and. dbLock( dbfHisMov )
-         ( dbfHisMov )->cSufRem           := "00"
-         ( dbfHisMov )->( dbUnLock() )
+      if Empty( ( dbfHisMov )->cSufRem )
+         ( dbfHisMov )->cSufRem        := "00"
       end if
 
       if Empty( ( dbfHisMov )->dFecMov )
 
-         dFecMov                          := RetFld( Str( ( dbfHisMov )->nNumRem ) + ( dbfHisMov )->cSufRem, dbfRemMov, "dFecRem", "cNumRem" )
+         dFecMov                       := RetFld( Str( ( dbfHisMov )->nNumRem ) + ( dbfHisMov )->cSufRem, dbfRemMov, "dFecRem", "cNumRem" )
 
          if Empty( dFecMov )
-            dFecMov                       := CtoD( "01/01/" + Str( Year( Date() ) ) )
+            dFecMov                    := CtoD( "01/01/" + Str( Year( Date() ) ) )
          end if
 
-         if dbLock( dbfHisMov )
-            ( dbfHisMov )->dFecMov        := dFecMov
-            ( dbfHisMov )->( dbUnLock() )
-         end if
+         ( dbfHisMov )->dFecMov        := dFecMov
 
       end if
 
@@ -3276,6 +3260,37 @@ Function SynRemMov( cPath )
    end while
 
    ( dbfHisMov )->( ordSetFocus( 1 ) )
+
+   /*
+   Rellenamos los campos de totales--------------------------------------------
+   */
+
+   ( dbfRemMov )->( dbGoTop() )
+   while !( dbfRemMov )->( eof() )
+
+      if ( dbfRemMov )->nTotRem == 0
+
+         if dbSeekInOrd( Str( ( dbfRemMov )->nNumRem ) + ( dbfRemMov )->cSufRem, "nNumRem", dbfHisMov )
+
+            while Str( ( dbfRemMov )->nNumRem ) + ( dbfRemMov )->cSufRem == Str( ( dbfHisMov )->nNumRem ) + ( dbfHisMov )->cSufRem .and. !( dbfHisMov )->( Eof() )
+
+               nTotRem                 += nTotLMovAlm( dbfHisMov )
+
+               ( dbfHisMov )->( dbSkip() )
+
+            end while
+
+         end if
+
+         ( dbfRemMov )->nTotRem        := nTotRem
+
+      end if
+
+      nTotRem                          := 0
+
+      ( dbfRemMov )->( dbSkip() )
+
+   end while
 
    RECOVER USING oError
 

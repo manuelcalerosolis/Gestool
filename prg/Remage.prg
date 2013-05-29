@@ -589,7 +589,7 @@ METHOD LoaRec( cNumRec )
       return ( .f. )
    end if
 
-   msgAlert( ::oDbfDet:OrdSetFocus(), "antes" )
+   msgStop( ::oDbfDet:OrdSetFocus(), "antes" )
 
    ::oDbfDet:GetStatus()
    ::oDbfDet:OrdSetFocus( "nNumFac" )
@@ -632,7 +632,7 @@ METHOD LoaRec( cNumRec )
 
    ::oDbfDet:SetStatus()
 
-   msgAlert( ::oDbfDet:OrdSetFocus(), "despues" )
+   msgStop( ::oDbfDet:OrdSetFocus(), "despues" )
 
 RETURN ( lLoaRec )
 
@@ -857,7 +857,7 @@ METHOD BrwRecCli()
    nOrd              := Min( Max( nOrd, 1 ), len( aCbxOrd ) )
    cCbxOrd           := aCbxOrd[ nOrd ]
 
-   msgAlert( ::oDbfDet:OrdSetFocus(), "antes brwreccli" )
+   msgStop( ::oDbfDet:OrdSetFocus(), "antes brwreccli" )
 
    ::oDbfDet:GetStatus()
    ::oDbfDet:OrdSetFocus( "NNUMFAC" )
@@ -938,7 +938,7 @@ METHOD BrwRecCli()
    ::oDbfDet:KillFilter()
    ::oDbfDet:SetStatus()
 
-   msgAlert( ::oDbfDet:OrdSetFocus(), "despues brwreccli" )
+   msgStop( ::oDbfDet:OrdSetFocus(), "despues brwreccli" )
 
 RETURN ( oDlg:nResult == IDOK )
 
@@ -1350,7 +1350,7 @@ METHOD ValCobro()
       ::oImpGas:cText( ::oDbfVir:nImporte - ::oDbfVir:nImpCob )
       return .t.
    else
-      msgAlert( "El importe del cobro excede al importe del recibo" )
+      msgStop( "El importe del cobro excede al importe del recibo" )
    end if
 
 return .f.

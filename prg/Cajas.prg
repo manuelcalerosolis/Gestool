@@ -3252,7 +3252,7 @@ Function SelectCajas()
       REDEFINE GET oGetBuscar ;
          VAR      cGetBuscar;
          ID       100 ;
-         ON CHANGE( AutoSeek( nKey, nFlags, Self, oBrw, dbfCajT, nil, nil, .f. ) ); //, msgAlert( ( dbfCajT )->( OrdSetFocus() ) ) );
+         ON CHANGE( AutoSeek( nKey, nFlags, Self, oBrw, dbfCajT, nil, nil, .f. ) ); //, msgStop( ( dbfCajT )->( OrdSetFocus() ) ) );
          BITMAP   "Find" ;
          OF       oDlg
 

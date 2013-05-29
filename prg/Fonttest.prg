@@ -27,12 +27,12 @@ FUNCTION ShowFonts()
 
   IF hDC > 0
     IF EMPTY( aFontNames := GetFontNames( hDC ) )
-      MsgAlert( "Error getting font names" )
+      msgStop( "Error getting font names" )
     ELSE
       ASORT( aFontNames,,, { |x, y| UPPER( x ) < UPPER( y ) } )
     ENDIF
   ELSE
-    MsgAlert( "Error creating DC" )
+    msgStop( "Error creating DC" )
   ENDIF
 
   DEFINE DIALOG oDlg ;

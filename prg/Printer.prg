@@ -458,7 +458,7 @@ METHOD _EndPage() CLASS TPrinter
 
    if ::lMeta
       if Len( ::aMeta ) == 0
-         MsgAlert( "The temporal metafile could not be created",;
+         msgStop( "The temporal metafile could not be created",;
                    "Printer object Error" )
       else
        #ifndef __CLIPPER__
@@ -468,7 +468,7 @@ METHOD _EndPage() CLASS TPrinter
        #endif
 
          if ! File( Atail( ::aMeta ) )
-           MsgAlert("Could not create temporary file: "+Atail(::aMeta)+CRLF+CRLF+;
+           msgStop("Could not create temporary file: "+Atail(::aMeta)+CRLF+CRLF+;
              "Please check your free space on your hard drive "+CRLF+;
              "and the amount of files handles available." ,;
              "Print preview error" )

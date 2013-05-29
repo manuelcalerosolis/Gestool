@@ -702,7 +702,7 @@ Method lCreateHandle()
       if ( nHandle   := fCreate( ::cFile, 0 ) ) != -1
          fClose( nHandle )
       else
-         MsgAlert( "Error " + Str( fError() ) + " al crear el fichero " + ::cFile )
+         msgStop( "Error " + Str( fError() ) + " al crear el fichero " + ::cFile )
       end if
    end if
 

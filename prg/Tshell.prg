@@ -2562,7 +2562,7 @@ Method CreateXFromCode()
       with object ( ::oBrw:AddCol() )
          :cHeader             := "Restar unidades"
          :bStrData            := {|| "" }
-         :bOnPreEdit          := {|| msgAlert( "preedit") }
+         :bOnPreEdit          := {|| msgStop( "preedit") }
          :bOnPostEdit         := {|| .t. }
          :bEditBlock          := {|| ::RecEdit() }
          :bBmpData            := {|| 1 }
