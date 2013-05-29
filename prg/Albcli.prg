@@ -8661,8 +8661,8 @@ Method Process()
 
       ::oSender:SetText( "Procesando fichero : " + aFiles[ m, 1 ] )
 
-      /*oBlock         := ErrorBlock( { | oError | ApoloBreak( oError ) } )
-      BEGIN SEQUENCE*/
+      oBlock         := ErrorBlock( { | oError | ApoloBreak( oError ) } )
+      BEGIN SEQUENCE
 
          if ::oSender:lUnZipData( cPatIn() + aFiles[ m, 1 ] )
 
@@ -8683,7 +8683,7 @@ Method Process()
                USE ( cPatSnd() + "AlbCliI.DBF" ) NEW VIA ( cDriver() )READONLY ALIAS ( cCheckArea( "AlbCliI", @tmpAlbCliI ) )
                SET ADSINDEX TO ( cPatSnd() + "AlbCliI.CDX" ) ADDITIVE
 
-               USE ( cPatEmp() + "AlbCliT.DBF" ) NEW VIA ( cDriver() )READONLY ALIAS ( cCheckArea( "AlbCliT", @dbfAlbCliT ) )
+               USE ( cPatEmp() + "AlbCliT.DBF" ) NEW VIA ( cDriver() ) SHARED ALIAS ( cCheckArea( "AlbCliT", @dbfAlbCliT ) )
                SET ADSINDEX TO ( cPatEmp() + "AlbCliT.CDX" ) ADDITIVE
 
                USE ( cPatEmp() + "AlbCliL.DBF" ) NEW VIA ( cDriver() ) SHARED ALIAS ( cCheckArea( "AlbCliL", @dbfAlbCliL ) )
@@ -8769,7 +8769,7 @@ Method Process()
 
          end if
 
-      /*RECOVER USING oError
+      RECOVER USING oError
 
          CLOSE ( dbfAlbCliT )
          CLOSE ( dbfAlbCliL )
@@ -8782,7 +8782,7 @@ Method Process()
          ::oSender:SetText( ErrorMessage( oError ) )
 
       END SEQUENCE
-      ErrorBlock( oBlock )*/
+      ErrorBlock( oBlock )
 
    next
 
