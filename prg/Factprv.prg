@@ -9599,10 +9599,10 @@ Function SynFacPrv( cPath )
    local aTotFac
    local aNumSer
    local cNumSer
-/*
+
    BEGIN SEQUENCE
    oBlock            := ErrorBlock( { | oError | ApoloBreak( oError ) } )
-*/
+
    dbUseArea( .t., cDriver(), cPath + "FacPrvT.DBF", cCheckArea( "FacPrvT", @dbfFacPrvT ), .f. )
    if !lAIS(); ordListAdd( cPath + "FacPrvT.CDX" ); else ; ordSetFocus( 1 ) ; end
 
@@ -9642,6 +9642,10 @@ Function SynFacPrv( cPath )
 
       if Empty( ( dbfFacPrvT )->cSufFac )
          ( dbfFacPrvT )->cSufFac := "00"
+      end if
+
+      if !Empty( ( dbfFacPrvT )->cNumAlb ) .and. Len( AllTrim( ( dbfFacPrvT )->cNumAlb ) ) != 12
+         ( dbfFacPrvT )->cNumAlb := AllTrim( ( dbfFacPrvT )->cNumAlb ) + "00"
       end if
 
       if Empty( ( dbfFacPrvT )->cCodCaj )
@@ -9779,13 +9783,13 @@ Function SynFacPrv( cPath )
       SysRefresh()
 
    end while
-/*
+
    RECOVER USING oError
 
       msgStop( "Imposible sincronizar factura de proveedores" + CRLF + ErrorMessage( oError ) )
 
    END SEQUENCE
-*/
+
    ErrorBlock( oBlock )
 
    CloseFiles()

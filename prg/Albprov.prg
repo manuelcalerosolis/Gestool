@@ -8115,6 +8115,14 @@ Function SynAlbPrv( cPath )
          ( dbfAlbPrvT )->cCodCaj := "000"
       end if
 
+      if !Empty( ( dbfAlbPrvT )->cNumPed ) .and. Len( AllTrim( ( dbfAlbPrvT )->cNumPed ) ) != 12
+         ( dbfAlbPrvT )->cNumPed := AllTrim( ( dbfAlbPrvT )->cNumPed ) + "00"
+      end if
+
+      if !Empty( ( dbfAlbPrvT )->cNumFac ) .and. Len( AllTrim( ( dbfAlbPrvT )->cNumFac ) ) != 12
+         ( dbfAlbPrvT )->cNumFac := AllTrim( ( dbfAlbPrvT )->cNumFac ) + "00"
+      end if
+
       /*
       Rellenamos los campos de totales-----------------------------------------
       */
@@ -8169,10 +8177,14 @@ Function SynAlbPrv( cPath )
 
       if Empty( ( dbfAlbPrvL )->cSufAlb )
          ( dbfAlbPrvL )->cSufAlb    := "00"
-      end if 
+      end if
 
       if !Empty( ( dbfAlbPrvL )->cCodPed ) .and. Len( AllTrim( ( dbfAlbPrvL )->cCodPed ) ) != 12
          ( dbfAlbPrvL )->cCodPed    := AllTrim( ( dbfAlbPrvL )->cCodPed ) + "00"
+      end if
+
+      if !Empty( ( dbfAlbPrvL )->cNumPed ) .and. Len( AllTrim( ( dbfAlbPrvL )->cNumPed ) ) != 12
+         ( dbfAlbPrvL )->cNumPed    := AllTrim( ( dbfAlbPrvL )->cNumPed ) + "00"
       end if
 
       if Empty( ( dbfAlbPrvL )->cLote ) .and. !Empty( ( dbfAlbPrvL )->nLote )

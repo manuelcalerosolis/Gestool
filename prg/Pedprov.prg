@@ -6693,11 +6693,19 @@ Function SynPedPrv( cPath )
    while !( dbfPedPrvT )->( eof() )
 
       if Empty( ( dbfPedPrvT )->cSufPed )
-         ( dbfPedPrvT )->cSufPed := "00"
+         ( dbfPedPrvT )->cSufPed    := "00"
       end if
 
       if Empty( ( dbfPedPrvT )->cCodCaj )
-         ( dbfPedPrvT )->cCodCaj := "000"
+         ( dbfPedPrvT )->cCodCaj    := "000"
+      end if
+
+      if !Empty( ( dbfPedPrvT )->cNumPedCli ) .and. Len( AllTrim( ( dbfPedPrvT )->cNumPedCli ) ) != 12
+         ( dbfPedPrvT )->cNumPedCli := AllTrim( ( dbfPedPrvT )->cNumPedCli ) + "00"
+      end if
+
+      if !Empty( ( dbfPedPrvT )->cNumAlb ) .and. Len( AllTrim( ( dbfPedPrvT )->cNumAlb ) ) != 12
+         ( dbfPedPrvT )->cNumAlb    := AllTrim( ( dbfPedPrvT )->cNumAlb ) + "00"
       end if
 
       /*
@@ -6706,12 +6714,12 @@ Function SynPedPrv( cPath )
 
       if ( dbfPedPrvT )->nTotPed == 0
 
-         aTotPed                 := aTotPedPrv( ( dbfPedPrvT )->cSerPed + Str( ( dbfPedPrvT )->nNumPed ) + ( dbfPedPrvT )->cSufPed, dbfPedPrvT, dbfPedPrvL, dbfIva, dbfDiv, ( dbfPedPrvT )->cDivPed )
+         aTotPed                    := aTotPedPrv( ( dbfPedPrvT )->cSerPed + Str( ( dbfPedPrvT )->nNumPed ) + ( dbfPedPrvT )->cSufPed, dbfPedPrvT, dbfPedPrvL, dbfIva, dbfDiv, ( dbfPedPrvT )->cDivPed )
 
-         ( dbfPedPrvT )->nTotNet := aTotPed[1]
-         ( dbfPedPrvT )->nTotIva := aTotPed[2]
-         ( dbfPedPrvT )->nTotReq := aTotPed[3]
-         ( dbfPedPrvT )->nTotPed := aTotPed[4]
+         ( dbfPedPrvT )->nTotNet    := aTotPed[1]
+         ( dbfPedPrvT )->nTotIva    := aTotPed[2]
+         ( dbfPedPrvT )->nTotReq    := aTotPed[3]
+         ( dbfPedPrvT )->nTotPed    := aTotPed[4]
 
       end if
 
@@ -6730,6 +6738,10 @@ Function SynPedPrv( cPath )
 
       if Empty( ( dbfPedPrvL )->cSufPed )
          ( dbfPedPrvL )->cSufPed := "00"
+      end if
+
+      if !Empty( ( dbfPedPrvL )->cPedCli ) .and. Len( AllTrim( ( dbfPedPrvL )->cPedCli ) ) != 12
+         ( dbfPedPrvL )->cPedCli    := AllTrim( ( dbfPedPrvL )->cPedCli ) + "00"
       end if
 
       if Empty( ( dbfPedPrvL )->cLote ) .and. !Empty( ( dbfPedPrvL )->nLote )

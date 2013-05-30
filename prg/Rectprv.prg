@@ -8969,6 +8969,10 @@ Function SynRctPrv( cPath )
          ( dbfRctPrvT )->cSufFac := "00"
       end if
 
+      if !Empty( ( dbfRctPrvT )->cNumFac ) .and. Len( AllTrim( ( dbfRctPrvT )->cNumFac ) ) != 12
+         ( dbfRctPrvT )->cNumFac := AllTrim( ( dbfRctPrvT )->cNumFac ) + "00"
+      end if
+
       if Empty( ( dbfRctPrvT )->cCodCaj )
          ( dbfRctPrvT )->cCodCaj := "000"
       end if
