@@ -17857,6 +17857,26 @@ Function SynTikCli( cPath )
          ( dbfTikT )->cSufTik := "00"
       end if
 
+      if !Empty( ( dbfTikT )->cNumDoc ) .and. Len( AllTrim( ( dbfTikT )->cNumDoc ) ) != 12
+         ( dbfTikT )->cNumDoc := AllTrim( ( dbfTikT )->cNumDoc ) + "00"
+      end if
+
+      if !Empty( ( dbfTikT )->cAlbTik ) .and. Len( AllTrim( ( dbfTikT )->cAlbTik ) ) != 12
+         ( dbfTikT )->cAlbTik := AllTrim( ( dbfTikT )->cAlbTik ) + "00"
+      end if
+
+      if !Empty( ( dbfTikT )->cPedTik ) .and. Len( AllTrim( ( dbfTikT )->cPedTik ) ) != 12
+         ( dbfTikT )->cPedTik := AllTrim( ( dbfTikT )->cPedTik ) + "00"
+      end if
+
+      if !Empty( ( dbfTikT )->cPreTik ) .and. Len( AllTrim( ( dbfTikT )->cPreTik ) ) != 12
+         ( dbfTikT )->cPreTik := AllTrim( ( dbfTikT )->cPreTik ) + "00"
+      end if
+
+      if !Empty( ( dbfTikT )->cTikVal ) .and. Len( AllTrim( ( dbfTikT )->cTikVal ) ) != 13
+         ( dbfTikT )->cTikVal := AllTrim( ( dbfTikT )->cTikVal ) + "00"
+      end if
+
       if Empty( ( dbfTikT )->cNcjTik )
          ( dbfTikT )->cNcjTik := "000"
       end if
@@ -17905,6 +17925,10 @@ Function SynTikCli( cPath )
 
       if Empty( ( dbfTikL )->cSufTil )
          ( dbfTikL )->cSufTil := "00"
+      end if
+
+      if !Empty( ( dbfTikL )->cNumDev ) .and. Len( AllTrim( ( dbfTikL )->cNumDev ) ) != 13
+         ( dbfTikL )->cNumDev := AllTrim( ( dbfTikL )->cNumDev ) + "00"
       end if
 
       if !Empty( ( dbfTikL )->cCbaTil ) .and. Empty( ( dbfTikL )->cCodFam )

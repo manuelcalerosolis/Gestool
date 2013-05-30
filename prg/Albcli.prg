@@ -7674,6 +7674,30 @@ function SynAlbCli( cPath )
          ( dbfAlbCliT )->cSufAlb := "00"
       end if
 
+      if !Empty( ( dbfAlbCliT )->cNumPre ) .and. Len( AllTrim( ( dbfAlbCliT )->cNumPre ) ) != 12
+         ( dbfAlbCliT )->cNumPre := AllTrim( ( dbfAlbCliT )->cNumPre ) + "00"
+      end if
+
+      if !Empty( ( dbfAlbCliT )->cNumPed ) .and. Len( AllTrim( ( dbfAlbCliT )->cNumPed ) ) != 12
+         ( dbfAlbCliT )->cNumPed := AllTrim( ( dbfAlbCliT )->cNumPed ) + "00"
+      end if
+
+      if !Empty( ( dbfAlbCliT )->cNumSat ) .and. Len( AllTrim( ( dbfAlbCliT )->cNumSat ) ) != 12
+         ( dbfAlbCliT )->cNumSat := AllTrim( ( dbfAlbCliT )->cNumSat ) + "00"
+      end if
+
+      if !Empty( ( dbfAlbCliT )->cNumFac ) .and. Len( AllTrim( ( dbfAlbCliT )->cNumFac ) ) != 12
+         ( dbfAlbCliT )->cNumFac := AllTrim( ( dbfAlbCliT )->cNumFac ) + "00"
+      end if
+
+      if !Empty( ( dbfAlbCliT )->cNumDoc ) .and. Len( AllTrim( ( dbfAlbCliT )->cNumDoc ) ) != 12
+         ( dbfAlbCliT )->cNumDoc := AllTrim( ( dbfAlbCliT )->cNumDoc ) + "00"
+      end if
+
+      if !Empty( ( dbfAlbCliT )->cNumTik ) .and. Len( AllTrim( ( dbfAlbCliT )->cNumTik ) ) != 13
+         ( dbfAlbCliT )->cNumTik := AllTrim( ( dbfAlbCliT )->cNumTik ) + "00"
+      end if
+
       if Empty( ( dbfAlbCliT )->cCodCaj )
          ( dbfAlbCliT )->cCodCaj := "000"
       end if
@@ -7761,6 +7785,14 @@ function SynAlbCli( cPath )
 
       if Empty( ( dbfAlbCliL )->cSufAlb )
          ( dbfAlbCliL )->cSufAlb    := "00"
+      end if
+
+      if !Empty( ( dbfAlbCliL )->cNumPed ) .and. Len( AllTrim( ( dbfAlbCliL )->cNumPed ) ) != 12
+         ( dbfAlbCliL )->cNumPed := AllTrim( ( dbfAlbCliL )->cNumPed ) + "00"
+      end if
+
+      if !Empty( ( dbfAlbCliL )->cNumSat ) .and. Len( AllTrim( ( dbfAlbCliL )->cNumSat ) ) != 12
+         ( dbfAlbCliL )->cNumSat := AllTrim( ( dbfAlbCliL )->cNumSat ) + "00"
       end if
 
       if Empty( ( dbfAlbCliL )->cLote ) .and. !Empty( ( dbfAlbCliL )->nLote )

@@ -8982,6 +8982,14 @@ Function SynSatCli( cPath )
             ( dbfSatCliT )->cSufSat := "00"
          end if
 
+         if !Empty( ( dbfSatCliT )->cNumAlb ) .and. Len( AllTrim( ( dbfSatCliT )->cNumAlb ) ) != 12
+         ( dbfSatCliT )->cNumAlb := AllTrim( ( dbfSatCliT )->cNumAlb ) + "00"
+         end if
+
+         if !Empty( ( dbfSatCliT )->cNumTik ) .and. Len( AllTrim( ( dbfSatCliT )->cNumTik ) ) != 13
+         ( dbfSatCliT )->cNumTik := AllTrim( ( dbfSatCliT )->cNumTik ) + "00"
+         end if
+
          if Empty( ( dbfSatCliT )->cCodCaj )
             ( dbfSatCliT )->cCodCaj := "000"
          end if
