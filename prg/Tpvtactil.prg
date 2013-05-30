@@ -377,7 +377,9 @@ CLASS TpvTactil
 
    METHOD AgregarKit()
 
-   METHOD MultiplicarLineas( nUnidades )
+   METHOD SumarUnidades( nUnidades )
+   
+   METHOD IncrementarUnidades()
 
    METHOD AgregarPLU()
 
@@ -867,8 +869,12 @@ CLASS TpvTactil
    METHOD SetAliasDocumento()
 
    METHOD BuildReport( nDevice, nCopies, cPrinter, lComanda, lAnulacion )
+
    METHOD DataReport()
    METHOD VariableReport()
+
+   METHOD BuildRelationReport()
+   METHOD ClearRelationReport()
 
    METHOD nPrecioPorPersona()          INLINE ( ::sTotal:nTotalDocumento / NotCero( ::oTiketCabecera:nNumCom ) )
 
@@ -1706,9 +1712,6 @@ METHOD Activate( lAlone ) CLASS TpvTactil
 
    ::oTpvListaTicket          := TpvListaTicket():New( Self )
 
-   ::oFastReport              := frReportManager():New()
-   ::oFastReport:LoadLangRes( "Spanish.Xml" )
-
    ::oTurno                   := TTurno():New( cPatEmp(), oWnd(), "01001" )
    ::oTurno:lArqueoTactil     := .t.
 
@@ -1736,6 +1739,16 @@ METHOD Activate( lAlone ) CLASS TpvTactil
       */
 
       ::InitDocumento( ubiGeneral )
+
+      /*
+      Creamos el objeto FastReport---------------------------------------------
+      */
+
+      ::oFastReport              := frReportManager():New()
+      ::oFastReport:LoadLangRes( "Spanish.Xml" )
+
+      ::DataReport()
+      // ::VariableReport()
 
       /*
       Cargamos los valores por defecto-----------------------------------------
@@ -3741,7 +3754,7 @@ METHOD KeyChar( cKey ) CLASS TpvTactil
 
       case cKey == "*"
 
-         ::MultiplicarLineas()
+         ::IncrementarUnidades()
 
       /*
       Asignamos el nuevo precio------------------------------------------------
@@ -3807,10 +3820,10 @@ METHOD oDlgKeyDown( o, nKey, nFlag )
          ::KeyChar( "C" )
 
       case ( nKey == 109 .or. nKey == 189 )  // Teclado poner a cero
-         ::MultiplicarLineas( -1 )
+         ::SumarUnidades( -1 )
 
       case ( nKey == 107 .or. nKey == 187 )
-         ::MultiplicarLineas( 1 )
+         ::SumarUnidades( 1 )
 
       case ( nKey == 110 .or. nKey == 190 )  // Teclado poner a cero
          ::KeyChar( "." )
@@ -4068,12 +4081,13 @@ METHOD AgregarLineas( cCodigoArticulo ) CLASS TpvTactil
          ::oTemporalLinea:cComTil      := ::oArticulo:Codigo
          ::oTemporalLinea:cNcmTil      := ::cNombreArticulo()
          ::oTemporalLinea:cFcmTil      := ::oArticulo:Familia
-         if ( ::oArticulo:lFacCnv )
-            ::oTemporalLinea:nFcmCnv   := NotCero( ::oArticulo:nFacCnv )
-         end if
          ::oTemporalLinea:nPcmTil      := cRetPreArt( ::oArticulo:Codigo,        ::nTarifaCombinado, cDivEmp(), .t., ::oArticulo:cAlias, ::oDivisas:cAlias, ::oArticulosEscandallos:cAlias, ::oTipoIVA:cAlias )
          ::oTemporalLinea:nPvpTil      := cRetPreArt( ::oTemporalLinea:cCbaTil,  ::nTarifaCombinado, cDivEmp(), .t., ::oArticulo:cAlias, ::oDivisas:cAlias, ::oArticulosEscandallos:cAlias, ::oTipoIVA:cAlias )
          ::oTemporalLinea:nCosTil      := ::oArticulo:pCosto
+
+         if ( ::oArticulo:lFacCnv )
+            ::oTemporalLinea:nFcmCnv   := NotCero( ::oArticulo:nFacCnv )
+         end if
 
          ::oTemporalLinea:Save()
 
@@ -4150,7 +4164,7 @@ METHOD lAcumulaArticulo() CLASS TpvTactil
             Sumamos------------------------------------------------------------
             */
 
-            ::MultiplicarLineas( 1 )
+            ::SumarUnidades( 1 )
 
             /*
             Tomamos el valor de retorno y saliendo-----------------------------
@@ -4266,7 +4280,7 @@ Return ( .t. )
 
 //---------------------------------------------------------------------------//
 
-METHOD MultiplicarLineas( nNuevasUnidades ) CLASS TpvTactil
+METHOD SumarUnidades( nNuevasUnidades ) CLASS TpvTactil
 
    local nNumeroLinea
    local nUnidadesAnterior
@@ -4276,15 +4290,9 @@ METHOD MultiplicarLineas( nNuevasUnidades ) CLASS TpvTactil
       Return ( .t. )
    end if
 
-   if IsNum( nNuevasUnidades )
-      nUnidadesActuales                := ::oTemporalLinea:nUntTil + nNuevasUnidades
-   else
-      nUnidadesActuales                := Val( ::cGetUnidades )
-   end if
+   nUnidadesActuales                   := ::oTemporalLinea:nUntTil + nNuevasUnidades
 
    if !Empty( nUnidadesActuales )
-
-      // CursorWait()
 
       nNumeroLinea                     := ::oTemporalLinea:nNumLin
       nUnidadesAnterior                := ::oTemporalLinea:nUntTil
@@ -4295,7 +4303,49 @@ METHOD MultiplicarLineas( nNuevasUnidades ) CLASS TpvTactil
       if ::oTemporalLinea:Seek( Str( nNumeroLinea ) )
          while ( ::oTemporalLinea:nNumLin == nNumeroLinea ) .and. !( ::oTemporalLinea:eof() )
 
-            ::oTemporalLinea:nUntTil   := ( ::oTemporalLinea:nUntTil / nUnidadesAnterior ) * ( nUnidadesActuales )
+            ::oTemporalLinea:nUntTil   := ( ::oTemporalLinea:nUntTil / nUnidadesAnterior ) * ( nUnidadesActuales ) 
+
+            ::oTemporalLinea:Skip()
+
+         end while
+      end if
+
+      ::oTemporalLinea:SetStatus()
+
+      ::TotalTemporal()
+
+      ::oBrwLineas:Refresh()
+
+   end if
+
+Return ( .t. )
+
+//---------------------------------------------------------------------------//
+
+METHOD IncrementarUnidades() CLASS TpvTactil
+
+   local nNumeroLinea
+   local nUnidadesAnterior
+   local nUnidadesActuales
+
+   if ( ::oTemporalLinea:ordKeyCount() == 0 )
+      Return ( .t. )
+   end if
+
+   nUnidadesActuales                   := Val( ::cGetUnidades )
+
+   if !Empty( nUnidadesActuales )
+
+      nNumeroLinea                     := ::oTemporalLinea:nNumLin
+      nUnidadesAnterior                := ::oTemporalLinea:nUntTil
+
+      ::oTemporalLinea:GetStatus()
+      ::oTemporalLinea:OrdSetFocus( "nNumLin" )
+
+      if ::oTemporalLinea:Seek( Str( nNumeroLinea ) )
+         while ( ::oTemporalLinea:nNumLin == nNumeroLinea ) .and. !( ::oTemporalLinea:eof() )
+
+            ::oTemporalLinea:nUntTil   := ( ::oTemporalLinea:nUntTil / nUnidadesAnterior ) * ( nUnidadesActuales + nUnidadesAnterior )
 
             ::oTemporalLinea:Skip()
 
@@ -4309,8 +4359,6 @@ METHOD MultiplicarLineas( nNuevasUnidades ) CLASS TpvTactil
       ::TotalTemporal()
 
       ::oBrwLineas:Refresh()
-
-      // CursorWE()
 
    end if
 
@@ -6836,6 +6884,7 @@ Return ( .f. )
 
 METHOD ImprimeDocumento() CLASS TpvTactil
 
+/*
    local oDlg
    local oBmpPrinter
 
@@ -6852,6 +6901,13 @@ METHOD ImprimeDocumento() CLASS TpvTactil
    CursorWE()
 
    oBmpPrinter:End()
+*/
+
+   CursorWait()
+
+   ::BuildReport()   
+
+   CursorWE()
 
 Return ( Self )
 
@@ -7044,7 +7100,9 @@ METHOD BuildReport() CLASS TpvTactil
    Zona de datos------------------------------------------------------------
    */
 
-   ::DataReport()
+   // ::DataReport()
+
+   ::BuildRelationReport()
 
    /*
    Cargar el informe-----------------------------------------------------------
@@ -7093,7 +7151,7 @@ METHOD BuildReport() CLASS TpvTactil
 
    end if
 
-   ::oFastReport:ClearDataSets()
+   ::ClearRelationReport()
 
 Return .t.
 
@@ -7110,12 +7168,11 @@ METHOD DataReport() CLASS TpvTactil
    ::oFastReport:SetWorkArea(       "Tickets", ::oTiketCabecera:nArea, .f., { FR_RB_CURRENT, FR_RB_CURRENT, 0 } )
    ::oFastReport:SetFieldAliases(   "Tickets", cItemsToReport( aItmTik() ) )
 
-   if ::lComanda
-      ::oFastReport:SetWorkArea(    "Lineas de tickets", ::oTemporalComanda:nArea )
-   else
-      ::oFastReport:SetWorkArea(    "Lineas de tickets", ::oTiketLinea:nArea )
-   end if
+   ::oFastReport:SetWorkArea(       "Lineas de tickets", ::oTiketLinea:nArea )
    ::oFastReport:SetFieldAliases(   "Lineas de tickets", cItemsToReport( aColTik() ) )
+
+   ::oFastReport:SetWorkArea(       "Lineas de comandas", ::oTemporalComanda:nArea )
+   ::oFastReport:SetFieldAliases(   "Lineas de comandas", cItemsToReport( aColTik() ) )
 
    ::oFastReport:SetWorkArea(       "Lineas de albaranes", ::oAlbaranClienteLinea:nArea )
    ::oFastReport:SetFieldAliases(   "Lineas de albaranes", cItemsToReport( aColAlbCli() ) )
@@ -7177,7 +7234,11 @@ METHOD DataReport() CLASS TpvTactil
    ::oFastReport:SetWorkArea(       "Temporadas", ::oTemporadas:nArea )
    ::oFastReport:SetFieldAliases(   "Temporadas", cItemsToReport( aItmTemporada() ) )
 
-   //------------------------------------------------------------------------//
+RETURN ( Self )
+
+//------------------------------------------------------------------------//
+
+METHOD BuildRelationReport() CLASS TpvTactil
 
    ::oFastReport:SetMasterDetail( "Tickets", "Empresa",            {|| cCodigoEmpresaEnUso() } )
    ::oFastReport:SetMasterDetail( "Tickets", "Lineas de tickets",  {|| ::oTiketCabecera:cSerTik + ::oTiketCabecera:cNumTik + ::oTiketCabecera:cSufTik } )
@@ -7193,30 +7254,34 @@ METHOD DataReport() CLASS TpvTactil
    ::oFastReport:SetMasterDetail( "Tickets", "SalaVenta",          {|| ::oTiketCabecera:cCodSala } )
 
    if ::lComanda
-      ::oFastReport:SetMasterDetail( "Lineas de tickets", "Artículos",           {|| ::oTemporalComanda:cCbaTil } )
-      ::oFastReport:SetMasterDetail( "Lineas de tickets", "Familia",             {|| ::oTemporalComanda:cFamTil } )
-      ::oFastReport:SetMasterDetail( "Lineas de tickets", "Orden comanda",       {|| ::oTemporalComanda:cCodTImp } )
-      ::oFastReport:SetMasterDetail( "Lineas de tickets", "Unidades de medición",{|| ::oTemporalComanda:cUnidad } )
-      ::oFastReport:SetMasterDetail( "Lineas de tickets", "Categorías",          {|| RetFld( ::oTemporalComanda:cCbaTil, ::oArticulo:cAlias, "cCodCate" ) } )
-      ::oFastReport:SetMasterDetail( "Lineas de tickets", "Tipos de artículos",  {|| RetFld( ::oTemporalComanda:cCbaTil, ::oArticulo:cAlias, "cCodTip" ) } )
-      ::oFastReport:SetMasterDetail( "Lineas de tickets", "Fabricantes",         {|| RetFld( ::oTemporalComanda:cCbaTil, ::oArticulo:cAlias, "cCodFab" ) } )
-      ::oFastReport:SetMasterDetail( "Lineas de tickets", "Temporadas",          {|| RetFld( ::oTemporalComanda:cCbaTil, ::oArticulo:cAlias, "cCodTemp" ) } )
+
+   ::oFastReport:SetMasterDetail( "Lineas de comandas", "Artículos",             {|| ::oTemporalComanda:cCbaTil } )
+   ::oFastReport:SetMasterDetail( "Lineas de comandas", "Familia",               {|| ::oTemporalComanda:cFamTil } )
+   ::oFastReport:SetMasterDetail( "Lineas de comandas", "Unidades de medición",  {|| ::oTemporalComanda:cUnidad } )
+   ::oFastReport:SetMasterDetail( "Lineas de comandas", "Categorías",            {|| RetFld( ::oTemporalComanda:cCbaTil, ::oArticulo:cAlias, "cCodCate" ) } )
+   ::oFastReport:SetMasterDetail( "Lineas de comandas", "Tipos de artículos",    {|| RetFld( ::oTemporalComanda:cCbaTil, ::oArticulo:cAlias, "cCodTip" ) } )
+   ::oFastReport:SetMasterDetail( "Lineas de comandas", "Fabricantes",           {|| RetFld( ::oTemporalComanda:cCbaTil, ::oArticulo:cAlias, "cCodFab" ) } )
+   ::oFastReport:SetMasterDetail( "Lineas de comandas", "Temporadas",            {|| RetFld( ::oTemporalComanda:cCbaTil, ::oArticulo:cAlias, "cCodTemp" ) } )
+   ::oFastReport:SetMasterDetail( "Lineas de comandas", "Orden comanda",         {|| ::oTemporalComanda:cCodTImp } )
+
    else
-      ::oFastReport:SetMasterDetail( "Lineas de tickets", "Artículos",           {|| ::oTiketLinea:cCbaTil } )
-      ::oFastReport:SetMasterDetail( "Lineas de tickets", "Familia",             {|| ::oTiketLinea:cFamTil } )
-      ::oFastReport:SetMasterDetail( "Lineas de tickets", "Orden comanda",       {|| ::oTiketLinea:cCodTImp } )
-      ::oFastReport:SetMasterDetail( "Lineas de tickets", "Unidades de medición",{|| ::oTiketLinea:cUnidad } )
-      ::oFastReport:SetMasterDetail( "Lineas de tickets", "Categorías",          {|| RetFld( ::oTiketLinea:cCbaTil, ::oArticulo:cAlias, "cCodCate" ) } )
-      ::oFastReport:SetMasterDetail( "Lineas de tickets", "Tipos de artículos",  {|| RetFld( ::oTiketLinea:cCbaTil, ::oArticulo:cAlias, "cCodTip" ) } )
-      ::oFastReport:SetMasterDetail( "Lineas de tickets", "Fabricantes",         {|| RetFld( ::oTiketLinea:cCbaTil, ::oArticulo:cAlias, "cCodFab" ) } )
-      ::oFastReport:SetMasterDetail( "Lineas de tickets", "Temporadas",          {|| RetFld( ::oTiketLinea:cCbaTil, ::oArticulo:cAlias, "cCodTemp" ) } )
-   end if
+
+   ::oFastReport:SetMasterDetail( "Lineas de tickets", "Artículos",           {|| ::oTiketLinea:cCbaTil } )
+   ::oFastReport:SetMasterDetail( "Lineas de tickets", "Familia",             {|| ::oTiketLinea:cFamTil } )
+   ::oFastReport:SetMasterDetail( "Lineas de tickets", "Unidades de medición",{|| ::oTiketLinea:cUnidad } )
+   ::oFastReport:SetMasterDetail( "Lineas de tickets", "Categorías",          {|| RetFld( ::oTiketLinea:cCbaTil, ::oArticulo:cAlias, "cCodCate" ) } )
+   ::oFastReport:SetMasterDetail( "Lineas de tickets", "Tipos de artículos",  {|| RetFld( ::oTiketLinea:cCbaTil, ::oArticulo:cAlias, "cCodTip" ) } )
+   ::oFastReport:SetMasterDetail( "Lineas de tickets", "Fabricantes",         {|| RetFld( ::oTiketLinea:cCbaTil, ::oArticulo:cAlias, "cCodFab" ) } )
+   ::oFastReport:SetMasterDetail( "Lineas de tickets", "Temporadas",          {|| RetFld( ::oTiketLinea:cCbaTil, ::oArticulo:cAlias, "cCodTemp" ) } )
+
+   end if 
 
    ::oFastReport:SetMasterDetail( "Pagos de tickets", "Formas de pago",          {|| ::oTiketCobro:cFpgPgo } )
 
    //------------------------------------------------------------------------//
 
    ::oFastReport:SetResyncPair(  "Tickets", "Lineas de tickets" )
+   ::oFastReport:SetResyncPair(  "Tickets", "Lineas de comandas" )
    ::oFastReport:SetResyncPair(  "Tickets", "Lineas de albaranes" )
    ::oFastReport:SetResyncPair(  "Tickets", "Lineas de facturas" )
    ::oFastReport:SetResyncPair(  "Tickets", "Empresa" )
@@ -7230,6 +7295,19 @@ METHOD DataReport() CLASS TpvTactil
 
    ::oFastReport:SetResyncPair(  "Pagos de tickets", "Formas de pago" )
 
+   if ::lComanda
+
+   ::oFastReport:SetResyncPair(  "Lineas de comandas", "Artículos" )
+   ::oFastReport:SetResyncPair(  "Lineas de comandas", "Familias" )
+   ::oFastReport:SetResyncPair(  "Lineas de comandas", "Orden comanda" )
+   ::oFastReport:SetResyncPair(  "Lineas de comandas", "Unidades de medición" )
+   ::oFastReport:SetResyncPair(  "Lineas de comandas", "Categorías" )
+   ::oFastReport:SetResyncPair(  "Lineas de comandas", "Tipos de artículos" )
+   ::oFastReport:SetResyncPair(  "Lineas de comandas", "Fabricantes" )
+   ::oFastReport:SetResyncPair(  "Lineas de comandas", "Temporadas" )
+
+   else 
+
    ::oFastReport:SetResyncPair(  "Lineas de tickets", "Artículos" )
    ::oFastReport:SetResyncPair(  "Lineas de tickets", "Familias" )
    ::oFastReport:SetResyncPair(  "Lineas de tickets", "Orden comanda" )
@@ -7239,9 +7317,68 @@ METHOD DataReport() CLASS TpvTactil
    ::oFastReport:SetResyncPair(  "Lineas de tickets", "Fabricantes" )
    ::oFastReport:SetResyncPair(  "Lineas de tickets", "Temporadas" )
 
+   end if 
+
 Return nil
 
 //---------------------------------------------------------------------------//
+
+METHOD ClearRelationReport() CLASS TpvTactil
+
+   ::oFastReport:ClearMasterDetail( "Empresa" )
+   ::oFastReport:ClearMasterDetail( "Lineas de tickets" )
+   ::oFastReport:ClearMasterDetail( "Pagos de tickets" )
+   ::oFastReport:ClearMasterDetail( "Lineas de albaranes" )
+   ::oFastReport:ClearMasterDetail( "Lineas de facturas" )
+   ::oFastReport:ClearMasterDetail( "Clientes" )
+   ::oFastReport:ClearMasterDetail( "Obras" )
+   ::oFastReport:ClearMasterDetail( "Almacen" )
+   ::oFastReport:ClearMasterDetail( "Rutas" )
+   ::oFastReport:ClearMasterDetail( "Agentes" )
+   ::oFastReport:ClearMasterDetail( "Usuarios" )
+   ::oFastReport:ClearMasterDetail( "SalaVenta" )
+
+   ::oFastReport:ClearMasterDetail( "Artículos" )
+   ::oFastReport:ClearMasterDetail( "Familia" )
+   ::oFastReport:ClearMasterDetail( "Unidades de medición" )
+   ::oFastReport:ClearMasterDetail( "Categorías" )
+   ::oFastReport:ClearMasterDetail( "Tipos de artículos" )
+   ::oFastReport:ClearMasterDetail( "Fabricantes" )
+   ::oFastReport:ClearMasterDetail( "Temporadas" )
+   ::oFastReport:ClearMasterDetail( "Orden comanda" )
+
+   ::oFastReport:ClearMasterDetail( "Formas de pago" )
+
+   //------------------------------------------------------------------------//
+
+   ::oFastReport:ClearResyncPair(  "Tickets", "Lineas de tickets" )
+   ::oFastReport:ClearResyncPair(  "Tickets", "Lineas de comandas" )
+   ::oFastReport:ClearResyncPair(  "Tickets", "Lineas de albaranes" )
+   ::oFastReport:ClearResyncPair(  "Tickets", "Lineas de facturas" )
+   ::oFastReport:ClearResyncPair(  "Tickets", "Empresa" )
+   ::oFastReport:ClearResyncPair(  "Tickets", "Clientes" )
+   ::oFastReport:ClearResyncPair(  "Tickets", "Obras" )
+   ::oFastReport:ClearResyncPair(  "Tickets", "Almacenes" )
+   ::oFastReport:ClearResyncPair(  "Tickets", "Rutas" )
+   ::oFastReport:ClearResyncPair(  "Tickets", "Agentes" )
+   ::oFastReport:ClearResyncPair(  "Tickets", "Usuarios" )
+   ::oFastReport:ClearResyncPair(  "Tickets", "SalaVenta" )
+
+   ::oFastReport:ClearResyncPair(  "Pagos de tickets", "Formas de pago" )
+
+   ::oFastReport:ClearResyncPair(  "Lineas de comandas", "Artículos" )
+   ::oFastReport:ClearResyncPair(  "Lineas de comandas", "Familias" )
+   ::oFastReport:ClearResyncPair(  "Lineas de comandas", "Orden comanda" )
+   ::oFastReport:ClearResyncPair(  "Lineas de comandas", "Unidades de medición" )
+   ::oFastReport:ClearResyncPair(  "Lineas de comandas", "Categorías" )
+   ::oFastReport:ClearResyncPair(  "Lineas de comandas", "Tipos de artículos" )
+   ::oFastReport:ClearResyncPair(  "Lineas de comandas", "Fabricantes" )
+   ::oFastReport:ClearResyncPair(  "Lineas de comandas", "Temporadas" )
+
+Return nil
+
+//---------------------------------------------------------------------------//
+
 
 METHOD VariableReport() CLASS TpvTactil
 

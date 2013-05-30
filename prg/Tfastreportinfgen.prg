@@ -2104,7 +2104,7 @@ RETURN ( Self )
 
 METHOD LoadReport() CLASS TFastReportInfGen
 
-   msgStop( ( cPatReporting() + Upper( ::cReportName ) + ".fr3" ), "nombre del fichero" )
+   local cFileName
 
    ::cInformeFastReport             := ""
 
@@ -2141,9 +2141,13 @@ METHOD LoadReport() CLASS TFastReportInfGen
    end if
 
    if Empty( ::cInformeFastReport )
-      if File( cPatReporting() + Upper( ::cReportName ) + ".fr3" )
-         ::cInformeFastReport       := MemoRead( cPatReporting() + Upper( ::cReportName ) + ".fr3" )
+
+      cFileName                     := cPatReporting() + ::cType + "\" + Upper( ::cReportName ) + ".fr3"
+
+      if File( cFileName )
+         ::cInformeFastReport       := MemoRead( cFileName )
       end if
+
    end if
 
 RETURN ( Self )
