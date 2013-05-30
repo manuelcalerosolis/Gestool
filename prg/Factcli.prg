@@ -12283,7 +12283,6 @@ function SynFacCli( cPath )
       ( dbfFacCliT )->( dbGoTop() )
       while !( dbfFacCliT )->( eof() )
 
-
          aTotFac           := aTotFacCli( ( dbfFacCliT )->cSerie + Str( ( dbfFacCliT )->nNumFac ) + ( dbfFacCliT )->cSufFac, dbfFacCliT, dbfFacCliL, dbfIva, dbfDiv, dbfFacCliP, dbfAntCliT, ( dbfFacCliT )->cDivFac )
 
          if ( dbfFacCliT )->nTotFac == 0
