@@ -272,11 +272,11 @@ METHOD InitResource( oDlg ) CLASS AccessCode
 
 Return .t.
 
-//--------------------------------------------------------------------------//
+//---------------------------------------------------------------------------//
 
 METHOD ShowLoginDialog( oDlg ) CLASS AccessCode
 
-   // Show del dialogo------------------------------------------------------
+   // Show del dialogo---------------------------------------------------------
 
    ::oGetUser:Show()
    ::oSayUser:Show()

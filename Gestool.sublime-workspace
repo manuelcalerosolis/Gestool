@@ -560,10 +560,26 @@
 			}
 		},
 		{
-			"file": "prg/Albcli.prg",
+			"file": "prg/Factu.prg",
 			"settings":
 			{
-				"buffer_size": 634665,
+				"buffer_size": 185107,
+				"line_ending": "Windows"
+			}
+		},
+		{
+			"file": "prg/Usuario.prg",
+			"settings":
+			{
+				"buffer_size": 80601,
+				"line_ending": "Windows"
+			}
+		},
+		{
+			"file": "prg/Empresa.prg",
+			"settings":
+			{
+				"buffer_size": 265067,
 				"line_ending": "Windows"
 			}
 		}
@@ -600,6 +616,10 @@
 	},
 	"file_history":
 	[
+		"/C/fw195/Gestool/prg/Accesscode.prg",
+		"/C/fw195/Gestool/prg/Empdata.prg",
+		"/C/fw195/Gestool/prg/Albcli.prg",
+		"/C/fw195/Gestool/prg/Utildbf.prg",
 		"/C/fw195/Gestool/prg/Tgrpfam.prg",
 		"/C/fw195/Gestool/prg/Familia.prg",
 		"/C/fw195/Gestool/prg/Tipart.prg",
@@ -612,7 +632,6 @@
 		"/C/fw195/Gestool/prg/TDetMaterial",
 		"/C/fw195/Gestool/prg/Tcomercio.prg",
 		"/C/fw195/Gestool/prg/Factcli.prg",
-		"/C/fw195/Gestool/prg/Albcli.prg",
 		"/C/fw195/Gestool/prg/Pedcli.prg",
 		"/C/fw195/Gestool/prg/Precli.prg",
 		"/C/fw195/Gestool/prg/Facrec.prg",
@@ -634,7 +653,6 @@
 		"/C/Users/Villa/Desktop/enviar_email_ajax/enviar_email_ajax/enviar.php",
 		"/C/Users/Villa/Desktop/enviar_email_ajax/enviar_email_ajax/jquery.js",
 		"/C/Users/Villa/Desktop/enviar_email_ajax/enviar_email_ajax/jquery.form.js",
-		"/C/fw195/Gestool/prg/Utildbf.prg",
 		"/C/Users/Villa/Desktop/enviar_email_ajax/enviar_email_ajax/index.php",
 		"/C/fw195/Gestool/prg/Divisas.prg",
 		"/C/Users/Villa/Desktop/reveal/demo.html",
@@ -725,9 +743,7 @@
 		"/C/fw195/Gestool/prg/tcomercio",
 		"/C/fw195/Gestool/prg/Rptgal.prg",
 		"/C/fw195/Gestool/prg/Tgesped.prg",
-		"/C/fw195/Gestool/prg/Edm.prg",
-		"/C/Scripts creados/SCRIPT JOAQUIN INFANTE/test.prg",
-		"/C/Scripts creados/ANTONIO INFORTISA/impinfor.prg"
+		"/C/fw195/Gestool/prg/Edm.prg"
 	],
 	"find":
 	{
@@ -735,7 +751,7 @@
 	},
 	"find_in_files":
 	{
-		"height": 0.0,
+		"height": 93.0,
 		"where_history":
 		[
 			"C:\\fw195\\Gestool\\prg",
@@ -769,6 +785,20 @@
 		"case_sensitive": false,
 		"find_history":
 		[
+			"just",
+			"\"00\"",
+			"TstEmpresa",
+			"on linit",
+			"lChkUser",
+			"initial",
+			"ss AccessCode",
+			"on CreateAcceso",
+			"od CreateAcceso",
+			"odCreateAcceso",
+			"CreateMainWindow",
+			"main",
+			"\"00\"",
+			"on dbpass",
 			"on aitm",
 			"openfiles",
 			"on aitm",
@@ -882,21 +912,7 @@
 			"sincronizar",
 			"exportarpre",
 			"nexportar",
-			"oBtnImportar",
-			"ESTADOPEDIDOS",
-			"AppendPedidoprestashop",
-			"pedido",
-			"InsertCategoriesPrestashop",
-			"prestashop",
-			"bmpImage",
-			"oUser():OpenCajon()",
-			"BuildReport",
-			"ImprimeDocumento",
-			"OnClickCopiaComanda",
-			"CIMGBTN",
-			"categories_block_left",
-			"selected",
-			"div.block"
+			"oBtnImportar"
 		],
 		"highlight": true,
 		"in_selection": false,
@@ -922,7 +938,7 @@
 	"groups":
 	[
 		{
-			"selected": 5,
+			"selected": 7,
 			"sheets":
 			[
 				{
@@ -937,8 +953,8 @@
 						"selection":
 						[
 							[
-								5111,
-								5111
+								965,
+								965
 							]
 						],
 						"settings":
@@ -947,7 +963,7 @@
 							"translate_tabs_to_spaces": false
 						},
 						"translation.x": 0.0,
-						"translation.y": 665.0,
+						"translation.y": 0.0,
 						"zoom_level": 1.0
 					},
 					"type": "text"
@@ -1045,8 +1061,8 @@
 						"selection":
 						[
 							[
-								671,
-								671
+								698,
+								698
 							]
 						],
 						"settings":
@@ -1062,18 +1078,18 @@
 				},
 				{
 					"buffer": 5,
-					"file": "prg/Albcli.prg",
+					"file": "prg/Factu.prg",
 					"settings":
 					{
-						"buffer_size": 634665,
+						"buffer_size": 185107,
 						"regions":
 						{
 						},
 						"selection":
 						[
 							[
-								304587,
-								304705
+								25065,
+								25065
 							]
 						],
 						"settings":
@@ -1083,7 +1099,63 @@
 							"translate_tabs_to_spaces": true
 						},
 						"translation.x": 0.0,
-						"translation.y": 166373.0,
+						"translation.y": 18211.0,
+						"zoom_level": 1.0
+					},
+					"type": "text"
+				},
+				{
+					"buffer": 6,
+					"file": "prg/Usuario.prg",
+					"settings":
+					{
+						"buffer_size": 80601,
+						"regions":
+						{
+						},
+						"selection":
+						[
+							[
+								63868,
+								63876
+							]
+						],
+						"settings":
+						{
+							"syntax": "Packages/harbour/harbour/Harbour.tmLanguage",
+							"tab_size": 3,
+							"translate_tabs_to_spaces": true
+						},
+						"translation.x": 0.0,
+						"translation.y": 47623.0,
+						"zoom_level": 1.0
+					},
+					"type": "text"
+				},
+				{
+					"buffer": 7,
+					"file": "prg/Empresa.prg",
+					"settings":
+					{
+						"buffer_size": 265067,
+						"regions":
+						{
+						},
+						"selection":
+						[
+							[
+								96908,
+								96908
+							]
+						],
+						"settings":
+						{
+							"syntax": "Packages/harbour/harbour/Harbour.tmLanguage",
+							"tab_size": 3,
+							"translate_tabs_to_spaces": true
+						},
+						"translation.x": 0.0,
+						"translation.y": 61569.0,
 						"zoom_level": 1.0
 					},
 					"type": "text"
