@@ -12077,6 +12077,30 @@ function SynFacCli( cPath )
             ( dbfFacCliT )->cSufFac := "00"
          end if
 
+         if !Empty( ( dbfFacCliT )->cNumPre ) .and. Len( AllTrim( ( dbfFacCliT )->cNumPre ) ) != 12
+            ( dbfFacCliT )->cNumPre := AllTrim( ( dbfFacCliT )->cNumPre ) + "00"
+         end if
+
+         if !Empty( ( dbfFacCliT )->cNumPed ) .and. Len( AllTrim( ( dbfFacCliT )->cNumPed ) ) != 12
+            ( dbfFacCliT )->cNumPed := AllTrim( ( dbfFacCliT )->cNumPed ) + "00"
+         end if
+
+         if !Empty( ( dbfFacCliT )->cNumAlb ) .and. Len( AllTrim( ( dbfFacCliT )->cNumAlb ) ) != 12
+            ( dbfFacCliT )->cNumAlb := AllTrim( ( dbfFacCliT )->cNumAlb ) + "00"
+         end if
+
+         if !Empty( ( dbfFacCliT )->cNumSat ) .and. Len( AllTrim( ( dbfFacCliT )->cNumSat ) ) != 12
+            ( dbfFacCliT )->cNumSat := AllTrim( ( dbfFacCliT )->cNumSat ) + "00"
+         end if
+
+         if !Empty( ( dbfFacCliT )->cNumDoc ) .and. Len( AllTrim( ( dbfFacCliT )->cNumDoc ) ) != 13
+            ( dbfFacCliT )->cNumDoc := AllTrim( ( dbfFacCliT )->cNumDoc ) + "00"
+         end if
+
+         if !Empty( ( dbfFacCliT )->cFacPrv ) .and. Len( AllTrim( ( dbfFacCliT )->cFacPrv ) ) != 12
+            ( dbfFacCliT )->cFacPrv := AllTrim( ( dbfFacCliT )->cFacPrv ) + "00"
+         end if
+
          if Empty( ( dbfFacCliT )->cCodCaj )
             ( dbfFacCliT )->cCodCaj := "000"
          end if
@@ -12125,6 +12149,14 @@ function SynFacCli( cPath )
 
          if Empty( ( dbfFacCliL )->cSufFac )
             ( dbfFacCliL )->cSufFac    := "00"
+         end if
+
+         if !Empty( ( dbfFacCliL )->cNumPed ) .and. Len( AllTrim( ( dbfFacCliL )->cNumPed ) ) != 12
+            ( dbfFacCliL )->cNumPed := AllTrim( ( dbfFacCliL )->cNumPed ) + "00"
+         end if
+
+         if !Empty( ( dbfFacCliL )->cCodAlb ) .and. Len( AllTrim( ( dbfFacCliL )->cCodAlb ) ) != 12
+            ( dbfFacCliL )->cCodAlb := AllTrim( ( dbfFacCliL )->cCodAlb ) + "00"
          end if
 
          if !Empty( ( dbfFacCliL )->cRef ) .and. Empty( ( dbfFacCliL )->nValImp )

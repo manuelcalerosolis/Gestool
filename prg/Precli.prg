@@ -9235,6 +9235,10 @@ Function SynPreCli( cPath )
             ( dbfPreCliT )->cSufPre := "00"
          end if
 
+         if !Empty( ( dbfPreCliT )->cNumTik ) .and. Len( AllTrim( ( dbfPreCliT )->cNumTik ) ) != 13
+            ( dbfPreCliT )->cNumTik := AllTrim( ( dbfPreCliT )->cNumTik ) + "00"
+         end if
+
          if Empty( ( dbfPreCliT )->cCodCaj )
             ( dbfPreCliT )->cCodCaj := "000"
          end if

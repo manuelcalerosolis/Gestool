@@ -7102,23 +7102,23 @@ Function SynPedCli( cPath )
    oBlock               := ErrorBlock( {| oError | ApoloBreak( oError ) } )
    BEGIN SEQUENCE
 
-    USE ( cPatEmp() + "PedCliT.DBF" ) NEW VIA ( cDriver() ) EXCLUSIVE ALIAS ( cCheckArea( "PedCliT", @dbfPedCliT ) )
-    SET ADSINDEX TO ( cPatEmp() + "PedCliT.CDX" ) ADDITIVE
+   USE ( cPatEmp() + "PedCliT.DBF" ) NEW VIA ( cDriver() ) EXCLUSIVE ALIAS ( cCheckArea( "PedCliT", @dbfPedCliT ) )
+   SET ADSINDEX TO ( cPatEmp() + "PedCliT.CDX" ) ADDITIVE
 
-    USE ( cPatEmp() + "PEDCLIL.DBF" ) NEW VIA ( cDriver() ) EXCLUSIVE ALIAS ( cCheckArea( "PEDCLIL", @dbfPedCliL ) )
-    SET ADSINDEX TO ( cPatEmp() + "PEDCLIL.CDX" ) ADDITIVE
+   USE ( cPatEmp() + "PEDCLIL.DBF" ) NEW VIA ( cDriver() ) EXCLUSIVE ALIAS ( cCheckArea( "PEDCLIL", @dbfPedCliL ) )
+   SET ADSINDEX TO ( cPatEmp() + "PEDCLIL.CDX" ) ADDITIVE
 
-    USE ( cPatEmp() + "PEDCLIR.DBF" ) NEW VIA ( cDriver() ) EXCLUSIVE ALIAS ( cCheckArea( "PEDCLIR", @dbfPedCliR ) )
-    SET ADSINDEX TO ( cPatEmp() + "PEDCLIR.CDX" ) ADDITIVE
+   USE ( cPatEmp() + "PEDCLIR.DBF" ) NEW VIA ( cDriver() ) EXCLUSIVE ALIAS ( cCheckArea( "PEDCLIR", @dbfPedCliR ) )
+   SET ADSINDEX TO ( cPatEmp() + "PEDCLIR.CDX" ) ADDITIVE
 
-    USE ( cPatEmp() + "PEDCLII.DBF" ) NEW VIA ( cDriver() ) EXCLUSIVE ALIAS ( cCheckArea( "PEDCLII", @dbfPedCliI ) )
-    SET ADSINDEX TO ( cPatEmp() + "PEDCLII.CDX" ) ADDITIVE
+   USE ( cPatEmp() + "PEDCLII.DBF" ) NEW VIA ( cDriver() ) EXCLUSIVE ALIAS ( cCheckArea( "PEDCLII", @dbfPedCliI ) )
+   SET ADSINDEX TO ( cPatEmp() + "PEDCLII.CDX" ) ADDITIVE
 
-    USE ( cPatEmp() + "PEDCLID.DBF" ) NEW VIA ( cDriver() ) EXCLUSIVE ALIAS ( cCheckArea( "PEDCLID", @dbfPedCliD ) )
-    SET ADSINDEX TO ( cPatEmp() + "PEDCLID.CDX" ) ADDITIVE
+   USE ( cPatEmp() + "PEDCLID.DBF" ) NEW VIA ( cDriver() ) EXCLUSIVE ALIAS ( cCheckArea( "PEDCLID", @dbfPedCliD ) )
+   SET ADSINDEX TO ( cPatEmp() + "PEDCLID.CDX" ) ADDITIVE
 
-    USE ( cPatEmp() + "PEDCLIP.DBF" ) NEW VIA ( cDriver() ) EXCLUSIVE ALIAS ( cCheckArea( "PEDCLIP", @dbfPedCliP ) )
-    SET ADSINDEX TO ( cPatEmp() + "PEDCLIP.CDX" ) ADDITIVE
+   USE ( cPatEmp() + "PEDCLIP.DBF" ) NEW VIA ( cDriver() ) EXCLUSIVE ALIAS ( cCheckArea( "PEDCLIP", @dbfPedCliP ) )
+   SET ADSINDEX TO ( cPatEmp() + "PEDCLIP.CDX" ) ADDITIVE
 
    USE ( cPatArt() + "ARTICULO.DBF" )  NEW VIA ( cDriver() ) ALIAS ( cCheckArea( "ARTICULO", @dbfArticulo ) ) EXCLUSIVE
    SET ADSINDEX TO ( cPatArt() + "ARTICULO.CDX" ) ADDITIVE
@@ -7140,15 +7140,23 @@ Function SynPedCli( cPath )
     
     while !( dbfPedCliT )->( eof() )
 
-         if Empty( ( dbfPedCliT )->cSufPed )
-               ( dbfPedCliT )->cSufPed := "00"
-         end if
+        if Empty( ( dbfPedCliT )->cSufPed )
+            ( dbfPedCliT )->cSufPed := "00"
+        end if
 
-         if Empty( ( dbfPedCliT )->cCodCaj )
-               ( dbfPedCliT )->cCodCaj := "000"
-         end if
+        if !Empty( ( dbfPedCliT )->cNumPre ) .and. Len( AllTrim( ( dbfPedCliT )->cNumPre ) ) != 12
+        	( dbfPedCliT )->cNumPre := AllTrim( ( dbfPedCliT )->cNumPre ) + "00"
+      	end if
 
-         ( dbfPedCliT )->( dbSkip() )
+        if !Empty( ( dbfPedCliT )->cNumAlb ) .and. Len( AllTrim( ( dbfPedCliT )->cNumAlb ) ) != 12
+        	( dbfPedCliT )->cNumAlb := AllTrim( ( dbfPedCliT )->cNumAlb ) + "00"
+      	end if
+
+        if Empty( ( dbfPedCliT )->cCodCaj )
+        	( dbfPedCliT )->cCodCaj := "000"
+        end if
+
+        ( dbfPedCliT )->( dbSkip() )
 
       end while
 

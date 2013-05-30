@@ -11269,15 +11269,19 @@ function SynFacRec( cPath )
 
       while !( dbfFacRecT )->( eof() )
 
-         if Empty( ( dbfFacRecT )->cSufFac )
-            ( dbfFacRecT )->cSufFac := "00"
-         end if
+        if Empty( ( dbfFacRecT )->cSufFac )
+           ( dbfFacRecT )->cSufFac := "00"
+        end if
 
-         if Empty( ( dbfFacRecT )->cCodCaj )
-            ( dbfFacRecT )->cCodCaj := "000"
-         end if
+		if !Empty( ( dbfFacRecT )->cNumFac ) .and. Len( AllTrim( ( dbfFacRecT )->cNumFac ) ) != 12
+        	( dbfFacRecT )->cNumFac := AllTrim( ( dbfFacRecT )->cNumFac ) + "00"
+      	end if
 
-         ( dbfFacRecT )->( dbSkip() )
+        if Empty( ( dbfFacRecT )->cCodCaj )
+           ( dbfFacRecT )->cCodCaj := "000"
+        end if
+
+        ( dbfFacRecT )->( dbSkip() )
 
       end while
 
@@ -11290,9 +11294,13 @@ function SynFacRec( cPath )
 
       while !( dbfFacRecL )->( eof() )
 
-	     	if Empty( ( dbfFacRecL )->cSufFac )
-	        	( dbfFacRecL )->cSufFac 	:= "00"
-	     	end if
+	    if Empty( ( dbfFacRecL )->cSufFac )
+	      	( dbfFacRecL )->cSufFac 	:= "00"
+	    end if
+
+	    if !Empty( ( dbfFacRecL )->cCodAlb ) .and. Len( AllTrim( ( dbfFacRecL )->cCodAlb ) ) != 12
+        	( dbfFacRecL )->cCodAlb := AllTrim( ( dbfFacRecL )->cCodAlb ) + "00"
+      	end if
 	        
 	      if Empty( ( dbfFacRecL )->cLote ) .and. !Empty( ( dbfFacRecL )->nLote )
 	         ( dbfFacRecL )->cLote         := AllTrim( Str( ( dbfFacRecL )->nLote ) )
