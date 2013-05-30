@@ -9,6 +9,8 @@
 
 CLASS TFastVentasArticulos FROM TFastReportInfGen
 
+   DATA  cType                            INIT "Articulos"
+
    DATA  cResource                        INIT "FastReportArticulos"
    DATA  lUnidadesNegativo                INIT .f.
 

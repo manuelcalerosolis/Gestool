@@ -223,6 +223,7 @@ static dbfProLin
 static dbfProMat
 static dbfHisMov
 static dbfSitua
+static dbfClient
 static oStock
 static oGetNet
 static oGetIva
@@ -408,6 +409,9 @@ STATIC FUNCTION OpenFiles( lExt )
 
       USE ( cPatDat() + "SITUA.DBF" ) NEW VIA ( cDriver() ) SHARED ALIAS ( cCheckArea( "SITUA", @dbfSitua ) )
       SET ADSINDEX TO ( cPatDat() + "SITUA.CDX" ) ADDITIVE
+
+      USE ( cPatCli() + "CLIENT.DBF" ) NEW VIA ( cDriver() ) SHARED ALIAS ( cCheckArea( "CLIENT", @dbfClient ) )
+      SET ADSINDEX TO ( cPatCli() + "CLIENT.CDX" ) ADDITIVE
 
       if !TDataCenter():OpenPedCliT( @dbfPedCliT )
          lOpenFiles     := .f.
@@ -645,6 +649,10 @@ STATIC FUNCTION CloseFiles()
       ( dbfSitua )->( dbCloseArea() )
    end if
 
+   if dbfClient != nil
+      ( dbfClient )->( dbCloseArea() )
+   end if
+
    if oStock != nil
       oStock:end()
    end if
@@ -687,6 +695,7 @@ STATIC FUNCTION CloseFiles()
    dbfProMat   := nil
    dbfHisMov   := nil
    dbfSitua    := nil
+   dbfClient   := nil 
 
    lOpenFiles  := .f.
 
@@ -1175,34 +1184,34 @@ Return .t.
 
 STATIC FUNCTION EdtRec( aTmp, aGet, dbfPedPrvT, oBrw, cCodPrv, cCodArt, nMode )
 
-	local oDlg
+   local oDlg
    local oFld
    local oBrwLin
    local oBrwInc
    local oBrwDoc
    local oSay        := Array( 5 )
    local cSay        := Array( 5 )
-   local oSayLabels  := Array( 7 )
+   local oSayLabels           := Array( 7 )
    local oBmpDiv
    local oBmpEmp
    local cEstPed
    local oGetMasDiv
-   local cGetMasDiv  := ""
+   local cGetMasDiv           := ""
    local cTlfPrv
    local oTlfPrv
    local oPedCli
    local oCodCli
    local oNomCli
-   local cCodCli     := GetCodCli( aTmp[_CNUMPEDCLI] )
-   local cNomCli     := GetNomCli( aTmp[_CNUMPEDCLI] )
+   local cCodCli              := GetCodCli( aTmp[ _CNUMPEDCLI ] )
+   local cNomCli              := GetNomCli( aTmp[ _CNUMPEDCLI ] )
    local oBmpGeneral
 
    /*
    Este valor los guaradamos para detectar los posibles cambios
    */
 
-   cOldCodCli        := aTmp[ _CCODPRV ]
-   cPicUnd           := MasUnd()                               // Picture de las unidades
+   cOldCodCli                 := aTmp[ _CCODPRV ]
+   cPicUnd                    := MasUnd()                               // Picture de las unidades
 
    do case
    case nMode  == APPD_MODE
@@ -1212,19 +1221,19 @@ STATIC FUNCTION EdtRec( aTmp, aGet, dbfPedPrvT, oBrw, cCodPrv, cCodArt, nMode )
          Return .f.
       end if
 
-      aTmp[ _CSERPED ]  := cNewSer( "nPedPrv" )
-      aTmp[ _CTURPED ]  := cCurSesion()
-      aTmp[ _CCODCAJ ]  := oUser():cCaja()
-      aTmp[ _CCODALM ]  := oUser():cAlmacen()
-      aTmp[ _CDIVPED ]  := cDivEmp()
-      aTmp[ _NVDVPED ]  := nChgDiv( aTmp[ _CDIVPED ], dbfDiv )
-      aTmp[ _CSUFPED ]  := RetSufEmp()
-      aTmp[ _LSNDDOC ]  := .t.
-      aTmp[ _NESTADO ]  := 1
-      aTmp[ _CCODUSR ]  := cCurUsr()
-      aTmp[ _CCODDLG ]  := oUser():cDelegacion()
+      aTmp[ _CSERPED ]        := cNewSer( "nPedPrv" )
+      aTmp[ _CTURPED ]        := cCurSesion()
+      aTmp[ _CCODCAJ ]        := oUser():cCaja()
+      aTmp[ _CCODALM ]        := oUser():cAlmacen()
+      aTmp[ _CDIVPED ]        := cDivEmp()
+      aTmp[ _NVDVPED ]        := nChgDiv( aTmp[ _CDIVPED ], dbfDiv )
+      aTmp[ _CSUFPED ]        := RetSufEmp()
+      aTmp[ _LSNDDOC ]        := .t.
+      aTmp[ _NESTADO ]        := 1
+      aTmp[ _CCODUSR ]        := cCurUsr()
+      aTmp[ _CCODDLG ]        := oUser():cDelegacion()
       if !Empty( cCodPrv )
-         aTmp[ _CCODPRV ]  := cCodPrv
+         aTmp[ _CCODPRV ]     := cCodPrv
       end if
 
    case nMode == DUPL_MODE
@@ -8342,6 +8351,9 @@ Static Function DataReport( oFr )
    oFr:SetWorkArea(     "Unidades de medición",  oUndMedicion:Select() )
    oFr:SetFieldAliases( "Unidades de medición",  cObjectsToReport( oUndMedicion:oDbf ) )
 
+   oFr:SetWorkArea(     "Clientes", ( dbfClient )->( Select() ) )
+   oFr:SetFieldAliases( "Clientes", cItemsToReport( aItmCli() ) )
+
    oFr:SetMasterDetail( "Pedidos", "Lineas de pedidos",        {|| ( dbfPedPrvT )->cSerPed + Str( ( dbfPedPrvT )->nNumPed ) + ( dbfPedPrvT )->cSufPed } )
    oFr:SetMasterDetail( "Pedidos", "Incidencias de pedidos",   {|| ( dbfPedPrvT )->cSerPed + Str( ( dbfPedPrvT )->nNumPed ) + ( dbfPedPrvT )->cSufPed } )
    oFr:SetMasterDetail( "Pedidos", "Documentos de pedidos",    {|| ( dbfPedPrvT )->cSerPed + Str( ( dbfPedPrvT )->nNumPed ) + ( dbfPedPrvT )->cSufPed } )
@@ -8350,6 +8362,7 @@ Static Function DataReport( oFr )
    oFr:SetMasterDetail( "Pedidos", "Formas de pago",           {|| ( dbfPedPrvT )->cCodPgo } )
    oFr:SetMasterDetail( "Pedidos", "Usuarios",                 {|| ( dbfPedPrvT )->cCodUsr } )
    oFr:SetMasterDetail( "Pedidos", "Empresa",                  {|| cCodigoEmpresaEnUso() } )
+   oFr:SetMasterDetail( "Pedidos", "Clientes",                 {|| GetCodCli( ( dbfPedPrvT )->cNumPedCli ) } )
 
    oFr:SetMasterDetail( "Lineas de pedidos", "Artículos",               {|| ( dbfPedPrvL )->cRef } )
    oFr:SetMasterDetail( "Lineas de pedidos", "Código de proveedores",   {|| ( dbfPedPrvT )->cCodPrv + ( dbfPedPrvL )->cRef } )
@@ -8363,6 +8376,7 @@ Static Function DataReport( oFr )
    oFr:SetResyncPair(   "Pedidos", "Almacenes" )
    oFr:SetResyncPair(   "Pedidos", "Formas de pago" )
    oFr:SetResyncPair(   "Pedidos", "Usuarios" )
+   oFr:SetResyncPair(   "Pedidos", "Clientes" )
 
    oFr:SetResyncPair(   "Lineas de pedidos", "Artículos" )
    oFr:SetResyncPair(   "Lineas de pedidos", "Código de proveedores" )
@@ -8390,24 +8404,24 @@ Static Function VariableReport( oFr )
    oFr:AddVariable(     "Pedidos",             "Total neto",                          "GetHbVar('nTotNet')" )
    oFr:AddVariable(     "Pedidos",             "Total primer descuento definible",    "GetHbVar('nTotUno')" )
    oFr:AddVariable(     "Pedidos",             "Total segundo descuento definible",   "GetHbVar('nTotDos')" )
-   oFr:AddVariable(     "Pedidos",             "Total " + cImp(),                           "GetHbVar('nTotIva')" )
+   oFr:AddVariable(     "Pedidos",             "Total " + cImp(),                     "GetHbVar('nTotIva')" )
    oFr:AddVariable(     "Pedidos",             "Total RE",                            "GetHbVar('nTotReq')" )
    oFr:AddVariable(     "Pedidos",             "Total retención",                     "GetHbVar('nTotRet')" )
-   oFr:AddVariable(     "Pedidos",             "Bruto primer tipo de " + cImp(),            "GetHbArrayVar('aIvaUno',1)" )
-   oFr:AddVariable(     "Pedidos",             "Bruto segundo tipo de " + cImp(),           "GetHbArrayVar('aIvaDos',1)" )
-   oFr:AddVariable(     "Pedidos",             "Bruto tercer tipo de " + cImp(),            "GetHbArrayVar('aIvaTre',1)" )
-   oFr:AddVariable(     "Pedidos",             "Base primer tipo de " + cImp(),             "GetHbArrayVar('aIvaUno',2)" )
-   oFr:AddVariable(     "Pedidos",             "Base segundo tipo de " + cImp(),            "GetHbArrayVar('aIvaDos',2)" )
-   oFr:AddVariable(     "Pedidos",             "Base tercer tipo de " + cImp(),             "GetHbArrayVar('aIvaTre',2)" )
-   oFr:AddVariable(     "Pedidos",             "Porcentaje primer tipo " + cImp(),          "GetHbArrayVar('aIvaUno',3)" )
-   oFr:AddVariable(     "Pedidos",             "Porcentaje segundo tipo " + cImp(),         "GetHbArrayVar('aIvaDos',3)" )
-   oFr:AddVariable(     "Pedidos",             "Porcentaje tercer tipo " + cImp(),          "GetHbArrayVar('aIvaTre',3)" )
+   oFr:AddVariable(     "Pedidos",             "Bruto primer tipo de " + cImp(),      "GetHbArrayVar('aIvaUno',1)" )
+   oFr:AddVariable(     "Pedidos",             "Bruto segundo tipo de " + cImp(),     "GetHbArrayVar('aIvaDos',1)" )
+   oFr:AddVariable(     "Pedidos",             "Bruto tercer tipo de " + cImp(),      "GetHbArrayVar('aIvaTre',1)" )
+   oFr:AddVariable(     "Pedidos",             "Base primer tipo de " + cImp(),       "GetHbArrayVar('aIvaUno',2)" )
+   oFr:AddVariable(     "Pedidos",             "Base segundo tipo de " + cImp(),      "GetHbArrayVar('aIvaDos',2)" )
+   oFr:AddVariable(     "Pedidos",             "Base tercer tipo de " + cImp(),       "GetHbArrayVar('aIvaTre',2)" )
+   oFr:AddVariable(     "Pedidos",             "Porcentaje primer tipo " + cImp(),    "GetHbArrayVar('aIvaUno',3)" )
+   oFr:AddVariable(     "Pedidos",             "Porcentaje segundo tipo " + cImp(),   "GetHbArrayVar('aIvaDos',3)" )
+   oFr:AddVariable(     "Pedidos",             "Porcentaje tercer tipo " + cImp(),    "GetHbArrayVar('aIvaTre',3)" )
    oFr:AddVariable(     "Pedidos",             "Porcentaje primer tipo RE",           "GetHbArrayVar('aIvaUno',4)" )
    oFr:AddVariable(     "Pedidos",             "Porcentaje segundo tipo RE",          "GetHbArrayVar('aIvaDos',4)" )
    oFr:AddVariable(     "Pedidos",             "Porcentaje tercer tipo RE",           "GetHbArrayVar('aIvaTre',4)" )
-   oFr:AddVariable(     "Pedidos",             "Importe primer tipo " + cImp(),             "GetHbArrayVar('aIvaUno',5)" )
-   oFr:AddVariable(     "Pedidos",             "Importe segundo tipo " + cImp(),            "GetHbArrayVar('aIvaDos',5)" )
-   oFr:AddVariable(     "Pedidos",             "Importe tercer tipo " + cImp(),             "GetHbArrayVar('aIvaTre',5)" )
+   oFr:AddVariable(     "Pedidos",             "Importe primer tipo " + cImp(),       "GetHbArrayVar('aIvaUno',5)" )
+   oFr:AddVariable(     "Pedidos",             "Importe segundo tipo " + cImp(),      "GetHbArrayVar('aIvaDos',5)" )
+   oFr:AddVariable(     "Pedidos",             "Importe tercer tipo " + cImp(),       "GetHbArrayVar('aIvaTre',5)" )
    oFr:AddVariable(     "Pedidos",             "Importe primer RE",                   "GetHbArrayVar('aIvaUno',6)" )
    oFr:AddVariable(     "Pedidos",             "Importe segundo RE",                  "GetHbArrayVar('aIvaDos',6)" )
    oFr:AddVariable(     "Pedidos",             "Importe tercer RE",                   "GetHbArrayVar('aIvaTre',6)" )
