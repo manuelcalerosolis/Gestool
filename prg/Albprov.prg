@@ -8171,6 +8171,10 @@ Function SynAlbPrv( cPath )
          ( dbfAlbPrvL )->cSufAlb    := "00"
       end if 
 
+      if !Empty( ( dbfAlbPrvL )->cCodPed ) .and. Len( AllTrim( ( dbfAlbPrvL )->cCodPed ) ) != 12
+         ( dbfAlbPrvL )->cCodPed    := AllTrim( ( dbfAlbPrvL )->cCodPed ) + "00"
+      end if
+
       if Empty( ( dbfAlbPrvL )->cLote ) .and. !Empty( ( dbfAlbPrvL )->nLote )
          ( dbfAlbPrvL )->cLote      := AllTrim( Str( ( dbfAlbPrvL )->nLote ) )
       end if

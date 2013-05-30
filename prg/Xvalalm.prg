@@ -304,7 +304,7 @@ METHOD lResource( cFld )
    Lo informamos aquí, porque en openfiles no está abierta todavia la tabla----
    */
 
-   ::oStock:cArt       := ::oDbfArt:cAlias
+   ::oStock:cArticulo  := ::oDbfArt:cAlias
 
    ::CreateFilter( aItmArt(), ::oDbfArt:cAlias )
 
@@ -348,8 +348,6 @@ METHOD lGenerate()
    ::oDbfArt:AddTmpIndex( cCurUsr(), GetFileNoExt( ::oDbfArt:cFile ), ::oDbfArt:OrdKey(), ( cExpHead ), , , , , , , , .t. )
 
    ::oMtrInf:SetTotal( ::oDbfArt:OrdKeyCount() )
-
-   ? cExpHead
 
    ::oDbfArt:GoTop()
    while !::lBreak .and. !::oDbfArt:Eof()

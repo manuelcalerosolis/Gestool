@@ -520,14 +520,6 @@
 	"buffers":
 	[
 		{
-			"file": "prg/Tcomercio.prg",
-			"settings":
-			{
-				"buffer_size": 370392,
-				"line_ending": "Windows"
-			}
-		},
-		{
 			"file": "/C/AppServ/www/zemtrum/tienda/themes/zemtrum/header.tpl",
 			"settings":
 			{
@@ -566,6 +558,30 @@
 				"buffer_size": 7522,
 				"line_ending": "Unix"
 			}
+		},
+		{
+			"file": "prg/Factu.prg",
+			"settings":
+			{
+				"buffer_size": 185107,
+				"line_ending": "Windows"
+			}
+		},
+		{
+			"file": "prg/Usuario.prg",
+			"settings":
+			{
+				"buffer_size": 80601,
+				"line_ending": "Windows"
+			}
+		},
+		{
+			"file": "prg/Empresa.prg",
+			"settings":
+			{
+				"buffer_size": 265067,
+				"line_ending": "Windows"
+			}
 		}
 	],
 	"build_system": "Packages/User/gestool.sublime-build",
@@ -600,14 +616,27 @@
 	},
 	"file_history":
 	[
-		"/C/fw195/Gestool/prg/Factcli.prg",
+		"/C/fw195/Gestool/prg/Accesscode.prg",
+		"/C/fw195/Gestool/prg/Empdata.prg",
 		"/C/fw195/Gestool/prg/Albcli.prg",
+		"/C/fw195/Gestool/prg/Utildbf.prg",
+		"/C/fw195/Gestool/prg/Tgrpfam.prg",
+		"/C/fw195/Gestool/prg/Familia.prg",
+		"/C/fw195/Gestool/prg/Tipart.prg",
+		"/C/fw195/Gestool/prg/Provee.prg",
+		"/C/fw195/Gestool/prg/Client.prg",
+		"/C/fw195/Gestool/prg/Factu.prg",
+		"/C/fw195/Gestool/prg/Producc.prg",
+		"/C/fw195/Gestool/prg/Trazalote.prg",
+		"/C/fw195/Gestool/prg/Tdetmaterial.prg",
+		"/C/fw195/Gestool/prg/TDetMaterial",
+		"/C/fw195/Gestool/prg/Tcomercio.prg",
+		"/C/fw195/Gestool/prg/Factcli.prg",
 		"/C/fw195/Gestool/prg/Pedcli.prg",
 		"/C/fw195/Gestool/prg/Precli.prg",
 		"/C/fw195/Gestool/prg/Facrec.prg",
 		"/C/fw195/Gestool/prg/Tpv.prg",
 		"/C/fw195/Gestool/prg/Satcli.prg",
-		"/C/fw195/Gestool/prg/Client.prg",
 		"/C/fw195/Gestool/prg/Recprv.prg",
 		"/C/fw195/Gestool/prg/Rectprv.prg",
 		"/C/fw195/Gestool/prg/Factprv.prg",
@@ -624,7 +653,6 @@
 		"/C/Users/Villa/Desktop/enviar_email_ajax/enviar_email_ajax/enviar.php",
 		"/C/Users/Villa/Desktop/enviar_email_ajax/enviar_email_ajax/jquery.js",
 		"/C/Users/Villa/Desktop/enviar_email_ajax/enviar_email_ajax/jquery.form.js",
-		"/C/fw195/Gestool/prg/Utildbf.prg",
 		"/C/Users/Villa/Desktop/enviar_email_ajax/enviar_email_ajax/index.php",
 		"/C/fw195/Gestool/prg/Divisas.prg",
 		"/C/Users/Villa/Desktop/reveal/demo.html",
@@ -654,12 +682,8 @@
 		"/C/AppServ/www/zemtrum/themes/zemtrum/category.tpl",
 		"/C/AppServ/www/zemtrum/themes/zemtrum/css/category.css",
 		"/C/AppServ/www/zemtrum/themes/zemtrum/css/product_list.css",
-		"/C/fw195/Gestool/prg/Factu.prg",
 		"/C/fw195/Gestool/prg/Backup.prg",
-		"/C/fw195/Gestool/prg/Tcomercio.prg",
 		"/C/AppServ/www/zemtrum/config/settings.inc.php",
-		"/C/fw195/Gestool/prg/Familia.prg",
-		"/C/fw195/Gestool/prg/Tgrpfam.prg",
 		"/C/fw195/Gestool/prg/Tpvtactil.prg",
 		"/C/AppServ/www/zemtrum/themes/zemtrum/css/global.css",
 		"/C/AppServ/www/zemtrum/themes/zemtrum/modules/blockcategories/category-tree-branch.tpl",
@@ -716,18 +740,10 @@
 		"/C/fw195/Gestool/prg/Tpvlistaticket.prg",
 		"/C/fw195/Gestool/prg/Tutil.prg",
 		"/C/fw195/Gestool/prg/Categoria.prg",
-		"/C/fw195/Gestool/prg/Tipart.prg",
 		"/C/fw195/Gestool/prg/tcomercio",
 		"/C/fw195/Gestool/prg/Rptgal.prg",
 		"/C/fw195/Gestool/prg/Tgesped.prg",
-		"/C/fw195/Gestool/prg/Edm.prg",
-		"/C/Scripts creados/SCRIPT JOAQUIN INFANTE/test.prg",
-		"/C/Scripts creados/ANTONIO INFORTISA/impinfor.prg",
-		"/C/Scripts creados/Oscar Tenis/oscar.prg",
-		"/C/fw195/Gestool/prg/Remmov.prg",
-		"/C/fw195/Gestool/prg/Tpvrestaurante.prg",
-		"/C/fw195/Gestool/prg/tpvtactil",
-		"/C/fw195/Gestool/prg/Tpvmesa.prg"
+		"/C/fw195/Gestool/prg/Edm.prg"
 	],
 	"find":
 	{
@@ -735,7 +751,7 @@
 	},
 	"find_in_files":
 	{
-		"height": 0.0,
+		"height": 93.0,
 		"where_history":
 		[
 			"C:\\fw195\\Gestool\\prg",
@@ -769,6 +785,27 @@
 		"case_sensitive": false,
 		"find_history":
 		[
+			"just",
+			"\"00\"",
+			"TstEmpresa",
+			"on linit",
+			"lChkUser",
+			"initial",
+			"ss AccessCode",
+			"on CreateAcceso",
+			"od CreateAcceso",
+			"odCreateAcceso",
+			"CreateMainWindow",
+			"main",
+			"\"00\"",
+			"on dbpass",
+			"on aitm",
+			"openfiles",
+			"on aitm",
+			"producm",
+			"TDetMaterial",
+			"AddConsumido",
+			"TTrazarLote",
 			"on synrecprv",
 			"lAplFac",
 			"on aitm",
@@ -875,28 +912,7 @@
 			"sincronizar",
 			"exportarpre",
 			"nexportar",
-			"oBtnImportar",
-			"ESTADOPEDIDOS",
-			"AppendPedidoprestashop",
-			"pedido",
-			"InsertCategoriesPrestashop",
-			"prestashop",
-			"bmpImage",
-			"oUser():OpenCajon()",
-			"BuildReport",
-			"ImprimeDocumento",
-			"OnClickCopiaComanda",
-			"CIMGBTN",
-			"categories_block_left",
-			"selected",
-			"div.block",
-			"div.block a",
-			"div.block a.selected",
-			"selected",
-			"categorie",
-			"id",
-			"branch",
-			"brancch"
+			"oBtnImportar"
 		],
 		"highlight": true,
 		"in_selection": false,
@@ -922,39 +938,11 @@
 	"groups":
 	[
 		{
-			"selected": 5,
+			"selected": 7,
 			"sheets":
 			[
 				{
 					"buffer": 0,
-					"file": "prg/Tcomercio.prg",
-					"settings":
-					{
-						"buffer_size": 370392,
-						"regions":
-						{
-						},
-						"selection":
-						[
-							[
-								304838,
-								304838
-							]
-						],
-						"settings":
-						{
-							"syntax": "Packages/harbour/harbour/Harbour.tmLanguage",
-							"tab_size": 3,
-							"translate_tabs_to_spaces": true
-						},
-						"translation.x": 0.0,
-						"translation.y": 188917.0,
-						"zoom_level": 1.0
-					},
-					"type": "text"
-				},
-				{
-					"buffer": 1,
 					"file": "/C/AppServ/www/zemtrum/tienda/themes/zemtrum/header.tpl",
 					"settings":
 					{
@@ -965,8 +953,8 @@
 						"selection":
 						[
 							[
-								5111,
-								5111
+								965,
+								965
 							]
 						],
 						"settings":
@@ -975,13 +963,13 @@
 							"translate_tabs_to_spaces": false
 						},
 						"translation.x": 0.0,
-						"translation.y": 1425.0,
+						"translation.y": 0.0,
 						"zoom_level": 1.0
 					},
 					"type": "text"
 				},
 				{
-					"buffer": 2,
+					"buffer": 1,
 					"file": "/C/AppServ/www/zemtrum/tienda/themes/zemtrum/css/global.css",
 					"settings":
 					{
@@ -1008,7 +996,7 @@
 					"type": "text"
 				},
 				{
-					"buffer": 3,
+					"buffer": 2,
 					"file": "/C/AppServ/www/zemtrum/tienda/modules/blockuserinfo/blockuserinfo.css",
 					"settings":
 					{
@@ -1035,7 +1023,7 @@
 					"type": "text"
 				},
 				{
-					"buffer": 4,
+					"buffer": 3,
 					"file": "/C/AppServ/www/zemtrum/tienda/modules/blockuserinfo/blockuserinfo.tpl",
 					"settings":
 					{
@@ -1056,13 +1044,13 @@
 							"translate_tabs_to_spaces": false
 						},
 						"translation.x": 0.0,
-						"translation.y": 136.0,
+						"translation.y": 117.0,
 						"zoom_level": 1.0
 					},
 					"type": "text"
 				},
 				{
-					"buffer": 5,
+					"buffer": 4,
 					"file": "/C/AppServ/www/zemtrum/tienda/js/jquery.reveal.js",
 					"settings":
 					{
@@ -1073,8 +1061,8 @@
 						"selection":
 						[
 							[
-								1347,
-								1347
+								698,
+								698
 							]
 						],
 						"settings":
@@ -1083,7 +1071,91 @@
 							"translate_tabs_to_spaces": false
 						},
 						"translation.x": 0.0,
-						"translation.y": 285.0,
+						"translation.y": 171.0,
+						"zoom_level": 1.0
+					},
+					"type": "text"
+				},
+				{
+					"buffer": 5,
+					"file": "prg/Factu.prg",
+					"settings":
+					{
+						"buffer_size": 185107,
+						"regions":
+						{
+						},
+						"selection":
+						[
+							[
+								25065,
+								25065
+							]
+						],
+						"settings":
+						{
+							"syntax": "Packages/harbour/harbour/Harbour.tmLanguage",
+							"tab_size": 3,
+							"translate_tabs_to_spaces": true
+						},
+						"translation.x": 0.0,
+						"translation.y": 18211.0,
+						"zoom_level": 1.0
+					},
+					"type": "text"
+				},
+				{
+					"buffer": 6,
+					"file": "prg/Usuario.prg",
+					"settings":
+					{
+						"buffer_size": 80601,
+						"regions":
+						{
+						},
+						"selection":
+						[
+							[
+								63868,
+								63876
+							]
+						],
+						"settings":
+						{
+							"syntax": "Packages/harbour/harbour/Harbour.tmLanguage",
+							"tab_size": 3,
+							"translate_tabs_to_spaces": true
+						},
+						"translation.x": 0.0,
+						"translation.y": 47623.0,
+						"zoom_level": 1.0
+					},
+					"type": "text"
+				},
+				{
+					"buffer": 7,
+					"file": "prg/Empresa.prg",
+					"settings":
+					{
+						"buffer_size": 265067,
+						"regions":
+						{
+						},
+						"selection":
+						[
+							[
+								96908,
+								96908
+							]
+						],
+						"settings":
+						{
+							"syntax": "Packages/harbour/harbour/Harbour.tmLanguage",
+							"tab_size": 3,
+							"translate_tabs_to_spaces": true
+						},
+						"translation.x": 0.0,
+						"translation.y": 61569.0,
 						"zoom_level": 1.0
 					},
 					"type": "text"

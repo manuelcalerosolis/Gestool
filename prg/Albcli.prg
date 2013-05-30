@@ -8683,7 +8683,7 @@ Method Process()
                USE ( cPatSnd() + "AlbCliI.DBF" ) NEW VIA ( cDriver() )READONLY ALIAS ( cCheckArea( "AlbCliI", @tmpAlbCliI ) )
                SET ADSINDEX TO ( cPatSnd() + "AlbCliI.CDX" ) ADDITIVE
 
-               USE ( cPatEmp() + "AlbCliT.DBF" ) NEW VIA ( cDriver() )READONLY ALIAS ( cCheckArea( "AlbCliT", @dbfAlbCliT ) )
+               USE ( cPatEmp() + "AlbCliT.DBF" ) NEW VIA ( cDriver() ) SHARED ALIAS ( cCheckArea( "AlbCliT", @dbfAlbCliT ) )
                SET ADSINDEX TO ( cPatEmp() + "AlbCliT.CDX" ) ADDITIVE
 
                USE ( cPatEmp() + "AlbCliL.DBF" ) NEW VIA ( cDriver() ) SHARED ALIAS ( cCheckArea( "AlbCliL", @dbfAlbCliL ) )

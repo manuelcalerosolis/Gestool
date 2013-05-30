@@ -6637,8 +6637,6 @@ FUNCTION TstEmpresa( cPatDat )
 
    local dbfEmp
    local dbfDlg
-   local oError
-   local oBlock
    local cCodEmp
    local lChangeCode
    local lChangeStruct  
@@ -6663,135 +6661,143 @@ FUNCTION TstEmpresa( cPatDat )
       rxDlg( cPatDat() )
    end if
 
-      /*
-      Empresa------------------------------------------------------------------
-      */
+   /*
+   Empresa------------------------------------------------------------------
+   */
 
-      dbUseArea( .t.,  cDriver(), ( cPatDat() + "Empresa.Dbf" ), cCheckArea( "EMPRESA", @dbfEmp ), .f. )
+   dbUseArea( .t.,  cDriver(), ( cPatDat() + "Empresa.Dbf" ), cCheckArea( "EMPRESA", @dbfEmp ), .f. )
 
-      if !( dbfEmp )->( netErr() )
+   if !( dbfEmp )->( netErr() )
 
-         lChangeStruct  := lChangeStruct( dbfEmp, aItmEmp() )
+      lChangeStruct  := lChangeStruct( dbfEmp, aItmEmp() )
 
-         ( dbfEmp )->( dbCloseArea() )
-
-         if lChangeStruct
-
-            dbCreate( cPatEmpTmp() + "Empresa.Dbf", aSqlStruct( aItmEmp() ), cLocalDriver() )
-            appDbf( cPatDat(), cPatEmpTmp(), "Empresa", aItmEmp() )
-
-            fEraseTable( cPatDat() + "Empresa.Dbf" )
-            fRenameTable( cPatEmpTmp() + "Empresa.Dbf", cPatDat() + "Empresa.Dbf" )
-
-            rxEmpresa( cPatDat() )
-
-         end if
-
-      end if
-
-      /*
-      Delgaciones--------------------------------------------------------------
-      */
-
-      dbUseArea( .t.,  cDriver(), ( cPatDat() + "Delega.Dbf" ), cCheckArea( "Delega", @dbfDlg ), .f. )
-
-      if !( dbfDlg )->( netErr() )
-
-         lChangeStruct  := lChangeStruct( dbfDlg, aItmDlg() )
-
-         ( dbfDlg )->( dbCloseArea() )
-
-         if lChangeStruct
-
-            dbCreate( cPatEmpTmp() + "Delega.Dbf", aSqlStruct( aItmDlg() ), cLocalDriver() )
-            appDbf( cPatDat(), cPatEmpTmp(), "Delega", aItmDlg() )
-
-            fEraseTable( cPatDat() + "Delega.Dbf" )
-            fRenameTable( cPatEmpTmp() + "Delega.Dbf", cPatDat() + "Delega.Dbf" )
-
-            rxDlg( cPatDat() )
-
-         end if
-
-      end if
-
-      /*
-      Situacion especial para cambio de codigo---------------------------------
-      */
-
-      dbUseArea( .t.,  cDriver(), ( cPatDat() + "Empresa.Dbf" ), cCheckArea( "EMPRESA", @dbfEmp ), .f. )
-      
-      if ( dbfEmp )->( netErr() )
-         if( ( dbfEmp )->( Used() ), ( dbfEmp )->( dbCloseArea() ), )
-         return .f.
-      end if 
-
-      if( !lAIS(), ordListAdd( ( cPatDat() + "Empresa.Cdx" ) ), ordSetFocus( 1 ) )
-      
-      dbUseArea( .t.,  cDriver(), ( cPatDat() + "Delega.Dbf" ), cCheckArea( "Delega", @dbfDlg ), .f. )
-            
-      if ( dbfDlg )->( netErr() )
-         if( ( dbfDlg )->( Used() ), ( dbfDlg )->( dbCloseArea() ), )
-         return .f.
-      end if    
-         
-      if( !lAIS(), ordListAdd( ( cPatDat() + "Delega.Cdx" ) ), ordSetFocus( 1 ) )
-
-      /*
-      Comprobamos la longitud del codigo------------------------------------
-      */
-
-      ( dbfEmp )->( dbGoTop() )
-      while !( dbfEmp )->( Eof() )
-      
-         cCodEmp     := Alltrim( ( dbfEmp )->CodEmp )
-      
-         if len( cCodEmp ) == 2
-      
-            if IsDirectory( FullCurDir() + "Emp" + cCodEmp )
-               if fRename( FullCurDir() + "Emp" + cCodEmp, FullCurDir() + "Emp" + RJust( cCodEmp, "0", 4 ) ) == -1
-                  msgStop( "No he podido renombrar el directorio " + FullCurDir() + "Emp" + cCodEmp )
-               end if
-            end if 
-      
-            if ( dbfEmp )->( dbRLock() )
-               ( dbfEmp )->CodEmp   := RJust( ( dbfEmp )->CodEmp )
-               ( dbfEmp )->( dbUnlock() )
-            end if
-      
-         end if 
-               
-         /*
-         Comprobamos q el codigo de la delegacion no este vacio----------------------
-         */
-
-         if !( dbfDlg )->( dbSeek( ( dbfEmp )->CodEmp ) )
-            if dbAppe( dbfDlg )
-               ( dbfDlg )->cCodEmp  := ( dbfEmp )->CodEmp
-               ( dbfDlg )->cCodDlg  := "00"
-               ( dbfDlg )->cNomDlg  := "Central"
-               ( dbfDlg )->( dbUnlock() )
-            end if 
-         end if
-
-         /*
-         Sigiente empresa------------------------------------------------
-         */
-                  
-         ( dbfEmp )->( dbSkip() )
-                  
-      end while
-             
-      ( dbfDlg )->( dbCloseArea() )
       ( dbfEmp )->( dbCloseArea() )
 
-   /*RECOVER USING oError
+      if lChangeStruct
 
-      msgStop( ErrorMessage( oError ), "Error al comprobar bases de datos de empresa." )
+         dbCreate( cPatEmpTmp() + "Empresa.Dbf", aSqlStruct( aItmEmp() ), cLocalDriver() )
+         appDbf( cPatDat(), cPatEmpTmp(), "Empresa", aItmEmp() )
 
-   END SEQUENCE
+         fEraseTable( cPatDat() + "Empresa.Dbf" )
+         fRenameTable( cPatEmpTmp() + "Empresa.Dbf", cPatDat() + "Empresa.Dbf" )
 
-   ErrorBlock( oBlock )*/
+         rxEmpresa( cPatDat() )
+
+      end if
+
+   end if
+
+   /*
+   Delgaciones--------------------------------------------------------------
+   */
+
+   dbUseArea( .t.,  cDriver(), ( cPatDat() + "Delega.Dbf" ), cCheckArea( "Delega", @dbfDlg ), .f. )
+
+   if !( dbfDlg )->( netErr() )
+
+      lChangeStruct  := lChangeStruct( dbfDlg, aItmDlg() )
+
+      ( dbfDlg )->( dbCloseArea() )
+
+      if lChangeStruct
+
+         dbCreate( cPatEmpTmp() + "Delega.Dbf", aSqlStruct( aItmDlg() ), cLocalDriver() )
+         appDbf( cPatDat(), cPatEmpTmp(), "Delega", aItmDlg() )
+
+         fEraseTable( cPatDat() + "Delega.Dbf" )
+         fRenameTable( cPatEmpTmp() + "Delega.Dbf", cPatDat() + "Delega.Dbf" )
+
+         rxDlg( cPatDat() )
+
+      end if
+
+   end if
+
+   /*
+   Situacion especial para cambio de codigo---------------------------------
+   */
+
+   dbUseArea( .t.,  cDriver(), ( cPatDat() + "Empresa.Dbf" ), cCheckArea( "EMPRESA", @dbfEmp ), .f. )
+      
+   if ( dbfEmp )->( netErr() )
+      if( ( dbfEmp )->( Used() ), ( dbfEmp )->( dbCloseArea() ), )
+      return .f.
+   end if 
+
+   if( !lAIS(), ordListAdd( ( cPatDat() + "Empresa.Cdx" ) ), ordSetFocus( 1 ) )
+      
+   dbUseArea( .t.,  cDriver(), ( cPatDat() + "Delega.Dbf" ), cCheckArea( "Delega", @dbfDlg ), .f. )
+            
+   if ( dbfDlg )->( netErr() )
+      if( ( dbfDlg )->( Used() ), ( dbfDlg )->( dbCloseArea() ), )
+      return .f.
+   end if    
+         
+   if( !lAIS(), ordListAdd( ( cPatDat() + "Delega.Cdx" ) ), ordSetFocus( 1 ) )
+
+   /*
+   Comprobamos la longitud del codigo------------------------------------
+   */
+
+   ( dbfEmp )->( dbGoTop() )
+   while !( dbfEmp )->( Eof() )
+      
+      cCodEmp     := Alltrim( ( dbfEmp )->CodEmp )
+      
+      if len( cCodEmp ) == 2
+      
+         if IsDirectory( FullCurDir() + "Emp" + cCodEmp )
+            if fRename( FullCurDir() + "Emp" + cCodEmp, FullCurDir() + "Emp" + RJust( cCodEmp, "0", 4 ) ) == -1
+               msgStop( "No he podido renombrar el directorio " + FullCurDir() + "Emp" + cCodEmp )
+            end if
+         end if 
+      
+         if ( dbfEmp )->( dbRLock() )
+            ( dbfEmp )->CodEmp   := RJust( ( dbfEmp )->CodEmp )
+            ( dbfEmp )->( dbUnlock() )
+         end if
+      
+      end if 
+              
+      /*
+      Comprobamos q el codigo de la delegacion no este vacio----------------------
+      */
+
+      if !( dbfDlg )->( dbSeek( ( dbfEmp )->CodEmp ) )
+         if dbAppe( dbfDlg )
+            ( dbfDlg )->cCodEmp  := ( dbfEmp )->CodEmp
+            ( dbfDlg )->cCodDlg  := "00"
+            ( dbfDlg )->cNomDlg  := "Central"
+            ( dbfDlg )->( dbUnlock() )
+         end if 
+      end if
+
+      /*
+      Sigiente empresa------------------------------------------------
+      */
+                
+      ( dbfEmp )->( dbSkip() )
+                  
+   end while
+
+   /*
+   Comprobamos que el campo de codigo de empresa de las delegaciones se rellenen por 0
+   */
+
+   ( dbfDlg )->( dbGoTop() )
+   while !( dbfDlg )->( Eof() )
+
+      if ( dbfDlg )->( dbRLock() )
+         ( dbfDlg )->cCodEmp   := RJust( ( dbfDlg )->cCodEmp )
+         ( dbfDlg )->( dbUnlock() )
+      end if
+
+      ( dbfDlg )->( dbSkip() )
+                  
+   end while
+             
+   ( dbfDlg )->( dbCloseArea() )
+   ( dbfEmp )->( dbCloseArea() )
 
 RETURN ( .t. )
 
