@@ -2576,6 +2576,31 @@ RETURN ( Self )
 //---------------------------------------------------------------------------//
 
 /*
+SAT----------------------------------------------------------------------------
+*/
+
+METHOD FastReportSATliente()
+      
+   ::oSatCliT:OrdSetFocus( "iNumSat" )
+      
+   ::oFastReport:SetWorkArea(       "SAT de clientes", ::oSatCliT:nArea )
+   ::oFastReport:SetFieldAliases(   "SAT de clientes", cItemsToReport( aItmSatCli() ) )
+      
+   ::oSatCliL:OrdSetFocus( "iNumSat" )
+      
+   ::oFastReport:SetWorkArea(       "Lineas SAT de clientes", ::oSatCliL:nArea )
+   ::oFastReport:SetFieldAliases(   "Lineas SAT de clientes", cItemsToReport( aColSatCli() ) )
+   
+   ::oFastReport:SetMasterDetail(   "Informe", "SAT de clientes",          {|| ::cIdeDocumento() } )
+   ::oFastReport:SetMasterDetail(   "Informe", "Lineas SAT de clientes",   {|| ::cIdeDocumento() } )
+   
+   ::oFastReport:SetResyncPair(     "Informe", "SAT de clientes" )
+   
+   ::oFastReport:SetResyncPair(     "Informe", "Lineas SAT de clientes" )
+
+RETURN ( Self )
+
+/*
 Presupuestos----------------------------------------------------------------
 */
 
