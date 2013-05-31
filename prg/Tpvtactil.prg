@@ -391,7 +391,7 @@ CLASS TpvTactil
 
       if ( ::oTemporalLinea:ordKeyCount() != 0 ) .and. ( Val( ::cGetUnidades ) != 0 )
 
-         if ApoloMsgNoYes( "¿Desea cambiar el precio del artículo seleccionado?", "Confirme", .t. )
+         if ( ::oTemporalLinea:nPvpTil == 0 ) .or. ( ApoloMsgNoYes( "¿Desea cambiar el precio del artículo seleccionado?", "Confirme", .t. ) )
 
             ::oTemporalLinea:nPvpTil   := Val( ::cGetUnidades )
 
