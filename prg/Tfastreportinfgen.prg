@@ -183,6 +183,7 @@ CLASS TFastReportInfGen FROM TNewInfGen
    METHOD nFacturaClientes()
    METHOD nPagosClientes()
 
+   METHOD FastReportSATCliente()
    METHOD FastReportPresupuestoCliente()
    METHOD FastReportPedidoCliente()
    METHOD FastReportAlbaranCliente()
@@ -2579,7 +2580,7 @@ RETURN ( Self )
 SAT----------------------------------------------------------------------------
 */
 
-METHOD FastReportSATliente()
+METHOD FastReportSATCliente()
       
    ::oSatCliT:OrdSetFocus( "iNumSat" )
       
@@ -2595,7 +2596,7 @@ METHOD FastReportSATliente()
    ::oFastReport:SetMasterDetail(   "Informe", "Lineas SAT de clientes",   {|| ::cIdeDocumento() } )
    
    ::oFastReport:SetResyncPair(     "Informe", "SAT de clientes" )
-   
+
    ::oFastReport:SetResyncPair(     "Informe", "Lineas SAT de clientes" )
 
 RETURN ( Self )

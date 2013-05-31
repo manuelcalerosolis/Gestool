@@ -8,6 +8,8 @@
 
 CLASS TFastVentasClientes FROM TFastReportInfGen
 
+   DATA  cType           INIT "Clientes"
+
    DATA  cResource       INIT "FastReportArticulos"
 
    DATA  oObras
@@ -409,104 +411,6 @@ METHOD DataReport() CLASS TFastVentasClientes
    ::oFastReport:SetFieldAliases(   "Incidencias",                      cItemsToReport( aCliInc() ) )
 
    /*
-   SAT----------------------------------------------------------------
-   */
-
-   ::oSatCliT:OrdSetFocus( "iNumSat" )
-
-   ::oFastReport:SetWorkArea(       "SAT de clientes", ::oSatCliT:nArea )
-   ::oFastReport:SetFieldAliases(   "SAT de clientes", cItemsToReport( aItmSatCli() ) )
-
-   ::oSatCliL:OrdSetFocus( "iNumSat" )
-
-   ::oFastReport:SetWorkArea(       "Lineas SAT de clientes", ::oSatCliL:nArea )
-   ::oFastReport:SetFieldAliases(   "Lineas SAT de clientes", cItemsToReport( aColSatCli() ) )
-
-   /*
-   Presupuestos----------------------------------------------------------------
-   */
-
-   ::oPreCliT:OrdSetFocus( "iNumPre" )
-
-   ::oFastReport:SetWorkArea(       "Presupuestos de clientes", ::oPreCliT:nArea )
-   ::oFastReport:SetFieldAliases(   "Presupuestos de clientes", cItemsToReport( aItmPreCli() ) )
-
-   ::oPreCliL:OrdSetFocus( "iNumPre" )
-
-   ::oFastReport:SetWorkArea(       "Lineas presupuestos de clientes", ::oPreCliL:nArea )
-   ::oFastReport:SetFieldAliases(   "Lineas presupuestos de clientes", cItemsToReport( aColPreCli() ) )
-
-   /*
-   Pedidos---------------------------------------------------------------------
-   */
-
-   ::oPedCliT:OrdSetFocus( "iNumPed" )
-
-   ::oFastReport:SetWorkArea(       "Pedidos de clientes", ::oPedCliT:nArea )
-   ::oFastReport:SetFieldAliases(   "Pedidos de clientes", cItemsToReport( aItmPedCli() ) )
-
-   ::oPedCliL:OrdSetFocus( "iNumPed" )
-
-   ::oFastReport:SetWorkArea(       "Lineas pedidos de clientes", ::oPedCliL:nArea )
-   ::oFastReport:SetFieldAliases(   "Lineas pedidos de clientes", cItemsToReport( aColPedCli() ) )
-
-   /*
-   Albaranes-------------------------------------------------------------------
-   */
-
-   ::oAlbCliT:OrdSetFocus( "iNumAlb" )
-
-   ::oFastReport:SetWorkArea(       "Albaranes de clientes", ::oAlbCliT:nArea )
-   ::oFastReport:SetFieldAliases(   "Albaranes de clientes", cItemsToReport( aItmAlbCli() ) )
-
-   ::oAlbCliL:OrdSetFocus( "iNumAlb" )
-
-   ::oFastReport:SetWorkArea(       "Lineas albaranes de clientes", ::oAlbCliL:nArea )
-   ::oFastReport:SetFieldAliases(   "Lineas albaranes de clientes", cItemsToReport( aColAlbCli() ) )
-
-   /*
-   Facturas--------------------------------------------------------------------
-   */
-
-   ::oFacCliT:OrdSetFocus( "iNumFac" )
-
-   ::oFastReport:SetWorkArea(       "Facturas de clientes", ::oFacCliT:nArea )
-   ::oFastReport:SetFieldAliases(   "Facturas de clientes", cItemsToReport( aItmFacCli() ) )
-
-   ::oFacCliL:OrdSetFocus( "iNumFac" )
-
-   ::oFastReport:SetWorkArea(       "Lineas facturas de clientes", ::oFacCliL:nArea )
-   ::oFastReport:SetFieldAliases(   "Lineas facturas de clientes", cItemsToReport( aColFacCli() ) )
-
-   /*
-   Rectificativas--------------------------------------------------------------
-   */
-
-   ::oFacRecT:OrdSetFocus( "iNumFac" )
-
-   ::oFastReport:SetWorkArea(       "Facturas rectificativas de clientes", ::oFacRecT:nArea )
-   ::oFastReport:SetFieldAliases(   "Facturas rectificativas de clientes", cItemsToReport( aItmFacRec() ) )
-
-   ::oFacRecL:OrdSetFocus( "iNumFac" )
-
-   ::oFastReport:SetWorkArea(       "Lineas facturas rectificativas de clientes", ::oFacRecL:nArea )
-   ::oFastReport:SetFieldAliases(   "Lineas facturas rectificativas de clientes", cItemsToReport( aColFacRec() ) )
-
-   /*
-   Tickets--------------------------------------------------------------------
-   */
-
-   ::oTikCliT:OrdSetFocus( "iNumTik" )
-
-   ::oFastReport:SetWorkArea(       "Tickets de clientes", ::oTikCliT:nArea )
-   ::oFastReport:SetFieldAliases(   "Tickets de clientes", cItemsToReport( aItmTik() ) )
-
-   ::oTikCliL:OrdSetFocus( "iNumTik" )
-
-   ::oFastReport:SetWorkArea(       "Lineas tickets de clientes", ::oTikCliL:nArea )
-   ::oFastReport:SetFieldAliases(   "Lineas tickets de clientes", cItemsToReport( aColTik() ) )
-
-   /*
    Relaciones------------------------------------------------------------------
    */
 
@@ -517,26 +421,7 @@ METHOD DataReport() CLASS TFastVentasClientes
    ::oFastReport:SetMasterDetail(   "Informe", "Tarifas de cliente",    {|| ::oDbf:cCodCli } )
    ::oFastReport:SetMasterDetail(   "Informe", "Documentos",            {|| ::oDbf:cCodCli } )
    ::oFastReport:SetMasterDetail(   "Informe", "Incidencias",           {|| ::oDbf:cCodCli } )
-
    ::oFastReport:SetMasterDetail(   "Informe", "Agentes",               {|| ::oDbf:cCodAge } )
-
-   ::oFastReport:SetMasterDetail(   "Informe", "Presupuestos de clientes",                   {|| ::cIdeDocumento() } )
-   ::oFastReport:SetMasterDetail(   "Informe", "Lineas presupuestos de clientes",            {|| ::cIdeDocumento() } )
-
-   ::oFastReport:SetMasterDetail(   "Informe", "Pedidos de clientes",                        {|| ::cIdeDocumento() } )
-   ::oFastReport:SetMasterDetail(   "Informe", "Lineas pedidos de clientes",                 {|| ::cIdeDocumento() } )
-
-   ::oFastReport:SetMasterDetail(   "Informe", "Albaranes de clientes",                      {|| ::cIdeDocumento() } )
-   ::oFastReport:SetMasterDetail(   "Informe", "Lineas albaranes de clientes",               {|| ::cIdeDocumento() } )
-
-   ::oFastReport:SetMasterDetail(   "Informe", "Facturas de clientes",                       {|| ::cIdeDocumento() } )
-   ::oFastReport:SetMasterDetail(   "Informe", "Lineas facturas de clientes",                {|| ::cIdeDocumento() } )
-
-   ::oFastReport:SetMasterDetail(   "Informe", "Facturas rectificativas de clientes",        {|| ::cIdeDocumento() } )
-   ::oFastReport:SetMasterDetail(   "Informe", "Lineas facturas rectificativas de clientes", {|| ::cIdeDocumento() } )
-
-   ::oFastReport:SetMasterDetail(   "Informe", "Tickets de clientes",                        {|| ::cIdeDocumento() } )
-   ::oFastReport:SetMasterDetail(   "Informe", "Lineas tickets de clientes",                 {|| ::cIdeDocumento() } )
 
    ::oFastReport:SetMasterDetail(   "Clientes", "Rutas",                {|| ::oDbfCli:cCodRut } )
    ::oFastReport:SetMasterDetail(   "Clientes", "Grupos de cliente",    {|| ::oDbfCli:cCodGrp } )
@@ -553,28 +438,53 @@ METHOD DataReport() CLASS TFastVentasClientes
    ::oFastReport:SetResyncPair(     "Informe", "Documentos" )
    ::oFastReport:SetResyncPair(     "Informe", "Incidencias" )
 
-   ::oFastReport:SetResyncPair(     "Informe", "Presupuestos de clientes" )
-   ::oFastReport:SetResyncPair(     "Informe", "Lineas presupuestos de clientes" )
-
-   ::oFastReport:SetResyncPair(     "Informe", "Pedidos de clientes" )
-   ::oFastReport:SetResyncPair(     "Informe", "Lineas pedidos de clientes" )
-
-   ::oFastReport:SetResyncPair(     "Informe", "Albaranes de clientes" )
-   ::oFastReport:SetResyncPair(     "Informe", "Lineas albaranes de clientes" )
-
-   ::oFastReport:SetResyncPair(     "Informe", "Facturas de clientes" )
-   ::oFastReport:SetResyncPair(     "Informe", "Lineas facturas de clientes" )
-
-   ::oFastReport:SetResyncPair(     "Informe", "Facturas rectificativas de clientes" )
-   ::oFastReport:SetResyncPair(     "Informe", "Lineas facturas rectificativas de clientes" )
-
-   ::oFastReport:SetResyncPair(     "Informe", "Tickets de clientes" )
-   ::oFastReport:SetResyncPair(     "Informe", "Lineas tickets de clientes" )
-
    ::oFastReport:SetResyncPair(     "Clientes", "Rutas" )
    ::oFastReport:SetResyncPair(     "Clientes", "Grupos de cliente" )
    ::oFastReport:SetResyncPair(     "Clientes", "Formas de pago" )
    ::oFastReport:SetResyncPair(     "Clientes", "Usuarios" )
+
+   do case
+      case ::cTypeName == "Informe de S.A.T."
+
+         ::FastReportSATCliente()
+
+      case ::cTypeName == "Informe de presupuestos"
+
+         ::FastReportPresupuestoCliente()
+
+      case ::cTypeName == "Informe de pedidos"
+      
+         ::FastReportPedidoCliente()
+
+      case ::cTypeName == "Informe de albaranes"
+      
+         ::FastReportAlbaranCliente()
+
+      case ::cTypeName == "Informe de facturas"
+      
+         ::FastReportFacturaCliente()
+         
+         ::FastReportFacturaRectificativa()
+
+      case ::cTypeName == "Informe de facturas rectificativas"
+
+         ::FastReportFacturaRectificativa()
+
+      case ::cTypeName == "Informe de tickets"
+
+         ::FastReportTicket( .t. )
+
+      case ::cTypeName == "Informe de ventas"
+
+         ::FastReportAlbaranCliente()
+
+         ::FastReportFacturaCliente()
+
+         ::FastReportFacturaRectificativa()
+
+         ::FastReportTicket()
+
+   end case
 
    ::AddVariable()
 
@@ -607,19 +517,19 @@ METHOD lGenerate() CLASS TFastVentasClientes
    */
 
    do case
-      case ::cReportName == "Informe de S.A.T."
+      case ::cTypeName == "Informe de S.A.T."
 
          ::AddSATCliente()
 
-      case ::cReportName == "Informe de presupuestos"
+      case ::cTypeName == "Informe de presupuestos"
 
          ::AddPresupuestoCliente()
 
-      case ::cReportName == "Informe de pedidos"
+      case ::cTypeName == "Informe de pedidos"
 
          ::AddPedidoCliente()
          
-      case ::cReportName == "Informe de albaranes"
+      case ::cTypeName == "Informe de albaranes"
 
          ::AddAlbaranCliente( .t. )
 
@@ -631,15 +541,15 @@ METHOD lGenerate() CLASS TFastVentasClientes
 
    //      ::AddFacturaRectificativa()
 
-      case ::cReportName == "Informe de facturas rectificativas"
+      case ::cTypeName == "Informe de facturas rectificativas"
 
          ::AddFacturaRectificativa()
 
-      case ::cReportName == "Informe de tickets"
+      case ::cTypeName == "Informe de tickets"
 
          ::AddTicket( .t. )
 
-      case ::cReportName == "Informe de ventas"
+      case ::cTypeName == "Informe de ventas"
 
    //      ::AddAlbaranCliente()
 
@@ -649,7 +559,7 @@ METHOD lGenerate() CLASS TFastVentasClientes
 
    //      ::AddTicket()
 
-      case ::cReportName == "Declaración anual de operaciones con terceras personas. Modelo 347" // "Informe de ventas consolidadas" 
+      case ::cTypeName == "Declaración anual de operaciones con terceras personas. Modelo 347" // "Informe de ventas consolidadas" 
 
          ::AddFacturaCliente()
 
