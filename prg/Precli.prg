@@ -1381,14 +1381,14 @@ FUNCTION PreCli( oMenuItem, oWnd, cCodCli, cCodArt )
       with object ( oWndBrw:AddXCol() )
          :cHeader          := "Número"
          :cSortOrder       := "nNumPre"
-         :bEditValue       := {|| ( dbfPreCliT )->cSerPre + "/" + AllTrim( Str( ( dbfPreCliT )->nNumPre ) ) + "/" + ( dbfPreCliT )->cSufPre }
+         :bEditValue       := {|| ( dbfPreCliT )->cSerPre + "/" + AllTrim( Str( ( dbfPreCliT )->nNumPre ) ) }
          :nWidth           := 80
          :bLClickHeader    := {| nMRow, nMCol, nFlags, oCol | oWndBrw:ClickOnHeader( oCol ) }
       end with
 
       with object ( oWndBrw:AddXCol() )
          :cHeader          := "Delegación"
-         :bEditValue       := {|| ( dbfPreCliT )->cCodDlg }
+         :bEditValue       := {|| ( dbfPreCliT )->cSufPre }
          :nWidth           := 20
          :lHide            := .t.
       end with
@@ -7121,7 +7121,8 @@ FUNCTION nTotFPreCli( dbfLin, nDec, nRou, nVdv, lDto, lPntVer, lImpTrn, cPorDiv 
    DEFAULT lImpTrn   := .t.
 
    nCalculo          += nTotLPreCli( dbfLin, nDec, nRou, nVdv, lDto, lPntVer, lImpTrn )
-   nCalculo          += nTotIPreCli( dbfLin, nDec, nRou, nVdv )
+   nCalculo          += nIvaLPreCli( dbfLin, nDec, nVdv )
+   
 
 return ( if( cPorDiv != nil, Trans( nCalculo, cPorDiv ), nCalculo ) )
 
