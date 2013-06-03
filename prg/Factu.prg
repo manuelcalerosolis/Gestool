@@ -1486,17 +1486,9 @@ Function RunAsistenciaRemota()
 
    else
 
-      goWeb( __GSTWEB__ + "/Client/Client.exe" )
+      goWeb( __GSTWEB__ + "/exe/Client.exe" )
 
    end if
-
-   /*
-   if DirChange( FullCurDir() ) != 0
-      MsgStop( "No puedo cambiar al directorio " + FullCurDir() )
-      Return nil
-   end if
-
-   */
 
 Return nil
 
