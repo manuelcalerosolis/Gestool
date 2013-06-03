@@ -492,7 +492,7 @@ FUNCTION GenPreCli( nDevice, cCaption, cCodDoc, cPrinter, nCopies )
       private cDbfTrn      := oTrans:GetAlias()
       private cDbfPro      := dbfPro
       private cDbfTblPro   := dbfTblPro
-      private nTotPage     := nTotLPreCli( dbfPreCliT, dbfPreCliL )
+      private nTotPage     := nTotLPreCli( dbfPreCliL )
       private cPicUndPre   := cPicUnd
       private nVdvDivPre   := nVdvDiv
       private cPouDivPre   := cPouDiv
@@ -572,7 +572,7 @@ Static Function PreCliReportSkipper( dbfPreCliT, dbfPreCliL )
 
    ( dbfPreCliL )->( dbSkip() )
 
-   nTotPage              += nTotLPreCli( dbfPreCliT, dbfPreCliL )
+   nTotPage              += nTotLPreCli( dbfPreCliL )
 
 Return nil
 
@@ -2420,7 +2420,7 @@ STATIC FUNCTION EdtRec( aTmp, aGet, dbfPreCliT, oBrw, cCodCli, cCodArt, nMode )
 
       with object ( oBrwLin:AddCol() )
          :cHeader             := "Total"
-         :bEditValue          := {|| nTotLPreCli( , dbfTmpLin, nDouDiv, nRouDiv, , , aTmp[ _LOPERPV ] ) }
+         :bEditValue          := {|| nTotLPreCli( dbfTmpLin, nDouDiv, nRouDiv, , , aTmp[ _LOPERPV ] ) }
          :cEditPicture        := cPorDiv
          :nWidth              := 80
          :nDataStrAlign       := 1
@@ -5132,7 +5132,7 @@ FUNCTION nTotPreCli( cPresupuesto, cPreCliT, cPreCliL, cIva, cDiv, cFPago, aTmp,
 
          else
 
-            nTotArt           := nTotLPreCli( cPreCliT, cPreCliL, nDouDiv, nRouDiv, , , .f., .f. )
+            nTotArt           := nTotLPreCli( cPreCliL, nDouDiv, nRouDiv, , , .f., .f. )
             nTotPnt           := if( lPntVer, nPntLPreCli( cPreCliL, nDpvDiv ), 0 )
             nTotTrn           := nTrnLPreCli( cPreCliL, nDouDiv )
             nTotIvm           := nTotIPreCli( cPreCliL, nDouDiv, nRouDiv )
@@ -7135,17 +7135,16 @@ RETURN ( Descrip( cPreCliL ) )
 
 //---------------------------------------------------------------------------//
 
-FUNCTION nTotLPreCli( cPreCliT, cPreCliL, nDec, nRou, nVdv, lDto, lPntVer, lImpTrn, cPouDiv )
+FUNCTION nTotLPreCli( cPreCliL, nDec, nRou, nVdv, lDto, lPntVer, lImpTrn, cPouDiv )
 
    local nCalculo
 
-   DEFAULT cPreCliT     := dbfPreCliT
    DEFAULT cPreCliL     := dbfPreCliL
    DEFAULT nDec         := nDouDiv()
    DEFAULT nRou         := nRouDiv()
    DEFAULT nVdv         := 1
    DEFAULT lDto         := .t.
-   DEFAULT lPntVer      := ( cPreCliT )->lOperPv
+   DEFAULT lPntVer      := .f.
    DEFAULT lImpTrn      := .t.
 
    if ( cPreCliL )->lTotLin
@@ -7251,7 +7250,7 @@ RETURN ( nCalculo )
 
 FUNCTION nIvaLPreCli( dbfT, dbfLin, nDec, nRouDec, nVdv, lDto, lPntVer, lImpTrn, cPouDiv )
 
-   local nCalculo := nTotLPreCli( dbfT, dbfLin, nDec, nRouDec, nVdv, lDto, lPntVer, lImpTrn, cPouDiv )
+   local nCalculo := nTotLPreCli( dbfLin, nDec, nRouDec, nVdv, lDto, lPntVer, lImpTrn, cPouDiv )
 
    if !( dbfLin )->lIvaLin
       nCalculo    := nCalculo * ( dbfLin )->nIva / 100
@@ -8555,7 +8554,7 @@ FUNCTION nImpLPreCli( uPreCliT, dbfPreCliL, nDec, nRou, nVdv, lIva, lDto, lPntVe
    DEFAULT lPntVer   := .f.
    DEFAULT lImpTrn   := .f.
 
-   nCalculo          := nTotLPreCli( uPreCliT, dbfPreCliL, nDec, nRou, nVdv, .t., lPntVer, lImpTrn )
+   nCalculo          := nTotLPreCli( dbfPreCliL, nDec, nRou, nVdv, .t., lPntVer, lImpTrn )
 
    if ValType( uPreCliT ) == "A"
       nCalculo       -= Round( nCalculo * uPreCliT[ _NDTOESP ]  / 100, nRou )
@@ -8598,7 +8597,7 @@ FUNCTION nDtoAtpPreCli( uPreCliT, dbfPreCliL, nDec, nRou, nVdv, lPntVer, lImpTrn
    DEFAULT lPntVer   := .f.
    DEFAULT lImpTrn   := .f.
 
-   nCalculo          := nTotLPreCli( uPreCliT, dbfPreCliL, nDec, nRou, nVdv, .t., lPntVer, lImpTrn )
+   nCalculo          := nTotLPreCli( dbfPreCliL, nDec, nRou, nVdv, .t., lPntVer, lImpTrn )
 
    if ( uPreCliT )->nSbrAtp <= 1 .and. ( uPreCliT )->nDtoAtp != 0
       nDtoAtp     += Round( nCalculo * ( uPreCliT )->nDtoAtp / 100, nRou )

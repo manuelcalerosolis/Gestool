@@ -177,8 +177,6 @@ METHOD lGenerate() CLASS TInfDetPrc
          bValid   := {|| .t. }
    end case
 
-
-
    /*
    Nos movemos por las cabeceras de los albaranes a proveedores
 	*/
@@ -213,7 +211,7 @@ METHOD lGenerate() CLASS TInfDetPrc
                   ::oDbf:cCodArt := ::oPreCliL:CREF
                   ::oDbf:nCajEnt := ::oPreCliL:NCANENT
                   ::oDbf:nUntEnt := NotCaja( ::oPreCliL:NCANPRE ) * ::oPreCliL:NUNICAJA
-                  ::oDbf:nPreDiv := nTotLPreCli( ::oPreCliT:cAlias, ::oPreCliL:cAlias, ::nDerOut, ::nValDiv )
+                  ::oDbf:nPreDiv := nTotLPreCli( ::oPreCliL:cAlias, ::nDerOut, ::nValDiv )
                   ::oDbf:cDocMov := ::oPreCliL:CSERPRE + "/" + Str( ::oPreCliL:NNUMPRE ) + "/" + ::oPreCliL:CSUFPRE
 
                   ::oDbf:Save()

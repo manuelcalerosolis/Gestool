@@ -296,7 +296,7 @@ METHOD lGenerate() CLASS TMovCPre
                         ::oDbf:nPreDiv := 0
                      else
                         ::oDbf:nComAge := ::oPreCliL:nComAge
-                        ::oDbf:nPreDiv := nTotLPreCli( ::oPreCliT:cAlias, ::oPreCliL:cAlias, ::nDecOut, ::nDerOut )
+                        ::oDbf:nPreDiv := nTotLPreCli( ::oPreCliL:cAlias, ::nDecOut, ::nDerOut )
                      end
 
                   else
@@ -305,7 +305,7 @@ METHOD lGenerate() CLASS TMovCPre
                      ::oDbf:NUNTENT := nTotNPreCli( ::oPreCliL )
                      ::oDbf:nUnidad := ::oPreCliL:NUNICAJA
                      ::oDbf:nComAge := ::oPreCliL:nComAge
-                     ::oDbf:nPreDiv := nTotLPreCli( ::oPreCliT:cAlias, ::oPreCliL:cAlias, ::nDecOut, ::nDerOut )
+                     ::oDbf:nPreDiv := nTotLPreCli( ::oPreCliL:cAlias, ::nDecOut, ::nDerOut )
 
                   end if
 

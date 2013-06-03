@@ -1411,7 +1411,7 @@ Method CargaPresupuestoCliente( cNumDoc )
             ::oDbfTmp:cAlmLin    := ::oPreCliL:cAlmLin
             ::oDbfTmp:nTotUnd    := nTotNPreCli( ::oPreCliL )
             ::oDbfTmp:nPreDiv    := nTotUPreCli( ::oPreCliL, ::nDecDiv )
-            ::oDbfTmp:nTotLin    := nTotLPreCli( ::oPreCliT:cAlias, ::oPreCliL:cAlias, ::nDecDiv, ::nRecDiv )
+            ::oDbfTmp:nTotLin    := nTotLPreCli( ::oPreCliL:cAlias, ::nDecDiv, ::nRecDiv )
             ::oDbfTmp:Save()
          end if
 

@@ -234,7 +234,7 @@ METHOD lGenerate() CLASS TCliDetPre
                   ::oDbf:cCodArt := ::oPreCliL:CREF
                   ::oDbf:nCajEnt := ::oPreCliL:NCANENT
                   ::oDbf:nUntEnt := NotCaja( ::oPreCliL:NCANPRE ) * ::oPreCliL:NUNICAJA
-                  ::oDbf:nPreDiv := nTotLPreCli( ::oPreCliT:cAlias, ::oPreCliL:cAlias, ::nDerOut, ::nValDiv )
+                  ::oDbf:nPreDiv := nTotLPreCli( ::oPreCliL:cAlias, ::nDerOut, ::nValDiv )
                   ::oDbf:cDocMov := ::oPreCliL:CSERPRE + "/" + Str( ::oPreCliL:NNUMPRE ) + "/" + ::oPreCliL:CSUFPRE
 
                   ::oDbf:Save()

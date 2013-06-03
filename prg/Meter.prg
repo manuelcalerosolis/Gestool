@@ -35,9 +35,11 @@ CLASS TMeter FROM TControl
    METHOD Paint()
 
    METHOD Set( nActual )
-   METHOD SetTotal( nTotal ) INLINE ( ::nTotal := nTotal, ::nCurrent := 0, ::Refresh() )
+   METHOD SetTotal( nTotal )  INLINE ( ::nTotal := nTotal, ::nCurrent := 0, ::Refresh() )
 
    METHOD AutoInc()
+
+   METHOD SetText( cText )    INLINE ( ::cText := cText, ::Refresh() )
 
 ENDCLASS
 
