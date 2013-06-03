@@ -3214,8 +3214,6 @@ METHOD nTotalOperario( cDocOpe )
    local nRec     := ::oDetHorasPersonal:oDbf:Recno()
    local nOrdAnt  := ::oDetHorasPersonal:oDbf:OrdSetFocus( "cNumTra" )
 
-   ::oDetHorasPersonal:oDbf:GoTop()
-
    if ::oDetHorasPersonal:oDbf:Seek( cDocOpe )
 
       while ::oDetHorasPersonal:oDbf:cSerOrd + Str( ::oDetHorasPersonal:oDbf:nNumOrd ) + ::oDetHorasPersonal:oDbf:cSufOrd + ::oDetHorasPersonal:oDbf:cCodTra == cDocOpe .and. !::oDetHorasPersonal:oDbf:Eof()
@@ -3240,8 +3238,6 @@ METHOD nTotalVolumen( cDocumento )
    local nTotal   := 0
    local nRec     := ::oDetProduccion:oDbf:Recno()
    local nOrdAnt  := ::oDetProduccion:oDbf:OrdSetFocus( "cNumOrd" )
-
-   ::oDetProduccion:oDbf:GoTop()
 
    if ::oDetProduccion:oDbf:Seek( cDocumento )
 
