@@ -197,7 +197,12 @@ CLASS TFastReportInfGen FROM TNewInfGen
    METHOD FastReportRectificativaProveedor()
 
    METHOD AddVariableSATCliente()
+   
    METHOD AddVariablePresupuestoCliente()
+   METHOD AddVariableLineasPresupuestoCliente()
+   METHOD cDetallePresupuestoClientes()      INLINE ( cDesPreCli( ::oPreCliL:cAlias ) )
+
+
    METHOD AddVariablePedidoCliente()
    METHOD AddVariableAlbaranCliente()
    METHOD AddVariableFacturaCliente()
@@ -2631,21 +2636,21 @@ Pedidos---------------------------------------------------------------------
 
 METHOD FastReportPedidoCliente()
       
-      ::oPedCliT:OrdSetFocus( "iNumPed" )
+   ::oPedCliT:OrdSetFocus( "iNumPed" )
       
-      ::oFastReport:SetWorkArea(       "Pedidos de clientes", ::oPedCliT:nArea )
-      ::oFastReport:SetFieldAliases(   "Pedidos de clientes", cItemsToReport( aItmPedCli() ) )
+   ::oFastReport:SetWorkArea(       "Pedidos de clientes", ::oPedCliT:nArea )
+   ::oFastReport:SetFieldAliases(   "Pedidos de clientes", cItemsToReport( aItmPedCli() ) )
       
-      ::oPedCliL:OrdSetFocus( "iNumPed" )
+   ::oPedCliL:OrdSetFocus( "iNumPed" )
       
-      ::oFastReport:SetWorkArea(       "Lineas pedidos de clientes", ::oPedCliL:nArea )
-      ::oFastReport:SetFieldAliases(   "Lineas pedidos de clientes", cItemsToReport( aColPedCli() ) )
+   ::oFastReport:SetWorkArea(       "Lineas pedidos de clientes", ::oPedCliL:nArea )
+   ::oFastReport:SetFieldAliases(   "Lineas pedidos de clientes", cItemsToReport( aColPedCli() ) )
 
-      ::oFastReport:SetMasterDetail(   "Informe", "Pedidos de clientes",               {|| ::cIdeDocumento() } )
-      ::oFastReport:SetMasterDetail(   "Informe", "Lineas pedidos de clientes",        {|| ::cIdeDocumento() } )
+   ::oFastReport:SetMasterDetail(   "Informe", "Pedidos de clientes",               {|| ::cIdeDocumento() } )
+   ::oFastReport:SetMasterDetail(   "Informe", "Lineas pedidos de clientes",        {|| ::cIdeDocumento() } )
 
-      ::oFastReport:SetResyncPair(     "Informe", "Pedidos de clientes" )
-      ::oFastReport:SetResyncPair(     "Informe", "Lineas pedidos de clientes" )
+   ::oFastReport:SetResyncPair(     "Informe", "Pedidos de clientes" )
+   ::oFastReport:SetResyncPair(     "Informe", "Lineas pedidos de clientes" )
 
 RETURN ( Self )
 
@@ -2655,21 +2660,21 @@ Albaranes-------------------------------------------------------------------
 
 METHOD FastReportAlbaranCliente()
 
-      ::oAlbCliT:OrdSetFocus( "iNumAlb" )
+   ::oAlbCliT:OrdSetFocus( "iNumAlb" )
    
-      ::oFastReport:SetWorkArea(       "Albaranes de clientes", ::oAlbCliT:nArea )
-      ::oFastReport:SetFieldAliases(   "Albaranes de clientes", cItemsToReport( aItmAlbCli() ) )
+   ::oFastReport:SetWorkArea(       "Albaranes de clientes", ::oAlbCliT:nArea )
+   ::oFastReport:SetFieldAliases(   "Albaranes de clientes", cItemsToReport( aItmAlbCli() ) )
    
-      ::oAlbCliL:OrdSetFocus( "iNumAlb" )
+   ::oAlbCliL:OrdSetFocus( "iNumAlb" )
    
-      ::oFastReport:SetWorkArea(       "Lineas albaranes de clientes", ::oAlbCliL:nArea )
-      ::oFastReport:SetFieldAliases(   "Lineas albaranes de clientes", cItemsToReport( aColAlbCli() ) )
+   ::oFastReport:SetWorkArea(       "Lineas albaranes de clientes", ::oAlbCliL:nArea )
+   ::oFastReport:SetFieldAliases(   "Lineas albaranes de clientes", cItemsToReport( aColAlbCli() ) )
    
-      ::oFastReport:SetMasterDetail(   "Informe", "Albaranes de clientes",             {|| ::cIdeDocumento() } )
-      ::oFastReport:SetMasterDetail(   "Informe", "Lineas albaranes de clientes",      {|| ::cIdeDocumento() } )
+   ::oFastReport:SetMasterDetail(   "Informe", "Albaranes de clientes",             {|| ::cIdeDocumento() } )
+   ::oFastReport:SetMasterDetail(   "Informe", "Lineas albaranes de clientes",      {|| ::cIdeDocumento() } )
    
-      ::oFastReport:SetResyncPair(     "Informe", "Albaranes de clientes" )
-      ::oFastReport:SetResyncPair(     "Informe", "Lineas albaranes de clientes" )
+   ::oFastReport:SetResyncPair(     "Informe", "Albaranes de clientes" )
+   ::oFastReport:SetResyncPair(     "Informe", "Lineas albaranes de clientes" )
 
 RETURN ( Self )
 
@@ -2679,21 +2684,21 @@ Facturas--------------------------------------------------------------------
 
 METHOD FastReportFacturaCliente()
 
-      ::oFacCliT:OrdSetFocus( "iNumFac" )
+   ::oFacCliT:OrdSetFocus( "iNumFac" )
    
-      ::oFastReport:SetWorkArea(       "Facturas de clientes", ::oFacCliT:nArea )
-      ::oFastReport:SetFieldAliases(   "Facturas de clientes", cItemsToReport( aItmFacCli() ) )
+   ::oFastReport:SetWorkArea(       "Facturas de clientes", ::oFacCliT:nArea )
+   ::oFastReport:SetFieldAliases(   "Facturas de clientes", cItemsToReport( aItmFacCli() ) )
    
-      ::oFacCliL:OrdSetFocus( "iNumFac" )
+   ::oFacCliL:OrdSetFocus( "iNumFac" )
    
-      ::oFastReport:SetWorkArea(       "Lineas facturas de clientes", ::oFacCliL:nArea )
-      ::oFastReport:SetFieldAliases(   "Lineas facturas de clientes", cItemsToReport( aColFacCli() ) )
+   ::oFastReport:SetWorkArea(       "Lineas facturas de clientes", ::oFacCliL:nArea )
+   ::oFastReport:SetFieldAliases(   "Lineas facturas de clientes", cItemsToReport( aColFacCli() ) )
    
-      ::oFastReport:SetMasterDetail(   "Informe", "Facturas de clientes",              {|| ::cIdeDocumento() } )
-      ::oFastReport:SetMasterDetail(   "Informe", "Lineas facturas de clientes",       {|| ::cIdeDocumento() } )
+   ::oFastReport:SetMasterDetail(   "Informe", "Facturas de clientes",              {|| ::cIdeDocumento() } )
+   ::oFastReport:SetMasterDetail(   "Informe", "Lineas facturas de clientes",       {|| ::cIdeDocumento() } )
    
-      ::oFastReport:SetResyncPair(     "Informe", "Facturas de clientes" )
-      ::oFastReport:SetResyncPair(     "Informe", "Lineas facturas de clientes" )
+   ::oFastReport:SetResyncPair(     "Informe", "Facturas de clientes" )
+   ::oFastReport:SetResyncPair(     "Informe", "Lineas facturas de clientes" )
 
 RETURN ( Self )
 
@@ -2703,21 +2708,21 @@ Rectificativas--------------------------------------------------------------
 
 METHOD FastReportFacturaRectificativa()
 
-      ::oFacRecT:OrdSetFocus( "iNumFac" )
+   ::oFacRecT:OrdSetFocus( "iNumFac" )
    
-      ::oFastReport:SetWorkArea(       "Facturas rectificativas de clientes", ::oFacRecT:nArea )
-      ::oFastReport:SetFieldAliases(   "Facturas rectificativas de clientes", cItemsToReport( aItmFacRec() ) )
+   ::oFastReport:SetWorkArea(       "Facturas rectificativas de clientes", ::oFacRecT:nArea )
+   ::oFastReport:SetFieldAliases(   "Facturas rectificativas de clientes", cItemsToReport( aItmFacRec() ) )
    
-      ::oFacRecL:OrdSetFocus( "iNumFac" )
+   ::oFacRecL:OrdSetFocus( "iNumFac" )
    
-      ::oFastReport:SetWorkArea(       "Lineas facturas rectificativas de clientes", ::oFacRecL:nArea )
-      ::oFastReport:SetFieldAliases(   "Lineas facturas rectificativas de clientes", cItemsToReport( aColFacRec() ) )
+   ::oFastReport:SetWorkArea(       "Lineas facturas rectificativas de clientes", ::oFacRecL:nArea )
+   ::oFastReport:SetFieldAliases(   "Lineas facturas rectificativas de clientes", cItemsToReport( aColFacRec() ) )
    
-      ::oFastReport:SetMasterDetail(   "Informe", "Facturas rectificativas de clientes",        {|| ::cIdeDocumento() } )
-      ::oFastReport:SetMasterDetail(   "Informe", "Lineas facturas rectificativas de clientes", {|| ::cIdeDocumento() } )
+   ::oFastReport:SetMasterDetail(   "Informe", "Facturas rectificativas de clientes",        {|| ::cIdeDocumento() } )
+   ::oFastReport:SetMasterDetail(   "Informe", "Lineas facturas rectificativas de clientes", {|| ::cIdeDocumento() } )
    
-      ::oFastReport:SetResyncPair(     "Informe", "Facturas rectificativas de clientes" )
-      ::oFastReport:SetResyncPair(     "Informe", "Lineas facturas rectificativas de clientes" )
+   ::oFastReport:SetResyncPair(     "Informe", "Facturas rectificativas de clientes" )
+   ::oFastReport:SetResyncPair(     "Informe", "Lineas facturas rectificativas de clientes" )
 
 RETURN ( Self )
 
@@ -2749,21 +2754,21 @@ RETURN ( Self )
 
 METHOD FastReportPedidoProveedor()
       
-      ::oPedPrvT:OrdSetFocus( "iNumPed" )
+   ::oPedPrvT:OrdSetFocus( "iNumPed" )
       
-      ::oFastReport:SetWorkArea(       "Pedidos de proveedor", ::oPedPrvT:nArea )
-      ::oFastReport:SetFieldAliases(   "Pedidos de proveedor", cItemsToReport( aItmPedPrv() ) )
+   ::oFastReport:SetWorkArea(       "Pedidos de proveedor", ::oPedPrvT:nArea )
+   ::oFastReport:SetFieldAliases(   "Pedidos de proveedor", cItemsToReport( aItmPedPrv() ) )
       
-      ::oPedPrvL:OrdSetFocus( "iNumPed" )
+   ::oPedPrvL:OrdSetFocus( "iNumPed" )
       
-      ::oFastReport:SetWorkArea(       "Lineas pedidos de proveedor", ::oPedPrvL:nArea )
-      ::oFastReport:SetFieldAliases(   "Lineas pedidos de proveedor", cItemsToReport( aColPedPrv() ) )
+   ::oFastReport:SetWorkArea(       "Lineas pedidos de proveedor", ::oPedPrvL:nArea )
+   ::oFastReport:SetFieldAliases(   "Lineas pedidos de proveedor", cItemsToReport( aColPedPrv() ) )
 
-      ::oFastReport:SetMasterDetail(   "Informe", "Pedidos de proveedor",               {|| ::cIdeDocumento() } )
-      ::oFastReport:SetMasterDetail(   "Informe", "Lineas pedidos de proveedor",        {|| ::cIdeDocumento() } )
+   ::oFastReport:SetMasterDetail(   "Informe", "Pedidos de proveedor",               {|| ::cIdeDocumento() } )
+   ::oFastReport:SetMasterDetail(   "Informe", "Lineas pedidos de proveedor",        {|| ::cIdeDocumento() } )
 
-      ::oFastReport:SetResyncPair(     "Informe", "Pedidos de proveedor" )
-      ::oFastReport:SetResyncPair(     "Informe", "Lineas pedidos de proveedor" )
+   ::oFastReport:SetResyncPair(     "Informe", "Pedidos de proveedor" )
+   ::oFastReport:SetResyncPair(     "Informe", "Lineas pedidos de proveedor" )
 
 RETURN ( Self )
 
@@ -2771,21 +2776,21 @@ RETURN ( Self )
 
 METHOD FastReportAlbaranProveedor()
       
-      ::oAlbPrvT:OrdSetFocus( "iNumAlb" )
+   ::oAlbPrvT:OrdSetFocus( "iNumAlb" )
       
-      ::oFastReport:SetWorkArea(       "Albaranes de proveedor", ::oAlbPrvT:nArea )
-      ::oFastReport:SetFieldAliases(   "Albaranes de proveedor", cItemsToReport( aItmAlbPrv() ) )
+   ::oFastReport:SetWorkArea(       "Albaranes de proveedor", ::oAlbPrvT:nArea )
+   ::oFastReport:SetFieldAliases(   "Albaranes de proveedor", cItemsToReport( aItmAlbPrv() ) )
       
-      ::oAlbPrvL:OrdSetFocus( "iNumAlb" )
+   ::oAlbPrvL:OrdSetFocus( "iNumAlb" )
       
-      ::oFastReport:SetWorkArea(       "Lineas albaranes de proveedor", ::oAlbPrvL:nArea )
-      ::oFastReport:SetFieldAliases(   "Lineas albaranes de proveedor", cItemsToReport( aColAlbPrv() ) )
+   ::oFastReport:SetWorkArea(       "Lineas albaranes de proveedor", ::oAlbPrvL:nArea )
+   ::oFastReport:SetFieldAliases(   "Lineas albaranes de proveedor", cItemsToReport( aColAlbPrv() ) )
 
-      ::oFastReport:SetMasterDetail(   "Informe", "Albaranes de proveedor",               {|| ::cIdeDocumento() } )
-      ::oFastReport:SetMasterDetail(   "Informe", "Lineas albaranes de proveedor",        {|| ::cIdeDocumento() } )
+   ::oFastReport:SetMasterDetail(   "Informe", "Albaranes de proveedor",               {|| ::cIdeDocumento() } )
+   ::oFastReport:SetMasterDetail(   "Informe", "Lineas albaranes de proveedor",        {|| ::cIdeDocumento() } )
 
-      ::oFastReport:SetResyncPair(     "Informe", "Albaranes de proveedor" )
-      ::oFastReport:SetResyncPair(     "Informe", "Lineas albaranes de proveedor" )
+   ::oFastReport:SetResyncPair(     "Informe", "Albaranes de proveedor" )
+   ::oFastReport:SetResyncPair(     "Informe", "Lineas albaranes de proveedor" )
 
 RETURN ( Self )
 
@@ -2793,21 +2798,21 @@ RETURN ( Self )
 
 METHOD FastReportFacturaProveedor()
       
-      ::oFacPrvT:OrdSetFocus( "iNumFac" )
+   ::oFacPrvT:OrdSetFocus( "iNumFac" )
       
-      ::oFastReport:SetWorkArea(       "Facturas de proveedor", ::oFacPrvT:nArea )
-      ::oFastReport:SetFieldAliases(   "Facturas de proveedor", cItemsToReport( aItmFacPrv() ) )
+   ::oFastReport:SetWorkArea(       "Facturas de proveedor", ::oFacPrvT:nArea )
+   ::oFastReport:SetFieldAliases(   "Facturas de proveedor", cItemsToReport( aItmFacPrv() ) )
       
-      ::oFacPrvL:OrdSetFocus( "iNumFac" )
+   ::oFacPrvL:OrdSetFocus( "iNumFac" )
       
-      ::oFastReport:SetWorkArea(       "Lineas facturas de proveedor", ::oFacPrvL:nArea )
-      ::oFastReport:SetFieldAliases(   "Lineas facturas de proveedor", cItemsToReport( aColFacPrv() ) )
+   ::oFastReport:SetWorkArea(       "Lineas facturas de proveedor", ::oFacPrvL:nArea )
+   ::oFastReport:SetFieldAliases(   "Lineas facturas de proveedor", cItemsToReport( aColFacPrv() ) )
 
-      ::oFastReport:SetMasterDetail(   "Informe", "Facturas de proveedor",               {|| ::cIdeDocumento() } )
-      ::oFastReport:SetMasterDetail(   "Informe", "Lineas facturas de proveedor",        {|| ::cIdeDocumento() } )
+   ::oFastReport:SetMasterDetail(   "Informe", "Facturas de proveedor",               {|| ::cIdeDocumento() } )
+   ::oFastReport:SetMasterDetail(   "Informe", "Lineas facturas de proveedor",        {|| ::cIdeDocumento() } )
 
-      ::oFastReport:SetResyncPair(     "Informe", "Facturas de proveedor" )
-      ::oFastReport:SetResyncPair(     "Informe", "Lineas facturas de proveedor" )
+   ::oFastReport:SetResyncPair(     "Informe", "Facturas de proveedor" )
+   ::oFastReport:SetResyncPair(     "Informe", "Lineas facturas de proveedor" )
 
 RETURN ( Self )
 
@@ -2815,21 +2820,21 @@ RETURN ( Self )
 
 METHOD FastReportRectificativaProveedor()
       
-      ::oRctPrvT:OrdSetFocus( "iNumRct" )
+   ::oRctPrvT:OrdSetFocus( "iNumRct" )
       
-      ::oFastReport:SetWorkArea(       "Rectificativas de proveedor", ::oRctPrvT:nArea )
-      ::oFastReport:SetFieldAliases(   "Rectificativas de proveedor", cItemsToReport( aItmRctPrv() ) )
+   ::oFastReport:SetWorkArea(       "Rectificativas de proveedor", ::oRctPrvT:nArea )
+   ::oFastReport:SetFieldAliases(   "Rectificativas de proveedor", cItemsToReport( aItmRctPrv() ) )
       
-      ::oRctPrvL:OrdSetFocus( "iNumRct" )
+   ::oRctPrvL:OrdSetFocus( "iNumRct" )
       
-      ::oFastReport:SetWorkArea(       "Lineas rectificativas de proveedor", ::oRctPrvL:nArea )
-      ::oFastReport:SetFieldAliases(   "Lineas rectificativas de proveedor", cItemsToReport( aColRctPrv() ) )
+   ::oFastReport:SetWorkArea(       "Lineas rectificativas de proveedor", ::oRctPrvL:nArea )
+   ::oFastReport:SetFieldAliases(   "Lineas rectificativas de proveedor", cItemsToReport( aColRctPrv() ) )
 
-      ::oFastReport:SetMasterDetail(   "Informe", "Rectificativas de proveedor",               {|| ::cIdeDocumento() } )
-      ::oFastReport:SetMasterDetail(   "Informe", "Lineas rectificativas de proveedor",        {|| ::cIdeDocumento() } )
+   ::oFastReport:SetMasterDetail(   "Informe", "Rectificativas de proveedor",               {|| ::cIdeDocumento() } )
+   ::oFastReport:SetMasterDetail(   "Informe", "Lineas rectificativas de proveedor",        {|| ::cIdeDocumento() } )
 
-      ::oFastReport:SetResyncPair(     "Informe", "Rectificativas de proveedor" )
-      ::oFastReport:SetResyncPair(     "Informe", "Lineas rectificativas de proveedor" )
+   ::oFastReport:SetResyncPair(     "Informe", "Rectificativas de proveedor" )
+   ::oFastReport:SetResyncPair(     "Informe", "Lineas rectificativas de proveedor" )
 
 RETURN ( Self )
 
@@ -2852,6 +2857,19 @@ METHOD AddVariablePresupuestoCliente()
    ::oFastReport:AddVariable(    "Presupuestos clientes",   "Total " + cImp() + " presupuestos clientes",   "CallHbFunc( 'oTinfGen', ['nIVAPresupuestosClientes'])"     )
    ::oFastReport:AddVariable(    "Presupuestos clientes",   "Total recargo presupuestos clientes",          "CallHbFunc( 'oTinfGen', ['nRecargoPresupuestosClientes'])" )
    ::oFastReport:AddVariable(    "Presupuestos clientes",   "Total presupuestos clientes",                  "CallHbFunc( 'oTinfGen', ['nTotalPresupuestosClientes'])"   )
+
+RETURN ( Self )
+
+//---------------------------------------------------------------------------//
+
+METHOD AddVariableLineasPresupuestoCliente()
+
+   ::oFastReport:AddVariable(     "Lineas de presupuestos",   "Detalle del artículo",                "CallHbFunc( 'oTInfGen', ['cDetallePresupuestoClientes'])"  )
+   ::oFastReport:AddVariable(     "Lineas de presupuestos",   "Total unidades artículo",             "CallHbFunc( 'oTInfGen', ['nTotNPreCli'])" )
+   ::oFastReport:AddVariable(     "Lineas de presupuestos",   "Precio unitario del artículo",        "CallHbFunc( 'oTInfGen', ['nTotUPreCli'])" )
+   ::oFastReport:AddVariable(     "Lineas de presupuestos",   "Total línea de presupuesto",          "CallHbFunc( 'oTInfGen', ['nTotLPreCli'])" )
+   ::oFastReport:AddVariable(     "Lineas de presupuestos",   "Total peso por línea",                "CallHbFunc( 'oTInfGen', ['nPesLPreCli'])" )
+   ::oFastReport:AddVariable(     "Lineas de presupuestos",   "Total final línea del presupuesto",   "CallHbFunc( 'oTInfGen', ['nTotFPreCli'])" )
 
 RETURN ( Self )
 

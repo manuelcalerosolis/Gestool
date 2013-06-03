@@ -9039,17 +9039,17 @@ STATIC FUNCTION RecPreCli( aTmpPre )
    local nRecno
    local cCodFam
 
-   if !ApoloMsgNoYes( "¡Atención!,"                                      + CRLF + ;
-                  "todos los precios se recalcularán en función de"  + CRLF + ;
-                  "los valores en las bases de datos.",;
-                  "¿Desea proceder?" )
+   if !ApoloMsgNoYes(   "¡Atención!,"                                      + CRLF + ;
+                        "todos los precios se recalcularán en función de"  + CRLF + ;
+                        "los valores en las bases de datos.",;
+                        "¿Desea proceder?" )
       return nil
    end if
 
    nRecno         := ( dbfTmpLin )->( RecNo() )
 
    ( dbfTmpLin )->( dbGotop() )
-   ( dbfArticulo )->( ordSetFocus( "CODIGO" ) )
+   ( dbfArticulo )->( ordSetFocus( "Codigo" ) )
 
    while !( dbfTmpLin )->( eof() )
 
@@ -11294,7 +11294,7 @@ Static Function VariableReport( oFr )
    oFr:AddVariable(     "Presupuestos",             "Importe del cuarto vencimiento",      "GetHbArrayVar('aImpVto',4)" )
    oFr:AddVariable(     "Presupuestos",             "Importe del quinto vencimiento",      "GetHbArrayVar('aImpVto',5)" )
 
-   oFr:AddVariable(     "Lineas de presupuestos",   "Detalle del artículo",                "CallHbFunc('cDesPreCli')"  )
+   oFr:AddVariable(     "Lineas de presupuestos",   "Detalle del artículo",                "CallHbFunc('cDesPreCli' )" )
    oFr:AddVariable(     "Lineas de presupuestos",   "Total unidades artículo",             "CallHbFunc('nTotNPreCli')" )
    oFr:AddVariable(     "Lineas de presupuestos",   "Precio unitario del artículo",        "CallHbFunc('nTotUPreCli')" )
    oFr:AddVariable(     "Lineas de presupuestos",   "Total línea de presupuesto",          "CallHbFunc('nTotLPreCli')" )

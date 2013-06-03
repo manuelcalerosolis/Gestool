@@ -27,7 +27,8 @@ CLASS TFastVentasClientes FROM TFastReportInfGen
    METHOD OpenFiles()
    METHOD CloseFiles()
 
-   METHOD DataReport( oFr )
+   METHOD DataReport()
+   METHOD AddVariable()
 
    METHOD StartDialog()
    METHOD BuildTree( oTree )
@@ -489,6 +490,57 @@ METHOD DataReport() CLASS TFastVentasClientes
    ::AddVariable()
 
 Return ( Self )
+
+//---------------------------------------------------------------------------//
+
+METHOD AddVariable() CLASS TFastVentasClientes
+
+   /*
+   Tablas en funcion del tipo de informe---------------------------------------
+   */
+
+   do case
+      case ::cTypeName == "Informe de presupuestos"
+
+         ::AddVariablePresupuestoCliente()
+
+         ::AddVariableLineasPresupuestoCliente()         
+
+      case ::cTypeName == "Informe de pedidos"
+      
+         ::AddVariablePedidoCliente()
+
+      case ::cTypeName == "Informe de albaranes"
+      
+         ::AddVariableAlbaranCliente()
+
+      case ::cTypeName == "Informe de facturas"
+      
+         ::AddVariableFacturaCliente()
+         
+         ::AddVariableRectificativaCliente()
+
+      case ::cTypeName == "Informe de facturas rectificativas"
+
+         ::AddVariableRectificativaCliente()
+
+      case ::cTypeName == "Informe de tickets"
+
+         ::AddVariableTicketCliente()
+
+      case ::cTypeName == "Informe de ventas"
+
+         ::AddVariableAlbaranCliente()
+
+         ::AddVariableFacturaCliente()
+         
+         ::AddVariableRectificativaCliente()
+
+         ::AddVariableTicketCliente()         
+
+   end case
+
+Return ( Super:AddVariable() )
 
 //---------------------------------------------------------------------------//
 
