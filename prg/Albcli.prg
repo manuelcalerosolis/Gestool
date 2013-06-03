@@ -2591,6 +2591,7 @@ STATIC FUNCTION EdtRec( aTmp, aGet, dbfAlbCliT, oBrw, hHash, bValid, nMode )
 
       oBrwLin:bClrSel         := {|| { CLR_BLACK, Rgb( 229, 229, 229 ) } }
       oBrwLin:bClrSelFocus    := {|| { CLR_BLACK, Rgb( 167, 205, 240 ) } }
+      oBrwLin:bClrStd         := {|| { if( ( dbfTmpLin )->lKitChl, CLR_GRAY, CLR_BLACK ), GetSysColor( COLOR_WINDOW ) } }
 
       oBrwLin:cAlias          := dbfTmpLin
 
@@ -3088,7 +3089,7 @@ STATIC FUNCTION EdtRec( aTmp, aGet, dbfAlbCliT, oBrw, hHash, bValid, nMode )
       REDEFINE BUTTON oBtnKit;
          ID       526 ;
 			OF 		oFld:aDialogs[1] ;
-         ACTION   ( lEscandalloEdtRec( .t., oBtnKit ) )
+         ACTION   ( lEscandalloEdtRec( .t., oBtnKit, oBrwLin ) )
 
       REDEFINE GET aGet[ _CSERALB ] VAR aTmp[ _CSERALB ] ;
          ID       100 ;
@@ -3694,7 +3695,7 @@ STATIC FUNCTION EdtRec( aTmp, aGet, dbfAlbCliT, oBrw, hHash, bValid, nMode )
       oDlg:AddFastKey( VK_F5,             {|| EndTrans( aTmp, aGet, oBrw, oBrwInc, nMode, oDlg ) } )
       oDlg:AddFastKey( 65,                {|| if( GetKeyState( VK_CONTROL ), CreateInfoArticulo(), ) } )
 
-      oDlg:bStart    := {|| StartEdtRec( aTmp, aGet, oDlg, nMode, hHash ) }
+      oDlg:bStart    := {|| StartEdtRec( aTmp, aGet, oDlg, nMode, hHash, oBrwLin ) }
 
    end if
 
@@ -3725,7 +3726,7 @@ RETURN ( oDlg:nResult == IDOK )
 
 //---------------------------------------------------------------------------//
 
-Static Function StartEdtRec( aTmp, aGet, oDlg, nMode, hHash )
+Static Function StartEdtRec( aTmp, aGet, oDlg, nMode, hHash, oBrwLin )
 
    if nMode == APPD_MODE
 
@@ -3777,7 +3778,7 @@ Static Function StartEdtRec( aTmp, aGet, oDlg, nMode, hHash )
    Mostramos los escandallos---------------------------------------------------
    */
 
-   lEscandalloEdtRec( .f., oBtnKit )
+   lEscandalloEdtRec( .f., oBtnKit, oBrwLin )
 
    /*
    Hace que salte la incidencia al entrar en el documento----------------------
@@ -3870,7 +3871,7 @@ Return ( oMenu )
 
 //---------------------------------------------------------------------------//
 
-Static Function lEscandalloEdtRec( lSet, oBtnKit )
+Static Function lEscandalloEdtRec( lSet, oBtnKit, oBrwLin )
 
    local lShwKit     := lShwKit()
 
@@ -3893,6 +3894,10 @@ Static Function lEscandalloEdtRec( lSet, oBtnKit )
    if lSet
       lShwKit( lShwKit )
    end if
+
+   if !Empty( oBrwLin )
+      oBrwLin:Refresh()
+   end if   
 
 Return ( nil )
 
