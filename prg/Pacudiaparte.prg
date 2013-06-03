@@ -183,8 +183,6 @@ METHOD lGenerate() CLASS PAcuDiaParte
 
    ::oProduccT:oDbf:AddTmpIndex( cCurUsr(), GetFileNoExt( ::oProduccT:oDbf:cFile ), ::oProduccT:oDbf:OrdKey(), ( cExpHead ), , , , , , , , .t. )
 
-   msgAlert( ::oProduccT:oDbf:OrdKeyCount() )
-
    ::oMtrInf:SetText( "Generando informe" )
    ::oMtrInf:SetTotal( ::oProduccT:oDbf:OrdKeyCount() )
 
@@ -212,6 +210,7 @@ METHOD lGenerate() CLASS PAcuDiaParte
             ::oDbf:cCodOpe    := ::oProduccT:oDbf:cCodOpe
             ::oDbf:cCodSec    := ::oProduccT:oDbf:cCodSec
             ::oDbf:cCodAlm    := ::oProduccT:oDbf:cAlmOrd
+            ::oDbf:dFecMov    := ::oProduccT:oDbf:dFecOrd
             ::oDbf:cCodTOpe   := cCodTipoOperacion
             ::oDbf:cNomTOpe   := oRetFld( cCodTipoOperacion, ::oProduccT:oOperacion:oTipOpera:oDbf, "cDesTip" )
             ::oDbf:cNomOpe    := oRetFld( ::oDbf:cCodOpe, ::oOperacion:oDbf )
@@ -224,7 +223,6 @@ METHOD lGenerate() CLASS PAcuDiaParte
             ::oDbf:nTotMaq    := ::oProduccT:nTotalMaquina( ::oProduccT:oDbf:cSerOrd + Str( ::oProduccT:oDbf:nNumOrd ) + ::oProduccT:oDbf:cSufOrd )
             ::oDbf:nVolumen   := ::oProduccT:nTotalVolumen( ::oProduccT:oDbf:cSerOrd + Str( ::oProduccT:oDbf:nNumOrd ) + ::oProduccT:oDbf:cSufOrd )
             ::oDbf:nCosLit    := ( ::oDbf:nTotMat + ::oDbf:nTotPer + ::oDbf:nTotMaq ) / ::oDbf:nVolumen
-            ::oDbf:dFecMov    := ::oProduccT:oDbf:dFecOrd
 
             ::oDbf:Save()
 

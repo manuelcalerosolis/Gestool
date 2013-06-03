@@ -3096,17 +3096,15 @@ METHOD nTotalProducido( cDocumento )
    local nRec     := ::oDetProduccion:oDbf:Recno()
    local nOrdAnt  := ::oDetProduccion:oDbf:OrdSetFocus( "cNumOrd" )
 
-   ::oDetProduccion:oDbf:GoTop()
+   if ::oDetProduccion:oDbf:Seek( cDocumento )
 
-   while !::oDetProduccion:oDbf:Eof()
-
-      if ::oDetProduccion:oDbf:cSerOrd + Str( ::oDetProduccion:oDbf:nNumOrd ) + ::oDetProduccion:oDbf:cSufOrd == cDocumento
+      while ::oDetProduccion:oDbf:cSerOrd + Str( ::oDetProduccion:oDbf:nNumOrd ) + ::oDetProduccion:oDbf:cSufOrd == cDocumento .and. !::oDetProduccion:oDbf:Eof()
 
          nTotal   += ( NotCaja( ::oDetProduccion:oDbf:nCajOrd ) * ::oDetProduccion:oDbf:nUndOrd ) * ::oDetProduccion:oDbf:nImpOrd
 
-      end if
+         ::oDetProduccion:oDbf:Skip()
 
-      ::oDetProduccion:oDbf:Skip()
+      end while
 
    end while
 
@@ -3123,19 +3121,17 @@ METHOD nTotalMaterial( cDocumento )
    local nRec     := ::oDetMaterial:oDbf:Recno()
    local nOrdAnt  := ::oDetMaterial:oDbf:OrdSetFocus( "cNumOrd" )
 
-   ::oDetMaterial:oDbf:GoTop()
+   if ::oDetMaterial:oDbf:Seek( cDocumento )
 
-   while !::oDetMaterial:oDbf:Eof()
-
-      if ::oDetMaterial:oDbf:cSerOrd + Str( ::oDetMaterial:oDbf:nNumOrd ) + ::oDetMaterial:oDbf:cSufOrd == cDocumento
+      while ::oDetMaterial:oDbf:cSerOrd + Str( ::oDetMaterial:oDbf:nNumOrd ) + ::oDetMaterial:oDbf:cSufOrd == cDocumento .and. !::oDetMaterial:oDbf:Eof()
 
          nTotal   += ( NotCaja( ::oDetMaterial:oDbf:nCajOrd ) * ::oDetMaterial:oDbf:nUndOrd ) * ::oDetMaterial:oDbf:nImpOrd
 
-      end if
+        ::oDetMaterial:oDbf:Skip()
 
-      ::oDetMaterial:oDbf:Skip()
+      end while
 
-   end while
+   end if 
 
    ::oDetMaterial:oDbf:OrdSetFocus( nOrdAnt )
    ::oDetMaterial:oDbf:GoTo( nRec )
@@ -3164,7 +3160,7 @@ METHOD nTotalPersonal( cDocumento )
             while ::oDetPersonal:oDbf:cSerOrd + Str( ::oDetPersonal:oDbf:nNumOrd ) + ::oDetPersonal:oDbf:cSufOrd + ::oDetPersonal:oDbf:cCodTra == ::oDetHorasPersonal:oDbf:cSerOrd + Str( ::oDetHorasPersonal:oDbf:nNumOrd ) + ::oDetHorasPersonal:oDbf:cSufOrd + ::oDetHorasPersonal:oDbf:cCodTra .and. ;
                   !::oDetHorasPersonal:oDbf:Eof()
 
-                  nTotal   += ::oDetHorasPersonal:oDbf:nNumHra * ::oDetHorasPersonal:oDbf:nCosHra
+               nTotal   += ::oDetHorasPersonal:oDbf:nNumHra * ::oDetHorasPersonal:oDbf:nCosHra
 
                ::oDetHorasPersonal:oDbf:Skip()
 
@@ -3193,19 +3189,17 @@ METHOD nTotalMaquina( cDocumento )
    local nRec     := ::oDetMaquina:oDbf:Recno()
    local nOrdAnt  := ::oDetMaquina:oDbf:OrdSetFocus( "cNumOrd" )
 
-   ::oDetMaquina:oDbf:GoTop()
+   if ::oDetMaquina:oDbf:Seek( cDocumento )
 
-   while !::oDetMaquina:oDbf:Eof()
-
-      if ::oDetMaquina:oDbf:cSerOrd + Str( ::oDetMaquina:oDbf:nNumOrd ) + ::oDetMaquina:oDbf:cSufOrd == cDocumento
+      while ::oDetMaquina:oDbf:cSerOrd + Str( ::oDetMaquina:oDbf:nNumOrd ) + ::oDetMaquina:oDbf:cSufOrd == cDocumento.and. !::oDetMaquina:oDbf:Eof()
 
          nTotal   += ::oDetMaquina:oDbf:nTotHra * ::oDetMaquina:oDbf:nCosHra
 
-      end if
+         ::oDetMaquina:oDbf:Skip()
 
-      ::oDetMaquina:oDbf:Skip()
+      end while
 
-   end while
+   end if 
 
    ::oDetMaquina:oDbf:OrdSetFocus( nOrdAnt )
    ::oDetMaquina:oDbf:GoTo( nRec )
@@ -3268,7 +3262,9 @@ METHOD nTotalVolumen( cDocumento )
 RETURN ( nTotal )
 
 //---------------------------------------------------------------------------//
-/*funcion para editar un parte desde fuera de la clase*/
+/*
+Funcion para editar un parte desde fuera de la clase
+*/
 
 function EditProduccion( cNumParte, oBrw )
 
