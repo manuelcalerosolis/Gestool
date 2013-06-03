@@ -200,12 +200,12 @@ CLASS TFastReportInfGen FROM TNewInfGen
    
    METHOD AddVariablePresupuestoCliente()
    METHOD AddVariableLineasPresupuestoCliente()
-   METHOD cDetallePresupuestoClientes()         INLINE ( cDesPreCli(  ::oPreCliL:cAlias ) )
-   METHOD nTotalUnidadesPresupuestosClientes()  INLINE ( nTotNPreCli( ::oPreCliL:cAlias ) )
-   METHOD nPrecioUnitarioPresupuestosClientes() INLINE ( nTotUPreCli( ::oPreCliL:cAlias ) ) 
-   METHOD nTotalLineaPresupuestosClientes()     INLINE ( nTotLPreCli( ::oPreCliL:cAlias ) )
-   METHOD nTotalPesoLineaPresupuestosClientes() INLINE ( nPesLPreCli( ::oPreCliL:cAlias ) )
-   METHOD nTotFinalLineaPresupuestosClientes()  INLINE ( nTotFPreCli( ::oPreCliL:cAlias ) )
+   METHOD cDetallePresupuestoClientes()                        INLINE ( cDesPreCli(  ::oPreCliL:cAlias ) )
+   METHOD nTotalUnidadesPresupuestosClientes()                 INLINE ( nTotNPreCli( ::oPreCliL:cAlias ) )
+   METHOD nPrecioUnitarioPresupuestosClientes()                INLINE ( nTotUPreCli( ::oPreCliL:cAlias ) ) 
+   METHOD nTotalLineaPresupuestosClientes()                    INLINE ( nTotLPreCli( ::oPreCliL:cAlias ) )
+   METHOD nTotalPesoLineaPresupuestosClientes()                INLINE ( nPesLPreCli( ::oPreCliL:cAlias ) )
+   METHOD nTotalImpuestosIncluidosLineaPresupuestosClientes()  INLINE ( nTotFPreCli( ::oPreCliL:cAlias ) )
 
    METHOD AddVariablePedidoCliente()
    METHOD AddVariableAlbaranCliente()
@@ -2873,7 +2873,7 @@ METHOD AddVariableLineasPresupuestoCliente()
    ::oFastReport:AddVariable(     "Lineas de presupuestos",   "Precio unitario del artículo",        "CallHbFunc( 'oTInfGen', ['nPrecioUnitarioPresupuestosClientes'])" )
    ::oFastReport:AddVariable(     "Lineas de presupuestos",   "Total línea de presupuesto",          "CallHbFunc( 'oTInfGen', ['nTotalLineaPresupuestosClientes'])" )
    ::oFastReport:AddVariable(     "Lineas de presupuestos",   "Total peso por línea",                "CallHbFunc( 'oTInfGen', ['nTotalPesoLineaPresupuestosClientes'])" )
-   ::oFastReport:AddVariable(     "Lineas de presupuestos",   "Total final línea del presupuesto",   "CallHbFunc( 'oTInfGen', ['nTotFinalLineaPresupuestosClientes'])" )
+   ::oFastReport:AddVariable(     "Lineas de presupuestos",   "Total final línea del presupuesto",   "CallHbFunc( 'oTInfGen', ['nTotalImpuestosIncluidosLineaPresupuestosClientes'])" )
 
 RETURN ( Self )
 
