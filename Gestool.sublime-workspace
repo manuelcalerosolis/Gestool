@@ -4,6 +4,34 @@
 		"selected_items":
 		[
 			[
+				"cFacPrv",
+				"cFacPrv"
+			],
+			[
+				"cNumAlb",
+				"cNumAlb"
+			],
+			[
+				"cNumPed",
+				"cNumPed"
+			],
+			[
+				"cNumDoc",
+				"cNumDoc"
+			],
+			[
+				"cNumFac",
+				"cNumFac"
+			],
+			[
+				"cPedCli",
+				"cPedCli"
+			],
+			[
+				"dbfDlg",
+				"dbfDlg"
+			],
+			[
 				"Rectificativas",
 				"Rectificativas"
 			],
@@ -178,10 +206,6 @@
 			[
 				"nTotIva",
 				"nTotIva"
-			],
-			[
-				"cNumPed",
-				"cNumPed"
 			],
 			[
 				"ntotPed",
@@ -490,30 +514,6 @@
 			[
 				"cPrefijo",
 				"cPrefijoBaseDatos"
-			],
-			[
-				"lUp",
-				"lUpdateFabricantesPrestashop"
-			],
-			[
-				"Cur",
-				"CursorWait"
-			],
-			[
-				"alquiler",
-				"cSayAlquiler"
-			],
-			[
-				"oSa",
-				"oSayAlquiler"
-			],
-			[
-				"oSay",
-				"oSaySerial"
-			],
-			[
-				"Control",
-				"ControlAcceso"
 			]
 		]
 	},
@@ -560,26 +560,26 @@
 			}
 		},
 		{
-			"file": "prg/Factu.prg",
+			"file": "prg/Pedcli.prg",
 			"settings":
 			{
-				"buffer_size": 185107,
+				"buffer_size": 648972,
 				"line_ending": "Windows"
 			}
 		},
 		{
-			"file": "prg/Usuario.prg",
+			"file": "prg/Albcli.prg",
 			"settings":
 			{
-				"buffer_size": 80601,
+				"buffer_size": 636176,
 				"line_ending": "Windows"
 			}
 		},
 		{
-			"file": "prg/Empresa.prg",
+			"file": "prg/Factcli.prg",
 			"settings":
 			{
-				"buffer_size": 265067,
+				"buffer_size": 0,
 				"line_ending": "Windows"
 			}
 		}
@@ -616,38 +616,44 @@
 	},
 	"file_history":
 	[
+		"/C/fw195/Gestool/prg/Tpv.prg",
+		"/C/fw195/Gestool/prg/Factcli.prg",
+		"/C/fw195/Gestool/prg/Facrec.prg",
+		"/C/fw195/Gestool/prg/Facant.prg",
+		"/C/fw195/Gestool/prg/Satcli.prg",
+		"/C/fw195/Gestool/prg/Albcli.prg",
+		"/C/fw195/Gestool/prg/Precli.prg",
+		"/C/fw195/Gestool/prg/Factprv.prg",
+		"/C/fw195/Gestool/prg/Rectprv.prg",
+		"/C/fw195/Gestool/prg/Albprov.prg",
+		"/C/fw195/Gestool/prg/Pedprov.prg",
+		"/C/fw195/Gestool/prg/Articulo.prg",
+		"/C/fw195/Gestool/prg/Client.prg",
+		"/C/fw195/Gestool/prg/Stock.prg",
+		"/C/fw195/Gestool/prg/Xvalalm.prg",
+		"/C/fw195/Gestool/prg/Factu.prg",
+		"/C/fw195/Gestool/prg/Usuario.prg",
+		"/C/fw195/Gestool/prg/Empresa.prg",
+		"/C/fw195/Gestool/prg/Medicon.prg",
 		"/C/fw195/Gestool/prg/Accesscode.prg",
 		"/C/fw195/Gestool/prg/Empdata.prg",
-		"/C/fw195/Gestool/prg/Albcli.prg",
 		"/C/fw195/Gestool/prg/Utildbf.prg",
 		"/C/fw195/Gestool/prg/Tgrpfam.prg",
 		"/C/fw195/Gestool/prg/Familia.prg",
 		"/C/fw195/Gestool/prg/Tipart.prg",
 		"/C/fw195/Gestool/prg/Provee.prg",
-		"/C/fw195/Gestool/prg/Client.prg",
-		"/C/fw195/Gestool/prg/Factu.prg",
 		"/C/fw195/Gestool/prg/Producc.prg",
 		"/C/fw195/Gestool/prg/Trazalote.prg",
 		"/C/fw195/Gestool/prg/Tdetmaterial.prg",
 		"/C/fw195/Gestool/prg/TDetMaterial",
 		"/C/fw195/Gestool/prg/Tcomercio.prg",
-		"/C/fw195/Gestool/prg/Factcli.prg",
 		"/C/fw195/Gestool/prg/Pedcli.prg",
-		"/C/fw195/Gestool/prg/Precli.prg",
-		"/C/fw195/Gestool/prg/Facrec.prg",
-		"/C/fw195/Gestool/prg/Tpv.prg",
-		"/C/fw195/Gestool/prg/Satcli.prg",
 		"/C/fw195/Gestool/prg/Recprv.prg",
-		"/C/fw195/Gestool/prg/Rectprv.prg",
-		"/C/fw195/Gestool/prg/Factprv.prg",
-		"/C/fw195/Gestool/prg/Albprov.prg",
-		"/C/fw195/Gestool/prg/Pedprov.prg",
 		"/C/fw195/Gestool/prg/Tfastventasarticulos.prg",
 		"/C/fw195/Gestool/prg/Tfastreportinfgen.prg",
 		"/C/fw195/Gestool/include/Factu.ch",
 		"/C/fw195/Gestool/prg/pedcli",
 		"/C/Users/Villa/Desktop/reveal/reveal.css",
-		"/C/fw195/Gestool/prg/Articulo.prg",
 		"/C/fw195/Gestool/prg/Facauto.prg",
 		"/C/fw195/Gestool/prg/Tdetfacautomatica.prg",
 		"/C/Users/Villa/Desktop/enviar_email_ajax/enviar_email_ajax/enviar.php",
@@ -677,7 +683,6 @@
 		"/C/AppServ/www/zemtrum/inicio/inicio.html",
 		"/C/Users/Villa/Desktop/inicio/inicio.html",
 		"/C/fw195/Gestool/prg/Tdbf.prg",
-		"/C/fw195/Gestool/prg/Empresa.prg",
 		"/C/fw195/Gestool/include/Empresa.ch",
 		"/C/AppServ/www/zemtrum/themes/zemtrum/category.tpl",
 		"/C/AppServ/www/zemtrum/themes/zemtrum/css/category.css",
@@ -738,12 +743,7 @@
 		"/C/fw195/Gestool/prg/Infagent.prg",
 		"/C/fw195/Gestool/prg/Tpvpda.prg",
 		"/C/fw195/Gestool/prg/Tpvlistaticket.prg",
-		"/C/fw195/Gestool/prg/Tutil.prg",
-		"/C/fw195/Gestool/prg/Categoria.prg",
-		"/C/fw195/Gestool/prg/tcomercio",
-		"/C/fw195/Gestool/prg/Rptgal.prg",
-		"/C/fw195/Gestool/prg/Tgesped.prg",
-		"/C/fw195/Gestool/prg/Edm.prg"
+		"/C/fw195/Gestool/prg/Tutil.prg"
 	],
 	"find":
 	{
@@ -785,6 +785,36 @@
 		"case_sensitive": false,
 		"find_history":
 		[
+			"on acol",
+			"on syn",
+			"on aitm",
+			"on syn",
+			"on acol",
+			"on syn",
+			"on aitm",
+			"on syn",
+			"on aitm",
+			"on acol",
+			"on syn",
+			"on aitm",
+			"on acol",
+			"on aitm",
+			"on syn",
+			"on rx",
+			"on aitm",
+			"on syn",
+			"on aitm",
+			"cart",
+			"cart ",
+			"cart",
+			"aStockArticulo",
+			"dlgTooltip",
+			"tooltip",
+			"beg",
+			"on aitm",
+			"on RJust",
+			"\"0",
+			"0",
 			"just",
 			"\"00\"",
 			"TstEmpresa",
@@ -882,37 +912,7 @@
 			"SaveToDisk",
 			"addtmpindex",
 			"makedir",
-			"mkdir",
-			"AppendImagesPrestashop",
-			"exportarp",
-			"ntipweb",
-			"121",
-			"lart",
-			"od exportarp",
-			"exportar",
-			"ometerl",
-			"meterglobaltext",
-			"od meterglobaltext",
-			"odmeterglobaltext",
-			"meterglobaltext",
-			"meter",
-			"importarprestashop",
-			"nTotMeter",
-			"meter",
-			"ntotalmeter",
-			"::oMeterL",
-			"od MeterGlobalText",
-			"MeterGlobalText",
-			"::oBtnExportar",
-			"ImportarPrestashop",
-			"od exporta",
-			"exporta",
-			"exportar",
-			"ChangeSincAll",
-			"sincronizar",
-			"exportarpre",
-			"nexportar",
-			"oBtnImportar"
+			"mkdir"
 		],
 		"highlight": true,
 		"in_selection": false,
@@ -1078,46 +1078,44 @@
 				},
 				{
 					"buffer": 5,
-					"file": "prg/Factu.prg",
+					"file": "prg/Pedcli.prg",
 					"settings":
 					{
-						"buffer_size": 185107,
+						"buffer_size": 648972,
 						"regions":
 						{
 						},
 						"selection":
 						[
 							[
-								25065,
-								25065
+								254569,
+								254751
 							]
 						],
 						"settings":
 						{
-							"syntax": "Packages/harbour/harbour/Harbour.tmLanguage",
-							"tab_size": 3,
-							"translate_tabs_to_spaces": true
+							"syntax": "Packages/harbour/harbour/Harbour.tmLanguage"
 						},
 						"translation.x": 0.0,
-						"translation.y": 18211.0,
+						"translation.y": 135346.0,
 						"zoom_level": 1.0
 					},
 					"type": "text"
 				},
 				{
 					"buffer": 6,
-					"file": "prg/Usuario.prg",
+					"file": "prg/Albcli.prg",
 					"settings":
 					{
-						"buffer_size": 80601,
+						"buffer_size": 636176,
 						"regions":
 						{
 						},
 						"selection":
 						[
 							[
-								63868,
-								63876
+								273547,
+								273547
 							]
 						],
 						"settings":
@@ -1127,25 +1125,25 @@
 							"translate_tabs_to_spaces": true
 						},
 						"translation.x": 0.0,
-						"translation.y": 47623.0,
+						"translation.y": 149824.0,
 						"zoom_level": 1.0
 					},
 					"type": "text"
 				},
 				{
 					"buffer": 7,
-					"file": "prg/Empresa.prg",
+					"file": "prg/Factcli.prg",
 					"settings":
 					{
-						"buffer_size": 265067,
+						"buffer_size": 0,
 						"regions":
 						{
 						},
 						"selection":
 						[
 							[
-								96908,
-								96908
+								0,
+								0
 							]
 						],
 						"settings":
@@ -1155,7 +1153,7 @@
 							"translate_tabs_to_spaces": true
 						},
 						"translation.x": 0.0,
-						"translation.y": 61569.0,
+						"translation.y": 0.0,
 						"zoom_level": 1.0
 					},
 					"type": "text"

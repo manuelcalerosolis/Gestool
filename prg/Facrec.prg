@@ -2578,6 +2578,7 @@ STATIC FUNCTION EdtRec( aTmp, aGet, dbfFacRecT, oBrw, cCodCli, cCodArt, nMode, a
 
       oBrwLin:bClrSel         := {|| { CLR_BLACK, Rgb( 229, 229, 229 ) } }
       oBrwLin:bClrSelFocus    := {|| { CLR_BLACK, Rgb( 167, 205, 240 ) } }
+      oBrwLin:bClrStd         := {|| { if( ( dbfTmpLin )->lKitChl, CLR_GRAY, CLR_BLACK ), GetSysColor( COLOR_WINDOW ) } }
 
       oBrwLin:cAlias          := dbfTmpLin
 
