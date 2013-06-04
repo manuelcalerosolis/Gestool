@@ -228,8 +228,8 @@ Method Create( cCodUsr, dbfUser, dbfCajas, cOldUsr, lCreateHandle )
 
    ::cCodigoUsuario           := cCodUsr
 
-   /*oBlock                     := ErrorBlock( {| oError | ApoloBreak( oError ) } )
-   BEGIN SEQUENCE*/
+   oBlock                     := ErrorBlock( {| oError | ApoloBreak( oError ) } )
+   BEGIN SEQUENCE                                                    
 
    ::OpenFiles( dbfUser, dbfCajas )
 
@@ -292,7 +292,9 @@ Method Create( cCodUsr, dbfUser, dbfCajas, cOldUsr, lCreateHandle )
          */
 
          if !Empty( ( ::oDbf )->cCodDlg )
-            ::cDelegacion(    ( ::oDbf )->cCodDlg )
+            if !::lMaster()
+               ::cDelegacion( ( ::oDbf )->cCodDlg )
+            end if
          end if
 
          /*
@@ -327,13 +329,13 @@ Method Create( cCodUsr, dbfUser, dbfCajas, cOldUsr, lCreateHandle )
 
    ::CloseFiles()
 
-   /*RECOVER USING oError
+   RECOVER USING oError
 
       msgStop( "Imposible seleccionar propiedades de usuarios " + CRLF + ErrorMessage( oError ) )
 
    END SEQUENCE
 
-   ErrorBlock( oBlock )*/
+   ErrorBlock( oBlock )
 
 Return ( Self )
 
@@ -353,26 +355,30 @@ Method Save( dbfUser, dbfCajas )
 
          if dbSeekInOrd( ::cCodigoUsuario, "cCodUse", ::oDbf ) .and. ( ::oDbf )->( dbRLock() )
 
-            ( ::oDbf )->lUseUse  := ::lEnUso()
-            ( ::oDbf )->cNbrUse  := ::cNombre()
-            ( ::oDbf )->cImagen  := ::cImagen()
-            ( ::oDbf )->cCajUse  := ::cCaja()
-            ( ::oDbf )->cAlmUse  := ::cAlmacen()
-            ( ::oDbf )->cEmpUse  := ::cEmpresa()
-            ( ::oDbf )->lSelFam  := ::lSelectorFamilia()
-            ( ::oDbf )->lUsrZur  := ::lUsrZur()
-            ( ::oDbf )->nGrpUse  := ::nGrupoUsuario()
-            ( ::oDbf )->cPcnUse  := ::cPcName()
-            ( ::oDbf )->cCodDlg  := ::cDelegacion()
-            ( ::oDbf )->lAlerta  := ::lAlerta()
-            ( ::oDbf )->cCodGrp  := ::cGrupo()
+            ( ::oDbf )->lUseUse     := ::lEnUso()
+            ( ::oDbf )->cNbrUse     := ::cNombre()
+            ( ::oDbf )->cImagen     := ::cImagen()
+            ( ::oDbf )->cCajUse     := ::cCaja()
+            ( ::oDbf )->cAlmUse     := ::cAlmacen()
+            ( ::oDbf )->cEmpUse     := ::cEmpresa()
+            ( ::oDbf )->lSelFam     := ::lSelectorFamilia()
+            ( ::oDbf )->lUsrZur     := ::lUsrZur()
+            ( ::oDbf )->nGrpUse     := ::nGrupoUsuario()
+            ( ::oDbf )->cPcnUse     := ::cPcName()
+            
+            if !::lMaster()
+               ( ::oDbf )->cCodDlg  := ::cDelegacion()
+            end if
 
-            ( ::oDbf )->lChgPrc  := ::_NotCambiarPrecio
-            ( ::oDbf )->lNotRnt  := ::_NotRentabilidad
-            ( ::oDbf )->lNotCos  := ::_NotCostos
-            ( ::oDbf )->lNotBmp  := ::_NotBitmap
-            ( ::oDbf )->lNotIni  := ::_NotInicio
-            ( ::oDbf )->cCodTra  := ::_Operario
+            ( ::oDbf )->lAlerta     := ::lAlerta()
+            ( ::oDbf )->cCodGrp     := ::cGrupo()
+
+            ( ::oDbf )->lChgPrc     := ::_NotCambiarPrecio
+            ( ::oDbf )->lNotRnt     := ::_NotRentabilidad
+            ( ::oDbf )->lNotCos     := ::_NotCostos
+            ( ::oDbf )->lNotBmp     := ::_NotBitmap
+            ( ::oDbf )->lNotIni     := ::_NotInicio
+            ( ::oDbf )->cCodTra     := ::_Operario
 
             ( ::oDbf )->( dbUnLock() )
 

@@ -1246,6 +1246,9 @@ METHOD Resource( nMode )
          :nHeadStrAlign := 1
       end with
 
+      
+if !oUser():lNotCostos()
+
       with object ( ::oBrwDet:addCol() )
          :cHeader       := "Importe"
          :bEditValue    := {|| ::oDetMovimientos:oDbfVir:FieldGetByName( "nPreDiv" ) }
@@ -1265,6 +1268,8 @@ METHOD Resource( nMode )
          :nHeadStrAlign := 1
          :nFootStrAlign := 1
       end with
+
+end if      
 
       with object ( ::oBrwDet:addCol() )
          :cHeader       := "Total peso"

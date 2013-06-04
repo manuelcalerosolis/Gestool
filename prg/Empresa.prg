@@ -284,21 +284,17 @@ FUNCTION Empresa( oMenuItem, oWnd )
 						"Nombre";
          MRU      "Office_Building_16";
          BITMAP   clrTopArchivos ;
-         APPEND   ( if( oUser():lCambiarEmpresa(), WinAppRec( nil, bEdit, dbfEmp ), ) );
-         EDIT     ( if( oUser():lCambiarEmpresa(), WinEdtRec( oWndBrw:oBrw, bEdit, dbfEmp ), ) ) ;
-         DELETE   ( if( oUser():lCambiarEmpresa(), WinDelEmp( oWndBrw:oBrw, dbfEmp ), ) ) ;
-         DUPLICAT ( if( oUser():lCambiarEmpresa(), WinDupRec( oWndBrw:oBrw, bEdit, dbfEmp ), ) );
+         APPEND   ( WinAppRec( nil, bEdit, dbfEmp ) );
+         EDIT     ( WinEdtRec( oWndBrw:oBrw, bEdit, dbfEmp ) ) ;
+         DELETE   ( WinDelEmp( oWndBrw:oBrw, dbfEmp ) ) ;
+         DUPLICAT ( WinDupRec( oWndBrw:oBrw, bEdit, dbfEmp ) );
          LEVEL    nLevel ;
          XBROWSE ;
          OF       oWnd
 
       oWndBrw:lAutoPos           := .f.
 
-   if oUser():lCambiarEmpresa()
       oWndBrw:oBrw:bLDblClick    := {|| SetEmpresa( ( dbfEmp )->CodEmp, dbfEmp, dbfDlg, dbfUser, nil, oWnd ), if( !Empty( oWndBrw ), oWndBrw:End( .t. ), ) }
-   else
-      oWndBrw:oBrw:bLDblClick    := {|| nil }
-   end if 
 
       // Columnas ---------------------------------------------------------------
 
@@ -340,8 +336,6 @@ FUNCTION Empresa( oMenuItem, oWnd )
 
       oWndBrw:AddSeaBar()
 
-   if oUser():lCambiarEmpresa()
-
       DEFINE BTNSHELL RESOURCE "SEL" OF oWndBrw ;
 			NOBORDER ;
          ACTION   ( Eval( oWndBrw:oBrw:bLDblClick ) ) ;
@@ -358,16 +352,6 @@ FUNCTION Empresa( oMenuItem, oWnd )
          BEGIN GROUP ;
          LEVEL    ACC_APPD
 
-      /*
-      DEFINE BTNSHELL RESOURCE "FACTORY_ADD2_" GROUP OF oWndBrw ;
-			NOBORDER ;
-         ACTION   ( WinAppRec( oWndBrw:oBrw, bEdtGrp, dbfEmp ) );
-         TOOLTIP  "Añadir (g)rupo";
-         HOTKEY   "G" ;
-         BEGIN GROUP ;
-         LEVEL    ACC_APPD
-      */
-
       DEFINE BTNSHELL RESOURCE "EDIT" OF oWndBrw ;
 			NOBORDER ;
          ACTION   ( oWndBrw:RecEdit() );
@@ -376,8 +360,6 @@ FUNCTION Empresa( oMenuItem, oWnd )
          HOTKEY   "M" ;
          LEVEL    ACC_EDIT
 
-   end if
-
       DEFINE BTNSHELL RESOURCE "ZOOM" OF oWndBrw ;
 			NOBORDER ;
          ACTION   ( if( ( dbfEmp )->lGrupo, WinZooRec( oWndBrw:oBrw, bEdtGrp, dbfEmp ), WinZooRec( oWndBrw:oBrw, bEdit, dbfEmp ) ) );
@@ -385,8 +367,6 @@ FUNCTION Empresa( oMenuItem, oWnd )
          MRU ;
          HOTKEY   "Z";
          LEVEL    ACC_ZOOM
-
-   if oUser():lCambiarEmpresa()
 
       DEFINE BTNSHELL RESOURCE "DEL" OF oWndBrw ;
 			NOBORDER ;
@@ -408,8 +388,6 @@ FUNCTION Empresa( oMenuItem, oWnd )
          TOOLTIP  "Ac(t)ualizar ficheros";
          HOTKEY   "T" ;
          LEVEL    ACC_EDIT
-
-   end if
 
       DEFINE BTNSHELL RESOURCE "END1" GROUP OF oWndBrw ;
 			NOBORDER ;
@@ -3147,9 +3125,13 @@ Function SetEmpresa( cCodEmp, dbfEmp, dbfDlg, dbfUsr, oBrw, oWnd, lSoft )
       Empresa()
    end if
 
+   //?"Comprobamos que tenga delegacion para ponerla"
+   //?oUser():lCambiarEmpresa
+   //?oUser():_EmpresaFija
+   //?oUser():_Delegacion
+
    /*
    Comprobamos q el codigo de la delegacion no este vacio----------------------
-
    cCodigoDelegacionEnUso( "00" )
    */
 
