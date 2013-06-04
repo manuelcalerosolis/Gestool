@@ -2944,6 +2944,8 @@ Function SetEmpresa( cCodEmp, dbfEmp, dbfDlg, dbfUsr, oBrw, oWnd, lSoft )
    local lCloDlg     := .f.
    local lCloEmp     := .f.
    local lCloUsr     := .f.
+   local lCmbEmpUsr  := oUser():lCambiarEmpresa
+   local cCodEmpUsr  := oUser():_EmpresaFija
 
    DEFAULT lSoft     := .f.
 
@@ -3125,10 +3127,20 @@ Function SetEmpresa( cCodEmp, dbfEmp, dbfDlg, dbfUsr, oBrw, oWnd, lSoft )
       Empresa()
    end if
 
-   //?"Comprobamos que tenga delegacion para ponerla"
-   //?oUser():lCambiarEmpresa
-   //?oUser():_EmpresaFija
-   //?oUser():_Delegacion
+   /*
+   Comprobamos o seleccionamos la delegación con la que vamos a trabajar-------
+   */
+
+   if !lCmbEmpUsr .and.!Empty( cCodEmpUsr )
+
+      if !( dbfDlg )->( dbSeek( cCodEmp + RetFld( cCurUsr(), dbfUsr, "cCodDlg" ) ) )
+         SelectDelegacion()
+      else
+         oUser():cDelegacion( ( dbfDlg )->cCodDlg )
+         ChkTurno()    
+      end if 
+
+   end if
 
    /*
    Comprobamos q el codigo de la delegacion no este vacio----------------------
