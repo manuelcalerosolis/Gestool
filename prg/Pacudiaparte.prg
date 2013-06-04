@@ -41,7 +41,7 @@ METHOD Create()
    ::AddField( "nTotMaq",   "N", 16, 6,  {|| ::cPicImp },   "Tot. maquinas",  .t., "Tot. maquinaria"          , 14, .t. )
    ::AddField( "nVolumen",  "N", 16, 6,  {|| MasUnd()  },   "Tot. volumen",   .f., "Tot. volumen"             , 12, .t. )
    ::AddField( "nCosLit",   "N", 16, 6,  {|| ::cPicImp },   "Costo/litro",    .f., "Costo/litro"              , 14, .t. )
-   ::AddField( "dFecMov",  "D",  8, 0 , {|| "@!" },       "Fec. inicio",  .f., "Fecha de inicio"             , 12, .f. )
+   ::AddField( "dFecMov",  "D",   8, 0 , {|| "@!" },        "Fec. inicio",    .f., "Fecha de inicio"          , 12, .f. )
 
 RETURN ( self )
 
@@ -60,7 +60,9 @@ METHOD OpenFiles() CLASS PAcuDiaParte
    RECOVER
 
       msgStop( 'Imposible abrir todas las bases de datos' )
+      
       ::CloseFiles()
+      
       lOpen          := .f.
 
    END SEQUENCE
@@ -177,8 +179,11 @@ METHOD lGenerate() CLASS PAcuDiaParte
       cExpHead    += ' .and. ' + ::oFilter:cExpFilter
    end if
 
+   ::oMtrInf:SetText( "Creando filtros" )
+
    ::oProduccT:oDbf:AddTmpIndex( cCurUsr(), GetFileNoExt( ::oProduccT:oDbf:cFile ), ::oProduccT:oDbf:OrdKey(), ( cExpHead ), , , , , , , , .t. )
 
+   ::oMtrInf:SetText( "Generando informe" )
    ::oMtrInf:SetTotal( ::oProduccT:oDbf:OrdKeyCount() )
 
    ::oProduccT:oDbf:GoTop()
@@ -205,6 +210,7 @@ METHOD lGenerate() CLASS PAcuDiaParte
             ::oDbf:cCodOpe    := ::oProduccT:oDbf:cCodOpe
             ::oDbf:cCodSec    := ::oProduccT:oDbf:cCodSec
             ::oDbf:cCodAlm    := ::oProduccT:oDbf:cAlmOrd
+            ::oDbf:dFecMov    := ::oProduccT:oDbf:dFecOrd
             ::oDbf:cCodTOpe   := cCodTipoOperacion
             ::oDbf:cNomTOpe   := oRetFld( cCodTipoOperacion, ::oProduccT:oOperacion:oTipOpera:oDbf, "cDesTip" )
             ::oDbf:cNomOpe    := oRetFld( ::oDbf:cCodOpe, ::oOperacion:oDbf )
@@ -217,7 +223,6 @@ METHOD lGenerate() CLASS PAcuDiaParte
             ::oDbf:nTotMaq    := ::oProduccT:nTotalMaquina( ::oProduccT:oDbf:cSerOrd + Str( ::oProduccT:oDbf:nNumOrd ) + ::oProduccT:oDbf:cSufOrd )
             ::oDbf:nVolumen   := ::oProduccT:nTotalVolumen( ::oProduccT:oDbf:cSerOrd + Str( ::oProduccT:oDbf:nNumOrd ) + ::oProduccT:oDbf:cSufOrd )
             ::oDbf:nCosLit    := ( ::oDbf:nTotMat + ::oDbf:nTotPer + ::oDbf:nTotMaq ) / ::oDbf:nVolumen
-            ::oDbf:dFecMov    := ::oProduccT:oDbf:dFecOrd
 
             ::oDbf:Save()
 

@@ -286,11 +286,6 @@ Return cCajUsr
 
 init procedure RddInit()
 
-#ifdef __SQLLIB__
-   REQUEST SQLRDD             // SQLRDD should be linked in
-   REQUEST SR_MYSQL           // Needed if you plan to use native connection to MySQL
-#endif
-
    REQUEST DBFCDX
    REQUEST DBFFPT
 
@@ -303,93 +298,6 @@ init procedure RddInit()
 return
 
 //---------------------------------------------------------------------------//
-/*
-FUNCTION ReportGalery()
-
-   local oDlg
-   local oLstTipoGaleria
-   local oImgTipoGaleria
-   local oImgArbolGaleria
-   local oTrvArbolGaleria
-
-   IsReportFolder()
-
-   if !lOpenFiles()
-      return nil
-   end if
-
-   CreateVentasReportGalery( oTrvArbolGaleria, .t. )
-   CreateComprasReportGalery( oTrvArbolGaleria, .t. )
-   CreateExistenciasReportGalery( oTrvArbolGaleria, .t. )
-   CreateProduccionReportGalery( oTrvArbolGaleria, .t. )
-
-   DEFINE DIALOG  oDlg ;
-      RESOURCE    "ReportGalery" ;
-      TITLE       __GSTROTOR__ + Space( 1 ) + __GSTVERSION__ + " - Galeria de informes : " + cCodEmp() + " - " + cNbrEmp()
-
-   oImgTipoGaleria   := TImageList():New( 32, 32 )
-
-   oImgTipoGaleria:AddIcon( "Money2" )
-   oImgTipoGaleria:AddIcon( "Truck_Red" )
-   oImgTipoGaleria:AddIcon( "Package" )
-   oImgTipoGaleria:AddIcon( "Worker_32" )
-   oImgTipoGaleria:AddIcon( "Star_Yellow" )
-
-   oLstTipoGaleria   := TListView():Redefine( 100, oDlg, {| nOption | SelectReportGalery( nOption, oTrvArbolGaleria ) } )
-
-   oImgArbolGaleria              := TImageList():New()
-
-   oTrvArbolGaleria              := TTreeView():Redefine( 110, oDlg  )
-   oTrvArbolGaleria:bLDblClick   := {|| ExecuteReportGalery( oTrvArbolGaleria ) }
-
-   REDEFINE BUTTONBMP oBtnAddFavorito ;
-      ID       120 ;
-      OF       oDlg ;
-      ACTION   ( AddFavorito( oTrvArbolGaleria ) );
-      TEXTRIGHT ;
-      BITMAP   "Star_Yellow_Add_16" ;
-
-   REDEFINE BUTTONBMP oBtnEditFavorito ;
-      ID       130 ;
-      OF       oDlg ;
-      ACTION   ( EditFavorito( oTrvArbolGaleria ) );
-      TEXTRIGHT ;
-      BITMAP   "Star_Yellow_Edit_16" ;
-
-   REDEFINE BUTTONBMP oBtnDelFavorito ;
-      ID       140 ;
-      OF       oDlg ;
-      ACTION   ( DelFavorito( oTrvArbolGaleria ) );
-      TEXTRIGHT ;
-      BITMAP   "Star_Yellow_Del_16" ;
-
-   REDEFINE BUTTON ;
-      ID       1 ;
-      OF       oDlg ;
-      ACTION   ExecuteReportGalery( oTrvArbolGaleria )
-
-   REDEFINE BUTTON ;
-      ID       2 ;
-      OF       oDlg ;
-      ACTION   oDlg:End()
-
-    REDEFINE BUTTON ;
-      ID       998 ;
-      OF       oDlg ;
-      ACTION   ( ChmHelp( "GaleriadeInformes" ) )
-
-   oDlg:AddFastKey( VK_F1, {|| ChmHelp( "GaleriadeInformes" ) } )
-   oDlg:AddFastKey( VK_F5, {|| ExecuteReportGalery( oTrvArbolGaleria ) } )
-
-   ACTIVATE DIALOG oDlg CENTERED ;
-      ON INIT  ( OnInitReportGalery( oLstTipoGaleria, oImgTipoGaleria, oImgArbolGaleria, oTrvArbolGaleria ) )
-
-   CloseFiles()
-
-Return nil
-*/
-
-//----------------------------------------------------------------------------//
 
 Static Function OnInitReportGalery( oLstTipoGaleria, oImgTipoGaleria, oImgArbolGaleria, oTrvArbolGaleria )
 
@@ -490,7 +398,9 @@ Static Function lOpenFiles()
    RECOVER
 
       msgStop( "Imposible abrir todas las bases de datos necesarias para la galería." )
+      
       CloseFiles()
+      
       lOpen       := .f.
 
    END SEQUENCE

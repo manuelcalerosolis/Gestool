@@ -7165,7 +7165,7 @@ METHOD DataReport() CLASS TpvTactil
 
    ::oFastReport:ClearDataSets()
 
-   ::oFastReport:SetWorkArea(       "Tickets", ::oTiketCabecera:nArea, .f., { FR_RB_CURRENT, FR_RB_CURRENT, 0 } )
+   ::oFastReport:SetWorkArea(       "Tickets", ::oTiketCabecera:nArea )
    ::oFastReport:SetFieldAliases(   "Tickets", cItemsToReport( aItmTik() ) )
 
    ::oFastReport:SetWorkArea(       "Lineas de tickets", ::oTiketLinea:nArea )
@@ -7239,6 +7239,8 @@ RETURN ( Self )
 //------------------------------------------------------------------------//
 
 METHOD BuildRelationReport() CLASS TpvTactil
+
+   ::oFastReport:SetWorkArea( "Tickets", ::oTiketCabecera:nArea, .f., { FR_RB_CURRENT, FR_RB_CURRENT, 0 } )
 
    ::oFastReport:SetMasterDetail( "Tickets", "Empresa",            {|| cCodigoEmpresaEnUso() } )
    ::oFastReport:SetMasterDetail( "Tickets", "Lineas de tickets",  {|| ::oTiketCabecera:cSerTik + ::oTiketCabecera:cNumTik + ::oTiketCabecera:cSufTik } )

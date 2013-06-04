@@ -2324,7 +2324,7 @@ Static Function LoadPresupuestoCliente( cCodArt, nYear )
             oDbfTmp:nFacCnv   := ( dbfPreCliL )->nFacCnv
             oDbfTmp:nImpDoc   := nTotUPreCli( dbfPreCliL, nDouDiv )
             oDbfTmp:nDtoDoc   := ( dbfPreCliL )->nDto
-            oDbfTmp:nTotDoc   := nTotLPreCli( dbfPreCliT, dbfPreCliL, nDouDiv, nDorDiv )
+            oDbfTmp:nTotDoc   := nTotLPreCli( dbfPreCliL, nDouDiv, nDorDiv )
             oDbfTmp:Save()
 
          end if

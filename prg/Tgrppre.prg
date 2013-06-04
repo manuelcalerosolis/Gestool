@@ -199,7 +199,7 @@ METHOD lGenerate() CLASS TInfMovPre
                      ::oDbf:NNUMCAJ := ::oPreCliL:NCANENT
                      ::oDbf:NUNIDAD := ::oPreCliL:NUNICAJA
                      ::oDbf:NNUMUND := NotCaja( ::oPreCliL:NCANENT ) * ::oPreCliL:NUNICAJA
-                     ::oDbf:NIMPART := nTotLPreCli( ::oPreCliT:cAlias, ::oPreCliL:cAlias, ::nDerOut, ::nValDiv )
+                     ::oDbf:NIMPART := nTotLPreCli( ::oPreCliL:cAlias, ::nDerOut, ::nValDiv )
                      ::oDbf:NCOMAGE := ::oPreCliL:NCOMAGE
                      ::oDbf:Save()
 
@@ -208,7 +208,7 @@ METHOD lGenerate() CLASS TInfMovPre
                      ::oDbf:NNUMCAJ += ::oPreCliL:NCANENT
                      ::oDbf:NUNIDAD += ::oPreCliL:NUNICAJA
                      ::oDbf:NNUMUND += NotCaja( ::oPreCliL:NCANENT ) * ::oPreCliL:NUNICAJA
-                     ::oDbf:NIMPART += nTotLPreCli( ::oPreCliT:cAlias, ::oPreCliL:cAlias, ::nDerOut, ::nValDiv )
+                     ::oDbf:NIMPART += nTotLPreCli( ::oPreCliL:cAlias, ::nDerOut, ::nValDiv )
                      ::oDbf:NCOMAGE += ::oPreCliL:NCOMAGE
                      ::oDbf:Save()
 

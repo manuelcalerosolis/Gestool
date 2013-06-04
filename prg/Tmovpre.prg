@@ -196,8 +196,8 @@ METHOD lGenerate() CLASS TMovPreInf
                      ::oDbf:NNUMCAJ := ::oPreCliL:NCANENT
                      ::oDbf:NUNIDAD := ::oPreCliL:NUNICAJA
                      ::oDbf:NNUMUND := NotCaja( ::oPreCliL:NCANENT ) * ::oPreCliL:NUNICAJA
-                     ::oDbf:NIMPART := nTotLPreCli( ::oPreCliT:cAlias, ::oPreCliL:cAlias, ::nDerOut, ::nDerOut, ::nValDiv )
-                     ::oDbf:NTOTIMP := nTotLPreCli( ::oPreCliT:cAlias, ::oPreCliL:cAlias, ::nDecOut, ::nDerOut, ::nValDiv )
+                     ::oDbf:NIMPART := nTotLPreCli( ::oPreCliL:cAlias, ::nDerOut, ::nDerOut, ::nValDiv )
+                     ::oDbf:NTOTIMP := nTotLPreCli( ::oPreCliL:cAlias, ::nDecOut, ::nDerOut, ::nValDiv )
                      ::oDbf:NCOMAGE := ::oPreCliL:NCOMAGE
 
                      IF ::oDbfCli:Seek ( ::oPreCliT:CCODCLI )
@@ -230,8 +230,8 @@ METHOD lGenerate() CLASS TMovPreInf
                      ::oDbf:NNUMCAJ += ::oPreCliL:NCANENT
                      ::oDbf:NUNIDAD += ::oPreCliL:NUNICAJA
                      ::oDbf:NNUMUND += NotCaja( ::oPreCliL:NCANENT ) * ::oPreCliL:NUNICAJA
-                     ::oDbf:NIMPART += nTotLPreCli( ::oPreCliT:cAlias, ::oPreCliL:cAlias, ::nDerOut, ::nDerOut, , , ::nValDiv )
-                     ::oDbf:NTOTIMP += nTotLPreCli( ::oPreCliT:cAlias, ::oPreCliL:cAlias, ::nDecOut, ::nDerOut, , , ::nValDiv )
+                     ::oDbf:NIMPART += nTotLPreCli( ::oPreCliL:cAlias, ::nDerOut, ::nDerOut, , , ::nValDiv )
+                     ::oDbf:NTOTIMP += nTotLPreCli( ::oPreCliL:cAlias, ::nDecOut, ::nDerOut, , , ::nValDiv )
                      ::oDbf:NCOMAGE += ::oPreCliL:NCOMAGE
 
                      ::oDbf:Save()

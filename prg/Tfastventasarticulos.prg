@@ -165,6 +165,7 @@ METHOD DataReport( oFr ) CLASS TFastVentasArticulos
 
          ::FastReportPresupuestoCliente()
 
+
       case ::cTypeName == "Informe de pedidos"
       
          ::FastReportPedidoCliente()
@@ -2320,6 +2321,8 @@ METHOD AddVariable() CLASS TFastVentasArticulos
       case ::cTypeName == "Informe de presupuestos"
 
          ::AddVariablePresupuestoCliente()
+
+         ::AddVariableLineasPresupuestoCliente()         
 
       case ::cTypeName == "Informe de pedidos"
       
