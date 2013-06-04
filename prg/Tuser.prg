@@ -102,7 +102,7 @@ CLASS TUser
    Method   lEnUso( lNewVal )          INLINE if( lNewVal != nil, ::_EnUso := lNewVal, ::_EnUso )
 
    Data     _Delegacion                INIT "00"
-   Method   cDelegacion( cNewVal )     INLINE if( cNewVal != nil, ( ::_Delegacion := cNewVal, cDlgUsr( cNewVal ) ), ::_Delegacion )
+   Method   cDelegacion( cNewVal )     INLINE if( cNewVal != nil, ( ::_Delegacion := cNewVal, cDlgUsr( cNewVal ) ), if( !Empty( uFieldEmpresa( "cSufDoc" ) ), ( ::_Delegacion := uFieldEmpresa( "cSufDoc" ), cDlgUsr( uFieldEmpresa( "cSufDoc" ) ) ), ::_Delegacion ) )
 
    Data     _NotCostos                 INIT .f.
    Method   lNotCostos( lNewVal )

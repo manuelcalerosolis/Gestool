@@ -284,17 +284,21 @@ FUNCTION Empresa( oMenuItem, oWnd )
 						"Nombre";
          MRU      "Office_Building_16";
          BITMAP   clrTopArchivos ;
-         APPEND   ( WinAppRec( nil, bEdit, dbfEmp ) );
-         EDIT     ( WinEdtRec( oWndBrw:oBrw, bEdit, dbfEmp ) ) ;
-         DELETE   ( WinDelEmp( oWndBrw:oBrw, dbfEmp ) ) ;
-         DUPLICAT ( WinDupRec( oWndBrw:oBrw, bEdit, dbfEmp ) );
+         APPEND   ( if( oUser():lCambiarEmpresa, WinAppRec( nil, bEdit, dbfEmp ), ) );
+         EDIT     ( if( oUser():lCambiarEmpresa, WinEdtRec( oWndBrw:oBrw, bEdit, dbfEmp ), ) ) ;
+         DELETE   ( if( oUser():lCambiarEmpresa, WinDelEmp( oWndBrw:oBrw, dbfEmp ), ) ) ;
+         DUPLICAT ( if( oUser():lCambiarEmpresa, WinDupRec( oWndBrw:oBrw, bEdit, dbfEmp ), ) );
          LEVEL    nLevel ;
          XBROWSE ;
          OF       oWnd
 
-      oWndBrw:lAutoPos           := .f.
+      oWndBrw:lAutoPos              := .f.
 
-      oWndBrw:oBrw:bLDblClick    := {|| SetEmpresa( ( dbfEmp )->CodEmp, dbfEmp, dbfDlg, dbfUser, nil, oWnd ), if( !Empty( oWndBrw ), oWndBrw:End( .t. ), ) }
+      if oUser():lCambiarEmpresa 
+         oWndBrw:oBrw:bLDblClick    := {|| SetEmpresa( ( dbfEmp )->CodEmp, dbfEmp, dbfDlg, dbfUser, nil, oWnd ), if( !Empty( oWndBrw ), oWndBrw:End( .t. ), ) }
+      else
+         oWndBrw:oBrw:bLDblClick    := {|| nil }
+      end if
 
       // Columnas ---------------------------------------------------------------
 
@@ -336,6 +340,8 @@ FUNCTION Empresa( oMenuItem, oWnd )
 
       oWndBrw:AddSeaBar()
 
+if oUser():lCambiarEmpresa
+
       DEFINE BTNSHELL RESOURCE "SEL" OF oWndBrw ;
 			NOBORDER ;
          ACTION   ( Eval( oWndBrw:oBrw:bLDblClick ) ) ;
@@ -360,6 +366,8 @@ FUNCTION Empresa( oMenuItem, oWnd )
          HOTKEY   "M" ;
          LEVEL    ACC_EDIT
 
+end if         
+
       DEFINE BTNSHELL RESOURCE "ZOOM" OF oWndBrw ;
 			NOBORDER ;
          ACTION   ( if( ( dbfEmp )->lGrupo, WinZooRec( oWndBrw:oBrw, bEdtGrp, dbfEmp ), WinZooRec( oWndBrw:oBrw, bEdit, dbfEmp ) ) );
@@ -367,6 +375,8 @@ FUNCTION Empresa( oMenuItem, oWnd )
          MRU ;
          HOTKEY   "Z";
          LEVEL    ACC_ZOOM
+
+if oUser():lCambiarEmpresa      
 
       DEFINE BTNSHELL RESOURCE "DEL" OF oWndBrw ;
 			NOBORDER ;
@@ -388,6 +398,8 @@ FUNCTION Empresa( oMenuItem, oWnd )
          TOOLTIP  "Ac(t)ualizar ficheros";
          HOTKEY   "T" ;
          LEVEL    ACC_EDIT
+
+end if         
 
       DEFINE BTNSHELL RESOURCE "END1" GROUP OF oWndBrw ;
 			NOBORDER ;
@@ -597,18 +609,22 @@ STATIC FUNCTION EdtRec( aTmp, aGet, dbfEmp, oBrw, bWhen, bValid, nMode )
 
    REDEFINE CHECKBOX aGet[ _LGRPCLI ] VAR aTmp[ _LGRPCLI ] ;
          ID       420 ;
+         WHEN     ( nMode != ZOOM_MODE ) ;
          OF       oFld:aDialogs[1]
 
    REDEFINE CHECKBOX aGet[ _LGRPPRV ] VAR aTmp[ _LGRPPRV ] ;
          ID       430 ;
+         WHEN     ( nMode != ZOOM_MODE ) ;
          OF       oFld:aDialogs[1]
 
    REDEFINE CHECKBOX aGet[ _LGRPART ] VAR aTmp[ _LGRPART ] ;
          ID       440 ;
+         WHEN     ( nMode != ZOOM_MODE ) ;
          OF       oFld:aDialogs[1]
 
    REDEFINE CHECKBOX aGet[ _LGRPALM ] VAR aTmp[ _LGRPALM ] ;
          ID       450 ;
+         WHEN     ( nMode != ZOOM_MODE ) ;
          OF       oFld:aDialogs[1]
 
    REDEFINE GET aGet[ _CDIVEMP ] VAR aTmp[ _CDIVEMP ];
@@ -1096,8 +1112,8 @@ STATIC FUNCTION EdtCnf( aTmp, aGet, dbfEmp, oBrw, nSelFolder, bValid, nMode )
    local oFnt
 	local oDlg
    local oFld
-   local oSay                    := Array( 46 )
-   local cSay                    := AFill( Array( 46 ), "" )
+   local oSay                    := Array( 47 )
+   local cSay                    := AFill( Array( 47 ), "" )
    local oError
    local oBlock
 
@@ -1220,6 +1236,8 @@ STATIC FUNCTION EdtCnf( aTmp, aGet, dbfEmp, oBrw, nSelFolder, bValid, nMode )
    cSay[ 41 ]              := aBnfSobre[ Max( aTmp[ _NDEFSBR6 ], 1 ) ]
 
    cSay[ 42 ]              := aCifRut[ Max( aTmp[ _NCIFRUT ], 1 ) ]
+
+   cSay[ 47 ]              := RetFld( aTmp[_CSUFDOC], dbfDlg, "cNomDlg" )
 
    cTiempoPed              := cTiempoToCadena( aTmp[ _NTIEMPOPED ] )
 
@@ -1482,6 +1500,18 @@ STATIC FUNCTION EdtCnf( aTmp, aGet, dbfEmp, oBrw, nSelFolder, bValid, nMode )
          ID       500 ;
          RESOURCE "Preferences_edit_48_alpha" ;
          TRANSPARENT ;
+         OF       oFld:aDialogs[2]
+
+      REDEFINE GET aGet[ _CSUFDOC ] VAR aTmp[ _CSUFDOC ];
+         ID       105 ;
+         VALID    ( cDelegacion( aGet[ _CSUFDOC ], dbfDlg, oSay[47], aTmp[ _CODEMP ] ) ) ;
+         BITMAP   "LUPA" ;
+         ON HELP  ( BrwDelegacion( aGet[ _CSUFDOC ], dbfDlg, oSay[47], aTmp[ _CODEMP ] ) ) ;
+         OF       oFld:aDialogs[2]
+
+      REDEFINE GET oSay[47] VAR cSay[47] ;
+         ID       106;
+         WHEN     .f. ;
          OF       oFld:aDialogs[2]
 
       REDEFINE GET aGet[ _CDEFCLI ] VAR aTmp[ _CDEFCLI ] ;
@@ -2187,10 +2217,6 @@ STATIC FUNCTION EdtCnf( aTmp, aGet, dbfEmp, oBrw, nSelFolder, bValid, nMode )
       REDEFINE COMBOBOX aGet[ _CENVUSR ] VAR aTmp[ _CENVUSR ] ;
             ITEMS    { "Cliente", "Servidor" } ;
             ID       100 ;
-            OF       oFld:aDialogs[6]
-
-      REDEFINE GET aTmp[ _CSUFDOC ];
-            ID       105 ;
             OF       oFld:aDialogs[6]
 
       REDEFINE RADIO aTmp[ _NTIPCON ] ;
@@ -2944,6 +2970,8 @@ Function SetEmpresa( cCodEmp, dbfEmp, dbfDlg, dbfUsr, oBrw, oWnd, lSoft )
    local lCloDlg     := .f.
    local lCloEmp     := .f.
    local lCloUsr     := .f.
+   local lCmbEmpUsr  := oUser():lCambiarEmpresa
+   local cCodEmpUsr  := oUser():_EmpresaFija
 
    DEFAULT lSoft     := .f.
 
@@ -3124,12 +3152,7 @@ Function SetEmpresa( cCodEmp, dbfEmp, dbfDlg, dbfUsr, oBrw, oWnd, lSoft )
    if !aEmpresa( cCodEmp, dbfEmp, dbfDlg, dbfUsr )
       Empresa()
    end if
-
-   //?"Comprobamos que tenga delegacion para ponerla"
-   //?oUser():lCambiarEmpresa
-   //?oUser():_EmpresaFija
-   //?oUser():_Delegacion
-
+   
    /*
    Comprobamos q el codigo de la delegacion no este vacio----------------------
    cCodigoDelegacionEnUso( "00" )
