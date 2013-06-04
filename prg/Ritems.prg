@@ -1467,7 +1467,7 @@ RETURN ( lMakeFiles )
 
 FUNCTION rxDocs( cPath, oMeter, cVia )
 
-	local cDbf
+   local cDbf
    local oBlock
    local oError
    local lReindexFiles  := .t.
