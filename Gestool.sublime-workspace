@@ -4,6 +4,10 @@
 		"selected_items":
 		[
 			[
+				"cCod",
+				"cCodArt"
+			],
+			[
 				"cFacPrv",
 				"cFacPrv"
 			],
@@ -510,10 +514,6 @@
 			[
 				"tax_ru",
 				"tax_rules_group"
-			],
-			[
-				"cPrefijo",
-				"cPrefijoBaseDatos"
 			]
 		]
 	},
@@ -560,26 +560,50 @@
 			}
 		},
 		{
-			"file": "prg/Pedcli.prg",
+			"file": "prg/Empresa.prg",
 			"settings":
 			{
-				"buffer_size": 648972,
+				"buffer_size": 264538,
 				"line_ending": "Windows"
 			}
 		},
 		{
-			"file": "prg/Albcli.prg",
+			"file": "prg/Comun.prg",
 			"settings":
 			{
-				"buffer_size": 636176,
+				"buffer_size": 75833,
 				"line_ending": "Windows"
 			}
 		},
 		{
-			"file": "prg/Factcli.prg",
+			"file": "prg/Usuario.prg",
 			"settings":
 			{
-				"buffer_size": 0,
+				"buffer_size": 80601,
+				"line_ending": "Windows"
+			}
+		},
+		{
+			"file": "prg/Tuser.prg",
+			"settings":
+			{
+				"buffer_size": 19935,
+				"line_ending": "Windows"
+			}
+		},
+		{
+			"file": "prg/Remmov.prg",
+			"settings":
+			{
+				"buffer_size": 156411,
+				"line_ending": "Windows"
+			}
+		},
+		{
+			"file": "prg/Movalm.prg",
+			"settings":
+			{
+				"buffer_size": 63871,
 				"line_ending": "Windows"
 			}
 		}
@@ -616,28 +640,36 @@
 	},
 	"file_history":
 	[
-		"/C/fw195/Gestool/prg/Tpv.prg",
-		"/C/fw195/Gestool/prg/Factcli.prg",
-		"/C/fw195/Gestool/prg/Facrec.prg",
-		"/C/fw195/Gestool/prg/Facant.prg",
+		"/C/fw195/Gestool/prg/tuser",
+		"/C/fw195/Gestool/prg/Pedcli.prg",
+		"/C/fw195/Gestool/prg/Precli.prg",
 		"/C/fw195/Gestool/prg/Satcli.prg",
 		"/C/fw195/Gestool/prg/Albcli.prg",
-		"/C/fw195/Gestool/prg/Precli.prg",
+		"/C/fw195/Gestool/prg/Facrec.prg",
+		"/C/fw195/Gestool/prg/Internet.prg",
+		"/C/fw195/Gestool/prg/Factcli.prg",
+		"/C/fw195/Gestool/prg/Empcnf.prg",
+		"/C/fw195/Gestool/bin/script/001.prg",
+		"/C/fw195/Gestool/include/Empresa.ch",
+		"/C/fw195/Gestool/prg/Empresa.prg",
+		"/C/fw195/Gestool/prg/Utildbf.prg",
+		"/C/fw195/Gestool/prg/Client.prg",
+		"/C/fw195/Gestool/prg/Tftp.prg",
+		"/C/Scripts creados/Inma Pepsi/001.prg",
+		"/C/fw195/Gestool/prg/Tpv.prg",
+		"/C/fw195/Gestool/prg/Facant.prg",
 		"/C/fw195/Gestool/prg/Factprv.prg",
 		"/C/fw195/Gestool/prg/Rectprv.prg",
 		"/C/fw195/Gestool/prg/Albprov.prg",
 		"/C/fw195/Gestool/prg/Pedprov.prg",
 		"/C/fw195/Gestool/prg/Articulo.prg",
-		"/C/fw195/Gestool/prg/Client.prg",
 		"/C/fw195/Gestool/prg/Stock.prg",
 		"/C/fw195/Gestool/prg/Xvalalm.prg",
 		"/C/fw195/Gestool/prg/Factu.prg",
 		"/C/fw195/Gestool/prg/Usuario.prg",
-		"/C/fw195/Gestool/prg/Empresa.prg",
 		"/C/fw195/Gestool/prg/Medicon.prg",
 		"/C/fw195/Gestool/prg/Accesscode.prg",
 		"/C/fw195/Gestool/prg/Empdata.prg",
-		"/C/fw195/Gestool/prg/Utildbf.prg",
 		"/C/fw195/Gestool/prg/Tgrpfam.prg",
 		"/C/fw195/Gestool/prg/Familia.prg",
 		"/C/fw195/Gestool/prg/Tipart.prg",
@@ -647,7 +679,6 @@
 		"/C/fw195/Gestool/prg/Tdetmaterial.prg",
 		"/C/fw195/Gestool/prg/TDetMaterial",
 		"/C/fw195/Gestool/prg/Tcomercio.prg",
-		"/C/fw195/Gestool/prg/Pedcli.prg",
 		"/C/fw195/Gestool/prg/Recprv.prg",
 		"/C/fw195/Gestool/prg/Tfastventasarticulos.prg",
 		"/C/fw195/Gestool/prg/Tfastreportinfgen.prg",
@@ -683,7 +714,6 @@
 		"/C/AppServ/www/zemtrum/inicio/inicio.html",
 		"/C/Users/Villa/Desktop/inicio/inicio.html",
 		"/C/fw195/Gestool/prg/Tdbf.prg",
-		"/C/fw195/Gestool/include/Empresa.ch",
 		"/C/AppServ/www/zemtrum/themes/zemtrum/category.tpl",
 		"/C/AppServ/www/zemtrum/themes/zemtrum/css/category.css",
 		"/C/AppServ/www/zemtrum/themes/zemtrum/css/product_list.css",
@@ -735,15 +765,9 @@
 		"/C/AppServ/www/zemtrum/footer.php",
 		"/C/fw195/Gestool/prg/Tscripts.prg",
 		"/C/fw195/Gestool/prg/Scrllbar.prg",
-		"/C/Scripts creados/Inma Pepsi/001.prg",
 		"/C/fw195/Gestool/prg/Turno.prg",
-		"/C/fw195/Gestool/prg/Empcnf.prg",
 		"/C/fw195/Gestool/prg/factcli",
-		"/C/fw195/Gestool/prg/Pacudiamaquinaria.prg",
-		"/C/fw195/Gestool/prg/Infagent.prg",
-		"/C/fw195/Gestool/prg/Tpvpda.prg",
-		"/C/fw195/Gestool/prg/Tpvlistaticket.prg",
-		"/C/fw195/Gestool/prg/Tutil.prg"
+		"/C/fw195/Gestool/prg/Pacudiamaquinaria.prg"
 	],
 	"find":
 	{
@@ -785,6 +809,53 @@
 		"case_sensitive": false,
 		"find_history":
 		[
+			"on setempresa",
+			"cambi",
+			"setempresa",
+			"on l",
+			"cCodigoDelegacionEnUso",
+			"on setempresa",
+			"ccoddlg",
+			"cDelegacion",
+			"ccoddlg",
+			"master",
+			"lmasterlike",
+			"master",
+			"ismaster",
+			"cdelegacion",
+			"ccoddlg",
+			"setusr",
+			"setuser",
+			"00",
+			"appDbf",
+			"tst",
+			"CCODDLG",
+			"on setempresa",
+			"cDlgUsr",
+			"cDelegacion",
+			"ccoddlg",
+			"dlg",
+			"on syn",
+			"\"00",
+			"\"00\"",
+			"ON EDTREC",
+			"on edtrec",
+			"obrwlin",
+			"ShowKit",
+			"obtnkit",
+			"Escandallo",
+			"lEscandallo",
+			"lEscandalloEdtRec",
+			"on lShwKit",
+			"lShwKit",
+			"ESCA",
+			"\"@",
+			"on cFirstPath",
+			"on aitm",
+			"160",
+			"on cSitFtp",
+			"@R",
+			"on aitm",
 			"on acol",
 			"on syn",
 			"on aitm",
@@ -865,54 +936,7 @@
 			"on nBrtLPedCli",
 			"AddRectificativaProveedor",
 			"tfastventasarticulos",
-			"on nTotuRctPrv",
-			"nTotuRctPrv",
-			"nTotLRctPrv",
-			"npreunit",
-			"class tcre",
-			"class cre",
-			"loaart",
-			"nretpreart",
-			"lPrcAtp",
-			"class",
-			"on dbpass",
-			"?",
-			"on edtrec",
-			"on nimpu",
-			"on edtrec",
-			"cpoudiv",
-			"on openfiles",
-			"cdivped",
-			"orotor",
-			"hHash",
-			"on edtrec",
-			"EdtRec",
-			"cPouDiv",
-			"orotor",
-			"header",
-			"/*",
-			"bottom",
-			"li ",
-			"a",
-			"nav",
-			";\n",
-			"lapelnomb",
-			"deletefile",
-			"DeleteImagesCategories",
-			"CopyFile",
-			"copy",
-			"xcopy",
-			"dirchange",
-			"WinExec",
-			"DirChange",
-			"addtmp",
-			"copy(",
-			"copy",
-			"oimage",
-			"SaveToDisk",
-			"addtmpindex",
-			"makedir",
-			"mkdir"
+			"on nTotuRctPrv"
 		],
 		"highlight": true,
 		"in_selection": false,
@@ -938,7 +962,7 @@
 	"groups":
 	[
 		{
-			"selected": 7,
+			"selected": 9,
 			"sheets":
 			[
 				{
@@ -1044,7 +1068,7 @@
 							"translate_tabs_to_spaces": false
 						},
 						"translation.x": 0.0,
-						"translation.y": 117.0,
+						"translation.y": 98.0,
 						"zoom_level": 1.0
 					},
 					"type": "text"
@@ -1078,44 +1102,18 @@
 				},
 				{
 					"buffer": 5,
-					"file": "prg/Pedcli.prg",
+					"file": "prg/Empresa.prg",
 					"settings":
 					{
-						"buffer_size": 648972,
+						"buffer_size": 264538,
 						"regions":
 						{
 						},
 						"selection":
 						[
 							[
-								254569,
-								254751
-							]
-						],
-						"settings":
-						{
-							"syntax": "Packages/harbour/harbour/Harbour.tmLanguage"
-						},
-						"translation.x": 0.0,
-						"translation.y": 135346.0,
-						"zoom_level": 1.0
-					},
-					"type": "text"
-				},
-				{
-					"buffer": 6,
-					"file": "prg/Albcli.prg",
-					"settings":
-					{
-						"buffer_size": 636176,
-						"regions":
-						{
-						},
-						"selection":
-						[
-							[
-								273547,
-								273547
+								94290,
+								94290
 							]
 						],
 						"settings":
@@ -1125,17 +1123,129 @@
 							"translate_tabs_to_spaces": true
 						},
 						"translation.x": 0.0,
-						"translation.y": 149824.0,
+						"translation.y": 58824.0,
+						"zoom_level": 1.0
+					},
+					"type": "text"
+				},
+				{
+					"buffer": 6,
+					"file": "prg/Comun.prg",
+					"settings":
+					{
+						"buffer_size": 75833,
+						"regions":
+						{
+						},
+						"selection":
+						[
+							[
+								0,
+								0
+							]
+						],
+						"settings":
+						{
+							"syntax": "Packages/harbour/harbour/Harbour.tmLanguage",
+							"tab_size": 3,
+							"translate_tabs_to_spaces": true
+						},
+						"translation.x": 0.0,
+						"translation.y": 0.0,
 						"zoom_level": 1.0
 					},
 					"type": "text"
 				},
 				{
 					"buffer": 7,
-					"file": "prg/Factcli.prg",
+					"file": "prg/Usuario.prg",
 					"settings":
 					{
-						"buffer_size": 0,
+						"buffer_size": 80601,
+						"regions":
+						{
+						},
+						"selection":
+						[
+							[
+								43447,
+								43452
+							]
+						],
+						"settings":
+						{
+							"syntax": "Packages/harbour/harbour/Harbour.tmLanguage",
+							"tab_size": 3,
+							"translate_tabs_to_spaces": true
+						},
+						"translation.x": 0.0,
+						"translation.y": 29858.0,
+						"zoom_level": 1.0
+					},
+					"type": "text"
+				},
+				{
+					"buffer": 8,
+					"file": "prg/Tuser.prg",
+					"settings":
+					{
+						"buffer_size": 19935,
+						"regions":
+						{
+						},
+						"selection":
+						[
+							[
+								4011,
+								4022
+							]
+						],
+						"settings":
+						{
+							"syntax": "Packages/harbour/harbour/Harbour.tmLanguage",
+							"tab_size": 3,
+							"translate_tabs_to_spaces": true
+						},
+						"translation.x": 0.0,
+						"translation.y": 1700.0,
+						"zoom_level": 1.0
+					},
+					"type": "text"
+				},
+				{
+					"buffer": 9,
+					"file": "prg/Remmov.prg",
+					"settings":
+					{
+						"buffer_size": 156411,
+						"regions":
+						{
+						},
+						"selection":
+						[
+							[
+								369,
+								369
+							]
+						],
+						"settings":
+						{
+							"syntax": "Packages/harbour/harbour/Harbour.tmLanguage",
+							"tab_size": 3,
+							"translate_tabs_to_spaces": true
+						},
+						"translation.x": 0.0,
+						"translation.y": 0.0,
+						"zoom_level": 1.0
+					},
+					"type": "text"
+				},
+				{
+					"buffer": 10,
+					"file": "prg/Movalm.prg",
+					"settings":
+					{
+						"buffer_size": 63871,
 						"regions":
 						{
 						},
