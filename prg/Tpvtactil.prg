@@ -7096,6 +7096,8 @@ METHOD BuildReport() CLASS TpvTactil
 
    SysRefresh()
 
+   ::nDispositivo := IS_SCREEN   
+
    /*
    Zona de datos------------------------------------------------------------
    */
@@ -7244,9 +7246,10 @@ METHOD BuildRelationReport() CLASS TpvTactil
 
    ::oFastReport:SetMasterDetail( "Tickets", "Empresa",            {|| cCodigoEmpresaEnUso() } )
    ::oFastReport:SetMasterDetail( "Tickets", "Lineas de tickets",  {|| ::oTiketCabecera:cSerTik + ::oTiketCabecera:cNumTik + ::oTiketCabecera:cSufTik } )
-   ::oFastReport:SetMasterDetail( "Tickets", "Pagos de tickets",   {|| ::oTiketCabecera:cSerTik + ::oTiketCabecera:cNumTik + ::oTiketCabecera:cSufTik } )
+   ::oFastReport:SetMasterDetail( "Tickets", "Lineas de comandas", {|| ::oTiketCabecera:cSerTik + ::oTiketCabecera:cNumTik + ::oTiketCabecera:cSufTik } )
    ::oFastReport:SetMasterDetail( "Tickets", "Lineas de albaranes",{|| ::oTiketCabecera:cNumDoc } )
    ::oFastReport:SetMasterDetail( "Tickets", "Lineas de facturas", {|| ::oTiketCabecera:cNumDoc } )
+   ::oFastReport:SetMasterDetail( "Tickets", "Pagos de tickets",   {|| ::oTiketCabecera:cSerTik + ::oTiketCabecera:cNumTik + ::oTiketCabecera:cSufTik } )
    ::oFastReport:SetMasterDetail( "Tickets", "Clientes",           {|| ::oTiketCabecera:cCliTik } )
    ::oFastReport:SetMasterDetail( "Tickets", "Obras",              {|| ::oTiketCabecera:cCliTik + ::oTiketCabecera:cCodObr } )
    ::oFastReport:SetMasterDetail( "Tickets", "Almacen",            {|| ::oTiketCabecera:cAlmTik } )
@@ -7268,13 +7271,13 @@ METHOD BuildRelationReport() CLASS TpvTactil
 
    else
 
-   ::oFastReport:SetMasterDetail( "Lineas de tickets", "Artículos",           {|| ::oTiketLinea:cCbaTil } )
-   ::oFastReport:SetMasterDetail( "Lineas de tickets", "Familia",             {|| ::oTiketLinea:cFamTil } )
-   ::oFastReport:SetMasterDetail( "Lineas de tickets", "Unidades de medición",{|| ::oTiketLinea:cUnidad } )
-   ::oFastReport:SetMasterDetail( "Lineas de tickets", "Categorías",          {|| RetFld( ::oTiketLinea:cCbaTil, ::oArticulo:cAlias, "cCodCate" ) } )
-   ::oFastReport:SetMasterDetail( "Lineas de tickets", "Tipos de artículos",  {|| RetFld( ::oTiketLinea:cCbaTil, ::oArticulo:cAlias, "cCodTip" ) } )
-   ::oFastReport:SetMasterDetail( "Lineas de tickets", "Fabricantes",         {|| RetFld( ::oTiketLinea:cCbaTil, ::oArticulo:cAlias, "cCodFab" ) } )
-   ::oFastReport:SetMasterDetail( "Lineas de tickets", "Temporadas",          {|| RetFld( ::oTiketLinea:cCbaTil, ::oArticulo:cAlias, "cCodTemp" ) } )
+   ::oFastReport:SetMasterDetail( "Lineas de tickets", "Artículos",              {|| ::oTiketLinea:cCbaTil } )
+   ::oFastReport:SetMasterDetail( "Lineas de tickets", "Familia",                {|| ::oTiketLinea:cFamTil } )
+   ::oFastReport:SetMasterDetail( "Lineas de tickets", "Unidades de medición",   {|| ::oTiketLinea:cUnidad } )
+   ::oFastReport:SetMasterDetail( "Lineas de tickets", "Categorías",             {|| RetFld( ::oTiketLinea:cCbaTil, ::oArticulo:cAlias, "cCodCate" ) } )
+   ::oFastReport:SetMasterDetail( "Lineas de tickets", "Tipos de artículos",     {|| RetFld( ::oTiketLinea:cCbaTil, ::oArticulo:cAlias, "cCodTip" ) } )
+   ::oFastReport:SetMasterDetail( "Lineas de tickets", "Fabricantes",            {|| RetFld( ::oTiketLinea:cCbaTil, ::oArticulo:cAlias, "cCodFab" ) } )
+   ::oFastReport:SetMasterDetail( "Lineas de tickets", "Temporadas",             {|| RetFld( ::oTiketLinea:cCbaTil, ::oArticulo:cAlias, "cCodTemp" ) } )
 
    end if 
 
@@ -7286,6 +7289,7 @@ METHOD BuildRelationReport() CLASS TpvTactil
    ::oFastReport:SetResyncPair(  "Tickets", "Lineas de comandas" )
    ::oFastReport:SetResyncPair(  "Tickets", "Lineas de albaranes" )
    ::oFastReport:SetResyncPair(  "Tickets", "Lineas de facturas" )
+   ::oFastReport:SetResyncPair(  "Tickets", "Pagos de tickets" )
    ::oFastReport:SetResyncPair(  "Tickets", "Empresa" )
    ::oFastReport:SetResyncPair(  "Tickets", "Clientes" )
    ::oFastReport:SetResyncPair(  "Tickets", "Obras" )
@@ -7294,8 +7298,6 @@ METHOD BuildRelationReport() CLASS TpvTactil
    ::oFastReport:SetResyncPair(  "Tickets", "Agentes" )
    ::oFastReport:SetResyncPair(  "Tickets", "Usuarios" )
    ::oFastReport:SetResyncPair(  "Tickets", "SalaVenta" )
-
-   ::oFastReport:SetResyncPair(  "Pagos de tickets", "Formas de pago" )
 
    if ::lComanda
 
@@ -7320,6 +7322,8 @@ METHOD BuildRelationReport() CLASS TpvTactil
    ::oFastReport:SetResyncPair(  "Lineas de tickets", "Temporadas" )
 
    end if 
+
+   ::oFastReport:SetResyncPair(  "Pagos de tickets", "Formas de pago" )
 
 Return nil
 
