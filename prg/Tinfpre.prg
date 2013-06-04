@@ -260,7 +260,7 @@ METHOD lGenerate()
                   ::oDbf:nUniCaj     := nTotNPreCli( ::oPreCliL )
                   ::oDbf:nPreArt     := nTotUPreCli( ::oPreCliL:cAlias, ::nDecOut, ::nValDiv )
                   ::oDbf:nBase       := nImpLPreCli( ::oPreCliT:cAlias, ::oPreCliL:cAlias, ::nDecOut, ::nDerOut, ::nValDiv )
-                  ::oDbf:nIva        := nIvaLPreCli( ::oPreCliT:cAlias, ::oPreCliL:cAlias, ::nDecOut, ::nDerOut, ::nValDiv )
+                  ::oDbf:nIva        := nIvaLPreCli( ::oPreCliL:cAlias, ::nDecOut, ::nDerOut, ::nValDiv )
                   ::oDbf:nTotal      := ::oDbf:nBase + ::oDbf:nIva
 
                   ::oDbf:Save()

@@ -7121,7 +7121,7 @@ FUNCTION nTotFPreCli( dbfLin, nDec, nRou, nVdv, lDto, lPntVer, lImpTrn, cPorDiv 
    DEFAULT lImpTrn   := .t.
 
    nCalculo          += nTotLPreCli( dbfLin, nDec, nRou, nVdv, lDto, lPntVer, lImpTrn )
-   nCalculo          += nIvaLPreCli( dbfLin, nDec, nVdv )
+   nCalculo          += nIvaLPreCli( dbfLin, nDec, nRou, nVdv, lDto, lPntVer, lImpTrn )
    
 
 return ( if( cPorDiv != nil, Trans( nCalculo, cPorDiv ), nCalculo ) )
@@ -7249,7 +7249,7 @@ RETURN ( nCalculo )
 
 //---------------------------------------------------------------------------//
 
-FUNCTION nIvaLPreCli( dbfT, dbfLin, nDec, nRouDec, nVdv, lDto, lPntVer, lImpTrn, cPouDiv )
+FUNCTION nIvaLPreCli( dbfLin, nDec, nRouDec, nVdv, lDto, lPntVer, lImpTrn, cPouDiv )
 
    local nCalculo := nTotLPreCli( dbfLin, nDec, nRouDec, nVdv, lDto, lPntVer, lImpTrn, cPouDiv )
 

@@ -296,7 +296,7 @@ METHOD lGenerate()
                         ::oDbf:nImpArt    := nTotUPreCli( ::oPreCliL:cAlias, ::nDecOut, ::nValDiv )
                         ::oDbf:nImpTrn    := nTrnUPreCli( ::oPreCliL:cAlias, ::nDecOut, ::nValDiv )
                         ::oDbf:nPntVer    := nPntUPreCli( ::oPreCliL:cAlias, ::nDecPnt, ::nValDiv )
-                        ::oDbf:nIvaTot    := nIvaLPreCli( ::oPreCliT:cAlias, ::oPreCliL:cAlias, ::nDecOut, ::nDerOut, ::nValDiv, .t., .t., .t. )
+                        ::oDbf:nIvaTot    := nIvaLPreCli( ::oPreCliL:cAlias, ::nDecOut, ::nDerOut, ::nValDiv, .t., .t., .t. )
                         ::oDbf:nTotFin    := ::oDbf:nImpTot + ::oDbf:nIvaTot
 
                      ::oDbf:Save()
