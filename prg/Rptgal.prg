@@ -720,7 +720,9 @@ Static Function CreateVentasReportGalery( oTrvArbolGaleria, lArray )
          AddInforme( lArray, oTrvDocumento, "Detalle de presupuestos por código postal y clientes", {|| TInfCPrePob():New( "Informe detallado de presupuestos por código postal y clientes" ):Play() } )
          AddInforme( lArray, oTrvDocumento, "Acumulado de presupuestos por clientes", {|| TAcuCPre():New( "Informe de acumulados de presupuestos por clientes" ):Play() } )
          AddInforme( lArray, oTrvDocumento, "Resumen anual de presupuestos por clientes", {|| TAnuCPre():New( "Informe anual de presupuestos por clientes" ):Play() } )
+         /*
          AddInforme( lArray, oTrvDocumento, "Rentabilidad de presupuestos por clientes", {|| TRenCPre():New( "Informe de rentabilidad de presupuestos por clientes" ):Play() } )
+         */
 
       oTrvDocumento     := AddInforme( lArray, oTrvTipo, "Pedidos" )
          AddInforme( lArray, oTrvDocumento, "Informe de pedidos de clientes", {|| TInfPed():New( "Informe de pedidos de clientes" ):Play() } )
@@ -2269,51 +2271,6 @@ Return ( "" )
 Function Sleep()
 
 Return nil
-
-//---------------------------------------------------------------------------//
-
-Function cValToStr( uVal, cPic )
-
-   local cVal
-
-   if uVal == nil
-      cVal     := 'nil'
-   elseif Empty( cPic )
-      cVal     := cValToChar( uVal )
-   elseif cPic == '@T'
-      cVal     := If( Year( uVal ) == 0, TTOC( uVal, 2 ), TTOC( uVal ) )
-   elseif ValType( uVal ) == 'D' .and. Left( cPic, 1 ) != "@"
-      cVal     := Lower( cPic )
-      cVal     := StrTran( cVal, 'dd', StrZero( Day( uVal ), 2 ) )
-      if 'mmmm' $ cVal
-         cVal  := StrTran( cVal, 'mmmm', cMonth( uVal ) )
-      elseif 'mmm' $ cVal
-         cVal  := StrTran( cVal, 'mmm', Left( cMonth( uVal ), 3 ) )
-      else
-         cVal  := StrTran( cVal, 'mm', StrZero( Month( uVal ), 2 ) )
-      endif
-      if 'yyyy' $ cVal
-         cVal  := StrTran( cVal, 'yyyy', Str( Year( uVal ), 4, 0 ) )
-      else
-         cVal  := StrTran( cVal, 'yy',   StrZero( Year( uVal ) % 100, 2 ) )
-      endif
-   else
-      cVal     := Transform( uVal, cPic )
-   endif
-
-return cVal
-
-//---------------------------------------------------------------------------//
-
-Function ReSizeBitmap()
-
-Return nil
-
-//---------------------------------------------------------------------------//
-
-Function IsBinaryData()
-
-Return ( .f. )
 
 //---------------------------------------------------------------------------//
 

@@ -1921,7 +1921,7 @@ STATIC FUNCTION EdtRec( aTmp, aGet, dbfArticulo, oBrw, bWhen, bValid, nMode )
          ID       290 ;
          COLOR    aTmp[ ( dbfArticulo )->( fieldpos( "nColBtn" ) ) ], aTmp[ ( dbfArticulo )->( fieldpos( "nColBtn" ) ) ] ;
          BITMAP   "COLORS_16" ;
-         ON HELP  ( ColorArt( aGet[ ( dbfArticulo )->( fieldpos( "nColBtn" ) ) ] ) ) ;
+         ON HELP  ( ColorFam( aGet[ ( dbfArticulo )->( fieldpos( "nColBtn" ) ) ] ) ) ;
          OF       fldGeneral
 
    REDEFINE GET   aGet[ ( dbfArticulo )->( fieldpos( "cImagen" ) ) ] ;
@@ -18590,88 +18590,6 @@ Static Function lPubArt()
    end if
 
 Return lPub
-
-//---------------------------------------------------------------------------//
-
-Function ColorArt( oGetColor )
-
-   local oDlg
-   local oBmpGeneral
-   local oImgColores
-
-   DEFINE DIALOG oDlg RESOURCE "COLORFAM"
-
-      oImgColores             := C5ImageView():Redefine( 200, oDlg )
-      oImgColores:nWItem      := 131
-      oImgColores:nHItem      := 75
-      oImgColores:lVScroll    := .f.
-      oImgColores:nAlignText  := nOr( DT_TOP, DT_CENTER )
-      oImgColores:lTitle      := .t.
-      oImgColores:nHTitle     := 12
-      oImgColores:lShowOption := .t.
-      oImgColores:aTextMargin := { 0, 0, 0, 0 }
-      oImgColores:nClrTextSel := Rgb( 0, 0, 0 )
-      oImgColores:bAction     := {|| SeleccionaColor( oImgColores, oGetColor, oDlg ) }
-
-      oImgColores:nOption     := 0
-
-      aAdd( oImgColores:aItems, C5ImageViewItem():New( , "Amarillo pastel",   Rgb( 255, 255, 149 ) ) )
-      aAdd( oImgColores:aItems, C5ImageViewItem():New( , "Amarillo señales",  Rgb( 255, 204,   0 ) ) )
-      aAdd( oImgColores:aItems, C5ImageViewItem():New( , "Amarillo miel",     Rgb( 201, 135,  33 ) ) )
-      aAdd( oImgColores:aItems, C5ImageViewItem():New( , "Amarillo ocre",     Rgb( 196, 181, 134 ) ) )
-      aAdd( oImgColores:aItems, C5ImageViewItem():New( , "Pardo verdoso",     Rgb( 143, 141,  97 ) ) )
-      aAdd( oImgColores:aItems, C5ImageViewItem():New( , "Rosa lavanda",      Rgb( 235, 205, 245 ) ) )
-      aAdd( oImgColores:aItems, C5ImageViewItem():New( , "Rosa claro",        Rgb( 232, 156, 181 ) ) )
-      aAdd( oImgColores:aItems, C5ImageViewItem():New( , "Violeta pastel",    Rgb( 172, 134, 164 ) ) )
-      aAdd( oImgColores:aItems, C5ImageViewItem():New( , "Biscuit",           Rgb( 249, 228, 202 ) ) )
-      aAdd( oImgColores:aItems, C5ImageViewItem():New( , "Rojo beige",        Rgb( 204, 130, 115 ) ) )
-      aAdd( oImgColores:aItems, C5ImageViewItem():New( , "Rojo anaranjado",   Rgb( 224,  94,  31 ) ) )
-      aAdd( oImgColores:aItems, C5ImageViewItem():New( , "Verde amarillento", Rgb( 165, 226, 135 ) ) )
-      aAdd( oImgColores:aItems, C5ImageViewItem():New( , "Verde mayo",        Rgb(  88, 186,  78 ) ) )
-      aAdd( oImgColores:aItems, C5ImageViewItem():New( , "Verde oliva",       Rgb(  69, 182, 159 ) ) )
-      aAdd( oImgColores:aItems, C5ImageViewItem():New( , "Cian",              Rgb( 180, 243, 243 ) ) )
-      aAdd( oImgColores:aItems, C5ImageViewItem():New( , "Azul pastel",       Rgb( 196, 215, 225 ) ) )
-      aAdd( oImgColores:aItems, C5ImageViewItem():New( , "Azul luminoso",     Rgb(  50, 134, 209 ) ) )
-      aAdd( oImgColores:aItems, C5ImageViewItem():New( , "Gris ceniza",       Rgb( 226, 224, 228 ) ) )
-      aAdd( oImgColores:aItems, C5ImageViewItem():New( , "Aluminio blanco",   Rgb( 172, 172, 181 ) ) )
-      aAdd( oImgColores:aItems, C5ImageViewItem():New( , "Gris piedra",       Rgb( 145, 145, 135 ) ) )
-
-      REDEFINE BITMAP oBmpGeneral ;
-        ID       500 ;
-        RESOURCE "color_wheel_48_alpha" ;
-        TRANSPARENT ;
-        OF       oDlg
-
-     REDEFINE BUTTON ;
-         ID       IDCANCEL ;
-         OF       oDlg ;
-         ACTION   ( oDlg:End() )
-
-   ACTIVATE DIALOG oDlg CENTER
-
-Return .t.
-
-//---------------------------------------------------------------------------//
-
-Function SeleccionaColor( oImgColores, oGetColor, oDlg )
-
-   local nOpt  := oImgColores:nOption
-
-   if Empty( nOpt )
-      MsgStop( "Seleccione un color" )
-      Return .f.
-   end if
-
-   nOpt        := Max( Min( nOpt, len( oImgColores:aItems ) ), 1 )
-
-   if nOpt > 0 .and. nOpt <= len( oImgColores:aItems )
-      oGetColor:cText( oImgColores:aItems[ nOpt ]:nClrPane )
-      oGetColor:SetColor( oImgColores:aItems[ nOpt ]:nClrPane, oImgColores:aItems[ nOpt ]:nClrPane )
-    end if
-
-   oDlg:End()
-
-Return .t.
 
 //---------------------------------------------------------------------------//
 
