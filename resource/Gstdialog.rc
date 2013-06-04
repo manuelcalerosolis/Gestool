@@ -1587,7 +1587,7 @@ FONT 8, "MS Sans Serif"
   CONTROL "Divisa cambio", -1, "Static", WS_GROUP, 50, 195, 47, 8
   CONTROL "", -1, "Button", BS_GROUPBOX, 44, 29, 348, 139
   CONTROL "Empresa matriz", -1, "Button", BS_GROUPBOX, 44, 209, 349, 74
-  CONTROL "E-mail", -1, "Static", WS_GROUP, 48, 145, 50, 8
+  CONTROL "E-mail", -1, "Static", WS_GROUP, 50, 145, 50, 8
   CONTROL "Dígitos cliente", 202, "Static", WS_GROUP, 181, 183, 48, 8
   CONTROL "", -1, "Static", SS_ETCHEDHORZ, 48, 85, 342, 1
   CONTROL "", -1, "Static", SS_ETCHEDHORZ, 48, 138, 342, 1
@@ -2398,25 +2398,23 @@ STYLE WS_CHILD|DS_3DLOOK
 FONT 8, "MS Sans Serif"
 {
   CONTROL "", 100, "ComboBox", WS_BORDER|CBS_DROPDOWNLIST|WS_TABSTOP, 120, 38, 110, 41
-  CONTROL "", 105, "Edit", WS_BORDER|WS_TABSTOP, 120, 53, 30, 11
-  CONTROL "Exportación por medio físico", 110, "Button", BS_AUTORADIOBUTTON, 47, 73, 102, 12
-  CONTROL "", 120, "Edit", WS_BORDER|WS_TABSTOP, 120, 87, 306, 11
-  CONTROL "Exportación por internet", 111, "Button", BS_AUTORADIOBUTTON, 47, 105, 87, 12
-  CONTROL "", 160, "Edit", WS_BORDER|WS_TABSTOP, 120, 119, 306, 11
-  CONTROL "", 170, "Edit", WS_BORDER|WS_TABSTOP, 120, 131, 120, 11
-  CONTROL "", 180, "Edit", ES_PASSWORD|WS_BORDER|WS_TABSTOP, 120, 143, 120, 11
-  CONTROL "Envío pasivo", 200, "Button", BS_AUTOCHECKBOX|WS_TABSTOP, 298, 131, 90, 12
-  CONTROL "Enviar solo albaranes entregados", 190, "Button", BS_AUTOCHECKBOX|WS_TABSTOP, 47, 174, 124, 12
-  CONTROL "", -1, "Button", BS_GROUPBOX, 44, 67, 385, 92
-  CONTROL "Propiedades", -1, "Button", BS_GROUPBOX, 44, 162, 385, 28
-  CONTROL "Nombre usuario", -1, "Static", WS_GROUP, 47, 134, 55, 8
-  CONTROL "Dirección FTP", -1, "Static", WS_GROUP, 47, 122, 51, 8
-  CONTROL "Clave de acceso", -1, "Static", WS_GROUP, 47, 146, 59, 8
+  CONTROL "Exportación por medio físico", 110, "Button", BS_AUTORADIOBUTTON, 47, 62, 102, 12
+  CONTROL "", 120, "Edit", WS_BORDER|WS_TABSTOP, 120, 76, 306, 11
+  CONTROL "Exportación por internet", 111, "Button", BS_AUTORADIOBUTTON, 47, 94, 87, 12
+  CONTROL "", 160, "Edit", WS_BORDER|WS_TABSTOP, 120, 108, 306, 11
+  CONTROL "", 170, "Edit", WS_BORDER|WS_TABSTOP, 120, 120, 120, 11
+  CONTROL "", 180, "Edit", ES_PASSWORD|WS_BORDER|WS_TABSTOP, 120, 132, 120, 11
+  CONTROL "Envío pasivo", 200, "Button", BS_AUTOCHECKBOX|WS_TABSTOP, 298, 120, 90, 12
+  CONTROL "Enviar solo albaranes entregados", 190, "Button", BS_AUTOCHECKBOX|WS_TABSTOP, 47, 163, 124, 12
+  CONTROL "", -1, "Button", BS_GROUPBOX, 44, 56, 385, 92
+  CONTROL "Propiedades", -1, "Button", BS_GROUPBOX, 44, 151, 385, 28
+  CONTROL "Nombre usuario", -1, "Static", WS_GROUP, 47, 123, 55, 8
+  CONTROL "Dirección FTP", -1, "Static", WS_GROUP, 47, 111, 51, 8
+  CONTROL "Clave de acceso", -1, "Static", WS_GROUP, 47, 135, 59, 8
   CONTROL "Tipo de envío", -1, "Static", WS_GROUP, 47, 42, 66, 8
-  CONTROL "Ruta de exportación", -1, "Static", WS_GROUP, 47, 89, 66, 8
-  CONTROL "", -1, "Static", SS_ETCHEDHORZ, 47, 102, 378, 1
-  CONTROL "Envío", -1, "Button", BS_GROUPBOX, 44, 29, 385, 38
-  CONTROL "Código centro", -1, "Static", WS_GROUP, 47, 56, 56, 8
+  CONTROL "Ruta de exportación", -1, "Static", WS_GROUP, 47, 78, 66, 8
+  CONTROL "", -1, "Static", SS_ETCHEDHORZ, 47, 91, 378, 1
+  CONTROL "Envío", -1, "Button", BS_GROUPBOX, 44, 29, 385, 27
   CONTROL "", 500, "Static", SS_BITMAP|SS_CENTERIMAGE, 4, 3, 34, 30
   CONTROL "Configuración para el envio de datos entre delegaciones", -1, "Static", SS_LEFTNOWORDWRAP|WS_GROUP, 44, 3, 384, 8
 }
@@ -2448,54 +2446,57 @@ EMPRESA_3 DIALOG DISCARDABLE 92, 14, 432, 353
 STYLE WS_CHILD|DS_3DLOOK
 FONT 8, "MS Sans Serif"
 {
-  CONTROL "", 100, "Edit", WS_BORDER|WS_TABSTOP, 125, 39, 61, 11
-  CONTROL "", 101, "Edit", ES_UPPERCASE|WS_BORDER|WS_TABSTOP, 188, 39, 237, 11
-  CONTROL "", 110, "Edit", WS_VSCROLL|WS_BORDER|WS_TABSTOP, 125, 52, 61, 11
-  CONTROL "", 140, "Edit", WS_BORDER|WS_TABSTOP, 125, 65, 61, 11
-  CONTROL "", 141, "Edit", ES_UPPERCASE|WS_BORDER|WS_TABSTOP, 188, 65, 178, 11
-  CONTROL "Seleccionar", 142, "Button", BS_AUTOCHECKBOX|WS_TABSTOP, 368, 66, 57, 10
-  CONTROL "", 120, "Edit", WS_BORDER|WS_TABSTOP, 125, 78, 61, 11
-  CONTROL "", 121, "Edit", ES_UPPERCASE|WS_BORDER|WS_TABSTOP, 188, 78, 178, 11
-  CONTROL "Seleccionar", 122, "Button", BS_AUTOCHECKBOX|WS_TABSTOP, 368, 79, 57, 10
-  CONTROL "", 130, "Edit", WS_BORDER|WS_TABSTOP, 125, 91, 61, 11
-  CONTROL "", 131, "Edit", ES_UPPERCASE|WS_BORDER|WS_TABSTOP, 188, 91, 237, 11
-  CONTROL "", 135, "Edit", WS_BORDER|WS_TABSTOP, 125, 104, 61, 11
-  CONTROL "", 136, "Edit", ES_UPPERCASE|WS_BORDER|WS_TABSTOP, 188, 104, 178, 11
-  CONTROL "Imp. incluido", 137, "Button", BS_AUTOCHECKBOX|WS_TABSTOP, 368, 105, 57, 10
-  CONTROL "", 150, "Edit", WS_BORDER|WS_TABSTOP, 125, 117, 61, 11
-  CONTROL "", 151, "Edit", ES_UPPERCASE|WS_BORDER|WS_TABSTOP, 188, 117, 237, 11
-  CONTROL "", 400, "Edit", WS_BORDER|WS_TABSTOP, 125, 130, 61, 11
-  CONTROL "", 401, "Edit", ES_UPPERCASE|WS_BORDER|WS_TABSTOP, 188, 130, 237, 11
-  CONTROL "", 200, "Edit", WS_BORDER|WS_TABSTOP, 125, 143, 61, 11
-  CONTROL "", 201, "Edit", ES_UPPERCASE|WS_BORDER|WS_TABSTOP, 188, 143, 237, 11
-  CONTROL "", 155, "Edit", WS_BORDER|WS_TABSTOP, 125, 156, 300, 11
-  CONTROL "", 290, "Edit", WS_VSCROLL|WS_BORDER|WS_TABSTOP, 125, 169, 61, 11
-  CONTROL "", 291, "Edit", ES_UPPERCASE|WS_BORDER|WS_TABSTOP, 188, 169, 237, 11
-  CONTROL "Recuperar número de factura", 300, "Button", BS_AUTOCHECKBOX|WS_TABSTOP, 49, 184, 123, 10
-  CONTROL "", 295, "Edit", ES_RIGHT|WS_VSCROLL|WS_BORDER|WS_TABSTOP, 125, 196, 61, 11
-  CONTROL "", 280, "Edit", ES_RIGHT|WS_VSCROLL|WS_BORDER|WS_TABSTOP, 188, 209, 57, 11
-  CONTROL "", 156, "Edit", ES_RIGHT|WS_VSCROLL|WS_BORDER|WS_TABSTOP, 188, 222, 57, 11
-  CONTROL "", 220, "Edit", ES_RIGHT|WS_VSCROLL|WS_BORDER|WS_TABSTOP, 188, 236, 57, 11
-  CONTROL "", 160, "ComboBox", WS_BORDER|CBS_DROPDOWN|CBS_SORT|WS_VSCROLL|WS_TABSTOP, 188, 249, 96, 40
+  CONTROL "", 105, "Edit", WS_BORDER|WS_TABSTOP, 125, 38, 61, 11
+  CONTROL "", 106, "Edit", ES_UPPERCASE|WS_BORDER|WS_TABSTOP, 188, 38, 237, 11
+  CONTROL "", 100, "Edit", WS_BORDER|WS_TABSTOP, 125, 51, 61, 11
+  CONTROL "", 101, "Edit", ES_UPPERCASE|WS_BORDER|WS_TABSTOP, 188, 51, 237, 11
+  CONTROL "", 110, "Edit", WS_VSCROLL|WS_BORDER|WS_TABSTOP, 125, 64, 61, 11
+  CONTROL "", 140, "Edit", WS_BORDER|WS_TABSTOP, 125, 77, 61, 11
+  CONTROL "", 141, "Edit", ES_UPPERCASE|WS_BORDER|WS_TABSTOP, 188, 77, 178, 11
+  CONTROL "Seleccionar", 142, "Button", BS_AUTOCHECKBOX|WS_TABSTOP, 368, 80, 57, 10
+  CONTROL "", 120, "Edit", WS_BORDER|WS_TABSTOP, 125, 90, 61, 11
+  CONTROL "", 121, "Edit", ES_UPPERCASE|WS_BORDER|WS_TABSTOP, 188, 90, 178, 11
+  CONTROL "Seleccionar", 122, "Button", BS_AUTOCHECKBOX|WS_TABSTOP, 368, 93, 57, 10
+  CONTROL "", 130, "Edit", WS_BORDER|WS_TABSTOP, 125, 103, 61, 11
+  CONTROL "", 131, "Edit", ES_UPPERCASE|WS_BORDER|WS_TABSTOP, 188, 103, 237, 11
+  CONTROL "", 135, "Edit", WS_BORDER|WS_TABSTOP, 125, 116, 61, 11
+  CONTROL "", 136, "Edit", ES_UPPERCASE|WS_BORDER|WS_TABSTOP, 188, 116, 178, 11
+  CONTROL "Imp. incluido", 137, "Button", BS_AUTOCHECKBOX|WS_TABSTOP, 368, 119, 57, 10
+  CONTROL "", 150, "Edit", WS_BORDER|WS_TABSTOP, 125, 129, 61, 11
+  CONTROL "", 151, "Edit", ES_UPPERCASE|WS_BORDER|WS_TABSTOP, 188, 129, 237, 11
+  CONTROL "", 400, "Edit", WS_BORDER|WS_TABSTOP, 125, 142, 61, 11
+  CONTROL "", 401, "Edit", ES_UPPERCASE|WS_BORDER|WS_TABSTOP, 188, 142, 237, 11
+  CONTROL "", 200, "Edit", WS_BORDER|WS_TABSTOP, 125, 155, 61, 11
+  CONTROL "", 201, "Edit", ES_UPPERCASE|WS_BORDER|WS_TABSTOP, 188, 155, 237, 11
+  CONTROL "", 155, "Edit", WS_BORDER|WS_TABSTOP, 125, 168, 300, 11
+  CONTROL "", 290, "Edit", WS_VSCROLL|WS_BORDER|WS_TABSTOP, 125, 181, 61, 11
+  CONTROL "", 291, "Edit", ES_UPPERCASE|WS_BORDER|WS_TABSTOP, 188, 181, 237, 11
+  CONTROL "Recuperar número de factura", 300, "Button", BS_AUTOCHECKBOX|WS_TABSTOP, 49, 196, 123, 10
+  CONTROL "", 295, "Edit", ES_RIGHT|WS_VSCROLL|WS_BORDER|WS_TABSTOP, 125, 208, 61, 11
+  CONTROL "", 280, "Edit", ES_RIGHT|WS_VSCROLL|WS_BORDER|WS_TABSTOP, 188, 221, 57, 11
+  CONTROL "", 156, "Edit", ES_RIGHT|WS_VSCROLL|WS_BORDER|WS_TABSTOP, 188, 234, 57, 11
+  CONTROL "", 220, "Edit", ES_RIGHT|WS_VSCROLL|WS_BORDER|WS_TABSTOP, 188, 248, 57, 11
+  CONTROL "", 160, "ComboBox", WS_BORDER|CBS_DROPDOWN|CBS_SORT|WS_VSCROLL|WS_TABSTOP, 188, 261, 96, 40
   CONTROL "Valores por defecto", -1, "Button", BS_GROUPBOX, 41, 29, 384, 316
-  CONTROL "Almacén", -1, "Static", WS_GROUP, 49, 81, 30, 8
-  CONTROL "Forma de pago", -1, "Static", WS_GROUP, 49, 94, 49, 8
-  CONTROL "Cliente", -1, "Static", WS_GROUP, 49, 42, 24, 8
-  CONTROL "Serie", -1, "Static", WS_GROUP, 49, 55, 18, 8
-  CONTROL "Caja", -1, "Static", WS_GROUP, 49, 68, 16, 8
-  CONTROL "Usuario", -1, "Static", WS_GROUP, 49, 120, 26, 8
-  CONTROL "Directorio imagenes", -1, "Static", WS_GROUP, 49, 159, 64, 8
-  CONTROL "Tipo de impuestos", -1, "Static", WS_GROUP, 49, 107, 69, 8
-  CONTROL "Días de validez para los presupuestos", -1, "Static", WS_GROUP, 49, 225, 135, 8
-  CONTROL "Tipo de venta", -1, "Static", WS_GROUP, 49, 133, 46, 8
-  CONTROL "Inicio jornada", -1, "Static", WS_GROUP, 49, 212, 45, 8
-  CONTROL "Temporada", -1, "Static", WS_GROUP, 49, 146, 46, 8
-  CONTROL "Número de días para validar los vales", -1, "Static", WS_GROUP, 49, 239, 135, 8
+  CONTROL "Almacén", -1, "Static", WS_GROUP, 49, 93, 30, 8
+  CONTROL "Forma de pago", -1, "Static", WS_GROUP, 49, 106, 49, 8
+  CONTROL "Cliente", -1, "Static", WS_GROUP, 49, 54, 24, 8
+  CONTROL "Serie", -1, "Static", WS_GROUP, 49, 67, 18, 8
+  CONTROL "Caja", -1, "Static", WS_GROUP, 49, 80, 16, 8
+  CONTROL "Usuario", -1, "Static", WS_GROUP, 49, 132, 26, 8
+  CONTROL "Directorio imagenes", -1, "Static", WS_GROUP, 49, 171, 64, 8
+  CONTROL "Tipo de impuestos", -1, "Static", WS_GROUP, 49, 119, 69, 8
+  CONTROL "Días de validez para los presupuestos", -1, "Static", WS_GROUP, 49, 237, 135, 8
+  CONTROL "Tipo de venta", -1, "Static", WS_GROUP, 49, 145, 46, 8
+  CONTROL "Inicio jornada", -1, "Static", WS_GROUP, 49, 224, 45, 8
+  CONTROL "Temporada", -1, "Static", WS_GROUP, 49, 158, 46, 8
+  CONTROL "Número de días para validar los vales", -1, "Static", WS_GROUP, 49, 251, 135, 8
   CONTROL "", 500, "Static", SS_BITMAP|SS_CENTERIMAGE, 4, 3, 34, 30
   CONTROL "Valores por defecto necesarios para la aplicación", -1, "Static", SS_LEFTNOWORDWRAP|WS_GROUP, 44, 3, 384, 8
-  CONTROL "Cálculo de dígito de identificación", -1, "Static", WS_GROUP, 49, 254, 113, 8
-  CONTROL "Nombre de la serie", -1, "Static", WS_GROUP, 49, 172, 68, 8
-  CONTROL "Semilla autoserializado", -1, "Static", WS_GROUP, 49, 199, 76, 8
+  CONTROL "Cálculo de dígito de identificación", -1, "Static", WS_GROUP, 49, 266, 113, 8
+  CONTROL "Nombre de la serie", -1, "Static", WS_GROUP, 49, 184, 68, 8
+  CONTROL "Semilla autoserializado", -1, "Static", WS_GROUP, 49, 211, 76, 8
+  CONTROL "Delegación", -1, "Static", WS_GROUP, 49, 41, 56, 8
 }
 
 EMPRESA_5 DIALOG DISCARDABLE 68, -86, 432, 353

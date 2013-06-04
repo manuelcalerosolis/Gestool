@@ -349,7 +349,7 @@ Static Function CreateMainWindow( oIconApp )
 
    oMsgUser                   := TMsgItem():New( oWnd:oMsgBar, "Usuario : "      + Rtrim( oUser():cNombre() ), 200,,,, .t. )
 
-   oMsgDelegacion             := TMsgItem():New( oWnd:oMsgBar, "Delegación : "   + Rtrim( oUser():cDelegacion() ), 200,,,, .t., {|| SelectDelegacion( oMsgDelegacion ) } )
+   oMsgDelegacion             := TMsgItem():New( oWnd:oMsgBar, "Delegación : "   + Rtrim( oUser():cDelegacion() ), 200,,,, .t., {|| if( oUser():lCambiarEmpresa, SelectDelegacion( oMsgDelegacion ), ) } )
 
    oMsgCaja                   := TMsgItem():New( oWnd:oMsgBar, "Caja : "         + oUser():cCaja(), 100,,,, .t., {|| SelectCajas() } )
 
