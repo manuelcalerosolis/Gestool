@@ -197,15 +197,24 @@ CLASS TFastReportInfGen FROM TNewInfGen
    METHOD FastReportRectificativaProveedor()
 
    METHOD AddVariableSATCliente()
+   METHOD AddVariableLineasSATCliente()
+   METHOD cDetalleSATClientes()                                INLINE ( cDesSatCli ( ::oSatCliL:cAlias )  )
+   Method nTotalUnidadesSATClientes()                          INLINE ( nTotNSatCli( ::oSatCliL:cAlias )  )
+   METHOD nPrecioUnitarioSATClientes()                         INLINE ( nTotUSatCli( ::oSatCliL:cAlias )  ) 
+   METHOD nTotalLineaSATClientes()                             INLINE ( nTotLSatCli( ::oSatCliL:cAlias )  )
+   METHOD nTotalPesoLineaSATClientes()                         INLINE ( nPesLSatCli( ::oSatCliL:cAlias )  )  
+   METHOD nTotalImpuestosIncluidosLineaSATClientes()           INLINE ( nTotFSatCli( ::oSatCliL:cAlias )  )
+   METHOD nTotalIVALineaSATClientes()                          INLINE ( nIvaLSatCli( ::oSatCliL:cAlias )  )
    
    METHOD AddVariablePresupuestoCliente()
    METHOD AddVariableLineasPresupuestoCliente()
-   METHOD cDetallePresupuestoClientes()                        INLINE ( cDesPreCli(  ::oPreCliL:cAlias ) )
+   METHOD cDetallePresupuestoClientes()                        INLINE ( cDesPreCli ( ::oPreCliL:cAlias ) )
    METHOD nTotalUnidadesPresupuestosClientes()                 INLINE ( nTotNPreCli( ::oPreCliL:cAlias ) )
    METHOD nPrecioUnitarioPresupuestosClientes()                INLINE ( nTotUPreCli( ::oPreCliL:cAlias ) ) 
    METHOD nTotalLineaPresupuestosClientes()                    INLINE ( nTotLPreCli( ::oPreCliL:cAlias ) )
    METHOD nTotalPesoLineaPresupuestosClientes()                INLINE ( nPesLPreCli( ::oPreCliL:cAlias ) )
    METHOD nTotalImpuestosIncluidosLineaPresupuestosClientes()  INLINE ( nTotFPreCli( ::oPreCliL:cAlias ) )
+   METHOD nTotalIVALineaPresupuestosClientes()                 INLINE ( nIvaLPreCli( ::oPreCliL:cAlias ) )
 
    METHOD AddVariablePedidoCliente()
    METHOD AddVariableAlbaranCliente()
@@ -2855,6 +2864,20 @@ RETURN ( Self )
 
 //---------------------------------------------------------------------------//
 
+METHOD AddVariableLineasSATCliente()
+
+   ::oFastReport:AddVariable(    "Lineas de SAT",    "Detalle del artículo",                        "CallHbFunc( 'oTinfGen', ['cDetalleSATClientes'])"                       )
+   ::oFastReport:AddVariable(    "Lineas de SAT",    "Total unidades artículo",                     "CallHbFunc( 'oTinfGen', ['nTotalUnidadesSATClientes'])"                 )
+   ::oFastReport:AddVariable(    "Lineas de SAT",    "Precio unitario del artículo",                "CallHbFunc( 'oTinfGen', ['nPrecioUnitarioSATClientes'])"                )
+   ::oFastReport:AddVariable(    "Lineas de SAT",    "Total línea de SAT",                          "CallHbFunc( 'oTinfGen', ['nTotalLineaSATClientes'])"                    )
+   ::oFastReport:AddVariable(    "Lineas de SAT",    "Total peso por línea",                        "CallHbFunc( 'oTinfGen', ['nTotalPesoLineaSATClientes'])"                )
+   ::oFastReport:AddVariable(    "Lineas de SAT",    "Total impuestos incluidos línea del SAT",     "CallHbFunc( 'oTinfGen', ['nTotalImpuestosIncluidosLineaSATClientes'])"  )
+   ::oFastReport:AddVariable(    "Lineas de SAT",    "Total  IVA línea del SAT",                    "CallHbFunc( 'oTinfGen', ['nTotalIVALineaSATClientes'])"                 )
+
+RETURN ( Self )
+
+//---------------------------------------------------------------------------//
+
 METHOD AddVariablePresupuestoCliente()
 
    ::oFastReport:AddVariable(    "Presupuestos clientes",   "Total base presupuestos clientes",             "CallHbFunc( 'oTinfGen', ['nBasePresupuestosClientes'])"    )
@@ -2868,12 +2891,13 @@ RETURN ( Self )
 
 METHOD AddVariableLineasPresupuestoCliente()
 
-   ::oFastReport:AddVariable(     "Lineas de presupuestos",   "Detalle del artículo",                "CallHbFunc( 'oTInfGen', ['cDetallePresupuestoClientes'])"  )
-   ::oFastReport:AddVariable(     "Lineas de presupuestos",   "Total unidades artículo",             "CallHbFunc( 'oTInfGen', ['nTotalUnidadesPresupuestosClientes'])" )
-   ::oFastReport:AddVariable(     "Lineas de presupuestos",   "Precio unitario del artículo",        "CallHbFunc( 'oTInfGen', ['nPrecioUnitarioPresupuestosClientes'])" )
-   ::oFastReport:AddVariable(     "Lineas de presupuestos",   "Total línea de presupuesto",          "CallHbFunc( 'oTInfGen', ['nTotalLineaPresupuestosClientes'])" )
-   ::oFastReport:AddVariable(     "Lineas de presupuestos",   "Total peso por línea",                "CallHbFunc( 'oTInfGen', ['nTotalPesoLineaPresupuestosClientes'])" )
-   ::oFastReport:AddVariable(     "Lineas de presupuestos",   "Total final línea del presupuesto",   "CallHbFunc( 'oTInfGen', ['nTotalImpuestosIncluidosLineaPresupuestosClientes'])" )
+   ::oFastReport:AddVariable(     "Lineas de presupuestos",   "Detalle del artículo",                              "CallHbFunc( 'oTInfGen', ['cDetallePresupuestoClientes'])"                       )
+   ::oFastReport:AddVariable(     "Lineas de presupuestos",   "Total unidades artículo",                           "CallHbFunc( 'oTInfGen', ['nTotalUnidadesPresupuestosClientes'])"                )
+   ::oFastReport:AddVariable(     "Lineas de presupuestos",   "Precio unitario del artículo",                      "CallHbFunc( 'oTInfGen', ['nPrecioUnitarioPresupuestosClientes'])"               )
+   ::oFastReport:AddVariable(     "Lineas de presupuestos",   "Total línea de presupuesto",                        "CallHbFunc( 'oTInfGen', ['nTotalLineaPresupuestosClientes'])"                   )
+   ::oFastReport:AddVariable(     "Lineas de presupuestos",   "Total peso por línea",                              "CallHbFunc( 'oTInfGen', ['nTotalPesoLineaPresupuestosClientes'])"               )
+   ::oFastReport:AddVariable(     "Lineas de presupuestos",   "Total impuestos incluidos línea del presupuesto",   "CallHbFunc( 'oTInfGen', ['nTotalImpuestosIncluidosLineaPresupuestosClientes'])" )
+   ::oFastReport:AddVariable(     "Lineas de presupuestos",   "Total IVA línea del presupuesto",                   "CallHbFunc( 'oTInfGen', ['nTotalIVALineaPresupuestosClientes'])"                )
 
 RETURN ( Self )
 

@@ -2281,7 +2281,7 @@ Static Function LoadSATCliente( cCodArt, nYear )
             oDbfTmp:nFacCnv   := ( dbfSatCliL )->nFacCnv
             oDbfTmp:nImpDoc   := nTotUSatCli( dbfSatCliL, nDouDiv )
             oDbfTmp:nDtoDoc   := ( dbfSatCliL )->nDto
-            oDbfTmp:nTotDoc   := nTotLSatCli( dbfSatCliT, dbfSatCliL, nDouDiv, nDorDiv )
+            oDbfTmp:nTotDoc   := nTotLSatCli( dbfSatCliL, nDouDiv, nDorDiv )
             oDbfTmp:Save()
 
          end if
