@@ -777,7 +777,7 @@ METHOD Search( oLote, oBtnCancel, oBtnBuscar )
 
       if ::oHisMov:Seek( ::cCodigo )
 
-         while ( ::cCodigo == ::oHisMov:cRef ) .and. !( ::oHisMov:Eof() )
+         while ( ::cCodigo == ::oHisMov:cRefMov ) .and. !( ::oHisMov:Eof() )
 
             if ( ::cLote == ::oHisMov:cLote .or. Empty( ::cLote ) )
                ::AddMovAlm()
