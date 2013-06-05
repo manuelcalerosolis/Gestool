@@ -446,7 +446,7 @@ Static Function SatCliReportSkipper( dbfSatCliT, dbfSatCliL )
 
    ( dbfSatCliL )->( dbSkip() )
 
-   nTotPage              += nTotLSatCli( dbfSatCliT, dbfSatCliL )
+   nTotPage              += nTotLSatCli( dbfSatCliL )
 
 Return nil
 
@@ -2247,7 +2247,7 @@ STATIC FUNCTION EdtRec( aTmp, aGet, dbfSatCliT, oBrw, cCodCli, cCodArt, nMode )
 
       with object ( oBrwLin:AddCol() )
          :cHeader             := "Total"
-         :bEditValue          := {|| nTotLSatCli( , dbfTmpLin, nDouDiv, nRouDiv, , , aTmp[ _LOPERPV ] ) }
+         :bEditValue          := {|| nTotLSatCli( dbfTmpLin, nDouDiv, nRouDiv, , , aTmp[ _LOPERPV ] ) }
          :cEditPicture        := cPorDiv
          :nWidth              := 80
          :nDataStrAlign       := 1
@@ -4915,7 +4915,7 @@ FUNCTION nTotSatCli( cSatsupuesto, cSatCliT, cSatCliL, cIva, cDiv, cFPago, aTmp,
 
          else
 
-            nTotArt           := nTotLSatCli( cSatCliT, cSatCliL, nDouDiv, nRouDiv, , , .f., .f. )
+            nTotArt           := nTotLSatCli( cSatCliL, nDouDiv, nRouDiv, , , .f., .f. )
             nTotPnt           := if( lPntVer, nPntLSatCli( cSatCliL, nDpvDiv ), 0 )
             nTotTrn           := nTrnLSatCli( cSatCliL, nDouDiv )
             nTotIvm           := nTotISatCli( cSatCliL, nDouDiv, nRouDiv )
@@ -6912,17 +6912,16 @@ RETURN ( Descrip( cSatCliL, cSatCliS ) )
 
 //---------------------------------------------------------------------------//
 
-FUNCTION nTotLSatCli( cSatCliT, cSatCliL, nDec, nRou, nVdv, lDto, lPntVer, lImpTrn, cPouDiv )
+FUNCTION nTotLSatCli( cSatCliL, nDec, nRou, nVdv, lDto, lPntVer, lImpTrn, cPouDiv )
 
    local nCalculo
 
-   DEFAULT cSatCliT     := dbfSatCliT
    DEFAULT cSatCliL     := dbfSatCliL
    DEFAULT nDec         := nDouDiv()
    DEFAULT nRou         := nRouDiv()
    DEFAULT nVdv         := 1
    DEFAULT lDto         := .t.
-   DEFAULT lPntVer      := ( cSatCliT )->lOperPv
+   DEFAULT lPntVer      := .t.
    DEFAULT lImpTrn      := .t.
 
    if ( cSatCliL )->lTotLin
@@ -7026,9 +7025,9 @@ RETURN ( nCalculo )
 
 //---------------------------------------------------------------------------//
 
-FUNCTION nIvaLSatCli( dbfT, dbfLin, nDec, nRouDec, nVdv, lDto, lPntVer, lImpTrn, cPouDiv )
+FUNCTION nIvaLSatCli( dbfLin, nDec, nRouDec, nVdv, lDto, lPntVer, lImpTrn, cPouDiv )
 
-   local nCalculo := nTotLSatCli( dbfT, dbfLin, nDec, nRouDec, nVdv, lDto, lPntVer, lImpTrn, cPouDiv )
+   local nCalculo := nTotLSatCli( dbfLin, nDec, nRouDec, nVdv, lDto, lPntVer, lImpTrn, cPouDiv )
 
    if !( dbfLin )->lIvaLin
       nCalculo    := nCalculo * ( dbfLin )->nIva / 100
@@ -8301,7 +8300,7 @@ FUNCTION nImpLSatCli( uSatCliT, dbfSatCliL, nDec, nRou, nVdv, lIva, lDto, lPntVe
    DEFAULT lPntVer   := .f.
    DEFAULT lImpTrn   := .f.
 
-   nCalculo          := nTotLSatCli( uSatCliT, dbfSatCliL, nDec, nRou, nVdv, .t., lPntVer, lImpTrn )
+   nCalculo          := nTotLSatCli( dbfSatCliL, nDec, nRou, nVdv, .t., lPntVer, lImpTrn )
 
    if ValType( uSatCliT ) == "A"
       nCalculo       -= Round( nCalculo * uSatCliT[ _NDTOESP ]  / 100, nRou )
@@ -8344,7 +8343,7 @@ FUNCTION nDtoAtpSatCli( uSatCliT, dbfSatCliL, nDec, nRou, nVdv, lPntVer, lImpTrn
    DEFAULT lPntVer   := .f.
    DEFAULT lImpTrn   := .f.
 
-   nCalculo          := nTotLSatCli( uSatCliT, dbfSatCliL, nDec, nRou, nVdv, .t., lPntVer, lImpTrn )
+   nCalculo          := nTotLSatCli( dbfSatCliL, nDec, nRou, nVdv, .t., lPntVer, lImpTrn )
 
    if ( uSatCliT )->nSbrAtp <= 1 .and. ( uSatCliT )->nDtoAtp != 0
       nDtoAtp     += Round( nCalculo * ( uSatCliT )->nDtoAtp / 100, nRou )

@@ -1,4 +1,3 @@
-#ifndef __PDA__
 #include "FiveWin.Ch"
 #include "Font.ch"
 #include "Folder.ch"
@@ -7,10 +6,6 @@
 #include "Label.ch"
 #include "FastRepH.ch"
 #include "Xbrowse.ch"
-#else
-#include "FWCE.ch"
-REQUEST DBFCDX
-#endif
 
 #define CLR_BAR                  14197607
 #define _MENUITEM_               "01048"

@@ -337,7 +337,7 @@ METHOD BuildTree( oTree, lSubNode ) CLASS TFastVentasClientes
    oTree:Add( "Listado", 19, "Listado"  )
 
    oTreeVentas             := oTree:Add( "Ventas", 11 )
-   oTreeVentas:Add( "Informe de S.A.T.",        20,   "Informe de S.A.T." )
+   oTreeVentas:Add( "Informe de SAT",           20,   "Informe de SAT" )
    oTreeVentas:Add( "Informe de presupuestos",  5,    "Informe de presupuestos" )
    oTreeVentas:Add( "Informe de pedidos",       6,    "Informe de pedidos" )
    oTreeVentas:Add( "Informe de albaranes",     7,    "Informe de albaranes" )
@@ -445,7 +445,7 @@ METHOD DataReport() CLASS TFastVentasClientes
    ::oFastReport:SetResyncPair(     "Clientes", "Usuarios" )
 
    do case
-      case ::cTypeName == "Informe de S.A.T."
+      case ::cTypeName == "Informe de SAT"
 
          ::FastReportSATCliente()
 
@@ -500,6 +500,12 @@ METHOD AddVariable() CLASS TFastVentasClientes
    */
 
    do case
+      case ::cTypeName == "Informe de SAT"
+
+         ::AddVariableSATCliente()
+
+         ::AddVariableLineasSATCliente()         
+
       case ::cTypeName == "Informe de presupuestos"
 
          ::AddVariablePresupuestoCliente()
@@ -569,7 +575,7 @@ METHOD lGenerate() CLASS TFastVentasClientes
    */
 
    do case
-      case ::cTypeName == "Informe de S.A.T."
+      case ::cTypeName == "Informe de SAT"
 
          ::AddSATCliente()
 

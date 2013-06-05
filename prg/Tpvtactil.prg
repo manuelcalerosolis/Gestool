@@ -7096,8 +7096,6 @@ METHOD BuildReport() CLASS TpvTactil
 
    SysRefresh()
 
-   ::nDispositivo := IS_SCREEN   
-
    /*
    Zona de datos------------------------------------------------------------
    */
@@ -7333,9 +7331,10 @@ METHOD ClearRelationReport() CLASS TpvTactil
 
    ::oFastReport:ClearMasterDetail( "Empresa" )
    ::oFastReport:ClearMasterDetail( "Lineas de tickets" )
-   ::oFastReport:ClearMasterDetail( "Pagos de tickets" )
+   ::oFastReport:ClearMasterDetail( "Lineas de comandas" )
    ::oFastReport:ClearMasterDetail( "Lineas de albaranes" )
    ::oFastReport:ClearMasterDetail( "Lineas de facturas" )
+   ::oFastReport:ClearMasterDetail( "Pagos de tickets" )
    ::oFastReport:ClearMasterDetail( "Clientes" )
    ::oFastReport:ClearMasterDetail( "Obras" )
    ::oFastReport:ClearMasterDetail( "Almacen" )
@@ -7372,6 +7371,8 @@ METHOD ClearRelationReport() CLASS TpvTactil
 
    ::oFastReport:ClearResyncPair(  "Pagos de tickets", "Formas de pago" )
 
+   if ::lComanda
+
    ::oFastReport:ClearResyncPair(  "Lineas de comandas", "Artículos" )
    ::oFastReport:ClearResyncPair(  "Lineas de comandas", "Familias" )
    ::oFastReport:ClearResyncPair(  "Lineas de comandas", "Orden comanda" )
@@ -7380,6 +7381,19 @@ METHOD ClearRelationReport() CLASS TpvTactil
    ::oFastReport:ClearResyncPair(  "Lineas de comandas", "Tipos de artículos" )
    ::oFastReport:ClearResyncPair(  "Lineas de comandas", "Fabricantes" )
    ::oFastReport:ClearResyncPair(  "Lineas de comandas", "Temporadas" )
+
+   else 
+
+   ::oFastReport:ClearResyncPair(  "Lineas de tickets", "Artículos" )
+   ::oFastReport:ClearResyncPair(  "Lineas de tickets", "Familias" )
+   ::oFastReport:ClearResyncPair(  "Lineas de tickets", "Orden comanda" )
+   ::oFastReport:ClearResyncPair(  "Lineas de tickets", "Unidades de medición" )
+   ::oFastReport:ClearResyncPair(  "Lineas de tickets", "Categorías" )
+   ::oFastReport:ClearResyncPair(  "Lineas de tickets", "Tipos de artículos" )
+   ::oFastReport:ClearResyncPair(  "Lineas de tickets", "Fabricantes" )
+   ::oFastReport:ClearResyncPair(  "Lineas de tickets", "Temporadas" )
+
+   end if 
 
 Return nil
 
