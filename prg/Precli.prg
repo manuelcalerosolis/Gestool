@@ -395,7 +395,7 @@ static cFiltroUsuario   := ""
 static nTarifaPrecio    := 0
 
 static oComisionLinea
-static nComisionLinea      := 0
+static nComisionLinea   := 0
 
 #endif
 
@@ -10894,28 +10894,28 @@ Function ChangeTarifaCabecera( nNumTar, dbfTmpLin, oBrw )
 
       if ( nNumTar != nTarifaPrecio .and. ( dbfTmpLin )->( LastRec() ) > 0 )
 
-         if ApoloMsgNoYes( "¿ Desea cambiar todas las tarifas de precios a todas las líneas del documento ?" )
+         CursorWait()
 
-            nRec        := ( dbfTmpLin )->( Recno() )
+         nRec           := ( dbfTmpLin )->( Recno() )
 
-            ( dbfTmpLin )->( dbGoTop() )
-            while !( dbfTmpLin )->( eof() )
+         ( dbfTmpLin )->( dbGoTop() )
+         while !( dbfTmpLin )->( eof() )
 
-               if ( dbfTmpLin )->nTarLin != nNumTar
-                  ( dbfTmpLin )->nTarLin := nNumTar
-               end if
+            if ( dbfTmpLin )->nTarLin != nNumTar
+               ( dbfTmpLin )->nTarLin := nNumTar
+            end if
 
-               ( dbfTmpLin )->( dbSkip() )
+            ( dbfTmpLin )->( dbSkip() )
 
-            end while
+         end while
 
-            ( dbfTmpLin )->( dbGoTo( nRec ) )
+         ( dbfTmpLin )->( dbGoTo( nRec ) )
 
-            oBrw:Refresh()
-
-         end if
+         oBrw:Refresh()
 
          nTarifaPrecio  := nNumTar
+
+         CursorWE()
 
       end if
 

@@ -797,20 +797,20 @@ METHOD _Delete( lNext ) CLASS TDbf
    DEFAULT lNext  := .t.
 
    if lNext
-      nRecNo      := ( ::nArea )->( RecNo() )
+      nRecNo      := ( ::nArea )->( OrdKeyNo() )
       ( ::nArea )->( dbSkip() )
-      nNext       := ( ::nArea )->( RecNo() )
-      ( ::nArea )->( dbGoTo( nRecNo ) )
+      nNext       := ( ::nArea )->( OrdKeyNo() )
+      ( ::nArea )->( OrdKeyGoTo( nRecNo ) )
    end if
 
    if ::RecLock()
-      ( ::nArea )->( DbDelete() )
+      ( ::nArea )->( dbDelete() )
       lDeleted    := .t.
       ::UnLock()
    endif
 
    if lDeleted .and. lNext
-      ( ::nArea )->( dbGoto( nNext ) )
+      ( ::nArea )->( OrdKeyGoTo( nRecNo ) )
       if ( ::nArea )->( Eof() ) .or. nNext == nRecNo
          ( ::nArea )->( dbGoBottom() )
       end if

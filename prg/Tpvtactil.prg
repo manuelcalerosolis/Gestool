@@ -393,9 +393,7 @@ CLASS TpvTactil
 
          if ( ::oTemporalLinea:nPvpTil == 0 ) .or. ( ApoloMsgNoYes( "¿Desea cambiar el precio del artículo seleccionado?", "Confirme", .t. ) )
 
-            ::oTemporalLinea:nPvpTil   := Val( ::cGetUnidades )
-
-            ::oGetUnidades:cText( "" )
+            ::oTemporalLinea:nPvpTil   := ::nGetUnidades()
 
             ::oBrwLineas:Refresh()
 
@@ -406,6 +404,26 @@ CLASS TpvTactil
       RETURN ( Self )
 
    ENDMETHOD
+
+   //------------------------------------------------------------------------//
+
+   INLINE METHOD nGetUnidades( lUnaUnidad )
+
+      local nUnidades      
+
+      DEFAULT lUnaUnidad   := .f.
+
+      nUnidades            := Val( ::cGetUnidades )
+
+      if lUnaUnidad
+         nUnidades         := Max( nUnidades, 1 )
+      end if
+
+      ::oGetUnidades:cText( "" )
+
+      RETURN ( nUnidades )
+
+   ENDMETHOD      
 
    //------------------------------------------------------------------------//
 
@@ -687,6 +705,8 @@ CLASS TpvTactil
    METHOD GuardaTemporal()
    METHOD CreaNuevoTicket()
 
+   //------------------------------------------------------------------------//
+
    INLINE METHOD lEmptyAlias()
 
       if !Empty( ::oTiketCabecera:cNumTik )
@@ -701,7 +721,6 @@ CLASS TpvTactil
 
    ENDMETHOD
 
-   //------------------------------------------------------------------------//
    /*
    Documentos------------------------------------------------------------------
    */
@@ -4038,7 +4057,7 @@ METHOD AgregarLineas( cCodigoArticulo ) CLASS TpvTactil
             ::oTemporalLinea:cCodFam      := ::oArticulo:Familia
             ::oTemporalLinea:cFamTil      := ::oArticulo:Familia
             ::oTemporalLinea:nCtlStk      := ::oArticulo:nCtlStock
-            ::oTemporalLinea:nUntTil      := 1
+            ::oTemporalLinea:nUntTil      := ::nGetUnidades( .t. )
 
             if ( ::oArticulo:lFacCnv )
                ::oTemporalLinea:nFacCnv   := NotCero( ::oArticulo:nFacCnv )
@@ -4164,7 +4183,7 @@ METHOD lAcumulaArticulo() CLASS TpvTactil
             Sumamos------------------------------------------------------------
             */
 
-            ::SumarUnidades( 1 )
+            ::SumarUnidades()
 
             /*
             Tomamos el valor de retorno y saliendo-----------------------------
@@ -4290,6 +4309,10 @@ METHOD SumarUnidades( nNuevasUnidades ) CLASS TpvTactil
       Return ( .t. )
    end if
 
+   if Empty( nNuevasUnidades )
+      nNuevasUnidades                  := ::nGetUnidades( .t. )
+   end if
+
    nUnidadesActuales                   := ::oTemporalLinea:nUntTil + nNuevasUnidades
 
    if !Empty( nUnidadesActuales )
@@ -4345,7 +4368,7 @@ METHOD IncrementarUnidades() CLASS TpvTactil
       if ::oTemporalLinea:Seek( Str( nNumeroLinea ) )
          while ( ::oTemporalLinea:nNumLin == nNumeroLinea ) .and. !( ::oTemporalLinea:eof() )
 
-            ::oTemporalLinea:nUntTil   := ( ::oTemporalLinea:nUntTil / nUnidadesAnterior ) * ( nUnidadesActuales + nUnidadesAnterior )
+            ::oTemporalLinea:nUntTil   := ( ::oTemporalLinea:nUntTil / nUnidadesAnterior ) * ( nUnidadesActuales ) // + nUnidadesAnterior )
 
             ::oTemporalLinea:Skip()
 
