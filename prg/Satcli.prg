@@ -6897,9 +6897,11 @@ FUNCTION nTotFSatCli( dbfLin, nDec, nRou, nVdv, lDto, lPntVer, lImpTrn, cPorDiv 
    DEFAULT lImpTrn   := .t.
 
    nCalculo          += nTotLSatCli( dbfLin, nDec, nRou, nVdv, lDto, lPntVer, lImpTrn )
-   nCalculo          += nTotISatCli( dbfLin, nDec, nRou, nVdv )
+   nCalculo          += nTotISatCli( dbfLin, nDec, nRou, nVdv, )
+
 
 return ( if( cPorDiv != nil, Trans( nCalculo, cPorDiv ), nCalculo ) )
+
 
 //---------------------------------------------------------------------------//
 

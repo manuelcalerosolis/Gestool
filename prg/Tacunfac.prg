@@ -248,7 +248,7 @@ METHOD lGenerate() CLASS TAcuNFac
                         ::oDbf:nIvaArt    := nIvaUFacCli( ::oFacCliL:cAlias, ::nDecOut, ::nValDiv )
                         ::oDbf:nImpTrn    := nTrnUFacCli( ::oFacCliL:cAlias, ::nDecOut, ::nValDiv )
                         ::oDbf:nPntVer    := nPntUFacCli( ::oFacCliL:cAlias, ::nDecPnt, ::nValDiv )
-                        ::oDbf:nIvaTot    := nIvaLFacCli( ::oFacCliT:cAlias, ::oFacCliL:cAlias, ::nDecOut, ::nDerOut, ::nValDiv )
+                        ::oDbf:nIvaTot    := nIvaLFacCli( ::oFacCliL:cAlias, ::nDecOut, ::nDerOut, ::nValDiv )
                         ::oDbf:nTotFin    := ::oDbf:nImpTot + ::oDbf:nIvaTot
                         ::oDbf:nPreMed    := ::oDbf:nImpTot / ::oDbf:nNumUni
 
@@ -282,9 +282,9 @@ METHOD lGenerate() CLASS TAcuNFac
                         ::oDbf:nImpTrn    += nTrnUFacCli( ::oFacCliL:cAlias, ::nDecOut, ::nValDiv )
                         ::oDbf:nPntVer    += nPntUFacCli( ::oFacCliL:cAlias, ::nDecOut, ::nValDiv )
                         ::oDbf:nPreMed    := ::oDbf:nImpTot / ::oDbf:nNumUni
-                        ::oDbf:nIvaTot    += nIvaLFacCli( ::oFacCliT:cAlias, ::oFacCliL:cAlias, ::nDecOut, ::nDerOut, ::nValDiv )
+                        ::oDbf:nIvaTot    += nIvaLFacCli( ::oFacCliL:cAlias, ::nDecOut, ::nDerOut, ::nValDiv )
                         ::oDbf:nTotFin    += nImpLFacCli( ::oFacCliT:cAlias, ::oFacCliL:cAlias, ::nDecOut, ::nDerOut, ::nValDiv, , , .t., .t.  )
-                        ::oDbf:nTotFin    += nIvaLFacCli( ::oFacCliT:cAlias, ::oFacCliL:cAlias, ::nDecOut, ::nDerOut, ::nValDiv )
+                        ::oDbf:nTotFin    += nIvaLFacCli( ::oFacCliL:cAlias, ::nDecOut, ::nDerOut, ::nValDiv )
 
                         ::AcuPesVol( ::oFacCliL:cRef, nTotNFacCli( ::oFacCliL ), ::oDbf:nImpTot, .t. )
 

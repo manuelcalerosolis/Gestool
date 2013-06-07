@@ -8539,7 +8539,7 @@ RETURN ( nCalculo )
 Devuelve el total de una linea con impuestos incluidos
 */
 
-STATIC FUNCTION nTotFFacRec( cFacRecL, nDec, nRouDec, nVdv, lDto, lPntVer, lImpTrn, cPorDiv )
+FUNCTION nTotFFacRec( cFacRecL, nDec, nRouDec, nVdv, lDto, lPntVer, lImpTrn, cPorDiv )
 
    local nCalculo := 0
 

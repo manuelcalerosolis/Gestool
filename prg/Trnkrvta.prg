@@ -361,7 +361,7 @@ METHOD lGenerate() CLASS TRnkRVta
                      ::oDbf:cNomArt    := ::oFacCliL:cDetalle
                      ::oDbf:nTotUni    := nTotNFacCli( ::oFacCliL )
                      ::oDbf:nTotNet    := nImpLFacCli( ::oFacCliT:cAlias, ::oFacCliL:cAlias, ::nDecOut, ::nDerOut, ::nValDiv )
-                     ::oDbf:nTotIva    := nIvaLFacCli( ::oFacCliT:cAlias, ::oFacCliL:cAlias, ::nDecOut, ::nDerOut, ::nValDiv )
+                     ::oDbf:nTotIva    := nIvaLFacCli( ::oFacCliL:cAlias, ::nDecOut, ::nDerOut, ::nValDiv )
                      ::oDbf:nTotDoc    := ::oDbf:nTotNet + ::oDbf:nTotIva
 
                      if ::oFacCliL:nCosDiv == 0
@@ -391,9 +391,9 @@ METHOD lGenerate() CLASS TRnkRVta
 
                      ::oDbf:nTotUni    += nTotNFacCli( ::oFacCliL )
                      ::oDbf:nTotNet    += nImpLFacCli( ::oFacCliT:cAlias, ::oFacCliL:cAlias, ::nDecOut, ::nDerOut, ::nValDiv )
-                     ::oDbf:nTotIva    += nIvaLFacCli( ::oFacCliT:cAlias, ::oFacCliL:cAlias, ::nDecOut, ::nDerOut, ::nValDiv )
+                     ::oDbf:nTotIva    += nIvaLFacCli( ::oFacCliL:cAlias, ::nDecOut, ::nDerOut, ::nValDiv )
                      ::oDbf:nTotDoc    += nImpLFacCli( ::oFacCliT:cAlias, ::oFacCliL:cAlias, ::nDecOut, ::nDerOut, ::nValDiv )
-                     ::oDbf:nTotDoc    += nIvaLFacCli( ::oFacCliT:cAlias, ::oFacCliL:cAlias, ::nDecOut, ::nDerOut, ::nValDiv )
+                     ::oDbf:nTotDoc    += nIvaLFacCli( ::oFacCliL:cAlias, ::nDecOut, ::nDerOut, ::nValDiv )
 
                      if ::oFacCliL:nCosDiv == 0
                         ::oDbf:nTotCos += nRetPreCosto( ::oDbfArt:cAlias, ::oFacCliL:cRef ) * nTotUni

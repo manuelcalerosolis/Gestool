@@ -297,7 +297,7 @@ METHOD lGenerate()
                ::oDbf:nUniCaj     := nTotNFacCli( ::oFacCliL )
                ::oDbf:nPreArt     := nTotUFacCli( ::oFacCliL:cAlias, ::nDecOut, ::nValDiv )
                ::oDbf:nBase       := nImpLFacCli( ::oFacCliT:cAlias, ::oFacCliL:cAlias, ::nDecOut, ::nDerOut, ::nValDiv, , , .t., .t.  )
-               ::oDbf:nIva        := nIvaLFacCli( ::oFacCliT:cAlias, ::oFacCliL:cAlias, ::nDecOut, ::nValDiv )
+               ::oDbf:nIva        := nIvaLFacCli( ::oFacCliL:cAlias, ::nDecOut, ::nValDiv )
                ::oDbf:nTotal      := ::oDbf:nBase + ::oDbf:nIva
 
                ::oDbf:Save()

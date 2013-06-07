@@ -1,3 +1,4 @@
+
 #ifndef __PDA__
    #include "FiveWin.Ch"
    #include "Folder.ch"
@@ -5621,11 +5622,27 @@ RETURN NIL
 
 //--------------------------------------------------------------------------//
 
-FUNCTION nIvaLFacCli( dbfFacT, dbfLin, nDec, nRou, nVdv, lDto, lPntVer, lImpTrn, cPouDiv )
+FUNCTION nIvaLFacCli( cFacCliL, nDec, nRou, nVdv, lDto, lPntVer, lImpTrn, cPouDiv )
 
-   local nCalculo := nImpLFacCli( dbfFacT, dbfLin, nDec, nRou, nVdv )
+   local nCalculo    := 0
 
-   nCalculo       := Round( nCalculo * ( dbfLin )->nIva / 100, nRou )
+   DEFAULT cFacCliL  := dbfFacCliL
+   DEFAULT nDec      := nDouDiv()
+   DEFAULT nRou      := nRouDiv()
+   DEFAULT nVdv      := 1
+   DEFAULT lDto      := .t.
+   DEFAULT lPntVer   := .t.
+   DEFAULT lImpTrn   := .t.
+
+   nCalculo          := nTotLFacCli( cFacCliL, nDec, nRou, nVdv, lDto, lPntVer, lImpTrn, cPouDiv )   
+
+   if !( cFacCliL )->lIvaLin
+      nCalculo       := nCalculo * ( cFacCliL )->nIva / 100
+   else
+      nCalculo       -= nCalculo / ( 1 + ( cFacCliL )->nIva / 100 )
+   end if
+
+   nCalculo          := Round( nCalculo, nRou )
 
 RETURN ( if( cPouDiv != nil, Trans( nCalculo, cPouDiv ), nCalculo ) )
 
@@ -17865,7 +17882,7 @@ RETURN ( round( nCalculo, nDec ) )
 Devuelve el total de una linea con impuestos incluidos
 */
 
-STATIC FUNCTION nTotFFacCli( dbfLin, nDec, nRou, nVdv, lDto, lPntVer, lImpTrn, cPorDiv )
+FUNCTION nTotFFacCli( dbfLin, nDec, nRou, nVdv, lDto, lPntVer, lImpTrn, cPorDiv )
 
    local nCalculo    := 0
 
@@ -20817,7 +20834,7 @@ Static Function CreateFileFacturae( oTree, lFirmar, lEnviar )
                oTax                                := Tax()
                oTax:nTaxRate                       := ( dbfFacCliL )->nIva
                oTax:nTaxBase                       := nTotLFacCli( dbfFacCliL, nDouDiv, nRouDiv, , , .f., .f. )
-               oTax:nTaxAmount                     := nIvaLFacCli( dbfFacCliT, dbfFacCliL, nDouDiv, nRouDiv, , .f., .f., .f. )
+               oTax:nTaxAmount                     := nIvaLFacCli( dbfFacCliL, nDouDiv, nRouDiv, , .f., .f., .f. )
 
                if ( dbfFacCliT )->lRecargo
                   oTax:nEquivalenceSurcharge       := ( dbfFacCliL )->nReq

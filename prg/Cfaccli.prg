@@ -141,7 +141,7 @@ FUNCTION CntFacCli( lSimula, lPago, lExcCnt, lMessage, oTree, nAsiento, aSimula,
                nImpDet        := nTotLFacCli( dbfFacCliL, nDouDiv, nRouDiv, nil, .t., .f., .f. )
                nImpTrn        := nTrnLFacCli( dbfFacCliL, nDouDiv, nRouDiv )                 // Portes
                nImpPnt        := nPntLFacCli( dbfFacCliL, nDpvDiv )
-               nImpIva        := nIvaLFacCli( dbfFacCliT, dbfFacCliL, nDouDiv, nRouDiv )
+               nImpIva        := nIvaLFacCli( dbfFacCliL, nDouDiv, nRouDiv )
                nImpIvm        := nTotIFacCli( dbfFacCliL, nDouDiv, nRouDiv )
                cCtaVent       := RetCtaVta( ( dbfFacCliL )->cRef, dbfArt )
 

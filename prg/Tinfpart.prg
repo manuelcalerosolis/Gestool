@@ -448,7 +448,7 @@ METHOD AddFac( lAcumula )
       ::oDbf:nTotTrn    := nTrnLFacCli( ::oFacCliL:cAlias, ::nDecOut, ::nDerOut, ::nValDiv )
       ::oDbf:nTotPVer   := nPntLFacCli( ::oFacCliL:cAlias, ::nDecOut, ::nValDiv )
       ::oDbf:nImpTot    := nImpLFacCli( ::oFacCliT:cAlias, ::oFacCliL:cAlias, ::nDecOut, ::nDerOut, ::nValDiv )
-      ::oDbf:nIvaTot    := nIvaLFacCli( ::oFacCliT:cAlias, ::oFacCliL:cAlias, ::nDecOut, ::nDerOut, ::nValDiv )
+      ::oDbf:nIvaTot    := nIvaLFacCli( ::oFacCliL:cAlias, ::nDecOut, ::nDerOut, ::nValDiv )
       ::oDbf:nPreMed    := ::oDbf:nImpTot / ::oDbf:nNumUni
       ::oDbf:nTotFin    := ::oDbf:nImpTot + ::oDbf:nIvaTot
 
@@ -483,9 +483,9 @@ METHOD AddFac( lAcumula )
       ::oDbf:nTotPVer   += nPntLFacCli( ::oFacCliL:cAlias, ::nDecOut, ::nValDiv )
       ::oDbf:nImpTot    += nImpLFacCli( ::oFacCliT:cAlias, ::oFacCliL:cAlias, ::nDecOut, ::nDerOut, ::nValDiv )
       ::oDbf:nPreMed    := ::oDbf:nImpTot / ::oDbf:nNumUni
-      ::oDbf:nIvaTot    += nIvaLFacCli( ::oFacCliT:cAlias, ::oFacCliL:cAlias, ::nDecOut, ::nDerOut, ::nValDiv )
+      ::oDbf:nIvaTot    += nIvaLFacCli( ::oFacCliL:cAlias, ::nDecOut, ::nDerOut, ::nValDiv )
       ::oDbf:nTotFin    += nImpLFacCli( ::oFacCliT:cAlias, ::oFacCliL:cAlias, ::nDecOut, ::nDerOut, ::nValDiv )
-      ::oDbf:nTotFin    += nIvaLFacCli( ::oFacCliT:cAlias, ::oFacCliL:cAlias, ::nDecOut, ::nDerOut, ::nValDiv )
+      ::oDbf:nTotFin    += nIvaLFacCli( ::oFacCliL:cAlias, ::nDecOut, ::nDerOut, ::nValDiv )
 
       ::AcuPesVol( ::oFacCliL:cRef, nTotNFacCli( ::oFacCliL ), ::oDbf:nImpTot, .t. )
 
