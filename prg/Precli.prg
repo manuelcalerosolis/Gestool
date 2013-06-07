@@ -7171,7 +7171,7 @@ FUNCTION nTotLPreCli( cPreCliL, nDec, nRou, nVdv, lDto, lPntVer, lImpTrn, cPouDi
       end if
 
       /*
-      Punto Verde
+      Punto Verde--------------------------------------------------------------
       */
 
       if lPntVer .and. ( cPreCliL )->nPntVer != 0
@@ -7197,6 +7197,81 @@ FUNCTION nTotLPreCli( cPreCliL, nDec, nRou, nVdv, lDto, lPntVer, lImpTrn, cPouDi
    end if
 
 RETURN ( if( cPouDiv != nil, Trans( nCalculo, cPouDiv ), nCalculo ) )
+
+//---------------------------------------------------------------------------//
+
+FUNCTION nDtoLPreCli( cPreCliL, nDec, nRou, nVdv )
+
+   local nCalculo       := 0
+
+   DEFAULT cPreCliL     := dbfPreCliL
+   DEFAULT nDec         := nDouDiv()
+   DEFAULT nRou         := nRouDiv()
+   DEFAULT nVdv         := 1
+
+   if ( cPreCliL )->nDto != 0 .and. !( cPreCliL )->lTotLin
+
+      nCalculo          := nTotUPreCli( cPreCliL, nDec ) * nTotNPreCli( cPreCliL )
+
+      /*
+      Descuentos---------------------------------------------------------------
+      */
+
+      nCalculo          -= Round( ( cPreCliL )->nDtoDiv / nVdv , nDec )
+
+      nCalculo          := nCalculo * ( cPreCliL )->nDto / 100
+
+
+      if nVdv != 0
+         nCalculo       := nCalculo / nVdv
+      end if
+
+      if nRou != nil
+         nCalculo       := Round( nCalculo, nRou )
+      end if
+
+   end if
+
+RETURN ( nCalculo ) 
+
+//---------------------------------------------------------------------------//
+
+FUNCTION nPrmLPreCli( cPreCliL, nDec, nRou, nVdv )
+
+   local nCalculo       := 0
+
+   DEFAULT cPreCliL     := dbfPreCliL
+   DEFAULT nDec         := nDouDiv()
+   DEFAULT nRou         := nRouDiv()
+   DEFAULT nVdv         := 1
+
+   if ( cPreCliL )->nDtoPrm != 0 .and. !( cPreCliL )->lTotLin
+
+      nCalculo          := nTotUPreCli( cPreCliL, nDec ) * nTotNPreCli( cPreCliL )
+
+      /*
+      Descuentos---------------------------------------------------------------
+      */
+
+      nCalculo          -= Round( ( cPreCliL )->nDtoDiv / nVdv , nDec )
+
+      if ( cPreCliL )->nDto != 0 
+         nCalculo       -= nCalculo * ( cPreCliL )->nDto / 100
+      end if
+
+      nCalculo          := nCalculo * ( cPreCliL )->nDtoPrm / 100
+
+      if nVdv != 0
+         nCalculo       := nCalculo / nVdv
+      end if
+
+      if nRou != nil
+         nCalculo       := Round( nCalculo, nRou )
+      end if
+
+   end if
+
+RETURN ( nCalculo ) 
 
 //---------------------------------------------------------------------------//
 
@@ -11696,23 +11771,6 @@ Return cReferencia
 //
 
 #ifndef __PDA__
-
-FUNCTION nDtoLPreCli( dbfLin, nDec, nVdv, cPorDiv )
-
-   local nCalculo    := 0
-
-   DEFAULT dbfLin    := dbfPreCliL
-   DEFAULT nDec      := nDouDiv()
-   DEFAULT nVdv      := 1
-
-   if ( dbfLin )->nDto != 0
-      nCalculo       := nTotUPreCli( dbfLin, nDec ) * ( dbfLin )->nDto / 100
-      nCalculo       := Round( nCalculo / nVdv, nDec )
-   end if
-
-RETURN ( if( cPorDiv != nil, Trans( nCalculo, cPorDiv ), nCalculo ) )
-
-//---------------------------------------------------------------------------//
 
 Function nTotDtoLPreCli( dbfLin, nDec, nVdv, cPorDiv )
 
