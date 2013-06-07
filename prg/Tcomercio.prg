@@ -10265,13 +10265,13 @@ METHOD AppendClientPrestashop()
                ::oCli:Append()
                ::oCli:Blank()
                ::oCli:Cod        := cCodCli
-               ::oCli:Titulo     := oQuery:FieldGet( 10 ) + Space( 1 ) + oQuery:FieldGet( 11 ) //firstname - Last Name
+               ::oCli:Titulo     := oQuery:FieldGet( 11 ) + Space( 1 ) + oQuery:FieldGet( 12 ) //firstname - Last Name
                ::oCli:nTipCli    := 3
                ::oCli:CopiasF    := 1
                ::oCli:Serie      := uFieldEmpresa( "cSeriePed" )
                ::oCli:nRegIva    := 1
                ::oCli:nTarifa    := 1
-               ::oCli:cMeiInt    := oQuery:FieldGet( 12 ) //email
+               ::oCli:cMeiInt    := oQuery:FieldGet( 13 ) //email
                ::oCli:lChgPre    := .t.
                ::oCli:lSndInt    := .t.
                ::oCli:CodPago    := cDefFpg()

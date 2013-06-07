@@ -2751,7 +2751,7 @@ METHOD CreaFactura() CLASS TCreaFacAutomaticas
                   ::oFacCliL:nPreUnit  := ::oFacAutL:oDbf:nPreUnit
                end if
 
-               ::oAlbCliL:nDto         := nDtoAtp( , ::oDbfCliAtp:cAlias )
+               ::oFacCliL:nDto         := nDtoAtp( , ::oDbfCliAtp:cAlias )
 
             else
 
