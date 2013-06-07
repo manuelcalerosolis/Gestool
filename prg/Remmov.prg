@@ -2400,7 +2400,7 @@ METHOD loadAlmacen( nMode )
    if ( nMode == APPD_MODE ) .and. ( ::oDbf:nTipMov >= 2 )
 
       ::oMtrStock:cText    := "Importando artículos "
-      ::oMtrStock:nTotal   := ( ::oStock:cArt )->( LastRec() )
+      ::oMtrStock:nTotal   := ( ::oStock:cArticulo )->( LastRec() )
       ::oMtrStock:Refresh()
 
       aStkAlm              := ::oStock:aStockAlmacen( Self )
@@ -2463,7 +2463,7 @@ METHOD loadAlmacen( nMode )
 
       ::oBrwDet:Refresh()
 
-      ::oMtrStock:Set( ( ::oStock:cArt )->( LastRec() ) )
+      ::oMtrStock:Set( ( ::oStock:cArticulo )->( LastRec() ) )
 
    end if
 

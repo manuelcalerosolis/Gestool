@@ -314,7 +314,7 @@ METHOD lResource( cFld )
    Lo informamos aquí, porque en openfiles no está abierta todavia la tabla----
    */
 
-   ::oStock:cArt       := ::oDbfArt:cAlias
+   ::oStock:cArticulo       := ::oDbfArt:cAlias
 
    ::CreateFilter( aItmArt(), ::oDbfArt:cAlias )
 

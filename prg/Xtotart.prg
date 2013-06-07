@@ -154,7 +154,7 @@ METHOD OpenFiles()
       ::oStock:cProducL := ::oProLin:cAlias
       ::oStock:cProducM := ::oProMat:cAlias
       ::oStock:cProducT := ::oProCab:cAlias
-      ::oStock:cHisMov  := ::oHisMov:cAlias
+      ::oStock:cHisMovT  := ::oHisMov:cAlias
       ::oStock:cPedPrvL := ::oPedPrvL:cAlias
       ::oStock:cPedCliL := ::oPedCliL:cAlias
       ::oStock:cKit     := ::oDbfKit:cAlias
@@ -322,7 +322,7 @@ METHOD lResource( cFld )
    Lo informamos aquí, porque en openfiles no está abierta todavia la tabla----
    */
 
-   ::oStock:cArt       := ::oDbfArt:cAlias
+   ::oStock:cArticulo       := ::oDbfArt:cAlias
 
    ::CreateFilter( aItmArt(), ::oDbfArt:cAlias )
 

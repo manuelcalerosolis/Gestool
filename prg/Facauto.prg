@@ -2200,8 +2200,6 @@ METHOD lLanzaAsistente( cCodFac ) CLASS TCreaFacAutomaticas
 
    ErrorBlock( oBlock )
 
-
-
    CursorWE()
 
 RETURN ( lLanza )
@@ -2341,7 +2339,6 @@ METHOD CreaAlbaran() CLASS TCreaFacAutomaticas
    local aTotAlb
    local nImpAtp
    local nDtoArt
-   local lAtpArt           := .f.
 
    /*
    Cabecera del albarán--------------------------------------------------------
@@ -2432,8 +2429,6 @@ METHOD CreaAlbaran() CLASS TCreaFacAutomaticas
 
       while ::oFacAutL:oDbf:cCodFac == ::oFacAutT:oDbf:cCodFac .and. !::oFacAutL:oDbf:Eof()
 
-         lAtpArt                    := .f.
-
          ::oAlbCliL:Append()
          ::oAlbCliL:cSerAlb         := cSerAlb
          ::oAlbCliL:nNumAlb         := nNumAlb
@@ -2447,6 +2442,49 @@ METHOD CreaAlbaran() CLASS TCreaFacAutomaticas
          ::oAlbCliL:cValPr2         := ::oFacAutL:oDbf:cValPr2
 
          ::oAlbCliL:cAlmLin         := ::oAlbCliT:cCodAlm
+
+         if ::oDbfArt:Seek( ::oFacAutL:oDbf:cCodArt )
+
+            ::oAlbCliL:nPesoKg      := ::oDbfArt:nPesoKg
+            ::oAlbCliL:cPesoKg      := ::oDbfArt:cUnidad
+            ::oAlbCliL:nVolumen     := ::oDbfArt:nVolumen
+            ::oAlbCliL:cVolumen     := ::oDbfArt:cVolumen
+            ::oAlbCliL:cUnidad      := ::oDbfArt:cUnidad
+            ::oAlbCliL:lMsgVta      := ::oDbfArt:lMsgVta
+            ::oAlbCliL:lNotVta      := ::oDbfArt:lNotVta
+            ::oAlbCliL:nFacCnv      := ::oDbfArt:nFacCnv
+            ::oAlbCliL:cCodTip      := ::oDbfArt:cCodTip
+            ::oAlbCliL:cCodFam      := ::oDbfArt:Familia
+            ::oAlbCliL:cGrpFam      := RetFld( ::oDbfArt:Familia, ::oDbfFam:cAlias, "cCodGrp" )
+            ::oAlbCliL:nCtlStk      := ::oDbfArt:nCtlStock
+            ::oAlbCliL:nCosDiv      := nCosto( nil, ::oDbfArt:cAlias, ::oDbfKit:cAlias )
+
+            if ( ::oFacAutT:oDbf:lUseCli )
+
+               do case
+               case nDtoArt == 1
+                  ::oAlbCliL:nDto   := ::oDbfArt:nDtoArt1
+
+               case nDtoArt == 2
+                  ::oAlbCliL:nDto   := ::oDbfArt:nDtoArt2
+
+               case nDtoArt == 3
+                  ::oAlbCliL:nDto   := ::oDbfArt:nDtoArt3
+
+               case nDtoArt == 4
+                  ::oAlbCliL:nDto   := ::oDbfArt:nDtoArt4
+
+               case nDtoArt == 5
+                  ::oAlbCliL:nDto   := ::oDbfArt:nDtoArt5
+
+               case nDtoArt == 6
+                  ::oAlbCliL:nDto   := ::oDbfArt:nDtoArt6
+
+               end case
+
+            end if
+
+         end if
 
          if ::oFacAutL:oDbf:lPrcAtp
 
@@ -2464,7 +2502,7 @@ METHOD CreaAlbaran() CLASS TCreaFacAutomaticas
                   ::oAlbCliL:nPreUnit  := nRetPreArt( Max( uFieldEmpresa( "nPreVta" ), ::oDbfCli:nTarifa ), cDivEmp(), uFieldEmpresa( "lIvaInc" ), ::oDbfArt:cAlias, ::oDbfDiv:cAlias, ::oDbfKit:cAlias, ::oDbfIva:cAlias )
                end if
 
-               lAtpArt                 := .t.
+               ::oAlbCliL:nDto         := nDtoAtp( , ::oDbfCliAtp:cAlias )
 
             else
 
@@ -2491,49 +2529,6 @@ METHOD CreaAlbaran() CLASS TCreaFacAutomaticas
          ::oAlbCliL:lIvaLin         := uFieldEmpresa( "lIvaInc" )
          ::oAlbCliL:nTarLin         := Max( uFieldEmpresa( "nPreVta" ), ::oDbfCli:nTarifa )
          ::oAlbCliL:nComAge         := RetFld( ::oDbfCli:cAgente, ::oDbfAge:cAlias, "nCom1" )
-
-         if ::oDbfArt:Seek( ::oFacAutL:oDbf:cCodArt )
-
-            ::oAlbCliL:nPesoKg      := ::oDbfArt:nPesoKg
-            ::oAlbCliL:cPesoKg      := ::oDbfArt:cUnidad
-            ::oAlbCliL:nVolumen     := ::oDbfArt:nVolumen
-            ::oAlbCliL:cVolumen     := ::oDbfArt:cVolumen
-            ::oAlbCliL:cUnidad      := ::oDbfArt:cUnidad
-            ::oAlbCliL:lMsgVta      := ::oDbfArt:lMsgVta
-            ::oAlbCliL:lNotVta      := ::oDbfArt:lNotVta
-            ::oAlbCliL:nFacCnv      := ::oDbfArt:nFacCnv
-            ::oAlbCliL:cCodTip      := ::oDbfArt:cCodTip
-            ::oAlbCliL:cCodFam      := ::oDbfArt:Familia
-            ::oAlbCliL:cGrpFam      := RetFld( ::oDbfArt:Familia, ::oDbfFam:cAlias, "cCodGrp" )
-            ::oAlbCliL:nCtlStk      := ::oDbfArt:nCtlStock
-            ::oAlbCliL:nCosDiv      := nCosto( nil, ::oDbfArt:cAlias, ::oDbfKit:cAlias )
-
-            if ( ::oFacAutT:oDbf:lUseCli .and. !lAtpArt )
-
-               do case
-               case nDtoArt == 1
-                  ::oAlbCliL:nDto   := ::oDbfArt:nDtoArt1
-
-               case nDtoArt == 2
-                  ::oAlbCliL:nDto   := ::oDbfArt:nDtoArt2
-
-               case nDtoArt == 3
-                  ::oAlbCliL:nDto   := ::oDbfArt:nDtoArt3
-
-               case nDtoArt == 4
-                  ::oAlbCliL:nDto   := ::oDbfArt:nDtoArt4
-
-               case nDtoArt == 5
-                  ::oAlbCliL:nDto   := ::oDbfArt:nDtoArt5
-
-               case nDtoArt == 6
-                  ::oAlbCliL:nDto   := ::oDbfArt:nDtoArt6
-
-               end case
-
-            end if
-
-         end if
 
          ::oAlbCliL:Save()
 
@@ -2587,7 +2582,6 @@ METHOD CreaFactura() CLASS TCreaFacAutomaticas
    local aTotFac
    local nImpAtp
    local nDtoArt
-   local lAtpArt           := .f.
 
    /*
    Cabecera del facturas-------------------------------------------------------
@@ -2683,8 +2677,6 @@ METHOD CreaFactura() CLASS TCreaFacAutomaticas
 
       while ::oFacAutL:oDbf:cCodFac == ::oFacAutT:oDbf:cCodFac .and. !::oFacAutL:oDbf:Eof()
 
-         lAtpArt                 := .f.
-
          ::oFacCliL:Append()
 
          ::oFacCliL:cSerie       := cSerFac
@@ -2699,52 +2691,6 @@ METHOD CreaFactura() CLASS TCreaFacAutomaticas
          ::oFacCliL:cValPr2      := ::oFacAutL:oDbf:cValPr2
 
          ::oFacCliL:cAlmLin      := ::oFacCliT:cCodAlm
-
-         if ::oFacAutL:oDbf:lPrcAtp
-
-            //--Chequeamos situaciones especiales--//
-            //--Atipicas de clientes por artículos--//
-
-            if lSeekAtpArt( ::oDbfCli:Cod + ::oFacAutL:oDbf:cCodArt, ::oFacAutL:oDbf:cCodPr1 + ::oFacAutL:oDbf:cCodPr2, ::oFacAutL:oDbf:cValPr1 + ::oFacAutL:oDbf:cValPr2, ::dFecDocumento, ::oDbfCliAtp:cAlias ) .and. ;
-               ::oDbfCliAtp:lAplFac
-
-               nImpAtp                 := nImpAtp( , ::oDbfCliAtp:cAlias )
-
-               if nImpAtp  != 0
-                  ::oFacCliL:nPreUnit  := nImpAtp
-               else
-                  ::oFacCliL:nPreUnit  := ::oFacAutL:oDbf:nPreUnit
-               end if
-
-               lAtpArt                 := .t.
-
-            else
-
-               ::oFacCliL:nPreUnit     := ::oFacAutL:oDbf:nPreUnit
-
-            end if
-
-         else
-
-            ::oFacCliL:nPreUnit        := ::oFacAutL:oDbf:nPreUnit
-
-         end if
-
-         ::oFacCliL:nCanEnt      := ::oFacAutL:oDbf:nCajas
-         ::oFacCliL:nUniCaja     := ::oFacAutL:oDbf:nUnidades
-         ::oFacCliL:lKitArt      := ::oFacAutL:oDbf:lKitArt
-         ::oFacCliL:lKitChl      := ::oFacAutL:oDbf:lKitChl
-         ::oFacCliL:lKitPrc      := ::oFacAutL:oDbf:lKitPrc
-         ::oFacCliL:nIva         := ::oFacAutL:oDbf:nIva
-         ::oFacCliL:nReq         := nPorcentajeRE( ::oDbfIva:cAlias, ::oFacAutL:oDbf:nIva )      
-         ::oFacCliL:nNumLin      := ::oFacAutL:oDbf:nNumLin
-
-         ::oFacCliL:dFecha       := ::dFecDocumento
-         ::oFacCliL:cTipMov      := cDefVta()
-         ::oFacCliL:lIvaLin      := uFieldEmpresa( "lIvaInc" )
-         ::oFacCliL:nTarLin      := Max( uFieldEmpresa( "nPreVta" ), ::oDbfCli:nTarifa )
-         ::oFacCliL:cCodAge      := ::oDbfCli:cAgente
-         ::oFacCliL:nComAge      := RetFld( ::oDbfCli:cAgente, ::oDbfAge:cAlias, "nCom1" )
 
          if ::oDbfArt:Seek( ::oFacAutL:oDbf:cCodArt )
 
@@ -2762,7 +2708,7 @@ METHOD CreaFactura() CLASS TCreaFacAutomaticas
             ::oFacCliL:nCtlStk   := ::oDbfArt:nCtlStock
             ::oFacCliL:nCosDiv   := nCosto( nil, ::oDbfArt:cAlias, ::oDbfKit:cAlias )
 
-            if ( ::oFacAutT:oDbf:lUseCli .and. !lAtpArt )
+            if ( ::oFacAutT:oDbf:lUseCli )
 
                do case
                case nDtoArt == 1
@@ -2788,6 +2734,52 @@ METHOD CreaFactura() CLASS TCreaFacAutomaticas
             end if
 
          end if
+
+         if ::oFacAutL:oDbf:lPrcAtp
+
+            //--Chequeamos situaciones especiales--//
+            //--Atipicas de clientes por artículos--//
+
+            if lSeekAtpArt( ::oDbfCli:Cod + ::oFacAutL:oDbf:cCodArt, ::oFacAutL:oDbf:cCodPr1 + ::oFacAutL:oDbf:cCodPr2, ::oFacAutL:oDbf:cValPr1 + ::oFacAutL:oDbf:cValPr2, ::dFecDocumento, ::oDbfCliAtp:cAlias ) .and. ;
+               ::oDbfCliAtp:lAplFac
+
+               nImpAtp                 := nImpAtp( , ::oDbfCliAtp:cAlias )
+
+               if nImpAtp  != 0
+                  ::oFacCliL:nPreUnit  := nImpAtp
+               else
+                  ::oFacCliL:nPreUnit  := ::oFacAutL:oDbf:nPreUnit
+               end if
+
+               ::oAlbCliL:nDto         := nDtoAtp( , ::oDbfCliAtp:cAlias )
+
+            else
+
+               ::oFacCliL:nPreUnit     := nRetPreArt( Max( uFieldEmpresa( "nPreVta" ), ::oDbfCli:nTarifa ), cDivEmp(), uFieldEmpresa( "lIvaInc" ), ::oDbfArt:cAlias, ::oDbfDiv:cAlias, ::oDbfKit:cAlias, ::oDbfIva:cAlias )
+
+            end if
+
+         else
+
+            ::oFacCliL:nPreUnit        := ::oFacAutL:oDbf:nPreUnit
+
+         end if
+
+         ::oFacCliL:nCanEnt      := ::oFacAutL:oDbf:nCajas
+         ::oFacCliL:nUniCaja     := ::oFacAutL:oDbf:nUnidades
+         ::oFacCliL:lKitArt      := ::oFacAutL:oDbf:lKitArt
+         ::oFacCliL:lKitChl      := ::oFacAutL:oDbf:lKitChl
+         ::oFacCliL:lKitPrc      := ::oFacAutL:oDbf:lKitPrc
+         ::oFacCliL:nIva         := ::oFacAutL:oDbf:nIva
+         ::oFacCliL:nReq         := nPorcentajeRE( ::oDbfIva:cAlias, ::oFacAutL:oDbf:nIva )      
+         ::oFacCliL:nNumLin      := ::oFacAutL:oDbf:nNumLin
+
+         ::oFacCliL:dFecha       := ::dFecDocumento
+         ::oFacCliL:cTipMov      := cDefVta()
+         ::oFacCliL:lIvaLin      := uFieldEmpresa( "lIvaInc" )
+         ::oFacCliL:nTarLin      := Max( uFieldEmpresa( "nPreVta" ), ::oDbfCli:nTarifa )
+         ::oFacCliL:cCodAge      := ::oDbfCli:cAgente
+         ::oFacCliL:nComAge      := RetFld( ::oDbfCli:cAgente, ::oDbfAge:cAlias, "nCom1" )
 
          ::oFacCliL:Save()
 
