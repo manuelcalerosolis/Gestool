@@ -276,23 +276,9 @@ METHOD Activate( bLClicked, bMoved, bPainted, lCentered, ;
    // ::AEvalWhen()  16-12-04 moved to TDialog:Initiate()
 
    if lModal
-      #ifndef __XPP__
-         ::nResult = if( ! Empty( ::cResName ),;
-                      DialogBox( ::hResources, ::cResName,;
-                                      hActiveWnd, Self ),;
-                      DialogBoxIndirect( GetInstance(),;
-                                         If( ! Empty( ::cResData ), ::cResData, ::cToChar( hActiveWnd ) ),;
-                                         hActiveWnd, Self ) )
-      #else
-         bDlgProc = { | nMsg, nWParam, nLParam | ;
-                     Self:HandleEvent( nMsg, nWParam, nLParam ) }
-         ::nResult = if( ! Empty( ::cResName ),;
-                      DialogBox( ::hResources, ::cResName,;
-                                 hActiveWnd, bDlgProc ),;
-                      DialogBoxIndirect( GetInstance(),;
-                                         If( ! Empty( ::cResData ), ::cResData, ::cToChar( hActiveWnd ) ),;
-                                 hActiveWnd, bDlgProc ) )
-      #endif
+        ::nResult = if( ! Empty( ::cResName ),;
+                      DialogBox( ::hResources, ::cResName, hActiveWnd, Self ),;
+                      DialogBoxIndirect( GetInstance(), if( ! Empty( ::cResData ), ::cResData, ::cToChar( hActiveWnd ) ), hActiveWnd, Self ) )
 
       #ifdef __CLIPPER__
          if ::nResult == -1
@@ -303,27 +289,11 @@ METHOD Activate( bLClicked, bMoved, bPainted, lCentered, ;
       endif
 
    else
-      if ( Len( ::aControls ) > 0 .and. CanRegDialog() ) .or. ;
-           Len( ::aControls ) == 0
+      if ( Len( ::aControls ) > 0 .and. CanRegDialog() ) .or. Len( ::aControls ) == 0
 
-         #ifndef __XPP__
-            ::hWnd = if( ! Empty( ::cResName ),;
-                       CreateDlg( ::hResources, ::cResName,;
-                                  hActiveWnd, Self ),;
-                       CreateDlgIndirect( GetInstance(), ::cToChar( hActiveWnd ),;
-                                  hActiveWnd, Self ) )
-         #else
-            bDlgProc = { | nMsg, nWParam, nLParam | ;
-                        Self:HandleEvent( nMsg, nWParam, nLParam ) }
-            ::hWnd = if( ! Empty( ::cResName ),;
-                         CreateDlg( ::hResources, ::cResName,;
-                                    hActiveWnd, bDlgProc ),;
-                         CreateDlgIndirect( GetInstance(), ::cToChar( hActiveWnd ),;
-                                    hActiveWnd, bDlgProc ) )
-            if Empty( ::cResName )
-               ::Initiate()
-            endif
-         #endif
+          ::hWnd = if ( !Empty( ::cResName ),;
+                      CreateDlg( ::hResources, ::cResName, hActiveWnd, Self ),;
+                      CreateDlgIndirect( GetInstance(), ::cToChar( hActiveWnd ), hActiveWnd, Self ) )
 
          if ::hWnd == 0
             CreateDlgError( Self )

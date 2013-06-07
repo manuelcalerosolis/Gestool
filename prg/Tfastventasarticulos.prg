@@ -253,6 +253,8 @@ METHOD lResource( cFld ) CLASS TFastVentasArticulos
    ::lNewInforme     := .t.
    ::lDefCondiciones := .f.
 
+   ::cSubTitle       := "Artículos"
+
    if !::NewResource()
       return .f.
    end if
@@ -2372,7 +2374,7 @@ METHOD TreeReportingChanged() CLASS TFastVentasArticulos
       ::lShowFecha()
    end if
 
-   ::oDlg:cTitle( "Reporting : [" + cTitle + "]" )
+   ::oDlg:cTitle( ::cSubTitle + " : [" + cTitle + "]" )
 
 Return ( Self )
 

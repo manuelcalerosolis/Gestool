@@ -1509,7 +1509,7 @@ Function CreateAcceso( oWnd )
    local oItemTpv
    local oItemHerramientas
    local oItemAyudas
-   local oItemSalir
+   local oItemReporting
 
    oAcceso              := TAcceso():New()
 
@@ -3064,10 +3064,35 @@ Function CreateAcceso( oWnd )
    oItem:cBmpBig        := "Currency_Euro_32"
    oItem:lShow          := .f.
 
+   // Reporting----------------------------------------------------------------
+
+   oItemReporting          := oAcceso:Add()
+   oItemReporting:cPrompt  := 'INFORMES'
+   oItemReporting:cBmp     := "Folder16"
+   oItemReporting:cBmpBig  := "Folder_32"
+   oItemReporting:lShow    := .t.
+
+   oGrupo               := TGrupoAcceso()
+   oGrupo:nBigItems     := 1
+   oGrupo:cPrompt       := 'Informes'
+   oGrupo:cLittleBitmap := "Lifebelt_16"
+   oGrupo:cBigBitmap    := "Lifebelt_32"
+
+   oItem                := oItemReporting:Add()
+   oItem:oGroup         := oGrupo
+   oItem:cPrompt        := 'Artículos'
+   oItem:cMessage       := 'Informes realacionados con articulos'
+   oItem:bAction        := {|| TFastVentasArticulos():New():Play() }
+   oItem:cId            := "01093"
+   oItem:cBmp           := "Lifebelt_16"
+   oItem:cBmpBig        := "Lifebelt_32"
+   oItem:lShow          := .f.
+
+
    // Ayudas-------------------------------------------------------------------
 
    oItemAyudas          := oAcceso:Add()
-   oItemAyudas:cPrompt  := 'Ayudas'
+   oItemAyudas:cPrompt  := 'AYUDAS'
    oItemAyudas:cBmp     := "Folder16"
    oItemAyudas:cBmpBig  := "Folder_32"
    oItemAyudas:lShow    := .t.

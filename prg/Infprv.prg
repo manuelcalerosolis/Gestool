@@ -32,11 +32,6 @@ METHOD Create()
    ::AddField( "Fax",       "C",  20, 0, {|| "" },          "Fax" ,                        .f., "Fax" ,                      10, .f. )
    ::AddField( "Fpago",     "C",   2, 0, {|| "" },          "Pg" ,                         .f., "Forma de pago" ,            10, .f. )
    ::AddField( "Diapago",   "N",   2, 0, {|| "" },          "Dia" ,                        .f., "Dia de pago" ,              10, .f. )
-   ::AddField( "Banco",     "C",  50, 0, {|| "" },          "Banco" ,                      .f., "Banco" ,                    30, .f. )
-   ::AddField( "DirBanco",  "C",  35, 0, {|| "" },          "Domicilio banco" ,            .f., "Domicilio banco" ,          25, .f. )
-   ::AddField( "PobBanco",  "C",  25, 0, {|| "" },          "Población banco" ,            .f., "Población banco" ,          30, .f. )
-   ::AddField( "cProBanco", "C",  20, 0, {|| "" },          "Provincia" ,                  .f., "Provincia banco" ,          15, .f. )
-   ::AddField( "Cuenta",    "C",  20, 0, {|| "" },          "Cuenta" ,                     .f., "Cuenta banco" ,             10, .f. )
    ::AddField( "cDefI01",   "C", 100, 0, {|| "@!" },        {|| ::cNameIniPrv(1) },        .f., {|| ::cNameIniPrv(1) },      50, .f. )
    ::AddField( "cDefI02",   "C", 100, 0, {|| "@!" },        {|| ::cNameIniPrv(2) },        .f., {|| ::cNameIniPrv(2) },      50, .f. )
    ::AddField( "cDefI03",   "C", 100, 0, {|| "@!" },        {|| ::cNameIniPrv(3) },        .f., {|| ::cNameIniPrv(3) },      50, .f. )
@@ -115,10 +110,10 @@ METHOD lGenerate()
    ::oDbfPrv:GoTop()
    WHILE !::oDbfPrv:Eof()
 
-      if ( ::lAllPrv .or. ( ::oDbfPrv:Cod >= ::cPrvOrg .and. ::oDbfPrv:Cod <= ::cPrvDes ) ) .and.;
-         ::EvalFilter()
+      if ( ::lAllPrv .or. ( ::oDbfPrv:Cod >= ::cPrvOrg .and. ::oDbfPrv:Cod <= ::cPrvDes ) ) .and. ::EvalFilter()
 
          ::oDbf:Append()
+
          ::oDbf:Cod         := ::oDbfPrv:Cod
          ::oDbf:Titulo      := ::oDbfPrv:Titulo
          ::oDbf:Nif         := ::oDbfPrv:Nif
@@ -130,11 +125,6 @@ METHOD lGenerate()
          ::oDbf:Fax         := ::oDbfPrv:Fax
          ::oDbf:Fpago       := ::oDbfPrv:Fpago
          ::oDbf:Diapago     := ::oDbfPrv:Diapago
-         ::oDbf:Banco       := ::oDbfPrv:Banco
-         ::oDbf:Dirbanco    := ::oDbfPrv:Dirbanco
-         ::oDbf:Pobbanco    := ::oDbfPrv:Pobbanco
-         ::oDbf:Cprobanco   := ::oDbfPrv:Cprobanco
-         ::oDbf:Cuenta      := ::oDbfPrv:Cuenta
 
          ::oDbf:Save()
 

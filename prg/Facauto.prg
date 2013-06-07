@@ -2341,6 +2341,7 @@ METHOD CreaAlbaran() CLASS TCreaFacAutomaticas
    local aTotAlb
    local nImpAtp
    local nDtoArt
+   local lAtpArt           := .f.
 
    /*
    Cabecera del albarán--------------------------------------------------------
@@ -2431,6 +2432,8 @@ METHOD CreaAlbaran() CLASS TCreaFacAutomaticas
 
       while ::oFacAutL:oDbf:cCodFac == ::oFacAutT:oDbf:cCodFac .and. !::oFacAutL:oDbf:Eof()
 
+         lAtpArt                    := .f.
+
          ::oAlbCliL:Append()
          ::oAlbCliL:cSerAlb         := cSerAlb
          ::oAlbCliL:nNumAlb         := nNumAlb
@@ -2453,19 +2456,19 @@ METHOD CreaAlbaran() CLASS TCreaFacAutomaticas
             if lSeekAtpArt( ::oDbfCli:Cod + ::oFacAutL:oDbf:cCodArt, ::oFacAutL:oDbf:cCodPr1 + ::oFacAutL:oDbf:cCodPr2, ::oFacAutL:oDbf:cValPr1 + ::oFacAutL:oDbf:cValPr2, ::dFecDocumento, ::oDbfCliAtp:cAlias ) .and. ;
                ::oDbfCliAtp:lAplFac
 
-               nImpAtp     := nImpAtp( , ::oDbfCliAtp:cAlias )
+               nImpAtp                 := nImpAtp( , ::oDbfCliAtp:cAlias )
 
                if nImpAtp  != 0
                   ::oAlbCliL:nPreUnit  := nImpAtp
                else
                   ::oAlbCliL:nPreUnit  := nRetPreArt( Max( uFieldEmpresa( "nPreVta" ), ::oDbfCli:nTarifa ), cDivEmp(), uFieldEmpresa( "lIvaInc" ), ::oDbfArt:cAlias, ::oDbfDiv:cAlias, ::oDbfKit:cAlias, ::oDbfIva:cAlias )
-                  //::oFacAutL:oDbf:nPreUnit
                end if
+
+               lAtpArt                 := .t.
 
             else
 
                ::oAlbCliL:nPreUnit  := nRetPreArt( Max( uFieldEmpresa( "nPreVta" ), ::oDbfCli:nTarifa ), cDivEmp(), uFieldEmpresa( "lIvaInc" ), ::oDbfArt:cAlias, ::oDbfDiv:cAlias, ::oDbfKit:cAlias, ::oDbfIva:cAlias )
-               //::oFacAutL:oDbf:nPreUnit
 
             end if
 
@@ -2505,7 +2508,7 @@ METHOD CreaAlbaran() CLASS TCreaFacAutomaticas
             ::oAlbCliL:nCtlStk      := ::oDbfArt:nCtlStock
             ::oAlbCliL:nCosDiv      := nCosto( nil, ::oDbfArt:cAlias, ::oDbfKit:cAlias )
 
-            if ::oFacAutT:oDbf:lUseCli
+            if ( ::oFacAutT:oDbf:lUseCli .and. !lAtpArt )
 
                do case
                case nDtoArt == 1
@@ -2584,6 +2587,7 @@ METHOD CreaFactura() CLASS TCreaFacAutomaticas
    local aTotFac
    local nImpAtp
    local nDtoArt
+   local lAtpArt           := .f.
 
    /*
    Cabecera del facturas-------------------------------------------------------
@@ -2679,6 +2683,8 @@ METHOD CreaFactura() CLASS TCreaFacAutomaticas
 
       while ::oFacAutL:oDbf:cCodFac == ::oFacAutT:oDbf:cCodFac .and. !::oFacAutL:oDbf:Eof()
 
+         lAtpArt                 := .f.
+
          ::oFacCliL:Append()
 
          ::oFacCliL:cSerie       := cSerFac
@@ -2709,6 +2715,8 @@ METHOD CreaFactura() CLASS TCreaFacAutomaticas
                else
                   ::oFacCliL:nPreUnit  := ::oFacAutL:oDbf:nPreUnit
                end if
+
+               lAtpArt                 := .t.
 
             else
 
@@ -2754,7 +2762,7 @@ METHOD CreaFactura() CLASS TCreaFacAutomaticas
             ::oFacCliL:nCtlStk   := ::oDbfArt:nCtlStock
             ::oFacCliL:nCosDiv   := nCosto( nil, ::oDbfArt:cAlias, ::oDbfKit:cAlias )
 
-            if ::oFacAutT:oDbf:lUseCli
+            if ( ::oFacAutT:oDbf:lUseCli .and. !lAtpArt )
 
                do case
                case nDtoArt == 1

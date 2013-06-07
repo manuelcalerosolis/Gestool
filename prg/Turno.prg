@@ -2238,26 +2238,41 @@ METHOD lCreateTurno()
    local oCodUsr
    local oNomUsr
    local cNomUsr
-   local nNumTur        := 0
+   local nNumTur        
    local oImporte
    local oObjetivo
    local oDescripcion
-   local cPicImp        := cPorDiv( cDivEmp(), ::oDbfDiv )
+   local cPicImp        
    local oDivisa
-   local cDivisa        := cDivEmp()
+   local cDivisa        
    local oBmpDiv
    local oBtnOk
    local oSayUsr
-   local cSayUsr        := Capitalize( oRetFld( cCurUsr(), ::oUser ) )
+   local cSayUsr        
    local oBtnUser
    local oDivObjetivo
-   local cDivObjetivo   := cDivEmp()
+   local cDivObjetivo   
    local oBmpObjetivo
    local oCaja
+   local cNombreCaja    
+   local cResource      
+   local lEspecial      
    local cCaja          := oUser():cCaja()
-   local cNombreCaja    := Alltrim( oRetFld( cCaja, ::oCaja ) )
-   local cResource      := "ApTurnoTCT"
-   local lEspecial      := .f.
+
+   if ( oRetFld( cCaja, ::oCaja, "lNoArq" ) )
+      return .t.
+   end if
+
+   nNumTur              := 0
+   cPicImp              := cPorDiv( cDivEmp(), ::oDbfDiv )
+   cDivisa              := cDivEmp()
+   cSayUsr              := Capitalize( oRetFld( cCurUsr(), ::oUser ) )
+   cDivObjetivo         := cDivEmp()
+   cCaja                := oUser():cCaja()
+   cNombreCaja          := Alltrim( oRetFld( cCaja, ::oCaja ) )
+   cResource            := "ApTurnoTCT"
+   lEspecial            := .f.
+
 
    /*
    Valores iniciales para la edicion-------------------------------------------
@@ -4497,27 +4512,6 @@ Method LoadCaja( cCurTurno )
    end if
 
    ::oDbfCaj:SetStatus()
-
-   /*
-   Recorremos todas las cajas para q seleccionemos solo la del usuario
-
-   if !::oDbfCaj:Seek( cCurTurno )
-      while ::oDbfCaj:cNumTur + ::oDbfCaj:cSufTur == cCurTurno .and. !::oDbfCaj:Eof()
-
-         if ( ::oDbfCaj:lCajSel ) .and. ( ::oCaja:cCodCaj != oUser():cCaja() )
-            ::oDbf
-            ::oDbfCaj:cNumTur    := SubStr( cCurTurno, 1, 6 )
-         ::oDbfCaj:cSufTur    := SubStr( cCurTurno, -2 )
-         ::oDbfCaj:cCodCaj    := cUserCaja
-         ::oDbfCaj:nCanPre    := ::nObjetivoTurno
-         ::oDbfCaj:cDivEfe    := cDivEmp()
-         ::oDbfCaj:cDivTar    := cDivEmp()
-         ::oDbfCaj:cDivPre    := cDivEmp()
-         ::oDbfCaj:Save()
-      end if
-
-   end if
-   */
 
    ::oDbfCaj:SetStatus()
 

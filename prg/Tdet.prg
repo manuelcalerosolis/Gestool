@@ -309,7 +309,7 @@ METHOD Del( oBrw ) CLASS TDet
          Eval( ::bOnPreDelete, Self )
       end if
 
-      ::oDbfVir:Delete( .f. )
+      ::oDbfVir:Delete( .t. )
 
       if ::bOnPostDelete != nil
          Eval( ::bOnPostDelete, Self )

@@ -239,7 +239,7 @@ STATIC FUNCTION OpenFiles( lExt, cPath )
       USE ( cPatArt() + "ArtCodebar.Dbf" ) NEW VIA ( cDriver() ) SHARED ALIAS ( cCheckArea( "CODEBAR", @dbfCodebar ) )
       SET ADSINDEX TO ( cPatArt() + "ArtCodebar.Cdx" ) ADDITIVE
 
-      USE ( cPatArt() + "PROVART.DBF" ) NEW VIA ( cDriver() ) SHARED ALIAS ( cCheckArea( "PROVART", @dbfArtPrv ) )
+      USE ( cPatArt() + "ProvArt.DBF" ) NEW VIA ( cDriver() ) SHARED ALIAS ( cCheckArea( "PROVART", @dbfArtPrv ) )
       SET ADSINDEX TO ( cPatArt() + "PROVART.CDX" ) ADDITIVE
 
       USE ( cPatPrv() + "PROVEE.DBF" ) NEW VIA ( cDriver() ) SHARED ALIAS ( cCheckArea( "PROVEE", @dbfProv ) )
@@ -1715,8 +1715,7 @@ STATIC FUNCTION EdtRec( aTmp, aGet, dbfArticulo, oBrw, bWhen, bValid, nMode )
                   "Co&ntabilidad",;
                   "&Ofertas",;
                   "&Escandallos",;
-                  "&Web",;
-                  "&Ubicaciones" ;
+                  "&Web";
          DIALOGS  "ART_1",;
                   "ART_5",;
                   "ART_2",;
@@ -1727,8 +1726,7 @@ STATIC FUNCTION EdtRec( aTmp, aGet, dbfArticulo, oBrw, bWhen, bValid, nMode )
                   "ART_15",;
                   "ART_4",;
                   "ART_6",;
-                  "ART_13",;
-                  "ART_10" 
+                  "ART_13"
 
 	/*
 	Primera Caja de Dialog del Folder
@@ -4247,18 +4245,6 @@ STATIC FUNCTION EdtRec( aTmp, aGet, dbfArticulo, oBrw, bWhen, bValid, nMode )
          ON CHANGE( ChangePublicar( aTmp ) ) ;
          OF       fldWeb
 
-   /*
-   REDEFINE CHECKBOX aTmp[ ( dbfArticulo )->( fieldpos( "LPUBOFE" ) ) ] ;
-         ID       110 ;
-			WHEN 		( nMode != ZOOM_MODE ) ;
-         OF       fldWeb
-
-   REDEFINE CHECKBOX aTmp[ ( dbfArticulo )->( fieldpos( "LPUBPOR" ) ) ] ;
-         ID       115 ;
-         WHEN     ( aTmp[ ( dbfArticulo )->( fieldpos( "LPUBOFE" ) ) ] .and. nMode != ZOOM_MODE ) ;
-         OF       fldWeb
-    */
-
    REDEFINE GET   aGet[ ( dbfArticulo )->( fieldpos( "pVtaWeb" ) ) ] ;
          VAR      aTmp[ ( dbfArticulo )->( fieldpos( "pVtaWeb" ) ) ] ;
          ID       120 ;
@@ -4358,24 +4344,12 @@ STATIC FUNCTION EdtRec( aTmp, aGet, dbfArticulo, oBrw, bWhen, bValid, nMode )
          WHEN     ( nMode != ZOOM_MODE ) ;
          PICTURE  "@E 99" ;
          OF       fldWeb
-   /*
-   if .t. //IsWinNt()
-   */
+
    REDEFINE GET   aTmp[ ( dbfArticulo )->( fieldpos( "MDESTEC" ) ) ] ;
          ID       220 ;
          WHEN     ( nMode != ZOOM_MODE ) ;
          MEMO ;
          OF       fldWeb
-   /*
-   else
-
-   REDEFINE ACTIVEX oActiveX ;
-         ID       200 ;
-         OF       fldWeb ;
-         PROGID   "rmpHTML.HTMLed"
-
-   end if
-   */
 
    REDEFINE GET aTmp[( dbfArticulo )->( fieldpos( "cCodWeb" ) ) ] ;
          ID       210 ;
@@ -4383,8 +4357,85 @@ STATIC FUNCTION EdtRec( aTmp, aGet, dbfArticulo, oBrw, bWhen, bValid, nMode )
          OF       fldWeb
 
    /*
-   Fechas de venta-------------------------------------------------------------
+   Cuarta Caja de Dialogo del Folder
+   ----------------------------------------------------------------------------
    */
+
+   REDEFINE BITMAP oBmpImagenes ;
+         ID       510 ;
+         RESOURCE "Photo_landscape2_48_alpha" ;
+         TRANSPARENT ;
+         OF       fldImagenes
+
+   REDEFINE BUTTON ;
+         ID       500 ;
+         OF       fldImagenes;
+         WHEN     ( nMode != ZOOM_MODE ) ;
+         ACTION   ( WinAppRec( oBrwImg, bEdtImg, dbfTmpImg, aTmp ) )
+
+   REDEFINE BUTTON ;
+         ID       501 ;
+         OF       fldImagenes;
+         WHEN     ( nMode != ZOOM_MODE ) ;
+         ACTION   ( WinEdtRec( oBrwImg, bEdtImg, dbfTmpImg, aTmp ) )
+
+   REDEFINE BUTTON ;
+         ID       502 ;
+         OF       fldImagenes;
+         WHEN     ( nMode != ZOOM_MODE ) ;
+         ACTION   ( WinDelRec( oBrwImg, dbfTmpImg ), lChangeImage := .t. )
+
+      REDEFINE BUTTON ;
+         ID       503 ;
+         OF       fldImagenes;
+         WHEN     ( nMode != ZOOM_MODE ) ;
+         ACTION   ( dbSwapUp( dbfTmpImg, oBrwImg ) )
+
+      REDEFINE BUTTON ;
+         ID       504 ;
+         OF       fldImagenes;
+         WHEN     ( nMode != ZOOM_MODE ) ;
+         ACTION   ( dbSwapDown( dbfTmpImg, oBrwImg ) )
+
+   oBrwImg                 := IXBrowse():New( fldImagenes )
+
+   oBrwImg:bClrSel         := {|| { CLR_BLACK, Rgb( 229, 229, 229 ) } }
+   oBrwImg:bClrSelFocus    := {|| { CLR_BLACK, Rgb( 167, 205, 240 ) } }
+
+   oBrwImg:cAlias          := dbfTmpImg
+   oBrwImg:nMarqueeStyle   := 6
+   oBrwImg:cName           := "Artículo.Imagenes"
+
+   with object ( oBrwImg:AddCol() )
+      :cHeader             := "Seleccionada"
+      :bStrData            := {|| "" }
+      :bEditValue          := {|| ( dbfTmpImg )->lDefImg }
+      :nWidth              := 20
+      :SetCheck( { "Sel16", "Nil16" } )
+   end with
+
+   with object ( oBrwImg:AddCol() )
+      :cHeader             := "Imagen"
+      :bEditValue          := {|| ( dbfTmpImg )->cImgArt }
+      :nWidth              := 400
+   end with
+
+   with object ( oBrwImg:AddCol() )
+      :cHeader             := "Nombre"
+      :bEditValue          := {|| ( dbfTmpImg )->cNbrArt }
+      :nWidth              := 400
+   end with
+
+   if nMode != ZOOM_MODE
+      oBrwImg:bLDblClick   := {|| WinEdtRec( oBrwImg, bEdtImg, dbfTmpImg, aTmp ) }
+   end if
+
+   oBrwImg:bRClicked       := {| nRow, nCol, nFlags | oBrwImg:RButtonDown( nRow, nCol, nFlags ) }
+
+   oBrwImg:CreateFromResource( 100 )
+
+   /*
+   Fechas de venta-------------------------------------------------------------
 
    REDEFINE BITMAP oBmpubicaciones ;
          ID       500 ;
@@ -4397,18 +4448,15 @@ STATIC FUNCTION EdtRec( aTmp, aGet, dbfArticulo, oBrw, bWhen, bValid, nMode )
          ID       100 ;
          OF       fldUbicaciones
 
-   /*
-   Fechas de venta-------------------------------------------------------------
-   */
 
    REDEFINE GET   aGet[ ( dbfArticulo )->( fieldpos( "dFinVta" ) ) ] ;
          VAR      aTmp[ ( dbfArticulo )->( fieldpos( "dFinVta" ) ) ] ;
          ID       110 ;
          OF       fldUbicaciones
+   */
 
    /*
    Ubicaciones-----------------------------------------------------------------
-   */
 
    REDEFINE GET   aGet[ ( dbfArticulo )->( fieldpos( "CCODUBI1" ) ) ] ;
          VAR      aTmp[ ( dbfArticulo )->( fieldpos( "CCODUBI1" ) ) ] ;
@@ -4469,84 +4517,8 @@ STATIC FUNCTION EdtRec( aTmp, aGet, dbfArticulo, oBrw, bWhen, bValid, nMode )
       VALID    ( cUbicaLin( aGet[ ( dbfArticulo )->( fieldpos( "CVALUBI3" ) ) ], aGet[ ( dbfArticulo )->( fieldpos( "CVALUBI3" ) ) ]:oHelpText, aTmp[ ( dbfArticulo )->( fieldpos( "CCODUBI3" ) ) ], dbfUbicaL ) );
       WHEN     ( nMode != ZOOM_MODE ) ;
       OF       fldUbicaciones
-
-   /*
-	Cuarta Caja de Dialogo del Folder
-   ----------------------------------------------------------------------------
    */
 
-   REDEFINE BITMAP oBmpImagenes ;
-         ID       510 ;
-         RESOURCE "Photo_landscape2_48_alpha" ;
-         TRANSPARENT ;
-         OF       fldImagenes
-
-   REDEFINE BUTTON ;
-			ID 		500 ;
-         OF       fldImagenes;
-         WHEN     ( nMode != ZOOM_MODE ) ;
-         ACTION   ( WinAppRec( oBrwImg, bEdtImg, dbfTmpImg, aTmp ) )
-
-   REDEFINE BUTTON ;
-			ID 		501 ;
-         OF       fldImagenes;
-         WHEN     ( nMode != ZOOM_MODE ) ;
-         ACTION   ( WinEdtRec( oBrwImg, bEdtImg, dbfTmpImg, aTmp ) )
-
-   REDEFINE BUTTON ;
-			ID 		502 ;
-         OF       fldImagenes;
-         WHEN     ( nMode != ZOOM_MODE ) ;
-         ACTION   ( WinDelRec( oBrwImg, dbfTmpImg ), lChangeImage := .t. )
-
-      REDEFINE BUTTON ;
-         ID       503 ;
-         OF       fldImagenes;
-         WHEN     ( nMode != ZOOM_MODE ) ;
-         ACTION   ( dbSwapUp( dbfTmpImg, oBrwImg ) )
-
-		REDEFINE BUTTON ;
-         ID       504 ;
-         OF       fldImagenes;
-         WHEN     ( nMode != ZOOM_MODE ) ;
-         ACTION   ( dbSwapDown( dbfTmpImg, oBrwImg ) )
-
-   oBrwImg                 := IXBrowse():New( fldImagenes )
-
-   oBrwImg:bClrSel         := {|| { CLR_BLACK, Rgb( 229, 229, 229 ) } }
-   oBrwImg:bClrSelFocus    := {|| { CLR_BLACK, Rgb( 167, 205, 240 ) } }
-
-   oBrwImg:cAlias          := dbfTmpImg
-   oBrwImg:nMarqueeStyle   := 6
-   oBrwImg:cName           := "Artículo.Imagenes"
-
-   with object ( oBrwImg:AddCol() )
-      :cHeader             := "Seleccionada"
-      :bStrData            := {|| "" }
-      :bEditValue          := {|| ( dbfTmpImg )->lDefImg }
-      :nWidth              := 20
-      :SetCheck( { "Sel16", "Nil16" } )
-   end with
-
-   with object ( oBrwImg:AddCol() )
-      :cHeader             := "Imagen"
-      :bEditValue          := {|| ( dbfTmpImg )->cImgArt }
-      :nWidth              := 400
-   end with
-
-   with object ( oBrwImg:AddCol() )
-      :cHeader             := "Nombre"
-      :bEditValue          := {|| ( dbfTmpImg )->cNbrArt }
-      :nWidth              := 400
-   end with
-
-   if nMode != ZOOM_MODE
-      oBrwImg:bLDblClick   := {|| WinEdtRec( oBrwImg, bEdtImg, dbfTmpImg, aTmp ) }
-   end if
-
-   oBrwImg:bRClicked       := {| nRow, nCol, nFlags | oBrwImg:RButtonDown( nRow, nCol, nFlags ) }
-
-   oBrwImg:CreateFromResource( 100 )
 
    /*
 	Botones de la Caja de Dialogo
@@ -4592,7 +4564,7 @@ STATIC FUNCTION EdtRec( aTmp, aGet, dbfArticulo, oBrw, bWhen, bValid, nMode )
    ACTIVATE DIALOG oDlg CENTER ;
          ON INIT  (  EdtRecMenu( aTmp, aGet, oSay, oDlg, oFld, aBar, cSay, nMode ) ) ;
          VALID    (  KillTrans( oBrwPrv, oBrwDiv, oBrwStk, oBrwCtaVta, oBrwCtaCom, oBrwOfe, oBrwKit ) )
-
+   
    RECOVER USING oError
 
       msgStop( ErrorMessage( oError ), "Imposible abrir todas las bases de datos ",  )
@@ -5465,7 +5437,6 @@ Static Function BeginTrans( aTmp, nMode )
       ( dbfTmpKit )->( dbGoTop() )
    end if
 
-
    /*
    Ofertas---------------------------------------------------------------------
    */
@@ -5524,7 +5495,7 @@ Static Function BeginTrans( aTmp, nMode )
    end if
 
    /*
-   Subcuentas
+   Subcuentas------------------------------------------------------------------
    */
 
    dbCreate( filTmpSubCta, aSqlStruct( aItmSubCta ), cLocalDriver() )
@@ -12737,18 +12708,12 @@ Static Function EdtRecMenu( aTmp, aGet, oSay, oDlg, oFld, aBar, cSay, nMode )
       oActivex:BorderStyle       := 0
    end if
 
-   /*
-   Ocultamos la ventana de compras si el usuario no tiene acceso a los costos
-
-   if nMode != APPD_MODE .and. oUser():lNotCostos()
-      oFld:DelItem( 2 )
-   end if
-   */
-
 Return ( oMenu )
 
 //---------------------------------------------------------------------------//
-/*Cambia el proveedor por defecto y lo refleja en la tabla de artículo (CPRVHAB)*/
+/*
+Cambia el proveedor por defecto y lo refleja en la tabla de artículo (CPRVHAB)
+*/
 
 Static Function lSelPrvDef( aTmp, dbfTmpPrv, oBrw, aTmpArt )
 
