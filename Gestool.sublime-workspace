@@ -519,22 +519,6 @@
 	},
 	"buffers":
 	[
-		{
-			"file": "prg/Trazalote.prg",
-			"settings":
-			{
-				"buffer_size": 43238,
-				"line_ending": "Windows"
-			}
-		},
-		{
-			"file": "prg/Remmov.prg",
-			"settings":
-			{
-				"buffer_size": 156458,
-				"line_ending": "Windows"
-			}
-		}
 	],
 	"build_system": "Packages/User/gestool.sublime-build",
 	"command_palette":
@@ -568,6 +552,8 @@
 	},
 	"file_history":
 	[
+		"/C/fw195/Gestool/prg/Trazalote.prg",
+		"/C/fw195/Gestool/prg/Remmov.prg",
 		"/C/AppServ/www/zemtrum/tienda/themes/zemtrum/header.tpl",
 		"/C/AppServ/www/zemtrum/tienda/themes/zemtrum/css/global.css",
 		"/C/AppServ/www/zemtrum/tienda/modules/blockuserinfo/blockuserinfo.css",
@@ -579,7 +565,6 @@
 		"/C/fw195/Gestool/prg/Factu.prg",
 		"/C/fw195/Gestool/prg/Usuario.prg",
 		"/C/fw195/Gestool/prg/Tutil.prg",
-		"/C/fw195/Gestool/prg/Remmov.prg",
 		"/C/fw195/Gestool/prg/Movalm.prg",
 		"/C/fw195/Gestool/prg/tuser",
 		"/C/fw195/Gestool/prg/Pedcli.prg",
@@ -613,7 +598,6 @@
 		"/C/fw195/Gestool/prg/Tipart.prg",
 		"/C/fw195/Gestool/prg/Provee.prg",
 		"/C/fw195/Gestool/prg/Producc.prg",
-		"/C/fw195/Gestool/prg/Trazalote.prg",
 		"/C/fw195/Gestool/prg/Tdetmaterial.prg",
 		"/C/fw195/Gestool/prg/TDetMaterial",
 		"/C/fw195/Gestool/prg/Tcomercio.prg",
@@ -890,65 +874,8 @@
 	"groups":
 	[
 		{
-			"selected": 0,
 			"sheets":
 			[
-				{
-					"buffer": 0,
-					"file": "prg/Trazalote.prg",
-					"settings":
-					{
-						"buffer_size": 43238,
-						"regions":
-						{
-						},
-						"selection":
-						[
-							[
-								22149,
-								22149
-							]
-						],
-						"settings":
-						{
-							"syntax": "Packages/harbour/harbour/Harbour.tmLanguage",
-							"tab_size": 3,
-							"translate_tabs_to_spaces": true
-						},
-						"translation.x": 0.0,
-						"translation.y": 14424.0,
-						"zoom_level": 1.0
-					},
-					"type": "text"
-				},
-				{
-					"buffer": 1,
-					"file": "prg/Remmov.prg",
-					"settings":
-					{
-						"buffer_size": 156458,
-						"regions":
-						{
-						},
-						"selection":
-						[
-							[
-								95660,
-								95666
-							]
-						],
-						"settings":
-						{
-							"syntax": "Packages/harbour/harbour/Harbour.tmLanguage",
-							"tab_size": 3,
-							"translate_tabs_to_spaces": true
-						},
-						"translation.x": 174.0,
-						"translation.y": 61645.0,
-						"zoom_level": 1.0
-					},
-					"type": "text"
-				}
 			]
 		}
 	],
