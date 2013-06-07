@@ -198,28 +198,64 @@ CLASS TFastReportInfGen FROM TNewInfGen
 
    METHOD AddVariableSATCliente()
    METHOD AddVariableLineasSATCliente()
-   METHOD cDetalleSATClientes()                                INLINE ( cDesSatCli ( ::oSatCliL:cAlias )  )
-   Method nTotalUnidadesSATClientes()                          INLINE ( nTotNSatCli( ::oSatCliL:cAlias )  )
-   METHOD nPrecioUnitarioSATClientes()                         INLINE ( nTotUSatCli( ::oSatCliL:cAlias )  ) 
-   METHOD nTotalLineaSATClientes()                             INLINE ( nTotLSatCli( ::oSatCliL:cAlias )  )
-   METHOD nTotalPesoLineaSATClientes()                         INLINE ( nPesLSatCli( ::oSatCliL:cAlias )  )  
-   METHOD nTotalImpuestosIncluidosLineaSATClientes()           INLINE ( nTotFSatCli( ::oSatCliL:cAlias )  )
-   METHOD nTotalIVALineaSATClientes()                          INLINE ( nIvaLSatCli( ::oSatCliL:cAlias )  )
+   METHOD cDetalleSATClientes()                                   INLINE ( cDesSatCli ( ::oSatCliL:cAlias )  )
+   Method nTotalUnidadesSATClientes()                             INLINE ( nTotNSatCli( ::oSatCliL:cAlias )  )
+   METHOD nPrecioUnitarioSATClientes()                            INLINE ( nTotUSatCli( ::oSatCliL:cAlias )  ) 
+   METHOD nTotalLineaSATClientes()                                INLINE ( nTotLSatCli( ::oSatCliL:cAlias )  )
+   METHOD nTotalPesoLineaSATClientes()                            INLINE ( nPesLSatCli( ::oSatCliL:cAlias )  )  
+   METHOD nTotalImpuestosIncluidosLineaSATClientes()              INLINE ( nTotFSatCli( ::oSatCliL:cAlias )  )
+   METHOD nTotalIVALineaSATClientes()                             INLINE ( nIvaLSatCli( ::oSatCliL:cAlias )  )
    
    METHOD AddVariablePresupuestoCliente()
    METHOD AddVariableLineasPresupuestoCliente()
-   METHOD cDetallePresupuestoClientes()                        INLINE ( cDesPreCli ( ::oPreCliL:cAlias ) )
-   METHOD nTotalUnidadesPresupuestosClientes()                 INLINE ( nTotNPreCli( ::oPreCliL:cAlias ) )
-   METHOD nPrecioUnitarioPresupuestosClientes()                INLINE ( nTotUPreCli( ::oPreCliL:cAlias ) ) 
-   METHOD nTotalLineaPresupuestosClientes()                    INLINE ( nTotLPreCli( ::oPreCliL:cAlias ) )
-   METHOD nTotalPesoLineaPresupuestosClientes()                INLINE ( nPesLPreCli( ::oPreCliL:cAlias ) )
-   METHOD nTotalImpuestosIncluidosLineaPresupuestosClientes()  INLINE ( nTotFPreCli( ::oPreCliL:cAlias ) )
-   METHOD nTotalIVALineaPresupuestosClientes()                 INLINE ( nIvaLPreCli( ::oPreCliL:cAlias ) )
+   METHOD cDetallePresupuestoClientes()                           INLINE ( cDesPreCli ( ::oPreCliL:cAlias ) )
+   METHOD nTotalUnidadesPresupuestosClientes()                    INLINE ( nTotNPreCli( ::oPreCliL:cAlias ) )
+   METHOD nPrecioUnitarioPresupuestosClientes()                   INLINE ( nTotUPreCli( ::oPreCliL:cAlias ) ) 
+   METHOD nTotalLineaPresupuestosClientes()                       INLINE ( nTotLPreCli( ::oPreCliL:cAlias ) )
+   METHOD nTotalPesoLineaPresupuestosClientes()                   INLINE ( nPesLPreCli( ::oPreCliL:cAlias ) )
+   METHOD nTotalImpuestosIncluidosLineaPresupuestosClientes()     INLINE ( nTotFPreCli( ::oPreCliL:cAlias ) )
+   METHOD nTotalIVALineaPresupuestosClientes()                    INLINE ( nIvaLPreCli( ::oPreCliL:cAlias ) )
 
    METHOD AddVariablePedidoCliente()
+   METHOD AddVariableLineasPedidoCliente()
+   METHOD cDetallePedidosClientes()                               INLINE ( cDesPedCli ( ::oPedCliL:cAlias ) )
+   METHOD nTotalUnidadesPedidosClientes()                         INLINE ( nTotNPedCli( ::oPedCliL:cAlias ) )
+   METHOD nPrecioUnitarioPedidosClientes()                        INLINE ( nTotUPedCli( ::oPedCliL:cAlias ) ) 
+   METHOD nTotalLineaPedidosClientes()                            INLINE ( nTotLPedCli( ::oPedCliL:cAlias ) )
+   METHOD nTotalPesoLineaPedidosClientes()                        INLINE ( nPesLPedCli( ::oPedCliL:cAlias ) )
+   METHOD nTotalImpuestosIncluidosLineaPedidosClientes()          INLINE ( nTotFPedCli( ::oPedCliL:cAlias ) )
+   METHOD nTotalIVALineaPedidosClientes()                         INLINE ( nIvaLPedCli( ::oPedCliL:cAlias ) )
+
    METHOD AddVariableAlbaranCliente()
+   METHOD AddVariableLineasAlbaranCliente()
+   METHOD cDetalleAlbaranesClientes()                             INLINE ( cDesAlbCli ( ::oAlbCliL:cAlias ) )
+   METHOD nTotalUnidadesAlbaranesClientes()                       INLINE ( nTotNAlbCli( ::oAlbCliL:cAlias ) )
+   METHOD nPrecioUnitarioAlbaranesClientes()                      INLINE ( nTotUAlbCli( ::oAlbCliL:cAlias ) ) 
+   METHOD nTotalLineaAlbaranesClientes()                          INLINE ( nTotLAlbCli( ::oAlbCliL:cAlias ) )
+   METHOD nTotalPesoLineaAlbaranesClientes()                      INLINE ( nPesLAlbCli( ::oAlbCliL:cAlias ) )
+   METHOD nTotalImpuestosIncluidosLineaAlbaranesClientes()        INLINE ( nTotFAlbCli( ::oAlbCliL:cAlias ) )
+   METHOD nTotalIVALineaAlbaranesClientes()                       INLINE ( nIvaLAlbCli( ::oAlbCliL:cAlias ) )
+
    METHOD AddVariableFacturaCliente()
+   METHOD AddVariableLineasFacturaCliente()
+   METHOD cDetalleFacturasClientes()                              INLINE ( cDesFacCli ( ::oFacCliL:cAlias ) )
+   METHOD nTotalUnidadesFacturasClientes()                        INLINE ( nTotNFacCli( ::oFacCliL:cAlias ) )
+   METHOD nPrecioUnitarioFacturasClientes()                       INLINE ( nTotUFacCli( ::oFacCliL:cAlias ) ) 
+   METHOD nTotalLineaFacturasClientes()                           INLINE ( nTotLFacCli( ::oFacCliL:cAlias ) )
+   METHOD nTotalPesoLineaFacturasClientes()                       INLINE ( nPesLFacCli( ::oFacCliL:cAlias ) )
+   METHOD nTotalImpuestosIncluidosLineaFacturasClientes()         INLINE ( nTotFFacCli( ::oFacCliL:cAlias ) )
+   METHOD nTotalIVALineaFacturasClientes()                        INLINE ( nIvaLFacCli( ::oFacCliL:cAlias ) )
+
    METHOD AddVariableRectificativaCliente()
+   METHOD AddVariableLineasRectificativaCliente()
+   METHOD cDetalleRectificativasClientes()                        INLINE ( cDesFacRec ( ::oFacCliL:cAlias ) )
+   METHOD nTotalUnidadesRectificativasClientes()                  INLINE ( nTotNFacRec( ::oFacCliL:cAlias ) )
+   METHOD nPrecioUnitarioRectificativasClientes()                 INLINE ( nTotUFacRec( ::oFacCliL:cAlias ) ) 
+   METHOD nTotalLineaRectificativasClientes()                     INLINE ( nTotLFacRec( ::oFacCliL:cAlias ) )
+   METHOD nTotalPesoLineaRectificativasClientes()                 INLINE ( nPesLFacRec( ::oFacCliL:cAlias ) )
+   METHOD nTotalImpuestosIncluidosLineaRectificativasClientes()   INLINE ( nTotFFacRec( ::oFacCliL:cAlias ) )
+   METHOD nTotalIVALineaRectificativasClientes()                  INLINE ( nIvaLFacRec( ::oFacCliL:cAlias ) )
+
    METHOD AddVariableTicketCliente()         VIRTUAL
 
    METHOD AddVariableLiquidacionAgentes()
@@ -2914,12 +2950,39 @@ RETURN ( Self )
 
 //---------------------------------------------------------------------------//
 
+METHOD AddVariableLineasPedidoCliente()
+   ::oFastReport:AddVariable(     "Lineas de pedidos",   "Detalle del artículo",                         "CallHbFunc( 'oTInfGen', ['cDetallePedidosClientes'])"                      )
+   ::oFastReport:AddVariable(     "Lineas de pedidos",   "Total unidades artículo",                      "CallHbFunc( 'oTInfGen', ['nTotalUnidadesPedidosClientes'])"                )
+   ::oFastReport:AddVariable(     "Lineas de pedidos",   "Precio unitario del artículo",                 "CallHbFunc( 'oTInfGen', ['nPrecioUnitarioPedidosClientes'])"               )
+   ::oFastReport:AddVariable(     "Lineas de pedidos",   "Total línea de pedido",                        "CallHbFunc( 'oTInfGen', ['nTotalLineaPedidosClientes'])"                   )
+   ::oFastReport:AddVariable(     "Lineas de pedidos",   "Total peso por línea",                         "CallHbFunc( 'oTInfGen', ['nTotalPesoLineaPedidosClientes'])"               )
+   ::oFastReport:AddVariable(     "Lineas de pedidos",   "Total impuestos incluidos línea del pedido",   "CallHbFunc( 'oTInfGen', ['nTotalImpuestosIncluidosLineaPedidosClientes'])" )
+   ::oFastReport:AddVariable(     "Lineas de pedidos",   "Total IVA línea del pedido",                   "CallHbFunc( 'oTInfGen', ['nTotalIVALineaPedidosClientes'])"                )      
+
+RETURN ( Self )
+
+//---------------------------------------------------------------------------//
+
 METHOD AddVariableAlbaranCliente()
 
    ::oFastReport:AddVariable(    "Albaranes clientes",      "Total base albaranes clientes",          "CallHbFunc( 'oTinfGen', ['nBaseAlbaranesClientes'])"    )
    ::oFastReport:AddVariable(    "Albaranes clientes",      "Total " + cImp() + " albaranes clientes","CallHbFunc( 'oTinfGen', ['nIVAAlbaranesClientes'])"     )
    ::oFastReport:AddVariable(    "Albaranes clientes",      "Total recargo albaranes clientes",       "CallHbFunc( 'oTinfGen', ['nRecargoAlbaranesClientes'])" )
    ::oFastReport:AddVariable(    "Albaranes clientes",      "Total albaranes clientes",               "CallHbFunc( 'oTinfGen', ['nTotalAlbaranesClientes'])"   )
+
+RETURN ( Self )
+
+//---------------------------------------------------------------------------//
+
+METHOD AddVariableLineasAlbaranCliente()
+
+   ::oFastReport:AddVariable(     "Lineas de albaranes",   "Detalle del artículo",                         "CallHbFunc( 'oTInfGen', ['cDetalleAlbaranesClientes'])"                      )
+   ::oFastReport:AddVariable(     "Lineas de albaranes",   "Total unidades artículo",                      "CallHbFunc( 'oTInfGen', ['nTotalUnidadesAlbaranesClientes'])"                )
+   ::oFastReport:AddVariable(     "Lineas de albaranes",   "Precio unitario del artículo",                 "CallHbFunc( 'oTInfGen', ['nPrecioUnitarioAlbaranesClientes'])"               )
+   ::oFastReport:AddVariable(     "Lineas de albaranes",   "Total línea de albaran",                       "CallHbFunc( 'oTInfGen', ['nTotalLineaAlbaranesClientes'])"                   )
+   ::oFastReport:AddVariable(     "Lineas de albaranes",   "Total peso por línea",                         "CallHbFunc( 'oTInfGen', ['nTotalPesoLineaAlbaranesClientes'])"               )
+   ::oFastReport:AddVariable(     "Lineas de albaranes",   "Total impuestos incluidos línea del albaran",  "CallHbFunc( 'oTInfGen', ['nTotalImpuestosIncluidosLineaAlbaranesClientes'])" )
+   ::oFastReport:AddVariable(     "Lineas de albaranes",   "Total IVA línea del albaran",                  "CallHbFunc( 'oTInfGen', ['nTotalIVALineaAlbaranesClientes'])"                )      
 
 RETURN ( Self )
 
@@ -2936,6 +2999,20 @@ RETURN ( Self )
 
 //---------------------------------------------------------------------------//
 
+METHOD AddVariableLineasFacturaCliente()
+
+   ::oFastReport:AddVariable(     "Lineas de facturas",   "Detalle del artículo",                         "CallHbFunc( 'oTInfGen', ['cDetalleFacturasClientes'])"                      )
+   ::oFastReport:AddVariable(     "Lineas de facturas",   "Total unidades artículo",                      "CallHbFunc( 'oTInfGen', ['nTotalUnidadesFacturasClientes'])"                )
+   ::oFastReport:AddVariable(     "Lineas de facturas",   "Precio unitario del artículo",                 "CallHbFunc( 'oTInfGen', ['nPrecioUnitarioFacturasClientes'])"               )
+   ::oFastReport:AddVariable(     "Lineas de facturas",   "Total línea de factura",                       "CallHbFunc( 'oTInfGen', ['nTotalLineaFacturasClientes'])"                   )
+   ::oFastReport:AddVariable(     "Lineas de facturas",   "Total peso por línea",                         "CallHbFunc( 'oTInfGen', ['nTotalPesoLineaFacturasClientes'])"               )
+   ::oFastReport:AddVariable(     "Lineas de facturas",   "Total impuestos incluidos línea de factura",   "CallHbFunc( 'oTInfGen', ['nTotalImpuestosIncluidosLineaFacturasClientes'])" )
+   ::oFastReport:AddVariable(     "Lineas de facturas",   "Total IVA línea de factura",                   "CallHbFunc( 'oTInfGen', ['nTotalIVALineaFacturasClientes'])"                )      
+
+RETURN ( Self )
+
+//---------------------------------------------------------------------------//
+
 METHOD AddVariableRectificativaCliente()
 
    ::oFastReport:AddVariable(    "Rectificativas clientes",       "Total base rectificativas clientes",           "CallHbFunc( 'oTinfGen', ['nBaseFacturasRectificativasClientes'])"     )
@@ -2946,6 +3023,21 @@ METHOD AddVariableRectificativaCliente()
 RETURN ( Self )
 
 //---------------------------------------------------------------------------//
+
+METHOD AddVariableLineasRectificativaCliente()
+
+   ::oFastReport:AddVariable(     "Lineas de rectificativas",   "Detalle del artículo",                              "CallHbFunc( 'oTInfGen', ['cDetalleRectificativasClientes'])"                      )
+   ::oFastReport:AddVariable(     "Lineas de rectificativas",   "Total unidades artículo",                           "CallHbFunc( 'oTInfGen', ['nTotalUnidadesRectificativasClientes'])"                )
+   ::oFastReport:AddVariable(     "Lineas de rectificativas",   "Precio unitario del artículo",                      "CallHbFunc( 'oTInfGen', ['nPrecioUnitarioRectificativasClientes'])"               )
+   ::oFastReport:AddVariable(     "Lineas de rectificativas",   "Total línea de rectificativa",                      "CallHbFunc( 'oTInfGen', ['nTotalLineaRectificativasClientes'])"                   )
+   ::oFastReport:AddVariable(     "Lineas de rectificativas",   "Total peso por línea",                              "CallHbFunc( 'oTInfGen', ['nTotalPesoLineaRectificativasClientes'])"               )
+   ::oFastReport:AddVariable(     "Lineas de rectificativas",   "Total impuestos incluidos línea de rectificativa",  "CallHbFunc( 'oTInfGen', ['nTotalImpuestosIncluidosLineaRectificativasClientes'])" )
+   ::oFastReport:AddVariable(     "Lineas de rectificativas",   "Total IVA línea de rectificativa",                  "CallHbFunc( 'oTInfGen', ['nTotalIVALineaRectificativasClientes'])"                )      
+
+RETURN ( Self )
+
+//---------------------------------------------------------------------------//
+
 
 METHOD AddVariableLiquidacionAgentes()
 

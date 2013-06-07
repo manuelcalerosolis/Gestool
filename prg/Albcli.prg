@@ -1,3 +1,4 @@
+
 #ifndef __PDA__
    #include "FiveWin.Ch"
    #include "Folder.ch"
@@ -5945,17 +5946,27 @@ RETURN ( if( cPouDiv != NIL, Trans( nCalculo, cPouDiv ), nCalculo ) )
 
 //---------------------------------------------------------------------------//
 
-FUNCTION nIvaLAlbCli( dbfLin, nDec, nRou, nVdv, lDto, lPntVer, lImpTrn, cPouDiv )
+FUNCTION nIvaLAlbCli( cAlbCliL, nDec, nRou, nVdv, lDto, lPntVer, lImpTrn, cPouDiv )
 
-   local nCalculo := nTotLAlbCli( dbfLin, nDec, nRou, nVdv, lDto, lPntVer, lImpTrn, cPouDiv )
+   local nCalculo    := 0
 
-   if !( dbfLin )->lIvaLin
-      nCalculo    := nCalculo * ( dbfLin )->nIva / 100
+   DEFAULT cAlbCliL  := dbfAlbCliL
+   DEFAULT nDec      := nDouDiv()
+   DEFAULT nRou      := nRouDiv()
+   DEFAULT nVdv      := 1
+   DEFAULT lDto      := .t.
+   DEFAULT lPntVer   := .t.
+   DEFAULT lImpTrn   := .t.
+
+   nCalculo          := nTotLAlbCli( cAlbCliL, nDec, nRou, nVdv, lDto, lPntVer, lImpTrn, cPouDiv )   
+
+   if !( cAlbCliL )->lIvaLin
+      nCalculo       := nCalculo * ( cAlbCliL )->nIva / 100
    else
-      nCalculo    -= nCalculo / ( 1 + ( dbfLin )->nIva / 100 )
+      nCalculo       -= nCalculo / ( 1 + ( cAlbCliL )->nIva / 100 )
    end if
 
-   nCalculo       := Round( nCalculo, nRou )
+   nCalculo          := Round( nCalculo, nRou )
 
 RETURN ( if( cPouDiv != nil, Trans( nCalculo, cPouDiv ), nCalculo ) )
 
@@ -14879,28 +14890,14 @@ RETURN ( RecalculaTotal( aTmpAlb ) )
 
 //---------------------------------------------------------------------------//
 
-function nTotFAlbCli( cCodArt, dbfAlbCliT, dbfAlbCliL )
+function nTotFAlbCli( cAlbCliL, nDec, nRou, nVdv, lDto, lPntVer, lImpTrn, cPouDiv )
 
-   local nTotVta        := 0
-   local nRecno         := ( dbfAlbCliL )->( Recno() )
+   local nCalculo := 0
 
-   if ( dbfAlbCliL )->( dbSeek( cCodArt ) )
+   nCalculo       += nTotLAlbCli( cAlbCliL, nDec, nRou, nVdv, lDto, lPntVer, lImpTrn, cPouDiv )
+   nCalculo       += nTotIAlbCli( cAlbCliL, nDec, nRou, nVdv )
 
-      while ( dbfAlbCliL )->cRef == cCodArt .and. !( dbfAlbCliL )->( eof() )
-
-         If !( dbfAlbCliL )->lTotLin .and. !lFacAlbCli( ( dbfAlbCliL )->cSerAlb + Str( ( dbfAlbCliL )->nNumFac ) + ( dbfAlbCliL )->cSufAlb, dbfAlbCliT )
-            nTotVta     += nTotNAlbCli( dbfAlbCliL )
-         end if
-
-         ( dbfAlbCliL )->( dbSkip() )
-
-      end while
-
-   end if
-
-   ( dbfAlbCliL )->( dbGoTo( nRecno ) )
-
-return ( nTotVta )
+return ( nCalculo )
 
 //----------------------------------------------------------------------------//
 

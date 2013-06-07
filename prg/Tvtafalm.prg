@@ -381,7 +381,7 @@ METHOD lGenerate()
                ::oDbf:nNumUni := nTotNFacCli( ::oFacCliL )
                ::oDbf:nImpArt := nTotUFacCli( ::oFacCliL:cAlias, ::nDecOut, ::nValDiv )
                ::oDbf:nImpTot := nImpLFacCli( ::oFacCliT:cAlias, ::oFacCliL:cAlias, ::nDecOut, ::nDerOut, ::nValDiv )
-               ::oDbf:nIvaTot := nIvaLFacCli( ::oFacCliT:cAlias, ::oFacCliL:cAlias, ::nDecOut, ::nDerOut, ::nValDiv )
+               ::oDbf:nIvaTot := nIvaLFacCli( ::oFacCliL:cAlias, ::nDecOut, ::nDerOut, ::nValDiv )
                ::oDbf:nTotFin := ::oDbf:nImpTot + ::oDbf:nIvaTot
                ::oDbf:cDocMov := ::oFacCliL:cSerie + "/" + lTrim ( Str( ::oFacCliL:nNumFac ) ) + "/" + lTrim ( ::oFacCliL:cSufFac )
                ::oDbf:cTipDoc := "Factura"

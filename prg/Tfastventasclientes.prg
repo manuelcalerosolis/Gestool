@@ -330,9 +330,7 @@ RETURN ( Self )
 METHOD BuildTree( oTree, lSubNode ) CLASS TFastVentasClientes
 
    local oTreeVentas
-   local oTreeFacturas
 
-   DEFAULT lSubNode        := .t.
 
    oTree:Add( "Listado", 19, "Listado"  )
 
@@ -342,12 +340,8 @@ METHOD BuildTree( oTree, lSubNode ) CLASS TFastVentasClientes
    oTreeVentas:Add( "Informe de pedidos",       6,    "Informe de pedidos" )
    oTreeVentas:Add( "Informe de albaranes",     7,    "Informe de albaranes" )
 
-   oTreeFacturas           := oTreeVentas:Add( "Informe de facturas",   8 )
-
-   if lSubNode
-      oTreeFacturas:Add( "Relación de facturas",                                           8, "Informe de facturas" )
-   end if
-
+   oTreeVentas:Add( "Informe de facturas",      8,    "Informe de facturas")
+   
    oTreeVentas:Add( "Declaración anual de operaciones con terceras personas. Modelo 347",  8, "Informe de ventas consolidadas" )
 
    oTreeVentas:Add( "Informe de facturas rectificativas", 9, "Informe de facturas rectificativas" )
@@ -356,7 +350,6 @@ METHOD BuildTree( oTree, lSubNode ) CLASS TFastVentasClientes
    oTreeVentas:Add( "Informe de ventas",        11,   "Informe de ventas" )
 
    oTreeVentas:Expand()
-   oTreeFacturas:Expand()
 
 RETURN ( Self )
 
@@ -516,19 +509,29 @@ METHOD AddVariable() CLASS TFastVentasClientes
       
          ::AddVariablePedidoCliente()
 
+         ::AddVariableLineasPedidoCliente()         
+
       case ::cTypeName == "Informe de albaranes"
       
          ::AddVariableAlbaranCliente()
 
+         ::AddVariableLineasAlbaranCliente()         
+
       case ::cTypeName == "Informe de facturas"
       
          ::AddVariableFacturaCliente()
+
+         ::AddVariableLineasFacturaCliente()
          
          ::AddVariableRectificativaCliente()
+
+         ::AddVariableLineasRectificativaCliente()
 
       case ::cTypeName == "Informe de facturas rectificativas"
 
          ::AddVariableRectificativaCliente()
+         
+         ::AddVariableLineasRectificativaCliente()
 
       case ::cTypeName == "Informe de tickets"
 

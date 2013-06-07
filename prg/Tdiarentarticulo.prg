@@ -508,7 +508,7 @@ METHOD lGenerate() CLASS TDiaRentArticulo
                ::oDbf:nNumUni       := nTotUni
                ::oDbf:dFecMov       := ::oFacCliL:dFecha
                ::oDbf:nImpTot       := ::oFacCliL:nPreUnit
-               ::oDbf:nIvaTot       := nIvaLFacCli( ::oFacCliT:cAlias, ::oFacCliL:cAlias, ::nDecOut, ::nDerOut, ::nValDiv )
+               ::oDbf:nIvaTot       := nIvaLFacCli( ::oFacCliL:cAlias, ::nDecOut, ::nDerOut, ::nValDiv )
                ::oDbf:nTotFin       := nTotImpUni + ::oDbf:nIvaTot
                ::oDbf:nCostUni      := nCosUni
                ::oDbf:cCodFam       := ::oFacCliL:cCodFam
@@ -548,8 +548,8 @@ METHOD lGenerate() CLASS TDiaRentArticulo
                ::oDbf:nNumCaj       += ::oFacCliL:nCanEnt
                ::oDbf:nUnidad       += ::oFacCliL:nUniCaja
                ::oDbf:nNumUni       += nTotUni
-               ::oDbf:nIvaTot       += nIvaLFacCli( ::oFacCliT:cAlias, ::oFacCliL:cAlias, ::nDecOut, ::nDerOut, ::nValDiv )
-               ::oDbf:nTotFin       += nTotImpUni + nIvaLFacCli( ::oFacCliT:cAlias, ::oFacCliL:cAlias, ::nDecOut, ::nDerOut, ::nValDiv )
+               ::oDbf:nIvaTot       += nIvaLFacCli( ::oFacCliL:cAlias, ::nDecOut, ::nDerOut, ::nValDiv )
+               ::oDbf:nTotFin       += nTotImpUni + nIvaLFacCli( ::oFacCliL:cAlias, ::nDecOut, ::nDerOut, ::nValDiv )
 
                if nTotUni != 0 .or. nCosUni != 0
                   ::oDbf:nRenTab    := nRentabilidad( nTotImpUni, nImpDtoAtp, nTotCosUni )
