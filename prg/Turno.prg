@@ -607,11 +607,16 @@ CLASS TTurno FROM TMasDet
    Inline Method TotSesion( cTurno, cCaja )
 
       ::TotVenta(    cTurno, cCaja )
+
       ::TotEntrada(  cTurno, cCaja )
+
       ::TotCompra(   cTurno, cCaja )
+
       ::TotCobro(    cTurno, cCaja )
+
       ::TotPago(     cTurno, cCaja )
-      ::TotTipoIva(  cTurno, cCaja  )
+
+      ::TotTipoIva(  cTurno, cCaja )
 
       if ::oDbfCaj:SeekInOrd( cTurno + cCaja, "cNumTur" )
          ::oTotales:addTotCajaEfectivo(   cCaja, ::oDbfCaj:nCanEfe )
@@ -4793,7 +4798,9 @@ METHOD lCalTurno( cTurno, cCaja, oDlg )
                   aAdd( aCajas, ::oDbfCaj:cCodCaj )
 
                   if ::lInCajaSelect( ::oDbfCaj:cCodCaj )
+
                      ::TotSesion( cTurno, ::oDbfCaj:cCodCaj )
+                     
                   end if
 
                end if
@@ -5296,6 +5303,7 @@ METHOD TotVenta( cTurno, cCaja )
    end if
 
    if ::oFacCliT:Seek( cTurno + cCaja )
+
       while ::oFacCliT:cTurFac + ::oFacCliT:cSufFac + ::oFacCliT:cCodCaj == cTurno + cCaja .and. !::oFacCliT:eof()
 
          ::oTotales:addTotFacCliContadores(  cCaja, ::oFacCliT:cSerie, ::nCntFacturaCliente(), ::cTxtFacturaCliente(), ::bEdtFacturaCliente() )
@@ -5323,7 +5331,7 @@ METHOD TotVenta( cTurno, cCaja )
    end if
 
    if !Empty( ::oTxt )
-      ::oTxt:SetText( 'Calculando facturas' )
+      ::oTxt:SetText( 'Calculando rectificativas' )
    end if
 
    if ::oRctCliT:Seek( cTurno + cCaja )
@@ -5933,7 +5941,7 @@ METHOD TotTipoIva( cTurno, cCaja )
             while ::oFacCliT:cSerie + Str( ::oFacCliT:nNumFac ) + ::oFacCliT:cSufFac == ::oFacCliL:cSerie + Str( ::oFacCliL:nNumFac ) + ::oFacCliL:cSufFac .and. !::oFacCliL:Eof()
 
             nBasLin     := nImpLFacCli( ::oFacCliT:cAlias, ::oFacCliL:cAlias, ::nDouDiv, ::nDorDiv, ::nVdvDiv )
-            nIvaLin     := nIvaLFacCli( ::oFacCliT:cAlias, ::oFacCliL:cAlias, ::nDouDiv, ::nDorDiv, ::nVdvDiv )
+            nIvaLin     := nIvaLFacCli( ::oFacCliL:cAlias, ::nDouDiv, ::nDorDiv, ::nVdvDiv )
             nTotLin     := nBasLin + nIvaLin
 
             nPos        := aScan( ::aTipIva, {|x| x[1] == ::oFacCliL:nIva } )
@@ -5980,7 +5988,7 @@ METHOD TotTipoIva( cTurno, cCaja )
             while ::oRctCliT:cSerie + Str( ::oRctCliT:nNumFac ) + ::oRctCliT:cSufFac == ::oRctCliL:cSerie + Str( ::oRctCliL:nNumFac ) + ::oRctCliL:cSufFac .and. !::oRctCliL:Eof()
 
             nBasLin     := nImpLFacRec( ::oRctCliT:cAlias, ::oRctCliL:cAlias, ::nDouDiv, ::nDorDiv, ::nVdvDiv )
-            nIvaLin     := nIvaLFacRec( ::oRctCliT:cAlias, ::oRctCliL:cAlias, ::nDouDiv, ::nDorDiv, ::nVdvDiv )
+            nIvaLin     := nIvaLFacRec( ::oRctCliL:cAlias, ::nDouDiv, ::nDorDiv, ::nVdvDiv )
             nTotLin     := nBasLin + nIvaLin
 
             nPos        := aScan( ::aTipIva, {|x| x[1] == ::oRctCliL:nIva } )

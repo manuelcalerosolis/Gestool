@@ -1456,6 +1456,10 @@ STATIC FUNCTION EdtCnf( aTmp, aGet, dbfEmp, oBrw, nSelFolder, bValid, nMode )
          ID       127 ;
          OF       oFld:aDialogs[ 1 ]
 
+      REDEFINE CHECKBOX aGet[ _LADDCUT ] VAR aTmp[ _LADDCUT ] ;
+         ID       128 ;
+         OF       oFld:aDialogs[ 1 ]
+
       REDEFINE CHECKBOX aGet[ _LIMGART ] VAR aTmp[ _LIMGART ] ;
          ID       990 ;
          OF       oFld:aDialogs[1]
@@ -3092,8 +3096,6 @@ Function SetEmpresa( cCodEmp, dbfEmp, dbfDlg, dbfUsr, oBrw, oWnd, lSoft )
    Directorios si no tiene grupo-----------------------------------------------
 
    */
-
-   ?( dbfEmp )->cCodGrp
 
    if Empty( ( dbfEmp )->cCodGrp ) 
 
@@ -7004,7 +7006,7 @@ FUNCTION aItmEmp()
    aAdd( aDbf, {"nNumPgo",    "N",  9, 0, "Contador para pago de clientes",                        "", "", "aEmp()", 1 } )
    aAdd( aDbf, {"lSelCaj",    "L",  1, 0, "Lógico seleccionar cajas",                              "", "", "aEmp()", .f. } )
    aAdd( aDbf, {"lSelAlm",    "L",  1, 0, "Lógico seleccionar almacenes",                          "", "", "aEmp()", .f. } )
-   aAdd( aDbf, {"lAddCut",    "L",  1, 0, "Lógico entrada corta o larga para artículos",           "", "", "aEmp()", .f. } )
+   aAdd( aDbf, {"lAddCut",    "L",  1, 0, "Lógico sumar unidades en TPV",                          "", "", "aEmp()", .f. } )
    aAdd( aDbf, {"lFidelity",  "L",  1, 0, "Lógico para iniciar el modo fidelity",                  "", "", "aEmp()", .f. } )
    aAdd( aDbf, {"lPreLin",    "L",  1, 0, "Lógico seleccionar precios en línea",                   "", "", "aEmp()", .f. } )
    aAdd( aDbf, {"lDtoLin",    "L",  1, 0, "Lógico habilitar descuento lineal",                     "", "", "aEmp()", .t. } )

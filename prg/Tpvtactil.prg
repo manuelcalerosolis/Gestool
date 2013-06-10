@@ -4355,12 +4355,12 @@ METHOD IncrementarUnidades() CLASS TpvTactil
       Return ( .t. )
    end if
 
-   nUnidadesActuales                   := Val( ::cGetUnidades )
+   nUnidadesActuales                      := Val( ::cGetUnidades )
 
    if !Empty( nUnidadesActuales )
 
-      nNumeroLinea                     := ::oTemporalLinea:nNumLin
-      nUnidadesAnterior                := ::oTemporalLinea:nUntTil
+      nNumeroLinea                        := ::oTemporalLinea:nNumLin
+      nUnidadesAnterior                   := ::oTemporalLinea:nUntTil
 
       ::oTemporalLinea:GetStatus()
       ::oTemporalLinea:OrdSetFocus( "nNumLin" )
@@ -4368,7 +4368,11 @@ METHOD IncrementarUnidades() CLASS TpvTactil
       if ::oTemporalLinea:Seek( Str( nNumeroLinea ) )
          while ( ::oTemporalLinea:nNumLin == nNumeroLinea ) .and. !( ::oTemporalLinea:eof() )
 
-            ::oTemporalLinea:nUntTil   := ( ::oTemporalLinea:nUntTil / nUnidadesAnterior ) * ( nUnidadesActuales ) // + nUnidadesAnterior )
+            ::oTemporalLinea:nUntTil      := ( ::oTemporalLinea:nUntTil / nUnidadesAnterior ) * ( nUnidadesActuales ) 
+
+            if !uFieldEmpresa( "lAddCut")
+               ::oTemporalLinea:nUntTil   += nUnidadesAnterior 
+            end if 
 
             ::oTemporalLinea:Skip()
 
@@ -4377,7 +4381,7 @@ METHOD IncrementarUnidades() CLASS TpvTactil
 
       ::oTemporalLinea:SetStatus()
 
-      ::cGetUnidades                   := ""
+      ::cGetUnidades                      := ""
 
       ::TotalTemporal()
 
