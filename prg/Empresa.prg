@@ -3093,6 +3093,8 @@ Function SetEmpresa( cCodEmp, dbfEmp, dbfDlg, dbfUsr, oBrw, oWnd, lSoft )
 
    */
 
+   ?( dbfEmp )->cCodGrp
+
    if Empty( ( dbfEmp )->cCodGrp ) 
 
       cPatGrp( cCodEmp, nil, .t. )
@@ -3115,7 +3117,7 @@ Function SetEmpresa( cCodEmp, dbfEmp, dbfDlg, dbfUsr, oBrw, oWnd, lSoft )
 
       cPatGrp( ( dbfEmp )->cCodGrp, nil, .f. )
 
-      if RetFld( cCodEmp, dbfEmp, "lGrpCli", "CodEmp" ) .and. !lAIS()   // Aun no van los 
+      if RetFld( cCodEmp, dbfEmp, "lGrpCli", "CodEmp" )
          cPatCli( ( dbfEmp )->cCodGrp, nil, .f. )
       else
          cPatCli( cCodEmp, nil, .t. )
