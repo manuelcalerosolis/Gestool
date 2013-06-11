@@ -8556,7 +8556,7 @@ FUNCTION nTotFFacRec( cFacRecL, nDec, nRouDec, nVdv, lDto, lPntVer, lImpTrn, cPo
    local nCalculo := 0
 
    nCalculo       += nTotLFacRec( cFacRecL, nDec, nRouDec, nVdv, lDto, lPntVer, lImpTrn )
-   nCalculo       += nTotIFacRec( cFacRecL, nDec, nRouDec, nVdv )
+   nCalculo       += nIvaLFacRec( cFacRecL, nDec, nRouDec, nVdv, lDto, lPntVer, lImpTrn )
 
 return ( if( cPorDiv != nil, Trans( nCalculo, cPorDiv ), nCalculo ) )
 
