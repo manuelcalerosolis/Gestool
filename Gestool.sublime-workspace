@@ -520,6 +520,7 @@
 	"buffers":
 	[
 		{
+<<<<<<< HEAD
 			"file": "/C/AppServ/www/zemtrum/tienda/themes/zemtrum/header.tpl",
 			"settings":
 			{
@@ -532,10 +533,17 @@
 			"settings":
 			{
 				"buffer_size": 62265,
+=======
+			"file": "prg/Tpvtactil.prg",
+			"settings":
+			{
+				"buffer_size": 259062,
+>>>>>>> 6038878c6d41de026def4674249380e5548eadd4
 				"line_ending": "Windows"
 			}
 		},
 		{
+<<<<<<< HEAD
 			"file": "/C/AppServ/www/zemtrum/tienda/modules/blockuserinfo/blockuserinfo.css",
 			"settings":
 			{
@@ -604,6 +612,22 @@
 			"settings":
 			{
 				"buffer_size": 63871,
+=======
+			"contents": "Searching 1334 files for \"on lFamInTpv\"\n\nC:\\fw195\\Gestool\\prg\\Familia.prg:\n 1451  //--------------------------------------------------------------------------//\n 1452  \n 1453: function lFamInTpv( dbfFamilia )\n 1454  \n 1455     local lFamInTpv   := .f.\n\n1 match in 1 file\n",
+			"settings":
+			{
+				"buffer_size": 271,
+				"line_ending": "Windows",
+				"name": "Find Results",
+				"scratch": true
+			}
+		},
+		{
+			"file": "prg/Familia.prg",
+			"settings":
+			{
+				"buffer_size": 93634,
+>>>>>>> 6038878c6d41de026def4674249380e5548eadd4
 				"line_ending": "Windows"
 			}
 		}
@@ -640,11 +664,37 @@
 	},
 	"file_history":
 	[
+<<<<<<< HEAD
+=======
+		"/C/fw195/Gestool/prg/Accesscode.prg",
+		"/C/fw195/Gestool/prg/Factu.prg",
+		"/C/fw195/Gestool/prg/Empresa.prg",
+		"/C/fw195/Gestool/prg/Client.prg",
+		"/C/fw195/Gestool/prg/client",
+		"/C/fw195/Gestool/prg/Facauto.prg",
+		"/C/fw195/Gestool/prg/Tcomercio.prg",
+		"/C/fw195/Gestool/prg/Remmov.prg",
+		"/C/fw195/Gestool/prg/Albcli.prg",
+		"/C/fw195/Gestool/prg/Stock.prg",
+		"/C/fw195/Gestool/prg/Xtotart.prg",
+		"/C/fw195/Gestool/prg/Xtotalm.prg",
+		"/C/fw195/Gestool/prg/Xvalalmg.prg",
+		"/C/fw195/Gestool/prg/Trazalote.prg",
+		"/C/AppServ/www/zemtrum/tienda/themes/zemtrum/header.tpl",
+		"/C/AppServ/www/zemtrum/tienda/themes/zemtrum/css/global.css",
+		"/C/AppServ/www/zemtrum/tienda/modules/blockuserinfo/blockuserinfo.css",
+		"/C/AppServ/www/zemtrum/tienda/modules/blockuserinfo/blockuserinfo.tpl",
+		"/C/AppServ/www/zemtrum/tienda/js/jquery.reveal.js",
+		"/C/fw195/Gestool/prg/Tuser.prg",
+		"/C/fw195/Gestool/prg/Comun.prg",
+		"/C/fw195/Gestool/prg/Usuario.prg",
+		"/C/fw195/Gestool/prg/Tutil.prg",
+		"/C/fw195/Gestool/prg/Movalm.prg",
+>>>>>>> 6038878c6d41de026def4674249380e5548eadd4
 		"/C/fw195/Gestool/prg/tuser",
 		"/C/fw195/Gestool/prg/Pedcli.prg",
 		"/C/fw195/Gestool/prg/Precli.prg",
 		"/C/fw195/Gestool/prg/Satcli.prg",
-		"/C/fw195/Gestool/prg/Albcli.prg",
 		"/C/fw195/Gestool/prg/Facrec.prg",
 		"/C/fw195/Gestool/prg/Internet.prg",
 		"/C/fw195/Gestool/prg/Factcli.prg",
@@ -653,7 +703,6 @@
 		"/C/fw195/Gestool/include/Empresa.ch",
 		"/C/fw195/Gestool/prg/Empresa.prg",
 		"/C/fw195/Gestool/prg/Utildbf.prg",
-		"/C/fw195/Gestool/prg/Client.prg",
 		"/C/fw195/Gestool/prg/Tftp.prg",
 		"/C/Scripts creados/Inma Pepsi/001.prg",
 		"/C/fw195/Gestool/prg/Tpv.prg",
@@ -663,12 +712,10 @@
 		"/C/fw195/Gestool/prg/Albprov.prg",
 		"/C/fw195/Gestool/prg/Pedprov.prg",
 		"/C/fw195/Gestool/prg/Articulo.prg",
-		"/C/fw195/Gestool/prg/Stock.prg",
 		"/C/fw195/Gestool/prg/Xvalalm.prg",
 		"/C/fw195/Gestool/prg/Factu.prg",
 		"/C/fw195/Gestool/prg/Usuario.prg",
 		"/C/fw195/Gestool/prg/Medicon.prg",
-		"/C/fw195/Gestool/prg/Accesscode.prg",
 		"/C/fw195/Gestool/prg/Empdata.prg",
 		"/C/fw195/Gestool/prg/Tgrpfam.prg",
 		"/C/fw195/Gestool/prg/Familia.prg",
@@ -678,14 +725,12 @@
 		"/C/fw195/Gestool/prg/Trazalote.prg",
 		"/C/fw195/Gestool/prg/Tdetmaterial.prg",
 		"/C/fw195/Gestool/prg/TDetMaterial",
-		"/C/fw195/Gestool/prg/Tcomercio.prg",
 		"/C/fw195/Gestool/prg/Recprv.prg",
 		"/C/fw195/Gestool/prg/Tfastventasarticulos.prg",
 		"/C/fw195/Gestool/prg/Tfastreportinfgen.prg",
 		"/C/fw195/Gestool/include/Factu.ch",
 		"/C/fw195/Gestool/prg/pedcli",
 		"/C/Users/Villa/Desktop/reveal/reveal.css",
-		"/C/fw195/Gestool/prg/Facauto.prg",
 		"/C/fw195/Gestool/prg/Tdetfacautomatica.prg",
 		"/C/Users/Villa/Desktop/enviar_email_ajax/enviar_email_ajax/enviar.php",
 		"/C/Users/Villa/Desktop/enviar_email_ajax/enviar_email_ajax/jquery.js",
@@ -756,6 +801,7 @@
 		"/C/Users/Villa/Desktop/zoomslider/zoomslider.tpl",
 		"/C/Users/Villa/Desktop/zoomslider/zoomslider.php",
 		"/C/Users/Villa/Desktop/minicslider/index.php",
+<<<<<<< HEAD
 		"/C/fw195/Gestool/prg/Tpvcobros.prg",
 		"/C/AppServ/www/zemtrum/modules/homeslider/index.php",
 		"/C/AppServ/www/zemtrum/modules/homeslider/homeslider.php",
@@ -768,6 +814,9 @@
 		"/C/fw195/Gestool/prg/Turno.prg",
 		"/C/fw195/Gestool/prg/factcli",
 		"/C/fw195/Gestool/prg/Pacudiamaquinaria.prg"
+=======
+		"/C/fw195/Gestool/prg/Tpvcobros.prg"
+>>>>>>> 6038878c6d41de026def4674249380e5548eadd4
 	],
 	"find":
 	{
@@ -809,6 +858,44 @@
 		"case_sensitive": false,
 		"find_history":
 		[
+<<<<<<< HEAD
+=======
+			"on lFamInTpv",
+			"familias",
+			"setempresa",
+			"cPatCli()",
+			"cpatcli",
+			"cpaycli",
+			"loadusuarios",
+			"AppendClientPrestashop",
+			"prestashop",
+			"pres",
+			"::oStock:cArt",
+			"on nImpAtp",
+			"on loaart",
+			"loaart",
+			"hismov",
+			"cref",
+			"delega",
+			"csufdoc",
+			"3134",
+			"on aitm",
+			"CSUFDOC",
+			"on openfiles",
+			"cDelegacion(",
+			"on edtc",
+			"on aitm",
+			"on retfld",
+			"cDlgUsr",
+			"on SelectDelegacion",
+			"delega",
+			"aempresa",
+			"adelegacion",
+			"setdlg",
+			"TDetMovimientos",
+			"odetmovimi",
+			"AppendDet",
+>>>>>>> 6038878c6d41de026def4674249380e5548eadd4
 			"on setempresa",
 			"cambi",
 			"setempresa",
@@ -901,6 +988,7 @@
 			"\"00\"",
 			"on dbpass",
 			"on aitm",
+<<<<<<< HEAD
 			"openfiles",
 			"on aitm",
 			"producm",
@@ -937,6 +1025,9 @@
 			"AddRectificativaProveedor",
 			"tfastventasarticulos",
 			"on nTotuRctPrv"
+=======
+			"openfiles"
+>>>>>>> 6038878c6d41de026def4674249380e5548eadd4
 		],
 		"highlight": true,
 		"in_selection": false,
@@ -962,11 +1053,16 @@
 	"groups":
 	[
 		{
+<<<<<<< HEAD
 			"selected": 9,
+=======
+			"selected": 0,
+>>>>>>> 6038878c6d41de026def4674249380e5548eadd4
 			"sheets":
 			[
 				{
 					"buffer": 0,
+<<<<<<< HEAD
 					"file": "/C/AppServ/www/zemtrum/tienda/themes/zemtrum/header.tpl",
 					"settings":
 					{
@@ -1134,6 +1230,12 @@
 					"settings":
 					{
 						"buffer_size": 75833,
+=======
+					"file": "prg/Tpvtactil.prg",
+					"settings":
+					{
+						"buffer_size": 259062,
+>>>>>>> 6038878c6d41de026def4674249380e5548eadd4
 						"regions":
 						{
 						},
@@ -1157,6 +1259,7 @@
 					"type": "text"
 				},
 				{
+<<<<<<< HEAD
 					"buffer": 7,
 					"file": "prg/Usuario.prg",
 					"settings":
@@ -1220,19 +1323,54 @@
 						"buffer_size": 156411,
 						"regions":
 						{
+=======
+					"buffer": 1,
+					"settings":
+					{
+						"buffer_size": 271,
+						"regions":
+						{
+							"match":
+							{
+								"flags": 112,
+								"regions":
+								[
+									[
+										182,
+										194
+									]
+								],
+								"scope": ""
+							}
+>>>>>>> 6038878c6d41de026def4674249380e5548eadd4
 						},
 						"selection":
 						[
 							[
+<<<<<<< HEAD
 								369,
 								369
+=======
+								190,
+								190
+>>>>>>> 6038878c6d41de026def4674249380e5548eadd4
 							]
 						],
 						"settings":
 						{
+<<<<<<< HEAD
 							"syntax": "Packages/harbour/harbour/Harbour.tmLanguage",
 							"tab_size": 3,
 							"translate_tabs_to_spaces": true
+=======
+							"detect_indentation": false,
+							"output_tag": 1,
+							"result_base_dir": "",
+							"result_file_regex": "^([A-Za-z\\\\/<].*):$",
+							"result_line_regex": "^ +([0-9]+):",
+							"scroll_past_end": true,
+							"syntax": "Packages/Default/Find Results.hidden-tmLanguage"
+>>>>>>> 6038878c6d41de026def4674249380e5548eadd4
 						},
 						"translation.x": 0.0,
 						"translation.y": 0.0,
@@ -1241,19 +1379,32 @@
 					"type": "text"
 				},
 				{
+<<<<<<< HEAD
 					"buffer": 10,
 					"file": "prg/Movalm.prg",
 					"settings":
 					{
 						"buffer_size": 63871,
+=======
+					"buffer": 2,
+					"file": "prg/Familia.prg",
+					"settings":
+					{
+						"buffer_size": 93634,
+>>>>>>> 6038878c6d41de026def4674249380e5548eadd4
 						"regions":
 						{
 						},
 						"selection":
 						[
 							[
+<<<<<<< HEAD
 								0,
 								0
+=======
+								42624,
+								42624
+>>>>>>> 6038878c6d41de026def4674249380e5548eadd4
 							]
 						],
 						"settings":
@@ -1263,7 +1414,11 @@
 							"translate_tabs_to_spaces": true
 						},
 						"translation.x": 0.0,
+<<<<<<< HEAD
 						"translation.y": 0.0,
+=======
+						"translation.y": 27287.0,
+>>>>>>> 6038878c6d41de026def4674249380e5548eadd4
 						"zoom_level": 1.0
 					},
 					"type": "text"

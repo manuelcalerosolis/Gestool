@@ -1836,13 +1836,13 @@ METHOD OpenFiles() CLASS TpvTactil
 
    DATABASE NEW ::oArticulosEscandallos                     PATH ( cPatArt() )   FILE "ARTKIT.DBF"          VIA ( cDriver() ) SHARED INDEX "ARTKIT.CDX"
 
-   DATABASE NEW ::oOferta                                   PATH ( cPatGrp() )   FILE "OFERTA.DBF"          VIA ( cDriver() ) SHARED INDEX "OFERTA.CDX"
+   DATABASE NEW ::oOferta                                   PATH ( cPatArt() )   FILE "OFERTA.DBF"          VIA ( cDriver() ) SHARED INDEX "OFERTA.CDX"
 
    DATABASE NEW ::oFormaPago                                PATH ( cPatGrp() )   FILE "FPAGO.DBF"           VIA ( cDriver() ) SHARED INDEX "FPAGO.CDX"
 
    DATABASE NEW ::oPropiedadesLinea                         PATH ( cPatGrp() )   FILE "TBLPRO.DBF"          VIA ( cDriver() ) SHARED INDEX "TBLPRO.CDX"
 
-   DATABASE NEW ::oFamilias                                 PATH ( cPatGrp() )   FILE "FAMILIAS.DBF"        VIA ( cDriver() ) SHARED INDEX "FAMILIAS.CDX"
+   DATABASE NEW ::oFamilias                                 PATH ( cPatArt() )   FILE "FAMILIAS.DBF"        VIA ( cDriver() ) SHARED INDEX "FAMILIAS.CDX"
 
    DATABASE NEW ::oAlbaranClienteCabecera                   PATH ( cPatEmp() )   FILE "ALBCLIT.DBF"         VIA ( cDriver() ) SHARED INDEX "ALBCLIT.CDX"
 
@@ -2031,7 +2031,7 @@ METHOD OpenFiles() CLASS TpvTactil
 
    ::cPictureImporte          := cPouDiv( cDivEmp(), ::oDivisas:cAlias )        // Picture de la divisa
    ::cPictureTotal            := cPorDiv( cDivEmp(), ::oDivisas:cAlias )        // Picture de la divisa redondeada
-   ::nDecimalesImporte        := nDouDiv( cDivEmp(), ::oDivisas:cAlias )        // .Decimales
+   ::nDecimalesImporte        := nDouDiv( cDivEmp(), ::oDivisas:cAlias )        // Decimales
    ::nDecimalesTotal          := nRouDiv( cDivEmp(), ::oDivisas:cAlias )        // Decimales redondeados
    ::cPictureUnidades         := MasUnd()
 
@@ -4355,12 +4355,12 @@ METHOD IncrementarUnidades() CLASS TpvTactil
       Return ( .t. )
    end if
 
-   nUnidadesActuales                   := Val( ::cGetUnidades )
+   nUnidadesActuales                      := Val( ::cGetUnidades )
 
    if !Empty( nUnidadesActuales )
 
-      nNumeroLinea                     := ::oTemporalLinea:nNumLin
-      nUnidadesAnterior                := ::oTemporalLinea:nUntTil
+      nNumeroLinea                        := ::oTemporalLinea:nNumLin
+      nUnidadesAnterior                   := ::oTemporalLinea:nUntTil
 
       ::oTemporalLinea:GetStatus()
       ::oTemporalLinea:OrdSetFocus( "nNumLin" )
@@ -4368,7 +4368,11 @@ METHOD IncrementarUnidades() CLASS TpvTactil
       if ::oTemporalLinea:Seek( Str( nNumeroLinea ) )
          while ( ::oTemporalLinea:nNumLin == nNumeroLinea ) .and. !( ::oTemporalLinea:eof() )
 
-            ::oTemporalLinea:nUntTil   := ( ::oTemporalLinea:nUntTil / nUnidadesAnterior ) * ( nUnidadesActuales ) // + nUnidadesAnterior )
+            ::oTemporalLinea:nUntTil      := ( ::oTemporalLinea:nUntTil / nUnidadesAnterior ) * ( nUnidadesActuales ) 
+
+            if !uFieldEmpresa( "lAddCut")
+               ::oTemporalLinea:nUntTil   += nUnidadesAnterior 
+            end if 
 
             ::oTemporalLinea:Skip()
 
@@ -4377,7 +4381,7 @@ METHOD IncrementarUnidades() CLASS TpvTactil
 
       ::oTemporalLinea:SetStatus()
 
-      ::cGetUnidades                   := ""
+      ::cGetUnidades                      := ""
 
       ::TotalTemporal()
 

@@ -70,9 +70,6 @@ Method New( cPath, oWndParent, oMenuItem )
 
    ::bOnPreAppend          := {|| ::oCapCampos:CheckDefault( Space( 3 ), .t. ) }
    ::bOnPreEdit            := {|| if( ::oDbf:cCodigo == DEFAULT_CODE, ( msgStop( "No se puede modificar la captura por defecto" ),.f. ), .t. ) }
-   /*
-   ::bOnPreDelete          := {|| if( ::oDbf:cCodigo == DEFAULT_CODE, ( msgStop( "No se puede eliminar la captura por defecto" ), .f. ), .t. ) }
-   */
 
 RETURN ( Self )
 

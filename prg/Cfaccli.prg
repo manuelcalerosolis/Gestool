@@ -87,7 +87,7 @@ FUNCTION CntFacCli( lSimula, lPago, lExcCnt, lMessage, oTree, nAsiento, aSimula,
 
    /*
    Seleccionamos las empresa dependiendo de la serie de factura
-	--------------------------------------------------------------------------
+	-------------------------------------------------------------------------- 
 	*/
 
    cRuta             := cRutCnt()
@@ -2822,7 +2822,7 @@ FUNCTION CntFacRec( lSimula, lPago, lExcCnt, lMessage, oTree, nAsiento, aSimula,
                nImpIvm     := nTotIFacRec( dbfFacRecL, nDouDiv, nRouDiv )
                nImpTrn     := nTrnLFacRec( dbfFacRecL, nDouDiv, nRouDiv )                 // Portes
                nImpPnt     := nPntLFacRec( dbfFacRecL, nDpvDiv )
-               nImpIva     := nIvaLFacRec( dbfFacRecL, nDouDiv, nRouDiv )
+               nImpIva     := nIvaLFacRec( dbfFacRecL, nDouDiv, nRouDiv ) 
 
                cCtaVent    := RetCtaVta( ( dbfFacRecL )->cRef, dbfArt )
 
