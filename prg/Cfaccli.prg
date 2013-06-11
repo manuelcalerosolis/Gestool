@@ -163,13 +163,6 @@ FUNCTION CntFacCli( lSimula, lPago, lExcCnt, lMessage, oTree, nAsiento, aSimula,
                Cuentas de ventas--------------------------------------------------
                */
 
-               msgAlert( cCtaVent,  "cCtaVent" ) 
-               msgAlert( nIva,      "nIva" )
-               msgAlert( nImpDet,   "nImpDet" ) 
-               msgAlert( nImpPnt,   "nImpPnt" )
-               msgAlert( nImpTrn,   "nImpTrn" )
-               msgAlert( nImpIva,   "nImpIva" ) 
-
                nPos           := aScan( aVentas, {|x| x[ 1 ] == cCtaVent .and. x[ 2 ] == nIva } )
                if nPos == 0
                   aAdd( aVentas, { cCtaVent, nIva, nImpDet, nImpPnt, nImpTrn, nImpIva } )
