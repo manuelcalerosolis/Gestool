@@ -146,7 +146,7 @@ FUNCTION ChkFecha( cRuta, cCodEmp, dFecha, lMessage, oTree, cText )
 
       else
 
-         cText             += "fecha del documento " + Dtoc( dFecha ) + " fuera de intervalo de empresa " + cCodEmp + " desde " + Dtoc( dFechaInicioEmpresa ) + " hasta " + Dtoc( dFechaFinEmpresa ) + "."
+         cText             += " fecha del documento " + Dtoc( dFecha ) + " fuera de intervalo de empresa " + cCodEmp + " desde " + Dtoc( dFechaInicioEmpresa ) + " hasta " + Dtoc( dFechaFinEmpresa ) + "."
 
          if lMessage
             msgStop( cText )
@@ -1330,8 +1330,8 @@ FUNCTION MkAsiento( 	Asien,;
       return ( aTemp )
    end if
 
-   oBlock                  := ErrorBlock( { | oError | ApoloBreak( oError ) } )
-   BEGIN SEQUENCE
+/*   oBlock                  := ErrorBlock( { | oError | ApoloBreak( oError ) } )
+   BEGIN SEQUENCE*/
 
    /*
    Importes en negativo--------------------------------------------------------
@@ -1417,14 +1417,14 @@ FUNCTION MkAsiento( 	Asien,;
    if !lSimula
       WriteAsiento( aTemp, cCodDiv )
    end if
-
+/*
    RECOVER USING oError
 
       msgStop( "Error al realizar apunte contable." + CRLF + ErrorMessage( oError ) )
 
    END SEQUENCE
 
-   ErrorBlock( oBlock )
+   ErrorBlock( oBlock )*/
 
 RETURN ( aTemp )
 
