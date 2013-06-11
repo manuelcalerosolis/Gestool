@@ -14895,7 +14895,7 @@ function nTotFAlbCli( cAlbCliL, nDec, nRou, nVdv, lDto, lPntVer, lImpTrn, cPouDi
    local nCalculo := 0
 
    nCalculo       += nTotLAlbCli( cAlbCliL, nDec, nRou, nVdv, lDto, lPntVer, lImpTrn, cPouDiv )
-   nCalculo       += nTotIAlbCli( cAlbCliL, nDec, nRou, nVdv )
+   nCalculo       += nIvaLAlbCli( cAlbCliL, nDec, nRou, nVdv, lDto, lPntVer, lImpTrn, cPouDiv )
 
 return ( nCalculo )
 

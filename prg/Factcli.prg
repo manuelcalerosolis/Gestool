@@ -17888,7 +17888,7 @@ FUNCTION nTotFFacCli( dbfLin, nDec, nRou, nVdv, lDto, lPntVer, lImpTrn, cPorDiv 
    DEFAULT lImpTrn   := .t.
 
    nCalculo          += nTotLFacCli( dbfLin, nDec, nRou, nVdv, lDto, lPntVer, lImpTrn )
-   nCalculo          += nTotIFacCli( dbfLin, nDec, nRou, nVdv )
+   nCalculo          += nIvaLFacCli( dbfLin, nDec, nRou, nVdv, lDto, lPntVer, lImpTrn )
 
 return ( if( cPorDiv != nil, Trans( nCalculo, cPorDiv ), nCalculo ) )
 
