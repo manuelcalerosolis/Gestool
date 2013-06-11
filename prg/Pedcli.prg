@@ -17787,8 +17787,8 @@ Function MuestraPedidosWeb( oBtnPedidos, lGoPedCli )
    oBlock               := ErrorBlock( {| oError | ApoloBreak( oError ) } )
    BEGIN SEQUENCE
 
-        TDataCenter():OpenPedCliT( @dbfPedCliT )
-      	( dbfPedCliT )->( OrdSetFocus( "lInternet" ) )
+      TDataCenter():OpenPedCliT( @dbfPedCliT )
+      ( dbfPedCliT )->( OrdSetFocus( "lInternet" ) )
 
       USE ( cPatEmp() + "PEDCLIL.DBF" ) NEW VIA ( cDriver() ) SHARED ALIAS ( cCheckArea( "PEDCLIL", @dbfPedCliL ) )
       SET ADSINDEX TO ( cPatEmp() + "PEDCLIL.CDX" ) ADDITIVE

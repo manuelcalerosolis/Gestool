@@ -622,13 +622,13 @@ METHOD lGenerate() CLASS TFastVentasClientes
 
       case ::cTypeName == "Informe de ventas"
 
-   //      ::AddAlbaranCliente()
+         ::AddAlbaranCliente()
 
          ::AddFacturaCliente()
 
-   //      ::AddFacturaRectificativa()
+         ::AddFacturaRectificativa()
 
-   //      ::AddTicket()
+         ::AddTicket()
 
       case ::cTypeName == "Declaración anual de operaciones con terceras personas. Modelo 347" // "Informe de ventas consolidadas" 
 

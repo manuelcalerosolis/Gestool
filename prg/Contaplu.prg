@@ -146,7 +146,7 @@ FUNCTION ChkFecha( cRuta, cCodEmp, dFecha, lMessage, oTree, cText )
 
       else
 
-         cText             += "fecha del documento " + Dtoc( dFecha ) + " fuera de intervalo de empresa " + cCodEmp + " desde " + Dtoc( dFechaInicioEmpresa ) + " hasta " + Dtoc( dFechaFinEmpresa ) + "."
+         cText             += " fecha del documento " + Dtoc( dFecha ) + " fuera de intervalo de empresa " + cCodEmp + " desde " + Dtoc( dFechaInicioEmpresa ) + " hasta " + Dtoc( dFechaFinEmpresa ) + "."
 
          if lMessage
             msgStop( cText )
@@ -1408,10 +1408,20 @@ FUNCTION MkAsiento( 	Asien,;
    */
 
    if !Empty( nEjeCon ) .and. !Empty( cEjeCta )
-      aTemp[ ( cDiario )->( FieldPos( "METAL") ) ]       := .t.
-      aTemp[ ( cDiario )->( FieldPos( "METALIMP" ) ) ]   := If ( nImporteDebe != NIL,  nImporteDebe,  aTemp[ ( cDiario )->( FieldPos( "METALIMP" ) ) ] )      
-      aTemp[ ( cDiario )->( FieldPos( "CLIENTE" ) ) ]    := cEjeCta
-      aTemp[ ( cDiario )->( FieldPos( "METALEJE") ) ]    := nEjeCon 
+
+      if ( cDiario )->( FieldPos( "METAL" ) ) != 0
+         aTemp[ ( cDiario )->( FieldPos( "METAL") ) ]       := .t.
+      end if
+      if ( cDiario )->( FieldPos( "METALIMP" ) ) != 0      
+         aTemp[ ( cDiario )->( FieldPos( "METALIMP" ) ) ]   := If ( nImporteDebe != NIL,  nImporteDebe,  aTemp[ ( cDiario )->( FieldPos( "METALIMP" ) ) ] )      
+      end if
+      if ( cDiario )->( FieldPos( "TERNOM" ) ) != 0
+         aTemp[ ( cDiario )->( FieldPos( "TERNOM" ) ) ]     := cEjeCta
+      end if
+      if ( cDiario )->( FieldPos( "METALEJE" ) ) != 0
+         aTemp[ ( cDiario )->( FieldPos( "METALEJE") ) ]    := nEjeCon 
+      end if
+
    end if 
 
    if !lSimula
