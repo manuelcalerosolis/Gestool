@@ -5980,7 +5980,7 @@ METHOD TotTipoIva( cTurno, cCaja )
             while ::oRctCliT:cSerie + Str( ::oRctCliT:nNumFac ) + ::oRctCliT:cSufFac == ::oRctCliL:cSerie + Str( ::oRctCliL:nNumFac ) + ::oRctCliL:cSufFac .and. !::oRctCliL:Eof()
 
             nBasLin     := nImpLFacRec( ::oRctCliT:cAlias, ::oRctCliL:cAlias, ::nDouDiv, ::nDorDiv, ::nVdvDiv )
-            nIvaLin     := nIvaLFacRec( ::oRctCliT:cAlias, ::oRctCliL:cAlias, ::nDouDiv, ::nDorDiv, ::nVdvDiv )
+            nIvaLin     := nIvaLFacRec( ::oRctCliL:cAlias, ::nDouDiv, ::nDorDiv, ::nVdvDiv )
             nTotLin     := nBasLin + nIvaLin
 
             nPos        := aScan( ::aTipIva, {|x| x[1] == ::oRctCliL:nIva } )
