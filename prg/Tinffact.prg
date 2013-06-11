@@ -361,7 +361,7 @@ METHOD lGenerate()
                ::oDbf:nUniCaj       := nTotNFacRec( ::oFacRecL )
                ::oDbf:nPreArt       := nTotUFacRec( ::oFacRecL:cAlias, ::nDecOut, ::nValDiv )
                ::oDbf:nBase         := nImpLFacRec( ::oFacRecT:cAlias, ::oFacRecL:cAlias, ::nDecOut, ::nDerOut, ::nValDiv, , , .t., .t.  )
-               ::oDbf:nIva          := nIvaLFacRec( ::oFacRecT:cAlias, ::oFacRecL:cAlias, ::nDecOut, ::nDerOut, ::nValDiv )
+               ::oDbf:nIva          := nIvaLFacRec( ::oFacRecL:cAlias, ::nDecOut, ::nDerOut, ::nValDiv )
                ::oDbf:nTotal        := ::oDbf:nBase + ::oDbf:nIva
                ::oDbf:nDtoEsp       := ::oFacRecT:nDtoEsp
                ::oDbf:nDpp          := ::oFacRecT:nDpp

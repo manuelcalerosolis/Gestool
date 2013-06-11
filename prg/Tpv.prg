@@ -4751,7 +4751,7 @@ RETURN ( round( nCalculo, nDec ) )
 
 //--------------------------------------------------------------------------//
 
-Function nIvaUTpv( uTmpL, nDec, nVdv, nPrc )
+Function nBasUTpv( uTmpL, nDec, nVdv, nPrc )
 
    local nCalculo := 0
 
@@ -4764,10 +4764,10 @@ Function nIvaUTpv( uTmpL, nDec, nVdv, nPrc )
 
    do case
       case ValType( uTmpL ) == "C"
-         nCalculo -= Round( nCalculo / ( 1 + ( uTmpL )->nIvaTil / 100 ), nDec )
+         nCalculo := Round( nCalculo / ( 1 + ( uTmpL )->nIvaTil / 100 ), nDec )
 
       case ValType( uTmpL ) == "O"
-         nCalculo -= Round( nCalculo / ( 1 + uTmpL:nIvaTil / 100 ), nDec )
+         nCalculo := Round( nCalculo / ( 1 + uTmpL:nIvaTil / 100 ), nDec )
 
    end case
 
@@ -4905,6 +4905,36 @@ FUNCTION nImpLTpv( uTikT, uTikL, nDec, nRou, nVdv, cPouDiv, nPrc )
 
          nCalculo    -= nDtoEsp
          nCalculo    -= nDtoPp
+
+   end case
+
+RETURN ( if( cPouDiv != nil, Trans( nCalculo, cPouDiv ), nCalculo ) )
+
+//---------------------------------------------------------------------------//
+
+FUNCTION nBasLTpv( uTikL, nDec, nRou, nVdv, cPouDiv, nPrc )
+
+   local nCalculo
+
+   DEFAULT nDec      := nDouDiv()
+   DEFAULT nRou      := nRouDiv()
+   DEFAULT nVdv      := 1
+   DEFAULT nPrc      := 0
+
+   nCalculo          := nTotLTpv( uTikL, nDec, nRou, nVdv, nPrc )
+
+   do case
+      case IsChar( uTikL )
+
+         if ( uTikL )->nIvaTil != 0
+            nCalculo := Round( nCalculo / ( 1 + ( ( uTikL )->nIvaTil / 100 ) ), nDec )
+         end if
+
+      case IsObject( uTikL )
+
+         if uTikL:nIvaTil != 0
+            nCalculo := Round( nCalculo / ( 1 + ( uTikL:nIvaTil / 100 ) ), nDec )
+         end if
 
    end case
 
@@ -5058,15 +5088,15 @@ Function nIvaLTpv( cTikT, cTikL, nDec, nRou, nVdv, nPrc )
 
    do case
       case Valtype( cTikT ) == "C" .and. ( cTikT )->cTipTik == SAVDEV
-         nCalculo    := - nCalculo
+         nCalculo       := - nCalculo
 
       case Valtype( cTikT ) == "O" .and. cTikT:cTipTik == SAVDEV
-         nCalculo    := - nCalculo
+         nCalculo       := - nCalculo
 
    end case
 
    if nCalculo != 0 .and. nVdv != 0
-      nCalculo       := nCalculo / nVdv
+      nCalculo          := nCalculo / nVdv
    end if
 
 Return ( Round( nCalculo, nRou ) )

@@ -525,7 +525,7 @@ METHOD AddFacRec( lAcumula )
       ::oDbf:nTotTrn    := nTrnLFacRec( ::oFacRecL:cAlias, ::nDecOut, ::nDerOut, ::nValDiv )
       ::oDbf:nTotPVer   := nPntLFacRec( ::oFacRecL:cAlias, ::nDecOut, ::nValDiv )
       ::oDbf:nImpTot    := nImpLFacRec( ::oFacRecT:cAlias, ::oFacRecL:cAlias, ::nDecOut, ::nDerOut, ::nValDiv )
-      ::oDbf:nIvaTot    := nIvaLFacRec( ::oFacRecT:cAlias, ::oFacRecL:cAlias, ::nDecOut, ::nDerOut, ::nValDiv )
+      ::oDbf:nIvaTot    := nIvaLFacRec(::oFacRecL:cAlias, ::nDecOut, ::nDerOut, ::nValDiv )
       ::oDbf:nTotFin    := ::oDbf:nImpTot + ::oDbf:nIvaTot
 
       ::AcuPesVol( ::oFacRecL:cRef, nTotNFacRec( ::oFacRecL ), ::oDbf:nImpTot, .f. )
@@ -559,9 +559,9 @@ METHOD AddFacRec( lAcumula )
       ::oDbf:nTotPVer   += nPntLFacRec( ::oFacRecL:cAlias, ::nDecOut, ::nValDiv )
       ::oDbf:nImpTot    += nImpLFacRec( ::oFacRecT:cAlias, ::oFacRecL:cAlias, ::nDecOut, ::nDerOut, ::nValDiv )
       ::oDbf:nPreMed    := ::oDbf:nImpTot / ::oDbf:nNumUni
-      ::oDbf:nIvaTot    += nIvaLFacRec( ::oFacRecT:cAlias, ::oFacRecL:cAlias, ::nDecOut, ::nDerOut, ::nValDiv )
+      ::oDbf:nIvaTot    += nIvaLFacRec( ::oFacRecL:cAlias, ::nDecOut, ::nDerOut, ::nValDiv )
       ::oDbf:nTotFin    += nImpLFacRec( ::oFacRecT:cAlias, ::oFacRecL:cAlias, ::nDecOut, ::nDerOut, ::nValDiv )
-      ::oDbf:nTotFin    += nIvaLFacRec( ::oFacRecT:cAlias, ::oFacRecL:cAlias, ::nDecOut, ::nDerOut, ::nValDiv )
+      ::oDbf:nTotFin    += nIvaLFacRec( ::oFacRecL:cAlias, ::nDecOut, ::nDerOut, ::nValDiv )
 
       ::AcuPesVol( ::oFacRecL:cRef, nTotNFacRec( ::oFacRecL ), ::oDbf:nImpTot, .t. )
 
@@ -599,7 +599,7 @@ METHOD AddFacRecVta( lAcumula )
       ::oDbf:nTotTrn    := nTrnLFacRec( ::oFacRecL:cAlias, ::nDecOut, ::nDerOut, ::nValDiv )
       ::oDbf:nTotPVer   := nPntLFacRec( ::oFacRecL:cAlias, ::nDecOut, ::nValDiv )
       ::oDbf:nImpTot    := nImpLFacRec( ::oFacRecT:cAlias, ::oFacRecL:cAlias, ::nDecOut, ::nDerOut, ::nValDiv )
-      ::oDbf:nIvaTot    := nIvaLFacRec( ::oFacRecT:cAlias, ::oFacRecL:cAlias, ::nDecOut, ::nDerOut, ::nValDiv )
+      ::oDbf:nIvaTot    := nIvaLFacRec( ::oFacRecL:cAlias, ::nDecOut, ::nDerOut, ::nValDiv )
       ::oDbf:nTotFin    := ::oDbf:nImpTot + ::oDbf:nIvaTot
 
       ::AcuPesVol( ::oFacRecL:cRef, nTotNFacRec( ::oFacRecL ), ::oDbf:nImpTot, .f. )
@@ -633,9 +633,9 @@ METHOD AddFacRecVta( lAcumula )
       ::oDbf:nTotPVer   += nPntLFacRec( ::oFacRecL:cAlias, ::nDecOut, ::nValDiv )
       ::oDbf:nImpTot    += nImpLFacRec( ::oFacRecT:cAlias, ::oFacRecL:cAlias, ::nDecOut, ::nDerOut, ::nValDiv )
       ::oDbf:nPreMed    := ::oDbf:nImpTot / ::oDbf:nNumUni
-      ::oDbf:nIvaTot    += nIvaLFacRec( ::oFacRecT:cAlias, ::oFacRecL:cAlias, ::nDecOut, ::nDerOut, ::nValDiv )
+      ::oDbf:nIvaTot    += nIvaLFacRec( ::oFacRecL:cAlias, ::nDecOut, ::nDerOut, ::nValDiv )
       ::oDbf:nTotFin    += nImpLFacRec( ::oFacRecT:cAlias, ::oFacRecL:cAlias, ::nDecOut, ::nDerOut, ::nValDiv )
-      ::oDbf:nTotFin    += nIvaLFacRec( ::oFacRecT:cAlias, ::oFacRecL:cAlias, ::nDecOut, ::nDerOut, ::nValDiv )
+      ::oDbf:nTotFin    += nIvaLFacRec( ::oFacRecL:cAlias, ::nDecOut, ::nDerOut, ::nValDiv )
 
       ::AcuPesVol( ::oFacRecL:cRef, nTotNFacRec( ::oFacRecL ), ::oDbf:nImpTot, .t. )
 

@@ -5685,17 +5685,29 @@ RETURN ( if( !lTotal, .t., nCalculo ) )
 
 //---------------------------------------------------------------------------//
 
-FUNCTION nIvaLFacRec( dbfFacT, dbfLin, nDec, nRouDec, nVdv, lDto, lPntVer, lImpTrn, cPouDiv )
+FUNCTION nIvaLFacRec( cFacRecL, nDec, nRou, nVdv, lDto, lPntVer, lImpTrn, cPouDiv )
 
-   local nCalculo := nImpLFacRec( dbfFacT, dbfLin, nDec, nRouDec, nVdv )
+   local nCalculo    := 0
 
-   //if !( dbfLin )->lIvaLin
-      nCalculo    := nCalculo * ( dbfLin )->nIva / 100
-   //else
-      //nCalculo    -= nCalculo / ( 1 + ( dbfLin )->nIva / 100 )
-   //end if
+   DEFAULT cFacRecL  := dbfFacRecL
+   DEFAULT nDec      := nDouDiv()
+   DEFAULT nRou      := nRouDiv()
+   DEFAULT nVdv      := 1
+   DEFAULT lDto      := .t.
+   DEFAULT lPntVer   := .t.
+   DEFAULT lImpTrn   := .t.
 
-RETURN ( if( cPouDiv != NIL, Trans( nCalculo, cPouDiv ), nCalculo ) )
+   nCalculo          := nTotLFacRec( cFacRecL, nDec, nRou, nVdv, lDto, lPntVer, lImpTrn, cPouDiv )   
+
+   if !( cFacRecL )->lIvaLin
+      nCalculo       := nCalculo * ( cFacRecL )->nIva / 100
+   else
+      nCalculo       -= nCalculo / ( 1 + ( cFacRecL )->nIva / 100 )
+   end if
+
+   nCalculo          := Round( nCalculo, nRou )
+
+RETURN ( if( cPouDiv != nil, Trans( nCalculo, cPouDiv ), nCalculo ) )
 
 //---------------------------------------------------------------------------//
 /*

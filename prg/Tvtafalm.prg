@@ -482,7 +482,7 @@ METHOD lGenerate()
                ::oDbf:nNumUni := nTotNFacRec( ::oFacRecL )
                ::oDbf:nImpArt := nTotUFacRec( ::oFacRecL:cAlias, ::nDecOut, ::nValDiv )
                ::oDbf:nImpTot := nImpLFacRec( ::oFacRecT:cAlias, ::oFacRecL:cAlias, ::nDecOut, ::nDerOut, ::nValDiv )
-               ::oDbf:nIvaTot := nIvaLFacRec( ::oFacRecT:cAlias, ::oFacRecL:cAlias, ::nDecOut, ::nDerOut, ::nValDiv )
+               ::oDbf:nIvaTot := nIvaLFacRec( ::oFacRecL:cAlias, ::nDecOut, ::nDerOut, ::nValDiv )
                ::oDbf:nTotFin := ::oDbf:nImpTot + ::oDbf:nIvaTot
                ::oDbf:cDocMov := ::oFacRecL:cSerie + "/" + lTrim ( Str( ::oFacRecL:nNumFac ) ) + "/" + lTrim ( ::oFacRecL:cSufFac )
                ::oDbf:cTipDoc := "Fac. rec."

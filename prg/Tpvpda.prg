@@ -2133,7 +2133,7 @@ RETURN ( round( nCalculo, nDec ) )
 
 //--------------------------------------------------------------------------//
 
-Function nIvaUTpv( uTmpL, nDec, nVdv, nPrc )
+Function nBasUTpv( uTmpL, nDec, nVdv, nPrc )
 
    local nCalculo := 0
 

@@ -5675,7 +5675,7 @@ RETURN ( Descrip( cPedCliL ) )
 
 FUNCTION nIvaLPedCli( dbfLin, nDec, nRouDec, nVdv, lDto, lPntVer, lImpTrn, cPouDiv )
 
-   local nCalculo := nTotLPedCli( dbfLin, nDec, nRouDec, nVdv, lDto, lPntVer, lImpTrn, cPouDiv )
+   local nCalculo 	:= nTotLPedCli( dbfLin, nDec, nRouDec, nVdv, lDto, lPntVer, lImpTrn, cPouDiv )
 
    if !( dbfLin )->lIvaLin
       nCalculo       := nCalculo * ( dbfLin )->nIva / 100
@@ -14850,7 +14850,7 @@ FUNCTION nTotFPedCli( cPedCliL, nDec, nRou, nVdv, lDto, lPntVer, lImpTrn, cPorDi
    local nCalculo := 0
 
    nCalculo       += nTotLPedCli( cPedCliL, nDec, nRou, nVdv, lDto, lPntVer, lImpTrn )
-   nCalculo       += nTotIPedCli( cPedCliL, nDec, nRou, nVdv )
+   nCalculo       += nIvaLPedCli( cPedCliL, nDec, nRou, nVdv, lDto, lPntVer, lImpTrn )
 
 return ( if( cPorDiv != nil, Trans( nCalculo, cPorDiv ), nCalculo ) )
 
@@ -15185,12 +15185,13 @@ FUNCTION nTotLPedCli( cPedCliL, nDec, nRou, nVdv, lDto, lPntVer, lImpTrn, cPouDi
    if ( cPedCliL )->lTotLin
 
       nCalculo       := nTotUPedCli( cPedCliL, nDec )
-
+      
    else
 
       nCalculo       := nTotUPedCli( cPedCliL, nDec )
       nCalculo       *= nTotNPedCli( cPedCliL )
 
+      
       if ( cPedCliL )->nDto != 0
             nCalculo -= nCalculo * ( cPedCliL )->nDto    / 100
       end if
@@ -15225,6 +15226,7 @@ FUNCTION nTotLPedCli( cPedCliL, nDec, nRou, nVdv, lDto, lPntVer, lImpTrn, cPouDi
       nCalculo       := Round( nCalculo, nRou )
    end if
 
+   
 RETURN ( if( cPouDiv != nil, Trans( nCalculo, cPouDiv ), nCalculo ) )
 
 //---------------------------------------------------------------------------//

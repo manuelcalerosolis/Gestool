@@ -530,7 +530,7 @@ METHOD lGenerate()
                   ::oDbf:nPntVer    := nPntUFacRec( ::oFacRecL:cAlias, ::nDecOut, ::nValDiv )
                   ::oDbf:nImpTrn    := nTrnUFacRec( ::oFacRecL:cAlias, ::nDecOut, ::nValDiv )
                   ::oDbf:nImpTot    := ( nImpLFacRec( ::oFacRecT:cAlias, ::oFacRecL:cAlias, ::nDecOut, ::nDerOut, ::nValDiv ) )
-                  ::oDbf:nIvaTot    := ( nIvaLFacRec( ::oFacRecT:cAlias, ::oFacRecL:cAlias, ::nDecOut, ::nDerOut, ::nValDiv ) )
+                  ::oDbf:nIvaTot    := ( nIvaLFacRec( ::oFacRecL:cAlias, ::nDecOut, ::nDerOut, ::nValDiv ) )
                   ::oDbf:nTotFin    := ::oDbf:nImpTot + ::oDbf:nIvaTot
                   ::oDbf:cCodRut    := ::oFacRecT:cCodRut
                   ::oDbf:cNomRut    := oRetFld( ::oDbf:cCodRut, ::oDbfRut )

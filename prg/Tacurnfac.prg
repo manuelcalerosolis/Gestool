@@ -350,7 +350,7 @@ METHOD lGenerate() CLASS TAcuRNFac
                      ::oDbf:nNumUni    := nTotNFacRec( ::oFacRecL )
                      ::oDbf:nImpArt    := nImpUFacRec( ::oFacRecT:cAlias, ::oFacRecL:cAlias, ::nDecOut, ::nValDiv )
                      ::oDbf:nImpTot    := nImpLFacRec( ::oFacRecT:cAlias, ::oFacRecL:cAlias, ::nDecOut, ::nDerOut, ::nValDiv )
-                     ::oDbf:nIvaTot    := nIvaLFacRec( ::oFacRecT:cAlias, ::oFacRecL:cAlias, ::nDecOut, ::nDerOut, ::nValDiv )
+                     ::oDbf:nIvaTot    := nIvaLFacRec( ::oFacRecL:cAlias, ::nDecOut, ::nDerOut, ::nValDiv )
                      ::oDbf:nTotFin    := ::oDbf:nImpTot + ::oDbf:nIvaTot
                      ::oDbf:nPreMed    := ::oDbf:nImpTot / ::oDbf:nNumUni
                      ::oDbf:nTotCom    := nComLFacRec( ::oFacRecT:cAlias, ::oFacRecL:cAlias, ::nDecOut, ::nDerOut )
@@ -367,9 +367,9 @@ METHOD lGenerate() CLASS TAcuRNFac
                      ::oDbf:nUniDad    := ::oFacRecL:nUniCaja
                      ::oDbf:nNumUni    += nTotNFacRec( ::oFacRecL )
                      ::oDbf:nImpTot    += nImpLFacRec( ::oFacRecT:cAlias, ::oFacRecL:cAlias, ::nDecOut, ::nDerOut, ::nValDiv )
-                     ::oDbf:nIvaTot    += nIvaLFacRec( ::oFacRecT:cAlias, ::oFacRecL:cAlias, ::nDecOut, ::nDerOut, ::nValDiv )
+                     ::oDbf:nIvaTot    += nIvaLFacRec( ::oFacRecL:cAlias, ::nDecOut, ::nDerOut, ::nValDiv )
                      ::oDbf:nTotFin    += nImpLFacRec( ::oFacRecT:cAlias, ::oFacRecL:cAlias, ::nDecOut, ::nDerOut, ::nValDiv )
-                     ::oDbf:nTotFin    += nIvaLFacRec( ::oFacRecT:cAlias, ::oFacRecL:cAlias, ::nDecOut, ::nDerOut, ::nValDiv )
+                     ::oDbf:nTotFin    += nIvaLFacRec( ::oFacRecL:cAlias, ::nDecOut, ::nDerOut, ::nValDiv )
                      ::oDbf:nPreMed    := ::oDbf:nImpTot / ::oDbf:nNumUni
                      ::oDbf:nTotCom    += nComLFacRec( ::oFacRecT:cAlias, ::oFacRecL:cAlias, ::nDecOut, ::nDerOut )
 

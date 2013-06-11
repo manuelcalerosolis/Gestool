@@ -537,6 +537,8 @@ METHOD AddVariable() CLASS TFastVentasClientes
 
          ::AddVariableTicketCliente()
 
+         ::AddVariableLineasTicketCliente()
+
       case ::cTypeName == "Informe de ventas"
 
          ::AddVariableAlbaranCliente()
@@ -545,7 +547,15 @@ METHOD AddVariable() CLASS TFastVentasClientes
          
          ::AddVariableRectificativaCliente()
 
-         ::AddVariableTicketCliente()         
+         ::AddVariableTicketCliente()   
+
+         ::AddVariableLineasAlbaranCliente()  
+
+         ::AddVariableLineasFacturaCliente()
+         
+         ::AddVariableLineasRectificativaCliente() 
+
+         ::AddVariableLineasTicketCliente()
 
    end case
 
