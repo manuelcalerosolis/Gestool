@@ -15703,9 +15703,7 @@ FUNCTION nTotFacCli( cFactura, cFacCliT, cFacCliL, cIva, cDiv, cFacCliP, cAntCli
                nTotCos           += nCosLFacCli( cFacCliL, nDouDiv, nRouDiv )
                nTotPes           += nPesLFacCli( cFacCliL )
 
-               #ifndef __PDA__
                nDescuentosLineas += nTotDtoLFacCli( cFacCliL, nDouDiv )
-               #endif
 
                if aTmp != nil
                   nTotAge        += nComLFacCli( aTmp, cFacCliL, nDouDiv, nRouDiv )
@@ -15969,11 +15967,6 @@ FUNCTION nTotFacCli( cFactura, cFacCliT, cFacCliL, cIva, cDiv, cFacCliP, cAntCli
       _NBASIVA3      -= aTotalEnt[ 3 ]
 
    end if
-
-      /*
-      nTotDtoEnt        := Round( nTotEnt * nDtoIni / 100, nRouDiv )
-      nTotNet           -= nTotDtoEnt
-      */
 
    /*
    Estudio de " + cImp() + " para el Gasto despues de los descuentos----------------------
