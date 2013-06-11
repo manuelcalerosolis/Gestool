@@ -7199,6 +7199,9 @@ FUNCTION nTotLPreCli( cPreCliL, nDec, nRou, nVdv, lDto, lPntVer, lImpTrn, cPouDi
 RETURN ( if( cPouDiv != nil, Trans( nCalculo, cPouDiv ), nCalculo ) )
 
 //---------------------------------------------------------------------------//
+/*
+Devuelve el importe de descuento porcentual por cada linea---------------------
+*/
 
 FUNCTION nDtoLPreCli( cPreCliL, nDec, nRou, nVdv )
 
@@ -7235,6 +7238,9 @@ FUNCTION nDtoLPreCli( cPreCliL, nDec, nRou, nVdv )
 RETURN ( nCalculo ) 
 
 //---------------------------------------------------------------------------//
+/*
+Devuelve el importe de descuento porcentual en promociones por cada linea------
+*/
 
 FUNCTION nPrmLPreCli( cPreCliL, nDec, nRou, nVdv )
 

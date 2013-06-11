@@ -1330,8 +1330,8 @@ FUNCTION MkAsiento( 	Asien,;
       return ( aTemp )
    end if
 
-/*   oBlock                  := ErrorBlock( { | oError | ApoloBreak( oError ) } )
-   BEGIN SEQUENCE*/
+   oBlock                  := ErrorBlock( { | oError | ApoloBreak( oError ) } )
+   BEGIN SEQUENCE
 
    /*
    Importes en negativo--------------------------------------------------------
@@ -1408,23 +1408,33 @@ FUNCTION MkAsiento( 	Asien,;
    */
 
    if !Empty( nEjeCon ) .and. !Empty( cEjeCta )
-      aTemp[ ( cDiario )->( FieldPos( "METAL") ) ]       := .t.
-      aTemp[ ( cDiario )->( FieldPos( "METALIMP" ) ) ]   := If ( nImporteDebe != NIL,  nImporteDebe,  aTemp[ ( cDiario )->( FieldPos( "METALIMP" ) ) ] )      
-      aTemp[ ( cDiario )->( FieldPos( "CLIENTE" ) ) ]    := cEjeCta
-      aTemp[ ( cDiario )->( FieldPos( "METALEJE") ) ]    := nEjeCon 
+
+      if ( cDiario )->( FieldPos( "METAL" ) ) != 0
+         aTemp[ ( cDiario )->( FieldPos( "METAL") ) ]       := .t.
+      end if
+      if ( cDiario )->( FieldPos( "METALIMP" ) ) != 0      
+         aTemp[ ( cDiario )->( FieldPos( "METALIMP" ) ) ]   := If ( nImporteDebe != NIL,  nImporteDebe,  aTemp[ ( cDiario )->( FieldPos( "METALIMP" ) ) ] )      
+      end if
+      if ( cDiario )->( FieldPos( "TERNOM" ) ) != 0
+         aTemp[ ( cDiario )->( FieldPos( "TERNOM" ) ) ]     := cEjeCta
+      end if
+      if ( cDiario )->( FieldPos( "METALEJE" ) ) != 0
+         aTemp[ ( cDiario )->( FieldPos( "METALEJE") ) ]    := nEjeCon 
+      end if
+
    end if 
 
    if !lSimula
       WriteAsiento( aTemp, cCodDiv )
    end if
-/*
+
    RECOVER USING oError
 
       msgStop( "Error al realizar apunte contable." + CRLF + ErrorMessage( oError ) )
 
    END SEQUENCE
 
-   ErrorBlock( oBlock )*/
+   ErrorBlock( oBlock )
 
 RETURN ( aTemp )
 

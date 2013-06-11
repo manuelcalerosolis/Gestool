@@ -140,7 +140,17 @@ FUNCTION CntFacCli( lSimula, lPago, lExcCnt, lMessage, oTree, nAsiento, aSimula,
                nIva           := ( dbfFacCliL )->nIva
                nImpDet        := nTotLFacCli( dbfFacCliL, nDouDiv, nRouDiv, nil, .t., .f., .f. )
                nImpTrn        := nTrnLFacCli( dbfFacCliL, nDouDiv, nRouDiv )                 // Portes
-               nImpPnt        := nPntLFacCli( dbfFacCliL, nDpvDiv )
+
+               /*
+               Si en la factura nos piden q operemeos con punto verde----------
+               */
+
+               if ( dbfFacCliT )->lOperPV
+                  nImpPnt     := nPntLFacCli( dbfFacCliL, nDpvDiv )
+               else
+                  nImpPnt     := 0
+               end if 
+
                nImpIva        := nIvaLFacCli( dbfFacCliL, nDouDiv, nRouDiv )
                nImpIvm        := nTotIFacCli( dbfFacCliL, nDouDiv, nRouDiv )
                cCtaVent       := RetCtaVta( ( dbfFacCliL )->cRef, dbfArt )
@@ -153,8 +163,15 @@ FUNCTION CntFacCli( lSimula, lPago, lExcCnt, lMessage, oTree, nAsiento, aSimula,
                Cuentas de ventas--------------------------------------------------
                */
 
+               msgAlert( cCtaVent,  "cCtaVent" ) 
+               msgAlert( nIva,      "nIva" )
+               msgAlert( nImpDet,   "nImpDet" ) 
+               msgAlert( nImpPnt,   "nImpPnt" )
+               msgAlert( nImpTrn,   "nImpTrn" )
+               msgAlert( nImpIva,   "nImpIva" ) 
+
                nPos           := aScan( aVentas, {|x| x[ 1 ] == cCtaVent .and. x[ 2 ] == nIva } )
-               if nPos  == 0
+               if nPos == 0
                   aAdd( aVentas, { cCtaVent, nIva, nImpDet, nImpPnt, nImpTrn, nImpIva } )
                else
                   aVentas[ nPos, 3 ]   += nImpDet
