@@ -10,6 +10,7 @@
 CLASS TFastVentasArticulos FROM TFastReportInfGen
 
    DATA  cType                            INIT "Articulos"
+   DATA  cSubType                         INIT ""
 
    DATA  cResource                        INIT "FastReportArticulos"
    DATA  lUnidadesNegativo                INIT .f.
@@ -33,7 +34,8 @@ CLASS TFastVentasArticulos FROM TFastReportInfGen
    METHOD AddVariable()
 
    METHOD StartDialog()
-   METHOD BuildTree( oTree, lSubNode )
+   METHOD BuildTree()
+   METHOD BuildNode()
 
    METHOD AddPresupuestoClientes()
    METHOD AddPedidoClientes()
@@ -56,199 +58,6 @@ CLASS TFastVentasArticulos FROM TFastReportInfGen
 END CLASS
 
 //----------------------------------------------------------------------------//
-
-METHOD DataReport( oFr ) CLASS TFastVentasArticulos
-
-   ::oFastReport:ClearDataSets()
-
-   /*
-   Zona de detalle-------------------------------------------------------------
-   */
-
-   ::oFastReport:SetWorkArea(       "Informe", ::oDbf:nArea )
-   ::oFastReport:SetFieldAliases(   "Informe", cObjectsToReport( ::oDbf ) )
-
-   /*
-   Zona de datos---------------------------------------------------------------
-   */
-
-   ::oFastReport:SetWorkArea(       "Empresa", ::oDbfEmp:nArea )
-   ::oFastReport:SetFieldAliases(   "Empresa", cItemsToReport( aItmEmp() ) )
-
-   ::oFastReport:SetWorkArea(       "Artículos.Informe", ::oDbfArt:nArea )
-   ::oFastReport:SetFieldAliases(   "Artículos.Informe", cItemsToReport( aItmArt() ) )
-
-   ::oFastReport:SetWorkArea(       "Imagenes", ::oArtImg:nArea )
-   ::oFastReport:SetFieldAliases(   "Imagenes", cItemsToReport( aItmImg() ) )
-
-   ::oFastReport:SetWorkArea(       "Códigos de barras", ::oArtCod:nArea )
-   ::oFastReport:SetFieldAliases(   "Códigos de barras", cItemsToReport( aItmBar() ) )
-
-   ::oFastReport:SetWorkArea(       "Escandallos", ::oArtKit:nArea )
-   ::oFastReport:SetFieldAliases(   "Escandallos", cItemsToReport( aItmKit() ) )
-
-   ::oFastReport:SetWorkArea(       "Artículos.Escandallos", ::oDbfArt:nArea )
-   ::oFastReport:SetFieldAliases(   "Artículos.Escandallos", cItemsToReport( aItmArt() ) )
-
-   ::oFastReport:SetWorkArea(       "Familias", ::oDbfFam:nArea )
-   ::oFastReport:SetFieldAliases(   "Familias", cItemsToReport( aItmFam() ) )
-
-   ::oFastReport:SetWorkArea(       "Tipo artículos", ::oTipArt:Select() )
-   ::oFastReport:SetFieldAliases(   "Tipo artículos", cObjectsToReport( ::oTipArt:oDbf ) )
-
-   ::oFastReport:SetWorkArea(       "Categorias", ::oDbfCat:nArea )
-   ::oFastReport:SetFieldAliases(   "Categorias", cItemsToReport( aItmCategoria() ) )
-
-   ::oFastReport:SetWorkArea(       "Temporadas", ::oDbfTmp:nArea )
-   ::oFastReport:SetFieldAliases(   "Temporadas", cItemsToReport( aItmTemporada() ) )
-
-   ::oFastReport:SetWorkArea(       "Fabricantes", ::oDbfFab:Select() )
-   ::oFastReport:SetFieldAliases(   "Fabricantes", cObjectsToReport( ::oDbfFab:oDbf ) )
-
-   ::oFastReport:SetWorkArea(       "Tipos de " + cImp(), ::oDbfIva:nArea )
-   ::oFastReport:SetFieldAliases(   "Tipos de " + cImp(), cItemsToReport( aItmTIva() ) )
-
-   ::oFastReport:SetWorkArea(       "Clientes", ::oDbfCli:nArea )
-   ::oFastReport:SetFieldAliases(   "Clientes", cItemsToReport( aItmCli() ) )
-
-   ::oFastReport:SetWorkArea(       "Proveedores", ::oDbfPrv:nArea )
-   ::oFastReport:SetFieldAliases(   "Proveedores", cItemsToReport( aItmPrv() ) )
-
-   /*
-   Relaciones entre tablas-----------------------------------------------------
-   */
-
-   ::oFastReport:SetMasterDetail(   "Informe", "Artículos.Informe",                 {|| ::oDbf:cCodArt } )
-   ::oFastReport:SetMasterDetail(   "Informe", "Imagenes",                          {|| ::oDbf:cCodArt } )
-   ::oFastReport:SetMasterDetail(   "Informe", "Escandallos",                       {|| ::oDbf:cCodArt } )
-   ::oFastReport:SetMasterDetail(   "Informe", "Códigos de barras",                 {|| ::oDbf:cCodArt } )
-
-   ::oFastReport:SetMasterDetail(   "Artículos.Informe", "Familias",                {|| ::oDbfArt:Familia } )
-   ::oFastReport:SetMasterDetail(   "Artículos.Informe", "Tipo artículos",          {|| ::oDbfArt:cCodTip } )
-   ::oFastReport:SetMasterDetail(   "Artículos.Informe", "Categorias",              {|| ::oDbfArt:cCodCate } )
-   ::oFastReport:SetMasterDetail(   "Artículos.Informe", "Temporadas",              {|| ::oDbfArt:cCodTemp } )
-   ::oFastReport:SetMasterDetail(   "Artículos.Informe", "Fabricantes",             {|| ::oDbfArt:cCodFab } )
-   ::oFastReport:SetMasterDetail(   "Artículos.Informe", "Tipos de " + cImp(),      {|| ::oDbfArt:TipoIva } )
-
-   ::oFastReport:SetMasterDetail(   "Escandallos", "Artículos.Escandallos",         {|| ::oArtKit:cRefKit } )
-
-   ::oFastReport:SetMasterDetail(   "Informe", "Clientes",                          {|| ::oDbf:cCodCli } )
-   ::oFastReport:SetMasterDetail(   "Informe", "Proveedores",                       {|| ::oDbf:cCodCli } )
-   ::oFastReport:SetMasterDetail(   "Informe", "Empresa",                           {|| cCodEmp() } )
-
-   /*
-   Resincronizar con los movimientos-------------------------------------------
-   */
-
-   ::oFastReport:SetResyncPair(     "Artículos.Informe", "Familias" )
-   ::oFastReport:SetResyncPair(     "Artículos.Informe", "Tipo artículos" )
-   ::oFastReport:SetResyncPair(     "Artículos.Informe", "Categorias" )
-   ::oFastReport:SetResyncPair(     "Artículos.Informe", "Temporadas" )
-   ::oFastReport:SetResyncPair(     "Artículos.Informe", "Fabricantes" )
-   ::oFastReport:SetResyncPair(     "Artículos.Informe", "Tipos de " + cImp() )
-
-   ::oFastReport:SetResyncPair(     "Informe", "Artículos.Informe" )
-   ::oFastReport:SetResyncPair(     "Informe", "Imagenes" )
-   ::oFastReport:SetResyncPair(     "Informe", "Escandallos" )
-   ::oFastReport:SetresyncPair(     "Informe", "Códigos de barras" )
-
-   ::oFastReport:SetResyncPair(     "Escandallos", "Artículos.Escandallos" )
-
-   ::oFastReport:SetResyncPair(     "Informe", "Clientes" )
-   ::oFastReport:SetResyncPair(     "Informe", "Proveedores" )
-   ::oFastReport:SetResyncPair(     "Informe", "Empresa" )
-
-   /*
-   Tablas en funcion del tipo de informe---------------------------------------
-   */
-
-   do case
-      case ::cTypeName == "Informe de presupuestos"
-
-         ::FastReportPresupuestoCliente()
-
-
-      case ::cTypeName == "Informe de pedidos"
-      
-         ::FastReportPedidoCliente()
-
-      case ::cTypeName == "Informe de albaranes"
-      
-         ::FastReportAlbaranCliente()
-
-      case ::cTypeName == "Informe de facturas"
-      
-         ::FastReportFacturaCliente()
-         
-         ::FastReportFacturaRectificativa()
-
-      case ::cTypeName == "Informe de facturas rectificativas"
-
-         ::FastReportFacturaRectificativa()
-
-      case ::cTypeName == "Informe de tickets"
-
-         ::FastReportTicket( .t. )
-
-      case ::cTypeName == "Informe de ventas"
-
-         ::FastReportAlbaranCliente()
-
-         ::FastReportFacturaCliente()
-
-         ::FastReportFacturaRectificativa()
-
-         ::FastReportTicket()
-
-      case ::cTypeName == "Informe de pedidos de proveedor"
-         
-         ::FastReportPedidoProveedor()
-
-      case ::cTypeName == "Informe de albaranes de proveedor"
-
-         ::FastReportAlbaranProveedor()
-
-      case ::cTypeName == "Informe de facturas de proveedor"
-
-         ::FastReportFacturaProveedor()
-
-      case ::cTypeName == "Informe de facturas rectificativas de proveedor"
-
-         ::FastReportRectificativaProveedor()
-
-      case ::cTypeName == "Informe de compras"
-
-         ::FastReportPedidoProveedor()
-
-         ::FastReportAlbaranProveedor()
-
-         ::FastReportFacturaProveedor()
-
-         ::FastReportRectificativaProveedor()
-
-      case ::cTypeName == "Informe de compras y ventas"
-
-         ::FastReportAlbaranCliente()
-
-         ::FastReportFacturaCliente()
-
-         ::FastReportFacturaRectificativa()
-
-         ::FastReportTicket()
-
-         ::FastReportPedidoProveedor()
-
-         ::FastReportAlbaranProveedor()
-
-         ::FastReportFacturaProveedor()
-         
-         ::FastReportRectificativaProveedor()
-
-   end case
-
-Return ( Self )
-
-//---------------------------------------------------------------------------//
 
 METHOD lResource( cFld ) CLASS TFastVentasArticulos
 
@@ -761,12 +570,6 @@ METHOD AddPresupuestoClientes() CLASS TFastVentasArticulos
    cExpHead          += ' .and. cCodCli >= "' + Rtrim( ::oGrupoCliente:Cargo:Desde ) + '" .and. cCodCli <= "' + Rtrim( ::oGrupoCliente:Cargo:Hasta ) + '"'
    cExpHead          += ' .and. cSerPre >= "' + Rtrim( ::oGrupoSerie:Cargo:Desde )   + '" .and. cSerPre <= "' + Rtrim( ::oGrupoSerie:Cargo:Hasta ) + '"'
 
-   /*
-   if !Empty( ::oFilter:aExpFilter ) .and. len( ::oFilter:aExpFilter ) >= 1
-      cExpHead       += ' .and. ' + ::oFilter:aExpFilter[ 1 ]
-   end if
-   */
-
    ::oPreCliT:AddTmpIndex( cCurUsr(), GetFileNoExt( ::oPreCliT:cFile ), ::oPreCliT:OrdKey(), ( cExpHead ), , , , , , , , .t. )
 
    ::oMtrInf:cText   := "Procesando presupuestos"
@@ -909,12 +712,6 @@ METHOD AddPedidoClientes() CLASS TFastVentasArticulos
    cExpHead          := 'dFecPed >= Ctod( "' + Dtoc( ::dIniInf ) + '" ) .and. dFecPed <= Ctod( "' + Dtoc( ::dFinInf ) + '" )'
    cExpHead          += ' .and. cCodCli >= "' + Rtrim( ::oGrupoCliente:Cargo:Desde ) + '" .and. cCodCli <= "' + Rtrim( ::oGrupoCliente:Cargo:Hasta ) + '"'
    cExpHead          += ' .and. cSerPed >= "' + Rtrim( ::oGrupoSerie:Cargo:Desde )   + '" .and. cSerPed <= "' + Rtrim( ::oGrupoSerie:Cargo:Hasta ) + '"'
-
-   /*
-   if !Empty( ::oFilter:aExpFilter ) .and. len( ::oFilter:aExpFilter ) >= 1
-      cExpHead       += ' .and. ' + ::oFilter:aExpFilter[ 1 ]
-   end if
-   */
 
    ::oPedCliT:AddTmpIndex( cCurUsr(), GetFileNoExt( ::oPedCliT:cFile ), ::oPedCliT:OrdKey(), ( cExpHead ), , , , , , , , .t. )
 
@@ -1066,12 +863,6 @@ METHOD AddAlbaranCliente( lFacturados ) CLASS TFastVentasArticulos
 
    cExpHead             += ' .and. cCodCli >= "' + Rtrim( ::oGrupoCliente:Cargo:Desde ) + '" .and. cCodCli <= "' + Rtrim( ::oGrupoCliente:Cargo:Hasta ) + '"'
    cExpHead             += ' .and. cSerAlb >= "' + Rtrim( ::oGrupoSerie:Cargo:Desde )   + '" .and. cSerAlb <= "' + Rtrim( ::oGrupoSerie:Cargo:Hasta ) + '"'
-
-   /*
-   if !Empty( ::oFilter:aExpFilter ) .and. len( ::oFilter:aExpFilter ) >= 1
-      cExpHead       += ' .and. ' + ::oFilter:aExpFilter[ 1 ]
-   end if
-   */
 
    ::oAlbCliT:AddTmpIndex( cCurUsr(), GetFileNoExt( ::oAlbCliT:cFile ), ::oAlbCliT:OrdKey(), ( cExpHead ), , , , , , , , .t. )
 
@@ -2335,24 +2126,32 @@ METHOD StartDialog() CLASS TFastVentasArticulos
 
    ::CreateTreeImageList()
 
-   ::BuildTree( ::oTreeReporting, .t. )
+   ::BuildTree( )
 
 RETURN ( Self )
 
 //---------------------------------------------------------------------------//
 
-METHOD BuildTree( oTree, lSubNode ) CLASS TFastVentasArticulos
+METHOD BuildTree( oTree, lLoadFile ) CLASS TFastVentasArticulos
 
+   local oNode
+   local oTreeListado
    local oTreeVentas
    local oTreeCompras
    local oTreeExistencias
 
-   DEFAULT lSubNode        := .t.
+   DEFAULT oTree           := ::oTreeReporting
+   DEFAULT lLoadFile       := .t.
 
-   oTree:Select( oTree:Add( "Listado", 0, "Listado" ) )
+   oTreeListado            := oTree:Add( "Listado", 0, { "Type" => "Listado", "File" => "Listado.fr3" } ) 
+   ::BuildNode( oTreeListado, "Listado", 0, lLoadFile )
 
-   oTreeVentas             := oTree:Add( "Ventas", 11  )
-   oTreeVentas:Add( "Informe de presupuestos",  5 , "Informe de presupuestos" )
+   oTreeVentas             := oTree:Add( "Ventas", 11 )
+
+      oNode                := oTreeVentas:Add( "Presupuestos de clientes", 5, { "Type" => "Presupuestos de clientes", "File" => "Ventas\Presupuestos de clientes.fr3" } )
+      ::BuildNode( oNode, "Ventas\Presupuestos de clientes", 5, lLoadFile )
+
+
    oTreeVentas:Add( "Informe de pedidos",       6 , "Informe de pedidos" )
    oTreeVentas:Add( "Informe de albaranes",     7 , "Informe de albaranes" )
    oTreeVentas:Add( "Informe de facturas",      8 , "Informe de facturas" )
@@ -2374,6 +2173,229 @@ METHOD BuildTree( oTree, lSubNode ) CLASS TFastVentasArticulos
    oTreeExistencias:Expand()
 
 RETURN ( Self )
+
+//---------------------------------------------------------------------------//
+
+METHOD BuildNode( oNode, cText, nImage, lLoadFile ) CLASS TFastVentasArticulos
+
+   local aFile 
+   local cType
+   local aDirectory
+
+   cType             := oNode:bAction[ "Type" ]
+
+   if lLoadFile
+
+      aDirectory     := Directory( cPatReporting() + ::cType + "\" + cText + "\" + "*.fr3" )
+      if !Empty( aDirectory )
+
+         for each aFile in aDirectory
+            oNode:Add( getFileNoExt( aFile[ 1 ] ), nImage, { "Type" => cType, "File" => cText + "\" + aFile[ 1 ] } )
+
+            ? cType
+            ? cText + "\" + aFile[ 1 ]
+
+         next 
+
+         oNode:Expand()
+
+      end if 
+
+   end if 
+
+RETURN ( Self )
+
+//---------------------------------------------------------------------------//
+
+METHOD DataReport() CLASS TFastVentasArticulos
+
+   ::oFastReport:ClearDataSets()
+
+   /*
+   Zona de detalle-------------------------------------------------------------
+   */
+
+   ::oFastReport:SetWorkArea(       "Informe", ::oDbf:nArea )
+   ::oFastReport:SetFieldAliases(   "Informe", cObjectsToReport( ::oDbf ) )
+
+   /*
+   Zona de datos---------------------------------------------------------------
+   */
+
+   ::oFastReport:SetWorkArea(       "Empresa", ::oDbfEmp:nArea )
+   ::oFastReport:SetFieldAliases(   "Empresa", cItemsToReport( aItmEmp() ) )
+
+   ::oFastReport:SetWorkArea(       "Artículos.Informe", ::oDbfArt:nArea )
+   ::oFastReport:SetFieldAliases(   "Artículos.Informe", cItemsToReport( aItmArt() ) )
+
+   ::oFastReport:SetWorkArea(       "Imagenes", ::oArtImg:nArea )
+   ::oFastReport:SetFieldAliases(   "Imagenes", cItemsToReport( aItmImg() ) )
+
+   ::oFastReport:SetWorkArea(       "Códigos de barras", ::oArtCod:nArea )
+   ::oFastReport:SetFieldAliases(   "Códigos de barras", cItemsToReport( aItmBar() ) )
+
+   ::oFastReport:SetWorkArea(       "Escandallos", ::oArtKit:nArea )
+   ::oFastReport:SetFieldAliases(   "Escandallos", cItemsToReport( aItmKit() ) )
+
+   ::oFastReport:SetWorkArea(       "Artículos.Escandallos", ::oDbfArt:nArea )
+   ::oFastReport:SetFieldAliases(   "Artículos.Escandallos", cItemsToReport( aItmArt() ) )
+
+   ::oFastReport:SetWorkArea(       "Familias", ::oDbfFam:nArea )
+   ::oFastReport:SetFieldAliases(   "Familias", cItemsToReport( aItmFam() ) )
+
+   ::oFastReport:SetWorkArea(       "Tipo artículos", ::oTipArt:Select() )
+   ::oFastReport:SetFieldAliases(   "Tipo artículos", cObjectsToReport( ::oTipArt:oDbf ) )
+
+   ::oFastReport:SetWorkArea(       "Categorias", ::oDbfCat:nArea )
+   ::oFastReport:SetFieldAliases(   "Categorias", cItemsToReport( aItmCategoria() ) )
+
+   ::oFastReport:SetWorkArea(       "Temporadas", ::oDbfTmp:nArea )
+   ::oFastReport:SetFieldAliases(   "Temporadas", cItemsToReport( aItmTemporada() ) )
+
+   ::oFastReport:SetWorkArea(       "Fabricantes", ::oDbfFab:Select() )
+   ::oFastReport:SetFieldAliases(   "Fabricantes", cObjectsToReport( ::oDbfFab:oDbf ) )
+
+   ::oFastReport:SetWorkArea(       "Tipos de " + cImp(), ::oDbfIva:nArea )
+   ::oFastReport:SetFieldAliases(   "Tipos de " + cImp(), cItemsToReport( aItmTIva() ) )
+
+   ::oFastReport:SetWorkArea(       "Clientes", ::oDbfCli:nArea )
+   ::oFastReport:SetFieldAliases(   "Clientes", cItemsToReport( aItmCli() ) )
+
+   ::oFastReport:SetWorkArea(       "Proveedores", ::oDbfPrv:nArea )
+   ::oFastReport:SetFieldAliases(   "Proveedores", cItemsToReport( aItmPrv() ) )
+
+   /*
+   Relaciones entre tablas-----------------------------------------------------
+   */
+
+   ::oFastReport:SetMasterDetail(   "Informe", "Artículos.Informe",                 {|| ::oDbf:cCodArt } )
+   ::oFastReport:SetMasterDetail(   "Informe", "Imagenes",                          {|| ::oDbf:cCodArt } )
+   ::oFastReport:SetMasterDetail(   "Informe", "Escandallos",                       {|| ::oDbf:cCodArt } )
+   ::oFastReport:SetMasterDetail(   "Informe", "Códigos de barras",                 {|| ::oDbf:cCodArt } )
+
+   ::oFastReport:SetMasterDetail(   "Artículos.Informe", "Familias",                {|| ::oDbfArt:Familia } )
+   ::oFastReport:SetMasterDetail(   "Artículos.Informe", "Tipo artículos",          {|| ::oDbfArt:cCodTip } )
+   ::oFastReport:SetMasterDetail(   "Artículos.Informe", "Categorias",              {|| ::oDbfArt:cCodCate } )
+   ::oFastReport:SetMasterDetail(   "Artículos.Informe", "Temporadas",              {|| ::oDbfArt:cCodTemp } )
+   ::oFastReport:SetMasterDetail(   "Artículos.Informe", "Fabricantes",             {|| ::oDbfArt:cCodFab } )
+   ::oFastReport:SetMasterDetail(   "Artículos.Informe", "Tipos de " + cImp(),      {|| ::oDbfArt:TipoIva } )
+
+   ::oFastReport:SetMasterDetail(   "Escandallos", "Artículos.Escandallos",         {|| ::oArtKit:cRefKit } )
+
+   ::oFastReport:SetMasterDetail(   "Informe", "Clientes",                          {|| ::oDbf:cCodCli } )
+   ::oFastReport:SetMasterDetail(   "Informe", "Proveedores",                       {|| ::oDbf:cCodCli } )
+   ::oFastReport:SetMasterDetail(   "Informe", "Empresa",                           {|| cCodEmp() } )
+
+   /*
+   Resincronizar con los movimientos-------------------------------------------
+   */
+
+   ::oFastReport:SetResyncPair(     "Artículos.Informe", "Familias" )
+   ::oFastReport:SetResyncPair(     "Artículos.Informe", "Tipo artículos" )
+   ::oFastReport:SetResyncPair(     "Artículos.Informe", "Categorias" )
+   ::oFastReport:SetResyncPair(     "Artículos.Informe", "Temporadas" )
+   ::oFastReport:SetResyncPair(     "Artículos.Informe", "Fabricantes" )
+   ::oFastReport:SetResyncPair(     "Artículos.Informe", "Tipos de " + cImp() )
+
+   ::oFastReport:SetResyncPair(     "Informe", "Artículos.Informe" )
+   ::oFastReport:SetResyncPair(     "Informe", "Imagenes" )
+   ::oFastReport:SetResyncPair(     "Informe", "Escandallos" )
+   ::oFastReport:SetresyncPair(     "Informe", "Códigos de barras" )
+
+   ::oFastReport:SetResyncPair(     "Escandallos", "Artículos.Escandallos" )
+
+   ::oFastReport:SetResyncPair(     "Informe", "Clientes" )
+   ::oFastReport:SetResyncPair(     "Informe", "Proveedores" )
+   ::oFastReport:SetResyncPair(     "Informe", "Empresa" )
+
+   /*
+   Tablas en funcion del tipo de informe---------------------------------------
+   */
+
+   do case
+      case ::cTypeName == "Informe de presupuestos"
+
+         ::FastReportPresupuestoCliente()
+
+      case ::cTypeName == "Informe de pedidos"
+      
+         ::FastReportPedidoCliente()
+
+      case ::cTypeName == "Informe de albaranes"
+      
+         ::FastReportAlbaranCliente()
+
+      case ::cTypeName == "Informe de facturas"
+      
+         ::FastReportFacturaCliente()
+         
+         ::FastReportFacturaRectificativa()
+
+      case ::cTypeName == "Informe de facturas rectificativas"
+
+         ::FastReportFacturaRectificativa()
+
+      case ::cTypeName == "Informe de tickets"
+
+         ::FastReportTicket( .t. )
+
+      case ::cTypeName == "Informe de ventas"
+
+         ::FastReportAlbaranCliente()
+
+         ::FastReportFacturaCliente()
+
+         ::FastReportFacturaRectificativa()
+
+         ::FastReportTicket()
+
+      case ::cTypeName == "Informe de pedidos de proveedor"
+         
+         ::FastReportPedidoProveedor()
+
+      case ::cTypeName == "Informe de albaranes de proveedor"
+
+         ::FastReportAlbaranProveedor()
+
+      case ::cTypeName == "Informe de facturas de proveedor"
+
+         ::FastReportFacturaProveedor()
+
+      case ::cTypeName == "Informe de facturas rectificativas de proveedor"
+
+         ::FastReportRectificativaProveedor()
+
+      case ::cTypeName == "Informe de compras"
+
+         ::FastReportPedidoProveedor()
+
+         ::FastReportAlbaranProveedor()
+
+         ::FastReportFacturaProveedor()
+
+         ::FastReportRectificativaProveedor()
+
+      case ::cTypeName == "Informe de compras y ventas"
+
+         ::FastReportAlbaranCliente()
+
+         ::FastReportFacturaCliente()
+
+         ::FastReportFacturaRectificativa()
+
+         ::FastReportTicket()
+
+         ::FastReportPedidoProveedor()
+
+         ::FastReportAlbaranProveedor()
+
+         ::FastReportFacturaProveedor()
+         
+         ::FastReportRectificativaProveedor()
+
+   end case
+
+Return ( Self )
 
 //---------------------------------------------------------------------------//
 

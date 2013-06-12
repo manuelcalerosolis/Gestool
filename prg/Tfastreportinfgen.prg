@@ -155,7 +155,7 @@ CLASS TFastReportInfGen FROM TNewInfGen
    METHOD TreeReportingChanged()       VIRTUAL
    METHOD TreePersonalizadosChanged()  VIRTUAL
 
-   METHOD TreeReportingClick()         INLINE ( ::GenReport( IS_SCREEN ) )
+   METHOD TreeReportingClick()         INLINE ( ::GenReport( IS_SCREEN ), 0 )
    METHOD TreePersonalizadosClick()    INLINE ( ::GenReport( IS_SCREEN ) )
 
    METHOD SaveReport()
@@ -779,11 +779,11 @@ METHOD NewResource( cFldRes ) CLASS TFastReportInfGen
 
    ::oTreeReporting                 := TTreeView():Redefine( 100, ::oPages:aDialogs[ 1 ] )
    ::oTreeReporting:bChanged        := {|| ::TreeReportingChanged() }
-   ::oTreeReporting:OnClick         := {|| ::TreeReportingClick() }
+   ::oTreeReporting:bLDblClick      := {|| ::TreeReportingClick() } // OnClick
 
    ::oTreePersonalizados            := TTreeView():Redefine( 100, ::oPages:aDialogs[ 2 ] )
    ::oTreePersonalizados:bChanged   := {|| ::TreePersonalizadosChanged() }
-   ::oTreePersonalizados:OnClick    := {|| ::TreePersonalizadosClick() }
+   ::oTreePersonalizados:bLDblClick := {|| ::TreePersonalizadosClick() }
 
    /*
    Fechas----------------------------------------------------------------------
@@ -1277,9 +1277,11 @@ METHOD GenReport( nOption ) CLASS TFastReportInfGen
       oTreeInforme      := ::oTreePersonalizados:GetSelected()
    end if
 
+   /*
    if !Empty( oTreeInforme:aItems )
       Return ( Self )
    end if
+   */
 
    if IsChar( oTreeInforme:cPrompt ) .and. !Empty( oTreeInforme:cPrompt )
       ::cReportName     := Rtrim( oTreeInforme:cPrompt )
@@ -1291,7 +1293,6 @@ METHOD GenReport( nOption ) CLASS TFastReportInfGen
    if IsChar( oTreeInforme:bAction ) .and. !Empty( oTreeInforme:bAction )
       ::cTypeName       := Rtrim( oTreeInforme:bAction )
    else
-      msgStop( "No se ha podido cargar el tipo de informe." )
       Return ( Self )
    end if
 
@@ -1739,10 +1740,12 @@ Method DesignReport( cNombre ) CLASS TFastReportInfGen
       oTreeInforme      := ::oTreePersonalizados:GetSelected()
    end if
 
+   /*
    if IsArray( oTreeInforme:aItems ) .and. len( oTreeInforme:aItems ) >= 1
       msgStop( "Seleccione el nodo inferior." )
       Return ( Self )
    end if
+   */
 
    if IsChar( oTreeInforme:cPrompt ) .and. !Empty( oTreeInforme:cPrompt )
       ::cReportName     := Rtrim( oTreeInforme:cPrompt )
@@ -1762,7 +1765,7 @@ Method DesignReport( cNombre ) CLASS TFastReportInfGen
    Obtenemos el informe personalizado------------------------------------------
    */
 
-   ::LoadReport()
+   ::LoadReport( oTreeInforme )
 
    /*
    if Empty( ::cInformeFastReport )
@@ -2205,6 +2208,10 @@ METHOD LoadReport() CLASS TFastReportInfGen
 
    end if
 
+   /*
+   Report por nombre del fichero ----------------------------------------------
+   */
+
    if Empty( ::cInformeFastReport )
 
       cFileName                     := cPatReporting() + ::cType + "\" + Upper( ::cReportName ) + ".fr3"
@@ -2214,6 +2221,18 @@ METHOD LoadReport() CLASS TFastReportInfGen
       end if
 
    end if
+
+   /*
+   Report por el action q puede traer una ruta---------------------------------
+   */
+
+   if Empty( ::cInformeFastReport )
+
+      if File( ::cTypeName )
+         ::cInformeFastReport       := MemoRead( ::cTypeName )
+      end if
+
+   end if    
 
 RETURN ( Self )
 
@@ -2266,7 +2285,6 @@ METHOD DlgExportDocument( oWndBrw )
    if IsChar( oTreeInforme:bAction ) .and. !Empty( oTreeInforme:bAction )
       ::cTypeName       := Rtrim( oTreeInforme:bAction )
    else
-      msgStop( "No se ha podido cargar el tipo de informe." )
       Return ( Self )
    end if
 

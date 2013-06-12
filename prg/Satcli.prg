@@ -6796,7 +6796,7 @@ FUNCTION nImpUSatCli( uTmpLin, nDec, nVdv, cPorDiv )
 
    local nCalculo    := 0
 
-   DEFAULT nDec      := 2
+   DEFAULT nDec      := nDouDiv()
    DEFAULT nVdv      := 1
 
    if ValType( uTmpLin ) == "C"
@@ -6851,7 +6851,7 @@ FUNCTION nBrtLSatCli( uTmpLin, nDec, nRec, nVdv, cPorDiv )
 
    local nCalculo    := 0
 
-   DEFAULT nDec      := 2
+   DEFAULT nDec      := nDouDiv()
    DEFAULT nVdv      := 1
 
    nCalculo          := nImpUSatCli( uTmpLin, nDec, nVdv, cPorDiv )
@@ -6867,7 +6867,7 @@ FUNCTION nIvaUSatCli( dbfTmpLin, nDec, nVdv )
 
    local nCalculo
 
-   DEFAULT nDec   := 0
+   DEFAULT nDec   := nDouDiv()
    DEFAULT nVdv   := 1
 
    nCalculo       := nTotUSatCli( dbfTmpLin, nDec, nVdv )
@@ -7028,8 +7028,8 @@ FUNCTION nTotCSatCli( dbfLine, nDec, nRec, nVdv, cPouDiv )
 
    local nCalculo       := 0
 
-   DEFAULT nDec         := 0
-   DEFAULT nRec         := 0
+   DEFAULT nDec         := nDouDiv()
+   DEFAULT nRec         := nRouDiv()
    DEFAULT nVdv         := 1
 
    if !( dbfLine )->lKitChl
@@ -7091,7 +7091,7 @@ Function nPntUSatCli( dbfTmpLin, nDec, nVdv )
 
    local nCalculo
 
-   DEFAULT nDec   := 0
+   DEFAULT nDec   := nDouDiv()
    DEFAULT nVdv   := 1
 
    nCalculo       := ( dbfTmpLin )->nPntVer
@@ -7109,7 +7109,7 @@ FUNCTION nPntLSatCli( dbfLin, nDec, nVdv )
    local nPntVer
 
    DEFAULT dbfLin    := dbfSatCliL
-   DEFAULT nDec      := 2
+   DEFAULT nDec      := nDouDiv()
    DEFAULT nVdv      := 1
 
    /*
@@ -7127,7 +7127,7 @@ FUNCTION nTrnUSatCli( dbfTmpLin, nDec, nVdv )
 
    local nCalculo
 
-   DEFAULT nDec   := 0
+   DEFAULT nDec   := nDouDiv()
    DEFAULT nVdv   := 1
 
    nCalculo       := ( dbfTmpLin )->nImpTrn
@@ -7144,7 +7144,7 @@ FUNCTION nDtoUSatCli( dbfTmpLin, nDec, nVdv )
 
    local nCalculo := ( dbfTmpLin )->nDtoDiv
 
-   DEFAULT nDec   := 0
+   DEFAULT nDec   := nDouDiv()
    DEFAULT nVdv   := 1
 
    if nVdv != 0
@@ -7160,8 +7160,8 @@ FUNCTION nTrnLSatCli( dbfLin, nDec, nRou, nVdv )
    local nImpTrn
 
    DEFAULT dbfLin    := dbfSatCliL
-   DEFAULT nDec      := 2
-   DEFAULT nRou      := 2
+   DEFAULT nDec      := nDouDiv()
+   DEFAULT nRou      := nRouDiv()
    DEFAULT nVdv      := 1
 
    /*
