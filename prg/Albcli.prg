@@ -12047,6 +12047,87 @@ FUNCTION nPntLAlbCli( dbfLin, nDec, nVdv )
 RETURN ( Round( nPntVer, nDec ) )
 
 //---------------------------------------------------------------------------//
+/*
+Devuelve el importe de descuento porcentual por cada linea---------------------
+*/
+
+FUNCTION nDtoLAlbCli( cAlbCliL, nDec, nRou, nVdv )
+
+   local nCalculo       := 0
+
+   DEFAULT cAlbCliL     := dbfAlbCliL
+   DEFAULT nDec         := nDouDiv()
+   DEFAULT nRou         := nRouDiv()
+   DEFAULT nVdv         := 1
+
+   if ( cAlbCliL )->nDto != 0 .and. !( cAlbCliL )->lTotLin
+
+      nCalculo          := nTotUAlbCli( cAlbCliL, nDec ) * nTotNAlbCli( cAlbCliL )
+
+      /*
+      Descuentos---------------------------------------------------------------
+      */
+
+      nCalculo          -= Round( ( cAlbCliL )->nDtoDiv / nVdv , nDec )
+
+      nCalculo          := nCalculo * ( cAlbCliL )->nDto / 100
+
+
+      if nVdv != 0
+         nCalculo       := nCalculo / nVdv
+      end if
+
+      if nRou != nil
+         nCalculo       := Round( nCalculo, nRou )
+      end if
+
+   end if
+
+RETURN ( nCalculo ) 
+
+//---------------------------------------------------------------------------//
+/*
+Devuelve el importe de descuento porcentual en promociones por cada linea------
+*/
+
+FUNCTION nPrmLAlbCli( cAlbCliL, nDec, nRou, nVdv )
+
+   local nCalculo       := 0
+
+   DEFAULT cAlbCliL     := dbfAlbCliL
+   DEFAULT nDec         := nDouDiv()
+   DEFAULT nRou         := nRouDiv()
+   DEFAULT nVdv         := 1
+
+   if ( cAlbCliL )->nDtoPrm != 0 .and. !( cAlbCliL )->lTotLin
+
+      nCalculo          := nTotUAlbCli( cAlbCliL, nDec ) * nTotNAlbCli( cAlbCliL )
+
+      /*
+      Descuentos---------------------------------------------------------------
+      */
+
+      nCalculo          -= Round( ( cAlbCliL )->nDtoDiv / nVdv , nDec )
+
+      if ( cAlbCliL )->nDto != 0 
+         nCalculo       -= nCalculo * ( cAlbCliL )->nDto / 100
+      end if
+
+      nCalculo          := nCalculo * ( cAlbCliL )->nDtoPrm / 100
+
+      if nVdv != 0
+         nCalculo       := nCalculo / nVdv
+      end if
+
+      if nRou != nil
+         nCalculo       := Round( nCalculo, nRou )
+      end if
+
+   end if
+
+RETURN ( nCalculo ) 
+
+//---------------------------------------------------------------------------//
 
 //
 // Precio unitario
@@ -16823,26 +16904,7 @@ FUNCTION SetFacturadoAlbaranCliente( lFacturado, oBrw, cAlbCliT, cAlbCliL, cAlbC
 RETURN NIL
 
 //---------------------------------------------------------------------------//
-//
-// Devuelve el importe del descuento lineal
-//
 
-FUNCTION nDtoLAlbCli( dbfLin, nDec, nVdv, cPorDiv )
-
-   local nCalculo    := 0
-
-   DEFAULT dbfLin    := dbfAlbCliL
-   DEFAULT nDec      := nDouDiv()
-   DEFAULT nVdv      := 1
-
-   if ( dbfLin )->nDto != 0
-      nCalculo       := nTotUAlbCli( dbfLin, nDec ) * ( dbfLin )->nDto / 100
-      nCalculo       := Round( nCalculo / nVdv, nDec )
-   end if
-
-RETURN ( if( cPorDiv != nil, Trans( nCalculo, cPorDiv ), nCalculo ) )
-
-//---------------------------------------------------------------------------//
 
 Function nTotDtoLAlbCli( dbfLin, nDec, nVdv, cPorDiv )
 

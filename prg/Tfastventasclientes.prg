@@ -602,7 +602,7 @@ METHOD lGenerate() CLASS TFastVentasClientes
          
       case ::cTypeName == "Informe de albaranes"
 
-         ::AddAlbaranCliente( .t. )
+         ::AddAlbaranCliente()
 
       case ::cTypeName == "Informe de facturas"
 
@@ -622,7 +622,7 @@ METHOD lGenerate() CLASS TFastVentasClientes
 
       case ::cTypeName == "Informe de ventas"
 
-         ::AddAlbaranCliente()
+         ::AddAlbaranCliente( .t. )
 
          ::AddFacturaCliente()
 
@@ -980,16 +980,16 @@ RETURN ( Self )
 
 //---------------------------------------------------------------------------//
 
-METHOD AddAlbaranCliente( lFacturados ) CLASS TFastVentasClientes
+METHOD AddAlbaranCliente( lNoFacturados ) CLASS TFastVentasClientes
 
    local sTot
    local oError
    local oBlock
    local cExpHead
    
-   DEFAULT lFacturados  := .f.
+   DEFAULT lNoFacturados   := .f.
 
-   oBlock               := ErrorBlock( {| oError | ApoloBreak( oError ) } )
+   oBlock                  := ErrorBlock( {| oError | ApoloBreak( oError ) } )
    BEGIN SEQUENCE
    
       ::InitAlbaranesClientes()
@@ -997,7 +997,7 @@ METHOD AddAlbaranCliente( lFacturados ) CLASS TFastVentasClientes
       ::oAlbCliT:OrdSetFocus( "dFecAlb" )
       ::oAlbCliL:OrdSetFocus( "nNumAlb" )
 
-      if lFacturados
+      if lNoFacturados
          cExpHead       := '!lFacturado .and. dFecAlb >= Ctod( "' + Dtoc( ::dIniInf ) + '" ) .and. dFecAlb <= Ctod( "' + Dtoc( ::dFinInf ) + '" )'
       else
          cExpHead       := 'dFecAlb >= Ctod( "' + Dtoc( ::dIniInf ) + '" ) .and. dFecAlb <= Ctod( "' + Dtoc( ::dFinInf ) + '" )'

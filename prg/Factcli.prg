@@ -6756,53 +6756,87 @@ FUNCTION nTotPFacCli( dbfLin, nDec, nVdv, cPorDiv )
 RETURN ( if( cPorDiv != NIL, Trans( nCalculo, cPorDiv ), nCalculo ) )
 
 //---------------------------------------------------------------------------//
-//
-// Devuelve el importe del descuento lineal
-//
-
-FUNCTION nDtoLFacCli( dbfLin, nDec, nVdv, cPorDiv )
-
-   local nCalculo    := 0
-
-   DEFAULT dbfLin    := dbfFacCliL
-   DEFAULT nDec      := nDouDiv()
-   DEFAULT nVdv      := 1
-
-   /*
-   Tomamos los valores redondeados------------------------------------------
-   */
-
-   if ( dbfLin )->nDto != 0
-      nCalculo       := nTotUFacCli( dbfLin, nDec )
-      nCalculo       -= Round( Div( ( dbfLin )->nDtoDiv, nVdv ), nDec )
-      nCalculo       := nCalculo * ( dbfLin )->nDto / 100
-      nCalculo       := Round( nCalculo / nVdv, nDec )
-   end if
-
-RETURN ( if( cPorDiv != nil, Trans( nCalculo, cPorDiv ), nCalculo ) )
 
 //---------------------------------------------------------------------------//
+/*
+Devuelve el importe de descuento porcentual por cada linea---------------------
+*/
 
-FUNCTION nPrmLFacCli( dbfLin, nDec, nVdv, cPorDiv )
+FUNCTION nDtoLFacCli( cFacCliL, nDec, nRou, nVdv )
 
-   local nCalculo    := 0
+   local nCalculo       := 0
 
-   DEFAULT dbfLin    := dbfFacCliL
-   DEFAULT nDec      := nDouDiv()
-   DEFAULT nVdv      := 1
+   DEFAULT cFacCliL     := dbfFacCliL
+   DEFAULT nDec         := nDouDiv()
+   DEFAULT nRou         := nRouDiv()
+   DEFAULT nVdv         := 1
 
-   /*
-   Tomamos los valores redondeados------------------------------------------
-   */
+   if ( cFacCliL )->nDto != 0 .and. !( cFacCliL )->lTotLin
 
-   if ( dbfLin )->nDto != 0
-      nCalculo       := nTotUFacCli( dbfLin, nDec )
-      nCalculo       -= Round( Div( ( dbfLin )->nDtoDiv, nVdv ), nDec )
-      nCalculo       := nCalculo * ( dbfLin )->nDtoPrm / 100
-      nCalculo       := Round( nCalculo / nVdv, nDec )
+      nCalculo          := nTotUFacCli( cFacCliL, nDec ) * nTotNFacCli( cFacCliL )
+
+      /*
+      Descuentos---------------------------------------------------------------
+      */
+
+      nCalculo          -= Round( ( cFacCliL )->nDtoDiv / nVdv , nDec )
+
+      nCalculo          := nCalculo * ( cFacCliL )->nDto / 100
+
+
+      if nVdv != 0
+         nCalculo       := nCalculo / nVdv
+      end if
+
+      if nRou != nil
+         nCalculo       := Round( nCalculo, nRou )
+      end if
+
    end if
 
-RETURN ( if( cPorDiv != nil, Trans( nCalculo, cPorDiv ), nCalculo ) )
+RETURN ( nCalculo ) 
+
+//---------------------------------------------------------------------------//
+/*
+Devuelve el importe de descuento porcentual en promociones por cada linea------
+*/
+
+FUNCTION nPrmLFacCli( cFacCliL, nDec, nRou, nVdv )
+
+   local nCalculo       := 0
+
+   DEFAULT cFacCliL     := dbfFacCliL
+   DEFAULT nDec         := nDouDiv()
+   DEFAULT nRou         := nRouDiv()
+   DEFAULT nVdv         := 1
+
+   if ( cFacCliL )->nDtoPrm != 0 .and. !( cFacCliL )->lTotLin
+
+      nCalculo          := nTotUFacCli( cFacCliL, nDec ) * nTotNFacCli( cFacCliL )
+
+      /*
+      Descuentos---------------------------------------------------------------
+      */
+
+      nCalculo          -= Round( ( cFacCliL )->nDtoDiv / nVdv , nDec )
+
+      if ( cFacCliL )->nDto != 0 
+         nCalculo       -= nCalculo * ( cFacCliL )->nDto / 100
+      end if
+
+      nCalculo          := nCalculo * ( cFacCliL )->nDtoPrm / 100
+
+      if nVdv != 0
+         nCalculo       := nCalculo / nVdv
+      end if
+
+      if nRou != nil
+         nCalculo       := Round( nCalculo, nRou )
+      end if
+
+   end if
+
+RETURN ( nCalculo ) 
 
 //---------------------------------------------------------------------------//
 

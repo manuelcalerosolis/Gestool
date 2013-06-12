@@ -20661,9 +20661,57 @@ Function nTotLUno( uTmpL, nDec, nRouDec, nVdv )
             nCalculo    -= uTmpL:nDtoLin * nCalculo / 100  // Dto porcentual
          end if
 
-         nCalculo       *= nTotNTpv( uTmpL )                    // Unidades
+         nCalculo       *= nTotNTpv( uTmpL )               // Unidades
 
          nCalculo       -= Round( uTmpL:nDtoDiv, nDec )    // Dto Lineal
+
+      end if
+
+   end case
+
+   if nVdv != 0
+      nCalculo          := nCalculo / nVdv
+   end if
+
+RETURN ( Round( nCalculo, nRouDec ) )
+
+//---------------------------------------------------------------------------//
+
+Function nDtoLTpv( uTmpL, nDec, nRouDec, nVdv )
+
+   local nCalculo    := 0
+
+   DEFAULT uTmpL     := dbfTikL
+   DEFAULT nDec      := nDouDiv()
+   DEFAULT nRouDec   := nRouDiv()
+   DEFAULT nVdv      := 0
+
+   /*
+   Siempre q el ticket no sea gratis
+   */
+
+   do case
+   case ValType( uTmpL ) == "C"
+
+      if !( uTmpL )->lFreTil .and. ( uTmpL )->nDtoLin != 0
+
+         nCalculo       := Round( ( uTmpL )->nPvpTil, nDec )    // Precio
+
+         nCalculo       *= nTotNTpv( uTmpL )                    // Unidades
+
+         nCalculo       := ( uTmpL )->nDtoLin * nCalculo / 100  // Dto porcentual
+
+      end if
+
+   otherwise
+
+      if !uTmpL:lFreTil .and. uTmpL:nDtoLin != 0
+
+         nCalculo       := Round( uTmpL:nPvpTil, nDec )        // Precio
+
+         nCalculo       *= nTotNTpv( uTmpL )                   // Unidades
+
+         nCalculo       := uTmpL:nDtoLin * nCalculo / 100      // Dto porcentual
 
       end if
 

@@ -15229,6 +15229,7 @@ FUNCTION nTotLPedCli( cPedCliL, nDec, nRou, nVdv, lDto, lPntVer, lImpTrn, cPouDi
    
 RETURN ( if( cPouDiv != nil, Trans( nCalculo, cPouDiv ), nCalculo ) )
 
+
 //---------------------------------------------------------------------------//
 
 STATIC FUNCTION LoaCli( aGet, aTmp, nMode, oRieCli, oTlfCli )
@@ -17714,25 +17715,87 @@ Static Function cEstadoProduccion( cNumPed )
 
 Return ( aEstadoProduccion[ Max( Min( nEstadoProduccion( cNumPed ), 3 ), 1 ) ] )
 
+
 //---------------------------------------------------------------------------//
-//
-// Devuelve el importe del descuento lineal
-//
+/*
+Devuelve el importe de descuento porcentual por cada linea---------------------
+*/
 
-FUNCTION nDtoLPedCli( dbfLin, nDec, nVdv, cPorDiv )
+FUNCTION nDtoLPedCli( cPedCliL, nDec, nRou, nVdv )
 
-   local nCalculo    := 0
+   local nCalculo       := 0
 
-   DEFAULT dbfLin    := dbfPedCliL
-   DEFAULT nDec      := nDouDiv()
-   DEFAULT nVdv      := 1
+   DEFAULT cPedCliL     := dbfPedCliL
+   DEFAULT nDec         := nDouDiv()
+   DEFAULT nRou         := nRouDiv()
+   DEFAULT nVdv         := 1
 
-   if ( dbfLin )->nDto != 0
-      nCalculo       := nTotUPedCli( dbfLin, nDec ) * ( dbfLin )->nDto / 100
-      nCalculo       := Round( nCalculo / nVdv, nDec )
+   if ( cPedCliL )->nDto != 0 .and. !( cPedCliL )->lTotLin
+
+      nCalculo          := nTotUPedCli( cPedCliL, nDec ) * nTotNPedCli( cPedCliL )
+
+      /*
+      Descuentos---------------------------------------------------------------
+      */
+
+      nCalculo          -= Round( ( cPedCliL )->nDtoDiv / nVdv , nDec )
+
+      nCalculo          := nCalculo * ( cPedCliL )->nDto / 100
+
+
+      if nVdv != 0
+         nCalculo       := nCalculo / nVdv
+      end if
+
+      if nRou != nil
+         nCalculo       := Round( nCalculo, nRou )
+      end if
+
    end if
 
-RETURN ( if( cPorDiv != nil, Trans( nCalculo, cPorDiv ), nCalculo ) )
+RETURN ( nCalculo ) 
+
+//---------------------------------------------------------------------------//
+/*
+Devuelve el importe de descuento porcentual en promociones por cada linea------
+*/
+
+FUNCTION nPrmLPedCli( cPedCliL, nDec, nRou, nVdv )
+
+   local nCalculo       := 0
+
+   DEFAULT cPedCliL     := dbfPedCliL
+   DEFAULT nDec         := nDouDiv()
+   DEFAULT nRou         := nRouDiv()
+   DEFAULT nVdv         := 1
+
+   if ( cPedCliL )->nDtoPrm != 0 .and. !( cPedCliL )->lTotLin
+
+      nCalculo          := nTotUPedCli( cPedCliL, nDec ) * nTotNPedCli( cPedCliL )
+
+      /*
+      Descuentos---------------------------------------------------------------
+      */
+
+      nCalculo          -= Round( ( cPedCliL )->nDtoDiv / nVdv , nDec )
+
+      if ( cPedCliL )->nDto != 0 
+         nCalculo       -= nCalculo * ( cPedCliL )->nDto / 100
+      end if
+
+      nCalculo          := nCalculo * ( cPedCliL )->nDtoPrm / 100
+
+      if nVdv != 0
+         nCalculo       := nCalculo / nVdv
+      end if
+
+      if nRou != nil
+         nCalculo       := Round( nCalculo, nRou )
+      end if
+
+   end if
+
+RETURN ( nCalculo ) 
 
 //---------------------------------------------------------------------------//
 

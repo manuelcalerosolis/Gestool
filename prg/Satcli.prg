@@ -6978,6 +6978,52 @@ RETURN ( if( cPouDiv != nil, Trans( nCalculo, cPouDiv ), nCalculo ) )
 
 //---------------------------------------------------------------------------//
 
+
+
+//---------------------------------------------------------------------------//
+/*
+Devuelve el importe de descuento porcentual en promociones por cada linea------
+*/
+
+FUNCTION nPrmLSatCli( cSatCliL, nDec, nRou, nVdv )
+
+   local nCalculo       := 0
+
+   DEFAULT cSatCliL     := dbfSatCliL
+   DEFAULT nDec         := nDouDiv()
+   DEFAULT nRou         := nRouDiv()
+   DEFAULT nVdv         := 1
+
+   if ( cSatCliL )->nDtoPrm != 0 .and. !( cSatCliL )->lTotLin
+
+      nCalculo          := nTotUSatCli( cSatCliL, nDec ) * nTotNSatCli( cSatCliL )
+
+      /*
+      Descuentos---------------------------------------------------------------
+      */
+
+      nCalculo          -= Round( ( cSatCliL )->nDtoDiv / nVdv , nDec )
+
+      if ( cSatCliL )->nDto != 0 
+         nCalculo       -= nCalculo * ( cSatCliL )->nDto / 100
+      end if
+
+      nCalculo          := nCalculo * ( cSatCliL )->nDtoPrm / 100
+
+      if nVdv != 0
+         nCalculo       := nCalculo / nVdv
+      end if
+
+      if nRou != nil
+         nCalculo       := Round( nCalculo, nRou )
+      end if
+
+   end if
+
+RETURN ( nCalculo ) 
+
+//---------------------------------------------------------------------------//
+
 FUNCTION nTotCSatCli( dbfLine, nDec, nRec, nVdv, cPouDiv )
 
    local nCalculo       := 0
@@ -7094,6 +7140,21 @@ RETURN ( Round( nCalculo, nDec ) )
 
 //---------------------------------------------------------------------------//
 
+FUNCTION nDtoUSatCli( dbfTmpLin, nDec, nVdv )
+
+   local nCalculo := ( dbfTmpLin )->nDtoDiv
+
+   DEFAULT nDec   := 0
+   DEFAULT nVdv   := 1
+
+   if nVdv != 0
+      nCalculo    /= nVdv
+   end if
+
+RETURN ( round( nCalculo, nDec ) )
+
+//---------------------------------------------------------------------------//
+
 FUNCTION nTrnLSatCli( dbfLin, nDec, nRou, nVdv )
 
    local nImpTrn
@@ -7116,19 +7177,43 @@ FUNCTION nTrnLSatCli( dbfLin, nDec, nRou, nVdv )
 RETURN ( Round( nImpTrn, nRou ) )
 
 //---------------------------------------------------------------------------//
+/*
+Devuelve el importe de descuento porcentual por cada linea---------------------
+*/
 
-FUNCTION nDtoUSatCli( dbfTmpLin, nDec, nVdv )
+FUNCTION nDtoLSatCli( cSatCliL, nDec, nRou, nVdv )
 
-   local nCalculo := ( dbfTmpLin )->nDtoDiv
+   local nCalculo       := 0
 
-   DEFAULT nDec   := 0
-   DEFAULT nVdv   := 1
+   DEFAULT cSatCliL     := dbfSatCliL
+   DEFAULT nDec         := nDouDiv()
+   DEFAULT nRou         := nRouDiv()
+   DEFAULT nVdv         := 1
 
-   if nVdv != 0
-      nCalculo    /= nVdv
+   if ( cSatCliL )->nDto != 0 .and. !( cSatCliL )->lTotLin
+
+      nCalculo          := nTotUSatCli( cSatCliL, nDec ) * nTotNSatCli( cSatCliL )
+
+      /*
+      Descuentos---------------------------------------------------------------
+      */
+
+      nCalculo          -= Round( ( cSatCliL )->nDtoDiv / nVdv , nDec )
+
+      nCalculo          := nCalculo * ( cSatCliL )->nDto / 100
+
+
+      if nVdv != 0
+         nCalculo       := nCalculo / nVdv
+      end if
+
+      if nRou != nil
+         nCalculo       := Round( nCalculo, nRou )
+      end if
+
    end if
 
-RETURN ( round( nCalculo, nDec ) )
+RETURN ( nCalculo ) 
 
 //---------------------------------------------------------------------------//
 
@@ -10989,23 +11074,6 @@ Return .t.
 //----------------------------------------------------------------------------//
 //Funciones comunes del programa y pda
 //----------------------------------------------------------------------------//
-
-FUNCTION nDtoLSatCli( dbfLin, nDec, nVdv, cPorDiv )
-
-   local nCalculo    := 0
-
-   DEFAULT dbfLin    := dbfSatCliL
-   DEFAULT nDec      := nDouDiv()
-   DEFAULT nVdv      := 1
-
-   if ( dbfLin )->nDto != 0
-      nCalculo       := nTotUSatCli( dbfLin, nDec ) * ( dbfLin )->nDto / 100
-      nCalculo       := Round( nCalculo / nVdv, nDec )
-   end if
-
-RETURN ( if( cPorDiv != nil, Trans( nCalculo, cPorDiv ), nCalculo ) )
-
-//---------------------------------------------------------------------------//
 
 Function nTotDtoLSatCli( dbfLin, nDec, nVdv, cPorDiv )
 
