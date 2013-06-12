@@ -4921,6 +4921,83 @@ FUNCTION nTotLPedPrv( uTmp, nDec, nRec, nVdv, cPouDiv )
 RETURN ( if( cPouDiv != NIL, Trans( nCalculo, cPouDiv ), nCalculo ) )
 
 //---------------------------------------------------------------------------//
+/*
+Devuelve el importe de descuento porcentual por cada linea---------------------
+*/
+
+FUNCTION nDtoLPedPrv( cPedPrvL, nDec, nRou, nVdv )
+
+   local nCalculo       := 0
+
+   DEFAULT cPedPrvL     := dbfPedPrvL
+   DEFAULT nDec         := nDouDiv()
+   DEFAULT nRou         := nRouDiv()
+   DEFAULT nVdv         := 1
+
+   if ( cPedPrvL )->nDtoLin != 0 
+
+      nCalculo          := nTotUPedPrv( cPedPrvL, nDec ) * nTotNPedPrv( cPedPrvL )
+
+      /*
+      Descuentos---------------------------------------------------------------
+      */
+
+      nCalculo          := nCalculo * ( cPedPrvL )->nDtoLin / 100
+
+
+      if nVdv != 0
+         nCalculo       := nCalculo / nVdv
+      end if
+
+      if nRou != nil
+         nCalculo       := Round( nCalculo, nRou )
+      end if
+
+   end if
+
+RETURN ( nCalculo ) 
+
+//---------------------------------------------------------------------------//
+/*
+Devuelve el importe de descuento porcentual en promociones por cada linea------
+*/
+
+FUNCTION nPrmLPedPrv( cPedPrvL, nDec, nRou, nVdv )
+
+   local nCalculo       := 0
+
+   DEFAULT cPedPrvL     := dbfPedPrvL
+   DEFAULT nDec         := nDouDiv()
+   DEFAULT nRou         := nRouDiv()
+   DEFAULT nVdv         := 1
+
+   if ( cPedPrvL )->nDtoPrm != 0 
+
+      nCalculo          := nTotUPedPrv( cPedPrvL, nDec ) * nTotNPedPrv( cPedPrvL )
+
+      /*
+      Descuentos---------------------------------------------------------------
+      */
+
+      if ( cPedPrvL )->nDtoLin != 0 
+         nCalculo       -= nCalculo * ( cPedPrvL )->nDtoLin / 100
+      end if
+
+      nCalculo          := nCalculo * ( cPedPrvL )->nDtoPrm / 100
+
+      if nVdv != 0
+         nCalculo       := nCalculo / nVdv
+      end if
+
+      if nRou != nil
+         nCalculo       := Round( nCalculo, nRou )
+      end if
+
+   end if
+
+RETURN ( nCalculo ) 
+
+//---------------------------------------------------------------------------//
 
 FUNCTION nIvaLPedPrv( uPedPrvT, uPedPrvL, nDec, nRec, nVdv, cPouDiv )
 

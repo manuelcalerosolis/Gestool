@@ -286,6 +286,13 @@ METHOD Create( uParam ) CLASS TFastVentasClientes
    ::AddField( "cNumDoc",  "C", 10, 0, {|| "" },   "Número del documento"                    )
    ::AddField( "cSufDoc",  "C",  2, 0, {|| "" },   "Delegación del documento"                )
 
+   ::AddField( "nDtoArt",  "N",  6, 2, {|| "" },   "Descuento porcentual artículo"           ) 
+   ::AddField( "nLinArt",  "N", 16, 6, {|| "" },   "Descuento lineal artículo"               )
+   ::AddField( "nPrmArt",  "N",  6, 2, {|| "" },   "Descuento promocional artículo"          )
+
+   ::AddField( "nTotPrm",  "N", 16, 6, {|| "" },   "Total descuento promocional artículo"    )
+   ::AddField( "nTotDto",  "N", 16, 6, {|| "" },   "Total descuento porcentual artículo"     ) 
+
    ::AddField( "nAnoDoc",  "N",  4, 0, {|| "" },   "Año del documento"                       )
    ::AddField( "nMesDoc",  "N",  2, 0, {|| "" },   "Mes del documento"                       )
    ::AddField( "dFecDoc",  "D",  8, 0, {|| "" },   "Fecha del documento"                     )
@@ -722,6 +729,13 @@ METHOD AddSATCliente( cCodigoCliente ) CLASS TFastVentasClientes
 
             ::oDbf:cIdeDoc    :=  ::cIdeDocumento()
 
+            ::oDbf:nDtoArt    := ::oSatcliL:nDto
+            ::oDbf:nLinArt    := ::oSatcliL:nDtoDiv
+            ::oDbf:nPrmArt    := ::oSatcliL:nDtoPrm
+
+            ::oDbf:nTotDto    := nDtoLSatCli( ::oSatCliL:cAlias, ::nDecOut, ::nDerOut, ::nValDiv )
+            ::oDbf:nTotPrm    := nPrmLSatCli( ::oSatCliL:cAlias, ::nDecOut, ::nDerOut, ::nValDiv )
+
             ::oDbf:nAnoDoc    := Year( ::oSatCliT:dFecSat )
             ::oDbf:nMesDoc    := Month( ::oSatCliT:dFecSat )
             ::oDbf:dFecDoc    := ::oSatCliT:dFecSat
@@ -822,6 +836,13 @@ METHOD AddPresupuestoCliente( cCodigoCliente ) CLASS TFastVentasClientes
             ::oDbf:cSerDoc    := ::oPreCliT:cSerPre
             ::oDbf:cNumDoc    := Str( ::oPreCliT:nNumPre )
             ::oDbf:cSufDoc    := ::oPreCliT:cSufPre
+
+            ::oDbf:nDtoArt    := ::oPrecliL:nDto
+            ::oDbf:nLinArt    := ::oPrecliL:nDtoDiv
+            ::oDbf:nPrmArt    := ::oPrecliL:nDtoPrm
+
+            ::oDbf:nTotDto    := nDtoLPreCli( ::oPreCliL:cAlias, ::nDecOut, ::nDerOut, ::nValDiv )
+            ::oDbf:nTotPrm    := nPrmLPreCli( ::oPreCliL:cAlias, ::nDecOut, ::nDerOut, ::nValDiv )
 
             ::oDbf:cIdeDoc    :=  ::cIdeDocumento()
 
@@ -926,6 +947,13 @@ METHOD AddPedidoCliente( cCodigoCliente ) CLASS TFastVentasClientes
             ::oDbf:cNumDoc    := Str( ::oPedCliT:nNumPed )
             ::oDbf:cSufDoc    := ::oPedCliT:cSufPed
             ::oDbf:cIdeDoc    := Upper( ::oDbf:cTipDoc ) + ::oDbf:cSerDoc + ::oDbf:cNumDoc + ::oDbf:cSufDoc
+
+            ::oDbf:nDtoArt    := ::oPedcliL:nDto
+            ::oDbf:nLinArt    := ::oPedcliL:nDtoDiv
+            ::oDbf:nPrmArt    := ::oPedcliL:nDtoPrm
+
+            ::oDbf:nTotDto    := nDtoLPedCli( ::oPedCliL:cAlias, ::nDecOut, ::nDerOut, ::nValDiv )
+            ::oDbf:nTotPrm    := nPrmLPedCli( ::oPedCliL:cAlias, ::nDecOut, ::nDerOut, ::nValDiv )
 
             ::oDbf:nAnoDoc    := Year( ::oPedCliT:dFecPed )
             ::oDbf:nMesDoc    := Month( ::oPedCliT:dFecPed )

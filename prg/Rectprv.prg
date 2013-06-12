@@ -10107,6 +10107,84 @@ RETURN ( if( cPirDiv != NIL, Trans( nCalculo, cPirDiv ), nCalculo ) )
 
 //---------------------------------------------------------------------------//
 
+/*
+Devuelve el importe de descuento porcentual por cada linea---------------------
+*/
+
+FUNCTION nDtoLRctPrv( cRctPrvL, nDec, nRou, nVdv )
+
+   local nCalculo       := 0
+
+   DEFAULT cRctPrvL     := dbfRctPrvL
+   DEFAULT nDec         := nDouDiv()
+   DEFAULT nRou         := nRouDiv()
+   DEFAULT nVdv         := 1
+
+   if ( cRctPrvL )->nDtoLin != 0 
+
+      nCalculo          := nTotURctPrv( cRctPrvL, nDec ) * nTotNRctPrv( cRctPrvL )
+
+      /*
+      Descuentos---------------------------------------------------------------
+      */
+
+      nCalculo          := nCalculo * ( cRctPrvL )->nDtoLin / 100
+
+
+      if nVdv != 0
+         nCalculo       := nCalculo / nVdv
+      end if
+
+      if nRou != nil
+         nCalculo       := Round( nCalculo, nRou )
+      end if
+
+   end if
+
+RETURN ( nCalculo ) 
+
+//---------------------------------------------------------------------------//
+/*
+Devuelve el importe de descuento porcentual en promociones por cada linea------
+*/
+
+FUNCTION nPrmLRctPrv( cRctPrvL, nDec, nRou, nVdv )
+
+   local nCalculo       := 0
+
+   DEFAULT cRctPrvL     := dbfRctPrvL
+   DEFAULT nDec         := nDouDiv()
+   DEFAULT nRou         := nRouDiv()
+   DEFAULT nVdv         := 1
+
+   if ( cRctPrvL )->nDtoPrm != 0 
+
+      nCalculo          := nTotURctPrv( cRctPrvL, nDec ) * nTotNRctPrv( cRctPrvL )
+
+      /*
+      Descuentos---------------------------------------------------------------
+      */
+
+      if ( cRctPrvL )->nDtoLin != 0 
+         nCalculo       -= nCalculo * ( cRctPrvL )->nDtoLin / 100
+      end if
+
+      nCalculo          := nCalculo * ( cRctPrvL )->nDtoPrm / 100
+
+      if nVdv != 0
+         nCalculo       := nCalculo / nVdv
+      end if
+
+      if nRou != nil
+         nCalculo       := Round( nCalculo, nRou )
+      end if
+
+   end if
+
+RETURN ( nCalculo ) 
+
+//---------------------------------------------------------------------------//
+
 FUNCTION nTotURctPrv( uFacPrvL, nDec, nVdv, cPinDiv )
 
 	local nCalculo
