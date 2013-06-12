@@ -1189,6 +1189,15 @@ Function Articulo( oMenuItem, oWnd, bOnInit )
 
       end if
 
+      /*
+      with object ( oWndBrw:AddXCol() )
+         :cHeader          := "btn"
+         :nEdittype        := EDIT_BUTTON
+         :nWidth           := 20
+         :bEditBlock       := { || MsgYesNo( "Please select" ) }
+      end with
+      */
+      
       oWndBrw:cHtmlHelp    := "Articulos"
       oWndBrw:bToolTip     := {|| dlgTooltip( ( dbfArticulo )->Codigo, oWndBrw:oBrw ) }
 
