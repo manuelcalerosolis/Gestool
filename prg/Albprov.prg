@@ -5815,6 +5815,84 @@ FUNCTION nNetUAlbPrv( uAlbPrvL, uAlbPrvT, nDec, nRec, nVdv, cPinDiv )
 RETURN ( if( cPinDiv != NIL, Trans( nCalculo, cPinDiv ), nCalculo ) )
 
 //---------------------------------------------------------------------------//
+
+/*
+Devuelve el importe de descuento porcentual por cada linea---------------------
+*/
+
+FUNCTION nDtoLAlbPrv( cAlbPrvL, nDec, nRou, nVdv )
+
+   local nCalculo       := 0
+
+   DEFAULT cAlbPrvL     := dbfAlbPrvL
+   DEFAULT nDec         := nDouDiv()
+   DEFAULT nRou         := nRouDiv()
+   DEFAULT nVdv         := 1
+
+   if ( cAlbPrvL )->nDtoLin != 0 
+
+      nCalculo          := nTotUAlbPrv( cAlbPrvL, nDec ) * nTotNAlbPrv( cAlbPrvL )
+
+      /*
+      Descuentos---------------------------------------------------------------
+      */
+
+      nCalculo          := nCalculo * ( cAlbPrvL )->nDtoLin / 100
+
+
+      if nVdv != 0
+         nCalculo       := nCalculo / nVdv
+      end if
+
+      if nRou != nil
+         nCalculo       := Round( nCalculo, nRou )
+      end if
+
+   end if
+
+RETURN ( nCalculo ) 
+
+//---------------------------------------------------------------------------//
+/*
+Devuelve el importe de descuento porcentual en promociones por cada linea------
+*/
+
+FUNCTION nPrmLAlbPrv( cAlbPrvL, nDec, nRou, nVdv )
+
+   local nCalculo       := 0
+
+   DEFAULT cAlbPrvL     := dbfAlbPrvL
+   DEFAULT nDec         := nDouDiv()
+   DEFAULT nRou         := nRouDiv()
+   DEFAULT nVdv         := 1
+
+   if ( cAlbPrvL )->nDtoPrm != 0 
+
+      nCalculo          := nTotUAlbPrv( cAlbPrvL, nDec ) * nTotNAlbPrv( cAlbPrvL )
+
+      /*
+      Descuentos---------------------------------------------------------------
+      */
+
+      if ( cAlbPrvL )->nDtoLin != 0 
+         nCalculo       -= nCalculo * ( cAlbPrvL )->nDtoLin / 100
+      end if
+
+      nCalculo          := nCalculo * ( cAlbPrvL )->nDtoPrm / 100
+
+      if nVdv != 0
+         nCalculo       := nCalculo / nVdv
+      end if
+
+      if nRou != nil
+         nCalculo       := Round( nCalculo, nRou )
+      end if
+
+   end if
+
+RETURN ( nCalculo ) 
+
+//---------------------------------------------------------------------------//
 // Total de linea
 
 FUNCTION nTotLAlbPrv( uAlbPrvL, nDec, nRec, nVdv, cPirDiv )
