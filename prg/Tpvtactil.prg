@@ -1734,8 +1734,6 @@ METHOD Activate( lAlone ) CLASS TpvTactil
    ::oTurno                   := TTurno():New( cPatEmp(), oWnd(), "01001" )
    ::oTurno:lArqueoTactil     := .t.
 
-   ::oTurno:SetFastReport( ::oFastReport )
-
    if lFamInTpv( ::oFamilias:cAlias )
 
       ::lAlone       := lAlone
@@ -1767,6 +1765,9 @@ METHOD Activate( lAlone ) CLASS TpvTactil
       ::oFastReport:LoadLangRes( "Spanish.Xml" )
 
       ::DataReport()
+
+      ::oTurno:SetFastReport( ::oFastReport )
+
       // ::VariableReport()
 
       /*

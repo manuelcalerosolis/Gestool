@@ -595,7 +595,7 @@ CLASS TTurno FROM TMasDet
 
    Method MailArqueo()
 
-   Method SetFastReport( oFastReport ) Inline ( ::oFastReport := oFastReport )
+   Method SetFastReport( oFastReport ) Inline ( if( !Empty( oFastReport ), ::oFastReport := oFastReport, ) )
 
    Method lInCajaSelect( cCodigoCaja ) Inline ( aScan( ::aCajaSelect, cCodigoCaja ) != 0 )
    Method nInCajaSelect( cCodigoCaja ) Inline ( aScan( ::aCajaSelect, cCodigoCaja ) )
@@ -8125,6 +8125,7 @@ METHOD PrintReport( cTurno, cCaja, nDevice, nCopies, cPrinter, dbfDoc )
    end if
 
    ::oFastReport:SetIcon( 1 )
+
    ::oFastReport:SetTitle(       "Diseñador de documentos" )
 
    /*
