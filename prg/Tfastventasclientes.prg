@@ -602,7 +602,7 @@ METHOD lGenerate() CLASS TFastVentasClientes
          
       case ::cTypeName == "Informe de albaranes"
 
-         ::AddAlbaranCliente( .t. )
+         ::AddAlbaranCliente()
 
       case ::cTypeName == "Informe de facturas"
 
@@ -622,7 +622,7 @@ METHOD lGenerate() CLASS TFastVentasClientes
 
       case ::cTypeName == "Informe de ventas"
 
-         ::AddAlbaranCliente()
+         ::AddAlbaranCliente( .t. )
 
          ::AddFacturaCliente()
 
@@ -720,7 +720,7 @@ METHOD AddSATCliente( cCodigoCliente ) CLASS TFastVentasClientes
             ::oDbf:cNumDoc    := Str( ::oSatCliT:nNumSat )
             ::oDbf:cSufDoc    := ::oSatCliT:cSufSat
 
-            ::oDbf:cIdeDoc    :=  ::cIdeDocumento()
+            ::oDbf:cIdeDoc    :=  ::cIdeDocumento()            
 
             ::oDbf:nAnoDoc    := Year( ::oSatCliT:dFecSat )
             ::oDbf:nMesDoc    := Month( ::oSatCliT:dFecSat )
@@ -980,16 +980,16 @@ RETURN ( Self )
 
 //---------------------------------------------------------------------------//
 
-METHOD AddAlbaranCliente( lFacturados ) CLASS TFastVentasClientes
+METHOD AddAlbaranCliente( lNoFacturados ) CLASS TFastVentasClientes
 
    local sTot
    local oError
    local oBlock
    local cExpHead
    
-   DEFAULT lFacturados  := .f.
+   DEFAULT lNoFacturados   := .f.
 
-   oBlock               := ErrorBlock( {| oError | ApoloBreak( oError ) } )
+   oBlock                  := ErrorBlock( {| oError | ApoloBreak( oError ) } )
    BEGIN SEQUENCE
    
       ::InitAlbaranesClientes()
@@ -997,7 +997,7 @@ METHOD AddAlbaranCliente( lFacturados ) CLASS TFastVentasClientes
       ::oAlbCliT:OrdSetFocus( "dFecAlb" )
       ::oAlbCliL:OrdSetFocus( "nNumAlb" )
 
-      if lFacturados
+      if lNoFacturados
          cExpHead       := '!lFacturado .and. dFecAlb >= Ctod( "' + Dtoc( ::dIniInf ) + '" ) .and. dFecAlb <= Ctod( "' + Dtoc( ::dFinInf ) + '" )'
       else
          cExpHead       := 'dFecAlb >= Ctod( "' + Dtoc( ::dIniInf ) + '" ) .and. dFecAlb <= Ctod( "' + Dtoc( ::dFinInf ) + '" )'
@@ -1223,7 +1223,7 @@ METHOD AddFacturaRectificativa( cCodigoCliente ) CLASS TFastVentasClientes
 
             ::oDbf:Blank()
 
-            ::oDbf:cCodCli    := ::oFacRecT:cCodCli
+            ::oDbf:cCodCli    := ::oFacRecT:cCodCli            
             ::oDbf:cNomCli    := ::oFacRecT:cNomCli
             ::oDbf:cCodAge    := ::oFacRecT:cCodAge
             ::oDbf:cCodPgo    := ::oFacRecT:cCodPago
@@ -1340,7 +1340,7 @@ METHOD AddTicket() CLASS TFastVentasClientes
             ::oDbf:cNumDoc    := ::oTikCliT:cNumTik
             ::oDbf:cSufDoc    := ::oTikCliT:cSufTik
             ::oDbf:cIdeDoc    := Upper( ::oDbf:cTipDoc ) + ::oDbf:cSerDoc + ::oDbf:cNumDoc + ::oDbf:cSufDoc
-
+            
             ::oDbf:nAnoDoc    := Year( ::oTikCliT:dFecTik )
             ::oDbf:nMesDoc    := Month( ::oTikCliT:dFecTik )
             ::oDbf:dFecDoc    := ::oTikCliT:dFecTik

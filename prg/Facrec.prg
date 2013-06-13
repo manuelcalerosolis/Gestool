@@ -8597,29 +8597,88 @@ FUNCTION nTotPFacRec( cFacRecL, nDec, nVdv, cPorDiv )
 
 RETURN ( if( cPorDiv != nil, Trans( nCalculo, cPorDiv ), nCalculo ) )
 
+
 //---------------------------------------------------------------------------//
-//
-// Devuelve el importe del descuento lineal
-//
+/*
+Devuelve el importe de descuento porcentual por cada linea---------------------
+*/
 
-FUNCTION nDtoLFacRec( cFacRecL, nDec, nVdv, cPorDiv )
+FUNCTION nDtoLFacRec( cFacRecL, nDec, nRou, nVdv )
 
-   local nCalculo    := 0
+   local nCalculo       := 0
 
-   DEFAULT cFacRecL  := dbfFacRecL
-   DEFAULT nDec      := nDouDiv()
-   DEFAULT nVdv      := 1
+   DEFAULT cFacRecL     := dbfFacRecL
+   DEFAULT nDec         := nDouDiv()
+   DEFAULT nRou         := nRouDiv()
+   DEFAULT nVdv         := 1
 
-   /*
-   Tomamos los valores redondeados------------------------------------------
-   */
+   if ( cFacRecL )->nDto != 0 .and. !( cFacRecL )->lTotLin
 
-   if ( cFacRecL )->nDto != 0
-      nCalculo       := nTotUFacRec( cFacRecL, nDec ) * ( cFacRecL )->nDto / 100
-      nCalculo       := Round( nCalculo / nVdv, nDec )
+      nCalculo          := nTotUFacRec( cFacRecL, nDec ) * nTotNFacRec( cFacRecL )
+
+      /*
+      Descuentos---------------------------------------------------------------
+      */
+
+      nCalculo          -= Round( ( cFacRecL )->nDtoDiv / nVdv , nDec )
+
+      nCalculo          := nCalculo * ( cFacRecL )->nDto / 100
+
+
+      if nVdv != 0
+         nCalculo       := nCalculo / nVdv
+      end if
+
+      if nRou != nil
+         nCalculo       := Round( nCalculo, nRou )
+      end if
+
    end if
 
-RETURN ( if( cPorDiv != nil, Trans( nCalculo, cPorDiv ), nCalculo ) )
+RETURN ( nCalculo ) 
+
+//---------------------------------------------------------------------------//
+/*
+Devuelve el importe de descuento porcentual en promociones por cada linea------
+*/
+
+FUNCTION nPrmLFacRec( cFacRecL, nDec, nRou, nVdv )
+
+   local nCalculo       := 0
+
+   DEFAULT cFacRecL     := dbfFacRecL
+   DEFAULT nDec         := nDouDiv()
+   DEFAULT nRou         := nRouDiv()
+   DEFAULT nVdv         := 1
+
+   if ( cFacRecL )->nDtoPrm != 0 .and. !( cFacRecL )->lTotLin
+
+      nCalculo          := nTotUFacRec( cFacRecL, nDec ) * nTotNFacRec( cFacRecL )
+
+      /*
+      Descuentos---------------------------------------------------------------
+      */
+
+      nCalculo          -= Round( ( cFacRecL )->nDtoDiv / nVdv , nDec )
+
+      if ( cFacRecL )->nDto != 0 
+         nCalculo       -= nCalculo * ( cFacRecL )->nDto / 100
+      end if
+
+      nCalculo          := nCalculo * ( cFacRecL )->nDtoPrm / 100
+
+      if nVdv != 0
+         nCalculo       := nCalculo / nVdv
+      end if
+
+      if nRou != nil
+         nCalculo       := Round( nCalculo, nRou )
+      end if
+
+   end if
+
+RETURN ( nCalculo ) 
+
 
 //---------------------------------------------------------------------------//
 
