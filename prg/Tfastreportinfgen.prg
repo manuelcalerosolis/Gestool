@@ -94,6 +94,11 @@ CLASS TFastReportInfGen FROM TNewInfGen
    DATA  nTotalPagosClientes           INIT 0
    DATA  nTotalPendientesClientes      INIT 0
 
+   DATA  nBasePedidosProveedores       INIT 0
+   DATA  nIVAPedidosProveedores        INIT 0
+   DATA  nRecargoPedidosProveedores    INIT 0
+   DATA  nTotalPedidosProveedores      INIT 0
+
    //------------------------------------------------------------------------//
 
    METHOD Create()
@@ -289,6 +294,9 @@ CLASS TFastReportInfGen FROM TNewInfGen
    METHOD nTotalDescuentoPorcentualLineaTicketsClientes()         INLINE ( nDtoLTpv( ::oTikCliL:cAlias ) )
 
    METHOD AddVariableLiquidacionAgentes()
+
+
+   METHOD AddVariablePedidoProveedor()
 
    //------------------------------------------------------------------------//
 
@@ -701,6 +709,32 @@ CLASS TFastReportInfGen FROM TNewInfGen
       ::nBaseTicketsClientes       += ::oTikCliT:nTotNet
       ::nIVATicketsClientes        += ::oTikCliT:nTotIva
       ::nTotalTicketsClientes      += ::oTikCliT:nTotTik
+
+      RETURN ( Self )
+
+   ENDMETHOD
+
+   //------------------------------------------------------------------------//  
+
+   INLINE METHOD InitPedidosProveedores()
+
+      ::nBasePedidosProveedores           := 0
+      ::nIVAPedidosProveedores            := 0
+      ::nRecargoPedidosProveedores        := 0
+      ::nTotalPedidosProveedores          := 0
+
+      RETURN ( Self )
+
+   ENDMETHOD
+
+   //------------------------------------------------------------------------//
+
+   INLINE METHOD AddPedidosProveedores()
+
+      ::nBasePedidosProveedores           += ::oPedPrvT:nTotNet
+      ::nIVAPedidosProveedores            += ::oPedPrvT:nTotIva
+      ::nRecargoPedidosProveedores        += ::oPedPrvT:nTotReq
+      ::nTotalPedidosProveedores          += ::oPedPrvT:nTotPed
 
       RETURN ( Self )
 
@@ -3140,6 +3174,17 @@ RETURN ( Self )
 METHOD AddVariableLiquidacionAgentes()
 
       ::oFastReport:AddVariable(    "Liquidación de agentes",  "Total liquidación de agentes",           "GetHbVar('nTotalRemesasAgentes')"                       )
+
+RETURN ( Self )
+
+//---------------------------------------------------------------------------//
+
+METHOD AddVariablePedidoProveedor()
+
+   ::oFastReport:AddVariable(    "Pedidos proveedores",        "Total base pedidos proveedores",            "CallHbFunc( 'oTinfGen', ['nBasePedidosProveedores'])"    )
+   ::oFastReport:AddVariable(    "Pedidos proveedores",        "Total " + cImp() + " pedidos proveedores",  "CallHbFunc( 'oTinfGen', ['nIVAPedidosProveedores'])"     )
+   ::oFastReport:AddVariable(    "Pedidos proveedores",        "Total recargo pedidos proveedores",         "CallHbFunc( 'oTinfGen', ['nRecargoPedidosProveedores'])" )
+   ::oFastReport:AddVariable(    "Pedidos proveedores",        "Total pedidos proveedores",                 "CallHbFunc( 'oTinfGen', ['nTotalPedidosProveedores'])"   )
 
 RETURN ( Self )
 
