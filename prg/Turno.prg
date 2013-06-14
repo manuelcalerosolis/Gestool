@@ -11499,7 +11499,6 @@ METHOD MailArqueo( cCurrentTruno )
 Return ( Self )
 
 //---------------------------------------------------------------------------//
-
 //
 // Turno en curso
 //
@@ -11507,6 +11506,7 @@ Return ( Self )
 Function cCurSesion( cCurSes, lDelega )
 
    local oTurno
+   local cSesion
 
    DEFAULT lDelega      := .t.
 
@@ -11516,10 +11516,18 @@ Function cCurSesion( cCurSes, lDelega )
       oTurno:cCurTurno  := cCurSes
    end if
 
-Return ( if( lDelega, oTurno:cCurTurno, SubStr( oTurno:cCurTurno, 1, 6 ) ) )
+   if lDelega
+      cSesion           := oTurno:cCurTurno
+   else
+      cSesion           := SubStr( oTurno:cCurTurno, 1, 6 )
+   end if 
+
+Return ( cSesion )
 
 //---------------------------------------------------------------------------//
-//indica si el turno existe
+//
+// Indica si el turno existe
+//
 
 Function lExisteTurno( cNumTur, dbfTurno )
 
@@ -11545,5 +11553,4 @@ Function lExisteTurno( cNumTur, dbfTurno )
 
 Return ( lExiste )
 
-//---------------------------------------------------------------------------//
 //---------------------------------------------------------------------------//

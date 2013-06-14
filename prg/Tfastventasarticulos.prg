@@ -2147,6 +2147,8 @@ RETURN ( Self )
 
 METHOD BuildTree( oTree, lLoadFile ) CLASS TFastVentasArticulos
 
+   local a
+   local h
    local oNode
    local oTreeListado
    local oTreeVentas
@@ -2155,6 +2157,38 @@ METHOD BuildTree( oTree, lLoadFile ) CLASS TFastVentasArticulos
 
    DEFAULT oTree           := ::oTreeReporting
    DEFAULT lLoadFile       := .t.
+
+   a  := {  {  "Title" => "Listado",   "Image" => 0,  "Type" => "Listado", "Directory" => "Articulos", "File" => "Listado.fr3"  },;
+            {  "Title" => "Ventas",    "Image" => 11, "Subnode" =>;
+            { ;
+               { "Title" => "Presupuestos de clientes",  "Image" => 5, "Type" => "Presupuestos de clientes",   "Directory" => "Articulos\Ventas",   "File" => "Presupuestos de clientes.fr3" },;
+               { "Title" => "Pedidos de clientes",       "Image" => 6, "Type" => "Pedidos de clientes",        "Directory" => "Articulos\Ventas",   "File" => "Pedidos de clientes.fr3" },;
+               { "Title" => "Albaranes de clientes",     "Image" => 7, "Type" => "Albaranes de clientes",      "Directory" => "Articulos\Ventas",   "File" => "Albaranes de clientes.fr3" },;
+               { "Title" => "Facturas de clientes",      "Image" => 8, "Type" => "Facturas de clientes",       "Directory" => "Articulos\Ventas",   "File" => "Facturas de clientes.fr3" },;
+               { "Title" => "Tickets de clientes",       "Image" =>10, "Type" => "Tickets de clientes",        "Directory" => "Articulos\Ventas",   "File" => "Tickets de clientes.fr3" },;
+               { "Title" => "Ventas de clientes",        "Image" =>11, "Type" => "Ventas de clientes",         "Directory" => "Articulos\Ventas",   "File" => "Ventas de clientes.fr3" },;
+            } ;
+            },;
+            {  "Title" => "Compras",    "Image" => 12, "Subnode" =>;
+            { ;
+               { "Title" => "Pedidos de proveedores",    "Image" => 2, "Type" => "Pedidos de proveedores",     "Directory" => "Articulos\Compras",  "File" => "Pedidos de proveedores.fr3" },;
+               { "Title" => "Albaranes de proveedores",  "Image" => 3, "Type" => "Albaranes de proveedores",   "Directory" => "Articulos\Compras",  "File" => "Albaranes de proveedores.fr3" },;
+               { "Title" => "Facturas de proveedores",   "Image" => 4, "Type" => "Facturas de proveedores",    "Directory" => "Articulos\Compras",  "File" => "Facturas de proveedores.fr3" },;
+               { "Title" => "Tickets de proveedores",    "Image" => 4, "Type" => "Tickets de proveedores",     "Directory" => "Articulos\Compras",  "File" => "Tickets de proveedores.fr3" },;
+               { "Title" => "Compras de proveedores",    "Image" =>12, "Type" => "Compras de proveedores",     "Directory" => "Articulos\Compras",  "File" => "Ventas de proveedores.fr3" },;
+            } ;
+            },; 
+            {  "Title" => "Existencias", "Image" => 16, "Subnode" =>;
+            { ;
+               { "Title" => "Existencias",               "Image" => 16, "Type" => "Existencias",               "Directory" => "Existencias",        "File" => "Existencias.fr3" },;
+            } ;
+            } }
+
+   ::BuildNode( a, oTree, lLoadFile )
+
+   oTree:ExpandAll()
+
+   /*
 
    oTreeListado            := oTree:Add( "Listado", 0, { "Type" => "Listado", "File" => "Listado.fr3" } ) 
    ::BuildNode( oTreeListado, "Listado", 0, lLoadFile )
@@ -2185,36 +2219,48 @@ METHOD BuildTree( oTree, lLoadFile ) CLASS TFastVentasArticulos
    oTreeCompras:Expand()
    oTreeExistencias:Expand()
 
+   */
+
 RETURN ( Self )
 
 //---------------------------------------------------------------------------//
 
-METHOD BuildNode( oNode, cText, nImage, lLoadFile ) CLASS TFastVentasArticulos
+METHOD BuildNode( a, oTree, lLoadFile ) CLASS TFastVentasArticulos
 
+   local hHash
+   local oNode
    local aFile 
    local cType
    local aDirectory
 
-   cType             := oNode:bAction[ "Type" ]
+   for each hHash in a
+      
+      if !Empty( hHash )
 
-   if lLoadFile
+         oNode          := oTree:Add( hHash[ "Title" ], hHash[ "Image" ], hHash ) 
 
-      aDirectory     := Directory( cPatReporting() + ::cType + "\" + cText + "\" + "*.fr3" )
-      if !Empty( aDirectory )
+         if lLoadFile .and. hHasKey( hHash, "Directory" ) 
 
-         for each aFile in aDirectory
-            oNode:Add( getFileNoExt( aFile[ 1 ] ), nImage, { "Type" => cType, "File" => cText + "\" + aFile[ 1 ] } )
+            aDirectory  := Directory( cPatReporting() + hHash[ "Directory" ] + "\" + hHash[ "Type" ] + "\*.fr3" )
+            if !Empty( aDirectory )
 
-            ? cType
-            ? cText + "\" + aFile[ 1 ]
+               for each aFile in aDirectory
+                  oNode:Add( getFileNoExt( aFile[ 1 ] ), hHash[ "Image" ], { "Type" => hHash[ "Type" ], "File" => hHash[ "Directory" ] + "\" + hHash[ "Type" ] + "\" + aFile[ 1 ] } )
+               next 
 
-         next 
+            end if 
+
+         end if 
 
          oNode:Expand()
 
+         if hHasKey( hHash, "Subnode" ) 
+            ::BuildNode( hHash[ "Subnode" ], oNode, lLoadFile )
+         end if 
+
       end if 
 
-   end if 
+   next 
 
 RETURN ( Self )
 

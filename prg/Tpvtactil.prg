@@ -248,11 +248,11 @@ CLASS TpvTactil
 
    DATA oFormatosImpresion
 
-   DATA cGetDescripcion
-   DATA nGetUnidades
-   DATA nGetImporte
-   DATA cGetImpresora
-   DATA nGetIvaLibre
+   DATA cDescripcionLibre
+   DATA nUnidadesLibre
+   DATA nImporteLibre
+   DATA cImpresoraLibre
+   DATA nIvaLibre
 
    DATA oBtnUnaLinea
    DATA oBtnTodasLineas
@@ -428,8 +428,8 @@ CLASS TpvTactil
    //------------------------------------------------------------------------//
 
    METHOD AgregarLibre()
-   METHOD AgregarLineasLibres()
    METHOD ValidarAgregarLibre( oGetDescripcion, oDlg )
+   METHOD GuardarAgregarLibre()
 
    METHOD AgregarFavoritos( cNombreArticulo )
 
@@ -1164,6 +1164,8 @@ CLASS TpvTactil
 
       local cInfo       := ""
 
+      cInfo             += "Sesión : " + Alltrim( Transform( cCurSesion(), "######" ) ) + Space( 1 )
+
       if !Empty( ::oTiketCabecera:cNumTik )
          cInfo          += "Ticket : " + ::oTiketCabecera:cSerTik + "/" + Alltrim( ::oTiketCabecera:cNumTik ) + Space( 1 )
       end if
@@ -1577,11 +1579,6 @@ METHOD New( oMenuItem, oWnd ) CLASS TpvTactil
    ::nTotalTicket             := 0
    ::nTotalPrecioPersona      := 0
 
-   ::cGetDescripcion          := Space( 100 )
-   ::nGetUnidades             := 1
-   ::nGetImporte              := 0
-   ::cGetImpresora            := Space( 254 )
-
    ::cGetUnidades             := Space( 100 )
 
    ::nTarifaSolo              := Max( uFieldEmpresa( "nPreTPro" ), 1 )
@@ -1714,6 +1711,8 @@ METHOD Activate( lAlone ) CLASS TpvTactil
       msgStop( "Esta caja " + oUser():cCaja() + " esta cerrada." )
       Return .f.
    end if
+
+
 
    /*
    Abrimos los ficheros necesarios---------------------------------------------
@@ -3405,17 +3404,17 @@ Return ( .t. )
 METHOD AgregarLibre() CLASS TpvTactil
 
    local oDlg
-   local oGetDescripcion
-   local oGetUnidades
-   local oGetImporte
-   local oGetImpresora
-   local oGetIvaLibre
+   local oDescripcionLibre
+   local oUnidadesLibre
+   local oImporteLibre
+   local oImpresoraLibre
+   local oIvaLibre
 
-   ::cGetDescripcion          := Space( 100 )
-   ::nGetUnidades             := 1
-   ::nGetImporte              := 0
-   ::cGetImpresora            := Space( 254 )
-   ::nGetIvaLibre             := nIva( ::oTipoIVA, cDefIva() )
+   ::cDescripcionLibre     := Space( 100 )
+   ::nUnidadesLibre        := 1
+   ::nImporteLibre         := 0
+   ::cImpresoraLibre       := Space( 254 )
+   ::nIvaLibre             := nIva( ::oTipoIVA, cDefIva() )
 
    if !::lEditableDocumento()
       MsgStop( "El documento ya está cerrado" )
@@ -3424,8 +3423,8 @@ METHOD AgregarLibre() CLASS TpvTactil
 
    DEFINE DIALOG oDlg RESOURCE "Libre" // FONT ::oFntDlg
 
-      REDEFINE GET oGetDescripcion ;
-         VAR      ::cGetDescripcion ;
+      REDEFINE GET oDescripcionLibre ;
+         VAR      ::cDescripcionLibre ;
          ID       100 ;
          OF       oDlg
 
@@ -3433,10 +3432,10 @@ METHOD AgregarLibre() CLASS TpvTactil
          ID       110 ;
          OF       oDlg ;
          BITMAP   "Keyboard2_32" ;
-         ACTION   ( VirtualKey( .f., oGetDescripcion ) )
+         ACTION   ( VirtualKey( .f., oDescripcionLibre ) )
 
-      REDEFINE GET oGetIvaLibre ;
-         VAR      ::nGetIvaLibre ;
+      REDEFINE GET oIvaLibre ;
+         VAR      ::nIvaLibre ;
          PICTURE  "@E 999.99" ;
          WHEN     ( .f. );
          ID       200 ;
@@ -3446,10 +3445,10 @@ METHOD AgregarLibre() CLASS TpvTactil
          ID       210 ;
          OF       oDlg ;
          BITMAP   "Lupa_32" ;
-         ACTION   ( BigBrwIva( oGetIvaLibre, ::oTipoIVA:cAlias ) )
+         ACTION   ( BigBrwIva( oIvaLibre, ::oTipoIVA:cAlias ) )
 
-      REDEFINE GET oGetUnidades ;
-         VAR      ::nGetUnidades ;
+      REDEFINE GET oUnidadesLibre ;
+         VAR      ::nUnidadesLibre ;
          PICTURE  ::cPictureUnidades ;
          ID       120 ;
          OF       oDlg
@@ -3458,10 +3457,10 @@ METHOD AgregarLibre() CLASS TpvTactil
          ID       130 ;
          OF       oDlg ;
          BITMAP   "Calculator_32" ;
-         ACTION   ( Calculadora( 0, oGetUnidades ) )
+         ACTION   ( Calculadora( 0, oUnidadesLibre ) )
 
-      REDEFINE GET oGetImporte ;
-         VAR      ::nGetImporte ;
+      REDEFINE GET oImporteLibre ;
+         VAR      ::nImporteLibre ;
          PICTURE  ::cPictureTotal ;
          ID       140 ;
          OF       oDlg
@@ -3470,10 +3469,10 @@ METHOD AgregarLibre() CLASS TpvTactil
          ID       150 ;
          OF       oDlg ; 
          BITMAP   "Calculator_32" ;
-         ACTION   ( Calculadora( 0, oGetImporte ) )
+         ACTION   ( Calculadora( 0, oImporteLibre ) )
 
-      REDEFINE GET oGetImpresora ;
-         VAR      ::cGetImpresora ;
+      REDEFINE GET oImpresoraLibre ;
+         VAR      ::cImpresoraLibre ;
          ID       160 ;
          OF       oDlg
 
@@ -3481,13 +3480,13 @@ METHOD AgregarLibre() CLASS TpvTactil
          ID       170 ;
          OF       oDlg ;
          BITMAP   "Lupa_32" ;
-         ACTION   ( BrwTipoImpresora( oGetImpresora, .t. ) )
+         ACTION   ( BrwTipoImpresora( oImpresoraLibre, .t. ) )
 
       REDEFINE BUTTONBMP ;
          BITMAP   "Check_32" ;
          ID       IDOK ;
          OF       oDlg ;
-         ACTION   ( ::ValidarAgregarLibre( oGetDescripcion, oDlg ) )
+         ACTION   ( ::ValidarAgregarLibre( oDescripcionLibre, oUnidadesLibre, oDlg ) )
 
       REDEFINE BUTTONBMP ;
          BITMAP   "Delete_32" ;
@@ -3497,32 +3496,57 @@ METHOD AgregarLibre() CLASS TpvTactil
 
    ACTIVATE DIALOG oDlg CENTER
 
-   if ( oDlg:nResult == IDOK )
-
-      ::AgregarLineasLibres()
-
-      if !Empty( ::oBrwLineas )
-         ::oBrwLineas:Refresh()
-      end if
-
-   end if
-
    ::oGetUnidades:SetFocus()
 
 Return ( oDlg:nResult == IDOK )
 
 //---------------------------------------------------------------------------//
 
-METHOD ValidarAgregarLibre( oGetDescripcion, oDlg ) CLASS TpvTactil
+METHOD ValidarAgregarLibre( oDescripcionLibre, oUnidadesLibre, oDlg ) CLASS TpvTactil
 
-   if Empty( oGetDescripcion:VarGet() )
+   if Empty( ::cDescripcionLibre )
       MsgStop( "Descripción no puede estar vacia" )
+      oDescripcionLibre:SetFocus()
       Return .f.
    end if
+
+   if Empty( ::nUnidadesLibre )
+      MsgStop( "Unidades tiene que ser distinta de cero" )
+      oUnidadesLibre:SetFocus()
+      Return .f.
+   end if
+
+   ::GuardarAgregarLibre()
 
    oDlg:End( IDOK )
 
 Return .t.
+
+//---------------------------------------------------------------------------//
+
+METHOD GuardarAgregarLibre() CLASS TpvTactil
+
+   CursorWait()
+
+   ::oTemporalLinea:Append()
+   ::oTemporalLinea:cNomTil     := ::cDescripcionLibre
+   ::oTemporalLinea:nUntTil     := ::nUnidadesLibre
+   ::oTemporalLinea:nPvpTil     := ::nImporteLibre
+   ::oTemporalLinea:nIvaTil     := ::nIvaLibre
+   ::oTemporalLinea:cAlmLin     := oUser():cAlmacen()
+   ::oTemporalLinea:cImpCom1    := ::cImpresoraLibre
+   ::oTemporalLinea:nNumLin     := nLastNum( ::oTemporalLinea )
+   ::oTemporalLinea:Save()
+ 
+   if !Empty( ::oBrwLineas )
+      ::oBrwLineas:Refresh()
+   end if
+
+   ::TotalTemporal()
+
+   CursorWE()
+
+Return ( .t. )
 
 //---------------------------------------------------------------------------//
 
@@ -4389,32 +4413,6 @@ METHOD IncrementarUnidades() CLASS TpvTactil
       ::oBrwLineas:Refresh()
 
    end if
-
-Return ( .t. )
-
-//---------------------------------------------------------------------------//
-
-METHOD AgregarLineasLibres() CLASS TpvTactil
-
-   CursorWait()
-
-      ::oTemporalLinea:Append()
-      ::oTemporalLinea:cNomTil     := ::cGetDescripcion
-      ::oTemporalLinea:nUntTil     := ::nGetUnidades
-      ::oTemporalLinea:nPvpTil     := ::nGetImporte
-      ::oTemporalLinea:nIvaTil     := ::nGetIvaLibre
-      ::oTemporalLinea:cAlmLin     := oUser():cAlmacen()
-      ::oTemporalLinea:cImpCom1    := ::cGetImpresora
-      ::oTemporalLinea:nNumLin     := nLastNum( ::oTemporalLinea )
-      ::oTemporalLinea:Save()
-
-   if !Empty( ::oBrwLineas )
-      ::oBrwLineas:Refresh()
-   end if
-
-   ::TotalTemporal()
-
-   CursorWE()
 
 Return ( .t. )
 
