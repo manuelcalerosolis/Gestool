@@ -36,8 +36,9 @@ CLASS TFastReportInfGen FROM TNewInfGen
 
    DATA  cResource         INIT "FastReport"
 
-   DATA  cTypeName         INIT ""
+   DATA  cReportType       INIT ""
    DATA  cReportName       INIT ""
+   DATA  cReportFile       INIT ""
 
    DATA  oBtnPrevisualizar
    DATA  oBtnImprimir
@@ -128,7 +129,7 @@ CLASS TFastReportInfGen FROM TNewInfGen
    METHOD ValidValueTextDesde( oGet )  INLINE ( Eval( ::aInitGroup[ ::oBrwRango:nArrayAt ]:Cargo:ValidDesde, oGet ) )
    METHOD ValidValueTextHasta( oGet )  INLINE ( Eval( ::aInitGroup[ ::oBrwRango:nArrayAt ]:Cargo:ValidHasta, oGet ) )
 
-   METHOD cKeyInf()                    INLINE ( Padr( ::ClassName(), 50 ) + Padr( Upper( ::cTypeName ), 50 ) + Padr( Upper( ::cReportName ), 50 ) )
+   METHOD cReportKey()                 INLINE ( Padr( ::ClassName(), 50 ) + Padr( Upper( ::cReportType ), 50 ) + Padr( Upper( ::cReportName ), 50 ) )
 
    METHOD ExtractOrder()
 
@@ -164,7 +165,7 @@ CLASS TFastReportInfGen FROM TNewInfGen
    METHOD TreePersonalizadosClick()    INLINE ( ::GenReport( IS_SCREEN ) )
 
    METHOD SaveReport()
-   METHOD LoadReport()
+   METHOD lLoadReport()
    METHOD MoveReport()
 
    METHOD OpenTemporal()
@@ -183,6 +184,8 @@ CLASS TFastReportInfGen FROM TNewInfGen
 
    METHOD DlgImportDocument()
    METHOD ImportDocument()
+
+   METHOD BuildNode( aReports, oTree, lLoadFile )
 
    METHOD nRemesaAgentes()
    METHOD nFacturaClientes()
@@ -203,7 +206,7 @@ CLASS TFastReportInfGen FROM TNewInfGen
 
    METHOD AddVariableSATCliente()
    METHOD AddVariableLineasSATCliente()
-   METHOD cDetalleSATClientes()                                   INLINE ( cDesSatCli ( ::oSatCliL:cAlias )  )
+   METHOD cDetalleSATClientes()                                   INLINE ( cDesSatCli(  ::oSatCliL:cAlias )  )
    Method nTotalUnidadesSATClientes()                             INLINE ( nTotNSatCli( ::oSatCliL:cAlias )  )
    METHOD nPrecioUnitarioSATClientes()                            INLINE ( nTotUSatCli( ::oSatCliL:cAlias )  ) 
    METHOD nTotalLineaSATClientes()                                INLINE ( nTotLSatCli( ::oSatCliL:cAlias )  )
@@ -216,7 +219,7 @@ CLASS TFastReportInfGen FROM TNewInfGen
    
    METHOD AddVariablePresupuestoCliente()
    METHOD AddVariableLineasPresupuestoCliente()
-   METHOD cDetallePresupuestoClientes()                           INLINE ( cDesPreCli ( ::oPreCliL:cAlias ) )
+   METHOD cDetallePresupuestoClientes()                           INLINE ( cDesPreCli(  ::oPreCliL:cAlias ) )
    METHOD nTotalUnidadesPresupuestosClientes()                    INLINE ( nTotNPreCli( ::oPreCliL:cAlias ) )
    METHOD nPrecioUnitarioPresupuestosClientes()                   INLINE ( nTotUPreCli( ::oPreCliL:cAlias ) ) 
    METHOD nTotalLineaPresupuestosClientes()                       INLINE ( nTotLPreCli( ::oPreCliL:cAlias ) )
@@ -764,18 +767,18 @@ CLASS TFastReportInfGen FROM TNewInfGen
       ::oTreeImageList:AddMasked( TBitmap():Define( "Clipboard_empty_user1_16" ),         Rgb( 255, 0, 255 ) ) // 6
       ::oTreeImageList:AddMasked( TBitmap():Define( "Document_plain_user1_16" ),          Rgb( 255, 0, 255 ) ) // 7
       ::oTreeImageList:AddMasked( TBitmap():Define( "Document_user1_16" ),                Rgb( 255, 0, 255 ) ) // 8
-      ::oTreeImageList:AddMasked( TBitmap():Define( "Document_delete_16" ),               Rgb( 255, 0, 255 ) ) // 9
+      ::oTreeImageList:AddMasked( TBitmap():Define( "Document_delete_16" ),               Rgb( 255, 0, 255 ) ) // 9 Rectificativas
       ::oTreeImageList:AddMasked( TBitmap():Define( "Cashier_user1_16" ),                 Rgb( 255, 0, 255 ) ) // 10
       ::oTreeImageList:AddMasked( TBitmap():Define( "ChgPre16" ),                         Rgb( 255, 0, 255 ) ) // 11
       ::oTreeImageList:AddMasked( TBitmap():Define( "Truck_red_16" ),                     Rgb( 255, 0, 255 ) ) // 12
       ::oTreeImageList:AddMasked( TBitmap():Define( "Package_16" ),                       Rgb( 255, 0, 255 ) ) // 13
       ::oTreeImageList:AddMasked( TBitmap():Define( "Worker2_Form_Red_16" ),              Rgb( 255, 0, 255 ) ) // 14
-      ::oTreeImageList:AddMasked( TBitmap():Define( "Document_navigate_cross_16" ),       Rgb( 255, 0, 255 ) ) // 15
+      ::oTreeImageList:AddMasked( TBitmap():Define( "Document_navigate_cross_16" ),       Rgb( 255, 0, 255 ) ) // 15 Rectifiactivas proveedores
       ::oTreeImageList:AddMasked( TBitmap():Define( "Package_16" ),                       Rgb( 255, 0, 255 ) ) // 16
       ::oTreeImageList:AddMasked( TBitmap():Define( "Office-building_address_book_16" ),  Rgb( 255, 0, 255 ) ) // 17
       ::oTreeImageList:AddMasked( TBitmap():Define( "Document_navigate_cross_16" ),       Rgb( 255, 0, 255 ) ) // 18
       ::oTreeImageList:AddMasked( TBitmap():Define( "User1_16" ),                         Rgb( 255, 0, 255 ) ) // 19
-      ::oTreeImageList:AddMasked( TBitmap():Define( "Power-drill_user1_16" ),             Rgb( 255, 0, 255 ) ) // 20
+      ::oTreeImageList:AddMasked( TBitmap():Define( "Power-drill_user1_16" ),             Rgb( 255, 0, 255 ) ) // 20 SAT
 
       if !Empty( ::oTreeReporting )
          ::oTreeReporting:SetImageList( ::oTreeImageList )
@@ -1180,6 +1183,8 @@ RETURN ( Self )
 
 METHOD End() CLASS TFastReportInfGen
 
+   CursorWait()
+
    if ::lSave2Exit .and. ::lOpenFiles
       ::Save()
    end if
@@ -1199,7 +1204,7 @@ METHOD End() CLASS TFastReportInfGen
    ::CloseData()
 
    /*
-   LLamamos al metodo virtual
+   LLamamos al metodo virtual--------------------------------------------------
    */
 
    ::CloseFiles()
@@ -1316,6 +1321,8 @@ METHOD End() CLASS TFastReportInfGen
 
    Self        := nil
 
+   CursorWE()
+
 Return .t.
 
 //----------------------------------------------------------------------------//
@@ -1332,32 +1339,24 @@ METHOD GenReport( nOption ) CLASS TFastReportInfGen
    end if
 
    /*
-   if !Empty( oTreeInforme:aItems )
-      Return ( Self )
-   end if
+   Obtenemos los datos necesarios para el informe------------------------------
    */
 
-   if IsChar( oTreeInforme:cPrompt ) .and. !Empty( oTreeInforme:cPrompt )
-      ::cReportName     := Rtrim( oTreeInforme:cPrompt )
+   if hb_isHash( oTreeInforme:bAction ) 
+      ::cReportName     := oTreeInforme:bAction[ "Title" ] 
+      ::cReportType     := oTreeInforme:bAction[ "Type" ]
+      ::cReportFile     := cPatReporting() + oTreeInforme:bAction[ "Directory" ] + "\" + oTreeInforme:bAction[ "File" ] 
    else
       msgStop( "No se ha podido cargar el nombre del informe." )
       Return ( Self )
    end if
 
-   if IsChar( oTreeInforme:bAction ) .and. !Empty( oTreeInforme:bAction )
-      ::cTypeName       := Rtrim( oTreeInforme:bAction )
-   else
-      Return ( Self )
-   end if
-
    /*
-   Obtenemos el informe personalizado------------------------------------------
+   Obtenemos el informe -------------------------------------------------------
    */
 
-   ::LoadReport()
-
-   if Empty( ::cInformeFastReport )
-      MsgStop( "No se ha podido cargar un diseño de informe valido.", ::cTypeName )
+   if !::lLoadReport()
+      MsgStop( "No se ha podido cargar un diseño de informe valido.", ::cReportType )
       Return ( Self )
    end if
 
@@ -1380,7 +1379,7 @@ METHOD GenReport( nOption ) CLASS TFastReportInfGen
    Comienza la generacion del informe------------------------------------------
    */
 
-   if Valtype( ::bPreGenerate ) == "B"
+   if hb_isBlock( ::bPreGenerate )
       Eval( ::bPreGenerate )
    end if
 
@@ -1389,7 +1388,7 @@ METHOD GenReport( nOption ) CLASS TFastReportInfGen
       if !::lBreak
 
           DEFINE DIALOG oDlg ;
-               FROM     0,0 ;
+               FROM     0, 0 ;
                TO       4, 30 ;
                TITLE    "Generando informe" ;
                STYLE    DS_MODALFRAME
@@ -1411,7 +1410,7 @@ METHOD GenReport( nOption ) CLASS TFastReportInfGen
 
    end if
 
-   if Valtype( ::bPostGenerate ) == "B"
+   if hb_isBlock( ::bPostGenerate )
       Eval( ::bPostGenerate )
    end if
 
@@ -1730,8 +1729,8 @@ Method FastReport( nDevice ) CLASS TFastReportInfGen
 
       ::AddVariable()
 
-      ::oFastReport:SetTitle(                "Visualizando : " + ::cTypeName )
-      ::oFastReport:ReportOptions:SetName(   "Visualizando : " + ::cTypeName )
+      ::oFastReport:SetTitle(                "Visualizando : " + ::cReportType )
+      ::oFastReport:ReportOptions:SetName(   "Visualizando : " + ::cReportType )
 
       /*
       Imprimir el informe------------------------------------------------------
@@ -1795,23 +1794,15 @@ Method DesignReport( cNombre ) CLASS TFastReportInfGen
    end if
 
    /*
-   if IsArray( oTreeInforme:aItems ) .and. len( oTreeInforme:aItems ) >= 1
-      msgStop( "Seleccione el nodo inferior." )
-      Return ( Self )
-   end if
+   Obtenemos los datos necesarios para el informe------------------------------
    */
 
-   if IsChar( oTreeInforme:cPrompt ) .and. !Empty( oTreeInforme:cPrompt )
-      ::cReportName     := Rtrim( oTreeInforme:cPrompt )
+   if hb_isHash( oTreeInforme:bAction ) 
+      ::cReportName     := oTreeInforme:bAction[ "Title" ] 
+      ::cReportType     := oTreeInforme:bAction[ "Type" ]
+      ::cReportFile     := cPatReporting() + oTreeInforme:bAction[ "Directory" ] + "\" + oTreeInforme:bAction[ "File" ] 
    else
-      msgStop( "No se ha podido cargar el nombre del informe." )
-      Return ( Self )
-   end if
-
-   if IsChar( oTreeInforme:bAction ) .and. !Empty( oTreeInforme:bAction )
-      ::cTypeName       := Rtrim( oTreeInforme:bAction )
-   else
-      msgStop( "No hay acción definida para este informe." )
+      msgStop( "No se ha podido cargar el informe." )
       Return ( Self )
    end if
 
@@ -1819,18 +1810,11 @@ Method DesignReport( cNombre ) CLASS TFastReportInfGen
    Obtenemos el informe personalizado------------------------------------------
    */
 
-   ::LoadReport( oTreeInforme )
-
-   /*
-   if Empty( ::cInformeFastReport )
-      MsgStop( "No se ha podido cargar un diseño de informe valido.", ::cTypeName )
-      Return ( Self )
-   end if
-   */
+   ::lLoadReport()
 
    if !Empty( cNombre )
-      ::lPersonalizado                 := .t.
-      ::cReportName                    := cNombre
+      ::lPersonalizado  := .t.
+      ::cReportName     := cNombre
    end if
 
    /*
@@ -1879,8 +1863,8 @@ Method DesignReport( cNombre ) CLASS TFastReportInfGen
 
    ::AddVariable()
 
-   ::oFastReport:SetTitle(                "Diseñando : " + ::cTypeName )
-   ::oFastReport:ReportOptions:SetName(   "Diseñando : " + ::cTypeName )
+   ::oFastReport:SetTitle(                "Diseñando : " + ::cReportType )
+   ::oFastReport:ReportOptions:SetName(   "Diseñando : " + ::cReportType )
 
    ::oFastReport:PreviewOptions:SetMaximized( .t. )
 
@@ -1904,15 +1888,15 @@ Method SaveReport() CLASS TFastReportInfGen
 
    if ::lPersonalizado
 
-      if ::oDbfPersonalizado:Seek( ::cKeyInf() )
-      ::oDbfPersonalizado:Load()
+      if ::oDbfPersonalizado:Seek( ::cReportKey() )
+         ::oDbfPersonalizado:Load()
       else
-      ::oDbfPersonalizado:Append()
+         ::oDbfPersonalizado:Append()
       end if
 
       ::oDbfPersonalizado:cCodUse   := cCurUsr()
       ::oDbfPersonalizado:cClsInf   := ::ClassName()
-      ::oDbfPersonalizado:cTypInf   := ::cTypeName
+      ::oDbfPersonalizado:cTypInf   := ::cReportType
       ::oDbfPersonalizado:cNomInf   := ::cReportName
 
       ::oDbfPersonalizado:Save()
@@ -1921,7 +1905,7 @@ Method SaveReport() CLASS TFastReportInfGen
 
    else
 
-      if ::oDbfInf:Seek( ::cKeyInf() )
+      if ::oDbfInf:Seek( ::cReportKey() )
       ::oDbfInf:Load()
       else
       ::oDbfInf:Append()
@@ -1929,7 +1913,7 @@ Method SaveReport() CLASS TFastReportInfGen
 
       ::oDbfInf:cCodUse             := cCurUsr()
       ::oDbfInf:cClsInf             := ::ClassName()
-      ::oDbfInf:cTypInf             := ::cTypeName
+      ::oDbfInf:cTypInf             := ::cReportType
       ::oDbfInf:cNomInf             := ::cReportName
 
       ::oDbfInf:Save()
@@ -2204,7 +2188,7 @@ METHOD Eliminar() CLASS TFastReportInfGen
    end if
 
    if IsChar( oTreeInforme:bAction ) .and. !Empty( oTreeInforme:bAction )
-      ::cTypeName       := Rtrim( oTreeInforme:bAction )
+      ::cReportType       := Rtrim( oTreeInforme:bAction )
    else
       msgStop( "No se ha podido cargar el tipo de informe." )
       Return ( Self )
@@ -2212,7 +2196,7 @@ METHOD Eliminar() CLASS TFastReportInfGen
 
    if ApoloMsgNoYes( "¿Desea eliminar el informe " + ::cReportName + "?", "Confirme supresión" )
 
-      if ::oDbfPersonalizado:Seek( ::cKeyInf() )
+      if ::oDbfPersonalizado:Seek( ::cReportKey() )
          ::oDbfPersonalizado:Delete()
       end if
 
@@ -2224,9 +2208,7 @@ RETURN ( Self )
 
 //---------------------------------------------------------------------------//
 
-METHOD LoadReport() CLASS TFastReportInfGen
-
-   local cFileName
+METHOD lLoadReport() CLASS TFastReportInfGen
 
    ::cInformeFastReport             := ""
 
@@ -2238,7 +2220,7 @@ METHOD LoadReport() CLASS TFastReportInfGen
 
       ::lPersonalizado              := .f.
 
-      if ::oDbfInf:Seek( ::cKeyInf() )
+      if ::oDbfInf:Seek( ::cReportKey() )
 
          if !Empty( ::oDbfInf:mModInf )
             ::cInformeFastReport    := ::oDbfInf:mModInf
@@ -2252,7 +2234,7 @@ METHOD LoadReport() CLASS TFastReportInfGen
 
       ::lPersonalizado              := .t.
 
-      if ::oDbfPersonalizado:Seek( ::cKeyInf() )
+      if ::oDbfPersonalizado:Seek( ::cReportKey() )
 
          if !Empty( ::oDbfPersonalizado:mModInf )
             ::cInformeFastReport    := ::oDbfPersonalizado:mModInf
@@ -2267,28 +2249,12 @@ METHOD LoadReport() CLASS TFastReportInfGen
    */
 
    if Empty( ::cInformeFastReport )
-
-      cFileName                     := cPatReporting() + ::cType + "\" + Upper( ::cReportName ) + ".fr3"
-
-      if File( cFileName )
-         ::cInformeFastReport       := MemoRead( cFileName )
+      if File( ::cReportFile )
+         ::cInformeFastReport       := MemoRead( ::cReportFile )
       end if
-
    end if
 
-   /*
-   Report por el action q puede traer una ruta---------------------------------
-   */
-
-   if Empty( ::cInformeFastReport )
-
-      if File( ::cTypeName )
-         ::cInformeFastReport       := MemoRead( ::cTypeName )
-      end if
-
-   end if    
-
-RETURN ( Self )
+RETURN ( !Empty( ::cInformeFastReport ) )
 
 //---------------------------------------------------------------------------//
 
@@ -2337,12 +2303,12 @@ METHOD DlgExportDocument( oWndBrw )
    end if
 
    if IsChar( oTreeInforme:bAction ) .and. !Empty( oTreeInforme:bAction )
-      ::cTypeName       := Rtrim( oTreeInforme:bAction )
+      ::cReportType       := Rtrim( oTreeInforme:bAction )
    else
       Return ( Self )
    end if
 
-   if ::oDbfPersonalizado:Seek( ::cKeyInf() )
+   if ::oDbfPersonalizado:Seek( ::cReportKey() )
       if Empty( ::oDbfPersonalizado:mModInf )
          msgStop( "El informe esta vacio." )
          Return ( Self )
@@ -2360,7 +2326,7 @@ METHOD DlgExportDocument( oWndBrw )
  
    DEFINE DIALOG oDlg RESOURCE "ExpDocs" TITLE "Exportar documento"
 
-      REDEFINE SAY PROMPT ::cTypeName ;
+      REDEFINE SAY PROMPT ::cReportType ;
          ID       100 ;
          OF       oDlg
 
@@ -2535,6 +2501,47 @@ METHOD ImportDocument( cGetFile, oSayProc )
    ::LoadPersonalizado()
 
 Return ( Self )
+
+//---------------------------------------------------------------------------//
+
+METHOD BuildNode( aReports, oTree, lLoadFile )
+
+   local hHash
+   local oNode
+   local aFile 
+   local cType
+   local aDirectory
+
+   for each hHash in aReports
+      
+      if !Empty( hHash )
+
+         oNode          := oTree:Add( hHash[ "Title" ], hHash[ "Image" ], hHash ) 
+
+         if lLoadFile .and. hHasKey( hHash, "Directory" ) 
+
+            aDirectory  := Directory( cPatReporting() + hHash[ "Directory" ] + "\" + hHash[ "Type" ] + "\*.fr3" )
+            if !Empty( aDirectory )
+
+               for each aFile in aDirectory
+                  oNode:Add( getFileNoExt( aFile[ 1 ] ), hHash[ "Image" ], { "Title" => getFileNoExt( aFile[ 1 ] ), "Type" => hHash[ "Type" ], "Directory" => hHash[ "Directory" ] + "\" + hHash[ "Type" ], "File" => aFile[ 1 ] } )
+               next 
+
+            end if 
+
+         end if 
+
+         oNode:Expand()
+
+         if hHasKey( hHash, "Subnode" ) 
+            ::BuildNode( hHash[ "Subnode" ], oNode, lLoadFile )
+         end if 
+
+      end if 
+
+   next 
+
+RETURN ( Self )
 
 //---------------------------------------------------------------------------//
 
@@ -3217,3 +3224,4 @@ Static Function CutString( cStart, cEnd, cText, lExclude )
 RETURN ( cString )
 
 //---------------------------------------------------------------------------//
+
