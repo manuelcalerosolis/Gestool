@@ -987,9 +987,6 @@ Method CreateFavoritosOfficeBar()
 
    next
 
-   oGrupo   := TDotNetGroup():New( ::oFavoritosBar, 66, "Galería", .f., , "Document_Chart_32" )
-   oBoton   := TDotNetButton():New( 60, oGrupo, "Document_Chart_32", "Galería informe", 1, {|| RunReportGalery() }, , , .f., .f., .f. )
-
    oGrupo   := TDotNetGroup():New( ::oFavoritosBar, 66, "Salir", .f., , "End32" )
    oBoton   := TDotNetButton():New( 60, oGrupo, "End32", "Salir", 1, {|| if ( !Empty( oWnd() ), oWnd():End(), ) }, , , .f., .f., .f. )
 

@@ -1446,7 +1446,7 @@ Return ( cDlg )
 
 Function RunReportGalery()
 
-   local nLevel   := nLevelUsr( "01066" )
+   local nLevel   := nLevelUsr( "01119" )
 
    if nAnd( nLevel, 1 ) != 0
       msgStop( "Acceso no permitido." )
@@ -3080,14 +3080,49 @@ Function CreateAcceso( oWnd )
 
    oItem                := oItemReporting:Add()
    oItem:oGroup         := oGrupo
+   oItem:cPrompt        := 'Galería de informes'
+   oItem:cMessage       := 'Galería de informes'
+   oItem:bAction        := {|| RunReportGalery() }
+   oItem:cId            := "01119"
+   oItem:cBmp           := "Document_Chart_16"
+   oItem:cBmpBig        := "Document_Chart_32"
+   oItem:lShow          := .f.
+
+   oGrupo               := TGrupoAcceso()
+   oGrupo:nBigItems     := 3
+   oGrupo:cPrompt       := 'Informes personalizables'
+   oGrupo:cLittleBitmap := "Lifebelt_16"
+   oGrupo:cBigBitmap    := "Lifebelt_32"
+
+   oItem                := oItemReporting:Add()
+   oItem:oGroup         := oGrupo
    oItem:cPrompt        := 'Artículos'
    oItem:cMessage       := 'Informes realacionados con articulos'
    oItem:bAction        := {|| TFastVentasArticulos():New():Play() }
-   oItem:cId            := "01093"
+   oItem:cId            := "01118"
    oItem:cBmp           := "Lifebelt_16"
-   oItem:cBmpBig        := "Lifebelt_32"
+   oItem:cBmpBig        := "cube_yellow_chart_32"
    oItem:lShow          := .f.
 
+   oItem                := oItemReporting:Add()
+   oItem:oGroup         := oGrupo
+   oItem:cPrompt        := 'Clientes'
+   oItem:cMessage       := 'Informes realacionados con clientes'
+   oItem:bAction        := {|| MsgStop( "Apartado en desarrollo" ) } //TFastVentasClientes():New():Play() }
+   oItem:cId            := "01120"
+   oItem:cBmp           := "Lifebelt_16"
+   oItem:cBmpBig        := "cube_yellow_chart_32"
+   oItem:lShow          := .f.
+
+   oItem                := oItemReporting:Add()
+   oItem:oGroup         := oGrupo
+   oItem:cPrompt        := 'Proveedores'
+   oItem:cMessage       := 'Informes realacionados con proveedores'
+   oItem:bAction        := {|| MsgStop( "Apartado en desarrollo" ) } //TFastVentasProveedores():New():Play() }
+   oItem:cId            := "01121"
+   oItem:cBmp           := "Lifebelt_16"
+   oItem:cBmpBig        := "cube_yellow_chart_32"
+   oItem:lShow          := .f.
 
    // Ayudas-------------------------------------------------------------------
 

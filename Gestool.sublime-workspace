@@ -4,6 +4,10 @@
 		"selected_items":
 		[
 			[
+				"t",
+				"t"
+			],
+			[
 				"cSufDoc",
 				"_CSUFDOC"
 			],
@@ -162,10 +166,6 @@
 			[
 				"cPro",
 				"cProp2"
-			],
-			[
-				"t",
-				"t"
 			],
 			[
 				"cImgWeb",
@@ -526,6 +526,14 @@
 				"buffer_size": 11722,
 				"line_ending": "Windows"
 			}
+		},
+		{
+			"file": "prg/Rptgal.prg",
+			"settings":
+			{
+				"buffer_size": 159254,
+				"line_ending": "Windows"
+			}
 		}
 	],
 	"build_system": "Packages/User/gestool.sublime-build",
@@ -560,6 +568,8 @@
 	},
 	"file_history":
 	[
+		"/C/fw195/Gestool/prg/Tctacli.prg",
+		"/C/fw195/Gestool/prg/Tctaprv.prg",
 		"/C/fw195/Gestool/prg/Albcli.prg",
 		"/C/fw195/Gestool/prg/Tpvtactil.prg",
 		"/C/fw195/Gestool/prg/Turno.prg",
@@ -685,9 +695,7 @@
 		"/C/Users/Villa/Desktop/minicslider/ajax_minicslider.php",
 		"/C/Users/Villa/Desktop/minicslider/minicslider.php",
 		"/C/Users/Villa/Desktop/zoomslider/css/flexslider.css",
-		"/C/Users/Villa/Desktop/zoomslider/config.xml",
-		"/C/Users/Villa/Desktop/zoomslider/zoomslider.tpl",
-		"/C/Users/Villa/Desktop/zoomslider/zoomslider.php"
+		"/C/Users/Villa/Desktop/zoomslider/config.xml"
 	],
 	"find":
 	{
@@ -695,7 +703,7 @@
 	},
 	"find_in_files":
 	{
-		"height": 0.0,
+		"height": 93.0,
 		"where_history":
 		[
 			"C:\\fw195\\Gestool\\prg",
@@ -729,6 +737,11 @@
 		"case_sensitive": false,
 		"find_history":
 		[
+			"AddField",
+			"TICtaPrv",
+			"estado de cuentas",
+			"TICtaCli",
+			"estado de cuentas",
 			"PrintArqueo",
 			"antes",
 			"?",
@@ -851,11 +864,6 @@
 			"on syn",
 			"on aitm",
 			"on acol",
-			"on aitm",
-			"on syn",
-			"on rx",
-			"on aitm",
-			"on syn",
 			"on aitm"
 		],
 		"highlight": true,
@@ -883,7 +891,7 @@
 	"groups":
 	[
 		{
-			"selected": 0,
+			"selected": 1,
 			"sheets":
 			[
 				{
@@ -898,8 +906,8 @@
 						"selection":
 						[
 							[
-								5524,
-								5524
+								687,
+								687
 							]
 						],
 						"settings":
@@ -909,7 +917,35 @@
 							"translate_tabs_to_spaces": true
 						},
 						"translation.x": 0.0,
-						"translation.y": 3135.0,
+						"translation.y": 0.0,
+						"zoom_level": 1.0
+					},
+					"type": "text"
+				},
+				{
+					"buffer": 1,
+					"file": "prg/Rptgal.prg",
+					"settings":
+					{
+						"buffer_size": 159254,
+						"regions":
+						{
+						},
+						"selection":
+						[
+							[
+								113711,
+								113719
+							]
+						],
+						"settings":
+						{
+							"syntax": "Packages/harbour/harbour/Harbour.tmLanguage",
+							"tab_size": 3,
+							"translate_tabs_to_spaces": true
+						},
+						"translation.x": 0.0,
+						"translation.y": 23740.0,
 						"zoom_level": 1.0
 					},
 					"type": "text"
