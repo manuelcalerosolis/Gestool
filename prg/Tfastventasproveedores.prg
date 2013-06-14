@@ -695,6 +695,10 @@ METHOD DataReport( oFr ) CLASS TFastVentasProveedores
    ::oFastReport:SetWorkArea(       "Proveedores", ::oDbfPrv:nArea )
    ::oFastReport:SetFieldAliases(   "Proveedores", cItemsToReport( aItmPrv() ) )
 
+    /*
+   Relaciones------------------------------------------------------------------
+   */
+
    ::oFastReport:SetMasterDetail(   "Informe", "Proveedores",     {|| ::oDbf:cCodPrv } )
    ::oFastReport:SetMasterDetail(   "Informe", "Empresa",         {|| cCodEmp() } )
 
@@ -741,6 +745,7 @@ METHOD AddVariable() CLASS TFastVentasProveedores
       case ::cTypeName == "Informe de pedidos a proveedores"
       
          ::AddVariablePedidoProveedor()
+           
    end case
 
 Return ( Super:AddVariable() )

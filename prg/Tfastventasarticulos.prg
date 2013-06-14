@@ -486,7 +486,7 @@ METHOD lGenerate() CLASS TFastVentasArticulos
 
          ::AddTicket( .t. )
 
-      case ::cReportType == "Ventas de clientes"
+      case ::cReportType == "Ventas"
 
          ::AddAlbaranCliente( .t. )
 
@@ -587,7 +587,7 @@ METHOD BuildTree( oTree, lLoadFile ) CLASS TFastVentasArticulos
    DEFAULT oTree           := ::oTreeReporting
    DEFAULT lLoadFile       := .t.
 
-   aReports := {  {  "Title" => "Listado",                        "Image" => 0,  "Type" => "Listado", "Directory" => "Articulos", "File" => "Listado.fr3"  },;
+   aReports := {  {  "Title" => "Listado",                        "Image" => 0,  "Type" => "Listado",                      "Directory" => "Articulos",          "File" => "Listado.fr3"  },;
                   {  "Title" => "Ventas",                         "Image" => 11, "Subnode" =>;
                   { ;
                      { "Title" => "SAT de clientes",              "Image" =>20, "Type" => "SAT de clientes",               "Directory" => "Articulos\Ventas",   "File" => "SAT de clientes.fr3" },;
@@ -597,7 +597,7 @@ METHOD BuildTree( oTree, lLoadFile ) CLASS TFastVentasArticulos
                      { "Title" => "Facturas de clientes",         "Image" => 8, "Type" => "Facturas de clientes",          "Directory" => "Articulos\Ventas",   "File" => "Facturas de clientes.fr3" },;
                      { "Title" => "Rectificativas de clientes",   "Image" => 9, "Type" => "Rectificativas de clientes",    "Directory" => "Articulos\Ventas",   "File" => "Rectificativas de clientes.fr3" },;
                      { "Title" => "Tickets de clientes",          "Image" =>10, "Type" => "Tickets de clientes",           "Directory" => "Articulos\Ventas",   "File" => "Tickets de clientes.fr3" },;
-                     { "Title" => "Ventas de clientes",           "Image" =>11, "Type" => "Ventas de clientes",            "Directory" => "Articulos\Ventas",   "File" => "Ventas de clientes.fr3" },;
+                     { "Title" => "Ventas",                       "Image" =>11, "Type" => "Ventas",                        "Directory" => "Articulos\Ventas",   "File" => "Ventas.fr3" },;
                   } ;
                   },;
                   {  "Title" => "Compras",                        "Image" => 12, "Subnode" =>;
@@ -606,7 +606,7 @@ METHOD BuildTree( oTree, lLoadFile ) CLASS TFastVentasArticulos
                      { "Title" => "Albaranes de proveedores",     "Image" => 3, "Type" => "Albaranes de proveedores",      "Directory" => "Articulos\Compras",  "File" => "Albaranes de proveedores.fr3" },;
                      { "Title" => "Facturas de proveedores",      "Image" => 4, "Type" => "Facturas de proveedores",       "Directory" => "Articulos\Compras",  "File" => "Facturas de proveedores.fr3" },;
                      { "Title" => "Rectificativas de proveedores","Image" =>15, "Type" => "Rectificativas de proveedores", "Directory" => "Articulos\Compras",  "File" => "Rectificativas de proveedores.fr3" },;
-                     { "Title" => "Compras de proveedores",       "Image" =>12, "Type" => "Compras de proveedores",        "Directory" => "Articulos\Compras",  "File" => "Ventas de proveedores.fr3" },;
+                     { "Title" => "Compras",                      "Image" =>12, "Type" => "Compras",                       "Directory" => "Articulos\Compras",  "File" => "Compras.fr3" },;
                   } ;
                   },; 
                   {  "Title" => "Existencias", "Image" => 16, "Subnode" =>;
@@ -745,21 +745,21 @@ METHOD DataReport() CLASS TFastVentasArticulos
       
          ::FastReportAlbaranCliente()
 
-      case ::cReportType == "Informe de facturas"
+      case ::cReportType == "Facturas de clientes"
       
          ::FastReportFacturaCliente()
          
          ::FastReportFacturaRectificativa()
 
-      case ::cReportType == "Informe de facturas rectificativas"
+      case ::cReportType == "Facturas rectificativas de clientes"
 
          ::FastReportFacturaRectificativa()
 
-      case ::cReportType == "Informe de tickets"
+      case ::cReportType == "Tickets de clientes"
 
          ::FastReportTicket( .t. )
 
-      case ::cReportType == "Informe de ventas"
+      case ::cReportType == "Ventas"
 
          ::FastReportAlbaranCliente()
 
@@ -769,23 +769,23 @@ METHOD DataReport() CLASS TFastVentasArticulos
 
          ::FastReportTicket()
 
-      case ::cReportType == "Informe de pedidos de proveedor"
+      case ::cReportType == "Pedidos de proveedores"
          
          ::FastReportPedidoProveedor()
 
-      case ::cReportType == "Informe de albaranes de proveedor"
+      case ::cReportType == "Albaranes de proveedores"
 
          ::FastReportAlbaranProveedor()
 
-      case ::cReportType == "Informe de facturas de proveedor"
+      case ::cReportType == "Facturas de proveedores"
 
          ::FastReportFacturaProveedor()
 
-      case ::cReportType == "Informe de facturas rectificativas de proveedor"
+      case ::cReportType == "Facturas rectificativas de proveedores"
 
          ::FastReportRectificativaProveedor()
 
-      case ::cReportType == "Informe de compras"
+      case ::cReportType == "Compras"
 
          ::FastReportPedidoProveedor()
 
@@ -795,7 +795,7 @@ METHOD DataReport() CLASS TFastVentasArticulos
 
          ::FastReportRectificativaProveedor()
 
-      case ::cReportType == "Informe de compras y ventas"
+      case ::cReportType == "Existencias"
 
          ::FastReportAlbaranCliente()
 
@@ -842,25 +842,25 @@ METHOD AddVariable() CLASS TFastVentasArticulos
       
          ::AddVariablePedidoCliente()
 
-      case ::cReportType == "Informe de albaranes"
+      case ::cReportType == "Albaranes de clientes"
       
          ::AddVariableAlbaranCliente()
 
-      case ::cReportType == "Informe de facturas"
+      case ::cReportType == "Facturas de clientes"
       
          ::AddVariableFacturaCliente()
          
          ::AddVariableRectificativaCliente()
 
-      case ::cReportType == "Informe de facturas rectificativas"
+      case ::cReportType == "Rectificativas de clientes"
 
          ::AddVariableRectificativaCliente()
 
-      case ::cReportType == "Informe de tickets"
+      case ::cReportType == "Tickets de clientes"
 
          ::AddVariableTicketCliente()
 
-      case ::cReportType == "Informe de ventas"
+      case ::cReportType == "Ventas"
 
          ::AddVariableAlbaranCliente()
 
