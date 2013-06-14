@@ -4839,9 +4839,7 @@ STATIC FUNCTION PrnSerie()
    local oSayFmt
    local cSayFmt
    local oSerIni
-   local oSerFin
-   local nRecno      := (dbfAlbCliT)->( Recno() )
-   local nOrdAnt     := (dbfAlbCliT)->( OrdSetFocus( 1 ) )
+   local oSerFin   
    local cSerIni     := (dbfAlbCliT)->cSerAlb
    local cSerFin     := (dbfAlbCliT)->cSerAlb
    local nDocIni     := (dbfAlbCliT)->nNumAlb
@@ -4854,6 +4852,10 @@ STATIC FUNCTION PrnSerie()
    local lInvOrden   := .f.
    local oNumCop
    local nNumCop     := if( nCopiasDocumento( ( dbfAlbCliT )->cSerAlb, "nAlbCli", dbfCount ) == 0, Max( Retfld( ( dbfAlbCliT )->cCodCli, dbfClient, "CopiasF" ), 1 ), nCopiasDocumento( ( dbfAlbCliT )->cSerAlb, "nAlbCli", dbfCount ) )
+   local oRango
+   local nRango      := 1
+   local dFecDesde   := CtoD( "01/01/" + Str( Year( Date() ) ) )
+   local dFecHasta   := Date()
 
    if Empty( cFmtDoc )
       cFmtDoc        := cSelPrimerDoc( "AC" )
@@ -4861,7 +4863,11 @@ STATIC FUNCTION PrnSerie()
 
    cSayFmt           := cNombreDoc( cFmtDoc )
 
-   DEFINE DIALOG oDlg RESOURCE "IMPSERDOC" TITLE "Imprimir series de albaranes"
+   DEFINE DIALOG oDlg RESOURCE "IMPSERIES" TITLE "Imprimir series de albaranes"
+
+   REDEFINE RADIO oRango VAR nRango ;
+      ID       201, 202 ;
+      OF       oDlg
 
    REDEFINE GET oSerIni VAR cSerIni ;
       ID       100 ;
@@ -4871,6 +4877,7 @@ STATIC FUNCTION PrnSerie()
       ON UP    ( UpSerie( oSerIni ) );
       ON DOWN  ( DwSerie( oSerIni ) );
       VALID    ( cSerIni >= "A" .AND. cSerIni <= "Z"  );
+      WHEN     ( nRango == 1 ); 
       OF       oDlg
 
    REDEFINE GET oSerFin VAR cSerFin ;
@@ -4881,29 +4888,46 @@ STATIC FUNCTION PrnSerie()
       ON UP    ( UpSerie( oSerFin ) );
       ON DOWN  ( DwSerie( oSerFin ) );
       VALID    ( cSerFin >= "A" .AND. cSerFin <= "Z"  );
+      WHEN     ( nRango == 1 ); 
       OF       oDlg
 
    REDEFINE GET nDocIni;
       ID       120 ;
 		PICTURE 	"999999999" ;
       SPINNER ;
+      WHEN     ( nRango == 1 ); 
       OF       oDlg
 
    REDEFINE GET nDocFin;
       ID       130 ;
 		PICTURE 	"999999999" ;
       SPINNER ;
+      WHEN     ( nRango == 1 ); 
       OF       oDlg
 
    REDEFINE GET cSufIni ;
       ID       140 ;
       PICTURE  "##" ;
+      WHEN     ( nRango == 1 ); 
       OF       oDlg
 
    REDEFINE GET cSufFin ;
       ID       150 ;
       PICTURE  "##" ;
+      WHEN     ( nRango == 1 ); 
       OF       oDlg
+
+   REDEFINE GET dFecDesde ;
+      ID       210 ;
+      WHEN     ( nRango == 2 ) ;
+      SPINNER ;
+      OF       oDlg
+
+   REDEFINE GET dFecHasta ;
+      ID       220 ;
+      WHEN     ( nRango == 2 ) ;
+      SPINNER ;
+      OF       oDlg   
 
    REDEFINE CHECKBOX lInvOrden ;
       ID       500 ;
@@ -4949,7 +4973,7 @@ STATIC FUNCTION PrnSerie()
    REDEFINE BUTTON ;
       ID       IDOK ;
 		OF 		oDlg ;
-      ACTION   (  StartPrint( SubStr( cFmtDoc, 1, 3 ), cSerIni + Str( nDocIni, 9 ) + cSufIni, cSerFin + Str( nDocFin, 9 ) + cSufFin, oDlg, cPrinter, lCopiasPre, nNumCop, lInvOrden ),;
+      ACTION   (  StartPrint( SubStr( cFmtDoc, 1, 3 ), cSerIni + Str( nDocIni, 9 ) + cSufIni, cSerFin + Str( nDocFin, 9 ) + cSufFin, oDlg, cPrinter, lCopiasPre, nNumCop, lInvOrden, nRango, dFecDesde, dFecHasta ),;
                   oDlg:end( IDOK ) )
 
    REDEFINE BUTTON ;
@@ -4959,12 +4983,9 @@ STATIC FUNCTION PrnSerie()
 
    oDlg:bStart := { || oSerIni:SetFocus() }
 
-   oDlg:AddFastKey( VK_F5, {|| StartPrint( SubStr( cFmtDoc, 1, 3 ), cSerIni + Str( nDocIni, 9 ) + cSufIni, cSerFin + Str( nDocFin, 9 ) + cSufFin, oDlg, cPrinter, lCopiasPre, nNumCop, lInvOrden ), oDlg:end( IDOK ) } )
+   oDlg:AddFastKey( VK_F5, {|| StartPrint( SubStr( cFmtDoc, 1, 3 ), cSerIni + Str( nDocIni, 9 ) + cSufIni, cSerFin + Str( nDocFin, 9 ) + cSufFin, oDlg, cPrinter, lCopiasPre, nNumCop, lInvOrden, nRango, dFecDesde, dFecHasta ), oDlg:end( IDOK ) } )
 
    ACTIVATE DIALOG oDlg CENTER
-
-   ( dbfAlbCliT )->( dbGoTo( nRecNo ) )
-   ( dbfAlbCliT )->( ordSetFocus( nOrdAnt ) )
 
 	oWndBrw:oBrw:refresh()
 
@@ -4972,64 +4993,139 @@ RETURN NIL
 
 //--------------------------------------------------------------------------//
 
-STATIC FUNCTION StartPrint( cFmtDoc, cDocIni, cDocFin, oDlg, cPrinter, lCopiasPre, nNumCop, lInvOrden )
+STATIC FUNCTION StartPrint( cFmtDoc, cDocIni, cDocFin, oDlg, cPrinter, lCopiasPre, nNumCop, lInvOrden, nRango, dFecDesde, dFecHasta )
 
    local nCopyClient
+   local nRecno
+   local nOrdAnt
 
    oDlg:disable()
 
-   if !lInvOrden
+   if nRango == 1
 
-      ( dbfAlbCliT )->( DbSeek( cDocIni, .t. ) )
+      nRecno      := ( dbfAlbCliT )->( recno() )
+      nOrdAnt     := ( dbfAlbCliT )->( OrdSetFocus( "nNumAlb" ) )
 
-      while ( dbfAlbCliT )->cSerAlb + Str( ( dbfAlbCliT )->nNumAlb ) + ( dbfAlbCliT )->cSufAlb >= cDocIni .AND. ;
-            ( dbfAlbCliT )->cSerAlb + Str( ( dbfAlbCliT )->nNumAlb ) + ( dbfAlbCliT )->cSufAlb <= cDocFin
+      if !lInvOrden
 
-            lChgImpDoc( dbfAlbCliT )
+         ( dbfAlbCliT )->( DbSeek( cDocIni, .t. ) )
 
-         if lCopiasPre
+         while ( dbfAlbCliT )->cSerAlb + Str( ( dbfAlbCliT )->nNumAlb ) + ( dbfAlbCliT )->cSufAlb >= cDocIni .AND. ;
+               ( dbfAlbCliT )->cSerAlb + Str( ( dbfAlbCliT )->nNumAlb ) + ( dbfAlbCliT )->cSufAlb <= cDocFin
 
-            nCopyClient := if( nCopiasDocumento( ( dbfAlbCliT )->cSerAlb, "nAlbCli", dbfCount ) == 0, Max( Retfld( ( dbfAlbCliT )->cCodCli, dbfClient, "CopiasF" ), 1 ), nCopiasDocumento( ( dbfAlbCliT )->cSerAlb, "nAlbCli", dbfCount ) )
+               lChgImpDoc( dbfAlbCliT )
 
-            GenAlbCli( IS_PRINTER, "Imprimiendo documento : " + (dbfAlbCliT)->cSerAlb + Str( (dbfAlbCliT)->nNumAlb ) + (dbfAlbCliT)->cSufAlb, cFmtDoc, cPrinter, nCopyClient )
+            if lCopiasPre
 
-         else
+               nCopyClient := if( nCopiasDocumento( ( dbfAlbCliT )->cSerAlb, "nAlbCli", dbfCount ) == 0, Max( Retfld( ( dbfAlbCliT )->cCodCli, dbfClient, "CopiasF" ), 1 ), nCopiasDocumento( ( dbfAlbCliT )->cSerAlb, "nAlbCli", dbfCount ) )
 
-            GenAlbCli( IS_PRINTER, "Imprimiendo documento : " + (dbfAlbCliT)->cSerAlb + Str( (dbfAlbCliT)->nNumAlb ) + (dbfAlbCliT)->cSufAlb, cFmtDoc, cPrinter, nNumCop )
+               GenAlbCli( IS_PRINTER, "Imprimiendo documento : " + (dbfAlbCliT)->cSerAlb + Str( (dbfAlbCliT)->nNumAlb ) + (dbfAlbCliT)->cSufAlb, cFmtDoc, cPrinter, nCopyClient )
 
-         end if
+            else
 
-         ( dbfAlbCliT )->( DbSkip( 1 ) )
+               GenAlbCli( IS_PRINTER, "Imprimiendo documento : " + (dbfAlbCliT)->cSerAlb + Str( (dbfAlbCliT)->nNumAlb ) + (dbfAlbCliT)->cSufAlb, cFmtDoc, cPrinter, nNumCop )
 
-      end do
+            end if
+
+            ( dbfAlbCliT )->( DbSkip( 1 ) )
+
+         end do
+
+      else
+
+      ( dbfAlbCliT )->( DbSeek( cDocFin ) )
+
+         while ( dbfAlbCliT )->cSerAlb + Str( ( dbfAlbCliT )->nNumAlb ) + ( dbfAlbCliT )->cSufAlb >= cDocIni .and.;
+               ( dbfAlbCliT )->cSerAlb + Str( ( dbfAlbCliT )->nNumAlb ) + ( dbfAlbCliT )->cSufAlb <= cDocFin .and.;
+               !( dbfAlbCliT )->( Bof() )
+
+               lChgImpDoc( dbfAlbCliT )
+
+            if lCopiasPre
+
+               nCopyClient := if( nCopiasDocumento( ( dbfAlbCliT )->cSerAlb, "nAlbCli", dbfCount ) == 0, Max( Retfld( ( dbfAlbCliT )->cCodCli, dbfClient, "CopiasF" ), 1 ), nCopiasDocumento( ( dbfAlbCliT )->cSerAlb, "nAlbCli", dbfCount ) )
+
+               GenAlbCli( IS_PRINTER, "Imprimiendo documento : " + ( dbfAlbCliT )->cSerAlb + Str( ( dbfAlbCliT )->nNumAlb ) + ( dbfAlbCliT )->cSufAlb, cFmtDoc, cPrinter, nCopyClient )
+
+            else
+
+               GenAlbCli( IS_PRINTER, "Imprimiendo documento : " + ( dbfAlbCliT )->cSerAlb + Str( ( dbfAlbCliT )->nNumAlb ) + ( dbfAlbCliT )->cSufAlb, cFmtDoc, cPrinter, nNumCop )
+
+            end if
+
+            ( dbfAlbCliT )->( DbSkip( -1 ) )
+
+         end while
+
+      end if
 
    else
 
-   ( dbfAlbCliT )->( DbSeek( cDocFin ) )
+      nRecno      := ( dbfAlbCliT )->( recno() )
+      nOrdAnt     := ( dbfAlbCliT )->( OrdSetFocus( "dFecAlb" ) )
 
-      while ( dbfAlbCliT )->cSerAlb + Str( ( dbfAlbCliT )->nNumAlb ) + ( dbfAlbCliT )->cSufAlb >= cDocIni .and.;
-            ( dbfAlbCliT )->cSerAlb + Str( ( dbfAlbCliT )->nNumAlb ) + ( dbfAlbCliT )->cSufAlb <= cDocFin .and.;
-            !( dbfAlbCliT )->( Bof() )
+      if !lInvOrden
 
-            lChgImpDoc( dbfAlbCliT )
+         ( dbfAlbCliT )->( dbGoTop() )
 
-         if lCopiasPre
+         while !( dbfAlbCliT )->( Eof() )
 
-            nCopyClient := if( nCopiasDocumento( ( dbfAlbCliT )->cSerAlb, "nAlbCli", dbfCount ) == 0, Max( Retfld( ( dbfAlbCliT )->cCodCli, dbfClient, "CopiasF" ), 1 ), nCopiasDocumento( ( dbfAlbCliT )->cSerAlb, "nAlbCli", dbfCount ) )
+            if ( dbfAlbCliT )->dFecAlb >= dFecDesde .and. ( dbfAlbCliT )->dFecAlb <= dFecHasta
 
-            GenAlbCli( IS_PRINTER, "Imprimiendo documento : " + ( dbfAlbCliT )->cSerAlb + Str( ( dbfAlbCliT )->nNumAlb ) + ( dbfAlbCliT )->cSufAlb, cFmtDoc, cPrinter, nCopyClient )
+               lChgImpDoc( dbfAlbCliT )
 
-         else
+               if lCopiasPre
 
-            GenAlbCli( IS_PRINTER, "Imprimiendo documento : " + ( dbfAlbCliT )->cSerAlb + Str( ( dbfAlbCliT )->nNumAlb ) + ( dbfAlbCliT )->cSufAlb, cFmtDoc, cPrinter, nNumCop )
+                  nCopyClient := if( nCopiasDocumento( ( dbfAlbCliT )->cSerAlb, "nAlbCli", dbfCount ) == 0, Max( Retfld( ( dbfAlbCliT )->cCodCli, dbfClient, "CopiasF" ), 1 ), nCopiasDocumento( ( dbfAlbCliT )->cSerAlb, "nAlbCli", dbfCount ) )
 
-         end if
+                  GenAlbCli( IS_PRINTER, "Imprimiendo documento : " + (dbfAlbCliT)->cSerAlb + Str( (dbfAlbCliT)->nNumAlb ) + (dbfAlbCliT)->cSufAlb, cFmtDoc, cPrinter, nCopyClient )
 
-         ( dbfAlbCliT )->( DbSkip( -1 ) )
+               else
 
-      end while
+                  GenAlbCli( IS_PRINTER, "Imprimiendo documento : " + (dbfAlbCliT)->cSerAlb + Str( (dbfAlbCliT)->nNumAlb ) + (dbfAlbCliT)->cSufAlb, cFmtDoc, cPrinter, nNumCop )
 
-   end if
+               end if
+
+            end if  
+
+            ( dbfAlbCliT )->( DbSkip( 1 ) )
+
+         end while
+
+      else
+
+         ( dbfAlbCliT )->( dbGoBottom() )
+
+         while !( dbfAlbCliT )->( Bof() )
+
+            if ( dbfAlbCliT )->dFecAlb >= dFecDesde .and. ( dbfAlbCliT )->dFecAlb <= dFecHasta
+
+               lChgImpDoc( dbfAlbCliT )
+
+               if lCopiasPre
+
+                  nCopyClient := if( nCopiasDocumento( ( dbfAlbCliT )->cSerAlb, "nAlbCli", dbfCount ) == 0, Max( Retfld( ( dbfAlbCliT )->cCodCli, dbfClient, "CopiasF" ), 1 ), nCopiasDocumento( ( dbfAlbCliT )->cSerAlb, "nAlbCli", dbfCount ) )
+
+                  GenAlbCli( IS_PRINTER, "Imprimiendo documento : " + ( dbfAlbCliT )->cSerAlb + Str( ( dbfAlbCliT )->nNumAlb ) + ( dbfAlbCliT )->cSufAlb, cFmtDoc, cPrinter, nCopyClient )
+
+               else
+
+                  GenAlbCli( IS_PRINTER, "Imprimiendo documento : " + ( dbfAlbCliT )->cSerAlb + Str( ( dbfAlbCliT )->nNumAlb ) + ( dbfAlbCliT )->cSufAlb, cFmtDoc, cPrinter, nNumCop )
+
+               end if
+
+            end if
+
+            ( dbfAlbCliT )->( DbSkip( -1 ) )
+
+         end while
+
+      end if
+   
+   end if   
+
+   ( dbfAlbCliT )->( dbGoTo( nRecNo ) )
+   ( dbfAlbCliT )->( ordSetFocus( nOrdAnt ) )
 
    oDlg:enable()
 
