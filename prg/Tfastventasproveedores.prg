@@ -8,6 +8,7 @@
 
 CLASS TFastVentasProveedores FROM TFastReportInfGen
 
+   DATA  cType           INIT "Proveedores"
    DATA  cResource       INIT "FastReportArticulos"
 
    METHOD lResource( cFld )
@@ -20,6 +21,7 @@ CLASS TFastVentasProveedores FROM TFastReportInfGen
    METHOD CloseFiles()
 
    METHOD DataReport( oFr )
+   METHOD AddVariable()
 
    METHOD StartDialog()
    METHOD BuildTree( oTree, lSubNode )
@@ -33,6 +35,9 @@ CLASS TFastVentasProveedores FROM TFastReportInfGen
    METHOD AddProveedor()
 
    METHOD TreeReportingChanged()
+
+   METHOD cIdeDocumento()  INLINE (  ::oDbf:cSerDoc + ::oDbf:cNumDoc + ::oDbf:cSufDoc )
+
 
 END CLASS
 
@@ -562,6 +567,8 @@ METHOD AddPedidosProveedor( cCodigoProveedor ) CLASS TFastVentasProveedores
    local cExpHead
    local cExpLine
 
+   ::InitPedidosProveedores()
+
    ::oPedPrvT:OrdSetFocus( "dFecPed" )
    ::oPedPrvL:OrdSetFocus( "nNumPed" )
 
@@ -626,6 +633,8 @@ METHOD AddPedidosProveedor( cCodigoProveedor ) CLASS TFastVentasProveedores
             end while
 
          end if
+
+         ::addPedidosProveedores()
 
       end if
 
@@ -692,9 +701,49 @@ METHOD DataReport( oFr ) CLASS TFastVentasProveedores
    ::oFastReport:SetResyncPair(     "Informe", "Proveedores" )
    ::oFastReport:SetResyncPair(     "Informe", "Empresa" )
 
+    /*
+   Tablas en funcion del tipo de informe---------------------------------------
+   */
+
+   do case
+      case ::cTypeName == "Informe de pedidos a proveedores"
+         
+         ::FastReportPedidoProveedor()
+
+       case ::cTypeName == "Informe de albaranes de proveedores"
+
+         ::FastReportAlbaranProveedor()
+
+      case ::cTypeName == "Informe de facturas de proveedores"
+
+         ::FastReportFacturaProveedor()
+
+      case ::cTypeName == "Informe de facturas rectificativas de proveedores"
+
+         ::FastReportRectificativaProveedor()
+
+
+   end case
+
    ::AddVariable()
 
 Return ( Self )
+
+//---------------------------------------------------------------------------//
+
+METHOD AddVariable() CLASS TFastVentasProveedores
+
+   /*
+   Tablas en funcion del tipo de informe---------------------------------------
+   */
+
+   do case
+      case ::cTypeName == "Informe de pedidos a proveedores"
+      
+         ::AddVariablePedidoProveedor()
+   end case
+
+Return ( Super:AddVariable() )
 
 //---------------------------------------------------------------------------//
 
