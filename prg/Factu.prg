@@ -3110,8 +3110,8 @@ Function CreateAcceso( oWnd )
    oItem:cMessage       := 'Informes realacionados con clientes'
    oItem:bAction        := {|| MsgStop( "Apartado en desarrollo" ) } //TFastVentasClientes():New():Play() }
    oItem:cId            := "01120"
-   oItem:cBmp           := "Lifebelt_16"
-   oItem:cBmpBig        := "cube_yellow_chart_32"
+   oItem:cBmp           := "user1_chart_16"
+   oItem:cBmpBig        := "user1_chart_32"
    oItem:lShow          := .f.
 
    oItem                := oItemReporting:Add()
@@ -3120,8 +3120,8 @@ Function CreateAcceso( oWnd )
    oItem:cMessage       := 'Informes realacionados con proveedores'
    oItem:bAction        := {|| MsgStop( "Apartado en desarrollo" ) } //TFastVentasProveedores():New():Play() }
    oItem:cId            := "01121"
-   oItem:cBmp           := "Lifebelt_16"
-   oItem:cBmpBig        := "cube_yellow_chart_32"
+   oItem:cBmp           := "businessman_chart_16"
+   oItem:cBmpBig        := "businessman_chart_32"
    oItem:lShow          := .f.
 
    // Ayudas-------------------------------------------------------------------
