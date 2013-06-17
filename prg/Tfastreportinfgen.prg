@@ -207,7 +207,7 @@ CLASS TFastReportInfGen FROM TNewInfGen
    METHOD AddVariableSATCliente()
    METHOD AddVariableLineasSATCliente()
    METHOD cDetalleSATClientes()                                   INLINE ( cDesSatCli(  ::oSatCliL:cAlias )  )
-   Method nTotalUnidadesSATClientes()                             INLINE ( nTotNSatCli( ::oSatCliL:cAlias )  )
+   METHOD nTotalUnidadesSATClientes()                             INLINE ( nTotNSatCli( ::oSatCliL:cAlias )  )
    METHOD nPrecioUnitarioSATClientes()                            INLINE ( nTotUSatCli( ::oSatCliL:cAlias )  ) 
    METHOD nTotalLineaSATClientes()                                INLINE ( nTotLSatCli( ::oSatCliL:cAlias )  )
    METHOD nTotalPesoLineaSATClientes()                            INLINE ( nPesLSatCli( ::oSatCliL:cAlias )  )  
@@ -300,6 +300,49 @@ CLASS TFastReportInfGen FROM TNewInfGen
 
 
    METHOD AddVariablePedidoProveedor()
+   METHOD AddVariableLineasPedidoProveedor()
+
+   METHOD cDetallePedidosProveedores()                            INLINE ( cDesPedPrv ( ::oPedPrvL:cAlias ) )
+   METHOD nTotalUnidadesPedidosProveedores()                      INLINE ( nTotNPedPrv( ::oPedPrvL:cAlias ) )
+   METHOD nPrecioUnitarioPedidosProveedores()                     INLINE ( nTotUPedPrv( ::oPedPrvL:cAlias ) ) 
+   METHOD nTotalLineaPedidosProveedores()                         INLINE ( nTotLPedPrv( ::oPedPrvL:cAlias ) )   
+   METHOD nTotalImpuestosIncluidosLineaPedidosProveedores()       INLINE ( nTotPedPrv(  ::oPedPrvL:cAlias ) )
+   METHOD nTotalIVALineaPedidosProveedores()                      INLINE ( nIvaLPedPrv( ::oPedPrvL:cAlias ) )
+   METHOD nTotalDescuentoPorcentualLineaPedidosProveedores()      INLINE ( nDtoLPedPrv( ::oPedPrvL:cAlias ) )
+   METHOD nTotalDescuentoPromocionalLineaPedidosProveedores()     INLINE ( nPrmLPedPrv( ::oPedPrvL:cAlias ) )
+
+   METHOD AddVariableLineasAlbaranProveedor()
+
+   METHOD cDetalleAlbaranesProveedores()                            INLINE ( cDesAlbPrv ( ::oPedPrvL:cAlias ) )
+   METHOD nTotalUnidadesAlbaranesProveedores()                      INLINE ( nTotNAlbPrv( ::oPedPrvL:cAlias ) )
+   METHOD nPrecioUnitarioAlbaranesProveedores()                     INLINE ( nTotUAlbPrv( ::oPedPrvL:cAlias ) ) 
+   METHOD nTotalLineaAlbaranesProveedores()                         INLINE ( nTotLAlbPrv( ::oPedPrvL:cAlias ) )   
+   METHOD nTotalImpuestosIncluidosLineaAlbaranesProveedores()       INLINE ( nTotAlbPrv(  ::oPedPrvL:cAlias ) )
+   METHOD nTotalIVALineaAlbaranesProveedores()                      INLINE ( nIvaLAlbPrv( ::oPedPrvL:cAlias ) )
+   METHOD nTotalDescuentoPorcentualLineaAlbaranesProveedores()      INLINE ( nDtoLAlbPrv( ::oPedPrvL:cAlias ) )
+   METHOD nTotalDescuentoPromocionalLineaAlbaranesProveedores()     INLINE ( nPrmLAlbPrv( ::oPedPrvL:cAlias ) )
+
+   METHOD AddVariableLineasFacturaProveedor()
+
+   METHOD cDetalleFacturasProveedores()                            INLINE ( cDesFacPrv ( ::oPedPrvL:cAlias ) )
+   METHOD nTotalUnidadesFacturasProveedores()                      INLINE ( nTotNFacPrv( ::oPedPrvL:cAlias ) )
+   METHOD nPrecioUnitarioFacturasProveedores()                     INLINE ( nTotUFacPrv( ::oPedPrvL:cAlias ) ) 
+   METHOD nTotalLineaFacturasProveedores()                         INLINE ( nTotLFacPrv( ::oPedPrvL:cAlias ) )   
+   METHOD nTotalImpuestosIncluidosLineaFacturasProveedores()       INLINE ( nTotFacPrv(  ::oPedPrvL:cAlias ) )
+   METHOD nTotalIVALineaFacturasProveedores()                      INLINE ( nIvaLFacPrv( ::oPedPrvL:cAlias ) )
+   METHOD nTotalDescuentoPorcentualLineaFacturasProveedores()      INLINE ( nDtoLFacPrv( ::oPedPrvL:cAlias ) )
+   METHOD nTotalDescuentoPromocionalLineaFacturasProveedores()     INLINE ( nPrmLFacPrv( ::oPedPrvL:cAlias ) )
+
+   METHOD AddVariableLineasRectificativaProveedor()
+
+   METHOD cDetalleRectificativasProveedores()                            INLINE ( cDesRctPrv ( ::oPedPrvL:cAlias ) )
+   METHOD nTotalUnidadesRectificativasProveedores()                      INLINE ( nTotNRctPrv( ::oPedPrvL:cAlias ) )
+   METHOD nPrecioUnitarioRectificativasProveedores()                     INLINE ( nTotURctPrv( ::oPedPrvL:cAlias ) ) 
+   METHOD nTotalLineaRectificativasProveedores()                         INLINE ( nTotLRctPrv( ::oPedPrvL:cAlias ) )   
+   METHOD nTotalImpuestosIncluidosLineaRectificativasProveedores()       INLINE ( nTotRctPrv(  ::oPedPrvL:cAlias ) )
+   METHOD nTotalIVALineaRectificativasProveedores()                      INLINE ( nIvaLRctPrv( ::oPedPrvL:cAlias ) )
+   METHOD nTotalDescuentoPorcentualLineaRectificativasProveedores()      INLINE ( nDtoLRctPrv( ::oPedPrvL:cAlias ) )
+   METHOD nTotalDescuentoPromocionalLineaRectificativasProveedores()     INLINE ( nPrmLRctPrv( ::oPedPrvL:cAlias ) )
 
    //------------------------------------------------------------------------//
 
@@ -3192,6 +3235,66 @@ METHOD AddVariablePedidoProveedor()
    ::oFastReport:AddVariable(    "Pedidos proveedores",        "Total " + cImp() + " pedidos proveedores",  "CallHbFunc( 'oTinfGen', ['nIVAPedidosProveedores'])"     )
    ::oFastReport:AddVariable(    "Pedidos proveedores",        "Total recargo pedidos proveedores",         "CallHbFunc( 'oTinfGen', ['nRecargoPedidosProveedores'])" )
    ::oFastReport:AddVariable(    "Pedidos proveedores",        "Total pedidos proveedores",                 "CallHbFunc( 'oTinfGen', ['nTotalPedidosProveedores'])"   )
+
+RETURN ( Self )
+
+//---------------------------------------------------------------------------//
+
+METHOD AddVariableLineasPedidoProveedor()
+
+   ::oFastReport:AddVariable(     "Lineas de pedidos proveedores",   "Detalle del artículo línea del pedido de proveedor",                   "CallHbFunc( 'oTInfGen', ['cDetallePedidosProveedores'])"                         )
+   ::oFastReport:AddVariable(     "Lineas de pedidos proveedores",   "Total unidades artículo línea del pedido de proveedor",                "CallHbFunc( 'oTInfGen', ['nTotalUnidadesPedidosProveedores'])"                   )
+   ::oFastReport:AddVariable(     "Lineas de pedidos proveedores",   "Precio unitario del artículo línea del pedido de proveedor",           "CallHbFunc( 'oTInfGen', ['nPrecioUnitarioPedidosProveedores'])"                  )
+   ::oFastReport:AddVariable(     "Lineas de pedidos proveedores",   "Total línea de pedido de proveedor",                                   "CallHbFunc( 'oTInfGen', ['nTotalLineaPedidosProveedores'])"                      )   
+   ::oFastReport:AddVariable(     "Lineas de pedidos proveedores",   "Total impuestos incluidos línea del pedido de proveedor",              "CallHbFunc( 'oTInfGen', ['nTotalImpuestosIncluidosLineaPedidosProveedores'])"    )
+   ::oFastReport:AddVariable(     "Lineas de pedidos proveedores",   "Total IVA línea del pedido de proveedor",                              "CallHbFunc( 'oTInfGen', ['nTotalIVALineaPedidosProveedores'])"                   )      
+   ::oFastReport:AddVariable(     "Lineas de pedidos proveedores",   "Total descuento porcentual artículo línea del pedido de proveedor",    "CallHbFunc( 'oTinfGen', ['nTotalDescuentoPorcentualLineaPedidosProveedores'])"   )
+   ::oFastReport:AddVariable(     "Lineas de pedidos proveedores",   "Total descuento promocional artículo línea del pedido de proveedor",   "CallHbFunc( 'oTinfGen', ['nTotalDescuentoPromocionalLineaPedidosProveedores'])"  )
+
+RETURN ( Self )
+
+//---------------------------------------------------------------------------//
+
+METHOD AddVariableLineasAlbaranProveedor()
+
+   ::oFastReport:AddVariable(     "Lineas de albaranes de proveedores",   "Detalle del artículo línea del albaran de proveedor",                   "CallHbFunc( 'oTInfGen', ['cDetalleAlbaranesProveedores'])"                         )
+   ::oFastReport:AddVariable(     "Lineas de albaranes de proveedores",   "Total unidades artículo línea del albaran de proveedor",                "CallHbFunc( 'oTInfGen', ['nTotalUnidadesAlbaranesProveedores'])"                   )
+   ::oFastReport:AddVariable(     "Lineas de albaranes de proveedores",   "Precio unitario del artículo línea del albaran de proveedor",           "CallHbFunc( 'oTInfGen', ['nPrecioUnitarioAlbaranesProveedores'])"                  )
+   ::oFastReport:AddVariable(     "Lineas de albaranes de proveedores",   "Total línea de albaran de proveedor",                                   "CallHbFunc( 'oTInfGen', ['nTotalLineaAlbaranesProveedores'])"                      )   
+   ::oFastReport:AddVariable(     "Lineas de albaranes de proveedores",   "Total impuestos incluidos línea del albaran de proveedor",              "CallHbFunc( 'oTInfGen', ['nTotalImpuestosIncluidosLineaAlbaranesProveedores'])"    )
+   ::oFastReport:AddVariable(     "Lineas de albaranes de proveedores",   "Total IVA línea del albaran de proveedor",                              "CallHbFunc( 'oTInfGen', ['nTotalIVALineaAlbaranesProveedores'])"                   )      
+   ::oFastReport:AddVariable(     "Lineas de albaranes de proveedores",   "Total descuento porcentual artículo línea del albaran de proveedor",    "CallHbFunc( 'oTinfGen', ['nTotalDescuentoPorcentualLineaAlbaranesProveedores'])"   )
+   ::oFastReport:AddVariable(     "Lineas de albaranes de proveedores",   "Total descuento promocional artículo línea del albaran de proveedor",   "CallHbFunc( 'oTinfGen', ['nTotalDescuentoPromocionalLineaAlbaranesProveedores'])"  )
+
+RETURN ( Self )
+
+//---------------------------------------------------------------------------//
+
+METHOD AddVariableLineasFacturaProveedor()
+
+   ::oFastReport:AddVariable(     "Lineas de facturas de proveedores",   "Detalle del artículo línea del factura de proveedor",                   "CallHbFunc( 'oTInfGen', ['cDetalleFacturasProveedores'])"                         )
+   ::oFastReport:AddVariable(     "Lineas de facturas de proveedores",   "Total unidades artículo línea del factura de proveedor",                "CallHbFunc( 'oTInfGen', ['nTotalUnidadesFacturasProveedores'])"                   )
+   ::oFastReport:AddVariable(     "Lineas de facturas de proveedores",   "Precio unitario del artículo línea del factura de proveedor",           "CallHbFunc( 'oTInfGen', ['nPrecioUnitarioFacturasProveedores'])"                  )
+   ::oFastReport:AddVariable(     "Lineas de facturas de proveedores",   "Total línea de factura de proveedor",                                   "CallHbFunc( 'oTInfGen', ['nTotalLineaFacturasProveedores'])"                      )   
+   ::oFastReport:AddVariable(     "Lineas de facturas de proveedores",   "Total impuestos incluidos línea del factura de proveedor",              "CallHbFunc( 'oTInfGen', ['nTotalImpuestosIncluidosLineaFacturasProveedores'])"    )
+   ::oFastReport:AddVariable(     "Lineas de facturas de proveedores",   "Total IVA línea del factura de proveedor",                              "CallHbFunc( 'oTInfGen', ['nTotalIVALineaFacturasProveedores'])"                   )      
+   ::oFastReport:AddVariable(     "Lineas de facturas de proveedores",   "Total descuento porcentual artículo línea del factura de proveedor",    "CallHbFunc( 'oTinfGen', ['nTotalDescuentoPorcentualLineaFacturasProveedores'])"   )
+   ::oFastReport:AddVariable(     "Lineas de facturas de proveedores",   "Total descuento promocional artículo línea del factura de proveedor",   "CallHbFunc( 'oTinfGen', ['nTotalDescuentoPromocionalLineaFacturasProveedores'])"  )
+
+RETURN ( Self )
+
+//---------------------------------------------------------------------------//
+
+METHOD AddVariableLineasRectificativaProveedor()
+
+   ::oFastReport:AddVariable(     "Lineas de rectificativas de proveedores",   "Detalle del artículo línea del rectificativa de proveedor",                   "CallHbFunc( 'oTInfGen', ['cDetalleRectificativasProveedores'])"                         )
+   ::oFastReport:AddVariable(     "Lineas de rectificativas de proveedores",   "Total unidades artículo línea del rectificativa de proveedor",                "CallHbFunc( 'oTInfGen', ['nTotalUnidadesRectificativasProveedores'])"                   )
+   ::oFastReport:AddVariable(     "Lineas de rectificativas de proveedores",   "Precio unitario del artículo línea del rectificativa de proveedor",           "CallHbFunc( 'oTInfGen', ['nPrecioUnitarioRectificativasProveedores'])"                  )
+   ::oFastReport:AddVariable(     "Lineas de rectificativas de proveedores",   "Total línea de rectificativa de proveedor",                                   "CallHbFunc( 'oTInfGen', ['nTotalLineaRectificativasProveedores'])"                      )   
+   ::oFastReport:AddVariable(     "Lineas de rectificativas de proveedores",   "Total impuestos incluidos línea del rectificativa de proveedor",              "CallHbFunc( 'oTInfGen', ['nTotalImpuestosIncluidosLineaRectificativasProveedores'])"    )
+   ::oFastReport:AddVariable(     "Lineas de rectificativas de proveedores",   "Total IVA línea del rectificativa de proveedor",                              "CallHbFunc( 'oTInfGen', ['nTotalIVALineaRectificativasProveedores'])"                   )      
+   ::oFastReport:AddVariable(     "Lineas de rectificativas de proveedores",   "Total descuento porcentual artículo línea del rectificativa de proveedor",    "CallHbFunc( 'oTinfGen', ['nTotalDescuentoPorcentualLineaRectificativasProveedores'])"   )
+   ::oFastReport:AddVariable(     "Lineas de rectificativas de proveedores",   "Total descuento promocional artículo línea del rectificativa de proveedor",   "CallHbFunc( 'oTinfGen', ['nTotalDescuentoPromocionalLineaRectificativasProveedores'])"  )
 
 RETURN ( Self )
 

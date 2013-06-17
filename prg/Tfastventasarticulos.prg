@@ -478,7 +478,7 @@ METHOD lGenerate() CLASS TFastVentasArticulos
 
          ::AddFacturaRectificativa()
 
-      case ::cReportType == "Facturas rectificativas de clientes" 
+      case ::cReportType == "Rectificativas de clientes" 
 
          ::AddFacturaRectificativa( .t. )
 
@@ -508,7 +508,7 @@ METHOD lGenerate() CLASS TFastVentasArticulos
 
          ::AddFacturaProveedor()
 
-      case ::cReportType == "Facturas rectificativas de proveedores"
+      case ::cReportType == "Rectificativas de proveedores"
 
          ::AddRectificativaProveedor()
 
@@ -611,7 +611,7 @@ METHOD BuildTree( oTree, lLoadFile ) CLASS TFastVentasArticulos
                   },; 
                   {  "Title" => "Existencias", "Image" => 16, "Subnode" =>;
                   { ;
-                     { "Title" => "Existencias",                  "Image" =>16, "Type" => "Existencias",                     "Directory" => "Existencias",        "File" => "Existencias.fr3" },;
+                     { "Title" => "Existencias",                  "Image" =>16, "Type" => "Existencias",                    "Directory" => "Articulos\Existencias",        "File" => "Existencias.fr3" },;
                   } ;
                   } }
 
@@ -751,7 +751,7 @@ METHOD DataReport() CLASS TFastVentasArticulos
          
          ::FastReportFacturaRectificativa()
 
-      case ::cReportType == "Facturas rectificativas de clientes"
+      case ::cReportType == "Rectificativas de clientes"
 
          ::FastReportFacturaRectificativa()
 
@@ -781,7 +781,7 @@ METHOD DataReport() CLASS TFastVentasArticulos
 
          ::FastReportFacturaProveedor()
 
-      case ::cReportType == "Facturas rectificativas de proveedores"
+      case ::cReportType == "Rectificativas de proveedores"
 
          ::FastReportRectificativaProveedor()
 
@@ -828,47 +828,84 @@ METHOD AddVariable() CLASS TFastVentasArticulos
    do case
       case ::cReportType == "SAT de clientes"
 
-         ::AddVariableSATCliente()
-
          ::AddVariableLineasSATCliente()         
 
       case ::cReportType == "Presupuestos de clientes"
-
-         ::AddVariablePresupuestoCliente()
 
          ::AddVariableLineasPresupuestoCliente()         
 
       case ::cReportType == "Pedidos de clientes"
       
-         ::AddVariablePedidoCliente()
+         ::AddVariableLineasPedidoCliente()
 
       case ::cReportType == "Albaranes de clientes"
       
-         ::AddVariableAlbaranCliente()
+         ::AddVariableLineasAlbaranCliente()
 
       case ::cReportType == "Facturas de clientes"
       
          ::AddVariableFacturaCliente()
-         
-         ::AddVariableRectificativaCliente()
 
       case ::cReportType == "Rectificativas de clientes"
 
-         ::AddVariableRectificativaCliente()
+         ::AddVariableLineasRectificativaCliente()
 
       case ::cReportType == "Tickets de clientes"
 
-         ::AddVariableTicketCliente()
+         ::AddVariableLineasTicketCliente()
 
       case ::cReportType == "Ventas"
 
-         ::AddVariableAlbaranCliente()
+         ::AddVariableLineasAlbaranCliente()
+
+         ::AddVariableLineasFacturaCliente()
+         
+         ::AddVariableLineasRectificativaCliente()
+
+         ::AddVariableLineasTicketCliente()   
+
+      case ::cReportType == "Pedidos de proveedores"
+
+         ::AddVariableLineasPedidoProveedor()
+
+      case ::cReportType == "Albaranes de proveedores"   
+
+         ::AddVariableLineasAlbaranProveedor()
+
+      case ::cReportType == "Facturas de proveedores"
+
+         ::AddVariableLineasFacturaProveedor()
+
+         ::AddVariableLineasRectificativaProveedor()
+
+      case ::cReportType == "Rectificativas de proveedores"
+
+         ::AddVariableLineasRectificativaProveedor()
+
+      case ::cReportType == "Compras"
+
+         ::AddVariableLineasAlbaranProveedor()
+
+         ::AddVariableLineasFacturaProveedor()
+
+         ::AddVariableLineasRectificativaProveedor()
+
+      case ::cReportType == "Existencias"
+
+         ::AddVariableLineasAlbaranCliente()
 
          ::AddVariableFacturaCliente()
-         
-         ::AddVariableRectificativaCliente()
 
-         ::AddVariableTicketCliente()         
+         ::AddVariableLineasRectificativaCliente()
+
+         ::AddVariableLineasTicketCliente() 
+
+         ::AddVariableLineasAlbaranProveedor()
+
+         ::AddVariableLineasFacturaProveedor()
+
+         ::AddVariableLineasRectificativaProveedor()
+
 
    end case
 
@@ -960,7 +997,7 @@ METHOD AddSATClientes() CLASS TFastVentasArticulos
                   ::oDbf:nLinArt    := ::oSatCliL:nDtoDiv
                   ::oDbf:nPrmArt    := ::oSatCliL:nDtoPrm
 
-                  ::oDbf:nSatArt    := nImpUSATCli( ::oSatCliL:cAlias, ::nDecOut, ::nValDiv )
+                  ::oDbf:nPreArt    := nImpUSATCli( ::oSatCliL:cAlias, ::nDecOut, ::nValDiv )
                   ::oDbf:nTrnArt    := nTrnUSATCli( ::oSatCliL:cAlias, ::nDecOut, ::nValDiv )
                   ::oDbf:nPntArt    := nPntLSATCli( ::oSatCliL:cAlias, ::nDecOut, ::nValDiv )
 
