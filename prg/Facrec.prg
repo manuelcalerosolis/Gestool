@@ -5385,8 +5385,6 @@ STATIC FUNCTION PrnSerie()
    local cSayFmt
    local oSerIni
    local oSerFin
-   local nRecno      := ( dbfFacRecT )->( Recno() )
-   local nOrdAnt     := ( dbfFacRecT )->( OrdSetFocus( 1 ) )
    local cSerIni     := ( dbfFacRecT )->cSerie
    local cSerFin     := ( dbfFacRecT )->cSerie
    local nDocIni     := ( dbfFacRecT )->nNumFac
@@ -5397,6 +5395,10 @@ STATIC FUNCTION PrnSerie()
    local cPrinter    := PrnGetName()
    local lCopiasPre  := .t.
    local lInvOrden   := .f.
+   local oRango
+   local nRango      := 1
+   local dFecDesde   := CtoD( "01/01/" + Str( Year( Date() ) ) )
+   local dFecHasta   := Date()
    local oNumCop
    local nNumCop     := if( nCopiasDocumento( ( dbfFacRecT )->cSerie, "nFacRec", dbfCount ) == 0, Max( Retfld( ( dbfFacRecT )->cCodCli, dbfClient, "CopiasF" ), 1 ), nCopiasDocumento( ( dbfFacRecT )->cSerie, "nFacRec", dbfCount ) )
 
@@ -5406,7 +5408,11 @@ STATIC FUNCTION PrnSerie()
 
    cSayFmt           := cNombreDoc( cFmtDoc )
 
-   DEFINE DIALOG oDlg RESOURCE "IMPSERDOC" TITLE "Imprimir series de facturas rectificativas"
+   DEFINE DIALOG oDlg RESOURCE "IMPSERIES" TITLE "Imprimir series de facturas rectificativas"
+
+   REDEFINE RADIO oRango VAR nRango ;
+      ID       201, 202 ;
+      OF       oDlg
 
    REDEFINE GET oSerIni VAR cSerIni ;
       ID       100 ;
@@ -5416,6 +5422,7 @@ STATIC FUNCTION PrnSerie()
       ON UP    ( UpSerie( oSerIni ) );
       ON DOWN  ( DwSerie( oSerIni ) );
       VALID    ( cSerIni >= "A" .AND. cSerIni <= "Z"  );
+      WHEN     ( nRango == 1 ); 
       OF       oDlg
 
    REDEFINE GET oSerFin VAR cSerFin ;
@@ -5426,29 +5433,46 @@ STATIC FUNCTION PrnSerie()
       ON UP    ( UpSerie( oSerFin ) );
       ON DOWN  ( DwSerie( oSerFin ) );
       VALID    ( cSerFin >= "A" .AND. cSerFin <= "Z"  );
+      WHEN     ( nRango == 1 ); 
       OF       oDlg
 
    REDEFINE GET nDocIni;
       ID       120 ;
-		PICTURE 	"999999999" ;
+	  PICTURE 	"999999999" ;
       SPINNER ;
-		OF 		oDlg
+      WHEN     ( nRango == 1 ); 
+	  OF 		oDlg
 
    REDEFINE GET nDocFin;
       ID       130 ;
-		PICTURE 	"999999999" ;
+	  PICTURE 	"999999999" ;
       SPINNER ;
-		OF 		oDlg
+      WHEN     ( nRango == 1 ); 
+	  OF 		oDlg
 
    REDEFINE GET cSufIni ;
       ID       140 ;
       PICTURE  "##" ;
-		OF 		oDlg
+      WHEN     ( nRango == 1 ); 
+	  OF 		oDlg
 
    REDEFINE GET cSufFin ;
       ID       150 ;
       PICTURE  "##" ;
+      WHEN     ( nRango == 1 ); 
       OF       oDlg
+
+   REDEFINE GET dFecDesde ;
+      ID       210 ;
+      WHEN     ( nRango == 2 ) ;
+      SPINNER ;
+      OF       oDlg
+
+   REDEFINE GET dFecHasta ;
+      ID       220 ;
+      WHEN     ( nRango == 2 ) ;
+      SPINNER ;
+      OF       oDlg   
 
    REDEFINE CHECKBOX lInvOrden ;
       ID       500 ;
@@ -5494,7 +5518,7 @@ STATIC FUNCTION PrnSerie()
    REDEFINE BUTTON ;
       ID       IDOK ;
 		OF 		oDlg ;
-      ACTION   (  StartPrint( SubStr( cFmtDoc, 1, 3 ), cSerIni + Str( nDocIni, 9 ) + cSufIni, cSerFin + Str( nDocFin, 9 ) + cSufFin, oDlg, cPrinter, lCopiasPre, nNumCop, lInvOrden ),;
+      ACTION   (  StartPrint( SubStr( cFmtDoc, 1, 3 ), cSerIni + Str( nDocIni, 9 ) + cSufIni, cSerFin + Str( nDocFin, 9 ) + cSufFin, oDlg, cPrinter, lCopiasPre, nNumCop, lInvOrden, nRango, dFecDesde, dFecHasta ),;
                   oDlg:end( IDOK ) )
 
    REDEFINE BUTTON ;
@@ -5505,79 +5529,151 @@ STATIC FUNCTION PrnSerie()
 
    oDlg:bStart := { || oSerIni:SetFocus() }
 
-   oDlg:AddFastKey( VK_F5, {|| StartPrint( SubStr( cFmtDoc, 1, 3 ), cSerIni + Str( nDocIni, 9 ) + cSufIni, cSerFin + Str( nDocFin, 9 ) + cSufFin, oDlg, cPrinter, lCopiasPre, nNumCop, lInvOrden ), oDlg:end( IDOK ) } )
+   oDlg:AddFastKey( VK_F5, {|| StartPrint( SubStr( cFmtDoc, 1, 3 ), cSerIni + Str( nDocIni, 9 ) + cSufIni, cSerFin + Str( nDocFin, 9 ) + cSufFin, oDlg, cPrinter, lCopiasPre, nNumCop, lInvOrden, nRango, dFecDesde, dFecHasta ), oDlg:end( IDOK ) } )
 
    ACTIVATE DIALOG oDlg CENTER
 
-   (dbfFacRecT)->( dbGoTo( nRecNo ) )
-   (dbfFacRecT)->( ordSetFocus( nOrdAnt ) )
-
-	oWndBrw:oBrw:refresh()
+   oWndBrw:oBrw:refresh()
 
 RETURN NIL
 
 //--------------------------------------------------------------------------//
 
-STATIC FUNCTION StartPrint( cFmtDoc, cDocIni, cDocFin, oDlg, cPrinter, lCopiasPre, nNumCop, lInvOrden )
+STATIC FUNCTION StartPrint( cFmtDoc, cDocIni, cDocFin, oDlg, cPrinter, lCopiasPre, nNumCop, lInvOrden, nRango, dFecDesde, dFecHasta )
 
    local nCopyClient
+   local nRecno
+   local nOrdAnt
 
-   oDlg:disable()
+   oDlg:Disable()
 
-   if !lInvOrden
+   	if nRango == 1
 
-      ( dbfFacRecT )->( dbSeek( cDocIni, .t. ) )
+   		nRecno      := ( dbfFacRecT )->( Recno() )
+   		nOrdAnt     := ( dbfFacRecT )->( OrdSetFocus( "NNUMFAC" ) )
 
-      while ( dbfFacRecT )->cSerie + Str( ( dbfFacRecT )->nNumFac ) + (dbfFacRecT)->cSufFac >= cDocIni .AND. ;
-            ( dbfFacRecT )->cSerie + Str( ( dbfFacRecT )->nNumFac ) + (dbfFacRecT)->cSufFac <= cDocFin
+   		if !lInvOrden
 
-            lChgImpDoc( dbfFacRecT )
+      		( dbfFacRecT )->( dbSeek( cDocIni, .t. ) )
 
-         if lCopiasPre
+      		while ( dbfFacRecT )->cSerie + Str( ( dbfFacRecT )->nNumFac ) + (dbfFacRecT)->cSufFac >= cDocIni .AND. ;
+        		( dbfFacRecT )->cSerie + Str( ( dbfFacRecT )->nNumFac ) + (dbfFacRecT)->cSufFac <= cDocFin
 
-            nCopyClient := if( nCopiasDocumento( ( dbfFacRecT )->cSerie, "nFacRec", dbfCount ) == 0, Max( Retfld( ( dbfFacRecT )->cCodCli, dbfClient, "CopiasF" ), 1 ), nCopiasDocumento( ( dbfFacRecT )->cSerie, "nFacRec", dbfCount ) )
+	        	lChgImpDoc( dbfFacRecT )
 
-            GenFacRec( IS_PRINTER, "Imprimiendo documento : " + ( dbfFacRecT )->cSerie + Str( ( dbfFacRecT )->nNumFac ) + ( dbfFacRecT )->cSufFac, cFmtDoc, cPrinter, nCopyClient )
+         		if lCopiasPre
 
-         else
+            		nCopyClient := if( nCopiasDocumento( ( dbfFacRecT )->cSerie, "nFacRec", dbfCount ) == 0, Max( Retfld( ( dbfFacRecT )->cCodCli, dbfClient, "CopiasF" ), 1 ), nCopiasDocumento( ( dbfFacRecT )->cSerie, "nFacRec", dbfCount ) )
 
-            GenFacRec( IS_PRINTER, "Imprimiendo documento : " + ( dbfFacRecT )->cSerie + Str( ( dbfFacRecT )->nNumFac ) + ( dbfFacRecT )->cSufFac, cFmtDoc, cPrinter, nNumCop )
+            		GenFacRec( IS_PRINTER, "Imprimiendo documento : " + ( dbfFacRecT )->cSerie + Str( ( dbfFacRecT )->nNumFac ) + ( dbfFacRecT )->cSufFac, cFmtDoc, cPrinter, nCopyClient )
 
-         end if
+         		else
 
-      ( dbfFacRecT )->( dbSkip() )
+            		GenFacRec( IS_PRINTER, "Imprimiendo documento : " + ( dbfFacRecT )->cSerie + Str( ( dbfFacRecT )->nNumFac ) + ( dbfFacRecT )->cSufFac, cFmtDoc, cPrinter, nNumCop )
 
-      end while
+         		end if
 
-   else
+      		( dbfFacRecT )->( dbSkip() )
 
-      ( dbfFacRecT )->( dbSeek( cDocFin ) )
+      		end while
 
-      while ( dbfFacRecT )->cSerie + Str( ( dbfFacRecT )->nNumFac ) + ( dbfFacRecT )->cSufFac >= cDocIni .and.;
-            ( dbfFacRecT )->cSerie + Str( ( dbfFacRecT )->nNumFac ) + ( dbfFacRecT )->cSufFac <= cDocFin .and.;
-            !( dbfFacRecT )->( Bof() )
+   		else
 
-            lChgImpDoc( dbfFacRecT )
+      		( dbfFacRecT )->( dbSeek( cDocFin ) )
 
-         if lCopiasPre
+      		while ( dbfFacRecT )->cSerie + Str( ( dbfFacRecT )->nNumFac ) + ( dbfFacRecT )->cSufFac >= cDocIni .and.;
+            		( dbfFacRecT )->cSerie + Str( ( dbfFacRecT )->nNumFac ) + ( dbfFacRecT )->cSufFac <= cDocFin .and.;
+            		!( dbfFacRecT )->( Bof() )
 
-            nCopyClient := if( nCopiasDocumento( ( dbfFacRecT )->cSerie, "nFacRec", dbfCount ) == 0, Max( Retfld( ( dbfFacRecT )->cCodCli, dbfClient, "CopiasF" ), 1 ), nCopiasDocumento( ( dbfFacRecT )->cSerie, "nFacRec", dbfCount ) )
+            		lChgImpDoc( dbfFacRecT )
 
-            GenFacRec( IS_PRINTER, "Imprimiendo documento : " + ( dbfFacRecT )->cSerie + Str( ( dbfFacRecT )->nNumFac ) + ( dbfFacRecT )->cSufFac, cFmtDoc, cPrinter, nCopyClient )
+        		 if lCopiasPre
 
-         else
+            		nCopyClient := if( nCopiasDocumento( ( dbfFacRecT )->cSerie, "nFacRec", dbfCount ) == 0, Max( Retfld( ( dbfFacRecT )->cCodCli, dbfClient, "CopiasF" ), 1 ), nCopiasDocumento( ( dbfFacRecT )->cSerie, "nFacRec", dbfCount ) )
 
-            GenFacRec( IS_PRINTER, "Imprimiendo documento : " + ( dbfFacRecT )->cSerie + Str( ( dbfFacRecT )->nNumFac ) + ( dbfFacRecT )->cSufFac, cFmtDoc, cPrinter, nNumCop )
+            		GenFacRec( IS_PRINTER, "Imprimiendo documento : " + ( dbfFacRecT )->cSerie + Str( ( dbfFacRecT )->nNumFac ) + ( dbfFacRecT )->cSufFac, cFmtDoc, cPrinter, nCopyClient )
 
-         end if
+         		else
 
-      ( dbfFacRecT )->( dbSkip( -1 ) )
+           		 GenFacRec( IS_PRINTER, "Imprimiendo documento : " + ( dbfFacRecT )->cSerie + Str( ( dbfFacRecT )->nNumFac ) + ( dbfFacRecT )->cSufFac, cFmtDoc, cPrinter, nNumCop )
 
-      end while
+        		 end if
 
-   end if
+      		( dbfFacRecT )->( dbSkip( -1 ) )
 
-   oDlg:enable()
+      		end while
+
+		end if
+
+	else
+
+		nRecno      := ( dbfFacRecT )->( Recno() )
+   		nOrdAnt     := ( dbfFacRecT )->( OrdSetFocus( "DFECFAC" ) )
+
+   		if !lInvOrden
+
+      		( dbfFacRecT )->( dbGoTop() )
+
+      		while !( dbfFacRecT )->( Eof() )
+
+	        	if ( dbfFacRecT )->dFecFac >= dFecDesde .and. ( dbfFacRecT )->dFecFac <= dFecHasta
+
+	        		lChgImpDoc( dbfFacRecT )
+
+         			if lCopiasPre
+
+	            		nCopyClient := if( nCopiasDocumento( ( dbfFacRecT )->cSerie, "nFacRec", dbfCount ) == 0, Max( Retfld( ( dbfFacRecT )->cCodCli, dbfClient, "CopiasF" ), 1 ), nCopiasDocumento( ( dbfFacRecT )->cSerie, "nFacRec", dbfCount ) )
+
+            			GenFacRec( IS_PRINTER, "Imprimiendo documento : " + ( dbfFacRecT )->cSerie + Str( ( dbfFacRecT )->nNumFac ) + ( dbfFacRecT )->cSufFac, cFmtDoc, cPrinter, nCopyClient )
+
+         			else
+
+	            		GenFacRec( IS_PRINTER, "Imprimiendo documento : " + ( dbfFacRecT )->cSerie + Str( ( dbfFacRecT )->nNumFac ) + ( dbfFacRecT )->cSufFac, cFmtDoc, cPrinter, nNumCop )
+
+         			end if
+
+         		end if
+
+      		( dbfFacRecT )->( dbSkip() )
+
+      		end while
+
+   		else
+
+      		( dbfFacRecT )->( dbGobottom() )
+
+      		while !( dbfFacRecT )->( Bof() )
+
+            	if ( dbfFacRecT )->dFecFac >= dFecDesde .and. ( dbfFacRecT )->dFecFac <= dFecHasta
+
+            		lChgImpDoc( dbfFacRecT )
+
+        			if lCopiasPre
+
+	            		nCopyClient := if( nCopiasDocumento( ( dbfFacRecT )->cSerie, "nFacRec", dbfCount ) == 0, Max( Retfld( ( dbfFacRecT )->cCodCli, dbfClient, "CopiasF" ), 1 ), nCopiasDocumento( ( dbfFacRecT )->cSerie, "nFacRec", dbfCount ) )
+
+            			GenFacRec( IS_PRINTER, "Imprimiendo documento : " + ( dbfFacRecT )->cSerie + Str( ( dbfFacRecT )->nNumFac ) + ( dbfFacRecT )->cSufFac, cFmtDoc, cPrinter, nCopyClient )
+
+         			else
+
+	           			GenFacRec( IS_PRINTER, "Imprimiendo documento : " + ( dbfFacRecT )->cSerie + Str( ( dbfFacRecT )->nNumFac ) + ( dbfFacRecT )->cSufFac, cFmtDoc, cPrinter, nNumCop )
+
+        			end if
+
+        		end if	
+
+      		( dbfFacRecT )->( dbSkip( -1 ) )
+
+      		end while
+
+		end if
+	
+	end if	
+
+   	(dbfFacRecT)->( dbGoTo( nRecNo ) )
+   	(dbfFacRecT)->( ordSetFocus( nOrdAnt ) )
+
+   	oDlg:enable()
 
 RETURN NIL
 
