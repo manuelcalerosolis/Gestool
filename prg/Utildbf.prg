@@ -1411,10 +1411,12 @@ FUNCTION WinAppRec( oBrw, bEdit, cAlias, bWhen, bValid, xOthers )
       return .f.
    end if
 
+   /*
    if lDemoMode() .and. ( cAlias )->( lastRec() ) >= 50
       msgStop( "Esta usted utilizando una versión demo.", "El programa se abortará" )
       return .f.
    end if
+   */
 
    if Empty( ( cAlias )->( OrdSetFocus() ) )
       nOrd        := ( cAlias )->( OrdSetFocus( 1 ) )
