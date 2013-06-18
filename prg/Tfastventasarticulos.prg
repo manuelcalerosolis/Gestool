@@ -767,7 +767,7 @@ METHOD DataReport() CLASS TFastVentasArticulos
 
          ::FastReportFacturaRectificativa()
 
-         ::FastReportTicket()
+         ::FastReportTicket( .t. )
 
       case ::cReportType == "Pedidos de proveedores"
          
@@ -803,7 +803,7 @@ METHOD DataReport() CLASS TFastVentasArticulos
 
          ::FastReportFacturaRectificativa()
 
-         ::FastReportTicket()
+         ::FastReportTicket( .t. )
 
          ::FastReportPedidoProveedor()
 
