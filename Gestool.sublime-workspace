@@ -523,7 +523,7 @@
 			"file": "bin/script/001.prg",
 			"settings":
 			{
-				"buffer_size": 11722,
+				"buffer_size": 11704,
 				"line_ending": "Windows"
 			}
 		},
@@ -568,13 +568,14 @@
 	},
 	"file_history":
 	[
+		"/C/fw195/Gestool/prg/Autoseek.prg",
+		"/C/fw195/Gestool/prg/Tpv.prg",
 		"/C/fw195/Gestool/prg/Factcli.prg",
 		"/C/fw195/Gestool/prg/Rectprv.prg",
 		"/C/fw195/Gestool/prg/Factprv.prg",
 		"/C/fw195/Gestool/prg/Albprov.prg",
 		"/C/fw195/Gestool/prg/Pedprov.prg",
 		"/C/fw195/Gestool/prg/Satcli.prg",
-		"/C/fw195/Gestool/prg/Tpv.prg",
 		"/C/fw195/Gestool/prg/Facant.prg",
 		"/C/fw195/Gestool/prg/Facrec.prg",
 		"/C/fw195/Gestool/prg/Pedcli.prg",
@@ -694,8 +695,7 @@
 		"/C/AppServ/www/zemtrum/modules/zoomslider/js/demo.js",
 		"/C/AppServ/www/zemtrum/modules/zoomslider/js/shCore.js",
 		"/C/Users/Villa/Desktop/zoomslider/js/slidercontrol.js",
-		"/C/Users/Villa/Desktop/zoomslider/links.xml",
-		"/C/AppServ/www/zemtrum/modules/homeslider/bx_styles.css"
+		"/C/Users/Villa/Desktop/zoomslider/links.xml"
 	],
 	"find":
 	{
@@ -737,6 +737,10 @@
 		"case_sensitive": false,
 		"find_history":
 		[
+			"on lBigSeek",
+			"ValidaDevolucionTiket",
+			"AsistenteDevolucionTiket",
+			"dev",
 			"on acol",
 			"acol",
 			"on ShowKit",
@@ -860,11 +864,7 @@
 			"cDlgUsr",
 			"cDelegacion",
 			"ccoddlg",
-			"dlg",
-			"on syn",
-			"\"00",
-			"\"00\"",
-			"ON EDTREC"
+			"dlg"
 		],
 		"highlight": true,
 		"in_selection": false,
@@ -891,7 +891,7 @@
 	"groups":
 	[
 		{
-			"selected": 1,
+			"selected": 0,
 			"sheets":
 			[
 				{
@@ -899,15 +899,15 @@
 					"file": "bin/script/001.prg",
 					"settings":
 					{
-						"buffer_size": 11722,
+						"buffer_size": 11704,
 						"regions":
 						{
 						},
 						"selection":
 						[
 							[
-								687,
-								687
+								7565,
+								7565
 							]
 						],
 						"settings":
@@ -917,7 +917,7 @@
 							"translate_tabs_to_spaces": true
 						},
 						"translation.x": 0.0,
-						"translation.y": 3705.0,
+						"translation.y": 4104.0,
 						"zoom_level": 1.0
 					},
 					"type": "text"
