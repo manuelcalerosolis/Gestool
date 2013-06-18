@@ -344,7 +344,7 @@ METHOD BuildTree( oTree, lLoadFile ) CLASS TFastVentasClientes
                      { "Title" => "Facturas de clientes",         "Image" => 8, "Type" => "Facturas de clientes",          "Directory" => "Clientes\Ventas",               "File" => "Facturas de clientes.fr3" },;                                        
                      { "Title" => "Rectificativas de clientes",   "Image" => 9, "Type" => "Rectificativas de clientes",    "Directory" => "Clientes\Ventas",               "File" => "Rectificativas de clientes.fr3" },;
                      { "Title" => "Tickets de clientes",          "Image" =>10, "Type" => "Tickets de clientes",           "Directory" => "Clientes\Ventas",               "File" => "Tickets de clientes.fr3" },;
-                     { "Title" => "Facturación",                  "Image" => 8, "Type" => "Facturación",                   "Directory" => "Clientes\Ventas",               "File" => "Facturación de clientes.fr3" },;
+                     { "Title" => "Facturación de clientes",      "Image" => 8, "Type" => "Facturación de clientes",       "Directory" => "Clientes\Ventas",               "File" => "Facturación de clientes.fr3" },;
                      { "Title" => "Ventas",                       "Image" =>11, "Type" => "Ventas",                        "Directory" => "Clientes\Ventas",               "File" => "Ventas.fr3" },;
                   } ;
                   }  }
@@ -495,7 +495,7 @@ METHOD DataReport() CLASS TFastVentasClientes
 
          ::FastReportTicket( .t. )
 
-      case ::cReportType == "Facturación"
+      case ::cReportType == "Facturación de clientes "
 
          ::FastReportFacturaCliente()
          
@@ -574,7 +574,7 @@ METHOD AddVariable() CLASS TFastVentasClientes
 
          ::AddVariableLineasTicketCliente()
 
-      case ::cReportType == "Facturación"
+      case ::cReportType == "Facturación de clientes"
       
          ::AddVariableFacturaCliente()
 
@@ -669,7 +669,7 @@ METHOD lGenerate() CLASS TFastVentasClientes
 
          ::AddTicket( .t. )
 
-      case ::cReportType == "Facturación"   
+      case ::cReportType == "Facturación de clientes"   
 
          ::AddFacturaCliente()
 
