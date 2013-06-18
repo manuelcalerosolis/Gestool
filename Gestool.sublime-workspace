@@ -4,6 +4,10 @@
 		"selected_items":
 		[
 			[
+				"nNumAlb",
+				"nNumAlb"
+			],
+			[
 				"t",
 				"t"
 			],
@@ -510,10 +514,6 @@
 			[
 				"T",
 				"TGrpFam"
-			],
-			[
-				"f",
-				"f"
 			]
 		]
 	},
@@ -528,10 +528,10 @@
 			}
 		},
 		{
-			"file": "prg/Rptgal.prg",
+			"file": "prg/Factcli.prg",
 			"settings":
 			{
-				"buffer_size": 159254,
+				"buffer_size": 804608,
 				"line_ending": "Windows"
 			}
 		}
@@ -568,17 +568,26 @@
 	},
 	"file_history":
 	[
+		"/C/fw195/Gestool/prg/Factcli.prg",
+		"/C/fw195/Gestool/prg/Albcli.prg",
+		"/C/fw195/Gestool/prg/Cfaccli.prg",
+		"/C/fw195/Gestool/prg/Articulo.prg",
+		"/C/fw195/Gestool/prg/Factu.prg",
+		"/C/fw195/Gestool/prg/Provee.prg",
+		"/C/fw195/Gestool/prg/Client.prg",
+		"/C/fw195/Gestool/resource/Gstimage12.rc",
+		"/C/fw195/Gestool/prg/Taccesos.prg",
+		"/C/fw195/Gestool/prg/Tfastventasarticulos.prg",
+		"/C/fw195/Gestool/prg/Pedcli.prg",
+		"/C/fw195/Gestool/prg/Rptgal.prg",
 		"/C/fw195/Gestool/prg/Tctacli.prg",
 		"/C/fw195/Gestool/prg/Tctaprv.prg",
-		"/C/fw195/Gestool/prg/Albcli.prg",
 		"/C/fw195/Gestool/prg/Tpvtactil.prg",
 		"/C/fw195/Gestool/prg/Turno.prg",
 		"/C/fw195/Gestool/prg/Familia.prg",
 		"/C/fw195/Gestool/prg/Tdatacenter.prg",
 		"/C/fw195/Gestool/prg/Accesscode.prg",
-		"/C/fw195/Gestool/prg/Factu.prg",
 		"/C/fw195/Gestool/prg/Empresa.prg",
-		"/C/fw195/Gestool/prg/Client.prg",
 		"/C/fw195/Gestool/prg/client",
 		"/C/fw195/Gestool/prg/Facauto.prg",
 		"/C/fw195/Gestool/prg/Tcomercio.prg",
@@ -599,12 +608,10 @@
 		"/C/fw195/Gestool/prg/Tutil.prg",
 		"/C/fw195/Gestool/prg/Movalm.prg",
 		"/C/fw195/Gestool/prg/tuser",
-		"/C/fw195/Gestool/prg/Pedcli.prg",
 		"/C/fw195/Gestool/prg/Precli.prg",
 		"/C/fw195/Gestool/prg/Satcli.prg",
 		"/C/fw195/Gestool/prg/Facrec.prg",
 		"/C/fw195/Gestool/prg/Internet.prg",
-		"/C/fw195/Gestool/prg/Factcli.prg",
 		"/C/fw195/Gestool/prg/Empcnf.prg",
 		"/C/fw195/Gestool/bin/script/001.prg",
 		"/C/fw195/Gestool/include/Empresa.ch",
@@ -617,18 +624,15 @@
 		"/C/fw195/Gestool/prg/Rectprv.prg",
 		"/C/fw195/Gestool/prg/Albprov.prg",
 		"/C/fw195/Gestool/prg/Pedprov.prg",
-		"/C/fw195/Gestool/prg/Articulo.prg",
 		"/C/fw195/Gestool/prg/Xvalalm.prg",
 		"/C/fw195/Gestool/prg/Medicon.prg",
 		"/C/fw195/Gestool/prg/Empdata.prg",
 		"/C/fw195/Gestool/prg/Tgrpfam.prg",
 		"/C/fw195/Gestool/prg/Tipart.prg",
-		"/C/fw195/Gestool/prg/Provee.prg",
 		"/C/fw195/Gestool/prg/Producc.prg",
 		"/C/fw195/Gestool/prg/Tdetmaterial.prg",
 		"/C/fw195/Gestool/prg/TDetMaterial",
 		"/C/fw195/Gestool/prg/Recprv.prg",
-		"/C/fw195/Gestool/prg/Tfastventasarticulos.prg",
 		"/C/fw195/Gestool/prg/Tfastreportinfgen.prg",
 		"/C/fw195/Gestool/include/Factu.ch",
 		"/C/fw195/Gestool/prg/pedcli",
@@ -691,15 +695,11 @@
 		"/C/AppServ/www/zemtrum/modules/zoomslider/js/shCore.js",
 		"/C/Users/Villa/Desktop/zoomslider/js/slidercontrol.js",
 		"/C/Users/Villa/Desktop/zoomslider/links.xml",
-		"/C/AppServ/www/zemtrum/modules/homeslider/bx_styles.css",
-		"/C/Users/Villa/Desktop/minicslider/ajax_minicslider.php",
-		"/C/Users/Villa/Desktop/minicslider/minicslider.php",
-		"/C/Users/Villa/Desktop/zoomslider/css/flexslider.css",
-		"/C/Users/Villa/Desktop/zoomslider/config.xml"
+		"/C/AppServ/www/zemtrum/modules/homeslider/bx_styles.css"
 	],
 	"find":
 	{
-		"height": 34.0
+		"height": 35.0
 	},
 	"find_in_files":
 	{
@@ -737,6 +737,24 @@
 		"case_sensitive": false,
 		"find_history":
 		[
+			"prnserie",
+			"on rx",
+			"radio",
+			"Reporting",
+			"ç",
+			"Reporting",
+			"ReportingClient",
+			"reporting",
+			"01119",
+			"RunReportGalery",
+			"01093",
+			"01118",
+			"01093",
+			"01097",
+			"01093",
+			"informe",
+			"PrnSerie",
+			"series",
 			"AddField",
 			"TICtaPrv",
 			"estado de cuentas",
@@ -846,24 +864,6 @@
 			"ESCA",
 			"\"@",
 			"on cFirstPath",
-			"on aitm",
-			"160",
-			"on cSitFtp",
-			"@R",
-			"on aitm",
-			"on acol",
-			"on syn",
-			"on aitm",
-			"on syn",
-			"on acol",
-			"on syn",
-			"on aitm",
-			"on syn",
-			"on aitm",
-			"on acol",
-			"on syn",
-			"on aitm",
-			"on acol",
 			"on aitm"
 		],
 		"highlight": true,
@@ -924,18 +924,18 @@
 				},
 				{
 					"buffer": 1,
-					"file": "prg/Rptgal.prg",
+					"file": "prg/Factcli.prg",
 					"settings":
 					{
-						"buffer_size": 159254,
+						"buffer_size": 804608,
 						"regions":
 						{
 						},
 						"selection":
 						[
 							[
-								113711,
-								113719
+								181562,
+								181570
 							]
 						],
 						"settings":
@@ -945,7 +945,7 @@
 							"translate_tabs_to_spaces": true
 						},
 						"translation.x": 0.0,
-						"translation.y": 23740.0,
+						"translation.y": 102894.0,
 						"zoom_level": 1.0
 					},
 					"type": "text"

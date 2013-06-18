@@ -3090,7 +3090,7 @@ Function CreateAcceso( oWnd )
    oItem:cMessage       := 'Informes realacionados con articulos'
    oItem:bAction        := {|| TFastVentasArticulos():New():Play() }
    oItem:cId            := "01118"
-   oItem:cBmp           := "Lifebelt_16"
+   oItem:cBmp           := "cube_yellow_chart_16"
    oItem:cBmpBig        := "cube_yellow_chart_32"
    oItem:lShow          := .f.
 

@@ -4264,9 +4264,7 @@ STATIC FUNCTION PrnSerie( oBrw )
    local oSayFmt
    local cSayFmt
    local oSerIni
-   local oSerFin
-   local nRecno      := ( dbfRctPrvT )->( Recno() )
-   local nOrdAnt     := ( dbfRctPrvT )->( OrdSetFocus( 1 ) )
+   local oSerFin   
    local cSerIni     := ( dbfRctPrvT )->cSerFac
    local cSerFin     := ( dbfRctPrvT )->cSerFac
    local nDocIni     := ( dbfRctPrvT )->nNumFac
@@ -4279,6 +4277,10 @@ STATIC FUNCTION PrnSerie( oBrw )
    local lInvOrden   := .f.
    local oNumCop
    local nNumCop     := if( nCopiasDocumento( ( dbfRctPrvT )->cSerFac, "nRctPrv", dbfCount ) == 0, Max( Retfld( ( dbfRctPrvT )->cCodPrv, dbfPrv, "nCopiasF" ), 1 ), nCopiasDocumento( ( dbfRctPrvT )->cSerFac, "nRctPrv", dbfCount ) )
+   local oRango
+   local nRango      := 1
+   local dFecDesde   := CtoD( "01/01/" + Str( Year( Date() ) ) )
+   local dFecHasta   := Date()
 
    if Empty( cFmtDoc )
       cFmtDoc        := cSelPrimerDoc( "TP" )
@@ -4286,7 +4288,11 @@ STATIC FUNCTION PrnSerie( oBrw )
 
    cSayFmt           := cNombreDoc( cFmtDoc )
 
-   DEFINE DIALOG oDlg RESOURCE "IMPSERDOC" TITLE "Imprimir series de facturas"
+   DEFINE DIALOG oDlg RESOURCE "IMPSERIES" TITLE "Imprimir series de facturas"
+
+   REDEFINE RADIO oRango VAR nRango ;
+      ID       201, 202 ;
+      OF       oDlg
 
    REDEFINE GET oSerIni VAR cSerIni ;
       ID       100 ;
@@ -4296,6 +4302,7 @@ STATIC FUNCTION PrnSerie( oBrw )
       ON UP    ( UpSerie( oSerIni ) );
       ON DOWN  ( DwSerie( oSerIni ) );
       VALID    ( cSerIni >= "A" .AND. cSerIni <= "Z"  );
+      WHEN     ( nRango == 1 ); 
       OF       oDlg
 
    REDEFINE GET oSerFin VAR cSerFin ;
@@ -4306,45 +4313,46 @@ STATIC FUNCTION PrnSerie( oBrw )
       ON UP    ( UpSerie( oSerFin ) );
       ON DOWN  ( DwSerie( oSerFin ) );
       VALID    ( cSerFin >= "A" .AND. cSerFin <= "Z"  );
+      WHEN     ( nRango == 1 ); 
       OF       oDlg
 
    REDEFINE GET nDocIni;
       ID       120 ;
 		PICTURE 	"999999999" ;
       SPINNER ;
-      VALID    ( If ( !( dbfRctPrvT )->( dbSeek( cSerIni + Str( nDocIni, 9 ) + cSufIni ) ),;
-							( msgStop( "Documento no valido" ), .F. ),;
-							( .T. ) ) );
-		COLOR 	CLR_GET ;
+      WHEN     ( nRango == 1 ); 
 		OF 		oDlg
 
    REDEFINE GET nDocFin;
       ID       130 ;
 		PICTURE 	"999999999" ;
       SPINNER ;
-      VALID    ( If ( !( dbfRctPrvT )->( dbSeek( cSerFin  + Str( nDocFin, 9 ) + cSufFin ) ),;
-						( msgStop( "Documento no valido" ), .F. ),;
-						( .T. ) ) );
-		COLOR 	CLR_GET ;
+      WHEN     ( nRango == 1 ); 
 		OF 		oDlg
 
    REDEFINE GET cSufIni ;
       ID       140 ;
       PICTURE  "##" ;
-      VALID    ( If ( !( dbfRctPrvT )->( dbSeek( cSerIni  + Str( nDocIni, 9 ) + cSufIni ) ),;
-							( msgStop( "Documento no valido" ), .F. ),;
-							( .T. ) ) );
-		COLOR 	CLR_GET ;
+      WHEN     ( nRango == 1 ); 
 		OF 		oDlg
 
    REDEFINE GET cSufFin ;
       ID       150 ;
       PICTURE  "##" ;
-      VALID    ( If ( !( dbfRctPrvT )->( dbSeek( cSerFin  + Str( nDocFin, 9 ) + cSufFin ) ),;
-							( msgStop( "Documento no valido" ), .F. ),;
-							( .T. ) ) );
-		COLOR 	CLR_GET ;
+      WHEN     ( nRango == 1 ); 
 		OF 		oDlg
+
+   REDEFINE GET dFecDesde ;
+      ID       210 ;
+      WHEN     ( nRango == 2 ) ;
+      SPINNER ;
+      OF       oDlg
+
+   REDEFINE GET dFecHasta ;
+      ID       220 ;
+      WHEN     ( nRango == 2 ) ;
+      SPINNER ;
+      OF       oDlg   
 
    REDEFINE CHECKBOX lInvOrden ;
       ID       500 ;
@@ -4390,7 +4398,7 @@ STATIC FUNCTION PrnSerie( oBrw )
    REDEFINE BUTTON ;
       ID       IDOK ;
 		OF 		oDlg ;
-      ACTION   (  StartPrint( SubStr( cFmtDoc, 1, 3 ), cSerIni + Str( nDocIni, 9 ) + cSufIni, cSerFin + Str( nDocFin, 9 ) + cSufFin, oDlg, cPrinter, lCopiasPre, nNumCop, lInvOrden ),;
+      ACTION   (  StartPrint( SubStr( cFmtDoc, 1, 3 ), cSerIni + Str( nDocIni, 9 ) + cSufIni, cSerFin + Str( nDocFin, 9 ) + cSufFin, oDlg, cPrinter, lCopiasPre, nNumCop, lInvOrden, nRango, dFecDesde, dFecHasta ),;
                   oDlg:end( IDOK ) )
 
    REDEFINE BUTTON ;
@@ -4399,14 +4407,11 @@ STATIC FUNCTION PrnSerie( oBrw )
       CANCEL ;
       ACTION   ( oDlg:end() )
 
-   oDlg:AddFastKey( VK_F5, {|| StartPrint( SubStr( cFmtDoc, 1, 3 ), cSerIni + Str( nDocIni, 9 ) + cSufIni, cSerFin + Str( nDocFin, 9 ) + cSufFin, oDlg, cPrinter, lCopiasPre, nNumCop, lInvOrden ), oDlg:end( IDOK ) } )
+   oDlg:AddFastKey( VK_F5, {|| StartPrint( SubStr( cFmtDoc, 1, 3 ), cSerIni + Str( nDocIni, 9 ) + cSufIni, cSerFin + Str( nDocFin, 9 ) + cSufFin, oDlg, cPrinter, lCopiasPre, nNumCop, lInvOrden, nRango, dFecDesde, dFecHasta ), oDlg:end( IDOK ) } )
 
    oDlg:bStart := { || oSerIni:SetFocus() }
 
 	ACTIVATE DIALOG oDlg CENTER
-
-   ( dbfRctPrvT )->( ordSetFocus( nOrdAnt ) )
-   ( dbfRctPrvT )->( dbGoTo( nRecNo ) )
 
 	oBrw:refresh()
 
@@ -4414,64 +4419,139 @@ RETURN NIL
 
 //--------------------------------------------------------------------------//
 
-STATIC FUNCTION StartPrint( cFmtDoc, cDocIni, cDocFin, oDlg, cPrinter, lCopiasPre, nNumCop, lInvOrden )
+STATIC FUNCTION StartPrint( cFmtDoc, cDocIni, cDocFin, oDlg, cPrinter, lCopiasPre, nNumCop, lInvOrden, nRango, dFecDesde, dFecHasta )
 
    local nCopyProvee
+   local nRecno
+   local nOrdAnt
 
    oDlg:disable()
 
-   if !lInvOrden
+   if nRango == 1
 
-      ( dbfRctPrvT )->( dbSeek( cDocIni, .t. ) )
+      nRecno      := ( dbfRctPrvT )->( Recno() )
+      nOrdAnt     := ( dbfRctPrvT )->( OrdSetFocus( "NNUMFAC" ) )
 
-      while ( dbfRctPrvT )->cSerFac + Str( ( dbfRctPrvT )->nNumFac ) + (dbfRctPrvT)->cSufFac >= cDocIni .AND. ;
-            ( dbfRctPrvT )->cSerFac + Str( ( dbfRctPrvT )->nNumFac ) + (dbfRctPrvT)->cSufFac <= cDocFin
+      if !lInvOrden
 
-            lChgImpDoc( dbfRctPrvT )
+         ( dbfRctPrvT )->( dbSeek( cDocIni, .t. ) )
 
-         if lCopiasPre
+         while ( dbfRctPrvT )->cSerFac + Str( ( dbfRctPrvT )->nNumFac ) + (dbfRctPrvT)->cSufFac >= cDocIni .AND. ;
+               ( dbfRctPrvT )->cSerFac + Str( ( dbfRctPrvT )->nNumFac ) + (dbfRctPrvT)->cSufFac <= cDocFin
 
-            nCopyProvee    := if( nCopiasDocumento( ( dbfRctPrvT )->cSerFac, "nRctPrv", dbfCount ) == 0, Max( Retfld( ( dbfRctPrvT )->cCodPrv, dbfPrv, "nCopiasF" ), 1 ), nCopiasDocumento( ( dbfRctPrvT )->cSerFac, "nRctPrv", dbfCount ) )
+               lChgImpDoc( dbfRctPrvT )
 
-            GenRctPrv( IS_PRINTER, "Imprimiendo documento : " + ( dbfRctPrvT )->cSerFac + Str( ( dbfRctPrvT )->nNumFac ) + (dbfRctPrvT)->cSufFac, cFmtDoc, cPrinter, nCopyProvee )
+            if lCopiasPre
 
-         else
+               nCopyProvee    := if( nCopiasDocumento( ( dbfRctPrvT )->cSerFac, "nRctPrv", dbfCount ) == 0, Max( Retfld( ( dbfRctPrvT )->cCodPrv, dbfPrv, "nCopiasF" ), 1 ), nCopiasDocumento( ( dbfRctPrvT )->cSerFac, "nRctPrv", dbfCount ) )
 
-            GenRctPrv( IS_PRINTER, "Imprimiendo documento : " + ( dbfRctPrvT )->cSerFac + Str( ( dbfRctPrvT )->nNumFac ) + (dbfRctPrvT)->cSufFac, cFmtDoc, cPrinter, nNumCop )
+               GenRctPrv( IS_PRINTER, "Imprimiendo documento : " + ( dbfRctPrvT )->cSerFac + Str( ( dbfRctPrvT )->nNumFac ) + (dbfRctPrvT)->cSufFac, cFmtDoc, cPrinter, nCopyProvee )
 
-         end if
+            else
 
-      (dbfRctPrvT)->( dbSkip() )
+               GenRctPrv( IS_PRINTER, "Imprimiendo documento : " + ( dbfRctPrvT )->cSerFac + Str( ( dbfRctPrvT )->nNumFac ) + (dbfRctPrvT)->cSufFac, cFmtDoc, cPrinter, nNumCop )
 
-      end while
+            end if
+
+         (dbfRctPrvT)->( dbSkip() )
+
+         end while
+
+      else
+
+         ( dbfRctPrvT )->( dbSeek( cDocFin ) )
+
+         while ( dbfRctPrvT )->cSerFac + Str( ( dbfRctPrvT )->nNumFac ) + ( dbfRctPrvT )->cSufFac >= cDocIni .and. ;
+               ( dbfRctPrvT )->cSerFac + Str( ( dbfRctPrvT )->nNumFac ) + ( dbfRctPrvT )->cSufFac <= cDocFin .and.;
+               !( dbfRctPrvT )->( Bof() )
+
+               lChgImpDoc( dbfRctPrvT )
+
+            if lCopiasPre
+
+               nCopyProvee    := if( nCopiasDocumento( ( dbfRctPrvT )->cSerFac, "nRctPrv", dbfCount ) == 0, Max( Retfld( ( dbfRctPrvT )->cCodPrv, dbfPrv, "nCopiasF" ), 1 ), nCopiasDocumento( ( dbfRctPrvT )->cSerFac, "nRctPrv", dbfCount ) )
+
+               GenRctPrv( IS_PRINTER, "Imprimiendo documento : " + ( dbfRctPrvT )->cSerFac + Str( ( dbfRctPrvT )->nNumFac ) + (dbfRctPrvT)->cSufFac, cFmtDoc, cPrinter, nCopyProvee )
+
+            else
+
+               GenRctPrv( IS_PRINTER, "Imprimiendo documento : " + ( dbfRctPrvT )->cSerFac + Str( ( dbfRctPrvT )->nNumFac ) + (dbfRctPrvT)->cSufFac, cFmtDoc, cPrinter, nNumCop )
+
+            end if
+
+         ( dbfRctPrvT )->( dbSkip( -1 ) )
+
+         end while
+
+      end if
 
    else
 
-      ( dbfRctPrvT )->( dbSeek( cDocFin ) )
+      nRecno      := ( dbfRctPrvT )->( Recno() )
+      nOrdAnt     := ( dbfRctPrvT )->( OrdSetFocus( "DFECFAC" ) )
 
-      while ( dbfRctPrvT )->cSerFac + Str( ( dbfRctPrvT )->nNumFac ) + ( dbfRctPrvT )->cSufFac >= cDocIni .and. ;
-            ( dbfRctPrvT )->cSerFac + Str( ( dbfRctPrvT )->nNumFac ) + ( dbfRctPrvT )->cSufFac <= cDocFin .and.;
-            !( dbfRctPrvT )->( Bof() )
+      if !lInvOrden
 
-            lChgImpDoc( dbfRctPrvT )
+         ( dbfRctPrvT )->( dbGoTop() )
 
-         if lCopiasPre
+         while !( dbfRctPrvT )->( Eof() )
 
-            nCopyProvee    := if( nCopiasDocumento( ( dbfRctPrvT )->cSerFac, "nRctPrv", dbfCount ) == 0, Max( Retfld( ( dbfRctPrvT )->cCodPrv, dbfPrv, "nCopiasF" ), 1 ), nCopiasDocumento( ( dbfRctPrvT )->cSerFac, "nRctPrv", dbfCount ) )
+            if ( dbfRctPrvT )->dFecFac >= dFecDesde .and. ( dbfRctPrvT )->dFecFac <= dFecHasta
 
-            GenRctPrv( IS_PRINTER, "Imprimiendo documento : " + ( dbfRctPrvT )->cSerFac + Str( ( dbfRctPrvT )->nNumFac ) + (dbfRctPrvT)->cSufFac, cFmtDoc, cPrinter, nCopyProvee )
+               lChgImpDoc( dbfRctPrvT )
 
-         else
+               if lCopiasPre
 
-            GenRctPrv( IS_PRINTER, "Imprimiendo documento : " + ( dbfRctPrvT )->cSerFac + Str( ( dbfRctPrvT )->nNumFac ) + (dbfRctPrvT)->cSufFac, cFmtDoc, cPrinter, nNumCop )
+                  nCopyProvee    := if( nCopiasDocumento( ( dbfRctPrvT )->cSerFac, "nRctPrv", dbfCount ) == 0, Max( Retfld( ( dbfRctPrvT )->cCodPrv, dbfPrv, "nCopiasF" ), 1 ), nCopiasDocumento( ( dbfRctPrvT )->cSerFac, "nRctPrv", dbfCount ) )
 
-         end if
+                  GenRctPrv( IS_PRINTER, "Imprimiendo documento : " + ( dbfRctPrvT )->cSerFac + Str( ( dbfRctPrvT )->nNumFac ) + (dbfRctPrvT)->cSufFac, cFmtDoc, cPrinter, nCopyProvee )
 
-      ( dbfRctPrvT )->( dbSkip( -1 ) )
+               else
 
-      end while
+                  GenRctPrv( IS_PRINTER, "Imprimiendo documento : " + ( dbfRctPrvT )->cSerFac + Str( ( dbfRctPrvT )->nNumFac ) + (dbfRctPrvT)->cSufFac, cFmtDoc, cPrinter, nNumCop )
 
-   end if
+               end if
+
+            end if   
+
+         (dbfRctPrvT)->( dbSkip() )
+
+         end while
+
+      else
+
+         ( dbfRctPrvT )->( dbSeek( cDocFin ) )
+
+         while !( dbfRctPrvT )->( Bof() )
+
+            if ( dbfRctPrvT )->dFecFac >= dFecDesde .and. ( dbfRctPrvT )->dFecFac <= dFecHasta   
+
+               lChgImpDoc( dbfRctPrvT )
+
+               if lCopiasPre
+
+                  nCopyProvee    := if( nCopiasDocumento( ( dbfRctPrvT )->cSerFac, "nRctPrv", dbfCount ) == 0, Max( Retfld( ( dbfRctPrvT )->cCodPrv, dbfPrv, "nCopiasF" ), 1 ), nCopiasDocumento( ( dbfRctPrvT )->cSerFac, "nRctPrv", dbfCount ) )
+
+                  GenRctPrv( IS_PRINTER, "Imprimiendo documento : " + ( dbfRctPrvT )->cSerFac + Str( ( dbfRctPrvT )->nNumFac ) + (dbfRctPrvT)->cSufFac, cFmtDoc, cPrinter, nCopyProvee )
+
+               else
+
+                  GenRctPrv( IS_PRINTER, "Imprimiendo documento : " + ( dbfRctPrvT )->cSerFac + Str( ( dbfRctPrvT )->nNumFac ) + (dbfRctPrvT)->cSufFac, cFmtDoc, cPrinter, nNumCop )
+
+               end if
+
+            end if   
+
+         ( dbfRctPrvT )->( dbSkip( -1 ) )
+
+         end while
+
+      end if
+
+   end if   
+
+   ( dbfRctPrvT )->( ordSetFocus( nOrdAnt ) )
+   ( dbfRctPrvT )->( dbGoTo( nRecNo ) )
 
    oDlg:Enable()
 
