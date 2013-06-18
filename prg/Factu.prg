@@ -259,19 +259,9 @@ function Main( cParams )
    XbrNumFormat( "E", .t. )
 
    do case
-      case ( "TCT" $ cParamsMain )
-         if AccessCode():TactilResource()
-            CreateMainTctWindow( oIconApp )
-         end if
-
       case ( "TACTIL" $ cParamsMain )
          if AccessCode():TactilResource()
             InitMainTactilWindow( oIconApp )
-         end if
-
-      case ( "TPV" $ cParamsMain )
-         if AccesTctCode()
-            CreateMainTPVWindow( oIconApp )
          end if
 
       case ( "PDA" $ cParamsMain )
@@ -3100,7 +3090,7 @@ Function CreateAcceso( oWnd )
    oItem:cMessage       := 'Informes realacionados con articulos'
    oItem:bAction        := {|| TFastVentasArticulos():New():Play() }
    oItem:cId            := "01118"
-   oItem:cBmp           := "Lifebelt_16"
+   oItem:cBmp           := "cube_yellow_chart_16"
    oItem:cBmpBig        := "cube_yellow_chart_32"
    oItem:lShow          := .f.
 
@@ -4337,121 +4327,13 @@ Return nil
 
 //---------------------------------------------------------------------------//
 
-Function CreateMainTctWindow( oIconApp )
-
-   SysRefresh()
-
-   DEFINE WINDOW oWnd ;
-      FROM     0, 0 TO 26, 82;
-      TITLE    __GSTTACTIL__ + " : " ;
-      MDI ;
-      ICON     oIconApp ;
-      MENU     BuildTctMenu()
-
-   oWndBar                    := TctCreateButtonBar( oWnd )
-   oWndBar:CreateButtonBar( oWnd, .t., .t. )
-
-   oWnd:Cargo                 := cParamsMain
-
-   SET MESSAGE OF oWnd TO __GSTCOPYRIGHT__ NOINSET
-
-   DEFINE MSGITEM oDlgProgress PROMPT ""                                         OF oWnd:oMsgBar SIZE 100
-
-   oWnd:oMsgBar:oDate         := TMsgItem():New( oWnd:oMsgBar, Dtoc( GetSysDate() ), oWnd:oMsgBar:GetWidth( DToC( GetSysDate() ) ) + 12,,,, .t., { || SelSysDate() } )
-   oWnd:oMsgBar:oDate:lTimer  := .t.
-   oWnd:oMsgBar:oDate:bMsg    := { || GetSysDate() }
-   oWnd:oMsgBar:CheckTimer()
-
-   DEFINE MSGITEM oMsgUser    PROMPT "Usuario : "  + Rtrim( oUser():cNombre() )  OF oWnd:oMsgBar SIZE 200
-
-   DEFINE MSGITEM oMsgCaja    PROMPT "Caja : "     + oUser():cCaja()             OF oWnd:oMsgBar SIZE 100
-
-   DEFINE MSGITEM oMsgSesion  PROMPT ""                                          OF oWnd:oMsgBar SIZE 100
-
-   ACTIVATE WINDOW oWnd ;
-      MAXIMIZED ;
-      ON PAINT    ( WndPaint( hDC, oWnd, oBmp ), SysRefresh() );
-      ON INIT     ( InitMainTctWindow( oWnd ) )
-
-      KillAutoImp()
-
-      if oWnd != nil
-         SysRefresh(); oWnd:CloseAll(); SysRefresh()
-         oWnd:End()
-      end if
-
-      SysRefresh()
-
-Return nil
-
-//--------------------------------------------------------------------------//
-
-Static Function InitMainTctWindow( oWnd )
-
-   lTpvInitCheck()
-
-   SelCajTactil( , .t. )
-
-   TactilTpv( "01064", oWnd, .t. )
-
-Return nil
-
-//--------------------------------------------------------------------------//
-
 Static Function InitMainTactilWindow()
+
+   lTactilInitCheck()
 
    SelCajTactil( , .t. )
 
    TpvTactil():New():Activate( .t. )
-
-Return nil
-
-//--------------------------------------------------------------------------//
-
-Function CreateMainTpvWindow( oIconApp )
-
-   DEFINE WINDOW oWnd ;
-      FROM     0, 0 TO 26, 82;
-      TITLE    __GSTTPV__ + " : " ;
-      MDI ;
-      ICON     oIconApp ;
-      MENU     BuildTpvMenu()
-
-   oWndBar                    := TpvCreateButtonBar( oWnd )
-   oWndBar:CreateButtonBar( oWnd, .t., .t. )
-
-   // Set the bar messages-----------------------------------------------------
-
-   oWnd:Cargo                 := cParamsMain
-
-   SET MESSAGE OF oWnd TO __GSTCOPYRIGHT__ NOINSET
-
-   DEFINE MSGITEM oDlgProgress PROMPT ""                                         OF oWnd:oMsgBar SIZE 100
-
-   oWnd:oMsgBar:oDate         := TMsgItem():New( oWnd:oMsgBar, Dtoc( GetSysDate() ), oWnd:oMsgBar:GetWidth( DToC( GetSysDate() ) ) + 12,,,, .t., { || SelSysDate() } )
-   oWnd:oMsgBar:oDate:lTimer  := .t.
-   oWnd:oMsgBar:oDate:bMsg    := { || GetSysDate() }
-   oWnd:oMsgBar:CheckTimer()
-
-   DEFINE MSGITEM oMsgUser    PROMPT "Usuario : "  + Rtrim( oUser():cNombre() )  OF oWnd:oMsgBar SIZE 200
-
-   DEFINE MSGITEM oMsgCaja    PROMPT "Caja : "     + oUser():cCaja()             OF oWnd:oMsgBar SIZE 100
-
-   DEFINE MSGITEM oMsgSesion  PROMPT ""                                          OF oWnd:oMsgBar SIZE 100
-
-   // Abrimos la ventana
-
-   ACTIVATE WINDOW oWnd ;
-      MAXIMIZED ;
-      ON PAINT    ( WndPaint( hDC, oWnd, oBmp ) );
-      ON INIT     ( lTpvInitCheck(), SelCajTactil( oWnd, .t. ), FrontTpv( "01063", oWnd, , , , .t. ) )
-
-      if oWnd != nil
-         SysRefresh(); oWnd:CloseAll(); SysRefresh()
-         oWnd:End()
-      end if
-
-      SysRefresh()
 
 Return nil
 
@@ -5064,7 +4946,7 @@ RETURN oMenu
 
 //--------------------------------------------------------------------------//
 
-STATIC FUNCTION lTPVInitCheck( lDir )
+STATIC FUNCTION lTactilInitCheck( lDir )
 
    local oError
    local oBlock
