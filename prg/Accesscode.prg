@@ -435,12 +435,12 @@ METHOD InitTactilResource( oDlg, oImgUsr, oLstUsr ) CLASS AccessCode
    // Abrimos las bases de datos de usuarios-----------------------------------
 
    USE ( cPatDat() + "USERS.DBF" ) NEW VIA ( cDriver() ) SHARED ALIAS ( ::dbfUser := cCheckArea( "USERS" ) )
-   ( ::dbfUser )->( ordListAdd( cPatDat() + "USERS.CDX" ) )
+   SET ADSINDEX TO ( cPatDat() + "Users.Cdx" ) ADDITIVE   
 
    ( ::dbfUser )->( dbSetFilter( {|| !Field->lGrupo }, "!lGrupo" ) )
 
    USE ( cPatDat() + "Cajas.Dbf" ) NEW VIA ( cDriver() ) SHARED ALIAS ( ::dbfCajas := cCheckArea( "CAJAS" ) )
-   ( ::dbfCajas )->( ordListAdd( cPatDat() + "Cajas.Cdx" ) )
+   SET ADSINDEX TO ( cPatDat() + "Cajas.Cdx" ) ADDITIVE   
 
    // Comprobamos q el usuario esta libre--------------------------------------
 
