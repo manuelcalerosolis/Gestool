@@ -960,7 +960,7 @@ METHOD AddSATClientes() CLASS TFastVentasArticulos
                   ::oDbf:nLinArt    := ::oSatCliL:nDtoDiv
                   ::oDbf:nPrmArt    := ::oSatCliL:nDtoPrm
 
-                  ::oDbf:nSatArt    := nImpUSATCli( ::oSatCliL:cAlias, ::nDecOut, ::nValDiv )
+                  ::oDbf:nPreArt    := nImpUSATCli( ::oSatCliL:cAlias, ::nDecOut, ::nValDiv )
                   ::oDbf:nTrnArt    := nTrnUSATCli( ::oSatCliL:cAlias, ::nDecOut, ::nValDiv )
                   ::oDbf:nPntArt    := nPntLSATCli( ::oSatCliL:cAlias, ::nDecOut, ::nValDiv )
 
