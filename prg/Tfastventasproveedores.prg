@@ -24,7 +24,7 @@ CLASS TFastVentasProveedores FROM TFastReportInfGen
    METHOD AddVariable()
 
    METHOD StartDialog()
-   METHOD BuildTree( oTree, lSubNode )
+   METHOD BuildTree()
 
    METHOD AddAlbaranProveedor()
    METHOD AddFacturaProveedor()
@@ -196,21 +196,33 @@ METHOD lGenerate() CLASS TFastVentasProveedores
    */
 
    do case
-      case ::cTypeName == "Informe de pedidos a proveedores"
+      case ::cReportType == "Pedidos de proveedores"
 
          ::AddPedidosProveedor()
 
-      case ::cTypeName == "Informe de albaranes de proveedores"
+      case ::cReportType == "Albaranes de proveedores"
 
          ::AddAlbaranProveedor( .t. )
 
-      case ::cTypeName == "Informe de facturas de proveedores"
+      case ::cReportType == "Facturas de proveedores"
 
          ::AddFacturaProveedor()
 
          ::AddFacturaRectificativa( .t. )
 
-      case ::cTypeName == "Listado de proveedores"
+      case ::cReportType == "Rectificativas de proveedores"
+      
+         ::AddFacturaRectificativa( .t. )
+
+      case ::cReportType == "Compras"
+
+         ::AddAlbaranProveedor( .t. )
+
+         ::AddFacturaProveedor()
+
+         ::AddFacturaRectificativa( .t. )
+
+      case ::cReportType == "Listado"
 
          ::AddProveedor( .t. )
 
@@ -247,6 +259,8 @@ METHOD AddAlbaranProveedor( lFacturados ) CLASS TFastVentasProveedores
    local cExpLine
 
    DEFAULT lFacturados  := .f.
+
+   ::InitAlbaranesProveedores()
 
    ::oAlbPrvT:OrdSetFocus( "dFecAlb" )
    ::oAlbPrvL:OrdSetFocus( "nNumAlb" )
@@ -325,6 +339,8 @@ METHOD AddAlbaranProveedor( lFacturados ) CLASS TFastVentasProveedores
 
          end if
 
+            ::addAlbaranesProveedores()
+
       end if
 
       ::oAlbPrvT:Skip()
@@ -344,6 +360,8 @@ METHOD AddFacturaProveedor( cCodigoProveedor ) CLASS TFastVentasProveedores
 
    local cExpHead
    local cExpLine
+
+   ::InitFacturasProveedores()
 
    ::oFacPrvT:OrdSetFocus( "dFecFac" )
    ::oFacPrvL:OrdSetFocus( "nNumFac" )
@@ -419,6 +437,8 @@ METHOD AddFacturaProveedor( cCodigoProveedor ) CLASS TFastVentasProveedores
 
          end if
 
+            ::AddFacturasProveedores()
+
       end if
 
       ::oFacPrvT:Skip()
@@ -438,6 +458,8 @@ METHOD AddFacturaRectificativa( cCodigoProveedor ) CLASS TFastVentasProveedores
 
    local cExpHead
    local cExpLine
+
+   ::InitFacturasRectificativasProveedores()
 
    ::oFacRecT:OrdSetFocus( "dFecFac" )
    ::oFacRecL:OrdSetFocus( "nNumFac" )
@@ -506,6 +528,8 @@ METHOD AddFacturaRectificativa( cCodigoProveedor ) CLASS TFastVentasProveedores
             end while
 
          end if
+
+            ::AddFacturasRectificativasProveedores()
 
       end if
 
@@ -655,22 +679,43 @@ METHOD StartDialog() CLASS TFastVentasProveedores
 
    ::CreateTreeImageList()
 
-   ::BuildTree( ::oTreeReporting, .f. )
+   ::BuildTree()
 
  RETURN ( Self )
 
 
 //---------------------------------------------------------------------------//
 
-METHOD BuildTree( oTree, lSubNode ) CLASS TFastVentasProveedores
+METHOD BuildTree( oTree, lLoadFile ) CLASS TFastVentasProveedores
 
-   DEFAULT lSubNode  := .t.
+   local aReports
+
+   DEFAULT oTree     := ::oTreeReporting
+   DEFAULT lLoadFile := .t.
+
+   aReports := {  {  "Title" => "Listado",                           "Image" => 0, "Type" => "Listado",                      "Directory" => "Proveedores",                      "File" => "Listado.fr3"  },;
+                  {  "Title" => "Compras",                           "Image" => 12, "Subnode" =>;
+                  { ;
+                     { "Title" => "Pedidos de proveedores",          "Image" => 2, "Type" => "Pedidos de proveedores",        "Directory" => "Proveedores\Compras",  "File" => "Pedidos de proveedores.fr3" },;
+                     { "Title" => "Albaranes de proveedores",        "Image" => 3, "Type" => "Albaranes de proveedores",      "Directory" => "Proveedores\Compras",  "File" => "Albaranes de proveedores.fr3" },;
+                     { "Title" => "Facturas de proveedores",         "Image" => 4, "Type" => "Facturas de proveedores",       "Directory" => "Proveedores\Compras",  "File" => "Facturas de proveedores.fr3" },;
+                     { "Title" => "Rectificativas de proveedores",   "Image" =>15, "Type" => "Rectificativas de proveedores", "Directory" => "Proveedores\Compras",  "File" => "Rectificativas de proveedores.fr3" },;
+                     { "Title" => "Compras",                         "Image" =>12, "Type" => "Compras",                       "Directory" => "Proveedores\Compras",  "File" => "Compras.fr3" },;                 
+                  } ;
+                  } }
+
+   ::BuildNode( aReports, oTree, lLoadFile )
+
+   oTree:ExpandAll()
+
+   /*DEFAULT lSubNode  := .t.
 
    oTree:Select(  oTree:Add( "Listado de proveedores",                              0, "Listado de proveedores" ) )
                   oTree:Add( "Informe de pedidos a proveedores",                    2, "Informe de pedidos a proveedores" )
                   oTree:Add( "Informe de albaranes de proveedores",                 3, "Informe de albaranes de proveedores" )
                   oTree:Add( "Informe de facturas de proveedores",                  4, "Informe de facturas de proveedores" )
                   oTree:Add( "Informe de facturas rectificativas de proveedores",  18, "Informe de facturas rectificativas de proveedores" )
+*/
 
 RETURN ( Self )
 
@@ -710,22 +755,29 @@ METHOD DataReport( oFr ) CLASS TFastVentasProveedores
    */
 
    do case
-      case ::cTypeName == "Informe de pedidos a proveedores"
+      case ::cReportType == "Pedidos de proveedores"
          
          ::FastReportPedidoProveedor()
 
-       case ::cTypeName == "Informe de albaranes de proveedores"
+       case ::cReportType == "Albaranes de proveedores"
 
          ::FastReportAlbaranProveedor()
 
-      case ::cTypeName == "Informe de facturas de proveedores"
+      case ::cReportType == "Facturas de proveedores"
 
          ::FastReportFacturaProveedor()
 
-      case ::cTypeName == "Informe de facturas rectificativas de proveedores"
+      case ::cReportType == "Rectificativas de proveedores"
 
          ::FastReportRectificativaProveedor()
 
+      case ::cReportType == "Compras"
+
+         ::FastReportAlbaranProveedor()
+
+         ::FastReportFacturaProveedor()
+
+         ::FastReportRectificativaProveedor()
 
    end case
 
@@ -742,9 +794,47 @@ METHOD AddVariable() CLASS TFastVentasProveedores
    */
 
    do case
-      case ::cTypeName == "Informe de pedidos a proveedores"
+      case ::cReportType == "Pedidos de proveedores"
       
-         ::AddVariablePedidoProveedor()
+         ::AddVariablePedidoProveedor()      
+
+         ::AddVariableLineasPedidoProveedor()
+
+      case ::cReportType == "Albaranes de proveedores"   
+
+         ::AddVariableAlbaranProveedor()
+         
+         ::AddVariableLineasAlbaranProveedor()
+
+      case ::cReportType == "Facturas de proveedores"
+
+         ::AddVariableFacturaProveedor()
+
+         ::AddVariableLineasFacturaProveedor()
+
+         ::AddVariableRectificativaProveedor()
+
+         ::AddVariableLineasRectificativaProveedor()
+
+      case ::cReportType == "Rectificativas de proveedores"
+
+         ::AddVariableRectificativaProveedor()
+
+         ::AddVariableLineasRectificativaProveedor()
+
+      case ::cReportType == "Compras"
+
+         ::AddVariableAlbaranProveedor()
+
+         ::AddVariableLineasAlbaranProveedor()
+
+         ::AddVariableFacturaProveedor()
+
+         ::AddVariableLineasFacturaProveedor()
+
+         ::AddVariableRectificativaProveedor()
+
+         ::AddVariableLineasRectificativaProveedor()   
            
    end case
 
