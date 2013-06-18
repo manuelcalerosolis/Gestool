@@ -4,6 +4,18 @@
 		"selected_items":
 		[
 			[
+				"dbGo",
+				"dbgobottom"
+			],
+			[
+				"nRecno",
+				"nRecno"
+			],
+			[
+				"dbBo",
+				"dbgobottom"
+			],
+			[
 				"nNumAlb",
 				"nNumAlb"
 			],
@@ -502,18 +514,6 @@
 			[
 				"Update",
 				"Update"
-			],
-			[
-				"elimino",
-				"Elimino"
-			],
-			[
-				"oCon",
-				"oCon"
-			],
-			[
-				"T",
-				"TGrpFam"
 			]
 		]
 	},
@@ -528,10 +528,10 @@
 			}
 		},
 		{
-			"file": "prg/Factcli.prg",
+			"file": "prg/Precli.prg",
 			"settings":
 			{
-				"buffer_size": 804608,
+				"buffer_size": 400048,
 				"line_ending": "Windows"
 			}
 		}
@@ -569,6 +569,16 @@
 	"file_history":
 	[
 		"/C/fw195/Gestool/prg/Factcli.prg",
+		"/C/fw195/Gestool/prg/Rectprv.prg",
+		"/C/fw195/Gestool/prg/Factprv.prg",
+		"/C/fw195/Gestool/prg/Albprov.prg",
+		"/C/fw195/Gestool/prg/Pedprov.prg",
+		"/C/fw195/Gestool/prg/Satcli.prg",
+		"/C/fw195/Gestool/prg/Tpv.prg",
+		"/C/fw195/Gestool/prg/Facant.prg",
+		"/C/fw195/Gestool/prg/Facrec.prg",
+		"/C/fw195/Gestool/prg/Pedcli.prg",
+		"/C/fw195/Gestool/prg/Precli.prg",
 		"/C/fw195/Gestool/prg/Albcli.prg",
 		"/C/fw195/Gestool/prg/Cfaccli.prg",
 		"/C/fw195/Gestool/prg/Articulo.prg",
@@ -578,7 +588,6 @@
 		"/C/fw195/Gestool/resource/Gstimage12.rc",
 		"/C/fw195/Gestool/prg/Taccesos.prg",
 		"/C/fw195/Gestool/prg/Tfastventasarticulos.prg",
-		"/C/fw195/Gestool/prg/Pedcli.prg",
 		"/C/fw195/Gestool/prg/Rptgal.prg",
 		"/C/fw195/Gestool/prg/Tctacli.prg",
 		"/C/fw195/Gestool/prg/Tctaprv.prg",
@@ -608,9 +617,6 @@
 		"/C/fw195/Gestool/prg/Tutil.prg",
 		"/C/fw195/Gestool/prg/Movalm.prg",
 		"/C/fw195/Gestool/prg/tuser",
-		"/C/fw195/Gestool/prg/Precli.prg",
-		"/C/fw195/Gestool/prg/Satcli.prg",
-		"/C/fw195/Gestool/prg/Facrec.prg",
 		"/C/fw195/Gestool/prg/Internet.prg",
 		"/C/fw195/Gestool/prg/Empcnf.prg",
 		"/C/fw195/Gestool/bin/script/001.prg",
@@ -618,12 +624,6 @@
 		"/C/fw195/Gestool/prg/Utildbf.prg",
 		"/C/fw195/Gestool/prg/Tftp.prg",
 		"/C/Scripts creados/Inma Pepsi/001.prg",
-		"/C/fw195/Gestool/prg/Tpv.prg",
-		"/C/fw195/Gestool/prg/Facant.prg",
-		"/C/fw195/Gestool/prg/Factprv.prg",
-		"/C/fw195/Gestool/prg/Rectprv.prg",
-		"/C/fw195/Gestool/prg/Albprov.prg",
-		"/C/fw195/Gestool/prg/Pedprov.prg",
 		"/C/fw195/Gestool/prg/Xvalalm.prg",
 		"/C/fw195/Gestool/prg/Medicon.prg",
 		"/C/fw195/Gestool/prg/Empdata.prg",
@@ -737,6 +737,19 @@
 		"case_sensitive": false,
 		"find_history":
 		[
+			"on acol",
+			"acol",
+			"on ShowKit",
+			"ShowKit",
+			"on rx",
+			"on prnserie",
+			"prnserie",
+			"prnseries",
+			"on rx",
+			"on prnseri",
+			"on rx",
+			"on prnserie",
+			"on rx",
 			"prnserie",
 			"on rx",
 			"radio",
@@ -851,20 +864,7 @@
 			"on syn",
 			"\"00",
 			"\"00\"",
-			"ON EDTREC",
-			"on edtrec",
-			"obrwlin",
-			"ShowKit",
-			"obtnkit",
-			"Escandallo",
-			"lEscandallo",
-			"lEscandalloEdtRec",
-			"on lShwKit",
-			"lShwKit",
-			"ESCA",
-			"\"@",
-			"on cFirstPath",
-			"on aitm"
+			"ON EDTREC"
 		],
 		"highlight": true,
 		"in_selection": false,
@@ -917,25 +917,25 @@
 							"translate_tabs_to_spaces": true
 						},
 						"translation.x": 0.0,
-						"translation.y": 0.0,
+						"translation.y": 3705.0,
 						"zoom_level": 1.0
 					},
 					"type": "text"
 				},
 				{
 					"buffer": 1,
-					"file": "prg/Factcli.prg",
+					"file": "prg/Precli.prg",
 					"settings":
 					{
-						"buffer_size": 804608,
+						"buffer_size": 400048,
 						"regions":
 						{
 						},
 						"selection":
 						[
 							[
-								181562,
-								181570
+								299380,
+								299380
 							]
 						],
 						"settings":
@@ -945,7 +945,7 @@
 							"translate_tabs_to_spaces": true
 						},
 						"translation.x": 0.0,
-						"translation.y": 102894.0,
+						"translation.y": 172814.0,
 						"zoom_level": 1.0
 					},
 					"type": "text"

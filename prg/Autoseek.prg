@@ -275,6 +275,8 @@ Function lMiniSeek( cPrefij, xCadena, xAlias, nLen )
    local oBlock
    local oError
 
+   DEFAULT nLen   := len( ordkeyval() ) - 2
+
    cType          := ( xAlias )->( dbOrderInfo( DBOI_KEYTYPE ) )
 
    if !( cType $ "CDN" )
@@ -325,7 +327,7 @@ Function lMiniSeek( cPrefij, xCadena, xAlias, nLen )
 
          else
 
-            nLen     := 10
+            // nLen     := 10
 
             if Empty( cPrefij )
 

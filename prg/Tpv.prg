@@ -21366,6 +21366,7 @@ Static Function AsistenteDevolucionTiket( aTmp, aGet, nMode, lDevolucion )
       oBrwDev:lHScroll           := .t.
       oBrwDev:lVScroll           := .t.
       oBrwDev:lRecordSelector    := .t.
+      oBrwDev:bLDblClick         := {|| SelectLinea( @nTotSel, dbfTmp, oBrwDev ) }
 
       REDEFINE BUTTON ;
          ID       120 ;
@@ -21472,15 +21473,11 @@ Static Function ValidaDevolucionTiket( oNumero, oBrwDev, aTmp, aGet, oDlg, dbfTm
 
       lErr        := .t.
 
-      MsgStop( "Número del tiket no encontrado" )
-
    else
 
       if ( dbfTikT )->cTipTik != "1"
 
          lErr     := .t.
-
-         MsgStop( "Esta selección no es un ticket" )
 
       else
 
