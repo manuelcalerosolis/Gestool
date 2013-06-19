@@ -331,13 +331,13 @@ METHOD AddAlbaranProveedor( lFacturados ) CLASS TFastVentasProveedores
 
    local cExpHead
    local cExpLine
+   local sTot
 
    DEFAULT lFacturados  := .f.
 
    ::InitAlbaranesProveedores()
 
-   ::oAlbPrvT:OrdSetFocus( "dFecAlb" )
-   ::oAlbPrvL:OrdSetFocus( "nNumAlb" )
+   ::oAlbPrvT:OrdSetFocus( "dFecAlb" )   
 
    if lFacturados
       cExpHead          := '!lFacturado .and. dFecAlb >= Ctod( "' + Dtoc( ::dIniInf ) + '" ) .and. dFecAlb <= Ctod( "' + Dtoc( ::dFinInf ) + '" )'
@@ -360,58 +360,41 @@ METHOD AddAlbaranProveedor( lFacturados ) CLASS TFastVentasProveedores
 
       if lChkSer( ::oAlbPrvT:cSerAlb, ::aSer )
 
-         if ::oAlbPrvL:Seek( ::oAlbPrvT:cSerAlb + Str( ::oAlbPrvT:nNumAlb ) + ::oAlbPrvT:cSufAlb )
+         sTot     :=sTotAlbPrv( ::oAlbPrvT:cSerAlb + Str( ::oAlbPrvT:nNumAlb ) + ::oAlbPrvT:cSufAlb, ::oAlbPrvT:cAlias, ::oAlbPrvL:cAlias, ::oDbfIva:cAlias, ::oDbfDiv:cAlias )
 
-            while !::lBreak .and. ( ::oAlbPrvT:cSerAlb + Str( ::oAlbPrvT:nNumAlb ) + ::oAlbPrvT:cSufAlb == ::oAlbPrvL:cSerAlb + Str( ::oAlbPrvL:nNumAlb ) + ::oAlbPrvL:cSufAlb )
+        
+         ::oDbf:Blank()
 
-               if !( ::lExcCero  .and. nTotNAlbPrv( ::oAlbPrvL:cAlias ) == 0 )  .and.;
-                  !( ::lExcImp   .and. nImpLAlbPrv( ::oAlbPrvT:cAlias, ::oAlbPrvL:cAlias, ::nDecOut, ::nDerOut, ::nValDiv ) == 0 )
+         ::oDbf:cTipDoc := "Albaranes"
+         ::oDbf:cClsDoc := ALB_PRV
 
-                  /*
-                  Añadimos un nuevo registro
-                  */
+         ::oDbf:cSerDoc := ::oAlbPrvT:cSerAlb
+         ::oDbf:cNumDoc := Str( ::oAlbPrvT:nNumAlb )
+         ::oDbf:cSufDoc := ::oAlbPrvT:cSufAlb
 
-                  if ::lValidRegister( ::oAlbPrvT:cCodPrv )
+         ::oDbf:cIdeDoc := Upper( ::oDbf:cTipDoc ) + ::oDbf:cSerDoc + ::oDbf:cNumDoc + ::oDbf:cSufDoc                                
 
-                  ::oDbf:Append()
+         ::oDbf:cCodPrv := ::oAlbPrvT:cCodPrv
+         ::oDbf:cNomPrv := ::oAlbPrvT:cNomPrv
+         ::oDbf:cCodGrp := oRetFld( ::oAlbPrvT:cCodPrv, ::oDbfPrv, "cCodGrp" )
+         ::oDbf:cCodPgo:= ::oAlbPrvT:cCodPgo
 
-                  ::oDbf:cTipDoc := "Albaranes"
-                  ::oDbf:cSerDoc := ::oAlbPrvT:cSerAlb
-                  ::oDbf:cNumDoc := Str( ::oAlbPrvT:nNumAlb )
-                  ::oDbf:cSufDoc := ::oAlbPrvT:cSufAlb
-                  ::oDbf:cIdeDoc := Upper( ::oDbf:cTipDoc ) + ::oDbf:cSerDoc + ::oDbf:cNumDoc + ::oDbf:cSufDoc
+         ::oDbf:nAnoDoc    := Year( ::oAlbPrvT:dFecAlb )
+         ::oDbf:nMesDoc    := Month( ::oAlbPrvT:dFecAlb )
+         ::oDbf:dFecDoc    := ::oAlbPrvT:dFecAlb
+         ::oDbf:cHorDoc    := SubStr( ::oAlbPrvT:cTimChg, 1, 2 )
+         ::oDbf:cMinDoc    := SubStr( ::oAlbPrvT:cTimChg, 3, 2 )
 
-                  ::oDbf:dFecDoc := ::oAlbPrvT:dFecAlb
-                  ::oDbf:cCodPago:= ::oAlbPrvT:cCodPgo
+         ::oDbf:nTotNet    := sTot:nTotalNeto
+         ::oDbf:nTotIva    := sTot:nTotalIva
+         ::oDbf:nTotReq    := sTot:nTotalRecargoEquivalencia
+         ::oDbf:nTotDoc    := sTot:nTotalDocumento
 
-                  ::oDbf:cCodPrv := ::oAlbPrvT:cCodPrv
-                  ::oDbf:cNomPrv := ::oAlbPrvT:cNomPrv
-                  ::oDbf:cCodGrp := oRetFld( ::oAlbPrvT:cCodPrv, ::oDbfPrv, "cCodGrp" )
-
-                  ::oDbf:cCodArt := ::oAlbPrvL:cRef
-                  ::oDbf:cNomArt := ::oAlbPrvL:cDetalle
-                  ::oDbf:nUniArt := nTotNAlbPrv( ::oAlbPrvL:cAlias )
-                  ::oDbf:nImpArt := nImpLAlbPrv( ::oAlbPrvT:cAlias, ::oAlbPrvL:cAlias, ::nDecOut, ::nDerOut, ::nValDiv, , , .t., .t. )
-                  ::oDbf:nIvaArt := nIvaLAlbPrv( ::oAlbPrvT:cAlias, ::oAlbPrvL:cAlias, ::nDecOut, ::nDerOut, ::nValDiv )
-                  ::oDbf:nTotArt := nImpLAlbPrv( ::oAlbPrvT:cAlias, ::oAlbPrvL:cAlias, ::nDecOut, ::nDerOut, ::nValDiv, , , .t., .t.  )
-                  ::oDbf:nTotArt += nIvaLAlbPrv( ::oAlbPrvT:cAlias, ::oAlbPrvL:cAlias, ::nDecOut, ::nDerOut, ::nValDiv )
-
-                  ::oDbf:cCodPr1 := ::oAlbPrvL:cCodPr1
-                  ::oDbf:cCodPr2 := ::oAlbPrvL:cCodPr2
-                  ::oDbf:cValPr1 := ::oAlbPrvL:cValPr1
-                  ::oDbf:cValPr2 := ::oAlbPrvL:cValPr2
-
-                  ::oDbf:Save()
-
-                  end if
-
-               end if
-
-               ::oAlbPrvL:Skip()
-
-            end while
-
-         end if
+         if ::lValidRegister()
+            ::oDbf:Insert()
+         else
+            ::oDbf:Cancel()
+         end if                
 
             ::addAlbaranesProveedores()
 
@@ -423,8 +406,7 @@ METHOD AddAlbaranProveedor( lFacturados ) CLASS TFastVentasProveedores
 
    end while
 
-   ::oAlbPrvT:IdxDelete( cCurUsr(), GetFileNoExt( ::oAlbPrvT:cFile ) )
-   ::oAlbPrvL:IdxDelete( cCurUsr(), GetFileNoExt( ::oAlbPrvL:cFile ) )
+   ::oAlbPrvT:IdxDelete( cCurUsr(), GetFileNoExt( ::oAlbPrvT:cFile ) )   
 
 RETURN ( Self )
 

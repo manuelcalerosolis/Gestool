@@ -14940,6 +14940,7 @@ FUNCTION nDtoUPedCli( dbfTmpLin, nDec, nVdv )
 RETURN ( round( nCalculo, nDec ) )
 
 //---------------------------------------------------------------------------//
+//Total de una linea con impuestos incluidos
 
 FUNCTION nTotFPedCli( cPedCliL, nDec, nRou, nVdv, lDto, lPntVer, lImpTrn, cPorDiv )
 

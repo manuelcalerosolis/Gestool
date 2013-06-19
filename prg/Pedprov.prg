@@ -161,6 +161,7 @@ memvar nTotImp
 memvar nTotUno
 memvar nTotDos
 
+
 memvar cPicUndPed
 memvar cPinDivPed
 memvar cPirDivPed
@@ -4240,6 +4241,7 @@ FUNCTION nTotPedPrv( cPedido, cPedPrvT, cPedPrvL, cIva, cDiv, aTmp, cDivRet, lPi
    public aIvaTre    := aTotIva[ 3 ]
    public nTotUno    := 0
    public nTotDos    := 0
+    
 
    nRec              := ( cPedPrvL )->( Recno() )
 
@@ -4917,6 +4919,18 @@ FUNCTION nTotNPedPrv( uTmp )
 RETURN ( nCalculo )
 
 //---------------------------------------------------------------------------//
+//Total de una linea con impuestos incluidos
+
+FUNCTION nTotFPedPrv( cPedPrvL, nDec, nRou, nVdv, lDto, lPntVer, lImpTrn, cPorDiv )
+
+   local nCalculo := 0
+
+   nCalculo       += nTotLPedPrv( cPedPrvL, nDec, nRou, nVdv, lDto, lPntVer, lImpTrn )
+   nCalculo       += nIvaLPedPrv( cPedPrvL, nDec, nRou, nVdv, lDto, lPntVer, lImpTrn )
+
+return ( if( cPorDiv != nil, Trans( nCalculo, cPorDiv ), nCalculo ) )
+
+//---------------------------------------------------------------------------//
 
 FUNCTION nTotUPedPrv( uTmp, nDec, nVdv )
 
@@ -5121,18 +5135,18 @@ RETURN ( nCalculo )
 
 //---------------------------------------------------------------------------//
 
-FUNCTION nIvaLPedPrv( uPedPrvT, uPedPrvL, nDec, nRec, nVdv, cPouDiv )
+FUNCTION nIvaLPedPrv( uPedPrvL, nDec, nRec, nVdv, cPouDiv )
 
    local nCalculo
 
-   DEFAULT uPedPrvT  := dbfPedPrvT
    DEFAULT uPedPrvL  := dbfPedPrvL
    DEFAULT nDec      := nDinDiv()
    DEFAULT nRec      := nRinDiv()
    DEFAULT nVdv      := 1
 
-   nCalculo          := nImpLPedPrv( uPedPrvT, uPedPrvL, nDec, nRec, nVdv, .f., cPouDiv )
-   nCalculo          := nCalculo * ( uPedPrvL )->nIva / 100
+   nCalculo          := nTotLPedPrv( uPedPrvL, nDec, nRec, nVdv, cPouDiv )
+
+   nCalculo          := Round( nCalculo * ( uPedPrvL )->nIva / 100, nRec )
 
 RETURN ( if( cPouDiv != NIL, Trans( nCalculo, cPouDiv ), nCalculo ) )
 
