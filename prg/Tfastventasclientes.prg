@@ -353,31 +353,6 @@ METHOD BuildTree( oTree, lLoadFile ) CLASS TFastVentasClientes
 
    oTree:ExpandAll()
 
-  // local oTreeVentas
-
-   /*
-
-   oTree:Add( "Listado", 19, "Listado"  )
-
-   oTreeVentas             := oTree:Add( "Ventas", 11 )
-   oTreeVentas:Add( "Informe de SAT",           20,   "Informe de SAT" )
-   oTreeVentas:Add( "Informe de presupuestos",  5,    "Informe de presupuestos" )
-   oTreeVentas:Add( "Informe de pedidos",       6,    "Informe de pedidos" )
-   oTreeVentas:Add( "Informe de albaranes",     7,    "Informe de albaranes" )
-
-   oTreeVentas:Add( "Informe de facturas",      8,    "Informe de facturas")
-   
-   oTreeVentas:Add( "Declaración anual de operaciones con terceras personas. Modelo 347",  8, "Informe de ventas consolidadas" )
-
-   oTreeVentas:Add( "Informe de facturas rectificativas", 9, "Informe de facturas rectificativas" )
-
-   oTreeVentas:Add( "Informe de tickets",       10,   "Informe de tickets" )
-   oTreeVentas:Add( "Informe de ventas",        11,   "Informe de ventas" )
-
-   oTreeVentas:Expand()
-
-   */
-
 RETURN ( Self )
 
 //---------------------------------------------------------------------------//
@@ -631,8 +606,6 @@ Return ( Self )
 METHOD lGenerate() CLASS TFastVentasClientes
 
    ::oDbf:Zap()
-
-   ? ::cReportType
 
    /*
    Recorremos clientes---------------------------------------------------------

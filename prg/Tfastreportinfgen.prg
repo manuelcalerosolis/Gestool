@@ -331,38 +331,38 @@ CLASS TFastReportInfGen FROM TNewInfGen
    METHOD AddVariableAlbaranProveedor()
    METHOD AddVariableLineasAlbaranProveedor()
 
-   METHOD cDetalleAlbaranesProveedores()                            INLINE ( cDesAlbPrv ( ::oPedPrvL:cAlias ) )
-   METHOD nTotalUnidadesAlbaranesProveedores()                      INLINE ( nTotNAlbPrv( ::oPedPrvL:cAlias ) )
-   METHOD nPrecioUnitarioAlbaranesProveedores()                     INLINE ( nTotUAlbPrv( ::oPedPrvL:cAlias ) ) 
-   METHOD nTotalLineaAlbaranesProveedores()                         INLINE ( nTotLAlbPrv( ::oPedPrvL:cAlias ) )   
-   METHOD nTotalImpuestosIncluidosLineaAlbaranesProveedores()       INLINE ( nTotAlbPrv(  ::oPedPrvL:cAlias ) )
-   METHOD nTotalIVALineaAlbaranesProveedores()                      INLINE ( nIvaLAlbPrv( ::oPedPrvL:cAlias ) )
-   METHOD nTotalDescuentoPorcentualLineaAlbaranesProveedores()      INLINE ( nDtoLAlbPrv( ::oPedPrvL:cAlias ) )
-   METHOD nTotalDescuentoPromocionalLineaAlbaranesProveedores()     INLINE ( nPrmLAlbPrv( ::oPedPrvL:cAlias ) )
+   METHOD cDetalleAlbaranesProveedores()                            INLINE ( cDesAlbPrv ( ::oAlbPrvL:cAlias ) )
+   METHOD nTotalUnidadesAlbaranesProveedores()                      INLINE ( nTotNAlbPrv( ::oAlbPrvL:cAlias ) )
+   METHOD nPrecioUnitarioAlbaranesProveedores()                     INLINE ( nTotUAlbPrv( ::oAlbPrvL:cAlias ) ) 
+   METHOD nTotalLineaAlbaranesProveedores()                         INLINE ( nTotLAlbPrv( ::oAlbPrvL:cAlias ) )   
+   METHOD nTotalImpuestosIncluidosLineaAlbaranesProveedores()       INLINE ( nTotAlbPrv(  ::oAlbPrvL:cAlias ) )
+   METHOD nTotalIVALineaAlbaranesProveedores()                      INLINE ( nIvaLAlbPrv( ::oAlbPrvL:cAlias ) )
+   METHOD nTotalDescuentoPorcentualLineaAlbaranesProveedores()      INLINE ( nDtoLAlbPrv( ::oAlbPrvL:cAlias ) )
+   METHOD nTotalDescuentoPromocionalLineaAlbaranesProveedores()     INLINE ( nPrmLAlbPrv( ::oAlbPrvL:cAlias ) )
 
    METHOD AddVariableFacturaProveedor()
    METHOD AddVariableLineasFacturaProveedor()
 
-   METHOD cDetalleFacturasProveedores()                            INLINE ( cDesFacPrv ( ::oPedPrvL:cAlias ) )
-   METHOD nTotalUnidadesFacturasProveedores()                      INLINE ( nTotNFacPrv( ::oPedPrvL:cAlias ) )
-   METHOD nPrecioUnitarioFacturasProveedores()                     INLINE ( nTotUFacPrv( ::oPedPrvL:cAlias ) ) 
-   METHOD nTotalLineaFacturasProveedores()                         INLINE ( nTotLFacPrv( ::oPedPrvL:cAlias ) )   
-   METHOD nTotalImpuestosIncluidosLineaFacturasProveedores()       INLINE ( nTotFacPrv(  ::oPedPrvL:cAlias ) )
-   METHOD nTotalIVALineaFacturasProveedores()                      INLINE ( nIvaLFacPrv( ::oPedPrvL:cAlias ) )
-   METHOD nTotalDescuentoPorcentualLineaFacturasProveedores()      INLINE ( nDtoLFacPrv( ::oPedPrvL:cAlias ) )
-   METHOD nTotalDescuentoPromocionalLineaFacturasProveedores()     INLINE ( nPrmLFacPrv( ::oPedPrvL:cAlias ) )
+   METHOD cDetalleFacturasProveedores()                            INLINE ( cDesFacPrv ( ::oFacPrvL:cAlias ) )
+   METHOD nTotalUnidadesFacturasProveedores()                      INLINE ( nTotNFacPrv( ::oFacPrvL:cAlias ) )
+   METHOD nPrecioUnitarioFacturasProveedores()                     INLINE ( nTotUFacPrv( ::oFacPrvL:cAlias ) ) 
+   METHOD nTotalLineaFacturasProveedores()                         INLINE ( nTotLFacPrv( ::oFacPrvL:cAlias ) )   
+   METHOD nTotalImpuestosIncluidosLineaFacturasProveedores()       INLINE ( nTotFacPrv(  ::oFacPrvL:cAlias ) )
+   METHOD nTotalIVALineaFacturasProveedores()                      INLINE ( nIvaLFacPrv( ::oFacPrvL:cAlias ) )
+   METHOD nTotalDescuentoPorcentualLineaFacturasProveedores()      INLINE ( nDtoLFacPrv( ::oFacPrvL:cAlias ) )
+   METHOD nTotalDescuentoPromocionalLineaFacturasProveedores()     INLINE ( nPrmLFacPrv( ::oFacPrvL:cAlias ) )
 
    METHOD AddVariableRectificativaProveedor()
    METHOD AddVariableLineasRectificativaProveedor()
 
-   METHOD cDetalleRectificativasProveedores()                            INLINE ( cDesFacRec ( ::oPedPrvL:cAlias ) )
-   METHOD nTotalUnidadesRectificativasProveedores()                      INLINE ( nTotNFacRec( ::oPedPrvL:cAlias ) )
-   METHOD nPrecioUnitarioRectificativasProveedores()                     INLINE ( nTotUFacRec( ::oPedPrvL:cAlias ) ) 
-   METHOD nTotalLineaRectificativasProveedores()                         INLINE ( nTotLFacRec( ::oPedPrvL:cAlias ) )   
-   METHOD nTotalImpuestosIncluidosLineaRectificativasProveedores()       INLINE ( nTotFacRec(  ::oPedPrvL:cAlias ) )
-   METHOD nTotalIVALineaRectificativasProveedores()                      INLINE ( nIvaLFacRec( ::oPedPrvL:cAlias ) )
-   METHOD nTotalDescuentoPorcentualLineaRectificativasProveedores()      INLINE ( nDtoLFacRec( ::oPedPrvL:cAlias ) )
-   METHOD nTotalDescuentoPromocionalLineaRectificativasProveedores()     INLINE ( nPrmLFacRec( ::oPedPrvL:cAlias ) )
+   METHOD cDetalleRectificativasProveedores()                            INLINE ( cDesRctPrv ( ::oRctPrvL:cAlias ) )
+   METHOD nTotalUnidadesRectificativasProveedores()                      INLINE ( nTotNRctPrv( ::oRctPrvL:cAlias ) )
+   METHOD nPrecioUnitarioRectificativasProveedores()                     INLINE ( nTotURctPrv( ::oRctPrvL:cAlias ) ) 
+   METHOD nTotalLineaRectificativasProveedores()                         INLINE ( nTotLRctPrv( ::oRctPrvL:cAlias ) )   
+   METHOD nTotalImpuestosIncluidosLineaRectificativasProveedores()       INLINE ( nTotRctPrv(  ::oRctPrvL:cAlias ) )
+   METHOD nTotalIVALineaRectificativasProveedores()                      INLINE ( nIvaLRctPrv( ::oRctPrvL:cAlias ) )
+   METHOD nTotalDescuentoPorcentualLineaRectificativasProveedores()      INLINE ( nDtoLRctPrv( ::oRctPrvL:cAlias ) )
+   METHOD nTotalDescuentoPromocionalLineaRectificativasProveedores()     INLINE ( nPrmLRctPrv( ::oRctPrvL:cAlias ) )
 
    //------------------------------------------------------------------------//
 
@@ -875,10 +875,10 @@ CLASS TFastReportInfGen FROM TNewInfGen
 
    INLINE METHOD AddFacturasRectificativasProveedores()
 
-      ::nBaseFacturasRectificativasProveedores       += ::oFacRecT:nTotNet
-      ::nIVAFacturasRectificativasProveedores        += ::oFacRecT:nTotIva
-      ::nRecargoFacturasRectificativasProveedores    += ::oFacRecT:nTotReq
-      ::nTotalFacturasRectificativasProveedores      += ::oFacRecT:nTotFac
+      ::nBaseFacturasRectificativasProveedores       += ::oRctPrvT:nTotNet
+      ::nIVAFacturasRectificativasProveedores        += ::oRctPrvT:nTotIva
+      ::nRecargoFacturasRectificativasProveedores    += ::oRctPrvT:nTotReq
+      ::nTotalFacturasRectificativasProveedores      += ::oRctPrvT:nTotFac
 
       RETURN ( Self )
 
@@ -3039,7 +3039,7 @@ METHOD FastReportPedidoProveedor()
    ::oFastReport:SetFieldAliases(   "Pedidos de proveedor", cItemsToReport( aItmPedPrv() ) )
       
    ::oPedPrvL:OrdSetFocus( "iNumPed" )
-      
+
    ::oFastReport:SetWorkArea(       "Lineas pedidos de proveedor", ::oPedPrvL:nArea )
    ::oFastReport:SetFieldAliases(   "Lineas pedidos de proveedor", cItemsToReport( aColPedPrv() ) )
 
