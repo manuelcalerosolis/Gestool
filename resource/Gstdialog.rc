@@ -18884,9 +18884,8 @@ FONT 8, "MS Sans Serif"
 {
   CONTROL "Ficheros de sistema", 100, "Button", BS_AUTOCHECKBOX|WS_TABSTOP, 4, 44, 75, 10
   CONTROL "Ficheros empresa", 101, "Button", BS_AUTOCHECKBOX|WS_TABSTOP, 4, 66, 75, 10
-  CONTROL "&Aceptar [F5]", IDOK, "Button", WS_TABSTOP, 224, 206, 50, 14
-  CONTROL "&Cancelar", IDCANCEL, "Button", WS_TABSTOP, 279, 206, 50, 14
-  CONTROL "A&yuda", 998, "Button", WS_TABSTOP, 334, 206, 50, 14
+  CONTROL "&Aceptar [F5]", IDOK, "Button", WS_TABSTOP, 279, 206, 50, 14
+  CONTROL "&Cancelar", IDCANCEL, "Button", WS_TABSTOP, 334, 206, 50, 14
   CONTROL "Proceso en curso", -1, "Button", BS_GROUPBOX, 2, 176, 382, 22
   CONTROL "", 110, "Static", SS_CENTER|WS_GROUP, 4, 187, 378, 8
   CONTROL "", 600, "Static", SS_BITMAP|SS_CENTERIMAGE|SS_REALSIZEIMAGE, 0, 0, 386, 34
