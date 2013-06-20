@@ -5827,14 +5827,14 @@ Return .t.
 //---------------------------------------------------------------------------//
 //Total de una linea con impuestos incluidos
 
-FUNCTION nTotFAlbPrv( cAlbPrvL, nDec, nRou, nVdv, lDto, lPntVer, lImpTrn, cPorDiv )
+FUNCTION nTotFAlbPrv( uAlbPrvL, nDec, nRec, nVdv, cPirDiv )
 
    local nCalculo := 0
 
-   nCalculo       += nTotLAlbPrv( cAlbPrvL, nDec, nRou, nVdv, lDto, lPntVer, lImpTrn )
-   nCalculo       += nIvaLAlbPrv( cAlbPrvL, nDec, nRou, nVdv, lDto, lPntVer, lImpTrn )
+   nCalculo       += nTotLAlbPrv( uAlbPrvL, nDec, nRec, nVdv, cPirDiv )
+   nCalculo       += nIvaLAlbPrv( uAlbPrvL, nDec, nRec, nVdv, cPirDiv )
 
-return ( if( cPorDiv != nil, Trans( nCalculo, cPorDiv ), nCalculo ) )
+return ( if( cPirDiv != nil, Trans( nCalculo, cPirDiv ), nCalculo ) )
 
 //---------------------------------------------------------------------------//
 // Precio del articulo

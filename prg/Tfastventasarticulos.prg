@@ -10,9 +10,7 @@
 CLASS TFastVentasArticulos FROM TFastReportInfGen
 
    DATA  cType                            INIT "Articulos"
-   DATA  cSubType                         INIT ""
 
-   DATA  cResource                        INIT "FastReportArticulos"
    DATA  lUnidadesNegativo                INIT .f.
 
    DATA  oProLin
@@ -52,8 +50,6 @@ CLASS TFastVentasArticulos FROM TFastReportInfGen
    METHOD AddFacturaProveedor()
    METHOD AddRectificativaProveedor()
 
-   METHOD TreeReportingChanged()
-
    METHOD cIdeDocumento()  INLINE ( ::oDbf:cClsDoc + ::oDbf:cSerDoc + ::oDbf:cNumDoc + ::oDbf:cSufDoc ) 
 
 END CLASS
@@ -64,6 +60,8 @@ METHOD lResource( cFld ) CLASS TFastVentasArticulos
 
    ::lNewInforme     := .t.
    ::lDefCondiciones := .f.
+
+   ::cSubTitle       := "Informe de artículos"
 
    if !::NewResource()
       return .f.
@@ -2643,18 +2641,3 @@ RETURN ( Self )
 
 //---------------------------------------------------------------------------//
 
-METHOD TreeReportingChanged() CLASS TFastVentasArticulos
-
-   local cTitle   := ::oTreeReporting:GetSelText()
-
-   if cTitle == "Listado"
-      ::lHideFecha()
-   else
-      ::lShowFecha()
-   end if
-
-   ::oDlg:cTitle( "Reporting : [" + cTitle + "]" )
-
-Return ( Self )
-
-//---------------------------------------------------------------------------//

@@ -8,9 +8,7 @@
 
 CLASS TFastVentasClientes FROM TFastReportInfGen
 
-   DATA  cType           INIT "Clientes"
-
-   DATA  cResource       INIT "FastReportArticulos"
+   DATA  cType                            INIT "Clientes"
 
    DATA  oObras
    DATA  oBancos
@@ -43,8 +41,6 @@ CLASS TFastVentasClientes FROM TFastReportInfGen
 
    METHOD AddClientes()
 
-   METHOD TreeReportingChanged()
-
    METHOD cIdeDocumento()  INLINE ( ::oDbf:cClsDoc + ::oDbf:cSerDoc + ::oDbf:cNumDoc + ::oDbf:cSufDoc )
 
    METHOD preCliInfo( cTitle )
@@ -57,6 +53,8 @@ METHOD lResource( cFld ) CLASS TFastVentasClientes
 
    ::lNewInforme     := .t.
    ::lDefCondiciones := .f.
+
+   ::cSubTitle       := "Informe de ventas"
 
    if !::NewResource()
       return .f.
@@ -138,7 +136,7 @@ METHOD OpenFiles() CLASS TFastVentasClientes
 
       DATABASE NEW ::oFacCliL PATH ( cPatEmp() ) CLASS "FACCLIL" FILE "FACCLIL.DBF" VIA ( cDriver() ) SHARED INDEX "FACCLIL.CDX"
 
-      ::oFacCliP := TDataCenter():oFacCliP()
+      ::oFacCliP  := TDataCenter():oFacCliP()
 
       DATABASE NEW ::oAntCliT PATH ( cPatEmp() ) CLASS "AntCliT" FILE "AntCliT.Dbf" VIA ( cDriver() ) SHARED INDEX "AntcliT.Cdx"
 
@@ -584,22 +582,6 @@ METHOD AddVariable() CLASS TFastVentasClientes
    end case
 
 Return ( Super:AddVariable() )
-
-//---------------------------------------------------------------------------//
-
-METHOD TreeReportingChanged() CLASS TFastVentasClientes
-
-   local cTitle   := ::oTreeReporting:GetSelText()
-
-   if cTitle == "Listado"
-      ::lHideFecha()
-   else
-      ::lShowFecha()
-   end if
-
-   ::oDlg:cTitle( "Reporting : [" + cTitle + "]" )
-
-Return ( Self )
 
 //---------------------------------------------------------------------------//
 
