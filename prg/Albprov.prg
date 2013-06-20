@@ -231,6 +231,9 @@ memvar nTotIva
 memvar nTotReq
 memvar nTotAlb
 memvar nTotImp
+memvar nTotUno
+memvar nTotDos
+
 memvar aImpVto
 memvar aDatVto
 memvar cPicUndAlb
@@ -4697,8 +4700,7 @@ FUNCTION nTotAlbPrv( nAlbaran, cAlbPrvT, cAlbPrvL, cIva, cDiv, aTmp, cDivRet, lP
 	local aTotalDPP	:= { 0, 0, 0 }
    local aTotalUno   := { 0, 0, 0 }
   	local aTotalDos   := { 0, 0, 0 }
-   local nTotUno
-   local nTotDos
+   
 
    DEFAULT cAlbPrvT  := dbfAlbPrvT
    DEFAULT cAlbPrvL  := dbfAlbPrvL
@@ -4721,6 +4723,8 @@ FUNCTION nTotAlbPrv( nAlbaran, cAlbPrvT, cAlbPrvL, cIva, cDiv, aTmp, cDivRet, lP
    public aIvaTre    := aTotIva[ 3 ]
    public aImpVto    := {}
    public aDatVto    := {}
+   public nTotUno    :=0
+   public nTotDos    :=0
 
    nRecno            := ( cAlbPrvL )->( Recno() )
 
@@ -4951,6 +4955,28 @@ FUNCTION aTotAlbPrv( cAlbaran, dbfAlbPrvT, dbfAlbPrvL, dbfIva, dbfDiv, cDivRet )
    nTotAlbPrv( cAlbaran, dbfAlbPrvT, dbfAlbPrvL, dbfIva, dbfDiv, nil, cDivRet, .f. )
 
 RETURN ( { nTotNet, nTotIva, nTotReq, nTotAlb, aTotIva } )
+
+//--------------------------------------------------------------------------//
+
+Function sTotAlbPrv( cAlbaran, dbfMaster, dbfLine, dbfIva, dbfDiv, cDivRet )
+
+   local sTotal
+
+   nTotAlbPrv( cAlbaran, dbfMaster, dbfLine, dbfIva, dbfDiv, nil, cDivRet, .f. )
+
+   sTotal                                 := sTotal()
+   sTotal:nTotalBruto                     := nTotBrt
+   sTotal:nTotalNeto                      := nTotNet
+   sTotal:nTotalIva                       := nTotIva
+   sTotal:aTotalIva                       := aTotIva
+   sTotal:nTotalRecargoEquivalencia       := nTotReq
+   sTotal:nTotalDocumento                 := nTotAlb
+   sTotal:nTotalDescuentoGeneral          := nTotDto
+   sTotal:nTotalDescuentoProntoPago       := nTotDpp
+   sTotal:nTotalDescuentoUno              := nTotUno
+   sTotal:nTotalDescuentoDos              := nTotDos
+
+Return ( sTotal )
 
 //--------------------------------------------------------------------------//
 
@@ -5799,6 +5825,18 @@ Static Function lCalcDeta( aTmp, aTmpAlb, aGet, oTotal )
 Return .t.
 
 //---------------------------------------------------------------------------//
+//Total de una linea con impuestos incluidos
+
+FUNCTION nTotFAlbPrv( cAlbPrvL, nDec, nRou, nVdv, lDto, lPntVer, lImpTrn, cPorDiv )
+
+   local nCalculo := 0
+
+   nCalculo       += nTotLAlbPrv( cAlbPrvL, nDec, nRou, nVdv, lDto, lPntVer, lImpTrn )
+   nCalculo       += nIvaLAlbPrv( cAlbPrvL, nDec, nRou, nVdv, lDto, lPntVer, lImpTrn )
+
+return ( if( cPorDiv != nil, Trans( nCalculo, cPorDiv ), nCalculo ) )
+
+//---------------------------------------------------------------------------//
 // Precio del articulo
 
 FUNCTION nTotUAlbPrv( uAlbPrvL, nDec, nVdv, cPinDiv )
@@ -6507,6 +6545,9 @@ FUNCTION rxAlbPrv( cPath, oMeter )
 
       ( dbfAlbPrvT)->( ordCondSet("!Deleted() .and. !lFacturado", {||!Deleted() .and. !Field->lFacturado }, , , , , , , , , .t.  ) )
       ( dbfAlbPrvT)->( ordCreate( cPath + "AlbProvL.Cdx", "cRefFec", "cRef + dtos( dFecAlb )", {|| Field->cRef + dtos( Field->dFecAlb ) } ) )
+
+      ( dbfAlbPrvT)->( ordCondSet("!Deleted()", {||!Deleted()}  ) )
+      ( dbfAlbPrvT)->( ordCreate( cPath + "AlbProvL.CDX", "iNumAlb", "'02' + CSERALB + STR( NNUMALB ) + CSUFALB", {|| '02' + Field->cSerAlb + STR( Field->nNumAlb ) + Field->cSufAlb } ) )
 
       ( dbfAlbPrvT )->( dbCloseArea() )
    else
@@ -7730,11 +7771,18 @@ RETURN ( Round( nCalculo, nDec ) )
 
 //---------------------------------------------------------------------------//
 
-FUNCTION nIvaLAlbPrv( dbfAlb, dbfLin, nDec, nRou, nVdv, cPorDiv )
+FUNCTION nIvaLAlbPrv( uAlbPrvL, nDec, nRou, nVdv, cPorDiv )
 
-   local nCalculo := nImpLAlbPrv( dbfAlb, dbfLin, nDec, nRou, nVdv )
+   local nCalculo 
 
-   nCalculo       := Round( nCalculo * ( dbfLin )->nIva / 100, nRou )
+   DEFAULT uAlbPrvL  := dbfAlbPrvL
+   DEFAULT nDec      := nDinDiv()
+   DEFAULT nRou      := nRinDiv()
+   DEFAULT nVdv      := 1
+
+   nCalculo          := nTotLAlbPrv( uAlbPrvL, nDec, nRou, nVdv )
+
+   nCalculo          := Round( nCalculo * ( uAlbPrvL )->nIva / 100, nRou )
 
 RETURN ( if( cPorDiv != nil, Trans( nCalculo, cPorDiv ), nCalculo ) )
 

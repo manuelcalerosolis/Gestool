@@ -125,10 +125,10 @@ METHOD GenIndices( oMsg )
    StopServices()
 
    dbCloseAll()
-/*
+
    oBlock            := ErrorBlock( {| oError | ApoloBreak( oError ) } )
    BEGIN SEQUENCE
-*/
+
    if !Empty( oMsg )
       ::oMsg         := oMsg
    end if
@@ -491,7 +491,6 @@ METHOD GenIndices( oMsg )
          ::SetText( "Sincroniza bancos de clientes", ::aProgress[ 6 ] )                      ; SynClient( ::cPathEmp )
          ::SetText( "Sincroniza bancos de proveedores", ::aProgress[ 6 ] )                   ; SynProvee( ::cPathEmp )
          ::SetText( "Sincroniza artículos", ::aProgress[ 6 ] )                               ; SynArt(    ::cPathEmp )
-         ::SetText( "Sincroniza recibos de proveedores", ::aProgress[ 6 ]  )                 ; SynRecPrv( ::cPathEmp )
          ::SetText( "Sincroniza líneas de SAT de clientes", ::aProgress[ 6 ]  )              ; SynSatCli( ::cPathEmp )
          ::SetText( "Sincroniza líneas de presupuestos", ::aProgress[ 6 ]  )                 ; SynPreCli( ::cPathEmp )
          ::SetText( "Sincroniza líneas de pedidos de clientes", ::aProgress[ 6 ]  )          ; SynPedCli( ::cPathEmp )
@@ -505,6 +504,7 @@ METHOD GenIndices( oMsg )
          ::SetText( "Sincroniza líneas de albaranes a proveedor", ::aProgress[ 6 ]  )        ; SynAlbPrv( ::cPathEmp )
          ::SetText( "Sincroniza líneas de facturas a proveedor", ::aProgress[ 6 ]  )         ; SynFacPrv( ::cPathEmp )
          ::SetText( "Sincroniza líneas de rectificativas a proveedor", ::aProgress[ 6 ]  )   ; SynRctPrv( ::cPathEmp )
+         ::SetText( "Sincroniza recibos de proveedores", ::aProgress[ 6 ]  )                 ; SynRecPrv( ::cPathEmp )
          ::SetText( "Sincroniza líneas de depósitos de agentes", ::aProgress[ 6 ]  )         ; SynDepAge( ::cPathEmp )
          ::SetText( "Sincroniza líneas de ordenes de carga", ::aProgress[ 6 ]  )             ; SynOrdCar( ::cPathEmp )
          ::SetText( "Sincroniza líneas de movimientos de almacén", ::aProgress[ 6 ]  )       ; SynRemMov( ::cPathEmp )
@@ -524,7 +524,7 @@ METHOD GenIndices( oMsg )
       ::oDlg:Enable()
       ::oDlg:End()
    end if
-/*
+
    RECOVER USING oError
 
       msgStop( ErrorMessage( oError ), "Error al realizar el proceso de organización" )
@@ -539,7 +539,7 @@ METHOD GenIndices( oMsg )
    END SEQUENCE
 
    ErrorBlock( oBlock )
-*/
+
    StartAutoImp()
 
 RETURN ( nil )

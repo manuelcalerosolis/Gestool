@@ -158,6 +158,10 @@ memvar nTotIva
 memvar nTotReq
 memvar nTotPed
 memvar nTotImp
+memvar nTotUno
+memvar nTotDos
+
+
 memvar cPicUndPed
 memvar cPinDivPed
 memvar cPirDivPed
@@ -4214,8 +4218,6 @@ FUNCTION nTotPedPrv( cPedido, cPedPrvT, cPedPrvL, cIva, cDiv, aTmp, cDivRet, lPi
    local aTotDPP     := { 0, 0, 0 }
    local aTotUno     := { 0, 0, 0 }
    local aTotDos     := { 0, 0, 0 }
-   local nTotUno
-   local nTotDos
    local bCondition
 
    DEFAULT cPedPrvT  := dbfPedPrvT
@@ -4237,6 +4239,9 @@ FUNCTION nTotPedPrv( cPedido, cPedPrvT, cPedPrvL, cIva, cDiv, aTmp, cDivRet, lPi
    public aIvaUno    := aTotIva[ 1 ]
    public aIvaDos    := aTotIva[ 2 ]
    public aIvaTre    := aTotIva[ 3 ]
+   public nTotUno    := 0
+   public nTotDos    := 0
+    
 
    nRec              := ( cPedPrvL )->( Recno() )
 
@@ -4486,6 +4491,29 @@ FUNCTION aTotPedPrv( cFactura, dbfPedPrvT, dbfLine, dbfIva, dbfDiv, cDivRet )
 RETURN ( { nTotNet, nTotIva, nTotReq, nTotPed, aTotIva } )
 
 //---------------------------------------------------------------------------//
+
+Function sTotPedPrv( cPedido, dbfMaster, dbfLine, dbfIva, dbfDiv, cDivRet )
+
+   local sTotal
+
+   nTotPedPrv( cPedido, dbfMaster, dbfLine, dbfIva, dbfDiv, nil, cDivRet, .f. )
+
+   sTotal                                 := sTotal()
+   sTotal:nTotalBruto                     := nTotBrt
+   sTotal:nTotalNeto                      := nTotNet
+   sTotal:nTotalIva                       := nTotIva
+   sTotal:aTotalIva                       := aTotIva
+   sTotal:nTotalRecargoEquivalencia       := nTotReq
+   sTotal:nTotalDocumento                 := nTotPed
+   sTotal:nTotalDescuentoGeneral          := nTotDto
+   sTotal:nTotalDescuentoProntoPago       := nTotDpp
+   sTotal:nTotalDescuentoUno              := nTotUno
+   sTotal:nTotalDescuentoDos              := nTotDos
+
+Return ( sTotal )
+
+//--------------------------------------------------------------------------//
+
 
 /*
 Carga los datos del proveedor
@@ -4891,6 +4919,18 @@ FUNCTION nTotNPedPrv( uTmp )
 RETURN ( nCalculo )
 
 //---------------------------------------------------------------------------//
+//Total de una linea con impuestos incluidos
+
+FUNCTION nTotFPedPrv( cPedPrvL, nDec, nRou, nVdv, lDto, lPntVer, lImpTrn, cPorDiv )
+
+   local nCalculo := 0
+
+   nCalculo       += nTotLPedPrv( cPedPrvL, nDec, nRou, nVdv, lDto, lPntVer, lImpTrn )
+   nCalculo       += nIvaLPedPrv( cPedPrvL, nDec, nRou, nVdv, lDto, lPntVer, lImpTrn )
+
+return ( if( cPorDiv != nil, Trans( nCalculo, cPorDiv ), nCalculo ) )
+
+//---------------------------------------------------------------------------//
 
 FUNCTION nTotUPedPrv( uTmp, nDec, nVdv )
 
@@ -5095,18 +5135,18 @@ RETURN ( nCalculo )
 
 //---------------------------------------------------------------------------//
 
-FUNCTION nIvaLPedPrv( uPedPrvT, uPedPrvL, nDec, nRec, nVdv, cPouDiv )
+FUNCTION nIvaLPedPrv( uPedPrvL, nDec, nRec, nVdv, cPouDiv )
 
    local nCalculo
 
-   DEFAULT uPedPrvT  := dbfPedPrvT
    DEFAULT uPedPrvL  := dbfPedPrvL
    DEFAULT nDec      := nDinDiv()
    DEFAULT nRec      := nRinDiv()
    DEFAULT nVdv      := 1
 
-   nCalculo          := nImpLPedPrv( uPedPrvT, uPedPrvL, nDec, nRec, nVdv, .f., cPouDiv )
-   nCalculo          := nCalculo * ( uPedPrvL )->nIva / 100
+   nCalculo          := nTotLPedPrv( uPedPrvL, nDec, nRec, nVdv, cPouDiv )
+
+   nCalculo          := Round( nCalculo * ( uPedPrvL )->nIva / 100, nRec )
 
 RETURN ( if( cPouDiv != NIL, Trans( nCalculo, cPouDiv ), nCalculo ) )
 
@@ -5317,6 +5357,7 @@ FUNCTION rxPedPrv( cPath, oMeter )
       ( dbfPedPrvT)->( ordCondSet("!Deleted()", {||!Deleted()}  ) )
       ( dbfPedPrvT)->( ordCreate( cPath + "PEDPROVT.CDX", "CNOMPRV", "Upper( CNOMPRV )", {|| Upper( Field->CNOMPRV ) } ) )
 
+
       /*
       Ordenes fechados---------------------------------------------------------
       */
@@ -5384,6 +5425,9 @@ FUNCTION rxPedPrv( cPath, oMeter )
 
       ( dbfPedPrvT)->( ordCondSet("!Deleted()", {||!Deleted()}  ) )
       ( dbfPedPrvT)->( ordCreate( cPath + "PEDPROVL.CDX", "cPedCliDet", "cPedCli + cRef + cValPr1 + cValPr2 + cRefPrv ", {|| Field->cPedCli + Field->cRef + Field->cValPr1 + Field->cValPr2 + Field->cRefPrv } ) ) // + cDetalle
+
+      ( dbfPedPrvT )->( ordCondSet( "!Deleted()", {|| !Deleted() } ) )
+      ( dbfPedPrvT )->( ordCreate( cPath + "PedProvL.Cdx", "iNumPed", "'01' + cSerPed + Str( nNumPed ) + cSufPed", {|| '01' + Field->cSerPed + Str( Field->nNumPed ) + Field->cSufPed } ) )
 
       ( dbfPedPrvT )->( dbCloseArea() )
    else

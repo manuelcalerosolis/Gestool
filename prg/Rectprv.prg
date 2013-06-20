@@ -9090,10 +9090,6 @@ Function SynRctPrv( cPath )
          ( dbfRctPrvL )->nReq    := nPReq( dbfIva, ( dbfRctPrvL )->nIva )
       end if
 
-      if ( dbfRctPrvL )->dFecRct != RetFld( ( dbfRctPrvL )->cSerRct + Str( ( dbfRctPrvL )->nNumRct ) + ( dbfRctPrvL )->cSufRct, dbfRctPrvT, "dFecRct" )
-         ( dbfRctPrvL )->dFecRct := RetFld( ( dbfRctPrvL )->cSerRct + Str( ( dbfRctPrvL )->nNumRct ) + ( dbfRctPrvL )->cSufRct, dbfRctPrvT, "dFecRct" )
-      end if
-
       ( dbfRctPrvL )->( dbSkip() )
 
       SysRefresh()
