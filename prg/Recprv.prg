@@ -2229,6 +2229,8 @@ function SynRecPrv( cPatEmp )
       
       end if
 
+      ChkLqdFacPrv( , dbfFacPrvT, dbfFacPrvL, dbfFacPrvP, dbfIva, dbfDiv )
+
       ( dbfFacPrvT )->( dbSkip() )
 
       SysRefresh()
