@@ -5123,7 +5123,7 @@ FUNCTION nTotFacPrv( cFactura, cFacPrvT, cFacPrvL, cDbfIva, cDbfDiv, cFacPrvP, a
          aTotalDPP[2]   := Round( _NBASIVA2 * nDtoPP / 100, nRinDiv )
          aTotalDPP[3]   := Round( _NBASIVA3 * nDtoPP / 100, nRinDiv )
 
-         nTotDPP      := aTotalDPP[1] + aTotalDPP[2] + aTotalDPP[3]
+         nTotDPP        := aTotalDPP[1] + aTotalDPP[2] + aTotalDPP[3]
 
          _NBASIVA1      -= aTotalDPP[1]
          _NBASIVA2      -= aTotalDPP[2]

@@ -27,23 +27,26 @@ END CLASS
 
 METHOD CreateFields()
 
-
    ::AddField ( "cCodTip", "C",  3, 0, {|| "@!" },       "Cod.",          .f., "Código tipo",         3, .f. )
    ::AddField ( "cNomTip", "C", 50, 0, {|| "@!" },       "Tipo",          .f., "Tipo de artículo",   28, .f. )
    ::AddField ( "cCodArt", "C", 18, 0, {|| "@!" },       "Art.",          .f., "Cod. artículo",      14, .f. )
    ::AddField ( "cNomArt", "C",100, 0, {|| "@!" },       "Artículo",      .f., "Artículo",           40, .f. )
+   
    ::FldPropiedades()
+   
    ::FldProveedor()
-   ::AddField ( "nNumCaj", "N", 16, 6, {|| MasUnd() },   cNombreCajas(),  .f., cNombreCajas(),       12, .t. )
-   ::AddField ( "nUniDad", "N", 16, 6, {|| MasUnd() },   cNombreUnidades(),.f., cNombreUnidades(),   12, .t. )
-   ::AddField ( "nNumUni", "N", 16, 6, {|| MasUnd() },   "Tot. " + cNombreUnidades(),     .t., "Total " + cNombreUnidades(),     12, .t. )
+   
+   ::AddField ( "nNumCaj", "N", 16, 6, {|| MasUnd() },   cNombreCajas(),               .f., cNombreCajas(),                12, .t. )
+   ::AddField ( "nUniDad", "N", 16, 6, {|| MasUnd() },   cNombreUnidades(),            .f., cNombreUnidades(),             12, .t. )
+   ::AddField ( "nNumUni", "N", 16, 6, {|| MasUnd() },   "Tot. " + cNombreUnidades(),  .t., "Total " + cNombreUnidades(),  12, .t. )
+
    ::AddField ( "nImpArt", "N", 16, 6, {|| ::cPicImp },  "Precio",        .t., "Precio",             12, .f. )
    ::AddField ( "nImpTot", "N", 16, 6, {|| ::cPicOut },  "Base",          .t., "Base",               12, .t. )
    ::AddField ( "nTotPes", "N", 16, 6, {|| MasUnd() },   "Tot. peso",     .f., "Total peso",         12, .t. )
    ::AddField ( "nPreKgr", "N", 16, 6, {|| ::cPicImp },  "Pre. Kg.",      .f., "Precio kilo",        12, .f. )
    ::AddField ( "nTotVol", "N", 16, 6, {|| MasUnd() },   "Tot. volumen",  .f., "Total volumen",      12, .t. )
    ::AddField ( "nPreVol", "N", 16, 6, {|| ::cPicImp },  "Pre. vol.",     .f., "Precio volumen",     12, .f. )
-   ::AddField ( "nIvaTot", "N", 16, 6, {|| ::cPicOut },  cImp(),        .t., cImp(),             12, .t. )
+   ::AddField ( "nIvaTot", "N", 16, 6, {|| ::cPicOut },  cImp(),          .t., cImp(),               12, .t. )
    ::AddField ( "nTotFin", "N", 16, 6, {|| ::cPicOut },  "Total",         .t., "Total",              12, .t. )
    ::AddField ( "cDocMov", "C", 14, 0, {|| "@!" },       "Doc.",          .t., "Documento",           8, .f. )
    ::AddField ( "cTipDoc", "C", 20, 0, {|| "@!" },       "Tipo",          .f., "Tipo de documento",  10, .f. )
@@ -227,7 +230,7 @@ METHOD AddFac( lAcumula )
       ::oDbf:nNumUni    := nTotNFacPrv( ::oFacPrvL )
       ::oDbf:nImpArt    := nTotUFacPrv( ::oFacPrvL:cAlias, ::nDecOut, ::nValDiv )
       ::oDbf:nImpTot    := nImpLFacPrv( ::oFacPrvT:cAlias, ::oFacPrvL:cAlias, ::nDecOut, ::nDerOut, ::nValDiv )
-      ::oDbf:nIvaTot    := nIvaLFacPrv( ::oFacPrvT:cAlias, ::oFacPrvL:cAlias, ::nDecOut, ::nDerOut, ::nValDiv )
+      ::oDbf:nIvaTot    := nIvaLFacPrv( ::oFacPrvL:cAlias, ::nDecOut, ::nDerOut, ::nValDiv )
       ::oDbf:nTotFin    := ::oDbf:nImpTot + ::oDbf:nIvaTot
 
       ::AcuPesVol( ::oFacPrvL:cRef, nTotNFacPrv( ::oFacPrvL ), ::oDbf:nImpTot, .f. )
@@ -258,9 +261,9 @@ METHOD AddFac( lAcumula )
       ::oDbf:nImpArt    += nTotUFacPrv( ::oFacPrvL:cAlias, ::nDecOut, ::nValDiv )
       ::oDbf:nImpTot    += nImpLFacPrv( ::oFacPrvT:cAlias, ::oFacPrvL:cAlias, ::nDecOut, ::nDerOut, ::nValDiv )
       ::oDbf:nPreMed    := ::oDbf:nImpTot / ::oDbf:nNumUni
-      ::oDbf:nIvaTot    += nIvaLFacPrv( ::oFacPrvT:cAlias, ::oFacPrvL:cAlias, ::nDecOut, ::nDerOut, ::nValDiv )
+      ::oDbf:nIvaTot    += nIvaLFacPrv( ::oFacPrvL:cAlias, ::nDecOut, ::nDerOut, ::nValDiv )
       ::oDbf:nTotFin    += nImpLFacPrv( ::oFacPrvT:cAlias, ::oFacPrvL:cAlias, ::nDecOut, ::nDerOut, ::nValDiv )
-      ::oDbf:nTotFin    += nIvaLFacPrv( ::oFacPrvT:cAlias, ::oFacPrvL:cAlias, ::nDecOut, ::nDerOut, ::nValDiv )
+      ::oDbf:nTotFin    += nIvaLFacPrv( ::oFacPrvL:cAlias, ::nDecOut, ::nDerOut, ::nValDiv )
 
       ::AcuPesVol( ::oFacPrvL:cRef, nTotNFacPrv( ::oFacPrvL ), ::oDbf:nImpTot, .t. )
 

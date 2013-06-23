@@ -32,7 +32,7 @@ METHOD CreateFields()
    ::AddField ( "dFecMov", "D",  8, 0, {|| "@!" },          "Fecha",                      .t., "Fecha",                       10, .f. )
    ::AddField ( "cTipDoc", "C", 20, 0, {|| "@!" },          "Tipo",                       .f., "Tipo de documento",           10, .f. )
    ::AddField ( "nImpTot", "N", 16, 6, {|| ::cPicOut },     "Base",                       .t., "Base",                        12, .t. )
-   ::AddField ( "nIvaTot", "N", 16, 6, {|| ::cPicOut },     cImp(),                     .t., cImp(),                      12, .t. )
+   ::AddField ( "nIvaTot", "N", 16, 6, {|| ::cPicOut },     cImp(),                       .t., cImp(),                        12, .t. )
    ::AddField ( "nTotFin", "N", 16, 6, {|| ::cPicOut },     "Total",                      .t., "Total",                       12, .t. )
 
 RETURN ( Self )
@@ -127,7 +127,7 @@ METHOD AddFac( lAcumula, cCodGrp )
       ::oDbf:cCodGrp    := cCodGrp
       ::oDbf:cNomGrp    := cNomGrp( cCodGrp, ::oGrpPrv:oDbf )
       ::oDbf:nImpTot    := nImpLFacPrv( ::oFacPrvT:cAlias, ::oFacPrvL:cAlias, ::nDecOut, ::nDerOut, ::nValDiv )
-      ::oDbf:nIvaTot    := nIvaLFacPrv( ::oFacPrvT:cAlias, ::oFacPrvL:cAlias, ::nDecOut, ::nDerOut, ::nValDiv )
+      ::oDbf:nIvaTot    := nIvaLFacPrv( ::oFacPrvL:cAlias, ::nDecOut, ::nDerOut, ::nValDiv )
       ::oDbf:nTotFin    := ::oDbf:nImpTot + ::oDbf:nIvaTot
 
       if !lAcumula
@@ -144,9 +144,9 @@ METHOD AddFac( lAcumula, cCodGrp )
       ::oDbf:Load()
       ::oDbf:nImpTot    += nImpLFacPrv( ::oFacPrvT:cAlias, ::oFacPrvL:cAlias, ::nDecOut, ::nDerOut, ::nValDiv )
       ::oDbf:nPreMed    := ::oDbf:nImpTot / ::oDbf:nNumUni
-      ::oDbf:nIvaTot    += nIvaLFacPrv( ::oFacPrvT:cAlias, ::oFacPrvL:cAlias, ::nDecOut, ::nDerOut, ::nValDiv )
+      ::oDbf:nIvaTot    += nIvaLFacPrv( ::oFacPrvL:cAlias, ::nDecOut, ::nDerOut, ::nValDiv )
       ::oDbf:nTotFin    += nImpLFacPrv( ::oFacPrvT:cAlias, ::oFacPrvL:cAlias, ::nDecOut, ::nDerOut, ::nValDiv )
-      ::oDbf:nTotFin    += nIvaLFacPrv( ::oFacPrvT:cAlias, ::oFacPrvL:cAlias, ::nDecOut, ::nDerOut, ::nValDiv )
+      ::oDbf:nTotFin    += nIvaLFacPrv( ::oFacPrvL:cAlias, ::nDecOut, ::nDerOut, ::nValDiv )
 
       ::oDbf:Save()
 
