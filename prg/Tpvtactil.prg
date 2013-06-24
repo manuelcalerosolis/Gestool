@@ -1727,10 +1727,8 @@ METHOD Activate( lAlone ) CLASS TpvTactil
       Return .f.
    end if
 
-
-
    if !lCurSesion()
-      MsgStop( "No hay sesiones activas, imposible añadir documentos" )
+      MsgStop( "No hay sesiones activas, imposible añadir documentos." )
       Return .f.
    end if
 

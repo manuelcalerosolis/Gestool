@@ -3666,7 +3666,7 @@ STATIC FUNCTION EdtRec( aTmp, aGet, dbfAlbCliT, oBrw, hHash, bValid, nMode )
          ID       IDCANCEL ;
 			OF 		oDlg ;
          CANCEL ;
-         ACTION   ( If( ExitNoSave( nMode, dbfTmpLin ), oDlg:end(), ) )
+         ACTION   ( CancelEdtRec( nMode, aGet, oDlg ) )
 
       REDEFINE GROUP oSayLabels[ 1 ] ID 700 OF oFld:aDialogs[ 1 ] TRANSPARENT
       REDEFINE SAY   oSayLabels[ 6 ] ID 708 OF oFld:aDialogs[ 1 ]
@@ -3815,6 +3815,39 @@ Static Function InitEdtRec( aTmp, aGet, oDlg, oSayDias, oSayTxtDias, oBrwLin, oB
 RETURN ( nil )
 
 //---------------------------------------------------------------------------//
+
+Static Function CancelEdtRec( nMode, aGet, oDlg )
+
+   local cNumSat  
+
+   if ExitNoSave( nMode, dbfTmpLin )
+
+      cNumSat                             := aGet[ _CNUMSAT ]:VarGet()
+
+      if !Empty( cNumSat ) .and. dbSeekInOrd( cNumSat, "nNumSat", dbfSatCliT )
+
+         if ( dbfSatCliT )->lEstado
+
+            if dbLock( dbfSatCliT )
+
+               ( dbfSatCliT )->cNumAlb    := ""
+               ( dbfSatCliT )->lEstado    := .f.
+               ( dbfSatCliT )->( dbUnLock() )
+            
+            end if 
+
+         end if
+
+      end if 
+
+      oDlg:end()
+
+   end if 
+
+RETURN ( nil )
+
+//---------------------------------------------------------------------------//
+
 
 Static Function EdtRecMenu( aGet, aTmp, oBrw, oDlg )
 
