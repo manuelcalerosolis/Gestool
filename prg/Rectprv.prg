@@ -4705,6 +4705,17 @@ RETURN ( if( cPouDiv != nil, Trans( nCalculo, cPouDiv ), nCalculo ) )
 
 //---------------------------------------------------------------------------//
 
+FUNCTION nTotFRctPrv( cRctPrvL, nDec, nRou, nVdv, cPorDiv )
+
+   local nCalculo := 0
+
+   nCalculo       += nTotLRctPrv( cRctPrvL, nDec, nRou, nVdv )
+   nCalculo       += nIvaLRctPrv( cRctPrvL, nDec, nRou, nVdv )
+
+return ( if( cPorDiv != nil, Trans( nCalculo, cPorDiv ), nCalculo ) )
+
+//---------------------------------------------------------------------------//
+
 FUNCTION nTotRctPrv( cFactura, cFacPrvT, cFacPrvL, cDbfIva, cDbfDiv, cFacPrvP, aTmp, cDivRet, lPic )
 
 	local bCondition
@@ -7122,6 +7133,9 @@ FUNCTION rxRctPrv( cPath, oMeter )
       ( dbfRctPrvL )->( ordCondSet("!Deleted()", {||!Deleted()}  ) )
       ( dbfRctPrvL )->( ordCreate( cPath + "RctPrvL.CDX", "Lote", "cLote", {|| Field->cLote }, ) )
 
+      ( dbfRctPrvL )->( ordCondSet("!Deleted()", {||!Deleted()}  ) )
+      ( dbfRctPrvL )->( ordCreate( cPath + "RctPrvL.CDX", "iNumRct", "'04' + CSERFAC + STR( NNUMFAC ) + CSUFFAC", {|| '04' + Field->CSERFAC + STR( Field->NNUMFAC ) + Field->CSUFFAC } ) )
+
       ( dbfRctPrvL )->( dbCloseArea() )
    else
       msgStop( "Imposible abrir en modo exclusivo la tabla de facturas rectificativas de proveedores" )
@@ -8618,9 +8632,15 @@ RETURN ( Round( nCalculo, nDec ) )
 
 //---------------------------------------------------------------------------//
 
-FUNCTION nIvaLRctPrv( dbfLin, nDec, nRouDec, nVdv, lDto, lPntVer, cPorDiv )
+FUNCTION nIvaLRctPrv( dbfLin, nDec, nRou, nVdv, cPorDiv )
 
-   local nCalculo := nTotLRctPrv( dbfLin, nDec, nRouDec, nVdv )
+   local nCalculo 
+
+   DEFAULT nDec   := nDinDiv()
+   DEFAULT nRou   := nRinDiv()
+   DEFAULT nVdv   := 1
+
+   nCalculo       := nTotLRctPrv( dbfLin, nDec, nRou, nVdv )
 
    if !( dbfLin )->lIvaLin
       nCalculo    := nCalculo * ( dbfLin )->nIva / 100

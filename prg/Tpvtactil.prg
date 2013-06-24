@@ -612,6 +612,8 @@ CLASS TpvTactil
          ::oTurno:CloseFiles()
       end if
 
+      ::SetInfo()
+
       RETURN ( Self )
 
    ENDMETHOD
@@ -1725,12 +1727,17 @@ METHOD Activate( lAlone ) CLASS TpvTactil
       Return .f.
    end if
 
+
+
+   if !lCurSesion()
+      MsgStop( "No hay sesiones activas, imposible añadir documentos" )
+      Return .f.
+   end if
+
    if !lCajaOpen( oUser():cCaja() ) .and. !oUser():lMaster()
       msgStop( "Esta caja " + oUser():cCaja() + " esta cerrada." )
       Return .f.
    end if
-
-
 
    /*
    Abrimos los ficheros necesarios---------------------------------------------
@@ -1749,7 +1756,6 @@ METHOD Activate( lAlone ) CLASS TpvTactil
    ::oTpvListaTicket          := TpvListaTicket():New( Self )
 
    ::oTurno                   := TTurno():New( cPatEmp(), oWnd(), "01001" )
-   ::oTurno:lArqueoTactil     := .t.
 
    if lFamInTpv( ::oFamilias:cAlias )
 
@@ -5824,10 +5830,12 @@ METHOD OnClickCloseTurno( lParcial ) CLASS TpvTactil
       ::InitDocumento()
 
       if ::oTurno:OpenFiles()
-         ::oTurno:lArqueoTurno( .f., .t., lParcial )
+         ::oTurno:lArqueoTurno( .f., lParcial )
       else
          ::oTurno:CloseFiles()
       end if
+
+      ::SetInfo()
 
    end if
 

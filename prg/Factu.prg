@@ -260,16 +260,19 @@ function Main( cParams )
 
    do case
       case ( "TACTIL" $ cParamsMain )
+         
          if AccessCode():TactilResource()
             InitMainTactilWindow( oIconApp )
          end if
 
       case ( "PDA" $ cParamsMain )
+         
          if AccessCode():Resource()
             CreateMainPdaWindow( oIconApp )
          end if
 
       otherwise
+         
          if AccessCode():Resource()
             CreateMainWindow( oIconApp )
          end if
@@ -926,8 +929,8 @@ FUNCTION lInitCheck( lDir, oMessage, oProgress )
    if( !lIsDir( cPatBmp() ),     MakeDir( cNamePath( cPatBmp() ) ), )
    if( !lIsDir( cPatHtm() ),     MakeDir( cNamePath( cPatHtm() ) ), )
    if( !lIsDir( cPatXml() ),     MakeDir( cNamePath( cPatXml() ) ), )
-   if( !lIsDir( cPatSafe()),     MakeDir( cNamePath( cPatSafe()) ), )
-   if( !lIsDir( cPatPsion()),    MakeDir( cNamePath( cPatPsion())), )
+   if( !lIsDir( cPatSafe() ),    MakeDir( cNamePath( cPatSafe() ) ), )
+   if( !lIsDir( cPatPsion() ),   MakeDir( cNamePath( cPatPsion() ) ), )
    if( !lIsDir( cPatEmpTmp() ),  MakeDir( cNamePath( cPatEmpTmp() ) ), )
    if( !lIsDir( cPatScript() ),  MakeDir( cNamePath( cPatScript() ) ), )
 
@@ -4328,8 +4331,6 @@ Return nil
 //---------------------------------------------------------------------------//
 
 Static Function InitMainTactilWindow()
-
-   lTactilInitCheck()
 
    SelCajTactil( , .t. )
 

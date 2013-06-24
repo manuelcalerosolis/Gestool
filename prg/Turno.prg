@@ -357,8 +357,9 @@ CLASS TTurno FROM TMasDet
    DATA aSer                                       INIT Afill( Array( 26 ), .t. )
 
    DATA  lArqueoParcial                            INIT .f.
-   DATA  lArqueoTactil                             INIT .f.
 
+   METHOD lArqueoTactil()                          INLINE lTactilMode()
+   
    DATA  OpenTurno                                 INIT .f.
    DATA  OpenCaja                                  INIT .f.
 
@@ -421,7 +422,7 @@ CLASS TTurno FROM TMasDet
    Method lInvCierre()
    Method InvCierre( oAni, oMsg )
 
-   Method lArqueoTurno( lZoom, lTactil, lParcial )
+   Method lArqueoTurno( lZoom, lParcial )
 
    Method lIsContadores()
    Method LoadContadores()
@@ -503,8 +504,6 @@ CLASS TTurno FROM TMasDet
    Method SetNumberToSend()   INLINE   WritePProString( "Numero", ::cText, cValToChar( ::nNumberSend ), ::cIniFile )
    Method IncNumberToSend()   INLINE   WritePProString( "Numero", ::cText, cValToChar( ++::nNumberSend ), ::cIniFile )
    Method lContaTiket()       VIRTUAL
-
-   METHOD SetBigUsr( oSayUsr )
 
    Method Process()
 
@@ -1311,7 +1310,7 @@ METHOD Activate()
 
    DEFINE BTNSHELL RESOURCE "STOPWATCH_REFRESH_" OF ::oWndBrw ;
       NOBORDER ;
-      ACTION   ( ::oWndBrw:SetOnProcess(), ::lArqueoTurno( .f., .f., .t. ), ::oWndBrw:QuitOnProcess() );
+      ACTION   ( ::oWndBrw:SetOnProcess(), ::lArqueoTurno( .f., .t. ), ::oWndBrw:QuitOnProcess() );
       TOOLTIP  "(A)rqueo parcial";
       HOTKEY   "A";
       LEVEL    ACC_ZOOM
@@ -2261,7 +2260,6 @@ METHOD lCreateTurno()
    local oCaja
    local cNombreCaja    
    local cResource      
-   local lEspecial      
    local cCaja          := oUser():cCaja()
 
    if ( oRetFld( cCaja, ::oCaja, "lNoArq" ) )
@@ -2276,7 +2274,6 @@ METHOD lCreateTurno()
    cCaja                := oUser():cCaja()
    cNombreCaja          := Alltrim( oRetFld( cCaja, ::oCaja ) )
    cResource            := "ApTurnoTCT"
-   lEspecial            := .f.
 
 
    /*
@@ -2294,11 +2291,8 @@ METHOD lCreateTurno()
    Comienza el dialogo---------------------------------------------------------
    */
 
-   if ::lArqueoTactil
-      if GetSysMetrics( 1 ) == 560
-         cResource      := "ApTurnoTCT_1024x560"
-         lEspecial      := .t.
-      end if
+   if ::lArqueoTactil()
+      cResource         := "ApTurnoTCT"
    else
       cResource         := "ApTurno"
    end if
@@ -2306,10 +2300,10 @@ METHOD lCreateTurno()
    DEFINE DIALOG oDlg RESOURCE cResource
 
       REDEFINE BITMAP oBmp ;
-        ID       600 ;
-        RESOURCE "Clock_run_48_alpha" ;
+        ID        600 ;
+        RESOURCE  "Clock_run_48_alpha" ;
         TRANSPARENT ;
-        OF       oDlg
+        OF        oDlg
 
       REDEFINE GET nNumTur UPDATE;
          ID       100 ;
@@ -2338,7 +2332,7 @@ METHOD lCreateTurno()
          WHEN     ( .f. ) ;
          OF       oDlg
 
-    if ::lArqueoTactil
+    if ::lArqueoTactil()
 
       REDEFINE GET oCodUsr VAR ::cCajeroTurno UPDATE ;
          ID       130 ;
@@ -2365,7 +2359,7 @@ METHOD lCreateTurno()
          WHEN     ( .f. ) ;
          OF       oDlg
 
-   if ::lArqueoTactil .and. !lEspecial
+   if ::lArqueoTactil()
 
       REDEFINE BUTTONBMP ;
          ID       210 ;
@@ -2392,7 +2386,7 @@ METHOD lCreateTurno()
          PICTURE  "@!" ;
          OF       oDlg
 
-   if ::lArqueoTactil .and. !lEspecial
+   if ::lArqueoTactil()
 
       REDEFINE BUTTONBMP ;
          ID       220 ;
@@ -2429,11 +2423,7 @@ METHOD lCreateTurno()
 
    oDlg:AddFastKey( VK_F1, {|| ChmHelp( "Iniciar_Sesión" ) } )
 
-   if !lTactilMode() .and. !lTpvMode()
-      oDlg:bStart := {|| ::StartCreateTurno( oDivisa, oDivObjetivo, oCodUsr ) }
-   else
-      oDlg:bStart := {|| ::SetBigUsr( oBtnUser, oSayUsr ) }
-   end if
+   oDlg:bStart    := {|| ::StartCreateTurno( oDivisa, oImporte, oCodUsr ) }
 
    ACTIVATE DIALOG oDlg CENTER
 
@@ -2445,34 +2435,16 @@ RETURN ( oDlg:nResult == IDOK )
 
 //----------------------------------------------------------------------------//
 
-Method StartCreateTurno( oDivisa, oDivObjetivo, oCodUsr )
+Method StartCreateTurno( oDivisa, oImporte, oCodUsr )
 
    oDivisa:lValid()
 
-   oDivObjetivo:lValid()
-
    oCodUsr:lValid()
-   oCodUsr:SetFocus()
+
+   oImporte:lValid()   
+   oImporte:SetFocus()
 
 Return ( Self )
-
-//----------------------------------------------------------------------------//
-
-METHOD SetBigUsr( oBtnUser, oSayUsr )
-
-   if !Empty( oUser():cImagen() )
-      oBtnUser:lTransparent := .f.
-      oBtnUser:ReLoadBitmap( cFileBmpName( oUser():cImagen() ) )
-   else
-      oBtnUser:lTransparent := .t.
-      oBtnUser:ReLoadBitmap( if( oUser():lAdministrador(), "Big_Admin", "Big_User" ) )
-   end if
-
-   oBtnUser:Refresh()
-
-   oSayUsr:SetText( Capitalize( oUser():cNombre() ) )
-
-RETURN ( .t. )
 
 //----------------------------------------------------------------------------//
 
@@ -3166,7 +3138,7 @@ RETURN ( nEfectivo )
 
 //--------------------------------------------------------------------------//
 
-METHOD lArqueoTurno( lZoom, lTactil, lParcial ) CLASS TTurno
+METHOD lArqueoTurno( lZoom, lParcial ) CLASS TTurno
 
    local oDlg
    local oFld
@@ -3193,11 +3165,9 @@ METHOD lArqueoTurno( lZoom, lTactil, lParcial ) CLASS TTurno
    local oSayGeneral2
 
    DEFAULT lZoom        := .f.
-   DEFAULT lTactil      := .f.
    DEFAULT lParcial     := .f.
 
    ::lZoom              := lZoom
-   ::lArqueoTactil      := lTactil
    ::lArqueoParcial     := lParcial
    ::nMeter             := 0
    ::aCajaSelect        := {}
@@ -3305,7 +3275,7 @@ METHOD lArqueoTurno( lZoom, lTactil, lParcial ) CLASS TTurno
       ::oWndBrw:Refresh()
    end if
 
-   if ::lArqueoTactil
+   if ::lArqueoTactil()
 
       oFnt              := TFont():New( "Segoe UI", 0, 22, .f., .f. )
       oFntSay           := TFont():New( "Segoe UI", 0, 30, .f., .t. )
@@ -3385,7 +3355,7 @@ METHOD lArqueoTurno( lZoom, lTactil, lParcial ) CLASS TTurno
          WHEN     .f. ;
          OF       oFld:aDialogs[1]
 
-      if !::lArqueoTactil  .and. ::lArqueoParcial
+      if !::lArqueoTactil()  .and. ::lArqueoParcial
 
       REDEFINE BITMAP oBmpGeneral ;
          ID       990 ;
@@ -3413,7 +3383,7 @@ METHOD lArqueoTurno( lZoom, lTactil, lParcial ) CLASS TTurno
 
       end if
 
-      if !::lArqueoTactil  .and. !::lArqueoParcial
+      if !::lArqueoTactil()  .and. !::lArqueoParcial
 
       REDEFINE BITMAP oBmpGeneral ;
          ID       990 ;
@@ -3441,7 +3411,7 @@ METHOD lArqueoTurno( lZoom, lTactil, lParcial ) CLASS TTurno
 
       end if
 
-      if !::lArqueoTactil
+      if !::lArqueoTactil()
 
       REDEFINE GET oCajTur VAR ::cCajTur;
          ID       120 ;
@@ -3500,7 +3470,7 @@ METHOD lArqueoTurno( lZoom, lTactil, lParcial ) CLASS TTurno
          WHEN     ( oUser():lMaster() );
          ACTION   ( ::SelAllCajas( .f., oBrwCaj ) )
 
-      if !::lArqueoTactil
+      if !::lArqueoTactil()
 
       REDEFINE BUTTON ;
          ID       505;
@@ -3676,7 +3646,7 @@ METHOD lArqueoTurno( lZoom, lTactil, lParcial ) CLASS TTurno
          :nFootStrAlign    := AL_RIGHT
       end with
 
-      if ::lArqueoTactil
+      if ::lArqueoTactil()
          oBrwCnt:nRowHeight   := 36
       end if
 
@@ -3698,7 +3668,7 @@ METHOD lArqueoTurno( lZoom, lTactil, lParcial ) CLASS TTurno
 
       // Cajas____________________________________________________________________
 
-      if ::lArqueoTactil
+      if ::lArqueoTactil()
 
       REDEFINE GET ::oCodCaj ;
          VAR      ::cCodCaj ;
@@ -3739,7 +3709,7 @@ METHOD lArqueoTurno( lZoom, lTactil, lParcial ) CLASS TTurno
 
       // Formas de pago-----------------------------------------------------------
 
-      if ::lArqueoTactil
+      if ::lArqueoTactil()
 
          REDEFINE SAY ::oTotalEfectivo ;
             VAR      ::oTotales:nTotSaldoEfectivo( ::cCodCaj ) ;
@@ -3797,7 +3767,7 @@ METHOD lArqueoTurno( lZoom, lTactil, lParcial ) CLASS TTurno
 
       end if
 
-      if ::lArqueoTactil
+      if ::lArqueoTactil()
 
       REDEFINE BUTTONBMP ;
          ID       220 ;
@@ -3821,7 +3791,7 @@ METHOD lArqueoTurno( lZoom, lTactil, lParcial ) CLASS TTurno
 
       ::oImporteEfectivo:bChange    := {|| ::RefreshTurno() }
 
-      if ::lArqueoTactil
+      if ::lArqueoTactil()
 
       REDEFINE BUTTONBMP ;
          ID       230 ;
@@ -3837,7 +3807,7 @@ METHOD lArqueoTurno( lZoom, lTactil, lParcial ) CLASS TTurno
 
       // Importe retirado-------------------------------------------------------
 
-      if ::lArqueoTactil
+      if ::lArqueoTactil()
 
       REDEFINE BUTTONBMP ;
          ID       235 ;
@@ -3916,7 +3886,7 @@ METHOD lArqueoTurno( lZoom, lTactil, lParcial ) CLASS TTurno
          ID       600 ;
          OF       oFld:aDialogs[ 4 ]
 
-     if ::lArqueoTactil
+     if ::lArqueoTactil()
 
       REDEFINE COMBOBOX ::oCmbReport ;
          VAR      ::cCmbReport ;
@@ -3938,7 +3908,7 @@ METHOD lArqueoTurno( lZoom, lTactil, lParcial ) CLASS TTurno
 
      end if
 
-     if ::lArqueoTactil
+     if ::lArqueoTactil()
 
       REDEFINE BUTTON ;
          ID       610 ;
@@ -4836,7 +4806,7 @@ METHOD lCalTurno( cTurno, cCaja, oDlg )
          ::oBrwTotales:lDrawHeaders := .f.
          ::oBrwTotales:bLine        := {|| { if( ::oBrwTotales:Cargo:lOpened, ::oBrwTotales:Cargo:hBmpOpen, ::oBrwTotales:Cargo:hBmpClose ), if( len( ::oBrwTotales:Cargo:Cargo ) >= 4, ::oBrwTotales:Cargo:Cargo[ 4 ], 0 ), ::oBrwTotales:Cargo:Cargo[ 1 ], if( ::oBrwTotales:Cargo:cPrompt == "Espacio", "", Trans( ::oBrwTotales:Cargo:Cargo[ 2 ], ::cPorDiv ) ) } }
          ::oBrwTotales:aHeaders     := { "", "", "", "Importes" }
-         ::oBrwTotales:aColSizes    := { 18, 18, if( ::lArqueoTactil, 350, 450 ), 150 }
+         ::oBrwTotales:aColSizes    := { 18, 18, if( ::lArqueoTactil(), 350, 450 ), 150 }
          ::oBrwTotales:aJustify     := { .f., .f., .f., .t. }
          ::oBrwTotales:nClrPane     := {|| if( Empty( ::oBrwTotales:Cargo:cPrompt ), CLR_BAR, CLR_WHITE ) }
          ::oBrwTotales:bLDblClick   := {|| ::ClickBrwTotales() }
@@ -6372,13 +6342,12 @@ RETURN NIL
 // Cierra el turno en curso
 //
 
-FUNCTION CloseTurno( oMenuItem, oWnd, lTactil, lParcial )
+FUNCTION CloseTurno( oMenuItem, oWnd, lParcial )
 
    local oTurno
 
    DEFAULT  oMenuItem   := "01001"
    DEFAULT  oWnd        := oWnd()
-   DEFAULT  lTactil     := .f.
    DEFAULT  lParcial    := .f.
 
    /*
@@ -6401,7 +6370,7 @@ FUNCTION CloseTurno( oMenuItem, oWnd, lTactil, lParcial )
             oTurno:Activate()
          end if
 
-         oTurno:lArqueoTurno( .f., lTactil, lParcial )
+         oTurno:lArqueoTurno( .f., lParcial )
 
       else
 
