@@ -1457,7 +1457,7 @@ CLASS TpvTactil
 
 //---------------------------------------------------------------------------//
 
-   INLINE METHOD OnClickImportesExactos()   
+   INLINE METHOD OnClickImportesExactos()
 
       SetFieldEmpresa( !uFieldEmpresa( "lImpExa" ), "lImpExa" )
 
@@ -1711,8 +1711,6 @@ METHOD Activate( lAlone ) CLASS TpvTactil
       msgStop( "Esta caja " + oUser():cCaja() + " esta cerrada." )
       Return .f.
    end if
-
-
 
    /*
    Abrimos los ficheros necesarios---------------------------------------------

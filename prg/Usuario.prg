@@ -41,6 +41,7 @@ REQUEST DBFCDX
 #define _LFILVTA                 30      //   L      1      0     Filtrar ventas por usuario
 #define _LDOCAUT                 31      //   L      1      0     Documentos automáticos
 #define _DULTAUT                 32      //   D      8      0     Último documento aautomático
+#define _LNOOPCAJ                33      //   L      1      0 
 
 //----------------------------------------------------------------------------//
 //Comenzamos la parte de código que se compila para el ejecutable normal
@@ -554,6 +555,11 @@ STATIC FUNCTION EdtRec( aTmp, aGet, dbfUser, oBrw, lGrupo, bValid, nMode )
          ID       360 ;
          WHEN     ( nMode != ZOOM_MODE ) ;
          OF       oDlg
+
+      REDEFINE CHECKBOX aGet[ _LNOOPCAJ ] VAR aTmp[ _LNOOPCAJ ] ;
+         ID       400 ;
+         WHEN     ( nMode != ZOOM_MODE ) ;
+         OF       oDlg   
 
    end if
 
@@ -2717,7 +2723,9 @@ Function aItmUsr()
                      { "cCodTra",   "C",  5,  0, "Código del operario" },;
                      { "lFilVta",   "L",  1,  0, "Filtrar ventas del usuario" },;
                      { "lDocAut",   "L",  1,  0, "Lógico documentos automáticos" },;
-                     { "dUltAut",   "D",  8,  0, "Fecha último documento automático" } }
+                     { "dUltAut",   "D",  8,  0, "Fecha último documento automático" },;
+                     { "lNoOpCaj",  "L",  1,  0, "Lógico abrir cajón portamonedas" } }
+
 
 Return ( aBase )
 
