@@ -1459,7 +1459,7 @@ CLASS TpvTactil
 
 //---------------------------------------------------------------------------//
 
-   INLINE METHOD OnClickImportesExactos()   
+   INLINE METHOD OnClickImportesExactos()
 
       SetFieldEmpresa( !uFieldEmpresa( "lImpExa" ), "lImpExa" )
 

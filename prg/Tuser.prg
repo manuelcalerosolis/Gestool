@@ -89,6 +89,9 @@ CLASS TUser
    Data     _UltAuto                   INIT cTod( "" )
    Method   dUltAuto( lNewVal )
 
+   Data     _lNoOpenCajon              INIT ".f."
+   Method   lNoOpenCajon( cNewVal )    INLINE if( cNewVal != nil, ::_lNoOpenCajon := cNewVal, ::_lNoOpenCajon )
+
    Data     _NotInicioGrupo
    Method   lNotInicioGrupo( lNewVal ) INLINE if( lNewVal != nil, ::_NotInicioGrupo := lNewVal, ::_NotInicioGrupo )
 
@@ -276,6 +279,7 @@ Method Create( cCodUsr, dbfUser, dbfCajas, cOldUsr, lCreateHandle )
          ::lDocAuto(          ( ::oDbf )->lDocAut )
          ::dUltAuto(          ( ::oDbf )->dUltAut )
          ::cEmpresaFija(      ( ::oDbf )->cCodEmp )
+         ::lNoOpenCajon(      ( ::oDbf )->lNoOpCaj)
 
          /*
          Si el usuario tiene una empresa fija la colocamos caso contrario la ultima en usarse
@@ -637,9 +641,10 @@ return .t.
 
 Method OpenCajon()
 
-   if !Empty( ::oCajon )
+   if !Empty( ::oCajon ) .and. !::lNoOpenCajon()
       ::oCajon:Open()
    end if
+
 return .t.
 
 //---------------------------------------------------------------------------//

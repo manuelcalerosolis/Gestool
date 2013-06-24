@@ -7054,17 +7054,18 @@ FONT 8, "MS Sans Serif"
   CONTROL "", 161, "Edit", WS_BORDER, 188, 154, 185, 11
   CONTROL "", 340, "Edit", WS_BORDER|WS_TABSTOP, 101, 166, 85, 11
   CONTROL "", 140, "Edit", ES_AUTOHSCROLL|WS_BORDER|WS_TABSTOP, 101, 178, 272, 11
-  CONTROL "No autorizado para cambio de precios", 240, "Button", BS_AUTOCHECKBOX|WS_TABSTOP, 397, 42, 133, 10
-  CONTROL "No mostrar rentabilidad ", 260, "Button", BS_AUTOCHECKBOX|WS_TABSTOP, 397, 55, 133, 10
-  CONTROL "No mostrar precios de costo", 270, "Button", BS_AUTOCHECKBOX|WS_TABSTOP, 397, 68, 133, 10
-  CONTROL "Panel táctil para zurdos", 300, "Button", BS_AUTOCHECKBOX|WS_TABSTOP, 397, 81, 133, 10
-  CONTROL "Seleccionar artículos por familias", 250, "Button", BS_AUTOCHECKBOX|WS_TABSTOP, 397, 94, 133, 10
-  CONTROL "No mostrar imágen de fondo", 280, "Button", BS_AUTOCHECKBOX|WS_TABSTOP, 397, 107, 133, 10
-  CONTROL "No mostrar página de inicio", 290, "Button", BS_AUTOCHECKBOX|WS_TABSTOP, 397, 120, 133, 10
-  CONTROL "Mostrar alertas", 310, "Button", BS_AUTOCHECKBOX|WS_TABSTOP, 397, 133, 133, 10
-  CONTROL "No pedir confirmación al eliminar", 330, "Button", BS_AUTOCHECKBOX|WS_TABSTOP, 397, 146, 133, 10
-  CONTROL "Filtrar operaciones por usuario", 350, "Button", BS_AUTOCHECKBOX|WS_TABSTOP, 397, 159, 133, 10
-  CONTROL "Realizar documentos automáticos", 360, "Button", BS_AUTOCHECKBOX|WS_TABSTOP, 397, 171, 133, 10
+  CONTROL "No autorizado para cambio de precios", 240, "Button", BS_AUTOCHECKBOX|WS_TABSTOP, 397, 39, 133, 10
+  CONTROL "No mostrar rentabilidad ", 260, "Button", BS_AUTOCHECKBOX|WS_TABSTOP, 397, 52, 133, 10
+  CONTROL "No mostrar precios de costo", 270, "Button", BS_AUTOCHECKBOX|WS_TABSTOP, 397, 65, 133, 10
+  CONTROL "Panel táctil para zurdos", 300, "Button", BS_AUTOCHECKBOX|WS_TABSTOP, 397, 78, 133, 10
+  CONTROL "Seleccionar artículos por familias", 250, "Button", BS_AUTOCHECKBOX|WS_TABSTOP, 397, 91, 133, 10
+  CONTROL "No mostrar imágen de fondo", 280, "Button", BS_AUTOCHECKBOX|WS_TABSTOP, 397, 104, 133, 10
+  CONTROL "No mostrar página de inicio", 290, "Button", BS_AUTOCHECKBOX|WS_TABSTOP, 397, 117, 133, 10
+  CONTROL "Mostrar alertas", 310, "Button", BS_AUTOCHECKBOX|WS_TABSTOP, 397, 130, 133, 10
+  CONTROL "No pedir confirmación al eliminar", 330, "Button", BS_AUTOCHECKBOX|WS_TABSTOP, 397, 143, 133, 10
+  CONTROL "Filtrar operaciones por usuario", 350, "Button", BS_AUTOCHECKBOX|WS_TABSTOP, 397, 156, 133, 10
+  CONTROL "Realizar documentos automáticos", 360, "Button", BS_AUTOCHECKBOX|WS_TABSTOP, 397, 168, 133, 10
+  CONTROL "No abrir cajón portamonedas", 400, "Button", BS_AUTOCHECKBOX|WS_TABSTOP, 397, 180, 107, 10
   CONTROL "", 320, "Edit", WS_BORDER|WS_TABSTOP, 101, 208, 85, 11
   CONTROL "", 321, "Edit", WS_BORDER|WS_TABSTOP, 188, 208, 185, 11
   CONTROL "", 170, "SysTreeView32", TVS_HASBUTTONS|TVS_HASLINES|TVS_LINESATROOT|TVS_SHOWSELALWAYS|TVS_TRACKSELECT|TVS_FULLROWSELECT|WS_BORDER, 51, 223, 322, 138

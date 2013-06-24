@@ -282,7 +282,6 @@ STATIC FUNCTION EdtRec( aTmp, aGet, dbfCajPorta, oBrw, bWhen, bValid, nMode )
 
    REDEFINE GET aGet[ ( dbfCajPorta )->( FieldPos( "cPrinter" ) ) ] ;
       VAR      aTmp[ ( dbfCajPorta )->( FieldPos( "cPrinter" ) ) ] ;
-      WHEN     ( .f. ) ;
       ID       170 ;
       OF       oDlg
 
@@ -361,7 +360,7 @@ STATIC FUNCTION EdtRec( aTmp, aGet, dbfCajPorta, oBrw, bWhen, bValid, nMode )
  RETURN ( oDlg:nResult == IDOK )
 //----------------------------------------------------------------------------//
 /*
-Funcion que termina la edición del registro de la base de datos
+Funcion que termina la edición del registro de la base de datos-----------------
 */
 
 STATIC FUNCTION EndTrans( aTmp, aGet, dbfCajPorta, oBrw, nMode, oDlg, aPort, oPort, oBitsSec, oBitsParada, oBitsDatos, oBitsParidad, aBitsSec, aBitsParada, aBitsDatos, aBitsParidad )
@@ -391,14 +390,13 @@ STATIC FUNCTION EndTrans( aTmp, aGet, dbfCajPorta, oBrw, nMode, oDlg, aPort, oPo
       Return nil
    end if
 
-    //Comprobamos que el código de apertura no esté vacío
+   //Comprobamos que el código de apertura no esté vacío
 
    if Empty( aTmp[ ( dbfCajPorta )->( FieldPos( "cCodAper" ) ) ] )
       MsgStop( "El código de apertura del portamonedas no puede estar vacío" )
       aGet[ ( dbfCajPorta )->( FieldPos( "cCodAper" ) ) ]:SetFocus()
       Return nil
    end if
-
 
    //Metemos los valores de los combos
 
@@ -412,7 +410,7 @@ STATIC FUNCTION EndTrans( aTmp, aGet, dbfCajPorta, oBrw, nMode, oDlg, aPort, oPo
 
    WinGather( aTmp, aGet, dbfCajPorta, oBrw, nMode )
 
- RETURN ( oDlg:end( IDOK ) )
+RETURN ( oDlg:end( IDOK ) )
 
 //---------------------------------------------------------------------------//
 /*
