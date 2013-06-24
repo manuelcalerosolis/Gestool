@@ -112,6 +112,7 @@ CLASS TNewInfGen FROM TInfGen
 
    DATA oFacCliT
    DATA oFacPrvT
+   DATA oFacPrvP
 
    DATA  oHoraInicio
    DATA  cHoraInicio

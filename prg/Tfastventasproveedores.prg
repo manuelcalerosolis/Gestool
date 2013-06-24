@@ -8,8 +8,7 @@
 
 CLASS TFastVentasProveedores FROM TFastReportInfGen
 
-   DATA  cType           INIT "Proveedores"
-   DATA  cResource       INIT "FastReportArticulos"
+   DATA  cType                            INIT "Proveedores"
 
    METHOD lResource( cFld )
 
@@ -34,9 +33,7 @@ CLASS TFastVentasProveedores FROM TFastReportInfGen
 
    METHOD AddProveedor()
 
-   METHOD TreeReportingChanged()
-
-   METHOD cIdeDocumento()  INLINE ( ::oDbf:cClsDoc + ::oDbf:cSerDoc + ::oDbf:cNumDoc + ::oDbf:cSufDoc )
+   METHOD cIdeDocumento()                 INLINE ( ::oDbf:cClsDoc + ::oDbf:cSerDoc + ::oDbf:cNumDoc + ::oDbf:cSufDoc )
 
 END CLASS
 
@@ -46,6 +43,8 @@ METHOD lResource( cFld ) CLASS TFastVentasProveedores
 
    ::lNewInforme     := .t.
    ::lDefCondiciones := .f.
+
+   ::cSubTitle       := "Informe de compras"
 
    if !::NewResource()
       return .f.
@@ -80,25 +79,28 @@ RETURN .t.
 METHOD OpenFiles() CLASS TFastVentasProveedores
 
    local lOpen    := .t.
-   local oBlock   := ErrorBlock( {| oError | ApoloBreak( oError ) } )
+   local oBlock
 
+   oBlock         := ErrorBlock( {| oError | ApoloBreak( oError ) } )
    BEGIN SEQUENCE
 
       DATABASE NEW ::oPedPrvT PATH ( cPatEmp() ) CLASS "PEDPRVT"  FILE "PEDPROVT.DBF" VIA ( cDriver() ) SHARED INDEX "PEDPROVT.CDX"
 
       DATABASE NEW ::oPedPrvL PATH ( cPatEmp() ) CLASS "PEDPRVL"  FILE "PEDPROVL.DBF" VIA ( cDriver() ) SHARED INDEX "PEDPROVL.CDX"
 
-      DATABASE NEW ::oAlbPrvT PATH ( cPatEmp() ) CLASS "ALBPROVT" FILE "ALBPROVT.DBF" VIA ( cDriver() ) SHARED INDEX "ALBPROVT.CDX"
+      DATABASE NEW ::oAlbPrvT PATH ( cPatEmp() ) CLASS "AlbPRVT"  FILE "AlbPROVT.DBF" VIA ( cDriver() ) SHARED INDEX "AlbPROVT.CDX"
 
-      DATABASE NEW ::oAlbPrvL PATH ( cPatEmp() ) CLASS "ALBPROVL" FILE "ALBPROVL.DBF" VIA ( cDriver() ) SHARED INDEX "ALBPROVL.CDX"
+      DATABASE NEW ::oAlbPrvL PATH ( cPatEmp() ) CLASS "AlbPRVL"  FILE "AlbPROVL.DBF" VIA ( cDriver() ) SHARED INDEX "AlbPROVL.CDX"
 
-      DATABASE NEW ::oFacPrvT PATH ( cPatEmp() ) CLASS "FACPRVT" FILE "FACPRVT.DBF" VIA ( cDriver() ) SHARED INDEX "FACPRVT.CDX"
+      DATABASE NEW ::oFacPrvT PATH ( cPatEmp() ) CLASS "FACPRVT"  FILE "FACPRVT.DBF" VIA ( cDriver() ) SHARED INDEX "FACPRVT.CDX"
 
-      DATABASE NEW ::oFacPrvL PATH ( cPatEmp() ) CLASS "FACPRVL" FILE "FACPRVL.DBF" VIA ( cDriver() ) SHARED INDEX "FACPRVL.CDX"
+      DATABASE NEW ::oFacPrvL PATH ( cPatEmp() ) CLASS "FACPRVL"  FILE "FACPRVL.DBF" VIA ( cDriver() ) SHARED INDEX "FACPRVL.CDX"
 
-      DATABASE NEW ::oFacRecT PATH ( cPatEmp() ) CLASS "RCTPRVT" FILE "RCTPRVT.DBF" VIA ( cDriver() ) SHARED INDEX "RCTPRVT.CDX"
+      DATABASE NEW ::oFacPrvP PATH ( cPatEmp() ) CLASS "FACPRVP"  FILE "FACPRVP.DBF" VIA ( cDriver() ) SHARED INDEX "FACPRVP.CDX"
 
-      DATABASE NEW ::oFacRecL PATH ( cPatEmp() ) CLASS "RCTPRVL" FILE "RCTPRVL.DBF" VIA ( cDriver() ) SHARED INDEX "RCTPRVL.CDX"
+      DATABASE NEW ::oFacRecT PATH ( cPatEmp() ) CLASS "RCTPRVT"  FILE "RCTPRVT.DBF" VIA ( cDriver() ) SHARED INDEX "RCTPRVT.CDX"
+
+      DATABASE NEW ::oFacRecL PATH ( cPatEmp() ) CLASS "RCTPRVL"  FILE "RCTPRVL.DBF" VIA ( cDriver() ) SHARED INDEX "RCTPRVL.CDX"
 
    RECOVER
 
@@ -118,6 +120,14 @@ RETURN ( lOpen )
 
 METHOD CloseFiles() CLASS TFastVentasProveedores
 
+   if !Empty( ::oPedPrvL ) .and. ( ::oPedPrvL:Used() )
+      ::oPedPrvL:end()
+   end if
+
+   if !Empty( ::oPedPrvT ) .and. ( ::oPedPrvT:Used() )
+      ::oPedPrvT:end()
+   end if
+
    if !Empty( ::oAlbPrvL ) .and. ( ::oAlbPrvL:Used() )
       ::oAlbPrvL:end()
    end if
@@ -134,6 +144,10 @@ METHOD CloseFiles() CLASS TFastVentasProveedores
       ::oFacPrvT:end()
    end if
 
+   if !Empty( ::oFacPrvP ) .and. ( ::oFacPrvP:Used() )
+      ::oFacPrvP:end()
+   end if
+
    if !Empty( ::oFacRecL ) .and. ( ::oFacRecL:Used() )
       ::oFacRecL:end()
    end if
@@ -141,15 +155,6 @@ METHOD CloseFiles() CLASS TFastVentasProveedores
    if !Empty( ::oFacRecT ) .and. ( ::oFacRecT:Used() )
       ::oFacRecT:end()
    end if
-
-   if !Empty( ::oPedPrvL ) .and. ( ::oPedPrvL:Used() )
-      ::oPedPrvL:end()
-   end if
-
-   if !Empty( ::oPedPrvT ) .and. ( ::oPedPrvT:Used() )
-      ::oPedPrvT:end()
-   end if
-
 
 RETURN .t.
 
@@ -205,9 +210,9 @@ METHOD lGenerate() CLASS TFastVentasProveedores
 
          ::AddPedidosProveedor()
 
-      case ::cReportType == "Albaranes de proveedores"
+      case ::cReportType == "Facaranes de proveedores"
 
-         ::AddAlbaranProveedor( .t. )
+         ::AddFacaranProveedor( .t. )
 
       case ::cReportType == "Facturas de proveedores"
 
@@ -221,7 +226,7 @@ METHOD lGenerate() CLASS TFastVentasProveedores
 
       case ::cReportType == "Compras"
 
-         ::AddAlbaranProveedor( .t. )
+         ::AddFacaranProveedor( .t. )
 
          ::AddFacturaProveedor()
 
@@ -327,20 +332,20 @@ RETURN ( Self )
 
 //---------------------------------------------------------------------------//
 
-METHOD AddAlbaranProveedor( lFacturados ) CLASS TFastVentasProveedores
+METHOD AddAlbaranProveedor( lAlbturados ) CLASS TFastVentasProveedores
 
    local cExpHead
    local cExpLine
    local sTot
 
-   DEFAULT lFacturados  := .f.
+   DEFAULT lAlbturados  := .f.
 
    ::InitAlbaranesProveedores()
 
    ::oAlbPrvT:OrdSetFocus( "dFecAlb" )   
 
-   if lFacturados
-      cExpHead          := '!lFacturado .and. dFecAlb >= Ctod( "' + Dtoc( ::dIniInf ) + '" ) .and. dFecAlb <= Ctod( "' + Dtoc( ::dFinInf ) + '" )'
+   if lAlbturados
+      cExpHead          := '!lAlbturado .and. dFecAlb >= Ctod( "' + Dtoc( ::dIniInf ) + '" ) .and. dFecAlb <= Ctod( "' + Dtoc( ::dFinInf ) + '" )'
    else
       cExpHead          := 'dFecAlb >= Ctod( "' + Dtoc( ::dIniInf ) + '" ) .and. dFecAlb <= Ctod( "' + Dtoc( ::dFinInf ) + '" )'
    end if
@@ -351,7 +356,7 @@ METHOD AddAlbaranProveedor( lFacturados ) CLASS TFastVentasProveedores
 
    ::oAlbPrvT:AddTmpIndex( cCurUsr(), GetFileNoExt( ::oAlbPrvT:cFile ), ::oAlbPrvT:OrdKey(), ( cExpHead ), , , , , , , , .t. )
 
-   ::oMtrInf:cText   := "Procesando albaranes"
+   ::oMtrInf:cText   := "Procesando Albaranes"
    ::oMtrInf:SetTotal( ::oAlbPrvT:OrdKeyCount() )
 
    ::oAlbPrvT:GoTop()
@@ -360,35 +365,34 @@ METHOD AddAlbaranProveedor( lFacturados ) CLASS TFastVentasProveedores
 
       if lChkSer( ::oAlbPrvT:cSerAlb, ::aSer )
 
-         sTot     :=sTotAlbPrv( ::oAlbPrvT:cSerAlb + Str( ::oAlbPrvT:nNumAlb ) + ::oAlbPrvT:cSufAlb, ::oAlbPrvT:cAlias, ::oAlbPrvL:cAlias, ::oDbfIva:cAlias, ::oDbfDiv:cAlias )
-
+         sTot           := sTotAlbPrv( ::oAlbPrvT:cSerAlb + Str( ::oAlbPrvT:nNumAlb ) + ::oAlbPrvT:cSufAlb, ::oAlbPrvT:cAlias, ::oAlbPrvL:cAlias, ::oDbfIva:cAlias, ::oDbfDiv:cAlias )
         
          ::oDbf:Blank()
 
-         ::oDbf:cTipDoc := "Albaranes"
+         ::oDbf:cTipDoc := "Albaran proveedor"
          ::oDbf:cClsDoc := ALB_PRV
 
          ::oDbf:cSerDoc := ::oAlbPrvT:cSerAlb
          ::oDbf:cNumDoc := Str( ::oAlbPrvT:nNumAlb )
          ::oDbf:cSufDoc := ::oAlbPrvT:cSufAlb
 
-         ::oDbf:cIdeDoc := Upper( ::oDbf:cTipDoc ) + ::oDbf:cSerDoc + ::oDbf:cNumDoc + ::oDbf:cSufDoc                                
+         ::oDbf:cIdeDoc := ::cIdeDocumento()            
 
          ::oDbf:cCodPrv := ::oAlbPrvT:cCodPrv
          ::oDbf:cNomPrv := ::oAlbPrvT:cNomPrv
          ::oDbf:cCodGrp := oRetFld( ::oAlbPrvT:cCodPrv, ::oDbfPrv, "cCodGrp" )
-         ::oDbf:cCodPgo:= ::oAlbPrvT:cCodPgo
+         ::oDbf:cCodPgo := ::oAlbPrvT:cCodPgo
 
-         ::oDbf:nAnoDoc    := Year( ::oAlbPrvT:dFecAlb )
-         ::oDbf:nMesDoc    := Month( ::oAlbPrvT:dFecAlb )
-         ::oDbf:dFecDoc    := ::oAlbPrvT:dFecAlb
-         ::oDbf:cHorDoc    := SubStr( ::oAlbPrvT:cTimChg, 1, 2 )
-         ::oDbf:cMinDoc    := SubStr( ::oAlbPrvT:cTimChg, 3, 2 )
+         ::oDbf:nAnoDoc := Year( ::oAlbPrvT:dFecAlb )
+         ::oDbf:nMesDoc := Month( ::oAlbPrvT:dFecAlb )
+         ::oDbf:dFecDoc := ::oAlbPrvT:dFecAlb
+         ::oDbf:cHorDoc := SubStr( ::oAlbPrvT:cTimChg, 1, 2 )
+         ::oDbf:cMinDoc := SubStr( ::oAlbPrvT:cTimChg, 3, 2 )
 
-         ::oDbf:nTotNet    := sTot:nTotalNeto
-         ::oDbf:nTotIva    := sTot:nTotalIva
-         ::oDbf:nTotReq    := sTot:nTotalRecargoEquivalencia
-         ::oDbf:nTotDoc    := sTot:nTotalDocumento
+         ::oDbf:nTotNet := sTot:nTotalNeto
+         ::oDbf:nTotIva := sTot:nTotalIva
+         ::oDbf:nTotReq := sTot:nTotalRecargoEquivalencia
+         ::oDbf:nTotDoc := sTot:nTotalDocumento
 
          if ::lValidRegister()
             ::oDbf:Insert()
@@ -396,7 +400,7 @@ METHOD AddAlbaranProveedor( lFacturados ) CLASS TFastVentasProveedores
             ::oDbf:Cancel()
          end if                
 
-            ::addAlbaranesProveedores()
+         ::addAlbaranProveedores()
 
       end if
 
@@ -414,6 +418,7 @@ RETURN ( Self )
 
 METHOD AddFacturaProveedor( cCodigoProveedor ) CLASS TFastVentasProveedores
 
+   local sTot
    local cExpHead
    local cExpLine
 
@@ -422,8 +427,8 @@ METHOD AddFacturaProveedor( cCodigoProveedor ) CLASS TFastVentasProveedores
    ::oFacPrvT:OrdSetFocus( "dFecFac" )
    ::oFacPrvL:OrdSetFocus( "nNumFac" )
 
-   cExpHead          := 'dFecFac >= Ctod( "' + Dtoc( ::dIniInf ) + '" ) .and. dFecFac <= Ctod( "' + Dtoc( ::dFinInf ) + '" )'
-   cExpHead          += ' .and. cCodPrv >= "' + Rtrim( ::oGrupoProveedor:Cargo:Desde ) + '" .and. cCodPrv <= "' + Rtrim( ::oGrupoProveedor:Cargo:Hasta ) + '"'
+   cExpHead             := 'dFecFac >= Ctod( "' + Dtoc( ::dIniInf ) + '" ) .and. dFecFac <= Ctod( "' + Dtoc( ::dFinInf ) + '" )'
+   cExpHead             += ' .and. cCodPrv >= "' + Rtrim( ::oGrupoProveedor:Cargo:Desde ) + '" .and. cCodPrv <= "' + Rtrim( ::oGrupoProveedor:Cargo:Hasta ) + '"'
 
 
    if !::lAllPrv
@@ -432,7 +437,7 @@ METHOD AddFacturaProveedor( cCodigoProveedor ) CLASS TFastVentasProveedores
 
    ::oFacPrvT:AddTmpIndex( cCurUsr(), GetFileNoExt( ::oFacPrvT:cFile ), ::oFacPrvT:OrdKey(), ( cExpHead ), , , , , , , , .t. )
 
-   ::oMtrInf:cText   := "Procesando facturas"
+   ::oMtrInf:cText      := "Procesando facturas"
    ::oMtrInf:SetTotal( ::oFacPrvT:OrdKeyCount() )
 
    ::oFacPrvT:GoTop()
@@ -441,59 +446,42 @@ METHOD AddFacturaProveedor( cCodigoProveedor ) CLASS TFastVentasProveedores
 
       if lChkSer( ::oFacPrvT:cSerFac, ::aSer )
 
-         if ::oFacPrvL:Seek( ::oFacPrvT:cSerFac + Str( ::oFacPrvT:nNumFac ) + ::oFacPrvT:cSufFac )
+         sTot           := sTotFacPrv( ::oFacPrvT:cSerFac + Str( ::oFacPrvT:nNumFac ) + ::oFacPrvT:cSufFac, ::oFacPrvT:cAlias, ::oFacPrvL:cAlias, ::oDbfIva:cAlias, ::oDbfDiv:cAlias, ::oFacPrvP:cAlias )
+        
+         ::oDbf:Blank()
 
-               while !::lBreak .and. ( ::oFacPrvT:cSerFac + Str( ::oFacPrvT:nNumFac ) + ::oFacPrvT:cSufFac == ::oFacPrvL:cSerFac + Str( ::oFacPrvL:nNumFac ) + ::oFacPrvL:cSufFac )
+         ::oDbf:cTipDoc := "Factura proveedor"
+         ::oDbf:cClsDoc := FAC_PRV
 
-                  if !( ::lExcCero  .and. nTotNFacPrv( ::oFacPrvL:cAlias ) == 0 )  .and.;
-                  !( ::lExcImp   .and. nImpLFacPrv( ::oFacPrvT:cAlias, ::oFacPrvL:cAlias, ::nDecOut, ::nDerOut, ::nValDiv ) == 0 )
-                  /*
-                  Añadimos un nuevo registro
-                  */
+         ::oDbf:cSerDoc := ::oFacPrvT:cSerFac
+         ::oDbf:cNumDoc := Str( ::oFacPrvT:nNumFac )
+         ::oDbf:cSufDoc := ::oFacPrvT:cSufFac
 
-                  if ::lValidRegister( ::oFacPrvT:cCodPrv )
+         ::oDbf:cIdeDoc := ::cIdeDocumento()                                
 
-                  ::oDbf:Append()
+         ::oDbf:cCodPrv := ::oFacPrvT:cCodPrv
+         ::oDbf:cNomPrv := ::oFacPrvT:cNomPrv
+         ::oDbf:cCodGrp := oRetFld( ::oFacPrvT:cCodPrv, ::oDbfPrv, "cCodGrp" )
+         ::oDbf:cCodPgo := ::oFacPrvT:cCodPago
 
-                  ::oDbf:cTipDoc := "Facturas"
-                  ::oDbf:cSerDoc := ::oFacPrvT:cSerFac
-                  ::oDbf:cNumDoc := Str( ::oFacPrvT:nNumFac )
-                  ::oDbf:cSufDoc := ::oFacPrvT:cSufFac
-                  ::oDbf:cIdeDoc := Upper( ::oDbf:cTipDoc ) + ::oDbf:cSerDoc + ::oDbf:cNumDoc + ::oDbf:cSufDoc
+         ::oDbf:nAnoDoc := Year( ::oFacPrvT:dFecFac )
+         ::oDbf:nMesDoc := Month( ::oFacPrvT:dFecFac )
+         ::oDbf:dFecDoc := ::oFacPrvT:dFecFac
+         ::oDbf:cHorDoc := SubStr( ::oFacPrvT:cTimChg, 1, 2 )
+         ::oDbf:cMinDoc := SubStr( ::oFacPrvT:cTimChg, 3, 2 )
 
-                  ::oDbf:dFecDoc := ::oFacPrvT:dFecFac
-                  ::oDbf:cCodPago:= ::oFacPrvT:cCodPago
+         ::oDbf:nTotNet := sTot:nTotalNeto
+         ::oDbf:nTotIva := sTot:nTotalIva
+         ::oDbf:nTotReq := sTot:nTotalRecargoEquivalencia
+         ::oDbf:nTotDoc := sTot:nTotalDocumento
 
-                  ::oDbf:cCodPrv := ::oFacPrvT:cCodPrv
-                  ::oDbf:cNomPrv := ::oFacPrvT:cNomPrv
-                  ::oDbf:cCodGrp := oRetFld( ::oFacPrvT:cCodPrv, ::oDbfPrv, "cCodGrp" )
+         if ::lValidRegister()
+            ::oDbf:Insert()
+         else
+            ::oDbf:Cancel()
+         end if                
 
-                  ::oDbf:cCodArt := ::oFacPrvL:cRef
-                  ::oDbf:cNomArt := ::oFacPrvL:cDetalle
-                  ::oDbf:nUniArt := nTotNFacPrv( ::oFacPrvL:cAlias )
-                  ::oDbf:nImpArt := nImpLFacPrv( ::oFacPrvT:cAlias, ::oFacPrvL:cAlias, ::nDecOut, ::nDerOut, ::nValDiv, , , .t., .t. )
-                  ::oDbf:nIvaArt := nIvaLFacPrv( ::oFacPrvT:cAlias, ::oFacPrvL:cAlias, ::nDecOut, ::nDerOut, ::nValDiv )
-                  ::oDbf:nTotArt := nImpLFacPrv( ::oFacPrvT:cAlias, ::oFacPrvL:cAlias, ::nDecOut, ::nDerOut, ::nValDiv, , , .t., .t.  )
-                  ::oDbf:nTotArt += nIvaLFacPrv( ::oFacPrvT:cAlias, ::oFacPrvL:cAlias, ::nDecOut, ::nDerOut, ::nValDiv )
-
-                  ::oDbf:cCodPr1 := ::oFacPrvL:cCodPr1
-                  ::oDbf:cCodPr2 := ::oFacPrvL:cCodPr2
-                  ::oDbf:cValPr1 := ::oFacPrvL:cValPr1
-                  ::oDbf:cValPr2 := ::oFacPrvL:cValPr2
-
-                  ::oDbf:Save()
-
-                  end if
-
-               end if
-
-               ::oFacPrvL:Skip()
-
-            end while
-
-         end if
-
-            ::AddFacturasProveedores()
+         ::AddFacturasProveedores()
 
       end if
 
@@ -504,7 +492,6 @@ METHOD AddFacturaProveedor( cCodigoProveedor ) CLASS TFastVentasProveedores
    end while
 
    ::oFacPrvT:IdxDelete( cCurUsr(), GetFileNoExt( ::oFacPrvT:cFile ) )
-   ::oFacPrvL:IdxDelete( cCurUsr(), GetFileNoExt( ::oFacPrvL:cFile ) )
 
 RETURN ( Self )
 
@@ -665,7 +652,7 @@ METHOD BuildTree( oTree, lLoadFile ) CLASS TFastVentasProveedores
                   {  "Title" => "Compras",                           "Image" => 12, "Subnode" =>;
                   { ;
                      { "Title" => "Pedidos de proveedores",          "Image" => 2, "Type" => "Pedidos de proveedores",        "Directory" => "Proveedores\Compras",  "File" => "Pedidos de proveedores.fr3" },;
-                     { "Title" => "Albaranes de proveedores",        "Image" => 3, "Type" => "Albaranes de proveedores",      "Directory" => "Proveedores\Compras",  "File" => "Albaranes de proveedores.fr3" },;
+                     { "Title" => "Facaranes de proveedores",        "Image" => 3, "Type" => "Facaranes de proveedores",      "Directory" => "Proveedores\Compras",  "File" => "Facaranes de proveedores.fr3" },;
                      { "Title" => "Facturas de proveedores",         "Image" => 4, "Type" => "Facturas de proveedores",       "Directory" => "Proveedores\Compras",  "File" => "Facturas de proveedores.fr3" },;
                      { "Title" => "Rectificativas de proveedores",   "Image" =>15, "Type" => "Rectificativas de proveedores", "Directory" => "Proveedores\Compras",  "File" => "Rectificativas de proveedores.fr3" },;
                      { "Title" => "Compras",                         "Image" =>12, "Type" => "Compras",                       "Directory" => "Proveedores\Compras",  "File" => "Compras.fr3" },;                 
@@ -718,9 +705,9 @@ METHOD DataReport( oFr ) CLASS TFastVentasProveedores
          
          ::FastReportPedidoProveedor()
 
-       case ::cReportType == "Albaranes de proveedores"
+       case ::cReportType == "Facaranes de proveedores"
 
-         ::FastReportAlbaranProveedor()
+         ::FastReportFacaranProveedor()
 
       case ::cReportType == "Facturas de proveedores"
 
@@ -732,7 +719,7 @@ METHOD DataReport( oFr ) CLASS TFastVentasProveedores
 
       case ::cReportType == "Compras"
 
-         ::FastReportAlbaranProveedor()
+         ::FastReportFacaranProveedor()
 
          ::FastReportFacturaProveedor()
 
@@ -759,11 +746,11 @@ METHOD AddVariable() CLASS TFastVentasProveedores
 
          ::AddVariableLineasPedidoProveedor()
 
-      case ::cReportType == "Albaranes de proveedores"   
+      case ::cReportType == "Facaranes de proveedores"   
 
-         ::AddVariableAlbaranProveedor()
+         ::AddVariableFacaranProveedor()
          
-         ::AddVariableLineasAlbaranProveedor()
+         ::AddVariableLineasFacaranProveedor()
 
       case ::cReportType == "Facturas de proveedores"
 
@@ -783,9 +770,9 @@ METHOD AddVariable() CLASS TFastVentasProveedores
 
       case ::cReportType == "Compras"
 
-         ::AddVariableAlbaranProveedor()
+         ::AddVariableFacaranProveedor()
 
-         ::AddVariableLineasAlbaranProveedor()
+         ::AddVariableLineasFacaranProveedor()
 
          ::AddVariableFacturaProveedor()
 
@@ -801,14 +788,3 @@ Return ( Super:AddVariable() )
 
 //---------------------------------------------------------------------------//
 
-METHOD TreeReportingChanged() CLASS TFastVentasProveedores
-
-   if ::oTreeReporting:GetSelText() == "Listado"
-      ::lHideFecha()
-   else
-      ::lShowFecha()
-   end if
-
-Return ( Self )
-
-//---------------------------------------------------------------------------//

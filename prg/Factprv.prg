@@ -1561,8 +1561,8 @@ STATIC FUNCTION EdtRec( aTmp, aGet, dbfFacPrvT, oBrw, cCodPrv, cCodArt, nMode, c
    cPirDiv              := cPirDiv( aTmp[ _CDIVFAC ], dbfDiv )    // Picture de la divisa redondeada
    nDinDiv              := nDinDiv( aTmp[ _CDIVFAC ], dbfDiv )    // Decimales de la divisa
    nRinDiv              := nRinDiv( aTmp[ _CDIVFAC ], dbfDiv )    // Decimales de la divisa redondeada
-   cPouDiv              := cPouDiv( aTmp[ _CDIVFAC ], dbfDiv ) // Picture de la divisa
-   cPorDiv              := cPorDiv( aTmp[ _CDIVFAC ], dbfDiv ) // Picture de la divisa redondeada
+   cPouDiv              := cPouDiv( aTmp[ _CDIVFAC ], dbfDiv )    // Picture de la divisa
+   cPorDiv              := cPorDiv( aTmp[ _CDIVFAC ], dbfDiv )    // Picture de la divisa redondeada
 
    /*
    Etiquetas-------------------------------------------------------------------
@@ -4789,8 +4789,8 @@ FUNCTION nNetUFacPrv( uFacPrvL, uFacPrvT, nDec, nRec, nVdv, cPinDiv )
    local nDtoPrm
    local nPorte
 
-   DEFAULT nDec   := 0
-   DEFAULT nRec   := 0
+   DEFAULT nDec   := nDinDiv()
+   DEFAULT nRec   := nRinDiv()
    DEFAULT nVdv   := 1
 
    nCalculo       := nTotUFacPrv( uFacPrvL, nDec, nVdv )
@@ -4855,7 +4855,7 @@ FUNCTION nImpUFacPrv( uFacPrvT, dbfFacPrvL, nDec, nVdv, lIva, cPouDiv )
 
    local nCalculo
 
-   DEFAULT nDec   := 0
+   DEFAULT nDec   := nDinDiv()
    DEFAULT nVdv   := 1
    DEFAULT lIva   := .f.
 
@@ -4885,8 +4885,7 @@ FUNCTION nImpLFacPrv( uFacPrvT, dbfFacPrvL, nDec, nRou, nVdv, lIva, cPouDiv )
 
    local nCalculo
 
-   DEFAULT nDec   := 0
-   DEFAULT nRou   := 0
+   DEFAULT nDec   := nDinDiv()
    DEFAULT nVdv   := 1
    DEFAULT lIva   := .f.
 
@@ -9095,8 +9094,8 @@ FUNCTION nNetLFacPrv( uFacPrvL, uFacPrvT, nDec, nRec, nVdv, cPirDiv )
 
    local nCalculo
 
-   DEFAULT nDec   := 0
-   DEFAULT nRec   := 0
+   DEFAULT nDec   := nDinDiv()
+   DEFAULT nRec   := nRinDiv()
    DEFAULT nVdv   := 1
 
    nCalculo       := nNetUFacPrv( uFacPrvL, nDec, nRec, nVdv )
@@ -9180,7 +9179,8 @@ FUNCTION nBrtLFacPrv( uTmpLin, nDec, nRec, nVdv, cPorDiv )
 
    local nCalculo := 0
 
-   DEFAULT nDec   := 2
+   DEFAULT nDec   := nDinDiv()
+   DEFAULT nRec   := nRinDiv()
    DEFAULT nVdv   := 1
 
    nCalculo       := nTotUFacPrv( uTmpLin, nDec, nVdv, cPorDiv )
@@ -9196,7 +9196,7 @@ FUNCTION nIvaUFacPrv( dbfTmp, nDec, nVdv )
 
    local nCalculo
 
-   DEFAULT nDec   := 0
+   DEFAULT nDec   := nDinDiv()
    DEFAULT nVdv   := 1
 
    nCalculo       := nTotUFacPrv( dbfTmp, nDec, nVdv )
@@ -9213,9 +9213,15 @@ RETURN ( Round( nCalculo, nDec ) )
 
 //---------------------------------------------------------------------------//
 
-FUNCTION nIvaLFacPrv( dbfFac, dbfLin, nDec, nRou, nVdv, lDto, lPntVer, cPorDiv )
+FUNCTION nIvaLFacPrv( dbfLin, nDec, nRou, nVdv, cPorDiv )
 
-   local nCalculo := nImpLFacPrv( dbfFac, dbfLin, nDec, nRou, nVdv )
+   local nCalculo
+
+   DEFAULT nDec   := nDinDiv()
+   DEFAULT nRou   := nRinDiv()
+   DEFAULT nVdv   := 1
+
+   nCalculo       := nTotLFacPrv( dbfLin, nDec, nRou, nVdv )
 
    nCalculo       := Round( nCalculo * ( dbfLin )->nIva / 100, nRou )
 
@@ -9235,7 +9241,29 @@ RETURN ( { nTotNet, nTotIva, nTotReq, nTotFac, aTotIva, nTotRet } )
 
 //---------------------------------------------------------------------------//
 
-static function QuiFacPrv( lDetail )
+Function sTotFacPrv( cFactura, dbfFacPrvT, dbfFacPrvL, dbfIva, dbfDiv, dbfFacPrvP, cDivRet )
+
+   local sTotal
+
+   nTotFacPrv( cFactura, dbfFacPrvT, dbfFacPrvL, dbfIva, dbfDiv, dbfFacPrvP, nil, cDivRet )
+
+   sTotal                                 := sTotal()
+   sTotal:nTotalBruto                     := nTotBrt
+   sTotal:nTotalNeto                      := nTotNet
+   sTotal:nTotalIva                       := nTotIva
+   sTotal:aTotalIva                       := aTotIva
+   sTotal:nTotalRecargoEquivalencia       := nTotReq
+   sTotal:nTotalDocumento                 := nTotFac
+   sTotal:nTotalDescuentoGeneral          := nTotDto
+   sTotal:nTotalDescuentoProntoPago       := nTotDpp
+   sTotal:nTotalDescuentoUno              := nTotUno
+   sTotal:nTotalDescuentoDos              := nTotDos
+
+Return ( sTotal )
+
+//--------------------------------------------------------------------------//
+
+Static Function QuiFacPrv( lDetail )
 
    local nOrdAnt
    local cFactura
@@ -10954,14 +10982,23 @@ FUNCTION nTotLFacPrv( uFacPrvL, nDec, nRec, nVdv, cPirDiv )
 
    nCalculo          *= nTotNFacPrv( uFacPrvL )
 
-   if nRec != nil
-      nCalculo       := Round( nCalculo, nRec )
-   end if
+   nCalculo          := Round( nCalculo, nRec )
 
 RETURN ( if( cPirDiv != NIL, Trans( nCalculo, cPirDiv ), nCalculo ) )
 
 //---------------------------------------------------------------------------//
+//Total de una linea con impuestos incluidos
 
+FUNCTION nTotFFacPrv( cFacPrvL, nDec, nRou, nVdv, cPorDiv )
+
+   local nCalculo := 0
+
+   nCalculo       += nTotLFacPrv( cFacPrvL, nDec, nRou, nVdv )
+   nCalculo       += nIvaLFacPrv( cFacPrvL, nDec, nRou, nVdv )
+
+return ( if( cPorDiv != nil, Trans( nCalculo, cPorDiv ), nCalculo ) )
+
+//---------------------------------------------------------------------------//
 /*
 Devuelve el importe de descuento porcentual por cada linea---------------------
 */
@@ -10971,8 +11008,8 @@ FUNCTION nDtoLFacPrv( cFacPrvL, nDec, nRou, nVdv )
    local nCalculo       := 0
 
    DEFAULT cFacPrvL     := dbfFacPrvL
-   DEFAULT nDec         := nDouDiv()
-   DEFAULT nRou         := nRouDiv()
+   DEFAULT nDec         := nDinDiv()   // Decimales de la divisa
+   DEFAULT nRou         := nRinDiv()   
    DEFAULT nVdv         := 1
 
    if ( cFacPrvL )->nDtoLin != 0 
@@ -11008,8 +11045,8 @@ FUNCTION nPrmLFacPrv( cFacPrvL, nDec, nRou, nVdv )
    local nCalculo       := 0
 
    DEFAULT cFacPrvL     := dbfFacPrvL
-   DEFAULT nDec         := nDouDiv()
-   DEFAULT nRou         := nRouDiv()
+   DEFAULT nDec         := nDinDiv()   // Decimales de la divisa
+   DEFAULT nRou         := nRinDiv()   
    DEFAULT nVdv         := 1
 
    if ( cFacPrvL )->nDtoPrm != 0 
@@ -11044,20 +11081,20 @@ FUNCTION nTotUFacPrv( uFacPrvL, nDec, nVdv, cPinDiv )
 
    local nCalculo
 
-   DEFAULT uFacPrvL  := if( !Empty( tmpFacPrvL ), tmpFacPrvL, dbfFacPrvL )
-   DEFAULT nDec      := 0
-   DEFAULT nVdv      := 1
+   DEFAULT uFacPrvL     := if( !Empty( tmpFacPrvL ), tmpFacPrvL, dbfFacPrvL )
+   DEFAULT nDec         := nDinDiv()   // Decimales de la divisa
+   DEFAULT nVdv         := 1
 
    do case
    case ValType( uFacPrvL ) == "O"
-      nCalculo    := uFacPrvL:nPreUnit       / NotCero( nVdv )
+      nCalculo          := uFacPrvL:nPreUnit       / NotCero( nVdv )
    case ValType( uFacPrvL ) == "A"
-      nCalculo    := uFacPrvL[ _NPREUNIT ]   / NotCero( nVdv )
+      nCalculo          := uFacPrvL[ _NPREUNIT ]   / NotCero( nVdv )
    case ValType( uFacPrvL ) == "C"
-      nCalculo    := ( uFacPrvL )->nPreUnit  / NotCero( nVdv )
+      nCalculo          := ( uFacPrvL )->nPreUnit  / NotCero( nVdv )
    end case
 
-   nCalculo       := Round( nCalculo, nDec )
+   nCalculo             := Round( nCalculo, nDec )
 
 RETURN ( ( if( cPinDiv != nil, Trans( nCalculo, cPinDiv ), nCalculo ) )  )
 
@@ -12681,7 +12718,7 @@ FUNCTION nIncUFacPrv( dbfTmpLin, nDec, nVdv )
 
    local nCalculo
 
-   DEFAULT nDec   := 0
+   DEFAULT nDec   := nDinDiv()
    DEFAULT nVdv   := 1
 
    nCalculo       := nTotUFacPrv( dbfTmpLin, nDec, nVdv )
@@ -12698,9 +12735,9 @@ RETURN ( Round( nCalculo, nDec ) )
 
 //---------------------------------------------------------------------------//
 
-FUNCTION nIncLFacPrv( dbfLin, nDec, nRouDec, nVdv )
+FUNCTION nIncLFacPrv( dbfLin, nDec, nRou, nVdv )
 
-   local nCalculo := nTotLFacPrv( dbfLin, nDec, nRouDec, nVdv )
+   local nCalculo := nTotLFacPrv( dbfLin, nDec, nRou, nVdv )
 
    if !( dbfLin )->lIvaLin
       nCalculo    += nCalculo * ( dbfLin )->nIva / 100

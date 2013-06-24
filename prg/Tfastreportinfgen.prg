@@ -34,7 +34,7 @@ CLASS TFastReportInfGen FROM TNewInfGen
    DATA  lPersonalizado    INIT .f.
    DATA  oDbfPersonalizado
 
-   DATA  cResource         INIT "FastReport"
+   DATA  cResource         INIT "FastReportArticulos"
 
    DATA  cReportType       INIT ""
    DATA  cReportName       INIT ""
@@ -175,7 +175,6 @@ CLASS TFastReportInfGen FROM TNewInfGen
 
    METHOD DesignReport( cNombre )
 
-   METHOD TreeReportingChanged()       VIRTUAL
    METHOD TreePersonalizadosChanged()  VIRTUAL
 
    METHOD TreeReportingClick()         INLINE ( ::GenReport( IS_SCREEN ), 0 )
@@ -315,7 +314,6 @@ CLASS TFastReportInfGen FROM TNewInfGen
 
    METHOD AddVariableLiquidacionAgentes()
 
-
    METHOD AddVariablePedidoProveedor()
    METHOD AddVariableLineasPedidoProveedor()
 
@@ -323,7 +321,7 @@ CLASS TFastReportInfGen FROM TNewInfGen
    METHOD nTotalUnidadesPedidosProveedores()                      INLINE ( nTotNPedPrv( ::oPedPrvL:cAlias ) )
    METHOD nPrecioUnitarioPedidosProveedores()                     INLINE ( nTotUPedPrv( ::oPedPrvL:cAlias ) ) 
    METHOD nTotalLineaPedidosProveedores()                         INLINE ( nTotLPedPrv( ::oPedPrvL:cAlias ) )   
-   METHOD nTotalImpuestosIncluidosLineaPedidosProveedores()       INLINE ( nTotFPedPrv(  ::oPedPrvL:cAlias ) )
+   METHOD nTotalImpuestosIncluidosLineaPedidosProveedores()       INLINE ( nTotFPedPrv( ::oPedPrvL:cAlias ) )
    METHOD nTotalIVALineaPedidosProveedores()                      INLINE ( nIvaLPedPrv( ::oPedPrvL:cAlias ) )
    METHOD nTotalDescuentoPorcentualLineaPedidosProveedores()      INLINE ( nDtoLPedPrv( ::oPedPrvL:cAlias ) )
    METHOD nTotalDescuentoPromocionalLineaPedidosProveedores()     INLINE ( nPrmLPedPrv( ::oPedPrvL:cAlias ) )
@@ -347,7 +345,7 @@ CLASS TFastReportInfGen FROM TNewInfGen
    METHOD nTotalUnidadesFacturasProveedores()                      INLINE ( nTotNFacPrv( ::oFacPrvL:cAlias ) )
    METHOD nPrecioUnitarioFacturasProveedores()                     INLINE ( nTotUFacPrv( ::oFacPrvL:cAlias ) ) 
    METHOD nTotalLineaFacturasProveedores()                         INLINE ( nTotLFacPrv( ::oFacPrvL:cAlias ) )   
-   METHOD nTotalImpuestosIncluidosLineaFacturasProveedores()       INLINE ( nTotFacPrv(  ::oFacPrvL:cAlias ) )
+   METHOD nTotalImpuestosIncluidosLineaFacturasProveedores()       INLINE ( nTotFFacPrv( ::oFacPrvL:cAlias ) )
    METHOD nTotalIVALineaFacturasProveedores()                      INLINE ( nIvaLFacPrv( ::oFacPrvL:cAlias ) )
    METHOD nTotalDescuentoPorcentualLineaFacturasProveedores()      INLINE ( nDtoLFacPrv( ::oFacPrvL:cAlias ) )
    METHOD nTotalDescuentoPromocionalLineaFacturasProveedores()     INLINE ( nPrmLFacPrv( ::oFacPrvL:cAlias ) )
@@ -930,6 +928,24 @@ CLASS TFastReportInfGen FROM TNewInfGen
       end if
 
       RETURN ( Self )
+
+   ENDMETHOD
+
+//---------------------------------------------------------------------------//
+
+   INLINE METHOD TreeReportingChanged() 
+
+      local cTitle   := ::oTreeReporting:GetSelText()
+   
+      if cTitle == "Listado"
+         ::lHideFecha()
+      else
+         ::lShowFecha()
+      end if
+
+      ::oDlg:cTitle( ::cSubTitle + " : [" + cTitle + "]" )
+   
+      Return ( Self )
 
    ENDMETHOD
 
