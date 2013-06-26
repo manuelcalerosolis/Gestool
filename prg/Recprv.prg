@@ -2196,16 +2196,18 @@ function SynRecPrv( cPatEmp )
 
    while !( dbfFacPrvT )->( eof() )
 
+      GenPgoFacPrv( ( dbfFacPrvT )->cSerFac + Str( ( dbfFacPrvT )->nNumFac ) + ( dbfFacPrvT )->cSufFac, dbfFacPrvT, dbfFacPrvL, dbfFacPrvP, dbfPrv, dbfFPago, dbfDiv )
+
+      /*
+
       nTotFac := nTotFacPrv( ( dbfFacPrvT )->cSerFac + Str( ( dbfFacPrvT )->nNumFac ) + ( dbfFacPrvT )->cSufFac, dbfFacPrvT, dbfFacPrvL, dbfIva, dbfDiv, dbfFacPrvP, nil, nil, .f. )
       nTotRec := nPagFacPrv( ( dbfFacPrvT )->cSerFac + Str( ( dbfFacPrvT )->nNumFac ) + ( dbfFacPrvT )->cSufFac, dbfFacPrvP, nil, dbfDiv, .f. )
 
       if nTotFac > nTotRec
 
-         nCon := nNewReciboProveedor( ( dbfFacPrvT )->cSerFac + Str( ( dbfFacPrvT )->nNumFac ) + ( dbfFacPrvT )->cSufFac, Space( 1 ), dbfFacPrvP )
+         nCon                       := nNewReciboProveedor( ( dbfFacPrvT )->cSerFac + Str( ( dbfFacPrvT )->nNumFac ) + ( dbfFacPrvT )->cSufFac, Space( 1 ), dbfFacPrvP )
          
-         /*
-         Añadimos el nuevo recibo----------------------------------------------
-         */
+         // Añadimos el nuevo recibo----------------------------------------------
          
          ( dbfFacPrvP )->( dbAppend() )
          ( dbfFacPrvP )->cSerFac     := ( dbfFacPrvT )->cSerFac
@@ -2228,6 +2230,8 @@ function SynRecPrv( cPatEmp )
          ( dbfFacPrvP )->( dbUnLock() )
       
       end if
+
+      */
 
       ChkLqdFacPrv( , dbfFacPrvT, dbfFacPrvL, dbfFacPrvP, dbfIva, dbfDiv )
 

@@ -1637,7 +1637,7 @@ RETURN ( Self )
 
 //---------------------------------------------------------------------------//
 
-METHOD AddFacturaRectificativa( cCodigoArticulo ) CLASS TFastVentasArticulos
+METHOD AddFacturaRectificativa() CLASS TFastVentasArticulos
 
    local cExpHead
    local cExpLine

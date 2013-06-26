@@ -8662,6 +8662,28 @@ RETURN ( { nTotNet, nTotIva, nTotReq, nTotFac, aTotIva, nTotRet } )
 
 //---------------------------------------------------------------------------//
 
+Function sTotRctPrv( cFactura, dbfRctPrvT, dbfRctPrvL, dbfIva, dbfDiv, dbfRctPrvP, cDivRet )
+
+   local sTotal
+
+   nTotRctPrv( cFactura, dbfRctPrvT, dbfRctPrvL, dbfIva, dbfDiv, dbfRctPrvP, nil, cDivRet )
+
+   sTotal                                 := sTotal()
+   sTotal:nTotalBruto                     := nTotBrt
+   sTotal:nTotalNeto                      := nTotNet
+   sTotal:nTotalIva                       := nTotIva
+   sTotal:aTotalIva                       := aTotIva
+   sTotal:nTotalRecargoEquivalencia       := nTotReq
+   sTotal:nTotalDocumento                 := nTotFac
+   sTotal:nTotalDescuentoGeneral          := nTotDto
+   sTotal:nTotalDescuentoProntoPago       := nTotDpp
+   sTotal:nTotalDescuentoUno              := nTotUno
+   sTotal:nTotalDescuentoDos              := nTotDos
+
+Return ( sTotal )
+
+//--------------------------------------------------------------------------//
+
 static function QuiRctPrv( lDetail, lSetCnt )
 
    local nOrdAnt
@@ -10212,8 +10234,8 @@ FUNCTION nDtoLRctPrv( cRctPrvL, nDec, nRou, nVdv )
    local nCalculo       := 0
 
    DEFAULT cRctPrvL     := dbfRctPrvL
-   DEFAULT nDec         := nDouDiv()
-   DEFAULT nRou         := nRouDiv()
+   DEFAULT nDec         := nDinDiv()
+   DEFAULT nRou         := nRinDiv()
    DEFAULT nVdv         := 1
 
    if ( cRctPrvL )->nDtoLin != 0 
@@ -10225,7 +10247,6 @@ FUNCTION nDtoLRctPrv( cRctPrvL, nDec, nRou, nVdv )
       */
 
       nCalculo          := nCalculo * ( cRctPrvL )->nDtoLin / 100
-
 
       if nVdv != 0
          nCalculo       := nCalculo / nVdv
@@ -10249,8 +10270,8 @@ FUNCTION nPrmLRctPrv( cRctPrvL, nDec, nRou, nVdv )
    local nCalculo       := 0
 
    DEFAULT cRctPrvL     := dbfRctPrvL
-   DEFAULT nDec         := nDouDiv()
-   DEFAULT nRou         := nRouDiv()
+   DEFAULT nDec         := nDinDiv()
+   DEFAULT nRou         := nRinDiv()
    DEFAULT nVdv         := 1
 
    if ( cRctPrvL )->nDtoPrm != 0 

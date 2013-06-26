@@ -3818,13 +3818,57 @@ RETURN ( nil )
 
 Static Function CancelEdtRec( nMode, aGet, oDlg )
 
-   local cNumSat  
+   local cNumDoc  
 
    if ExitNoSave( nMode, dbfTmpLin )
 
-      cNumSat                             := aGet[ _CNUMSAT ]:VarGet()
+      CursorWait()
 
-      if !Empty( cNumSat ) .and. dbSeekInOrd( cNumSat, "nNumSat", dbfSatCliT )
+      // Presupuesto-----------------------------------------------------------
+
+      cNumDoc                             := aGet[ _CNUMPRE ]:VarGet()
+
+      if !Empty( cNumDoc ) .and. dbSeekInOrd( cNumDoc, "nNumPre", dbfPreCliT )
+
+         if ( dbfPreCliT )->lEstado
+
+            if dbLock( dbfPreCliT )
+
+               ( dbfPreCliT )->cNumAlb    := ""
+               ( dbfPreCliT )->lEstado    := .f.
+               ( dbfPreCliT )->( dbUnLock() )
+            
+            end if 
+
+         end if
+
+      end if 
+
+      // Pedido----------------------------------------------------------------
+
+      cNumDoc                             := aGet[ _CNUMPED ]:VarGet()
+
+      if !Empty( cNumDoc ) .and. dbSeekInOrd( cNumDoc, "nNumPed", dbfPedCliT )
+
+         if ( dbfPedCliT )->lEstado
+
+            if dbLock( dbfPedCliT )
+
+               ( dbfPedCliT )->cNumAlb    := ""
+               ( dbfPedCliT )->lEstado    := .f.
+               ( dbfPedCliT )->( dbUnLock() )
+            
+            end if 
+
+         end if
+
+      end if 
+
+      // Albaran---------------------------------------------------------------
+
+      cNumDoc                             := aGet[ _CNUMSAT ]:VarGet()
+
+      if !Empty( cNumDoc ) .and. dbSeekInOrd( cNumDoc, "nNumSat", dbfSatCliT )
 
          if ( dbfSatCliT )->lEstado
 
@@ -3840,6 +3884,8 @@ Static Function CancelEdtRec( nMode, aGet, oDlg )
 
       end if 
 
+      CursorWE()
+
       oDlg:end()
 
    end if 
@@ -3847,7 +3893,6 @@ Static Function CancelEdtRec( nMode, aGet, oDlg )
 RETURN ( nil )
 
 //---------------------------------------------------------------------------//
-
 
 Static Function EdtRecMenu( aGet, aTmp, oBrw, oDlg )
 

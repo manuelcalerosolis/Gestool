@@ -7688,7 +7688,7 @@ FUNCTION rxFacPrv( cPath, oMeter )
 
       ( dbfFacPrvT )->( dbCloseArea() )
    else
-      msgStop( "Imposible abrir en modo exclusivo la tabla de numeros de series de Facaranes de proveedores" )
+      msgStop( "Imposible abrir en modo exclusivo la tabla de numeros de series de facturas de proveedores" )
    end if
 
 
@@ -8750,7 +8750,7 @@ FUNCTION GenPgoFacPrv( cNumFac, dbfFacPrvT, dbfFacPrvL, dbfFacPrvP, dbfPrv, dbfF
          end while
       end if
 
-      nTotal            -= nPagFacPrv( cNumFac, dbfFacPrvP, nil, dbfDiv, .f. )
+      nTotal         -= nPagFacPrv( cNumFac, dbfFacPrvP, nil, dbfDiv, .f. )
 
       /*
       Genera pagos
