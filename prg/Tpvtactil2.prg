@@ -4777,7 +4777,7 @@ METHOD OnClickCloseTurno( lParcial ) CLASS TpvTactil
       ::InitDocumento()
 
       if ::oTurno:OpenFiles()
-         ::oTurno:lArqueoTurno( .f., .t., lParcial )
+         ::oTurno:lArqueoTurno( .f., lParcial )
       else
          ::oTurno:CloseFiles()
       end if

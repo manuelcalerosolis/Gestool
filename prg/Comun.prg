@@ -1029,7 +1029,7 @@ Return ( aBase )
 
 Function lTactilMode()
 
-Return ( "TCT" $ cParamsMain() )
+Return ( "TACTIL" $ cParamsMain() )
 
 //---------------------------------------------------------------------------//
 

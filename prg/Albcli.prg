@@ -3666,7 +3666,7 @@ STATIC FUNCTION EdtRec( aTmp, aGet, dbfAlbCliT, oBrw, hHash, bValid, nMode )
          ID       IDCANCEL ;
 			OF 		oDlg ;
          CANCEL ;
-         ACTION   ( If( ExitNoSave( nMode, dbfTmpLin ), oDlg:end(), ) )
+         ACTION   ( CancelEdtRec( nMode, aGet, oDlg ) )
 
       REDEFINE GROUP oSayLabels[ 1 ] ID 700 OF oFld:aDialogs[ 1 ] TRANSPARENT
       REDEFINE SAY   oSayLabels[ 6 ] ID 708 OF oFld:aDialogs[ 1 ]
@@ -3811,6 +3811,84 @@ Static Function InitEdtRec( aTmp, aGet, oDlg, oSayDias, oSayTxtDias, oBrwLin, oB
    oBrwLin:Load()
    oBrwInc:Load()
    oBrwPgo:Load()
+
+RETURN ( nil )
+
+//---------------------------------------------------------------------------//
+
+Static Function CancelEdtRec( nMode, aGet, oDlg )
+
+   local cNumDoc  
+
+   if ExitNoSave( nMode, dbfTmpLin )
+
+      CursorWait()
+
+      // Presupuesto-----------------------------------------------------------
+
+      cNumDoc                             := aGet[ _CNUMPRE ]:VarGet()
+
+      if !Empty( cNumDoc ) .and. dbSeekInOrd( cNumDoc, "nNumPre", dbfPreCliT )
+
+         if ( dbfPreCliT )->lEstado
+
+            if dbLock( dbfPreCliT )
+
+               ( dbfPreCliT )->cNumAlb    := ""
+               ( dbfPreCliT )->lEstado    := .f.
+               ( dbfPreCliT )->( dbUnLock() )
+            
+            end if 
+
+         end if
+
+      end if 
+
+      // Pedido----------------------------------------------------------------
+
+      cNumDoc                             := aGet[ _CNUMPED ]:VarGet()
+
+      if !Empty( cNumDoc ) .and. dbSeekInOrd( cNumDoc, "nNumPed", dbfPedCliT )
+
+         if ( dbfPedCliT )->lEstado
+
+            if dbLock( dbfPedCliT )
+
+               ( dbfPedCliT )->cNumAlb    := ""
+               ( dbfPedCliT )->lEstado    := .f.
+               ( dbfPedCliT )->( dbUnLock() )
+            
+            end if 
+
+         end if
+
+      end if 
+
+      // Albaran---------------------------------------------------------------
+
+      cNumDoc                             := aGet[ _CNUMSAT ]:VarGet()
+
+      if !Empty( cNumDoc ) .and. dbSeekInOrd( cNumDoc, "nNumSat", dbfSatCliT )
+
+         if ( dbfSatCliT )->lEstado
+
+            if dbLock( dbfSatCliT )
+
+               ( dbfSatCliT )->cNumAlb    := ""
+               ( dbfSatCliT )->lEstado    := .f.
+               ( dbfSatCliT )->( dbUnLock() )
+            
+            end if 
+
+         end if
+
+      end if 
+
+      CursorWE()
+
+      oDlg:end()
+
+   end if 
 
 RETURN ( nil )
 

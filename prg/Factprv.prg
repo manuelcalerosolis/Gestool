@@ -94,99 +94,99 @@
 Lineas de Detalle
 */
 
-#define _CREF                       4      //   C     10     0
-#define _CREFPRV                    5      //
-#define _CDETALLE                   6      //   C     50     0
-#define _NPREUNIT                   7      //   N     13     4
-#define _NDTO                       8      //   N      5     1
-#define _NIVA                       9      //   N      6     2
-#define _NCANENT                   10      //   N     13     4
-#define _LCONTROL                  11      //   L      1     0
-#define _CUNIDAD                   12      //   C      2     0
-#define _NUNICAJA                  13      //   N      8     3
-#define _LCHGLIN                   14      //   L      1     0
-#define _MLNGDES                   15      //   M     10     0
-#define _NDTOLIN                   16      //   N      5     2
-#define _NDTOPRM                   17      //   N      5     2
-#define _NDTORAP                   18      //   N      5     2
-#define _NPRECOM                   19      //   N      5     2
-#define _LBNFLIN1                  20      //   N      5     1
-#define _LBNFLIN2                  21      //   N      5     1
-#define _LBNFLIN3                  22      //   N      5     1
-#define _LBNFLIN4                  23      //   N      5     1
-#define _LBNFLIN5                  24      //   N      5     1
-#define _LBNFLIN6                  25      //   N      5     1
-#define _NBNFLIN1                  26      //   N      5     1
-#define _NBNFLIN2                  27      //   N      5     1
-#define _NBNFLIN3                  28      //   N      5     1
-#define _NBNFLIN4                  29      //   N      5     1
-#define _NBNFLIN5                  30      //   N      5     1
-#define _NBNFLIN6                  31      //   N      5     1
-#define _NBNFSBR1                  32      //   N     13     3
-#define _NBNFSBR2                  33      //   N     13     3
-#define _NBNFSBR3                  34      //   N     13     3
-#define _NBNFSBR4                  35      //   N     13     3
-#define _NBNFSBR5                  36      //   N     13     3
-#define _NBNFSBR6                  37      //   N     13     3
-#define _NPVPLIN1                  38      //   N      6     2
-#define _NPVPLIN2                  39      //   L      1     0
-#define _NPVPLIN3                  40      //   C      5     0
-#define _NPVPLIN4                  41      //   C      5     0
-#define _NPVPLIN5                  42      //   C      5     0
-#define _NPVPLIN6                  43      //   C      5     0
-#define _NIVALIN1                  44      //   N     13     4
-#define _NIVALIN2                  45      //   C      3     0
-#define _NIVALIN3                  46      //   C      3     0
-#define _NIVALIN4                  47      //   L      1     0
-#define _NIVALIN5                  48      //   N      4     0
-#define _NIVALIN6                  49
-#define _NIVALIN                   50
-#define _LIVALIN                   51      //   L     1      0
-#define _CCODPR1                   52
-#define _CCODPR2                   53      //   L     4      0
-#define _CVALPR1                   54
-#define _CVALPR2                   55
-#define _NFACCNV                   56
-#define _CALMLIN                   57
-#define _NCTLSTK                   58
-#define _LLOTE                     59
-#define _NLOTE                     60
-#define _CLOTE                     61
-#define _NNUMLIN                   62
-#define _NUNDKIT                   63
-#define _LKITART                   64
-#define _LKITCHL                   65
-#define _LKITPRC                   66
-#define _LIMPLIN                   67
-#define _MNUMSER                   68
-#define _CCODUBI1                  69
-#define _CCODUBI2                  70
-#define _CCODUBI3                  71
-#define _CVALUBI1                  72
-#define _CVALUBI2                  73
-#define _CVALUBI3                  74
-#define _CNOMUBI1                  75
-#define _CNOMUBI2                  76
-#define _CNOMUBI3                  77
-#define _CCODFAM                   78   //    C    8    0
-#define _CGRPFAM                   79   //    C    3    0
-#define _NREQ                      80   //    N   16    6
-#define _MOBSLIN                   81   //    M   10    0
-#define _NPVPREC                   82
-#define _NNUMMED                   83
-#define _NMEDUNO                   84
-#define _NMEDDOS                   85
-#define _NMEDTRE                   86
-#define _DFECCAD                   87   //    D    8    0
-#define _NUNDLIN                   88
-#define _LLABEL                    89
-#define _NLABEL                    90
-#define __CSUPED                   91
-#define _LGASSUP                   92
-#define __DFECFAC                  93
-#define __CCODPRV                  94
-#define _LNUMSER                   95
-#define _LAUTSER                   96
+#define _CREF                     4      //   C     10     0
+#define _CREFPRV                  5      //
+#define _CDETALLE                 6      //   C     50     0
+#define _NPREUNIT                 7      //   N     13     4
+#define _NDTO                     8      //   N      5     1
+#define _NIVA                     9      //   N      6     2
+#define _NCANENT                 10      //   N     13     4
+#define _LCONTROL                11      //   L      1     0
+#define _CUNIDAD                 12      //   C      2     0
+#define _NUNICAJA                13      //   N      8     3
+#define _LCHGLIN                 14      //   L      1     0
+#define _MLNGDES                 15      //   M     10     0
+#define _NDTOLIN                 16      //   N      5     2
+#define _NDTOPRM                 17      //   N      5     2
+#define _NDTORAP                 18      //   N      5     2
+#define _NPRECOM                 19      //   N      5     2
+#define _LBNFLIN1                20      //   N      5     1
+#define _LBNFLIN2                21      //   N      5     1
+#define _LBNFLIN3                22      //   N      5     1
+#define _LBNFLIN4                23      //   N      5     1
+#define _LBNFLIN5                24      //   N      5     1
+#define _LBNFLIN6                25      //   N      5     1
+#define _NBNFLIN1                26      //   N      5     1
+#define _NBNFLIN2                27      //   N      5     1
+#define _NBNFLIN3                28      //   N      5     1
+#define _NBNFLIN4                29      //   N      5     1
+#define _NBNFLIN5                30      //   N      5     1
+#define _NBNFLIN6                31      //   N      5     1
+#define _NBNFSBR1                32      //   N     13     3
+#define _NBNFSBR2                33      //   N     13     3
+#define _NBNFSBR3                34      //   N     13     3
+#define _NBNFSBR4                35      //   N     13     3
+#define _NBNFSBR5                36      //   N     13     3
+#define _NBNFSBR6                37      //   N     13     3
+#define _NPVPLIN1                38      //   N      6     2
+#define _NPVPLIN2                39      //   L      1     0
+#define _NPVPLIN3                40      //   C      5     0
+#define _NPVPLIN4                41      //   C      5     0
+#define _NPVPLIN5                42      //   C      5     0
+#define _NPVPLIN6                43      //   C      5     0
+#define _NIVALIN1                44      //   N     13     4
+#define _NIVALIN2                45      //   C      3     0
+#define _NIVALIN3                46      //   C      3     0
+#define _NIVALIN4                47      //   L      1     0
+#define _NIVALIN5                48      //   N      4     0
+#define _NIVALIN6                49
+#define _NIVALIN                 50
+#define _LIVALIN                 51      //   L     1      0
+#define _CCODPR1                 52
+#define _CCODPR2                 53      //   L     4      0
+#define _CVALPR1                 54
+#define _CVALPR2                 55
+#define _NFACCNV                 56
+#define _CALMLIN                 57
+#define _NCTLSTK                 58
+#define _LLOTE                   59
+#define _NLOTE                   60
+#define _CLOTE                   61
+#define _NNUMLIN                 62
+#define _NUNDKIT                 63
+#define _LKITART                 64
+#define _LKITCHL                 65
+#define _LKITPRC                 66
+#define _LIMPLIN                 67
+#define _MNUMSER                 68
+#define _CCODUBI1                69
+#define _CCODUBI2                70
+#define _CCODUBI3                71
+#define _CVALUBI1                72
+#define _CVALUBI2                73
+#define _CVALUBI3                74
+#define _CNOMUBI1                75
+#define _CNOMUBI2                76
+#define _CNOMUBI3                77
+#define _CCODFAM                 78   //    C    8    0
+#define _CGRPFAM                 79   //    C    3    0
+#define _NREQ                    80   //    N   16    6
+#define _MOBSLIN                 81   //    M   10    0
+#define _NPVPREC                 82
+#define _NNUMMED                 83
+#define _NMEDUNO                 84
+#define _NMEDDOS                 85
+#define _NMEDTRE                 86
+#define _DFECCAD                 87   //    D    8    0
+#define _NUNDLIN                 88
+#define _LLABEL                  89
+#define _NLABEL                  90
+#define __CSUPED                 91
+#define _LGASSUP                 92
+#define __DFECFAC                93
+#define __CCODPRV                94
+#define _LNUMSER                 95
+#define _LAUTSER                 96
 
 /*
 Definici¢n de Array para IGIC--------------------------------------------------
@@ -5123,7 +5123,7 @@ FUNCTION nTotFacPrv( cFactura, cFacPrvT, cFacPrvL, cDbfIva, cDbfDiv, cFacPrvP, a
          aTotalDPP[2]   := Round( _NBASIVA2 * nDtoPP / 100, nRinDiv )
          aTotalDPP[3]   := Round( _NBASIVA3 * nDtoPP / 100, nRinDiv )
 
-         nTotDPP      := aTotalDPP[1] + aTotalDPP[2] + aTotalDPP[3]
+         nTotDPP        := aTotalDPP[1] + aTotalDPP[2] + aTotalDPP[3]
 
          _NBASIVA1      -= aTotalDPP[1]
          _NBASIVA2      -= aTotalDPP[2]
@@ -7641,6 +7641,9 @@ FUNCTION rxFacPrv( cPath, oMeter )
       ( dbfFacPrvL )->( ordCondSet("!Deleted()", {||!Deleted()}, , , , , , , , , .t. ) )
       ( dbfFacPrvL )->( ordCreate( cPath + "FACPRVL.CDX", "cRefFec", "cRef + dTos( dFecFac )", {|| Field->cRef + dTos( Field->dFecFac ) } ) )
 
+      ( dbfFacPrvL )->( ordCondSet("!Deleted()", {||!Deleted()}  ) )
+      ( dbfFacPrvL )->( ordCreate( cPath + "FACPRVL.CDX", "iNumFac", "'03' + CSERFAC + STR( NNUMFAC ) + CSUFFAC", {|| '03' + Field->CSERFAC + STR( Field->NNUMFAC ) + Field->CSUFFAC } ) )
+
       ( dbfFacPrvL )->( dbCloseArea() )
    else
       msgStop( "Imposible abrir en modo exclusivo la tabla de facturas de proveedores" )
@@ -7685,7 +7688,7 @@ FUNCTION rxFacPrv( cPath, oMeter )
 
       ( dbfFacPrvT )->( dbCloseArea() )
    else
-      msgStop( "Imposible abrir en modo exclusivo la tabla de numeros de series de Facaranes de proveedores" )
+      msgStop( "Imposible abrir en modo exclusivo la tabla de numeros de series de facturas de proveedores" )
    end if
 
 
@@ -8747,7 +8750,7 @@ FUNCTION GenPgoFacPrv( cNumFac, dbfFacPrvT, dbfFacPrvL, dbfFacPrvP, dbfPrv, dbfF
          end while
       end if
 
-      nTotal            -= nPagFacPrv( cNumFac, dbfFacPrvP, nil, dbfDiv, .f. )
+      nTotal         -= nPagFacPrv( cNumFac, dbfFacPrvP, nil, dbfDiv, .f. )
 
       /*
       Genera pagos
@@ -10889,7 +10892,7 @@ FUNCTION cDesFacPrv( cFacPrvT, cFacPrvL, cFacPrvS )
    DEFAULT cFacPrvL  := dbfFacPrvL
    DEFAULT cFacPrvS  := dbfFacPrvS
 
-   if ( dbfFacPrvT )->lFacGas
+   if ( cFacPrvT )->lFacGas
       cReturn        := Rtrim( ( cFacPrvT )->cDetalle )
    else
       cReturn        := Descrip( cFacPrvL, cFacPrvS )

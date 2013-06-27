@@ -1989,8 +1989,7 @@ STATIC FUNCTION lCloseTurno( cLasTur )
    */
 
    if oTurno:lCloseTurno( cLasTur, dFecTur, cHorTur, cCajTur, dbfTmp )
-      MsgInfo( "Sesión cerrado satisfactoriamente.",;
-               "Cierre de turno : " + Trans( cLasTur, "######" ) )
+      MsgInfo( "Sesión cerrado satisfactoriamente.", "Cierre de turno : " + Trans( cLasTur, "######" ) )
    end if
 
    CursorWe()
