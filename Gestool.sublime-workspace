@@ -4,6 +4,62 @@
 		"selected_items":
 		[
 			[
+				"lopen",
+				"lOpenCaj"
+			],
+			[
+				"cre",
+				"cResourceAlbaran"
+			],
+			[
+				"cRe",
+				"cResourceAlbaran"
+			],
+			[
+				"lResource",
+				"lResourceAlbaran"
+			],
+			[
+				"cSer",
+				"cSerAlb"
+			],
+			[
+				"OaLB",
+				"oAlbaranClienteCabecera"
+			],
+			[
+				"nTot",
+				"nTotNet"
+			],
+			[
+				"oAlbara",
+				"oAlbaranClienteLinea"
+			],
+			[
+				"cDtoEsp",
+				"cDtoEsp"
+			],
+			[
+				"guarda",
+				"GuardaTik2Alb"
+			],
+			[
+				"documen",
+				"documentoFactura"
+			],
+			[
+				"nt",
+				"nTipoDocumento"
+			],
+			[
+				"documento",
+				"documentoAlbaran"
+			],
+			[
+				"Ti",
+				"Ticket"
+			],
+			[
 				"carga",
 				"carga"
 			],
@@ -458,96 +514,40 @@
 			[
 				"cPre",
 				"cPrefixTable"
-			],
-			[
-				"METHOD",
-				"METHOD"
-			],
-			[
-				"cCodigo",
-				"cCodigoGrupo"
-			],
-			[
-				"tc",
-				"TComercio"
-			],
-			[
-				"Clas",
-				"CLASS"
-			],
-			[
-				"cCodFam",
-				"cCodFam"
-			],
-			[
-				"oBmp",
-				"oBmpWait"
-			],
-			[
-				"oDlg",
-				"oDlgWait"
-			],
-			[
-				"lRe",
-				"lReady"
-			],
-			[
-				"cCodGr",
-				"cCodGrp"
-			],
-			[
-				"cCodig",
-				"cCodigoGrupo"
-			],
-			[
-				"See",
-				"SeekInOrd"
-			],
-			[
-				"lOpen",
-				"lOpenFiles"
-			],
-			[
-				"lRE",
-				"lReady"
-			],
-			[
-				"new",
-				"NEW"
 			]
 		]
 	},
 	"buffers":
 	[
 		{
+			"file": "prg/Tpvcobros.prg",
+			"settings":
+			{
+				"buffer_size": 33566,
+				"line_ending": "Windows"
+			}
+		},
+		{
 			"file": "prg/Tpvtactil.prg",
 			"settings":
 			{
-				"buffer_size": 259084,
+				"buffer_size": 270310,
 				"line_ending": "Windows"
 			}
 		},
 		{
-			"file": "prg/Tcajon.prg",
+			"file": "prg/Albcli.prg",
 			"settings":
 			{
-				"buffer_size": 4848,
+				"buffer_size": 0,
 				"line_ending": "Windows"
 			}
 		},
 		{
-			"file": "prg/Factu.prg",
+			"file": "prg/Tpv.prg",
 			"settings":
 			{
-				"buffer_size": 183773,
-				"line_ending": "Windows"
-			}
-		},
-		{
-			"file": "prg/Confcajporta.prg",
-			"settings":
-			{
-				"buffer_size": 26157,
+				"buffer_size": 0,
 				"line_ending": "Windows"
 			}
 		}
@@ -584,19 +584,28 @@
 	},
 	"file_history":
 	[
+		"/C/fw195/Gestool/prg/Tpvtactil.prg",
+		"/C/fw195/Gestool/prg/Tpvlistaticket.prg",
+		"/C/fw195/Gestool/include/Factu.ch",
+		"/C/fw195/Gestool/prg/Albcli.prg",
+		"/C/fw195/Gestool/prg/Empresa.prg",
+		"/C/fw195/Gestool/include/Empresa.ch",
+		"/C/fw195/Gestool/prg/Factcli.prg",
+		"/C/fw195/Gestool/prg/Tfastreportinfgen.prg",
+		"/C/fw195/Gestool/prg/Tcajon.prg",
+		"/C/fw195/Gestool/prg/Factu.prg",
 		"/C/fw195/Gestool/prg/Cajas.prg",
+		"/C/fw195/Gestool/prg/Confcajporta.prg",
 		"/C/fw195/Gestool/prg/Usuario.prg",
 		"/C/fw195/Gestool/prg/Tuser.prg",
 		"/C/fw195/Gestool/prg/Abnprv.prg",
 		"/C/fw195/Gestool/prg/usuario",
 		"/C/fw195/Gestool/prg/Reindexa.prg",
-		"/C/fw195/Gestool/prg/Albcli.prg",
 		"/C/fw195/Gestool/prg/Articulo.prg",
 		"/C/fw195/Gestool/prg/Tdatacenter.prg",
 		"/C/fw195/Gestool/prg/Factprv.prg",
 		"/C/fw195/Gestool/prg/Recprv.prg",
 		"/C/fw195/Gestool/prg/Reccli.prg",
-		"/C/fw195/Gestool/prg/Factcli.prg",
 		"/C/fw195/Gestool/bin/script/001.prg",
 		"/C/fw195/Gestool/prg/Rectprv.prg",
 		"/C/fw195/Gestool/prg/Precli.prg",
@@ -609,7 +618,6 @@
 		"/C/fw195/Gestool/prg/Facrec.prg",
 		"/C/fw195/Gestool/prg/Pedcli.prg",
 		"/C/fw195/Gestool/prg/Cfaccli.prg",
-		"/C/fw195/Gestool/prg/Factu.prg",
 		"/C/fw195/Gestool/prg/Provee.prg",
 		"/C/fw195/Gestool/prg/Client.prg",
 		"/C/fw195/Gestool/resource/Gstimage12.rc",
@@ -618,11 +626,9 @@
 		"/C/fw195/Gestool/prg/Rptgal.prg",
 		"/C/fw195/Gestool/prg/Tctacli.prg",
 		"/C/fw195/Gestool/prg/Tctaprv.prg",
-		"/C/fw195/Gestool/prg/Tpvtactil.prg",
 		"/C/fw195/Gestool/prg/Turno.prg",
 		"/C/fw195/Gestool/prg/Familia.prg",
 		"/C/fw195/Gestool/prg/Accesscode.prg",
-		"/C/fw195/Gestool/prg/Empresa.prg",
 		"/C/fw195/Gestool/prg/client",
 		"/C/fw195/Gestool/prg/Facauto.prg",
 		"/C/fw195/Gestool/prg/Tcomercio.prg",
@@ -643,7 +649,6 @@
 		"/C/fw195/Gestool/prg/tuser",
 		"/C/fw195/Gestool/prg/Internet.prg",
 		"/C/fw195/Gestool/prg/Empcnf.prg",
-		"/C/fw195/Gestool/include/Empresa.ch",
 		"/C/fw195/Gestool/prg/Utildbf.prg",
 		"/C/fw195/Gestool/prg/Tftp.prg",
 		"/C/Scripts creados/Inma Pepsi/001.prg",
@@ -655,8 +660,6 @@
 		"/C/fw195/Gestool/prg/Producc.prg",
 		"/C/fw195/Gestool/prg/Tdetmaterial.prg",
 		"/C/fw195/Gestool/prg/TDetMaterial",
-		"/C/fw195/Gestool/prg/Tfastreportinfgen.prg",
-		"/C/fw195/Gestool/include/Factu.ch",
 		"/C/fw195/Gestool/prg/pedcli",
 		"/C/Users/Villa/Desktop/reveal/reveal.css",
 		"/C/fw195/Gestool/prg/Tdetfacautomatica.prg",
@@ -708,10 +711,7 @@
 		"/C/AppServ/www/zemtrum/modules/zoomslider/js/modernizr.js",
 		"/C/AppServ/www/zemtrum/modules/zoomslider/js/jquery.flexslider-min.js",
 		"/C/AppServ/www/zemtrum/modules/zoomslider/js/jquery.mousewheel.js",
-		"/C/AppServ/www/zemtrum/modules/zoomslider/js/shBrushXml.js",
-		"/C/AppServ/www/zemtrum/modules/zoomslider/js/jquery.flexslider.js",
-		"/C/AppServ/www/zemtrum/modules/zoomslider/js/slidercontrol.js",
-		"/C/AppServ/www/zemtrum/modules/zoomslider/js/jquery.easing.js"
+		"/C/AppServ/www/zemtrum/modules/zoomslider/js/shBrushXml.js"
 	],
 	"find":
 	{
@@ -719,7 +719,7 @@
 	},
 	"find_in_files":
 	{
-		"height": 93.0,
+		"height": 0.0,
 		"where_history":
 		[
 			"C:\\fw195\\Gestool\\prg",
@@ -753,6 +753,107 @@
 		"case_sensitive": false,
 		"find_history":
 		[
+			"GuardaDocumentoAlbaran",
+			"documentoalbaran",
+			"onclickace",
+			"lresource",
+			"aCobros",
+			"GuardaDocumentoAlbaran",
+			"nnumrec",
+			"on aitm",
+			"tik2",
+			"od SetCliente",
+			"on SetCliente",
+			"onclickcobro",
+			"setcliente",
+			"SetCliente",
+			"GuardaDocumentoPendiente",
+			"documento",
+			"documento.",
+			"documento",
+			"on aitm",
+			"tik2",
+			"GuardaDocumentoAlbaran",
+			"tik2",
+			"cclitik",
+			"tik2",
+			"cseralb",
+			"newdoc",
+			"csertik",
+			"CargaValoresDefecto",
+			"GuardaDocumentoAlbaran",
+			"od GuardaDocumento",
+			"od guardadocumentopagado",
+			"guardadocumentopagado",
+			"OnClickAlbaran",
+			"albaran",
+			"BuildRelationReport",
+			"BuildReport",
+			"ImprimeDocumento",
+			"GuardaDocumento",
+			"guardadocumentoalba",
+			"savalb",
+			"imprimeti",
+			"ss TFormatosImpresion",
+			"oFormatosImpresion",
+			"ImprimeTicket",
+			"exitAceptarImprimir",
+			"on acol",
+			"tik2",
+			"onclickal",
+			"SetCliente",
+			"SetInfo",
+			"od onclickalba",
+			"cclitik",
+			"GuardaDocumento",
+			"on aitm",
+			"openfiles",
+			"guardatik",
+			"openfiles",
+			"APPD_MODE",
+			"nmode",
+			"GuardaTik2Alb(",
+			"SavTik2Alb",
+			"guardadocumentoal",
+			"CargaValoresDefecto",
+			"od guardadocumento(",
+			"OD GuardaDocumento(",
+			"guardadocumento",
+			"guardadocumentoo",
+			"guarda",
+			"SAVALB",
+			"SAVALB.",
+			"SAVALB",
+			"SAVTIK",
+			"sav",
+			"od GuardaDocumento",
+			"GuardaDocumento",
+			"OD GuardaDocumento",
+			"oSayImporte",
+			"GuardaDocumento",
+			"CreaCobro",
+			"on aitm",
+			"pgo",
+			"cTipTik",
+			"on aitm",
+			"msginfo",
+			"tit",
+			"tittl",
+			"lcobro",
+			":lcobro",
+			"lcobro",
+			"OnClickCobro",
+			"LALBTCT",
+			"Document_plain_user1",
+			"on aitm",
+			"officebar",
+			"datareport",
+			"extrac",
+			"extra",
+			"order",
+			"extra",
+			"extract order",
+			"PrinterPreferences",
 			"on OpnCaj",
 			"OpnCaj",
 			"TestCajon",
@@ -779,108 +880,7 @@
 			"for each",
 			"ascan",
 			"od resource",
-			"cdescription",
-			"od resource",
-			"cname",
-			"AddDataTable",
-			"aDataTables",
-			"settext",
-			"ss TDataCenter",
-			"on lBigSeek",
-			"ValidaDevolucionTiket",
-			"AsistenteDevolucionTiket",
-			"dev",
-			"on acol",
-			"acol",
-			"on ShowKit",
-			"ShowKit",
-			"on rx",
-			"on prnserie",
-			"prnserie",
-			"prnseries",
-			"on rx",
-			"on prnseri",
-			"on rx",
-			"on prnserie",
-			"on rx",
-			"prnserie",
-			"on rx",
-			"radio",
-			"Reporting",
-			"ç",
-			"Reporting",
-			"ReportingClient",
-			"reporting",
-			"01119",
-			"RunReportGalery",
-			"01093",
-			"01118",
-			"01093",
-			"01097",
-			"01093",
-			"informe",
-			"PrnSerie",
-			"series",
-			"AddField",
-			"TICtaPrv",
-			"estado de cuentas",
-			"TICtaCli",
-			"estado de cuentas",
-			"PrintArqueo",
-			"antes",
-			"?",
-			"ofastreport",
-			"32",
-			"oFastReport",
-			"SetFastReport",
-			"oFastReport",
-			"::oFastReport",
-			"classname",
-			"Spanish.Xml",
-			"PrintReport",
-			"PrintArqueo",
-			"lCloseCajasEleccionada",
-			"larqueoturno",
-			"OnClickCloseTurno",
-			"parcial",
-			"cPatGrp",
-			"cPatPrv",
-			"cPatCli",
-			"cPatArt",
-			"cPatGrp",
-			"cPatAlm",
-			"fpago",
-			"aEmpresaTables",
-			"CreateEmpresaTrigger",
-			"creando triggers",
-			"on lFamInTpv",
-			"familias",
-			"setempresa",
-			"cPatCli()",
-			"cpatcli",
-			"cpaycli",
-			"loadusuarios",
-			"AppendClientPrestashop",
-			"prestashop",
-			"pres",
-			"::oStock:cArt",
-			"on nImpAtp",
-			"on loaart",
-			"loaart",
-			"hismov",
-			"cref",
-			"delega",
-			"csufdoc",
-			"3134",
-			"on aitm",
-			"CSUFDOC",
-			"on openfiles",
-			"cDelegacion(",
-			"on edtc",
-			"on aitm",
-			"on retfld",
-			"cDlgUsr",
-			"on SelectDelegacion"
+			"cdescription"
 		],
 		"highlight": true,
 		"in_selection": false,
@@ -907,23 +907,23 @@
 	"groups":
 	[
 		{
-			"selected": 3,
+			"selected": 0,
 			"sheets":
 			[
 				{
 					"buffer": 0,
-					"file": "prg/Tpvtactil.prg",
+					"file": "prg/Tpvcobros.prg",
 					"settings":
 					{
-						"buffer_size": 259084,
+						"buffer_size": 33566,
 						"regions":
 						{
 						},
 						"selection":
 						[
 							[
-								206661,
-								206661
+								4238,
+								4238
 							]
 						],
 						"settings":
@@ -933,17 +933,45 @@
 							"translate_tabs_to_spaces": true
 						},
 						"translation.x": 0.0,
-						"translation.y": 135631.0,
+						"translation.y": 3344.0,
 						"zoom_level": 1.0
 					},
 					"type": "text"
 				},
 				{
 					"buffer": 1,
-					"file": "prg/Tcajon.prg",
+					"file": "prg/Tpvtactil.prg",
 					"settings":
 					{
-						"buffer_size": 4848,
+						"buffer_size": 270310,
+						"regions":
+						{
+						},
+						"selection":
+						[
+							[
+								171348,
+								171348
+							]
+						],
+						"settings":
+						{
+							"syntax": "Packages/harbour/harbour/Harbour.tmLanguage",
+							"tab_size": 3,
+							"translate_tabs_to_spaces": true
+						},
+						"translation.x": 0.0,
+						"translation.y": 108176.0,
+						"zoom_level": 1.0
+					},
+					"type": "text"
+				},
+				{
+					"buffer": 2,
+					"file": "prg/Albcli.prg",
+					"settings":
+					{
+						"buffer_size": 0,
 						"regions":
 						{
 						},
@@ -967,47 +995,19 @@
 					"type": "text"
 				},
 				{
-					"buffer": 2,
-					"file": "prg/Factu.prg",
-					"settings":
-					{
-						"buffer_size": 183773,
-						"regions":
-						{
-						},
-						"selection":
-						[
-							[
-								85658,
-								85670
-							]
-						],
-						"settings":
-						{
-							"syntax": "Packages/harbour/harbour/Harbour.tmLanguage",
-							"tab_size": 3,
-							"translate_tabs_to_spaces": true
-						},
-						"translation.x": 0.0,
-						"translation.y": 51841.0,
-						"zoom_level": 1.0
-					},
-					"type": "text"
-				},
-				{
 					"buffer": 3,
-					"file": "prg/Confcajporta.prg",
+					"file": "prg/Tpv.prg",
 					"settings":
 					{
-						"buffer_size": 26157,
+						"buffer_size": 0,
 						"regions":
 						{
 						},
 						"selection":
 						[
 							[
-								22583,
-								22583
+								0,
+								0
 							]
 						],
 						"settings":
@@ -1017,7 +1017,7 @@
 							"translate_tabs_to_spaces": true
 						},
 						"translation.x": 0.0,
-						"translation.y": 13499.0,
+						"translation.y": 0.0,
 						"zoom_level": 1.0
 					},
 					"type": "text"

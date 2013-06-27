@@ -33,6 +33,10 @@
 #define exitCancelar                4
 #define exitAceptarDesglosado       5
 
+#define documentoTicket             1
+#define documentoAlbaran            2
+#define documentoFactura            3
+
 #define nParcial                    1
 #define nPagado                     2
 
@@ -427,6 +431,30 @@ CLASS TpvTactil
 
    //------------------------------------------------------------------------//
 
+   DATA nTipoDocumento     INIT documentoTicket 
+
+   INLINE METHOD cTipoDocumento()
+
+      local cTipo := "Ticket"
+
+      do case
+         case ::nTipoDocumento == documentoAlbaran
+            cTipo := "Albarán de cliente"
+
+         case ::nTipoDocumento == documentoFactura
+            cTipo := "Factura de cliente"
+
+         otherwise
+            cTipo := "Ticket de cliente"
+
+      end case
+
+      RETURN cTipo
+
+   ENDMETHOD
+
+   //------------------------------------------------------------------------//
+
    METHOD AgregarLibre()
    METHOD ValidarAgregarLibre( oGetDescripcion, oDlg )
    METHOD GuardarAgregarLibre()
@@ -515,6 +543,7 @@ CLASS TpvTactil
    */
 
    METHOD OnClickCobro()
+   METHOD OnClickAlbaran()
    METHOD OnClickSalaVenta()
    METHOD OnClickCambiaUbicacion()
    METHOD OnClickGeneral()
@@ -725,7 +754,9 @@ CLASS TpvTactil
    Documentos------------------------------------------------------------------
    */
 
-   METHOD GuardaDocumento()
+   METHOD GuardaDocumento( lZap, nSave )
+
+   METHOD GuardaDocumentoAlbaran()
 
    //-----------------------------------------------------------------------//
 
@@ -744,7 +775,11 @@ CLASS TpvTactil
 
    //-----------------------------------------------------------------------//
 
-   INLINE METHOD GuardaDocumentoPagado()
+   INLINE METHOD GuardaDocumentoPagado( nSave )
+
+      DEFAULT nSave                    := SAVTIK
+
+      ::oTiketCabecera:cTipTik         := nSave
 
       do case
          case ::oTpvCobros:nEstado == nParcial
@@ -757,7 +792,7 @@ CLASS TpvTactil
 
       end case
 
-      ::GuardaDocumento()
+      ::GuardaDocumento( nil, nSave )
 
       RETURN ( Self )
 
@@ -3010,8 +3045,18 @@ METHOD StartResource() CLASS TpvTactil
       oGrupo                     := TDotNetGroup():New( oCarpeta, 66, "Nota", .f., , "Printer_32" )
          oBoton                  := TDotNetButton():New( 60, oGrupo, "Printer_32",                    "Entregar nota",   1, {|| ::OnClickEntrega() }, , , .f., .f., .f. )
 
-      oGrupo                     := TDotNetGroup():New( oCarpeta, 66, "Cobrar", .f., , "Money2_32" )
-         oBoton                  := TDotNetButton():New( 60, oGrupo, "Money2_32",                     "Cobrar",          1, {|| ::OnClickCobro() }, , , .f., .f., .f. )
+      if uFieldEmpresa( "lAlbTct" )
+
+         oGrupo                  := TDotNetGroup():New( oCarpeta, 126, "Cobrar", .f., , "Money2_32" )
+            oBoton               := TDotNetButton():New( 60, oGrupo, "document_plain_user1_32",       "Albarán",         1, {|| ::OnClickAlbaran() }, , , .f., .f., .f. )
+            oBoton               := TDotNetButton():New( 60, oGrupo, "Money2_32",                     "Cobrar",          2, {|| ::OnClickCobro() }, , , .f., .f., .f. )
+
+      else
+
+         oGrupo                  := TDotNetGroup():New( oCarpeta, 66, "Cobrar", .f., , "Money2_32" )
+            oBoton               := TDotNetButton():New( 60, oGrupo, "Money2_32",                     "Cobrar",          1, {|| ::OnClickCobro() }, , , .f., .f., .f. )
+
+      end if         
 
       oGrupo                     := TDotNetGroup():New( oCarpeta, 66, "Cajón", .f., , "Diskdrive_32" )
          oBoton                  := TDotNetButton():New( 60, oGrupo, "Diskdrive_32",                  "Abrir cajón",     1, {|| oUser():OpenCajon() }, , , .f., .f., .f. )
@@ -5514,6 +5559,8 @@ METHOD OnClickCobro() CLASS TpvTactil
 
    else
 
+      ::nTipoDocumento := documentoTicket
+
       if ::oTpvCobros:lCobro()
 
          /*
@@ -5573,6 +5620,7 @@ METHOD OnClickCobro() CLASS TpvTactil
          */
 
          ::SetInfo()
+         ::SetCliente()
 
          /*
          Recoger usuario-------------------------------------------------------
@@ -5583,6 +5631,130 @@ METHOD OnClickCobro() CLASS TpvTactil
       end if
 
    end if
+
+Return .t.
+
+//---------------------------------------------------------------------------//
+
+METHOD OnClickAlbaran() CLASS TpvTactil
+
+   local lOpenCaj    := .f.
+
+   if Empty( ::oTemporalLinea ) .or. Empty( ::oTemporalLinea:RecCount() )
+
+      MsgStop( "No puede almacenar un documento sin línea" )
+
+      Return .f.
+
+   else
+
+      if Empty( ::oTiketCabecera:cCliTik )
+
+         MsgStop( "Para generar un albarán necesita seleccionar un cliente.", "Información" )
+
+         Return .f.
+
+      else
+
+         ::nTipoDocumento := documentoAlbaran
+
+         if ::oTpvCobros:lCobro()
+
+            /*
+            Guarda documento--------------------------------------------------------
+            */
+
+            ::GuardaDocumentoAlbaran()
+
+            /*
+            Vemos si hay que abrir el cajon------------------------------------------
+            */
+
+            lOpenCaj    := ( ::oTpvCobros:nTotalCobro != 0 )
+
+            /*
+            Inicializa los cobros para el proximo ticket-----------------------------
+            */
+
+            ::oTpvCobros:InitCobros()
+
+            /*
+            Vaciamos las lineas------------------------------------------------------
+            */
+
+            ::oTemporalLinea:Zap()
+
+            /*
+            Refrescamos las lineas---------------------------------------------------
+            */
+
+            ::oBrwLineas:Refresh()
+
+            /*
+            Barra de progreso vuelve a su estado----------------------------------------
+            */
+
+            ::oProgressBar:Set( 0 )
+            ::oProgressBar:Refresh()
+
+            /*
+            Encendemos el flag para cargar de nuevo el usuario--------------------------
+            */
+
+            ::lGetUsuario                 := .t.
+
+            /*
+            Abrimos el cajón portamonedas antes de imprimir-----------------------
+            */
+
+            if lOpenCaj
+               oUser():OpenCajon()
+            end if   
+
+            /*
+            Imprimimos el documento--------------------------------------------
+            */
+
+            if ::oTpvCobros:nExit == exitAceptarImprimir
+               ?"Imprimimos"
+               ::ImprimeTicket()
+            end if   
+
+            /*
+            Inicializa los valores para el documento---------------------------
+            */
+
+            ::InitDocumento( ubiGeneral )
+
+            /*
+            Datos de la ubicacion----------------------------------------------
+            */
+
+            ::SetUbicacion()
+
+            /*
+            Datos del documento------------------------------------------------
+            */
+
+            ::SetInfo()
+
+            /*
+            Datos del cliente--------------------------------------------------
+            */
+
+            ::SetCliente()
+
+            /*
+            Recoger usuario----------------------------------------------------
+            */
+
+            ::GetUsuario()
+
+         end if
+
+      end if
+
+   end if   
 
 Return .t.
 
@@ -5972,6 +6144,163 @@ METHOD GuardaDocumento( lZap, nSave ) CLASS TpvTactil
    RECOVER USING oError
 
       msgStop( "Error al grabar el ticket" + CRLF + ErrorMessage( oError ) )
+
+   END SEQUENCE
+
+   ErrorBlock( oBlock )
+
+   /*
+   Dialogo se vuelve a habilitar para volcer al trabajo------------------------
+   */
+
+   ::oDlg:Enable()
+
+   CursorWE()
+
+Return .t.
+
+//---------------------------------------------------------------------------//
+
+METHOD GuardaDocumentoAlbaran() CLASS TpvTactil
+
+   local oError
+   local oBlock
+   local sCobro
+   local nNewAlbCli
+   local nOrdAnt
+   local cSerAlb     := cNewSer( "NALBCLI", ::oContadores:cAlias )
+   local nNumAlb     := nNewDoc( cSerAlb, ::oAlbaranClienteCabecera:cAlias, "nAlbCli", , ::oContadores:cAlias )
+   local cSufAlb     := RetSufEmp()
+   local n           := 1
+
+   CursorWait()
+
+   ::oDlg:Disable()
+
+   oBlock                           := ErrorBlock( {| oError | ApoloBreak( oError ) } )
+   BEGIN SEQUENCE
+
+   /*
+   Creamos la cabecera del albarán---------------------------------------------
+   */
+
+   ::oAlbaranClienteCabecera:Append()
+
+   ::oAlbaranClienteCabecera:cSerAlb      := cSerAlb
+   ::oAlbaranClienteCabecera:nNumAlb      := nNumAlb
+   ::oAlbaranClienteCabecera:cSufAlb      := cSufAlb
+   ::oAlbaranClienteCabecera:dFecCre      := GetSysDate()
+   ::oAlbaranClienteCabecera:cTimCre      := Time()
+   ::oAlbaranClienteCabecera:dFecAlb      := GetSysDate()
+   ::oAlbaranClienteCabecera:cCodUsr      := oUser():cCodigo()
+   ::oAlbaranClienteCabecera:cTurAlb      := cCurSesion()
+   ::oAlbaranClienteCabecera:lFacturado   := .f.
+   ::oAlbaranClienteCabecera:lSndDoc      := .t.
+   ::oAlbaranClienteCabecera:lIvaInc      := .t.
+   ::oAlbaranClienteCabecera:cCodCaj      := oUser():cCaja()
+   ::oAlbaranClienteCabecera:cCodPago     := cDefFpg()
+   ::oAlbaranClienteCabecera:cCodAlm      := oUser():cAlmacen()
+   ::oAlbaranClienteCabecera:nTarifa      := Max( uFieldEmpresa( "nPreVta" ), 1 )
+   ::oAlbaranClienteCabecera:cCodCli      := ::oTiketCabecera:cCliTik
+   ::oAlbaranClienteCabecera:cNomCli      := ::oTiketCabecera:cNomTik
+   ::oAlbaranClienteCabecera:cDirCli      := ::oTiketCabecera:cDirCli
+   ::oAlbaranClienteCabecera:cPobCli      := ::oTiketCabecera:cPobCli
+   ::oAlbaranClienteCabecera:cPrvCli      := ::oTiketCabecera:cPrvCli
+   ::oAlbaranClienteCabecera:cPosCli      := ::oTiketCabecera:cPosCli
+   ::oAlbaranClienteCabecera:cDniCli      := ::oTiketCabecera:cDniCli
+   ::oAlbaranClienteCabecera:cDtoEsp      := ::oTiketCabecera:cDtoEsp
+   ::oAlbaranClienteCabecera:nDtoEsp      := ::oTiketCabecera:nDtoEsp
+   ::oAlbaranClienteCabecera:cDpp         := ::oTiketCabecera:cDpp
+   ::oAlbaranClienteCabecera:nDpp         := ::oTiketCabecera:nDpp
+   ::oAlbaranClienteCabecera:cDivAlb      := cDivEmp()
+   ::oAlbaranClienteCabecera:nVdvAlb      := nChgDiv( cDivEmp(), ::oDivisas:cAlias )
+   ::oAlbaranClienteCabecera:cRetMat      := ::oTiketCabecera:cRetMat
+   ::oAlbaranClienteCabecera:cCodAge      := ::oTiketCabecera:cCodAge
+   ::oAlbaranClienteCabecera:cCodRut      := ::oTiketCabecera:cCodRut
+   ::oAlbaranClienteCabecera:cCodTar      := ::oTiketCabecera:cCodTar
+   ::oAlbaranClienteCabecera:cCodObr      := ::oTiketCabecera:cCodObr
+   ::oAlbaranClienteCabecera:nTotNet      := ::sTotal:TotalBase()
+   ::oAlbaranClienteCabecera:nTotIva      := ::sTotal:TotalIva() 
+   ::oAlbaranClienteCabecera:nTotAlb      := ::sTotal:TotalDocumento()
+
+   ::oAlbaranClienteCabecera:Save()
+
+   /*
+   Creamos las Lineas del albarán----------------------------------------------
+   */   
+
+   ::oTemporalLinea:GoTop()
+
+   while !::oTemporalLinea:Eof()
+
+      ::oAlbaranClienteLinea:Append()
+      ::oAlbaranClienteLinea:cSerAlb      := cSerAlb
+      ::oAlbaranClienteLinea:nNumAlb      := nNumAlb
+      ::oAlbaranClienteLinea:cSufAlb      := cSufAlb
+      ::oAlbaranClienteLinea:cRef         := ::oTemporalLinea:cCbaTil
+      ::oAlbaranClienteLinea:cDetalle     := ::oTemporalLinea:cNomTil
+      ::oAlbaranClienteLinea:nPreUnit     := ::oTemporalLinea:nPvpTil
+      ::oAlbaranClienteLinea:nDto         := ::oTemporalLinea:nDtoLin
+      ::oAlbaranClienteLinea:nIva         := ::oTemporalLinea:nIvaTil
+      ::oAlbaranClienteLinea:nUniCaja     := ::oTemporalLinea:nUntTil
+      ::oAlbaranClienteLinea:cCodPr1      := ::oTemporalLinea:cCodPr1
+      ::oAlbaranClienteLinea:cCodPr2      := ::oTemporalLinea:cCodPr2
+      ::oAlbaranClienteLinea:cValPr1      := ::oTemporalLinea:cValPr1
+      ::oAlbaranClienteLinea:cValPr2      := ::oTemporalLinea:cValPr2
+      ::oAlbaranClienteLinea:nFacCnv      := ::oTemporalLinea:nFacCnv
+      ::oAlbaranClienteLinea:nDtoDiv      := ::oTemporalLinea:nDtoDiv
+      ::oAlbaranClienteLinea:nCtlStk      := ::oTemporalLinea:nCtlStk
+      ::oAlbaranClienteLinea:nValImp      := ::oTemporalLinea:nValImp
+      ::oAlbaranClienteLinea:cCodImp      := ::oTemporalLinea:cCodImp
+      ::oAlbaranClienteLinea:lKitChl      := ::oTemporalLinea:lKitChl
+      ::oAlbaranClienteLinea:lKitArt      := ::oTemporalLinea:lKitArt
+      ::oAlbaranClienteLinea:lKitPrc      := ::oTemporalLinea:lKitPrc
+      ::oAlbaranClienteLinea:dFecAlb      := GetSysDate()
+      ::oAlbaranClienteLinea:cAlmLin      := oUser():cAlmacen()
+      ::oAlbaranClienteLinea:lIvaLin      := .t.
+      ::oAlbaranClienteLinea:nNumLin      := ::oTemporalLinea:nNumLin
+      ::oAlbaranClienteLinea:Save()
+
+      ::oTemporalLinea:Skip()
+
+   end while
+
+   /*
+   Guardamos los cobros--------------------------------------------------------
+   */
+
+   if Len( ::oTpvCobros:aCobros ) != 0
+
+      for each sCobro in ::oTpvCobros:aCobros
+
+         ::oAlbaranClientePago:Append()
+
+         ::oAlbaranClientePago:cSerAlb    := cSerAlb
+         ::oAlbaranClientePago:nNumAlb    := nNumAlb
+         ::oAlbaranClientePago:cSufAlb    := cSufAlb
+         ::oAlbaranClientePago:nNumRec    := n
+         ::oAlbaranClientePago:cCodCaj    := oUser():cCaja()
+         ::oAlbaranClientePago:cTurRec    := cCurSesion()
+         ::oAlbaranClientePago:cCodCli    := ::oTiketCabecera:cCliTik
+         ::oAlbaranClientePago:dEntrega   := GetSysDate()
+         ::oAlbaranClientePago:nImporte   := sCobro:nImporte
+         ::oAlbaranClientePago:cDescrip   := "Entrega a cuenta del albarán: " + cSerAlb + "/" + AllTrim( Str( nNumAlb ) )
+         ::oAlbaranClientePago:cDivPgo    := cDivEmp()
+         ::oAlbaranClientePago:nVdvPgo    := nChgDiv( cDivEmp(), ::oDivisas:cAlias )
+         ::oAlbaranClientePago:cCodPgo    := sCobro:cCodigo
+         ::oAlbaranClientePago:lCloPgo    := .f.
+
+         ::oAlbaranClientePago:Save()
+
+         n++
+
+      next
+
+   end if
+
+   RECOVER USING oError
+
+      msgStop( "Error al grabar el albarán" + CRLF + ErrorMessage( oError ) )
 
    END SEQUENCE
 
