@@ -9131,10 +9131,10 @@ RETURN ( if( cPirDiv != NIL, Trans( nCalculo, cPirDiv ), nCalculo ) )
 
 FUNCTION cProFacPrv( cFacPro, dbfFacPrvT )
 
-   local cCodPro := ""
+   local cCodPro  := ""
 
    if dbSeekInOrd( cFacPro, "nNumFac", dbfFacPrvT )
-      cCodPro  := ( dbfFacPrvT )->cCodPro
+      cCodPro     := ( dbfFacPrvT )->cCodPro
    end if
 
 RETURN ( cCodPro )
@@ -9505,7 +9505,7 @@ function aCalFacPrv()
                         { "nTotDto",      "N", 16,  6, "Total descuento",             "cPirDivFac",         "lEnd" },;
                         { "nTotDpp",      "N", 16,  6, "Total descuento pronto pago", "cPirDivFac",         "lEnd" },;
                         { "nTotNet",      "N", 16,  6, "Total neto",                  "cPirDivFac",         "lEnd" },;
-                        { "nTotIva",      "N", 16,  6, "Total " + cImp(),                   "cPirDivFac",         "lEnd" },;
+                        { "nTotIva",      "N", 16,  6, "Total " + cImp(),             "cPirDivFac",         "lEnd" },;
                         { "nTotReq",      "N", 16,  6, "Total RE",                    "cPirDivFac",         "lEnd" },;
                         { "nTotRet",      "N", 16,  6, "Total retenciones por IRPF",  "cPirDivFac",         "lEnd" },;
                         { "nTotFac",      "N", 16,  6, "Total factura",               "cPirDivFac",         "lEnd" },;
@@ -9529,7 +9529,7 @@ function aColFacPrv()
    aAdd( aColFacPrv, { "CDETALLE"   ,"C",240, 0, "Detalle de articulo"         ,"",                    "", "( cDbfCol )", nil } )
    aAdd( aColFacPrv, { "NPREUNIT"   ,"N", 16, 6, "Precio unitario"             ,"cPinDivFac",          "", "( cDbfCol )", nil } )
    aAdd( aColFacPrv, { "NDTO"       ,"N",  6, 2, ""                            ,"'@E 99,99'",          "", "( cDbfCol )", nil } )
-   aAdd( aColFacPrv, { "NIVA"       ,"N",  6, 2, "Porcentaje de " + cImp()    ,"'@E 99,99'",          "", "( cDbfCol )", nil } )
+   aAdd( aColFacPrv, { "NIVA"       ,"N",  6, 2, "Porcentaje de " + cImp()     ,"'@E 99,99'",          "", "( cDbfCol )", nil } )
    aAdd( aColFacPrv, { "NCANENT"    ,"N", 16, 6, "Cajas recibidas"             ,"MasUnd()",            "", "( cDbfCol )", nil } )
    aAdd( aColFacPrv, { "LCONTROL"   ,"L",  1, 0, "Control reservado"           ,"",                    "", "( cDbfCol )", nil } )
    aAdd( aColFacPrv, { "CUNIDAD"    ,"C",  2, 0, "Unidad de venta"             ,"",                    "", "( cDbfCol )", nil } )
@@ -9615,8 +9615,8 @@ function aColFacPrv()
    aAdd( aColFacPrv, { "lGasSup"    ,"L",  1, 0, "Linea de gastos suplidos",     "",                   "", "( cDbfCol )", nil } )
    aAdd( aColFacPrv, { "dFecFac"    ,"D",  8, 0, "Fecha de la factura",          "",                   "", "( cDbfCol )", nil } )
    aAdd( aColFacPrv, { "cCodPrv"    ,"C", 12, 0, "Código de proveedor",          "",                   "", "( cDbfCol )", nil } )
-   aAdd( aColFacPrv, { "lNumSer"    ,"L",  1, 0, "Lógico solicitar numero de serie", "",                "", "( cDbfCol )" } )
-   aAdd( aColFacPrv, { "lAutSer"    ,"L",  1, 0, "Lógico de autoserializar",     "",                    "", "( cDbfCol )" } )
+   aAdd( aColFacPrv, { "lNumSer"    ,"L",  1, 0, "Lógico solicitar numero de serie", "",               "", "( cDbfCol )", nil } )
+   aAdd( aColFacPrv, { "lAutSer"    ,"L",  1, 0, "Lógico de autoserializar",     "",                   "", "( cDbfCol )", nil } )
 
 return ( aColFacPrv )
 
