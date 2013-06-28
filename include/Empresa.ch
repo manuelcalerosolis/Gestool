@@ -280,3 +280,5 @@
 #define _NCOPSEA               280
 #define _LREALWEB			   281
 #define _LRECNUMFAC			   282	
+#define _LALBTCT			   283
+#define _LFACTCT			   284

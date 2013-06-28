@@ -1460,12 +1460,20 @@ STATIC FUNCTION EdtCnf( aTmp, aGet, dbfEmp, oBrw, nSelFolder, bValid, nMode )
          ID       128 ;
          OF       oFld:aDialogs[ 1 ]
 
+      REDEFINE CHECKBOX aGet[ _LALBTCT ] VAR aTmp[ _LALBTCT ] ;
+         ID       129 ;
+         OF       oFld:aDialogs[ 1 ]
+
+      REDEFINE CHECKBOX aGet[ _LFACTCT ] VAR aTmp[ _LFACTCT ] ;
+         ID       130 ;
+         OF       oFld:aDialogs[ 1 ]
+
       REDEFINE CHECKBOX aGet[ _LIMGART ] VAR aTmp[ _LIMGART ] ;
          ID       990 ;
          OF       oFld:aDialogs[1]
 
       REDEFINE CHECKBOX aGet[ _LNUMPED ] VAR aTmp[ _LNUMPED ] ;
-         ID       260 ;
+         ID       260 ;   
          OF       oFld:aDialogs[1]
 
       REDEFINE GET aGet[ _CNUMPED ] VAR aTmp[ _CNUMPED ] ;
@@ -7098,6 +7106,8 @@ FUNCTION aItmEmp()
    aAdd( aDbf, {"nCopSea",    "N",  1, 0, "Número para comportamiento en caso de conflicto",       "", "", "aEmp()", 1 } )
    aAdd( aDbf, {"lRealWeb",   "L",  1, 0, "Lógico conectar tiempo real con la web",                "", "", "aEmp()", .f. } )
    aAdd( aDbf, {"lRecNumFac", "L",  1, 0, "Lógico para recuperar el número de las facturas",       "", "", "aEmp()", .t. } )
+   aAdd( aDbf, {"lAlbTct",    "L",  1, 0, "Lógico para realizar albaranes desde táctil",           "", "", "aEmp()", .f. } )
+   aAdd( aDbf, {"lFacTct",    "L",  1, 0, "Lógico para realizar facturas desde táctil",            "", "", "aEmp()", .f. } )
 
 Return ( aDbf  )
 

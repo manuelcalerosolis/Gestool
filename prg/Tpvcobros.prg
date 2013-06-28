@@ -16,6 +16,10 @@
 #define ubiRecoger                  3
 #define ubiEncargar                 4
 
+#define documentoTicket             1
+#define documentoAlbaran            2
+#define documentoFactura            3
+
 #define nParcial                    1
 #define nPagado                     2
 
@@ -60,6 +64,9 @@ CLASS TpvCobros
    METHOD lCobro()
 
    METHOD lCobroExacto()
+
+   METHOD lCobroExactoTicket()
+   METHOD lCobroExactoAlbaran()
 
    METHOD lResource()
    METHOD StartResource()
@@ -157,35 +164,44 @@ CLASS TpvCobros
 
    INLINE METHOD OnClickAceptar( nExit )
 
-      if ::nUbiTik == ubiEncargar
+      if ::oSender:nTipoDocumento != documentoAlbaran
 
-         if ( ::sTotalesCobros:nTotal ) > ( ::sTotalesCobros:nCobrado + ::sTotalesCobros:nEntregado )
-            ::nEstado   := nParcial
-         else
-            ::nEstado   := nPagado
-         end if
+         if ::nUbiTik == ubiEncargar
 
-         ::CreaCobro()
-
-         ::nExit  := nExit
-
-         ::oDlg:End( IDOK )
-
-      else
-
-         if ::ValidCobro()
+            if ( ::sTotalesCobros:nTotal ) > ( ::sTotalesCobros:nCobrado + ::sTotalesCobros:nEntregado )
+               ::nEstado   := nParcial
+            else
+               ::nEstado   := nPagado
+            end if
 
             ::CreaCobro()
 
-            ::nEstado   := nPagado
-
-            ::nExit     := nExit
+            ::nExit  := nExit
 
             ::oDlg:End( IDOK )
 
+         else
+
+            if ::ValidCobro()
+
+               ::CreaCobro()
+
+               ::nEstado   := nPagado
+
+               ::nExit     := nExit
+
+               ::oDlg:End( IDOK )
+
+            end if
+
          end if
 
-      end if
+      else
+
+         ::nExit     := nExit
+         ::oDlg:End( IDOK )
+
+      end if   
 
       RETURN ( Self )
 
@@ -216,7 +232,7 @@ METHOD New( oSender ) CLASS TpvCobros
    ::InitCobros()
 
    if oUser():lUsrZur()
-      ::cResource             := "BIG_COBRO_LEFT"
+      ::cResource             := "BIG_COBRO_RIGHT"
    else
       ::cResource             := "BIG_COBRO_RIGHT"
    end if
@@ -255,6 +271,10 @@ Return Self
 //--------------------------------------------------------------------------//
 
 METHOD lCobro() CLASS TpvCobros
+   
+   /*
+   Provisional para ponerselo al bollito---------------------------------------
+   */
 
    if lImporteExacto()
 
@@ -266,12 +286,26 @@ METHOD lCobro() CLASS TpvCobros
 
    end if
 
-
 Return .t.
 
 //---------------------------------------------------------------------------//
 
 METHOD lCobroExacto() CLASS TpvCobros
+
+   do case
+      case ::oSender:nTipoDocumento == documentoAlbaran
+         ::lCobroExactoAlbaran()
+
+      otherwise
+         ::lCobroExactoTicket()
+
+   end case
+
+Return .t.
+
+//---------------------------------------------------------------------------//
+
+METHOD lCobroExactoTicket() CLASS TpvCobros
 
    ::nUbiTik                  := ::oSender:oTiketCabecera:nUbiTik
 
@@ -287,7 +321,15 @@ METHOD lCobroExacto() CLASS TpvCobros
 
    ::nExit                    := exitAceptar
 
-Return .t.      
+Return .t.
+
+//---------------------------------------------------------------------------//
+
+METHOD lCobroExactoAlbaran() CLASS TpvCobros
+
+   ::nExit                    := exitAceptarImprimir
+
+Return .t.
 
 //---------------------------------------------------------------------------//
 
@@ -302,7 +344,7 @@ METHOD lResource() CLASS TpvCobros
 
    ::sTotalesCobros:GetTotal( ::oSender:sTotal )
 
-   DEFINE DIALOG ::oDlg RESOURCE ::cResource
+   DEFINE DIALOG ::oDlg RESOURCE ::cResource TITLE ::oSender:cTipoDocumento()
 
       /*
       Totales------------------------------------------------------------------
@@ -574,18 +616,29 @@ METHOD StartResource() CLASS TpvCobros
    ::oGrupoCobro              := TDotNetGroup():New( oCarpeta, ( ( ::nButtonsCobro() * 60 ) + 6 ), "Formas", .f. )
       ::CreateButtonsCobro()
 
-   oGrupo                     := TDotNetGroup():New( oCarpeta, 66,   "Vales", .f. )
+   if ::oSender:nTipoDocumento != documentoAlbaran
+      oGrupo                  := TDotNetGroup():New( oCarpeta, 66,   "Vales", .f. )
                                  TDotNetButton():New( 60, oGrupo,    "Document_Money2_32",               "Liquidar vales",     1, {|| ::OnClickAnnadirVales() }, , , .f., .f., .f. )
+   end if                              
 
    oGrupo                     := TDotNetGroup():New( oCarpeta, 126,  "Cobro combinado", .f. )
                                  TDotNetButton():New( 60, oGrupo,    "Money2_Add2_32",                   "Añadir cobro",       1, {|| ::OnClickAnnadirCobro() }, , , .f., .f., .f. )
                                  TDotNetButton():New( 60, oGrupo,    "Money2_Minus_32",                  "Eliminar cobro",     2, {|| ::OnClickEliminarCobro() }, , , .f., .f., .f. )
 
-   oGrupoImprimir             := TDotNetGroup():New( oCarpeta, 186,  "Imprimir", .f. )
-                              
+   
+   if ::oSender:nTipoDocumento != documentoAlbaran
+
+      oGrupoImprimir          := TDotNetGroup():New( oCarpeta, 186,  "Imprimir", .f. )
                                  TDotNetButton():New( 60, oGrupoImprimir,   "Check2_Printer2_32",        "Aceptar [F6]",       1, {|| ::OnClickAceptar( exitAceptarImprimir ) }, , , .f., .f., .f. )
                                  TDotNetButton():New( 60, oGrupoImprimir,   "package_new_printer2_32",   "Aceptar regalo",     2, {|| ::OnClickAceptar( exitAceptarRegalo ) }, , , .f., .f., .f. )
                                  TDotNetButton():New( 60, oGrupoImprimir,   "document_text_printer2_32", "Aceptar desglosado", 3, {|| ::OnClickAceptar( exitAceptarDesglosado ) }, , , .f., .f., .f. )
+
+   else
+
+      oGrupoImprimir          := TDotNetGroup():New( oCarpeta, 66,  "Imprimir", .f. )
+                                 TDotNetButton():New( 60, oGrupoImprimir,   "Check2_Printer2_32",        "Aceptar [F6]",       1, {|| ::OnClickAceptar( exitAceptarImprimir ) }, , , .f., .f., .f. )
+   
+   end if                              
                               
    oGrupo                     := TDotNetGroup():New( oCarpeta, 66,  "No imprimir", .f. )
                               
@@ -593,7 +646,7 @@ METHOD StartResource() CLASS TpvCobros
 
    oGrupo                     := TDotNetGroup():New( oCarpeta, 66,  "Salida", .f. )
                               
-                                 TDotNetButton():New( 60, oGrupo,    "End32",                            "Salida",             1, {|| ::oDlg:End() }, , , .f., .f., .f. )                           
+                                 TDotNetButton():New( 60, oGrupo,   "End32",                             "Salida",             1, {|| ::oDlg:End() }, , , .f., .f., .f. )
 
    ::oDlg:oTop                := ::oOfficeBar
    

@@ -33,6 +33,10 @@
 #define exitCancelar                4
 #define exitAceptarDesglosado       5
 
+#define documentoTicket             1
+#define documentoAlbaran            2
+#define documentoFactura            3
+
 #define nParcial                    1
 #define nPagado                     2
 
@@ -91,6 +95,8 @@ CLASS TpvTactil
    DATA oAlbaranClienteLinea
    DATA oAlbaranClienteSerie
    DATA oAlbaranClientePago
+   DATA oAlbaranClienteIncidencia
+   DATA oAlbaranClienteDocumento
    DATA oFacturaClienteCabecera
    DATA oFacturaClienteLinea
    DATA oFacturaClienteSerie
@@ -140,6 +146,9 @@ CLASS TpvTactil
    DATA oMaterialesProducion
    DATA oMaterialesProducionSeries
    DATA oMaterialesNumeroSeries
+   DATA oOferta
+   DATA oTipoVenta
+   DATA oTransportista
    DATA oCaptura
    DATA oTComandas
    DATA oBandera
@@ -427,6 +436,30 @@ CLASS TpvTactil
 
    //------------------------------------------------------------------------//
 
+   DATA nTipoDocumento     INIT documentoTicket 
+
+   INLINE METHOD cTipoDocumento()
+
+      local cTipo := "Ticket"
+
+      do case
+         case ::nTipoDocumento == documentoAlbaran
+            cTipo := "Albarán de cliente"
+
+         case ::nTipoDocumento == documentoFactura
+            cTipo := "Factura de cliente"
+
+         otherwise
+            cTipo := "Ticket de cliente"
+
+      end case
+
+      RETURN cTipo
+
+   ENDMETHOD
+
+   //------------------------------------------------------------------------//
+
    METHOD AgregarLibre()
    METHOD ValidarAgregarLibre( oGetDescripcion, oDlg )
    METHOD GuardarAgregarLibre()
@@ -515,6 +548,7 @@ CLASS TpvTactil
    */
 
    METHOD OnClickCobro()
+   METHOD OnClickAlbaran()
    METHOD OnClickSalaVenta()
    METHOD OnClickCambiaUbicacion()
    METHOD OnClickGeneral()
@@ -727,7 +761,9 @@ CLASS TpvTactil
    Documentos------------------------------------------------------------------
    */
 
-   METHOD GuardaDocumento()
+   METHOD GuardaDocumento( lZap, nSave )
+
+   METHOD GuardaDocumentoAlbaran()
 
    //-----------------------------------------------------------------------//
 
@@ -746,7 +782,11 @@ CLASS TpvTactil
 
    //-----------------------------------------------------------------------//
 
-   INLINE METHOD GuardaDocumentoPagado()
+   INLINE METHOD GuardaDocumentoPagado( nSave )
+
+      DEFAULT nSave                    := SAVTIK
+
+      ::oTiketCabecera:cTipTik         := nSave
 
       do case
          case ::oTpvCobros:nEstado == nParcial
@@ -759,7 +799,7 @@ CLASS TpvTactil
 
       end case
 
-      ::GuardaDocumento()
+      ::GuardaDocumento( nil, nSave )
 
       RETURN ( Self )
 
@@ -772,6 +812,8 @@ CLASS TpvTactil
    METHOD EliminaDocumento()
 
    METHOD GetTotalDocumento( uValue )  INLINE ( oSend( ::sTotal, uValue ) )
+
+   METHOD GetLineaAlbaranes( uValue )  INLINE ( Eval( &( uValue ), ::oAlbaranClienteLinea:cAlias ) )
 
    METHOD ImprimeDocumento()
 
@@ -795,8 +837,20 @@ CLASS TpvTactil
 
    INLINE METHOD ImprimeTicket()
 
-      ::cFormato        := ::oFormatosImpresion:cFormatoTiket
-      ::cImpresora      := ::oFormatosImpresion:cPrinterTik
+      do case
+      case ::nTipoDocumento == documentoAlbaran
+         
+         ::cFormato        := "ACA" //::oFormatosImpresion:cFmtAlb
+         ::cImpresora      := ::oFormatosImpresion:cPrinterAlb
+
+      otherwise
+         
+         ::cFormato        := ::oFormatosImpresion:cFormatoTiket
+         ::cImpresora      := ::oFormatosImpresion:cPrinterTik
+
+      end case
+
+      
       ::nDispositivo    := IS_PRINTER
       ::nCopias         := 1
       ::lComanda        := .f.
@@ -1874,6 +1928,10 @@ METHOD OpenFiles() CLASS TpvTactil
 
    DATABASE NEW ::oAlbaranClientePago                       PATH ( cPatEmp() )   FILE "ALBCLIP.DBF"         VIA ( cDriver() ) SHARED INDEX "ALBCLIP.CDX"
 
+   DATABASE NEW ::oAlbaranClienteIncidencia                 PATH ( cPatEmp() )   FILE "ALBCLII.DBF"         VIA ( cDriver() ) SHARED INDEX "ALBCLII.CDX"
+
+   DATABASE NEW ::oAlbaranClienteDocumento                  PATH ( cPatEmp() )   FILE "ALBCLID.DBF"         VIA ( cDriver() ) SHARED INDEX "ALBCLID.CDX"
+
    DATABASE NEW ::oFacturaClienteCabecera                   PATH ( cPatEmp() )   FILE "FACCLIT.DBF"         VIA ( cDriver() ) SHARED INDEX "FACCLIT.CDX"
 
    DATABASE NEW ::oFacturaClienteLinea                      PATH ( cPatEmp() )   FILE "FACCLIL.DBF"         VIA ( cDriver() ) SHARED INDEX "FACCLIL.CDX"
@@ -1982,6 +2040,10 @@ METHOD OpenFiles() CLASS TpvTactil
 
    DATABASE NEW ::oMaterialesNumeroSeries                   PATH ( cPatEmp() )   FILE "MatSer.DBF"          VIA ( cDriver() ) SHARED INDEX "MatSer.CDX"
 
+   DATABASE NEW ::oOferta                                   PATH ( cPatArt() )   FILE "OFERTA.DBF"          VIA ( cDriver() ) SHARED INDEX "OFERTA.CDX"
+
+   DATABASE NEW ::oTipoVenta                                PATH ( cPatDat() )   FILE "TVTA.DBF"            VIA ( cDriver() ) SHARED INDEX "TVTA.CDX"
+
    ::oCaptura             := TCaptura():New( cPatDat() )
    ::oCaptura:OpenFiles()
 
@@ -2048,6 +2110,11 @@ METHOD OpenFiles() CLASS TpvTactil
 
    ::oFabricante              := TFabricantes():Create( cPatArt() )
    if !::oFabricante:OpenFiles()
+      ::lOpenFiles            := .f.
+   end if
+
+   ::oTransportista           := TTrans():Create( cPatCli() )
+   if !::oTransportista:OpenFiles()
       ::lOpenFiles            := .f.
    end if
 
@@ -2168,6 +2235,14 @@ METHOD CloseFiles() CLASS TpvTactil
 
    if ::oAlbaranClientePago != nil .and. ::oAlbaranClientePago:Used()
       ::oAlbaranClientePago:End()
+   end if
+
+   if ::oAlbaranClienteIncidencia != nil .and. ::oAlbaranClienteIncidencia:Used()
+      ::oAlbaranClienteIncidencia:End()
+   end if
+
+   if ::oAlbaranClienteDocumento != nil .and. ::oAlbaranClienteDocumento:Used()
+      ::oAlbaranClienteDocumento:End()
    end if
 
    if ::oFacturaClienteCabecera != nil .and. ::oFacturaClienteCabecera:Used()
@@ -2366,6 +2441,14 @@ METHOD CloseFiles() CLASS TpvTactil
       ::oMaterialesNumeroSeries:End()
    end if
 
+   if ::oOferta != nil .and. ::oOferta:Used()
+      ::oOferta:End()
+   end if
+
+   if ::oTipoVenta != nil .and. ::oTipoVenta:Used()
+      ::oTipoVenta:End()
+   end if
+
    if !Empty( ::oCaptura )
       ::oCaptura:End()
    end if
@@ -2422,6 +2505,10 @@ METHOD CloseFiles() CLASS TpvTactil
       ::oFabricante:End()
    end if
 
+   if !Empty( ::oTransportista )
+      ::oTransportista:End()
+   end if
+
    ::oTiketCabecera                          := nil
    ::oTiketLinea                             := nil
    ::oTiketCobro                             := nil
@@ -2442,6 +2529,8 @@ METHOD CloseFiles() CLASS TpvTactil
    ::oAlbaranClienteLinea                    := nil
    ::oAlbaranClienteSerie                    := nil
    ::oAlbaranClientePago                     := nil
+   ::oAlbaranClienteIncidencia               := nil
+   ::oAlbaranClienteDocumento                := nil
    ::oFacturaClienteCabecera                 := nil
    ::oFacturaClienteLinea                    := nil
    ::oFacturaClienteSerie                    := nil
@@ -2505,6 +2594,9 @@ METHOD CloseFiles() CLASS TpvTactil
    ::oFideliza                               := nil
    ::oTipArt                                 := nil
    ::oFabricante                             := nil
+   ::oOferta                                 := nil
+   ::oTipoVenta                              := nil
+   ::oTransportista                          := nil
    ::oOfficeBar                              := nil
 
 Return .t.
@@ -3016,8 +3108,18 @@ METHOD StartResource() CLASS TpvTactil
       oGrupo                     := TDotNetGroup():New( oCarpeta, 66, "Nota", .f., , "Printer_32" )
          oBoton                  := TDotNetButton():New( 60, oGrupo, "Printer_32",                    "Entregar nota",   1, {|| ::OnClickEntrega() }, , , .f., .f., .f. )
 
-      oGrupo                     := TDotNetGroup():New( oCarpeta, 66, "Cobrar", .f., , "Money2_32" )
-         oBoton                  := TDotNetButton():New( 60, oGrupo, "Money2_32",                     "Cobrar",          1, {|| ::OnClickCobro() }, , , .f., .f., .f. )
+      if uFieldEmpresa( "lAlbTct" )
+
+         oGrupo                  := TDotNetGroup():New( oCarpeta, 126, "Cobrar", .f., , "Money2_32" )
+            oBoton               := TDotNetButton():New( 60, oGrupo, "document_plain_user1_32",       "Albarán",         1, {|| ::OnClickAlbaran() }, , , .f., .f., .f. )
+            oBoton               := TDotNetButton():New( 60, oGrupo, "Money2_32",                     "Cobrar",          2, {|| ::OnClickCobro() }, , , .f., .f., .f. )
+
+      else
+
+         oGrupo                  := TDotNetGroup():New( oCarpeta, 66, "Cobrar", .f., , "Money2_32" )
+            oBoton               := TDotNetButton():New( 60, oGrupo, "Money2_32",                     "Cobrar",          1, {|| ::OnClickCobro() }, , , .f., .f., .f. )
+
+      end if         
 
       oGrupo                     := TDotNetGroup():New( oCarpeta, 66, "Cajón", .f., , "Diskdrive_32" )
          oBoton                  := TDotNetButton():New( 60, oGrupo, "Diskdrive_32",                  "Abrir cajón",     1, {|| oUser():OpenCajon() }, , , .f., .f., .f. )
@@ -5520,6 +5622,8 @@ METHOD OnClickCobro() CLASS TpvTactil
 
    else
 
+      ::nTipoDocumento := documentoTicket
+
       if ::oTpvCobros:lCobro()
 
          /*
@@ -5579,6 +5683,7 @@ METHOD OnClickCobro() CLASS TpvTactil
          */
 
          ::SetInfo()
+         ::SetCliente()
 
          /*
          Recoger usuario-------------------------------------------------------
@@ -5589,6 +5694,129 @@ METHOD OnClickCobro() CLASS TpvTactil
       end if
 
    end if
+
+Return .t.
+
+//---------------------------------------------------------------------------//
+
+METHOD OnClickAlbaran() CLASS TpvTactil
+
+   local lOpenCaj    := .f.
+
+   if Empty( ::oTemporalLinea ) .or. Empty( ::oTemporalLinea:RecCount() )
+
+      MsgStop( "No puede almacenar un documento sin línea" )
+
+      Return .f.
+
+   else
+
+      if Empty( ::oTiketCabecera:cCliTik )
+
+         MsgStop( "Para generar un albarán necesita seleccionar un cliente.", "Información" )
+
+         Return .f.
+
+      else
+
+         ::nTipoDocumento := documentoAlbaran
+
+         if ::oTpvCobros:lCobro()
+
+            /*
+            Guarda documento--------------------------------------------------------
+            */
+
+            ::GuardaDocumentoAlbaran()
+
+            /*
+            Vemos si hay que abrir el cajon------------------------------------------
+            */
+
+            lOpenCaj    := ( ::oTpvCobros:nTotalCobro != 0 )
+
+            /*
+            Inicializa los cobros para el proximo ticket-----------------------------
+            */
+
+            ::oTpvCobros:InitCobros()
+
+            /*
+            Vaciamos las lineas------------------------------------------------------
+            */
+
+            ::oTemporalLinea:Zap()
+
+            /*
+            Refrescamos las lineas---------------------------------------------------
+            */
+
+            ::oBrwLineas:Refresh()
+
+            /*
+            Barra de progreso vuelve a su estado----------------------------------------
+            */
+
+            ::oProgressBar:Set( 0 )
+            ::oProgressBar:Refresh()
+
+            /*
+            Encendemos el flag para cargar de nuevo el usuario--------------------------
+            */
+
+            ::lGetUsuario                 := .t.
+
+            /*
+            Abrimos el cajón portamonedas antes de imprimir-----------------------
+            */
+
+            if lOpenCaj
+               oUser():OpenCajon()
+            end if   
+
+            /*
+            Imprimimos el documento--------------------------------------------
+            */
+
+            if ::oTpvCobros:nExit == exitAceptarImprimir
+               ::ImprimeTicket()
+            end if   
+
+            /*
+            Inicializa los valores para el documento---------------------------
+            */
+
+            ::InitDocumento( ubiGeneral )
+
+            /*
+            Datos de la ubicacion----------------------------------------------
+            */
+
+            ::SetUbicacion()
+
+            /*
+            Datos del documento------------------------------------------------
+            */
+
+            ::SetInfo()
+
+            /*
+            Datos del cliente--------------------------------------------------
+            */
+
+            ::SetCliente()
+
+            /*
+            Recoger usuario----------------------------------------------------
+            */
+
+            ::GetUsuario()
+
+         end if
+
+      end if
+
+   end if   
 
 Return .t.
 
@@ -5980,6 +6208,163 @@ METHOD GuardaDocumento( lZap, nSave ) CLASS TpvTactil
    RECOVER USING oError
 
       msgStop( "Error al grabar el ticket" + CRLF + ErrorMessage( oError ) )
+
+   END SEQUENCE
+
+   ErrorBlock( oBlock )
+
+   /*
+   Dialogo se vuelve a habilitar para volcer al trabajo------------------------
+   */
+
+   ::oDlg:Enable()
+
+   CursorWE()
+
+Return .t.
+
+//---------------------------------------------------------------------------//
+
+METHOD GuardaDocumentoAlbaran() CLASS TpvTactil
+
+   local oError
+   local oBlock
+   local sCobro
+   local nNewAlbCli
+   local nOrdAnt
+   local cSerAlb     := cNewSer( "NALBCLI", ::oContadores:cAlias )
+   local nNumAlb     := nNewDoc( cSerAlb, ::oAlbaranClienteCabecera:cAlias, "nAlbCli", , ::oContadores:cAlias )
+   local cSufAlb     := RetSufEmp()
+   local n           := 1
+
+   CursorWait()
+
+   ::oDlg:Disable()
+
+   oBlock                           := ErrorBlock( {| oError | ApoloBreak( oError ) } )
+   BEGIN SEQUENCE
+
+   /*
+   Creamos la cabecera del albarán---------------------------------------------
+   */
+
+   ::oAlbaranClienteCabecera:Append()
+
+   ::oAlbaranClienteCabecera:cSerAlb      := cSerAlb
+   ::oAlbaranClienteCabecera:nNumAlb      := nNumAlb
+   ::oAlbaranClienteCabecera:cSufAlb      := cSufAlb
+   ::oAlbaranClienteCabecera:dFecCre      := GetSysDate()
+   ::oAlbaranClienteCabecera:cTimCre      := Time()
+   ::oAlbaranClienteCabecera:dFecAlb      := GetSysDate()
+   ::oAlbaranClienteCabecera:cCodUsr      := oUser():cCodigo()
+   ::oAlbaranClienteCabecera:cTurAlb      := cCurSesion()
+   ::oAlbaranClienteCabecera:lFacturado   := .f.
+   ::oAlbaranClienteCabecera:lSndDoc      := .t.
+   ::oAlbaranClienteCabecera:lIvaInc      := .t.
+   ::oAlbaranClienteCabecera:cCodCaj      := oUser():cCaja()
+   ::oAlbaranClienteCabecera:cCodPago     := cDefFpg()
+   ::oAlbaranClienteCabecera:cCodAlm      := oUser():cAlmacen()
+   ::oAlbaranClienteCabecera:nTarifa      := Max( uFieldEmpresa( "nPreVta" ), 1 )
+   ::oAlbaranClienteCabecera:cCodCli      := ::oTiketCabecera:cCliTik
+   ::oAlbaranClienteCabecera:cNomCli      := ::oTiketCabecera:cNomTik
+   ::oAlbaranClienteCabecera:cDirCli      := ::oTiketCabecera:cDirCli
+   ::oAlbaranClienteCabecera:cPobCli      := ::oTiketCabecera:cPobCli
+   ::oAlbaranClienteCabecera:cPrvCli      := ::oTiketCabecera:cPrvCli
+   ::oAlbaranClienteCabecera:cPosCli      := ::oTiketCabecera:cPosCli
+   ::oAlbaranClienteCabecera:cDniCli      := ::oTiketCabecera:cDniCli
+   ::oAlbaranClienteCabecera:cDtoEsp      := ::oTiketCabecera:cDtoEsp
+   ::oAlbaranClienteCabecera:nDtoEsp      := ::oTiketCabecera:nDtoEsp
+   ::oAlbaranClienteCabecera:cDpp         := ::oTiketCabecera:cDpp
+   ::oAlbaranClienteCabecera:nDpp         := ::oTiketCabecera:nDpp
+   ::oAlbaranClienteCabecera:cDivAlb      := cDivEmp()
+   ::oAlbaranClienteCabecera:nVdvAlb      := nChgDiv( cDivEmp(), ::oDivisas:cAlias )
+   ::oAlbaranClienteCabecera:cRetMat      := ::oTiketCabecera:cRetMat
+   ::oAlbaranClienteCabecera:cCodAge      := ::oTiketCabecera:cCodAge
+   ::oAlbaranClienteCabecera:cCodRut      := ::oTiketCabecera:cCodRut
+   ::oAlbaranClienteCabecera:cCodTar      := ::oTiketCabecera:cCodTar
+   ::oAlbaranClienteCabecera:cCodObr      := ::oTiketCabecera:cCodObr
+   ::oAlbaranClienteCabecera:nTotNet      := ::sTotal:TotalBase()
+   ::oAlbaranClienteCabecera:nTotIva      := ::sTotal:TotalIva() 
+   ::oAlbaranClienteCabecera:nTotAlb      := ::sTotal:TotalDocumento()
+
+   ::oAlbaranClienteCabecera:Save()
+
+   /*
+   Creamos las Lineas del albarán----------------------------------------------
+   */   
+
+   ::oTemporalLinea:GoTop()
+
+   while !::oTemporalLinea:Eof()
+
+      ::oAlbaranClienteLinea:Append()
+      ::oAlbaranClienteLinea:cSerAlb      := cSerAlb
+      ::oAlbaranClienteLinea:nNumAlb      := nNumAlb
+      ::oAlbaranClienteLinea:cSufAlb      := cSufAlb
+      ::oAlbaranClienteLinea:cRef         := ::oTemporalLinea:cCbaTil
+      ::oAlbaranClienteLinea:cDetalle     := ::oTemporalLinea:cNomTil
+      ::oAlbaranClienteLinea:nPreUnit     := ::oTemporalLinea:nPvpTil
+      ::oAlbaranClienteLinea:nDto         := ::oTemporalLinea:nDtoLin
+      ::oAlbaranClienteLinea:nIva         := ::oTemporalLinea:nIvaTil
+      ::oAlbaranClienteLinea:nUniCaja     := ::oTemporalLinea:nUntTil
+      ::oAlbaranClienteLinea:cCodPr1      := ::oTemporalLinea:cCodPr1
+      ::oAlbaranClienteLinea:cCodPr2      := ::oTemporalLinea:cCodPr2
+      ::oAlbaranClienteLinea:cValPr1      := ::oTemporalLinea:cValPr1
+      ::oAlbaranClienteLinea:cValPr2      := ::oTemporalLinea:cValPr2
+      ::oAlbaranClienteLinea:nFacCnv      := ::oTemporalLinea:nFacCnv
+      ::oAlbaranClienteLinea:nDtoDiv      := ::oTemporalLinea:nDtoDiv
+      ::oAlbaranClienteLinea:nCtlStk      := ::oTemporalLinea:nCtlStk
+      ::oAlbaranClienteLinea:nValImp      := ::oTemporalLinea:nValImp
+      ::oAlbaranClienteLinea:cCodImp      := ::oTemporalLinea:cCodImp
+      ::oAlbaranClienteLinea:lKitChl      := ::oTemporalLinea:lKitChl
+      ::oAlbaranClienteLinea:lKitArt      := ::oTemporalLinea:lKitArt
+      ::oAlbaranClienteLinea:lKitPrc      := ::oTemporalLinea:lKitPrc
+      ::oAlbaranClienteLinea:dFecAlb      := GetSysDate()
+      ::oAlbaranClienteLinea:cAlmLin      := oUser():cAlmacen()
+      ::oAlbaranClienteLinea:lIvaLin      := .t.
+      ::oAlbaranClienteLinea:nNumLin      := ::oTemporalLinea:nNumLin
+      ::oAlbaranClienteLinea:Save()
+
+      ::oTemporalLinea:Skip()
+
+   end while
+
+   /*
+   Guardamos los cobros--------------------------------------------------------
+   */
+
+   if Len( ::oTpvCobros:aCobros ) != 0
+
+      for each sCobro in ::oTpvCobros:aCobros
+
+         ::oAlbaranClientePago:Append()
+
+         ::oAlbaranClientePago:cSerAlb    := cSerAlb
+         ::oAlbaranClientePago:nNumAlb    := nNumAlb
+         ::oAlbaranClientePago:cSufAlb    := cSufAlb
+         ::oAlbaranClientePago:nNumRec    := n
+         ::oAlbaranClientePago:cCodCaj    := oUser():cCaja()
+         ::oAlbaranClientePago:cTurRec    := cCurSesion()
+         ::oAlbaranClientePago:cCodCli    := ::oTiketCabecera:cCliTik
+         ::oAlbaranClientePago:dEntrega   := GetSysDate()
+         ::oAlbaranClientePago:nImporte   := sCobro:nImporte
+         ::oAlbaranClientePago:cDescrip   := "Entrega a cuenta del albarán: " + cSerAlb + "/" + AllTrim( Str( nNumAlb ) )
+         ::oAlbaranClientePago:cDivPgo    := cDivEmp()
+         ::oAlbaranClientePago:nVdvPgo    := nChgDiv( cDivEmp(), ::oDivisas:cAlias )
+         ::oAlbaranClientePago:cCodPgo    := sCobro:cCodigo
+         ::oAlbaranClientePago:lCloPgo    := .f.
+
+         ::oAlbaranClientePago:Save()
+
+         n++
+
+      next
+
+   end if
+
+   RECOVER USING oError
+
+      msgStop( "Error al grabar el albarán" + CRLF + ErrorMessage( oError ) )
 
    END SEQUENCE
 
@@ -7218,6 +7603,9 @@ METHOD DataReport() CLASS TpvTactil
    ::oFastReport:SetWorkArea(       "Tickets", ::oTiketCabecera:nArea )
    ::oFastReport:SetFieldAliases(   "Tickets", cItemsToReport( aItmTik() ) )
 
+   ::oFastReport:SetWorkArea(       "Albaranes", ::oAlbaranClienteCabecera:nArea )
+   ::oFastReport:SetFieldAliases(   "Albaranes", cItemsToReport( aItmAlbCli() ) )
+
    ::oFastReport:SetWorkArea(       "Lineas de tickets", ::oTiketLinea:nArea )
    ::oFastReport:SetFieldAliases(   "Lineas de tickets", cItemsToReport( aColTik() ) )
 
@@ -7284,94 +7672,164 @@ METHOD DataReport() CLASS TpvTactil
    ::oFastReport:SetWorkArea(       "Temporadas", ::oTemporadas:nArea )
    ::oFastReport:SetFieldAliases(   "Temporadas", cItemsToReport( aItmTemporada() ) )
 
+   ::oFastReport:SetWorkArea(       "Entregas de albaranes", ::oAlbaranClientePago:nArea )
+   ::oFastReport:SetFieldAliases(   "Entregas de albaranes", cItemsToReport( aItmAlbPgo() ) )
+
+   ::oFastReport:SetWorkArea(       "Incidencias de albaranes", ::oAlbaranClienteIncidencia:nArea )
+   ::oFastReport:SetFieldAliases(   "Incidencias de albaranes", cItemsToReport( aIncAlbCli() ) )
+
+   ::oFastReport:SetWorkArea(       "Documentos de albaranes", ::oAlbaranClienteDocumento:nArea )
+   ::oFastReport:SetFieldAliases(   "Documentos de albaranes", cItemsToReport( aAlbCliDoc() ) )
+
+   ::oFastReport:SetWorkArea(       "Transportistas", ::oTransportista:Select() )
+   ::oFastReport:SetFieldAliases(   "Transportistas", cObjectsToReport( ::oTransportista:oDbf ) )
+
+   ::oFastReport:SetWorkArea(       "Tipo de venta", ::oTipoVenta:nArea )
+   ::oFastReport:SetFieldAliases(   "Tipo de venta", cItemsToReport( aItmTVta() ) )
+
+   ::oFastReport:SetWorkArea(       "Ofertas", ::oOferta:nArea )
+   ::oFastReport:SetFieldAliases(   "Ofertas", cItemsToReport( aItmOfe() ) )
+
+   ::oFastReport:SetWorkArea(       "Series de lineas de albaranes", ::oAlbaranClienteSerie:nArea )
+   ::oFastReport:SetFieldAliases(   "Series de lineas de albaranes", cItemsToReport( aSerAlbCli() ) )
+
 RETURN ( Self )
 
 //------------------------------------------------------------------------//
 
 METHOD BuildRelationReport() CLASS TpvTactil
 
-   ::oFastReport:SetWorkArea( "Tickets", ::oTiketCabecera:nArea, .f., { FR_RB_CURRENT, FR_RB_CURRENT, 0 } )
+   do case
+      case ::nTipoDocumento == documentoAlbaran    //Creamos las relaciones para los tikets como albaranes
 
-   ::oFastReport:SetMasterDetail( "Tickets", "Empresa",            {|| cCodigoEmpresaEnUso() } )
-   ::oFastReport:SetMasterDetail( "Tickets", "Lineas de tickets",  {|| ::oTiketCabecera:cSerTik + ::oTiketCabecera:cNumTik + ::oTiketCabecera:cSufTik } )
-   ::oFastReport:SetMasterDetail( "Tickets", "Lineas de comandas", {|| ::oTiketCabecera:cSerTik + ::oTiketCabecera:cNumTik + ::oTiketCabecera:cSufTik } )
-   ::oFastReport:SetMasterDetail( "Tickets", "Lineas de albaranes",{|| ::oTiketCabecera:cNumDoc } )
-   ::oFastReport:SetMasterDetail( "Tickets", "Lineas de facturas", {|| ::oTiketCabecera:cNumDoc } )
-   ::oFastReport:SetMasterDetail( "Tickets", "Pagos de tickets",   {|| ::oTiketCabecera:cSerTik + ::oTiketCabecera:cNumTik + ::oTiketCabecera:cSufTik } )
-   ::oFastReport:SetMasterDetail( "Tickets", "Clientes",           {|| ::oTiketCabecera:cCliTik } )
-   ::oFastReport:SetMasterDetail( "Tickets", "Obras",              {|| ::oTiketCabecera:cCliTik + ::oTiketCabecera:cCodObr } )
-   ::oFastReport:SetMasterDetail( "Tickets", "Almacen",            {|| ::oTiketCabecera:cAlmTik } )
-   ::oFastReport:SetMasterDetail( "Tickets", "Rutas",              {|| ::oTiketCabecera:cCodRut } )
-   ::oFastReport:SetMasterDetail( "Tickets", "Agentes",            {|| ::oTiketCabecera:cCodAge } )
-   ::oFastReport:SetMasterDetail( "Tickets", "Usuarios",           {|| ::oTiketCabecera:cCcjTik } )
-   ::oFastReport:SetMasterDetail( "Tickets", "SalaVenta",          {|| ::oTiketCabecera:cCodSala } )
+         ::oFastReport:SetWorkArea( "Albaranes", ::oAlbaranClienteCabecera:nArea, .f., { FR_RB_CURRENT, FR_RB_CURRENT, 0 } )
 
-   if ::lComanda
+         ::oFastReport:SetMasterDetail( "Albaranes", "Lineas de albaranes",              {|| ::oAlbaranClienteCabecera:cSerAlb + Str( ::oAlbaranClienteCabecera:nNumAlb ) + ::oAlbaranClienteCabecera:cSufAlb } )
+         ::oFastReport:SetMasterDetail( "Albaranes", "Entregas de albaranes",            {|| ::oAlbaranClienteCabecera:cSerAlb + Str( ::oAlbaranClienteCabecera:nNumAlb ) + ::oAlbaranClienteCabecera:cSufAlb } )
+         ::oFastReport:SetMasterDetail( "Albaranes", "Incidencias de albaranes",         {|| ::oAlbaranClienteCabecera:cSerAlb + Str( ::oAlbaranClienteCabecera:nNumAlb ) + ::oAlbaranClienteCabecera:cSufAlb } )
+         ::oFastReport:SetMasterDetail( "Albaranes", "Documentos de albaranes",          {|| ::oAlbaranClienteCabecera:cSerAlb + Str( ::oAlbaranClienteCabecera:nNumAlb ) + ::oAlbaranClienteCabecera:cSufAlb } )
+         ::oFastReport:SetMasterDetail( "Albaranes", "Series de lineas de albaranes",     {|| ::oAlbaranClienteCabecera:cSerAlb + Str( ::oAlbaranClienteCabecera:nNumAlb ) + ::oAlbaranClienteCabecera:cSufAlb } )
+         ::oFastReport:SetMasterDetail( "Albaranes", "Clientes",                         {|| ::oAlbaranClienteCabecera:cCodCli } )
+         ::oFastReport:SetMasterDetail( "Albaranes", "Obras",                            {|| ::oAlbaranClienteCabecera:cCodCli + ::oAlbaranClienteCabecera:cCodObr } )
+         ::oFastReport:SetMasterDetail( "Albaranes", "Almacenes",                        {|| ::oAlbaranClienteCabecera:cCodAlm } )
+         ::oFastReport:SetMasterDetail( "Albaranes", "Rutas",                            {|| ::oAlbaranClienteCabecera:cCodRut } )
+         ::oFastReport:SetMasterDetail( "Albaranes", "Agentes",                          {|| ::oAlbaranClienteCabecera:cCodAge } )
+         ::oFastReport:SetMasterDetail( "Albaranes", "Formas de pago",                   {|| ::oAlbaranClienteCabecera:cCodPago } )
+         ::oFastReport:SetMasterDetail( "Albaranes", "Transportistas",                   {|| ::oAlbaranClienteCabecera:cCodTrn } )
+         ::oFastReport:SetMasterDetail( "Albaranes", "Empresa",                          {|| cCodigoEmpresaEnUso() } )
+         ::oFastReport:SetMasterDetail( "Albaranes", "Usuarios",                         {|| ::oAlbaranClienteCabecera:cCodUsr } )
+         ::oFastReport:SetMasterDetail( "Lineas de albaranes", "Artículos",              {|| ::oAlbaranClienteLinea:cRef } )
+         ::oFastReport:SetMasterDetail( "Lineas de albaranes", "Tipo de venta",          {|| ::oAlbaranClienteLinea:cTipMov } )
+         ::oFastReport:SetMasterDetail( "Lineas de albaranes", "Ofertas",                {|| ::oAlbaranClienteLinea:cRef } )
+         ::oFastReport:SetMasterDetail( "Lineas de albaranes", "Unidades de medición",   {|| ::oAlbaranClienteLinea:cUnidad } )
 
-   ::oFastReport:SetMasterDetail( "Lineas de comandas", "Artículos",             {|| ::oTemporalComanda:cCbaTil } )
-   ::oFastReport:SetMasterDetail( "Lineas de comandas", "Familia",               {|| ::oTemporalComanda:cFamTil } )
-   ::oFastReport:SetMasterDetail( "Lineas de comandas", "Unidades de medición",  {|| ::oTemporalComanda:cUnidad } )
-   ::oFastReport:SetMasterDetail( "Lineas de comandas", "Categorías",            {|| RetFld( ::oTemporalComanda:cCbaTil, ::oArticulo:cAlias, "cCodCate" ) } )
-   ::oFastReport:SetMasterDetail( "Lineas de comandas", "Tipos de artículos",    {|| RetFld( ::oTemporalComanda:cCbaTil, ::oArticulo:cAlias, "cCodTip" ) } )
-   ::oFastReport:SetMasterDetail( "Lineas de comandas", "Fabricantes",           {|| RetFld( ::oTemporalComanda:cCbaTil, ::oArticulo:cAlias, "cCodFab" ) } )
-   ::oFastReport:SetMasterDetail( "Lineas de comandas", "Temporadas",            {|| RetFld( ::oTemporalComanda:cCbaTil, ::oArticulo:cAlias, "cCodTemp" ) } )
-   ::oFastReport:SetMasterDetail( "Lineas de comandas", "Orden comanda",         {|| ::oTemporalComanda:cCodTImp } )
+         //------------------------------------------------------------------------//
 
-   else
+         ::oFastReport:SetResyncPair( "Albaranes", "Lineas de albaranes" )
+         ::oFastReport:SetResyncPair( "Albaranes", "Entregas de albaranes" )
+         ::oFastReport:SetResyncPair( "Albaranes", "Incidencias de albaranes" )
+         ::oFastReport:SetResyncPair( "Albaranes", "Documentos de albaranes" )
+         ::oFastReport:SetResyncPair( "Albaranes", "Series de lineas de albaranes" )
+         ::oFastReport:SetResyncPair( "Albaranes", "Clientes" )
+         ::oFastReport:SetResyncPair( "Albaranes", "Obras" )
+         ::oFastReport:SetResyncPair( "Albaranes", "Almacenes" )
+         ::oFastReport:SetResyncPair( "Albaranes", "Rutas" )
+         ::oFastReport:SetResyncPair( "Albaranes", "Agentes" )
+         ::oFastReport:SetResyncPair( "Albaranes", "Formas de pago" )
+         ::oFastReport:SetResyncPair( "Albaranes", "Transportistas" )
+         ::oFastReport:SetResyncPair( "Albaranes", "Empresa" )
+         ::oFastReport:SetResyncPair( "Albaranes", "Usuarios" )
+         ::oFastReport:SetResyncPair( "Lineas de albaranes", "Artículos" )
+         ::oFastReport:SetResyncPair( "Lineas de albaranes", "Tipo de venta" )
+         ::oFastReport:SetResyncPair( "Lineas de albaranes", "Ofertas" )
+         ::oFastReport:SetResyncPair( "Lineas de albaranes", "Unidades de medición" )
 
-   ::oFastReport:SetMasterDetail( "Lineas de tickets", "Artículos",              {|| ::oTiketLinea:cCbaTil } )
-   ::oFastReport:SetMasterDetail( "Lineas de tickets", "Familia",                {|| ::oTiketLinea:cFamTil } )
-   ::oFastReport:SetMasterDetail( "Lineas de tickets", "Unidades de medición",   {|| ::oTiketLinea:cUnidad } )
-   ::oFastReport:SetMasterDetail( "Lineas de tickets", "Categorías",             {|| RetFld( ::oTiketLinea:cCbaTil, ::oArticulo:cAlias, "cCodCate" ) } )
-   ::oFastReport:SetMasterDetail( "Lineas de tickets", "Tipos de artículos",     {|| RetFld( ::oTiketLinea:cCbaTil, ::oArticulo:cAlias, "cCodTip" ) } )
-   ::oFastReport:SetMasterDetail( "Lineas de tickets", "Fabricantes",            {|| RetFld( ::oTiketLinea:cCbaTil, ::oArticulo:cAlias, "cCodFab" ) } )
-   ::oFastReport:SetMasterDetail( "Lineas de tickets", "Temporadas",             {|| RetFld( ::oTiketLinea:cCbaTil, ::oArticulo:cAlias, "cCodTemp" ) } )
+      otherwise
 
-   end if 
+         ::oFastReport:SetWorkArea( "Tickets", ::oTiketCabecera:nArea, .f., { FR_RB_CURRENT, FR_RB_CURRENT, 0 } )
 
-   ::oFastReport:SetMasterDetail( "Pagos de tickets", "Formas de pago",          {|| ::oTiketCobro:cFpgPgo } )
+         ::oFastReport:SetMasterDetail( "Tickets", "Empresa",            {|| cCodigoEmpresaEnUso() } )
+         ::oFastReport:SetMasterDetail( "Tickets", "Lineas de tickets",  {|| ::oTiketCabecera:cSerTik + ::oTiketCabecera:cNumTik + ::oTiketCabecera:cSufTik } )
+         ::oFastReport:SetMasterDetail( "Tickets", "Lineas de comandas", {|| ::oTiketCabecera:cSerTik + ::oTiketCabecera:cNumTik + ::oTiketCabecera:cSufTik } )
+         ::oFastReport:SetMasterDetail( "Tickets", "Lineas de albaranes",{|| ::oTiketCabecera:cNumDoc } )
+         ::oFastReport:SetMasterDetail( "Tickets", "Lineas de facturas", {|| ::oTiketCabecera:cNumDoc } )
+         ::oFastReport:SetMasterDetail( "Tickets", "Pagos de tickets",   {|| ::oTiketCabecera:cSerTik + ::oTiketCabecera:cNumTik + ::oTiketCabecera:cSufTik } )
+         ::oFastReport:SetMasterDetail( "Tickets", "Clientes",           {|| ::oTiketCabecera:cCliTik } )
+         ::oFastReport:SetMasterDetail( "Tickets", "Obras",              {|| ::oTiketCabecera:cCliTik + ::oTiketCabecera:cCodObr } )
+         ::oFastReport:SetMasterDetail( "Tickets", "Almacen",            {|| ::oTiketCabecera:cAlmTik } )
+         ::oFastReport:SetMasterDetail( "Tickets", "Rutas",              {|| ::oTiketCabecera:cCodRut } )
+         ::oFastReport:SetMasterDetail( "Tickets", "Agentes",            {|| ::oTiketCabecera:cCodAge } )
+         ::oFastReport:SetMasterDetail( "Tickets", "Usuarios",           {|| ::oTiketCabecera:cCcjTik } )
+         ::oFastReport:SetMasterDetail( "Tickets", "SalaVenta",          {|| ::oTiketCabecera:cCodSala } )
 
-   //------------------------------------------------------------------------//
+         if ::lComanda
 
-   ::oFastReport:SetResyncPair(  "Tickets", "Lineas de tickets" )
-   ::oFastReport:SetResyncPair(  "Tickets", "Lineas de comandas" )
-   ::oFastReport:SetResyncPair(  "Tickets", "Lineas de albaranes" )
-   ::oFastReport:SetResyncPair(  "Tickets", "Lineas de facturas" )
-   ::oFastReport:SetResyncPair(  "Tickets", "Pagos de tickets" )
-   ::oFastReport:SetResyncPair(  "Tickets", "Empresa" )
-   ::oFastReport:SetResyncPair(  "Tickets", "Clientes" )
-   ::oFastReport:SetResyncPair(  "Tickets", "Obras" )
-   ::oFastReport:SetResyncPair(  "Tickets", "Almacenes" )
-   ::oFastReport:SetResyncPair(  "Tickets", "Rutas" )
-   ::oFastReport:SetResyncPair(  "Tickets", "Agentes" )
-   ::oFastReport:SetResyncPair(  "Tickets", "Usuarios" )
-   ::oFastReport:SetResyncPair(  "Tickets", "SalaVenta" )
+         ::oFastReport:SetMasterDetail( "Lineas de comandas", "Artículos",             {|| ::oTemporalComanda:cCbaTil } )
+         ::oFastReport:SetMasterDetail( "Lineas de comandas", "Familia",               {|| ::oTemporalComanda:cFamTil } )
+         ::oFastReport:SetMasterDetail( "Lineas de comandas", "Unidades de medición",  {|| ::oTemporalComanda:cUnidad } )
+         ::oFastReport:SetMasterDetail( "Lineas de comandas", "Categorías",            {|| RetFld( ::oTemporalComanda:cCbaTil, ::oArticulo:cAlias, "cCodCate" ) } )
+         ::oFastReport:SetMasterDetail( "Lineas de comandas", "Tipos de artículos",    {|| RetFld( ::oTemporalComanda:cCbaTil, ::oArticulo:cAlias, "cCodTip" ) } )
+         ::oFastReport:SetMasterDetail( "Lineas de comandas", "Fabricantes",           {|| RetFld( ::oTemporalComanda:cCbaTil, ::oArticulo:cAlias, "cCodFab" ) } )
+         ::oFastReport:SetMasterDetail( "Lineas de comandas", "Temporadas",            {|| RetFld( ::oTemporalComanda:cCbaTil, ::oArticulo:cAlias, "cCodTemp" ) } )
+         ::oFastReport:SetMasterDetail( "Lineas de comandas", "Orden comanda",         {|| ::oTemporalComanda:cCodTImp } )
 
-   if ::lComanda
+         else
 
-   ::oFastReport:SetResyncPair(  "Lineas de comandas", "Artículos" )
-   ::oFastReport:SetResyncPair(  "Lineas de comandas", "Familias" )
-   ::oFastReport:SetResyncPair(  "Lineas de comandas", "Orden comanda" )
-   ::oFastReport:SetResyncPair(  "Lineas de comandas", "Unidades de medición" )
-   ::oFastReport:SetResyncPair(  "Lineas de comandas", "Categorías" )
-   ::oFastReport:SetResyncPair(  "Lineas de comandas", "Tipos de artículos" )
-   ::oFastReport:SetResyncPair(  "Lineas de comandas", "Fabricantes" )
-   ::oFastReport:SetResyncPair(  "Lineas de comandas", "Temporadas" )
+         ::oFastReport:SetMasterDetail( "Lineas de tickets", "Artículos",              {|| ::oTiketLinea:cCbaTil } )
+         ::oFastReport:SetMasterDetail( "Lineas de tickets", "Familia",                {|| ::oTiketLinea:cFamTil } )
+         ::oFastReport:SetMasterDetail( "Lineas de tickets", "Unidades de medición",   {|| ::oTiketLinea:cUnidad } )
+         ::oFastReport:SetMasterDetail( "Lineas de tickets", "Categorías",             {|| RetFld( ::oTiketLinea:cCbaTil, ::oArticulo:cAlias, "cCodCate" ) } )
+         ::oFastReport:SetMasterDetail( "Lineas de tickets", "Tipos de artículos",     {|| RetFld( ::oTiketLinea:cCbaTil, ::oArticulo:cAlias, "cCodTip" ) } )
+         ::oFastReport:SetMasterDetail( "Lineas de tickets", "Fabricantes",            {|| RetFld( ::oTiketLinea:cCbaTil, ::oArticulo:cAlias, "cCodFab" ) } )
+         ::oFastReport:SetMasterDetail( "Lineas de tickets", "Temporadas",             {|| RetFld( ::oTiketLinea:cCbaTil, ::oArticulo:cAlias, "cCodTemp" ) } )
 
-   else 
+         end if 
 
-   ::oFastReport:SetResyncPair(  "Lineas de tickets", "Artículos" )
-   ::oFastReport:SetResyncPair(  "Lineas de tickets", "Familias" )
-   ::oFastReport:SetResyncPair(  "Lineas de tickets", "Orden comanda" )
-   ::oFastReport:SetResyncPair(  "Lineas de tickets", "Unidades de medición" )
-   ::oFastReport:SetResyncPair(  "Lineas de tickets", "Categorías" )
-   ::oFastReport:SetResyncPair(  "Lineas de tickets", "Tipos de artículos" )
-   ::oFastReport:SetResyncPair(  "Lineas de tickets", "Fabricantes" )
-   ::oFastReport:SetResyncPair(  "Lineas de tickets", "Temporadas" )
+         ::oFastReport:SetMasterDetail( "Pagos de tickets", "Formas de pago",          {|| ::oTiketCobro:cFpgPgo } )
 
-   end if 
+         //------------------------------------------------------------------------//
 
-   ::oFastReport:SetResyncPair(  "Pagos de tickets", "Formas de pago" )
+         ::oFastReport:SetResyncPair(  "Tickets", "Lineas de tickets" )
+         ::oFastReport:SetResyncPair(  "Tickets", "Lineas de comandas" )
+         ::oFastReport:SetResyncPair(  "Tickets", "Lineas de albaranes" )
+         ::oFastReport:SetResyncPair(  "Tickets", "Lineas de facturas" )
+         ::oFastReport:SetResyncPair(  "Tickets", "Pagos de tickets" )
+         ::oFastReport:SetResyncPair(  "Tickets", "Empresa" )
+         ::oFastReport:SetResyncPair(  "Tickets", "Clientes" )
+         ::oFastReport:SetResyncPair(  "Tickets", "Obras" )
+         ::oFastReport:SetResyncPair(  "Tickets", "Almacenes" )
+         ::oFastReport:SetResyncPair(  "Tickets", "Rutas" )
+         ::oFastReport:SetResyncPair(  "Tickets", "Agentes" )
+         ::oFastReport:SetResyncPair(  "Tickets", "Usuarios" )
+         ::oFastReport:SetResyncPair(  "Tickets", "SalaVenta" )
+
+         if ::lComanda
+
+         ::oFastReport:SetResyncPair(  "Lineas de comandas", "Artículos" )
+         ::oFastReport:SetResyncPair(  "Lineas de comandas", "Familias" )
+         ::oFastReport:SetResyncPair(  "Lineas de comandas", "Orden comanda" )
+         ::oFastReport:SetResyncPair(  "Lineas de comandas", "Unidades de medición" )
+         ::oFastReport:SetResyncPair(  "Lineas de comandas", "Categorías" )
+         ::oFastReport:SetResyncPair(  "Lineas de comandas", "Tipos de artículos" )
+         ::oFastReport:SetResyncPair(  "Lineas de comandas", "Fabricantes" )
+         ::oFastReport:SetResyncPair(  "Lineas de comandas", "Temporadas" )
+
+         else 
+
+         ::oFastReport:SetResyncPair(  "Lineas de tickets", "Artículos" )
+         ::oFastReport:SetResyncPair(  "Lineas de tickets", "Familias" )
+         ::oFastReport:SetResyncPair(  "Lineas de tickets", "Orden comanda" )
+         ::oFastReport:SetResyncPair(  "Lineas de tickets", "Unidades de medición" )
+         ::oFastReport:SetResyncPair(  "Lineas de tickets", "Categorías" )
+         ::oFastReport:SetResyncPair(  "Lineas de tickets", "Tipos de artículos" )
+         ::oFastReport:SetResyncPair(  "Lineas de tickets", "Fabricantes" )
+         ::oFastReport:SetResyncPair(  "Lineas de tickets", "Temporadas" )
+
+         end if 
+
+         ::oFastReport:SetResyncPair(  "Pagos de tickets", "Formas de pago" )
+
+   end case
 
 Return nil
 
@@ -7379,71 +7837,116 @@ Return nil
 
 METHOD ClearRelationReport() CLASS TpvTactil
 
-   ::oFastReport:ClearMasterDetail( "Empresa" )
-   ::oFastReport:ClearMasterDetail( "Lineas de tickets" )
-   ::oFastReport:ClearMasterDetail( "Lineas de comandas" )
-   ::oFastReport:ClearMasterDetail( "Lineas de albaranes" )
-   ::oFastReport:ClearMasterDetail( "Lineas de facturas" )
-   ::oFastReport:ClearMasterDetail( "Pagos de tickets" )
-   ::oFastReport:ClearMasterDetail( "Clientes" )
-   ::oFastReport:ClearMasterDetail( "Obras" )
-   ::oFastReport:ClearMasterDetail( "Almacen" )
-   ::oFastReport:ClearMasterDetail( "Rutas" )
-   ::oFastReport:ClearMasterDetail( "Agentes" )
-   ::oFastReport:ClearMasterDetail( "Usuarios" )
-   ::oFastReport:ClearMasterDetail( "SalaVenta" )
+   do case
+      case ::nTipoDocumento == documentoAlbaran    //Creamos las relaciones para los tikets como albaranes
 
-   ::oFastReport:ClearMasterDetail( "Artículos" )
-   ::oFastReport:ClearMasterDetail( "Familia" )
-   ::oFastReport:ClearMasterDetail( "Unidades de medición" )
-   ::oFastReport:ClearMasterDetail( "Categorías" )
-   ::oFastReport:ClearMasterDetail( "Tipos de artículos" )
-   ::oFastReport:ClearMasterDetail( "Fabricantes" )
-   ::oFastReport:ClearMasterDetail( "Temporadas" )
-   ::oFastReport:ClearMasterDetail( "Orden comanda" )
+      ::oFastReport:ClearMasterDetail( "Lineas de albaranes" )
+      ::oFastReport:ClearMasterDetail( "Entregas de albaranes" )
+      ::oFastReport:ClearMasterDetail( "Incidencias de albaranes" )
+      ::oFastReport:ClearMasterDetail( "Documentos de albaranes" )
+      ::oFastReport:ClearMasterDetail( "Series de lineas de albaranes" )
+      ::oFastReport:ClearMasterDetail( "Clientes" )
+      ::oFastReport:ClearMasterDetail( "Obras" )
+      ::oFastReport:ClearMasterDetail( "Almacenes" )
+      ::oFastReport:ClearMasterDetail( "Rutas" )
+      ::oFastReport:ClearMasterDetail( "Agentes" )
+      ::oFastReport:ClearMasterDetail( "Formas de pago" )
+      ::oFastReport:ClearMasterDetail( "Transportistas" )
+      ::oFastReport:ClearMasterDetail( "Empresa" )
+      ::oFastReport:ClearMasterDetail( "Usuarios" )
+      ::oFastReport:ClearMasterDetail( "Artículos" )
+      ::oFastReport:ClearMasterDetail( "Tipo de venta" )
+      ::oFastReport:ClearMasterDetail( "Ofertas" )
+      ::oFastReport:ClearMasterDetail( "Unidades de medición" )
 
-   ::oFastReport:ClearMasterDetail( "Formas de pago" )
+      ::oFastReport:ClearResyncPair( "Albaranes", "Lineas de albaranes" )
+      ::oFastReport:ClearResyncPair( "Albaranes", "Entregas de albaranes" )
+      ::oFastReport:ClearResyncPair( "Albaranes", "Incidencias de albaranes" )
+      ::oFastReport:ClearResyncPair( "Albaranes", "Documentos de albaranes" )
+      ::oFastReport:ClearResyncPair( "Albaranes", "Series de lineas de albaranes" )
+      ::oFastReport:ClearResyncPair( "Albaranes", "Clientes" )
+      ::oFastReport:ClearResyncPair( "Albaranes", "Obras" )
+      ::oFastReport:ClearResyncPair( "Albaranes", "Almacenes" )
+      ::oFastReport:ClearResyncPair( "Albaranes", "Rutas" )
+      ::oFastReport:ClearResyncPair( "Albaranes", "Agentes" )
+      ::oFastReport:ClearResyncPair( "Albaranes", "Formas de pago" )
+      ::oFastReport:ClearResyncPair( "Albaranes", "Transportistas" )
+      ::oFastReport:ClearResyncPair( "Albaranes", "Empresa" )
+      ::oFastReport:ClearResyncPair( "Albaranes", "Usuarios" )
+      ::oFastReport:ClearResyncPair( "Lineas de albaranes", "Artículos" )
+      ::oFastReport:ClearResyncPair( "Lineas de albaranes", "Tipo de venta" )
+      ::oFastReport:ClearResyncPair( "Lineas de albaranes", "Ofertas" )
+      ::oFastReport:ClearResyncPair( "Lineas de albaranes", "Unidades de medición" )
 
-   //------------------------------------------------------------------------//
+      otherwise
 
-   ::oFastReport:ClearResyncPair(  "Tickets", "Lineas de tickets" )
-   ::oFastReport:ClearResyncPair(  "Tickets", "Lineas de comandas" )
-   ::oFastReport:ClearResyncPair(  "Tickets", "Lineas de albaranes" )
-   ::oFastReport:ClearResyncPair(  "Tickets", "Lineas de facturas" )
-   ::oFastReport:ClearResyncPair(  "Tickets", "Empresa" )
-   ::oFastReport:ClearResyncPair(  "Tickets", "Clientes" )
-   ::oFastReport:ClearResyncPair(  "Tickets", "Obras" )
-   ::oFastReport:ClearResyncPair(  "Tickets", "Almacenes" )
-   ::oFastReport:ClearResyncPair(  "Tickets", "Rutas" )
-   ::oFastReport:ClearResyncPair(  "Tickets", "Agentes" )
-   ::oFastReport:ClearResyncPair(  "Tickets", "Usuarios" )
-   ::oFastReport:ClearResyncPair(  "Tickets", "SalaVenta" )
+      ::oFastReport:ClearMasterDetail( "Empresa" )
+      ::oFastReport:ClearMasterDetail( "Lineas de tickets" )
+      ::oFastReport:ClearMasterDetail( "Lineas de comandas" )
+      ::oFastReport:ClearMasterDetail( "Lineas de albaranes" )
+      ::oFastReport:ClearMasterDetail( "Lineas de facturas" )
+      ::oFastReport:ClearMasterDetail( "Pagos de tickets" )
+      ::oFastReport:ClearMasterDetail( "Clientes" )
+      ::oFastReport:ClearMasterDetail( "Obras" )
+      ::oFastReport:ClearMasterDetail( "Almacen" )
+      ::oFastReport:ClearMasterDetail( "Rutas" )
+      ::oFastReport:ClearMasterDetail( "Agentes" )
+      ::oFastReport:ClearMasterDetail( "Usuarios" )
+      ::oFastReport:ClearMasterDetail( "SalaVenta" )
 
-   ::oFastReport:ClearResyncPair(  "Pagos de tickets", "Formas de pago" )
+      ::oFastReport:ClearMasterDetail( "Artículos" )
+      ::oFastReport:ClearMasterDetail( "Familia" )
+      ::oFastReport:ClearMasterDetail( "Unidades de medición" )
+      ::oFastReport:ClearMasterDetail( "Categorías" )
+      ::oFastReport:ClearMasterDetail( "Tipos de artículos" )
+      ::oFastReport:ClearMasterDetail( "Fabricantes" )
+      ::oFastReport:ClearMasterDetail( "Temporadas" )
+      ::oFastReport:ClearMasterDetail( "Orden comanda" )
 
-   if ::lComanda
+      ::oFastReport:ClearMasterDetail( "Formas de pago" )
 
-   ::oFastReport:ClearResyncPair(  "Lineas de comandas", "Artículos" )
-   ::oFastReport:ClearResyncPair(  "Lineas de comandas", "Familias" )
-   ::oFastReport:ClearResyncPair(  "Lineas de comandas", "Orden comanda" )
-   ::oFastReport:ClearResyncPair(  "Lineas de comandas", "Unidades de medición" )
-   ::oFastReport:ClearResyncPair(  "Lineas de comandas", "Categorías" )
-   ::oFastReport:ClearResyncPair(  "Lineas de comandas", "Tipos de artículos" )
-   ::oFastReport:ClearResyncPair(  "Lineas de comandas", "Fabricantes" )
-   ::oFastReport:ClearResyncPair(  "Lineas de comandas", "Temporadas" )
+      //------------------------------------------------------------------------//
 
-   else 
+      ::oFastReport:ClearResyncPair(  "Tickets", "Lineas de tickets" )
+      ::oFastReport:ClearResyncPair(  "Tickets", "Lineas de comandas" )
+      ::oFastReport:ClearResyncPair(  "Tickets", "Lineas de albaranes" )
+      ::oFastReport:ClearResyncPair(  "Tickets", "Lineas de facturas" )
+      ::oFastReport:ClearResyncPair(  "Tickets", "Empresa" )
+      ::oFastReport:ClearResyncPair(  "Tickets", "Clientes" )
+      ::oFastReport:ClearResyncPair(  "Tickets", "Obras" )
+      ::oFastReport:ClearResyncPair(  "Tickets", "Almacenes" )
+      ::oFastReport:ClearResyncPair(  "Tickets", "Rutas" )
+      ::oFastReport:ClearResyncPair(  "Tickets", "Agentes" )
+      ::oFastReport:ClearResyncPair(  "Tickets", "Usuarios" )
+      ::oFastReport:ClearResyncPair(  "Tickets", "SalaVenta" )
 
-   ::oFastReport:ClearResyncPair(  "Lineas de tickets", "Artículos" )
-   ::oFastReport:ClearResyncPair(  "Lineas de tickets", "Familias" )
-   ::oFastReport:ClearResyncPair(  "Lineas de tickets", "Orden comanda" )
-   ::oFastReport:ClearResyncPair(  "Lineas de tickets", "Unidades de medición" )
-   ::oFastReport:ClearResyncPair(  "Lineas de tickets", "Categorías" )
-   ::oFastReport:ClearResyncPair(  "Lineas de tickets", "Tipos de artículos" )
-   ::oFastReport:ClearResyncPair(  "Lineas de tickets", "Fabricantes" )
-   ::oFastReport:ClearResyncPair(  "Lineas de tickets", "Temporadas" )
+      ::oFastReport:ClearResyncPair(  "Pagos de tickets", "Formas de pago" )
 
-   end if 
+      if ::lComanda
+
+      ::oFastReport:ClearResyncPair(  "Lineas de comandas", "Artículos" )
+      ::oFastReport:ClearResyncPair(  "Lineas de comandas", "Familias" )
+      ::oFastReport:ClearResyncPair(  "Lineas de comandas", "Orden comanda" )
+      ::oFastReport:ClearResyncPair(  "Lineas de comandas", "Unidades de medición" )
+      ::oFastReport:ClearResyncPair(  "Lineas de comandas", "Categorías" )
+      ::oFastReport:ClearResyncPair(  "Lineas de comandas", "Tipos de artículos" )
+      ::oFastReport:ClearResyncPair(  "Lineas de comandas", "Fabricantes" )
+      ::oFastReport:ClearResyncPair(  "Lineas de comandas", "Temporadas" )
+
+      else 
+
+      ::oFastReport:ClearResyncPair(  "Lineas de tickets", "Artículos" )
+      ::oFastReport:ClearResyncPair(  "Lineas de tickets", "Familias" )
+      ::oFastReport:ClearResyncPair(  "Lineas de tickets", "Orden comanda" )
+      ::oFastReport:ClearResyncPair(  "Lineas de tickets", "Unidades de medición" )
+      ::oFastReport:ClearResyncPair(  "Lineas de tickets", "Categorías" )
+      ::oFastReport:ClearResyncPair(  "Lineas de tickets", "Tipos de artículos" )
+      ::oFastReport:ClearResyncPair(  "Lineas de tickets", "Fabricantes" )
+      ::oFastReport:ClearResyncPair(  "Lineas de tickets", "Temporadas" )
+
+      end if
+
+   end case    
 
 Return nil
 
@@ -7452,83 +7955,117 @@ Return nil
 
 METHOD VariableReport() CLASS TpvTactil
 
-   ::oFastReport:DeleteCategory(  "Tickets" )
-   ::oFastReport:DeleteCategory(  "Lineas de tickets" )
-   ::oFastReport:DeleteCategory(  "Lineas de comandas" )
-   ::oFastReport:DeleteCategory(  "Lineas de albaranes" )
-   ::oFastReport:DeleteCategory(  "Lineas de facturas" )
+   do case
+      case ::nTipoDocumento == documentoAlbaran    //Creamos las relaciones para los tikets como albaranes
 
-   /*
-   Creación de variables----------------------------------------------------
-   */
+         ::oFastReport:DeleteCategory(  "Albaranes" )
+         ::oFastReport:DeleteCategory(  "Lineas de albaranes" )
 
-   ::oFastReport:AddVariable(     "Tickets",             "Ubicación del ticket",              "CallHbFunc( 'oTpvTactil', [ 'cTxtUbicacion()' ] )" )
+         /*
+         Creación de variables----------------------------------------------------
+         */
 
-   ::oFastReport:AddVariable(     "Tickets",             "Total ticket",                      "CallHbFunc( 'oTpvTactil', [ 'GetTotalDocumento', 'nTotalDocumento' ] )" )
-   ::oFastReport:AddVariable(     "Tickets",             "Precio por pax.",                   "CallHbFunc( 'oTpvTactil', [ 'nPrecioPorPersona()' ] )" )
-   ::oFastReport:AddVariable(     "Tickets",             "Total descuento general",           "CallHbFunc( 'oTpvTactil', [ 'GetTotalDocumento', 'nTotalDescuentoGeneral' ] )" )
-   ::oFastReport:AddVariable(     "Tickets",             "Total descuento pronto pago",       "CallHbFunc( 'oTpvTactil', [ 'GetTotalDocumento', 'nTotalDescuentoProntoPago' ] )" )
-   ::oFastReport:AddVariable(     "Tickets",             "Total descuento",                   "CallHbFunc( 'oTpvTactil', [ 'GetTotalDocumento', 'nTotalDescuento()' ] )" )
+         ::oFastReport:AddVariable(     "Albaranes",             "Total albarán",                     "CallHbFunc( 'oTpvTactil', [ 'GetTotalDocumento', 'nTotalDocumento' ] )" )
+         ::oFastReport:AddVariable(     "Albaranes",             "Total descuento general",           "CallHbFunc( 'oTpvTactil', [ 'GetTotalDocumento', 'nTotalDescuentoGeneral' ] )" )
+         ::oFastReport:AddVariable(     "Albaranes",             "Total descuento pronto pago",       "CallHbFunc( 'oTpvTactil', [ 'GetTotalDocumento', 'nTotalDescuentoProntoPago' ] )" )
+         ::oFastReport:AddVariable(     "Albaranes",             "Total descuento",                   "CallHbFunc( 'oTpvTactil', [ 'GetTotalDocumento', 'nTotalDescuento()' ] )" )
+         ::oFastReport:AddVariable(     "Albaranes",             "Bruto primer tipo de " + cImp(),    "CallHbFunc( 'oTpvTactil', [ 'GetTotalDocumento', 'nTotalPrimerBruto()' ] )" )
+         ::oFastReport:AddVariable(     "Albaranes",             "Bruto segundo tipo de " + cImp(),   "CallHbFunc( 'oTpvTactil', [ 'GetTotalDocumento', 'nTotalSegundoBruto()' ] )" )
+         ::oFastReport:AddVariable(     "Albaranes",             "Bruto tercer tipo de " + cImp(),    "CallHbFunc( 'oTpvTactil', [ 'GetTotalDocumento', 'nTotalTercerBruto()' ] )" )
+         ::oFastReport:AddVariable(     "Albaranes",             "Total bruto",                       "CallHbFunc( 'oTpvTactil', [ 'GetTotalDocumento', 'TotalBruto()' ] )" )
+         ::oFastReport:AddVariable(     "Albaranes",             "Base primer tipo de " + cImp(),     "CallHbFunc( 'oTpvTactil', [ 'GetTotalDocumento', 'nTotalPrimeraBase()' ] )" )
+         ::oFastReport:AddVariable(     "Albaranes",             "Base segundo tipo de " + cImp(),    "CallHbFunc( 'oTpvTactil', [ 'GetTotalDocumento', 'nTotalSegundaBase()' ] )" )
+         ::oFastReport:AddVariable(     "Albaranes",             "Base tercer tipo de " + cImp(),     "CallHbFunc( 'oTpvTactil', [ 'GetTotalDocumento', 'nTotalTerceraBase()' ] )" )
+         ::oFastReport:AddVariable(     "Albaranes",             "Total neto",                        "CallHbFunc( 'oTpvTactil', [ 'GetTotalDocumento', 'TotalBase()' ] )" )
+         ::oFastReport:AddVariable(     "Albaranes",             "Porcentaje primer tipo " + cImp(),  "CallHbFunc( 'oTpvTactil', [ 'GetTotalDocumento', 'nPorcentajePrimerIva()' ] )" )
+         ::oFastReport:AddVariable(     "Albaranes",             "Porcentaje segundo tipo " + cImp(), "CallHbFunc( 'oTpvTactil', [ 'GetTotalDocumento', 'nPorcentajeSegundoIva()' ] )" )
+         ::oFastReport:AddVariable(     "Albaranes",             "Porcentaje tercer tipo " + cImp(),  "CallHbFunc( 'oTpvTactil', [ 'GetTotalDocumento', 'nPorcentajeTercerIva()' ] )" )
+         ::oFastReport:AddVariable(     "Albaranes",             "Importe primer tipo " + cImp(),     "CallHbFunc( 'oTpvTactil', [ 'GetTotalDocumento', 'nTotalPrimerIva()' ] )" )
+         ::oFastReport:AddVariable(     "Albaranes",             "Importe segundo tipo " + cImp(),    "CallHbFunc( 'oTpvTactil', [ 'GetTotalDocumento', 'nTotalSegundoIva()' ] )" )
+         ::oFastReport:AddVariable(     "Albaranes",             "Importe tercer tipo " + cImp(),     "CallHbFunc( 'oTpvTactil', [ 'GetTotalDocumento', 'nTotalTercerIva()' ] )" )
+         ::oFastReport:AddVariable(     "Albaranes",             "Total " + cImp(),                   "CallHbFunc( 'oTpvTactil', [ 'GetTotalDocumento', 'TotalIVA()' ] )" )
 
-   ::oFastReport:AddVariable(     "Tickets",             "Bruto primer tipo de " + cImp(),    "CallHbFunc( 'oTpvTactil', [ 'GetTotalDocumento', 'nTotalPrimerBruto()' ] )" )
-   ::oFastReport:AddVariable(     "Tickets",             "Bruto segundo tipo de " + cImp(),   "CallHbFunc( 'oTpvTactil', [ 'GetTotalDocumento', 'nTotalSegundoBruto()' ] )" )
-   ::oFastReport:AddVariable(     "Tickets",             "Bruto tercer tipo de " + cImp(),    "CallHbFunc( 'oTpvTactil', [ 'GetTotalDocumento', 'nTotalTercerBruto()' ] )" )
+         ::oFastReport:AddVariable(     "Lineas de albaranes",   "Detalle del artículo",              "CallHbFunc( 'oTpvTactil', [ 'GetLineaAlbaranes' ,'{|u|cDesAlbCli(u)}'  ])" )
+         ::oFastReport:AddVariable(     "Lineas de albaranes",   "Total unidades artículo",           "CallHbFunc( 'oTpvTactil', [ 'GetLineaAlbaranes' ,'{|u|nTotNAlbCli(u)}' ])" )
+         ::oFastReport:AddVariable(     "Lineas de albaranes",   "Precio unitario del artículo",      "CallHbFunc( 'oTpvTactil', [ 'GetLineaAlbaranes' ,'{|u|nTotUAlbCli(u)}' ])" )
+         ::oFastReport:AddVariable(     "Lineas de albaranes",   "Total línea de albaran",            "CallHbFunc( 'oTpvTactil', [ 'GetLineaAlbaranes' ,'{|u|nTotLAlbCli(u)}' ])" )
+         ::oFastReport:AddVariable(     "Lineas de albaranes",   "Total línea sin " + cImp(),         "CallHbFunc( 'oTpvTactil', [ 'GetLineaAlbaranes' ,'{|u|nNetLAlbCli(u)}' ])" )
+         ::oFastReport:AddVariable(     "Lineas de albaranes",   "Total peso por línea",              "CallHbFunc( 'oTpvTactil', [ 'GetLineaAlbaranes' ,'{|u|nPesLAlbCli(u)}' ])" )
 
-   ::oFastReport:AddVariable(     "Tickets",             "Total bruto",                       "CallHbFunc( 'oTpvTactil', [ 'GetTotalDocumento', 'TotalBruto()' ] )" )
+      otherwise
 
-   ::oFastReport:AddVariable(     "Tickets",             "Base primer tipo de " + cImp(),     "CallHbFunc( 'oTpvTactil', [ 'GetTotalDocumento', 'nTotalPrimeraBase()' ] )" )
-   ::oFastReport:AddVariable(     "Tickets",             "Base segundo tipo de " + cImp(),    "CallHbFunc( 'oTpvTactil', [ 'GetTotalDocumento', 'nTotalSegundaBase()' ] )" )
-   ::oFastReport:AddVariable(     "Tickets",             "Base tercer tipo de " + cImp(),     "CallHbFunc( 'oTpvTactil', [ 'GetTotalDocumento', 'nTotalTerceraBase()' ] )" )
+         ::oFastReport:DeleteCategory(  "Tickets" )
+         ::oFastReport:DeleteCategory(  "Lineas de tickets" )
+         ::oFastReport:DeleteCategory(  "Lineas de comandas" )
+         ::oFastReport:DeleteCategory(  "Lineas de albaranes" )
+         ::oFastReport:DeleteCategory(  "Lineas de facturas" )
 
-   ::oFastReport:AddVariable(     "Tickets",             "Total neto",                        "CallHbFunc( 'oTpvTactil', [ 'GetTotalDocumento', 'TotalBase()' ] )" )
+         /*
+         Creación de variables----------------------------------------------------
+         */
 
-   ::oFastReport:AddVariable(     "Tickets",             "Porcentaje primer tipo " + cImp(),  "CallHbFunc( 'oTpvTactil', [ 'GetTotalDocumento', 'nPorcentajePrimerIva()' ] )" )
-   ::oFastReport:AddVariable(     "Tickets",             "Porcentaje segundo tipo " + cImp(), "CallHbFunc( 'oTpvTactil', [ 'GetTotalDocumento', 'nPorcentajeSegundoIva()' ] )" )
-   ::oFastReport:AddVariable(     "Tickets",             "Porcentaje tercer tipo " + cImp(),  "CallHbFunc( 'oTpvTactil', [ 'GetTotalDocumento', 'nPorcentajeTercerIva()' ] )" )
+         ::oFastReport:AddVariable(     "Tickets",             "Ubicación del ticket",              "CallHbFunc( 'oTpvTactil', [ 'cTxtUbicacion()' ] )" )
 
-   ::oFastReport:AddVariable(     "Tickets",             "Importe primer tipo " + cImp(),     "CallHbFunc( 'oTpvTactil', [ 'GetTotalDocumento', 'nTotalPrimerIva()' ] )" )
-   ::oFastReport:AddVariable(     "Tickets",             "Importe segundo tipo " + cImp(),    "CallHbFunc( 'oTpvTactil', [ 'GetTotalDocumento', 'nTotalSegundoIva()' ] )" )
-   ::oFastReport:AddVariable(     "Tickets",             "Importe tercer tipo " + cImp(),     "CallHbFunc( 'oTpvTactil', [ 'GetTotalDocumento', 'nTotalTercerIva()' ] )" )
+         ::oFastReport:AddVariable(     "Tickets",             "Total ticket",                      "CallHbFunc( 'oTpvTactil', [ 'GetTotalDocumento', 'nTotalDocumento' ] )" )
+         ::oFastReport:AddVariable(     "Tickets",             "Precio por pax.",                   "CallHbFunc( 'oTpvTactil', [ 'nPrecioPorPersona()' ] )" )
+         ::oFastReport:AddVariable(     "Tickets",             "Total descuento general",           "CallHbFunc( 'oTpvTactil', [ 'GetTotalDocumento', 'nTotalDescuentoGeneral' ] )" )
+         ::oFastReport:AddVariable(     "Tickets",             "Total descuento pronto pago",       "CallHbFunc( 'oTpvTactil', [ 'GetTotalDocumento', 'nTotalDescuentoProntoPago' ] )" )
+         ::oFastReport:AddVariable(     "Tickets",             "Total descuento",                   "CallHbFunc( 'oTpvTactil', [ 'GetTotalDocumento', 'nTotalDescuento()' ] )" )
 
-   ::oFastReport:AddVariable(     "Tickets",             "Total " + cImp(),                   "CallHbFunc( 'oTpvTactil', [ 'GetTotalDocumento', 'TotalIVA()' ] )" )
+         ::oFastReport:AddVariable(     "Tickets",             "Bruto primer tipo de " + cImp(),    "CallHbFunc( 'oTpvTactil', [ 'GetTotalDocumento', 'nTotalPrimerBruto()' ] )" )
+         ::oFastReport:AddVariable(     "Tickets",             "Bruto segundo tipo de " + cImp(),   "CallHbFunc( 'oTpvTactil', [ 'GetTotalDocumento', 'nTotalSegundoBruto()' ] )" )
+         ::oFastReport:AddVariable(     "Tickets",             "Bruto tercer tipo de " + cImp(),    "CallHbFunc( 'oTpvTactil', [ 'GetTotalDocumento', 'nTotalTercerBruto()' ] )" )
 
-   ::oFastReport:AddVariable(     "Tickets",             "Importe primer tipo IVMH",          "CallHbFunc( 'oTpvTactil', [ 'GetTotalDocumento', 'nTotalPrimerImpuestoHidrocarburos()' ] )" )
-   ::oFastReport:AddVariable(     "Tickets",             "Importe segundo tipo IVMH",         "CallHbFunc( 'oTpvTactil', [ 'GetTotalDocumento', 'nTotalSegundoImpuestoHidrocarburos()' ] )" )
-   ::oFastReport:AddVariable(     "Tickets",             "Importe tercer tipo IVMH",          "CallHbFunc( 'oTpvTactil', [ 'GetTotalDocumento', 'nTotalTercerImpuestoHidrocarburos()' ] )" )
+         ::oFastReport:AddVariable(     "Tickets",             "Total bruto",                       "CallHbFunc( 'oTpvTactil', [ 'GetTotalDocumento', 'TotalBruto()' ] )" )
 
-   ::oFastReport:AddVariable(     "Tickets",             "Total IVMH",                        "CallHbFunc( 'oTpvTactil', [ 'GetTotalDocumento', 'TotalImpuestoHidrocarburos()' ] )" )
+         ::oFastReport:AddVariable(     "Tickets",             "Base primer tipo de " + cImp(),     "CallHbFunc( 'oTpvTactil', [ 'GetTotalDocumento', 'nTotalPrimeraBase()' ] )" )
+         ::oFastReport:AddVariable(     "Tickets",             "Base segundo tipo de " + cImp(),    "CallHbFunc( 'oTpvTactil', [ 'GetTotalDocumento', 'nTotalSegundaBase()' ] )" )
+         ::oFastReport:AddVariable(     "Tickets",             "Base tercer tipo de " + cImp(),     "CallHbFunc( 'oTpvTactil', [ 'GetTotalDocumento', 'nTotalTerceraBase()' ] )" )
 
-   /*
-   ::oFastReport:AddVariable(     "Tickets",             "Total vale en compra",              "CallHbFunc('nImpValTik')" )
-   ::oFastReport:AddVariable(     "Tickets",             "Total vales acumulados cliente",    "CallHbFunc('nImpValCli')" )
-   ::oFastReport:AddVariable(     "Tickets",             "Total entregas a cuenta",           "CallHbFunc('nTotalEntregado')" )
-   ::oFastReport:AddVariable(     "Tickets",             "Total vales liquidados en compra",  "CallHbFunc('nTotValTikInfo')" )
-   */
+         ::oFastReport:AddVariable(     "Tickets",             "Total neto",                        "CallHbFunc( 'oTpvTactil', [ 'GetTotalDocumento', 'TotalBase()' ] )" )
 
-   ::oFastReport:AddVariable(     "Lineas de tickets",   "Total unidades artículo",                      "CallHbFunc( 'oTpvTactil', [ 'nUnidadesLinea()' ] )" )
-   ::oFastReport:AddVariable(     "Lineas de tickets",   "Precio unitario del artículo",                 "CallHbFunc( 'oTpvTactil', [ 'nPrecioLinea()' ] )" )
-   ::oFastReport:AddVariable(     "Lineas de tickets",   "Total línea de factura",                       "CallHbFunc( 'oTpvTactil', [ 'nTotalLinea()' ] )" )
+         ::oFastReport:AddVariable(     "Tickets",             "Porcentaje primer tipo " + cImp(),  "CallHbFunc( 'oTpvTactil', [ 'GetTotalDocumento', 'nPorcentajePrimerIva()' ] )" )
+         ::oFastReport:AddVariable(     "Tickets",             "Porcentaje segundo tipo " + cImp(), "CallHbFunc( 'oTpvTactil', [ 'GetTotalDocumento', 'nPorcentajeSegundoIva()' ] )" )
+         ::oFastReport:AddVariable(     "Tickets",             "Porcentaje tercer tipo " + cImp(),  "CallHbFunc( 'oTpvTactil', [ 'GetTotalDocumento', 'nPorcentajeTercerIva()' ] )" )
 
-   ::oFastReport:AddVariable(     "Lineas de tickets",   "Precio unitario con descuentos",               "CallHbFunc('nNetLTpv')" )
-   ::oFastReport:AddVariable(     "Lineas de tickets",   "Importe descuento línea del factura",          "CallHbFunc('nDtoUTpv')" )
-   ::oFastReport:AddVariable(     "Lineas de tickets",   "Total " + cImp() + " línea de factura",        "CallHbFunc('nIvaLTpv')" )
-   ::oFastReport:AddVariable(     "Lineas de tickets",   "Total IVMH línea de factura",                  "CallHbFunc('nIvmLTpv')" )
+         ::oFastReport:AddVariable(     "Tickets",             "Importe primer tipo " + cImp(),     "CallHbFunc( 'oTpvTactil', [ 'GetTotalDocumento', 'nTotalPrimerIva()' ] )" )
+         ::oFastReport:AddVariable(     "Tickets",             "Importe segundo tipo " + cImp(),    "CallHbFunc( 'oTpvTactil', [ 'GetTotalDocumento', 'nTotalSegundoIva()' ] )" )
+         ::oFastReport:AddVariable(     "Tickets",             "Importe tercer tipo " + cImp(),     "CallHbFunc( 'oTpvTactil', [ 'GetTotalDocumento', 'nTotalTercerIva()' ] )" )
 
-   ::oFastReport:AddVariable(     "Lineas de comandas",  "Total unidades en comanda",                    "CallHbFunc( 'oTpvTactil', [ 'nUnidadesLineaComanda()' ] )" )
-   ::oFastReport:AddVariable(     "Lineas de comandas",  "Total unidades impresas en comanda",           "CallHbFunc( 'oTpvTactil', [ 'nUnidadesImpresasComanda()' ] )" )
-   ::oFastReport:AddVariable(     "Lineas de comandas",  "Detalle del artículo en comanda",              "CallHbFunc( 'oTpvTactil', [ 'cDescripcionComanda()' ] )" )
+         ::oFastReport:AddVariable(     "Tickets",             "Total " + cImp(),                   "CallHbFunc( 'oTpvTactil', [ 'GetTotalDocumento', 'TotalIVA()' ] )" )
 
-   ::oFastReport:AddVariable(     "Lineas de albaranes", "Detalle del artículo del albarán",             "CallHbFunc('cTpvDesAlbCli')"  )
-   ::oFastReport:AddVariable(     "Lineas de albaranes", "Total unidades artículo del albarán",          "CallHbFunc('nTpvTotNAlbCli')" )
-   ::oFastReport:AddVariable(     "Lineas de albaranes", "Precio unitario del artículo del albarán",     "CallHbFunc('nTpvTotUAlbCli')" )
-   ::oFastReport:AddVariable(     "Lineas de albaranes", "Total línea de albarán",                       "CallHbFunc('nTpvTotLAlbCli')" )
+         ::oFastReport:AddVariable(     "Tickets",             "Importe primer tipo IVMH",          "CallHbFunc( 'oTpvTactil', [ 'GetTotalDocumento', 'nTotalPrimerImpuestoHidrocarburos()' ] )" )
+         ::oFastReport:AddVariable(     "Tickets",             "Importe segundo tipo IVMH",         "CallHbFunc( 'oTpvTactil', [ 'GetTotalDocumento', 'nTotalSegundoImpuestoHidrocarburos()' ] )" )
+         ::oFastReport:AddVariable(     "Tickets",             "Importe tercer tipo IVMH",          "CallHbFunc( 'oTpvTactil', [ 'GetTotalDocumento', 'nTotalTercerImpuestoHidrocarburos()' ] )" )
 
-   ::oFastReport:AddVariable(     "Lineas de facturas",  "Detalle del artículo de la factura",           "CallHbFunc('cTpvDesFacCli')" )
-   ::oFastReport:AddVariable(     "Lineas de facturas",  "Total unidades artículo de la factura",        "CallHbFunc('nTpvTotNFacCli')" )
-   ::oFastReport:AddVariable(     "Lineas de facturas",  "Precio unitario del artículo de la factura",   "CallHbFunc('nTpvTotUFacCli')" )
-   ::oFastReport:AddVariable(     "Lineas de facturas",  "Total línea de factura.",                      "CallHbFunc('nTpvTotLFacCli')" )
+         ::oFastReport:AddVariable(     "Tickets",             "Total IVMH",                        "CallHbFunc( 'oTpvTactil', [ 'GetTotalDocumento', 'TotalImpuestoHidrocarburos()' ] )" )
 
-Return nil
+         ::oFastReport:AddVariable(     "Lineas de tickets",   "Total unidades artículo",                      "CallHbFunc( 'oTpvTactil', [ 'nUnidadesLinea()' ] )" )
+         ::oFastReport:AddVariable(     "Lineas de tickets",   "Precio unitario del artículo",                 "CallHbFunc( 'oTpvTactil', [ 'nPrecioLinea()' ] )" )
+         ::oFastReport:AddVariable(     "Lineas de tickets",   "Total línea de factura",                       "CallHbFunc( 'oTpvTactil', [ 'nTotalLinea()' ] )" )
+
+         ::oFastReport:AddVariable(     "Lineas de tickets",   "Precio unitario con descuentos",               "CallHbFunc('nNetLTpv')" )
+         ::oFastReport:AddVariable(     "Lineas de tickets",   "Importe descuento línea del factura",          "CallHbFunc('nDtoUTpv')" )
+         ::oFastReport:AddVariable(     "Lineas de tickets",   "Total " + cImp() + " línea de factura",        "CallHbFunc('nIvaLTpv')" )
+         ::oFastReport:AddVariable(     "Lineas de tickets",   "Total IVMH línea de factura",                  "CallHbFunc('nIvmLTpv')" )
+
+         ::oFastReport:AddVariable(     "Lineas de comandas",  "Total unidades en comanda",                    "CallHbFunc( 'oTpvTactil', [ 'nUnidadesLineaComanda()' ] )" )
+         ::oFastReport:AddVariable(     "Lineas de comandas",  "Total unidades impresas en comanda",           "CallHbFunc( 'oTpvTactil', [ 'nUnidadesImpresasComanda()' ] )" )
+         ::oFastReport:AddVariable(     "Lineas de comandas",  "Detalle del artículo en comanda",              "CallHbFunc( 'oTpvTactil', [ 'cDescripcionComanda()' ] )" )
+
+         ::oFastReport:AddVariable(     "Lineas de albaranes", "Detalle del artículo del albarán",             "CallHbFunc('cTpvDesAlbCli')"  )
+         ::oFastReport:AddVariable(     "Lineas de albaranes", "Total unidades artículo del albarán",          "CallHbFunc('nTpvTotNAlbCli')" )
+         ::oFastReport:AddVariable(     "Lineas de albaranes", "Precio unitario del artículo del albarán",     "CallHbFunc('nTpvTotUAlbCli')" )
+         ::oFastReport:AddVariable(     "Lineas de albaranes", "Total línea de albarán",                       "CallHbFunc('nTpvTotLAlbCli')" )
+
+         ::oFastReport:AddVariable(     "Lineas de facturas",  "Detalle del artículo de la factura",           "CallHbFunc('cTpvDesFacCli')" )
+         ::oFastReport:AddVariable(     "Lineas de facturas",  "Total unidades artículo de la factura",        "CallHbFunc('nTpvTotNFacCli')" )
+         ::oFastReport:AddVariable(     "Lineas de facturas",  "Precio unitario del artículo de la factura",   "CallHbFunc('nTpvTotUFacCli')" )
+         ::oFastReport:AddVariable(     "Lineas de facturas",  "Total línea de factura.",                      "CallHbFunc('nTpvTotLFacCli')" )
+
+   end case
+
+   Return nil
 
 //---------------------------------------------------------------------------//
 
