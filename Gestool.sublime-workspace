@@ -4,6 +4,26 @@
 		"selected_items":
 		[
 			[
+				"Me",
+				"Method"
+			],
+			[
+				"Clear",
+				"ClearRelationReport"
+			],
+			[
+				"Buid",
+				"BuildRelationReport"
+			],
+			[
+				"nT",
+				"nTipoDocumento"
+			],
+			[
+				"imprimir",
+				"imprimir"
+			],
+			[
 				"lopen",
 				"lOpenCaj"
 			],
@@ -494,44 +514,16 @@
 			[
 				"feature_",
 				"feature_product"
-			],
-			[
-				"image_",
-				"image_shop"
-			],
-			[
-				"feature",
-				"feature_value_lang"
-			],
-			[
-				"product_gr",
-				"product_group_reduction_cache"
-			],
-			[
-				"product_att",
-				"product_attribute_image"
-			],
-			[
-				"cPre",
-				"cPrefixTable"
 			]
 		]
 	},
 	"buffers":
 	[
 		{
-			"file": "prg/Tpvcobros.prg",
-			"settings":
-			{
-				"buffer_size": 33566,
-				"line_ending": "Windows"
-			}
-		},
-		{
 			"file": "prg/Tpvtactil.prg",
 			"settings":
 			{
-				"buffer_size": 270310,
+				"buffer_size": 286422,
 				"line_ending": "Windows"
 			}
 		},
@@ -539,7 +531,7 @@
 			"file": "prg/Albcli.prg",
 			"settings":
 			{
-				"buffer_size": 0,
+				"buffer_size": 642756,
 				"line_ending": "Windows"
 			}
 		},
@@ -547,7 +539,7 @@
 			"file": "prg/Tpv.prg",
 			"settings":
 			{
-				"buffer_size": 0,
+				"buffer_size": 715889,
 				"line_ending": "Windows"
 			}
 		}
@@ -584,6 +576,7 @@
 	},
 	"file_history":
 	[
+		"/C/fw195/Gestool/prg/Tpvcobros.prg",
 		"/C/fw195/Gestool/prg/Tpvtactil.prg",
 		"/C/fw195/Gestool/prg/Tpvlistaticket.prg",
 		"/C/fw195/Gestool/include/Factu.ch",
@@ -710,8 +703,7 @@
 		"/C/AppServ/www/zemtrum/modules/zoomslider/js/shBrushCss.js",
 		"/C/AppServ/www/zemtrum/modules/zoomslider/js/modernizr.js",
 		"/C/AppServ/www/zemtrum/modules/zoomslider/js/jquery.flexslider-min.js",
-		"/C/AppServ/www/zemtrum/modules/zoomslider/js/jquery.mousewheel.js",
-		"/C/AppServ/www/zemtrum/modules/zoomslider/js/shBrushXml.js"
+		"/C/AppServ/www/zemtrum/modules/zoomslider/js/jquery.mousewheel.js"
 	],
 	"find":
 	{
@@ -719,7 +711,7 @@
 	},
 	"find_in_files":
 	{
-		"height": 0.0,
+		"height": 93.0,
 		"where_history":
 		[
 			"C:\\fw195\\Gestool\\prg",
@@ -753,6 +745,33 @@
 		"case_sensitive": false,
 		"find_history":
 		[
+			"on ntotn",
+			"lalquiler",
+			"on ntotn",
+			"on tn",
+			"2block",
+			"toblock",
+			"documentos de albaranes",
+			"7962",
+			"tvta",
+			"openfiles",
+			"impri",
+			"on variablereport",
+			"closefiles",
+			"openfiles",
+			"closefiles",
+			"on datareport",
+			"on openfiles",
+			"Openfiles",
+			"openfiles",
+			"datareport",
+			"documentoAlbaran",
+			"BuildRelationReport",
+			"BuildReport",
+			"ImprimeDocumento",
+			"ImprimeTicket",
+			"imprim",
+			"imprime",
 			"GuardaDocumentoAlbaran",
 			"documentoalbaran",
 			"onclickace",
@@ -853,34 +872,7 @@
 			"order",
 			"extra",
 			"extract order",
-			"PrinterPreferences",
-			"on OpnCaj",
-			"OpnCaj",
-			"TestCajon",
-			"BuildReport",
-			"ImprimeDocumento",
-			"::cimpresora",
-			"cInfo",
-			"oSayInfo",
-			"oSayZona",
-			"OpenCaj",
-			"OpenCajon",
-			"on edtrec",
-			"on aitm",
-			"on edtrec",
-			"on aitm",
-			"on chk",
-			"on syn",
-			"on ncosto",
-			"on aitm",
-			"on rx",
-			"dfecrct",
-			"on syn",
-			"ascan",
-			"for each",
-			"ascan",
-			"od resource",
-			"cdescription"
+			"PrinterPreferences"
 		],
 		"highlight": true,
 		"in_selection": false,
@@ -912,18 +904,18 @@
 			[
 				{
 					"buffer": 0,
-					"file": "prg/Tpvcobros.prg",
+					"file": "prg/Tpvtactil.prg",
 					"settings":
 					{
-						"buffer_size": 33566,
+						"buffer_size": 286422,
 						"regions":
 						{
 						},
 						"selection":
 						[
 							[
-								4238,
-								4238
+								246897,
+								246897
 							]
 						],
 						"settings":
@@ -933,25 +925,25 @@
 							"translate_tabs_to_spaces": true
 						},
 						"translation.x": 0.0,
-						"translation.y": 3344.0,
+						"translation.y": 151363.0,
 						"zoom_level": 1.0
 					},
 					"type": "text"
 				},
 				{
 					"buffer": 1,
-					"file": "prg/Tpvtactil.prg",
+					"file": "prg/Albcli.prg",
 					"settings":
 					{
-						"buffer_size": 270310,
+						"buffer_size": 642756,
 						"regions":
 						{
 						},
 						"selection":
 						[
 							[
-								171348,
-								171348
+								416651,
+								416651
 							]
 						],
 						"settings":
@@ -961,53 +953,25 @@
 							"translate_tabs_to_spaces": true
 						},
 						"translation.x": 0.0,
-						"translation.y": 108176.0,
+						"translation.y": 229282.0,
 						"zoom_level": 1.0
 					},
 					"type": "text"
 				},
 				{
 					"buffer": 2,
-					"file": "prg/Albcli.prg",
-					"settings":
-					{
-						"buffer_size": 0,
-						"regions":
-						{
-						},
-						"selection":
-						[
-							[
-								0,
-								0
-							]
-						],
-						"settings":
-						{
-							"syntax": "Packages/harbour/harbour/Harbour.tmLanguage",
-							"tab_size": 3,
-							"translate_tabs_to_spaces": true
-						},
-						"translation.x": 0.0,
-						"translation.y": 0.0,
-						"zoom_level": 1.0
-					},
-					"type": "text"
-				},
-				{
-					"buffer": 3,
 					"file": "prg/Tpv.prg",
 					"settings":
 					{
-						"buffer_size": 0,
+						"buffer_size": 715889,
 						"regions":
 						{
 						},
 						"selection":
 						[
 							[
-								0,
-								0
+								13685,
+								13685
 							]
 						],
 						"settings":
@@ -1017,7 +981,7 @@
 							"translate_tabs_to_spaces": true
 						},
 						"translation.x": 0.0,
-						"translation.y": 0.0,
+						"translation.y": 9196.0,
 						"zoom_level": 1.0
 					},
 					"type": "text"
