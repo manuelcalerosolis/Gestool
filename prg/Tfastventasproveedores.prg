@@ -533,9 +533,9 @@ METHOD AddProveedor() CLASS TFastVentasProveedores
       if ::lValidRegister()
 
          ::oDbf:Append()
+
          ::oDbf:cCodPrv  := ::oDbfPrv:Cod
          ::oDbf:cNomPrv  := ::oDbfPrv:Titulo
-
          ::oDbf:cCodGrp  := ::oDbfPrv:cCodGrp
 
          ::oDbf:Save()
