@@ -523,7 +523,25 @@
 			"file": "prg/Tpvtactil.prg",
 			"settings":
 			{
-				"buffer_size": 286422,
+				"buffer_size": 285955,
+				"line_ending": "Windows"
+			}
+		},
+		{
+			"contents": "Searching 1334 files for \"on bChar2Block\"\n\nC:\\fw195\\Gestool\\prg\\Utildbf.prg:\n  484  //-------------------------------------------------------------------------//\n  485  \n  486: FUNCTION bChar2Block( cChar, lLogic, lMessage, lHard )\n  487  \n  488  	local bBlock\n\n1 match in 1 file\n",
+			"settings":
+			{
+				"buffer_size": 280,
+				"line_ending": "Windows",
+				"name": "Find Results",
+				"scratch": true
+			}
+		},
+		{
+			"file": "prg/Utildbf.prg",
+			"settings":
+			{
+				"buffer_size": 71032,
 				"line_ending": "Windows"
 			}
 		},
@@ -745,6 +763,10 @@
 		"case_sensitive": false,
 		"find_history":
 		[
+			"od varia",
+			"bchar2",
+			"od varia",
+			"on bChar2Block",
 			"on ntotn",
 			"lalquiler",
 			"on ntotn",
@@ -868,11 +890,7 @@
 			"officebar",
 			"datareport",
 			"extrac",
-			"extra",
-			"order",
-			"extra",
-			"extract order",
-			"PrinterPreferences"
+			"extra"
 		],
 		"highlight": true,
 		"in_selection": false,
@@ -899,7 +917,7 @@
 	"groups":
 	[
 		{
-			"selected": 0,
+			"selected": 3,
 			"sheets":
 			[
 				{
@@ -907,15 +925,15 @@
 					"file": "prg/Tpvtactil.prg",
 					"settings":
 					{
-						"buffer_size": 286422,
+						"buffer_size": 285955,
 						"regions":
 						{
 						},
 						"selection":
 						[
 							[
-								246897,
-								246897
+								247691,
+								247691
 							]
 						],
 						"settings":
@@ -925,13 +943,84 @@
 							"translate_tabs_to_spaces": true
 						},
 						"translation.x": 0.0,
-						"translation.y": 151363.0,
+						"translation.y": 151175.0,
 						"zoom_level": 1.0
 					},
 					"type": "text"
 				},
 				{
 					"buffer": 1,
+					"settings":
+					{
+						"buffer_size": 280,
+						"regions":
+						{
+							"match":
+							{
+								"flags": 112,
+								"regions":
+								[
+									[
+										183,
+										197
+									]
+								],
+								"scope": ""
+							}
+						},
+						"selection":
+						[
+							[
+								206,
+								206
+							]
+						],
+						"settings":
+						{
+							"detect_indentation": false,
+							"output_tag": 1,
+							"result_base_dir": "",
+							"result_file_regex": "^([A-Za-z\\\\/<].*):$",
+							"result_line_regex": "^ +([0-9]+):",
+							"scroll_past_end": true,
+							"syntax": "Packages/Default/Find Results.hidden-tmLanguage"
+						},
+						"translation.x": 0.0,
+						"translation.y": 0.0,
+						"zoom_level": 1.0
+					},
+					"type": "text"
+				},
+				{
+					"buffer": 2,
+					"file": "prg/Utildbf.prg",
+					"settings":
+					{
+						"buffer_size": 71032,
+						"regions":
+						{
+						},
+						"selection":
+						[
+							[
+								11407,
+								11407
+							]
+						],
+						"settings":
+						{
+							"syntax": "Packages/harbour/harbour/Harbour.tmLanguage",
+							"tab_size": 3,
+							"translate_tabs_to_spaces": true
+						},
+						"translation.x": 0.0,
+						"translation.y": 9750.0,
+						"zoom_level": 1.0
+					},
+					"type": "text"
+				},
+				{
+					"buffer": 3,
 					"file": "prg/Albcli.prg",
 					"settings":
 					{
@@ -942,8 +1031,8 @@
 						"selection":
 						[
 							[
-								416651,
-								416651
+								414680,
+								414680
 							]
 						],
 						"settings":
@@ -953,13 +1042,13 @@
 							"translate_tabs_to_spaces": true
 						},
 						"translation.x": 0.0,
-						"translation.y": 229282.0,
+						"translation.y": 229111.0,
 						"zoom_level": 1.0
 					},
 					"type": "text"
 				},
 				{
-					"buffer": 2,
+					"buffer": 4,
 					"file": "prg/Tpv.prg",
 					"settings":
 					{

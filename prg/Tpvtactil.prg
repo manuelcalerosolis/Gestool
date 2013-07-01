@@ -840,7 +840,7 @@ CLASS TpvTactil
       do case
       case ::nTipoDocumento == documentoAlbaran
          
-         ::cFormato        := "ACA" //::oFormatosImpresion:cFmtAlb
+         ::cFormato        := ::oFormatosImpresion:cFmtAlb
          ::cImpresora      := ::oFormatosImpresion:cPrinterAlb
 
       otherwise
