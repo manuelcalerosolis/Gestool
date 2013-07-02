@@ -468,11 +468,11 @@ METHOD DataReport() CLASS TFastVentasClientes
 
          ::FastReportTicket( .t. )
 
-      case ::cReportType == "Facturación de clientes "
+      case ::cReportType == "Facturación de clientes"
 
          ::FastReportFacturaCliente()
          
-         ::FastReportFacturaRectificativa() 
+         ::FastReportFacturaRectificativa()
 
          ::FastReportTicket( .t. )
 

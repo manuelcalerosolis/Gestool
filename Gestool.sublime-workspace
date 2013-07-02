@@ -523,15 +523,7 @@
 			"file": "prg/Tpvtactil.prg",
 			"settings":
 			{
-				"buffer_size": 286422,
-				"line_ending": "Windows"
-			}
-		},
-		{
-			"file": "prg/Albcli.prg",
-			"settings":
-			{
-				"buffer_size": 642756,
+				"buffer_size": 285947,
 				"line_ending": "Windows"
 			}
 		},
@@ -540,6 +532,22 @@
 			"settings":
 			{
 				"buffer_size": 715889,
+				"line_ending": "Windows"
+			}
+		},
+		{
+			"file": "prg/Tfastventasclientes.prg",
+			"settings":
+			{
+				"buffer_size": 51816,
+				"line_ending": "Windows"
+			}
+		},
+		{
+			"file": "bin/reporting/articulos/Ventas/Facturas de clientes/Facturas de clientes lineas agrupadas.fr3",
+			"settings":
+			{
+				"buffer_size": 17937,
 				"line_ending": "Windows"
 			}
 		}
@@ -576,17 +584,20 @@
 	},
 	"file_history":
 	[
+		"/C/fw195/Gestool/prg/Factu.prg",
+		"/C/fw195/Gestool/prg/tpv",
+		"/C/fw195/Gestool/prg/Tpv.prg",
+		"/C/fw195/Gestool/prg/Albcli.prg",
+		"/C/fw195/Gestool/prg/Utildbf.prg",
 		"/C/fw195/Gestool/prg/Tpvcobros.prg",
 		"/C/fw195/Gestool/prg/Tpvtactil.prg",
 		"/C/fw195/Gestool/prg/Tpvlistaticket.prg",
 		"/C/fw195/Gestool/include/Factu.ch",
-		"/C/fw195/Gestool/prg/Albcli.prg",
 		"/C/fw195/Gestool/prg/Empresa.prg",
 		"/C/fw195/Gestool/include/Empresa.ch",
 		"/C/fw195/Gestool/prg/Factcli.prg",
 		"/C/fw195/Gestool/prg/Tfastreportinfgen.prg",
 		"/C/fw195/Gestool/prg/Tcajon.prg",
-		"/C/fw195/Gestool/prg/Factu.prg",
 		"/C/fw195/Gestool/prg/Cajas.prg",
 		"/C/fw195/Gestool/prg/Confcajporta.prg",
 		"/C/fw195/Gestool/prg/Usuario.prg",
@@ -603,7 +614,6 @@
 		"/C/fw195/Gestool/prg/Rectprv.prg",
 		"/C/fw195/Gestool/prg/Precli.prg",
 		"/C/fw195/Gestool/prg/Autoseek.prg",
-		"/C/fw195/Gestool/prg/Tpv.prg",
 		"/C/fw195/Gestool/prg/Albprov.prg",
 		"/C/fw195/Gestool/prg/Pedprov.prg",
 		"/C/fw195/Gestool/prg/Satcli.prg",
@@ -642,7 +652,6 @@
 		"/C/fw195/Gestool/prg/tuser",
 		"/C/fw195/Gestool/prg/Internet.prg",
 		"/C/fw195/Gestool/prg/Empcnf.prg",
-		"/C/fw195/Gestool/prg/Utildbf.prg",
 		"/C/fw195/Gestool/prg/Tftp.prg",
 		"/C/Scripts creados/Inma Pepsi/001.prg",
 		"/C/fw195/Gestool/prg/Xvalalm.prg",
@@ -702,8 +711,7 @@
 		"/C/AppServ/www/zemtrum/themes/zemtrum/header.tpl",
 		"/C/AppServ/www/zemtrum/modules/zoomslider/js/shBrushCss.js",
 		"/C/AppServ/www/zemtrum/modules/zoomslider/js/modernizr.js",
-		"/C/AppServ/www/zemtrum/modules/zoomslider/js/jquery.flexslider-min.js",
-		"/C/AppServ/www/zemtrum/modules/zoomslider/js/jquery.mousewheel.js"
+		"/C/AppServ/www/zemtrum/modules/zoomslider/js/jquery.flexslider-min.js"
 	],
 	"find":
 	{
@@ -711,7 +719,7 @@
 	},
 	"find_in_files":
 	{
-		"height": 93.0,
+		"height": 0.0,
 		"where_history":
 		[
 			"C:\\fw195\\Gestool\\prg",
@@ -745,6 +753,13 @@
 		"case_sensitive": false,
 		"find_history":
 		[
+			"reporting",
+			"class",
+			"ACA",
+			"od varia",
+			"bchar2",
+			"od varia",
+			"on bChar2Block",
 			"on ntotn",
 			"lalquiler",
 			"on ntotn",
@@ -865,14 +880,7 @@
 			"LALBTCT",
 			"Document_plain_user1",
 			"on aitm",
-			"officebar",
-			"datareport",
-			"extrac",
-			"extra",
-			"order",
-			"extra",
-			"extract order",
-			"PrinterPreferences"
+			"officebar"
 		],
 		"highlight": true,
 		"in_selection": false,
@@ -899,7 +907,7 @@
 	"groups":
 	[
 		{
-			"selected": 0,
+			"selected": 3,
 			"sheets":
 			[
 				{
@@ -907,15 +915,15 @@
 					"file": "prg/Tpvtactil.prg",
 					"settings":
 					{
-						"buffer_size": 286422,
+						"buffer_size": 285947,
 						"regions":
 						{
 						},
 						"selection":
 						[
 							[
-								246897,
-								246897
+								21179,
+								21179
 							]
 						],
 						"settings":
@@ -925,41 +933,13 @@
 							"translate_tabs_to_spaces": true
 						},
 						"translation.x": 0.0,
-						"translation.y": 151363.0,
+						"translation.y": 15789.0,
 						"zoom_level": 1.0
 					},
 					"type": "text"
 				},
 				{
 					"buffer": 1,
-					"file": "prg/Albcli.prg",
-					"settings":
-					{
-						"buffer_size": 642756,
-						"regions":
-						{
-						},
-						"selection":
-						[
-							[
-								416651,
-								416651
-							]
-						],
-						"settings":
-						{
-							"syntax": "Packages/harbour/harbour/Harbour.tmLanguage",
-							"tab_size": 3,
-							"translate_tabs_to_spaces": true
-						},
-						"translation.x": 0.0,
-						"translation.y": 229282.0,
-						"zoom_level": 1.0
-					},
-					"type": "text"
-				},
-				{
-					"buffer": 2,
 					"file": "prg/Tpv.prg",
 					"settings":
 					{
@@ -970,8 +950,8 @@
 						"selection":
 						[
 							[
-								13685,
-								13685
+								699909,
+								699909
 							]
 						],
 						"settings":
@@ -981,7 +961,63 @@
 							"translate_tabs_to_spaces": true
 						},
 						"translation.x": 0.0,
-						"translation.y": 9196.0,
+						"translation.y": 423861.0,
+						"zoom_level": 1.0
+					},
+					"type": "text"
+				},
+				{
+					"buffer": 2,
+					"file": "prg/Tfastventasclientes.prg",
+					"settings":
+					{
+						"buffer_size": 51816,
+						"regions":
+						{
+						},
+						"selection":
+						[
+							[
+								18709,
+								18709
+							]
+						],
+						"settings":
+						{
+							"syntax": "Packages/harbour/harbour/Harbour.tmLanguage",
+							"tab_size": 3,
+							"translate_tabs_to_spaces": true
+						},
+						"translation.x": 0.0,
+						"translation.y": 8417.0,
+						"zoom_level": 1.0
+					},
+					"type": "text"
+				},
+				{
+					"buffer": 3,
+					"file": "bin/reporting/articulos/Ventas/Facturas de clientes/Facturas de clientes lineas agrupadas.fr3",
+					"settings":
+					{
+						"buffer_size": 17937,
+						"regions":
+						{
+						},
+						"selection":
+						[
+							[
+								0,
+								0
+							]
+						],
+						"settings":
+						{
+							"syntax": "Packages/Text/Plain text.tmLanguage",
+							"tab_size": 2,
+							"translate_tabs_to_spaces": true
+						},
+						"translation.x": 0.0,
+						"translation.y": 0.0,
 						"zoom_level": 1.0
 					},
 					"type": "text"

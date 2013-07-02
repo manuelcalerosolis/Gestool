@@ -3101,7 +3101,7 @@ Function CreateAcceso( oWnd )
    oItem:oGroup         := oGrupo
    oItem:cPrompt        := 'Clientes'
    oItem:cMessage       := 'Informes realacionados con clientes'
-   oItem:bAction        := {|| MsgStop( "Apartado en desarrollo" ) } //TFastVentasClientes():New():Play() }
+   oItem:bAction        := {|| TFastVentasClientes():New():Play() }
    oItem:cId            := "01120"
    oItem:cBmp           := "user1_chart_16"
    oItem:cBmpBig        := "user1_chart_32"
@@ -3111,7 +3111,7 @@ Function CreateAcceso( oWnd )
    oItem:oGroup         := oGrupo
    oItem:cPrompt        := 'Proveedores'
    oItem:cMessage       := 'Informes realacionados con proveedores'
-   oItem:bAction        := {|| MsgStop( "Apartado en desarrollo" ) } //TFastVentasProveedores():New():Play() }
+   oItem:bAction        := {|| TFastVentasProveedores():New():Play() }
    oItem:cId            := "01121"
    oItem:cBmp           := "businessman_chart_16"
    oItem:cBmpBig        := "businessman_chart_32"
