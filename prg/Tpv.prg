@@ -4068,6 +4068,8 @@ Static Function NewTiket( aGet, aTmp, nMode, nSave, lBig, oBrw, oBrwDet )
 
          oDlgTpv:Disable()
 
+         BeginTransaction()
+
          /*
          Archivamos el tipo de venta que se ha realizado--------------------------
          */
@@ -4597,6 +4599,8 @@ Static Function NewTiket( aGet, aTmp, nMode, nSave, lBig, oBrw, oBrwDet )
          Cerrando-----------------------------------------------------------------
          */
 
+         CommitTransaction()
+
          oDlgTpv:Enable()
          oDlgTpv:AEvalWhen()
 
@@ -4605,6 +4609,8 @@ Static Function NewTiket( aGet, aTmp, nMode, nSave, lBig, oBrw, oBrwDet )
          */
 
       RECOVER USING oError
+
+         RollBackTransaction()
 
          msgStop( "Error en la grabación del ticket" + CRLF + ErrorMessage( oError ) )
 

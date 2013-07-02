@@ -1261,7 +1261,7 @@ Static Function ExeExpDoc( cGetFile, oDlg )
 
             msgInfo( "Documento exportado satisfactoriamente" )
 
-            lRdDir( cPatTmp(), "RTik*.*" )
+            EraseFilesInDirectory(cPatTmp(), "RTik*.*" )
 
          else
 
@@ -1429,7 +1429,7 @@ Static Function ExeGetDoc( cGetFile, oSayProc, oDlg )
    Eliminar todos los ficheros-------------------------------------------------
    */
 
-   lRdDir( cPatTmp(), "*.*" )
+   EraseFilesInDirectory(cPatTmp(), "*.*" )
 
    oDlg:Enable():End()
 

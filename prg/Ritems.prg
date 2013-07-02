@@ -2818,7 +2818,7 @@ Static Function ExportDocument( cGetFile )
 
    cGetFile          := Rtrim( cGetFile )
 
-   lRdDir( cPatIn(), "*.*" )
+   EraseFilesInDirectory(cPatIn(), "*.*" )
 
    if !mkDocs( cPatIn(), , , , .f., cLocalDriver() )
       Return .f.
@@ -2932,7 +2932,7 @@ Static Function ExportDocument( cGetFile )
             aEval( aDir, { | cName, nIndex | hb_ZipFile( cGetFile, cPatIn() + cName[ 1 ], 9 ) } )
             hb_gcAll()
 
-            lRdDir( cPatIn(), "*.*" )
+            EraseFilesInDirectory(cPatIn(), "*.*" )
 
             msgInfo( "Documento exportado satisfactoriamente" )
 

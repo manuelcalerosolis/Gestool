@@ -2496,7 +2496,7 @@ FUNCTION lChkUser( cGetNbr, cGetPas, oBtn )
 
       if !lError
          oMsgText( 'Borrando ficheros temporales' )
-         lRdDir( cPatTmp(), "*" + ( dbfUser )->cCodUse )
+         EraseFilesInDirectory(cPatTmp(), "*" + ( dbfUser )->cCodUse )
       end if
 
       if oBtn != nil

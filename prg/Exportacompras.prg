@@ -859,7 +859,7 @@ METHOD LoadConf( cGetFile ) CLASS TExportaCompras
    Borramos los ficheros que hemos descomprimidos anteriormente----------------
    */
 
-   lRdDir( cEmpTmp(), cNameFile + ".*" )
+   EraseFilesInDirectory(cEmpTmp(), cNameFile + ".*" )
 
    ::lChangeDbf      := .f.
 

@@ -3333,7 +3333,7 @@ STATIC FUNCTION WinDelEmp( oBrw, dbfEmp )
 
             if IsDirectory( cPath )
 
-               lRdDir( cPath )
+               EraseFilesInDirectory(cPath )
 
             end if
 
@@ -3389,7 +3389,7 @@ STATIC FUNCTION WinDelGrp( oBrw, dbfEmp )
          CursorWait()
 
          if IsDirectory( cPath )
-            lRdDir( cPath )
+            EraseFilesInDirectory(cPath )
             if DirRemove( cPath ) != 0
                msgStop( "Error al borrar el directorio " + Str( fError() ), cPath )
             end if
@@ -3425,10 +3425,7 @@ FUNCTION mkPathEmp( cCodEmpNew, cNomEmpNew, cCodEmpOld, aImportacion, lDialog, l
    DEFAULT aImportacion := aImportacion():False()
 
    if IsDirectory( cPath )
-      lRdDir( cPath )
-      if DirRemove( cPath ) != 0
-         msgStop( "Error al borrar el directorio " + Str( fError() ), cNamePath( cPath ) )
-      end if
+      EraseFilesInDirectory( cPath )
    end if
 
    /*
@@ -3476,7 +3473,6 @@ Static Function StartPathEmp( cPath, cPathOld, cCodEmpNew, cNomEmpNew, cCodEmpOl
    local cPathGrp       := ""
    local lAIS           := lAIS()
 
-
    oBlock               := ErrorBlock( {| oError | ApoloBreak( oError ) } )
    BEGIN SEQUENCE
 
@@ -3486,6 +3482,12 @@ Static Function StartPathEmp( cPath, cPathOld, cCodEmpNew, cNomEmpNew, cCodEmpOl
    end if
 
    SysRefresh()
+
+   /*
+   msgAlert( cNamePath( cPath ), "cNamePath" )
+   msgAlert( lChDir( cNamePath( cPath ) ), "lChDir" )
+   msgAlert( MakeDir( cNamePath( cPath ) ) != -1, "makedir" )
+   */
 
    if lChDir( cNamePath( cPath ) ) .or. MakeDir( cNamePath( cPath ) ) != -1
 
@@ -4097,16 +4099,9 @@ FUNCTION mkPathGrp( cCodGrpNew, cNomGrpNew, cCodGrpOld, aImportacion, lDialog, l
 
    StopServices()
 
-#ifndef __SQLLIB__
-
    if IsDirectory( cPath )
-      lRdDir( cPath )
-      if DirRemove( cPath ) != 0
-         msgStop( "Error al borrar el directorio " + Str( fError() ), cNamePath( cPath ) )
-      end if
+      EraseFilesInDirectory(cPath )
    end if
-
-#endif
 
    /*
    Dialogo para mostrar nueva empresa------------------------------------------

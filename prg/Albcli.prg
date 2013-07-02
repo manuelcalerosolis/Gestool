@@ -3696,11 +3696,11 @@ STATIC FUNCTION EdtRec( aTmp, aGet, dbfAlbCliT, oBrw, hHash, bValid, nMode )
       oDlg:AddFastKey( VK_F5,             {|| EndTrans( aTmp, aGet, oBrw, oBrwInc, nMode, oDlg ) } )
       oDlg:AddFastKey( 65,                {|| if( GetKeyState( VK_CONTROL ), CreateInfoArticulo(), ) } )
 
-      oDlg:bStart    := {|| StartEdtRec( aTmp, aGet, oDlg, nMode, hHash, oBrwLin ) }
-
    end if
 
-   oDlg:AddFastKey ( VK_F1, {|| ChmHelp( "Albaranes2" ) } )
+   oDlg:bStart       := {|| StartEdtRec( aTmp, aGet, oDlg, nMode, hHash, oBrwLin ) }
+
+   oDlg:AddFastKey(  VK_F1, {|| ChmHelp( "Albaranes2" ) } )
 
    ACTIVATE DIALOG   oDlg ;
       ON INIT        (  InitEdtRec( aTmp, aGet, oDlg, oSayDias, oSayTxtDias, oBrwLin, oBrwInc, oBrwPgo, hHash ) );

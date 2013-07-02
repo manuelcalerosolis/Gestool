@@ -281,12 +281,12 @@ Function lMiniSeek( cPrefij, xCadena, xAlias, nLen )
       return .f.
    end if
 
-   if !isChar( ordkeyval() )
+   if !isChar( ( xAlias )->( ordKeyVal() ) )
       return .f.
    end if
 
    if Empty( nLen )
-      nLen        := len( ordkeyval() ) - 2
+      nLen        := len( ( xAlias )->( ordKeyVal() ) ) - 2
    end if
 
    oBlock         := ErrorBlock( {| oError | ApoloBreak( oError ) } )

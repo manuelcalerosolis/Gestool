@@ -883,9 +883,9 @@ METHOD Execute( lSend, lRecive, lImprimirEnvio )
    Limpiamos los directorios de envios y recepciones---------------------------
    */
 
-   lRdDir( cPatIn(),  "*.*" )
-   lRdDir( cPatOut(), "*.*" )
-   lRdDir( cPatSnd(), "*.*" )
+   EraseFilesInDirectory(cPatIn(),  "*.*" )
+   EraseFilesInDirectory(cPatOut(), "*.*" )
+   EraseFilesInDirectory(cPatSnd(), "*.*" )
 
    /*
    Segun el tipo de envio------------------------------------------------------
@@ -900,7 +900,7 @@ METHOD Execute( lSend, lRecive, lImprimirEnvio )
       ::SetText( 'Seleccionando datos', 1 )
 
       if lSend
-         aEval( ::aSend, {|o| if( o:lSelectSend, ( ::SetText( o:cText, 2 ), o:CreateData(), lRdDir( cPatSnd(), "*.*" ), Self ), ) } )
+         aEval( ::aSend, {|o| if( o:lSelectSend, ( ::SetText( o:cText, 2 ), o:CreateData(), EraseFilesInDirectory(cPatSnd(), "*.*" ), Self ), ) } )
       end if
 
       /*
@@ -1058,9 +1058,9 @@ METHOD Execute( lSend, lRecive, lImprimirEnvio )
    Limpiamos los directorios de envios y recepciones---------------------------
    */
 
-   lRdDir( cPatIn(),  "*.*" )
-   lRdDir( cPatOut(), "*.*" )
-   lRdDir( cPatSnd(), "*.*" )
+   EraseFilesInDirectory(cPatIn(),  "*.*" )
+   EraseFilesInDirectory(cPatOut(), "*.*" )
+   EraseFilesInDirectory(cPatSnd(), "*.*" )
 
    /*
    Cerrando--------------------------------------------------------------------
@@ -1742,7 +1742,7 @@ Function ftpDeleteMask( cMask, oSender, lDisco )
    DEFAULT lDisco          := ( nTipConInt() == 1 )
 
    if lDisco
-      lRdDir( cRutConInt(), cMask )
+      EraseFilesInDirectory(cRutConInt(), cMask )
    else
       if oFtp != nil
          oFtp:DeleteMask( cMask )

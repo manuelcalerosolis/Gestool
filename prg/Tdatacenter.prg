@@ -2060,6 +2060,7 @@ METHOD BuildEmpresa()
    oDataTable:cName        := cPatEmp() + "CfgUse"
    oDataTable:cDataFile    := cPatEmp( , .t. ) + "CfgUse.Dbf"
    oDataTable:cIndexFile   := cPatEmp( , .t. ) + "CfgUse.Cdx"
+   oDataTable:lTrigger     := .f.
    oDataTable:cDescription := "Configuración"
    ::AddEmpresaTable( oDataTable )
 
@@ -2067,6 +2068,7 @@ METHOD BuildEmpresa()
    oDataTable:cName        := cPatEmp() + "CfgCol"
    oDataTable:cDataFile    := cPatEmp( , .t. ) + "CfgCol.Dbf"
    oDataTable:cIndexFile   := cPatEmp( , .t. ) + "CfgCol.Cdx"
+   oDataTable:lTrigger     := .f.
    oDataTable:cDescription := "Configuración"
    ::AddEmpresaTable( oDataTable )
 
@@ -2074,6 +2076,7 @@ METHOD BuildEmpresa()
    oDataTable:cName        := cPatEmp() + "CfgInf"
    oDataTable:cDataFile    := cPatEmp( , .t. ) + "CfgInf.Dbf"
    oDataTable:cIndexFile   := cPatEmp( , .t. ) + "CfgInf.Cdx"
+   oDataTable:lTrigger     := .f.
    oDataTable:cDescription := "Configuración"
    ::AddEmpresaTable( oDataTable )
 
@@ -2081,6 +2084,7 @@ METHOD BuildEmpresa()
    oDataTable:cName        := cPatEmp() + "CfgFnt"
    oDataTable:cDataFile    := cPatEmp( , .t. ) + "CfgFnt.Dbf"
    oDataTable:cIndexFile   := cPatEmp( , .t. ) + "CfgFnt.Cdx"
+   oDataTable:lTrigger     := .f.
    oDataTable:cDescription := "Configuración"
    ::AddEmpresaTable( oDataTable )
 
@@ -2088,6 +2092,7 @@ METHOD BuildEmpresa()
    oDataTable:cName        := cPatEmp() + "CfgGrp"
    oDataTable:cDataFile    := cPatEmp( , .t. ) + "CfgGrp.Dbf"
    oDataTable:cIndexFile   := cPatEmp( , .t. ) + "CfgGrp.Cdx"
+   oDataTable:lTrigger     := .f.
    oDataTable:cDescription := "Configuración"
    ::AddEmpresaTable( oDataTable )
 
@@ -2706,7 +2711,7 @@ METHOD BuildEmpresa()
    oDataTable:cDataFile    := cPatEmp( , .t. ) + "TikeL.Dbf"
    oDataTable:cIndexFile   := cPatEmp( , .t. ) + "TikeL.Cdx"
    oDataTable:cDescription := "Tickets de clientes"
-   oDataTable:lTrigger     := .f.
+   oDataTable:lTrigger     := .t.
    ::AddEmpresaTable( oDataTable )
 
    oDataTable              := TDataTable()
@@ -2714,7 +2719,7 @@ METHOD BuildEmpresa()
    oDataTable:cDataFile    := cPatEmp( , .t. ) + "TikeP.Dbf"
    oDataTable:cIndexFile   := cPatEmp( , .t. ) + "TikeP.Cdx"
    oDataTable:cDescription := "Tickets de clientes"
-   oDataTable:lTrigger     := .f.
+   oDataTable:lTrigger     := .t.
    ::AddEmpresaTable( oDataTable )
 
    oDataTable              := TDataTable()
@@ -2722,7 +2727,7 @@ METHOD BuildEmpresa()
    oDataTable:cDataFile    := cPatEmp( , .t. ) + "TikeS.Dbf"
    oDataTable:cIndexFile   := cPatEmp( , .t. ) + "TikeS.Cdx"
    oDataTable:cDescription := "Tickets de clientes"
-   oDataTable:lTrigger     := .f.
+   oDataTable:lTrigger     := .t.
    ::AddEmpresaTable( oDataTable )
 
    oDataTable              := TDataTable()
@@ -2730,7 +2735,7 @@ METHOD BuildEmpresa()
    oDataTable:cDataFile    := cPatEmp( , .t. ) + "TikeM.Dbf"
    oDataTable:cIndexFile   := cPatEmp( , .t. ) + "TikeM.Cdx"
    oDataTable:cDescription := "Tickets de clientes"
-   oDataTable:lTrigger     := .f.
+   oDataTable:lTrigger     := .t.
    ::AddEmpresaTable( oDataTable )
 
    oDataTable              := TDataTable()
