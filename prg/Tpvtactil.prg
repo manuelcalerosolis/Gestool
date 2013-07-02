@@ -5709,112 +5709,108 @@ METHOD OnClickAlbaran() CLASS TpvTactil
 
       Return .f.
 
-   else
+   end if 
 
-      if Empty( ::oTiketCabecera:cCliTik )
+   if Empty( ::oTiketCabecera:cCliTik )
 
-         MsgStop( "Para generar un albarán necesita seleccionar un cliente.", "Información" )
+      MsgStop( "Para generar un albarán necesita seleccionar un cliente.", "Información" )
 
-         Return .f.
+      Return .f.
 
-      else
+   end if
 
-         ::nTipoDocumento := documentoAlbaran
+   ::nTipoDocumento := documentoAlbaran
 
-         if ::oTpvCobros:lCobro()
+   if ::oTpvCobros:lCobro()
 
-            /*
-            Guarda documento--------------------------------------------------------
-            */
+      /*
+      Guarda documento--------------------------------------------------------
+      */
 
-            ::GuardaDocumentoAlbaran()
+      ::GuardaDocumentoAlbaran()
 
-            /*
-            Vemos si hay que abrir el cajon------------------------------------------
-            */
+      /*
+      Vemos si hay que abrir el cajon------------------------------------------
+      */
 
-            lOpenCaj    := ( ::oTpvCobros:nTotalCobro != 0 )
+      lOpenCaj    := ( ::oTpvCobros:nTotalCobro != 0 )
 
-            /*
-            Inicializa los cobros para el proximo ticket-----------------------------
-            */
+      /*
+      Inicializa los cobros para el proximo ticket-----------------------------
+      */
 
-            ::oTpvCobros:InitCobros()
+      ::oTpvCobros:InitCobros()
 
-            /*
-            Vaciamos las lineas------------------------------------------------------
-            */
+      /*
+      Vaciamos las lineas------------------------------------------------------
+      */
 
-            ::oTemporalLinea:Zap()
+      ::oTemporalLinea:Zap()
 
-            /*
-            Refrescamos las lineas---------------------------------------------------
-            */
+      /*
+      Refrescamos las lineas---------------------------------------------------
+      */
 
-            ::oBrwLineas:Refresh()
+      ::oBrwLineas:Refresh()
 
-            /*
-            Barra de progreso vuelve a su estado----------------------------------------
-            */
+      /*
+      Barra de progreso vuelve a su estado----------------------------------------
+      */
 
-            ::oProgressBar:Set( 0 )
-            ::oProgressBar:Refresh()
+      ::oProgressBar:Set( 0 )
+      ::oProgressBar:Refresh()
 
-            /*
-            Encendemos el flag para cargar de nuevo el usuario--------------------------
-            */
+      /*
+      Encendemos el flag para cargar de nuevo el usuario--------------------------
+      */
 
-            ::lGetUsuario                 := .t.
+      ::lGetUsuario                 := .t.
 
-            /*
-            Abrimos el cajón portamonedas antes de imprimir-----------------------
-            */
+      /*
+      Abrimos el cajón portamonedas antes de imprimir-----------------------
+      */
 
-            if lOpenCaj
-               oUser():OpenCajon()
-            end if   
+      if lOpenCaj
+         oUser():OpenCajon()
+      end if   
 
-            /*
-            Imprimimos el documento--------------------------------------------
-            */
+      /*
+      Imprimimos el documento--------------------------------------------
+      */
 
-            if ::oTpvCobros:nExit == exitAceptarImprimir
-               ::ImprimeTicket()
-            end if   
+      if ::oTpvCobros:nExit == exitAceptarImprimir
+         ::ImprimeTicket()
+      end if   
 
-            /*
-            Inicializa los valores para el documento---------------------------
-            */
+      /*
+      Inicializa los valores para el documento---------------------------
+      */
 
-            ::InitDocumento( ubiGeneral )
+      ::InitDocumento( ubiGeneral )
 
-            /*
-            Datos de la ubicacion----------------------------------------------
-            */
+      /*
+      Datos de la ubicacion----------------------------------------------
+      */
 
-            ::SetUbicacion()
+      ::SetUbicacion()
 
-            /*
-            Datos del documento------------------------------------------------
-            */
+      /*
+      Datos del documento------------------------------------------------
+      */
 
-            ::SetInfo()
+      ::SetInfo()
 
-            /*
-            Datos del cliente--------------------------------------------------
-            */
+      /*
+      Datos del cliente--------------------------------------------------
+      */
 
-            ::SetCliente()
+      ::SetCliente()
 
-            /*
-            Recoger usuario----------------------------------------------------
-            */
+      /*
+      Recoger usuario----------------------------------------------------
+      */
 
-            ::GetUsuario()
-
-         end if
-
-      end if
+      ::GetUsuario()
 
    end if   
 
@@ -6095,6 +6091,8 @@ METHOD GuardaDocumento( lZap, nSave ) CLASS TpvTactil
    oBlock                           := ErrorBlock( {| oError | ApoloBreak( oError ) } )
    BEGIN SEQUENCE
 
+      BeginTransaction()
+
       /*
       Si este ticket ya tiene numero debemos quitar las lineas anteriores---------
       */
@@ -6112,6 +6110,7 @@ METHOD GuardaDocumento( lZap, nSave ) CLASS TpvTactil
       if Empty( ::oTiketCabecera:cNumTik )
 
          ::oTiketCabecera:cNumTik   := ::nNuevoNumeroTicket()
+         
          ::oTiketCabecera:Insert()
 
       else
@@ -6158,6 +6157,8 @@ METHOD GuardaDocumento( lZap, nSave ) CLASS TpvTactil
 
       ::oTpvCobros:GuardaCobros()
 
+      CommitTransaction()
+
       /*
       Inicializa los cobros para el proximo ticket-----------------------------
       */
@@ -6193,7 +6194,7 @@ METHOD GuardaDocumento( lZap, nSave ) CLASS TpvTactil
       Imprimimos la comanda si procede--------------------------------------------
       */
 
-      if nSave == SAVTIK
+      if ( nSave == SAVTIK )
          ::OnClickCopiaComanda()
       end if
 
@@ -6206,6 +6207,8 @@ METHOD GuardaDocumento( lZap, nSave ) CLASS TpvTactil
       ::SetCliente()
 
    RECOVER USING oError
+
+      RollBackTransaction()
 
       msgStop( "Error al grabar el ticket" + CRLF + ErrorMessage( oError ) )
 
@@ -6227,22 +6230,29 @@ Return .t.
 
 METHOD GuardaDocumentoAlbaran() CLASS TpvTactil
 
+   local n           
    local oError
    local oBlock
    local sCobro
-   local nNewAlbCli
    local nOrdAnt
-   local cSerAlb     := cNewSer( "NALBCLI", ::oContadores:cAlias )
-   local nNumAlb     := nNewDoc( cSerAlb, ::oAlbaranClienteCabecera:cAlias, "nAlbCli", , ::oContadores:cAlias )
-   local cSufAlb     := RetSufEmp()
-   local n           := 1
+   local cSerAlb     
+   local nNumAlb     
+   local cSufAlb     
+   local nNewAlbCli
 
    CursorWait()
 
    ::oDlg:Disable()
 
-   oBlock                           := ErrorBlock( {| oError | ApoloBreak( oError ) } )
+   n                                      := 1
+   cSerAlb                                := cNewSer( "NALBCLI", ::oContadores:cAlias )
+   nNumAlb                                := nNewDoc( cSerAlb, ::oAlbaranClienteCabecera:cAlias, "nAlbCli", , ::oContadores:cAlias )
+   cSufAlb                                := RetSufEmp()
+
+   oBlock                                 := ErrorBlock( {| oError | ApoloBreak( oError ) } )
    BEGIN SEQUENCE
+
+   BeginTransaction()
 
    /*
    Creamos la cabecera del albarán---------------------------------------------
@@ -6362,9 +6372,13 @@ METHOD GuardaDocumentoAlbaran() CLASS TpvTactil
 
    end if
 
+   CommitTransaction()
+
    RECOVER USING oError
 
-      msgStop( "Error al grabar el albarán" + CRLF + ErrorMessage( oError ) )
+   RollBackTransaction()
+
+   msgStop( "Error al grabar el albarán" + CRLF + ErrorMessage( oError ) )
 
    END SEQUENCE
 

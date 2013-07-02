@@ -71,12 +71,6 @@ CLASS AccessCode
 
    METHOD SaveIni()
 
-   #ifdef __SQLLIB__
-   METHOD lConnect()
-
-   METHOD lExistDatabase()
-   #endif
-
    METHOD ShowConnectDialog()
    METHOD ShowLoginDialog()
    METHOD HideLoginDialog()
@@ -262,6 +256,8 @@ RETURN ( nil )
 
 METHOD InitResource( oDlg ) CLASS AccessCode
 
+   oDlg:bValid    := {|| .f. }
+
    ::HideLoginDialog()
 
    ::InitialCheck()
@@ -269,6 +265,8 @@ METHOD InitResource( oDlg ) CLASS AccessCode
    ::ShowLoginDialog( oDlg )
 
    ::oGetPassword:SetFocus()
+
+   oDlg:bValid    := {|| .t. }
 
 Return .t.
 
@@ -603,67 +601,6 @@ Return ( Self )
 
 //--------------------------------------------------------------------------//
 
-#ifdef __SQLLIB__
-
-METHOD lExistDatabase() CLASS AccessCode
-
-   local oConnect
-
-   if ::lConnect( "mysql" )
-      oConnect          := SR_GetConnection()
-      oConnect:Exec( "CREATE DATABASE IF NOT EXISTS gstapolo" )
-   end if
-
-RETURN ( .t. )
-
-#endif
-
-//--------------------------------------------------------------------------//
-
-#ifdef __SQLLIB__
-
-METHOD lConnect( cDatabase ) CLASS AccessCode
-
-   local lConnect          := .f.
-   local cConectionString  := ""
-
-   DEFAULT cDatabase       := "GstApolo"
-
-   cConectionString        += "MySQL="
-   cConectionString        += Rtrim( ::cGetServer )
-   cConectionString        += ";"
-   cConectionString        += "UID="
-   cConectionString        += Rtrim( ::cGetUser )
-   cConectionString        += ";"
-   cConectionString        += "PWD="
-   cConectionString        += Rtrim( ::cGetPasswordSql )
-   cConectionString        += ";"
-   cConectionString        += "DTB="
-   cConectionString        += Rtrim( cDatabase )
-
-   ::nConnection           := SR_AddConnection( CONNECT_MYSQL, cConectionString )
-   ::lConnected            := ( ::nConnection > 0 )
-   if ::lConnected
-      SR_SetActiveConnection( ::nConnection )
-   end if
-
-Return ( ::lConnected )
-
-#endif
-
-#ifdef __908__
-
-Function CurDir()
-
-Return ( cOnlyPath( GetModuleFileName( GetInstance() ) ) )
-
-// Return ( "\\asuscalero\c\Fw195\Camero" )
-
-#endif
-
-
-//--------------------------------------------------------------------------//
-
 METHOD ShowConnectDialog() CLASS AccessCode
 
    // Usuario y contraseña para conectarse-------------------------------------
@@ -843,19 +780,6 @@ Method InitialCheck() CLASS AccessCode
 
       IsIva()
 
-      // Comprobamos log de operaciones-------------------------------------------
-
-      /*
-      if !Empty( ::oMessage )
-         ::oMessage:SetText( "Comprobando log de operaciones..." )
-      end if
-
-      with object ( TAuditor():Create( cPatDat() ) )
-         :OpenService()
-         :CloseService()
-      end with
-      */
-
    end if
 
    // Iniciamos el data center-------------------------------------------------
@@ -866,37 +790,9 @@ Method InitialCheck() CLASS AccessCode
 
          if :lAdsConnection
 
-            /*
-
             if !Empty( ::oMessage )
-               ::oMessage:SetText( "Conectado con servidor... " + :cDataDictionaryFile )
+               ::oMessage:SetText( "Servidor ADS conectado." )
             end if
-
-            :BuildData()
-
-            if !Empty( ::oMessage )
-               ::oMessage:SetText( "Creando base de datos... " )
-            end if
-
-            :CreateDataTable()
-
-            if !Empty( ::oMessage )
-               ::oMessage:SetText( "Creando tabla de operaciones... " )
-            end if
-
-            :CreateOperationLogTable()
-
-            if !Empty( ::oMessage )
-               ::oMessage:SetText( "Creando tabla de columnas de operaciones... " )
-            end if
-
-            :CreateColumnLogTable()
-
-            if !Empty( ::oMessage )
-               ::oMessage:SetText( "Creando los triggers... " )
-            end if
-
-             */
 
             ::oBmpEngine:Reload( "Data_Green_Alpha_48" )
 
@@ -928,10 +824,18 @@ METHOD LoadUsuarios() CLASS AccessCode
 
    local dbfUser
 
-   USE ( cPatDat() + "Users.Dbf" ) NEW VIA ( cDriver() ) SHARED ALIAS ( cCheckArea( "USERS", @dbfUser ) )
+   USE ( cPatDat() + "Users.Dbf" ) NEW VIA ( cDriver() ) SHARED ALIAS ( cCheckArea( "Users", @dbfUser ) )
    SET ADSINDEX TO ( cPatDat() + "Users.Cdx" ) ADDITIVE
 
+      if !Empty( ::oMessage )
+         ::oMessage:SetText( "Comprobando los usuarios en uso..." )
+      end if
+
       nUsrInUse( dbfUser )
+
+      if !Empty( ::oMessage )
+         ::oMessage:SetText( "Localizando usuario del pc..." )
+      end if
 
       if ( dbfUser )->( FieldPos( "cPcnUse" ) ) != 0 .and. !dbSeekInOrd( ::cPcnUsr, "cPcnUse", dbfUser )
          ( dbfUser )->( dbGoTop() )

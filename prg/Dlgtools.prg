@@ -496,7 +496,7 @@ RETURN ( oDlg:nResult == IDOK )
 Vacia un directorio completo
 */
 
-FUNCTION lRdDir( cPath, cMask )
+FUNCTION EraseFilesInDirectory(cPath, cMask )
 
    DEFAULT cMask     := "*.*"
 

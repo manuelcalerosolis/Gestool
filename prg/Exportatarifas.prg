@@ -911,7 +911,7 @@ METHOD LoadConf() CLASS TExportaTarifas
    Borramos los ficheros que hemos descomprimidos anteriormente----------------
    */
 
-   lRdDir( cEmpTmp(), cNameFile + ".*" )
+   EraseFilesInDirectory(cEmpTmp(), cNameFile + ".*" )
 
    ::lChangeDbf      := .f.
 

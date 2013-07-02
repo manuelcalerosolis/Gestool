@@ -7692,30 +7692,31 @@ function aColTmpLin()
 
    local aColTmpLin  := {}
 
-   aAdd( aColTmpLin, { "CREF",    "C",   18,  0, "Referencia del artículo",         "",         "", "( cDbfCol )" } )
-   aAdd( aColTmpLin, { "CDETALLE","C",  250,  0, "Nombre del artículo",             "",         "", "( cDbfCol )" } )
-   aAdd( aColTmpLin, { "LSELART", "L",    1,  0, "Lógico de selección de artículo", "",         "", "( cDbfCol )" } )
-   aAdd( aColTmpLin, { "CCODPRV", "C",   12,  0, "Código de proveedor",             "",         "", "( cDbfCol )" } )
-   aAdd( aColTmpLin, { "CCODPR1", "C",   10,  0, "Código propiedad 1",              "",         "", "( cDbfCol )" } )
-   aAdd( aColTmpLin, { "CCODPR2", "C",   10,  0, "Código propiedad 2",              "",         "", "( cDbfCol )" } )
-   aAdd( aColTmpLin, { "CVALPR1", "C",   10,  0, "Valor propiedad 1",               "",         "", "( cDbfCol )" } )
-   aAdd( aColTmpLin, { "CVALPR2", "C",   10,  0, "Valor propiedad 2",               "",         "", "( cDbfCol )" } )
-   aAdd( aColTmpLin, { "NNUMUNI", "N",   16,  6, "Unidades pedidas",                "",         "", "( cDbfCol )" } )
-   aAdd( aColTmpLin, { "NNUMCAJ", "N",   16,  6, "Cajas pedidas",                   "",         "", "( cDbfCol )" } )
-   aAdd( aColTmpLin, { "NSTKFIS", "N",   16,  6, "Stock fisico",                    "",         "", "( cDbfCol )" } )
-   aAdd( aColTmpLin, { "NSTKDIS", "N",   16,  6, "Stock disponible",                "",         "", "( cDbfCol )" } )
-   aAdd( aColTmpLin, { "LSHOW",   "L",    1,  0, "Lógico de mostrar",               "",         "", "( cDbfCol )" } )
-   aAdd( aColTmpLin, { "NIVA",    "N",    6,  2, "Porcentaje de " + cImp(),               "",         "", "( cDbfCol )" } )
-   aAdd( aColTmpLin, { "NREQ",    "N",    6,  2, "Porcentaje de recargo",           "",         "", "( cDbfCol )" } )
-   aAdd( aColTmpLin, { "NPREDIV", "N",   16,  6, "Precio del artículo",             "",         "", "( cDbfCol )" } )
-   aAdd( aColTmpLin, { "NDTO",    "N",    6,  2, "Descuento del producto",          "",         "", "( cDbfCol )" } )
-   aAdd( aColTmpLin, { "NDTOPRM", "N",    6,  2, "Descuento de promoción",          "",         "", "( cDbfCol )" } )
-   aAdd( aColTmpLin, { "CUNIDAD", "C",    2,  0, "Unidad de medición",              "",         "", "( cDbfCol )" } )
-   aAdd( aColTmpLin, { "LLOTE",   "L",    1,  0, "",                                "",         "", "( cDbfCol )" } )
-   aAdd( aColTmpLin, { "NLOTE",   "N",    9,  0, "",                                "",         "", "( cDbfCol )" } )
-   aAdd( aColTmpLin, { "CLOTE",   "C",   12,  0, "Número de lote",                  "",         "", "( cDbfCol )" } )
-   aAdd( aColTmpLin, { "MOBSLIN", "M",   10,  0, "Observaciones de lineas",         "",         "", "( cDbfCol )" } )
-   aAdd( aColTmpLin, { "CREFPRV", "C",   18,  0, "Referencia proveedor",            "",         "", "( cDbfCol )" } )
+   aAdd( aColTmpLin, { "cRef",    "C",   18,  0, "Referencia del artículo",         "",         "", "( cDbfCol )" } )
+   aAdd( aColTmpLin, { "cDetalle","C",  250,  0, "Nombre del artículo",             "",         "", "( cDbfCol )" } )
+   aAdd( aColTmpLin, { "mLngDes", "M",   10,  0, "Descripciones largas",            "",         "", "( cDbfCol )" } )
+   aAdd( aColTmpLin, { "lSelArt", "L",    1,  0, "Lógico de selección de artículo", "",         "", "( cDbfCol )" } )
+   aAdd( aColTmpLin, { "cCodPrv", "C",   12,  0, "Código de proveedor",             "",         "", "( cDbfCol )" } )
+   aAdd( aColTmpLin, { "cCodPr1", "C",   10,  0, "Código propiedad 1",              "",         "", "( cDbfCol )" } )
+   aAdd( aColTmpLin, { "cCodPr2", "C",   10,  0, "Código propiedad 2",              "",         "", "( cDbfCol )" } )
+   aAdd( aColTmpLin, { "cValPr1", "C",   10,  0, "Valor propiedad 1",               "",         "", "( cDbfCol )" } )
+   aAdd( aColTmpLin, { "cValPr2", "C",   10,  0, "Valor propiedad 2",               "",         "", "( cDbfCol )" } )
+   aAdd( aColTmpLin, { "nNumUni", "N",   16,  6, "Unidades pedidas",                "",         "", "( cDbfCol )" } )
+   aAdd( aColTmpLin, { "nNumCaj", "N",   16,  6, "Cajas pedidas",                   "",         "", "( cDbfCol )" } )
+   aAdd( aColTmpLin, { "nStkFis", "N",   16,  6, "Stock fisico",                    "",         "", "( cDbfCol )" } )
+   aAdd( aColTmpLin, { "nStkDis", "N",   16,  6, "Stock disponible",                "",         "", "( cDbfCol )" } )
+   aAdd( aColTmpLin, { "lShow",   "L",    1,  0, "Lógico de mostrar",               "",         "", "( cDbfCol )" } )
+   aAdd( aColTmpLin, { "nIva",    "N",    6,  2, "Porcentaje de " + cImp(),         "",         "", "( cDbfCol )" } )
+   aAdd( aColTmpLin, { "nReq",    "N",    6,  2, "Porcentaje de recargo",           "",         "", "( cDbfCol )" } )
+   aAdd( aColTmpLin, { "nPreDiv", "N",   16,  6, "Precio del artículo",             "",         "", "( cDbfCol )" } )
+   aAdd( aColTmpLin, { "nDto",    "N",    6,  2, "Descuento del producto",          "",         "", "( cDbfCol )" } )
+   aAdd( aColTmpLin, { "nDtoPrm", "N",    6,  2, "Descuento de promoción",          "",         "", "( cDbfCol )" } )
+   aAdd( aColTmpLin, { "cUnidad", "C",    2,  0, "Unidad de medición",              "",         "", "( cDbfCol )" } )
+   aAdd( aColTmpLin, { "lLote",   "L",    1,  0, "",                                "",         "", "( cDbfCol )" } )
+   aAdd( aColTmpLin, { "nLote",   "N",    9,  0, "",                                "",         "", "( cDbfCol )" } )
+   aAdd( aColTmpLin, { "cLote",   "C",   12,  0, "Número de lote",                  "",         "", "( cDbfCol )" } )
+   aAdd( aColTmpLin, { "mObsLin", "M",   10,  0, "Observaciones de lineas",         "",         "", "( cDbfCol )" } )
+   aAdd( aColTmpLin, { "cRefPrv", "C",   18,  0, "Referencia proveedor",            "",         "", "( cDbfCol )" } )
    aAdd( aColTmpLin, { "cUnidad", "C",    2,  0, "Unidad de medición",              "",         "", "( cDbfCol )" } )
    aAdd( aColTmpLin, { "nMedUno", "N",   16,  6, "Primera unidad de medición",      "MasUnd()", "", "( cDbfCol )" } )
    aAdd( aColTmpLin, { "nMedDos", "N",   16,  6, "Segunda unidad de medición",      "MasUnd()", "", "( cDbfCol )" } )
@@ -7729,12 +7730,12 @@ function aColTmpFin()
 
    local aColTmpFin  := {}
 
-   aAdd( aColTmpFin, { "CSERIE",  "C",    1,  0, "Serie del documento",             "",  "", "( cDbfCol )" } )
-   aAdd( aColTmpFin, { "NNUMERO", "N",    9,  0, "Número del documento",            "",  "", "( cDbfCol )" } )
-   aAdd( aColTmpFin, { "CSUFIJO", "C",    2,  0, "Sufijo del documento",            "",  "", "( cDbfCol )" } )
-   aAdd( aColTmpFin, { "DFECDOC", "D",    8,  0, "Fecha del documento",             "",  "", "( cDbfCol )" } )
-   aAdd( aColTmpFin, { "CCODPRV", "C",   12,  0, "Código de proveedor",             "",  "", "( cDbfCol )" } )
-   aAdd( aColTmpFin, { "CNOMPRV", "C",   30,  0, "Nombre de proveedor",             "",  "", "( cDbfCol )" } )
+   aAdd( aColTmpFin, { "cSerie",  "C",    1,  0, "Serie del documento",             "",  "", "( cDbfCol )" } )
+   aAdd( aColTmpFin, { "nNumero", "N",    9,  0, "Número del documento",            "",  "", "( cDbfCol )" } )
+   aAdd( aColTmpFin, { "cSufijo", "C",    2,  0, "Sufijo del documento",            "",  "", "( cDbfCol )" } )
+   aAdd( aColTmpFin, { "dFecDoc", "D",    8,  0, "Fecha del documento",             "",  "", "( cDbfCol )" } )
+   aAdd( aColTmpFin, { "cCodPrv", "C",   12,  0, "Código de proveedor",             "",  "", "( cDbfCol )" } )
+   aAdd( aColTmpFin, { "cNomPrv", "C",   30,  0, "Nombre de proveedor",             "",  "", "( cDbfCol )" } )
 
 return ( aColTmpFin )
 
@@ -9202,7 +9203,7 @@ Method Dialog() CLASS TPedidosClientes2PedidosProveedor
 
       with object ( ::oBrw:AddCol() )
          :cHeader          := "Nombre"
-         :bEditValue       := {|| ( dbfTmpPedLin )->cDetalle }
+         :bEditValue       := {|| if( !Empty( ( dbfTmpPedLin )->cRef ), ( dbfTmpPedLin )->cDetalle, ( dbfTmpPedLin )->mLngDes ) }
          :nWidth           := 155
       end with
 
@@ -9378,16 +9379,16 @@ Method CreateLines() CLASS TPedidosClientes2PedidosProveedor
    local cTmpLin
    local cTmpFin
    local lErrors  := .f.
-
-   /*oBlock         := ErrorBlock( {| oError | ApoloBreak( oError ) } )
-   BEGIN SEQUENCE*/
-
+/*
+   oBlock         := ErrorBlock( {| oError | ApoloBreak( oError ) } )
+   BEGIN SEQUENCE
+*/
    cTmpLin        := cGetNewFileName( cPatTmp() + "PTmpCliL" )
    cTmpFin        := cGetNewFileName( cPatTmp() + "PTmpFinL" )
 
-   dbCreate( cTmpLin, aSqlStruct( aColTmpLin() ), cDriver() )
+   dbCreate( cTmpLin, aSqlStruct( aColTmpLin() ), cLocalDriver() )
 
-   dbUseArea( .t., cDriver(), cTmpLin, cCheckArea( "PTmpCliL", @dbfTmpPedLin ), .f. )
+   dbUseArea( .t., cLocalDriver(), cTmpLin, cCheckArea( "PTmpCliL", @dbfTmpPedLin ), .f. )
 
    if !NetErr()
       ( dbfTmpPedLin )->( ordCondSet( "!Deleted()", {||!Deleted()}  ) )
@@ -9405,9 +9406,9 @@ Method CreateLines() CLASS TPedidosClientes2PedidosProveedor
       lErrors     := .t.
    end if
 
-   dbCreate( cTmpFin, aSqlStruct( aColTmpFin() ), cDriver() )
+   dbCreate( cTmpFin, aSqlStruct( aColTmpFin() ), cLocalDriver() )
 
-   dbUseArea( .t., cDriver(), cTmpFin, cCheckArea( "PTmpFinL", @dbfTmpFin ), .f. )
+   dbUseArea( .t., cLocalDriver(), cTmpFin, cCheckArea( "PTmpFinL", @dbfTmpFin ), .f. )
 
    if !NetErr()
       ( dbfTmpFin )->( ordCondSet( "!Deleted()", {||!Deleted()}  ) )
@@ -9421,39 +9422,39 @@ Method CreateLines() CLASS TPedidosClientes2PedidosProveedor
       ( dbfPedCliL )->( dbGoTop() )
       while !( dbfPedCliL )->( Eof() )
 
-         if ( dbfPedCliL )->cSerPed + Str( ( dbfPedCliL )->nNumPed ) + ( dbfPedCliL )->cSufPed == ::cSerie + Str( ::nNumero ) + ::cSufijo .and. ;
-            nTotNPedCli( dbfPedCliL ) != 0
+         if ( dbfPedCliL )->cSerPed + Str( ( dbfPedCliL )->nNumPed ) + ( dbfPedCliL )->cSufPed == ::cSerie + Str( ::nNumero ) + ::cSufijo .and. nTotNPedCli( dbfPedCliL ) != 0
 
             ( dbfTmpPedLin )->( dbAppend() )
 
-            (dbfTmpPedLin)->lShow      := .t.
-            (dbfTmpPedLin)->lSelArt    := .t.
-            (dbfTmpPedLin)->cRef       := (dbfPedCliL)->cRef
-            (dbfTmpPedLin)->cDetalle   := (dbfPedCliL)->cDetalle
-            (dbfTmpPedLin)->cCodPrv    := (dbfPedCliL)->cCodPrv
-            (dbfTmpPedLin)->cCodPr1    := (dbfPedCliL)->cCodPr1
-            (dbfTmpPedLin)->cCodPr2    := (dbfPedCliL)->cCodPr2
-            (dbfTmpPedLin)->cValPr1    := (dbfPedCliL)->cValPr1
-            (dbfTmpPedLin)->cValPr2    := (dbfPedCliL)->cValPr2
-            (dbfTmpPedLin)->nNumUni    := (dbfPedCliL)->nUniCaja
-            (dbfTmpPedLin)->nNumCaj    := (dbfPedCliL)->nCanPed
-            (dbfTmpPedLin)->nStkFis    := oStock:nTotStockAct( (dbfPedCliL)->cRef, , , , , RetFld( (dbfPedCliL)->cRef, dbfArticulo, "lKitArt" ), RetFld( (dbfPedCliL)->cRef, dbfArticulo, "nKitStk" ) )
-            (dbfTmpPedLin)->nStkDis    := oStock:nTotStockAct( (dbfPedCliL)->cRef, , , , , RetFld( (dbfPedCliL)->cRef, dbfArticulo, "lKitArt" ), RetFld( (dbfPedCliL)->cRef, dbfArticulo, "nKitStk" ) ) - nTotReserva( (dbfPedCliL)->cRef )
-            (dbfTmpPedLin)->nIva       := (dbfPedCliL)->nIva
-            (dbfTmpPedLin)->nReq       := (dbfPedCliL)->nReq
-            (dbfTmpPedLin)->nDto       := (dbfPedCliL)->nDto
-            (dbfTmpPedLin)->nDtoPrm    := (dbfPedCliL)->nDtoPrm
-            (dbfTmpPedLin)->cUniDad    := (dbfPedCliL)->cUniDad
-            (dbfTmpPedLin)->lLote      := (dbfPedCliL)->lLote
-            (dbfTmpPedLin)->nLote      := (dbfPedCliL)->nLote
-            (dbfTmpPedLin)->cLote      := (dbfPedCliL)->cLote
-            (dbfTmpPedLin)->mObsLin    := (dbfPedCliL)->mObsLin
-            (dbfTmpPedLin)->cRefPrv    := (dbfPedCliL)->cRefPrv
-            (dbfTmpPedLin)->cUnidad    := (dbfPedCliL)->cUnidad
-            (dbfTmpPedLin)->nMedUno    := (dbfPedCliL)->nMedUno
-            (dbfTmpPedLin)->nMedDos    := (dbfPedCliL)->nMedDos
-            (dbfTmpPedLin)->nMedTre    := (dbfPedCliL)->nMedTre
-            (dbfTmpPedLin)->nPreDiv    := nCosto( ( dbfPedCliL )->cRef, dbfArticulo, dbfKit, .f., , dbfDiv )
+            ( dbfTmpPedLin )->lShow    	:= .t.
+            ( dbfTmpPedLin )->lSelArt  	:= .t.
+            ( dbfTmpPedLin )->cRef     	:= ( dbfPedCliL )->cRef
+            ( dbfTmpPedLin )->cDetalle 	:= ( dbfPedCliL )->cDetalle
+            ( dbfTmpPedLin )->mLngDes 		:= ( dbfPedCliL )->mLngDes
+            ( dbfTmpPedLin )->cCodPrv  	:= ( dbfPedCliL )->cCodPrv
+            ( dbfTmpPedLin )->cCodPr1  	:= ( dbfPedCliL )->cCodPr1
+            ( dbfTmpPedLin )->cCodPr2  	:= ( dbfPedCliL )->cCodPr2
+            ( dbfTmpPedLin )->cValPr1  	:= ( dbfPedCliL )->cValPr1
+            ( dbfTmpPedLin )->cValPr2  	:= ( dbfPedCliL )->cValPr2
+            ( dbfTmpPedLin )->nNumUni  	:= ( dbfPedCliL )->nUniCaja
+            ( dbfTmpPedLin )->nNumCaj  	:= ( dbfPedCliL )->nCanPed
+            ( dbfTmpPedLin )->nStkFis  	:= oStock:nTotStockAct( ( dbfPedCliL )->cRef, , , , , RetFld( ( dbfPedCliL )->cRef, dbfArticulo, "lKitArt" ), RetFld( ( dbfPedCliL )->cRef, dbfArticulo, "nKitStk" ) )
+            ( dbfTmpPedLin )->nStkDis  	:= oStock:nTotStockAct( ( dbfPedCliL )->cRef, , , , , RetFld( ( dbfPedCliL )->cRef, dbfArticulo, "lKitArt" ), RetFld( ( dbfPedCliL )->cRef, dbfArticulo, "nKitStk" ) ) - nTotReserva( ( dbfPedCliL )->cRef )
+            ( dbfTmpPedLin )->nIva     	:= ( dbfPedCliL )->nIva
+            ( dbfTmpPedLin )->nReq     	:= ( dbfPedCliL )->nReq
+            ( dbfTmpPedLin )->nDto     	:= ( dbfPedCliL )->nDto
+            ( dbfTmpPedLin )->nDtoPrm  	:= ( dbfPedCliL )->nDtoPrm
+            ( dbfTmpPedLin )->cUniDad  	:= ( dbfPedCliL )->cUniDad
+            ( dbfTmpPedLin )->lLote    	:= ( dbfPedCliL )->lLote
+            ( dbfTmpPedLin )->nLote    	:= ( dbfPedCliL )->nLote
+            ( dbfTmpPedLin )->cLote    	:= ( dbfPedCliL )->cLote
+            ( dbfTmpPedLin )->mObsLin  	:= ( dbfPedCliL )->mObsLin
+            ( dbfTmpPedLin )->cRefPrv  	:= ( dbfPedCliL )->cRefPrv
+            ( dbfTmpPedLin )->cUnidad  	:= ( dbfPedCliL )->cUnidad
+            ( dbfTmpPedLin )->nMedUno  	:= ( dbfPedCliL )->nMedUno
+            ( dbfTmpPedLin )->nMedDos  	:= ( dbfPedCliL )->nMedDos
+            ( dbfTmpPedLin )->nMedTre  	:= ( dbfPedCliL )->nMedTre
+            ( dbfTmpPedLin )->nPreDiv  	:= nCosto( ( dbfPedCliL )->cRef, dbfArticulo, dbfKit, .f., , dbfDiv )
 
          end if
 
@@ -9464,8 +9465,8 @@ Method CreateLines() CLASS TPedidosClientes2PedidosProveedor
       ( dbfTmpPedLin )->( dbGoTop() )
 
    end if
-
-   /*RECOVER USING oError
+/*
+   RECOVER USING oError
 
       lErrors     := .t.
 
@@ -9473,8 +9474,8 @@ Method CreateLines() CLASS TPedidosClientes2PedidosProveedor
 
    END SEQUENCE
 
-   ErrorBlock( oBlock )*/
-
+   ErrorBlock( oBlock )
+*/
 Return ( !lErrors )
 
 //---------------------------------------------------------------------------//
@@ -9536,8 +9537,6 @@ Method Next() CLASS TPedidosClientes2PedidosProveedor
 
          ::oPag:GoNext()
 
-         // ::oBtnPrev:Hide()
-
          SetWindowText( ::oBtnPrev:hWnd, "Terminar e &imprimir" )
 
          SetWindowText( ::oBtnNext:hWnd, "&Terminar" )
@@ -9578,6 +9577,7 @@ Method SelectAllArticulo( lSel ) CLASS TPedidosClientes2PedidosProveedor
       end if
 
       ( dbfTmpPedLin )->( dbSkip() )
+   
    end while
 
    ( dbfTmpPedLin )->( dbGoTo( nRec ) )
@@ -9659,7 +9659,7 @@ Method CreaPedidoProveedor() CLASS TPedidosClientes2PedidosProveedor
    local cSufijoPedido
    local cLastProveedor := ""
 
-   ( dbfTmpPedLin )->( OrdSetFocus(4) )
+   ( dbfTmpPedLin )->( OrdSetFocus( "cCodPrv" ) )
    ( dbfTmpPedLin )->( dbGoTop() )
 
    while !( dbfTmpPedLin )->( eof() )
@@ -9674,7 +9674,7 @@ Method CreaPedidoProveedor() CLASS TPedidosClientes2PedidosProveedor
             nNumeroPedido              := nNewDoc( cSeriePedido, dbfPedPrvT, "nPedPrv", , dbfCount )
             cSufijoPedido              := RetSufEmp()
 
-            ( dbfTmpFin )->( dbAppend())
+            ( dbfTmpFin )->( dbAppend() )
             ( dbfTmpFin )->cSerie      := cSeriePedido
             ( dbfTmpFin )->nNumero     := nNumeroPedido
             ( dbfTmpFin )->cSufijo     := cSufijoPedido
@@ -9723,21 +9723,9 @@ Method CreaPedidoProveedor() CLASS TPedidosClientes2PedidosProveedor
          ( dbfPedPrvL )->cSufPed          := cSufijoPedido
          ( dbfPedPrvL )->cRef             := ( dbfTmpPedLin )->cRef
          ( dbfPedPrvL )->cDetalle         := ( dbfTmpPedLin )->cDetalle
+			( dbfPedPrvL )->mLngDes          := ( dbfTmpPedLin )->mLngDes
          ( dbfPedPrvL )->nIva             := ( dbfTmpPedLin )->nIva
          ( dbfPedPrvL )->nReq             := ( dbfTmpPedLin )->nReq
-
-         do case
-            case ::nStockFin == 1
-               ( dbfPedPrvL )->nUniCaja   := Calculaunidades( ( dbfTmpPedLin )->nNumUni, ( dbfTmpPedLin )->nStkDis, RetFld( ( dbfTmpPedLin )->cRef, dbfArticulo, "nMinimo" ) )
-
-            case ::nStockFin == 2
-               ( dbfPedPrvL )->nUniCaja   := Calculaunidades( ( dbfTmpPedLin )->nNumUni, ( dbfTmpPedLin )->nStkDis, RetFld( ( dbfTmpPedLin )->cRef, dbfArticulo, "nMaximo" ) )
-
-            case ::nStockFin == 3
-               ( dbfPedPrvL )->nUniCaja   := ( dbfTmpPedLin )->nNumUni
-
-         end case
-
          ( dbfPedPrvL )->cPedCli          := ::cSerie + Str( ::nNumero ) + ::cSufijo
          ( dbfPedPrvL )->cAlmLin          := ::cCodigoAlmacen
          ( dbfPedPrvL )->nCanPed          := ( dbfTmpPedLin )->nNumCaj
@@ -9758,6 +9746,21 @@ Method CreaPedidoProveedor() CLASS TPedidosClientes2PedidosProveedor
          ( dbfPedPrvL )->nMedDos          := ( dbfTmpPedLin )->nMedDos
          ( dbfPedPrvL )->nMedTre          := ( dbfTmpPedLin )->nMedTre
          ( dbfPedPrvL )->cUnidad          := ( dbfTmpPedLin )->cUnidad
+
+         do case
+            case ::nStockFin == 1
+
+               ( dbfPedPrvL )->nUniCaja   := Calculaunidades( ( dbfTmpPedLin )->nNumUni, ( dbfTmpPedLin )->nStkDis, RetFld( ( dbfTmpPedLin )->cRef, dbfArticulo, "nMinimo" ) )
+
+            case ::nStockFin == 2
+
+               ( dbfPedPrvL )->nUniCaja   := Calculaunidades( ( dbfTmpPedLin )->nNumUni, ( dbfTmpPedLin )->nStkDis, RetFld( ( dbfTmpPedLin )->cRef, dbfArticulo, "nMaximo" ) )
+
+            case ::nStockFin == 3
+
+               ( dbfPedPrvL )->nUniCaja   := ( dbfTmpPedLin )->nNumUni
+
+         end case
 
          ( dbfPedPrvL )->( dbRUnLock() )
 

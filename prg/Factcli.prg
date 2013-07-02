@@ -5991,20 +5991,6 @@ Static Function lChgContabilizado( lChk )
       ( dbfFacCliT )->( dbUnlock() )
    end if
 
-   /*
-   Informacion al Auditor------------------------------------------------
-   */
-
-   if lChk
-      if !Empty( oAuditor() )
-         oAuditor():AddEvent( MARK_CONT_FACTURA_CLIENTES,   ( dbfFacCliT )->cSerie + Str( ( dbfFacCliT )->nNumFac ) + ( dbfFacCliT )->cSufFac, FAC_CLI )
-      end if
-   else
-      if !Empty( oAuditor() )
-         oAuditor():AddEvent( NOMARK_CONT_FACTURA_CLIENTES, ( dbfFacCliT )->cSerie + Str( ( dbfFacCliT )->nNumFac ) + ( dbfFacCliT )->cSufFac, FAC_CLI )
-      end if
-   end if
-
 Return .t.
 
 //---------------------------------------------------------------------------//

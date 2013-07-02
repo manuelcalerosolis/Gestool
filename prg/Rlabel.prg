@@ -1677,7 +1677,7 @@ Static Function ExeExpDoc( cGetFile, oDlg )
          aEval( aDir, { | cName, nIndex | hb_ZipFile( cGetFile, cPatTmp( .t., .t. ) + cName[ 1 ], 9 ) } )
          hb_gcAll()
 
-         lRdDir( cPatTmp(), "Lbl*.*" )
+         EraseFilesInDirectory(cPatTmp(), "Lbl*.*" )
 
          msgInfo( "Documento exportado satisfactoriamente" )
 
@@ -1834,7 +1834,7 @@ Static Function ExeGetDoc( cGetFile, oSayProc, oDlg )
    Eliminar todos los ficheros-------------------------------------------------
    */
 
-   lRdDir( cPatTmp(), "*.*" )
+   EraseFilesInDirectory(cPatTmp(), "*.*" )
 
    msgInfo( "Documento importado satisfactoriamente" )
 

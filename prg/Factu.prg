@@ -936,8 +936,8 @@ FUNCTION lInitCheck( lDir, oMessage, oProgress )
 
    // Elimina los temporales de la aplicación----------------------------------
 
-   lRdDir( cPatTmp(), "*.*" )
-   lRdDir( cPatLog(), "*.*" )
+   EraseFilesInDirectory( cPatTmp(), "*.*" )
+   EraseFilesInDirectory( cPatLog(), "*.*" )
 
    // Cargamos los datos de la empresa-----------------------------------------
 
@@ -4640,7 +4640,7 @@ STATIC FUNCTION lTctInitCheck( lDir, oMessage, oProgress )
 
       oMsgText( 'Borrando ficheros temporales' )
 
-      lRdDir( cPatTmp(), "*.*" )
+      EraseFilesInDirectory(cPatTmp(), "*.*" )
 
       // Cargamos los datos de la empresa-----------------------------------------
 
@@ -4982,7 +4982,7 @@ STATIC FUNCTION lTactilInitCheck( lDir )
 
       oMsgText( 'Borrando ficheros temporales' )
 
-      lRdDir( cPatTmp(), "*.*" )
+      EraseFilesInDirectory(cPatTmp(), "*.*" )
 
       // Cargamos los datos de la empresa-----------------------------------------
 
