@@ -918,9 +918,9 @@ Method FastReport( nDevice ) CLASS TFastValoracionAlmacen
             ::oFastReport:DoExport(    "HTMLExport" )
 
          case nDevice == IS_EXCEL
-            ::oFastReport:SetProperty( "XLSxport", "DefaultPath",     cPatTmp() )
+            ::oFastReport:SetProperty( "XLSExport", "DefaultPath",      cPatTmp() )
             ::oFastReport:SetProperty( "XLSExport", "FileName",         "Informe" + cCurUsr() + ".xls" )
-            ::oFastReport:DoExport( "XLSExport" )
+            ::oFastReport:DoExport(    "XLSExport" )
 
       end case
 

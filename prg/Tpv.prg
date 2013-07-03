@@ -396,14 +396,11 @@ static aImpComanda         := {}
 static oTipArt
 static oFabricante
 
-static cFiltroCajero       := ""
-
 static lExternal           := .t.
 static nNumBtnFam          := NUM_BTN_FAM
 static nNumBtnArt          := NUM_BTN_ART
 static aTipDoc             := { "Tiket", "Albarán", "Factura", "Devolución", "Apartado", "Vale", "Pda", "Cheque regalo" }
 static bEditT              := { |aTmp, aGet, dbfTikT, oBrw, cTot, nTot, nMode, aNumDoc    | EdtRec( aTmp, aGet, dbfTikT, oBrw, cTot, nTot, nMode, aNumDoc ) }
-static bEditB              := { |aTmp, aGet, dbfTikT, oBrw, cTot, nTot, nMode, oWnd       | EdtBig( aTmp, aGet, dbfTikT, oBrw, cTot, nTot, nMode, oWnd ) }
 static bEditL              := { |aTmp, aGet, dbfTikL, oBrw, bWhen, bValid, nMode, cNumTik | EdtDet( aTmp, aGet, dbfTikL, oBrw, bWhen, bValid, nMode, cNumTik ) }
 static bEditP              := { |aTmp, aGet, dbfTikP, oBrw, bWhen, bValid, nMode, aTmpTik | EdtCob( aTmp, aGet, dbfTikP, oBrw, bWhen, bValid, nMode, aTmpTik ) }
 static bEditE              := { |aTmp, aGet, dbfTmpE, oBrw, bWhen, bValid, nMode, aTmpTik | EdtEnt( aTmp, aGet, dbfTmpE, oBrw, bWhen, bValid, nMode, aTmpTik ) }
@@ -466,8 +463,6 @@ static dbfFacRecL
 static dbfFacRecS
 
 static cNewFilL
-
-static oSalaVentas
 
 static lOpenFiles          := .f.
 
@@ -782,16 +777,6 @@ STATIC FUNCTION OpenFiles( cPatEmp, lExt, lTactil )
          lOpenFiles        := .f.
       end if
 
-      oSalaVentas          := TSalaVenta():New( cPatEmp )
-      if !oSalaVentas:OpenFiles()
-         lOpenFiles        := .f.
-      else
-         oSalaVentas:cTikT := dbfTikT
-         oSalaVentas:cTikL := dbfTikL
-         oSalaVentas:cDiv  := dbfDiv
-         oSalaVentas:BuildSala()
-      end if
-
       cBalanza             := cBalanzaEnCaja( oUser():cCaja(), dbfCajT )
       if !Empty( cBalanza )
          oBalanza          := TCommPort():Create( cBalanza )
@@ -1008,10 +993,6 @@ STATIC FUNCTION CloseFiles()
       oUndMedicion:end()
    end if
 
-   if !Empty( oSalaVentas )
-      oSalaVentas:End()
-   end if
-
    if !Empty( oInvitacion )
       oInvitacion:End()
    end if
@@ -1094,7 +1075,6 @@ STATIC FUNCTION CloseFiles()
    oNewImp           := nil
    oVisor            := nil
    oImpresora        := nil
-   oSalaVentas       := nil
    oInvitacion       := nil
    oTipArt           := nil
    oFabricante       := nil
@@ -1192,8 +1172,6 @@ FUNCTION FrontTpv( oMenuItem, oWnd, cCodCli, cCodArt, lEntCon, lExtTpv, aNumDoc 
 
    AddMnuNext( "T.P.V.", ProcName() )
 
-if !lExtTpv
-
    DEFINE SHELL oWndBrw FROM 0, 0 TO 22, 80 ;
       XBROWSE ;
       TITLE    cTitle ;
@@ -1208,43 +1186,14 @@ if !lExtTpv
       BITMAP   clrTopTPV ;
       ALIAS    ( dbfTikT );
       APPEND   ( TpvAppRec( oWndBrw:oBrw, bEditT, dbfTikT, oWnd, cCodCli, cCodArt, aNumDoc ) );
-      DELETE   ( DelTpv( oWndBrw:oBrw, dbfTikT ) );
+      DELETE   ( WinDelRec( oWndBrw:oBrw, dbfTikT, {|| TpvDelRec() } ) );
       ZOOM     ( WinZooRec( oWndBrw:oBrw, bEditT, dbfTikT ) );
       EDIT     ( WinEdtRec( oWndBrw:oBrw, bEditT, dbfTikT ) );
       LEVEL    nLevel ;
       OF       oWnd
-
-else
-
-   DEFINE SHELL oWndBrw FROM 0, 0 TO 22, 80 ;
-      XBROWSE ;
-      TITLE    cTitle ;
-      PROMPTS  "Número",;
-					"Fecha",;
-               "Caja",;
-               "Cajero",;
-               "Código",;
-               "Nombre",;
-               "Sesión" ;
-      BITMAP   clrTopTPV ;
-      ALIAS    ( dbfTikT );
-      APPEND   ( TpvAppRec( oWndBrw:oBrw, bEditT, dbfTikT, oWnd, cCodCli, cCodArt, aNumDoc ) );
-      DELETE   ( DelTpv( oWndBrw:oBrw, dbfTikT ) );
-      ZOOM     ( WinZooRec( oWndBrw:oBrw, bEditT, dbfTikT ) );
-      EDIT     ( WinEdtRec( oWndBrw:oBrw, bEditT, dbfTikT ) );
-      LEVEL    nLevel ;
-      BIGSTYLE ;
-      OF       oWnd
-
-end if
 
       oWndBrw:lAutoSeek     := .f.
-
       oWndBrw:lFechado      := .t.
-
-      /*
-      oWndBrw:bChgIndex     := {|| if( oUser():lFiltroVentas(), CreateFastFilter( cFiltroCajero, dbfTikT, .f., , cFiltroCajero ), CreateFastFilter( "", dbfTikT, .f. ) ) }
-      */
 
 	  oWndBrw:SetYearComboBoxChange( {|| YearComboBoxChange() } )
 
@@ -1453,8 +1402,6 @@ end if
 
    oWndBrw:CreateXFromCode()
 
-if !lExtTpv
-
     DEFINE BTNSHELL RESOURCE "BUS" OF oWndBrw ;
       NOBORDER ;
       ACTION   ( oWndBrw:SearchSetFocus() ) ;
@@ -1463,8 +1410,6 @@ if !lExtTpv
       HOTKEY   "B"
 
    oWndBrw:AddSeaBar()
-
-end if
 
    DEFINE BTNSHELL RESOURCE "NEW" OF oWndBrw ;
       NOBORDER ;
@@ -1685,7 +1630,7 @@ else
 
    DEFINE BTNSHELL RESOURCE "END" GROUP OF oWndBrw ;
       NOBORDER ;
-      ACTION   ( ( cFiltroCajero := "" ), oWndBrw:End() ) ;
+      ACTION   ( oWndBrw:End() ) ;
       TOOLTIP  "(S)alir";
       HOTKEY   "S"
 
@@ -1702,12 +1647,15 @@ end if
    EnableAcceso()
 
    if !Empty( cCodCli ) .or. !Empty( cCodArt ) .or. lEntCon .or. !Empty( aNumDoc )
+
       if !Empty( oWndBrw )
          oWndBrw:RecAdd()
       end if
+
       cCodCli  := nil
       cCodArt  := nil
       aNumDoc  := { "", "", "" }
+
    end if
 
 Return .t.
@@ -1726,7 +1674,7 @@ Static Function TpvAppRec( oWndBrw, bEditT, dbfTikT, oWnd, cCodCli, cCodArt, aNu
 
    end while
 
-   ( dbfTikT )->( dbGoBottom() )
+   // ( dbfTikT )->( dbGoBottom() )
 
    oWndBrw:Select( 0 )
    oWndBrw:Select( 1 )
@@ -1903,45 +1851,46 @@ Return ( .t. )
 //
 // Borra tickets
 //
-FUNCTION DelTpv( oBrw, dbfTikCliT, lMessage )
+
+FUNCTION TpvDelRec()
 
    local nOrdAlb
+   local nRecAnt
+   local nOrdAnt
+   local cTipDoc        := ( dbfTikT )->cTipTik
+   local cNumDoc        := ( dbfTikT )->cNumDoc
+   local cNumTik        := ( dbfTikT )->cSerTik + ( dbfTikT )->cNumTik + ( dbfTikT )->cSufTik
 
-   DEFAULT lMessage     := .t.
+   CursorWait()
 
    /*
    Cambiamos el estado del albarán del que proviene----------------------------
    */
 
-   if !Empty( ( dbfTikCliT )->cAlbTik )
+   if !Empty( ( dbfTikT )->cAlbTik )
 
-      if dbSeekInOrd( ( dbfTikCliT )->cAlbTik, "nNumAlb", dbfAlbCliT )
+      if dbSeekInOrd( ( dbfTikT )->cAlbTik, "nNumAlb", dbfAlbCliT )
 
          if dbLock( dbfAlbCliT )
-
             ( dbfAlbCliT )->lFacturado    := .f.
             ( dbfAlbCliT )->cNumTik       := Space(13)
             ( dbfAlbCliT )->( dbUnLock() )
-
          end if
 
       end if
 
       nOrdAlb  := ( dbfAlbCliL )->( OrdSetFocus( "nNumAlb" ) )
 
-      if ( dbfAlbCliL )->( dbSeek( ( dbfTikCliT )->cAlbTik ) )
+      if ( dbfAlbCliL )->( dbSeek( ( dbfTikT )->cAlbTik ) )
 
-         while ( dbfAlbCliL )->cSerAlb + Str( ( dbfAlbCliL )->nNumAlb ) + ( dbfAlbCliL )->cSufAlb == ( dbfTikCliT )->cAlbTik .and. !( dbfAlbCliL )->( Eof() )
+         while ( dbfAlbCliL )->cSerAlb + Str( ( dbfAlbCliL )->nNumAlb ) + ( dbfAlbCliL )->cSufAlb == ( dbfTikT )->cAlbTik .and. !( dbfAlbCliL )->( Eof() )
 
             if dbLock( dbfAlbCliL )
-
                ( dbfAlbCliL )->lFacturado    := .f.
                ( dbfAlbCliL )->( dbUnLock() )
-
             end if
 
-
-         ( dbfAlbCliL )->( dbSkip() )
+            ( dbfAlbCliL )->( dbSkip() )
 
          end while
 
@@ -1955,24 +1904,21 @@ FUNCTION DelTpv( oBrw, dbfTikCliT, lMessage )
    Cambiamos el estado del pedido del que proviene----------------------------
    */
 
-   if !Empty( ( dbfTikCliT )->cPedTik )
+   if !Empty( ( dbfTikT )->cPedTik )
 
-      if dbSeekInOrd( ( dbfTikCliT )->cPedTik, "nNumPed", dbfPedCliT )
+      if dbSeekInOrd( ( dbfTikT )->cPedTik, "nNumPed", dbfPedCliT )
 
          if dbLock( dbfPedCliT )
-
             ( dbfPedCliT )->nEstado       := 1
             ( dbfPedCliT )->cNumTik       := Space(13)
-
             ( dbfPedCliT )->( dbUnLock() )
-
          end if
 
       end if
 
-      if dbSeekInOrd( ( dbfTikCliT )->cPedTik, "nNumPed", dbfPedCliP )
+      if dbSeekInOrd( ( dbfTikT )->cPedTik, "nNumPed", dbfPedCliP )
 
-         while ( dbfPedCliP )->cSerPed + Str( ( dbfPedCliP )->nNumPed ) + ( dbfPedCliP )->cSufPed == ( dbfTikCliT )->cPedTik .and. !( dbfPedCliP )->( eof() )
+         while ( dbfPedCliP )->cSerPed + Str( ( dbfPedCliP )->nNumPed ) + ( dbfPedCliP )->cSufPed == ( dbfTikT )->cPedTik .and. !( dbfPedCliP )->( eof() )
 
             if dbLock( dbfPedCliP )
                ( dbfPedCliP )->lPasado    := .f.
@@ -1991,9 +1937,9 @@ FUNCTION DelTpv( oBrw, dbfTikCliT, lMessage )
    Cambiamos el estado del presupuestos del que proviene----------------------------
    */
 
-   if !Empty( ( dbfTikCliT )->cPreTik )
+   if !Empty( ( dbfTikT )->cPreTik )
 
-      if dbSeekInOrd( ( dbfTikCliT )->cPreTik, "nNumPre", dbfPreCliT )
+      if dbSeekInOrd( ( dbfTikT )->cPreTik, "nNumPre", dbfPreCliT )
 
          if dbLock( dbfPreCliT )
             ( dbfPreCliT )->lEstado       := .f.
@@ -2005,30 +1951,12 @@ FUNCTION DelTpv( oBrw, dbfTikCliT, lMessage )
 
    end if
 
-   WinDelRec( oBrw, dbfTikCliT, TpvDelRec() )
-
-Return ( .t. )
-
-//---------------------------------------------------------------------------//
-
-FUNCTION TpvDelRec()
-
-   local cCodAlm
-   local nRecAnt
-   local nOrdAnt
-   local cNumTik     := ( dbfTikT )->cSerTik + ( dbfTikT )->cNumTik + ( dbfTikT )->cSufTik
-   local cTipDoc     := ( dbfTikT )->cTipTik
-   local cNumDoc     := ( dbfTikT )->cNumDoc
-
    /*
    Eliminamos las lineas----------------------------------------------------
    */
 
    while ( dbfTikL )->( dbSeek( cNumTik ) )
-      if dbLock( dbfTikL )
-         ( dbfTikL )->( dbDelete() )
-         ( dbfTikL )->( dbUnLock() )
-      end if
+      dbDel( dbfTikL )
    end while
 
    /*
@@ -2036,18 +1964,15 @@ FUNCTION TpvDelRec()
    */
 
    while ( dbfTikP )->( dbSeek( cNumTik ) )
-      if dbLock( dbfTikP )
-         ( dbfTikP )->( dbDelete() )
-         ( dbfTikP )->( dbUnLock() )
-      end if
+      dbDel( dbfTikP )
    end while
 
    /*
    Eliminamos los vales-----------------------------------------------------
    */
 
-   nRecAnt     := ( dbfTikT )->( Recno() )
-   nOrdAnt     := ( dbfTikT )->( OrdSetFocus( "cDocVal" ) )
+   nRecAnt                       := ( dbfTikT )->( Recno() )
+   nOrdAnt                       := ( dbfTikT )->( OrdSetFocus( "cDocVal" ) )
 
    if ( dbfTikT )->( dbSeek( cNumTik ) )
       while ( dbfTikT )->cValDoc == cNumTik .and. !( dbfTikT )->( eof() )
@@ -2061,10 +1986,6 @@ FUNCTION TpvDelRec()
          ( dbfTikT )->( dbSkip() )
       end while
    end if
-
-   /*
-   Reposicionamiento--------------------------------------------------------
-   */
 
    ( dbfTikT )->( dbGoTo( nRecAnt ) )
    ( dbfTikT )->( OrdSetFocus( nOrdAnt ) )
@@ -2082,71 +2003,58 @@ FUNCTION TpvDelRec()
       do case
       case cTipDoc == SAVALB
 
-         if ( dbfAlbCliT )->( dbSeek( cNumDoc ) )
+         while dbSeekInOrd( cNumDoc, "nNumAlb", dbfAlbCliT )
+            dbDel( dbfAlbCliT )
+         end if
 
-            cCodAlm  := ( dbfAlbCliT )->cCodAlm
-            cNumDoc  := ( dbfAlbCliT )->cSerAlb + Str( ( dbfAlbCliT )->nNumAlb ) + ( dbfAlbCliT )->cSufAlb
-
-            /*
-            Eliminamos el albaran-------------------------------------------
-            */
-
-            delRecno( dbfAlbCliT )
-
+         while dbSeekInOrd( cNumDoc, "nNumAlb", dbfAlbCliL )
+            dbDel( dbfAlbCliL )
          end if
 
       case cTipDoc == SAVFAC
 
-         if ( dbfFacCliT )->( dbSeek( cNumDoc ) )
+         while dbSeekInOrd( cNumDoc, "nNumFac", dbfFacCliT )
+            dbDel( dbfFacCliT )
+         end if
 
-            cCodAlm  := ( dbfFacCliT )->cCodAlm
-            cNumDoc  := ( dbfFacCliT )->cSerie + Str( ( dbfFacCliT )->nNumFac ) + ( dbfFacCliT )->cSufFac
+         while dbSeekInOrd( cNumDoc, "nNumFac", dbfFacCliL )
+            dbDel( dbfFacCliL )
+         end if
 
-            /*
-            Eliminamos la factura
-            */
+         while dbSeekInOrd( cNumDoc, "nNumFac", dbfFacCliP )
+            dbDel( dbfFacCliP )
+         end if
 
-            delRecno( dbfFacCliT )
+         /*
+         Devolvemos los anticipos a su estado anterior-------------------------
+         */
 
-            /*
-            Eliminamos los recibos
-            */
+         nOrdAnt     := ( dbfAntCliT )->( OrdSetFocus( "cNumDoc" ) )
 
-            while ( dbfFacCliP )->( dbSeek( cNumDoc ) ) .and. !( dbfFacCliP )->( eof() )
+         if ( dbfAntCliT )->( dbSeek( cNumDoc ) )
+               
+            while ( dbfAntCliT )->cNumDoc == cNumDoc .and. !( dbfAntCliT )->( eof() )
 
-               if dbLock( dbfFacCliP )
-                  ( dbfFacCliP )->( dbDelete() )
-                  ( dbfFacCliP )->( dbUnLock() )
+               if dbLock( dbfAntCliT )
+                  ( dbfAntCliT )->lLiquidada := .f.
+                  ( dbfAntCliT )->( dbUnLock() )
                end if
 
-               ( dbfFacCliP )->( dbSkip() )
-            end do
+               ( dbfAntCliT )->( dbSkip() )
 
-            /*
-            Devolvemos los anticipos a su estado anterior-------------------------
-            */
-
-            nOrdAnt     := ( dbfAntCliT )->( OrdSetFocus( "cNumDoc" ) )
-
-            if ( dbfAntCliT )->( dbSeek( cNumDoc ) )
-               while ( dbfAntCliT )->cNumDoc == cNumDoc .and. !( dbfAntCliT )->( eof() )
-                  if dbLock( dbfAntCliT )
-                     ( dbfAntCliT )->lLiquidada := .f.
-                     ( dbfAntCliT )->( dbUnLock() )
-                  end if
-                  ( dbfAntCliT )->( dbSkip() )
-               end while
-            end if
-
-            ( dbfAntCliT )->( OrdSetFocus( nOrdAnt ) )
+            end while
 
          end if
+
+         ( dbfAntCliT )->( OrdSetFocus( nOrdAnt ) )
 
       end case
 
    end if
 
-RETURN .t.
+   CursorWE()
+
+Return ( .t. )
 
 //----------------------------------------------------------------------------//
 
@@ -5672,38 +5580,6 @@ Static Function TmpTiket( aTmp, aGet, nMode, lClean, lImprimirComanda, lLiberarM
    end if
 
    /*
-   Comprobamos que si el ticket es un generico y no tiene alias----------------
-   */
-
-   if !Empty( oSalaVentas )                        .and.;
-      Empty( aTmp[ _CCODSALA ] )                   .and.;
-      AllTrim( aTmp[ _CPNTVENTA ] ) == "General"   .and.;
-      Empty( aTmp[ _CALIASTIK ] )
-
-      MsgStop( "No puede guardar un ticket general sin asignarle un alias." )
-
-      RenombrarUbicacion( aTmp, aGet )
-
-      return .f.
-
-   end if
-
-   /*
-   Comprobamos que si el ticket es un para llevar y no tiene cliente-----------
-   */
-
-   if !Empty( oSalaVentas )                         .and.;
-      Empty( aTmp[ _CCODSALA ] )                    .and.;
-      AllTrim( aTmp[ _CPNTVENTA ] ) == "Llevar"     .and.;
-      Empty( aTmp[ _CCLITIK ] )
-
-      MsgStop( "No puede guardar un ticket para llevar sin asignarle un cliente." )
-
-      return .f.
-
-   end if
-
-   /*
    Parar timer de impresión pda------------------------------------------------
    */
 
@@ -5786,12 +5662,6 @@ Static Function TmpTiket( aTmp, aGet, nMode, lClean, lImprimirComanda, lLiberarM
 
          aTmp[ _CHORTIK ]           := Substr( Time(), 1, 5 )
          aTmp[ _LCLOTIK ]           := .f.
-
-         if !Empty( oSalaVentas ) .and. IsTrue( oSalaVentas:lPuntosVenta )
-            aTmp[ _CCODSALA   ]     := oSalaVentas:cSelectedSala
-            aTmp[ _CPNTVENTA  ]     := oSalaVentas:cSelectedPunto
-            aTmp[ _NTARIFA    ]     := oSalaVentas:nSelectedPrecio
-         end if
 
       case nMode == EDIT_MODE
 
@@ -6974,12 +6844,6 @@ Static function BeginTrans( aTmp, aGet, nMode, lNewFile )
       Colocamos los valores de la sala-----------------------------------------
       */
 
-      if !Empty( oSalaVentas ) .and. IsFalse( oSalaVentas:lPuntosVenta )
-         aTmp[ _CCODSALA   ]           := oSalaVentas:cSelectedSala
-         aTmp[ _CPNTVENTA  ]           := oSalaVentas:cSelectedPunto
-         aTmp[ _NTARIFA    ]           := oSalaVentas:nSelectedPrecio
-      end if
-
       if !Empty( oBtnTipoVta )
          oBtnTipoVta:cPrompt           := "Ticket"
          oBtnTipoVta:cxBmp             := "Cashier_user1_32"
@@ -7169,12 +7033,6 @@ Static function BeginTrans( aTmp, aGet, nMode, lNewFile )
          ( dbfTikT )->( OrdSetFocus( nOrdAnt ) )
 
          ( dbfTmpV )->( dbGoTop() )
-
-         /*
-         Creamos un ponto de venta---------------------------------------------
-         */
-
-         oSalaVentas:SetSalaVta( aTmp, dbfTikT )
 
       end if
 
@@ -11260,323 +11118,11 @@ return nCon
 
 //----------------------------------------------------------------------------//
 
-FUNCTION TactilTpv( oMenuItem, oWnd, lTactil )
-
-   local nLevel
-   local oBtnEur
-   local cTitle
-   local lEur           := .f.
-
-   DEFAULT  oMenuItem   := "01041"
-   DEFAULT  oWnd        := oWnd()
-   DEFAULT  lTactil     := .f.
-
-   SetAutoImp()
-
-   if oWndBig == nil
-
-      nLevel            := nLevelUsr( oMenuItem )
-      if nAnd( nLevel, 1 ) != 0
-         msgStop( "Acceso no permitido." )
-         return nil
-      end if
-
-      /*
-      Cerramos todas las ventanas
-      */
-
-      if oWnd != nil
-         SysRefresh(); oWnd:CloseAll(); SysRefresh()
-      end if
-
-      if !OpenFiles( , , .t. )
-         return nil
-      end if
-
-      /*
-      Anotamos el movimiento para el navegador
-      */
-
-      AddMnuNext( "T.P.V. Táctil", ProcName() )
-
-      cTitle            := "T.P.V. Táctil - Sesión : " + Trans( cCurSesion(), "######" ) + " - " + dtoc( date() )
-
-      DEFINE SHELL oWndBig FROM 0, 0 TO 22, 80 ;
-         XBROWSE ;
-         TITLE    cTitle ;
-         PROMPTS  "Número",;
-                  "Fecha",;
-                  "Cajero/a",;
-                  "Cliente",;
-                  "Matrícula",;
-                  "Sesión" ;
-         ALIAS    ( dbfTikT );
-         APPEND   ( TpvAppRec( oWndBig:oBrw, bEditB, dbfTikT, oWnd ) );
-         DELETE   ( DelTpv( oWndBig:oBrw, dbfTikT ) );
-         EDIT     ( TpvEdtRec( oWndBig:oBrw, bEditB, dbfTikT, oWnd ) );
-         LEVEL    nLevel ;
-         BIGSTYLE ;
-         OF       oWnd
-
-      oWndBig:lAutoSeek    := .f.
-
-      with object ( oWndBig:AddXCol() )
-         :cHeader          := "Cerrado"
-         :nHeadBmpNo       := 3
-         :bStrData         := {|| "" }
-         :bEditValue       := {|| ( dbfTikT )->lCloTik }
-         :nWidth           := 24
-         :SetCheck( { "Sel16", "Nil16" } )
-         :AddResource( "Zoom16" )
-      end with
-
-      with object ( oWndBig:AddXCol() )
-         :cHeader          := "Estado"
-         :nHeadBmpNo       := 4
-         :bStrData         := {|| "" }
-         :bBmpData         := {|| if( ( dbfTikT )->lAbierto, 1, if( !( dbfTikT )->lPgdTik, 2, 3 ) ) }
-         :nWidth           := 24
-         :AddResource( "Bullet_Square_Red_16" )
-         :AddResource( "Bullet_Square_Yellow_16" )
-         :AddResource( "Bullet_Square_Green_16" )
-         :AddResource( "TrafficLight_on_16" )
-      end with
-
-      with object ( oWndBig:AddXCol() )
-         :cHeader          := "Documento"
-         :bEditValue       := {|| aTipTik() }
-         :nWidth           := 55
-      end with
-
-      with object ( oWndBig:AddXCol() )
-         :cHeader          := "Número"
-         :bEditValue       := {|| ( dbfTikT )->cSerTik + "/" + ltrim( ( dbfTikT )->cNumTik ) + "/" + ( dbfTikT )->cSufTik }
-         :nWidth           := 80
-      end with
-
-      with object ( oWndBig:AddXCol() )
-         :cHeader          := "Fecha"
-         :bEditValue       := {|| dtoc( ( dbfTikT )->dFecTik ) }
-         :nWidth           := 70
-      end with
-
-      with object ( oWndBig:AddXCol() )
-         :cHeader          := "Sesión"
-         :bEditValue       := {|| Trans( ( dbfTikT )->cTurTik, "######" ) }
-         :nWidth           := 40
-         :lHide            := .t.
-         :nDataStrAlign    := 1
-         :nHeadStrAlign    := 1
-      end with
-
-      with object ( oWndBig:AddXCol() )
-         :cHeader          := "Hora"
-         :bEditValue       := {|| ( dbfTikT )->cHorTik }
-         :nWidth           := 40
-      end with
-
-      with object ( oWndBig:AddXCol() )
-         :cHeader          := "Caja"
-         :bEditValue       := {|| ( dbfTikT )->cNcjTik }
-         :nWidth           := 40
-      end with
-
-      with object ( oWndBig:AddXCol() )
-         :cHeader          := "Cajero"
-         :bEditValue       := {|| ( dbfTikT )->cCcjTik }
-         :nWidth           := 50
-      end with
-
-      with object ( oWndBig:AddXCol() )
-         :cHeader          := "Sala"
-         :bEditValue       := {|| ( dbfTikT )->cCodSala }
-         :nWidth           := 40
-      end with
-
-      with object ( oWndBig:AddXCol() )
-         :cHeader          := "Punto de venta"
-         :bEditValue       := {|| ( dbfTikT )->cPntVenta }
-         :nWidth           := 80
-      end with
-
-      with object ( oWndBig:AddXCol() )
-         :cHeader          := "Cliente"
-         :bEditValue       := {|| Rtrim( ( dbfTikT )->cCliTik ) + Space( 1 ) + ( dbfTikT )->cNomTik }
-         :nWidth           := 160
-      end with
-
-      with object ( oWndBig:AddXCol() )
-         :cHeader          := "Alias"
-         :bEditValue       := {|| ( dbfTikT )->cAliasTik }
-         :nWidth           := 70
-      end with
-
-      with object ( oWndBig:AddXCol() )
-         :cHeader          := "Total"
-         :bEditValue       := {|| nTotalizer( ( dbfTikT )->cSerTik + ( dbfTikT )->cNumTik + ( dbfTikT )->cSufTik, dbfTikT, dbfTikL, dbfTikP, dbfAlbCliT, dbfAlbCliL, dbfFacCliT, dbfFacCliL, dbfFacCliP, dbfIva, dbfDiv, if( lEur, cDivChg(), cDivEmp() ), .t. ) }
-         :nWidth           := 80
-         :nDataStrAlign    := 1
-         :nHeadStrAlign    := 1
-      end with
-
-      with object ( oWndBig:AddXCol() )
-         :cHeader          := "Div."
-         :bEditValue       := {|| cSimDiv( ( dbfTikT )->cDivTik, dbfDiv ) }
-         :nWidth           := 30
-      end with
-
-      with object ( oWndBig:AddXCol() )
-         :cHeader          := "Cobrado"
-         :bEditValue       := {|| nTotCobTik( ( dbfTikT )->cSerTik + ( dbfTikT )->cNumTik + ( dbfTikT )->cSufTik, dbfTikP, dbfDiv, if( lEur, cDivChg(), cDivEmp() ), .t. ) }
-         :nWidth           := 80
-         :nDataStrAlign    := 1
-         :nHeadStrAlign    := 1
-      end with
-
-      with object ( oWndBig:AddXCol() )
-         :cHeader          := "Vale"
-         :bEditValue       := {|| nTotValTik( ( dbfTikT )->cSerTik + ( dbfTikT )->cNumTik + ( dbfTikT )->cSufTik, dbfTikT, dbfTikL, dbfDiv, if( lEur, cDivChg(), cDivEmp() ), .t. ) }
-         :nWidth           := 80
-         :nDataStrAlign    := 1
-         :nHeadStrAlign    := 1
-      end with
-
-      oWndBig:cHtmlHelp    := "Tickets táctil"
-
-      oWndBig:CreateXFromCode()
-
-      if !lTactil
-         oWndBig:AddSeaBar()
-      end if
-
-      DEFINE BTNSHELL RESOURCE "NEW" OF oWndBig ;
-			NOBORDER ;
-         ACTION   ( oWndBig:RecAdd(), oWndBig:oBrw:Refresh() );
-			TOOLTIP 	"(A)ñadir";
-         HOTKEY   "A";
-         LEVEL    ACC_APPD
-
-      DEFINE BTNSHELL RESOURCE "EDIT" OF oWndBig ;
-			NOBORDER ;
-         ACTION   ( oWndBig:RecEdit() );
-			TOOLTIP 	"(M)odificar";
-         HOTKEY   "M";
-         LEVEL    ACC_EDIT
-
-      DEFINE BTNSHELL RESOURCE "ZOOM" OF oWndBig ;
-			NOBORDER ;
-         ACTION   ( WinZooRec( oWndBig:oBrw, bEditB, dbfTikT ) );
-			TOOLTIP 	"(Z)oom";
-         HOTKEY   "Z";
-         LEVEL    ACC_ZOOM
-
-      DEFINE BTNSHELL RESOURCE "DEL" OF oWndBig ;
-			NOBORDER ;
-         ACTION   ( oWndBig:RecDel() );
-			TOOLTIP 	"(E)liminar";
-         HOTKEY   "E";
-         LEVEL    ACC_DELE
-
-      DEFINE BTNSHELL oBtnEur RESOURCE "BAL_EURO" OF oWndBig ;
-			NOBORDER ;
-         ACTION   ( lEur := !lEur, SetHeadEuro( lEur, oWndBig ), SetHeadEuro( lEur, oWndBig, "Cobrado" ) ) ;
-         TOOLTIP  "M(o)neda";
-         HOTKEY   "O";
-         LEVEL    ACC_ZOOM
-
-      DEFINE BTNSHELL RESOURCE "IMP" GROUP OF oWndBig ;
-			NOBORDER ;
-         ACTION   ( ImpTiket( .f. ) );
-         TOOLTIP  "(I)mprimir" ;
-         HOTKEY   "I";
-         LEVEL    ACC_IMPR
-
-      DEFINE BTNSHELL RESOURCE "Money2_" OF oWndBig ;
-         NOBORDER ;
-         ACTION   ( EdtCobTik( oWndBig, .t. ) );
-         TOOLTIP  "(C)obros";
-         HOTKEY   "C";
-         LEVEL    ACC_APPD
-
-if !lTactilMode()
-
-      DEFINE BTNSHELL RESOURCE "User1_" OF oWndBig ;
-         NOBORDER ;
-         ACTION   ( CuentasClientes( oWndBig:oBrw ) );
-         TOOLTIP  "C(t)a. cliente";
-         HOTKEY   "T";
-         LEVEL    ACC_APPD
-
-endif
-
-      DEFINE BTNSHELL RESOURCE "UP" GROUP OF oWndBig ;
-			NOBORDER ;
-         ACTION   ( oWndBig:oBrw:GoUp() ) ;
-         TOOLTIP  "S(u)bir" ;
-         HOTKEY   "U"
-
-      DEFINE BTNSHELL RESOURCE "DOWN" GROUP OF oWndBig ;
-			NOBORDER ;
-         ACTION   ( oWndBig:oBrw:GoDown() ) ;
-         TOOLTIP  "(B)ajar" ;
-         HOTKEY   "B"
-
-if !lTactilMode()
-
-      DEFINE BTNSHELL RESOURCE "END" GROUP OF oWndBig ;
-			NOBORDER ;
-         ACTION   ( oWndBig:end() ) ;
-			TOOLTIP 	"(S)alir";
-			HOTKEY   "S"
-end if
-
-      ACTIVATE SHELL oWndBig VALID ( CloseFiles() )
-
-   else
-
-      oWndBig:setFocus()
-
-   end if
-
-   if lEntCon()
-      oWndBig:RecAdd()
-   end if
-
-Return Nil
-
-//----------------------------------------------------------------------------//
-
 Function oWndTactil()
 
 Return oWndBrw
 
 //----------------------------------------------------------------------------//
-
-Static Function EdtBig( aTmp, aGet, dbfTikT, oBrw, cTot, nTot, nMode, oWnd )
-
-Return ( oDlgTpv:nResult == IDOK )
-
-//---------------------------------------------------------------------------//
-
-/*
-Static Function ComprobarUsuario()
-
-   local cCodUser    := oUser():cCodigo()
-
-   if dbSeekInOrd( cCodUser, "CCODUSE", dbfUsr )
-
-      if ( dbfUsr )->nGrpUse  != 1
-
-         return .f.
-
-      end if
-
-   end if
-
-Return .t.
-*/
-
-//---------------------------------------------------------------------------//
 
 Static Function lValidDlgTpv( aTmp, aGet, nSaveMode )
 
@@ -11587,287 +11133,6 @@ Static Function lValidDlgTpv( aTmp, aGet, nSaveMode )
    end if
 
 Return lValid
-
-//---------------------------------------------------------------------------//
-
-Static Function StartEdtBig( aTmp, aGet, oDlgTpv, oBrwDet, nMode, lCobrando )
-
-Return ( nil )
-
-//---------------------------------------------------------------------------//
-
-Static Function CargoEdtBig( aTmp, aGet, oDlgTpv, lCobrando )
-
-   DEFAULT lCobrando    := .f.
-
-   /*
-   Otras acciones--------------------------------------------------------------
-   */
-
-   if nSaveMode == APPD_MODE
-
-      if lRecogerUsuario()
-         if !SelBigUser( aTmp, aGet, dbfUsr )
-            oDlgTpv:end()
-            Return nil
-         end if
-      else
-         SetBigUser( aTmp, aGet )
-      end if
-
-      if IsTrue( oSalaVentas:lPuntosVenta )
-
-         SysRefresh()
-
-         /*if !lCobrando .and. uFieldEmpresa( "lShowSala" )
-            GetSalaVenta( aTmp, aGet )
-         else*/
-            SetSalaVenta( aTmp, aGet )
-         //end if
-
-      end if
-
-   else
-
-      SetBigUser( aTmp, aGet )
-
-   end if
-
-   /*
-   Boton-----------------------------------------------------------------------
-   */
-
-   oSalaVentas:ConfigButton( oBtnTarifa, oBtnRenombrar )
-
-   /*
-   Titulo de la ventana--------------------------------------------------------
-   */
-
-   cTitleDialog( aTmp )
-
-   /*
-   Recalculo-------------------------------------------------------------------
-   */
-
-   if !lCobrando
-      lRecTotal( aTmp )
-   end if
-
-Return ( nil )
-
-//---------------------------------------------------------------------------//
-
-Static Function SetSalaVenta( aTmp, aGet )
-
-   local oError
-   local oBlock
-
-   oBlock                  := ErrorBlock( {| oError | ApoloBreak( oError ) } )
-   BEGIN SEQUENCE
-
-   /*
-   Guarda la venta actual---------------------------------------------------
-   */
-
-   if GuardaVenta( aTmp, aGet )
-
-      /*
-      Ponemos el boton generico------------------------------------------------
-      */
-
-      oSalaVentas:InitSala()
-
-      /*
-      Damos loa valores al tiket actual----------------------------------------
-      */
-
-      if Empty( oSalaVentas:cSelectedPunto )
-         oSalaVentas:cSelectedPunto  := "General"
-      end if
-
-      aTmp[ _CCODSALA   ]     := oSalaVentas:cSelectedSala
-      aTmp[ _CPNTVENTA  ]     := oSalaVentas:cSelectedPunto
-      aTmp[ _NTARIFA    ]     := oSalaVentas:nSelectedPrecio
-
-      /*
-      Pintamos los botones-----------------------------------------------------
-      */
-
-      oSalaVentas:ConfigButton( oBtnTarifa, oBtnRenombrar )
-
-      /*
-      Titulo de la ventana--------------------------------------------------------
-      */
-
-      cTitleDialog( aTmp )
-
-   end if
-
-   RECOVER USING oError
-
-      msgStop( "Error al asignar la salas de venta" + CRLF + ErrorMessage( oError ) )
-
-   END SEQUENCE
-
-   ErrorBlock( oBlock )
-
-Return ( .t. )
-
-//---------------------------------------------------------------------------//
-
-Static Function GetNuevaVenta( aTmp, aGet )
-
-   /*
-   Guarda la venta actual------------------------------------------------------
-   */
-
-   if GuardaVenta( aTmp, aGet )
-
-      /*
-      Nuevo registro--------------------------------------------------------------
-      */
-
-      if !BeginTrans( aTmp, aGet, APPD_MODE, .t. )
-
-         nSaveMode            := APPD_MODE
-
-         /*
-         Articulos de inicio------------------------------------------------------
-         */
-
-         if !Empty( oBtnIni )
-            oBtnIni:Click()
-         end if
-
-         /*
-         Ejecutamos del nuevo el bStart-------------------------------------------
-         */
-
-         if uFieldEmpresa( "lShowSala" )
-            GetSalaVenta( aTmp, aGet )
-         else
-            SetSalaVenta( aTmp, aGet )
-         end if
-
-         lRecTotal( aTmp )
-
-      end if
-
-
-      /*
-      Titulo de la ventana--------------------------------------------------------
-      */
-
-      cTitleDialog( aTmp )
-
-   end if
-
-Return ( nil )
-
-//---------------------------------------------------------------------------//
-
-Static Function GuardaVenta( aTmp, aGet )
-
-   local lValid      := .t.
-   local cNumTik
-
-   /*
-   Vamos a comprobar q hay algo q guardar--------------------------------------
-   */
-
-   if ( dbfTmpL )->( ordKeyCount() ) != 0
-
-      lValid         := TmpTiket( aTmp, aGet, nSaveMode, .f. )
-
-      if lValid
-         nSaveMode   := EDIT_MODE
-      end if
-
-   else
-
-      if ( !Empty( oSalaVentas:cSelectedSala ) .and. !Empty( oSalaVentas:cSelectedPunto ) )  .or. ;
-         ( if( IsChar( oSalaVentas:cSelectedPunto ), AllTrim( oSalaVentas:cSelectedPunto ) == "General" .and. !Empty( aTmp[ _CALIASTIK ] ), .f.) )
-
-         cNumTik     := aTmp[ _CSERTIK ] + aTmp[ _CNUMTIK ] + aTmp[ _CSUFTIK ]
-
-         if !Empty( cNumTik )
-
-            if dbSeekInOrd( cNumTik, "cNumTik", dbfTikT )
-
-               if ApoloMsgNoYes( "El ticket " + aTmp[ _CSERTIK ] + "/" + Alltrim( aTmp[ _CNUMTIK ] ) + " va a ser eliminado.", "¿Desea continuar?", .t. )
-
-                  TpvDelRec()
-
-                  if dbLock( dbfTikT )
-                     ( dbfTikT )->( dbDelete() )
-                     ( dbfTikT )->( dbUnLock() )
-                  end if
-
-               end if
-
-            end if
-
-         end if
-
-         // lValid      := TmpTiket( aTmp, aGet, nSaveMode, .f., .f., .t. )
-
-      end if
-
-   end if
-
-   /*
-   Liberamos la mesa-----------------------------------------------------------
-   */
-
-   if !Empty( oSalaVentas )
-      lFreeMesa( oSalaVentas:cSelectedSala, oSalaVentas:cSelectedPunto )
-   end if
-
-   dbSafeUnLock( dbfTikT )
-
-Return ( lValid )
-
-//---------------------------------------------------------------------------//
-
-Static Function GetTiketPendiente( aTmp, aGet )
-
-   /*
-   Guarda la venta actual------------------------------------------------------
-   */
-
-   if GuardaVenta( aTmp, aGet )
-
-      /*
-      Muestra el botón------------------------------------------------------------
-      */
-
-      if oSalaVentas:Tikets( oBtnTarifa, oBtnRenombrar )
-
-         if dbSeekInOrd( oSalaVentas:cSelectedTiket(), "cNumTik", dbfTikT )
-
-            aScatter( dbfTikT, aTmp )
-
-            if BeginTrans( aTmp, aGet, EDIT_MODE, .t. )
-               Return .f.
-            end if
-
-            nSaveMode               := EDIT_MODE
-
-            lRecTotal( aTmp )
-
-         end if
-
-         /*
-         Titulo de la ventana--------------------------------------------------------
-         */
-
-         cTitleDialog( aTmp )
-
-      end if
-
-   end if
-
-Return ( nil )
 
 //---------------------------------------------------------------------------//
 
@@ -11884,833 +11149,11 @@ Static Function cTitleDialog( aTmp )
       oDlgTpv:cTitle          += "[ Ticket : " + aTmp[ _CSERTIK ] + "/" + Alltrim( aTmp[ _CNUMTIK ] ) + "/" + Alltrim( aTmp[ _CSUFTIK ] ) + "]"
    end if
 
-   if !Empty( oSalaVentas )
-
-      oDlgTpv:cTitle          += Space( 1 )
-      oDlgTpv:cTitle          += "[ Precio : " + oSalaVentas:cTextoPrecio() + "]"
-
-      if !Empty( oSalaVentas:cSelectedPunto )
-
-
-         if !Empty( oSalaVentas:cTextoSala() )
-            oDlgTpv:cTitle    += Space( 1 )
-            oDlgTpv:cTitle    += "[ Sala : " + oSalaVentas:cTextoSala() + "]"
-         end if
-
-         if !Empty( oSalaVentas:GetSelectedTexto() )
-            oDlgTpv:cTitle    += Space( 1 )
-            oDlgTpv:cTitle    += "[ Punto : " + Alltrim( oSalaVentas:GetSelectedTexto() ) + "]"
-         end if
-
-      end if
-
-   end if
-
-   if !Empty( aTmp[ _CALIASTIK ] )
-      oDlgTpv:cTitle          += Space( 1 )
-      oDlgTpv:cTitle          += "[ Alias : " + Rtrim( aTmp[ _CALIASTIK ] ) + "]"
-   end if
-
    oDlgTpv:Refresh()
 
 Return ( nil )
 
 //---------------------------------------------------------------------------//
-
-Static Function KeyChar( cKey, aTmpArt, aGetArt )
-
-   do case
-      case At( cKey, "0123456789" ) > 0
-         aTmpArt[ _NUNTTIL ]     += cKey
-
-      case cKey == "." .and. !( At( ".", aTmpArt[ _NUNTTIL ] ) > 0 )
-         aTmpArt[ _NUNTTIL ]     += cKey
-
-      case cKey == "-"
-         if !( At( "-", aTmpArt[ _NUNTTIL ] ) > 0 )
-            aTmpArt[ _NUNTTIL ]  := cKey + aTmpArt[ _NUNTTIL ]
-         else
-            aTmpArt[ _NUNTTIL ]  := StrTran( aTmpArt[ _NUNTTIL ], "-", "" )
-         end if
-
-      case cKey == "C"
-         aTmpArt[ _NUNTTIL ]     := ""
-
-      /*
-      Multiplicamos por el numero de unidades q nos marquen--------------------
-      */
-
-      case cKey == "*"
-         if !Empty( aTmpArt[ _NUNTTIL ] )
-         if ( dbfTmpL )->( ordKeyCount() ) != 0
-            ( dbfTmpL )->nUntTil := Val( aTmpArt[ _NUNTTIL ] )
-         end if
-         aTmpArt[ _NUNTTIL ]     := ""
-         end if
-
-      /*
-      Asignamos el nuevo precio------------------------------------------------
-      */
-
-      case cKey == "="
-         if ( dbfTmpL )->( ordKeyCount() ) != 0
-            ( dbfTmpL )->nPvpTil := Val( aTmpArt[ _NUNTTIL ] )
-         end if
-         aTmpArt[ _NUNTTIL ]     := ""
-
-   end case
-
-   aGetArt[ _NUNTTIL ]:cText( aTmpArt[ _NUNTTIL ] )
-
-return ( nil )
-
-//--------------------------------------------------------------------------//
-
-Static Function loaFam( lAvance, lRepos, aGetArt, aTmpArt, aTmp, nMode )
-
-   local n                 := 1
-   local nNumeroFamilias   := 0
-
-   DEFAULT lAvance         := .t.
-   DEFAULT lRepos          := .f.
-
-   // Ocultamos los botones----------------------------------------------------
-
-   aEval( oBtnFam, {|o| o:Hide() } )
-   aEval( oSayFam, {|o| o:Hide() } )
-
-   // Si estamos en modo zoom no podemos mostrar las familias------------------
-
-   if nMode == ZOOM_MODE
-      return nil
-   end if
-
-   // Posicionamiento al inicio------------------------------------------------
-
-   if lRepos
-
-      ( dbfFamilia )->( dbGoTop() )
-
-      aRecFam              := {}
-      aAdd( aRecFam, ( dbfFamilia )->( Recno() ) )
-
-   end if
-
-   // Retroceso----------------------------------------------------------------
-
-   if ( !lRepos .and. !lAvance )
-
-      aDel( aRecFam, len( aRecFam ), .t. )
-      ( dbfFamilia )->( dbGoTo( aRecFam[ len( aRecFam ) ] ) )
-
-   end if
-
-   // Avance-------------------------------------------------------------------
-
-   if ( !lRepos .and. lAvance )
-
-      if ( dbfFamilia )->( Recno() ) != 0 .and. aScan( aRecFam, ( dbfFamilia )->( Recno() ) ) == 0
-         aAdd( aRecFam, ( dbfFamilia )->( Recno() ) )
-      end if
-
-   end if
-
-   // Nos piden avanzar montamos el boton anterior------------------------------
-
-   if ( !lRepos .and. lAvance ) .or. ( !lRepos .and. !lAvance .and. len( aRecFam ) > 1 )
-
-      oBtnFam[ n ]:ReLoadBitmap( "AnteriorFamilia" )
-      oBtnFam[ n ]:Cargo               := .t.
-      oBtnFam[ n ]:bAction             := {|| loaFam( .f., .f., aGetArt, aTmpArt, aTmp, nMode ) }
-      oBtnFam[ n ]:bRClicked           := nil
-      oBtnFam[ n ]:lTransparent        := .t.
-      oBtnFam[ n ]:Show()
-
-	  SetWindowText( oBtnFam[ n ]:hWnd, "" )
-
-      oSayFam[ n ]:SetText( "Anterior" )
-      oSayFam[ n ]:Show()
-
-      n++
-
-   end if
-
-   // Montamos las familias----------------------------------------------------
-
-   nNumeroFamilias         := nNumeroFamilias()
-
-   while n <= nNumeroFamilias // ( nNumBtnFam - 1 )
-
-      if !( dbfFamilia )->( eof() )
-
-         if File( cFileBmpName( ( dbfFamilia )->cImgBtn ) )
-
-            oBtnFam[ n ]:ReLoadBitmap( cFileBmpName( ( dbfFamilia )->cImgBtn ) )
-
-         	oSayFam[ n ]:Show()
-         	oSayFam[ n ]:SetText( Rtrim( ( dbfFamilia )->cNomFam ) )
-
-			SetWindowText( oBtnFam[ n ]:hWnd, "" )
-
-         else
-
-			oBtnFam[ n ]:HideBitmap()
-
-         	oSayFam[ n ]:Hide()
-         	oSayFam[ n ]:SetText( Rtrim( ( dbfFamilia )->cNomFam ) )
-
-			SetWindowText( oBtnFam[ n ]:hWnd, Rtrim( ( dbfFamilia )->cNomFam ) )
-
-            /*
-            if ( dbfFamilia )->nColBtn != 0
-               oBtnFam[ n ]:SetColor( 0, ( dbfFamilia )->nColBtn )
-            else
-               oBtnFam[ n ]:SetColor( 0, GetSysColor( COLOR_BTNFACE ) )
-            end if
-            */
-
-		 end if
-
-
-         oBtnFam[ n ]:Show()
-         oBtnFam[ n ]:Cargo            := .f.
-         oBtnFam[ n ]:lTransparent     := .f.
-         oBtnFam[ n ]:bAction          := bLoaPrd( ( dbfFamilia )->cCodFam, aGetArt, aTmpArt, aTmp )
-
-         if !lTactilMode()
-            oBtnFam[ n ]:bRClicked     := bEdtFam( ( dbfFamilia )->cCodFam )
-         end if
-
-         ( dbfFamilia )->( dbSkip() )
-
-      end if
-
-      n++
-
-   end while
-
-   if lMostrarFamilias()
-
-      oSayFam[ n ]:SetText( "Siguiente" )
-      oSayFam[ n ]:Show()
-
-      oBtnFam[ n ]:ReLoadBitmap( "SiguienteFamilia" )
-      oBtnFam[ n ]:Cargo               := .t.
-      oBtnFam[ n ]:lTransparent        := .t.
-      oBtnFam[ n ]:bAction             := {|| loaFam( .t., .f., aGetArt, aTmpArt, aTmp, nMode ) }
-      oBtnFam[ n ]:Show()
-
-   end if
-
-   /*
-   Buscamos la primera familia de la nueva situación---------------------------
-   */
-
-   if lRepos
-
-      if !Empty( oBtnIni:bAction )
-         Eval( oBtnIni:bAction, oBtnIni )
-      end if
-
-   else
-
-      for n := 1 to len( oBtnFam )
-
-         if !oBtnFam[ n ]:Cargo
-
-            if !Empty( oBtnFam[ n ]:bAction )
-               Eval( oBtnFam[ n ]:bAction, oBtnFam[ n ] )
-            end if
-
-            exit
-
-         end if
-
-      next
-
-   end if
-
-Return ( nil )
-
-//--------------------------------------------------------------------------//
-
-Static Function loaIni( lAvance, lInit, aGetArt, aTmpArt, aTmp )
-
-   local n           := 1
-   local nOrd        := ( dbfArticulo )->( OrdSetFocus( "nPosTcl" ) )
-
-   DEFAULT lAvance   := .t.
-   DEFAULT lInit     := .f.
-
-   /*
-   Liberamos todos los botones
-   */
-
-   if lInit
-
-      ( dbfArticulo )->( dbGoTop() )
-
-      aRecArt        := {}
-      aAdd( aRecArt, ( dbfArticulo )->( Recno() ) )
-
-   else
-
-      if !lAvance
-
-         aDel( aRecArt, len( aRecArt ), .t. )
-         ( dbfArticulo )->( dbGoTo( aRecArt[ len( aRecArt  ) ] ) )
-
-      else
-
-         aAdd( aRecArt, ( dbfArticulo )->( Recno() ) )
-
-      end if
-
-   end if
-
-   SysRefresh()
-
-   if ( !lInit .and. len( aRecArt ) > 1 )
-
-      oSayArt[ n ]:SetText( "Anterior" )
-      oSayArt[ n ]:Show()
-
-      oBtnArt[ n ]:ReLoadBitmap( "AnteriorArticulo" )
-      oBtnArt[ n ]:Cargo         := .t.
-      oBtnArt[ n ]:bAction       := {|| loaIni( .f., .f., aGetArt, aTmpArt, aTmp ) }
-      oBtnArt[ n ]:bRClicked     := nil
-      oBtnArt[ n ]:lTransparent  := .t.
-      oBtnArt[ n ]:Show()
-
-	  SetWindowText( oBtnArt[ n ]:hWnd, "" )
-
-      n++
-
-   end if
-
-   while n <= nNumBtnArt - 1
-
-      while !( dbfArticulo )->( eof() ) .and. n <= nNumBtnArt - 1
-
-         if ( dbfArticulo )->nPosTcl != 0 .and. ( dbfArticulo )->lIncTcl
-
-            if File( cFileBmpName( ( dbfArticulo )->cImagen ) )
-
-				oBtnArt[ n ]:ReLoadBitmap( cFileBmpName( ( dbfArticulo )->cImagen ) )
-
-            	oSayArt[ n ]:SetText( if( !Empty( ( dbfArticulo )->cDesTcl ), Rtrim( ( dbfArticulo )->cDesTcl ), Rtrim( ( dbfArticulo )->Nombre ) ) )
-           		oSayArt[ n ]:SetColor( oDlgTpv:nClrText, oDlgTpv:nClrPane )
-
-				oSayArt[ n ]:Show()
-
-            else
-
-				SetWindowText( oBtnArt[ n ]:hWnd, if( !Empty( ( dbfArticulo )->cDesTcl ), Rtrim( ( dbfArticulo )->cDesTcl ), Rtrim( ( dbfArticulo )->Nombre ) ) )
-               	oBtnArt[ n ]:HideBitmap()
-
-				/*
-            	oSayArt[ n ]:SetText( "" )
-				oSayArt[ n ]:SetColor( Rgb( 255, 0, 0 ), Rgb( 255, 0, 0 ) )
-				*/
-
-				oSayArt[ n ]:Hide()
-
-            end if
-
-            oBtnArt[ n ]:Show()
-            oBtnArt[ n ]:bAction          := bAddPrd( ( dbfArticulo )->Codigo, aGetArt, aTmpArt, aTmp )
-            oBtnArt[ n ]:bRClicked        := bEdtPrd( ( dbfArticulo )->Codigo )
-
-            n++
-
-         end if
-
-         ( dbfArticulo )->( dbSkip() )
-
-      end while
-
-      if n <= nNumBtnArt - 1
-         oSayArt[ n ]:Hide()
-         oBtnArt[ n ]:Hide()
-         oBtnArt[ n ]:bAction    := nil
-         n++
-      end if
-
-   end while
-
-   if !( dbfArticulo )->( eof() )
-
-      oBtnArt[ n ]:ReLoadBitmap( "SiguienteArticulo" )
-      oBtnArt[ n ]:bAction       := {|| loaIni( .t., .f., aGetArt, aTmpArt, aTmp ) }
-      oBtnArt[ n ]:lTransparent  := .t.
-      oBtnArt[ n ]:Show()
-
-      oSayArt[ n ]:SetText( "Siguiente" )
-      oSayArt[ n ]:Show()
-
-   else
-
-      oBtnArt[ n ]:Hide()
-      oBtnArt[ n ]:bAction       := nil
-
-      oSayArt[ n ]:Hide()
-
-   end if
-
-   ( dbfArticulo )->( OrdSetFocus( nOrd ) )
-
-   SysRefresh()
-
-Return ( nil )
-
-//--------------------------------------------------------------------------//
-
-Static Function bLoaPrd( cCodFam, aGetArt, aTmpArt, aTmp )
-
-Return ( {|Self| loaPrd( cCodFam, .t., .t., aGetArt, aTmpArt, aTmp ) } )
-
-//--------------------------------------------------------------------------//
-//
-// Cargo productos de la familia
-//
-
-Static Function loaPrd( cCodFam, lAvance, lInit, aGetArt, aTmpArt, aTmp )
-
-   local n           := 1
-
-   DEFAULT lAvance   := .t.
-   DEFAULT lInit     := .f.
-
-   /*
-   Liberamos todos los botones-------------------------------------------------
-   */
-
-   if lInit
-
-      if uFieldEmpresa( "lOrdNomTpv" )
-
-         if dbSeekInOrd( cCodFam, "nNomTpv", dbfArticulo )
-
-            aRecArt     := {}
-            aAdd( aRecArt, ( dbfArticulo )->( Recno() ) )
-
-         end if
-
-      else
-
-         if dbSeekInOrd( cCodFam, "nPosTpv", dbfArticulo )
-
-            aRecArt     := {}
-            aAdd( aRecArt, ( dbfArticulo )->( Recno() ) )
-
-         end if
-
-      end if
-
-   else
-
-      if !lAvance
-
-         aDel( aRecArt, len( aRecArt ), .t. )
-
-         ( dbfArticulo )->( dbGoTo( aRecArt[ len( aRecArt  ) ] ) )
-
-      else
-
-         aAdd( aRecArt, ( dbfArticulo )->( Recno() ) )
-
-      end if
-
-   end if
-
-   SysRefresh()
-
-   if ( !lInit .and. len( aRecArt ) > 1 )
-
-      oBtnArt[ n ]:ReLoadBitmap( "AnteriorArticulo" )
-      oBtnArt[ n ]:bAction       := {|| loaPrd( cCodFam, .f., .f., aGetArt, aTmpArt, aTmp ) }
-      oBtnArt[ n ]:lTransparent  := .t.
-      oBtnArt[ n ]:Cargo         := .t.
-      oBtnArt[ n ]:bRClicked     := nil
-
-	  SetWindowText( oBtnArt[ n ]:hWnd, "" )
-
-      oBtnArt[ n ]:Show()
-
-      oSayArt[ n ]:SetText( "Anterior" )
-      oSayArt[ n ]:Show()
-
-      n++
-
-   end if
-
-   while n <= nNumBtnArt - 1
-
-      if ( dbfArticulo )->Familia == cCodFam .and. !( dbfArticulo )->( eof() )
-
-         if ( dbfArticulo )->lIncTcl
-
-            if File( cFileBmpName( ( dbfArticulo )->cImagen ) )
-
-               oBtnArt[ n ]:ReLoadBitmap( cFileBmpName( ( dbfArticulo )->cImagen ) )
-
-               SetWindowText( oBtnArt[ n ]:hWnd, "" )
-
-            	oSayArt[ n ]:SetText( if( !Empty( ( dbfArticulo )->cDesTcl ), Rtrim( ( dbfArticulo )->cDesTcl ), Rtrim( ( dbfArticulo )->Nombre ) ) )
-            	oSayArt[ n ]:Show()
-
-            else
-
-			   	oBtnArt[ n ]:HideBitmap()
-
-               SetWindowText( oBtnArt[ n ]:hWnd, if( !Empty( ( dbfArticulo )->cDesTcl ), Rtrim( ( dbfArticulo )->cDesTcl ), Rtrim( ( dbfArticulo )->Nombre ) ) )
-
-            	oSayArt[ n ]:SetText( "" )
-            	oSayArt[ n ]:Hide()
-
-            end if
-
-            oBtnArt[ n ]:Show()
-            oBtnArt[ n ]:bAction       := bAddPrd( ( dbfArticulo )->Codigo, aGetArt, aTmpArt, aTmp )
-            oBtnArt[ n ]:bRClicked     := bEdtPrd( ( dbfArticulo )->Codigo )
-
-            n++
-
-         end if
-
-         ( dbfArticulo )->( dbSkip() )
-
-      else
-
-         oSayArt[ n ]:Hide()
-
-         oBtnArt[ n ]:Hide()
-         oBtnArt[ n ]:bAction          := nil
-
-         n++
-
-      end if
-
-   end while
-
-   if ( dbfArticulo )->Familia == cCodFam .and. !( dbfArticulo )->( eof() )
-
-      oBtnArt[ n ]:ReLoadBitmap( "SiguienteArticulo" )
-      oBtnArt[ n ]:bAction             := {|| loaPrd( cCodFam, .t., .f., aGetArt, aTmpArt, aTmp ) }
-      oBtnArt[ n ]:lTransparent        := .t.
-
-	  SetWindowText( oBtnArt[ n ]:hWnd, "" )
-
-      oBtnArt[ n ]:Show()
-
-      oSayArt[ n ]:SetText( "Siguiente" )
-      oSayArt[ n ]:Show()
-
-
-   else
-
-      oSayArt[ n ]:Hide()
-
-      oBtnArt[ n ]:bAction             := nil
-      oBtnArt[ n ]:Hide()
-
-   end if
-
-   SysRefresh()
-
-return ( nil )
-
-//--------------------------------------------------------------------------//
-
-static function bAddPrd( cCodArt, aGetArt, aTmpArt, aTmp )
-
-return ( {|Self| AddPrd( cCodArt, aGetArt, aTmpArt, aTmp ), lRecTotal( aTmp ) } )
-
-//--------------------------------------------------------------------------//
-
-static function bEdtPrd( cCodArt )
-
-return ( {|| EdtArticulo( cCodArt ) } )
-
-//--------------------------------------------------------------------------//
-
-static function bEdtFam( cCodFam )
-
-return ( {|| EdtFamilia( cCodFam ) } )
-
-//--------------------------------------------------------------------------//
-
-static function AddPrd( cCodArt, aGetArt, aTmpArt, aTmp )
-
-   local cCodFam
-   local cCodTImp
-   local lAcum                   := .f.
-   local aArtSta                 := aGetStatus( dbfArticulo )
-   local aFamSta                 := aGetStatus( dbfFamilia  )
-
-   if Empty( cCodArt )
-      return .t.
-   end if
-
-   /*
-   Primero buscamos por codigos de barra---------------------------------------
-   */
-
-   ( dbfArticulo )->( ordSetFocus( "CodeBar" ) )
-
-   if ( dbfArticulo )->( dbSeek( cCodArt ) )
-      cCodArt                    := ( dbfArticulo )->Codigo
-   end if
-
-   ( dbfArticulo )->( ordSetFocus( "Codigo" ) )
-
-   /*
-   Ahora buscamos por el codigo interno----------------------------------------
-   */
-
-   if ( dbfArticulo )->( dbSeek( cCodArt ) )
-
-      if !lTwoLin
-
-         aTmpArt[ _CCBATIL ]     := cCodArt
-
-         if !Empty( ( dbfArticulo )->cDesTik )
-            aTmpArt[ _CNOMTIL ]  := ( dbfArticulo )->cDesTik
-         else
-            aTmpArt[ _CNOMTIL ]  := ( dbfArticulo )->Nombre
-         end if
-
-         /*
-         Texto para la comanda-------------------------------------------------
-         */
-
-         if !Empty( ( dbfArticulo )->cDesCmd )
-            aTmpArt[ _CNOMCMD ]  := ( dbfArticulo )->cDesCmd
-         else
-            aTmpArt[ _CNOMCMD ]  := aTmpArt[ _CNOMTIL ]
-         end if
-
-         /*
-         Nos quedamos con el artículo para los combinados----------------------
-         */
-
-         cCodArtAnt              := cCodArt
-
-         /*
-         Familia del artículo--------------------------------------------------
-         */
-
-         aTmpArt[ _CFAMTIL ]     := ( dbfArticulo )->Familia
-         aTmpArt[ _LTIPACC ]     := ( dbfArticulo )->lTipAcc
-         aTmpArt[ _NCTLSTK ]     := ( dbfArticulo )->nCtlStock
-
-         /*
-         Obtenemos la familia y los codigos de familia-------------------------
-         */
-
-         cCodFam                 := ( dbfArticulo )->Familia
-         if !Empty( cCodFam )
-            aTmpArt[ _CCODFAM ]  := cCodFam
-            aTmpArt[ _CGRPFAM ]  := cGruFam( cCodFam, dbfFamilia )
-
-            /*
-            Buscamos la familia del articulo y anotamos las propiedades--------
-            */
-
-            if dbSeekInOrd( cCodFam, "cCodFam", dbfFamilia )
-
-               lAcum                := ( dbfFamilia )->lAcum
-
-               aTmpArt[ _CCODPR1 ]  := ( dbfArticulo )->cCodPrp1
-               aTmpArt[ _CCODPR2 ]  := ( dbfArticulo )->cCodPrp2
-
-               cCodTImp             := ( dbfFamilia  )->cCodImp
-
-            else
-               aTmpArt[ _CCODPR1 ]  := Space( 10 )
-               aTmpArt[ _CCODPR2 ]  := Space( 10 )
-            end if
-
-            if !Empty( cCodTImp ) .and. oTComandas:oDbf:SeekInOrd( cCodTImp, "cCodigo" )
-
-               aTmpArt[ _CCODTIMP ] := cCodTImp
-               aTmpArt[ _NORTIMP  ] := oTComandas:oDbf:nOrden
-
-            else
-
-               aTmpArt[ _NORTIMP ]  := 0
-
-            end if
-
-         end if
-
-         /*
-         Guardamos las impresoras de comandas en las lineas--------------------
-         */
-
-         aTmpArt[ _CIMPCOM1 ]    := ( dbfArticulo )->cTipImp1
-         aTmpArt[ _CIMPCOM2 ]    := ( dbfArticulo )->cTipImp2
-
-         /*
-         Obtenemos el Tipo de IGIC
-         */
-
-         aTmpArt[ _NIVATIL ]     := nIva( dbfIva, ( dbfArticulo )->TipoIva )
-         aTmpArt[ _NPVPTIL ]     := nRetPreArt( aTmp[ _NTARIFA ], cDivEmp(), .t., dbfArticulo, dbfDiv, dbfKit, dbfIva, .t. )
-
-         /*
-         Obtenemos el factor de conversion-------------------------------------------
-         */
-
-         if ( dbfArticulo )->lFacCnv
-            aTmpArt[ _NFACCNV ]     := ( dbfArticulo )->nFacCnv
-         end if
-
-         /*
-         Obtenemos el numero de unidades---------------------------------------------
-         */
-
-         if !Empty( aTmpArt[ _NUNTTIL ] )
-
-            if ValType( aTmpArt[ _NUNTTIL ] ) == "C"
-               aTmpArt[ _NUNTTIL ]  := Val( aTmpArt[ _NUNTTIL ] )
-            end if
-
-         else
-
-            aTmpArt[ _NUNTTIL ]     := 1
-
-         end if
-
-         aTmpArt[ _CALMLIN ]        := oUser():cAlmacen()
-
-         /*
-         Comprobamos si hay promociones por fidelizacion-----------------------------
-         */
-
-         aTmpArt[ _LINPROMO ]       := oFideliza:InPrograma( aTmpArt[ _CCBATIL ], aTmp[ _DFECTIK ], dbfArticulo )
-
-         /*
-         Imprimo en el visor el nombre y precio del artículo-------------------
-         */
-
-         if oVisor != nil
-            oVisor:SetBufferLine( { aTmpArt[ _CNOMTIL ], Trans( aTmpArt[ _NPVPTIL ], cPouDiv ) }, 1 )
-         end if
-
-         /*
-         Si el articulo no esta en la lista lo agregamos-----------------------
-         */
-
-         aTmpArt[ _NNUMLIN ]        := nLastNum( dbfTmpL )
-
-         if lAcum
-            WinGather( aTmpArt, aGetArt, dbfTmpL, oBrwDet, APPD_MODE, nil, .t. )
-         else
-            if !lIsCode( aTmpArt, dbfTmpL, oBrwDet )
-               WinGather( aTmpArt, aGetArt, dbfTmpL, oBrwDet, APPD_MODE, nil, .t. )
-            end if
-         end if
-
-      else
-
-         aTmpArt                    := dbScatter( dbfTmpL )
-         aTmpArt[ _CCOMTIL ]        := cCodArt
-
-         if !Empty( ( dbfArticulo )->cDesTik )
-            aTmpArt[ _CNCMTIL ]     := ( dbfArticulo )->cDesTik
-         else
-            aTmpArt[ _CNCMTIL ]     := ( dbfArticulo )->Nombre
-         end if
-
-         /*
-         Factor de conversion
-         ----------------------------------------------------------------------
-         */
-
-         if ( dbfArticulo )->lFacCnv
-            aTmpArt[ _NFCMCNV ]     := ( dbfArticulo )->nFacCnv
-         end if
-
-         /*
-         Familia del artículo
-         */
-
-         aTmpArt[ _CFCMTIL ]        := ( dbfArticulo )->Familia
-
-         /*
-         Importe de los productos----------------------------------------------
-         */
-
-         aTmpArt[ _NPCMTIL ]        := nRetPreArt( oSalaVentas:nSelectedCombinado, cDivEmp(), .t., dbfArticulo, dbfDiv, dbfKit, dbfIva, uFieldEmpresa( "LBUSIMP" ) )
-         aTmpArt[ _NPVPTIL ]        := cRetPreArt( aTmpArt[ _CCBATIL ], oSalaVentas:nSelectedCombinado, cDivEmp(), .t., dbfArticulo, dbfDiv, dbfKit, dbfIva, .t. )
-
-         lTwoLin                    := .f.
-
-         /*
-         Imprimo en el visor el nombre y precio del artículo-------------------
-         */
-
-         if oVisor != nil
-            oVisor:Say( aTmpArt[ _CNOMTIL ], Trans( aTmpArt[ _NPVPTIL ], cPouDiv ) )
-         end if
-
-         WinGather( aTmpArt, aGetArt, dbfTmpL, oBrwDet, EDIT_MODE, nil, .t. )
-
-         /*
-         si combinamos con una familia volvemos al origen----------------------
-         */
-
-         if !Empty( cCodFamAnt )
-            loaPrd( cCodFamAnt, .t., .t., aGetArt, aTmpArt, aTmp )
-         end if
-
-         /*
-         Limpiamos los valores usados para combinar----------------------------
-         */
-
-         cCodArtAnt                 := ""
-         cCodFamAnt                 := ""
-
-      end if
-
-      /*
-      Cargamos los valores por defecto de nuevo--------------------------------
-      */
-
-      aGetArt[ _NUNTTIL ]:cText( "" )
-      aTmpArt[ _NPVPTIL ]        := 0
-
-      /*
-      Pintamos el buffer-------------------------------------------------------
-      */
-
-      if ( dbfFamilia )->lMostrar
-         ComentariosTPV( aGetArt, aTmpArt, dbfTmpL, ( dbfFamilia )->cComFam )
-         oBrwDet:Refresh()
-      end if
-
-      if oVisor != nil
-         oVisor:SetBufferLine( { "Total", Trans( nTotTik, cPorDiv ) }, 2 )
-         oVisor:WriteBufferLine()
-      end if
-
-   else
-
-      MsgBeepStop( "Artículo no encontrado" )
-
-   end if
-
-   /*
-   Retomamos el estado del la base de datos------------------------------------
-   */
-
-   SetStatus( dbfArticulo, aArtSta )
-   SetStatus( dbfFamilia,  aFamSta )
-
-return ( nil )
-
-//--------------------------------------------------------------------------//
 
 Static Function EdtCob( aTmp, aGet, dbfTikP, oBrw, bWhen, bValid, nMode, aTmpTik )
 
@@ -14612,7 +13055,7 @@ STATIC FUNCTION DelStart( oDesde, oDlg, oBtnAceptar, oBtnCancel, oTxtDel, lCance
 
             oTxtDel:cText  := "Eliminando : " + ( dbfTikT )->cSerTik + "/" + Alltrim( ( dbfTikT )->cNumTik ) + "/" + ( dbfTikT )->cSufTik
 
-            DelTpv( nil, dbfTikT )
+            WinDelRec( , dbfTikT, {|| TpvDelRec() } )
 
          else
 
@@ -14642,9 +13085,7 @@ STATIC FUNCTION DelStart( oDesde, oDlg, oBtnAceptar, oBtnCancel, oTxtDel, lCance
 
             oTxtDel:cText  := "Eliminando : " + ( dbfTikT )->cSerTik + "/" + Alltrim( ( dbfTikT )->cNumTik ) + "/" + ( dbfTikT )->cSufTik
 
-            DelTpv( nil, dbfTikT )
-
-            //TpvDelRec( nil, .f., .f. )
+            WinDelRec( , dbfTikT, {|| TpvDelRec() } )
 
          else
 
@@ -14863,8 +13304,7 @@ FUNCTION DelTikCli( nNumTik, lOpenBrowse )
 
       if FrontTpv( , , , , .f. )
          if dbSeekInOrd( nNumTik, "cNumTik", dbfTikT )
-            //oWndBrw:RecDel()
-            DelTpv( oWndBrw:oBrw, dbfTikT )
+            WinDelRec( oWndBrw, dbfTikT, {|| TpvDelRec() } )
          else
             MsgStop( "No se encuentra ticket" )
          end if
@@ -14875,8 +13315,7 @@ FUNCTION DelTikCli( nNumTik, lOpenBrowse )
       if OpenFiles( nil, .t. )
          if dbSeekInOrd( nNumTik, "cNumTik", dbfTikT )
             nTotTik()
-            //TpvDelRec()
-            DelTpv( nil, dbfTikT )
+            WinDelRec( oWndBrw, dbfTikT, {|| TpvDelRec() } )
          else
             MsgStop( "No se encuentra ticket" )
          end if
@@ -15201,54 +13640,6 @@ FUNCTION IsTpv( cPath )
       !lExistIndex( cPath + "TIKEC.Cdx" )
 
       rxTpv( cPath )
-
-   end if
-
-Return ( nil )
-
-//---------------------------------------------------------------------------//
-
-Static Function ClickEntrega( aTmp, aGet, oDlgTpv )
-
-   /*
-   Vamos a comprobar q hay algo q guardar--------------------------------------
-   */
-
-   if ( dbfTmpL )->( ordKeyCount() ) != 0
-
-      aTmp[ _LABIERTO ] := .f.
-
-      /*
-      Guardamos el tiket de manera normal--------------------------------------
-      */
-
-      if GuardaVenta( aTmp, aGet, .f. )
-
-         /*
-         Paramos a la ventana-----------------------------------------------------
-         */
-
-         oDlgTpv:Disable()
-
-         /*
-         Proceso de impresion-----------------------------------------------------
-         */
-
-         ImpTiket( .f., .t. )
-
-         /*
-         Ponemos en marcha la ventana---------------------------------------------
-         */
-
-         oDlgTpv:Enable()
-
-         /*
-         Titulo de la ventana-----------------------------------------------------
-         */
-
-         cTitleDialog( aTmp )
-
-      end if
 
    end if
 
@@ -15880,9 +14271,6 @@ Static Function DataReport( oFr )
 
    oFr:SetWorkArea(     "Familias", ( dbfFamilia )->( Select() ) )
    oFr:SetFieldAliases( "Familias", cItemsToReport( aItmFam() ) )
-
-   oFr:SetWorkArea(     "Sala venta", oSalaVentas:oDbf:nArea )
-   oFr:SetFieldAliases( "Sala venta", cObjectsToReport( oSalaVentas:oDbf ) )
 
    oFr:SetWorkArea(     "Orden comanda", oTComandas:oDbf:nArea )
    oFr:SetFieldAliases( "Orden comanda", cObjectsToReport( oTComandas:oDbf ) )
@@ -16881,39 +15269,6 @@ Return nil
 
 //---------------------------------------------------------------------------//
 
-function lCombinado( cCodArt, aGetArt, aTmpArt, aTmp )
-
-   local nRecArt
-   local nRecFam
-
-   lTwoLin              := !lTwoLin
-
-   if lTwoLin
-
-      nRecArt           := ( dbfArticulo )->( Recno() )
-      nRecFam           := ( dbfFamilia )->( Recno() )
-
-      if dbSeekInOrd( cCodArtAnt, "Codigo", dbfArticulo )
-
-         if dbSeekInOrd( ( dbfArticulo )->Familia, "cCodFam", dbfFamilia ) .and. !Empty( ( dbfFamilia )->cFamCmb )
-
-            cCodFamAnt  := ( dbfArticulo )->Familia
-
-            loaPrd( ( dbfFamilia )->cFamCmb, .t., .t., aGetArt, aTmpArt, aTmp )
-
-         end if
-
-      end if
-
-      ( dbfArticulo )->( dbGoTo( nRecArt ) )
-      ( dbfFamilia )->( dbGoTo( nRecFam ) )
-
-   end if
-
-return .t.
-
-//---------------------------------------------------------------------------//
-
 Function SynTikCli( cPath )
 
    local oBlock
@@ -17621,81 +15976,65 @@ Static Function lCambiaTicket( lSubir, aTmp, aGet, nMode )
 
    end if
 
-   /*oBlock               := ErrorBlock( {| oError | ApoloBreak( oError ) } )
-   BEGIN SEQUENCE*/
+   oBlock               := ErrorBlock( {| oError | ApoloBreak( oError ) } )
+   BEGIN SEQUENCE
 
    nSaveMode            := EDIT_MODE
 
    /*
-   Guarda la venta actual------------------------------------------------------
+   Subo o bajo un registro-----------------------------------------------------
    */
 
-   if GuardaVenta( aTmp, aGet )
-
-      /*
-      Subo o bajo un registro--------------------------------------------------
-      */
-
-      if lSubir
-         ( dbfTikT )->( dbSkip( -1 ) )
-      else
-         ( dbfTikT )->( dbSkip() )
-      end if
-
-      /*
-      Abrimos el ticket seleccionado-------------------------------------------
-      */
-
-      aScatter( dbfTikT, aTmp )
-
-      BeginTrans( aTmp, aGet, nMode, .f. )
-
-      /*
-      Botones de la officebar--------------------------------------------------
-      */
-
-      if lTactilMode()
-         oSalaVentas:ConfigButton( oBtnTarifa, oBtnRenombrar )
-      end if
-
-      /*
-      Titulo de la ventana-----------------------------------------------------
-      */
-
-      cTitleDialog( aTmp )
-
-      /*
-      Botones de la ventana de tpv---------------------------------------------
-      */
-
-      SetButtonEdtRec( nSaveMode, aTmp )
-
-      /*
-      Recalculamos el total----------------------------------------------------
-      */
-
-      lRecTotal( aTmp )
-
-      /*
-      Cargamos y refrescamos datos del cliente------------------------------
-      */
-
-      cOldCodCli        := ""
-
-      if !Empty( aGet[ _CCLITIK ] )
-         aGet[ _CCLITIK ]:SetFocus()
-         aGet[ _CCLITIK ]:lValid()
-      end if
-
+   if lSubir
+      ( dbfTikT )->( dbSkip( -1 ) )
+   else
+      ( dbfTikT )->( dbSkip() )
    end if
 
-   /*RECOVER USING oError
+   /*
+   Abrimos el ticket seleccionado-------------------------------------------
+   */
 
-      msgStop( ErrorMessage( oError ), "Error al cambiar de ticket" )
+   aScatter( dbfTikT, aTmp )
+
+   BeginTrans( aTmp, aGet, nMode, .f. )
+
+   /*
+   Titulo de la ventana-----------------------------------------------------
+   */
+
+   cTitleDialog( aTmp )
+
+   /*
+   Botones de la ventana de tpv---------------------------------------------
+   */
+
+   SetButtonEdtRec( nSaveMode, aTmp )
+
+   /*
+   Recalculamos el total----------------------------------------------------
+   */
+
+   lRecTotal( aTmp )
+
+   /*
+   Cargamos y refrescamos datos del cliente------------------------------
+   */
+
+   cOldCodCli        := ""
+
+   if !Empty( aGet[ _CCLITIK ] )
+      aGet[ _CCLITIK ]:SetFocus()
+      aGet[ _CCLITIK ]:lValid()
+   end if
+
+   RECOVER USING oError
+
+   msgStop( ErrorMessage( oError ), "Error al cambiar de ticket" )
 
    END SEQUENCE
 
-   ErrorBlock( oBlock )*/
+   ErrorBlock( oBlock )
 
 Return .t.
 
@@ -17769,65 +16108,6 @@ Function StopAutoImp()
    end if
 
 Return( nil )
-
-//---------------------------------------------------------------------------//
-
-Function pdaTicket( oMenuItem )
-
-   local oBlock
-   local oError
-   local nLevel
-
-   DEFAULT  oMenuItem   := _MENUITEM_
-
-   if !OpenFiles()
-      return nil
-   end if
-
-   nLevel               := nLevelUsr( oMenuItem )
-   if nAnd( nLevel, 1 ) != 0
-      msgStop( "Acceso no permitido." )
-      return nil
-   end if
-
-   if Empty( nZona )
-      PdaZona()
-   end if
-
-   if IsTrue( oSalaVentas:lPuntosVenta )
-
-      while !IsNil( pdaGetSalaVenta() )
-
-         if !Empty( oSalaVentas:cSelectedTiket )
-            EdtPda( oSalaVentas:cSelectedTiket, EDIT_MODE )
-         else
-            EdtPda( nil, APPD_MODE )
-         end if
-
-      end while
-
-   end if
-
-   oBlock               := ErrorBlock( {| oError | ApoloBreak( oError ) } )
-   BEGIN SEQUENCE
-
-   CloseFiles()
-
-   RECOVER USING oError
-
-      msgStop( "Imposible abrir tikects" )
-
-   END SEQUENCE
-
-   ErrorBlock( oBlock )
-
-   // Restauramos la ventana---------------------------------------------------
-
-   if !Empty( oWnd() )
-      oWnd():Show()
-   end if
-
-Return Nil
 
 //---------------------------------------------------------------------------//
 
@@ -17939,18 +16219,7 @@ Static Function pdaOpenFiles()
          USE ( cPatGrp() + "CONFIG.DBF" ) NEW VIA ( cDriver() ) SHARED ALIAS ( cCheckArea( "CONFIG", @dbfConfig ) )
          SET ADSINDEX TO ( cPatGrp() + "CONFIG.CDX" ) ADDITIVE
 
-
-         oSalaVentas          := TSalaVenta():New( cPatEmp() )
-         if !oSalaVentas:OpenFiles()
-            lOpenFiles        := .f.
-         else
-            oSalaVentas:cTikT := dbfTikT
-            oSalaVentas:cTikL := dbfTikL
-            oSalaVentas:cDiv  := dbfDiv
-            oSalaVentas:BuildSala()
-         end if
-
-         //LLenamos los pictures de la divisa
+         // LLenamos los pictures de la divisa
 
          cPouDiv              := cPouDiv( cDivEmp(), dbfDiv )        // Picture de la divisa
          cPorDiv              := cPorDiv( cDivEmp(), dbfDiv )        // Picture de la divisa redondeada
@@ -17995,18 +16264,12 @@ Static Function pdaCloseFiles()
    if( !Empty( dbfFPago          ), ( dbfFPago           )->( dbCloseArea() ), )
    if( !Empty( dbfConfig         ), ( dbfConfig          )->( dbCloseArea() ), )
 
-   if !Empty( oSalaVentas )
-      oSalaVentas:end()
-   end if
-
    dbfFamilia        := nil
    dbfArticulo       := nil
    dbfTblCnv         := nil
    dbfCount          := nil
    dbfFPago          := nil
    dbfConfig         := nil
-
-   oSalaVentas       := nil
 
    lOpenFiles        := .f.
 
@@ -18039,14 +16302,6 @@ Static Function EdtPda( cNumTik, nMode )
    Cargamos los campos de la tabal en el array---------------------------------
    */
 
-   if !Empty( oSalaVentas )
-
-      if lLockMesa( oSalaVentas:cSelectedSala, oSalaVentas:cSelectedPunto )
-         return .f.
-      end if
-
-   end if
-
    do case
       case nMode == APPD_MODE
          aTmp              := dbBlankRec( dbfTikT )
@@ -18076,14 +16331,6 @@ Static Function EdtPda( cNumTik, nMode )
    oBlock                  := ErrorBlock( {| oError | ApoloBreak( oError ) } )
    BEGIN SEQUENCE
 
-   if nMode == APPD_MODE
-
-      aTmp[ _CCODSALA  ]   := oSalaVentas:cSelectedSala
-      aTmp[ _CPNTVENTA ]   := oSalaVentas:cSelectedPunto
-      aTmp[ _NTARIFA   ]   := oSalaVentas:nTarifa
-
-   end if
-
    oFont                   := TFont():New( "MS Sans Serif",   7, 8, .f., .t. )
 
    lShowBrwLin             := .f.
@@ -18098,7 +16345,7 @@ Static Function EdtPda( cNumTik, nMode )
    oBtnSalon               := TBtnBmp():ReDefine( 203, "pda_write_16",,,,,{|| PdaShowBrwLin( oBtnSalon, oNumTot, oBrwLin, oBrwFamilia, oBrwArt, !lShowBrwLin, oTitArt, oTitPrc, oSayTit ), lRecTotal( aTmp ) }, oDlgTpv, .f., , .f., , , , , , .f.  )
 
    REDEFINE SAY oSayTit UPDATE;
-      PROMPT   AllTrim( oSalaVentas:cTextoSala() ) + " " + AllTrim( oSalaVentas:cSelectedPunto ) ;
+      PROMPT   "" ;
       FONT     oFont ;
       ID       204 ;
       OF       oDlgTpv
@@ -18283,15 +16530,11 @@ static function EndEdtPda( aTmp, aGet, nMode, oDlgTpv )
 
       if PdaNewTiket( aTmp, aGet, nMode, .t. )
 
-         lFreeMesa( oSalaVentas:cSelectedSala, oSalaVentas:cSelectedPunto )
-
          oDlgTpv:End()
 
       end if
 
    else
-
-       lFreeMesa( oSalaVentas:cSelectedSala, oSalaVentas:cSelectedPunto )
 
        oDlgTpv:End()
 
@@ -18607,7 +16850,7 @@ Static Function pdaBtnFamilias( aTmp, aGet, nMode, oBrwArticulo, oDlgTpv )
       oBtnChange                    := TBtnBmp():ReDefine( 203, "pda_write_16",,,,,{|| PdaShowBrwFam( oBrwFamilia, oBrwLin, oBrwArticulo, !lShowBrwFam, aBtnFam, oBtnAnterior, oBtnSiguiente, oDlg, oSayTitle, oBtnMenos, oBtnMas ), lRecTotal( aTmp ) }, oDlg, .f., , .f., , , , , , .f.  )
 
       REDEFINE SAY oSayTitle ;
-         PROMPT   AllTrim( oSalaVentas:cTextoSala() ) + " " + AllTrim( oSalaVentas:cSelectedPunto ) ;
+         PROMPT   "" ;
          FONT     oFont ;
          ID       204 ;
          OF       oDlg
@@ -18687,7 +16930,7 @@ Static Function pdaBtnFamilias( aTmp, aGet, nMode, oBrwArticulo, oDlgTpv )
          oBtnChange               := TBtnBmp():ReDefine( 203, "pda_write_16",,,,,{|| PdaShowBrwFam( oBrwFamilia, oBrwLin, oBrwArticulo, !lShowBrwFam, aBtnFam, oBtnAnterior, oBtnSiguiente, oDlg, oSayTitle, oBtnMenos, oBtnMas ), lRecTotal( aTmp ) }, oDlg, .f., , .f., , , , , , .f.  )
 
          REDEFINE SAY oSayTitle ;
-            PROMPT   AllTrim( oSalaVentas:cTextoSala() ) + " " + AllTrim( oSalaVentas:cSelectedPunto ) ;
+            PROMPT   "" ;
             FONT     oFont ;
             ID       204 ;
             OF       oDlg
@@ -19048,10 +17291,6 @@ function pdaZona()
    local aCbxSalon   := {}
    local sSala
 
-   for each sSala in oSalaVentas:aSalas
-      aAdd( aCbxSalon, sSala:cDescripcion )
-   next
-
    DEFINE DIALOG oDlg RESOURCE "ZONATS"
 
    REDEFINE COMBOBOX oCbxSalon ;
@@ -19163,20 +17402,6 @@ RETURN ( nil )
 //---------------------------------------------------------------------------//
 
 Static Function cTitleSalaVenta( oSayVta, oSayTit )
-
-   if !Empty( oSalaVentas )
-
-      if!Empty( oSayVta )
-         oSayVta:SetText( AllTrim( oSalaVentas:cTextoSala() ) + " " + AllTrim( oSalaVentas:cSelectedPunto ) )
-         oSayVta:Refresh()
-      end if
-
-      if !Empty( oSayTit )
-         oSayTit:SetText( "Dario" )
-         oSayTit:Refresh()
-      end if
-
-   end if
 
 Return ( nil )
 
@@ -19311,177 +17536,6 @@ return nil
 
 #endif
 
-//---------------------------------------------------------------------------//
-
-#ifndef __PDA__
-
-//---------------------------------------------------------------------------//
-
-Static Function GetSalaVenta( aTmp, aGet, lPuntosLibres )
-
-   local oError
-   local oBlock
-   local lReturn           := .t.
-
-   // DEFAULT lPuntosLibres   := .f.
-
-   oBlock                  := ErrorBlock( {| oError | ApoloBreak( oError ) } )
-   BEGIN SEQUENCE
-
-   /*
-   Guarda la venta actual---------------------------------------------------
-   */
-
-   if GuardaVenta( aTmp, aGet )
-
-      /*
-      Muestra el boton---------------------------------------------------------
-      */
-
-      if oSalaVentas:Sala( oBtnTarifa, lPuntosLibres, .t., dbfTikT )
-
-         do case
-            case IsFalse( oSalaVentas:lPuntosVenta )
-
-            /*
-            Si el punto seleccionado no esta vacio y es distinto del actual y no existen ventas en ese punto
-            */
-
-            if !Empty( oSalaVentas:cSelectedSala ) // .and. ( aTmp[ _CCODSALA ] != oSalaVentas:cSelectedSala )
-
-               aTmp[ _CCODSALA   ]           := oSalaVentas:cSelectedSala
-               aTmp[ _NTARIFA    ]           := oSalaVentas:nSelectedPrecio
-
-               if ( dbfTmpL )->( ordKeyCount() ) != 0
-
-                  Recalcula( aTmp )
-
-                  TmpTiket( aTmp, aGet, nSaveMode, .f. )
-
-               end if
-
-            end if
-
-         case IsTrue( oSalaVentas:lPuntosVenta )
-
-            if IsFalse( lPuntosLibres )
-
-               if !Empty( oSalaVentas:cSelected() )
-
-                  if ApoloMsgNoYes( "¿Desea cambiar la ubicación actual a la sala " + Alltrim( oSalaVentas:cSelectedSala ) + ", " + Alltrim( oSalaVentas:cSelectedPunto ) + " ?" )
-
-                     aTmp[ _CCODSALA   ]        := oSalaVentas:cSelectedSala
-                     aTmp[ _CPNTVENTA  ]        := oSalaVentas:cSelectedPunto
-
-                  end if
-
-               end if
-
-            else
-
-               /*
-               Si el punto seleccionado no esta vacio y es distinto del actual y no existen ventas en ese punto
-               */
-
-               if !Empty( oSalaVentas:cSelected() )
-
-                  if !Empty( oSalaVentas:cSelectedTicket() ) .and. ( dbSeekInOrd( oSalaVentas:cSelectedTicket(), "cNumTik", dbfTikT ) )
-
-                     aScatter( dbfTikT, aTmp )
-
-                     if !BeginTrans( aTmp, aGet, EDIT_MODE, .t. )
-                        nSaveMode               := EDIT_MODE
-                     end if
-
-                  else
-
-                     aScatter( dbfTikT, aTmp )
-
-                     if !BeginTrans( aTmp, aGet, APPD_MODE, .t. )
-                        nSaveMode               := APPD_MODE
-                     end if
-
-                  end if
-
-               else
-
-                  aScatter( dbfTikT, aTmp )
-
-                  if !BeginTrans( aTmp, aGet, APPD_MODE, .t. )
-                     nSaveMode                  := APPD_MODE
-                  end if
-
-               end if
-
-               if lReturn
-
-                  aTmp[ _CCODSALA   ]              := oSalaVentas:cSelectedSala
-                  aTmp[ _CPNTVENTA  ]              := oSalaVentas:cSelectedPunto
-                  aTmp[ _NTARIFA    ]              := oSalaVentas:nSelectedPrecio
-
-               end if
-
-            end if
-
-         end case
-
-            /*
-            Pintamos los botones--------------------------------------------------------
-            */
-
-            oSalaVentas:ConfigButton( oBtnTarifa, oBtnRenombrar )
-
-            /*
-            Titulo de la ventana--------------------------------------------------------
-            */
-
-            cTitleDialog( aTmp )
-
-            /*
-            Recalculamos el total-------------------------------------------------
-            */
-
-            lRecTotal( aTmp )
-
-      end if
-
-   end if
-
-   RECOVER USING oError
-
-      msgStop( "Error al montar la salas de venta" + CRLF + ErrorMessage( oError ) )
-
-   END SEQUENCE
-
-   ErrorBlock( oBlock )
-
-Return ( lReturn )
-
-//---------------------------------------------------------------------------//
-//---------------------------------------------------------------------------//
-
-Static Function pdaGetSalaVenta( lPuntosLibres )
-
-   DEFAULT lPuntosLibres   := .f.
-
-      if oSalaVentas:Sala( , lPuntosLibres, dbfTikT )
-
-         if IsFalse( oSalaVentas:lPuntosVenta ) .or. Empty( oSalaVentas:cSelected() )
-
-            Return nil
-
-         end if
-
-      else
-
-         Return nil
-
-      end if
-
-Return ( oSalaVentas )
-
-//---------------------------------------------------------------------------//
-#endif
 //---------------------------------------------------------------------------//
 
 FUNCTION mkTpv( cPath, lAppend, cPathOld, oMeter )

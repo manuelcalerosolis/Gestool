@@ -3910,13 +3910,6 @@ Function BuildMenu()
                WHEN     lCurSesion() ;
                RESOURCE "Cashier_user1_16"
 
-            MENUITEM    "&2. T. P. V. táctil";
-               HELPID   "01064" ;
-               MESSAGE  "Pasar a venta por mostrador táctil";
-               ACTION   ( TactilTpv( oMenuItem, oWnd ) );
-               WHEN     lCurSesion() ;
-               RESOURCE "Cashier_hand_point_16"
-
             MENUITEM    "&3. Entradas y salidas";
                HELPID   "01065" ;
                MESSAGE  "Entradas y salidas de caja";
@@ -4317,8 +4310,6 @@ Static Function CreateMainPdaWindow( oIconApp )
    */
 
    lInitCheck()
-
-   pdaTicket( "01063" )
 
 Return nil
 

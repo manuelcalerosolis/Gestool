@@ -388,7 +388,7 @@ METHOD OpenFiles( lExclusive ) CLASS TCuentasBancarias
 
       DATABASE NEW ::oAlbCliP PATH ( cPatEmp() ) CLASS "AlbCliP" FILE "AlbCliP.Dbf" VIA ( cDriver() ) SHARED INDEX "AlbCliP.Cdx"
 
-      ::oFacCliP := TDataCenter():oFacCliP()
+      ::oFacCliP        := TDataCenter():oFacCliP()
 
       DATABASE NEW ::oFacPrvP PATH ( cPatEmp() ) CLASS "FacPrvP" FILE "FacPrvP.Dbf" VIA ( cDriver() ) SHARED INDEX "FacPrvP.Cdx"
 
@@ -1100,7 +1100,7 @@ METHOD OpenFiles() CLASS TFastCuentasBancarias
 
       DATABASE NEW ::oAlbCliP PATH ( cPatEmp() ) CLASS "AlbCliP" FILE "AlbCliP.Dbf" VIA ( cDriver() ) SHARED INDEX "AlbCliP.Cdx"
 
-      ::oFacCliP := TDataCenter():oFacCliP()
+      ::oFacCliP  := TDataCenter():oFacCliP()
 
       DATABASE NEW ::oFacPrvP PATH ( cPatEmp() ) CLASS "FacPrvP" FILE "FacPrvP.Dbf" VIA ( cDriver() ) SHARED INDEX "FacPrvP.Cdx"
 
@@ -1175,7 +1175,7 @@ METHOD lGenerate() CLASS TFastCuentasBancarias
    ::oDbf:Zap()
 
    do case
-      case ::cTypeName == "Informe de cuentas bancarias"
+      case ::cReportType == "Informe de cuentas bancarias"
 
          ::AddPedidosClientes()
 
@@ -1195,11 +1195,7 @@ RETURN ( ::oDbf:LastRec() > 0 )
 
 Method lValidRegister( cCtaBnc ) CLASS TFastCuentasBancarias
 
-   if ( cCtaBnc >= ::oGrupoCuentasBancarias:Cargo:Desde .and. cCtaBnc <= ::oGrupoCuentasBancarias:Cargo:Hasta )
-      Return ( .t. )
-   end if
-
-RETURN ( .f. )
+Return ( cCtaBnc >= ::oGrupoCuentasBancarias:Cargo:Desde .and. cCtaBnc <= ::oGrupoCuentasBancarias:Cargo:Hasta )
 
 //---------------------------------------------------------------------------//
 
@@ -1210,18 +1206,18 @@ METHOD AddPedidosClientes() CLASS TFastCuentasBancarias
 
    ::oPedCliP:OrdSetFocus( "dEntrega" )
 
-   cExp              := '!lPasado .and. dEntrega >= Ctod( "' + Dtoc( ::dIniInf ) + '" ) .and. dEntrega <= Ctod( "' + Dtoc( ::dFinInf ) + '" ) .and. '
-   cExp              += 'cCodCli >= "' + ::oGrupoCliente:Cargo:Desde + '" .and. cCodCli <= "' + ::oGrupoCliente:Cargo:Hasta + '"'
+   cExp                 := '!lPasado .and. dEntrega >= Ctod( "' + Dtoc( ::dIniInf ) + '" ) .and. dEntrega <= Ctod( "' + Dtoc( ::dFinInf ) + '" ) .and. '
+   cExp                 += 'cCodCli >= "' + ::oGrupoCliente:Cargo:Desde + '" .and. cCodCli <= "' + ::oGrupoCliente:Cargo:Hasta + '"'
 
    ::oPedCliP:AddTmpIndex( cCurUsr(), GetFileNoExt( ::oPedCliP:cFile ), ::oPedCliP:OrdKey(), ( cExp ), , , , , , , , .t. )
 
-   ::oMtrInf:cText   := "Procesando recibos de clientes"
+   ::oMtrInf:cText      := "Procesando recibos de clientes"
    ::oMtrInf:SetTotal( ::oPedCliP:OrdKeyCount() )
 
    ::oPedCliP:GoTop()
    while !::lBreak .and. !::oPedCliP:Eof()
 
-      cCta           := oRetFld( ::oPedCliP:cEntEmp + ::oPedCliP:cSucEmp + ::oPedCliP:cDigEmp + ::oPedCliP:cCtaEmp, ::oCuentasBancarias:oDbf, "cCodBnc", "cCtaBnc" )
+      cCta              := oRetFld( ::oPedCliP:cEntEmp + ::oPedCliP:cSucEmp + ::oPedCliP:cDigEmp + ::oPedCliP:cCtaEmp, ::oCuentasBancarias:oDbf, "cCodBnc", "cCtaBnc" )
 
       if ::lValidRegister( cCta )
 
@@ -1265,18 +1261,18 @@ METHOD AddAlbaranesClientes() CLASS TFastCuentasBancarias
 
    ::oAlbCliP:OrdSetFocus( "dEntrega" )
 
-   cExp              := '!lPasado .and. dEntrega >= Ctod( "' + Dtoc( ::dIniInf ) + '" ) .and. dEntrega <= Ctod( "' + Dtoc( ::dFinInf ) + '" ) .and. '
-   cExp              += 'cCodCli >= "' + ::oGrupoCliente:Cargo:Desde + '" .and. cCodCli <= "' + ::oGrupoCliente:Cargo:Hasta + '"'
+   cExp                 := '!lPasado .and. dEntrega >= Ctod( "' + Dtoc( ::dIniInf ) + '" ) .and. dEntrega <= Ctod( "' + Dtoc( ::dFinInf ) + '" ) .and. '
+   cExp                 += 'cCodCli >= "' + ::oGrupoCliente:Cargo:Desde + '" .and. cCodCli <= "' + ::oGrupoCliente:Cargo:Hasta + '"'
 
    ::oAlbCliP:AddTmpIndex( cCurUsr(), GetFileNoExt( ::oAlbCliP:cFile ), ::oAlbCliP:OrdKey(), ( cExp ), , , , , , , , .t. )
 
-   ::oMtrInf:cText   := "Procesando recibos de clientes"
+   ::oMtrInf:cText      := "Procesando recibos de clientes"
    ::oMtrInf:SetTotal( ::oAlbCliP:OrdKeyCount() )
 
    ::oAlbCliP:GoTop()
    while !::lBreak .and. !::oAlbCliP:Eof()
 
-      cCta           := oRetFld( ::oAlbCliP:cEntEmp + ::oAlbCliP:cSucEmp + ::oAlbCliP:cDigEmp + ::oAlbCliP:cCtaEmp, ::oCuentasBancarias:oDbf, "cCodBnc", "cCtaBnc" )
+      cCta              := oRetFld( ::oAlbCliP:cEntEmp + ::oAlbCliP:cSucEmp + ::oAlbCliP:cDigEmp + ::oAlbCliP:cCtaEmp, ::oCuentasBancarias:oDbf, "cCodBnc", "cCtaBnc" )
 
       if ::lValidRegister( cCta )
 
@@ -1320,18 +1316,18 @@ METHOD AddRecibosClientes() CLASS TFastCuentasBancarias
 
    ::oFacCliP:OrdSetFocus( "dEntrada" )
 
-   cExp              := 'lCobrado .and. dEntrada >= Ctod( "' + Dtoc( ::dIniInf ) + '" ) .and. dEntrada <= Ctod( "' + Dtoc( ::dFinInf ) + '" ) .and. '
-   cExp              += 'cCodCli >= "' + ::oGrupoCliente:Cargo:Desde + '" .and. cCodCli <= "' + ::oGrupoCliente:Cargo:Hasta + '"'
+   cExp                 := 'lCobrado .and. dEntrada >= Ctod( "' + Dtoc( ::dIniInf ) + '" ) .and. dEntrada <= Ctod( "' + Dtoc( ::dFinInf ) + '" ) .and. '
+   cExp                 += 'cCodCli >= "' + ::oGrupoCliente:Cargo:Desde + '" .and. cCodCli <= "' + ::oGrupoCliente:Cargo:Hasta + '"'
 
    ::oFacCliP:AddTmpIndex( cCurUsr(), GetFileNoExt( ::oFacCliP:cFile ), ::oFacCliP:OrdKey(), ( cExp ), , , , , , , , .t. )
 
-   ::oMtrInf:cText   := "Procesando recibos de clientes"
+   ::oMtrInf:cText      := "Procesando recibos de clientes"
    ::oMtrInf:SetTotal( ::oFacCliP:OrdKeyCount() )
 
    ::oFacCliP:GoTop()
    while !::lBreak .and. !::oFacCliP:Eof()
 
-      cCta           := oRetFld( ::oFacCliP:cEntEmp + ::oFacCliP:cSucEmp + ::oFacCliP:cDigEmp + ::oFacCliP:cCtaEmp, ::oCuentasBancarias:oDbf, "cCodBnc", "cCtaBnc" )
+      cCta              := oRetFld( ::oFacCliP:cEntEmp + ::oFacCliP:cSucEmp + ::oFacCliP:cDigEmp + ::oFacCliP:cCtaEmp, ::oCuentasBancarias:oDbf, "cCodBnc", "cCtaBnc" )
 
       if ::lValidRegister( cCta )
 
@@ -1375,18 +1371,18 @@ METHOD AddRecibosProveedores() CLASS TFastCuentasBancarias
 
    ::oFacPrvP:OrdSetFocus( "dEntrada" )
 
-   cExp              := 'lCobrado .and. dEntrada >= Ctod( "' + Dtoc( ::dIniInf ) + '" ) .and. dEntrada <= Ctod( "' + Dtoc( ::dFinInf ) + '" ) .and. '
-   cExp              += 'cCodPrv >= "' + ::oGrupoCliente:Cargo:Desde + '" .and. cCodPrv <= "' + ::oGrupoCliente:Cargo:Hasta + '"'
+   cExp                 := 'lCobrado .and. dEntrada >= Ctod( "' + Dtoc( ::dIniInf ) + '" ) .and. dEntrada <= Ctod( "' + Dtoc( ::dFinInf ) + '" ) .and. '
+   cExp                 += 'cCodPrv >= "' + ::oGrupoCliente:Cargo:Desde + '" .and. cCodPrv <= "' + ::oGrupoCliente:Cargo:Hasta + '"'
 
    ::oFacPrvP:AddTmpIndex( cCurUsr(), GetFileNoExt( ::oFacPrvP:cFile ), ::oFacPrvP:OrdKey(), ( cExp ), , , , , , , , .t. )
 
-   ::oMtrInf:cText   := "Procesando recibos de proveedores"
+   ::oMtrInf:cText      := "Procesando recibos de proveedores"
    ::oMtrInf:SetTotal( ::oFacPrvP:OrdKeyCount() )
 
    ::oFacPrvP:GoTop()
    while !::lBreak .and. !::oFacPrvP:Eof()
 
-      cCta           := oRetFld( ::oFacPrvP:cEntEmp + ::oFacPrvP:cSucEmp + ::oFacPrvP:cDigEmp + ::oFacPrvP:cCtaEmp, ::oCuentasBancarias:oDbf, "cCodBnc", "cCtaBnc" )
+      cCta              := oRetFld( ::oFacPrvP:cEntEmp + ::oFacPrvP:cSucEmp + ::oFacPrvP:cDigEmp + ::oFacPrvP:cCtaEmp, ::oCuentasBancarias:oDbf, "cCodBnc", "cCtaBnc" )
 
       if ::lValidRegister( cCta )
 
@@ -1463,11 +1459,18 @@ RETURN ( Self )
 
 //---------------------------------------------------------------------------//
 
-METHOD BuildTree( oTree, lSubNode ) CLASS TFastCuentasBancarias
+METHOD BuildTree( oTree, lLoadFile ) CLASS TFastCuentasBancarias
 
-   DEFAULT lSubNode  := .t.
+   local aReports
 
-   oTree:Select( oTree:Add( "Informe de cuentas bancarias", 17, "Informe de cuentas bancarias" ) )
+   DEFAULT oTree     := ::oTreeReporting
+   DEFAULT lLoadFile := .t.
+
+   aReports          := {  {  "Title" => "Informe de cuentas bancarias", "Image" => 17, "Type" => "Informe", "Directory" => "Cuentas bancarias", "File" => "Informe.fr3"  } }
+
+   ::BuildNode( aReports, oTree, lLoadFile )
+
+   oTree:ExpandAll()
 
 RETURN ( Self )
 

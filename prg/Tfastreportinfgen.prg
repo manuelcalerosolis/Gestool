@@ -1937,7 +1937,7 @@ Method FastReport( nDevice ) CLASS TFastReportInfGen
          case nDevice == IS_EXCEL
             ::oFastReport:PrepareReport()
             ::oFastReport:SetProperty( "XLSExport", "ShowDialog",       .t. )
-            ::oFastReport:SetProperty( "XLSxport", "DefaultPath",       cPatTmp() )
+            ::oFastReport:SetProperty( "XLSExport", "DefaultPath",      cPatTmp() )
             ::oFastReport:SetProperty( "XLSExport", "FileName",         "Informe" + cCurUsr() + ".xls" )
             ::oFastReport:DoExport(    "XLSExport" )
 
