@@ -1155,8 +1155,10 @@ Function Articulo( oMenuItem, oWnd, bOnInit )
 
       with object ( oWndBrw:AddXCol() )
          :cHeader          := "Proveedor"
+         :cSortOrder       := "cPrvHab"
          :bStrData         := {|| if( !Empty( ( dbfArticulo )->cPrvHab ), AllTrim( ( dbfArticulo )->cPrvHab ) + " - " + RetProvee( ( dbfArticulo )->cPrvHab, dbfProv ), "" ) }
          :nWidth           := 200
+         :bLClickHeader    := {| nMRow, nMCol, nFlags, oCol | oWndBrw:ClickOnHeader( oCol ) }
          :lHide            := .t.
       end with
 
