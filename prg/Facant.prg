@@ -14,8 +14,8 @@
 #define CLR_BAR              14197607
 #define CLR_KIT              Rgb( 239, 239, 239 )
 
-#define IGIC_DESG             1
-#define IGIC_INCL             2
+#define impuestos_DESG             1
+#define impuestos_INCL             2
 
 #define _CSERANT             1
 #define _NNUMANT             2
@@ -3927,7 +3927,7 @@ STATIC FUNCTION ContabilizarAnticipos( lSimula, lPago, oTree )
    end if
 
    /*
-   Chequeo de Cuentas de IGIC
+   Chequeo de Cuentas de impuestos
 	--------------------------------------------------------------------------
 	*/
 
@@ -4076,14 +4076,14 @@ STATIC FUNCTION ContabilizarAnticipos( lSimula, lPago, oTree )
                               cTerNom ) )
 
 	/*
-   Asientos de IGIC
+   Asientos de impuestos
 	--------------------------------------------------------------------------
 	*/
 
    aadd( aSimula, MkAsiento(  nAsiento, ;
                               cCodDiv, ;
                               dFecha, ;
-                              cSubCtaIva,;   // Cuenta de IGIC
+                              cSubCtaIva,;   // Cuenta de impuestos
                               cCtaCli,;      // Contrapartida
                               ,;             // Ptas. Debe
                               cConcepto,;
@@ -5023,7 +5023,7 @@ FUNCTION nTotAntCli( cAntCliT, cIva, cDiv, aTmp, cDivRet, lPic )
       nTotNet        := nTotAnt - nTotImp
 
       /*
-      Total IGIC
+      Total impuestos
       */
 
       if nPctIva != 0

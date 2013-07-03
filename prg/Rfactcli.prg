@@ -51,7 +51,7 @@ Definici¢n de la base de datos de lineas de detalle
 #define _NUNICAJA                aTemp[ 11 ]     //   N      5     0
 
 /*
-Definici¢n de Array para IGIC
+Definici¢n de Array para impuestos
 */
 #define _NBASEIVA1					aIva[ 1, 1 ]
 #define _NPCTIVA1						aIva[ 1, 2 ]
@@ -64,7 +64,7 @@ Definici¢n de Array para IGIC
 #define _NIMPIVA3						aIva[ 3, 3 ]
 
 /*
-Definici¢n de Array para objetos IGIC
+Definici¢n de Array para objetos impuestos
 */
 #define _OBASEIVA1					aoIva[ 1, 1 ]
 #define _OPCTIVA1						aoIva[ 1, 2 ]

@@ -1520,7 +1520,7 @@ STATIC FUNCTION EdtRec( aTmp, aGet, dbfClient, oBrw, bWhen, bValid, nMode )
          OF       fldComercial
 
       /*
-      IGIC----------------------------------------------------------------------
+      impuestos----------------------------------------------------------------------
       */
 
       REDEFINE RADIO aGet[ _NREGIVA ] ;
@@ -3538,7 +3538,7 @@ STATIC FUNCTION EdtAtp( aTmp, aGet, dbfTmpAtp, oBrw, aTmpCli, aGetCli, nMode )
          OF       oFld:aDialogs[1]
 
       /*
-      Precios con IGIC
+      Precios con impuestos
       */
 
       REDEFINE GET aGet[ _aNPREIVA1 ] VAR aTmp[ _aNPREIVA1 ] ;
@@ -5808,7 +5808,7 @@ STATIC FUNCTION ChgPrc( dbfCliAtp, oWndBrw )
 		OF 		oDlg
 
    /*
-   Monta los tipos de IGIC
+   Monta los tipos de impuestos
    */
 
    REDEFINE GET oTipIva VAR cTipIva ;
@@ -13269,7 +13269,7 @@ Static Function IsCliAtp( aGet, aTmp, oGet, dbfCliAtp, nMode, oSayPr1, oSayPr2, 
          end if
 
          /*
-         Primer precio de venta IGIC incluido
+         Primer precio de venta impuestos incluido
          */
 
          nPreVta           := nPrePro( cCodArt, aTmp[ _aCCODPR1 ], aTmp[ _aCVALPR1 ], aTmp[ _aCCODPR2 ], aTmp[ _aCVALPR2 ], 1, .t., dbfArtDiv )
@@ -13283,7 +13283,7 @@ Static Function IsCliAtp( aGet, aTmp, oGet, dbfCliAtp, nMode, oSayPr1, oSayPr2, 
          end if
 
          /*
-         Segundo precio de venta IGIC incluido
+         Segundo precio de venta impuestos incluido
          */
 
          nPreVta           := nPrePro( cCodArt, aTmp[ _aCCODPR1 ], aTmp[ _aCVALPR1 ], aTmp[ _aCCODPR2 ], aTmp[ _aCVALPR2 ], 2, .t., dbfArtDiv )
@@ -13297,7 +13297,7 @@ Static Function IsCliAtp( aGet, aTmp, oGet, dbfCliAtp, nMode, oSayPr1, oSayPr2, 
          end if
 
          /*
-         Tercer precio de venta IGIC incluido
+         Tercer precio de venta impuestos incluido
          */
 
          nPreVta           := nPrePro( cCodArt, aTmp[ _aCCODPR1 ], aTmp[ _aCVALPR1 ], aTmp[ _aCCODPR2 ], aTmp[ _aCVALPR2 ], 3, .t., dbfArtDiv )
@@ -13311,7 +13311,7 @@ Static Function IsCliAtp( aGet, aTmp, oGet, dbfCliAtp, nMode, oSayPr1, oSayPr2, 
          end if
 
          /*
-         Cuarto precio de venta IGIC incluido
+         Cuarto precio de venta impuestos incluido
          */
 
          nPreVta           := nPrePro( cCodArt, aTmp[ _aCCODPR1 ], aTmp[ _aCVALPR1 ], aTmp[ _aCCODPR2 ], aTmp[ _aCVALPR2 ], 4, .t., dbfArtDiv )
@@ -13325,7 +13325,7 @@ Static Function IsCliAtp( aGet, aTmp, oGet, dbfCliAtp, nMode, oSayPr1, oSayPr2, 
          end if
 
          /*
-         Quinto precio de venta IGIC incluido
+         Quinto precio de venta impuestos incluido
          */
 
          nPreVta           := nPrePro( cCodArt, aTmp[ _aCCODPR1 ], aTmp[ _aCVALPR1 ], aTmp[ _aCCODPR2 ], aTmp[ _aCVALPR2 ], 5, .t., dbfArtDiv )
@@ -13339,7 +13339,7 @@ Static Function IsCliAtp( aGet, aTmp, oGet, dbfCliAtp, nMode, oSayPr1, oSayPr2, 
          end if
 
          /*
-         Sexto precio de venta IGIC incluido
+         Sexto precio de venta impuestos incluido
          */
 
          nPreVta           := nPrePro( cCodArt, aTmp[ _aCCODPR1 ], aTmp[ _aCVALPR1 ], aTmp[ _aCCODPR2 ], aTmp[ _aCVALPR2 ], 6, .t., dbfArtDiv )
@@ -14127,7 +14127,7 @@ Static Function CalIva( nPrecio, lIvaInc, cTipIva, cCodImp, oGetIva )
    end if
 
 	/*
-   Calculo del IGIC
+   Calculo del impuestos
 	*/
 
    nPrecio        += ( nPrecio * nIvaPct / 100 )
@@ -14146,7 +14146,7 @@ Static Function CalBas( nPrecio, lIvaInc, cTipIva, cCodImp, oGetBas )
    local nIvaPct  := nIva( dbfIva, cTipIva )
 
 	/*
-   Primero es quitar el IGIC
+   Primero es quitar el impuestos
 	*/
 
    nNewPre        := Div( nPrecio, ( 1 + nIvaPct / 100 ) )
@@ -14182,7 +14182,7 @@ Function nCalIva( nPrecio, lIvaInc, cTipIva, cCodImp )
    end if
 
 	/*
-   Calculo del IGIC
+   Calculo del impuestos
 	*/
 
    nPrecio        += ( nPrecio * nIvaPct / 100 )
@@ -14197,7 +14197,7 @@ Function nCalBas( nPrecio, lIvaInc, cTipIva, cCodImp )
    local nIvaPct  := nIva( dbfIva, cTipIva )
 
 	/*
-   Primero es quitar el IGIC
+   Primero es quitar el impuestos
 	*/
 
    nNewPre        := Div( nPrecio, ( 1 + nIvaPct / 100 ) )

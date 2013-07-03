@@ -184,7 +184,7 @@ Definici¢n de la base de datos de lineas de detalle
 #define _LVOLIMP                  79
 
 /*
-Array para IGIC
+Array para impuestos
 */
 
 #define _NBRTIVA1                aTotIva[ 1, 1 ]
@@ -2325,7 +2325,7 @@ STATIC FUNCTION EdtRec( aTmp, aGet, dbfSatCliT, oBrw, cCodCli, cCodArt, nMode )
          OF       oFld:aDialogs[1]
 
       /*
-      Desglose del IGIC---------------------------------------------------------
+      Desglose del impuestos---------------------------------------------------------
       */
 
       oBrwIva                        := TXBrowse():New( oFld:aDialogs[ 1 ] )
@@ -5035,7 +5035,7 @@ FUNCTION nTotSatCli( cSatsupuesto, cSatCliT, cSatCliL, cIva, cDiv, cFPago, aTmp,
             nTotUnd           += nTotNSatCli( cSatCliL )
 
             /*
-            Estudio de IGIC-----------------------------------------------------
+            Estudio de impuestos-----------------------------------------------------
             */
 
             DO CASE
@@ -5101,7 +5101,7 @@ FUNCTION nTotSatCli( cSatsupuesto, cSatCliT, cSatCliL, cIva, cDiv, cFPago, aTmp,
    ( cSatCliL )->( dbGoto( nRecno ) )
 
    /*
-   Ordenamos los IGICS de menor a mayor
+   Ordenamos los impuestosS de menor a mayor
    */
 
    aTotIva           := aSort( aTotIva,,, {|x,y| if( x[3] != nil, x[3], -1 ) > if( y[3] != nil, y[3], -1 )  } )
@@ -5301,7 +5301,7 @@ FUNCTION nTotSatCli( cSatsupuesto, cSatCliT, cSatCliL, cIva, cDiv, cFPago, aTmp,
    if !lIvaInc
 
       /*
-      Calculos de IGIC
+      Calculos de impuestos
       */
 
       _NIMPIVA1      := if( _NPCTIVA1 != NIL, Round( _NBASIVA1 * _NPCTIVA1 / 100, nRouDiv ), 0 )
@@ -5391,7 +5391,7 @@ FUNCTION nTotSatCli( cSatsupuesto, cSatCliT, cSatCliL, cIva, cDiv, cFPago, aTmp,
    nTotPnt           := Round( _NPNTVER1 + _NPNTVER2 + _NPNTVER3, nRouDiv )
 
    /*
-   Total de IGIC
+   Total de impuestos
    */
 
    nTotIva           := Round( _NIMPIVA1 + _NIMPIVA2 + _NIMPIVA3, nRouDiv )
@@ -5756,7 +5756,7 @@ end if
             end if
 
             /*
-            Unidades e IGIC--------------------------------------------------------
+            Unidades e impuestos--------------------------------------------------------
             */
 
             if ( dbfArticulo )->nCajEnt != 0
@@ -8500,11 +8500,11 @@ FUNCTION nImpLSatCli( uSatCliT, dbfSatCliL, nDec, nRou, nVdv, lIva, lDto, lPntVe
    end if
 
    if ( dbfSatCliL )->nIva != 0
-      if lIva  // lo quermos con IGIC
+      if lIva  // lo quermos con impuestos
          if !lIvaInc
             nCalculo += Round( nCalculo * ( dbfSatCliL )->nIva / 100, nRou )
          end if
-      else     // lo queremos sin IGIC
+      else     // lo queremos sin impuestos
          if lIvaInc
             nCalculo -= Round( nCalculo / ( 100 / ( dbfSatCliL )->nIva  + 1 ), nRou )
          end if

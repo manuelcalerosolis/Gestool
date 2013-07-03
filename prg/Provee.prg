@@ -1010,7 +1010,7 @@ STATIC FUNCTION EdtRec( aTmp, aGet, dbfProvee, oBrw, bWhen, bValid, nMode )
          WHEN     ( oUser():lAdministrador() .and. nMode != ZOOM_MODE .and. aTmp[ _LBLQPRV ] );
          OF       oFld:aDialogs[2]
 
-      // Regimen de IGIC
+      // Regimen de impuestos
 
       REDEFINE RADIO aGet[ _NREGIVA ] VAR aTmp[ _NREGIVA ] ;
          ID       270, 271, 272, 273 ;

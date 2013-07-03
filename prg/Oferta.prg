@@ -1819,7 +1819,7 @@ Static Function CalIva( nPrecio, lIvaInc, cTipIva, cCodImp, oGetIva )
    end if
 
 	/*
-   Calculo del IGIC
+   Calculo del impuestos
 	*/
 
    nPrecio           += ( nPrecio * nIvaPct / 100 )
@@ -1838,7 +1838,7 @@ Static Function CalBas( nPrecio, lIvaInc, cTipIva, cCodImp, oGetBas )
    local nIvaPct  := nIva( dbfIva, cTipIva )
 
 	/*
-   Primero es quitar el IGIC
+   Primero es quitar el impuestos
 	*/
 
    nNewPre        := ( nPrecio / ( 1 + nIvaPct / 100 ) )

@@ -7,7 +7,7 @@
 #define CLR_BAR              14197607
 #define CLR_KIT              Rgb( 239, 239, 239 )
 
-#define IGIC_DESG             1
-#define IGIC_INCL             2
+#define impuestos_DESG             1
+#define impuestos_INCL             2
 
 //---------------------------------------------------------------------------//

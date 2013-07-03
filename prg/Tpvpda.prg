@@ -5800,7 +5800,7 @@ STATIC FUNCTION LoaArt( aGet, aTmp, oBrw, oGetTotal, aTik, lTwo, nMode, oDlg, lN
          end if
 
          /*
-         Obtenemos el Tipo de IGIC-------------------------------------------------
+         Obtenemos el Tipo de impuestos-------------------------------------------------
          */
 
          aTmp[ _NIVATIL ]     := nIva( dbfIva, ( dbfArticulo )->TipoIva )
@@ -5900,7 +5900,7 @@ STATIC FUNCTION LoaArt( aGet, aTmp, oBrw, oGetTotal, aTik, lTwo, nMode, oDlg, lN
             end if
 
             /*
-            Obtenemos el Tipo de IGIC-------------------------------------------
+            Obtenemos el Tipo de impuestos-------------------------------------------
             */
 
             aTmp[ _NIVATIL ]     := nIva( dbfIva, ( dbfArticulo )->TipoIva )
@@ -9961,7 +9961,7 @@ static function AddPrd( cCodArt, aGetArt, aTmpArt, aTmp )
          aTmpArt[ _NIMPCOM2 ]    := ( dbfArticulo )->nImpCom2 - 1
 
          /*
-         Obtenemos el Tipo de IGIC
+         Obtenemos el Tipo de impuestos
          */
 
          aTmpArt[ _NIVATIL ]     := nIva( dbfIva, ( dbfArticulo )->TipoIva )

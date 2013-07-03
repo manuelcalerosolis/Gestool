@@ -15,8 +15,8 @@ REQUEST DBFCDX
 #define CLR_BAR                   14197607
 #define _MENUITEM_                "01057"
 
-#define IGIC_DESG                  1
-#define IGIC_INCL                  2
+#define impuestos_DESG                  1
+#define impuestos_INCL                  2
 
 /*
 Definición de la base de datos de albaranes a CLIENTES
@@ -221,7 +221,7 @@ Definici¢n de la base de datos de lineas de detalle
 #define __DFECALB                 93
 
 /*
-Definici¢n de Array para IGIC
+Definici¢n de Array para impuestos
 */
 
 #define _NBRTIVA1                aTotIva[ 1, 1 ]
@@ -330,7 +330,7 @@ memvar nPagina
 memvar oReport
 
 /*
-Definici¢n de Array para objetos IGIC
+Definici¢n de Array para objetos impuestos
 */
 
 static oWndBrw
@@ -2904,7 +2904,7 @@ STATIC FUNCTION EdtRec( aTmp, aGet, dbfAlbCliT, oBrw, hHash, bValid, nMode )
       end if
 
       /*
-      Desglose del IGIC---------------------------------------------------------
+      Desglose del impuestos---------------------------------------------------------
       */
 
       oBrwIva                        := TXBrowse():New( oFld:aDialogs[ 1 ] )
@@ -5981,7 +5981,7 @@ Return ( if( cPorDiv != nil, Trans( nCalculo, cPorDiv ), nCalculo ) )
 //---------------------------------------------------------------------------//
 
 /*
-Devuelve el valor del IGIC de un artículo
+Devuelve el valor del impuestos de un artículo
 */
 /*
 FUNCTION nIvaUAlbCli( dbfTmpLin, nDec, nVdv )
@@ -6007,7 +6007,7 @@ RETURN ( Round( nCalculo, nDec ) )
   */
 //---------------------------------------------------------------------------//
 /*
-Devuelve el precio unitario IGIC incluido
+Devuelve el precio unitario impuestos incluido
 */
 
 FUNCTION nIncUAlbCli( dbfTmpLin, nDec, nVdv )
@@ -6105,7 +6105,7 @@ RETURN ( if( cPouDiv != NIL, trans( nCalculo, cPouDiv ), nCalculo ) )
 //---------------------------------------------------------------------------//
 
 /*
-Devuelve el total de una linea con IGIC incluido
+Devuelve el total de una linea con impuestos incluido
 */
 
 FUNCTION nIncLAlbCli( dbfLin, nDec, nRouDec, nVdv, lDto, lPntVer, lImpTrn, cPouDiv )
@@ -7190,9 +7190,9 @@ N§ PO  LC  Descripci¢n       Observaciones
 5  21  8   BASE IMPONIBLE 1
 6  29  8   BASE IMPONIBLE 2
 7  37  8   BASE IMPONIBLE 3
-8  45  8   IGIC TIPO 1
-9  53  8   IGIC TIPO 2
-10 61  8   IGIC TIPO 3
+8  45  8   impuestos TIPO 1
+9  53  8   impuestos TIPO 2
+10 61  8   impuestos TIPO 3
 11 69  8   R.E. TIPO 1
 12 77  8   R.E. TIPO 2
 13 85  8   R.E. TIPO 3
@@ -7220,7 +7220,7 @@ er  igual a ImporteNota si se trata de contado-met lico.
              0       0 0.00 0.00       0   23300   2330012/03/199618:15"
      (Factura de contado n§ 10900 emitida al cliente 321 por el vendedor 4
       el d¡a 12 de Marzo de 1996, por un importe de 23200, sin descuentos,
-      ni punto verde, a las 6 y cuarto de la tarde. El tipo de IGIC fue el 1)
+      ni punto verde, a las 6 y cuarto de la tarde. El tipo de impuestos fue el 1)
 
 
 NOMBRE FICHERO      : EALBAxxx.PSI   (xxx = Agente)
@@ -7240,7 +7240,7 @@ N§ PO  LC  Descripci¢n       Observaciones
 8  49  4   UNID. VALORA. 1   cajas
 9  53  7   UNID. VALORA  2   kilos/unidades
 10 60  1   TIPO LINEA        (2)
-11 61  1   tipo IGIC          1, 2 ¢ 3
+11 61  1   tipo impuestos          1, 2 ¢ 3
 12 62  1   EUROS S/N         Indica si se hizo en euros o en pts (3)
 13 63  7   PVERDE            Cargo unitario por Punto Verde
 14 70  2   FINAL REGISTRO    CR LF  ( chr$(13) y chr$(10) )
@@ -11747,8 +11747,8 @@ Static Function pdaGenAlbCli( oBrw, dbfAlbCliT, dbfAlbCliL )
 
                         //           1         2         3         4         5         6
                         //  123456789012345678901234567890123456789012345678901234567890
-   cTextToPrint         += "   Base IGIC%   Importe RE%    Importe   Base   " + Right( Str( nTotNet ), 12 ) + CRLF
-   cTextToPrint         += "------- ---- --------- ---- ---------   IGIC " + Right( Str( nTotIva ), 12 ) + CRLF
+   cTextToPrint         += "   Base impuestos%   Importe RE%    Importe   Base   " + Right( Str( nTotNet ), 12 ) + CRLF
+   cTextToPrint         += "------- ---- --------- ---- ---------   impuestos " + Right( Str( nTotIva ), 12 ) + CRLF
 
    cTextToPrint         += Right( Trans( aIvaUno[ 2 ], cPorDiv )  , 7 ) + Space(1)
    cTextToPrint         += Right( Trans( aIvaUno[ 3 ], "@E 99.9" ), 4 ) + Space(1)
@@ -13289,7 +13289,7 @@ FUNCTION nTotAlbCli( cAlbaran, cAlbCliT, cAlbCliL, cIva, cDiv, aTmp, cDivRet, lP
                nTotArt           += nTotNAlbCli( cAlbCliL )
                nTotCaj           += ( cAlbCliL )->nCanEnt
 
-               // Estudio de IGIC-----------------------------------------------
+               // Estudio de impuestos-----------------------------------------------
 
                if nTotalArt + nTotalIvm + nTotalTrn + nTotalPnt != 0
 
@@ -13368,7 +13368,7 @@ FUNCTION nTotAlbCli( cAlbaran, cAlbCliT, cAlbCliL, cIva, cDiv, aTmp, cDivRet, lP
 
    ( cAlbCliL )->( dbGoto( nRecno ) )
 
-   // Ordenamos los IGICS de menor a mayor
+   // Ordenamos los impuestosS de menor a mayor
 
    aTotIva           := aSort( aTotIva,,, {|x,y| if( x[3] != nil, x[3], -1 ) > if( y[3] != nil, y[3], -1 )  } )
 
@@ -13500,7 +13500,7 @@ FUNCTION nTotAlbCli( cAlbaran, cAlbCliT, cAlbCliL, cIva, cDiv, aTmp, cDivRet, lP
    end if
 
    /*
-   Estudio de IGIC para el Gasto despues de los descuentos----------------------
+   Estudio de impuestos para el Gasto despues de los descuentos----------------------
    */
 
    if nManObr != 0
@@ -13547,11 +13547,11 @@ FUNCTION nTotAlbCli( cAlbaran, cAlbCliT, cAlbCliL, cIva, cDiv, aTmp, cDivRet, lP
       _NBASIVA3      += _NIVMIVA3
    end if
 
-   // Calculamos los IGICS-----------------------------------------------------
+   // Calculamos los impuestosS-----------------------------------------------------
 
    if !lIvaInc
 
-      //Calculos de IGIC
+      //Calculos de impuestos
 
       _NIMPIVA1      := if ( _NPCTIVA1 != NIL, Round( _NBASIVA1 * _NPCTIVA1 / 100, nRouDiv ), 0 )
       _NIMPIVA2      := if ( _NPCTIVA2 != NIL, Round( _NBASIVA2 * _NPCTIVA2 / 100, nRouDiv ), 0 )
@@ -13617,7 +13617,7 @@ FUNCTION nTotAlbCli( cAlbaran, cAlbCliT, cAlbCliL, cIva, cDiv, aTmp, cDivRet, lP
 
    nTotPnt           := Round( _NPNTVER1 + _NPNTVER2 + _NPNTVER3, nRouDiv )
 
-   //Total de IGIC
+   //Total de impuestos
 
    nTotIva           := Round( _NIMPIVA1 + _NIMPIVA2 + _NIMPIVA3, nRouDiv )
 
@@ -13740,11 +13740,11 @@ FUNCTION nImpUAlbCli( uAlbCliT, uAlbCliL, nDec, nVdv, lIva, cPouDiv )
    end case
 
    if nIva != 0
-      if lIva  // lo quermos con IGIC
+      if lIva  // lo quermos con impuestos
          if !lIvaInc
             nCalculo += Round( nCalculo * nIva / 100, nDec )
          end if
-      else     // lo queremos sin IGIC
+      else     // lo queremos sin impuestos
          if lIvaInc
             nCalculo -= Round( nCalculo / ( 100 / nIva  + 1 ), nDec )
          end if
@@ -13798,11 +13798,11 @@ FUNCTION nImpLAlbCli( uAlbCliT, dbfAlbCliL, nDec, nRou, nVdv, lIva, lDto, lImpTr
    end if
 
    if ( dbfAlbCliL )->nIva != 0
-      if lIva  // lo quermos con IGIC
+      if lIva  // lo quermos con impuestos
          if !lIvaInc
             nCalculo += Round( nCalculo * ( dbfAlbCliL )->nIva / 100, nRou )
          end if
-      else     // lo queremos sin IGIC
+      else     // lo queremos sin impuestos
          if lIvaInc
             nCalculo -= Round( nCalculo / ( 100 / ( dbfAlbCliL )->nIva  + 1 ), nRou )
          end if
@@ -15466,7 +15466,7 @@ STATIC FUNCTION LoaArt( cCodArt, aTmp, aGet, aTmpAlb, oStkAct, oSayPr1, oSayPr2,
             end if
 
             /*
-            Preguntamos si el regimen de IGIC es distinto de Exento-------------
+            Preguntamos si el regimen de impuestos es distinto de Exento-------------
             */
 
             if aTmpAlb[ _NREGIVA ] <= 1
@@ -16423,7 +16423,7 @@ STATIC FUNCTION AppendKit( uTmpLin, aTmpAlb )
             ( dbfTmpLin )->nUniCaja    := nUniCaj * ( dbfKit )->nUndKit
 
             /*
-            Estudio de los tipos de IGIC si el padre el cero todos cero---------
+            Estudio de los tipos de impuestos si el padre el cero todos cero---------
             */
 
             if !Empty( nIvaLin )

@@ -174,7 +174,7 @@ FUNCTION CntFacCli( lSimula, lPago, lExcCnt, lMessage, oTree, nAsiento, aSimula,
                end if
 
                /*
-               Construimos las bases de los IGICS
+               Construimos las bases de los impuestosS
                */
 
                if lIvaCEE
@@ -294,7 +294,7 @@ FUNCTION CntFacCli( lSimula, lPago, lExcCnt, lMessage, oTree, nAsiento, aSimula,
    next
 
    /*
-   Descuentos sobres grupos de IGIC
+   Descuentos sobres grupos de impuestos
    ----------------------------------------------------------------------------
 	*/
 
@@ -331,7 +331,7 @@ FUNCTION CntFacCli( lSimula, lPago, lExcCnt, lMessage, oTree, nAsiento, aSimula,
    next
 
    /*
-   IGIC de los anticipos--------------------------------------------------------
+   impuestos de los anticipos--------------------------------------------------------
    */
 
    n                 := ( dbfAntCliT )->( OrdSetFocus( "cNumDoc" ) )
@@ -346,7 +346,7 @@ FUNCTION CntFacCli( lSimula, lPago, lExcCnt, lMessage, oTree, nAsiento, aSimula,
          nTotAnt     := aTotAnt[ 5 ]
          nAcuAnt     += nNetAnt
 
-         // Construimos las bases de los IGICS
+         // Construimos las bases de los impuestosS
 
          if ( dbfAntCliT )->nPctIva != 0
 
@@ -406,7 +406,7 @@ FUNCTION CntFacCli( lSimula, lPago, lExcCnt, lMessage, oTree, nAsiento, aSimula,
    end if
 
    /*
-   Creacion y chequeo de Cuentas de IGIC
+   Creacion y chequeo de Cuentas de impuestos
 	--------------------------------------------------------------------------
 	*/
 
@@ -790,7 +790,7 @@ FUNCTION CntFacCli( lSimula, lPago, lExcCnt, lMessage, oTree, nAsiento, aSimula,
       next
 
       /*
-      Asientos de IGIC
+      Asientos de impuestos
       --------------------------------------------------------------------------
       */
 
@@ -812,7 +812,7 @@ FUNCTION CntFacCli( lSimula, lPago, lExcCnt, lMessage, oTree, nAsiento, aSimula,
                aAdd( aSimula, MkAsiento(  nAsiento, ;
                                           cCodDiv, ;
                                           dFecha, ;
-                                          aIva[ n, 2 ],;       // Cuenta de IGIC
+                                          aIva[ n, 2 ],;       // Cuenta de impuestos
                                           if( lIvaCEE, aIva[ n, 3 ], cCtaCli ),;            // Contrapartida
                                           ,;                   // Ptas. Debe
                                           cConcepto,;
@@ -843,7 +843,7 @@ FUNCTION CntFacCli( lSimula, lPago, lExcCnt, lMessage, oTree, nAsiento, aSimula,
                aadd( aSimula, MkAsiento(  nAsiento, ;
                                           cCodDiv, ;
                                           dFecha, ;
-                                          aIva[ n, 2 ],;    // Cuenta de IGIC
+                                          aIva[ n, 2 ],;    // Cuenta de impuestos
                                           if( lIvaCEE, aIva[ n, 3 ], cCtaCli ),;            // Contrapartida
                                           ,;                // Ptas. Debe
                                           cConcepto,;
@@ -1445,7 +1445,7 @@ Function CntTiket( lSimula, lCobro, lDev, lMessage, oTree, nAsiento, aSimula, db
          end if
 
          /*
-         IGIC de la linea-------------------------------------------------------
+         impuestos de la linea-------------------------------------------------------
          */
 
          nIvaDeta    := nTotLTpv( dbfTikL, nDouDiv, nRouDiv )
@@ -1495,7 +1495,7 @@ Function CntTiket( lSimula, lCobro, lDev, lMessage, oTree, nAsiento, aSimula, db
          end if
 
          /*
-         Construimos las bases de los IGICS
+         Construimos las bases de los impuestosS
          --------------------------------------------------------------------
          */
 
@@ -1554,7 +1554,7 @@ Function CntTiket( lSimula, lCobro, lDev, lMessage, oTree, nAsiento, aSimula, db
    */
 
    /*
-   Descuentos sobres grupos de IGIC
+   Descuentos sobres grupos de impuestos
    ----------------------------------------------------------------------------
 
    for n := 1 to Len( aIva )
@@ -1579,7 +1579,7 @@ Function CntTiket( lSimula, lCobro, lDev, lMessage, oTree, nAsiento, aSimula, db
    */
 
    /*
-   Descuentos sobres grupos de IGIC
+   Descuentos sobres grupos de impuestos
    ----------------------------------------------------------------------------
 
    for n := 1 to Len( aIvm )
@@ -1788,7 +1788,7 @@ Function CntTiket( lSimula, lCobro, lDev, lMessage, oTree, nAsiento, aSimula, db
       next
 
       /*
-      Asientos de IGIC
+      Asientos de impuestos
       --------------------------------------------------------------------------
       */
 
@@ -1799,7 +1799,7 @@ Function CntTiket( lSimula, lCobro, lDev, lMessage, oTree, nAsiento, aSimula, db
             aAdd( aSimula, MkAsiento(  nAsiento, ;
                                        cCodDiv, ;
                                        dFecha, ;
-                                       aIva[ n, 1 ],;    // Cuenta de IGIC
+                                       aIva[ n, 1 ],;    // Cuenta de impuestos
                                        cCtaCli,;         // Contrapartida
                                        ,;                // Ptas. Debe
                                        cConcepto,;
@@ -1966,7 +1966,7 @@ Return ( .t. )
 
 //---------------------------------------------------------------------------//
 //
-// Devuelve la subcuenta de IGIC
+// Devuelve la subcuenta de impuestos
 //
 
 Function cSubCuentaIva( nIva, lRecargo, cRuta, cCodEmp, dbfIva, lVentas )
@@ -2166,7 +2166,7 @@ FUNCTION CntAlbCli( lSimula, lExcCnt, lMessage, oTree, nAsiento, aSimula, dbfAlb
                   end if
 
                   /*
-                  Construimos las bases de los IGICS y las cuentas
+                  Construimos las bases de los impuestosS y las cuentas
                   ----------------------------------------------------------------
                   */
 
@@ -2271,7 +2271,7 @@ FUNCTION CntAlbCli( lSimula, lExcCnt, lMessage, oTree, nAsiento, aSimula, dbfAlb
    next
 
    /*
-   Descuentos sobres grupos de IGIC
+   Descuentos sobres grupos de impuestos
    ----------------------------------------------------------------------------
 	*/
 
@@ -2319,7 +2319,7 @@ FUNCTION CntAlbCli( lSimula, lExcCnt, lMessage, oTree, nAsiento, aSimula, dbfAlb
    end if
 
    /*
-   Creacion y chequeo de Cuentas de IGIC
+   Creacion y chequeo de Cuentas de impuestos
 	--------------------------------------------------------------------------
 	*/
 
@@ -2549,7 +2549,7 @@ FUNCTION CntAlbCli( lSimula, lExcCnt, lMessage, oTree, nAsiento, aSimula, dbfAlb
       next
 
       /*
-      Asientos de IGIC
+      Asientos de impuestos
       --------------------------------------------------------------------------
       */
 
@@ -2571,7 +2571,7 @@ FUNCTION CntAlbCli( lSimula, lExcCnt, lMessage, oTree, nAsiento, aSimula, dbfAlb
                aAdd( aSimula, MkAsiento(  nAsiento, ;
                                           cCodDiv, ;
                                           dFecha, ;
-                                          aIva[ n, 2 ],;       // Cuenta de IGIC
+                                          aIva[ n, 2 ],;       // Cuenta de impuestos
                                           cCtaCli,;            // Contrapartida
                                           ,;                   // Ptas. Debe
                                           cConcepto,;
@@ -2602,7 +2602,7 @@ FUNCTION CntAlbCli( lSimula, lExcCnt, lMessage, oTree, nAsiento, aSimula, dbfAlb
                aadd( aSimula, MkAsiento(  nAsiento, ;
                                           cCodDiv, ;
                                           dFecha, ;
-                                          aIva[ n, 2 ],;    // Cuenta de IGIC
+                                          aIva[ n, 2 ],;    // Cuenta de impuestos
                                           cCtaCli,;         // Contrapartida
                                           ,;                // Ptas. Debe
                                           cConcepto,;
@@ -2857,7 +2857,7 @@ FUNCTION CntFacRec( lSimula, lPago, lExcCnt, lMessage, oTree, nAsiento, aSimula,
                   end if
 
                   /*
-                  Construimos las bases de los IGICS
+                  Construimos las bases de los impuestosS
                   */
 
                   if lIvaCEE
@@ -2970,7 +2970,7 @@ FUNCTION CntFacRec( lSimula, lPago, lExcCnt, lMessage, oTree, nAsiento, aSimula,
    next
 
    /*
-   Descuentos sobres grupos de IGIC
+   Descuentos sobres grupos de impuestos
    ----------------------------------------------------------------------------
 	*/
 
@@ -3008,7 +3008,7 @@ FUNCTION CntFacRec( lSimula, lPago, lExcCnt, lMessage, oTree, nAsiento, aSimula,
    end if
 
    /*
-   Creacion y chequeo de Cuentas de IGIC
+   Creacion y chequeo de Cuentas de impuestos
 	--------------------------------------------------------------------------
 	*/
 
@@ -3238,7 +3238,7 @@ FUNCTION CntFacRec( lSimula, lPago, lExcCnt, lMessage, oTree, nAsiento, aSimula,
       next
 
       /*
-      Asientos de IGIC
+      Asientos de impuestos
       --------------------------------------------------------------------------
       */
 
@@ -3260,7 +3260,7 @@ FUNCTION CntFacRec( lSimula, lPago, lExcCnt, lMessage, oTree, nAsiento, aSimula,
                aAdd( aSimula, MkAsiento(  nAsiento, ;
                                           cCodDiv, ;
                                           dFecha, ;
-                                          aIva[ n, 2 ],;                         // Cuenta de IGIC
+                                          aIva[ n, 2 ],;                         // Cuenta de impuestos
                                           if( lIvaCEE, aIva[ n, 3 ], cCtaCli ),; // Contrapartida
                                           ,;                                     // Ptas. Debe
                                           cConcepto,;
@@ -3360,7 +3360,7 @@ FUNCTION CntFacRec( lSimula, lPago, lExcCnt, lMessage, oTree, nAsiento, aSimula,
                                           cCodDiv,;
                                           dFecha,;
                                           aIva[ n, 3 ],;                                                                // Contrapartida
-                                          ,;                                                                            // Cuenta de IGIC
+                                          ,;                                                                            // Cuenta de impuestos
                                           ,;                                                                            // Ptas. Debe
                                           cConcepto,;
                                           Round( nPReq( dbfIva, aIva[ n, 1 ] ) * ( aIva[ n, 4 ] ) / 100, nRouDiv ),;    // Ptas. Haber
@@ -3565,7 +3565,7 @@ FUNCTION CntFacPrv( lSimula, lPago, lMessage, oTree, nAsiento, aSimula, dbfFacPr
       aAdd( aVentas, { ( dbfFacPrvT )->SubCta, aTotFac[ 1 ] } )
 
       /*
-      Construimos las bases de los IGICS
+      Construimos las bases de los impuestosS
       */
 
       for n := 1 to Len( aTotIva )
@@ -3615,7 +3615,7 @@ FUNCTION CntFacPrv( lSimula, lPago, lMessage, oTree, nAsiento, aSimula, dbfFacPr
                end if
 
                /*
-               Construimos las bases de los IGICS
+               Construimos las bases de los impuestosS
                */
 
                if ( dbfFacPrvT )->nRegIva == 2
@@ -3674,7 +3674,7 @@ FUNCTION CntFacPrv( lSimula, lPago, lMessage, oTree, nAsiento, aSimula, dbfFacPr
    next
 
    /*
-   Descuentos sobres grupos de IGIC
+   Descuentos sobres grupos de impuestos
 	*/
 
    for n := 1 to Len( aIva )
@@ -3709,7 +3709,7 @@ FUNCTION CntFacPrv( lSimula, lPago, lMessage, oTree, nAsiento, aSimula, dbfFacPr
    next
 
 	/*
-   Chequeo de Cuentas de IGIC---------------------------------------------------
+   Chequeo de Cuentas de impuestos---------------------------------------------------
 	*/
 
    for n := 1 to len( aIva )
@@ -3836,7 +3836,7 @@ FUNCTION CntFacPrv( lSimula, lPago, lMessage, oTree, nAsiento, aSimula, dbfFacPr
       next
 
       /*
-      Asientos de IGIC_____________________________________________________________
+      Asientos de impuestos_____________________________________________________________
       */
 
       if ( dbfFacPrvT )->nRegIva == 2
@@ -3848,7 +3848,7 @@ FUNCTION CntFacPrv( lSimula, lPago, lMessage, oTree, nAsiento, aSimula, dbfFacPr
                aadd( aSimula, MkAsiento(  nAsiento, ;
                                           cCodDiv,;
                                           dFecha, ;
-                                          aIva[ n, 3 ],;                                        // Cuenta de IGIC
+                                          aIva[ n, 3 ],;                                        // Cuenta de impuestos
                                           aIva[ n, 2 ],;                                        // Contrapartida
                                           Round( aIva[ n, 1 ] * aIva[ n, 4 ] / 100, nRinDiv ),; // Ptas. Debe
                                           cConCompr,;
@@ -3880,7 +3880,7 @@ FUNCTION CntFacPrv( lSimula, lPago, lMessage, oTree, nAsiento, aSimula, dbfFacPr
                aadd( aSimula, MkAsiento(  nAsiento, ;
                                           cCodDiv,;
                                           dFecha, ;
-                                          aIva[ n, 2 ],;    // Cuenta de IGIC
+                                          aIva[ n, 2 ],;    // Cuenta de impuestos
                                           cCtaPrv,;         // Contrapartida
                                           Round( aIva[ n, 1 ] * aIva[ n, 4 ] / 100, nRinDiv ),;
                                           cConCompr,;
@@ -3916,7 +3916,7 @@ FUNCTION CntFacPrv( lSimula, lPago, lMessage, oTree, nAsiento, aSimula, dbfFacPr
                   aadd( aSimula, MkAsiento(  nAsiento,;
                                              cCodDiv,;
                                              dFecha,;
-                                             aIva[ n, 3 ],; // Cuenta de IGIC
+                                             aIva[ n, 3 ],; // Cuenta de impuestos
                                              ,;
                                              Round( nPReq( dbfIva, aIva[ n, 1 ] ) * aIva[ n, 4 ] / 100, nRinDiv ),;
                                              cConCompr,;
@@ -4148,7 +4148,7 @@ FUNCTION CntRctPrv( lSimula, lPago, lMessage, oTree, nAsiento, aSimula, dbfRctPr
             end if
 
             /*
-            Construimos las bases de los IGICS
+            Construimos las bases de los impuestosS
             */
 
             if ( dbfRctPrvT )->nRegIva == 2
@@ -4204,7 +4204,7 @@ FUNCTION CntRctPrv( lSimula, lPago, lMessage, oTree, nAsiento, aSimula, dbfRctPr
    next
 
    /*
-   Descuentos sobres grupos de IGIC
+   Descuentos sobres grupos de impuestos
 	*/
 
    for n := 1 to Len( aIva )
@@ -4243,7 +4243,7 @@ FUNCTION CntRctPrv( lSimula, lPago, lMessage, oTree, nAsiento, aSimula, dbfRctPr
    next
 
 	/*
-   Chequeo de Cuentas de IGIC---------------------------------------------------
+   Chequeo de Cuentas de impuestos---------------------------------------------------
 	*/
 
    for n := 1 to len( aIva )
@@ -4375,7 +4375,7 @@ FUNCTION CntRctPrv( lSimula, lPago, lMessage, oTree, nAsiento, aSimula, dbfRctPr
          aadd( aSimula, MkAsiento(  nAsiento, ;
                                     cCodDiv,;
                                     dFecha, ;
-                                    aIva[ n, 3 ],;                                        // Cuenta de IGIC
+                                    aIva[ n, 3 ],;                                        // Cuenta de impuestos
                                     aIva[ n, 2 ],;                                        // Contrapartida
                                     Round( aIva[ n, 1 ] * aIva[ n, 4 ] / 100, nRinDiv ),; // Ptas. Debe
                                     cConCompr,;
@@ -4399,7 +4399,7 @@ FUNCTION CntRctPrv( lSimula, lPago, lMessage, oTree, nAsiento, aSimula, dbfRctPr
       else
 
       /*
-      Asientos de IGIC_____________________________________________________________
+      Asientos de impuestos_____________________________________________________________
       */
 
       for n := 1 TO len( aIva )
@@ -4407,7 +4407,7 @@ FUNCTION CntRctPrv( lSimula, lPago, lMessage, oTree, nAsiento, aSimula, dbfRctPr
          aadd( aSimula, MkAsiento(  nAsiento, ;
                                     cCodDiv,;
                                     dFecha, ;
-                                    aIva[ n, 2 ],;    // Cuenta de IGIC
+                                    aIva[ n, 2 ],;    // Cuenta de impuestos
                                     cCtaPrv,;         // Contrapartida
                                     Round( aIva[ n, 1 ] * aIva[ n, 4 ] / 100, nRinDiv ),;
                                     cConCompr,;
@@ -4439,7 +4439,7 @@ FUNCTION CntRctPrv( lSimula, lPago, lMessage, oTree, nAsiento, aSimula, dbfRctPr
             aadd( aSimula, MkAsiento(  nAsiento,;
                                        cCodDiv,;
                                        dFecha,;
-                                       aIva[ n, 3 ],; // Cuenta de IGIC
+                                       aIva[ n, 3 ],; // Cuenta de impuestos
                                        ,;
                                        Round( nPReq( dbfIva, aIva[ n, 1 ] ) * aIva[ n, 4 ] / 100, nRinDiv ),;
                                        cConCompr,;

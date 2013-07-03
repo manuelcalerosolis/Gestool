@@ -772,10 +772,10 @@ Method InitialCheck() CLASS AccessCode
          rxDiv()
       end while
 
-      // Comprobamos q existan los tipos de IGIC----------------------------------
+      // Comprobamos q existan los tipos de impuestos----------------------------------
 
       if !Empty( ::oMessage )
-         ::oMessage:SetText( "Comprobando tipos de IGIC..." )
+         ::oMessage:SetText( "Comprobando tipos de impuestos..." )
       end if
 
       IsIva()

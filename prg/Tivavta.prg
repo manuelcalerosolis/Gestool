@@ -57,7 +57,7 @@ METHOD Create()
 
    ::AddTmpIndex( "cTipIva", "cTipIva + dTos( dFecMov )" )
 
-   ::AddGroup( {|| ::oDbf:cTipIva }, {|| "tipo " + cImp() + " : " + Rtrim( ::oDbf:cTipIva ) + "-" + AllTrim( ::oDbf:cNomIva ) + " - " + AllTrim( Trans( ::oDbf:nPctIva, "@EZ 99.99%" ) ) }, {||"Total tipo IGIC.."} )
+   ::AddGroup( {|| ::oDbf:cTipIva }, {|| "tipo " + cImp() + " : " + Rtrim( ::oDbf:cTipIva ) + "-" + AllTrim( ::oDbf:cNomIva ) + " - " + AllTrim( Trans( ::oDbf:nPctIva, "@EZ 99.99%" ) ) }, {||"Total tipo impuestos.."} )
 
    ::dIniInf := GetSysDate()
 

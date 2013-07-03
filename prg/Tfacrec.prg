@@ -164,7 +164,7 @@ METHOD lResource( cFld )
       OF       ::oFld:aDialogs[1]
 
    /*
-   Montamos el Desde -- Hasta IGIC----------------------------------------------
+   Montamos el Desde -- Hasta impuestos----------------------------------------------
    */
 
    ::cIvaDes   := dbFirst( ::oDbfIva, 1 )

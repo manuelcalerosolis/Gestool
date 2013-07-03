@@ -49,7 +49,7 @@ Definici¢n de la base de datos de lineas de detalle
 #define _DFECHA                  (dbfExtAgeL)->( FieldPos( "DFECHA"   ) )
 
 /*
-Definici¢n de Array para IGIC
+Definici¢n de Array para impuestos
 */
 
 #define _NBRTIVA1						aIva[ 1, 1 ]
@@ -66,7 +66,7 @@ Definici¢n de Array para IGIC
 #define _NPCTREQ3						aIva[ 3, 4 ]
 
 /*
-Definici¢n de Array para objetos IGIC
+Definici¢n de Array para objetos impuestos
 */
 
 #define _OBASIVA1						oIva[ 1, 1 ]
@@ -1210,7 +1210,7 @@ STATIC FUNCTION nTotal( nNumExt, dbfMaster, dbfLine, dbfIva, dbfDivisa, aTmp, lE
 		nNumArt			+= nTotLNumArt( dbfLine )
 
 		/*
-      Estudio de IGIC
+      Estudio de impuestos
 		*/
 
 		DO CASE
@@ -1238,7 +1238,7 @@ STATIC FUNCTION nTotal( nNumExt, dbfMaster, dbfLine, dbfIva, dbfDivisa, aTmp, lE
 	( dbfLine )->( DbGoto( nRecno ) )
 
 	/*
-   Ordenamos los IGICS de menor a mayor
+   Ordenamos los impuestosS de menor a mayor
 	*/
 
    aIva        := aSort( aIva,,, {|x,y| abs( x[1] ) > abs( y[1] ) } )
@@ -1356,7 +1356,7 @@ STATIC FUNCTION nTotal( nNumExt, dbfMaster, dbfLine, dbfIva, dbfDivisa, aTmp, lE
 	END IF
 
 	/*
-   Calculos de IGIC
+   Calculos de impuestos
 	*/
 
 	nTotalIva := Round( _NBASIVA1 * _NPCTIVA1 / 100, nDinDiv )
@@ -1416,7 +1416,7 @@ STATIC FUNCTION nTotal( nNumExt, dbfMaster, dbfLine, dbfIva, dbfDivisa, aTmp, lE
 		END IF
 
 		/*
-      Refrescamos los IGICS
+      Refrescamos los impuestosS
 		*/
 
 		IF _OBASIVA1 != NIL

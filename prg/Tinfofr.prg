@@ -134,7 +134,7 @@ METHod lResource ( cFld )
       OF       ::oFld:aDialogs[1]
 
    /*
-   Montamos el Desde -- Hasta IGIC
+   Montamos el Desde -- Hasta impuestos
    */
 
    REDEFINE GET oOfrDes VAR ::cOfrDes ;

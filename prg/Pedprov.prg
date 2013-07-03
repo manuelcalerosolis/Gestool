@@ -112,7 +112,7 @@ Definici¢n de la base de datos de pedidos a proveedores
 #define _NMEDTRE                  48
 
 /*
-Definici¢n de Array para IGIC
+Definici¢n de Array para impuestos
 */
 
 #define _NBRTIVA1                aTotIva[ 1, 1 ]
@@ -1747,7 +1747,7 @@ STATIC FUNCTION EdtRec( aTmp, aGet, dbfPedPrvT, oBrw, cCodPrv, cCodArt, nMode )
 			OF 		oFld:aDialogs[1]
 
       /*
-      Desglose del IGIC---------------------------------------------------------
+      Desglose del impuestos---------------------------------------------------------
       */
 
       oBrwIva                        := TXBrowse():New( oFld:aDialogs[ 1 ] )
@@ -4290,7 +4290,7 @@ FUNCTION nTotPedPrv( cPedido, cPedPrvT, cPedPrvL, cIva, cDiv, aTmp, cDivRet, lPi
          if nTotArt != 0
 
             /*
-            Estudio de IGIC
+            Estudio de impuestos
             */
 
             do case
@@ -4399,7 +4399,7 @@ FUNCTION nTotPedPrv( cPedido, cPedPrvT, cPedPrvL, cIva, cDiv, aTmp, cDivRet, lPi
    nTotNet           := Round( _NBASIVA1 + _NBASIVA2 + _NBASIVA3, nDirDiv )
 
 	/*
-   Calculos de IGIC
+   Calculos de impuestos
 	*/
 
    if nRegIva <= 1
@@ -4421,7 +4421,7 @@ FUNCTION nTotPedPrv( cPedido, cPedPrvT, cPedPrvL, cIva, cDiv, aTmp, cDivRet, lPi
    end if
 
    /*
-   Total IGIC
+   Total impuestos
    */
 
    nTotIva           := Round( _NIMPIVA1 + _NIMPIVA2 + _NIMPIVA3, nDirDiv )

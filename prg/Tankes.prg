@@ -632,7 +632,7 @@ METHOD CalPre( lBnf, nBnf, oGetPrePts, oGetIvaPts )
       oGetPrePts:cText( nNewPre )
 
       /*
-      Calculo del IGIC
+      Calculo del impuestos
       */
 
       nNewIva     := nNewPre
@@ -658,7 +658,7 @@ RETURN .T.
 //----------------------------------------------------------------------------//
 
 /*
-Esta funci¢n calcula el beneficio que se esta aplicando a un articulo sin IGIC
+Esta funci¢n calcula el beneficio que se esta aplicando a un articulo sin impuestos
 */
 
 Method CalBnfPts( nPrePts, oBnf, oGetIvaPts )
@@ -703,7 +703,7 @@ Method CalBnfPts( nPrePts, oBnf, oGetIvaPts )
    end if
 
 	/*
-   Calculo del IGIC
+   Calculo del impuestos
 	*/
 
    nNewIva        += ( nNewIva * nIvaPct / 100 )
@@ -716,7 +716,7 @@ RETURN .T.
 
 //----------------------------------------------------------------------------//
 /*
-Esta funci¢n calcula el beneficio que se esta aplicando a un articulo con IGIC
+Esta funci¢n calcula el beneficio que se esta aplicando a un articulo con impuestos
 */
 
 METHOD CalBnfIva( nPrePtsIva, oBnf, oGetBas )
@@ -733,7 +733,7 @@ METHOD CalBnfIva( nPrePtsIva, oBnf, oGetBas )
    nPrePtsIva     := Round( nPrePtsIva, ::nDouDiv )
 
 	/*
-   Primero es quitar el IGIC
+   Primero es quitar el impuestos
 	*/
 
    nNewPre        := Round( nPrePtsIva / ( 1 + nIvaPct / 100 ), ::nDouDiv )

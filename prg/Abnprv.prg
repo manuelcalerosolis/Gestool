@@ -59,7 +59,7 @@ Definici¢n de la base de datos de lineas de detalle
 #define _DFECHA                   13      //   D      8     0
 
 /*
-Definici¢n de Array para IGIC
+Definici¢n de Array para impuestos
 */
 
 #define _NBRTIVA1						aIva[ 1, 1 ]
@@ -76,7 +76,7 @@ Definici¢n de Array para IGIC
 #define _NPCTREQ3						aIva[ 3, 4 ]
 
 /*
-Definici¢n de Array para objetos IGIC
+Definici¢n de Array para objetos impuestos
 */
 
 #define _OBASIVA1						aoIva[ 1, 1 ]
@@ -606,7 +606,7 @@ STATIC FUNCTION EdtRec( aTmp, aGet, dbfAbnPrvT, oBrw, bWhen, bValid, nMode )
 			OF 		oFld:aDialogs[1]
 
 		/*
-      Desglose del IGIC
+      Desglose del impuestos
 		________________________________________________________________________
 		*/
 
@@ -1468,7 +1468,7 @@ STATIC FUNCTION nTotal( nFactura, dbfAbnPrvT, dbfLine, dbfIva, dbfDivisa, aTmp, 
 		nTotalArt := nTotLAbnPrv( dbfLine, nDinDiv, nVdvDiv )
 
 		/*
-      Estudio de IGIC
+      Estudio de impuestos
 		*/
 
 		DO CASE
@@ -1497,7 +1497,7 @@ STATIC FUNCTION nTotal( nFactura, dbfAbnPrvT, dbfLine, dbfIva, dbfDivisa, aTmp, 
 	( dbfLine )->( dbGoTo( nRecno) )
 
 	/*
-   Ordenamos los IGICS de menor a mayor
+   Ordenamos los impuestosS de menor a mayor
 	*/
 
 	nTotalBrt	:= _NBRTIVA1 + _NBRTIVA2 + _NBRTIVA3
@@ -1547,7 +1547,7 @@ STATIC FUNCTION nTotal( nFactura, dbfAbnPrvT, dbfLine, dbfIva, dbfDivisa, aTmp, 
 	nTotalNet			:= _NBASIVA1 + _NBASIVA2 + _NBASIVA3
 
 	/*
-   Calculos de IGIC
+   Calculos de impuestos
 	*/
 
 	nTotalIva += if ( _NPCTIVA1 != NIL, Round( _NBASIVA1 * _NPCTIVA1 / 100, nDinDiv ), 0 )
@@ -1607,7 +1607,7 @@ STATIC FUNCTION nTotal( nFactura, dbfAbnPrvT, dbfLine, dbfIva, dbfDivisa, aTmp, 
 		END IF
 
 		/*
-      Refrescamos los IGICS
+      Refrescamos los impuestosS
 		*/
 
 		IF _OBASIVA1 != NIL
@@ -2030,7 +2030,7 @@ STATIC FUNCTION TransAbono( oBrw )
 			END IF
 
 			/*
-         Construimos las bases de los IGICS
+         Construimos las bases de los impuestosS
 			--------------------------------------------------------------------
 			*/
 
@@ -2073,7 +2073,7 @@ STATIC FUNCTION TransAbono( oBrw )
 	END IF
 
    /*
-   Descuentos sobres grupos de IGIC
+   Descuentos sobres grupos de impuestos
 	--------------------------------------------------------------------------
 	*/
 
@@ -2101,7 +2101,7 @@ STATIC FUNCTION TransAbono( oBrw )
 	NEXT
 
 	/*
-   Chequeo de Cuentas de IGIC
+   Chequeo de Cuentas de impuestos
 	--------------------------------------------------------------------------
 	*/
 
@@ -2196,7 +2196,7 @@ STATIC FUNCTION TransAbono( oBrw )
 	NEXT
 
 	/*
-   Asientos de IGIC
+   Asientos de impuestos
 	--------------------------------------------------------------------------
 	*/
 
@@ -2221,7 +2221,7 @@ STATIC FUNCTION TransAbono( oBrw )
       MkAsiento(  nAsiento, ;
                   cCodDiv,;
 						dFecha, ;
-                  cSubCtaIva,;   // Cuenta de IGIC
+                  cSubCtaIva,;   // Cuenta de impuestos
 						cCtaPrv,;		// Contrapartida
 						,; 				// Ptas. Debe
 						cConcepto,;

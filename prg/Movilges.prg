@@ -953,7 +953,7 @@ Method MovilgesExportarArticulo( cCodAgente )
          cChr  += "      0"                                                      // Tarifa 9
          cChr  += "      0"                                                      // Tarifa 10
          cChr  += truncarNumero( ::dbfArticulo:PCOSTO, 7, ::nDecimales )         // Precio de costo
-         cChr  += truncarCadena( cCodTerIva( ::dbfArticulo:TipoIva, ::dbfTIva:nArea ) ) // Codigo del tipo de IGIC
+         cChr  += truncarCadena( cCodTerIva( ::dbfArticulo:TipoIva, ::dbfTIva:nArea ) ) // Codigo del tipo de impuestos
          cChr  += truncarNumero( ::dbfArticulo:NCAJPLT, 6, 0 )                   // Numero de cajas por palet
          cChr  += truncarNumero( ::dbfArticulo:NPESOKG, 6, 3 )                   // Peso de la caja
          cChr  += "D"                                                            // Modificar precio
@@ -979,8 +979,8 @@ Method MovilgesExportarArticulo( cCodAgente )
 
       else
 
-         //el articulo no tiene IGIC
-         ::SetTexto( "El artículo " + RTrim( ::dbfArticulo:Nombre ) + " no tiene asignado ningún código de IGIC.", 42 )
+         //el articulo no tiene impuestos
+         ::SetTexto( "El artículo " + RTrim( ::dbfArticulo:Nombre ) + " no tiene asignado ningún código de impuestos.", 42 )
 
       end if
 
@@ -1615,7 +1615,7 @@ Method movilgesImportarPedido( cCodAgente )
       if ::dbfClient:Seek( cCodCli ) .and. ( substr( cCabecera, 21, 1 ) == "9" ) // 9 es el codigo de pedido general
 
          dFecha                  := dTruncarFecha( substr( cCabecera, 261, 10 ) )
-         lExentoIva              := truncarCadena( cCabecera, 242, 1 ) = "N"     //Si esta exento de IGIC
+         lExentoIva              := truncarCadena( cCabecera, 242, 1 ) = "N"     //Si esta exento de impuestos
 
          ::oMedidor:Set( oFileCabecera:nRecNo() )
 
@@ -1948,7 +1948,7 @@ Method movilgesImportarAlbaran( cCodAgente )
          ::oMedidor:Set( oFileCabecera:nRecNo() )
 
          dFecha         := dTruncarFecha( substr( cCabecera, 261, 10 ) )
-         lExentoIva     := truncarCadena( cCabecera, 242, 1 ) = "N"                   //Si esta exento de IGIC
+         lExentoIva     := truncarCadena( cCabecera, 242, 1 ) = "N"                   //Si esta exento de impuestos
 
          nNumAlb        := nNewDoc( ::dbfClient :Serie, ::dbfAlbCliT:nArea, "NALBCLI" )
 
@@ -2133,7 +2133,7 @@ Method movilgesImportarFactura( cCodAgente )
          ::oMedidor:Set( oFileCabecera:nRecNo() )
 
          dFecha         := dTruncarFecha( substr( cCabecera, 261, 10 ) )
-         lExentoIva     := truncarCadena( cCabecera, 242, 1 ) = "N"           //Si esta exento de IGIC
+         lExentoIva     := truncarCadena( cCabecera, 242, 1 ) = "N"           //Si esta exento de impuestos
 
          nNumFac     := nNewDoc( ::dbfClient:Serie, ::dbfFacCliT:nArea, "NFACCLI" )
 

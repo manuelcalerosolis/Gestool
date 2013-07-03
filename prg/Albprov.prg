@@ -186,7 +186,7 @@ Definici¢n de la base de datos de lineas de detalle
 #define _LAUTSER                 107
 
 /*
-Definici¢n de Array para IGIC
+Definici¢n de Array para impuestos
 */
 
 #define _NBRTIVA1                aTotIva[ 1, 1 ]
@@ -2001,7 +2001,7 @@ STATIC FUNCTION EdtRec( aTmp, aGet, dbfAlbPrvT, oBrw, cCodPrv, cCodArt, nMode, c
 			OF 		oFld:aDialogs[1]
 
       /*
-      Desglose del IGIC
+      Desglose del impuestos
 		________________________________________________________________________
 
       REDEFINE LISTBOX oBrwIva ;
@@ -2226,7 +2226,7 @@ STATIC FUNCTION EdtRec( aTmp, aGet, dbfAlbPrvT, oBrw, cCodPrv, cCodArt, nMode, c
          OF       oFld:aDialogs[2]
 
       /*
-      Regimen de IGIC-----------------------------------------------------------
+      Regimen de impuestos-----------------------------------------------------------
       */
 
       REDEFINE RADIO aGet[ _NREGIVA ] VAR aTmp[ _NREGIVA ] ;
@@ -4767,7 +4767,7 @@ FUNCTION nTotAlbPrv( nAlbaran, cAlbPrvT, cAlbPrvL, cIva, cDiv, aTmp, cDivRet, lP
          if nTotArt != 0
 
             /*
-            Estudio de IGIC
+            Estudio de impuestos
             */
 
             do case
@@ -4798,7 +4798,7 @@ FUNCTION nTotAlbPrv( nAlbaran, cAlbPrvT, cAlbPrvL, cIva, cDiv, aTmp, cDivRet, lP
    ( cAlbPrvL )->( dbGoTo( nRecno) )
 
 	/*
-   Ordenamos los IGICS de menor a mayor
+   Ordenamos los impuestosS de menor a mayor
 	*/
 
    nTotBrt           := _NBRTIVA1 + _NBRTIVA2 + _NBRTIVA3
@@ -4868,7 +4868,7 @@ FUNCTION nTotAlbPrv( nAlbaran, cAlbPrvT, cAlbPrvL, cIva, cDiv, aTmp, cDivRet, lP
    nTotNet           := _NBASIVA1 + _NBASIVA2   + _NBASIVA3
 
 	/*
-   Calculos de IGIC
+   Calculos de impuestos
 	*/
 
    if nRegIva <= 1
@@ -4890,7 +4890,7 @@ FUNCTION nTotAlbPrv( nAlbaran, cAlbPrvT, cAlbPrvL, cIva, cDiv, aTmp, cDivRet, lP
    end if
 
    /*
-   Total IGIC
+   Total impuestos
    */
 
    nTotIva           := Round( _NIMPIVA1 + _NIMPIVA2 + _NIMPIVA3, nDirDiv )
@@ -5104,7 +5104,7 @@ Static Function LoaArt( aGet, aTmp, aTmpAlb, oFld, oSayPr1, oSayPr2, oSayVp1, oS
             oFld:Refresh()
 
             /*
-            Preguntamos si el regimen de IGIC es distinto de Exento-------------
+            Preguntamos si el regimen de impuestos es distinto de Exento-------------
             */
 
             nIva              := nIva( dbfIva, ( dbfArticulo )->TipoIva )
@@ -7484,7 +7484,7 @@ return nCon
 
 //----------------------------------------------------------------------------//
 /*
-Calcula el precio teniendo en cuenta el tipo de IGIC
+Calcula el precio teniendo en cuenta el tipo de impuestos
 */
 
 /*STATIC FUNCTION lCalPre( nPreUnt, nBnf, lIva, nIva, oGet, lBnf )
@@ -7496,7 +7496,7 @@ Calcula el precio teniendo en cuenta el tipo de IGIC
       nPre     := nPreUnt * nBnf / 100 + nPreUnt
 
       /*
-      Si lleva IGIC incluido
+      Si lleva impuestos incluido
       */
 
 /*      if lIva
@@ -7524,7 +7524,7 @@ RETURN .T.*/
 	IF nPreVta != 0
 
 		/*
-      Si va con IGIC incluido nos quedamos con la base redondeamos a los
+      Si va con impuestos incluido nos quedamos con la base redondeamos a los
 		decimales de la divisa
 		*/
 

@@ -68,7 +68,7 @@ METHOD Create()
 
    ::AddTmpIndex( "cTipIva", "cTipIva" )
 
-   ::AddGroup( {|| ::oDbf:cTipIva }, {|| "tipo " + cImp() + " : " + Rtrim( ::oDbf:cTipIva ) + "-" + oRetFld( ::oDbf:cTipIva, ::oDbfIva ) }, {||"Total tipo IGIC.."} )
+   ::AddGroup( {|| ::oDbf:cTipIva }, {|| "tipo " + cImp() + " : " + Rtrim( ::oDbf:cTipIva ) + "-" + oRetFld( ::oDbf:cTipIva, ::oDbfIva ) }, {||"Total tipo impuestos.."} )
 
 RETURN ( self )
 

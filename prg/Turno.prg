@@ -7006,7 +7006,7 @@ METHOD ContabilizaContadores()
    end if
 
    /*
-   Construimos las bases de los IGICS
+   Construimos las bases de los impuestosS
    ----------------------------------------------------------------------------
    */
 
@@ -7137,7 +7137,7 @@ METHOD ContabilizaContadores()
    next
 
    /*
-   Asientos de IGIC----------------------------------------------------------
+   Asientos de impuestos----------------------------------------------------------
    */
 
    for m := 1 to len( aIva )
@@ -7152,7 +7152,7 @@ METHOD ContabilizaContadores()
                                     aIva[ m, 5 ],;
                                     Val( ::oDbf:cNumTur ),;
                                     aIva[ m, 4 ],;    // Base Imponible
-                                    aIva[ m, 6 ],;    // IGIC
+                                    aIva[ m, 6 ],;    // impuestos
                                     ,;
                                     ,;
                                     ::cGetProjectoContaplus,;

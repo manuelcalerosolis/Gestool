@@ -833,7 +833,7 @@ Function aCalPrePnt( lSobreCoste, nCosto, lBnf, nBnf, uTipIva, nDecDiv, cCodImp,
       end if
 
       /*
-      Calculo del IGIC
+      Calculo del impuestos
       */
 
       nNewIva     := nNewPre

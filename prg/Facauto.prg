@@ -879,7 +879,7 @@ METHOD Resource( nMode ) CLASS TFacAutomatica
          ::aGet[ _NDTODOS ]:bChange   := {|| ::nCalculoTotal() }
 
       /*
-      Browse de IGICs
+      Browse de impuestoss
       -------------------------------------------------------------------------
       */
 
@@ -1355,7 +1355,7 @@ METHOD nCalculoTotal( lExt ) CLASS TFacAutomatica
    oDbfDet:GoTo( nRec )
 
    /*
-   Ordenamos los IGICS de menor a mayor----------------------------------------
+   Ordenamos los impuestosS de menor a mayor----------------------------------------
    */
 
    ::aTotIva         := aSort( ::aTotIva,,, {|x,y| if( x[3] != nil, x[3], -1 ) > if( y[3] != nil, y[3], -1 )  } )
@@ -1439,7 +1439,7 @@ METHOD nCalculoTotal( lExt ) CLASS TFacAutomatica
    end if
 
    /*
-   Calculo de los IGICs---------------------------------------------------------
+   Calculo de los impuestoss---------------------------------------------------------
    */
 
    _NIMPIVA1      := if( _NPCTIVA1 != NIL, Round( _NBASIVA1 * _NPCTIVA1 / 100, ::nRouDiv ), 0 )
@@ -1467,7 +1467,7 @@ METHOD nCalculoTotal( lExt ) CLASS TFacAutomatica
    end if
 
    /*
-   Total IGIC-------------------------------------------------------------------
+   Total impuestos-------------------------------------------------------------------
    */
 
    ::nTotIva      := Round( _NIMPIVA1 + _NIMPIVA2 + _NIMPIVA3, ::nRouDiv )

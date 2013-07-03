@@ -54,7 +54,7 @@ Definici¢n de la base de datos de lineas de detalle
 #define _CTIPMOV                 (dbfExtAgeL)->( FieldPos( "CTIPMOV"  ) )
 
 /*
-Definici¢n de Array para IGIC
+Definici¢n de Array para impuestos
 */
 
 #define _NBRTIVA1                aTotIva[ 1, 1 ]
@@ -71,7 +71,7 @@ Definici¢n de Array para IGIC
 #define _NPCTREQ3                aTotIva[ 3, 4 ]
 
 /*
-Definici¢n de Array para objetos IGIC
+Definici¢n de Array para objetos impuestos
 */
 
 #define _OBASIVA1						oIva[ 1, 1 ]
@@ -885,7 +885,7 @@ STATIC FUNCTION EdtRec( aTmp, aGet, dbfExtAgeT, oBrw, bWhen, bValid, nMode )
 			OF 		oDlg
 
       /*
-      Cajas Bases de los IGICS____________________________________________________________
+      Cajas Bases de los impuestosS____________________________________________________________
 		*/
 
       oBrwIva                        := TXBrowse():New( oDlg )
@@ -1457,7 +1457,7 @@ FUNCTION nTotExtAge( nNumExt, dbfMaster, dbfLine, cDbfIva, cDbfDivisa, aTmp, lEu
       nTotalArt      := nTotLExtAge( dbfLine )
 
       /*
-      Estudio de IGIC
+      Estudio de impuestos
       */
 
       do case
@@ -1478,7 +1478,7 @@ FUNCTION nTotExtAge( nNumExt, dbfMaster, dbfLine, cDbfIva, cDbfDivisa, aTmp, lEu
 
    ( dbfLine )->( dbGoto( nRecno ) )
 
-   /*Ordenamos los IGICS de menor a mayor*/
+   /*Ordenamos los impuestosS de menor a mayor*/
 
    aTotIva        := aSort( aTotIva,,, {|x,y| if( x[3] != nil, x[3], -1 ) > if( y[3] != nil, y[3], -1 )  } )
 
@@ -1535,7 +1535,7 @@ FUNCTION nTotExtAge( nNumExt, dbfMaster, dbfLine, cDbfIva, cDbfDivisa, aTmp, lEu
    nTotNet           := _NBASIVA1 + _NBASIVA2 + _NBASIVA3
 
    /*
-   Calculos de IGIC
+   Calculos de impuestos
    */
 
    nTotIva           := if( _NPCTIVA1 != nil, Round( _NBASIVA1 * _NPCTIVA1 / 100, nDinDiv ), 0 )

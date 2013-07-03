@@ -117,7 +117,6 @@ CLASS TDataCenter
    METHOD Auditor()
    METHOD StartAuditor()                  VIRTUAL
    METHOD lValidAuditor()
-
    METHOD lSelectAuditor()
 
    METHOD cTableDescription( cTableName )

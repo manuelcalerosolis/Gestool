@@ -7877,7 +7877,7 @@ Function CalPre( lSobreCoste, nCosto, lBnf, nBnf, uTipIva, oGetPrePts, oGetIvaPt
       end if
 
       /*
-      Calculo del IGIC
+      Calculo del impuestos
       */
 
       nNewIva     := nNewPre
@@ -7933,7 +7933,7 @@ return cImagenArt
 //---------------------------------------------------------------------------//
 
 /*
-Esta funci¢n calcula el beneficio que se esta aplicando a un articulo sin IGIC
+Esta funci¢n calcula el beneficio que se esta aplicando a un articulo sin impuestos
 */
 
 Function CalBnfPts( lSobreCoste, lIvaInc, nCosto, nPrePts, oBnf, uTipIva, oGetIvaPts, nDecDiv, cCodImp, oSay, lMargenAjuste, cMargenAjuste )
@@ -7975,7 +7975,7 @@ Function CalBnfPts( lSobreCoste, lIvaInc, nCosto, nPrePts, oBnf, uTipIva, oGetIv
    end if
 
    /*
-   Tipos de IGIC
+   Tipos de impuestos
    */
 
    if ValType( uTipIva ) == "C"
@@ -7993,7 +7993,7 @@ Function CalBnfPts( lSobreCoste, lIvaInc, nCosto, nPrePts, oBnf, uTipIva, oGetIv
    end if
 
 	/*
-   Calculo del IGIC
+   Calculo del impuestos
 	*/
 
    nNewIva        += ( nNewIva * nIvaPct / 100 )
@@ -8017,7 +8017,7 @@ Return .t.
 //----------------------------------------------------------------------------//
 
 /*
-Esta funci¢n calcula el beneficio que se esta aplicando a un articulo con IGIC
+Esta funci¢n calcula el beneficio que se esta aplicando a un articulo con impuestos
 */
 
 Function CalBnfIva( lSobreCoste, lIvaInc, nCosto, uPrecioIva, oBnf, uTipIva, oGetBas, nDecDiv, cCodImp, oSay, lMargenAjuste, cMargenAjuste )
@@ -8058,7 +8058,7 @@ Function CalBnfIva( lSobreCoste, lIvaInc, nCosto, uPrecioIva, oBnf, uTipIva, oGe
    end if
 
 	/*
-   Primero es quitar el IGIC
+   Primero es quitar el impuestos
 	*/
 
    nNewPre        := Round( nPreIva / ( 1 + nIvaPct / 100 ), nDecDiv )
@@ -8245,7 +8245,7 @@ RETURN ( !lTmp )
       end with
 
       with object ( oBrw:AddCol() )
-         :cHeader          := uFieldEmpresa( "cTxtTar1", "Precio 1" ) + " IGIC inc."
+         :cHeader          := uFieldEmpresa( "cTxtTar1", "Precio 1" ) + " impuestos inc."
          :bStrData         := {|| TransPrecio( nRetPreArt( 1, nil, .t., dbfArticulo, dbfDiv, dbfArtKit, dbfIva ), lEuro ) }
          :nWidth           := 80
          :nDataStrAlign    := AL_RIGHT
@@ -8262,7 +8262,7 @@ RETURN ( !lTmp )
       end with
 
       with object ( oBrw:AddCol() )
-         :cHeader          := uFieldEmpresa( "cTxtTar2", "Precio 2" ) + " IGIC inc."
+         :cHeader          := uFieldEmpresa( "cTxtTar2", "Precio 2" ) + " impuestos inc."
          :bStrData         := {|| TransPrecio( nRetPreArt( 2, nil, .t., dbfArticulo, dbfDiv, dbfArtKit, dbfIva ), lEuro ) }
          :nWidth           := 80
          :nDataStrAlign    := AL_RIGHT
@@ -8280,7 +8280,7 @@ RETURN ( !lTmp )
       end with
 
       with object ( oBrw:AddCol() )
-         :cHeader          := uFieldEmpresa( "cTxtTar3", "Precio 3" ) + " IGIC inc."
+         :cHeader          := uFieldEmpresa( "cTxtTar3", "Precio 3" ) + " impuestos inc."
          :bStrData         := {|| TransPrecio( nRetPreArt( 3, nil, .t., dbfArticulo, dbfDiv, dbfArtKit, dbfIva ), lEuro ) }
          :nWidth           := 80
          :nDataStrAlign    := AL_RIGHT
@@ -8298,7 +8298,7 @@ RETURN ( !lTmp )
       end with
 
       with object ( oBrw:AddCol() )
-         :cHeader          := uFieldEmpresa( "cTxtTar4", "Precio 4" ) + " IGIC inc."
+         :cHeader          := uFieldEmpresa( "cTxtTar4", "Precio 4" ) + " impuestos inc."
          :bStrData         := {|| TransPrecio( nRetPreArt( 4, nil, .t., dbfArticulo, dbfDiv, dbfArtKit, dbfIva ), lEuro ) }
          :nWidth           := 80
          :nDataStrAlign    := AL_RIGHT
@@ -8316,7 +8316,7 @@ RETURN ( !lTmp )
       end with
 
       with object ( oBrw:AddCol() )
-         :cHeader          := uFieldEmpresa( "cTxtTar5", "Precio 5" ) + " IGIC inc."
+         :cHeader          := uFieldEmpresa( "cTxtTar5", "Precio 5" ) + " impuestos inc."
          :bStrData         := {|| TransPrecio( nRetPreArt( 5, nil, .t., dbfArticulo, dbfDiv, dbfArtKit, dbfIva ), lEuro ) }
          :nWidth           := 80
          :nDataStrAlign    := AL_RIGHT
@@ -8334,7 +8334,7 @@ RETURN ( !lTmp )
       end with
 
       with object ( oBrw:AddCol() )
-         :cHeader          := uFieldEmpresa( "cTxtTar6", "Precio 6" ) + " IGIC inc."
+         :cHeader          := uFieldEmpresa( "cTxtTar6", "Precio 6" ) + " impuestos inc."
          :bStrData         := {|| TransPrecio( nRetPreArt( 6, nil, .t., dbfArticulo, dbfDiv, dbfArtKit, dbfIva ), lEuro ) }
          :nWidth           := 80
          :nDataStrAlign    := AL_RIGHT
@@ -9469,7 +9469,7 @@ STATIC FUNCTION mkChgPrc( cFam, cGetTip, cIva, lCosto, lTarifa1, lTarifa2, lTari
             nIva                                      := nIva( dbfIva, ( dbfArticulo )->TipoIva ) / 100
 
             /*
-            Vemos si cumplimos las condiciones de familia y tipo de IGIC--------
+            Vemos si cumplimos las condiciones de familia y tipo de impuestos--------
             */
 
             if dbLock( dbfArticulo )
@@ -9607,7 +9607,7 @@ STATIC FUNCTION mkChgPrc( cFam, cGetTip, cIva, lCosto, lTarifa1, lTarifa2, lTari
                   end if
 
                   /*
-                  Redondeos y precios finales producto sin IGIC incluido--------
+                  Redondeos y precios finales producto sin impuestos incluido--------
                   */
 
                   if !( dbfArticulo )->lIvaInc
@@ -9627,7 +9627,7 @@ STATIC FUNCTION mkChgPrc( cFam, cGetTip, cIva, lCosto, lTarifa1, lTarifa2, lTari
                   end if
 
                   /*
-                  Redondeos y precios finales producto IGIC incluido------------
+                  Redondeos y precios finales producto impuestos incluido------------
                   */
 
                   if ( dbfArticulo )->lIvaInc
@@ -9731,7 +9731,7 @@ STATIC FUNCTION mkChgPrc( cFam, cGetTip, cIva, lCosto, lTarifa1, lTarifa2, lTari
                   end if
 
                   /*
-                  Redondeos y precios finales producto sin IGIC incluido--------
+                  Redondeos y precios finales producto sin impuestos incluido--------
                   */
 
                   if !( dbfArticulo )->lIvaInc
@@ -9751,7 +9751,7 @@ STATIC FUNCTION mkChgPrc( cFam, cGetTip, cIva, lCosto, lTarifa1, lTarifa2, lTari
                   end if
 
                   /*
-                  Redondeos y precios finales producto IGIC incluido------------
+                  Redondeos y precios finales producto impuestos incluido------------
                   */
 
                   if ( dbfArticulo )->lIvaInc
@@ -9855,7 +9855,7 @@ STATIC FUNCTION mkChgPrc( cFam, cGetTip, cIva, lCosto, lTarifa1, lTarifa2, lTari
                   end if
 
                   /*
-                  Redondeos y precios finales producto sin IGIC incluido--------
+                  Redondeos y precios finales producto sin impuestos incluido--------
                   */
 
                   if !( dbfArticulo )->lIvaInc
@@ -9875,7 +9875,7 @@ STATIC FUNCTION mkChgPrc( cFam, cGetTip, cIva, lCosto, lTarifa1, lTarifa2, lTari
                   end if
 
                   /*
-                  Redondeos y precios finales producto IGIC incluido------------
+                  Redondeos y precios finales producto impuestos incluido------------
                   */
 
                   if ( dbfArticulo )->lIvaInc
@@ -9975,7 +9975,7 @@ STATIC FUNCTION mkChgPrc( cFam, cGetTip, cIva, lCosto, lTarifa1, lTarifa2, lTari
                   end if
 
                   /*
-                  Redondeos y precios finales producto sin IGIC incluido--------
+                  Redondeos y precios finales producto sin impuestos incluido--------
                   */
 
                   if !( dbfArticulo )->lIvaInc
@@ -9995,7 +9995,7 @@ STATIC FUNCTION mkChgPrc( cFam, cGetTip, cIva, lCosto, lTarifa1, lTarifa2, lTari
                   end if
 
                   /*
-                  Redondeos y precios finales producto IGIC incluido------------
+                  Redondeos y precios finales producto impuestos incluido------------
                   */
 
                   if ( dbfArticulo )->lIvaInc
@@ -10099,7 +10099,7 @@ STATIC FUNCTION mkChgPrc( cFam, cGetTip, cIva, lCosto, lTarifa1, lTarifa2, lTari
                   end if
 
                   /*
-                  Redondeos y precios finales producto sin IGIC incluido--------
+                  Redondeos y precios finales producto sin impuestos incluido--------
                   */
 
                   if !( dbfArticulo )->lIvaInc
@@ -10119,7 +10119,7 @@ STATIC FUNCTION mkChgPrc( cFam, cGetTip, cIva, lCosto, lTarifa1, lTarifa2, lTari
                   end if
 
                   /*
-                  Redondeos y precios finales producto IGIC incluido------------
+                  Redondeos y precios finales producto impuestos incluido------------
                   */
 
                   if ( dbfArticulo )->lIvaInc
@@ -10223,7 +10223,7 @@ STATIC FUNCTION mkChgPrc( cFam, cGetTip, cIva, lCosto, lTarifa1, lTarifa2, lTari
                   end if
 
                   /*
-                  Redondeos y precios finales producto sin IGIC incluido--------
+                  Redondeos y precios finales producto sin impuestos incluido--------
                   */
 
                   if !( dbfArticulo )->lIvaInc
@@ -10243,7 +10243,7 @@ STATIC FUNCTION mkChgPrc( cFam, cGetTip, cIva, lCosto, lTarifa1, lTarifa2, lTari
                   end if
 
                   /*
-                  Redondeos y precios finales producto IGIC incluido------------
+                  Redondeos y precios finales producto impuestos incluido------------
                   */
 
                   if ( dbfArticulo )->lIvaInc
@@ -10565,7 +10565,7 @@ FUNCTION EdmArt( cCodRut, cPathTo, oStru, oTipArt )
          cChr  += EdmSubStr( Trans( (dbf)->PVENTA2, "@ 9999.99" ), 1, 7 )        // Tarifa 2
          cChr  += EdmSubStr( Trans( (dbf)->PVENTA3, "@ 9999.99" ), 1, 7 )        // Tarifa 3
          cChr  += EdmSubStr( Trans( (dbf)->PVENTA4, "@ 9999.99" ), 1, 7 )        // Tarifa 4
-         cChr  += cCodTerIva( (dbf)->TipoIva, dbfTIva ) + ","                    // Codigo del tipo de IGIC
+         cChr  += cCodTerIva( (dbf)->TipoIva, dbfTIva ) + ","                    // Codigo del tipo de impuestos
          cChr  += EdmSubStr( Trans( (dbf)->NUNICAJA, "@ 99999" ), 1, 5 )         // Lote unidades por caja
          cChr  += EdmSubStr( Trans( (dbf)->NPNTVER1, "@ 9999.99" ), 1, 7, .f. )  // Importe de punto verde
          cChr  += CRLF

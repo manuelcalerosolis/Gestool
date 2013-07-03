@@ -28,9 +28,9 @@ END CLASS
 
 METHOD Create()
 
-   ::AddField( "Tipo",      "C",  1, 0, {|| "" },   "Cod. IGIC.",      .t., "Tipo de " + cImp(),                    8, .f. )
-   ::AddField( "DescIva",   "C", 30, 0, {|| "" },   "Des. IGIC.",      .t., "Descripción del tipo de " + cImp(),   30, .f. )
-   ::AddField( "TPIva",     "N",  6, 2, {|| "" },   "% IGIC.",         .t., "Tipo de " + cImp(),                    8, .f. )
+   ::AddField( "Tipo",      "C",  1, 0, {|| "" },   "Cod. impuestos.",      .t., "Tipo de " + cImp(),                    8, .f. )
+   ::AddField( "DescIva",   "C", 30, 0, {|| "" },   "Des. impuestos.",      .t., "Descripción del tipo de " + cImp(),   30, .f. )
+   ::AddField( "TPIva",     "N",  6, 2, {|| "" },   "% impuestos.",         .t., "Tipo de " + cImp(),                    8, .f. )
    ::AddField( "nRecEq",    "N",  6, 2, {|| "" },   "R.E.",           .t., "Recargo de equivalencia",        8, .f. )
    ::AddField( "GrpAsc",    "C",  9, 0, {|| "" },   "Grp. Ven.",      .f., "Grupo de venta asociado",       10, .f. )
    ::AddField( "CodTer",    "C",  1, 0, {|| "" },   "Terminal",       .f., "Código para terminales",         1, .f. )

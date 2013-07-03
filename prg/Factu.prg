@@ -3117,6 +3117,22 @@ Function CreateAcceso( oWnd )
    oItem:cBmpBig        := "businessman_chart_32"
    oItem:lShow          := .f.
 
+   oGrupo               := TGrupoAcceso()
+   oGrupo:nBigItems     := 1
+   oGrupo:cPrompt       := 'Auditor'
+   oGrupo:cLittleBitmap := "Lifebelt_16"
+   oGrupo:cBigBitmap    := "Lifebelt_32"
+
+   oItem                := oItemReporting:Add()
+   oItem:oGroup         := oGrupo
+   oItem:cPrompt        := 'Auditoria'
+   oItem:cMessage       := 'Auditoria'
+   oItem:bAction        := {|| TDataCenter():Auditor() }
+   oItem:cId            := "01122"
+   oItem:cBmp           := "Document_Chart_16"
+   oItem:cBmpBig        := "Document_Chart_32"
+   oItem:lShow          := .f.
+
    // Ayudas-------------------------------------------------------------------
 
    oItemAyudas          := oAcceso:Add()

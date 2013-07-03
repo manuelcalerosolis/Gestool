@@ -884,7 +884,7 @@ METHOD TaxesXml( oTax )
    ::oXmlTax         := TXmlNode():new( , 'Tax' )
 
    /*
-   Tipo de IGIC--------------------------------------------------------------
+   Tipo de impuestos--------------------------------------------------------------
    */
 
    if oTax:nTaxBase != 0

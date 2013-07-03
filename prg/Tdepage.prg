@@ -353,7 +353,7 @@ METHOD Resource( nMode )
 			OF 		oDlg
 
       /*
-      Cajas Bases de los IGICS____________________________________________________________
+      Cajas Bases de los impuestosS____________________________________________________________
 		*/
 
       REDEFINE LISTBOX oBrwIva ;

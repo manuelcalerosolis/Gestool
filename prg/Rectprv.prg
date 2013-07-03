@@ -187,7 +187,7 @@ Lineas de Detalle
 #define _LGASSUP                   88
 
 /*
-Definici¢n de Array para IGIC
+Definici¢n de Array para impuestos
 */
 
 #define _NBRTIVA1                aTotIva[ 1, 1 ]
@@ -2099,7 +2099,7 @@ STATIC FUNCTION EdtRec( aTmp, aGet, dbfRctPrvT, oBrw, cCodPrv, cCodArt, nMode, c
          OF       oFld:aDialogs[1]
 
       /*
-      Desglose del IGIC---------------------------------------------------------
+      Desglose del impuestos---------------------------------------------------------
       */
 
       oBrwIva                        := TXBrowse():New( oFld:aDialogs[ 1 ] )
@@ -2333,7 +2333,7 @@ STATIC FUNCTION EdtRec( aTmp, aGet, dbfRctPrvT, oBrw, cCodPrv, cCodArt, nMode, c
          OF       oFld:aDialogs[ 2 ]
 
       /*
-      Regimen de IGIC-----------------------------------------------------------
+      Regimen de impuestos-----------------------------------------------------------
       */
 
       REDEFINE RADIO aGet[ _NREGIVA ] VAR aTmp[ _NREGIVA ] ;
@@ -4834,7 +4834,7 @@ FUNCTION nTotRctPrv( cFactura, cFacPrvT, cFacPrvL, cDbfIva, cDbfDiv, cFacPrvP, a
                end if
 
                /*
-               Estudio de IGIC
+               Estudio de impuestos
                */
 
                do case
@@ -4884,7 +4884,7 @@ FUNCTION nTotRctPrv( cFactura, cFacPrvT, cFacPrvL, cDbfIva, cDbfDiv, cFacPrvP, a
    end if
 
    /*
-   Ordenamos los IGICS de menor a mayor
+   Ordenamos los impuestosS de menor a mayor
 	*/
 
    aTotIva              := aSort( aTotIva,,, {|x,y| abs( x[1] ) > abs( y[1] ) } )
@@ -4966,7 +4966,7 @@ FUNCTION nTotRctPrv( cFactura, cFacPrvT, cFacPrvL, cDbfIva, cDbfDiv, cFacPrvP, a
    end if
 
 	/*
-   Calculos de IGIC
+   Calculos de impuestos
 	*/
 
    if nRegIva <= 1
@@ -4988,7 +4988,7 @@ FUNCTION nTotRctPrv( cFactura, cFacPrvT, cFacPrvL, cDbfIva, cDbfDiv, cFacPrvP, a
    end if
 
    /*
-   Total IGIC
+   Total impuestos
    */
 
    nTotIva           := Round( _NIMPIVA1 + _NIMPIVA2 + _NIMPIVA3, nRinDiv )
@@ -6489,7 +6489,7 @@ STATIC FUNCTION ContabilizaRectificativa( lSimula, lPago, oTree )
             end if
 
             /*
-            Construimos las bases de los IGICS
+            Construimos las bases de los impuestosS
             */
 
             if ( dbfRctPrvT )->nRegIva == 2
@@ -6545,7 +6545,7 @@ STATIC FUNCTION ContabilizaRectificativa( lSimula, lPago, oTree )
    next
 
    /*
-   Descuentos sobres grupos de IGIC
+   Descuentos sobres grupos de impuestos
 	*/
 
    for n := 1 TO Len( aIva )
@@ -6584,7 +6584,7 @@ STATIC FUNCTION ContabilizaRectificativa( lSimula, lPago, oTree )
    next
 
 	/*
-   Chequeo de Cuentas de IGIC---------------------------------------------------
+   Chequeo de Cuentas de impuestos---------------------------------------------------
 	*/
 
    for n := 1 to len( aIva )
@@ -6716,7 +6716,7 @@ STATIC FUNCTION ContabilizaRectificativa( lSimula, lPago, oTree )
          aadd( aSimula, MkAsiento(  nAsiento, ;
                                     cCodDiv,;
                                     dFecha, ;
-                                    aIva[ n, 3 ],;                                        // Cuenta de IGIC
+                                    aIva[ n, 3 ],;                                        // Cuenta de impuestos
                                     aIva[ n, 2 ],;                                        // Contrapartida
                                     Round( aIva[ n, 1 ] * aIva[ n, 4 ] / 100, nRinDiv ),; // Ptas. Debe
                                     cConCompr,;
@@ -6740,7 +6740,7 @@ STATIC FUNCTION ContabilizaRectificativa( lSimula, lPago, oTree )
       else
 
       /*
-      Asientos de IGIC_____________________________________________________________
+      Asientos de impuestos_____________________________________________________________
       */
 
       for n := 1 TO len( aIva )
@@ -6748,7 +6748,7 @@ STATIC FUNCTION ContabilizaRectificativa( lSimula, lPago, oTree )
          aadd( aSimula, MkAsiento(  nAsiento, ;
                                     cCodDiv,;
                                     dFecha, ;
-                                    aIva[ n, 2 ],;    // Cuenta de IGIC
+                                    aIva[ n, 2 ],;    // Cuenta de impuestos
                                     cCtaPrv,;         // Contrapartida
                                     Round( aIva[ n, 1 ] * aIva[ n, 4 ] / 100, nRinDiv ),;
                                     cConCompr,;
@@ -6780,7 +6780,7 @@ STATIC FUNCTION ContabilizaRectificativa( lSimula, lPago, oTree )
             aadd( aSimula, MkAsiento(  nAsiento,;
                                        cCodDiv,;
                                        dFecha,;
-                                       aIva[ n, 3 ],; // Cuenta de IGIC
+                                       aIva[ n, 3 ],; // Cuenta de impuestos
                                        ,;
                                        Round( nPReq( dbfIva, aIva[ n, 1 ] ) * aIva[ n, 4 ] / 100, nRinDiv ),;
                                        cConCompr,;
@@ -8651,7 +8651,7 @@ RETURN ( if( cPorDiv != NIL, Trans( nCalculo, cPorDiv ), nCalculo ) )
 //---------------------------------------------------------------------------//
 
 /*
-Devuelve un array con el neto, IGIC, recargo y total
+Devuelve un array con el neto, impuestos, recargo y total
 */
 
 FUNCTION aTotRctPrv( cFactura, dbfRctPrvT, dbfRctPrvL, dbfIva, dbfDiv, dbfRctPrvP, cDivRet )

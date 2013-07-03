@@ -206,7 +206,7 @@ Definici¢n de la base de datos de lineas de detalle
 #define _LVOLIMP                  87
 #define _NPRODUC                  88
 /*
-Array para IGIC
+Array para impuestos
 */
 
 #define _NBRTIVA1                aTotIva[ 1, 1 ]
@@ -2497,7 +2497,7 @@ STATIC FUNCTION EdtRec( aTmp, aGet, dbfPedCliT, oBrw, cCodCli, cCodArt, nMode, c
 			OF 		oFld:aDialogs[1]
 
 		/*
-      Cajas para el desglose de IGIC--------------------------------------------
+      Cajas para el desglose de impuestos--------------------------------------------
 		*/
 
       oBrwIva                        := TXBrowse():New( oFld:aDialogs[ 1 ] )
@@ -4123,7 +4123,7 @@ STATIC FUNCTION EdtDet( aTmp, aGet, dbfPedCliL, oBrw, lTotLin, cCodArtEnt, nMode
          aGet[ ( dbfPedCliL )->( fieldpos( "nMedTre" ) ) ]:oSay:SetColor( CLR_BLUE )
 
       /*
-      Tipo de IGIC
+      Tipo de impuestos
       -------------------------------------------------------------------------
       */
 
@@ -12484,7 +12484,7 @@ Static Function pdaGenPedCli( oBrwPedCli, dbfPedCliT, dbfPedCliL )
 
                         //           1         2         3         4         5         6
                         //  123456789012345678901234567890123456789012345678901234567890
-   cTextToPrint         += "   Base IGIC%   Importe RE%    Importe   Base   " + Right( Str( nTotNet ), 12 ) + CRLF
+   cTextToPrint         += "   Base impuestos%   Importe RE%    Importe   Base   " + Right( Str( nTotNet ), 12 ) + CRLF
    cTextToPrint         += "------- ---- --------- ---- ---------   " + cImp() + " " + Right( Str( nTotIva ), 12 ) + CRLF
 
 
@@ -13229,7 +13229,7 @@ function aItmPedCli()
    aAdd( aItmPedCli, { "LSNDDOC", "L",    1,  0, "Valor lógico documento enviado",  "",                   "", "( cDbf )", nil } )
    aAdd( aItmPedCli, { "LPDTCRG", "L",    1,  0, "Lógico para ser entregado",       "",                   "", "( cDbf )", nil } )
    aAdd( aItmPedCli, { "NREGIVA", "N",    1,  0, "Regimen de " + cImp() ,           "",                   "", "( cDbf )", nil } )
-   aAdd( aItmPedCli, { "LIVAINC", "L",    1,  0, "IGIC incluido" ,                  "",                   "", "( cDbf )", nil } )
+   aAdd( aItmPedCli, { "LIVAINC", "L",    1,  0, "impuestos incluido" ,                  "",                   "", "( cDbf )", nil } )
    aAdd( aItmPedCli, { "NIVAMAN", "N",    6,  2, "Porcentaje de " + cImp() + " del gasto" , "'@EZ 999,99'","","( cDbf )", nil } )
    aAdd( aItmPedCli, { "NMANOBR", "N",   16,  6, "Gastos" ,                         "cPorDivPed",         "", "( cDbf )", nil } )
    aAdd( aItmPedCli, { "CCODTRN", "C",    9,  0, "Código de transportista" ,        "",                   "", "( cDbf )", nil } )
@@ -14342,7 +14342,7 @@ FUNCTION nTotPedCli( cPedido, cPedCliT, cPedCliL, cIva, cDiv, cFpago, aTmp, cDiv
             nNumCaj           += ( cPedCliL )->nCanPed
 
             /*
-            Estudio de IGIC
+            Estudio de impuestos
             */
 
             do case
@@ -14409,7 +14409,7 @@ FUNCTION nTotPedCli( cPedido, cPedCliT, cPedCliL, cIva, cDiv, cFpago, aTmp, cDiv
    ( cPedCliL )->( dbGoto( nRecno ) )
 
    /*
-   Ordenamos los IGICS de menor a mayor
+   Ordenamos los impuestosS de menor a mayor
 	*/
 
    aTotIva           := aSort( aTotIva,,, {|x,y| if( x[3] != nil, x[3], -1 ) > if( y[3] != nil, y[3], -1 )  } )
@@ -14607,7 +14607,7 @@ FUNCTION nTotPedCli( cPedido, cPedCliT, cPedCliL, cIva, cDiv, cFpago, aTmp, cDiv
    if !lIvaInc
 
       /*
-      Calculos de IGIC
+      Calculos de impuestos
       */
 
       _NIMPIVA1      := if( _NPCTIVA1 != NIL, Round( _NBASIVA1 * _NPCTIVA1 / 100, nRouDiv ), 0 )
@@ -14687,7 +14687,7 @@ FUNCTION nTotPedCli( cPedido, cPedCliT, cPedCliL, cIva, cDiv, cFpago, aTmp, cDiv
    nTotPnt           := Round( _NPNTVER1 + _NPNTVER2 + _NPNTVER3, nRouDiv )
 
    /*
-   Total de IGIC
+   Total de impuestos
 	*/
 
    nTotIva           := Round( _NIMPIVA1 + _NIMPIVA2 + _NIMPIVA3, nRouDiv )
@@ -15141,11 +15141,11 @@ FUNCTION nImpLPedCli( uPedCliT, dbfPedCliL, nDec, nRou, nVdv, lIva, lDto, lPntVe
    end if
 
    if ( dbfPedCliL )->nIva != 0
-      if lIva  // lo quermos con IGIC
+      if lIva  // lo quermos con impuestos
          if !lIvaInc
             nCalculo += Round( nCalculo * ( dbfPedCliL )->nIva / 100, nRou )
          end if
-      else     // lo queremos sin IGIC
+      else     // lo queremos sin impuestos
          if lIvaInc
             nCalculo -= Round( nCalculo / ( 100 / ( dbfPedCliL )->nIva  + 1 ), nRou )
          end if
@@ -17143,7 +17143,7 @@ STATIC FUNCTION LoaArt( cCodArt, aTmp, aGet, aTmpPed, oStkAct, oSayPr1, oSayPr2,
             end if
 
             /*
-            Unidades e IGIC--------------------------------------------------------
+            Unidades e impuestos--------------------------------------------------------
             */
 
             if aGet[ _CDETALLE ] != nil

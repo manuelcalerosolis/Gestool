@@ -65,7 +65,7 @@ Definici¢n de la base de datos de lineas de detalle
 #define _LMSGVTA                 ( dbfDepAgeL )->( FieldPos( "LMSGVTA"  ) )
 #define _LNOTVTA                 ( dbfDepAgeL )->( FieldPos( "LNOTVTA"  ) )
 /*
-Definici¢n de Array para IGIC
+Definici¢n de Array para impuestos
 */
 
 #define _NBRTIVA1                aTotIva[ 1, 1 ]
@@ -82,7 +82,7 @@ Definici¢n de Array para IGIC
 #define _NPCTREQ3                aTotIva[ 3, 4 ]
 
 /*
-Definici¢n de Array para objetos IGIC
+Definici¢n de Array para objetos impuestos
 */
 
 #define _OBASIVA1						oIva[ 1, 1 ]
@@ -1008,7 +1008,7 @@ FUNCTION nTotDepAge( nNumDep, dbfMaster, dbfLine, cDbfIva, cDbfDiv, aTmp, cDivRe
       nNumCaj        += ( dbfLine )->nCanEnt
 
 		/*
-      Estudio de IGIC
+      Estudio de impuestos
 		*/
 
 		DO CASE
@@ -1036,7 +1036,7 @@ FUNCTION nTotDepAge( nNumDep, dbfMaster, dbfLine, cDbfIva, cDbfDiv, aTmp, cDivRe
 	( dbfLine )->( DbGoto( nRecno ) )
 
 	/*
-   Ordenamos los IGICS de menor a mayor
+   Ordenamos los impuestosS de menor a mayor
 	*/
 
    aTotIva           := aSort( aTotIva,,, {|x,y| abs( x[1] ) > abs( y[1] ) } )
@@ -1105,7 +1105,7 @@ FUNCTION nTotDepAge( nNumDep, dbfMaster, dbfLine, cDbfIva, cDbfDiv, aTmp, cDivRe
    nTotNet         := _NBASIVA1 + _NBASIVA2 + _NBASIVA3
 
 	/*
-   Calculos de IGIC
+   Calculos de impuestos
 	*/
 
    nTotIva         := 0
@@ -2436,7 +2436,7 @@ STATIC FUNCTION EdtRec( aTmp, aGet, dbfDepAgeT, oBrw, bWhen, bValid, nMode )
 			OF 		oDlg
 
       /*
-      Cajas Bases de los IGICS____________________________________________________________
+      Cajas Bases de los impuestosS____________________________________________________________
 		*/
 
       oBrwIva                        := TXBrowse():New( oDlg )

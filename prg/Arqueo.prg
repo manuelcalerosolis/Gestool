@@ -1064,7 +1064,7 @@ STATIC FUNCTION nTotLinTik( cNumTik, dbfTikL )
 		WHILE ( dbfTikL )->CSERTIL + ( dbfTikL )->CNUMTIL + ( dbfTikL )->CSUFTIL == cNumTik .AND. !( dbfTikL )->( eof() )
 
 			/*
-         Desglose de IGIC siempre trabajamos con IGIC Incluido
+         Desglose de impuestos siempre trabajamos con impuestos Incluido
 			*/
 
          nTotLin  := ( dbfTikL )->NUNTTIL * ( dbfTikL )->NPVPTIL
@@ -1073,7 +1073,7 @@ STATIC FUNCTION nTotLinTik( cNumTik, dbfTikL )
 			nTotDet 	+= nTotLin
 
 			/*
-         Estudios de los distintos tipos de IGIC
+         Estudios de los distintos tipos de impuestos
 			*/
 
 			nPos		:= aScan( aTipIva, {|x| x[1] == ( dbfTikL )->NIVATIL } )
@@ -1105,7 +1105,7 @@ STATIC FUNCTION nTotLinTik( cNumTik, dbfTikL )
          IF !empty( ( dbfTikL )->CCOMTIL )
 
             /*
-            Desglose de IGIC siempre trabajamos con IGIC Incluido
+            Desglose de impuestos siempre trabajamos con impuestos Incluido
             */
 
             nTotLin  := ( dbfTikL )->NUNTTIL * ( dbfTikL )->NPCMTIL
@@ -1114,7 +1114,7 @@ STATIC FUNCTION nTotLinTik( cNumTik, dbfTikL )
             nTotDet  += nTotLin
 
             /*
-            Estudios de los distintos tipos de IGIC
+            Estudios de los distintos tipos de impuestos
             */
 
             nPos     := aScan( aTipIva, {|x| x[1] == ( dbfTikL )->NIVATIL } )
@@ -1758,7 +1758,7 @@ STATIC FUNCTION PrnArqueo( lPrev )
    */
 
 	/*
-   Tipos de IGIC____________________________________________________________
+   Tipos de impuestos____________________________________________________________
 
 	IF Len( aTipIva ) >= 1
 

@@ -25,8 +25,8 @@
 #define CLR_BAR              14197607
 #define CLR_KIT              Rgb( 239, 239, 239 )
 
-#define IGIC_DESG            1
-#define IGIC_INCL            2
+#define impuestos_DESG            1
+#define impuestos_INCL            2
 
 #define _CSERIE              1      //,"C",  1, 0, "Serie de la factura A o B" },;
 #define _NNUMFAC             2      //,"N",  9, 0, "Numero de la factura" },;
@@ -238,7 +238,7 @@ Definici¢n de la base de datos de lineas de detalle
 #define _dCNUMPED                85
 
 /*
-Definici¢n de Array para IGIC
+Definici¢n de Array para impuestos
 */
 
 #define _NBRTIVA1                aTotIva[ 1, 1 ]
@@ -2799,7 +2799,7 @@ STATIC FUNCTION EdtRec( aTmp, aGet, dbfFacCliT, oBrw, cCodCli, cCodArt, nMode, a
          OF       oFld:aDialogs[2]
 
       /*
-      IGIC Incluido-------------------------------------------------------------
+      impuestos Incluido-------------------------------------------------------------
       */
 
       REDEFINE CHECKBOX aGet[ _LIVAINC ] VAR aTmp[ _LIVAINC ] ;
@@ -3361,7 +3361,7 @@ STATIC FUNCTION EdtRec( aTmp, aGet, dbfFacCliT, oBrw, cCodCli, cCodArt, nMode, a
          OF       oFld:aDialogs[1]
 
       /*
-      Cajas Bases de los IGICS____________________________________________________________
+      Cajas Bases de los impuestosS____________________________________________________________
       */
 
       oBrwIva                        := IXBrowse():New( oFld:aDialogs[ 1 ] )
@@ -4529,7 +4529,7 @@ Return ( if( cPorDiv != nil, Trans( nCalculo, cPorDiv ), nCalculo ) )
 
 //---------------------------------------------------------------------------//
 /*
-Devuelve el valor del IGIC de un artículo
+Devuelve el valor del impuestos de un artículo
 */
 
 FUNCTION nIvaUFacCli( dbfTmpLin, nDec, nVdv )
@@ -4581,7 +4581,7 @@ RETURN ( Round( nCalculo, nDec ) )
 
 //---------------------------------------------------------------------------//
 /*
-Devuelve el precio unitario IGIC incluido
+Devuelve el precio unitario impuestos incluido
 */
 
 FUNCTION nIncUFacCli( dbfTmpLin, nDec, nVdv )
@@ -5833,7 +5833,7 @@ RETURN ( if( cPouDiv != nil, Trans( nCalculo, cPouDiv ), nCalculo ) )
 //---------------------------------------------------------------------------//
 
 /*
-Devuelve el total de una lina con IGIC incluido
+Devuelve el total de una lina con impuestos incluido
 */
 
 FUNCTION nIncLFacCli( dbfLin, nDec, nRouDec, nVdv, lDto, lPntVer, lImpTrn, cPorDiv )
@@ -5848,7 +5848,7 @@ RETURN ( if( cPorDiv != NIL, Trans( nCalculo, cPorDiv ), nCalculo ) )
 
 //---------------------------------------------------------------------------//
 /*
-Devuelve el total de una linea sin IGIC incluido
+Devuelve el total de una linea sin impuestos incluido
 */
 
 FUNCTION nNoIncLFacCli( dbfLin, nDec, nRouDec, nVdv, lDto, lPntVer, lImpTrn, cPorDiv )
@@ -5868,7 +5868,7 @@ RETURN ( if( cPorDiv != NIL, Trans( nCalculo, cPorDiv ), nCalculo ) )
 //---------------------------------------------------------------------------//
 
 /*
-Devuelve el precio unitario sin IGIC incluido
+Devuelve el precio unitario sin impuestos incluido
 */
 
 FUNCTION nNoIncUFacCli( dbfLin, nDec, nVdv )
@@ -8869,9 +8869,9 @@ N§ PO  LC  Descripci¢n       Observaciones
 5  21  8   BASE IMPONIBLE 1
 6  29  8   BASE IMPONIBLE 2
 7  37  8   BASE IMPONIBLE 3
-8  45  8   IGIC TIPO 1
-9  53  8   IGIC TIPO 2
-10 61  8   IGIC TIPO 3
+8  45  8   impuestos TIPO 1
+9  53  8   impuestos TIPO 2
+10 61  8   impuestos TIPO 3
 11 69  8   R.E. TIPO 1
 12 77  8   R.E. TIPO 2
 13 85  8   R.E. TIPO 3
@@ -8898,7 +8898,7 @@ N§ PO  LC  Descripci¢n       Observaciones
              0       0 0.00 0.00       0   23300   2330012/03/199618:15"
      (Factura de contado n§ 10900 emitida al cliente 321 por el vendedor 4
       el d¡a 12 de Marzo de 1996, por un importe de 23200, sin descuentos,
-      ni punto verde, a las 6 y cuarto de la tarde. El tipo de IGIC fue el 1)
+      ni punto verde, a las 6 y cuarto de la tarde. El tipo de impuestos fue el 1)
 */
 
 FUNCTION EdmFacCli( cCodRut, cPathTo, oStru, aSucces )
@@ -9013,7 +9013,7 @@ N§ PO  LC  Descripci¢n       Observaciones
 8  49  4   UNID. VALORA. 1   cajas
 9  53  7   UNID. VALORA  2   kilos/unidades
 10 60  1   TIPO LINEA        (2)
-11 61  1   tipo IGIC          1, 2 ¢ 3
+11 61  1   tipo impuestos          1, 2 ¢ 3
 12 62  1   EUROS S/N         Indica si se hizo en euros o en pts (3)
 13 63  7   PVERDE            Cargo unitario por Punto Verde
 14 70  2   FINAL REGISTRO    CR LF  ( chr$(13) y chr$(10) )
@@ -13338,8 +13338,8 @@ Static Function pdaGenFacCli( oBrw, dbfFacCliT, dbfFacCliL )
 
                         //           1         2         3         4         5         6
                         //  123456789012345678901234567890123456789012345678901234567890
-   cTextToPrint         += "   Base IGIC%   Importe RE%    Importe   Base   " + Right( Str( nTotNet ), 12 ) + CRLF
-   cTextToPrint         += "------- ---- --------- ---- ---------   IGIC " + Right( Str( nTotIva ), 12 ) + CRLF
+   cTextToPrint         += "   Base impuestos%   Importe RE%    Importe   Base   " + Right( Str( nTotNet ), 12 ) + CRLF
+   cTextToPrint         += "------- ---- --------- ---- ---------   impuestos " + Right( Str( nTotIva ), 12 ) + CRLF
 
    cTextToPrint         += Right( Trans( aIvaUno[ 2 ], cPorDiv )  , 7 ) + Space(1)
    cTextToPrint         += Right( Trans( aIvaUno[ 3 ], "@E 99.9" ), 4 ) + Space(1)
@@ -15911,7 +15911,7 @@ FUNCTION nTotFacCli( cFactura, cFacCliT, cFacCliL, cIva, cDiv, cFacCliP, cAntCli
                nTotCaj           += ( cFacCliL )->nCanEnt
 
                /*
-               Estudio de IGIC--------------------------------------------------
+               Estudio de impuestos--------------------------------------------------
                */
 
                do case
@@ -15993,7 +15993,7 @@ FUNCTION nTotFacCli( cFactura, cFacCliT, cFacCliL, cIva, cDiv, cFacCliP, cAntCli
    ( cFacCliL )->( dbGoTo( nRec ) )
 
    /*
-   Ordenamos los IGICS de menor a mayor
+   Ordenamos los impuestosS de menor a mayor
    */
 
    aTotIva           := aSort( aTotIva,,, {|x,y| if( x[3] != nil, x[3], -1 ) > if( y[3] != nil, y[3], -1 )  } )
@@ -16268,7 +16268,7 @@ FUNCTION nTotFacCli( cFactura, cFacCliT, cFacCliL, cIva, cDiv, cFacCliP, cAntCli
    nTotCob           := nPagFacCli( cFactura, cFacCliT, cFacCliP, cIva, cDiv, nil, .t. )
 
    /*
-   Calculamos los IGICS---------------------------------------------------------
+   Calculamos los impuestosS---------------------------------------------------------
    */
 
    if lIvaInc
@@ -16360,7 +16360,7 @@ FUNCTION nTotFacCli( cFactura, cFacCliT, cFacCliL, cIva, cDiv, cFacCliP, cAntCli
    nTotPnt           := Round( _NPNTVER1 + _NPNTVER2 + _NPNTVER3, nRouDiv )
 
    /*
-   Total de IGIC
+   Total de impuestos
    */
 
    nTotIva           := Round( _NIMPIVA1 + _NIMPIVA2 + _NIMPIVA3, nRouDiv )
@@ -20609,12 +20609,12 @@ Static Function ExportaEDILinea( nNumeroLinea, hFicheroFactura )
    cLinea            += Padl( Trans( nTotUFacCli( dbfFacCliL, nDouDiv ), "99999999999.999" ), 16 )                               // 291. Precio bruto unitario
    cLinea            += Padl( Trans( nTotPFacCli( dbfFacCliL, nDouDiv ), "9999999999.9999" ), 16 )                               // 291. Precio neto unitario
    cLinea            += Padr( "", 6 )                                                                                            // 225. Unidad de medida del precio
-   cLinea            += Padr( "VAT", 6 )                                                                                         // 225. Calificador de impuesto VAT es IGIC
+   cLinea            += Padr( "VAT", 6 )                                                                                         // 225. Calificador de impuesto VAT es impuestos
    cLinea            += Padl( Trans( ( dbfFacCliL )->nIva, "999.99" ), 6 )                                                       // 291. % Impuesto
    cLinea            += Padl( Trans( 0, "9999999999999.999" ), 18 )                                                              // 291. Importe impuesto se aconseja no cumplimentar
    cLinea            += Padl( Trans( if( ( dbfFacCliT )->lRecargo, ( dbfFacCliL )->nReq, 0 ), "999.99" ), 6 )                    // 291. % Recargo de eqivalencia
    cLinea            += Padl( Trans( 0, "9999999999999.999" ), 18 )                                                              // 291. Importe recargo equivalencia se aconseja no cumplimentar
-   cLinea            += Padr( "", 6 )                                                                                            // 225. Calificador de otro impuesto VAT es IGIC
+   cLinea            += Padr( "", 6 )                                                                                            // 225. Calificador de otro impuesto VAT es impuestos
    cLinea            += Padl( Trans( 0, "999.99" ), 6 )                                                                          // 291. % otro Impuesto
    cLinea            += Padl( Trans( 0, "9999999999999.999" ), 18 )                                                              // 291. Importe otro impuesto se aconseja no cumplimentar
    cLinea            += Padr( ( dbfFacCliT )->cNumPed, 17 )                                                                      // 179. Numero del pedido
@@ -20710,8 +20710,8 @@ Static Function ExportaEDIImpuestos( hFicheroFactura )
       cImpuesto      += Padr( uFieldEmpresa( "cCodEdi" ), 13 )                                                                   // 42. Codigo de Vendedor a quien se pide
       cImpuesto      += Padr( Retfld( ( dbfFacCliT )->cCodCli, dbfClient, "cCodEdi" ), 13 )                                      // 55. Codigo de Comprador (quien pide)
       cImpuesto      += Padl( Trans( ++nImpuesto, "99" ), 2 )                                                                    // 61. Numero de impuesto
-      cImpuesto      += Padr( "VAT", 6 )                                                                                         // 76. Tipo de IGIC
-      cImpuesto      += Padl( Trans( aIvaUno[ 3 ], "999.99" ), 6 )                                                               // 203. % IGIC
+      cImpuesto      += Padr( "VAT", 6 )                                                                                         // 76. Tipo de impuestos
+      cImpuesto      += Padl( Trans( aIvaUno[ 3 ], "999.99" ), 6 )                                                               // 203. % impuestos
       cImpuesto      += Padl( Trans( aIvaUno[ 8 ], "99999999999999.999" ), 18 )                                                  // 203. Importe de tipo de impuesto
       cImpuesto      += Padl( Trans( aIvaUno[ 2 ], "99999999999999.999" ), 18 )                                                  // 203. Base imponible
       cImpuesto      += CRLF
@@ -20724,8 +20724,8 @@ Static Function ExportaEDIImpuestos( hFicheroFactura )
       cImpuesto      += Padr( uFieldEmpresa( "cCodEdi" ), 13 )                                                                   // 42. Codigo de Vendedor a quien se pide
       cImpuesto      += Padr( Retfld( ( dbfFacCliT )->cCodCli, dbfClient, "cCodEdi" ), 13 )                                      // 55. Codigo de Comprador (quien pide)
       cImpuesto      += Padl( Trans( ++nImpuesto, "99" ), 2 )                                                                    // 61. Numero de impuesto
-      cImpuesto      += Padr( "VAT", 6 )                                                                                         // 76. Tipo de IGIC
-      cImpuesto      += Padl( Trans( aIvaDos[ 3 ], "999.99" ), 6 )                                                               // 203. % IGIC
+      cImpuesto      += Padr( "VAT", 6 )                                                                                         // 76. Tipo de impuestos
+      cImpuesto      += Padl( Trans( aIvaDos[ 3 ], "999.99" ), 6 )                                                               // 203. % impuestos
       cImpuesto      += Padl( Trans( aIvaDos[ 8 ], "99999999999999.999" ), 18 )                                                  // 203. Base imponible
       cImpuesto      += Padl( Trans( aIvaDos[ 2 ], "99999999999999.999" ), 18 )                                                  // 203. Importe de tipo de impuesto
       cImpuesto      += CRLF
@@ -20738,8 +20738,8 @@ Static Function ExportaEDIImpuestos( hFicheroFactura )
       cImpuesto      += Padr( uFieldEmpresa( "cCodEdi" ), 13 )                                                                   // 42. Codigo de Vendedor a quien se pide
       cImpuesto      += Padr( Retfld( ( dbfFacCliT )->cCodCli, dbfClient, "cCodEdi" ), 13 )                                      // 55. Codigo de Comprador (quien pide)
       cImpuesto      += Padl( Trans( ++nImpuesto, "99" ), 2 )                                                                    // 61. Numero de impuesto
-      cImpuesto      += Padr( "VAT", 6 )                                                                                         // 76. Tipo de IGIC
-      cImpuesto      += Padl( Trans( aIvaTre[ 3 ], "999.99" ), 6 )                                                               // 203. % IGIC
+      cImpuesto      += Padr( "VAT", 6 )                                                                                         // 76. Tipo de impuestos
+      cImpuesto      += Padl( Trans( aIvaTre[ 3 ], "999.99" ), 6 )                                                               // 203. % impuestos
       cImpuesto      += Padl( Trans( aIvaTre[ 8 ], "99999999999999.999" ), 18 )                                                  // 203. Base imponible
       cImpuesto      += Padl( Trans( aIvaTre[ 2 ], "99999999999999.999" ), 18 )                                                  // 203. Importe de tipo de impuesto
       cImpuesto      += CRLF

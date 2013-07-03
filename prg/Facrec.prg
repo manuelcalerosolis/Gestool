@@ -17,8 +17,8 @@ REQUEST DBFCDX
 #define CLR_BAR              14197607
 #define CLR_KIT              Rgb( 239, 239, 239 )
 
-#define IGIC_DESG             1
-#define IGIC_INCL             2
+#define impuestos_DESG             1
+#define impuestos_INCL             2
 
 #define _CSERIE              1      //,"C",  1, 0, "Serie de la factura A o B" },;
 #define _NNUMFAC             2      //,"N",  9, 0, "Número de la factura" },;
@@ -198,7 +198,7 @@ Definici¢n de la base de datos de lineas de detalle
 #define _LVOLIMP                 74
 
 /*
-Definici¢n de Array para IGIC
+Definici¢n de Array para impuestos
 */
 
 #define _NBRTIVA1                aTotIva[ 1, 1 ]
@@ -2386,7 +2386,7 @@ STATIC FUNCTION EdtRec( aTmp, aGet, dbfFacRecT, oBrw, cCodCli, cCodArt, nMode, a
          OF       oFld:aDialogs[2]
 
       /*
-      IGIC Incluido-------------------------------------------------------------
+      impuestos Incluido-------------------------------------------------------------
       */
 
       REDEFINE CHECKBOX aGet[_LIVAINC] VAR aTmp[_LIVAINC] ;
@@ -2902,7 +2902,7 @@ STATIC FUNCTION EdtRec( aTmp, aGet, dbfFacRecT, oBrw, cCodCli, cCodArt, nMode, a
 			OF 		oFld:aDialogs[1]
 
 		/*
-      Cajas Bases de los IGICS____________________________________________________________
+      Cajas Bases de los impuestosS____________________________________________________________
 		*/
 
       oBrwIva                        := IXBrowse():New( oFld:aDialogs[1] )
@@ -3663,7 +3663,7 @@ Return ( if( cPorDiv != nil, Trans( nCalculo, cPorDiv ), nCalculo ) )
 //---------------------------------------------------------------------------//
 
 /*
-Devuelve el valor del IGIC de un artículo
+Devuelve el valor del impuestos de un artículo
 */
 
 FUNCTION nIvaUFacRec( dbfTmpLin, nDec, nVdv )
@@ -3689,7 +3689,7 @@ RETURN ( Round( nCalculo, nDec ) )
 
 //---------------------------------------------------------------------------//
 /*
-Devuelve el precio unitario IGIC incluido
+Devuelve el precio unitario impuestos incluido
 */
 
 FUNCTION nIncUFacRec( dbfTmpLin, nDec, nVdv )
@@ -5223,7 +5223,7 @@ STATIC FUNCTION AppKit( aClo, aTmpFac, dbfTmpLin, dbfArticulo, dbfKit )
             ( dbfTmpLin )->nUniCaja    := aClo[ _NUNICAJA] * ( dbfKit )->nUndKit
 
             /*
-            Estudio de los tipos de IGIC si el padre el cero todos cero---------
+            Estudio de los tipos de impuestos si el padre el cero todos cero---------
             */
 
             if !Empty( aClo[ _NIVA ] )
@@ -5807,7 +5807,7 @@ RETURN ( if( cPouDiv != nil, Trans( nCalculo, cPouDiv ), nCalculo ) )
 
 //---------------------------------------------------------------------------//
 /*
-Devuelve el total de una lina con IGIC incluido
+Devuelve el total de una lina con impuestos incluido
 */
 
 FUNCTION nIncLFacRec( dbfLin, nDec, nRouDec, nVdv, lDto, lPntVer, lImpTrn, cPorDiv )
@@ -6136,7 +6136,7 @@ FUNCTION nTotFacRec( cFactura, cFacRecT, cFacRecL, cIva, cDiv, aTmp, cDivRet, lP
                nNumCaj           += ( cFacRecL )->nCanEnt
 
                /*
-               Estudio de IGIC--------------------------------------------------
+               Estudio de impuestos--------------------------------------------------
                */
 
                do case
@@ -6212,7 +6212,7 @@ FUNCTION nTotFacRec( cFactura, cFacRecT, cFacRecL, cIva, cDiv, aTmp, cDivRet, lP
    ( cFacRecL )->( dbGoTo( nRec ) )
 
    /*
-   Ordenamos los IGICS de menor a mayor-----------------------------------------
+   Ordenamos los impuestosS de menor a mayor-----------------------------------------
    */
 
    aTotIva           := aSort( aTotIva,,, {|x,y| abs( x[1] ) > abs( y[1] ) } )
@@ -6288,7 +6288,7 @@ FUNCTION nTotFacRec( cFactura, cFacRecT, cFacRecL, cIva, cDiv, aTmp, cDivRet, lP
 	END IF
 
    /*
-   Estudio de IGIC para el Gasto despues de los descuentos----------------------
+   Estudio de impuestos para el Gasto despues de los descuentos----------------------
    */
 
    if nManObr != 0
@@ -6340,7 +6340,7 @@ FUNCTION nTotFacRec( cFactura, cFacRecT, cFacRecL, cIva, cDiv, aTmp, cDivRet, lP
    end if
 
    /*
-   Calculamos los IGICS---------------------------------------------------------
+   Calculamos los impuestosS---------------------------------------------------------
    */
 
    if lIvaInc
@@ -6412,7 +6412,7 @@ FUNCTION nTotFacRec( cFactura, cFacRecT, cFacRecL, cIva, cDiv, aTmp, cDivRet, lP
    nTotIvm           := Round( aTotIvm[ 1, 3 ] + aTotIvm[ 2, 3 ] + aTotIvm[ 3, 3 ], nRouDiv )
 
    /*
-   Total de IGIC
+   Total de impuestos
 	*/
 
    nTotIva           := Round( _NIMPIVA1 + _NIMPIVA2 + _NIMPIVA3, nRouDiv )
@@ -6843,7 +6843,7 @@ STATIC FUNCTION LoaArt( aGet, bmpImage, aTmp, aTmpFac, oStkAct, oSayPr1, oSayPr2
          end if
 
          /*
-         Preguntamos si el regimen de IGIC es distinto de Exento----------------
+         Preguntamos si el regimen de impuestos es distinto de Exento----------------
          */
 
          if aTmpFac[_NREGIVA] <= 1
