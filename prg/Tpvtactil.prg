@@ -824,7 +824,7 @@ CLASS TpvTactil
       ::cFormato        := cFormatoComandaEnCaja( oUser():cCaja(), cImpresora, ::oCajaCabecera:cAlias, ::oCajaLinea:cAlias )
       ::cImpresora      := AllTrim( cNombreImpresoraComanda( oUser():cCaja(), cImpresora, ::oCajaLinea:cAlias ) )
       ::nDispositivo    := IS_PRINTER
-      ::nCopias         := 1
+      ::nCopias         := Max( nCopiasComandasEnCaja( oUser():cCaja(), ::oCajaLinea:cAlias ), 1 )
       ::lComanda        := .t.
 
       ::ImprimeDocumento()
@@ -842,17 +842,18 @@ CLASS TpvTactil
          
          ::cFormato        := ::oFormatosImpresion:cFmtAlb
          ::cImpresora      := ::oFormatosImpresion:cPrinterAlb
+         ::nCopias         := Max( ::oFormatosImpresion:nCopiasAlb, 1 )
 
       otherwise
          
          ::cFormato        := ::oFormatosImpresion:cFormatoTiket
          ::cImpresora      := ::oFormatosImpresion:cPrinterTik
+         ::nCopias         := Max( ::oFormatosImpresion:nCopiasTik, 1 )
 
       end case
 
       
       ::nDispositivo    := IS_PRINTER
-      ::nCopias         := 1
       ::lComanda        := .f.
 
       ::ImprimeDocumento()
@@ -884,7 +885,7 @@ CLASS TpvTactil
       ::cFormato        := ::oFormatosImpresion:cFormatoEntrega
       ::cImpresora      := ::oFormatosImpresion:cPrinterEntrega
       ::nDispositivo    := IS_PRINTER
-      ::nCopias         := 1
+      ::nCopias         := Max( ::oFormatosImpresion:nCopiasEntrega, 1 )
       ::lComanda        := .f.
 
       ::ImprimeDocumento()
@@ -900,7 +901,7 @@ CLASS TpvTactil
       ::cFormato        := ::oFormatosImpresion:cFormatoRegalo
       ::cImpresora      := ::oFormatosImpresion:cPrinterRegalo
       ::nDispositivo    := IS_PRINTER
-      ::nCopias         := 1
+      ::nCopias         := Max( ::oFormatosImpresion:nCopiasRegalo, 1 )
       ::lComanda        := .f.
 
       ::ImprimeDocumento()
@@ -5140,6 +5141,8 @@ METHOD SelecionaCliente() CLASS TpvTactil
       ::oTiketCabecera:cDniCli      := oRetFld( cCliente, ::oCliente, "Nif" )
       ::oTiketCabecera:nTarifa      := Max( oRetFld( cCliente, ::oCliente, "nTarifa" ), 1 )
 
+      ::nTarifaSolo                 := Max( oRetFld( cCliente, ::oCliente, "nTarifa" ), 1 )
+
       if Empty( oRetFld( cCliente, ::oCliente, "CodPago" ) )
          ::oTiketCabecera:cFpgTik   := cDefFpg()
       else
@@ -5770,9 +5773,7 @@ METHOD OnClickAlbaran() CLASS TpvTactil
       Abrimos el cajón portamonedas antes de imprimir-----------------------
       */
 
-      if lOpenCaj
-         oUser():OpenCajon()
-      end if   
+      oUser():OpenCajon()
 
       /*
       Imprimimos el documento--------------------------------------------
@@ -6632,6 +6633,8 @@ METHOD CargaValoresDefecto( nUbicacion, lInit ) CLASS TpvTactil
       ::oTiketCabecera:lAbierto  := .t.
       ::oTiketCabecera:lCloTik   := .f.
       ::oTiketCabecera:lSndDoc   := .t.
+      ::nTarifaSolo              := Max( uFieldEmpresa( "nPreVta" ), 1 )
+      ::nTarifaCombinado         := Max( uFieldEmpresa( "nPreTCmb" ), 1 )
    end if
 
    if !Empty( ::sTotal )

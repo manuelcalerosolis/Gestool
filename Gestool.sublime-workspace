@@ -519,6 +519,14 @@
 	},
 	"buffers":
 	[
+		{
+			"file": "prg/Tpvtactil.prg",
+			"settings":
+			{
+				"buffer_size": 285876,
+				"line_ending": "Windows"
+			}
+		}
 	],
 	"build_system": "Packages/User/gestool.sublime-build",
 	"command_palette":
@@ -552,6 +560,7 @@
 	},
 	"file_history":
 	[
+		"/C/fw195/Gestool/prg/Articulo.prg",
 		"/C/fw195/Gestool/prg/Tpvtactil.prg",
 		"/C/fw195/Gestool/prg/Tpv.prg",
 		"/C/fw195/Gestool/prg/Tfastventasclientes.prg",
@@ -575,7 +584,6 @@
 		"/C/fw195/Gestool/prg/Abnprv.prg",
 		"/C/fw195/Gestool/prg/usuario",
 		"/C/fw195/Gestool/prg/Reindexa.prg",
-		"/C/fw195/Gestool/prg/Articulo.prg",
 		"/C/fw195/Gestool/prg/Tdatacenter.prg",
 		"/C/fw195/Gestool/prg/Factprv.prg",
 		"/C/fw195/Gestool/prg/Recprv.prg",
@@ -721,6 +729,15 @@
 		"case_sensitive": false,
 		"find_history":
 		[
+			"SetCliente",
+			"SetInfo",
+			"nTarifaSolo",
+			"AgregarLineas",
+			"seleccionaa",
+			"selecc",
+			"articulo",
+			"onclick",
+			"CPRVHAB",
 			"reporting",
 			"class",
 			"ACA",
@@ -839,16 +856,7 @@
 			"cTipTik",
 			"on aitm",
 			"msginfo",
-			"tit",
-			"tittl",
-			"lcobro",
-			":lcobro",
-			"lcobro",
-			"OnClickCobro",
-			"LALBTCT",
-			"Document_plain_user1",
-			"on aitm",
-			"officebar"
+			"tit"
 		],
 		"highlight": true,
 		"in_selection": false,
@@ -875,8 +883,37 @@
 	"groups":
 	[
 		{
+			"selected": 0,
 			"sheets":
 			[
+				{
+					"buffer": 0,
+					"file": "prg/Tpvtactil.prg",
+					"settings":
+					{
+						"buffer_size": 285876,
+						"regions":
+						{
+						},
+						"selection":
+						[
+							[
+								156170,
+								156170
+							]
+						],
+						"settings":
+						{
+							"syntax": "Packages/harbour/harbour/Harbour.tmLanguage",
+							"tab_size": 3,
+							"translate_tabs_to_spaces": true
+						},
+						"translation.x": 0.0,
+						"translation.y": 95693.0,
+						"zoom_level": 1.0
+					},
+					"type": "text"
+				}
 			]
 		}
 	],

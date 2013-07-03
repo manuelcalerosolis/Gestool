@@ -22262,6 +22262,7 @@ CLASS TFormatosImpresion
 
    DATA  oPrinterTik
    DATA  cPrinterTik
+   DATA  nCopiasTik
 
    DATA  oFmtVal
    DATA  cFmtVal
@@ -22276,6 +22277,7 @@ CLASS TFormatosImpresion
    DATA  cSayFmtAlb
    DATA  oPrinterAlb
    DATA  cPrinterAlb
+   DATA  nCopiasAlb
 
    DATA  oFmtFac
    DATA  cFmtFac
@@ -22283,15 +22285,18 @@ CLASS TFormatosImpresion
    DATA  cSayFmtFac
    DATA  oPrinterFac
    DATA  cPrinterFac
+   DATA  nCopiasFac
 
    DATA  cFormatoRegalo
    DATA  cPrinterRegalo
+   DATA  nCopiasRegalo
 
    DATA  cFmtTikChk
    DATA  cPrinterTikChk
 
    DATA  cFormatoEntrega
    DATA  cPrinterEntrega
+   DATA  nCopiasEntrega
 
    DATA  cFmtTikDev
    DATA  cPrinterDev
@@ -22333,14 +22338,21 @@ METHOD Load( dbfCajT )
    ::cPrinterAlb     := cPrinterAlbaran(  ::cCodCaj, dbfCajT )
    ::cPrinterFac     := cPrinterFactura(  ::cCodCaj, dbfCajT )
 
+   ::nCopiasTik      := nCopiasTicketsEnCaja( ::cCodCaj, dbfCajT )
+   ::nCopiasAlb      := nCopiasAlbaranesEnCaja( ::cCodCaj, dbfCajT )
+   ::nCopiasFac      := nCopiasFacturasEnCaja( ::cCodCaj, dbfCajT )
+
    ::cFormatoRegalo  := cFormatoTicketRegaloEnCaja(   ::cCodCaj, dbfCajT )
    ::cPrinterRegalo  := cPrinterRegalo(               ::cCodCaj, dbfCajT )
+   ::nCopiasRegalo   := nCopiasTicketsRegaloEnCaja(   ::cCodCaj, dbfCajT )
 
    ::cFmtTikChk      := cFormatoChequeRegaloEnCaja(   ::cCodCaj, dbfCajT )
    ::cPrinterTikChk  := cPrinterChequeRegalo(         ::cCodCaj, dbfCajT )
 
    ::cFormatoEntrega := cFormatoEntregaEnCaja(     ::cCodCaj, dbfCajT )
    ::cPrinterEntrega := cPrinterEntrega(           ::cCodCaj, dbfCajT )
+   ::nCopiasEntrega  := nCopiasEntregasEnCaja(     ::cCodCaj, dbfCajT )
+
    ::cFmtTikDev      := cFormatoDevolucionEnCaja(  ::cCodCaj, dbfCajT )
    ::cPrinterDev     := cPrinterDevolucion(        ::cCodCaj, dbfCajT )
    ::cFmtAlbCaj      := cFormatoAlbaranEnCaja(     ::cCodCaj, dbfCajT )
@@ -22354,25 +22366,6 @@ METHOD Load( dbfCajT )
 
    ::cFmtApt         := cFormatoApartadosEnCaja(   ::cCodCaj, dbfCajT )
    ::cPrinterApt     := cPrinterApartados(         ::cCodCaj, dbfCajT )
-
-   /*
-   ::cPrinterComanda := cNombreImpresoraComanda(   ::cCodCaj, aImp[ nPos ], dbfCajL )
-         cFormato    := cFormatoComandaEnCaja( oUser():cCaja(), aImp[ nPos ], dbfCajT, dbfCajL )
-   */
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 
 return self
 
