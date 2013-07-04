@@ -2627,6 +2627,7 @@ Static Function CmbSerieSave( uSerie )
       ( tmpDlgCon )->( FieldPut( FieldPos( "Copias" + cSerie ),   nGetCopias        ) )
       ( tmpDlgCon )->( FieldPut( FieldPos( "cNCF"   + cSerie ),   cGetNFCPrefijo    ) )
       ( tmpDlgCon )->( FieldPut( FieldPos( "nCNF"   + cSerie ),   cGetNFCContador   ) )
+      ( tmpDlgCon )->( FieldPut( FieldPos( "cSerie"  ),           cGetSerie         ) )
       ( tmpDlgCon )->( dbUnLock() )
    end if
 

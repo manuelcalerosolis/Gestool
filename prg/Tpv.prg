@@ -20316,6 +20316,7 @@ CLASS TFormatosImpresion
 
    DATA  oPrinterTik
    DATA  cPrinterTik
+   DATA  nCopiasTik
 
    DATA  oFmtVal
    DATA  cFmtVal
@@ -20330,6 +20331,7 @@ CLASS TFormatosImpresion
    DATA  cSayFmtAlb
    DATA  oPrinterAlb
    DATA  cPrinterAlb
+   DATA  nCopiasAlb
 
    DATA  oFmtFac
    DATA  cFmtFac
@@ -20337,15 +20339,18 @@ CLASS TFormatosImpresion
    DATA  cSayFmtFac
    DATA  oPrinterFac
    DATA  cPrinterFac
+   DATA  nCopiasFac
 
    DATA  cFormatoRegalo
    DATA  cPrinterRegalo
+   DATA  nCopiasRegalo
 
    DATA  cFmtTikChk
    DATA  cPrinterTikChk
 
    DATA  cFormatoEntrega
    DATA  cPrinterEntrega
+   DATA  nCopiasEntrega
 
    DATA  cFmtTikDev
    DATA  cPrinterDev
@@ -20409,25 +20414,12 @@ METHOD Load( dbfCajT )
    ::cFmtApt         := cFormatoApartadosEnCaja(   ::cCodCaj, dbfCajT )
    ::cPrinterApt     := cPrinterApartados(         ::cCodCaj, dbfCajT )
 
-   /*
-   ::cPrinterComanda := cNombreImpresoraComanda(   ::cCodCaj, aImp[ nPos ], dbfCajL )
-         cFormato    := cFormatoComandaEnCaja( oUser():cCaja(), aImp[ nPos ], dbfCajT, dbfCajL )
-   */
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
+   ::nCopiasTik      := nCopiasTicketsEnCaja( ::cCodCaj, dbfCajT )
+   ::nCopiasAlb      := nCopiasAlbaranesEnCaja( ::cCodCaj, dbfCajT )
+   ::nCopiasFac      := nCopiasFacturasEnCaja( ::cCodCaj, dbfCajT )
+   ::nCopiasEntrega  := nCopiasEntregasEnCaja( ::cCodCaj, dbfCajT )
+   ::nCopiasRegalo   := nCopiasTicketsRegaloEnCaja( ::cCodCaj, dbfCajT )    
+   
 return self
 
 //---------------------------------------------------------------------------//

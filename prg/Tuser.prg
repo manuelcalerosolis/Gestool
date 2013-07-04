@@ -104,8 +104,40 @@ CLASS TUser
    Data     _EnUso                     INIT .f.
    Method   lEnUso( lNewVal )          INLINE if( lNewVal != nil, ::_EnUso := lNewVal, ::_EnUso )
 
-   Data     _Delegacion                INIT "00"
-   Method   cDelegacion( cNewVal )     INLINE if( cNewVal != nil, ( ::_Delegacion := cNewVal, cDlgUsr( cNewVal ) ), if( !Empty( uFieldEmpresa( "cSufDoc" ) ), ( ::_Delegacion := uFieldEmpresa( "cSufDoc" ), cDlgUsr( uFieldEmpresa( "cSufDoc" ) ) ), ::_Delegacion ) )
+   //------------------------------------------------------------------------//
+
+   Data     _Delegacion                INIT ""
+   //Method   cDelegacion( cNewVal )     INLINE if( cNewVal != nil, ( ::_Delegacion := cNewVal, cDlgUsr( cNewVal ) ), if( !Empty( uFieldEmpresa( "cSufDoc" ) ), ( ::_Delegacion := uFieldEmpresa( "cSufDoc" ), cDlgUsr( uFieldEmpresa( "cSufDoc" ) ) ), ::_Delegacion ) )
+ 
+   INLINE METHOD cDelegacion( cNewVal )
+
+      if cNewVal != nil
+
+         ::_Delegacion := cNewVal
+
+         cDlgUsr( cNewVal ) 
+
+      else
+
+         if Empty( ::_Delegacion )
+
+            if !Empty( uFieldEmpresa( "cSufDoc" ) )
+
+               ::_Delegacion := uFieldEmpresa( "cSufDoc" )
+
+               cDlgUsr( uFieldEmpresa( "cSufDoc" ) )
+
+            end if
+         
+         end if   
+
+      end if   
+
+      RETURN ::_Delegacion
+
+   ENDMETHOD
+
+   //------------------------------------------------------------------------//
 
    Data     _NotCostos                 INIT .f.
    Method   lNotCostos( lNewVal )
@@ -296,9 +328,13 @@ Method Create( cCodUsr, dbfUser, dbfCajas, cOldUsr, lCreateHandle )
          */
 
          if !Empty( ( ::oDbf )->cCodDlg )
+
             if !::lMaster()
+
                ::cDelegacion( ( ::oDbf )->cCodDlg )
+
             end if
+
          end if
 
          /*
