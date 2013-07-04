@@ -1912,7 +1912,6 @@ STATIC FUNCTION EdtRec( aTmp, aGet, dbfSatCliT, oBrw, cCodCli, cCodArt, nMode )
          VALID    ( cTarifa( aGet[_CCODTAR], oSay[ 2 ] ) ) ;
          BITMAP   "LUPA" ;
          ON HELP  ( BrwTarifa( aGet[_CCODTAR], oSay[ 2 ] ) ) ;
-         COLOR    CLR_GET ;
          OF       oFld:aDialogs[1]
 
       REDEFINE GET oSay[ 2 ] VAR cSay[ 2 ] ;
@@ -1927,10 +1926,9 @@ STATIC FUNCTION EdtRec( aTmp, aGet, dbfSatCliT, oBrw, cCodCli, cCodArt, nMode )
       REDEFINE GET aGet[_CCODOBR] VAR aTmp[_CCODOBR] ;
          ID       150 ;
          WHEN     ( nMode != ZOOM_MODE ) ;
-         VALID    ( cObras( aGet[_CCODOBR], oSay[ 3 ], aTmp[_CCODCLI], dbfObrasT ) ) ;
+         VALID    ( cObras( aGet[ _CCODOBR ], oSay[ 3 ], aTmp[ _CCODCLI ], dbfObrasT ) ) ;
          BITMAP   "LUPA" ;
-         ON HELP  ( BrwObras( aGet[_CCODOBR], oSay[ 3 ], aTmp[_CCODCLI], dbfObrasT ) ) ;
-         COLOR    CLR_GET ;
+         ON HELP  ( BrwObras( aGet[ _CCODOBR ], oSay[ 3 ], aTmp[ _CCODCLI ], dbfObrasT ) ) ;
          OF       oFld:aDialogs[1]
 
       REDEFINE GET oSay[ 3 ] VAR cSay[ 3 ] ;

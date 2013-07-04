@@ -9379,10 +9379,10 @@ Method CreateLines() CLASS TPedidosClientes2PedidosProveedor
    local cTmpLin
    local cTmpFin
    local lErrors  := .f.
-/*
+
    oBlock         := ErrorBlock( {| oError | ApoloBreak( oError ) } )
    BEGIN SEQUENCE
-*/
+
    cTmpLin        := cGetNewFileName( cPatTmp() + "PTmpCliL" )
    cTmpFin        := cGetNewFileName( cPatTmp() + "PTmpFinL" )
 
@@ -9465,7 +9465,7 @@ Method CreateLines() CLASS TPedidosClientes2PedidosProveedor
       ( dbfTmpPedLin )->( dbGoTop() )
 
    end if
-/*
+
    RECOVER USING oError
 
       lErrors     := .t.
@@ -9475,7 +9475,7 @@ Method CreateLines() CLASS TPedidosClientes2PedidosProveedor
    END SEQUENCE
 
    ErrorBlock( oBlock )
-*/
+
 Return ( !lErrors )
 
 //---------------------------------------------------------------------------//
