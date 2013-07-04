@@ -87,6 +87,7 @@ CLASS TpvTactil
    DATA oArticulo
    DATA oCodigoBarraArticulo
    DATA oArticulosEscandallos
+   DATA oArticulosOfertas
    DATA oOferta
    DATA oFormaPago
    DATA oPropiedadesLinea
@@ -276,6 +277,7 @@ CLASS TpvTactil
    DATA oCarpetaInicio
 
    DATA oGrpSalones
+   DATA oGrpSeries
 
    DATA oBtnSala
    DATA oBtnGeneral
@@ -381,6 +383,8 @@ CLASS TpvTactil
    METHOD CargaFavoritos()
 
    METHOD AgregarLineas()
+
+   METHOD nPrecioArticulo()
 
    METHOD lAcumulaArticulo()
 
@@ -535,6 +539,8 @@ CLASS TpvTactil
    METHOD SelecionaCliente()
 
    METHOD SetCliente()
+   METHOD SetSerie()
+   METHOD CambiaSerie( lSubir )
    METHOD SetUbicacion()               INLINE ( if( !Empty( ::oSayZona ), ::oSayZona:SetText( ::cUbicacion() ), ) )
    METHOD SetInfo()                    INLINE ( if( !Empty( ::oSayInfo ), ::oSayInfo:SetText( ::cInfo() ), ) )
 
@@ -829,7 +835,7 @@ CLASS TpvTactil
 
       ::ImprimeDocumento()
 
-      RETURN ( Self )
+      RETURN ( Self )  
 
    ENDMETHOD
 
@@ -1913,6 +1919,8 @@ METHOD OpenFiles() CLASS TpvTactil
 
    DATABASE NEW ::oArticulosEscandallos                     PATH ( cPatArt() )   FILE "ARTKIT.DBF"          VIA ( cDriver() ) SHARED INDEX "ARTKIT.CDX"
 
+   DATABASE NEW ::oArticulosOfertas                         PATH ( cPatArt() )   FILE "OFERTA.DBF"          VIA ( cDriver() ) SHARED INDEX "OFERTA.CDX"
+
    DATABASE NEW ::oOferta                                   PATH ( cPatArt() )   FILE "OFERTA.DBF"          VIA ( cDriver() ) SHARED INDEX "OFERTA.CDX"
 
    DATABASE NEW ::oFormaPago                                PATH ( cPatGrp() )   FILE "FPAGO.DBF"           VIA ( cDriver() ) SHARED INDEX "FPAGO.CDX"
@@ -2204,6 +2212,10 @@ METHOD CloseFiles() CLASS TpvTactil
 
    if ::oArticulosEscandallos != nil .and. ::oArticulosEscandallos:Used()
       ::oArticulosEscandallos:End()
+   end if
+
+   if ::oArticulosOfertas != nil .and. ::oArticulosOfertas:Used()
+      ::oArticulosOfertas:End()
    end if
 
    if ::oOferta != nil .and. ::oOferta:Used()
@@ -2522,6 +2534,7 @@ METHOD CloseFiles() CLASS TpvTactil
    ::oArticulo                               := nil
    ::oCodigoBarraArticulo                    := nil
    ::oArticulosEscandallos                   := nil
+   ::oArticulosOfertas                       := nil
    ::oOferta                                 := nil
    ::oFormaPago                              := nil
    ::oPropiedadesLinea                       := nil
@@ -3154,39 +3167,22 @@ METHOD StartResource() CLASS TpvTactil
          ::oBtnImportesExactos   := TDotNetButton():New( 60, oGrupo, "Gauge_32",                      "Cobros rapidos",    3, {|| ::OnClickImportesExactos() }, , , .f., .f., .f. )
 
       oGrupo                     := TDotNetGroup():New( oCarpeta, 186, "Arqueos/Sesiones", .f., , "Stopwatch_stop_32" )
-         oBoton                  := TDotNetButton():New( 60, oGrupo, "Stopwatch_refresh_32",          "Arqueo parcial [X]",   1, {|| ::OnClickCloseTurno( .t. ) }, , , .f., .f., .f. )
-         oBoton                  := TDotNetButton():New( 60, oGrupo, "Stopwatch_stop_32",             "Arqueo total [Z]",     2, {|| ::OnClickCloseTurno( .f. ) }, , , .f., .f., .f. )
-         oBoton                  := TDotNetButton():New( 60, oGrupo, "Stopwatch_run_32",              "Iniciar sesión",       3, {|| ::OnClickIniciarSesion() }, , , .f., .f., .f. )
+         oBoton                  := TDotNetButton():New( 60, oGrupo, "Stopwatch_refresh_32",          "Arqueo parcial [X]",1, {|| ::OnClickCloseTurno( .t. ) }, , , .f., .f., .f. )
+         oBoton                  := TDotNetButton():New( 60, oGrupo, "Stopwatch_stop_32",             "Arqueo total [Z]",  2, {|| ::OnClickCloseTurno( .f. ) }, , , .f., .f., .f. )
+         oBoton                  := TDotNetButton():New( 60, oGrupo, "Stopwatch_run_32",              "Iniciar sesión",    3, {|| ::OnClickIniciarSesion() }, , , .f., .f., .f. )
 
       oGrupo                     := TDotNetGroup():New( oCarpeta, 66, "Salida", .f. )
          oBoton                  := TDotNetButton():New( 60, oGrupo, "End32",                         "Salida",            1, {|| ::oDlg:End() }, , , .f., .f., .f. )
  
-      /* 
-      Segunda pestaña de tpv tactil--------------------------------------------
-      */
-
-      // oCarpeta             := TCarpeta():New( ::oOfficeBar, "Arqueos/Sesiones" )
-
-
       /*
       Segunda pestaña de tpv tactil--------------------------------------------
       */
-      /*
-      oCarpeta             := TCarpeta():New( ::oOfficeBar, "Más" )
+      
+      oCarpeta             := TCarpeta():New( ::oOfficeBar, "Más..." )
 
-      oGrupo               := TDotNetGroup():New( oCarpeta, 66, "", .f., , "" )
-         oBoton            := TDotNetButton():New( 60, oGrupo, "Navigate_left_32",              "Anterior",          1, {|| ::oOfficeBar:SetOption( 1 ) }, , , .f., .f., .f. )
-
-      oGrupo               := TDotNetGroup():New( oCarpeta, 66, "Tipo venta", .f. )
-         oBoton            := TDotNetButton():New( 60, oGrupo, "Cashier_user1_32",              "Ticket",            1, {|| Msginfo( "OfficeBar" ) }, , , .f., .f., .f. )
-
-      oGrupo               := TDotNetGroup():New( oCarpeta, 126, "Serie: ", .f. )
-         oBoton            := TDotNetButton():New( 60, oGrupo, "Up32",                          "Subir",             1, {|| Msginfo( "OfficeBar" ) }, , , .f., .f., .f. )
-         oBoton            := TDotNetButton():New( 60, oGrupo, "Down32",                        "Bajar",             2, {|| Msginfo( "OfficeBar" ) }, , , .f., .f., .f. )
-
-      oGrupo               := TDotNetGroup():New( oCarpeta, 66, "Salida", .f. )
-         oBoton            := TDotNetButton():New( 60, oGrupo, "End32",                         "Salida",            1, {|| ::oDlg:End() }, , , .f., .f., .f. )
-      */
+      ::oGrpSeries         := TDotNetGroup():New( oCarpeta, 126, "Serie: ", .f. )
+         oBoton            := TDotNetButton():New( 60, ::oGrpSeries, "Up32",                          "Subir",             1, {|| ::CambiaSerie( .t. ) }, , , .f., .f., .f. )
+         oBoton            := TDotNetButton():New( 60, ::oGrpSeries, "Down32",                        "Bajar",             2, {|| ::CambiaSerie( .f. ) }, , , .f., .f., .f. )
 
    end if
 
@@ -3246,6 +3242,12 @@ METHOD StartResource() CLASS TpvTactil
    */
 
    ::SetCliente()
+
+   /*
+   Datos de la serie-----------------------------------------------------------
+   */
+
+   ::SetSerie()
 
    /*
    Datos de la ubicacion-------------------------------------------------------
@@ -3404,6 +3406,26 @@ METHOD PaintResource() CLASS TpvTactil
 Return ( Self )
 
 //---------------------------------------------------------------------------//
+
+METHOD CambiaSerie( lSubir ) CLASS TpvTactil
+
+   if lSubir
+
+      ::oTiketCabecera:cSerTik   := cUpSerie( ::oTiketCabecera:cSerTik )
+
+   else
+
+      ::oTiketCabecera:cSerTik   := cDwSerie( ::oTiketCabecera:cSerTik )
+
+   end if
+
+   if !Empty( ::oGrpSeries )
+      ::oGrpSeries:cPrompt       := "Serie: " + ::oTiketCabecera:cSerTik
+   end if
+
+Return ( Self )
+
+//----------------------------------------------------------------------------//
 
 METHOD CargaArticulos() CLASS TpvTactil
 
@@ -4213,7 +4235,7 @@ METHOD AgregarLineas( cCodigoArticulo ) CLASS TpvTactil
                ::oTemporalLinea:nFacCnv   := NotCero( ::oArticulo:nFacCnv )
             end if
 
-            ::oTemporalLinea:nPvpTil      := cRetPreArt( ::oArticulo:Codigo, ::nTarifaSolo, cDivEmp(), .t., ::oArticulo:cAlias, ::oDivisas:cAlias, ::oArticulosEscandallos:cAlias, ::oTipoIVA:cAlias )
+            ::oTemporalLinea:nPvpTil      := ::nPrecioArticulo()
             ::oTemporalLinea:nIvaTil      := nIva( ::oTipoIva, ::oArticulo:TipoIva )
             ::oTemporalLinea:cAlmLin      := oUser():cAlmacen()
             ::oTemporalLinea:cImpCom1     := ::oArticulo:cTipImp1
@@ -4278,6 +4300,48 @@ METHOD AgregarLineas( cCodigoArticulo ) CLASS TpvTactil
 
 
 Return ( .t. )
+
+//---------------------------------------------------------------------------//
+
+METHOD nPrecioArticulo() CLASS TpvTactil
+
+   local nPrecio        := 0
+   local sOferta
+   local nTotalLinea    := 0
+   local cCodGrpCli
+   local cCodArt        := ::oArticulo:Codigo
+   local cCodCli        := ::oTiketCabecera:cCliTik
+   local nTarifa        := ::nTarifaSolo
+
+
+   /*
+   Obtenemos el precio normal del artículo-------------------------------------
+   */
+
+   nPrecio              := cRetPreArt( cCodArt, nTarifa, cDivEmp(), .t., ::oArticulo:cAlias, ::oDivisas:cAlias, ::oArticulosEscandallos:cAlias, ::oTipoIVA:cAlias )
+
+   /*
+   Si el artículo está de oferta cambiamos el precio hasta la oferta-----------
+   */
+
+   cCodGrpCli           := RetGrpCli( ::oTiketCabecera:cCliTik, ::oCliente:cAlias )
+   sOferta              := sOfertaArticulo( cCodArt, ::oTiketCabecera:cCliTik, cCodGrpCli, 1, GetSysDate(), ::oArticulosOfertas:cAlias, nTarifa, .t., Space( 10 ), Space( 10 ), Space( 10 ), Space( 10 ), ::oTiketCabecera:cDivTik, ::oArticulo:cAlias, ::oDivisas:cAlias, ::oArticulosEscandallos:cAlias, ::oTipoIVA:cAlias, 1, nPrecio )
+
+   if !Empty( sOferta ) 
+      nPrecio           := sOferta:nPrecio
+   end if
+
+   /*
+   Si el cliente tiene una tarifa atípica la buscamos tb-----------------------
+   */
+
+   if lSeekAtpArt( cCodCli + cCodArt, Space( 10 ) + Space( 10 ), Space( 10 ) + Space( 10 ), GetSysDate(), ::oAtipicasCliente:cAlias )
+
+      nPrecio           := nImpAtp( nTarifa, ::oAtipicasCliente:cAlias, , nIva( ::oTipoIva, ::oArticulo:TipoIva ) )
+
+   end if   
+
+Return ( nPrecio )
 
 //---------------------------------------------------------------------------//
 
@@ -5151,6 +5215,12 @@ METHOD SelecionaCliente() CLASS TpvTactil
 
       ::SetCliente()
 
+      /*
+      Datos de la serie---------------------------------------------------------
+      */
+
+      ::SetSerie()
+
    end if
 
 Return .t.
@@ -5185,6 +5255,16 @@ METHOD SetCliente() CLASS TpvTactil
       ::oBtnTelefono:cCaption( if( !Empty( uValor ), uValor, "..." ) )
 
    end if
+
+Return nil
+
+//---------------------------------------------------------------------------//
+
+METHOD SetSerie() Class TpvTactil
+
+   if !Empty( ::oGrpSeries )
+      ::oGrpSeries:cPrompt  := "Serie: " + ::oTiketCabecera:cSerTik
+   end if   
 
 Return nil
 
@@ -5687,6 +5767,7 @@ METHOD OnClickCobro() CLASS TpvTactil
 
          ::SetInfo()
          ::SetCliente()
+         ::SetSerie()
 
          /*
          Recoger usuario-------------------------------------------------------
@@ -5773,7 +5854,9 @@ METHOD OnClickAlbaran() CLASS TpvTactil
       Abrimos el cajón portamonedas antes de imprimir-----------------------
       */
 
-      oUser():OpenCajon()
+      if lOpenCaj
+         oUser():OpenCajon()
+      end if
 
       /*
       Imprimimos el documento--------------------------------------------
@@ -5806,6 +5889,12 @@ METHOD OnClickAlbaran() CLASS TpvTactil
       */
 
       ::SetCliente()
+
+      /*
+      Datos de la serie--------------------------------------------------
+      */
+
+      ::SetSerie()
 
       /*
       Recoger usuario----------------------------------------------------
@@ -6207,6 +6296,8 @@ METHOD GuardaDocumento( lZap, nSave ) CLASS TpvTactil
 
       ::SetCliente()
 
+      ::SetSerie()
+
    RECOVER USING oError
 
       RollBackTransaction()
@@ -6246,7 +6337,7 @@ METHOD GuardaDocumentoAlbaran() CLASS TpvTactil
    ::oDlg:Disable()
 
    n                                      := 1
-   cSerAlb                                := cNewSer( "NALBCLI", ::oContadores:cAlias )
+   cSerAlb                                := ::oTiketCabecera:cSerTik //cNewSer( "NALBCLI", ::oContadores:cAlias )
    nNumAlb                                := nNewDoc( cSerAlb, ::oAlbaranClienteCabecera:cAlias, "nAlbCli", , ::oContadores:cAlias )
    cSufAlb                                := RetSufEmp()
 
@@ -6510,7 +6601,7 @@ METHOD CargaValoresDefecto( nUbicacion, lInit ) CLASS TpvTactil
    */
 
    if Empty( ::oTiketCabecera:cSerTik )
-      ::oTiketCabecera:cSerTik   := "A"
+      ::oTiketCabecera:cSerTik   := cNewSer( "NTIKCLI", ::oContadores:cAlias )
    end if
 
    /*
@@ -9032,6 +9123,87 @@ function CheckRes()
 return nil
 
 //---------------------------------------------------------------------------//
+
+/*
+Static Function lCambiaSerie( aTmp, lSubir, oGrupoSerie )
+
+   if lSubir
+      aTmp[ _CSERTIK ]        := cUpSerie( aTmp[ _CSERTIK ] )
+      oGrupoSerie:cPrompt     := "Serie: " + aTmp[ _CSERTIK ]
+   else
+      aTmp[ _CSERTIK ]        := cDwSerie( aTmp[ _CSERTIK ] )
+      oGrupoSerie:cPrompt     := "Serie: " + aTmp[ _CSERTIK ]
+   end if
+
+Return .t.
+
+
+FUNCTION cUpSerie( cSer )
+
+   local nAsc
+   local cChr
+
+   if Empty( cSer ) .or. cSer < "A"
+      cSer     := "A"
+      nAsc     := Asc( cSer )
+   else
+      nAsc     := Asc( cSer ) + 1
+   end if
+
+   cChr        := Chr( nAsc )
+
+   if cChr > "Z"
+      cChr     := "Z"
+   end if
+
+return cChr
+
+FUNCTION cDwSerie( cSer )
+
+   local nAsc
+   local cChr
+   local cSerie
+
+   nAsc        := Asc( cSer ) - 1
+   cChr        := Chr( nAsc )
+
+   if cChr < "A"
+      cChr     := "A"
+   end if
+
+return cChr
+
+      */
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 
