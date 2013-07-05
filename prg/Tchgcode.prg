@@ -822,7 +822,7 @@ METHOD ChgCode()
             end if
          else
             if ::oGrpFam:oDbf:Seek( ::cGetGrfOld )
-               ::oGrpFam:oDbf:Delete()
+               ::oGrpFam:oDbf:Delete(.f.)
             end if
          end if
 
@@ -883,7 +883,7 @@ METHOD ChgCode()
             end if
          else
             if ::oDbfFam:Seek( ::cGetFamOld )
-               ::oDbfFam:Delete()
+               ::oDbfFam:Delete(.f.)
             end if
          end if
 
@@ -1487,7 +1487,7 @@ METHOD ChgCode()
             end if
          else
             if ::oDbfAgentes:Seek( ::cAgenteOld )
-               ::oDbfAgentes:Delete()
+               ::oDbfAgentes:Delete(.f.)
             end if
          end if
 
@@ -1679,7 +1679,7 @@ METHOD ChgCode()
             end if
          else
             if ::oDbfPago:Seek( ::cPagoOld )
-               ::oDbfPago:Delete()
+               ::oDbfPago:Delete(.f.)
             end if
          end if
 

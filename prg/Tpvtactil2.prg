@@ -5022,11 +5022,11 @@ METHOD EliminaDocumento( cNumeroTicket ) CLASS TpvTactil
    ::oDlg:Disable()
 
    if ::oTiketCabecera:Seek( cNumeroTicket )
-      ::oTiketCabecera:Delete()
+      ::oTiketCabecera:Delete(.f.)
    end if
 
    while ( ::oTiketLinea:Seek( cNumeroTicket ) )
-      ::oTiketLinea:Delete()
+      ::oTiketLinea:Delete(.f.)
    end while
 
    ::oDlg:Enable()
@@ -6247,7 +6247,7 @@ METHOD GeneraVale() CLASS TpvTactil
       */
 
       while ::oTiketLinea:Seek( ::cNumeroTicket() )
-         ::oTiketLinea:Delete()
+         ::oTiketLinea:Delete(.f.)
       end while
 
       ::oTiketLinea:Blank()

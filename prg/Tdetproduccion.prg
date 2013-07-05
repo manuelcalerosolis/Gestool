@@ -743,7 +743,7 @@ RETURN ( Self )
 METHOD DeleteDetails() CLASS TDetProduccion
 
    while ::oParent:oDetSeriesProduccion:oDbfVir:SeekInOrd( Str( ::oDbfVir:nNumLin, 4 ) + ::oDbfVir:cCodArt, "nNumLin" )
-      ::oParent:oDetSeriesProduccion:oDbfVir:Delete()
+      ::oParent:oDetSeriesProduccion:oDbfVir:Delete(.f.)
    end while
 
 RETURN ( Self )
@@ -924,11 +924,11 @@ RETURN ( if ( !uFieldEmpresa( "lNStkAct" ), ::oStkAct:cText( ::oParent:oStock:nS
 METHOD Del( oBrw1, oBrw2 ) CLASS TDetProduccion
 
    while ::oParent:oDetMaterial:oDbfVir:SeekInOrd( ::oDbfVir:cCodArt, "cCodPro" )
-      ::oParent:oDetMaterial:oDbfVir:Delete()
+      ::oParent:oDetMaterial:oDbfVir:Delete(.f.)
    end while
 
    while ::oParent:oDetSeriesProduccion:oDbfVir:SeekInOrd( Str( ::oDbfVir:nNumLin, 4 ), "nNumLin" )
-      ::oParent:oDetSeriesProduccion:oDbfVir:Delete()
+      ::oParent:oDetSeriesProduccion:oDbfVir:Delete(.f.)
    end while
 
    Super:Del( oBrw1 )

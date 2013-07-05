@@ -1289,7 +1289,7 @@ METHOD Del() CLASS TCobAge
    if oUser():lNotConfirmDelete() .or. msgNoYes( "¿ Desea eliminar el registro en curso ?", "Confirme supresión" )
 
       while ::oDetCobAge:oDbf:SeekInOrd( Str( ::oDbf:nNumCob ) + ::oDbf:cSufCob, "nNumCob" )
-         ::oDetCobAge:oDbf:Delete()
+         ::oDetCobAge:oDbf:Delete(.f.)
       end while
 
       ::oDbf:Delete()

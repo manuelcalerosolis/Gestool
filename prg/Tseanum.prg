@@ -1985,7 +1985,7 @@ METHOD EliminarSeries() CLASS TNumerosSerie
    case IsObject( ::uTmpSer )
 
       while ( ::uTmpSer:Seek( Str( ::nNumLin, 4 ) + ::cCodArt ) ) .and. ! ::uTmpSer:Eof()
-         ::uTmpSer:Delete()
+         ::uTmpSer:Delete(.f.)
       end while
 
    end case

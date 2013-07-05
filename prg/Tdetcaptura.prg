@@ -86,7 +86,7 @@ Method CheckDefault( cCod, lNew )
 
    if lNew
       while ::oDbf:Seek( cCod ) .and. !::oDbf:Eof()
-         ::oDbf:Delete()
+         ::oDbf:Delete(.f.)
       end while
    end if
 

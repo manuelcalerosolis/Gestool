@@ -2555,7 +2555,7 @@ METHOD CreateRegister() CLASS TPlantillaXML
                */
 
                while ::oFacPrvL:SeekInOrd( aCampos[ ::oFacPrvT:FieldPos( "cSerFac" ), 9 ] + Str( aCampos[ ::oFacPrvT:FieldPos( "nNumFac" ), 9 ], 9 ) + aCampos[ ::oFacPrvT:FieldPos( "cSufFac" ), 9 ], "nNumFac" ) .and. !::oFacPrvL:eof()
-                  ::oFacPrvL:Delete()
+                  ::oFacPrvL:Delete(.f.)
                end while
 
             end if

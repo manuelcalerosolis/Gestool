@@ -3754,9 +3754,14 @@ METHOD Reindex()
          end if
 
          dbUseArea( .t., cDriver(), ( oTable:cName + ".Dbf" ), "Table", .f. )
-         ( "Table" )->( OrdSetFocus( 1 ) )
-         ( "Table" )->( OrdListRebuild() )
-         ( "Table" )->( dbCloseArea() )
+
+         if ( "Table" )->( Used() )
+
+            ( "Table" )->( OrdSetFocus( 1 ) )
+            ( "Table" )->( OrdListRebuild() )
+            ( "Table" )->( dbCloseArea() )
+
+         end if 
 
          ::aProgress[ 1 ]:Set( hb_EnumIndex() )
 
@@ -3781,9 +3786,14 @@ METHOD Reindex()
          end if
 
          dbUseArea( .t., cDriver(), ( oTable:cName + ".Dbf" ), "Table", .f. )
-         ( "Table" )->( OrdSetFocus( 1 ) )
-         ( "Table" )->( OrdListRebuild() )
-         ( "Table" )->( dbCloseArea() )
+         
+         if ( "Table" )->( Used() )
+         
+            ( "Table" )->( OrdSetFocus( 1 ) )
+            ( "Table" )->( OrdListRebuild() )
+            ( "Table" )->( dbCloseArea() )
+         
+         end if 
 
          ::aProgress[ 2 ]:Set( hb_EnumIndex() )
 
