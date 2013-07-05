@@ -2274,7 +2274,7 @@ METHOD BuildEmpresa()
    oDataTable:cName        := cPatEmp() + "FacPrvL"
    oDataTable:cDataFile    := cPatEmp( , .t. ) + "FacPrvL.Dbf"
    oDataTable:cIndexFile   := cPatEmp( , .t. ) + "FacPrvL.Cdx"
-   oDataTable:cDescription := "Facturas de proveedor"
+   oDataTable:cDescription := "Líneas de facturas de proveedor"
    oDataTable:lTrigger     := ::lTriggerAuxiliares
    ::AddEmpresaTable( oDataTable )
 
@@ -2282,7 +2282,7 @@ METHOD BuildEmpresa()
    oDataTable:cName        := cPatEmp() + "FacPrvI"
    oDataTable:cDataFile    := cPatEmp( , .t. ) + "FacPrvI.Dbf"
    oDataTable:cIndexFile   := cPatEmp( , .t. ) + "FacPrvI.Cdx"
-   oDataTable:cDescription := "Facturas de proveedor"
+   oDataTable:cDescription := "Incidencias de facturas de proveedor"
    oDataTable:lTrigger     := ::lTriggerAuxiliares
    ::AddEmpresaTable( oDataTable )
 
@@ -2290,7 +2290,7 @@ METHOD BuildEmpresa()
    oDataTable:cName        := cPatEmp() + "FacPrvD"
    oDataTable:cDataFile    := cPatEmp( , .t. ) + "FacPrvD.Dbf"
    oDataTable:cIndexFile   := cPatEmp( , .t. ) + "FacPrvD.Cdx"
-   oDataTable:cDescription := "Facturas de proveedor"
+   oDataTable:cDescription := "Documentos de facturas de proveedor"
    oDataTable:lTrigger     := ::lTriggerAuxiliares
    ::AddEmpresaTable( oDataTable )
 
@@ -2298,7 +2298,7 @@ METHOD BuildEmpresa()
    oDataTable:cName        := cPatEmp() + "FacPrvP"
    oDataTable:cDataFile    := cPatEmp( , .t. ) + "FacPrvP.Dbf"
    oDataTable:cIndexFile   := cPatEmp( , .t. ) + "FacPrvP.Cdx"
-   oDataTable:cDescription := "Facturas de proveedor"
+   oDataTable:cDescription := "Pagos de facturas de proveedor"
    oDataTable:bSyncFile    := {|| SynRecPrv( cPatEmp() ) }
    ::AddEmpresaTable( oDataTable )
 
@@ -2306,7 +2306,7 @@ METHOD BuildEmpresa()
    oDataTable:cName        := cPatEmp() + "FacPrvS"
    oDataTable:cDataFile    := cPatEmp( , .t. ) + "FacPrvS.Dbf"
    oDataTable:cIndexFile   := cPatEmp( , .t. ) + "FacPrvS.Cdx"
-   oDataTable:cDescription := "Facturas de proveedor"
+   oDataTable:cDescription := "Series de facturas de proveedor"
    oDataTable:lTrigger     := ::lTriggerAuxiliares
    ::AddEmpresaTable( oDataTable )
 
@@ -2326,7 +2326,7 @@ METHOD BuildEmpresa()
    oDataTable:cName        := cPatEmp() + "RctPrvL"
    oDataTable:cDataFile    := cPatEmp( , .t. ) + "RctPrvL.Dbf"
    oDataTable:cIndexFile   := cPatEmp( , .t. ) + "RctPrvL.Cdx"
-   oDataTable:cDescription := "Rectificativas de proveedor"
+   oDataTable:cDescription := "Líneas de rectificativas de proveedor"
    oDataTable:lTrigger     := ::lTriggerAuxiliares
    ::AddEmpresaTable( oDataTable )
 
@@ -3831,7 +3831,7 @@ Return ( Self )
 
 //---------------------------------------------------------------------------//
 
-METHOD disableTriggers()
+METHOD DisableTriggers()
 
    local lOk
    local cStm
@@ -3848,7 +3848,7 @@ METHOD disableTriggers()
    Creamos la snetencia--------------------------------------------------------
    */
 
-   if ADSCreateSQLStatement( "SqlOperation", 3 )
+   if ADSCreateSQLStatement( "DisableTriggers", 3 )
 
       lOk         := ADSExecuteSQLDirect( cStm )
       if !lOk
@@ -3887,7 +3887,7 @@ METHOD EnableTriggers()
    Creamos la snetencia--------------------------------------------------------
    */
 
-   if ADSCreateSQLStatement( "SqlOperation", 3 )
+   if ADSCreateSQLStatement( "EnableTriggers", 3 )
 
       lOk         := ADSExecuteSQLDirect( cStm )
       if !lOk

@@ -830,7 +830,7 @@ CLASS TpvTactil
       ::cFormato        := cFormatoComandaEnCaja( oUser():cCaja(), cImpresora, ::oCajaCabecera:cAlias, ::oCajaLinea:cAlias )
       ::cImpresora      := AllTrim( cNombreImpresoraComanda( oUser():cCaja(), cImpresora, ::oCajaLinea:cAlias ) )
       ::nDispositivo    := IS_PRINTER
-      ::nCopias         := Max( nCopiasComandasEnCaja( oUser():cCaja(), ::oCajaLinea:cAlias ), 1 )
+      ::nCopias         := Max( nCopiasComandasEnCaja( oUser():cCaja(), ::oCajaCabecera:cAlias ), 1 )
       ::lComanda        := .t.
 
       ::ImprimeDocumento()
@@ -846,15 +846,15 @@ CLASS TpvTactil
       do case
       case ::nTipoDocumento == documentoAlbaran
          
-         ::cFormato        := ::oFormatosImpresion:cFmtAlb
-         ::cImpresora      := ::oFormatosImpresion:cPrinterAlb
-         ::nCopias         := Max( ::oFormatosImpresion:nCopiasAlb, 1 )
+         ::cFormato     := ::oFormatosImpresion:cFmtAlb
+         ::cImpresora   := ::oFormatosImpresion:cPrinterAlb
+         ::nCopias      := Max( ::oFormatosImpresion:nCopiasAlb, 1 )
 
       otherwise
          
-         ::cFormato        := ::oFormatosImpresion:cFormatoTiket
-         ::cImpresora      := ::oFormatosImpresion:cPrinterTik
-         ::nCopias         := Max( ::oFormatosImpresion:nCopiasTik, 1 )
+         ::cFormato     := ::oFormatosImpresion:cFormatoTiket
+         ::cImpresora   := ::oFormatosImpresion:cPrinterTik
+         ::nCopias      := Max( ::oFormatosImpresion:nCopiasTik, 1 )
 
       end case
 
