@@ -202,9 +202,11 @@ memvar cDbfCon
 
 static oWndBrw
 static dbfConfig
+
 static dbfClient
 static filClient
 static tmpClient
+
 static dbfClientD
 static dbfCliAtp
 static dbfAlbCliT

@@ -10588,6 +10588,9 @@ Static Function DataReport( oFr )
    oFr:SetWorkArea(     "Unidades de medición",  oUndMedicion:Select() )
    oFr:SetFieldAliases( "Unidades de medición",  cObjectsToReport( oUndMedicion:oDbf ) )
 
+   oFr:SetWorkArea(     "SAT", ( dbfSatCliT )->( Select() ) )
+   oFr:SetFieldAliases( "SAT", cItemsToReport( aItmSatCli() ) )
+
    oFr:SetMasterDetail( "Albaranes", "Lineas de albaranes",             {|| ( dbfAlbCliT )->cSerAlb + Str( ( dbfAlbCliT )->nNumAlb ) + ( dbfAlbCliT )->cSufAlb } )
    oFr:SetMasterDetail( "Albaranes", "Series de ineas de albaranes",    {|| ( dbfAlbCliT )->cSerAlb + Str( ( dbfAlbCliT )->nNumAlb ) + ( dbfAlbCliT )->cSufAlb } )
    oFr:SetMasterDetail( "Albaranes", "Incidencias de albaranes",        {|| ( dbfAlbCliT )->cSerAlb + Str( ( dbfAlbCliT )->nNumAlb ) + ( dbfAlbCliT )->cSufAlb } )
@@ -10608,6 +10611,8 @@ Static Function DataReport( oFr )
    oFr:SetMasterDetail( "Lineas de albaranes", "Ofertas",               {|| ( dbfAlbCliL )->cRef } )
    oFr:SetMasterDetail( "Lineas de albaranes", "Unidades de medición",  {|| ( dbfAlbCliL )->cUnidad } )
 
+   oFr:SetMasterDetail( "Lineas de albaranes", "SAT",                   {|| ( dbfAlbCliL )->cNumSat } )
+
    oFr:SetResyncPair(   "Albaranes", "Lineas de albaranes" )
    oFr:SetResyncPair(   "Albaranes", "Series de lineas de albaranes" )
    oFr:SetResyncPair(   "Albaranes", "Incidencias de albaranes" )
@@ -10627,6 +10632,8 @@ Static Function DataReport( oFr )
    oFr:SetResyncPair(   "Lineas de albaranes", "Tipo de venta" )
    oFr:SetResyncPair(   "Lineas de albaranes", "Ofertas" )
    oFr:SetResyncPair(   "Lineas de albaranes", "Unidades de medición" )
+
+   oFr:SetResyncPair(   "Lineas de albaranes", "SAT" )
 
 Return nil
 

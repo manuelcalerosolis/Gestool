@@ -881,48 +881,48 @@ FUNCTION cObras( oGet, oGet2, cCodCli, dbfObrasT )
 	local lClose 	:= .F.
 	local xValor 	:= oGet:varGet()
 
-	IF Empty( xValor )
-		IF oGet2 != NIL
+	if Empty( xValor )
+		if oGet2 != NIL
 			oGet2:cText( "" )
-		END IF
-		RETURN .T.
-	END IF
+      end if
+      return .t.
+   end if
 
-   IF Empty( cCodCli )
+   if Empty( cCodCli )
 		MsgStop( "Es necesario codificar un cliente" )
-		RETURN .t.
-	END IF
+		return .t.
+	end if
 
-   IF dbfObrasT == NIL
+   if dbfObrasT == NIL
       USE ( cPatEmp() + "OBRAST.DBF" ) NEW VIA ( cDriver() ) SHARED ALIAS ( cCheckArea( "OBRAST", @dbfObrasT ) )
       SET ADSINDEX TO ( cPatEmp() + "OBRAST.CDX" ) ADDITIVE
       lClose   := .t.
    else
       ( dbfObrasT )->( OrdSetFocus( "cCodCli" ) )
-   END IF
+   end if
 
    xValor      := cCodCli + xValor
 
-   IF ( dbfObrasT )->( dbSeek( xValor ) )
+   if ( dbfObrasT )->( dbSeek( xValor ) )
 
       oGet:cText( ( dbfObrasT )->CCODOBR )
 
-		IF oGet2 != NIL
+		if oGet2 != NIL
 			oGet2:cText( ( dbfObrasT )->CNOMOBR )
-		END IF
+		end if
 
       lValid   := .T.
 
-	ELSE
+	else
 
       msgStop( "Obra no encontrada", ( dbfObrasT )->( OrdSetFocus() ) )
 
-	END IF
+	end if
 
-   IF lClose
+   if lClose
       CLOSE ( dbfObrasT )
-   END IF
+   end if
 
-RETURN lValid
+Return lValid
 
 //---------------------------------------------------------------------------//
