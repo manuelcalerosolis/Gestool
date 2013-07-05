@@ -416,11 +416,11 @@ METHOD DataReport() CLASS TFastVentasClientes
    ::oFastReport:SetMasterDetail(   "Informe", "Documentos",            {|| ::oDbf:cCodCli } )
    ::oFastReport:SetMasterDetail(   "Informe", "Incidencias",           {|| ::oDbf:cCodCli } )
    ::oFastReport:SetMasterDetail(   "Informe", "Agentes",               {|| ::oDbf:cCodAge } )
+   ::oFastReport:SetMasterDetail(   "Informe", "Usuarios",              {|| ::oDbf:cCodUsr } )
 
    ::oFastReport:SetMasterDetail(   "Clientes", "Rutas",                {|| ::oDbfCli:cCodRut } )
    ::oFastReport:SetMasterDetail(   "Clientes", "Grupos de cliente",    {|| ::oDbfCli:cCodGrp } )
    ::oFastReport:SetMasterDetail(   "Clientes", "Formas de pago",       {|| ::oDbfCli:CodPago } )
-   ::oFastReport:SetMasterDetail(   "Clientes", "Usuarios",             {|| ::oDbfCli:cCodUsr } )
 
    ::oFastReport:SetResyncPair(     "Informe", "Empresa" )
    ::oFastReport:SetResyncPair(     "Informe", "Facturas" )
@@ -431,11 +431,11 @@ METHOD DataReport() CLASS TFastVentasClientes
    ::oFastReport:SetResyncPair(     "Informe", "Tarifas de cliente" )
    ::oFastReport:SetResyncPair(     "Informe", "Documentos" )
    ::oFastReport:SetResyncPair(     "Informe", "Incidencias" )
+   ::oFastReport:SetResyncPair(     "Informe", "Usuarios" )
 
    ::oFastReport:SetResyncPair(     "Clientes", "Rutas" )
    ::oFastReport:SetResyncPair(     "Clientes", "Grupos de cliente" )
    ::oFastReport:SetResyncPair(     "Clientes", "Formas de pago" )
-   ::oFastReport:SetResyncPair(     "Clientes", "Usuarios" )
 
    do case
       case ::cReportType == "SAT de clientes"
