@@ -693,16 +693,16 @@ Function lEnviarCorreoWatchdog( cSay, oDlg )
       :SetPara(            "registro@gestool.es" )
       :SetAsunto(          "Registro de usuario de Gestool SAAS." )
       :cGetMensaje         := "Datos de registro de usuario de Gestool SAAS" + "<br>"
-      :cGetMensaje         += "NIF: " + AllTrim( cSay[1] ) + "<br>"
-      :cGetMensaje         += "Nombre: " + AllTrim( cSay[2] ) + "<br>"
-      :cGetMensaje         += "Domicilio: " + AllTrim( cSay[3] ) + "<br>"
-      :cGetMensaje         += "Población: " + AllTrim( cSay[4] ) + "<br>"
-      :cGetMensaje         += "Cod. postal: " + AllTrim( cSay[5] ) + "<br>"
-      :cGetMensaje         += "Provincia: " + AllTrim( cSay[8] ) + "<br>"
-      :cGetMensaje         += "Email: " + AllTrim( cSay[6] ) + "<br>"
-      :cGetMensaje         += "Teléfono: " + AllTrim( cSay[7] ) + "<br>"
+      :cGetMensaje         += "NIF: "           + AllTrim( cSay[1] ) + "<br>"
+      :cGetMensaje         += "Nombre: "        + AllTrim( cSay[2] ) + "<br>"
+      :cGetMensaje         += "Domicilio: "     + AllTrim( cSay[3] ) + "<br>"
+      :cGetMensaje         += "Población: "     + AllTrim( cSay[4] ) + "<br>"
+      :cGetMensaje         += "Cod. postal: "   + AllTrim( cSay[5] ) + "<br>"
+      :cGetMensaje         += "Provincia: "     + AllTrim( cSay[8] ) + "<br>"
+      :cGetMensaje         += "Email: "         + AllTrim( cSay[6] ) + "<br>"
+      :cGetMensaje         += "Teléfono: "      + AllTrim( cSay[7] ) + "<br>"
       :cGetMensaje         += "<br>"
-      :cGetMensaje         += "Serial : " + Str( Abs( nSerialHD() ) ) + "<br>"
+      :cGetMensaje         += "Serial : "       + Str( Abs( nSerialHD() ) ) + "<br>"
 
       /*
       Mandamos el Mail---------------------------------------------------------
@@ -3117,6 +3117,8 @@ Function CreateAcceso( oWnd )
    oItem:cBmpBig        := "businessman_chart_32"
    oItem:lShow          := .f.
 
+   if lAIS()
+
    oGrupo               := TGrupoAcceso()
    oGrupo:nBigItems     := 1
    oGrupo:cPrompt       := 'Auditor'
@@ -3132,6 +3134,8 @@ Function CreateAcceso( oWnd )
    oItem:cBmp           := "Document_Chart_16"
    oItem:cBmpBig        := "Document_Chart_32"
    oItem:lShow          := .f.
+
+   end if 
 
    // Ayudas-------------------------------------------------------------------
 

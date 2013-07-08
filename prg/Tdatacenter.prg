@@ -134,6 +134,7 @@ CLASS TDataCenter
 
    METHOD DisableTriggers()
    METHOD EnableTriggers()
+   METHOD SetAplicationID( cNombreUsuario )
 
    METHOD Resource( nId )
    METHOD Reindex()
@@ -1615,21 +1616,21 @@ METHOD BuildEmpresa()
    oDataTable:cName        := cPatEmp() + "Turno"
    oDataTable:cDataFile    := cPatEmp( , .t. ) + "Turno.Dbf"
    oDataTable:cIndexFile   := cPatEmp( , .t. ) + "Turno.Cdx"
-   oDataTable:cDescription := "Turnos"
+   oDataTable:cDescription := "Sesiones"
    ::AddEmpresaTable( oDataTable )
 
    oDataTable              := TDataTable()
    oDataTable:cName        := cPatEmp() + "TurnoC"
    oDataTable:cDataFile    := cPatEmp( , .t. ) + "TurnoC.Dbf"
    oDataTable:cIndexFile   := cPatEmp( , .t. ) + "TurnoC.Cdx"
-   oDataTable:cDescription := "Turnos"
+   oDataTable:cDescription := "Sesiones cajas"
    ::AddEmpresaTable( oDataTable )
 
    oDataTable              := TDataTable()
    oDataTable:cName        := cPatEmp() + "TurnoL"
    oDataTable:cDataFile    := cPatEmp( , .t. ) + "TurnoL.Dbf"
    oDataTable:cIndexFile   := cPatEmp( , .t. ) + "TurnoL.Cdx"
-   oDataTable:cDescription := "Turnos"
+   oDataTable:cDescription := "Lineas cajas"
    ::AddEmpresaTable( oDataTable )
 
    oDataTable              := TDataTable()
@@ -1657,7 +1658,7 @@ METHOD BuildEmpresa()
    oDataTable:cName        := cPatEmp() + "UbiCal"
    oDataTable:cDataFile    := cPatEmp( , .t. ) + "UbiCal.Dbf"
    oDataTable:cIndexFile   := cPatEmp( , .t. ) + "UbiCal.Cdx"
-   oDataTable:cDescription := "Ubicaciones"
+   oDataTable:cDescription := "Ubicaciones calles"
    ::AddEmpresaTable( oDataTable )
 
    oDataTable              := TDataTable()
@@ -1691,7 +1692,7 @@ METHOD BuildEmpresa()
    oDataTable:cName        := cPatEmp() + "ProvArt"
    oDataTable:cDataFile    := cPatEmp( , .t. ) + "ProvArt.Dbf"
    oDataTable:cIndexFile   := cPatEmp( , .t. ) + "ProvArt.Cdx"
-   oDataTable:cDescription := "Artículos"
+   oDataTable:cDescription := "Artículos proveedor"
    oDataTable:lTrigger     := ::lTriggerAuxiliares   
    ::AddEmpresaTable( oDataTable )
 
@@ -1699,7 +1700,7 @@ METHOD BuildEmpresa()
    oDataTable:cName        := cPatEmp() + "ArtDiv"
    oDataTable:cDataFile    := cPatEmp( , .t. ) + "ArtDiv.Dbf"
    oDataTable:cIndexFile   := cPatEmp( , .t. ) + "ArtDiv.Cdx"
-   oDataTable:cDescription := "Artículos"
+   oDataTable:cDescription := "Artículos precios por porpiedades"
    oDataTable:lTrigger     := ::lTriggerAuxiliares
    ::AddEmpresaTable( oDataTable )
 
@@ -1707,7 +1708,7 @@ METHOD BuildEmpresa()
    oDataTable:cName        := cPatEmp() + "ArtKit"
    oDataTable:cDataFile    := cPatEmp( , .t. ) + "ArtKit.Dbf"
    oDataTable:cIndexFile   := cPatEmp( , .t. ) + "ArtKit.Cdx"
-   oDataTable:cDescription := "Artículos"
+   oDataTable:cDescription := "Artículos escandallos"
    oDataTable:lTrigger     := ::lTriggerAuxiliares
    ::AddEmpresaTable( oDataTable )
 
@@ -1715,7 +1716,7 @@ METHOD BuildEmpresa()
    oDataTable:cName        := cPatEmp() + "ArtCodebar"
    oDataTable:cDataFile    := cPatEmp( , .t. ) + "ArtCodebar.Dbf"
    oDataTable:cIndexFile   := cPatEmp( , .t. ) + "ArtCodebar.Cdx"
-   oDataTable:cDescription := "Artículos"
+   oDataTable:cDescription := "Artículos codigos de barra"
    oDataTable:lTrigger     := ::lTriggerAuxiliares
    ::AddEmpresaTable( oDataTable )
 
@@ -1723,7 +1724,7 @@ METHOD BuildEmpresa()
    oDataTable:cName        := cPatEmp() + "ArtLbl"
    oDataTable:cDataFile    := cPatEmp( , .t. ) + "ArtLbl.Dbf"
    oDataTable:cIndexFile   := cPatEmp( , .t. ) + "ArtLbl.Cdx"
-   oDataTable:cDescription := "Artículos"
+   oDataTable:cDescription := "Artículos etiquetas"
    oDataTable:lTrigger     := ::lTriggerAuxiliares
    ::AddEmpresaTable( oDataTable )
 
@@ -1731,7 +1732,7 @@ METHOD BuildEmpresa()
    oDataTable:cName        := cPatEmp() + "ArtImg"
    oDataTable:cDataFile    := cPatEmp( , .t. ) + "ArtImg.Dbf"
    oDataTable:cIndexFile   := cPatEmp( , .t. ) + "ArtImg.Cdx"
-   oDataTable:cDescription := "Artículos"
+   oDataTable:cDescription := "Artículos imagenes"
    oDataTable:lTrigger     := ::lTriggerAuxiliares
    ::AddEmpresaTable( oDataTable )
 
@@ -1746,7 +1747,7 @@ METHOD BuildEmpresa()
    oDataTable:cName        := cPatEmp() + "FamPrv"
    oDataTable:cDataFile    := cPatEmp( , .t. ) + "FamPrv.Dbf"
    oDataTable:cIndexFile   := cPatEmp( , .t. ) + "FamPrv.Cdx"
-   oDataTable:cDescription := "Familias"
+   oDataTable:cDescription := "Familias proveedor"
    ::AddEmpresaTable( oDataTable )
 
    oDataTable              := TDataTable()
@@ -1826,7 +1827,7 @@ METHOD BuildEmpresa()
    oDataTable:cName        := cPatEmp() + "Tankes"
    oDataTable:cDataFile    := cPatEmp( , .t. ) + "Tankes.Dbf"
    oDataTable:cIndexFile   := cPatEmp( , .t. ) + "Tankes.Cdx"
-   oDataTable:cDescription := "Tankes"
+   oDataTable:cDescription := "Tanques de combustible"
    ::AddEmpresaTable( oDataTable )
 
    oDataTable              := TDataTable()
@@ -1861,7 +1862,7 @@ METHOD BuildEmpresa()
    oDataTable:cName        := cPatEmp() + "ComentariosL"
    oDataTable:cDataFile    := cPatEmp( , .t. ) + "ComentariosL.Dbf"
    oDataTable:cIndexFile   := cPatEmp( , .t. ) + "ComentariosL.Cdx"
-   oDataTable:cDescription := "Comentarios"
+   oDataTable:cDescription := "Comentarios lineas"
    ::AddEmpresaTable( oDataTable )
 
    oDataTable              := TDataTable()
@@ -1875,7 +1876,7 @@ METHOD BuildEmpresa()
    oDataTable:cName        := cPatEmp() + "PromoL"
    oDataTable:cDataFile    := cPatEmp( , .t. ) + "PromoL.Dbf"
    oDataTable:cIndexFile   := cPatEmp( , .t. ) + "PromoL.Cdx"
-   oDataTable:cDescription := "Promociones"
+   oDataTable:cDescription := "Promociones lineas"
    oDataTable:lTrigger     := ::lTriggerAuxiliares
    ::AddEmpresaTable( oDataTable )
 
@@ -1898,7 +1899,7 @@ METHOD BuildEmpresa()
    oDataTable:cName        := cPatEmp() + "DetFideliza"
    oDataTable:cDataFile    := cPatEmp( , .t. ) + "DetFideliza.Dbf"
    oDataTable:cIndexFile   := cPatEmp( , .t. ) + "DetFideliza.Cdx"
-   oDataTable:cDescription := "Fidelización"
+   oDataTable:cDescription := "Fidelización lineas"
    ::AddEmpresaTable( oDataTable )
 
    /*
@@ -1917,7 +1918,7 @@ METHOD BuildEmpresa()
    oDataTable:cName        := cPatEmp() + "ClientD"
    oDataTable:cDataFile    := cPatEmp( , .t. ) + "ClientD.Dbf"
    oDataTable:cIndexFile   := cPatEmp( , .t. ) + "ClientD.Cdx"
-   oDataTable:cDescription := "Clientes"
+   oDataTable:cDescription := "Clientes documentos"
    oDataTable:lTrigger     := ::lTriggerAuxiliares
    ::AddEmpresaTable( oDataTable )
 
@@ -1941,7 +1942,7 @@ METHOD BuildEmpresa()
    oDataTable:cName        := cPatEmp() + "ObrasT"
    oDataTable:cDataFile    := cPatEmp( , .t. ) + "ObrasT.Dbf"
    oDataTable:cIndexFile   := cPatEmp( , .t. ) + "ObrasT.Cdx"
-   oDataTable:cDescription := "Direcciones de clientes"
+   oDataTable:cDescription := "Clientes direcciones"
    oDataTable:lTrigger     := ::lTriggerAuxiliares
    ::AddEmpresaTable( oDataTable )
 
@@ -1949,7 +1950,7 @@ METHOD BuildEmpresa()
    oDataTable:cName        := cPatEmp() + "CliContactos"
    oDataTable:cDataFile    := cPatEmp( , .t. ) + "CliContactos.Dbf"
    oDataTable:cIndexFile   := cPatEmp( , .t. ) + "CliContactos.Cdx"
-   oDataTable:cDescription := "Contactos de clientes"
+   oDataTable:cDescription := "Clientes contactos"
    oDataTable:lTrigger     := ::lTriggerAuxiliares
    ::AddEmpresaTable( oDataTable )
 
@@ -1957,7 +1958,7 @@ METHOD BuildEmpresa()
    oDataTable:cName        := cPatEmp() + "CliBnc"
    oDataTable:cDataFile    := cPatEmp( , .t. ) + "CliBnc.Dbf"
    oDataTable:cIndexFile   := cPatEmp( , .t. ) + "CliBnc.Cdx"
-   oDataTable:cDescription := "Bancos de clientes"
+   oDataTable:cDescription := "Clientes bancos"
    oDataTable:lTrigger     := ::lTriggerAuxiliares
    ::AddEmpresaTable( oDataTable )
 
@@ -1965,7 +1966,7 @@ METHOD BuildEmpresa()
    oDataTable:cName        := cPatEmp() + "CliInc"
    oDataTable:cDataFile    := cPatEmp( , .t. ) + "CliInc.Dbf"
    oDataTable:cIndexFile   := cPatEmp( , .t. ) + "CliInc.Cdx"
-   oDataTable:cDescription := "Incidencias de clientes"
+   oDataTable:cDescription := "Clientes incidencias"
    oDataTable:lTrigger     := ::lTriggerAuxiliares
    ::AddEmpresaTable( oDataTable )
 
@@ -3207,8 +3208,10 @@ METHOD Auditor()
       ::oBrwOperation:bClrSel                := {|| { CLR_WHITE, RGB( 53, 142, 182 ) } }
       ::oBrwOperation:bClrSelFocus           := {|| { CLR_WHITE, RGB( 53, 142, 182 ) } }
 
+/*
       ::oBrwOperation:bKeyNo                 := {| n, Self | iif( n == nil, Round( ( "SqlOperation" )->( ADSGetRelKeyPos() ) * Self:nLen, 0 ), ( "SqlOperation" )->( ADSSetRelKeyPos( n / Self:nLen ) ) ) }
       ::oBrwOperation:bKeyCount              := {|| ( "SqlOperation" )->( ADSKeyCount( , , 1 ) ) }
+*/
 
       ::oBrwOperation:bChange                := {|| ::lSelectColumnLog( SqlOperation->Id ) }
 
@@ -3233,7 +3236,7 @@ METHOD Auditor()
       with object ( ::oBrwOperation:AddCol() )
          :cHeader          := "Usuario"
          :nWidth           := 100  
-         :bEditValue       := {|| SqlOperation->UserName }
+         :bEditValue       := {|| SqlOperation->AppName }
       end with
 
       with object ( ::oBrwOperation:AddCol() )
@@ -3739,6 +3742,8 @@ METHOD Reindex()
 
    ::BuildData()
 
+   ::DisableTriggers()
+
    /*
    Bases de datos de directorio datos------------------------------------------
    */
@@ -3809,8 +3814,6 @@ METHOD Reindex()
 
       ::aProgress[ 3 ]:SetTotal( len( ::aEmpresaTables ) )
 
-      ::DisableTriggers()
-
       for each oTable in ::aEmpresaTables
 
          if !Empty( ::oMsg )
@@ -3825,9 +3828,9 @@ METHOD Reindex()
 
       next
       
-      ::EnableTriggers()
-
    end if   
+
+   ::EnableTriggers()
       
    CursorWE()
 
@@ -3876,6 +3879,10 @@ METHOD DisableTriggers()
    AdsCacheOpenCursors( 0 )
    AdsClrCallBack()
 
+   if Select( "DisableTriggers" ) > 0
+      ( "DisableTriggers" )->( dbCloseArea() )
+   endif
+
 RETURN ( lOk )
 
 //---------------------------------------------------------------------------//
@@ -3915,8 +3922,59 @@ METHOD EnableTriggers()
    AdsCacheOpenCursors( 0 )
    AdsClrCallBack()
 
+   if Select( "EnableTriggers" ) > 0
+      ( "EnableTriggers" )->( dbCloseArea() )
+   endif
+
 RETURN ( lOk )
 
+//---------------------------------------------------------------------------//
+
+METHOD SetAplicationID( cNombreUsuario )
+
+   local lOk
+   local cStm
+   local nError
+   local cErrorAds
+
+   DEFAULT cNombreUsuario := "Administrador"
+
+   /*
+   Creamos la instruccion------------------------------------------------------
+   */
+
+   cStm                    := "EXECUTE PROCEDURE sp_SetApplicationID( '" + Alltrim( cNombreUsuario ) + "' ) ;"
+
+   /*
+   Creamos la snetencia--------------------------------------------------------
+   */
+
+   if ADSCreateSQLStatement( "SetAplicationID", 3 )
+
+      lOk         := ADSExecuteSQLDirect( cStm )
+      if !lOk
+         nError   := AdsGetLastError( @cErrorAds )
+         msgStop( cErrorAds, 'ERROR en ADSSqlOperationLog' )
+      endif
+
+   else
+
+      nError      := AdsGetLastError( @cErrorAds )
+      msgStop( nError, 'ERROR en ADSCreateSQLStatement' )
+      msgStop( cErrorAds, 'ERROR en ADSCreateSQLStatement' )
+
+   end if
+
+   AdsCacheOpenCursors( 0 )
+   AdsClrCallBack()
+
+   if Select( "SetAplicationID" ) > 0
+      ( "SetAplicationID" )->( dbCloseArea() )
+   endif
+
+RETURN ( lOk )
+
+//---------------------------------------------------------------------------//
 //---------------------------------------------------------------------------//
 //---------------------------------------------------------------------------//
 //---------------------------------------------------------------------------//

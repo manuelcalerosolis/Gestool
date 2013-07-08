@@ -2435,6 +2435,7 @@ FUNCTION lChkUser( cGetNbr, cGetPas, oBtn )
    local oUser
    local dbfUser
    local dbfCajas
+   local cNombre  := ""
    local lError   := .f.
 
    USE ( cPatDat() + "Users.Dbf" ) NEW VIA ( cDriver() ) SHARED ALIAS ( cCheckArea( "USERS", @dbfUser ) )
@@ -2487,6 +2488,8 @@ FUNCTION lChkUser( cGetNbr, cGetPas, oBtn )
             ( dbfUser )->( dbUnLock() )
          end if
 
+         cGetNbr  := Alltrim( ( dbfUser )->cNbrUse )
+
       else
          
          msgStop( "Clave de acceso no valida" )
@@ -2524,6 +2527,12 @@ FUNCTION lChkUser( cGetNbr, cGetPas, oBtn )
 
    CLOSE ( dbfUser  )
    CLOSE ( dbfCajas )
+
+   // Anotamos el usuario para asignarle los cambios---------------------------
+
+   if lAIS() .and. !lError
+      TDataCenter():SetAplicationID( cGetNbr )
+   end if 
 
 RETURN ( !lError )
 

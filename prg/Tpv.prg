@@ -14541,6 +14541,8 @@ Function DesignReportTikCli( oFr, dbfDoc )
 
       VariableReport( oFr )
 
+      BuildRelationReport( oFr )
+
       /*
       Diseño de report---------------------------------------------------------
       */
@@ -14550,6 +14552,8 @@ Function DesignReportTikCli( oFr, dbfDoc )
       /*
       Destruye el diseñador----------------------------------------------------
       */
+
+      ClearRelationReport( oFr )
 
       oFr:DestroyFr()
 

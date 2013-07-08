@@ -7811,7 +7811,7 @@ METHOD BuildRelationReport() CLASS TpvTactil
          ::oFastReport:SetMasterDetail( "Albaranes", "Entregas de albaranes",            {|| ::oAlbaranClienteCabecera:cSerAlb + Str( ::oAlbaranClienteCabecera:nNumAlb ) + ::oAlbaranClienteCabecera:cSufAlb } )
          ::oFastReport:SetMasterDetail( "Albaranes", "Incidencias de albaranes",         {|| ::oAlbaranClienteCabecera:cSerAlb + Str( ::oAlbaranClienteCabecera:nNumAlb ) + ::oAlbaranClienteCabecera:cSufAlb } )
          ::oFastReport:SetMasterDetail( "Albaranes", "Documentos de albaranes",          {|| ::oAlbaranClienteCabecera:cSerAlb + Str( ::oAlbaranClienteCabecera:nNumAlb ) + ::oAlbaranClienteCabecera:cSufAlb } )
-         ::oFastReport:SetMasterDetail( "Albaranes", "Series de lineas de albaranes",     {|| ::oAlbaranClienteCabecera:cSerAlb + Str( ::oAlbaranClienteCabecera:nNumAlb ) + ::oAlbaranClienteCabecera:cSufAlb } )
+         ::oFastReport:SetMasterDetail( "Albaranes", "Series de lineas de albaranes",    {|| ::oAlbaranClienteCabecera:cSerAlb + Str( ::oAlbaranClienteCabecera:nNumAlb ) + ::oAlbaranClienteCabecera:cSufAlb } )
          ::oFastReport:SetMasterDetail( "Albaranes", "Clientes",                         {|| ::oAlbaranClienteCabecera:cCodCli } )
          ::oFastReport:SetMasterDetail( "Albaranes", "Obras",                            {|| ::oAlbaranClienteCabecera:cCodCli + ::oAlbaranClienteCabecera:cCodObr } )
          ::oFastReport:SetMasterDetail( "Albaranes", "Almacenes",                        {|| ::oAlbaranClienteCabecera:cCodAlm } )
@@ -7821,6 +7821,7 @@ METHOD BuildRelationReport() CLASS TpvTactil
          ::oFastReport:SetMasterDetail( "Albaranes", "Transportistas",                   {|| ::oAlbaranClienteCabecera:cCodTrn } )
          ::oFastReport:SetMasterDetail( "Albaranes", "Empresa",                          {|| cCodigoEmpresaEnUso() } )
          ::oFastReport:SetMasterDetail( "Albaranes", "Usuarios",                         {|| ::oAlbaranClienteCabecera:cCodUsr } )
+         
          ::oFastReport:SetMasterDetail( "Lineas de albaranes", "Artículos",              {|| ::oAlbaranClienteLinea:cRef } )
          ::oFastReport:SetMasterDetail( "Lineas de albaranes", "Tipo de venta",          {|| ::oAlbaranClienteLinea:cTipMov } )
          ::oFastReport:SetMasterDetail( "Lineas de albaranes", "Ofertas",                {|| ::oAlbaranClienteLinea:cRef } )
@@ -7981,7 +7982,7 @@ METHOD ClearRelationReport() CLASS TpvTactil
       ::oFastReport:ClearResyncPair( "Lineas de albaranes", "Ofertas" )
       ::oFastReport:ClearResyncPair( "Lineas de albaranes", "Unidades de medición" )
 
-      otherwise
+   otherwise
 
       ::oFastReport:ClearMasterDetail( "Empresa" )
       ::oFastReport:ClearMasterDetail( "Lineas de tickets" )
@@ -8327,7 +8328,8 @@ METHOD OnclickDividirMesa() Class TpvTactil
    DEFINE DIALOG oDlg RESOURCE "DIVIDIR_MESAS"
 
    REDEFINE GROUP oGrupoOriginal ID 230 OF oDlg TRANSPARENT
-   oGrupoOriginal:oFont := ::oFntFld
+   
+   oGrupoOriginal:oFont                  := ::oFntFld
 
    /*
    Browse de Lineas Originales-------------------------------------------------
