@@ -131,6 +131,8 @@
 #define _NDTOART                 116      //   N      1     0
 #define _LEXCFID                 117      //   L      1     0
 #define _MFACAUT                 118      //   M     10     0
+#define _DFECNACI                119      //   D      8     0
+#define _NSEXO                   120      //   N      7     0 
 
 #define _aCCODCLI                  1      //   C     12     0
 #define _aCCODART                  2      //   C     14     0
@@ -999,6 +1001,8 @@ STATIC FUNCTION EdtRec( aTmp, aGet, dbfClient, oBrw, bWhen, bValid, nMode )
    local aStrColor      := { "Ninguno", "Verde", "Naranja", "Rojo" }
    local aResColor      := { "COLOR_00", "COLOR_01", "COLOR_02", "COLOR_03" }
    local aStrRetencion  := { "Ret. S/Base", "Ret. S/Total" }
+   local aSexos         := { "", "Entidad", "Hombre", "Mujer" }
+   local cSexo
    local aResClients    := { "Cli", "CliPot", "CliPot" }
    local aMes           := { "Ninguno", "Enero", "Febrero", "Marzo", "Abril", "Mayo", "Junio", "Julio", "Agosto", "Septiembre", "Octubre", "Noviembre", "Diciembre" }
    local oFiltroAtp
@@ -1068,6 +1072,8 @@ STATIC FUNCTION EdtRec( aTmp, aGet, dbfClient, oBrw, bWhen, bValid, nMode )
    cTipCli                 := aStrClients[ Min( Max( aTmp[ _NTIPCLI ], 1 ), len( aStrClients ) ) ]
 
    cTipRetencion           := aStrRetencion[ Min( Max( aTmp[ _NTIPRET ], 1 ), len( aStrRetencion ) ) ]
+
+   cSexo                   := aSexos[ Min( Max( aTmp[ _NSEXO ], 1 ), len( aSexos ) ) ]
 
    if Empty( aTmp[ _CDTOESP ] )
       aTmp[ _CDTOESP ]     := Padr( "General", 50 )
@@ -2420,6 +2426,19 @@ STATIC FUNCTION EdtRec( aTmp, aGet, dbfClient, oBrw, bWhen, bValid, nMode )
          RESOURCE "Message_Alpha_48" ;
          TRANSPARENT ;
          OF       fldDefinidos
+
+      REDEFINE GET aGet[ _DFECNACI ] VAR aTmp[ _DFECNACI ];
+         ID       450 ;
+         WHEN     ( nMode != ZOOM_MODE );  
+         SPINNER;
+         OF       fldDefinidos   
+
+      REDEFINE COMBOBOX aGet[ _NSEXO ] ;
+         VAR      cSexo ;
+         ITEMS    aSexos ;
+         ID       460 ;
+         WHEN     ( nMode != ZOOM_MODE ) ;
+         OF       fldDefinidos   
 
       REDEFINE GET aGet[ _MCOMENT ] VAR aTmp[ _MCOMENT ];
 			ID 		370 ;
@@ -11760,6 +11779,8 @@ FUNCTION aItmCli()
    aAdd( aBase, { "nDtoArt",   "N",  1, 0, "Descuento de artículo",                         "",                   "", "( cDbfCli )" } )
    aAdd( aBase, { "lExcFid",   "L",  1, 0, "Lógico para creado desde internet (S/N)",       "",                   "", "( cDbfCli )" } )
    aAdd( aBase, { "mFacAut",   "M", 10, 0, "Plantillas de facturas automáticas",            "",                   "", "( cDbfCli )" } )
+   aAdd( aBase, { "dFecNaci",  "D",  8, 0, "Fecha de nacimiento",                           "",                   "", "( cDbfCli )" } )
+   aAdd( aBase, { "nSexo",     "N",  1, 0, "Sexo del cliente",                              "",                   "", "( cDbfCli )" } )
 
 RETURN ( aBase )
 
@@ -12842,6 +12863,10 @@ static function SavClient( aTmp, aGet, oDlg, dbfClient, oBrw, nMode )
 
    if !Empty( aGet[ _NTIPRET ] )
       aTmp[ _NTIPRET ]  := aGet[ _NTIPRET ]:nAt
+   end if
+
+   if !Empty( aGet[ _NSEXO ] )
+      aTmp[ _NSEXO ]  := aGet[ _NSEXO ]:nAt
    end if
 
    if !Empty( oRTF )
@@ -14743,133 +14768,5 @@ Function cClientCuenta( cCliente, dbfBncCli )
    end if
 
 Return cCuenta
-
-//---------------------------------------------------------------------------//
-
-/*Paso de datos para Pinturas Mayka*/
-
-/*Function TraspasoMayka()
-
-   local dbfClientes
-   local dbfArticulos
-   local dbfProveedores
-   local oFile
-   local cGetFile             := cGetFile( "*.txt", "Selección de fichero" )
-
-   if !Empty( cGetFile )
-
-      /*
-      Clientes-----------------------------------------------------------------
-      */
-
-      /*USE ( cPatCli() + "CLIENT.DBF" ) NEW VIA ( cDriver() ) SHARED ALIAS ( cCheckArea( "CLIENT", @dbfClientes ) )
-      SET ADSINDEX TO ( cPatCli() + "CLIENT.CDX" ) ADDITIVE
-
-      oFile           := TTxtFile():New( cGetFile )
-
-      oMsgProgress()
-      oMsgProgress():SetRange( 0, oFile:nTLines )
-
-      while !oFile:lEoF()
-
-         ( dbfClientes )->( dbAppend() )
-
-         ( dbfClientes )->Cod          := Padl( AllTrim( SubStr( oFile:cLine,  1, 7 ) ), RetNumCodCliEmp(), "0" )
-         ( dbfClientes )->Titulo       := SubStr( oFile:cLine,  9, 27 )
-         ( dbfClientes )->NbrEst       := SubStr( oFile:cLine,  38, 23 )
-         ( dbfClientes )->Domicilio    := SubStr( oFile:cLine,  62, 21 )
-         ( dbfClientes )->Poblacion    := SubStr( oFile:cLine,  84, 11 )
-         ( dbfClientes )->Provincia    := SubStr( oFile:cLine,  96, 11 )
-         ( dbfClientes )->nTarifa      := 1
-         ( dbfClientes )->cCodAlm      := "000"
-
-         ( dbfClientes )->( dbUnLock() )
-
-         oFile:Skip()
-
-         oMsgProgress():Deltapos(1)
-
-      end while
-
-      oFile:End()
-
-      CLOSE ( dbfClient )*/
-
-      /*
-      Artículos----------------------------------------------------------------
-      */
-  /*
-      USE ( cPatGrp() + "ARTICULO.DBF" ) NEW VIA ( cDriver() ) SHARED ALIAS ( cCheckArea( "ARTICULO", @dbfArticulos ) )
-      SET ADSINDEX TO ( cPatGrp() + "ARTICULO.CDX" ) ADDITIVE
-
-      oFile           := TTxtFile():New( cGetFile )
-
-      oMsgProgress()
-      oMsgProgress():SetRange( 0, oFile:nTLines )
-
-      while !oFile:lEoF()
-
-         ( dbfArticulos )->( dbAppend() )
-
-         ( dbfArticulos )->Codigo    := SubStr( oFile:cLine,  1, 12 )
-         ( dbfArticulos )->Nombre    := SubStr( oFile:cLine,  12, 41 )
-         ( dbfArticulos )->lIvaInc   := .t.
-         ( dbfArticulos )->TipoIva   := "G"
-         //( dbfArticulos )->pVenta1   := Val( AllTrim( SubStr( oFile:cLine,  98, 12 ) ) )
-         ( dbfArticulos )->pVtaIva1  := Val( AllTrim( SubStr( oFile:cLine,  98, 12 ) ) )
-         ( dbfArticulos )->PCosto    := Val( AllTrim( SubStr( oFile:cLine, 110, 14 ) ) )
-         ( dbfArticulos )->MComent   := SubStr( oFile:cLine,  133, 27 )
-
-         ( dbfArticulos )->( dbUnLock() )
-
-         oFile:Skip()
-
-         oMsgProgress():Deltapos(1)
-
-      end while
-
-      oFile:End()
-
-      CLOSE ( dbfArticulos )
-
-      /*
-      Proveedores--------------------------------------------------------------
-      */
-
-      /*USE ( cPatGrp() + "PROVEE.DBF" ) NEW VIA ( cDriver() ) SHARED ALIAS ( cCheckArea( "PROVEE", @dbfProveedores ) )
-      SET ADSINDEX TO ( cPatGrp() + "PROVEE.CDX" ) ADDITIVE
-
-      oFile           := TTxtFile():New( cGetFile )
-
-      oMsgProgress()
-      oMsgProgress():SetRange( 0, oFile:nTLines )
-
-      while !oFile:lEoF()
-
-         ( dbfProveedores )->( dbAppend() )
-
-         ( dbfProveedores )->Cod          := Padl( AllTrim( SubStr( oFile:cLine,  1, 7 ) ), RetNumCodPrvEmp(), "0" )
-         ( dbfProveedores )->Titulo       := SubStr( oFile:cLine,  7, 32 )
-         ( dbfProveedores )->Domicilio    := SubStr( oFile:cLine,  39, 30 )
-         ( dbfProveedores )->Poblacion    := SubStr( oFile:cLine,  69, 24 )
-         ( dbfProveedores )->Provincia    := SubStr( oFile:cLine,  93, 11 )
-
-         ( dbfProveedores )->( dbUnLock() )
-
-         oFile:Skip()
-
-         oMsgProgress():Deltapos(1)
-
-      end while
-
-      oFile:End()
-
-      CLOSE ( dbfProveedores )*/
-
-    /*  msginfo( "Proceso finalizado" )
-
-   end if
-
-Return nil*/
 
 //---------------------------------------------------------------------------//

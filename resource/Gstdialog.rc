@@ -993,32 +993,37 @@ CLIENT_4 DIALOG DISCARDABLE 32, 32, 496, 254
 STYLE WS_CHILD|DS_3DLOOK
 FONT 8, "MS Sans Serif"
 {
-  CONTROL "", 370, "Edit", ES_MULTILINE|ES_AUTOHSCROLL|ES_WANTRETURN|WS_VSCROLL|WS_BORDER|WS_TABSTOP, 49, 40, 438, 56
-  CONTROL "Mostrar comentario en documentos de venta", 380, "Button", BS_AUTOCHECKBOX|WS_TABSTOP, 49, 98, 154, 10
-  CONTROL "Campos definidos", -1, "Button", BS_GROUPBOX, 44, 112, 448, 140
-  CONTROL "", 110, "Edit", WS_BORDER|WS_TABSTOP, 142, 121, 344, 11
-  CONTROL "", 120, "Edit", WS_BORDER|WS_TABSTOP, 142, 135, 344, 11
-  CONTROL "", 130, "Edit", WS_BORDER|WS_TABSTOP, 142, 148, 344, 11
-  CONTROL "", 140, "Edit", WS_BORDER|WS_TABSTOP, 142, 161, 344, 11
-  CONTROL "", 150, "Edit", WS_BORDER|WS_TABSTOP, 142, 174, 344, 11
-  CONTROL "", 160, "Edit", WS_BORDER|WS_TABSTOP, 142, 187, 344, 11
-  CONTROL "", 170, "Edit", WS_BORDER|WS_TABSTOP, 142, 200, 344, 11
-  CONTROL "", 180, "Edit", WS_BORDER|WS_TABSTOP, 142, 213, 344, 11
-  CONTROL "", 190, "Edit", WS_BORDER|WS_TABSTOP, 142, 226, 344, 11
-  CONTROL "", 200, "Edit", WS_BORDER|WS_TABSTOP, 142, 238, 344, 11
-  CONTROL "", 105, "Static", WS_GROUP, 49, 125, 89, 8
-  CONTROL "", 115, "Static", WS_GROUP, 49, 139, 89, 8
-  CONTROL "", 125, "Static", WS_GROUP, 49, 152, 89, 8
-  CONTROL "", 135, "Static", WS_GROUP, 49, 165, 89, 8
-  CONTROL "", 145, "Static", WS_GROUP, 49, 178, 89, 8
-  CONTROL "", 155, "Static", WS_GROUP, 49, 191, 89, 8
-  CONTROL "", 165, "Static", WS_GROUP, 49, 204, 89, 8
-  CONTROL "", 175, "Static", WS_GROUP, 49, 217, 89, 8
-  CONTROL "", 185, "Static", WS_GROUP, 49, 230, 89, 8
-  CONTROL "", 195, "Static", WS_GROUP, 49, 242, 89, 8
-  CONTROL "Comentario", -1, "Button", BS_GROUPBOX, 44, 29, 448, 82
+  CONTROL "", 450, "Edit", WS_VSCROLL|WS_BORDER|WS_TABSTOP, 78, 40, 76, 11
+  CONTROL "", 460, "ComboBox", WS_BORDER|CBS_DROPDOWN|WS_TABSTOP, 78, 54, 76, 133
+  CONTROL "", 370, "Edit", ES_MULTILINE|ES_AUTOHSCROLL|ES_WANTRETURN|WS_VSCROLL|WS_BORDER|WS_TABSTOP, 166, 40, 321, 56
+  CONTROL "Mostrar comentario en documentos de venta", 380, "Button", BS_AUTOCHECKBOX|WS_TABSTOP, 166, 98, 154, 10
+  CONTROL "Definidos", -1, "Button", BS_GROUPBOX, 44, 112, 448, 140
+  CONTROL "", 110, "Edit", WS_BORDER|WS_TABSTOP, 166, 121, 321, 11
+  CONTROL "", 120, "Edit", WS_BORDER|WS_TABSTOP, 166, 135, 321, 11
+  CONTROL "", 130, "Edit", WS_BORDER|WS_TABSTOP, 166, 148, 321, 11
+  CONTROL "", 140, "Edit", WS_BORDER|WS_TABSTOP, 166, 161, 321, 11
+  CONTROL "", 150, "Edit", WS_BORDER|WS_TABSTOP, 166, 174, 321, 11
+  CONTROL "", 160, "Edit", WS_BORDER|WS_TABSTOP, 166, 187, 321, 11
+  CONTROL "", 170, "Edit", WS_BORDER|WS_TABSTOP, 166, 200, 321, 11
+  CONTROL "", 180, "Edit", WS_BORDER|WS_TABSTOP, 166, 213, 321, 11
+  CONTROL "", 190, "Edit", WS_BORDER|WS_TABSTOP, 166, 226, 321, 11
+  CONTROL "", 200, "Edit", WS_BORDER|WS_TABSTOP, 166, 238, 321, 11
+  CONTROL "", 105, "Static", WS_GROUP, 49, 125, 108, 8
+  CONTROL "", 115, "Static", WS_GROUP, 49, 139, 108, 8
+  CONTROL "", 125, "Static", WS_GROUP, 49, 152, 108, 8
+  CONTROL "", 135, "Static", WS_GROUP, 49, 165, 108, 8
+  CONTROL "", 145, "Static", WS_GROUP, 49, 178, 108, 8
+  CONTROL "", 155, "Static", WS_GROUP, 49, 191, 108, 8
+  CONTROL "", 165, "Static", WS_GROUP, 49, 204, 108, 8
+  CONTROL "", 175, "Static", WS_GROUP, 49, 217, 108, 8
+  CONTROL "", 185, "Static", WS_GROUP, 49, 230, 108, 8
+  CONTROL "", 195, "Static", WS_GROUP, 49, 242, 108, 8
+  CONTROL "Comentario", -1, "Button", BS_GROUPBOX, 161, 29, 331, 82
   CONTROL "", 500, "Static", SS_BITMAP|SS_CENTERIMAGE, 4, 3, 34, 30
   CONTROL "Comentarios a mostar al realizar un documento de ventas y campos definidos por el usuario de la aplicación.", -1, "Static", SS_LEFTNOWORDWRAP|WS_GROUP, 44, 3, 446, 8
+  CONTROL "Estadísticas", -1, "Button", BS_GROUPBOX, 44, 29, 114, 82
+  CONTROL "Nacido", -1, "Static", WS_GROUP, 49, 43, 28, 8
+  CONTROL "Sexo", -1, "Static", WS_GROUP, 49, 58, 21, 8
 }
 
 CLIENT_5 DIALOG DISCARDABLE 32, 32, 496, 254
@@ -2156,18 +2161,18 @@ CLIENT_1 DIALOG DISCARDABLE -3, 20, 496, 254
 STYLE WS_CHILD|DS_3DLOOK
 FONT 8, "MS Sans Serif"
 {
-  CONTROL "", 100, "Edit", WS_BORDER|WS_TABSTOP, 101, 38, 270, 11
-  CONTROL "", 110, "Edit", WS_BORDER|WS_TABSTOP, 101, 50, 270, 11
-  CONTROL "Publicar en web", 400, "Button", BS_AUTOCHECKBOX|WS_TABSTOP, 48, 64, 66, 9
-  CONTROL "", 410, "Edit", WS_BORDER|WS_TABSTOP, 258, 63, 113, 11
-  CONTROL "", 290, "Edit", WS_BORDER|WS_TABSTOP, 101, 81, 270, 11
+  CONTROL "", 100, "Edit", WS_BORDER|WS_TABSTOP, 101, 40, 270, 11
+  CONTROL "", 110, "Edit", WS_BORDER|WS_TABSTOP, 101, 52, 270, 11
+  CONTROL "", 290, "Edit", WS_BORDER|WS_TABSTOP, 101, 65, 270, 11
+  CONTROL "Publicar en web", 400, "Button", BS_AUTOCHECKBOX|WS_TABSTOP, 47, 94, 66, 9
+  CONTROL "", 410, "Edit", WS_BORDER|WS_TABSTOP, 101, 78, 113, 11
   CONTROL "General", 240, "Button", BS_AUTORADIOBUTTON, 47, 127, 60, 10
   CONTROL "Recargo equivalencia", 130, "Button", BS_AUTOCHECKBOX|WS_TABSTOP, 111, 127, 81, 10
   CONTROL "Unión Europea", 241, "Button", BS_AUTORADIOBUTTON, 47, 139, 60, 10
   CONTROL "Exento", 242, "Button", BS_AUTORADIOBUTTON, 47, 151, 60, 10
   CONTROL "Exportación", 243, "Button", BS_AUTORADIOBUTTON, 47, 163, 60, 10
-  CONTROL "", 310, "ComboBox", WS_BORDER|CBS_DROPDOWN|WS_TABSTOP, 101, 187, 66, 40
-  CONTROL "", 320, "Edit", ES_RIGHT|WS_VSCROLL|WS_BORDER|WS_TABSTOP, 101, 201, 38, 11
+  CONTROL "", 310, "ComboBox", WS_BORDER|CBS_DROPDOWN|WS_TABSTOP, 111, 187, 66, 40
+  CONTROL "", 320, "Edit", ES_RIGHT|WS_VSCROLL|WS_BORDER|WS_TABSTOP, 111, 201, 38, 11
   CONTROL "", 159, "Edit", WS_BORDER|WS_TABSTOP, 204, 126, 122, 11
   CONTROL "", 160, "Edit", ES_RIGHT|WS_VSCROLL|WS_BORDER|WS_TABSTOP, 329, 126, 40, 11
   CONTROL "", 169, "Edit", WS_BORDER|WS_TABSTOP, 204, 138, 122, 11
@@ -2209,33 +2214,32 @@ FONT 8, "MS Sans Serif"
   CONTROL "Bloquear cliente", 155, "Button", BS_AUTOCHECKBOX|WS_TABSTOP, 391, 201, 64, 10
   CONTROL "", 156, "Edit", WS_VSCROLL|WS_BORDER|WS_TABSTOP, 428, 212, 60, 11
   CONTROL "", 157, "Edit", ES_AUTOHSCROLL|WS_BORDER|WS_TABSTOP, 391, 235, 96, 11
-  CONTROL "Nombre ", -1, "Static", WS_GROUP, 47, 40, 26, 8
-  CONTROL "Domicilio", -1, "Static", WS_GROUP, 47, 53, 31, 8
-  CONTROL "Web", -1, "Static", WS_GROUP, 48, 85, 21, 8
+  CONTROL "Nombre ", -1, "Static", WS_GROUP, 47, 42, 26, 8
+  CONTROL "Domicilio", -1, "Static", WS_GROUP, 47, 55, 31, 8
+  CONTROL "Web", -1, "Static", WS_GROUP, 47, 68, 21, 8
   CONTROL "Riesgo ", -1, "Static", WS_GROUP, 206, 226, 29, 8
   CONTROL "Alcanzado", -1, "Static", WS_GROUP, 206, 238, 39, 8
-  CONTROL "%", -1, "Static", WS_GROUP, 370, 129, 7, 8
-  CONTROL "%", -1, "Static", WS_GROUP, 370, 141, 7, 8
-  CONTROL "%", -1, "Static", WS_GROUP, 370, 153, 7, 8
-  CONTROL "%", -1, "Static", WS_GROUP, 370, 165, 7, 8
+  CONTROL "%", -1, "Static", WS_GROUP, 370, 154, 7, 8
+  CONTROL "%", -1, "Static", WS_GROUP, 370, 166, 7, 8
+  CONTROL "%", -1, "Static", WS_GROUP, 370, 178, 7, 8
+  CONTROL "%", -1, "Static", WS_GROUP, 370, 190, 7, 8
   CONTROL "Mes de vacaciones", -1, "Static", WS_GROUP, 390, 132, 73, 8
-  CONTROL "Establecimiento", -1, "Button", BS_GROUPBOX, 44, 29, 338, 48
+  CONTROL "Establecimiento", -1, "Button", BS_GROUPBOX, 44, 29, 338, 84
   CONTROL "Régimen de imp.", -1, "Button", BS_GROUPBOX, 43, 115, 155, 64
   CONTROL "Bloqueo", -1, "Button", BS_GROUPBOX, 384, 179, 108, 71
   CONTROL "Descuentos", 98, "Button", BS_GROUPBOX, 199, 115, 182, 64
   CONTROL "Días de visita", -1, "Button", BS_GROUPBOX, 384, 29, 108, 150
-  CONTROL "%", -1, "Static", WS_GROUP, 370, 186, 7, 8
+  CONTROL "%", -1, "Static", WS_GROUP, 370, 211, 7, 8
   CONTROL "Aplicado en", -1, "Static", WS_GROUP, 206, 204, 47, 8
   CONTROL "I.R.P.F.", -1, "Button", BS_GROUPBOX, 43, 179, 155, 36
   CONTROL "Porcentaje", -1, "Static", WS_GROUP, 47, 205, 36, 8
-  CONTROL "%", -1, "Static", WS_GROUP, 142, 205, 9, 8
+  CONTROL "%", -1, "Static", WS_GROUP, 152, 205, 9, 8
   CONTROL "Tipo ", -1, "Static", WS_GROUP, 47, 191, 16, 8
   CONTROL "Descuentos atipicos", -1, "Button", BS_GROUPBOX, 199, 179, 182, 36
   CONTROL "Crédito", -1, "Button", BS_GROUPBOX, 43, 216, 338, 34
   CONTROL "Fecha", -1, "Static", WS_GROUP, 391, 215, 20, 8
   CONTROL "Motivo", -1, "Static", WS_GROUP, 391, 225, 24, 8
-  CONTROL "Contraseña", -1, "Static", WS_GROUP, 204, 66, 37, 8
-  CONTROL "", -1, "Button", BS_GROUPBOX, 44, 74, 338, 40
+  CONTROL "Contraseña", -1, "Static", WS_GROUP, 47, 81, 37, 8
   CONTROL "", 500, "Static", SS_BITMAP|SS_CENTERIMAGE, 4, 3, 34, 30
   CONTROL "Datos realcionados con la actividad comercial del cliente ", -1, "Static", SS_LEFTNOWORDWRAP|WS_GROUP, 44, 3, 446, 8
 }
