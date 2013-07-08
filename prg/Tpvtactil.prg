@@ -1407,7 +1407,7 @@ CLASS TpvTactil
          */
 
          if ::oTiketMesa:RecLock()
-            ::oTiketMesa:Delete()
+            ::oTiketMesa:Delete(.f.)
          end if
 
       end if
@@ -2053,17 +2053,17 @@ METHOD OpenFiles() CLASS TpvTactil
 
    DATABASE NEW ::oTipoVenta                                PATH ( cPatDat() )   FILE "TVTA.DBF"            VIA ( cDriver() ) SHARED INDEX "TVTA.CDX"
 
-   ::oCaptura             := TCaptura():New( cPatDat() )
+   ::oCaptura                 := TCaptura():New( cPatDat() )
    ::oCaptura:OpenFiles()
 
-   ::oTComandas           := TComandas():Create( cPatArt() )
+   ::oTComandas               := TComandas():Create( cPatArt() )
    ::oTComandas:OpenFiles()
 
-   ::oBandera             := TBandera():New()
+   ::oBandera                 := TBandera():New()
 
-   ::oStock               := TStock():Create( cPatGrp() )
+   ::oStock                   := TStock():Create( cPatGrp() )
    if !::oStock:lOpenFiles()
-      ::lOpenFiles        := .f.
+      ::lOpenFiles            := .f.
    end if
 
    ::oNewImp                  := TNewImp():New( cPatEmp() )
@@ -6076,9 +6076,9 @@ METHOD OnClickEntrega() CLASS TpvTactil
    Guarda documento------------------------------------------------------------
    */
 
-   ::GuardaDocumento( .f. )
-
    ::oTiketCabecera:lAbierto  := .f.
+
+   ::GuardaDocumento( .f. )
 
    /*
    Imprimimos el documento-----------------------------------------------------
@@ -6184,29 +6184,24 @@ METHOD GuardaDocumento( lZap, nSave ) CLASS TpvTactil
       BeginTransaction()
 
       /*
-      Si este ticket ya tiene numero debemos quitar las lineas anteriores---------
+      Si este ticket ya tiene numero debemos quitar las lineas anteriores------
       */
 
       if !Empty( ::oTiketCabecera:cNumTik ) .and. !Empty( ::oTemporalLinea:OrdKeyCount() )
-         while ( ::oTiketLinea:Seek( ::oTiketCabecera:cSerTik + ::oTiketCabecera:cNumTik + ::oTiketCabecera:cSufTik ) )
-            ::oTiketLinea:Delete()
+         while ::oTiketLinea:Seek( ::oTiketCabecera:cSerTik + ::oTiketCabecera:cNumTik + ::oTiketCabecera:cSufTik ) .and. !::oTiketLinea:eof()
+            ::oTiketLinea:Delete(.f.)
          end while
       end if
 
       /*
-      Si el numero de ticket esta vacio debemos tomar un nuevo numero-------------
+      Si el numero de ticket esta vacio debemos tomar un nuevo numero----------
       */
 
       if Empty( ::oTiketCabecera:cNumTik )
-
          ::oTiketCabecera:cNumTik   := ::nNuevoNumeroTicket()
-         
          ::oTiketCabecera:Insert()
-
       else
-
          ::oTiketCabecera:Save()
-
       end if
 
       /*
@@ -6247,8 +6242,6 @@ METHOD GuardaDocumento( lZap, nSave ) CLASS TpvTactil
 
       ::oTpvCobros:GuardaCobros()
 
-      CommitTransaction()
-
       /*
       Inicializa los cobros para el proximo ticket-----------------------------
       */
@@ -6267,6 +6260,8 @@ METHOD GuardaDocumento( lZap, nSave ) CLASS TpvTactil
          ::oTemporalLinea:Zap()
       end if
 
+      CommitTransaction()
+
       /*
       Refrescamos las lineas---------------------------------------------------
       */
@@ -6274,14 +6269,14 @@ METHOD GuardaDocumento( lZap, nSave ) CLASS TpvTactil
       ::oBrwLineas:Refresh()
 
       /*
-      Barra de progreso vuelve a su estado----------------------------------------
+      Barra de progreso vuelve a su estado-------------------------------------
       */
 
       ::oProgressBar:Set( 0 )
       ::oProgressBar:Refresh()
 
       /*
-      Imprimimos la comanda si procede--------------------------------------------
+      Imprimimos la comanda si procede-----------------------------------------
       */
 
       if ( nSave == SAVTIK )
@@ -6289,7 +6284,7 @@ METHOD GuardaDocumento( lZap, nSave ) CLASS TpvTactil
       end if
 
       /*
-      Encendemos el flag para cargar de nuevo el usuario--------------------------
+      Encendemos el flag para cargar de nuevo el usuario-----------------------
       */
 
       ::lGetUsuario                 := .t.
@@ -6573,7 +6568,7 @@ METHOD EliminaDocumento( cNumeroTicket ) CLASS TpvTactil
    end if
 
    while ( ::oTiketLinea:Seek( cNumeroTicket ) )
-      ::oTiketLinea:Delete()
+      ::oTiketLinea:Delete(.f.)
    end while
 
    ::oDlg:Enable()
@@ -8263,8 +8258,8 @@ METHOD GeneraVale() CLASS TpvTactil
       Ahora metemos una linea-----------------------------------------------------
       */
 
-      while ::oTiketLinea:Seek( ::cNumeroTicket() )
-         ::oTiketLinea:Delete()
+      while ( ::oTiketLinea:Seek( ::cNumeroTicket() ) .and. !::oTiketLinea:eof() )
+         ::oTiketLinea:Delete(.f.)
       end while
 
       ::oTiketLinea:Blank()
@@ -8827,8 +8822,8 @@ METHOD AddLineOrgToNew() Class TpvTactil
 
             ::oTemporalDivisionOriginal:GoTop()
 
-            while ::oTemporalDivisionOriginal:nNumLin == nLinea
-               ::oTemporalDivisionOriginal:Delete()
+            while ( ::oTemporalDivisionOriginal:nNumLin == nLinea )
+               ::oTemporalDivisionOriginal:Delete( .f. )
             end while
 
             ::oTemporalDivisionOriginal:OrdSetFocus( "nRecNum" )
@@ -8837,7 +8832,7 @@ METHOD AddLineOrgToNew() Class TpvTactil
 
          end if
 
-         ::oTemporalDivisionOriginal:Delete()
+         ::oTemporalDivisionOriginal:Delete(.f.)
 
       otherwise
       
@@ -8889,7 +8884,7 @@ METHOD AddLineOrgToNew() Class TpvTactil
             ::oTemporalDivisionOriginal:GoTop()  
 
             while ::oTemporalDivisionOriginal:nNumLin == nLinea
-               ::oTemporalDivisionOriginal:Delete()
+               ::oTemporalDivisionOriginal:Delete(.f.)
             end while
 
             ::oTemporalDivisionOriginal:OrdSetFocus( "nRecNum" )
@@ -8898,7 +8893,7 @@ METHOD AddLineOrgToNew() Class TpvTactil
 
          end if
 
-         ::oTemporalDivisionOriginal:Delete()   
+         ::oTemporalDivisionOriginal:Delete(.f.)   
 
       end case
 
@@ -9035,7 +9030,7 @@ METHOD AddLineNewToOrg() Class TpvTactil
             ::oTemporalDivisionNuevoTicket:GoTop()
 
             while ::oTemporalDivisionNuevoTicket:nNumLin == nLinea
-               ::oTemporalDivisionNuevoTicket:Delete()
+               ::oTemporalDivisionNuevoTicket:Delete(.f.)
             end while
 
             ::oTemporalDivisionNuevoTicket:OrdSetFocus( "nRecNum" )
@@ -9044,7 +9039,7 @@ METHOD AddLineNewToOrg() Class TpvTactil
 
          end if   
 
-         ::oTemporalDivisionNuevoTicket:Delete()
+         ::oTemporalDivisionNuevoTicket:Delete(.f.)
 
       end if
 

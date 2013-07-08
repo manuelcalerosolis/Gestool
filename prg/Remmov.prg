@@ -1946,7 +1946,7 @@ Method Process()
 
                if oRemMovTmp:oDbf:nNumRem != 0
                   while oRemMov:oDetMovimientos:oDbf:Seek( Str( oRemMovTmp:oDbf:nNumRem, 9 ) + oRemMovTmp:oDbf:cSufRem ) .and. !oRemMov:oDetMovimientos:oDbf:eof()
-                     oRemMov:oDetMovimientos:oDbf:Delete()
+                     oRemMov:oDetMovimientos:oDbf:Delete(.f.)
                   end while
                end if
 
@@ -2243,7 +2243,7 @@ METHOD DeleteDet()
 
          while !::oDetMovimientos:oDbfVir:Eof()
             if !Empty( nNumLin ) .and. ( ::oDetMovimientos:oDbfVir:nNumLin == nNumLin )
-               ::oDetMovimientos:oDbfVir:Delete()
+               ::oDetMovimientos:oDbfVir:Delete(.f.)
             end if
             ::oDetMovimientos:oDbfVir:Skip()
          end while

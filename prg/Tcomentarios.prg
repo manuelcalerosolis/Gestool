@@ -236,9 +236,7 @@ METHOD DelRecComentario( oBrw )
    end if
 
    if oUser():lNotConfirmDelete() .or. ApoloMsgNoYes("¿ Desea eliminar definitivamente este registro ?", "Confirme supersión" )
-
       ::oDetComentarios:oDbfVir:Delete()
-
    end if
 
    oBrw:Refresh()

@@ -672,23 +672,23 @@ METHOD BorraSeleccionados()
          case ::nAction == 1 .and. ::aArticulos[ n, 1 ]
 
             while ::oPrvArt:Seek( ::aArticulos[ n, 2 ] )
-               ::oPrvArt:Delete()
+               ::oPrvArt:Delete(.f.)
             end while
 
             while ::oArtDiv:Seek( ::aArticulos[ n, 2 ] )
-               ::oArtDiv:Delete()
+               ::oArtDiv:Delete(.f.)
             end while
 
             while ::oArtKit:Seek( ::aArticulos[ n, 2 ] )
-               ::oArtKit:Delete()
+               ::oArtKit:Delete(.f.)
             end while
 
             while ::oCodeBar:Seek( ::aArticulos[ n, 2 ] )
-               ::oCodeBar:Delete()
+               ::oCodeBar:Delete(.f.)
             end while
 
             while ::oDbfArt:Seek( ::aArticulos[ n, 2 ] )
-               ::oDbfArt:Delete()
+               ::oDbfArt:Delete(.f.)
             end while
 
          case ::nAction == 2 .and. ::aArticulos[ n, 1 ]

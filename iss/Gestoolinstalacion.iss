@@ -92,21 +92,21 @@ Name: "{app}\Backup";   Permissions: everyone-full
 [Files]
 
 #ifdef InstalacionStandard
-Source: "c:\fw195\gestool\bin\stndrd.";           DestDir: "{app}"; Flags: ignoreversion
+Source: "c:\fw195\gestool\bin\stndrd.";             DestDir: "{app}"; Flags: ignoreversion
 #endif
 
 #ifdef InstalacionProfesional
-Source: "c:\fw195\gestool\bin\prfsnl.";           DestDir: "{app}"; Flags: ignoreversion
+Source: "c:\fw195\gestool\bin\prfsnl.";             DestDir: "{app}"; Flags: ignoreversion
 #endif
 
 #ifdef InstalacionPrestashop
-Source: "c:\fw195\gestool\bin\scmmrc.";           DestDir: "{app}"; Flags: ignoreversion
+Source: "c:\fw195\gestool\bin\scmmrc.";             DestDir: "{app}"; Flags: ignoreversion
 #endif
 
-Source: "c:\fw195\gestool\bin\gestool.exe";       DestDir: "{app}"; Flags: ignoreversion;
-Source: "c:\fw195\gestool\resource\gestool.ico";  DestDir: "{app}"; Flags: ignoreversion
+Source: "c:\fw195\gestool\bin\gestool.exe";         DestDir: "{app}"; Flags: ignoreversion;
+Source: "c:\fw195\gestool\resource\gestool.ico";    DestDir: "{app}"; Flags: ignoreversion
 
-Source: "c:\fw195\gestool\bin\rptapolo.exe";      DestDir: "{app}"; Flags: ignoreversion
+Source: "c:\fw195\gestool\bin\rptapolo.exe";        DestDir: "{app}"; Flags: ignoreversion
 
 Source: "c:\fw195\gestool\bin\image2pdf stdcall.dll";  DestDir: "{app}"; Flags: ignoreversion
 
@@ -141,6 +141,8 @@ Source: "c:\fw195\gestool\bin\ads.ini";                DestDir: "{app}"; Flags: 
 Source: "c:\fw195\gestool\bin\ansi.chr";               DestDir: "{app}"; Flags: ignoreversion
 Source: "c:\fw195\gestool\bin\extend.chr";             DestDir: "{app}"; Flags: ignoreversion
 
+Source: "c:\fw195\gestool\bin\reporting\*.*";          DestDir: "{app}\Reporting"; Flags: ignoreversion onlyifdoesntexist
+
 Source: "c:\fw195\gestool\bmp\gestoollogo.bmp";        DestDir: "{app}\Bmp"; Flags: ignoreversion
 Source: "c:\fw195\gestool\bmp\gestoolpro.bmp";         DestDir: "{app}\Bmp"; Flags: ignoreversion
 Source: "c:\fw195\gestool\bmp\gestoollite.bmp";        DestDir: "{app}\Bmp"; Flags: ignoreversion
@@ -169,6 +171,7 @@ Source: "c:\fw195\actualiza\safe\*.*";            DestDir: "{app}\Safe";      Fl
 Source: "c:\fw195\actualiza\emp00vg\*.*";         DestDir: "{app}\Emp00VG";   Flags: ignoreversion onlyifdoesntexist
 Source: "c:\fw195\actualiza\datos\*.*";           DestDir: "{app}\Datos";     Flags: ignoreversion onlyifdoesntexist
 Source: "c:\fw195\actualiza\psion\*.*";           DestDir: "{app}\Psion";     Flags: ignoreversion onlyifdoesntexist
+
 
 ; Scripts
 

@@ -857,7 +857,7 @@ METHOD EliminaCobros() CLASS TpvCobros
       */
 
       while ( ::oSender:oTiketCobro:Seek( cNumeroTicket ) )
-         ::oSender:oTiketCobro:Delete()
+         ::oSender:oTiketCobro:Delete(.f.)
       end while
 
       /*

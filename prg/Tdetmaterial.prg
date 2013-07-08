@@ -714,7 +714,7 @@ RETURN ( Self )
 METHOD DeleteDetails()
 
    while ::oParent:oDetSeriesMaterial:oDbfVir:SeekInOrd( Str( ::oDbfVir:nNumLin, 4 ) + ::oDbfVir:cCodArt, "nNumLin" )
-      ::oParent:oDetSeriesMaterial:oDbfVir:Delete()
+      ::oParent:oDetSeriesMaterial:oDbfVir:Delete(.f.)
    end while
 
 RETURN ( Self )

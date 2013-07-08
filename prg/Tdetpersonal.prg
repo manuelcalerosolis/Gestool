@@ -155,7 +155,7 @@ METHOD Resource( nMode ) CLASS TDetPersonal
       ::oDbfVir:cCodOpe    := ::oParent:oDbf:cCodOpe
 
       while ::oParent:oDetHorasPersonal:oDbfVir:Seek( Space( 5 ) ) .and. !::oParent:oDetHorasPersonal:oDbfVir:Eof()
-         ::oParent:oDetHorasPersonal:oDbfVir:Delete()
+         ::oParent:oDetHorasPersonal:oDbfVir:Delete(.f.)
       end if
 
       ::oParent:oDetHorasPersonal:oDbfVir:OrdScope( Space( 5 ) )
@@ -589,7 +589,7 @@ RETURN ( Self )
 METHOD DeleteDetails()
 
    while ::oParent:oDetHorasPersonal:oDbfVir:Seek( Space( 5 ) )
-      ::oParent:oDetHorasPersonal:oDbfVir:Delete()
+      ::oParent:oDetHorasPersonal:oDbfVir:Delete(.f.)
    end while
 
 RETURN ( Self )

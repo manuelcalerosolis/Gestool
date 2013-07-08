@@ -7815,7 +7815,7 @@ Method Process()
                */
 
                while oTurno:oDbfDet:Seek( oTurnoTmp:oDbf:cNumTur + oTurnoTmp:oDbf:cSufTur )
-                  oTurno:oDbfDet:Delete()
+                  oTurno:oDbfDet:Delete(.f.)
                   SysRefresh()
                end while
 
@@ -7836,7 +7836,7 @@ Method Process()
                */
 
                while oTurno:oDbfCaj:Seek( oTurnoTmp:oDbf:cNumTur + oTurnoTmp:oDbf:cSufTur )
-                  oTurno:oDbfCaj:Delete()
+                  oTurno:oDbfCaj:Delete(.f.)
                   SysRefresh()
                end while
 
