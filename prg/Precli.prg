@@ -8237,6 +8237,24 @@ STATIC FUNCTION LoaCli( aGet, aTmp, nMode, oRieCli, oTlfCli )
          aTmp[ _CCODGRP ]  := ( dbfClient )->cCodGrp
       end if
 
+      /*
+      Cargamos la obra por defecto-------------------------------------
+      */
+
+      if dbSeekInOrd( cNewCodCli, "LDEFOBR", dbfObrasT )
+
+         if !Empty( aGet[ _CCODOBR ] )
+            aGet[ _CCODOBR ]:cText( ( dbfObrasT )->cCodObr )
+            aGet[ _CCODOBR ]:lValid()
+         end if
+
+      else
+      
+         aGet[ _CCODOBR ]:cText( Space( 10 ) )
+         aGet[ _CCODOBR ]:lValid()
+
+      end if
+
       if ( lChgCodCli )
 
          /*
