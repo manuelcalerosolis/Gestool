@@ -520,10 +520,10 @@
 	"buffers":
 	[
 		{
-			"file": "prg/Facrec.prg",
+			"file": "prg/Tpv.prg",
 			"settings":
 			{
-				"buffer_size": 480243,
+				"buffer_size": 665600,
 				"line_ending": "Windows"
 			}
 		}
@@ -560,6 +560,13 @@
 	},
 	"file_history":
 	[
+		"/C/fw195/Gestool/prg/Recprv.prg",
+		"/C/fw195/Gestool/prg/Infpreprv.prg",
+		"/C/fw195/Gestool/prg/Tnewinfgen.prg",
+		"/C/fw195/Gestool/prg/Grpprv.prg",
+		"/C/fw195/Gestool/prg/InfPrevisionPagos",
+		"/C/fw195/Gestool/prg/Tfastventasclientes.prg",
+		"/C/fw195/Gestool/prg/Facrec.prg",
 		"/C/fw195/Gestool/prg/Tpvtactil.prg",
 		"/C/fw195/Gestool/prg/Empresa.prg",
 		"/C/fw195/Gestool/prg/Factu.prg",
@@ -572,7 +579,6 @@
 		"/C/fw195/Gestool/prg/Articulo.prg",
 		"/C/fw195/Gestool/prg/Cajas.prg",
 		"/C/fw195/Gestool/prg/tpv",
-		"/C/fw195/Gestool/prg/Tfastventasclientes.prg",
 		"/C/fw195/Gestool/bin/reporting/articulos/Ventas/Facturas de clientes/Facturas de clientes lineas agrupadas.fr3",
 		"/C/fw195/Gestool/prg/Albcli.prg",
 		"/C/fw195/Gestool/prg/Utildbf.prg",
@@ -589,7 +595,6 @@
 		"/C/fw195/Gestool/prg/Reindexa.prg",
 		"/C/fw195/Gestool/prg/Tdatacenter.prg",
 		"/C/fw195/Gestool/prg/Factprv.prg",
-		"/C/fw195/Gestool/prg/Recprv.prg",
 		"/C/fw195/Gestool/prg/Reccli.prg",
 		"/C/fw195/Gestool/bin/script/001.prg",
 		"/C/fw195/Gestool/prg/Rectprv.prg",
@@ -599,7 +604,6 @@
 		"/C/fw195/Gestool/prg/Pedprov.prg",
 		"/C/fw195/Gestool/prg/Satcli.prg",
 		"/C/fw195/Gestool/prg/Facant.prg",
-		"/C/fw195/Gestool/prg/Facrec.prg",
 		"/C/fw195/Gestool/prg/Pedcli.prg",
 		"/C/fw195/Gestool/prg/Cfaccli.prg",
 		"/C/fw195/Gestool/prg/Provee.prg",
@@ -683,11 +687,7 @@
 		"/C/AppServ/www/zemtrum/js/jquery/plugins/treeview-categories/jquery.treeview-categories.css",
 		"/C/AppServ/www/zemtrum/themes/zemtrum/css/grid_prestashop.css",
 		"/C/AppServ/www/zemtrum/themes/zemtrum/css/identity.css",
-		"/C/Users/Villa/Desktop/Modulos bajados de prestashop/product_list_grid_projectfiles/product-list.tpl",
-		"/C/Users/Villa/Desktop/product_list.css",
-		"/C/Users/Villa/Desktop/product_listold.css",
-		"/C/AppServ/www/zemtrum/themes/zemtrum/css/product_list.cssold",
-		"/C/AppServ/www/zemtrum/themes/zemtrum/category-cms-tree-branch.tpl"
+		"/C/Users/Villa/Desktop/Modulos bajados de prestashop/product_list_grid_projectfiles/product-list.tpl"
 	],
 	"find":
 	{
@@ -729,6 +729,13 @@
 		"case_sensitive": false,
 		"find_history":
 		[
+			"Tree(",
+			"Tree",
+			"clie",
+			"od lGrupoGProveedor",
+			"ss InfPrevisionPagos",
+			"informe",
+			"cMinDoc",
 			"loaart",
 			":cDelegacion(",
 			"CSUFDOC",
@@ -849,14 +856,7 @@
 			"on datareport",
 			"on openfiles",
 			"Openfiles",
-			"openfiles",
-			"datareport",
-			"documentoAlbaran",
-			"BuildRelationReport",
-			"BuildReport",
-			"ImprimeDocumento",
-			"ImprimeTicket",
-			"imprim"
+			"openfiles"
 		],
 		"highlight": true,
 		"in_selection": false,
@@ -888,26 +888,28 @@
 			[
 				{
 					"buffer": 0,
-					"file": "prg/Facrec.prg",
+					"file": "prg/Tpv.prg",
 					"settings":
 					{
-						"buffer_size": 480243,
+						"buffer_size": 665600,
 						"regions":
 						{
 						},
 						"selection":
 						[
 							[
-								132265,
-								132265
+								151,
+								151
 							]
 						],
 						"settings":
 						{
-							"syntax": "Packages/harbour/harbour/Harbour.tmLanguage"
+							"syntax": "Packages/harbour/harbour/Harbour.tmLanguage",
+							"tab_size": 3,
+							"translate_tabs_to_spaces": true
 						},
 						"translation.x": 0.0,
-						"translation.y": 74660.0,
+						"translation.y": 0.0,
 						"zoom_level": 1.0
 					},
 					"type": "text"

@@ -45,7 +45,7 @@ END CLASS
 
 METHOD New( cPath, oWndParent, oMenuItem )
 
-   DEFAULT cPath        := cPatCli()
+   DEFAULT cPath        := cPatPrv()
    DEFAULT oWndParent   := GetWndFrame()
    DEFAULT oMenuItem    := "01030"
 
@@ -67,7 +67,7 @@ METHOD New( cPath, oWndParent, oMenuItem )
 
    //::lAutoButtons       := .t.
    ::lCreateShell       := .f.
-   ::cHtmlHelp          := "Grupos de clientes"
+   ::cHtmlHelp          := "Grupos de proveedores"
 
 RETURN ( Self )
 
@@ -104,7 +104,7 @@ METHOD OpenFiles( lExclusive )
    RECOVER USING oError
 
       lOpen             := .f.
-      msgStop( ErrorMessage( oError ), "Imposible abrir todas las bases de datos de grupos de clientes" )
+      msgStop( ErrorMessage( oError ), "Imposible abrir todas las bases de datos de grupos de proveedores" )
 
    END SEQUENCE
    ErrorBlock( oBlock )
@@ -122,13 +122,13 @@ METHOD DefineFiles( cPath, cDriver )
    DEFAULT cPath        := ::cPath
    DEFAULT cDriver      := cDriver()
 
-   DEFINE DATABASE ::oDbf FILE "GrpPrv.DBF" CLASS "GrpPrv" ALIAS "GrpPrv" PATH ( cPath ) VIA ( cDriver ) COMMENT "Grupos de clientes"
+   DEFINE DATABASE ::oDbf FILE "GrpPrv.DBF" CLASS "GrpPrv" ALIAS "GrpPrv" PATH ( cPath ) VIA ( cDriver ) COMMENT "Grupos de proveedores"
 
-      FIELD NAME "CCODGRP"    TYPE "C" LEN  4  DEC 0  COMMENT "C贸digo"              COLSIZE 80  OF ::oDbf
+      FIELD NAME "CCODGRP"    TYPE "C" LEN  4  DEC 0  COMMENT "C骴igo"              COLSIZE 80  OF ::oDbf
       FIELD NAME "CNOMGRP"    TYPE "C" LEN 30  DEC 0  COMMENT "Nombre"              COLSIZE 200 OF ::oDbf
       FIELD NAME "CCODPDR"    TYPE "C" LEN  4  DEC 0  COMMENT "Grupo padre"         COLSIZE 80  OF ::oDbf
 
-      INDEX TO "GrpPrv.CDX" TAG "CCODGRP" ON "CCODGRP"   COMMENT "C贸digo"           NODELETED   OF ::oDbf
+      INDEX TO "GrpPrv.CDX" TAG "CCODGRP" ON "CCODGRP"   COMMENT "C骴igo"           NODELETED   OF ::oDbf
       INDEX TO "GrpPrv.CDX" TAG "CNOMGRP" ON "CNOMGRP"   COMMENT "Nombre"           NODELETED   OF ::oDbf
       INDEX TO "GrpPrv.CDX" TAG "CCODPDR" ON "CCODPDR"   COMMENT "Grupo padre"      NODELETED   OF ::oDbf
 
@@ -192,13 +192,13 @@ Method lSaveResource( nMode, oDlg )
    if ( nMode == APPD_MODE .or. nMode == DUPL_MODE )
 
       if Empty( ::oDbf:cCodGrp )
-         MsgStop( "C贸digo de grupo de proveedores no puede estar vac铆o" )
+         MsgStop( "C骴igo de grupo de proveedores no puede estar vac韔" )
          ::oGetCodigo:SetFocus()
          Return nil
       end if
 
       if ::oDbf:SeekInOrd( ::oDbf:cCodGrp, "cCodGrp" )
-         msgStop( "C贸digo existente" )
+         msgStop( "C骴igo existente" )
          ::oGetCodigo:SetFocus()
          Return nil
       end if
@@ -206,7 +206,7 @@ Method lSaveResource( nMode, oDlg )
    end if
 
    if Empty( ::oDbf:cNomGrp )
-      MsgStop( "Nombre de grupo de proveedores no puede estar vac铆o" )
+      MsgStop( "Nombre de grupo de proveedores no puede estar vac韔" )
       ::oGetNombre:SetFocus()
       Return nil
    end if
@@ -226,7 +226,7 @@ Method lSaveResource( nMode, oDlg )
       Return nil
    end if
 
-Return oDlg:end( IDOK )
+Return oDlg:end( IDOK ) 
 
 //---------------------------------------------------------------------------//
 

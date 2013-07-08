@@ -2267,7 +2267,7 @@ STATIC FUNCTION EdtRec( aTmp, aGet, dbfTikT, oBrw, cCodCli, cCodArt, nMode, aNum
 
 		REDEFINE GET aGet[_CCODOBR] VAR aTmp[_CCODOBR] ;
          ID       230 ;
-         WHEN     ( lObras() .and. nMode != ZOOM_MODE ) ;
+         WHEN     ( nMode != ZOOM_MODE ) ;
          VALID    ( cObras( aGet[ _CCODOBR ], oGetTxt[ 5 ], aTmp[ _CCLITIK ], dbfObrasT ) );
          BITMAP   "LUPA" ;
          ON HELP  ( brwObras( aGet[ _CCODOBR ], oGetTxt[ 5 ], aTmp[ _CCLITIK ], dbfObrasT ) ) ;
@@ -11382,6 +11382,24 @@ Static Function loaCli( aGet, aTmp, nMode, oTelefonoClient, oMailClient )
 
       if Empty( aTmp[ _CCODGRP ] ) .or. lChgCodCli
          aTmp[ _CCODGRP ]  := ( dbfClient )->cCodGrp
+      end if
+
+      /*
+      Cargamos la obra por defecto-------------------------------------
+      */
+
+      if dbSeekInOrd( cNewCodCli, "LDEFOBR", dbfObrasT )
+
+         if !Empty( aGet[ _CCODOBR ] )
+            aGet[ _CCODOBR ]:cText( ( dbfObrasT )->cCodObr )
+            aGet[ _CCODOBR ]:lValid()
+         end if
+
+      else
+      
+         aGet[ _CCODOBR ]:cText( Space( 10 ) )
+         aGet[ _CCODOBR ]:lValid()
+
       end if
 
       if oTelefonoClient != nil

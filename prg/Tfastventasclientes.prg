@@ -730,7 +730,7 @@ METHOD AddSATCliente( cCodigoCliente ) CLASS TFastVentasClientes
             ::oDbf:nMesDoc    := Month( ::oSatCliT:dFecSat )
             ::oDbf:dFecDoc    := ::oSatCliT:dFecSat
             ::oDbf:cHorDoc    := SubStr( ::oSatCliT:cTimCre, 1, 2 )
-            ::oDbf:cMinDoc    := SubStr( ::oSatCliT:cTimCre, 3, 2 )
+            ::oDbf:cMinDoc    := SubStr( ::oSatCliT:cTimCre, 4, 2 )
 
             ::oDbf:nTotNet    := sTot:nTotalNeto
             ::oDbf:nTotIva    := sTot:nTotalIva
@@ -833,7 +833,7 @@ METHOD AddPresupuestoCliente( cCodigoCliente ) CLASS TFastVentasClientes
             ::oDbf:nMesDoc    := Month( ::oPreCliT:dFecPre )
             ::oDbf:dFecDoc    := ::oPreCliT:dFecPre
             ::oDbf:cHorDoc    := SubStr( ::oPreCliT:cTimCre, 1, 2 )
-            ::oDbf:cMinDoc    := SubStr( ::oPreCliT:cTimCre, 3, 2 )
+            ::oDbf:cMinDoc    := SubStr( ::oPreCliT:cTimCre, 4, 2 )
 
             ::oDbf:nTotNet    := sTot:nTotalNeto
             ::oDbf:nTotIva    := sTot:nTotalIva
@@ -935,7 +935,7 @@ METHOD AddPedidoCliente( cCodigoCliente ) CLASS TFastVentasClientes
             ::oDbf:nMesDoc    := Month( ::oPedCliT:dFecPed )
             ::oDbf:dFecDoc    := ::oPedCliT:dFecPed
             ::oDbf:cHorDoc    := SubStr( ::oPedCliT:cTimCre, 1, 2 )
-            ::oDbf:cMinDoc    := SubStr( ::oPedCliT:cTimCre, 3, 2 )
+            ::oDbf:cMinDoc    := SubStr( ::oPedCliT:cTimCre, 4, 2 )
 
             ::oDbf:nTotNet    := sTot:nTotalNeto
             ::oDbf:nTotIva    := sTot:nTotalIva
@@ -1043,7 +1043,7 @@ METHOD AddAlbaranCliente( lNoFacturados ) CLASS TFastVentasClientes
             ::oDbf:nMesDoc    := Month( ::oAlbCliT:dFecAlb )
             ::oDbf:dFecDoc    := ::oAlbCliT:dFecAlb
             ::oDbf:cHorDoc    := SubStr( ::oAlbCliT:cTimCre, 1, 2 )
-            ::oDbf:cMinDoc    := SubStr( ::oAlbCliT:cTimCre, 3, 2 )
+            ::oDbf:cMinDoc    := SubStr( ::oAlbCliT:cTimCre, 4, 2 )
 
             ::oDbf:nTotNet    := sTot:nTotalNeto
             ::oDbf:nTotIva    := sTot:nTotalIva
@@ -1145,7 +1145,7 @@ METHOD AddFacturaCliente( cCodigoCliente ) CLASS TFastVentasClientes
             ::oDbf:nMesDoc    := Month( ::oFacCliT:dFecFac )
             ::oDbf:dFecDoc    := ::oFacCliT:dFecFac
             ::oDbf:cHorDoc    := SubStr( ::oFacCliT:cTimCre, 1, 2 )
-            ::oDbf:cMinDoc    := SubStr( ::oFacCliT:cTimCre, 3, 2 )
+            ::oDbf:cMinDoc    := SubStr( ::oFacCliT:cTimCre, 4, 2 )
 
             ::oDbf:nTotNet    := sTot:nTotalNeto
             ::oDbf:nTotIva    := sTot:nTotalIva
@@ -1247,7 +1247,7 @@ METHOD AddFacturaRectificativa( cCodigoCliente ) CLASS TFastVentasClientes
             ::oDbf:nMesDoc    := Month( ::oFacRecT:dFecFac )
             ::oDbf:dFecDoc    := ::oFacRecT:dFecFac
             ::oDbf:cHorDoc    := SubStr( ::oFacRecT:cTimCre, 1, 2 )
-            ::oDbf:cMinDoc    := SubStr( ::oFacRecT:cTimCre, 3, 2 )
+            ::oDbf:cMinDoc    := SubStr( ::oFacRecT:cTimCre, 4, 2 )
 
             ::oDbf:nTotNet    := sTot:nTotalNeto
             ::oDbf:nTotIva    := sTot:nTotalIva
@@ -1349,7 +1349,7 @@ METHOD AddTicket() CLASS TFastVentasClientes
             ::oDbf:nMesDoc    := Month( ::oTikCliT:dFecTik )
             ::oDbf:dFecDoc    := ::oTikCliT:dFecTik
             ::oDbf:cHorDoc    := SubStr( ::oTikCliT:cTimCre, 1, 2 )
-            ::oDbf:cMinDoc    := SubStr( ::oTikCliT:cTimCre, 3, 2 )
+            ::oDbf:cMinDoc    := SubStr( ::oTikCliT:cTimCre, 4, 2 )
 
             ::oDbf:nTotNet    := sTot:nTotalNeto
             ::oDbf:nTotIva    := sTot:nTotalIva
