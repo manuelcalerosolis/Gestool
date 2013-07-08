@@ -520,10 +520,10 @@
 	"buffers":
 	[
 		{
-			"file": "prg/Facrec.prg",
+			"file": "prg/Tfastventasclientes.prg",
 			"settings":
 			{
-				"buffer_size": 480243,
+				"buffer_size": 51811,
 				"line_ending": "Windows"
 			}
 		}
@@ -560,6 +560,7 @@
 	},
 	"file_history":
 	[
+		"/C/fw195/Gestool/prg/Facrec.prg",
 		"/C/fw195/Gestool/prg/Tpvtactil.prg",
 		"/C/fw195/Gestool/prg/Empresa.prg",
 		"/C/fw195/Gestool/prg/Factu.prg",
@@ -599,7 +600,6 @@
 		"/C/fw195/Gestool/prg/Pedprov.prg",
 		"/C/fw195/Gestool/prg/Satcli.prg",
 		"/C/fw195/Gestool/prg/Facant.prg",
-		"/C/fw195/Gestool/prg/Facrec.prg",
 		"/C/fw195/Gestool/prg/Pedcli.prg",
 		"/C/fw195/Gestool/prg/Cfaccli.prg",
 		"/C/fw195/Gestool/prg/Provee.prg",
@@ -695,7 +695,7 @@
 	},
 	"find_in_files":
 	{
-		"height": 93.0,
+		"height": 0.0,
 		"where_history":
 		[
 			"C:\\fw195\\Gestool\\prg",
@@ -729,6 +729,7 @@
 		"case_sensitive": false,
 		"find_history":
 		[
+			"cMinDoc",
 			"loaart",
 			":cDelegacion(",
 			"CSUFDOC",
@@ -855,8 +856,7 @@
 			"BuildRelationReport",
 			"BuildReport",
 			"ImprimeDocumento",
-			"ImprimeTicket",
-			"imprim"
+			"ImprimeTicket"
 		],
 		"highlight": true,
 		"in_selection": false,
@@ -888,26 +888,28 @@
 			[
 				{
 					"buffer": 0,
-					"file": "prg/Facrec.prg",
+					"file": "prg/Tfastventasclientes.prg",
 					"settings":
 					{
-						"buffer_size": 480243,
+						"buffer_size": 51811,
 						"regions":
 						{
 						},
 						"selection":
 						[
 							[
-								132265,
-								132265
+								26534,
+								26534
 							]
 						],
 						"settings":
 						{
-							"syntax": "Packages/harbour/harbour/Harbour.tmLanguage"
+							"syntax": "Packages/harbour/harbour/Harbour.tmLanguage",
+							"tab_size": 3,
+							"translate_tabs_to_spaces": true
 						},
 						"translation.x": 0.0,
-						"translation.y": 74660.0,
+						"translation.y": 13499.0,
 						"zoom_level": 1.0
 					},
 					"type": "text"
