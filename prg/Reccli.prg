@@ -4939,6 +4939,8 @@ FUNCTION GenPgoFacCli( cNumFac, dbfFacCliT, dbfFacCliL, dbfFacCliP, dbfAntCliT, 
    Comprobar q el total de factura  no es igual al de pagos--------------------
    */
 
+   logwrite( "llamada a total desde recibos")
+
    nTotal            := nTotFacCli( cNumFac, dbfFacCliT, dbfFacCliL, dbfIva, dbfDiv, dbfFacCliP, dbfAntCliT, nil, nil, .f. )
 
    nTotCob           := nPagFacCli( cNumFac, dbfFacCliT, dbfFacCliP, dbfIva, dbfDiv, nil, .f. )
@@ -4947,7 +4949,13 @@ FUNCTION GenPgoFacCli( cNumFac, dbfFacCliT, dbfFacCliL, dbfFacCliP, dbfAntCliT, 
    Ya nos viene sin los anticipos
    */
 
+   ? nTotal
+   ? nTotCob
+   ? lDiferencia( nTotal, nTotCob, 0.1 )
+
    if lDiferencia( nTotal, nTotCob, 0.1 )
+
+      ? "lDiferencia"
 
       /*
       Si no hay recibos pagados eliminamos los recibos y se vuelven a generar
@@ -4981,6 +4989,8 @@ FUNCTION GenPgoFacCli( cNumFac, dbfFacCliT, dbfFacCliL, dbfFacCliP, dbfAntCliT, 
       */
 
       if ( dbfFPago )->( dbSeek( cCodPgo ) )
+
+         ? "encuentra forma de pago"
 
          nTotAcu        := nTotal
          nPlazos        := Max( ( dbfFPago )->nPlazos, 1 )

@@ -3029,17 +3029,15 @@ Return ( lImp )
 
 Function cCajonEnCaja( cCodCaj, dbfCajT )
 
+   local nRec     
    local cCaj     := "000"
-   local nRec     := ( dbfCajT )->( Recno() )
-   local nOrdAnt
 
-   nOrdAnt        := ( dbfCajT )->( OrdSetFocus( "cCodCaj" ) )
+   nRec           := ( dbfCajT )->( Recno() )
 
    if dbSeekInOrd( cCodCaj, "cCodCaj", dbfCajT )
       cCaj        := ( dbfCajT )->cCajon
    end if
 
-   ( dbfCajT )->( OrdSetFocus( nOrdAnt ) )
    ( dbfCajT )->( dbGoTo( nRec ) )
 
 Return ( cCaj )

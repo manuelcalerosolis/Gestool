@@ -3090,7 +3090,7 @@ STATIC FUNCTION EdtRec( aTmp, aGet, dbfAlbCliT, oBrw, hHash, bValid, nMode )
       REDEFINE BUTTON oBtnKit;
          ID       526 ;
 			OF 		oFld:aDialogs[1] ;
-         ACTION   ( lEscandalloEdtRec( .t., oBtnKit, oBrwLin ) )
+         ACTION   ( lEscandalloEdtRec( .t., oBrwLin ) )
 
       REDEFINE GET aGet[ _CSERALB ] VAR aTmp[ _CSERALB ] ;
          ID       100 ;
@@ -3779,7 +3779,7 @@ Static Function StartEdtRec( aTmp, aGet, oDlg, nMode, hHash, oBrwLin )
    Mostramos los escandallos---------------------------------------------------
    */
 
-   lEscandalloEdtRec( .f., oBtnKit, oBrwLin )
+   lEscandalloEdtRec( .f., oBrwLin )
 
    /*
    Hace que salte la incidencia al entrar en el documento----------------------
@@ -3950,7 +3950,7 @@ Return ( oMenu )
 
 //---------------------------------------------------------------------------//
 
-Static Function lEscandalloEdtRec( lSet, oBtnKit, oBrwLin )
+Static Function lEscandalloEdtRec( lSet, oBrwLin )
 
    local lShwKit     := lShwKit()
 

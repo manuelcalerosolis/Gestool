@@ -106,29 +106,24 @@ CLASS TUser
 
    //------------------------------------------------------------------------//
 
-   Data     _Delegacion                INIT ""
-   //Method   cDelegacion( cNewVal )     INLINE if( cNewVal != nil, ( ::_Delegacion := cNewVal, cDlgUsr( cNewVal ) ), if( !Empty( uFieldEmpresa( "cSufDoc" ) ), ( ::_Delegacion := uFieldEmpresa( "cSufDoc" ), cDlgUsr( uFieldEmpresa( "cSufDoc" ) ) ), ::_Delegacion ) )
+   Data     _Delegacion                INIT Space( 2 )
  
    INLINE METHOD cDelegacion( cNewVal )
 
       if cNewVal != nil
 
-         ::_Delegacion := cNewVal
+         ::_Delegacion     := cNewVal
 
          cDlgUsr( cNewVal ) 
 
       else
 
-         if Empty( ::_Delegacion )
+         if Empty( ::_Delegacion ) .and. !Empty( uFieldEmpresa( "cSufDoc" ) )
 
-            if !Empty( uFieldEmpresa( "cSufDoc" ) )
+            ::_Delegacion  := uFieldEmpresa( "cSufDoc" )
 
-               ::_Delegacion := uFieldEmpresa( "cSufDoc" )
+            cDlgUsr( uFieldEmpresa( "cSufDoc" ) )
 
-               cDlgUsr( uFieldEmpresa( "cSufDoc" ) )
-
-            end if
-         
          end if   
 
       end if   
@@ -264,7 +259,7 @@ Method Create( cCodUsr, dbfUser, dbfCajas, cOldUsr, lCreateHandle )
    ::cCodigoUsuario           := cCodUsr
 
    oBlock                     := ErrorBlock( {| oError | ApoloBreak( oError ) } )
-   BEGIN SEQUENCE                                                    
+   BEGIN SEQUENCE
 
    ::OpenFiles( dbfUser, dbfCajas )
 
@@ -327,14 +322,8 @@ Method Create( cCodUsr, dbfUser, dbfCajas, cOldUsr, lCreateHandle )
          Si el usuario tiene una delegacion fija la asignamos------------------
          */
 
-         if !Empty( ( ::oDbf )->cCodDlg )
-
-            if !::lMaster()
-
-               ::cDelegacion( ( ::oDbf )->cCodDlg )
-
-            end if
-
+         if !Empty( ( ::oDbf )->cCodDlg ) .and. !::lMaster()
+            ::cDelegacion( ( ::oDbf )->cCodDlg )
          end if
 
          /*

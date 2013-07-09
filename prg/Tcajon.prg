@@ -77,7 +77,7 @@ METHOD Create( cCodCaj )
    END SEQUENCE
 
    ErrorBlock( oBlock )
-
+*/
    if dbfCajPorta != nil
       ( dbfCajPorta )->( dbCloseArea() )
    end if
