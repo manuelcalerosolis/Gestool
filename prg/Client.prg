@@ -780,7 +780,7 @@ FUNCTION Client( oMenuItem, oWnd, cCodCli )
 
          DEFINE BTNSHELL RESOURCE "Document_user1_" OF oWndBrw ;
             ALLOW    EXIT ;
-            ACTION   ( FactCli( nil, oWnd, ( dbfClient )->Cod, nil ) );
+            ACTION   ( FactCli( nil, oWnd, { "Cliente" => ( dbfClient )->Cod } ) );
             TOOLTIP  "Añadir factura de cliente" ;
             FROM     oRotor ;
             LEVEL    ACC_EDIT
@@ -6349,12 +6349,12 @@ Static Function EdtRotorMenu( aTmp, aGet, oDlg, dbfClient, oBrw, nMode )
             MENUITEM "&3. Añadir albarán de cliente";
             MESSAGE  "Añade un albarán de cliente" ;
             RESOURCE "Document_plain_user1_16";
-            ACTION   ( SavClient( aTmp, aGet, oDlg, dbfClient, oBrw, nMode ), AlbCli( nil, nil, ( dbfClient )->Cod, nil ) )
+            ACTION   ( SavClient( aTmp, aGet, oDlg, dbfClient, oBrw, nMode ), AlbCli( nil, nil,  { "Cliente" => ( dbfClient )->Cod } ) )
 
             MENUITEM "&4. Añadir factura de cliente";
             MESSAGE  "Añade una factura de cliente" ;
             RESOURCE "Document_user1_16";
-            ACTION   ( SavClient( aTmp, aGet, oDlg, dbfClient, oBrw, nMode ), FactCli( nil, nil, ( dbfClient )->Cod, nil ) )
+            ACTION   ( SavClient( aTmp, aGet, oDlg, dbfClient, oBrw, nMode ), FactCli( nil, nil, { "Cliente" => ( dbfClient )->Cod } ) )
 
             MENUITEM "&5. Añadir tiket de cliente";
             MESSAGE  "Añade un tiket de cliente" ;

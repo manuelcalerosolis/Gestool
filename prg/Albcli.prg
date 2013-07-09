@@ -2040,7 +2040,7 @@ FUNCTION AlbCli( oMenuItem, oWnd, hHash )
 
       DEFINE BTNSHELL RESOURCE "DOCUMENT_USER1_" OF oWndBrw ;
          ALLOW    EXIT ;
-         ACTION   ( if( !( dbfAlbCliT )->lFacturado, FactCli( nil, nil, nil, nil, nil, { nil, nil, ( dbfAlbCliT )->cSerAlb + Str( ( dbfAlbCliT )->nNumAlb ) + ( dbfAlbCliT )->cSufAlb, nil } ), MsgStop( "Albarán facturado" ) ) );
+         ACTION   ( if( !( dbfAlbCliT )->lFacturado, FactCli( nil, nil, { "Albaran" => ( dbfAlbCliT )->cSerAlb + Str( ( dbfAlbCliT )->nNumAlb ) + ( dbfAlbCliT )->cSufAlb } ), MsgStop( "Albarán facturado" ) ) );
          TOOLTIP  "Generar factura" ;
          FROM     oRotor ;
 

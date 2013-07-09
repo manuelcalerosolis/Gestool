@@ -4949,13 +4949,7 @@ FUNCTION GenPgoFacCli( cNumFac, dbfFacCliT, dbfFacCliL, dbfFacCliP, dbfAntCliT, 
    Ya nos viene sin los anticipos
    */
 
-   ? nTotal
-   ? nTotCob
-   ? lDiferencia( nTotal, nTotCob, 0.1 )
-
    if lDiferencia( nTotal, nTotCob, 0.1 )
-
-      ? "lDiferencia"
 
       /*
       Si no hay recibos pagados eliminamos los recibos y se vuelven a generar
@@ -4989,8 +4983,6 @@ FUNCTION GenPgoFacCli( cNumFac, dbfFacCliT, dbfFacCliL, dbfFacCliP, dbfAntCliT, 
       */
 
       if ( dbfFPago )->( dbSeek( cCodPgo ) )
-
-         ? "encuentra forma de pago"
 
          nTotAcu        := nTotal
          nPlazos        := Max( ( dbfFPago )->nPlazos, 1 )
