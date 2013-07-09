@@ -520,10 +520,18 @@
 	"buffers":
 	[
 		{
-			"file": "prg/Tpv.prg",
+			"file": "prg/Tfastventasclientes.prg",
 			"settings":
 			{
-				"buffer_size": 665600,
+				"buffer_size": 51906,
+				"line_ending": "Windows"
+			}
+		},
+		{
+			"file": "prg/Factcli.prg",
+			"settings":
+			{
+				"buffer_size": 806279,
 				"line_ending": "Windows"
 			}
 		}
@@ -560,33 +568,39 @@
 	},
 	"file_history":
 	[
+		"/C/fw195/Gestool/prg/Client.prg",
+		"/C/Users/Villa/AppData/Roaming/Sublime Text 2/Packages/Default/Preferences.sublime-settings",
+		"/C/fw195/Gestool/prg/Factcli.prg",
+		"/C/fw195/Gestool/prg/Facrec.prg",
+		"/C/fw195/Gestool/prg/Albcli.prg",
+		"/C/fw195/Gestool/prg/Facant.prg",
+		"/C/fw195/Gestool/prg/Pedcli.prg",
+		"/C/fw195/Gestool/prg/Satcli.prg",
+		"/C/fw195/Gestool/prg/Precli.prg",
+		"/C/fw195/Gestool/prg/Tpv.prg",
+		"/C/fw195/Gestool/prg/Obras.prg",
 		"/C/fw195/Gestool/prg/Recprv.prg",
 		"/C/fw195/Gestool/prg/Infpreprv.prg",
 		"/C/fw195/Gestool/prg/Tnewinfgen.prg",
 		"/C/fw195/Gestool/prg/Grpprv.prg",
 		"/C/fw195/Gestool/prg/InfPrevisionPagos",
 		"/C/fw195/Gestool/prg/Tfastventasclientes.prg",
-		"/C/fw195/Gestool/prg/Facrec.prg",
 		"/C/fw195/Gestool/prg/Tpvtactil.prg",
 		"/C/fw195/Gestool/prg/Empresa.prg",
 		"/C/fw195/Gestool/prg/Factu.prg",
 		"/C/fw195/Gestool/prg/Usuario.prg",
 		"/C/fw195/Gestool/prg/Tuser.prg",
 		"/C/fw195/Gestool/prg/Count.prg",
-		"/C/fw195/Gestool/prg/Tpv.prg",
 		"/C/fw195/Gestool/prg/Oferta.prg",
-		"/C/fw195/Gestool/prg/Client.prg",
 		"/C/fw195/Gestool/prg/Articulo.prg",
 		"/C/fw195/Gestool/prg/Cajas.prg",
 		"/C/fw195/Gestool/prg/tpv",
 		"/C/fw195/Gestool/bin/reporting/articulos/Ventas/Facturas de clientes/Facturas de clientes lineas agrupadas.fr3",
-		"/C/fw195/Gestool/prg/Albcli.prg",
 		"/C/fw195/Gestool/prg/Utildbf.prg",
 		"/C/fw195/Gestool/prg/Tpvcobros.prg",
 		"/C/fw195/Gestool/prg/Tpvlistaticket.prg",
 		"/C/fw195/Gestool/include/Factu.ch",
 		"/C/fw195/Gestool/include/Empresa.ch",
-		"/C/fw195/Gestool/prg/Factcli.prg",
 		"/C/fw195/Gestool/prg/Tfastreportinfgen.prg",
 		"/C/fw195/Gestool/prg/Tcajon.prg",
 		"/C/fw195/Gestool/prg/Confcajporta.prg",
@@ -598,13 +612,9 @@
 		"/C/fw195/Gestool/prg/Reccli.prg",
 		"/C/fw195/Gestool/bin/script/001.prg",
 		"/C/fw195/Gestool/prg/Rectprv.prg",
-		"/C/fw195/Gestool/prg/Precli.prg",
 		"/C/fw195/Gestool/prg/Autoseek.prg",
 		"/C/fw195/Gestool/prg/Albprov.prg",
 		"/C/fw195/Gestool/prg/Pedprov.prg",
-		"/C/fw195/Gestool/prg/Satcli.prg",
-		"/C/fw195/Gestool/prg/Facant.prg",
-		"/C/fw195/Gestool/prg/Pedcli.prg",
 		"/C/fw195/Gestool/prg/Cfaccli.prg",
 		"/C/fw195/Gestool/prg/Provee.prg",
 		"/C/fw195/Gestool/resource/Gstimage12.rc",
@@ -685,9 +695,7 @@
 		"/C/AppServ/www/zemtrum/themes/zemtrum/modules/blockcategories/blockcategories.tpl",
 		"/C/AppServ/www/zemtrum/css/admin.css",
 		"/C/AppServ/www/zemtrum/js/jquery/plugins/treeview-categories/jquery.treeview-categories.css",
-		"/C/AppServ/www/zemtrum/themes/zemtrum/css/grid_prestashop.css",
-		"/C/AppServ/www/zemtrum/themes/zemtrum/css/identity.css",
-		"/C/Users/Villa/Desktop/Modulos bajados de prestashop/product_list_grid_projectfiles/product-list.tpl"
+		"/C/AppServ/www/zemtrum/themes/zemtrum/css/grid_prestashop.css"
 	],
 	"find":
 	{
@@ -695,7 +703,7 @@
 	},
 	"find_in_files":
 	{
-		"height": 93.0,
+		"height": 0.0,
 		"where_history":
 		[
 			"C:\\fw195\\Gestool\\prg",
@@ -729,6 +737,33 @@
 		"case_sensitive": false,
 		"find_history":
 		[
+			"cnomcli",
+			"cCodCli",
+			"cSufDoc",
+			"on aitm",
+			"on edtrec",
+			"on savcli",
+			"asexos",
+			"fldcome",
+			"on edtrec",
+			"on aitm",
+			"on airm",
+			"ccodobr",
+			"on loacli",
+			"on aitm",
+			"on openfiles",
+			"obr",
+			"on loacli",
+			"ldefobr",
+			"aItmObr",
+			"cTmpObr",
+			"contacto",
+			"contactos",
+			"on acli",
+			"on aitm",
+			"def",
+			"on loacli",
+			"loacli",
 			"Tree(",
 			"Tree",
 			"clie",
@@ -829,34 +864,7 @@
 			"seleccionaa",
 			"selecc",
 			"articulo",
-			"onclick",
-			"CPRVHAB",
-			"reporting",
-			"class",
-			"ACA",
-			"od varia",
-			"bchar2",
-			"od varia",
-			"on bChar2Block",
-			"on ntotn",
-			"lalquiler",
-			"on ntotn",
-			"on tn",
-			"2block",
-			"toblock",
-			"documentos de albaranes",
-			"7962",
-			"tvta",
-			"openfiles",
-			"impri",
-			"on variablereport",
-			"closefiles",
-			"openfiles",
-			"closefiles",
-			"on datareport",
-			"on openfiles",
-			"Openfiles",
-			"openfiles"
+			"onclick"
 		],
 		"highlight": true,
 		"in_selection": false,
@@ -888,18 +896,18 @@
 			[
 				{
 					"buffer": 0,
-					"file": "prg/Tpv.prg",
+					"file": "prg/Tfastventasclientes.prg",
 					"settings":
 					{
-						"buffer_size": 665600,
+						"buffer_size": 51906,
 						"regions":
 						{
 						},
 						"selection":
 						[
 							[
-								151,
-								151
+								26300,
+								26300
 							]
 						],
 						"settings":
@@ -909,7 +917,35 @@
 							"translate_tabs_to_spaces": true
 						},
 						"translation.x": 0.0,
-						"translation.y": 0.0,
+						"translation.y": 13214.0,
+						"zoom_level": 1.0
+					},
+					"type": "text"
+				},
+				{
+					"buffer": 1,
+					"file": "prg/Factcli.prg",
+					"settings":
+					{
+						"buffer_size": 806279,
+						"regions":
+						{
+						},
+						"selection":
+						[
+							[
+								540317,
+								540317
+							]
+						],
+						"settings":
+						{
+							"syntax": "Packages/harbour/harbour/Harbour.tmLanguage",
+							"tab_size": 3,
+							"translate_tabs_to_spaces": true
+						},
+						"translation.x": 0.0,
+						"translation.y": 295003.0,
 						"zoom_level": 1.0
 					},
 					"type": "text"

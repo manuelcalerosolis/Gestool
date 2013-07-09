@@ -283,6 +283,7 @@ METHOD Create( uParam ) CLASS TFastVentasClientes
    ::AddField( "cSerDoc",  "C",  1, 0, {|| "" },   "Serie del documento"                     )
    ::AddField( "cNumDoc",  "C", 10, 0, {|| "" },   "Número del documento"                    )
    ::AddField( "cSufDoc",  "C",  2, 0, {|| "" },   "Delegación del documento"                )
+   ::AddField( "cCodPos",  "C", 15, 0, {|| "@!" }, "Código postal del documento"             )
 
    ::AddField( "nAnoDoc",  "N",  4, 0, {|| "" },   "Año del documento"                       )
    ::AddField( "nMesDoc",  "N",  2, 0, {|| "" },   "Mes del documento"                       )
@@ -716,6 +717,8 @@ METHOD AddSATCliente( cCodigoCliente ) CLASS TFastVentasClientes
             ::oDbf:cCodRut    := ::oSatCliT:cCodRut
             ::oDbf:cCodUsr    := ::oSatCliT:cCodUsr
 
+            ::oDbf:cCodPos    := ::oSatCliT:cPosCli
+
             ::oDbf:cCodGrp    := cGruCli( ::oSatCliT:cCodCli, ::oDbfCli )
 
             ::oDbf:cTipDoc    := "SAT clientes"
@@ -819,6 +822,8 @@ METHOD AddPresupuestoCliente( cCodigoCliente ) CLASS TFastVentasClientes
             ::oDbf:cCodRut    := ::oPreCliT:cCodRut
             ::oDbf:cCodUsr    := ::oPreCliT:cCodUsr
 
+            ::oDbf:cCodPos    := ::oPreCliT:cPosCli
+
             ::oDbf:cCodGrp    := cGruCli( ::oPreCliT:cCodCli, ::oDbfCli )
 
             ::oDbf:cTipDoc    := "Presupuesto clientes"
@@ -921,6 +926,8 @@ METHOD AddPedidoCliente( cCodigoCliente ) CLASS TFastVentasClientes
             ::oDbf:cCodPgo    := ::oPedCliT:cCodPgo
             ::oDbf:cCodRut    := ::oPedCliT:cCodRut
             ::oDbf:cCodUsr    := ::oPedCliT:cCodUsr
+
+            ::oDbf:cCodPos    := ::oPedCliT:cPosCli
 
             ::oDbf:cCodGrp    := cGruCli( ::oPedCliT:cCodCli, ::oDbfCli )
 
@@ -1030,6 +1037,8 @@ METHOD AddAlbaranCliente( lNoFacturados ) CLASS TFastVentasClientes
             ::oDbf:cCodRut    := ::oAlbCliT:cCodRut
             ::oDbf:cCodUsr    := ::oAlbCliT:cCodUsr
 
+            ::oDbf:cCodPos    := ::oAlbCliT:cPosCli
+
             ::oDbf:cCodGrp    := cGruCli( ::oAlbCliT:cCodCli, ::oDbfCli )
 
             ::oDbf:cTipDoc    := "Albaranes clientes"
@@ -1131,6 +1140,8 @@ METHOD AddFacturaCliente( cCodigoCliente ) CLASS TFastVentasClientes
             ::oDbf:cCodPgo    := ::oFacCliT:cCodPago
             ::oDbf:cCodRut    := ::oFacCliT:cCodRut
             ::oDbf:cCodUsr    := ::oFacCliT:cCodUsr
+
+            ::oDbf:cCodPos    := ::oFacCliT:cPosCli
 
             ::oDbf:cCodGrp    := cGruCli( ::oFacCliT:cCodCli, ::oDbfCli )
 
@@ -1234,6 +1245,8 @@ METHOD AddFacturaRectificativa( cCodigoCliente ) CLASS TFastVentasClientes
             ::oDbf:cCodRut    := ::oFacRecT:cCodRut
             ::oDbf:cCodUsr    := ::oFacRecT:cCodUsr
 
+            ::oDbf:cCodPos    := ::oFacRecT:cPosCli
+
             ::oDbf:cCodGrp    := cGruCli( ::oFacRecT:cCodCli, ::oDbfCli )
 
             ::oDbf:cTipDoc    := "Factura rectificativa"
@@ -1336,6 +1349,8 @@ METHOD AddTicket() CLASS TFastVentasClientes
             ::oDbf:cCodRut    := ::oTikCliT:cCodRut
             ::oDbf:cCodUsr    := ::oTikCliT:cCcjTik
 
+            ::oDbf:cCodPos    := ::oTikCliT:cPosCli
+
             ::oDbf:cCodGrp    := cGruCli( ::oTikCliT:cCliTik, ::oDbfCli )
 
             ::oDbf:cTipDoc    := "Tickets clientes"
@@ -1418,6 +1433,7 @@ METHOD AddClientes() CLASS TFastVentasClientes
       ::oDbf:cCodRut := ::oDbfCli:cCodRut
       ::oDbf:cCodAge := ::oDbfCli:cAgente
       ::oDbf:cCodUsr := ""
+      ::oDbf:cCodPos := ::oDbfCli:CodPostal
 
       if ::lValidRegister()
          ::oDbf:Insert()
