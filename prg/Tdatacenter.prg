@@ -2601,9 +2601,17 @@ METHOD BuildEmpresa()
    oDataTable:cName        := cPatEmp() + "FacCliP"
    oDataTable:cDataFile    := cPatEmp( , .t. ) + "FacCliP.Dbf"
    oDataTable:cIndexFile   := cPatEmp( , .t. ) + "FacCliP.Cdx"
-   oDataTable:cDescription := "Facturas de clientes"
+   oDataTable:cDescription := "Facturas de clientes recibos"
    oDataTable:lTrigger     := ::lTriggerAuxiliares
    oDataTable:bSyncFile    := {|| SynRecCli( cPatEmp() ) }
+   ::AddEmpresaTable( oDataTable )
+
+   oDataTable              := TDataTable()
+   oDataTable:cName        := cPatEmp() + "FacCliG"
+   oDataTable:cDataFile    := cPatEmp( , .t. ) + "FacCliG.Dbf"
+   oDataTable:cIndexFile   := cPatEmp( , .t. ) + "FacCliG.Cdx"
+   oDataTable:cDescription := "Facturas de clientes grupos de recibos"
+   oDataTable:lTrigger     := ::lTriggerAuxiliares
    ::AddEmpresaTable( oDataTable )
 
    oDataTable              := TDataTable()

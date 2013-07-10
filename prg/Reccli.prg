@@ -620,6 +620,14 @@ FUNCTION RecCli( oMenuItem, oWnd, aNumRec )
       HOTKEY   "E";
       LEVEL    ACC_DELE
 
+   DEFINE BTNSHELL RESOURCE "EDIT" OF oWndBrw ;
+      NOBORDER ;
+      ACTION   ( CompensarRecibos( oWndBrw ) );
+      TOOLTIP  "(C)ompensar";
+      BEGIN GROUP;
+      HOTKEY   "C";
+      LEVEL    ACC_EDIT
+
    DEFINE BTNSHELL oImp RESOURCE "IMP" GROUP OF oWndBrw ;
       NOBORDER ;
       MENU     This:Toggle() ;
@@ -4657,10 +4665,12 @@ Regenera indices
 Function rxRecCli( cPath, oMeter )
 
    local dbfFacCliT
+   local dbfFacCliG
 
    DEFAULT cPath  := cPatEmp()
 
-   if !lExistTable( cPath + "FACCLIP.DBF" )
+   if !lExistTable( cPath + "FacCliP.Dbf" ) .or. ;
+      !lExistTable( cPath + "FacCliG.Dbf" ) 
       mkRecCli( cPath, oMeter, .f. )
    end if
 
@@ -4758,11 +4768,41 @@ Function rxRecCli( cPath, oMeter )
       ( dbfFacCliT )->( ordCondSet("!Deleted() .and. Field->lCobrado", {|| !Deleted() .and. Field->lCobrado } ) )
       ( dbfFacCliT )->( ordCreate( cPath + "FACCLIP.CDX", "lCtaBnc", "Field->cEntEmp + Field->cSucEmp + Field->cDigEmp + Field->cCtaEmp", {|| Field->cEntEmp + Field->cSucEmp + Field->cDigEmp + Field->cCtaEmp } ) )
 
+      ( dbfFacCliT )->( ordCondSet( "!Deleted()", {|| !Deleted() } ) )
+      ( dbfFacCliT )->( ordCreate( cPath + "FACCLIP.CDX", "cNumMtr", "Field->cNumMtr", {|| Field->cNumMtr } ) )
+
       ( dbfFacCliT )->( dbCloseArea() )
 
    else
 
       msgStop( "Imposible abrir en modo exclusivo la tabla de recibos de clientes" )
+
+   end if
+
+   // Tabla de grupos de recibos-----------------------------------------------
+
+   fEraseIndex( cPath + "FacCliG.Cdx" )
+
+   dbUseArea( .t., cDriver(), cPath + "FacCliG.Dbf", cCheckArea( "FACCLIG", @dbfFacCliG ), .f. )
+
+   if !( dbfFacCliG )->( neterr() )
+
+      ( dbfFacCliG )->( __dbPack() )
+
+      ( dbfFacCliG )->( ordCondSet( "!Deleted()", {|| !Deleted() } ) )
+      ( dbfFacCliG )->( ordCreate( cPath + "FacCliG.Cdx", "cNumMtr", "cNumMtr", {|| Field->cNumMtr } ) )
+
+      ( dbfFacCliG )->( ordCondSet( "!Deleted()", {|| !Deleted() } ) )
+      ( dbfFacCliG )->( ordCreate( cPath + "FacCliG.Cdx", "cNumRec", "cNumRec", {|| Field->cNumRec } ) )
+
+      ( dbfFacCliG )->( ordCondSet( "!Deleted()", {|| !Deleted() } ) )
+      ( dbfFacCliG )->( ordCreate( cPath + "FacCliG.Cdx", "cNumRel", "cNumMtr + cNumRec", {|| Field->cNumMtr + Field->cNumRec } ) )
+
+      ( dbfFacCliG )->( dbCloseArea() )
+
+   else
+
+      msgStop( "Imposible abrir en modo exclusivo la tabla de grupos de recibos de clientes" )
 
    end if
 
@@ -4782,7 +4822,13 @@ FUNCTION mkRecCli( cPath, oMeter, lReindex )
 		sysrefresh()
    end if
 
-   dbCreate( cPath + "FACCLIP.DBF", aSqlStruct( aItmRecCli() ), cDriver() )
+   if !lExistTable( cPath + "FacCliP.Dbf" )
+      dbCreate( cPath + "FacCliP.Dbf", aSqlStruct( aItmRecCli() ), cDriver() )
+   end if 
+
+   if !lExistTable( cPath + "FacCliG.Dbf" )
+      dbCreate( cPath + "FacCliG.Dbf", aSqlStruct( aItmGruposRecibos() ), cDriver() )
+   end if
 
    if lReindex
       rxRecCli( cPath )
@@ -4857,8 +4903,20 @@ FUNCTION aItmRecCli()
    aAdd( aBasRecCli, {"cDigCli"     ,"C",  2, 0, "Dígito de control de la cuenta del cliente", "",    "", "( cDbfRec )" } )
    aAdd( aBasRecCli, {"cCtaCli"     ,"C", 10, 0, "Cuenta bancaria del cliente",  "",                  "", "( cDbfRec )" } )
    aAdd( aBasRecCli, {"lRemesa"     ,"L",  1, 0, "Lógico de incluido en una remesa",  "",             "", "( cDbfRec )" } )
+   aAdd( aBasRecCli, {"cNumMtr"     ,"C",  15, 0, "Numero del recibo matriz",   "",                   "", "( cDbfRec )" } )
 
-return ( aBasRecCli )
+Return ( aBasRecCli )
+
+//---------------------------------------------------------------------------//
+
+FUNCTION aItmGruposRecibos()
+
+   local aBasRecCli  := {}
+
+   aAdd( aBasRecCli, {"cNumMtr"     ,"C", 14, 0, "Número de recibo matriz",         "",                "", "( cDbfRec )" } )
+   aAdd( aBasRecCli, {"cNumRec"     ,"C", 14, 0, "Número de recibo relacionado",    "",                "", "( cDbfRec )" } )
+
+Return ( aBasRecCli )
 
 //---------------------------------------------------------------------------//
 
@@ -5440,9 +5498,7 @@ Static Function EndTrans( aTmp, aGet, dbfFacCliP, oBrw, oDlg, nMode )
 
       ( dbfFacCliP )->( dbAppend() )
 
-#ifndef __PDA__
       ( dbfFacCliP )->cTurRec    := cCurSesion()
-#endif
       ( dbfFacCliP )->cSerie     := aTmp[ _CSERIE  ]
       ( dbfFacCliP )->nNumFac    := aTmp[ _NNUMFAC ]
       ( dbfFacCliP )->cSufFac    := aTmp[ _CSUFFAC ]
@@ -5577,6 +5633,14 @@ Static Function EndTrans( aTmp, aGet, dbfFacCliP, oBrw, oDlg, nMode )
    oDlg:Enable()
 
    oDlg:End( IDOK )
+
+return .t.
+
+//--------------------------------------------------------------------------//
+
+Static Function CompensarRecibos()
+
+   msginfo( "CompensarRecibos" )
 
 return .t.
 
@@ -5779,7 +5843,19 @@ Static Function FilterRecibos( lCobrado )
 
    end with
 
-return ( nil )
+Return ( nil )
+
+//---------------------------------------------------------------------------//
+
+Function lReciboMatriz( cNumRec, dbfFacCliP ) 
+   
+   DEFAULT cNumRec         := ( dbfFacCliP )->cSerie + Str( ( dbfFacCliP )->nNumFac ) + ( dbfFacCliP )->cSufFac + Str( ( dbfFacCliP )->nNumRec ) + ( dbfFacCliP )->cTipRec
+
+   if dbSeekInOrd( cNumRec, "cNumMtr", dbfFacCliP )
+      Return .t.
+   end if 
+
+Return .f.
 
 //---------------------------------------------------------------------------//
 

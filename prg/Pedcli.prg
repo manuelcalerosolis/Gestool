@@ -2684,7 +2684,7 @@ STATIC FUNCTION EdtRec( aTmp, aGet, dbfPedCliT, oBrw, cCodCli, cCodArt, nMode, c
       REDEFINE BUTTON oBtnKit;
          ID       526 ;
 			OF 		oFld:aDialogs[1] ;
-         ACTION   ( ShowKit( dbfPedCliT, dbfTmpLin, oBtnKit, oBrwLin ) )
+         ACTION   ( ShowKit( dbfPedCliT, dbfTmpLin, oBrwLin ) )
 
       REDEFINE GET aGet[_CSERPED] VAR aTmp[_CSERPED] ;
          ID       90 ;
@@ -3292,7 +3292,7 @@ STATIC FUNCTION EdtRec( aTmp, aGet, dbfPedCliT, oBrw, cCodCli, cCodArt, nMode, c
       case nMode == APPD_MODE .and. !lRecogerUsuario() .and. !Empty( cCodArt )
          oDlg:bStart := {|| AppDeta( oBrwLin, bEdtDet, aTmp, nil, cCodArt ) }
       otherwise
-         oDlg:bStart := {|| ShowKit( dbfPedCliT, dbfTmpLin, oBtnKit, oBrwLin, .f., dbfTmpInc, cCodCli, dbfClient, oRieCli, oGetRnt, aGet, oSayGetRnt ) }
+         oDlg:bStart := {|| ShowKit( dbfPedCliT, dbfTmpLin, oBrwLin, .f., dbfTmpInc, cCodCli, dbfClient, oRieCli, oGetRnt, aGet, oSayGetRnt ) }
    end case
 
 	ACTIVATE DIALOG oDlg;

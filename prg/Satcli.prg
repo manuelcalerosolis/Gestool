@@ -2513,7 +2513,7 @@ STATIC FUNCTION EdtRec( aTmp, aGet, dbfSatCliT, oBrw, cCodCli, cCodArt, nMode )
       REDEFINE BUTTON oBtnKit;
          ID       526 ;
          OF       oFld:aDialogs[1] ;
-         ACTION   ( ShowKit( dbfSatCliT, dbfTmpLin, oBtnKit, oBrwLin ) )
+         ACTION   ( ShowKit( dbfSatCliT, dbfTmpLin, oBrwLin ) )
 
       REDEFINE GET aGet[_CSERSAT] VAR aTmp[_CSERSAT] ;
          ID       90 ;
@@ -2920,7 +2920,7 @@ STATIC FUNCTION EdtRec( aTmp, aGet, dbfSatCliT, oBrw, cCodCli, cCodArt, nMode )
          oDlg:bStart := {|| AppDeta( oBrwLin, bEdtDet, aTmp, nil, cCodArt ) }
 
       otherwise
-         oDlg:bStart := {|| ShowKit( dbfSatCliT, dbfTmpLin, oBtnKit, oBrwLin, .f., dbfTmpInc, cCodCli, dbfClient, oRieCli, oGetRnt, aGet, oSayGetRnt ) }
+         oDlg:bStart := {|| ShowKit( dbfSatCliT, dbfTmpLin, oBrwLin, .f., dbfTmpInc, cCodCli, dbfClient, oRieCli, oGetRnt, aGet, oSayGetRnt ) }
 
    end case
 

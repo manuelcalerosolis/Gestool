@@ -2568,7 +2568,7 @@ STATIC FUNCTION EdtRec( aTmp, aGet, dbfFacRecT, oBrw, cCodCli, cCodArt, nMode, a
       REDEFINE BUTTON oBtnKit;
          ID       526 ;
 			OF 		oFld:aDialogs[1] ;
-         ACTION   ( ShowKit( dbfFacRecT, dbfTmpLin, oBtnKit, oBrwLin, .t. ) )
+         ACTION   ( ShowKit( dbfFacRecT, dbfTmpLin, oBrwLin, .t. ) )
 
       /*
       Detalle___________________________________________________________________________
@@ -3586,7 +3586,7 @@ STATIC FUNCTION EdtRec( aTmp, aGet, dbfFacRecT, oBrw, cCodCli, cCodArt, nMode, a
          oDlg:bStart := {|| AppDeta( oBrwLin, bEdtDet, aTmp, .f., cCodArt ) }
 
       otherwise
-         oDlg:bStart := {|| ShowKit( dbfFacRecT, dbfTmpLin, oBtnKit, oBrwLin, .f., dbfTmpInc, aTmp[ _CCODCLI ], dbfClient, oRieCli, nil, aGet, oSayGetRnt ) }
+         oDlg:bStart := {|| ShowKit( dbfFacRecT, dbfTmpLin, oBrwLin, .f., dbfTmpInc, aTmp[ _CCODCLI ], dbfClient, oRieCli, nil, aGet, oSayGetRnt ) }
 
    end case
 

@@ -1,4 +1,3 @@
-
 #ifndef __PDA__
    #include "FiveWin.Ch"
    #include "Folder.ch"
@@ -2508,9 +2507,6 @@ STATIC FUNCTION EdtRec( aTmp, aGet, dbfFacCliT, oBrw, hHash, bValid, nMode )
       aTmp[ _NENTINI    ]  := RetFld( aTmp[ _CCODPAGO ], dbfFPago, "nEntIni" )
       aTmp[ _NPCTDTO    ]  := RetFld( aTmp[ _CCODPAGO ], dbfFPago, "nPctDto" )
 
-      logwrite( "len( aTmp[ _CSUFFAC ] )" )
-      logwrite( len( aTmp[ _CSUFFAC ] ) )
-
    case nMode == DUPL_MODE
 
       if !lCurSesion()
@@ -4399,12 +4395,8 @@ Static Function StartEdtRec( aTmp, aGet, oDlg, nMode, hHash, oBrwLin )
 
    if nMode == APPD_MODE
 
-      if lRecogerUsuario()
-
-         if !lGetUsuario( aGet[ _CCODUSR ], dbfUsr )
-            oDlg:End()
-         end if
-
+      if lRecogerUsuario() .and. !lGetUsuario( aGet[ _CCODUSR ], dbfUsr )
+         oDlg:End()
       end if 
 
       if IsHash( hHash )
@@ -4565,7 +4557,7 @@ FUNCTION nBrtLFacCli( uTmpLin, nDec, nRec, nVdv, cPorDiv )
 
    local nCalculo    := 0
 
-   DEFAULT nDec      := 2
+   DEFAULT nDec      := nDouDiv()
    DEFAULT nVdv      := 1
 
    nCalculo          := nTotUFacCli( uTmpLin, nDec, nVdv, cPorDiv )
@@ -4584,19 +4576,19 @@ FUNCTION nIvaUFacCli( dbfTmpLin, nDec, nVdv )
 
    local nCalculo
 
-   DEFAULT nDec   := 0
-   DEFAULT nVdv   := 1
+   DEFAULT nDec      := nDouDiv()
+   DEFAULT nVdv      := 1
 
-   nCalculo       := nTotUFacCli( dbfTmpLin, nDec, nVdv )
+   nCalculo          := nTotUFacCli( dbfTmpLin, nDec, nVdv )
 
    if !( dbfTmpLin )->lIvaLin
-      nCalculo    := nCalculo * ( dbfTmpLin )->nIva / 100
+      nCalculo       := nCalculo * ( dbfTmpLin )->nIva / 100
    else
-      nCalculo    -= nCalculo / ( 1 + ( dbfTmpLin )->nIva / 100 )
+      nCalculo       -= nCalculo / ( 1 + ( dbfTmpLin )->nIva / 100 )
    end if
 
    if nVdv != 0
-      nCalculo    := nCalculo / nVdv
+      nCalculo       := nCalculo / nVdv
    end if
 
 RETURN ( Round( nCalculo, nDec ) )
@@ -4610,7 +4602,7 @@ FUNCTION nReqUFacCli( dbfTmpLin, nDec, nVdv )
 
    local nCalculo
 
-   DEFAULT nDec   := 0
+   DEFAULT nDec   := nDouDiv()
    DEFAULT nVdv   := 1
 
    nCalculo       := nTotUFacCli( dbfTmpLin, nDec, nVdv )
@@ -4636,7 +4628,7 @@ FUNCTION nIncUFacCli( dbfTmpLin, nDec, nVdv )
 
    local nCalculo
 
-   DEFAULT nDec   := 0
+   DEFAULT nDec   := nDouDiv()
    DEFAULT nVdv   := 1
 
    nCalculo       := nTotUFacCli( dbfTmpLin, nDec, nVdv )
@@ -7076,42 +7068,42 @@ RETURN ( uTotLFacCli )
 FUNCTION nDtoAtpFacCli( uFacCliT, dbfFacCliL, nDec, nRou, nVdv, lPntVer, lImpTrn )
 
    local nCalculo
-   local nDtoAtp  := 0
+   local nDtoAtp     := 0
 
-   DEFAULT nDec   := 0
-   DEFAULT nRou   := 0
-   DEFAULT nVdv   := 1
-   DEFAULT lPntVer:= .f.
-   DEFAULT lImpTrn:= .f.
+   DEFAULT nDec      := nDouDiv()
+   DEFAULT nRou      := nRouDiv()
+   DEFAULT nVdv      := 1
+   DEFAULT lPntVer   := .f.
+   DEFAULT lImpTrn   := .f.
 
-   nCalculo       := nTotLFacCli( dbfFacCliL, nDec, nRou, nVdv, .t., lPntVer, lImpTrn )
+   nCalculo          := nTotLFacCli( dbfFacCliL, nDec, nRou, nVdv, .t., lPntVer, lImpTrn )
 
    if ( uFacCliT )->nSbrAtp <= 1 .and. ( uFacCliT )->nDtoAtp != 0
-      nDtoAtp     += Round( nCalculo * ( uFacCliT )->nDtoAtp / 100, nRou )
+      nDtoAtp        += Round( nCalculo * ( uFacCliT )->nDtoAtp / 100, nRou )
    end if
 
-   nCalculo       -= Round( nCalculo * ( uFacCliT )->nDtoEsp / 100, nRou )
+   nCalculo          -= Round( nCalculo * ( uFacCliT )->nDtoEsp / 100, nRou )
 
    if ( uFacCliT )->nSbrAtp == 2 .and. ( uFacCliT )->nDtoAtp != 0
-      nDtoAtp     += Round( nCalculo * ( uFacCliT )->nDtoAtp / 100, nRou )
+      nDtoAtp        += Round( nCalculo * ( uFacCliT )->nDtoAtp / 100, nRou )
    end if
 
-   nCalculo       -= Round( nCalculo * ( uFacCliT )->nDpp    / 100, nRou )
+   nCalculo          -= Round( nCalculo * ( uFacCliT )->nDpp    / 100, nRou )
 
    if ( uFacCliT )->nSbrAtp == 3 .and. ( uFacCliT )->nDtoAtp != 0
-      nDtoAtp     += Round( nCalculo * ( uFacCliT )->nDtoAtp / 100, nRou )
+      nDtoAtp        += Round( nCalculo * ( uFacCliT )->nDtoAtp / 100, nRou )
    end if
 
-   nCalculo       -= Round( nCalculo * ( uFacCliT )->nDtoUno / 100, nRou )
+   nCalculo          -= Round( nCalculo * ( uFacCliT )->nDtoUno / 100, nRou )
 
    if ( uFacCliT )->nSbrAtp == 4 .and. ( uFacCliT )->nDtoAtp != 0
-      nDtoAtp     += Round( nCalculo * ( uFacCliT )->nDtoAtp / 100, nRou )
+      nDtoAtp        += Round( nCalculo * ( uFacCliT )->nDtoAtp / 100, nRou )
    end if
 
-   nCalculo       -= Round( nCalculo * ( uFacCliT )->nDtoDos / 100, nRou )
+   nCalculo          -= Round( nCalculo * ( uFacCliT )->nDtoDos / 100, nRou )
 
    if ( uFacCliT )->nSbrAtp == 5 .and. ( uFacCliT )->nDtoAtp != 0
-      nDtoAtp     += Round( nCalculo * ( uFacCliT )->nDtoAtp / 100, nRou )
+      nDtoAtp        += Round( nCalculo * ( uFacCliT )->nDtoAtp / 100, nRou )
    end if
 
 RETURN ( nDtoAtp )
@@ -7126,7 +7118,7 @@ FUNCTION nNetLFacCli( cFacCliL, nDec, nRou, nVdv, lDto, lPntVer, lImpTrn, cPouDi
    local nCalculo
 
    DEFAULT cFacCliL  := dbfFacCliL
-   DEFAULT nDec      := 2
+   DEFAULT nDec      := nDouDiv()
    DEFAULT nVdv      := 1
    DEFAULT lDto      := .t.
    DEFAULT lPntVer   := .t.
@@ -13354,7 +13346,7 @@ Static Function pdaGenFacCli( oBrw, dbfFacCliT, dbfFacCliL )
    BEGIN SEQUENCE
 
    /*
-   Cargamos los valores iniciales con nTotFacCli-------------------------------
+   Cargamos los valores iniciales con -----------------------------------------
    */
 
    nTotFacCli( cCodFacCli, dbfFacCliT, dbfFacCliL )
@@ -15815,22 +15807,18 @@ FUNCTION nTotFacCli( cFactura, cFacCliT, cFacCliL, cIva, cDiv, cFacCliP, cAntCli
    DEFAULT lNeto           := .f.
 
    if Empty( Select( cFacCliT ) )
-      logwrite( "cFacCliT")
       Return ( 0 )
    end if
 
    if Empty( Select( cFacCliL ) )
-      logwrite( "cFacCliL")
       Return ( 0 )
    end if
 
    if Empty( Select( cIva ) )
-      logwrite( "cIva") 
       Return ( 0 )
    end if
 
    if Empty( Select( cDiv ) )
-      logwrite( "cDiv" )
       Return ( 0 )
    end if
 
@@ -15923,11 +15911,6 @@ FUNCTION nTotFacCli( cFactura, cFacCliT, cFacCliL, cIva, cDiv, cFacCliP, cAntCli
       lPntVer        := ( cFacCliT )->lOperPV
       bCondition     := {|| ( cFacCliL )->cSerie + Str( ( cFacCliL )->nNumFac ) + ( cFacCliL )->cSufFac == cFactura .and. !( cFacCliL )->( eof() ) }
       ( cFacCliL )->( dbSeek( cFactura ) )
-
-      logwrite( cFacCliL )
-      logwrite( ( cFacCliL )->( ordSetFocus() ) )
-      logwrite( ( cFacCliL )->( dbSeek( cFactura ) ) )
-
    end if
 
    /*
@@ -15941,27 +15924,9 @@ FUNCTION nTotFacCli( cFactura, cFacCliT, cFacCliL, cIva, cDiv, cFacCliP, cAntCli
    nRouDiv           := nRouDiv( cCodDiv, cDiv ) // Decimales de redondeo
    nDpvDiv           := nDpvDiv( cCodDiv, cDiv ) // Decimales de redondeo del punto verde
 
-   logwrite( "entro en el while")
-
-   if ( cFacCliL )->cSerie + Str( ( cFacCliL )->nNumFac ) + ( cFacCliL )->cSufFac == cFactura
-      logwrite( "es igual")
-   else 
-      logwrite( "no es igual")
-      logwrite( ( cFacCliL )->cSerie + Str( ( cFacCliL )->nNumFac ) + ( cFacCliL )->cSufFac )
-      logwrite( len( ( cFacCliL )->cSerie + Str( ( cFacCliL )->nNumFac ) + ( cFacCliL )->cSufFac ) )
-      logwrite( cFactura )
-      logwrite( len( cFactura ) )
-   end if 
-
-   logwrite( ( cFacCliL )->cSerie + Str( ( cFacCliL )->nNumFac ) + ( cFacCliL )->cSufFac == cFactura .and. !( cFacCliL )->( eof() ) )
-
    while Eval( bCondition )
 
-      logwrite( "dentro de la condicion" )
-
       if lValLine( cFacCliL )
-
-         logwrite( "despues de lValLine" + ( cFacCliL )->cRef )
 
          if ( lExcCnt == nil                                .or.;    // Entran todos
             ( lExcCnt .and. ( cFacCliL )->nCtlStk != 2 )    .or.;    // Articulos sin contadores
@@ -15993,9 +15958,6 @@ FUNCTION nTotFacCli( cFactura, cFacCliT, cFacCliL, cIva, cDiv, cFacCliP, cAntCli
             else
 
                nTotalArt         := nTotLFacCli( cFacCliL, nDouDiv, nRouDiv, , , .f., .f. )
-
-               logwrite( "nTotalArt")
-               logwrite( nTotalArt)
 
                nTotTrn           := nTrnLFacCli( cFacCliL, nDouDiv )
                nTotIvm           := nTotIFacCli( cFacCliL, nDouDiv, nRouDiv )
@@ -16398,9 +16360,8 @@ FUNCTION nTotFacCli( cFactura, cFacCliT, cFacCliL, cIva, cDiv, cFacCliP, cAntCli
       if _NPCTIVA3 != 0
          _NIMPIVA3   := if( _NPCTIVA3 != nil, Round( _NBASIVA3 / ( Div( 100, _NPCTIVA3 ) + 1 ), nRouDiv ), 0 )
       end if
-
+/*
       if lRecargo
-
          if _NPCTREQ1 != 0
             _NIMPREQ1   := if( _NPCTIVA1 != NIL, Round( _NBASIVA1 / ( Div( 100, _NPCTREQ1 ) + 1 ), nRouDiv ), 0 )
          end if
@@ -16410,34 +16371,34 @@ FUNCTION nTotFacCli( cFactura, cFacCliT, cFacCliL, cIva, cDiv, cFacCliP, cAntCli
          if _NPCTREQ3 != 0
             _NIMPREQ3   := if( _NPCTIVA3 != NIL, Round( _NBASIVA3 / ( Div( 100, _NPCTREQ3 ) + 1 ), nRouDiv ), 0 )
          end if
-
       end if
-
+*/
       _NBASIVA1      -= _NIMPIVA1
       _NBASIVA2      -= _NIMPIVA2
       _NBASIVA3      -= _NIMPIVA3
-
+/*
       _NBASIVA1      -= _NIMPREQ1
       _NBASIVA2      -= _NIMPREQ2
       _NBASIVA3      -= _NIMPREQ3
-
+*/
    else
 
       _NIMPIVA1      := if( _NPCTIVA1 != NIL, Round( _NBASIVA1 * _NPCTIVA1 / 100, nRouDiv ), 0 )
       _NIMPIVA2      := if( _NPCTIVA2 != NIL, Round( _NBASIVA2 * _NPCTIVA2 / 100, nRouDiv ), 0 )
       _NIMPIVA3      := if( _NPCTIVA3 != NIL, Round( _NBASIVA3 * _NPCTIVA3 / 100, nRouDiv ), 0 )
 
-      /*
-      Calculo de recargo
-      */
-
-      if lRecargo
-         _NIMPREQ1   := if( _NPCTIVA1 != NIL, Round( _NBASIVA1 * _NPCTREQ1 / 100, nRouDiv ), 0 )
-         _NIMPREQ2   := if( _NPCTIVA2 != NIL, Round( _NBASIVA2 * _NPCTREQ2 / 100, nRouDiv ), 0 )
-         _NIMPREQ3   := if( _NPCTIVA3 != NIL, Round( _NBASIVA3 * _NPCTREQ3 / 100, nRouDiv ), 0 )
-      end if
-
    end if
+
+   /*
+   Calculo de recargo----------------------------------------------------------
+   */
+
+   if lRecargo
+      _NIMPREQ1      := if( _NPCTIVA1 != NIL, Round( _NBASIVA1 * _NPCTREQ1 / 100, nRouDiv ), 0 )
+      _NIMPREQ2      := if( _NPCTIVA2 != NIL, Round( _NBASIVA2 * _NPCTREQ2 / 100, nRouDiv ), 0 )
+      _NIMPREQ3      := if( _NPCTIVA3 != NIL, Round( _NBASIVA3 * _NPCTREQ3 / 100, nRouDiv ), 0 )
+   end if
+
 
    /*
    Redondeo del neto de la factura---------------------------------------------
@@ -16580,9 +16541,6 @@ FUNCTION nTotFacCli( cFactura, cFacCliT, cFacCliL, cIva, cDiv, cFacCliP, cAntCli
       cPorDiv        := cPorDiv( cDivRet, cDiv )
    end if
 
-   logwrite( "salida" )
-   logwrite( nTotFac )
-
 RETURN ( if( lPic, Trans( if( lNeto, nTotNet, nTotFac ), cPorDiv ), if( lNeto, nTotNet, nTotFac ) ) )
 
 //--------------------------------------------------------------------------//
@@ -16613,7 +16571,7 @@ FUNCTION nCosLFacCli( dbfLine, nDec, nRec, nVdv, cPouDiv )
 
    local nCalculo       := 0
 
-   DEFAULT nDec         := 0
+   DEFAULT nDec         := nDouDiv()
    DEFAULT nRec         := 0
    DEFAULT nVdv         := 1
 
@@ -16641,7 +16599,7 @@ FUNCTION nPntLFacCli( dbfLin, nDec, nVdv )
    local nPntVer
 
    DEFAULT dbfLin    := dbfFacCliL
-   DEFAULT nDec      := 0
+   DEFAULT nDec      := nDouDiv()
    DEFAULT nVdv      := 1
 
    /*
@@ -16654,13 +16612,13 @@ RETURN ( Round( nPntVer, nDec ) )
 
 //---------------------------------------------------------------------------//
 
-FUNCTION nTotIFacCli( dbfLin, nDec, nRouDec, nVdv, cPorDiv )
+FUNCTION nTotIFacCli( dbfLin, nDec, nRou, nVdv, cPorDiv )
 
    local nCalculo    := 0
 
    DEFAULT dbfLin    := dbfFacCliL
-   DEFAULT nDec      := 0
-   DEFAULT nRouDec   := 0
+   DEFAULT nDec      := nDouDiv()
+   DEFAULT nRou      := nRouDiv()
    DEFAULT nVdv      := 1
 
    if !( dbfLin )->lTotLin
@@ -16681,7 +16639,7 @@ FUNCTION nTotIFacCli( dbfLin, nDec, nRouDec, nVdv, cPorDiv )
          nCalculo    *= NotCero( ( dbfLin )->nVolumen )
       end if
 
-      nCalculo       := Round( nCalculo / nVdv, nRouDec )
+      nCalculo       := Round( nCalculo / nVdv, nRou )
 
    end if
 
@@ -16694,8 +16652,8 @@ FUNCTION nTrnLFacCli( dbfLin, nDec, nRou, nVdv )
    local nImpTrn
 
    DEFAULT dbfLin    := dbfFacCliL
-   DEFAULT nDec      := 2
-   DEFAULT nRou      := 2
+   DEFAULT nDec      := nDouDiv()
+   DEFAULT nRou      := nRouDiv()
    DEFAULT nVdv      := 1
 
    /*
@@ -16721,7 +16679,7 @@ FUNCTION nImpUFacCli( uFacCliT, uFacCliL, nDec, nVdv, lIva )
    local lIvaInc
    local nCalculo
 
-   DEFAULT nDec   := 0
+   DEFAULT nDec   := nDouDiv()
    DEFAULT nVdv   := 1
    DEFAULT lIva   := .f.
 
@@ -16784,31 +16742,31 @@ FUNCTION nImpLFacCli( uFacCliT, uFacCliL, nDec, nRou, nVdv, lIva, lDto, lPntVer,
    local lIvaInc
    local nCalculo
 
-   DEFAULT nDec   := 0
-   DEFAULT nRou   := 0
-   DEFAULT nVdv   := 1
-   DEFAULT lIva   := .f.
-   DEFAULT lDto   := .t.
-   DEFAULT lPntVer:= .f.
-   DEFAULT lImpTrn:= .f.
+   DEFAULT nDec      := nDouDiv()
+   DEFAULT nRou      := nRouDiv()
+   DEFAULT nVdv      := 1
+   DEFAULT lIva      := .f.
+   DEFAULT lDto      := .t.
+   DEFAULT lPntVer   := .f.
+   DEFAULT lImpTrn   := .f.
 
-   nCalculo       := nTotLFacCli( uFacCliL, nDec, nRou, nVdv, .t., lPntVer, lImpTrn )
+   nCalculo          := nTotLFacCli( uFacCliL, nDec, nRou, nVdv, .t., lPntVer, lImpTrn )
 
    if IsArray( uFacCliT )
 
-      nCalculo    -= Round( nCalculo * uFacCliT[ _NDTOESP ]  / 100, nRou )
-      nCalculo    -= Round( nCalculo * uFacCliT[ _NDPP    ]  / 100, nRou )
-      nCalculo    -= Round( nCalculo * uFacCliT[ _NDTOUNO ]  / 100, nRou )
-      nCalculo    -= Round( nCalculo * uFacCliT[ _NDTODOS ]  / 100, nRou )
-      lIvaInc     := uFacCliT[ _LIVAINC ]
+      nCalculo       -= Round( nCalculo * uFacCliT[ _NDTOESP ]  / 100, nRou )
+      nCalculo       -= Round( nCalculo * uFacCliT[ _NDPP    ]  / 100, nRou )
+      nCalculo       -= Round( nCalculo * uFacCliT[ _NDTOUNO ]  / 100, nRou )
+      nCalculo       -= Round( nCalculo * uFacCliT[ _NDTODOS ]  / 100, nRou )
+      lIvaInc        := uFacCliT[ _LIVAINC ]
 
    else
 
-      nCalculo    -= Round( nCalculo * ( uFacCliT )->nDtoEsp / 100, nRou )
-      nCalculo    -= Round( nCalculo * ( uFacCliT )->nDpp    / 100, nRou )
-      nCalculo    -= Round( nCalculo * ( uFacCliT )->nDtoUno / 100, nRou )
-      nCalculo    -= Round( nCalculo * ( uFacCliT )->nDtoDos / 100, nRou )
-      lIvaInc     := ( uFacCliT )->lIvaInc
+      nCalculo       -= Round( nCalculo * ( uFacCliT )->nDtoEsp / 100, nRou )
+      nCalculo       -= Round( nCalculo * ( uFacCliT )->nDpp    / 100, nRou )
+      nCalculo       -= Round( nCalculo * ( uFacCliT )->nDtoUno / 100, nRou )
+      nCalculo       -= Round( nCalculo * ( uFacCliT )->nDtoDos / 100, nRou )
+      lIvaInc        := ( uFacCliT )->lIvaInc
 
    end if
 
@@ -16868,13 +16826,13 @@ FUNCTION nTrnUFacCli( dbfTmpLin, nDec, nVdv )
 
    local nCalculo
 
-   DEFAULT nDec   := 0
-   DEFAULT nVdv   := 1
+   DEFAULT nDec      := nDouDiv()
+   DEFAULT nVdv      := 1
 
-   nCalculo       := ( dbfTmpLin )->nImpTrn
+   nCalculo          := ( dbfTmpLin )->nImpTrn
 
    IF nVdv != 0
-      nCalculo    := nCalculo / nVdv
+      nCalculo       := nCalculo / nVdv
    END IF
 
 RETURN ( Round( nCalculo, nDec ) )
@@ -18181,7 +18139,7 @@ FUNCTION nDtoUFacCli( dbfTmpLin, nDec, nVdv )
 
    local nCalculo := ( dbfTmpLin )->nDtoDiv
 
-   DEFAULT nDec   := 0
+   DEFAULT nDec   := nDouDiv()
    DEFAULT nVdv   := 1
 
    IF nVdv != 0
