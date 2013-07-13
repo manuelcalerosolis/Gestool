@@ -93,35 +93,34 @@ memvar lEnd
 memvar nTotFac
 
 static oWndBrw
+
 static dbfDiv
-static oBandera
 static dbfClient
 static dbfCount
-
 static dbfFacCliT
 static dbfFacCliL
 static dbfFacCliP
-
 static dbfFacRecT
 static dbfFacRecL
-
 static dbfAntCliT
-
 static dbfFPago
 static dbfIva
 static dbfDoc
 static dbfFlt
 static dbfAgent
 static dbfCajT
-static oCtaRem
-static lPgdOld
-static nImpOld
 static dbfEmp
 static dbfBncCli
 static dbfBncEmp
 static dbfTurno
 
-static aDbfBmp
+static oCtaRem
+static oBandera
+
+static lPgdOld
+static nImpOld
+
+static aRecRel          := {}
 
 static oMenu
 
@@ -294,7 +293,6 @@ STATIC FUNCTION CloseFiles()
    if dbfCount != nil
       ( dbfCount )->( dbCloseArea() )
    end if
-
    if dbfBncCli != nil
       ( dbfBncCli )->( dbCloseArea() )
    end if
@@ -355,7 +353,7 @@ FUNCTION RecCli( oMenuItem, oWnd, aNumRec )
    DEFAULT  oWnd        := oWnd()
    DEFAULT  aNumRec     := Array( 1 )
 
-   nLevel            := nLevelUsr( oMenuItem )
+   nLevel               := nLevelUsr( oMenuItem )
    if nAnd( nLevel, 1 ) != 0
       msgStop( "Acceso no permitido." )
       return nil
@@ -461,8 +459,8 @@ FUNCTION RecCli( oMenuItem, oWnd, aNumRec )
       with object ( oWndBrw:AddXCol() )
          :cHeader          := "Número"
          :cSortOrder       := "nNumFac"
-         :bEditValue       := {|| ( dbfFacCliP )->cSerie + "/" + AllTrim( Str( ( dbfFacCliP )->nNumFac ) ) + "-" + Str( ( dbfFacCliP )->nNumRec ) }
-         :nWidth           := 70
+         :bEditValue       := {|| ( dbfFacCliP )->cSerie + "/" + AllTrim( Str( ( dbfFacCliP )->nNumFac ) ) + "-" + Alltrim( Str( ( dbfFacCliP )->nNumRec ) ) }
+         :nWidth           := 100
          :bLClickHeader    := {| nMRow, nMCol, nFlags, oCol | oWndBrw:ClickOnHeader( oCol ) }
       end with
 
@@ -822,6 +820,8 @@ FUNCTION EdtCob( aTmp, aGet, dbfFacCliP, oBrw, lRectificativa, bValid, nMode, aN
    local oBmpContabilidad
    local oBmpDevolucion
    local oBmpBancos
+   local oBmpAsociados
+   local oBrwRec
 
    if !IsLogic( lRectificativa )
       lRectificativa       := .f.
@@ -851,6 +851,8 @@ FUNCTION EdtCob( aTmp, aGet, dbfFacCliP, oBrw, lRectificativa, bValid, nMode, aN
       aTmp[ _CCODCAJ ]     := oUser():cCaja()
    end if
 
+   aRecRel                 := {}
+
    lOldDevuelto            := aTmp[ _LDEVUELTO ]
 
    lPgdOld                 := ( dbfFacCliP )->lCobrado .or. ( dbfFacCliP )->lRecDto
@@ -866,10 +868,12 @@ FUNCTION EdtCob( aTmp, aGet, dbfFacCliP, oBrw, lRectificativa, bValid, nMode, aN
          PROMPT   "&General",;
                   "Bancos",;
                   "Devolución",;
-                  "Contablidad" ;
+                  "Agrupados",;
+                  "Contablidad";
          DIALOGS  "Recibos_1",;
                   "Recibos_6",;
                   "Recibos_2",;
+                  "Recibos_5",;
                   "Recibos_3"
 
       REDEFINE BITMAP oBmpGeneral ;
@@ -942,17 +946,17 @@ FUNCTION EdtCob( aTmp, aGet, dbfFacCliP, oBrw, lRectificativa, bValid, nMode, aN
          WHEN     .f.;
          OF       oFld:aDialogs[ 1 ]
 
-      REDEFINE GET aGet[_CDESCRIP] VAR aTmp[_CDESCRIP] ;
+      REDEFINE GET aGet[ _CDESCRIP ] VAR aTmp[ _CDESCRIP ] ;
          ID       140 ;
          WHEN     ( nMode != ZOOM_MODE ) ;
          OF       oFld:aDialogs[ 1 ]
 
-		REDEFINE GET aGet[_CPGDOPOR] VAR aTmp[_CPGDOPOR] ;
+		REDEFINE GET aGet[ _CPGDOPOR ] VAR aTmp[ _CPGDOPOR ] ;
          ID       150 ;
          WHEN     ( nMode != ZOOM_MODE ) ;
          OF       oFld:aDialogs[ 1 ]
 
-      REDEFINE GET aGet[_CDOCPGO] VAR aTmp[_CDOCPGO] ;
+      REDEFINE GET aGet [_CDOCPGO ] VAR aTmp[ _CDOCPGO ] ;
          ID       155 ;
          WHEN     ( nMode != ZOOM_MODE ) ;
          OF       oFld:aDialogs[ 1 ]
@@ -1008,136 +1012,6 @@ FUNCTION EdtCob( aTmp, aGet, dbfFacCliP, oBrw, lRectificativa, bValid, nMode, aN
          ON HELP  aGet[ _DENTRADA ]:cText( Calendario( aTmp[ _DENTRADA ] ) ) ;
          BITMAP   "LUPA" ;
          OF       oFld:aDialogs[ 1 ]
-
-      /*
-      Segunda caja de diálogo--------------------------------------------------
-      */
-
-      REDEFINE BITMAP oBmpDevolucion ;
-         ID       500 ;
-         RESOURCE "money2_delete_48" ;
-         TRANSPARENT ;
-         OF       oFld:aDialogs[ 3 ]
-
-      REDEFINE CHECKBOX aGet[ _LDEVUELTO ] VAR aTmp[ _LDEVUELTO ];
-         ID       100 ;
-         WHEN     ( aTmp[ _LCOBRADO] .and. nMode != ZOOM_MODE ) ;
-         ON CHANGE( lValDevolucion( aGet, aTmp, .f. ) ) ;
-         OF       oFld:aDialogs[ 3 ]
-
-      REDEFINE GET aGet[ _DFECDEV ] VAR aTmp[ _DFECDEV ] ;
-         ID       110 ;
-         SPINNER ;
-         WHEN     ( aTmp[ _LCOBRADO] .and. nMode != ZOOM_MODE ) ;
-         OF       oFld:aDialogs[ 3 ]
-
-      REDEFINE GET aGet[ _CMOTDEV ] VAR aTmp[ _CMOTDEV ] ;
-         ID       120 ;
-         WHEN     ( aTmp[ _LCOBRADO ] .and. nMode != ZOOM_MODE ) ;
-         OF       oFld:aDialogs[ 3 ]
-
-      REDEFINE GET aGet[ _CRECDEV ] VAR aTmp[ _CRECDEV ] ;
-         ID       130 ;
-         WHEN     ( .f. ) ;
-         OF       oFld:aDialogs[ 3 ]
-
-      /*
-      Cuentas contables--------------------------------------------------------
-      */
-
-      REDEFINE BITMAP oBmpContabilidad ;
-         ID       500 ;
-         RESOURCE "Folder2_red_Alpha_48" ;
-         TRANSPARENT ;
-         OF       oFld:aDialogs[ 4 ]
-
-      REDEFINE CHECKBOX aGet[ _LCONPGO ] VAR aTmp[ _LCONPGO ];
-         ID       230 ;
-         WHEN     ( nMode != ZOOM_MODE ) ;
-         OF       oFld:aDialogs[ 4 ]
-
-      REDEFINE GET aGet[ _CCTAREC ] VAR aTmp[ _CCTAREC ] ;
-         ID       240 ;
-         PICTURE  ( Replicate( "X", nLenSubcuentaContaplus() ) ) ;
-         WHEN     ( nLenCuentaContaplus() != 0 .AND. nMode != ZOOM_MODE ) ;
-         BITMAP   "LUPA" ;
-         ON HELP  ( BrwChkSubCta( aGet[ _CCTAREC ], oGetSubCta ) ) ;
-         VALID    ( MkSubCta( aGet[ _CCTAREC ], nil, oGetSubCta ) ) ;
-         OF       oFld:aDialogs[ 4 ]
-
-		REDEFINE GET oGetSubCta VAR cGetSubCta ;
-         ID       241 ;
-			WHEN 		.F. ;
-         OF       oFld:aDialogs[ 4 ]
-
-      REDEFINE GET aGet[ _CCTAGAS ] VAR aTmp[ _CCTAGAS ] ;
-         ID       270 ;
-         PICTURE  ( Replicate( "X", nLenSubcuentaContaplus() ) ) ;
-         WHEN     ( nLenCuentaContaplus() != 0 .AND. nMode != ZOOM_MODE ) ;
-         BITMAP   "LUPA" ;
-         ON HELP  ( BrwChkSubCta( aGet[ _CCTAGAS ], oGetSubGas ) ) ;
-         VALID    ( MkSubCta( aGet[ _CCTAGAS ], nil, oGetSubGas ) );
-         OF       oFld:aDialogs[ 4 ]
-
-      REDEFINE GET oGetSubGas VAR cGetSubGas ;
-         ID       271 ;
-         WHEN     .f. ;
-         OF       oFld:aDialogs[ 4 ]
-
-      /*
-      Remesa___________________________________________________________________
-		*/
-
-      REDEFINE GET aGet[ _CCTAREM ] VAR aTmp[ _CCTAREM ] ;
-         ID       250 ;
-         WHEN     ( nMode != ZOOM_MODE ) ;
-         BITMAP   "LUPA" ;
-         VALID    ( oGetCtaRem:cText( oRetFld( aTmp[ _CCTAREM ], oCtaRem:oDbf ) ), .t. );
-         ON HELP  ( oCtaRem:Buscar( aGet[ _CCTAREM ] ) ) ;
-         OF       oFld:aDialogs[ 4 ]
-
-      REDEFINE GET oGetCtaRem VAR cGetCtaRem ;
-         ID       251 ;
-			COLOR 	CLR_GET ;
-			WHEN 		.F. ;
-         OF       oFld:aDialogs[ 4 ]
-
-      /*
-		Cajas____________________________________________________________________
-		*/
-
-      REDEFINE GET aGet[ _CCODCAJ ] VAR aTmp[ _CCODCAJ ];
-			WHEN 		( nMode != ZOOM_MODE ) ;
-         VALID    cCajas( aGet[ _CCODCAJ ], dbfCajT, oGetCaj ) ;
-         ID       280 ;
-         BITMAP   "LUPA" ;
-         ON HELP  ( BrwCajas( aGet[ _CCODCAJ ], oGetCaj ) ) ;
-         OF       oFld:aDialogs[ 4 ]
-
-      REDEFINE GET oGetCaj VAR cGetCaj ;
-         ID       281 ;
-         WHEN     .f. ;
-         OF       oFld:aDialogs[ 4 ]
-
-      REDEFINE CHECKBOX aGet[_LRECIMP] VAR aTmp[_LRECIMP];
-         ID       160 ;
-         WHEN     ( nMode != ZOOM_MODE .and. lUsrMaster() ) ;
-         OF       oFld:aDialogs[ 4 ]
-
-      REDEFINE GET aGet[ _DFECIMP ] VAR aTmp[ _DFECIMP ] ;
-         ID       161 ;
-         WHEN     ( nMode != ZOOM_MODE .and. lUsrMaster() ) ;
-         OF       oFld:aDialogs[ 4 ]
-
-      REDEFINE GET aGet[ _CHORIMP ] VAR aTmp[ _CHORIMP ] ;
-         ID       162 ;
-         WHEN     ( nMode != ZOOM_MODE .and. lUsrMaster() ) ;
-         OF       oFld:aDialogs[ 4 ]
-
-      REDEFINE CHECKBOX aGet[ _LESPERADOC ] VAR aTmp[ _LESPERADOC ];
-         ID       165 ;
-			WHEN 		( nMode != ZOOM_MODE ) ;
-         OF       oFld:aDialogs[ 4 ]
 
       /*
       Diálogo de bancos--------------------------------------------------------
@@ -1227,6 +1101,214 @@ FUNCTION EdtCob( aTmp, aGet, dbfFacCliP, oBrw, lRectificativa, bValid, nMode, aN
          OF       oFld:aDialogs[2]
 
       /*
+      Segunda caja de diálogo--------------------------------------------------
+      */
+
+      REDEFINE BITMAP oBmpDevolucion ;
+         ID       500 ;
+         RESOURCE "money2_delete_48" ;
+         TRANSPARENT ;
+         OF       oFld:aDialogs[ 3 ]
+
+      REDEFINE CHECKBOX aGet[ _LDEVUELTO ] VAR aTmp[ _LDEVUELTO ];
+         ID       100 ;
+         WHEN     ( aTmp[ _LCOBRADO] .and. nMode != ZOOM_MODE ) ;
+         ON CHANGE( lChangeDevolucion( aGet, aTmp, .f. ) ) ;
+         OF       oFld:aDialogs[ 3 ]
+
+      REDEFINE GET aGet[ _DFECDEV ] VAR aTmp[ _DFECDEV ] ;
+         ID       110 ;
+         SPINNER ;
+         WHEN     ( aTmp[ _LCOBRADO] .and. nMode != ZOOM_MODE ) ;
+         OF       oFld:aDialogs[ 3 ]
+
+      REDEFINE GET aGet[ _CMOTDEV ] VAR aTmp[ _CMOTDEV ] ;
+         ID       120 ;
+         WHEN     ( aTmp[ _LCOBRADO ] .and. nMode != ZOOM_MODE ) ;
+         OF       oFld:aDialogs[ 3 ]
+
+      REDEFINE GET aGet[ _CRECDEV ] VAR aTmp[ _CRECDEV ] ;
+         ID       130 ;
+         WHEN     ( .f. ) ;
+         OF       oFld:aDialogs[ 3 ]
+
+      /*
+      Agrupados----------------------------------------------------------------
+      */
+
+      REDEFINE BITMAP oBmpAsociados ;
+         ID       500 ;
+         RESOURCE "Folder2_red_Alpha_48" ;
+         TRANSPARENT ;
+         OF       oFld:aDialogs[ 4 ]
+
+      REDEFINE BUTTON ;
+         ID       100 ;
+         OF       oFld:aDialogs[ 4 ] ;
+         WHEN     ( !aTmp[ _LCOBRADO ] .and. nMode != ZOOM_MODE ) ;
+         ACTION   ( GetReciboCliente( oBrwRec ) )
+
+      REDEFINE BUTTON ;
+         ID       110 ;
+         OF       oFld:aDialogs[ 4 ] ;
+         WHEN     ( !aTmp[ _LCOBRADO ] .and. nMode != ZOOM_MODE ) ;
+         ACTION   ( MsgStop( "eliminar recibo") )
+
+      oBrwRec                  := IXBrowse():New( oFld:aDialogs[ 4 ] )
+
+      oBrwRec:bClrSel          := {|| { CLR_BLACK, Rgb( 229, 229, 229 ) } }
+      oBrwRec:bClrSelFocus     := {|| { CLR_BLACK, Rgb( 167, 205, 240 ) } }
+
+      oBrwRec:SetArray( aRecRel, , , .f. )
+
+      oBrwRec:nMarqueeStyle    := 6
+      oBrwRec:lRecordSelector  := .f.
+      oBrwRec:lHScroll         := .f.
+
+      oBrwRec:CreateFromResource( 200 )
+
+      with object ( oBrwRec:AddCol() )
+         :cHeader          := "Tipo"
+         :bStrData         := {|| if( len( aRecRel) > 0 .and. Right( aRecRel[ oBrwRec:nArrayAt ], 1 ) == "R", "Rectificativa", "" ) }
+         :nWidth           := 50
+      end with
+
+      with object ( oBrwRec:AddCol() )
+         :cHeader          := "Numero"
+         :bStrData         := {|| if( len( aRecRel) > 0, Left( aRecRel[ oBrwRec:nArrayAt ], 1 ) + "/" + Alltrim( SubStr( aRecRel[ oBrwRec:nArrayAt ], 2, 9 ) ) + "-" + Alltrim( SubStr( aRecRel[ oBrwRec:nArrayAt ], 13, 2 ) ), "" ) }
+         :nWidth           := 100
+      end with
+
+      with object ( oBrwRec:AddCol() )
+         :cHeader          := "Delegación"
+         :bStrData         := {|| if( len( aRecRel) > 0, SubStr( aRecRel[ oBrwRec:nArrayAt ], 11, 2 ), "" ) }
+         :nWidth           := 40
+         :lHide            := .t.
+      end with
+
+      with object ( oBrwRec:AddCol() )
+         :cHeader          := "Fecha"
+         :bStrData         := {|| if( len( aRecRel) > 0, RetFld( aRecRel[ oBrwRec:nArrayAt ], dbfFacCliP, "dPreCob", "nNumFac" ), "" ) }
+         :nWidth           := 80
+         :nDataStrAlign    := 3
+         :nHeadStrAlign    := 3
+      end with
+
+      with object ( oBrwRec:AddCol() )
+         :cHeader          := "Vencimiento"
+         :bStrData         := {|| if( len( aRecRel) > 0, RetFld( aRecRel[ oBrwRec:nArrayAt ], dbfFacCliP, "dFecVto", "nNumFac" ), "" ) }
+         :nWidth           := 80
+         :nDataStrAlign    := 3
+         :nHeadStrAlign    := 3
+      end with
+
+      with object ( oBrwRec:AddCol() )
+         :cHeader          := "Total"
+         :bStrData         := {|| if( len( aRecRel) > 0, Trans( nTotRecibo( aRecRel[ oBrwRec:nArrayAt ], dbfFacCliP, dbfDiv ), cPorDiv() ), "" ) }
+         :nWidth           := 90
+         :nDataStrAlign    := 1
+         :nHeadStrAlign    := 1
+      end with
+
+      /*
+      Cuentas contables--------------------------------------------------------
+      */
+
+      REDEFINE BITMAP oBmpContabilidad ;
+         ID       500 ;
+         RESOURCE "Folder2_red_Alpha_48" ;
+         TRANSPARENT ;
+         OF       oFld:aDialogs[ 5 ]
+
+      REDEFINE CHECKBOX aGet[ _LCONPGO ] VAR aTmp[ _LCONPGO ];
+         ID       230 ;
+         WHEN     ( nMode != ZOOM_MODE ) ;
+         OF       oFld:aDialogs[ 5 ]
+
+      REDEFINE GET aGet[ _CCTAREC ] VAR aTmp[ _CCTAREC ] ;
+         ID       240 ;
+         PICTURE  ( Replicate( "X", nLenSubcuentaContaplus() ) ) ;
+         WHEN     ( nLenCuentaContaplus() != 0 .AND. nMode != ZOOM_MODE ) ;
+         BITMAP   "LUPA" ;
+         ON HELP  ( BrwChkSubCta( aGet[ _CCTAREC ], oGetSubCta ) ) ;
+         VALID    ( MkSubCta( aGet[ _CCTAREC ], nil, oGetSubCta ) ) ;
+         OF       oFld:aDialogs[ 5 ]
+
+		REDEFINE GET oGetSubCta VAR cGetSubCta ;
+         ID       241 ;
+			WHEN 		.F. ;
+         OF       oFld:aDialogs[ 5 ]
+
+      REDEFINE GET aGet[ _CCTAGAS ] VAR aTmp[ _CCTAGAS ] ;
+         ID       270 ;
+         PICTURE  ( Replicate( "X", nLenSubcuentaContaplus() ) ) ;
+         WHEN     ( nLenCuentaContaplus() != 0 .AND. nMode != ZOOM_MODE ) ;
+         BITMAP   "LUPA" ;
+         ON HELP  ( BrwChkSubCta( aGet[ _CCTAGAS ], oGetSubGas ) ) ;
+         VALID    ( MkSubCta( aGet[ _CCTAGAS ], nil, oGetSubGas ) );
+         OF       oFld:aDialogs[ 5 ]
+
+      REDEFINE GET oGetSubGas VAR cGetSubGas ;
+         ID       271 ;
+         WHEN     .f. ;
+         OF       oFld:aDialogs[ 5 ]
+
+      /*
+      Remesa___________________________________________________________________
+		*/
+
+      REDEFINE GET aGet[ _CCTAREM ] VAR aTmp[ _CCTAREM ] ;
+         ID       250 ;
+         WHEN     ( nMode != ZOOM_MODE ) ;
+         BITMAP   "LUPA" ;
+         VALID    ( oGetCtaRem:cText( oRetFld( aTmp[ _CCTAREM ], oCtaRem:oDbf ) ), .t. );
+         ON HELP  ( oCtaRem:Buscar( aGet[ _CCTAREM ] ) ) ;
+         OF       oFld:aDialogs[ 5 ]
+
+      REDEFINE GET oGetCtaRem VAR cGetCtaRem ;
+         ID       251 ;
+			WHEN 		.F. ;
+         OF       oFld:aDialogs[ 5 ]
+
+      /*
+		Cajas____________________________________________________________________
+		*/
+
+      REDEFINE GET aGet[ _CCODCAJ ] VAR aTmp[ _CCODCAJ ];
+			WHEN 		( nMode != ZOOM_MODE ) ;
+         VALID    cCajas( aGet[ _CCODCAJ ], dbfCajT, oGetCaj ) ;
+         ID       280 ;
+         BITMAP   "LUPA" ;
+         ON HELP  ( BrwCajas( aGet[ _CCODCAJ ], oGetCaj ) ) ;
+         OF       oFld:aDialogs[ 5 ]
+
+      REDEFINE GET oGetCaj VAR cGetCaj ;
+         ID       281 ;
+         WHEN     .f. ;
+         OF       oFld:aDialogs[ 5 ]
+
+      REDEFINE CHECKBOX aGet[_LRECIMP] VAR aTmp[_LRECIMP];
+         ID       160 ;
+         WHEN     ( nMode != ZOOM_MODE .and. lUsrMaster() ) ;
+         OF       oFld:aDialogs[ 5 ]
+
+      REDEFINE GET aGet[ _DFECIMP ] VAR aTmp[ _DFECIMP ] ;
+         ID       161 ;
+         WHEN     ( nMode != ZOOM_MODE .and. lUsrMaster() ) ;
+         OF       oFld:aDialogs[ 5 ]
+
+      REDEFINE GET aGet[ _CHORIMP ] VAR aTmp[ _CHORIMP ] ;
+         ID       162 ;
+         WHEN     ( nMode != ZOOM_MODE .and. lUsrMaster() ) ;
+         OF       oFld:aDialogs[ 5 ]
+
+      REDEFINE CHECKBOX aGet[ _LESPERADOC ] VAR aTmp[ _LESPERADOC ];
+         ID       165 ;
+			WHEN 		( nMode != ZOOM_MODE ) ;
+         OF       oFld:aDialogs[ 5 ]
+
+
+      /*
       Botones__________________________________________________________________
 		*/
 
@@ -1247,21 +1329,15 @@ FUNCTION EdtCob( aTmp, aGet, dbfFacCliP, oBrw, lRectificativa, bValid, nMode, aN
 			OF 		oDlg ;
          ACTION   ( ChmHelp ("Recibos") )
 
-   if nMode != ZOOM_MODE
-      oDlg:AddFastKey( VK_F5, {|| EndTrans( aTmp, aGet, dbfFacCliP, oBrw, oDlg, nMode ) } )
-   end if
+      if nMode != ZOOM_MODE
+         oDlg:AddFastKey( VK_F5, {|| EndTrans( aTmp, aGet, dbfFacCliP, oBrw, oDlg, nMode ) } )
+      end if
 
-   oDlg:AddFastKey ( VK_F1, {|| ChmHelp ("Recibos") } )
+      oDlg:AddFastKey ( VK_F1, {|| ChmHelp ("Recibos") } )
 
-   oDlg:bStart := {|| lValDevolucion( aGet, aTmp, .t. ) }
+      oDlg:bStart := {|| StartEdtRec( aTmp, aGet ) }
 
-   ACTIVATE DIALOG oDlg CENTER ;
-         ON INIT  (  aGet[ _CDIVPGO ]:lValid(),;
-                     aGet[ _CCTAREC ]:lValid(),;
-                     aGet[ _CCTAGAS ]:lValid(),;
-                     aGet[ _CCTAREM ]:lValid(),;
-                     aGet[ _DPRECOB ]:SetFocus(),;
-                     EdtRecMenu( aTmp, oDlg ) )
+   ACTIVATE DIALOG oDlg CENTER ON INIT ( EdtRecMenu( aTmp, oDlg ) )
 
    EndEdtRecMenu()
 
@@ -1289,6 +1365,50 @@ RETURN ( oDlg:nResult == IDOK )
 
 //--------------------------------------------------------------------------//
 
+Static Function StartEdtRec( aTmp, aGet )
+
+   local nOrd
+   local nRec  
+   local cNum  
+
+   /*
+   Cargamos los recibos asociados----------------------------------------------
+   */
+
+   cNum        := ( dbfFacCliP )->cSerie + Str( ( dbfFacCliP )->nNumFac ) + ( dbfFacCliP )->cSufFac + Str( ( dbfFacCliP )->nNumRec ) + ( dbfFacCliP )->cTipRec
+   nRec        := ( dbfFacCliP )->( Recno() )
+   nOrd        := ( dbfFacCliP )->( OrdSetFocus( "cNumMtr" ) )
+
+   if ( dbfFacCliP )->( dbSeek( cNum ) )
+      while ( dbfFacCliP )->cNumMtr == cNum .and. !( dbfFacCliP )->( eof() )
+         aAdd( aRecRel, ( dbfFacCliP )->cNumMtr )
+         ( dbfFacCliP )->( dbSkip() )
+      end while
+   end if 
+  
+   ( dbfFacCliP )->( OrdSetFocus( nOrd ) )
+   ( dbfFacCliP )->( dbGoTo( nRec ) )
+
+   /*
+   Fin carga los recibos asociados---------------------------------------------
+   */
+
+   aGet[ _CDIVPGO ]:lValid()
+
+   aGet[ _CCTAREC ]:lValid()
+                     
+   aGet[ _CCTAGAS ]:lValid()
+   
+   aGet[ _CCTAREM ]:lValid()
+
+   aGet[ _DPRECOB ]:SetFocus()
+
+   lChangeDevolucion( aGet, aTmp, .t. ) 
+
+Return .t.
+
+//---------------------------------------------------------------------------//
+
 Static Function KillTrans( dbfFacCliP, oDlg )
 
    oDlg:End()
@@ -1310,6 +1430,45 @@ STATIC FUNCTION ChgState( lState )
    end if
 
 RETURN NIL
+
+//-------------------------------------------------------------------------//
+
+Static Function GetReciboCliente( oBrwRec )
+
+   local cNumRec  := ""
+
+   hGetStatus( dbfFacCliP )
+
+   if BrwRecCli( @cNumRec, dbfFacCliP, dbfClient, dbfDiv )
+
+      if Empty( cNumRec )
+         Return .f.
+      end if
+
+      if RetFld( cNumRec, dbfFacCliP, "lCobrado", "nNumFac" )
+         msgStop( "Recibo ya cobrado" )
+         Return .f.
+      end if 
+
+      if !Empty( RetFld( cNumRec, dbfFacCliP, "cNumMtz", "nNumFac" ) )
+         msgStop( "Recibo ya pertenece a otra matriz" )
+         Return .f.
+      end if 
+
+      if aScan( aRecRel, cNumRec ) != 0
+         msgStop( "Recibo ya incluido" )
+         Return .f.
+      end if
+
+      aAdd( aRecRel, cNumRec )
+
+      oBrwRec:Refresh()
+       
+   end if
+
+   hSetStatus()
+
+Return nil
 
 //-------------------------------------------------------------------------//
 
@@ -2004,7 +2163,7 @@ Function nTotRecCli( uFacCliP, cDbfDiv, cDivRet, lPic )
    DEFAULT cDivRet   := cDivEmp()
    DEFAULT lPic      := .f.
 
-   if ValType( uFacCliP ) == "O"
+   if IsObject( uFacCliP )
       cDivPgo        := uFacCliP:cDivPgo
       nTotRec        := uFacCliP:nImporte
    else
@@ -2741,13 +2900,15 @@ return {|| ImpPago( nil, nDev, cCod, cTit ) }
 
 //---------------------------------------------------------------------------//
 
-FUNCTION BrwRecCli( uGet, dbfFacCliP, dbfClient, dbfDiv, oBandera )
+FUNCTION BrwRecCli( uGet, dbfFacCliP, dbfClient, dbfDiv )
 
 	local oDlg
 	local oBrw
+   local nOrd        
 	local aGet1
 	local cGet1
-   local nOrd        := GetBrwOpt( "BrwRecCli" )
+   local cNumRec
+   local nRecAnt
 	local nOrdAnt
 	local oCbxOrd
    local cCbxOrd
@@ -2759,9 +2920,13 @@ FUNCTION BrwRecCli( uGet, dbfFacCliP, dbfClient, dbfDiv, oBandera )
                            "Fecha cobro",;
                            "Importe" }
 
+   nOrd              := GetBrwOpt( "BrwRecCli" )
    nOrd              := Min( Max( nOrd, 1 ), len( aCbxOrd ) )
    cCbxOrd           := aCbxOrd[ nOrd ]
 
+   cNumRec           := ""
+
+   nRecAnt           := ( dbfFacCliP )->( Recno() )
    nOrdAnt           := ( dbfFacCliP )->( OrdSetFocus( nOrd ) )
 
    ( dbfFacCliP )->( dbSetFilter( {|| !Field->lCobrado }, "!lCobrado" ) )
@@ -2770,19 +2935,19 @@ FUNCTION BrwRecCli( uGet, dbfFacCliP, dbfClient, dbfDiv, oBandera )
    DEFINE DIALOG oDlg RESOURCE "HELPENTRY" TITLE "Recibos de clientes"
 
 		REDEFINE GET aGet1 VAR cGet1;
-			ID 		104 ;
-			PICTURE	"@!" ;
-         ON CHANGE( AutoSeek( nKey, nFlags, Self, oBrw, dbfFacCliP, .f. ) );
-         VALID    ( OrdClearScope( oBrw, dbfFacCliP ) );
-         BITMAP   "FIND" ;
-         OF       oDlg
+			ID          104 ;
+			PICTURE     "@!" ;
+         ON CHANGE   ( AutoSeek( nKey, nFlags, Self, oBrw, dbfFacCliP, .f. ) );
+         VALID       ( OrdClearScope( oBrw, dbfFacCliP ) );
+         BITMAP      "FIND" ;
+         OF          oDlg
 
 		REDEFINE COMBOBOX oCbxOrd ;
-			VAR 		cCbxOrd ;
-			ID 		102 ;
-         ITEMS    aCbxOrd ;
-         ON CHANGE( ( dbfFacCliP )->( OrdSetFocus( oCbxOrd:nAt ) ), oBrw:Refresh(), aGet1:SetFocus() ) ;
-         OF       oDlg
+			VAR         cCbxOrd ;
+			ID          102 ;
+         ITEMS       aCbxOrd ;
+         ON CHANGE   ( ( dbfFacCliP )->( OrdSetFocus( oCbxOrd:nAt ) ), oBrw:Refresh(), aGet1:SetFocus() ) ;
+         OF          oDlg
 
       oBrw                    := IXBrowse():New( oDlg )
 
@@ -2814,9 +2979,21 @@ FUNCTION BrwRecCli( uGet, dbfFacCliP, dbfClient, dbfDiv, oBandera )
       end with
 
       with object ( oBrw:AddCol() )
+         :cHeader             := "Tipo"
+         :bEditValue          := {|| if( !Empty( ( dbfFacCliP )->cTipRec ), "Rectificativa", "" ) }
+         :nWidth              := 60
+      end with
+
+      with object ( oBrw:AddCol() )
          :cHeader             := "Número"
-         :bEditValue          := {|| ( dbfFacCliP )->cSerie + "/" + AllTrim( Str( ( dbfFacCliP )->nNumFac ) ) + "/" + ( dbfFacCliP )->cSufFac + "-" + Str( ( dbfFacCliP )->nNumRec ) }
+         :bEditValue          := {|| ( dbfFacCliP )->cSerie + "/" + AllTrim( Str( ( dbfFacCliP )->nNumFac ) ) + "-" + Alltrim( Str( ( dbfFacCliP )->nNumRec ) ) }
          :nWidth              := 95
+      end with
+
+      with object ( oBrw:AddCol() )
+         :cHeader             := "Delegación"
+         :bEditValue          := {|| ( dbfFacCliP )->cSufFac }
+         :nWidth              := 40
       end with
 
       with object ( oBrw:AddCol() )
@@ -2828,13 +3005,13 @@ FUNCTION BrwRecCli( uGet, dbfFacCliP, dbfClient, dbfDiv, oBandera )
       with object ( oBrw:AddCol() )
          :cHeader             := "Nombre cliente"
          :bEditValue          := {|| ( dbfFacCliP )->cNomCli }
-         :nWidth              := 170
+         :nWidth              := 280
       end with
 
       with object ( oBrw:AddCol() )
          :cHeader             := "Importe " + cDivEmp()
          :bEditValue          := {|| nTotRecCli( dbfFacCliP, dbfDiv, cDivEmp(), .t. ) }
-         :nWidth              := 85
+         :nWidth              := 100
          :nDataStrAlign       := 1
          :nHeadStrAlign       := 1
       end with
@@ -2905,13 +3082,20 @@ FUNCTION BrwRecCli( uGet, dbfFacCliP, dbfClient, dbfDiv, oBandera )
 
    if oDlg:nResult == IDOK
 
-      if ValType( uGet ) == "O"
-         uGet:cText( ( dbfFacCliP )->cSerie + Str( ( dbfFacCliP )->nNumFac ) + ( dbfFacCliP )->cSufFac + Str( ( dbfFacCliP )->nNumRec ) )
-         uGet:lValid()
-         uGet:SetFocus()
-      elseif ValType( uGet ) == "C"
-         uGet     := ( dbfFacCliP )->cSerie + Str( ( dbfFacCliP )->nNumFac ) + ( dbfFacCliP )->cSufFac + Str( ( dbfFacCliP )->nNumRec )
-      end if
+      cNumRec     := ( dbfFacCliP )->cSerie + Str( ( dbfFacCliP )->nNumFac ) + ( dbfFacCliP )->cSufFac + Str( ( dbfFacCliP )->nNumRec ) + ( dbfFacCliP )->cTipRec
+
+      do case
+         case IsObject( uGet )
+
+            uGet:cText( cNumRec )
+            uGet:lValid()
+            uGet:SetFocus()
+         
+         case IsChar( uGet )
+
+            uGet  := cNumRec
+
+      end case 
 
    end if
 
@@ -2924,6 +3108,7 @@ FUNCTION BrwRecCli( uGet, dbfFacCliP, dbfClient, dbfDiv, oBandera )
    ( dbfFacCliP )->( dbClearFilter() )
 
    ( dbfFacCliP )->( OrdSetFocus( nOrdAnt ) )
+   ( dbfFacCliP )->( dbGoTo( nRecAnt ) )
 
    /*
    Guardamos los datos del browse----------------------------------------------
@@ -4335,6 +4520,20 @@ Return ( nTotFacRec( cNumRec, cFacRecT, cFacRecL, cDbfIva, cDbfDiv, nil, nil, .f
 
 //---------------------------------------------------------------------------//
 
+function nTotRecibo( cNumRec, dbfFacCliP, dbfDiv )
+
+   local nTotRec     := 0
+
+   DEFAULT cNumRec   := ( dbfFacCliP )->cSerie + Str( ( dbfFacCliP )->nNumFac ) + ( dbfFacCliP )->cSufFac + Str( ( dbfFacCliP )->nNumRec ) + ( dbfFacCliP )->cTipRec
+   
+   if hSeekInOrd( { "Value" => cNumRec, "Order" => "nNumFac", "Alias" => dbfFacCliP } )
+      nTotRec        := nTotRecCli( dbfFacCliP, dbfDiv )
+   end if
+
+Return ( nTotRec )
+
+//---------------------------------------------------------------------------//
+
 #else
 
 //----------------------------------------------------------------------------//
@@ -4923,6 +5122,7 @@ Return ( aBasRecCli )
 /*
 Genera los recibos de una factura
 */
+
 FUNCTION GenPgoFacCli( cNumFac, dbfFacCliT, dbfFacCliL, dbfFacCliP, dbfAntCliT, dbfCli, dbfFPago, dbfDiv, dbfIva, nMode, lMessage )
 
    local cCodPgo
@@ -5236,7 +5436,7 @@ Return .t.
 
 //---------------------------------------------------------------------------//
 
-Function lValDevolucion( aGet, aTmp, lIntro )
+Function lChangeDevolucion( aGet, aTmp, lIntro )
 
    DEFAULT lIntro := .f.
 
@@ -5423,62 +5623,48 @@ Static Function EndTrans( aTmp, aGet, dbfFacCliP, oBrw, oDlg, nMode )
 
    local nImp
    local nCon
-   local nRec        := ( dbfFacCliP )->( Recno() )
+   local aTabla
+   local nOrdAnt
+   local nRec        
    local lImpNeg     := ( dbfFacCliP )->nImporte < 0
    local nImpFld     := abs( ( dbfFacCliP )->nImporte )
    local nImpTmp     := abs( aTmp[ _NIMPORTE ] )
    local cNumFac     := aTmp[ _CSERIE ] + Str( aTmp[ _NNUMFAC ] ) + aTmp[ _CSUFFAC ]
    local cNumRec     := aTmp[ _CSERIE ] + Str( aTmp[ _NNUMFAC ] ) + aTmp[ _CSUFFAC ] + Str( aTmp[ _NNUMREC ] )
    local lDevuelto   := aTmp[ _LDEVUELTO ]
-   local aTabla
-   local nOrdAnt
+
+   /*
+   Condiciones antes de grabar-------------------------------------------------
+   */
 
    if !aGet[ _NIMPCOB ]:lValid()
       return .f.
    end if
 
-   /*
-   El importe no puede ser mayor q el importe anterior-------------------------
-   */
-
    if nImpTmp > nImpFld
+
+      msgAlert( nImpTmp, "nImpTmp" )
+      msgAlert( nImpFld, "nImpFld" )
+
       msgStop( "El importe no puede ser superior al actual." )
       return nil
    end if
 
    if !lExisteTurno( aGet[ _CTURREC ]:VarGet(), dbfTurno )
-
       msgStop( "La sesión introducida no existe." )
-
       aGet[ _CTURREC ]:SetFocus()
-
       return nil
-
    end if
 
    oDlg:Disable()
 
    /*
-   Suma el riesgo en situacion anterior----------------------------------------
-   */
-
-   if !Empty( dbfClient )
-
-      if lPgdOld
-         AddRiesgo( nImpOld, aTmp[ _CCODCLI ], dbfClient )
-      end if
-
-      if ( aTmp[ _LCOBRADO ] .or. aTmp[ _LRECDTO ] )
-         DelRiesgo( aTmp[ _NIMPORTE ], aTmp[ _CCODCLI ], dbfClient )
-      end if
-
-   end if
-
-   /*
    Comprobamos q los importes sean distintos-----------------------------------
    */
 
-   if nImpFld != nImpTmp
+   if ( nImpFld != nImpTmp ) .and. Empty( aRecRel )
+   
+      nRec                       := ( dbfFacCliP )->( Recno() )
 
       /*
       El importe ha cambiado por tanto debemos de hacer un nuevo recibo por la diferencia
@@ -5487,7 +5673,7 @@ Static Function EndTrans( aTmp, aGet, dbfFacCliP, oBrw, oDlg, nMode )
       nImp                       := ( nImpFld - nImpTmp ) * if( lImpNeg, - 1 , 1 )
 
       /*
-      Obtnenemos el nuevo numero del contador
+      Obtnenemos el nuevo numero del contador----------------------------------
       */
 
       nCon                       := nNewReciboCliente( aTmp[ _CSERIE ] + Str( aTmp[ _NNUMFAC ] ) + aTmp[ _CSUFFAC ], aTmp[ _CTIPREC ], dbfFacCliP )
@@ -5521,16 +5707,16 @@ Static Function EndTrans( aTmp, aGet, dbfFacCliP, oBrw, oDlg, nMode )
 
       ( dbfFacCliP )->( dbUnLock() )
 
-   end if
+      ( dbfFacCliP )->( dbGoTo( nRec ) )
 
-   ( dbfFacCliP )->( dbGoTo( nRec ) )
+   end if
 
    /*
    Estado de la contabilizacion------------------------------------------------
    */
 
    if ( lOldDevuelto != lDevuelto )
-      aTmp[ _LCONPGO ]              := .f.
+      aTmp[ _LCONPGO ]           := .f.
    end if
 
    /*
@@ -5540,12 +5726,39 @@ Static Function EndTrans( aTmp, aGet, dbfFacCliP, oBrw, oDlg, nMode )
    WinGather( aTmp, aGet, dbfFacCliP, oBrw, nMode )
 
    /*
+   Anotamos los recibos asociados----------------------------------------------
+   */
+
+   if !Empty( aRecRel )
+
+      nRec                          := ( dbfFacCliP )->( Recno() )
+      nOrdAnt                       := ( dbfFacCliP )->( OrdSetFocus( "nNumFac" ) )
+
+      for each cNumRec in aRecRel
+
+         ? cNumRec
+
+         if ( dbfFacCliP )->( dbSeek( cNumRec ) ) .and. dbDialogLock( dbfFacCliP )
+            
+            ? aTmp[ _CSERIE ] + Str( aTmp[ _NNUMFAC ] ) + aTmp[ _CSUFFAC ] + aTmp[ _CTIPREC ]
+
+            ( dbfFacCliP )->cNumMtr := aTmp[ _CSERIE ] + Str( aTmp[ _NNUMFAC ] ) + aTmp[ _CSUFFAC ] + aTmp[ _CTIPREC ]
+            ( dbfFacCliP )->( dbUnLock() )
+         end if 
+      next 
+
+      ( dbfFacCliP )->( dbGoTo( nRec ) )
+      ( dbfFacCliP )->( OrdSetFocus( nOrdAnt ) )
+
+   end if 
+
+   /*
    Si es Devuelto creamos el tiket nuevo---------------------------------------
    */
 
-   nRec     := ( dbfFacCliP )->( Recno() )
-
    if lOldDevuelto != lDevuelto
+
+      nRec                             := ( dbfFacCliP )->( Recno() )
 
       if lDevuelto
 
@@ -5604,9 +5817,9 @@ Static Function EndTrans( aTmp, aGet, dbfFacCliP, oBrw, oDlg, nMode )
 
       end if
 
-   end if
+      ( dbfFacCliP )->( dbGoTo( nRec ) )
 
-   ( dbfFacCliP )->( dbGoTo( nRec ) )
+   end if
 
    /*
    Comprobamos el estado de la factura-----------------------------------------

@@ -1631,7 +1631,7 @@ FUNCTION AlbCli( oMenuItem, oWnd, hHash )
          :nHeadStrAlign    := 1
       end with
 
-      with object ( oWndBrw:AddXCol() )
+      with object ( oWndBrw:AddXCol() )   
          :cHeader          := "Fecha"
          :cSortOrder       := "dFecAlb"
          :bEditValue       := {|| Dtoc( ( dbfAlbCliT )->dFecAlb ) }
@@ -10592,7 +10592,7 @@ Static Function DataReport( oFr )
    oFr:SetFieldAliases( "SAT", cItemsToReport( aItmSatCli() ) )
 
    oFr:SetMasterDetail( "Albaranes", "Lineas de albaranes",             {|| ( dbfAlbCliT )->cSerAlb + Str( ( dbfAlbCliT )->nNumAlb ) + ( dbfAlbCliT )->cSufAlb } )
-   oFr:SetMasterDetail( "Albaranes", "Series de ineas de albaranes",    {|| ( dbfAlbCliT )->cSerAlb + Str( ( dbfAlbCliT )->nNumAlb ) + ( dbfAlbCliT )->cSufAlb } )
+   oFr:SetMasterDetail( "Albaranes", "Series de lineas de albaranes",   {|| ( dbfAlbCliT )->cSerAlb + Str( ( dbfAlbCliT )->nNumAlb ) + ( dbfAlbCliT )->cSufAlb } )
    oFr:SetMasterDetail( "Albaranes", "Incidencias de albaranes",        {|| ( dbfAlbCliT )->cSerAlb + Str( ( dbfAlbCliT )->nNumAlb ) + ( dbfAlbCliT )->cSufAlb } )
    oFr:SetMasterDetail( "Albaranes", "Documentos de albaranes",         {|| ( dbfAlbCliT )->cSerAlb + Str( ( dbfAlbCliT )->nNumAlb ) + ( dbfAlbCliT )->cSufAlb } )
    oFr:SetMasterDetail( "Albaranes", "Entregas de albaranes",           {|| ( dbfAlbCliT )->cSerAlb + Str( ( dbfAlbCliT )->nNumAlb ) + ( dbfAlbCliT )->cSufAlb } )
@@ -10722,6 +10722,8 @@ Static Function VariableReport( oFr )
 
    oFr:AddVariable(     "Lineas de albaranes",   "Fecha en juliano 6 meses",            "CallHbFunc('dJulianoAlbCli')" )
    oFr:AddVariable(     "Lineas de albaranes",   "Fecha en juliano 8 meses",            "CallHbFunc('dJulianoAlbAnio')" )
+
+   oFr:AddVariable(     "Lineas de albaranes",   "Dirección del SAT",                   "CallHbFunc('cDireccionSAT')" )
 
 Return nil
 
@@ -18489,3 +18491,20 @@ Return nil
 
 //---------------------------------------------------------------------------//
 
+Function cDireccionSAT()
+
+   local dbfObras
+   local cDireccion  := ""
+
+   USE ( cPatCli() + "ObrasT.Dbf" ) NEW VIA ( cDriver() ) SHARED ALIAS ( cCheckArea( "Obras", @dbfObras ) )
+   SET ADSINDEX TO ( cPatCli() + "ObrasT.Cdx" ) ADDITIVE
+
+   if ( dbfObras )->( dbSeek( ( dbfSatCliT )->cCodCli + ( dbfSatCliT )->cCodObr ) )
+      cDireccion     := ( dbfObras )->cNomObr
+   end if
+
+   CLOSE ( dbfObras )
+
+Return ( cDireccion )
+
+//---------------------------------------------------------------------------//

@@ -12163,15 +12163,11 @@ function SavTik2Fac( aTik, aGet, nMode, nSave, nTotal )
 
    end while
 
-   //oStock:FacCli( ( dbfFacCliT )->cSerie + Str( ( dbfFacCliT )->nNumFac ) + ( dbfFacCliT )->cSufFac, ( dbfFacCliT )->cCodAlm, .f., .f., .t. )
-
    /*
    Rollback de los pagos-------------------------------------------------------
    */
 
    while ( dbfFacCliP )->( dbSeek( ( dbfFacCliT )->cSerie + Str( ( dbfFacCliT )->nNumFac ) + ( dbfFacCliT )->cSufFac ) ) .and. !( dbfFacCliP )->( eof() )
-
-      // addRiesgo( ( dbfFacCliP )->nImporte, cCliTik, dbfClient )
 
       if dbLock( dbfFacCliP )
          ( dbfFacCliP )->( dbDelete() )
@@ -14047,10 +14043,6 @@ Method Process() CLASS TTiketsClientesSenderReciver
 
                      dbPass( tmpTikT, dbfTikT, .t. )
                      ::oSender:SetText( "Añadido : " + ( dbfTikT )->cSerTik + "/" + AllTrim( ( dbfTikT )->cNumTik ) + "/" + AllTrim( ( dbfTikT )->cSufTik ) + "; " + Dtoc( ( dbfTikT )->dFecTik ) + "; " + AllTrim( ( dbfTikT )->cCliTik ) + "; " + ( dbfTikT )->cNomTik )
-
-                     //nTotTik := nTotTik( ( tmpTikT )->cSerTik + ( tmpTikT )->cNumTik + ( tmpTikT )->cSufTik, tmpTikT, tmpTikL, dbfDiv )
-
-                     // AddRiesgo( nTotTik, ( tmpTikT )->cCliTik, dbfClient )
 
                   end if
 

@@ -1,16 +1,11 @@
-#ifndef __PDA__
-   #include "FiveWin.Ch"
-   #include "Folder.ch"
-   #include "Report.ch"
-   #include "Print.ch"
-   #include "TWMail.ch"
-   #include "FastRepH.ch"
-   #include "Xbrowse.ch"
-#else
-   #include "FWCE.ch"
-   REQUEST DBFCDX
-#endif
-   #include "Factu.ch"
+#include "FiveWin.Ch"
+#include "Folder.ch"
+#include "Report.ch"
+#include "Print.ch"
+#include "TWMail.ch"
+#include "FastRepH.ch"
+#include "Xbrowse.ch"
+#include "Factu.ch"
 
 #define OFN_PATHMUSTEXIST    0x00000800
 #define OFN_NOCHANGEDIR      0x00000008
@@ -23,9 +18,6 @@
 
 #define CLR_BAR              14197607
 #define CLR_KIT              Rgb( 239, 239, 239 )
-
-#define impuestos_DESG            1
-#define impuestos_INCL            2
 
 #define _CSERIE              1      //,"C",  1, 0, "Serie de la factura A o B" },;
 #define _NNUMFAC             2      //,"N",  9, 0, "Numero de la factura" },;
@@ -4758,7 +4750,7 @@ STATIC FUNCTION EdtDet( aTmp, aGet, dbfFacCliL, oBrw, lTotLin, cCodArtEnt, nMode
       REDEFINE GET aGet[ _CREF ] VAR cCodArt;
          ID       100 ;
          WHEN     ( nMode != ZOOM_MODE ) ;
-         VALID    ( loaArt( aGet, bmpImage, aTmp, aTmpFac, oStkAct, oSayPr1, oSayPr2, oSayVp1, oSayVp2, nMode, .f. ) );
+         VALID    ( loaArt( aGet, bmpImage, aTmp, aTmpFac, oStkAct, oSayPr1, oSayPr2, oSayVp1, oSayVp2, nMode, .t. ) );
          BITMAP   "LUPA" ;
          ON HELP  ( BrwArticulo( aGet[ _CREF ], aGet[ _CDETALLE ] , , , , aGet[ _CLOTE ], aTmp[ _CCODPR1 ], aTmp[ _CCODPR2 ], aGet[ _CVALPR1 ], aGet[ _CVALPR2 ], aGet[ _DFECCAD ] ) );
          OF       oFld:aDialogs[1]
@@ -10965,8 +10957,6 @@ Return ( nEstado )
 
 //--------------------------------------------------------------------------//
 
-#ifndef __PDA__
-
 FUNCTION BrwFacCli( oGet, oIva )
 
    local oDlg
@@ -10982,10 +10972,10 @@ FUNCTION BrwFacCli( oGet, oIva )
       Return .f.
    end if
 
-   aCbxOrd           := { "Número", "Fecha", "Cliente", "Nombre" }
-   nOrd              := GetBrwOpt( "BrwFacCli" )
-   nOrd              := Min( Max( nOrd, 1 ), len( aCbxOrd ) )
-   cCbxOrd           := aCbxOrd[ nOrd ]
+   aCbxOrd        := { "Número", "Fecha", "Cliente", "Nombre" }
+   nOrd           := GetBrwOpt( "BrwFacCli" )
+   nOrd           := Min( Max( nOrd, 1 ), len( aCbxOrd ) )
+   cCbxOrd        := aCbxOrd[ nOrd ]
 
    DEFINE DIALOG oDlg RESOURCE "HELPENTRY" TITLE "Facturas de clientes"
 
@@ -11019,9 +11009,15 @@ FUNCTION BrwFacCli( oGet, oIva )
       with object ( oBrw:AddCol() )
          :cHeader          := "Número"
          :cSortOrder       := "nNumFac"
-         :bEditValue       := {|| ( dbfFacCliT )->cSerie + "/" + RTrim( Str( ( dbfFacCliT )->nNumFac ) ) + "/" + ( dbfFacCliT )->cSufFac }
+         :bEditValue       := {|| ( dbfFacCliT )->cSerie + "/" + RTrim( Str( ( dbfFacCliT )->nNumFac ) ) }
          :nWidth           := 80
          :bLClickHeader    := {| nMRow, nMCol, nFlags, oCol | oCbxOrd:Set( oCol:cHeader ) }
+      end with
+
+      with object ( oBrw:AddCol() )
+         :cHeader          := "Delegación"
+         :bEditValue       := {|| ( dbfFacCliT )->cSufFac }
+         :nWidth           := 40
       end with
 
       with object ( oBrw:AddCol() )
@@ -11044,14 +11040,14 @@ FUNCTION BrwFacCli( oGet, oIva )
          :cHeader          := "Nombre"
          :cSortOrder       := "cNomCli"
          :bEditValue       := {|| Rtrim( ( dbfFacCliT )->cNomCli ) }
-         :nWidth           := 180
+         :nWidth           := 300
          :bLClickHeader    := {| nMRow, nMCol, nFlags, oCol | oCbxOrd:Set( oCol:cHeader ) }
       end with
 
       with object ( oBrw:AddCol() )
-         :cHeader          := "Importe"
-         :bEditValue       := {|| nTotFacCli( ( dbfFacCliT )->cSerie + Str( ( dbfFacCliT )->nNumFac ) + ( dbfFacCliT )->cSufFac, dbfFacCliT, dbfFacCliL, dbfIva, dbfDiv, dbfFacCliP, dbfAntCliT, nil, cDivEmp(), .t. ) }
-         :nWidth           := 80
+         :cHeader          := "Total"
+         :bEditValue       := {|| Trans( ( dbfFacCliT )->nTotFac, cPorDiv() ) }
+         :nWidth           := 100
          :nDataStrAlign    := 1
          :nHeadStrAlign    := 1
       end with
@@ -11107,10 +11103,6 @@ FUNCTION BrwFacCli( oGet, oIva )
    oBrw:CloseData()
 
 RETURN ( oDlg:nResult == IDOK )
-
-//---------------------------------------------------------------------------//
-
-#endif
 
 //---------------------------------------------------------------------------//
 
@@ -15793,6 +15785,7 @@ FUNCTION nTotFacCli( cFactura, cFacCliT, cFacCliL, cIva, cDiv, cFacCliP, cAntCli
    local aTotalDos         := { 0, 0, 0 }
    local aTotalAtp         := { 0, 0, 0 }
    local aTotalEnt         := { 0, 0, 0 }
+   local aTotalBase        := { 0, 0, 0 }
    local nDescuentosLineas := 0
    local lPntVer           := .f.
 
@@ -16351,54 +16344,49 @@ FUNCTION nTotFacCli( cFactura, cFacCliT, cFacCliL, cIva, cDiv, cFacCliP, cAntCli
 
    if lIvaInc
 
-      if _NPCTIVA1 != 0
-         _NIMPIVA1   := if( _NPCTIVA1 != nil, Round( _NBASIVA1 / ( Div( 100, _NPCTIVA1 ) + 1 ), nRouDiv ), 0 )
-      end if
-      if _NPCTIVA2 != 0
-         _NIMPIVA2   := if( _NPCTIVA2 != nil, Round( _NBASIVA2 / ( Div( 100, _NPCTIVA2 ) + 1 ), nRouDiv ), 0 )
-      end if
-      if _NPCTIVA3 != 0
-         _NIMPIVA3   := if( _NPCTIVA3 != nil, Round( _NBASIVA3 / ( Div( 100, _NPCTIVA3 ) + 1 ), nRouDiv ), 0 )
-      end if
-/*
       if lRecargo
-         if _NPCTREQ1 != 0
-            _NIMPREQ1   := if( _NPCTIVA1 != NIL, Round( _NBASIVA1 / ( Div( 100, _NPCTREQ1 ) + 1 ), nRouDiv ), 0 )
-         end if
-         if _NPCTREQ2 != 0
-            _NIMPREQ2   := if( _NPCTIVA2 != NIL, Round( _NBASIVA2 / ( Div( 100, _NPCTREQ2 ) + 1 ), nRouDiv ), 0 )
-         end if
-         if _NPCTREQ3 != 0
-            _NIMPREQ3   := if( _NPCTIVA3 != NIL, Round( _NBASIVA3 / ( Div( 100, _NPCTREQ3 ) + 1 ), nRouDiv ), 0 )
-         end if
+
+         aTotalBase[ 1 ]   := _NBASIVA1 - if( _NPCTIVA1 != nil, Round( _NBASIVA1 / ( Div( 100, _NPCTIVA1 + _NPCTREQ1 ) + 1 ), nRouDiv ), 0 )
+         aTotalBase[ 2 ]   := _NBASIVA2 - if( _NPCTIVA2 != nil, Round( _NBASIVA2 / ( Div( 100, _NPCTIVA2 + _NPCTREQ2 ) + 1 ), nRouDiv ), 0 )
+         aTotalBase[ 3 ]   := _NBASIVA3 - if( _NPCTIVA3 != nil, Round( _NBASIVA3 / ( Div( 100, _NPCTIVA3 + _NPCTREQ3 ) + 1 ), nRouDiv ), 0 )
+
+         _NIMPIVA1         := if( _NPCTIVA1 != NIL, Round( ( aTotalBase[ 1 ] ) * _NPCTIVA1 / 100, nRouDiv ), 0 )
+         _NIMPIVA2         := if( _NPCTIVA2 != NIL, Round( ( aTotalBase[ 2 ] ) * _NPCTIVA2 / 100, nRouDiv ), 0 )
+         _NIMPIVA3         := if( _NPCTIVA3 != NIL, Round( ( aTotalBase[ 3 ] ) * _NPCTIVA3 / 100, nRouDiv ), 0 )
+   
+         _NIMPREQ1         := _NBASIVA1 - aTotalBase[ 1 ] - _NIMPIVA1
+         _NIMPREQ2         := _NBASIVA2 - aTotalBase[ 2 ] - _NIMPIVA2
+         _NIMPREQ3         := _NBASIVA3 - aTotalBase[ 3 ] - _NIMPIVA3
+
+         _NBASIVA1         -= ( _NIMPIVA1 + _NIMPREQ1 ) 
+         _NBASIVA2         -= ( _NIMPIVA2 + _NIMPREQ2 )
+         _NBASIVA3         -= ( _NIMPIVA3 + _NIMPREQ3 )
+
+      else 
+
+         _NIMPIVA1         := if( _NPCTIVA1 != nil, Round( _NBASIVA1 / ( 100 / _NPCTIVA1 + 1 ), nRouDiv ), 0 )
+         _NIMPIVA2         := if( _NPCTIVA2 != nil, Round( _NBASIVA2 / ( 100 / _NPCTIVA2 + 1 ), nRouDiv ), 0 )
+         _NIMPIVA3         := if( _NPCTIVA3 != nil, Round( _NBASIVA3 / ( 100 / _NPCTIVA3 + 1 ), nRouDiv ), 0 )
+   
+         _NBASIVA1         -= _NIMPIVA1
+         _NBASIVA2         -= _NIMPIVA2
+         _NBASIVA3         -= _NIMPIVA3
+
       end if
-*/
-      _NBASIVA1      -= _NIMPIVA1
-      _NBASIVA2      -= _NIMPIVA2
-      _NBASIVA3      -= _NIMPIVA3
-/*
-      _NBASIVA1      -= _NIMPREQ1
-      _NBASIVA2      -= _NIMPREQ2
-      _NBASIVA3      -= _NIMPREQ3
-*/
+
    else
 
-      _NIMPIVA1      := if( _NPCTIVA1 != NIL, Round( _NBASIVA1 * _NPCTIVA1 / 100, nRouDiv ), 0 )
-      _NIMPIVA2      := if( _NPCTIVA2 != NIL, Round( _NBASIVA2 * _NPCTIVA2 / 100, nRouDiv ), 0 )
-      _NIMPIVA3      := if( _NPCTIVA3 != NIL, Round( _NBASIVA3 * _NPCTIVA3 / 100, nRouDiv ), 0 )
+      _NIMPIVA1            := if( _NPCTIVA1 != NIL, Round( _NBASIVA1 * _NPCTIVA1 / 100, nRouDiv ), 0 )
+      _NIMPIVA2            := if( _NPCTIVA2 != NIL, Round( _NBASIVA2 * _NPCTIVA2 / 100, nRouDiv ), 0 )
+      _NIMPIVA3            := if( _NPCTIVA3 != NIL, Round( _NBASIVA3 * _NPCTIVA3 / 100, nRouDiv ), 0 )
+
+      if lRecargo
+         _NIMPREQ1         := if( _NPCTIVA1 != NIL, Round( _NBASIVA1 * _NPCTREQ1 / 100, nRouDiv ), 0 )
+         _NIMPREQ2         := if( _NPCTIVA2 != NIL, Round( _NBASIVA2 * _NPCTREQ2 / 100, nRouDiv ), 0 )
+         _NIMPREQ3         := if( _NPCTIVA3 != NIL, Round( _NBASIVA3 * _NPCTREQ3 / 100, nRouDiv ), 0 )
+      end if
 
    end if
-
-   /*
-   Calculo de recargo----------------------------------------------------------
-   */
-
-   if lRecargo
-      _NIMPREQ1      := if( _NPCTIVA1 != NIL, Round( _NBASIVA1 * _NPCTREQ1 / 100, nRouDiv ), 0 )
-      _NIMPREQ2      := if( _NPCTIVA2 != NIL, Round( _NBASIVA2 * _NPCTREQ2 / 100, nRouDiv ), 0 )
-      _NIMPREQ3      := if( _NPCTIVA3 != NIL, Round( _NBASIVA3 * _NPCTREQ3 / 100, nRouDiv ), 0 )
-   end if
-
 
    /*
    Redondeo del neto de la factura---------------------------------------------
