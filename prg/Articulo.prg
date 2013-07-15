@@ -6,8 +6,8 @@
 #include "FastRepH.ch"
 #include "Factu.ch"
 
-#define GWL_STYLE          -16
-#define TVS_TRACKSELECT    512 //   0x0200
+#define GWL_STYLE                   -16
+#define TVS_TRACKSELECT             512 //   0x0200
 
 #define DT_TOP                      0x00000000
 #define DT_LEFT                     0x00000000
@@ -26,18 +26,18 @@
 #define DT_INTERNAL                 0x00001000
 
 
-#define fldGeneral         oFld:aDialogs[1]
-#define fldPrecios         oFld:aDialogs[2]
-#define fldDescripciones   oFld:aDialogs[3]
-#define fldPropiedades     oFld:aDialogs[4]
-#define fldImagenes        oFld:aDialogs[5]
-#define fldLogistica       oFld:aDialogs[6]
-#define fldStocks          oFld:aDialogs[7]
-#define fldContabilidad    oFld:aDialogs[8]
-#define fldOfertas         oFld:aDialogs[9]
-#define fldEscandallos     oFld:aDialogs[10]
-#define fldWeb             oFld:aDialogs[11]
-#define fldUbicaciones     oFld:aDialogs[12]
+#define fldGeneral                  oFld:aDialogs[1]
+#define fldPrecios                  oFld:aDialogs[2]
+#define fldDescripciones            oFld:aDialogs[3]
+#define fldPropiedades              oFld:aDialogs[4]
+#define fldImagenes                 oFld:aDialogs[5]
+#define fldLogistica                oFld:aDialogs[6]
+#define fldStocks                   oFld:aDialogs[7]
+#define fldContabilidad             oFld:aDialogs[8]
+#define fldOfertas                  oFld:aDialogs[9]
+#define fldEscandallos              oFld:aDialogs[10]
+#define fldWeb                      oFld:aDialogs[11]
+#define fldUbicaciones              oFld:aDialogs[12]
 
 memvar cDbfArt
 memvar cDbfDiv
@@ -122,7 +122,7 @@ static bEdtKit             := { |aTmp, aGet, dbf, oBrw, bWhen, bValid, nMode, cC
 static bEdtImg             := { |aTmp, aGet, dbf, oBrw, bWhen, bValid, nMode          | EdtImg( aTmp, aGet, dbf, oBrw, bWhen, bValid, nMode ) }
 static bEdtCod             := { |aTmp, aGet, dbf, oBrw, bWhen, bValid, nMode, cCodArt | EdtCodebar( aTmp, aGet, dbf, oBrw, bWhen, bValid, nMode, cCodArt ) }
 
-static oCbxPrecio
+static oCbxPrecio 
 
 static dbfArticulo
 static dbfFam
@@ -193,10 +193,10 @@ Static Function aItmCom()
 
    local aBase := {}
 
-   aAdd( aBase, { "cCodArt",   "C", 18, 0, "CÃ³digo de artÃ­culo"            , "",                  "", "( cDbfArt )", nil } )
-   aAdd( aBase, { "cCodDiv",   "C",  3, 0, "CÃ³digo de divisa"              , "",                  "", "( cDbfArt )", nil } )
-   aAdd( aBase, { "cCodPr1",   "C", 10, 0, "CÃ³digo de primera propiedad"   , "",                  "", "( cDbfArt )", nil } )
-   aAdd( aBase, { "cCodPr2",   "C", 10, 0, "CÃ³digo de segunda propiedad"   , "",                  "", "( cDbfArt )", nil } )
+   aAdd( aBase, { "cCodArt",   "C", 18, 0, "Código de artículo"            , "",                  "", "( cDbfArt )", nil } )
+   aAdd( aBase, { "cCodDiv",   "C",  3, 0, "Código de divisa"              , "",                  "", "( cDbfArt )", nil } )
+   aAdd( aBase, { "cCodPr1",   "C", 10, 0, "Código de primera propiedad"   , "",                  "", "( cDbfArt )", nil } )
+   aAdd( aBase, { "cCodPr2",   "C", 10, 0, "Código de segunda propiedad"   , "",                  "", "( cDbfArt )", nil } )
    aAdd( aBase, { "cValPr1",   "C", 10, 0, "Valor de primera propiedad"    , "",                  "", "( cDbfArt )", nil } )
    aAdd( aBase, { "cValPr2",   "C", 10, 0, "Valor de segunda propiedad"    , "",                  "", "( cDbfArt )", nil } )
    aAdd( aBase, { "nPreCom",   "N", 16, 6, "Precio de compras"             , "",                  "", "( cDbfArt )", nil } )
@@ -213,7 +213,7 @@ STATIC FUNCTION OpenFiles( lExt, cPath )
    local oBlock
 
    if lOpenFiles
-      MsgStop( 'Imposible abrir ficheros de artÃ­culos' )
+      MsgStop( 'Imposible abrir ficheros de artículos' )
       Return ( .f. )
    end if
 
@@ -227,7 +227,7 @@ STATIC FUNCTION OpenFiles( lExt, cPath )
    oBlock         := ErrorBlock( { | oError | ApoloBreak( oError ) } )
    BEGIN SEQUENCE
 
-      oMsgText( 'Abriendo ficheros artÃ­culos' )
+      oMsgText( 'Abriendo ficheros artículos' )
 
       lOpenFiles  := .t.
 
@@ -455,13 +455,13 @@ STATIC FUNCTION OpenFiles( lExt, cPath )
       Inicializa el editor de HTML---------------------------------------------
       */
 
-      oMsgText( 'Ficheros de artÃ­culos abiertos' )
+      oMsgText( 'Ficheros de artículos abiertos' )
 
    RECOVER USING oError
 
       lOpenFiles           := .f.
 
-      msgStop( ErrorMessage( oError ), 'Imposible abrir las bases de datos de artÃ­culos' )
+      msgStop( ErrorMessage( oError ), 'Imposible abrir las bases de datos de artículos' )
 
    END SEQUENCE
 
@@ -804,24 +804,24 @@ Function Articulo( oMenuItem, oWnd, bOnInit )
       Anotamos el movimiento para el navegador---------------------------------
       */
 
-      AddMnuNext( "ArtÃ­culos", ProcName() )
+      AddMnuNext( "Artículos", ProcName() )
 
       DEFINE SHELL oWndBrw FROM 0, 0 TO 22, 80 ;
          XBROWSE ;
-         TITLE    "ArtÃ­culos" ;
-         PROMPT   "CÃ³digo",;
+         TITLE    "Artículos" ;
+         PROMPT   "Código",;
 						"Nombre",;
-                  "CÃ³digo familia",;
+                  "Código familia",;
                   "Proveedor" ,;
-                  "No obsoletos + CÃ³digo",;
+                  "No obsoletos + Código",;
                   "No obsoletos + Nombre",;
                   "Tipo" ,;
-                  "CategorÃ­a" ,;
+                  "Categoría" ,;
                   "Temporada" ,;
                   "Fabricante" ,;
-                  "PosiciÃ³n tÃ¡ctil" ,;
-                  "PÃºblicar" ,;
-                  "CÃ³digo web" ;
+                  "Posición táctil" ,;
+                  "Públicar" ,;
+                  "Código web" ;
          MRU      "Cube_Yellow_16";
          BITMAP   clrTopArchivos ;
          ALIAS    ( dbfArticulo ) ;
@@ -853,7 +853,7 @@ Function Articulo( oMenuItem, oWnd, bOnInit )
       end with
 
       with object ( oWndBrw:AddXCol() )
-         :cHeader          := "CÃ³digo de barras"
+         :cHeader          := "Código de barras"
          :nHeadBmpNo       := 3
          :bStrData         := {|| "" }
          :bEditValue       := {|| dbSeekInOrd( ( dbfArticulo )->Codigo, "cCodArt", dbfCodebar ) }
@@ -863,7 +863,7 @@ Function Articulo( oMenuItem, oWnd, bOnInit )
       end with
 
       with object ( oWndBrw:AddXCol() )
-         :cHeader          := "TÃ¡ctil"
+         :cHeader          := "Táctil"
          :nHeadBmpNo       := 3
          :bStrData         := {|| "" }
          :bEditValue       := {|| ( dbfArticulo )->lIncTcl }
@@ -874,7 +874,7 @@ Function Articulo( oMenuItem, oWnd, bOnInit )
       end with
 
       with object ( oWndBrw:AddXCol() )
-         :cHeader          := "PosiciÃ³n tÃ¡ctil"
+         :cHeader          := "Posición táctil"
          :cSortOrder       := "nPosTpv"
          :bEditValue       := {|| if( ( dbfArticulo )->lIncTcl, Trans( ( dbfArticulo )->nPosTpv, "999" ), "" ) }
          :nWidth           := 80
@@ -885,7 +885,7 @@ Function Articulo( oMenuItem, oWnd, bOnInit )
       end with
 
       with object ( oWndBrw:AddXCol() )
-         :cHeader          := "PÃºblicar"
+         :cHeader          := "Públicar"
          :cSortOrder       := "lPubInt"
          :nHeadBmpNo       := 3
          :bStrData         := {|| "" }
@@ -897,7 +897,7 @@ Function Articulo( oMenuItem, oWnd, bOnInit )
       end with
 
       with object ( oWndBrw:AddXCol() )
-         :cHeader          := "CÃ³digo"
+         :cHeader          := "Código"
          :cSortOrder       := "Codigo"
          :bEditValue       := {|| ( dbfArticulo )->Codigo }
          :nWidth           := 100
@@ -913,7 +913,7 @@ Function Articulo( oMenuItem, oWnd, bOnInit )
       end with
 
       with object ( oWndBrw:AddXCol() )
-         :cHeader          := "CÃ³digo familia"
+         :cHeader          := "Código familia"
          :cSortOrder       := "cFamCod"
          :bEditValue       := {|| ( dbfArticulo )->Familia }
          :nWidth           := 80
@@ -937,7 +937,7 @@ Function Articulo( oMenuItem, oWnd, bOnInit )
       end with
 
       with object ( oWndBrw:AddXCol() )
-         :cHeader          := "CategorÃ­a"
+         :cHeader          := "Categoría"
          :cSortOrder       := "cCodCate"
          :bStrData         := {|| AllTrim( ( dbfArticulo )->cCodCate ) + if( !Empty( ( dbfArticulo )->cCodCate ), " - ", "" ) + RetFld( ( dbfArticulo )->cCodCate, dbfCategoria, "cNombre" ) }
          :bBmpData         := {|| nBitmapTipoCategoria( RetFld( ( dbfArticulo )->cCodCate, dbfCategoria, "cTipo" ) ) }
@@ -1170,7 +1170,7 @@ Function Articulo( oMenuItem, oWnd, bOnInit )
       end with
 
       with object ( oWndBrw:AddXCol() )
-         :cHeader          := "CÃ³digo web"
+         :cHeader          := "Código web"
          :cSortOrder       := "cCodWeb"
          :bStrData         := {|| ( dbfArticulo )->cCodWeb }
          :nWidth           := 80
@@ -1229,7 +1229,7 @@ Function Articulo( oMenuItem, oWnd, bOnInit )
       DEFINE BTNSHELL RESOURCE "NEW" OF oWndBrw ;
 			NOBORDER ;
          ACTION   ( oWndBrw:RecAdd() );
-         TOOLTIP  "(A)Ã±adir";
+         TOOLTIP  "(A)ñadir";
          BEGIN GROUP;
          HOTKEY   "A" ;
          LEVEL    ACC_APPD
@@ -1280,13 +1280,13 @@ Function Articulo( oMenuItem, oWnd, bOnInit )
       DEFINE BTNSHELL RESOURCE "INFO" GROUP OF oWndBrw ;
 			NOBORDER ;
          ACTION   ( BrwVtaComArt( ( dbfArticulo )->Codigo, ( dbfArticulo )->Nombre, dbfDiv, dbfIva, dbfAlmT, dbfArticulo ) ) ;
-         TOOLTIP  "(I)nforme artÃ­culo" ;
+         TOOLTIP  "(I)nforme artículo" ;
          HOTKEY   "I" ;
          LEVEL    ACC_ZOOM
 
 		DEFINE BTNSHELL RESOURCE "IMP" GROUP OF oWndBrw ;
 			NOBORDER ;
-         ACTION   ( TInfArtFam():New( "Listado de artÃ­culos" ):Play( .f., dbfArticulo, dbfDiv, dbfArtKit, dbfIva, dbfFam, oStock, oWndBrw ) );
+         ACTION   ( TInfArtFam():New( "Listado de artículos" ):Play( .f., dbfArticulo, dbfDiv, dbfArtKit, dbfIva, dbfFam, oStock, oWndBrw ) );
          TOOLTIP  "Lis(t)ado";
          HOTKEY   "T" ;
          LEVEL    ACC_IMPR
@@ -1375,14 +1375,14 @@ Function Articulo( oMenuItem, oWnd, bOnInit )
          NOBORDER ;
          MENU     This:Toggle() ;
          ACTION   ( ChangeField( dbfArticulo, "lIncTcl", !( dbfArticulo )->lIncTcl, oWndBrw ) ) ;
-         TOOLTIP  "TÃ¡ct(i)l" ;
+         TOOLTIP  "Táct(i)l" ;
          HOTKEY   "I";
          LEVEL    ACC_EDIT
 
          DEFINE BTNSHELL RESOURCE "Up" OF oWndBrw ;
             NOBORDER ;
             ACTION   ( ChangePosition( .f. ), oWndBrw:Select() ) ;
-            TOOLTIP  "S(u)bir posiciÃ³n" ;
+            TOOLTIP  "S(u)bir posición" ;
             FROM     oTct ;
             CLOSED ;
             LEVEL    ACC_IMPR
@@ -1390,7 +1390,7 @@ Function Articulo( oMenuItem, oWnd, bOnInit )
          DEFINE BTNSHELL RESOURCE "Down" OF oWndBrw ;
             NOBORDER ;
             ACTION   ( ChangePosition( .t. ), oWndBrw:Select() ) ;
-            TOOLTIP  "Ba(j)ar posiciÃ³n" ;
+            TOOLTIP  "Ba(j)ar posición" ;
             FROM     oTct ;
             LEVEL    ACC_IMPR
 
@@ -1413,7 +1413,7 @@ Function Articulo( oMenuItem, oWnd, bOnInit )
          DEFINE BTNSHELL RESOURCE "Clipboard_empty_businessman_" OF oWndBrw ;
             NOBORDER ;
             ACTION   ( PedPrv( nil, oWnd, nil, ( dbfArticulo )->Codigo ) );
-            TOOLTIP  "AÃ±adir pedido a proveedor" ;
+            TOOLTIP  "Añadir pedido a proveedor" ;
             FROM     oRotor ;
             ALLOW    EXIT ;
             LEVEL    ACC_EDIT
@@ -1421,7 +1421,7 @@ Function Articulo( oMenuItem, oWnd, bOnInit )
          DEFINE BTNSHELL RESOURCE "Document_plain_businessman_" OF oWndBrw ;
             NOBORDER ;
             ACTION   ( AlbPrv( nil, oWnd, nil, ( dbfArticulo )->Codigo ) );
-            TOOLTIP  "AÃ±adir albarÃ¡n de proveedor" ;
+            TOOLTIP  "Añadir albarán de proveedor" ;
             FROM     oRotor ;
             ALLOW    EXIT ;
             LEVEL    ACC_EDIT
@@ -1429,7 +1429,7 @@ Function Articulo( oMenuItem, oWnd, bOnInit )
          DEFINE BTNSHELL RESOURCE "Document_businessman_" OF oWndBrw ;
             NOBORDER ;
             ACTION   ( FacPrv( nil, oWnd, nil, ( dbfArticulo )->Codigo ) );
-            TOOLTIP  "AÃ±adir factura de proveedor" ;
+            TOOLTIP  "Añadir factura de proveedor" ;
             FROM     oRotor ;
             ALLOW    EXIT ;
             LEVEL    ACC_EDIT
@@ -1437,56 +1437,56 @@ Function Articulo( oMenuItem, oWnd, bOnInit )
          DEFINE BTNSHELL RESOURCE "Notebook_user1_" OF oWndBrw ;
             NOBORDER ;
             ACTION   ( PreCli( nil, oWnd, nil, ( dbfArticulo )->Codigo ) );
-            TOOLTIP  "AÃ±adir presupuesto de cliente" ;
+            TOOLTIP  "Añadir presupuesto de cliente" ;
             FROM     oRotor ;
             ALLOW    EXIT ;
             LEVEL    ACC_EDIT
 
          DEFINE BTNSHELL RESOURCE "Clipboard_empty_user1_" OF oWndBrw ;
             ACTION   ( PedCli( nil, oWnd, nil, ( dbfArticulo )->Codigo ) );
-            TOOLTIP  "AÃ±adir pedido de cliente" ;
+            TOOLTIP  "Añadir pedido de cliente" ;
             FROM     oRotor ;
             ALLOW    EXIT ;
             LEVEL    ACC_EDIT
 
          DEFINE BTNSHELL RESOURCE "Document_plain_user1_" OF oWndBrw ;
-            ACTION   ( AlbCli( nil, oWnd, { "ArtÃ­culo" => ( dbfArticulo )->Codigo } ) );
-            TOOLTIP  "AÃ±adir albarÃ¡n de cliente" ;
+            ACTION   ( AlbCli( nil, oWnd, { "Artículo" => ( dbfArticulo )->Codigo } ) );
+            TOOLTIP  "Añadir albarán de cliente" ;
             FROM     oRotor ;
             ALLOW    EXIT ;
             LEVEL    ACC_EDIT
 
          DEFINE BTNSHELL RESOURCE "Document_user1_" OF oWndBrw ;
-            ACTION   ( FactCli( nil, oWnd, { "ArtÃ­culo" => ( dbfArticulo )->Codigo } ) );
-            TOOLTIP  "AÃ±adir factura de cliente" ;
+            ACTION   ( FactCli( nil, oWnd, { "Artículo" => ( dbfArticulo )->Codigo } ) );
+            TOOLTIP  "Añadir factura de cliente" ;
             FROM     oRotor ;
             ALLOW    EXIT ;
             LEVEL    ACC_EDIT
 
          DEFINE BTNSHELL RESOURCE "Cashier_user1_" OF oWndBrw ;
             ACTION   ( FrontTpv( nil, oWnd, nil, ( dbfArticulo )->Codigo ) );
-            TOOLTIP  "AÃ±adir tiket de cliente" ;
+            TOOLTIP  "Añadir tiket de cliente" ;
             FROM     oRotor ;
             ALLOW    EXIT ;
             LEVEL    ACC_EDIT
 
          DEFINE BTNSHELL RESOURCE "Pencil_Package_" OF oWndBrw ;
             ACTION   ( AppMovAlm( ( dbfArticulo )->Codigo, 1 ) );
-            TOOLTIP  "AÃ±adir movimiento entre almacenes" ;
+            TOOLTIP  "Añadir movimiento entre almacenes" ;
             FROM     oRotor ;
             ALLOW    EXIT ;
             LEVEL    ACC_EDIT
 
          DEFINE BTNSHELL RESOURCE "Pencil_Package_" OF oWndBrw ;
             ACTION   ( AppMovAlm( ( dbfArticulo )->Codigo, 2 ) );
-            TOOLTIP  "AÃ±adir movimiento de regularizaciÃ³n de almacenes simple" ;
+            TOOLTIP  "Añadir movimiento de regularización de almacenes simple" ;
             FROM     oRotor ;
             ALLOW    EXIT ;
             LEVEL    ACC_EDIT
 
          DEFINE BTNSHELL RESOURCE "Pencil_Package_" OF oWndBrw ;
             ACTION   ( AppMovAlm( ( dbfArticulo )->Codigo, 3 ) );
-            TOOLTIP  "AÃ±adir movimiento de regularizaciÃ³n de almacenes por objetivo" ;
+            TOOLTIP  "Añadir movimiento de regularización de almacenes por objetivo" ;
             FROM     oRotor ;
             ALLOW    EXIT ;
             LEVEL    ACC_EDIT
@@ -1711,7 +1711,7 @@ STATIC FUNCTION EdtRec( aTmp, aGet, dbfArticulo, oBrw, bWhen, bValid, nMode )
    Cargamos los precios en sus variables---------------------------------------
 	*/
 
-   DEFINE DIALOG oDlg RESOURCE "ARTICULO" TITLE LblTitle( nMode ) + "artÃ­culo : " + Rtrim( aTmp[ ( dbfArticulo )->( fieldpos( "Nombre" ) ) ] )
+   DEFINE DIALOG oDlg RESOURCE "ARTICULO" TITLE LblTitle( nMode ) + "artículo : " + Rtrim( aTmp[ ( dbfArticulo )->( fieldpos( "Nombre" ) ) ] )
 
       REDEFINE FOLDER oFld;
          ID       300 ;
@@ -1721,7 +1721,7 @@ STATIC FUNCTION EdtRec( aTmp, aGet, dbfArticulo, oBrw, bWhen, bValid, nMode )
                   "&Descripciones",;
                   "P&ropiedades",;
                   "Imagenes",;
-                  "&LogÃ­stica",;
+                  "&Logística",;
                   "&Stocks",;
                   "Co&ntabilidad",;
                   "&Ofertas",;
@@ -1791,7 +1791,7 @@ STATIC FUNCTION EdtRec( aTmp, aGet, dbfArticulo, oBrw, bWhen, bValid, nMode )
       end with
 
       with object ( oBrwCodebar:AddCol() )
-         :cHeader                := "CÃ³digo"
+         :cHeader                := "Código"
          :bEditValue             := {|| ( dbfTmpCodebar )->cCodBar }
          :nWidth                 := 120
       end with
@@ -1833,7 +1833,7 @@ STATIC FUNCTION EdtRec( aTmp, aGet, dbfArticulo, oBrw, bWhen, bValid, nMode )
 			ID 		161 ;
          OF       fldGeneral
 
-   REDEFINE SAY oNombre VAR "Tipo artÃ­culo";
+   REDEFINE SAY oNombre VAR "Tipo artículo";
          ID       888 ;
          OF       fldGeneral
 
@@ -1863,7 +1863,7 @@ STATIC FUNCTION EdtRec( aTmp, aGet, dbfArticulo, oBrw, bWhen, bValid, nMode )
    aGet[ ( dbfArticulo )->( fieldpos( "cCodFab" ) ) ]:bHelp  := {|| oFabricante:Buscar( aGet[ ( dbfArticulo )->( fieldpos( "cCodFab" ) ) ] ) }
 
    /*
-   CategorÃ­a de artÃ­culo-------------------------------------------------------
+   Categoría de artículo-------------------------------------------------------
    */
 
    REDEFINE GET   aGet[ ( dbfArticulo )->( fieldpos( "CCODCATE" ) ) ] ;
@@ -3214,7 +3214,7 @@ STATIC FUNCTION EdtRec( aTmp, aGet, dbfArticulo, oBrw, bWhen, bValid, nMode )
       aGet[ ( dbfArticulo )->( fieldpos( "cCodFra" ) ) ]:bHelp  := {|| oFraPub:Buscar( aGet[ ( dbfArticulo )->( fieldpos( "cCodFra" ) ) ] ) }
 
    /*
-   CÃ³digo de la secciÃ³n-----------------------------------------------------
+   Código de la sección-----------------------------------------------------
    */
 
    REDEFINE GET aGet[ ( dbfArticulo )->( fieldpos( "cCodSec" ) ) ] ;
@@ -3239,7 +3239,7 @@ STATIC FUNCTION EdtRec( aTmp, aGet, dbfArticulo, oBrw, bWhen, bValid, nMode )
 
    REDEFINE COMBOBOX aGet[ ( dbfArticulo )->( fieldpos( "NTIPDUR" ) ) ];
       VAR      aTmp[ ( dbfArticulo )->( fieldpos( "NTIPDUR" ) ) ];
-      ITEMS    { "Dia (s)", "Mes (es)", "AÃ±o (s)" };
+      ITEMS    { "Dia (s)", "Mes (es)", "Año (s)" };
       ID       251 ;
       WHEN     ( nMode != ZOOM_MODE ) ;
       OF       fldLogistica
@@ -3497,20 +3497,20 @@ STATIC FUNCTION EdtRec( aTmp, aGet, dbfArticulo, oBrw, bWhen, bValid, nMode )
    oBrwStk:lHScroll        := .f.
    oBrwStk:lRecordSelector := .f.
    oBrwStk:nMarqueeStyle   := 5
-   oBrwStk:cName           := "ArtÃ­culo.Stocks"
+   oBrwStk:cName           := "Artículo.Stocks"
 
    oBrwStk:bRClicked       := {| nRow, nCol, nFlags | oBrwStk:RButtonDown( nRow, nCol, nFlags ) }
 
    oBrwStk:SetArray( oStock:aStocks, , , .f. )
 
       with object ( oBrwStk:AddCol() )
-         :cHeader             := "CÃ³digo"
+         :cHeader             := "Código"
          :nWidth              := 40
          :bStrData            := {|| if( !Empty( oBrwStk:aArrayData ), oBrwStk:aArrayData[ oBrwStk:nArrayAt ]:cCodigoAlmacen, "" ) }
       end with
 
       with object ( oBrwStk:AddCol() )
-         :cHeader             := "AlmacÃ©n"
+         :cHeader             := "Almacén"
          :nWidth              := 120
          :bStrData            := {|| if( !Empty( oBrwStk:aArrayData ), RetAlmacen( oBrwStk:aArrayData[ oBrwStk:nArrayAt ]:cCodigoAlmacen, dbfAlmT ), "" ) }
       end with
@@ -3658,7 +3658,7 @@ STATIC FUNCTION EdtRec( aTmp, aGet, dbfArticulo, oBrw, bWhen, bValid, nMode )
    oBrwCtaVta:cAlias          := dbfTmpSubCta
 
    oBrwCtaVta:nMarqueeStyle   := 5
-   oBrwCtaVta:cName           := "ArtÃ­culo.Contabilidad cuenta de ventas"
+   oBrwCtaVta:cName           := "Artículo.Contabilidad cuenta de ventas"
 
    with object ( oBrwCtaVta:AddCol() )
       :cHeader          := "Asiento"
@@ -3771,7 +3771,7 @@ STATIC FUNCTION EdtRec( aTmp, aGet, dbfArticulo, oBrw, bWhen, bValid, nMode )
    oBrwCtaCom:lFooter         := .t.
    oBrwCtaCom:cAlias          := dbfTmpSubCom
    oBrwCtaCom:nMarqueeStyle   := 5
-   oBrwCtaCom:cName           := "ArtÃ­culo.Contabilidad cuenta de compras"
+   oBrwCtaCom:cName           := "Artículo.Contabilidad cuenta de compras"
 
    with object ( oBrwCtaCom:AddCol() )
       :cHeader          := "Asiento"
@@ -3898,7 +3898,7 @@ STATIC FUNCTION EdtRec( aTmp, aGet, dbfArticulo, oBrw, bWhen, bValid, nMode )
 
    oBrwOfe:cAlias          := dbfTmpOfe
    oBrwOfe:nMarqueeStyle   := 5
-   oBrwOfe:cName           := "ArtÃ­culo.Ofertas"
+   oBrwOfe:cName           := "Artículo.Ofertas"
 
    with object ( oBrwOfe:AddCol() )
       :cHeader          := "Oferta"
@@ -4159,16 +4159,16 @@ STATIC FUNCTION EdtRec( aTmp, aGet, dbfArticulo, oBrw, bWhen, bValid, nMode )
    oBrwKit:lFooter         := .t.
    oBrwKit:cAlias          := dbfTmpKit
    oBrwKit:nMarqueeStyle   := 5
-   oBrwKit:cName           := "ArtÃ­culo.Kits"
+   oBrwKit:cName           := "Artículo.Kits"
 
    with object ( oBrwKit:AddCol() )
-      :cHeader          := "CÃ³digo"
+      :cHeader          := "Código"
       :bEditValue       := {|| ( dbfTmpKit )->cRefKit }
       :nWidth           := 80
    end with
 
    with object ( oBrwKit:AddCol() )
-      :cHeader          := "ArtÃ­culo"
+      :cHeader          := "Artículo"
       :bEditValue       := {|| ( dbfTmpKit )->cDesKit }
       :nWidth           := 160
    end with
@@ -4415,7 +4415,7 @@ STATIC FUNCTION EdtRec( aTmp, aGet, dbfArticulo, oBrw, bWhen, bValid, nMode )
 
    oBrwImg:cAlias          := dbfTmpImg
    oBrwImg:nMarqueeStyle   := 6
-   oBrwImg:cName           := "ArtÃ­culo.Imagenes"
+   oBrwImg:cName           := "Artículo.Imagenes"
 
    with object ( oBrwImg:AddCol() )
       :cHeader             := "Seleccionada"
@@ -4674,7 +4674,7 @@ static function CodificacionProveedor( aTmp, nMode )
       end with
 
       with object ( oBrwPrv:AddCol() )
-         :cHeader          := "CÃ³digo"
+         :cHeader          := "Código"
          :bEditValue       := {|| ( dbfTmpPrv )->cCodPrv }
          :nWidth           := 60
       end with
@@ -4827,11 +4827,11 @@ STATIC FUNCTION EdtRec2( aTmp, aGet, dbfArticulo, oBrw, bWhen, bValid, nMode )
    cCatOld     := aTmp[ ( dbfArticulo )->( fieldpos( "cCodCat" ) ) ]
    cPrvOld     := aTmp[ ( dbfArticulo )->( fieldpos( "cPrvHab" ) ) ]
 
-   //Definicion del diÃ¡logo
+   //Definicion del diálogo
 
-   DEFINE DIALOG oDlg RESOURCE "FASTART" TITLE LblTitle( nMode ) + "artÃ­culo : " + Rtrim( aTmp[( dbfArticulo )->( fieldpos( "NOMBRE" ) ) ] )
+   DEFINE DIALOG oDlg RESOURCE "FASTART" TITLE LblTitle( nMode ) + "artículo : " + Rtrim( aTmp[( dbfArticulo )->( fieldpos( "NOMBRE" ) ) ] )
 
-   //DefiniciÃ³n del cÃ³digo y nombre del nuevo artÃ­culo
+   //Definición del código y nombre del nuevo artículo
 
    REDEFINE GET aGet[ ( dbfArticulo )->( fieldpos( "Codigo" ) ) ];
       VAR      aTmp[ ( dbfArticulo )->( fieldpos( "Codigo" ) ) ];
@@ -4849,7 +4849,7 @@ STATIC FUNCTION EdtRec2( aTmp, aGet, dbfArticulo, oBrw, bWhen, bValid, nMode )
       ON CHANGE( ActTitle( nKey, nFlags, Self, nMode, oDlg ) );
       OF       oDlg
 
-   //DefiniciÃ³n de la familia del nuevo artÃ­culo
+   //Definición de la familia del nuevo artículo
 
    REDEFINE GET aGet[( dbfArticulo )->( fieldpos( "Familia" ) ) ] ;
       VAR      aTmp[( dbfArticulo )->( fieldpos( "Familia" ) ) ] ;
@@ -4864,7 +4864,7 @@ STATIC FUNCTION EdtRec2( aTmp, aGet, dbfArticulo, oBrw, bWhen, bValid, nMode )
       ID       121 ;
       OF       oDlg
 
-   //DefiniciÃ³n del catÃ¡logo del artÃ­culo
+   //Definición del catálogo del artículo
 
    REDEFINE GET aGet[ ( dbfArticulo )->( fieldpos( "cCodCat" ) ) ] ;
       VAR      aTmp[ ( dbfArticulo )->( fieldpos( "cCodCat" ) ) ] ;
@@ -4881,7 +4881,7 @@ STATIC FUNCTION EdtRec2( aTmp, aGet, dbfArticulo, oBrw, bWhen, bValid, nMode )
       WHEN     ( .f. ) ;
       OF       oDlg
 
-   //DefiniciÃ³n del proveedor del artÃ­culo
+   //Definición del proveedor del artículo
 
    REDEFINE GET aGet[ ( dbfArticulo )->( fieldpos( "CPRVHAB" ) ) ] ;
       VAR      aTmp[ ( dbfArticulo )->( fieldpos( "CPRVHAB" ) ) ] ;
@@ -4902,7 +4902,7 @@ STATIC FUNCTION EdtRec2( aTmp, aGet, dbfArticulo, oBrw, bWhen, bValid, nMode )
       ID       150 ;
       OF       oDlg
 
-   //Define la cantidad de puntos que cuesta un artÃ­culo
+   //Define la cantidad de puntos que cuesta un artículo
 
    REDEFINE GET aGet[ ( dbfArticulo )->( fieldpos( "pCosto" ) ) ] ;
       VAR      aTmp[ ( dbfArticulo )->( fieldpos( "pCosto" ) ) ] ;
@@ -4938,7 +4938,7 @@ STATIC FUNCTION EdtRec2( aTmp, aGet, dbfArticulo, oBrw, bWhen, bValid, nMode )
       COLOR    CLR_GET ;
       OF       oDlg
 
-   //DefiniciÃ³n de los botones de la caja de diÃ¡logo
+   //Definición de los botones de la caja de diálogo
 
    REDEFINE BUTTON oBtn ;
       ID       IDOK ;
@@ -5527,7 +5527,7 @@ Static Function BeginTrans( aTmp, nMode )
    end if
 
    /*
-   Guardamos el-los cÃ³digos de barras para saber si han habido cambios---------
+   Guardamos el-los códigos de barras para saber si han habido cambios---------
    */
 
    aOldCodeBar    := aDbfToArr( dbfTmpCodebar, 2 )
@@ -5562,18 +5562,18 @@ Static Function EndTrans( aTmp, aGet, oSay, oDlg, aTipBar, cTipBar, nMode, oImpC
    local lDefault    := .f.
 
    /*
-   Tomamos los valores de los cÃ³digos de barra---------------------------------
+   Tomamos los valores de los códigos de barra---------------------------------
    */
 
    cCod              := aTmp[ ( dbfArticulo )->( fieldpos( "Codigo" ) ) ]
 
    if Empty( cCod ) .and. ( nMode == APPD_MODE .or. nMode == DUPL_MODE )
-      MsgStop( "CÃ³digo no puede estar vacio" )
+      MsgStop( "Código no puede estar vacio" )
       return nil
    end if
 
    if dbSeekInOrd( cCod, "Codigo", dbfArticulo ) .and. ( nMode == APPD_MODE .or. nMode == DUPL_MODE )
-      msgStop( "CÃ³digo ya existe" )
+      msgStop( "Código ya existe" )
       return nil
    end if
 
@@ -5592,7 +5592,7 @@ Static Function EndTrans( aTmp, aGet, oSay, oDlg, aTipBar, cTipBar, nMode, oImpC
 
       /*
       -------------------------------------------------------------------------
-      AÃ±adimos la imÃ¡gen del tÃ¡ctil a la tabla de imÃ¡genes---------------------
+      Añadimos la imágen del táctil a la tabla de imágenes---------------------
       -------------------------------------------------------------------------
       */
 
@@ -5615,7 +5615,7 @@ Static Function EndTrans( aTmp, aGet, oSay, oDlg, aTipBar, cTipBar, nMode, oImpC
 
       /*
       -------------------------------------------------------------------------
-      AÃ±adimos las imÃ¡genes de las propiedades---------------------------------
+      Añadimos las imágenes de las propiedades---------------------------------
       -------------------------------------------------------------------------
       */
 
@@ -5647,7 +5647,7 @@ Static Function EndTrans( aTmp, aGet, oSay, oDlg, aTipBar, cTipBar, nMode, oImpC
 
       /*
       -------------------------------------------------------------------------
-      Dejamos almenos una imÃ¡gen por defecto-----------------------------------
+      Dejamos almenos una imágen por defecto-----------------------------------
       -------------------------------------------------------------------------
       */
 
@@ -5830,14 +5830,14 @@ Static Function EndTrans( aTmp, aGet, oSay, oDlg, aTipBar, cTipBar, nMode, oImpC
       end if
 
       /*
-      Ponemos la fecha de cambio por cÃ³digo de barras-----------------------------
+      Ponemos la fecha de cambio por código de barras-----------------------------
       */
 
-      if Len( aCodeBar ) != Len( aOldCodeBar )  // Hemos aÃ±adido y eliminado algÃ±un cÃ³digo de barras
+      if Len( aCodeBar ) != Len( aOldCodeBar )  // Hemos añadido y eliminado algñun código de barras
          lChange     := .t.
       end if
 
-      for i := 1 to Len( aCodeBar )             // Comprobamos para el caso en el que sÃ³lo modifiquemos
+      for i := 1 to Len( aCodeBar )             // Comprobamos para el caso en el que sólo modifiquemos
          if aScan( aOldCodeBar, aCodeBar[ i ] ) == 0
             lChange  := .t.
          end if
@@ -5872,7 +5872,7 @@ Static Function EndTrans( aTmp, aGet, oSay, oDlg, aTipBar, cTipBar, nMode, oImpC
       Actualizaweb( cCod, lChangeImage )
 
       /*
-      Terminamos la transaciÃ³n-------------------------------------------------
+      Terminamos la transación-------------------------------------------------
       */
 
       CommitTransaction()
@@ -5986,7 +5986,7 @@ RETURN ( lIvaInc .AND. nMode != ZOOM_MODE )
 STATIC FUNCTION ActTitle( nKey, nFlags, aGet, nMode, oDlg )
 
 	aGet:assign()
-   oDlg:cTitle( LblTitle( nMode ) + " artÃ­culo : " + Rtrim( aGet:varGet() ) + Chr( nKey ) )
+   oDlg:cTitle( LblTitle( nMode ) + " artículo : " + Rtrim( aGet:varGet() ) + Chr( nKey ) )
 
 RETURN NIL
 
@@ -6943,7 +6943,7 @@ Static Function EndEdtVta( aValPrp1, aValPrp2, aTmp, aGet, oSay, cSay, oBrw, oDl
             
             end if   
 
-            msgWait( "He aÃ±adido " + AllTrim( Str( nContAdd ) ) + " registros y he modificado " + AllTrim( Str( nContEdt ) ) + " registros", "Proceso terminado con Ã©xito", 2 )
+            msgWait( "He añadido " + AllTrim( Str( nContAdd ) ) + " registros y he modificado " + AllTrim( Str( nContEdt ) ) + " registros", "Proceso terminado con éxito", 2 )
 
             lLimpiarPantalla( aValPrp1, aValPrp2, aTmp, aGet, oBrwPrp1, oBrwPrp2, oSay, cSay, dbfTmpVta )
 
@@ -7004,7 +7004,7 @@ Static Function EndEdtVta( aValPrp1, aValPrp2, aTmp, aGet, oSay, cSay, oBrw, oDl
 
                   next
 
-                  msgWait( "He aÃ±adido " + AllTrim( Str( nContAdd ) ) + " registros y he modificado " + AllTrim( Str( nContEdt ) ) + " registros", "Proceso terminado con Ã©xito", 2 )
+                  msgWait( "He añadido " + AllTrim( Str( nContAdd ) ) + " registros y he modificado " + AllTrim( Str( nContEdt ) ) + " registros", "Proceso terminado con éxito", 2 )
 
                   lLimpiarPantalla( aValPrp1, aValPrp2, aTmp, aGet, oBrwPrp1, oBrwPrp2, oSay, cSay, dbfTmpVta )
 
@@ -7042,7 +7042,7 @@ Static Function EndEdtVta( aValPrp1, aValPrp2, aTmp, aGet, oSay, cSay, oBrw, oDl
 
                   next
 
-                  msgWait( "He aÃ±adido " + AllTrim( Str( nContAdd ) ) + " registros y he modificado " + AllTrim( Str( nContEdt ) ) + " registros", "Proceso terminado con Ã©xito", 2 )
+                  msgWait( "He añadido " + AllTrim( Str( nContAdd ) ) + " registros y he modificado " + AllTrim( Str( nContEdt ) ) + " registros", "Proceso terminado con éxito", 2 )
 
                   lLimpiarPantalla( aValPrp1, aValPrp2, aTmp, aGet, oBrwPrp1, oBrwPrp2, oSay, cSay, dbfTmpVta )
 
@@ -7080,7 +7080,7 @@ Static Function EndEdtVta( aValPrp1, aValPrp2, aTmp, aGet, oSay, cSay, oBrw, oDl
 
                   next
 
-                  msgWait( "He aÃ±adido " + AllTrim( Str( nContAdd ) ) + " registros y he modificado " + AllTrim( Str( nContEdt ) ) + " registros", "Proceso terminado con Ã©xito", 2 )
+                  msgWait( "He añadido " + AllTrim( Str( nContAdd ) ) + " registros y he modificado " + AllTrim( Str( nContEdt ) ) + " registros", "Proceso terminado con éxito", 2 )
 
                   lLimpiarPantalla( aValPrp1, aValPrp2, aTmp, aGet, oBrwPrp1, oBrwPrp2, oSay, cSay, dbfTmpVta )
 
@@ -7110,7 +7110,7 @@ Static Function EndEdtVta( aValPrp1, aValPrp2, aTmp, aGet, oSay, cSay, oBrw, oDl
 
                   end if
 
-                  msgWait( "He aÃ±adido " + AllTrim( Str( nContAdd ) ) + " registros y he modificado " + AllTrim( Str( nContEdt ) ) + " registros", "Proceso terminado con Ã©xito", 2 )
+                  msgWait( "He añadido " + AllTrim( Str( nContAdd ) ) + " registros y he modificado " + AllTrim( Str( nContEdt ) ) + " registros", "Proceso terminado con éxito", 2 )
 
                   lLimpiarPantalla( aValPrp1, aValPrp2, aTmp, aGet, oBrwPrp1, oBrwPrp2, oSay, cSay, dbfTmpVta )   
 
@@ -7277,7 +7277,7 @@ Static Function SaveCodebar( aTmp, aGet, cOldCodebar, oBrw, oDlg, dbfTmpCodebar,
    local lDef  := .f.
 
    /*
-   BÃºsqueda por cÃ³digos de barras en la temporal-------------------------------
+   Búsqueda por códigos de barras en la temporal-------------------------------
    */
 
    if dbSeekCodebar( aTmp[ ( dbfTmpCodebar )->( fieldPos( "cCodBar" ) ) ], dbfTmpCodebar, cOldCodebar, .t. )
@@ -7287,14 +7287,14 @@ Static Function SaveCodebar( aTmp, aGet, cOldCodebar, oBrw, oDlg, dbfTmpCodebar,
    end if
 
    /*
-   BÃºsqueda por cÃ³digos de barras en la temporal-------------------------------
+   Búsqueda por códigos de barras en la temporal-------------------------------
    */
 
    if dbSeekInOrd( aTmp[ ( dbfTmpCodebar )->( fieldPos( "cCodBar" ) ) ], "cCodBar", dbfCodebar )
 
       if ( dbfCodebar )->cCodArt != aTmp[ ( dbfTmpCodebar )->( fieldPos( "cCodArt" ) ) ] .and.;
-         !ApoloMsgNoYes( "El cÃ³digo de barras se ha introducido para el artÃ­culo: " ;
-                    + AllTrim( ( dbfCodebar )->cCodArt ) + " - " + AllTrim( RetFld( ( dbfCodebar )->cCodArt, dbfArticulo ) ) ,"Â¿Desea introducirlo en Ã©ste artÃ­culo?" )
+         !ApoloMsgNoYes( "El código de barras se ha introducido para el artículo: " ;
+                    + AllTrim( ( dbfCodebar )->cCodArt ) + " - " + AllTrim( RetFld( ( dbfCodebar )->cCodArt, dbfArticulo ) ) ,"¿Desea introducirlo en éste artículo?" )
 
          aGet[ ( dbfTmpCodebar )->( fieldPos( "cCodBar" ) ) ]:SetFocus()
          aGet[ ( dbfTmpCodebar )->( fieldPos( "cCodBar" ) ) ]:SelectAll()
@@ -7324,7 +7324,7 @@ Static Function SaveCodebar( aTmp, aGet, cOldCodebar, oBrw, oDlg, dbfTmpCodebar,
    WinGather( aTmp, aGet, dbfTmpCodebar, oBrw, nMode )
 
    if lEntCon() .and. nMode == APPD_MODE
-      MsgWait( "CÃ³digo de barras aceptado", , 0.1 )
+      MsgWait( "Código de barras aceptado", , 0.1 )
 
       if lDef
          aTmp[ ( dbfTmpCodebar )->( fieldpos( "lDefBar" ) ) ] := .f.
@@ -7352,7 +7352,7 @@ Function dbSeekCodebar( cCodBar, dbfCodebar, cCodExc, lMessage )
 
    if Empty( cCodBar )
       if lMessage
-         MsgBeepWait( "CÃ³digo de barras no puede estar vacÃ­o", "AtenciÃ³n", 1 )
+         MsgBeepWait( "Código de barras no puede estar vacío", "Atención", 1 )
       end if
       return .t.
    end if
@@ -7367,7 +7367,7 @@ Function dbSeekCodebar( cCodBar, dbfCodebar, cCodExc, lMessage )
    ( dbfCodebar )->( dbGoTo( nRegistroAnterior ) )
 
    if lMessage .and. lSeek
-      MsgBeepWait( "CÃ³digo de barras ya existe", "AtenciÃ³n", 1 )
+      MsgBeepWait( "Código de barras ya existe", "Atención", 1 )
    end if
 
 Return ( lSeek )
@@ -7379,7 +7379,7 @@ Static Function StartEdtVta( aTmp, aGet, nMode, oBrwPrp1, oBrwPrp2, oTodasPrp1, 
    if nMode == APPD_MODE
 
       if !Empty( oBtnOk )
-         SetWindowText( oBtnOk:hWnd, "AÃ±adir" )
+         SetWindowText( oBtnOk:hWnd, "Añadir" )
       end if
 
       if !Empty( oBtnCancel )
@@ -7528,13 +7528,13 @@ RETURN ( oDlg:nResult == IDOK )
 Function lPreSaveKit( aGet, aTmp, dbfTmpKit, dbfArticulo, oBrw, nMode, oDlg, aTmpArt, nCos )
 
    if Empty( aTmp[ ( dbfTmpKit )->( fieldpos( "CREFKIT" ) ) ] )
-      msgstop( "El cÃ³digo no puede estar vacÃ­o" )
+      msgstop( "El código no puede estar vacío" )
       aGet[ ( dbfTmpKit )->( fieldpos( "CREFKIT" ) ) ]:SetFocus()
       Return .f.
    end if
 
    if aTmp[ ( dbfTmpKit )->( fieldpos( "CREFKIT" ) ) ] == aTmpArt[ ( dbfArticulo )->( FieldPos( "Codigo" ) ) ]
-      MsgStop( "El cÃ³digo es el mismo que el del escandallo", "No se puede introducir" )
+      MsgStop( "El código es el mismo que el del escandallo", "No se puede introducir" )
       aGet[ ( dbfTmpKit )->( fieldpos( "CREFKIT" ) ) ]:SetFocus()
       Return .f.
    end if
@@ -7560,7 +7560,7 @@ Static Function ChkCodKit( aGet, oCos, dbfTmpKit )
 
       if dbSeekInOrd( cRefKit, "cRefKit", dbfTmpKit )
 
-         msgStop( "CÃ³digo duplicado" )
+         msgStop( "Código duplicado" )
 
       else
 
@@ -7575,7 +7575,7 @@ Static Function ChkCodKit( aGet, oCos, dbfTmpKit )
 
    else
 
-      msgStop( "CÃ³digo no existe" )
+      msgStop( "Código no existe" )
 
    end if
 
@@ -7620,7 +7620,7 @@ STATIC FUNCTION GetDisk()
       REDEFINE GET oFileName VAR cFileName;
 			ID 		100 ;
          BITMAP   "FOLDER" ;
-         ON HELP  ( oFileName:cText( cGetFile( "*.dbf", "SelecciÃ³n de fichero" ) ) ) ;
+         ON HELP  ( oFileName:cText( cGetFile( "*.dbf", "Selección de fichero" ) ) ) ;
 			OF 		oDlg
 
       REDEFINE GET oPctBnf1 VAR nPctBnf1 ;
@@ -7883,7 +7883,7 @@ Function CalPre( lSobreCoste, nCosto, lBnf, nBnf, uTipIva, oGetPrePts, oGetIvaPt
       nNewIva     := nNewPre
 
       /*
-      Si tiene impuesto especial aÃ±adirlo
+      Si tiene impuesto especial añadirlo
       */
 
       if !Empty( cCodImp ) .and. !Empty( oNewImp )
@@ -7933,7 +7933,7 @@ return cImagenArt
 //---------------------------------------------------------------------------//
 
 /*
-Esta funciÂ¢n calcula el beneficio que se esta aplicando a un articulo sin impuestos
+Esta funci¢n calcula el beneficio que se esta aplicando a un articulo sin impuestos
 */
 
 Function CalBnfPts( lSobreCoste, lIvaInc, nCosto, nPrePts, oBnf, uTipIva, oGetIvaPts, nDecDiv, cCodImp, oSay, lMargenAjuste, cMargenAjuste )
@@ -8017,7 +8017,7 @@ Return .t.
 //----------------------------------------------------------------------------//
 
 /*
-Esta funciÂ¢n calcula el beneficio que se esta aplicando a un articulo con impuestos
+Esta funci¢n calcula el beneficio que se esta aplicando a un articulo con impuestos
 */
 
 Function CalBnfIva( lSobreCoste, lIvaInc, nCosto, uPrecioIva, oBnf, uTipIva, oGetBas, nDecDiv, cCodImp, oSay, lMargenAjuste, cMargenAjuste )
@@ -8170,7 +8170,7 @@ RETURN ( !lTmp )
 	local cGet1
 	local oCbxOrd
    local cCbxOrd     := 'Nombre'
-   local aCbxOrd     := { 'CÃ³digo', 'Nombre' }
+   local aCbxOrd     := { 'Código', 'Nombre' }
    local nRecAnt     := ( dbfArticulo )->( Recno() )
    local nOrdAnt     := ( dbfArticulo )->( OrdSetFocus( 'Nombre' ) )
 
@@ -8186,7 +8186,7 @@ RETURN ( !lTmp )
 
    ( dbfArticulo )->( dbGoTop() )
 
-   DEFINE DIALOG oDlg RESOURCE "HELPENTRY" TITLE "Seleccionar artÃ­culos"
+   DEFINE DIALOG oDlg RESOURCE "HELPENTRY" TITLE "Seleccionar artículos"
 
       REDEFINE GET oGet1 VAR cGet1;
 			ID 		104 ;
@@ -8210,10 +8210,10 @@ RETURN ( !lTmp )
 
       oBrw:cAlias          := dbfArticulo
       oBrw:nMarqueeStyle   := 5
-      oBrw:cName           := "Browse.ArtÃ­culos"
+      oBrw:cName           := "Browse.Artículos"
 
       with object ( oBrw:AddCol() )
-         :cHeader          := "CÃ³digo"
+         :cHeader          := "Código"
          :cSortOrder       := "Codigo"
          :bEditValue       := {|| ( dbfArticulo )->Codigo }
          :nWidth           := 90
@@ -8412,10 +8412,10 @@ FUNCTION BrwFamiliaArticulo( oGet, oGet2, lCodeBar, lAppend )
    local cGetFamilia := Space( 100 )
    local oCbxFamilia
    local cCbxFamilia := 'Nombre'
-   local aCbxFamilia := { 'CÃ³digo', 'Nombre' }
+   local aCbxFamilia := { 'Código', 'Nombre' }
    local oCbxOrd
-   local cCbxOrd     := 'Familia + CÃ³digo'
-   local aCbxOrd     := { 'CÃ³digo', 'Nombre', 'Familia + CÃ³digo', 'Familia + Nombre' }
+   local cCbxOrd     := 'Familia + Código'
+   local aCbxOrd     := { 'Código', 'Nombre', 'Familia + Código', 'Familia + Nombre' }
    local nLevel      := nLevelUsr( "01014" )
 
    DEFAULT lCodeBar  := .f.
@@ -8429,7 +8429,7 @@ FUNCTION BrwFamiliaArticulo( oGet, oGet2, lCodeBar, lAppend )
 
    cPouDiv           := cPouDiv( cDivEmp(), dbfDiv )
 
-   DEFINE DIALOG oDlg RESOURCE "HELPARTFAM" TITLE "ArtÃ­culos"
+   DEFINE DIALOG oDlg RESOURCE "HELPARTFAM" TITLE "Artículos"
 
       REDEFINE GET oGetFamilia VAR cGetFamilia;
          ID       106 ;
@@ -8452,10 +8452,10 @@ FUNCTION BrwFamiliaArticulo( oGet, oGet2, lCodeBar, lAppend )
 
       oBrwFam:cAlias          := dbfFam
       oBrwFam:nMarqueeStyle   := 5
-      oBrwFam:cName           := "Browse.Familias en artÃ­culos"
+      oBrwFam:cName           := "Browse.Familias en artículos"
 
       with object ( oBrwFam:AddCol() )
-         :cHeader          := "CÃ³digo"
+         :cHeader          := "Código"
          :cSortOrder       := "cCodFam"
          :bEditValue       := {|| ( dbfFam )->cCodFam }
          :nWidth           := 80
@@ -8495,10 +8495,10 @@ FUNCTION BrwFamiliaArticulo( oGet, oGet2, lCodeBar, lAppend )
 
       oBrw:cAlias          := dbfArticulo
       oBrw:nMarqueeStyle   := 5
-      oBrw:cName           := "Browse.ArtÃ­culos"
+      oBrw:cName           := "Browse.Artículos"
 
       with object ( oBrw:AddCol() )
-         :cHeader          := "CÃ³digo"
+         :cHeader          := "Código"
          :cSortOrder       := "Codigo"
          :bEditValue       := {|| ( dbfArticulo )->Codigo }
          :nWidth           := 90
@@ -8717,7 +8717,7 @@ Static Function SeekFamilia( dbfFam, dbfArticulo, oCbxOrd, oBrw )
 
    ( dbfArticulo )->( dbGoTop() )
 
-   oCbxOrd:Set( 'Familia + CÃ³digo' )
+   oCbxOrd:Set( 'Familia + Código' )
 
    oBrw:Refresh()
 
@@ -8771,7 +8771,7 @@ FUNCTION cArticulo( aGet, dbfArticulo, aGet2, lCodeBar )
 
 	ELSE
 
-      msgStop( "ArtÃ­culo no encontrado", "Cadena buscada : " + cCodArt )
+      msgStop( "Artículo no encontrado", "Cadena buscada : " + cCodArt )
 
 	END IF
 
@@ -8838,7 +8838,7 @@ STATIC FUNCTION DelDetalle( cCodArt )
    InitWait()
 
    /*
-   Referencia artÃ­culo proveedor
+   Referencia artículo proveedor
    */
 
    if ( dbfArtPrv )->( dbSeek( cCodArt ) )
@@ -8909,7 +8909,7 @@ STATIC FUNCTION DelDetalle( cCodArt )
    end while
 
    /*
-   ArtÃ­culos kit
+   Artículos kit
    */
 
    if ( dbfArtKit )->( dbSeek( cCodArt ) )
@@ -8967,14 +8967,14 @@ FUNCTION ExsArt(  dbfArticulo, dbfIva, dbfTmp )
 
 	IF !empty( cRefArt ) .AND. !( dbfArticulo )->( dbSeek( cRefArt ) )
 
-      //Nos piden autorizaciÂ¢n para aÂ¤adirlo
+      //Nos piden autorizaci¢n para a¤adirlo
 
       IF ApoloMsgNoYes(   "Articulo : " + rtrim( cDetArt ) + " no existe en su fichero." + CRLF +;
 							CRLF +;
-							"Â¿ Desea realizar el alta automÃ¡tica ?" + CRLF +;
+							"¿ Desea realizar el alta automática ?" + CRLF +;
 							CRLF + ;
-                     "( Recuerde que, debe de completar la ficha de este artÃ­culo )",;
-                     "Nuevo artÃ­culo" )
+                     "( Recuerde que, debe de completar la ficha de este artículo )",;
+                     "Nuevo artículo" )
 
 			( dbfArticulo )->( dbAppend() )
 			( dbfArticulo )->CODIGO		:= cRefArt
@@ -9087,7 +9087,7 @@ Return nil
 //--------------------------------------------------------------------------//
 
 /*
-Devuelve el precio de distribuciÃ³n de un articulo
+Devuelve el precio de distribución de un articulo
 */
 
 FUNCTION retPvd( cCodArt, cCodDiv, nChgDiv, dbfArt, dbfDiv )
@@ -9431,7 +9431,7 @@ STATIC FUNCTION mkChgPrc( cFam, cGetTip, cIva, lCosto, lTarifa1, lTarifa2, lTari
    local nRecAct  := ( dbfArticulo )->( RecNo() )
 
    if !lCosto .and. !lTarifa1 .and. !lTarifa2 .and. !lTarifa3 .and. !lTarifa4 .and. !lTarifa5 .and. !lTarifa6 .and. !lPesVol
-      msgStop( "No ha elegido ningÃºna tarifa a cambiar." )
+      msgStop( "No ha elegido ningúna tarifa a cambiar." )
       Return .f.
    end if
 
@@ -9455,7 +9455,7 @@ STATIC FUNCTION mkChgPrc( cFam, cGetTip, cIva, lCosto, lTarifa1, lTarifa2, lTari
 
    if CreateFastFilter( cExpFlt, dbfArticulo, .f., oMtr )
 
-      if ApoloMsgNoYes( "Se van a reemplazar " + Alltrim( Trans( ( dbfArticulo )->( OrdKeyCount() ), "9999999" ) ) + " registros.", "Â¿Desea continuar?" )
+      if ApoloMsgNoYes( "Se van a reemplazar " + Alltrim( Trans( ( dbfArticulo )->( OrdKeyCount() ), "9999999" ) ) + " registros.", "¿Desea continuar?" )
 
          oMtr:SetTotal( ( dbfArticulo )->( OrdKeyCount() ) )
 
@@ -10551,7 +10551,7 @@ FUNCTION EdmArt( cCodRut, cPathTo, oStru, oTipArt )
    USE ( cPatDat() + "TIVA.DBF" ) NEW VIA ( cDriver() ) SHARED ALIAS ( cCheckArea( "TIVA", @dbfTIva ) )
    SET ADSINDEX TO ( cPatDat() + "TIVA.CDX" ) ADDITIVE
 
-   oStru:oMetUno:cText   := "ArtÃ­culos"
+   oStru:oMetUno:cText   := "Artículos"
    oStru:oMetUno:SetTotal( ( dbf )->( LastRec() ) )
 
    while !( dbf )->( eof() )
@@ -10988,13 +10988,13 @@ Static Function PosProveedor( nSea, cGetPrv, cGetArt, cGetBar )
          if dbSeekInOrd( ( dbfCodeBar )->cCodArt, "Codigo", dbfArticulo )
             oWndBrw:SetFocus()
          else
-            msgStop( "ArtÃ­culo " + Rtrim( ( dbfCodeBar )->cCodArt ) + " no encontrado." )
+            msgStop( "Artículo " + Rtrim( ( dbfCodeBar )->cCodArt ) + " no encontrado." )
          end if
       else
          if dbSeekInOrd( cGetBar, "CodeBar", dbfArticulo )
             oWndBrw:Refresh()
          else
-            msgStop( "CÃ³digo de barras " + Rtrim( cGetBar ) + " no encontrado." )
+            msgStop( "Código de barras " + Rtrim( cGetBar ) + " no encontrado." )
          end if
       end if
 
@@ -11004,7 +11004,7 @@ Static Function PosProveedor( nSea, cGetPrv, cGetArt, cGetBar )
          if dbSeekInOrd( ( dbfArtPrv )->cCodArt, "Codigo", dbfArticulo ) 
             oWndBrw:SetFocus()
          else
-            msgStop( "ArtÃ­culo " + Rtrim( ( dbfArtPrv )->cCodArt ) + " no encontrado." )
+            msgStop( "Artículo " + Rtrim( ( dbfArtPrv )->cCodArt ) + " no encontrado." )
          end if
       end if
 
@@ -11066,7 +11066,7 @@ Function EdtArticulo( cCodArt, lOpenBrowse )
          if dbSeekInOrd( cCodArt, "Codigo", dbfArticulo )
             oWndBrw:RecEdit()
          else
-            MsgStop( "No se encuentra artÃ­culo" )
+            MsgStop( "No se encuentra artículo" )
          end if
       end if
 
@@ -11076,7 +11076,7 @@ Function EdtArticulo( cCodArt, lOpenBrowse )
          if dbSeekInOrd( cCodArt, "Codigo", dbfArticulo )
             WinEdtRec( oWndBrw, bEdit, dbfArticulo )
          else
-            MsgStop( "No se encuentra artÃ­culo con cÃ³digo " + Rtrim( cCodArt ) )
+            MsgStop( "No se encuentra artículo con código " + Rtrim( cCodArt ) )
          end if
          CloseFiles()
       end if
@@ -11085,7 +11085,7 @@ Function EdtArticulo( cCodArt, lOpenBrowse )
 
    RECOVER USING oError
 
-      msgStop( ErrorMessage( oError ), "Error editando artÃ­culo" )
+      msgStop( ErrorMessage( oError ), "Error editando artículo" )
 
    END SEQUENCE
 
@@ -11128,7 +11128,7 @@ Function AppArticulo( lOpenBrowse )
 
    RECOVER USING oError
 
-      msgStop( ErrorMessage( oError ), "Error aÃ±adiendo artÃ­culo" )
+      msgStop( ErrorMessage( oError ), "Error añadiendo artículo" )
 
    END SEQUENCE
 
@@ -11155,7 +11155,7 @@ FUNCTION InfArticulo( cCodArt, oBrw )
    if ( dbfArticulo )->( dbSeek( cCodArt ) )
       BrwVtaComArt( ( dbfArticulo )->Codigo, ( dbfArticulo )->Nombre, dbfDiv, dbfIva, dbfAlmT, dbfArticulo )
    else
-      MsgStop( "No se encuentra artÃ­culo" )
+      MsgStop( "No se encuentra artículo" )
    end if
 
    if oBrw != nil
@@ -11180,7 +11180,7 @@ FUNCTION CargaValorCat( aTmp, aGet, oSay, oValorPunto, oValorDto, oValorTot, nMo
          ( dbfCatalogo )->( dbSeek( aTmp[ ( dbfArticulo )->( fieldpos( "CCODCAT" ) ) ] ) )   .and.;
          !(dbfCatalogo)->lObsCat
 
-         if ApoloMsgNoYes(  "Â¿ Desea actualizar los datos del artÃ­culo con los datos del catÃ¡logo ?", "Elija una opciÃ³n" )
+         if ApoloMsgNoYes(  "¿ Desea actualizar los datos del artículo con los datos del catálogo ?", "Elija una opción" )
 
             nOrdAnt     := ( dbfTmpPrv )->( OrdSetFocus( "CREFPRV" ) )
 
@@ -11455,7 +11455,7 @@ function SynArt( cPath )
          end if
 
          /*
-         Sincronizamos las fechas de LASTCHGcreaciÃ³n y de cambio---------------
+         Sincronizamos las fechas de LASTCHGcreación y de cambio---------------
          */
 
          do case
@@ -11476,8 +11476,8 @@ function SynArt( cPath )
          end case
 
          /*
-         Si tenemos marcada la opciÃ³n de "Cambiar precios de costo automÃ¡ticamente"
-         ponemos en la ficha del artÃ­culo el precio de la Ãºltima compra.
+         Si tenemos marcada la opción de "Cambiar precios de costo automáticamente"
+         ponemos en la ficha del artículo el precio de la última compra.
          */
 
          if uFieldEmpresa( "lActCos" )
@@ -11490,7 +11490,7 @@ function SynArt( cPath )
          end if
 
          /*
-         Recalculamos precios de artÃ­culos-------------------------------------
+         Recalculamos precios de artículos-------------------------------------
          */
 
          nCosto                        := ( dbfArticulo )->pCosto
@@ -11564,7 +11564,7 @@ function SynArt( cPath )
          end if
 
          /*
-         Factores de conversiÃ³n de articulos-----------------------------------
+         Factores de conversión de articulos-----------------------------------
          */
 
          if ( dbfArticulo )->nFacCnv == 0
@@ -11590,7 +11590,7 @@ function SynArt( cPath )
          end if
 
          /*
-         Nos aseguramos de que haya una imagen por defecto del artÃ­culo--------
+         Nos aseguramos de que haya una imagen por defecto del artículo--------
          */
 
          if !dbSeekInOrd( ( dbfArticulo )->Codigo, "lDefImg", dbfImg )
@@ -11730,22 +11730,22 @@ Static Function EndTrans2( aTmp, aGet, oSay, oDlg, nMode )
    */
 
    if Empty( cCod )
-      MsgStop( "CÃ³digo no puede estar vacÃ­o" )
+      MsgStop( "Código no puede estar vacío" )
       return nil
    end if
 
    if Empty( aTmp[( dbfArticulo )->( fieldpos( "Nombre" ) ) ] )
-      MsgStop( "DescripciÃ³n no puede estar vacÃ­o" )
+      MsgStop( "Descripción no puede estar vacío" )
       return nil
    end if
 
    if Empty( oSay[3]:varGet() )
-      MsgStop( "Referencia artÃ­culo-proveedor no puede estar vacÃ­a" )
+      MsgStop( "Referencia artículo-proveedor no puede estar vacía" )
       return nil
    end if
 
    if ( dbfArticulo )->( dbSeek( cCod ) )
-      msgStop( "CÃ³digo ya existe" )
+      msgStop( "Código ya existe" )
       return nil
    end if
 
@@ -11895,7 +11895,7 @@ Static Function EndTrans2( aTmp, aGet, oSay, oDlg, nMode )
 
    end if
 
-   //guarda el artÃ­culo
+   //guarda el artículo
 
    WinGather( aTmp, aGet, dbfArticulo, nil, nMode )
 
@@ -11906,7 +11906,7 @@ Return ( oDlg:end( IDOK ) )
 Static Function EndDetalle( aTmp, aGet, dbfTmpPrv, oBrw, nMode, oDlg, lOldPrvDef, aTmpArt, lOldRefPrv )
 
    if Empty( aTmp[ ( dbfTmpPrv )->( fieldPos( "CCODPRV" ) ) ] )
-      msgStop( "El cÃ³digo de proveedor no puede estar vacÃ­o" )
+      msgStop( "El código de proveedor no puede estar vacío" )
       return nil
    end if
 
@@ -11997,7 +11997,7 @@ Method CreateData()
       Return Nil
    End If
 
-   ::oSender:SetText( 'Seleccionando artÃ­culos' )
+   ::oSender:SetText( 'Seleccionando artículos' )
 
    /*
    Creamos todas las bases de datos relacionadas con Articulos
@@ -12169,7 +12169,7 @@ Method CreateData()
 
    if lSnd
 
-      ::oSender:SetText( "Comprimiendo artÃ­culos" )
+      ::oSender:SetText( "Comprimiendo artículos" )
 
       if ::oSender:lZipData( cFileName )
          ::oSender:SetText( "Ficheros comprimidos" )
@@ -12179,7 +12179,7 @@ Method CreateData()
 
    else
 
-      ::oSender:SetText( "No hay artÃ­culos para enviar" )
+      ::oSender:SetText( "No hay artículos para enviar" )
 
    end if
 
@@ -12248,9 +12248,9 @@ Method SendData()
       if ftpSndFile( cPatOut() + cFileName, cFileName, 2000, ::oSender )
          ::IncNumberToSend()
          ::lSuccesfullSend := .t.
-         ::oSender:SetText( "Ficheros de artÃ­culos enviados " + cFileName )
+         ::oSender:SetText( "Ficheros de artículos enviados " + cFileName )
       else
-         ::oSender:SetText( "ERROR fichero de artÃ­culos no enviado" )
+         ::oSender:SetText( "ERROR fichero de artículos no enviado" )
       end if
 
    end if
@@ -12270,13 +12270,13 @@ Method ReciveData()
       aExt              := { "All" }
    end if
 
-   ::oSender:SetText( "Recibiendo artÃ­culos" )
+   ::oSender:SetText( "Recibiendo artículos" )
 
    for n := 1 to len( aExt )
       FtpGetFiles( "Art*." + aExt[ n ], cPatIn(), 2000, ::oSender )
    next
 
-   ::oSender:SetText( "ArtÃ­culos recibidos" )
+   ::oSender:SetText( "Artículos recibidos" )
 
 Return ( Self )
 
@@ -12357,7 +12357,7 @@ Method Process()
                else
                      ::CleanRelation( ( tmpArticulo )->Codigo )
                      dbPass( tmpArticulo, dbfArticulo, .t. )
-                     ::oSender:SetText( "AÃ±adido     : " + AllTrim( ( dbfArticulo )->Codigo ) + "; " + AllTrim( ( dbfArticulo )->Nombre ) + "; " + AllTrim( Trans( ( dbfArticulo )->pVenta1, PicOut() ) ) + "; " + AllTrim( Trans( ( dbfArticulo )->pVtaIva1, PicOut() ) ) )
+                     ::oSender:SetText( "Añadido     : " + AllTrim( ( dbfArticulo )->Codigo ) + "; " + AllTrim( ( dbfArticulo )->Nombre ) + "; " + AllTrim( Trans( ( dbfArticulo )->pVenta1, PicOut() ) ) + "; " + AllTrim( Trans( ( dbfArticulo )->pVtaIva1, PicOut() ) ) )
                end if
 
                ( tmpArticulo )->( dbSkip() )
@@ -12631,13 +12631,13 @@ Static Function EdtRecMenu( aTmp, aGet, oSay, oDlg, oFld, aBar, cSay, nMode )
 
          MENU
 
-            MENUITEM "&1. Informe del artÃ­culo";
-            MESSAGE  "Muestra el informe del artÃ­culo" ;
+            MENUITEM "&1. Informe del artículo";
+            MESSAGE  "Muestra el informe del artículo" ;
             RESOURCE "info16" ;
             ACTION   ( BrwVtaComArt( ( dbfArticulo )->Codigo, ( dbfArticulo )->Nombre, dbfDiv, dbfIva, dbfAlmT, dbfArticulo ) )
 
-            MENUITEM "&2. Informe de artÃ­culo en escandallo";
-            MESSAGE  "Muestra el informe del artÃ­culo en escandallo" ;
+            MENUITEM "&2. Informe de artículo en escandallo";
+            MESSAGE  "Muestra el informe del artículo en escandallo" ;
             RESOURCE "info16" ;
             ACTION   ( BrwVtaComArt( ( dbfTmpKit )->cRefKit, ( dbfTmpKit )->cDesKit, dbfDiv, dbfIva, dbfAlmT, dbfArticulo ) )
 
@@ -12645,60 +12645,60 @@ Static Function EdtRecMenu( aTmp, aGet, oSay, oDlg, oFld, aBar, cSay, nMode )
 
             SEPARATOR
 
-            MENUITEM "&3. AÃ±adir pedido a proveedor";
-            MESSAGE  "AÃ±ade un pedido a proveedor" ;
+            MENUITEM "&3. Añadir pedido a proveedor";
+            MESSAGE  "Añade un pedido a proveedor" ;
             RESOURCE "Clipboard_empty_businessman_16";
             ACTION   ( if( !Empty( EndTrans( aTmp, aGet, oSay, oDlg, aBar, cSay[7], nMode ) ), PedPrv( nil, nil, nil, ( dbfArticulo )->Codigo ), ) )
 
-            MENUITEM "&4. AÃ±adir albarÃ¡n de proveedor";
-            MESSAGE  "AÃ±ade un albarÃ¡n de proveedor" ;
+            MENUITEM "&4. Añadir albarán de proveedor";
+            MESSAGE  "Añade un albarán de proveedor" ;
             RESOURCE "Document_plain_businessman_16";
             ACTION   ( if( !Empty( EndTrans( aTmp, aGet, oSay, oDlg, aBar, cSay[7], nMode ) ), AlbPrv( nil , nil, nil, ( dbfArticulo )->Codigo ), ) )
 
-            MENUITEM "&5. AÃ±adir factura de proveedor";
-            MESSAGE  "AÃ±ade una factura de proveedor" ;
+            MENUITEM "&5. Añadir factura de proveedor";
+            MESSAGE  "Añade una factura de proveedor" ;
             RESOURCE "Document_businessman_16";
             ACTION   ( if( !Empty( EndTrans( aTmp, aGet, oSay, oDlg, aBar, cSay[7], nMode ) ), FacPrv( nil, nil, nil, ( dbfArticulo )->Codigo ), ) )
 
-            MENUITEM "&6. AÃ±adir presupuesto de cliente";
-            MESSAGE  "AÃ±ade un presupuesto de cliente" ;
+            MENUITEM "&6. Añadir presupuesto de cliente";
+            MESSAGE  "Añade un presupuesto de cliente" ;
             RESOURCE "Notebook_user1_16";
             ACTION   ( if( !Empty( EndTrans( aTmp, aGet, oSay, oDlg, aBar, cSay[7], nMode ) ), PreCli( nil, nil, nil, ( dbfArticulo )->Codigo ), ) )
 
-            MENUITEM "&7. AÃ±adir pedido de cliente";
-            MESSAGE  "AÃ±ade un pedido de cliente" ;
+            MENUITEM "&7. Añadir pedido de cliente";
+            MESSAGE  "Añade un pedido de cliente" ;
             RESOURCE "Clipboard_empty_user1_16";
             ACTION   ( if( !Empty( EndTrans( aTmp, aGet, oSay, oDlg, aBar, cSay[7], nMode ) ), PedCli( nil, nil, nil, ( dbfArticulo )->Codigo ), ) )
 
-            MENUITEM "&8. AÃ±adir albarÃ¡n de cliente";
-            MESSAGE  "AÃ±ade un albarÃ¡n de cliente" ;
+            MENUITEM "&8. Añadir albarán de cliente";
+            MESSAGE  "Añade un albarán de cliente" ;
             RESOURCE "Document_plain_user1_16";
-            ACTION   ( if( !Empty( EndTrans( aTmp, aGet, oSay, oDlg, aBar, cSay[7], nMode ) ), AlbCli( nil, nil, { "ArtÃ­culo" => ( dbfArticulo )->Codigo } ), ) )
+            ACTION   ( if( !Empty( EndTrans( aTmp, aGet, oSay, oDlg, aBar, cSay[7], nMode ) ), AlbCli( nil, nil, { "Artículo" => ( dbfArticulo )->Codigo } ), ) )
 
-            MENUITEM "&9. AÃ±adir factura de cliente";
-            MESSAGE  "AÃ±ade una factura de cliente" ;
+            MENUITEM "&9. Añadir factura de cliente";
+            MESSAGE  "Añade una factura de cliente" ;
             RESOURCE "Document_user1_16";
-            ACTION   ( if( !Empty( EndTrans( aTmp, aGet, oSay, oDlg, aBar, cSay[7], nMode ) ), FactCli( nil, nil, { "ArtÃ­culo" => ( dbfArticulo )->Codigo } ), ) )
+            ACTION   ( if( !Empty( EndTrans( aTmp, aGet, oSay, oDlg, aBar, cSay[7], nMode ) ), FactCli( nil, nil, { "Artículo" => ( dbfArticulo )->Codigo } ), ) )
 
-            MENUITEM "&A. AÃ±adir tiket de cliente";
-            MESSAGE  "AÃ±ade un tiket de cliente" ;
+            MENUITEM "&A. Añadir tiket de cliente";
+            MESSAGE  "Añade un tiket de cliente" ;
             RESOURCE "Cashier_user1_16";
             ACTION   ( if( !Empty( EndTrans( aTmp, aGet, oSay, oDlg, aBar, cSay[7], nMode ) ), FrontTpv( nil, nil, nil, ( dbfArticulo )->Codigo ), ) )
 
             SEPARATOR
 
-            MENUITEM "&B. AÃ±adir movimiento entre almacenes";
+            MENUITEM "&B. Añadir movimiento entre almacenes";
             MESSAGE  "Realizar un nuevo movimiento entre almacenes" ;
             RESOURCE "Pencil_Package_16";
             ACTION   ( AppMovAlm( ( dbfArticulo )->Codigo, 1 ) );
 
-            MENUITEM "&C. AÃ±adir movimiento de regularizaciÃ³n de almacenes simple";
-            MESSAGE  "Realizar un nuevo movimiento de regularizaciÃ³n de almacenes simple" ;
+            MENUITEM "&C. Añadir movimiento de regularización de almacenes simple";
+            MESSAGE  "Realizar un nuevo movimiento de regularización de almacenes simple" ;
             RESOURCE "Pencil_Package_16";
             ACTION   ( AppMovAlm( ( dbfArticulo )->Codigo, 2 ) );
 
-            MENUITEM "&D. AÃ±adir movimiento de regularizaciÃ³n de almacenes por objetivo";
-            MESSAGE  "Realizar un nuevo movimiento de regularizaciÃ³n de almacenes por objetivo" ;
+            MENUITEM "&D. Añadir movimiento de regularización de almacenes por objetivo";
+            MESSAGE  "Realizar un nuevo movimiento de regularización de almacenes por objetivo" ;
             RESOURCE "Pencil_Package_16";
             ACTION   ( AppMovAlm( ( dbfArticulo )->Codigo, 3 ) );
 
@@ -12720,7 +12720,7 @@ Return ( oMenu )
 
 //---------------------------------------------------------------------------//
 /*
-Cambia el proveedor por defecto y lo refleja en la tabla de artÃ­culo (CPRVHAB)
+Cambia el proveedor por defecto y lo refleja en la tabla de artículo (CPRVHAB)
 */
 
 Static Function lSelPrvDef( aTmp, dbfTmpPrv, oBrw, aTmpArt )
@@ -12798,7 +12798,7 @@ Return ( .f. )
 
 Static Function lValidUndMedicion( aTmp, aGet )
 
-   //si el campo unidad de mediciÃ³n esta vacio oculto las tres dimensiones
+   //si el campo unidad de medición esta vacio oculto las tres dimensiones
 
    if Empty( aTmp[ ( dbfArticulo )->( fieldpos( "CUNIDAD" ) ) ] )
 
@@ -12818,7 +12818,7 @@ Static Function lValidUndMedicion( aTmp, aGet )
       aGet[ ( dbfArticulo )->( fieldpos( "NALTART" ) ) ]:Hide()
       aGet[ ( dbfArticulo )->( fieldpos( "NANCART" ) ) ]:Hide()
 
-      //si nDimension es igual a 1 muestra la primera descrpciÃ³n
+      //si nDimension es igual a 1 muestra la primera descrpción
 
       if oUndMedicion:oDbf:nDimension >= 1
 
@@ -12881,7 +12881,7 @@ Function ExpFamilia( cCodFam, oSayFamilia, aGet )
             ( !Empty( ( dbfFam )->cCodPrp2 ) .and. aGet[ ( dbfArticulo )->( fieldpos( "cCodPrp2" ) ) ]:VarGet() != ( dbfFam )->cCodPrp2 ) .or.;
             ( !Empty( ( dbfFam )->cCodFra  ) .and. aGet[ ( dbfArticulo )->( fieldpos( "cCodFra"  ) ) ]:VarGet() != ( dbfFam )->cCodFra  )
 
-            if ApoloMsgNoYes( "Â¿ Desea importar las propiedades y frases publicitarias de la familia ?" )
+            if ApoloMsgNoYes( "¿ Desea importar las propiedades y frases publicitarias de la familia ?" )
 
                aGet[ ( dbfArticulo )->( fieldpos( "cCodPrp1" ) ) ]:cText( ( dbfFam )->cCodPrp1 )
                aGet[ ( dbfArticulo )->( fieldpos( "cCodPrp1" ) ) ]:lValid()
@@ -13026,8 +13026,8 @@ Method lDefault() CLASS TArticuloLabelGenerator
    oBlock               := ErrorBlock( { | oError | ApoloBreak( oError ) } )
    BEGIN SEQUENCE
 
-   ::cCriterio          := "NingÃºn criterio"
-   ::aCriterio          := { "NingÃºn criterio", "Todos los registros", "Familia", "Fecha modificaciÃ³n" }
+   ::cCriterio          := "Ningún criterio"
+   ::aCriterio          := { "Ningún criterio", "Todos los registros", "Familia", "Fecha modificación" }
 
    ::cFamiliaInicio    := ( dbfArticulo )->Familia
    ::cFamiliaFin       := ( dbfArticulo )->Familia
@@ -13048,13 +13048,13 @@ Method lDefault() CLASS TArticuloLabelGenerator
    ::nCantidadLabels    := 1
    ::nUnidadesLabels    := 1
 
-   ::aSearch            := { "CÃ³digo", "Nombre" }
+   ::aSearch            := { "Código", "Nombre" }
 
    RECOVER USING oError
 
       lError            := .t.
 
-      msgStop( "Error en la creaciÃ³n de generador de etiquetas" + CRLF + ErrorMessage( oError ) )
+      msgStop( "Error en la creación de generador de etiquetas" + CRLF + ErrorMessage( oError ) )
 
    END SEQUENCE
    ErrorBlock( oBlock )
@@ -13068,8 +13068,8 @@ Method Create() CLASS TArticuloLabelGenerator
    local oGetOrd
    local cGetOrd     := Space( 100 )
 	local oCbxOrd
-   local cCbxOrd     := "CÃ³digo"
-   local aCbxOrd     := { "CÃ³digo", "Nombre" }
+   local cCbxOrd     := "Código"
+   local aCbxOrd     := { "Código", "Nombre" }
 
    if ::lDefault()
 
@@ -13262,7 +13262,7 @@ Method Create() CLASS TArticuloLabelGenerator
          end with
 
          with object ( ::oBrwLabel:AddCol() )
-            :cHeader          := "CÃ³digo"
+            :cHeader          := "Código"
             :bEditValue       := {|| ( dbfArticulo )->Codigo }
             :nWidth           := 80
             :cSortOrder       := "Codigo"
@@ -13306,7 +13306,7 @@ Method Create() CLASS TArticuloLabelGenerator
          REDEFINE BUTTON ::oBtnListado ;          // Boton listado
             ID       40 ;
             OF       ::oDlg ;
-            ACTION   ( TInfArtFam():New( "Listado de artÃ­culos seleccionados para etiquetas" ):Play( .t., dbfArticulo, dbfDiv, dbfArtKit, dbfIva, dbfFam, oStock, oWndBrw ) )
+            ACTION   ( TInfArtFam():New( "Listado de artículos seleccionados para etiquetas" ):Play( .t., dbfArticulo, dbfDiv, dbfArtKit, dbfIva, dbfFam, oStock, oWndBrw ) )
 
          REDEFINE BUTTON ::oBtnAnterior ;          // Boton anterior
             ID       20 ;
@@ -13644,7 +13644,7 @@ Method SelectPropertiesLabels() CLASS TArticuloLabelGenerator
 
    else
 
-      MsgStop( "Este artÃ­culo no tiene propiedades." )
+      MsgStop( "Este artículo no tiene propiedades." )
 
    end if
 
@@ -13949,7 +13949,7 @@ Method lCreateTemporal() CLASS TArticuloLabelGenerator
 
       lCreateTemporal      := .f.
 
-      MsgStop( 'Imposible abrir ficheros de artÃ­culos' + CRLF + ErrorMessage( oError ) )
+      MsgStop( 'Imposible abrir ficheros de artículos' + CRLF + ErrorMessage( oError ) )
 
    END SEQUENCE
 
@@ -14009,7 +14009,7 @@ Method lPrintLabels() CLASS TArticuloLabelGenerator
 
    oFr:SetIcon( 1 )
 
-   oFr:SetTitle(        "DiseÃ±ador de documentos" )
+   oFr:SetTitle(        "Diseñador de documentos" )
 
 
    /*
@@ -14054,7 +14054,7 @@ Method lPrintLabels() CLASS TArticuloLabelGenerator
    end if
 
    /*
-   Destruye el diseÃ±ador-------------------------------------------------------
+   Destruye el diseñador-------------------------------------------------------
    */
 
    oFr:DestroyFr()
@@ -14290,7 +14290,7 @@ FUNCTION pdaArticulo( oMenuItem )
    local oGetBuscar
    local cGetBuscar     := Space( 100 )
    local oCbxOrden
-   local cCbxOrden      := "CÃ³digo"
+   local cCbxOrden      := "Código"
    local oSayTit
    local oFont
    local oBtn
@@ -14320,7 +14320,7 @@ FUNCTION pdaArticulo( oMenuItem )
       DEFINE DIALOG oDlg RESOURCE "Dlg_info"
 
       REDEFINE SAY oSayTit ;
-         VAR      "ArtÃ­culos" ;
+         VAR      "Artículos" ;
          ID       140 ;
          COLOR    "N/W*" ;
          FONT     oFont ;
@@ -14346,7 +14346,7 @@ FUNCTION pdaArticulo( oMenuItem )
       REDEFINE COMBOBOX oCbxOrden ;
          VAR      cCbxOrden ;
          ID       120 ;
-         ITEMS    { "CÃ³digo", "Nombre" } ;
+         ITEMS    { "Código", "Nombre" } ;
 			OF 		oDlg
 
       oCbxOrden:bChange    := {|| ( dbfArticulo )->( OrdSetFocus( oCbxOrden:nAt ) ), ( dbfArticulo )->( dbGoTop() ), oBrwArticulo:Refresh(), oGetBuscar:SetFocus(), oCbxOrden:Refresh() }
@@ -14357,7 +14357,7 @@ FUNCTION pdaArticulo( oMenuItem )
          SIZES ;
                180 ;
          HEADER ;
-               "CÃ³digo" + CRLF + "Nombre" ;
+               "Código" + CRLF + "Nombre" ;
          ALIAS ( dbfArticulo );
          ID    100 ;
          OF    oDlg
@@ -14423,10 +14423,10 @@ Static Function PdaEdtRec( aTmp, aGet, dbfArticulo, oBrw, oDlgAnt, bValid, nMode
 
    DEFINE FONT oFont NAME "Verdana" SIZE 0, -14
 
-   DEFINE DIALOG oDlg RESOURCE "ARTICULO_PDA"  //TITLE LblTitle( nMode ) + "familias de artÃ­culos"
+   DEFINE DIALOG oDlg RESOURCE "ARTICULO_PDA"  //TITLE LblTitle( nMode ) + "familias de artículos"
 
       REDEFINE SAY oSayTit ;
-         VAR      "AÃ±adiendo artÃ­culos" ;
+         VAR      "Añadiendo artículos" ;
          ID       110 ;
          COLOR    "N/W*" ;
          FONT     oFont ;
@@ -14619,18 +14619,18 @@ STATIC FUNCTION PdaEndTrans( aTmp, aGet, nMode, oBrw, oDlg )
    local aTabla
    local cCodArt  := aTmp[ ( dbfArticulo )->( fieldpos( "Codigo" ) ) ]
 
-   //Controlamos que no se cree una familia con el cÃ³digo o el nombre en blanco
+   //Controlamos que no se cree una familia con el código o el nombre en blanco
 
    if nMode == APPD_MODE
 
       if Empty( cCodArt )
-         MsgStop( "CÃ³digo no puede estar vacÃ­o" )
+         MsgStop( "Código no puede estar vacío" )
          aGet[ ( dbfArticulo )->( fieldpos( "Codigo" ) ) ]:SetFocus()
          return nil
       end if
 
       if dbSeekInOrd( cCodArt, "Codigo", dbfArticulo )
-         MsgStop( "CÃ³digo ya existe " + Rtrim( cCodArt ) )
+         MsgStop( "Código ya existe " + Rtrim( cCodArt ) )
          aGet[ ( dbfArticulo )->( fieldpos( "Codigo" ) ) ]:SetFocus()
          return nil
       end if
@@ -14638,7 +14638,7 @@ STATIC FUNCTION PdaEndTrans( aTmp, aGet, nMode, oBrw, oDlg )
    end if
 
    if Empty( aTmp[( dbfArticulo )->( fieldpos( "Nombre" ) ) ] )
-      MsgStop( "Nombre no puede estar vacÃ­o" )
+      MsgStop( "Nombre no puede estar vacío" )
       aGet[( dbfArticulo )->( fieldpos( "Nombre" ) ) ]:SetFocus()
       return nil
    end if
@@ -14828,7 +14828,7 @@ Method CreateData( oPgrActual, oSayStatus, cPatPreVenta ) CLASS pdaArticuloSende
       ( tmpArticulo )->( dbSkip() )
 
       if !Empty( oSayStatus )
-         oSayStatus:SetText( "Sincronizando ArtÃ­culos " + Alltrim( Str( ( tmpArticulo )->( OrdKeyNo() ) ) ) + " de " + Alltrim( Str( ( tmpArticulo )->( OrdKeyCount() ) ) ) )
+         oSayStatus:SetText( "Sincronizando Artículos " + Alltrim( Str( ( tmpArticulo )->( OrdKeyNo() ) ) ) + " de " + Alltrim( Str( ( tmpArticulo )->( OrdKeyCount() ) ) ) )
       end if
 
       SysRefresh()
@@ -15032,7 +15032,7 @@ Method CreateData( oPgrActual, oSayStatus, cPatPreVenta ) CLASS pdaPCArtSenderRe
       ( pdaArticulo )->( dbSkip() )
 
       if !Empty( oSayStatus )
-         oSayStatus:SetText( "Sincronizando ArtÃ­culos " + Alltrim( Str( ( pdaArticulo )->( OrdKeyNo() ) ) ) + " de " + Alltrim( Str( ( pdaArticulo )->( OrdKeyCount() ) ) ) )
+         oSayStatus:SetText( "Sincronizando Artículos " + Alltrim( Str( ( pdaArticulo )->( OrdKeyNo() ) ) ) + " de " + Alltrim( Str( ( pdaArticulo )->( OrdKeyCount() ) ) ) )
       end if
 
       SysRefresh()
@@ -15317,7 +15317,7 @@ FUNCTION rxArticulo( cPath, oMeter, lRecPrc )
 
    else
 
-      msgStop( "Imposible abrir en modo exclusivo la tabla de artÃ­culos" )
+      msgStop( "Imposible abrir en modo exclusivo la tabla de artículos" )
 
    end if
 
@@ -15344,7 +15344,7 @@ FUNCTION rxArticulo( cPath, oMeter, lRecPrc )
 
    else
 
-      msgStop( "Imposible abrir en modo exclusivo la tabla de artÃ­culos" )
+      msgStop( "Imposible abrir en modo exclusivo la tabla de artículos" )
 
    end if
 
@@ -15365,7 +15365,7 @@ FUNCTION rxArticulo( cPath, oMeter, lRecPrc )
 
       ( dbfArticulo )->( dbCloseArea() )
    else
-      msgStop( "Imposible abrir en modo exclusivo la tabla de artÃ­culos" )
+      msgStop( "Imposible abrir en modo exclusivo la tabla de artículos" )
    end if
 
 	/*
@@ -15387,7 +15387,7 @@ FUNCTION rxArticulo( cPath, oMeter, lRecPrc )
 
       ( dbfArticulo )->( dbCloseArea() )
    else
-      msgStop( "Imposible abrir en modo exclusivo la tabla de artÃ­culos" )
+      msgStop( "Imposible abrir en modo exclusivo la tabla de artículos" )
    end if
 
    /*
@@ -15434,7 +15434,7 @@ FUNCTION rxArticulo( cPath, oMeter, lRecPrc )
 
       ( dbfArticulo )->( dbCloseArea() )
    else
-      msgStop( "Imposible abrir en modo exclusivo la tabla de artÃ­culos" )
+      msgStop( "Imposible abrir en modo exclusivo la tabla de artículos" )
    end if
 
    /*
@@ -15457,7 +15457,7 @@ FUNCTION rxArticulo( cPath, oMeter, lRecPrc )
 
       ( dbfArticulo )->( dbCloseArea() )
    else
-      msgStop( "Imposible abrir en modo exclusivo la tabla de artÃ­culos" )
+      msgStop( "Imposible abrir en modo exclusivo la tabla de artículos" )
    end if
 
    /*
@@ -15520,17 +15520,17 @@ function aItmArt()
 
    local aBase  := {}
 
-   aAdd( aBase, { "Codigo",    "C", 18, 0, "CÃ³digo del artÃ­culo" ,                    "'@!'",               "", "( cDbfArt )", nil } )
-   aAdd( aBase, { "Nombre",    "C",100, 0, "Nombre del artÃ­culo",                     "",                   "", "( cDbfArt )", nil } )
-   aAdd( aBase, { "cDesTik",   "C", 20, 0, "DescripciÃ³n para el tiket" ,              "",                   "", "( cDbfArt )", nil } )
+   aAdd( aBase, { "Codigo",    "C", 18, 0, "Código del artículo" ,                    "'@!'",               "", "( cDbfArt )", nil } )
+   aAdd( aBase, { "Nombre",    "C",100, 0, "Nombre del artículo",                     "",                   "", "( cDbfArt )", nil } )
+   aAdd( aBase, { "cDesTik",   "C", 20, 0, "Descripción para el tiket" ,              "",                   "", "( cDbfArt )", nil } )
    aAdd( aBase, { "pCosto",    "N", 15, 6, "Precio de costo" ,                        "PicIn()",            "", "( cDbfArt )", nil } )
    aAdd( aBase, { "PvpRec",    "N", 15, 6, "Precio venta recomendado" ,               "PicOut()",           "", "( cDbfArt )", nil } )
-   aAdd( aBase, { "lBnf1",     "L",  1, 0, "LÃ³gico aplicar porcentaje de beneficio 1","",                   "", "( cDbfArt )", nil } )
-   aAdd( aBase, { "LBNF2",     "L",  1, 0, "LÃ³gico aplicar porcentaje de beneficio 2","",                   "", "( cDbfArt )", nil } )
-   aAdd( aBase, { "LBNF3",     "L",  1, 0, "LÃ³gico aplicar porcentaje de beneficio 3","",                   "", "( cDbfArt )", nil } )
-   aAdd( aBase, { "LBNF4",     "L",  1, 0, "LÃ³gico aplicar porcentaje de beneficio 4","",                   "", "( cDbfArt )", nil } )
-   aAdd( aBase, { "LBNF5",     "L",  1, 0, "LÃ³gico aplicar porcentaje de beneficio 5","",                   "", "( cDbfArt )", nil } )
-   aAdd( aBase, { "LBNF6",     "L",  1, 0, "LÃ³gico aplicar porcentaje de beneficio 6","",                   "", "( cDbfArt )", nil } )
+   aAdd( aBase, { "lBnf1",     "L",  1, 0, "Lógico aplicar porcentaje de beneficio 1","",                   "", "( cDbfArt )", nil } )
+   aAdd( aBase, { "LBNF2",     "L",  1, 0, "Lógico aplicar porcentaje de beneficio 2","",                   "", "( cDbfArt )", nil } )
+   aAdd( aBase, { "LBNF3",     "L",  1, 0, "Lógico aplicar porcentaje de beneficio 3","",                   "", "( cDbfArt )", nil } )
+   aAdd( aBase, { "LBNF4",     "L",  1, 0, "Lógico aplicar porcentaje de beneficio 4","",                   "", "( cDbfArt )", nil } )
+   aAdd( aBase, { "LBNF5",     "L",  1, 0, "Lógico aplicar porcentaje de beneficio 5","",                   "", "( cDbfArt )", nil } )
+   aAdd( aBase, { "LBNF6",     "L",  1, 0, "Lógico aplicar porcentaje de beneficio 6","",                   "", "( cDbfArt )", nil } )
    aAdd( aBase, { "BENEF1",    "N",  6, 2, "Porcentaje de beneficio precio 1" ,       "'@EZ 99.99'",        "", "( cDbfArt )", nil } )
    aAdd( aBase, { "BENEF2",    "N",  6, 2, "Porcentaje de beneficio precio 2" ,       "'@EZ 99.99'",        "", "( cDbfArt )", nil } )
    aAdd( aBase, { "BENEF3",    "N",  6, 2, "Porcentaje de beneficio precio 3" ,       "'@EZ 99.99'",        "", "( cDbfArt )", nil } )
@@ -15567,72 +15567,72 @@ function aItmArt()
    aAdd( aBase, { "PALQIVA4",  "N", 15, 6, "Precio de alquiler precio 4 " + cImp() + " incluido" ,    "PicOut()",        "", "( cDbfArt )", nil } )
    aAdd( aBase, { "PALQIVA5",  "N", 15, 6, "Precio de alquiler precio 5 " + cImp() + " incluido" ,    "PicOut()",        "", "( cDbfArt )", nil } )
    aAdd( aBase, { "PALQIVA6",  "N", 15, 6, "Precio de alquiler precio 6 " + cImp() + " incluido" ,    "PicOut()",        "", "( cDbfArt )", nil } )
-   aAdd( aBase, { "NPNTVER1",  "N", 15, 6, "ContribuciÃ³n punto verde" ,                               "PicOut()",        "", "( cDbfArt )", nil } )
-   aAdd( aBase, { "NPNVIVA1",  "N", 15, 6, "ContribuciÃ³n punto verde " + cImp() + " inc.",            "PicOut()",        "", "( cDbfArt )", nil } )
-   aAdd( aBase, { "NACTUAL",   "N", 15, 6, "NÃºmero de artÃ­culos" ,                    "",                   "", "( cDbfArt )", nil } )
-   aAdd( aBase, { "NCAJENT",   "N", 15, 6, "NÃºmero de cajas por defecto" ,            "MasUnd()",           "", "( cDbfArt )", nil } )
-   aAdd( aBase, { "NUNICAJA",  "N", 15, 6, "NÃºmero de unidades por defecto" ,         "MasUnd()",           "", "( cDbfArt )", nil } )
-   aAdd( aBase, { "NMINIMO",   "N", 15, 6, "NÃºmero de stock mÃ­nimo" ,                 "",                   "", "( cDbfArt )", nil } )
-   aAdd( aBase, { "NMAXIMO",   "N", 15, 6, "NÃºmero de stock maximo" ,                 "",                   "", "( cDbfArt )", nil } )
-   aAdd( aBase, { "NCNTACT",   "N", 15, 6, "NÃºmero del contador" ,                    "",                   "", "( cDbfArt )", nil } )
+   aAdd( aBase, { "NPNTVER1",  "N", 15, 6, "Contribución punto verde" ,                               "PicOut()",        "", "( cDbfArt )", nil } )
+   aAdd( aBase, { "NPNVIVA1",  "N", 15, 6, "Contribución punto verde " + cImp() + " inc.",            "PicOut()",        "", "( cDbfArt )", nil } )
+   aAdd( aBase, { "NACTUAL",   "N", 15, 6, "Número de artículos" ,                    "",                   "", "( cDbfArt )", nil } )
+   aAdd( aBase, { "NCAJENT",   "N", 15, 6, "Número de cajas por defecto" ,            "MasUnd()",           "", "( cDbfArt )", nil } )
+   aAdd( aBase, { "NUNICAJA",  "N", 15, 6, "Número de unidades por defecto" ,         "MasUnd()",           "", "( cDbfArt )", nil } )
+   aAdd( aBase, { "NMINIMO",   "N", 15, 6, "Número de stock mínimo" ,                 "",                   "", "( cDbfArt )", nil } )
+   aAdd( aBase, { "NMAXIMO",   "N", 15, 6, "Número de stock maximo" ,                 "",                   "", "( cDbfArt )", nil } )
+   aAdd( aBase, { "NCNTACT",   "N", 15, 6, "Número del contador" ,                    "",                   "", "( cDbfArt )", nil } )
    aAdd( aBase, { "LASTIN",    "D",  8, 0, "Fecha ultima entrada" ,                   "",                   "", "( cDbfArt )", nil } )
-   aAdd( aBase, { "LASTCHG",   "D",  8, 0, "Fecha de creaciÃ³n" ,                      "",                   "", "( cDbfArt )", nil } )
+   aAdd( aBase, { "LASTCHG",   "D",  8, 0, "Fecha de creación" ,                      "",                   "", "( cDbfArt )", nil } )
    aAdd( aBase, { "LASTOUT",   "D",  8, 0, "Fecha ultima salida" ,                    "",                   "", "( cDbfArt )", nil } )
-   aAdd( aBase, { "TIPOIVA",   "C",  1, 0, "CÃ³digo tipo de " + cImp(),                "",                   "", "( cDbfArt )", nil } )
-   aAdd( aBase, { "LIVAINC",   "L",  1, 0, "LÃ³gico " + cImp() + " incluido (S/N)" ,   "",                   "", "( cDbfArt )", nil } )
-   aAdd( aBase, { "FAMILIA",   "C", 16, 0, "CÃ³digo de la familia del artÃ­culo" ,      "",                   "", "( cDbfArt )", nil } )
-   aAdd( aBase, { "CSUBFAM",   "C",  8, 0, "CÃ³digo de la subfamilia del artÃ­culo" ,   "",                   "", "( cDbfArt )", nil } )
-   aAdd( aBase, { "GRPVENT",   "C",  9, 0, "CÃ³digo del grupo de ventas" ,             "",                   "", "( cDbfArt )", nil } )
-   aAdd( aBase, { "CCTAVTA",   "C", 12, 0, "CÃ³digo de la cuenta de ventas" ,          "",                   "", "( cDbfArt )", nil } )
-   aAdd( aBase, { "CCTACOM",   "C", 12, 0, "CÃ³digo de la cuenta de compras" ,         "",                   "", "( cDbfArt )", nil } )
-   aAdd( aBase, { "CCTATRN",   "C", 12, 0, "CÃ³digo de la cuenta de portes" ,          "",                   "", "( cDbfArt )", nil } )
-   aAdd( aBase, { "CODEBAR",   "C", 20, 0, "CÃ³digo de barras" ,                       "",                   "", "( cDbfArt )", nil } )
-   aAdd( aBase, { "NTIPBAR",   "N",  2, 0, "Tipo de cÃ³digo de barras" ,               "",                   "", "( cDbfArt )", nil } )
-   aAdd( aBase, { "DESCRIP",   "M", 10, 0, "DescripciÃ³n larga" ,                      "",                   "", "( cDbfArt )", nil } )
-   aAdd( aBase, { "LLABEL",    "L",  1, 0, "LÃ³gico de selecciÃ³n de etiqueta",         "",                   "", "( cDbfArt )", nil } )
-   aAdd( aBase, { "NLABEL",    "N",  5, 0, "NÃºmero de etiquetas a imprimir",          "",                   "", "( cDbfArt )", nil } )
+   aAdd( aBase, { "TIPOIVA",   "C",  1, 0, "Código tipo de " + cImp(),                "",                   "", "( cDbfArt )", nil } )
+   aAdd( aBase, { "LIVAINC",   "L",  1, 0, "Lógico " + cImp() + " incluido (S/N)" ,   "",                   "", "( cDbfArt )", nil } )
+   aAdd( aBase, { "FAMILIA",   "C", 16, 0, "Código de la familia del artículo" ,      "",                   "", "( cDbfArt )", nil } )
+   aAdd( aBase, { "CSUBFAM",   "C",  8, 0, "Código de la subfamilia del artículo" ,   "",                   "", "( cDbfArt )", nil } )
+   aAdd( aBase, { "GRPVENT",   "C",  9, 0, "Código del grupo de ventas" ,             "",                   "", "( cDbfArt )", nil } )
+   aAdd( aBase, { "CCTAVTA",   "C", 12, 0, "Código de la cuenta de ventas" ,          "",                   "", "( cDbfArt )", nil } )
+   aAdd( aBase, { "CCTACOM",   "C", 12, 0, "Código de la cuenta de compras" ,         "",                   "", "( cDbfArt )", nil } )
+   aAdd( aBase, { "CCTATRN",   "C", 12, 0, "Código de la cuenta de portes" ,          "",                   "", "( cDbfArt )", nil } )
+   aAdd( aBase, { "CODEBAR",   "C", 20, 0, "Código de barras" ,                       "",                   "", "( cDbfArt )", nil } )
+   aAdd( aBase, { "NTIPBAR",   "N",  2, 0, "Tipo de código de barras" ,               "",                   "", "( cDbfArt )", nil } )
+   aAdd( aBase, { "DESCRIP",   "M", 10, 0, "Descripción larga" ,                      "",                   "", "( cDbfArt )", nil } )
+   aAdd( aBase, { "LLABEL",    "L",  1, 0, "Lógico de selección de etiqueta",         "",                   "", "( cDbfArt )", nil } )
+   aAdd( aBase, { "NLABEL",    "N",  5, 0, "Número de etiquetas a imprimir",          "",                   "", "( cDbfArt )", nil } )
    aAdd( aBase, { "NCTLSTOCK", "N",  1, 0, "Control de stock ( 1, 2, 3 )",            "",                   "", "( cDbfArt )", nil } )
    aAdd( aBase, { "LSELPRE",   "L",  1, 0, "",                                        "",                   "", "( cDbfArt )", nil } )
    aAdd( aBase, { "NSELPRE",   "N",  5, 0, "",                                        "",                   "", "( cDbfArt )", nil } )
    aAdd( aBase, { "NTIPPRE",   "N",  1, 0, "",                                        "",                   "", "( cDbfArt )", nil } )
-   aAdd( aBase, { "NPESOKG",   "N", 16, 6, "Peso del artÃ­culo" ,                      "'@E 999,999.999999'","", "( cDbfArt )", nil } )
-   aAdd( aBase, { "CUNIDAD",   "C",  2, 0, "Unidad de mediciÃ³n del peso" ,            "",                   "", "( cDbfArt )", nil } )
-   aAdd( aBase, { "NVOLUMEN",  "N", 16, 6, "Volumen del artÃ­culo" ,                   "'@E 999,999.999999'","", "( cDbfArt )", nil } )
-   aAdd( aBase, { "CVOLUMEN",  "C",  2, 0, "Unidad de mediciÃ³n del volumen" ,         "",                   "", "( cDbfArt )", nil } )
-   aAdd( aBase, { "NLNGART",   "N", 16, 6, "Largo del artÃ­culo" ,                     "'@E 999,999.999999'","", "( cDbfArt )", nil } )
-   aAdd( aBase, { "NALTART",   "N", 16, 6, "Alto del artÃ­culo" ,                      "'@E 999,999.999999'","", "( cDbfArt )", nil } )
-   aAdd( aBase, { "NANCART",   "N", 16, 6, "Ancho del artÃ­culo" ,                     "'@E 999,999.999999'","", "( cDbfArt )", nil } )
-   aAdd( aBase, { "CUNDDIM",   "C",  2, 0, "Unidad de mediciÃ³n de las longitudes" ,   "",                   "", "( cDbfArt )", nil } )
+   aAdd( aBase, { "NPESOKG",   "N", 16, 6, "Peso del artículo" ,                      "'@E 999,999.999999'","", "( cDbfArt )", nil } )
+   aAdd( aBase, { "CUNIDAD",   "C",  2, 0, "Unidad de medición del peso" ,            "",                   "", "( cDbfArt )", nil } )
+   aAdd( aBase, { "NVOLUMEN",  "N", 16, 6, "Volumen del artículo" ,                   "'@E 999,999.999999'","", "( cDbfArt )", nil } )
+   aAdd( aBase, { "CVOLUMEN",  "C",  2, 0, "Unidad de medición del volumen" ,         "",                   "", "( cDbfArt )", nil } )
+   aAdd( aBase, { "NLNGART",   "N", 16, 6, "Largo del artículo" ,                     "'@E 999,999.999999'","", "( cDbfArt )", nil } )
+   aAdd( aBase, { "NALTART",   "N", 16, 6, "Alto del artículo" ,                      "'@E 999,999.999999'","", "( cDbfArt )", nil } )
+   aAdd( aBase, { "NANCART",   "N", 16, 6, "Ancho del artículo" ,                     "'@E 999,999.999999'","", "( cDbfArt )", nil } )
+   aAdd( aBase, { "CUNDDIM",   "C",  2, 0, "Unidad de medición de las longitudes" ,   "",                   "", "( cDbfArt )", nil } )
    aAdd( aBase, { "NIMPPES",   "N", 15, 6, "Importe de peso/volumen del articulo" ,   "",                   "", "( cDbfArt )", nil } )
    aAdd( aBase, { "CIMAGEN",   "C",250, 0, "Fichero de imagen" ,                      "",                   "", "( cDbfArt )", nil } )
-   aAdd( aBase, { "lSndDoc",   "L",  1, 0, "LÃ³gico para envios" ,                     "",                   "", "( cDbfArt )", nil } )
-   aAdd( aBase, { "cCodUsr",   "C",  3, 0, "CÃ³digo de usuario que realiza el cambio" ,"",                   "", "( cDbfArt )", nil } )
+   aAdd( aBase, { "lSndDoc",   "L",  1, 0, "Lógico para envios" ,                     "",                   "", "( cDbfArt )", nil } )
+   aAdd( aBase, { "cCodUsr",   "C",  3, 0, "Código de usuario que realiza el cambio" ,"",                   "", "( cDbfArt )", nil } )
    aAdd( aBase, { "dFecChg",   "D",  8, 0, "Fecha de cambio" ,                        "",                   "", "( cDbfArt )", nil } )
    aAdd( aBase, { "cTimChg",   "C",  5, 0, "Hora de cambio" ,                         "",                   "", "( cDbfArt )", nil } )
-   aAdd( aBase, { "lKitArt",   "L",  1, 0, "LÃ³gico de escandallos" ,                  "",                   "", "( cDbfArt )", nil } )
-   aAdd( aBase, { "lKitAsc",   "L",  1, 0, "LÃ³gico de asociado" ,                     "",                   "", "( cDbfArt )", nil } )
+   aAdd( aBase, { "lKitArt",   "L",  1, 0, "Lógico de escandallos" ,                  "",                   "", "( cDbfArt )", nil } )
+   aAdd( aBase, { "lKitAsc",   "L",  1, 0, "Lógico de asociado" ,                     "",                   "", "( cDbfArt )", nil } )
    aAdd( aBase, { "nKitImp",   "N",  1, 0, "" ,                                       "",                   "", "( cDbfArt )", nil } )
    aAdd( aBase, { "nKitStk",   "N",  1, 0, "" ,                                       "",                   "", "( cDbfArt )", nil } )
    aAdd( aBase, { "nKitPrc",   "N",  1, 0, "" ,                                       "",                   "", "( cDbfArt )", nil } )
-   aAdd( aBase, { "lAutSer",   "L",  1, 0, "LÃ³gico de autoserializar" ,               "",                   "", "( cDbfArt )", nil } )
-   aAdd( aBase, { "LOBS",      "L",  1, 0, "LÃ³gico de obsoleto" ,                     "",                   "", "( cDbfArt )", nil } )
-   aAdd( aBase, { "LNUMSER",   "L",  1, 0, "LÃ³gico solicitar numero de serie" ,       "",                   "", "( cDbfArt )", nil } )
+   aAdd( aBase, { "lAutSer",   "L",  1, 0, "Lógico de autoserializar" ,               "",                   "", "( cDbfArt )", nil } )
+   aAdd( aBase, { "LOBS",      "L",  1, 0, "Lógico de obsoleto" ,                     "",                   "", "( cDbfArt )", nil } )
+   aAdd( aBase, { "LNUMSER",   "L",  1, 0, "Lógico solicitar numero de serie" ,       "",                   "", "( cDbfArt )", nil } )
    aAdd( aBase, { "CPRVHAB",   "C", 12, 0, "Proveedor habitual" ,                     "",                   "", "( cDbfArt )", nil } )
-   aAdd( aBase, { "LFACCNV",   "L",  1, 0, "Usar factor de conversiÃ³n" ,              "",                   "", "( cDbfArt )", nil } )
-   aAdd( aBase, { "CFACCNV",   "C",  2, 0, "CÃ³digo del factor de conversiÃ³n" ,        "",                   "", "( cDbfArt )", nil } )
-   aAdd( aBase, { "CCODTNK",   "C",  3, 0, "CÃ³digo del tanque de combustible" ,       "",                   "", "( cDbfArt )", nil } )
-   aAdd( aBase, { "CCODTIP",   "C",  3, 0, "CÃ³digo del tipo de artÃ­culo" ,            "",                   "", "( cDbfArt )", nil } )
-   aAdd( aBase, { "LTIPACC",   "L",  1, 0, "LÃ³gico de acceso por unidades o importe", "",                   "", "( cDbfArt )", nil } )
-   aAdd( aBase, { "LCOMBUS",   "L",  1, 0, "LÃ³gico si el artÃ­culo es del tipo combustible", "",             "", "( cDbfArt )", nil } )
-   aAdd( aBase, { "CCODIMP",   "C",  3, 0, "CÃ³digo del impuesto especiales",          "",                   "", "( cDbfArt )", nil } )
-   aAdd( aBase, { "LMSGVTA",   "L",  1, 0, "LÃ³gico para avisar en venta sin stock",   "",                   "", "( cDbfArt )", nil } )
-   aAdd( aBase, { "LNOTVTA",   "L",  1, 0, "LÃ³gico para no permitir venta sin stock", "",                   "", "( cDbfArt )", nil } )
+   aAdd( aBase, { "LFACCNV",   "L",  1, 0, "Usar factor de conversión" ,              "",                   "", "( cDbfArt )", nil } )
+   aAdd( aBase, { "CFACCNV",   "C",  2, 0, "Código del factor de conversión" ,        "",                   "", "( cDbfArt )", nil } )
+   aAdd( aBase, { "CCODTNK",   "C",  3, 0, "Código del tanque de combustible" ,       "",                   "", "( cDbfArt )", nil } )
+   aAdd( aBase, { "CCODTIP",   "C",  3, 0, "Código del tipo de artículo" ,            "",                   "", "( cDbfArt )", nil } )
+   aAdd( aBase, { "LTIPACC",   "L",  1, 0, "Lógico de acceso por unidades o importe", "",                   "", "( cDbfArt )", nil } )
+   aAdd( aBase, { "LCOMBUS",   "L",  1, 0, "Lógico si el artículo es del tipo combustible", "",             "", "( cDbfArt )", nil } )
+   aAdd( aBase, { "CCODIMP",   "C",  3, 0, "Código del impuesto especiales",          "",                   "", "( cDbfArt )", nil } )
+   aAdd( aBase, { "LMSGVTA",   "L",  1, 0, "Lógico para avisar en venta sin stock",   "",                   "", "( cDbfArt )", nil } )
+   aAdd( aBase, { "LNOTVTA",   "L",  1, 0, "Lógico para no permitir venta sin stock", "",                   "", "( cDbfArt )", nil } )
    aAdd( aBase, { "NLOTE",     "N",  9, 0, "",                                        "'999999999'",        "", "( cDbfArt )", nil } )
-   aAdd( aBase, { "CLOTE",     "C", 12, 0, "NÃºmero de lote",                          "",                   "", "( cDbfArt )", nil } )
+   aAdd( aBase, { "CLOTE",     "C", 12, 0, "Número de lote",                          "",                   "", "( cDbfArt )", nil } )
    aAdd( aBase, { "LLOTE",     "L",  1, 0, "Lote (S/N)",                              "",                   "", "( cDbfArt )", nil } )
-   aAdd( aBase, { "LPUBINT",   "L",  1, 0, "LÃ³gico para publicar en internet (S/N)",  "",                   "", "( cDbfArt )", nil } )
-   aAdd( aBase, { "LPUBOFE",   "L",  1, 0, "LÃ³gico para publicar como oferta (S/N)",  "",                   "", "( cDbfArt )", nil } )
-   aAdd( aBase, { "LPUBPOR",   "L",  1, 0, "LÃ³gico para publicar como oferta de portada(S/N)",  "",         "", "( cDbfArt )", nil } )
+   aAdd( aBase, { "LPUBINT",   "L",  1, 0, "Lógico para publicar en internet (S/N)",  "",                   "", "( cDbfArt )", nil } )
+   aAdd( aBase, { "LPUBOFE",   "L",  1, 0, "Lógico para publicar como oferta (S/N)",  "",                   "", "( cDbfArt )", nil } )
+   aAdd( aBase, { "LPUBPOR",   "L",  1, 0, "Lógico para publicar como oferta de portada(S/N)",  "",         "", "( cDbfArt )", nil } )
    aAdd( aBase, { "NDTOINT1",  "N",  6, 2, "Descuento de oferta para tienda web 1",   "",                   "", "( cDbfArt )", nil } )
    aAdd( aBase, { "NIMPINT1",  "N", 15, 6, "Precio del producto en oferta 1",         "",                   "", "( cDbfArt )", nil } )
    aAdd( aBase, { "NIMPIVA1",  "N", 15, 6, "Precio del producto en oferta con " + cImp() + " 1", "",        "", "( cDbfArt )", nil } )
@@ -15651,57 +15651,57 @@ function aItmArt()
    aAdd( aBase, { "NDTOINT6",  "N",  6, 2, "Descuento de oferta para tienda web 6",   "",                   "", "( cDbfArt )", nil } )
    aAdd( aBase, { "NIMPINT6",  "N", 15, 6, "Precio del producto en oferta 6",         "",                   "", "( cDbfArt )", nil } )
    aAdd( aBase, { "NIMPIVA6",  "N", 15, 6, "Precio del producto en oferta con " + cImp() + " 6", "",        "", "( cDbfArt )", nil } )
-   aAdd( aBase, { "NMESGRT",   "N",  2, 0, "Meses de garantÃ­a",                       "",                   "", "( cDbfArt )", nil } )
-   aAdd( aBase, { "NINFENT",   "N",  1, 0, "InformaciÃ³n de entrega",                  "",                   "", "( cDbfArt )", nil } )
+   aAdd( aBase, { "NMESGRT",   "N",  2, 0, "Meses de garantía",                       "",                   "", "( cDbfArt )", nil } )
+   aAdd( aBase, { "NINFENT",   "N",  1, 0, "Información de entrega",                  "",                   "", "( cDbfArt )", nil } )
    aAdd( aBase, { "NINFENT1",  "N",  3, 0, "Dias en entregar la mercancia ( desde )", "",                   "", "( cDbfArt )", nil } )
    aAdd( aBase, { "NINFENT2",  "N",  3, 0, "Dias en entregar la mercancia ( hasta )", "",                   "", "( cDbfArt )", nil } )
-   aAdd( aBase, { "MDESTEC",   "M", 10, 0, "DescripciÃ³n tÃ©cnica del artÃ­culo",        "",                   "", "( cDbfArt )", nil } )
+   aAdd( aBase, { "MDESTEC",   "M", 10, 0, "Descripción técnica del artículo",        "",                   "", "( cDbfArt )", nil } )
    aAdd( aBase, { "NLNGCAJ",   "N", 16, 6, "Largo de la caja" ,                       "'@E 999,999.999999'","", "( cDbfArt )", nil } )
    aAdd( aBase, { "NALTCAJ",   "N", 16, 6, "Alto de la caja" ,                        "'@E 999,999.999999'","", "( cDbfArt )", nil } )
    aAdd( aBase, { "NANCCAJ",   "N", 16, 6, "Ancho de la caja" ,                       "'@E 999,999.999999'","", "( cDbfArt )", nil } )
-   aAdd( aBase, { "CUNDCAJ",   "C",  2, 0, "Unidad de mediciÃ³n de la caja" ,          "",                   "", "( cDbfArt )", nil } )
+   aAdd( aBase, { "CUNDCAJ",   "C",  2, 0, "Unidad de medición de la caja" ,          "",                   "", "( cDbfArt )", nil } )
    aAdd( aBase, { "NPESCAJ",   "N", 16, 6, "Peso de la caja" ,                        "'@E 999,999.999999'","", "( cDbfArt )", nil } )
-   aAdd( aBase, { "CCAJPES",   "C",  2, 0, "Unidad de mediciÃ³n del peso de la caja" , "",                   "", "( cDbfArt )", nil } )
+   aAdd( aBase, { "CCAJPES",   "C",  2, 0, "Unidad de medición del peso de la caja" , "",                   "", "( cDbfArt )", nil } )
    aAdd( aBase, { "NVOLCAJ",   "N", 16, 6, "Volumen de la caja" ,                     "'@E 999,999.999999'","", "( cDbfArt )", nil } )
-   aAdd( aBase, { "CCAJVOL",   "C",  2, 0, "Unidad de mediciÃ³n del volumen de la caja","",                  "", "( cDbfArt )", nil } )
-   aAdd( aBase, { "NCAJPLT",   "N", 16, 6, "NÃºmero de cajas por palets" ,             "'@E 999,999.999999'","", "( cDbfArt )", nil } )
+   aAdd( aBase, { "CCAJVOL",   "C",  2, 0, "Unidad de medición del volumen de la caja","",                  "", "( cDbfArt )", nil } )
+   aAdd( aBase, { "NCAJPLT",   "N", 16, 6, "Número de cajas por palets" ,             "'@E 999,999.999999'","", "( cDbfArt )", nil } )
    aAdd( aBase, { "NBASPLT",   "N", 16, 6, "Base del palet" ,                         "'@E 999,999.999999'","", "( cDbfArt )", nil } )
    aAdd( aBase, { "NALTPLT",   "N", 16, 6, "Altura del palet" ,                       "'@E 999,999.999999'","", "( cDbfArt )", nil } )
-   aAdd( aBase, { "CUNDPLT",   "C",  2, 0, "Unidad de mediciÃ³n de la altura del palet","",                  "", "( cDbfArt )", nil } )
-   aAdd( aBase, { "LINCTCL",   "L",  1, 0, "Incluir en pantalla tÃ¡ctil",               "",                  "", "( cDbfArt )", nil } )
-   aAdd( aBase, { "CDESTCL",   "C", 20, 0, "DescripciÃ³n en pantalla tÃ¡ctil",           "",                  "", "( cDbfArt )", nil } )
-   aAdd( aBase, { "CDESCMD",   "M", 10, 0, "DescripciÃ³n para comanda",                 "",                  "", "( cDbfArt )", nil } )
-   aAdd( aBase, { "NPOSTCL",   "N", 16, 6, "PosiciÃ³n en pantalla tÃ¡ctil",              "",                  "", "( cDbfArt )", nil } )
-   aAdd( aBase, { "CCODCAT",   "C",  4, 0, "CÃ³digo del catÃ¡logo del artÃ­culo" ,        "",                  "", "( cDbfArt )", nil } )
+   aAdd( aBase, { "CUNDPLT",   "C",  2, 0, "Unidad de medición de la altura del palet","",                  "", "( cDbfArt )", nil } )
+   aAdd( aBase, { "LINCTCL",   "L",  1, 0, "Incluir en pantalla táctil",               "",                  "", "( cDbfArt )", nil } )
+   aAdd( aBase, { "CDESTCL",   "C", 20, 0, "Descripción en pantalla táctil",           "",                  "", "( cDbfArt )", nil } )
+   aAdd( aBase, { "CDESCMD",   "M", 10, 0, "Descripción para comanda",                 "",                  "", "( cDbfArt )", nil } )
+   aAdd( aBase, { "NPOSTCL",   "N", 16, 6, "Posición en pantalla táctil",              "",                  "", "( cDbfArt )", nil } )
+   aAdd( aBase, { "CCODCAT",   "C",  4, 0, "Código del catálogo del artículo" ,        "",                  "", "( cDbfArt )", nil } )
    aAdd( aBase, { "NPUNTOS",   "N", 16, 6, "Puntos del catalogo" ,                     "",                  "", "( cDbfArt )", nil } )
    aAdd( aBase, { "NDTOPNT",   "N",  6, 2, "Dto. del catalogo" ,                       "",                  "", "( cDbfArt )", nil } )
-   aAdd( aBase, { "NRENMIN",   "N",  6, 2, "Rentabilidad mÃ­nima" ,                     "",                  "", "( cDbfArt )", nil } )
-   aAdd( aBase, { "CCODCATE",  "C",  3, 0, "CÃ³digo de categorÃ­a",                      "",                  "", "( cDbfArt )", nil } )
-   aAdd( aBase, { "CCODTEMP",  "C",  3, 0, "CÃ³digo de la temporada",                   "",                  "", "( cDbfArt )", nil } )
-   aAdd( aBase, { "LECOTASA",  "L",  1, 0, "LÃ³gico para usar ECOTASA",                 "",                  "", "( cDbfArt )", nil } )
-   aAdd( aBase, { "LMOSCOM",   "L",  1, 0, "LÃ³gico mostrar comentario" ,               "",                  "", "( cDbfArt )", nil } )
+   aAdd( aBase, { "NRENMIN",   "N",  6, 2, "Rentabilidad mínima" ,                     "",                  "", "( cDbfArt )", nil } )
+   aAdd( aBase, { "CCODCATE",  "C",  3, 0, "Código de categoría",                      "",                  "", "( cDbfArt )", nil } )
+   aAdd( aBase, { "CCODTEMP",  "C",  3, 0, "Código de la temporada",                   "",                  "", "( cDbfArt )", nil } )
+   aAdd( aBase, { "LECOTASA",  "L",  1, 0, "Lógico para usar ECOTASA",                 "",                  "", "( cDbfArt )", nil } )
+   aAdd( aBase, { "LMOSCOM",   "L",  1, 0, "Lógico mostrar comentario" ,               "",                  "", "( cDbfArt )", nil } )
    aAdd( aBase, { "MCOMENT",   "M", 10, 0, "Comentario a mostrar" ,                    "",                  "", "( cDbfArt )", nil } )
-   aAdd( aBase, { "LPUNTO",    "L",  1, 0, "LÃ³gico para trabajar con puntos" ,         "",                  "", "( cDbfArt )", nil } )
-   aAdd( aBase, { "CCODPRP1",  "C", 10, 0, "CÃ³digo de la primera propiedad" ,          "",                  "", "( cDbfArt )", nil } )
-   aAdd( aBase, { "CCODPRP2",  "C", 10, 0, "CÃ³digo de la segunda propiedad" ,          "",                  "", "( cDbfArt )", nil } )
+   aAdd( aBase, { "LPUNTO",    "L",  1, 0, "Lógico para trabajar con puntos" ,         "",                  "", "( cDbfArt )", nil } )
+   aAdd( aBase, { "CCODPRP1",  "C", 10, 0, "Código de la primera propiedad" ,          "",                  "", "( cDbfArt )", nil } )
+   aAdd( aBase, { "CCODPRP2",  "C", 10, 0, "Código de la segunda propiedad" ,          "",                  "", "( cDbfArt )", nil } )
    aAdd( aBase, { "lCodPrp",   "L",  1, 0, "" ,                                        "",                  "", "( cDbfArt )", nil } )
-   aAdd( aBase, { "cCodFra",   "C",  3, 0, "CÃ³digo de frases publiciarias",            "",                  "", "( cDbfArt )", nil } )
-   aAdd( aBase, { "cCodWeb",   "N", 11, 0, "CÃ³digo del producto en la web",            "",                  "", "( cDbfArt )", nil } )
-   aAdd( aBase, { "nPosTpv",   "N", 10, 2, "PosiciÃ³n para mostrar en TPV tÃ¡ctil",      "",                  "", "( cDbfArt )", nil } )
-   aAdd( aBase, { "nDuracion", "N",  3, 0, "DuraciÃ³n del producto",                    "",                  "", "( cDbfArt )", nil } )
-   aAdd( aBase, { "nTipDur",   "N",  1, 0, "Tipo duraciÃ³n (dia, mes, aÃ±o)",            "",                  "", "( cDbfArt )", nil } )
-   aAdd( aBase, { "cCodFab",   "C",  3, 0, "CÃ³digo del fabricante",                    "",                  "", "( cDbfArt )", nil } )
+   aAdd( aBase, { "cCodFra",   "C",  3, 0, "Código de frases publiciarias",            "",                  "", "( cDbfArt )", nil } )
+   aAdd( aBase, { "cCodWeb",   "N", 11, 0, "Código del producto en la web",            "",                  "", "( cDbfArt )", nil } )
+   aAdd( aBase, { "nPosTpv",   "N", 10, 2, "Posición para mostrar en TPV táctil",      "",                  "", "( cDbfArt )", nil } )
+   aAdd( aBase, { "nDuracion", "N",  3, 0, "Duración del producto",                    "",                  "", "( cDbfArt )", nil } )
+   aAdd( aBase, { "nTipDur",   "N",  1, 0, "Tipo duración (dia, mes, año)",            "",                  "", "( cDbfArt )", nil } )
+   aAdd( aBase, { "cCodFab",   "C",  3, 0, "Código del fabricante",                    "",                  "", "( cDbfArt )", nil } )
    aAdd( aBase, { "nImpCom1",  "N",  1, 0, "Impresora de comanda 1",                   "",                  "", "( cDbfArt )", nil } )
    aAdd( aBase, { "nImpCom2",  "N",  1, 0, "Impresora de comanda 2",                   "",                  "", "( cDbfArt )", nil } )
-   aAdd( aBase, { "LMSGMOV",   "L",  1, 0, "LÃ³gico para avisar en movimientos sin stock","",                "", "( cDbfArt )", nil } )
+   aAdd( aBase, { "LMSGMOV",   "L",  1, 0, "Lógico para avisar en movimientos sin stock","",                "", "( cDbfArt )", nil } )
    aAdd( aBase, { "cImagenWeb","C",250, 0, "Imagen para la web",                       "",                  "", "( cDbfArt )", nil } )
-   aAdd( aBase, { "cChgBar",   "D",  8, 0, "Fecha de cambio de cÃ³digo de barras",      "",                  "", "( cDbfArt )", nil } )
-   aAdd( aBase, { "CCODUBI1",  "C",  5, 0, "CÃ³digo primera ubicaciÃ³n",                 "",                  "", "( cDbfArt )", nil } )
-   aAdd( aBase, { "CCODUBI2",  "C",  5, 0, "CÃ³digo segunda ubicaciÃ³n",                 "",                  "", "( cDbfArt )", nil } )
-   aAdd( aBase, { "CCODUBI3",  "C",  5, 0, "CÃ³digo tercera ubicaciÃ³n",                 "",                  "", "( cDbfArt )", nil } )
-   aAdd( aBase, { "CVALUBI1",  "C",  5, 0, "Valor primera ubicaciÃ³n",                  "",                  "", "( cDbfArt )", nil } )
-   aAdd( aBase, { "CVALUBI2",  "C",  5, 0, "Valor segunda ubicaciÃ³n",                  "",                  "", "( cDbfArt )", nil } )
-   aAdd( aBase, { "CVALUBI3",  "C",  5, 0, "Valor tercera ubicaciÃ³n",                  "",                  "", "( cDbfArt )", nil } )
+   aAdd( aBase, { "cChgBar",   "D",  8, 0, "Fecha de cambio de código de barras",      "",                  "", "( cDbfArt )", nil } )
+   aAdd( aBase, { "CCODUBI1",  "C",  5, 0, "Código primera ubicación",                 "",                  "", "( cDbfArt )", nil } )
+   aAdd( aBase, { "CCODUBI2",  "C",  5, 0, "Código segunda ubicación",                 "",                  "", "( cDbfArt )", nil } )
+   aAdd( aBase, { "CCODUBI3",  "C",  5, 0, "Código tercera ubicación",                 "",                  "", "( cDbfArt )", nil } )
+   aAdd( aBase, { "CVALUBI1",  "C",  5, 0, "Valor primera ubicación",                  "",                  "", "( cDbfArt )", nil } )
+   aAdd( aBase, { "CVALUBI2",  "C",  5, 0, "Valor segunda ubicación",                  "",                  "", "( cDbfArt )", nil } )
+   aAdd( aBase, { "CVALUBI3",  "C",  5, 0, "Valor tercera ubicación",                  "",                  "", "( cDbfArt )", nil } )
    aAdd( aBase, { "dFecVta",   "D",  8, 0, "Fecha de puesta a la venta",               "",                  "", "( cDbfArt )", nil } )
    aAdd( aBase, { "dFinVta",   "D",  8, 0, "Fecha de fin de la venta",                 "",                  "", "( cDbfArt )", nil } )
    aAdd( aBase, { "lMsgSer",   "L",  1, 0, "Avisar en ventas por series sin stock",    "",                  "", "( cDbfArt )", nil } )
@@ -15710,25 +15710,25 @@ function aItmArt()
    aAdd( aBase, { "mValPrp1",  "M", 10, 0, "Valores seleccionables de la primera propiedad", "",            "", "( cDbfArt )", nil } )
    aAdd( aBase, { "mValPrp2",  "M", 10, 0, "Valores seleccionables de la segunda propiedad", "",            "", "( cDbfArt )", nil } )
    aAdd( aBase, { "dChgBar",   "D",  8, 0, "Fecha de cambio de codigos de barras",     "",                  "", "( cDbfArt )", nil } )
-   aAdd( aBase, { "cCodSus",   "C", 18, 0, "CÃ³digo del artÃ­culo al que se sustituye" , "'@!'",              "", "( cDbfArt )", nil } )
-   aAdd( aBase, { "cCodPor",   "C", 18, 0, "CÃ³digo del artÃ­culo por el que es sustituido" , "'@!'",         "", "( cDbfArt )", nil } )
-   aAdd( aBase, { "nDtoArt1",  "N",  6, 2, "Primer descuento de artÃ­culo",             "@EZ 99.99",         "", "( cDbfArt )", nil } )
-   aAdd( aBase, { "nDtoArt2",  "N",  6, 2, "Segundo descuento de artÃ­culo",            "@EZ 99.99",         "", "( cDbfArt )", nil } )
-   aAdd( aBase, { "nDtoArt3",  "N",  6, 2, "Tercer descuento de artÃ­culo",             "@EZ 99.99",         "", "( cDbfArt )", nil } )
-   aAdd( aBase, { "nDtoArt4",  "N",  6, 2, "Cuarto descuento de artÃ­culo",             "@EZ 99.99",         "", "( cDbfArt )", nil } )
-   aAdd( aBase, { "nDtoArt5",  "N",  6, 2, "Quinto descuento de artÃ­culo",             "@EZ 99.99",         "", "( cDbfArt )", nil } )
-   aAdd( aBase, { "nDtoArt6",  "N",  6, 2, "Sexto descuento de artÃ­culo",              "@EZ 99.99",         "", "( cDbfArt )", nil } )
-   aAdd( aBase, { "lMarAju",   "L",  1, 0, "LÃ³gico para utilizar el margen de ajuste", "",                  "", "( cDbfArt )", nil } )
+   aAdd( aBase, { "cCodSus",   "C", 18, 0, "Código del artículo al que se sustituye" , "'@!'",              "", "( cDbfArt )", nil } )
+   aAdd( aBase, { "cCodPor",   "C", 18, 0, "Código del artículo por el que es sustituido" , "'@!'",         "", "( cDbfArt )", nil } )
+   aAdd( aBase, { "nDtoArt1",  "N",  6, 2, "Primer descuento de artículo",             "@EZ 99.99",         "", "( cDbfArt )", nil } )
+   aAdd( aBase, { "nDtoArt2",  "N",  6, 2, "Segundo descuento de artículo",            "@EZ 99.99",         "", "( cDbfArt )", nil } )
+   aAdd( aBase, { "nDtoArt3",  "N",  6, 2, "Tercer descuento de artículo",             "@EZ 99.99",         "", "( cDbfArt )", nil } )
+   aAdd( aBase, { "nDtoArt4",  "N",  6, 2, "Cuarto descuento de artículo",             "@EZ 99.99",         "", "( cDbfArt )", nil } )
+   aAdd( aBase, { "nDtoArt5",  "N",  6, 2, "Quinto descuento de artículo",             "@EZ 99.99",         "", "( cDbfArt )", nil } )
+   aAdd( aBase, { "nDtoArt6",  "N",  6, 2, "Sexto descuento de artículo",              "@EZ 99.99",         "", "( cDbfArt )", nil } )
+   aAdd( aBase, { "lMarAju",   "L",  1, 0, "Lógico para utilizar el margen de ajuste", "",                  "", "( cDbfArt )", nil } )
    aAdd( aBase, { "cMarAju",   "C",  5, 0, "Cadena descriptiva del margen de ajuste",  "",                  "", "( cDbfArt )", nil } )
    aAdd( aBase, { "nTarWeb",   "N",  1, 0, "Tarifa a aplicar en la Web" ,              "",                  "", "( cDbfArt )", nil } )
    aAdd( aBase, { "pVtaWeb",   "N", 16, 6, "Precio venta en la Web",                   "",                  "", "( cDbfArt )", nil } )
    aAdd( aBase, { "cTipImp1",  "C", 50, 0, "Tipo impresora comanda 1",                 "",                  "", "( cDbfArt )", nil } )
    aAdd( aBase, { "cTipImp2",  "C", 50, 0, "Tipo impresora comanda 2",                 "",                  "", "( cDbfArt )", nil } )
-   aAdd( aBase, { "cRefPrv",   "C", 18, 0, "Referencia del proveedor al artÃ­culo" ,    "",                  "", "( cDbfArt )", nil } )
-   aAdd( aBase, { "cCodSec",   "C",  3, 0, "CÃ³digo de la secciÃ³n para producciÃ³n" ,    "",                  "", "( cDbfArt )", nil } )
-   aAdd( aBase, { "nFacCnv",   "N", 16, 6, "Factor de conversiÃ³n" ,                    "",                  "", "( cDbfArt )", nil } )
-   aAdd( aBase, { "lSbrInt",   "L",  1, 0, "LÃ³gico precio libre internet" ,            "",                  "", "( cDbfArt )", nil } )
-   aAdd( aBase, { "nColBtn",   "N", 10, 0, "Color para tÃ¡ctil" ,                       "",                  "", "( cDbfArt )", nil } )
+   aAdd( aBase, { "cRefPrv",   "C", 18, 0, "Referencia del proveedor al artículo" ,    "",                  "", "( cDbfArt )", nil } )
+   aAdd( aBase, { "cCodSec",   "C",  3, 0, "Código de la sección para producción" ,    "",                  "", "( cDbfArt )", nil } )
+   aAdd( aBase, { "nFacCnv",   "N", 16, 6, "Factor de conversión" ,                    "",                  "", "( cDbfArt )", nil } )
+   aAdd( aBase, { "lSbrInt",   "L",  1, 0, "Lógico precio libre internet" ,            "",                  "", "( cDbfArt )", nil } )
+   aAdd( aBase, { "nColBtn",   "N", 10, 0, "Color para táctil" ,                       "",                  "", "( cDbfArt )", nil } )
 
 return ( aBase )
 
@@ -15740,16 +15740,16 @@ Function aItmKit()
 
    local aBase := {}
 
-   aAdd( aBase, { "cCodKit",   "C", 18, 0, "CÃ³digo del contenedor"               , "",                  "", "( cDbfArt )", nil } )
-   aAdd( aBase, { "cRefKit",   "C", 18, 0, "CÃ³digo de artÃ­culo escandallo"       , "",                  "", "( cDbfArt )", nil } )
+   aAdd( aBase, { "cCodKit",   "C", 18, 0, "Código del contenedor"               , "",                  "", "( cDbfArt )", nil } )
+   aAdd( aBase, { "cRefKit",   "C", 18, 0, "Código de artículo escandallo"       , "",                  "", "( cDbfArt )", nil } )
    aAdd( aBase, { "nUndKit",   "N", 16, 6, "Unidades de escandallo"              , "",                  "", "( cDbfArt )", nil } )
    aAdd( aBase, { "nPreKit",   "N", 16, 6, "Precio de escandallo"                , "",                  "", "( cDbfArt )", nil } )
-   aAdd( aBase, { "cDesKit",   "C", 50, 0, "DescripciÃ³n del escandallo"          , "",                  "", "( cDbfArt )", nil } )
-   aAdd( aBase, { "cUniDad",   "C",  2, 0, "Unidad de mediciÃ³n"                  , "",                  "", "( cDbfArt )", nil } )
+   aAdd( aBase, { "cDesKit",   "C", 50, 0, "Descripción del escandallo"          , "",                  "", "( cDbfArt )", nil } )
+   aAdd( aBase, { "cUniDad",   "C",  2, 0, "Unidad de medición"                  , "",                  "", "( cDbfArt )", nil } )
    aAdd( aBase, { "nValPnt",   "N", 16, 6, ""                                    , "",                  "", "( cDbfArt )", nil } )
    aAdd( aBase, { "nDtoPnt",   "N",  6, 2, "Descuento del punto"                 , "",                  "", "( cDbfArt )", nil } )
-   aAdd( aBase, { "lAplDto",   "L",  1, 0, "LÃ³gico aplicar descuentos"           , "",                  "", "( cDbfArt )", nil } )
-   aAdd( aBase, { "lExcPro",   "L",  1, 0, "LÃ³gico para excluir de producciÃ³n"   , "",                  "", "( cDbfArt )", nil } )
+   aAdd( aBase, { "lAplDto",   "L",  1, 0, "Lógico aplicar descuentos"           , "",                  "", "( cDbfArt )", nil } )
+   aAdd( aBase, { "lExcPro",   "L",  1, 0, "Lógico para excluir de producción"   , "",                  "", "( cDbfArt )", nil } )
 
 return ( aBase )
 
@@ -15762,21 +15762,21 @@ Function aItmVta()
 
    local aBase := {}
 
-   aAdd( aBase, { "cCodArt",   "C", 18, 0, "CÃ³digo de artÃ­culo",                       "",                  "", "( cDbfArt )", nil } )
-   aAdd( aBase, { "cCodDiv",   "C",  3, 0, "CÃ³digo de divisa",                         "",                  "", "( cDbfArt )", nil } )
-   aAdd( aBase, { "cCodPr1",   "C", 10, 0, "CÃ³digo de primera propiedad",              "",                  "", "( cDbfArt )", nil } )
-   aAdd( aBase, { "cCodPr2",   "C", 10, 0, "CÃ³digo de segunda propiedad",              "",                  "", "( cDbfArt )", nil } )
+   aAdd( aBase, { "cCodArt",   "C", 18, 0, "Código de artículo",                       "",                  "", "( cDbfArt )", nil } )
+   aAdd( aBase, { "cCodDiv",   "C",  3, 0, "Código de divisa",                         "",                  "", "( cDbfArt )", nil } )
+   aAdd( aBase, { "cCodPr1",   "C", 10, 0, "Código de primera propiedad",              "",                  "", "( cDbfArt )", nil } )
+   aAdd( aBase, { "cCodPr2",   "C", 10, 0, "Código de segunda propiedad",              "",                  "", "( cDbfArt )", nil } )
    aAdd( aBase, { "cValPr1",   "C", 10, 0, "Valor de primera propiedad",               "",                  "", "( cDbfArt )", nil } )
    aAdd( aBase, { "cValPr2",   "C", 10, 0, "Valor de segunda propiedad",               "",                  "", "( cDbfArt )", nil } )
    aAdd( aBase, { "nPreCom",   "N", 16, 6, "Precio de compras",                        "",                  "", "( cDbfArt )", nil } )
    aAdd( aBase, { "nValPnt",   "N", 16, 6, "Valor del punto",                          "",                  "", "( cDbfArt )", nil } )
    aAdd( aBase, { "nDtoPnt",   "N",  6, 2, "Descuento del punto",                      "",                  "", "( cDbfArt )", nil } )
-   aAdd( aBase, { "lBnf1",     "L",  1, 0, "LÃ³gico aplicar porcentaje de beneficio 1", "",                  "", "( cDbfArt )", nil } )
-   aAdd( aBase, { "lBnf2",     "L",  1, 0, "LÃ³gico aplicar porcentaje de beneficio 2", "",                  "", "( cDbfArt )", nil } )
-   aAdd( aBase, { "lBnf3",     "L",  1, 0, "LÃ³gico aplicar porcentaje de beneficio 3", "",                  "", "( cDbfArt )", nil } )
-   aAdd( aBase, { "lBnf4",     "L",  1, 0, "LÃ³gico aplicar porcentaje de beneficio 4", "",                  "", "( cDbfArt )", nil } )
-   aAdd( aBase, { "lBnf5",     "L",  1, 0, "LÃ³gico aplicar porcentaje de beneficio 5", "",                  "", "( cDbfArt )", nil } )
-   aAdd( aBase, { "lBnf6",     "L",  1, 0, "LÃ³gico aplicar porcentaje de beneficio 6", "",                  "", "( cDbfArt )", nil } )
+   aAdd( aBase, { "lBnf1",     "L",  1, 0, "Lógico aplicar porcentaje de beneficio 1", "",                  "", "( cDbfArt )", nil } )
+   aAdd( aBase, { "lBnf2",     "L",  1, 0, "Lógico aplicar porcentaje de beneficio 2", "",                  "", "( cDbfArt )", nil } )
+   aAdd( aBase, { "lBnf3",     "L",  1, 0, "Lógico aplicar porcentaje de beneficio 3", "",                  "", "( cDbfArt )", nil } )
+   aAdd( aBase, { "lBnf4",     "L",  1, 0, "Lógico aplicar porcentaje de beneficio 4", "",                  "", "( cDbfArt )", nil } )
+   aAdd( aBase, { "lBnf5",     "L",  1, 0, "Lógico aplicar porcentaje de beneficio 5", "",                  "", "( cDbfArt )", nil } )
+   aAdd( aBase, { "lBnf6",     "L",  1, 0, "Lógico aplicar porcentaje de beneficio 6", "",                  "", "( cDbfArt )", nil } )
    aAdd( aBase, { "Benef1",    "N",  6, 2, "Porcentaje de beneficio precio 1" ,        "'@EZ 99.99'",       "", "( cDbfArt )", nil } )
    aAdd( aBase, { "Benef2",    "N",  6, 2, "Porcentaje de beneficio precio 2" ,        "'@EZ 99.99'",       "", "( cDbfArt )", nil } )
    aAdd( aBase, { "Benef3",    "N",  6, 2, "Porcentaje de beneficio precio 3" ,        "'@EZ 99.99'",       "", "( cDbfArt )", nil } )
@@ -15803,7 +15803,7 @@ Function aItmVta()
    aAdd( aBase, { "nPreIva6",  "N", 16, 6, "Precio de venta " + cImp() + " incl. 6"  , "",                  "", "( cDbfArt )", nil } )
    aAdd( aBase, { "cImgWeb",   "C",250, 0, "Imagen para la web de estas propiedades" , "",                  "", "( cDbfArt )", nil } )
    aAdd( aBase, { "cToolTip",  "C",250, 0, "Tooltip para las imagenes de la web"     , "",                  "", "( cDbfArt )", nil } )
-   aAdd( aBase, { "cCodImgWeb","N", 11, 0, "CÃ³digo de la imagen para la web"         , "",                  "", "( cDbfArt )", 0 } )
+   aAdd( aBase, { "cCodImgWeb","N", 11, 0, "Código de la imagen para la web"         , "",                  "", "( cDbfArt )", 0 } )
 
 Return ( aBase )
 
@@ -15813,14 +15813,14 @@ Function aItmArtPrv()
 
    local aBase := {}
 
-   aAdd( aBase, { "cCodArt",   "C", 18, 0, "CÃ³digo del artÃ­culo referenciado"  , "",                  "", "( cDbfArt )", nil } )
-   aAdd( aBase, { "cCodPrv",   "C", 12, 0, "CÃ³digo del proveedor"              , "",                  "", "( cDbfArt )", nil } )
-   aAdd( aBase, { "cRefPrv",   "C", 18, 0, "Referencia del proveedor al artÃ­culo" , "",               "", "( cDbfArt )", nil } )
+   aAdd( aBase, { "cCodArt",   "C", 18, 0, "Código del artículo referenciado"  , "",                  "", "( cDbfArt )", nil } )
+   aAdd( aBase, { "cCodPrv",   "C", 12, 0, "Código del proveedor"              , "",                  "", "( cDbfArt )", nil } )
+   aAdd( aBase, { "cRefPrv",   "C", 18, 0, "Referencia del proveedor al artículo" , "",               "", "( cDbfArt )", nil } )
    aAdd( aBase, { "nDtoPrv",   "N",  6, 2, "Descuento del proveedor"           , "",                  "", "( cDbfArt )", nil } )
-   aAdd( aBase, { "nDtoPrm",   "N",  6, 2, "Descuento por promociÃ³n"           , "",                  "", "( cDbfArt )", nil } )
-   aAdd( aBase, { "cDivPrv",   "C",  3, 0, "CÃ³digo de la divisa"               , "",                  "", "( cDbfArt )", nil } )
+   aAdd( aBase, { "nDtoPrm",   "N",  6, 2, "Descuento por promoción"           , "",                  "", "( cDbfArt )", nil } )
+   aAdd( aBase, { "cDivPrv",   "C",  3, 0, "Código de la divisa"               , "",                  "", "( cDbfArt )", nil } )
    aAdd( aBase, { "nImpPrv",   "N", 19, 6, "Importe de compra"                 , "",                  "", "( cDbfArt )", nil } )
-   aAdd( aBase, { "lDefPrv",   "L",  1, 0, "LÃ³gico de proveedor por defecto"   , "",                  "", "( cDbfArt )", nil } )
+   aAdd( aBase, { "lDefPrv",   "L",  1, 0, "Lógico de proveedor por defecto"   , "",                  "", "( cDbfArt )", nil } )
 
 Return ( aBase )
 
@@ -15830,9 +15830,9 @@ Function aItmLbl()
 
    local aBase := {}
 
-   aAdd( aBase, { "cCodArt",   "C", 18, 0, "CÃ³digo de artÃ­culo",                       "",                  "", "( cDbfArt )", nil } )
-   aAdd( aBase, { "cCodPr1",   "C", 10, 0, "CÃ³digo de primera propiedad",              "",                  "", "( cDbfArt )", nil } )
-   aAdd( aBase, { "cCodPr2",   "C", 10, 0, "CÃ³digo de segunda propiedad",              "",                  "", "( cDbfArt )", nil } )
+   aAdd( aBase, { "cCodArt",   "C", 18, 0, "Código de artículo",                       "",                  "", "( cDbfArt )", nil } )
+   aAdd( aBase, { "cCodPr1",   "C", 10, 0, "Código de primera propiedad",              "",                  "", "( cDbfArt )", nil } )
+   aAdd( aBase, { "cCodPr2",   "C", 10, 0, "Código de segunda propiedad",              "",                  "", "( cDbfArt )", nil } )
    aAdd( aBase, { "cValPr1",   "C", 10, 0, "Valor de primera propiedad",               "",                  "", "( cDbfArt )", nil } )
    aAdd( aBase, { "cValPr2",   "C", 10, 0, "Valor de segunda propiedad",               "",                  "", "( cDbfArt )", nil } )
    aAdd( aBase, { "nUndLbl",   "N", 16, 6, "Precio de compras",                        "",                  "", "( cDbfArt )", nil } )
@@ -15845,12 +15845,12 @@ Function aItmImg()
 
    local aBase := {}
 
-   aAdd( aBase, { "cCodArt",   "C",  18, 0, "CÃ³digo del artÃ­culo",                     "",                  "", "( cDbfArt )", nil } )
-   aAdd( aBase, { "cImgArt",   "C", 240, 0, "Imagen del artÃ­culo",                     "",                  "", "( cDbfArt )", nil } )
+   aAdd( aBase, { "cCodArt",   "C",  18, 0, "Código del artículo",                     "",                  "", "( cDbfArt )", nil } )
+   aAdd( aBase, { "cImgArt",   "C", 240, 0, "Imagen del artículo",                     "",                  "", "( cDbfArt )", nil } )
    aAdd( aBase, { "cNbrArt",   "C", 240, 0, "Nombre de la imagen",                     "",                  "", "( cDbfArt )", nil } )
    aAdd( aBase, { "cHtmArt",   "M",  10, 0, "HTML de la imagen",                       "",                  "", "( cDbfArt )", nil } )
-   aAdd( aBase, { "cCodWeb",   "N",  11, 0, "CÃ³digo de artÃ­culo para la web",          "",                  "", "( cDbfArt )", 0 } )
-   aAdd( aBase, { "lDefImg",   "L",   1, 0, "LÃ³gico para imÃ¡gen por defecto",          "",                  "", "( cDbfArt )", .f. } )
+   aAdd( aBase, { "cCodWeb",   "N",  11, 0, "Código de artículo para la web",          "",                  "", "( cDbfArt )", 0 } )
+   aAdd( aBase, { "lDefImg",   "L",   1, 0, "Lógico para imágen por defecto",          "",                  "", "( cDbfArt )", .f. } )
 
 Return ( aBase )
 
@@ -16274,7 +16274,7 @@ function GraLotArt( cCodArt, dbfArticulo, cLote )
    local nOrdSetFocus   := ( dbfArticulo )->( ordSetFocus( "CODIGO" ) )
 
    /*
-   Actualizar NLOTE en el Fichero de artÃ­culos
+   Actualizar NLOTE en el Fichero de artículos
    ----------------------------------------------------------------------------
    */
 
@@ -16319,11 +16319,11 @@ Function BrwSelArticulo( oGetCodigo, oGetNombre, lCodeBar, lAppend, lEdit, oBtnS
    local nOrd           := GetBrwOpt( "BrwArticulo" )
    local nLevel         := nLevelUsr( "01014" )
    local oCbxOrd
-   local aCbxOrd        := { "CÃ³digo", "Nombre" }
+   local aCbxOrd        := { "Código", "Nombre" }
    local cCbxOrd
    local Ordenes        := { "CodObs", "NomObs" }
    local oSayText
-   local cSayText       := "Listado de artÃ­culos"
+   local cSayText       := "Listado de artículos"
    local oBmpImage
    local oBrwStock
    local cTxtOrigen     := ""
@@ -16376,12 +16376,12 @@ Function BrwSelArticulo( oGetCodigo, oGetNombre, lCodeBar, lAppend, lEdit, oBtnS
    */
 
    if IsReport()
-      DEFINE DIALOG oDlg RESOURCE "HELPENTRY"            TITLE "Seleccionar artÃ­culos"
+      DEFINE DIALOG oDlg RESOURCE "HELPENTRY"            TITLE "Seleccionar artículos"
    else
       if !uFieldEmpresa( "lNStkAct" )
-         DEFINE DIALOG oDlg RESOURCE "HELPENTRYDUPSTK"   TITLE "Seleccionar artÃ­culos"
+         DEFINE DIALOG oDlg RESOURCE "HELPENTRYDUPSTK"   TITLE "Seleccionar artículos"
       else
-         DEFINE DIALOG oDlg RESOURCE "HELPENTRYDUP"      TITLE "Seleccionar artÃ­culos"
+         DEFINE DIALOG oDlg RESOURCE "HELPENTRYDUP"      TITLE "Seleccionar artículos"
       end if
    end if
 
@@ -16406,7 +16406,7 @@ Function BrwSelArticulo( oGetCodigo, oGetNombre, lCodeBar, lAppend, lEdit, oBtnS
 
       oBrw:cAlias          := dbfArticulo
       oBrw:nMarqueeStyle   := 6
-      oBrw:cName           := "Browse.ArtÃ­culos selecciÃ³n"
+      oBrw:cName           := "Browse.Artículos selección"
       oBrw:Cargo           := {}
 
       with object ( oBrw:AddCol() )
@@ -16417,7 +16417,7 @@ Function BrwSelArticulo( oGetCodigo, oGetNombre, lCodeBar, lAppend, lEdit, oBtnS
       end with
 
       with object ( oBrw:AddCol() )
-         :cHeader          := "CÃ³digo"
+         :cHeader          := "Código"
          :cSortOrder       := "CodObs"
          :bEditValue       := {|| if( lCodeBar, ( dbfArticulo )->CodeBar, ( dbfArticulo )->Codigo ) }
          :nWidth           := 90
@@ -16603,19 +16603,19 @@ Function BrwSelArticulo( oGetCodigo, oGetNombre, lCodeBar, lAppend, lEdit, oBtnS
             oBrwStock:lFooter                := .t.
             oBrwStock:lHScroll               := .f.
             oBrwStock:nMarqueeStyle          := 5
-            oBrwStock:cName                  := "Browse.ArtÃ­culos.Stock"
+            oBrwStock:cName                  := "Browse.Artículos.Stock"
             oBrwStock:lRecordSelector        := .f.
 
             with object ( oBrwStock:AddCol() )
-               :cHeader             := "CÃ³digo"
-               :cOrder              := "CÃ³digo"
+               :cHeader             := "Código"
+               :cOrder              := "Código"
                :nWidth              := 40
                :bStrData            := {|| if( !Empty( oBrwStock:aArrayData ), oBrwStock:aArrayData[ oBrwStock:nArrayAt ]:cCodigoAlmacen, "" ) }
                :bLClickHeader       := {| nMRow, nMCol, nFlags, oCol | cOrdenColumnaBrw( oCol, oBrwStock ) }
             end with
 
             with object ( oBrwStock:AddCol() )
-               :cHeader             := "AlmacÃ©n"
+               :cHeader             := "Almacén"
                :nWidth              := 120
                :bStrData            := {|| if( !Empty( oBrwStock:aArrayData ), RetAlmacen( oBrwStock:aArrayData[ oBrwStock:nArrayAt ]:cCodigoAlmacen, dbfAlmT ), "" ) }
             end with
@@ -16879,7 +16879,7 @@ static function cOrdenColumnaBrw( oCol, oBrwStock )
    if !Empty( oBrwStock )
 
       do case
-         case AllTrim( oCol:cHeader ) == "CÃ³digo"
+         case AllTrim( oCol:cHeader ) == "Código"
 
             aSort( oBrwStock:aArrayData, , , {|x,y| x:cCodigoAlmacen < y:cCodigoAlmacen } )
 
@@ -16887,7 +16887,7 @@ static function cOrdenColumnaBrw( oCol, oBrwStock )
                oColumn:cOrder := ""
             next
 
-            oCol:cOrder := "CÃ³digo"
+            oCol:cOrder := "Código"
 
          case AllTrim( oCol:cHeader ) == "Lote"
 
@@ -17400,11 +17400,11 @@ Static Function DataReport( oFr, lTemporal )
    oFr:ClearDataSets()
 
    if lTemporal
-      oFr:SetWorkArea(  "ArtÃ­culos", ( tmpArticulo )->( Select() ), .f., { FR_RB_FIRST, FR_RE_LAST, 0 } )
+      oFr:SetWorkArea(  "Artículos", ( tmpArticulo )->( Select() ), .f., { FR_RB_FIRST, FR_RE_LAST, 0 } )
    else
-      oFr:SetWorkArea(  "ArtÃ­culos", ( dbfArticulo )->( Select() ), .f., { FR_RB_FIRST, FR_RE_LAST, 0 } )
+      oFr:SetWorkArea(  "Artículos", ( dbfArticulo )->( Select() ), .f., { FR_RB_FIRST, FR_RE_LAST, 0 } )
    end if
-   oFr:SetFieldAliases( "ArtÃ­culos", cItemsToReport( aItmArt() ) )
+   oFr:SetFieldAliases( "Artículos", cItemsToReport( aItmArt() ) )
 
    oFr:SetWorkArea(     "Familias", ( dbfFam )->( Select() ) )
    oFr:SetFieldAliases( "Familias", cItemsToReport( aItmFam() ) )
@@ -17418,52 +17418,52 @@ Static Function DataReport( oFr, lTemporal )
    oFr:SetWorkArea(     "Temporada", ( dbfTemporada )->( Select() ) )
    oFr:SetFieldAliases( "Temporada", cItemsToReport( aItmTemporada() ) )
 
-   oFr:SetWorkArea(     "CÃ³digos de barras", ( dbfCodebar )->( Select() ) )
-   oFr:SetFieldAliases( "CÃ³digos de barras", cItemsToReport( aItmBar() ) )
+   oFr:SetWorkArea(     "Códigos de barras", ( dbfCodebar )->( Select() ) )
+   oFr:SetFieldAliases( "Códigos de barras", cItemsToReport( aItmBar() ) )
 
-   oFr:SetWorkArea(     "Tipo artÃ­culo",  oTipArt:Select() )
-   oFr:SetFieldAliases( "Tipo artÃ­culo",  cObjectsToReport( oTipArt:oDbf ) )
+   oFr:SetWorkArea(     "Tipo artículo",  oTipArt:Select() )
+   oFr:SetFieldAliases( "Tipo artículo",  cObjectsToReport( oTipArt:oDbf ) )
 
    oFr:SetWorkArea(     "Fabricante",  oFabricante:Select() )
    oFr:SetFieldAliases( "Fabricante",  cObjectsToReport( oFabricante:oDbf ) )
 
-   oFr:SetWorkArea(     "Unidad de mediciÃ³n",  oUndMedicion:Select() )
-   oFr:SetFieldAliases( "Unidad de mediciÃ³n",  cObjectsToReport( oUndMedicion:oDbf ) )
+   oFr:SetWorkArea(     "Unidad de medición",  oUndMedicion:Select() )
+   oFr:SetFieldAliases( "Unidad de medición",  cObjectsToReport( oUndMedicion:oDbf ) )
 
    oFr:SetWorkArea(     "Precios por propiedades", ( dbfArtVta )->( Select() ) )
    oFr:SetFieldAliases( "Precios por propiedades", cItemsToReport( aItmVta() ) )
 
    if lTemporal
-      oFr:SetMasterDetail( "ArtÃ­culos",   "Precios por propiedades", {|| ( tmpArticulo )->Codigo + ( tmpArticulo )->cCodPrp1 + ( tmpArticulo )->cCodPrp2 + ( tmpArticulo )->cValPrp1 + ( tmpArticulo )->cValPrp2 } )
-      oFr:SetMasterDetail( "ArtÃ­culos",   "Ofertas",                 {|| ( tmpArticulo )->Codigo + ( tmpArticulo )->cCodPrp1 + ( tmpArticulo )->cCodPrp2 + ( tmpArticulo )->cValPrp1 + ( tmpArticulo )->cValPrp2 } )
-      oFr:SetMasterDetail( "ArtÃ­culos",   "Familias",                {|| ( tmpArticulo )->Familia } )
-      oFr:SetMasterDetail( "ArtÃ­culos",   "Categoria",               {|| ( tmpArticulo )->cCodCate } )
-      oFr:SetMasterDetail( "ArtÃ­culos",   "Temporada",               {|| ( tmpArticulo )->cCodTemp } )
-      oFr:SetMasterDetail( "ArtÃ­culos",   "Tipo artÃ­culo",           {|| ( tmpArticulo )->cCodTip } )
-      oFr:SetMasterDetail( "ArtÃ­culos",   "Fabricante",              {|| ( tmpArticulo )->cCodFab } )
-      oFr:SetMasterDetail( "ArtÃ­culos",   "Unidad de mediciÃ³n",      {|| ( tmpArticulo )->cUnidad } )
-      oFr:SetMasterDetail( "ArtÃ­culos",   "CÃ³digos de barras",       {|| ( tmpArticulo )->Codigo } )
+      oFr:SetMasterDetail( "Artículos",   "Precios por propiedades", {|| ( tmpArticulo )->Codigo + ( tmpArticulo )->cCodPrp1 + ( tmpArticulo )->cCodPrp2 + ( tmpArticulo )->cValPrp1 + ( tmpArticulo )->cValPrp2 } )
+      oFr:SetMasterDetail( "Artículos",   "Ofertas",                 {|| ( tmpArticulo )->Codigo + ( tmpArticulo )->cCodPrp1 + ( tmpArticulo )->cCodPrp2 + ( tmpArticulo )->cValPrp1 + ( tmpArticulo )->cValPrp2 } )
+      oFr:SetMasterDetail( "Artículos",   "Familias",                {|| ( tmpArticulo )->Familia } )
+      oFr:SetMasterDetail( "Artículos",   "Categoria",               {|| ( tmpArticulo )->cCodCate } )
+      oFr:SetMasterDetail( "Artículos",   "Temporada",               {|| ( tmpArticulo )->cCodTemp } )
+      oFr:SetMasterDetail( "Artículos",   "Tipo artículo",           {|| ( tmpArticulo )->cCodTip } )
+      oFr:SetMasterDetail( "Artículos",   "Fabricante",              {|| ( tmpArticulo )->cCodFab } )
+      oFr:SetMasterDetail( "Artículos",   "Unidad de medición",      {|| ( tmpArticulo )->cUnidad } )
+      oFr:SetMasterDetail( "Artículos",   "Códigos de barras",       {|| ( tmpArticulo )->Codigo } )
    else
-      oFr:SetMasterDetail( "ArtÃ­culos",   "Precios por propiedades", {|| ( dbfArticulo )->Codigo + ( dbfArticulo )->cCodPrp1 + ( dbfArticulo )->cCodPrp2 + ( dbfArticulo )->cValPrp1 + ( dbfArticulo )->cValPrp2 } )
-      oFr:SetMasterDetail( "ArtÃ­culos",   "Ofertas",                 {|| ( dbfArticulo )->Codigo + ( dbfArticulo )->cCodPrp1 + ( dbfArticulo )->cCodPrp2 + ( dbfArticulo )->cValPrp1 + ( dbfArticulo )->cValPrp2 } )
-      oFr:SetMasterDetail( "ArtÃ­culos",   "Familias",                {|| ( dbfArticulo )->Familia } )
-      oFr:SetMasterDetail( "ArtÃ­culos",   "Categoria",               {|| ( dbfArticulo )->cCodCate } )
-      oFr:SetMasterDetail( "ArtÃ­culos",   "Temporada",               {|| ( dbfArticulo )->cCodTemp } )
-      oFr:SetMasterDetail( "ArtÃ­culos",   "Tipo artÃ­culo",           {|| ( dbfArticulo )->cCodTip } )
-      oFr:SetMasterDetail( "ArtÃ­culos",   "Fabricante",              {|| ( dbfArticulo )->cCodFab } )
-      oFr:SetMasterDetail( "ArtÃ­culos",   "Unidad de mediciÃ³n",      {|| ( dbfArticulo )->cUnidad } )
-      oFr:SetMasterDetail( "ArtÃ­culos",   "CÃ³digos de barras",       {|| ( dbfArticulo )->Codigo } )
+      oFr:SetMasterDetail( "Artículos",   "Precios por propiedades", {|| ( dbfArticulo )->Codigo + ( dbfArticulo )->cCodPrp1 + ( dbfArticulo )->cCodPrp2 + ( dbfArticulo )->cValPrp1 + ( dbfArticulo )->cValPrp2 } )
+      oFr:SetMasterDetail( "Artículos",   "Ofertas",                 {|| ( dbfArticulo )->Codigo + ( dbfArticulo )->cCodPrp1 + ( dbfArticulo )->cCodPrp2 + ( dbfArticulo )->cValPrp1 + ( dbfArticulo )->cValPrp2 } )
+      oFr:SetMasterDetail( "Artículos",   "Familias",                {|| ( dbfArticulo )->Familia } )
+      oFr:SetMasterDetail( "Artículos",   "Categoria",               {|| ( dbfArticulo )->cCodCate } )
+      oFr:SetMasterDetail( "Artículos",   "Temporada",               {|| ( dbfArticulo )->cCodTemp } )
+      oFr:SetMasterDetail( "Artículos",   "Tipo artículo",           {|| ( dbfArticulo )->cCodTip } )
+      oFr:SetMasterDetail( "Artículos",   "Fabricante",              {|| ( dbfArticulo )->cCodFab } )
+      oFr:SetMasterDetail( "Artículos",   "Unidad de medición",      {|| ( dbfArticulo )->cUnidad } )
+      oFr:SetMasterDetail( "Artículos",   "Códigos de barras",       {|| ( dbfArticulo )->Codigo } )
    end if
 
-   oFr:SetResyncPair(      "ArtÃ­culos",   "Precios por propiedades" )
-   oFr:SetResyncPair(      "ArtÃ­culos",   "Ofertas" )
-   oFr:SetResyncPair(      "ArtÃ­culos",   "Familias" )
-   oFr:SetResyncPair(      "ArtÃ­culos",   "Categoria" )
-   oFr:SetResyncPair(      "ArtÃ­culos",   "Temporada" )
-   oFr:SetResyncPair(      "ArtÃ­culos",   "Tipo artÃ­culo" )
-   oFr:SetResyncPair(      "ArtÃ­culos",   "Fabricante" )
-   oFr:SetResyncPair(      "ArtÃ­culos",   "Unidad de mediciÃ³n" )
-   oFr:SetResyncPair(      "ArtÃ­culos",   "CÃ³digos de barras" )
+   oFr:SetResyncPair(      "Artículos",   "Precios por propiedades" )
+   oFr:SetResyncPair(      "Artículos",   "Ofertas" )
+   oFr:SetResyncPair(      "Artículos",   "Familias" )
+   oFr:SetResyncPair(      "Artículos",   "Categoria" )
+   oFr:SetResyncPair(      "Artículos",   "Temporada" )
+   oFr:SetResyncPair(      "Artículos",   "Tipo artículo" )
+   oFr:SetResyncPair(      "Artículos",   "Fabricante" )
+   oFr:SetResyncPair(      "Artículos",   "Unidad de medición" )
+   oFr:SetResyncPair(      "Artículos",   "Códigos de barras" )
 
    RECOVER USING oError
 
@@ -17478,14 +17478,14 @@ Return nil
 
 Static Function VariableReport( oFr )
 
-   oFr:DeleteCategory(  "ArtÃ­culos" )
+   oFr:DeleteCategory(  "Artículos" )
 
    /*
-   CreaciÃ³n de variables----------------------------------------------------
+   Creación de variables----------------------------------------------------
    */
 
-   oFr:AddVariable(     "ArtÃ­culos",      "CÃ³digo de barras para primera propiedad",  "CallHbFunc('cArtBarPrp1')" )
-   oFr:AddVariable(     "ArtÃ­culos",      "CÃ³digo de barras para segunda propiedad",  "CallHbFunc('cArtBarPrp2')" )
+   oFr:AddVariable(     "Artículos",      "Código de barras para primera propiedad",  "CallHbFunc('cArtBarPrp1')" )
+   oFr:AddVariable(     "Artículos",      "Código de barras para segunda propiedad",  "CallHbFunc('cArtBarPrp2')" )
 
 Return nil
 
@@ -17542,7 +17542,7 @@ Function DesignReportArticulo( oFr, dbfDoc )
             oFr:AddBand(         "CabeceraColumnas",  "MainPage",       frxMasterData )
             oFr:SetProperty(     "CabeceraColumnas",  "Top",            200 )
             oFr:SetProperty(     "CabeceraColumnas",  "Height",         100 )
-            oFr:SetObjProperty(  "CabeceraColumnas",  "DataSet",        "ArtÃ­culos" )
+            oFr:SetObjProperty(  "CabeceraColumnas",  "DataSet",        "Artículos" )
 
          end if
 
@@ -17553,13 +17553,13 @@ Function DesignReportArticulo( oFr, dbfDoc )
          VariableReport( oFr )
 
          /*
-         DiseÃ±o de report---------------------------------------------------------
+         Diseño de report---------------------------------------------------------
          */
 
          oFr:DesignReport()
 
          /*
-         Destruye el diseÃ±ador----------------------------------------------------
+         Destruye el diseñador----------------------------------------------------
          */
 
          oFr:DestroyFr()
@@ -17602,7 +17602,7 @@ Function PrintReportArticulo( nDevice, nCopies, cPrinter, dbfDoc )
 
    oFr:SetIcon( 1 )
 
-   oFr:SetTitle(        "DiseÃ±ador de documentos" )
+   oFr:SetTitle(        "Diseñador de documentos" )
 
    /*
    Manejador de eventos--------------------------------------------------------
@@ -17658,7 +17658,7 @@ Function PrintReportArticulo( nDevice, nCopies, cPrinter, dbfDoc )
    end if
 
    /*
-   Destruye el diseÃ±ador-------------------------------------------------------
+   Destruye el diseñador-------------------------------------------------------
    */
 
    oFr:DestroyFr()
@@ -17698,7 +17698,7 @@ Static Function dlgToolTip( cCodArt, oBrw )
       oBmpImage:bRClicked              := {|| ShowImage( oBmpImage ) }
 
       /*
-      Arbol con informaciÃ³n del producto---------------------------------------
+      Arbol con información del producto---------------------------------------
       */
 
       oTreeInfo                        := TTreeView():Redefine( 120, oDlgToolTip )
@@ -17723,17 +17723,17 @@ Static Function dlgToolTip( cCodArt, oBrw )
       oBrwStock:lFooter                := .t.
       oBrwStock:lHScroll               := .f.
       oBrwStock:nMarqueeStyle          := 5
-      oBrwStock:cName                  := "Tooltip artÃ­culos"
+      oBrwStock:cName                  := "Tooltip artículos"
       oBrwStock:lRecordSelector        := .f.
 
       with object ( oBrwStock:AddCol() )
-         :cHeader             := "CÃ³digo"
+         :cHeader             := "Código"
          :nWidth              := 40
          :bStrData            := {|| if( !Empty( oBrwStock:aArrayData ), oBrwStock:aArrayData[ oBrwStock:nArrayAt ]:cCodigoAlmacen, "" ) }
       end with
 
       with object ( oBrwStock:AddCol() )
-         :cHeader             := "AlmacÃ©n"
+         :cHeader             := "Almacén"
          :nWidth              := 120
          :bStrData            := {|| if( !Empty( oBrwStock:aArrayData ), RetAlmacen( oBrwStock:aArrayData[ oBrwStock:nArrayAt ]:cCodigoAlmacen, dbfAlmT ), "" ) }
       end with
@@ -17811,15 +17811,15 @@ Static Function startToolTip( cCodArt, oBrwStock, oTreeInfo, oImageListInfo )
 
    switch ( nTipoOferta() )
       case 1
-         oTreeInfo:Add( "ArtÃ­culo actualmente en oferta por importes.", 1 )
+         oTreeInfo:Add( "Artículo actualmente en oferta por importes.", 1 )
       case 2
-         oTreeInfo:Add( "ArtÃ­culo actualmente en oferta de tipo X*Y.", 1 )
+         oTreeInfo:Add( "Artículo actualmente en oferta de tipo X*Y.", 1 )
    end
 
-   oTreeInfo:Add( "Fecha de creaciÃ³n " + Dtoc( ( dbfArticulo )->LastChg ), 2 )
+   oTreeInfo:Add( "Fecha de creación " + Dtoc( ( dbfArticulo )->LastChg ), 2 )
 
    if !Empty( ( dbfArticulo )->dFecChg )
-      oTreeInfo:Add( "Ãšltima modificaciÃ³n " + Dtoc( ( dbfArticulo )->dFecChg ), 2 )
+      oTreeInfo:Add( "Última modificación " + Dtoc( ( dbfArticulo )->dFecChg ), 2 )
    end if
 
    /*
@@ -18282,7 +18282,7 @@ Static Function EdtImg( aTmp, aGet, dbfTmpImg, oBrw, aArt, bValid, nMode )
 
    end if
 
-   DEFINE DIALOG oDlg RESOURCE "Imagenes" TITLE LblTitle( nMode ) + "imagenes de artÃ­culos"
+   DEFINE DIALOG oDlg RESOURCE "Imagenes" TITLE LblTitle( nMode ) + "imagenes de artículos"
 
       REDEFINE FOLDER oFld;
          ID       100 ;

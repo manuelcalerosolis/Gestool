@@ -142,123 +142,123 @@
 Definici¢n de la base de datos de lineas de detalle
 */
 
-#define _dCSERIE                  1      //   C      1     0
-#define _dNNUMFAC                 2      //   N      9     0
-#define _dCSUFFAC                 3      //   C      2     0
-#define _CREF                     4      //   C     14     0
-#define _CDETALLE                 5      //   C     50     0
-#define _NPREUNIT                 6      //   N     13     3
-#define _NPNTVER                  7      //   N     13     6
-#define _NIMPTRN                  8      //   N     13     6
-#define _NDTO                     9      //   N      5     1
-#define _NDTOPRM                 10      //   N      5     1
-#define _NIVA                    11      //   N      6     2
-#define _NCANENT                 12      //   N     13     3
-#define _LCONTROL                13      //   L      1     0
-#define _NPESOKG                 14      //   N      7     3
-#define _CPESOKG                 15      //   N      7     3
-#define _CUNIDAD                 16      //   C      2     0
-#define __CCODAGE                17      //   N      5     1
-#define _NCOMAGE                 18      //   N      5     1
-#define _NUNICAJA                19      //   N      9     3
-#define _NUNDKIT                 20      //   N     16     6
-#define _DFECHA                  21      //   D      8     0
-#define _CTIPMOV                 22      //   C      2     0
-#define _MLNGDES                 23      //   M     10     0
-#define _CCODALB                 24      //   C     12     0
-#define _DFECALB                 25      //   C     12     0
-#define _LTOTLIN                 26      //   L      1     0
-#define _LIMPLIN                 27      //   L      1     0
-#define _CCODPR1                 28
-#define _CCODPR2                 29
-#define _CVALPR1                 30
-#define _CVALPR2                 31
-#define _NFACCNV                 32
-#define _NDTODIV                 33
-#define _LSEL                    34
-#define _NNUMLIN                 35
-#define _NCTLSTK                 36
-#define _NCOSDIV                 37      //   N     13     3
-#define _NPVPREC                 38      //   N     13     3
-#define _CALMLIN                 39      //   C     3      0
-#define _LIVALIN                 40      //   C     3      0
-#define _CCODIMP                 41      //   C     3      0
-#define _NVALIMP                 42      //   N    16      6
-#define _LLOTE                   43      //   L     1      0
-#define _NLOTE                   44      //   N     4      0
-#define _CLOTE                   45      //   N     4      0
-#define _DFECCAD                 46      //   N     4      0
-#define _LKITART                 47      //   L     1      0
-#define _LKITCHL                 48      //   L     1      0
-#define _LKITPRC                 49      //   L     1      0
-#define _NMESGRT                 50      //   N     2      0
-#define _LMSGVTA                 51
-#define _LNOTVTA                 52
-#define _CCODTIP                 53      //   C     3      0
-#define _MNUMSER                 54
-#define _CCODFAM                 55      //   C     8      0
-#define _CGRPFAM                 56      //   C     3      0
-#define _NREQ                    57      //   N    16      6
-#define _MOBSLIN                 58      //   M    10      0
-#define _CCODPRV                 59      //   C    12      0
-#define _CNOMPRV                 60      //   C    30      0
-#define _CIMAGEN                 61      //   C    30      0
-#define _NPUNTOS                 62
-#define _NVALPNT                 63
-#define _NDTOPNT                 64
-#define _NINCPNT                 65
-#define _CREFPRV                 66
-#define _NVOLUMEN                67
-#define _CVOLUMEN                68
-#define __LALQUILER              69
-#define __DFECENT                70
-#define __DFECSAL                71
-#define _NPREALQ                 72
-#define _NNUMMED                 73
-#define _NMEDUNO                 74
-#define _NMEDDOS                 75
-#define _NMEDTRE                 76
-#define _NTARLIN                 77      //   L      1     0
-#define _LIMPFRA                 78
-#define _CCODFRA                 79
-#define _CTXTFRA                 80
-#define _DESCRIP                 81
-#define _LLINOFE                 82       // L       1    0
-#define _LVOLIMP                 83
-#define _LGASSUP                 84
-#define _dCNUMPED                85
+#define _dCSERIE             1      //   C      1     0
+#define _dNNUMFAC            2      //   N      9     0
+#define _dCSUFFAC            3      //   C      2     0
+#define _CREF                4      //   C     14     0
+#define _CDETALLE            5      //   C     50     0
+#define _NPREUNIT            6      //   N     13     3
+#define _NPNTVER             7      //   N     13     6
+#define _NIMPTRN             8      //   N     13     6
+#define _NDTO                9      //   N      5     1
+#define _NDTOPRM            10      //   N      5     1
+#define _NIVA               11      //   N      6     2
+#define _NCANENT            12      //   N     13     3
+#define _LCONTROL           13      //   L      1     0
+#define _NPESOKG            14      //   N      7     3
+#define _CPESOKG            15      //   N      7     3
+#define _CUNIDAD            16      //   C      2     0
+#define __CCODAGE           17      //   N      5     1
+#define _NCOMAGE            18      //   N      5     1
+#define _NUNICAJA           19      //   N      9     3
+#define _NUNDKIT            20      //   N     16     6
+#define _DFECHA             21      //   D      8     0
+#define _CTIPMOV            22      //   C      2     0
+#define _MLNGDES            23      //   M     10     0
+#define _CCODALB            24      //   C     12     0
+#define _DFECALB            25      //   C     12     0
+#define _LTOTLIN            26      //   L      1     0
+#define _LIMPLIN            27      //   L      1     0
+#define _CCODPR1            28
+#define _CCODPR2            29
+#define _CVALPR1            30
+#define _CVALPR2            31
+#define _NFACCNV            32
+#define _NDTODIV            33
+#define _LSEL               34
+#define _NNUMLIN            35
+#define _NCTLSTK            36
+#define _NCOSDIV            37      //   N     13     3
+#define _NPVPREC            38      //   N     13     3
+#define _CALMLIN            39      //   C     3      0
+#define _LIVALIN            40      //   C     3      0
+#define _CCODIMP            41      //   C     3      0
+#define _NVALIMP            42      //   N    16      6
+#define _LLOTE              43      //   L     1      0
+#define _NLOTE              44      //   N     4      0
+#define _CLOTE              45      //   N     4      0
+#define _DFECCAD            46      //   N     4      0
+#define _LKITART            47      //   L     1      0
+#define _LKITCHL            48      //   L     1      0
+#define _LKITPRC            49      //   L     1      0
+#define _NMESGRT            50      //   N     2      0
+#define _LMSGVTA            51
+#define _LNOTVTA            52
+#define _CCODTIP            53      //   C     3      0
+#define _MNUMSER            54
+#define _CCODFAM            55      //   C     8      0
+#define _CGRPFAM            56      //   C     3      0
+#define _NREQ               57      //   N    16      6
+#define _MOBSLIN            58      //   M    10      0
+#define _CCODPRV            59      //   C    12      0
+#define _CNOMPRV            60      //   C    30      0
+#define _CIMAGEN            61      //   C    30      0
+#define _NPUNTOS            62
+#define _NVALPNT            63
+#define _NDTOPNT            64
+#define _NINCPNT            65
+#define _CREFPRV            66
+#define _NVOLUMEN           67
+#define _CVOLUMEN           68
+#define __LALQUILER         69
+#define __DFECENT           70
+#define __DFECSAL           71
+#define _NPREALQ            72
+#define _NNUMMED            73
+#define _NMEDUNO            74
+#define _NMEDDOS            75
+#define _NMEDTRE            76
+#define _NTARLIN            77      //   L      1     0
+#define _LIMPFRA            78
+#define _CCODFRA            79
+#define _CTXTFRA            80
+#define _DESCRIP            81
+#define _LLINOFE            82       // L       1    0
+#define _LVOLIMP            83
+#define _LGASSUP            84
+#define _dCNUMPED           85
 
 /*
 Definici¢n de Array para impuestos
 */
 
-#define _NBRTIVA1                aTotIva[ 1, 1 ]
-#define _NBASIVA1                aTotIva[ 1, 2 ]
-#define _NPCTIVA1                aTotIva[ 1, 3 ]
-#define _NPCTREQ1                aTotIva[ 1, 4 ]
-#define _NPNTVER1                aTotIva[ 1, 5 ]
-#define _NIVMIVA1                aTotIva[ 1, 6 ]
-#define _NTRNIVA1                aTotIva[ 1, 7 ]
-#define _NIMPIVA1                aTotIva[ 1, 8 ]
-#define _NIMPREQ1                aTotIva[ 1, 9 ]
-#define _NBRTIVA2                aTotIva[ 2, 1 ]
-#define _NBASIVA2                aTotIva[ 2, 2 ]
-#define _NPCTIVA2                aTotIva[ 2, 3 ]
-#define _NPCTREQ2                aTotIva[ 2, 4 ]
-#define _NPNTVER2                aTotIva[ 2, 5 ]
-#define _NIVMIVA2                aTotIva[ 2, 6 ]
-#define _NTRNIVA2                aTotIva[ 2, 7 ]
-#define _NIMPIVA2                aTotIva[ 2, 8 ]
-#define _NIMPREQ2                aTotIva[ 2, 9 ]
-#define _NBRTIVA3                aTotIva[ 3, 1 ]
-#define _NBASIVA3                aTotIva[ 3, 2 ]
-#define _NPCTIVA3                aTotIva[ 3, 3 ]
-#define _NPCTREQ3                aTotIva[ 3, 4 ]
-#define _NPNTVER3                aTotIva[ 3, 5 ]
-#define _NIVMIVA3                aTotIva[ 3, 6 ]
-#define _NTRNIVA3                aTotIva[ 3, 7 ]
-#define _NIMPIVA3                aTotIva[ 3, 8 ]
-#define _NIMPREQ3                aTotIva[ 3, 9 ]
+#define _NBRTIVA1           aTotIva[ 1, 1 ]
+#define _NBASIVA1           aTotIva[ 1, 2 ]
+#define _NPCTIVA1           aTotIva[ 1, 3 ]
+#define _NPCTREQ1           aTotIva[ 1, 4 ]
+#define _NPNTVER1           aTotIva[ 1, 5 ]
+#define _NIVMIVA1           aTotIva[ 1, 6 ]
+#define _NTRNIVA1           aTotIva[ 1, 7 ]
+#define _NIMPIVA1           aTotIva[ 1, 8 ]
+#define _NIMPREQ1           aTotIva[ 1, 9 ]
+#define _NBRTIVA2           aTotIva[ 2, 1 ]
+#define _NBASIVA2           aTotIva[ 2, 2 ]
+#define _NPCTIVA2           aTotIva[ 2, 3 ]
+#define _NPCTREQ2           aTotIva[ 2, 4 ]
+#define _NPNTVER2           aTotIva[ 2, 5 ]
+#define _NIVMIVA2           aTotIva[ 2, 6 ]
+#define _NTRNIVA2           aTotIva[ 2, 7 ]
+#define _NIMPIVA2           aTotIva[ 2, 8 ]
+#define _NIMPREQ2           aTotIva[ 2, 9 ]
+#define _NBRTIVA3           aTotIva[ 3, 1 ]
+#define _NBASIVA3           aTotIva[ 3, 2 ]
+#define _NPCTIVA3           aTotIva[ 3, 3 ]
+#define _NPCTREQ3           aTotIva[ 3, 4 ]
+#define _NPNTVER3           aTotIva[ 3, 5 ]
+#define _NIVMIVA3           aTotIva[ 3, 6 ]
+#define _NTRNIVA3           aTotIva[ 3, 7 ]
+#define _NIMPIVA3           aTotIva[ 3, 8 ]
+#define _NIMPREQ3           aTotIva[ 3, 9 ]
 
 memvar cDbf
 memvar cDbfCol

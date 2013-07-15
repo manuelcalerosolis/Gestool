@@ -2772,9 +2772,9 @@ Function CreateAcceso( oWnd )
    case IsOscommerce()
       oGrupo:nBigItems  := 4
    case IsProfesional()
-      oGrupo:nBigItems  := 2
+      oGrupo:nBigItems  := 4
    otherwise
-      oGrupo:nBigItems  := 1
+      oGrupo:nBigItems  := 3
    end case
 
    oGrupo:cPrompt       := 'Herramientas'

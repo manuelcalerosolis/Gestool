@@ -11346,6 +11346,10 @@ METHOD GetLastOpen()
       Return ( cLasTur )
    end if
 
+   CursorWait()
+
+   ::oDbf:GetStatus()
+
    ::oDbf:OrdSetFocus( "nStaTur" )
 
    ::oDbf:GoTop()
@@ -11373,7 +11377,9 @@ METHOD GetLastOpen()
 
    end while      
 
-   ::oDbf:OrdSetFocus( "cNumTur" )
+   ::oDbf:SetStatus()
+
+   CursorWE()
 
 RETURN ( cLasTur )
 
