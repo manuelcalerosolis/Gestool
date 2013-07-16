@@ -48,6 +48,8 @@ CLASS TInvitacion FROM TMANT
    METHOD cImagen()              INLINE ( ::aImagen[ Min( Max( ::oDbf:nImgInv, 1 ), len( ::aImagen ) ) ] )
    METHOD cBigResource()         INLINE ( ::aBigResource[ Min( Max( ::oDbf:nImgInv, 1 ), len( ::aBigResource ) ) ] )
 
+   METHOD nPrecioInvitacion( cCodigoInvitacion )
+
 END CLASS
 
 //----------------------------------------------------------------------------//
@@ -225,7 +227,7 @@ Method lPreSave( oGet, oGet2, nMode, oDlg, oCmbImg )
          Return nil
       end if
 
-      if ::oDbf:SeekInOrd( ::oDbf:cCodInv, "CCODINV" )
+      if ::oDbf:SeekInOrd( ::oDbf:cCodInv, "cCodInv" )
          msgStop( "Código existente" )
          oGet:SetFocus()
          return nil
@@ -242,5 +244,25 @@ Method lPreSave( oGet, oGet2, nMode, oDlg, oCmbImg )
    ::oDbf:nImgInv := oCmbImg:nAt
 
 Return ( oDlg:end( IDOK ) )
+
+//---------------------------------------------------------------------------//
+
+METHOD nPrecioInvitacion( cCodigoInvitacion )
+
+   local nPrecioInvitacion    := 0
+
+   ::oDbf:GetStatus()
+
+   ::oDbf:OrdSetFocus( "cCodInv" )
+
+   if ::oDbf:Seek( cCodigoInvitacion ) 
+      if ::oDbf:lPreInv
+         nPrecioInvitacion    := ::oDbf:nPreInv
+      end if 
+   end if 
+
+   ::oDbf:SetStatus()
+
+Return ( nPrecioInvitacion )
 
 //---------------------------------------------------------------------------//

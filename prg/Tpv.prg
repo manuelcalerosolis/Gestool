@@ -163,6 +163,7 @@ Ficheros-----------------------------------------------------------------------
 #define _CIMPCOM2                 69
 #define __DFECTIK                 70
 #define _NCOSTIL                  71
+#define _CTXTINV                  72
 
 #define _NNUMREC                   4
 #define _CCODCAJ                   5
@@ -18216,6 +18217,7 @@ function aColTik()
    aAdd( aColTik, { "cImpCom2", "C",     50,     0, "Segundo tipo impresora comanda",     "",                  "", "( cDbfCol )" } )
    aAdd( aColTik, { "dFecTik",  "D",      8,     0, "Fecha del tiket",                    "",                  "", "( cDbfCol )" } )
    aAdd( aColTik, { "nCosTil",  "N",     16,     6, "Precio de costo de combinado",       "",                  "", "( cDbfCol )" } )
+   aAdd( aColTik, { "cTxtInv",  "C",     30,     0, "Texto invitación",                   "",                  "", "( cDbfCol )" } )
 
 Return ( aColTik )
 

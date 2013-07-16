@@ -421,9 +421,10 @@ METHOD New(  nTop, nLeft, nBottom, nRight, cTitle, oMenu, oWnd, oIcon,;
 
    ::oBtnTop:Say( -14, dfnTreeViewWidth, ::cTitle ) // antes primera coordenada en 6
 
-   ::oBtnBar            := TTreeView():New( dfnSplitterHeight, 0, Self, , , .t., .f., dfnTreeViewWidth, 400 )
+   ::oBtnBar            := TTreeView():New( dfnSplitterHeight, 0, Self, , , .t., .f., dfnTreeViewWidth, 400 ) // Rgb( 51, 51, 51 )
 
    ::oBtnBar:SetItemHeight( 20 )
+   // ::oBtnBar:SetFont( oFontLittelTitle() )
 
    ::oBtnBar:OnClick    := {|| ::ClickTree() }
 
@@ -2931,6 +2932,7 @@ Function oFontLittelTitle()
 
    if Empty( oFontLittelTitle )
       oFontLittelTitle  := TFont():New( "Ms Sans Serif", 6, 12, .f. )
+      // oFontLittelTitle  := TFont():New( "Segoe UI Light", 0, -12, .f., .f. )
    end if
 
 Return ( oFontLittelTitle )

@@ -133,6 +133,10 @@ CLASS TTreeView FROM TControl
       If( oItem == nil, oItem := ::GetSelected(), nil ), ;
       TVSetCheck( ::hWnd, oItem:hItem, lOnOff )
 
+   METHOD SetColor( nClrText, nClrPane ) INLINE ;
+      Super:SetColor( nClrText, nClrPane ), ;
+      TVSetColor( ::hWnd, nClrText, nClrPane )
+
 ENDCLASS
 
 //----------------------------------------------------------------------------//
@@ -177,6 +181,7 @@ METHOD New( nTop, nLeft, oWnd, nClrFore,;
    if !Empty( oWnd:hWnd )
       ::Create( CTRL_NAME )
       oWnd:AddControl( Self )
+      ::SetColor( nClrFore, nClrBack )
    else
       oWnd:DefControl( Self )
    endif
