@@ -137,6 +137,8 @@ CLASS TComercio
    DATA  oFacPrvL
    DATA  oRctPrvL
    DATA  oArtImg
+   DATA  oOferta
+   DATA  oTextOfertas
 
    DATA  oStock
 
@@ -376,6 +378,8 @@ CLASS TComercio
 
    METHOD DeletePropiedadesPrestashop()
 
+   METHOD InsertOfertasPrestashop()
+
    METHOD ActualizaPropiedadesPrestashop( oDbf )
 
    METHOD InsertLineasPropiedadesPrestashop()
@@ -426,7 +430,7 @@ METHOD New( oMenuItem ) CLASS TComercio
    ::aImagesArticulos      := {}
    ::aImagesCategories     := {}
    ::aTipoImagesPrestashop := {}
-   ::nTotMeter             := 0
+   ::nTotMeter             := 0 
 
    ::cHost                 := uFieldEmpresa( "cSitSql" )
    ::cUser                 := uFieldEmpresa( "cUsrSql" )
@@ -459,8 +463,6 @@ RETURN ( Self )
 
 //---------------------------------------------------------------------------//
 
-
-
 METHOD OpenFiles() CLASS TComercio
 
    local oBlock
@@ -481,6 +483,8 @@ METHOD OpenFiles() CLASS TComercio
    DATABASE NEW ::oTblPro  PATH ( cPatArt() ) FILE "TBLPRO.DBF"      VIA ( cDriver() ) SHARED INDEX "TBLPRO.CDX"
 
    DATABASE NEW ::oArtDiv  PATH ( cPatArt() ) FILE "ARTDIV.DBF"      VIA ( cDriver() ) SHARED INDEX "ARTDIV.CDX"
+
+   DATABASE NEW ::oOferta  PATH ( cPatArt() ) FILE "OFERTA.DBF"      VIA ( cDriver() ) SHARED INDEX "OFERTA.CDX"
 
    DATABASE NEW ::oFam     PATH ( cPatArt() ) FILE "FAMILIAS.DBF"    VIA ( cDriver() ) SHARED INDEX "FAMILIAS.CDX"
 
@@ -688,6 +692,10 @@ METHOD CloseFiles() CLASS TComercio
       ::oArtImg:End()
    end if
 
+   if !Empty( ::oOferta ) .and. ::oOferta:Used()
+      ::oOferta:End()
+   end if
+
    ::oArt      := nil
    ::oPro      := nil
    ::oTblPro   := nil
@@ -719,6 +727,7 @@ METHOD CloseFiles() CLASS TComercio
    ::oFacPrvL  := nil
    ::oRctPrvL  := nil
    ::oArtImg   := nil
+   ::oOferta   := nil
 
 RETURN ( Self )
 
@@ -8101,10 +8110,26 @@ METHOD AppendArticuloPrestashop( oDb )
       ::SetText ( 'Error al borrar la tabla ' + ::cPrefixTable( "scene_products" ), 3  )
    end if
 
+   /*
+   stockaje--------------------------------------------------------------------
+   */
+
+   cCommand          := "TRUNCATE TABLE " + ::cPrefixTable( "stock_available" )
+
+   if TMSCommand():New( ::oCon ):ExecDirect( cCommand )
+      ::SetText ( 'Tabla ' + ::cPrefixTable( "stock_available" ) + ' borrada correctamente', 3  )
+   else
+      ::SetText ( 'Error al borrar la tabla ' + ::cPrefixTable( "stock_available" ), 3  )
+   end if   
+
+   /*
+   limpiamos refencias de imagenes a la web------------------------------------
+   */
+
    ::lLimpiaRefImgWeb()
 
    /*
-   Limpiamos las Id de las tablas del programa------------------------------
+   Limpiamos las Id de las tablas del programa--------------------------------
    */
 
    ::DelIdTipoArticuloPrestashop()
@@ -8237,6 +8262,7 @@ METHOD InsertProductsPrestashop( lExt ) CLASS TComercio
    local nPrecio              := 0
    local nParent              := ::GetParentCategories()
    local cCommand             := ""
+   local nTotStock
 
    DEFAULT lExt               := .f.
 
@@ -8270,7 +8296,7 @@ METHOD InsertProductsPrestashop( lExt ) CLASS TComercio
                      "'1', " + ;                                                                                  //id_shop_default
                      "'1', " + ;                                                                                  //quantity
                      "'1', " + ;                                                                                  //minimal_quantity
-                     "'" + if( !Empty( ::oArt:cCodPrp1 ), "0", AllTrim( Str( ::oArt:nImpInt1 ) ) ) + "', " + ;    //price
+                     "'" + if( !Empty( ::oArt:cCodPrp1 ), "0", AllTrim( Str( ::oArt:nImpIva1 ) ) ) + "', " + ;    //price
                      "'1', " + ;                                                                                  //active
                      "'" + dtos( GetSysDate() ) + "', " + ;                                                       //date_add
                      "'" + dtos( GetSysDate() ) + "' )"
@@ -8351,13 +8377,13 @@ METHOD InsertProductsPrestashop( lExt ) CLASS TComercio
                      "available_now, " + ;
                      "available_later )" + ;
                   " VALUES " + ;
-                     "('" + Str( nCodigoWeb ) + "', " + ;               // id_product
-                     "'" + Str( ::nLanguage ) + "', " + ;               // id_lang
+                     "('" + Str( nCodigoWeb ) + "', " + ;                  // id_product
+                     "'" + Str( ::nLanguage ) + "', " + ;                  // id_lang
                      "'" + if( !Empty( ::oArt:mDesTec ), AllTrim( ::oArt:mDesTec ), AllTrim( ::oArt:Nombre ) ) + "', " + ;        // description
-                     "'" + AllTrim( ::oArt:Nombre ) + "', " + ;         // description_short
-                     "'" + cLinkRewrite( ::oArt:Nombre ) + "', " + ;    // link_rewrite
-                     "'" + AllTrim( ::oArt:Nombre ) + "', " + ;         // name
-                     "'En stock', " + ;                                 // avatible_now
+                     "'" + "Ref:" + AllTrim( ::oArt:Codigo ) + "', " + ;   // description_short
+                     "'" + cLinkRewrite( ::oArt:Nombre ) + "', " + ;       // link_rewrite
+                     "'" + AllTrim( ::oArt:Nombre ) + "', " + ;            // name
+                     "'En stock', " + ;                                    // avatible_now
                      "'' )"
 
    if TMSCommand():New( ::oCon ):ExecDirect( cCommand )
@@ -8365,6 +8391,35 @@ METHOD InsertProductsPrestashop( lExt ) CLASS TComercio
    else
       ::SetText( "Error al insertar el artículo " + AllTrim( ::oArt:Nombre ) + " en la tabla " + ::cPrefixTable( "product_lang" ), 3 )
    end if
+
+   /*
+   Metemos el stock total del artículo-----------------------------------------
+   */
+
+   nTotStock   := ::oStock:nStockArticulo( ::oArt:Codigo )
+
+   cCommand    :=    "INSERT INTO " + ::cPrefixTable( "stock_available" ) + " ( " + ;
+                        "id_product, " + ;
+                        "id_product_attribute, " + ;
+                        "id_shop, " + ;
+                        "id_shop_group, " + ;
+                        "quantity, " + ;
+                        "depends_on_stock, " + ;
+                        "out_of_stock )" + ;
+                     " VALUES " + ;
+                        "('" + AllTrim( Str( nCodigoWeb ) ) + "', " + ;
+                        "'0', " + ;   
+                        "'1', " + ;
+                        "'0', " + ;
+                        "'" + AllTrim( Str( nTotStock ) ) + "', " + ;
+                        "'0', " + ;
+                        "'2' )"
+
+      if TMSCommand():New( ::oCon ):ExecDirect( cCommand )
+         ::SetText( "He insertado el artículo  " + AllTrim( ::oArt:Nombre ) + " correctamente en la tabla " + ::cPrefixTable( "stock_available" ), 3 )
+      else
+         ::SetText( "Error al insertar el artículo " + AllTrim( ::oArt:Nombre ) + " en la tabla " + ::cPrefixTable( "stock_available" ), 3 )
+      end if
 
    SysRefresh()
 
@@ -8380,13 +8435,23 @@ METHOD InsertProductsPrestashop( lExt ) CLASS TComercio
 
    /*
    ----------------------------------------------------------------------------
-   Insertamos las imágenes del producto----------------------------------------
+   Insertamos las propiedades del producto-------------------------------------
    ----------------------------------------------------------------------------
    */
 
    ::cTextoWait( "Añadiendo propiedades del artículo: " + AllTrim( ::oArt:Nombre ) )
 
    ::InsertPropiedadesProductPrestashop( nCodigoWeb )
+
+   /*
+   ----------------------------------------------------------------------------
+   Insertamos las ofertas del producto-----------------------------------------
+   ----------------------------------------------------------------------------
+   */
+
+   ::cTextoWait( "Añadiendo ofertas del artículo: " + AllTrim( ::oArt:Nombre ) )
+
+   ::InsertOfertasPrestashop( nCodigoWeb )
 
    /*
    ----------------------------------------------------------------------------
@@ -8934,6 +8999,7 @@ METHOD InsertPropiedadesProductPrestashop( nCodigoWeb ) CLASS TComercio
    local cCommand             := ""
    local nOrdArtDiv           := ::oArtDiv:OrdSetFocus( "cCodArt" )
    local lDefault             := .t.
+   local nTotStock            := 0
 
    /*
    Comprobamos si el artículo tiene propiedades y metemos las propiedades
@@ -9036,6 +9102,37 @@ METHOD InsertPropiedadesProductPrestashop( nCodigoWeb ) CLASS TComercio
 
                   else
                      ::SetText( "Error al insertar la propiedad " + AllTrim( ::oTblPro:cDesTbl ) + " en la tabla " + ::cPrefixTable( "product_attribute_shop" ), 3 )
+                  end if
+
+                  /*
+                  Metemos el stock por cada propiedad--------------------------
+                  */
+
+                  nTotStock   := ::oStock:nStockAlmacen( ::oArt:Codigo, , ::oArtDiv:cValPr1 )
+
+                  cCommand    :=    "INSERT INTO " + ::cPrefixTable( "stock_available" ) + " ( " + ;
+                                       "id_product, " + ;
+                                       "id_product_attribute, " + ;
+                                       "id_shop, " + ;
+                                       "id_shop_group, " + ;
+                                       "quantity, " + ;
+                                       "depends_on_stock, " + ;
+                                       "out_of_stock )" + ;
+                                    " VALUES " + ;
+                                       "('" + AllTrim( Str( nCodigoWeb ) ) + "', " + ;
+                                       "'" + AllTrim( Str( nCodigoPropiedad ) ) + "', " + ;   
+                                       "'1', " + ;
+                                       "'0', " + ;
+                                       "'" + AllTrim( Str( nTotStock ) ) + "', " + ;
+                                       "'0', " + ;
+                                       "'2' )"
+
+                  if TMSCommand():New( ::oCon ):ExecDirect( cCommand )
+
+                     ::SetText( "He insertado la propiedad  " + AllTrim( ::oTblPro:cDesTbl ) + " correctamente en la tabla " + ::cPrefixTable( "stock_available" ), 3 )
+
+                  else
+                     ::SetText( "Error al insertar la propiedad " + AllTrim( ::oTblPro:cDesTbl ) + " en la tabla " + ::cPrefixTable( "stock_available" ), 3 )
                   end if
 
                   /*
@@ -9290,6 +9387,35 @@ METHOD InsertPropiedadesProductPrestashop( nCodigoWeb ) CLASS TComercio
 
                   ::SetText( "Error al insertar la propiedad " + AllTrim( ::oTblPro:cDesTbl ) + " en la tabla " + ::cPrefixTable( "product_attribute_shop" ), 3 )
 
+               end if
+
+               /*
+               Metemos el stock por cada propiedad--------------------------
+               */
+
+               nTotStock   := ::oStock:nStockAlmacen( ::oArt:Codigo, , ::oArtDiv:cValPr1, ::oArtDiv:cValPr2 )
+
+               cCommand    :=    "INSERT INTO " + ::cPrefixTable( "stock_available" ) + " ( " + ;
+                                    "id_product, " + ;
+                                    "id_product_attribute, " + ;
+                                    "id_shop, " + ;
+                                    "id_shop_group, " + ;
+                                    "quantity, " + ;
+                                    "depends_on_stock, " + ;
+                                    "out_of_stock )" + ;
+                                 " VALUES " + ;
+                                    "('" + AllTrim( Str( nCodigoWeb ) ) + "', " + ;
+                                    "'" + AllTrim( Str( nCodigoPropiedad ) ) + "', " + ;   
+                                    "'1', " + ;
+                                    "'0', " + ;
+                                    "'" + AllTrim( Str( nTotStock ) ) + "', " + ;
+                                    "'0', " + ;
+                                    "'2' )"
+
+               if TMSCommand():New( ::oCon ):ExecDirect( cCommand )
+                  ::SetText( "He insertado la propiedad  " + AllTrim( ::oTblPro:cDesTbl ) + " correctamente en la tabla " + ::cPrefixTable( "stock_available" ), 3 )
+               else
+                  ::SetText( "Error al insertar la propiedad " + AllTrim( ::oTblPro:cDesTbl ) + " en la tabla " + ::cPrefixTable( "stock_available" ), 3 )
                end if
 
                /*
@@ -11117,6 +11243,59 @@ Method InsertPropiedadesPrestashop() CLASS TComercio
    ::InsertLineasPropiedadesPrestashop( ::oPro:cCodPro, nCodigoGrupo )
 
 return nCodigoGrupo
+
+//---------------------------------------------------------------------------//
+
+Method InsertOfertasPrestashop( nCodigoWeb ) CLASS TComercio
+
+   local cCommand          := ""
+   
+   if ::oArt:lSbrInt .and. ::oArt:nDtoInt1 != 0
+            
+      cCommand          := "INSERT INTO " + ::cPrefixTable( "specific_price" ) + ; 
+                           " ( id_specific_price_rule, " + ;
+                              "id_cart, " + ;
+                              "id_product, " + ;
+                              "id_shop, " + ;
+                              "id_shop_group, " + ;
+                              "id_currency, " + ;
+                              "id_country, " + ;
+                              "id_group, " + ;
+                              "id_customer, " + ;
+                              "id_product_attribute, " + ;
+                              "price, " + ;
+                              "from_quantity, " + ;
+                              "reduction, " + ;
+                              "reduction_type )" + ;
+                           " VALUES " + ;
+                              "('0', " + ;                                             //id_specific_price_rule
+                              "'0', " + ;                                              //id_cart
+                              "'" + AllTrim( Str( nCodigoWeb ) ) + "', " + ;           //id_product
+                              "'1', " + ;                                              //id_shop
+                              "'0', " + ;                                              //id_shop_group
+                              "'0', " + ;                                              //id_currency
+                              "'0', " + ;                                              //id_country
+                              "'0', " + ;                                              //id_group
+                              "'0', " + ;                                              //id_customer
+                              "'0', " + ;                                              //id_product_attribute
+                              "'-1', " + ;                                             //price
+                              "'1', " + ;                                              //from_quantity
+                              "'" + AllTrim( Str( ::oArt:nDtoInt1 / 100 ) ) + "', " + ;//reduction
+                              "'percentage' )"                                         //reduction_type
+   
+      if TMSCommand():New( ::oCon ):ExecDirect( cCommand )
+
+         ::SetText( "He insertado la propiedad " + AllTrim( ::oTblPro:cDesTbl ) + " correctamente en la tabla " + ::cPrefixTable( "attribute" ), 3 )
+
+      else
+
+         ::SetText( "Error al insertar la propiedad " + AllTrim( ::oTblPro:cDesTbl ) + " en la tabla " + ::cPreFixtable( "ps_attribute" ), 3 )
+
+      end if   
+
+   end if
+
+return nil
 
 //---------------------------------------------------------------------------//
 

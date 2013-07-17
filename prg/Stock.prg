@@ -3977,10 +3977,10 @@ METHOD aStockArticulo( cCodArt, cCodAlm, oBrw, lLote, lNumeroSerie, dFecIni, dFe
 
    DEFAULT lLote        := !uFieldEmpresa( "lCalLot" )
    DEFAULT lNotPendiente:= .f.
-/*
+
    oBlock               := ErrorBlock( {| oError | ApoloBreak( oError ) } )
    BEGIN SEQUENCE
-*/
+
    nOrdPedPrvL          := ( ::cPedPrvL )->( OrdSetFocus( "cRef"     ) )
    nOrdAlbPrvL          := ( ::cAlbPrvL )->( OrdSetFocus( "cStkFast" ) )
    nOrdFacPrvL          := ( ::cFacPrvL )->( OrdSetFocus( "cRef"     ) )
@@ -4842,7 +4842,7 @@ METHOD aStockArticulo( cCodArt, cCodAlm, oBrw, lLote, lNumeroSerie, dFecIni, dFe
       oBrw:Refresh()
 
    end if
-/*
+
    RECOVER USING oError
 
       msgStop( ErrorMessage( oError ), "Calculo de stock" )
@@ -4850,7 +4850,7 @@ METHOD aStockArticulo( cCodArt, cCodAlm, oBrw, lLote, lNumeroSerie, dFecIni, dFe
    END SEQUENCE
 
    ErrorBlock( oBlock )
-*/
+
 return ( ::aStocks )
 
 //---------------------------------------------------------------------------//
