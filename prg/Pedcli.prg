@@ -1639,7 +1639,7 @@ FUNCTION PedCli( oMenuItem, oWnd, cCodCli, cCodArt, cCodPre, lPedWeb )
 
       DEFINE BTNSHELL RESOURCE "DOCUMENT_USER1_" OF oWndBrw ;
             ALLOW    EXIT ;
-            ACTION   ( if( ( dbfPedCliT )->nEstado <= 2, FactCli( nil, nil, nil, nil, nil, { nil, ( dbfPedCliT )->cSerPed + Str( ( dbfPedCliT )->nNumPed ) + ( dbfPedCliT )->cSufPed , nil, nil } ), MsgInfo( "Pedido entregado o cancelado" ) ) );
+            ACTION   ( if( ( dbfPedCliT )->nEstado <= 2, FactCli( nil, nil, { "Pedido" => ( dbfPedCliT )->cSerPed + Str( ( dbfPedCliT )->nNumPed ) + ( dbfPedCliT )->cSufPed } ), MsgInfo( "Pedido entregado o cancelado" ) ) );
             TOOLTIP  "Generar factura" ;
             FROM     oRotor ;
 
@@ -2684,7 +2684,7 @@ STATIC FUNCTION EdtRec( aTmp, aGet, dbfPedCliT, oBrw, cCodCli, cCodArt, nMode, c
       REDEFINE BUTTON oBtnKit;
          ID       526 ;
 			OF 		oFld:aDialogs[1] ;
-         ACTION   ( ShowKit( dbfPedCliT, dbfTmpLin, oBtnKit, oBrwLin ) )
+         ACTION   ( ShowKit( dbfPedCliT, dbfTmpLin, oBrwLin ) )
 
       REDEFINE GET aGet[_CSERPED] VAR aTmp[_CSERPED] ;
          ID       90 ;
@@ -3292,7 +3292,7 @@ STATIC FUNCTION EdtRec( aTmp, aGet, dbfPedCliT, oBrw, cCodCli, cCodArt, nMode, c
       case nMode == APPD_MODE .and. !lRecogerUsuario() .and. !Empty( cCodArt )
          oDlg:bStart := {|| AppDeta( oBrwLin, bEdtDet, aTmp, nil, cCodArt ) }
       otherwise
-         oDlg:bStart := {|| ShowKit( dbfPedCliT, dbfTmpLin, oBtnKit, oBrwLin, .f., dbfTmpInc, cCodCli, dbfClient, oRieCli, oGetRnt, aGet, oSayGetRnt ) }
+         oDlg:bStart := {|| ShowKit( dbfPedCliT, dbfTmpLin, oBrwLin, .f., dbfTmpInc, cCodCli, dbfClient, oRieCli, oGetRnt, aGet, oSayGetRnt ) }
    end case
 
 	ACTIVATE DIALOG oDlg;
@@ -9058,21 +9058,15 @@ Return ( Self )
 
 Method Dialog() CLASS TPedidosClientes2PedidosProveedor
 
-   if ::CreateLines()
+   if !::CreateLines()
+   	Return .f.
+   end if 
 
-      ( dbfTmpPedLin )->( ordSetFocus( "cRef" ) )
-      ( dbfTmpPedLin )->( dbGoTop() )
+   /*
+   Dialogo---------------------------------------------------------------------
+   */
 
-      ::cArticuloDesde     := dbFirst( dbfTmpPedLin, 1 )
-      ::cArticuloHasta     := dbLast ( dbfTmpPedLin, 1 )
-      ::cSayArticuloDesde  := dbFirst( dbfTmpPedLin, 2 )
-      ::cSayArticuloHasta  := dbLast ( dbfTmpPedLin, 2 )
-
-      /*
-      Dialogo---------------------------------------------------------------------
-      */
-
-      DEFINE DIALOG ::oDlg RESOURCE "ASS_PEDCLI"
+   DEFINE DIALOG ::oDlg RESOURCE "ASS_PEDCLI"
 
       REDEFINE BITMAP ::oBmp ;
          RESOURCE "GenerarPedidoProveedor" ;
@@ -9360,13 +9354,13 @@ Method Dialog() CLASS TPedidosClientes2PedidosProveedor
 
       ::oDlg:bStart  := {|| ::oBtnPrev:Hide(), ::oBrwFin:GoTop() }
 
-      ACTIVATE DIALOG ::oDlg CENTER
+   ACTIVATE DIALOG ::oDlg CENTER
 
-      ::oBmp:End()
+   ::oBmp:End()
 
-   end if
-
-   ::oStock:SetGeneradoPedCli( ::cSerie + Str( ::nNumero ) + ::cSufijo )
+   if ( ::oDlg:nResult == IDOK )
+		::oStock:SetGeneradoPedCli( ::cSerie + Str( ::nNumero ) + ::cSufijo )
+   end if 
 
 RETURN ( ::oDlg:nResult == IDOK )
 
@@ -9380,9 +9374,12 @@ Method CreateLines() CLASS TPedidosClientes2PedidosProveedor
    local cTmpFin
    local lErrors  := .f.
 
+   CursorWait()
+
    oBlock         := ErrorBlock( {| oError | ApoloBreak( oError ) } )
    BEGIN SEQUENCE
 
+   
    cTmpLin        := cGetNewFileName( cPatTmp() + "PTmpCliL" )
    cTmpFin        := cGetNewFileName( cPatTmp() + "PTmpFinL" )
 
@@ -9391,17 +9388,15 @@ Method CreateLines() CLASS TPedidosClientes2PedidosProveedor
    dbUseArea( .t., cLocalDriver(), cTmpLin, cCheckArea( "PTmpCliL", @dbfTmpPedLin ), .f. )
 
    if !NetErr()
-      ( dbfTmpPedLin )->( ordCondSet( "!Deleted()", {||!Deleted()}  ) )
+      ( dbfTmpPedLin )->( ordCondSet( "!Deleted()", {|| !Deleted() }  ) )
       ( dbfTmpPedLin )->( ordCreate( cTmpLin, "cRef", "cRef", {|| Field->cRef } ) )
 
-      ( dbfTmpPedLin )->( ordCondSet( "!Deleted()", {||!Deleted()}  ) )
-      ( dbfTmpPedLin )->( ordCreate( cTmpLin, "cDetalle", "cDetalle", {|| Field->cDetalle } ) )
-
-      ( dbfTmpPedLin )->( ordCondSet( "!Deleted()", {||!Deleted()}  ) )
+      ( dbfTmpPedLin )->( ordCondSet( "!Deleted()", {|| !Deleted() }  ) )
       ( dbfTmpPedLin )->( ordCreate( cTmpLin, "lShow", "lShow", {|| Field->lShow } ) )
 
-      ( dbfTmpPedLin )->( ordCondSet( "lShow .and. lSelArt .and. !Deleted()", {|| Field->lShow .and. Field->lSelArt .and. !Deleted()}  ) )
+      ( dbfTmpPedLin )->( ordCondSet( "lShow .and. lSelArt .and. !Deleted()", {|| Field->lShow .and. Field->lSelArt .and. !Deleted() }  ) )
       ( dbfTmpPedLin )->( ordCreate( cTmpLin, "cCodPrv", "cCodPrv", {|| Field->cCodPrv } ) )
+
    else
       lErrors     := .t.
    end if
@@ -9464,17 +9459,27 @@ Method CreateLines() CLASS TPedidosClientes2PedidosProveedor
 
       ( dbfTmpPedLin )->( dbGoTop() )
 
+	   ( dbfTmpPedLin )->( ordSetFocus( "cRef" ) )
+	   ( dbfTmpPedLin )->( dbGoTop() )
+
+   	::cArticuloDesde     					:= dbFirst( dbfTmpPedLin, 1 )
+   	::cArticuloHasta     					:= dbLast ( dbfTmpPedLin, 1 )
+   	::cSayArticuloDesde  					:= dbFirst( dbfTmpPedLin, 2 )
+   	::cSayArticuloHasta  					:= dbLast ( dbfTmpPedLin, 2 )
+
    end if
 
    RECOVER USING oError
 
-      lErrors     := .t.
+      lErrors     								:= .t.
 
       msgStop( "Imposible crear las bases de datos temporales" + CRLF + ErrorMessage( oError ) )
 
    END SEQUENCE
 
    ErrorBlock( oBlock )
+
+   CursorWE()
 
 Return ( !lErrors )
 

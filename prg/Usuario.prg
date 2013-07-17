@@ -2079,13 +2079,13 @@ FUNCTION BrwBigUser( dbfUsr, dbfCaj )
    BEGIN SEQUENCE
 
    if Empty( dbfUsr )
-      USE ( cPatDat() + "USERS.DBF" ) NEW VIA ( cDriver() ) SHARED ALIAS ( cCheckArea( "USERS", @dbfUsr ) )
-      SET ADSINDEX TO ( cPatDat() + "USERS.CDX" ) ADDITIVE
+      USE ( cPatDat() + "Users.DBF" ) NEW VIA ( cDriver() ) SHARED ALIAS ( cCheckArea( "Users", @dbfUsr ) )
+      SET ADSINDEX TO ( cPatDat() + "Users.CDX" ) ADDITIVE
       lCloseUsr         := .t.
    end if
 
    if Empty( dbfCaj )
-      USE ( cPatDat() + "Cajas.Dbf" ) NEW VIA ( cDriver() ) SHARED ALIAS ( cCheckArea( "CAJAS", @dbfCajT ) )
+      USE ( cPatDat() + "Cajas.Dbf" ) NEW VIA ( cDriver() ) SHARED ALIAS ( cCheckArea( "Cajas", @dbfCaj ) )
       SET ADSINDEX TO ( cPatDat() + "Cajas.Cdx" ) ADDITIVE
       lCloseCaj         := .t.
    end if
@@ -2098,7 +2098,7 @@ FUNCTION BrwBigUser( dbfUsr, dbfCaj )
 
       oLstUsr           := TListView():Redefine( 100, oDlg )
       oLstUsr:nOption   := 0
-      oLstUsr:bClick    := {| nOpt | SelBrwBigUser( nOpt, oLstUsr, oDlg, dbfUsr, .t., DbfCaj ) }
+      oLstUsr:bClick    := {| nOpt | SelBrwBigUser( nOpt, oLstUsr, oDlg, dbfUsr, dbfCaj, .t. ) }
 
       REDEFINE BUTTONBMP oBtn ;
          BITMAP   "Delete_32" ;
@@ -2183,11 +2183,9 @@ RETURN ( nil )
 
 //---------------------------------------------------------------------------//
 
-Static Function SelBrwBigUser( nOpt, oLstUsr, oDlg, dbfUsr, lPermitirEnUso, dbfCaj )
+Static Function SelBrwBigUser( nOpt, oLstUsr, oDlg, dbfUsr, dbfCaj )
 
-   DEFAULT lPermitirEnUso  := .f.
-
-   if nOpt == 0
+   if ( nOpt == 0 )
       MsgStop( "Seleccione usuario" )
       Return nil
    end if
@@ -2196,16 +2194,17 @@ Static Function SelBrwBigUser( nOpt, oLstUsr, oDlg, dbfUsr, lPermitirEnUso, dbfC
 
       if ( dbfUsr )->lUseUse
 
-         if !( ( dbfUsr )->cCodUse == cCurUsr() .and. lPermitirEnUso )
+         if !( ( dbfUsr )->cCodUse == cCurUsr() )
 
             MsgStop( "Usuario en uso" )
+
             Return nil
 
          end if
 
       end if
 
-      if lGetPsw( dbfUsr, .t. )
+      if .t. // lGetPsw( dbfUsr, .t. )
 
          oSetUsr( ( dbfUsr )->cCodUse, dbfUsr, dbfCaj, cCurUsr(), .t. ):Save( ( dbfUsr )->cCodUse, dbfUsr )
 

@@ -12187,7 +12187,7 @@ static function lFacturaAlbaran()
 
    if ( dbfTikT )->cTipTik == SAVALB
       if !RetFld( ( dbfTikT )->cNumDoc, dbfAlbCliT, "lFacturado" )
-         FactCli( nil, nil, nil, nil, nil, { nil, nil, ( dbfTikT )->cNumDoc, nil } )
+         FactCli( nil, nil, { "Albaran" => ( dbfTikT )->cNumDoc } )
       else
          msgStop( "El albarán ya ha sido facturado" )
       end if

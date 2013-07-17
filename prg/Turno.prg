@@ -1105,8 +1105,10 @@ METHOD OpenFiles( lExclusive )
          lOpen                   := .f.
       end if
 
-      ::oBandera                 := TBandera():New()
-
+      if Empty( ::oBandera )
+         ::oBandera              := TBandera():New()
+      end if 
+      
       ::oNewImp                  := TNewImp():Create( cPatEmp() )
       if !::oNewImp:OpenFiles( .f. )
          lOpen                   := .f.
@@ -11346,6 +11348,10 @@ METHOD GetLastOpen()
       Return ( cLasTur )
    end if
 
+   CursorWait()
+
+   ::oDbf:GetStatus()
+
    ::oDbf:OrdSetFocus( "nStaTur" )
 
    ::oDbf:GoTop()
@@ -11373,7 +11379,9 @@ METHOD GetLastOpen()
 
    end while      
 
-   ::oDbf:OrdSetFocus( "cNumTur" )
+   ::oDbf:SetStatus()
+
+   CursorWE()
 
 RETURN ( cLasTur )
 

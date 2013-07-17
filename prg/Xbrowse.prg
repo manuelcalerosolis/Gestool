@@ -341,7 +341,7 @@ CLASS TXBrowse FROM TControl
    DATA nMaxRowToAdvance AS NUMERIC INIT 40
    DATA nMinVelocity     AS NUMERIC INIT 50
    DATA lDrawSelected    AS LOGICAL INIT .T.
-   DATA hCursorHand
+   //DATA hCursorHand
 
    DATA lKineticBrw      AS LOGICAL INIT .T.
 
@@ -699,7 +699,7 @@ METHOD New( oWnd ) CLASS TXBrowse
    ::nHeader          := 0          // Obsolete
    ::aHeaderTop       := {}         // Obsolete
 
-   ::hCursorHand      := CursorOpenHand()
+   // ::hCursorHand      := CursorOpenHand()
    ::lKineticBrw      := ::lKinetic
    ::lAdjusted        := .f.
 
@@ -3381,7 +3381,7 @@ METHOD MouseMove( nRow, nCol, nKeyFlags ) CLASS TXBrowse
 
    if ::lPressed .and. ! ::lCaptured
 
-      SetCursor( ::hCursorHand )
+      //SetCursor( ::hCursorHand )
 
       nVMove        = ::nRowAdvance - ::MouseRowPos( nRow )
       ::nRowAdvance = nMousePos

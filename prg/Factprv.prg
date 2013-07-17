@@ -1416,7 +1416,7 @@ end if
 
       DEFINE BTNSHELL RESOURCE "DOCUMENT_USER1_" OF oWndBrw ;
          ALLOW    EXIT ;
-         ACTION   ( FactCli( nil, nil, nil, nil, nil, { nil, nil, nil, nil, ( dbfFacPrvT )->cSerFac + Str( ( dbfFacPrvT )->nNumFac ) + ( dbfFacPrvT )->cSufFac } ) );
+         ACTION   ( FactCli( nil, nil, { "Factura" => ( dbfFacPrvT )->cSerFac + Str( ( dbfFacPrvT )->nNumFac ) + ( dbfFacPrvT )->cSufFac } ) );
          TOOLTIP  "Generar factura" ;
          FROM     oRotor ;
          LEVEL    ACC_APPD

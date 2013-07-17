@@ -1742,7 +1742,7 @@ FUNCTION PreCli( oMenuItem, oWnd, cCodCli, cCodArt )
 
       DEFINE BTNSHELL RESOURCE "DOCUMENT_USER1_" OF oWndBrw ;
             ALLOW    EXIT ;
-            ACTION   ( if( !( dbfPreCliT )->lEstado, FactCli( nil, nil, nil, nil, nil, { ( dbfPreCliT )->cSerPre + Str( ( dbfPreCliT )->nNumPre ) + ( dbfPreCliT )->cSufPre, nil, nil, nil } ), MsgStop( "El presupuesto ya ha sido aceptado" ) ) );
+            ACTION   ( if( !( dbfPreCliT )->lEstado, FactCli( nil, nil, { "Presupuesto" => ( dbfPreCliT )->cSerPre + Str( ( dbfPreCliT )->nNumPre ) + ( dbfPreCliT )->cSufPre } ), MsgStop( "El presupuesto ya ha sido aceptado" ) ) );
             TOOLTIP  "Generar factura" ;
             FROM     oRotor ;
 
@@ -2688,7 +2688,7 @@ STATIC FUNCTION EdtRec( aTmp, aGet, dbfPreCliT, oBrw, cCodCli, cCodArt, nMode )
       REDEFINE BUTTON oBtnKit;
          ID       526 ;
 			OF 		oFld:aDialogs[1] ;
-         ACTION   ( ShowKit( dbfPreCliT, dbfTmpLin, oBtnKit, oBrwLin ) )
+         ACTION   ( ShowKit( dbfPreCliT, dbfTmpLin, oBrwLin ) )
 
       REDEFINE GET aGet[_CSERPRE] VAR aTmp[_CSERPRE] ;
          ID       90 ;
@@ -3125,7 +3125,7 @@ STATIC FUNCTION EdtRec( aTmp, aGet, dbfPreCliT, oBrw, cCodCli, cCodArt, nMode )
          oDlg:bStart := {|| AppDeta( oBrwLin, bEdtDet, aTmp, nil, cCodArt ) }
 
       otherwise
-         oDlg:bStart := {|| ShowKit( dbfPreCliT, dbfTmpLin, oBtnKit, oBrwLin, .f., dbfTmpInc, cCodCli, dbfClient, oRieCli, oGetRnt, aGet, oSayGetRnt ) }
+         oDlg:bStart := {|| ShowKit( dbfPreCliT, dbfTmpLin, oBrwLin, .f., dbfTmpInc, cCodCli, dbfClient, oRieCli, oGetRnt, aGet, oSayGetRnt ) }
 
    end case
 

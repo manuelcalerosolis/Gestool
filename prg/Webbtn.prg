@@ -117,7 +117,7 @@ CLASS TWebBtn FROM TControl
 
    METHOD cText( cText )   SETGET
 
-   METHOD End() INLINE ( if( ::hWnd == 0, ::Destroy(), Super:End() ) )
+   METHOD End() INLINE ( ::Destroy(), Super:End() ) 
 
    METHOD VarGet()      INLINE   ( ::cCaption )
 
@@ -543,12 +543,13 @@ return 0
 
 METHOD Destroy() CLASS TWebBtn
 
-   /*
-   ::FreeBitmaps()
-   */
+   if !Empty( ::oFont )
+      ::oFont:end()
+   end if 
 
-   ::oFont:end()
-   ::oFontOver:end()
+   if !Empty( ::oFontOver )
+      ::oFontOver:end()
+   end if 
 
    if ::oCursor != nil
       ::oCursor:end()

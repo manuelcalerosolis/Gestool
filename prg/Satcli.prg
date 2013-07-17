@@ -1599,7 +1599,7 @@ FUNCTION SatCli( oMenuItem, oWnd, cCodCli, cCodArt )
 
       DEFINE BTNSHELL RESOURCE "DOCUMENT_USER1_" OF oWndBrw ;
             ALLOW    EXIT ;
-            ACTION   ( if( !( dbfSatCliT )->lEstado, FactCli( nil, nil, nil, nil, nil, { nil, nil, nil, ( dbfSatCliT )->cSerSat + Str( ( dbfSatCliT )->nNumSat ) + ( dbfSatCliT )->cSufSat } ), MsgStop( "El S.A.T. ya ha sido aceptado" ) ) );
+            ACTION   ( if( !( dbfSatCliT )->lEstado, FactCli( nil, nil, { "SAT" => ( dbfSatCliT )->cSerSat + Str( ( dbfSatCliT )->nNumSat ) + ( dbfSatCliT )->cSufSat } ), MsgStop( "El S.A.T. ya ha sido aceptado" ) ) );
             TOOLTIP  "Generar factura" ;
             FROM     oRotor ;
 
@@ -2513,7 +2513,7 @@ STATIC FUNCTION EdtRec( aTmp, aGet, dbfSatCliT, oBrw, cCodCli, cCodArt, nMode )
       REDEFINE BUTTON oBtnKit;
          ID       526 ;
          OF       oFld:aDialogs[1] ;
-         ACTION   ( ShowKit( dbfSatCliT, dbfTmpLin, oBtnKit, oBrwLin ) )
+         ACTION   ( ShowKit( dbfSatCliT, dbfTmpLin, oBrwLin ) )
 
       REDEFINE GET aGet[_CSERSAT] VAR aTmp[_CSERSAT] ;
          ID       90 ;
@@ -2920,7 +2920,7 @@ STATIC FUNCTION EdtRec( aTmp, aGet, dbfSatCliT, oBrw, cCodCli, cCodArt, nMode )
          oDlg:bStart := {|| AppDeta( oBrwLin, bEdtDet, aTmp, nil, cCodArt ) }
 
       otherwise
-         oDlg:bStart := {|| ShowKit( dbfSatCliT, dbfTmpLin, oBtnKit, oBrwLin, .f., dbfTmpInc, cCodCli, dbfClient, oRieCli, oGetRnt, aGet, oSayGetRnt ) }
+         oDlg:bStart := {|| ShowKit( dbfSatCliT, dbfTmpLin, oBrwLin, .f., dbfTmpInc, cCodCli, dbfClient, oRieCli, oGetRnt, aGet, oSayGetRnt ) }
 
    end case
 

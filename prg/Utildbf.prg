@@ -19,6 +19,8 @@ REQUEST DBFCDX
 #define MODE_RECORD           2
 #define MODE_APPEND           3
 
+static hStatus        
+
 static aResources             := {}
 static aAdsDirectory          := {}
 
@@ -1190,6 +1192,58 @@ Return ( lRet )
 
 //---------------------------------------------------------------------------//
 
+Function hSeekInOrd( hHash )
+
+   local h
+   local nOrd
+   local lRet
+   local lSoft
+   local lLast
+   local uValue
+   local uOrder
+   local cAlias
+
+   lRet                 := .f.
+
+   if IsHash( hHash )
+
+      if HHasKey( hHash, "Value" )
+         uValue         := HGet( hHash, "Value" )  
+      end if  
+
+      if HHasKey( hHash, "Order" )
+         uOrder         := HGet( hHash, "Order" ) 
+      end if 
+
+      if HHasKey( hHash, "Alias" )
+         cAlias         := HGet( hHash, "Alias" ) 
+      end if 
+
+      if HHasKey( hHash, "Soft" )
+         lSoft          := HGet( hHash, "Soft" ) 
+      end if 
+
+      if HHasKey( hHash, "Last" )
+         lLast          := HGet( hHash, "Last" ) 
+      end if 
+
+      if !Empty( uValue ) .and. !Empty( uOrder ) .and. !Empty( cAlias )
+
+         if ( cAlias )->( Used() )
+            uOrder      := ( cAlias )->( OrdSetFocus( uOrder ) )
+            lRet        := ( cAlias )->( dbSeek( uValue, lSoft, lLast ) )
+            ( cAlias )->( OrdSetFocus( uOrder ) )
+         end if
+
+      end if 
+
+   end if 
+
+Return ( lRet )
+
+//---------------------------------------------------------------------------//
+
+
 Function aSqlStruct( aStruct )
 
    local a
@@ -2138,6 +2192,29 @@ return ( aStatus )
 
 //--------------------------------------------------------------------------//
 
+Function hGetStatus( cAlias, lInit )
+
+   hStatus        := { "Alias" => cAlias, "Recno" => ( cAlias )->( Recno() ), "Order" => ( cAlias )->( OrdSetFocus() ) }
+
+   DEFAULT lInit  := .f.
+
+   if lInit
+      ( cAlias )->( OrdSetFocus( 1 ) )
+      ( cAlias )->( dbGoTop() )
+   end if
+
+Return ( hStatus )
+
+//--------------------------------------------------------------------------//
+
+Function hSetStatus()
+
+   ( HGet( hStatus, "Alias" ) )->( OrdSetFocus( HGet( hStatus, "Order" ) ) )
+   ( HGet( hStatus, "Alias" ) )->( dbGoTo(      HGet( hStatus, "Recno" ) ) )
+
+Return nil
+
+//--------------------------------------------------------------------------//
 /*
 Comprueba si existe una clave
 */

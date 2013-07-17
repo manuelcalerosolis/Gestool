@@ -2231,7 +2231,7 @@ METHOD BuildEmpresa()
    oDataTable:cName        := cPatEmp() + "AlbProvL"
    oDataTable:cDataFile    := cPatEmp( , .t. ) + "AlbProvL.Dbf"
    oDataTable:cIndexFile   := cPatEmp( , .t. ) + "AlbProvL.Cdx"
-   oDataTable:cDescription := "Albaranes de proveedor"
+   oDataTable:cDescription := "Albaranes de proveedor lineas"
    oDataTable:lTrigger     := ::lTriggerAuxiliares
    ::AddEmpresaTable( oDataTable )
 
@@ -2239,7 +2239,7 @@ METHOD BuildEmpresa()
    oDataTable:cName        := cPatEmp() + "AlbPrvI"
    oDataTable:cDataFile    := cPatEmp( , .t. ) + "AlbPrvI.Dbf"
    oDataTable:cIndexFile   := cPatEmp( , .t. ) + "AlbPrvI.Cdx"
-   oDataTable:cDescription := "Albaranes de proveedor"
+   oDataTable:cDescription := "Albaranes de proveedor incidencias"
    oDataTable:lTrigger     := ::lTriggerAuxiliares
    ::AddEmpresaTable( oDataTable )
 
@@ -2247,7 +2247,7 @@ METHOD BuildEmpresa()
    oDataTable:cName        := cPatEmp() + "AlbPrvD"
    oDataTable:cDataFile    := cPatEmp( , .t. ) + "AlbPrvD.Dbf"
    oDataTable:cIndexFile   := cPatEmp( , .t. ) + "AlbPrvD.Cdx"
-   oDataTable:cDescription := "Albaranes de proveedor"
+   oDataTable:cDescription := "Albaranes de proveedor documentos"
    oDataTable:lTrigger     := ::lTriggerAuxiliares
    ::AddEmpresaTable( oDataTable )
 
@@ -2255,7 +2255,7 @@ METHOD BuildEmpresa()
    oDataTable:cName        := cPatEmp() + "AlbPrvS"
    oDataTable:cDataFile    := cPatEmp( , .t. ) + "AlbPrvS.Dbf"
    oDataTable:cIndexFile   := cPatEmp( , .t. ) + "AlbPrvS.Cdx"
-   oDataTable:cDescription := "Albaranes de proveedor"
+   oDataTable:cDescription := "Albaranes de proveedor series"
    oDataTable:lTrigger     := ::lTriggerAuxiliares
    ::AddEmpresaTable( oDataTable )
 
@@ -2601,9 +2601,17 @@ METHOD BuildEmpresa()
    oDataTable:cName        := cPatEmp() + "FacCliP"
    oDataTable:cDataFile    := cPatEmp( , .t. ) + "FacCliP.Dbf"
    oDataTable:cIndexFile   := cPatEmp( , .t. ) + "FacCliP.Cdx"
-   oDataTable:cDescription := "Facturas de clientes"
+   oDataTable:cDescription := "Facturas de clientes recibos"
    oDataTable:lTrigger     := ::lTriggerAuxiliares
    oDataTable:bSyncFile    := {|| SynRecCli( cPatEmp() ) }
+   ::AddEmpresaTable( oDataTable )
+
+   oDataTable              := TDataTable()
+   oDataTable:cName        := cPatEmp() + "FacCliG"
+   oDataTable:cDataFile    := cPatEmp( , .t. ) + "FacCliG.Dbf"
+   oDataTable:cIndexFile   := cPatEmp( , .t. ) + "FacCliG.Cdx"
+   oDataTable:cDescription := "Facturas de clientes grupos de recibos"
+   oDataTable:lTrigger     := ::lTriggerAuxiliares
    ::AddEmpresaTable( oDataTable )
 
    oDataTable              := TDataTable()

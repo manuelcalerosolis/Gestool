@@ -792,7 +792,7 @@ METHOD LoadGenericosPendientes( lPuntosPendientes ) CLASS TTpvSalon
    */
 
    ::oSender:oSender:oTiketCabecera:GetStatus()
-   ::oSender:oSender:oTiketCabecera:OrdSetFocus( "nUbiTik" )
+   ::oSender:oSender:oTiketCabecera:OrdSetFocus( "lCloUbiTik" )
 
    if ::oSender:oSender:oTiketCabecera:Seek( Str( ubiGeneral, 1 ) )
 

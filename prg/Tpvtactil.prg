@@ -191,6 +191,7 @@ CLASS TpvTactil
    DATA aLineas
 
    DATA oBtnNum
+
    DATA oFntNum
    DATA oFntEur
    DATA oFntFld
@@ -337,6 +338,14 @@ CLASS TpvTactil
    DATA aTemporalOriginal
    DATA aTemporalNuevoTicket
 
+   DATA cCodigoInvitacion
+
+   DATA oTextoInvitacion
+   DATA cTextoInvitacion
+
+   DATA oListViewInvitacion
+   DATA oImageListInvitacion
+
    METHOD New( oMenuItem, oWnd ) CONSTRUCTOR
 
    METHOD Activate( lAlone )
@@ -396,7 +405,7 @@ CLASS TpvTactil
 
    METHOD AgregarPLU()
 
-   METHOD cNombreArticulo()   INLINE ( Capitalize( Alltrim( if( !Empty( ::oArticulo:cDesTcl ), ::oArticulo:cDesTcl, ::oArticulo:Nombre ) ) ) )
+   METHOD cNombreArticulo()            INLINE ( Capitalize( Alltrim( if( !Empty( ::oArticulo:cDesTcl ), ::oArticulo:cDesTcl, ::oArticulo:Nombre ) ) ) )
 
    //------------------------------------------------------------------------//
 
@@ -530,6 +539,7 @@ CLASS TpvTactil
    METHOD OnClickInvitacion()
    METHOD EndInvitacion( nOpt, oLstInv, oDlg )
    METHOD InitInvitacion( oDlg, oImgInv, oLstInv )
+   METHOD SelectInvitacion( nOpt, oLstInv, oTxtInv ) 
 
    METHOD OnClickDescuento()
 
@@ -1680,11 +1690,11 @@ METHOD End() CLASS TpvTactil
    end if
 
    if !Empty( ::oFntFld )
-      ::oFntDlg:End()
+      ::oFntFld:End()
    end if
 
    if !Empty( ::oFntEur )
-      ::oFntFld:End()
+      ::oFntEur:End()
    end if
 
    if !Empty( ::oFntBrw )
@@ -1759,12 +1769,6 @@ METHOD End() CLASS TpvTactil
    ::oFntDto         := nil
 
    Self              := nil
-
-   /*
-   fErase( "Checkres.txt" )
-
-   CheckRes()
-   */
 
 Return .t.
 
@@ -4887,10 +4891,6 @@ return .t.
 METHOD OnClickInvitacion() CLASS TpvTactil
 
    local oDlg
-   local nRec
-   local oBtnCancel
-   local oImgInv
-   local oLstInv
 
    if !::lEditableDocumento()
       MsgStop( "El documento ya está cerrado" )
@@ -4901,33 +4901,53 @@ METHOD OnClickInvitacion() CLASS TpvTactil
    Definimos el dialogo para las invitaciones----------------------------------
    */
 
+   ::cCodigoInvitacion              := ""
+   ::cTextoInvitacion               := Space( 30 )
+
    DEFINE DIALOG oDlg RESOURCE "INV_TCT"
 
-      ::oBtnTodasLineas := ApoloBtnBmp():ReDefine( 100, "Row_All_32", , , , , {|| ::SelectTodasLineasInvitacion() }, oDlg, .f., , .f., .f., "", , , , .t., "TOP", .t., , , .f. )
-      ::oBtnUnaLinea    := ApoloBtnBmp():ReDefine( 110, "Row_32", , , , ,     {|| ::SelectUnaLineaInvitacion() },    oDlg, .f., , .f., .f., "", , , , .t., "TOP", .t., , , .f. )
+      ::oBtnTodasLineas             := ApoloBtnBmp():ReDefine( 100, "Row_All_32", , , , , {|| ::SelectTodasLineasInvitacion() }, oDlg, .f., , .f., .f., "", , , , .t., "TOP", .t., , , .f. )
+      ::oBtnUnaLinea                := ApoloBtnBmp():ReDefine( 110, "Row_32", , , , ,     {|| ::SelectUnaLineaInvitacion() },    oDlg, .f., , .f., .f., "", , , , .t., "TOP", .t., , , .f. )
 
-      oImgInv           := TImageList():New( 48, 48 )
+      ::oImageListInvitacion        := TImageList():New( 48, 48 )
 
-      oLstInv           := TListView():Redefine( 120, oDlg )
-      oLstInv:nOption   := 0
-      oLstInv:bClick    := {| nOpt | ::EndInvitacion( nOpt, oLstInv, oDlg ) }
+      ::oListViewInvitacion         := TListView():Redefine( 120, oDlg )
+      ::oListViewInvitacion:nOption := 0
+      ::oListViewInvitacion:bClick  := {| nOpt | ::SelectInvitacion( nOpt ) }
 
-      REDEFINE BUTTONBMP oBtnCancel ;
-         ID       550 ;
-         OF       oDlg ;
-         BITMAP   "Delete2_48" ;
-         ACTION   ( oDlg:End() )
+      REDEFINE GET      ::oTextoInvitacion ;
+         VAR            ::cTextoInvitacion ;
+         ID             130 ;
+         OF             oDlg
 
-      oDlg:bStart       := {|| ::InitInvitacion( oDlg, oImgInv, oLstInv ) }
+      REDEFINE BUTTONBMP ;
+         ID             131 ;
+         OF             oDlg ;
+         BITMAP         "Keyboard2_32" ;
+         ACTION         ( VirtualKey( .f., ::oTextoInvitacion ) )
+
+      REDEFINE BUTTONBMP ;
+         ID             540 ;
+         OF             oDlg ;
+         BITMAP         "Check_32" ;
+         ACTION         ( ::EndInvitacion( oDlg ) )
+
+      REDEFINE BUTTONBMP ;
+         ID             550 ;
+         OF             oDlg ;
+         BITMAP         "Delete_32" ;
+         ACTION         ( oDlg:End() )
+
+      oDlg:bStart       := {|| ::InitInvitacion( oDlg ) }
 
    ACTIVATE DIALOG oDlg CENTER
 
-   if !Empty( oImgInv )
-      oImgInv:end()
+   if !Empty( ::oImageListInvitacion )
+      ::oImageListInvitacion:end()
    end if
 
-   if !Empty( oLstInv )
-      oLstInv:end()
+   if !Empty( ::oListViewInvitacion )
+      ::oListViewInvitacion:end()
    end if
 
    if !Empty( ::oBrwLineas )
@@ -4937,6 +4957,36 @@ METHOD OnClickInvitacion() CLASS TpvTactil
    ::TotalTemporal()
 
 Return ( nil )
+
+//---------------------------------------------------------------------------//
+
+METHOD InitInvitacion( oDlg ) CLASS TpvTactil
+
+   local nInvi := 0
+
+   if !Empty( ::oImageListInvitacion ) .and. !Empty( ::oListViewInvitacion ) .and. !Empty( ::oInvitacion )
+
+      ::oListViewInvitacion:SetImageList( ::oImageListInvitacion )
+
+      ::oInvitacion:oDbf:GoTop()
+
+      while !::oInvitacion:oDbf:Eof()
+
+         ::oImageListInvitacion:AddMasked( TBitmap():Define( ::oInvitacion:cBigResource() ), Rgb( 255, 0, 255 ) )
+
+         ::oListViewInvitacion:InsertItem( nInvi, Capitalize( ::oInvitacion:oDbf:cNomInv ) )
+
+         ::oInvitacion:oDbf:Skip()
+
+         nInvi++
+
+      end while
+
+   end if
+
+   ::oBtnUnaLinea:GoDown()
+
+RETURN ( nil )
 
 //---------------------------------------------------------------------------//
 
@@ -4958,98 +5008,67 @@ Return ( nil )
 
 //---------------------------------------------------------------------------//
 
-METHOD EndInvitacion( nOpt, oLstInv, oDlg ) CLASS TpvTactil
+METHOD SelectInvitacion( nOpt ) CLASS TpvTactil
 
-   local nRec
+   if !Empty( nOpt ) .and. ::oInvitacion:oDbf:OrdKeyGoTo( nOpt )
+
+      ::cCodigoInvitacion           := ::oInvitacion:oDbf:cCodInv
+      
+      ::oTextoInvitacion:cText( ::oInvitacion:oDbf:cNomInv )
+
+   end if 
+
+Return ( nil )
+
+//---------------------------------------------------------------------------//
+
+METHOD EndInvitacion( oDlg ) CLASS TpvTactil
 
    /*
    Si no selecionamos la invitacion aparece este mensaje, si lo hacemos vamos al else
    */
 
-   if nOpt == 0
+   if Empty( ::cTextoInvitacion )
+      msgStop( "Debe seleccionar un motivo o texto valido." )
+      return nil
+   end if 
 
-      msgStop( "Debe seleccionar una opción válida." )
+   if ::oBtnUnaLinea:lBtnDown
 
-   else
+      ::oTemporalLinea:nPvpTil         := ::oInvitacion:nPrecioInvitacion( ::cCodigoInvitacion )
+      ::oTemporalLinea:nPcmTil         := 0
+      ::oTemporalLinea:cCodInv         := ::cCodigoInvitacion
+      ::oTemporalLinea:cTxtInv         := ::cTextoInvitacion
+     
+   end if 
 
-      if ::oInvitacion:oDbf:OrdKeyGoTo( nOpt )
+   if ::oBtnTodasLineas:lBtnDown
+     
+      CursorWait()
+     
+      ::oTemporalLinea:GetStatus()
 
-         if ::oBtnUnaLinea:lPressed
+      ::oTemporalLinea:GoTop()
+      while !::oTemporalLinea:Eof()
 
-            if ::oInvitacion:oDbf:lPreInv
-               ::oTemporalLinea:nPvpTil    := ::oInvitacion:oDbf:nPreInv
-            else
-               ::oTemporalLinea:nPvpTil    := 0
-            end if
+         ::oTemporalLinea:nPvpTil      := ::oInvitacion:nPrecioInvitacion( ::cCodigoInvitacion )
+         ::oTemporalLinea:nPcmTil      := 0
+         ::oTemporalLinea:cCodInv      := ::cCodigoInvitacion
+         ::oTemporalLinea:cTxtInv      := ::cTextoInvitacion
 
-            ::oTemporalLinea:nPcmTil       := 0
-            ::oTemporalLinea:cCodInv       := ::oInvitacion:oDbf:cCodInv
-
-         else
-
-            CursorWait()
-
-            nRec     := ::oTemporalLinea:Recno()
-
-            ::oTemporalLinea:GoTop()
-            while !::oTemporalLinea:Eof()
-
-               if ::oInvitacion:oDbf:lPreInv
-                  ::oTemporalLinea:nPvpTil := ::oInvitacion:oDbf:nPreInv
-               else
-                  ::oTemporalLinea:nPvpTil := 0
-               end if
-
-               ::oTemporalLinea:nPcmTil    := 0
-               ::oTemporalLinea:cCodInv    := ::oInvitacion:oDbf:cCodInv
-
-               ::oTemporalLinea:Skip()
-
-            end while
-
-            ::oTemporalLinea:GoTo( nRec )
-
-            CursorWE()
-
-         end if
-
-      end if
-
-      oDlg:End( IDOK )
-
-   end if
-
-return ( .t. )
-
-//---------------------------------------------------------------------------//
-
-METHOD InitInvitacion( oDlg, oImgInv, oLstInv ) CLASS TpvTactil
-
-   local nInvi := 0
-
-   if !Empty( oImgInv ) .and. !Empty( oLstInv ) .and. !Empty( ::oInvitacion )
-
-      oLstInv:SetImageList( oImgInv )
-
-      ::oInvitacion:oDbf:GoTop()
-
-      while !::oInvitacion:oDbf:Eof()
-
-         oImgInv:AddMasked( TBitmap():Define( ::oInvitacion:cBigResource() ), Rgb( 255, 0, 255 ) )
-
-         oLstInv:InsertItem( nInvi, Capitalize( ::oInvitacion:oDbf:cNomInv ) )
-
-         ::oInvitacion:oDbf:Skip()
-
-         nInvi++
+         ::oTemporalLinea:Skip()
 
       end while
+        
+      ::oTemporalLinea:SetStatus()
+        
+      CursorWE()
 
    end if
 
-   ::oBtnUnaLinea:GoDown()
+   oDlg:End( IDOK )
 
-RETURN ( nil )
+return ( .t. )
 
 //---------------------------------------------------------------------------//
 
@@ -8385,7 +8404,8 @@ METHOD OnclickDividirMesa() Class TpvTactil
    oBtnDel              := TButtonBmp():ReDefine( 220, {|| ::AddLineNewToOrg() }, oDlg, , , .f., , , , .f., "Navigate_left2" ) 
 
    REDEFINE GROUP oGrupoNuevo ID 240 OF oDlg TRANSPARENT
-   oGrupoNuevo:oFont := ::oFntFld
+      
+      oGrupoNuevo:oFont := ::oFntFld
 
    /*
    Browse de Lineas para el Nuevo Ticket---------------------------------------
@@ -9120,89 +9140,6 @@ function CheckRes()
 return nil
 
 //---------------------------------------------------------------------------//
-
-/*
-Static Function lCambiaSerie( aTmp, lSubir, oGrupoSerie )
-
-   if lSubir
-      aTmp[ _CSERTIK ]        := cUpSerie( aTmp[ _CSERTIK ] )
-      oGrupoSerie:cPrompt     := "Serie: " + aTmp[ _CSERTIK ]
-   else
-      aTmp[ _CSERTIK ]        := cDwSerie( aTmp[ _CSERTIK ] )
-      oGrupoSerie:cPrompt     := "Serie: " + aTmp[ _CSERTIK ]
-   end if
-
-Return .t.
-
-
-FUNCTION cUpSerie( cSer )
-
-   local nAsc
-   local cChr
-
-   if Empty( cSer ) .or. cSer < "A"
-      cSer     := "A"
-      nAsc     := Asc( cSer )
-   else
-      nAsc     := Asc( cSer ) + 1
-   end if
-
-   cChr        := Chr( nAsc )
-
-   if cChr > "Z"
-      cChr     := "Z"
-   end if
-
-return cChr
-
-FUNCTION cDwSerie( cSer )
-
-   local nAsc
-   local cChr
-   local cSerie
-
-   nAsc        := Asc( cSer ) - 1
-   cChr        := Chr( nAsc )
-
-   if cChr < "A"
-      cChr     := "A"
-   end if
-
-return cChr
-
-      */
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 
 #pragma BEGINDUMP
 

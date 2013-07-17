@@ -6,8 +6,8 @@
 #include "FastRepH.ch"
 #include "Factu.ch"
 
-#define GWL_STYLE          -16
-#define TVS_TRACKSELECT    512 //   0x0200
+#define GWL_STYLE                   -16
+#define TVS_TRACKSELECT             512 //   0x0200
 
 #define DT_TOP                      0x00000000
 #define DT_LEFT                     0x00000000
@@ -26,18 +26,18 @@
 #define DT_INTERNAL                 0x00001000
 
 
-#define fldGeneral         oFld:aDialogs[1]
-#define fldPrecios         oFld:aDialogs[2]
-#define fldDescripciones   oFld:aDialogs[3]
-#define fldPropiedades     oFld:aDialogs[4]
-#define fldImagenes        oFld:aDialogs[5]
-#define fldLogistica       oFld:aDialogs[6]
-#define fldStocks          oFld:aDialogs[7]
-#define fldContabilidad    oFld:aDialogs[8]
-#define fldOfertas         oFld:aDialogs[9]
-#define fldEscandallos     oFld:aDialogs[10]
-#define fldWeb             oFld:aDialogs[11]
-#define fldUbicaciones     oFld:aDialogs[12]
+#define fldGeneral                  oFld:aDialogs[1]
+#define fldPrecios                  oFld:aDialogs[2]
+#define fldDescripciones            oFld:aDialogs[3]
+#define fldPropiedades              oFld:aDialogs[4]
+#define fldImagenes                 oFld:aDialogs[5]
+#define fldLogistica                oFld:aDialogs[6]
+#define fldStocks                   oFld:aDialogs[7]
+#define fldContabilidad             oFld:aDialogs[8]
+#define fldOfertas                  oFld:aDialogs[9]
+#define fldEscandallos              oFld:aDialogs[10]
+#define fldWeb                      oFld:aDialogs[11]
+#define fldUbicaciones              oFld:aDialogs[12]
 
 memvar cDbfArt
 memvar cDbfDiv
@@ -122,7 +122,7 @@ static bEdtKit             := { |aTmp, aGet, dbf, oBrw, bWhen, bValid, nMode, cC
 static bEdtImg             := { |aTmp, aGet, dbf, oBrw, bWhen, bValid, nMode          | EdtImg( aTmp, aGet, dbf, oBrw, bWhen, bValid, nMode ) }
 static bEdtCod             := { |aTmp, aGet, dbf, oBrw, bWhen, bValid, nMode, cCodArt | EdtCodebar( aTmp, aGet, dbf, oBrw, bWhen, bValid, nMode, cCodArt ) }
 
-static oCbxPrecio
+static oCbxPrecio 
 
 static dbfArticulo
 static dbfFam
@@ -1457,7 +1457,7 @@ Function Articulo( oMenuItem, oWnd, bOnInit )
             LEVEL    ACC_EDIT
 
          DEFINE BTNSHELL RESOURCE "Document_user1_" OF oWndBrw ;
-            ACTION   ( FactCli( nil, oWnd, nil, ( dbfArticulo )->Codigo ) );
+            ACTION   ( FactCli( nil, oWnd, { "Artículo" => ( dbfArticulo )->Codigo } ) );
             TOOLTIP  "Añadir factura de cliente" ;
             FROM     oRotor ;
             ALLOW    EXIT ;
@@ -11437,11 +11437,8 @@ function SynArt( cPath )
                if ( dbfArtPrv )->( dbSeek( ( dbfArticulo )->Codigo ) )
 
                   while ( dbfArtPrv )->cCodArt == ( dbfArticulo )->Codigo .and. !( dbfArtPrv )->( eof() )
-
                      ( dbfArtPrv )->lDefPrv   := .f.
-
                      ( dbfArtPrv )->( dbSkip() )
-
                   end while
 
                   ( dbfArtPrv )->( dbAppend() )
@@ -12676,12 +12673,12 @@ Static Function EdtRecMenu( aTmp, aGet, oSay, oDlg, oFld, aBar, cSay, nMode )
             MENUITEM "&8. Añadir albarán de cliente";
             MESSAGE  "Añade un albarán de cliente" ;
             RESOURCE "Document_plain_user1_16";
-            ACTION   ( if( !Empty( EndTrans( aTmp, aGet, oSay, oDlg, aBar, cSay[7], nMode ) ), AlbCli( nil, nil, nil, ( dbfArticulo )->Codigo ), ) )
+            ACTION   ( if( !Empty( EndTrans( aTmp, aGet, oSay, oDlg, aBar, cSay[7], nMode ) ), AlbCli( nil, nil, { "Artículo" => ( dbfArticulo )->Codigo } ), ) )
 
             MENUITEM "&9. Añadir factura de cliente";
             MESSAGE  "Añade una factura de cliente" ;
             RESOURCE "Document_user1_16";
-            ACTION   ( if( !Empty( EndTrans( aTmp, aGet, oSay, oDlg, aBar, cSay[7], nMode ) ), FactCli( nil, nil, nil, ( dbfArticulo )->Codigo ), ) )
+            ACTION   ( if( !Empty( EndTrans( aTmp, aGet, oSay, oDlg, aBar, cSay[7], nMode ) ), FactCli( nil, nil, { "Artículo" => ( dbfArticulo )->Codigo } ), ) )
 
             MENUITEM "&A. Añadir tiket de cliente";
             MESSAGE  "Añade un tiket de cliente" ;

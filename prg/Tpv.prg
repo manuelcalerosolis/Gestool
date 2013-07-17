@@ -163,6 +163,7 @@ Ficheros-----------------------------------------------------------------------
 #define _CIMPCOM2                 69
 #define __DFECTIK                 70
 #define _NCOSTIL                  71
+#define _CTXTINV                  72
 
 #define _NNUMREC                   4
 #define _CCODCAJ                   5
@@ -12163,15 +12164,11 @@ function SavTik2Fac( aTik, aGet, nMode, nSave, nTotal )
 
    end while
 
-   //oStock:FacCli( ( dbfFacCliT )->cSerie + Str( ( dbfFacCliT )->nNumFac ) + ( dbfFacCliT )->cSufFac, ( dbfFacCliT )->cCodAlm, .f., .f., .t. )
-
    /*
    Rollback de los pagos-------------------------------------------------------
    */
 
    while ( dbfFacCliP )->( dbSeek( ( dbfFacCliT )->cSerie + Str( ( dbfFacCliT )->nNumFac ) + ( dbfFacCliT )->cSufFac ) ) .and. !( dbfFacCliP )->( eof() )
-
-      // addRiesgo( ( dbfFacCliP )->nImporte, cCliTik, dbfClient )
 
       if dbLock( dbfFacCliP )
          ( dbfFacCliP )->( dbDelete() )
@@ -13462,7 +13459,7 @@ static function lFacturaAlbaran()
 
    if ( dbfTikT )->cTipTik == SAVALB
       if !RetFld( ( dbfTikT )->cNumDoc, dbfAlbCliT, "lFacturado" )
-         FactCli( nil, nil, nil, nil, nil, { nil, nil, ( dbfTikT )->cNumDoc, nil } )
+         FactCli( nil, nil, { "Albaran" => ( dbfTikT )->cNumDoc } )
       else
          msgStop( "El albarán ya ha sido facturado" )
       end if
@@ -14047,10 +14044,6 @@ Method Process() CLASS TTiketsClientesSenderReciver
 
                      dbPass( tmpTikT, dbfTikT, .t. )
                      ::oSender:SetText( "Añadido : " + ( dbfTikT )->cSerTik + "/" + AllTrim( ( dbfTikT )->cNumTik ) + "/" + AllTrim( ( dbfTikT )->cSufTik ) + "; " + Dtoc( ( dbfTikT )->dFecTik ) + "; " + AllTrim( ( dbfTikT )->cCliTik ) + "; " + ( dbfTikT )->cNomTik )
-
-                     //nTotTik := nTotTik( ( tmpTikT )->cSerTik + ( tmpTikT )->cNumTik + ( tmpTikT )->cSufTik, tmpTikT, tmpTikL, dbfDiv )
-
-                     // AddRiesgo( nTotTik, ( tmpTikT )->cCliTik, dbfClient )
 
                   end if
 
@@ -18224,6 +18217,7 @@ function aColTik()
    aAdd( aColTik, { "cImpCom2", "C",     50,     0, "Segundo tipo impresora comanda",     "",                  "", "( cDbfCol )" } )
    aAdd( aColTik, { "dFecTik",  "D",      8,     0, "Fecha del tiket",                    "",                  "", "( cDbfCol )" } )
    aAdd( aColTik, { "nCosTil",  "N",     16,     6, "Precio de costo de combinado",       "",                  "", "( cDbfCol )" } )
+   aAdd( aColTik, { "cTxtInv",  "C",     30,     0, "Texto invitación",                   "",                  "", "( cDbfCol )" } )
 
 Return ( aColTik )
 
