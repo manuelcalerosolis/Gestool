@@ -848,6 +848,8 @@ STATIC FUNCTION EndApp()
 
          TBandera():Destroy()
 
+         CheckRes()
+
       end if
 
    RECOVER
@@ -855,10 +857,6 @@ STATIC FUNCTION EndApp()
    END SEQUENCE
 
    ErrorBlock( oBlock )
-
-   fErase( "Checkres.txt" )
-
-   CheckRes()
 
 RETURN ( oDlg:nResult == IDOK )
 

@@ -371,10 +371,10 @@ RETURN Self
 
 
 METHOD Destroy() CLASS TGraph
-   LOCAL nI
-   FOR nI = 1 TO 8
-      ::aFont[nI]:End()
-   NEXT nI
+   LOCAL oFont
+   for each oFont in ::aFont
+      oFont:End()
+   next
    Super:End()
 RETURN (Nil)
 

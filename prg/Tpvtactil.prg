@@ -172,7 +172,9 @@ CLASS TpvTactil
    DATA oBrwLineas
 
    DATA oImgArticulos
+   
    DATA oLstArticulos
+   DATA oLstOrden
 
    DATA lImagenArticulos
 
@@ -384,6 +386,7 @@ CLASS TpvTactil
 
    METHOD SeleccionaArticulos()
    METHOD SeleccionaFavoritos()
+   METHOD SeleccionaOrden()
 
    METHOD cFileBmpName( cFile, lEmptyImage )
 
@@ -1717,6 +1720,10 @@ METHOD End() CLASS TpvTactil
       ::oLstFavoritos:End()
    end if
 
+   if !Empty( ::oLstOrden )
+      ::oLstOrden:End()
+   end if 
+
    if !Empty( ::oTpvCobros )
       ::oTpvCobros:End()
    end if
@@ -1760,6 +1767,7 @@ METHOD End() CLASS TpvTactil
 
    ::oLstArticulos   := nil
    ::oLstFavoritos   := nil
+   ::oLstOrden       := nil
 
    ::oFntNum         := nil
    ::oFntEur         := nil
@@ -2653,7 +2661,7 @@ METHOD Resource() CLASS TpvTactil
    ::oBrwFamilias:bLClicked               := {|| ::oBrwFamilias:Refresh() }
 
    ::oBrwFamilias:bChange                 := {|| ::ChangeFamilias() }
-   ::oBrwFamilias:bRClicked               := {|| ::EditFamilia() } //msginfo( "gotfocus" ),
+   ::oBrwFamilias:bRClicked               := {|| ::EditFamilia() } 
 
    ::oBrwFamilias:CreateFromResource( 300 )
 
@@ -2725,10 +2733,40 @@ METHOD Resource() CLASS TpvTactil
    ::oBtnCalculadora             := TButtonBmp():ReDefine( 504, {|| ::SetCalculadora() },          ::oDlg, , , .f., , , , .f., "Calculator_32" )
 
    /*
+   Botones para el orden de las comandas---------------------------------------
+   */ 
+
+   ::oLstOrden                   := C5ImageView():Redefine( 700, ::oDlg )
+   ::oLstOrden:oFont             := ::oFntBrw
+   ::oLstOrden:nWItem            := 78 // ::nImageViewWItem
+   ::oLstOrden:nHItem            := 50 //::nImageViewHItem
+   ::oLstOrden:nVSep             := ::nImageViewVSep
+   ::oLstOrden:nHSep             := ::nImageViewHSep
+   ::oLstOrden:aTextMargin       := ::aImageViewTextMargin
+   ::oLstOrden:lTitle            := ::lImagenArticulos
+   ::oLstOrden:nHTitle           := ::nImageViewTitle
+   ::oLstOrden:lShowOption       := .f.
+   ::oLstOrden:lxVScroll         := .f.
+   ::oLstOrden:lxHScroll         := .f.
+   ::oLstOrden:lAdjust           := .f.
+   ::oLstOrden:nClrTextSel       := CLR_BLACK
+   ::oLstOrden:nClrPane          := CLR_WHITE
+   ::oLstOrden:nClrPaneSel       := rgb( 48, 48, 48 )
+   ::oLstOrden:nAlignText        := nOr( DT_TOP, DT_CENTER, DT_WORDBREAK )
+
+   ::oLstOrden:nOption           := 0
+   ::oLstOrden:bAction           := {|| ::SeleccionaOrden() } 
+
+   ::oLstOrden:AddItem( "", "Entrantes",  RGB(  45, 137, 239 ) )
+   ::oLstOrden:AddItem( "", "Primeros",   rgb( 255, 255, 255 ) )
+   ::oLstOrden:AddItem( "", "Segundos",   rgb( 255, 255, 255 ) )
+   ::oLstOrden:AddItem( "", "Psotres",    rgb( 255, 255, 255 ) )
+
+   /*
    Datos de la sala y del Usuario-------------------------------------------
    */
 
-   REDEFINE SAY ::oSayImporte ;
+   REDEFINE SAY ::oSayImporte ; 
       PROMPT   "Importe";
       FONT     ::oFntDlg ;
       ID       210 ;
@@ -3228,7 +3266,7 @@ METHOD StartResource() CLASS TpvTactil
 
    ::nDialogWidth          := ::oDlg:nWidth()
    ::nDialogHeight         := ::oDlg:nHeight()
-
+ 
    /*
    Cargamos las columnas del browse--------------------------------------------
    */
@@ -3312,6 +3350,8 @@ METHOD ResizedResource() CLASS TpvTactil
 
    ::oDlg:CoorsUpdate()
 
+   SysRefresh()
+
    nDialogWidth            := ( ::oDlg:nWidth() - ::nDialogWidth )
    nDialogHeight           := ( ::oDlg:nHeight() - ::nDialogHeight )
 
@@ -3319,7 +3359,7 @@ METHOD ResizedResource() CLASS TpvTactil
    Movemos los objetos---------------------------------------------------------
    */
 
-   ::oBrwLineas:Move( , , , ::oBrwLineas:nHeight() + nDialogHeight, .f. )
+   ::oBrwLineas:Move( , , , ::oBrwLineas:nHeight() + nDialogHeight, .f. ) 
 
    ::oSayImporte:Move( ::oSayImporte:nTop + nDialogHeight, , , , .f. )
    ::oTotalTicket:Move( ::oTotalTicket:nTop + nDialogHeight, , , , .f. )
@@ -3547,6 +3587,24 @@ METHOD SeleccionaFavoritos() CLASS TpvTactil
    if !Empty( ::oBrwLineas )
       ::oBrwLineas:Refresh()
    end if
+
+Return ( .t. )
+
+//---------------------------------------------------------------------------//
+
+METHOD SeleccionaOrden() CLASS TpvTactil
+
+   local n
+
+   for n := 1 to len( ::oLstOrden:aItems ) 
+      if ( n == ::oLstOrden:nOption )
+         ::oLstOrden:aItems[ n ]:nClrPane := Rgb( 45, 137, 239 )
+      else
+         ::oLstOrden:aItems[ n ]:nClrPane := Rgb( 255, 255, 255 )
+      end if 
+   next
+
+   ::oLstOrden:Refresh()
 
 Return ( .t. )
 
@@ -9127,6 +9185,8 @@ return nil
 function CheckRes()
 
    local cInfo := "", n
+
+   ferase( "checkres.txt" )
 
    for n = 1 to Len( aResources )
       if aResources[ n, 2 ] != 0

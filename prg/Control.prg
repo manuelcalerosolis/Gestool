@@ -634,6 +634,10 @@ METHOD End() CLASS TControl
       ASize( ::oWnd:aControls, Len( ::oWnd:aControls ) - 1 )
    endif
 
+   if !Empty( ::oBrush )
+      ::oBrush:End()
+   end if 
+
    if ::oWnd != nil .and. ::oWnd:oCtlFocus == Self
       ::oWnd:oCtlFocus = nil
    endif
