@@ -130,11 +130,7 @@ static cFiltroUsuario   := ""
 
 static lOldDevuelto     := .f.
 
-#ifndef __PDA__
-   static bEdit         := { |aTmp, aGet, dbfFacCliP, oBrw, lRectificativa, bValid, nMode, aTmpFac| EdtCob( aTmp, aGet, dbfFacCliP, oBrw, lRectificativa, bValid, nMode, aTmpFac ) }
-#else
-   static bpdaEdit      := { |aTmp, aGet, dbfFacCliP, oBrw, bWhen, bValid, nMode, aTmpFac| pdaEdtCob( aTmp, aGet, dbfFacCliP, oBrw, bWhen, bValid, nMode, aTmpFac ) }
-#endif
+static bEdit            := { |aTmp, aGet, dbfFacCliP, oBrw, lRectificativa, bValid, nMode, aTmpFac| EdtCob( aTmp, aGet, dbfFacCliP, oBrw, lRectificativa, bValid, nMode, aTmpFac ) }
 
 #ifndef __PDA__
 
@@ -1394,11 +1390,8 @@ Static Function StartEdtRec( aTmp, aGet )
    */
 
    aGet[ _CDIVPGO ]:lValid()
-
    aGet[ _CCTAREC ]:lValid()
-                     
    aGet[ _CCTAGAS ]:lValid()
-   
    aGet[ _CCTAREM ]:lValid()
 
    aGet[ _DPRECOB ]:SetFocus()
