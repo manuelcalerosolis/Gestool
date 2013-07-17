@@ -359,7 +359,6 @@ Static Function CreateMainWindow( oIconApp )
       ON INIT     ( lStartCheck() );
       VALID       ( EndApp() )
 
-
 Return nil
 
 //---------------------------------------------------------------------------//
@@ -843,6 +842,12 @@ STATIC FUNCTION EndApp()
 
          CloseWebBrowser( oWnd )
 
+         // Limpiamos los recursos estaticos-----------------------------------
+
+         TAcceso():End()
+
+         TBandera():Destroy()
+
       end if
 
    RECOVER
@@ -850,6 +855,10 @@ STATIC FUNCTION EndApp()
    END SEQUENCE
 
    ErrorBlock( oBlock )
+
+   fErase( "Checkres.txt" )
+
+   CheckRes()
 
 RETURN ( oDlg:nResult == IDOK )
 
@@ -1198,7 +1207,6 @@ Function InitClasses()
    TMant()
    TMasDet()
    TDet()
-   TBandera()
    TCatalogo()
    TGrpCli()
    TInfoArticulo()
@@ -1226,6 +1234,7 @@ Function InitClasses()
    TTurno()
    TInvitacion()
    TXBrowse():Register( nOr( CS_VREDRAW, CS_HREDRAW, CS_DBLCLKS ) )
+   TBandera():New()
 
 Return .t.
 

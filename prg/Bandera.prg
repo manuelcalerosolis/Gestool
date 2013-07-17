@@ -12,6 +12,8 @@ CLASS TBandera
 
    METHOD End()            VIRTUAL
 
+   METHOD Destroy()
+
    METHOD hBandera( cRes )
 
    METHOD cBandera( cRes )
@@ -22,7 +24,7 @@ END CLASS
 
 METHOD New()
 
-   local n
+   local cRes
 
    if Empty( ::aResBan )
       ::aResBan   := {  "BAN_ALB" ,;
@@ -198,8 +200,8 @@ METHOD New()
 
    if Empty( ::aBmpBan )
       ::aBmpBan   := {}
-      for n := 1 to Len( ::aResBan )
-         aAdd( ::aBmpBan, LoadBitMap( GetResources(), ::aResBan[ n ] ) )
+      for each cRes in ::aResBan 
+         aAdd( ::aBmpBan, LoadBitMap( GetResources(), cRes ) )
       next
    end if
 
@@ -207,6 +209,19 @@ return ( Self )
 
 //---------------------------------------------------------------------------//
 
+METHOD Destroy()
+
+   local hBmp
+
+   if !Empty( ::aBmpBan )
+      for each hBmp in ::aBmpBan 
+         DeleteObject( hBmp )
+      next
+   end if
+
+return ( Self )
+
+//---------------------------------------------------------------------------//
 //---------------------------------------------------------------------------//
 //
 // Devuelve el handle de la bandera

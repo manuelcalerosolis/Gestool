@@ -1105,8 +1105,10 @@ METHOD OpenFiles( lExclusive )
          lOpen                   := .f.
       end if
 
-      ::oBandera                 := TBandera():New()
-
+      if Empty( ::oBandera )
+         ::oBandera              := TBandera():New()
+      end if 
+      
       ::oNewImp                  := TNewImp():Create( cPatEmp() )
       if !::oNewImp:OpenFiles( .f. )
          lOpen                   := .f.

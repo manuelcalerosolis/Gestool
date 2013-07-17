@@ -9,6 +9,8 @@
 
 CLASS TMant
 
+   CLASSDATA oBandera
+
    DATA nLevel
 
    DATA cPath
@@ -26,7 +28,6 @@ CLASS TMant
    DATA oBmpDiv
 
    DATA oBuscar
-   DATA oBandera
 
    DATA oWndParent
    DATA oWndBrw
@@ -392,7 +393,6 @@ METHOD End() CLASS TMant
 
    if ::oBandera != nil
       ::oBandera:End()
-      ::oBandera  := nil
    end if
 
    if ::oWndBrw != nil

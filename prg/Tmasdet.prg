@@ -1486,7 +1486,6 @@ METHOD End() CLASS TMasDet
 
    if ::oBandera != nil
       ::oBandera:End()
-      ::oBandera  := nil
    end if
 
    ::Super:End()

@@ -225,6 +225,10 @@ METHOD Resource() CLASS AccessCode
       ::oBmpEngine:End()
    end if
 
+   if !Empty( ::oSayDatabase )
+      ::oSayDatabase:End()
+   end if 
+
    ::SaveIni()
 
 RETURN ( oDlg:nResult == IDOK )

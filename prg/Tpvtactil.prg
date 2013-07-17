@@ -191,6 +191,7 @@ CLASS TpvTactil
    DATA aLineas
 
    DATA oBtnNum
+
    DATA oFntNum
    DATA oFntEur
    DATA oFntFld
@@ -1689,11 +1690,11 @@ METHOD End() CLASS TpvTactil
    end if
 
    if !Empty( ::oFntFld )
-      ::oFntDlg:End()
+      ::oFntFld:End()
    end if
 
    if !Empty( ::oFntEur )
-      ::oFntFld:End()
+      ::oFntEur:End()
    end if
 
    if !Empty( ::oFntBrw )
@@ -1768,12 +1769,6 @@ METHOD End() CLASS TpvTactil
    ::oFntDto         := nil
 
    Self              := nil
-
-   /*
-   fErase( "Checkres.txt" )
-
-   CheckRes()
-   */
 
 Return .t.
 
@@ -9145,89 +9140,6 @@ function CheckRes()
 return nil
 
 //---------------------------------------------------------------------------//
-
-/*
-Static Function lCambiaSerie( aTmp, lSubir, oGrupoSerie )
-
-   if lSubir
-      aTmp[ _CSERTIK ]        := cUpSerie( aTmp[ _CSERTIK ] )
-      oGrupoSerie:cPrompt     := "Serie: " + aTmp[ _CSERTIK ]
-   else
-      aTmp[ _CSERTIK ]        := cDwSerie( aTmp[ _CSERTIK ] )
-      oGrupoSerie:cPrompt     := "Serie: " + aTmp[ _CSERTIK ]
-   end if
-
-Return .t.
-
-
-FUNCTION cUpSerie( cSer )
-
-   local nAsc
-   local cChr
-
-   if Empty( cSer ) .or. cSer < "A"
-      cSer     := "A"
-      nAsc     := Asc( cSer )
-   else
-      nAsc     := Asc( cSer ) + 1
-   end if
-
-   cChr        := Chr( nAsc )
-
-   if cChr > "Z"
-      cChr     := "Z"
-   end if
-
-return cChr
-
-FUNCTION cDwSerie( cSer )
-
-   local nAsc
-   local cChr
-   local cSerie
-
-   nAsc        := Asc( cSer ) - 1
-   cChr        := Chr( nAsc )
-
-   if cChr < "A"
-      cChr     := "A"
-   end if
-
-return cChr
-
-      */
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 
 #pragma BEGINDUMP
 

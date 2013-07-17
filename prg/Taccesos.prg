@@ -176,7 +176,7 @@ CLASS TAcceso
    Method Disable()                       INLINE ( CursorWait(),  if( !Empty( ::oOfficeBar ), ( ::oOfficeBar:Disable(), SysRefresh() ), ) )
    Method Enable()                        INLINE ( CursorWE(),    if( !Empty( ::oOfficeBar ), ( ::oOfficeBar:Enable(), SysRefresh() ), ) )
 
-   Method EndApp()
+   Method End()
 
 ENDCLASS
 
@@ -788,7 +788,6 @@ Return ( Self )
 Method CreateOfficeBar( oWnd )
 
    local oAcceso
-   local oFont
 
    ::oOfficeBar               := TDotNetBar():New( 0, 0, 1000, 120, ::oReBar, 1 )
    ::oOfficeBar:lPaintAll     := .f.
@@ -1045,21 +1044,27 @@ Return ( Self )
 
 //---------------------------------------------------------------------------//
 
-Method EndApp()
+Method End()
 
-   local oBlock
-   local oError
+   if !Empty( ::oFont )
+      ::oFont:End()
+   end if 
 
-   oBlock            := ErrorBlock( {| oError | ApoloBreak( oError ) } )
-   BEGIN SEQUENCE
+   if !Empty( ::oBmpLogo )
+      ::oBmpLogo:End()
+   end if 
 
-      if( !Empty( oWnd() ), oWnd():End(), )
+   if !Empty( ::oButtonAddFilter )
+      ::oButtonAddFilter:End()
+   end if 
 
-   RECOVER
-
-   END SEQUENCE
-
-   ErrorBlock( oBlock )
+   if !Empty( ::oButtonEditFilter )
+      ::oButtonEditFilter:End()
+   end if 
+   
+   if !Empty( ::oButtonFilter )
+      ::oButtonFilter:End()
+   end if 
 
 Return ( Self )
 
