@@ -378,7 +378,7 @@ function BrwVtaComArt( cCodArt, cNomArt, cDiv, cIva, cAlm, cArticulo )
    local oBrwVta
    local oTree
    local oCmbAnio
-   local cCmbAnio          := Str( Year( GetSysDate() ) ) // "Todos" //
+   local cCmbAnio          := "Todos" //Str( Year( GetSysDate() ) ) // 
    local oBmpGeneral
    local oBmpDocumentos
    local oBmpGraficos

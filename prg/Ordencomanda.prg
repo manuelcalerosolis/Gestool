@@ -23,7 +23,10 @@ CLASS TOrdenComanda FROM TMant
 
    METHOD Resource( nMode )
 
-   METHOD cAbreviatura( cNomOrd )
+   METHOD cNombre( cOrdOrd )
+   METHOD cAbreviatura( cOrdOrd )
+
+   METHOD cOrden( cNombre )
 
    METHOD lPreSave( nMode )
 
@@ -41,10 +44,10 @@ END CLASS
 
 METHOD Create( cPath )
 
-   DEFAULT cPath     := cPatArt()
+   DEFAULT cPath        := cPatArt()
 
-   ::cPath           := cPath
-   ::oDbf            := nil
+   ::cPath              := cPath
+   ::oDbf               := nil
 
 RETURN ( Self )
 
@@ -84,7 +87,7 @@ METHOD Activate()
    end if
 
    /*
-   Cerramos todas las ventanas
+   Cerramos todas las ventanas-------------------------------------------------
    */
 
    if ::oWndParent != nil
@@ -96,7 +99,7 @@ METHOD Activate()
    end if
 
    /*
-   Creamos el Shell
+   Creamos el Shell------------------------------------------------------------
    */
 
    if ::lOpenFiles
@@ -127,7 +130,7 @@ METHOD Activate()
          ::oWndBrw:cHtmlHelp  := ::cHtmlHelp
       end if
 
-      ::oWndBrw:Activate(  nil, nil, nil, nil, nil, nil, nil, nil, nil, nil, nil, nil, nil, nil, nil, nil, {|| ::CloseFiles() }, nil, nil )
+      ::oWndBrw:Activate( nil, nil, nil, nil, nil, nil, nil, nil, nil, nil, nil, nil, nil, nil, nil, nil, {|| ::CloseFiles() } )
 
    end if
 
@@ -250,15 +253,39 @@ RETURN ( ::oDlg:end( IDOK ) )
 
 //--------------------------------------------------------------------------//
 
-METHOD cAbreviatura( cNomOrd )
+METHOD cAbreviatura( cOrdOrd )
 
    local cAbreviatura   := ""
 
-   if ::oDbf:SeekInOrd( cNomOrd, "cNomOrd" )
+   if ::oDbf:SeekInOrd( cOrdOrd, "cOrdOrd" )
       cAbreviatura      := ::oDbf:cAbrOrd
    end if
 
 RETURN ( cAbreviatura )
+
+//---------------------------------------------------------------------------//
+
+METHOD cNombre( cOrdOrd )
+
+   local cNombre        := ""
+
+   if ::oDbf:SeekInOrd( cOrdOrd, "cOrdOrd" )
+      cNombre           := ::oDbf:cNomOrd
+   end if
+
+RETURN ( cNombre )
+
+//---------------------------------------------------------------------------//
+
+METHOD cOrden( cNomOrd )
+
+   local cCodigo        := ""
+
+   if ::oDbf:SeekInOrd( cNomOrd, "cNomOrd" )
+      cCodigo           := ::oDbf:cOrdOrd
+   end if
+
+RETURN ( cCodigo )
 
 //---------------------------------------------------------------------------//
 
@@ -336,19 +363,18 @@ METHOD aNombreOrdenComanda()
 
    ::cPath                    := cPatArt()
 
-   if ::OpenFiles()
+   ::oDbf:GetStatus()
+   ::oDbf:GoTop()
 
-      while !( ::oDbf:Eof() )
+   while !( ::oDbf:Eof() )
 
-         aAdd( aNombreOrdenComanda, AllTrim( ::oDbf:cNomOrd ) )
+      aAdd( aNombreOrdenComanda, AllTrim( ::oDbf:cNomOrd ) )
 
-         ::oDbf:Skip()
+      ::oDbf:Skip()
 
-      end while
+   end while
 
-      ::CloseFiles()
-
-   end if    
+   ::oDbf:SetStatus()
 
    CursorWE()
 
@@ -424,7 +450,7 @@ METHOD Selector()
    ACTIVATE DIALOG oDlg CENTER
 
    if oDlg:nResult == IDOK
-      cReturn     := ::oDbf:cNomOrd
+      cReturn     := ::oDbf:cOrdOrd
    end if
 
    RECOVER USING oError
