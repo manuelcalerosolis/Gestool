@@ -4,6 +4,30 @@
 		"selected_items":
 		[
 			[
+				"else",
+				"else"
+			],
+			[
+				"per",
+				"percentage"
+			],
+			[
+				"id_pro",
+				"id_product_attribute"
+			],
+			[
+				"id_s",
+				"id_shop_group"
+			],
+			[
+				"spe",
+				"specific_price"
+			],
+			[
+				"nTot",
+				"nTotStock"
+			],
+			[
 				"stock",
 				"stock_available"
 			],
@@ -106,10 +130,6 @@
 			[
 				"OaLB",
 				"oAlbaranClienteCabecera"
-			],
-			[
-				"nTot",
-				"nTotNet"
 			],
 			[
 				"oAlbara",
@@ -274,10 +294,6 @@
 			[
 				"lCobro",
 				"lCobroExacto"
-			],
-			[
-				"else",
-				"else"
 			],
 			[
 				"CCODFAB",
@@ -498,22 +514,6 @@
 			[
 				"id_A",
 				"id_attribute_group"
-			],
-			[
-				"Attr",
-				"attribute_group"
-			],
-			[
-				"oPro",
-				"oPro"
-			],
-			[
-				"cCodi",
-				"cCodigoPropiedad"
-			],
-			[
-				"id_at",
-				"id_attribute"
 			]
 		]
 	},
@@ -531,7 +531,39 @@
 			"file": "prg/Tcomercio.prg",
 			"settings":
 			{
-				"buffer_size": 372526,
+				"buffer_size": 371969,
+				"line_ending": "Windows"
+			}
+		},
+		{
+			"file": "prg/Pedcli.prg",
+			"settings":
+			{
+				"buffer_size": 654381,
+				"line_ending": "Windows"
+			}
+		},
+		{
+			"file": "prg/Tpv.prg",
+			"settings":
+			{
+				"buffer_size": 665794,
+				"line_ending": "Windows"
+			}
+		},
+		{
+			"file": "prg/Stock.prg",
+			"settings":
+			{
+				"buffer_size": 213580,
+				"line_ending": "Windows"
+			}
+		},
+		{
+			"file": "prg/Articulo.prg",
+			"settings":
+			{
+				"buffer_size": 672726,
 				"line_ending": "Windows"
 			}
 		},
@@ -584,6 +616,8 @@
 	},
 	"file_history":
 	[
+		"/C/fw195/Gestool/prg/Articulo.prg",
+		"/C/fw195/Gestool/prg/Oferta.prg",
 		"/C/fw195/Gestool/prg/Tpv.prg",
 		"/C/fw195/Gestool/prg/Reccli.prg",
 		"/C/Users/Villa/Desktop/TIKET.CDX",
@@ -647,8 +681,6 @@
 		"/C/fw195/Gestool/prg/Usuario.prg",
 		"/C/fw195/Gestool/prg/Tuser.prg",
 		"/C/fw195/Gestool/prg/Count.prg",
-		"/C/fw195/Gestool/prg/Oferta.prg",
-		"/C/fw195/Gestool/prg/Articulo.prg",
 		"/C/fw195/Gestool/prg/Cajas.prg",
 		"/C/fw195/Gestool/prg/tpv",
 		"/C/fw195/Gestool/bin/reporting/articulos/Ventas/Facturas de clientes/Facturas de clientes lineas agrupadas.fr3",
@@ -755,6 +787,66 @@
 		"case_sensitive": false,
 		"find_history":
 		[
+			"AppendClientPrestashop",
+			"ImportarPrestashop",
+			"oBtnImportar",
+			"importa",
+			"promoci",
+			"on rx",
+			"on aitm",
+			"on rx",
+			"InsertPropiedadesProductPrestashop",
+			"insertprodu",
+			"insertpro",
+			"InsertPropiedadesProductPrestashop",
+			"insertprop",
+			"?",
+			"attribute_lang",
+			"attribute_shop",
+			"InsertLineasPropiedadesPrestashop",
+			"Insertpr",
+			"InsertOfertasPrestashop",
+			"fldweb",
+			"CalDtoWeb",
+			"on cal",
+			"on nretpreart",
+			"nretpreart",
+			"iva",
+			"on cal",
+			"on n",
+			"on ncal",
+			"on calbnfiva",
+			"calbnfiva",
+			"InsertPropiedadesProductPrestashop",
+			"nprecio",
+			"on edtrec",
+			"EvalGet",
+			"StartDlg",
+			"pVtaWeb",
+			"nImpInt1",
+			"od insertprod",
+			"od insertofer",
+			"InsertProductsPrestashop",
+			"InsertProductsPrestashop()",
+			"od Insert",
+			"od InsertOfertasPrestashop",
+			"fldweb",
+			"on rx",
+			"oferta",
+			"od openfiles",
+			"on openfiles",
+			"on aitm",
+			"otablaofertas",
+			"openfiles",
+			"ofert",
+			"InsertPropiedadesPrestashop",
+			"InsertProductsPrestashop",
+			"od insert",
+			"os insert",
+			"liva",
+			"lfpago",
+			"ostock",
+			"method nstockarticulo",
 			"stock",
 			"InsertProductsPrestashop",
 			"articulo",
@@ -822,67 +914,7 @@
 			"cnomcli",
 			"cCodCli",
 			"cSufDoc",
-			"on aitm",
-			"on edtrec",
-			"on savcli",
-			"asexos",
-			"fldcome",
-			"on edtrec",
-			"on aitm",
-			"on airm",
-			"ccodobr",
-			"on loacli",
-			"on aitm",
-			"on openfiles",
-			"obr",
-			"on loacli",
-			"ldefobr",
-			"aItmObr",
-			"cTmpObr",
-			"contacto",
-			"contactos",
-			"on acli",
-			"on aitm",
-			"def",
-			"on loacli",
-			"loacli",
-			"Tree(",
-			"Tree",
-			"clie",
-			"od lGrupoGProveedor",
-			"ss InfPrevisionPagos",
-			"informe",
-			"cMinDoc",
-			"loaart",
-			":cDelegacion(",
-			"CSUFDOC",
-			"dlg",
-			"delega",
-			"#",
-			"cserie",
-			"on aitm",
-			"oGetSerie",
-			"cGetSerie",
-			"CmbSerieSave",
-			"CmbDocumentosChanged",
-			"cnf",
-			"guardadocumentoa",
-			"albaran",
-			" OfertaArticulo",
-			"nTotalLinea",
-			"linea",
-			"ccodgrp",
-			"dbfOferta",
-			"openfiles",
-			"on openfiles",
-			"closefiles",
-			"oferta",
-			"cclitik",
-			"lBuscaOferta",
-			"cliatp",
-			"dbfcliatp",
-			"atp",
-			"cliatp"
+			"on aitm"
 		],
 		"highlight": true,
 		"in_selection": false,
@@ -909,7 +941,7 @@
 	"groups":
 	[
 		{
-			"selected": 1,
+			"selected": 2,
 			"sheets":
 			[
 				{
@@ -924,8 +956,8 @@
 						"selection":
 						[
 							[
-								11227,
-								11227
+								1618,
+								1618
 							]
 						],
 						"settings":
@@ -934,7 +966,7 @@
 							"translate_tabs_to_spaces": false
 						},
 						"translation.x": 0.0,
-						"translation.y": 3426.0,
+						"translation.y": 348.0,
 						"zoom_level": 1.0
 					},
 					"type": "text"
@@ -944,15 +976,15 @@
 					"file": "prg/Tcomercio.prg",
 					"settings":
 					{
-						"buffer_size": 372526,
+						"buffer_size": 371969,
 						"regions":
 						{
 						},
 						"selection":
 						[
 							[
-								87558,
-								87558
+								320000,
+								320000
 							]
 						],
 						"settings":
@@ -962,13 +994,123 @@
 							"translate_tabs_to_spaces": true
 						},
 						"translation.x": 0.0,
-						"translation.y": 59973.0,
+						"translation.y": 198692.0,
 						"zoom_level": 1.0
 					},
 					"type": "text"
 				},
 				{
 					"buffer": 2,
+					"file": "prg/Pedcli.prg",
+					"settings":
+					{
+						"buffer_size": 654381,
+						"regions":
+						{
+						},
+						"selection":
+						[
+							[
+								470451,
+								470458
+							]
+						],
+						"settings":
+						{
+							"syntax": "Packages/harbour/harbour/Harbour.tmLanguage"
+						},
+						"translation.x": 0.0,
+						"translation.y": 250106.0,
+						"zoom_level": 1.0
+					},
+					"type": "text"
+				},
+				{
+					"buffer": 3,
+					"file": "prg/Tpv.prg",
+					"settings":
+					{
+						"buffer_size": 665794,
+						"regions":
+						{
+						},
+						"selection":
+						[
+							[
+								141649,
+								141649
+							]
+						],
+						"settings":
+						{
+							"syntax": "Packages/harbour/harbour/Harbour.tmLanguage",
+							"tab_size": 3,
+							"translate_tabs_to_spaces": true
+						},
+						"translation.x": 0.0,
+						"translation.y": 83191.0,
+						"zoom_level": 1.0
+					},
+					"type": "text"
+				},
+				{
+					"buffer": 4,
+					"file": "prg/Stock.prg",
+					"settings":
+					{
+						"buffer_size": 213580,
+						"regions":
+						{
+						},
+						"selection":
+						[
+							[
+								111475,
+								111475
+							]
+						],
+						"settings":
+						{
+							"syntax": "Packages/harbour/harbour/Harbour.tmLanguage",
+							"tab_size": 3,
+							"translate_tabs_to_spaces": true
+						},
+						"translation.x": 0.0,
+						"translation.y": 67222.0,
+						"zoom_level": 1.0
+					},
+					"type": "text"
+				},
+				{
+					"buffer": 5,
+					"file": "prg/Articulo.prg",
+					"settings":
+					{
+						"buffer_size": 672726,
+						"regions":
+						{
+						},
+						"selection":
+						[
+							[
+								547425,
+								547425
+							]
+						],
+						"settings":
+						{
+							"syntax": "Packages/harbour/harbour/Harbour.tmLanguage",
+							"tab_size": 3,
+							"translate_tabs_to_spaces": true
+						},
+						"translation.x": 0.0,
+						"translation.y": 293179.0,
+						"zoom_level": 1.0
+					},
+					"type": "text"
+				},
+				{
+					"buffer": 6,
 					"file": "/C/AppServ/www/zemtrum/tienda/modules/blockuserinfo/blockuserinfo.css",
 					"settings":
 					{
@@ -995,7 +1137,7 @@
 					"type": "text"
 				},
 				{
-					"buffer": 3,
+					"buffer": 7,
 					"file": "/C/AppServ/www/zemtrum/tienda/js/jquery.reveal.js",
 					"settings":
 					{
@@ -1006,8 +1148,8 @@
 						"selection":
 						[
 							[
-								5842,
-								5842
+								7253,
+								7253
 							]
 						],
 						"settings":
@@ -1015,7 +1157,7 @@
 							"syntax": "Packages/JavaScript/JavaScript.tmLanguage"
 						},
 						"translation.x": 0.0,
-						"translation.y": 3518.0,
+						"translation.y": 0.0,
 						"zoom_level": 1.0
 					},
 					"type": "text"
