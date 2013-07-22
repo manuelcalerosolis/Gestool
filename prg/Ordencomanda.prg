@@ -31,6 +31,7 @@ CLASS TOrdenComanda FROM TMant
    METHOD BajarOrden() 
 
    METHOD aNombreOrdenComanda()
+   METHOD EmptyOrdenComanda()          INLINE ( if( !Empty( ::oDbf ) .and. ::oDbf:Used(), !( ::oDbf:OrdKeyCount() > 0 ), .t. ) )
 
    METHOD Selector()
 

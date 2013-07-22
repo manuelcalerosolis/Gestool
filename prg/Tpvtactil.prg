@@ -326,6 +326,8 @@ CLASS TpvTactil
 
    DATA lHideCalculadora
 
+   DATA lEmptyOrdenComanda
+
    DATA oBtnFamiliasTop
    DATA oBtnFamiliasUp
    DATA oBtnFamiliasDown
@@ -1380,7 +1382,7 @@ CLASS TpvTactil
       cOrdenComanda                 := ::oOrdenComanda:Selector()
 
       if !Empty( cOrdenComanda )
-         ::oTemporalLinea:cNomCmd   := cOrdenComanda
+         ::oTemporalLinea:cNomOrd   := cOrdenComanda
       end if 
 
       ::oBrwLineas:Refresh()
@@ -1577,7 +1579,6 @@ CLASS TpvTactil
 
 //--------------------------------------------------------------------------//
 
-
    INLINE METHOD TreeReportingChanged() 
 
       local cTitle   := ::oTreeReporting:GetSelText()
@@ -1595,6 +1596,7 @@ CLASS TpvTactil
    ENDMETHOD
 
 //---------------------------------------------------------------------------//
+
 END CLASS
 
 //--------------------------------------------------------------------------//
@@ -2177,6 +2179,12 @@ METHOD OpenFiles() CLASS TpvTactil
    ::nDecimalesImporte        := nDouDiv( cDivEmp(), ::oDivisas:cAlias )        // Decimales
    ::nDecimalesTotal          := nRouDiv( cDivEmp(), ::oDivisas:cAlias )        // Decimales redondeados
    ::cPictureUnidades         := MasUnd()
+
+   /*
+   Si no tiene ordenes para comandas-------------------------------------------
+   */
+
+   ::lEmptyOrdenComanda       := ::oOrdenComanda:EmptyOrdenComanda()
 
    /*
    Impresion del documento-----------------------------------------------------
@@ -2876,7 +2884,7 @@ METHOD Resource() CLASS TpvTactil
    with object ( ::oBrwLineas:AddCol() )
       :cHeader                := "Nº"
       :bEditValue             := {|| ::oTemporalLinea:nNumLin }
-      :lHide                  := .t.
+      :lHide                  := ::lEmptyOrdenComanda
       :nWidth                 := 20
       :nDataStrAlign          := AL_RIGHT
       :nHeadStrAlign          := AL_RIGHT
@@ -2927,7 +2935,7 @@ METHOD Resource() CLASS TpvTactil
    with object ( ::oBrwLineas:AddCol() )
       :cHeader                := "Detalle"
       :bEditValue             := {|| ::cTextoLinea() }
-      :nWidth                 := 200
+      :nWidth                 := if( ::lEmptyOrdenComanda, 200, 180 )
    end with
 
    with object ( ::oBrwLineas:AddCol() )
@@ -3298,6 +3306,14 @@ METHOD StartResource() CLASS TpvTactil
    if !Empty( ::oBtnEncargar )
       ::oBtnEncargar:bRAction := {|| ::OnClickSalaVenta( ubiEncargar ) }
    end if
+
+   /*
+   Si no tienen orden de comandas no mostramos el botón-----------------------
+   */
+
+   if ::oOrdenComanda:EmptyOrdenComanda()
+      ::oBtnCambiarOrden:Hide()
+   end if 
 
    /*
    Estado del boton de cobro rapido
