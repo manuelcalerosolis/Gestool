@@ -8149,8 +8149,6 @@ METHOD AppendArticuloPrestashop( oDb )
 
       if ::oArt:lPubInt
 
-         ?::oArt:nombre
-
          ::MeterParticularText( "Actualizando artículos" )
 
          /*
