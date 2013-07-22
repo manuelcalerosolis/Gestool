@@ -848,6 +848,8 @@ STATIC FUNCTION EndApp()
 
          TBandera():Destroy()
 
+         CheckRes()
+
       end if
 
    RECOVER
@@ -855,10 +857,6 @@ STATIC FUNCTION EndApp()
    END SEQUENCE
 
    ErrorBlock( oBlock )
-
-   fErase( "Checkres.txt" )
-
-   CheckRes()
 
 RETURN ( oDlg:nResult == IDOK )
 
@@ -1551,7 +1549,7 @@ Function CreateAcceso( oWnd )
    oItem:oGroup         := oGrupo
    oItem:cPrompt        := 'Arqueo parcial (X)'
    oItem:cMessage       := 'Inicia una nueva sesión de trabajo'
-   oItem:bAction        := {|| CloseTurno( "01001", oWnd(), .f., .t. ) }
+   oItem:bAction        := {|| CloseTurno( "01001", oWnd(), .t. ) }
    oItem:cId            := "01001"
    oItem:cBmp           := "Stopwatch_Refresh_16"
    oItem:cBmpBig        := "Stopwatch_Refresh_32"
@@ -2662,7 +2660,7 @@ Function CreateAcceso( oWnd )
    oItemTpv:lShow       := .t.
 
    oGrupo               := TGrupoAcceso()
-   oGrupo:nBigItems     := 5
+   oGrupo:nBigItems     := 6
    oGrupo:cPrompt       := 'T.P.V.'
    oGrupo:cLittleBitmap := "Cashier_user1_16"
    oGrupo:cBigBitmap    := "Cashier_user1_32"
@@ -2717,6 +2715,16 @@ Function CreateAcceso( oWnd )
    oItem:cBmpBig        := "Masks_32"
    oItem:lShow          := .f.
 
+   oItem                := oItemTPV:Add()
+   oItem:oGroup         := oGrupo
+   oItem:cPrompt        := 'Ordenes de comanda'
+   oItem:cMessage       := 'Acceso a los comentarios de los artículos'
+   oItem:bAction        := {|| TOrdenComanda():New( cPatArt(), oWnd, "01093" ):Activate() }
+   oItem:cId            := "01093"
+   oItem:cBmp           := "message_16"
+   oItem:cBmpBig        := "message_32"
+   oItem:lShow          := .f.
+
    oGrupo               := TGrupoAcceso()
    oGrupo:nBigItems     := 1
    oGrupo:nLittleItems  := 1
@@ -2749,7 +2757,7 @@ Function CreateAcceso( oWnd )
    oItem:oGroup         := oGrupo
    oItem:cPrompt        := 'Configurar visor'
    oItem:cMessage       := 'Configurar visor'
-   oItem:bAction        := {|| ConfVisor ( "01092", oWnd ) }
+   oItem:bAction        := {|| ConfVisor( "01092", oWnd ) }
    oItem:cId            := "01092"
    oItem:cBmp           := "Console_network_16"
    oItem:cBmpBig        := "Console_network_32"

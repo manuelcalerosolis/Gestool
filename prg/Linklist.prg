@@ -16,8 +16,8 @@ CLASS TLinkList
    METHOD Draw( cPrevDraw )
    METHOD End()
 
-   MESSAGE Eval METHOD _Eval( bAction )
-
+   MESSAGE Eval METHOD _Eval( bAction ) 
+ 
 ENDCLASS
 
 //----------------------------------------------------------------------------//
@@ -34,9 +34,9 @@ METHOD Add( cPrompt, nLevel, hBmpOpen, hBmpClose, lOpened ) CLASS TLinkList
       ::oFirst = oItem
       ::oLast  = oItem
    else
-      ::oLast:SetNext( oItem )
+      ::oLast:SetNext( oItem ) 
       oItem:oPrev   = ::oLast
-      ::oLast       = oItem
+      ::oLast       = oItem 
    endif
 
    oItem:lOpened = lOpened

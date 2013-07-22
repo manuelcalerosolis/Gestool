@@ -350,7 +350,7 @@ FONT 8, "MS Sans Serif"
   CONTROL "", -1, "Static", SS_ETCHEDHORZ, 3, 30, 246, 2
 }
 
-ART_1 DIALOG DISCARDABLE 36, 16, 496, 286
+ART_1 DIALOG DISCARDABLE 36, 16, 496, 306
 STYLE WS_CHILD|DS_3DLOOK|WS_VISIBLE
 FONT 8, "MS Sans Serif"
 {
@@ -388,6 +388,9 @@ FONT 8, "MS Sans Serif"
   CONTROL "", 260, "Edit", WS_BORDER|WS_TABSTOP, 98, 206, 279, 11
   CONTROL "", 290, "Edit", WS_BORDER|WS_TABSTOP, 98, 219, 279, 11
   CONTROL "", 220, "Edit", WS_BORDER|WS_TABSTOP, 98, 232, 279, 11
+  CONTROL "", 470, "ComboBox", WS_BORDER|CBS_DROPDOWNLIST|WS_TABSTOP, 98, 245, 87, 84
+  CONTROL "", 450, "ComboBox", WS_BORDER|CBS_DROPDOWNLIST|WS_TABSTOP, 292, 245, 85, 84
+  CONTROL "", 460, "ComboBox", WS_BORDER|CBS_DROPDOWNLIST|WS_TABSTOP, 292, 260, 85, 84
   CONTROL "Código", -1, "Static", WS_GROUP, 49, 42, 33, 8
   CONTROL "Descripción", -1, "Static", WS_GROUP, 49, 54, 39, 8
   CONTROL "Familia", -1, "Static", WS_GROUP, 49, 77, 33, 8
@@ -397,16 +400,15 @@ FONT 8, "MS Sans Serif"
   CONTROL "Categoría", -1, "Static", WS_GROUP, 49, 101, 35, 8
   CONTROL "Fabricante", -1, "Static", WS_GROUP, 49, 125, 47, 8
   CONTROL "Posición", -1, "Static", WS_GROUP, 49, 196, 32, 8
-  CONTROL "", 450, "ComboBox", WS_BORDER|CBS_DROPDOWNLIST|WS_TABSTOP, 157, 245, 96, 84
-  CONTROL "", 460, "ComboBox", WS_BORDER|CBS_DROPDOWNLIST|WS_TABSTOP, 157, 259, 96, 84
-  CONTROL "Impresora comanda", -1, "Static", WS_GROUP, 49, 247, 67, 8
-  CONTROL "Impresora copia comanda", -1, "Static", WS_GROUP, 49, 261, 87, 8
+  CONTROL "Impresora comanda", -1, "Static", WS_GROUP, 201, 248, 67, 8
+  CONTROL "Impresora copia comanda", -1, "Static", WS_GROUP, 201, 263, 87, 8
   CONTROL "Temporada", -1, "Static", WS_GROUP, 49, 113, 41, 8
   CONTROL "", 500, "TBitmap", 0x0000020e, 4, 3, 34, 30, 0x00000020
   CONTROL "Datos generales del artículo", -1, "Static", SS_LEFTNOWORDWRAP|WS_GROUP, 44, 3, 446, 8
   CONTROL "Actual", -1, "Static", WS_GROUP, 262, 163, 25, 8
   CONTROL "Lote", -1, "Button", BS_GROUPBOX, 255, 138, 125, 37
   CONTROL "Color botón", -1, "Static", WS_GROUP, 49, 222, 41, 8
+  CONTROL "Orden", -1, "Static", WS_GROUP, 49, 248, 25, 8
 }
 
 ARTKITCAT DIALOG DISCARDABLE 30, 106, 311, 105
@@ -699,6 +701,8 @@ FONT 8, "MS Sans Serif"
   CONTROL "&Aceptar [F5]", IDOK, "Button", BS_DEFPUSHBUTTON|WS_TABSTOP, 400, 305, 50, 14
   CONTROL "&Cancelar", IDCANCEL, "Button", WS_TABSTOP, 456, 305, 50, 14
   CONTROL "", 500, "TBitmap", 0x00800000, 510, 14, 60, 62
+  CONTROL "A&nterior [F7]", 3, "Button", 0x00000000, 6, 305, 50, 14
+  CONTROL "&Siguiente [F8]", 4, "Button", 0x00000000, 62, 305, 50, 14
 }
 
 ARTKIT DIALOG DISCARDABLE 30, 106, 311, 92
@@ -19117,5 +19121,21 @@ FONT 8, "MS Sans Serif"
   CONTROL "Orden", -1, "Button", BS_GROUPBOX, 1, 94, 288, 29
   CONTROL "Desde", -1, "Static", WS_GROUP, 23, 65, 36, 8
   CONTROL "Hasta", -1, "Static", WS_GROUP, 23, 79, 35, 8
+}
+
+LANGUAGE LANG_SPANISH,SUBLANG_SPANISH
+
+OrdenComanda DIALOG DISCARDABLE 60, 16, 297, 73
+STYLE WS_POPUP|DS_MODALFRAME|DS_3DLOOK|WS_CAPTION|WS_SYSMENU|WS_VISIBLE
+CAPTION "Orden de comanda"
+FONT 8, "Helv"
+{
+  CONTROL "", 100, "Edit", WS_BORDER|WS_TABSTOP, 75, 14, 210, 12
+  CONTROL "", 110, "Edit", WS_BORDER|WS_TABSTOP, 75, 28, 33, 12
+  CONTROL "&Aceptar [F5]", IDOK, "Button", WS_TABSTOP, 187, 52, 50, 14
+  CONTROL "&Cancelar", IDCANCEL, "Button", WS_TABSTOP, 242, 52, 50, 14
+  CONTROL "Identificación", -1, "Button", BS_GROUPBOX, 2, 3, 290, 43
+  CONTROL "Abreviatura", -1, "Static", WS_GROUP, 10, 32, 60, 8
+  CONTROL "Descripción ", -1, "Static", WS_GROUP, 10, 18, 60, 8
 }
 

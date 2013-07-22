@@ -103,7 +103,7 @@ CLASS TStock
 
    METHOD Create( cPath, lExclusive )
 
-   METHOD End()         INLINE ( ::CloseFiles() )
+   METHOD End()            INLINE ( if( !Empty( ::oTree ), ::oTree:End(), ), ::CloseFiles() )
 
    METHOD lOpenFiles( lExclusive )
 
@@ -5632,30 +5632,6 @@ METHOD oTreeStocks( cCodArt, cCodAlm )
    local cValue
 
    ::aStockArticulo( cCodArt, cCodAlm )
-
-/*
-   ::oTree     := TreeBegin( "Navigate_Minus_16", "Navigate_Plus_16" )
-
-   TreeAddItem( "Tronco mundo" )
-
-      TreeBegin()
-      TreeAddItem( "Adios mundo" )
-      TreeEnd()      
-
-   TreeAddItem( "Adios mundo" )
-   TreeAddItem( "Adios mundo" )
-   TreeAddItem( "Adios mundo" )
-
-   TreeAddItem( "Hola mundo" )
-   TreeAddItem( "Hola mundo" )
-
-   TreeAddItem( "Hola mundo" )
-   TreeAddItem( "Hola mundo" )
-   TreeAddItem( "Hola mundo" )
-   TreeAddItem( "Hola mundo" )
-
-   TreeEnd()
-*/
 
    aSort( ::aStocks, , , {|x,y| x:cCodigo + x:cCodigoAlmacen + x:cValorPropiedad1 + x:cValorPropiedad2 + x:cLote + dtos( x:dFechaDocumento ) < y:cCodigo + y:cCodigoAlmacen + y:cValorPropiedad1 + y:cValorPropiedad2 + y:cLote + dtos( y:dFechaDocumento ) } )
 

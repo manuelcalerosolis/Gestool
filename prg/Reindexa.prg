@@ -414,6 +414,7 @@ METHOD GenIndices( oMsg )
             ::SetText( "Generando índices : Turnos", ::aProgress[ 4 ] );                  TTurno():New( ::cPathEmp ):Reindexa()
             ::SetText( "Generando índices : Comentarios", ::aProgress[ 4 ] );             TComentarios():Create( ::cPatArt ):Reindexa()
             ::SetText( "Generando índices : Lineas de comentarios", ::aProgress[ 4 ] );   TDetComentarios():Create( ::cPatArt ):Reindexa()
+            ::SetText( "Generando índices : Ordenenes de comanda", ::aProgress[ 4 ] );    TOrdenComanda():Create( ::cPatArt ):Reindexa()
 
          end if
 

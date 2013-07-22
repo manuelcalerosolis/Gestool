@@ -17040,11 +17040,14 @@ STATIC FUNCTION BeginTrans( aTmp, nMode )
 
    if !NetErr()
 
-      ( dbfTmpPgo )->( ordCondSet("!Deleted()", {|| !Deleted() } ) )
-      ( dbfTmpPgo )->( ordCreate( cTmpPgo , "cRecDev", "CRECDEV", {|| Field->CRECDEV } ) )
+      ( dbfTmpPgo )->( ordCondSet( "!Deleted()", {|| !Deleted() } ) )
+      ( dbfTmpPgo )->( ordCreate( cTmpPgo , "cRecDev", "cRecDev", {|| Field->cRecDev } ) )
 
-      ( dbfTmpPgo )->( ordCondSet( "!Deleted()", {||!Deleted() } ) )
+      ( dbfTmpPgo )->( ordCondSet( "!Deleted()", {|| !Deleted() } ) )
       ( dbfTmpPgo )->( ordCreate( cTmpPgo, "nNumFac", "cSerie + Str( nNumFac ) + cSufFac + Str( nNumRec ) + cTipRec", {|| Field->cSerie + Str( Field->nNumFac ) + Field->cSufFac + Str( Field->nNumRec ) + Field->cTipRec } ) )
+
+      ( dbfTmpPgo )->( ordCondSet( "!Deleted()", {|| !Deleted() } ) )
+      ( dbfTmpPgo )->( ordCreate( cTmpPgo, "cNumMtr", "Field->cNumMtr", {|| Field->cNumMtr } ) )
 
       nOrd        := ( dbfFacCliP )->( OrdSetFocus( "nNumFac" ) )
 

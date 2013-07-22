@@ -776,26 +776,26 @@ FUNCTION BrwObras( oGet, oGet2, cCodCli, dbfObrasT )
    ( dbfObrasT )->( OrdScope( 1, cCodCli ) )
    ( dbfObrasT )->( dbGoTop() )
 
-   DEFINE DIALOG  oDlg ;
-      RESOURCE    "HELPENTRY";
-      TITLE       "Seleccionar direcciones"
+   DEFINE DIALOG     oDlg ;
+      RESOURCE       "HELPENTRY";
+      TITLE          "Seleccionar direcciones"
 
       REDEFINE GET oGet1 VAR cGet1;
-         ID       104 ;
-         ON CHANGE( AutoSeek( nKey, nFlags, Self, oBrw, dbfObrasT, nil, cCodCli ) );
-         BITMAP   "FIND" ;
-         OF       oDlg
+         ID          104 ;
+         ON CHANGE   ( AutoSeek( nKey, nFlags, Self, oBrw, dbfObrasT, nil, cCodCli ) );
+         BITMAP      "FIND" ;
+         OF          oDlg
 
 		REDEFINE COMBOBOX oCbxOrd ;
-			VAR 		cCbxOrd ;
-			ID 		102 ;
-         ITEMS    aCbxOrd ;
-         ON CHANGE(  ( dbfObrasT )->( OrdSetFocus( oCbxOrd:nAt ) ),;
+			VAR 		   cCbxOrd ;
+			ID 		   102 ;
+         ITEMS       aCbxOrd ;
+         ON CHANGE   (  ( dbfObrasT )->( OrdSetFocus( oCbxOrd:nAt ) ),;
                      ( dbfObrasT )->( OrdScope( 0, cCodCli ) ),;
                      ( dbfObrasT )->( OrdScope( 1, cCodCli ) ),;
                      oBrw:Refresh(),;
                      oGet1:SetFocus() );
-			OF 		oDlg
+			OF 		   oDlg
 
       oBrw                 := TXBrowse():New( oDlg )
 
@@ -848,11 +848,13 @@ FUNCTION BrwObras( oGet, oGet2, cCodCli, dbfObrasT )
    ACTIVATE DIALOG oDlg CENTER
 
    if oDlg:nResult == IDOK
+
       oGet:cText( ( dbfObrasT )->CCODOBR )
 
-      if oGet2 != NIL
+      if !Empty( oGet2 )
          oGet2:cText( ( dbfObrasT )->CNOMOBR )
       end if
+
    end if
 
    DestroyFastFilter( dbfObrasT )
@@ -877,12 +879,12 @@ RETURN ( oDlg:nResult == IDOK )
 
 FUNCTION cObras( oGet, oGet2, cCodCli, dbfObrasT )
 
-	local lValid 	:= .F.
-	local lClose 	:= .F.
+	local lValid 	:= .f.
+	local lClose 	:= .f.
 	local xValor 	:= oGet:varGet()
 
 	if Empty( xValor )
-		if oGet2 != NIL
+		if !Empty( oGet2 )
 			oGet2:cText( "" )
       end if
       return .t.
@@ -893,7 +895,7 @@ FUNCTION cObras( oGet, oGet2, cCodCli, dbfObrasT )
 		return .t.
 	end if
 
-   if dbfObrasT == NIL
+   if Empty( dbfObrasT )
       USE ( cPatEmp() + "OBRAST.DBF" ) NEW VIA ( cDriver() ) SHARED ALIAS ( cCheckArea( "OBRAST", @dbfObrasT ) )
       SET ADSINDEX TO ( cPatEmp() + "OBRAST.CDX" ) ADDITIVE
       lClose   := .t.
@@ -907,11 +909,11 @@ FUNCTION cObras( oGet, oGet2, cCodCli, dbfObrasT )
 
       oGet:cText( ( dbfObrasT )->CCODOBR )
 
-		if oGet2 != NIL
+		if !Empty( oGet2 )
 			oGet2:cText( ( dbfObrasT )->CNOMOBR )
 		end if
 
-      lValid   := .T.
+      lValid   := .t.
 
 	else
 
