@@ -98,7 +98,9 @@ static cCatOld
 static cPrvOld
 static oMenu
 static aBmpTipCat
-static aStrTipCat
+
+static aNombreOrdenComanda
+static oNombreOrdenComanda 
 
 static aBenefSobre         := { "Costo", "Venta" }
 
@@ -431,7 +433,7 @@ STATIC FUNCTION OpenFiles( lExt, cPath )
       Cargo los colores para las categorias---------------------------------------
       */
 
-      aStrTipCat           := aStrTipoCategoria()
+      aNombreOrdenComanda  := TOrdenComanda():aNombreOrdenComanda()
 
       /*
       Cargamos el valor del Euro y de la Peseta-----------------------------------
@@ -1571,13 +1573,13 @@ STATIC FUNCTION EdtRec( aTmp, aGet, dbfArticulo, oBrw, bWhen, bValid, nMode )
    local oNom1
    local oNom2
    local oNom3
-   local aBtn           := Array( 14 )
+   local aBtn                 := Array( 14 )
    local oBmpCategoria
    local oBmpTemporada
-   local cCbxPrecio     := "Ventas"
-   local nTotStkAct     := 0
-   local nTotStkPdr     := 0
-   local nTotStkPde     := 0
+   local cCbxPrecio           := "Ventas"
+   local nTotStkAct           := 0
+   local nTotStkPdr           := 0
+   local nTotStkPde           := 0
    local oBmpGeneral
    local oBmpPrecios
    local oBmpDescripciones
@@ -1590,19 +1592,12 @@ STATIC FUNCTION EdtRec( aTmp, aGet, dbfArticulo, oBrw, bWhen, bValid, nMode )
    local oBmpWeb
    local oBmpUbicaciones
    local oBmpImagenes
-   local aImpComanda    := aTiposImpresoras( dbfTImp )
+   local aImpComanda          := aTiposImpresoras( dbfTImp )
    local oImpComanda1
    local oImpComanda2
    local cImpComanda1
    local cImpComanda2
-
-   cCatOld              := aTmp[ ( dbfArticulo )->( fieldpos( "cCodCat" ) ) ]
-   cPrvOld              := aTmp[ ( dbfArticulo )->( fieldpos( "cPrvHab" ) ) ]
-   cImageOld            := aTmp[ ( dbfArticulo )->( fieldpos( "cImagen" ) ) ]
-
-   if Empty( aTmp[ ( dbfArticulo )->( fieldpos( "nColBtn" ) ) ] )
-      aTmp[ ( dbfArticulo )->( fieldpos( "nColBtn" ) ) ]    := GetSysColor( COLOR_BTNFACE )
-   end if
+   local cNombreOrdenComanda  := "" 
 
    CursorWait()
 
@@ -1675,6 +1670,15 @@ STATIC FUNCTION EdtRec( aTmp, aGet, dbfArticulo, oBrw, bWhen, bValid, nMode )
       aTmp[ ( dbfArticulo )->( fieldpos( "CodeBar"  ) ) ]   := ""
 
    end case
+
+   cCatOld                    := aTmp[ ( dbfArticulo )->( fieldpos( "cCodCat" ) ) ]
+   cPrvOld                    := aTmp[ ( dbfArticulo )->( fieldpos( "cPrvHab" ) ) ]
+   cImageOld                  := aTmp[ ( dbfArticulo )->( fieldpos( "cImagen" ) ) ]
+   cNombreOrdenComanda        := aTmp[ ( dbfArticulo )->( fieldpos( "cNomOrd" ) ) ]
+
+   if Empty( aTmp[ ( dbfArticulo )->( fieldpos( "nColBtn" ) ) ] )
+      aTmp[ ( dbfArticulo )->( fieldpos( "nColBtn" ) ) ]    := GetSysColor( COLOR_BTNFACE )
+   end if
 
    if Empty( aTmp[ ( dbfArticulo )->( fieldpos( "nTipBar" ) ) ] )
       aTmp[ ( dbfArticulo )->( fieldpos( "nTipBar" ) ) ]    := 1
@@ -1965,6 +1969,13 @@ STATIC FUNCTION EdtRec( aTmp, aGet, dbfArticulo, oBrw, bWhen, bValid, nMode )
       ID          460 ;
       WHEN        ( nMode != ZOOM_MODE ) ;
       OF          fldGeneral
+
+   REDEFINE COMBOBOX oNombreOrdenComanda ;
+      VAR            cNombreOrdenComanda ;
+      ITEMS          aNombreOrdenComanda ;
+      ID             470 ;
+      WHEN           ( nMode != ZOOM_MODE ) ;
+      OF             fldGeneral
 
    REDEFINE CHECKBOX aTmp[ ( dbfArticulo )->( fieldpos( "lTipAcc" ) ) ] ;
          ID       280 ;
@@ -4536,7 +4547,17 @@ STATIC FUNCTION EdtRec( aTmp, aGet, dbfArticulo, oBrw, bWhen, bValid, nMode )
    ----------------------------------------------------------------------------
    */
 
-   REDEFINE BUTTON aBtn[1] ;
+   REDEFINE BUTTON ;
+         ID       3 ;
+         OF       oDlg ;
+         ACTION   ( oFld:SetOption( oFld:nOption - 1 )  )
+
+   REDEFINE BUTTON ;
+         ID       4 ;
+         OF       oDlg ;
+         ACTION   ( oFld:SetOption( oFld:nOption + 1 ) )
+
+   REDEFINE BUTTON aBtn[ 1 ] ;
          ID       IDOK ;
 			OF 		oDlg ;
          WHEN     ( nMode != ZOOM_MODE ) ;
@@ -4566,6 +4587,9 @@ STATIC FUNCTION EdtRec( aTmp, aGet, dbfArticulo, oBrw, bWhen, bValid, nMode )
       fldImagenes:AddFastKey( VK_F3, {|| WinEdtRec( oBrwImg, bEdtImg, dbfTmpImg, aTmp ) } )
       fldImagenes:AddFastKey( VK_F4, {|| WinDelRec( oBrwImg, dbfTmpImg ) } )
 
+      oDlg:AddFastKey(  VK_F7, {|| oFld:SetOption( oFld:nOption - 1 ) } )
+      oDlg:AddFastKey(  VK_F8, {|| oFld:SetOption( oFld:nOption + 1 ) } )
+
       oDlg:AddFastKey(  VK_F5, {|| EndTrans( aTmp, aGet, oSay, oDlg, aBar, cSay[7], nMode, oImpComanda1, oImpComanda2, aImpComanda ) } )
 
    end if
@@ -4578,7 +4602,7 @@ STATIC FUNCTION EdtRec( aTmp, aGet, dbfArticulo, oBrw, bWhen, bValid, nMode )
    
    RECOVER USING oError
 
-      msgStop( ErrorMessage( oError ), "Imposible abrir todas las bases de datos ",  )
+      msgStop( ErrorMessage( oError ), "Imposible abrir el dialogo de artículos" )
 
    END SEQUENCE
 
@@ -5824,6 +5848,8 @@ Static Function EndTrans( aTmp, aGet, oSay, oDlg, aTipBar, cTipBar, nMode, oImpC
 
       aTmp[ ( dbfArticulo )->( fieldpos( "cTipImp1" ) ) ]      := aImpComanda[ oImpComanda1:nAt ]
       aTmp[ ( dbfArticulo )->( fieldpos( "cTipImp2" ) ) ]      := aImpComanda[ oImpComanda2:nAt ]
+
+      aTmp[ ( dbfArticulo )->( fieldpos( "cNomOrd" ) ) ]       := aNombreOrdenComanda[ oNombreOrdenComanda:nAt ]
 
       if !Empty( oActiveX )
          aTmp[ ( dbfArticulo )->( fieldpos( "mDesTec" ) ) ]    := oActiveX:DocumentHTML
@@ -15729,6 +15755,7 @@ function aItmArt()
    aAdd( aBase, { "nFacCnv",   "N", 16, 6, "Factor de conversión" ,                    "",                  "", "( cDbfArt )", nil } )
    aAdd( aBase, { "lSbrInt",   "L",  1, 0, "Lógico precio libre internet" ,            "",                  "", "( cDbfArt )", nil } )
    aAdd( aBase, { "nColBtn",   "N", 10, 0, "Color para táctil" ,                       "",                  "", "( cDbfArt )", nil } )
+   aAdd( aBase, { "cNomOrd",   "C", 30, 0, "Orden de comanda" ,                        "",                  "", "( cDbfArt )", nil } )
 
 return ( aBase )
 

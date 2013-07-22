@@ -4889,6 +4889,9 @@ Static Function ActDbfEmp( cCodEmp, aMsg, oAni, oDlg, oMsg, oMet, lActEmp )
          oMsg:SetText( "Añadiendo detalles de comentarios" )
          TDetComentarios():Create():SyncAllDbf()
 
+         oMsg:SetText( "Añadiendo ordenes de comandas" )
+         TOrdenComanda():Create():SyncAllDbf()
+
          oMsg:SetText( "Añadiendo programas de fidelización" )
          TFideliza():Create():SyncAllDbf()
 

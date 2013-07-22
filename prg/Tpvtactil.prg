@@ -167,6 +167,7 @@ CLASS TpvTactil
    DATA oFideliza
    DATA oTipArt
    DATA oFabricante
+   DATA oOrdenComanda
 
    DATA oBrwFamilias
    DATA oBrwLineas
@@ -272,6 +273,8 @@ CLASS TpvTactil
 
    DATA oBtnArticulosPageUp
    DATA oBtnArticulosPageDown
+
+   DATA oBtnCambiarOrden
    DATA oBtnAgregarLibre
    DATA oBtnCombinado
    DATA oBtnCalculadora
@@ -705,7 +708,9 @@ CLASS TpvTactil
 
       if ApoloMsgNoYes( "¿Desea eliminar el registro en curso?", "Confirme supresión", .t. )
 
-         ::oTemporalLinea:Delete()
+         // ::oTemporalLinea:Delete()
+
+         ::oTemporalLinea:lDelTil   := .t.
 
          ::oBrwLineas:Refresh()
 
@@ -1356,6 +1361,29 @@ CLASS TpvTactil
          end if
 
       end if
+
+      RETURN ( Self )
+
+   ENDMETHOD
+
+   //-----------------------------------------------------------------------//
+
+   INLINE METHOD SetOrdenComanda( lCombinando )
+
+      local cOrdenComanda           := ""
+
+      if ::lEmptyDocumento()
+         MsgInfo( "No hay producto para cambiar el orden de comanda." )
+         Return ( Self )
+      end if
+
+      cOrdenComanda                 := ::oOrdenComanda:Selector()
+
+      if !Empty( cOrdenComanda )
+         ::oTemporalLinea:cNomCmd   := cOrdenComanda
+      end if 
+
+      ::oBrwLineas:Refresh()
 
       RETURN ( Self )
 
@@ -2139,6 +2167,11 @@ METHOD OpenFiles() CLASS TpvTactil
       ::lOpenFiles            := .f.
    end if
 
+   ::oOrdenComanda            := TOrdenComanda():Create( cPatArt() )
+   if !::oOrdenComanda:OpenFiles()
+      ::lOpenfiles            := .f.
+   end if 
+
    ::cPictureImporte          := cPouDiv( cDivEmp(), ::oDivisas:cAlias )        // Picture de la divisa
    ::cPictureTotal            := cPorDiv( cDivEmp(), ::oDivisas:cAlias )        // Picture de la divisa redondeada
    ::nDecimalesImporte        := nDouDiv( cDivEmp(), ::oDivisas:cAlias )        // Decimales
@@ -2534,6 +2567,10 @@ METHOD CloseFiles() CLASS TpvTactil
       ::oTransportista:End()
    end if
 
+   if !Empty( ::oOrdenComanda )
+      ::oOrdenComanda:End()
+   end if
+
    ::oTiketCabecera                          := nil
    ::oTiketLinea                             := nil
    ::oTiketCobro                             := nil
@@ -2623,6 +2660,7 @@ METHOD CloseFiles() CLASS TpvTactil
    ::oOferta                                 := nil
    ::oTipoVenta                              := nil
    ::oTransportista                          := nil
+   ::oOrdenComanda                           := nil 
    ::oOfficeBar                              := nil
 
 Return .t.
@@ -2728,13 +2766,14 @@ METHOD Resource() CLASS TpvTactil
 
    ::oBtnArticulosPageUp         := TButtonBmp():ReDefine( 500, {|| ::oLstArticulos:PageUp() },    ::oDlg, , , .f., , , , .f., "Navigate_up2" )
    ::oBtnArticulosPageDown       := TButtonBmp():ReDefine( 501, {|| ::oLstArticulos:PageDown() },  ::oDlg, , , .f., , , , .f., "Navigate_down2" )
+
+   ::oBtnCambiarOrden            := TButtonBmp():ReDefine( 505, {|| ::SetOrdenComanda() },         ::oDlg, , , .f., , , , .f., "Free_Bullet_32" ) //
    ::oBtnAgregarLibre            := TButtonBmp():ReDefine( 502, {|| ::AgregarLibre() },            ::oDlg, , , .f., , , , .f., "Free_Bullet_32" ) //
    ::oBtnCombinado               := TButtonBmp():ReDefine( 503, {|| ::SetCombinando() },           ::oDlg, , , .f., , , , .f., "Cocktail_32" )
    ::oBtnCalculadora             := TButtonBmp():ReDefine( 504, {|| ::SetCalculadora() },          ::oDlg, , , .f., , , , .f., "Calculator_32" )
 
    /*
    Botones para el orden de las comandas---------------------------------------
-   */ 
 
    ::oLstOrden                   := C5ImageView():Redefine( 700, ::oDlg )
    ::oLstOrden:oFont             := ::oFntBrw
@@ -2761,6 +2800,7 @@ METHOD Resource() CLASS TpvTactil
    ::oLstOrden:AddItem( "", "Primeros",   rgb( 255, 255, 255 ) )
    ::oLstOrden:AddItem( "", "Segundos",   rgb( 255, 255, 255 ) )
    ::oLstOrden:AddItem( "", "Psotres",    rgb( 255, 255, 255 ) )
+   */ 
 
    /*
    Datos de la sala y del Usuario-------------------------------------------
@@ -2813,21 +2853,21 @@ METHOD Resource() CLASS TpvTactil
    Browse de Lineas---------------------------------------------------------
    */
 
-   ::oBrwLineas                        := IXBrowse():New( ::oDlg )
+   ::oBrwLineas                  := IXBrowse():New( ::oDlg )
 
-   ::oBrwLineas:bClrSel                := {|| { CLR_BLACK, Rgb( 229, 229, 229 ) } }
-   ::oBrwLineas:bClrSelFocus           := {|| { CLR_BLACK, Rgb( 167, 205, 240 ) } }
+   ::oBrwLineas:bClrSel          := {|| if( !::oTemporalLinea:lDelTil, { CLR_BLACK, Rgb( 229, 229, 229 ) }, { CLR_BLACK, Rgb( 255, 0, 0 ) } ) }
+   ::oBrwLineas:bClrSelFocus     := {|| if( !::oTemporalLinea:lDelTil, { CLR_BLACK, Rgb( 167, 205, 240 ) }, { CLR_BLACK, Rgb( 255, 0, 0 ) } ) }
 
-   ::oBrwLineas:nClrText               := {|| if( ::oTemporalLinea:lKitChl, CLR_GRAY, CLR_BLACK ) }
+   ::oBrwLineas:nClrText         := {|| if( ::oTemporalLinea:lKitChl, CLR_GRAY, CLR_BLACK ) }
 
-   ::oBrwLineas:lRecordSelector        := .f.
-   ::oBrwLineas:lHScroll               := .f.
-   ::oBrwLineas:lVScroll               := .f.
-   ::oBrwLineas:oFont                  := ::oFntBrw
+   ::oBrwLineas:lRecordSelector  := .f.
+   ::oBrwLineas:lHScroll         := .f. 
+   ::oBrwLineas:lVScroll         := .f.
+   ::oBrwLineas:oFont            := ::oFntBrw
 
-   ::oBrwLineas:nMarqueeStyle          := MARQSTYLE_HIGHLROW
-   ::oBrwLineas:nRowHeight             := 36
-   ::oBrwLineas:cName                  := "Tactil.Lineas"
+   ::oBrwLineas:nMarqueeStyle    := MARQSTYLE_HIGHLROW
+   ::oBrwLineas:nRowHeight       := 36
+   ::oBrwLineas:cName            := "Tactil.Lineas"
 
    ::oTemporalLinea:SetBrowse( ::oBrwLineas )
 
@@ -2840,6 +2880,13 @@ METHOD Resource() CLASS TpvTactil
       :nWidth                 := 20
       :nDataStrAlign          := AL_RIGHT
       :nHeadStrAlign          := AL_RIGHT
+   end with
+
+   with object ( ::oBrwLineas:AddCol() )
+      :cHeader                := "Or. Orden comanda"
+      :lHide                  := .t.
+      :bEditValue             := {|| ::oOrdenComanda:cAbreviatura( ::oTemporalLinea:cNomOrd ) } 
+      :nWidth                 := 30
    end with
 
    with object ( ::oBrwLineas:AddCol() )
@@ -2906,7 +2953,7 @@ METHOD Resource() CLASS TpvTactil
    ::oBtnLineasBottom         := TButtonBmp():ReDefine( 121, {|| ::oBrwLineas:GoDown() },  ::oDlg, , , .f., , , , .f., "Navigate_down" )
    ::oBtnLineasDelete         := TButtonBmp():ReDefine( 122, {|| ::EliminarLinea() },      ::oDlg, , , .f., , , , .f., "Garbage_Empty_32" )
    ::oBtnLineasComentarios    := TButtonBmp():ReDefine( 123, {|| ::InitComentarios() },    ::oDlg, , , .f., , , , .f., "Message_32" )
-   ::oBtnLineasEscandallos    := TButtonBmp():ReDefine( 124, {|| ::lShowEscandallos() },   ::oDlg, , , .f., , , , .f., "Text_code_32" )
+   ::oBtnLineasEscandallos    := TButtonBmp():ReDefine( 124, {|| ::lShowEscandallos() },   ::oDlg, , , .f., , , , .f., "Text_code_32" ) 
 
    /*
    TButtonBmp():ReDefine( 123, {|| ::OnClickDescuento() },                                  ::oDlg, , , .f., , , , .f., "Percent_32" )
@@ -3377,7 +3424,9 @@ METHOD ResizedResource() CLASS TpvTactil
    ::oBtnArticulosPageUp:Move( ::oBtnArticulosPageUp:nTop + nDialogHeight, , , , .f. )
    ::oBtnArticulosPageDown:Move( ::oBtnArticulosPageDown:nTop + nDialogHeight, , , , .f. )
 
+   ::oBtnCambiarOrden:Move( ::oBtnCambiarOrden:nTop + nDialogHeight, ::oBtnCambiarOrden:nLeft + nDialogWidth, , , .f. )
    ::oBtnAgregarLibre:Move( ::oBtnAgregarLibre:nTop + nDialogHeight, ::oBtnAgregarLibre:nLeft + nDialogWidth, , , .f. )
+
    ::oBtnCombinado:Move( ::oBtnCombinado:nTop + nDialogHeight, ::oBtnCombinado:nLeft + nDialogWidth, , , .f. )
    
    // ::oBtnCalculadora:Move( ::oBtnCalculadora:nTop + nDialogHeight, ::oBtnCalculadora:nLeft + nDialogWidth, , , .f. )
@@ -4309,6 +4358,8 @@ METHOD AgregarLineas( cCodigoArticulo ) CLASS TpvTactil
 
             ::oTemporalLinea:lInPromo     := ::oFideliza:InPrograma( ::oArticulo:Codigo, ::oTiketCabecera:dFecTik, ::oArticulo )
 
+            ::oTemporalLinea:cNomOrd      := ::oArticulo:cNomOrd
+
             ::oTemporalLinea:Save()
 
             /*
@@ -4367,14 +4418,13 @@ Return ( .t. )
 
 METHOD nPrecioArticulo() CLASS TpvTactil
 
-   local nPrecio        := 0
    local sOferta
-   local nTotalLinea    := 0
    local cCodGrpCli
+   local nPrecio        := 0
+   local nTotalLinea    := 0
    local cCodArt        := ::oArticulo:Codigo
    local cCodCli        := ::oTiketCabecera:cCliTik
    local nTarifa        := ::nTarifaSolo
-
 
    /*
    Obtenemos el precio normal del artículo-------------------------------------
@@ -4453,7 +4503,8 @@ METHOD lAcumulaArticulo() CLASS TpvTactil
             ::oTemporalLinea:nPvpTil == nPrecioLinea                       .and. ;
             ::oTemporalLinea:nDtoLin == 0                                  .and. ;
             Empty( ::oTemporalLinea:cComent )                              .and. ;
-            Rtrim( ::oTemporalLinea:cNomTil ) == ::cNombreArticulo()
+            Rtrim( ::oTemporalLinea:cNomTil ) == ::cNombreArticulo()       .and. ;
+            ::oTemporalLinea:cNomOrd == ::oArticulo:cNomOrd            
 
             /*
             Sumamos------------------------------------------------------------
@@ -5574,7 +5625,11 @@ Method lLineaValida( uTmpL, lExcluirContadores ) CLASS TpvTactil
 
    DEFAULT uTmpL        := ::oTiketLinea
 
-   if uTmpL:lControl
+   /*
+   Si es una linea de control o la hemos marcado-------------------------------
+   */
+
+   if uTmpL:lControl .or. uTmpL:lDelTil
       Return .f.
    end if
 

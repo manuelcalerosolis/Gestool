@@ -362,6 +362,7 @@ Fabricantes.prg         \
 ExportaTarifas.prg      \
 TComentarios.prg        \
 TDetComentarios.prg     \
+OrdenComanda.prg 			\
 IBrowse.prg             \
 Fideliza.prg            \
 TDetFideliza.prg        \
@@ -769,6 +770,7 @@ Fabricantes.obj         \
 ExportaTarifas.obj      \
 TComentarios.obj        \
 TDetComentarios.obj     \
+OrdenComanda.obj 			\
 IBrowse.obj             \
 PlantillaXML.obj        \
 Fideliza.obj            \
@@ -1149,6 +1151,7 @@ $(OBJ)\ExportaTarifas.obj       +
 $(OBJ)\TDetOrdCar.obj           +
 $(OBJ)\TComentarios.obj         +
 $(OBJ)\TDetComentarios.obj      +
+$(OBJ)\OrdenComanda.obj 		  +
 $(OBJ)\IBrowse.obj              +
 $(OBJ)\PlantillaXML.obj         +
 $(OBJ)\Fideliza.obj             +

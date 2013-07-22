@@ -35,7 +35,7 @@ CLASS TDbf
     DATA nArea, FieldCount, hDataFile, Count,       ;
          nType, nLang, nRecno                       AS NUMERIC
     DATA lRecycle, lShared, lReadOnly, lProtec,     ;
-         lScope, Eof, Bof,        ;
+         lScope,                                    ;
          lMemo, lValid, lAppend, lCount, lFilter,   ;
          lBuffer                                    AS LOGICAL
     DATA bNetError, bOnCreate, bOnOpen, bOnClose,   ;
@@ -49,18 +49,16 @@ CLASS TDbf
 
     METHOD  New( cFile, cName, cRDD, cComment, cPath )          CONSTRUCTOR
     METHOD  Use( cFile, cPath, cComment )                       CONSTRUCTOR
-    METHOD  NewOpen( cFile, cName, cRDD, cComment, cPath, ;
-               lRecycle, lShared, lReadOnly, lProtec )          CONSTRUCTOR
+    METHOD  NewOpen( cFile, cName, cRDD, cComment, cPath, lRecycle, lShared, lReadOnly, lProtec )          CONSTRUCTOR
     METHOD  AutoField()
     METHOD  AutoIndex()
-    METHOD  Activate( lRecycle, lShared, lReadOnly, ;
-                      lProtec, lAutoField, lAutoIndex, lOpen, lNewArea )
+    METHOD  Activate( lRecycle, lShared, lReadOnly, lProtec, lAutoField, lAutoIndex, lOpen, lNewArea )
     METHOD  ReActivate()
 
 //-- WORKAREA METHODS -------------------------------------------------------//
 
-    METHOD  CheckEofBof()
-
+    METHOD  Bof()       INLINE ( ::nArea )->( Bof() )
+    METHOD  Eof()       INLINE ( ::nArea )->( Eof() )
     METHOD  Found()     INLINE ( ::nArea )->( Found() )
     MESSAGE GoTo()      METHOD _GoTo( nRec )
     MESSAGE GoTop()     METHOD _GoTop()
@@ -128,15 +126,10 @@ CLASS TDbf
 
 //-- ORDER MANAGEMENT METHODS ------------------------------------------------//
 
-    /* Sistemas tradicionales de clipper */
-
     METHOD OrdBagExt() INLINE ( ::nArea )->( OrdBagExt() )
     METHOD OrdBagName( cnTag ) INLINE ( ::nArea )->( OrdBagName( cnTag ) )
-    METHOD OrdCreate( cFile, cName, cExp, bExp, lUniq ) ;
-        INLINE ( ::nArea )->( OrdCreate( cFile, cName, cExp, bExp, lUniq ) ), ;
-               ::AutoIndex()
-    METHOD OrdDestroy( cnTag, cFile ) ;
-        INLINE ( ::nArea )->( OrdDestroy( cnTag, cFile ) ), ::AutoIndex()
+    METHOD OrdCreate( cFile, cName, cExp, bExp, lUniq ) INLINE ( ::nArea )->( OrdCreate( cFile, cName, cExp, bExp, lUniq ) ), ::AutoIndex()
+    METHOD OrdDestroy( cnTag, cFile )                   INLINE ( ::nArea )->( OrdDestroy( cnTag, cFile ) ), ::AutoIndex()
     METHOD OrdFor( cnTag, cFile ) INLINE ( ::nArea )->( OrdFor( cnTag, cFile ) )
     METHOD OrdKey( cnTag, cFile ) INLINE ( ::nArea )->( OrdKey( cnTag, cFile ) )
     METHOD OrdKeyNo()      INLINE ( ::nArea )->( OrdKeyNo() )                             // mcs
@@ -153,8 +146,6 @@ CLASS TDbf
     METHOD OrdNumber( cName, cFile ) INLINE ( ::nArea )->( OrdNumber( cName, cFile ) )
     METHOD OrdDescend() INLINE ( ::nArea )->( OrdDescend() )
     MESSAGE OrdSetFocus() METHOD _OrdSetFocus( cnTag, cFile )
-
-    /* Sistemas nuevos de TDbf */
 
     METHOD IdxByTag( cnTag, cFile )
     METHOD IdxByName( cName, cFile )
@@ -231,9 +222,9 @@ CLASS TDbf
     METHOD  GetStatus()
     METHOD  SetStatus()
 
-    METHOD  aMsg( nMsg )    INLINE GetMsg( ::nLang )[ nMsg ]
-    METHOD  DbError( Error ) ;
-        INLINE MsgInfo( if( ValType( Error ) != "N", Error, ::aMsg( Error ) ) )
+    METHOD  aMsg( nMsg )      INLINE GetMsg( ::nLang )[ nMsg ]
+    METHOD  DbError( Error )  INLINE MsgInfo( if( ValType( Error ) != "N", Error, ::aMsg( Error ) ) )
+
 
     //Nuevos por manuel calero
 
@@ -312,8 +303,6 @@ METHOD New( cFile, cName, cRDD, cComment, cPath ) CLASS TDbf
     ::lBuffer     := .f.
     ::lScope      := .f.
     ::lFilter     := .f.
-    ::Eof         := .f.
-    ::Bof         := .f.
 
     ::bLFor       := { || .t. }
     ::bLWhile     := { || .t. }
@@ -480,28 +469,11 @@ return( ::oIndex )
 //-- WORKAREA METHODS --------------------------------------------------------//
 //----------------------------------------------------------------------------//
 
-METHOD CheckEofBof() CLASS TDbf
-
-    if !::lScope
-        ::Eof := ( ::nArea )->( Eof() )
-        ::Bof := ( ::nArea )->( Bof() )
-    endif
-
-    if ::Eof
-        eval( ::bEof, Self )
-    elseif ::Bof
-        eval( ::bBof, Self )
-    endif
-
-return( Self )
-
 //----------------------------------------------------------------------------//
 //
 METHOD _GoTo( nRecNo ) CLASS TDbf
 
     ( ::nArea )->( DbGoTo( nRecNo ) )
-
-    ::CheckEofBof()
 
 return( Self )
 
@@ -511,8 +483,6 @@ METHOD _GoTop() CLASS TDbf
 
     ( ::nArea )->( DbGoTop() )
 
-    ::CheckEofBof()
-
 return( Self )
 
 //---------------------------------------------------------------------------//
@@ -520,8 +490,6 @@ return( Self )
 METHOD _GoBottom() CLASS TDbf
 
     ( ::nArea )->( DbGoBottom() )
-
-    ::CheckEofBof()
 
 return( Self )
 
@@ -533,9 +501,6 @@ METHOD Seek( uVal, lSoft, lLast ) CLASS TDbf
 
     local lRet := .f.
 
-    ::Eof      := .f.
-    ::Bof      := .f.
-
     DEFAULT lSoft := Set( _SET_SOFTSEEK )
     DEFAULT lLast := .f.
 
@@ -544,10 +509,9 @@ METHOD Seek( uVal, lSoft, lLast ) CLASS TDbf
     if ::lScope
         if !Eval( ::oIndex:bBottom, Self )
             ( ::nArea )->( dbGoTo( 0 ) )
-            ::Eof := .t.
             lRet  := .f.
         elseif !eval( ::oIndex:bTop, Self )
-            if( lSoft, ::GoTop(), ( ( ::nArea )->( dbGoTo( 0 ) ), ::Eof := .t. ) )
+            if( lSoft, ::GoTop(), ( ( ::nArea )->( dbGoTo( 0 ) ) ) )
             lRet  := .f.
         endif
     endif
@@ -586,9 +550,6 @@ return( lRet )
 
 METHOD _Skip( nSkip ) CLASS TDbf
 
-    ::Eof := .f.
-    ::Bof := .f.
-
     ( ::nArea )->( DbSkip( nSkip ) )
 
     if ::lScope
@@ -596,20 +557,18 @@ METHOD _Skip( nSkip ) CLASS TDbf
         if nSkip > 0
             if !eval( ::oIndex:bBottom, Self )
                 ( ::nArea )->( DbGoTo( 0 ) )
-                ::Eof := .t.
                 eval( ::bEof, Self )
             endif
         else
             if !eval( ::oIndex:bTop, Self )
                 iScpTop( Self )
-                ::Bof := .t.
                 eval( ::bBof, Self )
             endif
         endif
     else
-        if ::Eof := ( ::nArea )->( Eof() )
+        if ( ::Eof() )
             eval( ::bEof, Self )
-        elseif ::Bof := ( ::nArea )->( Bof() )
+        elseif ( ::Bof() )
             eval( ::bBof, Self )
         endif
     endif
@@ -623,13 +582,8 @@ METHOD Skipper( nSkip ) CLASS TDbf
 
     local nSkipped := 0
 
-    ::Eof := .f.
-    ::Bof := .f.
 
     DO CASE
-    CASE ( ::nArea )->( LastRec() ) == 0
-        ::Eof := .t.
-        ::Bof := .t.
     CASE nSkip > 0
         if ::lScope
             while nSkipped < nSkip
@@ -638,18 +592,16 @@ METHOD Skipper( nSkip ) CLASS TDbf
                     ++nSkipped
                 else
                     ( ::nArea )->( DbSkip( -1 ) )
-                    ::Eof := .t.
                     EXIT
                 endif
             end
         else
             while nSkipped < nSkip
                 ( ::nArea )->( DbSkip( 1 ) )
-                if !( ::nArea )->( Eof() )
+                if !( ::Eof() )
                     ++nSkipped
                 else
                     ( ::nArea )->( DbSkip( -1 ) )
-                    ::Eof := .t.
                     EXIT
                 endif
             end
@@ -661,19 +613,16 @@ METHOD Skipper( nSkip ) CLASS TDbf
                 if eval( ::oIndex:bTop, Self )
                     --nSkipped
                 else
-                    if( !( ::nArea )->( Bof() ), ;
-                        ( ::nArea )->( DbSkip( 1 ) ), )
-                    ::Bof := .t.
+                    if( !( ::Bof() ), ( ::nArea )->( dbSkip( 1 ) ), )
                     EXIT
                 endif
             end
         else
             while nSkipped > nSkip
                 ( ::nArea )->( DbSkip( -1 ) )
-                if !( ::nArea )->( Bof() )
+                if !( ::Bof() )
                     --nSkipped
                 else
-                    ::Bof := .t.
                     EXIT
                 endif
             end
@@ -689,13 +638,7 @@ METHOD SkipperLoad( nSkip ) CLASS TDbf
 
     local nSkipped := 0
 
-    ::Eof := .f.
-    ::Bof := .f.
-
     DO CASE
-    CASE ( ::nArea )->( LastRec() ) == 0
-        ::Eof := .t.
-        ::Bof := .t.
     CASE nSkip > 0
         if ::lScope
             while nSkipped < nSkip
@@ -705,19 +648,17 @@ METHOD SkipperLoad( nSkip ) CLASS TDbf
                     ::Load()
                 else
                     ( ::nArea )->( DbSkip( -1 ) )
-                    ::Eof := .t.
                     EXIT
                 endif
             end
         else
             while nSkipped < nSkip
                 ( ::nArea )->( DbSkip( 1 ) )
-                if !( ::nArea )->( Eof() )
+                if !( ::Eof() )
                     ++nSkipped
                     ::Load()
                 else
                     ( ::nArea )->( DbSkip( -1 ) )
-                    ::Eof := .t.
                     EXIT
                 endif
             end
@@ -730,20 +671,17 @@ METHOD SkipperLoad( nSkip ) CLASS TDbf
                     --nSkipped
                     ::Load()
                 else
-                    if( !( ::nArea )->( Bof() ), ;
-                        ( ::nArea )->( DbSkip( 1 ) ), )
-                    ::Bof := .t.
+                    if( !( ::Bof() ), ( ::nArea )->( dbSkip( 1 ) ), )
                     EXIT
                 endif
             end
         else
             while nSkipped > nSkip
-                ( ::nArea )->( DbSkip( -1 ) )
-                if !( ::nArea )->( Bof() )
+                ( ::nArea )->( dbSkip( -1 ) )
+                if !( ::Bof() )
                     --nSkipped
                     ::Load()
                 else
-                    ::Bof := .t.
                     EXIT
                 endif
             end
@@ -811,7 +749,7 @@ METHOD _Delete( lNext ) CLASS TDbf
 
    if lDeleted .and. lNext
       ( ::nArea )->( OrdKeyGoTo( nRecNo ) )
-      if ( ::nArea )->( Eof() ) .or. nNext == nRecNo
+      if ( ::Eof() ) .or. nNext == nRecNo
          ( ::nArea )->( dbGoBottom() )
       end if
    end if
@@ -1062,7 +1000,7 @@ METHOD _Eval( bBlock, bFor, bWhile, nNext, nRecord, lRest ) CLASS TDbf
                 ( ::nArea )->( DbSkip() )
             enddo
         else
-           while !( ::nArea )->( Eof() ) .and. ;
+           while !( ::Eof() ) .and. ;
                  ( ::nArea )->( eval( bWhile, Self ) ) .and. nNext > 0
                if ( ::nArea )->( eval( bFor, Self ) )
                    ( ::nArea )->( eval( bBlock, Self ) )
@@ -1091,8 +1029,6 @@ METHOD Locate( bFor, bWhile, lRest ) CLASS TDbf
     local lBuf := ::lBuffer
 
     ::lBuffer := .f.
-    ::Eof     := .f.
-    ::Bof     := .f.
 
     ::bLFor    := if( ValType( bFor )   == "B", bFor,   ::bLFor )
     ::bLWhile  := if( ValType( bWhile ) == "B", bWhile, ::bLWhile )
@@ -1110,8 +1046,7 @@ METHOD Locate( bFor, bWhile, lRest ) CLASS TDbf
          ( ::nArea )->( DbSkip() )
       enddo
    else
-      while !( ::Eof := ( ::nArea )->( Eof() ) ) .and. ;
-            ( ::nArea )->( eval( ::bLWhile, Self ) )
+      while !( ::Eof() ) .and. ( ::nArea )->( eval( ::bLWhile, Self ) )
          if ( ::nArea )->( eval( ::bLFor, Self ) )
             EXIT
          endif
@@ -1121,7 +1056,7 @@ METHOD Locate( bFor, bWhile, lRest ) CLASS TDbf
 
    ::lBuffer := lBuf
 
-return( !::Eof )
+return( self )
 
 
 //----------------------------------------------------------------------------//
@@ -1505,7 +1440,7 @@ METHOD _SetScope( uTop, uBottom ) CLASS TDbf
     if ::oIndex:cName == "_NONE_"
             ::DbError( dbNOORDER )
     else
-        ::Eof := ::Bof := ::lScope := .f.
+        ::lScope := .f.
 
         if uTop == nil .and. uBottom != nil
             cType := ValType( uBottom )
@@ -2049,7 +1984,7 @@ METHOD SetAllMark( cMark )
    cMark          := if( ValType( cMark ) != "C", "#", cMark )
 
    ::GoTop()
-   while !::eof()
+   while !( ::Eof() )
 
       ::lSetMarkRec( cMark )
       ::Skip()
@@ -2070,7 +2005,7 @@ METHOD nGetAllMark( cMark, cAlias )
    cMark          := if( ValType( cMark ) != "C", "#", cMark )
 
    ::GoTop()
-   while !::eof()
+   while !( ::Eof() )
 
       if ::lMarked( cMark )
          ++nNum
@@ -2222,7 +2157,7 @@ Method aDbfToArray() class TDbf
 
   ::First()
 
-  while !( ::nArea )->( Eof() )  
+  while !( ::Eof() )  
 
     aAdd( aDbf, ::aScatter() )
 
