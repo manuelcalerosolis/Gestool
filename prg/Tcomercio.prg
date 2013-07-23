@@ -398,6 +398,8 @@ CLASS TComercio
 
    METHOD InsertPropiedadesProductPrestashop()
 
+   METHOD nIvaProduct( cCodArt )
+
 END CLASS
 
 //---------------------------------------------------------------------------//
@@ -6681,8 +6683,8 @@ Method ImportarPrestashop()
 
    ::oBtnCancel:Disable()
 
-   oBlock            := ErrorBlock( { | oError | Break( oError ) } )
-   BEGIN SEQUENCE
+   /*oBlock            := ErrorBlock( { | oError | Break( oError ) } )
+   BEGIN SEQUENCE*/
 
    if ::OpenFiles()
 
@@ -6745,13 +6747,13 @@ Method ImportarPrestashop()
 
    end if
 
-   RECOVER USING oError
+   /*RECOVER USING oError
 
       msgStop( ErrorMessage( oError ), "Error al conectarnos con la base de datos" )
 
    END SEQUENCE
 
-   ErrorBlock( oBlock )
+   ErrorBlock( oBlock )*/
 
    ::Closefiles()
 
@@ -10338,7 +10340,6 @@ Return ( self )
 
 METHOD AppendPedidoprestashop()
 
-   local oQuery                  := TMSQuery():New( ::oCon, 'SELECT * FROM ps_orders' )
    local cSerPed                 := ""
    local nNumPed                 := 0
    local cSufPed                 := ""
@@ -10346,6 +10347,7 @@ METHOD AppendPedidoprestashop()
    local oQueryL
    local nNumLin                 := 1
    local cCodWeb                 := 1
+   local oQuery                  := TMSQuery():New( ::oCon, 'SELECT * FROM ' + ::cPrefixTable( "orders" ) )
 
    if oQuery:Open()
 
@@ -10386,7 +10388,7 @@ METHOD AppendPedidoprestashop()
                cSufPed                 := RetSufEmp()
 
                SET DATE FORMAT "yyyy/mm/dd"
-               dFecha                  := Ctod( Left( oQuery:FieldGet( 43 ), 10 ) )
+               dFecha                  := Ctod( Left( oQuery:FieldGetByName( "date_add" ), 10 ) )
                SET DATE FORMAT "dd/mm/yyyy"
 
                ::oPedCliT:Append()
@@ -10395,7 +10397,7 @@ METHOD AppendPedidoprestashop()
                ::oPedCliT:cSerPed      := cSerPed
                ::oPedCliT:nNumPed      := nNumPed
                ::oPedCliT:cSufPed      := cSufPed
-               ::oPedCliT:cSuPed       := oQuery:FieldGet( 2 )
+               ::oPedCliT:cSuPed       := oQuery:FieldGetByName( "reference" )
                ::oPedCliT:cTurPed      := cCurSesion()
                ::oPedCliT:dFecPed      := dFecha
                ::oPedCliT:cCodAlm      := oUser():cAlmacen()
@@ -10408,8 +10410,8 @@ METHOD AppendPedidoprestashop()
                ::oPedCliT:lSndDoc      := .t.
                ::oPedCliT:lIvaInc      := uFieldEmpresa( "lIvaInc" )
                ::oPedCliT:cManObr      := Padr( "Gastos envio", 250 )
-               ::oPedCliT:nManObr      := oQuery:FieldGet( 33 )
-               ::oPedCliT:nIvaMan      := oQuery:FieldGet( 34 )
+               ::oPedCliT:nManObr      := oQuery:FieldGetByName( "total_shipping_tax_excl" )
+               ::oPedCliT:nIvaMan      := oQuery:FieldGetByName( "carrier_tax_rate" )
                ::oPedCliT:lCloPed      := .f.
                ::oPedCliT:cCodUsr      := cCurUsr()
                ::oPedCliT:dFecCre      := GetSysDate()
@@ -10419,11 +10421,11 @@ METHOD AppendPedidoprestashop()
                ::oPedCliT:lInternet    := .t.
                ::oPedCliT:cCodWeb      := oQuery:FieldGet( 1 )
                cCodWeb                 := oQuery:FieldGet( 1 )
-               ::oPedCliT:nTotNet      := oQuery:FieldGet( 29 )
-               ::oPedCliT:nTotIva      := oQuery:FieldGet( 26 ) - ( oQuery:FieldGet( 29 ) + oQuery:FieldGet( 32 ) )
-               ::oPedCliT:nTotPed      := oQuery:FieldGet( 26 )
+               ::oPedCliT:nTotNet      := oQuery:FieldGetByName( "total_products" )
+               ::oPedCliT:nTotIva      := oQuery:FieldGetByName( "total_paid_tax_incl" ) - ( oQuery:FieldGetByName( "total_products" ) + oQuery:FieldGetByName( "total_shipping_tax_incl" ) )
+               ::oPedCliT:nTotPed      := oQuery:FieldGetByName( "total_paid_tax_incl" )
 
-               if ::oCli:SeekInOrd( Str( oQuery:FieldGet( 7 ), 11 ) , "cCodWeb" )
+               if ::oCli:SeekInOrd( Str( oQuery:FieldGetByName( "id_customer" ), 11 ) , "cCodWeb" )
 
                   ::oPedCliT:cCodCli   := ::oCli:Cod
                   ::oPedCliT:cNomCli   := ::oCli:Titulo
@@ -10443,7 +10445,7 @@ METHOD AppendPedidoprestashop()
                Introducimos las lineas del pedido------------------------------
                */
 
-               oQueryL            := TMSQuery():New( ::oCon, "SELECT * FROM ps_order_detail WHERE id_order=" + AllTrim( Str( cCodWeb ) ) )
+               oQueryL            := TMSQuery():New( ::oCon, "SELECT * FROM " + ::cPrefixtable( "order_detail" ) + " WHERE id_order=" + AllTrim( Str( cCodWeb ) ) )
 
                if oQueryL:Open()
 
@@ -10458,18 +10460,20 @@ METHOD AppendPedidoprestashop()
                         ::oPedCliL:cSerPed        := cSerPed
                         ::oPedCliL:nNumPed        := nNumPed
                         ::oPedCliL:cSufPed        := cSufPed
-                        ::oPedCliL:cDetalle       := oQueryL:FieldGet( 8 )
-                        ::oPedCliL:mLngDes        := oQueryL:FieldGet( 8 )
+                        ::oPedCliL:cDetalle       := oQueryL:FieldGetByName( "product_name" )
+                        ::oPedCliL:mLngDes        := oQueryL:FieldGetByName( "product_name" )
                         ::oPedCliL:nCanPed        := 1
-                        ::oPedCliL:nUniCaja       := oQueryL:FieldGet( 9 )
-                        ::oPedCliL:nPreDiv        := oQueryL:FieldGet( 14 )
+                        ::oPedCliL:nUniCaja       := oQueryL:FieldGetByName( "product_quantity" )
+                        ::oPedCliL:nPreDiv        := oQueryL:FieldGetByName( "product_price" )
                         ::oPedCliL:dFecha         := dFecha
                         ::oPedCliL:nNumLin        := nNumLin
                         ::oPedCliL:cAlmLin        := cDefAlm()
                         ::oPedCliL:nTarLin        := 1
+                        ::oPedCliL:nDto           := oQueryL:FieldGetByName( "reduction_percent" )
+                        ::oPedCliL:nDtoDiv        := oQueryL:FieldGetByName( "reduction_amount" )
+                        ::oPedCliL:nIva           := ::nIvaProduct( oQueryL:FieldGetByName( "product_id" ) )
 
-
-                        if ::oArt:SeekInOrd( Str( oQueryL:FieldGet( 6 ), 11 ) , "cCodWeb" )
+                        if ::oArt:SeekInOrd( Str( oQueryL:FieldGetByName( "product_id" ), 11 ) , "cCodWeb" )
 
                            ::oPedCliL:cRef        := ::oArt:Codigo
                            ::oPedCliL:cUnidad     := ::oArt:cUnidad
@@ -10486,7 +10490,6 @@ METHOD AppendPedidoprestashop()
                            ::oPedCliL:cCodPr2     := ::oArt:cCodPrp2
                            ::oPedCliL:cValPr1     := ::GetValPrp( oRetFld( ::oArt:cCodPrp1, ::oPro, "cCodWeb", "cCodPro" ), oQueryL:FieldGet( 7 ) )
                            ::oPedCliL:cValPr2     := ::GetValPrp( oRetFld( ::oArt:cCodPrp2, ::oPro, "cCodWeb", "cCodPro" ), oQueryL:FieldGet( 7 ) )
-                           ::oPedCliL:nIva        := nIva( ::oIva:cAlias, ::oArt:TipoIva )
 
                         end if
 
@@ -10531,6 +10534,31 @@ METHOD AppendPedidoprestashop()
    oQuery   := nil
 
 Return ( self )
+
+//---------------------------------------------------------------------------//
+
+METHOD nIvaProduct( cCodArt ) Class TComercio
+
+   local nIva        := 0
+   local oQuery
+   local cCommand    := ""
+   
+   cCommand    := 'SELECT * FROM ' + ::cPrefixTable( "tax" ) + ;
+                  ' INNER JOIN ' + ::cPreFixTable( "tax_rule" ) + ' ON ' + ::cPrefixTable( "tax" ) + '.id_tax = ' + ::cPrefixTable( "tax_rule" ) + '.id_tax ' +; 
+                  ' INNER JOIN ' + ::cPrefixTable( "product" ) + ' ON ' + ::cPrefixTable( "tax_rule" ) + '.id_tax_rules_group = ' + ::cPrefixTable( "product" ) + '.id_tax_rules_group ' + ;
+                  ' WHERE ' + ::cPrefixTable( "product" ) + '.id_product = ' + AllTrim( Str( cCodArt ) )
+
+   oQuery     := TMSQuery():New( ::oCon, cCommand )
+
+   if oQuery:Open() .and. oQuery:RecCount() > 0
+
+      oQuery:GoTop()
+
+      nIva     := oQuery:FieldGetByName( "rate" )
+
+   end if
+
+Return ( nIva )
 
 //---------------------------------------------------------------------------//
 

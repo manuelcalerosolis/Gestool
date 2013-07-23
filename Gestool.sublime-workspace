@@ -4,16 +4,36 @@
 		"selected_items":
 		[
 			[
+				"id_pro",
+				"id_product"
+			],
+			[
+				"oquer",
+				"oQuery1"
+			],
+			[
+				"id_ta",
+				"id_tax_rules_group"
+			],
+			[
+				"oque",
+				"oQuery2"
+			],
+			[
+				"product_price",
+				"products_price"
+			],
+			[
+				"total",
+				"total_shipping_tax_excl"
+			],
+			[
 				"else",
 				"else"
 			],
 			[
 				"per",
 				"percentage"
-			],
-			[
-				"id_pro",
-				"id_product_attribute"
 			],
 			[
 				"id_s",
@@ -494,26 +514,6 @@
 			[
 				"nCodigo",
 				"nCodigoGrupo"
-			],
-			[
-				"EDIT",
-				"EDIT_MODE"
-			],
-			[
-				"ncodigo",
-				"nCodigoPropiedad"
-			],
-			[
-				"nCodig",
-				"nCodigoPropiedad"
-			],
-			[
-				"nCodi",
-				"nCodigoPropiedad"
-			],
-			[
-				"id_A",
-				"id_attribute_group"
 			]
 		]
 	},
@@ -531,7 +531,7 @@
 			"file": "prg/Tcomercio.prg",
 			"settings":
 			{
-				"buffer_size": 371969,
+				"buffer_size": 373511,
 				"line_ending": "Windows"
 			}
 		},
@@ -563,7 +563,7 @@
 			"file": "prg/Articulo.prg",
 			"settings":
 			{
-				"buffer_size": 672726,
+				"buffer_size": 673841,
 				"line_ending": "Windows"
 			}
 		},
@@ -616,6 +616,7 @@
 	},
 	"file_history":
 	[
+		"/C/fw195/Gestool/prg/Tfastventasclientes.prg",
 		"/C/fw195/Gestool/prg/Articulo.prg",
 		"/C/fw195/Gestool/prg/Oferta.prg",
 		"/C/fw195/Gestool/prg/Tpv.prg",
@@ -661,7 +662,6 @@
 		"/C/AppServ/www/zemtrum/tienda/modules/blockuserinfo/blockuserinfo.css",
 		"/C/fw195/Gestool/prg/Factcli.prg",
 		"/C/fw195/Gestool/prg/Client.prg",
-		"/C/fw195/Gestool/prg/Tfastventasclientes.prg",
 		"/C/fw195/Gestool/prg/Satcli.prg",
 		"/C/fw195/Gestool/prg/Precli.prg",
 		"/C/Users/Villa/AppData/Roaming/Sublime Text 2/Packages/Default/Preferences.sublime-settings",
@@ -787,6 +787,34 @@
 		"case_sensitive": false,
 		"find_history":
 		[
+			"nIvaProduct",
+			"SELECT",
+			"FieldGetByName(",
+			"10472",
+			"FieldGetBy",
+			"FieldGetByName    ",
+			"free     ",
+			"free",
+			"select *",
+			"select *.",
+			"select *",
+			"FieldGetByName",
+			"oQuery:Skip()",
+			"FieldGetByName",
+			"::cPrefixTable( ",
+			"while",
+			"TMSQuery",
+			"dFecDoc",
+			"dfecped",
+			"dtos",
+			"dtoc",
+			"dtos",
+			"AppendPedidoprestashop",
+			"ImportarPrestashop",
+			"import",
+			"InsertProductsPrestashop",
+			"insertproduct",
+			"inserproduct",
 			"AppendClientPrestashop",
 			"ImportarPrestashop",
 			"oBtnImportar",
@@ -886,35 +914,7 @@
 			"right",
 			"content_prices",
 			"content_prices clearfix",
-			"price",
-			"solid",
-			"InsertProductsPrestashop",
-			"AppendArticuloPrestashop",
-			"produc",
-			":crosshair",
-			"over",
-			"cursor",
-			"curso",
-			"thumbs_list_frame",
-			"tumb",
-			"more_info",
-			"more_info_block",
-			"1px",
-			"cross",
-			"cursor",
-			"mouse",
-			"over",
-			"cursor",
-			"cur",
-			"ccodusr",
-			"cnomcli",
-			"on aitm",
-			"cNomcli",
-			"on aitm",
-			"cnomcli",
-			"cCodCli",
-			"cSufDoc",
-			"on aitm"
+			"price"
 		],
 		"highlight": true,
 		"in_selection": false,
@@ -941,7 +941,7 @@
 	"groups":
 	[
 		{
-			"selected": 2,
+			"selected": 1,
 			"sheets":
 			[
 				{
@@ -966,7 +966,7 @@
 							"translate_tabs_to_spaces": false
 						},
 						"translation.x": 0.0,
-						"translation.y": 348.0,
+						"translation.y": 329.0,
 						"zoom_level": 1.0
 					},
 					"type": "text"
@@ -976,15 +976,15 @@
 					"file": "prg/Tcomercio.prg",
 					"settings":
 					{
-						"buffer_size": 371969,
+						"buffer_size": 373511,
 						"regions":
 						{
 						},
 						"selection":
 						[
 							[
-								320000,
-								320000
+								323293,
+								323293
 							]
 						],
 						"settings":
@@ -994,7 +994,7 @@
 							"translate_tabs_to_spaces": true
 						},
 						"translation.x": 0.0,
-						"translation.y": 198692.0,
+						"translation.y": 199946.0,
 						"zoom_level": 1.0
 					},
 					"type": "text"
@@ -1011,8 +1011,8 @@
 						"selection":
 						[
 							[
-								470451,
-								470458
+								478753,
+								478753
 							]
 						],
 						"settings":
@@ -1020,7 +1020,7 @@
 							"syntax": "Packages/harbour/harbour/Harbour.tmLanguage"
 						},
 						"translation.x": 0.0,
-						"translation.y": 250106.0,
+						"translation.y": 252386.0,
 						"zoom_level": 1.0
 					},
 					"type": "text"
@@ -1086,7 +1086,7 @@
 					"file": "prg/Articulo.prg",
 					"settings":
 					{
-						"buffer_size": 672726,
+						"buffer_size": 673841,
 						"regions":
 						{
 						},
