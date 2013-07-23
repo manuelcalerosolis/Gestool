@@ -151,7 +151,6 @@ CLASS TpvTactil
    DATA oTipoVenta
    DATA oTransportista
    DATA oCaptura
-   DATA oTComandas
    DATA oBandera
    DATA oStock
    DATA oNewImp
@@ -325,6 +324,8 @@ CLASS TpvTactil
    DATA lKillResource
 
    DATA lHideCalculadora
+
+   DATA lEmptyOrdenComanda
 
    DATA oBtnFamiliasTop
    DATA oBtnFamiliasUp
@@ -1380,7 +1381,7 @@ CLASS TpvTactil
       cOrdenComanda                 := ::oOrdenComanda:Selector()
 
       if !Empty( cOrdenComanda )
-         ::oTemporalLinea:cNomCmd   := cOrdenComanda
+         ::oTemporalLinea:cOrdOrd   := cOrdenComanda
       end if 
 
       ::oBrwLineas:Refresh()
@@ -1577,7 +1578,6 @@ CLASS TpvTactil
 
 //--------------------------------------------------------------------------//
 
-
    INLINE METHOD TreeReportingChanged() 
 
       local cTitle   := ::oTreeReporting:GetSelText()
@@ -1595,6 +1595,7 @@ CLASS TpvTactil
    ENDMETHOD
 
 //---------------------------------------------------------------------------//
+
 END CLASS
 
 //--------------------------------------------------------------------------//
@@ -2096,9 +2097,6 @@ METHOD OpenFiles() CLASS TpvTactil
    ::oCaptura                 := TCaptura():New( cPatDat() )
    ::oCaptura:OpenFiles()
 
-   ::oTComandas               := TComandas():Create( cPatArt() )
-   ::oTComandas:OpenFiles()
-
    ::oBandera                 := TBandera():New()
 
    ::oStock                   := TStock():Create( cPatGrp() )
@@ -2177,6 +2175,12 @@ METHOD OpenFiles() CLASS TpvTactil
    ::nDecimalesImporte        := nDouDiv( cDivEmp(), ::oDivisas:cAlias )        // Decimales
    ::nDecimalesTotal          := nRouDiv( cDivEmp(), ::oDivisas:cAlias )        // Decimales redondeados
    ::cPictureUnidades         := MasUnd()
+
+   /*
+   Si no tiene ordenes para comandas-------------------------------------------
+   */
+
+   ::lEmptyOrdenComanda       := ::oOrdenComanda:EmptyOrdenComanda()
 
    /*
    Impresion del documento-----------------------------------------------------
@@ -2511,10 +2515,6 @@ METHOD CloseFiles() CLASS TpvTactil
       ::oCaptura:End()
    end if
 
-   if !Empty( ::oTComandas )
-      ::oTComandas:End()
-   end if
-
    if !Empty( ::oBandera )
       ::oBandera:End()
    end if
@@ -2644,7 +2644,6 @@ METHOD CloseFiles() CLASS TpvTactil
    ::oMaterialesProducionSeries              := nil
    ::oMaterialesNumeroSeries                 := nil
    ::oCaptura                                := nil
-   ::oTComandas                              := nil
    ::oBandera                                := nil
    ::oStock                                  := nil
    ::oNewImp                                 := nil
@@ -2688,7 +2687,6 @@ METHOD Resource() CLASS TpvTactil
    ::oBrwFamilias:lTransparent            := .f.
    ::oBrwFamilias:lAutoSort               := .f.
    ::oBrwFamilias:nDataLines              := 1
-   ::oBrwFamilias:oFont                   := ::oFntBrw
    ::oBrwFamilias:nRowHeight              := 48
 
    ::oBrwFamilias:nMarqueeStyle           := MARQSTYLE_HIGHLROW
@@ -2700,6 +2698,8 @@ METHOD Resource() CLASS TpvTactil
 
    ::oBrwFamilias:bChange                 := {|| ::ChangeFamilias() }
    ::oBrwFamilias:bRClicked               := {|| ::EditFamilia() } 
+
+   ::oBrwFamilias:oFont                   := ::oFntBrw // SetFont( ::oFntBrw )
 
    ::oBrwFamilias:CreateFromResource( 300 )
 
@@ -2767,7 +2767,8 @@ METHOD Resource() CLASS TpvTactil
    ::oBtnArticulosPageUp         := TButtonBmp():ReDefine( 500, {|| ::oLstArticulos:PageUp() },    ::oDlg, , , .f., , , , .f., "Navigate_up2" )
    ::oBtnArticulosPageDown       := TButtonBmp():ReDefine( 501, {|| ::oLstArticulos:PageDown() },  ::oDlg, , , .f., , , , .f., "Navigate_down2" )
 
-   ::oBtnCambiarOrden            := TButtonBmp():ReDefine( 505, {|| ::SetOrdenComanda() },         ::oDlg, , , .f., , , , .f., "Free_Bullet_32" ) //
+   ::oBtnCambiarOrden            := TButtonBmp():ReDefine( 505, {|| ::SetOrdenComanda() },         ::oDlg, , , .f., , , , .f., "Sort_az_descending_32" ) //
+
    ::oBtnAgregarLibre            := TButtonBmp():ReDefine( 502, {|| ::AgregarLibre() },            ::oDlg, , , .f., , , , .f., "Free_Bullet_32" ) //
    ::oBtnCombinado               := TButtonBmp():ReDefine( 503, {|| ::SetCombinando() },           ::oDlg, , , .f., , , , .f., "Cocktail_32" )
    ::oBtnCalculadora             := TButtonBmp():ReDefine( 504, {|| ::SetCalculadora() },          ::oDlg, , , .f., , , , .f., "Calculator_32" )
@@ -2855,10 +2856,11 @@ METHOD Resource() CLASS TpvTactil
 
    ::oBrwLineas                  := IXBrowse():New( ::oDlg )
 
-   ::oBrwLineas:bClrSel          := {|| if( !::oTemporalLinea:lDelTil, { CLR_BLACK, Rgb( 229, 229, 229 ) }, { CLR_BLACK, Rgb( 255, 0, 0 ) } ) }
-   ::oBrwLineas:bClrSelFocus     := {|| if( !::oTemporalLinea:lDelTil, { CLR_BLACK, Rgb( 167, 205, 240 ) }, { CLR_BLACK, Rgb( 255, 0, 0 ) } ) }
+   ::oBrwLineas:bClrStd          := {|| if( ::oTemporalLinea:lDelTil, { CLR_BLACK, Rgb( 255, 0, 0 ) }, { CLR_BLACK, Rgb( 255, 255, 255 ) } ) }
+   ::oBrwLineas:bClrSel          := {|| if( ::oTemporalLinea:lDelTil, { CLR_BLACK, Rgb( 255, 0, 0 ) }, { CLR_BLACK, Rgb( 229, 229, 229 ) } ) }
+   ::oBrwLineas:bClrSelFocus     := {|| if( ::oTemporalLinea:lDelTil, { CLR_BLACK, Rgb( 255, 128, 128 ) }, { CLR_BLACK, Rgb( 167, 205, 240 ) } ) }
 
-   ::oBrwLineas:nClrText         := {|| if( ::oTemporalLinea:lKitChl, CLR_GRAY, CLR_BLACK ) }
+   ::oBrwLineas:nClrText         := {|| if( ::oTemporalLinea:lKitChl, CLR_GRAY, CLR_BLACK ) } 
 
    ::oBrwLineas:lRecordSelector  := .f.
    ::oBrwLineas:lHScroll         := .f. 
@@ -2876,7 +2878,7 @@ METHOD Resource() CLASS TpvTactil
    with object ( ::oBrwLineas:AddCol() )
       :cHeader                := "Nº"
       :bEditValue             := {|| ::oTemporalLinea:nNumLin }
-      :lHide                  := .t.
+      :lHide                  := ::lEmptyOrdenComanda
       :nWidth                 := 20
       :nDataStrAlign          := AL_RIGHT
       :nHeadStrAlign          := AL_RIGHT
@@ -2885,7 +2887,7 @@ METHOD Resource() CLASS TpvTactil
    with object ( ::oBrwLineas:AddCol() )
       :cHeader                := "Or. Orden comanda"
       :lHide                  := .t.
-      :bEditValue             := {|| ::oOrdenComanda:cAbreviatura( ::oTemporalLinea:cNomOrd ) } 
+      :bEditValue             := {|| ::oOrdenComanda:cAbreviatura( ::oTemporalLinea:cOrdOrd ) } 
       :nWidth                 := 30
    end with
 
@@ -2927,7 +2929,7 @@ METHOD Resource() CLASS TpvTactil
    with object ( ::oBrwLineas:AddCol() )
       :cHeader                := "Detalle"
       :bEditValue             := {|| ::cTextoLinea() }
-      :nWidth                 := 200
+      :nWidth                 := if( ::lEmptyOrdenComanda, 200, 180 )
    end with
 
    with object ( ::oBrwLineas:AddCol() )
@@ -3298,6 +3300,14 @@ METHOD StartResource() CLASS TpvTactil
    if !Empty( ::oBtnEncargar )
       ::oBtnEncargar:bRAction := {|| ::OnClickSalaVenta( ubiEncargar ) }
    end if
+
+   /*
+   Si no tienen orden de comandas no mostramos el botón-----------------------
+   */
+
+   if ::oOrdenComanda:EmptyOrdenComanda()
+      ::oBtnCambiarOrden:Hide()
+   end if 
 
    /*
    Estado del boton de cobro rapido
@@ -4358,7 +4368,7 @@ METHOD AgregarLineas( cCodigoArticulo ) CLASS TpvTactil
 
             ::oTemporalLinea:lInPromo     := ::oFideliza:InPrograma( ::oArticulo:Codigo, ::oTiketCabecera:dFecTik, ::oArticulo )
 
-            ::oTemporalLinea:cNomOrd      := ::oArticulo:cNomOrd
+            ::oTemporalLinea:cOrdOrd      := ::oArticulo:cOrdOrd
 
             ::oTemporalLinea:Save()
 
@@ -4491,20 +4501,16 @@ METHOD lAcumulaArticulo() CLASS TpvTactil
 
          /*
          Comprobamos que el codigo y el precio sean iguales y que no sean ofertas-
-
-         ::oTemporalLinea:cCodPr1 == ::oArticulo:cCodPrp1               .and. ;
-         Empty( ::oTemporalLinea:cValPr1 )                              .and. ;
-         ::oTemporalLinea:cCodPr2 == ::oArticulo:cCodPrp2               .and. ;
-         Empty( ::oTemporalLinea:cValPr2 )                              .and. ;
          */
 
          if Empty( ::oTemporalLinea:cComTil )                              .and. ;
             !::oTemporalLinea:lKitChl                                      .and. ;
+            !::oTemporalLinea:lDelTil                                      .and. ;
             ::oTemporalLinea:nPvpTil == nPrecioLinea                       .and. ;
             ::oTemporalLinea:nDtoLin == 0                                  .and. ;
             Empty( ::oTemporalLinea:cComent )                              .and. ;
             Rtrim( ::oTemporalLinea:cNomTil ) == ::cNombreArticulo()       .and. ;
-            ::oTemporalLinea:cNomOrd == ::oArticulo:cNomOrd            
+            ::oTemporalLinea:cOrdOrd == ::oArticulo:cOrdOrd                
 
             /*
             Sumamos------------------------------------------------------------
@@ -7616,7 +7622,7 @@ METHOD OnClickCopiaComanda( lCopia ) CLASS TpvTactil
 
          lAppend        := .f.
 
-         if lCopia .or. ( ::nUnidadesImpresas() < ::nUnidadesLinea() )
+         if !( ::oTiketLinea:lDelTil ) .and. ( lCopia .or. ( ::nUnidadesImpresas() < ::nUnidadesLinea() ) )
 
             /*
             Impresora Uno------------------------------------------------------
@@ -7889,8 +7895,8 @@ METHOD DataReport() CLASS TpvTactil
    ::oFastReport:SetWorkArea(       "Sala venta", ::oRestaurante:oDbf:nArea )
    ::oFastReport:SetFieldAliases(   "Sala venta", cObjectsToReport( ::oRestaurante:oDbf ) )
 
-   ::oFastReport:SetWorkArea(       "Orden comanda", ::oTComandas:oDbf:nArea )
-   ::oFastReport:SetFieldAliases(   "Orden comanda", cObjectsToReport( ::oTComandas:oDbf ) )
+   ::oFastReport:SetWorkArea(       "Orden comanda", ::oOrdenComanda:oDbf:nArea )
+   ::oFastReport:SetFieldAliases(   "Orden comanda", cObjectsToReport( ::oOrdenComanda:oDbf ) )
 
    ::oFastReport:SetWorkArea(       "Unidades de medición",  ::oUndMedicion:oDbf:nArea )
    ::oFastReport:SetFieldAliases(   "Unidades de medición",  cObjectsToReport( ::oUndMedicion:oDbf ) )
@@ -7975,6 +7981,7 @@ METHOD BuildRelationReport() CLASS TpvTactil
          ::oFastReport:SetResyncPair( "Albaranes", "Transportistas" )
          ::oFastReport:SetResyncPair( "Albaranes", "Empresa" )
          ::oFastReport:SetResyncPair( "Albaranes", "Usuarios" )
+
          ::oFastReport:SetResyncPair( "Lineas de albaranes", "Artículos" )
          ::oFastReport:SetResyncPair( "Lineas de albaranes", "Tipo de venta" )
          ::oFastReport:SetResyncPair( "Lineas de albaranes", "Ofertas" )
@@ -8007,7 +8014,7 @@ METHOD BuildRelationReport() CLASS TpvTactil
          ::oFastReport:SetMasterDetail( "Lineas de comandas", "Tipos de artículos",    {|| RetFld( ::oTemporalComanda:cCbaTil, ::oArticulo:cAlias, "cCodTip" ) } )
          ::oFastReport:SetMasterDetail( "Lineas de comandas", "Fabricantes",           {|| RetFld( ::oTemporalComanda:cCbaTil, ::oArticulo:cAlias, "cCodFab" ) } )
          ::oFastReport:SetMasterDetail( "Lineas de comandas", "Temporadas",            {|| RetFld( ::oTemporalComanda:cCbaTil, ::oArticulo:cAlias, "cCodTemp" ) } )
-         ::oFastReport:SetMasterDetail( "Lineas de comandas", "Orden comanda",         {|| ::oTemporalComanda:cCodTImp } )
+         ::oFastReport:SetMasterDetail( "Lineas de comandas", "Orden comanda",         {|| ::oTemporalComanda:cOrdOrd } )
 
          else
 

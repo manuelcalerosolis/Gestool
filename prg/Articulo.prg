@@ -91,6 +91,7 @@ static oCosto
 static oUndMedicion
 static oFraPub
 static oFabricante
+static oOrdenComanda
 
 static oActiveX
 
@@ -101,6 +102,7 @@ static aBmpTipCat
 
 static aNombreOrdenComanda
 static oNombreOrdenComanda 
+static cNombreOrdenComanda
 
 static aBenefSobre         := { "Costo", "Venta" }
 
@@ -429,11 +431,12 @@ STATIC FUNCTION OpenFiles( lExt, cPath )
          lOpenFiles        := .f.
       end if
 
-      /*
-      Cargo los colores para las categorias---------------------------------------
-      */
+      oOrdenComanda        := TOrdenComanda():Create( cPatArt() )
+      if !oOrdenComanda:OpenFiles()
+         lOpenfiles        := .f.
+      end if 
 
-      aNombreOrdenComanda  := TOrdenComanda():aNombreOrdenComanda()
+      aNombreOrdenComanda  := oOrdenComanda:aNombreOrdenComanda()
 
       /*
       Cargamos el valor del Euro y de la Peseta-----------------------------------
@@ -655,6 +658,14 @@ STATIC FUNCTION CloseFiles( lDestroy )
       ( dbfTImp )->( dbCloseArea() )
    end if
 
+   if !Empty( dbfDoc )
+      ( dbfDoc )->( dbCloseArea() )
+   end if
+
+   if !Empty( dbfFlt )
+      ( dbfFlt )->( dbCloseArea() )
+   end if
+
    if !Empty( oStock )
       oStock:end()
    end if
@@ -695,13 +706,9 @@ STATIC FUNCTION CloseFiles( lDestroy )
       oSeccion:End()
    end if
 
-   if !Empty( dbfDoc )
-      ( dbfDoc )->( dbCloseArea() )
-   end if
-
-   if !Empty( dbfFlt )
-      ( dbfFlt )->( dbCloseArea() )
-   end if
+   if !Empty( oOrdenComanda )
+      oOrdenComanda:End()
+   end if 
 
    dbfArticulo    := nil
    dbfProv        := nil
@@ -729,6 +736,7 @@ STATIC FUNCTION CloseFiles( lDestroy )
    oTankes        := nil
    oTipArt        := nil
    oCatalogo      := nil
+   oOrdenComanda  := nil 
    oNewImp        := nil
    oFraPub        := nil
    dbfDoc         := nil
@@ -1597,7 +1605,6 @@ STATIC FUNCTION EdtRec( aTmp, aGet, dbfArticulo, oBrw, bWhen, bValid, nMode )
    local oImpComanda2
    local cImpComanda1
    local cImpComanda2
-   local cNombreOrdenComanda  := "" 
 
    CursorWait()
 
@@ -1674,7 +1681,8 @@ STATIC FUNCTION EdtRec( aTmp, aGet, dbfArticulo, oBrw, bWhen, bValid, nMode )
    cCatOld                    := aTmp[ ( dbfArticulo )->( fieldpos( "cCodCat" ) ) ]
    cPrvOld                    := aTmp[ ( dbfArticulo )->( fieldpos( "cPrvHab" ) ) ]
    cImageOld                  := aTmp[ ( dbfArticulo )->( fieldpos( "cImagen" ) ) ]
-   cNombreOrdenComanda        := aTmp[ ( dbfArticulo )->( fieldpos( "cNomOrd" ) ) ]
+
+   cNombreOrdenComanda        := oOrdenComanda:cNombre( aTmp[ ( dbfArticulo )->( fieldpos( "cOrdOrd" ) ) ] )
 
    if Empty( aTmp[ ( dbfArticulo )->( fieldpos( "nColBtn" ) ) ] )
       aTmp[ ( dbfArticulo )->( fieldpos( "nColBtn" ) ) ]    := GetSysColor( COLOR_BTNFACE )
@@ -5849,7 +5857,7 @@ Static Function EndTrans( aTmp, aGet, oSay, oDlg, aTipBar, cTipBar, nMode, oImpC
       aTmp[ ( dbfArticulo )->( fieldpos( "cTipImp1" ) ) ]      := aImpComanda[ oImpComanda1:nAt ]
       aTmp[ ( dbfArticulo )->( fieldpos( "cTipImp2" ) ) ]      := aImpComanda[ oImpComanda2:nAt ]
 
-      aTmp[ ( dbfArticulo )->( fieldpos( "cNomOrd" ) ) ]       := aNombreOrdenComanda[ oNombreOrdenComanda:nAt ]
+      aTmp[ ( dbfArticulo )->( fieldpos( "cOrdOrd" ) ) ]       := oOrdenComanda:cOrden( cNombreOrdenComanda )
 
       if !Empty( oActiveX )
          aTmp[ ( dbfArticulo )->( fieldpos( "mDesTec" ) ) ]    := oActiveX:DocumentHTML
@@ -15755,7 +15763,7 @@ function aItmArt()
    aAdd( aBase, { "nFacCnv",   "N", 16, 6, "Factor de conversión" ,                    "",                  "", "( cDbfArt )", nil } )
    aAdd( aBase, { "lSbrInt",   "L",  1, 0, "Lógico precio libre internet" ,            "",                  "", "( cDbfArt )", nil } )
    aAdd( aBase, { "nColBtn",   "N", 10, 0, "Color para táctil" ,                       "",                  "", "( cDbfArt )", nil } )
-   aAdd( aBase, { "cNomOrd",   "C", 30, 0, "Orden de comanda" ,                        "",                  "", "( cDbfArt )", nil } )
+   aAdd( aBase, { "cOrdOrd",   "C",  2, 0, "Orden de comanda" ,                        "",                  "", "( cDbfArt )", nil } )
 
 return ( aBase )
 

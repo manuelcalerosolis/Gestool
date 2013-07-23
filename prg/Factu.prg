@@ -2721,8 +2721,8 @@ Function CreateAcceso( oWnd )
    oItem:cMessage       := 'Acceso a los comentarios de los artículos'
    oItem:bAction        := {|| TOrdenComanda():New( cPatArt(), oWnd, "01093" ):Activate() }
    oItem:cId            := "01093"
-   oItem:cBmp           := "message_16"
-   oItem:cBmpBig        := "message_32"
+   oItem:cBmp           := "Sort_az_descending_alpha_16"
+   oItem:cBmpBig        := "Sort_az_descending_32"
    oItem:lShow          := .f.
 
    oGrupo               := TGrupoAcceso()

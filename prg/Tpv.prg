@@ -10609,7 +10609,8 @@ STATIC FUNCTION lIsCode( aTmp, dbfTmpL, oBrw )
          ( dbfTmpL )->cValPr2 == aTmp[ _CVALPR2 ]                    .and. ;
          ( dbfTmpL )->nPvpTil == aTmp[ _NPVPTIL ]                    .and. ;
          ( dbfTmpL )->nDtoLin == aTmp[ _NDTOLIN ]                    .and. ;
-         Rtrim( ( dbfTmpL )->cNomTil ) == Rtrim( aTmp[ _CNOMTIL ] )
+         ( dbfTmpL )->cLote == aTmp[ _CLOTE ]                        .and. ;
+         Rtrim( ( dbfTmpL )->cNomTil ) == Rtrim( aTmp[ _CNOMTIL ] )  
 
          /*
          Sumamos------------------------------------------------------------
@@ -18218,6 +18219,7 @@ function aColTik()
    aAdd( aColTik, { "dFecTik",  "D",      8,     0, "Fecha del tiket",                    "",                  "", "( cDbfCol )" } )
    aAdd( aColTik, { "nCosTil",  "N",     16,     6, "Precio de costo de combinado",       "",                  "", "( cDbfCol )" } )
    aAdd( aColTik, { "cTxtInv",  "C",     30,     0, "Texto invitación",                   "",                  "", "( cDbfCol )" } )
+   aAdd( aColTik, { "cOrdOrd",  "C",      2,     0, "Código de orden de comanda",         "",                  "", "( cDbfCol )" } )
    aAdd( aColTik, { "cNomOrd",  "C",     30,     0, "Orden de comanda",                   "",                  "", "( cDbfCol )" } )
    aAdd( aColTik, { "lDelTil",  "L",      1,     0, "Línea borrada",                      "",                  "", "( cDbfCol )" } )
 
