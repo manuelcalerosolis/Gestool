@@ -2326,6 +2326,10 @@ STATIC FUNCTION EdtCnf( aTmp, aGet, dbfEmp, oBrw, nSelFolder, bValid, nMode )
             ID       141 ;
             OF       oFld:aDialogs[7]
 
+      REDEFINE GET aTmp[ _CPREFIXTBL ] ;
+            ID       142 ;
+            OF       oFld:aDialogs[7]      
+
       REDEFINE GET aGet[ _CSERIEPED ] VAR aTmp[ _CSERIEPED ] ;
             SPINNER ;
             ON UP    ( UpSerie( aGet[ _CSERIEPED ] ) );
@@ -7107,6 +7111,7 @@ FUNCTION aItmEmp()
    aAdd( aDbf, {"lRecNumFac", "L",  1, 0, "Lógico para recuperar el número de las facturas",       "", "", "aEmp()", .t. } )
    aAdd( aDbf, {"lAlbTct",    "L",  1, 0, "Lógico para realizar albaranes desde táctil",           "", "", "aEmp()", .f. } )
    aAdd( aDbf, {"lFacTct",    "L",  1, 0, "Lógico para realizar facturas desde táctil",            "", "", "aEmp()", .f. } )
+   aAdd( aDbf, {"cPrefixTbl", "C", 10, 0, "Prefijo para tablas de prestashop",                     "", "", "aEmp()", "ps_" } )
 
 Return ( aDbf  )
 

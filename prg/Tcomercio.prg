@@ -154,7 +154,6 @@ CLASS TComercio
    DATA  cUserFtp
    DATA  cPasswdFtp
    DATA  lPassiveFtp
-   DATA  cPlataforma
    DATA  Cookiekey
 
    DATA  oInt
@@ -448,18 +447,7 @@ METHOD New( oMenuItem ) CLASS TComercio
    ::nPortFtp              := uFieldEmpresa( "nPrtFtp", 21 )
    ::lPassiveFtp           := uFieldEmpresa( "lPasFtp" )
    ::Cookiekey             := uFieldEmpresa( "cCooKey" )
-
-   if uFieldEmpresa( "nTipWeb" ) == 1
-      ::cPlataforma        := "OsCommerce"
-   else
-      ::cPlataforma        := "Prestashop"
-   end if
-
-   /*
-   Tomamos el prefijo de las bases de datos de prestashop-------------------
-   */
-
-   ::cPrefijoBaseDatos     := "ps_"
+   ::cPrefijoBaseDatos     := uFieldEmpresa( "cPrefixTbl" )
 
 RETURN ( Self )
 
@@ -4816,12 +4804,6 @@ Return ( self )
 
 //---------------------------------------------------------------------------//
 
-Function HB_DBCREATETEMP()
-
-Return( nil )
-
-//---------------------------------------------------------------------------//
-
 Method AppPedidos( oTablaPedidos, oTablaPedidosPro, oTablaPedidosAtributos, oTablaPedidosTotal, oTablaPedidosHistory ) CLASS TComercio
 
    local n
@@ -6290,56 +6272,6 @@ return ( cPropArt )
 
 //---------------------------------------------------------------------------//
 
-
-Function SetAutoRecive()
-
-   if Empty( oComercio )
-      oComercio   := TComercio():New()
-   end if
-
-   if !Empty( oComercio )           .and. ;
-      !Empty( oComercio:cHost )     .and. ;
-      !Empty( oComercio:cUser )     .and. ;
-      !Empty( oComercio:cPasswd )   .and. ;
-      !Empty( oComercio:cDbName )   .and. ;
-      ( oComercio:nSecondTimer != 0 )
-
-      oTimer      := TTimer():New( oComercio:nSecondTimer, {|| oComercio:AutoRecive() } )
-      oTimer:Activate()
-
-   end if
-
-Return( nil )
-
-//---------------------------------------------------------------------------//
-
-Function KillAutoRecive()
-
-   if !Empty( oTimer )
-      oTimer:End()
-   end if
-
-   oTimer         := nil
-   oComercio      := nil
-
-Return( nil )
-
-//---------------------------------------------------------------------------//
-
-Static Function BuscarCodFam( cCodigo, oFam )
-
-   local cCodFamilia
-
-   if oFam:SeekInOrd( Str( cCodigo, 11 ), "cCodWeb" )
-
-      cCodFamilia       := oFam:cCodfam
-
-   end if
-
-Return cCodFamilia
-
-//---------------------------------------------------------------------------//
-
 Method GetLanguage( oDb )
 
    local cCodLanguage
@@ -6372,130 +6304,6 @@ Method GetLanguage( oDb )
    end if
 
 Return cCodLanguage
-
-//---------------------------------------------------------------------------//
-
-Static Function BuscarCodPro( cCodigo, oPro )
-
-   local cCodPro
-
-   if oPro:SeekInOrd( Str( cCodigo, 11 ), "cCodWeb" )
-
-      cCodPro       := oPro:cCodPro
-
-   end if
-
-Return cCodPro
-
-//---------------------------------------------------------------------------//
-
-Static Function BuscarCodIva( cCodigo, oIva )
-
-   local cCodIva
-
-   if oIva:SeekInOrd( Str( cCodigo, 11 ), "cCodWeb" )
-      cCodIva           := oIva:Tipo
-   end if
-
-Return cCodIva
-
-//---------------------------------------------------------------------------//
-
-Static Function BuscarCodFab( cCodigo, oFab )
-
-   local cCodFab
-
-   if oFab:SeekInOrd( Str( cCodigo, 11 ), "cCodWeb" )
-
-      cCodFab           := oFab:cCodFab
-
-   end if
-
-Return cCodFab
-
-//---------------------------------------------------------------------------//
-
-Static Function BuscarProvincia( cCodZona, oTablaZona )
-
-   local cNomZona := ""
-
-   if ValType( cCodZona ) == "N" .and. cCodZona != 0
-
-      if oTablaZona:Find( 1, cCodZona , .t. )
-
-         oTablaZona:load()
-
-         cNomZona    := oTablaZona:GetBuffer( 4 )
-
-      end if
-
-   end if
-
-Return cNomZona
-
-//---------------------------------------------------------------------------//
-
-Static Function BuscarCliente( cCodCli, oCli )
-
-   local cCodigo := ""
-
-   if oCli:SeekInOrd( Str( cCodCli, 11 ), "cCodWeb" )
-      cCodigo    := oCli:Cod
-   end if
-
-Return cCodigo
-
-//---------------------------------------------------------------------------//
-
-Static Function BuscarFormaPago( cNombre , oFPago )
-
-   local cCodigo  := Space( 2 )
-
-   if oFPago:SeekInOrd( Upper( cNombre ), "cDesPgoBig" )
-      cCodigo     := oFPago:cCodPago
-   end if
-
-Return cCodigo
-
-//---------------------------------------------------------------------------//
-
-Static Function BuscarGastoEnvio( cCodigo, oTotal )
-
-   local nTotal   := 0
-   local n
-
-   if oTotal:RecCount() > 0
-
-   for n := 1 to oTotal:RecCount()
-
-      oTotal:Load()
-
-      if( oTotal:GetBuffer( 2 ) == cCodigo ).and.;
-        ( oTotal:GetBuffer( 6 ) == "ot_shipping" )
-
-         nTotal   := oTotal:GetBuffer( 5 )
-
-      end if
-
-   oTotal:Skip()
-
-   next
-
-   end if
-
-Return nTotal
-
-//---------------------------------------------------------------------------//
-
-Static Function BuscarDireccion( cDireccion, oObras, cCliente )
-
-   local cCodigo
-
-   if oObras:SeekInOrd( Upper( cDireccion ), "cDirObr" )
-      cCodigo     := oObras:cCodObr
-   end if
-
-Return cCodigo
 
 //---------------------------------------------------------------------------//
 
@@ -6992,7 +6800,7 @@ METHOD AddCategoriaRaiz() CLASS TComercio
    if TMSCommand():New( ::oCon ):ExecDirect( cCommand )
       ::SetText( "He insertado correctamente en la tabla categorias grupo la categoría raiz", 3 )
    else
-      ::SetText( "Error al insertar la categoría root en ps_category_group", 3 )
+      ::SetText( "Error al insertar la categoría root en category_group", 3 )
    end if
 
    /*
@@ -7465,7 +7273,7 @@ Method InsertGrupoCategoriesPrestashop() CLASS TComercio
       ::SetText( "He insertado el grupo de familia " + AllTrim( ::oGrpFam:cNomGrp ) + " correctamente en la tabla " + ::cPrefixTable( "category" ), 3 )
 
    else
-      ::SetText( "Error al insertar el grupo de familia " + AllTrim( ::oGrpFam:cNomGrp ) + " en la tabla " + ::cPrefixTable( "ps_category" ), 3 )
+      ::SetText( "Error al insertar el grupo de familia " + AllTrim( ::oGrpFam:cNomGrp ) + " en la tabla " + ::cPrefixTable( "category" ), 3 )
    end if
 
    cCommand := "INSERT INTO " + ::cPrefixTable( "category_lang" ) + "( " + ;
@@ -7488,9 +7296,9 @@ Method InsertGrupoCategoriesPrestashop() CLASS TComercio
                   "'' )"
 
    if TMSCommand():New( ::oCon ):ExecDirect( cCommand )
-      ::SetText( "He insertado el grupo de familia " + AllTrim( ::oGrpFam:cNomGrp ) + " correctamente en la tabla ps_category_lang", 3 )
+      ::SetText( "He insertado el grupo de familia " + AllTrim( ::oGrpFam:cNomGrp ) + " correctamente en la tabla category_lang", 3 )
    else
-      ::SetText( "Error al insertar el grupo de familia " + AllTrim( ::oGrpFam:cNomGrp ) + " en la tabla ps_category_lang", 3 )
+      ::SetText( "Error al insertar el grupo de familia " + AllTrim( ::oGrpFam:cNomGrp ) + " en la tabla category_lang", 3 )
    end if
 
    cCommand := "INSERT INTO " + ::cPrefixTable( "category_shop" ) + " ( id_category, id_shop, position ) VALUES ( '" + Str( nCodigoWeb ) + "', '1', '0' )"
@@ -7810,16 +7618,16 @@ METHOD RecalculaPosicionesCategoriasPrestashop() CLASS TComercio
    Pongo posiciones en la categoría raiz e inicio
    */
 
-   if TMSCommand():New( ::oCon ):ExecDirect( "UPDATE ps_category SET nLeft='1', nRight='" + AllTrim( Str( ::nNumeroCategorias * 2 ) ) + "' WHERE id_category=1" )
-      ::SetText( "Actualizada correctamente el grupo de familia en la tabla ps_category", 3 )
+   if TMSCommand():New( ::oCon ):ExecDirect( "UPDATE " + ::cPrefixTable( "category" ) + " SET nLeft='1', nRight='" + AllTrim( Str( ::nNumeroCategorias * 2 ) ) + "' WHERE id_category=1" )
+      ::SetText( "Actualizada correctamente el grupo de familia en la tabla category", 3 )
    else
-      ::SetText( "Error al actualizar el grupo de familia en la tabla ps_category", 3 )
+      ::SetText( "Error al actualizar el grupo de familia en la tabla category", 3 )
    end if
 
-   if TMSCommand():New( ::oCon ):ExecDirect( "UPDATE ps_category SET nLeft='2', nRight='" + AllTrim( Str( ( ::nNumeroCategorias * 2 ) -1 ) ) + "' WHERE id_category=2" )
-      ::SetText( "Actualizada correctamente el grupo de familia en la tabla ps_category", 3 )
+   if TMSCommand():New( ::oCon ):ExecDirect( "UPDATE " + ::cPrefixTable( "category" ) + " SET nLeft='2', nRight='" + AllTrim( Str( ( ::nNumeroCategorias * 2 ) -1 ) ) + "' WHERE id_category=2" )
+      ::SetText( "Actualizada correctamente el grupo de familia en la tabla category", 3 )
    else
-      ::SetText( "Error al actualizar el grupo de familia en la tabla ps_category", 3 )
+      ::SetText( "Error al actualizar el grupo de familia en la tabla category", 3 )
    end if
 
    /*
@@ -7895,10 +7703,10 @@ METHOD RecalculaPosicionesCategoriasPrestashop() CLASS TComercio
 
    for each oCategoria in ::aCategorias
 
-      if TMSCommand():New( ::oCon ):ExecDirect( "UPDATE ps_category SET nLeft='" + AllTrim( Str( oCategoria:nLeft ) ) + "', nRight='" + AllTrim( Str( ( oCategoria:nRight ) ) + "' WHERE id_category=" + AllTrim( Str( oCategoria:id ) ) ) )
-         ::SetText( "Actualizada correctamente el grupo de familia en la tabla ps_category", 3 )
+      if TMSCommand():New( ::oCon ):ExecDirect( "UPDATE " + ::cPrefixTable( "category" ) + " SET nLeft='" + AllTrim( Str( oCategoria:nLeft ) ) + "', nRight='" + AllTrim( Str( ( oCategoria:nRight ) ) + "' WHERE id_category=" + AllTrim( Str( oCategoria:id ) ) ) )
+         ::SetText( "Actualizada correctamente el grupo de familia en la tabla category", 3 )
       else
-         ::SetText( "Error al actualizar el grupo de familia en la tabla ps_category", 3 )
+         ::SetText( "Error al actualizar el grupo de familia en la tabla category", 3 )
       end if
 
    next
@@ -8326,7 +8134,7 @@ METHOD InsertProductsPrestashop( lExt ) CLASS TComercio
    end if
 
    /*
-   Insertamos un artículo nuevo en la tabla ps_category_product----------------
+   Insertamos un artículo nuevo en la tabla category_product----------------
     */
 
    cCommand    := "INSERT INTO " + ::cPrefixTable( "category_product" ) + ; 
@@ -8343,7 +8151,7 @@ METHOD InsertProductsPrestashop( lExt ) CLASS TComercio
    end if
 
    /*
-   Insertamos un artículo nuevo en la tabla ps_category_shop-------------------
+   Insertamos un artículo nuevo en la tabla category_shop-------------------
    */
 
    cCommand    := "INSERT INTO " + ::cPrefixTable( "product_shop" ) + ;
@@ -8374,7 +8182,7 @@ METHOD InsertProductsPrestashop( lExt ) CLASS TComercio
    end if
 
    /*
-   Insertamos un artículo nuevo en la tabla ps_product_lang--------------------
+   Insertamos un artículo nuevo en la tabla product_lang--------------------
    */
 
    cCommand    := "INSERT INTO " + ::cPrefixTable( "product_lang" ) +;
@@ -9160,7 +8968,7 @@ METHOD InsertPropiedadesProductPrestashop( nCodigoWeb ) CLASS TComercio
                            if AllTrim( ::oArtImg:cImgArt ) == AllTrim( ::oArtDiv:cImgWeb )
 
                               /*
-                              Añadimos en la tabla ps_product_attribute_image-----------
+                              Añadimos en la tabla product_attribute_image-----------
                               */
 
                               cCommand    := "INSERT INTO " + ::cPrefixTable( "product_attribute_image" ) + " ( " + ;
@@ -9358,7 +9166,7 @@ METHOD InsertPropiedadesProductPrestashop( nCodigoWeb ) CLASS TComercio
                         if AllTrim( ::oArtImg:cImgArt ) == AllTrim( ::oArtDiv:cImgWeb )
 
                            /*
-                           Añadimos en la tabla ps_product_attribute_image-----------
+                           Añadimos en la tabla product_attribute_image-----------
                            */
 
                            cCommand    := "INSERT INTO " + ::cPrefixTable( "product_attribute_image" ) + " ( " + ;
@@ -9423,7 +9231,7 @@ METHOD AppTipoArticuloPrestashop( cCodTip, IdParent )
 
       else
 
-         if TMSCommand():New( ::oCon ):ExecDirect( "INSERT INTO ps_category ( id_parent, level_depth, nleft, nright, active, date_add, date_upd, position ) VALUES ( '" + Str( IdParent ) + "', '2', '0', '0', '1', '" + dtos( GetSysDate() ) + "', '" + dtos( GetSysDate() ) + "', '0' ) " )
+         if TMSCommand():New( ::oCon ):ExecDirect( "INSERT INTO " + ::cPrefixTable( "category" ) + " ( id_parent, level_depth, nleft, nright, active, date_add, date_upd, position ) VALUES ( '" + Str( IdParent ) + "', '2', '0', '0', '1', '" + dtos( GetSysDate() ) + "', '" + dtos( GetSysDate() ) + "', '0' ) " )
 
             nCodigoWeb           := ::oCon:GetInsertId()
 
@@ -9446,40 +9254,40 @@ METHOD AppTipoArticuloPrestashop( cCodTip, IdParent )
 
             ::oTipArt:fieldPutByName( "cCodWeb", nCodigoWeb )
 
-            ::SetText( "He insertado el tipo de artículo " + AllTrim( ::oTipArt:cNomTip ) + " correctamente en la tabla ps_category", 3 )
+            ::SetText( "He insertado el tipo de artículo " + AllTrim( ::oTipArt:cNomTip ) + " correctamente en la tabla category", 3 )
 
          else
-            ::SetText( "Error al insertar el tipo de artículo " + AllTrim( ::oTipArt:cNomTip ) + " en la tabla ps_category", 3 )
+            ::SetText( "Error al insertar el tipo de artículo " + AllTrim( ::oTipArt:cNomTip ) + " en la tabla category", 3 )
          end if
 
-         if TMSCommand():New( ::oCon ):ExecDirect( "INSERT INTO ps_category_lang ( id_category, id_lang, name, description, link_rewrite, meta_title, meta_keywords, meta_description ) VALUES ( '" + Str( nCodigoWeb ) + "', '" + Str( ::nLanguage ) + "', '" + AllTrim( ::oTipArt:cNomTip ) + "', '" + AllTrim( ::oTipArt:cNomTip ) + "', '" + cLinkRewrite( ::oTipArt:cNomTip ) + "', '', '', '' )" )
-            ::SetText( "He insertado el tipo de artículo " + AllTrim( ::oTipArt:cNomTip ) + " correctamente en la tabla ps_category_lang", 3 )
+         if TMSCommand():New( ::oCon ):ExecDirect( "INSERT INTO " + ::cPrefixTable( "category_lang" ) + " ( id_category, id_lang, name, description, link_rewrite, meta_title, meta_keywords, meta_description ) VALUES ( '" + Str( nCodigoWeb ) + "', '" + Str( ::nLanguage ) + "', '" + AllTrim( ::oTipArt:cNomTip ) + "', '" + AllTrim( ::oTipArt:cNomTip ) + "', '" + cLinkRewrite( ::oTipArt:cNomTip ) + "', '', '', '' )" )
+            ::SetText( "He insertado el tipo de artículo " + AllTrim( ::oTipArt:cNomTip ) + " correctamente en la tabla category_lang", 3 )
          else
-            ::SetText( "Error al insertar el tipo de artículo " + AllTrim( ::oTipArt:cNomTip ) + " en la tabla ps_category_lang", 3 )
+            ::SetText( "Error al insertar el tipo de artículo " + AllTrim( ::oTipArt:cNomTip ) + " en la tabla category_lang", 3 )
          end if
 
-         if TMSCommand():New( ::oCon ):ExecDirect( "INSERT INTO ps_category_shop ( id_category, id_shop, position ) VALUES ( '" + Str( nCodigoWeb ) + "', '1', '0' )" )
-            ::SetText( "He insertado correctamente en la tabla categorias grupo la categoría raiz", 3 )
+         if TMSCommand():New( ::oCon ):ExecDirect( "INSERT INTO " + ::cPrefixTavle( "category_shop" ) + " ( id_category, id_shop, position ) VALUES ( '" + Str( nCodigoWeb ) + "', '1', '0' )" )
+            ::SetText( "He insertado correctamente en la tabla category_group la categoría raiz", 3 )
          else
-            ::SetText( "Error al insertar la categoría inicio en ps_category_group", 3 )
+            ::SetText( "Error al insertar la categoría inicio en category_group", 3 )
          end if
 
-         if TMSCommand():New( ::oCon ):ExecDirect( "INSERT INTO ps_category_group ( id_category, id_group ) VALUES ( '" + Str( nCodigoWeb ) + "', '1' )" )
-            ::SetText( "He insertado el tipo de artículo " + AllTrim( ::oTipArt:cNomTip ) + " correctamente en la tabla ps_category_group", 3 )
+         if TMSCommand():New( ::oCon ):ExecDirect( "INSERT INTO " + ::cPrefixTable( "category_group" ) + " ( id_category, id_group ) VALUES ( '" + Str( nCodigoWeb ) + "', '1' )" )
+            ::SetText( "He insertado el tipo de artículo " + AllTrim( ::oTipArt:cNomTip ) + " correctamente en la tabla category_group", 3 )
          else
-            ::SetText( "Error al insertar v " + AllTrim( ::oTipArt:cNomTip ) + " en la tabla ps_category_group", 3 )
+            ::SetText( "Error al insertar v " + AllTrim( ::oTipArt:cNomTip ) + " en la tabla category_group", 3 )
          end if
 
-         if TMSCommand():New( ::oCon ):ExecDirect( "INSERT INTO ps_category_group ( id_category, id_group ) VALUES ( '" + Str( nCodigoWeb ) + "', '2' )" )
-            ::SetText( "He insertado el tipo de artículo " + AllTrim( ::oTipArt:cNomTip ) + " correctamente en la tabla ps_category_group", 3 )
+         if TMSCommand():New( ::oCon ):ExecDirect( "INSERT INTO " + ::cPrefixTable( "category_group" ) + " ( id_category, id_group ) VALUES ( '" + Str( nCodigoWeb ) + "', '2' )" )
+            ::SetText( "He insertado el tipo de artículo " + AllTrim( ::oTipArt:cNomTip ) + " correctamente en la tabla category_group", 3 )
          else
-            ::SetText( "Error al insertar el tipo de artículo " + AllTrim( ::oTipArt:cNomTip ) + " en la tabla ps_category_group", 3 )
+            ::SetText( "Error al insertar el tipo de artículo " + AllTrim( ::oTipArt:cNomTip ) + " en la tabla category_group", 3 )
          end if
 
-         if TMSCommand():New( ::oCon ):ExecDirect( "INSERT INTO ps_category_group ( id_category, id_group ) VALUES ( '" + Str( nCodigoWeb ) + "', '3' )" )
-            ::SetText( "He insertado el tipo de artículo " + AllTrim( ::oTipArt:cNomTip ) + " correctamente en la tabla ps_category_group", 3 )
+         if TMSCommand():New( ::oCon ):ExecDirect( "INSERT INTO " + ::cPrefixTable( "category_group" ) + " ( id_category, id_group ) VALUES ( '" + Str( nCodigoWeb ) + "', '3' )" )
+            ::SetText( "He insertado el tipo de artículo " + AllTrim( ::oTipArt:cNomTip ) + " correctamente en la tabla category_group", 3 )
          else
-            ::SetText( "Error al insertar el tipo de artículo " + AllTrim( ::oTipArt:cNomTip ) + " en la tabla ps_category_group", 3 )
+            ::SetText( "Error al insertar el tipo de artículo " + AllTrim( ::oTipArt:cNomTip ) + " en la tabla category_group", 3 )
          end if
 
          /*
@@ -9682,7 +9490,7 @@ METHOD InsertIvaPrestashop() CLASS TComercio
    end if
 
    /*
-   Insertamos un tipo de IVA nuevo en la tabla ps_tax_lang-----------------
+   Insertamos un tipo de IVA nuevo en la tabla tax_lang-----------------
    */
 
    cCommand := "INSERT INTO " + ::cPrefixTable( "tax_lang" ) + "( " +;
@@ -9705,7 +9513,7 @@ METHOD InsertIvaPrestashop() CLASS TComercio
    end if
 
    /*
-   Insertamos un tipo de IVA nuevo en la tabla ps_tax_rule_group-----------------
+   Insertamos un tipo de IVA nuevo en la tabla tax_rule_group-----------------
    */
 
    cCommand := "INSERT INTO "+ ::cPrefixTable( "tax_rules_group" ) + "( " + ;
@@ -9730,7 +9538,7 @@ METHOD InsertIvaPrestashop() CLASS TComercio
    end if
 
    /*
-   Insertamos un tipo de IVA nuevo en la tabla ps_tax_rule-----------------
+   Insertamos un tipo de IVA nuevo en la tabla tax_rule-----------------
    */
 
    cCommand := "INSERT INTO " + ::cPrefixTable( "tax_rule" ) + "( " +;
@@ -9764,27 +9572,27 @@ METHOD lUpdateIvaPrestashop( nId ) CLASS TComercio
    Actualizamos los tipos de IVA ----------------------------------------
    */
 
-   if TMSCommand():New( ::oCon ):ExecDirect( "UPDATE ps_tax SET rate='" + AllTrim( Str( ::oIva:TpIva ) ) + "' WHERE id_tax=" + AllTrim( Str( nId ) ) )
-      ::SetText( "Actualizada correctamente el tipo de " + cImp() + Space(1) + AllTrim( ::oIva:DescIva ) + " en la tabla ps_tax", 3 )
+   if TMSCommand():New( ::oCon ):ExecDirect( "UPDATE " + ::cPrefixTable( "tax" ) + " SET rate='" + AllTrim( Str( ::oIva:TpIva ) ) + "' WHERE id_tax=" + AllTrim( Str( nId ) ) )
+      ::SetText( "Actualizada correctamente el tipo de " + cImp() + Space(1) + AllTrim( ::oIva:DescIva ) + " en la tabla tax", 3 )
       lReturn     := .t.
    else
-      ::SetText( "Error al actualizar el tipo de " + cImp() + Space(1) + AllTrim( ::oIva:DescIva ) + " en la tabla ps_tax", 3 )
+      ::SetText( "Error al actualizar el tipo de " + cImp() + Space(1) + AllTrim( ::oIva:DescIva ) + " en la tabla tax", 3 )
       lReturn     := .f.
    end if
 
-   if TMSCommand():New( ::oCon ):ExecDirect( "UPDATE ps_tax_lang SET name='" + AllTrim( ::oIva:DescIva ) + "' WHERE id_tax=" + AllTrim( Str( nId ) ) )
-      ::SetText( "Actualizada correctamente el tipo de " + cImp() + Space(1) + AllTrim( ::oIva:DescIva ) + " en la tabla ps_tax_lang", 3 )
+   if TMSCommand():New( ::oCon ):ExecDirect( "UPDATE " + ::cPrefixTable( "tax_lang" ) + " SET name='" + AllTrim( ::oIva:DescIva ) + "' WHERE id_tax=" + AllTrim( Str( nId ) ) )
+      ::SetText( "Actualizada correctamente el tipo de " + cImp() + Space(1) + AllTrim( ::oIva:DescIva ) + " en la tabla tax_lang", 3 )
       lReturn     := .t.
    else
-      ::SetText( "Error al actualizar el tipo de " + cImp() + Space(1) + AllTrim( ::oIva:DescIva ) + " en la tabla ps_tax_lang", 3 )
+      ::SetText( "Error al actualizar el tipo de " + cImp() + Space(1) + AllTrim( ::oIva:DescIva ) + " en la tabla tax_lang", 3 )
       lReturn     := .f.
    end if
 
-   if TMSCommand():New( ::oCon ):ExecDirect( "UPDATE ps_tax_rules_group SET name='" + AllTrim( ::oIva:DescIva ) + "' WHERE id_tax_rules_group=" + AllTrim( Str( nId ) ) )
-      ::SetText( "Actualizada correctamente el tipo de " + cImp() + Space(1) + AllTrim( ::oIva:DescIva ) + " en la tabla ps_tax_rules_group", 3 )
+   if TMSCommand():New( ::oCon ):ExecDirect( "UPDATE " + ::cPrefixTable( "tax_rules_group" ) + " SET name='" + AllTrim( ::oIva:DescIva ) + "' WHERE id_tax_rules_group=" + AllTrim( Str( nId ) ) )
+      ::SetText( "Actualizada correctamente el tipo de " + cImp() + Space(1) + AllTrim( ::oIva:DescIva ) + " en la tabla tax_rules_group", 3 )
       lReturn     := .t.
    else
-      ::SetText( "Error al actualizar el tipo de " + cImp() + Space(1) + AllTrim( ::oIva:DescIva ) + " en la tabla ps_tax_rules_group", 3 )
+      ::SetText( "Error al actualizar el tipo de " + cImp() + Space(1) + AllTrim( ::oIva:DescIva ) + " en la tabla tax_rules_group", 3 )
       lReturn     := .f.
    end if
 
@@ -10117,7 +9925,7 @@ Return( nil )
 METHOD aTipoImagenPrestashop() CLASS TComercio
 
    local oImagen
-   local oQuery            := TMSQuery():New( ::oCon, 'SELECT * FROM ps_image_type' )
+   local oQuery            := TMSQuery():New( ::oCon, 'SELECT * FROM ' + ::cPrefixTable( "image_type" ) )
 
    if oQuery:Open()
 
@@ -10192,7 +10000,7 @@ METHOD AppendClientPrestashop()
 
    local oQueryDirecciones
    local lFirst                  := .t.
-   local oQuery                  := TMSQuery():New( ::oCon, 'SELECT * FROM ps_customer' )
+   local oQuery                  := TMSQuery():New( ::oCon, 'SELECT * FROM ' + ::cPrefixTable( "customer" ) )
    local cCodCli
 
    /*
@@ -10243,7 +10051,6 @@ METHOD AppendClientPrestashop()
                ::oCli:cCodAlm    := cDefAlm()
                ::oCli:dFecChg    := GetSysDate()
                ::oCli:cTimChg    := Time()
-               //::oCli:lPubInt    := .t.
                ::oCli:cCodWeb    := oQuery:FieldGet( 1 ) //id_customer
                ::oCli:lWeb       := .t.
 
@@ -10251,7 +10058,7 @@ METHOD AppendClientPrestashop()
                Vamos a meter las direcciones-----------------------------------
                */
 
-               oQueryDirecciones       := TMSQuery():New( ::oCon, "SELECT * FROM ps_address WHERE id_customer = " + Str( oQuery:FieldGet( 1 ) ) )
+               oQueryDirecciones       := TMSQuery():New( ::oCon, "SELECT * FROM " + ::cPrefixTable( "address" ) + " WHERE id_customer = " + Str( oQuery:FieldGet( 1 ) ) )
 
                if oQueryDirecciones:Open()
 
@@ -10599,13 +10406,13 @@ Method EstadoPedidosPrestashop() Class TComercio
 
          ::MeterParticularText( "Actualizando estado de pedidos " + AllTrim( Str( ::nActualMeterL ) ) + " de " + AllTrim( Str( ::nTotMeter ) ) )
 
-         oQuery                  := TMSQuery():New( ::oCon, "SELECT * FROM ps_order_history WHERE id_order=" + AllTrim( Str( ::oPedCliT:cCodWeb ) ) + " AND id_order_state=5" )
+         oQuery                  := TMSQuery():New( ::oCon, "SELECT * FROM " + ::cPrefixTable( "order_history" ) + " WHERE id_order=" + AllTrim( Str( ::oPedCliT:cCodWeb ) ) + " AND id_order_state=5" )
 
          if oQuery:Open()
 
             if oQuery:RecCount() == 0
 
-               if TMSCommand():New( ::oCon ):ExecDirect( "INSERT INTO ps_order_history ( id_employee, " + ;
+               if TMSCommand():New( ::oCon ):ExecDirect( "INSERT INTO " + ::cPrefixTable( "order_history" ) + " ( id_employee, " + ;
                                                                                          "id_order, " + ;
                                                                                          "id_order_state, " + ;
                                                                                          "date_add )" + ;
@@ -10664,7 +10471,7 @@ METHOD AppendClientesToPrestashop()
                cFirstName           := ::oCon:EscapeStr( SubStr( ::oCli:Titulo, 1, nSpace ) )
                cLastName            := ::oCon:EscapeStr( SubStr( ::oCli:Titulo, nSpace + 1 ) )
 
-               if TMSCommand():New( ::oCon ):ExecDirect( "INSERT INTO ps_customer ( id_gender, " + ;
+               if TMSCommand():New( ::oCon ):ExecDirect( "INSERT INTO " + ::cPrefixTable( "customer" ) + " ( id_gender, " + ;
                                                                                     "id_default_group, " + ;
                                                                                     "firstname, " + ;
                                                                                     "lastname, " + ;
@@ -10696,34 +10503,34 @@ METHOD AppendClientesToPrestashop()
 
                   ::oCli:fieldPutByName( "cCodWeb", nCodigoWeb )
 
-                  ::SetText( "He insertado el cliente " + AllTrim( ::oCli:Titulo ) + " correctamente en la tabla ps_customer", 3 )
+                  ::SetText( "He insertado el cliente " + AllTrim( ::oCli:Titulo ) + " correctamente en la tabla customer", 3 )
 
                else
-                  ::SetText( "Error al insertar el cliente " + AllTrim( ::oCli:Titulo ) + " en la tabla ps_customer", 3 )
+                  ::SetText( "Error al insertar el cliente " + AllTrim( ::oCli:Titulo ) + " en la tabla customer", 3 )
                end if
 
                /*
-               Insertamos en la tabla ps_customer_group------------------------
+               Insertamos en la tabla customer_group------------------------
                */
 
-               if TMSCommand():New( ::oCon ):ExecDirect( "INSERT INTO ps_customer_group ( id_customer, " + ;
+               if TMSCommand():New( ::oCon ):ExecDirect( "INSERT INTO " + ::cPrefixTable( "customer_group" ) + " ( id_customer, " + ;
                                                                                           "id_group )" + ;
                                                                                  " VALUES " + ;
                                                                                            "('" + AllTrim( Str( nCodigoWeb ) ) + "', " + ;
                                                                                            "'1' )" )
 
 
-                  ::SetText( "He insertado el cliente " + AllTrim( ::oCli:Titulo ) + " correctamente en la tabla ps_customer_group", 3 )
+                  ::SetText( "He insertado el cliente " + AllTrim( ::oCli:Titulo ) + " correctamente en la tabla customer_group", 3 )
 
                else
-                  ::SetText( "Error al insertar el cliente " + AllTrim( ::oCli:Titulo ) + " en la tabla ps_customer_group", 3 )
+                  ::SetText( "Error al insertar el cliente " + AllTrim( ::oCli:Titulo ) + " en la tabla customer_group", 3 )
                end if
 
                /*
-               Insertamos en la tabla ps_address------------------------
+               Insertamos en la tabla address------------------------
                */
 
-               if TMSCommand():New( ::oCon ):ExecDirect( "INSERT INTO ps_address ( id_country, " + ;
+               if TMSCommand():New( ::oCon ):ExecDirect( "INSERT INTO " + ::cPrefixTable( "address" ) + " ( id_country, " + ;
                                                                                   "id_customer, " + ;
                                                                                   "alias, " + ;
                                                                                   "lastname, " + ;
@@ -10756,10 +10563,10 @@ METHOD AppendClientesToPrestashop()
                                                                                   "'0' )" )                                                      //deleted
 
 
-                  ::SetText( "He insertado el cliente " + AllTrim( ::oCli:Titulo ) + " correctamente en la tabla ps_address", 3 )
+                  ::SetText( "He insertado el cliente " + AllTrim( ::oCli:Titulo ) + " correctamente en la tabla address", 3 )
 
                else
-                  ::SetText( "Error al insertar el cliente " + AllTrim( ::oCli:Titulo ) + " en la tabla ps_address", 3 )
+                  ::SetText( "Error al insertar el cliente " + AllTrim( ::oCli:Titulo ) + " en la tabla address", 3 )
                end if
 
             else
@@ -10774,7 +10581,7 @@ METHOD AppendClientesToPrestashop()
                   Actualizamos la tabla de clientes----------------------------
                   */
 
-                  if TMSCommand():New( ::oCon ):ExecDirect( "UPDATE ps_customer SET firstname='" + AllTrim( cFirstName ) + ;
+                  if TMSCommand():New( ::oCon ):ExecDirect( "UPDATE " + ::cPrefixTable( "customer" ) + " SET firstname='" + AllTrim( cFirstName ) + ;
                                                                                 "', lastname='" + AllTrim( cLastName ) + ;
                                                                                 "', email='" + AllTrim( ::oCli:cMeiInt ) + ;
                                                                                 "', passwd='" + hb_md5( AllTrim( ::Cookiekey ) + AllTrim( ::oCli:cClave ) ) + ;
@@ -10782,16 +10589,16 @@ METHOD AppendClientesToPrestashop()
                                                                                 "', date_upd='" + dtos( GetSysDate() ) + ;
                                                                                 "' WHERE id_customer=" + AllTrim( Str( ::oCli:cCodWeb ) ) )
 
-                     ::SetText( "Actualizado correctamente el cliente " + AllTrim( ::oCli:Titulo ) + " en la tabla ps_customer", 3 )
+                     ::SetText( "Actualizado correctamente el cliente " + AllTrim( ::oCli:Titulo ) + " en la tabla customer", 3 )
                   else
-                     ::SetText( "Error al actualizar el cliente " + AllTrim( ::oCli:Titulo ) + " en la tabla ps_customer", 3 )
+                     ::SetText( "Error al actualizar el cliente " + AllTrim( ::oCli:Titulo ) + " en la tabla customer", 3 )
                   end if
 
                   /*
                   Actualizamos la tabla de direcciones-------------------------
                   */
 
-                  if TMSCommand():New( ::oCon ):ExecDirect( "UPDATE ps_address SET alias='" + AllTrim( cFirstName ) + AllTrim( cLastName ) + ;
+                  if TMSCommand():New( ::oCon ):ExecDirect( "UPDATE " + ::cPrefixTable( "address" ) + " SET alias='" + AllTrim( cFirstName ) + AllTrim( cLastName ) + ;
                                                                                 "', firstname='" + AllTrim( cFirstName ) + ;
                                                                                 "', lastname='" + AllTrim( cLastName ) + ;
                                                                                 "', address1='" + AllTrim( ::oCli:Domicilio ) + ;
@@ -10803,9 +10610,9 @@ METHOD AppendClientesToPrestashop()
                                                                                 "', date_upd='" + dtos( GetSysDate() ) + ;
                                                                                 "' WHERE id_customer=" + AllTrim( Str( ::oCli:cCodWeb ) ) )
 
-                     ::SetText( "Actualizado correctamente el cliente " + AllTrim( ::oCli:Titulo ) + " en la tabla ps_address", 3 )
+                     ::SetText( "Actualizado correctamente el cliente " + AllTrim( ::oCli:Titulo ) + " en la tabla address", 3 )
                   else
-                     ::SetText( "Error al actualizar el cliente " + AllTrim( ::oCli:Titulo ) + " en la tabla ps_address", 3 )
+                     ::SetText( "Error al actualizar el cliente " + AllTrim( ::oCli:Titulo ) + " en la tabla address", 3 )
                   end if
 
                end if
@@ -10961,11 +10768,11 @@ METHOD lUpdateFabricantesPrestashop( nId ) Class TComercio
 
    local lReturn  := .f.
 
-   if TMSCommand():New( ::oCon ):ExecDirect( "UPDATE ps_manufacturer SET name='" + AllTrim( ::oFab:cNomFab ) + "', date_upd='" + dtos( GetSysDate() ) + "' WHERE id_manufacturer=" + AllTrim( Str( ::oFab:cCodWeb ) ) )
-      ::SetText( "Actualizada correctamente el fabricante " + AllTrim( ::oFab:cNomFab ) + " en la tabla ps_manufacturer", 3 )
+   if TMSCommand():New( ::oCon ):ExecDirect( "UPDATE " + ::cPrefixTable( "manufacturer" ) + " SET name='" + AllTrim( ::oFab:cNomFab ) + "', date_upd='" + dtos( GetSysDate() ) + "' WHERE id_manufacturer=" + AllTrim( Str( ::oFab:cCodWeb ) ) )
+      ::SetText( "Actualizada correctamente el fabricante " + AllTrim( ::oFab:cNomFab ) + " en la tabla manufacturer", 3 )
       lReturn     := .t.
    else
-     ::SetText( "Error al actualizar el fabricante " + AllTrim( ::oFab:cNomFab ) + " en la tabla ps_manufacturer", 3 )
+     ::SetText( "Error al actualizar el fabricante " + AllTrim( ::oFab:cNomFab ) + " en la tabla manufacturer", 3 )
      lReturn     := .f.
    end if
 
@@ -11163,7 +10970,7 @@ Method InsertOfertasPrestashop( nCodigoWeb ) CLASS TComercio
 
       else
 
-         ::SetText( "Error al insertar la propiedad " + AllTrim( ::oTblPro:cDesTbl ) + " en la tabla " + ::cPreFixtable( "ps_attribute" ), 3 )
+         ::SetText( "Error al insertar la propiedad " + AllTrim( ::oTblPro:cDesTbl ) + " en la tabla " + ::cPreFixtable( "attribute" ), 3 )
 
       end if   
 
@@ -11205,7 +11012,7 @@ METHOD InsertLineasPropiedadesPrestashop( cCodPro, nCodigoGrupo ) CLASS TComerci
 
          else
 
-            ::SetText( "Error al insertar la propiedad " + AllTrim( ::oTblPro:cDesTbl ) + " en la tabla " + ::cPreFixtable( "ps_attribute" ), 3 )
+            ::SetText( "Error al insertar la propiedad " + AllTrim( ::oTblPro:cDesTbl ) + " en la tabla " + ::cPreFixtable( "attribute" ), 3 )
 
          end if
 
@@ -11532,7 +11339,7 @@ METHOD GetValPrp( nIdPrp, nProductAttibuteId ) CLASS TComercio
    local nIdAttributeGroup
    local cValPrp                 := ""
 
-   oQuery1                       := TMSQuery():New( ::oCon, 'SELECT * FROM ps_product_attribute_combination where id_product_attribute=' + AllTrim( Str( nProductAttibuteId ) ) )
+   oQuery1                       := TMSQuery():New( ::oCon, 'SELECT * FROM ' + ::cPrefixTable( "product_attribute_combination" ) + ' where id_product_attribute=' + AllTrim( Str( nProductAttibuteId ) ) )
 
    if oQuery1:Open()
 
@@ -11548,7 +11355,7 @@ METHOD GetValPrp( nIdPrp, nProductAttibuteId ) CLASS TComercio
 
          nIdAttribute            := oQuery1:FieldGet( 1 )
 
-         oQuery2                 := TMSQuery():New( ::oCon, 'SELECT * FROM ps_attribute where id_attribute=' + AllTrim( Str( nIdAttribute ) ) )
+         oQuery2                 := TMSQuery():New( ::oCon, 'SELECT * FROM ' + ::cPrefixTable( "attribute" ) + ' where id_attribute=' + AllTrim( Str( nIdAttribute ) ) )
 
          if oQuery2:Open()
 
@@ -11824,7 +11631,7 @@ Return .t.
 //---------------------------------------------------------------------------//
 //---------------------------------------------------------------------------//
 //---------------------------------------------------------------------------//
-//---------------------------------------------------------------------------//
+//ESTRUCTURAS----------------------------------------------------------------//
 //---------------------------------------------------------------------------//
 //---------------------------------------------------------------------------//
 //---------------------------------------------------------------------------//
@@ -11880,9 +11687,196 @@ CLASS SCategoria
 END CLASS
 
 //---------------------------------------------------------------------------//
+//---------------------------------------------------------------------------//
+//---------------------------------------------------------------------------//
+//FUNCIONES------------------------------------------------------------------//
+//---------------------------------------------------------------------------//
+//---------------------------------------------------------------------------//
+//---------------------------------------------------------------------------//
+//---------------------------------------------------------------------------//
+//---------------------------------------------------------------------------//
 
 function cLinkRewrite( cLink )
 
 Return( StrTran( AllTrim( cLink ), " ", "-" ) )
+
+//---------------------------------------------------------------------------//
+
+Function HB_DBCREATETEMP()
+
+Return( nil )
+
+//---------------------------------------------------------------------------//
+
+Function SetAutoRecive()
+
+   if Empty( oComercio )
+      oComercio   := TComercio():New()
+   end if
+
+   if !Empty( oComercio )           .and. ;
+      !Empty( oComercio:cHost )     .and. ;
+      !Empty( oComercio:cUser )     .and. ;
+      !Empty( oComercio:cPasswd )   .and. ;
+      !Empty( oComercio:cDbName )   .and. ;
+      ( oComercio:nSecondTimer != 0 )
+
+      oTimer      := TTimer():New( oComercio:nSecondTimer, {|| oComercio:AutoRecive() } )
+      oTimer:Activate()
+
+   end if
+
+Return( nil )
+
+//---------------------------------------------------------------------------//
+
+Function KillAutoRecive()
+
+   if !Empty( oTimer )
+      oTimer:End()
+   end if
+
+   oTimer         := nil
+   oComercio      := nil
+
+Return( nil )
+
+//---------------------------------------------------------------------------//
+
+Static Function BuscarCodFam( cCodigo, oFam )
+
+   local cCodFamilia
+
+   if oFam:SeekInOrd( Str( cCodigo, 11 ), "cCodWeb" )
+
+      cCodFamilia       := oFam:cCodfam
+
+   end if
+
+Return cCodFamilia
+
+//---------------------------------------------------------------------------//
+
+Static Function BuscarCodPro( cCodigo, oPro )
+
+   local cCodPro
+
+   if oPro:SeekInOrd( Str( cCodigo, 11 ), "cCodWeb" )
+
+      cCodPro       := oPro:cCodPro
+
+   end if
+
+Return cCodPro
+
+//---------------------------------------------------------------------------//
+
+Static Function BuscarCodIva( cCodigo, oIva )
+
+   local cCodIva
+
+   if oIva:SeekInOrd( Str( cCodigo, 11 ), "cCodWeb" )
+      cCodIva           := oIva:Tipo
+   end if
+
+Return cCodIva
+
+//---------------------------------------------------------------------------//
+
+Static Function BuscarCodFab( cCodigo, oFab )
+
+   local cCodFab
+
+   if oFab:SeekInOrd( Str( cCodigo, 11 ), "cCodWeb" )
+
+      cCodFab           := oFab:cCodFab
+
+   end if
+
+Return cCodFab
+
+//---------------------------------------------------------------------------//
+
+Static Function BuscarProvincia( cCodZona, oTablaZona )
+
+   local cNomZona := ""
+
+   if ValType( cCodZona ) == "N" .and. cCodZona != 0
+
+      if oTablaZona:Find( 1, cCodZona , .t. )
+
+         oTablaZona:load()
+
+         cNomZona    := oTablaZona:GetBuffer( 4 )
+
+      end if
+
+   end if
+
+Return cNomZona
+
+//---------------------------------------------------------------------------//
+
+Static Function BuscarCliente( cCodCli, oCli )
+
+   local cCodigo := ""
+
+   if oCli:SeekInOrd( Str( cCodCli, 11 ), "cCodWeb" )
+      cCodigo    := oCli:Cod
+   end if
+
+Return cCodigo
+
+//---------------------------------------------------------------------------//
+
+Static Function BuscarFormaPago( cNombre , oFPago )
+
+   local cCodigo  := Space( 2 )
+
+   if oFPago:SeekInOrd( Upper( cNombre ), "cDesPgoBig" )
+      cCodigo     := oFPago:cCodPago
+   end if
+
+Return cCodigo
+
+//---------------------------------------------------------------------------//
+
+Static Function BuscarGastoEnvio( cCodigo, oTotal )
+
+   local nTotal   := 0
+   local n
+
+   if oTotal:RecCount() > 0
+
+   for n := 1 to oTotal:RecCount()
+
+      oTotal:Load()
+
+      if( oTotal:GetBuffer( 2 ) == cCodigo ).and.;
+        ( oTotal:GetBuffer( 6 ) == "ot_shipping" )
+
+         nTotal   := oTotal:GetBuffer( 5 )
+
+      end if
+
+   oTotal:Skip()
+
+   next
+
+   end if
+
+Return nTotal
+
+//---------------------------------------------------------------------------//
+
+Static Function BuscarDireccion( cDireccion, oObras, cCliente )
+
+   local cCodigo
+
+   if oObras:SeekInOrd( Upper( cDireccion ), "cDirObr" )
+      cCodigo     := oObras:cCodObr
+   end if
+
+Return cCodigo
 
 //---------------------------------------------------------------------------//

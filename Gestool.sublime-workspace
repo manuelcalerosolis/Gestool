@@ -531,7 +531,7 @@
 			"file": "prg/Tcomercio.prg",
 			"settings":
 			{
-				"buffer_size": 373511,
+				"buffer_size": 373469,
 				"line_ending": "Windows"
 			}
 		},
@@ -547,7 +547,7 @@
 			"file": "prg/Tpv.prg",
 			"settings":
 			{
-				"buffer_size": 665794,
+				"buffer_size": 666017,
 				"line_ending": "Windows"
 			}
 		},
@@ -555,7 +555,7 @@
 			"file": "prg/Stock.prg",
 			"settings":
 			{
-				"buffer_size": 213580,
+				"buffer_size": 213137,
 				"line_ending": "Windows"
 			}
 		},
@@ -616,6 +616,7 @@
 	},
 	"file_history":
 	[
+		"/C/fw195/Gestool/prg/Client.prg",
 		"/C/fw195/Gestool/prg/Tfastventasclientes.prg",
 		"/C/fw195/Gestool/prg/Articulo.prg",
 		"/C/fw195/Gestool/prg/Oferta.prg",
@@ -661,7 +662,6 @@
 		"/C/AppServ/www/zemtrum/tienda/js/jquery.reveal.js",
 		"/C/AppServ/www/zemtrum/tienda/modules/blockuserinfo/blockuserinfo.css",
 		"/C/fw195/Gestool/prg/Factcli.prg",
-		"/C/fw195/Gestool/prg/Client.prg",
 		"/C/fw195/Gestool/prg/Satcli.prg",
 		"/C/fw195/Gestool/prg/Precli.prg",
 		"/C/Users/Villa/AppData/Roaming/Sublime Text 2/Packages/Default/Preferences.sublime-settings",
@@ -976,15 +976,15 @@
 					"file": "prg/Tcomercio.prg",
 					"settings":
 					{
-						"buffer_size": 373511,
+						"buffer_size": 373469,
 						"regions":
 						{
 						},
 						"selection":
 						[
 							[
-								323293,
-								323293
+								309963,
+								309963
 							]
 						],
 						"settings":
@@ -994,7 +994,7 @@
 							"translate_tabs_to_spaces": true
 						},
 						"translation.x": 0.0,
-						"translation.y": 199946.0,
+						"translation.y": 193480.0,
 						"zoom_level": 1.0
 					},
 					"type": "text"
@@ -1030,15 +1030,15 @@
 					"file": "prg/Tpv.prg",
 					"settings":
 					{
-						"buffer_size": 665794,
+						"buffer_size": 666017,
 						"regions":
 						{
 						},
 						"selection":
 						[
 							[
-								141649,
-								141649
+								0,
+								0
 							]
 						],
 						"settings":
@@ -1058,15 +1058,15 @@
 					"file": "prg/Stock.prg",
 					"settings":
 					{
-						"buffer_size": 213580,
+						"buffer_size": 213137,
 						"regions":
 						{
 						},
 						"selection":
 						[
 							[
-								111475,
-								111475
+								0,
+								0
 							]
 						],
 						"settings":
