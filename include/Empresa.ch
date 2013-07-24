@@ -282,3 +282,4 @@
 #define _LRECNUMFAC			   282	
 #define _LALBTCT			   283
 #define _LFACTCT			   284
+#define _CPREFIXTBL 		   285	
