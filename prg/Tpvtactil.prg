@@ -792,14 +792,14 @@ CLASS TpvTactil
 
    //-----------------------------------------------------------------------//
 
-   INLINE METHOD GuardaDocumentoPendiente( nSave )
+   INLINE METHOD GuardaDocumentoPendiente()
 
-      DEFAULT nSave                 := SAVTIK
-
-      ::oTiketCabecera:cTipTik      := nSave
+      ::oTiketCabecera:cTipTik      := SAVTIK
       ::oTiketCabecera:lPgdTik      := .f.
 
-      ::GuardaDocumento( nil, nSave )
+      ::GuardaDocumento()
+
+      ::ProcesaComandas()
 
       RETURN ( .t. )
 
@@ -807,11 +807,9 @@ CLASS TpvTactil
 
    //-----------------------------------------------------------------------//
 
-   INLINE METHOD GuardaDocumentoPagado( nSave )
+   INLINE METHOD GuardaDocumentoPagado()
 
-      DEFAULT nSave                    := SAVTIK
-
-      ::oTiketCabecera:cTipTik         := nSave
+      ::oTiketCabecera:cTipTik         := SAVTIK
 
       do case
          case ::oTpvCobros:nEstado == nParcial
@@ -824,7 +822,23 @@ CLASS TpvTactil
 
       end case
 
-      ::GuardaDocumento( nil, nSave )
+      ::GuardaDocumento()
+
+      ::ProcesaComandas()
+
+      RETURN ( Self )
+
+   ENDMETHOD
+
+   //-----------------------------------------------------------------------//
+
+   INLINE METHOD GuardaDocumentoCerrado()
+
+      ::oTiketCabecera:lAbierto  := .f.
+
+      ::GuardaDocumento( .f. )
+
+      ::ProcesaComandas()
 
       RETURN ( Self )
 
@@ -839,6 +853,8 @@ CLASS TpvTactil
    METHOD GetTotalDocumento( uValue )  INLINE ( oSend( ::sTotal, uValue ) )
 
    METHOD GetLineaAlbaranes( uValue )  INLINE ( Eval( &( uValue ), ::oAlbaranClienteLinea:cAlias ) )
+
+   METHOD ProcesaComandas()
 
    METHOD ImprimeDocumento()
 
@@ -1248,7 +1264,9 @@ CLASS TpvTactil
 
       cInfo             += "Sesión : " + Alltrim( Transform( cCurSesion(), "######" ) ) + Space( 1 )
 
-      if !Empty( ::oTiketCabecera:cNumTik )
+      if ::lEmptyNumeroTicket()
+         cInfo          += "*Nuevo*"
+      else
          cInfo          += "Ticket : " + ::oTiketCabecera:cSerTik + "/" + Alltrim( ::oTiketCabecera:cNumTik ) + Space( 1 )
       end if
 
@@ -4230,11 +4248,11 @@ METHOD CreateTemporal() CLASS TpvTactil
          ::oTemporalComanda:AddField( aFieldCol[ 1 ], aFieldCol[ 2 ], aFieldCol[ 3 ], aFieldCol[ 4 ], aFieldCol[ 6 ], , , , aFieldCol[ 5 ] )
       next
 
-      INDEX TO ( ::cTemporalComanda ) TAG ( Str( ::oTemporalComanda:Recno() ) ) ON ( Str( ::oTemporalComanda:Recno() ) ) COMMENT "Orden" NODELETED OF ::oTemporalComanda
+      INDEX TO ( ::cTemporalComanda ) TAG "TikC" ON Field->cSerTil + Field->cNumTil + Field->cSufTil + Field->cOrdOrd + Str( Recno() )    COMMENT "Orden"   NODELETED OF ::oTemporalComanda
 
    END DATABASE ::oTemporalComanda
 
-   ::oTemporalComanda:Activate( .f., .f. )
+   ::oTemporalComanda:Activate( .f., .f. ) 
 
    /*
    Definimos las bases de datos temporal linea---------------------------------
@@ -4248,7 +4266,7 @@ METHOD CreateTemporal() CLASS TpvTactil
          ::oTemporalCobro:AddField( aFieldCol[ 1 ], aFieldCol[ 2 ], aFieldCol[ 3 ], aFieldCol[ 4 ], "", , , , aFieldCol[ 5 ] )
       next
 
-      INDEX TO ( ::cTemporalCobro ) TAG ( Str( ::oTemporalCobro:Recno() ) ) ON ( Str( ::oTemporalCobro:Recno() ) ) COMMENT "Orden" NODELETED OF ::oTemporalCobro
+      INDEX TO ( ::cTemporalCobro ) TAG "TikP" ON Str( Recno() )                             COMMENT "Orden"   NODELETED OF ::oTemporalCobro
 
    END DATABASE ::oTemporalCobro
 
@@ -4265,7 +4283,7 @@ METHOD DestroyTemporal() CLASS TpvTactil
       ::oTemporalLinea:End()
    end if
 
-   ::oTemporalLinea         := nil
+   ::oTemporalLinea                       := nil
 
    dbfErase( ::cTemporalLinea )
 
@@ -4273,7 +4291,7 @@ METHOD DestroyTemporal() CLASS TpvTactil
       ::oTemporalDivisionOriginal:End()
    end if
 
-   ::oTemporalDivisionOriginal         := nil
+   ::oTemporalDivisionOriginal            := nil
 
    dbfErase( ::cTemporalDivisionOriginal )
 
@@ -4289,7 +4307,7 @@ METHOD DestroyTemporal() CLASS TpvTactil
       ::oTemporalComanda:End()
    end if
 
-   ::oTemporalComanda       := nil
+   ::oTemporalComanda                     := nil
 
    dbfErase( ::cTemporalComanda )
 
@@ -4297,7 +4315,7 @@ METHOD DestroyTemporal() CLASS TpvTactil
       ::oTemporalCobro:End()
    end if
 
-   ::oTemporalCobro         := nil
+   ::oTemporalCobro                       := nil
 
    dbfErase( ::cTemporalCobro )
 
@@ -6214,9 +6232,7 @@ METHOD OnClickEntrega() CLASS TpvTactil
    Guarda documento------------------------------------------------------------
    */
 
-   ::oTiketCabecera:lAbierto  := .f.
-
-   ::GuardaDocumento( .f. )
+   ::GuardaDocumentoCerrado( .f. )
 
    /*
    Imprimimos el documento-----------------------------------------------------
@@ -6415,11 +6431,11 @@ METHOD GuardaDocumento( lZap, nSave ) CLASS TpvTactil
 
       /*
       Imprimimos la comanda si procede-----------------------------------------
-      */
 
       if ( nSave == SAVTIK )
          ::OnClickCopiaComanda()
       end if
+      */
 
       /*
       Encendemos el flag para cargar de nuevo el usuario-----------------------
@@ -6430,6 +6446,8 @@ METHOD GuardaDocumento( lZap, nSave ) CLASS TpvTactil
       ::SetCliente()
 
       ::SetSerie()
+
+      ::SetInfo()
 
    RECOVER USING oError
 
@@ -6638,6 +6656,8 @@ METHOD CargaDocumento( cNumeroTicket ) CLASS TpvTactil
       */
 
       if ::oTiketLinea:Seek( cNumeroTicket )
+
+         ::oTemporalLinea:Zap()
 
          while ( ::oTiketLinea:cSerTil + ::oTiketLinea:cNumTil + ::oTiketLinea:cSufTil == cNumeroTicket ) .and. !( ::oTiketLinea:Eof() )
 
@@ -7589,26 +7609,14 @@ Return ( Self )
 
 //---------------------------------------------------------------------------//
 
-METHOD OnClickCopiaComanda( lCopia ) CLASS TpvTactil
+METHOD ProcesaComandas( lCopia )
 
    local cImp
    local aImp           := {}
    local cWav           := ""
-   local lAppend
+   local lAppend        := .f.
 
    DEFAULT lCopia       := .f.
-
-   /*
-   Comprobamos si tenemos que imprimir la comanda------------------------------
-   */
-
-   /*
-   Esta excepcion es para un cliente pero no para otros
-
-   if ( ::oTiketCabecera:nUbiTik == ubiGeneral ) .and. Empty( ::oTiketCabecera:cAliasTik )
-      Return .t.
-   end if
-   */
 
    CursorWait()
 
@@ -7656,7 +7664,6 @@ METHOD OnClickCopiaComanda( lCopia ) CLASS TpvTactil
             Añadimos esta linea al temporal de comandas------------------------
             */
 
-
             if lAppend
 
                ::oTemporalComanda:AppendFromObject( ::oTiketLinea )
@@ -7690,6 +7697,7 @@ METHOD OnClickCopiaComanda( lCopia ) CLASS TpvTactil
       */
 
       ::oTemporalComanda:SetFilter( "Rtrim( Field->cImpCom1 ) == '" + Rtrim( cImp ) + "' .or. Rtrim( Field->cImpCom2 ) == '" + Rtrim( cImp ) + "'" )
+      ::oTemporalComanda:GoTop()
 
       /*
       Imprimimos la comanda por la impresora correspondiente-------------------
@@ -7732,37 +7740,60 @@ METHOD OnClickCopiaComanda( lCopia ) CLASS TpvTactil
    end if
 
    /*
-   Log de impresiones----------------------------------------------------------
-
-   if !Empty( dbfImp )
-
-      if dbSeekInOrd( nNumTik, "cNumTil", dbfImp )
-
-         while ( dbfImp )->cSerTik + ( dbfImp )->cNumTik + ( dbfImp )->cSufTik == nNumTik .and. ( dbfImp )->lComanda .and. !( dbfImp )->( Eof() )
-
-            if dbLock( dbfImp )
-               ( dbfImp )->lImp        := .t.
-               ( dbfImp )->dFTikImp    := GetSysDate()
-               ( dbfImp )->cHTikImp    := Substr( Time(), 1, 5 )
-               ( dbfImp )->( dbUnLock() )
-            end if
-
-            ( dbfImp )->( dbSkip() )
-
-         end while
-
-      end if
-
-   end if
-   */
-
-   /*
    Matamos la temporal---------------------------------------------------------
    */
 
-   ::oTemporalComanda:Zap()
+   if ::oTemporalComanda:OrdKeyCount() > 0
+      ::oTemporalComanda:Zap()
+   end if 
 
    CursorWE()
+   
+Return ( Self )
+
+//---------------------------------------------------------------------------//
+
+METHOD OnClickCopiaComanda() CLASS TpvTactil
+
+   /*
+   Comprobamos si tenemos que imprimir la comanda------------------------------
+   */
+
+   if ::lEmptyNumeroTicket()
+
+      /*
+      Si el documento es nuevo y no tiene lineas no lo guardo------------------
+      */
+
+      if ::lEmptyDocumento()
+         Return ( .t. )
+      end if
+
+      /*
+      Vamos a detectar si estoy en un General----------------------------------
+      */
+
+      if ::lEmptyAlias() .and. !::SetAliasDocumento()
+         Return ( .t. )
+      end if
+
+      ::GuardaDocumento( .f. )
+
+      /*
+      Es una comanda normal pq se gurada por primera vez-----------------------
+      */
+
+      ::ProcesaComandas( .f. )
+
+   else 
+
+      /*
+      Es una comanda de copia pq ya estaba guardada----------------------------
+      */
+
+      ::ProcesaComandas( .t. )
+
+   end if 
 
 Return ( Self )
 
@@ -8082,112 +8113,112 @@ METHOD ClearRelationReport() CLASS TpvTactil
 
    do case
       case ::nTipoDocumento == documentoAlbaran    //Creamos las relaciones para los tikets como albaranes
-
-      ::oFastReport:ClearMasterDetail( "Lineas de albaranes" )
-      ::oFastReport:ClearMasterDetail( "Entregas de albaranes" )
-      ::oFastReport:ClearMasterDetail( "Incidencias de albaranes" )
-      ::oFastReport:ClearMasterDetail( "Documentos de albaranes" )
-      ::oFastReport:ClearMasterDetail( "Series de lineas de albaranes" )
-      ::oFastReport:ClearMasterDetail( "Clientes" )
-      ::oFastReport:ClearMasterDetail( "Obras" )
-      ::oFastReport:ClearMasterDetail( "Almacenes" )
-      ::oFastReport:ClearMasterDetail( "Rutas" )
-      ::oFastReport:ClearMasterDetail( "Agentes" )
-      ::oFastReport:ClearMasterDetail( "Formas de pago" )
-      ::oFastReport:ClearMasterDetail( "Transportistas" )
-      ::oFastReport:ClearMasterDetail( "Empresa" )
-      ::oFastReport:ClearMasterDetail( "Usuarios" )
-      ::oFastReport:ClearMasterDetail( "Artículos" )
-      ::oFastReport:ClearMasterDetail( "Tipo de venta" )
-      ::oFastReport:ClearMasterDetail( "Ofertas" )
-      ::oFastReport:ClearMasterDetail( "Unidades de medición" )
-
-      ::oFastReport:ClearResyncPair( "Albaranes", "Lineas de albaranes" )
-      ::oFastReport:ClearResyncPair( "Albaranes", "Entregas de albaranes" )
-      ::oFastReport:ClearResyncPair( "Albaranes", "Incidencias de albaranes" )
-      ::oFastReport:ClearResyncPair( "Albaranes", "Documentos de albaranes" )
-      ::oFastReport:ClearResyncPair( "Albaranes", "Series de lineas de albaranes" )
-      ::oFastReport:ClearResyncPair( "Albaranes", "Clientes" )
-      ::oFastReport:ClearResyncPair( "Albaranes", "Obras" )
-      ::oFastReport:ClearResyncPair( "Albaranes", "Almacenes" )
-      ::oFastReport:ClearResyncPair( "Albaranes", "Rutas" )
-      ::oFastReport:ClearResyncPair( "Albaranes", "Agentes" )
-      ::oFastReport:ClearResyncPair( "Albaranes", "Formas de pago" )
-      ::oFastReport:ClearResyncPair( "Albaranes", "Transportistas" )
-      ::oFastReport:ClearResyncPair( "Albaranes", "Empresa" )
-      ::oFastReport:ClearResyncPair( "Albaranes", "Usuarios" )
-      ::oFastReport:ClearResyncPair( "Lineas de albaranes", "Artículos" )
-      ::oFastReport:ClearResyncPair( "Lineas de albaranes", "Tipo de venta" )
-      ::oFastReport:ClearResyncPair( "Lineas de albaranes", "Ofertas" )
-      ::oFastReport:ClearResyncPair( "Lineas de albaranes", "Unidades de medición" )
-
-   otherwise
-
-      ::oFastReport:ClearMasterDetail( "Empresa" )
-      ::oFastReport:ClearMasterDetail( "Lineas de tickets" )
-      ::oFastReport:ClearMasterDetail( "Lineas de comandas" )
-      ::oFastReport:ClearMasterDetail( "Lineas de albaranes" )
-      ::oFastReport:ClearMasterDetail( "Lineas de facturas" )
-      ::oFastReport:ClearMasterDetail( "Pagos de tickets" )
-      ::oFastReport:ClearMasterDetail( "Clientes" )
-      ::oFastReport:ClearMasterDetail( "Obras" )
-      ::oFastReport:ClearMasterDetail( "Almacen" )
-      ::oFastReport:ClearMasterDetail( "Rutas" )
-      ::oFastReport:ClearMasterDetail( "Agentes" )
-      ::oFastReport:ClearMasterDetail( "Usuarios" )
-      ::oFastReport:ClearMasterDetail( "SalaVenta" )
-
-      ::oFastReport:ClearMasterDetail( "Artículos" )
-      ::oFastReport:ClearMasterDetail( "Familia" )
-      ::oFastReport:ClearMasterDetail( "Unidades de medición" )
-      ::oFastReport:ClearMasterDetail( "Categorías" )
-      ::oFastReport:ClearMasterDetail( "Tipos de artículos" )
-      ::oFastReport:ClearMasterDetail( "Fabricantes" )
-      ::oFastReport:ClearMasterDetail( "Temporadas" )
-      ::oFastReport:ClearMasterDetail( "Orden comanda" )
-
-      ::oFastReport:ClearMasterDetail( "Formas de pago" )
-
-      //------------------------------------------------------------------------//
-
-      ::oFastReport:ClearResyncPair(  "Tickets", "Lineas de tickets" )
-      ::oFastReport:ClearResyncPair(  "Tickets", "Lineas de comandas" )
-      ::oFastReport:ClearResyncPair(  "Tickets", "Lineas de albaranes" )
-      ::oFastReport:ClearResyncPair(  "Tickets", "Lineas de facturas" )
-      ::oFastReport:ClearResyncPair(  "Tickets", "Empresa" )
-      ::oFastReport:ClearResyncPair(  "Tickets", "Clientes" )
-      ::oFastReport:ClearResyncPair(  "Tickets", "Obras" )
-      ::oFastReport:ClearResyncPair(  "Tickets", "Almacenes" )
-      ::oFastReport:ClearResyncPair(  "Tickets", "Rutas" )
-      ::oFastReport:ClearResyncPair(  "Tickets", "Agentes" )
-      ::oFastReport:ClearResyncPair(  "Tickets", "Usuarios" )
-      ::oFastReport:ClearResyncPair(  "Tickets", "SalaVenta" )
-
-      ::oFastReport:ClearResyncPair(  "Pagos de tickets", "Formas de pago" )
-
-      if ::lComanda
-
-      ::oFastReport:ClearResyncPair(  "Lineas de comandas", "Artículos" )
-      ::oFastReport:ClearResyncPair(  "Lineas de comandas", "Familias" )
-      ::oFastReport:ClearResyncPair(  "Lineas de comandas", "Orden comanda" )
-      ::oFastReport:ClearResyncPair(  "Lineas de comandas", "Unidades de medición" )
-      ::oFastReport:ClearResyncPair(  "Lineas de comandas", "Categorías" )
-      ::oFastReport:ClearResyncPair(  "Lineas de comandas", "Tipos de artículos" )
-      ::oFastReport:ClearResyncPair(  "Lineas de comandas", "Fabricantes" )
-      ::oFastReport:ClearResyncPair(  "Lineas de comandas", "Temporadas" )
-
-      else 
-
-      ::oFastReport:ClearResyncPair(  "Lineas de tickets", "Artículos" )
-      ::oFastReport:ClearResyncPair(  "Lineas de tickets", "Familias" )
-      ::oFastReport:ClearResyncPair(  "Lineas de tickets", "Orden comanda" )
-      ::oFastReport:ClearResyncPair(  "Lineas de tickets", "Unidades de medición" )
-      ::oFastReport:ClearResyncPair(  "Lineas de tickets", "Categorías" )
-      ::oFastReport:ClearResyncPair(  "Lineas de tickets", "Tipos de artículos" )
-      ::oFastReport:ClearResyncPair(  "Lineas de tickets", "Fabricantes" )
-      ::oFastReport:ClearResyncPair(  "Lineas de tickets", "Temporadas" )
-
-      end if
+   
+         ::oFastReport:ClearMasterDetail( "Lineas de albaranes" )
+         ::oFastReport:ClearMasterDetail( "Entregas de albaranes" )
+         ::oFastReport:ClearMasterDetail( "Incidencias de albaranes" )
+         ::oFastReport:ClearMasterDetail( "Documentos de albaranes" )
+         ::oFastReport:ClearMasterDetail( "Series de lineas de albaranes" )
+         ::oFastReport:ClearMasterDetail( "Clientes" )
+         ::oFastReport:ClearMasterDetail( "Obras" )
+         ::oFastReport:ClearMasterDetail( "Almacenes" )
+         ::oFastReport:ClearMasterDetail( "Rutas" )
+         ::oFastReport:ClearMasterDetail( "Agentes" )
+         ::oFastReport:ClearMasterDetail( "Formas de pago" )
+         ::oFastReport:ClearMasterDetail( "Transportistas" )
+         ::oFastReport:ClearMasterDetail( "Empresa" )
+         ::oFastReport:ClearMasterDetail( "Usuarios" )
+         ::oFastReport:ClearMasterDetail( "Artículos" )
+         ::oFastReport:ClearMasterDetail( "Tipo de venta" )
+         ::oFastReport:ClearMasterDetail( "Ofertas" )
+         ::oFastReport:ClearMasterDetail( "Unidades de medición" )
+   
+         ::oFastReport:ClearResyncPair( "Albaranes", "Lineas de albaranes" )
+         ::oFastReport:ClearResyncPair( "Albaranes", "Entregas de albaranes" )
+         ::oFastReport:ClearResyncPair( "Albaranes", "Incidencias de albaranes" )
+         ::oFastReport:ClearResyncPair( "Albaranes", "Documentos de albaranes" )
+         ::oFastReport:ClearResyncPair( "Albaranes", "Series de lineas de albaranes" )
+         ::oFastReport:ClearResyncPair( "Albaranes", "Clientes" )
+         ::oFastReport:ClearResyncPair( "Albaranes", "Obras" )
+         ::oFastReport:ClearResyncPair( "Albaranes", "Almacenes" )
+         ::oFastReport:ClearResyncPair( "Albaranes", "Rutas" )
+         ::oFastReport:ClearResyncPair( "Albaranes", "Agentes" )
+         ::oFastReport:ClearResyncPair( "Albaranes", "Formas de pago" )
+         ::oFastReport:ClearResyncPair( "Albaranes", "Transportistas" )
+         ::oFastReport:ClearResyncPair( "Albaranes", "Empresa" )
+         ::oFastReport:ClearResyncPair( "Albaranes", "Usuarios" )
+         ::oFastReport:ClearResyncPair( "Lineas de albaranes", "Artículos" )
+         ::oFastReport:ClearResyncPair( "Lineas de albaranes", "Tipo de venta" )
+         ::oFastReport:ClearResyncPair( "Lineas de albaranes", "Ofertas" )
+         ::oFastReport:ClearResyncPair( "Lineas de albaranes", "Unidades de medición" )
+   
+      otherwise
+   
+         ::oFastReport:ClearMasterDetail( "Empresa" )
+         ::oFastReport:ClearMasterDetail( "Lineas de tickets" )
+         ::oFastReport:ClearMasterDetail( "Lineas de comandas" )
+         ::oFastReport:ClearMasterDetail( "Lineas de albaranes" )
+         ::oFastReport:ClearMasterDetail( "Lineas de facturas" )
+         ::oFastReport:ClearMasterDetail( "Pagos de tickets" )
+         ::oFastReport:ClearMasterDetail( "Clientes" )
+         ::oFastReport:ClearMasterDetail( "Obras" )
+         ::oFastReport:ClearMasterDetail( "Almacen" )
+         ::oFastReport:ClearMasterDetail( "Rutas" )
+         ::oFastReport:ClearMasterDetail( "Agentes" )
+         ::oFastReport:ClearMasterDetail( "Usuarios" )
+         ::oFastReport:ClearMasterDetail( "SalaVenta" )
+   
+         ::oFastReport:ClearMasterDetail( "Artículos" )
+         ::oFastReport:ClearMasterDetail( "Familia" )
+         ::oFastReport:ClearMasterDetail( "Unidades de medición" )
+         ::oFastReport:ClearMasterDetail( "Categorías" )
+         ::oFastReport:ClearMasterDetail( "Tipos de artículos" )
+         ::oFastReport:ClearMasterDetail( "Fabricantes" )
+         ::oFastReport:ClearMasterDetail( "Temporadas" )
+         ::oFastReport:ClearMasterDetail( "Orden comanda" )
+   
+         ::oFastReport:ClearMasterDetail( "Formas de pago" )
+   
+         //------------------------------------------------------------------------//
+   
+         ::oFastReport:ClearResyncPair(  "Tickets", "Lineas de tickets" )
+         ::oFastReport:ClearResyncPair(  "Tickets", "Lineas de comandas" )
+         ::oFastReport:ClearResyncPair(  "Tickets", "Lineas de albaranes" )
+         ::oFastReport:ClearResyncPair(  "Tickets", "Lineas de facturas" )
+         ::oFastReport:ClearResyncPair(  "Tickets", "Empresa" )
+         ::oFastReport:ClearResyncPair(  "Tickets", "Clientes" )
+         ::oFastReport:ClearResyncPair(  "Tickets", "Obras" )
+         ::oFastReport:ClearResyncPair(  "Tickets", "Almacenes" )
+         ::oFastReport:ClearResyncPair(  "Tickets", "Rutas" )
+         ::oFastReport:ClearResyncPair(  "Tickets", "Agentes" )
+         ::oFastReport:ClearResyncPair(  "Tickets", "Usuarios" )
+         ::oFastReport:ClearResyncPair(  "Tickets", "SalaVenta" )
+   
+         ::oFastReport:ClearResyncPair(  "Pagos de tickets", "Formas de pago" )
+   
+         if ::lComanda
+   
+            ::oFastReport:ClearResyncPair(  "Lineas de comandas", "Artículos" )
+            ::oFastReport:ClearResyncPair(  "Lineas de comandas", "Familias" )
+            ::oFastReport:ClearResyncPair(  "Lineas de comandas", "Orden comanda" )
+            ::oFastReport:ClearResyncPair(  "Lineas de comandas", "Unidades de medición" )
+            ::oFastReport:ClearResyncPair(  "Lineas de comandas", "Categorías" )
+            ::oFastReport:ClearResyncPair(  "Lineas de comandas", "Tipos de artículos" )
+            ::oFastReport:ClearResyncPair(  "Lineas de comandas", "Fabricantes" )
+            ::oFastReport:ClearResyncPair(  "Lineas de comandas", "Temporadas" )
+   
+         else 
+   
+            ::oFastReport:ClearResyncPair(  "Lineas de tickets", "Artículos" )
+            ::oFastReport:ClearResyncPair(  "Lineas de tickets", "Familias" )
+            ::oFastReport:ClearResyncPair(  "Lineas de tickets", "Orden comanda" )
+            ::oFastReport:ClearResyncPair(  "Lineas de tickets", "Unidades de medición" )
+            ::oFastReport:ClearResyncPair(  "Lineas de tickets", "Categorías" )
+            ::oFastReport:ClearResyncPair(  "Lineas de tickets", "Tipos de artículos" )
+            ::oFastReport:ClearResyncPair(  "Lineas de tickets", "Fabricantes" )
+            ::oFastReport:ClearResyncPair(  "Lineas de tickets", "Temporadas" )
+   
+         end if
 
    end case    
 
@@ -8851,11 +8882,9 @@ METHOD AddLineOrgToNew() Class TpvTactil
    cCodArt     := ::oTemporalDivisionOriginal:cCbaTil
    nUnidades   := ::oTemporalDivisionOriginal:nUntTil
 
-   if !::oTemporalDivisionOriginal:lKitChl   .and.;
-      !Empty( ::oTemporalDivisionOriginal:RecCount() )
+   if !::oTemporalDivisionOriginal:lKitChl .and. !Empty( ::oTemporalDivisionOriginal:RecCount() )
 
       do case
-
       case ::oTemporalDivisionOriginal:nUntTil > 1
 
          ::oTemporalDivisionOriginal:nUntTil := ::oTemporalDivisionOriginal:nUntTil - 1
@@ -8885,8 +8914,7 @@ METHOD AddLineOrgToNew() Class TpvTactil
 
                while !::oTemporalDivisionOriginal:Eof()
 
-                  if ::oTemporalDivisionOriginal:nNumLin == nLinea .and.;
-                     ::oTemporalDivisionOriginal:cCbaTil != cCodArt
+                  if ::oTemporalDivisionOriginal:nNumLin == nLinea .and. ::oTemporalDivisionOriginal:cCbaTil != cCodArt
 
                      if !::oTemporalDivisionNuevoTicket:SeekinOrd( Str( ::oTemporalDivisionOriginal:nNumLin ) + ::oTemporalDivisionOriginal:cCbaTil, "cLinCba" )
 
@@ -8940,8 +8968,7 @@ METHOD AddLineOrgToNew() Class TpvTactil
 
             while !::oTemporalDivisionOriginal:Eof()
 
-               if ::oTemporalDivisionOriginal:nNumLin == nLinea .and.;
-                  ::oTemporalDivisionOriginal:cCbaTil != cCodArt
+               if ::oTemporalDivisionOriginal:nNumLin == nLinea .and. ::oTemporalDivisionOriginal:cCbaTil != cCodArt
 
                   if !::oTemporalDivisionNuevoTicket:SeekinOrd( Str( ::oTemporalDivisionOriginal:nNumLin ) + ::oTemporalDivisionOriginal:cCbaTil, "cLinCba" )
 
@@ -9002,8 +9029,7 @@ METHOD AddLineOrgToNew() Class TpvTactil
 
             while !::oTemporalDivisionOriginal:Eof()
 
-               if ::oTemporalDivisionOriginal:nNumLin == nLinea .and.;
-                  ::oTemporalDivisionOriginal:cCbaTil != cCodArt
+               if ::oTemporalDivisionOriginal:nNumLin == nLinea .and. ::oTemporalDivisionOriginal:cCbaTil != cCodArt
 
                   if !::oTemporalDivisionNuevoTicket:SeekinOrd( Str( ::oTemporalDivisionOriginal:nNumLin ) + ::oTemporalDivisionOriginal:cCbaTil, "cLinCba" )
 
@@ -9060,8 +9086,7 @@ METHOD AddLineNewToOrg() Class TpvTactil
    cCodArt     := ::oTemporalDivisionNuevoTicket:cCbaTil
    nUnidades   := ::oTemporalDivisionNuevoTicket:nUntTil
 
-   if !::oTemporalDivisionNuevoTicket:lKitChl   .and.;
-      !Empty( ::oTemporalDivisionNuevoTicket:RecCount() )
+   if !::oTemporalDivisionNuevoTicket:lKitChl .and. !Empty( ::oTemporalDivisionNuevoTicket:RecCount() )
 
       if ::oTemporalDivisionNuevoTicket:nUntTil > 1
 
@@ -9092,8 +9117,7 @@ METHOD AddLineNewToOrg() Class TpvTactil
 
                while !::oTemporalDivisionNuevoTicket:Eof()
 
-                  if ::oTemporalDivisionNuevoTicket:nNumLin == nLinea .and.;
-                     ::oTemporalDivisionNuevoTicket:cCbaTil != cCodArt
+                  if ::oTemporalDivisionNuevoTicket:nNumLin == nLinea .and. ::oTemporalDivisionNuevoTicket:cCbaTil != cCodArt
 
                      if !::oTemporalDivisionOriginal:SeekinOrd( Str( ::oTemporalDivisionNuevoTicket:nNumLin ) + ::oTemporalDivisionNuevoTicket:cCbaTil, "cLinCba" )
 
@@ -9147,8 +9171,7 @@ METHOD AddLineNewToOrg() Class TpvTactil
 
             while !::oTemporalDivisionNuevoTicket:Eof()
 
-               if ::oTemporalDivisionNuevoTicket:nNumLin == nLinea .and.;
-                  ::oTemporalDivisionNuevoTicket:cCbaTil != cCodArt
+               if ::oTemporalDivisionNuevoTicket:nNumLin == nLinea .and. ::oTemporalDivisionNuevoTicket:cCbaTil != cCodArt
 
                   if !::oTemporalDivisionOriginal:SeekinOrd( Str( ::oTemporalDivisionNuevoTicket:nNumLin ) + ::oTemporalDivisionNuevoTicket:cCbaTil, "cLinCba" )
 
