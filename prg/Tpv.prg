@@ -2435,7 +2435,7 @@ STATIC FUNCTION EdtRec( aTmp, aGet, dbfTikT, oBrw, cCodCli, cCodArt, nMode, aNum
 
       oBrwDet:bChange         := {|| DisImg( ( dbfTmpL )->cCbaTil ) }
 
-      if ( nMode != ZOOM_MODE ) .and. nAnd( nLevel, ACC_EDIT ) != 0
+      if ( nMode != ZOOM_MODE ) // .and. nAnd( nLevel, ACC_EDIT ) != 0
          oBrwDet:bLDblClick   := {|| WinEdtRec( oBrwDet, bEditL, dbfTmpL, , , aTmp ), lRecTotal( aTmp ), aGet[ _CCLITIK ]:SetFocus() }
       end if
 
