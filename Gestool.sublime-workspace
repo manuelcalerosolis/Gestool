@@ -4,6 +4,38 @@
 		"selected_items":
 		[
 			[
+				"fit",
+				"firstname"
+			],
+			[
+				"pho",
+				"phone"
+			],
+			[
+				"addres",
+				"address2"
+			],
+			[
+				"addre",
+				"address2"
+			],
+			[
+				"phon",
+				"phone_mobile"
+			],
+			[
+				"adr",
+				"address2"
+			],
+			[
+				"last",
+				"lastname"
+			],
+			[
+				"category",
+				"category_group"
+			],
+			[
 				"id_pro",
 				"id_product"
 			],
@@ -482,105 +514,17 @@
 			[
 				"TCo",
 				"TProduccion"
-			],
-			[
-				"Create",
-				"CreateEtiqueta"
-			],
-			[
-				"Init",
-				"InitLabel"
-			],
-			[
-				"p",
-				"p"
-			],
-			[
-				"cCodPro",
-				"cCodProduct"
-			],
-			[
-				"delete",
-				"DeleteProductsPrestashop"
-			],
-			[
-				"familia",
-				"familia"
-			],
-			[
-				"cCom",
-				"cCommand"
-			],
-			[
-				"nCodigo",
-				"nCodigoGrupo"
 			]
 		]
 	},
 	"buffers":
 	[
 		{
-			"file": "/C/AppServ/www/zemtrum/tienda/modules/blockuserinfo/blockuserinfo.tpl",
-			"settings":
-			{
-				"buffer_size": 13809,
-				"line_ending": "Unix"
-			}
-		},
-		{
 			"file": "prg/Tcomercio.prg",
 			"settings":
 			{
-				"buffer_size": 373469,
+				"buffer_size": 219173,
 				"line_ending": "Windows"
-			}
-		},
-		{
-			"file": "prg/Pedcli.prg",
-			"settings":
-			{
-				"buffer_size": 654381,
-				"line_ending": "Windows"
-			}
-		},
-		{
-			"file": "prg/Tpv.prg",
-			"settings":
-			{
-				"buffer_size": 666017,
-				"line_ending": "Windows"
-			}
-		},
-		{
-			"file": "prg/Stock.prg",
-			"settings":
-			{
-				"buffer_size": 213137,
-				"line_ending": "Windows"
-			}
-		},
-		{
-			"file": "prg/Articulo.prg",
-			"settings":
-			{
-				"buffer_size": 673841,
-				"line_ending": "Windows"
-			}
-		},
-		{
-			"file": "/C/AppServ/www/zemtrum/tienda/modules/blockuserinfo/blockuserinfo.css",
-			"settings":
-			{
-				"buffer_size": 3493,
-				"line_ending": "Unix"
-			}
-		},
-		{
-			"file": "/C/AppServ/www/zemtrum/tienda/js/jquery.reveal.js",
-			"settings":
-			{
-				"buffer_size": 7253,
-				"line_ending": "Unix"
 			}
 		}
 	],
@@ -616,11 +560,35 @@
 	},
 	"file_history":
 	[
+		"/C/Users/Villa/Desktop/memberalert/mails/es/memberalert.html",
+		"/C/Users/Villa/Desktop/memberalert/memberalert.php",
+		"/C/Users/Villa/Desktop/tcomercio",
+		"/C/Users/Villa/Desktop/Copia web zemtrum 24-07-2013/includes/configure.php",
+		"/C/Users/Villa/Desktop/settings.inc.php",
+		"/C/fw195/Gestool/prg/Tcomercio.prg",
+		"/C/Users/Villa/Desktop/Copia web zemtrum 24-07-2013/database.php",
+		"/C/Users/Villa/Desktop/Copia web zemtrum 24-07-2013/admin/configuration.php",
+		"/C/Users/Villa/Desktop/Copia web zemtrum 24-07-2013/includes/database_tables.php",
+		"/C/fw195/Gestool/prg/TcomercioOSCOMMERCE.prg",
+		"/C/fw195/Gestool/prg/Factu.prg",
+		"/C/fw195/Gestool/prg/Empresa.prg",
 		"/C/fw195/Gestool/prg/Client.prg",
-		"/C/fw195/Gestool/prg/Tfastventasclientes.prg",
+		"/C/fw195/Gestool/include/Empresa.ch",
+		"/C/AppServ/www/zemtrum/tienda/modules/blockuserinfo/blockuserinfo.tpl",
+		"/C/AppServ/www/zemtrum/tienda/config/settings.inc.php",
+		"/C/AppServ/www/zemtrum/tienda/config/config.inc.php",
+		"/C/AppServ/www/zemtrum/tienda/config/defines.inc.php",
+		"/C/Users/Villa/Desktop/zemtrum/includes/cabecera.php",
+		"/C/Users/Villa/Desktop/zemtrum/index.php",
+		"/C/AppServ/www/zemtrum/tienda/js/jquery.reveal.js",
+		"/C/AppServ/www/zemtrum/tienda/modules/blockuserinfo/blockuserinfo.css",
 		"/C/fw195/Gestool/prg/Articulo.prg",
-		"/C/fw195/Gestool/prg/Oferta.prg",
+		"/C/fw195/Gestool/prg/Stock.prg",
 		"/C/fw195/Gestool/prg/Tpv.prg",
+		"/C/fw195/Gestool/prg/Pedcli.prg",
+		"/C/Users/Villa/Desktop/zemtrum/conocenos.php",
+		"/C/fw195/Gestool/prg/Tfastventasclientes.prg",
+		"/C/fw195/Gestool/prg/Oferta.prg",
 		"/C/fw195/Gestool/prg/Reccli.prg",
 		"/C/Users/Villa/Desktop/TIKET.CDX",
 		"/C/AppServ/www/zemtrum/tienda/themes/zemtrum/header.tpl",
@@ -658,9 +626,6 @@
 		"/C/AppServ/www/zemtrum/tienda/themes/zemtrum/lang/es.php",
 		"/C/AppServ/www/zemtrum/tienda/themes/zemtrum/product-list.tpl",
 		"/C/AppServ/www/zemtrum/tienda/js/jquery/plugins/jqzoom/jquery.jqzoom.css",
-		"/C/AppServ/www/zemtrum/tienda/modules/blockuserinfo/blockuserinfo.tpl",
-		"/C/AppServ/www/zemtrum/tienda/js/jquery.reveal.js",
-		"/C/AppServ/www/zemtrum/tienda/modules/blockuserinfo/blockuserinfo.css",
 		"/C/fw195/Gestool/prg/Factcli.prg",
 		"/C/fw195/Gestool/prg/Satcli.prg",
 		"/C/fw195/Gestool/prg/Precli.prg",
@@ -668,7 +633,6 @@
 		"/C/fw195/Gestool/prg/Facrec.prg",
 		"/C/fw195/Gestool/prg/Albcli.prg",
 		"/C/fw195/Gestool/prg/Facant.prg",
-		"/C/fw195/Gestool/prg/Pedcli.prg",
 		"/C/fw195/Gestool/prg/Obras.prg",
 		"/C/fw195/Gestool/prg/Recprv.prg",
 		"/C/fw195/Gestool/prg/Infpreprv.prg",
@@ -676,8 +640,6 @@
 		"/C/fw195/Gestool/prg/Grpprv.prg",
 		"/C/fw195/Gestool/prg/InfPrevisionPagos",
 		"/C/fw195/Gestool/prg/Tpvtactil.prg",
-		"/C/fw195/Gestool/prg/Empresa.prg",
-		"/C/fw195/Gestool/prg/Factu.prg",
 		"/C/fw195/Gestool/prg/Usuario.prg",
 		"/C/fw195/Gestool/prg/Tuser.prg",
 		"/C/fw195/Gestool/prg/Count.prg",
@@ -688,7 +650,6 @@
 		"/C/fw195/Gestool/prg/Tpvcobros.prg",
 		"/C/fw195/Gestool/prg/Tpvlistaticket.prg",
 		"/C/fw195/Gestool/include/Factu.ch",
-		"/C/fw195/Gestool/include/Empresa.ch",
 		"/C/fw195/Gestool/prg/Tfastreportinfgen.prg",
 		"/C/fw195/Gestool/prg/Tcajon.prg",
 		"/C/fw195/Gestool/prg/Confcajporta.prg",
@@ -715,9 +676,7 @@
 		"/C/fw195/Gestool/prg/Accesscode.prg",
 		"/C/fw195/Gestool/prg/client",
 		"/C/fw195/Gestool/prg/Facauto.prg",
-		"/C/fw195/Gestool/prg/Tcomercio.prg",
 		"/C/fw195/Gestool/prg/Remmov.prg",
-		"/C/fw195/Gestool/prg/Stock.prg",
 		"/C/fw195/Gestool/prg/Xtotart.prg",
 		"/C/fw195/Gestool/prg/Xtotalm.prg",
 		"/C/fw195/Gestool/prg/Xvalalmg.prg",
@@ -728,22 +687,7 @@
 		"/C/fw195/Gestool/prg/tuser",
 		"/C/fw195/Gestool/prg/Internet.prg",
 		"/C/fw195/Gestool/prg/Empcnf.prg",
-		"/C/fw195/Gestool/prg/Tftp.prg",
-		"/C/Scripts creados/Inma Pepsi/001.prg",
-		"/C/fw195/Gestool/prg/Xvalalm.prg",
-		"/C/fw195/Gestool/prg/Medicon.prg",
-		"/C/fw195/Gestool/prg/Empdata.prg",
-		"/C/fw195/Gestool/prg/Tgrpfam.prg",
-		"/C/fw195/Gestool/prg/Tipart.prg",
-		"/C/fw195/Gestool/prg/Producc.prg",
-		"/C/fw195/Gestool/prg/Tdetmaterial.prg",
-		"/C/fw195/Gestool/prg/TDetMaterial",
-		"/C/fw195/Gestool/prg/pedcli",
-		"/C/Users/Villa/Desktop/reveal/reveal.css",
-		"/C/fw195/Gestool/prg/Tdetfacautomatica.prg",
-		"/C/Users/Villa/Desktop/enviar_email_ajax/enviar_email_ajax/enviar.php",
-		"/C/Users/Villa/Desktop/enviar_email_ajax/enviar_email_ajax/jquery.js",
-		"/C/Users/Villa/Desktop/enviar_email_ajax/enviar_email_ajax/jquery.form.js"
+		"/C/fw195/Gestool/prg/Tftp.prg"
 	],
 	"find":
 	{
@@ -787,134 +731,134 @@
 		"case_sensitive": false,
 		"find_history":
 		[
-			"nIvaProduct",
-			"SELECT",
-			"FieldGetByName(",
-			"10472",
-			"FieldGetBy",
-			"FieldGetByName    ",
-			"free     ",
-			"free",
-			"select *",
-			"select *.",
-			"select *",
-			"FieldGetByName",
-			"oQuery:Skip()",
-			"FieldGetByName",
-			"::cPrefixTable( ",
-			"while",
-			"TMSQuery",
-			"dFecDoc",
-			"dfecped",
-			"dtos",
-			"dtoc",
-			"dtos",
-			"AppendPedidoprestashop",
-			"ImportarPrestashop",
-			"import",
-			"InsertProductsPrestashop",
-			"insertproduct",
-			"inserproduct",
-			"AppendClientPrestashop",
-			"ImportarPrestashop",
-			"oBtnImportar",
-			"importa",
-			"promoci",
-			"on rx",
+			"BuscarGastoEnvio",
+			"BuscarFormaPago",
+			"BuscarCliente",
+			"BuscarProvincia",
+			"BuscarCodFab",
+			"BuscarCodIva",
+			"BuscarCodPro",
+			"BuscarCodFam",
+			"HB_DBCREATETEMP",
+			"cLinkRewrite",
+			"SCategoria",
+			"SPrePro",
+			"STipoImagen",
+			"SImagen",
+			"SeleccionFamilia",
+			"cModelArticulo",
+			"GetPropArt",
+			"GetTipArt()",
+			"ChangeSincAll",
+			"AddImages",
+			"AutoInt",
+			"GetLanguage",
+			"lParentTipoArticulo",
+			"GetParentTipoArticulo",
+			"GetParentIva",
+			"GetParentFamilia",
+			"GetParentFabricantes",
+			"GetParent",
+			"GetParentFamilia",
+			"NIDORINO",
+			"GetParentFamilia",
+			"GetParentCategories",
+			"DropAtributes",
+			"CambiarEPedidos",
+			"\n\nCambiarEPedidos",
+			"\nCambiarEPedidos",
+			"CambiarEPedidos",
+			"AppPreciosAtributes",
+			"AppImages",
+			"AppAtributes",
+			"AppZone",
+			"AppIva",
+			"AppFabricantes",
+			"AppPedidos",
+			"AppCustomers",
+			"AppGrpCategories",
+			"AppCategories",
+			"AppOptions",
+			"AppProducts",
+			"EstadoPedidos",
+			"AppendZone",
+			"AppendIva",
+			"AppendIva.",
+			"AppendIva",
+			"AppendFabricantes",
+			"AppendImages",
+			"AppendPedido",
+			"AppendClient",
+			"AppendFamilia",
+			"AppendPropiedades",
+			"AppendArticulo",
+			"NIDORINO",
+			"meterparticular",
+			"meterglobaltext",
+			"SetText",
+			"od importar",
+			"od appendclient",
+			"AppendClientesToPrestashop",
+			"AppTipoArticuloPrestashop",
+			"GetValPrp",
+			"getcolordefault",
+			"od cprefixtable",
+			"od conect",
+			"od ndefimagen",
+			"od addtipoimages",
+			"AppendImagesPrestashop",
+			"RecalculaPosicionesCategoriasPrestashop",
+			"od delidart",
+			"od nivapro",
+			"od nivaprov",
+			"insertimage",
+			"od insertofertas",
+			"od updateproducts",
+			"od appendarticulop",
+			"od append",
+			"od insertpropiedadespro",
+			"od insertli",
+			"od actualizapropiedadesp",
+			"od deletepropiedadesp",
+			"NIDORI",
+			"od updatepropie",
+			"od appendpropi",
+			"insertgrupocategories",
+			"NIDORINO",
+			"AddCategoriaRaiz",
+			"insertgrupocategories",
+			"NIDORINO",
+			"od insertca",
+			"NIDORINO",
+			"delidfami",
+			"od delidfami",
+			"NIDORINO",
+			"od appendfamilia",
+			"od appendfa",
+			"od delidiva",
+			"od del",
+			"appendfabricante",
+			"appendfafricante",
+			"exportar",
+			"lReady",
+			"GetInstance",
+			"AppZone",
+			"AppendClientesToPrestashop",
+			"function",
+			"BuscarCodFam",
+			"SetAutoRecive",
+			":AutoRecive",
+			"cookey",
+			"aSexos",
+			"NSEXO",
+			"cTiempoPed",
+			"220",
 			"on aitm",
-			"on rx",
-			"InsertPropiedadesProductPrestashop",
-			"insertprodu",
-			"insertpro",
-			"InsertPropiedadesProductPrestashop",
-			"insertprop",
-			"?",
-			"attribute_lang",
-			"attribute_shop",
-			"InsertLineasPropiedadesPrestashop",
-			"Insertpr",
-			"InsertOfertasPrestashop",
-			"fldweb",
-			"CalDtoWeb",
-			"on cal",
-			"on nretpreart",
-			"nretpreart",
-			"iva",
-			"on cal",
-			"on n",
-			"on ncal",
-			"on calbnfiva",
-			"calbnfiva",
-			"InsertPropiedadesProductPrestashop",
-			"nprecio",
-			"on edtrec",
-			"EvalGet",
-			"StartDlg",
-			"pVtaWeb",
-			"nImpInt1",
-			"od insertprod",
-			"od insertofer",
-			"InsertProductsPrestashop",
-			"InsertProductsPrestashop()",
-			"od Insert",
-			"od InsertOfertasPrestashop",
-			"fldweb",
-			"on rx",
-			"oferta",
-			"od openfiles",
-			"on openfiles",
-			"on aitm",
-			"otablaofertas",
-			"openfiles",
-			"ofert",
-			"InsertPropiedadesPrestashop",
-			"InsertProductsPrestashop",
-			"od insert",
-			"os insert",
-			"liva",
-			"lfpago",
-			"ostock",
-			"method nstockarticulo",
-			"stock",
-			"InsertProductsPrestashop",
-			"articulo",
-			"on aitm",
-			"no se generaron recibos",
-			"#left_column",
-			"center_column",
-			"grid",
-			" rid_5",
-			"grid_9",
-			"grid_9 alpha omega clearfix",
-			".payment_module a {",
-			".address_title",
-			".addresses ul.address ",
-			"table.std th, table.table_block th {",
-			"ul.step li.step_current",
-			"header",
-			"*{",
-			"order",
-			"rte",
-			"rte align_justify",
-			"conte",
-			"exclusive",
-			"buttons_bottom_block",
-			"availableNowValue",
-			"stock",
-			"Este producto ya no está en stock con esas opciones",
-			"Este producto ya no está en stock con esas opciones , pero está disponible con otras",
-			"add_to_cart",
-			"add",
-			"availability_value",
-			"bottom",
-			"clearfi",
-			"ur_price_display",
-			"old_price_display",
-			"old",
-			"right",
-			"content_prices",
-			"content_prices clearfix",
-			"price"
+			"cPrefijoBaseDatos",
+			"cPlataforma",
+			"ps_",
+			"ps",
+			"nIvaProduct"
 		],
 		"highlight": true,
 		"in_selection": false,
@@ -941,96 +885,15 @@
 	"groups":
 	[
 		{
-			"selected": 1,
+			"selected": 0,
 			"sheets":
 			[
 				{
 					"buffer": 0,
-					"file": "/C/AppServ/www/zemtrum/tienda/modules/blockuserinfo/blockuserinfo.tpl",
-					"settings":
-					{
-						"buffer_size": 13809,
-						"regions":
-						{
-						},
-						"selection":
-						[
-							[
-								1618,
-								1618
-							]
-						],
-						"settings":
-						{
-							"syntax": "Packages/HTML/HTML.tmLanguage",
-							"translate_tabs_to_spaces": false
-						},
-						"translation.x": 0.0,
-						"translation.y": 329.0,
-						"zoom_level": 1.0
-					},
-					"type": "text"
-				},
-				{
-					"buffer": 1,
 					"file": "prg/Tcomercio.prg",
 					"settings":
 					{
-						"buffer_size": 373469,
-						"regions":
-						{
-						},
-						"selection":
-						[
-							[
-								309963,
-								309963
-							]
-						],
-						"settings":
-						{
-							"syntax": "Packages/harbour/harbour/Harbour.tmLanguage",
-							"tab_size": 3,
-							"translate_tabs_to_spaces": true
-						},
-						"translation.x": 0.0,
-						"translation.y": 193480.0,
-						"zoom_level": 1.0
-					},
-					"type": "text"
-				},
-				{
-					"buffer": 2,
-					"file": "prg/Pedcli.prg",
-					"settings":
-					{
-						"buffer_size": 654381,
-						"regions":
-						{
-						},
-						"selection":
-						[
-							[
-								478753,
-								478753
-							]
-						],
-						"settings":
-						{
-							"syntax": "Packages/harbour/harbour/Harbour.tmLanguage"
-						},
-						"translation.x": 0.0,
-						"translation.y": 252386.0,
-						"zoom_level": 1.0
-					},
-					"type": "text"
-				},
-				{
-					"buffer": 3,
-					"file": "prg/Tpv.prg",
-					"settings":
-					{
-						"buffer_size": 666017,
+						"buffer_size": 219173,
 						"regions":
 						{
 						},
@@ -1046,115 +909,6 @@
 							"syntax": "Packages/harbour/harbour/Harbour.tmLanguage",
 							"tab_size": 3,
 							"translate_tabs_to_spaces": true
-						},
-						"translation.x": 0.0,
-						"translation.y": 83191.0,
-						"zoom_level": 1.0
-					},
-					"type": "text"
-				},
-				{
-					"buffer": 4,
-					"file": "prg/Stock.prg",
-					"settings":
-					{
-						"buffer_size": 213137,
-						"regions":
-						{
-						},
-						"selection":
-						[
-							[
-								0,
-								0
-							]
-						],
-						"settings":
-						{
-							"syntax": "Packages/harbour/harbour/Harbour.tmLanguage",
-							"tab_size": 3,
-							"translate_tabs_to_spaces": true
-						},
-						"translation.x": 0.0,
-						"translation.y": 67222.0,
-						"zoom_level": 1.0
-					},
-					"type": "text"
-				},
-				{
-					"buffer": 5,
-					"file": "prg/Articulo.prg",
-					"settings":
-					{
-						"buffer_size": 673841,
-						"regions":
-						{
-						},
-						"selection":
-						[
-							[
-								547425,
-								547425
-							]
-						],
-						"settings":
-						{
-							"syntax": "Packages/harbour/harbour/Harbour.tmLanguage",
-							"tab_size": 3,
-							"translate_tabs_to_spaces": true
-						},
-						"translation.x": 0.0,
-						"translation.y": 293179.0,
-						"zoom_level": 1.0
-					},
-					"type": "text"
-				},
-				{
-					"buffer": 6,
-					"file": "/C/AppServ/www/zemtrum/tienda/modules/blockuserinfo/blockuserinfo.css",
-					"settings":
-					{
-						"buffer_size": 3493,
-						"regions":
-						{
-						},
-						"selection":
-						[
-							[
-								3011,
-								3011
-							]
-						],
-						"settings":
-						{
-							"syntax": "Packages/CSS/CSS.tmLanguage",
-							"translate_tabs_to_spaces": false
-						},
-						"translation.x": 0.0,
-						"translation.y": 0.0,
-						"zoom_level": 1.0
-					},
-					"type": "text"
-				},
-				{
-					"buffer": 7,
-					"file": "/C/AppServ/www/zemtrum/tienda/js/jquery.reveal.js",
-					"settings":
-					{
-						"buffer_size": 7253,
-						"regions":
-						{
-						},
-						"selection":
-						[
-							[
-								7253,
-								7253
-							]
-						],
-						"settings":
-						{
-							"syntax": "Packages/JavaScript/JavaScript.tmLanguage"
 						},
 						"translation.x": 0.0,
 						"translation.y": 0.0,
