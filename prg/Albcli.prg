@@ -14430,26 +14430,24 @@ STATIC FUNCTION LoaCli( aGet, aTmp, nMode, oRieCli, oTlfCli )
       if Empty( aTmp[_CCODGRP] ) .or. lChgCodCli
          aTmp[_CCODGRP]    := ( dbfClient )->cCodGrp
       end if
-      
-      /*
-      Cargamos la obra por defecto-------------------------------------
-      */
+     
+      if ( lChgCodCli )
 
-      if dbSeekInOrd( cNewCodCli, "LDEFOBR", dbfObrasT )
+         /*
+         Cargamos la obra por defecto------------------------------------------
+         */
 
          if !Empty( aGet[ _CCODOBR ] )
-            aGet[ _CCODOBR ]:cText( ( dbfObrasT )->cCodObr )
+
+            if dbSeekInOrd( cNewCodCli, "lDefObr", dbfObrasT )
+               aGet[ _CCODOBR ]:cText( ( dbfObrasT )->cCodObr )
+            else
+               aGet[ _CCODOBR ]:cText( Space( 10 ) )
+            end if
+
             aGet[ _CCODOBR ]:lValid()
+
          end if
-
-      else
-      
-         aGet[ _CCODOBR ]:cText( Space( 10 ) )
-         aGet[ _CCODOBR ]:lValid()
-
-      end if
-
-      if ( lChgCodCli )
 
          /*
          Calculo del reisgo del cliente-------------------------------------------
@@ -17752,15 +17750,15 @@ RETURN lValid
 
 STATIC FUNCTION cSatCli( aGet, aTmp, oBrw, nMode )
 
-   local cDesAlb
-   local cPedido  := aGet[ _CNUMSAT ]:VarGet()
    local lValid   := .f.
+   local cDesAlb
+   local cNumSat  := aGet[ _CNUMSAT ]:VarGet()
 
-   if nMode != APPD_MODE .OR. Empty( cPedido )
+   if nMode != APPD_MODE .OR. Empty( cNumSat )
       return .t.
    end if
 
-   if dbSeekInOrd( cPedido, "nNumSat", dbfSatCliT )
+   if dbSeekInOrd( cNumSat, "nNumSat", dbfSatCliT )
 
       if ( dbfSatCliT )->lEstado
 
@@ -17771,7 +17769,7 @@ STATIC FUNCTION cSatCli( aGet, aTmp, oBrw, nMode )
 
          CursorWait()
 
-         HideImportacion(aGet, aGet[ _CNUMSAT ])
+         HideImportacion( aGet, aGet[ _CNUMSAT ] )
 
          aGet[ _CCODCLI ]:cText( ( dbfSatCliT )->CCODCLI )
          aGet[ _CCODCLI ]:lValid()
@@ -17842,7 +17840,7 @@ STATIC FUNCTION cSatCli( aGet, aTmp, oBrw, nMode )
          aTmp[ _DFECENTR  ]      := ( dbfSatCliT )->dFecEntr
          aTmp[ _DFECSAL   ]      := ( dbfSatCliT )->dFecSal
 
-         if ( dbfSatCliL )->( dbSeek( cPedido ) )
+         if ( dbfSatCliL )->( dbSeek( cNumSat ) )
 
             ( dbfTmpLin )->( dbAppend() )
             cDesAlb                    := ""
@@ -17851,7 +17849,7 @@ STATIC FUNCTION cSatCli( aGet, aTmp, oBrw, nMode )
             ( dbfTmpLin )->MLNGDES     := cDesAlb
             ( dbfTmpLin )->LCONTROL    := .t.
 
-            while ( (dbfSatCliL)->cSerSat + Str( (dbfSatCliL)->nNumSat ) + (dbfSatCliL)->cSufSat == cPedido )
+            while ( (dbfSatCliL)->cSerSat + Str( (dbfSatCliL)->nNumSat ) + (dbfSatCliL)->cSufSat == cNumSat )
 
                (dbfTmpLin)->( dbAppend() )
 
@@ -17922,6 +17920,7 @@ STATIC FUNCTION cSatCli( aGet, aTmp, oBrw, nMode )
                (dbfTmpLin)->nIncPnt    := (dbfSatCliL)->nIncPnt
                (dbfTmpLin)->lControl   := (dbfSatCliL)->lControl
                (dbfTmpLin)->lLinOfe    := (dbfSatCliL)->lLinOfe
+               (dbfTmpLin)->cNumSat    := cNumSat
 
                (dbfSatCliL)->( dbSkip() )
 
@@ -17933,9 +17932,9 @@ STATIC FUNCTION cSatCli( aGet, aTmp, oBrw, nMode )
             Pasamos las incidencias del SAT----------------------------
             */
 
-            if ( dbfSatCliI )->( dbSeek( cPedido ) )
+            if ( dbfSatCliI )->( dbSeek( cNumSat ) )
 
-               while ( dbfSatCliI )->cSerSat + Str( ( dbfSatCliI )->nNumSat ) + ( dbfSatCliI )->cSufSat == cPedido .and. !( dbfSatCliI )->( Eof() )
+               while ( dbfSatCliI )->cSerSat + Str( ( dbfSatCliI )->nNumSat ) + ( dbfSatCliI )->cSufSat == cNumSat .and. !( dbfSatCliI )->( Eof() )
                   dbPass( dbfSatCliI, dbfTmpInc, .t. )
                   ( dbfSatCliI )->( dbSkip() )
                end while
@@ -17948,9 +17947,9 @@ STATIC FUNCTION cSatCli( aGet, aTmp, oBrw, nMode )
             Pasamos los documentos del SAT-----------------------------
             */
 
-            if ( dbfSatCliD )->( dbSeek( cPedido ) )
+            if ( dbfSatCliD )->( dbSeek( cNumSat ) )
 
-               while ( dbfSatCliD )->cSerSat + Str( ( dbfSatCliD )->nNumSat ) + ( dbfSatCliD )->cSufSat == cPedido .and. !( dbfSatCliD )->( Eof() )
+               while ( dbfSatCliD )->cSerSat + Str( ( dbfSatCliD )->nNumSat ) + ( dbfSatCliD )->cSufSat == cNumSat .and. !( dbfSatCliD )->( Eof() )
                   dbPass( dbfSatCliD, dbfTmpDoc, .t. )
                   ( dbfSatCliD )->( dbSkip() )
                end while
@@ -17961,17 +17960,17 @@ STATIC FUNCTION cSatCli( aGet, aTmp, oBrw, nMode )
             Pasamos todas las series----------------------------------------------
             */
 
-            if ( dbfSatCliS )->( dbSeek( cPedido ) )
+            if ( dbfSatCliS )->( dbSeek( cNumSat ) )
 
-               while ( dbfSatCliS )->cSerSat + Str( ( dbfSatCliS )->nNumSat ) + ( dbfSatCliS )->cSufSat == cPedido .and. !( dbfSatCliS )->( Eof() )
+               while ( dbfSatCliS )->cSerSat + Str( ( dbfSatCliS )->nNumSat ) + ( dbfSatCliS )->cSufSat == cNumSat .and. !( dbfSatCliS )->( Eof() )
                   dbPass( dbfSatCliS, dbfTmpSer, .t. )
                   ( dbfSatCliS )->( dbSkip() )
                end while
 
             end if 
 
-            oBrw:refresh()
-            oBrw:setFocus()
+            oBrw:Refresh()
+            oBrw:SetFocus()
 
          end if
 
@@ -18508,3 +18507,4 @@ Function cDireccionSAT()
 Return ( cDireccion )
 
 //---------------------------------------------------------------------------//
+

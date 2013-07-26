@@ -2326,13 +2326,12 @@ STATIC FUNCTION EdtRec( aTmp, aGet, dbfFacPrvT, oBrw, cCodPrv, cCodArt, nMode, c
          ID       110 ;
          SPINNER ;
          WHEN     ( nMode != ZOOM_MODE ) ;
-         COLOR    CLR_GET ;
          OF       oFld:aDialogs[1]
 
       REDEFINE GET aGet[ _CSUPED ] VAR aTmp[ _CSUPED ] ;
          ID       120 ;
          WHEN     ( nMode != ZOOM_MODE ) ;
-         COLOR    CLR_GET ;
+         VALID    ( ValidaSuFactura( aGet ) ) ;
          OF       oFld:aDialogs[1]
 
       REDEFINE GET aGet[ _CNUMALB ] VAR aTmp[ _CNUMALB ] ;
@@ -7609,6 +7608,9 @@ FUNCTION rxFacPrv( cPath, oMeter )
 
       ( dbfFacPrvT )->( ordCondSet("!Deleted()", {||!Deleted()}  ) )
       ( dbfFacPrvT )->( ordCreate( cPath + "FACPRVT.CDX", "iNumFac", "'03' + CSERFAC + STR( NNUMFAC ) + CSUFFAC", {|| '03' + Field->CSERFAC + STR( Field->NNUMFAC ) + Field->CSUFFAC } ) )
+
+      ( dbfFacPrvT )->( ordCondSet("!Deleted()", {||!Deleted()}  ) )
+      ( dbfFacPrvT )->( ordCreate( cPath + "FACPRVT.CDX", "cPrvFac", "cCodPrv + Upper( cSuPed )", {|| Field->cCodPrv + Upper( Field->cSuPed ) } ) )
 
       ( dbfFacPrvT )->( dbCloseArea() )
    else
@@ -13301,3 +13303,19 @@ Return ( .f. )
 
 //---------------------------------------------------------------------------//
 
+Static Function ValidaSuFactura( aGet )
+
+   local nRecno
+   local cSuFactura  := aGet[ _CCODPRV ]:VarGet() + Upper( aGet[ _CSUPED ]:VarGet() )
+
+   nRecno            := ( dbfFacPrvT )->( Recno() )
+
+   if dbSeekInOrd( cSuFactura, "cPrvFac", dbfFacPrvT )
+      MsgInfo( "La referencia de esta factura ya existe.")
+   end if
+
+   ( dbfFacPrvT )->( dbGoTo( nRecno ) )
+
+Return ( .t. )
+
+//---------------------------------------------------------------------------//

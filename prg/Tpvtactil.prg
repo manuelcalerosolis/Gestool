@@ -266,6 +266,7 @@ CLASS TpvTactil
    DATA nImporteLibre
    DATA cImpresoraLibre
    DATA nIvaLibre
+   DATA cOrdenComandaLibre
 
    DATA oBtnUnaLinea
    DATA oBtnTodasLineas
@@ -657,6 +658,8 @@ CLASS TpvTactil
    //------------------------------------------------------------------------//
 
    METHOD OnClickCopiaComanda()
+
+   METHOD OnClickGuardar()
 
    METHOD OnClickCloseTurno( lParcial )
 
@@ -3223,75 +3226,77 @@ METHOD StartResource() CLASS TpvTactil
             ::oBtnEncargar    := TDotNetButton():New( 60, ::oGrpSalones, "address_book2_32",       "Encargar",     nPos++, {|| ::OnClickEncargar() }, , , .f., .f., .f. )
          end if
 
-      oGrupo                     := TDotNetGroup():New( oCarpeta, 226, "Datos de cliente", .f., , "User1_32" )
-         ::oBtnCliente           := TDotNetButton():New( 220, oGrupo, "User1_16",                     "...",             1, {|| ::SelecionaCliente() }, , , .f., .f., .f. )
-         ::oBtnDireccion         := TDotNetButton():New( 220, oGrupo, "Home_16",                      "...",             1, {|| ::SelecionaCliente() }, , , .f., .f., .f. )
-         ::oBtnTelefono          := TDotNetButton():New( 220, oGrupo, "Mobilephone3_16",              "...",             1, {|| ::SelecionaCliente() }, , , .f., .f., .f. )
+      oGrupo                  := TDotNetGroup():New( oCarpeta, 226, "Datos de cliente", .f., , "User1_32" )
+         ::oBtnCliente        := TDotNetButton():New( 220, oGrupo, "User1_16",                     "...",             1, {|| ::SelecionaCliente() }, , , .f., .f., .f. )
+         ::oBtnDireccion      := TDotNetButton():New( 220, oGrupo, "Home_16",                      "...",             1, {|| ::SelecionaCliente() }, , , .f., .f., .f. )
+         ::oBtnTelefono       := TDotNetButton():New( 220, oGrupo, "Mobilephone3_16",              "...",             1, {|| ::SelecionaCliente() }, , , .f., .f., .f. )
 
-      oGrupo                     := TDotNetGroup():New( oCarpeta, 66, "Nota", .f., , "Printer_32" )
-         oBoton                  := TDotNetButton():New( 60, oGrupo, "Printer_32",                    "Entregar nota",   1, {|| ::OnClickEntrega() }, , , .f., .f., .f. )
+      oGrupo                  := TDotNetGroup():New( oCarpeta, 66, "Guardar", .f., , "Disk_blue_32" )
+         oBoton               := TDotNetButton():New( 60, oGrupo, "Disk_blue_32",                  "Guardar y procesar",   1, {|| ::OnClickGuardar() }, , , .f., .f., .f. )
+
+      oGrupo                  := TDotNetGroup():New( oCarpeta, 66, "Nota", .f., , "Printer_32" )
+         oBoton               := TDotNetButton():New( 60, oGrupo, "Printer_32",                    "Entregar nota",   1, {|| ::OnClickEntrega() }, , , .f., .f., .f. )
 
       if uFieldEmpresa( "lAlbTct" )
 
-         oGrupo                  := TDotNetGroup():New( oCarpeta, 126, "Cobrar", .f., , "Money2_32" )
-            oBoton               := TDotNetButton():New( 60, oGrupo, "document_plain_user1_32",       "Albarán",         1, {|| ::OnClickAlbaran() }, , , .f., .f., .f. )
-            oBoton               := TDotNetButton():New( 60, oGrupo, "Money2_32",                     "Cobrar",          2, {|| ::OnClickCobro() }, , , .f., .f., .f. )
+         oGrupo               := TDotNetGroup():New( oCarpeta, 126, "Cobrar", .f., , "Money2_32" )
+            oBoton            := TDotNetButton():New( 60, oGrupo, "document_plain_user1_32",       "Albarán",         1, {|| ::OnClickAlbaran() }, , , .f., .f., .f. )
+            oBoton            := TDotNetButton():New( 60, oGrupo, "Money2_32",                     "Cobrar",          2, {|| ::OnClickCobro() }, , , .f., .f., .f. )
 
       else
 
-         oGrupo                  := TDotNetGroup():New( oCarpeta, 66, "Cobrar", .f., , "Money2_32" )
-            oBoton               := TDotNetButton():New( 60, oGrupo, "Money2_32",                     "Cobrar",          1, {|| ::OnClickCobro() }, , , .f., .f., .f. )
+         oGrupo               := TDotNetGroup():New( oCarpeta, 66, "Cobrar", .f., , "Money2_32" )
+            oBoton            := TDotNetButton():New( 60, oGrupo, "Money2_32",                     "Cobrar",          1, {|| ::OnClickCobro() }, , , .f., .f., .f. )
 
       end if         
 
-      oGrupo                     := TDotNetGroup():New( oCarpeta, 66, "Cajón", .f., , "Diskdrive_32" )
-         oBoton                  := TDotNetButton():New( 60, oGrupo, "Diskdrive_32",                  "Abrir cajón",     1, {|| oUser():OpenCajon() }, , , .f., .f., .f. )
+      oGrupo                  := TDotNetGroup():New( oCarpeta, 66, "Cajón", .f., , "Diskdrive_32" )
+         oBoton               := TDotNetButton():New( 60, oGrupo, "Diskdrive_32",                  "Abrir cajón",     1, {|| oUser():OpenCajon() }, , , .f., .f., .f. )
 
-      oGrupo                     := TDotNetGroup():New( oCarpeta, 66, "Comanda", .f., , "Printer_comanda_32" )
-         oBoton                  := TDotNetButton():New( 60, oGrupo, "Printer_comanda_32",            "Copia comanda",   1, {|| ::OnClickCopiaComanda( .t. ) }, , , .f., .f., .f. )
+      oGrupo                  := TDotNetGroup():New( oCarpeta, 66, "Comanda", .f., , "Printer_comanda_32" )
+         oBoton               := TDotNetButton():New( 60, oGrupo, "Printer_comanda_32",            "Copia comanda",   1, {|| ::OnClickCopiaComanda( .t. ) }, , , .f., .f., .f. )
 
-      oGrupo                     := TDotNetGroup():New( oCarpeta, 186, "Mesas", .f., , "Users1_32" )
-         oBoton                  := TDotNetButton():New( 60, oGrupo, "Users1_32",                     "Comensales",        1, {|| ::OnClickComensales() }, , , .f., .f., .f. )
-         oBoton                  := TDotNetButton():New( 60, oGrupo, "Media_stop_replace2_32",        "Cambiar ubicación", 2, {|| ::OnClickCambiaUbicacion() }, , , .f., .f., .f. )
-         oBoton                  := TDotNetButton():New( 60, oGrupo, "Note_cut_32",                   "Dividir mesa",      3, {|| ::OnclickDividirMesa() }, , , .f., .f., .f. )
+      oGrupo                  := TDotNetGroup():New( oCarpeta, 186, "Mesas", .f., , "Users1_32" )
+         oBoton               := TDotNetButton():New( 60, oGrupo, "Users1_32",                     "Comensales",        1, {|| ::OnClickComensales() }, , , .f., .f., .f. )
+         oBoton               := TDotNetButton():New( 60, oGrupo, "Media_stop_replace2_32",        "Cambiar ubicación", 2, {|| ::OnClickCambiaUbicacion() }, , , .f., .f., .f. )
+         oBoton               := TDotNetButton():New( 60, oGrupo, "Note_cut_32",                   "Dividir mesa",      3, {|| ::OnclickDividirMesa() }, , , .f., .f., .f. )
 
-      oGrupo                     := TDotNetGroup():New( oCarpeta, 66, "Tickets", .f., , "Index_32" )
-         oBoton                  := TDotNetButton():New( 60, oGrupo, "Index_32",                      "Lista",           1, {|| ::OnClickLista() }, , , .f., .f., .f. )
+      oGrupo                  := TDotNetGroup():New( oCarpeta, 66, "Tickets", .f., , "Index_32" )
+         oBoton               := TDotNetButton():New( 60, oGrupo, "Index_32",                      "Lista",           1, {|| ::OnClickLista() }, , , .f., .f., .f. )
 
-      oGrupo                     := TDotNetGroup():New( oCarpeta, 126, "Invitaciones", .f., , "Masks_32" )
-         oBoton                  := TDotNetButton():New( 60, oGrupo, "Percent_32",                    "Descuentos",      1, {|| ::OnClickDescuento() }, , , .f., .f., .f. )
-         oBoton                  := TDotNetButton():New( 60, oGrupo, "Masks_32",                      "Invitaciones",    2, {|| ::OnClickInvitacion() }, , , .f., .f., .f. )
+      oGrupo                  := TDotNetGroup():New( oCarpeta, 126, "Invitaciones", .f., , "Masks_32" )
+         oBoton               := TDotNetButton():New( 60, oGrupo, "Percent_32",                    "Descuentos",      1, {|| ::OnClickDescuento() }, , , .f., .f., .f. )
+         oBoton               := TDotNetButton():New( 60, oGrupo, "Masks_32",                      "Invitaciones",    2, {|| ::OnClickInvitacion() }, , , .f., .f., .f. )
 
-      oGrupo                     := TDotNetGroup():New( oCarpeta, 66, "Usuario", .f., , "Security_Agent_32" )
-         ::oBtnUsuario           := TDotNetButton():New( 60, oGrupo, "Security_Agent_32",             Capitalize( Rtrim( oUser():cNombre() ) ), 1, {|| ::OnClickUsuarios() }, , , .f., .f., .f. )
+      oGrupo                  := TDotNetGroup():New( oCarpeta, 66, "Usuario", .f., , "Security_Agent_32" )
+         ::oBtnUsuario        := TDotNetButton():New( 60, oGrupo, "Security_Agent_32",             Capitalize( Rtrim( oUser():cNombre() ) ), 1, {|| ::OnClickUsuarios() }, , , .f., .f., .f. )
 
-      /*
-      oGrupo                     := TDotNetGroup():New( oCarpeta, 66, "", .f., , "" )
-      */
+      oGrupo                     := TDotNetGroup():New( oCarpeta, 66, "Otros", .f., , "Cashier_32" )
+         ::oBtnImportesExactos   := TDotNetButton():New( 60, oGrupo, "Gauge_32",                   "Cobros rapidos",    1, {|| ::OnClickImportesExactos() }, , , .f., .f., .f. )
 
+      oGrupo                  := TDotNetGroup():New( oCarpeta, 186, "Arqueos/Sesiones", .f., , "Stopwatch_stop_32" )
+         oBoton               := TDotNetButton():New( 60, oGrupo, "Stopwatch_refresh_32",          "Arqueo parcial [X]",1, {|| ::OnClickCloseTurno( .t. ) }, , , .f., .f., .f. )
+         oBoton               := TDotNetButton():New( 60, oGrupo, "Stopwatch_stop_32",             "Arqueo total [Z]",  2, {|| ::OnClickCloseTurno( .f. ) }, , , .f., .f., .f. )
+         oBoton               := TDotNetButton():New( 60, oGrupo, "Stopwatch_run_32",              "Iniciar sesión",    3, {|| ::OnClickIniciarSesion() }, , , .f., .f., .f. )
 
-      oGrupo                     := TDotNetGroup():New( oCarpeta, 186, "Otros", .f., , "Cashier_32" )
-         oBoton                  := TDotNetButton():New( 60, oGrupo, "Cashier_32",                    "Seleccionar cajas", 1, {|| ::OnClickSeleccionarCajas() }, , , .f., .f., .f. )
-         oBoton                  := TDotNetButton():New( 60, oGrupo, "Cashier_replace_32",            "Entrada y salida",  2, {|| ::OnclickEntrdaSalida() }, , , .f., .f., .f. )
-         ::oBtnImportesExactos   := TDotNetButton():New( 60, oGrupo, "Gauge_32",                      "Cobros rapidos",    3, {|| ::OnClickImportesExactos() }, , , .f., .f., .f. )
-
-      oGrupo                     := TDotNetGroup():New( oCarpeta, 186, "Arqueos/Sesiones", .f., , "Stopwatch_stop_32" )
-         oBoton                  := TDotNetButton():New( 60, oGrupo, "Stopwatch_refresh_32",          "Arqueo parcial [X]",1, {|| ::OnClickCloseTurno( .t. ) }, , , .f., .f., .f. )
-         oBoton                  := TDotNetButton():New( 60, oGrupo, "Stopwatch_stop_32",             "Arqueo total [Z]",  2, {|| ::OnClickCloseTurno( .f. ) }, , , .f., .f., .f. )
-         oBoton                  := TDotNetButton():New( 60, oGrupo, "Stopwatch_run_32",              "Iniciar sesión",    3, {|| ::OnClickIniciarSesion() }, , , .f., .f., .f. )
-
-      oGrupo                     := TDotNetGroup():New( oCarpeta, 66, "Salida", .f. )
-         oBoton                  := TDotNetButton():New( 60, oGrupo, "End32",                         "Salida",            1, {|| ::oDlg:End() }, , , .f., .f., .f. )
+      oGrupo                  := TDotNetGroup():New( oCarpeta, 66, "Salida", .f. )
+         oBoton               := TDotNetButton():New( 60, oGrupo, "End32",                         "Salida",            1, {|| ::oDlg:End() }, , , .f., .f., .f. )
  
       /*
       Segunda pestaña de tpv tactil--------------------------------------------
       */
       
-      oCarpeta             := TCarpeta():New( ::oOfficeBar, "Más..." )
+      oCarpeta                := TCarpeta():New( ::oOfficeBar, "Más..." )
 
-      ::oGrpSeries         := TDotNetGroup():New( oCarpeta, 126, "Serie: ", .f. )
-         oBoton            := TDotNetButton():New( 60, ::oGrpSeries, "Up32",                          "Subir",             1, {|| ::CambiaSerie( .t. ) }, , , .f., .f., .f. )
-         oBoton            := TDotNetButton():New( 60, ::oGrpSeries, "Down32",                        "Bajar",             2, {|| ::CambiaSerie( .f. ) }, , , .f., .f., .f. )
+      ::oGrpSeries            := TDotNetGroup():New( oCarpeta, 126, "Serie: ", .f. )
+         oBoton               := TDotNetButton():New( 60, ::oGrpSeries, "Up32",                    "Subir",             1, {|| ::CambiaSerie( .t. ) }, , , .f., .f., .f. )
+         oBoton               := TDotNetButton():New( 60, ::oGrpSeries, "Down32",                  "Bajar",             2, {|| ::CambiaSerie( .f. ) }, , , .f., .f., .f. )
+
+      oGrupo                  := TDotNetGroup():New( oCarpeta, 66, "Cajas", .f. )
+         oBoton               := TDotNetButton():New( 60, oGrupo, "Cashier_32",                    "Seleccionar cajas", 1, {|| ::OnClickSeleccionarCajas() }, , , .f., .f., .f. )
+
+      oGrupo                  := TDotNetGroup():New( oCarpeta, 66, "Entradas", .f. )
+         oBoton               := TDotNetButton():New( 60, oGrupo, "Cashier_replace_32",            "Entrada y salida",  1, {|| ::OnclickEntrdaSalida() }, , , .f., .f., .f. )
 
    end if
 
@@ -3695,11 +3700,13 @@ METHOD AgregarLibre() CLASS TpvTactil
    local oImporteLibre
    local oImpresoraLibre
    local oIvaLibre
+   local oNombreOrdenComanda
 
+   ::cOrdenComandaLibre    := ""
    ::cDescripcionLibre     := Space( 100 )
+   ::cImpresoraLibre       := Space( 254 )
    ::nUnidadesLibre        := 1
    ::nImporteLibre         := 0
-   ::cImpresoraLibre       := Space( 254 )
    ::nIvaLibre             := nIva( ::oTipoIVA, cDefIva() )
 
    if !::lEditableDocumento()
@@ -3707,7 +3714,7 @@ METHOD AgregarLibre() CLASS TpvTactil
       Return ( .t. )
    end if
 
-   DEFINE DIALOG oDlg RESOURCE "Libre" // FONT ::oFntDlg
+   DEFINE DIALOG oDlg RESOURCE "Libre" // FONT ::oFntDlg 
 
       REDEFINE GET oDescripcionLibre ;
          VAR      ::cDescripcionLibre ;
@@ -3760,6 +3767,12 @@ METHOD AgregarLibre() CLASS TpvTactil
       REDEFINE GET oImpresoraLibre ;
          VAR      ::cImpresoraLibre ;
          ID       160 ;
+         OF       oDlg
+
+      REDEFINE COMBOBOX oNombreOrdenComanda ;
+         VAR      ::cOrdenComandaLibre ;
+         ITEMS    ::oOrdenComanda:aNombreOrdenComanda() ;
+         ID       180 ;
          OF       oDlg
 
       REDEFINE BUTTONBMP ;
@@ -3815,13 +3828,14 @@ METHOD GuardarAgregarLibre() CLASS TpvTactil
    CursorWait()
 
    ::oTemporalLinea:Append()
-   ::oTemporalLinea:cNomTil     := ::cDescripcionLibre
-   ::oTemporalLinea:nUntTil     := ::nUnidadesLibre
-   ::oTemporalLinea:nPvpTil     := ::nImporteLibre
-   ::oTemporalLinea:nIvaTil     := ::nIvaLibre
-   ::oTemporalLinea:cAlmLin     := oUser():cAlmacen()
-   ::oTemporalLinea:cImpCom1    := ::cImpresoraLibre
-   ::oTemporalLinea:nNumLin     := nLastNum( ::oTemporalLinea )
+   ::oTemporalLinea:cNomTil      := ::cDescripcionLibre
+   ::oTemporalLinea:nUntTil      := ::nUnidadesLibre
+   ::oTemporalLinea:nPvpTil      := ::nImporteLibre
+   ::oTemporalLinea:nIvaTil      := ::nIvaLibre
+   ::oTemporalLinea:cAlmLin      := oUser():cAlmacen()
+   ::oTemporalLinea:cImpCom1     := ::cImpresoraLibre
+   ::oTemporalLinea:nNumLin      := nLastNum( ::oTemporalLinea )
+   ::oTemporalLinea:cOrdOrd      := ::oOrdenComanda:cOrden( ::cOrdenComandaLibre ) 
    ::oTemporalLinea:Save()
  
    if !Empty( ::oBrwLineas )
@@ -3878,7 +3892,7 @@ Return .t.
 
 METHOD CargaArticulosFamilia( cCodFam, nColBtn ) CLASS TpvTactil
 
-   local aItems                  := {}
+   local aItems                     := {}
 
    ::oArticulo:GetStatus()
 
@@ -3896,11 +3910,11 @@ METHOD CargaArticulosFamilia( cCodFam, nColBtn ) CLASS TpvTactil
 
             with object ( C5ImageViewItem() )
 
-               :cText            := ::cNombreArticulo()
+               :cText               := ::cNombreArticulo()
 
                if ( ::lImagenArticulos ) .and. ( ::lFileBmpName( ::oArticulo:cImagen ) )
 
-                  :cImage        := ::cFileBmpName( ::oArticulo:cImagen )
+                  :cImage           := ::cFileBmpName( ::oArticulo:cImagen )
 
                else
 
@@ -3914,13 +3928,13 @@ METHOD CargaArticulosFamilia( cCodFam, nColBtn ) CLASS TpvTactil
 
                   else
                   
-                     :nClrPane   := ::oArticulo:nColBtn
+                     :nClrPane      := ::oArticulo:nColBtn
 
                   end if   
 
                end if
 
-               :Cargo            := ::oArticulo:Codigo
+               :Cargo               := ::oArticulo:Codigo
 
                :Add( aItems )
 
@@ -3965,10 +3979,10 @@ METHOD CargaFavoritos() CLASS TpvTactil
 
          with object ( C5ImageViewItem() )
 
-           :cText          := ::cNombreArticulo()
+           :cText             := ::cNombreArticulo()
 
             if ( ::lImagenArticulos ) .and. ( ::lFileBmpName( ::oArticulo:cImagen ) )
-               :cImage     := ::cFileBmpName( ::oArticulo:cImagen )
+               :cImage        := ::cFileBmpName( ::oArticulo:cImagen )
             else
                
                if ::oArticulo:nColBtn == 0 
@@ -3979,7 +3993,7 @@ METHOD CargaFavoritos() CLASS TpvTactil
                   
             end if
 
-            :Cargo         := ::oArticulo:Codigo
+            :Cargo            := ::oArticulo:Codigo
 
             :Add( aItems )
 
@@ -4355,6 +4369,8 @@ METHOD AgregarLineas( cCodigoArticulo ) CLASS TpvTactil
 
             CursorWait()
 
+            SysRefresh()
+
             ::nNumeroLinea                := nLastNum( ::oTemporalLinea )
 
             ::oTemporalLinea:Append()
@@ -4368,6 +4384,7 @@ METHOD AgregarLineas( cCodigoArticulo ) CLASS TpvTactil
             ::oTemporalLinea:cCodFam      := ::oArticulo:Familia
             ::oTemporalLinea:cFamTil      := ::oArticulo:Familia
             ::oTemporalLinea:nCtlStk      := ::oArticulo:nCtlStock
+
             ::oTemporalLinea:nUntTil      := ::nGetUnidades( .t. )
 
             if ( ::oArticulo:lFacCnv )
@@ -4799,11 +4816,11 @@ METHOD AgregarPLU() CLASS TpvTactil
 
    cCodigoArticulo               := cSeekCodebar( ::cGetUnidades, ::oCodigoBarraArticulo, ::oArticulo )
 
+   ::oGetUnidades:cText( "" )
+
    if !::AgregarLineas( cCodigoArticulo )
       MsgBeepStop( "Artículo " + Alltrim( cCodigoArticulo ) + " no encontrado." )
    end if
-
-   ::oGetUnidades:cText( "" )
 
 Return .t.
 
@@ -6643,9 +6660,9 @@ METHOD CargaDocumento( cNumeroTicket ) CLASS TpvTactil
 
    CursorWait()
 
-   ::oTpvCobros:InitCobros()
-
    ::oDlg:Disable()
+
+   ::oTpvCobros:InitCobros()
 
    if ::oTiketCabecera:Seek( cNumeroTicket )
 
@@ -7737,15 +7754,31 @@ METHOD ProcesaComandas( lCopia )
 
       end if
 
+      /*
+      Lineas temporales--------------------------------------------------------
+      Esto hay q hacerlo para cuando se guraa sin salir del doc ---------------
+      */
+
+      ::oTemporalLinea:GetStatus()
+
+      ::oTemporalLinea:GoTop()
+      while !::oTemporalLinea:Eof()
+
+         ::oTemporalLinea:FieldPutByName( "nImpCom", ::nUnidadesLinea( ::oTemporalLinea ) )
+
+         ::oTemporalLinea:Skip()
+
+      end while
+
+      ::oTemporalLinea:SetStatus()
+
    end if
 
    /*
    Matamos la temporal---------------------------------------------------------
    */
 
-   if ::oTemporalComanda:OrdKeyCount() > 0
-      ::oTemporalComanda:Zap()
-   end if 
+   ::oTemporalComanda:Zap()
 
    CursorWE()
    
@@ -7759,41 +7792,41 @@ METHOD OnClickCopiaComanda() CLASS TpvTactil
    Comprobamos si tenemos que imprimir la comanda------------------------------
    */
 
-   if ::lEmptyNumeroTicket()
-
-      /*
-      Si el documento es nuevo y no tiene lineas no lo guardo------------------
-      */
-
-      if ::lEmptyDocumento()
-         Return ( .t. )
-      end if
-
-      /*
-      Vamos a detectar si estoy en un General----------------------------------
-      */
-
-      if ::lEmptyAlias() .and. !::SetAliasDocumento()
-         Return ( .t. )
-      end if
-
-      ::GuardaDocumento( .f. )
-
-      /*
-      Es una comanda normal pq se gurada por primera vez-----------------------
-      */
-
-      ::ProcesaComandas( .f. )
-
-   else 
-
-      /*
-      Es una comanda de copia pq ya estaba guardada----------------------------
-      */
+   if !::lEmptyNumeroTicket()
 
       ::ProcesaComandas( .t. )
 
    end if 
+
+Return ( Self )
+
+//---------------------------------------------------------------------------//
+
+METHOD OnClickGuardar() CLASS TpvTactil
+
+   /*
+   Si el documento es nuevo y no tiene lineas no lo guardo------------------
+   */
+
+   if ::lEmptyDocumento()
+      Return ( .t. )
+   end if
+
+   /*
+   Vamos a detectar si estoy en un General----------------------------------
+   */
+
+   if ::lEmptyAlias() .and. !::SetAliasDocumento()
+      Return ( .t. )
+   end if
+
+   ::GuardaDocumento( .f. )
+
+   /*
+   Mandamos las comandas a imprimir--------------------------------------------
+   */
+
+   ::ProcesaComandas( .f. )
 
 Return ( Self )
 
