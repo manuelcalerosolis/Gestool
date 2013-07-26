@@ -11390,19 +11390,18 @@ Static Function loaCli( aGet, aTmp, nMode, oTelefonoClient, oMailClient )
       Cargamos la obra por defecto-------------------------------------
       */
 
-      if dbSeekInOrd( cNewCodCli, "LDEFOBR", dbfObrasT )
+      if ( lChgCodCli ) .and. !Empty( aGet[ _CCODOBR ] )
 
-         if !Empty( aGet[ _CCODOBR ] )
+         if dbSeekInOrd( cNewCodCli, "lDefObr", dbfObrasT )
             aGet[ _CCODOBR ]:cText( ( dbfObrasT )->cCodObr )
-            aGet[ _CCODOBR ]:lValid()
+         else
+            aGet[ _CCODOBR ]:cText( Space( 10 ) )
          end if
 
-      else
-      
-         aGet[ _CCODOBR ]:cText( Space( 10 ) )
          aGet[ _CCODOBR ]:lValid()
 
       end if
+
 
       if oTelefonoClient != nil
          oTelefonoClient:SetText( ( dbfClient )->Telefono )

@@ -18436,7 +18436,7 @@ FONT 8, "MS Sans Serif"
   CONTROL "Número", -1, "Static", WS_GROUP, 44, 33, 35, 8
   CONTROL "Fecha", -1, "Static", WS_GROUP, 44, 57, 35, 8
   CONTROL "Albarán", -1, "Static", WS_GROUP, 44, 69, 35, 8
-  CONTROL "Su fac.", -1, "Static", WS_GROUP, 44, 93, 35, 8
+  CONTROL "Su factura", -1, "Static", WS_GROUP, 44, 93, 38, 8
   CONTROL "Proveedor", -1, "Static", WS_GROUP, 184, 33, 45, 8
   CONTROL "Nombre", -1, "Static", WS_GROUP, 184, 45, 45, 8
   CONTROL "Domicilio", -1, "Static", WS_GROUP, 184, 57, 45, 8

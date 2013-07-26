@@ -849,10 +849,10 @@ FUNCTION BrwObras( oGet, oGet2, cCodCli, dbfObrasT )
 
    if oDlg:nResult == IDOK
 
-      oGet:cText( ( dbfObrasT )->CCODOBR )
+      oGet:cText( ( dbfObrasT )->cCodObr )
 
       if !Empty( oGet2 )
-         oGet2:cText( ( dbfObrasT )->CNOMOBR )
+         oGet2:cText( ( dbfObrasT )->cNomObr )
       end if
 
    end if
@@ -881,7 +881,7 @@ FUNCTION cObras( oGet, oGet2, cCodCli, dbfObrasT )
 
 	local lValid 	:= .f.
 	local lClose 	:= .f.
-	local xValor 	:= oGet:varGet()
+	local xValor 	:= oGet:VarGet()
 
 	if Empty( xValor )
 		if !Empty( oGet2 )
@@ -898,22 +898,22 @@ FUNCTION cObras( oGet, oGet2, cCodCli, dbfObrasT )
    if Empty( dbfObrasT )
       USE ( cPatEmp() + "OBRAST.DBF" ) NEW VIA ( cDriver() ) SHARED ALIAS ( cCheckArea( "OBRAST", @dbfObrasT ) )
       SET ADSINDEX TO ( cPatEmp() + "OBRAST.CDX" ) ADDITIVE
-      lClose   := .t.
+      lClose      := .t.
    else
       ( dbfObrasT )->( OrdSetFocus( "cCodCli" ) )
    end if
 
-   xValor      := cCodCli + xValor
+   xValor         := cCodCli + xValor
 
    if ( dbfObrasT )->( dbSeek( xValor ) )
 
-      oGet:cText( ( dbfObrasT )->CCODOBR )
+      oGet:cText( ( dbfObrasT )->cCodObr )
 
 		if !Empty( oGet2 )
-			oGet2:cText( ( dbfObrasT )->CNOMOBR )
+			oGet2:cText( ( dbfObrasT )->cNomObr )
 		end if
 
-      lValid   := .t.
+      lValid      := .t.
 
 	else
 

@@ -7330,16 +7330,14 @@ STATIC FUNCTION loaCli( aGet, aTmp, nMode, oRieCli, oTlfCli )
       Cargamos la obra por defecto-------------------------------------
       */
 
-      if dbSeekInOrd( cNewCodCli, "LDEFOBR", dbfObrasT )
+      if ( lChgCodCli ) .and. !Empty( aGet[ _CCODOBR ] )
 
-         if !Empty( aGet[ _CCODOBR ] )
+         if dbSeekInOrd( cNewCodCli, "lDefObr", dbfObrasT )
             aGet[ _CCODOBR ]:cText( ( dbfObrasT )->cCodObr )
-            aGet[ _CCODOBR ]:lValid()
+         else
+            aGet[ _CCODOBR ]:cText( Space( 10 ) )
          end if
 
-      else
-      
-         aGet[ _CCODOBR ]:cText( Space( 10 ) )
          aGet[ _CCODOBR ]:lValid()
 
       end if
@@ -7887,6 +7885,9 @@ STATIC FUNCTION BeginTrans( aTmp, nMode )
 
       ( dbfTmpPgo )->( ordCondSet( "!Deleted()", {||!Deleted() } ) )
       ( dbfTmpPgo )->( ordCreate( cTmpPgo, "nNumFac", "cSerie + Str( nNumFac ) + cSufFac + Str( nNumRec ) + cTipRec", {|| Field->cSerie + Str( Field->nNumFac ) + Field->cSufFac + Str( Field->nNumRec ) + Field->cTipRec } ) )
+
+      ( dbfTmpPgo )->( ordCondSet( "!Deleted()", {|| !Deleted() } ) )
+      ( dbfTmpPgo )->( ordCreate( cTmpPgo, "cNumMtr", "Field->cNumMtr", {|| Field->cNumMtr } ) )
 
       if ( dbfFacCliP )->( dbSeek( cFac ) ) .and. nMode != DUPL_MODE
          while ( dbfFacCliP )->cSerie + Str( ( dbfFacCliP )->nNumFac ) + ( dbfFacCliP )->cSufFac == cFac .and. ( dbfFacCliP )->( !eof() )

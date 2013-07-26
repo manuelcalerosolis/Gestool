@@ -227,6 +227,7 @@ Definici¢n de la base de datos de lineas de detalle
 #define _LVOLIMP            83
 #define _LGASSUP            84
 #define _dCNUMPED           85
+#define _dCNUMSAT           86
 
 /*
 Definici¢n de Array para impuestos
@@ -2749,8 +2750,7 @@ STATIC FUNCTION EdtRec( aTmp, aGet, dbfFacCliT, oBrw, hHash, bValid, nMode )
       Codigo de Divisas______________________________________________________________
       */
 
-      REDEFINE GET aGet[ _CDIVFAC ] ;
-         VAR      aTmp[ _CDIVFAC ];
+      REDEFINE GET aGet[ _CDIVFAC ] VAR aTmp[ _CDIVFAC ];
          WHEN     ( nMode == APPD_MODE .AND. ( dbfTmpLin )->( LastRec() ) == 0 ) ;
          VALID    ( cDivOut( aGet[ _CDIVFAC ], oBmpDiv, aGet[ _NVDVFAC ], @cPouDiv, @nDouDiv, @cPorDiv, @nRouDiv, @cPpvDiv, @nDpvDiv, oGetMasDiv, dbfDiv, oBandera ) );
          PICTURE  "@!";
@@ -2794,12 +2794,12 @@ STATIC FUNCTION EdtRec( aTmp, aGet, dbfFacCliT, oBrw, hHash, bValid, nMode )
       Codigo de Tarifa_______________________________________________________________
       */
 
-      REDEFINE GET aGet[_CCODTAR] VAR aTmp[_CCODTAR] ;
+      REDEFINE GET aGet[ _CCODTAR ] VAR aTmp[ _CCODTAR ] ;
          ID       210 ;
          WHEN     ( lWhen .and. oUser():lAdministrador() ) ;
-         VALID    ( cTarifa( aGet[_CCODTAR], oSay[ 5 ] ) ) ;
+         VALID    ( cTarifa( aGet[ _CCODTAR ], oSay[ 5 ] ) ) ;
          BITMAP   "LUPA" ;
-         ON HELP  ( BrwTarifa( aGet[_CCODTAR], oSay[ 5 ] ) ) ;
+         ON HELP  ( BrwTarifa( aGet[ _CCODTAR ], oSay[ 5 ] ) ) ;
          OF       oFld:aDialogs[1]
 
       REDEFINE GET oSay[ 5 ] VAR cSay[ 5 ] ;
@@ -6254,6 +6254,7 @@ STATIC FUNCTION cAlbCli( aGet, aTmp, oBrwLin, oBrwPgo, nMode )
                (dbfTmpLin)->nFacCnv    := (dbfAlbCliL)->nFacCnv
                (dbfTmpLin)->lLinOfe    := (dbfAlbCliL)->lLinOfe
                (dbfTmpLin)->dFecCad    := (dbfAlbCliL)->dFecCad
+               (dbfTmpLin)->cNumSat 	:= (dbfAlbCliL)->cNumSat
                (dbfTmpLin)->cSuPed     := cSuPed
 
                ( dbfAlbCliL )->( dbSkip() )
@@ -9842,8 +9843,8 @@ STATIC FUNCTION GrpAlb( aGet, aTmp, oBrw )
                ( dbfTmpLin )->nFacCnv  := ( dbfAlbCliL )->nFacCnv
                ( dbfTmpLin )->lLinOfe  := ( dbfAlbCliL )->lLinOfe
                ( dbfTmpLin )->dFecCad  := ( dbfAlbCliL )->dFecCad
+               ( dbfTmpLin )->cNumSat  := ( dbfAlbCliL )->cNumSat
                ( dbfTmpLin )->cSuPed   := cSuPed
-
 
                /*
                Pasamos series de albaranes-------------------------------------
@@ -12763,6 +12764,9 @@ Static Function DataReport( oFr )
    oFr:SetWorkArea(     "Clientes.Pais", oPais:Select() )
    oFr:SetFieldAliases( "Clientes.Pais", cObjectsToReport( oPais:oDbf ) )
 
+   oFr:SetWorkArea(     "SAT", ( dbfSatCliT )->( Select() ) )
+   oFr:SetFieldAliases( "SAT", cItemsToReport( aItmSatCli() ) )
+
    oFr:SetMasterDetail( "Facturas", "Lineas de facturas",               {|| ( dbfFacCliT )->cSerie + Str( ( dbfFacCliT )->nNumFac ) + ( dbfFacCliT )->cSufFac } )
    oFr:SetMasterDetail( "Facturas", "Series de lineas de facturas",     {|| ( dbfFacCliT )->cSerie + Str( ( dbfFacCliT )->nNumFac ) + ( dbfFacCliT )->cSufFac } )
    oFr:SetMasterDetail( "Facturas", "Incidencias de facturas",          {|| ( dbfFacCliT )->cSerie + Str( ( dbfFacCliT )->nNumFac ) + ( dbfFacCliT )->cSufFac } )
@@ -12786,8 +12790,9 @@ Static Function DataReport( oFr )
    oFr:SetMasterDetail( "Lineas de facturas", "Tipo de venta",          {|| ( dbfFacCliL )->cTipMov } )
    oFr:SetMasterDetail( "Lineas de facturas", "Ofertas",                {|| ( dbfFacCliL )->cRef } )
    oFr:SetMasterDetail( "Lineas de facturas", "Unidades de medición",   {|| ( dbfFacCliL )->cUnidad } )
+   oFr:SetMasterDetail( "Lineas de facturas", "SAT",                   	{|| ( dbfFacCliL )->cNumSat } )
 
-   oFr:SetMasterDetail( "Clientes", "Clientes.Pais",                     {|| ( dbfClient )->cCodPai } )
+   oFr:SetMasterDetail( "Clientes", "Clientes.Pais",                    {|| ( dbfClient )->cCodPai } )
 
    oFr:SetResyncPair(   "Facturas", "Lineas de facturas" )
    oFr:SetResyncPair(   "Facturas", "Series de lineas de facturas" )
@@ -12812,6 +12817,7 @@ Static Function DataReport( oFr )
    oFr:SetResyncPair(   "Lineas de facturas", "Tipo de venta" )
    oFr:SetResyncPair(   "Lineas de facturas", "Ofertas" )
    oFr:SetResyncPair(   "Lineas de facturas", "Unidades de medición" )
+   oFr:SetResyncPair( 	"Lineas de facturas", "SAT" )
 
    oFr:SetResyncPair(   "Clientes", "Clientes.Pais" )
 
@@ -12917,6 +12923,8 @@ Static Function VariableReport( oFr )
    oFr:AddVariable(     "Lineas de facturas",   "Fecha en juliano",                                "CallHbFunc('dJulianoFacCli')" )
    oFr:AddVariable(     "Lineas de facturas",   "Precio unitario sin " + cImp(),                   "CallHbFunc('nNoIncUFacCli')"  )
    oFr:AddVariable(     "Lineas de facturas",   "Total linea sin " + cImp(),                       "CallHbFunc('nNoIncLFacCli')"  )
+
+   oFr:AddVariable(     "Lineas de facturas",   "Dirección del SAT",                   "CallHbFunc('cFacturaClienteDireccionSAT')" )
 
 Return nil
 
@@ -15599,8 +15607,9 @@ function aColFacCli()
    aAdd( aColFacCli, { "lVolImp",   "L",   1, 0, "Aplicar volumen impuestos especiales"  , "",              "", "( cDbfCol )" } )
    aAdd( aColFacCli, { "lGasSup",   "L",   1, 0, "Linea de gastos suplidos"              , "",              "", "( cDbfCol )" } )
    aAdd( aColFacCli, { "cNumPed"   ,"C",  12, 0, "Número del pedido"                     , "",              "", "( cDbfCol )" } )
-   aAdd( aColFacCli, { "dFecFac"   ,"D",   8, 0, "Fecha de factura"                      , "" ,             "", "( cDbfCol )" } )
-   aAdd( aColFacCli, { "cSuPed"    ,"C",  50, 0, "Su pedido (desde albarán)"             , "" ,             "", "( cDbfCol )" } )
+   aAdd( aColFacCli, { "dFecFac"   ,"D",   8, 0, "Fecha de factura"                      , "",              "", "( cDbfCol )" } )
+   aAdd( aColFacCli, { "cSuPed"    ,"C",  50, 0, "Su pedido (desde albarán)"             , "",              "", "( cDbfCol )" } )
+   aAdd( aColFacCli, { "cNumSat"   ,"C",  12, 0, "Número del SAT" 							  , "",              "", "( cDbfCol )" } )
 
 return ( aColFacCli )
 
@@ -17188,17 +17197,15 @@ STATIC FUNCTION loaCli( aGet, aTmp, nMode, oRieCli, oTlfCli )
       Cargamos la obra por defecto-------------------------------------
       */
 
-      if dbSeekInOrd( cNewCodCli, "LDEFOBR", dbfObrasT )
+      if ( lChgCodCli ) .and. !Empty( aGet[ _CCODOBR ] )
 
-         if !Empty( aGet[ _CCODOBR ] )
-            aGet[ _CCODOBR ]:cText( ( dbfObrasT )->cCodObr )
-            aGet[ _CCODOBR ]:lValid()
-         end if
+			if dbSeekInOrd( cNewCodCli, "lDefObr", dbfObrasT )
+   	      aGet[ _CCODOBR ]:cText( ( dbfObrasT )->cCodObr )
+      	else
+         	aGet[ _CCODOBR ]:cText( Space( 10 ) )
+       	end if
 
-      else
-      
-         aGet[ _CCODOBR ]:cText( Space( 10 ) )
-         aGet[ _CCODOBR ]:lValid()
+   	   aGet[ _CCODOBR ]:lValid()
 
       end if
 
@@ -22648,6 +22655,7 @@ STATIC FUNCTION cSatCli( aGet, aTmp, oBrw, nMode )
                (dbfTmpLin)->nIncPnt    := (dbfSatCliL)->nIncPnt
                (dbfTmpLin)->lControl   := (dbfSatCliL)->lControl
                (dbfTmpLin)->lLinOfe    := (dbfSatCliL)->lLinOfe
+               (dbfTmpLin)->cNumSat 	:= cNumSat 
 
                (dbfSatCliL)->( dbSkip() )
 
@@ -23212,5 +23220,23 @@ Static Function HideImportacion( aGet, oShow )
    end if
 
 Return ( nil ) 
+
+//---------------------------------------------------------------------------//
+
+Function cFacturaClienteDireccionSAT()
+
+   local dbfObras
+   local cDireccion  := ""
+
+   USE ( cPatCli() + "ObrasT.Dbf" ) NEW VIA ( cDriver() ) SHARED ALIAS ( cCheckArea( "Obras", @dbfObras ) )
+   SET ADSINDEX TO ( cPatCli() + "ObrasT.Cdx" ) ADDITIVE
+
+   if ( dbfObras )->( dbSeek( ( dbfSatCliT )->cCodCli + ( dbfSatCliT )->cCodObr ) )
+      cDireccion     := ( dbfObras )->cNomObr
+   end if
+
+   CLOSE ( dbfObras )
+
+Return ( cDireccion )
 
 //---------------------------------------------------------------------------//
