@@ -797,7 +797,7 @@ METHOD SetText( cText, nLevel ) CLASS TComercio
             ::oTree:Select( ::oSubItem2 )
             ::oTree:Expand()
          case nLevel == 3
-            ::oTree:Select( ::oSubItem2:Add( cText ) )
+            ::oTree:Select( ::oSubItem2:Add( cText ) )    
             ::oSubItem2:Expand()
       end case
    end if
