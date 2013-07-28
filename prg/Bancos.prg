@@ -1187,6 +1187,10 @@ METHOD lGenerate() CLASS TFastCuentasBancarias
 
          ::CalculaSaldo()
 
+      otherwise
+
+         msgStop( "Tipo de informe no valido.", ::cReportType )
+
    end case
 
 RETURN ( ::oDbf:LastRec() > 0 )
@@ -1466,7 +1470,7 @@ METHOD BuildTree( oTree, lLoadFile ) CLASS TFastCuentasBancarias
    DEFAULT oTree     := ::oTreeReporting
    DEFAULT lLoadFile := .t.
 
-   aReports          := {  {  "Title" => "Informe de cuentas bancarias", "Image" => 17, "Type" => "Informe", "Directory" => "Cuentas bancarias", "File" => "Informe.fr3"  } }
+   aReports          := {  {  "Title" => "Informe de cuentas bancarias", "Image" => 17, "Type" => "Informe de cuentas bancarias", "Directory" => "Cuentas bancarias", "File" => "Informe.fr3"  } }
 
    ::BuildNode( aReports, oTree, lLoadFile )
 

@@ -63,7 +63,6 @@
 
 #define DLGC_BUTTON         8192   // 0x2000
 
-
 #define CS_DBLCLKS             8
 #define CW_USEDEFAULT      32768
 
@@ -96,6 +95,14 @@
    #define NO_ID  -1
 #else
    #define NO_ID  65535
+#endif
+
+#ifdef __XPP__
+   #define WM_MOUSEWHEEL  0x020A
+#endif
+
+#ifdef __C3__
+   #define WM_MOUSEWHEEL  522
 #endif
 
 // ToolTip Icons (Set with TTM_SETTITLE)
@@ -173,6 +180,7 @@ return lPrevious
 
 //----------------------------------------------------------------------------//
 
+
 CLASS TWindow
 
    DATA   hWnd, nOldProc
@@ -208,8 +216,6 @@ CLASS TWindow
 
    DATA   OnClick, OnMouseMove, OnKeyDown, OnMove, OnPaint, OnResize
    DATA   nPosition
-   DATA   lFastEdit AS LOGICAL INIT .F.
-   DATA   aGradColors
 
    CLASSDATA lRegistered AS LOGICAL
 
@@ -233,12 +239,13 @@ CLASS TWindow
                             { "OnMove" },;
                             { "OnPaint" }, { "OnResize" } }
 
-   DATA hAlphaColor, hAlphaLevel
+   DATA hAlphaColor, hAlphaLevel PROTECTED
+
 
    METHOD New( nTop, nLeft, nBottom, nRight, cTitle, nStyle, oMenu,;
                oBrush, oIcon, oParent, lVScroll, lHScroll,;
                nClrFore, nClrBack, oCursor, cBorder, lSysMenu, lCaption,;
-               lMin, lMax, lPixel, nExStyle ) CONSTRUCTOR
+               lMin, lMax, lPixel ) CONSTRUCTOR
 
    METHOD Activate( cShow, bLClicked, bRClicked, bMoved, bResized, bPainted,;
                     bKeyDown, bInit,;
@@ -263,8 +270,12 @@ CLASS TWindow
 
    METHOD CheckToolTip()
 
-   METHOD ChildLevel( oClass ) INLINE ChildLevel( Self, oClass )
+   #ifndef __CLIPPER__
+      #ifndef __C3__
+         METHOD ChildLevel( oClass ) INLINE ChildLevel( Self, oClass )
          //defined at db10.prg and at harbour.prg
+      #endif
+   #endif
 
    METHOD Close() VIRTUAL
 
@@ -288,7 +299,7 @@ CLASS TWindow
 
    METHOD cTitle( cNewTitle ) SETGET
 
-   METHOD Cut() INLINE If( ::bCut != nil, Eval( ::bCut, Self ),)
+   METHOD Cut() INLINE If( ::bCut != nil, Eval( ::bCut ),)
 
    METHOD DdeInitiate( hWndClient, nAppName, nTopicName )
 
@@ -317,13 +328,11 @@ CLASS TWindow
 
    METHOD DropOver( nRow, nCol, nKeyFlags )
 
-   METHOD EditTitle( cTitle )
-
    METHOD Enable()   INLINE ::lActive := .t.,;
                             If( ::hWnd != 0, EnableWindow( ::hWnd, .t. ),)
 
    METHOD End() BLOCK ;   // It has to be Block
-          { | Self, lEnd | If( lEnd := ::lValid(), ::PostMsg( WM_CLOSE ),), lEnd }
+      { | Self, lEnd | If( lEnd := ::lValid(), ::PostMsg( WM_CLOSE ),), lEnd }
 
    METHOD EndPaint() INLINE ::nPaintCount--,;
                      EndPaint( ::hWnd, ::cPS ), ::cPS := nil, ::hDC := nil, 0 // keep this zero here!
@@ -333,8 +342,6 @@ CLASS TWindow
    METHOD Event( nEvent ) INLINE ::aEvents[ nEvent ]
 
    METHOD EveCount() INLINE Len( ::aEvents )
-
-   METHOD FastEdit( nRow, nCol )
 
    METHOD Find() INLINE If( ::bFind != nil, Eval( ::bFind, Self ),)
 
@@ -346,7 +353,7 @@ CLASS TWindow
           FloodFill( ::hDC, nRow, nCol, nRGBColor )
 
    METHOD GenDbf()
-   METHOD cGenPrg( cFileName, lDlgUnits )
+   METHOD cGenPrg()
 
    METHOD nGetChrHeight() INLINE ;
                           ::nChrHeight := nWndChrHeight( ::hWnd,;
@@ -359,8 +366,8 @@ CLASS TWindow
    METHOD GetRect()
 
    METHOD GetDC() INLINE ;
-          If( ::hDC == nil, ::hDC := GetDC( ::hWnd ),),;
-          If( ::nPaintCount == nil, ::nPaintCount := 1, ::nPaintCount++ ), ::hDC
+       If( ::hDC == nil, ::hDC := GetDC( ::hWnd ),),;
+       If( ::nPaintCount == nil, ::nPaintCount := 1, ::nPaintCount++ ), ::hDC
 
    METHOD GetDlgCode( nLastKey ) VIRTUAL
 
@@ -382,11 +389,24 @@ CLASS TWindow
    METHOD GotFocus()
 
    METHOD GoTop() INLINE BringWindowToTop( ::hWnd )
-   
-   METHOD Gradient( aGradColors )
 
-   METHOD HandleEvent( nMsg, nWParam, nLParam ) EXTERN ;
-                       WndHandleEvent( Self, nMsg, nWParam, nLParam )
+   #ifdef __C3__
+      METHOD HandleEvent( nMsg, nWParam, nLParam )
+   #endif
+
+   #ifdef __CLIPPER__
+      METHOD HandleEvent( nMsg, nWParam, nLParam ) EXTERN ;
+                          WndHandleEvent( nMsg, nWParam, nLParam )
+   #endif
+
+   #ifdef __XPP__
+      METHOD HandleEvent( nMsg, nWParam, nLParam )
+   #endif
+
+   #ifdef __HARBOUR__
+      METHOD HandleEvent( nMsg, nWParam, nLParam ) EXTERN ;
+                          WndHandleEvent( Self, nMsg, nWParam, nLParam )
+   #endif
 
    METHOD HardCopy( nScale, lFromUser )
 
@@ -401,7 +421,7 @@ CLASS TWindow
 
    MESSAGE HelpTopic METHOD __HelpTopic()
 
-   METHOD Hide() INLINE ( ::lVisible := .F., ShowWindow( ::hWnd, SW_HIDE ) )
+   METHOD Hide() INLINE ShowWindow( ::hWnd, SW_HIDE )
 
    METHOD HScroll( nWParam, nLParam )
 
@@ -475,8 +495,6 @@ CLASS TWindow
 
    METHOD Paint()
 
-   METHOD PaintBack( hDC )
-
    METHOD PaletteChanged( hWndPalChg ) INLINE PalChgEvent( hWndPalChg )
 
    METHOD Paste() INLINE If( ::bPaste != nil, Eval( ::bPaste, Self ),)
@@ -529,10 +547,6 @@ CLASS TWindow
    METHOD SaveFile( cFileName )
 
    METHOD SaveToBmp( cBmpFile )
-
-//   METHOD SaveToPng( cBmpFile )
-   
-   METHOD SaveToRC( nIndent )   
 
    METHOD SaveToText( nIndent )
 
@@ -593,8 +607,7 @@ CLASS TWindow
 
    METHOD SetSize( nWidth, nHeight, lRepaint ) INLINE ;
                    WndSetSize( ::hWnd, nWidth, nHeight, lRepaint ),;
-                   ::CoorsUpdate(),;
-                   If( ::aGradColors != nil, ::Gradient(),)
+                   ::CoorsUpdate()
 
    METHOD SetText( cText ) INLINE ;
                            ::cCaption := cText,;
@@ -602,7 +615,7 @@ CLASS TWindow
 
    METHOD Shadow()
 
-   METHOD Show() INLINE  ( ::lVisible := .T., ShowWindow( ::hWnd, SW_SHOWNA ) )
+   METHOD Show() INLINE  ShowWindow( ::hWnd, SW_SHOWNA )
 
    METHOD ShowToolTip( nRow, nCol, cToolTip )
 
@@ -679,7 +692,7 @@ METHOD Register( nClsStyle )  CLASS TWindow
 
    DEFAULT nClsStyle  := nOR( CS_VREDRAW, CS_HREDRAW ),;
            ::nClrPane := GetSysColor( COLOR_WINDOW ),;
-           ::oBrush   := TBrush():New( ,::nClrPane )
+           ::oBrush   := TBrush():New( , ::nClrPane )
 
    nClsStyle = nOr( nClsStyle, CS_GLOBALCLASS, CS_DBLCLKS )
 
@@ -716,12 +729,12 @@ METHOD Create( cClsName )  CLASS TWindow
                              ::nLeft, ::nTop, ::nRight - ::nLeft + 1, ;
                              ::nBottom - ::nTop + 1, ;
                              If( ::oWnd != nil, ::oWnd:hWnd, 0 ), ;
-                             ::nId,, ::nExStyle )
+                             ::nId )
    else
       ::hWnd = CreateWindow( cClsName, ::cCaption, ::nStyle, ;
                              ::nLeft, ::nTop, ::nRight, ::nBottom, ;
                              If( ::oWnd != nil, ::oWnd:hWnd, 0 ), ;
-                             ::nId,, ::nExStyle )
+                             ::nId )
    endif
 
    if ::hWnd == 0
@@ -752,7 +765,7 @@ return nil
 
 METHOD New( nTop, nLeft, nBottom, nRight, cTitle, nStyle, oMenu,;
             oBrush, oIcon, oWnd, lVScroll, lHScroll, nClrFore, nClrBack,;
-            oCursor, cBorder, lSysMenu, lCaption, lMin, lMax, lPixel, nExStyle ) ;
+            oCursor, cBorder, lSysMenu, lCaption, lMin, lMax, lPixel ) ;
                                                                CLASS TWindow
 
    DEFAULT nTop     := 2, nLeft := 2, nBottom := 20, nRight := 70,;
@@ -761,7 +774,7 @@ METHOD New( nTop, nLeft, nBottom, nRight, cTitle, nStyle, oMenu,;
            nClrBack := GetSysColor( COLOR_WINDOW ),;
            nStyle   := 0,;
            cBorder  := "SINGLE", lSysMenu := .t., lCaption := .t.,;
-           lMin     := .t., lMax := .t., lPixel := .f., nExStyle := 0
+           lMin     := .t., lMax := .t., lPixel := .f.
 
    if nStyle == 0
       nStyle = nOr( WS_CLIPCHILDREN,;
@@ -789,7 +802,6 @@ METHOD New( nTop, nLeft, nBottom, nRight, cTitle, nStyle, oMenu,;
    ::aControls = {}
    ::nLastKey  = 0
    ::lValidating = .f.
-   ::nExStyle  = nExStyle
 
    #ifdef __XPP__
       DEFAULT ::lRegistered := .f.
@@ -981,6 +993,10 @@ METHOD Activate( cShow, bLClicked, bRClicked, bMoved, bResized, bPainted,;
       endif
    endif
 
+   if Self != nil  // FiveWin++ difference
+      ::lVisible = .f.
+   endif
+
 return nil
 
 //----------------------------------------------------------------------------//
@@ -1140,13 +1156,12 @@ METHOD DrawItem( nIdCtl, pItemStruct ) CLASS TWindow
             oItem = ::oMenu:GetMenuItem( GetDrawItem( pItemStruct ) )
          endif
          if oItem != nil
-            if ! oItem:oMenu:l2007 .AND. ! oItem:oMenu:l2010
+            if ! oItem:oMenu:l2007
                return MenuDrawItem( pItemStruct,;
                                     If( ! Empty( oItem:cPrompt ), oItem:cPrompt, "" ),;
                                     If( ::oMenu != nil, ::oMenu:hMenu, 0 ),;
                                     oItem:hBitmap, ::hWnd )
             else
-               oItem:oMenu:SetSkin()
                return MenuDraw2007( pItemStruct,;
                                     If( ! Empty( oItem:cPrompt ), oItem:cPrompt, "" ),;
                                     If( ::oMenu != nil, ::oMenu:hMenu, 0 ),;
@@ -1190,7 +1205,7 @@ METHOD GenDbf( cDbfName ) CLASS TWindow
    ::CoorsUpdate()
 
    if File( cDbfName )
-      if ! MsgYesNo( cDbfName + CRLF + ;
+      if ! ApoloMsgNoYes( cDbfName + CRLF + ;
                      "This file already exists" + CRLF + ;
                      "Do you want to overwrite it ?" )
          return nil
@@ -1218,18 +1233,16 @@ return nil
 
 //----------------------------------------------------------------------------//
 
-METHOD cGenPRG( cFileName, lDlgUnits ) CLASS TWindow
+METHOD cGenPRG( cFileName ) CLASS TWindow
 
    local cPrg := ""
-
-   DEFAULT lDlgUnits := .F.
 
    ::CoorsUpdate()
 
    cPrg += '#include "FiveWin.ch"' + CRLF + CRLF
    cPrg += "static oWnd" + CRLF + CRLF
    cPrg += "//" + Replicate( "-", 76 ) + "//" + CRLF + CRLF
-   cPrg += "function MainWnd()" + CRLF + CRLF
+   cPrg += "function Main()" + CRLF + CRLF
 
    if ::oBar != nil
       cPrg += "   local oBar" + CRLF
@@ -1240,14 +1253,13 @@ METHOD cGenPRG( cFileName, lDlgUnits ) CLASS TWindow
    endif
 
    if ::oBrush != nil
-      cPrg += CRLF + ::oBrush:cGenPRG() + CRLF
+      cPrg += ::oBrush:cGenPRG()
    endif
 
    cPrg += CRLF + ;
            '   DEFINE WINDOW oWnd TITLE "' + ::cTitle + '" ;' + CRLF + ;
            "      FROM " + ;
-           If( IsZoomed( ::hWnd ), "0", Str( ::nTop / WIN_CHARPIX_H, 3 ) ) + ", " + ;
-           If( IsZoomed( ::hWnd ), "0", Str( ::nLeft / WIN_CHARPIX_W, 3 ) ) + " TO " + ;
+           Str( ::nTop / WIN_CHARPIX_H , 3 ) + ", " + Str( ::nLeft / WIN_CHARPIX_W, 3 ) + " TO " + ;             // 16, 8
            Str( ::nBottom / WIN_CHARPIX_H, 3 ) + ", " + Str( ::nRight / WIN_CHARPIX_W, 3 )                       // 16,8
 
    if ::oMenu != nil
@@ -1255,34 +1267,25 @@ METHOD cGenPRG( cFileName, lDlgUnits ) CLASS TWindow
    endif
 
    if ::oBrush != nil
-      cPrg += " ;" + CRLF + "      BRUSH oBrush"
+      cPrg += " ;" + CRLF + "      BRUSH oBrush" + CRLF
    endif
 
    if ::oBar != nil
-      cPrg += ::oBar:cGenPRG() + CRLF
+      cPrg += ::oBar:cGenPRG()
    endif
 
    if ::oMsgBar != nil
-      cPrg += CRLF + '   DEFINE MSGBAR OF oWnd PROMPT "' + ;
-              ::oMsgBar:cMsgDef + '"' + If( ::oMsgBar:l2007, " 2007", "" ) + CRLF
+      cPrg += CRLF + CRLF + '   SET MESSAGE OF oWnd TO "' + ;
+              ::oMsgBar:cMsgDef + '"'
    endif
 
    if ! Empty( ::aControls )
-      cPrg += CRLF
-      AEval( ::aControls, { | oCtrl | cPrg += oCtrl:cGenPRG( lDlgUnits ) } )
+      AEval( ::aControls, { | oCtrl | cPrg += oCtrl:cGenPRG() } )
    endif
 
-   cPrg += CRLF + "   ACTIVATE WINDOW oWnd" + If( IsZoomed( ::hWnd ), " MAXIMIZED", "" ) + CRLF + CRLF
+   cPrg += CRLF + "   ACTIVATE WINDOW oWnd" + CRLF + CRLF
    cPrg += "return nil" + CRLF + CRLF
    cPrg += "//" + Replicate( "-", 76 ) + "//" + CRLF
-
-   if ::oMenu != nil
-      cPrg += CRLF + "static function BuildMenu()" + CRLF + CRLF
-      cPrg += "   local oMenu" + CRLF + CRLF
-      cPrg += ::oMenu:cGenPrg() + CRLF
-      cPrg += "return oMenu" + CRLF + CRLF
-      cPrg += "//" + Replicate( "-", 76 ) + "//" + CRLF
-   endif
 
    if ! Empty( cFileName )
       MemoWrit( cFileName, cPrg )
@@ -1355,8 +1358,7 @@ METHOD MeasureItem( nIdCtl, pMitStruct ) CLASS TWindow
          MenuMeasureItem( pMitStruct,;
                           0.9 * GetTextWidth( 0, If( ! Empty( oItem:cPrompt ),;
                           StrTran( oItem:cPrompt, "&", "" ), "" ) ) + ;
-                          If( oItem:oMenu:hMenu != If( ::oMenu != nil, ::oMenu:hMenu, 0 ), ;
-                             if( ValType( oItem:cPrompt ) == "C", if( chr( 9 )$oItem:cPrompt, 100, 100 ), 0 ), 0 ) ,;
+                          If( oItem:oMenu:hMenu != If( ::oMenu != nil, ::oMenu:hMenu, 0 ), 30, 0 ),;
                           Empty( oItem:cPrompt ) )
       else                // + 20 introduced due Error on NT on width calculation 1999/05/19
          if IsMenuItem( pMitStruct )
@@ -1614,42 +1616,6 @@ METHOD SaveToBmp( cBmpFile ) CLASS TWindow
 return ( File( cBmpFile ) )
 
 //----------------------------------------------------------------------------//
-/*
-METHOD SaveToPng( cBmpFile ) CLASS TWindow
-
-   local hBmp := WndBitmap( ::hWnd )
-   
-   Save2PngFile( hBmp, cBmpFile )
-
-return ( File( cBmpFile ) )
-*/
-//----------------------------------------------------------------------------//
-
-METHOD SaveToRC( nIndent ) CLASS TWindow
-
-   local cRC := Upper( StrToken( ::cCaption, 1 ) ) + " DIALOG ", n
-   
-   cRC += AllTrim( Str( ::nTop ) ) + ", " 
-   cRC += AllTrim( Str( ::nLeft ) ) + ", " 
-   cRC += AllTrim( Str( ::nWidth ) ) + ", " 
-   cRC += AllTrim( Str( ::nHeight ) ) + CRLF
-   
-   cRC += "STYLE DS_MODALFRAME | WS_POPUP | WS_VISIBLE | WS_CAPTION | WS_SYSMENU" + CRLF 
-   cRC += 'CAPTION "' + ::cCaption + '"' + CRLF
-   cRC += 'FONT 8, "' + ::oFont:cFaceName + '"' + CRLF
-   cRC += "{" + CRLF
-
-   if ::aControls != nil
-      for n = 1 to Len( ::aControls )
-         cRC += ::aControls[ n ]:SaveToRC( 3 ) + CRLF
-      next
-   endif
-   
-   cRC += "}" + CRLF   
-
-return cRC  
-
-//----------------------------------------------------------------------------//
 
 METHOD SaveToText( nIndent ) CLASS TWindow
 
@@ -1766,14 +1732,12 @@ return "A" + I2Bin( 2 + Len( cInfo ) ) + I2Bin( Len( aArray ) ) + cInfo
 
 function ARead( cInfo )
 
-   local nPos := 1, nLen, n
+   local nPos := 4, nLen, n
    local aArray, cType, cBuffer
 
    nLen   = Bin2I( SubStr( cInfo, nPos, 2 ) )
    nPos  += 2
    aArray = Array( nLen )
-
-   // LogFile( "c:\aread.txt", { "ARead", nLen } )
 
    for n = 1 to Len( aArray )
       cType = SubStr( cInfo, nPos++, 1 )
@@ -1781,9 +1745,6 @@ function ARead( cInfo )
       nPos += 2
       cBuffer = SubStr( cInfo, nPos, nLen )
       nPos += nLen
-
-      // LogFile( "c:\aread.txt", { cType, nLen, cBuffer } )
-
       do case
          case cType == "A"
               aArray[ n ] = ARead( "A" + I2Bin( nLen ) + cBuffer )
@@ -2020,18 +1981,38 @@ METHOD Link( lSubClass ) CLASS TWindow
 
    local nAt := AScan( aWindows, 0 )
 
-   DEFAULT lSubClass := .T.
+   DEFAULT lSubClass := .t.
 
    if ::hWnd != 0
       if nAt != 0
          aWindows[ nAt ] = Self
+         #ifdef __CLIPPER__
+            while GetProp( ::hWnd, "WP" ) != nAt
+               SetProp( ::hWnd, "WP", nAt )
+            end
+         #endif
       else
          AAdd( aWindows, Self )
          nAt = Len( aWindows )
+         #ifdef __CLIPPER__
+            while GetProp( ::hWnd, "WP" ) != Len( aWindows )
+               SetProp( ::hWnd, "WP", Len( aWindows ) )
+            end
+         #endif
       endif
 
+      #ifdef __CLIPPER__
+         if Len( aWindows ) == 1
+            WindowsFix()
+         endif
+      #endif
+
       if lSubClass
-         ::nOldProc = XChangeProc( ::hWnd, nAt )
+         #ifdef __CLIPPER__
+            ::nOldProc = ChangeProc( ::hWnd )
+         #else
+            ::nOldProc = XChangeProc( ::hWnd, nAt )
+         #endif
       endif
    endif
 
@@ -2041,8 +2022,7 @@ return nil
 
 METHOD Destroy() CLASS TWindow
 
-   if ( ::hWnd == nil .or. ::hWnd == 0 ) .and. ;
-      ( ::nResult == nil .or. ( ValType( ::nResult ) == "N" .and. ::nResult == 0 ) )
+   if Empty( ::hWnd ) .and. Empty( ::nResult )
       return nil
    endif
 
@@ -2168,17 +2148,32 @@ return nil
 
 METHOD UnLink() CLASS TWindow
 
-   local nAt := AScan( aWindows,;
-                       { | o | ValType( o ) == "O" .and. o:hWnd == ::hWnd } )
+   local nOldProc
+
+   #ifdef __CLIPPER__
+      local nAt := If( ::hWnd != 0, GetProp( ::hWnd, "WP" ), 0 )
+   #else
+      local nAt := AScan( aWindows,;
+                          { | o | ValType( o ) == "O" .and. o:hWnd == ::hWnd } )
+   #endif
 
    if ::nOldProc != nil .and. ::hWnd != 0
-      RestProc( ::hWnd, ::nOldProc )
-      ::nOldProc = nil
+      nOldProc = RestProc( ::hWnd, ::nOldProc )
+      #ifndef __XPP__
+         ::nOldProc = nil
+      #endif
    endif
 
    if nAt > 0 .and. nAt <= Len( aWindows )
       aWindows[ nAt ] = 0
    endif
+
+   #ifdef __CLIPPER__
+      SetProp( ::hWnd, "WP", 0 )
+      RemoveProp( ::hWnd, "WP" )
+   #else
+      XFreeProc( nOldProc )
+   #endif
 
 return nil
 
@@ -2186,9 +2181,15 @@ return nil
 
 METHOD VScroll( nWParam, nLParam ) CLASS TWindow
 
-   local nScrHandle  := nLParam
-   local nScrollCode := nLoWord( nWParam )
-   local nPos        := nHiWord( nWParam )
+   #ifdef __CLIPPER__
+      local nScrHandle  := nHiWord( nLParam )
+      local nScrollCode := nWParam
+      local nPos        := nLoWord( nLParam )
+   #else
+      local nScrHandle  := nLParam
+      local nScrollCode := nLoWord( nWParam )
+      local nPos        := nHiWord( nWParam )
+   #endif
 
    if nScrHandle == 0                   // Window ScrollBar
       if ::oVScroll != nil
@@ -2256,9 +2257,15 @@ return nil
 
 METHOD HScroll( nWParam, nLParam ) CLASS TWindow
 
-   local nScrHandle  := nLParam
-   local nScrollCode := nLoWord( nWParam )
-   local nPos        := nHiWord( nWParam )
+   #ifdef __CLIPPER__
+      local nScrHandle  := nHiWord( nLParam )
+      local nScrollCode := nWParam
+      local nPos        := nLoWord( nLParam )
+   #else
+      local nScrHandle  := nLParam
+      local nScrollCode := nLoWord( nWParam )
+      local nPos        := nHiWord( nWParam )
+   #endif
 
    if nScrHandle == 0 .and. ::oHScroll != nil    // Window ScrollBar
       do case
@@ -2317,30 +2324,30 @@ METHOD SysCommand( nWParam, nLParam ) CLASS TWindow
 
    if ::oBar != nil
       AEval( ::oBar:aControls,;
-             { | oCtl | If( oCtl:IsKindOf( "TBTNBMP" ),;
+             { | oCtl | If( oCtl:ClassName() == "TBTNBMP",;
                             oCtl:LostFocus(), ) } )
    endif
 
-   if ::IsKindOf( "TMDIFRAME" )
+   if ::ClassName() = "TMDIFRAME"
       for i = 1 to Len( ::oWndClient:aWnd )
          if ::oWndClient:aWnd[ i ]:oBar != nil
             AEval( ::oWndClient:aWnd[ i ]:oBar:aControls,;
-                   { | oCtl | If( oCtl:IsKindOf( "TBTNBMP" ),;
+                   { | oCtl | If( oCtl:ClassName() == "TBTNBMP",;
                                   oCtl:LostFocus(), ) } )
          endif
       next
    endif
 
-   if ::IsKindOf( "TDIALOG" )
+   if ::ClassName() = "TDIALOG"
       AEval( ::aControls,;
-             { | oCtl | If( oCtl:IsKindOf( "TBTNBMP" ),;
+             { | oCtl | If( oCtl:ClassName() == "TBTNBMP",;
                             oCtl:LostFocus(), ) } )
    endif
 
    if nWParam == SC_KEYMENU // VK_F10
-      if ::aControls != nil
+      if ::aControls != NIL
          for each o in ::aControls
-            if o:IsKindOf( "TRIBBONBAR" )
+            if o:ClassName() == "TRIBBONBAR"
                if o:oPanelAcc == NIL
                   if o:lUseAcc
                      o:KeybMode()
@@ -2353,7 +2360,7 @@ METHOD SysCommand( nWParam, nLParam ) CLASS TWindow
                exit
             endif
          next
-         if oRibbon != nil .and. oRibbon:lUseAcc
+         if oRibbon != NIL .and. oRibbon:lUseAcc
             return 0
          endif
       endif
@@ -2388,13 +2395,13 @@ METHOD Paint() CLASS TWindow
          ::SendMsg( WM_ICONERASEBKGND, ::hDC, 0 )
       endif
       DrawIcon( ::hDC, 0, 0,;
-         If( ::oIcon != nil, ::oIcon:hIcon, ExtractIcon( "user.exe" ) ) )
+      If( ::oIcon != nil, ::oIcon:hIcon, ExtractIcon( "user.exe" ) ) )
    else
       aInfo = ::DispBegin()
       if ValType( ::bEraseBkGnd ) == "B"
          Eval( ::bEraseBkGnd, ::hDC )
       else
-         ::PaintBack( ::hDC )
+         FillRect( ::hDC, GetClientRect( ::hWnd ), ::oBrush:hBrush )
       endif
       if ValType( ::bPainted ) == "B"
          uVal = Eval( ::bPainted, ::hDC, ::cPS, Self )
@@ -2403,49 +2410,6 @@ METHOD Paint() CLASS TWindow
   endif
 
 return uVal
-
-//----------------------------------------------------------------------------//
-
-METHOD PaintBack( hDC ) CLASS TWindow
-
-   local uVal := 0
-   local nOrgX := 0, nOrgY := 0
-
-   ::oBrush:Resize( Self, @nOrgX, @nOrgY )
-   SetBrushOrgEx( hDC, nOrgX, nOrgY )
-   
-   FillRect( hDC, GetClientRect( ::hWnd ), ::oBrush:hBrush )
-
-return uVal
-
-//----------------------------------------------------------------------------//
-
-METHOD Gradient( aGradColors ) CLASS TWindow
-
-   local hDC, hBmp, hBmpOld
-
-   DEFAULT aGradColors := ::aGradColors
-   
-   if aGradColors == nil
-      return nil
-   endif   
-   
-   hDC = CreateCompatibleDC( ::GetDC() )
-   hBmp = CreateCompatibleBitMap( ::hDC, ::nWidth, ::nHeight )
-   hBmpOld = SelectObject( hDC, hBmp )
-
-   GradientFill( hDC, 0, 0, ::nHeight, ::nWidth, aGradColors )
-
-   ::oBrush:End()
-   ::oBrush = TBrush():New()
-   ::oBrush:hBitmap = hBmp
-   ::oBrush:hBrush = CreatePatternBrush( hBmp )
-   
-   SelectObject( hDC, hBmpOld )
-
-   ::ReleaseDC()
-
-return nil   
 
 //----------------------------------------------------------------------------//
 
@@ -2463,7 +2427,7 @@ METHOD HardCopy( nScale, lUser ) CLASS TWindow
 
       PAGE
          ::Refresh()
-         SysRefresh()     // Let Windows process
+         SysRefresh()                      // Let Windows process
          ::Print( oPrn, 0, 0, nScale )
       ENDPAGE
    ENDPRINT
@@ -2504,13 +2468,13 @@ METHOD SetColor( nClrFore, nClrBack, oBrush ) CLASS TWindow
 
    if ::oBrush != nil
       ::oBrush:End()
-      ::oBrush = NIL
    endif
    if oBrush != nil
       ::oBrush = oBrush
       oBrush:nCount++
    else
-      ::oBrush = TBrush():New( , nClrBack )
+      // Keep the := here for XBase++ translation
+      ::oBrush := TBrush():New(,nClrBack,)
    endif
 
 return nil
@@ -2606,7 +2570,7 @@ METHOD KeyDown( nKey, nFlags ) CLASS TWindow
       Eval( ::OnKeyDown, Self, nKey, nFlags )
    endif
 
-   if ! ::IsKindOf( "TGET" ) .and. ::bKeyDown != nil
+   if Upper( ::ClassName() ) != "TGET" .and. ::bKeyDown != nil
       return Eval( ::bKeyDown, nKey, nFlags )
    endif
 
@@ -2620,6 +2584,7 @@ return nil
 // Some friends functions
 
 function SetWndDefault( oWnd ) ; oWndDefault := oWnd ; return nil
+function _SetWndDefaul( oWnd ) ; oWndDefault := oWnd ; return nil  // XBPP
 
 function GetWndDefault() ; return oWndDefault
 
@@ -2634,9 +2599,13 @@ METHOD GotFocus() CLASS TWindow
    endif
 
    if ! Empty( ::hCtlFocus )
-      if Upper( GetClassName( ::hCtlFocus ) ) $ "SYSTABCONTROL32,TPAGES,TFOLDEREX"
+      #ifdef __CLIPPER__
+         if Upper( GetClassName( ::hCtlFocus ) ) $ "TFOLDER,TPAGES"
+      #else
+         if Upper( GetClassName( ::hCtlFocus ) ) $ "SYSTABCONTROL32,TPAGES,TFOLDEREX"
+      #endif
          AEval( ::aControls, {| Ctrl | If( Ctrl:hWnd != ::hCtlFocus, , ;
-                If( ! Empty( Ctrl:aDialogs ), SetFocus( Ctrl:aDialogs[ Ctrl:nOption ]:hCtlFocus ), ) ) } )
+                  If( ! Empty( Ctrl:aDialogs ), SetFocus( Ctrl:aDialogs[ Ctrl:nOption ]:hCtlFocus ), ) ) } )
       else
          SetFocus( ::hCtlFocus )
       endif
@@ -2655,42 +2624,95 @@ return 0   // no standard behavior
 
 METHOD GoNextCtrl( hCtrl ) CLASS TWindow
 
-   local hCtlNext := NextDlgTab( ::hWnd, hCtrl )
-   
-   if ::oWnd:ClassName() $ "TFOLDER,TFOLDEREX,TPAGES"
-      if hCtrl == NextDlgTab( ::hWnd, GetWindow( ::hWnd, GW_CHILD ), .T. ) // last ctrl ?
-         hCtlNext = NextDlgTab( ::oWnd:oWnd:hWnd, ::oWnd:hWnd )
-      endif   
+   local hCtlNext, nAt
+
+   if Upper( ::ClassName() ) != "TDIALOG"
+      nAt = AScan( ::aControls, { | o | o:hWnd == hCtrl } )
+      if nAt != 0
+         if nAt < Len( ::aControls )
+            hCtlNext = ::aControls[ nAt + 1 ]:hWnd
+         else
+            hCtlNext = ::aControls[ 1 ]:hWnd
+         endif
+//         if lAnd( GetWindowLong( ::hWnd, GWL_STYLE ), WS_TABSTOP )  // 2010-09-19
+         if lAnd( GetWindowLong( hCtlNext, GWL_STYLE ), WS_TABSTOP )
+            SetFocus( hCtlNext )
+         endif
+         return nil
+      endif
    endif
 
-   ::hCtlFocus = hCtrl
-   SetFocus( hCtlNext )
-     
+   hCtlNext := NextDlgTab( ::hWnd, hCtrl )
+   ::hCtlFocus = hCtlNext
+
+   if ! Empty( ::aControls ) .and. hCtrl == ::LastActiveCtrl():hWnd //ATail( ::aControls ):hWnd
+      if ! Empty( ::oWnd ) .and. ;
+         ( ( Upper( ::oWnd:ClassName() ) $ "TFOLDER;TPAGES;TFOLDEREX" ) )
+         hCtlNext = NextDlgTab( ::oWnd:oWnd:hWnd, ::oWnd:hWnd )
+         ::hCtlFocus = hCtrl
+      endif
+   endif
+
+   if hCtlNext == hCtrl .and. Upper( GetClassName( hCtrl ) ) == "EDIT"
+      hCtlNext = NextDlgTab( GetParent( ::hWnd ), hCtrl )
+   endif
+
+   if hCtlNext != hCtrl
+      SetFocus( hCtlNext )
+   endif
+
 return nil
 
 //----------------------------------------------------------------------------//
 
 METHOD GoPrevCtrl( hCtrl ) CLASS TWindow
 
-   local hCtlPrev := NextDlgTab( ::hWnd, hCtrl, .T. )
-   local oCtl, oDlg
+   local hCtlPrev := NextDlgTab( ::hWnd, hCtrl, .t. )
+   local n, cFoldName, nAt
 
-   if ::oWnd:ClassName() $ "TFOLDER,TFOLDEREX,TPAGES"
-      if hCtrl == NextDlgTab( ::hWnd ) // first ctrl ?
-         hCtlPrev = NextDlgTab( ::oWnd:oWnd:hWnd, ::oWnd:hWnd, .T. )
+   if Upper( ::ClassName() ) != "TDIALOG"
+      nAt = AScan( ::aControls, { | o | o:hWnd == hCtrl } )
+      if nAt != 0
+         if nAt > 1
+            hCtlPrev = ::aControls[ nAt - 1 ]:hWnd
+         else
+            hCtlPrev = ATail( ::aControls ):hWnd
+         endif
+         if lAnd( GetWindowLong( ::hWnd, GWL_STYLE ), WS_TABSTOP )
+            SetFocus( hCtlPrev )
+         endif
+         return nil
       endif
-   endif      
-
-   ::hCtlFocus = hCtrl
-
-   if GetClassName( hCtlPrev ) $ "SysTabControl32,TFOLDEREX,TPAGES"
-      oCtl = oWndFromHwnd( hCtlPrev )
-      oDlg = oCtl:aDialogs[ oCtl:nOption ]
-      hCtlPrev = NextDlgTab( oDlg:hWnd, GetWindow( oDlg:hWnd, GW_CHILD ), .T. )
    endif
-      
-   SetFocus( hCtlPrev )
- 
+
+   #ifdef __CLIPPER__
+      cFoldName = "TFOLDER"
+   #else
+      cFoldName = "SYSTABCONTROL32"
+   #endif
+
+   ::hCtlFocus = hCtlPrev
+
+   if ! Empty( ::aControls ) .and. hCtrl == ::FirstActiveCtrl():hWnd //::aControls[ 1 ]:hWnd
+      if ! Empty( ::oWnd ) .and. ;
+         ( ( Upper( ::oWnd:ClassName() ) $ "TFOLDER;TPAGES;TFOLDEREX" ) )
+         hCtlPrev = NextDlgTab( ::oWnd:oWnd:hWnd, ::oWnd:hWnd, .t. )
+         ::hCtlFocus = hCtrl
+      endif
+   endif
+
+   If hCtlPrev != hCtrl
+      If Upper( GetClassName( hCtlPrev ) ) == cFoldName .or. ;
+         Upper( GetClassName( hCtlPrev ) ) == "TPAGES"
+         n = AScan( ::aControls, { | o | o:hWnd == hCtlPrev } )
+         if n > 0
+            ::aControls[ n ]:aDialogs[ ::aControls[ n ]:nOption ]:LastActiveCtrl():SetFocus()
+         endif
+      else
+         SetFocus( hCtlPrev )
+      endif
+   endif
+
 return nil
 
 //----------------------------------------------------------------------------//
@@ -2710,7 +2732,11 @@ METHOD GetFont() CLASS TWindow
    if ::oFont == nil
       if ( hFont := ::SendMsg( WM_GETFONT ) ) != 0
          aInfo = GetFontInfo( hFont )
-         oFont = TFont()
+         #ifndef __XPP__
+            oFont = TFont()
+         #else
+            oFont = TFont():New()
+         #endif
          oFont:hFont     = hFont
          oFont:nCount    = 1
          oFont:nHeight   = aInfo[ 1 ]
@@ -2735,15 +2761,16 @@ return ::oFont
 
 METHOD AEvalWhen() CLASS TWindow
 
-   local n, aControls := ::aControls
+   local n
+   local aControls := ::aControls
 
    if aControls != nil .and. ! Empty( aControls )
       for n = 1 to Len( aControls )
           if aControls[ n ] != nil .and. aControls[ n ]:bWhen != nil
              if Eval( aControls[ n ]:bWhen )
-                aControls[ n ]:Enable()
+                ::aControls[ n ]:Enable()   // keep this as ::
              else
-                aControls[ n ]:Disable()
+                ::aControls[ n ]:Disable()  // keep this as ::
              endif
          endif
       next
@@ -2910,6 +2937,10 @@ return 0
 
 METHOD CheckToolTip() CLASS TWindow
 
+   #ifdef __CLIPPER__
+      local hWndAct, oFont, aPos, hOldFont
+   #endif
+
    if ::cToolTip == nil .and. ::hWnd != hWndParent
       if ::hWnd != hToolTip
          lToolTip = .f.
@@ -2941,7 +2972,21 @@ METHOD CheckToolTip() CLASS TWindow
             oTmr = NIL
          endif
 
-         ::ShowToolTip()
+         #ifdef __CLIPPER__
+            if lToolTip
+               ::ShowToolTip()
+            else
+               hWndAct = GetActiveWindow()
+               DEFINE TIMER oTmr INTERVAL ::nToolTip ;
+                  ACTION ( If( GetActiveWindow() == hWndAct,;
+                           ::ShowToolTip(),), If( oTmr != nil, oTmr:End(), nil ),;
+                           oTmr := nil )
+                  oTmr:hWndOwner = GetActiveWindow() // WndApp()
+               ACTIVATE TIMER oTmr
+            endif
+         #else
+            ::ShowToolTip()
+         #endif
 
       endif
    endif
@@ -2951,8 +2996,13 @@ return nil
 //----------------------------------------------------------------------------//
 
 METHOD ShowToolTip( nRow, nCol, cToolTip ) CLASS TWindow
-
+/*
    local aToolTip, nLenToolTip, oTemp, hWnd
+
+   #ifdef __CLIPPER__
+      local nTxtWidth := 0, nTxtHeight
+      local oFont, aPos, hOldFont
+   #endif
 
    DEFAULT nCol := 7, nRow := ::nHeight() + 7, ;
            cToolTip := ::cToolTip
@@ -2969,43 +3019,82 @@ METHOD ShowToolTip( nRow, nCol, cToolTip ) CLASS TWindow
 
       oTemp = oToolTip
 
-      DestroyWindow( oToolTip:hWnd )
+      #ifndef __CLIPPER__
+         DestroyWindow( oToolTip:hWnd )
 
-      hWnd = CreateToolTip( Self:hWnd, If( ValType( cToolTip ) == "A", cToolTip[ 1 ], cToolTip ),  ;
-                            If( ::lBalloon != nil, ::lBalloon, lTTBalloon ) )
+         hWnd = CreateToolTip( Self:hWnd, If( ValType( cToolTip ) == "A", cToolTip[ 1 ], cToolTip ),  ;
+                               If( ::lBalloon != nil, ::lBalloon, lTTBalloon ) )
 
-      if ValType( cToolTip ) == "A"
-         if Len( cToolTip ) > 1
-            if ! Empty ( cToolTip[ 2 ] )
-               SendMessage( hWnd, TTM_SETTITLE, ;
-                  If( Len( cToolTip ) > 2 .and. ! Empty( cToolTip[ 3 ] ), ;
-                      cToolTip[ 3 ], TTI_INFO ), cToolTip[ 2 ] )
-            endif
-            if Len( cToolTip ) > 3
-               if ValType( cToolTip[ 4 ] ) == "N"
-                  SendMessage( hWnd, TTM_SETTIPTEXTCOLOR, cToolTip[ 4 ], 0 )
+         if ValType( cToolTip ) == "A"
+            if Len( cToolTip ) > 1
+               if ! Empty ( cToolTip[ 2 ] )
+                  SendMessage( hWnd, TTM_SETTITLE, ;
+                     If( Len( cToolTip ) > 2 .and. ! Empty( cToolTip[ 3 ] ), ;
+                        cToolTip[ 3 ], TTI_INFO ), cToolTip[ 2 ] )
                endif
-               if Len( cToolTip ) > 4
-                  if ValType( cToolTip[ 5 ] ) == "N"
-                     SendMessage( hWnd, TTM_SETTIPBKCOLOR, cToolTip[ 5 ], 0 )
+               if Len( cToolTip ) > 3
+                  if ValType( cToolTip[ 4 ] ) == "N"
+                     SendMessage( hWnd, TTM_SETTIPTEXTCOLOR, cToolTip[ 4 ], 0 )
+                  endif
+                  if Len( cToolTip ) > 4
+                     if ValType( cToolTip[ 5 ] ) == "N"
+                        SendMessage( hWnd, TTM_SETTIPBKCOLOR, cToolTip[ 5 ], 0 )
+                     endif
                   endif
                endif
             endif
          endif
-      endif
 
-      SendMessage( hWnd, TTM_SETMAXTIPWIDTH, 0, 300 )
+         SendMessage( hWnd, TTM_SETMAXTIPWIDTH, 0, 300 )
 
-      oToolTip = oTemp
-      oToolTip:hWnd = hWnd
+         oToolTip = oTemp
+         oToolTip:hWnd = hWnd
+      #else
+         DEFINE FONT oFont NAME GetSysFont() SIZE 0, -8
+
+         aPos = { nRow, nCol }
+
+         aPos = ClientToScreen( ::hWnd, aPos )
+
+         nTxtHeight := Max(14, GetTextHeight( oToolTip:hWnd )-2)
+
+         aToolTip = Array( nLenToolTip := MLCount( cToolTip, 254 ) )
+         AEval( aToolTip, {|c, n| aToolTip[ n ] := Trim( MemoLine( cToolTip, 252, n ) ), ;
+                nTxtWidth := Max( nTxtWidth, GetTextWidth( 0, aToolTip[ n ], oFont:hFont ) + 7 ) } )
+
+         if aPos[ 2 ] + nTxtWidth + 3 > GetSysMetrics( SM_CXSCREEN )
+            aPos[ 2 ] = GetSysMetrics( SM_CXSCREEN ) - nTxtWidth - 3
+         endif
+
+         oToolTip:Move( aPos[ 1 ], aPos[ 2 ], nTxtWidth, nTxtHeight * nLenToolTip + 3 )
+         oToolTip:Show()
+
+         #ifdef __CLIPPER__
+            SysRefresh()
+            if oToolTip != nil
+         #endif
+
+         SetBkMode( oToolTip:GetDC(), 1 )
+         SetTextColor( oToolTip:hDC, 0 )
+         hOldFont = SelectObject( oToolTip:hDC, oFont:hFont )
+         AEval( aToolTip, {| c, n | TextOut( oToolTip:hDC, n * nTxtHeight - (nTxtHeight-1), 2, aToolTip[ n ] ) } )
+         SelectObject( oToolTip:hDC, hOldFont )
+         oToolTip:ReleaseDC()
+
+         #ifdef __CLIPPER__
+            endif
+         #endif
+
+         oFont:End()
+      #endif
 
       if oToolTip != nil
          hToolTip = oToolTip:hWnd
       endif
    endif
 
-   lToolTip = .T.
-
+   lToolTip = .t.
+*/
 return nil
 
 //----------------------------------------------------------------------------//
@@ -3062,10 +3151,10 @@ return nil
 
 METHOD __HelpTopic() CLASS TWindow
 
-   static lShow := .F.
+   static lShow := .f.
 
    if ! lShow
-      lShow = .T.
+      lShow = .t.
       if Empty( ::nHelpId )
          if ::oWnd != nil .and. ;
             ! Upper( ::oWnd:ClassName() ) $ "TFOLDER,TPAGES,TDIALOG,TWINDOW,TMDIFRAME,TMDICHILD,TFOLDEREX"
@@ -3078,9 +3167,9 @@ METHOD __HelpTopic() CLASS TWindow
             endif
          endif
       else
-         HelpTopic( ::nHelpId )
+        HelpTopic( ::nHelpId )
       endif
-      lShow = .F.
+      lShow = .f.
    endif
 
 return nil
@@ -3141,7 +3230,173 @@ return If( nAt != 0, aWindows[ nAt ], nil )
 
 //----------------------------------------------------------------------------//
 
-function _FWH( hWnd, nMsg, nWParam, nLParam, nAt )
+#ifdef __C3__
+   #define __XPP__
+#endif
+
+#ifdef __XPP__
+
+METHOD HandleEvent( nMsg, nWParam, nLParam ) CLASS TWindow
+
+
+   do case
+      case nMsg == WM_CHAR
+           return ::KeyChar( nWParam, nLParam )
+
+      case nMsg == WM_CLOSE
+           return ::Close( nWParam )
+
+      case nMsg == WM_COMMAND
+           return ::Command( nWParam, nLParam )
+
+      case nMsg == WM_GETMINMAXINFO
+           return ::GetMinMaxInfo( nLParam )
+
+      case nMsg == WM_HELP
+           return ::Help()
+
+      case nMsg == WM_PAINT
+           ::BeginPaint()
+           ::Paint()
+           ::EndPaint()
+
+      case nMsg == WM_DDE_INITIATE
+           ::DdeInitiate( nWParam, nLoWord( nLParam ), nHiWord( nLParam ) )
+
+      case nMsg == WM_DDE_ACK
+           ::DdeAck( nWParam, nLParam )
+
+      case nMsg == WM_DDE_EXECUTE
+           ::DdeExecute( nWParam, nLParam )
+
+      case nMsg == WM_DDE_TERMINATE
+           ::DdeTerminate( nWParam )
+
+      case nMsg == WM_DESTROY
+           return ::Destroy()
+
+      case nMsg == WM_DRAWITEM
+           return ::DrawItem( nWParam, nLParam )
+
+      case nMsg == WM_ERASEBKGND
+           return ::EraseBkGnd( nWParam )
+
+      case nMsg == WM_GETDLGCODE
+           return ::GetDlgCode()
+
+      case nMsg == WM_HSCROLL
+           return ::HScroll( nWParam, nLParam )
+
+      case nMsg == WM_KEYDOWN
+           return ::KeyDown( nWParam, nLParam )
+
+      case nMsg == WM_INITMENUPOPUP
+           return ::InitMenuPopup( nWParam, nLoWord( nLParam ), nHiWord( nLParam ) != 0 )
+
+      case nMsg == WM_KILLFOCUS
+           return ::LostFocus( nWParam ) // LostFocus(), not KillFocus()!!!
+
+      case nMsg == WM_LBUTTONDOWN
+           return ::LButtonDown( nHiWord( nLParam ), nLoWord( nLParam ),;
+                                 nWParam )
+      case nMsg == WM_LBUTTONUP
+           return ::LButtonUp( nHiWord( nLParam ), nLoWord( nLParam ),;
+                               nWParam )
+      case nMsg == WM_LBUTTONDBLCLK
+           return ::LDblClick( nHiWord( nLParam ), nLoWord( nLParam ),;
+                               nWParam )
+      case nMsg == WM_MBUTTONDOWN
+           return ::MButtonDown( nHiWord( nLParam ), nLoWord( nLParam ),;
+                                 nWParam )
+      case nMsg == WM_MBUTTONUP
+           return ::MButtonUp( nHiWord( nLParam ), nLoWord( nLParam ),;
+                               nWParam )
+      case nMsg == WM_MEASUREITEM
+           return ::MeasureItem( nWParam, nLParam )
+
+      case nMsg == WM_MENUCHAR
+           return ::MenuChar( nLoWord( nWParam ), nHiWord( nWParam ), nLParam )
+
+      case nMsg == WM_MENUSELECT
+           return ::MenuSelect( nLoWord( nWParam ), nHiWord( nWParam ), nLParam )
+
+      case nMsg == WM_MOUSEMOVE
+           return ::MouseMove( nHiWord( nLParam ), nLoWord( nLParam ),;
+                               nWParam )
+
+      case nMsg == WM_MOUSEWHEEL
+           return ::MouseWheel( nLoWord( nWParam ),;
+                                If( nHiWord( nWParam ) > 32768,;
+                                nHiWord( nWParam ) - 65535, nHiWord( nWParam ) ),;
+                                nLoWord( nLParam ), nHiWord( nLParam ) )
+
+      case nMsg == WM_MOVE
+           return ::Moved( nLoWord( nLParam ), nHiWord( nLParam ) )
+
+      case nMsg == WM_NCMOUSEMOVE
+           return ::NcMouseMove( nWParam, nHiWord( nLParam ), nLoWord( nLParam ) );
+
+      case nMsg == WM_RBUTTONDOWN
+           return ::RButtonDown( nHiWord( nLParam ), nLoWord( nLParam ),;
+                                 nWParam )
+      case nMsg == WM_RBUTTONUP
+           return ::RButtonUp( nHiWord( nLParam ), nLoWord( nLParam ),;
+                               nWParam )
+      case nMsg == WM_SETFOCUS
+           return ::GotFocus( nWParam )
+
+      case nMsg == WM_VSCROLL
+           return ::VScroll( nWParam, nLParam )
+
+      case nMsg == WM_SIZE
+           return ::ReSize( nWParam, nLoWord( nLParam ), nHiWord( nLParam ) )
+
+      case nMsg == WM_SYSCOMMAND
+           return ::SysCommand( nWParam, nLParam )
+
+      case nMsg == WM_TASKBAR
+           return ::TaskBar( nWParam, nLParam )
+
+      case nMsg == WM_TIMER
+           return ::Timer( nWParam, nLParam )
+
+      case nMsg == WM_CTLCOLORSTATIC .or. ;
+           nMsg == WM_CTLCOLOREDIT   .or. ;
+           nMsg == WM_CTLCOLORLISTBOX
+           return ::CtlColor( nLParam, nWParam )
+
+      case nMsg == WM_ASYNCSELECT
+           return ::AsyncSelect( nWParam, nLParam )
+
+      case nMsg == FM_DRAW
+           return ::DrawItem( nWParam, nLParam )
+
+      case nMsg == FM_DROPOVER
+           return ::DropOver( nLoWord( nLParam ), nHiWord( nLParam ), nWParam )
+
+      case nMsg == WM_NOTIFY
+           return ::Notify( nWParam, nLParam )
+   endcase
+
+return nil
+
+#endif
+
+//----------------------------------------------------------------------------//
+
+#ifdef __C3__
+   #undef __XPP__
+#endif
+
+#ifdef __XPP__
+   function _XBPP( hWnd, nMsg, nWParam, nLParam, nAt )
+#else
+   #ifdef __C3__
+      function _FWC3( hWnd, nMsg, nWParam, nLParam, nAt )
+   #else
+      function _FWH( hWnd, nMsg, nWParam, nLParam, nAt )
+   #endif
+#endif
 
    local oWnd
 
@@ -3156,7 +3411,7 @@ function _FWH( hWnd, nMsg, nWParam, nLParam, nAt )
       return aRet
    endif
 
-return nil
+return nil // { nil, nil }
 
 //----------------------------------------------------------------------------//
 
@@ -3180,7 +3435,10 @@ METHOD LastActiveCtrl() CLASS TWindow
          oControl := ::aControls[ n ]
          exit
       endif
-      if ::aControls[ n ]:lActive .and. ;
+      #ifdef __XPP__
+         DEFAULT ::aControls[ n ]:lActive := .t.
+      #endif
+      If ::aControls[ n ]:lActive .and. ;
          lAnd( GetWindowLong( ::aControls[ n ]:hWnd, GWL_STYLE ), WS_TABSTOP )
          oControl := ::aControls[ n ]
          exit
@@ -3196,51 +3454,12 @@ return oControl
 
 //------------------------------------------------------------------------//
 
-METHOD EditTitle( cTitle ) CLASS TWindow
-
-   local oDlg, oGet, cOldTitle := PadR( ::cCaption, 100 )
-
-   if Empty( cTitle )
-      cTitle = PadR( ::cCaption, 100 )
-   else
-      cTitle = PadR( cTitle, 100 )
-   endif
-
-   DEFINE DIALOG oDlg TITLE "window Title" SIZE 600, 110
-
-   @ 1, 1 GET oGet VAR cTitle OF oDlg SIZE 285, 12
-      // ON CHANGE ::SetText( oGet:GetText() )
-
-   @ 2, 18 BUTTON "&Ok" OF oDlg ACTION ( ::SetText( AllTrim( cTitle ) ), oDlg:End() )
-
-   @ 2, 25 BUTTON "&Cancel" OF oDlg ACTION ( ::SetText( cOldTitle ), oDlg:End() )
-
-   ACTIVATE DIALOG oDlg CENTERED
-
-return RTrim( cTitle )
-
-//------------------------------------------------------------------------//
-
-METHOD FastEdit( nRow, nCol ) CLASS TWindow
-
-   local oPopup
-
-   MENU oPopup POPUP
-      MENUITEM "Source code..."
-   ENDMENU
-
-   ACTIVATE POPUP oPopup WINDOW Self AT nRow, nCol
-
-return nil
-
-//------------------------------------------------------------------------//
-
 METHOD FirstActiveCtrl() CLASS TWindow
 
    local n := 1
    local oControl, oRadMenu
 
-   if Len( ::aControls ) == 1
+   if len(::aControls) == 1
       return ::aControls[ 1 ]
    endif
 
@@ -3264,7 +3483,7 @@ METHOD FirstActiveCtrl() CLASS TWindow
    end
 
    if oControl == nil
-      oControl = ::aControls[ 1 ]
+      oControl := ::aControls[ 1 ]
    endif
 
 return oControl
@@ -3287,7 +3506,7 @@ METHOD SetAlphaLevel() CLASS TWindow
          endif
          // Check range
          if ::hAlphaColor != nil
-            ::hAlphaColor  := nAnd( ::hAlphaColor, 0xFFFFFF )
+            ::hAlphaColor  := nAnd( ::hAlphaColor, 255 )
          endif
          if ::hAlphaLevel != nil
             ::hAlphaLevel  := nAnd( ::hAlphaLevel, 255 )
@@ -3315,11 +3534,11 @@ function WndParents( xWnd1, xWnd2 )
 
    for nFor := 1 to nLen
       if Ascan( aParent2, aParent1[ nFor ] ) > 0
-         return .T.
+         return .t.
       end
    next
 
-return .F.
+return .f.
 
 //----------------------------------------------------------------------------//
 

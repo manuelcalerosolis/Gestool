@@ -513,7 +513,7 @@ METHOD lResource() CLASS TpvCobros
       ::oBrwPago:lVScroll        := .t.
       ::oBrwPago:lHScroll        := .f.
       ::oBrwPago:nMarqueeStyle   := 5
-      ::oBrwPago:oFont           := ::oSender:oFntDlg
+      ::oBrwPago:SetFont( ::oSender:oFntDlg )
 
       ::oBrwPago:SetArray( ::aCobros, , , .f. )
 

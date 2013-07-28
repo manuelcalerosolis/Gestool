@@ -127,20 +127,22 @@ METHOD Resource() CLASS AccessCode
 
    do case
       case lAds()
-         ::oSayDatabase       := TWebBtn():Redefine( 210,,,,,, oDlg,,,, "Database engine : Sybase Advantage Release 10.0 - SAP Company ®", "LEFT",,,,, Rgb( 0, 0, 0 ), Rgb( 255, 255, 255 ) )
-         ::cBmpEngine         := "Data_Green_Alpha_48"
+         ::oSayDatabase          := TSay():Redefine( 210, {|| "Database engine : Sybase Advantage Release 10.0 - SAP Company ®" }, oDlg )
+         ::cBmpEngine            := "Data_Green_Alpha_48"
 
       case lAIS()
-         ::oSayDatabase       := TWebBtn():Redefine( 210,,,,,, oDlg,,,, "Database engine : Internet Sybase Advantage Release 10.0 - SAP Company ®", "LEFT",,,,, Rgb( 0, 0, 0 ), Rgb( 255, 255, 255 ) )
-         ::cBmpEngine         := "Courthouse_Alpha_48"
+         ::oSayDatabase          := TSay():Redefine( 210, {|| "Database engine : Internet Sybase Advantage Release 10.0 - SAP Company ®" }, oDlg )
+         ::cBmpEngine            := "Courthouse_Alpha_48"
 
       otherwise
-         ::oSayDatabase       := TWebBtn():Redefine( 210,,,,,, oDlg,,,, "Database engine : xHarbour Native RDD", "LEFT",,,,, Rgb( 0, 0, 0 ), Rgb( 255, 255, 255 ) )
-         ::cBmpEngine         := "Data_Green_Alpha_48"
+         ::oSayDatabase          := TSay():Redefine( 210, {|| "Database engine : xHarbour Native RDD" }, oDlg )
+         ::cBmpEngine            := "Data_Green_Alpha_48"
 
    end case
 
-   ::oSayDatabase:SetTransparent()
+   ::oSayDatabase:lTransparent   := .t.
+
+   // ::oSayDatabase:SetTransparent()
 
    REDEFINE BITMAP ::oBmpEngine ;
       ID       200 ;
@@ -148,8 +150,8 @@ METHOD Resource() CLASS AccessCode
       TRANSPARENT ;
       OF       oDlg
 
-   ::oSayUser                 := TWebBtn():Redefine( 100,,,,,, oDlg,,,,, "LEFT",,,,, Rgb( 0, 0, 0 ), Rgb( 255, 255, 255 ) )
-   ::oSayUser:SetTransparent()
+   ::oSayUser                    := TSay():Redefine( 100, , oDlg )
+   ::oSayUser:lTransparent       := .t.
 
    REDEFINE GET ::oGetUser ;
       VAR      ::cGetUser ;
@@ -157,17 +159,17 @@ METHOD Resource() CLASS AccessCode
       ID       110 ;
       OF       oDlg
 
-   ::oGetUser:bHelp           := {|| BrwUser( ::oGetUser, nil, ::oGetUser, .f., .f., .f., .t. ) }
+   ::oGetUser:bHelp              := {|| BrwUser( ::oGetUser, nil, ::oGetUser, .f., .f., .f., .t. ) }
 
-   ::oSayPassword             := TWebBtn():Redefine( 120,,,,,, oDlg,,,,, "LEFT",,,,, Rgb( 0, 0, 0 ), Rgb( 255, 255, 255 ) )
-   ::oSayPassword:SetTransparent()
+   ::oSayPassword                := TSay():Redefine( 120, , oDlg )
+   ::oSayPassword:lTransparent   := .t.
 
    REDEFINE GET ::oGetPassword ;
       VAR      ::cGetPassword ;
       ID       130 ;
       OF       oDlg
 
-   ::oProgress                := TMeter():ReDefine( 240, { | u | if( pCount() == 0, ::nProgress, ::nProgress := u ) }, 10, oDlg, .f., , , .t., rgb( 255,255,255 ), , rgb( 128,255,0 ) )
+   ::oProgress                   := TMeter():ReDefine( 240, { | u | if( pCount() == 0, ::nProgress, ::nProgress := u ) }, 10, oDlg, .f., , , .t., rgb( 255,255,255 ), , rgb( 128,255,0 ) )
 
    REDEFINE BUTTON ::oBtnOk ;
       ID       IDOK ;
@@ -179,11 +181,6 @@ METHOD Resource() CLASS AccessCode
       OF       oDlg ;
       CANCEL ;
       ACTION   ( oDlg:end() )
-
-   with object ( TWebBtn():Redefine( 150,,,,,  {|| goWeb( __GSTWEB__ ) }, oDlg,,,,, "LEFT",,,,, Rgb( 0, 0, 255 ), Rgb( 0, 0, 255 ),,,, "Ir a la página web de " + __GSTFACTORY__ ) )
-      :SetTransparent()
-      :SetText( __GSTWEB__ )
-   end with
 
    REDEFINE SAY ::oMessage PROMPT "" ;
       ID       160 ;

@@ -738,7 +738,7 @@ FUNCTION EdtPag( aTmp, aGet, dbfFacPrvP, oBrw, lRectificativa, bValid, nMode )
                   "Bancos",;
                   "Devolución" ;
          DIALOGS  "Pgo_Prv_1",;
-                  "Recibos_5",;
+                  "RecibosProveedoresBancos",;
                   "Recibos_2"
 
       REDEFINE BITMAP oBmpGeneral ;
