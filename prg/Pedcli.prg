@@ -5023,11 +5023,12 @@ STATIC FUNCTION EdtDet( aTmp, aGet, dbfPedCliL, oBrw, lTotLin, cCodArtEnt, nMode
                            aGet[ _CUNIDAD ]:lValid() }
 
    ACTIVATE DIALOG oDlg ;
-         ON INIT     ( EdtDetMenu( aGet[ _CREF ], oDlg ), oBrwResCli:Load() );
          ON PAINT    ( RecalculaLinea( aTmp, aTmpPed, nDouDiv, oTotal, oTot, oRentLin, cCodDiv ) );
          CENTER
 
-   EndDetMenu()
+         /*ON INIT     ( EdtDetMenu( aGet[ _CREF ], oDlg ), oBrwResCli:Load() );
+
+   EndDetMenu()*/
 
    ( dbfPedPrvL )->( OrdSetFocus( nOrdPedPrv ) )
 
