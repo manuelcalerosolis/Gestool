@@ -523,7 +523,7 @@
 			"file": "prg/Tcomercio.prg",
 			"settings":
 			{
-				"buffer_size": 219173,
+				"buffer_size": 219177,
 				"line_ending": "Windows"
 			}
 		}
@@ -560,6 +560,14 @@
 	},
 	"file_history":
 	[
+		"/C/AppServ/www/zemtrum/tienda/themes/zemtrum/css/authentication.css",
+		"/C/AppServ/www/zemtrum/tienda/controllers/front/AuthController.php",
+		"/C/AppServ/www/zemtrum/tienda/classes/controller/AdminController.php",
+		"/C/AppServ/www/zemtrum/tienda/controllers/front/MyAccountController.php",
+		"/C/AppServ/www/zemtrum/tienda/authentication.php",
+		"/C/AppServ/www/zemtrum/tienda/themes/zemtrum/authentication.tpl",
+		"/C/fw195/Gestool/prg/Articulo.prg",
+		"/C/Users/Villa/Desktop/mailchimp/mailchimp.tpl",
 		"/C/Users/Villa/Desktop/memberalert/mails/es/memberalert.html",
 		"/C/Users/Villa/Desktop/memberalert/memberalert.php",
 		"/C/Users/Villa/Desktop/tcomercio",
@@ -582,7 +590,6 @@
 		"/C/Users/Villa/Desktop/zemtrum/index.php",
 		"/C/AppServ/www/zemtrum/tienda/js/jquery.reveal.js",
 		"/C/AppServ/www/zemtrum/tienda/modules/blockuserinfo/blockuserinfo.css",
-		"/C/fw195/Gestool/prg/Articulo.prg",
 		"/C/fw195/Gestool/prg/Stock.prg",
 		"/C/fw195/Gestool/prg/Tpv.prg",
 		"/C/fw195/Gestool/prg/Pedcli.prg",
@@ -609,7 +616,6 @@
 		"/C/AppServ/www/zemtrum/tienda/themes/zemtrum/css/history.css",
 		"/C/AppServ/www/zemtrum/tienda/themes/zemtrum/order-return.tpl",
 		"/C/AppServ/www/zemtrum/tienda/themes/zemtrum/order-payment.tpl",
-		"/C/AppServ/www/zemtrum/tienda/themes/zemtrum/authentication.tpl",
 		"/C/AppServ/www/zemtrum/tienda/themes/zemtrum/order-slip.tpl",
 		"/C/AppServ/www/zemtrum/tienda/themes/zemtrum/order-opc.tpl",
 		"/C/AppServ/www/zemtrum/tienda/themes/zemtrum/order-address.tpl",
@@ -681,13 +687,7 @@
 		"/C/fw195/Gestool/prg/Xtotalm.prg",
 		"/C/fw195/Gestool/prg/Xvalalmg.prg",
 		"/C/fw195/Gestool/prg/Trazalote.prg",
-		"/C/fw195/Gestool/prg/Comun.prg",
-		"/C/fw195/Gestool/prg/Tutil.prg",
-		"/C/fw195/Gestool/prg/Movalm.prg",
-		"/C/fw195/Gestool/prg/tuser",
-		"/C/fw195/Gestool/prg/Internet.prg",
-		"/C/fw195/Gestool/prg/Empcnf.prg",
-		"/C/fw195/Gestool/prg/Tftp.prg"
+		"/C/fw195/Gestool/prg/Comun.prg"
 	],
 	"find":
 	{
@@ -731,6 +731,8 @@
 		"case_sensitive": false,
 		"find_history":
 		[
+			"welcomme",
+			"ccodfab",
 			"BuscarGastoEnvio",
 			"BuscarFormaPago",
 			"BuscarCliente",
@@ -856,9 +858,7 @@
 			"on aitm",
 			"cPrefijoBaseDatos",
 			"cPlataforma",
-			"ps_",
-			"ps",
-			"nIvaProduct"
+			"ps_"
 		],
 		"highlight": true,
 		"in_selection": false,
@@ -893,15 +893,15 @@
 					"file": "prg/Tcomercio.prg",
 					"settings":
 					{
-						"buffer_size": 219173,
+						"buffer_size": 219177,
 						"regions":
 						{
 						},
 						"selection":
 						[
 							[
-								0,
-								0
+								36988,
+								36988
 							]
 						],
 						"settings":
@@ -911,7 +911,7 @@
 							"translate_tabs_to_spaces": true
 						},
 						"translation.x": 0.0,
-						"translation.y": 0.0,
+						"translation.y": 25536.0,
 						"zoom_level": 1.0
 					},
 					"type": "text"
