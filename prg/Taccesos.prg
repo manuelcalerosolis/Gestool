@@ -7,7 +7,7 @@
 
 CLASS TAcceso
 
-   CLASSDATA  oFont
+   DATA  oFont
 
    DATA  cDbf
    DATA  lOpenFiles        INIT  .f.
@@ -576,8 +576,9 @@ Method CreateToolbar( aAccesos )
          ::oToolBar           := TToolBar():New( ::oReBar, 20, 20, ::oImageList, .t. )
       end if
 
-      ::oToolBar:oBrush       := TBrush():New( , Rgb( 255,255,255 ) )
       ::oToolBar:nWidth       := 0
+
+      ::oToolBar:SetBrush( TBrush():New( , Rgb( 255,255,255 ) ) )
 
    end if
 
@@ -1046,8 +1047,17 @@ Return ( Self )
 
 Method End()
 
+   if !Empty( ::oRebar )
+      ::oRebar:End()
+   end if 
+
+   if !Empty( ::oGet )
+      ::oGet:End()
+   end if 
+
    if !Empty( ::oFont )
-      ::oFont:End()
+      ::oFont:End(.t.)
+      ::oFont  := nil 
    end if 
 
    if !Empty( ::oBmpLogo )

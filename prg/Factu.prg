@@ -822,36 +822,6 @@ STATIC FUNCTION EndApp()
          oBmpVersion:End()
       end if 
 
-      if oDlg:nResult == IDOK
-
-         WritePProString( "main", "Ultima Empresa", cCodEmp(), FullCurDir() + "GstApolo.Ini" )
-
-         lFreeUser()
-
-         // Cerramos las auditorias-----------------------------------------------
-
-         StopServices()
-
-         // Cerramos el report----------------------------------------------------
-
-         if !Empty( nHndReport )
-            PostMessage( nHndReport, WM_CLOSE )
-         end if
-
-         // Cerramos el Activex---------------------------------------------------
-
-         CloseWebBrowser( oWnd )
-
-         // Limpiamos los recursos estaticos-----------------------------------
-
-         TAcceso():End()
-
-         TBandera():Destroy()
-
-         CheckRes()
-
-      end if
-
    RECOVER
 
    END SEQUENCE
@@ -866,9 +836,35 @@ RETURN ( oDlg:nResult == IDOK )
 
 exit procedure Finish()
 
+   WritePProString( "main", "Ultima Empresa", cCodEmp(), FullCurDir() + "GstApolo.Ini" )
+
+   lFreeUser()
+
+   // Cerramos las auditorias-----------------------------------------------
+
+   StopServices()
+
+   // Cerramos el report----------------------------------------------------
+
+   if !Empty( nHndReport )
+      PostMessage( nHndReport, WM_CLOSE )
+   end if
+
+   // Cerramos el Activex---------------------------------------------------
+
+   CloseWebBrowser( oWnd )
+
+   // Limpiamos los recursos estaticos-----------------------------------
+
+   TAcceso():End()
+
+   TBandera():Destroy()
+
    FreeResources()
 
    FreeLibrary( hDLLRich )
+
+   CheckRes()
 
 Return
 
@@ -1318,12 +1314,12 @@ return .t.
 static function nLeft( oMsgBar )
 
    local n
-   local nLen  := Len( oMsgBar:aItem )
+   local nLen  := Len( oMsgBar:aItems )
    local nPos  := oMsgBar:nRight - 3
 
    if nLen > 0
       for n := 1 to nLen
-         nPos -= ( oMsgBar:aItem[ n ]:nWidth + 4 )
+         nPos -= ( oMsgBar:aItems[ n ]:nWidth + 4 )
       next
    end if
 

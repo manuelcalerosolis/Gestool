@@ -2720,7 +2720,7 @@ METHOD Resource() CLASS TpvTactil
    ::oBrwFamilias:bChange                 := {|| ::ChangeFamilias() }
    ::oBrwFamilias:bRClicked               := {|| ::EditFamilia() } 
 
-   ::oBrwFamilias:oFont                   := ::oFntBrw // SetFont( ::oFntBrw )
+   ::oBrwFamilias:SetFont( ::oFntBrw ) // SetFont( ::oFntBrw )
 
    ::oBrwFamilias:CreateFromResource( 300 )
 
@@ -2755,7 +2755,6 @@ METHOD Resource() CLASS TpvTactil
    */
 
    ::oLstArticulos               := C5ImageView():Redefine( 200, ::oDlg )
-   ::oLstArticulos:oFont         := ::oFntBrw
    ::oLstArticulos:nWItem        := ::nImageViewWItem
    ::oLstArticulos:nHItem        := ::nImageViewHItem
    ::oLstArticulos:nVSep         := ::nImageViewVSep
@@ -2775,6 +2774,8 @@ METHOD Resource() CLASS TpvTactil
    ::oLstArticulos:nOption       := 0
    ::oLstArticulos:bAction       := {|| ::SeleccionaArticulos() }
    ::oLstArticulos:bRClicked     := {|nRow, nCol| ::EditArticulo( nRow, nCol ) }
+
+   ::oLstArticulos:SetFont( ::oFntBrw )
 
    if ::lImagenArticulos
       ::oLstArticulos:cAlphaBmp     := "Alpha"
@@ -2798,7 +2799,6 @@ METHOD Resource() CLASS TpvTactil
    Botones para el orden de las comandas---------------------------------------
 
    ::oLstOrden                   := C5ImageView():Redefine( 700, ::oDlg )
-   ::oLstOrden:oFont             := ::oFntBrw
    ::oLstOrden:nWItem            := 78 // ::nImageViewWItem
    ::oLstOrden:nHItem            := 50 //::nImageViewHItem
    ::oLstOrden:nVSep             := ::nImageViewVSep
@@ -2886,11 +2886,12 @@ METHOD Resource() CLASS TpvTactil
    ::oBrwLineas:lRecordSelector  := .f.
    ::oBrwLineas:lHScroll         := .f. 
    ::oBrwLineas:lVScroll         := .f.
-   ::oBrwLineas:oFont            := ::oFntBrw
 
    ::oBrwLineas:nMarqueeStyle    := MARQSTYLE_HIGHLROW
    ::oBrwLineas:nRowHeight       := 36
    ::oBrwLineas:cName            := "Tactil.Lineas"
+
+   ::oBrwLineas:SetFont( ::oFntBrw )
 
    ::oTemporalLinea:SetBrowse( ::oBrwLineas )
 
@@ -3005,7 +3006,7 @@ METHOD Resource() CLASS TpvTactil
       ACTION   ( ::KeyChar( "1" ) ) ;
       PROMPT   "1" ;
 
-   ::oBtnNum[ 1 ]:oFont   := ::oFntNum
+   ::oBtnNum[ 1 ]:SetFont( ::oFntNum )
 
    REDEFINE BUTTON ::oBtnNum[ 2 ] ;
       ID       102 ;
@@ -3013,7 +3014,7 @@ METHOD Resource() CLASS TpvTactil
       ACTION   ( ::KeyChar( "2" ) );
       PROMPT   "2" ;
 
-   ::oBtnNum[ 2 ]:oFont   := ::oFntNum
+   ::oBtnNum[ 2 ]:SetFont( ::oFntNum )
 
    REDEFINE BUTTON ::oBtnNum[ 3 ] ;
       ID       103 ;
@@ -3021,7 +3022,7 @@ METHOD Resource() CLASS TpvTactil
       ACTION   ( ::KeyChar( "3" ) );
       PROMPT   "3" ;
 
-   ::oBtnNum[ 3 ]:oFont   := ::oFntNum
+   ::oBtnNum[ 3 ]:SetFont( ::oFntNum )
 
    REDEFINE BUTTON ::oBtnNum[ 4 ] ;
       ID       104 ;
@@ -3029,7 +3030,7 @@ METHOD Resource() CLASS TpvTactil
       ACTION   ( ::KeyChar( "4" ) );
       PROMPT   "4" ;
 
-   ::oBtnNum[ 4 ]:oFont   := ::oFntNum
+   ::oBtnNum[ 4 ]:SetFont( ::oFntNum )
 
    REDEFINE BUTTON ::oBtnNum[ 5 ] ;
       ID       105 ;
@@ -3037,7 +3038,7 @@ METHOD Resource() CLASS TpvTactil
       ACTION   ( ::KeyChar( "5" ) );
       PROMPT   "5" ;
 
-   ::oBtnNum[ 5 ]:oFont   := ::oFntNum
+   ::oBtnNum[ 5 ]:SetFont( ::oFntNum )
 
    REDEFINE BUTTON ::oBtnNum[ 6 ] ;
       ID       106 ;
@@ -3045,7 +3046,7 @@ METHOD Resource() CLASS TpvTactil
       ACTION   ( ::KeyChar( "6" ) );
       PROMPT   "6" ;
 
-   ::oBtnNum[ 6 ]:oFont   := ::oFntNum
+   ::oBtnNum[ 6 ]:SetFont( ::oFntNum )
 
    REDEFINE BUTTON ::oBtnNum[ 7 ] ;
       ID       107 ;
@@ -3053,7 +3054,7 @@ METHOD Resource() CLASS TpvTactil
       ACTION   ( ::KeyChar( "7" ) );
       PROMPT   "7" ;
 
-   ::oBtnNum[ 7 ]:oFont   := ::oFntNum
+   ::oBtnNum[ 7 ]:SetFont( ::oFntNum )
 
    REDEFINE BUTTON ::oBtnNum[ 8 ] ;
       ID       108 ;
@@ -3061,7 +3062,7 @@ METHOD Resource() CLASS TpvTactil
       ACTION   ( ::KeyChar( "8" ) );
       PROMPT   "8" ;
 
-   ::oBtnNum[ 8 ]:oFont   := ::oFntNum
+   ::oBtnNum[ 8 ]:SetFont( ::oFntNum )
 
    REDEFINE BUTTON ::oBtnNum[ 9 ] ;
       ID       109 ;
@@ -3069,7 +3070,7 @@ METHOD Resource() CLASS TpvTactil
       ACTION   ( ::KeyChar( "9" ) );
       PROMPT   "9" ;
 
-   ::oBtnNum[ 9 ]:oFont   := ::oFntNum
+   ::oBtnNum[ 9 ]:SetFont( ::oFntNum )
 
    REDEFINE BUTTON ::oBtnNum[ 10 ] ;
       ID       110 ;
@@ -3077,7 +3078,7 @@ METHOD Resource() CLASS TpvTactil
       ACTION   ( ::KeyChar( "0" ) );
       PROMPT   "0" ;
 
-   ::oBtnNum[ 10 ]:oFont  := ::oFntNum
+   ::oBtnNum[ 10 ]:SetFont( ::oFntNum )
 
    /*
    Boton de puesta a cero___________________________________________________
@@ -3089,7 +3090,7 @@ METHOD Resource() CLASS TpvTactil
       ACTION   ( ::KeyChar( "." ) );
       PROMPT   "," ;
 
-   ::oBtnNum[ 11 ]:oFont  := ::oFntNum
+   ::oBtnNum[ 11 ]:SetFont( ::oFntNum )
 
    /*
    Boton de punto decimal___________________________________________________
@@ -3101,7 +3102,7 @@ METHOD Resource() CLASS TpvTactil
       ACTION   ( ::KeyChar( "C" ) );
       PROMPT   "C" ;
 
-   ::oBtnNum[ 12 ]:oFont  := ::oFntNum
+   ::oBtnNum[ 12 ]:SetFont( ::oFntNum )
 
    /*
    Boton de +_______________________________________________________________
@@ -3113,7 +3114,7 @@ METHOD Resource() CLASS TpvTactil
       ACTION   ( ::KeyChar( "=" ) );
       PROMPT   "=" ;
 
-   ::oBtnNum[ 13 ]:oFont  := ::oFntNum
+   ::oBtnNum[ 13 ]:SetFont( ::oFntNum )
 
    /*
    Boton de -_______________________________________________________________
@@ -3125,7 +3126,7 @@ METHOD Resource() CLASS TpvTactil
       ACTION   ( ::KeyChar( "-" ) );
       PROMPT   "-" ;
 
-   ::oBtnNum[ 14 ]:oFont  := ::oFntNum
+   ::oBtnNum[ 14 ]:SetFont( ::oFntNum )
 
    /*
    Boton de *_______________________________________________________________
@@ -3137,7 +3138,7 @@ METHOD Resource() CLASS TpvTactil
       ACTION   ( ::KeyChar( "*" ) );
       PROMPT   "x" ;
 
-   ::oBtnNum[ 15 ]:oFont  := ::oFntNum
+   ::oBtnNum[ 15 ]:SetFont( ::oFntNum )
 
    /*
    Definimos el meter--------------------------------------------------------
@@ -3162,6 +3163,8 @@ METHOD Resource() CLASS TpvTactil
    */
 
    ::oDlg:Activate( , , , .t., {|| ::EndResource() } )
+
+   ::End()
 
 Return .t.
 
@@ -3513,10 +3516,6 @@ METHOD EndResource() CLASS TpvTactil
          lEnd           := ApoloMsgNoYes( "¿ Desea salir del TPV táctil ?", "Atención", .t. )
       end if
 
-   end if
-
-   if lEnd
-      ::End()
    end if
 
 Return ( lEnd )
@@ -4929,9 +4928,10 @@ METHOD InitComentarios() CLASS TpvTactil
       oBrwComentarios:nMarqueeStyle          := MARQSTYLE_HIGHLROW
       oBrwComentarios:cName                  := "Comentarios de artículos"
       oBrwComentarios:nRowHeight             := 48
-      oBrwComentarios:oFont                  := ::oFntBrw
       oBrwComentarios:lHeader                := .f.
       oBrwComentarios:lHScroll               := .f.
+
+      oBrwComentarios:SetFont( ::oFntBrw )
 
       oBrwComentarios:CreateFromResource( 100 )
 
@@ -4952,7 +4952,8 @@ METHOD InitComentarios() CLASS TpvTactil
       oBrwLineasComentarios:lHeader          := .f.
       oBrwLineasComentarios:lHScroll         := .f.
       oBrwLineasComentarios:nRowHeight       := 48
-      oBrwLineasComentarios:oFont            := ::oFntBrw
+      
+      oBrwLineasComentarios:SetFont( ::oFntBrw )
 
       oBrwLineasComentarios:CreateFromResource( 110 )
 
@@ -8532,7 +8533,7 @@ METHOD OnclickDividirMesa() Class TpvTactil
 
    REDEFINE GROUP oGrupoOriginal ID 230 OF oDlg TRANSPARENT
    
-   oGrupoOriginal:oFont                  := ::oFntFld
+   oGrupoOriginal:SetFont( ::oFntFld )
 
    /*
    Browse de Lineas Originales-------------------------------------------------
@@ -8546,12 +8547,13 @@ METHOD OnclickDividirMesa() Class TpvTactil
    ::oBrwOriginal:lRecordSelector        := .f.
    ::oBrwOriginal:lHScroll               := .f. 
    ::oBrwOriginal:lVScroll               := .f.
-   ::oBrwOriginal:oFont                  := ::oFntBrw
 
    ::oBrwOriginal:nMarqueeStyle          := MARQSTYLE_HIGHLROW
    ::oBrwOriginal:nRowHeight             := 36
    ::oBrwOriginal:cName                  := "Tactil.Lineas.Originales" 
    ::oBrwOriginal:lFooter                := .t.
+
+   ::oBrwOriginal:SetFont( ::oFntBrw )
 
    ::oTemporalDivisionOriginal:SetBrowse( ::oBrwOriginal )
 
@@ -8589,7 +8591,7 @@ METHOD OnclickDividirMesa() Class TpvTactil
 
    REDEFINE GROUP oGrupoNuevo ID 240 OF oDlg TRANSPARENT
       
-      oGrupoNuevo:oFont := ::oFntFld
+      oGrupoNuevo:SetFont( ::oFntFld )
 
    /*
    Browse de Lineas para el Nuevo Ticket---------------------------------------
@@ -8603,12 +8605,13 @@ METHOD OnclickDividirMesa() Class TpvTactil
    ::oBrwNuevoTicket:lRecordSelector        := .f.
    ::oBrwNuevoTicket:lHScroll               := .f.
    ::oBrwNuevoTicket:lVScroll               := .f.
-   ::oBrwNuevoTicket:oFont                  := ::oFntBrw
 
    ::oBrwNuevoTicket:nMarqueeStyle          := MARQSTYLE_HIGHLROW
    ::oBrwNuevoTicket:nRowHeight             := 36
    ::oBrwNuevoTicket:cName                  := "Tactil.Lineas.NuevoTicket"
    ::oBrwNuevoTicket:lFooter                := .t.
+
+   ::oBrwNuevoTicket:SetFont( ::oFntBrw )
 
    ::oTemporalDivisionNuevoTicket:SetBrowse( ::oBrwNuevoTicket )
 

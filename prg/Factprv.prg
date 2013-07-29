@@ -13303,10 +13303,16 @@ Return ( .f. )
 
 //---------------------------------------------------------------------------//
 
-Static Function ValidaSuFactura( aGet )
+Static Function ValidaSuFactura( aGet, nMode )
 
    local nRecno
-   local cSuFactura  := aGet[ _CCODPRV ]:VarGet() + Upper( aGet[ _CSUPED ]:VarGet() )
+   local cSuFactura
+
+   if nMode != APPD_MODE
+      Return .t.
+   end if
+
+   cSuFactura        := aGet[ _CCODPRV ]:VarGet() + Upper( aGet[ _CSUPED ]:VarGet() )
 
    nRecno            := ( dbfFacPrvT )->( Recno() )
 

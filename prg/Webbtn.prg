@@ -359,7 +359,6 @@ METHOD ReDefine(  nId, cResName1, cResName2, cBmpFile1, cBmpFile2,;
    ::bWhen        = bWhen
    ::lUpdate      = lUpdate
    ::cToolTip     = cToolTip
-   ::oFont        = oFont
    ::lBorder      = lBorder
    ::lBtnDown     = .f.
    ::oCursor      = TCursor():New( , "HAND" )
