@@ -615,7 +615,7 @@ METHOD BuildTree( oTree, lLoadFile ) CLASS TFastVentasArticulos
 
    ::BuildNode( aReports, oTree, lLoadFile )
 
-   oTree:ExpandAll()
+   //oTree:ExpandAll()
 
 RETURN ( Self )
 

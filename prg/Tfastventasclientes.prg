@@ -350,7 +350,7 @@ METHOD BuildTree( oTree, lLoadFile ) CLASS TFastVentasClientes
 
    ::BuildNode( aReports, oTree, lLoadFile )
 
-   oTree:ExpandAll()
+   //oTree:ExpandAll()
 
 RETURN ( Self )
 
@@ -459,7 +459,7 @@ METHOD DataReport() CLASS TFastVentasClientes
       
          ::FastReportFacturaCliente()
          
-         ::FastReportFacturaRectificativa()
+//       ::FastReportFacturaRectificativa()
 
       case ::cReportType == "Rectificativas de clientes"
 
@@ -532,9 +532,9 @@ METHOD AddVariable() CLASS TFastVentasClientes
 
          ::AddVariableLineasFacturaCliente()
          
-         ::AddVariableRectificativaCliente()
+//      ::AddVariableRectificativaCliente()
 
-         ::AddVariableLineasRectificativaCliente()
+//       ::AddVariableLineasRectificativaCliente()
 
       case ::cReportType == "Rectificativas de clientes"
 
@@ -615,7 +615,7 @@ METHOD lGenerate() CLASS TFastVentasClientes
 
          ::AddFacturaCliente()   
 
-         ::AddFacturaRectificativa()
+//       ::AddFacturaRectificativa()
 
       case ::cReportType == "Rectificativas de clientes"
 

@@ -2699,12 +2699,11 @@ METHOD BuildNode( aReports, oTree, lLoadFile )
 
             end if 
 
-         end if 
+         end if          
 
-         oNode:Expand()
-
-         if hHasKey( hHash, "Subnode" ) 
+         if hHasKey( hHash, "Subnode" )
             ::BuildNode( hHash[ "Subnode" ], oNode, lLoadFile )
+            oNode:Expand() 
          end if 
 
       end if 

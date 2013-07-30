@@ -3545,6 +3545,7 @@ Function EdtDetMenu( oCodArt, oDlg, lOferta )
 
    MENU oMenu
 
+
       MENUITEM    "&1. Rotor  " ;
          RESOURCE "Rotor16"
 
@@ -3595,7 +3596,7 @@ Function EdtDetMenu( oCodArt, oDlg, lOferta )
 
    ENDMENU
 
-   oDlg:SetMenu( oMenu )
+   //oDlg:SetMenu( oMenu )
 
 Return ( oMenu )
 

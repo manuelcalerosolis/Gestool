@@ -4759,11 +4759,12 @@ STATIC FUNCTION EdtDet( aTmp, aGet, dbfAlbCliL, oBrw, lTotLin, cCodArtEnt, nMode
                            aGet[ _CUNIDAD ]:lValid(),;
                            lCalcDeta( aTmp, aTmpAlb, nDouDiv, oTotal, oRentLin, cCodDiv ) }
 
-   ACTIVATE DIALOG oDlg  ;
+   ACTIVATE DIALOG oDlg CENTER
+     /*;
       ON INIT     ( EdtDetMenu( aGet[ _CREF ], oDlg ) );
       CENTER
 
-   EndDetMenu()
+   EndDetMenu()*/
 
 RETURN ( oDlg:nResult == IDOK )
 
