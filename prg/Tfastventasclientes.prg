@@ -350,7 +350,7 @@ METHOD BuildTree( oTree, lLoadFile ) CLASS TFastVentasClientes
 
    ::BuildNode( aReports, oTree, lLoadFile )
 
-   oTree:ExpandAll()
+   //oTree:ExpandAll()
 
 RETURN ( Self )
 
