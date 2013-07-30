@@ -3596,7 +3596,7 @@ Function EdtDetMenu( oCodArt, oDlg, lOferta )
 
    ENDMENU
 
-   //oDlg:SetMenu( oMenu )
+   oDlg:SetMenu( oMenu )
 
 Return ( oMenu )
 

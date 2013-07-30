@@ -5371,11 +5371,11 @@ end if
                            if( !Empty( cCodArtEnt ), aGet[ _CREF ]:lValid(), ),;
                            lCalcDeta( aTmp, aTmpFac ) }
 
-   ACTIVATE DIALOG oDlg CENTER
-//      ON INIT     ( EdtDetMenu( aGet[ _CREF ], oDlg ) );
-//      CENTER
+   ACTIVATE DIALOG oDlg ;
+      ON INIT     ( EdtDetMenu( aGet[ _CREF ], oDlg ) );
+      CENTER
 
-   //EndDetMenu()
+   EndDetMenu()
 
    if !Empty( bmpImage )
       bmpImage:End()

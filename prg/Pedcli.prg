@@ -5022,13 +5022,12 @@ STATIC FUNCTION EdtDet( aTmp, aGet, dbfPedCliL, oBrw, lTotLin, cCodArtEnt, nMode
                            if( !Empty( cCodArtEnt ), aGet[ _CREF ]:lValid(), ),;
                            aGet[ _CUNIDAD ]:lValid() }
 
-   ACTIVATE DIALOG oDlg ;
+   ACTIVATE DIALOG oDlg ; 
+         ON INIT     ( EdtDetMenu( aGet[ _CREF ], oDlg ), oBrwResCli:Load() );
          ON PAINT    ( RecalculaLinea( aTmp, aTmpPed, nDouDiv, oTotal, oTot, oRentLin, cCodDiv ) );
          CENTER
 
-         /*ON INIT     ( EdtDetMenu( aGet[ _CREF ], oDlg ), oBrwResCli:Load() );
-
-   EndDetMenu()*/
+   EndDetMenu()
 
    ( dbfPedPrvL )->( OrdSetFocus( nOrdPedPrv ) )
 

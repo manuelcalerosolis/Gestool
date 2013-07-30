@@ -4007,11 +4007,10 @@ end if
                            aGet[ _CUNIDAD ]:lValid() }
 
    ACTIVATE DIALOG oDlg CENTER ;
+         ON INIT  ( EdtDetMenu( aGet[ _CREF ], oDlg ) );
          ON PAINT ( RecalculaLinea( aTmp, aTmpPre, nDouDiv, oTotal, oRentLin, cCodDiv ) )
 
-         /*ON INIT  ( EdtDetMenu( aGet[ _CREF ], oDlg ) );
-
-   EndDetMenu()*/
+   EndDetMenu()
 
 RETURN ( oDlg:nResult == IDOK )
 
