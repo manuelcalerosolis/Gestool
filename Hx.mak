@@ -31,6 +31,7 @@ Font.prg                \
 DialogHb.prg            \
 Window.prg              \
 Msgbar.prg 					\
+Menu.prg 					\
 Tmsgitem.prg 				\
 Mdiframe.prg 				\
 Brush.prg               \
@@ -426,6 +427,7 @@ Font.obj                \
 DialogHb.obj            \
 Window.obj              \
 Msgbar.obj 					\
+Menu.obj 					\
 Tmsgitem.obj 				\
 Mdiframe.obj 				\
 Rect.obj                \
@@ -835,6 +837,7 @@ $(OBJ)\TXml.obj                 +
 $(OBJ)\DialogHb.obj             +
 $(OBJ)\Window.obj               +
 $(OBJ)\Msgbar.obj 				  +
+$(OBJ)\Menu.obj 				  	  +
 $(OBJ)\Tmsgitem.obj 				  +
 $(OBJ)\Mdiframe.obj 				  +
 $(OBJ)\Rect.obj                 +

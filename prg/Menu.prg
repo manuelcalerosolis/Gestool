@@ -1,5 +1,4 @@
-#include "FiveWin.Ch"
-#include "Menu.ch"
+#include "FiveWin.ch"
 
 #define MF_ENABLED       0
 #define MF_GRAYED        1
@@ -23,20 +22,26 @@ static aPopups := {}
 CLASS TMenu
 
    DATA   hMenu
-   DATA   aItems
+   DATA   aMenuItems
    DATA   oWnd
    DATA   lSysMenu, lPopup
    DATA   nHelpId
    DATA   cVarName
+   DATA   oAccTable       // Accelerators table object
+   DATA   oMenuItemPopup  // Many thanks to Hernán! It overcomes the limitation
+                          // of API TrackPopupMenu() under 16 bits
+   DATA   l2007, l2010
+   DATA   OnInit          // Visual FW
 
    CLASSDATA aProperties INIT { "aItems", "cVarName" }
+   CLASSDATA aEvents INIT { { "OnInit", "oMenu" } }
    CLASSDATA oLastItem
 
-   METHOD New( lPopup, oWnd )  CONSTRUCTOR
+   METHOD New( lPopup, oWnd, l2007 )  CONSTRUCTOR
    METHOD ReDefine( cResName, lPopup ) CONSTRUCTOR
    METHOD NewSys( oWnd )       CONSTRUCTOR
 
-   METHOD Add( oMenuItem )
+   METHOD Add( oMenuItem, lRoot )
 
    METHOD AddEdit()
 
@@ -46,9 +51,15 @@ CLASS TMenu
 
    METHOD AddMdi()
 
+   METHOD aItems() INLINE ::aMenuItems
+
+   METHOD _aItems( aItems )
+
    METHOD Insert( oMenuItem, nAt )
 
    METHOD Initiate()
+
+   METHOD cGenPrg()
 
    METHOD Command( nCommand )
 
@@ -56,7 +67,7 @@ CLASS TMenu
 
    METHOD Load( cInfo )
 
-   METHOD GetMenuItem( nItemId ) INLINE  SearchItem( ::aItems, nItemId )
+   METHOD GetMenuItem( nItemId ) INLINE SearchItem( ::aMenuItems, nItemId )
 
    METHOD GetPopup( hPopup )
 
@@ -64,7 +75,7 @@ CLASS TMenu
 
    METHOD HelpTopic()
 
-   METHOD Activate( nRow, nCol, oWnd )
+   METHOD Activate( nRow, nCol, oWnd, lEnd )
 
    METHOD DelItems()
 
@@ -72,9 +83,11 @@ CLASS TMenu
 
    METHOD Reset() INLINE If( ::lSysMenu, GetSystemMenu( ::oWnd:hWnd, .t. ),;
                          DestroyMenu( ::hMenu ) ), ::hMenu := CreateMenu(),;
-                         ::aItems := {}
+                         ::aMenuItems := {}
 
-   METHOD Destroy() INLINE DestroyItems( ::aItems )
+   // METHOD SetSkin()   INLINE if( ::l2007, set2007SkinMenu(), if( ::l2010, set2010SkinMenu(), ) )
+
+   METHOD Destroy() INLINE ( DestroyItems( ::aMenuItems ) )
 
    METHOD End()
 
@@ -86,26 +99,31 @@ CLASS TMenu
                            HiliteMenuItem( ::oWnd:hWnd, ::hMenu, nPopUp - 1,;
                                            nOr( MF_UNHILITE, MF_BYPOSITION ) )
 
-   METHOD Disable() INLINE ASend( ::aItems, "Disable" ),;
-                           If( ::oWnd != nil, ::Refresh(),)
+   METHOD Disable() INLINE ASend( ::aMenuItems, "Disable()" )
 
-   METHOD Enable() INLINE ASend( ::aItems, "Enable" ),;
-                          If( ::oWnd != nil, ::Refresh(),)
+   METHOD Enable() INLINE ASend( ::aMenuItems, "Enable()" ),;
+                             If( ::oWnd != nil, ::Refresh(),)
 
    METHOD Save()
+
+   METHOD SaveToText( nIndent )
 
 ENDCLASS
 
 //----------------------------------------------------------------------------//
 
-METHOD New( lPopup, oWnd ) CLASS TMenu
+METHOD New( lPopup, oWnd, l2007, l2010 ) CLASS TMenu
 
-   DEFAULT lPopup := .f. // , oWnd := GetWndDefault()
+   DEFAULT lPopup := .F., l2007 := .F., l2010 := .F. // , oWnd := GetWndDefault()
 
    ::hMenu    = If( lPopup, CreatePopupMenu(), CreateMenu() )
-   ::aItems   = {}
-   ::lSysMenu = .f.
+   ::aMenuItems = {}
+   ::lSysMenu = .F.
    ::lPopup   = lPopup
+   ::l2007    = l2007
+   ::l2010    = l2010
+
+   // ::SetSkin()
 
    if lPopup
       AAdd( aPopups, Self )
@@ -115,7 +133,7 @@ METHOD New( lPopup, oWnd ) CLASS TMenu
       oWnd:SetMenu( Self )
    endif
 
-return nil
+return Self
 
 //----------------------------------------------------------------------------//
 
@@ -127,17 +145,20 @@ METHOD End() CLASS TMenu
       SetMenu( ::oWnd:hWnd, 0 )
    endif
 
+   ::Destroy()
    ::DelItems()
    if ::hMenu != 0
       DestroyMenu( ::hMenu )
       ::hMenu = 0
    endif
 
-   ::Destroy()
-
    if ( nAt := AScan( aPopups, { | o | o == Self } ) ) != 0
       ADel( aPopups, nAt )
       ASize( aPopups, Len( aPopups ) - 1 )
+   endif
+
+   if ::oAccTable != nil
+      ::oAccTable:End()
    endif
 
 return nil
@@ -150,7 +171,7 @@ METHOD ReDefine( cResName, lPopup ) CLASS TMenu
    local n
 
    ::hMenu    = hMenu
-   ::aItems   = {}
+   ::aMenuItems   = {}
    ::lSysMenu = .f.
    ::lPopup   = lPopup
 
@@ -165,7 +186,7 @@ METHOD ReDefine( cResName, lPopup ) CLASS TMenu
 
    ResBuild( Self )
 
-return nil
+return Self
 
 //----------------------------------------------------------------------------//
 
@@ -177,24 +198,29 @@ METHOD NewSys( oWnd ) CLASS TMenu
       ::oWnd  = oWnd
       ::hMenu = GetSystemMenu( oWnd:hWnd, .f. )
    endif
-   ::aItems   = {}
+   ::aMenuItems   = {}
    ::lSysMenu = .t.
+   ::lPopup   = .F.
 
-return nil
+return Self
 
 //----------------------------------------------------------------------------//
 
-METHOD Add( oMenuItem ) CLASS TMenu
+METHOD Add( oMenuItem, lRoot ) CLASS TMenu
 
-   AAdd( ::aItems, oMenuItem )
+   DEFAULT lRoot := .F., ::l2007 := .F., ::l2010 := .F.
+
+//   ::SetSkin()
+
+   AAdd( ::aMenuItems, oMenuItem )
 
    oMenuItem:oMenu = Self
 
    if ValType( oMenuItem:bAction ) == "O" .and. ;
       Upper( oMenuItem:bAction:ClassName() ) == "TMENU"
       if oMenuItem:cPrompt != nil
-         AppendMenu( ::hMenu, nOr( MF_POPUP, MF_ENABLED,;
-                          If( oMenuItem:hBmpPal != 0, MF_OWNERDRAW, 0 ),;
+         AppendMenu( ::hMenu, nOr( MF_POPUP, MF_ENABLED, If( ::l2007 .OR. ::l2010, MF_OWNERDRAW, 0 ),;
+                          If( oMenuItem:hBitmap != 0 .or. ( IsWinNT() .and. ! lRoot .and. ! ::lSysmenu), MF_OWNERDRAW, 0 ),;
                           If( oMenuItem:lHelp, MF_HELP, 0 ),;
                           If( oMenuItem:lChecked, MF_CHECKED, 0 ),;
                           If( ! oMenuItem:lActive, MF_GRAYED, 0 ),;
@@ -207,26 +233,33 @@ METHOD Add( oMenuItem ) CLASS TMenu
                           If( ! oMenuItem:lActive, MF_GRAYED, 0 ),;
                           If( oMenuItem:lHelp, MF_HELP, 0 ),;
                           If( oMenuItem:lBreak, MF_BREAK, 0 ) ),;
-                     oMenuItem:bAction:hMenu, oMenuItem:hBmpPal )
+                     oMenuItem:bAction:hMenu, oMenuItem:hBitmap )
       endif
       AAdd( aPopups, oMenuItem:bAction )
    else
       if oMenuItem:cPrompt != nil
          AppendMenu( ::hMenu,;
                      nOR( If( oMenuItem:lActive,;
-                          nOr( MF_ENABLED, If( oMenuItem:hBmpPal != 0, MF_OWNERDRAW, 0 ) ),;
-                          nOR( MF_DISABLED, MF_GRAYED ) ),;
+                          nOr( MF_ENABLED, If( ::l2007 .OR. ::l2010, MF_OWNERDRAW, 0 ), If( oMenuItem:hBitmap != 0 .or. ;
+                          ( /* .f. .and. */ IsWinNT() .and. ! lRoot .and. ! ::lSysMenu ),;
+                          MF_OWNERDRAW, 0 ) ),;
+                          nOR( MF_DISABLED, MF_GRAYED, MF_OWNERDRAW ) ),;
                           If( oMenuItem:lChecked, MF_CHECKED, 0 ),;
                           If( oMenuItem:lHelp, MF_HELP, 0 ),;
                           If( oMenuItem:lBreak, MF_BREAK, 0 ) ),;
                      oMenuItem:nId, oMenuItem:cPrompt )
       else
-         if oMenuItem:hBmpPal != 0
+         if oMenuItem:hBitmap != 0
+            #ifdef __XPP__
+               if oMenuItem:lBreak == nil
+                  oMenuItem:lBreak = .f.
+               endif
+            #endif
             AppendMenu( ::hMenu, nOr( MF_BITMAP,;
                         If( oMenuItem:lBreak, MF_BREAK, 0 ) ),;
-                        oMenuItem:nId, oMenuItem:hBmpPal )
+                        oMenuItem:nId, oMenuItem:hBitmap )
          else
-            AppendMenu( ::hMenu, MF_SEPARATOR, oMenuItem:nId, "" )
+            AppendMenu( ::hMenu, nOr( MF_SEPARATOR, If( ::l2007 .OR. ::l2010, MF_OWNERDRAW, 0 ) ), oMenuItem:nId, "" )
          endif
       endif
    endif
@@ -235,10 +268,22 @@ return nil
 
 //----------------------------------------------------------------------------//
 
+METHOD _aItems( aNewItems ) CLASS TMenu
+
+   local n
+
+   for n = 1 to Len( aNewItems )
+      ::Add( aNewItems[ n ] )
+   next
+
+return nil
+
+//----------------------------------------------------------------------------//
+
 METHOD DelItems() CLASS TMenu
 
-   while Len( ::aItems ) > 0
-      ATail( ::aItems ):Destroy()
+   while Len( ::aMenuItems ) > 0
+      ATail( ::aMenuItems ):Destroy()
    end
 
 return nil
@@ -257,8 +302,8 @@ static function SearchSubMenu( oMenu, hMenu )
 
    local n, oSubMenu
 
-   for n = 1 to Len( oMenu:aItems )
-      if ValType( oSubMenu := oMenu:aItems[ n ]:bAction ) == "O"
+   for n = 1 to Len( oMenu:aMenuItems )
+      if ValType( oSubMenu := oMenu:aMenuItems[ n ]:bAction ) == "O"
          if oSubMenu:hMenu == hMenu
             return oSubMenu
          endif
@@ -274,22 +319,22 @@ return nil
 
 METHOD Insert( oMenuItem, nAt ) CLASS TMenu
 
-   local oPrevItem := If( nAt <= Len( ::aItems ), ::aItems[ nAt ], nil )
+   local oPrevItem := If( nAt <= Len( ::aMenuItems ), ::aMenuItems[ nAt ], nil )
 
    if oPrevItem == nil
       ::Add( oMenuItem )
       return nil
    endif
 
-   AAdd( ::aItems, nil )
-   AIns( ::aItems, nAt )
+   AAdd( ::aMenuItems, nil )
+   AIns( ::aMenuItems, nAt )
 
-   ::aItems[ nAt ] = oMenuItem
+   ::aMenuItems[ nAt ] = oMenuItem
 
    oMenuItem:oMenu = Self
 
-   if Upper( oMenuItem:bAction:ClassName() ) == "TMENU"
-      if oMenuItem:hBmpPal == 0
+   if ValType( oMenuItem:bAction ) == "O" .and. Upper( oMenuItem:bAction:ClassName() ) == "TMENU"
+      if oMenuItem:hBitmap == 0
          InsertMenu( ::hMenu, oPrevItem:nId, nOr( MF_POPUP,;
                      If( oMenuItem:lHelp, MF_HELP, 0 ),;
                      If( oMenuItem:lBreak, MF_BREAK, 0 ) ),;
@@ -299,22 +344,25 @@ METHOD Insert( oMenuItem, nAt ) CLASS TMenu
          InsertMenu( ::hMenu, oPrevItem:nId, nOR( MF_POPUP, MF_BITMAP,;
                      If( oMenuItem:lHelp, MF_HELP, 0 ),;
                      If( oMenuItem:lBreak, MF_BREAK, 0 ) ),;
-                     oMenuItem:bAction:hMenu, oMenuItem:hBmpPal )
+                     oMenuItem:bAction:hMenu, oMenuItem:hBitmap )
       endif
    else
       if oMenuItem:cPrompt != nil
          InsertMenu( ::hMenu, oPrevItem:nId, ;
-                     nOR( If( oMenuItem:lActive, MF_ENABLED,;
-                     nOR( MF_DISABLED, MF_GRAYED ) ),;
-                     If( oMenuItem:lChecked, MF_CHECKED, 0 ),;
-                     If( oMenuItem:lHelp, MF_HELP, 0 ),;
-                     If( oMenuItem:lBreak, MF_BREAK, 0 ) ),;
-                     oMenuItem:nId, oMenuItem:cPrompt )
+                    nOR( If( oMenuItem:lActive,;
+                    nOr( MF_ENABLED, If( oMenuItem:hBitmap != 0 .or. ;
+                    ( IsWinNT() .and. ! ::lSysMenu ),;
+                    MF_OWNERDRAW, 0 ) ),;
+                    nOR( MF_DISABLED, MF_GRAYED ) ),;
+                    If( oMenuItem:lChecked, MF_CHECKED, 0 ),;
+                    If( oMenuItem:lHelp, MF_HELP, 0 ),;
+                    If( oMenuItem:lBreak, MF_BREAK, 0 ) ),;
+                    oMenuItem:nId, oMenuItem:cPrompt )
       else
-         if oMenuItem:hBmpPal != 0
+         if oMenuItem:hBitmap != 0
             InsertMenu( ::hMenu, oPrevItem:nId, nOr( MF_BITMAP,;
                         If( oMenuItem:lBreak, MF_BREAK, 0 ) ),;
-                        oMenuItem:nId, oMenuItem:hBmpPal )
+                        oMenuItem:nId, oMenuItem:hBitmap )
          else
             InsertMenu( ::hMenu, oPrevItem:nId, MF_SEPARATOR,;
                         oMenuItem:nId, "" )
@@ -326,13 +374,53 @@ return nil
 
 //----------------------------------------------------------------------------//
 
+METHOD cGenPrg() CLASS TMenu
+
+   local cPrg := "", nLevel := 2
+
+   GenSubMenu( Self, @cPrg, nLevel )
+
+return cPrg
+
+//----------------------------------------------------------------------------//
+
+static function GenSubMenu( oMenu, cPrg, nLevel )
+
+   local n
+
+   cPrg += Replicate( " ", ( nLevel - 1 ) * 3 ) + "MENU" + If( nLevel == 2, " oMenu", "" ) + ;
+           If( oMenu:lPopup, " POPUP", "" ) + CRLF
+
+   for n = 1 to Len( oMenu:aItems )
+      cPrg += Replicate( " ", ( nLevel - 1 ) * 3 ) + '   MENUITEM "' + oMenu:aItems[ n ]:cPrompt + '"' + CRLF
+      if ValType( oMenu:aItems[ n ]:bAction ) == "O"
+         GenSubMenu( oMenu:aItems[ n ]:bAction, @cPrg, nLevel + 1 )
+      endif
+   next
+
+   cPrg += Replicate( " ", ( nLevel - 1 ) * 3 ) + "ENDMENU" + CRLF
+
+return cPrg
+
+//----------------------------------------------------------------------------//
+
 METHOD Initiate() CLASS TMenu
 
    local n, lWhen
    local oItem
 
-   for n = 1 to Len( ::aItems )
-      oItem = ::aItems[ n ]
+   DEFAULT ::l2007 := .F., ::l2010 := .F.
+
+//   ::SetSkin()
+
+   if cWinVersion() != "98"
+      if ::l2007 .or. ::l2010
+         MITEMS2007( ::hMenu )
+      endif
+   endif
+
+   for n = 1 to Len( ::aMenuItems )
+      oItem = ::aMenuItems[ n ]
       if ! Empty( oItem:bWhen )
          lWhen = Eval( oItem:bWhen, oItem )
          if ValType( lWhen ) == "L"
@@ -354,9 +442,21 @@ METHOD Command( nCommand ) CLASS TMenu
    local oMenuItem := ::GetMenuItem( nCommand )
 
    if oMenuItem != nil
-      if ValType( oMenuItem:bAction ) == "B"
+      if ValType( oMenuItem:bAction ) == "B" .or. ValType( oMenuItem:OnClick ) == "B"
+         if oMenuItem:bWhen != nil .and. ! Eval( oMenuItem:bWhen, oMenuItem )
+            return nil
+         endif
          ::oLastItem = oMenuItem
-         Eval( oMenuItem:bAction, oMenuItem )
+
+         if ::lPopup
+            ::oMenuItemPopup = oMenuItem
+         else
+            if oMenuItem:bAction != nil
+               Eval( oMenuItem:bAction, oMenuItem )
+            else
+               Eval( oMenuItem:OnClick, ::oWnd, oMenuItem )
+            endif
+         endif
       endif
    endif
 
@@ -364,49 +464,58 @@ return nil
 
 //----------------------------------------------------------------------------//
 
-METHOD Activate( nRow, nCol, oWnd ) CLASS TMenu
+METHOD Activate( nRow, nCol, oWnd, lEnd, nFlags ) CLASS TMenu
 
    local aPoint := { nRow, nCol }
+
+   DEFAULT lEnd := .t., nFlags := 0
 
    if oWnd != nil
       aPoint = ClientToScreen( oWnd:hWnd, aPoint )
 
-      if oWnd:oPopup != nil
-         oWnd:oPopup:End()
+      if lEnd
+         if oWnd:oPopup != nil
+            oWnd:oPopup:End()
+         endif
       endif
       oWnd:oPopup = Self
-      TrackPopup( ::hMenu, 2, aPoint[ 1 ], aPoint[ 2 ],;
-                  0, oWnd:hWnd )
+      ::Initiate()
+
+      TrackPopup( ::hMenu, nOr( 2, nFlags ), aPoint[ 1 ], aPoint[ 2 ], 0, oWnd:hWnd )
+
       SysRefresh()
-      ::End()
-      oWnd:oPopup = nil
+      if ::oMenuItemPopup != nil
+         Eval( ::oMenuItemPopup:bAction, ::oMenuItemPopup )
+         ::oMenuItemPopup = nil
+      endif
+
+      if lEnd
+         ::End()
+         oWnd:oPopup = nil
+      endif
    endif
 
 return nil
 
 //----------------------------------------------------------------------------//
 
-static function SearchItem( aItems, nId )
+static function SearchItem( aMenuItems, nId )
 
    local n      := 1
    local lFound := .f.
    local oReturn
    local bAction
 
-   // if hClass == nil
-   //   hClass = TMenu():ClassH()
-   // endif
-
-   while n <= Len( aItems ) .and. ! lFound
-      if aItems[ n ]:nId == nId
-         return aItems[ n ]
+   while n <= Len( aMenuItems ) .and. ! lFound
+      if aMenuItems[ n ]:nId == nId
+         return aMenuItems[ n ]
       else
-         bAction = aItems[ n ]:bAction
+         bAction = aMenuItems[ n ]:bAction
          if ValType( bAction ) == "O" .and. Upper( bAction:ClassName() ) == "TMENU"
-            if aItems[ n ]:bAction:hMenu == nId
-               return aItems[ n ]
+            if aMenuItems[ n ]:bAction:hMenu == nId
+               return aMenuItems[ n ]
             else
-               oReturn = SearchItem( aItems[ n ]:bAction:aItems, nId )
+               oReturn = SearchItem( aMenuItems[ n ]:bAction:aMenuItems, nId )
                if oReturn != nil
                   exit
                endif
@@ -420,25 +529,20 @@ return oReturn
 
 //----------------------------------------------------------------------------//
 
-static function DestroyItem( aItems )
+static function DestroyItems( aMenuItems )
 
    local n := 1
    local oItem
 
-   // if hClass == nil
-   //   hClass = TMenu():ClassH()
-   // endif
-
-   while n <= Len( aItems )
-      oItem = aItems[ n ]
+   while n <= Len( aMenuItems )
+      oItem = aMenuItems[ n ]
       if oItem:bAction != nil
          if ValType( oItem:bAction ) == "O" .and. ;
             Upper( oItem:bAction:ClassName() ) == "TMENU"
-            DestroyItem( oItem:bAction:aItems )
+            DestroyItems( oItem:bAction:aMenuItems )
          endif
       endif
       oItem:End()
-      // oItem:Destroy()   Sid, I think this has been already done
       n++
    end
 
@@ -454,7 +558,11 @@ static function ResBuild( oMenu )
    local oSubMenu, oMenuItem
 
    for n = 1 to GetMItemCount( hMenu )
-         oMenuItem          = TMenuItem()
+         #ifndef __XPP__
+            oMenuItem          = TMenuItem()
+         #else
+            oMenuItem          = TMenuItem():New()
+         #endif
          oMenuItem:nId      = GetMItemID( hMenu, n - 1 )
          oMenuItem:cPrompt  = GetMenuString( hMenu, n - 1, MF_BYPOSITION )
          oMenuItem:cMsg     = ""
@@ -462,15 +570,19 @@ static function ResBuild( oMenu )
          oMenuItem:lActive  = ! lAnd( GetMenuState( hMenu, n - 1,;
                               MF_BYPOSITION ), nOr( MF_DISABLED, MF_GRAYED ) )
          oMenuItem:oMenu    = oMenu
-         oMenuItem:hBmpPal  = 0
+         oMenuItem:hBitmap  = 0
          oMenuItem:lHelp    = .f.
          oMenuItem:lBreak   = lAnd( GetMenuState( hMenu, n - 1, MF_BYPOSITION ), MF_BREAK )
-         AAdd( oMenu:aItems, oMenuItem )
+         AAdd( oMenu:aMenuItems, oMenuItem )
          if ( hSubMenu := GetSubMenu( hMenu, n - 1 ) ) != 0
-            oSubMenu          = TMenu()
+            #ifndef __XPP__
+               oSubMenu          = TMenu()
+            #else
+               oSubMenu          = TMenu():New()
+            #endif
             oSubMenu:hMenu    = hSubMenu
             oSubMenu:lSysMenu = .f.
-            oSubMenu:aItems   = {}
+            oSubMenu:aMenuItems   = {}
             oMenuItem:bAction = oSubMenu
             ResBuild( oSubMenu )
          endif
@@ -515,6 +627,7 @@ METHOD AddMdi() CLASS TMenu
       #translate oWnd:IconizeAll   => oWnd:TMdiFrame:IconizeAll
       #translate oWnd:NextWindow   => oWnd:TMdiFrame:NextWindow
       #translate oWnd:Tile         => oWnd:TMdiFrame:Tile
+      #translate oWnd:oWndClient   => oWnd:TMdiFrame:oWndClient
    #endif
 
    MENUITEM "&Window"
@@ -545,7 +658,7 @@ METHOD AddMdi() CLASS TMenu
          MESSAGE "Iconize all open windows" ;
          WHEN Len( ::oWnd:oWndClient:aWnd ) > 0
 
-      MENUITEM "C&lose All"       ACTION ::SysRefresh(); oWnd:CloseAll(); SysRefresh() ;
+      MENUITEM "C&lose All"       ACTION ::oWnd:CloseAll() ;
          MESSAGE "Close all open windows" ;
          WHEN Len( ::oWnd:oWndClient:aWnd ) > 0
    ENDMENU
@@ -558,19 +671,44 @@ METHOD AddHelp( cAbout, cCopyRight ) CLASS TMenu
 
    MENUITEM "&Help"
    MENU
-      MENUITEM "&Contents"    ACTION HelpIndex() ;
-         MESSAGE "Show the help contents"
+      if FindResource( GetResources(), "Contents", 2 ) != 0
+         MENUITEM "&Contents"    ACTION HelpIndex() RESOURCE "Contents" ;
+            MESSAGE "Show the help contents"
+      else
+         MENUITEM "&Contents"    ACTION HelpIndex() ;
+            MESSAGE "Show the help contents"
+      endif
 
-      MENUITEM "&Search for Help on..."  + Chr( 9 ) + "F1" ;
-         ACTION HelpSearch() MESSAGE "Search the help for a specific item"
+      if FindResource( GetResources(), "SearchHelp", 2 ) != 0
+         MENUITEM "&Search for Help on..."  + Chr( 9 ) + "F1" RESOURCE "SearchHelp" ;
+            ACTION HelpSearch() MESSAGE "Search the help for a specific item"
+      else
+         MENUITEM "&Search for Help on..."  + Chr( 9 ) + "F1" ;
+            ACTION HelpSearch() MESSAGE "Search the help for a specific item"
+      endif
 
       MENUITEM "Using &help"  ACTION HelpIndex() ;
          MESSAGE "Show the help index"
 
       SEPARATOR
 
-      MENUITEM "&About..."    ACTION MsgAbout( cAbout, cCopyRight ) ;
-         MESSAGE "Displays program information and copyright"
+      if FindResource( GetResources(), "about", 2 ) != 0
+         if ValType( cAbout ) == "B"
+            MENUITEM "&About..."    ACTION Eval( cAbout ) RESOURCE "About" ;
+               MESSAGE "Displays program information and copyright"
+         else
+            MENUITEM "&About..."    ACTION MsgAbout( cAbout, cCopyRight ) RESOURCE "About" ;
+               MESSAGE "Displays program information and copyright"
+         endif
+      else
+         if ValType( cAbout ) == "B"
+            MENUITEM "&About..."    ACTION Eval( cAbout ) ;
+               MESSAGE "Displays program information and copyright"
+         else
+            MENUITEM "&About..."    ACTION MsgAbout( cAbout, cCopyRight ) ;
+               MESSAGE "Displays program information and copyright"
+         endif
+      endif
    ENDMENU
 
 return nil
@@ -583,33 +721,71 @@ METHOD AddEdit() CLASS TMenu
 
    MENUITEM "&Edit"
    MENU
-      MENUITEM "&Undo" + Chr( 9 ) + "Ctrl+Z" ;
-         MESSAGE "Undoes the last action" ;
-         ACTION  ::oWnd:UnDo()
+      if FindResource( GetResources(), "UnDo", 2 ) != 0
+         MENUITEM "&Undo" + Chr( 9 ) + "Ctrl+Z" ;
+            MESSAGE "Undoes the last action" ;
+            ACTION  ::oWnd:UnDo() RESOURCE "UnDo"
+      else
+         MENUITEM "&Undo" + Chr( 9 ) + "Ctrl+Z" ;
+            MESSAGE "Undoes the last action" ;
+            ACTION  ::oWnd:UnDo()
+      endif
 
-      MENUITEM "&Redo" + Chr( 9 ) + "Ctrl+A" ;
-         MESSAGE "Redoes the previously undone action" ;
-         ACTION  ::oWnd:ReDo()
+      if FindResource( GetResources(), "ReDo", 2 ) != 0
+         MENUITEM "&Redo" + Chr( 9 ) + "Ctrl+A" ;
+            MESSAGE "Redoes the previously undone action" ;
+            ACTION  ::oWnd:ReDo() RESOURCE "ReDo"
+      else
+         MENUITEM "&Redo" + Chr( 9 ) + "Ctrl+A" ;
+            MESSAGE "Redoes the previously undone action" ;
+            ACTION  ::oWnd:ReDo()
+      endif
 
       SEPARATOR
 
-      MENUITEM "Cu&t" + Chr( 9 ) + "Ctrl+X" ;
-         MESSAGE "Removes the selection and puts it on the Clipboard" ;
-         ACTION ::oWnd:Cut()
+      if FindResource( GetResources(), "Cut", 2 ) != 0
+         MENUITEM "Cu&t" + Chr( 9 ) + "Ctrl+X" ;
+            MESSAGE "Removes the selection and puts it on the Clipboard" ;
+            ACTION ::oWnd:Cut() RESOURCE "Cut"
+      else
+         MENUITEM "Cu&t" + Chr( 9 ) + "Ctrl+X" ;
+            MESSAGE "Removes the selection and puts it on the Clipboard" ;
+            ACTION ::oWnd:Cut()
+      endif
 
-      MENUITEM "&Copy" + Chr( 9 ) + "Ctrl+C" ;
-         MESSAGE "Copies the selection and puts it on the Clipboard" ;
-         ACTION ::oWnd:Copy()
+      if FindResource( GetResources(), "Copy", 2 ) != 0
+         MENUITEM "&Copy" + Chr( 9 ) + "Ctrl+C" ;
+            MESSAGE "Copies the selection and puts it on the Clipboard" ;
+            ACTION ::oWnd:Copy() RESOURCE "Copy"
+      else
+         MENUITEM "&Copy" + Chr( 9 ) + "Ctrl+C" ;
+            MESSAGE "Copies the selection and puts it on the Clipboard" ;
+            ACTION ::oWnd:Copy()
+      endif
 
-      MENUITEM "&Paste" + Chr( 9 ) + "Ctrl+V" ;
-         MESSAGE "Insert Clipboard contents at the insertion point" ;
-         ACTION ::oWnd:Paste() ;
-         WHEN   ( oClp := TClipboard():New(), ! oClp:IsEmpty() )
+      if FindResource( GetResources(), "Paste", 2 ) != 0
+         MENUITEM "&Paste" + Chr( 9 ) + "Ctrl+V" ;
+            MESSAGE "Insert Clipboard contents at the insertion point" ;
+            ACTION ::oWnd:Paste() ;
+            WHEN   ( oClp := TClipboard():New(), ! oClp:IsEmpty() ) RESOURCE "Paste"
+      else
+         MENUITEM "&Paste" + Chr( 9 ) + "Ctrl+V" ;
+            MESSAGE "Insert Clipboard contents at the insertion point" ;
+            ACTION ::oWnd:Paste() ;
+            WHEN   ( oClp := TClipboard():New(), ! oClp:IsEmpty() )
+      endif
 
-      MENUITEM "&Delete" + Chr( 9 ) + "Del" ;
-         MESSAGE "Erases the selection" ;
-         ACTION  ::oWnd:Delete() ;
-         ACCELERATOR 0, VK_DELETE
+      if FindResource( GetResources(), "Delete", 2 ) != 0
+         MENUITEM "&Delete" + Chr( 9 ) + "Del" RESOURCE "Delete" ;
+            MESSAGE "Erases the selection" ;
+            ACTION  ::oWnd:Delete() // ;
+            // ACCELERATOR 0, VK_DELETE
+      else
+         MENUITEM "&Delete" + Chr( 9 ) + "Del" ;
+            MESSAGE "Erases the selection" ;
+            ACTION  ::oWnd:Delete() // ;
+            // ACCELERATOR 0, VK_DELETE
+      endif
 
       MENUITEM "&Select All" ;
          MESSAGE "Selects the entire document" ;
@@ -617,10 +793,17 @@ METHOD AddEdit() CLASS TMenu
 
       SEPARATOR
 
-      MENUITEM "&Find..." + Chr( 9 ) + "Ctrl+F" ;
-         MESSAGE "Finds the specified text" ;
-         ACTION ::oWnd:Find() ;
-         ACCELERATOR ACC_CONTROL, Asc( "F" )
+      if FindResource( GetResources(), "Find", 2 ) != 0
+         MENUITEM "&Find..." + Chr( 9 ) + "Ctrl+F" RESOURCE "Find" ;
+            MESSAGE "Finds the specified text" ;
+            ACTION ::oWnd:Find() ;
+            ACCELERATOR ACC_CONTROL, Asc( "F" )
+      else
+         MENUITEM "&Find..." + Chr( 9 ) + "Ctrl+F" ;
+            MESSAGE "Finds the specified text" ;
+            ACTION ::oWnd:Find() ;
+            ACCELERATOR ACC_CONTROL, Asc( "F" )
+      endif
 
       MENUITEM "Find &Next" + Chr( 9 ) + "F3" ;
          MESSAGE "Repeats the last find" ;
@@ -632,9 +815,15 @@ METHOD AddEdit() CLASS TMenu
 
       SEPARATOR
 
-      MENUITEM "Pr&operties" + Chr( 9 ) + "Alt+Enter" ;
-         MESSAGE "Edits properties of the current selection" ;
-         ACTION ::oWnd:Properties()
+      if FindResource( GetResources(), "Properties", 2 ) != 0
+         MENUITEM "Pr&operties" + Chr( 9 ) + "Alt+Enter" RESOURCE "Properties" ;
+            MESSAGE "Edits properties of the current selection" ;
+            ACTION ::oWnd:Properties()
+      else
+         MENUITEM "Pr&operties" + Chr( 9 ) + "Alt+Enter" ;
+            MESSAGE "Edits properties of the current selection" ;
+            ACTION ::oWnd:Properties()
+      endif
 
    ENDMENU
 
@@ -744,6 +933,84 @@ return "O" + I2Bin( 2 + Len( ::ClassName() ) + 2 + Len( cInfo ) ) + ;
 
 //----------------------------------------------------------------------------//
 
+METHOD SaveToText( nIndent ) CLASS TMenu
+
+   local n, m, cType, cInfo
+   local cMethod, uData, nProps := 0
+   local oMenu := &( ::ClassName() + "()" )
+   local cParams1, cParams2
+
+   DEFAULT nIndent := 0
+
+   DEFAULT ::cVarName := "oMenu"
+
+   cInfo := Space( nIndent ) + "OBJECT " + If( nIndent > 0, "::", "" ) + ;
+            ::cVarName + " AS " + ;
+            If( nIndent > 0, Upper( Left( ::ClassName(), 2 ) ) + ;
+            Lower( SubStr( ::ClassName(), 3 ) ), ::cClassName ) + ;
+            CRLF + CRLF
+
+   oMenu = oMenu:New()
+
+   for n = 1 to Len( ::aProperties )
+       // if ::aProperties[ n ] == "cVarName"
+
+       // else
+          if ! ( uData := OSend( Self, ::aProperties[ n ] ) ) == ;
+             OSend( oMenu, ::aProperties[ n ] )
+             nProps++
+             cType = ValType( uData )
+             do case
+                case cType == "C"
+                     cInfo += Space( nIndent ) + "   ::" + ::aProperties[ n ] + " = "
+                     cInfo += '"' + uData + '"' + CRLF
+
+                case cType == "A"
+                     cInfo += Space( nIndent + 3 ) + "::" + ::aProperties[ n ] + ;
+                              " = Array( " + AllTrim( Str( Len( uData ) ) ) + " )" + CRLF + CRLF
+                     cInfo += AToText( uData, ::aProperties[ n ], nIndent + 3 )
+
+                case cType == "O"
+                     cInfo += CRLF + uData:SaveToText( nIndent + 3 )
+
+                otherwise
+                     cInfo += Space( nIndent ) + "   ::" + ::aProperties[ n ] + " = "
+                     cInfo += cValToChar( uData ) + CRLF
+             endcase
+          endif
+       // endif
+   next
+
+   if ::aEvents != nil
+      for n = 1 to Len( ::aEvents )
+         if ( cMethod := OSend( Self, ::aEvents[ n ][ 1 ] ) ) != nil
+            cInfo += Space( nIndent ) + "   ::" + ::aEvents[ n ][ 1 ] + " = "
+            nProps++
+            cParams1 = "{ | Self"
+            cParams2 = "( Self"
+            for m = 2 to Len( ::aEvents[ n ] )
+               cParams1 += ", " + ::aEvents[ n ][ m ]
+               cParams2 += ", " + ::aEvents[ n ][ m ]
+            next
+            cParams1 += " | "
+            cParams2 += " )"
+            if ::oWnd != nil
+               cInfo += cParams1 + "::oWnd:" + cMethod + cParams2 + " }" + CRLF
+            else
+               cInfo += cParams1 + " ::" + cMethod + cParams2 + " }" + CRLF
+            endif
+         endif
+      next
+   endif
+
+   cInfo += CRLF + Space( nIndent ) + "ENDOBJECT" + If( nIndent != 0, CRLF, "" )
+
+   oMenu:End()
+
+return cInfo
+
+//----------------------------------------------------------------------------//
+
 static function ASave( aArray )
 
    local n, cType, uData
@@ -847,3 +1114,10 @@ METHOD Load( cInfo ) CLASS TMenu
 return nil
 
 //----------------------------------------------------------------------------//
+
+EXIT PROCEDURE FW_MenuExit
+
+return
+
+//----------------------------------------------------------------------------//
+
