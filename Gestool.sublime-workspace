@@ -526,6 +526,62 @@
 				"buffer_size": 219177,
 				"line_ending": "Windows"
 			}
+		},
+		{
+			"file": "prg/Factcli.prg",
+			"settings":
+			{
+				"buffer_size": 808992,
+				"line_ending": "Windows"
+			}
+		},
+		{
+			"file": "prg/Albcli.prg",
+			"settings":
+			{
+				"buffer_size": 644255,
+				"line_ending": "Windows"
+			}
+		},
+		{
+			"file": "prg/Pedcli.prg",
+			"settings":
+			{
+				"buffer_size": 654368,
+				"line_ending": "Windows"
+			}
+		},
+		{
+			"file": "prg/Precli.prg",
+			"settings":
+			{
+				"buffer_size": 400468,
+				"line_ending": "Windows"
+			}
+		},
+		{
+			"file": "prg/Satcli.prg",
+			"settings":
+			{
+				"buffer_size": 384257,
+				"line_ending": "Windows"
+			}
+		},
+		{
+			"file": "prg/Turno.prg",
+			"settings":
+			{
+				"buffer_size": 353883,
+				"line_ending": "Windows"
+			}
+		},
+		{
+			"file": "prg/Ttotturno.prg",
+			"settings":
+			{
+				"buffer_size": 59289,
+				"line_ending": "Windows"
+			}
 		}
 	],
 	"build_system": "Packages/User/gestool.sublime-build",
@@ -560,6 +616,8 @@
 	},
 	"file_history":
 	[
+		"/C/fw195/Gestool/prg/Factcli.prg",
+		"/C/fw195/Gestool/prg/Brwvta.prg",
 		"/C/AppServ/www/zemtrum/tienda/themes/zemtrum/css/authentication.css",
 		"/C/AppServ/www/zemtrum/tienda/controllers/front/AuthController.php",
 		"/C/AppServ/www/zemtrum/tienda/classes/controller/AdminController.php",
@@ -632,7 +690,6 @@
 		"/C/AppServ/www/zemtrum/tienda/themes/zemtrum/lang/es.php",
 		"/C/AppServ/www/zemtrum/tienda/themes/zemtrum/product-list.tpl",
 		"/C/AppServ/www/zemtrum/tienda/js/jquery/plugins/jqzoom/jquery.jqzoom.css",
-		"/C/fw195/Gestool/prg/Factcli.prg",
 		"/C/fw195/Gestool/prg/Satcli.prg",
 		"/C/fw195/Gestool/prg/Precli.prg",
 		"/C/Users/Villa/AppData/Roaming/Sublime Text 2/Packages/Default/Preferences.sublime-settings",
@@ -686,8 +743,7 @@
 		"/C/fw195/Gestool/prg/Xtotart.prg",
 		"/C/fw195/Gestool/prg/Xtotalm.prg",
 		"/C/fw195/Gestool/prg/Xvalalmg.prg",
-		"/C/fw195/Gestool/prg/Trazalote.prg",
-		"/C/fw195/Gestool/prg/Comun.prg"
+		"/C/fw195/Gestool/prg/Trazalote.prg"
 	],
 	"find":
 	{
@@ -695,7 +751,7 @@
 	},
 	"find_in_files":
 	{
-		"height": 0.0,
+		"height": 93.0,
 		"where_history":
 		[
 			"C:\\fw195\\Gestool\\prg",
@@ -731,6 +787,18 @@
 		"case_sensitive": false,
 		"find_history":
 		[
+			"facturas de clientes",
+			"factura de clientes",
+			"factura clien",
+			"on edtdet",
+			"omenu:",
+			"omenu",
+			"MENUITEM",
+			"5381",
+			"omenu",
+			"on EdtDetMenu",
+			"on edtdet",
+			"on edtdel",
 			"welcomme",
 			"ccodfab",
 			"BuscarGastoEnvio",
@@ -846,19 +914,7 @@
 			"GetInstance",
 			"AppZone",
 			"AppendClientesToPrestashop",
-			"function",
-			"BuscarCodFam",
-			"SetAutoRecive",
-			":AutoRecive",
-			"cookey",
-			"aSexos",
-			"NSEXO",
-			"cTiempoPed",
-			"220",
-			"on aitm",
-			"cPrefijoBaseDatos",
-			"cPlataforma",
-			"ps_"
+			"function"
 		],
 		"highlight": true,
 		"in_selection": false,
@@ -885,7 +941,7 @@
 	"groups":
 	[
 		{
-			"selected": 0,
+			"selected": 6,
 			"sheets":
 			[
 				{
@@ -900,8 +956,8 @@
 						"selection":
 						[
 							[
-								36988,
-								36988
+								119012,
+								119012
 							]
 						],
 						"settings":
@@ -911,7 +967,199 @@
 							"translate_tabs_to_spaces": true
 						},
 						"translation.x": 0.0,
-						"translation.y": 25536.0,
+						"translation.y": 68124.0,
+						"zoom_level": 1.0
+					},
+					"type": "text"
+				},
+				{
+					"buffer": 1,
+					"file": "prg/Factcli.prg",
+					"settings":
+					{
+						"buffer_size": 808992,
+						"regions":
+						{
+						},
+						"selection":
+						[
+							[
+								178814,
+								178814
+							]
+						],
+						"settings":
+						{
+							"syntax": "Packages/harbour/harbour/Harbour.tmLanguage"
+						},
+						"translation.x": 0.0,
+						"translation.y": 101754.0,
+						"zoom_level": 1.0
+					},
+					"type": "text"
+				},
+				{
+					"buffer": 2,
+					"file": "prg/Albcli.prg",
+					"settings":
+					{
+						"buffer_size": 644255,
+						"regions":
+						{
+						},
+						"selection":
+						[
+							[
+								157184,
+								157184
+							]
+						],
+						"settings":
+						{
+							"syntax": "Packages/harbour/harbour/Harbour.tmLanguage",
+							"tab_size": 3,
+							"translate_tabs_to_spaces": true
+						},
+						"translation.x": 0.0,
+						"translation.y": 89974.0,
+						"zoom_level": 1.0
+					},
+					"type": "text"
+				},
+				{
+					"buffer": 3,
+					"file": "prg/Pedcli.prg",
+					"settings":
+					{
+						"buffer_size": 654368,
+						"regions":
+						{
+						},
+						"selection":
+						[
+							[
+								180228,
+								180228
+							]
+						],
+						"settings":
+						{
+							"syntax": "Packages/harbour/harbour/Harbour.tmLanguage"
+						},
+						"translation.x": 0.0,
+						"translation.y": 95028.0,
+						"zoom_level": 1.0
+					},
+					"type": "text"
+				},
+				{
+					"buffer": 4,
+					"file": "prg/Precli.prg",
+					"settings":
+					{
+						"buffer_size": 400468,
+						"regions":
+						{
+						},
+						"selection":
+						[
+							[
+								130296,
+								130296
+							]
+						],
+						"settings":
+						{
+							"syntax": "Packages/harbour/harbour/Harbour.tmLanguage",
+							"tab_size": 3,
+							"translate_tabs_to_spaces": true
+						},
+						"translation.x": 0.0,
+						"translation.y": 75648.0,
+						"zoom_level": 1.0
+					},
+					"type": "text"
+				},
+				{
+					"buffer": 5,
+					"file": "prg/Satcli.prg",
+					"settings":
+					{
+						"buffer_size": 384257,
+						"regions":
+						{
+						},
+						"selection":
+						[
+							[
+								123628,
+								123628
+							]
+						],
+						"settings":
+						{
+							"syntax": "Packages/harbour/harbour/Harbour.tmLanguage",
+							"tab_size": 3,
+							"translate_tabs_to_spaces": true
+						},
+						"translation.x": 0.0,
+						"translation.y": 70936.0,
+						"zoom_level": 1.0
+					},
+					"type": "text"
+				},
+				{
+					"buffer": 6,
+					"file": "prg/Turno.prg",
+					"settings":
+					{
+						"buffer_size": 353883,
+						"regions":
+						{
+						},
+						"selection":
+						[
+							[
+								248169,
+								248169
+							]
+						],
+						"settings":
+						{
+							"syntax": "Packages/harbour/harbour/Harbour.tmLanguage",
+							"tab_size": 3,
+							"translate_tabs_to_spaces": true
+						},
+						"translation.x": 0.0,
+						"translation.y": 157424.0,
+						"zoom_level": 1.0
+					},
+					"type": "text"
+				},
+				{
+					"buffer": 7,
+					"file": "prg/Ttotturno.prg",
+					"settings":
+					{
+						"buffer_size": 59289,
+						"regions":
+						{
+						},
+						"selection":
+						[
+							[
+								2829,
+								2838
+							]
+						],
+						"settings":
+						{
+							"syntax": "Packages/harbour/harbour/Harbour.tmLanguage",
+							"tab_size": 3,
+							"translate_tabs_to_spaces": true
+						},
+						"translation.x": 0.0,
+						"translation.y": 1187.0,
 						"zoom_level": 1.0
 					},
 					"type": "text"

@@ -5372,7 +5372,7 @@ end if
                            lCalcDeta( aTmp, aTmpFac ) }
 
    ACTIVATE DIALOG oDlg CENTER
-//      ON INIT     ( msginfo("I1"), EdtDetMenu( aGet[ _CREF ], oDlg ), msginfo("I2") );
+//      ON INIT     ( EdtDetMenu( aGet[ _CREF ], oDlg ) );
 //      CENTER
 
    //EndDetMenu()

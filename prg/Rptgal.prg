@@ -2408,9 +2408,9 @@ Function TComercio()
 
 Return nil
 
-Function TOrdenComanda()
+/*Function TOrdenComanda()
 
-Return nil
+Return nil*/
 
 /*
 //---------------------------------------------------------------------------//

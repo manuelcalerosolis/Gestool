@@ -1054,6 +1054,7 @@ TipoImpresora.prg       \
 TCalenda.prg            \
 TDataCenter.prg         \
 Valtostr.prg            \
+OrdenComanda.prg 		\
 
 C               =       \
 Metafi32.c              \
@@ -2112,6 +2113,7 @@ TipoImpresora.obj       \
 TCalenda.obj            \
 TDataCenter.obj         \
 Valtostr.obj            \
+OrdenComanda.obj 		\
 
 .PRG.OBJ:
   	$(HB)\Bin\Harbour $< /n /po$(PPO)\$&.ppo /w /es2 /d__GST__ /i$(FWINCLUDE) /i$(HBINCLUDE) /i$(GTINCLUDE) /o$(OBJ)\$&.c
@@ -3170,6 +3172,7 @@ $(OBJ)\TipoImpresora.obj        +
 $(OBJ)\TCalenda.obj             +
 $(OBJ)\TDataCenter.obj          +
 $(OBJ)\Valtostr.obj             +
+$(OBJ)\OrdenComanda.obj 		+
 (HBLIB)\Mapi32.obj
 $<,$*
 $(FWLIB)\xc5h.lib               +

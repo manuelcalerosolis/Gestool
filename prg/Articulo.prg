@@ -228,8 +228,8 @@ STATIC FUNCTION OpenFiles( lExt, cPath )
 
    lExternal      := lExt
 
-   oBlock         := ErrorBlock( { | oError | ApoloBreak( oError ) } )
-   BEGIN SEQUENCE
+   /*oBlock         := ErrorBlock( { | oError | ApoloBreak( oError ) } )
+   BEGIN SEQUENCE*/
 
       oMsgText( 'Abriendo ficheros artículos' )
 
@@ -462,7 +462,7 @@ STATIC FUNCTION OpenFiles( lExt, cPath )
 
       oMsgText( 'Ficheros de artículos abiertos' )
 
-   RECOVER USING oError
+   /*RECOVER USING oError
 
       lOpenFiles           := .f.
 
@@ -470,7 +470,7 @@ STATIC FUNCTION OpenFiles( lExt, cPath )
 
    END SEQUENCE
 
-   ErrorBlock( oBlock )
+   ErrorBlock( oBlock )*/
 
    if !lOpenFiles
       CloseFiles()

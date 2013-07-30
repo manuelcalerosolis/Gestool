@@ -8310,7 +8310,7 @@ METHOD VariableReport( oFastReport )
    oFastReport:AddVariable(     "Cajas sesión",     "Total caja objetivo",                           "GetHbVar('nTotCajaObjetivo')"      )
    oFastReport:AddVariable(     "Cajas sesión",     "Total caja",                                    "GetHbVar('nTotCaja')"              )
 
-   oFastReport:AddVariable(     "Numeros sesión",   "Número de albaranes en sesión",                 "GetHbVar('nTotNumeroAlbaranes')"   )
+   oFastReport:AddVariable(     "Numeros sesión",   "Número de albaranes en sesión",                  "GetHbVar('nTotNumeroAlbaranes')"   )
    oFastReport:AddVariable(     "Numeros sesión",   "Número de facturas en sesión",                  "GetHbVar('nTotNumeroFacturas')"    )
    oFastReport:AddVariable(     "Numeros sesión",   "Número de tickets en sesión",                   "GetHbVar('nTotNumeroTikets')"      )
    oFastReport:AddVariable(     "Numeros sesión",   "Número de vales en sesión",                     "GetHbVar('nTotNumeroVales')"       )
