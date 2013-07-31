@@ -4166,7 +4166,9 @@ METHOD UpdateProductsPrestashop( lChangeImage ) CLASS TComercio
 
    if lChangeImage
 
-      ::DeleteImagesProducts( ::oArt:cCodWeb )
+      ?"Falta actualizar las imagenes al actualizar el artículo"
+
+      /*::DeleteImagesProducts( ::oArt:cCodWeb )
 
       SysRefresh()
 
@@ -4174,7 +4176,7 @@ METHOD UpdateProductsPrestashop( lChangeImage ) CLASS TComercio
 
       SysRefresh()
 
-      ::AppendImagesPrestashop()
+      ::AppendImagesPrestashop()*/
 
    end if
 
