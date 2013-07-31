@@ -6948,10 +6948,10 @@ METHOD OnClickSalaVenta( nSelectOption ) CLASS TpvTactil
       end if
       lGuardaDocumento     := .f.
    end if
-
+/*
    oBlock                  := ErrorBlock( {| oError | ApoloBreak( oError ) } )
    BEGIN SEQUENCE
-
+*/
    /*
    Guarda la venta actual------------------------------------------------------
    */
@@ -7024,7 +7024,7 @@ METHOD OnClickSalaVenta( nSelectOption ) CLASS TpvTactil
       end if
 
    end if
-
+/*
    RECOVER USING oError
 
       msgStop( "Error al montar la salas de venta" + CRLF + ErrorMessage( oError ) )
@@ -7032,7 +7032,7 @@ METHOD OnClickSalaVenta( nSelectOption ) CLASS TpvTactil
    END SEQUENCE
 
    ErrorBlock( oBlock )
-
+*/
 Return ( lReturn )
 
 //---------------------------------------------------------------------------//

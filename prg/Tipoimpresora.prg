@@ -313,6 +313,7 @@ FUNCTION rxTImp( cPath, oMeter )
    END IF
 
    if lExistTable( cPath + "TIPIMP.DBF" )
+
       dbUseArea( .t., cDriver(), cPath + "TIPIMP.DBF", cCheckArea( "TIPIMP", @dbfTImp ), .f. )
 
       if !( dbfTImp )->( neterr() )
@@ -476,7 +477,7 @@ FUNCTION BrwTipoImpresora( oGet, lBigStyle )
       end if
 
    else
-      DEFINE DIALOG oDlg RESOURCE "HELPENTRY"            TITLE "Seleccionar tipo de impresora"
+      DEFINE DIALOG oDlg RESOURCE "HELPENTRY" TITLE "Seleccionar tipo de impresora"
    end if
 
    if lBigStyle

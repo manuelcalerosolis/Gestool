@@ -240,7 +240,9 @@ Return Self
 
 METHOD lResource() CLASS TpvListaTicket
 
-   local oFont    := TFont():New( "Segoe UI",  0, 20, .f., .t. )
+   local oFont                            := TFont():New( "Segoe UI",  0, 20, .f., .t. )
+
+   ::cNumeroTicket                        := nil 
 
    ::oSender:oTiketCabecera:GetStatus()
 
@@ -889,6 +891,8 @@ Return .t.
 //---------------------------------------------------------------------------//
 
 METHOD lPendientes() CLASS TpvListaTicket
+
+   ::cNumeroTicket                     := nil 
 
    DEFINE DIALOG ::oDlg RESOURCE "Tpv_Ticket_Pendiente"
 
