@@ -523,63 +523,15 @@
 			"file": "prg/Tcomercio.prg",
 			"settings":
 			{
-				"buffer_size": 219177,
+				"buffer_size": 219247,
 				"line_ending": "Windows"
 			}
 		},
 		{
-			"file": "prg/Factcli.prg",
+			"file": "prg/Articulo.prg",
 			"settings":
 			{
-				"buffer_size": 808992,
-				"line_ending": "Windows"
-			}
-		},
-		{
-			"file": "prg/Albcli.prg",
-			"settings":
-			{
-				"buffer_size": 644255,
-				"line_ending": "Windows"
-			}
-		},
-		{
-			"file": "prg/Pedcli.prg",
-			"settings":
-			{
-				"buffer_size": 654368,
-				"line_ending": "Windows"
-			}
-		},
-		{
-			"file": "prg/Precli.prg",
-			"settings":
-			{
-				"buffer_size": 400468,
-				"line_ending": "Windows"
-			}
-		},
-		{
-			"file": "prg/Satcli.prg",
-			"settings":
-			{
-				"buffer_size": 384257,
-				"line_ending": "Windows"
-			}
-		},
-		{
-			"file": "prg/Turno.prg",
-			"settings":
-			{
-				"buffer_size": 353883,
-				"line_ending": "Windows"
-			}
-		},
-		{
-			"file": "prg/Ttotturno.prg",
-			"settings":
-			{
-				"buffer_size": 59289,
+				"buffer_size": 674024,
 				"line_ending": "Windows"
 			}
 		}
@@ -616,15 +568,30 @@
 	},
 	"file_history":
 	[
-		"/C/fw195/Gestool/prg/Factcli.prg",
+		"/C/fw195/Gestool/prg/Stock.prg",
+		"/C/fw195/Gestool/prg/Satcli.prg",
+		"/C/fw195/Gestool/prg/Precli.prg",
+		"/C/fw195/Gestool/prg/Pedcli.prg",
+		"/C/fw195/Gestool/prg/Albcli.prg",
 		"/C/fw195/Gestool/prg/Brwvta.prg",
+		"/C/fw195/Gestool/prg/Factcli.prg",
+		"/C/fw195/Gestool/prg/Tfastventasproveedores.prg",
+		"/C/fw195/Gestool/prg/Tfastventasarticulos.prg",
+		"/C/fw195/Gestool/prg/Tfastventasclientes.prg",
+		"/C/fw195/Gestool/prg/Tfastreportinfgen.prg",
+		"/C/fw195/Gestool/prg/Turno.prg",
+		"/C/fw195/Gestool/prg/Ttotturno.prg",
+		"/C/fw195/Gestool/Hx.mak",
+		"/C/fw195/Gestool/prg/Rptgal.prg",
+		"/C/fw195/Gestool/prg/Articulo.prg",
+		"/C/fw195/Gestool/Lx.mak",
+		"/C/fw195/Gestool/prg/Ordencomanda.prg",
 		"/C/AppServ/www/zemtrum/tienda/themes/zemtrum/css/authentication.css",
 		"/C/AppServ/www/zemtrum/tienda/controllers/front/AuthController.php",
 		"/C/AppServ/www/zemtrum/tienda/classes/controller/AdminController.php",
 		"/C/AppServ/www/zemtrum/tienda/controllers/front/MyAccountController.php",
 		"/C/AppServ/www/zemtrum/tienda/authentication.php",
 		"/C/AppServ/www/zemtrum/tienda/themes/zemtrum/authentication.tpl",
-		"/C/fw195/Gestool/prg/Articulo.prg",
 		"/C/Users/Villa/Desktop/mailchimp/mailchimp.tpl",
 		"/C/Users/Villa/Desktop/memberalert/mails/es/memberalert.html",
 		"/C/Users/Villa/Desktop/memberalert/memberalert.php",
@@ -648,11 +615,8 @@
 		"/C/Users/Villa/Desktop/zemtrum/index.php",
 		"/C/AppServ/www/zemtrum/tienda/js/jquery.reveal.js",
 		"/C/AppServ/www/zemtrum/tienda/modules/blockuserinfo/blockuserinfo.css",
-		"/C/fw195/Gestool/prg/Stock.prg",
 		"/C/fw195/Gestool/prg/Tpv.prg",
-		"/C/fw195/Gestool/prg/Pedcli.prg",
 		"/C/Users/Villa/Desktop/zemtrum/conocenos.php",
-		"/C/fw195/Gestool/prg/Tfastventasclientes.prg",
 		"/C/fw195/Gestool/prg/Oferta.prg",
 		"/C/fw195/Gestool/prg/Reccli.prg",
 		"/C/Users/Villa/Desktop/TIKET.CDX",
@@ -690,11 +654,8 @@
 		"/C/AppServ/www/zemtrum/tienda/themes/zemtrum/lang/es.php",
 		"/C/AppServ/www/zemtrum/tienda/themes/zemtrum/product-list.tpl",
 		"/C/AppServ/www/zemtrum/tienda/js/jquery/plugins/jqzoom/jquery.jqzoom.css",
-		"/C/fw195/Gestool/prg/Satcli.prg",
-		"/C/fw195/Gestool/prg/Precli.prg",
 		"/C/Users/Villa/AppData/Roaming/Sublime Text 2/Packages/Default/Preferences.sublime-settings",
 		"/C/fw195/Gestool/prg/Facrec.prg",
-		"/C/fw195/Gestool/prg/Albcli.prg",
 		"/C/fw195/Gestool/prg/Facant.prg",
 		"/C/fw195/Gestool/prg/Obras.prg",
 		"/C/fw195/Gestool/prg/Recprv.prg",
@@ -713,7 +674,6 @@
 		"/C/fw195/Gestool/prg/Tpvcobros.prg",
 		"/C/fw195/Gestool/prg/Tpvlistaticket.prg",
 		"/C/fw195/Gestool/include/Factu.ch",
-		"/C/fw195/Gestool/prg/Tfastreportinfgen.prg",
 		"/C/fw195/Gestool/prg/Tcajon.prg",
 		"/C/fw195/Gestool/prg/Confcajporta.prg",
 		"/C/fw195/Gestool/prg/Abnprv.prg",
@@ -730,20 +690,12 @@
 		"/C/fw195/Gestool/prg/Provee.prg",
 		"/C/fw195/Gestool/resource/Gstimage12.rc",
 		"/C/fw195/Gestool/prg/Taccesos.prg",
-		"/C/fw195/Gestool/prg/Tfastventasarticulos.prg",
-		"/C/fw195/Gestool/prg/Rptgal.prg",
 		"/C/fw195/Gestool/prg/Tctacli.prg",
 		"/C/fw195/Gestool/prg/Tctaprv.prg",
-		"/C/fw195/Gestool/prg/Turno.prg",
 		"/C/fw195/Gestool/prg/Familia.prg",
 		"/C/fw195/Gestool/prg/Accesscode.prg",
 		"/C/fw195/Gestool/prg/client",
-		"/C/fw195/Gestool/prg/Facauto.prg",
-		"/C/fw195/Gestool/prg/Remmov.prg",
-		"/C/fw195/Gestool/prg/Xtotart.prg",
-		"/C/fw195/Gestool/prg/Xtotalm.prg",
-		"/C/fw195/Gestool/prg/Xvalalmg.prg",
-		"/C/fw195/Gestool/prg/Trazalote.prg"
+		"/C/fw195/Gestool/prg/Facauto.prg"
 	],
 	"find":
 	{
@@ -751,7 +703,7 @@
 	},
 	"find_in_files":
 	{
-		"height": 93.0,
+		"height": 0.0,
 		"where_history":
 		[
 			"C:\\fw195\\Gestool\\prg",
@@ -787,6 +739,25 @@
 		"case_sensitive": false,
 		"find_history":
 		[
+			"UpdateProductsPrestashop",
+			"ActualizaProductsPrestashop",
+			"nriesgo",
+			"Actualizaweb",
+			"ActualizaProductsPrestashop",
+			"UpdateProductsPrestashop",
+			"UpdatePropiedadesPrestashop",
+			"UpdateLineasPropiedades",
+			"TFtp",
+			"DeleteImagesCategories",
+			"ActualizaCategoriesPrestashop",
+			"expand",
+			"BuildNode",
+			"tordencomanda",
+			"orden",
+			"OpenFiles",
+			"on brw",
+			"brw",
+			"\"\n",
 			"facturas de clientes",
 			"factura de clientes",
 			"factura clien",
@@ -895,26 +866,7 @@
 			"od appendpropi",
 			"insertgrupocategories",
 			"NIDORINO",
-			"AddCategoriaRaiz",
-			"insertgrupocategories",
-			"NIDORINO",
-			"od insertca",
-			"NIDORINO",
-			"delidfami",
-			"od delidfami",
-			"NIDORINO",
-			"od appendfamilia",
-			"od appendfa",
-			"od delidiva",
-			"od del",
-			"appendfabricante",
-			"appendfafricante",
-			"exportar",
-			"lReady",
-			"GetInstance",
-			"AppZone",
-			"AppendClientesToPrestashop",
-			"function"
+			"AddCategoriaRaiz"
 		],
 		"highlight": true,
 		"in_selection": false,
@@ -941,7 +893,7 @@
 	"groups":
 	[
 		{
-			"selected": 6,
+			"selected": 0,
 			"sheets":
 			[
 				{
@@ -949,15 +901,15 @@
 					"file": "prg/Tcomercio.prg",
 					"settings":
 					{
-						"buffer_size": 219177,
+						"buffer_size": 219247,
 						"regions":
 						{
 						},
 						"selection":
 						[
 							[
-								119012,
-								119012
+								146439,
+								146439
 							]
 						],
 						"settings":
@@ -967,51 +919,25 @@
 							"translate_tabs_to_spaces": true
 						},
 						"translation.x": 0.0,
-						"translation.y": 68124.0,
+						"translation.y": 78245.0,
 						"zoom_level": 1.0
 					},
 					"type": "text"
 				},
 				{
 					"buffer": 1,
-					"file": "prg/Factcli.prg",
+					"file": "prg/Articulo.prg",
 					"settings":
 					{
-						"buffer_size": 808992,
+						"buffer_size": 674024,
 						"regions":
 						{
 						},
 						"selection":
 						[
 							[
-								178814,
-								178814
-							]
-						],
-						"settings":
-						{
-							"syntax": "Packages/harbour/harbour/Harbour.tmLanguage"
-						},
-						"translation.x": 0.0,
-						"translation.y": 101754.0,
-						"zoom_level": 1.0
-					},
-					"type": "text"
-				},
-				{
-					"buffer": 2,
-					"file": "prg/Albcli.prg",
-					"settings":
-					{
-						"buffer_size": 644255,
-						"regions":
-						{
-						},
-						"selection":
-						[
-							[
-								157184,
-								157184
+								231160,
+								231172
 							]
 						],
 						"settings":
@@ -1021,145 +947,7 @@
 							"translate_tabs_to_spaces": true
 						},
 						"translation.x": 0.0,
-						"translation.y": 89974.0,
-						"zoom_level": 1.0
-					},
-					"type": "text"
-				},
-				{
-					"buffer": 3,
-					"file": "prg/Pedcli.prg",
-					"settings":
-					{
-						"buffer_size": 654368,
-						"regions":
-						{
-						},
-						"selection":
-						[
-							[
-								180228,
-								180228
-							]
-						],
-						"settings":
-						{
-							"syntax": "Packages/harbour/harbour/Harbour.tmLanguage"
-						},
-						"translation.x": 0.0,
-						"translation.y": 95028.0,
-						"zoom_level": 1.0
-					},
-					"type": "text"
-				},
-				{
-					"buffer": 4,
-					"file": "prg/Precli.prg",
-					"settings":
-					{
-						"buffer_size": 400468,
-						"regions":
-						{
-						},
-						"selection":
-						[
-							[
-								130296,
-								130296
-							]
-						],
-						"settings":
-						{
-							"syntax": "Packages/harbour/harbour/Harbour.tmLanguage",
-							"tab_size": 3,
-							"translate_tabs_to_spaces": true
-						},
-						"translation.x": 0.0,
-						"translation.y": 75648.0,
-						"zoom_level": 1.0
-					},
-					"type": "text"
-				},
-				{
-					"buffer": 5,
-					"file": "prg/Satcli.prg",
-					"settings":
-					{
-						"buffer_size": 384257,
-						"regions":
-						{
-						},
-						"selection":
-						[
-							[
-								123628,
-								123628
-							]
-						],
-						"settings":
-						{
-							"syntax": "Packages/harbour/harbour/Harbour.tmLanguage",
-							"tab_size": 3,
-							"translate_tabs_to_spaces": true
-						},
-						"translation.x": 0.0,
-						"translation.y": 70936.0,
-						"zoom_level": 1.0
-					},
-					"type": "text"
-				},
-				{
-					"buffer": 6,
-					"file": "prg/Turno.prg",
-					"settings":
-					{
-						"buffer_size": 353883,
-						"regions":
-						{
-						},
-						"selection":
-						[
-							[
-								248169,
-								248169
-							]
-						],
-						"settings":
-						{
-							"syntax": "Packages/harbour/harbour/Harbour.tmLanguage",
-							"tab_size": 3,
-							"translate_tabs_to_spaces": true
-						},
-						"translation.x": 0.0,
-						"translation.y": 157424.0,
-						"zoom_level": 1.0
-					},
-					"type": "text"
-				},
-				{
-					"buffer": 7,
-					"file": "prg/Ttotturno.prg",
-					"settings":
-					{
-						"buffer_size": 59289,
-						"regions":
-						{
-						},
-						"selection":
-						[
-							[
-								2829,
-								2838
-							]
-						],
-						"settings":
-						{
-							"syntax": "Packages/harbour/harbour/Harbour.tmLanguage",
-							"tab_size": 3,
-							"translate_tabs_to_spaces": true
-						},
-						"translation.x": 0.0,
-						"translation.y": 1187.0,
+						"translation.y": 111786.0,
 						"zoom_level": 1.0
 					},
 					"type": "text"
