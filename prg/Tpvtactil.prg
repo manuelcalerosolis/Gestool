@@ -360,8 +360,36 @@ CLASS TpvTactil
    METHOD End()
 
    METHOD OpenFiles()
-
    METHOD CloseFiles()
+
+   INLINE METHOD InstanceFastReport()
+
+      /*
+      Creamos el objeto FastReport---------------------------------------------
+      */
+
+      ::oFastReport              := frReportManager():New()
+      ::oFastReport:LoadLangRes( "Spanish.Xml" )
+
+      ::DataReport()
+
+      // ::oTurno:SetFastReport( ::oFastReport )
+
+      RETURN ( Self )
+
+   ENDMETHOD
+
+   INLINE METHOD DestroyFastReport()
+
+      if !Empty( ::oFastReport )
+         ::oFastReport:DestroyFr()
+      end if
+
+      ::oFastReport     := nil
+
+      RETURN ( Self )
+
+   ENDMETHOD
 
    METHOD Resource()
    METHOD ResizedResource()
@@ -1782,10 +1810,6 @@ METHOD End() CLASS TpvTactil
       ::oTpvListaTicket:End()
    end if
 
-   if !Empty( ::oFastReport )
-      ::oFastReport:DestroyFr()
-   end if
-
    if !Empty( ::oTurno )
       ::oTurno:End()
    end if
@@ -1806,7 +1830,7 @@ METHOD End() CLASS TpvTactil
       ::CloseFiles()
    end if
 
-   ::oFastReport     := nil
+   ::DestroyFastReport()
 
    ::oTpvCobros      := nil
    ::oTpvListaTicket := nil
@@ -1905,14 +1929,9 @@ METHOD Activate( lAlone ) CLASS TpvTactil
       Creamos el objeto FastReport---------------------------------------------
       */
 
-      ::oFastReport              := frReportManager():New()
-      ::oFastReport:LoadLangRes( "Spanish.Xml" )
+      ::InstanceFastReport()
 
-      ::DataReport()
-
-      ::oTurno:SetFastReport( ::oFastReport )
-
-      // ::VariableReport()
+     // ::VariableReport()
 
       /*
       Cargamos los valores por defecto-----------------------------------------
@@ -6313,11 +6332,15 @@ METHOD OnClickCloseTurno( lParcial ) CLASS TpvTactil
 
       ::InitDocumento()
 
+      ::DestroyFastReport()
+
       if ::oTurno:OpenFiles()
          ::oTurno:lArqueoTurno( .f., lParcial )
       else
          ::oTurno:CloseFiles()
       end if
+
+      ::InstanceFastReport()
 
       ::SetInfo()
 
