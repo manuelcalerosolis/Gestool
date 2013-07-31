@@ -523,7 +523,7 @@
 			"file": "prg/Tcomercio.prg",
 			"settings":
 			{
-				"buffer_size": 219247,
+				"buffer_size": 220197,
 				"line_ending": "Windows"
 			}
 		},
@@ -901,15 +901,15 @@
 					"file": "prg/Tcomercio.prg",
 					"settings":
 					{
-						"buffer_size": 219247,
+						"buffer_size": 220197,
 						"regions":
 						{
 						},
 						"selection":
 						[
 							[
-								146439,
-								146439
+								141548,
+								141468
 							]
 						],
 						"settings":
@@ -919,7 +919,7 @@
 							"translate_tabs_to_spaces": true
 						},
 						"translation.x": 0.0,
-						"translation.y": 78245.0,
+						"translation.y": 78880.0,
 						"zoom_level": 1.0
 					},
 					"type": "text"

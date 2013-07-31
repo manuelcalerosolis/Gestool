@@ -4115,6 +4115,7 @@ METHOD UpdateProductsPrestashop( lChangeImage ) CLASS TComercio
    local cCommand    := ""
    local lReturn     := .f.
    local nParent     := ::GetParentCategories()
+   local nTotStock   := 0
 
    /*
    ----------------------------------------------------------------------------
@@ -4158,9 +4159,38 @@ METHOD UpdateProductsPrestashop( lChangeImage ) CLASS TComercio
 
    /*
    ----------------------------------------------------------------------------
-   ACTUALIZAMOS IMAGENES DEL ARTÍCULO------------------------------------------
+   Actualizamos el stock total del producto------------------------------------
    ----------------------------------------------------------------------------
    */
+
+   nTotStock   := ::oStock:nStockArticulo( ::oArt:Codigo )
+
+   cCommand          := "UPDATE " + ::cPrefixTable( "stock_available" ) + " SET " + ;
+                           "q='" + AllTrim( Str( nTotStock ) ) + "' " + ;
+                        "WHERE id_product=" + AllTrim( Str( ::oArt:cCodWeb ) ) + " AND id_product_attribute=0 "
+
+   lReturn           := TMSCommand():New( ::oCon ):ExecDirect( cCommand )
+
+   /*
+   ----------------------------------------------------------------------------
+   ACTUALIZAMOS PRECIOS POR PROPIEDADES DEL ARTICULO---------------------------
+   ----------------------------------------------------------------------------
+   */
+
+
+
+
+
+
+
+
+
+
+   /*
+   ----------------------------------------------------------------------------
+   ACTUALIZAMOS IMAGENES DEL ARTÍCULO------------------------------------------
+   ----------------------------------------------------------------------------
+   */ 
 
    SysRefresh()
 
