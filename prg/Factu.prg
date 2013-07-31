@@ -4356,6 +4356,8 @@ Return nil
 
 Static Function InitMainTactilWindow()
 
+   lDemoMode( .f. )
+
    SelCajTactil( , .t. )
 
    TpvTactil():New():Activate( .t. )
