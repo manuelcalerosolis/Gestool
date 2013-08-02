@@ -362,22 +362,24 @@ CLASS TpvTactil
    METHOD OpenFiles()
    METHOD CloseFiles()
 
+   //------------------------------------------------------------------------//
+
    INLINE METHOD InstanceFastReport()
 
       /*
       Creamos el objeto FastReport---------------------------------------------
       */
 
-      ::oFastReport              := frReportManager():New()
+      ::oFastReport     := frReportManager():New()
       ::oFastReport:LoadLangRes( "Spanish.Xml" )
 
       ::DataReport()
 
-      // ::oTurno:SetFastReport( ::oFastReport )
-
       RETURN ( Self )
 
    ENDMETHOD
+
+   //------------------------------------------------------------------------//
 
    INLINE METHOD DestroyFastReport()
 
@@ -390,6 +392,8 @@ CLASS TpvTactil
       RETURN ( Self )
 
    ENDMETHOD
+
+   //------------------------------------------------------------------------//
 
    METHOD Resource()
    METHOD ResizedResource()

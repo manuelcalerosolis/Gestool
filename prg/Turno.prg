@@ -505,6 +505,8 @@ CLASS TTurno FROM TMasDet
    Method IncNumberToSend()   INLINE   WritePProString( "Numero", ::cText, cValToChar( ++::nNumberSend ), ::cIniFile )
    Method lContaTiket()       VIRTUAL
 
+   METHOD SetCurrentTurno()   INLINE   ( ::cCurTurno  := ::oDbf:cNumTur + ::oDbf:cSufTur )
+
    Method Process()
 
    Method Save()
@@ -839,7 +841,7 @@ CLASS TTurno FROM TMasDet
       cInfoAperturaCierreCaja       += Dtoc( ::oDbfCaj:FieldGetByName( "dFecOpe" ) ) + Space(1)
       cInfoAperturaCierreCaja       += ::oDbfCaj:FieldGetByName( "cHorOpe" ) + Space(1)
       cInfoAperturaCierreCaja       += ::oDbfCaj:FieldGetByName( "cCajOpe" ) + Space(1)
-      cInfoAperturaCierreCaja       += Capitalize( oRetFld( ::oDbfCaj:FieldGetByName( "cCajOpe" ), ::oUser ) )
+      cInfoAperturaCierreCaja       += Capitalize( oRetFld( ::oDbfCaj:FieldGetByName( "cCajOpe" ), ::oUser ) ) 
       cInfoAperturaCierreCaja       += CRLF
 
       if ::oDbfCaj:FieldGetByName( "lCajClo" )
@@ -847,13 +849,16 @@ CLASS TTurno FROM TMasDet
          cInfoAperturaCierreCaja    += ::oDbfCaj:FieldGetByName( "cHorClo" ) + Space(1)
          cInfoAperturaCierreCaja    += ::oDbfCaj:FieldGetByName( "cCajTur" ) + Space(1)
          cInfoAperturaCierreCaja    += Capitalize( oRetFld( ::oDbfCaj:FieldGetByName( "cCajTur" ), ::oUser ) ) 
-      end if 
+      end if  
       
       Return ( cInfoAperturaCierreCaja )
 
    EndMethod
 
    //-------------------------------------------------------------------------//
+
+   METHOD cNumeroCurrentTurno()  INLINE ( SubStr( ::cCurTurno, 1, 6 ) )
+   METHOD cSufijoCurrentTurno()  INLINE ( SubStr( ::cCurTurno, -2 ) )
 
 END CLASS
 
@@ -2462,6 +2467,7 @@ Method CreateTurno( oDlg )
    */
 
    if Empty( ::GetLastOpen() )
+
       ::oDbf:Append()
       ::oDbf:cNumTur    := ::cValidTurno()
       ::oDbf:cSufTur    := RetSufEmp()
@@ -2470,22 +2476,22 @@ Method CreateTurno( oDlg )
       ::oDbf:cCajTur    := ::cCajeroTurno
       ::oDbf:nStaTur    := cajAbierta
       ::oDbf:Save()
+
+      ::SetCurrentTurno()
+
    end if
 
-   /*
-   Cargamos la caja------------------------------------------------------------
-   */
-
-   ::LoadCaja( ::oDbf:cNumTur + ::oDbf:cSufTur )
+   ::LoadCaja()
 
    /*
    Creamos el apunte de caja---------------------------------------------------
    */
 
    if !Empty( ::nImporteTurno )
+
       ::oEntSal:Append()
-      ::oEntSal:cTurEnt := ::oDbf:cNumTur
-      ::oEntSal:cSufEnt := ::oDbf:cSufTur
+      ::oEntSal:cTurEnt := ::cNumeroCurrentTurno()
+      ::oEntSal:cSufEnt := ::cSufijoCurrentTurno()
       ::oEntSal:dFecEnt := ::dOpenTurno
       ::oEntSal:cHora   := ::cHoraTurno
       ::oEntSal:cCodUsr := ::cCajeroTurno
@@ -2498,6 +2504,7 @@ Method CreateTurno( oDlg )
       ::oEntSal:cCodDiv := cDivEmp()
       ::oEntSal:nVdvDiv := nValDiv( cDivEmp(), ::oDbfDiv:cAlias  )
       ::oEntSal:Save()
+
    end if
 
    oDlg:end( IDOK )
@@ -2789,11 +2796,11 @@ METHOD InvCierre( oDlg, oMsg )
 
    oMsg:SetText( 'Estableciendo la nueva sesión' )
    
-   cCurSesion( SubStr( ::cCurTurno, 1, 6 ) )
+   cCurSesion( ::cNumeroCurrentTurno() )
 
    oMsg:SetText( 'Escribiendo contadores' )
    
-   SetFieldEmpresa( Val( SubStr( ::cCurTurno, 1, 6 ) ), "nNumTur" )
+   SetFieldEmpresa( Val( ::cNumeroCurrentTurno() ), "nNumTur" )
 
    oMsg:SetText( 'Chequeando el estado de las sesiones' )
 
@@ -4418,9 +4425,10 @@ Method LoadContadores( lReLoad )
             else
 
                if ::oDbfDet:Append()
+
                   ::oDbfDet:Blank()
-                  ::oDbfDet:cNumTur    := SubStr( ::cCurTurno, 1, 6 )
-                  ::oDbfDet:cSufTur    := SubStr( ::cCurTurno, -2 )
+                  ::oDbfDet:cNumTur    := ::cNumeroCurrentTurno()
+                  ::oDbfDet:cSufTur    := ::cSufijoCurrentTurno()
                   ::oDbfDet:cCodArt    := ::oArticulo:Codigo
                   ::oDbfDet:cNomArt    := ::oArticulo:Nombre
                   ::oDbfDet:nCanAnt    := ::oArticulo:nCntAct
@@ -4428,7 +4436,9 @@ Method LoadContadores( lReLoad )
                   ::oDbfDet:nPvpArt    := ::oArticulo:PvtaIva1
                   ::oDbfDet:nIvaArt    := nIva
                   ::oDbfDet:nValImp    := ::oNewImp:nValImp( ::oArticulo:cCodImp, ::oArticulo:lIvaInc, nIva )
+               
                   ::oDbfDet:Save()
+               
                end if
 
             end if
@@ -6111,11 +6121,11 @@ METHOD DlgImprimir( nDevice, lTactil )
 
    end if
 
-      ::cCurTurno    := ::oDbf:cNumTur + ::oDbf:cSufTur
+   ::SetCurrentTurno()
 
-      /*
-      Cajas____________________________________________________________________
-      */
+   /*
+   Cajas____________________________________________________________________
+   */
 
    if lTactil
 
@@ -11394,7 +11404,7 @@ METHOD CurTurno( lDelega )
    ::cCurTurno       := ::GetLastOpen()
 
    if !lDelega
-      ::cCurTurno    := SubStr( ::cCurTurno, 1, 6 )
+      ::cCurTurno    := ::cNumeroCurrentTurno()
    end if
 
 RETURN ( ::cCurTurno )
