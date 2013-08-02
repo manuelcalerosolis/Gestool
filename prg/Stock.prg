@@ -205,6 +205,8 @@ CLASS TStock
 
    METHOD Integra( sStock )
 
+   METHOD nOperacionesCliente(cCodigoCliente, lRiesgo)
+
    METHOD lValidNumeroSerie( cCodArt, cCodAlm, nNumSer, lMessage )
 
    METHOD BrowseNumeroSerie( cCodArt, cCodAlm )
@@ -218,7 +220,9 @@ CLASS TStock
    METHOD SetTmpFacRecL( tmpFacRecL )        INLINE   ( ::tmpFacRecL := tmpFacRecL )
    METHOD SetTmpFacRecS( tmpFacRecS )        INLINE   ( ::tmpFacRecS := tmpFacRecS )
 
-   METHOD nRiesgo( cCodigoCliente )
+   METHOD nRiesgo( cCodigoCliente )          INLINE   ( ::nOperacionesCliente( cCodigoCliente, .t. ) )
+   METHOD nFacturado( cCodigoCliente )       INLINE   ( ::nOperacionesCliente( cCodigoCliente, .f. ) )
+
    METHOD SetRiesgo( cCodigoCliente, oGetRiesgo, nRiesgoCliente )
 
    METHOD nCostoMedio( cCodArt, cCodAlm, cCodPr1, cCodPr2, cValPr1, cValPr2 )
@@ -5781,7 +5785,7 @@ Return ( uRet )
 
 //---------------------------------------------------------------------------//
 
-Method nRiesgo( cCodigoCliente )
+Method nOperacionesCliente( cCodigoCliente, lRiesgo )
 
    local nRec
    local nOrd
@@ -5796,6 +5800,8 @@ Method nRiesgo( cCodigoCliente )
       Return ( nRiesgo )
    end if
 
+   DEFAULT lRiesgo   := .t.
+
    oBlock            := ErrorBlock( {| oError | ApoloBreak( oError ) } )
    BEGIN SEQUENCE
 
@@ -5806,7 +5812,11 @@ Method nRiesgo( cCodigoCliente )
 
       while ( Alltrim( ( ::cAlbCliT )->cCodCli ) == Alltrim( cCodigoCliente ) ) .and. !( ::cAlbCliT )->( Eof() )
 
-         nRiesgo     += ( ::cAlbCliT )->nTotAlb - ( ::cAlbCliT )->nTotPag
+         nRiesgo     += ( ::cAlbCliT )->nTotAlb
+
+         if lRiesgo
+            nRiesgo  -= ( ::cAlbCliT )->nTotPag
+         end if 
 
          ( ::cAlbCliT )->( dbSkip() )
 
@@ -5822,13 +5832,17 @@ Method nRiesgo( cCodigoCliente )
    // Pagos no cobrados en facturas--------------------------------------------
 
    nRec              := ( ::cFacCliP )->( Recno() )
-   nOrd              := ( ::cFacCliP )->( OrdSetFocus( "lCodCli" ) )
+   nOrd              := ( ::cFacCliP )->( OrdSetFocus( "cCodCli" ) )
 
    if ( ::cFacCliP )->( dbSeek( cCodigoCliente ) )
 
       while ( Alltrim( ( ::cFacCliP )->cCodCli ) == Alltrim( cCodigoCliente ) ) .and. !( ::cFacCliP )->( Eof() )
 
          nRiesgo     += ( ::cFacCliP )->nImporte
+
+         if lRiesgo .and. ( ::cFacCliP )->lCobrado
+            nRiesgo  -= ( ::cFacCliP )->nImporte
+         end if
 
          ( ::cFacCliP )->( dbSkip() )
 
@@ -5850,7 +5864,9 @@ Method nRiesgo( cCodigoCliente )
 
       while ( Alltrim( ( ::cAntCliT )->cCodCli ) == Alltrim( cCodigoCliente ) ) .and. !( ::cAntCliT )->( Eof() )
 
-         nRiesgo     -= ( ::cAntCliT )->nTotAnt
+         if lRiesgo
+            nRiesgo  -= ( ::cAntCliT )->nTotAnt
+         end if 
 
          ( ::cAntCliT )->( dbSkip() )
 
@@ -5872,7 +5888,11 @@ Method nRiesgo( cCodigoCliente )
 
       while ( Alltrim( ( ::cTikT )->cCliTik ) == Alltrim( cCodigoCliente ) ) .and. !( ::cTikT )->( Eof() )
 
-         nRiesgo     += ( ( ::cTikT )->nTotTik - ( ::cTikT )->nCobTik )
+         nRiesgo     += ( ::cTikT )->nTotTik 
+
+         if lRiesgo
+            nRiesgo  -= ( ::cTikT )->nCobTik 
+         end if
 
          ( ::cTikT )->( dbSkip() )
 

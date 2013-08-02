@@ -16,6 +16,8 @@ CLASS TFastVentasClientes FROM TFastReportInfGen
    DATA  oCliDoc
    DATA  oCliInc
 
+   DATA  oStock
+
    METHOD lResource( cFld )
 
    METHOD Create()
@@ -41,9 +43,12 @@ CLASS TFastVentasClientes FROM TFastReportInfGen
 
    METHOD AddClientes()
 
-   METHOD cIdeDocumento()  INLINE ( ::oDbf:cClsDoc + ::oDbf:cSerDoc + ::oDbf:cNumDoc + ::oDbf:cSufDoc )
+   METHOD cIdeDocumento()     INLINE ( ::oDbf:cClsDoc + ::oDbf:cSerDoc + ::oDbf:cNumDoc + ::oDbf:cSufDoc )
 
    METHOD preCliInfo( cTitle )
+
+   METHOD RiesgoAlcanzado()   INLINE ( ::oStock:nRiesgo( ::oDbf:cCodCli ) )
+   METHOD TotalFacturado()    INLINE ( ::oStock:nFacturado( ::oDbf:cCodCli))
 
 END CLASS
 
@@ -158,6 +163,15 @@ METHOD OpenFiles() CLASS TFastVentasClientes
 
       DATABASE NEW ::oCliInc  PATH ( cPatCli() ) CLASS "CliInc"   FILE "CliInc.Dbf" VIA ( cDriver() ) SHARED INDEX "CliInc.Cdx"
 
+       /*
+      Stocks de articulos------------------------------------------------------
+      */
+
+      ::oStock                := TStock():Create( cPatGrp() )
+      if !::oStock:lOpenFiles()
+         lOpen                := .f.
+      end if
+
    RECOVER USING oError
 
       msgStop( ErrorMessage( oError ), "Imposible abrir las bases de datos de clientes" )
@@ -259,6 +273,10 @@ METHOD CloseFiles() CLASS TFastVentasClientes
    if !Empty( ::oCliInc ) .and. ( ::oCliInc:Used() )
       ::oCliInc:End()
    end if 
+
+   if !Empty( ::oStock )
+      ::oStock:End()
+   end if
 
 RETURN .t.
 
@@ -581,6 +599,11 @@ METHOD AddVariable() CLASS TFastVentasClientes
          ::AddVariableLineasTicketCliente()
 
    end case
+
+   ::oFastReport:AddVariable(    "Clientes",    "Riesgo alcanzado",   "CallHbFunc( 'oTinfGen', ['RiesgoAlcanzado'])" )
+   ::oFastReport:AddVariable(    "Clientes",    "Total facturado",    "CallHbFunc( 'oTinfGen', ['TotalFacturado'])" )
+
+
 
 Return ( Super:AddVariable() )
 
