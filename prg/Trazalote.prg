@@ -33,7 +33,7 @@ CLASS TTrazarLote
    DATA oHisMov
    DATA oProducT
    DATA oProducL
-   DATA oProducM
+   DATA oProducM 
 
    DATA oMetMsg
    DATA nMetMsg         AS NUMERIC  INIT 0
@@ -75,6 +75,8 @@ CLASS TTrazarLote
    METHOD AddFacCli()
 
    METHOD AddFacRec()
+
+   METHOD AddTikCli()
 
    METHOD AddHisMov()
 
@@ -165,6 +167,12 @@ METHOD OpenFiles()
 
       DATABASE NEW ::oProducM PATH ( cPatEmp() ) FILE "PROMAT.DBF" VIA ( cDriver() ) SHARED INDEX "PROMAT.CDX"
       ::oProducM:OrdSetFocus( "cCodArt" )
+
+      DATABASE NEW ::oTikCliT PATH ( cPatEmp() ) FILE "TIKET.DBF" VIA ( cDriver() ) SHARED INDEX "TIKET.CDX"
+      
+      DATABASE NEW ::oTikCliL PATH ( cPatEmp() ) FILE "TIKEL.Dbf" VIA ( cDriver() ) SHARED INDEX "TIKEL.Cdx"
+      ::oTikCliL:OrdSetFocus( "cCbaTil" )
+
 
       DEFINE TABLE ::oDbfTmp FILE ( ::cFileTrazaLote ) CLASS ( ::cFileTrazaLote ) ALIAS ( ::cFileTrazaLote ) PATH ( cPatTmp() ) VIA ( cLocalDriver() )
 
@@ -307,6 +315,14 @@ METHOD CloseFiles()
 
    if !Empty( ::oDbfTmp )  .and.::oDbfTmp:Used()
       ::oDbfTmp:End()
+   end if
+
+   if !Empty( ::oTikCliT ) .and.::oTikCliT:Used()
+      ::oTikCliT:End()
+   end if
+
+   if !Empty( ::oTikCliL ) .and.::oTikCliL:Used()
+      ::oTikCliL:End()
    end if
 
    dbfErase( cPatTmp() + ::cFileTrazaLote )
@@ -763,6 +779,28 @@ METHOD Search( oLote, oBtnCancel, oBtnBuscar )
 
       end if
 
+      // Tickets-----------------------------------------------
+
+      ::oMetMsg:cText   := "Tickets clientes"
+
+      ::oMetMsg:SetTotal( ::oTikCliL:OrdKeyCount() )
+
+      if ::oTikCliL:Seek( ::cCodigo )
+
+         while ( ::cCodigo == ::oTikCliL:cCbaTil ) .and. !( ::oTikCliL:Eof() )
+
+            if ( ::cLote == ::oTikCliL:cLote .or. Empty( ::cLote ) )
+               ::AddTikCli()
+            end if 
+
+            ::oTikCliL:Skip()
+
+            ::oMetMsg:Set( ::oTikCliL:OrdKeyNo() )
+
+         end while
+
+      end if
+
    // Fin de la busquedas------------------------------------------------------
 
    end if
@@ -1009,6 +1047,26 @@ METHOD AddFacRec()
    ::oDbfTmp:cCodCli    := oRetFld( ::oFacRecL:cSerie + Str( ::oFacRecL:nNumFac ) + ::oFacRecL:cSufFac, ::oFacRecT, "cCodCli" )
    ::oDbfTmp:cNomCli    := oRetFld( ::oFacRecL:cSerie + Str( ::oFacRecL:nNumFac ) + ::oFacRecL:cSufFac, ::oFacRecT, "cNomCli" )
    ::oDbfTmp:cCodObr    := oRetFld( ::oFacRecL:cSerie + Str( ::oFacRecL:nNumFac ) + ::oFacRecL:cSufFac, ::oFacRecT, "cCodObr" )
+   ::oDbfTmp:Save()
+
+RETURN ( Self )
+
+//----------------------------------------------------------------------------//
+
+METHOD AddTikCli()
+
+   ::oDbfTmp:Append()
+   ::oDbfTmp:cTipDoc    := "Ticket de cliente"
+   ::oDbfTmp:cNumDoc    := ::oTikCliL:cSerTil + "/" + Ltrim( Str( ::oTikCliL:cNumTik ) ) + "/" + ::oTikCliL:cSufTik
+   ::oDbfTmp:cDoc       := ::oTikCliL:cSerTil + Str( ::oTikCliL:cNumTik ) + ::oTikCliL:cSufTik
+   ::oDbfTmp:cCodigo    := ::oTikCliL:cCbaTil
+   ::oDbfTmp:cNomArt    := ::oTikCliL:cNomTil
+   ::oDbfTmp:cLote      := ::oTikCliL:cLote
+   ::oDbfTmp:nUnidades  := nTotNTpv( ::oTikCliL:cName )
+   ::oDbfTmp:dFecDoc    := oRetFld( ::oTikCliL:cSerTil + Str( ::oTikCliL:cNumTik ) + ::oTikCliL:cSufTik, ::oTikCliT, "dFecTik" )
+   ::oDbfTmp:cCodCli    := oRetFld( ::oTikCliL:cSerTil + Str( ::oTikCliL:cNumTik ) + ::oTikCliL:cSufTik, ::oTikCliT, "cCliTik" )
+   ::oDbfTmp:cNomCli    := oRetFld( ::oTikCliL:cSerTil + Str( ::oTikCliL:cNumTik ) + ::oTikCliL:cSufTik, ::oTikCliT, "cNomTik" )
+   ::oDbfTmp:cCodObr    := oRetFld( ::oTikCliL:cSerTil + Str( ::oTikCliL:cNumTik ) + ::oTikCliL:cSufTik, ::oTikCliT, "cCodObr" )
    ::oDbfTmp:Save()
 
 RETURN ( Self )
