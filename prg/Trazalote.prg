@@ -386,6 +386,7 @@ METHOD Activate( oMenuItem, oWnd )
                               Space( 6 ) + "Albaranes de clientes",;
                               Space( 6 ) + "Facturas de clientes",;
                               Space( 6 ) + "Facturas rectificativas de clientes",;
+                              Space( 6 ) + "Tickets de clientes",;
                               Space( 3 ) + "Movimiento de almacén",;
                               Space( 3 ) + "Partes de producción",;
                               Space( 6 ) + "Material producido",;
@@ -402,7 +403,8 @@ METHOD Activate( oMenuItem, oWnd )
                               "Document_user1_16",;
                               "Document_delete_16",;
                               "Package_book_red_16",;
-                              "Worker2_Form_Red_16" }
+                              "Worker2_Form_Red_16",;
+                              "Cashier_user1_16" }
 
    if !::OpenFiles()
       return( Self )
@@ -1169,6 +1171,9 @@ METHOD Zoom()
       case Alltrim( ::oDbfTmp:cTipDoc ) == "Material consumido"
          ZoomProduccion( ::oDbfTmp:cDoc, ::oBrw )
 
+      case Alltrim( ::oDbfTmp:cTipDoc ) == "Ticket de cliente"
+         ZooTikCli( ::oDbfTmp:cDoc )   
+
    endcase
 
 return( Self )
@@ -1270,6 +1275,12 @@ METHOD Filtrar()
          ::oDbfTmp:GoTop()
          ::oBrw:Refresh()
 
+      case Alltrim( ::cFiltro ) == "Tickets de clientes"
+         ::oDbfTmp:OrdSetFocus( "cTipDoc" )
+         ::oDbfTmp:OrdScope( "Ticket de cliente" )
+         ::oDbfTmp:GoTop()
+         ::oBrw:Refresh()   
+
    end case
 
 return( nil )
@@ -1312,6 +1323,10 @@ METHOD Visualizar()
 
       case Alltrim( ::oDbfTmp:cTipDoc ) == "Material consumido"
          VisProduccion( ::oDbfTmp:cDoc )
+
+      case Alltrim( ::oDbfTmp:cTipDoc ) == "Ticket de cliente"
+         msgStop( "El documento no se puede visualizar","Información" )
+         //VisTikCli( ::oDbfTmp:cDoc )
 
    endcase
 
@@ -1356,6 +1371,10 @@ METHOD Imprimir()
       case Alltrim( ::oDbfTmp:cTipDoc ) == "Material consumido"
          PrnProduccion( ::oDbfTmp:cDoc )
 
+      case Alltrim( ::oDbfTmp:cTipDoc ) == "Ticket de cliente"
+         msgStop( "El documento no se puede imprimir","Información" )
+         //PrnTikCli( ::oDbfTmp:cDoc )   
+
    endcase
 
 return( nil )
@@ -1398,6 +1417,9 @@ Method nTreeImagen()
 
       case Alltrim( ::oDbfTmp:cTipDoc ) == "Material consumido"
          Return ( 10 )
+
+      case Alltrim( ::oDbfTmp:cTipDoc ) == "Ticket de cliente"
+         Return ( 11 )   
 
    end case
 
