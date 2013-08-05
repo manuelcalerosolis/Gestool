@@ -164,6 +164,10 @@ Ficheros-----------------------------------------------------------------------
 #define __DFECTIK                 70
 #define _NCOSTIL                  71
 #define _CTXTINV                  72
+#define _CORDORD                  73
+#define _CNOMORD                  74
+#define _LDELTIL                  75
+#define _DFECCAD                  76
 
 #define _NNUMREC                   4
 #define _CCODCAJ                   5
@@ -3077,6 +3081,7 @@ Static Function cAlbCli( aTmp, aGet, cNumAlb, oBrwLin )
             ( dbfTmpL )->cGrpFam    := ( dbfAlbCliL )->cGrpFam
             ( dbfTmpL )->nLote      := ( dbfAlbCliL )->nLote
             ( dbfTmpL )->cLote      := ( dbfAlbCliL )->cLote
+            ( dbfTmpL )->dFecCad    := ( dbfAlbCliL )->dFecCad
             ( dbfTmpL )->cCodUsr    := ( dbfAlbCliT )->cCodUsr
             ( dbfTmpL )->nNumLin    := nLastNum( dbfTmpL )
 
@@ -3202,6 +3207,7 @@ static function cPedCli( aTmp, aGet, cNumPed, oBrwLin )
             ( dbfTmpL )->cGrpFam    := ( dbfPedCliL )->cGrpFam
             ( dbfTmpL )->nLote      := ( dbfPedCliL )->nLote
             ( dbfTmpL )->cLote      := ( dbfPedCliL )->cLote
+            ( dbfTmpL )->dFecCad    := ( dbfPedCliL )->dFecCad
             ( dbfTmpL )->cCodUsr    := ( dbfPedCliT )->cCodUsr
             ( dbfTmpL )->nNumLin    := nLastNum( dbfTmpL )
 
@@ -3357,6 +3363,7 @@ static function cPreCli( aTmp, aGet, cNumPre, oBrwLin )
             ( dbfTmpL )->cGrpFam    := ( dbfPreCliL )->cGrpFam
             ( dbfTmpL )->nLote      := ( dbfPreCliL )->nLote
             ( dbfTmpL )->cLote      := ( dbfPreCliL )->cLote
+            ( dbfTmpL )->dFecCad    := ( dbfPreCliL )->dFecCad
             ( dbfTmpL )->cCodUsr    := ( dbfPreCliT )->cCodUsr
             ( dbfTmpL )->nNumLin    := nLastNum( dbfTmpL )
 
@@ -7585,6 +7592,23 @@ STATIC FUNCTION EdtDet( aTmp, aGet, dbfTmpL, oBrw, bWhen, cCodArt, nMode, aTik )
                   aGet[ _CLOTE ]:lNeedGetFocus   := .t.
                end case
 
+            case cName == "Caducidad"
+
+               @ 0, 0 GET  aGet[ _DFECCAD ] VAR aTmp[ _DFECCAD ];
+                           NOBORDER ;
+                           FONT     oBrw:oFont ;
+                           RIGHT ;
+                           OF       oDlgDet
+
+               do case
+               case nCaptura == 1
+                  aGet[ _DFECCAD ]:bWhen           := {|| .f. }
+               case nCaptura == 2
+                  aGet[ _DFECCAD ]:bWhen           := {|| !Empty( aTmp[ _DFECCAD ] ) }
+               case nCaptura == 3
+                  aGet[ _DFECCAD ]:lNeedGetFocus   := .t.
+               end case   
+
             case cName == "Detalle"
 
                @ 0, 0 GET  aGet[ _CNOMTIL ] VAR aTmp[ _CNOMTIL ] ;
@@ -10610,6 +10634,7 @@ STATIC FUNCTION lIsCode( aTmp, dbfTmpL, oBrw )
          ( dbfTmpL )->nPvpTil == aTmp[ _NPVPTIL ]                    .and. ;
          ( dbfTmpL )->nDtoLin == aTmp[ _NDTOLIN ]                    .and. ;
          ( dbfTmpL )->cLote == aTmp[ _CLOTE ]                        .and. ;
+         ( dbfTmpL )->dFecCad == aTmp[ _DFECCAD ]                    .and. ;
          Rtrim( ( dbfTmpL )->cNomTil ) == Rtrim( aTmp[ _CNOMTIL ] )  
 
          /*
@@ -12899,6 +12924,8 @@ Function NameToField( cName )
          cField   := {|| ( dbfTmpL )->cValPr2 }
       case cName == "Lote"
          cField   := {|| ( dbfTmpL )->cLote }
+      case cName == "Caducidad"
+         cField   := {|| ( dbfTmpL )->dFecCad }
       case cName == "Medición 1"
          cField   := {|| Trans( ( dbfTmpL )->nMedUno, MasUnd() ) }
       case cName == "Medición 2"
@@ -15720,6 +15747,7 @@ Function ProcesaPedidosWeb( aTmp )
             ( dbfTmpL )->cCodFam    := ( dbfPedCliL )->cCodFam
             ( dbfTmpL )->cGrpFam    := ( dbfPedCliL )->cGrpFam
             ( dbfTmpL )->nLote      := ( dbfPedCliL )->nLote
+            ( dbfTmpL )->dFecCad    := ( dbfPedCliL )->dFecCad
             ( dbfTmpL )->nNumMed    := ( dbfPedCliL )->nNumMed
             ( dbfTmpL )->nMedUno    := ( dbfPedCliL )->nMedUno
             ( dbfTmpL )->nMedDos    := ( dbfPedCliL )->nMedDos
@@ -18221,6 +18249,7 @@ function aColTik()
    aAdd( aColTik, { "cOrdOrd",  "C",      2,     0, "Código de orden de comanda",         "",                  "", "( cDbfCol )" } )
    aAdd( aColTik, { "cNomOrd",  "C",     30,     0, "Orden de comanda",                   "",                  "", "( cDbfCol )" } )
    aAdd( aColTik, { "lDelTil",  "L",      1,     0, "Línea borrada",                      "",                  "", "( cDbfCol )" } )
+   aAdd( aColTik, { "dFecCad",  "D",      1,     0, "Fecha de caducidad",                 "",                  "", "( cDbfCol )" } )
 
 Return ( aColTik )
 
@@ -19406,6 +19435,12 @@ Static Function AsistenteDevolucionTiket( aTmp, aGet, nMode, lDevolucion )
          :cHeader                := "Lote"
          :bEditValue             := {|| ( dbfTmp )->cLote }
          :nWidth                 := 40
+      end with
+
+      with object ( oBrwDev:AddCol() )
+         :cHeader                := "dFecCad"
+         :bEditValue             := {|| ( dbfTmp )->dFecCad }
+         :nWidth                 := 50
       end with
 
       with object ( oBrwDev:AddCol() )

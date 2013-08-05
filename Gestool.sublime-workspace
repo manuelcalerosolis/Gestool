@@ -523,15 +523,31 @@
 			"file": "prg/Tcomercio.prg",
 			"settings":
 			{
-				"buffer_size": 220197,
+				"buffer_size": 220204,
 				"line_ending": "Windows"
 			}
 		},
 		{
-			"file": "prg/Articulo.prg",
+			"file": "prg/Tpv.prg",
 			"settings":
 			{
-				"buffer_size": 674024,
+				"buffer_size": 667778,
+				"line_ending": "Windows"
+			}
+		},
+		{
+			"file": "prg/Tcaptura.prg",
+			"settings":
+			{
+				"buffer_size": 14082,
+				"line_ending": "Windows"
+			}
+		},
+		{
+			"file": "prg/Tdetcaptura.prg",
+			"settings":
+			{
+				"buffer_size": 11682,
 				"line_ending": "Windows"
 			}
 		}
@@ -568,11 +584,25 @@
 	},
 	"file_history":
 	[
+		"/C/fw195/Gestool/prg/Albcli.prg",
+		"/C/fw195/Gestool/prg/Articulo.prg",
+		"/C/Users/Villa/Desktop/FACTU.PRG",
+		"/C/fw195/Gestool/Hr.bat",
+		"/C/fw195/Gestool/prg/Factu.prg",
+		"/C/fw195/Gestool/Hx.mak",
+		"/C/fw195/Gestool/HPPC.mak",
+		"/C/fw195/Gestool/resource/Gstpda.rc",
+		"/C/fw195/Gestool/resource/Gstdialog.rc",
+		"/C/fw195/Gestool/Hx.bat",
+		"/C/fw195/Gestool/HP.Bat",
+		"/C/fw195/Gestool/Ax.bat",
+		"/C/fw195/camero/HV.Bat",
+		"/C/fw195/camero/HP.Bat",
+		"/C/fw195/camero/HT.Bat",
 		"/C/fw195/Gestool/prg/Stock.prg",
 		"/C/fw195/Gestool/prg/Satcli.prg",
 		"/C/fw195/Gestool/prg/Precli.prg",
 		"/C/fw195/Gestool/prg/Pedcli.prg",
-		"/C/fw195/Gestool/prg/Albcli.prg",
 		"/C/fw195/Gestool/prg/Brwvta.prg",
 		"/C/fw195/Gestool/prg/Factcli.prg",
 		"/C/fw195/Gestool/prg/Tfastventasproveedores.prg",
@@ -581,9 +611,7 @@
 		"/C/fw195/Gestool/prg/Tfastreportinfgen.prg",
 		"/C/fw195/Gestool/prg/Turno.prg",
 		"/C/fw195/Gestool/prg/Ttotturno.prg",
-		"/C/fw195/Gestool/Hx.mak",
 		"/C/fw195/Gestool/prg/Rptgal.prg",
-		"/C/fw195/Gestool/prg/Articulo.prg",
 		"/C/fw195/Gestool/Lx.mak",
 		"/C/fw195/Gestool/prg/Ordencomanda.prg",
 		"/C/AppServ/www/zemtrum/tienda/themes/zemtrum/css/authentication.css",
@@ -603,7 +631,6 @@
 		"/C/Users/Villa/Desktop/Copia web zemtrum 24-07-2013/admin/configuration.php",
 		"/C/Users/Villa/Desktop/Copia web zemtrum 24-07-2013/includes/database_tables.php",
 		"/C/fw195/Gestool/prg/TcomercioOSCOMMERCE.prg",
-		"/C/fw195/Gestool/prg/Factu.prg",
 		"/C/fw195/Gestool/prg/Empresa.prg",
 		"/C/fw195/Gestool/prg/Client.prg",
 		"/C/fw195/Gestool/include/Empresa.ch",
@@ -684,18 +711,7 @@
 		"/C/fw195/Gestool/bin/script/001.prg",
 		"/C/fw195/Gestool/prg/Rectprv.prg",
 		"/C/fw195/Gestool/prg/Autoseek.prg",
-		"/C/fw195/Gestool/prg/Albprov.prg",
-		"/C/fw195/Gestool/prg/Pedprov.prg",
-		"/C/fw195/Gestool/prg/Cfaccli.prg",
-		"/C/fw195/Gestool/prg/Provee.prg",
-		"/C/fw195/Gestool/resource/Gstimage12.rc",
-		"/C/fw195/Gestool/prg/Taccesos.prg",
-		"/C/fw195/Gestool/prg/Tctacli.prg",
-		"/C/fw195/Gestool/prg/Tctaprv.prg",
-		"/C/fw195/Gestool/prg/Familia.prg",
-		"/C/fw195/Gestool/prg/Accesscode.prg",
-		"/C/fw195/Gestool/prg/client",
-		"/C/fw195/Gestool/prg/Facauto.prg"
+		"/C/fw195/Gestool/prg/Albprov.prg"
 	],
 	"find":
 	{
@@ -739,6 +755,19 @@
 		"case_sensitive": false,
 		"find_history":
 		[
+			"lote",
+			"caducidad",
+			"cadu",
+			"#ifndef __PDA__",
+			"on main",
+			"pda",
+			"PDA",
+			"Main(",
+			"prg",
+			"path.obj",
+			"path.prg",
+			"SOURCEPRG",
+			".path.prg",
 			"UpdateProductsPrestashop",
 			"ActualizaProductsPrestashop",
 			"nriesgo",
@@ -853,20 +882,7 @@
 			"od nivapro",
 			"od nivaprov",
 			"insertimage",
-			"od insertofertas",
-			"od updateproducts",
-			"od appendarticulop",
-			"od append",
-			"od insertpropiedadespro",
-			"od insertli",
-			"od actualizapropiedadesp",
-			"od deletepropiedadesp",
-			"NIDORI",
-			"od updatepropie",
-			"od appendpropi",
-			"insertgrupocategories",
-			"NIDORINO",
-			"AddCategoriaRaiz"
+			"od insertofertas"
 		],
 		"highlight": true,
 		"in_selection": false,
@@ -893,7 +909,7 @@
 	"groups":
 	[
 		{
-			"selected": 0,
+			"selected": 3,
 			"sheets":
 			[
 				{
@@ -901,15 +917,15 @@
 					"file": "prg/Tcomercio.prg",
 					"settings":
 					{
-						"buffer_size": 220197,
+						"buffer_size": 220204,
 						"regions":
 						{
 						},
 						"selection":
 						[
 							[
-								141548,
-								141468
+								141562,
+								141562
 							]
 						],
 						"settings":
@@ -919,25 +935,25 @@
 							"translate_tabs_to_spaces": true
 						},
 						"translation.x": 0.0,
-						"translation.y": 78880.0,
+						"translation.y": 78758.0,
 						"zoom_level": 1.0
 					},
 					"type": "text"
 				},
 				{
 					"buffer": 1,
-					"file": "prg/Articulo.prg",
+					"file": "prg/Tpv.prg",
 					"settings":
 					{
-						"buffer_size": 674024,
+						"buffer_size": 667778,
 						"regions":
 						{
 						},
 						"selection":
 						[
 							[
-								231160,
-								231172
+								237295,
+								237295
 							]
 						],
 						"settings":
@@ -947,7 +963,63 @@
 							"translate_tabs_to_spaces": true
 						},
 						"translation.x": 0.0,
-						"translation.y": 111786.0,
+						"translation.y": 144096.0,
+						"zoom_level": 1.0
+					},
+					"type": "text"
+				},
+				{
+					"buffer": 2,
+					"file": "prg/Tcaptura.prg",
+					"settings":
+					{
+						"buffer_size": 14082,
+						"regions":
+						{
+						},
+						"selection":
+						[
+							[
+								14082,
+								14082
+							]
+						],
+						"settings":
+						{
+							"syntax": "Packages/harbour/harbour/Harbour.tmLanguage",
+							"tab_size": 3,
+							"translate_tabs_to_spaces": true
+						},
+						"translation.x": 0.0,
+						"translation.y": 10374.0,
+						"zoom_level": 1.0
+					},
+					"type": "text"
+				},
+				{
+					"buffer": 3,
+					"file": "prg/Tdetcaptura.prg",
+					"settings":
+					{
+						"buffer_size": 11682,
+						"regions":
+						{
+						},
+						"selection":
+						[
+							[
+								6766,
+								6766
+							]
+						],
+						"settings":
+						{
+							"syntax": "Packages/harbour/harbour/Harbour.tmLanguage",
+							"tab_size": 3,
+							"translate_tabs_to_spaces": true
+						},
+						"translation.x": 0.0,
+						"translation.y": 3727.0,
 						"zoom_level": 1.0
 					},
 					"type": "text"

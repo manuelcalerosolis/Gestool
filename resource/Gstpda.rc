@@ -3,7 +3,6 @@
 #include <windows.h>
 #include <commctrl.h>
 #include <richedit.h>
-#include "GstDialog.h"
 
 LANGUAGE LANG_SPANISH,SUBLANG_SPANISH_MODERN
 

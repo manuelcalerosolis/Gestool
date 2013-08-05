@@ -4166,7 +4166,7 @@ METHOD UpdateProductsPrestashop( lChangeImage ) CLASS TComercio
    nTotStock   := ::oStock:nStockArticulo( ::oArt:Codigo )
 
    cCommand          := "UPDATE " + ::cPrefixTable( "stock_available" ) + " SET " + ;
-                           "q='" + AllTrim( Str( nTotStock ) ) + "' " + ;
+                           "quantity='" + AllTrim( Str( nTotStock ) ) + "' " + ;
                         "WHERE id_product=" + AllTrim( Str( ::oArt:cCodWeb ) ) + " AND id_product_attribute=0 "
 
    lReturn           := TMSCommand():New( ::oCon ):ExecDirect( cCommand )
