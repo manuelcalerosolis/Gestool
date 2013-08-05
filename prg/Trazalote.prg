@@ -177,8 +177,8 @@ METHOD OpenFiles()
       DEFINE TABLE ::oDbfTmp FILE ( ::cFileTrazaLote ) CLASS ( ::cFileTrazaLote ) ALIAS ( ::cFileTrazaLote ) PATH ( cPatTmp() ) VIA ( cLocalDriver() )
 
          FIELD NAME "cTipDoc"    TYPE "C" LEN  40 DEC 0 OF ::oDbfTmp
-         FIELD NAME "cNumDoc"    TYPE "C" LEN  12 DEC 0 OF ::oDbfTmp
-         FIELD NAME "cDoc"       TYPE "C" LEN  12 DEC 0 OF ::oDbfTmp
+         FIELD NAME "cNumDoc"    TYPE "C" LEN  20 DEC 0 OF ::oDbfTmp
+         FIELD NAME "cDoc"       TYPE "C" LEN  13 DEC 0 OF ::oDbfTmp
          FIELD NAME "cCodigo"    TYPE "C" LEN  18 DEC 0 OF ::oDbfTmp
          FIELD NAME "cNomArt"    TYPE "C" LEN 100 DEC 0 OF ::oDbfTmp
          FIELD NAME "nUnidades"  TYPE "N" LEN  16 DEC 6 OF ::oDbfTmp
@@ -353,7 +353,7 @@ METHOD Activate( oMenuItem, oWnd )
    local oBtnCancel
    local oBtnBuscar
 
-   DEFAULT  oMenuItem   := "01022"
+   DEFAULT  oMenuItem   := "01023"
    DEFAULT  oWnd        := oWnd()
 
    // Nivel de usuario---------------------------------------------------------
@@ -818,7 +818,7 @@ METHOD Search( oLote, oBtnCancel, oBtnBuscar )
          while ( ::cCodigo == ::oHisMov:cRefMov ) .and. !( ::oHisMov:Eof() )
 
             if ( ::cLote == ::oHisMov:cLote .or. Empty( ::cLote ) )
-               ::AddMovAlm()
+               ::AddHisMov()
             end if 
 
             ::oHisMov:Skip()
@@ -1057,16 +1057,16 @@ METHOD AddTikCli()
 
    ::oDbfTmp:Append()
    ::oDbfTmp:cTipDoc    := "Ticket de cliente"
-   ::oDbfTmp:cNumDoc    := ::oTikCliL:cSerTil + "/" + Ltrim( Str( ::oTikCliL:cNumTik ) ) + "/" + ::oTikCliL:cSufTik
-   ::oDbfTmp:cDoc       := ::oTikCliL:cSerTil + Str( ::oTikCliL:cNumTik ) + ::oTikCliL:cSufTik
+   ::oDbfTmp:cNumDoc    := ::oTikCliL:cSerTil + "/" + Ltrim( ::oTikCliL:cNumTil ) + "/" + ::oTikCliL:cSufTil
+   ::oDbfTmp:cDoc       := ::oTikCliL:cSerTil + ::oTikCliL:cNumTil + ::oTikCliL:cSufTil
    ::oDbfTmp:cCodigo    := ::oTikCliL:cCbaTil
    ::oDbfTmp:cNomArt    := ::oTikCliL:cNomTil
    ::oDbfTmp:cLote      := ::oTikCliL:cLote
    ::oDbfTmp:nUnidades  := nTotNTpv( ::oTikCliL:cName )
-   ::oDbfTmp:dFecDoc    := oRetFld( ::oTikCliL:cSerTil + Str( ::oTikCliL:cNumTik ) + ::oTikCliL:cSufTik, ::oTikCliT, "dFecTik" )
-   ::oDbfTmp:cCodCli    := oRetFld( ::oTikCliL:cSerTil + Str( ::oTikCliL:cNumTik ) + ::oTikCliL:cSufTik, ::oTikCliT, "cCliTik" )
-   ::oDbfTmp:cNomCli    := oRetFld( ::oTikCliL:cSerTil + Str( ::oTikCliL:cNumTik ) + ::oTikCliL:cSufTik, ::oTikCliT, "cNomTik" )
-   ::oDbfTmp:cCodObr    := oRetFld( ::oTikCliL:cSerTil + Str( ::oTikCliL:cNumTik ) + ::oTikCliL:cSufTik, ::oTikCliT, "cCodObr" )
+   ::oDbfTmp:dFecDoc    := oRetFld( ::oTikCliL:cSerTil + ::oTikCliL:cNumTil + ::oTikCliL:cSufTil, ::oTikCliT, "dFecTik" )
+   ::oDbfTmp:cCodCli    := oRetFld( ::oTikCliL:cSerTil + ::oTikCliL:cNumTil + ::oTikCliL:cSufTil, ::oTikCliT, "cCliTik" )
+   ::oDbfTmp:cNomCli    := oRetFld( ::oTikCliL:cSerTil + ::oTikCliL:cNumTil + ::oTikCliL:cSufTil, ::oTikCliT, "cNomTik" )
+   ::oDbfTmp:cCodObr    := oRetFld( ::oTikCliL:cSerTil + ::oTikCliL:cNumTil + ::oTikCliL:cSufTil, ::oTikCliT, "cCodObr" )
    ::oDbfTmp:Save()
 
 RETURN ( Self )
