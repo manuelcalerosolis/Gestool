@@ -50,7 +50,10 @@ CLASS TFastVentasArticulos FROM TFastReportInfGen
    METHOD AddFacturaProveedor()
    METHOD AddRectificativaProveedor()
 
-   METHOD cIdeDocumento()  INLINE ( ::oDbf:cClsDoc + ::oDbf:cSerDoc + ::oDbf:cNumDoc + ::oDbf:cSufDoc ) 
+   METHOD cIdeDocumento()   INLINE ( ::oDbf:cClsDoc + ::oDbf:cSerDoc + ::oDbf:cNumDoc + ::oDbf:cSufDoc ) 
+
+
+   METHOD StockArticulo()   INLINE ( ::oStock:nStockAlmacen( ::oDbf:cCodArt, ::oDbf:cCodAlm, ::oDbf:cValPr1, ::oDbf:cValPr2, ::oDbf:cLote   ) )
 
 END CLASS
 
@@ -906,6 +909,8 @@ METHOD AddVariable() CLASS TFastVentasArticulos
 
 
    end case
+
+      ::oFastReport:AddVariable(    "Articulos",    "Stock actual",   "CallHbFunc( 'oTinfGen', ['StockArticulo'])" )
 
 Return ( Super:AddVariable() )
 

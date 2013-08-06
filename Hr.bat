@@ -13,9 +13,8 @@
 \vce\bin\rc /r /d__FLAT__ /d__MK__ /i\bcc55\include Resource\GstImage10.Rc
 \vce\bin\rc /r /d__FLAT__ /d__MK__ /i\bcc55\include Resource\GstImage11.Rc
 \vce\bin\rc /r /d__FLAT__ /d__MK__ /i\bcc55\include Resource\GstImage12.Rc
-
-rem \vce\bin\rc /r /d__FLAT__ /d__MK__ /i\bcc55\include ..\Resource\GstPda.Rc
-rem \vce\bin\rc /r /d__FLAT__ /d__MK__ /i\bcc55\include ..\Resource\MenuPda.Rc
+\vce\bin\rc /r /d__FLAT__ /d__MK__ /i\bcc55\include Resource\GstPda.Rc
+\vce\bin\rc /r /d__FLAT__ /d__MK__ /i\bcc55\include Resource\MenuPda.Rc
 
 del *.map
 del *.tds

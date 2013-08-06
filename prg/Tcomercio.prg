@@ -236,6 +236,7 @@ CLASS TComercio
    METHOD UpdateLineasPropiedadesPrestashop()
    METHOD DeleteLineasPropiedadesPrestashop()
    METHOD InsertPropiedadesProductPrestashop()
+   METHOD EliminaPropiedadesProductsPrestashop()
    METHOD GetValPrp( nIdPrp, nProductAttibuteId )
 
    METHOD AppendArticuloPrestashop()
@@ -247,6 +248,7 @@ CLASS TComercio
    METHOD DeleteImagesProducts( cCodWeb )
    METHOD InsertImageProductsPrestashop( cCodArt )
    METHOD nIvaProduct( cCodArt )
+   METHOD ActualizaPropiedadesProducts( cCodWeb )
 
    METHOD DelIdArticuloPrestashop()
 
@@ -3540,6 +3542,55 @@ Return ( self )
 
 //---------------------------------------------------------------------------//
 
+METHOD EliminaPropiedadesProductsPrestashop( cCodWeb )
+
+   local oQuery
+   local cCommand    := ""
+
+   /*
+   Borramos las tablas auxiliares de lineas de propiedades---------------------
+   */
+
+   cCommand          := "SELECT * FROM " + ::cPrefixTable( "product_attribute" ) + ;
+                        " WHERE id_product = " + Alltrim( Str( cCodWeb ) )
+
+   oQuery            := TMSQuery():New( ::oCon, cCommand )
+
+   if oQuery:Open() .and. oQuery:RecCount() > 0
+
+      oQuery:GoTop()
+
+      while !oQuery:Eof()
+
+         cCommand    := "DELETE FROM " + ::cPrefixTable( "product_attribute_combination" ) + " WHERE id_product_attribute=" + AllTrim( Str( oQuery:FieldGetbyName( "id_product_attribute" ) ) )
+         TMSCommand():New( ::oCon ):ExecDirect( cCommand )
+
+         cCommand    := "DELETE FROM " + ::cPrefixTable( "product_attribute_shop" ) + " WHERE id_product_attribute=" + AllTrim( Str( oQuery:FieldGetbyName( "id_product_attribute" ) ) )
+         TMSCommand():New( ::oCon ):ExecDirect( cCommand )
+
+         cCommand    := "DELETE FROM " + ::cPrefixTable( "stock_available" ) + " WHERE id_product_attribute=" + AllTrim( Str( oQuery:FieldGetbyName( "id_product_attribute" ) ) )
+         TMSCommand():New( ::oCon ):ExecDirect( cCommand )
+         
+         cCommand    := "DELETE FROM " + ::cPrefixTable( "product_attribute_image" ) + " WHERE id_product_attribute=" + AllTrim( Str( oQuery:FieldGetbyName( "id_product_attribute" ) ) )
+         TMSCommand():New( ::oCon ):ExecDirect( cCommand )
+         
+         oQuery:Skip()
+
+      end while
+
+   end if
+
+   /*
+   Borramos las líneas de propiedades de la tabla attribute--------------------
+   */
+
+   cCommand          := "DELETE FROM " + ::cPrefixTable( "product_attribute" ) + " WHERE id_product=" + AllTrim( Str( cCodWeb ) )
+   TMSCommand():New( ::oCon ):ExecDirect( cCommand )
+
+Return ( self )
+
+//---------------------------------------------------------------------------//
+
 METHOD AppendArticuloPrestashop( oDb )
 
    local cCommand    := ""
@@ -4166,7 +4217,7 @@ METHOD UpdateProductsPrestashop( lChangeImage ) CLASS TComercio
    nTotStock   := ::oStock:nStockArticulo( ::oArt:Codigo )
 
    cCommand          := "UPDATE " + ::cPrefixTable( "stock_available" ) + " SET " + ;
-                           "q='" + AllTrim( Str( nTotStock ) ) + "' " + ;
+                           "quantity='" + AllTrim( Str( nTotStock ) ) + "' " + ;
                         "WHERE id_product=" + AllTrim( Str( ::oArt:cCodWeb ) ) + " AND id_product_attribute=0 "
 
    lReturn           := TMSCommand():New( ::oCon ):ExecDirect( cCommand )
@@ -4177,14 +4228,7 @@ METHOD UpdateProductsPrestashop( lChangeImage ) CLASS TComercio
    ----------------------------------------------------------------------------
    */
 
-
-
-
-
-
-
-
-
+   ::ActualizaPropiedadesProducts( ::oArt:cCodWeb )
 
    /*
    ----------------------------------------------------------------------------
@@ -6243,6 +6287,21 @@ Method AddImages( cImage ) CLASS TComercio
 
 Return ( ::aImages )
 
+//---------------------------------------------------------------------------//
+
+METHOD ActualizaPropiedadesProducts( cCodWeb ) CLASS TComercio
+
+   /*
+   Eliminamos todas las comvinaciones------------------------------------------
+   */
+
+   ::EliminaPropiedadesProductsPrestashop( cCodWeb )
+
+   ::InsertPropiedadesProductPrestashop( cCodWeb )
+
+Return ( Self )
+
+//---------------------------------------------------------------------------//
 //---------------------------------------------------------------------------//
 //ESTRUCTURAS----------------------------------------------------------------//
 //---------------------------------------------------------------------------//

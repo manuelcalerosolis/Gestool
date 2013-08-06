@@ -33,7 +33,7 @@ CLASS TTrazarLote
    DATA oHisMov
    DATA oProducT
    DATA oProducL
-   DATA oProducM
+   DATA oProducM 
 
    DATA oMetMsg
    DATA nMetMsg         AS NUMERIC  INIT 0
@@ -75,6 +75,8 @@ CLASS TTrazarLote
    METHOD AddFacCli()
 
    METHOD AddFacRec()
+
+   METHOD AddTikCli()
 
    METHOD AddHisMov()
 
@@ -166,11 +168,17 @@ METHOD OpenFiles()
       DATABASE NEW ::oProducM PATH ( cPatEmp() ) FILE "PROMAT.DBF" VIA ( cDriver() ) SHARED INDEX "PROMAT.CDX"
       ::oProducM:OrdSetFocus( "cCodArt" )
 
+      DATABASE NEW ::oTikCliT PATH ( cPatEmp() ) FILE "TIKET.DBF" VIA ( cDriver() ) SHARED INDEX "TIKET.CDX"
+      
+      DATABASE NEW ::oTikCliL PATH ( cPatEmp() ) FILE "TIKEL.Dbf" VIA ( cDriver() ) SHARED INDEX "TIKEL.Cdx"
+      ::oTikCliL:OrdSetFocus( "cCbaTil" )
+
+
       DEFINE TABLE ::oDbfTmp FILE ( ::cFileTrazaLote ) CLASS ( ::cFileTrazaLote ) ALIAS ( ::cFileTrazaLote ) PATH ( cPatTmp() ) VIA ( cLocalDriver() )
 
          FIELD NAME "cTipDoc"    TYPE "C" LEN  40 DEC 0 OF ::oDbfTmp
-         FIELD NAME "cNumDoc"    TYPE "C" LEN  12 DEC 0 OF ::oDbfTmp
-         FIELD NAME "cDoc"       TYPE "C" LEN  12 DEC 0 OF ::oDbfTmp
+         FIELD NAME "cNumDoc"    TYPE "C" LEN  20 DEC 0 OF ::oDbfTmp
+         FIELD NAME "cDoc"       TYPE "C" LEN  13 DEC 0 OF ::oDbfTmp
          FIELD NAME "cCodigo"    TYPE "C" LEN  18 DEC 0 OF ::oDbfTmp
          FIELD NAME "cNomArt"    TYPE "C" LEN 100 DEC 0 OF ::oDbfTmp
          FIELD NAME "nUnidades"  TYPE "N" LEN  16 DEC 6 OF ::oDbfTmp
@@ -309,6 +317,14 @@ METHOD CloseFiles()
       ::oDbfTmp:End()
    end if
 
+   if !Empty( ::oTikCliT ) .and.::oTikCliT:Used()
+      ::oTikCliT:End()
+   end if
+
+   if !Empty( ::oTikCliL ) .and.::oTikCliL:Used()
+      ::oTikCliL:End()
+   end if
+
    dbfErase( cPatTmp() + ::cFileTrazaLote )
 
 RETURN ( Self )
@@ -337,7 +353,7 @@ METHOD Activate( oMenuItem, oWnd )
    local oBtnCancel
    local oBtnBuscar
 
-   DEFAULT  oMenuItem   := "01022"
+   DEFAULT  oMenuItem   := "01023"
    DEFAULT  oWnd        := oWnd()
 
    // Nivel de usuario---------------------------------------------------------
@@ -370,6 +386,7 @@ METHOD Activate( oMenuItem, oWnd )
                               Space( 6 ) + "Albaranes de clientes",;
                               Space( 6 ) + "Facturas de clientes",;
                               Space( 6 ) + "Facturas rectificativas de clientes",;
+                              Space( 6 ) + "Tickets de clientes",;
                               Space( 3 ) + "Movimiento de almacén",;
                               Space( 3 ) + "Partes de producción",;
                               Space( 6 ) + "Material producido",;
@@ -386,7 +403,8 @@ METHOD Activate( oMenuItem, oWnd )
                               "Document_user1_16",;
                               "Document_delete_16",;
                               "Package_book_red_16",;
-                              "Worker2_Form_Red_16" }
+                              "Worker2_Form_Red_16",;
+                              "Cashier_user1_16" }
 
    if !::OpenFiles()
       return( Self )
@@ -763,6 +781,28 @@ METHOD Search( oLote, oBtnCancel, oBtnBuscar )
 
       end if
 
+      // Tickets-----------------------------------------------
+
+      ::oMetMsg:cText   := "Tickets clientes"
+
+      ::oMetMsg:SetTotal( ::oTikCliL:OrdKeyCount() )
+
+      if ::oTikCliL:Seek( ::cCodigo )
+
+         while ( ::cCodigo == ::oTikCliL:cCbaTil ) .and. !( ::oTikCliL:Eof() )
+
+            if ( ::cLote == ::oTikCliL:cLote .or. Empty( ::cLote ) )
+               ::AddTikCli()
+            end if 
+
+            ::oTikCliL:Skip()
+
+            ::oMetMsg:Set( ::oTikCliL:OrdKeyNo() )
+
+         end while
+
+      end if
+
    // Fin de la busquedas------------------------------------------------------
 
    end if
@@ -780,7 +820,7 @@ METHOD Search( oLote, oBtnCancel, oBtnBuscar )
          while ( ::cCodigo == ::oHisMov:cRefMov ) .and. !( ::oHisMov:Eof() )
 
             if ( ::cLote == ::oHisMov:cLote .or. Empty( ::cLote ) )
-               ::AddMovAlm()
+               ::AddHisMov()
             end if 
 
             ::oHisMov:Skip()
@@ -1015,6 +1055,26 @@ RETURN ( Self )
 
 //----------------------------------------------------------------------------//
 
+METHOD AddTikCli()
+
+   ::oDbfTmp:Append()
+   ::oDbfTmp:cTipDoc    := "Ticket de cliente"
+   ::oDbfTmp:cNumDoc    := ::oTikCliL:cSerTil + "/" + Ltrim( ::oTikCliL:cNumTil ) + "/" + ::oTikCliL:cSufTil
+   ::oDbfTmp:cDoc       := ::oTikCliL:cSerTil + ::oTikCliL:cNumTil + ::oTikCliL:cSufTil
+   ::oDbfTmp:cCodigo    := ::oTikCliL:cCbaTil
+   ::oDbfTmp:cNomArt    := ::oTikCliL:cNomTil
+   ::oDbfTmp:cLote      := ::oTikCliL:cLote
+   ::oDbfTmp:nUnidades  := nTotNTpv( ::oTikCliL:cName )
+   ::oDbfTmp:dFecDoc    := oRetFld( ::oTikCliL:cSerTil + ::oTikCliL:cNumTil + ::oTikCliL:cSufTil, ::oTikCliT, "dFecTik" )
+   ::oDbfTmp:cCodCli    := oRetFld( ::oTikCliL:cSerTil + ::oTikCliL:cNumTil + ::oTikCliL:cSufTil, ::oTikCliT, "cCliTik" )
+   ::oDbfTmp:cNomCli    := oRetFld( ::oTikCliL:cSerTil + ::oTikCliL:cNumTil + ::oTikCliL:cSufTil, ::oTikCliT, "cNomTik" )
+   ::oDbfTmp:cCodObr    := oRetFld( ::oTikCliL:cSerTil + ::oTikCliL:cNumTil + ::oTikCliL:cSufTil, ::oTikCliT, "cCodObr" )
+   ::oDbfTmp:Save()
+
+RETURN ( Self )
+
+//----------------------------------------------------------------------------//
+
 METHOD AddHisMov()
 
    ::oDbfTmp:Append()
@@ -1110,6 +1170,9 @@ METHOD Zoom()
 
       case Alltrim( ::oDbfTmp:cTipDoc ) == "Material consumido"
          ZoomProduccion( ::oDbfTmp:cDoc, ::oBrw )
+
+      case Alltrim( ::oDbfTmp:cTipDoc ) == "Ticket de cliente"
+         ZooTikCli( ::oDbfTmp:cDoc )   
 
    endcase
 
@@ -1212,6 +1275,12 @@ METHOD Filtrar()
          ::oDbfTmp:GoTop()
          ::oBrw:Refresh()
 
+      case Alltrim( ::cFiltro ) == "Tickets de clientes"
+         ::oDbfTmp:OrdSetFocus( "cTipDoc" )
+         ::oDbfTmp:OrdScope( "Ticket de cliente" )
+         ::oDbfTmp:GoTop()
+         ::oBrw:Refresh()   
+
    end case
 
 return( nil )
@@ -1254,6 +1323,10 @@ METHOD Visualizar()
 
       case Alltrim( ::oDbfTmp:cTipDoc ) == "Material consumido"
          VisProduccion( ::oDbfTmp:cDoc )
+
+      case Alltrim( ::oDbfTmp:cTipDoc ) == "Ticket de cliente"
+         msgStop( "El documento no se puede visualizar","Información" )
+         //VisTikCli( ::oDbfTmp:cDoc )
 
    endcase
 
@@ -1298,6 +1371,10 @@ METHOD Imprimir()
       case Alltrim( ::oDbfTmp:cTipDoc ) == "Material consumido"
          PrnProduccion( ::oDbfTmp:cDoc )
 
+      case Alltrim( ::oDbfTmp:cTipDoc ) == "Ticket de cliente"
+         msgStop( "El documento no se puede imprimir","Información" )
+         //PrnTikCli( ::oDbfTmp:cDoc )   
+
    endcase
 
 return( nil )
@@ -1340,6 +1417,9 @@ Method nTreeImagen()
 
       case Alltrim( ::oDbfTmp:cTipDoc ) == "Material consumido"
          Return ( 10 )
+
+      case Alltrim( ::oDbfTmp:cTipDoc ) == "Ticket de cliente"
+         Return ( 11 )   
 
    end case
 
