@@ -187,6 +187,7 @@ METHOD OpenFiles()
          FIELD NAME "cNomCli"    TYPE "C" LEN  50 DEC 0 OF ::oDbfTmp
          FIELD NAME "cCodObr"    TYPE "C" LEN  10 DEC 0 OF ::oDbfTmp
          FIELD NAME "cLote"      TYPE "C" LEN  12 DEC 0 OF ::oDbfTmp  
+         FIELD NAME "dFecCad"    TYPE "D" LEN   8 DEC 0 OF ::oDbfTmp
 
          INDEX TO ( ::cFileTrazaLote ) TAG "cLote"     ON "cLote"                       NODELETED OF ::oDbfTmp
          INDEX TO ( ::cFileTrazaLote ) TAG "dFecDoc"   ON "Dtos( dFecDoc )"             NODELETED OF ::oDbfTmp
@@ -194,6 +195,7 @@ METHOD OpenFiles()
          INDEX TO ( ::cFileTrazaLote ) TAG "cCodigo"   ON "cCodigo + Dtos( dFecDoc )"   NODELETED OF ::oDbfTmp
          INDEX TO ( ::cFileTrazaLote ) TAG "cNomArt"   ON "cNomArt + Dtos( dFecDoc )"   NODELETED OF ::oDbfTmp
          INDEX TO ( ::cFileTrazaLote ) TAG "cNomCli"   ON "cNomCli + Dtos( dFecDoc )"   NODELETED OF ::oDbfTmp
+         INDEX TO ( ::cFileTrazaLote ) TAG "dFecCad"   ON "Dtos( dFecCad )"             NODELETED OF ::oDbfTmp
 
       END DATABASE ::oDbfTmp
 
@@ -469,6 +471,13 @@ METHOD Activate( oMenuItem, oWnd )
       end with
 
       with object ( ::oBrw:AddCol() )
+         :cHeader          := "Caducidad"
+         :cSortOrder       := "dFecCad"
+         :bStrData         := {|| Dtoc( ::oDbfTmp:dFecCad ) }
+         :nWidth           := 70
+      end with
+
+      with object ( ::oBrw:AddCol() )
          :cHeader          := "Tipo de documento"
          :cSortOrder       := "cTipDoc"
          :bStrData         := {|| ::oDbfTmp:cTipDoc }
@@ -521,9 +530,12 @@ METHOD Activate( oMenuItem, oWnd )
          :nWidth           := 120
       end with
 
+      
+
 
       ::oBrw:bRClicked     := {| nRow, nCol, nFlags | ::oBrw:RButtonDown( nRow, nCol, nFlags ) }
       ::oBrw:bLDblClick    := {|| ::Zoom() }
+      ::oBrw:bChange       := {|| ::oBrw:Refresh() }
 
    REDEFINE METER ::oMetMsg ;
       VAR      ::nMetMsg ;
@@ -897,6 +909,7 @@ RETURN ( .t. )
 
 METHOD AddPedPrv()
 
+
    ::oDbfTmp:Append()
    ::oDbfTmp:cTipDoc    := "Pedido a proveedor"
    ::oDbfTmp:cNumDoc    := ::oPedPrvL:cSerPed + "/" + Ltrim( Str( ::oPedPrvL:nNumPed ) ) + "/" + ::oPedPrvL:cSufPed
@@ -909,6 +922,7 @@ METHOD AddPedPrv()
    ::oDbfTmp:cCodCli    := oRetFld( ::oPedPrvL:cSerPed + Str( ::oPedPrvL:nNumPed ) + ::oPedPrvL:cSufPed, ::oPedPrvT, "cCodPrv" )
    ::oDbfTmp:cNomCli    := oRetFld( ::oPedPrvL:cSerPed + Str( ::oPedPrvL:nNumPed ) + ::oPedPrvL:cSufPed, ::oPedPrvT, "cNomPrv" )
    ::oDbfTmp:cCodObr    := ""
+   ::oDbfTmp:dFecCad    := ctod("")
    ::oDbfTmp:Save()
 
 RETURN ( Self )
@@ -928,6 +942,7 @@ METHOD AddAlbPrv()
    ::oDbfTmp:dFecDoc    := oRetFld( ::oAlbPrvL:cSerAlb + Str( ::oAlbPrvL:nNumAlb ) + ::oAlbPrvL:cSufAlb, ::oAlbPrvT, "dFecAlb" )
    ::oDbfTmp:cCodCli    := oRetFld( ::oAlbPrvL:cSerAlb + Str( ::oAlbPrvL:nNumAlb ) + ::oAlbPrvL:cSufAlb, ::oAlbPrvT, "cCodPrv" )
    ::oDbfTmp:cNomCli    := oRetFld( ::oAlbPrvL:cSerAlb + Str( ::oAlbPrvL:nNumAlb ) + ::oAlbPrvL:cSufAlb, ::oAlbPrvT, "cNomPrv" )
+   ::oDbfTmp:dFecCad    := ::oAlbPrvL:dFecCad
    ::oDbfTmp:cCodObr    := ""
    ::oDbfTmp:Save()
 
@@ -936,6 +951,7 @@ RETURN ( Self )
 //----------------------------------------------------------------------------//
 
 METHOD AddFacPrv()
+
 
    ::oDbfTmp:Append()
    ::oDbfTmp:cTipDoc    := "Factura de proveedor"
@@ -948,6 +964,7 @@ METHOD AddFacPrv()
    ::oDbfTmp:dFecDoc    := oRetFld( ::oFacPrvL:cSerFac + Str( ::oFacPrvL:nNumFac ) + ::oFacPrvL:cSufFac, ::oFacPrvT, "dFecFac" )
    ::oDbfTmp:cCodCli    := oRetFld( ::oFacPrvL:cSerFac + Str( ::oFacPrvL:nNumFac ) + ::oFacPrvL:cSufFac, ::oFacPrvT, "cCodPrv" )
    ::oDbfTmp:cNomCli    := oRetFld( ::oFacPrvL:cSerFac + Str( ::oFacPrvL:nNumFac ) + ::oFacPrvL:cSufFac, ::oFacPrvT, "cNomPrv" )
+   ::oDbfTmp:dFecCad    := ::oFacPrvL:dFecCad
    ::oDbfTmp:cCodObr    := ""
    ::oDbfTmp:Save()
 
@@ -956,6 +973,7 @@ RETURN ( Self )
 //----------------------------------------------------------------------------//
 
 METHOD AddPreCli()
+
 
    ::oDbfTmp:Append()
    ::oDbfTmp:cTipDoc    := "Presupuesto de cliente"
@@ -969,6 +987,7 @@ METHOD AddPreCli()
    ::oDbfTmp:cCodCli    := oRetFld( ::oPreCliL:cSerPre + Str( ::oPreCliL:nNumPre ) + ::oPreCliL:cSufPre, ::oPreCliT, "cCodCli" )
    ::oDbfTmp:cNomCli    := oRetFld( ::oPreCliL:cSerPre + Str( ::oPreCliL:nNumPre ) + ::oPreCliL:cSufPre, ::oPreCliT, "cNomCli" )
    ::oDbfTmp:cCodObr    := oRetFld( ::oPreCliL:cSerPre + Str( ::oPreCliL:nNumPre ) + ::oPreCliL:cSufPre, ::oPreCliT, "cCodObr" )
+   ::oDbfTmp:dFecCad    := ctod("")
    ::oDbfTmp:Save()
 
 RETURN ( Self )
@@ -976,6 +995,7 @@ RETURN ( Self )
 //----------------------------------------------------------------------------//
 
 METHOD AddPedCli()
+
 
    ::oDbfTmp:Append()
    ::oDbfTmp:cTipDoc    := "Pedido de cliente"
@@ -989,6 +1009,7 @@ METHOD AddPedCli()
    ::oDbfTmp:cCodCli    := oRetFld( ::oPedCliL:cSerPed + Str( ::oPedCliL:nNumPed ) + ::oPedCliL:cSufPed, ::oPedCliT, "cCodCli" )
    ::oDbfTmp:cNomCli    := oRetFld( ::oPedCliL:cSerPed + Str( ::oPedCliL:nNumPed ) + ::oPedCliL:cSufPed, ::oPedCliT, "cNomCli" )
    ::oDbfTmp:cCodObr    := oRetFld( ::oPedCliL:cSerPed + Str( ::oPedCliL:nNumPed ) + ::oPedCliL:cSufPed, ::oPedCliT, "cCodObr" )
+   ::oDbfTmp:dFecCad    := ctod("")
    ::oDbfTmp:Save()
 
 RETURN ( Self )
@@ -996,6 +1017,7 @@ RETURN ( Self )
 //----------------------------------------------------------------------------//
 
 METHOD AddAlbCli()
+
 
    ::oDbfTmp:Append()
    ::oDbfTmp:cTipDoc    := "Albarán de cliente"
@@ -1009,6 +1031,7 @@ METHOD AddAlbCli()
    ::oDbfTmp:cCodCli    := oRetFld( ::oAlbCliL:cSerAlb + Str( ::oAlbCliL:nNumAlb ) + ::oAlbCliL:cSufAlb, ::oAlbCliT, "cCodCli" )
    ::oDbfTmp:cNomCli    := oRetFld( ::oAlbCliL:cSerAlb + Str( ::oAlbCliL:nNumAlb ) + ::oAlbCliL:cSufAlb, ::oAlbCliT, "cNomCli" )
    ::oDbfTmp:cCodObr    := oRetFld( ::oAlbCliL:cSerAlb + Str( ::oAlbCliL:nNumAlb ) + ::oAlbCliL:cSufAlb, ::oAlbCliT, "cCodObr" )
+   ::oDbfTmp:dFecCad    := ::oAlbCliL:dFecCad
    ::oDbfTmp:Save()
 
 RETURN ( Self )
@@ -1016,6 +1039,7 @@ RETURN ( Self )
 //----------------------------------------------------------------------------//
 
 METHOD AddFacCli()
+
 
    ::oDbfTmp:Append()
    ::oDbfTmp:cTipDoc    := "Factura de cliente"
@@ -1029,6 +1053,7 @@ METHOD AddFacCli()
    ::oDbfTmp:cCodCli    := oRetFld( ::oFacCliL:cSerie + Str( ::oFacCliL:nNumFac ) + ::oFacCliL:cSufFac, ::oFacCliT, "cCodCli" )
    ::oDbfTmp:cNomCli    := oRetFld( ::oFacCliL:cSerie + Str( ::oFacCliL:nNumFac ) + ::oFacCliL:cSufFac, ::oFacCliT, "cNomCli" )
    ::oDbfTmp:cCodObr    := oRetFld( ::oFacCliL:cSerie + Str( ::oFacCliL:nNumFac ) + ::oFacCliL:cSufFac, ::oFacCliT, "cCodObr" )
+   ::oDbfTmp:dFecCad    := ::oFacCliL:dFecCad
    ::oDbfTmp:Save()
 
 RETURN ( Self )
@@ -1036,6 +1061,7 @@ RETURN ( Self )
 //----------------------------------------------------------------------------//
 
 METHOD AddFacRec()
+
 
    ::oDbfTmp:Append()
    ::oDbfTmp:cTipDoc    := "Factura rectificativa de cliente"
@@ -1049,6 +1075,7 @@ METHOD AddFacRec()
    ::oDbfTmp:cCodCli    := oRetFld( ::oFacRecL:cSerie + Str( ::oFacRecL:nNumFac ) + ::oFacRecL:cSufFac, ::oFacRecT, "cCodCli" )
    ::oDbfTmp:cNomCli    := oRetFld( ::oFacRecL:cSerie + Str( ::oFacRecL:nNumFac ) + ::oFacRecL:cSufFac, ::oFacRecT, "cNomCli" )
    ::oDbfTmp:cCodObr    := oRetFld( ::oFacRecL:cSerie + Str( ::oFacRecL:nNumFac ) + ::oFacRecL:cSufFac, ::oFacRecT, "cCodObr" )
+   ::oDbfTmp:dFecCad    := ::oFacRecL:dFecCad
    ::oDbfTmp:Save()
 
 RETURN ( Self )
@@ -1069,6 +1096,7 @@ METHOD AddTikCli()
    ::oDbfTmp:cCodCli    := oRetFld( ::oTikCliL:cSerTil + ::oTikCliL:cNumTil + ::oTikCliL:cSufTil, ::oTikCliT, "cCliTik" )
    ::oDbfTmp:cNomCli    := oRetFld( ::oTikCliL:cSerTil + ::oTikCliL:cNumTil + ::oTikCliL:cSufTil, ::oTikCliT, "cNomTik" )
    ::oDbfTmp:cCodObr    := oRetFld( ::oTikCliL:cSerTil + ::oTikCliL:cNumTil + ::oTikCliL:cSufTil, ::oTikCliT, "cCodObr" )
+   ::oDbfTmp:dFecCad    := ::oTikCliL:dFecCad
    ::oDbfTmp:Save()
 
 RETURN ( Self )
@@ -1076,6 +1104,7 @@ RETURN ( Self )
 //----------------------------------------------------------------------------//
 
 METHOD AddHisMov()
+
 
    ::oDbfTmp:Append()
    ::oDbfTmp:cTipDoc    := "Movimiento de almacén"
@@ -1089,6 +1118,7 @@ METHOD AddHisMov()
    ::oDbfTmp:cCodCli    := Space(12)
    ::oDbfTmp:cNomCli    := Space(50)
    ::oDbfTmp:cCodObr    := Space(10)
+   ::oDbfTmp:dFecCad    := ctod("")
    ::oDbfTmp:Save()
 
 RETURN ( Self )
@@ -1109,6 +1139,8 @@ METHOD AddProducido()
    ::oDbfTmp:cCodCli    := Space( 12 )
    ::oDbfTmp:cNomCli    := Space( 50 )
    ::oDbfTmp:cCodObr    := Space( 10 )
+   ::oDbfTmp:dFecCad    := ctod("")
+
    ::oDbfTmp:Save()
 
 RETURN ( Self )
@@ -1129,6 +1161,7 @@ METHOD AddConsumido()
    ::oDbfTmp:cCodCli    := Space( 12 )
    ::oDbfTmp:cNomCli    := Space( 50 )
    ::oDbfTmp:cCodObr    := Space( 10 )
+   ::oDbfTmp:dFecCad    := ctod("")
    ::oDbfTmp:Save()
 
 RETURN ( Self )
