@@ -409,7 +409,7 @@ CLASS TTurno FROM TMasDet
 
    Method cNombreUser()
 
-   Method CurTurno()
+   Method GetCurrentTurno()
 
    Method cValidTurno()
 
@@ -2466,7 +2466,7 @@ Method CreateTurno( oDlg )
    Creamos el registros para el turno------------------------------------------
    */
 
-   if Empty( ::GetLastOpen() )
+   if Empty( ::GetCurrentTurno() )
 
       ::oDbf:Append()
       ::oDbf:cNumTur    := ::cValidTurno()
@@ -2481,7 +2481,7 @@ Method CreateTurno( oDlg )
 
    end if
 
-   ::LoadCaja()
+   ::LoadCaja( ::cCurTurno )
 
    /*
    Creamos el apunte de caja---------------------------------------------------
@@ -3196,7 +3196,7 @@ METHOD lArqueoTurno( lZoom, lParcial ) CLASS TTurno
 
    else
 
-      ::cCurTurno       := ::GetLastOpen()
+      ::GetCurrentTurno()
 
       if Empty( ::dFecTur )
          ::dFecTur      := GetSysDate()
@@ -7522,7 +7522,7 @@ METHOD lNowOpen( oWnd )
 
    end if
 
-   ::CurTurno()
+   ::GetCurrentTurno()
 
    if oMsgSesion() != nil
       oMsgSesion():SetText( "Sesión : " + Transform( ::cCurTurno, "######" ) )
@@ -7939,7 +7939,7 @@ Function lCajaOpen( cCodCaj )
 
       if oTurno:OpenService()
 
-         if oTurno:oDbfCaj:SeekInOrd( oTurno:CurTurno() + cCodCaj, "cNumTur" )
+         if oTurno:oDbfCaj:SeekInOrd( oTurno:GetCurrentTurno() + cCodCaj, "cNumTur" )
             lCajaOpen   := !oTurno:oDbfCaj:lCajClo
          end if
 
@@ -11397,7 +11397,7 @@ RETURN ( cLasTur )
 
 //--------------------------------------------------------------------------//
 
-METHOD CurTurno( lDelega )
+METHOD GetCurrentTurno( lDelega )
 
    DEFAULT  lDelega  := .t.
 

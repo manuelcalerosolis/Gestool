@@ -348,7 +348,7 @@ FUNCTION Arqueo( oMenuItem, oWnd )
       return .f.
    end if
 
-   cCurTur        := oTurno:CurTurno()
+   cCurTur        := oTurno:GetCurrentTurno()
 
    /*
    Datos para el arqueo--------------------------------------------------------
