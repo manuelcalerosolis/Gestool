@@ -4218,32 +4218,32 @@ STATIC FUNCTION EdtRec( aTmp, aGet, dbfFacCliT, oBrw, hHash, bValid, nMode )
 
       REDEFINE BITMAP oBmpEmp FILE "Bmp\ImgFacCli.bmp" ID 500 OF oDlg
 
-   /*
-   Apertura de la caja de Dialogo
-   ----------------------------------------------------------------------------
-   */
+	   /*
+	   Apertura de la caja de Dialogo
+	   ----------------------------------------------------------------------------
+	   */
+	
+	   if nMode != ZOOM_MODE
+	
+	      oFld:aDialogs[1]:AddFastKey( VK_F2, {|| AppDeta( oBrwLin, bEdtDet, aTmp, .f. ) } )
+	      oFld:aDialogs[1]:AddFastKey( VK_F3, {|| EdtDeta( oBrwLin, bEdtDet, aTmp, .f., nMode ) } )
+	      oFld:aDialogs[1]:AddFastKey( VK_F4, {|| WinDelRec( oBrwLin, dbfTmpLin, {|| DelDeta() }, {|| RecalculaTotal( aTmp ) } ) } )
+	
+	      oFld:aDialogs[3]:AddFastKey( VK_F2, {|| WinAppRec( oBrwInc, bEdtInc, dbfTmpInc, nil, nil, aTmp ) } )
+	      oFld:aDialogs[3]:AddFastKey( VK_F3, {|| WinEdtRec( oBrwInc, bEdtInc, dbfTmpInc, nil, nil, aTmp ) } )
+	      oFld:aDialogs[3]:AddFastKey( VK_F4, {|| WinDelRec( oBrwInc, dbfTmpInc ) } )
+	
+	      oFld:aDialogs[4]:AddFastKey( VK_F2, {|| WinAppRec( oBrwDoc, bEdtDoc, dbfTmpDoc, nil, nil, aTmp ) } )
+	      oFld:aDialogs[4]:AddFastKey( VK_F3, {|| WinEdtRec( oBrwDoc, bEdtDoc, dbfTmpDoc, nil, nil, aTmp ) } )
+	      oFld:aDialogs[4]:AddFastKey( VK_F4, {|| WinDelRec( oBrwDoc, dbfTmpDoc ) } )
 
-   if nMode != ZOOM_MODE
-
-      oFld:aDialogs[1]:AddFastKey( VK_F2, {|| AppDeta( oBrwLin, bEdtDet, aTmp, .f. ) } )
-      oFld:aDialogs[1]:AddFastKey( VK_F3, {|| EdtDeta( oBrwLin, bEdtDet, aTmp, .f., nMode ) } )
-      oFld:aDialogs[1]:AddFastKey( VK_F4, {|| WinDelRec( oBrwLin, dbfTmpLin, {|| DelDeta() }, {|| RecalculaTotal( aTmp ) } ) } )
-
-      oFld:aDialogs[3]:AddFastKey( VK_F2, {|| WinAppRec( oBrwInc, bEdtInc, dbfTmpInc, nil, nil, aTmp ) } )
-      oFld:aDialogs[3]:AddFastKey( VK_F3, {|| WinEdtRec( oBrwInc, bEdtInc, dbfTmpInc, nil, nil, aTmp ) } )
-      oFld:aDialogs[3]:AddFastKey( VK_F4, {|| WinDelRec( oBrwInc, dbfTmpInc ) } )
-
-      oFld:aDialogs[4]:AddFastKey( VK_F2, {|| WinAppRec( oBrwDoc, bEdtDoc, dbfTmpDoc, nil, nil, aTmp ) } )
-      oFld:aDialogs[4]:AddFastKey( VK_F3, {|| WinEdtRec( oBrwDoc, bEdtDoc, dbfTmpDoc, nil, nil, aTmp ) } )
-      oFld:aDialogs[4]:AddFastKey( VK_F4, {|| WinDelRec( oBrwDoc, dbfTmpDoc ) } )
-
-      oDlg:AddFastKey( VK_F6,             {|| if( EndTrans( aTmp, aGet, oBrw, oBrwLin, oBrwPgo, aNumAlb, nMode, oDlg ), GenFacCli( IS_PRINTER ), ) } )
-      oDlg:AddFastKey( VK_F5,             {|| EndTrans( aTmp, aGet, oBrw, oBrwLin, oBrwPgo, aNumAlb, nMode, oDlg ) } )
-      oDlg:AddFastKey( 65,                {|| if( GetKeyState( VK_CONTROL ), CreateInfoArticulo(), ) } )
-
-   end if
-
-   oDlg:bStart := {|| StartEdtRec( aTmp, aGet, oDlg, nMode, hHash, oBrwLin ) }
+	      oDlg:AddFastKey( VK_F6,             {|| if( EndTrans( aTmp, aGet, oBrw, oBrwLin, oBrwPgo, aNumAlb, nMode, oDlg ), GenFacCli( IS_PRINTER ), ) } )
+	      oDlg:AddFastKey( VK_F5,             {|| EndTrans( aTmp, aGet, oBrw, oBrwLin, oBrwPgo, aNumAlb, nMode, oDlg ) } )
+	      oDlg:AddFastKey( 65,                {|| if( GetKeyState( VK_CONTROL ), CreateInfoArticulo(), ) } )
+	
+	   end if
+	
+	   oDlg:bStart := {|| StartEdtRec( aTmp, aGet, oDlg, nMode, hHash, oBrwLin ) }
 
    ACTIVATE DIALOG oDlg ;
       ON INIT  (  InitDialog( aTmp, oDlg, oBrwLin, oBrwInc, oBrwPgo, oBrwAnt ), SetDialog( aGet, oSayDias, oSayGetRnt, oGetRnt ) );
@@ -4255,51 +4255,6 @@ STATIC FUNCTION EdtRec( aTmp, aGet, dbfFacCliT, oBrw, hHash, bValid, nMode )
    */
 
    DisableAcceso()
-
-   if oDlg:nResult != IDOK
-
-      if len( aNumAlb ) > 0
-         for n := 1 to len( aNumAlb )
-            if ( dbfAlbCliT )->( dbSeek( aNumAlb[ n ] ) )
-               SetFacturadoAlbaranCliente( .f., , dbfAlbCliT, dbfAlbCliL, dbfAlbCliS )
-            end if
-         next
-      end if
-
-      /*
-      Devolvemos los presupuestos a su estado anterior-------------------------
-      */
-
-      if !Empty( aTmp[ _CNUMPRE ] )
-         if ( dbfPreCliT )->( dbSeek( aTmp[ _CNUMPRE ] ) ) .and. dbLock( dbfPreCliT )
-            ( dbfPreCliT )->lEstado       := .f.
-            ( dbfPreCliL )->( dbUnlock() )
-         end if
-      end if
-
-      /*
-      Devolvemos los pedidos a su estado anterior------------------------------
-      */
-
-      if !Empty( aTmp[ _CNUMPED ] )
-         if ( dbfPedCliT )->( dbSeek( aTmp[ _CNUMPED ] ) ) .and. ( dbfPedCliT )->( dbRLock() )
-            ( dbfPedCliT )->nEstado       := 1
-            ( dbfPedCliL )->( dbUnlock() )
-         end if
-      end if
-
-      /*
-      Devolvemos los pedidos a su estado anterior------------------------------
-      */
-
-      if !Empty( aTmp[ _CNUMSAT ] )
-         if ( dbfSatCliT )->( dbSeek( aTmp[ _CNUMSAT ] ) ) .and. ( dbfSatCliT )->( dbRLock() )
-            ( dbfSatCliT )->lEstado       := .f.
-            ( dbfSatCliL )->( dbUnlock() )
-         end if
-      end if
-
-   end if
 
    /*
    Repos-----------------------------------------------------------------------
@@ -4482,60 +4437,58 @@ Static Function CancelEdtRec( nMode, aGet, oDlg )
 
    if ExitNoSave( nMode, dbfTmpLin )
 
-      CursorWait()
+      if ( nMode == APPD_MODE .or. nMode == DUPL_MODE )
 
-      // Presupuestos----------------------------------------------------------
+	      CursorWait()
 
-      cNumDoc                             := aGet[ _CNUMPRE ]:VarGet()
+	   	/*
+	   	rollback de los albaranes facturados-------------------------------------
+	   	*/
+	
+	      if len( aNumAlb ) > 0
+	         for each cNumDoc in aNumAlb 
+	            if ( dbfAlbCliT )->( dbSeek( cNumDoc ) )
+	               SetFacturadoAlbaranCliente( .f., , dbfAlbCliT, dbfAlbCliL, dbfAlbCliS )
+	            end if
+	         next
+	      end if
 
-      if !Empty( cNumDoc ) .and. dbSeekInOrd( cNumDoc, "nNumPre", dbfPreCliT )
+	      // Presupuestos----------------------------------------------------------
+	
+	      cNumDoc                             := aGet[ _CNUMPRE ]:VarGet()
+	
+	      if !Empty( cNumDoc ) .and. dbSeekInOrd( cNumDoc, "nNumPre", dbfPreCliT )
+	         if ( dbfPreCliT )->lEstado .and. dbLock( dbfPreCliT )
+	            ( dbfPreCliT )->lEstado    := .f.
+	            ( dbfPreCliT )->( dbUnLock() )
+	         end if
+	      end if 
 
-         if ( dbfPreCliT )->lEstado
+	      // Pedidos---------------------------------------------------------------
+	
+	      cNumDoc                             := aGet[ _CNUMPED ]:VarGet()
+	
+	      if !Empty( cNumDoc ) .and. dbSeekInOrd( cNumDoc, "nNumPed", dbfPedCliT )
+	         if ( dbfPedCliT )->lEstado .and. dbLock( dbfPedCliT )
+	            ( dbfPedCliT )->lEstado    := .f.
+	            ( dbfPedCliT )->( dbUnLock() )
+	         end if
+	      end if 
 
-            if dbLock( dbfPreCliT )
-               ( dbfPreCliT )->lEstado    := .f.
-               ( dbfPreCliT )->( dbUnLock() )
-            end if 
+	      // SAT--------------------------------------------------------------
+	
+	      cNumDoc                             := aGet[ _CNUMSAT ]:VarGet()
+	
+	      if !Empty( cNumDoc ) .and. dbSeekInOrd( cNumDoc, "nNumSat", dbfSatCliT )
+	         if ( dbfSatCliT )->lEstado .and. dbLock( dbfSatCliT )
+	            ( dbfSatCliT )->lEstado    := .f.
+	            ( dbfSatCliT )->( dbUnLock() )
+	         end if
+	      end if 
 
-         end if
+	      CursorWE()
 
-      end if 
-
-      // Pedidos---------------------------------------------------------------
-
-      cNumDoc                             := aGet[ _CNUMPED ]:VarGet()
-
-      if !Empty( cNumDoc ) .and. dbSeekInOrd( cNumDoc, "nNumPed", dbfPedCliT )
-
-         if ( dbfPedCliT )->lEstado
-
-            if dbLock( dbfPedCliT )
-               ( dbfPedCliT )->lEstado    := .f.
-               ( dbfPedCliT )->( dbUnLock() )
-            end if 
-
-         end if
-
-      end if 
-
-      // SAT--------------------------------------------------------------
-
-      cNumDoc                             := aGet[ _CNUMSAT ]:VarGet()
-
-      if !Empty( cNumDoc ) .and. dbSeekInOrd( cNumDoc, "nNumSat", dbfSatCliT )
-
-         if ( dbfSatCliT )->lEstado
-
-            if dbLock( dbfSatCliT )
-               ( dbfSatCliT )->lEstado    := .f.
-               ( dbfSatCliT )->( dbUnLock() )
-            end if 
-
-         end if
-
-      end if 
-
-      CursorWE()
+	   end if
 
       oDlg:end()
 

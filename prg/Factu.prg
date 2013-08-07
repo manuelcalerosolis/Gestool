@@ -357,7 +357,7 @@ Static Function CreateMainWindow( oIconApp )
       ON PAINT    ( WndPaint( hDC, oWnd, oBmp ) ); 
       ON RESIZE   ( WndResize( oWnd ) );
       ON INIT     ( lStartCheck() );
-      VALID       ( EndApp() )
+      VALID       ( if( EndApp(), FinishApplication(), .f. ) )
 
 Return nil
 
@@ -834,7 +834,7 @@ RETURN ( oDlg:nResult == IDOK )
 // Remember to use 'exit' procedures to asure that resources are
 // freed on a possible application error
 
-exit procedure Finish()
+Static Function FinishApplication() // exit procedure
 
    WritePProString( "main", "Ultima Empresa", cCodEmp(), FullCurDir() + "GstApolo.Ini" )
 
@@ -843,12 +843,6 @@ exit procedure Finish()
    // Cerramos las auditorias-----------------------------------------------
 
    StopServices()
-
-   // Cerramos el report----------------------------------------------------
-
-   if !Empty( nHndReport )
-      PostMessage( nHndReport, WM_CLOSE )
-   end if
 
    // Cerramos el Activex---------------------------------------------------
 
@@ -860,13 +854,19 @@ exit procedure Finish()
 
    TBandera():Destroy()
 
+   FreeLibrary( hDLLRich )
+
    FreeResources()
 
-   FreeLibrary( hDLLRich )
+   // Cerramos el report----------------------------------------------------
+
+   if !Empty( nHndReport )
+      PostMessage( nHndReport, WM_CLOSE )
+   end if
 
    CheckRes()
 
-Return
+Return .t. 
 
 //-----------------------------------------------------------------------------//
 
@@ -1381,12 +1381,7 @@ RETURN cStr
 
 //---------------------------------------------------------------------------//
 
-init procedure RddInit()
-
-#ifdef __SQLLIB__
-   REQUEST SQLRDD             // SQLRDD should be linked in
-   REQUEST SR_MYSQL           // Needed if you plan to use native connection to MySQL
-#endif
+init procedure InitAplication()
 
    REQUEST HB_LANG_ES         // Para establecer idioma de Mensajes, fechas, etc..
    REQUEST HB_CODEPAGE_ESWIN  // Para establecer código de página a Español (Ordenación, etc..)
