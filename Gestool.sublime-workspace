@@ -4,6 +4,14 @@
 		"selected_items":
 		[
 			[
+				"product",
+				"product_attribute_image"
+			],
+			[
+				"product_attri",
+				"product_attribute_combination"
+			],
+			[
 				"fit",
 				"firstname"
 			],
@@ -506,14 +514,6 @@
 			[
 				"TPro",
 				"TProduccion"
-			],
-			[
-				"tPro",
-				"TProduccion"
-			],
-			[
-				"TCo",
-				"TProduccion"
 			]
 		]
 	},
@@ -523,31 +523,15 @@
 			"file": "prg/Tcomercio.prg",
 			"settings":
 			{
-				"buffer_size": 220204,
+				"buffer_size": 225273,
 				"line_ending": "Windows"
 			}
 		},
 		{
-			"file": "prg/Tpv.prg",
+			"file": "prg/Factcli.prg",
 			"settings":
 			{
-				"buffer_size": 667778,
-				"line_ending": "Windows"
-			}
-		},
-		{
-			"file": "prg/Tcaptura.prg",
-			"settings":
-			{
-				"buffer_size": 14082,
-				"line_ending": "Windows"
-			}
-		},
-		{
-			"file": "prg/Tdetcaptura.prg",
-			"settings":
-			{
-				"buffer_size": 11682,
+				"buffer_size": 809096,
 				"line_ending": "Windows"
 			}
 		}
@@ -584,17 +568,25 @@
 	},
 	"file_history":
 	[
-		"/C/fw195/Gestool/prg/Albcli.prg",
 		"/C/fw195/Gestool/prg/Articulo.prg",
-		"/C/Users/Villa/Desktop/FACTU.PRG",
-		"/C/fw195/Gestool/Hr.bat",
-		"/C/fw195/Gestool/prg/Factu.prg",
-		"/C/fw195/Gestool/Hx.mak",
 		"/C/fw195/Gestool/HPPC.mak",
-		"/C/fw195/Gestool/resource/Gstpda.rc",
-		"/C/fw195/Gestool/resource/Gstdialog.rc",
+		"/C/fw195/Gestool/prg/Factu.prg",
+		"/C/fw195/Gestool/prg/Tpv.prg",
+		"/C/fw195/Gestool/Hx.mak",
+		"/C/fw195/Gestool/prg/Factcli.prg",
+		"/C/fw195/Gestool/Build.bat",
+		"/C/fw195/Gestool/prg/Remmov.prg",
+		"/C/fw195/Gestool/prg/Brwvta.prg",
+		"/C/fw195/Gestool/prg/Trazalote.prg",
 		"/C/fw195/Gestool/Hx.bat",
 		"/C/fw195/Gestool/HP.Bat",
+		"/C/fw195/Gestool/prg/Tdetcaptura.prg",
+		"/C/fw195/Gestool/prg/Tcaptura.prg",
+		"/C/fw195/Gestool/prg/Albcli.prg",
+		"/C/Users/Villa/Desktop/FACTU.PRG",
+		"/C/fw195/Gestool/Hr.bat",
+		"/C/fw195/Gestool/resource/Gstpda.rc",
+		"/C/fw195/Gestool/resource/Gstdialog.rc",
 		"/C/fw195/Gestool/Ax.bat",
 		"/C/fw195/camero/HV.Bat",
 		"/C/fw195/camero/HP.Bat",
@@ -603,8 +595,6 @@
 		"/C/fw195/Gestool/prg/Satcli.prg",
 		"/C/fw195/Gestool/prg/Precli.prg",
 		"/C/fw195/Gestool/prg/Pedcli.prg",
-		"/C/fw195/Gestool/prg/Brwvta.prg",
-		"/C/fw195/Gestool/prg/Factcli.prg",
 		"/C/fw195/Gestool/prg/Tfastventasproveedores.prg",
 		"/C/fw195/Gestool/prg/Tfastventasarticulos.prg",
 		"/C/fw195/Gestool/prg/Tfastventasclientes.prg",
@@ -642,7 +632,6 @@
 		"/C/Users/Villa/Desktop/zemtrum/index.php",
 		"/C/AppServ/www/zemtrum/tienda/js/jquery.reveal.js",
 		"/C/AppServ/www/zemtrum/tienda/modules/blockuserinfo/blockuserinfo.css",
-		"/C/fw195/Gestool/prg/Tpv.prg",
 		"/C/Users/Villa/Desktop/zemtrum/conocenos.php",
 		"/C/fw195/Gestool/prg/Oferta.prg",
 		"/C/fw195/Gestool/prg/Reccli.prg",
@@ -706,12 +695,7 @@
 		"/C/fw195/Gestool/prg/Abnprv.prg",
 		"/C/fw195/Gestool/prg/usuario",
 		"/C/fw195/Gestool/prg/Reindexa.prg",
-		"/C/fw195/Gestool/prg/Tdatacenter.prg",
-		"/C/fw195/Gestool/prg/Factprv.prg",
-		"/C/fw195/Gestool/bin/script/001.prg",
-		"/C/fw195/Gestool/prg/Rectprv.prg",
-		"/C/fw195/Gestool/prg/Autoseek.prg",
-		"/C/fw195/Gestool/prg/Albprov.prg"
+		"/C/fw195/Gestool/prg/Tdatacenter.prg"
 	],
 	"find":
 	{
@@ -755,6 +739,68 @@
 		"case_sensitive": false,
 		"find_history":
 		[
+			"actualizaweb",
+			"on endtrans",
+			"Actualizaweb",
+			"actualiza",
+			"appfaccli",
+			"#endif",
+			"__PDA__",
+			"cdriver",
+			"adsset",
+			"on adsset",
+			"on ads",
+			"Updategrupo",
+			"UpdateProductsPrestashop",
+			"od actualiza",
+			"InsertGrupoCategoriesPrestashop",
+			"UpdateCategoriesPrestashop",
+			"UpdateGrupoCategoriesPrestashop",
+			"GrupoFamiliasPrestashop",
+			"grupof",
+			"UpdateOfertasPrestashop",
+			"oDetMovimientos",
+			"dfeccad",
+			"lote",
+			"updateofe",
+			"InsertOfertasPrestashop",
+			"ActualizaPropiedadesProducts",
+			"FieldGetbyName",
+			"EliminaPropiedadesProductsPrestashop",
+			"ActualizaPropiedadesProducts",
+			"ctualizaPropiedadesProducts",
+			"Presupuestos de clientes",
+			"Material consumido",
+			"ImpTiket",
+			"vis",
+			"abmp",
+			"od addt",
+			"nTreeImagen",
+			"v",
+			"res",
+			"cmru",
+			"Albaranes de clientes",
+			"AddTikCli",
+			"oTikCliL",
+			"cnumdoc",
+			"cNumDoc",
+			"on acol",
+			"AddTikCli",
+			"Addmov",
+			"AddHisMov",
+			"AddMovAlm",
+			"search",
+			"Search",
+			"Activate",
+			"TTrazarLote",
+			"ExportarPrestashop",
+			"FieldGetbyName",
+			"while",
+			"InsertPropiedadesProductPrestashop",
+			"InsertPropiedadesProductPrestashop( nCodigoWeb )",
+			"InsertPropiedadesProductPrestashop",
+			"insertpro",
+			"datareport",
 			"lote",
 			"caducidad",
 			"cadu",
@@ -820,69 +866,7 @@
 			"GetPropArt",
 			"GetTipArt()",
 			"ChangeSincAll",
-			"AddImages",
-			"AutoInt",
-			"GetLanguage",
-			"lParentTipoArticulo",
-			"GetParentTipoArticulo",
-			"GetParentIva",
-			"GetParentFamilia",
-			"GetParentFabricantes",
-			"GetParent",
-			"GetParentFamilia",
-			"NIDORINO",
-			"GetParentFamilia",
-			"GetParentCategories",
-			"DropAtributes",
-			"CambiarEPedidos",
-			"\n\nCambiarEPedidos",
-			"\nCambiarEPedidos",
-			"CambiarEPedidos",
-			"AppPreciosAtributes",
-			"AppImages",
-			"AppAtributes",
-			"AppZone",
-			"AppIva",
-			"AppFabricantes",
-			"AppPedidos",
-			"AppCustomers",
-			"AppGrpCategories",
-			"AppCategories",
-			"AppOptions",
-			"AppProducts",
-			"EstadoPedidos",
-			"AppendZone",
-			"AppendIva",
-			"AppendIva.",
-			"AppendIva",
-			"AppendFabricantes",
-			"AppendImages",
-			"AppendPedido",
-			"AppendClient",
-			"AppendFamilia",
-			"AppendPropiedades",
-			"AppendArticulo",
-			"NIDORINO",
-			"meterparticular",
-			"meterglobaltext",
-			"SetText",
-			"od importar",
-			"od appendclient",
-			"AppendClientesToPrestashop",
-			"AppTipoArticuloPrestashop",
-			"GetValPrp",
-			"getcolordefault",
-			"od cprefixtable",
-			"od conect",
-			"od ndefimagen",
-			"od addtipoimages",
-			"AppendImagesPrestashop",
-			"RecalculaPosicionesCategoriasPrestashop",
-			"od delidart",
-			"od nivapro",
-			"od nivaprov",
-			"insertimage",
-			"od insertofertas"
+			"AddImages"
 		],
 		"highlight": true,
 		"in_selection": false,
@@ -909,7 +893,7 @@
 	"groups":
 	[
 		{
-			"selected": 3,
+			"selected": 0,
 			"sheets":
 			[
 				{
@@ -917,15 +901,15 @@
 					"file": "prg/Tcomercio.prg",
 					"settings":
 					{
-						"buffer_size": 220204,
+						"buffer_size": 225273,
 						"regions":
 						{
 						},
 						"selection":
 						[
 							[
-								141562,
-								141562
+								222244,
+								222244
 							]
 						],
 						"settings":
@@ -935,91 +919,33 @@
 							"translate_tabs_to_spaces": true
 						},
 						"translation.x": 0.0,
-						"translation.y": 78758.0,
+						"translation.y": 114185.0,
 						"zoom_level": 1.0
 					},
 					"type": "text"
 				},
 				{
 					"buffer": 1,
-					"file": "prg/Tpv.prg",
+					"file": "prg/Factcli.prg",
 					"settings":
 					{
-						"buffer_size": 667778,
+						"buffer_size": 809096,
 						"regions":
 						{
 						},
 						"selection":
 						[
 							[
-								237295,
-								237295
+								678509,
+								678509
 							]
 						],
 						"settings":
 						{
-							"syntax": "Packages/harbour/harbour/Harbour.tmLanguage",
-							"tab_size": 3,
-							"translate_tabs_to_spaces": true
+							"syntax": "Packages/harbour/harbour/Harbour.tmLanguage"
 						},
 						"translation.x": 0.0,
-						"translation.y": 144096.0,
-						"zoom_level": 1.0
-					},
-					"type": "text"
-				},
-				{
-					"buffer": 2,
-					"file": "prg/Tcaptura.prg",
-					"settings":
-					{
-						"buffer_size": 14082,
-						"regions":
-						{
-						},
-						"selection":
-						[
-							[
-								14082,
-								14082
-							]
-						],
-						"settings":
-						{
-							"syntax": "Packages/harbour/harbour/Harbour.tmLanguage",
-							"tab_size": 3,
-							"translate_tabs_to_spaces": true
-						},
-						"translation.x": 0.0,
-						"translation.y": 10374.0,
-						"zoom_level": 1.0
-					},
-					"type": "text"
-				},
-				{
-					"buffer": 3,
-					"file": "prg/Tdetcaptura.prg",
-					"settings":
-					{
-						"buffer_size": 11682,
-						"regions":
-						{
-						},
-						"selection":
-						[
-							[
-								6766,
-								6766
-							]
-						],
-						"settings":
-						{
-							"syntax": "Packages/harbour/harbour/Harbour.tmLanguage",
-							"tab_size": 3,
-							"translate_tabs_to_spaces": true
-						},
-						"translation.x": 0.0,
-						"translation.y": 3727.0,
+						"translation.y": 358300.0,
 						"zoom_level": 1.0
 					},
 					"type": "text"

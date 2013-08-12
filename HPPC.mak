@@ -10,7 +10,7 @@ RESOURCE=.\Resource
 BORLAND=\vce
 BORLANDLIB=\vce\lib\arm
 
-OBJ 			= 		Obj
+OBJ 			= 		ObjPpc
 SOURCEPRG 		= 		Prg
 SOURCEC 		=		C
 

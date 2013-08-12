@@ -1,10 +1,15 @@
-#include "FiveWin.Ch"
+#ifndef __PDA__
+
+#include "Factu.ch"
 #include "Menu.ch" 
 #include "Font.ch"
 #include "Inkey.ch"
-#include "Factu.ch"
 #include "Ads.ch"
 #include "Xbrowse.ch"
+
+#endif
+
+#include "FiveWin.Ch"
 
 #define GR_GDIOBJECTS         0      /* Count of GDI objects */
 #define GR_USEROBJECTS        1      /* Count of USER objects */
@@ -13,14 +18,18 @@
 
 #define HKEY_LOCAL_MACHINE    2147483650
 
+#ifndef __PDA__
+
 ANNOUNCE RDDSYS
 
 REQUEST ADS, DBFCDX, DBFFPT
 
 REQUEST AdsKeyNo
 REQUEST AdsKeyCount
-REQUEST AdsGetRelKeyPos
+REQUEST AdsGetRelKeyPos 
 REQUEST AdsSetRelKeyPos
+
+#endif
 
 static oWndBar
 static oMenu
@@ -53,7 +62,11 @@ static cBmpVersion
 static cTypeVersion  := ""
 
 //---------------------------------------------------------------------------//
-//Comenzamos la parte de código que se compila para el ejecutable normal
+/*
+-------------------------------------------------------------------------------
+//Comenzamos la parte de código que se compila para el ejecutable normal-------
+-------------------------------------------------------------------------------
+*/
 
 #ifndef __PDA__
 
@@ -1907,7 +1920,7 @@ Function CreateAcceso( oWnd )
 
    // Otros--------------------------------------------------------------------
 
-   oGrupo               := TGrupoAcceso()
+   oGrupo               := TGrupoAcceso() 
    oGrupo:nBigItems     := 10
    oGrupo:cPrompt       := 'Global'
    oGrupo:cLittleBitmap := "Folder2_Red_16"
@@ -5303,16 +5316,6 @@ Function BuildTpvMenu()
 RETURN oMenu
 
 //--------------------------------------------------------------------------//
-
-#endif
-
-//---------------------------------------------------------------------------//
-//---------------------------------------------------------------------------//
-//---------------------------------------------------------------------------//
-//Comenzamos la parte que se compila para el ejecutacle de PDA
-
-//--------------------------------------------------------------------------//
-
 /*
 SHOWTASKBAR() // Habilita
 HIDETASKBAR() // Desabilita
@@ -5425,15 +5428,6 @@ Function StopServices()
 
 Return ( nil )
 
-//---------------------------------------------------------------------------//
-
-#else
-
-#endif
-
-//---------------------------------------------------------------------------//
-//---------------------------------------------------------------------------//
-//Funciones comunes tanto para el ejecutable de pda como para el normal
 //---------------------------------------------------------------------------//
 
 Function oWnd() ; Return oWnd
@@ -5832,6 +5826,8 @@ RETURN .t.
 
 //--------------------------------------------------------------------------//
 
+#endif
+
 Static Function nDaySaas()
 
    local oReg
@@ -5873,13 +5869,21 @@ Return ( nil )
 //---------------------------------------------------------------------------//
 //--------------PDA ROCIO----------------------------------------------------//
 
-#ifdef __PDA__
+/*
+-------------------------------------------------------------------------------
+Comenzamos la parte de código que se compila para PDA--------------------------
+-------------------------------------------------------------------------------
+*/
+
+#else
+
+//---------------------------------------------------------------------------//
 
 function Main()
 
    local oFont
    local oSayTit
-   local oBtn        := Array( 19 )
+   local oBtn        := Array( 19 ) 
    local oBtnTpv     := Array( 9 )
 
    SET DATE FORMAT   "dd/mm/yyyy"

@@ -245,10 +245,12 @@ CLASS TComercio
    METHOD UpdateProductsPrestashop()
    METHOD DeleteProductsPrestashop()
    METHOD InsertOfertasPrestashop()
+   METHOD UpdateOfertasPrestashop()
    METHOD DeleteImagesProducts( cCodWeb )
    METHOD InsertImageProductsPrestashop( cCodArt )
    METHOD nIvaProduct( cCodArt )
    METHOD ActualizaPropiedadesProducts( cCodWeb )
+   Method ActualizaStockProductsPrestashop( cCodigoArticulo )
 
    METHOD DelIdArticuloPrestashop()
 
@@ -1120,7 +1122,7 @@ METHOD AppendIvaPrestashop() Class TComercio
    end if
 
    /*
-   Inicializamos el código para la web en el programa-----------------------
+   Inicializamos el código para la web en el programa--------------------------
    */
 
    ::DelIdIvaPrestashop()
@@ -2315,6 +2317,7 @@ Method UpdateGrupoCategoriesPrestashop() CLASS TComercio
 
    local lReturn  := .f.
    local cCommand := ""
+   local oImagen
 
    ::cTextoWait( "Actualizando grupo: " + AllTrim( ::oGrpFam:cNomGrp ) )
 
@@ -2335,6 +2338,27 @@ Method UpdateGrupoCategoriesPrestashop() CLASS TComercio
                      "WHERE id_category=" + AllTrim( Str( ::oGrpFam:cCodWeb ) )
 
    lReturn        := TMSCommand():New( ::oCon ):ExecDirect( cCommand )
+
+   if !Empty( ::oGrpFam:cImgGrp )
+
+      /*
+      Añadimos la imagen al array para pasarla a prestashop--------------
+      */
+
+      oImagen                       := SImagen()
+      oImagen:cNombreImagen         := ::oGrpFam:cImgGrp
+      oImagen:nTipoImagen           := tipoCategoria
+      oImagen:cPrefijoNombre        := AllTrim( Str( ::oGrpFam:cCodWeb ) )
+
+      ::AddImages( oImagen )
+
+      SysRefresh()
+
+      ::AppendImagesPrestashop()
+
+      SysRefresh()
+
+   end if
 
 Return lReturn
 
@@ -3546,6 +3570,7 @@ METHOD EliminaPropiedadesProductsPrestashop( cCodWeb )
 
    local oQuery
    local cCommand    := ""
+   local idDelete
 
    /*
    Borramos las tablas auxiliares de lineas de propiedades---------------------
@@ -3562,16 +3587,18 @@ METHOD EliminaPropiedadesProductsPrestashop( cCodWeb )
 
       while !oQuery:Eof()
 
-         cCommand    := "DELETE FROM " + ::cPrefixTable( "product_attribute_combination" ) + " WHERE id_product_attribute=" + AllTrim( Str( oQuery:FieldGetbyName( "id_product_attribute" ) ) )
+         idDelete    := oQuery:FieldGet( 1 ) //id_product_attributeb
+
+         cCommand    := "DELETE FROM " + ::cPrefixTable( "product_attribute_combination" ) + " WHERE id_product_attribute=" + AllTrim( Str( idDelete ) )
          TMSCommand():New( ::oCon ):ExecDirect( cCommand )
 
-         cCommand    := "DELETE FROM " + ::cPrefixTable( "product_attribute_shop" ) + " WHERE id_product_attribute=" + AllTrim( Str( oQuery:FieldGetbyName( "id_product_attribute" ) ) )
+         cCommand    := "DELETE FROM " + ::cPrefixTable( "product_attribute_shop" ) + " WHERE id_product_attribute=" + AllTrim( Str( idDelete ) )
          TMSCommand():New( ::oCon ):ExecDirect( cCommand )
 
-         cCommand    := "DELETE FROM " + ::cPrefixTable( "stock_available" ) + " WHERE id_product_attribute=" + AllTrim( Str( oQuery:FieldGetbyName( "id_product_attribute" ) ) )
+         cCommand    := "DELETE FROM " + ::cPrefixTable( "stock_available" ) + " WHERE id_product_attribute=" + AllTrim( Str( idDelete ) )
          TMSCommand():New( ::oCon ):ExecDirect( cCommand )
          
-         cCommand    := "DELETE FROM " + ::cPrefixTable( "product_attribute_image" ) + " WHERE id_product_attribute=" + AllTrim( Str( oQuery:FieldGetbyName( "id_product_attribute" ) ) )
+         cCommand    := "DELETE FROM " + ::cPrefixTable( "product_attribute_image" ) + " WHERE id_product_attribute=" + AllTrim( Str( idDelete ) )
          TMSCommand():New( ::oCon ):ExecDirect( cCommand )
          
          oQuery:Skip()
@@ -4232,6 +4259,14 @@ METHOD UpdateProductsPrestashop( lChangeImage ) CLASS TComercio
 
    /*
    ----------------------------------------------------------------------------
+   ACTUALIZAMOS LAS OFERTAS DEL ARTÍCULO---------------------------------------
+   ----------------------------------------------------------------------------
+   */
+
+   ::UpdateOfertasPrestashop()
+
+   /*
+   ----------------------------------------------------------------------------
    ACTUALIZAMOS IMAGENES DEL ARTÍCULO------------------------------------------
    ----------------------------------------------------------------------------
    */ 
@@ -4240,9 +4275,7 @@ METHOD UpdateProductsPrestashop( lChangeImage ) CLASS TComercio
 
    if lChangeImage
 
-      ?"Falta actualizar las imagenes al actualizar el artículo"
-
-      /*::DeleteImagesProducts( ::oArt:cCodWeb )
+      ::DeleteImagesProducts( ::oArt:cCodWeb )
 
       SysRefresh()
 
@@ -4250,7 +4283,7 @@ METHOD UpdateProductsPrestashop( lChangeImage ) CLASS TComercio
 
       SysRefresh()
 
-      ::AppendImagesPrestashop()*/
+      ::AppendImagesPrestashop()
 
    end if
 
@@ -4580,6 +4613,24 @@ Method InsertOfertasPrestashop( nCodigoWeb ) CLASS TComercio
 
    end if
 
+return nil
+
+//---------------------------------------------------------------------------//
+
+Method UpdateOfertasPrestashop() CLASS TComercio
+
+   local cCommand          := ""
+
+   if ::oArt:lSbrInt .and. ::oArt:nDtoInt1 != 0
+
+      cCommand          := "UPDATE " + ::cPrefixTable( "specific_price" ) + " SET " + ;
+                              "reduction='" + AllTrim( Str( ::oArt:nDtoInt1 / 100 ) ) + "' " + ;
+                           "WHERE id_product=" + AllTrim( Str( ::oArt:cCodWeb ) )
+
+      TMSCommand():New( ::oCon ):ExecDirect( cCommand )
+
+   end if   
+            
 return nil
 
 //---------------------------------------------------------------------------//
@@ -6296,11 +6347,51 @@ METHOD ActualizaPropiedadesProducts( cCodWeb ) CLASS TComercio
    */
 
    ::EliminaPropiedadesProductsPrestashop( cCodWeb )
-
    ::InsertPropiedadesProductPrestashop( cCodWeb )
 
 Return ( Self )
 
+//---------------------------------------------------------------------------//
+
+Method ActualizaStockProductsPrestashop( cCodigoArticulo, cCodigoPropiedad1, cCodigoPropiedad2, cValorPropiedad1, cValorPropiedad2 ) CLASS TComercio
+
+   local oQuery
+   local cCommand
+
+   if !::lReady()
+      Return .f.
+   end if
+   
+   ::lShowDialogWait()
+
+   if ::OpenFiles()
+
+      if ::oArt:Seek( cCodigoArticulo )
+   
+         if ::ConectBBDD()
+
+            ?"Actualizamos el Stock del artículo"
+            ?cCodigoArticulo
+            ?cCodigoPropiedad1
+            ?cCodigoPropiedad2
+            ?cValorPropiedad1
+            ?cValorPropiedad2
+
+            ::DisconectBBDD()
+   
+         endif      
+
+      end if
+
+      ::CloseFiles()
+
+   end if
+
+   ::lHideDialogWait()
+
+Return .t.
+
+//---------------------------------------------------------------------------//
 //---------------------------------------------------------------------------//
 //---------------------------------------------------------------------------//
 //ESTRUCTURAS----------------------------------------------------------------//
@@ -6385,5 +6476,19 @@ Function KillAutoRecive()
    oComercio      := nil
 
 Return( nil )
+
+//---------------------------------------------------------------------------//
+
+Function ActualizaStockWeb( cCodArt, cCodPr1, cCodPr2, cValPr1, cValPr2 )
+
+   if uFieldEmpresa( "lRealWeb" )
+
+      with object ( TComercio():GetInstance() )    
+         :ActualizaStockProductsPrestashop( cCodArt, cCodPr1, cCodPr2, cValPr1, cValPr2 )
+      end with
+
+   end if   
+
+Return .t.
 
 //---------------------------------------------------------------------------//

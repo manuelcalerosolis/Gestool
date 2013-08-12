@@ -19926,6 +19926,7 @@ STATIC FUNCTION EndTrans( aTmp, aGet, oBrw, oBrwDet, oBrwPgo, aNumAlb, nMode, oD
       while ( dbfTmpLin )->( !eof() )
          ( dbfTmpLin )->dFecFac  := dFecFac
          dbPass( dbfTmpLin, dbfFacCliL, .t., cSerFac, nNumFac, cSufFac )
+         ActualizaStockWeb( ( dbfTmpLin )->cRef, ( dbfTmpLin )->cCodPr1, ( dbfTmpLin )->cCodPr2, ( dbfTmpLin )->cValPr1, ( dbfTmpLin )->cValPr2 )
          ( dbfTmpLin )->( dbSkip() )
          SysRefresh()
       end while
