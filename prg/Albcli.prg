@@ -3822,69 +3822,49 @@ Static Function CancelEdtRec( nMode, aGet, oDlg )
 
    if ExitNoSave( nMode, dbfTmpLin )
 
-      CursorWait()
+      if ( nMode == APPD_MODE .or. nMode == DUPL_MODE )
 
-      // Presupuesto-----------------------------------------------------------
-
-      cNumDoc                             := aGet[ _CNUMPRE ]:VarGet()
-
-      if !Empty( cNumDoc ) .and. dbSeekInOrd( cNumDoc, "nNumPre", dbfPreCliT )
-
-         if ( dbfPreCliT )->lEstado
-
-            if dbLock( dbfPreCliT )
-
+         CursorWait()
+   
+         // Presupuesto-----------------------------------------------------------
+   
+         cNumDoc                             := aGet[ _CNUMPRE ]:VarGet()
+   
+         if !Empty( cNumDoc ) .and. dbSeekInOrd( cNumDoc, "nNumPre", dbfPreCliT )
+            if ( dbfPreCliT )->lEstado .and. dbLock( dbfPreCliT )
                ( dbfPreCliT )->cNumAlb    := ""
                ( dbfPreCliT )->lEstado    := .f.
                ( dbfPreCliT )->( dbUnLock() )
-            
-            end if 
+            end if
+         end if 
 
-         end if
-
-      end if 
-
-      // Pedido----------------------------------------------------------------
-
-      cNumDoc                             := aGet[ _CNUMPED ]:VarGet()
-
-      if !Empty( cNumDoc ) .and. dbSeekInOrd( cNumDoc, "nNumPed", dbfPedCliT )
-
-         if ( dbfPedCliT )->lEstado
-
-            if dbLock( dbfPedCliT )
-
+         // Pedido----------------------------------------------------------------
+   
+         cNumDoc                             := aGet[ _CNUMPED ]:VarGet()
+   
+         if !Empty( cNumDoc ) .and. dbSeekInOrd( cNumDoc, "nNumPed", dbfPedCliT )
+            if ( dbfPedCliT )->lEstado .and. dbLock( dbfPedCliT )
                ( dbfPedCliT )->cNumAlb    := ""
                ( dbfPedCliT )->lEstado    := .f.
                ( dbfPedCliT )->( dbUnLock() )
-            
-            end if 
+            end if
+         end if 
 
-         end if
+         // SAT----------------------------------------------------------------
 
-      end if 
+         cNumDoc                             := aGet[ _CNUMSAT ]:VarGet()
 
-      // Albaran---------------------------------------------------------------
-
-      cNumDoc                             := aGet[ _CNUMSAT ]:VarGet()
-
-      if !Empty( cNumDoc ) .and. dbSeekInOrd( cNumDoc, "nNumSat", dbfSatCliT )
-
-         if ( dbfSatCliT )->lEstado
-
-            if dbLock( dbfSatCliT )
-
+         if !Empty( cNumDoc ) .and. dbSeekInOrd( cNumDoc, "nNumSat", dbfSatCliT )
+            if ( dbfSatCliT )->lEstado .and. dbLock( dbfSatCliT )
                ( dbfSatCliT )->cNumAlb    := ""
                ( dbfSatCliT )->lEstado    := .f.
                ( dbfSatCliT )->( dbUnLock() )
-            
-            end if 
+            end if
+         end if 
 
-         end if
+         CursorWE()
 
       end if 
-
-      CursorWE()
 
       oDlg:end()
 
