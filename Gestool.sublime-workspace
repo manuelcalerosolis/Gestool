@@ -4,6 +4,38 @@
 		"selected_items":
 		[
 			[
+				"Fiel",
+				"FieldGetbyName"
+			],
+			[
+				"ccodweb",
+				"cCodWebValPr2"
+			],
+			[
+				"cCodWe",
+				"cCodWebValPr1"
+			],
+			[
+				"T",
+				"TComercio"
+			],
+			[
+				"CLAS",
+				"CLASS"
+			],
+			[
+				"cCodWeb",
+				"cCodWebValPr2"
+			],
+			[
+				"cValor",
+				"cValorPropiedad2"
+			],
+			[
+				"Actua",
+				"ActualizaStockWeb"
+			],
+			[
 				"product",
 				"product_attribute_image"
 			],
@@ -118,10 +150,6 @@
 			[
 				"ba",
 				"background-color"
-			],
-			[
-				"T",
-				"text-decoration"
 			],
 			[
 				"if",
@@ -486,34 +514,6 @@
 			[
 				"lCreate",
 				"lCreateTemporalLbl"
-			],
-			[
-				"desi",
-				"DesignLabelProducc"
-			],
-			[
-				"Producción",
-				"Producción"
-			],
-			[
-				"Pro",
-				"Produccion"
-			],
-			[
-				"oBrw",
-				"oBrwLabel"
-			],
-			[
-				"Nombre",
-				"cNombre"
-			],
-			[
-				"cFile",
-				"cFileTmpLabel"
-			],
-			[
-				"TPro",
-				"TProduccion"
 			]
 		]
 	},
@@ -523,7 +523,41 @@
 			"file": "prg/Tcomercio.prg",
 			"settings":
 			{
-				"buffer_size": 225273,
+				"buffer_size": 232409,
+				"line_ending": "Windows"
+			}
+		},
+		{
+			"contents": "Searching 1337 files for \"on oretfld\"\n\nC:\\fw195\\Gestool\\prg\\Tutil.prg:\n  730  //----------------------------------------------------------------------------//\n  731  \n  732: function oRetFld( cCod, oDbf, xFld, nOrd )\n  733  \n  734     local nRec\n\n1 match in 1 file\n",
+			"settings":
+			{
+				"buffer_size": 265,
+				"line_ending": "Windows",
+				"name": "Find Results",
+				"scratch": true
+			}
+		},
+		{
+			"file": "prg/Tutil.prg",
+			"settings":
+			{
+				"buffer_size": 18550,
+				"line_ending": "Windows"
+			}
+		},
+		{
+			"file": "prg/Pro.prg",
+			"settings":
+			{
+				"buffer_size": 67648,
+				"line_ending": "Windows"
+			}
+		},
+		{
+			"file": "prg/Stock.prg",
+			"settings":
+			{
+				"buffer_size": 213685,
 				"line_ending": "Windows"
 			}
 		},
@@ -531,7 +565,7 @@
 			"file": "prg/Factcli.prg",
 			"settings":
 			{
-				"buffer_size": 809096,
+				"buffer_size": 809019,
 				"line_ending": "Windows"
 			}
 		}
@@ -568,6 +602,7 @@
 	},
 	"file_history":
 	[
+		"/C/fw195/Gestool/prg/Pro.prg",
 		"/C/fw195/Gestool/prg/Articulo.prg",
 		"/C/fw195/Gestool/HPPC.mak",
 		"/C/fw195/Gestool/prg/Factu.prg",
@@ -694,8 +729,7 @@
 		"/C/fw195/Gestool/prg/Confcajporta.prg",
 		"/C/fw195/Gestool/prg/Abnprv.prg",
 		"/C/fw195/Gestool/prg/usuario",
-		"/C/fw195/Gestool/prg/Reindexa.prg",
-		"/C/fw195/Gestool/prg/Tdatacenter.prg"
+		"/C/fw195/Gestool/prg/Reindexa.prg"
 	],
 	"find":
 	{
@@ -739,6 +773,19 @@
 		"case_sensitive": false,
 		"find_history":
 		[
+			"on edtrec",
+			"while",
+			"openfiles",
+			"on oretfld",
+			"on rx",
+			"oret",
+			"oretç",
+			"nStockArticulo",
+			"stock",
+			"on aitm",
+			"on acol",
+			"ActualizaStockProductsPrestashop",
+			"on rx",
 			"actualizaweb",
 			"on endtrans",
 			"Actualizaweb",
@@ -853,20 +900,7 @@
 			"BuscarProvincia",
 			"BuscarCodFab",
 			"BuscarCodIva",
-			"BuscarCodPro",
-			"BuscarCodFam",
-			"HB_DBCREATETEMP",
-			"cLinkRewrite",
-			"SCategoria",
-			"SPrePro",
-			"STipoImagen",
-			"SImagen",
-			"SeleccionFamilia",
-			"cModelArticulo",
-			"GetPropArt",
-			"GetTipArt()",
-			"ChangeSincAll",
-			"AddImages"
+			"BuscarCodPro"
 		],
 		"highlight": true,
 		"in_selection": false,
@@ -893,7 +927,7 @@
 	"groups":
 	[
 		{
-			"selected": 0,
+			"selected": 5,
 			"sheets":
 			[
 				{
@@ -901,15 +935,15 @@
 					"file": "prg/Tcomercio.prg",
 					"settings":
 					{
-						"buffer_size": 225273,
+						"buffer_size": 232409,
 						"regions":
 						{
 						},
 						"selection":
 						[
 							[
-								222244,
-								222244
+								226721,
+								226721
 							]
 						],
 						"settings":
@@ -919,25 +953,152 @@
 							"translate_tabs_to_spaces": true
 						},
 						"translation.x": 0.0,
-						"translation.y": 114185.0,
+						"translation.y": 115876.0,
 						"zoom_level": 1.0
 					},
 					"type": "text"
 				},
 				{
 					"buffer": 1,
-					"file": "prg/Factcli.prg",
 					"settings":
 					{
-						"buffer_size": 809096,
+						"buffer_size": 265,
+						"regions":
+						{
+							"match":
+							{
+								"flags": 112,
+								"regions":
+								[
+									[
+										180,
+										190
+									]
+								],
+								"scope": ""
+							}
+						},
+						"selection":
+						[
+							[
+								186,
+								186
+							]
+						],
+						"settings":
+						{
+							"detect_indentation": false,
+							"output_tag": 1,
+							"result_base_dir": "",
+							"result_file_regex": "^([A-Za-z\\\\/<].*):$",
+							"result_line_regex": "^ +([0-9]+):",
+							"scroll_past_end": true,
+							"syntax": "Packages/Default/Find Results.hidden-tmLanguage"
+						},
+						"translation.x": 0.0,
+						"translation.y": 0.0,
+						"zoom_level": 1.0
+					},
+					"type": "text"
+				},
+				{
+					"buffer": 2,
+					"file": "prg/Tutil.prg",
+					"settings":
+					{
+						"buffer_size": 18550,
 						"regions":
 						{
 						},
 						"selection":
 						[
 							[
-								678509,
-								678509
+								17241,
+								17263
+							]
+						],
+						"settings":
+						{
+							"syntax": "Packages/harbour/harbour/Harbour.tmLanguage",
+							"tab_size": 2,
+							"translate_tabs_to_spaces": true
+						},
+						"translation.x": 0.0,
+						"translation.y": 12723.0,
+						"zoom_level": 1.0
+					},
+					"type": "text"
+				},
+				{
+					"buffer": 3,
+					"file": "prg/Pro.prg",
+					"settings":
+					{
+						"buffer_size": 67648,
+						"regions":
+						{
+						},
+						"selection":
+						[
+							[
+								55140,
+								55148
+							]
+						],
+						"settings":
+						{
+							"syntax": "Packages/harbour/harbour/Harbour.tmLanguage",
+							"tab_size": 3,
+							"translate_tabs_to_spaces": true
+						},
+						"translation.x": 0.0,
+						"translation.y": 35087.0,
+						"zoom_level": 1.0
+					},
+					"type": "text"
+				},
+				{
+					"buffer": 4,
+					"file": "prg/Stock.prg",
+					"settings":
+					{
+						"buffer_size": 213685,
+						"regions":
+						{
+						},
+						"selection":
+						[
+							[
+								112452,
+								112452
+							]
+						],
+						"settings":
+						{
+							"syntax": "Packages/harbour/harbour/Harbour.tmLanguage",
+							"tab_size": 3,
+							"translate_tabs_to_spaces": true
+						},
+						"translation.x": 0.0,
+						"translation.y": 63779.0,
+						"zoom_level": 1.0
+					},
+					"type": "text"
+				},
+				{
+					"buffer": 5,
+					"file": "prg/Factcli.prg",
+					"settings":
+					{
+						"buffer_size": 809019,
+						"regions":
+						{
+						},
+						"selection":
+						[
+							[
+								809019,
+								809019
 							]
 						],
 						"settings":
@@ -945,7 +1106,7 @@
 							"syntax": "Packages/harbour/harbour/Harbour.tmLanguage"
 						},
 						"translation.x": 0.0,
-						"translation.y": 358300.0,
+						"translation.y": 417323.0,
 						"zoom_level": 1.0
 					},
 					"type": "text"

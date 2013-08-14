@@ -19879,7 +19879,6 @@ STATIC FUNCTION EndTrans( aTmp, aGet, oBrw, oBrwDet, oBrwPgo, aNumAlb, nMode, oD
       while ( dbfTmpLin )->( !eof() )
          ( dbfTmpLin )->dFecFac  := dFecFac
          dbPass( dbfTmpLin, dbfFacCliL, .t., cSerFac, nNumFac, cSufFac )
-         ActualizaStockWeb( ( dbfTmpLin )->cRef, ( dbfTmpLin )->cCodPr1, ( dbfTmpLin )->cCodPr2, ( dbfTmpLin )->cValPr1, ( dbfTmpLin )->cValPr2 )
          ( dbfTmpLin )->( dbSkip() )
          SysRefresh()
       end while
@@ -19999,7 +19998,7 @@ STATIC FUNCTION EndTrans( aTmp, aGet, oBrw, oBrwDet, oBrwPgo, aNumAlb, nMode, oD
       aTmp[ _NTOTPDT ]  := nTotFac - nTotCob
 
       /*
-      Grabamos el registro--------------------------------------------------------
+      Grabamos el registro-----------------------------------------------------
       */
 
       oMsgText( "Guardamos el documento" )
@@ -20008,7 +20007,13 @@ STATIC FUNCTION EndTrans( aTmp, aGet, oBrw, oBrwDet, oBrwPgo, aNumAlb, nMode, oD
       WinGather( aTmp, , dbfFacCliT, , nMode )
 
       /*
-      Actualizamos el estado de los albaranes de clientes-------------------------
+	  Actualizamos el stock en la web------------------------------------------
+      */
+
+      ActualizaStockWeb( cSerFac + Str( nNumFac ) + cSufFac )
+
+      /*
+      Actualizamos el estado de los albaranes de clientes----------------------
       */
 
       oMsgText( "Actualizamos el estado de los albaranes" )
@@ -23192,5 +23197,37 @@ Function cFacturaClienteDireccionSAT()
    CLOSE ( dbfObras )
 
 Return ( cDireccion )
+
+//---------------------------------------------------------------------------//
+
+static Function ActualizaStockWeb( cNumDoc )
+
+   local nRec 		:= ( dbfFacCliL )->( Recno() )
+   local nOrdAnt 	:= ( dbfFacCliL )->( OrdSetFocus( "nNumFac" ) )
+
+   if uFieldEmpresa( "lRealWeb" )
+
+      with object ( TComercio():GetInstance() )
+
+      	if ( dbfFacCliL )->( dbSeek( cNumDoc ) )
+
+      		while ( dbfFacCliL )->cSerie + Str( ( dbfFacCliL )->nNumFac ) + ( dbfFacCliL )->cSufFac == cNumDoc .and. !( dbfFacCliL )->( Eof() )
+
+         		:ActualizaStockProductsPrestashop( ( dbfFacCliL )->cRef, ( dbfFacCliL )->cCodPr1, ( dbfFacCliL )->cCodPr2, ( dbfFacCliL )->cValPr1, ( dbfFacCliL )->cValPr2 )
+
+         		( dbfFacCliL )->( dbSkip() )
+
+         	end while
+
+        end if 	
+
+      end with
+
+   end if 
+
+   ( dbfFacCliL )->( OrdSetFocus( nOrdAnt ) )
+   ( dbfFacCliL )->( dbGoTo( nRec ) )  
+
+Return .t.
 
 //---------------------------------------------------------------------------//

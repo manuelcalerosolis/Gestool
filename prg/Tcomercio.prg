@@ -251,6 +251,7 @@ CLASS TComercio
    METHOD nIvaProduct( cCodArt )
    METHOD ActualizaPropiedadesProducts( cCodWeb )
    Method ActualizaStockProductsPrestashop( cCodigoArticulo )
+   METHOD nIdProductAttribute( cCodWebArt, cCodWebValPr1, cCodWebValPr2 )
 
    METHOD DelIdArticuloPrestashop()
 
@@ -6357,6 +6358,10 @@ Method ActualizaStockProductsPrestashop( cCodigoArticulo, cCodigoPropiedad1, cCo
 
    local oQuery
    local cCommand
+   local nTotStock            := 0
+   local cCodWebValPr1
+   local cCodWebValPr2
+   local nIdProductAttribute
 
    if !::lReady()
       Return .f.
@@ -6366,20 +6371,101 @@ Method ActualizaStockProductsPrestashop( cCodigoArticulo, cCodigoPropiedad1, cCo
 
    if ::OpenFiles()
 
-      if ::oArt:Seek( cCodigoArticulo )
-   
-         if ::ConectBBDD()
+      if !Empty( cCodigoArticulo )
 
-            ?"Actualizamos el Stock del artículo"
-            ?cCodigoArticulo
-            ?cCodigoPropiedad1
-            ?cCodigoPropiedad2
-            ?cValorPropiedad1
-            ?cValorPropiedad2
+         if ::oArt:Seek( cCodigoArticulo )
+
+            cCodWebValPr1        := oRetFld( cCodigoPropiedad1 + cValorPropiedad1, ::oTblPro, "cCodWeb" )
+            cCodWebValPr2        := oRetFld( cCodigoPropiedad2 + cValorPropiedad2, ::oTblPro, "cCodWeb" )
+   
+            if ::ConectBBDD()
+
+               do case
+                  case Empty( cValorPropiedad1 ) .and. Empty( cValorPropiedad2 ) //Caso de artículo sin propiedades
+
+                     /*
+                     Actualizamos el stock total de la web---------------------
+                     */
+
+                     nTotStock   := ::oStock:nStockArticulo( ::oArt:Codigo )
+
+                     cCommand    := "UPDATE " + ::cPrefixTable( "stock_available" ) + " SET " + ;
+                                       "quantity='" + AllTrim( Str( nTotStock ) ) + "' " + ;
+                                    "WHERE id_product=" + AllTrim( Str( ::oArt:cCodWeb ) ) + " AND id_product_attribute=0 "
+
+                     TMSCommand():New( ::oCon ):ExecDirect( cCommand )
+
+                  case !Empty( cValorPropiedad1 ) .and. Empty( cValorPropiedad2 ) //Caso de artículo con una sola propiedad
+
+                     /*
+                     Actualizamos el stock total de la web---------------------
+                     */
+
+                     nTotStock   := ::oStock:nStockArticulo( ::oArt:Codigo )
+
+                     cCommand    := "UPDATE " + ::cPrefixTable( "stock_available" ) + " SET " + ;
+                                       "quantity='" + AllTrim( Str( nTotStock ) ) + "' " + ;
+                                    "WHERE id_product=" + AllTrim( Str( ::oArt:cCodWeb ) ) + " AND id_product_attribute=0 "
+
+                     TMSCommand():New( ::oCon ):ExecDirect( cCommand )
+
+                     /*
+                     Actualizamos el stock por propiedades---------------------
+                     */
+
+                     nTotStock   := ::oStock:nStockAlmacen( cCodigoArticulo, , cValorPropiedad1 )
+
+                     nIdProductAttribute := ::nIdProductAttribute( ::oArt:cCodWeb, cCodWebValPr1 )
+
+                     if nIdProductAttribute != 0
+
+                        cCommand    := "UPDATE " + ::cPrefixTable( "stock_available" ) + " SET " + ;
+                                          "quantity='" + AllTrim( Str( nTotStock ) ) + "' " + ;
+                                       "WHERE id_product=" + AllTrim( Str( ::oArt:cCodWeb ) ) + " AND id_product_attribute=" + Str( nIdProductAttribute )
+
+                        TMSCommand():New( ::oCon ):ExecDirect( cCommand )
+
+                     end if   
+
+                  case !Empty( cValorPropiedad1 ) .and. !Empty( cValorPropiedad2 ) //Caso de artículo con dos propiedades
+
+                     /*
+                     Actualizamos el stock total de la web---------------------
+                     */
+
+                     nTotStock   := ::oStock:nStockArticulo( ::oArt:Codigo )
+
+                     cCommand    := "UPDATE " + ::cPrefixTable( "stock_available" ) + " SET " + ;
+                                       "quantity='" + AllTrim( Str( nTotStock ) ) + "' " + ;
+                                    "WHERE id_product=" + AllTrim( Str( ::oArt:cCodWeb ) ) + " AND id_product_attribute=0 "
+
+                     TMSCommand():New( ::oCon ):ExecDirect( cCommand )
+
+                     /*
+                     Actualizamos el stock por propiedades---------------------
+                     */
+
+                     nTotStock   := ::oStock:nStockAlmacen( cCodigoArticulo, , cValorPropiedad1, cValorPropiedad2 )
+
+                     nIdProductAttribute := ::nIdProductAttribute( ::oArt:cCodWeb, cCodWebValPr1, cCodWebValPr2 )
+
+                     if nIdProductAttribute != 0
+
+                        cCommand    := "UPDATE " + ::cPrefixTable( "stock_available" ) + " SET " + ;
+                                          "quantity='" + AllTrim( Str( nTotStock ) ) + "' " + ;
+                                       "WHERE id_product=" + AllTrim( Str( ::oArt:cCodWeb ) ) + " AND id_product_attribute=" + Str( nIdProductAttribute )
+
+                        TMSCommand():New( ::oCon ):ExecDirect( cCommand )
+
+                     end if   
+
+               end case   
 
             ::DisconectBBDD()
    
-         endif      
+            endif      
+
+         end if   
 
       end if
 
@@ -6390,6 +6476,111 @@ Method ActualizaStockProductsPrestashop( cCodigoArticulo, cCodigoPropiedad1, cCo
    ::lHideDialogWait()
 
 Return .t.
+
+//---------------------------------------------------------------------------//
+
+METHOD nIdProductAttribute( cCodWebArt, cCodWebValPr1, cCodWebValPr2 ) CLASS TComercio
+
+   local nIdProductAttribute  := 0
+   local cCommand             := ""
+   local oQuery
+   local oQuery2
+   local lPrp1                := .f.
+   local lPrp2                := .f.
+
+   do case
+      case !Empty( cCodWebValPr1 ) .and. Empty( cCodWebValPr2 )
+
+      cCommand          := "SELECT * FROM " + ::cPrefixTable( "product_attribute" ) + ;
+                        " WHERE id_product = " + Alltrim( Str( cCodWebArt ) )
+
+      oQuery            := TMSQuery():New( ::oCon, cCommand )
+
+      if oQuery:Open() .and. oQuery:RecCount() > 0
+
+         oQuery:GoTop()
+
+         while !oQuery:Eof()
+
+            cCommand                      := "SELECT * FROM " + ::cPrefixTable( "product_attribute_combination" ) + ;
+                                             " WHERE id_product_attribute = " + Alltrim( Str( oQuery:FieldGet( 1 ) ) )
+
+            oQuery2                       := TMSQuery():New( ::oCon, cCommand )
+
+               if oQuery2:Open()             .and.;
+                  oQuery2:RecCount() == 1    .and.;
+                  oQuery2:FieldGet( 1 ) == cCodWebValPr1
+
+                  nIdProductAttribute     := oQuery:FieldGet( 1 )
+
+               end if   
+
+            oQuery:Skip()
+
+         end while
+
+      end if
+
+      case !Empty( cCodWebValPr1 ) .and. !Empty( cCodWebValPr2 )
+
+      cCommand          := "SELECT * FROM " + ::cPrefixTable( "product_attribute" ) + " WHERE id_product=" + Alltrim( Str( cCodWebArt ) )
+
+      oQuery            := TMSQuery():New( ::oCon, cCommand )
+
+      if oQuery:Open() .and. oQuery:RecCount() > 0
+
+         oQuery:GoTop()
+
+         while !oQuery:Eof()
+
+            cCommand                      := "SELECT * FROM " + ::cPrefixTable( "product_attribute_combination" ) + " WHERE id_product_attribute=" + Alltrim( Str( oQuery:FieldGet( 1 ) ) )
+
+            oQuery2                       := TMSQuery():New( ::oCon, cCommand )
+
+               if oQuery2:Open() .and. oQuery2:RecCount() == 2
+
+                  oQuery2:GoTop()
+
+                  while !oQuery2:Eof()
+
+                     if !lPrp1
+                        lPrp1 := ( oQuery2:FieldGet( 1 ) == cCodWebValPr1 )
+                     end if
+
+                     oQuery2:Skip()
+
+                  end while
+
+                  oQuery2:GoTop()
+
+                  while !oQuery2:Eof()
+
+                     if !lPrp2
+                        lPrp2 := ( oQuery2:FieldGet( 1 ) == cCodWebValPr2 )
+                     end if
+
+                     oQuery2:Skip()
+
+                  end while
+
+                  if lPrp1 .and. lPrp2
+                     nIdProductAttribute     := oQuery:FieldGet( 1 )
+                  end if
+
+               end if
+
+            oQuery:Skip()
+
+            lPrp1 := .f.
+            lPrp2 := .f.
+
+         end while
+
+      end if
+
+   end case
+
+Return nIdProductAttribute
 
 //---------------------------------------------------------------------------//
 //---------------------------------------------------------------------------//
@@ -6476,19 +6667,5 @@ Function KillAutoRecive()
    oComercio      := nil
 
 Return( nil )
-
-//---------------------------------------------------------------------------//
-
-Function ActualizaStockWeb( cCodArt, cCodPr1, cCodPr2, cValPr1, cValPr2 )
-
-   if uFieldEmpresa( "lRealWeb" )
-
-      with object ( TComercio():GetInstance() )    
-         :ActualizaStockProductsPrestashop( cCodArt, cCodPr1, cCodPr2, cValPr1, cValPr2 )
-      end with
-
-   end if   
-
-Return .t.
 
 //---------------------------------------------------------------------------//
