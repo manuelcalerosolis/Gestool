@@ -3427,10 +3427,10 @@ METHOD DefineFiles( cPath, cVia, lUniqueName, cFileName ) CLASS TDetMovimientos
       FIELD NAME "cAloMov"             TYPE "C" LEN   3 DEC 0 COMMENT "Alm. sal."                           OF oDbf
       FIELD NAME "cRefMov"             TYPE "C" LEN  18 DEC 0 COMMENT "Código"                              OF oDbf
       FIELD NAME "cCodMov"             TYPE "C" LEN   2 DEC 0 COMMENT "TM"                                  OF oDbf
-      FIELD NAME "cCodPr1"             TYPE "C" LEN  10 DEC 0 COMMENT "Cod. propiedad 1"                    OF oDbf
-      FIELD NAME "cCodPr2"             TYPE "C" LEN  10 DEC 0 COMMENT "Cod. propiedad 2"                    OF oDbf
-      FIELD NAME "cValPr1"             TYPE "C" LEN  10 DEC 0 COMMENT "Prp.1"                               OF oDbf
-      FIELD NAME "cValPr2"             TYPE "C" LEN  10 DEC 0 COMMENT "Prp.2"                               OF oDbf
+      FIELD NAME "cCodPr1"             TYPE "C" LEN  20 DEC 0 COMMENT "Cod. propiedad 1"                    OF oDbf
+      FIELD NAME "cCodPr2"             TYPE "C" LEN  20 DEC 0 COMMENT "Cod. propiedad 2"                    OF oDbf
+      FIELD NAME "cValPr1"             TYPE "C" LEN  20 DEC 0 COMMENT "Prp.1"                               OF oDbf
+      FIELD NAME "cValPr2"             TYPE "C" LEN  20 DEC 0 COMMENT "Prp.2"                               OF oDbf
       FIELD NAME "cCodUsr"             TYPE "C" LEN   3 DEC 0 COMMENT "Código usuario"                      OF oDbf
       FIELD NAME "cCodDlg"             TYPE "C" LEN   2 DEC 0 COMMENT "Código delegación"                   OF oDbf
       FIELD NAME "lLote"               TYPE "L" LEN   1 DEC 0 COMMENT "Lógico lote"                         OF oDbf

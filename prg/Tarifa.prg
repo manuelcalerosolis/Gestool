@@ -52,18 +52,18 @@ static aDetalle   := {  {"CCODTAR",   "C",    5,    0, "Código de la tarifa" },;
                         {"DINIPRM",   "D",    8,    0, "Fecha inicio de promoción" },;
                         {"DFINPRM",   "D",    8,    0, "Fecha final de promoción" },;
                         {"NDTOPRM",   "N",    6,    2, "Descuento promoción" },;
-                        {"CCODPR1",   "C",   10,    0, "Código de primera propiedad" },;
-                        {"CCODPR2",   "C",   10,    0, "Código de segunda propiedad" },;
-                        {"CVALPR1",   "C",   10,    0, "Valor de primera propiedad" },;
-                        {"CVALPR2",   "C",   10,    0, "Valor de segunda propiedad" } }
+                        {"CCODPR1",   "C",   20,    0, "Código de primera propiedad" },;
+                        {"CCODPR2",   "C",   20,    0, "Código de segunda propiedad" },;
+                        {"CVALPR1",   "C",   20,    0, "Valor de primera propiedad" },;
+                        {"CVALPR2",   "C",   20,    0, "Valor de segunda propiedad" } }
 
 static aDeta2     := {  {"CCODTAR",   "C",    5,    0, "Código de la tarifa" },;
                         {"CCODART",   "C",   18,    0, "Código del artículo" },;
                         {"CCODFAM",   "C",   16,    0, "Código de la família" },;
-                        {"CCODPR1",   "C",   10,    0, "Código de primera propiedad" },;
-                        {"CCODPR2",   "C",   10,    0, "Código de segunda propiedad" },;
-                        {"CVALPR1",   "C",   10,    0, "Valor de primera propiedad" },;
-                        {"CVALPR2",   "C",   10,    0, "Valor de segunda propiedad" },;
+                        {"CCODPR1",   "C",   20,    0, "Código de primera propiedad" },;
+                        {"CCODPR2",   "C",   20,    0, "Código de segunda propiedad" },;
+                        {"CVALPR1",   "C",   20,    0, "Valor de primera propiedad" },;
+                        {"CVALPR2",   "C",   20,    0, "Valor de segunda propiedad" },;
                         {"CCODAGE",   "C",    3,    0, "Código del agentes" },;
                         {"NCOMAGE",   "N",    6,    2, "Porcentaje de comisión del agente" },;
                         {"NCOMPRM",   "N",    6,    2, "Porcentaje de comisión en promoción" } }
