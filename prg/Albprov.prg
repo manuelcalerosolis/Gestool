@@ -6549,6 +6549,10 @@ FUNCTION rxAlbPrv( cPath, oMeter )
       ( dbfAlbPrvT)->( ordCondSet("!Deleted()", {||!Deleted()}  ) )
       ( dbfAlbPrvT)->( ordCreate( cPath + "AlbProvL.CDX", "iNumAlb", "'02' + CSERALB + STR( NNUMALB ) + CSUFALB", {|| '02' + Field->cSerAlb + STR( Field->nNumAlb ) + Field->cSufAlb } ) )
 
+      ( dbfAlbPrvT )->( ordCondSet( "!lFacturado .and. !Deleted()", {|| !Field->lFacturado .and. !Deleted() } ) )
+      ( dbfAlbPrvT )->( ordCreate( cPath + "AlbProvL.Cdx", "cArtLote", "cRef + cLote", {|| Field->cRef + Field->cLote } ) )
+
+
       ( dbfAlbPrvT )->( dbCloseArea() )
    else
       msgStop( "Imposible abrir en modo exclusivo la tabla de albaranes de proveedores" )
