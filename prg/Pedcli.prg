@@ -2342,7 +2342,7 @@ STATIC FUNCTION EdtRec( aTmp, aGet, dbfPedCliT, oBrw, cCodCli, cCodArt, nMode, c
 
       with object ( oBrwLin:AddCol() )
          :cHeader             := "Precio"
-         :bEditValue          := {|| nImpUPedCli( aTmp, dbfTmpLin, nDouDiv ) }
+         :bEditValue          := {|| nTotUPedCli( dbfTmpLin, nDouDiv ) }
          :cEditPicture        := cPouDiv
          :nWidth              := 70
          :nDataStrAlign       := 1
@@ -14986,7 +14986,7 @@ FUNCTION nTotUPedCli( uTmpLin, nDec, nVdv )
             nCalculo    := uTmpLin:nPreDiv
          end if
 
-   end case
+   end case 
 
    if nVdv != 0
       nCalculo          := nCalculo / nVdv
@@ -18201,7 +18201,7 @@ Function MuestraPedidosWeb( oBtnPedidos, lGoPedCli )
 
       with object ( oBrwDetallesPedidos:AddCol() )
          :cHeader             := "Precio"
-         :bEditValue          := {|| nImpUPedCli( dbfTmpLin, nDouDiv ) }
+         :bEditValue          := {|| nTotUPedCli( dbfTmpLin, nDouDiv ) }
          :cEditPicture        := cPouDiv
          :nWidth              := 60
          :nDataStrAlign       := 1

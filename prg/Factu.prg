@@ -1370,8 +1370,6 @@ init procedure InitAplication()
 
    hDLLRich    := LoadLibrary( "Riched20.dll" ) // Cargamos la libreria para richedit
 
-   msginfo( "InitAplication")
-
 return
 
 //---------------------------------------------------------------------------//
@@ -1379,8 +1377,6 @@ return
 // freed on a possible application error
 
 Static Function FinishAplication() //  Static Function
-
-   msginfo( "FinishAplication" )
 
    CursorWait()
 
