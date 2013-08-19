@@ -7592,6 +7592,8 @@ STATIC FUNCTION EdtDet( aTmp, aGet, dbfTmpL, oBrw, bWhen, cCodArt, nMode, aTik )
                   aGet[ _CLOTE ]:lNeedGetFocus   := .t.
                end case
 
+               aGet[ _CLOTE ]:bValid              := {|| lValidaLote( aTmp, aGet ) }
+
             case cName == "Caducidad"
 
                @ 0, 0 GET  aGet[ _DFECCAD ] VAR aTmp[ _DFECCAD ];
@@ -20992,5 +20994,49 @@ FUNCTION sTotTikCli( cNumTik, cTikT, cTikL, cDiv, cDivRet )
    sTotal:aTotalIva                       := aImpTik
 
 Return ( sTotal )
+
+//--------------------------------------------------------------------------//
+
+// busca articulos por el numero de lote y devulve la fecha de caducidad------- 
+
+Static Function lValidaLote( aTmp, aGet )
+
+   local nOrdAnt
+   local nRecAnt
+   local lEncontrado       :=.f.
+
+   if Empty( aTmp[ _CLOTE ] )
+      return .t.
+   end if 
+
+   // buscamos en facturas ----------------------------------------------------
+
+   nRecAnt           := ( dbfFacPrvL )->( RecNo() )
+   nOrdAnt           := ( dbfFacPrvL )->( OrdSetFocus( "cArtLote" ) )
+
+   if ( dbfFacPrvL )->( dbSeek( aTmp[ _CCBATIL ] + aTmp[ _CLOTE ] ) )
+
+      lEncontrado :=.t.
+      aGet[ _DFECCAD ]:cText( ( dbfFacPrvL )->dFecCad ) 
+   end if
+   ( dbfFacPrvL )->( OrdSetFocus( nOrdAnt ) )
+   ( dbfFacPrvL )->( dbGoTo( nRecAnt ) )
+
+   // si no encuentra nada buscamos en albaranes ------------------------------
+   if !(lEncontrado)
+
+      nRecAnt           := ( dbfAlbPrvL )->( RecNo() ) 
+      nOrdAnt           := ( dbfAlbPrvL )->( OrdSetFocus( "cArtLote" ) )
+                                       
+      if ( dbfAlbPrvL )->( dbSeek( aTmp[ _CCBATIL ] + aTmp[ _CLOTE ] ) )
+         aGet[ _DFECCAD ]:cText( ( dbfAlbPrvL )->dFecCad )
+      end if
+      
+      ( dbfAlbPrvL )->( OrdSetFocus( nOrdAnt ) )
+      ( dbfAlbPrvL )->( dbGoTo( nRecAnt ) ) 
+
+   end if 
+
+Return .t.
 
 //--------------------------------------------------------------------------//
