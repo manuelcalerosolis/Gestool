@@ -71,6 +71,8 @@ CLASS TImpFactu
    DATA oDbfTrnGst
    DATA oDbfObrGst
    DATA oDbfObrFac
+   DATA oDbfBncFac
+   DATA oDbfBncGst
    DATA oDbfAgeGst
    DATA oDbfAgeFac
    DATA oDbfAlmGst
@@ -192,8 +194,10 @@ METHOD OpenFiles()
       DATABASE NEW ::oDbfCliGst PATH ( cPatCli() )  FILE "CLIENT.DBF"   VIA ( cDriver() ) CLASS "CLIGST"  SHARED INDEX "CLIENT.CDX"
       DATABASE NEW ::oDbfObrGst PATH ( cPatCli() )  FILE "OBRAST.DBF"   VIA ( cDriver() ) CLASS "OBRGST"  SHARED INDEX "OBRAST.CDX"
       DATABASE NEW ::oDbfAtpGst PATH ( cPatCli() )  FILE "CLIATP.DBF"   VIA ( cDriver() ) CLASS "ATPGST"  SHARED INDEX "CLIATP.CDX"
+      DATABASE NEW ::oDbfBncGst PATH ( cPatCli() )  FILE "CliBnc.DBF"   VIA ( cDriver() ) CLASS "CliBnc"  SHARED INDEX "CliBnc.CDX"
       DATABASE NEW ::oDbfCliFac PATH ( ::cPathFac ) FILE "CLIENTES.DBF" VIA ( cDriver() ) CLASS "CLIFAC"
       DATABASE NEW ::oDbfObrFac PATH ( ::cPathFac ) FILE "DIRCLI.DBF"   VIA ( cDriver() ) CLASS "OBRFAC"
+      DATABASE NEW ::oDbfBncFac PATH ( ::cPathFac ) FILE "BancosCL.DBF" VIA ( cDriver() ) CLASS "BancosCL"
       DATABASE NEW ::oDbfAtpFac PATH ( ::cPathFac ) FILE "ATIPICAS.DBF" VIA ( cDriver() ) CLASS "ATPFAC"
       DATABASE NEW ::oDbfProvFac PATH ( ::cPathFac ) FILE "PROVINC.DBF" VIA ( cDriver() ) CLASS "PROVFAC" SHARED INDEX "PROVINC.CDX"
       DATABASE NEW ::oDbfCliCom PATH ( ::cPathFac ) FILE "ClienteC.Dbf" VIA ( cDriver() ) CLASS "ClienteC" SHARED INDEX "ClienteC.Cdx"
@@ -656,6 +660,18 @@ METHOD CloseFiles()
       ::oDbfObrFac := nil
    end if
 
+   if !Empty( ::oDbfBncFac )
+      ::oDbfBncFac:End()
+   else
+      ::oDbfBncFac := nil
+   end if
+
+   if !Empty( ::oDbfBncGst )
+      ::oDbfBncGst:End()
+   else
+      ::oDbfBncGst := nil
+   end if
+
    if !Empty( ::oDbfAgeGst )
       ::oDbfAgeGst:End()
    else
@@ -998,6 +1014,7 @@ METHOD Importar()
    local cCodCli              := ""
    local cNotas               := ""
    local nCounter             := 0
+   local nLinea               := 0
    local cControl             := ""
    local aTemporalLineas      := {}
    local oTemporal
@@ -1346,6 +1363,38 @@ METHOD Importar()
             ::aMtrIndices[ 5 ]:Set( ::oDbfObrFac:Recno() )
 
             ::oDbfObrFac:Skip()
+
+         end while
+
+         /*
+         Trasbase de bancos-----------------------------------------------------
+         */
+
+         ::aMtrIndices[ 5 ]:SetTotal( ::oDbfBncFac:LastRec() )
+
+         ::oDbfBncFac:GoTop()
+         while !( ::oDbfBncFac:eof() )
+
+            ::oDbfBncGst:Append()
+
+            ::oDbfBncGst:cCodCli    := SpecialPadr( ::oDbfBncFac:cCodCli, "0", RetNumCodCliEmp() )
+            ::oDbfBncGst:cEntBnc    := ::oDbfBncFac:cEntidad
+            ::oDbfBncGst:cSucBnc    := ::oDbfBncFac:cAgencia
+            ::oDbfBncGst:cCtaBnc    := ::oDbfBncFac:cCta
+            ::oDbfBncGst:cDgtBnc    := cDgtControl( ::oDbfBncFac:cEntidad, ::oDbfBncFac:cAgencia, Space( 2 ), ::oDbfBncFac:cCta )
+            ::oDbfBncGst:cCodBnc    := ::oDbfBncFac:cNombre
+            ::oDbfBncGst:cDirBnc    := ::oDbfBncFac:cDireccion
+            ::oDbfBncGst:cPobBnc    := ::oDbfBncFac:cPoblacion
+            ::oDbfBncGst:cProBnc    := ::oDbfBncFac:cProvincia
+            ::oDbfBncGst:cTlfBnc    := ::oDbfBncFac:cTfoBco
+            ::oDbfBncGst:cFaxBnc    := ::oDbfBncFac:cFaxBco
+            ::oDbfBncGst:cPContBco  := ::oDbfBncFac:cContactBco 
+
+            ::oDbfBncGst:Save()
+
+            ::aMtrIndices[ 5 ]:Set( ::oDbfBncFac:Recno() )
+
+            ::oDbfBncFac:Skip()
 
          end while
 
@@ -2276,7 +2325,7 @@ METHOD Importar()
          ::oDbfFacTFac:GoTop()
          while !( ::oDbfFacTFac:eof() )
 
-            if ::oDbfFacTFac:cSerie == "R"
+            if ::oDbfFacTFac:cSerie == "C"
 
                while ::oDbfFacRecTGst:Seek( ::oDbfFacTFac:cSerie + Str( ::oDbfFacTFac:nNumFac, 9 ) )
                   ::oDbfFacRecTGst:Delete( .f. )
@@ -2364,7 +2413,7 @@ METHOD Importar()
          ::oDbfRecFac:GoTop()
          while !( ::oDbfRecFac:eof() )
 
-            if ::oDbfRecFac:cSerie == "R"
+            if ::oDbfRecFac:cSerie == "C"
 
                ::oDbfFacPGst:Append()
 
@@ -2392,7 +2441,7 @@ METHOD Importar()
                ::oDbfFacPGst:nNumRem        := ::oDbfRecFac:nNumRem
                ::oDbfFacPGst:cCtaRem        := ::oDbfRecFac:cCtaRem
                ::oDbfFacPGst:dFecVto        := ::oDbfRecFac:dFecVcto
-               ::oDbfFacPGst:cTipRec        := "R"
+               ::oDbfFacPGst:cTipRec        := "C"
 
                ::oDbfFacPGst:Save()
 
@@ -2409,7 +2458,7 @@ METHOD Importar()
          ::oDbfFacLFac:GoTop()
          while !( ::oDbfFacLFac:eof() )
 
-            if ::oDbfFacLFac:cSerie == "R"
+            if ::oDbfFacLFac:cSerie == "C"
 
                ::oDbfFacRecLGst:Append()
 
@@ -2719,28 +2768,35 @@ METHOD Importar()
          ::oDbfMovLFac:GoTop()
          while !::oDbfMovLFac:Eof()
 
-            if isNil( cCodAlm ) .or. ( cCodAlm == ::oDbfMovLFac:cCodAlm )
+            if isNil( cCodAlm ) .or. ( cCodAlm != ::oDbfMovLFac:cCodAlm )
 
                cCodAlm                 := ::oDbfMovLFac:cCodAlm
+               nLinea                  := 0
                nCounter++
 
-               ::oDbfMovLGst:Append()
-               ::oDbfMovLGst:nNumRem   := nCounter
-               ::oDbfMovLGst:dFecRem   := GetSysDate()
-               ::oDbfMovLGst:Save()
+               ::oDbfMovTGst:Append()
+               ::oDbfMovTGst:nNumRem   := nCounter
+               ::oDbfMovTGst:dFecRem   := GetSysDate()
+               ::oDbfMovTGst:cCodUsr   := cCurUsr()
+               ::oDbfMovTGst:nTipMov   := 4
+               ::oDbfMovTGst:cAlmDes   := ::oDbfMovLFac:cCodAlm
+               ::oDbfMovTGst:Save()
 
             end if
 
+            nLinea++
+
             ::oDbfMovLGst:Append()
-            ::oDbfMovLGst:nNumRem   := nCounter
-            ::oDbfMovLGst:dFecMov   := GetSysDate()
-            ::oDbfMovLGst:nTipMov   := 2
-            ::oDbfMovLGst:cAliMov   := ::oDbfMovLFac:cCodAlm
-            ::oDbfMovLGst:cRefMov   := ::oDbfMovLFac:cRef
-            ::oDbfMovLGst:cValPr1   := ::oDbfMovLFac:cProp1
-            ::oDbfMovLGst:cValPr2   := ::oDbfMovLFac:cProp2
-            ::oDbfMovLGst:nUndMov   := ::oDbfMovLFac:nStock
-            ::oDbfMovLGst:cUsrMov   := cCurUsr()
+            ::oDbfMovLGst:nNumRem      := nCounter
+            ::oDbfMovLGst:nNumLin      := nLinea
+            ::oDbfMovLGst:dFecMov      := GetSysDate()
+            ::oDbfMovLGst:nTipMov      := 4
+            ::oDbfMovLGst:cAliMov      := ::oDbfMovLFac:cCodAlm
+            ::oDbfMovLGst:cRefMov      := ::oDbfMovLFac:cRef
+            ::oDbfMovLGst:cValPr1      := ::oDbfMovLFac:cProp1
+            ::oDbfMovLGst:cValPr2      := ::oDbfMovLFac:cProp2
+            ::oDbfMovLGst:nUndMov      := ::oDbfMovLFac:nStock
+            ::oDbfMovLGst:cCodUsr      := cCurUsr()
             ::oDbfMovLGst:Save()
 
             ::oDbfMovLFac:Skip()

@@ -276,7 +276,6 @@ RETURN ( Self )
 
 //---------------------------------------------------------------------------//
 
-
 METHOD Initiate( cText, oSender )
 
    ::cText              := cText

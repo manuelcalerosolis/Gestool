@@ -7299,15 +7299,19 @@ Function SynPedCli( cPath )
               ( dbfPedCliL )->cLote   := AllTrim( Str( ( dbfPedCliL )->nLote ) )
         end if
 
-        if ( dbfPedCliL )->lIvaLin != RetFld( ( dbfPedCliI )->cSerPed + Str( ( dbfPedCliI )->nNumPed ) + ( dbfPedCliI )->cSufPed, dbfPedCliT, "lIvaInc" )
-              ( dbfPedCliL )->lIvaLin := RetFld( ( dbfPedCliI )->cSerPed + Str( ( dbfPedCliI )->nNumPed ) + ( dbfPedCliI )->cSufPed, dbfPedCliT, "lIvaInc" )
+        if ( dbfPedCliL )->lIvaLin != RetFld( ( dbfPedCliL )->cSerPed + Str( ( dbfPedCliL )->nNumPed ) + ( dbfPedCliL )->cSufPed, dbfPedCliT, "lIvaInc" )
+              ( dbfPedCliL )->lIvaLin := RetFld( ( dbfPedCliL )->cSerPed + Str( ( dbfPedCliL )->nNumPed ) + ( dbfPedCliL )->cSufPed, dbfPedCliT, "lIvaInc" )
+        end if
+
+        if Empty( ( dbfPedCliL )->cAlmLin )
+              ( dbfPedCliL )->cAlmLin := RetFld( ( dbfPedCliL )->cSerPed + Str( ( dbfPedCliL )->nNumPed ) + ( dbfPedCliL )->cSufPed, dbfPedCliT, "cCodAlm" )
         end if
 
         if !Empty( ( dbfPedCliL )->cRef ) .and. Empty( ( dbfPedCliL )->cCodFam )
               ( dbfPedCliL )->cCodFam := RetFamArt( ( dbfPedCliL )->cRef, dbfArticulo )
         end if
 
-        if !Empty( ( dbfPedCliL )->cRef ) .and. !Empty( ( dbfPedCliL )->cCodFam )
+        if !Empty( ( dbfPedCliL )->cRef ) .and. !Empty( ( dbfPedCliL )->cGrpFam )
               ( dbfPedCliL )->cGrpFam := cGruFam( ( dbfPedCliL )->cCodFam, dbfFamilia )
         end if
 

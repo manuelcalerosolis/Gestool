@@ -12435,6 +12435,10 @@ function SynFacCli( cPath )
             ( dbfFacCliL )->dFecFac    := RetFld( ( dbfFacCliL )->cSerie + Str( ( dbfFacCliL )->nNumFac ) + ( dbfFacCliL )->cSufFac, dbfFacCliT, "dFecFac" )
          end if
 
+         if Empty( ( dbfFacCliL )->cAlmLin )
+            ( dbfFacCliL )->cAlmLin    := RetFld( ( dbfFacCliL )->cSerie + Str( ( dbfFacCliL )->nNumFac ) + ( dbfFacCliL )->cSufFac, dbfFacCliT, "cCodAlm" )
+         end if
+
          if !Empty( ( dbfFacCliL )->mNumSer )
             aNumSer                    := hb_aTokens( ( dbfFacCliL )->mNumSer, "," )
             for each cNumSer in aNumSer

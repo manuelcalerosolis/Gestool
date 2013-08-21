@@ -8004,6 +8004,10 @@ function SynAlbCli( cPath )
          ( dbfAlbCliL )->dFecAlb    := RetFld( ( dbfAlbCliL )->cSerAlb + Str( ( dbfAlbCliL )->nNumAlb ) + ( dbfAlbCliL )->cSufAlb, dbfAlbCliT, "dFecAlb" )
       end if
 
+      if Empty( ( dbfAlbCliL )->cAlmLin )
+         ( dbfAlbCliL )->cAlmLin    := RetFld( ( dbfAlbCliL )->cSerAlb + Str( ( dbfAlbCliL )->nNumAlb ) + ( dbfAlbCliL )->cSufAlb, dbfAlbCliT, "cCodAlm" )
+      end if
+
       if !Empty( ( dbfAlbCliL )->mNumSer )
          aNumSer                       := hb_aTokens( ( dbfAlbCliL )->mNumSer, "," )
          for each cNumSer in aNumSer

@@ -11482,24 +11482,28 @@ function SynFacRec( cPath )
 	    end if
 
 	    if !Empty( ( dbfFacRecL )->cCodAlb ) .and. Len( AllTrim( ( dbfFacRecL )->cCodAlb ) ) != 12
-        	( dbfFacRecL )->cCodAlb := AllTrim( ( dbfFacRecL )->cCodAlb ) + "00"
+        	( dbfFacRecL )->cCodAlb 		:= AllTrim( ( dbfFacRecL )->cCodAlb ) + "00"
       	end if
 	        
 	      if Empty( ( dbfFacRecL )->cLote ) .and. !Empty( ( dbfFacRecL )->nLote )
-	         ( dbfFacRecL )->cLote         := AllTrim( Str( ( dbfFacRecL )->nLote ) )
+	         ( dbfFacRecL )->cLote      := AllTrim( Str( ( dbfFacRecL )->nLote ) )
 	      end if
 	      
 	      if Empty( ( dbfFacRecL )->nValImp )
-	         cCodImp                       := RetFld( ( dbfFacRecL )->cRef, dbfArticulo, "cCodImp" )
+	         cCodImp                    := RetFld( ( dbfFacRecL )->cRef, dbfArticulo, "cCodImp" )
 	        	if !Empty( cCodImp )
-	            ( dbfFacRecL )->nValImp    := oNewImp:nValImp( cCodImp )
+	            ( dbfFacRecL )->nValImp := oNewImp:nValImp( cCodImp )
 	         end if
 	      end if
 	      
 	      if Empty( ( dbfFacRecL )->nVolumen )
-	         ( dbfFacRecL )->nVolumen      :=  RetFld( ( dbfFacRecL )->cRef, dbfArticulo, "nVolumen" )
+	         ( dbfFacRecL )->nVolumen   :=  RetFld( ( dbfFacRecL )->cRef, dbfArticulo, "nVolumen" )
 	      end if
 	      
+         if Empty( ( dbfFacRecL )->cAlmLin )
+            ( dbfFacRecL )->cAlmLin    := RetFld( ( dbfFacRecL )->cSerie + Str( ( dbfFacRecL )->nNumFac ) + ( dbfFacRecL )->cSufFac, dbfFacRecT, "cCodAlm" )
+         end if
+
 	      if !Empty( ( dbfFacRecL )->mNumSer )
 
 	         aNumSer                       := hb_aTokens( ( dbfFacRecL )->mNumSer, "," )

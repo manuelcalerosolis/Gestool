@@ -9442,7 +9442,8 @@ Function SynPreCli( cPath )
          end if
 
          /*
-         Rellenamos los campos de totales
+         Rellenamos los campos de totales--------------------------------------
+         */
 
          if ( dbfPreCliT )->nTotPre == 0 .and. dbLock( dbfPreCliT )
 
@@ -9456,7 +9457,6 @@ Function SynPreCli( cPath )
             ( dbfPreCliT )->( dbUnLock() )
 
          end if
-         */
 
          ( dbfPreCliT )->( dbSkip() )
 
@@ -9469,37 +9469,37 @@ Function SynPreCli( cPath )
    ( dbfPreCliL )->( ordSetFocus( 0 ) )
    ( dbfPreCliL )->( dbGoTop() )
 
-      while !( dbfPreCliL )->( eof() )
+   while !( dbfPreCliL )->( eof() )
 
-         if Empty( ( dbfPreCliL )->cSufPre )
-            ( dbfPreCliL )->cSufPre := "00"
-         end if
+      if Empty( ( dbfPreCliL )->cSufPre )
+         ( dbfPreCliL )->cSufPre := "00"
+      end if
 
-         if Empty( ( dbfPreCliL )->cLote ) .and. !Empty( ( dbfPreCliL )->nLote )
-            ( dbfPreCliL )->cLote   := AllTrim( Str( ( dbfPreCliL )->nLote ) )
-         end if
+      if Empty( ( dbfPreCliL )->cLote ) .and. !Empty( ( dbfPreCliL )->nLote )
+         ( dbfPreCliL )->cLote   := AllTrim( Str( ( dbfPreCliL )->nLote ) )
+      end if
 
-         if ( dbfPreCliL )->lIvaLin != RetFld( ( dbfPreCliL )->cSerPre + Str( ( dbfPreCliL )->nNumPre ) + ( dbfPreCliL )->cSufPre, dbfPreCliT, "lIvaInc" )
-            ( dbfPreCliL )->lIvaLin := RetFld( ( dbfPreCliL )->cSerPre + Str( ( dbfPreCliL )->nNumPre ) + ( dbfPreCliL )->cSufPre, dbfPreCliT, "lIvaInc" )
-         end if
+      if ( dbfPreCliL )->lIvaLin != RetFld( ( dbfPreCliL )->cSerPre + Str( ( dbfPreCliL )->nNumPre ) + ( dbfPreCliL )->cSufPre, dbfPreCliT, "lIvaInc" )
+         ( dbfPreCliL )->lIvaLin := RetFld( ( dbfPreCliL )->cSerPre + Str( ( dbfPreCliL )->nNumPre ) + ( dbfPreCliL )->cSufPre, dbfPreCliT, "lIvaInc" )
+      end if
 
-         if !Empty( ( dbfPreCliL )->cRef ) .and. Empty( ( dbfPreCliL )->cCodFam )
-            ( dbfPreCliL )->cCodFam := RetFamArt( ( dbfPreCliL )->cRef, dbfArticulo )
-         end if
+      if !Empty( ( dbfPreCliL )->cRef ) .and. Empty( ( dbfPreCliL )->cCodFam )
+         ( dbfPreCliL )->cCodFam := RetFamArt( ( dbfPreCliL )->cRef, dbfArticulo )
+      end if
 
-         if !Empty( ( dbfPreCliL )->cRef ) .and. !Empty( ( dbfPreCliL )->cCodFam )
-            ( dbfPreCliL )->cGrpFam := cGruFam( ( dbfPreCliL )->cCodFam, dbfFamilia )
-         end if
+      if Empty( ( dbfPreCliL )->cAlmLin )
+         ( dbfPreCliL )->cAlmLin := RetFld( ( dbfPreCliL )->cSerPre + Str( ( dbfPreCliL )->nNumPre ) + ( dbfPreCliL )->cSufPre, dbfPreCliT, "cCodAlm" )         
+      end if
 
-         if Empty( ( dbfPreCliL )->nReq )
-            ( dbfPreCliL )->nReq    := nPReq( dbfIva, ( dbfPreCliL )->nIva )
-         end if
+      if Empty( ( dbfPreCliL )->nReq )
+         ( dbfPreCliL )->nReq    := nPReq( dbfIva, ( dbfPreCliL )->nIva )
+      end if
 
-         ( dbfPreCliL )->( dbSkip() )
+      ( dbfPreCliL )->( dbSkip() )
 
-         SysRefresh()
+      SysRefresh()
 
-      end while
+   end while
 
    ( dbfPreCliL )->( ordSetFocus( 1 ) )
 

@@ -380,6 +380,8 @@ CLASS TTurno FROM TMasDet
    Method Initiate( cText, oSender )               CONSTRUCTOR
    Method Build( cPath, oWndParent, oMenuItem )    CONSTRUCTOR
 
+   Method lArqueoCiego()                           INLINE ( !lUsrMaster() )
+
    Method OpenFiles( lExclusive )
    Method OpenService( lExclusive )
    Method CloseFiles()
@@ -423,6 +425,7 @@ CLASS TTurno FROM TMasDet
    Method InvCierre( oAni, oMsg )
 
    Method lArqueoTurno( lZoom, lParcial )
+   Method InitArqueoTurno()
 
    Method lIsContadores()
    Method LoadContadores()
@@ -514,7 +517,7 @@ CLASS TTurno FROM TMasDet
 
    Method ChangedTreeImpresion() VIRTUAL
 
-   Method InitArqueoTurno()
+   Method InitDlgImprimir()
    Method StartArqueoTurno( oFld, oBtnMod, oCajTur )
 
    Method PrintReport( cTurno, cCaja, nDevice, nCopies, cPrinter, dbfDoc )
@@ -3985,12 +3988,12 @@ METHOD lArqueoTurno( lZoom, lParcial ) CLASS TTurno
          OF       oDlg ;
          ACTION   oDlg:End()
 
-      oDlg:bStart := {||  ::StartArqueoTurno( oFld, oBtnMod, oCajTur, oBrwCaj, oBrwCnt, oComentario ) }
+      oDlg:bStart := {|| ::StartArqueoTurno( oFld, oBtnMod, oCajTur, oBrwCaj, oBrwCnt, oComentario ) }
 
       oFld:aDialogs[ 2 ]:AddFastKey( VK_F2, {|| ::EdtAnt( oBrwCnt ) } )
       oFld:aDialogs[ 2 ]:AddFastKey( VK_F3, {|| ::EdtCol( oBrwCnt ) } )
 
-   oDlg:Activate( , , , .t. )
+   oDlg:Activate( , , , .t., {|| .t. }, , {|| ::InitArqueoTurno() } )
 
    /*
    Repos de las bases de datos-------------------------------------------------
@@ -4092,6 +4095,21 @@ Return ( oDlg:nResult == IDOK )
 //---------------------------------------------------------------------------//
 
 Method InitArqueoTurno()
+
+   if ::lArqueoCiego()
+
+   ? "Hide"
+      ::oBrwTotales:Hide()
+
+   else
+      ? "noes arqueo ciego"
+   end if    
+
+Return ( nil )
+
+//---------------------------------------------------------------------------//
+
+Method InitDlgImprimir()
 
    local oSubTree
 
@@ -6237,7 +6255,7 @@ METHOD DlgImprimir( nDevice, lTactil )
 
       oDlg:bStart := {|| ::StartDlgImprimir() }
 
-   oDlg:Activate( , , , .t., {|| .t. }, , {|| ::InitArqueoTurno() } )
+   oDlg:Activate( , , , .t., {|| .t. }, , {|| ::InitDlgImprimir() } )
 
 Return ( Self )
 
