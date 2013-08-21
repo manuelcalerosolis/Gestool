@@ -8417,6 +8417,10 @@ Function SynAlbPrv( cPath )
          ( dbfAlbPrvL )->nReq       := nPReq( dbfIva, ( dbfAlbPrvL )->nIva )
       end if
 
+      if Empty( ( dbfAlbPrvL )->cAlmLin )
+         ( dbfAlbPrvL )->cAlmLin    := RetFld( ( dbfAlbPrvL )->cSerAlb + Str( ( dbfAlbPrvL )->nNumAlb ) + ( dbfAlbPrvL )->cSufAlb, dbfAlbPrvT, "cCodAlm" )
+      end if
+
       if ( dbfAlbPrvL )->lFacturado != RetFld( ( dbfAlbPrvL )->cSerAlb + Str( ( dbfAlbPrvL )->nNumAlb ) + ( dbfAlbPrvL )->cSufAlb, dbfAlbPrvT, "lFacturado" )
          ( dbfAlbPrvL )->lFacturado := RetFld( ( dbfAlbPrvL )->cSerAlb + Str( ( dbfAlbPrvL )->nNumAlb ) + ( dbfAlbPrvL )->cSufAlb, dbfAlbPrvT, "lFacturado" )
       end if

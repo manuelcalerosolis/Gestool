@@ -7066,7 +7066,7 @@ FONT 8, "MS Sans Serif"
   CONTROL "No autorizado para cambio de precios", 240, "Button", BS_AUTOCHECKBOX|WS_TABSTOP, 397, 39, 133, 10
   CONTROL "No mostrar rentabilidad ", 260, "Button", BS_AUTOCHECKBOX|WS_TABSTOP, 397, 52, 133, 10
   CONTROL "No mostrar precios de costo", 270, "Button", BS_AUTOCHECKBOX|WS_TABSTOP, 397, 65, 133, 10
-  CONTROL "Panel táctil para zurdos", 300, "Button", BS_AUTOCHECKBOX|WS_TABSTOP, 397, 78, 133, 10
+  CONTROL "Arqueos ciegos", 300, "Button", BS_AUTOCHECKBOX|WS_TABSTOP, 397, 78, 133, 10
   CONTROL "Seleccionar artículos por familias", 250, "Button", BS_AUTOCHECKBOX|WS_TABSTOP, 397, 91, 133, 10
   CONTROL "No mostrar imágen de fondo", 280, "Button", BS_AUTOCHECKBOX|WS_TABSTOP, 397, 104, 133, 10
   CONTROL "No mostrar página de inicio", 290, "Button", BS_AUTOCHECKBOX|WS_TABSTOP, 397, 117, 133, 10

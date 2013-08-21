@@ -6967,7 +6967,7 @@ Function SynPedPrv( cPath )
       end if
 
       if !Empty( ( dbfPedPrvL )->cPedCli ) .and. Len( AllTrim( ( dbfPedPrvL )->cPedCli ) ) != 12
-         ( dbfPedPrvL )->cPedCli    := AllTrim( ( dbfPedPrvL )->cPedCli ) + "00"
+         ( dbfPedPrvL )->cPedCli := AllTrim( ( dbfPedPrvL )->cPedCli ) + "00"
       end if
 
       if Empty( ( dbfPedPrvL )->cLote ) .and. !Empty( ( dbfPedPrvL )->nLote )
@@ -6978,12 +6978,16 @@ Function SynPedPrv( cPath )
          ( dbfPedPrvL )->cCodFam := RetFamArt( ( dbfPedPrvL )->cRef, dbfArticulo )
       end if
 
-      if !Empty( ( dbfPedPrvL )->cRef ) .and. !Empty( ( dbfPedPrvL )->cCodFam )
+      if !Empty( ( dbfPedPrvL )->cRef ) .and. !Empty( ( dbfPedPrvL )->cGrpFam )
          ( dbfPedPrvL )->cGrpFam := cGruFam( ( dbfPedPrvL )->cCodFam, dbfFamilia )
       end if
 
       if Empty( ( dbfPedPrvL )->nReq )
          ( dbfPedPrvL )->nReq    := nPReq( dbfIva, ( dbfPedPrvL )->nIva )
+      end if
+
+      if Empty( ( dbfPedPrvL )->cAlmLin )
+         ( dbfPedPrvL )->cAlmLin := RetFld( ( dbfPedPrvL )->cSerPed + Str( ( dbfPedPrvL )->nNumPed ) + ( dbfPedPrvL )->cSufPed, dbfPedPrvT, "cCodAlm" )
       end if
 
       ( dbfPedPrvL )->( dbSkip() )

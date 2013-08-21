@@ -707,7 +707,7 @@ METHOD Del( lHead, lDetail ) CLASS TMasDet
 
    if !Empty( ::oWndBrw:oBrw ) .and. ( "XBROWSE" $ ::oWndBrw:oBrw:ClassName() ) .and. ( len( ::oWndBrw:oBrw:aSelected ) > 1 )
 
-      cTxt           := "¿ Desea eliminar definitivamente " + AllTrim( Trans( nMarked, "999999" ) ) + " registros ?"
+      cTxt           := "¿ Desea eliminar definitivamente " + AllTrim( Trans( len( ::oWndBrw:oBrw:aSelected ), "999999" ) ) + " registros ?"
 
       if oUser():lNotConfirmDelete() .or. ApoloMsgNoYes( cTxt, "Confirme supresión" )
 

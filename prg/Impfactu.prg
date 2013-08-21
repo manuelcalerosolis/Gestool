@@ -1242,10 +1242,18 @@ METHOD Importar()
          ::oDbfCliFac:GoTop()
          while !( ::oDbfCliFac:eof() )
 
-            cCodCli  := SpecialPadr( ::oDbfCliFac:cCodCli, "0", RetNumCodCliEmp() )
+            cCodCli              := SpecialPadr( ::oDbfCliFac:cCodCli, "0", RetNumCodCliEmp() )
 
             while ::oDbfCliGst:Seek( cCodCli )
                ::oDbfCliGst:Delete( .f. )
+            end if
+
+            while ::oDbfObrGst:Seek( cCodCli )
+               ::oDbfObrGst:Delete( .f. )
+            end if
+
+            while ::oDbfBncGst:Seek( cCodCli )
+               ::oDbfBncGst:Delete( .f. )
             end if
 
             ::oDbfCliGst:Append()
@@ -1381,14 +1389,14 @@ METHOD Importar()
             ::oDbfBncGst:cEntBnc    := ::oDbfBncFac:cEntidad
             ::oDbfBncGst:cSucBnc    := ::oDbfBncFac:cAgencia
             ::oDbfBncGst:cCtaBnc    := ::oDbfBncFac:cCta
-            ::oDbfBncGst:cDgtBnc    := cDgtControl( ::oDbfBncFac:cEntidad, ::oDbfBncFac:cAgencia, Space( 2 ), ::oDbfBncFac:cCta )
+            ::oDbfBncGst:cDigBnc    := cDgtControl( ::oDbfBncFac:cEntidad, ::oDbfBncFac:cAgencia, Space( 2 ), ::oDbfBncFac:cCta )
             ::oDbfBncGst:cCodBnc    := ::oDbfBncFac:cNombre
             ::oDbfBncGst:cDirBnc    := ::oDbfBncFac:cDireccion
             ::oDbfBncGst:cPobBnc    := ::oDbfBncFac:cPoblacion
             ::oDbfBncGst:cProBnc    := ::oDbfBncFac:cProvincia
             ::oDbfBncGst:cTlfBnc    := ::oDbfBncFac:cTfoBco
             ::oDbfBncGst:cFaxBnc    := ::oDbfBncFac:cFaxBco
-            ::oDbfBncGst:cPContBco  := ::oDbfBncFac:cContactBco 
+            ::oDbfBncGst:cPContBnc  := ::oDbfBncFac:cContacBco 
 
             ::oDbfBncGst:Save()
 

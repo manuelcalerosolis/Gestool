@@ -380,7 +380,7 @@ CLASS TTurno FROM TMasDet
    Method Initiate( cText, oSender )               CONSTRUCTOR
    Method Build( cPath, oWndParent, oMenuItem )    CONSTRUCTOR
 
-   Method lArqueoCiego()                           INLINE ( !lUsrMaster() )
+   Method lArqueoCiego()                           INLINE ( oUser():lArqueoCiego() )
 
    Method OpenFiles( lExclusive )
    Method OpenService( lExclusive )

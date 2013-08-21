@@ -144,6 +144,9 @@ CLASS TUser
    Data     _UsrZur                    INIT .f.
    Method   lUsrZur( lNewVal )         INLINE if( lNewVal != nil, ::_UsrZur := lNewVal, ::_UsrZur )
 
+   Data     _ArqueoCiego               INIT .f.
+   Method   lArqueoCiego( lNewVal )    INLINE if( lNewVal != nil, ::_ArqueoCiego := lNewVal, ::_ArqueoCiego )
+
    Data     _Alerta                    INIT .f.
    Method   lAlerta( lNewVal )         INLINE if( lNewVal != nil, ::_Alerta := lNewVal, ::_Alerta )
 
@@ -292,6 +295,7 @@ Method Create( cCodUsr, dbfUser, dbfCajas, cOldUsr, lCreateHandle )
          ::lNotRentabilidad(  ( ::oDbf )->lNotRnt )
          ::lNotCostos(        ( ::oDbf )->lNotCos )
          ::lUsrZur(           ( ::oDbf )->lUsrZur )
+         ::lArqueoCiego(      ( ::oDbf )->lArqCie )
          ::nGrupoUsuario(     ( ::oDbf )->nGrpUse )
          ::lMaster(           ( ::oDbf )->cCodUse == "000" )
          ::lAdministrador(    ( ::oDbf )->cCodUse == "000" .or. ( ::oDbf )->nGrpUse == 1 )
@@ -392,6 +396,7 @@ Method Save( dbfUser, dbfCajas )
             ( ::oDbf )->cEmpUse     := ::cEmpresa()
             ( ::oDbf )->lSelFam     := ::lSelectorFamilia()
             ( ::oDbf )->lUsrZur     := ::lUsrZur()
+            ( ::oDbf )->lArqCie     := ::lArqueoCiego()
             ( ::oDbf )->nGrpUse     := ::nGrupoUsuario()
             ( ::oDbf )->cPcnUse     := ::cPcName()
             

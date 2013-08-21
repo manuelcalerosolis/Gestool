@@ -9132,6 +9132,10 @@ Function SynRctPrv( cPath )
          ( dbfRctPrvL )->nReq    := nPReq( dbfIva, ( dbfRctPrvL )->nIva )
       end if
 
+      if Empty( ( dbfRctPrvL )->cAlmLin )
+         ( dbfRctPrvL )->cAlmLin := RetFld( ( dbfRctPrvL )->cSerRct + Str( ( dbfRctPrvL )->nNumRct ) + ( dbfRctPrvL )->cSufRct, dbfRctPrvT, "cCodAlm" )
+      end if
+
       ( dbfRctPrvL )->( dbSkip() )
 
       SysRefresh()

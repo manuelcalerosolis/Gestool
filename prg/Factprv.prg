@@ -9805,6 +9805,10 @@ Function SynFacPrv( cPath )
          ( dbfFacPrvL )->dFecFac := RetFld( ( dbfFacPrvL )->cSerFac + Str( ( dbfFacPrvL )->nNumFac ) + ( dbfFacPrvL )->cSufFac, dbfFacPrvT, "dFecFac" )
       end if
 
+      if Empty( ( dbfFacPrvL )->cAlmLin )
+         ( dbfFacPrvL )->cAlmLin    := RetFld( ( dbfFacPrvL )->cSerFac + Str( ( dbfFacPrvL )->nNumFac ) + ( dbfFacPrvL )->cSufFac, dbfFacPrvT, "cCodAlm" )
+      end if
+
       if !Empty( ( dbfFacPrvL )->mNumSer )
          aNumSer                       := hb_aTokens( ( dbfFacPrvL )->mNumSer, "," )
          for each cNumSer in aNumSer
