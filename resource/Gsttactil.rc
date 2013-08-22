@@ -430,30 +430,30 @@ FONT 8, "MS Sans Serif"
   CONTROL "", 141, "Edit", WS_BORDER|WS_TABSTOP, 144, 41, 450, 11
   CONTROL "Arqueo", -1, "Button", BS_GROUPBOX, 44, 59, 558, 192
   CONTROL "Caja", -1, "Button", BS_GROUPBOX, 44, 30, 558, 26
-  CONTROL "Efectivo", -1, "Static", WS_GROUP, 50, 265, 31, 8
+  CONTROL "Efectivo", 401, "Static", WS_GROUP, 50, 265, 31, 8
   CONTROL "Cobros calculados", -1, "Button", BS_GROUPBOX, 44, 254, 143, 62
   CONTROL "0", 410, "Static", SS_RIGHT|WS_GROUP, 119, 278, 60, 8
-  CONTROL "Tarjeta", -1, "Static", WS_GROUP, 50, 278, 27, 8
+  CONTROL "Tarjeta", 402, "Static", WS_GROUP, 50, 278, 27, 8
   CONTROL "0", 400, "Static", SS_RIGHT|WS_GROUP, 119, 265, 60, 8
   CONTROL "En caja", -1, "Button", BS_GROUPBOX, 195, 254, 224, 62
   CONTROL "Diferencias", -1, "Button", BS_GROUPBOX, 427, 254, 175, 62
   CONTROL "Efectivo", -1, "Static", WS_GROUP, 201, 264, 31, 8
   CONTROL "Tarjeta", -1, "Static", WS_GROUP, 201, 277, 27, 8
-  CONTROL "Efectivo", -1, "Static", WS_GROUP, 433, 265, 60, 8
+  CONTROL "Efectivo", 441, "Static", WS_GROUP, 433, 265, 60, 8
   CONTROL "0", 450, "Static", SS_RIGHT|WS_GROUP, 522, 278, 70, 8
-  CONTROL "Tarjeta", -1, "Static", WS_GROUP, 433, 278, 60, 8
+  CONTROL "Tarjeta", 451, "Static", WS_GROUP, 433, 278, 60, 8
   CONTROL "0", 440, "Static", SS_RIGHT|WS_GROUP, 522, 265, 70, 8
   CONTROL "0", 415, "Static", SS_RIGHT|WS_GROUP, 119, 304, 60, 8
-  CONTROL "Total cobros", -1, "Static", WS_GROUP, 50, 304, 45, 8
+  CONTROL "Total cobros", 404, "Static", WS_GROUP, 50, 304, 45, 8
   CONTROL "Retirado efectivo", -1, "Static", WS_GROUP, 201, 290, 59, 8
   CONTROL "0", 470, "Static", SS_RIGHT|WS_GROUP, 522, 303, 70, 8
-  CONTROL "Total diferencias", -1, "Static", WS_GROUP, 433, 303, 60, 8
+  CONTROL "Total diferencias", 471, "Static", WS_GROUP, 433, 303, 60, 8
   CONTROL "", 220, "TBtnBmp", 0x00000000, 268, 262, 12, 11
   CONTROL "", 230, "TBtnBmp", 0x00000000, 268, 275, 12, 11
   CONTROL "", 235, "TBtnBmp", 0x00000000, 268, 288, 12, 11
   CONTROL "Cambio", -1, "Static", WS_GROUP, 201, 303, 29, 8
   CONTROL "0", 411, "Static", SS_RIGHT|WS_GROUP, 119, 291, 60, 8
-  CONTROL "No efectivo", -1, "Static", WS_GROUP, 50, 291, 48, 8
+  CONTROL "No efectivo", 403, "Static", WS_GROUP, 50, 291, 48, 8
   CONTROL "", 990, "Static", SS_BITMAP|SS_CENTERIMAGE, 4, 3, 34, 30
   CONTROL "Arqueo de caja", -1, "Static", WS_GROUP, 44, 3, 120, 8
 }
@@ -1139,7 +1139,7 @@ FONT 12, "Segoe UI"
   CONTROL "", 420, "Edit", ES_RIGHT|WS_BORDER|WS_TABSTOP, 172, 130, 70, 16
   CONTROL "", 430, "Edit", ES_RIGHT|WS_BORDER|WS_TABSTOP, 172, 146, 70, 16
   CONTROL "", 460, "Edit", ES_RIGHT|WS_BORDER|WS_TABSTOP, 172, 162, 70, 16
-  CONTROL "Efectivo", -1, "Static", WS_GROUP, 6, 138, 28, 8
+  CONTROL "Efectivo", 401, "Static", WS_GROUP, 6, 138, 28, 8
   CONTROL "Cobros calculados", -1, "Button", BS_GROUPBOX, 2, 122, 100, 76
   CONTROL "0", 410, "Static", SS_RIGHT|WS_GROUP, 39, 150, 60, 12
   CONTROL "Tarjeta", -1, "Static", WS_GROUP, 6, 154, 24, 8
