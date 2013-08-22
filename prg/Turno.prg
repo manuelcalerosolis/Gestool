@@ -211,8 +211,11 @@ CLASS TTurno FROM TMasDet
    DATA  dFechaFin            INIT Date();
 
    DATA  oDiferenciaEfectivo
+   DATA  oSayDiferenciaEfectivo
    DATA  oDiferenciaTarjeta
+   DATA  oSayDiferenciaTarjeta
    DATA  oDiferenciaTotal
+   DATA  oSayDiferenciaTotal
 
    DATA  cComentario
 
@@ -278,9 +281,13 @@ CLASS TTurno FROM TMasDet
    DATA  nObjetivoTurno       INIT 0
 
    DATA  oTotalEfectivo
+   DATA  oSayTotalEfectivo
+   DATA  oSayTotalNoEfectivo
    DATA  oTotalNoEfectivo
+   DATA  oSayTotalTarjeta
    DATA  oTotalTarjeta
    DATA  oTotalCobros
+   DATA  oSayTotalCobros
    DATA  oTotalCaja
 
    DATA  oImporteEfectivo
@@ -3293,38 +3300,18 @@ METHOD lArqueoTurno( lZoom, lParcial ) CLASS TTurno
       oFntSay           := TFont():New( "Segoe UI", 0, 30, .f., .t. )
       oFntBrw           := TFont():New( "Segoe UI", 0, 17, .f., .f. )
 
-      do case
-         case ::nScreenVertRes == 560
+      DEFINE DIALOG oDlg ;
+         RESOURCE       "ARQUEO_TCT";
+         TITLE          "Arqueo " + if( ::lArqueoParcial, "parcial ", " " ) + "de caja, sesión : " + Trans( ::cCurTurno, "@R ######" )
 
-           DEFINE DIALOG oDlg ;
-               RESOURCE       "ARQUEO_TCT_1024x576";
-               TITLE          "Arqueo " + if( ::lArqueoParcial, "parcial ", " " ) + "de caja, sesión : " + Trans( ::cCurTurno, "@R ######" )
-
-           REDEFINE PAGES    oFld ;
-               ID             200 ;
-               FONT           oFnt ;
-               OF             oDlg ;
-               DIALOGS        "ARQUEO_1_TCT_1024x576",;
-                              "ARQUEO_2_TCT_1024x576",;
-                              "ARQUEO_3_TCT_1024x576",;
-                              "ARQUEO_4_TCT_1024x576"
-
-         otherwise
-
-           DEFINE DIALOG oDlg ;
-               RESOURCE       "ARQUEO_TCT";
-               TITLE          "Arqueo " + if( ::lArqueoParcial, "parcial ", " " ) + "de caja, sesión : " + Trans( ::cCurTurno, "@R ######" )
-
-           REDEFINE PAGES    oFld ;
-               ID             200 ;
-               FONT           oFnt ;
-               OF             oDlg ;
-               DIALOGS        "ARQUEO_1_TCT",;
-                              "ARQUEO_2_TCT",;
-                              "ARQUEO_3_TCT",;
-                              "ARQUEO_4_TCT"
-
-      end case
+         REDEFINE PAGES    oFld ;
+            ID             200 ;
+            FONT           oFnt ;
+            OF             oDlg ;
+            DIALOGS        "ARQUEO_1_TCT",;
+                           "ARQUEO_2_TCT",;
+                           "ARQUEO_3_TCT",;
+                           "ARQUEO_4_TCT"
 
    else
 
@@ -3721,6 +3708,8 @@ METHOD lArqueoTurno( lZoom, lParcial ) CLASS TTurno
 
       // Formas de pago-----------------------------------------------------------
 
+      ? 1
+
       if ::lArqueoTactil()
 
          REDEFINE SAY ::oTotalEfectivo ;
@@ -3753,10 +3742,18 @@ METHOD lArqueoTurno( lZoom, lParcial ) CLASS TTurno
 
       else
 
+         REDEFINE SAY ::oSayTotalEfectivo ;
+            ID          401 ;
+            OF          oFld:aDialogs[3]
+
          REDEFINE SAY ::oTotalEfectivo ;
             VAR      ::oTotales:nTotSaldoEfectivo( ::cCodCaj ) ;
             ID       400 ;
             PICTURE  ::cPorDiv ;
+            OF       oFld:aDialogs[3]
+
+         REDEFINE SAY ::oSayTotalTarjeta ;
+            ID       402 ;
             OF       oFld:aDialogs[3]
 
          REDEFINE SAY ::oTotalTarjeta ;
@@ -3765,10 +3762,18 @@ METHOD lArqueoTurno( lZoom, lParcial ) CLASS TTurno
             PICTURE  ::cPorDiv ;
             OF       oFld:aDialogs[3]
 
+         REDEFINE SAY ::oSayTotalNoEfectivo ;
+            ID       403 ;
+            OF       oFld:aDialogs[3]
+
          REDEFINE SAY ::oTotalNoEfectivo ;
             VAR      ::oTotales:nTotSaldoNoEfectivo( ::cCodCaj ) ;
             ID       411 ;
             PICTURE  ::cPorDiv ;
+            OF       oFld:aDialogs[3]
+
+         REDEFINE SAY ::oSayTotalCobros ;
+            ID       404 ;
             OF       oFld:aDialogs[3]
 
          REDEFINE SAY ::oTotalCobros ;
@@ -3778,6 +3783,8 @@ METHOD lArqueoTurno( lZoom, lParcial ) CLASS TTurno
             OF       oFld:aDialogs[3]
 
       end if
+
+      ? 2
 
       if ::lArqueoTactil()
 
@@ -3862,6 +3869,10 @@ METHOD lArqueoTurno( lZoom, lParcial ) CLASS TTurno
 
       ::oImporteTarjeta:bChange     := {|| ::oDiferenciaTarjeta:Refresh(), ::RefreshTurno() }
 
+      REDEFINE SAY ::oSayDiferenciaEfectivo ;
+         ID       441 ;
+         OF       oFld:aDialogs[ 3 ]
+
       REDEFINE SAY ::oDiferenciaEfectivo VAR ( ::nImporteEfectivo - ::oTotales:nTotSaldoEfectivo( ::cCodCaj )  ) ;
          ID       440 ;
          PICTURE  ::cPorDiv ;
@@ -3869,11 +3880,19 @@ METHOD lArqueoTurno( lZoom, lParcial ) CLASS TTurno
          COLOR    CLR_BLUE, GetSysColor( COLOR_BTNFACE ) ;
          OF       oFld:aDialogs[ 3 ]
 
+      REDEFINE SAY ::oSayDiferenciaTarjeta ;
+         ID       451 ;
+         OF       oFld:aDialogs[ 3 ]      
+
       REDEFINE SAY ::oDiferenciaTarjeta VAR ( ::nImporteTarjeta - ::oTotales:nTotCobroTarjeta( ::cCodCaj ) );
          ID       450 ;
          PICTURE  ::cPorDiv ;
          FONT     oFntSay ;
          COLOR    CLR_BLUE, GetSysColor( COLOR_BTNFACE ) ;
+         OF       oFld:aDialogs[ 3 ]
+
+      REDEFINE SAY ::oSayDiferenciaTotal ;
+         ID       471 ;
          OF       oFld:aDialogs[ 3 ]
 
       REDEFINE SAY ::oDiferenciaTotal VAR ( ::oDiferenciaEfectivo:VarGet() + ::oDiferenciaTarjeta:VarGet() ) ;
@@ -4099,7 +4118,50 @@ Method InitArqueoTurno()
    if ::lArqueoCiego()
 
    ? "Hide"
+      
       ::oBrwTotales:Hide()
+      
+      ::oTotalEfectivo:Hide()
+
+      if !Empty( ::oSayTotalEfectivo )
+         ::oSayTotalEfectivo:Hide()
+      end if 
+
+      ::oTotalTarjeta:Hide()
+
+      if !Empty( ::oSayTotalTarjeta )
+         ::oSayTotalTarjeta:Hide()
+      end if 
+
+      ::oTotalNoEfectivo:Hide()
+
+      if !Empty( ::oSayTotalNoEfectivo )
+         ::oSayTotalNoEfectivo:Hide()
+      end if
+
+      ::oTotalCobros:Hide()
+
+      if !Empty( ::oSayTotalCobros )
+         ::oSayTotalCobros:Hide()
+      end if
+
+      ::oDiferenciaEfectivo:Hide()
+
+      if !Empty( ::oSayDiferenciaEfectivo )
+         ::oSayDiferenciaEfectivo:Hide()
+      end if
+
+      ::oDiferenciaTarjeta:Hide()
+
+      if !Empty( ::oSayDiferenciaTarjeta )
+         ::oSayDiferenciaTarjeta:Hide()
+      end if
+
+      ::oDiferenciaTotal:Hide()
+
+      if !Empty( ::oSayDiferenciaTotal )
+         ::oSayDiferenciaTotal:Hide()
+      end if
 
    else
       ? "noes arqueo ciego"
