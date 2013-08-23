@@ -17872,7 +17872,7 @@ FUNCTION rxTpv( cPath, oMeter )
       ( dbfTikT )->( ordCondSet( "!Deleted()", {|| !Deleted() }  ) )
       ( dbfTikT )->( ordCreate( cPath + "TIKET.CDX", "cValTik", "cTikVal", {|| Field->cTikVal } ) )
 
-      ( dbfTikT )->( ordCondSet( "!Deleted() .and. !lCloTik", {|| !Deleted() .and. !Field->lCloTik } ) )
+      ( dbfTikT )->( ordCondSet( "!Deleted() .and. lAbierto", {|| !Deleted() .and. Field->lAbierto } ) )
       ( dbfTikT )->( ordCreate( cPath + "TikeT.Cdx", "lCloTik", "cSerTik + cNumTik + cSufTik", {|| Field->cSerTik + Field->cNumTik + Field->cSufTik } ) )
 
       ( dbfTikT )->( ordCondSet( "!Deleted() .and. lAbierto", {|| !Deleted() .and. Field->lAbierto } ) )
