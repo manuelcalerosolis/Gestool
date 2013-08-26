@@ -519,56 +519,6 @@
 	},
 	"buffers":
 	[
-		{
-			"file": "prg/Tcomercio.prg",
-			"settings":
-			{
-				"buffer_size": 232409,
-				"line_ending": "Windows"
-			}
-		},
-		{
-			"contents": "Searching 1337 files for \"on oretfld\"\n\nC:\\fw195\\Gestool\\prg\\Tutil.prg:\n  730  //----------------------------------------------------------------------------//\n  731  \n  732: function oRetFld( cCod, oDbf, xFld, nOrd )\n  733  \n  734     local nRec\n\n1 match in 1 file\n",
-			"settings":
-			{
-				"buffer_size": 265,
-				"line_ending": "Windows",
-				"name": "Find Results",
-				"scratch": true
-			}
-		},
-		{
-			"file": "prg/Tutil.prg",
-			"settings":
-			{
-				"buffer_size": 18550,
-				"line_ending": "Windows"
-			}
-		},
-		{
-			"file": "prg/Pro.prg",
-			"settings":
-			{
-				"buffer_size": 67648,
-				"line_ending": "Windows"
-			}
-		},
-		{
-			"file": "prg/Stock.prg",
-			"settings":
-			{
-				"buffer_size": 213685,
-				"line_ending": "Windows"
-			}
-		},
-		{
-			"file": "prg/Factcli.prg",
-			"settings":
-			{
-				"buffer_size": 809019,
-				"line_ending": "Windows"
-			}
-		}
 	],
 	"build_system": "Packages/User/gestool.sublime-build",
 	"command_palette":
@@ -602,13 +552,16 @@
 	},
 	"file_history":
 	[
+		"/C/fw195/Gestool/prg/Tcomercio.prg",
+		"/C/fw195/Gestool/prg/Stock.prg",
 		"/C/fw195/Gestool/prg/Pro.prg",
+		"/C/fw195/Gestool/prg/Factcli.prg",
+		"/C/fw195/Gestool/prg/Tutil.prg",
 		"/C/fw195/Gestool/prg/Articulo.prg",
 		"/C/fw195/Gestool/HPPC.mak",
 		"/C/fw195/Gestool/prg/Factu.prg",
 		"/C/fw195/Gestool/prg/Tpv.prg",
 		"/C/fw195/Gestool/Hx.mak",
-		"/C/fw195/Gestool/prg/Factcli.prg",
 		"/C/fw195/Gestool/Build.bat",
 		"/C/fw195/Gestool/prg/Remmov.prg",
 		"/C/fw195/Gestool/prg/Brwvta.prg",
@@ -626,7 +579,6 @@
 		"/C/fw195/camero/HV.Bat",
 		"/C/fw195/camero/HP.Bat",
 		"/C/fw195/camero/HT.Bat",
-		"/C/fw195/Gestool/prg/Stock.prg",
 		"/C/fw195/Gestool/prg/Satcli.prg",
 		"/C/fw195/Gestool/prg/Precli.prg",
 		"/C/fw195/Gestool/prg/Pedcli.prg",
@@ -651,7 +603,6 @@
 		"/C/Users/Villa/Desktop/tcomercio",
 		"/C/Users/Villa/Desktop/Copia web zemtrum 24-07-2013/includes/configure.php",
 		"/C/Users/Villa/Desktop/settings.inc.php",
-		"/C/fw195/Gestool/prg/Tcomercio.prg",
 		"/C/Users/Villa/Desktop/Copia web zemtrum 24-07-2013/database.php",
 		"/C/Users/Villa/Desktop/Copia web zemtrum 24-07-2013/admin/configuration.php",
 		"/C/Users/Villa/Desktop/Copia web zemtrum 24-07-2013/includes/database_tables.php",
@@ -728,8 +679,7 @@
 		"/C/fw195/Gestool/prg/Tcajon.prg",
 		"/C/fw195/Gestool/prg/Confcajporta.prg",
 		"/C/fw195/Gestool/prg/Abnprv.prg",
-		"/C/fw195/Gestool/prg/usuario",
-		"/C/fw195/Gestool/prg/Reindexa.prg"
+		"/C/fw195/Gestool/prg/usuario"
 	],
 	"find":
 	{
@@ -773,6 +723,7 @@
 		"case_sensitive": false,
 		"find_history":
 		[
+			"ctext",
 			"on edtrec",
 			"while",
 			"openfiles",
@@ -899,8 +850,7 @@
 			"BuscarCliente",
 			"BuscarProvincia",
 			"BuscarCodFab",
-			"BuscarCodIva",
-			"BuscarCodPro"
+			"BuscarCodIva"
 		],
 		"highlight": true,
 		"in_selection": false,
@@ -927,190 +877,8 @@
 	"groups":
 	[
 		{
-			"selected": 5,
 			"sheets":
 			[
-				{
-					"buffer": 0,
-					"file": "prg/Tcomercio.prg",
-					"settings":
-					{
-						"buffer_size": 232409,
-						"regions":
-						{
-						},
-						"selection":
-						[
-							[
-								226721,
-								226721
-							]
-						],
-						"settings":
-						{
-							"syntax": "Packages/harbour/harbour/Harbour.tmLanguage",
-							"tab_size": 3,
-							"translate_tabs_to_spaces": true
-						},
-						"translation.x": 0.0,
-						"translation.y": 115876.0,
-						"zoom_level": 1.0
-					},
-					"type": "text"
-				},
-				{
-					"buffer": 1,
-					"settings":
-					{
-						"buffer_size": 265,
-						"regions":
-						{
-							"match":
-							{
-								"flags": 112,
-								"regions":
-								[
-									[
-										180,
-										190
-									]
-								],
-								"scope": ""
-							}
-						},
-						"selection":
-						[
-							[
-								186,
-								186
-							]
-						],
-						"settings":
-						{
-							"detect_indentation": false,
-							"output_tag": 1,
-							"result_base_dir": "",
-							"result_file_regex": "^([A-Za-z\\\\/<].*):$",
-							"result_line_regex": "^ +([0-9]+):",
-							"scroll_past_end": true,
-							"syntax": "Packages/Default/Find Results.hidden-tmLanguage"
-						},
-						"translation.x": 0.0,
-						"translation.y": 0.0,
-						"zoom_level": 1.0
-					},
-					"type": "text"
-				},
-				{
-					"buffer": 2,
-					"file": "prg/Tutil.prg",
-					"settings":
-					{
-						"buffer_size": 18550,
-						"regions":
-						{
-						},
-						"selection":
-						[
-							[
-								17241,
-								17263
-							]
-						],
-						"settings":
-						{
-							"syntax": "Packages/harbour/harbour/Harbour.tmLanguage",
-							"tab_size": 2,
-							"translate_tabs_to_spaces": true
-						},
-						"translation.x": 0.0,
-						"translation.y": 12723.0,
-						"zoom_level": 1.0
-					},
-					"type": "text"
-				},
-				{
-					"buffer": 3,
-					"file": "prg/Pro.prg",
-					"settings":
-					{
-						"buffer_size": 67648,
-						"regions":
-						{
-						},
-						"selection":
-						[
-							[
-								55140,
-								55148
-							]
-						],
-						"settings":
-						{
-							"syntax": "Packages/harbour/harbour/Harbour.tmLanguage",
-							"tab_size": 3,
-							"translate_tabs_to_spaces": true
-						},
-						"translation.x": 0.0,
-						"translation.y": 35087.0,
-						"zoom_level": 1.0
-					},
-					"type": "text"
-				},
-				{
-					"buffer": 4,
-					"file": "prg/Stock.prg",
-					"settings":
-					{
-						"buffer_size": 213685,
-						"regions":
-						{
-						},
-						"selection":
-						[
-							[
-								112452,
-								112452
-							]
-						],
-						"settings":
-						{
-							"syntax": "Packages/harbour/harbour/Harbour.tmLanguage",
-							"tab_size": 3,
-							"translate_tabs_to_spaces": true
-						},
-						"translation.x": 0.0,
-						"translation.y": 63779.0,
-						"zoom_level": 1.0
-					},
-					"type": "text"
-				},
-				{
-					"buffer": 5,
-					"file": "prg/Factcli.prg",
-					"settings":
-					{
-						"buffer_size": 809019,
-						"regions":
-						{
-						},
-						"selection":
-						[
-							[
-								809019,
-								809019
-							]
-						],
-						"settings":
-						{
-							"syntax": "Packages/harbour/harbour/Harbour.tmLanguage"
-						},
-						"translation.x": 0.0,
-						"translation.y": 417323.0,
-						"zoom_level": 1.0
-					},
-					"type": "text"
-				}
 			]
 		}
 	],
