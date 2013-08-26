@@ -6892,8 +6892,6 @@ FUNCTION nTotPFacCli( dbfLin, nDec, nVdv, cPorDiv )
 RETURN ( if( cPorDiv != NIL, Trans( nCalculo, cPorDiv ), nCalculo ) )
 
 //---------------------------------------------------------------------------//
-
-//---------------------------------------------------------------------------//
 /*
 Devuelve el importe de descuento porcentual por cada linea---------------------
 */

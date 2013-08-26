@@ -952,7 +952,7 @@ FUNCTION EdtCob( aTmp, aGet, dbfFacCliP, oBrw, lRectificativa, bValid, nMode, aN
          WHEN     ( nMode != ZOOM_MODE ) ;
          OF       oFld:aDialogs[ 1 ]
 
-      REDEFINE GET aGet [_CDOCPGO ] VAR aTmp[ _CDOCPGO ] ;
+      REDEFINE GET aGet [ _CDOCPGO ] VAR aTmp[ _CDOCPGO ] ;
          ID       155 ;
          WHEN     ( nMode != ZOOM_MODE ) ;
          OF       oFld:aDialogs[ 1 ]
@@ -972,7 +972,7 @@ FUNCTION EdtCob( aTmp, aGet, dbfFacCliP, oBrw, lRectificativa, bValid, nMode, aN
          ID       171;
          OF       oFld:aDialogs[ 1 ]
 
-      REDEFINE GET aGet[_NIMPORTE] VAR aTmp[_NIMPORTE] ;
+      REDEFINE GET aGet[ _NIMPORTE ] VAR aTmp[ _NIMPORTE ] ;
          ID       180 ;
          WHEN     ( nMode != ZOOM_MODE ) ;
          VALID    ( aGet[ _NIMPCOB ]:cText( aTmp[ _NIMPORTE ] ), .t. ) ;
@@ -980,7 +980,7 @@ FUNCTION EdtCob( aTmp, aGet, dbfFacCliP, oBrw, lRectificativa, bValid, nMode, aN
          PICTURE  ( cPorDiv ) ;
          OF       oFld:aDialogs[ 1 ]
 
-      REDEFINE GET aGet[_NIMPCOB] VAR aTmp[_NIMPCOB] ;
+      REDEFINE GET aGet[ _NIMPCOB ] VAR aTmp[ _NIMPCOB ] ;
          ID       190 ;
          WHEN     ( nMode != ZOOM_MODE ) ;
          VALID    ( ValCobro( aGet, aTmp ) ) ;
@@ -988,7 +988,7 @@ FUNCTION EdtCob( aTmp, aGet, dbfFacCliP, oBrw, lRectificativa, bValid, nMode, aN
          PICTURE  ( cPorDiv ) ;
          OF       oFld:aDialogs[ 1 ]
 
-      REDEFINE GET aGet[_NIMPGAS] VAR aTmp[_NIMPGAS] ;
+      REDEFINE GET aGet[ _NIMPGAS ] VAR aTmp[ _NIMPGAS ] ;
          ID       260 ;
          WHEN     .f. ;
          COLOR    CLR_GET ;
@@ -1142,7 +1142,7 @@ FUNCTION EdtCob( aTmp, aGet, dbfFacCliP, oBrw, lRectificativa, bValid, nMode, aN
          ID       100 ;
          OF       oFld:aDialogs[ 4 ] ;
          WHEN     ( !aTmp[ _LCOBRADO ] .and. nMode != ZOOM_MODE ) ;
-         ACTION   ( GetReciboCliente( oBrwRec ) )
+         ACTION   ( GetReciboCliente( aTmp, oBrwRec ) )
 
       REDEFINE BUTTON ;
          ID       110 ;
@@ -1201,7 +1201,7 @@ FUNCTION EdtCob( aTmp, aGet, dbfFacCliP, oBrw, lRectificativa, bValid, nMode, aN
       with object ( oBrwRec:AddCol() )
          :cHeader          := "Total"
          :bStrData         := {|| if( len( aRecRel) > 0, Trans( nTotRecibo( aRecRel[ oBrwRec:nArrayAt ], dbfFacCliP, dbfDiv ), cPorDiv() ), "" ) }
-         :nWidth           := 90
+         :nWidth           := 80
          :nDataStrAlign    := 1
          :nHeadStrAlign    := 1
       end with
@@ -1426,7 +1426,7 @@ RETURN NIL
 
 //-------------------------------------------------------------------------//
 
-Static Function GetReciboCliente( oBrwRec )
+Static Function GetReciboCliente( aTmp, oBrwRec )
 
    local cNumRec  := ""
 
@@ -1436,6 +1436,11 @@ Static Function GetReciboCliente( oBrwRec )
 
       if Empty( cNumRec )
          Return .f.
+      end if
+
+      if ( cNumRec != aTmp[ _CSERIE ] + Str( aTmp[ _NNUMFAC ] ) + aTmp[ _CSUFFAC ] + Str( aTmp[ _NNUMREC ] ) + aTmp[ _CTIPREC ] )
+         msgStop( "Este recibo es el mismo")     
+         return .f.
       end if
 
       if RetFld( cNumRec, dbfFacCliP, "lCobrado", "nNumFac" )
