@@ -226,6 +226,7 @@ CLASS TTurno FROM TMasDet
    DATA  aOpcionImp           AS ARRAY    INIT  ( aFill( Array( 19 ), .t. ) )
    DATA  oIniArqueo           AS OBJECT
 
+   DATA  oNoImprimirArqueo
    DATA  lNoImprimirArqueo    AS LOGIC    INIT .f.
    DATA  lCerrado             AS LOGIC    INIT .f.
 
@@ -307,12 +308,19 @@ CLASS TTurno FROM TMasDet
 
    DATA  aFilesProcessed      AS ARRAY    INIT {}
 
+   DATA  oSaySalidaImpresion
+   DATA  oBtnOpcionesImpresion
+   DATA  oGrpOpcionesImpresion
+
    DATA  lEnvioInformacion    AS LOGIC    INIT .t.
    DATA  lImprimirEnvio       AS LOGIC    INIT .t.
 
    DATA  oEnvioInformacion    AS OBJECT
    DATA  oImprimirEnvio       AS OBJECT
-   DATA  oEnviarMail          AS OBJECT
+   DATA  oChkEnviarMail       AS OBJECT
+   DATA  oGetEnviarMail
+   DATA  oGrpNotificacion
+   DATA  oGrpOpcionesEnvioInformacion
 
    DATA  lEnviarMail          AS LOGIC    INIT .f.
    DATA  cEnviarMail          INIT Space( 200 )
@@ -3181,7 +3189,6 @@ METHOD lArqueoTurno( lZoom, lParcial ) CLASS TTurno
    local aPrnCaj
    local oPrinter
    local oComentario
-   local oEnvMail
    local oSayGeneral
    local oBmpGeneral
    local oSayGeneral2
@@ -3686,10 +3693,10 @@ METHOD lArqueoTurno( lZoom, lParcial ) CLASS TTurno
          OF       oFld:aDialogs[ 3 ]
 
       else
-/*
+
       REDEFINE GROUP ::oGrpArqueo ;
          ID       801;
-         OF       oFld:aDialogs[3]  */
+         OF       oFld:aDialogs[3]  
 
       REDEFINE GET ::oCodCaj ;
          VAR      ::cCodCaj ;
@@ -3925,11 +3932,12 @@ METHOD lArqueoTurno( lZoom, lParcial ) CLASS TTurno
 
       // Impresión----------------------------------------------------------------
 
-      REDEFINE CHECKBOX ::lNoImprimirArqueo ;
+      REDEFINE CHECKBOX ::oNoImprimirArqueo ;
+         VAR      ::lNoImprimirArqueo ;
          ID       600 ;
          OF       oFld:aDialogs[ 4 ]
 
-     if ::lArqueoTactil()
+      if ::lArqueoTactil()
 
       REDEFINE COMBOBOX ::oCmbReport ;
          VAR      ::cCmbReport ;
@@ -3939,7 +3947,7 @@ METHOD lArqueoTurno( lZoom, lParcial ) CLASS TTurno
          ITEMS    ::aCmbReport ;
          BITMAPS  ::aBmpReportTactil
 
-     else
+      else
 
       REDEFINE COMBOBOX ::oCmbReport ;
          VAR      ::cCmbReport ;
@@ -3949,25 +3957,26 @@ METHOD lArqueoTurno( lZoom, lParcial ) CLASS TTurno
          ITEMS    ::aCmbReport ;
          BITMAPS  ::aBmpReport
 
-     end if
+      REDEFINE SAY  ::oSaySalidaImpresion ;
+         ID        621 ;
+         OF        oFld:aDialogs[4]
 
-     if ::lArqueoTactil()
+      end if
 
-      REDEFINE BUTTON ;
+
+      REDEFINE SAY  ::oGrpOpcionesImpresion ;
+         ID        601 ;
+         OF        oFld:aDialogs[4]
+
+      REDEFINE BUTTON ::oBtnOpcionesImpresion;
          ID       610 ;
          OF       oFld:aDialogs[ 4 ] ;
          WHEN     ( !::lNoImprimirArqueo ) ;
-         ACTION   ( ::DlgImprimir( , .t.) )
+         ACTION   ( ::DlgImprimir( , ::lArqueoTactil() ) )
 
-     else
-
-      REDEFINE BUTTON ;
-         ID       610 ;
-         OF       oFld:aDialogs[ 4 ] ;
-         WHEN     ( !::lNoImprimirArqueo ) ;
-         ACTION   ( ::DlgImprimir() )
-
-     end if
+      REDEFINE GROUP ::oGrpOpcionesEnvioInformacion ;
+         ID       701;
+         OF       oFld:aDialogs[ 4 ]
 
       REDEFINE CHECKBOX ::oEnvioInformacion VAR ::lEnvioInformacion ;
          ID       700 ;
@@ -3979,12 +3988,16 @@ METHOD lArqueoTurno( lZoom, lParcial ) CLASS TTurno
          WHEN     ::lEnvioInformacion ;
          OF       oFld:aDialogs[ 4 ]
 
-      REDEFINE CHECKBOX ::oEnviarMail VAR ::lEnviarMail ;
+      REDEFINE GROUP ::oGrpNotificacion ;
+         ID       721;
+         OF       oFld:aDialogs[ 4 ]
+
+      REDEFINE CHECKBOX ::oChkEnviarMail VAR ::lEnviarMail ;
          WHEN     lUsrMaster() .and. !::lArqueoParcial ;
          ID       720 ;
          OF       oFld:aDialogs[ 4 ]
 
-      REDEFINE GET oEnvMail ;
+      REDEFINE GET ::oGetEnviarMail ;
          VAR      ::cEnviarMail ;
          WHEN     ( ::lEnviarMail .and. lUsrMaster() ) ;
          ID       730 ;
@@ -4180,6 +4193,40 @@ Method InitArqueoTurno()
       end if
 
       ::oGrpDiferencias:Hide()
+
+      /*if !Empty( ::oNoImprimirArqueo )
+         ::oNoImprimirArqueo:Hide()
+      end if*/
+
+      //::oCmbReport:Hide()
+
+      /*if !Empty( ::oSaySalidaImpresion )
+         ::oSaySalidaImpresion:Hide()
+      end if*/
+
+      ::oBtnOpcionesImpresion:Hide()
+
+      if !Empty( ::oChkEnviarMail )
+         ::oChkEnviarMail:Hide()
+      end if
+
+      if !Empty( ::oGetEnviarMail )
+         ::oGetEnviarMail:Hide()
+      end if
+
+      ::oGrpNotificacion:Hide()
+
+      if !Empty( ::oEnvioInformacion )
+         ::oEnvioInformacion:Hide()
+      end if
+
+      if !Empty( ::oImprimirEnvio )
+         ::oImprimirEnvio:Hide()
+      end if
+
+      if !Empty( ::oGrpOpcionesEnvioInformacion )
+         ::oGrpOpcionesEnvioInformacion:Hide()
+      end if
 
    end if    
 
