@@ -869,7 +869,7 @@ FUNCTION EdtCob( aTmp, aGet, dbfFacCliP, oBrw, lRectificativa, bValid, nMode, aN
          DIALOGS  "Recibos_1",;
                   "Recibos_6",;
                   "Recibos_2",;
-                  "Recibos_5",;
+                  "Recibos_5",; 
                   "Recibos_3"
 
       REDEFINE BITMAP oBmpGeneral ;

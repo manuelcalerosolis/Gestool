@@ -2149,34 +2149,35 @@ Function InitBrwBigUser( oDlg, oImgUsr, oLstUsr, dbfUsr )
       oLstUsr:InsertGroup( 2, "Usuarios" )
       oLstUsr:InsertGroup( 1, "Administradores" )
 
-      ( dbfUsr )->( dbSetFilter( {|| !Field->lGrupo }, "!lGrupo" ) )
-
       ( dbfUsr )->( dbGoTop() )
       while !( dbfUsr )->( eof() )
 
-         if !Empty( ( dbfUsr )->cImagen ) .and. File( Rtrim( ( dbfUsr )->cImagen ) )
+         if !( dbfUsr )->lGrupo
 
-            oImgUsr:Add( TBitmap():Define( , Rtrim( ( dbfUsr )->cImagen ), oDlg ) )
+            if !Empty( ( dbfUsr )->cImagen ) .and. File( Rtrim( ( dbfUsr )->cImagen ) )
 
-            oLstUsr:InsertItemGroup( nUser, Capitalize( ( dbfUsr )->cNbrUse ), 1 )
+               oImgUsr:Add( TBitmap():Define( , Rtrim( ( dbfUsr )->cImagen ), oDlg ) )
 
-         else
+               oLstUsr:InsertItemGroup( 1, Capitalize( ( dbfUsr )->cNbrUse ), nUser )
 
-            if ( dbfUsr )->nGrpUse <= 1
-               oLstUsr:InsertItemGroup( nUser, Capitalize( ( dbfUsr )->cNbrUse ), 1 )
+               nUser++
+
             else
-               oLstUsr:InsertItemGroup( nUser, Capitalize( ( dbfUsr )->cNbrUse ), 2 )
+
+               if ( dbfUsr )->nGrpUse <= 1
+                  oLstUsr:InsertItemGroup( 0, Capitalize( ( dbfUsr )->cNbrUse ), 1 )
+               else
+                  oLstUsr:InsertItemGroup( 1, Capitalize( ( dbfUsr )->cNbrUse ), 2 )
+               end if
+
             end if
 
-         end if
+
+         end if 
 
          ( dbfUsr )->( dbSkip() )
 
-         nUser++
-
       end while
-
-      ( dbfUsr )->( dbClearFilter() )
 
    end if
 
