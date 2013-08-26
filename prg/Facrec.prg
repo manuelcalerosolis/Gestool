@@ -3817,8 +3817,7 @@ STATIC FUNCTION EdtDet( aTmp, aGet, dbfFacRecL, oBrw, lTotLin, cCodArtEnt, nMode
          WHEN     ( nMode != ZOOM_MODE ) ;
          VALID    ( loaArt( aGet, bmpImage, aTmp, aTmpFac, oStkAct, oSayPr1, oSayPr2, oSayVp1, oSayVp2, nMode ) );
          BITMAP   "LUPA" ;
-         ON HELP  ( BrwArticulo( aGet[_CREF], aGet[_CDETALLE] ) );
-			COLOR 	CLR_GET ;
+         ON HELP  ( BrwArticulo( aGet[ _CREF ], aGet[ _CDETALLE ] , , , , aGet[ _CLOTE ], aTmp[ _CCODPR1 ], aTmp[ _CCODPR2 ], aGet[ _CVALPR1 ], aGet[ _CVALPR2 ], aGet[ _DFECCAD ] ) );
          OF       oFld:aDialogs[1]
 
 		REDEFINE GET aGet[_CDETALLE] VAR aTmp[_CDETALLE] ;
@@ -10203,10 +10202,10 @@ function aColFacRec()
    aAdd( aColFacRec, { "DFECALB"     ,"D",  8, 0, "Fecha del albarán de procedencia"      , "" ,             "", "( cDbfCol )"} )
    aAdd( aColFacRec, { "LTOTLIN"     ,"L",  1, 0, "Valor lógico para línea de total"      , "" ,             "", "( cDbfCol )"} )
    aAdd( aColFacRec, { "LIMPLIN"     ,"L",  1, 0, "Valor lógico línea no imprimible"      , "" ,             "", "( cDbfCol )"} )
-   aAdd( aColFacRec, { "CCODPR1"     ,"C", 10, 0, "Código de primera propiedad"           , "" ,             "", "( cDbfCol )"} )
-   aAdd( aColFacRec, { "CCODPR2"     ,"C", 10, 0, "Código de segunda propiedad"           , "" ,             "", "( cDbfCol )"} )
-   aAdd( aColFacRec, { "CVALPR1"     ,"C", 10, 0, "Valor de primera propiedad"            , "" ,             "", "( cDbfCol )"} )
-   aAdd( aColFacRec, { "CVALPR2"     ,"C", 10, 0, "Valor de segunda propiedad"            , "" ,             "", "( cDbfCol )"} )
+   aAdd( aColFacRec, { "CCODPR1"     ,"C", 20, 0, "Código de primera propiedad"           , "" ,             "", "( cDbfCol )"} )
+   aAdd( aColFacRec, { "CCODPR2"     ,"C", 20, 0, "Código de segunda propiedad"           , "" ,             "", "( cDbfCol )"} )
+   aAdd( aColFacRec, { "CVALPR1"     ,"C", 20, 0, "Valor de primera propiedad"            , "" ,             "", "( cDbfCol )"} )
+   aAdd( aColFacRec, { "CVALPR2"     ,"C", 20, 0, "Valor de segunda propiedad"            , "" ,             "", "( cDbfCol )"} )
    aAdd( aColFacRec, { "NFACCNV"     ,"N", 16, 6, "Factor de conversión de la compra"     , "" ,             "", "( cDbfCol )"} )
    aAdd( aColFacRec, { "NDTODIV"     ,"N", 16, 6, "Descuento lineal de la compra"         , "'@EZ 99,99'" ,  "", "( cDbfCol )"} )
    aAdd( aColFacRec, { "LSEL"        ,"L",  1, 0, ""                                      , "" ,             "", "( cDbfCol )"} )
@@ -11482,24 +11481,28 @@ function SynFacRec( cPath )
 	    end if
 
 	    if !Empty( ( dbfFacRecL )->cCodAlb ) .and. Len( AllTrim( ( dbfFacRecL )->cCodAlb ) ) != 12
-        	( dbfFacRecL )->cCodAlb := AllTrim( ( dbfFacRecL )->cCodAlb ) + "00"
+        	( dbfFacRecL )->cCodAlb 		:= AllTrim( ( dbfFacRecL )->cCodAlb ) + "00"
       	end if
 	        
 	      if Empty( ( dbfFacRecL )->cLote ) .and. !Empty( ( dbfFacRecL )->nLote )
-	         ( dbfFacRecL )->cLote         := AllTrim( Str( ( dbfFacRecL )->nLote ) )
+	         ( dbfFacRecL )->cLote      := AllTrim( Str( ( dbfFacRecL )->nLote ) )
 	      end if
 	      
 	      if Empty( ( dbfFacRecL )->nValImp )
-	         cCodImp                       := RetFld( ( dbfFacRecL )->cRef, dbfArticulo, "cCodImp" )
+	         cCodImp                    := RetFld( ( dbfFacRecL )->cRef, dbfArticulo, "cCodImp" )
 	        	if !Empty( cCodImp )
-	            ( dbfFacRecL )->nValImp    := oNewImp:nValImp( cCodImp )
+	            ( dbfFacRecL )->nValImp := oNewImp:nValImp( cCodImp )
 	         end if
 	      end if
 	      
 	      if Empty( ( dbfFacRecL )->nVolumen )
-	         ( dbfFacRecL )->nVolumen      :=  RetFld( ( dbfFacRecL )->cRef, dbfArticulo, "nVolumen" )
+	         ( dbfFacRecL )->nVolumen   :=  RetFld( ( dbfFacRecL )->cRef, dbfArticulo, "nVolumen" )
 	      end if
 	      
+         if Empty( ( dbfFacRecL )->cAlmLin )
+            ( dbfFacRecL )->cAlmLin    := RetFld( ( dbfFacRecL )->cSerie + Str( ( dbfFacRecL )->nNumFac ) + ( dbfFacRecL )->cSufFac, dbfFacRecT, "cCodAlm" )
+         end if
+
 	      if !Empty( ( dbfFacRecL )->mNumSer )
 
 	         aNumSer                       := hb_aTokens( ( dbfFacRecL )->mNumSer, "," )

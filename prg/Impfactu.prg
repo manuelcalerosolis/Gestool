@@ -71,6 +71,8 @@ CLASS TImpFactu
    DATA oDbfTrnGst
    DATA oDbfObrGst
    DATA oDbfObrFac
+   DATA oDbfBncFac
+   DATA oDbfBncGst
    DATA oDbfAgeGst
    DATA oDbfAgeFac
    DATA oDbfAlmGst
@@ -100,6 +102,8 @@ CLASS TImpFactu
    DATA oDbfCliCom
    DATA oDbfCnt
    DATA oDbfDiv
+   DATA oDbfStocks
+
    DATA cPathFac
    DATA cPathMov      INIT "C:\ARCHIV~1\AZUDSO~1\UTILID~1\Datos\TBLS04\"
 
@@ -140,225 +144,219 @@ METHOD OpenFiles()
 
    BEGIN SEQUENCE
 
-   DATABASE NEW ::oDbfCnt PATH ( cPatEmp() ) FILE "nCount.Dbf"    VIA ( cDriver() )CLASS "Count"    SHARED INDEX "nCount.Cdx"
+   DATABASE NEW ::oDbfCnt PATH ( cPatEmp() ) FILE "nCount.Dbf"    VIA ( cDriver() ) CLASS "Count"    SHARED INDEX "nCount.Cdx"
 
    if !File( ::cPathFac + "Articulo.dbf" ) .or. !File( ::cPathFac + "Artcom.dbf" )
       ::aChkIndices[ 1 ]:Click( .f. ):Refresh()
       msgStop( "No existe fichero de articulos", ::cPathFac + "ARTICULO.DBF" )
    else
-      DATABASE NEW ::oDbfArtGst PATH ( cPatArt() )  FILE "ARTICULO.DBF" VIA ( cDriver() )CLASS "ARTGST" SHARED INDEX "ARTICULO.CDX"
-      DATABASE NEW ::oDbfArtFac PATH ( ::cPathFac ) FILE "ARTICULO.DBF" VIA ( cDriver() )CLASS "ARTFAC"
-      DATABASE NEW ::oDbfArcFac PATH ( ::cPathFac ) FILE "ARTCOM.DBF"   VIA ( cDriver() )CLASS "ARTCOM"
+      DATABASE NEW ::oDbfArtGst PATH ( cPatArt() )  FILE "ARTICULO.DBF" VIA ( cDriver() ) CLASS "ARTGST" SHARED INDEX "ARTICULO.CDX"
+      DATABASE NEW ::oDbfArtFac PATH ( ::cPathFac ) FILE "ARTICULO.DBF" VIA ( cDriver() ) CLASS "ARTFAC"
+      DATABASE NEW ::oDbfArcFac PATH ( ::cPathFac ) FILE "ARTCOM.DBF"   VIA ( cDriver() ) CLASS "ARTCOM"
    end if
 
    if !File( ::cPathFac + "FAMILIAS.DBF" )
       ::aChkIndices[ 2 ]:Click( .f. ):Refresh()
       msgStop( "No existe fichero de familias", ::cPathFac + "FAMILIAS.DBF" )
    else
-      DATABASE NEW ::oDbfFamGst PATH ( cPatArt() )  FILE "FAMILIAS.DBF" VIA ( cDriver() )CLASS "FAMGST" SHARED INDEX "FAMILIAS.CDX"
-      DATABASE NEW ::oDbfFamFac PATH ( ::cPathFac ) FILE "FAMILIAS.DBF" VIA ( cDriver() )CLASS "FAMFAC"
+      DATABASE NEW ::oDbfFamGst PATH ( cPatArt() )  FILE "FAMILIAS.DBF" VIA ( cDriver() ) CLASS "FAMGST" SHARED INDEX "FAMILIAS.CDX"
+      DATABASE NEW ::oDbfFamFac PATH ( ::cPathFac ) FILE "FAMILIAS.DBF" VIA ( cDriver() ) CLASS "FAMFAC"
    end if
 
    if !File( ::cPathFac + "GRP_VENT.DBF" )
       ::aChkIndices[ 3 ]:Click( .f. ):Refresh()
       msgStop( "No existe fichero de grupos de ventas", ::cPathFac + "GRP_VENT.DBF" )
    else
-      DATABASE NEW ::oDbfGrpGst PATH ( cPatEmp() )  FILE "GRPVENT.DBF"  VIA ( cDriver() )CLASS "GRPGST" SHARED INDEX "GRPVENT.CDX"
-      DATABASE NEW ::oDbfGrpFac PATH ( ::cPathFac ) FILE "GRP_VENT.DBF" VIA ( cDriver() )CLASS "GRPFAC"
+      DATABASE NEW ::oDbfGrpGst PATH ( cPatEmp() )  FILE "GRPVENT.DBF"  VIA ( cDriver() ) CLASS "GRPGST" SHARED INDEX "GRPVENT.CDX"
+      DATABASE NEW ::oDbfGrpFac PATH ( ::cPathFac ) FILE "GRP_VENT.DBF" VIA ( cDriver() ) CLASS "GRPFAC"
    end if
 
    if !File( ::cPathFac + "IVAS.DBF" )
       ::aChkIndices[ 4 ]:Click( .f. ):Refresh()
       msgStop( "No existe fichero de tipos de " + cImp(), ::cPathFac + "IVAS.DBF" )
    else
-      DATABASE NEW ::oDbfIvaGst PATH ( cPatDat() )  FILE "TIVA.DBF"     VIA ( cDriver() )CLASS "IVAGST" SHARED INDEX "TIVA.CDX"
-      DATABASE NEW ::oDbfIvaFac PATH ( ::cPathFac ) FILE "IVAS.DBF"     VIA ( cDriver() )CLASS "IVAFAC"
+      DATABASE NEW ::oDbfIvaGst PATH ( cPatDat() )  FILE "TIVA.DBF"     VIA ( cDriver() ) CLASS "IVAGST" SHARED INDEX "TIVA.CDX"
+      DATABASE NEW ::oDbfIvaFac PATH ( ::cPathFac ) FILE "IVAS.DBF"     VIA ( cDriver() ) CLASS "IVAFAC"
    end if
 
    if !File( ::cPathFac + "GRUPCLI.DBF" )
       ::aChkIndices[ 18 ]:Click( .f. ):Refresh()
       msgStop( "No existen ficheros de grupos de clientes", ::cPathFac + "GRUPCLI.DBF" )
    else
-      DATABASE NEW ::oDbfGrpCliGst PATH ( cPatCli() )  FILE "GRPCLI.DBF"   VIA ( cDriver() )CLASS "GRPCLIGST"  SHARED INDEX "GRPCLI.CDX"
-      DATABASE NEW ::oDbfGrpCliFac PATH ( ::cPathFac ) FILE "GRUPCLI.DBF"  VIA ( cDriver() )CLASS "GRPCLIFAC"
+      DATABASE NEW ::oDbfGrpCliGst PATH ( cPatCli() )  FILE "GRPCLI.DBF"   VIA ( cDriver() ) CLASS "GRPCLIGST"  SHARED INDEX "GRPCLI.CDX"
+      DATABASE NEW ::oDbfGrpCliFac PATH ( ::cPathFac ) FILE "GRUPCLI.DBF"  VIA ( cDriver() ) CLASS "GRPCLIFAC"
    end if
 
    if !File( ::cPathFac + "CLIENTES.DBF" ) .or. !File( ::cPathFac + "DIRCLI.DBF" ) .or. !File( ::cPathFac + "PROVINC.DBF" ) .or. !File( ::cPathFac + "ATIPICAS.DBF" )
       ::aChkIndices[ 5 ]:Click( .f. ):Refresh()
       msgStop( "No existen ficheros de clientes ni direcciones", ::cPathFac + "CLIENTES.DBF" + ::cPathFac + "DIRCLI.DBF" )
    else
-      DATABASE NEW ::oDbfCliGst PATH ( cPatCli() )  FILE "CLIENT.DBF"   VIA ( cDriver() )CLASS "CLIGST"  SHARED INDEX "CLIENT.CDX"
-      DATABASE NEW ::oDbfObrGst PATH ( cPatCli() )  FILE "OBRAST.DBF"   VIA ( cDriver() )CLASS "OBRGST"  SHARED INDEX "OBRAST.CDX"
-      DATABASE NEW ::oDbfAtpGst PATH ( cPatCli() )  FILE "CLIATP.DBF"   VIA ( cDriver() )CLASS "ATPGST"  SHARED INDEX "CLIATP.CDX"
-      DATABASE NEW ::oDbfCliFac PATH ( ::cPathFac ) FILE "CLIENTES.DBF" VIA ( cDriver() )CLASS "CLIFAC"
-      DATABASE NEW ::oDbfObrFac PATH ( ::cPathFac ) FILE "DIRCLI.DBF"   VIA ( cDriver() )CLASS "OBRFAC"
-      DATABASE NEW ::oDbfAtpFac PATH ( ::cPathFac ) FILE "ATIPICAS.DBF" VIA ( cDriver() )CLASS "ATPFAC"
-      DATABASE NEW ::oDbfProvFac PATH ( ::cPathFac ) FILE "PROVINC.DBF"  VIA ( cDriver() )CLASS "PROVFAC" SHARED INDEX "PROVINC.CDX"
-      DATABASE NEW ::oDbfCliCom PATH ( ::cPathFac ) FILE "ClienteC.Dbf" VIA ( cDriver() )CLASS "ClienteC" SHARED INDEX "ClienteC.Cdx"
+      DATABASE NEW ::oDbfCliGst PATH ( cPatCli() )  FILE "CLIENT.DBF"   VIA ( cDriver() ) CLASS "CLIGST"  SHARED INDEX "CLIENT.CDX"
+      DATABASE NEW ::oDbfObrGst PATH ( cPatCli() )  FILE "OBRAST.DBF"   VIA ( cDriver() ) CLASS "OBRGST"  SHARED INDEX "OBRAST.CDX"
+      DATABASE NEW ::oDbfAtpGst PATH ( cPatCli() )  FILE "CLIATP.DBF"   VIA ( cDriver() ) CLASS "ATPGST"  SHARED INDEX "CLIATP.CDX"
+      DATABASE NEW ::oDbfBncGst PATH ( cPatCli() )  FILE "CliBnc.DBF"   VIA ( cDriver() ) CLASS "CliBnc"  SHARED INDEX "CliBnc.CDX"
+      DATABASE NEW ::oDbfCliFac PATH ( ::cPathFac ) FILE "CLIENTES.DBF" VIA ( cDriver() ) CLASS "CLIFAC"
+      DATABASE NEW ::oDbfObrFac PATH ( ::cPathFac ) FILE "DIRCLI.DBF"   VIA ( cDriver() ) CLASS "OBRFAC"
+      DATABASE NEW ::oDbfBncFac PATH ( ::cPathFac ) FILE "BancosCL.DBF" VIA ( cDriver() ) CLASS "BancosCL"
+      DATABASE NEW ::oDbfAtpFac PATH ( ::cPathFac ) FILE "ATIPICAS.DBF" VIA ( cDriver() ) CLASS "ATPFAC"
+      DATABASE NEW ::oDbfProvFac PATH ( ::cPathFac ) FILE "PROVINC.DBF" VIA ( cDriver() ) CLASS "PROVFAC" SHARED INDEX "PROVINC.CDX"
+      DATABASE NEW ::oDbfCliCom PATH ( ::cPathFac ) FILE "ClienteC.Dbf" VIA ( cDriver() ) CLASS "ClienteC" SHARED INDEX "ClienteC.Cdx"
    end if
 
    if !File( ::cPathFac + "FPAGO.DBF" )
       ::aChkIndices[ 6 ]:Click( .f. ):Refresh()
       msgStop( "No existe fichero de formas de pago", ::cPathFac + "FPAGO.DBF" )
    else
-      DATABASE NEW ::oDbfFpgGst PATH ( cPatGrp() )  FILE "FPAGO.DBF"    VIA ( cDriver() )CLASS "FPGGST" SHARED INDEX "FPAGO.CDX"
-      DATABASE NEW ::oDbfFpgFac PATH ( ::cPathFac ) FILE "FPAGO.DBF"    VIA ( cDriver() )CLASS "FPGFAC"
+      DATABASE NEW ::oDbfFpgGst PATH ( cPatGrp() )  FILE "FPAGO.DBF"    VIA ( cDriver() ) CLASS "FPGGST" SHARED INDEX "FPAGO.CDX"
+      DATABASE NEW ::oDbfFpgFac PATH ( ::cPathFac ) FILE "FPAGO.DBF"    VIA ( cDriver() ) CLASS "FPGFAC"
    end if
 
    if !File( ::cPathFac + "REMESAS.DBF" ) .or. !File( ::cPathFac + "CTA_REM.DBF" )
       ::aChkIndices[ 19 ]:Click( .f. ):Refresh()
       msgStop( "No existen ficheros de remesas" )
    else
-      DATABASE NEW ::oDbfRemGst     PATH ( cPatEmp() )  FILE "REMCLIT.DBF"    VIA ( cDriver() )CLASS "REMGST"     SHARED INDEX "REMCLIT.CDX"
-      DATABASE NEW ::oDbfRemFac     PATH ( ::cPathFac ) FILE "REMESAS.DBF"    VIA ( cDriver() )CLASS "REMFAC"
-      DATABASE NEW ::oDbfCtaRemGst  PATH ( cPatEmp() )  FILE "CTAREM.DBF"     VIA ( cDriver() )CLASS "CTAREMGST"  SHARED INDEX "CTAREM.CDX"
-      DATABASE NEW ::oDbfCtaRemFac  PATH ( ::cPathFac ) FILE "CTA_REM.DBF"    VIA ( cDriver() )CLASS "CTAREMFAC"
+      DATABASE NEW ::oDbfRemGst     PATH ( cPatEmp() )  FILE "REMCLIT.DBF"    VIA ( cDriver() ) CLASS "REMGST"     SHARED INDEX "REMCLIT.CDX"
+      DATABASE NEW ::oDbfRemFac     PATH ( ::cPathFac ) FILE "REMESAS.DBF"    VIA ( cDriver() ) CLASS "REMFAC"
+      DATABASE NEW ::oDbfCtaRemGst  PATH ( cPatEmp() )  FILE "CTAREM.DBF"     VIA ( cDriver() ) CLASS "CTAREMGST"  SHARED INDEX "CTAREM.CDX"
+      DATABASE NEW ::oDbfCtaRemFac  PATH ( ::cPathFac ) FILE "CTA_REM.DBF"    VIA ( cDriver() ) CLASS "CTAREMFAC"
    end if
 
    if !File( ::cPathFac + "PROVEEDO.DBF" )
       ::aChkIndices[ 7 ]:Click( .f. ):Refresh()
       msgStop( "No existe fichero de proveedores", ::cPathFac + "PROVEEDO.DBF" )
    else
-      DATABASE NEW ::oDbfPrvGst PATH ( cPatPrv() )  FILE "PROVEE.DBF"   VIA ( cDriver() )CLASS "PRVGST" SHARED INDEX "PROVEE.CDX"
-      DATABASE NEW ::oDbfPrvFac PATH ( ::cPathFac ) FILE "PROVEEDO.DBF" VIA ( cDriver() )CLASS "PRVFAC"
+      DATABASE NEW ::oDbfPrvGst PATH ( cPatPrv() )  FILE "PROVEE.DBF"   VIA ( cDriver() ) CLASS "PRVGST" SHARED INDEX "PROVEE.CDX"
+      DATABASE NEW ::oDbfPrvFac PATH ( ::cPathFac ) FILE "PROVEEDO.DBF" VIA ( cDriver() ) CLASS "PRVFAC"
    end if
 
    if !File( ::cPathFac + "AGENTES.DBF" )
       ::aChkIndices[ 11 ]:Click( .f. ):Refresh()
       msgStop( "No existe fichero de agentes", ::cPathFac + "AGENTES.DBF" )
    else
-      DATABASE NEW ::oDbfAgeGst PATH ( cPatCli() )    FILE "AGENTES.DBF"   VIA ( cDriver() )CLASS "AGEGST" SHARED INDEX "AGENTES.CDX"
-      DATABASE NEW ::oDbfAgeFac PATH ( ::cPathFac ) FILE "AGENTES.DBF"   VIA ( cDriver() )CLASS "AGEFAC"
+      DATABASE NEW ::oDbfAgeGst PATH ( cPatCli() )    FILE "AGENTES.DBF"   VIA ( cDriver() ) CLASS "AGEGST" SHARED INDEX "AGENTES.CDX"
+      DATABASE NEW ::oDbfAgeFac PATH ( ::cPathFac )   FILE "AGENTES.DBF"   VIA ( cDriver() ) CLASS "AGEFAC"
    end if
 
    if !File( ::cPathFac + "ALMACEN.DBF" )
       ::aChkIndices[ 12 ]:Click( .f. ):Refresh()
       msgStop( "No existe fichero de almacenes", ::cPathFac + "ALMACEN.DBF" )
    else
-      DATABASE NEW ::oDbfAlmGst PATH ( cPatAlm() )    FILE "ALMACEN.DBF"   VIA ( cDriver() )CLASS "ALMGST" SHARED INDEX "ALMACEN.CDX"
-      DATABASE NEW ::oDbfAlmFac PATH ( ::cPathFac ) FILE "ALMACEN.DBF"   VIA ( cDriver() )CLASS "ALMFAC"
+      DATABASE NEW ::oDbfAlmGst PATH ( cPatAlm() )    FILE "ALMACEN.DBF"   VIA ( cDriver() ) CLASS "ALMGST" SHARED INDEX "ALMACEN.CDX"
+      DATABASE NEW ::oDbfAlmFac PATH ( ::cPathFac )   FILE "ALMACEN.DBF"   VIA ( cDriver() ) CLASS "ALMFAC"
    end if
 
    if !File( ::cPathFac + "PRECLIT.DBF" ) .or.  !File( ::cPathFac + "PRECLIL.DBF" )
       ::aChkIndices[ 20 ]:Click( .f. ):Refresh()
       msgStop( "No existen ficheros de presupuestos", ::cPathFac + "PRECLIT.DBF, ni " + ::cPathFac + "PRECLIL.DBF" )
    else
-      DATABASE NEW ::oDbfPreTGst PATH ( cPatEmp() )  FILE "PRECLIT.DBF"   VIA ( cDriver() )CLASS "PRETGST"  SHARED INDEX "PRECLIT.CDX"
-      DATABASE NEW ::oDbfPreTFac PATH ( ::cPathFac ) FILE "PRECLIT.DBF"   VIA ( cDriver() )CLASS "PRETFAC"
-      DATABASE NEW ::oDbfPreLGst PATH ( cPatEmp() )  FILE "PRECLIL.DBF"   VIA ( cDriver() )CLASS "PRELGST"  SHARED INDEX "PRECLIL.CDX"
-      DATABASE NEW ::oDbfPreLFac PATH ( ::cPathFac ) FILE "PRECLIL.DBF"   VIA ( cDriver() )CLASS "PRELFAC"
+      DATABASE NEW ::oDbfPreTGst PATH ( cPatEmp() )  FILE "PRECLIT.DBF"   VIA ( cDriver() ) CLASS "PRETGST"  SHARED INDEX "PRECLIT.CDX"
+      DATABASE NEW ::oDbfPreTFac PATH ( ::cPathFac ) FILE "PRECLIT.DBF"   VIA ( cDriver() ) CLASS "PRETFAC"
+      DATABASE NEW ::oDbfPreLGst PATH ( cPatEmp() )  FILE "PRECLIL.DBF"   VIA ( cDriver() ) CLASS "PRELGST"  SHARED INDEX "PRECLIL.CDX"
+      DATABASE NEW ::oDbfPreLFac PATH ( ::cPathFac ) FILE "PRECLIL.DBF"   VIA ( cDriver() ) CLASS "PRELFAC"
    end if   
 
    if !File( ::cPathFac + "PEDCLIT.DBF" ) .or.  !File( ::cPathFac + "PEDCLIL.DBF" )
       ::aChkIndices[ 21 ]:Click( .f. ):Refresh()
       msgStop( "No existen ficheros de pedidos", ::cPathFac + "PEDCLIT.DBF, ni " + ::cPathFac + "PEDCLIL.DBF" )
    else
-      DATABASE NEW ::oDbfPedTGst PATH ( cPatEmp() )  FILE "PEDCLIT.DBF"   VIA ( cDriver() )CLASS "PEDTGST"  SHARED INDEX "PEDCLIT.CDX"
-      DATABASE NEW ::oDbfPedTFac PATH ( ::cPathFac ) FILE "PEDCLIT.DBF"   VIA ( cDriver() )CLASS "PEDTFAC"
-      DATABASE NEW ::oDbfPedLGst PATH ( cPatEmp() )  FILE "PEDCLIL.DBF"   VIA ( cDriver() )CLASS "PEDLGST"  SHARED INDEX "PEDCLIL.CDX"
-      DATABASE NEW ::oDbfPedLFac PATH ( ::cPathFac ) FILE "PEDCLIL.DBF"   VIA ( cDriver() )CLASS "PEDLFAC"
+      DATABASE NEW ::oDbfPedTGst PATH ( cPatEmp() )  FILE "PEDCLIT.DBF"   VIA ( cDriver() ) CLASS "PEDTGST"  SHARED INDEX "PEDCLIT.CDX"
+      DATABASE NEW ::oDbfPedTFac PATH ( ::cPathFac ) FILE "PEDCLIT.DBF"   VIA ( cDriver() ) CLASS "PEDTFAC"
+      DATABASE NEW ::oDbfPedLGst PATH ( cPatEmp() )  FILE "PEDCLIL.DBF"   VIA ( cDriver() ) CLASS "PEDLGST"  SHARED INDEX "PEDCLIL.CDX"
+      DATABASE NEW ::oDbfPedLFac PATH ( ::cPathFac ) FILE "PEDCLIL.DBF"   VIA ( cDriver() ) CLASS "PEDLFAC"
    end if   
 
    if !File( ::cPathFac + "ALBCLIT.DBF" ) .or.  !File( ::cPathFac + "ALBCLIL.DBF" )
       ::aChkIndices[ 8 ]:Click( .f. ):Refresh()
       msgStop( "No existen ficheros de Albaranes", ::cPathFac + "ALBCLIT.DBF, ni " + ::cPathFac + "ALBCLIL.DBF" )
    else
-      DATABASE NEW ::oDbfAlbTGst PATH ( cPatEmp() )  FILE "ALBCLIT.DBF"   VIA ( cDriver() )CLASS "ALBTGST"  SHARED INDEX "ALBCLIT.CDX"
-      DATABASE NEW ::oDbfAlbTFac PATH ( ::cPathFac ) FILE "ALBCLIT.DBF"   VIA ( cDriver() )CLASS "ALBTFAC"
-      DATABASE NEW ::oDbfAlbLGst PATH ( cPatEmp() )  FILE "ALBCLIL.DBF"   VIA ( cDriver() )CLASS "ALBLGST"  SHARED INDEX "ALBCLIL.CDX"
-      DATABASE NEW ::oDbfAlbLFac PATH ( ::cPathFac ) FILE "ALBCLIL.DBF"   VIA ( cDriver() )CLASS "ALBLFAC"
+      DATABASE NEW ::oDbfAlbTGst PATH ( cPatEmp() )  FILE "ALBCLIT.DBF"   VIA ( cDriver() ) CLASS "ALBTGST"  SHARED INDEX "ALBCLIT.CDX"
+      DATABASE NEW ::oDbfAlbTFac PATH ( ::cPathFac ) FILE "ALBCLIT.DBF"   VIA ( cDriver() ) CLASS "ALBTFAC"
+      DATABASE NEW ::oDbfAlbLGst PATH ( cPatEmp() )  FILE "ALBCLIL.DBF"   VIA ( cDriver() ) CLASS "ALBLGST"  SHARED INDEX "ALBCLIL.CDX"
+      DATABASE NEW ::oDbfAlbLFac PATH ( ::cPathFac ) FILE "ALBCLIL.DBF"   VIA ( cDriver() ) CLASS "ALBLFAC"
    end if
 
    if !File( ::cPathFac + "FACCLIT.DBF" ) .or.  !File( ::cPathFac + "FACCLIL.DBF" ) .or. !File( ::cPathFac + "RECIBOS.DBF" ) .or. !File( ::cPathFac + "FACCLID.DBF" )
       ::aChkIndices[ 9 ]:Click( .f. ):Refresh()
       msgStop( "No existen ficheros de Facturas", ::cPathFac + "FACCLIT.DBF, ni " + ::cPathFac + "FACCLIL.DBF" )
    else
-      DATABASE NEW ::oDbfFacTGst    PATH ( cPatEmp() )   FILE "FACCLIT.DBF"   VIA ( cDriver() )CLASS "FACTGST" SHARED INDEX "FACCLIT.CDX"
-      DATABASE NEW ::oDbfFacTFac    PATH ( ::cPathFac )  FILE "FACCLIT.DBF"   VIA ( cDriver() )CLASS "FACTFAC"
-      DATABASE NEW ::oDbfFacLGst    PATH ( cPatEmp() )   FILE "FACCLIL.DBF"   VIA ( cDriver() )CLASS "FACLGST" SHARED INDEX "FACCLIL.CDX"
-      DATABASE NEW ::oDbfFacLFac    PATH ( ::cPathFac )  FILE "FACCLIL.DBF"   VIA ( cDriver() )CLASS "FACLFAC"
-      DATABASE NEW ::oDbfFacPGst    PATH ( cPatEmp() )   FILE "FACCLIP.DBF"   VIA ( cDriver() )CLASS "FACPGST" SHARED INDEX "FACCLIP.CDX"
-      DATABASE NEW ::oDbfRecFac     PATH ( ::cPathFac )  FILE "RECIBOS.DBF"   VIA ( cDriver() )CLASS "RECFAC"
-      DATABASE NEW ::oDbfFacDFac    PATH ( ::cPathFac )  FILE "FACCLID.DBF"   VIA ( cDriver() )CLASS "FACDFAC" SHARED INDEX "FACCLID.CDX"
-      DATABASE NEW ::oDbfFacRecTGst PATH ( cPatEmp() )   FILE "FACRECT.DBF"   VIA ( cDriver() )CLASS "FACRECT" SHARED INDEX "FACRECT.CDX"
-      DATABASE NEW ::oDbfFacRecLGst PATH ( cPatEmp() )   FILE "FACRECL.DBF"   VIA ( cDriver() )CLASS "FACRECL" SHARED INDEX "FACRECL.CDX"
-      DATABASE NEW ::oDbfFacIGst    PATH ( cPatEmp() )   FILE "FACCLII.DBF"   VIA ( cDriver() )CLASS "INCGST"  SHARED INDEX "FACCLII.CDX"
-      DATABASE NEW ::oDbfFacCFac    PATH ( ::cPathFac )  FILE "FACCLIC.DBF"   VIA ( cDriver() )CLASS "INCFAC" 
+      DATABASE NEW ::oDbfFacTGst    PATH ( cPatEmp() )   FILE "FACCLIT.DBF"   VIA ( cDriver() ) CLASS "FACTGST" SHARED INDEX "FACCLIT.CDX"
+      DATABASE NEW ::oDbfFacTFac    PATH ( ::cPathFac )  FILE "FACCLIT.DBF"   VIA ( cDriver() ) CLASS "FACTFAC"
+      DATABASE NEW ::oDbfFacLGst    PATH ( cPatEmp() )   FILE "FACCLIL.DBF"   VIA ( cDriver() ) CLASS "FACLGST" SHARED INDEX "FACCLIL.CDX"
+      DATABASE NEW ::oDbfFacLFac    PATH ( ::cPathFac )  FILE "FACCLIL.DBF"   VIA ( cDriver() ) CLASS "FACLFAC"
+      DATABASE NEW ::oDbfFacPGst    PATH ( cPatEmp() )   FILE "FACCLIP.DBF"   VIA ( cDriver() ) CLASS "FACPGST" SHARED INDEX "FACCLIP.CDX"
+      DATABASE NEW ::oDbfRecFac     PATH ( ::cPathFac )  FILE "RECIBOS.DBF"   VIA ( cDriver() ) CLASS "RECFAC"
+      DATABASE NEW ::oDbfFacDFac    PATH ( ::cPathFac )  FILE "FACCLID.DBF"   VIA ( cDriver() ) CLASS "FACDFAC" SHARED INDEX "FACCLID.CDX"
+      DATABASE NEW ::oDbfFacRecTGst PATH ( cPatEmp() )   FILE "FACRECT.DBF"   VIA ( cDriver() ) CLASS "FACRECT" SHARED INDEX "FACRECT.CDX"
+      DATABASE NEW ::oDbfFacRecLGst PATH ( cPatEmp() )   FILE "FACRECL.DBF"   VIA ( cDriver() ) CLASS "FACRECL" SHARED INDEX "FACRECL.CDX"
+      DATABASE NEW ::oDbfFacIGst    PATH ( cPatEmp() )   FILE "FACCLII.DBF"   VIA ( cDriver() ) CLASS "INCGST"  SHARED INDEX "FACCLII.CDX"
+      DATABASE NEW ::oDbfFacCFac    PATH ( ::cPathFac )  FILE "FACCLIC.DBF"   VIA ( cDriver() ) CLASS "INCFAC" 
    end if
 
    if !File( ::cPathFac + "TICKETT.DBF" ) .or.  !File( ::cPathFac + "TICKETL.DBF" )
       ::aChkIndices[ 10 ]:Click( .f. ):Refresh()
       msgStop( "No existen ficheros de Tikets", ::cPathFac + "TICKETT.DBF, ni " + ::cPathFac + "TICKETL.DBF" )
    else
-      DATABASE NEW ::oDbfTikTGst PATH ( cPatEmp() )  FILE "TIKET.DBF"     VIA ( cDriver() )CLASS "TIKTGST"  SHARED INDEX "TIKET.CDX"
-      DATABASE NEW ::oDbfTikTFac PATH ( ::cPathFac ) FILE "TICKETT.DBF"   VIA ( cDriver() )CLASS "TIKTFAC"
-      DATABASE NEW ::oDbfHisTFac PATH ( ::cPathFac ) FILE "HTICKETT.DBF"  VIA ( cDriver() )CLASS "HTIKTFAC"
-      DATABASE NEW ::oDbfTikLGst PATH ( cPatEmp() )  FILE "TIKEL.DBF"     VIA ( cDriver() )CLASS "TIKLGST"  SHARED INDEX "TIKEL.CDX"
-      DATABASE NEW ::oDbfTikLFac PATH ( ::cPathFac ) FILE "TICKETL.DBF"   VIA ( cDriver() )CLASS "TIKLFAC"
-      DATABASE NEW ::oDbfHisLFac PATH ( ::cPathFac ) FILE "HTICKETL.DBF"  VIA ( cDriver() )CLASS "HTIKLFAC"
-      DATABASE NEW ::oDbfTikPGst PATH ( cPatEmp() )  FILE "TIKEP.DBF"     VIA ( cDriver() )CLASS "TIKPGST"  SHARED INDEX "TIKEP.CDX"
+      DATABASE NEW ::oDbfTikTGst PATH ( cPatEmp() )  FILE "TIKET.DBF"     VIA ( cDriver() ) CLASS "TIKTGST"  SHARED INDEX "TIKET.CDX"
+      DATABASE NEW ::oDbfTikTFac PATH ( ::cPathFac ) FILE "TICKETT.DBF"   VIA ( cDriver() ) CLASS "TIKTFAC"
+      DATABASE NEW ::oDbfHisTFac PATH ( ::cPathFac ) FILE "HTICKETT.DBF"  VIA ( cDriver() ) CLASS "HTIKTFAC"
+      DATABASE NEW ::oDbfTikLGst PATH ( cPatEmp() )  FILE "TIKEL.DBF"     VIA ( cDriver() ) CLASS "TIKLGST"  SHARED INDEX "TIKEL.CDX"
+      DATABASE NEW ::oDbfTikLFac PATH ( ::cPathFac ) FILE "TICKETL.DBF"   VIA ( cDriver() ) CLASS "TIKLFAC"
+      DATABASE NEW ::oDbfHisLFac PATH ( ::cPathFac ) FILE "HTICKETL.DBF"  VIA ( cDriver() ) CLASS "HTIKLFAC"
+      DATABASE NEW ::oDbfTikPGst PATH ( cPatEmp() )  FILE "TIKEP.DBF"     VIA ( cDriver() ) CLASS "TIKPGST"  SHARED INDEX "TIKEP.CDX"
    end if
 
-   if !File( ::cPathMov + "TRASALMC.DBF" )
+   if !File( ::cPathFac + "Stocks.Dbf" )
       ::aChkIndices[ 13 ]:Click( .f. ):Refresh()
+      msgStop( "No existen ficheros de movimientos de almacen", ::cPathFac + "Stocks.Dbf" )
    else
-      DATABASE NEW ::oDbfMovTGst PATH ( cPatEmp() )  FILE "REMMOVT.DBF"   VIA ( cDriver() )CLASS "MOVTGST"  SHARED INDEX "REMMOVT.CDX"
-      DATABASE NEW ::oDbfMovTFac PATH ( ::cPathMov ) FILE "TRASALMC.DBF"  VIA ( cDriver() )CLASS "MOVTFAC"
-   end if
-
-   if !File( ::cPathMov + "TRASALML.DBF" )
-      ::aChkIndices[ 13 ]:Click( .f. ):Refresh()
-   else
-      DATABASE NEW ::oDbfMovLGst PATH ( cPatEmp() )  FILE "HISMOV.DBF"    VIA ( cDriver() )CLASS "MOVLGST"  SHARED INDEX "HISMOV.CDX"
-      DATABASE NEW ::oDbfMovLFac PATH ( ::cPathMov ) FILE "TRASALML.DBF"  VIA ( cDriver() )CLASS "MOVLFAC"
+      DATABASE NEW ::oDbfMovTGst PATH ( cPatEmp() )  FILE "REMMOVT.DBF" VIA ( cDriver() ) CLASS "MOVTGST"  SHARED INDEX "REMMOVT.CDX"
+      DATABASE NEW ::oDbfMovLGst PATH ( cPatEmp() )  FILE "HISMOV.DBF"  VIA ( cDriver() ) CLASS "MOVLGST"  SHARED INDEX "HISMOV.CDX"
+      DATABASE NEW ::oDbfMovLFac PATH ( ::cPathFac ) FILE "Stocks.Dbf"  VIA ( cDriver() ) CLASS "Stocks"
    end if
 
    if !File( ::cPathFac + "Transpor.Dbf" )
       ::aChkIndices[ 14 ]:Click( .f. ):Refresh()
       msgStop( "No existe fichero de transportistas", ::cPathFac + "Transpor.Dbf" )
    else
-      DATABASE NEW ::oDbfTrnGst PATH ( cPatGrp() )  FILE "Transpor.Dbf"    VIA ( cDriver() )CLASS "TRNGST"  SHARED INDEX "Transpor.Cdx"
-      DATABASE NEW ::oDbfTrnFac PATH ( ::cPathFac ) FILE "Transpor.Dbf"    VIA ( cDriver() )CLASS "TRNFAC"
+      DATABASE NEW ::oDbfTrnGst PATH ( cPatGrp() )  FILE "Transpor.Dbf"    VIA ( cDriver() ) CLASS "TRNGST"  SHARED INDEX "Transpor.Cdx"
+      DATABASE NEW ::oDbfTrnFac PATH ( ::cPathFac ) FILE "Transpor.Dbf"    VIA ( cDriver() ) CLASS "TRNFAC"
    end if
-
-   
 
    if !File( ::cPathFac + "PEDPROT.DBF" ) .or.  !File( ::cPathFac + "PEDPROL.DBF" )
       ::aChkIndices[ 22 ]:Click( .f. ):Refresh()
       msgStop( "No existen ficheros de pedidos de proveedor", ::cPathFac + "PEDPROT.DBF, ni " + ::cPathFac + "PEDPROL.DBF" )
    else
-      DATABASE NEW ::oDbfPepTGst PATH ( cPatEmp() )  FILE "PEDPROVT.DBF"  VIA ( cDriver() )CLASS "PEPTGST"  SHARED INDEX "PEDPROVT.CDX"
-      DATABASE NEW ::oDbfPepTFac PATH ( ::cPathFac ) FILE "PEDPROT.DBF"   VIA ( cDriver() )CLASS "PEPTFAC"
-      DATABASE NEW ::oDbfPepLGst PATH ( cPatEmp() )  FILE "PEDPROVL.DBF"  VIA ( cDriver() )CLASS "PEPLGST"  SHARED INDEX "PEDPROVL.CDX"
-      DATABASE NEW ::oDbfPepLFac PATH ( ::cPathFac ) FILE "PEDPROL.DBF"   VIA ( cDriver() )CLASS "PEPLFAC"
+      DATABASE NEW ::oDbfPepTGst PATH ( cPatEmp() )  FILE "PEDPROVT.DBF"  VIA ( cDriver() ) CLASS "PEPTGST"  SHARED INDEX "PEDPROVT.CDX"
+      DATABASE NEW ::oDbfPepTFac PATH ( ::cPathFac ) FILE "PEDPROT.DBF"   VIA ( cDriver() ) CLASS "PEPTFAC"
+      DATABASE NEW ::oDbfPepLGst PATH ( cPatEmp() )  FILE "PEDPROVL.DBF"  VIA ( cDriver() ) CLASS "PEPLGST"  SHARED INDEX "PEDPROVL.CDX"
+      DATABASE NEW ::oDbfPepLFac PATH ( ::cPathFac ) FILE "PEDPROL.DBF"   VIA ( cDriver() ) CLASS "PEPLFAC"
    end if
 
    if !File( ::cPathFac + "ALBPROT.DBF" ) .or.  !File( ::cPathFac + "ALBPROL.DBF" )
       ::aChkIndices[ 15 ]:Click( .f. ):Refresh()
       msgStop( "No existen ficheros de Albaranes de proveedor", ::cPathFac + "ALBPROT.DBF, ni " + ::cPathFac + "ALBPROL.DBF" )
    else
-      DATABASE NEW ::oDbfAlpTGst PATH ( cPatEmp() )  FILE "ALBPROVT.DBF"  VIA ( cDriver() )CLASS "ALPTGST"  SHARED INDEX "ALBPROVT.CDX"
-      DATABASE NEW ::oDbfAlpTFac PATH ( ::cPathFac ) FILE "ALBPROT.DBF"   VIA ( cDriver() )CLASS "ALPTFAC"
-      DATABASE NEW ::oDbfAlpLGst PATH ( cPatEmp() )  FILE "ALBPROVL.DBF"  VIA ( cDriver() )CLASS "ALPLGST"  SHARED INDEX "ALBPROVL.CDX"
-      DATABASE NEW ::oDbfAlpLFac PATH ( ::cPathFac ) FILE "ALBPROL.DBF"   VIA ( cDriver() )CLASS "ALPLFAC"
+      DATABASE NEW ::oDbfAlpTGst PATH ( cPatEmp() )  FILE "ALBPROVT.DBF"  VIA ( cDriver() ) CLASS "ALPTGST"  SHARED INDEX "ALBPROVT.CDX"
+      DATABASE NEW ::oDbfAlpTFac PATH ( ::cPathFac ) FILE "ALBPROT.DBF"   VIA ( cDriver() ) CLASS "ALPTFAC"
+      DATABASE NEW ::oDbfAlpLGst PATH ( cPatEmp() )  FILE "ALBPROVL.DBF"  VIA ( cDriver() ) CLASS "ALPLGST"  SHARED INDEX "ALBPROVL.CDX"
+      DATABASE NEW ::oDbfAlpLFac PATH ( ::cPathFac ) FILE "ALBPROL.DBF"   VIA ( cDriver() ) CLASS "ALPLFAC"
    end if
 
    if !File( ::cPathFac + "FACPROT.DBF" ) .or.  !File( ::cPathFac + "FACPROL.DBF" ) .or.  !File( ::cPathFac + "RECIBOSP.DBF" )
       ::aChkIndices[ 16 ]:Click( .f. ):Refresh()
       msgStop( "No existen ficheros de Facturas de proveedor", ::cPathFac + "FACPROT.DBF, ni " + ::cPathFac + "FACPROL.DBF" )
    else
-      DATABASE NEW ::oDbfFapTGst PATH ( cPatEmp() )  FILE "FACPRVT.DBF"  VIA ( cDriver() )CLASS "FAPTGST"  SHARED INDEX "FACPRVT.CDX"
-      DATABASE NEW ::oDbfFapTFac PATH ( ::cPathFac ) FILE "FACPROT.DBF"  VIA ( cDriver() )CLASS "FAPTFAC"
-      DATABASE NEW ::oDbfFapLGst PATH ( cPatEmp() )  FILE "FACPRVL.DBF"  VIA ( cDriver() )CLASS "FAPLGST"  SHARED INDEX "FACPRVL.CDX"
-      DATABASE NEW ::oDbfFapLFac PATH ( ::cPathFac ) FILE "FACPROL.DBF"  VIA ( cDriver() )CLASS "FAPLFAC"
-      DATABASE NEW ::oDbfFapPGst PATH ( cPatEmp() )  FILE "FACPRVP.DBF"  VIA ( cDriver() )CLASS "FAPPGST"  SHARED INDEX "FACPRVP.CDX"
-      DATABASE NEW ::oDbfFapPFac PATH ( ::cPathFac ) FILE "RECIBOSP.DBF" VIA ( cDriver() )CLASS "FAPPFAC"
-      DATABASE NEW ::oDbfFapIGst PATH ( cPatEmp() )  FILE "FACPRVI.DBF"   VIA ( cDriver() )CLASS "INCGSTP" SHARED INDEX "FACPRVI.CDX"
-      DATABASE NEW ::oDbfFapCFac PATH ( ::cPathFac ) FILE "FACPROC.DBF"   VIA ( cDriver() )CLASS "INCFACP"  
-
+      DATABASE NEW ::oDbfFapTGst PATH ( cPatEmp() )  FILE "FACPRVT.DBF"  VIA ( cDriver() ) CLASS "FAPTGST"  SHARED INDEX "FACPRVT.CDX"
+      DATABASE NEW ::oDbfFapTFac PATH ( ::cPathFac ) FILE "FACPROT.DBF"  VIA ( cDriver() ) CLASS "FAPTFAC"
+      DATABASE NEW ::oDbfFapLGst PATH ( cPatEmp() )  FILE "FACPRVL.DBF"  VIA ( cDriver() ) CLASS "FAPLGST"  SHARED INDEX "FACPRVL.CDX"
+      DATABASE NEW ::oDbfFapLFac PATH ( ::cPathFac ) FILE "FACPROL.DBF"  VIA ( cDriver() ) CLASS "FAPLFAC"
+      DATABASE NEW ::oDbfFapPGst PATH ( cPatEmp() )  FILE "FACPRVP.DBF"  VIA ( cDriver() ) CLASS "FAPPGST"  SHARED INDEX "FACPRVP.CDX"
+      DATABASE NEW ::oDbfFapPFac PATH ( ::cPathFac ) FILE "RECIBOSP.DBF" VIA ( cDriver() ) CLASS "FAPPFAC"
+      DATABASE NEW ::oDbfFapIGst PATH ( cPatEmp() )  FILE "FACPRVI.DBF"  VIA ( cDriver() ) CLASS "INCGSTP" SHARED INDEX "FACPRVI.CDX"
+      DATABASE NEW ::oDbfFapCFac PATH ( ::cPathFac ) FILE "FACPROC.DBF"  VIA ( cDriver() ) CLASS "INCFACP"  
    end if
 
-   DATABASE NEW ::oDbfDiv PATH ( cPatDat() )  FILE "DIVISAS.DBF"  VIA ( cDriver() )CLASS "DIVISAS"  SHARED INDEX "DIVISAS.CDX"
+   DATABASE NEW ::oDbfDiv PATH ( cPatDat() )  FILE "DIVISAS.DBF"  VIA ( cDriver() ) CLASS "DIVISAS"  SHARED INDEX "DIVISAS.CDX"
 
    if !File( ::cPathFac + "FACCLIT.DBF" ) .or.  !File( ::cPathFac + "FACCLIL.DBF" ) .or. !File( ::cPathFac + "RECIBOS.DBF" ) .or. !File( ::cPathFac + "FACCLID.DBF" )
       ::aChkIndices[ 17 ]:Click( .f. ):Refresh()
@@ -660,6 +658,18 @@ METHOD CloseFiles()
       ::oDbfObrFac:End()
    else
       ::oDbfObrFac := nil
+   end if
+
+   if !Empty( ::oDbfBncFac )
+      ::oDbfBncFac:End()
+   else
+      ::oDbfBncFac := nil
+   end if
+
+   if !Empty( ::oDbfBncGst )
+      ::oDbfBncGst:End()
+   else
+      ::oDbfBncGst := nil
    end if
 
    if !Empty( ::oDbfAgeGst )
@@ -1000,9 +1010,11 @@ RETURN ( Self )
 METHOD Importar()
 
    local n                    := 0
+   local cCodAlm              
    local cCodCli              := ""
    local cNotas               := ""
-   local nCounter             := 1
+   local nCounter             := 0
+   local nLinea               := 0
    local cControl             := ""
    local aTemporalLineas      := {}
    local oTemporal
@@ -1230,10 +1242,18 @@ METHOD Importar()
          ::oDbfCliFac:GoTop()
          while !( ::oDbfCliFac:eof() )
 
-            cCodCli  := SpecialPadr( ::oDbfCliFac:cCodCli, "0", RetNumCodCliEmp() )
+            cCodCli              := SpecialPadr( ::oDbfCliFac:cCodCli, "0", RetNumCodCliEmp() )
 
             while ::oDbfCliGst:Seek( cCodCli )
                ::oDbfCliGst:Delete( .f. )
+            end if
+
+            while ::oDbfObrGst:Seek( cCodCli )
+               ::oDbfObrGst:Delete( .f. )
+            end if
+
+            while ::oDbfBncGst:Seek( cCodCli )
+               ::oDbfBncGst:Delete( .f. )
             end if
 
             ::oDbfCliGst:Append()
@@ -1351,6 +1371,38 @@ METHOD Importar()
             ::aMtrIndices[ 5 ]:Set( ::oDbfObrFac:Recno() )
 
             ::oDbfObrFac:Skip()
+
+         end while
+
+         /*
+         Trasbase de bancos-----------------------------------------------------
+         */
+
+         ::aMtrIndices[ 5 ]:SetTotal( ::oDbfBncFac:LastRec() )
+
+         ::oDbfBncFac:GoTop()
+         while !( ::oDbfBncFac:eof() )
+
+            ::oDbfBncGst:Append()
+
+            ::oDbfBncGst:cCodCli    := SpecialPadr( ::oDbfBncFac:cCodCli, "0", RetNumCodCliEmp() )
+            ::oDbfBncGst:cEntBnc    := ::oDbfBncFac:cEntidad
+            ::oDbfBncGst:cSucBnc    := ::oDbfBncFac:cAgencia
+            ::oDbfBncGst:cCtaBnc    := ::oDbfBncFac:cCta
+            ::oDbfBncGst:cDigBnc    := cDgtControl( ::oDbfBncFac:cEntidad, ::oDbfBncFac:cAgencia, Space( 2 ), ::oDbfBncFac:cCta )
+            ::oDbfBncGst:cCodBnc    := ::oDbfBncFac:cNombre
+            ::oDbfBncGst:cDirBnc    := ::oDbfBncFac:cDireccion
+            ::oDbfBncGst:cPobBnc    := ::oDbfBncFac:cPoblacion
+            ::oDbfBncGst:cProBnc    := ::oDbfBncFac:cProvincia
+            ::oDbfBncGst:cTlfBnc    := ::oDbfBncFac:cTfoBco
+            ::oDbfBncGst:cFaxBnc    := ::oDbfBncFac:cFaxBco
+            ::oDbfBncGst:cPContBnc  := ::oDbfBncFac:cContacBco 
+
+            ::oDbfBncGst:Save()
+
+            ::aMtrIndices[ 5 ]:Set( ::oDbfBncFac:Recno() )
+
+            ::oDbfBncFac:Skip()
 
          end while
 
@@ -1628,6 +1680,8 @@ METHOD Importar()
 
       if ::aLgcIndices[ 20 ]
 
+         aTemporalLineas               := {}
+
          ::aMtrIndices[ 20 ]:SetTotal( ::oDbfPreTFac:LastRec() )
 
          ::oDbfPreTFac:GoTop()
@@ -1672,7 +1726,7 @@ METHOD Importar()
             ::oDbfPreTGst:nDtoEsp      := ::oDbfPreTFac:nDtoEsp
             ::oDbfPreTGst:cDivPre      := ::oDbfPreTFac:cCodDiv
             ::oDbfPreTGst:nVdvPre      := 1
-            ::oDbfPreTGst:nTotPre      := ::oDbfPreTFac:nTotPre 
+            ::oDbfPreTGst:nTotPre      := 0
 
             ::oDbfPreTGst:Save()
 
@@ -1687,10 +1741,9 @@ METHOD Importar()
          ::oDbfPreLGst:OrdSetFocus( "nNumLin" )
 
          ::oDbfPreLFac:GoTop()
-
          while !( ::oDbfPreLFac:eof() )
 
-            n := aScan( aTemporalLineas, {|o| o:nNumPre == ::oDbfPreLFac:nNumPre .and. o:nNumLin == ::oDbfPreLFac:nServicio } )
+            n                          := aScan( aTemporalLineas, {|o| o:nNumPre == ::oDbfPreLFac:nNumPre .and. o:nNumLin == ::oDbfPreLFac:nServicio } )
 
             if n == 0
 
@@ -1779,6 +1832,8 @@ METHOD Importar()
 
       if ::aLgcIndices[ 21 ]
 
+         aTemporalLineas               := {}
+
          ::aMtrIndices[ 21 ]:SetTotal( ::oDbfPedTFac:LastRec() )
 
          ::oDbfPedTFac:GoTop()
@@ -1823,7 +1878,7 @@ METHOD Importar()
             ::oDbfPedTGst:nDtoEsp      := ::oDbfPedTFac:nDtoEsp
             ::oDbfPedTGst:cDivPed      := ::oDbfPedTFac:cCodDiv
             ::oDbfPedTGst:nVdvPed      := 1
-            ::oDbfPedTGst:nTotPed      := ::oDbfPedTFac:nTotPed 
+            ::oDbfPedTGst:nTotPed      := 0
 
             ::oDbfPedTGst:Save()
 
@@ -1838,10 +1893,9 @@ METHOD Importar()
          ::oDbfPedLGst:OrdSetFocus( "nNumLin" )
 
          ::oDbfPedLFac:GoTop()
-
          while !( ::oDbfPedLFac:eof() )
 
-            n := aScan( aTemporalLineas, {|o| o:nNumPed == ::oDbfPedLFac:nNumPed .and. o:nNumLin == ::oDbfPedLFac:nServicio } )
+            n := aScan( aTemporalLineas, {|o| IsObject( o ) .and. ( o:nNumPed == ::oDbfPedLFac:nNumPed ) .and. ( o:nNumLin == ::oDbfPedLFac:nServicio ) } )
 
             if n == 0
 
@@ -1891,7 +1945,7 @@ METHOD Importar()
 
             end if   
 
-            ::aMtrIndices[ 21 ]:Set( ::oDbfPedeLFac:Recno() )
+            ::aMtrIndices[ 21 ]:Set( ::oDbfPedLFac:Recno() )
 
             ::oDbfPedLFac:Skip()
 
@@ -1995,8 +2049,10 @@ METHOD Importar()
 
             ::oDbfAlbLGst:Append()
 
-            /*Buscamos la serie del documento en la cabecera, la que factuplus
-            no guarda la serie en las lineas de los albaranes*/
+            /*
+            Buscamos la serie del documento en la cabecera, la que factuplus---
+            no guarda la serie en las lineas de los albaranes
+            */
 
             ::oDbfAlbTGst:GoTop()
 
@@ -2049,7 +2105,7 @@ METHOD Importar()
       end if
 
       /*
-      Trasbase de Facturas de Clientes----------------------------
+      Trasbase de Facturas de Clientes-----------------------------------------
       */
 
       if ::aLgcIndices[ 9 ]
@@ -2277,7 +2333,7 @@ METHOD Importar()
          ::oDbfFacTFac:GoTop()
          while !( ::oDbfFacTFac:eof() )
 
-            if ::oDbfFacTFac:cSerie == "R"
+            if ::oDbfFacTFac:cSerie == "C"
 
                while ::oDbfFacRecTGst:Seek( ::oDbfFacTFac:cSerie + Str( ::oDbfFacTFac:nNumFac, 9 ) )
                   ::oDbfFacRecTGst:Delete( .f. )
@@ -2365,7 +2421,7 @@ METHOD Importar()
          ::oDbfRecFac:GoTop()
          while !( ::oDbfRecFac:eof() )
 
-            if ::oDbfRecFac:cSerie == "R"
+            if ::oDbfRecFac:cSerie == "C"
 
                ::oDbfFacPGst:Append()
 
@@ -2393,7 +2449,7 @@ METHOD Importar()
                ::oDbfFacPGst:nNumRem        := ::oDbfRecFac:nNumRem
                ::oDbfFacPGst:cCtaRem        := ::oDbfRecFac:cCtaRem
                ::oDbfFacPGst:dFecVto        := ::oDbfRecFac:dFecVcto
-               ::oDbfFacPGst:cTipRec        := "R"
+               ::oDbfFacPGst:cTipRec        := "C"
 
                ::oDbfFacPGst:Save()
 
@@ -2410,7 +2466,7 @@ METHOD Importar()
          ::oDbfFacLFac:GoTop()
          while !( ::oDbfFacLFac:eof() )
 
-            if ::oDbfFacLFac:cSerie == "R"
+            if ::oDbfFacLFac:cSerie == "C"
 
                ::oDbfFacRecLGst:Append()
 
@@ -2713,62 +2769,45 @@ METHOD Importar()
 
       // Transpaso de cabeceras y lineas de movimientos de almacenes solo para Allgüelles
 
-      if .f. //::aLgcIndices[ 13 ] .and. ::oDbfMovTGst != nil .and. ::oDbfMovTFac != nil
+      if ::aLgcIndices[ 13 ] .and. ::oDbfMovTGst != nil .and. ::oDbfMovLFac != nil
 
-         //::oDbfMovTGst:Zap()
+         ::oDbfMovLFac:OrdSetFocus( "cStocks" )
 
-         ::oDbfMovTFac:GoTop()
-         while !( ::oDbfMovTFac:eof() )
+         ::oDbfMovLFac:GoTop()
+         while !::oDbfMovLFac:Eof()
 
-            ::oDbfMovTGst:Append()
+            if isNil( cCodAlm ) .or. ( cCodAlm != ::oDbfMovLFac:cCodAlm )
 
-            nCounter                := Val( Left( ::oDbfMovTFac:cHora, 2 ) + Right( ::oDbfMovTFac:cHora, 2 ) )
+               cCodAlm                 := ::oDbfMovLFac:cCodAlm
+               nLinea                  := 0
+               nCounter++
 
-            ::oDbfMovTGst:nNumRem   := nCounter
-            //::oDbfMovTGst:cSufRem   :=
-            //::oDbfMovTGst:cNumRem   :=
-            ::oDbfMovTGst:nTipMov   := 1
-            //::oDbfMovTGst:cTipMov   :=
-            ::oDbfMovTGst:cCodUsr   := cCurUsr()
-            //::oDbfMovTGst:cCodMov   :=
-            ::oDbfMovTGst:dFecRem   := ::oDbfMovTFac:dFecha
-            ::oDbfMovTGst:cAlmOrg   := ::oDbfMovTFac:cAlmOri
-            ::oDbfMovTGst:cAlmDes   := ::oDbfMovTFac:cAlmDes
-            ::oDbfMovTGst:cCodDiv   := cDivEmp()
-            ::oDbfMovTGst:nVdvDiv   := 1
-            ::oDbfMovTGst:cComMov   := ::oDbfMovTFac:cMotivo
-            ::oDbfMovTGst:cCodAge   := ::oDbfMovTFac:cCodAge
+               ::oDbfMovTGst:Append()
+               ::oDbfMovTGst:nNumRem   := nCounter
+               ::oDbfMovTGst:dFecRem   := GetSysDate()
+               ::oDbfMovTGst:cCodUsr   := cCurUsr()
+               ::oDbfMovTGst:nTipMov   := 4
+               ::oDbfMovTGst:cAlmDes   := ::oDbfMovLFac:cCodAlm
+               ::oDbfMovTGst:Save()
 
-               ::oDbfMovLFac:GoTop()
-               while !::oDbfMovLFac:Eof()
+            end if
 
-                  if ::oDbfMovLFac:cHora + dtos( ::oDbfMovLFac:dFecha ) == ::oDbfMovTFac:cHora + dtos( ::oDbfMovTFac:dFecha )
+            nLinea++
 
-                     ::oDbfMovLGst:Append()
+            ::oDbfMovLGst:Append()
+            ::oDbfMovLGst:nNumRem      := nCounter
+            ::oDbfMovLGst:nNumLin      := nLinea
+            ::oDbfMovLGst:dFecMov      := GetSysDate()
+            ::oDbfMovLGst:nTipMov      := 4
+            ::oDbfMovLGst:cAliMov      := ::oDbfMovLFac:cCodAlm
+            ::oDbfMovLGst:cRefMov      := ::oDbfMovLFac:cRef
+            ::oDbfMovLGst:cValPr1      := ::oDbfMovLFac:cProp1
+            ::oDbfMovLGst:cValPr2      := ::oDbfMovLFac:cProp2
+            ::oDbfMovLGst:nUndMov      := ::oDbfMovLFac:nStock
+            ::oDbfMovLGst:cCodUsr      := cCurUsr()
+            ::oDbfMovLGst:Save()
 
-                     ::oDbfMovLGst:dFecMov   := ::oDbfMovLFac:dFecha
-                     ::oDbfMovLGst:nTipMov   := 1
-                     ::oDbfMovLGst:cAliMov   := ::oDbfMovTFac:cAlmOri
-                     ::oDbfMovLGst:cAloMov   := ::oDbfMovTFac:cAlmDes
-                     ::oDbfMovLGst:cRefMov   := ::oDbfMovLFac:cRef
-                     ::oDbfMovLGst:nUndMov   := ::oDbfMovLFac:nCanEnt
-                     ::oDbfMovLGst:nPreDiv   := ::oDbfMovLFac:nPreUnit
-                     ::oDbfMovLGst:cUsrMov   := cCurUsr()
-                     ::oDbfMovLGst:nNumRem   := nCounter
-
-                     ::oDbfMovLGst:Save()
-
-                  end if
-
-                  ::oDbfMovLFac:Skip()
-
-            end while
-
-            ::oDbfMovTGst:Save()
-
-            ::oDbfMovTFac:Skip()
-
-            SysRefresh()
+            ::oDbfMovLFac:Skip()
 
          end while
 
@@ -2779,6 +2818,8 @@ METHOD Importar()
       */
 
       if ::aLgcIndices[ 22 ]
+
+         aTemporalLineas               := {}
 
          ::aMtrIndices[ 22 ]:SetTotal( ::oDbfPepTFac:LastRec() )
 
@@ -2834,10 +2875,9 @@ METHOD Importar()
          ::oDbfPepLGst:OrdSetFocus( "nNumLin" )
 
          ::oDbfPepLFac:GoTop()
-
          while !( ::oDbfPepLFac:eof() )
 
-            n := aScan( aTemporalLineas, {|o| o:nNumPed == ::oDbfPepLFac:nNumPed .and. o:nNumLin == ::oDbfPepLFac:nServicio } )
+            n                          := aScan( aTemporalLineas, {|o| o:nNumPed == ::oDbfPepLFac:nNumPed .and. o:nNumLin == ::oDbfPepLFac:nServicio } )
 
             if n == 0
 
@@ -2908,18 +2948,24 @@ METHOD Importar()
 
       end if
 
-      /* Trasbase de albaranes de compras */
+      /*
+      Trasbase de albaranes de compras
+      */
 
       if ::aLgcIndices[ 15 ]
 
-         /* Trasbase de cabeceras de albaranes de compras */
+         /*
+         Trasbase de cabeceras de albaranes de compras
+         */
 
          ::aMtrIndices[ 15 ]:SetTotal( ::oDbfAlpTFac:LastRec() )
 
          ::oDbfAlpTFac:GoTop()
          while !( ::oDbfAlpTFac:eof() )
 
-            /*Limpiamos las tablas para que no se dupliquen*/
+            /*
+            Limpiamos las tablas para que no se dupliquen
+            */
 
             while ::oDbfAlpTGst:Seek( ::oDbfAlpTFac:cSerie + Str( ::oDbfAlpTFac:nNumAlb, 9 ) )
                ::oDbfAlpTGst:Delete( .f. )
@@ -2968,7 +3014,9 @@ METHOD Importar()
 
          end while
 
-         /* Trasbase de líneas de albaranes de compras */
+         /*
+         Trasbase de líneas de albaranes de compras
+         */
 
          ::aMtrIndices[ 15 ]:SetTotal( ::oDbfAlpLFac:LastRec() )
 
@@ -2977,8 +3025,10 @@ METHOD Importar()
 
             ::oDbfAlpLGst:Append()
 
-            /*Buscamos la serie del documento en la cabecera, la que factuplus
-            no guarda la serie en las lineas de los albaranes*/
+            /*
+            Buscamos la serie del documento en la cabecera, la que factuplus
+            no guarda la serie en las lineas de los albaranes
+            */
 
             ::oDbfAlpTGst:GoTop()
 
@@ -3123,7 +3173,9 @@ METHOD Importar()
 
          end while
 
-         /*Traspasamos recibos de proveedores*/
+         /*
+         Traspasamos recibos de proveedores---------------------------------
+         */
 
          ::oDbfFapPFac:GoTop()
          while !( ::oDbfFapPFac:eof() )

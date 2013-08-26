@@ -2002,7 +2002,7 @@ Static Function aPro()
 
    local aBase := {}
 
-   aAdd( aBase, { "cCodPro",   "C", 10, 0, "Código de la propiedad"                 } )
+   aAdd( aBase, { "cCodPro",   "C", 20, 0, "Código de la propiedad"                 } )
    aAdd( aBase, { "cDesPro",   "C", 30, 0, "Nombre de la propiedad"                 } )
    aAdd( aBase, { "cCodWeb",   "N", 11, 0, "Código de la propiedad en la web"       } )
    aAdd( aBase, { "lPubInt",   "L",  1, 0, "Lógico de propiedad en la web"          } )
@@ -2018,8 +2018,8 @@ Static Function aItmPro()
 
    local aBase := {}
 
-   aAdd( aBase, { "cCodPro",   "C", 10, 0, "Código propiedad"                       } )
-   aAdd( aBase, { "cCodTbl",   "C", 10, 0, "Código de línea de propiedad"           } )
+   aAdd( aBase, { "cCodPro",   "C", 20, 0, "Código propiedad"                       } )
+   aAdd( aBase, { "cCodTbl",   "C", 20, 0, "Código de línea de propiedad"           } )
    aAdd( aBase, { "cDesTbl",   "C", 30, 0, "Nombre de línea de propiedad"           } )
    aAdd( aBase, { "nOrdTbl",   "N",  4, 0, "Número de orden para codigos de barras" } )
    aAdd( aBase, { "nBarTbl",   "C",  4, 0, "Código para codigos de barras"          } )
@@ -2111,7 +2111,7 @@ FUNCTION retValProp( cCodPrp, dbfPro )
    local lClo     := .f.
    local cPrp     := Space( 3 )
 
-   oBlock            := ErrorBlock( {| oError | ApoloBreak( oError ) } )
+   oBlock         := ErrorBlock( {| oError | ApoloBreak( oError ) } )
    BEGIN SEQUENCE
 
    if Empty( dbfPro )

@@ -571,10 +571,10 @@ METHOD Resource( nMode )
    DEFINE DIALOG oDlg RESOURCE "RemCli" TITLE LblTitle( nMode ) + "remesas de recibos a clientes"
 
       REDEFINE BITMAP oBmpGeneral ;
-        ID       990 ;
-        RESOURCE "remesas_bancarias_48_alpha" ;
-        TRANSPARENT ;
-        OF       oDlg
+         ID       990 ;
+         RESOURCE "Remesas_bancarias_48_alpha" ;
+         TRANSPARENT ;
+         OF       oDlg
 
       REDEFINE GET ::oDbf:nNumRem ;
 			ID 		100 ;
@@ -697,8 +697,14 @@ METHOD Resource( nMode )
 
       with object ( ::oBrwDet:AddCol() )
          :cHeader          := "Número"
-         :bEditValue       := {|| ::oDbfVir:cSerie + "/" + Str( ::oDbfVir:nNumFac ) + "/" + ::oDbfVir:cSufFac + "-" + Str( ::oDbfVir:nNumRec ) }
-         :nWidth           := 95
+         :bEditValue       := {|| ::oDbfVir:cSerie + "/" + Alltrim( Str( ::oDbfVir:nNumFac ) ) + "-" + AllTrim( Str( ::oDbfVir:nNumRec ) ) }
+         :nWidth           := 90
+      end with
+
+      with object ( ::oBrwDet:AddCol() )
+         :cHeader          := "Delegción"
+         :bEditValue       := {|| ::oDbfVir:cSufFac }
+         :nWidth           := 40
       end with
 
       with object ( ::oBrwDet:AddCol() )
@@ -1401,26 +1407,28 @@ METHOD AppendDet()
 
    if BrwRecCli( @cCodRec, ::oDbfDet:cAlias, ::oClientes:cAlias, ::oDivisas:cAlias, ::oBandera )
 
-      if ::oDbfDet:lCobrado
-         msgStop( "Recibo ya cobrado." )
-         return ( .f. )
-      end if
-
-      if !Empty( ::oDbfDet:nNumRem )
-         msgStop( "Recibo ya remesado." )
-         return ( .f. )
-      end if
-
       if ::lNowExist( cCodRec )
          msgStop( "Recibo ya incluido en remesa." )
          return ( .f. )
       end if
 
       if ::oDbfDet:SeekInOrd( cCodRec, "nNumFac" )
+
+         if ::oDbfDet:lCobrado
+            msgStop( "Recibo ya cobrado." )
+            return ( .f. )
+         end if
+
+         if !Empty( ::oDbfDet:nNumRem )
+            msgStop( "Recibo ya remesado." )
+            return ( .f. )
+         end if
+
          if ::oDbfVir:Append()
             aEval( ::oDbfVir:aTField, {| oFld, n | ::oDbfVir:FldPut( n, ::oDbfDet:FieldGet( n ) ) } )
             ::oDbfVir:Save()
          end if
+
       end if
 
       ::oBrwDet:Refresh()

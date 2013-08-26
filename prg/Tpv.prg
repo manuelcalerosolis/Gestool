@@ -7592,6 +7592,8 @@ STATIC FUNCTION EdtDet( aTmp, aGet, dbfTmpL, oBrw, bWhen, cCodArt, nMode, aTik )
                   aGet[ _CLOTE ]:lNeedGetFocus   := .t.
                end case
 
+               aGet[ _CLOTE ]:bValid              := {|| lValidaLote( aTmp, aGet ) }
+
             case cName == "Caducidad"
 
                @ 0, 0 GET  aGet[ _DFECCAD ] VAR aTmp[ _DFECCAD ];
@@ -17870,7 +17872,7 @@ FUNCTION rxTpv( cPath, oMeter )
       ( dbfTikT )->( ordCondSet( "!Deleted()", {|| !Deleted() }  ) )
       ( dbfTikT )->( ordCreate( cPath + "TIKET.CDX", "cValTik", "cTikVal", {|| Field->cTikVal } ) )
 
-      ( dbfTikT )->( ordCondSet( "!Deleted() .and. !lCloTik", {|| !Deleted() .and. !Field->lCloTik } ) )
+      ( dbfTikT )->( ordCondSet( "!Deleted() .and. lAbierto", {|| !Deleted() .and. Field->lAbierto } ) )
       ( dbfTikT )->( ordCreate( cPath + "TikeT.Cdx", "lCloTik", "cSerTik + cNumTik + cSufTik", {|| Field->cSerTik + Field->cNumTik + Field->cSufTik } ) )
 
       ( dbfTikT )->( ordCondSet( "!Deleted() .and. lAbierto", {|| !Deleted() .and. Field->lAbierto } ) )
@@ -18192,10 +18194,10 @@ function aColTik()
    aAdd( aColTik, { "cFcmTil",  "C",      5,     0, "Familia la que pertenece el producto combinado", "",      "", "( cDbfCol )" } )
    aAdd( aColTik, { "lFreTil",  "L",      1,     0, "Lineas sin cargo",                   "",                  "", "( cDbfCol )" } )
    aAdd( aColTik, { "nDtoLin",  "N",      6,     2, "Descuento en linea",                 "'@E 999.9'",        "", "( cDbfCol )" } )
-   aAdd( aColTik, { "cCodPr1",  "C",     10,     0, "Código de la primera propiedad",     "",                  "", "( cDbfCol )" } )
-   aAdd( aColTik, { "cCodPr2",  "C",     10,     0, "Código de la segunda propiedad",     "",                  "", "( cDbfCol )" } )
-   aAdd( aColTik, { "cValPr1",  "C",     10,     0, "Valor de la primera propiedad",      "",                  "", "( cDbfCol )" } )
-   aAdd( aColTik, { "cValPr2",  "C",     10,     0, "Valor de la segunda propiedad",      "",                  "", "( cDbfCol )" } )
+   aAdd( aColTik, { "cCodPr1",  "C",     20,     0, "Código de la primera propiedad",     "",                  "", "( cDbfCol )" } )
+   aAdd( aColTik, { "cCodPr2",  "C",     20,     0, "Código de la segunda propiedad",     "",                  "", "( cDbfCol )" } )
+   aAdd( aColTik, { "cValPr1",  "C",     20,     0, "Valor de la primera propiedad",      "",                  "", "( cDbfCol )" } )
+   aAdd( aColTik, { "cValPr2",  "C",     20,     0, "Valor de la segunda propiedad",      "",                  "", "( cDbfCol )" } )
    aAdd( aColTik, { "nFacCnv",  "N",     16,     6, "Factor de conversión",               "",                  "", "( cDbfCol )" } )
    aAdd( aColTik, { "nDtoDiv",  "N",     16,     6, "Descuento lineal de la compra",      "",                  "", "( cDbfCol )" } )
    aAdd( aColTik, { "lTipAcc",  "L",      1,     0, "",                                   "",                  "", "( cDbfCol )" } )
@@ -20992,5 +20994,49 @@ FUNCTION sTotTikCli( cNumTik, cTikT, cTikL, cDiv, cDivRet )
    sTotal:aTotalIva                       := aImpTik
 
 Return ( sTotal )
+
+//--------------------------------------------------------------------------//
+
+// busca articulos por el numero de lote y devulve la fecha de caducidad------- 
+
+Static Function lValidaLote( aTmp, aGet )
+
+   local nOrdAnt
+   local nRecAnt
+   local lEncontrado       :=.f.
+
+   if Empty( aTmp[ _CLOTE ] )
+      return .t.
+   end if 
+
+   // buscamos en facturas ----------------------------------------------------
+
+   nRecAnt           := ( dbfFacPrvL )->( RecNo() )
+   nOrdAnt           := ( dbfFacPrvL )->( OrdSetFocus( "cArtLote" ) )
+
+   if ( dbfFacPrvL )->( dbSeek( aTmp[ _CCBATIL ] + aTmp[ _CLOTE ] ) )
+
+      lEncontrado :=.t.
+      aGet[ _DFECCAD ]:cText( ( dbfFacPrvL )->dFecCad ) 
+   end if
+   ( dbfFacPrvL )->( OrdSetFocus( nOrdAnt ) )
+   ( dbfFacPrvL )->( dbGoTo( nRecAnt ) )
+
+   // si no encuentra nada buscamos en albaranes ------------------------------
+   if !(lEncontrado)
+
+      nRecAnt           := ( dbfAlbPrvL )->( RecNo() ) 
+      nOrdAnt           := ( dbfAlbPrvL )->( OrdSetFocus( "cArtLote" ) )
+                                       
+      if ( dbfAlbPrvL )->( dbSeek( aTmp[ _CCBATIL ] + aTmp[ _CLOTE ] ) )
+         aGet[ _DFECCAD ]:cText( ( dbfAlbPrvL )->dFecCad )
+      end if
+      
+      ( dbfAlbPrvL )->( OrdSetFocus( nOrdAnt ) )
+      ( dbfAlbPrvL )->( dbGoTo( nRecAnt ) ) 
+
+   end if 
+
+Return .t.
 
 //--------------------------------------------------------------------------//

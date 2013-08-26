@@ -2342,7 +2342,7 @@ STATIC FUNCTION EdtRec( aTmp, aGet, dbfPedCliT, oBrw, cCodCli, cCodArt, nMode, c
 
       with object ( oBrwLin:AddCol() )
          :cHeader             := "Precio"
-         :bEditValue          := {|| nImpUPedCli( aTmp, dbfTmpLin, nDouDiv ) }
+         :bEditValue          := {|| nTotUPedCli( dbfTmpLin, nDouDiv ) }
          :cEditPicture        := cPouDiv
          :nWidth              := 70
          :nDataStrAlign       := 1
@@ -7299,15 +7299,19 @@ Function SynPedCli( cPath )
               ( dbfPedCliL )->cLote   := AllTrim( Str( ( dbfPedCliL )->nLote ) )
         end if
 
-        if ( dbfPedCliL )->lIvaLin != RetFld( ( dbfPedCliI )->cSerPed + Str( ( dbfPedCliI )->nNumPed ) + ( dbfPedCliI )->cSufPed, dbfPedCliT, "lIvaInc" )
-              ( dbfPedCliL )->lIvaLin := RetFld( ( dbfPedCliI )->cSerPed + Str( ( dbfPedCliI )->nNumPed ) + ( dbfPedCliI )->cSufPed, dbfPedCliT, "lIvaInc" )
+        if ( dbfPedCliL )->lIvaLin != RetFld( ( dbfPedCliL )->cSerPed + Str( ( dbfPedCliL )->nNumPed ) + ( dbfPedCliL )->cSufPed, dbfPedCliT, "lIvaInc" )
+              ( dbfPedCliL )->lIvaLin := RetFld( ( dbfPedCliL )->cSerPed + Str( ( dbfPedCliL )->nNumPed ) + ( dbfPedCliL )->cSufPed, dbfPedCliT, "lIvaInc" )
+        end if
+
+        if Empty( ( dbfPedCliL )->cAlmLin )
+              ( dbfPedCliL )->cAlmLin := RetFld( ( dbfPedCliL )->cSerPed + Str( ( dbfPedCliL )->nNumPed ) + ( dbfPedCliL )->cSufPed, dbfPedCliT, "cCodAlm" )
         end if
 
         if !Empty( ( dbfPedCliL )->cRef ) .and. Empty( ( dbfPedCliL )->cCodFam )
               ( dbfPedCliL )->cCodFam := RetFamArt( ( dbfPedCliL )->cRef, dbfArticulo )
         end if
 
-        if !Empty( ( dbfPedCliL )->cRef ) .and. !Empty( ( dbfPedCliL )->cCodFam )
+        if !Empty( ( dbfPedCliL )->cRef ) .and. !Empty( ( dbfPedCliL )->cGrpFam )
               ( dbfPedCliL )->cGrpFam := cGruFam( ( dbfPedCliL )->cCodFam, dbfFamilia )
         end if
 
@@ -7697,10 +7701,10 @@ function aColTmpLin()
    aAdd( aColTmpLin, { "mLngDes", "M",   10,  0, "Descripciones largas",            "",         "", "( cDbfCol )" } )
    aAdd( aColTmpLin, { "lSelArt", "L",    1,  0, "Lógico de selección de artículo", "",         "", "( cDbfCol )" } )
    aAdd( aColTmpLin, { "cCodPrv", "C",   12,  0, "Código de proveedor",             "",         "", "( cDbfCol )" } )
-   aAdd( aColTmpLin, { "cCodPr1", "C",   10,  0, "Código propiedad 1",              "",         "", "( cDbfCol )" } )
-   aAdd( aColTmpLin, { "cCodPr2", "C",   10,  0, "Código propiedad 2",              "",         "", "( cDbfCol )" } )
-   aAdd( aColTmpLin, { "cValPr1", "C",   10,  0, "Valor propiedad 1",               "",         "", "( cDbfCol )" } )
-   aAdd( aColTmpLin, { "cValPr2", "C",   10,  0, "Valor propiedad 2",               "",         "", "( cDbfCol )" } )
+   aAdd( aColTmpLin, { "cCodPr1", "C",   20,  0, "Código propiedad 1",              "",         "", "( cDbfCol )" } )
+   aAdd( aColTmpLin, { "cCodPr2", "C",   20,  0, "Código propiedad 2",              "",         "", "( cDbfCol )" } )
+   aAdd( aColTmpLin, { "cValPr1", "C",   20,  0, "Valor propiedad 1",               "",         "", "( cDbfCol )" } )
+   aAdd( aColTmpLin, { "cValPr2", "C",   20,  0, "Valor propiedad 2",               "",         "", "( cDbfCol )" } )
    aAdd( aColTmpLin, { "nNumUni", "N",   16,  6, "Unidades pedidas",                "",         "", "( cDbfCol )" } )
    aAdd( aColTmpLin, { "nNumCaj", "N",   16,  6, "Cajas pedidas",                   "",         "", "( cDbfCol )" } )
    aAdd( aColTmpLin, { "nStkFis", "N",   16,  6, "Stock fisico",                    "",         "", "( cDbfCol )" } )
@@ -13294,10 +13298,10 @@ function aColPedCli()
    aAdd( aColPedCli, { "NNUMPED",   "N",    9,  0, "",                                "'999999999'",        "", "( cDbfCol )", nil } )
    aAdd( aColPedCli, { "CSUFPED",   "C",    2,  0, "",                                "",                   "", "( cDbfCol )", nil } )
    aAdd( aColPedCli, { "CREF",      "C",   18,  0, "Referencia del artículo",         "",                   "", "( cDbfCol )", nil } )
-   aAdd( aColPedCli, { "CCODPR1",   "C",   10,  0, "Código de la primera propiedad",  "",                   "", "( cDbfCol )", nil } )
-   aAdd( aColPedCli, { "CCODPR2",   "C",   10,  0, "Código de la segunda propiedad",  "",                   "", "( cDbfCol )", nil } )
-   aAdd( aColPedCli, { "CVALPR1",   "C",   10,  0, "Valor de la primera propiedad",   "",                   "", "( cDbfCol )", nil } )
-   aAdd( aColPedCli, { "CVALPR2",   "C",   10,  0, "Valor de la segunda propiedad",   "",                   "", "( cDbfCol )", nil } )
+   aAdd( aColPedCli, { "CCODPR1",   "C",   20,  0, "Código de la primera propiedad",  "",                   "", "( cDbfCol )", nil } )
+   aAdd( aColPedCli, { "CCODPR2",   "C",   20,  0, "Código de la segunda propiedad",  "",                   "", "( cDbfCol )", nil } )
+   aAdd( aColPedCli, { "CVALPR1",   "C",   20,  0, "Valor de la primera propiedad",   "",                   "", "( cDbfCol )", nil } )
+   aAdd( aColPedCli, { "CVALPR2",   "C",   20,  0, "Valor de la segunda propiedad",   "",                   "", "( cDbfCol )", nil } )
    aAdd( aColPedCli, { "CDETALLE",  "C",  250,  0, "Descripción de artículo",         "",                   "", "( cDbfCol )", nil } )
    aAdd( aColPedCli, { "NIVA"    ,  "N",    6,  2, "Porcentaje de impuesto",          "'@E 99.99'",         "", "( cDbfCol )", nil } )
    aAdd( aColPedCli, { "NCANPED" ,  "N",   16,  6, "Cantidad pedida",                 "MasUnd()",           "", "( cDbfCol )", nil } )
@@ -13391,10 +13395,10 @@ Static Function aPedCliRes()
    aAdd( aPedCliRes, { "NNUMPED", "N",    9,  0, "",                                "'999999999'",        "", "( cDbfCol )", nil } )
    aAdd( aPedCliRes, { "CSUFPED", "C",    2,  0, "",                                "",                   "", "( cDbfCol )", nil } )
    aAdd( aPedCliRes, { "CREF",    "C",   18,  0, "Referencia del artículo",         "",                   "", "( cDbfCol )", nil } )
-   aAdd( aPedCliRes, { "CCODPR1", "C",   10,  0, "Código de la primera propiedad",  "",                   "", "( cDbfCol )", nil } )
-   aAdd( aPedCliRes, { "CCODPR2", "C",   10,  0, "Código de la segunda propiedad",  "",                   "", "( cDbfCol )", nil } )
-   aAdd( aPedCliRes, { "CVALPR1", "C",   10,  0, "Valor de la primera propiedad",   "",                   "", "( cDbfCol )", nil } )
-   aAdd( aPedCliRes, { "CVALPR2", "C",   10,  0, "Valor de la segunda propiedad",   "",                   "", "( cDbfCol )", nil } )
+   aAdd( aPedCliRes, { "CCODPR1", "C",   20,  0, "Código de la primera propiedad",  "",                   "", "( cDbfCol )", nil } )
+   aAdd( aPedCliRes, { "CCODPR2", "C",   20,  0, "Código de la segunda propiedad",  "",                   "", "( cDbfCol )", nil } )
+   aAdd( aPedCliRes, { "CVALPR1", "C",   20,  0, "Valor de la primera propiedad",   "",                   "", "( cDbfCol )", nil } )
+   aAdd( aPedCliRes, { "CVALPR2", "C",   20,  0, "Valor de la segunda propiedad",   "",                   "", "( cDbfCol )", nil } )
    aAdd( aPedCliRes, { "DFECRES", "D",    8,  0, "Fecha de la reserva",             "",                   "", "( cDbfCol )", nil } )
    aAdd( aPedCliRes, { "NCAJRES", "N",   16,  6, "Cajas reservadas",                "MasUnd()",           "", "( cDbfCol )", nil } )
    aAdd( aPedCliRes, { "NUNDRES", "N",   16,  6, "Unidades reservadas",             "MasUnd()",           "", "( cDbfCol )", nil } )
@@ -14986,7 +14990,7 @@ FUNCTION nTotUPedCli( uTmpLin, nDec, nVdv )
             nCalculo    := uTmpLin:nPreDiv
          end if
 
-   end case
+   end case 
 
    if nVdv != 0
       nCalculo          := nCalculo / nVdv
@@ -18201,7 +18205,7 @@ Function MuestraPedidosWeb( oBtnPedidos, lGoPedCli )
 
       with object ( oBrwDetallesPedidos:AddCol() )
          :cHeader             := "Precio"
-         :bEditValue          := {|| nImpUPedCli( dbfTmpLin, nDouDiv ) }
+         :bEditValue          := {|| nTotUPedCli( dbfTmpLin, nDouDiv ) }
          :cEditPicture        := cPouDiv
          :nWidth              := 60
          :nDataStrAlign       := 1

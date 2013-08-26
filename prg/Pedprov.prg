@@ -6635,10 +6635,10 @@ function aColPedPrv()
    aAdd( aColPedPrv,  { "NDTOLIN", "N",  6,   2, "Descuento en lineas",              "'@E 999.99'",       "", "(cDbfCol)" } )
    aAdd( aColPedPrv,  { "NDTOPRM", "N",  6,   2, "Descuento pormociones",            "'@E 999.99'",       "", "(cDbfCol)" } )
    aAdd( aColPedPrv,  { "NDTORAP", "N",  6,   2, "Descuento por rappels",            "'@E 999.99'",       "", "(cDbfCol)" } )
-   aAdd( aColPedPrv,  { "CCODPR1", "C", 10,   0, "Código de la primera propiedad",   "",                  "", "(cDbfCol)" } )
-   aAdd( aColPedPrv,  { "CCODPR2", "C", 10,   0, "Código de la segunda propiedad",   "",                  "", "(cDbfCol)" } )
-   aAdd( aColPedPrv,  { "CVALPR1", "C", 10,   0, "Valor de la primera propiedad",    "",                  "", "(cDbfCol)" } )
-   aAdd( aColPedPrv,  { "CVALPR2", "C", 10,   0, "Valor de la segunda propiedad",    "",                  "", "(cDbfCol)" } )
+   aAdd( aColPedPrv,  { "CCODPR1", "C", 20,   0, "Código de la primera propiedad",   "",                  "", "(cDbfCol)" } )
+   aAdd( aColPedPrv,  { "CCODPR2", "C", 20,   0, "Código de la segunda propiedad",   "",                  "", "(cDbfCol)" } )
+   aAdd( aColPedPrv,  { "CVALPR1", "C", 20,   0, "Valor de la primera propiedad",    "",                  "", "(cDbfCol)" } )
+   aAdd( aColPedPrv,  { "CVALPR2", "C", 20,   0, "Valor de la segunda propiedad",    "",                  "", "(cDbfCol)" } )
    aAdd( aColPedPrv,  { "NFACCNV", "N", 13,   4, "",                                 "",                  "", "(cDbfCol)" } )
    aAdd( aColPedPrv,  { "NCTLSTK", "N",  1,   0, "Control de stock (1,2,3)",         "'9'",               "", "(cDbfCol)" } )
    aAdd( aColPedPrv,  { "CALMLIN" ,"C",  3,   0, "Código de almacén" ,               "",                  "", "(cDbfCol)" } )
@@ -6967,7 +6967,7 @@ Function SynPedPrv( cPath )
       end if
 
       if !Empty( ( dbfPedPrvL )->cPedCli ) .and. Len( AllTrim( ( dbfPedPrvL )->cPedCli ) ) != 12
-         ( dbfPedPrvL )->cPedCli    := AllTrim( ( dbfPedPrvL )->cPedCli ) + "00"
+         ( dbfPedPrvL )->cPedCli := AllTrim( ( dbfPedPrvL )->cPedCli ) + "00"
       end if
 
       if Empty( ( dbfPedPrvL )->cLote ) .and. !Empty( ( dbfPedPrvL )->nLote )
@@ -6978,12 +6978,16 @@ Function SynPedPrv( cPath )
          ( dbfPedPrvL )->cCodFam := RetFamArt( ( dbfPedPrvL )->cRef, dbfArticulo )
       end if
 
-      if !Empty( ( dbfPedPrvL )->cRef ) .and. !Empty( ( dbfPedPrvL )->cCodFam )
+      if !Empty( ( dbfPedPrvL )->cRef ) .and. !Empty( ( dbfPedPrvL )->cGrpFam )
          ( dbfPedPrvL )->cGrpFam := cGruFam( ( dbfPedPrvL )->cCodFam, dbfFamilia )
       end if
 
       if Empty( ( dbfPedPrvL )->nReq )
          ( dbfPedPrvL )->nReq    := nPReq( dbfIva, ( dbfPedPrvL )->nIva )
+      end if
+
+      if Empty( ( dbfPedPrvL )->cAlmLin )
+         ( dbfPedPrvL )->cAlmLin := RetFld( ( dbfPedPrvL )->cSerPed + Str( ( dbfPedPrvL )->nNumPed ) + ( dbfPedPrvL )->cSufPed, dbfPedPrvT, "cCodAlm" )
       end if
 
       ( dbfPedPrvL )->( dbSkip() )

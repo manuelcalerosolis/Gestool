@@ -370,7 +370,7 @@ Static Function CreateMainWindow( oIconApp )
       ON PAINT    ( WndPaint( hDC, oWnd, oBmp ) ); 
       ON RESIZE   ( WndResize( oWnd ) );
       ON INIT     ( lStartCheck() );
-      VALID       ( if( EndApp(), FinishApplication(), .f. ) )
+      VALID       ( EndApp() ) // , FinishAplication(), .f. )
 
 Return nil
 
@@ -841,45 +841,11 @@ STATIC FUNCTION EndApp()
 
    ErrorBlock( oBlock )
 
-RETURN ( oDlg:nResult == IDOK )
-
-//---------------------------------------------------------------------------//
-// Remember to use 'exit' procedures to asure that resources are
-// freed on a possible application error
-
-Static Function FinishApplication() // exit procedure
-
-   WritePProString( "main", "Ultima Empresa", cCodEmp(), FullCurDir() + "GstApolo.Ini" )
-
-   lFreeUser()
-
-   // Cerramos las auditorias-----------------------------------------------
-
-   StopServices()
-
-   // Cerramos el Activex---------------------------------------------------
-
-   CloseWebBrowser( oWnd )
-
-   // Limpiamos los recursos estaticos-----------------------------------
-
-   TAcceso():End()
-
-   TBandera():Destroy()
-
-   FreeLibrary( hDLLRich )
-
-   FreeResources()
-
-   // Cerramos el report----------------------------------------------------
-
-   if !Empty( nHndReport )
-      PostMessage( nHndReport, WM_CLOSE )
+   if ( oDlg:nResult == IDOK )
+      FinishAplication()
    end if
 
-   CheckRes()
-
-Return .t. 
+RETURN ( oDlg:nResult == IDOK )
 
 //-----------------------------------------------------------------------------//
 
@@ -1405,6 +1371,54 @@ init procedure InitAplication()
    hDLLRich    := LoadLibrary( "Riched20.dll" ) // Cargamos la libreria para richedit
 
 return
+
+//---------------------------------------------------------------------------//
+// Remember to use 'exit' procedures to asure that resources are
+// freed on a possible application error
+
+Static Function FinishAplication() //  Static Function
+
+   CursorWait()
+
+   if !Empty( cCodEmp() )
+      WritePProString( "main", "Ultima Empresa", cCodEmp(), FullCurDir() + "GstApolo.Ini" )
+   end if 
+
+   lFreeUser()
+
+   // Cerramos las auditorias--------------------------------------------------
+
+   StopServices()
+
+   // Cerramos el Activex------------------------------------------------------
+
+   CloseWebBrowser( oWnd )
+
+   // Limpiamos los recursos estaticos-----------------------------------------
+
+   TAcceso():End()
+
+   TBandera():Destroy()
+
+   FreeResources()
+
+   // Cerramos la dll----------------------------------------------------------
+
+   if !Empty( hDLLRich )
+      FreeLibrary( hDLLRich )
+   end if 
+
+   // Cerramos el report-------------------------------------------------------
+
+   if !Empty( nHndReport )
+      PostMessage( nHndReport, WM_CLOSE )
+   end if
+
+   CheckRes()
+
+   CursorWE()
+
+Return nil
 
 //---------------------------------------------------------------------------//
 

@@ -42,6 +42,7 @@ REQUEST DBFCDX
 #define _LDOCAUT                 31      //   L      1      0     Documentos automáticos
 #define _DULTAUT                 32      //   D      8      0     Último documento aautomático
 #define _LNOOPCAJ                33      //   L      1      0 
+#define _LARQCIE                 34      //   L      1      0
 
 //----------------------------------------------------------------------------//
 //Comenzamos la parte de código que se compila para el ejecutable normal
@@ -474,7 +475,7 @@ STATIC FUNCTION EdtRec( aTmp, aGet, dbfUser, oBrw, lGrupo, bValid, nMode )
          WHEN     ( nMode != ZOOM_MODE ) ;
          OF       oDlg
 
-      REDEFINE CHECKBOX aGet[ _LUSRZUR ] VAR aTmp[ _LUSRZUR ] ;
+      REDEFINE CHECKBOX aGet[ _LARQCIE ] VAR aTmp[ _LARQCIE ] ;
          ID       300 ;
          WHEN     ( nMode != ZOOM_MODE ) ;
          OF       oDlg
@@ -2732,7 +2733,8 @@ Function aItmUsr()
                      { "lFilVta",   "L",  1,  0, "Filtrar ventas del usuario" },;
                      { "lDocAut",   "L",  1,  0, "Lógico documentos automáticos" },;
                      { "dUltAut",   "D",  8,  0, "Fecha último documento automático" },;
-                     { "lNoOpCaj",  "L",  1,  0, "Lógico abrir cajón portamonedas" } }
+                     { "lNoOpCaj",  "L",  1,  0, "Lógico abrir cajón portamonedas" },;
+                     { "lArqCie",   "L",  1,  0, "Lógico arqueo ciego para este usuario" } }
 
 
 Return ( aBase )

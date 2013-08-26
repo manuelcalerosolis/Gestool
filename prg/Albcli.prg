@@ -8004,6 +8004,10 @@ function SynAlbCli( cPath )
          ( dbfAlbCliL )->dFecAlb    := RetFld( ( dbfAlbCliL )->cSerAlb + Str( ( dbfAlbCliL )->nNumAlb ) + ( dbfAlbCliL )->cSufAlb, dbfAlbCliT, "dFecAlb" )
       end if
 
+      if Empty( ( dbfAlbCliL )->cAlmLin )
+         ( dbfAlbCliL )->cAlmLin    := RetFld( ( dbfAlbCliL )->cSerAlb + Str( ( dbfAlbCliL )->nNumAlb ) + ( dbfAlbCliL )->cSufAlb, dbfAlbCliT, "cCodAlm" )
+      end if
+
       if !Empty( ( dbfAlbCliL )->mNumSer )
          aNumSer                       := hb_aTokens( ( dbfAlbCliL )->mNumSer, "," )
          for each cNumSer in aNumSer
@@ -12882,10 +12886,10 @@ Function aColAlbCli()
    aAdd( aColAlbCli, { "lImpLin",   "L",  1, 0, "Línea no imprimible" ,          "",                  "", "( cDbfCol )" } )
    aAdd( aColAlbCli, { "lNewLin",   "L",  1, 0, "" ,                             "",                  "", "( cDbfCol )" } )
    aAdd( aColAlbCli, { "cNumPed"   ,"C", 12, 0, "Número del pedido" ,            "",                  "", "( cDbfCol )" } )
-   aAdd( aColAlbCli, { "cCodPr1",   "C", 10, 0, "Código de primera propiedad",   "",                  "", "( cDbfCol )" } )
-   aAdd( aColAlbCli, { "cCodPr2",   "C", 10, 0, "Código de segunda propiedad",   "",                  "", "( cDbfCol )" } )
-   aAdd( aColAlbCli, { "cValPr1",   "C", 10, 0, "Valor de primera propiedad",    "",                  "", "( cDbfCol )" } )
-   aAdd( aColAlbCli, { "cValPr2",   "C", 10, 0, "Valor de segunda propiedad",    "",                  "", "( cDbfCol )" } )
+   aAdd( aColAlbCli, { "cCodPr1",   "C", 20, 0, "Código de primera propiedad",   "",                  "", "( cDbfCol )" } )
+   aAdd( aColAlbCli, { "cCodPr2",   "C", 20, 0, "Código de segunda propiedad",   "",                  "", "( cDbfCol )" } )
+   aAdd( aColAlbCli, { "cValPr1",   "C", 20, 0, "Valor de primera propiedad",    "",                  "", "( cDbfCol )" } )
+   aAdd( aColAlbCli, { "cValPr2",   "C", 20, 0, "Valor de segunda propiedad",    "",                  "", "( cDbfCol )" } )
    aAdd( aColAlbCli, { "nFacCnv",   "N", 16, 6, "",                              "",                  "", "( cDbfCol )" } )
    aAdd( aColAlbCli, { "nDtoDiv",   "N", 16, 6, "Descuento en línea",            "cPouDivAlb",        "", "( cDbfCol )" } )
    aAdd( aColAlbCli, { "nNumLin",   "N",  4, 0, "Número de la línea",            "'9999'",            "", "( cDbfCol )" } )

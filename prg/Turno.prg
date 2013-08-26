@@ -210,9 +210,13 @@ CLASS TTurno FROM TMasDet
    DATA  oFechaFin
    DATA  dFechaFin            INIT Date();
 
+   DATA  oGrpDiferencias
    DATA  oDiferenciaEfectivo
+   DATA  oSayDiferenciaEfectivo
    DATA  oDiferenciaTarjeta
+   DATA  oSayDiferenciaTarjeta
    DATA  oDiferenciaTotal
+   DATA  oSayDiferenciaTotal
 
    DATA  cComentario
 
@@ -277,10 +281,15 @@ CLASS TTurno FROM TMasDet
    DATA  nImporteTurno        INIT 0
    DATA  nObjetivoTurno       INIT 0
 
+   DATA  oGrpCobros
    DATA  oTotalEfectivo
+   DATA  oSayTotalEfectivo
+   DATA  oSayTotalNoEfectivo
    DATA  oTotalNoEfectivo
+   DATA  oSayTotalTarjeta
    DATA  oTotalTarjeta
    DATA  oTotalCobros
+   DATA  oSayTotalCobros
    DATA  oTotalCaja
 
    DATA  oImporteEfectivo
@@ -328,6 +337,7 @@ CLASS TTurno FROM TMasDet
    DATA  aTipIva              AS ARRAY    INIT {}
 
    DATA  oBrwTotales
+   DATA  oGrpArqueo
 
    DATA  oMoneyEfectivo
    DATA  oMoneyRetirado
@@ -380,6 +390,8 @@ CLASS TTurno FROM TMasDet
    Method Initiate( cText, oSender )               CONSTRUCTOR
    Method Build( cPath, oWndParent, oMenuItem )    CONSTRUCTOR
 
+   Method lArqueoCiego()                           INLINE ( oUser():lArqueoCiego() )
+
    Method OpenFiles( lExclusive )
    Method OpenService( lExclusive )
    Method CloseFiles()
@@ -423,6 +435,7 @@ CLASS TTurno FROM TMasDet
    Method InvCierre( oAni, oMsg )
 
    Method lArqueoTurno( lZoom, lParcial )
+   Method InitArqueoTurno()
 
    Method lIsContadores()
    Method LoadContadores()
@@ -514,7 +527,7 @@ CLASS TTurno FROM TMasDet
 
    Method ChangedTreeImpresion() VIRTUAL
 
-   Method InitArqueoTurno()
+   Method InitDlgImprimir()
    Method StartArqueoTurno( oFld, oBtnMod, oCajTur )
 
    Method PrintReport( cTurno, cCaja, nDevice, nCopies, cPrinter, dbfDoc )
@@ -3290,38 +3303,18 @@ METHOD lArqueoTurno( lZoom, lParcial ) CLASS TTurno
       oFntSay           := TFont():New( "Segoe UI", 0, 30, .f., .t. )
       oFntBrw           := TFont():New( "Segoe UI", 0, 17, .f., .f. )
 
-      do case
-         case ::nScreenVertRes == 560
+      DEFINE DIALOG oDlg ;
+         RESOURCE       "ARQUEO_TCT";
+         TITLE          "Arqueo " + if( ::lArqueoParcial, "parcial ", " " ) + "de caja, sesión : " + Trans( ::cCurTurno, "@R ######" )
 
-           DEFINE DIALOG oDlg ;
-               RESOURCE       "ARQUEO_TCT_1024x576";
-               TITLE          "Arqueo " + if( ::lArqueoParcial, "parcial ", " " ) + "de caja, sesión : " + Trans( ::cCurTurno, "@R ######" )
-
-           REDEFINE PAGES    oFld ;
-               ID             200 ;
-               FONT           oFnt ;
-               OF             oDlg ;
-               DIALOGS        "ARQUEO_1_TCT_1024x576",;
-                              "ARQUEO_2_TCT_1024x576",;
-                              "ARQUEO_3_TCT_1024x576",;
-                              "ARQUEO_4_TCT_1024x576"
-
-         otherwise
-
-           DEFINE DIALOG oDlg ;
-               RESOURCE       "ARQUEO_TCT";
-               TITLE          "Arqueo " + if( ::lArqueoParcial, "parcial ", " " ) + "de caja, sesión : " + Trans( ::cCurTurno, "@R ######" )
-
-           REDEFINE PAGES    oFld ;
-               ID             200 ;
-               FONT           oFnt ;
-               OF             oDlg ;
-               DIALOGS        "ARQUEO_1_TCT",;
-                              "ARQUEO_2_TCT",;
-                              "ARQUEO_3_TCT",;
-                              "ARQUEO_4_TCT"
-
-      end case
+         REDEFINE PAGES    oFld ;
+            ID             200 ;
+            FONT           oFnt ;
+            OF             oDlg ;
+            DIALOGS        "ARQUEO_1_TCT",;
+                           "ARQUEO_2_TCT",;
+                           "ARQUEO_3_TCT",;
+                           "ARQUEO_4_TCT"
 
    else
 
@@ -3693,6 +3686,10 @@ METHOD lArqueoTurno( lZoom, lParcial ) CLASS TTurno
          OF       oFld:aDialogs[ 3 ]
 
       else
+/*
+      REDEFINE GROUP ::oGrpArqueo ;
+         ID       801;
+         OF       oFld:aDialogs[3]  */
 
       REDEFINE GET ::oCodCaj ;
          VAR      ::cCodCaj ;
@@ -3717,6 +3714,26 @@ METHOD lArqueoTurno( lZoom, lParcial ) CLASS TTurno
       end if
 
       // Formas de pago-----------------------------------------------------------
+
+      REDEFINE SAY  ::oSayTotalEfectivo ;
+         ID       401 ;
+         OF       oFld:aDialogs[3]
+
+      REDEFINE SAY   ::oSayTotalTarjeta ;
+         ID       402 ;
+         OF       oFld:aDialogs[3]  
+            
+      REDEFINE SAY   ::oSayTotalNoEfectivo ;
+         ID       403 ;
+         OF       oFld:aDialogs[3]     
+
+      REDEFINE SAY   ::oSayTotalCobros ;
+         ID      404 ;
+         OF      oFld:aDialogs[3] 
+            
+      REDEFINE GROUP ::oGrpCobros ;
+         ID      500;
+         OF      oFld:aDialogs[3]    
 
       if ::lArqueoTactil()
 
@@ -3750,31 +3767,32 @@ METHOD lArqueoTurno( lZoom, lParcial ) CLASS TTurno
 
       else
 
-         REDEFINE SAY ::oTotalEfectivo ;
-            VAR      ::oTotales:nTotSaldoEfectivo( ::cCodCaj ) ;
-            ID       400 ;
-            PICTURE  ::cPorDiv ;
-            OF       oFld:aDialogs[3]
+         REDEFINE SAY   ::oTotalEfectivo ;
+            VAR         ::oTotales:nTotSaldoEfectivo( ::cCodCaj ) ;
+            ID          400 ;
+            PICTURE     ::cPorDiv ;
+            OF          oFld:aDialogs[3]
 
-         REDEFINE SAY ::oTotalTarjeta ;
-            VAR      ::oTotales:nTotSaldoTarjeta( ::cCodCaj ) ;
-            ID       410 ;
-            PICTURE  ::cPorDiv ;
-            OF       oFld:aDialogs[3]
+         REDEFINE SAY   ::oTotalTarjeta ;
+            VAR         ::oTotales:nTotSaldoTarjeta( ::cCodCaj ) ;
+            ID          410 ;
+            PICTURE     ::cPorDiv ;
+            OF          oFld:aDialogs[3]
 
-         REDEFINE SAY ::oTotalNoEfectivo ;
-            VAR      ::oTotales:nTotSaldoNoEfectivo( ::cCodCaj ) ;
-            ID       411 ;
-            PICTURE  ::cPorDiv ;
-            OF       oFld:aDialogs[3]
+         REDEFINE SAY   ::oTotalNoEfectivo ;
+            VAR         ::oTotales:nTotSaldoNoEfectivo( ::cCodCaj ) ;
+            ID          411 ;
+            PICTURE     ::cPorDiv ;
+            OF          oFld:aDialogs[3]
 
-         REDEFINE SAY ::oTotalCobros ;
-            VAR      ( ::oTotales:nTotSaldoEfectivo( ::cCodCaj ) + ::oTotales:nTotSaldoTarjeta( ::cCodCaj ) ) ;
-            ID       415 ;
-            PICTURE  ::cPorDiv ;
-            OF       oFld:aDialogs[3]
+         REDEFINE SAY   ::oTotalCobros ;
+            VAR         ( ::oTotales:nTotSaldoEfectivo( ::cCodCaj ) + ::oTotales:nTotSaldoTarjeta( ::cCodCaj ) ) ;
+            ID          415 ;
+            PICTURE     ::cPorDiv ;
+            OF          oFld:aDialogs[3]
 
       end if
+
 
       if ::lArqueoTactil()
 
@@ -3859,26 +3877,42 @@ METHOD lArqueoTurno( lZoom, lParcial ) CLASS TTurno
 
       ::oImporteTarjeta:bChange     := {|| ::oDiferenciaTarjeta:Refresh(), ::RefreshTurno() }
 
-      REDEFINE SAY ::oDiferenciaEfectivo VAR ( ::nImporteEfectivo - ::oTotales:nTotSaldoEfectivo( ::cCodCaj )  ) ;
-         ID       440 ;
-         PICTURE  ::cPorDiv ;
-         FONT     oFntSay ;
-         COLOR    CLR_BLUE, GetSysColor( COLOR_BTNFACE ) ;
-         OF       oFld:aDialogs[ 3 ]
+      REDEFINE GROUP ::oGrpDiferencias ;
+         ID          480;
+         OF          oFld:aDialogs[ 3 ]
 
-      REDEFINE SAY ::oDiferenciaTarjeta VAR ( ::nImporteTarjeta - ::oTotales:nTotCobroTarjeta( ::cCodCaj ) );
-         ID       450 ;
-         PICTURE  ::cPorDiv ;
-         FONT     oFntSay ;
-         COLOR    CLR_BLUE, GetSysColor( COLOR_BTNFACE ) ;
-         OF       oFld:aDialogs[ 3 ]
+      REDEFINE SAY   ::oSayDiferenciaEfectivo ;
+         ID          441 ;
+         OF          oFld:aDialogs[ 3 ]
 
-      REDEFINE SAY ::oDiferenciaTotal VAR ( ::oDiferenciaEfectivo:VarGet() + ::oDiferenciaTarjeta:VarGet() ) ;
-         ID       470 ;
-         PICTURE  ::cPorDiv ;
-         FONT     oFntSay ;
-         COLOR    CLR_BLUE, GetSysColor( COLOR_BTNFACE ) ;
-         OF       oFld:aDialogs[3]
+      REDEFINE SAY   ::oDiferenciaEfectivo VAR ( ::nImporteEfectivo - ::oTotales:nTotSaldoEfectivo( ::cCodCaj )  ) ;
+         ID          440 ;
+         PICTURE     ::cPorDiv ;
+         FONT        oFntSay ;
+         COLOR       CLR_BLUE, GetSysColor( COLOR_BTNFACE ) ;
+         OF          oFld:aDialogs[ 3 ]
+
+      REDEFINE SAY   ::oSayDiferenciaTarjeta ;
+         ID          451 ;
+         OF          oFld:aDialogs[ 3 ]      
+
+      REDEFINE SAY   ::oDiferenciaTarjeta VAR ( ::nImporteTarjeta - ::oTotales:nTotCobroTarjeta( ::cCodCaj ) );
+         ID          450 ;
+         PICTURE     ::cPorDiv ;
+         FONT        oFntSay ;
+         COLOR       CLR_BLUE, GetSysColor( COLOR_BTNFACE ) ;
+         OF          oFld:aDialogs[ 3 ]
+
+      REDEFINE SAY   ::oSayDiferenciaTotal ;
+         ID          471 ;
+         OF          oFld:aDialogs[ 3 ]
+
+      REDEFINE SAY   ::oDiferenciaTotal VAR ( ::oDiferenciaEfectivo:VarGet() + ::oDiferenciaTarjeta:VarGet() ) ;
+         ID          470 ;
+         PICTURE     ::cPorDiv ;
+         FONT        oFntSay ;
+         COLOR       CLR_BLUE, GetSysColor( COLOR_BTNFACE ) ;
+         OF          oFld:aDialogs[3]
 
       // Comentarios--------------------------------------------------------------
 
@@ -3985,12 +4019,12 @@ METHOD lArqueoTurno( lZoom, lParcial ) CLASS TTurno
          OF       oDlg ;
          ACTION   oDlg:End()
 
-      oDlg:bStart := {||  ::StartArqueoTurno( oFld, oBtnMod, oCajTur, oBrwCaj, oBrwCnt, oComentario ) }
+      oDlg:bStart := {|| ::StartArqueoTurno( oFld, oBtnMod, oCajTur, oBrwCaj, oBrwCnt, oComentario ) }
 
       oFld:aDialogs[ 2 ]:AddFastKey( VK_F2, {|| ::EdtAnt( oBrwCnt ) } )
       oFld:aDialogs[ 2 ]:AddFastKey( VK_F3, {|| ::EdtCol( oBrwCnt ) } )
 
-   oDlg:Activate( , , , .t. )
+   oDlg:Activate( , , , .t., {|| .t. }, , {|| ::InitArqueoTurno() } )
 
    /*
    Repos de las bases de datos-------------------------------------------------
@@ -4092,6 +4126,68 @@ Return ( oDlg:nResult == IDOK )
 //---------------------------------------------------------------------------//
 
 Method InitArqueoTurno()
+
+   if ::lArqueoCiego()    
+
+      ::oBrwTotales:Hide()
+
+      if !Empty( ::oGrpArqueo )
+         ::oGrpArqueo:Hide()
+      end if 
+      
+      ::oTotalEfectivo:Hide()
+
+      if !Empty( ::oSayTotalEfectivo )
+         ::oSayTotalEfectivo:Hide()
+      end if 
+
+      ::oTotalTarjeta:Hide()
+
+      if !Empty( ::oSayTotalTarjeta )
+         ::oSayTotalTarjeta:Hide()
+      end if 
+
+      ::oTotalNoEfectivo:Hide()
+
+      if !Empty( ::oSayTotalNoEfectivo )
+         ::oSayTotalNoEfectivo:Hide()
+      end if
+
+      ::oTotalCobros:Hide()
+
+      if !Empty( ::oSayTotalCobros )
+         ::oSayTotalCobros:Hide()
+      end if
+
+      ::oGrpCobros:Hide()
+
+      ::oDiferenciaEfectivo:Hide()
+
+      if !Empty( ::oSayDiferenciaEfectivo )
+         ::oSayDiferenciaEfectivo:Hide()
+      end if
+
+      ::oDiferenciaTarjeta:Hide()
+
+      if !Empty( ::oSayDiferenciaTarjeta )
+         ::oSayDiferenciaTarjeta:Hide()
+      end if
+
+      ::oDiferenciaTotal:Hide()
+
+      if !Empty( ::oSayDiferenciaTotal )
+         ::oSayDiferenciaTotal:Hide()
+      end if
+
+      ::oGrpDiferencias:Hide()
+
+   end if    
+
+Return ( nil )
+
+//---------------------------------------------------------------------------//
+
+Method InitDlgImprimir()
 
    local oSubTree
 
@@ -6080,13 +6176,21 @@ METHOD DlgImprimir( nDevice, lTactil )
    local oDlg
    local oCodCaj
    local oCajNbr
-   local cCodCaj     := oUser():cCaja()
-   local cCajNbr     := oRetFld( cCodCaj, ::oCaja, "cNomCaj" )
+   local cCodCaj     
+   local cCajNbr     
    local cBtnPrompt
    local bBtnAction
    local oPrinter
 
    DEFAULT lTactil   := .f.
+
+   if ::lArqueoCiego()
+      MsgStop( "No tiene privilegios para imprimir el arqueo." )
+      Return ( Self )
+   end if 
+
+   cCodCaj           := oUser():cCaja()
+   cCajNbr           := oRetFld( cCodCaj, ::oCaja, "cNomCaj" )
 
    ::cWinArq         := cPrinterArqueo( cCodCaj, ::oCaja:cAlias )
    ::cPrnArq         := cFormatoArqueoEnCaja( ::oDbfCaj:cCodCaj, ::oCaja:cAlias )
@@ -6237,7 +6341,7 @@ METHOD DlgImprimir( nDevice, lTactil )
 
       oDlg:bStart := {|| ::StartDlgImprimir() }
 
-   oDlg:Activate( , , , .t., {|| .t. }, , {|| ::InitArqueoTurno() } )
+   oDlg:Activate( , , , .t., {|| .t. }, , {|| ::InitDlgImprimir() } )
 
 Return ( Self )
 

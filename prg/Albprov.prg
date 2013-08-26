@@ -6549,6 +6549,10 @@ FUNCTION rxAlbPrv( cPath, oMeter )
       ( dbfAlbPrvT)->( ordCondSet("!Deleted()", {||!Deleted()}  ) )
       ( dbfAlbPrvT)->( ordCreate( cPath + "AlbProvL.CDX", "iNumAlb", "'02' + CSERALB + STR( NNUMALB ) + CSUFALB", {|| '02' + Field->cSerAlb + STR( Field->nNumAlb ) + Field->cSufAlb } ) )
 
+      ( dbfAlbPrvT )->( ordCondSet( "!lFacturado .and. !Deleted()", {|| !Field->lFacturado .and. !Deleted() } ) )
+      ( dbfAlbPrvT )->( ordCreate( cPath + "AlbProvL.Cdx", "cArtLote", "cRef + cLote", {|| Field->cRef + Field->cLote } ) )
+
+
       ( dbfAlbPrvT )->( dbCloseArea() )
    else
       msgStop( "Imposible abrir en modo exclusivo la tabla de albaranes de proveedores" )
@@ -8057,10 +8061,10 @@ function aColAlbPrv()
    aAdd( aColAlbPrv, { "NIVALIN",      "N",  6,  2, "",                            "",                    "", "( cDbfCol )" } )
    aAdd( aColAlbPrv, { "LIVALIN",      "L",  1,  0, "",                            "",                    "", "( cDbfCol )" } )
    aAdd( aColAlbPrv, { "LCHGLIN",      "L",  1,  0, "",                            "",                    "", "( cDbfCol )" } )
-   aAdd( aColAlbPrv, { "CCODPR1",      "C", 10,  0, "Código de primera propiedad", "",                    "", "( cDbfCol )" } )
-   aAdd( aColAlbPrv, { "CCODPR2",      "C", 10,  0, "Código de segunda propiedad", "",                    "", "( cDbfCol )" } )
-   aAdd( aColAlbPrv, { "CVALPR1",      "C", 10,  0, "Valor de primera propiedad",  "",                    "", "( cDbfCol )" } )
-   aAdd( aColAlbPrv, { "CVALPR2",      "C", 10,  0, "Valor de segunda propiedad",  "",                    "", "( cDbfCol )" } )
+   aAdd( aColAlbPrv, { "CCODPR1",      "C", 20,  0, "Código de primera propiedad", "",                    "", "( cDbfCol )" } )
+   aAdd( aColAlbPrv, { "CCODPR2",      "C", 20,  0, "Código de segunda propiedad", "",                    "", "( cDbfCol )" } )
+   aAdd( aColAlbPrv, { "CVALPR1",      "C", 20,  0, "Valor de primera propiedad",  "",                    "", "( cDbfCol )" } )
+   aAdd( aColAlbPrv, { "CVALPR2",      "C", 20,  0, "Valor de segunda propiedad",  "",                    "", "( cDbfCol )" } )
    aAdd( aColAlbPrv, { "NFACCNV",      "N", 13,  4, "Factor de conversión de la compra","",               "", "( cDbfCol )" } )
    aAdd( aColAlbPrv, { "CCODPED",      "C", 12,  0, "Número del pedido",           "",                    "", "( cDbfCol )" } )
    aAdd( aColAlbPrv, { "CALMLIN",      "C",  3,  0, "Código del almacén",          "",                    "", "( cDbfCol )" } )
@@ -8411,6 +8415,10 @@ Function SynAlbPrv( cPath )
 
       if Empty( ( dbfAlbPrvL )->nReq )
          ( dbfAlbPrvL )->nReq       := nPReq( dbfIva, ( dbfAlbPrvL )->nIva )
+      end if
+
+      if Empty( ( dbfAlbPrvL )->cAlmLin )
+         ( dbfAlbPrvL )->cAlmLin    := RetFld( ( dbfAlbPrvL )->cSerAlb + Str( ( dbfAlbPrvL )->nNumAlb ) + ( dbfAlbPrvL )->cSufAlb, dbfAlbPrvT, "cCodAlm" )
       end if
 
       if ( dbfAlbPrvL )->lFacturado != RetFld( ( dbfAlbPrvL )->cSerAlb + Str( ( dbfAlbPrvL )->nNumAlb ) + ( dbfAlbPrvL )->cSufAlb, dbfAlbPrvT, "lFacturado" )

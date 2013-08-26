@@ -7646,6 +7646,10 @@ FUNCTION rxFacPrv( cPath, oMeter )
       ( dbfFacPrvL )->( ordCondSet("!Deleted()", {||!Deleted()}  ) )
       ( dbfFacPrvL )->( ordCreate( cPath + "FACPRVL.CDX", "iNumFac", "'03' + CSERFAC + STR( NNUMFAC ) + CSUFFAC", {|| '03' + Field->CSERFAC + STR( Field->NNUMFAC ) + Field->CSUFFAC } ) )
 
+      ( dbfFacPrvL )->( ordCondSet( "!Deleted()", {|| !Deleted() } ) )
+      ( dbfFacPrvL )->( ordCreate( cPath + "FACPRVL.Cdx", "cArtLote", "cRef + cLote", {|| Field->cRef + Field->cLote } ) )
+
+
       ( dbfFacPrvL )->( dbCloseArea() )
    else
       msgStop( "Imposible abrir en modo exclusivo la tabla de facturas de proveedores" )
@@ -9574,10 +9578,10 @@ function aColFacPrv()
    aAdd( aColFacPrv, { "NIVALIN6"   ,"N", 16, 6, ""                            ,"",                    "", "( cDbfCol )", nil } )
    aAdd( aColFacPrv, { "NIVALIN"    ,"N",  6, 2, ""                            ,"",                    "", "( cDbfCol )", nil } )
    aAdd( aColFacPrv, { "LIVALIN"    ,"L",  1, 0, ""                            ,"",                    "", "( cDbfCol )", nil } )
-   aAdd( aColFacPrv, { "CCODPR1"    ,"C", 10, 0, "Código de la propiedad 1",     "",                   "", "( cDbfCol )", nil } )
-   aAdd( aColFacPrv, { "CCODPR2"    ,"C", 10, 0, "Código de la propiedad 2",     "",                   "", "( cDbfCol )", nil } )
-   aAdd( aColFacPrv, { "CVALPR1"    ,"C", 10, 0, "Valor de la propiedad 1" ,     "",                   "", "( cDbfCol )", nil } )
-   aAdd( aColFacPrv, { "CVALPR2"    ,"C", 10, 0, "Valor de la propiedad 2" ,     "",                   "", "( cDbfCol )", nil } )
+   aAdd( aColFacPrv, { "CCODPR1"    ,"C", 20, 0, "Código de la propiedad 1",     "",                   "", "( cDbfCol )", nil } )
+   aAdd( aColFacPrv, { "CCODPR2"    ,"C", 20, 0, "Código de la propiedad 2",     "",                   "", "( cDbfCol )", nil } )
+   aAdd( aColFacPrv, { "CVALPR1"    ,"C", 20, 0, "Valor de la propiedad 1" ,     "",                   "", "( cDbfCol )", nil } )
+   aAdd( aColFacPrv, { "CVALPR2"    ,"C", 20, 0, "Valor de la propiedad 2" ,     "",                   "", "( cDbfCol )", nil } )
    aAdd( aColFacPrv, { "NFACCNV"    ,"N", 16, 6, "Factor de conversión de la compra", "",              "", "( cDbfCol )", nil } )
    aAdd( aColFacPrv, { "CALMLIN"    ,"C",  3, 0, "Código del almacen" ,          "",                   "", "( cDbfCol )", nil } )
    aAdd( aColFacPrv, { "NCTLSTK"    ,"N",  1, 0, "Tipo de stock de la línea",    "'9'",                "", "( cDbfCol )", nil } )
@@ -9799,6 +9803,10 @@ Function SynFacPrv( cPath )
 
       if ( dbfFacPrvL )->dFecFac != RetFld( ( dbfFacPrvL )->cSerFac + Str( ( dbfFacPrvL )->nNumFac ) + ( dbfFacPrvL )->cSufFac, dbfFacPrvT, "dFecFac" )
          ( dbfFacPrvL )->dFecFac := RetFld( ( dbfFacPrvL )->cSerFac + Str( ( dbfFacPrvL )->nNumFac ) + ( dbfFacPrvL )->cSufFac, dbfFacPrvT, "dFecFac" )
+      end if
+
+      if Empty( ( dbfFacPrvL )->cAlmLin )
+         ( dbfFacPrvL )->cAlmLin    := RetFld( ( dbfFacPrvL )->cSerFac + Str( ( dbfFacPrvL )->nNumFac ) + ( dbfFacPrvL )->cSufFac, dbfFacPrvT, "cCodAlm" )
       end if
 
       if !Empty( ( dbfFacPrvL )->mNumSer )
