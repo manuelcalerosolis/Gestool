@@ -3785,19 +3785,19 @@ Edita las lineas de Detalle
 
 STATIC FUNCTION EdtDet( aTmp, aGet, dbfPedCliL, oBrw, lTotLin, cCodArtEnt, nMode, aTmpPed )
 
-   	local oDlg
-   	local oFld
-   	local oBtn
-   	local oBrwResCli
-   	local oBrwAlbCli
-   	local oBrwFacCli
-   	local oBrwAlbPrv
+   local oDlg
+   local oFld
+   local oBtn
+   local oBrwResCli
+   local oBrwAlbCli
+   local oBrwFacCli
+   local oBrwAlbPrv
 	local oGet2
-   	local cGet2
-   	local oGet3
-   	local cGet3
-   	local oTot           := Array( 6 )
-   	local oTotal
+   local cGet2
+   local oGet3
+   local cGet3
+   local oTot           := Array( 6 )
+   local oTotal
 	local nTotal
    local oSayPr1
    local oSayPr2
@@ -3838,7 +3838,6 @@ STATIC FUNCTION EdtDet( aTmp, aGet, dbfPedCliL, oBrw, lTotLin, cCodArtEnt, nMode
    local dGetCaducidad
    local nOrdFacCliL
    local oBtnSer
-
    local oEstadoProduccion
    local cEstadoProduccion := aEstadoProduccion[ Min( Max( aTmp[ _NPRODUC ] + 1, 1 ), len( aEstadoProduccion ) ) ]
 
@@ -13753,8 +13752,8 @@ FUNCTION nTotRPedCli( cPedido, cRef, cValPr1, cValPr2, dbfPedCliR )
    local nOrd
    local nRec        := ( dbfPedCliR )->( Recno() )
 
-   DEFAULT cValPr1   := Space( 10 )
-   DEFAULT cValPr2   := Space( 10 )
+   DEFAULT cValPr1   := Space( 20 )
+   DEFAULT cValPr2   := Space( 20 )
 
    if cPedido == nil
 

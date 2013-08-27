@@ -1473,10 +1473,10 @@ Method New() CLASS TPropertiesItems
    ::cCodigo            := ""
    ::cHead              := ""
    ::Value              := nil
-   ::cCodigoPropiedad1  := Space( 10 )
-   ::cCodigoPropiedad2  := Space( 10 )
-   ::cValorPropiedad1   := Space( 10 )
-   ::cValorPropiedad2   := Space( 10 )
+   ::cCodigoPropiedad1  := Space( 20 )
+   ::cCodigoPropiedad2  := Space( 20 )
+   ::cValorPropiedad1   := Space( 20 )
+   ::cValorPropiedad2   := Space( 20 )
    ::nPrecioCompra      := 0
 
 Return ( Self )

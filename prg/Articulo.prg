@@ -6929,7 +6929,7 @@ Static Function EndEdtVta( aValPrp1, aValPrp2, aTmp, aGet, oSay, cSay, oBrw, oDl
 
                   if aVal1:lsel
 
-                     if ( dbfTmpVta )->( dbSeek( aTmp[ ( dbfTmpVta )->( FieldPos( "CCODART" ) ) ] + aVal1:cCodPrp + Space( 10 ) + aVal1:cValPrp + Space( 10 ) ) )
+                     if ( dbfTmpVta )->( dbSeek( aTmp[ ( dbfTmpVta )->( FieldPos( "CCODART" ) ) ] + aVal1:cCodPrp + Space( 20 ) + aVal1:cValPrp + Space( 20 ) ) )
 
                         aTmp[ ( dbfTmpVta )->( FieldPos( "CCODPR1" ) ) ] := aVal1:cCodPrp
                         aTmp[ ( dbfTmpVta )->( FieldPos( "CVALPR1" ) ) ] := aVal1:cValPrp
@@ -6955,7 +6955,7 @@ Static Function EndEdtVta( aValPrp1, aValPrp2, aTmp, aGet, oSay, cSay, oBrw, oDl
 
             else
 
-               if ( dbfTmpVta )->( dbSeek( aTmp[ ( dbfTmpVta )->( FieldPos( "CCODART" ) ) ] + aValPrp1[ oBrwPrp1:nArrayAt ]:cCodPrp + Space( 10 ) + aValPrp1[oBrwPrp1:nArrayAt]:cValPrp + Space( 10 ) ) )
+               if ( dbfTmpVta )->( dbSeek( aTmp[ ( dbfTmpVta )->( FieldPos( "CCODART" ) ) ] + aValPrp1[ oBrwPrp1:nArrayAt ]:cCodPrp + Space( 20 ) + aValPrp1[oBrwPrp1:nArrayAt]:cValPrp + Space( 20 ) ) )
 
                   aTmp[ ( dbfTmpVta )->( FieldPos( "CCODPR1" ) ) ] := aValPrp1[oBrwPrp1:nArrayAt]:cCodPrp
                   aTmp[ ( dbfTmpVta )->( FieldPos( "CVALPR1" ) ) ] := aValPrp1[oBrwPrp1:nArrayAt]:cValPrp
@@ -18525,8 +18525,8 @@ return( nCosto )
 
 CLASS SValorPropiedades
 
-   DATA cCodPrp   INIT Space( 10 )
-   DATA cValPrp   INIT Space( 10 )
+   DATA cCodPrp   INIT Space( 20 )
+   DATA cValPrp   INIT Space( 20 )
    DATA cDesPrp
    DATA nColor
    DATA lSel      INIT .f.

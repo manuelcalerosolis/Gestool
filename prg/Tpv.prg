@@ -8696,8 +8696,8 @@ STATIC FUNCTION LoaArt( aGet, aTmp, oBrw, oGetTotal, aTik, lTwo, nMode, oDlg, lN
                aTmp[ _CCODPR1 ]     := ( dbfArticulo )->cCodPrp1
                aTmp[ _CCODPR2 ]     := ( dbfArticulo )->cCodPrp2
             else
-               aTmp[ _CCODPR1 ]     := Space( 10 )
-               aTmp[ _CCODPR2 ]     := Space( 10 )
+               aTmp[ _CCODPR1 ]     := Space( 20 )
+               aTmp[ _CCODPR2 ]     := Space( 20 )
             end if
 
             /*
@@ -17537,10 +17537,10 @@ static function EdtPdaL( aTmp, aGet, dbfTmpL, oBrw, aTmpHead, lNegative, nMode )
    aTmp[ _NUNDKIT ]     := 0
    aTmp[ _NIVATIL ]     := nIva( dbfIva, ( dbfArticulo )->TipoIva )
    aTmp[ _LOFETIL ]     := .f.
-   aTmp[ _CCODPR1 ]     := Space( 10 )
-   aTmp[ _CCODPR2 ]     := Space( 10 )
-   aTmp[ _CVALPR1 ]     := Space( 10 )
-   aTmp[ _CVALPR2 ]     := Space( 10 )
+   aTmp[ _CCODPR1 ]     := Space( 20 )
+   aTmp[ _CCODPR2 ]     := Space( 20 )
+   aTmp[ _CVALPR1 ]     := Space( 20 )
+   aTmp[ _CVALPR2 ]     := Space( 20 )
 
    if ( dbfArticulo )->lFacCnv
       aTmp[ _NFACCNV ]  := ( dbfArticulo )->nFacCnv

@@ -450,10 +450,10 @@ METHOD nRetPrecioPropiedades( cCodArt, cCodPrp1, cCodPrp2, cValPrp1, cValPrp2 )
 
    local nPreMed     := 0
 
-   DEFAULT cCodPrp1  := Space( 10 )
-   DEFAULT cCodPrp2  := Space( 10 )
-   DEFAULT cValPrp1  := Space( 10 )
-   DEFAULT cValPrp2  := Space( 10 )
+   DEFAULT cCodPrp1  := Space( 20 )
+   DEFAULT cCodPrp2  := Space( 20 )
+   DEFAULT cValPrp1  := Space( 20 )
+   DEFAULT cValPrp2  := Space( 20 )
 
    do case
    case ::cEstado == "Precios de costo medio"

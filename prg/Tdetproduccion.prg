@@ -600,8 +600,8 @@ METHOD LoaArticulo( oGetArticulo, oGetNombre ) CLASS TDetProduccion
             ::oDbfVir:cCodPr1 := ::oParent:oFam:cCodPrp1
             ::oDbfVir:cCodPr2 := ::oParent:oFam:cCodPrp2
          else
-            ::oDbfVir:cCodPr1 := Space( 10 )
-            ::oDbfVir:cCodPr2 := Space( 10 )
+            ::oDbfVir:cCodPr1 := Space( 20 )
+            ::oDbfVir:cCodPr2 := Space( 20 )
          end if
 
          if !Empty( ::oDbfVir:cCodPr1 )

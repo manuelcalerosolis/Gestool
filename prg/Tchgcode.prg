@@ -186,8 +186,8 @@ METHOD New( oMenuItem, oWnd ) CLASS TChgCode
    ::cGetArtNew         := Space( 18 )
    ::cGetEscOld         := Space( 18 )
    ::cGetEscNew         := Space( 18 )
-   ::cGetPr1Old         := Space( 10 )
-   ::cGetPr2Old         := Space( 10 )
+   ::cGetPr1Old         := Space( 20 )
+   ::cGetPr2Old         := Space( 20 )
 
    ::oGrpFam            := TGrpFam():Create( cPatArt() )
 
@@ -1284,8 +1284,8 @@ METHOD ChgCode()
 
          ::oGetArtOld:cText( Space( 18 ) )
          ::oGetArtNew:cText( Space( 18 ) )
-         ::oGetPr1Old:cText( Space( 10 ) )
-         ::oGetPr2Old:cText( Space( 10 ) )
+         ::oGetPr1Old:cText( Space( 20 ) )
+         ::oGetPr2Old:cText( Space( 20 ) )
          ::oSayArtOld:cText( "" )
          ::oSayPr1Old:cText( "" )
          ::oSayPr2Old:cText( "" )
