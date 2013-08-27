@@ -6965,6 +6965,12 @@ STATIC FUNCTION EndTrans( aTmp, aGet, dbfIva, nDec, nRec, oBrw, nMode, oDlg )
       WinGather( aTmp, , dbfAlbPrvT, , nMode )
 
       /*
+      Actualizamos el stock en la web------------------------------------------
+      */
+
+      ActualizaStockWeb( cSerAlb + Str( nNumAlb ) + cSufAlb )
+
+      /*
       Ponemos el estado al pedido----------------------------------------------
       */
 
@@ -12000,3 +12006,35 @@ Static Function EliminarNumeroSerie( aTmp )
 Return ( nil )
 
 //----------------------------------------------------------------------------//
+
+static Function ActualizaStockWeb( cNumDoc )
+
+   local nRec     := ( dbfAlbPrvL )->( Recno() )
+   local nOrdAnt  := ( dbfAlbPrvL )->( OrdSetFocus( "nNumAlb" ) )
+
+   if uFieldEmpresa( "lRealWeb" )
+
+      with object ( TComercio():GetInstance() )
+
+         if ( dbfAlbPrvL )->( dbSeek( cNumDoc ) )
+
+            while ( dbfAlbPrvL )->cSerAlb + Str( ( dbfAlbPrvL )->nNumAlb ) + ( dbfAlbPrvL )->cSufAlb == cNumDoc .and. !( dbfAlbPrvL )->( Eof() )
+
+               :ActualizaStockProductsPrestashop( ( dbfAlbPrvL )->cRef, ( dbfAlbPrvL )->cCodPr1, ( dbfAlbPrvL )->cCodPr2, ( dbfAlbPrvL )->cValPr1, ( dbfAlbPrvL )->cValPr2 )
+
+               ( dbfAlbPrvL )->( dbSkip() )
+
+            end while
+
+        end if
+        
+      end with
+
+   end if 
+
+   ( dbfAlbPrvL )->( OrdSetFocus( nOrdAnt ) )
+   ( dbfAlbPrvL )->( dbGoTo( nRec ) )  
+
+Return .t.
+
+//---------------------------------------------------------------------------//

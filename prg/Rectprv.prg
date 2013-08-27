@@ -7674,7 +7674,7 @@ STATIC FUNCTION EndTrans( aTmp, aGet, oBrw, oBrwLin, nMode, nDec, oDlg, oFld )
    end while
 
    /*
-   Guardamos  los campos de totales--------------------------------------------
+   Guardamos los campos de totales--------------------------------------------
    */
 
    aTmp[ _NTOTNET ]   := nTotNet
@@ -7688,6 +7688,12 @@ STATIC FUNCTION EndTrans( aTmp, aGet, oBrw, oBrwLin, nMode, nDec, oDlg, oFld )
    */
 
    WinGather( aTmp, , dbfRctPrvT, , nMode )
+
+   /*
+   Actualizamos el stock en la web------------------------------------------
+   */
+
+   ActualizaStockWeb( cSerFac + Str( nNumFac ) + cSufFac )
 
    /*
    Generar los pagos de las facturas
@@ -12182,5 +12188,39 @@ Static Function SalvarNumeroSerie( aNumSer, aTmp, oProSer, nMode )
    next
 
 Return ( nil )
+
+//----------------------------------------------------------------------------//
+
+static Function ActualizaStockWeb( cNumDoc )
+
+   local nRec     := ( dbfRctPrvL )->( Recno() )
+   local nOrdAnt  := ( dbfRctPrvL )->( OrdSetFocus( "nNumFac" ) )
+
+   if uFieldEmpresa( "lRealWeb" )
+
+      with object ( TComercio():GetInstance() )
+
+         if ( dbfRctPrvL )->( dbSeek( cNumDoc ) )
+
+            while ( dbfRctPrvL )->cSerFac + Str( ( dbfRctPrvL )->nNumFac ) + ( dbfRctPrvL )->cSufFac == cNumDoc .and. !( dbfRctPrvL )->( Eof() )
+
+               :ActualizaStockProductsPrestashop( ( dbfRctPrvL )->cRef, ( dbfRctPrvL )->cCodPr1, ( dbfRctPrvL )->cCodPr2, ( dbfRctPrvL )->cValPr1, ( dbfRctPrvL )->cValPr2 )
+
+               ( dbfRctPrvL )->( dbSkip() )
+
+            end while
+
+        end if
+        
+      end with
+
+   end if 
+
+   ( dbfRctPrvL )->( OrdSetFocus( nOrdAnt ) )
+   ( dbfRctPrvL )->( dbGoTo( nRec ) )  
+
+Return .t.
+
+//---------------------------------------------------------------------------//
 
 //----------------------------------------------------------------------------//

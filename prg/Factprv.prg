@@ -8181,6 +8181,12 @@ STATIC FUNCTION EndTrans( aTmp, aGet, oBrw, oBrwLin, nMode, nDec, oDlg )
    WinGather( aTmp, , dbfFacPrvT, , nMode )
 
    /*
+   Actualizamos el stock en la web------------------------------------------
+   */
+
+   ActualizaStockWeb( cSerFac + Str( nNumFac ) + cSufFac )
+
+   /*
    Generar los pagos de las facturas-------------------------------------------
    */
 
@@ -13331,5 +13337,39 @@ Static Function ValidaSuFactura( aGet, nMode )
    ( dbfFacPrvT )->( dbGoTo( nRecno ) )
 
 Return ( .t. )
+
+//---------------------------------------------------------------------------//
+
+static Function ActualizaStockWeb( cNumDoc )
+
+   local nRec     := ( dbfFacPrvL )->( Recno() )
+   local nOrdAnt  := ( dbfFacPrvL )->( OrdSetFocus( "nNumFac" ) )
+
+   if uFieldEmpresa( "lRealWeb" )
+
+      with object ( TComercio():GetInstance() )
+
+         if ( dbfFacPrvL )->( dbSeek( cNumDoc ) )
+
+            while ( dbfFacPrvL )->cSerFac + Str( ( dbfFacPrvL )->nNumFac ) + ( dbfFacPrvL )->cSufFac == cNumDoc .and. !( dbfFacPrvL )->( Eof() )
+
+               :ActualizaStockProductsPrestashop( ( dbfFacPrvL )->cRef, ( dbfFacPrvL )->cCodPr1, ( dbfFacPrvL )->cCodPr2, ( dbfFacPrvL )->cValPr1, ( dbfFacPrvL )->cValPr2 )
+
+               ( dbfFacPrvL )->( dbSkip() )
+
+            end while
+
+        end if
+        
+      end with
+
+   end if 
+
+   ( dbfFacPrvL )->( OrdSetFocus( nOrdAnt ) )
+   ( dbfFacPrvL )->( dbGoTo( nRec ) )  
+
+Return .t.
+
+//---------------------------------------------------------------------------//
 
 //---------------------------------------------------------------------------//
