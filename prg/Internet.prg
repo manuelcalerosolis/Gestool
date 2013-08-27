@@ -1333,7 +1333,7 @@ Method FtpConexion()
 
    local nRetry            := 0
    local ftpSit            := cFirstPath( Rtrim( cSitFtp() ) )
-   local ftpDir            := cNoPath( Rtrim( cSitFtp() ) )
+   local ftpDir            := cNoPathLeft( Rtrim( cSitFtp() ) )
    local nbrUsr            := Rtrim( cUsrFtp() )
    local accUsr            := Rtrim( cPswFtp() )
    local pasInt            := uFieldEmpresa( "lPasEnvio" )

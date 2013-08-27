@@ -435,13 +435,13 @@ RETURN SubStr( cFileName, 1, RAt( ":", cFileName ) + 1 )
 
 FUNCTION cFirstPath( cPath )
 
-   local nRAt     := RAt( "\", cPath )
+   local nAt     := At( "\", cPath )
 
-   if nRAT == 0
-      nRAt        := RAt( "/", cPath )
+   if nAT == 0
+      nAt        := At( "/", cPath )
    end if
 
-RETURN SubStr( cPath, 1, nRAt - 1 )
+RETURN SubStr( cPath, 1, nAt - 1 )
 
 //----------------------------------------------------------------------------//
 
@@ -1156,6 +1156,18 @@ Return ( nil )
 FUNCTION cNoPath( cFileName )
 
 RETURN Alltrim( SubStr( cFileName, RAt( "\", cFileName ) + 1 ) )
+
+//----------------------------------------------------------------------------//
+
+FUNCTION cNoPathLeft( cFileName )
+
+   local nAt     := At( "\", cFileName )
+
+   if nAT == 0
+      nAt        := At( "/", cFileName )
+   end if
+
+   RETURN Alltrim( SubStr( cFileName, nAt + 1 ) )
 
 //----------------------------------------------------------------------------//
 
