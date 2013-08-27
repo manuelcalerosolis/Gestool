@@ -23221,8 +23221,8 @@ static Function ActualizaStockWeb( cNumDoc )
 
          	end while
 
-        end if 	
-
+        end if
+        
       end with
 
    end if 
