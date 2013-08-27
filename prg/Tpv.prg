@@ -21050,7 +21050,7 @@ Return .t.
 static Function ActualizaStockWeb( cNumDoc )
 
    local nRec     := ( dbfTikL )->( Recno() )
-   local nOrdAnt  := ( dbfTikL )->( OrdSetFocus( "nNumTik" ) )
+   local nOrdAnt  := ( dbfTikL )->( OrdSetFocus( "CNUMTIL" ) )
 
    if uFieldEmpresa( "lRealWeb" )
 
