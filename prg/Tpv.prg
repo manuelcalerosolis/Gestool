@@ -4271,6 +4271,12 @@ Static Function NewTiket( aGet, aTmp, nMode, nSave, lBig, oBrw, oBrwDet )
          end case
 
          /*
+         Actualizamos el stock en la web------------------------------------------
+         */
+
+         ActualizaStockWeb( nNumTik )
+
+         /*
          Actualizamos el stock-------------------------------------------------------
          */
 
@@ -21040,3 +21046,35 @@ Static Function lValidaLote( aTmp, aGet )
 Return .t.
 
 //--------------------------------------------------------------------------//
+
+static Function ActualizaStockWeb( cNumDoc )
+
+   local nRec     := ( dbfTikL )->( Recno() )
+   local nOrdAnt  := ( dbfTikL )->( OrdSetFocus( "nNumTik" ) )
+
+   if uFieldEmpresa( "lRealWeb" )
+
+      with object ( TComercio():GetInstance() )
+
+         if ( dbfTikL )->( dbSeek( cNumDoc ) )
+
+            while ( dbfTikL )->cSerTil + ( dbfTikL )->cNumTil + ( dbfTikL )->cSufTil == cNumDoc .and. !( dbfTikL )->( Eof() )
+
+               :ActualizaStockProductsPrestashop( ( dbfTikL )->cCbaTil, ( dbfTikL )->cCodPr1, ( dbfTikL )->cCodPr2, ( dbfTikL )->cValPr1, ( dbfTikL )->cValPr2 )
+
+               ( dbfTikL )->( dbSkip() )
+
+            end while
+
+        end if
+        
+      end with
+
+   end if 
+
+   ( dbfTikL )->( OrdSetFocus( nOrdAnt ) )
+   ( dbfTikL )->( dbGoTo( nRec ) )  
+
+Return .t.
+
+//---------------------------------------------------------------------------//
