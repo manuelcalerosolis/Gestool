@@ -11973,8 +11973,8 @@ function nUnidadesRecibidasAlbCli( cNumPed, cCodArt, cCodPr1, cCodPr2, cRefPrv, 
    local nTot        := 0
    local aStaLin     := aGetStatus( dbfAlbCliL, .f. )
 
-   DEFAULT cCodPr1   := Space( 10 )
-   DEFAULT cCodPr2   := Space( 10 )
+   DEFAULT cCodPr1   := Space( 20 )
+   DEFAULT cCodPr2   := Space( 20 )
    DEFAULT cRefPrv   := Space( 18 )
    DEFAULT cDetalle  := Space( 250 )
 

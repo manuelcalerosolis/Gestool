@@ -4558,10 +4558,10 @@ METHOD AppendKit() CLASS TDetMovimientos
             ::oDbfVir:cAloMov    := cAloMov
             ::oDbfVir:cRefMov    := ::oParent:oArtKit:cRefKit
             ::oDbfVir:cCodMov    := cCodMov
-            ::oDbfVir:cCodPr1    := Space( 10 )
-            ::oDbfVir:cCodPr2    := Space( 10 )
-            ::oDbfVir:cValPr1    := Space( 10 )
-            ::oDbfVir:cValPr2    := Space( 10 )
+            ::oDbfVir:cCodPr1    := Space( 20 )
+            ::oDbfVir:cCodPr2    := Space( 20 )
+            ::oDbfVir:cValPr1    := Space( 20 )
+            ::oDbfVir:cValPr2    := Space( 20 )
             ::oDbfVir:cCodUsr    := cCodUsr
             ::oDbfVir:cCodDlg    := cCodDlg
             ::oDbfVir:lLote      := ::oParent:oArt:lLote

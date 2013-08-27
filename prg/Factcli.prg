@@ -10756,8 +10756,8 @@ function nTotRFacCli( cNumFac, dFecRes, cCodArt, cValPr1, cValPr2, cLote, dbfFac
    local aStaFac     := aGetStatus( dbfFacCliT, .t. )
    local aStaLin     := aGetStatus( dbfFacCliL, .f. )
 
-   DEFAULT cValPr1   := Space( 10 )
-   DEFAULT cValPr2   := Space( 10 )
+   DEFAULT cValPr1   := Space( 20 )
+   DEFAULT cValPr2   := Space( 20 )
 
    ( dbfFacCliL )->( dbGoTop() )
 
@@ -10786,8 +10786,8 @@ function nUnidadesRecibidasFacCli( cNumPed, cCodArt, cCodPr1, cCodPr2, dbfFacCli
    local nTot        := 0
    local aStaLin     := aGetStatus( dbfFacCliL, .f. )
 
-   DEFAULT cCodPr1   := Space( 10 )
-   DEFAULT cCodPr2   := Space( 10 )
+   DEFAULT cCodPr1   := Space( 20 )
+   DEFAULT cCodPr2   := Space( 20 )
 
    ( dbfFacCliL )->( OrdSetFocus( "cNumPedRef" ) )
 

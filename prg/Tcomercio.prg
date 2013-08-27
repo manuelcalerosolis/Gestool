@@ -3196,7 +3196,7 @@ METHOD InsertPropiedadesProductPrestashop( nCodigoWeb ) CLASS TComercio
 
                if ::oTblPro:Seek( ::oArtDiv:cCodPr1 + ::oArtDiv:cValPr1 )
 
-                  nPrecio     := nPrePro( ::oArt:Codigo, ::oArtDiv:cCodPr1, ::oArtDiv:cValPr1, Space( 10 ), Space( 10 ), 1, .f., ::oArtDiv:cAlias )
+                  nPrecio     := nPrePro( ::oArt:Codigo, ::oArtDiv:cCodPr1, ::oArtDiv:cValPr1, Space( 20 ), Space( 20 ), 1, .f., ::oArtDiv:cAlias )
 
                   /*
                   Metemos la propiedad de éste artículo------------------------

@@ -637,8 +637,8 @@ METHOD LoaArticulo()
          ::oDbfVir:cCodPr1 := ::oParent:oDbfFam:cCodPrp1
          ::oDbfVir:cCodPr2 := ::oParent:oDbfFam:cCodPrp2
       else
-         ::oDbfVir:cCodPr1 := Space( 10 )
-         ::oDbfVir:cCodPr2 := Space( 10 )
+         ::oDbfVir:cCodPr1 := Space( 20 )
+         ::oDbfVir:cCodPr2 := Space( 20 )
       end if
 
 #ifndef __PDA__

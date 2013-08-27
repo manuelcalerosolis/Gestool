@@ -10731,8 +10731,8 @@ function nTotRFacRec( cNumFac, dFecRes, cCodArt, cValPr1, cValPr2, cLote, dbfFac
    local aStaFac     := aGetStatus( dbfFacRecT, .t. )
    local aStaLin     := aGetStatus( dbfFacRecL, .f. )
 
-   DEFAULT cValPr1   := Space( 10 )
-   DEFAULT cValPr2   := Space( 10 )
+   DEFAULT cValPr1   := Space( 20 )
+   DEFAULT cValPr2   := Space( 20 )
 
    ( dbfFacRecL )->( dbGoTop() )
 

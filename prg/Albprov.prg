@@ -6520,9 +6520,6 @@ FUNCTION rxAlbPrv( cPath, oMeter )
       ( dbfAlbPrvT)->( ordCreate( cPath + "AlbProvL.Cdx", "cPedCliRef", "cNumPed + cRef + cValPr1 + cValPr2", {|| Field->cNumPed + Field->cRef + Field->cValPr1 + Field->cValPr2 } ) )
 
       ( dbfAlbPrvT)->( ordCondSet("!Deleted()", {||!Deleted()}  ) )
-      ( dbfAlbPrvT)->( ordCreate( cPath + "AlbProvL.Cdx", "cPedCliDet", "cNumPed + cRef + cValPr1 + cValPr2 + cRefPrv ", {|| Field->cNumPed + Field->cRef + Field->cValPr1 + Field->cValPr2 + Field->cRefPrv } ) ) // + cDetalle
-
-      ( dbfAlbPrvT)->( ordCondSet("!Deleted()", {||!Deleted()}  ) )
       ( dbfAlbPrvT)->( ordCreate( cPath + "AlbProvL.Cdx", "cCodPed", "cCodPed", {|| Field->cCodPed } ) )
 
       ( dbfAlbPrvT)->( ordCondSet("!Deleted()", {||!Deleted()}  ) )
@@ -8170,50 +8167,26 @@ function nUnidadesRecibidasPedCli( cPedCli, cCodArt, cValPr1, cValPr2, cRefPrv, 
    local nOrd
    local nTot        := 0
 
-   DEFAULT cValPr1   := Space( 10 )
-   DEFAULT cValPr2   := Space( 10 )
+   DEFAULT cValPr1   := Space( 20 )
+   DEFAULT cValPr2   := Space( 20 )
 
-   if IsMuebles()
+   nRec              := ( dbfAlbPrvL )->( Recno() )
+   nOrd              := ( dbfAlbPrvL )->( OrdSetFocus( "cPedCliRef" ) )
 
-      nRec           := ( dbfAlbPrvL )->( Recno() )
-      nOrd           := ( dbfAlbPrvL )->( OrdSetFocus( "cPedCliDet" ) )
+   if ( dbfAlbPrvL )->( dbSeek( cPedCli + cCodArt + cValPr1 + cValPr2 ) )
 
-      if ( dbfAlbPrvL )->( dbSeek( cPedCli + cCodArt + cValPr1 + cValPr2 + cRefPrv + cDetalle ) )
+      while ( dbfAlbPrvL )->cNumPed + ( dbfAlbPrvL )->cRef + ( dbfAlbPrvL )->cValPr1 + ( dbfAlbPrvL )->cValPr2 == cPedCli + cCodArt + cValPr1 + cValPr2 .and. !( dbfAlbPrvL )->( eof() )
 
-         while ( dbfAlbPrvL )->cNumPed + ( dbfAlbPrvL )->cRef + ( dbfAlbPrvL )->cValPr1 + ( dbfAlbPrvL )->cValPr2 + ( dbfAlbPrvL )->cRefPrv + ( dbfAlbPrvL )->cDetalle  == cPedCli + cCodArt + cValPr1 + cValPr2 + cRefPRv + cDetalle .and. !( dbfAlbPrvL )->( eof() )
+         nTot        += nTotNAlbPrv( dbfAlbPrvL )
 
-            nTot     += nTotNAlbPrv( dbfAlbPrvL )
+         ( dbfAlbPrvL )->( dbSkip() )
 
-            ( dbfAlbPrvL )->( dbSkip() )
-
-         end while
-
-      end if
-
-      ( dbfAlbPrvL )->( OrdSetFocus( nOrd ) )
-      ( dbfAlbPrvL )->( dbGoTo( nRec ) )
-
-   else
-
-      nRec           := ( dbfAlbPrvL )->( Recno() )
-      nOrd           := ( dbfAlbPrvL )->( OrdSetFocus( "cPedCliRef" ) )
-
-      if ( dbfAlbPrvL )->( dbSeek( cPedCli + cCodArt + cValPr1 + cValPr2 ) )
-
-         while ( dbfAlbPrvL )->cNumPed + ( dbfAlbPrvL )->cRef + ( dbfAlbPrvL )->cValPr1 + ( dbfAlbPrvL )->cValPr2 == cPedCli + cCodArt + cValPr1 + cValPr2 .and. !( dbfAlbPrvL )->( eof() )
-
-            nTot     += nTotNAlbPrv( dbfAlbPrvL )
-
-            ( dbfAlbPrvL )->( dbSkip() )
-
-         end while
-
-      end if
-
-      ( dbfAlbPrvL )->( OrdSetFocus( nOrd ) )
-      ( dbfAlbPrvL )->( dbGoTo( nRec ) )
+      end while
 
    end if
+
+   ( dbfAlbPrvL )->( OrdSetFocus( nOrd ) )
+   ( dbfAlbPrvL )->( dbGoTo( nRec ) )
 
 return ( nTot )
 
@@ -8225,8 +8198,8 @@ function nUnidadesRecibidasPedPrv( cPedPrv, cCodArt, cValPr1, cValPr2, cRefPrv, 
    local nOrd
    local nTot        := 0
 
-   DEFAULT cValPr1   := Space( 10 )
-   DEFAULT cValPr2   := Space( 10 )
+   DEFAULT cValPr1   := Space( 20 )
+   DEFAULT cValPr2   := Space( 20 )
 
    if IsMuebles()
 

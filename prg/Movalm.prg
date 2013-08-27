@@ -1269,8 +1269,8 @@ static function LoaArt( aGet, aTmp, nMode, oSayPr1, oSayPr2, oSayVp1, oSayVp2, o
 
          aTmp[ _CCODPR1 ]  := ( dbfArticulo )->cCodPrp1
          aTmp[ _CCODPR2 ]  := ( dbfArticulo )->cCodPrp2
-         aTmp[ _CVALPR1 ]  := Space( 10 )
-         aTmp[ _CVALPR2 ]  := Space( 10 )
+         aTmp[ _CVALPR1 ]  := Space( 20 )
+         aTmp[ _CVALPR2 ]  := Space( 20 )
 
          if !Empty( aTmp[_CCODPR1 ] )
 

@@ -2000,10 +2000,10 @@ FUNCTION RetDtoAge( cCodArt, cCodFam, cCodTar, cCodPr1, cCodPr2, cValPr1, cValPr
    local nOrdAnt     := ( dbfTarPreL )->( OrdSetFocus( "CTARPRP" ) )
    local nOrdAge     := ( dbfTarPreS )->( OrdSetFocus( "CCODAGE" ) )
 
-   DEFAULT cCodPr1:= Space( 10 )
-   DEFAULT cCodPr2:= Space( 10 )
-   DEFAULT cValPr1:= Space( 10 )
-   DEFAULT cValPr2:= Space( 10 )
+   DEFAULT cCodPr1:= Space( 20 )
+   DEFAULT cCodPr2:= Space( 20 )
+   DEFAULT cValPr1:= Space( 20 )
+   DEFAULT cValPr2:= Space( 20 )
 
    cCodSek := cCodTar + cCodArt + cCodPr1 + cCodPr2 + cValPr1 + cValPr2
 
@@ -2053,10 +2053,10 @@ FUNCTION RetDtoPrm( cCodArt, cCodFam, cCodTar, cCodPr1, cCodPr2, cValPr1, cValPr
    local cCodSek
    local nOrdAnt     := ( dbfTarPreL )->( OrdSetFocus( "CTARPRP" ) )
 
-   DEFAULT cCodPr1:= Space( 10 )
-   DEFAULT cCodPr2:= Space( 10 )
-   DEFAULT cValPr1:= Space( 10 )
-   DEFAULT cValPr2:= Space( 10 )
+   DEFAULT cCodPr1:= Space( 20 )
+   DEFAULT cCodPr2:= Space( 20 )
+   DEFAULT cValPr1:= Space( 20 )
+   DEFAULT cValPr2:= Space( 20 )
 
    cCodSek := cCodTar + cCodArt + cCodPr1 + cCodPr2 + cValPr1 + cValPr2
 
@@ -2100,15 +2100,15 @@ FUNCTION RetComTar( cCodArt, cCodFam, cCodTar, cCodPr1, cCodPr2, cValPr1, cValPr
    local nOrdAnt  := ( dbfTarPreS )->( OrdSetFocus( "CCODAGE" ) )
    local nOrdAntL := ( dbfTarPreL )->( OrdSetFocus( "CTARPRP" ) )
 
-   DEFAULT cCodPr1:= Space( 10 )
-   DEFAULT cCodPr2:= Space( 10 )
-   DEFAULT cValPr1:= Space( 10 )
-   DEFAULT cValPr2:= Space( 10 )
+   DEFAULT cCodPr1:= Space( 20 )
+   DEFAULT cCodPr2:= Space( 20 )
+   DEFAULT cValPr1:= Space( 20 )
+   DEFAULT cValPr2:= Space( 20 )
 
    if ( dbfTarPreL )->( dbSeek( cCodTar + cCodArt + cCodPr1 + cCodPr2 + cValPr1 + cValPr2 ) )
       cCodSek  := cCodTar + cCodArt + Space(16) + cCodPr1 + cCodPr2 + cValPr1 + cValPr2 + cCodAge
    else
-      cCodSek  := cCodTar + Space(18) + cCodFam + Space(10) + Space(10) + Space(10) + Space(10) + cCodAge
+      cCodSek  := cCodTar + Space(18) + cCodFam + Space(20) + Space(20) + Space(20) + Space(20) + cCodAge
    end if
 
    if ( dbfTarPreS )->( dbSeek( cCodSek ) )
@@ -2129,10 +2129,10 @@ FUNCTION RetLinTar( cCodArt, cCodFam, cCodTar, cCodPr1, cCodPr2, cValPr1, cValPr
    local cCodSek
    local nOrdAnt  := ( dbfTarPreL )->( OrdSetFocus( "CTARPRP" ) )
 
-   DEFAULT cCodPr1:= Space( 10 )
-   DEFAULT cCodPr2:= Space( 10 )
-   DEFAULT cValPr1:= Space( 10 )
-   DEFAULT cValPr2:= Space( 10 )
+   DEFAULT cCodPr1:= Space( 20 )
+   DEFAULT cCodPr2:= Space( 20 )
+   DEFAULT cValPr1:= Space( 20 )
+   DEFAULT cValPr2:= Space( 20 )
 
    cCodSek := cCodTar + cCodArt + cCodPr1 + cCodPr2 + cValPr1 + cValPr2
 
@@ -2167,10 +2167,10 @@ FUNCTION RetPctTar( cCodArt, cCodFam, cCodTar, cCodPr1, cCodPr2, cValPr1, cValPr
    local cCodSek
    local nOrdAnt  := ( dbfTarPreL )->( OrdSetFocus( "CTARPRP" ) )
 
-   DEFAULT cCodPr1:= Space( 10 )
-   DEFAULT cCodPr2:= Space( 10 )
-   DEFAULT cValPr1:= Space( 10 )
-   DEFAULT cValPr2:= Space( 10 )
+   DEFAULT cCodPr1:= Space( 20 )
+   DEFAULT cCodPr2:= Space( 20 )
+   DEFAULT cValPr1:= Space( 20 )
+   DEFAULT cValPr2:= Space( 20 )
 
    cCodSek := cCodTar + cCodArt + cCodPr1 + cCodPr2 + cValPr1 + cValPr2
 
@@ -2208,10 +2208,10 @@ FUNCTION RetPrcTar( cCodArt, cCodTar, cCodPr1, cCodPr2, cValPr1, cValPr2, dbfTar
    local cCodSek
    local nOrdAnt  := ( dbfTarPreL )->( OrdSetFocus( "CTARPRP" ) )
 
-   DEFAULT cCodPr1:= Space( 10 )
-   DEFAULT cCodPr2:= Space( 10 )
-   DEFAULT cValPr1:= Space( 10 )
-   DEFAULT cValPr2:= Space( 10 )
+   DEFAULT cCodPr1:= Space( 20 )
+   DEFAULT cCodPr2:= Space( 20 )
+   DEFAULT cValPr1:= Space( 20 )
+   DEFAULT cValPr2:= Space( 20 )
    DEFAULT nTarPre:= 1
 
    cCodSek        := cCodTar + cCodArt + cCodPr1 + cCodPr2 + cValPr1 + cValPr2

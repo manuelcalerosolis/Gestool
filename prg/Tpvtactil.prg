@@ -4504,7 +4504,7 @@ METHOD nPrecioArticulo() CLASS TpvTactil
    */
 
    cCodGrpCli           := RetGrpCli( ::oTiketCabecera:cCliTik, ::oCliente:cAlias )
-   sOferta              := sOfertaArticulo( cCodArt, ::oTiketCabecera:cCliTik, cCodGrpCli, 1, GetSysDate(), ::oArticulosOfertas:cAlias, nTarifa, .t., Space( 10 ), Space( 10 ), Space( 10 ), Space( 10 ), ::oTiketCabecera:cDivTik, ::oArticulo:cAlias, ::oDivisas:cAlias, ::oArticulosEscandallos:cAlias, ::oTipoIVA:cAlias, 1, nPrecio )
+   sOferta              := sOfertaArticulo( cCodArt, ::oTiketCabecera:cCliTik, cCodGrpCli, 1, GetSysDate(), ::oArticulosOfertas:cAlias, nTarifa, .t., Space( 20 ), Space( 20 ), Space( 20 ), Space( 20 ), ::oTiketCabecera:cDivTik, ::oArticulo:cAlias, ::oDivisas:cAlias, ::oArticulosEscandallos:cAlias, ::oTipoIVA:cAlias, 1, nPrecio )
 
    if !Empty( sOferta ) 
       nPrecio           := sOferta:nPrecio
@@ -4514,7 +4514,7 @@ METHOD nPrecioArticulo() CLASS TpvTactil
    Si el cliente tiene una tarifa atípica la buscamos tb-----------------------
    */
 
-   if lSeekAtpArt( cCodCli + cCodArt, Space( 10 ) + Space( 10 ), Space( 10 ) + Space( 10 ), GetSysDate(), ::oAtipicasCliente:cAlias )
+   if lSeekAtpArt( cCodCli + cCodArt, Space( 20 ) + Space( 20 ), Space( 20 ) + Space( 20 ), GetSysDate(), ::oAtipicasCliente:cAlias )
 
       nPrecio           := nImpAtp( nTarifa, ::oAtipicasCliente:cAlias, , nIva( ::oTipoIva, ::oArticulo:TipoIva ) )
 
