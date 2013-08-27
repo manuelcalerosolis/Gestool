@@ -8574,17 +8574,16 @@ Method CreateData()
    local dbfAlbPrvL
    local tmpAlbPrvT
    local tmpAlbPrvL
-   local cFileName
 
    if ::oSender:lServer
-      cFileName      := "AlbPrv" + StrZero( ::nGetNumberToSend(), 6 ) + ".All"
+      ::cFileName    := "AlbPrv" + StrZero( ::nGetNumberToSend(), 6 ) + ".All"
    else
-      cFileName      := "AlbPrv" + StrZero( ::nGetNumberToSend(), 6 ) + "." + RetSufEmp()
+      ::cFileName    := "AlbPrv" + StrZero( ::nGetNumberToSend(), 6 ) + "." + RetSufEmp()
    end if
 
    ::oSender:SetText( "Enviando albaranes a proveedores" )
 
-   oBlock         := ErrorBlock( {| oError | ApoloBreak( oError ) } )
+   oBlock            := ErrorBlock( {| oError | ApoloBreak( oError ) } )
    BEGIN SEQUENCE
 
    USE ( cPatEmp() + "AlbProvT.Dbf" ) NEW VIA ( cDriver() ) SHARED ALIAS ( cCheckArea( "AlbProvT", @dbfAlbPrvT ) )
@@ -8662,7 +8661,7 @@ Method CreateData()
 
       ::oSender:SetText( "Comprimiendo albaranes de proveedores" )
 
-      if ::oSender:lZipData( cFileName )
+      if ::oSender:lZipData( ::cFileName )
          ::oSender:SetText( "Ficheros comprimidos" )
       else
          ::oSender:SetText( "ERROR al crear fichero comprimido" )
@@ -8677,6 +8676,9 @@ Method CreateData()
 Return ( Self )
 
 //----------------------------------------------------------------------------//
+/*
+Retorna el valor anterior
+*/
 
 Method RestoreData()
 
@@ -8686,25 +8688,21 @@ Method RestoreData()
 
    if ::lSuccesfullSend
 
-      /*
-      Retorna el valor anterior
-      */
-
       oBlock         := ErrorBlock( {| oError | ApoloBreak( oError ) } )
       BEGIN SEQUENCE
 
-      USE ( cPatEmp() + "AlbProvT.Dbf" ) NEW VIA ( cDriver() ) SHARED ALIAS ( cCheckArea( "AlbProvT", @dbfAlbPrvT ) )
-      SET ADSINDEX TO ( cPatEmp() + "AlbProvT.Cdx" ) ADDITIVE
+         USE ( cPatEmp() + "AlbProvT.Dbf" ) NEW VIA ( cDriver() ) SHARED ALIAS ( cCheckArea( "AlbProvT", @dbfAlbPrvT ) )
+         SET ADSINDEX TO ( cPatEmp() + "AlbProvT.Cdx" ) ADDITIVE
 
          lSelectAll( nil, dbfAlbPrvT, "lSndDoc", .f., .t., .f. )
 
-   RECOVER USING oError
+      RECOVER USING oError
 
-      msgStop( "Imposible abrir todas las bases de datos de agentes" + CRLF + ErrorMessage( oError ) )
+         msgStop( "Imposible abrir todas las bases de datos de agentes" + CRLF + ErrorMessage( oError ) )
 
-   END SEQUENCE
+      END SEQUENCE
 
-   ErrorBlock( oBlock )
+      ErrorBlock( oBlock )
 
       CLOSE ( dbfAlbPrvT )
 
@@ -8713,24 +8711,25 @@ Method RestoreData()
 Return ( Self )
 
 //----------------------------------------------------------------------------//
+/*
+Enviarlos a internet
+*/
 
 Method SendData()
 
-   local cFileName   := "AlbPrv" + StrZero( ::nGetNumberToSend(), 6 ) + "." + RetSufEmp()
+   if file( cPatOut() + ::cFileName )
 
-   if file( cPatOut() + cFileName )
-
-      /*
-      Enviarlos a internet
-      */
-
-      if ftpSndFile( cPatOut() + cFileName, cFileName, 2000, ::oSender )
+      if ftpSndFile( cPatOut() + ::cFileName, ::cFileName, 2000, ::oSender )
          ::lSuccesfullSend := .t.
          ::IncNumberToSend()
-         ::oSender:SetText( "Fichero enviado " + cFileName  )
+         ::oSender:SetText( "Fichero enviado " + ::cFileName  )
       else
          ::oSender:SetText( "ERROR al enviar fichero" )
       end if
+
+   else 
+
+      ::oSender:SetText( "No existe el fichero " + ( cPatOut() + ::cFileName ) )
 
    end if
 
@@ -8741,7 +8740,13 @@ Return ( Self )
 Method ReciveData()
 
    local n
-   local aExt        := aRetDlgEmp()
+   local aExt
+   
+   if ::oSender:lServer
+      aExt  := aRetDlgEmp()
+   else
+      aExt  := { "All" }
+   end if
 
    /*
    Recibirlo de internet

@@ -24,6 +24,8 @@ CLASS TSenderReciverItem
 
    DATA  cIniFile
 
+   DATA  cFileName
+
    DATA  lSuccesfullSend
 
    Method New()
