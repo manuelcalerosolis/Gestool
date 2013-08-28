@@ -567,13 +567,8 @@ METHOD LoaArticulo( oGetArticulo, oGetNombre )
          ::lTotPeso( ::oDbfVir )
          ::lTotVolumen( ::oDbfVir )
 
-         if ::oParent:oFam:Seek( ::oParent:oArt:Familia )
-            ::oDbfVir:cCodPr1 := ::oParent:oFam:cCodPrp1
-            ::oDbfVir:cCodPr2 := ::oParent:oFam:cCodPrp2
-         else
-            ::oDbfVir:cCodPr1 := Space( 20 )
-            ::oDbfVir:cCodPr2 := Space( 20 )
-         end if
+         ::oDbfVir:cCodPr1    := ::oParent:oArt:cCodPrp1
+         ::oDbfVir:cCodPr2    := ::oParent:oArt:cCodPrp2
 
          if !Empty( ::oDbfVir:cCodPr1 )
             ::oSayPr1:Show()

@@ -361,54 +361,60 @@ METHOD New( cPath, oWndParent, oMenuItem )
 
    ::oStock                := TStock():Create( cPatGrp() )
 
+   ::bOnPostAppend         := {|| ::ActualizaStockWeb( ::oDbf:cSerOrd + Str( ::oDbf:nNumOrd ) + ::oDbf:cSufOrd ) }
+   ::bOnPostEdit           := {|| ::ActualizaStockWeb( ::oDbf:cSerOrd + Str( ::oDbf:nNumOrd ) + ::oDbf:cSufOrd ) }
+
 RETURN ( Self )
 
 //----------------------------------------------------------------------------//
 
 METHOD Create( cPath, oWndParent )
 
-   DEFAULT cPath        := cPatEmp()
-   DEFAULT oWndParent   := GetWndFrame()
+   DEFAULT cPath           := cPatEmp()
+   DEFAULT oWndParent      := GetWndFrame()
 
-   ::cPath              := cPath
-   ::oWndParent         := oWndParent
+   ::cPath                 := cPath
+   ::oWndParent            := oWndParent
 
-   ::oOperario          := TOperarios():Create( cPath )
+   ::oOperario             := TOperarios():Create( cPath )
 
-   ::oOperacion         := TOperacion():CreateInit( cPath )
+   ::oOperacion            := TOperacion():CreateInit( cPath )
 
-   ::oMaquina           := TMaquina():CreateInit( cPath )
+   ::oMaquina              := TMaquina():CreateInit( cPath )
 
-   ::oSeccion           := TSeccion():Create( cPath )
+   ::oSeccion              := TSeccion():Create( cPath )
 
-   ::oHoras             := THoras():Create( cPath )
+   ::oHoras                := THoras():Create( cPath )
 
-   ::oDetHoras          := TDetHoras():New( cPath, Self )
+   ::oDetHoras             := TDetHoras():New( cPath, Self )
 
-   ::oDetHorasPersonal  := TDetHorasPersonal():New( cPath, Self )
+   ::oDetHorasPersonal     := TDetHorasPersonal():New( cPath, Self )
    ::AddDetail( ::oDetHorasPersonal )
 
-   ::oDetProduccion     := TDetProduccion():New( cPath, Self )
+   ::oDetProduccion        := TDetProduccion():New( cPath, Self )
    ::AddDetail( ::oDetProduccion )
 
    ::oDetSeriesProduccion  := TDetSeriesProduccion():New( cPath, Self )
    ::AddDetail( ::oDetSeriesProduccion )
 
-   ::oDetMaterial       := TDetMaterial():New( cPath, Self )
+   ::oDetMaterial          := TDetMaterial():New( cPath, Self )
    ::AddDetail( ::oDetMaterial )
 
-   ::oDetSeriesMaterial := TDetSeriesMaterial():New( cPath, Self )
+   ::oDetSeriesMaterial    := TDetSeriesMaterial():New( cPath, Self )
    ::AddDetail( ::oDetSeriesMaterial )
 
-   ::oDetPersonal       := TDetPersonal():New( cPath, Self )
+   ::oDetPersonal          := TDetPersonal():New( cPath, Self )
    ::AddDetail( ::oDetPersonal )
 
-   ::oDetMaquina        := TDetMaquina():New( cPath, Self )
+   ::oDetMaquina           := TDetMaquina():New( cPath, Self )
    ::AddDetail( ::oDetMaquina )
 
-   ::oStock             := TStock():Create( cPatGrp() )
+   ::oStock                := TStock():Create( cPatGrp() )
 
-   ::bFirstKey          := {|| ::oDbf:cSerOrd + Str( ::oDbf:nNumOrd ) + ::oDbf:cSufOrd }
+   ::bFirstKey             := {|| ::oDbf:cSerOrd + Str( ::oDbf:nNumOrd ) + ::oDbf:cSufOrd }
+
+   ::bOnPostAppend         := {|| ::ActualizaStockWeb( ::oDbf:cSerOrd + Str( ::oDbf:nNumOrd ) + ::oDbf:cSufOrd ) }
+   ::bOnPostEdit           := {|| ::ActualizaStockWeb( ::oDbf:cSerOrd + Str( ::oDbf:nNumOrd ) + ::oDbf:cSufOrd ) }
 
 RETURN ( Self )
 
@@ -4785,33 +4791,64 @@ Return ( Self )
 
 Method ActualizaStockWeb( cNumDoc ) CLASS TProduccion
 
-   ?"Actualizaremos el stock"
-
-   /*local nRec     := ( dbfFacCliL )->( Recno() )
-   local nOrdAnt  := ( dbfFacCliL )->( OrdSetFocus( "nNumFac" ) )
+   local nRec
+   local nOrdAnt
 
    if uFieldEmpresa( "lRealWeb" )
 
+      /*
+      Materiales producidos----------------------------------------------------
+      */
+
+      nRec     := ::oDetProduccion:oDbf:Recno()
+      nOrdAnt  := ::oDetProduccion:oDbf:OrdSetFocus( "cNumOrd" )
+
       with object ( TComercio():GetInstance() )
 
-         if ( dbfFacCliL )->( dbSeek( cNumDoc ) )
+         if ::oDetProduccion:oDbf:Seek( cNumDoc )
 
-            while ( dbfFacCliL )->cSerie + Str( ( dbfFacCliL )->nNumFac ) + ( dbfFacCliL )->cSufFac == cNumDoc .and. !( dbfFacCliL )->( Eof() )
+            while ::oDetProduccion:oDbf:cSerOrd + Str( ::oDetProduccion:oDbf:nNumOrd ) + ::oDetProduccion:oDbf:cSufOrd == cNumDoc .and. !::oDetProduccion:oDbf:Eof()
 
-               :ActualizaStockProductsPrestashop( ( dbfFacCliL )->cRef, ( dbfFacCliL )->cCodPr1, ( dbfFacCliL )->cCodPr2, ( dbfFacCliL )->cValPr1, ( dbfFacCliL )->cValPr2 )
+               :ActualizaStockProductsPrestashop( ::oDetProduccion:oDbf:cCodArt, ::oDetProduccion:oDbf:cCodPr1, ::oDetProduccion:oDbf:cCodPr2, ::oDetProduccion:oDbf:cValPr1, ::oDetProduccion:oDbf:cValPr2 )
 
-               ( dbfFacCliL )->( dbSkip() )
+               ::oDetProduccion:oDbf:Skip()
 
             end while
 
         end if
         
       end with
+
+      ::oDetProduccion:oDbf:OrdSetFocus( nOrdAnt )
+      ::oDetProduccion:oDbf:GoTo( nRec )
+
+      /*
+      Materiales consumidos----------------------------------------------------
+      */
+
+      nRec     := ::oDetMaterial:oDbf:Recno()
+      nOrdAnt  := ::oDetMaterial:oDbf:OrdSetFocus( "cNumOrd" )
+
+      with object ( TComercio():GetInstance() )
+
+         if ::oDetMaterial:oDbf:Seek( cNumDoc )
+
+            while ::oDetMaterial:oDbf:cSerOrd + Str( ::oDetMaterial:oDbf:nNumOrd ) + ::oDetMaterial:oDbf:cSufOrd == cNumDoc .and. !::oDetMaterial:oDbf:Eof()
+
+               :ActualizaStockProductsPrestashop( ::oDetMaterial:oDbf:cCodArt, ::oDetMaterial:oDbf:cCodPr1, ::oDetMaterial:oDbf:cCodPr2, ::oDetMaterial:oDbf:cValPr1, ::oDetMaterial:oDbf:cValPr2 )
+
+               ::oDetMaterial:oDbf:Skip()
+
+            end while
+
+        end if
+        
+      end with
+
+      ::oDetMaterial:oDbf:OrdSetFocus( nOrdAnt )
+      ::oDetMaterial:oDbf:GoTo( nRec )
    
    end if 
-
-   ( dbfFacCliL )->( OrdSetFocus( nOrdAnt ) )
-   ( dbfFacCliL )->( dbGoTo( nRec ) )*/
 
 Return .f.   
 

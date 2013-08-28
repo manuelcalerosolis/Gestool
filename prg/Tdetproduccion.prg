@@ -596,13 +596,8 @@ METHOD LoaArticulo( oGetArticulo, oGetNombre ) CLASS TDetProduccion
          ::lTotPeso( ::oDbfVir )
          ::lTotVolumen( ::oDbfVir )
 
-         if ::oParent:oFam:Seek( ::oParent:oArt:Familia )
-            ::oDbfVir:cCodPr1 := ::oParent:oFam:cCodPrp1
-            ::oDbfVir:cCodPr2 := ::oParent:oFam:cCodPrp2
-         else
-            ::oDbfVir:cCodPr1 := Space( 20 )
-            ::oDbfVir:cCodPr2 := Space( 20 )
-         end if
+         ::oDbfVir:cCodPr1 := ::oParent:oArt:cCodPrp1
+         ::oDbfVir:cCodPr2 := ::oParent:oArt:cCodPrp2
 
          if !Empty( ::oDbfVir:cCodPr1 )
             ::oSayPr1:Show()
@@ -853,10 +848,10 @@ METHOD lPreSave( oGetArt, oDlg, nMode ) CLASS TDetProduccion
                         ::oParent:oDetMaterial:oDbfVir:cUndPes    := oRetFld( ::oParent:oKitArt:cRefKit, ::oParent:oArt, "cUnidad" )
                         ::oParent:oDetMaterial:oDbfVir:nVolumen   := oRetFld( ::oParent:oKitArt:cRefKit, ::oParent:oArt, "nVolumen" )
                         ::oParent:oDetMaterial:oDbfVir:cUndVol    := oRetFld( ::oParent:oKitArt:cRefKit, ::oParent:oArt, "cVolumen" )
-                        ::oParent:oDetMaterial:oDbfVir:cCodPr1    := Space(5)
-                        ::oParent:oDetMaterial:oDbfVir:cCodPr2    := Space(5)
-                        ::oParent:oDetMaterial:oDbfVir:cValPr1    := Space(5)
-                        ::oParent:oDetMaterial:oDbfVir:cValPr2    := Space(5)
+                        ::oParent:oDetMaterial:oDbfVir:cCodPr1    := Space(20)
+                        ::oParent:oDetMaterial:oDbfVir:cCodPr2    := Space(20)
+                        ::oParent:oDetMaterial:oDbfVir:cValPr1    := Space(20)
+                        ::oParent:oDetMaterial:oDbfVir:cValPr2    := Space(20)
                         ::oParent:oDetMaterial:oDbfVir:lLote      := oRetFld( ::oParent:oKitArt:cRefKit, ::oParent:oArt, "lLote" )
                         ::oParent:oDetMaterial:oDbfVir:cLote      := oRetFld( ::oParent:oKitArt:cRefKit, ::oParent:oArt, "cLote" )
                         ::oParent:oDetMaterial:oDbfVir:cCodPro    := ::oDbfVir:cCodArt
