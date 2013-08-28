@@ -4780,3 +4780,35 @@ Method LoadAuxiliarDesign() CLASS TProduccion
 Return ( Self )
 
 //---------------------------------------------------------------------------//
+
+Method ActualizaStockWeb( cNumDoc ) CLASS TProduccion
+
+   local nRec     := ( dbfFacCliL )->( Recno() )
+   local nOrdAnt  := ( dbfFacCliL )->( OrdSetFocus( "nNumFac" ) )
+
+   if uFieldEmpresa( "lRealWeb" )
+
+      with object ( TComercio():GetInstance() )
+
+         if ( dbfFacCliL )->( dbSeek( cNumDoc ) )
+
+            while ( dbfFacCliL )->cSerie + Str( ( dbfFacCliL )->nNumFac ) + ( dbfFacCliL )->cSufFac == cNumDoc .and. !( dbfFacCliL )->( Eof() )
+
+               :ActualizaStockProductsPrestashop( ( dbfFacCliL )->cRef, ( dbfFacCliL )->cCodPr1, ( dbfFacCliL )->cCodPr2, ( dbfFacCliL )->cValPr1, ( dbfFacCliL )->cValPr2 )
+
+               ( dbfFacCliL )->( dbSkip() )
+
+            end while
+
+        end if
+        
+      end with
+
+   end if 
+
+   ( dbfFacCliL )->( OrdSetFocus( nOrdAnt ) )
+   ( dbfFacCliL )->( dbGoTo( nRec ) )
+
+Return .f.   
+
+//---------------------------------------------------------------------------//
