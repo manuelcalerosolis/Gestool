@@ -238,6 +238,8 @@ CLASS TRemMovAlm FROM TMasDet
 
    Method Report()            INLINE   TInfRemMov():New( "Remesas de movimientos", , , , , , { ::oDbf, ::oDetMovimientos:oDbf, ::oArt } ):Play()
 
+   Method ActualizaStockWeb( cNumDoc )
+
 END CLASS
 
 //---------------------------------------------------------------------------//
@@ -271,6 +273,9 @@ METHOD New( cPath, oWndParent, oMenuItem )
    ::AddDetail( ::oDetSeriesMovimientos )
 
    ::oDetSeriesMovimientos:bOnPreSaveDetail  := {|| ::oDetSeriesMovimientos:SaveDetails() }
+
+   ::bOnPostAppend         := {|| ::ActualizaStockWeb( Str( ::oDbf:nNumRem, 9 ) + ::oDbf:cSufRem ) }
+   ::bOnPostEdit           := {|| ::ActualizaStockWeb( Str( ::oDbf:nNumRem, 9 ) + ::oDbf:cSufRem ) }
 
 RETURN ( Self )
 
@@ -2864,6 +2869,47 @@ METHOD PrintReportRemMov( nDevice, nCopies, cPrinter, dbfDoc )
    oFr:DestroyFr()
 
 Return .t.
+
+//---------------------------------------------------------------------------//
+
+Method ActualizaStockWeb( cNumDoc ) CLASS TRemMovAlm
+
+   local nRec
+   local nOrdAnt
+
+   if uFieldEmpresa( "lRealWeb" )
+
+      /*
+      Materiales producidos----------------------------------------------------
+      */
+
+      nRec     := ::oDetMovimientos:oDbf:Recno()
+      nOrdAnt  := ::oDetMovimientos:oDbf:OrdSetFocus( "nNumRem" )
+
+      with object ( TComercio():GetInstance() )
+
+         if ::oDetMovimientos:oDbf:Seek( cNumDoc )
+
+            while Str( ::oDetMovimientos:oDbf:nNumRem ) + ::oDetMovimientos:oDbf:cSufRem == cNumDoc .and. !::oDetMovimientos:oDbf:Eof()
+
+               :ActualizaStockProductsPrestashop( ::oDetMovimientos:oDbf:cRefMov, ::oDetMovimientos:oDbf:cCodPr1, ::oDetMovimientos:oDbf:cCodPr2, ::oDetMovimientos:oDbf:cValPr1, ::oDetMovimientos:oDbf:cValPr2 )
+
+               ::oDetMovimientos:oDbf:Skip()
+
+            end while
+
+        end if
+        
+      end with
+
+      ::oDetMovimientos:oDbf:OrdSetFocus( nOrdAnt )
+      ::oDetMovimientos:oDbf:GoTo( nRec )
+   
+   end if 
+
+Return .f.   
+
+//---------------------------------------------------------------------------//
 
 //---------------------------------------------------------------------------//
 
