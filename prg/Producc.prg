@@ -301,6 +301,8 @@ CLASS TProduccion FROM TMasDet
 
    METHOD LoadAuxiliarDesign()
 
+   Method ActualizaStockWeb( cNumDoc )
+
 ENDCLASS
 
 //----------------------------------------------------------------------------//
@@ -4783,7 +4785,9 @@ Return ( Self )
 
 Method ActualizaStockWeb( cNumDoc ) CLASS TProduccion
 
-   local nRec     := ( dbfFacCliL )->( Recno() )
+   ?"Actualizaremos el stock"
+
+   /*local nRec     := ( dbfFacCliL )->( Recno() )
    local nOrdAnt  := ( dbfFacCliL )->( OrdSetFocus( "nNumFac" ) )
 
    if uFieldEmpresa( "lRealWeb" )
@@ -4803,11 +4807,11 @@ Method ActualizaStockWeb( cNumDoc ) CLASS TProduccion
         end if
         
       end with
-
+   
    end if 
 
    ( dbfFacCliL )->( OrdSetFocus( nOrdAnt ) )
-   ( dbfFacCliL )->( dbGoTo( nRec ) )
+   ( dbfFacCliL )->( dbGoTo( nRec ) )*/
 
 Return .f.   
 
