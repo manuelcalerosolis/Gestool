@@ -3210,10 +3210,9 @@ STATIC FUNCTION EdtDet( aTmp, aGet, dbfFacPrvL, oBrw, aTmpFac, cCodArt, nMode )
          ID       111 ;
          OF       oFld:aDialogs[1]
 
-      REDEFINE GET aGet[_CLOTE] VAR aTmp[_CLOTE];
+      REDEFINE GET aGet[ _CLOTE ] VAR aTmp[ _CLOTE ];
          ID       112 ;
          WHEN     ( nMode != ZOOM_MODE ) ;
-         COLOR    CLR_GET ;
          OF       oFld:aDialogs[1]
 
       aGet[ _CLOTE ]:bValid   := {|| oStock:nPutStockActual( aTmp[ _CREF ], aTmp[ _CALMLIN ], aTmp[ _CVALPR1 ], aTmp[ _CVALPR2 ], aTmp[ _CLOTE ], aTmp[ _LKITART ], aTmp[ _NCTLSTK ], oStkAct ), .t. }
@@ -3255,7 +3254,7 @@ STATIC FUNCTION EdtDet( aTmp, aGet, dbfFacPrvL, oBrw, aTmpFac, cCodArt, nMode )
          ID       220 ;
          WHEN     ( nMode != ZOOM_MODE ) ;
          BITMAP   "LUPA" ;
-         VALID    ( if( lPrpAct( aGet[ _CVALPR1 ], oSayVp1, aTmp[_CCODPR1 ], dbfTblPro ),;
+         VALID    ( if( lPrpAct( aGet[ _CVALPR1 ], oSayVp1, aTmp[ _CCODPR1 ], dbfTblPro ),;
                         LoaArt( aGet, aTmp, aTmpFac, oFld, oSayPr1, oSayPr2, oSayVp1, oSayVp2, oBmp, oBrwPrp, oGetIra, oDlg, oStkAct, oSayLote, oBeneficioSobre, oTotal, nMode ),;
                         .f. ) ) ;
          ON HELP  ( brwPrpAct( aGet[ _CVALPR1 ], oSayVp1, aTmp[ _CCODPR1 ] ) ) ;
@@ -8017,10 +8016,6 @@ STATIC FUNCTION EndTrans( aTmp, aGet, oBrw, oBrwLin, nMode, nDec, oDlg )
 
    case nMode == EDIT_MODE
 
-      /*
-      oStock:FacPrv( cSerFac + Str( nNumFac ) + cSufFac, ( dbfFacPrvT )->cCodAlm, .t., .f. )
-      */
-
       while ( dbfFacPrvL )->( dbSeek( cSerFac + str( nNumFac ) + cSufFac ) .and. !( dbfFacPrvL )->( eof() ) )
          if dbLock( dbfFacPrvL )
             ( dbfFacPrvL )->( dbDelete() )
@@ -8086,7 +8081,7 @@ STATIC FUNCTION EndTrans( aTmp, aGet, oBrw, oBrwLin, nMode, nDec, oDlg )
       Comprobamos que exista el articulo en la base de datos----------------
       */
 
-      AppRefPrv(  aTbl[ _CREFPRV ], aTmp[ _CCODPRV ], aTbl[ _CREF ], aTbl[ _NDTOLIN ], aTbl[ _NDTOPRM ], aTmp[ _CDIVFAC ], aTbl[ _NPREUNIT ], dbfArtPrv )
+      AppRefPrv( aTbl[ _CREFPRV ], aTmp[ _CCODPRV ], aTbl[ _CREF ], aTbl[ _NDTOLIN ], aTbl[ _NDTOPRM ], aTmp[ _CDIVFAC ], aTbl[ _NPREUNIT ], dbfArtPrv )
 
       /*
       Cambios de precios-------------------------------------------------------
