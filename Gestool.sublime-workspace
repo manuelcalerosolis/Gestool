@@ -526,6 +526,54 @@
 				"buffer_size": 232035,
 				"line_ending": "Windows"
 			}
+		},
+		{
+			"file": "prg/Factcli.prg",
+			"settings":
+			{
+				"buffer_size": 809163,
+				"line_ending": "Windows"
+			}
+		},
+		{
+			"file": "prg/Tfastreportinfgen.prg",
+			"settings":
+			{
+				"buffer_size": 131700,
+				"line_ending": "Windows"
+			}
+		},
+		{
+			"file": "prg/Tnewinfgen.prg",
+			"settings":
+			{
+				"buffer_size": 136487,
+				"line_ending": "Windows"
+			}
+		},
+		{
+			"file": "prg/Tfastventasarticulos.prg",
+			"settings":
+			{
+				"buffer_size": 114051,
+				"line_ending": "Windows"
+			}
+		},
+		{
+			"file": "resource/Gstimage12.rc",
+			"settings":
+			{
+				"buffer_size": 3196,
+				"line_ending": "Windows"
+			}
+		},
+		{
+			"file": "prg/Satcli.prg",
+			"settings":
+			{
+				"buffer_size": 384252,
+				"line_ending": "Windows"
+			}
 		}
 	],
 	"build_system": "Packages/User/gestool.sublime-build",
@@ -560,6 +608,7 @@
 	},
 	"file_history":
 	[
+		"/C/fw195/Gestool/prg/Tinfgen.prg",
 		"/C/AppServ/www/webtactil/inicio/index.html",
 		"/C/AppServ/www/webtactil/inicio/usuario.php",
 		"/C/AppServ/www/webtactil/inicio/css/estilos.css",
@@ -686,8 +735,7 @@
 		"/C/AppServ/www/zemtrum/tienda/themes/zemtrum/js/product.js",
 		"/C/AppServ/www/zemtrum/tienda/themes/zemtrum/product.tpl",
 		"/C/AppServ/www/zemtrum/tienda/themes/zemtrum/lang/es.php",
-		"/C/AppServ/www/zemtrum/tienda/themes/zemtrum/product-list.tpl",
-		"/C/AppServ/www/zemtrum/tienda/js/jquery/plugins/jqzoom/jquery.jqzoom.css"
+		"/C/AppServ/www/zemtrum/tienda/themes/zemtrum/product-list.tpl"
 	],
 	"find":
 	{
@@ -731,6 +779,18 @@
 		"case_sensitive": false,
 		"find_history":
 		[
+			"lGrupoNumero",
+			"::oGrupoNumero",
+			"oGrupoSerie",
+			"ogrupose",
+			"ogruposerie",
+			"cserdoc",
+			"cnumdoc",
+			"cserdoc",
+			"lGrupoSerie",
+			"cNumRef",
+			"on rx",
+			"datarepor",
 			"loaart",
 			"::oValPr1",
 			"cvalpr1",
@@ -846,19 +906,7 @@
 			"v",
 			"res",
 			"cmru",
-			"Albaranes de clientes",
-			"AddTikCli",
-			"oTikCliL",
-			"cnumdoc",
-			"cNumDoc",
-			"on acol",
-			"AddTikCli",
-			"Addmov",
-			"AddHisMov",
-			"AddMovAlm",
-			"search",
-			"Search",
-			"Activate"
+			"Albaranes de clientes"
 		],
 		"highlight": true,
 		"in_selection": false,
@@ -885,7 +933,7 @@
 	"groups":
 	[
 		{
-			"selected": 0,
+			"selected": 3,
 			"sheets":
 			[
 				{
@@ -900,8 +948,8 @@
 						"selection":
 						[
 							[
-								224072,
-								224072
+								226025,
+								226025
 							]
 						],
 						"settings":
@@ -911,7 +959,171 @@
 							"translate_tabs_to_spaces": true
 						},
 						"translation.x": 0.0,
-						"translation.y": 115416.0,
+						"translation.y": 115409.0,
+						"zoom_level": 1.0
+					},
+					"type": "text"
+				},
+				{
+					"buffer": 1,
+					"file": "prg/Factcli.prg",
+					"settings":
+					{
+						"buffer_size": 809163,
+						"regions":
+						{
+						},
+						"selection":
+						[
+							[
+								420780,
+								420780
+							]
+						],
+						"settings":
+						{
+							"syntax": "Packages/harbour/harbour/Harbour.tmLanguage"
+						},
+						"translation.x": 0.0,
+						"translation.y": 227381.0,
+						"zoom_level": 1.0
+					},
+					"type": "text"
+				},
+				{
+					"buffer": 2,
+					"file": "prg/Tfastreportinfgen.prg",
+					"settings":
+					{
+						"buffer_size": 131700,
+						"regions":
+						{
+						},
+						"selection":
+						[
+							[
+								0,
+								0
+							]
+						],
+						"settings":
+						{
+							"syntax": "Packages/harbour/harbour/Harbour.tmLanguage",
+							"tab_size": 3,
+							"translate_tabs_to_spaces": true
+						},
+						"translation.x": 0.0,
+						"translation.y": 0.0,
+						"zoom_level": 1.0
+					},
+					"type": "text"
+				},
+				{
+					"buffer": 3,
+					"file": "prg/Tnewinfgen.prg",
+					"settings":
+					{
+						"buffer_size": 136487,
+						"regions":
+						{
+						},
+						"selection":
+						[
+							[
+								116341,
+								116341
+							]
+						],
+						"settings":
+						{
+							"syntax": "Packages/harbour/harbour/Harbour.tmLanguage",
+							"tab_size": 3,
+							"translate_tabs_to_spaces": true
+						},
+						"translation.x": 0.0,
+						"translation.y": 57839.0,
+						"zoom_level": 1.0
+					},
+					"type": "text"
+				},
+				{
+					"buffer": 4,
+					"file": "prg/Tfastventasarticulos.prg",
+					"settings":
+					{
+						"buffer_size": 114051,
+						"regions":
+						{
+						},
+						"selection":
+						[
+							[
+								62407,
+								62407
+							]
+						],
+						"settings":
+						{
+							"syntax": "Packages/harbour/harbour/Harbour.tmLanguage",
+							"tab_size": 3,
+							"translate_tabs_to_spaces": true
+						},
+						"translation.x": 0.0,
+						"translation.y": 27095.0,
+						"zoom_level": 1.0
+					},
+					"type": "text"
+				},
+				{
+					"buffer": 5,
+					"file": "resource/Gstimage12.rc",
+					"settings":
+					{
+						"buffer_size": 3196,
+						"regions":
+						{
+						},
+						"selection":
+						[
+							[
+								3155,
+								3164
+							]
+						],
+						"settings":
+						{
+							"syntax": "Packages/Text/Plain text.tmLanguage"
+						},
+						"translation.x": 0.0,
+						"translation.y": 648.0,
+						"zoom_level": 1.0
+					},
+					"type": "text"
+				},
+				{
+					"buffer": 6,
+					"file": "prg/Satcli.prg",
+					"settings":
+					{
+						"buffer_size": 384252,
+						"regions":
+						{
+						},
+						"selection":
+						[
+							[
+								0,
+								0
+							]
+						],
+						"settings":
+						{
+							"syntax": "Packages/harbour/harbour/Harbour.tmLanguage",
+							"tab_size": 3,
+							"translate_tabs_to_spaces": true
+						},
+						"translation.x": 0.0,
+						"translation.y": 0.0,
 						"zoom_level": 1.0
 					},
 					"type": "text"

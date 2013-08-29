@@ -89,6 +89,8 @@ CLASS TNewInfGen FROM TInfGen
    DATA oGrupoTemporada
    DATA oGrupoIVA
    DATA oGrupoSerie
+   DATA oGrupoNumero
+   DATA oGrupoSufijo
 
    DATA oTipoExpediente
    DATA oGrupoTipoExpediente
@@ -186,6 +188,10 @@ CLASS TNewInfGen FROM TInfGen
    METHOD lGrupoEntidadesBancarias( lInitGroup, lImp )
 
    METHOD lGrupoSerie( lInitGroup, lImp )
+
+   METHOD lGrupoNumero( lInitGroup, lImp )
+
+   METHOD lGrupoSufijo( lInitGroup, lImp )
 
    METHOD oDefEstados( nIdEstadoUno, nIdEstadoDos )
 
@@ -3075,6 +3081,73 @@ RETURN ( lOpen )
 
 //---------------------------------------------------------------------------//
 
+METHOD lGrupoNumero( lInitGroup, lImp ) CLASS TNewInfGen
+
+   local lOpen          := .t.
+   local oError
+   local oBlock         := ErrorBlock( {| oError | ApoloBreak( oError ) } )
+
+   DEFAULT lImp         := .t.
+
+   BEGIN SEQUENCE
+
+   ::oGrupoNumero                 := TRGroup():New( {|| ::oDbf:cNumDoc }, {|| "Número : "  }, {|| "Total número : " + ::oDbf:cNumDoc }, {|| 3 }, ::lSalto )
+
+   ::oGrupoNumero:Cargo            := TItemGroup()
+   ::oGrupoNumero:Cargo:Nombre     := "Número"
+   ::oGrupoNumero:Cargo:Expresion  := "cNumDoc"
+   ::oGrupoNumero:Cargo:Todos      := .t.
+   ::oGrupoNumero:Cargo:Desde      := Space( 10 )
+   ::oGrupoNumero:Cargo:Hasta      := "9999999999"
+   ::oGrupoNumero:Cargo:cPicDesde  := "9999999999"
+   ::oGrupoNumero:Cargo:cPicHasta  := "9999999999"
+   ::oGrupoNumero:Cargo:HelpDesde  := {|| nil }
+   ::oGrupoNumero:Cargo:HelpHasta  := {|| nil }
+   ::oGrupoNumero:Cargo:TextDesde  := {|| "" }
+   ::oGrupoNumero:Cargo:TextHasta  := {|| "" }
+   ::oGrupoNumero:Cargo:ValidDesde := {| oGet | if( oGet:VarGet() >= "0" , .t., ( msgStop( "No existe numeración negativa" ), .f. ) ) }
+   ::oGrupoNumero:Cargo:ValidHasta := {| oGet | if( oGet:VarGet() >= "0" , .t., ( msgStop( "No existe numeración negativa" ), .f. ) ) }
+   ::oGrupoNumero:Cargo:lImprimir  := lImp
+   ::oGrupoNumero:Cargo:cBitmap    := "text_normal_16"
+
+   if !Empty( ::oImageList )
+      ::oImageList:AddMasked( TBitmap():Define( ::oGrupoNumero:Cargo:cBitmap ), Rgb( 255, 0, 255 ) )
+   end if
+
+   if lInitGroup != nil
+
+      aAdd( ::aSelectionGroup, ::oGrupoNumero )
+
+      if !Empty( ::oImageGroup )
+         ::oImageGroup:AddMasked( TBitmap():Define( ::oGrupoNumero:Cargo:cBitmap ), Rgb( 255, 0, 255 ) )
+         ::oGrupoNumero:Cargo:Imagen  := len( ::oImageGroup:aBitmaps ) - 1
+      end if
+
+      if lInitGroup
+         if !Empty( ::oColNombre )
+            ::oColNombre:AddResource( ::oGrupoNumero:Cargo:cBitmap )
+         end if
+         aAdd( ::aInitGroup, ::oGrupoNumero )
+      end if
+
+   end if
+
+   aAdd( ::aSelectionRango, ::oGrupoNumero )
+
+   RECOVER USING oError
+
+      msgStop( ErrorMessage( oError ), 'Imposible abrir todas las bases de datos' )
+
+      lOpen          := .f.
+
+   END SEQUENCE
+
+   ErrorBlock( oBlock )
+
+RETURN ( lOpen )
+
+//---------------------------------------------------------------------------//
+
 METHOD lGrupoSerie( lInitGroup, lImp ) CLASS TNewInfGen
 
    local lOpen          := .t.
@@ -3127,6 +3200,73 @@ METHOD lGrupoSerie( lInitGroup, lImp ) CLASS TNewInfGen
    end if
 
    aAdd( ::aSelectionRango, ::oGrupoSerie )
+
+   RECOVER USING oError
+
+      msgStop( ErrorMessage( oError ), 'Imposible abrir todas las bases de datos' )
+
+      lOpen          := .f.
+
+   END SEQUENCE
+
+   ErrorBlock( oBlock )
+
+RETURN ( lOpen )
+
+//---------------------------------------------------------------------------//
+
+METHOD lGrupoSufijo( lInitGroup, lImp ) CLASS TNewInfGen
+
+   local lOpen          := .t.
+   local oError
+   local oBlock         := ErrorBlock( {| oError | ApoloBreak( oError ) } )
+
+   DEFAULT lImp         := .t.
+
+   BEGIN SEQUENCE
+
+   ::oGrupoSufijo                  := TRGroup():New( {|| ::oDbf:cSufDoc }, {|| "Delegación : "  }, {|| "Total delegación : " + ::oDbf:cSufDoc }, {|| 3 }, ::lSalto )
+
+   ::oGrupoSufijo:Cargo            := TItemGroup()
+   ::oGrupoSufijo:Cargo:Nombre     := "Delegación"
+   ::oGrupoSufijo:Cargo:Expresion  := "cSufDoc"
+   ::oGrupoSufijo:Cargo:Todos      := .t.
+   ::oGrupoSufijo:Cargo:Desde      := Space( 2 )
+   ::oGrupoSufijo:Cargo:Hasta      := "ZZ"
+   ::oGrupoSufijo:Cargo:cPicDesde  := "@!"
+   ::oGrupoSufijo:Cargo:cPicHasta  := "@!"
+   ::oGrupoSufijo:Cargo:HelpDesde  := {|| nil }
+   ::oGrupoSufijo:Cargo:HelpHasta  := {|| nil }
+   ::oGrupoSufijo:Cargo:TextDesde  := {|| "" }
+   ::oGrupoSufijo:Cargo:TextHasta  := {|| "" }
+   ::oGrupoSufijo:Cargo:ValidDesde := {|| .t. }
+   ::oGrupoSufijo:Cargo:ValidHasta := {|| .t. }
+   ::oGrupoSufijo:Cargo:lImprimir  := lImp
+   ::oGrupoSufijo:Cargo:cBitmap    := "branch_16"
+
+   if !Empty( ::oImageList )
+      ::oImageList:AddMasked( TBitmap():Define( ::oGrupoSufijo:Cargo:cBitmap ), Rgb( 255, 0, 255 ) )
+   end if
+
+   if lInitGroup != nil
+
+      aAdd( ::aSelectionGroup, ::oGrupoSufijo )
+
+      if !Empty( ::oImageGroup )
+         ::oImageGroup:AddMasked( TBitmap():Define( ::oGrupoSufijo:Cargo:cBitmap ), Rgb( 255, 0, 255 ) )
+         ::oGrupoSufijo:Cargo:Imagen  := len( ::oImageGroup:aBitmaps ) - 1
+      end if
+
+      if lInitGroup
+         if !Empty( ::oColNombre )
+            ::oColNombre:AddResource( ::oGrupoSufijo:Cargo:cBitmap )
+         end if
+         aAdd( ::aInitGroup, ::oGrupoSufijo )
+      end if
+
+   end if
+
+   aAdd( ::aSelectionRango, ::oGrupoSufijo )
 
    RECOVER USING oError
 
