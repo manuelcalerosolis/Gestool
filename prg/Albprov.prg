@@ -8252,6 +8252,7 @@ Function SynAlbPrv( cPath )
    local oError
    local oBlock      
    local aTotAlb
+   local cCodPrv
    local cNumSer
    local aNumSer
    local nRecPed
@@ -8424,7 +8425,16 @@ Function SynAlbPrv( cPath )
          ( dbfAlbPrvL )->mNumSer       := ""
       end if
 
-      AppRefPrv( ( dbfAlbPrvL )->cRefPrv, ( dbfAlbPrvT )->cCodPrv, ( dbfAlbPrvL )->cRef, ( dbfAlbPrvL )->nDtoLin, ( dbfAlbPrvL )->nDtoPrm, ( dbfAlbPrvT )->cDivAlb, ( dbfAlbPrvL )->nPreDiv, dbfArtPrv )
+      /*
+      Referencias segun las compras--------------------------------------------
+      */
+
+      if !Empty( ( dbfAlbPrvL )->cRefPrv )
+         cCodPrv                       := RetFld( ( dbfAlbPrvL )->cSerAlb + Str( ( dbfAlbPrvL )->nNumAlb ) + ( dbfAlbPrvL )->cSufAlb, dbfAlbPrvT, "cCodPrv" )
+         if !Empty( cCodPrv )
+            AppRefPrv( ( dbfAlbPrvL )->cRefPrv, cCodPrv, ( dbfAlbPrvL )->cRef, ( dbfAlbPrvL )->nDtoLin, ( dbfAlbPrvL )->nDtoPrm, ( dbfAlbPrvT )->cDivAlb, ( dbfAlbPrvL )->nPreDiv, dbfArtPrv )
+         end if 
+      end if
 
       ( dbfAlbPrvL )->( dbSkip() )
 

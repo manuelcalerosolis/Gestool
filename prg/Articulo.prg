@@ -9037,13 +9037,22 @@ FUNCTION AppRefPrv( cRefPrv, cCodPrv, cCodArt, nDtoPrv, nDtoPrm, cDivPrv, nImpPr
       Return nil
    end if
 
-   nOrdAnt        := ( dbfArtPrv )->( OrdSetFocus( "cCodPrv" ) )
+   if Empty( cCodPrv )
+      Return nil 
+   end if    
+
+   if Empty( cCodArt )
+      Return nil 
+   end if    
+
+   nOrdAnt        := ( dbfArtPrv )->( OrdSetFocus( "cRefArt" ) )
 
    /*
-	Ahora pasamos las refrencias de los proveedores
+	Ahora pasamos las refrencias de los proveedores-----------------------------
 	*/
 
-   if !( dbfArtPrv)->( dbSeek( cCodPrv + cCodArt ) )
+   if !( dbfArtPrv)->( dbSeek( cCodArt + cCodPrv + cRefPrv ) )
+
       if dbAppe( dbfArtPrv )
          ( dbfArtPrv )->cCodArt  := cCodArt
          ( dbfArtPrv )->cCodPrv  := cCodPrv
@@ -9054,7 +9063,9 @@ FUNCTION AppRefPrv( cRefPrv, cCodPrv, cCodArt, nDtoPrv, nDtoPrm, cDivPrv, nImpPr
          ( dbfArtPrv )->nImpPrv  := nImpPrv
          ( dbfArtPrv )->( dbUnLock() )
       end if
+   
    else
+
       if dbLock( dbfArtPrv )
          ( dbfArtPrv )->nDtoPrv  := nDtoPrv
          ( dbfArtPrv )->nDtoPrm  := nDtoPrm
@@ -9062,6 +9073,7 @@ FUNCTION AppRefPrv( cRefPrv, cCodPrv, cCodArt, nDtoPrv, nDtoPrm, cDivPrv, nImpPr
          ( dbfArtPrv )->nImpPrv  := nImpPrv
          ( dbfArtPrv )->( dbUnLock() )
       end if
+   
    end if
 
    ( dbfArtPrv )->( OrdSetFocus( nOrdAnt ) )
@@ -9090,7 +9102,7 @@ Return nPreCos
 FUNCTION nUnitEnt( dbfLine )
 
 	local nUnits
-   local nCajas   := (dbfLine)->nCanEnt
+   local nCajas   := ( dbfLine )->nCanEnt
 
    if nCajas == 0
       nCajas      := 1
@@ -9130,31 +9142,31 @@ FUNCTION retPvd( cCodArt, cCodDiv, nChgDiv, dbfArt, dbfDiv )
 
 	DEFAULT nChgDiv	:= 0
 
-	IF ( dbfArt )->( dbSeek( cCodArt ) )
+	if ( dbfArt )->( dbSeek( cCodArt ) )
 
-    nPvp  := ( dbfArt )->PVTAIVA1
+      nPvp           := ( dbfArt )->pVtaIva1
 
 		/*
-		Buscamos la divisa pasada
+		Buscamos la divisa pasada------------------------------------------------
 		*/
 
-		IF ( dbfDiv )->( dbSeek( ( dbfArt )->CODIGO + cCodDiv ) )
+		if ( dbfDiv )->( dbSeek( ( dbfArt )->Codigo + cCodDiv ) )
 
-      nPvp  := ( dbfDiv )->NPVDDIV
+         nPvp        := ( dbfDiv )->nPvdDiv
 
-		ELSE
+		else
 
 			/*
-			Aplicamos el cambio
+			Aplicamos el cambio---------------------------------------------------
 			*/
 
-			IF nChgDiv != 0
-            nPvp := Div( nPvp, nChgDiv )
-			END IF
+			if nChgDiv != 0
+            nPvp     := Div( nPvp, nChgDiv )
+         end if
 
-		END IF
+      end if
 
-	END IF
+   end if
 
 RETURN ( nPvp )
 
@@ -15373,6 +15385,9 @@ FUNCTION rxArticulo( cPath, oMeter, lRecPrc )
 
       ( dbfArticulo )->( ordCondSet("!Deleted()", {|| !Deleted() } ) )
       ( dbfArticulo )->( ordCreate( cPath + "PROVART.CDX", "cRefPrv", "cCodPrv + cRefPrv", {|| Field->CCODPRV + Field->CREFPRV } ) )
+
+      ( dbfArticulo )->( ordCondSet("!Deleted()", {|| !Deleted() } ) )
+      ( dbfArticulo )->( ordCreate( cPath + "PROVART.CDX", "cRefArt", "cCodArt + cCodPrv + cRefPrv", {|| Field->cCodArt + Field->cCodPrv + Field->cRefPrv } ) )
 
       ( dbfArticulo )->( dbCloseArea() )
 
