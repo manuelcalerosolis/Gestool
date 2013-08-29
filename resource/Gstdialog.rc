@@ -2407,26 +2407,28 @@ EMPRESA_6 DIALOG DISCARDABLE 154, 80, 432, 353
 STYLE WS_CHILD|DS_3DLOOK
 FONT 8, "MS Sans Serif"
 {
-  CONTROL "", 100, "ComboBox", WS_BORDER|CBS_DROPDOWNLIST|WS_TABSTOP, 120, 38, 110, 41
-  CONTROL "Exportación por medio físico", 110, "Button", BS_AUTORADIOBUTTON, 47, 62, 102, 12
-  CONTROL "", 120, "Edit", WS_BORDER|WS_TABSTOP, 120, 76, 306, 11
-  CONTROL "Exportación por internet", 111, "Button", BS_AUTORADIOBUTTON, 47, 94, 87, 12
-  CONTROL "", 160, "Edit", WS_BORDER|WS_TABSTOP, 120, 108, 306, 11
-  CONTROL "", 170, "Edit", WS_BORDER|WS_TABSTOP, 120, 120, 120, 11
-  CONTROL "", 180, "Edit", ES_PASSWORD|WS_BORDER|WS_TABSTOP, 120, 132, 120, 11
-  CONTROL "Envío pasivo", 200, "Button", BS_AUTOCHECKBOX|WS_TABSTOP, 298, 120, 90, 12
-  CONTROL "Enviar solo albaranes entregados", 190, "Button", BS_AUTOCHECKBOX|WS_TABSTOP, 47, 163, 124, 12
-  CONTROL "", -1, "Button", BS_GROUPBOX, 44, 56, 385, 92
-  CONTROL "Propiedades", -1, "Button", BS_GROUPBOX, 44, 151, 385, 28
-  CONTROL "Nombre usuario", -1, "Static", WS_GROUP, 47, 123, 55, 8
-  CONTROL "Dirección FTP", -1, "Static", WS_GROUP, 47, 111, 51, 8
-  CONTROL "Clave de acceso", -1, "Static", WS_GROUP, 47, 135, 59, 8
-  CONTROL "Tipo de envío", -1, "Static", WS_GROUP, 47, 42, 66, 8
-  CONTROL "Ruta de exportación", -1, "Static", WS_GROUP, 47, 78, 66, 8
-  CONTROL "", -1, "Static", SS_ETCHEDHORZ, 47, 91, 378, 1
-  CONTROL "Envío", -1, "Button", BS_GROUPBOX, 44, 29, 385, 27
+  CONTROL "", 100, "ComboBox", WS_BORDER|CBS_DROPDOWNLIST|WS_TABSTOP, 120, 39, 110, 41
+  CONTROL "Exportación por medio físico", 110, "Button", BS_AUTORADIOBUTTON, 47, 56, 102, 12
+  CONTROL "", 120, "Edit", WS_BORDER|WS_TABSTOP, 120, 70, 306, 11
+  CONTROL "Exportación por internet", 111, "Button", BS_AUTORADIOBUTTON, 47, 84, 87, 12
+  CONTROL "", 160, "Edit", WS_BORDER|WS_TABSTOP, 120, 98, 306, 11
+  CONTROL "", 170, "Edit", WS_BORDER|WS_TABSTOP, 120, 110, 120, 11
+  CONTROL "", 180, "Edit", ES_PASSWORD|WS_BORDER|WS_TABSTOP, 120, 122, 120, 11
+  CONTROL "Envío pasivo", 200, "Button", BS_AUTOCHECKBOX|WS_TABSTOP, 371, 121, 55, 12
+  CONTROL "Enviar solo albaranes entregados", 190, "Button", BS_AUTOCHECKBOX|WS_TABSTOP, 47, 140, 124, 12
+  CONTROL "Enviar cierre de turnos por correo electrónico", 300, "Button", BS_AUTOCHECKBOX|WS_TABSTOP, 47, 170, 155, 12
+  CONTROL "", 310, "Edit", WS_BORDER|WS_TABSTOP, 119, 185, 306, 11
+  CONTROL "Nombre usuario", -1, "Static", WS_GROUP, 58, 113, 55, 8
+  CONTROL "Dirección FTP", -1, "Static", WS_GROUP, 58, 101, 51, 8
+  CONTROL "Clave de acceso", -1, "Static", WS_GROUP, 58, 125, 59, 8
+  CONTROL "Tipo de envío", -1, "Static", WS_GROUP, 47, 43, 66, 8
+  CONTROL "Ruta", -1, "Static", WS_GROUP, 58, 72, 21, 8
+  CONTROL "", -1, "Static", SS_ETCHEDHORZ, 47, 136, 378, 1
+  CONTROL "Envío de información", -1, "Button", BS_GROUPBOX, 44, 29, 385, 127
   CONTROL "", 500, "Static", SS_BITMAP|SS_CENTERIMAGE, 4, 3, 34, 30
   CONTROL "Configuración para el envio de datos entre delegaciones", -1, "Static", SS_LEFTNOWORDWRAP|WS_GROUP, 44, 3, 384, 8
+  CONTROL "Turnos", -1, "Button", BS_GROUPBOX, 44, 159, 385, 43
+  CONTROL "Correo electrónico", -1, "Static", WS_GROUP, 46, 188, 63, 8
 }
 
 EMPRESA_4 DIALOG DISCARDABLE 31, 32, 357, 259
@@ -19142,7 +19144,7 @@ FONT 8, "Helv"
 
 LANGUAGE LANG_SPANISH,SUBLANG_SPANISH_MODERN
 
-Recibos_4 DIALOG DISCARDABLE 82, 27, 333, 272
+RECIBOS_4 DIALOG DISCARDABLE 82, 27, 333, 272
 STYLE WS_CHILD|WS_VISIBLE
 FONT 8, "MS Sans Serif"
 {

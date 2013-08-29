@@ -393,11 +393,12 @@ CLASS TTurno FROM TMasDet
 
    DATA aCajaSelect                                INIT {}
 
+   DATA lArqueoCiego                               INIT .f.
+
    Method New( cPath, oWndParent, oMenuItem )
    Method Initiate( cText, oSender )               CONSTRUCTOR
    Method Build( cPath, oWndParent, oMenuItem )    CONSTRUCTOR
 
-   Method lArqueoCiego()                           INLINE ( oUser():lArqueoCiego() )
 
    Method OpenFiles( lExclusive )
    Method OpenService( lExclusive )
@@ -938,6 +939,8 @@ METHOD New( cPath, oWndParent, oMenuItem )
 
    ::lDefaultPrinter    := .t.
    ::cPrinter           := PrnGetName()
+
+   ::lArqueoCiego       := oUser():lArqueoCiego() 
 
 RETURN ( Self )
 
@@ -3290,8 +3293,8 @@ METHOD lArqueoTurno( lZoom, lParcial ) CLASS TTurno
 
    ::lImprimirEnvio     := ::oIniArqueo:Get( "Arqueo", "ImprimirEnvio",    .t.,           ::lImprimirEnvio )
 
-   ::lEnviarMail        := ::oIniArqueo:Get( "Arqueo", "EnviarMail",       .t.,           ::lEnviarMail )
-   ::cEnviarMail        := ::oIniArqueo:Get( "Arqueo", "Mail",             "",            ::cEnviarMail )
+   ::lEnviarMail        := uFieldEmpresa( "lMailTurno" )
+   ::cEnviarMail        := uFieldEmpresa( "cMailTurno" )
    ::cEnviarMail        := Padr( ::cEnviarMail, 200 )
 
    ::oMoneyEfectivo     := TVirtualMoney():New()
@@ -3313,14 +3316,14 @@ METHOD lArqueoTurno( lZoom, lParcial ) CLASS TTurno
          RESOURCE       "ARQUEO_TCT";
          TITLE          "Arqueo " + if( ::lArqueoParcial, "parcial ", " " ) + "de caja, sesión : " + Trans( ::cCurTurno, "@R ######" )
 
-         REDEFINE PAGES    oFld ;
-            ID             200 ;
-            FONT           oFnt ;
-            OF             oDlg ;
-            DIALOGS        "ARQUEO_1_TCT",;
-                           "ARQUEO_2_TCT",;
-                           "ARQUEO_3_TCT",;
-                           "ARQUEO_4_TCT"
+         REDEFINE PAGES oFld ;
+            ID          200 ;
+            FONT        oFnt ;
+            OF          oDlg ;
+            DIALOGS     "ARQUEO_1_TCT",;
+                        "ARQUEO_2_TCT",;
+                        "ARQUEO_3_TCT",;
+                        "ARQUEO_4_TCT"
 
    else
 
@@ -3337,7 +3340,6 @@ METHOD lArqueoTurno( lZoom, lParcial ) CLASS TTurno
                         "ARQUEO_4"
 
    end if
-
 
       // Primera caja de dialogo_______________________________________________
 
@@ -3388,10 +3390,6 @@ METHOD lArqueoTurno( lZoom, lParcial ) CLASS TTurno
          RESOURCE "clock_refresh_48_alpha" ;
          TRANSPARENT ;
          OF       oFld:aDialogs[4]
-
-      end if
-
-      if !::lArqueoTactil()  .and. !::lArqueoParcial
 
       REDEFINE BITMAP oBmpGeneral ;
          ID       990 ;
@@ -3805,12 +3803,13 @@ METHOD lArqueoTurno( lZoom, lParcial ) CLASS TTurno
       REDEFINE BUTTONBMP ;
          ID       220 ;
          OF       oFld:aDialogs[ 3 ] ;
+         WHEN     !::lCerrado ;
          BITMAP   "Money2_32" ;
          ACTION   ( ::oMoneyEfectivo:Dialog( ::oImporteEfectivo ), ::RefreshTurno() )
 
       else
 
-      TBtnBmp():ReDefine( 220, "Money2_16",,,,,{|| ::oMoneyEfectivo:Dialog( ::oImporteEfectivo ), ::RefreshTurno() }, oFld:aDialogs[ 3 ], .f., , .f., "Conteo de efectivo" )
+         TBtnBmp():ReDefine( 220, "Money2_16",,,,,{|| ::oMoneyEfectivo:Dialog( ::oImporteEfectivo ), ::RefreshTurno() }, oFld:aDialogs[ 3 ], .f., {|| !::lCerrado }, .f., "Conteo de efectivo" )
 
       end if
 
@@ -3829,12 +3828,13 @@ METHOD lArqueoTurno( lZoom, lParcial ) CLASS TTurno
       REDEFINE BUTTONBMP ;
          ID       230 ;
          OF       oFld:aDialogs[ 3 ] ;
+         WHEN     !::lCerrado ;
          BITMAP   "Calculator_32" ;
          ACTION   ( Calculadora( 0, ::oImporteTarjeta ), ::RefreshTurno() )
 
       else
 
-      TBtnBmp():ReDefine( 230, "Calculator_16" ,,,,, {|| Calculadora( 0, ::oImporteTarjeta ), ::RefreshTurno() }, oFld:aDialogs[ 3 ], .f., , .f., "Calculo de tarjetas" )
+         TBtnBmp():ReDefine( 230, "Calculator_16" ,,,,, {|| Calculadora( 0, ::oImporteTarjeta ), ::RefreshTurno() }, oFld:aDialogs[ 3 ], .f., {|| !::lCerrado }, .f., "Calculo de tarjetas" )
 
       end if
 
@@ -3845,12 +3845,13 @@ METHOD lArqueoTurno( lZoom, lParcial ) CLASS TTurno
       REDEFINE BUTTONBMP ;
          ID       235 ;
          OF       oFld:aDialogs[ 3 ] ;
+         WHEN     !::lCerrado ;
          BITMAP   "Money2_32" ;
          ACTION   ( ::oMoneyRetirado:Dialog( ::oImporteRetirado ), ::RefreshTurno() )
 
       else
 
-         TBtnBmp():ReDefine( 235, "Money2_16",,,,,{|| ::oMoneyRetirado:Dialog( ::oImporteRetirado ), ::RefreshTurno() }, oFld:aDialogs[ 3 ], .f., , .f., "Conteo de retirado" )
+         TBtnBmp():ReDefine( 235, "Money2_16",,,,,{|| ::oMoneyRetirado:Dialog( ::oImporteRetirado ), ::RefreshTurno() }, oFld:aDialogs[ 3 ], .f., {|| !::lCerrado }, .f., "Conteo de retirado" )
 
       end if
 
@@ -4139,7 +4140,7 @@ Return ( oDlg:nResult == IDOK )
 
 Method InitArqueoTurno()
 
-   if ::lArqueoCiego()    
+   if ::lArqueoCiego    
 
       ::oBrwTotales:Hide()
 
@@ -4890,7 +4891,7 @@ METHOD lCalTurno( cTurno, cCaja, oDlg )
       */
 
       if Empty( ::oTotales )
-         ::oTotales                 := TTotalTurno():New()
+         ::oTotales                 := TTotalTurno():New( Self )
       end if
       ::oTotales:Initiate()
 
@@ -6230,7 +6231,7 @@ METHOD DlgImprimir( nDevice, lTactil )
 
    DEFAULT lTactil   := .f.
 
-   if ::lArqueoCiego()
+   if ::lArqueoCiego
       MsgStop( "No tiene privilegios para imprimir el arqueo." )
       Return ( Self )
    end if 

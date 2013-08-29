@@ -335,6 +335,8 @@ CLASS TTotalTurno
 
    Method CreateTree( cCaja, cTurno )
 
+   Method lArqueoCiego()                                       INLINE   ( if( !Empty( ::oTurno ), ::oTurno:lArqueoCiego, .f. ) )
+
    Method End()                                                INLINE   ( HEval( ::hBmpDoc, { | xKey, hBmp | DeleteObject( hBmp ) } ) )
 
 END CLASS
@@ -692,21 +694,25 @@ Return ( nTotMetalico )
 
 Method nTotCaja( cCaja, cSerie )
 
-   local nTotCaja
+   local nTotCaja    := 0
 
-   nTotCaja          := ::nTotTikCliCobros( cCaja, cSerie )
-   nTotCaja          += ::nTotFacCliCobros( cCaja, cSerie )
-   nTotCaja          += ::nTotRctCliCobros( cCaja, cSerie )
-   nTotCaja          += ::nTotEntregas( cCaja, cSerie )
-   nTotCaja          += ::nTotEntradas( cCaja, cSerie )
-   nTotCaja          += ::nTotAntCliVentas( cCaja, cSerie )
-   nTotCaja          -= ::nTotFacPrvPagos( cCaja, cSerie )
-   nTotCaja          -= ::nTotRctPrvPagos( cCaja, cSerie )
-   nTotCaja          += ::nContadores
-   nTotCaja          -= ::nTotAlbCliContadores( cCaja, cSerie )
-   nTotCaja          -= ::nTotFacCliContadores( cCaja, cSerie )
-   nTotCaja          -= ::nTotRctCliContadores( cCaja, cSerie )
-   nTotCaja          -= ::nTotTikCliContadores( cCaja, cSerie )
+   if !::lArqueoCiego()
+
+      nTotCaja       := ::nTotTikCliCobros( cCaja, cSerie )
+      nTotCaja       += ::nTotFacCliCobros( cCaja, cSerie )
+      nTotCaja       += ::nTotRctCliCobros( cCaja, cSerie )
+      nTotCaja       += ::nTotEntregas( cCaja, cSerie )
+      nTotCaja       += ::nTotEntradas( cCaja, cSerie )
+      nTotCaja       += ::nTotAntCliVentas( cCaja, cSerie )
+      nTotCaja       -= ::nTotFacPrvPagos( cCaja, cSerie )
+      nTotCaja       -= ::nTotRctPrvPagos( cCaja, cSerie )
+      nTotCaja       += ::nContadores
+      nTotCaja       -= ::nTotAlbCliContadores( cCaja, cSerie )
+      nTotCaja       -= ::nTotFacCliContadores( cCaja, cSerie )
+      nTotCaja       -= ::nTotRctCliContadores( cCaja, cSerie )
+      nTotCaja       -= ::nTotTikCliContadores( cCaja, cSerie )
+
+   end if
 
 Return ( nTotCaja )
 
