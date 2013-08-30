@@ -2267,11 +2267,12 @@ STATIC FUNCTION EdtCnf( aTmp, aGet, dbfEmp, oBrw, nSelFolder, bValid, nMode )
 
       REDEFINE CHECKBOX aTmp[ _LMAILTURNO ] ;
             ID       300;
+            WHEN     ( lUsrMaster() ) ;
             OF       oFld:aDialogs[6]
 
       REDEFINE GET aTmp[ _CMAILTURNO ] ;
             ID       310 ;
-            WHEN     ( aTmp[ _LMAILTURNO ] ) ;
+            WHEN     ( lUsrMaster() .and. aTmp[ _LMAILTURNO ] ) ;
             OF       oFld:aDialogs[6]
 
       /*

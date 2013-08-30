@@ -286,6 +286,11 @@ STATIC FUNCTION EdtRec( aTmp, aGet, dbfCajT, oBrw, bWhen, bValid, nMode )
    local oBmpGeneral
    local oBmpFormatos
 
+   if lUsrMaster()
+      msgStop( "Solo el usuario administrador puede modificar las cajas.")
+      Return nil
+   end if 
+
    if nMode == APPD_MODE
 
       aTmp[ ( dbfCajT )->( FieldPos( "cPrnWin" ) ) ]     := PrnGetName()
@@ -304,6 +309,7 @@ STATIC FUNCTION EdtRec( aTmp, aGet, dbfCajT, oBrw, bWhen, bValid, nMode )
       aTmp[ ( dbfCajT )->( FieldPos( "nCopReg" ) ) ]     := 1
       aTmp[ ( dbfCajT )->( FieldPos( "nCopApt" ) ) ]     := 1
       aTmp[ ( dbfCajT )->( FieldPos( "nCopEna" ) ) ]     := 1
+      aTmp[ ( dbfCajT )->( FieldPos( "nCopCie" ) ) ]     := 1
 
    end if
 
@@ -838,6 +844,39 @@ STATIC FUNCTION EdtRec( aTmp, aGet, dbfCajT, oBrw, bWhen, bValid, nMode )
       REDEFINE GET aGet[ ( dbfCajT )->( FieldPos( "nCopPar" ) ) ] ;
          VAR      aTmp[ ( dbfCajT )->( FieldPos( "nCopPar" ) ) ] ;
          ID       254 ;
+         SPINNER ;
+         MIN      0 ;
+         MAX      99 ;
+         PICTURE  "99" ;
+         WHEN     ( nMode != ZOOM_MODE ) ;
+         OF       oFld:aDialogs[2]
+
+      /*
+      Formato de arqueos parciales de cajas
+      -------------------------------------------------------------------------
+      */
+
+      REDEFINE CHECKBOX aGet[ ( dbfCajT )->( FieldPos( "lPrnCie" ) ) ] ;
+         VAR      aTmp[ ( dbfCajT )->( FieldPos( "lPrnCie" ) ) ] ;
+         ID       343 ;
+         WHEN     (  nMode != ZOOM_MODE ) ;
+         OF       oFld:aDialogs[2]
+
+      REDEFINE GET aGet[ ( dbfCajT )->( FieldPos( "cPrnCie" ) ) ] ;
+         VAR      aTmp[ ( dbfCajT )->( FieldPos( "cPrnCie" ) ) ] ;
+         ID       340 ;
+         IDTEXT   341 ;
+         WHEN     ( nMode != ZOOM_MODE ) ;
+         VALID    ( cDocumento( aGet[ ( dbfCajT )->( FieldPos( "cPrnCie" ) ) ], aGet[ ( dbfCajT )->( FieldPos( "cPrnCie" ) ) ]:oHelpText, dbfDoc ) ) ;
+         BITMAP   "LUPA" ;
+         ON HELP  ( BrwDocumento( aGet[ ( dbfCajT )->( FieldPos( "cPrnCie" ) ) ], aGet[ ( dbfCajT )->( FieldPos( "cPrnCie" ) ) ]:oHelpText, "AQ" ) );
+         OF       oFld:aDialogs[2]
+
+      TBtnBmp():ReDefine( 342, "Printer_pencil_16",,,,,{|| EdtDocumento( aTmp[ ( dbfCajT )->( FieldPos( "cPrnCie" ) ) ] ) }, oFld:aDialogs[2], .f., , .f.,  )
+
+      REDEFINE GET aGet[ ( dbfCajT )->( FieldPos( "nCopCie" ) ) ] ;
+         VAR      aTmp[ ( dbfCajT )->( FieldPos( "nCopCie" ) ) ] ;
+         ID       344 ;
          SPINNER ;
          MIN      0 ;
          MAX      99 ;
@@ -2205,6 +2244,9 @@ Function aItmCaja()
    aAdd( aBase, { "cPrnEna",   "C",  3,   0, "Formato entregas a cuenta de albaranes" } )
    aAdd( aBase, { "nCopEna",   "N",  2,   0, "Copias entregas a cuenta de albaranes" } )
    aAdd( aBase, { "lNoArq",    "L",  1,   0, "Lógico para no incluir en arqueo" } )
+   aAdd( aBase, { "lPrnCie",   "L",  1,   0, "Lógico impresora normal arqueos ciegos" } )
+   aAdd( aBase, { "cPrnCie",   "C",  3,   0, "Formato para arqueos ciegos" } )
+   aAdd( aBase, { "nCopCie",   "N",  2,   0, "Copias para arqueos ciegos" } )
 
 Return ( aBase )
 
@@ -2328,6 +2370,18 @@ Function cFormatoArqueoParcialEnCaja( cCodCaj, dbfCajT )
 
    if dbSeekInOrd( cCodCaj, "cCodCaj", dbfCajT )
       cFmt     := ( dbfCajT )->cPrnPar
+   end if
+
+Return ( cFmt )
+
+//---------------------------------------------------------------------------//
+
+Function cFormatoArqueoCiegoEnCaja( cCodCaj, dbfCajT )
+
+   local cFmt  := Space( 3 )
+
+   if dbSeekInOrd( cCodCaj, "cCodCaj", dbfCajT )
+      cFmt     := ( dbfCajT )->cPrnCie
    end if
 
 Return ( cFmt )
@@ -3014,6 +3068,25 @@ Function cPrinterArqueoParcial( cCodCaj, dbfCajT )
 Return ( cPrn )
 
 //---------------------------------------------------------------------------//
+
+Function cPrinterArqueoCiego( cCodCaj, dbfCajT )
+
+   local cPrn  := ""
+
+   if dbSeekInOrd( cCodCaj, "cCodCaj", dbfCajT )
+
+      if ( dbfCajT )->lPrnCie
+         cPrn     := Rtrim( ( dbfCajT )->cPrnWin )
+      else
+         cPrn     := Rtrim( ( dbfCajT )->cWinTik )
+      endif
+
+   end if
+
+Return ( cPrn )
+
+//---------------------------------------------------------------------------//
+
 
 Function lImpArqueoEnImpresora( cCodCaj, dbfCajT )
 
