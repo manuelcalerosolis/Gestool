@@ -1294,6 +1294,7 @@ METHOD SetDialog( lEnabled ) CLASS TFastReportInfGen
    ::oBtnEliminar:lEnabled       := lEnabled
    ::oBtnExportar:lEnabled       := lEnabled
    ::oBtnImportar:lEnabled       := lEnabled
+   ::oBtnXml:lEnabled            := lEnabled
 
    if lEnabled
       ::oTreeReporting:Enable()
