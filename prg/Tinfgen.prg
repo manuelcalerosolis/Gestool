@@ -218,6 +218,7 @@ CLASS TInfGen
    DATA oBtnCancel
    DATA oBtnExportar
    DATA oBtnImportar
+   DATA oBtnXml
 
    DATA aHeader
    DATA aFooter

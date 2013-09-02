@@ -951,6 +951,37 @@ CLASS TFastReportInfGen FROM TNewInfGen
 
 //---------------------------------------------------------------------------//
 
+   INLINE METHOD XmlDocument()
+
+      local cFile    := cPatTmp() + "Report.txt"
+
+      if ::lLoadReport()
+
+         CursorWait()
+
+         if File( cFile )
+            fErase( cFile )
+         end if
+
+         MemoWrit( cFile, ::cInformeFastReport )
+
+         CursorWE()    
+
+         if File( cFile )
+            WinExec( "notepad.exe " + cFile )
+         end if 
+
+      else 
+         
+         MsgStop( "No se ha podido cargar un diseño de informe valido.", ::cReportType )
+         Return ( Self )
+
+      end if
+
+   ENDMETHOD
+
+//----------------------------------------------------------------------------//
+
 END CLASS
 
 //----------------------------------------------------------------------------//
@@ -1198,10 +1229,11 @@ METHOD InitDialog() CLASS TFastReportInfGen
       ::oBtnEliminar       := TDotNetButton():New( 60, oGrupo, "Document_delete_32",   "Eliminar",          3, {|| ::Eliminar() }, , , .f., .f., .f. )
       ::oBtnFiltrar        := TDotNetButton():New( 60, oGrupo, "Funnel_32",            "Filtrar",           4, {|| ::DlgFilter() }, , , .f., .f., .f. )
 
-      oGrupo               := TDotNetGroup():New( oCarpeta, 126, "Herramientas", .f. )
+      oGrupo               := TDotNetGroup():New( oCarpeta, 186, "Herramientas", .f. )
 
       ::oBtnExportar       := TDotNetButton():New( 60, oGrupo, "Folder_out_32",        "Exportar",          1, {|| ::DlgExportDocument() }, , , .f., .f., .f. )
       ::oBtnImportar       := TDotNetButton():New( 60, oGrupo, "Folder_into_32",       "Importar",          2, {|| ::DlgImportDocument() }, , , .f., .f., .f. )
+      ::oBtnXml            := TDotNetButton():New( 60, oGrupo, "Folder_into_32",       "Ver",               3, {|| ::XmlDocument() }, , , .f., .f., .f. )
 
       oGrupo               := TDotNetGroup():New( oCarpeta, 66, "Salida", .f. )
 
