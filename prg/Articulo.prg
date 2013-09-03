@@ -431,12 +431,12 @@ STATIC FUNCTION OpenFiles( lExt, cPath )
          lOpenFiles        := .f.
       end if
 
-      oOrdenComanda        := TOrdenComanda():Create( cPatArt() )
+      oOrdenComanda           := TOrdenComanda():Create( cPatArt() )
       if !oOrdenComanda:OpenFiles()
-         lOpenfiles        := .f.
+         lOpenfiles           := .f.
+      else 
+         aNombreOrdenComanda  := oOrdenComanda:aNombreOrdenComanda()
       end if 
-
-      aNombreOrdenComanda  := oOrdenComanda:aNombreOrdenComanda()
 
       /*
       Cargamos el valor del Euro y de la Peseta-----------------------------------
