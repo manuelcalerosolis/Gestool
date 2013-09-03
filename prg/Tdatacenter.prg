@@ -805,7 +805,7 @@ METHOD ConnectDataDictionary()
 
    ::CreateDataDictionary()
 
-   ::lAdsConnection     := AdsConnect60( ::cDataDictionaryFile, 2, "ADSSYS", "", , @::hAdsConnection )
+   ::lAdsConnection     := AdsConnect60( ::cDataDictionaryFile, 7, "ADSSYS", "", , @::hAdsConnection )
 
    if !::lAdsConnection
 
@@ -1852,6 +1852,13 @@ METHOD BuildEmpresa()
    ::AddEmpresaTable( oDataTable )
 
    oDataTable              := TDataTable()
+   oDataTable:cName        := cPatEmp() + "OrdenComanda"
+   oDataTable:cDataFile    := cPatEmp( , .t. ) + "OrdenComanda.Dbf"
+   oDataTable:cIndexFile   := cPatEmp( , .t. ) + "OrdenComanda.Cdx"
+   oDataTable:cDescription := "OrdenComanda"
+   ::AddEmpresaTable( oDataTable )
+
+   oDataTable              := TDataTable()
    oDataTable:cName        := cPatEmp() + "ComentariosT"
    oDataTable:cDataFile    := cPatEmp( , .t. ) + "ComentariosT.Dbf"
    oDataTable:cIndexFile   := cPatEmp( , .t. ) + "ComentariosT.Cdx"
@@ -2015,7 +2022,7 @@ METHOD BuildEmpresa()
    ::AddEmpresaTable( oDataTable )
 
    /*
-   Proveedores
+   Proveedores-----------------------------------------------------------------
    */
 
    oDataTable              := TDataTable()

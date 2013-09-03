@@ -640,54 +640,59 @@ METHOD DataReport() CLASS TFastVentasArticulos
    Zona de detalle-------------------------------------------------------------
    */
 
-   ::oFastReport:SetWorkArea(       "Informe", ::oDbf:nArea )
-   ::oFastReport:SetFieldAliases(   "Informe", cObjectsToReport( ::oDbf ) )
+   ::oFastReport:SetWorkArea(       "Informe",                    ::oDbf:nArea )
+   ::oFastReport:SetFieldAliases(   "Informe",                    cObjectsToReport( ::oDbf ) )
 
    /*
    Zona de datos---------------------------------------------------------------
    */
 
-   ::oFastReport:SetWorkArea(       "Empresa", ::oDbfEmp:nArea )
-   ::oFastReport:SetFieldAliases(   "Empresa", cItemsToReport( aItmEmp() ) )
+   ::oFastReport:SetWorkArea(       "Empresa",                    ::oDbfEmp:nArea )
+   ::oFastReport:SetFieldAliases(   "Empresa",                    cItemsToReport( aItmEmp() ) )
 
-   ::oFastReport:SetWorkArea(       "Artículos.Informe", ::oDbfArt:nArea )
-   ::oFastReport:SetFieldAliases(   "Artículos.Informe", cItemsToReport( aItmArt() ) )
+   ::oFastReport:SetWorkArea(       "Artículos.Informe",          ::oDbfArt:nArea )
+   ::oFastReport:SetFieldAliases(   "Artículos.Informe",          cItemsToReport( aItmArt() ) )
 
-   ::oFastReport:SetWorkArea(       "Imagenes", ::oArtImg:nArea )
-   ::oFastReport:SetFieldAliases(   "Imagenes", cItemsToReport( aItmImg() ) )
+   ::oFastReport:SetWorkArea(       "Imagenes",                   ::oArtImg:nArea )
+   ::oFastReport:SetFieldAliases(   "Imagenes",                   cItemsToReport( aItmImg() ) )
 
-   ::oFastReport:SetWorkArea(       "Códigos de barras", ::oArtCod:nArea )
-   ::oFastReport:SetFieldAliases(   "Códigos de barras", cItemsToReport( aItmBar() ) )
+   ::oFastReport:SetWorkArea(       "Códigos de barras",          ::oArtCod:nArea )
+   ::oFastReport:SetFieldAliases(   "Códigos de barras",          cItemsToReport( aItmBar() ) )
 
-   ::oFastReport:SetWorkArea(       "Escandallos", ::oArtKit:nArea )
-   ::oFastReport:SetFieldAliases(   "Escandallos", cItemsToReport( aItmKit() ) )
+   ::oFastReport:SetWorkArea(       "Escandallos",                ::oArtKit:nArea )
+   ::oFastReport:SetFieldAliases(   "Escandallos",                cItemsToReport( aItmKit() ) )
 
-   ::oFastReport:SetWorkArea(       "Artículos.Escandallos", ::oDbfArt:nArea )
-   ::oFastReport:SetFieldAliases(   "Artículos.Escandallos", cItemsToReport( aItmArt() ) )
+   ::oFastReport:SetWorkArea(       "Artículos.Escandallos",      ::oDbfArt:nArea )
+   ::oFastReport:SetFieldAliases(   "Artículos.Escandallos",      cItemsToReport( aItmArt() ) )
 
-   ::oFastReport:SetWorkArea(       "Familias", ::oDbfFam:nArea )
-   ::oFastReport:SetFieldAliases(   "Familias", cItemsToReport( aItmFam() ) )
+   ::oFastReport:SetWorkArea(       "Familias",                   ::oDbfFam:nArea )
+   ::oFastReport:SetFieldAliases(   "Familias",                   cItemsToReport( aItmFam() ) )
 
-   ::oFastReport:SetWorkArea(       "Tipo artículos", ::oTipArt:Select() )
-   ::oFastReport:SetFieldAliases(   "Tipo artículos", cObjectsToReport( ::oTipArt:oDbf ) )
+   ::oFastReport:SetWorkArea(       "Tipo artículos",             ::oTipArt:Select() )
+   ::oFastReport:SetFieldAliases(   "Tipo artículos",             cObjectsToReport( ::oTipArt:oDbf ) )
 
-   ::oFastReport:SetWorkArea(       "Categorias", ::oDbfCat:nArea )
-   ::oFastReport:SetFieldAliases(   "Categorias", cItemsToReport( aItmCategoria() ) )
+   ::oFastReport:SetWorkArea(       "Categorias",                 ::oDbfCat:nArea )
+   ::oFastReport:SetFieldAliases(   "Categorias",                 cItemsToReport( aItmCategoria() ) )
 
-   ::oFastReport:SetWorkArea(       "Temporadas", ::oDbfTmp:nArea )
-   ::oFastReport:SetFieldAliases(   "Temporadas", cItemsToReport( aItmTemporada() ) )
+   ::oFastReport:SetWorkArea(       "Temporadas",                 ::oDbfTmp:nArea )
+   ::oFastReport:SetFieldAliases(   "Temporadas",                 cItemsToReport( aItmTemporada() ) )
 
-   ::oFastReport:SetWorkArea(       "Fabricantes", ::oDbfFab:Select() )
-   ::oFastReport:SetFieldAliases(   "Fabricantes", cObjectsToReport( ::oDbfFab:oDbf ) )
+   ::oFastReport:SetWorkArea(       "Fabricantes",                ::oDbfFab:Select() )
+   ::oFastReport:SetFieldAliases(   "Fabricantes",                cObjectsToReport( ::oDbfFab:oDbf ) )
 
-   ::oFastReport:SetWorkArea(       "Tipos de " + cImp(), ::oDbfIva:nArea )
-   ::oFastReport:SetFieldAliases(   "Tipos de " + cImp(), cItemsToReport( aItmTIva() ) )
+   ::oFastReport:SetWorkArea(       "Tipos de " + cImp(),         ::oDbfIva:nArea )
+   ::oFastReport:SetFieldAliases(   "Tipos de " + cImp(),         cItemsToReport( aItmTIva() ) )
 
-   ::oFastReport:SetWorkArea(       "Clientes", ::oDbfCli:nArea )
-   ::oFastReport:SetFieldAliases(   "Clientes", cItemsToReport( aItmCli() ) )
+   ::oFastReport:SetWorkArea(       "Clientes",                   ::oDbfCli:nArea )
+   ::oFastReport:SetFieldAliases(   "Clientes",                   cItemsToReport( aItmCli() ) )
 
-   ::oFastReport:SetWorkArea(       "Proveedores", ::oDbfPrv:nArea )
-   ::oFastReport:SetFieldAliases(   "Proveedores", cItemsToReport( aItmPrv() ) )
+   ::oFastReport:SetWorkArea(       "Proveedores",                ::oDbfPrv:nArea )
+   ::oFastReport:SetFieldAliases(   "Proveedores",                cItemsToReport( aItmPrv() ) )
+
+   ::oFastReport:SetWorkArea(       "Usuarios",                   ::oDbfUsr:nArea ) 
+   ::oFastReport:SetFieldAliases(   "Usuarios",                   cItemsToReport( aItmUsr() ) )
+
+
 
    /*
    Relaciones entre tablas-----------------------------------------------------
@@ -710,6 +715,7 @@ METHOD DataReport() CLASS TFastVentasArticulos
    ::oFastReport:SetMasterDetail(   "Informe", "Clientes",                          {|| ::oDbf:cCodCli } )
    ::oFastReport:SetMasterDetail(   "Informe", "Proveedores",                       {|| ::oDbf:cCodCli } )
    ::oFastReport:SetMasterDetail(   "Informe", "Empresa",                           {|| cCodEmp() } )
+   ::oFastReport:SetMasterDetail(   "Informe", "Usuarios",                          {|| ::oDbf:cCodUsr } )
 
    /*
    Resincronizar con los movimientos-------------------------------------------
@@ -732,6 +738,7 @@ METHOD DataReport() CLASS TFastVentasArticulos
    ::oFastReport:SetResyncPair(     "Informe", "Clientes" )
    ::oFastReport:SetResyncPair(     "Informe", "Proveedores" )
    ::oFastReport:SetResyncPair(     "Informe", "Empresa" )
+   ::oFastReport:SetResyncPair(     "Informe", "Usuarios" )
 
    /*
    Tablas en funcion del tipo de informe---------------------------------------
@@ -1034,7 +1041,7 @@ METHOD AddSATClientes() CLASS TFastVentasArticulos
                   ::oDbf:nMesDoc    := Month( ::oSatCliT:dFecSat )
                   ::oDbf:dFecDoc    := ::oSatCliT:dFecSat
                   ::oDbf:cHorDoc    := SubStr( ::oSatCliT:cTimCre, 1, 2 )
-                  ::oDbf:cMinDoc    := SubStr( ::oSatCliT:cTimCre, 3, 2 )
+                  ::oDbf:cMinDoc    := SubStr( ::oSatCliT:cTimCre, 4, 2 )
 
                   /*
                   AÃ±adimos un nuevo registro-----------------------------------
@@ -1179,7 +1186,7 @@ METHOD AddPresupuestoClientes() CLASS TFastVentasArticulos
                   ::oDbf:nMesDoc    := Month( ::oPreCliT:dFecPre )
                   ::oDbf:dFecDoc    := ::oPreCliT:dFecPre
                   ::oDbf:cHorDoc    := SubStr( ::oPreCliT:cTimCre, 1, 2 )
-                  ::oDbf:cMinDoc    := SubStr( ::oPreCliT:cTimCre, 3, 2 )
+                  ::oDbf:cMinDoc    := SubStr( ::oPreCliT:cTimCre, 4, 2 )
 
                   /*
                   AÃ±adimos un nuevo registro-----------------------------------
@@ -1323,7 +1330,7 @@ METHOD AddPedidoClientes() CLASS TFastVentasArticulos
                   ::oDbf:nMesDoc    := Month( ::oPedCliT:dFecPed )
                   ::oDbf:dFecDoc    := ::oPedCliT:dFecPed
                   ::oDbf:cHorDoc    := SubStr( ::oPedCliT:cTimCre, 1, 2 )
-                  ::oDbf:cMinDoc    := SubStr( ::oPedCliT:cTimCre, 3, 2 )
+                  ::oDbf:cMinDoc    := SubStr( ::oPedCliT:cTimCre, 4, 2 )
 
                   /*
                   AÃ±adimos un nuevo registro
@@ -1476,7 +1483,7 @@ METHOD AddAlbaranCliente( lFacturados ) CLASS TFastVentasArticulos
                   ::oDbf:nMesDoc    := Month( ::oAlbCliT:dFecAlb )
                   ::oDbf:dFecDoc    := ::oAlbCliT:dFecAlb
                   ::oDbf:cHorDoc    := SubStr( ::oAlbCliT:cTimCre, 1, 2 )
-                  ::oDbf:cMinDoc    := SubStr( ::oAlbCliT:cTimCre, 3, 2 )
+                  ::oDbf:cMinDoc    := SubStr( ::oAlbCliT:cTimCre, 4, 2 )
 
                   /*
                   AÃ±adimos un nuevo registro
@@ -1623,7 +1630,7 @@ METHOD AddFacturaCliente() CLASS TFastVentasArticulos
                   ::oDbf:nMesDoc    := Month( ::oFacCliT:dFecFac )
                   ::oDbf:dFecDoc    := ::oFacCliT:dFecFac
                   ::oDbf:cHorDoc    := SubStr( ::oFacCliT:cTimCre, 1, 2 )
-                  ::oDbf:cMinDoc    := SubStr( ::oFacCliT:cTimCre, 3, 2 )
+                  ::oDbf:cMinDoc    := SubStr( ::oFacCliT:cTimCre, 4, 2 )
 
                   /*
                   AÃ±adimos un nuevo registro
@@ -1773,7 +1780,7 @@ METHOD AddFacturaRectificativa() CLASS TFastVentasArticulos
                   ::oDbf:nMesDoc    := Month( ::oFacRecT:dFecFac )
                   ::oDbf:dFecDoc    := ::oFacRecT:dFecFac
                   ::oDbf:cHorDoc    := SubStr( ::oFacRecT:cTimCre, 1, 2 )
-                  ::oDbf:cMinDoc    := SubStr( ::oFacRecT:cTimCre, 3, 2 )
+                  ::oDbf:cMinDoc    := SubStr( ::oFacRecT:cTimCre, 4, 2 )
 
                   /*
                   AÃ±adimos un nuevo registro
@@ -1918,7 +1925,7 @@ METHOD AddTicket() CLASS TFastVentasArticulos
                   ::oDbf:nMesDoc    := Month( ::oTikCliT:dFecTik )
                   ::oDbf:dFecDoc    := ::oTikCliT:dFecTik
                   ::oDbf:cHorDoc    := SubStr( ::oTikCliT:cHorTik, 1, 2 )
-                  ::oDbf:cMinDoc    := SubStr( ::oTikCliT:cHorTik, 3, 2 )
+                  ::oDbf:cMinDoc    := SubStr( ::oTikCliT:cHorTik, 4, 2 )
 
                   /*
                   AÃ±adimos un nuevo registro
@@ -1989,7 +1996,7 @@ METHOD AddTicket() CLASS TFastVentasArticulos
                   ::oDbf:nMesDoc    := Month( ::oTikCliT:dFecTik )
                   ::oDbf:dFecDoc    := ::oTikCliT:dFecTik
                   ::oDbf:cHorDoc    := SubStr( ::oTikCliT:cHorTik, 1, 2 )
-                  ::oDbf:cMinDoc    := SubStr( ::oTikCliT:cHorTik, 3, 2 )
+                  ::oDbf:cMinDoc    := SubStr( ::oTikCliT:cHorTik, 4, 2 )
 
                   /*
                   AÃ±adimos un nuevo registro
@@ -2191,7 +2198,7 @@ METHOD AddPedidoProveedor() CLASS TFastVentasArticulos
                      ::oDbf:nMesDoc    := Month( ::oPedPrvT:dFecPed )
                      ::oDbf:dFecDoc    := ::oPedPrvT:dFecPed
                      ::oDbf:cHorDoc    := SubStr( ::oPedPrvT:cTimChg, 1, 2 )
-                     ::oDbf:cMinDoc    := SubStr( ::oPedPrvT:cTimChg, 3, 2 )
+                     ::oDbf:cMinDoc    := SubStr( ::oPedPrvT:cTimChg, 4, 2 )
 
                   /*
                   Añadimos un nuevo registro-----------------------------------
@@ -2344,7 +2351,7 @@ METHOD AddAlbaranProveedor( lFacturados ) CLASS TFastVentasArticulos
                   ::oDbf:nMesDoc    := Month( ::oAlbPrvT:dFecAlb )
                   ::oDbf:dFecDoc    := ::oAlbPrvT:dFecAlb
                   ::oDbf:cHorDoc    := SubStr( ::oAlbPrvT:cTimChg, 1, 2 )
-                  ::oDbf:cMinDoc    := SubStr( ::oAlbPrvT:cTimChg, 3, 2 )
+                  ::oDbf:cMinDoc    := SubStr( ::oAlbPrvT:cTimChg, 4, 2 )
 
                   /*
                   AÃ±adimos un nuevo registro
@@ -2490,7 +2497,7 @@ METHOD AddFacturaProveedor( cCodigoArticulo ) CLASS TFastVentasArticulos
                   ::oDbf:nMesDoc    := Month( ::oFacPrvT:dFecFac )
                   ::oDbf:dFecDoc    := ::oFacPrvT:dFecFac
                   ::oDbf:cHorDoc    := SubStr( ::oFacPrvT:cTimChg, 1, 2 )
-                  ::oDbf:cMinDoc    := SubStr( ::oFacPrvT:cTimChg, 3, 2 )
+                  ::oDbf:cMinDoc    := SubStr( ::oFacPrvT:cTimChg, 4, 2 )
 
                   /*
                   AÃ±adimos un nuevo registro
@@ -2629,7 +2636,7 @@ METHOD AddRectificativaProveedor( cCodigoArticulo ) CLASS TFastVentasArticulos
                   ::oDbf:nMesDoc    := Month( ::oRctPrvT:dFecFac )
                   ::oDbf:dFecDoc    := ::oRctPrvT:dFecFac
                   ::oDbf:cHorDoc    := SubStr( ::oRctPrvT:cTimChg, 1, 2 )
-                  ::oDbf:cMinDoc    := SubStr( ::oRctPrvT:cTimChg, 3, 2 )
+                  ::oDbf:cMinDoc    := SubStr( ::oRctPrvT:cTimChg, 4, 2 )
 
                   /*
                   AÃ±adimos un nuevo registro

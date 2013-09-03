@@ -372,17 +372,17 @@ FUNCTION CfgDocs( oMenuItem, oWnd )
 
    DEFINE SHELL oWndBrw FROM 2, 10 TO 18, 70;
       XBROWSE ;
-		TITLE 	"Documentos" ;
+	TITLE 	"Documentos" ;
       PROMPT   "Código" ,;
                "Documento" ;
       MRU      "Document_edit_16" ;
       BITMAP   clrTopHerramientas ;
-		ALIAS		( dbfDoc ) ;
-		APPEND	( WinAppRec( oWndBrw:oBrw, bEdit0, dbfDoc, , {|oGet| NotValid( oGet, dbfDoc ) } ) );
-      EDIT     ( if( ( dbfDoc )->lVisual, VisualEdtDocs( dbfDoc ), msgInfo( "No se puede modificar el formato." + CRLF + "Tiene que crear un nuevo formato de forma visual.", "Formato obsoleto" ) ) ) ;
+	ALIAS		( dbfDoc ) ;
+	APPEND     ( WinAppRec( oWndBrw:oBrw, bEdit0, dbfDoc, , {|oGet| NotValid( oGet, dbfDoc ) } ) );
+      EDIT     ( VisualEdtDocs( dbfDoc ) ) ;
       DELETE   ( WinDelRec( oWndBrw:oBrw, dbfDoc, {|| DocDelRec() } ) );
       LEVEL    nLevel ;
-		OF 		oWnd
+	OF 		oWnd
 
       with object ( oWndBrw:AddXCol() )
          :cHeader          := "Código"
@@ -3925,10 +3925,10 @@ Return nil*/
 		REDEFINE BUTTON ;
          ID       501 ;
          OF       oDlg ;
-         ACTION   ( if( ( dbfDoc )->lVisual, VisualEdtDocs( dbfDoc ), msgInfo( "No se puede modificar el formato." + CRLF + "Tiene que crear un nuevo formato de forma visual.", "Formato obsoleto" ) ) )
+         ACTION   ( VisualEdtDocs( dbfDoc ) ) 
 
       oDlg:AddFastKey( VK_F2,       {|| WinAppRec( oBrw, bEdit0, dbfDoc, cTipDoc ) } )
-      oDlg:AddFastKey( VK_F3,       {|| ( if( ( dbfDoc )->lVisual, VisualEdtDocs( dbfDoc ), msgInfo( "No se puede modificar el formato." + CRLF + "Tiene que crear un nuevo formato de forma visual.", "Formato obsoleto" ) ) ) } )
+      oDlg:AddFastKey( VK_F3,       {|| VisualEdtDocs( dbfDoc ) } )
 
       oDlg:AddFastKey( VK_F5,       {|| oDlg:end( IDOK ) } )
       oDlg:AddFastKey( VK_RETURN,   {|| oDlg:end( IDOK ) } )
@@ -4109,7 +4109,19 @@ Return ( aItm )
 Static Function VisualEdtDocs( dbfDoc )
 
    local oFr
-   local cTipo          := ( dbfDoc )->cTipo
+   local cTipo          
+
+   if lUsrMaster()
+      msgInfo( "Solo pueden modificar los formatos el ususario Administrador" )
+      Return nil
+   end if
+
+   if !( dbfDoc )->lVisual
+      msgInfo( "No se puede modificar el formato, tiene que crear un nuevo formato de forma visual.", "Formato obsoleto" )
+      Return nil
+   end if
+
+   cTipo                := ( dbfDoc )->cTipo
 
    oFr                  := frReportManager():New()
 
@@ -4351,13 +4363,7 @@ FUNCTION EdtDocumento( cCodDoc )
    if OpenFiles()
 
       if dbSeekInOrd( cCodDoc, "Codigo", dbfDoc )
-
-         if ( dbfDoc )->lVisual
-            VisualEdtDocs( dbfDoc )
-         else
-            msgInfo( "No se puede modificar el formato " + cCodDoc + CRLF + "Tiene que crear un nuevo formato de forma visual.", "Formato obsoleto" )
-         end if
-
+         VisualEdtDocs( dbfDoc )
       else
          MsgStop( "No se encuentra formato de etiqueta" )
       end if

@@ -359,9 +359,11 @@ METHOD aNombreOrdenComanda()
 
    local aNombreOrdenComanda  := {}
 
-   CursorWait()
+   if Empty( ::oDbf ) .or. !( ::oDbf:Used() )
+      Return ( aNombreOrdenComanda )
+   end if 
 
-   ::cPath                    := cPatArt()
+   CursorWait()
 
    ::oDbf:GetStatus()
    ::oDbf:GoTop()

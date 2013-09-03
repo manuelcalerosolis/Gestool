@@ -2252,7 +2252,7 @@ STATIC FUNCTION EdtCnf( aTmp, aGet, dbfEmp, oBrw, nSelFolder, bValid, nMode )
             WHEN     ( aTmp[_NTIPCON] == 2 ) ;
             OF       oFld:aDialogs[6]
 
-      REDEFINE GET aTmp[_CPSWFTP] ;
+      REDEFINE GET aTmp[ _CPSWFTP ] ;
             ID       180;
             WHEN     ( aTmp[_NTIPCON] == 2 ) ;
             OF       oFld:aDialogs[6]
@@ -2263,6 +2263,16 @@ STATIC FUNCTION EdtCnf( aTmp, aGet, dbfEmp, oBrw, nSelFolder, bValid, nMode )
 
       REDEFINE CHECKBOX aGet[ _LENVENT ] VAR aTmp[ _LENVENT ] ;
             ID       190 ;
+            OF       oFld:aDialogs[6]
+
+      REDEFINE CHECKBOX aTmp[ _LMAILTURNO ] ;
+            ID       300;
+            WHEN     ( lUsrMaster() ) ;
+            OF       oFld:aDialogs[6]
+
+      REDEFINE GET aTmp[ _CMAILTURNO ] ;
+            ID       310 ;
+            WHEN     ( lUsrMaster() .and. aTmp[ _LMAILTURNO ] ) ;
             OF       oFld:aDialogs[6]
 
       /*
@@ -7112,6 +7122,8 @@ FUNCTION aItmEmp()
    aAdd( aDbf, {"lAlbTct",    "L",  1, 0, "Lógico para realizar albaranes desde táctil",           "", "", "aEmp()", .f. } )
    aAdd( aDbf, {"lFacTct",    "L",  1, 0, "Lógico para realizar facturas desde táctil",            "", "", "aEmp()", .f. } )
    aAdd( aDbf, {"cPrefixTbl", "C", 10, 0, "Prefijo para tablas de prestashop",                     "", "", "aEmp()", "ps_" } )
+   aAdd( aDbf, {"lMailTurno", "L",  1, 0, "Lógico para enviar mail de cierre de turno",            "", "", "aEmp()", .f. } )
+   aAdd( aDbf, {"cMailTurno", "C",200, 0, "Dirección de correo electónico para cierre de turno",   "", "", "aEmp()", "" } )
 
 Return ( aDbf  )
 

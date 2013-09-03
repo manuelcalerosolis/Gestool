@@ -134,7 +134,6 @@ memvar nTotSaldoEfectivo
 memvar nTotSaldoNoEfectivo
 memvar nTotSaldoTarjeta
 
-
 //----------------------------------------------------------------------------//
 //----------------------------------------------------------------------------//
 //----------------------------------------------------------------------------//
@@ -394,11 +393,12 @@ CLASS TTurno FROM TMasDet
 
    DATA aCajaSelect                                INIT {}
 
+   DATA lArqueoCiego                               INIT .f.
+
    Method New( cPath, oWndParent, oMenuItem )
    Method Initiate( cText, oSender )               CONSTRUCTOR
    Method Build( cPath, oWndParent, oMenuItem )    CONSTRUCTOR
 
-   Method lArqueoCiego()                           INLINE ( oUser():lArqueoCiego() )
 
    Method OpenFiles( lExclusive )
    Method OpenService( lExclusive )
@@ -429,7 +429,9 @@ CLASS TTurno FROM TMasDet
 
    Method cNombreUser()
 
+   METHOD SetCurrentTurno()   INLINE   ( ::cCurTurno  := ::oDbf:cNumTur + ::oDbf:cSufTur )
    Method GetCurrentTurno()
+   Method GoCurrentTurno()
 
    Method cValidTurno()
 
@@ -526,7 +528,6 @@ CLASS TTurno FROM TMasDet
    Method IncNumberToSend()   INLINE   WritePProString( "Numero", ::cText, cValToChar( ++::nNumberSend ), ::cIniFile )
    Method lContaTiket()       VIRTUAL
 
-   METHOD SetCurrentTurno()   INLINE   ( ::cCurTurno  := ::oDbf:cNumTur + ::oDbf:cSufTur )
 
    Method Process()
 
@@ -939,6 +940,8 @@ METHOD New( cPath, oWndParent, oMenuItem )
 
    ::lDefaultPrinter    := .t.
    ::cPrinter           := PrnGetName()
+
+   ::lArqueoCiego       := oUser():lArqueoCiego() 
 
 RETURN ( Self )
 
@@ -1819,7 +1822,7 @@ RETURN ( lOpenCaja )
 Cierra el turno
 */
 
-METHOD lCloseCajasEleccionada( oDlg )
+METHOD lCloseCajaSeleccionada( oDlg )
 
    local oInternet
    local nTotalCajas    := 0
@@ -3216,7 +3219,10 @@ METHOD lArqueoTurno( lZoom, lParcial ) CLASS TTurno
 
    else
 
-      ::GetCurrentTurno()
+      if !::GoCurrentTurno()
+         msgStop( "No puedo posicionarme en la sesión actual.")
+         return .f.
+      end if
 
       if Empty( ::dFecTur )
          ::dFecTur      := GetSysDate()
@@ -3248,8 +3254,26 @@ METHOD lArqueoTurno( lZoom, lParcial ) CLASS TTurno
    oBlock            := ErrorBlock( { | oError | ApoloBreak( oError ) } )
    BEGIN SEQUENCE
 
+   ? ::oDbf:cNumTur + ::oDbf:cSufTur
+   ? ::oDbf:dOpnTur
+   ? ::oDbf:cHorOpn
+   ? ::oDbf:cCajTur
+   ? ::oDbf:nStaTur
+
+
+
+
+
+
+
+
+
+
+
+
+
    ::cComentario     := ::oDbf:mComTur
-   ::lCerrado        := ::oDbf:nStaTur == cajCerrrada
+   ::lCerrado        := ( ::oDbf:nStaTur == cajCerrrada )
 
    ::LoadCaja( ::cCurTurno )
 
@@ -3274,13 +3298,17 @@ METHOD lArqueoTurno( lZoom, lParcial ) CLASS TTurno
    Valores de la impresión-----------------------------------------------------
    */
 
-   if !::lArqueoParcial
-      ::cWinArq         := cPrinterArqueo( ::oDbfCaj:cCodCaj, ::oCaja:cAlias )
-      ::cPrnArq         := cFormatoArqueoEnCaja( ::oDbfCaj:cCodCaj, ::oCaja:cAlias )
-   else
-      ::cWinArq         := cPrinterArqueoParcial( ::oDbfCaj:cCodCaj, ::oCaja:cAlias )
-      ::cPrnArq         := cFormatoArqueoParcialEnCaja( ::oDbfCaj:cCodCaj, ::oCaja:cAlias )
-   end if
+   do case
+      case ::lArqueoCiego
+         ::cWinArq      := cPrinterArqueoCiego( ::oDbfCaj:cCodCaj, ::oCaja:cAlias )
+         ::cPrnArq      := cFormatoArqueoCiegoEnCaja( ::oDbfCaj:cCodCaj, ::oCaja:cAlias )
+      case !::lArqueoCiego .and. !::lArqueoParcial
+         ::cWinArq      := cPrinterArqueo( ::oDbfCaj:cCodCaj, ::oCaja:cAlias )
+         ::cPrnArq      := cFormatoArqueoEnCaja( ::oDbfCaj:cCodCaj, ::oCaja:cAlias )
+      case !::lArqueoCiego .and. ::lArqueoParcial
+         ::cWinArq      := cPrinterArqueoParcial( ::oDbfCaj:cCodCaj, ::oCaja:cAlias )
+         ::cPrnArq      := cFormatoArqueoParcialEnCaja( ::oDbfCaj:cCodCaj, ::oCaja:cAlias )
+   end case 
 
    // Opciones de empresa------------------------------------------------------
 
@@ -3291,8 +3319,8 @@ METHOD lArqueoTurno( lZoom, lParcial ) CLASS TTurno
 
    ::lImprimirEnvio     := ::oIniArqueo:Get( "Arqueo", "ImprimirEnvio",    .t.,           ::lImprimirEnvio )
 
-   ::lEnviarMail        := ::oIniArqueo:Get( "Arqueo", "EnviarMail",       .t.,           ::lEnviarMail )
-   ::cEnviarMail        := ::oIniArqueo:Get( "Arqueo", "Mail",             "",            ::cEnviarMail )
+   ::lEnviarMail        := uFieldEmpresa( "lMailTurno" )
+   ::cEnviarMail        := uFieldEmpresa( "cMailTurno" )
    ::cEnviarMail        := Padr( ::cEnviarMail, 200 )
 
    ::oMoneyEfectivo     := TVirtualMoney():New()
@@ -3314,14 +3342,14 @@ METHOD lArqueoTurno( lZoom, lParcial ) CLASS TTurno
          RESOURCE       "ARQUEO_TCT";
          TITLE          "Arqueo " + if( ::lArqueoParcial, "parcial ", " " ) + "de caja, sesión : " + Trans( ::cCurTurno, "@R ######" )
 
-         REDEFINE PAGES    oFld ;
-            ID             200 ;
-            FONT           oFnt ;
-            OF             oDlg ;
-            DIALOGS        "ARQUEO_1_TCT",;
-                           "ARQUEO_2_TCT",;
-                           "ARQUEO_3_TCT",;
-                           "ARQUEO_4_TCT"
+         REDEFINE PAGES oFld ;
+            ID          200 ;
+            FONT        oFnt ;
+            OF          oDlg ;
+            DIALOGS     "ARQUEO_1_TCT",;
+                        "ARQUEO_2_TCT",;
+                        "ARQUEO_3_TCT",;
+                        "ARQUEO_4_TCT"
 
    else
 
@@ -3338,7 +3366,6 @@ METHOD lArqueoTurno( lZoom, lParcial ) CLASS TTurno
                         "ARQUEO_4"
 
    end if
-
 
       // Primera caja de dialogo_______________________________________________
 
@@ -3364,7 +3391,7 @@ METHOD lArqueoTurno( lZoom, lParcial ) CLASS TTurno
          WHEN     .f. ;
          OF       oFld:aDialogs[1]
 
-      if !::lArqueoTactil()  .and. ::lArqueoParcial
+      if !::lArqueoTactil() .and. ::lArqueoParcial
 
       REDEFINE BITMAP oBmpGeneral ;
          ID       990 ;
@@ -3389,10 +3416,6 @@ METHOD lArqueoTurno( lZoom, lParcial ) CLASS TTurno
          RESOURCE "clock_refresh_48_alpha" ;
          TRANSPARENT ;
          OF       oFld:aDialogs[4]
-
-      end if
-
-      if !::lArqueoTactil()  .and. !::lArqueoParcial
 
       REDEFINE BITMAP oBmpGeneral ;
          ID       990 ;
@@ -3722,19 +3745,19 @@ METHOD lArqueoTurno( lZoom, lParcial ) CLASS TTurno
 
       // Formas de pago-----------------------------------------------------------
 
-      REDEFINE SAY  ::oSayTotalEfectivo ;
+      REDEFINE SAY ::oSayTotalEfectivo ;
          ID       401 ;
          OF       oFld:aDialogs[3]
 
-      REDEFINE SAY   ::oSayTotalTarjeta ;
+      REDEFINE SAY ::oSayTotalTarjeta ;
          ID       402 ;
          OF       oFld:aDialogs[3]  
             
-      REDEFINE SAY   ::oSayTotalNoEfectivo ;
+      REDEFINE SAY ::oSayTotalNoEfectivo ;
          ID       403 ;
          OF       oFld:aDialogs[3]     
 
-      REDEFINE SAY   ::oSayTotalCobros ;
+      REDEFINE SAY ::oSayTotalCobros ;
          ID      404 ;
          OF      oFld:aDialogs[3] 
             
@@ -3800,18 +3823,18 @@ METHOD lArqueoTurno( lZoom, lParcial ) CLASS TTurno
 
       end if
 
-
       if ::lArqueoTactil()
 
       REDEFINE BUTTONBMP ;
          ID       220 ;
          OF       oFld:aDialogs[ 3 ] ;
+         WHEN     !::lCerrado ;
          BITMAP   "Money2_32" ;
          ACTION   ( ::oMoneyEfectivo:Dialog( ::oImporteEfectivo ), ::RefreshTurno() )
 
       else
 
-      TBtnBmp():ReDefine( 220, "Money2_16",,,,,{|| ::oMoneyEfectivo:Dialog( ::oImporteEfectivo ), ::RefreshTurno() }, oFld:aDialogs[ 3 ], .f., , .f., "Conteo de efectivo" )
+         TBtnBmp():ReDefine( 220, "Money2_16",,,,,{|| ::oMoneyEfectivo:Dialog( ::oImporteEfectivo ), ::RefreshTurno() }, oFld:aDialogs[ 3 ], .f., {|| !::lCerrado }, .f., "Conteo de efectivo" )
 
       end if
 
@@ -3830,12 +3853,13 @@ METHOD lArqueoTurno( lZoom, lParcial ) CLASS TTurno
       REDEFINE BUTTONBMP ;
          ID       230 ;
          OF       oFld:aDialogs[ 3 ] ;
+         WHEN     !::lCerrado ;
          BITMAP   "Calculator_32" ;
          ACTION   ( Calculadora( 0, ::oImporteTarjeta ), ::RefreshTurno() )
 
       else
 
-      TBtnBmp():ReDefine( 230, "Calculator_16" ,,,,, {|| Calculadora( 0, ::oImporteTarjeta ), ::RefreshTurno() }, oFld:aDialogs[ 3 ], .f., , .f., "Calculo de tarjetas" )
+         TBtnBmp():ReDefine( 230, "Calculator_16" ,,,,, {|| Calculadora( 0, ::oImporteTarjeta ), ::RefreshTurno() }, oFld:aDialogs[ 3 ], .f., {|| !::lCerrado }, .f., "Calculo de tarjetas" )
 
       end if
 
@@ -3846,12 +3870,13 @@ METHOD lArqueoTurno( lZoom, lParcial ) CLASS TTurno
       REDEFINE BUTTONBMP ;
          ID       235 ;
          OF       oFld:aDialogs[ 3 ] ;
+         WHEN     !::lCerrado ;
          BITMAP   "Money2_32" ;
          ACTION   ( ::oMoneyRetirado:Dialog( ::oImporteRetirado ), ::RefreshTurno() )
 
       else
 
-         TBtnBmp():ReDefine( 235, "Money2_16",,,,,{|| ::oMoneyRetirado:Dialog( ::oImporteRetirado ), ::RefreshTurno() }, oFld:aDialogs[ 3 ], .f., , .f., "Conteo de retirado" )
+         TBtnBmp():ReDefine( 235, "Money2_16",,,,,{|| ::oMoneyRetirado:Dialog( ::oImporteRetirado ), ::RefreshTurno() }, oFld:aDialogs[ 3 ], .f., {|| !::lCerrado }, .f., "Conteo de retirado" )
 
       end if
 
@@ -4069,8 +4094,6 @@ METHOD lArqueoTurno( lZoom, lParcial ) CLASS TTurno
       ::oIniArqueo:Set( "Arqueo", "ImprimirArqueo",   ::lNoImprimirArqueo  )
       ::oIniArqueo:Set( "Arqueo", "SalidaArqueo",     ::cCmbReport         )
       ::oIniArqueo:Set( "Arqueo", "ImprimirEnvio",    ::lImprimirEnvio     )
-      ::oIniArqueo:Set( "Arqueo", "EnviarMail",       ::lEnviarMail        )
-      ::oIniArqueo:Set( "Arqueo", "Mail",             ::cEnviarMail        )
 
       /*
       Comprueba si hay sesiones para trabajar----------------------------------
@@ -4140,7 +4163,7 @@ Return ( oDlg:nResult == IDOK )
 
 Method InitArqueoTurno()
 
-   if ::lArqueoCiego()    
+   if ::lArqueoCiego    
 
       ::oBrwTotales:Hide()
 
@@ -4891,7 +4914,7 @@ METHOD lCalTurno( cTurno, cCaja, oDlg )
       */
 
       if Empty( ::oTotales )
-         ::oTotales                 := TTotalTurno():New()
+         ::oTotales              := TTotalTurno():New( Self )
       end if
       ::oTotales:Initiate()
 
@@ -4899,8 +4922,8 @@ METHOD lCalTurno( cTurno, cCaja, oDlg )
       Tickets abiertos-----------------------------------------------------------
       */
 
-      ::lTikAbiertos                := .f.
-      ::cTikAbiertos                := ""
+      ::lTikAbiertos             := .f.
+      ::cTikAbiertos             := ""
 
       /*
       Calculo de contadores------------------------------------------------------
@@ -5059,15 +5082,15 @@ METHOD lCalTurno( cTurno, cCaja, oDlg )
 
             if len( aStream ) >= 15
 
-               aStream[1]           := Val( aStream[1] )
-               aStream[2]           := Val( aStream[2] )
-               aStream[3]           := Val( aStream[3] )
-               aStream[4]           := Val( aStream[4] )
-               aStream[5]           := Val( aStream[5] )
-               aStream[6]           := Val( aStream[6] )
-               aStream[7]           := Val( aStream[7] )
-               aStream[8]           := Val( aStream[8] )
-               aStream[9]           := Val( aStream[9] )
+               aStream[ 1]          := Val( aStream[ 1] )
+               aStream[ 2]          := Val( aStream[ 2] )
+               aStream[ 3]          := Val( aStream[ 3] )
+               aStream[ 4]          := Val( aStream[ 4] )
+               aStream[ 5]          := Val( aStream[ 5] )
+               aStream[ 6]          := Val( aStream[ 6] )
+               aStream[ 7]          := Val( aStream[ 7] )
+               aStream[ 8]          := Val( aStream[ 8] )
+               aStream[ 9]          := Val( aStream[ 9] )
                aStream[10]          := Val( aStream[10] )
                aStream[11]          := Val( aStream[11] )
                aStream[12]          := Val( aStream[12] )
@@ -5215,14 +5238,14 @@ METHOD TotContadores( cTurno )
 
 return ( ::oTotales:nContadores )
 
-//--------------------------------------------------------------------------//
+//---------------------------------------------------------------------------//
 
 METHOD TotVenta( cTurno, cCaja )
 
    DEFAULT cTurno       := ::cCurTurno
 
    /*
-   Cerrar por turnos__________________________________________________________________
+   Cerrar por turnos-----------------------------------------------------------
    */
 
    if ::oMeter != nil
@@ -6231,7 +6254,7 @@ METHOD DlgImprimir( nDevice, lTactil )
 
    DEFAULT lTactil   := .f.
 
-   if ::lArqueoCiego()
+   if ::lArqueoCiego
       MsgStop( "No tiene privilegios para imprimir el arqueo." )
       Return ( Self )
    end if 
@@ -8471,7 +8494,7 @@ METHOD VariableReport( oFastReport )
    oFastReport:AddVariable(     "Cajas sesión",     "Total caja objetivo",                           "GetHbVar('nTotCajaObjetivo')"      )
    oFastReport:AddVariable(     "Cajas sesión",     "Total caja",                                    "GetHbVar('nTotCaja')"              )
 
-   oFastReport:AddVariable(     "Numeros sesión",   "Número de albaranes en sesión",                  "GetHbVar('nTotNumeroAlbaranes')"   )
+   oFastReport:AddVariable(     "Numeros sesión",   "Número de albaranes en sesión",                 "GetHbVar('nTotNumeroAlbaranes')"   )
    oFastReport:AddVariable(     "Numeros sesión",   "Número de facturas en sesión",                  "GetHbVar('nTotNumeroFacturas')"    )
    oFastReport:AddVariable(     "Numeros sesión",   "Número de tickets en sesión",                   "GetHbVar('nTotNumeroTikets')"      )
    oFastReport:AddVariable(     "Numeros sesión",   "Número de vales en sesión",                     "GetHbVar('nTotNumeroVales')"       )
@@ -11512,7 +11535,6 @@ METHOD GetLastOpen()
    CursorWait()
 
    ::oDbf:GetStatus()
-
    ::oDbf:OrdSetFocus( "nStaTur" )
 
    ::oDbf:GoTop()
@@ -11562,6 +11584,17 @@ RETURN ( ::cCurTurno )
 
 //---------------------------------------------------------------------------//
 
+METHOD GoCurrentTurno( lDelega )
+
+   DEFAULT  lDelega  := .t.
+
+   ::GetCurrentTurno( lDelega )
+
+RETURN ( ::oDbf:SeekInOrd( ::cCurTurno, "cNumTur" ) )
+
+//---------------------------------------------------------------------------//
+
+
 METHOD MailArqueo( cCurrentTruno )
 
    local cMensajeMail   := ""
@@ -11574,9 +11607,9 @@ METHOD MailArqueo( cCurrentTruno )
 
    ::PrintArqueo( cCurrentTruno, ::oDbfCaj:cCodCaj, IS_HTML )
 
-   cMensajeMail         := "Caja [" + ::oDbfCaj:cCodCaj + Space( 1 ) + Rtrim( oRetFld( ::oDbfCaj:cCodCaj, ::oCaja ) ) + "],"
-   cMensajeMail         += " cerrada a las " + Left( Time(), 5 )
-   cMensajeMail         += " del día " + Dtoc( Date() ) + "." + CRLF
+   cMensajeMail         := "Caja [" + ::oDbfCaj:cCodCaj + Space( 1 ) + Rtrim( oRetFld( ::oDbfCaj:cCodCaj, ::oCaja ) ) + "], "
+   cMensajeMail         += "cerrada a las " + Left( Time(), 5 ) + Space( 1 )
+   cMensajeMail         += "del día " + Dtoc( Date() ) + "." + CRLF
 
    if ::oTotales:nTotCompras( ::oDbfCaj:cCodCaj ) != 0
       cMensajeMail      += "Compras en albaranes "                + Alltrim( Str( ::oTotales:nTotAlbPrvCompras( ::oDbfCaj:cCodCaj ) ) )   + cSimDiv( cDivEmp(), ::oDbfDiv ) + "." + CRLF

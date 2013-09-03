@@ -1309,7 +1309,7 @@ STATIC FUNCTION EdtRec( aTmp, aGet, dbfPedPrvT, oBrw, cCodPrv, cCodArt, nMode )
 
    DEFINE DIALOG oDlg RESOURCE "PEDPRV" TITLE LblTitle( nMode ) + "pedidos a proveedores"
 
-		REDEFINE FOLDER oFld ID 400 OF oDlg ;
+	REDEFINE FOLDER oFld ID 400 OF oDlg ;
          PROMPT   "&Pedido",  "Da&tos",   "&Incidencias",   "D&ocumentos" ;
          DIALOGS  "PEDPRV_1", "PEDPRV_2", "PEDCLI_3",       "PEDCLI_4"
 
@@ -1329,10 +1329,10 @@ STATIC FUNCTION EdtRec( aTmp, aGet, dbfPedPrvT, oBrw, cCodPrv, cCodArt, nMode )
       // Datos del proveedor_________________________________________________
 
       REDEFINE BITMAP oBmpGeneral ;
-        ID       990 ;
-        RESOURCE "pedidos_proveedores_48_alpha" ;
-        TRANSPARENT ;
-        OF       oFld:aDialogs[1]
+            ID          990 ;
+            RESOURCE    "Pedidos_proveedores_48_alpha" ;
+            TRANSPARENT ;
+            OF          oFld:aDialogs[1]
 
       REDEFINE BITMAP oBmpGeneral ;
         ID       990 ;
@@ -1508,7 +1508,6 @@ STATIC FUNCTION EdtRec( aTmp, aGet, dbfPedPrvT, oBrw, cCodPrv, cCodArt, nMode )
 
          with object ( oBrwLin:AddCol() )
             :cHeader          := "Número"
-            :bStrData         := {|| "" }
             :bEditValue       := {|| if( ( dbfTmpLin )->lKitChl, "", Trans( ( dbfTmpLin )->nNumLin, "9999" ) ) }
             :nWidth           := 65
             :nDataStrAlign    := 1
