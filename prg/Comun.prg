@@ -763,7 +763,7 @@ Function aEmpresa( cEmp, dbfEmp, dbfDlg, dbfUser, lRptGal )
       */
 
       if !( dbfDlg )->( dbSeek( cEmp + cDlg ) )
-         oUser():cDelegacion( "00" )
+         oUser():cDelegacion()
       end if 
 
       /*

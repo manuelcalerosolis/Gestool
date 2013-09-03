@@ -372,6 +372,8 @@ Static Function CreateMainWindow( oIconApp )
       ON INIT     ( lStartCheck() );
       VALID       ( EndApp() ) // , FinishAplication(), .f. )
 
+   SysRefresh()
+
 Return nil
 
 //---------------------------------------------------------------------------//

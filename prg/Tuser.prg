@@ -106,7 +106,7 @@ CLASS TUser
 
    //------------------------------------------------------------------------//
 
-   Data     _Delegacion                INIT Space( 2 )
+   Data     _Delegacion                INIT space( 2 )
  
    INLINE METHOD cDelegacion( cNewVal )
 
@@ -118,15 +118,19 @@ CLASS TUser
 
       else
 
-         if Empty( ::_Delegacion ) .and. !Empty( uFieldEmpresa( "cSufDoc" ) )
+         ::_Delegacion  := uFieldEmpresa( "cSufDoc" )
 
-            ::_Delegacion  := uFieldEmpresa( "cSufDoc" )
+         cDlgUsr( uFieldEmpresa( "cSufDoc" ) )
 
-            cDlgUsr( uFieldEmpresa( "cSufDoc" ) )
+         if Empty( ::_Delegacion )
 
+            ::_Delegacion  := "00"
+
+            cDlgUsr( "00" )
+               
          end if   
 
-      end if   
+      end if
 
       RETURN ::_Delegacion
 
