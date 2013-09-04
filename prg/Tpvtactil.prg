@@ -775,6 +775,10 @@ CLASS TpvTactil
    METHOD nTotalLineaUno( uTmpL, nVdv )
    METHOD nTotalLineaDos( uTmpL, nVdv )
 
+   METHOD nTotalDescuento( uTmpL, nVdv )
+   METHOD nTotalDescuentoUno( uTmpL, nVdv )
+   METHOD nTotalDescuentoDos( uTmpL, nVdv )
+
    METHOD nTotalImpuestosEspeciales( uTmpL, nVdv )
 
    METHOD nTotalCobrosTemporales()
@@ -5556,8 +5560,7 @@ METHOD sTotalTiket() CLASS TpvTactil
    local nComensales       := 0
    local nDtoEsp           := 0
    local nDpp              := 0
-   local nDescuentoEsp     := 0
-   local nDescuentoPp      := 0
+   local nDescuento        := 0
 
    ::sTotal                := sTotal()
 
@@ -5576,22 +5579,9 @@ METHOD sTotalTiket() CLASS TpvTactil
       if ::lLineaValida( ::oTemporalLinea )
 
          nTotLin           := ::nTotalLinea( ::oTemporalLinea )
-
-         if nDtoEsp != 0
-            nDescuentoEsp  := ( nTotLin * nDtoEsp ) / 100
-         else
-            nDescuentoEsp  := 0
-         end if
-
-         if nDpp != 0
-            nDescuentoPp   := ( nTotLin * nDpp ) / 100
-         else
-            nDescuentoPp   := 0
-         end if
+         nDescuento        := ::nTotalDescuento( ::oTemporalLinea )
 
          nBasLin           := nTotLin
-         nBasLin           -= nDescuentoEsp
-         nBasLin           -= nDescuentoPp
 
          nIvmLin           := ::nTotalImpuestosEspeciales( ::oTemporalLinea )
 
@@ -5629,15 +5619,14 @@ METHOD sTotalTiket() CLASS TpvTactil
          end case
 
          ::sTotal:nTotalDocumento                        += nTotLin
-         ::sTotal:nTotalDescuentoGeneral                 += nDescuentoEsp
-         ::sTotal:nTotalDescuentoProntoPago              += nDescuentoPp
+         ::sTotal:nTotalDescuentoGeneral                 += nDescuento
 
          if !Empty( ::oStock )
             ::sTotal:nTotalCosto                         += ::oStock:nCostoMedio( ::oTemporalLinea:cCbaTil, ::oTemporalLinea:cAlmLin, ::oTemporalLinea:cCodPr1, ::oTemporalLinea:cValPr1, ::oTemporalLinea:cCodPr2, ::oTemporalLinea:cValPr2 ) * ::nUnidadesLinea( ::oTemporalLinea )
          end if
 
          if ::oTemporalLinea:lInPromo
-            ::sTotal:nPromocion                          += nTotLin - nDescuentoEsp - nDescuentoPp
+            ::sTotal:nPromocion                          += nTotLin - nDescuento
          end if
 
       end if
@@ -5645,13 +5634,6 @@ METHOD sTotalTiket() CLASS TpvTactil
       ::oTemporalLinea:Skip()
 
    end while
-
-   /*
-   Quitamos los descuentos al total--------------------------------------------
-   */
-
-   ::sTotal:nTotalDocumento                              -= ::sTotal:nTotalDescuentoGeneral
-   ::sTotal:nTotalDocumento                              -= ::sTotal:nTotalDescuentoProntoPago
 
    /*
    Total por persona-----------------------------------------------------------
@@ -5775,6 +5757,7 @@ METHOD nTotalLineaUno( uTmpL, nVdv ) CLASS TpvTactil
       end if
 
       nCalculo       *= ::nUnidadesLinea( uTmpL )           // Unidades
+
    end if
 
    if nVdv != 0
@@ -5793,12 +5776,68 @@ METHOD nTotalLineaDos( uTmpL, nVdv ) CLASS TpvTactil
    DEFAULT nVdv      := 0
 
    if !uTmpL:lFreTil
+
       nCalculo       := Round( uTmpL:nPcmTil, ::nDecimalesImporte )   // Precio
 
       if uTmpL:nDtoLin != 0
          nCalculo    -= uTmpL:nDtoLin * nCalculo / 100      // Dto porcentual
       end if
 
+      nCalculo       *= ::nUnidadesLinea( uTmpL )           // Unidades
+   
+   end if
+
+   if nVdv != 0
+      nCalculo       := nCalculo / nVdv
+   end if
+
+RETURN ( Round( nCalculo, ::nDecimalesTotal ) )
+
+//---------------------------------------------------------------------------//
+
+METHOD nTotalDescuento( uTmpL, lPicture ) CLASS TpvTactil
+
+   local nTotalDescuento
+
+   DEFAULT uTmpL     := ::oTiketLinea
+   DEFAULT lPicture  := .f.
+
+   nTotalDescuento   := ::nTotalDescuentoUno( uTmpL )
+   nTotalDescuento   += ::nTotalDescuentoDos( uTmpL )
+
+RETURN ( if( lPicture, Trans( nTotalDescuento, ::cPictureTotal ), nTotalDescuento ) )
+
+//---------------------------------------------------------------------------//
+
+METHOD nTotalDescuentoUno( uTmpL, nVdv ) CLASS TpvTactil
+
+   local nCalculo    := 0
+
+   DEFAULT uTmpL     := ::oTemporalLinea
+   DEFAULT nVdv      := 0
+
+   if !uTmpL:lFreTil .and. uTmpL:nDtoLin != 0
+      nCalculo       := uTmpL:nDtoLin * Round( uTmpL:nPvpTil, ::nDecimalesImporte ) / 100      // Dto porcentual
+      nCalculo       *= ::nUnidadesLinea( uTmpL )           // Unidades
+   end if
+
+   if nVdv != 0
+      nCalculo       := nCalculo / nVdv
+   end if
+
+RETURN ( Round( nCalculo, ::nDecimalesTotal ) )
+
+//---------------------------------------------------------------------------//
+
+METHOD nTotalDescuentoDos( uTmpL, nVdv ) CLASS TpvTactil
+
+   local nCalculo    := 0
+
+   DEFAULT uTmpL     := ::oTemporalLinea
+   DEFAULT nVdv      := 0
+
+   if !uTmpL:lFreTil .and. uTmpL:nDtoLin != 0
+      nCalculo       := uTmpL:nDtoLin * Round( uTmpL:nPcmTil, ::nDecimalesImporte ) / 100      // Dto porcentual
       nCalculo       *= ::nUnidadesLinea( uTmpL )           // Unidades
    end if
 
