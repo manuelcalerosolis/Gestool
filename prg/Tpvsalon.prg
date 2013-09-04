@@ -784,7 +784,7 @@ METHOD LoadGenericosPendientes( lPuntosPendientes ) CLASS TTpvSalon
    */
 
    while len( ::oWnd:oClient:aControls ) > 0
-      ::oWnd:oClient:aControls[ 1 ]:End()
+      ::oWnd:oClient:aControls[ 1 ]:End() 
    end while
 
    /*

@@ -81,21 +81,23 @@ RETURN ( Self )
 METHOD OpenService( lExclusive )
 
    local lOpen          := .t.
-   local oBlock         := ErrorBlock( {| oError | ApoloBreak( oError ) } )
+   local oError
+   local oBlock         
 
    DEFAULT  lExclusive  := .f.
 
+   oBlock               := ErrorBlock( {| oError | ApoloBreak( oError ) } )
    BEGIN SEQUENCE
 
-   if Empty( ::oDbf )
-      ::DefineFiles()
-   end if
+      if Empty( ::oDbf )
+         ::DefineFiles()
+      end if
 
-   ::oDbf:Activate( .f., !( lExclusive ) )
+      ::oDbf:Activate( .f., !( lExclusive ) )
 
-   RECOVER
+   RECOVER USING oError
 
-      msgStop( "Imposible abrir todas las bases de datos" )
+      msgStop( "Imposible abrir todas las bases de datos de unidades de medición" + CRLF + ErrorMessage( oError )  )
 
       ::CloseFiles()
 
@@ -113,10 +115,11 @@ METHOD OpenFiles( lExclusive )
 
    local lOpen          := .t.
    local oError
-   local oBlock         := ErrorBlock( {| oError | ApoloBreak( oError ) } )
+   local oBlock         
 
    DEFAULT  lExclusive  := .f.
 
+   oBlock               := ErrorBlock( {| oError | ApoloBreak( oError ) } )
    BEGIN SEQUENCE
 
       if Empty( ::oDbf )
@@ -127,7 +130,7 @@ METHOD OpenFiles( lExclusive )
 
    RECOVER USING oError
 
-      msgStop( "Imposible abrir todas las bases de datos" + CRLF + ErrorMessage( oError )  )
+      msgStop( "Imposible abrir todas las bases de datos de unidades de medición" + CRLF + ErrorMessage( oError )  )
 
       ::CloseFiles()
 

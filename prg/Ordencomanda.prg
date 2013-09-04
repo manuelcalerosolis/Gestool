@@ -281,7 +281,7 @@ METHOD cOrden( cNomOrd )
 
    local cCodigo        := ""
 
-   if ::oDbf:SeekInOrd( cNomOrd, "cNomOrd" )
+   if !Empty( cNomOrd ) .and. ::oDbf:SeekInOrd( cNomOrd, "cNomOrd" )
       cCodigo           := ::oDbf:cOrdOrd
    end if
 
@@ -357,7 +357,7 @@ Return ( Self )
 
 METHOD aNombreOrdenComanda()
 
-   local aNombreOrdenComanda  := {}
+   local aNombreOrdenComanda  := { "" }
 
    if Empty( ::oDbf ) .or. !( ::oDbf:Used() )
       Return ( aNombreOrdenComanda )

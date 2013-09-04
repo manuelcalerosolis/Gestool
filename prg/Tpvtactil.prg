@@ -834,7 +834,7 @@ CLASS TpvTactil
    INLINE METHOD GuardaDocumentoPendiente()
 
       ::oTiketCabecera:cTipTik      := SAVTIK
-      ::oTiketCabecera:lPgdTik      := .f.
+      // ::oTiketCabecera:lPgdTik      := .f.
 
       ::GuardaDocumento()
 

@@ -1818,13 +1818,7 @@ FUNCTION cPatGrp( cPath, lFull, lEmpresa )
    DEFAULT lEmpresa  := .t.
 
    if !Empty( cPath )
-
-      if lEmpresa
-         cPatGrp     := "Emp" + cPath
-      else
-         cPatGrp     := "Emp" + cPath
-      end if
-
+      cPatGrp        := "Emp" + cPath
    end if
 
    if lAds()
@@ -1843,11 +1837,7 @@ FUNCTION cPatGrp( cPath, lFull, lEmpresa )
       Return ( FullCurDir() + cPatGrp + "\" )
    end if
 
-#ifdef __SQLLIB__
-Return ( cPatGrp + "\" )
-#else
 Return ( if( lFull, FullCurDir(), "" ) + cPatGrp + "\" )
-#endif
 
 //---------------------------------------------------------------------------//
 
