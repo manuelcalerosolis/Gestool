@@ -4111,14 +4111,14 @@ Static Function VisualEdtDocs( dbfDoc )
    local oFr
    local cTipo          
 
-   if lUsrMaster()
+   if !lUsrMaster()
       msgInfo( "Solo pueden modificar los formatos el ususario Administrador" )
-      Return nil
+      Return .f.
    end if
 
    if !( dbfDoc )->lVisual
       msgInfo( "No se puede modificar el formato, tiene que crear un nuevo formato de forma visual.", "Formato obsoleto" )
-      Return nil
+      Return .f.
    end if
 
    cTipo                := ( dbfDoc )->cTipo
@@ -4157,7 +4157,7 @@ Static Function VisualEdtDocs( dbfDoc )
 
       case cTipo == "AL"
          DesignLabelAlbPrv( oFr, dbfDoc )
-
+ 
       case cTipo == "FL"
          DesignLabelFacPrv( oFr, dbfDoc )
 

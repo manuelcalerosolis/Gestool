@@ -286,9 +286,9 @@ STATIC FUNCTION EdtRec( aTmp, aGet, dbfCajT, oBrw, bWhen, bValid, nMode )
    local oBmpGeneral
    local oBmpFormatos
 
-   if lUsrMaster()
+   if !lUsrMaster()
       msgStop( "Solo el usuario administrador puede modificar las cajas.")
-      Return nil
+      Return .f.
    end if 
 
    if nMode == APPD_MODE

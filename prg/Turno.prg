@@ -3254,24 +3254,6 @@ METHOD lArqueoTurno( lZoom, lParcial ) CLASS TTurno
    oBlock            := ErrorBlock( { | oError | ApoloBreak( oError ) } )
    BEGIN SEQUENCE
 
-   ? ::oDbf:cNumTur + ::oDbf:cSufTur
-   ? ::oDbf:dOpnTur
-   ? ::oDbf:cHorOpn
-   ? ::oDbf:cCajTur
-   ? ::oDbf:nStaTur
-
-
-
-
-
-
-
-
-
-
-
-
-
    ::cComentario     := ::oDbf:mComTur
    ::lCerrado        := ( ::oDbf:nStaTur == cajCerrrada )
 
@@ -3399,50 +3381,8 @@ METHOD lArqueoTurno( lZoom, lParcial ) CLASS TTurno
          TRANSPARENT ;
          OF       oFld:aDialogs[1]
 
-      REDEFINE BITMAP oBmpGeneral ;
-         ID       990 ;
-         RESOURCE "clock_refresh_48_alpha" ;
-         TRANSPARENT ;
-         OF       oFld:aDialogs[2]
-
-      REDEFINE BITMAP oBmpGeneral ;
-         ID       990 ;
-         RESOURCE "clock_refresh_48_alpha" ;
-         TRANSPARENT ;
-         OF       oFld:aDialogs[3]
-
-      REDEFINE BITMAP oBmpGeneral ;
-         ID       990 ;
-         RESOURCE "clock_refresh_48_alpha" ;
-         TRANSPARENT ;
-         OF       oFld:aDialogs[4]
-
-      REDEFINE BITMAP oBmpGeneral ;
-         ID       990 ;
-         RESOURCE "clock_stop_48_alpha" ;
-         TRANSPARENT ;
-         OF       oFld:aDialogs[1]
-
-      REDEFINE BITMAP oBmpGeneral ;
-         ID       990 ;
-         RESOURCE "clock_stop_48_alpha" ;
-         TRANSPARENT ;
-         OF       oFld:aDialogs[2]
-
-      REDEFINE BITMAP oBmpGeneral ;
-         ID       990 ;
-         RESOURCE "clock_stop_48_alpha" ;
-         TRANSPARENT ;
-         OF       oFld:aDialogs[3]
-
-      REDEFINE BITMAP oBmpGeneral ;
-         ID       990 ;
-         RESOURCE "clock_stop_48_alpha" ;
-         TRANSPARENT ;
-         OF       oFld:aDialogs[4]
-
       end if
-
+  
       if !::lArqueoTactil()
 
       REDEFINE GET oCajTur VAR ::cCajTur;
@@ -3717,10 +3657,6 @@ METHOD lArqueoTurno( lZoom, lParcial ) CLASS TTurno
 
       else
 
-      REDEFINE GROUP ::oGrpArqueo ;
-         ID       801;
-         OF       oFld:aDialogs[3]  
-
       REDEFINE GET ::oCodCaj ;
          VAR      ::cCodCaj ;
          ID       140 ;
@@ -3738,7 +3674,7 @@ METHOD lArqueoTurno( lZoom, lParcial ) CLASS TTurno
       end if
 
       if lZoom
-         ::oCodCaj:bWhen   := {|| .f. }
+         ::oCodCaj:bWhen   := {|| .f. }  
       else
          ::oCodCaj:bWhen   := {|| oUser():lAdministrador() }
       end if
@@ -3987,7 +3923,6 @@ METHOD lArqueoTurno( lZoom, lParcial ) CLASS TTurno
          OF        oFld:aDialogs[4]
 
       end if
-
 
       REDEFINE SAY  ::oGrpOpcionesImpresion ;
          ID        601 ;
@@ -4816,7 +4751,7 @@ Method lValidCajas()
       if ::lInCajaSelect( ::oDbfCaj:cCodCaj )
          nUsrCaj  := nUserCaja( ::oDbfCaj:cCodCaj )
          if !( nUsrCaj == 0 .or. ( nUsrCaj == 1 .and. ::oDbfCaj:cCodCaj == oUser():cCaja() ) )
-            if !ApoloMsgNoYes( "Hay usuarios trabajando en la caja " + ::oDbfCaj:cCodCaj, "¿Desea continuar con el cierre?" )
+            if !ApoloMsgNoYes( "Hay usuarios trabajando en la caja " + ::oDbfCaj:cCodCaj, "¿ Desea continuar con el cierre ?" )
                lValidCajas := .f.
                exit
             end if

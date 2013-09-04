@@ -351,6 +351,8 @@ static cInforme
 static oNumerosSerie
 static oBtnNumerosSerie
 
+static lIncidencia      := .f.
+
 //----------------------------------------------------------------------------//
 
 STATIC FUNCTION OpenFiles( lExt )
@@ -11594,6 +11596,7 @@ Function IcgMotor()
 
    aFichero                         := {}
    cInforme                         := ""
+   lIncidencia                      := .f.
 
    DEFINE DIALOG oDlg RESOURCE "ImportarICG"
 
@@ -11858,6 +11861,26 @@ FUNCTION IcgAlbPrv( aFichero, oDlg, oInforme )
 
    oInforme:cText( cInforme )
 
+   if lIncidencia
+
+      /*
+      Envio de mail al usuario----------------------------------------------
+      */
+
+      with object TGenMailing():New()
+
+         :cGetDe           := __GSTROTOR__ + Space( 1 ) + __GSTVERSION__
+         :cGetAsunto       := "Indicencias en albaranes de proveedor"
+         :cNombre          := __GSTROTOR__
+         :cDireccion       := "josecarlos@icgmotor.com"
+         :cGetMensaje      := Rtrim( cInforme )
+
+         :lExternalSendMail()
+
+      end with
+
+   end if
+
 RETURN ( nil )
 
 //---------------------------------------------------------------------------//
@@ -11928,6 +11951,7 @@ Static Function IcgDetAlbPrv( cSerDoc, cSufDoc, cDesLin, nUntLin, nPvpLin, nDtoL
 
    if !dbSeekInOrd( cRefLin, "Codigo", dbfArticulo )
       cInforme                += "Articulo " + cRefLin + " no existe en la base de datos, albaran número " + cSerDoc + "/" + Alltrim( Str( nNumAlb ) ) + "/" + RetSufEmp() + CRLF
+      lIncidencia             := .t.
    end if
 
    ( dbfAlbPrvL )->( dbAppend() )
