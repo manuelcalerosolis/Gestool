@@ -24,6 +24,8 @@ CLASS TImpFactu
    DATA oDbfGrpCliFac
    DATA oDbfPrvGst
    DATA oDbfPrvFac
+   DATA oDbfPrePrvGst
+   DATA oDbfPrePrvFac
    DATA oDbfFamGst
    DATA oDbfFamFac
    DATA oDbfGrpGst
@@ -131,7 +133,7 @@ METHOD OpenFiles()
 
    local lOpen       := .t.
    local oError
-   local oBlock      := ErrorBlock( {| oError | ApoloBreak( oError ) } )
+   local oBlock      
 
    if Empty( ::cPathFac )
       MsgStop( "Ruta de factuplus ® esta vacia" )
@@ -142,6 +144,7 @@ METHOD OpenFiles()
       ::cPathFac  += "\"
    end if
 
+   oBlock            := ErrorBlock( {| oError | ApoloBreak( oError ) } )
    BEGIN SEQUENCE
 
    DATABASE NEW ::oDbfCnt PATH ( cPatEmp() ) FILE "nCount.Dbf"    VIA ( cDriver() ) CLASS "Count"    SHARED INDEX "nCount.Cdx"
@@ -150,9 +153,11 @@ METHOD OpenFiles()
       ::aChkIndices[ 1 ]:Click( .f. ):Refresh()
       msgStop( "No existe fichero de articulos", ::cPathFac + "ARTICULO.DBF" )
    else
-      DATABASE NEW ::oDbfArtGst PATH ( cPatArt() )  FILE "ARTICULO.DBF" VIA ( cDriver() ) CLASS "ARTGST" SHARED INDEX "ARTICULO.CDX"
-      DATABASE NEW ::oDbfArtFac PATH ( ::cPathFac ) FILE "ARTICULO.DBF" VIA ( cDriver() ) CLASS "ARTFAC"
-      DATABASE NEW ::oDbfArcFac PATH ( ::cPathFac ) FILE "ARTCOM.DBF"   VIA ( cDriver() ) CLASS "ARTCOM"
+      DATABASE NEW ::oDbfArtGst     PATH ( cPatArt() )  FILE "ARTICULO.DBF" VIA ( cDriver() ) CLASS "ARTGST" SHARED INDEX "ARTICULO.CDX"
+      DATABASE NEW ::oDbfArtFac     PATH ( ::cPathFac ) FILE "ARTICULO.DBF" VIA ( cDriver() ) CLASS "ARTFAC"
+      DATABASE NEW ::oDbfArcFac     PATH ( ::cPathFac ) FILE "ARTCOM.DBF"   VIA ( cDriver() ) CLASS "ARTCOM"
+      DATABASE NEW ::oDbfPrePrvGst  PATH ( cPatArt() )  FILE "ProvArt.DBF"  VIA ( cDriver() ) CLASS "PROPRVGST" SHARED INDEX "ProvArt.CDX"
+      DATABASE NEW ::oDbfPrePrvFac  PATH ( ::cPathFac ) FILE "PrecProv.DBF" VIA ( cDriver() ) CLASS "PROPRVFAC"
    end if
 
    if !File( ::cPathFac + "FAMILIAS.DBF" )
@@ -221,12 +226,12 @@ METHOD OpenFiles()
       DATABASE NEW ::oDbfCtaRemFac  PATH ( ::cPathFac ) FILE "CTA_REM.DBF"    VIA ( cDriver() ) CLASS "CTAREMFAC"
    end if
 
-   if !File( ::cPathFac + "PROVEEDO.DBF" )
+   if !File( ::cPathFac + "Proveedo.DBF" ) .or. !File( ::cPathFac + "PrecProv.DBF" )
       ::aChkIndices[ 7 ]:Click( .f. ):Refresh()
-      msgStop( "No existe fichero de proveedores", ::cPathFac + "PROVEEDO.DBF" )
+      msgStop( "No existe fichero de proveedores", ::cPathFac + "Proveedo.DBF" )
    else
-      DATABASE NEW ::oDbfPrvGst PATH ( cPatPrv() )  FILE "PROVEE.DBF"   VIA ( cDriver() ) CLASS "PRVGST" SHARED INDEX "PROVEE.CDX"
-      DATABASE NEW ::oDbfPrvFac PATH ( ::cPathFac ) FILE "PROVEEDO.DBF" VIA ( cDriver() ) CLASS "PRVFAC"
+      DATABASE NEW ::oDbfPrvGst     PATH ( cPatPrv() )  FILE "PROVEE.DBF"   VIA ( cDriver() ) CLASS "PRVGST" SHARED INDEX "Provee.CDX"
+      DATABASE NEW ::oDbfPrvFac     PATH ( ::cPathFac ) FILE "PROVEEDO.DBF" VIA ( cDriver() ) CLASS "PRVFAC"
    end if
 
    if !File( ::cPathFac + "AGENTES.DBF" )
@@ -516,10 +521,22 @@ METHOD CloseFiles()
       ::oDbfPrvGst := nil
    end if
 
-   if !Empty( ::oDbfProvFac )
-      ::oDbfProvFac:End()
+   if !Empty( ::oDbfPrvFac )
+      ::oDbfPrvFac:End()
    else
-      ::oDbfProvFac := nil
+      ::oDbfPrvFac := nil
+   end if
+
+   if !Empty( ::oDbfPrePrvGst )
+      ::oDbfPrePrvGst:End()
+   else
+      ::oDbfPrePrvGst := nil
+   end if
+
+   if !Empty( ::oDbfPrePrvFac )
+      ::oDbfPrePrvFac:End()
+   else
+      ::oDbfPrePrvFac := nil
    end if
 
    if !Empty( ::oDbfAlbTGst )
@@ -588,12 +605,6 @@ METHOD CloseFiles()
       ::oDbfFacPGst := nil
    end if
 
-   if !Empty( ::oDbfPrvFac )
-      ::oDbfPrvFac:End()
-   else
-      ::oDbfPrvFac := nil
-   end if
-
    if !Empty( ::oDbfRecFac )
       ::oDbfRecFac:End()
    else
@@ -638,9 +649,9 @@ METHOD CloseFiles()
 
    if !Empty( ::oDbfHisLFac )
       ::oDbfHisLFac:End()
+   else
+      ::oDbfHisLFac  := nil
    end if
-
-   ::oDbfHisLFac  := nil
 
    if !Empty( ::oDbfTikPGst )
       ::oDbfTikPGst:End()
@@ -1597,6 +1608,34 @@ METHOD Importar()
             ::aMtrIndices[ 7 ]:Set( ::oDbfPrvFac:Recno() )
 
             ::oDbfPrvFac:Skip()
+
+         end while
+
+         ::aMtrIndices[ 7 ]:SetTotal( ::oDbfPrePrvFac:LastRec() )
+
+         ::oDbfPrePrvGst:GoTop()
+         while !::oDbfPrePrvGst:Eof()
+            ::oDbfPrePrvGst:Delete( .f. )
+            ::oDbfPrePrvGst:Skip()
+         end if
+
+         ::oDbfPrePrvFac:GoTop()
+         while !( ::oDbfPrePrvFac:eof() )
+
+            ::oDbfPrePrvGst:Append()
+
+            ::oDbfPrePrvGst:cCodArt    := ::oDbfPrePrvFac:cRef
+            ::oDbfPrePrvGst:cCodPrv    := SpecialPadr( ::oDbfPrePrvFac:cCodPro, "0", RetNumCodPrvEmp() )
+            ::oDbfPrePrvGst:cRefPrv    := ::oDbfPrePrvFac:cRefProv
+            ::oDbfPrePrvGst:cDivPrv    := ::oDbfPrePrvFac:cCodDiv
+            ::oDbfPrePrvGst:nImpPrv    := ::oDbfPrePrvFac:nCosteDiv
+            ::oDbfPrePrvGst:lDefPrv    := ::oDbfPrePrvFac:lHabitual
+
+            ::oDbfPrePrvGst:Save()
+
+            ::aMtrIndices[ 7 ]:Set( ::oDbfPrePrvFac:Recno() )
+
+            ::oDbfPrePrvFac:Skip()
 
          end while
 
@@ -2985,14 +3024,16 @@ METHOD Importar()
             ::oDbfAlpTGst:cCodAlm      := ::oDbfAlpTFac:cCodAlm
             ::oDbfAlpTGst:cCodCaj      := cDefCaj()
             ::oDbfAlpTGst:cCodPrv      := SpecialPadr( ::oDbfAlpTFac:cCodPro, "0", RetNumCodPrvEmp() )
+
             if ::oDbfPrvGst:Seek( SpecialPadr( ::oDbfAlpTFac:cCodPro, "0", RetNumCodPrvEmp() ) )
-               ::oDbfAlpTGst:cNomPrv      := ::oDbfPrvGst:Titulo
-               ::oDbfAlpTGst:cDirPrv      := ::oDbfPrvGst:Domicilio
-               ::oDbfAlpTGst:cPobPrv      := ::oDbfPrvGst:Poblacion
-               ::oDbfAlpTGst:cProPrv      := ::oDbfPrvGst:Provincia
-               ::oDbfAlpTGst:cPosPrv      := ::oDbfPrvGst:CodPostal
-               ::oDbfAlpTGst:cDniPrv      := ::oDbfPrvGst:Nif
+               ::oDbfAlpTGst:cNomPrv   := ::oDbfPrvGst:Titulo
+               ::oDbfAlpTGst:cDirPrv   := ::oDbfPrvGst:Domicilio
+               ::oDbfAlpTGst:cPobPrv   := ::oDbfPrvGst:Poblacion
+               ::oDbfAlpTGst:cProPrv   := ::oDbfPrvGst:Provincia
+               ::oDbfAlpTGst:cPosPrv   := ::oDbfPrvGst:CodPostal
+               ::oDbfAlpTGst:cDniPrv   := ::oDbfPrvGst:Nif
             end if
+
             ::oDbfAlpTGst:dFecEnt      := ::oDbfAlpTFac:dFecEnt
             ::oDbfAlpTGst:cSuAlb       := ::oDbfAlpTFac:SuAlbaran
             ::oDbfAlpTGst:cCodPgo      := ::oDbfAlpTFac:cCodPago
@@ -3132,6 +3173,7 @@ METHOD Importar()
             ::oDbfFapTGst:cCodAlm    := ::oDbfFapTFac:cCodAlm
             ::oDbfFapTGst:cCodCaj    := cDefCaj()
             ::oDbfFapTGst:cCodPrv    := SpecialPadr( ::oDbfFapTFac:cCodPro, "0", RetNumCodPrvEmp() )
+
             if ::oDbfPrvGst:Seek( SpecialPadr( ::oDbfFapTFac:cCodPro, "0", RetNumCodPrvEmp() ) )
                ::oDbfFapTGst:cNomPrv      := ::oDbfPrvGst:Titulo
                ::oDbfFapTGst:cDirPrv      := ::oDbfPrvGst:Domicilio
@@ -3140,6 +3182,7 @@ METHOD Importar()
                ::oDbfFapTGst:cPosPrv      := ::oDbfPrvGst:CodPostal
                ::oDbfFapTGst:cDniPrv      := ::oDbfPrvGst:Nif
             end if
+            
             ::oDbfFapTGst:lConTab    := ::oDbfFapTFac:lContab
             ::oDbfFapTGst:dFecEnt    := ::oDbfFapTFac:dFecEnt
             ::oDbfFapTGst:cSuPed     := ::oDbfFapTFac:cSuPed

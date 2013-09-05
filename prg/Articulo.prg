@@ -5818,9 +5818,9 @@ Static Function EndTrans( aTmp, aGet, oSay, oDlg, aTipBar, cTipBar, nMode, oImpC
          ( dbfTmpCodebar )->cCodArt := cCod
 
          if ( dbfTmpCodebar )->lDefBar
-            cCodArt                                             := ( dbfTmpCodebar )->cCodBar
-            nTipBar                                             := ( dbfTmpCodebar )->nTipBar
-            aTmp[ ( dbfArticulo )->( fieldpos( "CodeBar"  ) ) ] := ( dbfTmpCodebar )->cCodBar
+            cCodArt                                               := ( dbfTmpCodebar )->cCodBar
+            nTipBar                                               := ( dbfTmpCodebar )->nTipBar
+            aTmp[ ( dbfArticulo )->( fieldpos( "CodeBar"  ) ) ]   := ( dbfTmpCodebar )->cCodBar
          end if
 
          if !Empty( ( dbfTmpCodebar )->cValPr1 ) .and. At( Alltrim( aTmp[ ( dbfArticulo )->( FieldPos( "mValPrp1" ) ) ] ), Alltrim( ( dbfTmpCodebar )->cValPr1 ) ) == 0
@@ -6013,7 +6013,7 @@ RETURN ( .t. )
 
 STATIC FUNCTION StdCol( lIvaInc, nMode )
 
-RETURN ( lIvaInc .AND. nMode != ZOOM_MODE )
+RETURN ( lIvaInc .and. nMode != ZOOM_MODE )
 
 //--------------------------------------------------------------------------//
 

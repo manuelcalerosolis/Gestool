@@ -947,11 +947,11 @@ METHOD Close() CLASS TDbf
     if lRet
         ( ::nArea )->( OrdListClear() )
         ( ::nArea )->( DbCloseArea() )
-        ::Protec( 0 )
+
         ::nArea  := 0
         ::cAlias := ""
     else
-        Alert( "No puedo cerrar el area de trabajo: " + ::cAlias )
+        Alert( "No puedo cerrar el area de trabajo: " + ::cAlias + ":" + ::ClassName() )
     endif
 
 return( lRet )

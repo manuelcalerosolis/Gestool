@@ -4970,14 +4970,14 @@ Return ( nTotUnd )
 
 Function nIvaLTpv( cTikT, cTikL, nDec, nRou, nVdv, nPrc )
 
-   local nCalculo    := 0
+   local nCalculo       := 0
 
-   DEFAULT cTikT     := dbfTikT
-   DEFAULT cTikL     := dbfTikL
-   DEFAULT nDec      := nDouDiv()
-   DEFAULT nRou      := nRouDiv()
-   DEFAULT nVdv      := 1
-   DEFAULT nPrc      := 0
+   DEFAULT cTikT        := dbfTikT
+   DEFAULT cTikL        := dbfTikL
+   DEFAULT nDec         := nDouDiv()
+   DEFAULT nRou         := nRouDiv()
+   DEFAULT nVdv         := 1
+   DEFAULT nPrc         := 0
 
    do case
       case ValType( cTikL ) == "C"

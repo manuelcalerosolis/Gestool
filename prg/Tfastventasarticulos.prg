@@ -922,10 +922,9 @@ METHOD AddVariable() CLASS TFastVentasArticulos
 
          ::AddVariableLineasRectificativaProveedor()
 
-
    end case
 
-      ::oFastReport:AddVariable(    "Articulos",    "Stock actual",   "CallHbFunc( 'oTinfGen', ['StockArticulo'])" )
+   ::oFastReport:AddVariable(    "Articulos",    "Stock actual",   "CallHbFunc( 'oTinfGen', ['StockArticulo'])" )
 
 Return ( Super:AddVariable() )
 
