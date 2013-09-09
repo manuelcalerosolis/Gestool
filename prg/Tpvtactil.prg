@@ -167,6 +167,7 @@ CLASS TpvTactil
    DATA oTipArt
    DATA oFabricante
    DATA oOrdenComanda
+   DATA oVisor
 
    DATA oBrwFamilias
    DATA oBrwLineas
@@ -1079,6 +1080,34 @@ CLASS TpvTactil
 
    //-----------------------------------------------------------------------//
 
+   INLINE METHOD EscribeVisor()
+
+      if ::oVisor != nil
+         ::oVisor:SetBufferLine( { "Total: ",  Trans( ::sTotal:nTotalDocumento, ::cPictureTotal ) }, 1 )
+         ::oVisor:SetBufferLine( { "Cambio: ", Trans( ::oTpvCobros:sTotalesCobros:nCambio, ::cPictureTotal ) }, 2 )
+         ::oVisor:WriteBufferLine()
+      end if
+
+   ENDMETHOD
+
+   //------------------------------------------------------------------------//      
+
+   INLINE METHOD AgregaLineaVisor( aTextoLinea, nLinea )
+
+      if ::oVisor != nil
+         
+         ::oVisor:SetBufferLine( aTextoLinea, nLinea )
+         
+         if nLinea == 2
+            ::oVisor:WriteBufferLine()
+         end if
+            
+      end if
+
+   ENDMETHOD
+   
+   //------------------------------------------------------------------------//   
+
    INLINE METHOD TotalTemporal()
 
       ::sTotal    := ::sTotalTiket()
@@ -1973,6 +2002,7 @@ METHOD OpenFiles() CLASS TpvTactil
 
    local oBlock
    local oError
+   local cVisor
 
    if ::lOpenFiles
       MsgStop( 'Imposible abrir ficheros de tickets de clientes' )
@@ -2240,6 +2270,18 @@ METHOD OpenFiles() CLASS TpvTactil
    ::cImpresora               := ::oFormatosImpresion:cPrinterEntrega
    ::nDispositivo             := IS_PRINTER
    ::nCopias                  := 1
+
+   /*
+   Visor-----------------------------------------------------------------------
+   */
+
+   cVisor               := cVisorEnCaja( oUser():cCaja(), ::oCajaCabecera:cAlias )
+   if !Empty( cVisor )
+      ::oVisor            := TVisor():Create( cVisor )
+      if !Empty( ::oVisor )
+         ::oVisor:Wellcome()
+      end if
+   end if
 
    RECOVER USING oError
 
@@ -2619,6 +2661,10 @@ METHOD CloseFiles() CLASS TpvTactil
       ::oOrdenComanda:End()
    end if
 
+   if !Empty( ::oVisor )
+      ::oVisor:End()
+   end if
+
    ::oTiketCabecera                          := nil
    ::oTiketLinea                             := nil
    ::oTiketCobro                             := nil
@@ -2709,6 +2755,7 @@ METHOD CloseFiles() CLASS TpvTactil
    ::oTransportista                          := nil
    ::oOrdenComanda                           := nil 
    ::oOfficeBar                              := nil
+   ::oVisor                                  := nil
 
 Return .t.
 
@@ -4447,6 +4494,12 @@ METHOD AgregarLineas( cCodigoArticulo ) CLASS TpvTactil
 
          end if
 
+         /*
+         Informamos en el visor---------------------------------------------
+         */
+
+         ::AgregaLineaVisor( { ::oTemporalLinea:cNomTil, Trans( ::oTemporalLinea:nPvpTil, ::cPictureImporte ) }, 1 )
+
       else
 
          CursorWait()
@@ -4475,6 +4528,8 @@ METHOD AgregarLineas( cCodigoArticulo ) CLASS TpvTactil
       ::oBrwLineas:Refresh()
 
       ::TotalTemporal()
+
+      ::AgregaLineaVisor( { "Total", Trans( ::sTotal:nTotalDocumento, ::cPictureTotal ) }, 2 )
 
    else
 
@@ -5962,6 +6017,13 @@ METHOD OnClickCobro() CLASS TpvTactil
          */
 
          ::UltimoCambio()
+
+
+         /*
+         Imprimimos en el visor---------------------------------------------------
+         */
+
+         ::EscribeVisor()
 
          /*
          Abrimos el cajón portamonedas antes de imprimir-----------------------
