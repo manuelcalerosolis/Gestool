@@ -4599,6 +4599,16 @@ Static Function NewTiket( aGet, aTmp, nMode, nSave, lBig, oBrw, oBrwDet )
          end if
 
          /*
+         Imprimimos en el visor---------------------------------------------------
+         */
+
+         if oVisor != nil
+            oVisor:SetBufferLine( { "Total: ",  Trans( nTotTik, cPorDiv ) },     1 )
+            oVisor:SetBufferLine( { "Cambio: ", Trans( nCambioTik, cPorDiv ) },  2 )
+            oVisor:WriteBufferLine()
+         end if
+
+         /*
          Ejecutamos del nuevo el bStart----------------------------------------
          */
 
@@ -4615,16 +4625,6 @@ Static Function NewTiket( aGet, aTmp, nMode, nSave, lBig, oBrw, oBrwDet )
       end if
 
       lStopEntCont         := !( Empty( cAlbTik ) .and. Empty( cPedTik ) .and. Empty( cPreTik ) )
-
-      /*
-      Imprimimos en el visor---------------------------------------------------
-      */
-
-      if oVisor != nil
-         oVisor:SetBufferLine( { "Total: ",  Trans( nTotTik, cPorDiv ) },     1 )
-         oVisor:SetBufferLine( { "Cambio: ", Trans( nCambioTik, cPorDiv ) },  2 )
-         oVisor:WriteBufferLine()
-      end if
 
    end if
 

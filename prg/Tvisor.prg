@@ -132,7 +132,7 @@ METHOD Create( cCodImp )
       ::cRetroceso         := ""
       ::cAvanceChr         := ""
       ::cAvanceLinea       := ""
-      ::cReset             := ""
+      ::cReset             := "20"
       ::cActiveCursor      := ""
       ::cInactiveCursor    := ""
       ::cNormalWrite       := ""
@@ -141,9 +141,9 @@ METHOD Create( cCodImp )
       ::nPosEnd            := ""
       ::nFirstRow          := ""
       ::nFirstCol          := ""
-      ::cWellcomeLine1     := "Bienvenidos a"
-      ::cWellcomeLine2     := __GSTROTOR__ + Space( 1 ) + __GSTVERSION__
-      ::nInact             := 10
+      ::cWellcomeLine1     := ""
+      ::cWellcomeLine2     := ""
+      ::nInact             := 20
 
    end if
 
@@ -155,7 +155,11 @@ METHOD Create( cCodImp )
 
    dbfVisor                := nil
 
-   ::oPrn                  := TPort():New( ::cPort, ::nBitsSec, ::nBitsParada, ::nBitsDatos, ::nBitsParidad, .f. )
+   // Conversion
+
+   ::cReset                := RetChr( ::cReset )
+
+   ::oPrn                  := TCommPort():New( ::cPort, ::nBitsSec, ::nBitsParada, ::nBitsDatos, ::nBitsParidad, .f. )
 
    if ::oPrn:lCreated
 
@@ -187,7 +191,7 @@ Method New( cPort, nBitsSec, nBitsParada, nBitsDatos, nBitsParidad, lMessage )
    Creamos el puerto--------------------------------------------------------
    */
 
-   ::oPrn               := TPort():New( ::cPort, nBitsSec, nBitsParada, nBitsDatos, nBitsParidad, lMessage )
+   ::oPrn               := TCommPort():New( ::cPort, nBitsSec, nBitsParada, nBitsDatos, nBitsParidad, .f. )
 
    if ::oPrn:lCreated
 
@@ -228,6 +232,14 @@ METHOD Say( cTxtLine1, cTxtLine2 )
          ::oTimer:DeActivate()
       end if
 
+      if !Empty( ::cReset )
+         ::oPrn:Write( ::cReset )
+      end if
+
+      logWrite( PadR( cTxtLine1, ::nChrLineas ) )
+      logWrite( PadL( cTxtLine2, ::nChrLineas ) )
+      logwrite( PadR( cTxtLine1, ::nChrLineas ) + PadL( cTxtLine2, ::nChrLineas ) )
+
       ::oPrn:Write( PadR( cTxtLine1, ::nChrLineas ) + PadL( cTxtLine2, ::nChrLineas ) )
 
       if ::oTimer != nil
@@ -263,7 +275,13 @@ METHOD SetBufferLine( cTxtLine, nLine )
    if Valtype( cTxtLine ) == "A"
 
       nLen                 := Len( AllTrim( cTxtLine[ 2 ] ) ) + 1
+
+      logWrite( nlen )
+      
       ::aTextLine[ nLine ] := PadR( cTxtLine[ 1 ], ::nChrLineas - nLen ) + PadL( AllTrim( cTxtLine[ 2 ] ), nLen )
+
+      logwrite( ::aTextLine[ nLine ] )
+      logwrite( len( ::aTextLine[ nLine ] ) )
 
    else
 

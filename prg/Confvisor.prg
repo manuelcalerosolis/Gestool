@@ -601,19 +601,19 @@ FUNCTION IsVisor()
       ( dbfVisor )->cBitPari     := "Sin paridad"
       ( dbfVisor )->nLinea       := 2
       ( dbfVisor )->nChaLin      := 20
-      ( dbfVisor )->cRetro       := "27 91 68 "    //Retroceso del visor
-      ( dbfVisor )->cAvCha       := "27 91 67"     //Avance caracter del visor
-      ( dbfVisor )->cAvLin       := "27 91 82"     //Avance linea del visor
-      ( dbfVisor )->cReset       := "27 60"        //Reset del visor
-      ( dbfVisor )->cEscNor      := "27 17"        //Escritura normal
-      ( dbfVisor )->cEscDes      := "27 19"        //Escritura desplazada
-      ( dbfVisor )->cPosIni      := "27 108 1 1"   //Posición de inicio
-      ( dbfVisor )->cPosFin      := "27 108 2 20"  //Posición de fin
-      ( dbfVisor )->cPriFil      := "27 108 1 1"   //Primera fila
-      ( dbfVisor )->cPriCol      := "27 108 2 1"   //Primera columna
-      ( dbfVisor )->cText1       := ""             //Texto defec. primera linea
-      ( dbfVisor )->cText2       := ""             //Texto defec. segunda linea
-      ( dbfVisor )->nInact       := 5             //Segundos de inactividad del visor
+      ( dbfVisor )->cRetro       := ""              //Retroceso del visor
+      ( dbfVisor )->cAvCha       := ""              //Avance caracter del visor
+      ( dbfVisor )->cAvLin       := ""              //Avance linea del visor
+      ( dbfVisor )->cReset       := "12"            //Reset del visor
+      ( dbfVisor )->cEscNor      := ""              //Escritura normal
+      ( dbfVisor )->cEscDes      := ""              //Escritura desplazada
+      ( dbfVisor )->cPosIni      := ""              //Posición de inicio
+      ( dbfVisor )->cPosFin      := ""              //Posición de fin
+      ( dbfVisor )->cPriFil      := ""              //Primera fila
+      ( dbfVisor )->cPriCol      := ""              //Primera columna
+      ( dbfVisor )->cText1       := ""              //Texto defec. primera linea
+      ( dbfVisor )->cText2       := ""              //Texto defec. segunda linea
+      ( dbfVisor )->nInact       := 15              //Segundos de inactividad del visor
       ( dbfVisor )->( dbUnLock() )
 
    end if
@@ -639,7 +639,7 @@ Test del visor
 
 STATIC FUNCTION TestVisor( aTmp, cPuerto, cBitsSec, cBitsDatos, cBitsPara, cBitsPari )
 
-  local oVis   := TPort():New( cPuerto, cBitsSec, cBitsPara, cBitsDatos, cBitsPari )
+  local oVis   := TCommPort():New( cPuerto, cBitsSec, cBitsPara, cBitsDatos, cBitsPari, .f. )
 
   // Comprobamos si se ha creado el puerto
 
@@ -658,7 +658,7 @@ STATIC FUNCTION TestVisor( aTmp, cPuerto, cBitsSec, cBitsDatos, cBitsPara, cBits
 
          //Escribimos en el visor el texto
 
-         oVis:Write( Padr( "Test del visor", 20) + CRLF)
+         oVis:Write( Padr( "Test del visor", 20) )
 
      end if
 
