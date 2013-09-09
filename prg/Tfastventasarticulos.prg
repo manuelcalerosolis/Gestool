@@ -398,7 +398,7 @@ METHOD Create( uParam ) CLASS TFastVentasArticulos
    ::AddField( "cCodRut",     "C", 12, 0, {|| "@!" }, "Código de la ruta"                       )
    ::AddField( "cCodAge",     "C", 12, 0, {|| "@!" }, "Código del agente"                       )
    ::AddField( "cCodTrn",     "C", 12, 0, {|| "@!" }, "Código del transportista"                )
-   ::AddField( "cCodUsr",     "C",  3, 0, {|| "@!" }, "Código usuario que realiza el cambio"    )
+   ::AddField( "cCodUsr",     "C",  3, 0, {|| "@!" }, "Código usuario"                          )
 
    ::AddField( "cCodCli",     "C", 12, 0, {|| "@!" }, "Código cliente/proveedor"                )
    ::AddField( "cNomCli",     "C", 80, 0, {|| "@!" }, "Nombre cliente/proveedor"                )
