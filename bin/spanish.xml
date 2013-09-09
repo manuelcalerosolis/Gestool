@@ -1,0 +1,672 @@
+<?xml version="1.0" encoding="iso-8859-1"?>
+<languageUI>
+	<MainItem name="Toolbar1">
+		<Item>
+			<name>Toggle</name>
+                        <value>Ver código fuente/Ver HTML</value>
+		</Item>
+		<Item>
+			<name>Print</name>
+			<value>Imprimir</value>
+    	</Item>
+		<Item>
+			<name>Copy</name>
+			<value>Copiar</value>
+		</Item>
+		<Item>
+			<name>Cut</name>
+			<value>Cortar</value>
+		</Item>
+		<Item>
+			<name>Paste</name>
+			<value>Pegar</value>
+		</Item>
+		<Item>
+			<name>Align Left</name>
+			<value>Alinear a la izquierda</value>
+		</Item>
+		<Item>
+			<name>Center</name>
+			<value>Centrar</value>
+		</Item>
+		<Item>
+			<name>Align Right</name>
+			<value>Alinear a la derecha</value>
+		</Item>
+		<Item>
+			<name>Redo</name>
+			<value>Rehacer</value>
+		</Item>
+		<Item>
+			<name>Undo</name>
+			<value>Deshacer</value>
+		</Item>
+		<Item>
+			<name>indent</name>
+			<value>Sangria</value>
+		</Item>
+		<Item>
+			<name>unindent</name>
+			<value>Quitar Sangria</value>
+		</Item>
+		<Item>
+			<name>unorderedlist</name>
+			<value>lista</value>
+		</Item>
+		<Item>
+			<name>orderedlist</name>
+			<value>lista numerada</value>
+		</Item>
+	</MainItem>
+	<MainItem name="Toolbar2">
+		<Item>
+			<name>Bold</name>
+			<value>Negrita</value>
+		</Item>
+		<Item>
+			<name>Italic</name>
+			<value>Italica</value>
+		</Item>
+		<Item>
+			<name>Underline</name>
+			<value>Subrayado</value>
+		</Item>
+		<Item>
+			<name>Strike Through</name>
+			<value>Tachado</value>
+		</Item>
+		<Item>
+			<name>Image</name>
+			<value>Insertar una imagen</value>
+		</Item>
+		<Item>
+			<name>RemoteImage</name>
+			<value>insertar una imagen desde el servidor</value>
+		</Item>
+		<Item>
+			<name>Table</name>
+			<value>Insertar una tabla</value>
+		</Item>
+		<Item>
+			<name>Spell Check</name>
+			<value>Comprobar ortografia</value>
+		</Item>
+		<Item>
+			<name>Link</name>
+			<value>Hipervinculo</value>
+		</Item>
+		<Item>
+			<name>HR</name>
+                        <value>Línea</value>
+		</Item>
+		<Item>
+			<name>Text</name>
+                        <value>Ajustes del texto</value>
+		</Item>
+	</MainItem>
+	<MainItem name="Toolbar3">
+		<Item>
+			<name>Form</name>
+			<value>Insertar formulario</value>
+		</Item>
+		<Item>
+			<name>TextField</name>
+			<value>Insertar un campo de texto</value>
+		</Item>
+		<Item>
+			<name>Textarea</name>
+			<value>Insertar un campo memo</value>
+		</Item>
+		<Item>
+			<name>FileField</name>
+			<value>Insertar un selector de archivos</value>
+		</Item>
+		<Item>
+			<name>HiddenField</name>
+			<value>Insertar un campo oculto</value>
+		</Item>
+		<Item>
+			<name>ImageField</name>
+			<value>Insertar una imagen-boton</value>
+		</Item>
+		<Item>
+			<name>checkbox</name>
+			<value>Insertar un checkbox</value>
+		</Item>
+		<Item>
+			<name>dropdown</name>
+			<value>Insertar una lista de seleccion</value>
+		</Item>
+		<Item>
+			<name>Button</name>
+			<value>"Insertar un boton</value>
+		</Item>
+		<Item>
+			<name>Submit</name>
+			<value>Insertar un boton para enviar</value>
+		</Item>
+		<Item>
+			<name>Reset</name>
+			<value>Insertar un boton para limpiar formulario</value>
+		</Item>
+		<Item>
+			<name>Radio</name>
+			<value>Insertar un boton de radio</value>
+		</Item>
+	</MainItem>
+	<MainItem name="ContextMenus">
+		<!-- right click table context menu  -->
+		<Item>
+			<name>mnuTInsRow</name>
+			<value>Insertar Fila</value>
+		</Item>
+		<Item>
+			<name>mnuTDelRow</name>
+			<value>Suprimir Fila</value>
+		</Item>
+		<Item>
+			<name>mnuTInsCol</name>
+			<value>Insertar Columna</value>
+		</Item>
+		<Item>
+			<name>mnuTDelCol</name>
+			<value>Suprimir Columna</value>
+		</Item>
+		<Item>
+			<name>mnuTProp</name>
+			<value>Propiedades</value>
+		</Item>
+		<!-- right click hyperlink context menu  -->
+		<Item>
+			<name>mnuLinkCut</name>
+			<value>Cortar</value>
+		</Item>
+		<Item>
+			<name>mnuLinkCopy</name>
+			<value>Copiar</value>
+		</Item>
+		<Item>
+			<name>mnuLinkPaste</name>
+			<value>Pegar</value>
+		</Item>
+		<Item>
+			<name>mnuLinkEdit</name>
+			<value>Hipervinculo</value>
+		</Item>
+		<Item>
+			<name>mnuLinkRemove</name>
+                        <value>Eliminar hipervinculo</value>
+		</Item>
+		<!-- Miscellaneous right click context menu
+			 displayed when a right is performed in the editor
+			 and the target is not an image or link or table   -->
+		<Item>
+			<name>mnuMiscCut</name>
+			<value>Cortar</value>
+		</Item>
+		<Item>
+			<name>mnuMiscCopy</name>
+			<value>Copiar</value>
+		</Item>
+		<Item>
+			<name>mnuMiscPaste</name>
+			<value>Pegar</value>
+		</Item>
+		<Item>
+			<name>mnuInsertLink</name>
+			<value>Hipervinculo</value>
+		</Item>
+		<Item>
+			<name>mnuMiscSource</name>
+                        <value>Ver código fuente</value>
+		</Item>
+		<Item>
+			<name>mnuMiscRevert</name>
+			<value>Invertir seleccion</value>
+		</Item>
+		<!-- right click image context menu -->
+		<Item>
+			<name>mnuImgCut</name>
+			<value>Cortar</value>
+		</Item>
+		<Item>
+			<name>mnuImgCopy</name>
+			<value>Copiar</value>
+		</Item>
+		<Item>
+			<name>mnuImgPaste</name>
+			<value>Pegar</value>
+		</Item>
+		<Item>
+			<name>mnuImgLink</name>
+			<value>Hipervinculo</value>
+		</Item>
+		<Item>
+			<name>mnuImgLinkRemove</name>
+			<value>Quitar El Hipervinculo</value>
+		</Item>
+		<Item>
+			<name>mnuImgProperties</name>
+			<value>Propiedades</value>
+		</Item>
+		<!-- DOM Branch Toolbar rightclick context menus -->
+		<Item>
+			<name>mnuToolProperties</name>
+			<value>Propiedades</value>
+		</Item>
+		<Item>
+			<name>MnuCellAction</name>
+			<value>Celda</value>
+		</Item>
+		<Item>
+			<name>MnuRowAction</name>
+			<value>Fila</value>
+		</Item>
+		<Item>
+			<name>MnuRowActionDelete</name>
+			<value>Eliminar Fila</value>
+		</Item>
+		<Item>
+			<name>MnuCellActionDelete</name>
+			<value>Eliminar Celda</value>
+		</Item>
+		<Item>
+			<name>MnuCellRowActionsInsertRowAbove</name>
+			<value>Insertar Fila Arriba</value>
+		</Item>
+		<Item>
+			<name>MnuCellRowActionsInsertRowBelow</name>
+			<value>Insertar Fila Abajo</value>
+		</Item>
+		<Item>
+			<name>MnuCellRowActionsMergeCellLeft</name>
+			<value>Unir celdas de la izquierda</value>
+		</Item>
+		<Item>
+			<name>MnuCellRowActionsMergeCellRight</name>
+			<value>Unir celdas de la derecha</value>
+		</Item>
+		<Item>
+			<name>MnuCellRowActionsInsertCellBefore</name>
+			<value>Insertar una celda arriba</value>
+		</Item>
+		<Item>
+			<name>MnuCellRowActionsInsertCellAfter</name>
+			<value>Insertar una celda abajo</value>
+		</Item>
+		<Item>
+			<name>mnuToolEditTag</name>
+                        <value>Modificar código fuente</value>
+		</Item>
+		<Item>
+			<name>mnuToolSetClass</name>
+			<value>Estilo CSS</value>
+		</Item>
+	</MainItem>
+
+	<ImageSettings>
+		<Item>
+			<name special="Form">Ajustes De la Imagen</name>
+		</Item>
+		<Item>
+			<name>lblWidth</name>
+			<value>Anchura</value>
+    	</Item>
+		<Item>
+			<name>lblHeight</name>
+			<value>Altura</value>
+		</Item>
+		<Item>
+			<name>chkConstrain</name>
+                        <value>Ajustar las proporciones</value>
+		</Item>
+		<Item>
+			<name>lblBorder</name>
+                        <value>Borde</value>
+		</Item>
+		<Item>
+			<name>lblAlign</name>
+			<value>Alinee</value>
+		</Item>
+		<Item>
+			<name>lblSource</name>
+			<value>Fuente</value>
+		</Item>
+		<Item>
+			<name>lblAlt</name>
+                        <value>Texto alt.</value>
+		</Item>
+		<Item>
+			<name>OKButton</name>
+			<value>Aceptar</value>
+		</Item>
+		<Item>
+			<name>CancelButton</name>
+			<value>Cancelar</value>
+		</Item>
+		<Item>
+			<name>cmdReset</name>
+                        <value>Ajustar</value>
+		</Item>
+	</ImageSettings>
+	<TableCellSettings>
+		<Item>
+                        <name special="Form">Ajustes de la celda</name>
+		</Item>
+		<Item>
+			<name>lblHAlign</name>
+			<value>H. Alinee</value>
+    	</Item>
+		<Item>
+			<name>lblVAlign</name>
+			<value>V. Alinee</value>
+    	</Item>
+		<Item>
+			<name>lblWidth</name>
+			<value>Anchura</value>
+    	</Item>
+		<Item>
+			<name>lblHeight</name>
+			<value>Altura</value>
+    	</Item>
+		<Item>
+			<name>lblColSpan</name>
+                        <value>ColSpan</value>
+    	</Item>
+		<Item>
+			<name>lblRowSpan</name>
+                        <value>RowSpan</value>
+    	</Item>
+		<Item>
+			<name>lblBackground</name>
+                        <value>Imagen BG</value>
+    	</Item>
+		<Item>
+			<name>lblStyle</name>
+                        <value>Estilo CSS</value>
+    	</Item>
+		<Item>
+			<name>lblBGColor</name>
+                        <value>Color de fondo</value>
+    	</Item>
+		<Item>
+			<name>lblBorderColor</name>
+                        <value>Color del borde</value>
+    	</Item>
+		<Item>
+			<name>lblBorderColorLight</name>
+                        <value>Luz del borde</value>
+    	</Item>
+		<Item>
+			<name>lblBorderColorDark</name>
+                        <value>Oscuridad del borde</value>
+    	</Item>
+		<Item>
+			<name>OKButton</name>
+			<value>Aceptar</value>
+    	</Item>
+		<Item>
+			<name>CancelButton</name>
+			<value>Cancelar</value>
+    	</Item>
+	</TableCellSettings>
+	<TableRowSettings>
+		<Item>
+			<name special="Form">Ajustes De la Fila</name>
+		</Item>
+		<Item>
+			<name>lblHAlign</name>
+			<value>H. Alinee</value>
+    	</Item>
+		<Item>
+			<name>lblVAlign</name>
+			<value>V. Alinee</value>
+    	</Item>
+		<Item>
+			<name>lblWidth</name>
+			<value>Anchura</value>
+    	</Item>
+		<Item>
+			<name>lblHeight</name>
+			<value>Altura</value>
+    	</Item>
+		<Item>
+			<name>lblColSpan</name>
+                        <value>ColSpan</value>
+    	</Item>
+		<Item>
+			<name>lblRowSpan</name>
+                        <value>RowSpan</value>
+    	</Item>
+		<Item>
+			<name>lblBackground</name>
+			<value>Imagen de BG</value>
+    	</Item>
+		<Item>
+			<name>lblStyle</name>
+			<value>Estilo del Css</value>
+    	</Item>
+		<Item>
+			<name>lblBGColor</name>
+                        <value>Color de fondo</value>
+    	</Item>
+		<Item>
+			<name>lblBorderColor</name>
+                        <value>Color del borde</value>
+    	</Item>
+		<Item>
+			<name>lblBorderColorLight</name>
+                        <value>Luz del color del borde</value>
+    	</Item>
+		<Item>
+			<name>lblBorderColorDark</name>
+                        <value>Oscuridad del color del borde</value>
+    	</Item>
+		<Item>
+			<name>OKButton</name>
+			<value>Aceptar</value>
+    	</Item>
+		<Item>
+			<name>CancelButton</name>
+			<value>Cancelar</value>
+    	</Item>
+	</TableRowSettings>
+	<ElementTagEdit>
+		<Item>
+			<name>OKButton</name>
+			<value>Aceptar</value>
+		</Item>
+		<Item>
+			<name>CancelButton</name>
+			<value>Cancelar</value>
+    	</Item>
+	</ElementTagEdit>
+
+	<FontSettings>
+		<Item>
+                        <name special="Form">Ajustes de la fuente</name>
+		</Item>
+		<Item>
+			<name>lblFontName</name>
+                        <value>Fuente</value>
+		</Item>
+		<Item>
+			<name>lblFontSize</name>
+                        <value>Tamaño</value>
+    	</Item>
+		<Item>
+			<name>lblForeColor</name>
+                        <value>Color frente</value>
+		</Item>
+		<Item>
+			<name>lblBackColor</name>
+                        <value>Color fondo</value>
+    	</Item>
+		<Item>
+			<name>cmdApply</name>
+			<value>Aceptar</value>
+		</Item>
+		<Item>
+			<name>cmdCancel</name>
+			<value>Cancelar</value>
+    	</Item>
+	</FontSettings>
+
+	<FormSettings>
+		<Item>
+			<name special="Form">Forme Los Ajustes</name>
+		</Item>
+		<Item>
+			<name>lblFormName</name>
+                        <value>Forme el nombre</value>
+		</Item>
+		<Item>
+			<name>lblAction</name>
+			<value>Acción</value>
+    	</Item>
+		<Item>
+			<name>lblMethod</name>
+			<value>Método</value>
+		</Item>
+		<Item>
+			<name>lblEncoding</name>
+			<value>Codificación</value>
+    	</Item>
+		<Item>
+			<name>lblTarget</name>
+			<value>Blanco</value>
+    	</Item>
+		<Item>
+			<name>OKButton</name>
+			<value>Aceptar</value>
+		</Item>
+		<Item>
+			<name>CancelButton</name>
+			<value>Cancelar</value>
+    	</Item>
+		<Item>
+			<name>cmdRemove</name>
+                        <value>Quite la forma</value>
+    	</Item>
+	</FormSettings>
+
+	<WaitSettings>
+		<Item>
+			<name>cmdCancel</name>
+			<value>Cancelar</value>
+		</Item>
+		<Item>
+			<name>lblTitle</name>
+                        <value>Por favor espere</value>
+    	</Item>
+	</WaitSettings>
+
+	<SpellingSettings>
+		<Item>
+			<name special="Form">Deletreo</name>
+		</Item>
+		<Item>
+			<name>lblSuggestions</name>
+			<value>Sugerencias</value>
+		</Item>
+		<Item>
+			<name>OKButton</name>
+			<value>Aceptar</value>
+    	</Item>
+		<Item>
+			<name>CancelButton</name>
+			<value>No haga caso</value>
+    	</Item>
+		<Item>
+			<name>cmdAddWord</name>
+                        <value>Agregue la palabra</value>
+    	</Item>
+		<Item>
+			<name>cmdQuitSpelling</name>
+                        <value>Pare el deletrear</value>
+    	</Item>
+	</SpellingSettings>
+
+	<TableSettings>
+		<Item>
+			<name special="Form">Tabla del HTML</name>
+		</Item>
+		<Item>
+			<name>lblTableAttributes</name>
+                        <value>Características de la tabla</value>
+		</Item>
+		<Item>
+			<name>lblrows</name>
+			<value>Número de filas</value>
+    	</Item>
+		<Item>
+			<name>lblcolumns</name>
+			<value>Número de columnas</value>
+    	</Item>
+		<Item>
+			<name>lblBorderWidth</name>
+                        <value>Anchura del borde</value>
+    	</Item>
+		<Item>
+			<name>lblBorderColor</name>
+                        <value>Color del borde</value>
+    	</Item>
+		<Item>
+			<name>lblBackgroundColor</name>
+                        <value>Color del fondo</value>
+    	</Item>
+		<Item>
+			<name>lblCellSpacing</name>
+                        <value>Espaciamiento de la celda</value>
+    	</Item>
+		<Item>
+			<name>lblCellPadding</name>
+                        <value>Acolchado de la celda</value>
+    	</Item>
+		<Item>
+			<name>lblWidth</name>
+			<value>Anchura</value>
+    	</Item>
+		<Item>
+			<name>lblStyle</name>
+			<value>Estilo del Css</value>
+    	</Item>
+
+		<Item>
+			<name>lblCellAttributes</name>
+                        <value>Características de la celda</value>
+    	</Item>
+		<Item>
+			<name>lblCellBorderColor</name>
+                        <value>Color del borde de la celda</value>
+    	</Item>
+		<Item>
+			<name>lblCellBackgroundColor</name>
+                        <value>Color del fondo de la celda</value>
+    	</Item>
+
+		<Item>
+			<name>cmdApply</name>
+			<value>Aceptar</value>
+    	</Item>
+		<Item>
+			<name>cmdCancel</name>
+			<value>Cancelar</value>
+    	</Item>
+	</TableSettings>
+
+	<LibraryImageSettings>
+		<Item>
+			<name special="Form">Inserte la imagen vía el ftp</name>
+		</Item>
+		<Item>
+			<name>cmdInsert</name>
+                        <value>Insertar</value>
+		</Item>
+		<Item>
+			<name>cmdCancel</name>
+			<value>Cancelar</value>
+    	</Item>
+	</LibraryImageSettings>
+
+</languageUI>
