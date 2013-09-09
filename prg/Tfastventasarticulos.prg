@@ -1485,7 +1485,7 @@ METHOD AddAlbaranCliente( lFacturados ) CLASS TFastVentasArticulos
                   ::oDbf:cMinDoc    := SubStr( ::oAlbCliT:cTimCre, 4, 2 )
 
                   /*
-                  Añadimos un nuevo registro
+                  Añadimos un nuevo registro----------------------------------
                   */
 
                   if ::lValidRegister()
