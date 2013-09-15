@@ -10564,7 +10564,7 @@ Static Function DataReport( oFr )
    oFr:SetFieldAliases( "Tipo de venta", cItemsToReport( aItmTVta() ) )
 
    oFr:SetWorkArea(     "Usuarios", ( dbfUsr )->( Select() ) )
-   oFr:SetFieldAliases( "Usuarios", cItemsToReport( aItmUsr() ) )
+   oFr:SetFieldAliases( "Usuarios", cItemsToReport( aItmUsuario() ) )
 
    oFr:SetWorkArea(     "Ofertas", ( dbfOferta )->( Select() ) )
    oFr:SetFieldAliases( "Ofertas", cItemsToReport( aItmOfe() ) )

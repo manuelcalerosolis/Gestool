@@ -406,7 +406,7 @@ METHOD DataReport() CLASS TFastVentasClientes
    ::oFastReport:SetFieldAliases(   "Grupos de cliente",                cObjectsToReport( ::oGrpCli:oDbf ) )
 
    ::oFastReport:SetWorkArea(       "Usuarios",                         ::oDbfUsr:nArea ) 
-   ::oFastReport:SetFieldAliases(   "Usuarios",                         cItemsToReport( aItmUsr() ) )
+   ::oFastReport:SetFieldAliases(   "Usuarios",                         cItemsToReport( aItmUsuario() ) )
 
    ::oFastReport:SetWorkArea(       "Direcciones",                      ::oObras:nArea )
    ::oFastReport:SetFieldAliases(   "Direcciones",                      cItemsToReport( aItmObr() ) )

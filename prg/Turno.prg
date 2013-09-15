@@ -8331,7 +8331,7 @@ METHOD DataReport( cTurno, cCaja, oFastReport )
    oFastReport:SetFieldAliases( "Lineas de informes", cObjectsToReport( ::oDbfTemporal ) )
 
    oFastReport:SetWorkArea(     "Usuarios", ::oDbfUsr:nArea )
-   oFastReport:SetFieldAliases( "Usuarios", cItemsToReport( aItmUsr() ) )
+   oFastReport:SetFieldAliases( "Usuarios", cItemsToReport( aItmUsuario() ) )
 
    oFastReport:SetWorkArea(     "Empresa", ::oDbfEmp:nArea )
    oFastReport:SetFieldAliases( "Empresa", cItemsToReport( aItmEmp() ) )

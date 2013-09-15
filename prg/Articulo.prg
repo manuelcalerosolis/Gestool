@@ -16321,7 +16321,7 @@ RETURN ( lTmp )
 
 function GraLotArt( cCodArt, dbfArticulo, cLote )
 
-   local nOrdSetFocus   := ( dbfArticulo )->( ordSetFocus( "CODIGO" ) )
+   local nOrdSetFocus   := ( dbfArticulo )->( ordSetFocus( "Codigo" ) )
 
    /*
    Actualizar NLOTE en el Fichero de artículos

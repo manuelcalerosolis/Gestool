@@ -4730,7 +4730,7 @@ STATIC FUNCTION lTctInitCheck( lDir, oMessage, oProgress )
 
       oMsgText( 'Control de contadores' )
 
-      mkNewCount( cPatEmp() )
+      mkCount( cPatEmp() )
 
       oMsgText()
 
@@ -5072,7 +5072,7 @@ STATIC FUNCTION lTactilInitCheck( lDir )
 
       oMsgText( 'Control de contadores' )
 
-      mkNewCount( cPatEmp() )
+      mkCount( cPatEmp() )
 
       oMsgText()
 

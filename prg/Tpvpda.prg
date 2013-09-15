@@ -13068,7 +13068,7 @@ Static Function DataReport( oFr )
    oFr:SetFieldAliases( "Formas de pago", cItemsToReport( aItmFPago() ) )
 
    oFr:SetWorkArea(     "Usuarios", ( dbfUsr )->( Select() ) )
-   oFr:SetFieldAliases( "Usuarios", cItemsToReport( aItmUsr() ) )
+   oFr:SetFieldAliases( "Usuarios", cItemsToReport( aItmUsuario() ) )
 
    oFr:SetMasterDetail( "Tickets", "Lineas de tickets",  {|| ( dbfTikT )->cSerTik + ( dbfTikT )->cNumTik + ( dbfTikT )->cSufTik } )
    oFr:SetMasterDetail( "Tickets", "Lineas de albaranes",{|| ( dbfTikT )->cNumDoc } )

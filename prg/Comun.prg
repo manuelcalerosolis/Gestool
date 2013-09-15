@@ -71,6 +71,8 @@ Return ( lAIS )
 
 //----------------------------------------------------------------------------//
 
+
+
 Function lAdsRdd()
 
 Return ( lAds() .or. lAIS() )
@@ -122,6 +124,22 @@ Function lPda()
 Return ( "PDA" $ cParamsMain() )
 
 //---------------------------------------------------------------------------//
+
+Function SetIndexToAIS()
+
+   lCdx( .f. )
+   lAIS( .t. )
+
+Return nil 
+
+//---------------------------------------------------------------------------//
+
+Function SetIndexToCDX()
+
+   lCdx( .t. )
+   lAIS( .f. )
+
+Return nil 
 
 #ifndef __PDA__
 

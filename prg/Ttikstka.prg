@@ -78,36 +78,9 @@ METHOD OpenFiles()
 
    BEGIN SEQUENCE
 
-   DATABASE NEW ::oPedPrvL    PATH ( cPatEmp() ) FILE "PedProvL.DBF" VIA ( cDriver() ) SHARED INDEX "PedProvL.Cdx"
-
-   DATABASE NEW ::oAlbPrvL    PATH ( cPatEmp() ) FILE "ALBPROVL.DBF"   VIA ( cDriver() ) SHARED INDEX "ALBPROVL.CDX"
-
-   DATABASE NEW ::oFacPrvL    PATH ( cPatEmp() ) FILE "FACPRVL.DBF"    VIA ( cDriver() ) SHARED INDEX "FACPRVL.CDX"
-
-   DATABASE NEW ::oRctPrvL    PATH ( cPatEmp() ) FILE "RctPrvL.DBF"  VIA ( cDriver() ) SHARED INDEX "RctPrvL.Cdx"
-
-   DATABASE NEW ::oPedCliL    PATH ( cPatEmp() ) FILE "PedCliL.DBF"  VIA ( cDriver() ) SHARED INDEX "PedCliL.Cdx"
-
-   DATABASE NEW ::oAlbCliL  PATH ( cPatEmp() ) FILE "ALBCLIL.DBF"    VIA ( cDriver() ) SHARED INDEX "ALBCLIL.CDX"
-
-   DATABASE NEW ::oPedCliR  PATH ( cPatEmp() ) FILE "PEDCLIR.DBF"    VIA ( cDriver() ) SHARED INDEX "PEDCLIR.CDX"
-   ::oPedCliR:OrdSetFocus( "cRef" )
-
-   DATABASE NEW ::oFacCliL  PATH ( cPatEmp() ) FILE "FACCLIL.DBF"    VIA ( cDriver() ) SHARED INDEX "FACCLIL.CDX"
-
-   DATABASE NEW ::oFacRecL  PATH ( cPatEmp() ) FILE "FACRECL.DBF"    VIA ( cDriver() ) SHARED INDEX "FACRECL.CDX"
-
-   DATABASE NEW ::oTikCliL  PATH ( cPatEmp() ) FILE "TikeL.DBF"      VIA ( cDriver() ) SHARED INDEX "TikeL.CDX"
-
-   DATABASE NEW ::oHisMov   PATH ( cPatEmp() ) FILE "HisMov.DBF"     VIA ( cDriver() ) SHARED INDEX "HisMov.CDX"
-
-   DATABASE NEW ::oProLin    PATH ( cPatEmp() ) FILE "PROLIN.DBF"    VIA ( cDriver() ) SHARED INDEX "PROLIN.CDX"
-
-   DATABASE NEW ::oProMat    PATH ( cPatEmp() ) FILE "PROMAT.DBF"    VIA ( cDriver() ) SHARED INDEX "PROMAT.CDX"
-
-      ::oStock                := TStock():New()
+      ::oStock    := TStock():New()
       if !::oStock:lOpenFiles()
-         lOpen                := .f.
+         lOpen    := .f.
       end if
 
    RECOVER
@@ -129,72 +102,10 @@ RETURN ( lOpen )
 
 METHOD CloseFiles()
 
-   if !Empty( ::oPedPrvL ) .and. ::oPedPrvL:Used()
-      ::oPedPrvL:End()
-   end if
-
-   if !Empty( ::oAlbPrvL ) .and. ::oAlbPrvL:Used()
-      ::oAlbPrvL:End()
-   end if
-
-   if !Empty( ::oFacPrvL ) .and. ::oFacPrvL:Used()
-      ::oFacPrvL:End()
-   end if
-
-   if !Empty( ::oRctPrvL ) .and. ::oRctPrvL:Used()
-      ::oRctPrvL:End()
-   end if
-
-   if !Empty( ::oPedCliL ) .and. ::oPedCliL:Used()
-      ::oPedCliL:End()
-   end if
-
-   if !Empty( ::oAlbCliL ) .and. ::oAlbCliL:Used()
-      ::oAlbCliL:End()
-   end if
-
-   if !Empty( ::oPedCliR ) .and. ::oPedCliR:Used()
-      ::oPedCliR:End()
-   end if
-
-   if !Empty( ::oFacCliL ) .and. ::oFacCliL:Used()
-      ::oFacCliL:End()
-   end if
-
-   if !Empty( ::oFacRecL ) .and. ::oFacRecL:Used()
-      ::oFacRecL:End()
-   end if
-
-   if !Empty( ::oTikCliL ) .and. ::oTikCliL:Used()
-      ::oTikCliL:End()
-   end if
-
-   if !Empty( ::oHisMov ) .and. ::oHisMov:Used()
-      ::oHisMov:End()
-   end if
-
-   if !Empty( ::oProLin ) .and. ::oProLin:Used()
-      ::oProLin:End()
-   end if
-
-   if !Empty( ::oProMat ) .and. ::oProMat:Used()
-      ::oProMat:End()
-   end if
-
    if !Empty( ::oStock )
       ::oStock:End()
    end if
 
-   ::oAlbPrvL := nil
-   ::oFacPrvL := nil
-   ::oAlbCliL := nil
-   ::oPedCliR := nil
-   ::oFacCliL := nil
-   ::oFacRecL := nil
-   ::oTikCliL := nil
-   ::oHisMov  := nil
-   ::oProLin  := nil
-   ::oProMat  := nil
    ::oStock   := nil
 
 RETURN ( Self )
@@ -250,9 +161,7 @@ METHOD lResource()
    */
 
    if ::xOthers
-
       ::oBtnAction:bAction    := {|| if( ::lGenerate(), ::PrnTiket( ::oCmbReport:nAt == 1 ), msgStop( "No hay registros en las condiciones solictadas" ) ) }
-
    end if
 
    ::oMtrInf:SetTotal( ::oDbfArt:OrdKeyCount() )
@@ -268,17 +177,18 @@ Esta funcion crea la base de datos para generar posteriormente el informe
 
 METHOD lGenerate()
 
-   local cExpAlm        := ""
-   local cExpArt        := ""
-   local nStockActual   := 0
+   local cExpAlm           := ""
+   local cExpArt           := ""
+   local nStockActual      := 0
+   local nStockReservado   := 0   
 
    ::oDlg:Disable()
    ::oBtnCancel:Enable()
    ::oDbf:Zap()
 
-   ::aHeader      := {  {|| "Fecha      : " + Dtoc( Date() ) },;
-                        {|| "Almacenes  : " + if( ::lAllAlm, "Todos", AllTrim( ::cAlmOrg ) + " > " + AllTrim( ::cAlmDes ) ) },;
-                        {|| "Artículos  : " + if( ::lAllArt, "Todos", AllTrim( ::cArtOrg ) + " > " + AllTrim( ::cArtDes ) ) } }
+   ::aHeader         := {  {|| "Fecha      : " + Dtoc( Date() ) },;
+                           {|| "Almacenes  : " + if( ::lAllAlm, "Todos", AllTrim( ::cAlmOrg ) + " > " + AllTrim( ::cAlmDes ) ) },;
+                           {|| "Artículos  : " + if( ::lAllArt, "Todos", AllTrim( ::cArtOrg ) + " > " + AllTrim( ::cArtDes ) ) } }
 
    ::oDbfAlm:OrdSetFocus( "cCodAlm" )
    ::oDbfArt:OrdSetFocus( "Codigo" )
@@ -319,9 +229,10 @@ METHOD lGenerate()
 
             if ( ( ::lControlStock .and. ::oDbfArt:nCtlStock == 1 ) .or. !::lControlStock )
 
-               nStockActual   := ::oStock:nStockAlmacen( ::oDbfArt:Codigo, ::oDbfAlm:cCodAlm )
+               nStockActual      := ::oStock:nStockAlmacen( ::oDbfArt:Codigo, ::oDbfAlm:cCodAlm )
+               nStockReservado   := ::oStock:nStockReservado( ::oDbfArt:Codigo )
 
-               if !( ::lExcCero .AND. nStockActual == 0 )
+               if !( ::lExcCero .and. nStockActual == 0 )
 
                   ::oDbf:Append()
 
@@ -330,8 +241,8 @@ METHOD lGenerate()
                   ::oDbf:cNomArt := ::oDbfArt:Nombre
                   ::oDbf:cDesArt := if( Empty( ::oDbfArt:cDesTik ), ::oDbfArt:Nombre, ::oDbfArt:cDesTik )
                   ::oDbf:nNumUnd := nStockActual
-                  ::oDbf:nStkCmp := ::nTotReserva( ::oDbfArt:Codigo )
-                  ::oDbf:nStkLib := nStockActual - ::oDbf:nStkCmp
+                  ::oDbf:nStkCmp := nStockReservado
+                  ::oDbf:nStkLib := nStockActual - nStockReservado
 
                   ::oDbf:Save()
 
