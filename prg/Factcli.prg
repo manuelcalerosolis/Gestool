@@ -4350,7 +4350,7 @@ Static Function StartEdtRec( aTmp, aGet, oDlg, nMode, hHash, oBrwLin )
 
          do case
             case HGetKeyAt( hHash, 1 ) == "Artículo"
-               AppDeta( oBrwLin, bEdtDet, aTmp, nil, nMode, HGetValueAt( hHash, 1 ) )
+               AppDeta( oBrwLin, bEdtDet, aTmp, nil, HGetValueAt( hHash, 1 ) )
 
             case HGetKeyAt( hHash, 1 ) == "Cliente"
                aGet[ _CCODCLI ]:cText( HGetValueAt( hHash, 1 ) )
@@ -17591,7 +17591,7 @@ Funcion Auxiliar para A¤adir lineas de detalle a una Factura
 */
 
 STATIC FUNCTION AppDeta( oBrwDet, bEdtDet, aTmp, lTot, cCodArt, aNumDoc )
-
+					 
    DEFAULT lTot   := .f.
 
    if lRecibosPagadosTmp( dbfTmpPgo )

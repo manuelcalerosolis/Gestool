@@ -85,7 +85,7 @@ FUNCTION Prop( oMenuItem, oWnd )
       end with
 
       with object ( oWndBrw:AddXCol() )
-         :cHeader          := "Públicar"
+         :cHeader          := "Publicar"
          :nHeadBmpNo       := 3
          :bStrData         := {|| "" }
          :bEditValue       := {|| ( dbfProT )->lPubInt }

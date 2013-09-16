@@ -7444,9 +7444,6 @@ FUNCTION ActDbf( cEmpOld, cEmpTmp, cFile, cText, oMtr, oMsg, aMsg )
    local nField      := 0
    local aField
 
-   ? ( dbfNamOld + ".Dbf", "dbfNamOld" )
-   ? ( dbfNamTmp + ".Dbf", "dbfNamTmp" )
-
    if !lExistTable( dbfNamOld + ".Dbf" )
       return nil
    end if

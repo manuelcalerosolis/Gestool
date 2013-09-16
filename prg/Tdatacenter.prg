@@ -114,7 +114,7 @@ CLASS TDataCenter
    METHOD CreateOperationLogTable()
    METHOD CreateColumnLogTable()
 
-   METHOD CreateTemporalTable( oTable )   INLINE ( if( !Empty( oTable:aStruct ) .and. !Empty( oTable:bCreateFile ) .and. !Empty( oTable:bCreateIndex ), Eval( oTable:bCreateFile, cEmpTmp() ), ) )                  
+   METHOD CreateTemporalTable( oTable )   INLINE ( if( !Empty( oTable:aStruct ) .and. !Empty( oTable:bCreateFile ), Eval( oTable:bCreateFile, cEmpTmp() ), ) )                  
 
    METHOD lAdministratorTask()
    METHOD StartAdministratorTask()
@@ -145,11 +145,12 @@ CLASS TDataCenter
    METHOD Reindex()
    METHOD ReindexTable( oTable )
 
-   METHOD ActualizaDataTable( oTable )     INLINE  ( msgAlert( oTable:cName), msgAlert( cPatDat(), "cPatDat" ), msgAlert( cEmpTmp(), "cEmpTmp" ), ActDbf( cPatDat(), cEmpTmp(), oTable:cName ) )
-   METHOD ActualizaEmpresTable( oTable )   INLINE  ActDbf( cPatEmp(), cEmpTmp(), oTable:cName )
+   METHOD ActualizaDataTable( oTable )       INLINE  ( ::ActualizaTable( oTable, cPatDat() ) )
+   METHOD ActualizaEmpresaTable( oTable )    INLINE  ( ::ActualizaTable( oTable, cPatEmp() ) )
+   METHOD ActualizaTable( oTable, cPath )
    METHOD ActualizaEmpresa()
 
-   //---------------------------------------------------------------------------//
+   //------------------------------------------------------------------------//
 
    INLINE METHOD oFacCliT()
 
@@ -781,11 +782,11 @@ METHOD StartAdministratorTask()
 
       /*
       Reindexamos las bases de datos-------------------------------------------
-      */
 
       ::oSayProceso:SetText( "Regnerando indices" )
 
       ::Reindex()
+      */
 
    end if
 
@@ -943,9 +944,7 @@ METHOD DeleteTable( oTable )
       aDel( ::aDDTables, nScan, .t. )
    end if
 
-   AdsDDRemoveTable( Left( Upper( oTable:cName ), len( oTable:cName ) - 1 ) )
-
-Return ( Self )
+Return ( AdsDDRemoveTable( Upper( oTable:cName ) ), "AdsDDRemoveTable"  + Left( Upper( oTable:cName ), len( oTable:cName ) - 1 ) )
 
 //---------------------------------------------------------------------------//
 
@@ -1360,6 +1359,8 @@ METHOD BuildData()
 
    local oDataTable
 
+   ::aDataTables           := {}
+
    oDataTable              := TDataTable()
    oDataTable:cName        := cPatDat() + "Users"
    oDataTable:cDataFile    := cPatDat( .t. ) + "Users.Dbf"
@@ -1415,6 +1416,8 @@ METHOD BuildData()
    oDataTable:cIndexFile   := cPatDat( .t. ) + "Visor.Cdx"
    oDataTable:cDescription := "Visores"
    oDataTable:lTrigger     := ::lTriggerAuxiliares
+   oDataTable:bCreateFile  := {| cPath | mkVisor( cPath ) }
+   oDataTable:bCreateIndex := {| cPath | rxVisor( cPath ) }
    ::AddDataTable( oDataTable )
 
    oDataTable              := TDataTable()
@@ -1423,6 +1426,8 @@ METHOD BuildData()
    oDataTable:cIndexFile   := cPatDat( .t. ) + "CajPorta.Cdx"
    oDataTable:cDescription := "Cajón portamonedas"
    oDataTable:lTrigger     := ::lTriggerAuxiliares
+   oDataTable:bCreateFile  := {| cPath | mkCajPorta( cPath ) }
+   oDataTable:bCreateIndex := {| cPath | rxCajPorta( cPath ) }
    ::AddDataTable( oDataTable )
 
    oDataTable              := TDataTable()
@@ -1431,6 +1436,8 @@ METHOD BuildData()
    oDataTable:cIndexFile   := cPatDat( .t. ) + "TipImp.Cdx"
    oDataTable:cDescription := "Tipos de impresoras"
    oDataTable:lTrigger     := ::lTriggerAuxiliares
+   oDataTable:bCreateFile  := {| cPath | mkTImp( cPath ) }
+   oDataTable:bCreateIndex := {| cPath | rxTImp( cPath ) }
    ::AddDataTable( oDataTable )
 
    oDataTable              := TDataTable()
@@ -1439,6 +1446,7 @@ METHOD BuildData()
    oDataTable:cIndexFile   := cPatDat( .t. ) + "Agenda.Cdx"
    oDataTable:cDescription := "Agenda"
    oDataTable:lTrigger     := ::lTriggerAuxiliares
+   oDataTable:bCreateFile  := {| cPath | TAgenda():OpenFiles( .t., cPath ), MsgStop( "mira tAgenda") }
    ::AddDataTable( oDataTable )
 
    oDataTable              := TDataTable()
@@ -1576,6 +1584,8 @@ RETURN ( Self )
 METHOD BuildEmpresa()
 
    local oDataTable
+
+   ::aEmpresaTables        := {}
 
    oDataTable              := TDataTable()
    oDataTable:cName        := cPatEmp() + "NCount"
@@ -2233,7 +2243,7 @@ METHOD BuildEmpresa()
    ::AddEmpresaTable( oDataTable )
 
    /*
-   Pedido Proveedores
+   Pedido Proveedores----------------------------------------------------------
    */
 
    oDataTable              := TDataTable()
@@ -3911,19 +3921,113 @@ Return ( Self )
 
 METHOD ReindexTable( oTable )
 
-   dbUseArea( .t., cDriver(), ( oTable:cName + ".Dbf" ), "Table", .f. )
-   
-   if ( "Table" )->( Used() )
-   
-      ( "Table" )->( OrdSetFocus( 1 ) )
-      ( "Table" )->( OrdListRebuild() )
-      ( "Table" )->( dbCloseArea() )
-   
-   end if 
+   local oError
+   local oBlock
+
+   oBlock         := ErrorBlock( { | oError | ApoloBreak( oError ) } )
+   BEGIN SEQUENCE
+
+      dbUseArea( .t., cDriver(), ( oTable:cName + ".Dbf" ), "Table", .f. )
+      
+      if !NetErr() .and. ( "Table" )->( Used() )
+      
+         ( "Table" )->( OrdSetFocus( 1 ) )
+         ( "Table" )->( OrdListRebuild() )
+         ( "Table" )->( dbCloseArea() )
+      
+      end if 
+
+   RECOVER USING oError
+
+      msgStop( ErrorMessage( oError ), 'Imposible regenerar indices' )
+
+   END SEQUENCE
+
+   ErrorBlock( oBlock )
 
 Return ( Self )
 
 //---------------------------------------------------------------------------//
+
+METHOD ActualizaTable( oTable, cPath )
+
+   local i
+   local cOld
+   local cTmp
+   local lCopy       
+   local dbfOld
+   local dbfTmp
+   local nField      
+   local aField
+   
+   cOld              := oTable:cName 
+   cTmp              := cEmpTmp() + cNoPath( oTable:cName )
+   
+   if !lExistTable( cOld + ".Dbf" )
+      return .f.
+   end if
+   
+   if !lExistTable( cTmp + ".Dbf" )
+      return .f.
+   end if
+   
+   USE ( cOld + ".Dbf" ) NEW VIA ( cDriver() ) SHARED ALIAS ( cCheckArea( "OLD", @dbfOld ) )
+   if NetErr()
+      return .f.
+   end if
+   
+   USE ( cTmp + ".Dbf" ) NEW VIA ( cDriver() ) SHARED ALIAS ( cCheckArea( "TMP", @dbfTmp ) )
+   if NetErr()
+      return .f.
+   end if
+
+   // Preparamos los campos ---------------------------------------------------
+   
+   nField            := ( dbfTmp )->( fCount() )
+   aField            := Array( nField )
+
+   for i := 1 to nField
+      aField[ i ]    := ( dbfTmp )->( FieldPos( ( dbfOld )->( FieldName( i ) ) ) )
+   next
+
+   while !( dbfOld )->( eof() )
+
+      ( dbfTmp )->( dbAppend() )
+   
+      aEval( aField, {| nFld, i | if( nFld != 0, ( dbfTmp )->( FieldPut( nFld, ( dbfOld )->( FieldGet( i ) ) ) ), ) } )
+   
+      ( dbfOld )->( dbSkip() )
+   
+      SysRefresh()
+   
+   end while
+   
+   lCopy             := ( dbfOld )->( eof() )
+   
+   CLOSE ( dbfOld )
+   CLOSE ( dbfTmp )
+   
+   // Si hay copia satisfactoria cambiamos los ficheros------------------------
+   
+   if lCopy
+   
+      fEraseTable( cOld + ".Dbf" )
+      fEraseTable( cOld + ".Fpt" )
+      fEraseTable( cOld + ".Cdx" )
+   
+      fRenameTable( cTmp + ".Dbf", cOld + ".Dbf" )
+      fRenameTable( cTmp + ".Fpt", cOld + ".Fpt" )
+      fRenameTable( cTmp + ".Cdx", cOld + ".Cdx" )
+   
+   else
+   
+      MsgStop( "No se actualizo el fichero " + cNoPath( cOld ) + ".Dbf" )
+   
+   end if
+   
+return ( lCopy )
+
+//------------------------------------------------------------------------------//
 
 METHOD ActualizaEmpresa( oMsg )
 
@@ -3935,7 +4039,7 @@ METHOD ActualizaEmpresa( oMsg )
 
    ::BuildData()
 
-   SetIndexToCdx()
+   ::BuildEmpresa()
 
    // Eliminando tablas del diccionario----------------------------------------
 
@@ -3949,6 +4053,12 @@ METHOD ActualizaEmpresa( oMsg )
       ::DeleteTable( oTable )
    next 
 
+   SetIndexToCdx()
+
+   ::BuildData()
+
+   ::BuildEmpresa()
+
    // Creamos las nuesvas estructuras------------------------------------------
 
    for each oTable in ::aDataTables
@@ -3962,8 +4072,6 @@ METHOD ActualizaEmpresa( oMsg )
    next 
 
    // Creamos las nuesvas estructuras------------------------------------------
-
-   MsgStop( len( ::aDataTables), "len aDataTables" )
 
    for each oTable in ::aDataTables
       ::oMsg:SetText( "Actualizando tabla : " + oTable:cDescription )
@@ -3976,6 +4084,10 @@ METHOD ActualizaEmpresa( oMsg )
    next 
 
    SetIndexToAIS()
+
+   ::BuildData()
+
+   ::BuildEmpresa()
 
    // Creamos las nuesvas estructuras------------------------------------------
 
@@ -3992,12 +4104,12 @@ METHOD ActualizaEmpresa( oMsg )
    // Reindexando tablas ------------------------------------------------------
 
    for each oTable in ::aDataTables
-      ::oMsg:SetText( "Reindexando tabla : " + oTable:cDescription )
+      ::oMsg:SetText( "Reindexando : " + oTable:cDescription )
       ::ReindexTable( oTable )
    next 
 
    for each oTable in ::aEmpresaTables
-      ::oMsg:SetText( "Reindexando tabla : " + oTable:cDescription )
+      ::oMsg:SetText( "Reindexando : " + oTable:cDescription )
       ::ReindexTable( oTable )
    next 
 
@@ -4357,3 +4469,5 @@ Function ADSRunSQL( cSqlAlias, cSqlStatement, lShow )
 RETURN lGood
 
 //---------------------------------------------------------------------------//
+
+

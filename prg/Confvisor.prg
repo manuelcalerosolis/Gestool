@@ -510,14 +510,8 @@ FUNCTION mkVisor(cPath, lAppend, cPathOld, oMeter )
 
    oVisor:Activate( .f., .f. )
 
-   if lAppend .and. lIsDir( cPathOld )
-
-      if file ( cPathOld + "VISOR.DBF" )
-
-         oVisor:AppendFrom (  cPathOld + "VISOR.DBF" )
-
-      end if
-
+   if lAppend .and. file( cPathOld + "VISOR.DBF" )
+        oVisor:AppendFrom( cPathOld + "VISOR.DBF" )
    end if
 
    oVisor:end()

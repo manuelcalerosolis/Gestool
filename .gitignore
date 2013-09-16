@@ -47,6 +47,7 @@
 *.map
 *.lic
 *.zip
+*.adt
 
 # [Bb]in/
 
