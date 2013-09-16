@@ -4582,7 +4582,7 @@ Static Function ActDbfEmp( cCodEmp, aMsg, oAni, oDlg, oMsg, oMet, lActEmp )
             ActDbf( cEmpDat, cEmpTmp, "Situa", "situaciones", oMet, oMsg, aMsg )
          end if
 
-         if mkTImp( cEmpTmp )
+         if mkTipImp( cEmpTmp )
             ActDbf( cEmpDat, cEmpTmp, "TipImp", "Tipos de impresoras", oMet, oMsg, aMsg )
          end if
 

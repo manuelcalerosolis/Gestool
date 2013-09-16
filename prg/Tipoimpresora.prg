@@ -20,7 +20,7 @@ STATIC FUNCTION OpenFiles()
       DisableAcceso()
 
       if !lExistTable( cPatDat() + "TIPIMP.DBF" )
-         mkTImp( cPatDat() )
+         mkTipImp( cPatDat() )
       end if
 
       USE ( cPatDat() + "TIPIMP.DBF" ) NEW VIA ( cDriver() ) SHARED ALIAS ( cCheckArea( "TIPIMP", @dbfTImp ) )
@@ -262,7 +262,7 @@ RETURN ( oDlg:end( IDOK ) )
 Función que crea las bases de datos necesarias
 */
 
-FUNCTION mkTImp( cPath, lAppend, cPathOld, oMeter )
+FUNCTION mkTipImp( cPath, lAppend, cPathOld, oMeter )
 
    local dbfTImp
 
@@ -277,18 +277,13 @@ FUNCTION mkTImp( cPath, lAppend, cPathOld, oMeter )
       fErase( cPath + "TipImp.Cdx" )
    end if
 
-   if lAppend .and. lIsDir( cPathOld )
-
-      if file( cPathOld + "TipImp.Dbf" )
-
-         dbUseArea( .t., cDriver(), "TipImp.Dbf", cCheckArea( "TipImp", @dbfTImp ), .f. )
-         ( dbfTImp )->( __dbApp( cPathOld + "TipImp.Dbf" ) )
-
-      end if
-
+   if lAppend .and. file( cPathOld + "TipImp.Dbf" )
+      dbUseArea( .t., cDriver(), "TipImp.Dbf", cCheckArea( "TipImp", @dbfTImp ), .f. )
+      ( dbfTImp )->( __dbApp( cPathOld + "TipImp.Dbf" ) )
+      ( dbfTImp )->( dbCloseArea() )
    end if
 
-   ( dbfTImp )->( dbCloseArea() )
+   rxTipImp( cPath )
 
 RETURN .t.
 
@@ -298,7 +293,7 @@ RETURN .t.
 Funcion que crea los índices de las bases de datos
 */
 
-FUNCTION rxTImp( cPath, oMeter )
+FUNCTION rxTipImp( cPath, oMeter )
 
    local dbfTImp
 
@@ -343,11 +338,11 @@ FUNCTION IsTipImp()
    BEGIN SEQUENCE
 
    if !lExistTable( cPatDat() + "TipImp.Dbf" )
-      mkTImp( cPatDat() )
+      mkTipImp( cPatDat() )
    end if
 
    if !lExistIndex( cPatDat() + "TipImp.Cdx" )
-      rxTImp( cPatDat() )
+      rxTipImp( cPatDat() )
    end if
 
    USE ( cPatDat() + "TipImp.Dbf" ) NEW VIA ( cDriver() ) SHARED ALIAS ( cCheckArea( "TipImp", @dbfTImp ) )

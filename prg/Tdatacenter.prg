@@ -114,7 +114,7 @@ CLASS TDataCenter
    METHOD CreateOperationLogTable()
    METHOD CreateColumnLogTable()
 
-   METHOD CreateTemporalTable( oTable )   INLINE ( if( !Empty( oTable:aStruct ) .and. !Empty( oTable:bCreateFile ), Eval( oTable:bCreateFile, cEmpTmp() ), ) )                  
+   METHOD CreateTemporalTable( oTable )   INLINE ( if( !Empty( oTable:bCreateFile ), Eval( oTable:bCreateFile, cEmpTmp() ), ) )                  
 
    METHOD lAdministratorTask()
    METHOD StartAdministratorTask()
@@ -1436,8 +1436,8 @@ METHOD BuildData()
    oDataTable:cIndexFile   := cPatDat( .t. ) + "TipImp.Cdx"
    oDataTable:cDescription := "Tipos de impresoras"
    oDataTable:lTrigger     := ::lTriggerAuxiliares
-   oDataTable:bCreateFile  := {| cPath | mkTImp( cPath ) }
-   oDataTable:bCreateIndex := {| cPath | rxTImp( cPath ) }
+   oDataTable:bCreateFile  := {| cPath | mkTipImp( cPath ) }
+   oDataTable:bCreateIndex := {| cPath | rxTipImp( cPath ) }
    ::AddDataTable( oDataTable )
 
    oDataTable              := TDataTable()
@@ -1446,7 +1446,7 @@ METHOD BuildData()
    oDataTable:cIndexFile   := cPatDat( .t. ) + "Agenda.Cdx"
    oDataTable:cDescription := "Agenda"
    oDataTable:lTrigger     := ::lTriggerAuxiliares
-   oDataTable:bCreateFile  := {| cPath | TAgenda():OpenFiles( .t., cPath ), MsgStop( "mira tAgenda") }
+   oDataTable:bCreateFile  := {| cPath | TAgenda():BuildFiles( .t., cPath ) }
    ::AddDataTable( oDataTable )
 
    oDataTable              := TDataTable()
@@ -3973,11 +3973,13 @@ METHOD ActualizaTable( oTable, cPath )
    
    USE ( cOld + ".Dbf" ) NEW VIA ( cDriver() ) SHARED ALIAS ( cCheckArea( "OLD", @dbfOld ) )
    if NetErr()
+      msgStop(  cOld + ".Dbf", "Error de apertura" )
       return .f.
    end if
    
    USE ( cTmp + ".Dbf" ) NEW VIA ( cDriver() ) SHARED ALIAS ( cCheckArea( "TMP", @dbfTmp ) )
    if NetErr()
+      msgStop(  cTmp + ".Dbf", "Error de apertura" )
       return .f.
    end if
 
