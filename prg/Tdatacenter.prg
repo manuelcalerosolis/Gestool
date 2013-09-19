@@ -958,16 +958,6 @@ METHOD ExistTable( uTable )
 
    lExistTable       := aScan( ::aDDTables, {|c| Left( Upper( c ), len( c ) - 1 ) == cTable } ) != 0
 
-<<<<<<< HEAD
-//   if !lExistTable 
-//      msgAlert( lExistTable, cTable )
-//   end if 
-=======
-   if !lExistTable 
-      msgAlert( lExistTable, cTable )
-   end if 
->>>>>>> a27079b369143c221e7353f95e00b94d7267746f
-
 Return ( lExistTable )
 
 //---------------------------------------------------------------------------//
