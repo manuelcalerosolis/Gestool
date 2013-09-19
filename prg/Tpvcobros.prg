@@ -20,8 +20,8 @@
 #define documentoAlbaran            2
 #define documentoFactura            3
 
-#define nParcial                    1
-#define nPagado                     2
+#define estadoParcial               1
+#define estadoPagado                2
 
 static oThis
 
@@ -55,7 +55,7 @@ CLASS TpvCobros
 
    DATA nUbiTik            INIT ubiGeneral
 
-   DATA nEstado            INIT nPagado
+   DATA nEstado            INIT estadoPagado
 
    METHOD New( oSender ) CONSTRUCTOR
 
@@ -164,21 +164,23 @@ CLASS TpvCobros
 
    INLINE METHOD OnClickAceptar( nExit )
 
+      ::oDlg:Disable()
+
       if ::oSender:nTipoDocumento != documentoAlbaran
+
+         ::ValidTotalesCobro()
 
          if ::nUbiTik == ubiEncargar
 
             if ( ::sTotalesCobros:nTotal ) > ( ::sTotalesCobros:nCobrado + ::sTotalesCobros:nEntregado )
-               ::nEstado   := nParcial
+               ::nEstado   := estadoParcial
             else
-               ::nEstado   := nPagado
+               ::nEstado   := estadoPagado
             end if
 
             ::CreaCobro()
 
-            ::nExit  := nExit
-
-            ::oDlg:End( IDOK )
+            ::nExit        := nExit
 
          else
 
@@ -186,11 +188,8 @@ CLASS TpvCobros
 
                ::CreaCobro()
 
-               ::nEstado   := nPagado
-
+               ::nEstado   := estadoPagado
                ::nExit     := nExit
-
-               ::oDlg:End( IDOK )
 
             end if
 
@@ -198,10 +197,12 @@ CLASS TpvCobros
 
       else
 
-         ::nExit     := nExit
-         ::oDlg:End( IDOK )
-
+         ::nExit           := nExit
+         
       end if   
+
+      ::oDlg:Enable()
+      ::oDlg:End( IDOK )
 
       RETURN ( Self )
 
@@ -317,7 +318,7 @@ METHOD lCobroExactoTicket() CLASS TpvCobros
 
    ::CreaCobro()
 
-   ::nEstado                  := nPagado
+   ::nEstado                  := estadoPagado
 
    ::nExit                    := exitAceptar
 

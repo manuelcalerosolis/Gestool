@@ -8077,7 +8077,7 @@ METHOD DataReport() CLASS TpvTactil
    ::oFastReport:SetFieldAliases(   "Formas de pago", cItemsToReport( aItmFPago() ) )
 
    ::oFastReport:SetWorkArea(       "Usuarios", ::oUsuario:nArea )
-   ::oFastReport:SetFieldAliases(   "Usuarios", cItemsToReport( aItmUsr() ) )
+   ::oFastReport:SetFieldAliases(   "Usuarios", cItemsToReport( aItmUsuario() ) )
 
    ::oFastReport:SetWorkArea(       "Artículos", ::oArticulo:nArea )
    ::oFastReport:SetFieldAliases(   "Artículos", cItemsToReport( aItmArt() ) )

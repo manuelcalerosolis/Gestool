@@ -10216,7 +10216,7 @@ Static Function DataReport( oFr )
    oFr:SetFieldAliases( "Unidades de medición",  cObjectsToReport( oUndMedicion:oDbf ) )
 
    oFr:SetWorkArea(     "Usuarios", ( dbfUsr )->( Select() ) )
-   oFr:SetFieldAliases( "Usuarios", cItemsToReport( aItmUsr() ) )
+   oFr:SetFieldAliases( "Usuarios", cItemsToReport( aItmUsuario() ) )
 
    oFr:SetMasterDetail( "Pedidos", "Lineas de pedidos",                 {|| ( dbfPedCliT )->cSerPed + Str( ( dbfPedCliT )->nNumPed ) + ( dbfPedCliT )->cSufPed } )
    oFr:SetMasterDetail( "Pedidos", "Incidencias de pedidos",            {|| ( dbfPedCliT )->cSerPed + Str( ( dbfPedCliT )->nNumPed ) + ( dbfPedCliT )->cSufPed } )

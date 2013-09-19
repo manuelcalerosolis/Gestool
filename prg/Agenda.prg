@@ -4,7 +4,7 @@
 
 //----------------------------------------------------------------------------//
 
-CLASS TAgenda FROM TMANT 
+CLASS TAgenda FROM TMant 
 
    METHOD Create( cPath )
 
@@ -32,7 +32,7 @@ RETURN ( Self )
 
 //---------------------------------------------------------------------------//
 
-METHOD OpenFiles( lExclusive )
+METHOD OpenFiles( lExclusive, cPath )
 
    local lOpen          := .t.
    local oError
@@ -42,11 +42,11 @@ METHOD OpenFiles( lExclusive )
 
    BEGIN SEQUENCE
 
-   if Empty( ::oDbf )
-      ::DefineFiles()
-   end if
+      if Empty( ::oDbf )
+         ::DefineFiles( cPath )
+      end if
 
-   ::oDbf:Activate( .f., !( lExclusive ), .f., .f. )
+      ::oDbf:Activate( .f., !( lExclusive ), .f., .f. )
 
    RECOVER USING oError
 
@@ -70,93 +70,34 @@ METHOD DefineFiles( cPath, cDriver )
 
    DEFINE TABLE ::oDbf FILE "Agenda.Dbf" CLASS "Agenda" PATH ( cPath ) ALIAS "Agenda" VIA ( cDriver ) COMMENT "Listín telefónico"
 
-      FIELD NAME "CAPELLIDOS"   TYPE "C" LEN 200  DEC 0 COMMENT "Nombre"          DEFAULT "Nombre completo" COLSIZE 200 OF ::oDbf
-      FIELD NAME "CNIF"         TYPE "C" LEN  15  DEC 0 COMMENT "Nif"             DEFAULT "NIF"             COLSIZE  80 OF ::oDbf
-      FIELD NAME "CDOMICILIO"   TYPE "C" LEN 200  DEC 0 COMMENT "Domicilio"       DEFAULT "Domicilio"       COLSIZE 200 OF ::oDbf
-      FIELD NAME "CCODPOSTAL"   TYPE "C" LEN   5  DEC 0 COMMENT "Código postal"                             COLSIZE  50 OF ::oDbf
-      FIELD NAME "CPOBLACION"   TYPE "C" LEN 100  DEC 0 COMMENT "Población"       DEFAULT "Población"       COLSIZE 100 OF ::oDbf
-      FIELD NAME "CPROVINCIA"   TYPE "C" LEN  60  DEC 0 COMMENT "Provincia"       DEFAULT "Provincia"       COLSIZE  60 OF ::oDbf
-      FIELD NAME "CTEL"         TYPE "C" LEN  12  DEC 0 COMMENT "Teléfono"                                  COLSIZE  60 OF ::oDbf
-      FIELD NAME "CDESTEL"      TYPE "C" LEN  20  DEC 0 COMMENT "Nombre teléfono"                           COLSIZE 100 OF ::oDbf
-      FIELD NAME "CMOV"         TYPE "C" LEN  12  DEC 0 COMMENT "Móvil"                                     COLSIZE  60 OF ::oDbf
-      FIELD NAME "CDESMOV"      TYPE "C" LEN  20  DEC 0 COMMENT "Nombre móvil"                              COLSIZE 100 OF ::oDbf
-      FIELD NAME "CFAX"         TYPE "C" LEN  12  DEC 0 COMMENT "Fax"                                       COLSIZE  60 OF ::oDbf
-      FIELD NAME "CDESFAX"      TYPE "C" LEN  20  DEC 0 COMMENT "Nombre fax"                                COLSIZE 100 OF ::oDbf
-      FIELD NAME "MOBSERVA"     TYPE "M" LEN  10  DEC 0 COMMENT "Observaciones"   DEFAULT "Observaciones"   HIDE        OF ::oDbf
-      FIELD NAME "LSELECT"      TYPE "L" LEN   1  DEC 0 COMMENT ""                                          HIDE        OF ::oDbf
+      FIELD NAME "cApellidos"   TYPE "C" LEN 200  DEC 0 COMMENT "Nombre"          DEFAULT "Nombre completo" COLSIZE 200 OF ::oDbf
+      FIELD NAME "cNif"         TYPE "C" LEN  15  DEC 0 COMMENT "Nif"             DEFAULT "NIF"             COLSIZE  80 OF ::oDbf
+      FIELD NAME "cDomicilio"   TYPE "C" LEN 200  DEC 0 COMMENT "Domicilio"       DEFAULT "Domicilio"       COLSIZE 200 OF ::oDbf
+      FIELD NAME "cCodpostal"   TYPE "C" LEN   5  DEC 0 COMMENT "Código postal"                             COLSIZE  50 OF ::oDbf
+      FIELD NAME "cPoblacion"   TYPE "C" LEN 100  DEC 0 COMMENT "Población"       DEFAULT "Población"       COLSIZE 100 OF ::oDbf
+      FIELD NAME "cProvincia"   TYPE "C" LEN  60  DEC 0 COMMENT "Provincia"       DEFAULT "Provincia"       COLSIZE  60 OF ::oDbf
+      FIELD NAME "cTel"         TYPE "C" LEN  12  DEC 0 COMMENT "Teléfono"                                  COLSIZE  60 OF ::oDbf
+      FIELD NAME "cDesTel"      TYPE "C" LEN  20  DEC 0 COMMENT "Nombre teléfono"                           COLSIZE 100 OF ::oDbf
+      FIELD NAME "cMov"         TYPE "C" LEN  12  DEC 0 COMMENT "Móvil"                                     COLSIZE  60 OF ::oDbf
+      FIELD NAME "cDesMov"      TYPE "C" LEN  20  DEC 0 COMMENT "Nombre móvil"                              COLSIZE 100 OF ::oDbf
+      FIELD NAME "cFax"         TYPE "C" LEN  12  DEC 0 COMMENT "Fax"                                       COLSIZE  60 OF ::oDbf
+      FIELD NAME "cDesfax"      TYPE "C" LEN  20  DEC 0 COMMENT "Nombre fax"                                COLSIZE 100 OF ::oDbf
+      FIELD NAME "mObserva"     TYPE "M" LEN  10  DEC 0 COMMENT "Observaciones"   DEFAULT "Observaciones"   HIDE        OF ::oDbf
+      FIELD NAME "lSelect"      TYPE "L" LEN   1  DEC 0 COMMENT ""                                          HIDE        OF ::oDbf
 
-      INDEX TO "AGENDA.CDX" TAG "CAPELLIDOS" ON "UPPER( CAPELLIDOS )" NODELETED COMMENT "Nombre"         OF ::oDbf
-      INDEX TO "AGENDA.CDX" TAG "CNIF"       ON "CNIF"                NODELETED COMMENT "Nif"            OF ::oDbf
-      INDEX TO "AGENDA.CDX" TAG "CCODPOSTAL" ON "CCODPOSTAL"          NODELETED COMMENT "Código postal"  OF ::oDbf
-      INDEX TO "AGENDA.CDX" TAG "CPOBLACION" ON "CPOBLACION"          NODELETED COMMENT "Población"      OF ::oDbf
-      INDEX TO "AGENDA.CDX" TAG "CPROVINCIA" ON "CPROVINCIA"          NODELETED COMMENT "Provincia"      OF ::oDbf
-      INDEX TO "AGENDA.CDX" TAG "CTEL"       ON "CTEL"                NODELETED COMMENT "Teléfono"       OF ::oDbf
-      INDEX TO "AGENDA.CDX" TAG "CMOV"       ON "CMOV"                NODELETED COMMENT "Móvil"          OF ::oDbf
-      INDEX TO "AGENDA.CDX" TAG "CFAX"       ON "CFAX"                NODELETED COMMENT "Fax"            OF ::oDbf
+      INDEX TO "Agenda.Cdx" TAG "CAPELLIDOS" ON "UPPER( CAPELLIDOS )" NODELETED COMMENT "Nombre"         OF ::oDbf
+      INDEX TO "Agenda.Cdx" TAG "CNIF"       ON "CNIF"                NODELETED COMMENT "Nif"            OF ::oDbf
+      INDEX TO "Agenda.Cdx" TAG "CCODPOSTAL" ON "CCODPOSTAL"          NODELETED COMMENT "Código postal"  OF ::oDbf
+      INDEX TO "Agenda.Cdx" TAG "CPOBLACION" ON "CPOBLACION"          NODELETED COMMENT "Población"      OF ::oDbf
+      INDEX TO "Agenda.Cdx" TAG "CPROVINCIA" ON "CPROVINCIA"          NODELETED COMMENT "Provincia"      OF ::oDbf
+      INDEX TO "Agenda.Cdx" TAG "CTEL"       ON "CTEL"                NODELETED COMMENT "Teléfono"       OF ::oDbf
+      INDEX TO "Agenda.Cdx" TAG "CMOV"       ON "CMOV"                NODELETED COMMENT "Móvil"          OF ::oDbf
+      INDEX TO "Agenda.Cdx" TAG "CFAX"       ON "CFAX"                NODELETED COMMENT "Fax"            OF ::oDbf
 
    END DATABASE ::oDbf
 
 RETURN ( ::oDbf )
 
-//----------------------------------------------------------------------------//
-/*
-METHOD Activate( oWnd )
-
-   // Nivel de usuario------------------------------------------------------------
-
-   if nAnd( ::nLevel, 1 ) != 0
-      msgStop( "Acceso no permitido." )
-      Return ( Self )
-   end if
-
-   // Cerramos todas las ventanas-------------------------------------------------
-
-   if ::oWndParent != nil
-      ::oWndParent:CloseAll()
-   end if
-
-   if !::OpenFiles()
-      return nil
-   end if
-
-   DEFINE SHELL ::oWndBrw FROM 2, 10 TO 18, 70 ;
-      TITLE    "Listín telefónico" ;
-      FIELDS   ::oDbf:cApellidos,;
-               ::oDbf:cNif,;
-               ::oDbf:cTel + Space( 1 ) + ::oDbf:cDesTel,;
-               ::oDbf:cMov + Space( 1 ) + ::oDbf:cDesMov,;
-               ::oDbf:cFax + Space( 1 ) + ::oDbf:cDesFax ;
-      HEAD     "Nombre",;
-               "Nif",;
-               "Teléfono",;
-               "Móvil",;
-               "Fax" ;
-      PROMPT   "Nombre",;
-               "Nif",;
-               "Teléfono",;
-               "Móvil",;
-               "Fax" ;
-      FIELDSIZES 200,;
-               80,;
-               120,;
-               120,;
-               120 ;
-      JUSTIFY  .f., .f., .f., .f., .f. ;
-      MRU      "Telephone_16" ;
-      BITMAP   "WebTopGreen" ;
-      ALIAS    ( ::oDbf ) ;
-      APPEND   ::Append() ;
-      EDIT     ::Edit() ;
-      DELETE   ::Del() ;
-      DUPLICAT ::Dup() ;
-      OF       ::oWndParent
-
-      ::oWndBrw:AutoButtons( Self )
-
-      ACTIVATE WINDOW ::oWndBrw VALID ( ::CloseFiles() )
-
-RETURN ( Self )
-*/
 //----------------------------------------------------------------------------//
 
 METHOD Resource( nMode )

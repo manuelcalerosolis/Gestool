@@ -142,7 +142,7 @@ METHOD GenIndices( oMsg )
    */
 
    if ::lNotGrupo
-      rxNewCount( ::cPathEmp )
+      rxCount( ::cPathEmp )
       synNewCount( ::cPathEmp )
    end if
 
@@ -190,7 +190,7 @@ METHOD GenIndices( oMsg )
 
          if ::lEmpresa
 
-            ::SetText( "Generando índices : Empresas", ::aProgress[ 1 ] )        ; rxEmpresa(  ::cPathDat ); rxDlg(  ::cPathDat )
+            ::SetText( "Generando índices : Empresas", ::aProgress[ 1 ] )        ; rxEmpresa(  ::cPathDat )
             ::SetText( "Generando índices : Usuarios", ::aProgress[ 1 ] )        ; rxUsuario(  ::cPathDat )
             ::SetText( "Generando índices : Divisas", ::aProgress[ 1 ]  )        ; rxDiv(      ::cPathDat )
             ::SetText( "Generando índices : Configuración", ::aProgress[ 1 ] )   ; TShell():ReindexData()
@@ -425,7 +425,7 @@ METHOD GenIndices( oMsg )
          ::SetText( "Generando índices : Log cajón Portamonedas", ::aProgress[ 4 ] );     rxLogPorta( ::cPathEmp )
          ::SetText( "Generando índices : Situaciones", ::aProgress[ 4 ] );                rxSitua( ::cPathDat )
          ::SetText( "Generando índices : Tipos de notas", ::aProgress[ 4 ] );             rxTipoNotas( ::cPathDat )
-         ::SetText( "Generando índices : Tipos de impresoras", ::aProgress[ 4 ] );        rxTImp( ::cPathDat )
+         ::SetText( "Generando índices : Tipos de impresoras", ::aProgress[ 4 ] );        rxTipImp( ::cPathDat )
 
          ::SetText( "Generando índices : Capturas", ::aProgress[ 4 ] );                   TCaptura():Create( ::cPathDat ):Reindexa()
          ::SetText( "Generando índices : Detalle de capturas", ::aProgress[ 4 ] );        TDetCaptura():New( ::cPathDat ):Reindexa()

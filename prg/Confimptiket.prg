@@ -427,7 +427,7 @@ FUNCTION mkImpTik( cPath, lAppend, cPathOld, oMeter )
    local oImpTik
 
    DEFAULT cPath     := cPatDat()
-	DEFAULT lAppend	:= .F.
+	DEFAULT lAppend	:= .f.
 
    DEFINE DATABASE oImpTik FILE "IMPTIK.DBF" PATH ( cPath ) ALIAS "IMPTIK" VIA ( cDriver() ) COMMENT "Impresoras de tickets"
 
@@ -459,14 +459,8 @@ FUNCTION mkImpTik( cPath, lAppend, cPathOld, oMeter )
 
    oImpTik:Activate( .f., .f. )
 
-   if lAppend .and. lIsDir( cPathOld )
-
-      if lExistTable( cPathOld + "IMPTIK.DBF" )
-
-         oImpTik:AppendFrom( cPathOld + "IMPTIK.DBF" )
-
-      end if
-
+   if lAppend .and. lExistTable( cPathOld + "IMPTIK.DBF" )
+      oImpTik:AppendFrom( cPathOld + "IMPTIK.DBF" )
    end if
 
    oImpTik:end()

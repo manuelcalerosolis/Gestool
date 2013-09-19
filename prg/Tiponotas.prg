@@ -81,6 +81,8 @@ FUNCTION mkTipoNotas( cPath, lAppend, cPathOld, oMeter )
       end if
    end if
 
+   rxTipoNotas( cPath, oMeter )
+
 RETURN .t.
 
 //----------------------------------------------------------------------------//

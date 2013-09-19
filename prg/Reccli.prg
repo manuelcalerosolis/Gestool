@@ -5195,8 +5195,6 @@ FUNCTION GenPgoFacCli( cNumFac, dbfFacCliT, dbfFacCliL, dbfFacCliP, dbfAntCliT, 
    Comprobar q el total de factura  no es igual al de pagos--------------------
    */
 
-   logwrite( "llamada a total desde recibos")
-
    nTotal            := nTotFacCli( cNumFac, dbfFacCliT, dbfFacCliL, dbfIva, dbfDiv, dbfFacCliP, dbfAntCliT, nil, nil, .f. )
 
    nTotCob           := nPagFacCli( cNumFac, dbfFacCliT, dbfFacCliP, dbfIva, dbfDiv, nil, .f. )

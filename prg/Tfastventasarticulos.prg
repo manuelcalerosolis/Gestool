@@ -690,7 +690,7 @@ METHOD DataReport() CLASS TFastVentasArticulos
    ::oFastReport:SetFieldAliases(   "Proveedores",                cItemsToReport( aItmPrv() ) )
 
    ::oFastReport:SetWorkArea(       "Usuarios",                   ::oDbfUsr:nArea ) 
-   ::oFastReport:SetFieldAliases(   "Usuarios",                   cItemsToReport( aItmUsr() ) )
+   ::oFastReport:SetFieldAliases(   "Usuarios",                   cItemsToReport( aItmUsuario() ) )
 
 
 
@@ -1027,6 +1027,9 @@ METHOD AddSATClientes() CLASS TFastVentasArticulos
                   ::oDbf:nTotArt    += nIvaLSATCli( ::oSatCliL:cAlias, ::nDecOut, ::nDerOut, ::nValDiv )
 
                   ::oDbf:nCosArt    := nTotCSATCli( ::oSatCliL:cAlias, ::nDecOut, ::nDerOut, ::nValDiv )
+                  if Empty( ::oDbf:nCosArt )
+                     ::oDbf:nCosArt := pCosto( ::oDbfArt:cAlias )
+                  end if 
 
                   ::oDbf:cClsDoc    := SAT_CLI
                   ::oDbf:cTipDoc    := "SAT cliente"
@@ -1172,6 +1175,9 @@ METHOD AddPresupuestoClientes() CLASS TFastVentasArticulos
                   ::oDbf:nTotArt    += nIvaLPreCli( ::oPreCliL:cAlias, ::nDecOut, ::nDerOut, ::nValDiv )
 
                   ::oDbf:nCosArt    := nTotCPreCli( ::oPreCliL:cAlias, ::nDecOut, ::nDerOut, ::nValDiv )
+                  if Empty( ::oDbf:nCosArt )
+                     ::oDbf:nCosArt := nCosto( ::oDbf:cCodArt, ::oDbfArt:cAlias, ::oArtKit:cAlias )
+                  end if 
 
                   ::oDbf:cClsDoc    := PRE_CLI
                   ::oDbf:cTipDoc    := "Presupuesto cliente"
@@ -1310,7 +1316,11 @@ METHOD AddPedidoClientes() CLASS TFastVentasArticulos
                   ::oDbf:nIvaArt    := nIvaLPedCli( ::oPedCliL:cAlias, ::nDecOut, ::nDerOut, ::nValDiv )
                   ::oDbf:nTotArt    := nImpLPedCli( ::oPedCliT:cAlias, ::oPedCliL:cAlias, ::nDecOut, ::nDerOut, ::nValDiv, , , .t., .t.  )
                   ::oDbf:nTotArt    += nIvaLPedCli( ::oPedCliL:cAlias, ::nDecOut, ::nDerOut, ::nValDiv )
+
                   ::oDbf:nCosArt    := nTotCPedCli( ::oPedCliL:cAlias, ::nDecOut, ::nDerOut, ::nValDiv )
+                  if Empty( ::oDbf:nCosArt )
+                     ::oDbf:nCosArt := nCosto( ::oDbf:cCodArt, ::oDbfArt:cAlias, ::oArtKit:cAlias )
+                  end if 
 
                   ::oDbf:cCodPr1    := ::oPedCliL:cCodPr1
                   ::oDbf:cCodPr2    := ::oPedCliL:cCodPr2
@@ -1460,7 +1470,11 @@ METHOD AddAlbaranCliente( lFacturados ) CLASS TFastVentasArticulos
                   ::oDbf:nIvaArt    := nIvaLAlbCli( ::oAlbCliL:cAlias, ::nDecOut, ::nDerOut, ::nValDiv )
                   ::oDbf:nTotArt    := nImpLAlbCli( ::oAlbCliT:cAlias, ::oAlbCliL:cAlias, ::nDecOut, ::nDerOut, ::nValDiv, , , .t., .t.  )
                   ::oDbf:nTotArt    += nIvaLAlbCli( ::oAlbCliL:cAlias, ::nDecOut, ::nDerOut, ::nValDiv )
+
                   ::oDbf:nCosArt    := nCosLAlbCli( ::oAlbCliL:cAlias, ::nDecOut, ::nDerOut, ::nValDiv )
+                  if Empty( ::oDbf:nCosArt )
+                     ::oDbf:nCosArt := nCosto( ::oDbf:cCodArt, ::oDbfArt:cAlias, ::oArtKit:cAlias )
+                  end if 
 
                   ::oDbf:cCodPr1    := ::oAlbCliL:cCodPr1
                   ::oDbf:cCodPr2    := ::oAlbCliL:cCodPr2
@@ -1607,8 +1621,12 @@ METHOD AddFacturaCliente() CLASS TFastVentasArticulos
                   ::oDbf:nIvaArt    := nIvaLFacCli( ::oFacCliL:cAlias, ::nDecOut, ::nDerOut, ::nValDiv )
                   ::oDbf:nTotArt    := nImpLFacCli( ::oFacCliT:cAlias, ::oFacCliL:cAlias, ::nDecOut, ::nDerOut, ::nValDiv, , , .t., .t.  )
                   ::oDbf:nTotArt    += nIvaLFacCli( ::oFacCliL:cAlias, ::nDecOut, ::nDerOut, ::nValDiv )
-                  ::oDbf:nCosArt    := nCosLFacCli( ::oFacCliL:cAlias, ::nDecOut, ::nDerOut, ::nValDiv )
 
+                  ::oDbf:nCosArt    := nCosLFacCli( ::oFacCliL:cAlias, ::nDecOut, ::nDerOut, ::nValDiv )
+                  if Empty( ::oDbf:nCosArt )
+                     ::oDbf:nCosArt := nCosto( ::oDbf:cCodArt, ::oDbfArt:cAlias, ::oArtKit:cAlias )
+                  end if 
+                  
                   ::oDbf:cCodPr1    := ::oFacCliL:cCodPr1
                   ::oDbf:cCodPr2    := ::oFacCliL:cCodPr2
                   ::oDbf:cValPr1    := ::oFacCliL:cValPr1
@@ -1757,7 +1775,11 @@ METHOD AddFacturaRectificativa() CLASS TFastVentasArticulos
                   ::oDbf:nIvaArt    := nIvaLFacRec( ::oFacRecL:cAlias, ::nDecOut, ::nDerOut, ::nValDiv )
                   ::oDbf:nTotArt    := nImpLFacRec( ::oFacRecT:cAlias, ::oFacRecL:cAlias, ::nDecOut, ::nDerOut, ::nValDiv, , , .t., .t.  )
                   ::oDbf:nTotArt    += nIvaLFacRec( ::oFacRecL:cAlias, ::nDecOut, ::nDerOut, ::nValDiv )
+
                   ::oDbf:nCosArt    := nCosLFacRec( ::oFacRecL:cAlias, ::nDecOut, ::nDerOut, ::nValDiv )
+                  if Empty( ::oDbf:nCosArt )
+                     ::oDbf:nCosArt := nCosto( ::oDbf:cCodArt, ::oDbfArt:cAlias, ::oArtKit:cAlias )
+                  end if 
 
                   ::oDbf:cCodPr1    := ::oFacRecL:cCodPr1
                   ::oDbf:cCodPr2    := ::oFacRecL:cCodPr2
@@ -1903,7 +1925,11 @@ METHOD AddTicket() CLASS TFastVentasArticulos
                   ::oDbf:nIvaArt    := nIvaLTpv( ::oTikCliT, ::oTikCliL, ::nDecOut, ::nDerOut, ::nValDiv, 1 )
                   ::oDbf:nTotArt    := nImpLTpv( ::oTikCliT, ::oTikCliL, ::nDecOut, ::nDerOut, ::nValDiv, nil, 1 )
                   ::oDbf:nTotArt    += nIvaLTpv( ::oTikCliT, ::oTikCliL, ::nDecOut, ::nDerOut, ::nValDiv, 1 )
+                  
                   ::oDbf:nCosArt    := nCosLTpv( ::oTikCliL, ::nDecOut, ::nDerOut, ::nValDiv, 1 )
+                  if Empty( ::oDbf:nCosArt )
+                     ::oDbf:nCosArt := nCosto( ::oDbf:cCodArt, ::oDbfArt:cAlias, ::oArtKit:cAlias )
+                  end if 
 
                   ::oDbf:cCodPr1    := ::oTikCliL:cCodPr1
                   ::oDbf:cCodPr2    := ::oTikCliL:cCodPr2
@@ -1976,7 +2002,11 @@ METHOD AddTicket() CLASS TFastVentasArticulos
                   ::oDbf:nIvaArt    := nIvaLTpv( ::oTikCliT, ::oTikCliL, ::nDecOut, ::nDerOut, ::nValDiv, 2 )
                   ::oDbf:nTotArt    := nImpLTpv( ::oTikCliT, ::oTikCliL, ::nDecOut, ::nDerOut, ::nValDiv, nil, 2 )
                   ::oDbf:nTotArt    += nIvaLTpv( ::oTikCliT, ::oTikCliL, ::nDecOut, ::nDerOut, ::nValDiv, 2 )
+
                   ::oDbf:nCosArt    := nCosLTpv( ::oTikCliL, ::nDecOut, ::nDerOut, ::nValDiv, 2 )
+                  if Empty( ::oDbf:nCosArt )
+                     ::oDbf:nCosArt := nCosto( ::oDbf:cCodArt, ::oDbfArt:cAlias, ::oArtKit:cAlias )
+                  end if 
 
                   ::oDbf:cCodPr1    := ::oTikCliL:cCodPr1
                   ::oDbf:cCodPr2    := ::oTikCliL:cCodPr2
@@ -2056,6 +2086,7 @@ METHOD AddArticulo() CLASS TFastVentasArticulos
       ::oDbf:cCodTemp := ::oDbfArt:cCodTemp
       ::oDbf:cCodFab  := ::oDbfArt:cCodFab
       ::oDbf:cCodGrp  := ::oDbfArt:GrpVent
+      ::oDbf:nCosArt  := nCosto( nil, ::oDbfArt:cAlias, ::oArtKit:cAlias )
       ::oDbf:cCodCli  := ""
       ::oDbf:cNomCli  := ""
       ::oDbf:cPobCli  := ""
@@ -2067,6 +2098,8 @@ METHOD AddArticulo() CLASS TFastVentasArticulos
       ::oDbf:cCodAge  := ""
       ::oDbf:cCodTrn  := ""
       ::oDbf:cCodUsr  := ""
+
+      
 
       /*
       Añadimos un nuevo registro

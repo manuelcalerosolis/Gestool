@@ -325,17 +325,17 @@ FUNCTION Usuarios( oMenuItem, oWnd )
 
       DEFINE BTNSHELL oFlt RESOURCE "BFILTER" GROUP OF oWndBrw ;
          NOBORDER ;
-         ACTION   ( TDlgFlt():New( aItmUsr(), dbfUser, oFlt, .t., oWndBrw ):Resource( USR_TBL, nil, dbfFlt ) ) ;
+         ACTION   ( TDlgFlt():New( aItmUsuario(), dbfUser, oFlt, .t., oWndBrw ):Resource( USR_TBL, nil, dbfFlt ) ) ;
          TOOLTIP  "(F)iltrar" ;
          HOTKEY   "F"
 
-      lLoadFiltro( ANT_CLI, aItmUsr(), oFlt, oWndBrw, dbfFlt, dbfUser )
+      lLoadFiltro( ANT_CLI, aItmUsuario(), oFlt, oWndBrw, dbfFlt, dbfUser )
 
    if oUser():lAdministrador()
 
       DEFINE BTNSHELL RESOURCE "BMPCHG" GROUP OF oWndBrw ;
          NOBORDER ;
-         ACTION   ( TDlgFlt():New( aItmUsr(), dbfUser ):ChgFields(), oWndBrw:Refresh() ) ;
+         ACTION   ( TDlgFlt():New( aItmUsuario(), dbfUser ):ChgFields(), oWndBrw:Refresh() ) ;
          TOOLTIP  "Cambiar campos" ;
          LEVEL    ACC_APPD
 
@@ -1647,9 +1647,9 @@ FUNCTION TstUsuario()
 
       ( dbfUsr )->( dbCloseArea() )
 
-      if ( nFldUsr < len( aItmUsr() ) )
+      if ( nFldUsr < len( aItmUsuario() ) )
 
-         dbCreate( cPatEmpTmp() + "Users.Dbf", aSqlStruct( aItmUsr() ), ( cLocalDriver() ) )
+         dbCreate( cPatEmpTmp() + "Users.Dbf", aSqlStruct( aItmUsuario() ), ( cLocalDriver() ) )
          appDbf( cPatDat(), cPatEmpTmp(), "Users" )
 
          fEraseTable( cPatDat() + "Users.Dbf" )
@@ -2630,11 +2630,11 @@ FUNCTION mkUsuario( cPath, oMeter )
 	END IF
 
    if !lExistTable( cPath + "USERS.DBF" )
-      dbCreate( cPath + "USERS.DBF", aSqlStruct( aItmUsr() ), cDriver() )
+      dbCreate( cPath + "USERS.DBF", aSqlStruct( aItmUsuario() ), cDriver() )
    end if
 
    if !lExistTable( cPath + "MAPAS.DBF" )
-      dbCreate( cPath + "MAPAS.DBF", aSqlStruct( aItmMap() ), cDriver() )
+      dbCreate( cPath + "MAPAS.DBF", aSqlStruct( aItmMapaUsuario() ), cDriver() )
    end if
 
    rxUsuario( cPath, oMeter )
@@ -2680,7 +2680,7 @@ FUNCTION rxUsuario( cPath, oMeter )
    end if
 
    /*
-   Mapas de usuarios
+   Mapas de usuarios-----------------------------------------------------------
    */
 
    dbUseArea( .t., cDriver(), cPath + "MAPAS.DBF", cCheckArea( "MAPAS", @dbfUser ), .f. )
@@ -2700,7 +2700,7 @@ RETURN NIL
 
 //--------------------------------------------------------------------------//
 
-Function aItmUsr()
+Function aItmUsuario()
 
    local aBase := {  { "cCodUse",   "C",  3,  0, "Código de usuario" },;
                      { "cNbrUse",   "C", 30,  0, "Nombre de usuario" },;
@@ -2737,12 +2737,11 @@ Function aItmUsr()
                      { "lNoOpCaj",  "L",  1,  0, "Lógico abrir cajón portamonedas" },;
                      { "lArqCie",   "L",  1,  0, "Lógico arqueo ciego para este usuario" } }
 
-
 Return ( aBase )
 
 //--------------------------------------------------------------------------//
 
-Static Function aItmMap()
+Function aItmMapaUsuario()
 
    local aMapa := {  { "cCodUse",   "C",  3,  0, "Código del usuario" },;
                      { "cNomOpc",   "C", 20,  0, "Opción de programa" },;

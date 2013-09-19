@@ -22,10 +22,11 @@ CLASS TCaptura FROM TMasDet
    Method New( cPath, oWndParent, oMenuItem )
 
    Method OpenFiles( lExclusive )
-   Method CloseFiles()
-
    METHOD OpenService( lExclusive )
+
+   Method CloseFiles()
    METHOD CloseService()
+
    METHOD Reindexa()
 
    METHOD Activate()
@@ -87,8 +88,8 @@ Method OpenFiles( lExclusive )
 
    if !::oDbf:Seek( DEFAULT_CODE )
       ::oDbf:Append()
-      ::oDbf:cCodigo    := DEFAULT_CODE
-      ::oDbf:cNombre    := "Captura por defecto"
+      ::oDbf:cCodigo       := DEFAULT_CODE
+      ::oDbf:cNombre       := "Captura por defecto"
       ::oDbf:Save()
    end if
 
@@ -440,7 +441,7 @@ return ( Self )
 
 //---------------------------------------------------------------------------//
 
-METHOD OpenService( lExclusive )
+METHOD OpenService( lExclusive, cPath )
 
    local lOpen          := .t.
    local oBlock         := ErrorBlock( {| oError | ApoloBreak( oError ) } )
@@ -450,16 +451,18 @@ METHOD OpenService( lExclusive )
    BEGIN SEQUENCE
 
       if Empty( ::oDbf )
-         ::DefineFiles()
+         ::DefineFiles( cPath )
       end if
 
       ::oDbf:Activate( .f., !( lExclusive ) )
 
    RECOVER
 
-      msgStop( "Imposible abrir todas las bases de datos de capturas" )
-      ::CloseService()
       lOpen             := .f.
+
+      ::CloseService()
+
+      msgStop( "Imposible abrir todas las bases de datos de capturas" )
 
    END SEQUENCE
 

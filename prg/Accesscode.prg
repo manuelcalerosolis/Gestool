@@ -740,7 +740,7 @@ Method InitialCheck() CLASS AccessCode
       end if
  
       while !IsTipImp()
-         rxTImp( cPatDat() )
+         rxTipImp( cPatDat() )
       end while
 
       // Tipos de notas por defecto-----------------------------------------------

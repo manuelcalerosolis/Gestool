@@ -22,7 +22,7 @@
 CLASS TBackup
 
    DATA oDbfEmpresa
-   DATA oDbfBackup
+   DATA oDbf
 
    DATA nLevel
 
@@ -103,26 +103,28 @@ CLASS TBackup
 
    Method New( oMenuItem, oWnd )
 
+   Method DefineFiles()
+
    Method OpenFiles()
+   Method OpenService( lExclusive, cPath)
+
+   Method BuildFiles( lExclusive, cPath ) INLINE ( ::OpenService( lExclusive, cPath ), ::CloseFiles() )
 
    Method CloseFiles()
 
    Method MuestraDialogo()
 
    Method BotonSiguiente()
-
    Method BotonAnterior()
 
    Method ZipFiles()
 
    Method doBackup( aFiles, cDriveTo )
+   Method doRestore( cFileFrom )
 
    Method doFtp( aFiles )
 
-   Method DoRestore( cFileFrom )
-
    Method SaveToDisk( cFile )
-
    Method RestoreFromDisk( cFile )
 
    Method cGetFilesToRestore()
@@ -137,7 +139,6 @@ CLASS TBackup
 
    Method GuardarPreferencias()
 
-   METHOD DefineFiles()
 
    METHOD SyncAllDbf()
 
@@ -147,7 +148,7 @@ ENDCLASS
 
 METHOD Create( cPath )
 
-   ::oDbfBackup      := nil
+   ::oDbf      := nil
 
 RETURN ( Self )
 
@@ -190,15 +191,18 @@ return ( Self )
 
 //---------------------------------------------------------------------------//
 
-Method OpenFiles()
+Method OpenFiles( lExclusive, cPath)
 
-   local lOpen    := .t.
+   local lOpen          := .t.
    local oError
-   local oBlock   := ErrorBlock( { | oError | ApoloBreak( oError ) } )
+   local oBlock         
 
+   DEFAULT lExclusive   := .f.
+
+   oBlock               := ErrorBlock( { | oError | ApoloBreak( oError ) } )
    BEGIN SEQUENCE
 
-      ::oDbfBackup:Activate( .f., .t. )
+      ::oDbf:Activate( .f., .t. )
 
       DATABASE NEW ::oDbfEmpresa PATH ( cPatDat() ) FILE "Empresa.Dbf" VIA ( cDriver() ) SHARED INDEX "Empresa.Cdx"
 
@@ -216,6 +220,40 @@ Return ( lOpen )
 
 //---------------------------------------------------------------------------//
 
+Method OpenService( lExclusive, cPath)
+
+   local lOpen          := .t.
+   local oError
+   local oBlock         
+
+   DEFAULT lExclusive   := .f.
+
+   oBlock               := ErrorBlock( { | oError | ApoloBreak( oError ) } )
+   BEGIN SEQUENCE
+
+      if Empty( ::oDbf )
+         ::DefineFiles( cPath )
+      end if
+
+      ::oDbf:Activate( .f., !( lExclusive ) )
+
+   RECOVER USING oError
+
+      lOpen          := .f.
+
+      ::oDbf:End()
+
+      msgStop( ErrorMessage( oError ), "Imposible abrir todas las bases de datos" )
+
+
+   END SEQUENCE
+
+   ErrorBlock( oBlock )
+
+Return ( lOpen )
+
+//---------------------------------------------------------------------------//
+
 Method CloseFiles()
 
    local oBlock   := ErrorBlock( { | oError | ApoloBreak( oError ) } )
@@ -223,12 +261,16 @@ Method CloseFiles()
 
    BEGIN SEQUENCE
 
-      ::oDbfEmpresa:End()
-      ::oDbfBackup:End()
+      if !Empty( ::oDbfEmpresa ) .and. ( ::oDbfEmpresa:Used() )
+         ::oDbfEmpresa:End()
+      end if 
+
+      ::oDbf:End()
 
    RECOVER
 
       msgStop( "Imposible cerrar todas las bases de datos.","Atención" )
+
       lOpen       := .F.
 
    END SEQUENCE
@@ -286,7 +328,7 @@ Method MuestraDialogo()
    REDEFINE BUTTON ::oBotonImprimir ;          // Boton de imprimir
          ID       50 ;
          OF       ::oDlg ;
-         ACTION   ( ImprimirODbf( ::oDbfBackup, "Copia de Seguridad " ) )
+         ACTION   ( ImprimirODbf( ::oDbf, "Copia de Seguridad " ) )
 
    REDEFINE RADIO ::oAccion VAR ::nAccion ;
          ID       100, 110, 120 ;
@@ -508,7 +550,7 @@ Method MuestraDialogo()
 
    ::oBrwHistorial                 := TXBrowse():New( ::oFld:aDialogs[ 9 ] )
 
-   ::oDbfBackup:SetBrowse( ::oBrwHistorial )
+   ::oDbf:SetBrowse( ::oBrwHistorial )
 
    ::oBrwHistorial:bClrSel         := {|| { CLR_BLACK, Rgb( 229, 229, 229 ) } }
    ::oBrwHistorial:bClrSelFocus    := {|| { CLR_BLACK, Rgb( 167, 205, 240 ) } }
@@ -521,25 +563,25 @@ Method MuestraDialogo()
 
       with object ( ::oBrwHistorial:AddCol() )
          :cHeader          := "Fecha"
-         :bEditValue       := {|| Dtoc( ::oDbfBackup:Fecha ) }
+         :bEditValue       := {|| Dtoc( ::oDbf:Fecha ) }
          :nWidth           := 70
       end with
 
       with object ( ::oBrwHistorial:AddCol() )
          :cHeader          := "Hora"
-         :bEditValue       := {|| ::oDbfBackup:Hora }
+         :bEditValue       := {|| ::oDbf:Hora }
          :nWidth           := 60
       end with
 
       with object ( ::oBrwHistorial:AddCol() )
          :cHeader          := "Usuario"
-         :bEditValue       := {|| ::oDbfBackup:Usuario }
+         :bEditValue       := {|| ::oDbf:Usuario }
          :nWidth           := 30
       end with
 
       with object ( ::oBrwHistorial:AddCol() )
          :cHeader          := "Resumen"
-         :bEditValue       := {|| ::oDbfBackup:Resumen }
+         :bEditValue       := {|| ::oDbf:Resumen }
          :nWidth           := 300
       end with
 
@@ -1549,12 +1591,12 @@ Method SaveToDisk( Resultado )
 
    // Guardar en backup.dbf----------------------------------------------------
 
-   ::oDbfBackup:Append()
-   ::oDbfBackup:Fecha   := Date()
-   ::oDbfBackup:Hora    := hora
-   ::oDbfBackup:Usuario := cCurUsr()
-   ::oDbfBackup:Resumen := ::mResultado
-   ::oDbfBackup:Save()
+   ::oDbf:Append()
+   ::oDbf:Fecha   := Date()
+   ::oDbf:Hora    := hora
+   ::oDbf:Usuario := cCurUsr()
+   ::oDbf:Resumen := ::mResultado
+   ::oDbf:Save()
 
 Return ( Self )
 
@@ -1570,22 +1612,22 @@ Method RestoreFromDisk( cFile )
    ::bk_NumFiles := nil
 
    INI oIni FILE cFile
-      GET ::bk_DiskNum       SECTION "backup" ENTRY "DiskNum"      OF oIni
-      GET ::bk_Serial        SECTION "backup" ENTRY "Serial"       OF oIni
-      GET ::bk_Bytes         SECTION "backup" ENTRY "Bytes"        OF oIni
-      GET ::bk_NumFiles      SECTION "backup" ENTRY "NumFiles"     OF oIni
+      GET ::bk_DiskNum  SECTION "backup" ENTRY "DiskNum"      OF oIni
+      GET ::bk_Serial   SECTION "backup" ENTRY "Serial"       OF oIni
+      GET ::bk_Bytes    SECTION "backup" ENTRY "Bytes"        OF oIni
+      GET ::bk_NumFiles SECTION "backup" ENTRY "NumFiles"     OF oIni
    ENDINI
 
    if Valtype( ::bk_DiskNum ) == "C"
-      ::bk_DiskNum     := Val( ::bk_DiskNum )
+      ::bk_DiskNum      := Val( ::bk_DiskNum )
    end if
 
    if Valtype( ::bk_Bytes ) == "C"
-      ::bk_Bytes       := Val( ::bk_Bytes   )
+      ::bk_Bytes        := Val( ::bk_Bytes   )
    end if
 
    if Valtype( ::bk_NumFiles ) == "C"
-      ::bk_NumFiles    := Val( ::bk_NumFiles)
+      ::bk_NumFiles     := Val( ::bk_NumFiles)
    end if
 
 Return ( Self )
@@ -1633,28 +1675,28 @@ METHOD DefineFiles( cPath, cDriver )
    DEFAULT cPath     := cPatDat()
    DEFAULT cDriver   := cDriver()
 
-   DEFINE TABLE ::oDbfBackup FILE "Backup.Dbf" CLASS "BACKUP" ALIAS "BACKUP" PATH ( cPath ) VIA ( cDriver )COMMENT "Registro de los backup"
+   DEFINE TABLE ::oDbf FILE "Backup.Dbf" CLASS "BACKUP" ALIAS "BACKUP" PATH ( cPath ) VIA ( cDriver )COMMENT "Registro de los backup"
 
-      FIELD NAME "FECHA"   TYPE "D" LEN  10 DEC 0  COMMENT "Fecha de la copia"        OF ::oDbfBackup
-      FIELD NAME "HORA"    TYPE "C" LEN   8 DEC 0  COMMENT "Hora de la copia"         OF ::oDbfBackup
-      FIELD NAME "USUARIO" TYPE "C" LEN   3 DEC 0  COMMENT "Usuario que la realiza"   OF ::oDbfBackup
-      FIELD NAME "RESUMEN" TYPE "C" LEN 200 DEC 0  COMMENT "Resumen del proceso"      OF ::oDbfBackup
+      FIELD NAME "FECHA"   TYPE "D" LEN  10 DEC 0  COMMENT "Fecha de la copia"         OF ::oDbf
+      FIELD NAME "HORA"    TYPE "C" LEN   8 DEC 0  COMMENT "Hora de la copia"          OF ::oDbf
+      FIELD NAME "USUARIO" TYPE "C" LEN   3 DEC 0  COMMENT "Usuario que la realiza"    OF ::oDbf
+      FIELD NAME "RESUMEN" TYPE "C" LEN 200 DEC 0  COMMENT "Resumen del proceso"       OF ::oDbf
 
-      INDEX TO "BACKUP.CDX" TAG "FECHA"   ON "FECHA"   COMMENT "Por fecha"   NODELETED OF ::oDbfBackup
-      INDEX TO "BACKUP.CDX" TAG "USUARIO" ON "USUARIO" COMMENT "Por usuario" NODELETED OF ::oDbfBackup
+      INDEX TO "BACKUP.CDX" TAG "Fecha"   ON "Fecha"   COMMENT "Por fecha"   NODELETED OF ::oDbf
+      INDEX TO "BACKUP.CDX" TAG "Usuario" ON "Usuario" COMMENT "Por usuario" NODELETED OF ::oDbf
 
-   END DATABASE ::oDbfBackup
+   END DATABASE ::oDbf
 
-RETURN ( ::oDbfBackup )
+RETURN ( ::oDbf )
 
 //---------------------------------------------------------------------------//
 
 METHOD SyncAllDbf()
 
-   local oDbfTmp
-   local oDbfOld
    local oBlock
    local oError
+   local oDbfTmp
+   local oDbfOld
 
    oBlock         := ErrorBlock( {| oError | ApoloBreak( oError ) } )
    BEGIN SEQUENCE

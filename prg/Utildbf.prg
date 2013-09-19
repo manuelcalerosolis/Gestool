@@ -1305,6 +1305,10 @@ Function fEraseTable( cTable, cVia )
 
    local lErase   := .t.
 
+   if !lExistTable( cTable )
+      Return ( lErase )
+   end if 
+
    lErase         := ( fErase( cTable ) == 0 )
    if !lErase
       MsgStop( "Imposible eliminar el fichero " + cTable + ". Código de error " + Str( fError() ) )

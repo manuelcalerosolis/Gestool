@@ -47,6 +47,11 @@
 *.map
 *.lic
 *.zip
+<<<<<<< HEAD
+=======
+*.rar
+*.adt
+>>>>>>> d7b9334a5c7604d1ab16e15fe6d8c57dbb024b62
 
 # [Bb]in/
 

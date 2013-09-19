@@ -1857,7 +1857,7 @@ STATIC FUNCTION BeginTrans( aTmp )
    Primero crear la base de datos local----------------------------------------
 	*/
 
-   dbCreate( cTmpLin, aSqlStruct( aColCaja() ), cLocalDriver() )
+   dbCreate( cTmpLin, aSqlStruct( aItmCajaL() ), cLocalDriver() )
    dbUseArea( .t., cLocalDriver(), cTmpLin, cCheckArea( cDbfLin, @dbfTmpLin ), .f. )
 
    if !NetErr()
@@ -1927,7 +1927,7 @@ FUNCTION mkCajas( cPath, oMeter )
    end if
 
    if !lExistTable( cPath + "CajasL.Dbf" )
-      dbCreate( cPath + "CajasL.Dbf", aSqlStruct( aColCaja() ), cDriver() )
+      dbCreate( cPath + "CajasL.Dbf", aSqlStruct( aItmCajaL() ), cDriver() )
    end if
 
    rxCajas( cPath, oMeter )
@@ -1947,7 +1947,7 @@ FUNCTION rxCajas( cPath, oMeter )
    end if
 
    if !lExistTable( cPath + "CAJASL.DBF" )
-      dbCreate( cPath + "CAJASL.DBF", aSqlStruct( aColCaja() ), cDriver() )
+      dbCreate( cPath + "CAJASL.DBF", aSqlStruct( aItmCajaL() ), cDriver() )
    end if
 
    dbUseArea( .t., cDriver(), cPath + "CAJAS.DBF", cCheckArea( "CAJAS", @dbfCajT ), .f. )
@@ -2252,7 +2252,7 @@ Return ( aBase )
 
 //---------------------------------------------------------------------------//
 
-Function aColCaja()
+Function aItmCajaL()
 
    local aBase := {}
 

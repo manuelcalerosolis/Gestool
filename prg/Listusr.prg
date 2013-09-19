@@ -46,7 +46,7 @@ METHOD lResource( cFld )
 
    ::oMtrInf:SetTotal( ::oDbfUsr:Lastrec() )
 
-   ::CreateFilter( aItmUsr(), ::oDbfUsr:cAlias )
+   ::CreateFilter( aItmUsuario(), ::oDbfUsr:cAlias )
 
 RETURN .t.
 

@@ -63,7 +63,7 @@ FUNCTION Configura()
    */
 
    IF !File( cPatEmp() + "NCOUNT.DBF" )
-      mkNewCount()
+      mkCount()
 	END IF
 
    /*

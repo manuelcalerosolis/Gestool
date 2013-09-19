@@ -13,7 +13,7 @@ CLASS TPais FROM TMant
    DATA  cBitmap              INIT clrTopArchivos
 
    METHOD OpenFiles()
-   MESSAGE OpenService()      METHOD OpenFiles()
+   METHOD OpenService()
 
    METHOD DefineFiles()
 
@@ -32,7 +32,7 @@ END CLASS
 
 //----------------------------------------------------------------------------//
 
-METHOD OpenFiles( lExclusive )
+METHOD OpenFiles( lExclusive, cPath )
 
    local lOpen          := .t.
    local oError
@@ -54,15 +54,45 @@ METHOD OpenFiles( lExclusive )
    RECOVER USING oError
 
       lOpen             := .f.
+
+      ::CloseFiles()
+      
+      msgStop( ErrorMessage( oError ), "Imposible abrir todas las bases de datos de paises" )
+
+   END SEQUENCE
+
+RETURN ( lOpen )
+
+//----------------------------------------------------------------------------//
+
+METHOD OpenService( lExclusive, cPath )
+
+   local lOpen          := .t.
+   local oError
+   local oBlock
+
+   DEFAULT lExclusive   := .f.
+
+   oBlock               := ErrorBlock( {| oError | ApoloBreak( oError ) } )
+   BEGIN SEQUENCE
+
+      if Empty( ::oDbf )
+         ::DefineFiles( cPath )
+      end if
+
+      ::oDbf:Activate( .f., !( lExclusive ) )
+
+   RECOVER USING oError
+
+      lOpen             := .f.
+
+      ::CloseFiles()
+      
       msgStop( ErrorMessage( oError ), "Imposible abrir todas las bases de datos de paises" )
 
    END SEQUENCE
 
    ErrorBlock( oBlock )
-
-   if !lOpen
-      ::CloseFiles()
-   end if
 
 RETURN ( lOpen )
 

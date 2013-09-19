@@ -10823,7 +10823,7 @@ Static Function DataReport( oFr )
    oFr:SetFieldAliases( "Unidades de medición",  cObjectsToReport( oUndMedicion:oDbf ) )
 
    oFr:SetWorkArea(     "Usuarios", ( dbfUsr )->( Select() ) )
-   oFr:SetFieldAliases( "Usuarios", cItemsToReport( aItmUsr() ) )
+   oFr:SetFieldAliases( "Usuarios", cItemsToReport( aItmUsuario() ) )
 
    oFr:SetMasterDetail( "SAT", "Lineas de SAT",                   {|| ( dbfSatCliT )->cSerSat + Str( ( dbfSatCliT )->nNumSat ) + ( dbfSatCliT )->cSufSat } )
    oFr:SetMasterDetail( "SAT", "Series de lineas de SAT",         {|| ( dbfSatCliT )->cSerSat + Str( ( dbfSatCliT )->nNumSat ) + ( dbfSatCliT )->cSufSat } )

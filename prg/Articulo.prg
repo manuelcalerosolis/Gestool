@@ -830,7 +830,7 @@ Function Articulo( oMenuItem, oWnd, bOnInit )
                   "Temporada" ,;
                   "Fabricante" ,;
                   "Posición táctil" ,;
-                  "Públicar" ,;
+                  "Publicar" ,;
                   "Código web" ;
          MRU      "Cube_Yellow_16";
          BITMAP   clrTopArchivos ;
@@ -895,7 +895,7 @@ Function Articulo( oMenuItem, oWnd, bOnInit )
       end with
 
       with object ( oWndBrw:AddXCol() )
-         :cHeader          := "Públicar"
+         :cHeader          := "Publicar"
          :cSortOrder       := "lPubInt"
          :nHeadBmpNo       := 3
          :bStrData         := {|| "" }
@@ -16321,7 +16321,7 @@ RETURN ( lTmp )
 
 function GraLotArt( cCodArt, dbfArticulo, cLote )
 
-   local nOrdSetFocus   := ( dbfArticulo )->( ordSetFocus( "CODIGO" ) )
+   local nOrdSetFocus   := ( dbfArticulo )->( ordSetFocus( "Codigo" ) )
 
    /*
    Actualizar NLOTE en el Fichero de artículos

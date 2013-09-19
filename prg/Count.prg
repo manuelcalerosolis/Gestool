@@ -160,11 +160,11 @@ Function IsCount()
    local dbf
 
    if !lExistTable( cPatEmp() + "nCount.Dbf" )
-      mkNewCount( cPatEmp() )
+      mkCount( cPatEmp() )
    end if
 
    if !lExistIndex( cPatEmp() + "nCount.Cdx" )
-      rxNewCount( cPatEmp() )
+      rxCount( cPatEmp() )
    end if
 
    oBlock                     := ErrorBlock( {| oError | ApoloBreak( oError ) } )
@@ -187,7 +187,7 @@ Return ( .t. )
 
 //----------------------------------------------------------------------------//
 
-FUNCTION mkNewCount( cPath, oMeter, nSemilla )
+FUNCTION mkCount( cPath, oMeter, nSemilla )
 
    DEFAULT cPath     := cPatEmp()
 
@@ -196,14 +196,14 @@ FUNCTION mkNewCount( cPath, oMeter, nSemilla )
    end if
 
    if !lExistIndex( cPath + "nCount.Cdx" )
-      rxNewCount( cPath )
+      rxCount( cPath )
    end if
 
 RETURN .t.
 
 //--------------------------------------------------------------------------//
 
-FUNCTION rxNewCount( cPath, oMeter )
+FUNCTION rxCount( cPath, oMeter )
 
    local n
    local dbf

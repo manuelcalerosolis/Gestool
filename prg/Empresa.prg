@@ -3609,7 +3609,7 @@ Static Function StartPathEmp( cPath, cPathOld, cCodEmpNew, cNomEmpNew, cCodEmpOl
       if oMsg != nil
          oMsg:SetText( "Creando contadores" )
       end if
-      mkNewCount( cPath, nil, nGetSemilla )                             ; sysrefresh()
+      mkCount( cPath, nil, nGetSemilla )                             ; sysrefresh()
 
       if oMsg != nil
          oMsg:SetText( "Creando tarifas" )
@@ -4168,6 +4168,7 @@ FUNCTION mkPathGrp( cCodGrpNew, cNomGrpNew, cCodGrpOld, aImportacion, lDialog, l
       if oMsg != nil
          oMsg:SetText( "Creando grupos de familias" )
       end if
+
       if cPathOld != nil
          TGrpFam():Create( cPath ):CheckFiles( cPathOld + "GrpFam.Dbf" )   ; SysRefresh()
       else
@@ -4183,7 +4184,6 @@ FUNCTION mkPathGrp( cCodGrpNew, cNomGrpNew, cCodGrpOld, aImportacion, lDialog, l
       else
          TFabricantes():Create( cPath ):CheckFiles()                                   ; SysRefresh()
       end if
-
 
       if oMsg != nil
          oMsg:SetText( "Creando tipos de familias" )
@@ -4493,7 +4493,11 @@ Static Function ActualizaEmpresa( cCodEmp, aMsg, oAni, oBtnAceptar, oBtnCancelar
       CompressEmpresa( cCodEmp, nil, nil, oBtnAceptar, oAni, oMsg )
    end if
 
-   ActDbfEmp( cCodEmp, aMsg, oAni, oDlg, oMsg, nil, lActEmp )
+   if lAIS()
+      TDataCenter():ActualizaEmpresa( oMsg )
+   else 
+      ActDbfEmp( cCodEmp, aMsg, oAni, oDlg, oMsg, nil, lActEmp )
+   end if 
 
    oDlg:bValid          := {|| .t. }
 
@@ -4578,7 +4582,7 @@ Static Function ActDbfEmp( cCodEmp, aMsg, oAni, oDlg, oMsg, oMet, lActEmp )
             ActDbf( cEmpDat, cEmpTmp, "Situa", "situaciones", oMet, oMsg, aMsg )
          end if
 
-         if mkTImp( cEmpTmp )
+         if mkTipImp( cEmpTmp )
             ActDbf( cEmpDat, cEmpTmp, "TipImp", "Tipos de impresoras", oMet, oMsg, aMsg )
          end if
 
@@ -5304,7 +5308,7 @@ RETURN .t.
 Comprueba los cambios de estructura y añade registros
 */
 
-FUNCTION ActDbf( cEmpOld, cEmpTmp, cFile, cText, oMtr, oMsg, aMsg )
+FUNCTION ActDbf( cEmpOld, cEmpTmp, cFile, cText, oMtr, oMsg )
 
    local i
    local dbfOld
@@ -5343,11 +5347,11 @@ FUNCTION ActDbf( cEmpOld, cEmpTmp, cFile, cText, oMtr, oMsg, aMsg )
 
    /*
    Comprobamos q hay cambios en las estructuras--------------------------------
-   */
 
    if !IsChgStru( dbfOld, dbfTmp )
       return .f.
    end if
+   */
 
    /*
    Numero de campos------------------------------------------------------------
@@ -6438,7 +6442,7 @@ function ActualizaEmpGrp( dbfEmp, dbfDlg, dbfUser, oBrw, oWnd )
       end if
 
    end if
-
+   
    // Iniciamos los servicios----------------------------------------------------
 
    InitServices()
@@ -6522,13 +6526,8 @@ Static Function ActDbfGrp( cCodGrp, aMsg, oAni, oMsg, oMet, lActGrp )
 
    local oBlock
    local oError
-#ifdef __SQLLIB__
-   local cEmpTmp  := "GrpTmp"          + "\"
-   local cEmpOld  := "Emp" + cCodGrp   + "\"
-#else
    local cEmpTmp  := cPatGrpOld( "Tmp" )
    local cEmpOld  := cPatGrpOld( cCodGrp )
-#endif
 
    oAni:Show()
 
@@ -6543,18 +6542,18 @@ Static Function ActDbfGrp( cCodGrp, aMsg, oAni, oMsg, oMet, lActGrp )
    /*
    Creamos el directorio-------------------------------------------------------
    */
-
+   
    if mkPathGrp( "Tmp", nil, nil, aImportacion():False(), .f., .f., nil, oMsg )
 
       CloseFiles()
-
+   
       oBlock      := ErrorBlock( {| oError | ApoloBreak( oError ) } )
       BEGIN SEQUENCE
 
          /*
          Ficheros del subdirectorio empresa------------------------------------
          */
-
+   
          ActDbf( cEmpOld, cEmpTmp, "FPago",     "formas de pago", oMet, oMsg, aMsg )
 
          ActDbf( cEmpOld, cEmpTmp, "Familias",  "familias", oMet, oMsg, aMsg )
@@ -6564,7 +6563,6 @@ Static Function ActDbfGrp( cCodGrp, aMsg, oAni, oMsg, oMet, lActGrp )
 
          ActDbf( cEmpOld, cEmpTmp, "Pro",       "propiedades", oMet, oMsg, aMsg )
          ActDbf( cEmpOld, cEmpTmp, "TblPro",    "tabla de propiedades", oMet, oMsg, aMsg )
-
          ActDbf( cEmpOld, cEmpTmp, "ObrasT",    "obras", oMet, oMsg, aMsg )
 
          ActDbf( cEmpOld, cEmpTmp, "Articulo",  "artículos", oMet, oMsg, aMsg )
@@ -6581,7 +6579,7 @@ Static Function ActDbfGrp( cCodGrp, aMsg, oAni, oMsg, oMet, lActGrp )
          ActDbf( cEmpOld, cEmpTmp, "CliBnc",    "bancos de clientes", oMet, oMsg, aMsg )
 
          ActDbf( cEmpOld, cEmpTmp, "Provee",    "proveedores", oMet, oMsg, aMsg )
-
+   
          ActDbf( cEmpOld, cEmpTmp, "ProveeD",   "documentos de proveedor", oMet, oMsg, aMsg )
 
          ActDbf( cEmpOld, cEmpTmp, "Agentes",   "agentes", oMet, oMsg, aMsg )
@@ -6603,17 +6601,17 @@ Static Function ActDbfGrp( cCodGrp, aMsg, oAni, oMsg, oMet, lActGrp )
 
          oMsg:SetText( "Añadiendo tipos de comandas" )
          TComandas():Create():SyncAllDbf()
-
          oMsg:SetText( "Añadiendo tipos de artículos" )
+
          TTipArt():Create():SyncAllDbf()
-
          oMsg:SetText( "Añadiendo catálogos de artículos" )
+         
          TCatalogo():Create():SyncAllDbf()
-
          oMsg:SetText( "Añadiendo grupos de clientes" )
+         
          TGrpCli():Create():SyncAllDbf()
-
          oMsg:SetText( "Añadiendo grupos de proveedores" )
+         
          TGrpPrv():Create():SyncAllDbf()
 
          oMsg:SetText( "Añadiendo invitaciones" )
@@ -6679,16 +6677,12 @@ FUNCTION TstEmpresa( cPatDat )
       dbCreate( cPatDat() + "EMPRESA.DBF", aSqlStruct( aItmEmp() ), cDriver() )
    end if
 
-   if !lExistIndex( cPatDat() + "EMPRESA.CDX" )
-      rxEmpresa( cPatDat() )
-   end if
-
    if !lExistTable( cPatDat() + "DELEGA.DBF" )
       dbCreate( cPatDat() + "DELEGA.DBF", aSqlStruct( aItmDlg() ), cDriver() )
    end if
 
-   if !lExistIndex( cPatDat() + "DELEGA.CDX" )
-      rxDlg( cPatDat() )
+   if !lExistIndex( cPatDat() + "EMPRESA.CDX" ) .or. !lExistIndex( cPatDat() + "DELEGA.CDX" )
+      rxEmpresa( cPatDat() )
    end if
 
    /*
@@ -6710,8 +6704,6 @@ FUNCTION TstEmpresa( cPatDat )
 
          fEraseTable( cPatDat() + "Empresa.Dbf" )
          fRenameTable( cPatEmpTmp() + "Empresa.Dbf", cPatDat() + "Empresa.Dbf" )
-
-         rxEmpresa( cPatDat() )
 
       end if
 
@@ -6737,11 +6729,13 @@ FUNCTION TstEmpresa( cPatDat )
          fEraseTable( cPatDat() + "Delega.Dbf" )
          fRenameTable( cPatEmpTmp() + "Delega.Dbf", cPatDat() + "Delega.Dbf" )
 
-         rxDlg( cPatDat() )
-
       end if
 
    end if
+
+   if lChangeStruct
+      rxEmpresa( cPatDat() )
+   end if 
 
    /*
    Situacion especial para cambio de codigo---------------------------------
@@ -7141,11 +7135,35 @@ return ( aItmDlg )
 
 //---------------------------------------------------------------------------//
 
+FUNCTION mkEmpresa( cPath )
+
+   DEFAULT cPath  := cPatDat()
+
+   if !lExistTable( cPath + "EMPRESA.DBF" )
+      dbCreate( cPath + "EMPRESA.DBF", aSqlStruct( aItmEmp() ), cDriver() )
+   end if
+
+   if !lExistTable( cPath + "DELEGA.DBF" )
+      dbCreate( cPath + "DELEGA.DBF", aSqlStruct( aItmDlg() ), cDriver() )
+   end if
+
+   if !lExistIndex( cPath + "EMPRESA.CDX" ) .or. !lExistIndex( cPath + "DELEGA.CDX" )
+      rxEmpresa( cPath )
+   end if
+
+RETURN NIL
+
+//--------------------------------------------------------------------------//
+
 FUNCTION rxEmpresa( cPath, oMeter )
 
    local dbfEmp
 
    DEFAULT cPath  := cPatDat()
+
+   if !lExistTable( cPath + "EMPRESA.DBF" )
+      dbCreate( cPath + "EMPRESA.DBF", aSqlStruct( aItmEmp() ), cDriver() )
+   end if
 
    dbUseArea( .t., cDriver(), cPath + "Empresa.Dbf", cCheckArea( "EMPRESA", @dbfEmp ), .f. )
    if !( dbfEmp )->( neterr() )
@@ -7165,15 +7183,9 @@ FUNCTION rxEmpresa( cPath, oMeter )
       msgStop( "Imposible abrir en modo exclusivo la tabla de empresas" )
    end if
 
-RETURN NIL
-
-//--------------------------------------------------------------------------//
-
-FUNCTION rxDlg( cPath, oMeter )
-
-   local dbfDlg
-
-   DEFAULT cPath  := cPatDat()
+   if !lExistTable( cPath + "DELEGA.DBF" )
+      dbCreate( cPath + "DELEGA.DBF", aSqlStruct( aItmDlg() ), cDriver() )
+   end if
 
    dbUseArea( .t., cDriver(), cPath + "DELEGA.DBF", cCheckArea( "DELEGA", @dbfDlg ), .f. )
 
@@ -7191,7 +7203,6 @@ FUNCTION rxDlg( cPath, oMeter )
 RETURN NIL
 
 //--------------------------------------------------------------------------//
-
 /*
 Valida la fecha del documento que estamos haciendo para que estén en el rango marcado en la empresa
 */
@@ -7427,7 +7438,6 @@ Return oMenu
 
 static Function ActDbfPda( oSayProgress, oPgrSistema, oDlg )
 
-
 RETURN .t.
 
 //---------------------------------------------------------------------------//
@@ -7446,10 +7456,6 @@ FUNCTION ActDbf( cEmpOld, cEmpTmp, cFile, cText, oMtr, oMsg, aMsg )
    local lCopy       := .f.
    local nField      := 0
    local aField
-
-   /*if oMsg != nil
-      oMsg:SetText( "Añadiendo " + cText )
-   end if*/
 
    if !lExistTable( dbfNamOld + ".Dbf" )
       return nil
@@ -7502,6 +7508,7 @@ FUNCTION ActDbf( cEmpOld, cEmpTmp, cFile, cText, oMtr, oMsg, aMsg )
 
       if lExistTable( dbfNamOld + ".Dbf" )
          fEraseTable( dbfNamOld + ".Dbf" )
+         msgAlert( dbfNamOld + ".Dbf", "" )
       end if
 
       if lExistTable( dbfNamOld + ".Fpt" )

@@ -976,7 +976,7 @@ FUNCTION nPutDoc( cSerDoc, nNumDoc, cSufDoc, dbf, cTipDoc, nLen, dbfCount )
 
    if Empty( dbfCount )
 
-      mkNewCount( cPatEmp() )
+      mkCount( cPatEmp() )
 
       USE ( cPatEmp() + "NCOUNT.DBF" ) NEW VIA ( cDriver() ) SHARED ALIAS ( cCheckArea( "NCOUNT", @dbfCount ) )
       SET ADSINDEX TO ( cPatEmp() + "NCOUNT.CDX" ) ADDITIVE
@@ -1128,7 +1128,7 @@ FUNCTION cNewSer( cTipDoc, dbfCount )
 
    if Empty( dbfCount )
 
-      mkNewCount( cPatEmp() )
+      mkCount( cPatEmp() )
 
       while .t.
 

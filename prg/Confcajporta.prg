@@ -444,20 +444,18 @@ FUNCTION mkCajPorta( cPath, lAppend, cPathOld, oMeter )
 
    oCajPorta:Activate( .f., .t. )
 
-   if lAppend              .and.;
-      lIsDir( cPathOld )   .and.;
-      lExistTable( cPathOld + "CajPorta.Dbf" )
-
+   if lAppend .and. lExistTable( cPathOld + "CajPorta.Dbf" )
       oCajPorta:AppendFrom( cPathOld + "CajPorta.Dbf" )
-
    end if
 
    oCajPorta:end()
 
  RETURN .t.
- //----------------------------------------------------------------------------//
-
- /*Funcion que crea los índices de las bases de datos*/
+ 
+//----------------------------------------------------------------------------//
+/*
+Funcion que crea los índices de las bases de datos
+*/
 
  FUNCTION rxCajPorta( cPath, oMeter )
 

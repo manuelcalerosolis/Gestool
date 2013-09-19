@@ -11379,7 +11379,7 @@ Static Function DataReport( oFr )
    oFr:SetFieldAliases( "Unidades de medición",  cObjectsToReport( oUndMedicion:oDbf ) )
 
    oFr:SetWorkArea(     "Usuarios", ( dbfUsr )->( Select() ) )
-   oFr:SetFieldAliases( "Usuarios", cItemsToReport( aItmUsr() ) )
+   oFr:SetFieldAliases( "Usuarios", cItemsToReport( aItmUsuario() ) )
 
    oFr:SetMasterDetail( "Presupuestos", "Lineas de presupuestos",          {|| ( dbfPreCliT )->cSerPre + Str( ( dbfPreCliT )->nNumPre ) + ( dbfPreCliT )->cSufPre } )
    oFr:SetMasterDetail( "Presupuestos", "Incidencias de presupuestos",     {|| ( dbfPreCliT )->cSerPre + Str( ( dbfPreCliT )->nNumPre ) + ( dbfPreCliT )->cSufPre } )

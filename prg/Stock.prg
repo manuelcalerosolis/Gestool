@@ -159,7 +159,7 @@ CLASS TStock
 
    METHOD StockInit( cPath, cPathOld, oMsg, lAlbPrv, lAlbCli, lGrupo )
 
-   METHOD nGetUndRes()
+   METHOD nStockReservado( cCodArt, cValPr1, cValPr2 )
 
    METHOD SetEstadoPedCli( cNumPed )
    METHOD SetEstadoSatCli( cNumPed )
@@ -1188,7 +1188,7 @@ Return ( Self )
 //
 // Devuleve las unidades reservadas
 //
-
+/*
 METHOD nGetUndRes() CLASS TStock
 
    local nUndRes  := nTotRPedCli( ( ::cPedCliL )->cSerPed + Str( ( ::cPedCliL )->nNumPed ) + ( ::cPedCliL )->cSufPed, ( ::cPedCliL )->cRef, ( ::cPedCliL )->cValPr1, ( ::cPedCliL )->cValPr2, ::cPedCliR )
@@ -1197,9 +1197,7 @@ METHOD nGetUndRes() CLASS TStock
 
       nUndRes     -= nUnidadesRecibidasAlbCli( ( ::cPedCliL )->cSerPed + Str( ( ::cPedCliL )->nNumPed ) + ( ::cPedCliL )->cSufPed, ( ::cPedCliL )->cRef, ( ::cPedCliL )->cValPr1, ( ::cPedCliL )->cValPr2, ( ::cPedCliL )->cRefPrv, ( ::cPedCliL )->cDetalle, ::cAlbCliL )
 
-      /*
-      No se pueden dar de baja mas q los reservados
-      */
+      // No se pueden dar de baja mas q los reservados
 
       if nUndRes < 0
          nUndRes  := 0
@@ -1208,6 +1206,29 @@ METHOD nGetUndRes() CLASS TStock
    end if
 
 return ( nUndRes )
+*/
+//---------------------------------------------------------------------------//
+
+METHOD nStockReservado( cCodArt, cValPr1, cValPr2 ) CLASS TStock
+
+   local nTotal         := 0
+   local nOrdPedCliR    := ( ::cPedCliR )->( OrdSetFocus( "cRef" ) )
+
+   if ( ::cPedCliR )->( dbSeek( cCodArt ) )
+
+      while ( ::cPedCliR )->cRef == cCodArt .and. !( ::cPedCliR )->( Eof() )
+
+         nTotal         += nTotRPedCli( ( ::cPedCliR )->cSerPed + Str( ( ::cPedCliR )->nNumPed ) + ( ::cPedCliR )->cSufPed, ( ::cPedCliR )->cRef, ( ::cPedCliR )->cValPr1, ( ::cPedCliR )->cValPr2, ::cPedCliR )
+
+         ( ::cPedCliR )->( dbSkip() )
+
+      end while
+
+   end if
+
+   ( ::cPedCliR )->( OrdSetFocus( nOrdPedCliR ) )
+
+RETURN ( nTotal )
 
 //---------------------------------------------------------------------------//
 
@@ -3560,6 +3581,7 @@ RETURN ( Self )
 
 //---------------------------------------------------------------------------//
 
+/*
 METHOD nStockAlmacen( cCodArt, cCodAlm, cValPr1, cValPr2, cLote ) CLASS TStock
 
    local oBlock
@@ -3599,9 +3621,7 @@ METHOD nStockAlmacen( cCodArt, cCodAlm, cValPr1, cValPr2, cLote ) CLASS TStock
 
       CursorWait()
 
-      /*
-      Movimientos de almacén------------------------------------------------------
-      */
+      // Movimientos de almacén------------------------------------------------------
 
       SysRefresh()
 
@@ -3622,6 +3642,8 @@ METHOD nStockAlmacen( cCodArt, cCodAlm, cValPr1, cValPr2, cLote ) CLASS TStock
                      ( Empty( cValPr2 )   .or. cValPr2 == ( ::cHisMovT)->cValPr2 )  .and.;
                      ( Empty( cLote )     .or. cLote   == ( ::cHisMovT)->cLote   )
 
+                     logwrite( "HisMov + " + Str( nTotNMovAlm( ::cHisMovT) ) )
+
                      nStkTotal               += nTotNMovAlm( ::cHisMovT)
 
                   end if
@@ -3635,6 +3657,8 @@ METHOD nStockAlmacen( cCodArt, cCodAlm, cValPr1, cValPr2, cLote ) CLASS TStock
 
                      nStkTotal               -= nTotNMovAlm( ::cHisMovT)
 
+                     logwrite( "HisMov - " + Str( nTotNMovAlm( ::cHisMovT) ) )
+
                   end if
 
                //end if
@@ -3647,9 +3671,7 @@ METHOD nStockAlmacen( cCodArt, cCodAlm, cValPr1, cValPr2, cLote ) CLASS TStock
 
       end if
 
-      /*
-      Albaranes de proveedor------------------------------------------------------
-      */
+      // Albaranes de proveedor------------------------------------------------------
 
       SysRefresh()
 
@@ -3666,6 +3688,8 @@ METHOD nStockAlmacen( cCodArt, cCodAlm, cValPr1, cValPr2, cLote ) CLASS TStock
 
                nStkTotal               += nTotNAlbPrv( ::cAlbPrvL )
 
+               logwrite( "AlbPrv + " + Str( nTotNAlbPrv( ::cAlbPrvL ) ) )
+
             end if
 
             ( ::cAlbPrvL )->( dbSkip() )
@@ -3674,9 +3698,7 @@ METHOD nStockAlmacen( cCodArt, cCodAlm, cValPr1, cValPr2, cLote ) CLASS TStock
 
       end if
 
-      /*
-      Facturas de proveedor-------------------------------------------------------
-      */
+      // Facturas de proveedor-------------------------------------------------------
 
       SysRefresh()
 
@@ -3693,6 +3715,8 @@ METHOD nStockAlmacen( cCodArt, cCodAlm, cValPr1, cValPr2, cLote ) CLASS TStock
 
                nStkTotal               += nTotNFacPrv( ::cFacPrvL )
 
+               logwrite( "FacPrv + " + Str( nTotNFacPrv( ::cFacPrvL ) ) )
+
             end if
 
             ( ::cFacPrvL )->( dbSkip() )
@@ -3701,9 +3725,7 @@ METHOD nStockAlmacen( cCodArt, cCodAlm, cValPr1, cValPr2, cLote ) CLASS TStock
 
       end if
 
-      /*
-      Facturas rectificativas de proveedor-------------------------------------
-      */
+      // Facturas rectificativas de proveedor-------------------------------------
 
       SysRefresh()
 
@@ -3720,6 +3742,8 @@ METHOD nStockAlmacen( cCodArt, cCodAlm, cValPr1, cValPr2, cLote ) CLASS TStock
 
                nStkTotal               += nTotNRctPrv( ::cRctPrvL )
 
+               logwrite( "RctPrv + " + Str( nTotNRctPrv( ::cRctPrvL ) ) )
+
             end if
 
             ( ::cRctPrvL )->( dbSkip() )
@@ -3728,9 +3752,7 @@ METHOD nStockAlmacen( cCodArt, cCodAlm, cValPr1, cValPr2, cLote ) CLASS TStock
 
       end if
 
-      /*
-      Albaranes de clientes----------------------------------------------------
-      */
+      // Albaranes de clientes----------------------------------------------------
 
       SysRefresh()
 
@@ -3747,6 +3769,8 @@ METHOD nStockAlmacen( cCodArt, cCodAlm, cValPr1, cValPr2, cLote ) CLASS TStock
 
                nStkTotal               -= nTotVAlbCli( ::cAlbCliL )
 
+               logwrite( "AlbCli + " + Str( nTotVAlbCli( ::cAlbCliL ) ) )
+
             end if
 
             ( ::cAlbCliL )->( dbSkip() )
@@ -3755,9 +3779,7 @@ METHOD nStockAlmacen( cCodArt, cCodAlm, cValPr1, cValPr2, cLote ) CLASS TStock
 
       end if
 
-      /*
-      Facturas de clientes--------------------------------------------------------
-      */
+      // Facturas de clientes--------------------------------------------------------
 
       SysRefresh()
 
@@ -3774,6 +3796,8 @@ METHOD nStockAlmacen( cCodArt, cCodAlm, cValPr1, cValPr2, cLote ) CLASS TStock
 
                nStkTotal               -= nTotVFacCli( ::cFacCliL )
 
+               logwrite( "FacCli + " + Str( nTotVFacCli( ::cFacCliL ) ) )
+
             end if
 
             ( ::cFacCliL )->( dbSkip() )
@@ -3782,9 +3806,7 @@ METHOD nStockAlmacen( cCodArt, cCodAlm, cValPr1, cValPr2, cLote ) CLASS TStock
 
       end if
 
-      /*
-      Facturas rectificativas-----------------------------------------------------
-      */
+      // Facturas rectificativas-----------------------------------------------------
 
       SysRefresh()
 
@@ -3801,6 +3823,8 @@ METHOD nStockAlmacen( cCodArt, cCodAlm, cValPr1, cValPr2, cLote ) CLASS TStock
 
                nStkTotal               -= nTotVFacRec( ::cFacRecL )
 
+               logwrite( "FacRec + " + Str( nTotVFacRec( ::cFacRecL ) ) )
+
             end if
 
             ( ::cFacRecL )->( dbSkip() )
@@ -3809,9 +3833,7 @@ METHOD nStockAlmacen( cCodArt, cCodAlm, cValPr1, cValPr2, cLote ) CLASS TStock
 
       end if
 
-      /*
-      Tickets de clientes normales------------------------------------------------
-      */
+      // Tickets de clientes normales------------------------------------------------
 
       SysRefresh()
 
@@ -3830,8 +3852,10 @@ METHOD nStockAlmacen( cCodArt, cCodAlm, cValPr1, cValPr2, cLote ) CLASS TStock
 
                   if ( ::cTikL )->cTipTil == SAVTIK .or. ( ::cTikL )->cTipTil == SAVAPT
                      nStkTotal               -= nTotVTikTpv( ::cTikL )
+                     logwrite( "TikCli - " + Str( nTotVTikTpv( ::cTikL ) ) )
                   else
                      nStkTotal               += nTotVTikTpv( ::cTikL )
+                     logwrite( "TikCli + " + Str( nTotVTikTpv( ::cTikL ) ) )
                   end if
 
                end if
@@ -3842,9 +3866,7 @@ METHOD nStockAlmacen( cCodArt, cCodAlm, cValPr1, cValPr2, cLote ) CLASS TStock
 
          end if
 
-         /*
-         Tickets de clientes combinados----------------------------------------------
-         */
+         // Tickets de clientes combinados----------------------------------------------
 
          SysRefresh()
 
@@ -3862,6 +3884,8 @@ METHOD nStockAlmacen( cCodArt, cCodAlm, cValPr1, cValPr2, cLote ) CLASS TStock
 
                      nStkTotal               -= nTotVTikTpv( ::cTikL, .t. )
 
+                     logwrite( "TikCli - " + Str( nTotVTikTpv( ::cTikL, .t. ) ) )
+
                   end if
 
                   ( ::cTikL )->( dbSkip() )
@@ -3876,9 +3900,7 @@ METHOD nStockAlmacen( cCodArt, cCodAlm, cValPr1, cValPr2, cLote ) CLASS TStock
 
       end if
 
-      /*
-      Materiales producidos-------------------------------------------------------
-      */
+      // Materiales producidos-------------------------------------------------------
 
       SysRefresh()
 
@@ -3902,9 +3924,7 @@ METHOD nStockAlmacen( cCodArt, cCodAlm, cValPr1, cValPr2, cLote ) CLASS TStock
 
       end if
 
-      /*
-      Materias primas-------------------------------------------------------------
-      */
+      // Materias primas-------------------------------------------------------------
 
       SysRefresh()
 
@@ -3952,6 +3972,7 @@ METHOD nStockAlmacen( cCodArt, cCodAlm, cValPr1, cValPr2, cLote ) CLASS TStock
    ErrorBlock( oBlock )
 
 return ( nStkTotal )
+*/
 
 //---------------------------------------------------------------------------//
 
@@ -4870,6 +4891,23 @@ METHOD nStockArticulo( cCodArt, cCodAlm, oBrw, lLote, lNumeroSerie, dFecIni, dFe
 Return ( nStockArticulo )
 
 //---------------------------------------------------------------------------//
+
+METHOD nStockAlmacen( cCodArt, cCodAlm, cValPr1, cValPr2, cLote ) CLASS TStock
+
+   local nStockArticulo := 0
+
+   ::aStockArticulo( cCodArt, cCodAlm  )
+
+   aEval( ::aStocks, {|o| if( ( Empty( cCodAlm ) .or. cCodAlm == o:cCodigoAlmacen )    .and.;
+                              ( Empty( cValPr1 ) .or. cValPr1 == o:cCodigoPropiedad1 ) .and.;
+                              ( Empty( cValPr2 ) .or. cValPr2 == o:cCodigoPropiedad2 ) .and.;                  
+                              ( Empty( cLote   ) .or. cLote   == o:cLote   ),;
+                              nStockArticulo += o:nUnidades, ) } )
+
+Return ( nStockArticulo )
+
+//---------------------------------------------------------------------------//
+
 
 METHOD nStockSerie( cCodArt, cCodAlm, cNumeroSerie ) CLASS TStock
 

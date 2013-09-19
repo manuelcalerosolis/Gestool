@@ -137,14 +137,14 @@ CLASS TMant
    METHOD HelpTopic()
 
    METHOD OpenService( lExclusive )
-
    METHOD CloseService()
+
+   METHOD BuildFiles( lExclusive, cPath ) INLINE ( ::OpenService( lExclusive, cPath ), ::CloseService() )
 
    METHOD lValid( oGet, oSay )
 
-   METHOD InitSeconds() INLINE   ::nSeconds := Seconds()
-
-   METHOD GetSeconds()  INLINE   msgInfo( ::nSeconds - Seconds() )
+   METHOD InitSeconds()                   INLINE ( ::nSeconds := Seconds() )
+   METHOD GetSeconds()                    INLINE ( msgInfo( ::nSeconds - Seconds() ) )
 
    METHOD lLoadDivisa()
 
