@@ -958,9 +958,15 @@ METHOD ExistTable( uTable )
 
    lExistTable       := aScan( ::aDDTables, {|c| Left( Upper( c ), len( c ) - 1 ) == cTable } ) != 0
 
+<<<<<<< HEAD
 //   if !lExistTable 
 //      msgAlert( lExistTable, cTable )
 //   end if 
+=======
+   if !lExistTable 
+      msgAlert( lExistTable, cTable )
+   end if 
+>>>>>>> a27079b369143c221e7353f95e00b94d7267746f
 
 Return ( lExistTable )
 
@@ -4171,8 +4177,9 @@ METHOD ActualizaEmpresa( oMsg )
    next 
 
    for each oTable in ::aEmpresaTables
+      MsgAlert( "Añadiendo tabla al diccionario de datos : " + oTable:cName + " : " + oTable:cDataFile )
       ::oMsg:SetText( "Añadiendo tabla al diccionario de datos : " + oTable:cDescription )
-      ::AddTable( oTable )
+      msgAlert( ::AddTable( oTable ), "Añadiendo tabla" )
    next 
 
    // Reindexando tablas ------------------------------------------------------
@@ -4186,6 +4193,10 @@ METHOD ActualizaEmpresa( oMsg )
       ::oMsg:SetText( "Reindexando : " + oTable:cDescription )
       ::ReindexTable( oTable )
    next 
+
+   // Recargamos el diccionario de datos---------------------------------------
+
+   ::ReLoadTables()
 
 Return ( Self )
 
