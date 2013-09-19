@@ -166,6 +166,8 @@ CLASS TpvCobros
 
       if ::oSender:nTipoDocumento != documentoAlbaran
 
+         ::ValidTotalesCobro()
+
          if ::nUbiTik == ubiEncargar
 
             if ( ::sTotalesCobros:nTotal ) > ( ::sTotalesCobros:nCobrado + ::sTotalesCobros:nEntregado )
@@ -176,7 +178,7 @@ CLASS TpvCobros
 
             ::CreaCobro()
 
-            ::nExit  := nExit
+            ::nExit        := nExit
 
             ::oDlg:End( IDOK )
 
@@ -187,7 +189,6 @@ CLASS TpvCobros
                ::CreaCobro()
 
                ::nEstado   := nPagado
-
                ::nExit     := nExit
 
                ::oDlg:End( IDOK )
@@ -198,7 +199,8 @@ CLASS TpvCobros
 
       else
 
-         ::nExit     := nExit
+         ::nExit           := nExit
+         
          ::oDlg:End( IDOK )
 
       end if   

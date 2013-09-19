@@ -2113,7 +2113,7 @@ Static Function LoadPedidoProveedor( cCodArt, nYear )
             oDbfTmp:nFacCnv   := ( dbfPedPrvL )->nFacCnv
             oDbfTmp:nImpDoc   := nTotUPedPrv( dbfPedPrvL, nDinDiv )
             oDbfTmp:nDtoDoc   := ( dbfPedPrvL )->nDtoLin
-            oDbfTmp:nTotDoc   := nTotLPedPrv( dbfPedPrvL, nDinDiv, nDirDiv )
+            oDbfTmp:nTotDoc   := oDbfTmp:nUndDoc * oDbfTmp:nImpDoc
             oDbfTmp:Save()
 
          end if
@@ -2154,7 +2154,7 @@ Static Function LoadAlbaranProveedor( cCodArt, nYear )
             oDbfTmp:nFacCnv   := ( dbfAlbPrvL )->nFacCnv
             oDbfTmp:nImpDoc   := nTotUAlbPrv( dbfAlbPrvL, nDinDiv )
             oDbfTmp:nDtoDoc   := ( dbfAlbPrvL )->nDtoLin
-            oDbfTmp:nTotDoc   := nTotLAlbPrv( dbfAlbPrvL, nDinDiv, nDirDiv )
+            oDbfTmp:nTotDoc   := oDbfTmp:nUndDoc * oDbfTmp:nImpDoc
             oDbfTmp:Save()
 
          end if
@@ -2197,7 +2197,7 @@ Static Function LoadFacturaProveedor( cCodArt, nYear )
             oDbfTmp:nFacCnv   := ( dbfFacPrvL )->nFacCnv
             oDbfTmp:nImpDoc   := nTotUFacPrv( dbfFacPrvL, nDinDiv )
             oDbfTmp:nDtoDoc   := ( dbfFacPrvL )->nDtoLin
-            oDbfTmp:nTotDoc   := nTotLFacPrv( dbfFacPrvL, nDinDiv, nDirDiv )
+            oDbfTmp:nTotDoc   := oDbfTmp:nUndDoc * oDbfTmp:nImpDoc
             oDbfTmp:Save()
 
          end if
@@ -2239,7 +2239,7 @@ Static Function LoadRectificativaProveedor( cCodArt, nYear )
             oDbfTmp:nFacCnv   := ( dbfRctPrvL )->nFacCnv
             oDbfTmp:nImpDoc   := nTotURctPrv( dbfRctPrvL, nDinDiv )
             oDbfTmp:nDtoDoc   := ( dbfRctPrvL )->nDtoLin
-            oDbfTmp:nTotDoc   := nTotLRctPrv( dbfRctPrvL, nDinDiv, nDirDiv )
+            oDbfTmp:nTotDoc   := oDbfTmp:nUndDoc * oDbfTmp:nImpDoc
             oDbfTmp:Save()
 
          end if
@@ -2281,7 +2281,7 @@ Static Function LoadSATCliente( cCodArt, nYear )
             oDbfTmp:nFacCnv   := ( dbfSatCliL )->nFacCnv
             oDbfTmp:nImpDoc   := nTotUSatCli( dbfSatCliL, nDouDiv )
             oDbfTmp:nDtoDoc   := ( dbfSatCliL )->nDto
-            oDbfTmp:nTotDoc   := nTotLSatCli( dbfSatCliL, nDouDiv, nDorDiv )
+            oDbfTmp:nTotDoc   := oDbfTmp:nUndDoc * oDbfTmp:nImpDoc
             oDbfTmp:Save()
 
          end if
@@ -2324,7 +2324,7 @@ Static Function LoadPresupuestoCliente( cCodArt, nYear )
             oDbfTmp:nFacCnv   := ( dbfPreCliL )->nFacCnv
             oDbfTmp:nImpDoc   := nTotUPreCli( dbfPreCliL, nDouDiv )
             oDbfTmp:nDtoDoc   := ( dbfPreCliL )->nDto
-            oDbfTmp:nTotDoc   := nTotLPreCli( dbfPreCliL, nDouDiv, nDorDiv )
+            oDbfTmp:nTotDoc   := oDbfTmp:nUndDoc * oDbfTmp:nImpDoc
             oDbfTmp:Save()
 
          end if
@@ -2369,7 +2369,7 @@ Static Function LoadPedidosCliente( cCodArt, nYear )
             oDbfTmp:nFacCnv   := ( dbfPedCliL )->nFacCnv
             oDbfTmp:nImpDoc   := nTotUPedCli( dbfPedCliL, nDouDiv )
             oDbfTmp:nDtoDoc   := ( dbfPedCliL )->nDto
-            oDbfTmp:nTotDoc   := nTotLPedCli( dbfPedCliL, nDouDiv, nDorDiv )
+            oDbfTmp:nTotDoc   := oDbfTmp:nUndDoc * oDbfTmp:nImpDoc
             oDbfTmp:Save()
 
          end if
@@ -2411,7 +2411,7 @@ Static Function LoadAlbaranesCliente( cCodArt, nYear )
             oDbfTmp:nFacCnv   := ( dbfAlbCliL )->nFacCnv
             oDbfTmp:nImpDoc   := nTotUAlbCli( dbfAlbCliL, nDouDiv )
             oDbfTmp:nDtoDoc   := ( dbfAlbCliL )->nDto
-            oDbfTmp:nTotDoc   := nTotLAlbCli( dbfAlbCliL, nDouDiv, nDorDiv )
+            oDbfTmp:nTotDoc   := oDbfTmp:nUndDoc * oDbfTmp:nImpDoc
             oDbfTmp:Save()
 
          end if
@@ -2451,11 +2451,11 @@ Static Function LoadFacturasCliente( cCodArt, nYear )
             oDbfTmp:cValPr2   := ( dbfFacCliL )->cValPr2
             oDbfTmp:cLote     := ( dbfFacCliL )->cLote
             oDbfTmp:cAlmDoc   := ( dbfFacCliL )->cAlmLin
-            oDbfTmp:nUndDoc   := nTotNFacCli( dbfFacCliL )
             oDbfTmp:nFacCnv   := ( dbfFacCliL )->nFacCnv
-            oDbfTmp:nImpDoc   := nImpUFacCli( dbfFacCliT, dbfFacCliL, nDouDiv )
             oDbfTmp:nDtoDoc   := ( dbfFacCliL )->nDto
-            oDbfTmp:nTotDoc   := nTotLFacCli( dbfFacCliL, nDouDiv, nDorDiv )
+            oDbfTmp:nUndDoc   := nTotNFacCli( dbfFacCliL )
+            oDbfTmp:nImpDoc   := nImpUFacCli( dbfFacCliT, dbfFacCliL, nDouDiv )
+            oDbfTmp:nTotDoc   := oDbfTmp:nUndDoc * oDbfTmp:nImpDoc
             oDbfTmp:Save()
 
          end if
@@ -2496,7 +2496,7 @@ Static Function LoadFacturasRectificativas( cCodArt, nYear )
             oDbfTmp:nFacCnv   := ( dbfFacRecL )->nFacCnv
             oDbfTmp:nImpDoc   := nImpUFacRec( dbfFacRecT, dbfFacRecL, nDouDiv )
             oDbfTmp:nDtoDoc   := ( dbfFacRecL )->nDto
-            oDbfTmp:nTotDoc   := nTotLFacRec( dbfFacRecL, nDouDiv, nDorDiv )
+            oDbfTmp:nTotDoc   := oDbfTmp:nUndDoc * oDbfTmp:nImpDoc
             oDbfTmp:Save()
 
          end if
@@ -2574,7 +2574,7 @@ Static Function LoadTiketsCliente( cCodArt, nYear )
                oDbfTmp:cAlmDoc         := ( dbfTikCliL )->cAlmLin
                oDbfTmp:nDtoDoc         := ( dbfTikCliL )->nDtoLin
                oDbfTmp:nImpDoc         := nImpUTpv( dbfTikCliT, dbfTikCliL, nDouDiv )
-               oDbfTmp:nTotDoc         := nNetLTpv( dbfTikCliL, nDouDiv )
+               oDbfTmp:nTotDoc         := oDbfTmp:nUndDoc * oDbfTmp:nImpDoc
 
                oDbfTmp:Save()
 
@@ -2623,7 +2623,7 @@ Static Function LoadTiketsCliente( cCodArt, nYear )
                oDbfTmp:nFacCnv      := ( dbfTikCliL )->nFacCnv
                oDbfTmp:nImpDoc      := ( dbfTikCliL )->nPcmTil
                oDbfTmp:nDtoDoc      := ( dbfTikCliL )->nDtoLin
-               oDbfTmp:nTotDoc      := nTotLDos( dbfTikCliL, nDouDiv, nDorDiv )
+               oDbfTmp:nTotDoc      := oDbfTmp:nUndDoc * oDbfTmp:nImpDoc
                oDbfTmp:Save()
 
             end if
@@ -2669,7 +2669,7 @@ Static Function LoadMovimientosAlmacen( cCodArt, nYear )
                oDbfTmp:cAlmDoc   := ( dbfMovAlm )->cAliMov
                oDbfTmp:nUndDoc   := nTotNMovAlm( dbfMovAlm )
                oDbfTmp:nImpDoc   := ( dbfMovAlm )->nPreDiv
-               oDbfTmp:nTotDoc   := nTotLMovAlm( dbfMovAlm )
+               oDbfTmp:nTotDoc   := oDbfTmp:nUndDoc * oDbfTmp:nImpDoc
                oDbfTmp:nDtoDoc   := 0 //( dbfMovAlm )->( Recno() )    // Lo usamos como referencia al registro
                oDbfTmp:Save()
             end if
@@ -2689,7 +2689,7 @@ Static Function LoadMovimientosAlmacen( cCodArt, nYear )
                oDbfTmp:cAlmDoc   := ( dbfMovAlm )->cAloMov
                oDbfTmp:nUndDoc   := nTotNMovAlm( dbfMovAlm )
                oDbfTmp:nImpDoc   := ( dbfMovAlm )->nPreDiv
-               oDbfTmp:nTotDoc   := nTotLMovAlm( dbfMovAlm )
+               oDbfTmp:nTotDoc   := oDbfTmp:nUndDoc * oDbfTmp:nImpDoc
                oDbfTmp:nDtoDoc   := 0 //( dbfMovAlm )->( Recno() )       // Lo usamos como referencia al registro
                oDbfTmp:Save()
             end if
@@ -2738,7 +2738,7 @@ Static Function LoadProduccion( cCodArt, nYear )
                oDbfTmp:cAlmDoc   := ( dbfProducL )->cAlmOrd
                oDbfTmp:nUndDoc   := NotCaja( ( dbfProducL )->nCajOrd ) * ( dbfProducL )->nUndOrd
                oDbfTmp:nImpDoc   := ( dbfProducL )->nImpOrd
-               oDbfTmp:nTotDoc   := ( NotCaja( ( dbfProducL )->nCajOrd ) * ( dbfProducL )->nUndOrd ) * ( dbfProducL )->nImpOrd
+               oDbfTmp:nTotDoc   := oDbfTmp:nUndDoc * oDbfTmp:nImpDoc
                oDbfTmp:Save()
 
             end if
@@ -2781,7 +2781,7 @@ Static Function LoadProduccion( cCodArt, nYear )
                oDbfTmp:cAlmDoc   := ( dbfProducM )->cAlmOrd
                oDbfTmp:nUndDoc   := NotCaja( ( dbfProducM )->nCajOrd ) * ( dbfProducM )->nUndOrd
                oDbfTmp:nImpDoc   := ( dbfProducM )->nImpOrd
-               oDbfTmp:nTotDoc   := ( NotCaja( ( dbfProducM )->nCajOrd ) * ( dbfProducM )->nUndOrd ) * ( dbfProducM )->nImpOrd
+               oDbfTmp:nTotDoc   := oDbfTmp:nUndDoc * oDbfTmp:nImpDoc
                oDbfTmp:Save()
 
             end if
@@ -2855,10 +2855,11 @@ Calcula el stock reservado
 
 function nTotRStk( cCodArt, dbfPedCliT, dbfPedCliR, dbfAlbCliT, dbfAlbCliL, nYear )
 
-   local nTotRStk := 0
-   local nOrdAnt  := ( dbfPedCliR )->( OrdSetFocus( "cRef" ) )
+   local nTotRStk    := 0
+   local nOrdAnt     := ( dbfPedCliR )->( OrdSetFocus( "cRef" ) )
 
    if ( dbfPedCliR )->( dbSeek( cCodArt ) )
+      
       while cCodArt == ( dbfPedCliR )->cRef .and. !( dbfPedCliR )->( Eof() )
 
          if nYear == nil .or. Year( ( dbfPedCliR )->dFecRes ) == nYear
@@ -2866,7 +2867,9 @@ function nTotRStk( cCodArt, dbfPedCliT, dbfPedCliR, dbfAlbCliT, dbfAlbCliL, nYea
          end if
 
          ( dbfPedCliR )->( dbSkip() )
+
       end while
+
    end if
 
    ( dbfPedCliR )->( OrdSetFocus( nOrdAnt ) )

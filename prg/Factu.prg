@@ -5698,7 +5698,7 @@ function lCheckSaasMode()
 
    oCon                    := TMSConnect():New()
 
-   if oCon:Connect( "www.watchdog.es", "watchdog_root", "Nidorino1234", "watchdog_gestool_saas", "3306" )
+   if oCon:Connect( "gestool.serveftp.com", "root", "nidorino", "gestool_saas", "3306" )
 
       oQuery               := TMSQuery():New( oCon, "SELECT * FROM numerosserie WHERE serial='" + AllTrim( Str( Abs( nSerialHD() ) ) ) + "'" )
 
