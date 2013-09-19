@@ -827,27 +827,31 @@ FUNCTION mkTMov( cPath, lAppend )
 
    local nCont
 	local dbfTMov
-   local aTMov := {  { "EI", "Exs. Iniciales",     1, .T., .T. },;
-                     { "MV", "Movimientos",        2, .T., .T. },;
-                     { "RG", "Reg. Almacen",       2, .T., .T. } }
+   local aTMov       := {  { "EI", "Exs. Iniciales",     1, .T., .T. },;
+                           { "MV", "Movimientos",        2, .T., .T. },;
+                           { "RG", "Reg. Almacen",       2, .T., .T. } }
 
-	DEFAULT lAppend := .F.
+	DEFAULT lAppend  := .F.
 
    dbCreate( cPath + "TMOV.DBF", aSqlStruct( aItmMovAlm() ), cDriver() )
 
 	/*
-	A¤adimos registros obligatorios
+	A¤adimos registros obligatorios-----------------------------------------
 	*/
 
-#ifndef __PDA__
+   if lAppend
 
-   dbUseArea( .t., cDriver(), cPath + "TMOV.DBF", cCheckArea( "TMOV", @dbfTMov ), .f. )
-   for nCont := 1 to Len( aTMov )
-      dbGather( aTMov[ nCont ], dbfTMov, .T. )
-   next
-	( dbfTMov )->( dbCloseArea() )
+      dbUseArea( .t., cDriver(), cPath + "TMOV.DBF", cCheckArea( "TMOV", @dbfTMov ), .f. )
 
-#endif
+      for nCont := 1 to Len( aTMov )
+         dbGather( aTMov[ nCont ], dbfTMov, .T. )
+      next
+
+	  ( dbfTMov )->( dbCloseArea() )
+
+   end if
+
+   rxTMov( cPath )
 
 RETURN .t.
 

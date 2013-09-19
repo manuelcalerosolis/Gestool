@@ -43,7 +43,7 @@ CLASS TNotas FROM TMant
 
    METHOD CloseFiles()
 
-   METHOD DefineFiles()
+   METHOD DefineFiles( cPath )
 
    METHOD OpenService( lExclusive )
 
@@ -99,7 +99,7 @@ RETURN ( Self )
 
 //---------------------------------------------------------------------------//
 
-METHOD OpenService( lExclusive ) CLASS TNotas
+METHOD OpenService( lExclusive, cPath ) CLASS TNotas
 
    local lOpen          := .t.
    local oError
@@ -109,11 +109,11 @@ METHOD OpenService( lExclusive ) CLASS TNotas
 
    BEGIN SEQUENCE
 
-   if Empty( ::oDbf )
-      ::DefineFiles()
-   end if
+      if Empty( ::oDbf )
+         ::DefineFiles( cPath )
+      end if
 
-   ::oDbf:Activate( .f., !( lExclusive ) )
+      ::oDbf:Activate( .f., !( lExclusive ) )
 
    RECOVER USING oError
 

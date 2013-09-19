@@ -139,7 +139,7 @@ CLASS TMant
    METHOD OpenService( lExclusive )
    METHOD CloseService()
 
-   METHOD BuildFiles( lExclusive, cPath ) INLINE ( ::OpenFiles( lExclusive, cPath ), ::CloseFiles() )
+   METHOD BuildFiles( lExclusive, cPath ) INLINE ( ::OpenService( lExclusive, cPath ), ::CloseService() )
 
    METHOD lValid( oGet, oSay )
 

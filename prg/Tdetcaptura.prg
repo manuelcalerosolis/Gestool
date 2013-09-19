@@ -53,12 +53,13 @@ RETURN ( oDbf )
 
 //--------------------------------------------------------------------------//
 
-METHOD OpenFiles( lExclusive ) CLASS TDetCaptura
+METHOD OpenFiles( lExclusive, cPath ) CLASS TDetCaptura
 
    DEFAULT lExclusive   := .f.
+   DEFAULT cPath        := ::cPath
 
    if Empty( ::oDbf )
-      ::oDbf            := ::DefineFiles()
+      ::oDbf            := ::DefineFiles( cPath )
    end if
 
    ::oDbf:Activate( .f., !lExclusive )
@@ -70,6 +71,39 @@ METHOD OpenFiles( lExclusive ) CLASS TDetCaptura
 RETURN ( Self )
 
 //--------------------------------------------------------------------------//
+
+METHOD OpenService( lExclusive, cPath )
+
+   local lOpen          := .t.
+   local oBlock         
+
+   DEFAULT lExclusive   := .f.
+   DEFAULT cPath        := ::cPath
+
+   oBlock               := ErrorBlock( {| oError | ApoloBreak( oError ) } )
+   BEGIN SEQUENCE
+
+      if Empty( ::oDbf )
+         ::oDbf         := ::DefineFiles( cPath )
+      end if
+
+      ::oDbf:Activate( .f., !( lExclusive ) )
+
+   RECOVER
+
+      lOpen             := .f.
+
+      ::CloseService()
+
+      msgStop( "Imposible abrir todas las bases de datos de detalle de capturas" )
+
+   END SEQUENCE
+
+   ErrorBlock( oBlock )
+
+RETURN ( lOpen )
+
+//---------------------------------------------------------------------------//
 
 METHOD SaveLines() CLASS TDetCaptura
 
@@ -375,35 +409,6 @@ Method CheckDefault( cCod, lNew )
    end if
 
 RETURN ( .t. )
-
-//---------------------------------------------------------------------------//
-
-METHOD OpenService( lExclusive )
-
-   local lOpen          := .t.
-   local oBlock         := ErrorBlock( {| oError | ApoloBreak( oError ) } )
-
-   DEFAULT lExclusive   := .f.
-
-   BEGIN SEQUENCE
-
-      if Empty( ::oDbf )
-         ::oDbf         := ::DefineFiles()
-      end if
-
-      ::oDbf:Activate( .f., !( lExclusive ) )
-
-   RECOVER
-
-      msgStop( "Imposible abrir todas las bases de datos de detalle de capturas" )
-      ::CloseService()
-      lOpen             := .f.
-
-   END SEQUENCE
-
-   ErrorBlock( oBlock )
-
-RETURN ( lOpen )
 
 //---------------------------------------------------------------------------//
 

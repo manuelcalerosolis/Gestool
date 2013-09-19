@@ -666,7 +666,6 @@ FUNCTION mkTVta( cPath, lAppend )
 
       /*
       A¤adimos registros obligatorios------------------------------------------
-      */
 
       dbUseArea( .t., cDriver(), cPath + "TVta.Dbf", cCheckArea( "TVta", @dbfTVta ), .f. )
 
@@ -675,9 +674,11 @@ FUNCTION mkTVta( cPath, lAppend )
       next
 
       ( dbfTVta )->( dbCloseArea() )
+      */
 
    end if
 
+   rxTVta( cPath )   
 
 RETURN NIL
 
@@ -689,7 +690,7 @@ FUNCTION rxTVta( cPath, oMeter )
 
    DEFAULT cPath  := cPatDat()
 
-   if !lExistTable( cPath + "TVTA.DBF" )
+   if !lExistTable( cPath + "TVta.Dbf" )
 		mkTVta( cPath )
    end if
 

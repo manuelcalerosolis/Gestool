@@ -6677,16 +6677,12 @@ FUNCTION TstEmpresa( cPatDat )
       dbCreate( cPatDat() + "EMPRESA.DBF", aSqlStruct( aItmEmp() ), cDriver() )
    end if
 
-   if !lExistIndex( cPatDat() + "EMPRESA.CDX" )
-      rxEmpresa( cPatDat() )
-   end if
-
    if !lExistTable( cPatDat() + "DELEGA.DBF" )
       dbCreate( cPatDat() + "DELEGA.DBF", aSqlStruct( aItmDlg() ), cDriver() )
    end if
 
-   if !lExistIndex( cPatDat() + "DELEGA.CDX" )
-      rxDlg( cPatDat() )
+   if !lExistIndex( cPatDat() + "EMPRESA.CDX" ) .or. !lExistIndex( cPatDat() + "DELEGA.CDX" )
+      rxEmpresa( cPatDat() )
    end if
 
    /*
@@ -6708,8 +6704,6 @@ FUNCTION TstEmpresa( cPatDat )
 
          fEraseTable( cPatDat() + "Empresa.Dbf" )
          fRenameTable( cPatEmpTmp() + "Empresa.Dbf", cPatDat() + "Empresa.Dbf" )
-
-         rxEmpresa( cPatDat() )
 
       end if
 
@@ -6735,11 +6729,13 @@ FUNCTION TstEmpresa( cPatDat )
          fEraseTable( cPatDat() + "Delega.Dbf" )
          fRenameTable( cPatEmpTmp() + "Delega.Dbf", cPatDat() + "Delega.Dbf" )
 
-         rxDlg( cPatDat() )
-
       end if
 
    end if
+
+   if lChangeStruct
+      rxEmpresa( cPatDat() )
+   end if 
 
    /*
    Situacion especial para cambio de codigo---------------------------------
@@ -7139,11 +7135,35 @@ return ( aItmDlg )
 
 //---------------------------------------------------------------------------//
 
+FUNCTION mkEmpresa( cPath )
+
+   DEFAULT cPath  := cPatDat()
+
+   if !lExistTable( cPath + "EMPRESA.DBF" )
+      dbCreate( cPath + "EMPRESA.DBF", aSqlStruct( aItmEmp() ), cDriver() )
+   end if
+
+   if !lExistTable( cPath + "DELEGA.DBF" )
+      dbCreate( cPath + "DELEGA.DBF", aSqlStruct( aItmDlg() ), cDriver() )
+   end if
+
+   if !lExistIndex( cPath + "EMPRESA.CDX" ) .or. !lExistIndex( cPath + "DELEGA.CDX" )
+      rxEmpresa( cPath )
+   end if
+
+RETURN NIL
+
+//--------------------------------------------------------------------------//
+
 FUNCTION rxEmpresa( cPath, oMeter )
 
    local dbfEmp
 
    DEFAULT cPath  := cPatDat()
+
+   if !lExistTable( cPath + "EMPRESA.DBF" )
+      dbCreate( cPath + "EMPRESA.DBF", aSqlStruct( aItmEmp() ), cDriver() )
+   end if
 
    dbUseArea( .t., cDriver(), cPath + "Empresa.Dbf", cCheckArea( "EMPRESA", @dbfEmp ), .f. )
    if !( dbfEmp )->( neterr() )
@@ -7163,15 +7183,9 @@ FUNCTION rxEmpresa( cPath, oMeter )
       msgStop( "Imposible abrir en modo exclusivo la tabla de empresas" )
    end if
 
-RETURN NIL
-
-//--------------------------------------------------------------------------//
-
-FUNCTION rxDlg( cPath, oMeter )
-
-   local dbfDlg
-
-   DEFAULT cPath  := cPatDat()
+   if !lExistTable( cPath + "DELEGA.DBF" )
+      dbCreate( cPath + "DELEGA.DBF", aSqlStruct( aItmDlg() ), cDriver() )
+   end if
 
    dbUseArea( .t., cDriver(), cPath + "DELEGA.DBF", cCheckArea( "DELEGA", @dbfDlg ), .f. )
 
@@ -7189,7 +7203,6 @@ FUNCTION rxDlg( cPath, oMeter )
 RETURN NIL
 
 //--------------------------------------------------------------------------//
-
 /*
 Valida la fecha del documento que estamos haciendo para que estén en el rango marcado en la empresa
 */

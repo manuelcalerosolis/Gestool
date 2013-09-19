@@ -1095,6 +1095,10 @@ Function Ejecutascript()
 
    dFecha         := cToD( GetPvProfString( "SCRIPT", "Fecha",    "", FullCurDir() + "GstApolo.Ini" ) )
 
+   /*
+   Ejecutamos el script-----------------------------------------------
+   */
+
    if dFecha  < GetSysDate()
 
       aScripts    := Directory( cPatScript() + "*.hrb" )
@@ -1103,12 +1107,8 @@ Function Ejecutascript()
 
          for each cScript in aScripts
 
-            /*
-            Ejecutamos el script-----------------------------------------------
-            */
-
-            pHrb := __hrbLoad( cPatScript() + cScript[1] )
-            u := __hrbDo( pHrb )
+            pHrb  := __hrbLoad( cPatScript() + cScript[1] )
+            u     := __hrbDo( pHrb )
             __hrbUnload( pHrb )
 
          next
@@ -4318,7 +4318,7 @@ Function About()
    local oBrush
    local oImgLst
 
-   DEFINE BRUSH oBrush FILE ( cBmpVersion() )
+   DEFINE BRUSH oBrush // FILE ( cBmpVersion() )
 
    DEFINE DIALOG oDlg RESOURCE "About" BRUSH oBrush TITLE "Acerca de " + __GSTROTOR__ + Space( 1 ) + __GSTVERSION__
 

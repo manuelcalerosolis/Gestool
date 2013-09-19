@@ -36,13 +36,15 @@ CLASS TDet
    DATA  bOnPreSaveDetail, bOnPostSaveDetail
    DATA  bOnPreLoad, bOnPostLoad
 
-   // Datas para la selecion generica de registros
+   // Datas para la selecion generica de registros-----------------------------
 
    DATA  oRadSelect
    DATA  nRadSelect           AS NUMERIC
    DATA  oChkSelect
    DATA  lChkSelect           AS LOGIC    INIT  .t.
    DATA  oDlgSelect
+
+   // Metodos------------------------------------------------------------------
 
    METHOD New( cPath, oParent )      CONSTRUCTOR
    MESSAGE Create( cPath, oParent )  METHOD New( cPath, oParent )
@@ -59,9 +61,12 @@ CLASS TDet
    METHOD Del()
    METHOD Duplicate()
 
-   METHOD DefineFiles()       VIRTUAL
-   METHOD OpenFiles()         VIRTUAL
+   METHOD DefineFiles()                      VIRTUAL
+   METHOD OpenFiles( lExclusive, cPath )     VIRTUAL
    METHOD CloseFiles()
+
+   METHOD OpenService( lExclusive, cPath )   INLINE ( ::OpenFiles( lExclusive, cPath ) )
+   METHOD CloseService()                     INLINE ( ::CloseFiles() )
 
    METHOD Resource( nMode )   VIRTUAL
 
@@ -85,6 +90,8 @@ CLASS TDet
 
    METHOD Existe( uValue, oGetTxt, uField, lMessage, lFill, cFillChar )
    METHOD NotExiste( uValue, oGetTxt, uField, lMessage, lFill, cFillChar )
+
+   METHOD BuildFiles( lExclusive, cPath ) INLINE ( ::OpenService( lExclusive, cPath ), ::CloseService() )
 
 END CLASS
 

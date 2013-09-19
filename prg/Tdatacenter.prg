@@ -114,7 +114,7 @@ CLASS TDataCenter
    METHOD CreateOperationLogTable()
    METHOD CreateColumnLogTable()
 
-   METHOD CreateTemporalTable( oTable )   INLINE ( if( !Empty( oTable:bCreateFile ), Eval( oTable:bCreateFile, cEmpTmp() ), ) )                  
+   METHOD CreateTemporalTable( oTable )
 
    METHOD lAdministratorTask()
    METHOD StartAdministratorTask()
@@ -535,6 +535,30 @@ END CLASS
 
 //---------------------------------------------------------------------------//
 
+METHOD CreateTemporalTable( oTable )
+
+   local oError
+   local oBlock
+
+   oBlock         := ErrorBlock( { | oError | ApoloBreak( oError ) } )
+   BEGIN SEQUENCE
+
+      if !Empty( oTable:bCreateFile )
+         Eval( oTable:bCreateFile, cEmpTmp() )
+      end if 
+
+   RECOVER USING oError
+
+      msgStop( ErrorMessage( oError ), 'Error creando tabla temporal.' )
+
+   END SEQUENCE
+
+   ErrorBlock( oBlock )
+
+RETURN ( Self )
+
+//---------------------------------------------------------------------------//
+
 METHOD lAdministratorTask()
 
    local dbfEmp
@@ -919,6 +943,7 @@ RETURN ( Self )
 METHOD ExistTable( uTable )
 
    local cTable
+   local lExistTable := .f.
 
    do case
       case IsObject( uTable )
@@ -931,7 +956,13 @@ METHOD ExistTable( uTable )
       ::aDDTables    := AdsDirectory()
    end if
 
-Return ( aScan( ::aDDTables, {|c| Left( Upper( c ), len( c ) - 1 ) == cTable } ) != 0 )
+   lExistTable       := aScan( ::aDDTables, {|c| Left( Upper( c ), len( c ) - 1 ) == cTable } ) != 0
+
+   if !lExistTable 
+      msgAlert( lExistTable, cTable )
+   end if 
+
+Return ( lExistTable )
 
 //---------------------------------------------------------------------------//
 
@@ -939,12 +970,18 @@ METHOD DeleteTable( oTable )
 
    local nScan
 
+   /*
+   if !ExistTable( oTable )
+      Return .f.
+   endif
+   */
+
    nScan             := aScan( ::aDDTables, oTable:cName )
    if nScan != 0
       aDel( ::aDDTables, nScan, .t. )
    end if
 
-Return ( AdsDDRemoveTable( Upper( oTable:cName ) ), "AdsDDRemoveTable"  + Left( Upper( oTable:cName ), len( oTable:cName ) - 1 ) )
+Return ( AdsDDRemoveTable( Upper( oTable:cName ) ) )
 
 //---------------------------------------------------------------------------//
 
@@ -1339,6 +1376,10 @@ METHOD AddTable( oTable )
 
       end if
 
+   else 
+
+      msgAlert( "La tabla existe" + oTable:cName + ":" + oTable:cDataFile + ":" + oTable:cIndexFile ) 
+
    end if
 
 Return ( lAddTable )
@@ -1455,6 +1496,7 @@ METHOD BuildData()
    oDataTable:cIndexFile   := cPatDat( .t. ) + "AgendaUsr.Cdx"
    oDataTable:cDescription := "Agenda"
    oDataTable:lTrigger     := ::lTriggerAuxiliares
+   oDataTable:bCreateFile  := {| cPath | TNotas():BuildFiles( .t., cPath ) }
    ::AddDataTable( oDataTable )
 
    oDataTable              := TDataTable()
@@ -1463,6 +1505,8 @@ METHOD BuildData()
    oDataTable:cIndexFile   := cPatDat( .t. ) + "TipoNotas.Cdx"
    oDataTable:cDescription := "Tipos de notas"
    oDataTable:lTrigger     := ::lTriggerAuxiliares
+   oDataTable:bCreateFile  := {| cPath | mkTipoNotas( cPath ) }
+   oDataTable:bCreateIndex := {| cPath | rxTipoNotas( cPath ) }
    ::AddDataTable( oDataTable )
 
    oDataTable              := TDataTable()
@@ -1471,6 +1515,8 @@ METHOD BuildData()
    oDataTable:cIndexFile   := cPatDat( .t. ) + "TVta.Cdx"
    oDataTable:cDescription := "Tipos de ventas"
    oDataTable:lTrigger     := ::lTriggerAuxiliares
+   oDataTable:bCreateFile  := {| cPath | mkTVta( cPath ) }
+   oDataTable:bCreateIndex := {| cPath | rxTVta( cPath ) }
    ::AddDataTable( oDataTable )
 
    oDataTable              := TDataTable()
@@ -1479,6 +1525,8 @@ METHOD BuildData()
    oDataTable:cIndexFile   := cPatDat( .t. ) + "Divisas.Cdx"
    oDataTable:cDescription := "Divisas"
    oDataTable:lTrigger     := ::lTriggerAuxiliares
+   oDataTable:bCreateFile  := {| cPath | mkDiv( cPath ) }
+   oDataTable:bCreateIndex := {| cPath | rxDiv( cPath ) }
    ::AddDataTable( oDataTable )
 
    oDataTable              := TDataTable()
@@ -1487,6 +1535,8 @@ METHOD BuildData()
    oDataTable:cIndexFile   := cPatDat( .t. ) + "TIva.Cdx"
    oDataTable:cDescription := "Tipos de impuestos"
    oDataTable:lTrigger     := ::lTriggerAuxiliares
+   oDataTable:bCreateFile  := {| cPath | mkTIva( cPath ) }
+   oDataTable:bCreateIndex := {| cPath | rxTIva( cPath ) }
    ::AddDataTable( oDataTable )
 
    oDataTable              := TDataTable()
@@ -1495,6 +1545,8 @@ METHOD BuildData()
    oDataTable:cIndexFile   := cPatDat( .t. ) + "Empresa.Cdx"
    oDataTable:cDescription := "Empresa"
    oDataTable:lTrigger     := .f.
+   oDataTable:bCreateFile  := {| cPath | mkEmpresa( cPath ) }
+   oDataTable:bCreateIndex := {| cPath | rxEmpresa( cPath ) }
    ::AddDataTable( oDataTable )
 
    oDataTable              := TDataTable()
@@ -1510,6 +1562,8 @@ METHOD BuildData()
    oDataTable:cDataFile    := cPatDat( .t. ) + "UsrBtnBar.Dbf"
    oDataTable:cIndexFile   := cPatDat( .t. ) + "UsrBtnBar.Cdx"
    oDataTable:cDescription := "Barra favoritos"
+   oDataTable:bCreateFile  := {| cPath | TAcceso():MakeDatabase( cPath ) }
+   oDataTable:bCreateIndex := {| cPath | TAcceso():ReindexDatabase( cPath ) }
    oDataTable:lTrigger     := ::lTriggerAuxiliares
    ::AddDataTable( oDataTable )
 
@@ -1518,6 +1572,8 @@ METHOD BuildData()
    oDataTable:cDataFile    := cPatDat( .t. ) + "TblCnv.Dbf"
    oDataTable:cIndexFile   := cPatDat( .t. ) + "TblCnv.Cdx"
    oDataTable:cDescription := "Factor conversión"
+   oDataTable:bCreateFile  := {| cPath | mkTblCnv( cPath ) }
+   oDataTable:bCreateIndex := {| cPath | rxTblCnv( cPath ) }
    oDataTable:lTrigger     := ::lTriggerAuxiliares
    ::AddDataTable( oDataTable )
 
@@ -1526,6 +1582,7 @@ METHOD BuildData()
    oDataTable:cDataFile    := cPatDat( .t. ) + "Captura.Dbf"
    oDataTable:cIndexFile   := cPatDat( .t. ) + "Captura.Cdx"
    oDataTable:cDescription := "Capturas T.P.V."
+   oDataTable:bCreateFile  := {| cPath | TCaptura():BuildFiles( .t., cPath ) }
    oDataTable:lTrigger     := ::lTriggerAuxiliares
    ::AddDataTable( oDataTable )
 
@@ -1534,6 +1591,7 @@ METHOD BuildData()
    oDataTable:cDataFile    := cPatDat( .t. ) + "CapturaCampos.Dbf"
    oDataTable:cIndexFile   := cPatDat( .t. ) + "CapturaCampos.Cdx"
    oDataTable:cDescription := "Capturas T.P.V."
+   oDataTable:bCreateFile  := {| cPath | TDetCaptura():BuildFiles( .t., cPath ) }
    oDataTable:lTrigger     := ::lTriggerAuxiliares
    ::AddDataTable( oDataTable )
 
@@ -1542,6 +1600,8 @@ METHOD BuildData()
    oDataTable:cDataFile    := cPatDat( .t. ) + "TMov.Dbf"
    oDataTable:cIndexFile   := cPatDat( .t. ) + "TMov.Cdx"
    oDataTable:cDescription := "Tipos de movimientos"
+   oDataTable:bCreateFile  := {| cPath | mkTMov( cPath ) }
+   oDataTable:bCreateIndex := {| cPath | rxTMov( cPath ) }
    oDataTable:lTrigger     := ::lTriggerAuxiliares
    ::AddDataTable( oDataTable )
 
@@ -1550,6 +1610,8 @@ METHOD BuildData()
    oDataTable:cDataFile    := cPatDat( .t. ) + "CnfFlt.Dbf"
    oDataTable:cIndexFile   := cPatDat( .t. ) + "CnfFlt.Cdx"
    oDataTable:cDescription := "Configuración filtros"
+   oDataTable:bCreateFile  := {| cPath | mkFilter( cPath ) }
+   oDataTable:bCreateIndex := {| cPath | rxFilter( cPath ) }
    oDataTable:lTrigger     := ::lTriggerAuxiliares
    ::AddDataTable( oDataTable )
 
@@ -1559,6 +1621,8 @@ METHOD BuildData()
    oDataTable:cIndexFile   := cPatDat( .t. ) + "Situa.Cdx"
    oDataTable:cDescription := "Situaciones"
    oDataTable:lTrigger     := ::lTriggerAuxiliares
+   oDataTable:bCreateFile  := {| cPath | mkSitua( cPath ) }
+   oDataTable:bCreateIndex := {| cPath | rxSitua( cPath ) }
    ::AddDataTable( oDataTable )
 
    oDataTable              := TDataTable()
@@ -1566,6 +1630,7 @@ METHOD BuildData()
    oDataTable:cDataFile    := cPatDat( .t. ) + "Pais.Dbf"
    oDataTable:cIndexFile   := cPatDat( .t. ) + "Pais.Cdx"
    oDataTable:cDescription := "Paises"
+   oDataTable:bCreateFile  := {| cPath | TPais():BuildFiles( .t., cPath ) }
    oDataTable:lTrigger     := ::lTriggerAuxiliares
    ::AddDataTable( oDataTable )
 
@@ -1573,6 +1638,7 @@ METHOD BuildData()
    oDataTable:cName        := cPatDat() + "Backup"
    oDataTable:cDataFile    := cPatDat( .t. ) + "Backup.Dbf"
    oDataTable:cIndexFile   := cPatDat( .t. ) + "Backup.Cdx"
+   oDataTable:bCreateFile  := {| cPath | TBackup():BuildFiles( .t., cPath ) }
    oDataTable:cDescription := "Copias de seguridad"
    oDataTable:lTrigger     := ::lTriggerAuxiliares
    ::AddDataTable( oDataTable )
@@ -4099,8 +4165,9 @@ METHOD ActualizaEmpresa( oMsg )
    next 
 
    for each oTable in ::aEmpresaTables
+      MsgAlert( "Añadiendo tabla al diccionario de datos : " + oTable:cName + " : " + oTable:cDataFile )
       ::oMsg:SetText( "Añadiendo tabla al diccionario de datos : " + oTable:cDescription )
-      ::AddTable( oTable )
+      msgAlert( ::AddTable( oTable ), "Añadiendo tabla" )
    next 
 
    // Reindexando tablas ------------------------------------------------------
@@ -4114,6 +4181,10 @@ METHOD ActualizaEmpresa( oMsg )
       ::oMsg:SetText( "Reindexando : " + oTable:cDescription )
       ::ReindexTable( oTable )
    next 
+
+   // Recargamos el diccionario de datos---------------------------------------
+
+   ::ReLoadTables()
 
 Return ( Self )
 
