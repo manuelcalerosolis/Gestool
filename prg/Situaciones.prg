@@ -334,7 +334,7 @@ Return aSitua
 Función que crea las bases de datos necesarias
 */
 
-FUNCTION mkSitua( cPath, lAppend, cPathOld, oMeter )
+FUNCTION mkSitua( cPath, lAppend, cPathOld )
 
    local dbfSitua
 
@@ -349,18 +349,15 @@ FUNCTION mkSitua( cPath, lAppend, cPathOld, oMeter )
       fErase( cPath + "Situa.Cdx" )
    end if
 
-   if lAppend .and. lIsDir( cPathOld )
+   if lAppend .and. lExistTable( cPathOld + "Situa.Dbf" )
 
-      if file( cPathOld + "Situa.Dbf" )
-
-         dbUseArea( .t., cDriver(), "Situa.Dbf", cCheckArea( "Situa", @dbfSitua ), .f. )
-         ( dbfSitua )->( __dbApp( cPathOld + "Situa.Dbf" ) )
-
-      end if
+      dbUseArea( .t., cDriver(), "Situa.Dbf", cCheckArea( "Situa", @dbfSitua ), .f. )
+      ( dbfSitua )->( __dbApp( cPathOld + "Situa.Dbf" ) )
+      ( dbfSitua )->( dbCloseArea() )
 
    end if
 
-   ( dbfSitua )->( dbCloseArea() )
+   rxSitua( cPath )
 
 RETURN .t.
 

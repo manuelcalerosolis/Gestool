@@ -190,7 +190,7 @@ METHOD GenIndices( oMsg )
 
          if ::lEmpresa
 
-            ::SetText( "Generando índices : Empresas", ::aProgress[ 1 ] )        ; rxEmpresa(  ::cPathDat ); rxDlg(  ::cPathDat )
+            ::SetText( "Generando índices : Empresas", ::aProgress[ 1 ] )        ; rxEmpresa(  ::cPathDat )
             ::SetText( "Generando índices : Usuarios", ::aProgress[ 1 ] )        ; rxUsuario(  ::cPathDat )
             ::SetText( "Generando índices : Divisas", ::aProgress[ 1 ]  )        ; rxDiv(      ::cPathDat )
             ::SetText( "Generando índices : Configuración", ::aProgress[ 1 ] )   ; TShell():ReindexData()

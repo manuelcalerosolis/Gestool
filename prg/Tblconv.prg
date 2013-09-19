@@ -698,12 +698,12 @@ FUNCTION mkTblCnv( cPath, lAppend, cPathOld )
       dbCreate( cPath + "TblCnv.Dbf", aSqlStruct( aItmTbl() ), cDriver() )
    end if
 
-   if lAppend .and. lIsDir( cPathOld )
+   if lAppend .and. lExistTable( cPathOld + "TblCnv.Dbf" )
 
       dbUseArea( .t., cDriver(), cPath + "TblCnv.Dbf", cCheckArea( "TblCnv.Dbf", @dbf ), .f. )
       if !( dbf )->( neterr() )
          ( dbf )->( __dbApp( cPathOld + "TblCnv.Dbf" ) )
-         (   dbf )->( dbCloseArea() )
+         ( dbf )->( dbCloseArea() )
       end if
 
    end if
